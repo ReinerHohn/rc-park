@@ -31,12 +31,24 @@
   Karte; Standort eingeben → zeigt Verbote/Auflagen + ob DFS-Freigabe nötig). Freiburg hat
   zudem einen Flugplatz (mögliche Kontrollzone).
 
-### Darf die Drohne ums Freiburger Münster? → praktisch nein
-Münsterplatz = fast immer Markt + Touristen = **Menschenansammlung** → Überflug verboten.
-Dazu Altstadt-/Denkmal-Geozone + evtl. Kontrollzone. Nur mit **Sondergenehmigung** und
-menschenleerem Zeitfenster denkbar. Besser: bodennah + Turmgalerie fotografieren, oder Profi
-mit Genehmigung, oder vorhandenen Scan (mit Lizenzfreigabe) nutzen. **DIY-Drohne stattdessen
-an der Kastelburg** üben (abgelegen, legal einfach).
+### Darf die Drohne ums Freiburger Münster? → kommt auf Zeit + dipul.de an
+- **Tagsüber / bei Markt (Mo–Sa): nein** — Münsterplatz = Menschenansammlung → Überflug verboten.
+- **Sonntag sehr früh: evtl. machbar** — **kein Markt** (Mo–Sa), vor Öffnung/Gottesdienst
+  menschenleer; mit **Kleinstdrohne < 250 g (C0)** ist das Personen-Problem dann gelöst.
+- **Flugplatz Freiburg (EDTF)**: 1,5-km-Drohnensperrzone; Münster ~3 km entfernt → **wohl
+  außerhalb**, aber Rettungshubschrauber/Uniklinik-Luftraum beachten.
+- **Verbindlich: [dipul.de](https://www.dipul.de)** für „Freiburg Münsterplatz" prüfen —
+  zeigt er keine Geozone, ist ein kurzer Flug sehr früh realistisch legal; zeigt er eine
+  Sperre, braucht es eine Genehmigung (zeitunabhängig).
+- Immer: keine erkennbaren Personen filmen, Kirchen-/Denkmal-Hausrecht beachten.
+- **Einfacher Weg zum Üben: Kastelburg** (abgelegen, keine Menschenmassen).
+
+### Grundregeln „wo erlaubt / wo nicht"
+- **A1, < 250 g (C0):** Stadt/Wohngebiet erlaubt, über *einzelne* Unbeteiligte ok — **nie
+  über Menschenansammlungen.**
+- **A3 (schwerer):** nur freies Land, 150 m Abstand zu Wohn-/Gewerbe-/Erholungsgebieten.
+- **Immer verboten/nur mit Genehmigung:** Menschenansammlungen, Geozonen (dipul.de),
+  Flughafen-/Kontrollzonen, > 120 m, Nacht, außer Sicht, fremde Wohngrundstücke.
 
 ## Praxis: was für dich realistisch ist
 - **Freiburger Münster (Innenstadt)**: Drohne **schwierig** (Menschenmassen, Airspace,
