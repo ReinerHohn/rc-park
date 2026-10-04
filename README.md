@@ -33,6 +33,7 @@ selbst steuern.
 | [`wartung-risiko.md`](wartung-risiko.md) | RC-Aktion vs Display: Wartung/Risiko + low-maintenance Interaktivität |
 | [`automatisierung-ohne-rc.md`](automatisierung-ohne-rc.md) | MiWuLa-Qualität ohne RC: Magnorail (Magnet-Autos) + Märklin Höllentalbahn |
 | [`demo-standort.md`](demo-standort.md) | Risikoärmster Start: Demo bei bemanntem Partner am Münster |
+| [`standort-display-pilot.md`](standort-display-pilot.md) | Pilot-Standorte Display (Stadtbibliothek/Tourist-Info/Museum) + StadtModell e.V. |
 | [`host-indoor-spielplatz.md`](host-indoor-spielplatz.md) | **RC-Baustelle bei Indoor-Spielplatz (Kindergalaxie)** via Umsatzbeteiligung |
 | [`schutzbox-plexiglas.md`](schutzbox-plexiglas.md) | Sicherer Schutzkasten (von außen gesteuert, kindersicher, Polycarbonat) |
 | [`lean-phasen.md`](lean-phasen.md) | Lean-Start in Phasen: Demo & Pop-up & große Fläche (Gates) |
