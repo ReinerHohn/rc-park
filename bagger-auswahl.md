@@ -12,17 +12,38 @@
 Tausend €** (grob **2.500–6.000 €+**). Custom-Eigenbauten gehen noch größer.
 **Fürs Baggerland: EIN Stück als „Meister"-/Premium-Station** (Wow), nicht die Flotte.
 
-## 🎯 Preis-Leistungs-Sweet-Spot (die Arbeitstiere)
-| Einsatz | Modell | Maßstab | Preis ca. | Warum |
+## 🎯 Preis-Leistungs-Sweet-Spot (die Arbeitstiere) — mit echten eBay-Preisen
+| Einsatz | Modell | Maßstab | Preis (gebraucht) | Warum |
 |---|---|---|---|---|
-| **Günstig/robust (Kinder, Self-Service)** | **Huina 1580** (brushed, Getriebe) | 1:14 | **~250–370 €** | unkaputtbar, billig, Ersatzteile überall |
-| **★ Haupt-Flotte (Sweet Spot)** | **Kabolite/Huina K336** (Hydraulik) | 1:16 | **~300–500 €** | CNC-Vollmetall, echte Hydraulik, robust, getesteter Dauerläufer |
-| **Flaggschiff** | **Kabolite K970** (Hydraulik) | 1:13,5 / 1:14 | **~600–900 €** | „bester 1:14-Hydraulikbagger von Huina", 31 kg Vollmetall |
-| **Hero/Premium (1 Stück)** | 1:8-Riese (385CF o. ä.) | 1:8 | ~2.500–6.000 € | der „Meister"-Bagger, eigene Station |
+| **Günstig/robust (Kinder, Self-Service)** | Getriebe-Bagger (Huina 1580 / generisch Vollmetall-Schaufel) | 1:14 | **~100–370 €** | unkaputtbar, billig, leicht steuerbar, Ersatzteile überall |
+| **★ Haupt-Flotte (Sweet Spot)** | **Kabolite K336 / Amewi G101H** (Hydraulik, Vollmetall) | 1:16 | **~600–900 €** | CNC-Metall, echte Hydraulik, robust, bestes €/Leistung |
+| **Flaggschiff** | **Kabolite K970** (Hydraulik) | 1:14 | **~1.000–2.000 €** | 31 kg Vollmetall, Top-1:14-Hydraulik |
+| **Hero/Premium (1 Stück)** | Lesu / JDM / RC4WD / 1:8-Riese | 1:14–1:8 | **~3.000–5.700 €** | der „Meister"-Bagger, eigene Station |
 
-**Der Sweet Spot = Kabolite/Huina K336 (1:16, Hydraulik, ~300–500 €):** CNC-Metall (hält
-Publikums-Belastung aus), echte Hydraulik (das „echte" Gefühl), Ersatzteile gut verfügbar,
-bezahlbar genug für **mehrere Einheiten**. Darüber der K970 als Flaggschiff.
+**Echte eBay-Kleinanzeigen-Preise (gebraucht, Hydraulik):** Amewi G101H (1:16) 849 €,
+Kabolite K336 ~820–900 €, JDM Liebherr 920 (1:14) 2.000 €, Leimbach Liebherr 922 (1:16)
+1.050 €, Kabolite K970 SME 4.750 €, Volvo RC4WD 5.700 €. **Spanne gesamt ~600–5.700 €**
+(Budget 290–850 · Mid 1.000–2.500 · Premium 3.000–5.700).
+
+**Der Sweet Spot = Kabolite K336 / Amewi G101H (1:16, Hydraulik, ~600–900 €):** CNC-Metall
+(hält Publikums-Belastung aus), echte Hydraulik (das „echte" Gefühl), Ersatzteile gut
+verfügbar, bezahlbar genug für **mehrere Einheiten**. Darüber K970/JDM als Flaggschiff.
+
+## 👥 Was wollen Kunden / welche Größe?
+- **1:14 ist DER Standard-Maßstab** — **größte Auswahl an Modellen + Ersatzteilen/Zubehör**
+  (Kipper, Schaufeln, Anbaugeräte). Daneben 1:16 (Kabolite). → auf 1:14/1:16 setzen, nicht
+  Exoten.
+- **Größe 1:14 ≈ 50–70 cm**, Vollmetall, schwer, realistisch — **imposant genug für den Wow,
+  aber indoor noch handhabbar.** (1:8-Riesen = nur als Hero-Stück, brauchen viel Platz/Strom.)
+- **Steuer-Hürde beachten (wichtig fürs Publikum!):** Vollmetall-**Hydraulik ist präzise/
+  anspruchsvoll** → für **Einsteiger/Kinder nicht ideal**. Deshalb der Mix:
+  - **Self-Service/Kinder** → **Getriebe-Bagger** (gutmütig, robust, billig).
+  - **Profi-/Premium-Station** → **Hydraulik** (K336/K970), ggf. mit kurzer Einweisung.
+- Platz: schon **~3×3 m** reichen für Grundbetrieb; mehr Fläche = realistischere Baustelle.
+- Einsteiger-Allrounder mit gutem Ruf: **Double E EC160E** (1:14).
+
+→ **Fazit Größe:** **1:14 (ca. 50–70 cm)** ist der Kunden-Sweet-Spot (Standard, viel Zubehör,
+imposant, indoor machbar). Getriebe für die Masse, Hydraulik als Premium.
 
 ## Flotten-Empfehlung fürs Baggerland (gestuft = Baggerführerschein-Unlock!)
 1. **Lehrling-Station:** Huina 1580 brushed (robust/billig) — Kinder & Einsteiger.
