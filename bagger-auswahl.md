@@ -54,6 +54,35 @@ imposant, indoor machbar). Getriebe für die Masse, Hydraulik als Premium.
 → Passt exakt zum Level-System ([`baggerland-stationen.md`](baggerland-stationen.md)):
 Minibagger → K336 → K970 → **1:8-Meisterbagger** freischalten.
 
+## 🧮 Start-Flotte durchgerechnet (5 Bagger, gestuft)
+| Stück | Modell | Klasse | Preis (gebr.) | Station(en) | Führerschein-Stufe |
+|---|---|---|---|---|---|
+| **Getriebe #1** | Huina 1580 o. ä. | Getriebe 1:14 | ~250 € | **1 Fahrschule** + **4 Schatzsuche** | 🟢 Lehrling |
+| **Getriebe #2** | Huina 1580 o. ä. | Getriebe 1:14 | ~250 € | **2 Verladen** (+ Dumper) | 🟢 Lehrling |
+| **Hydraulik #1** | Kabolite K336 / Amewi G101H | Hydraulik 1:16 | ~850 € | **3 Präzision** | 🔵 Geselle |
+| **Hydraulik #2** | Kabolite K336 / Amewi G101H | Hydraulik 1:16 | ~850 € | **5 Katastrophe/Damm** | 🟠 Profi |
+| **Flaggschiff** | Kabolite K970 | Hydraulik 1:14 | ~1.500 € | **6 Mini-Freiburg-Baustelle** (Finale) | 🔴 Meister |
+
+**Zubehör/Betrieb:**
+| Posten | ca. |
+|---|---|
+| 1× Dumper/Kipper (Huina K3361) für „Verladen" | ~250 € |
+| Zusatz-Akkus + Ladegeräte | ~200 € |
+| Ersatzteile/Reparatur-Reserve | ~300 € |
+| Stationsmaterial (Granulat, Wannen, Pylonen, Blöcke, Becher, Token, Timer/Tablet, Jeton, Führerschein-Karten) | ~400 € |
+
+### Summe
+- **Bagger (5 Stück):** ~**3.700 €**
+- **+ Zubehör/Betrieb:** ~**1.150 €**
+- **= Start-Flotte gesamt: ~4.850 €**
+
+→ Deckt **alle 6 Stationen** ab + das komplette Führerschein-Unlock
+(🟢 Getriebe → 🔵/🟠 K336 → 🔴 K970). Später **1× 1:8-Riese** als „Super-Meister"-Premium
+(~3.000–5.700 €) dazu.
+**Spar-Hebel:** „Defekt/Bastler" kaufen + reparieren drückt v. a. die Hydraulik-Posten stark
+(K336 defekt teils < 500 €). Passt in das MVP-CapEx (~14 k, siehe
+[`mvp-kalkulation.md`](mvp-kalkulation.md)) — Baggerzone ≈ 5 k davon.
+
 ## Beschaffung
 - Neu: s-idee.de, HEPF, goldlandrc, toucanhobby, heavydutyrc; **gebraucht** (eBay Kleinanzeigen)
   deutlich billiger (siehe [`startausstattung.md`](startausstattung.md)).
