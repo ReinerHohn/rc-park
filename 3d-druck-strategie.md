@@ -1,0 +1,117 @@
+# 3D-Druck-Strategie: Dioramen & Gebäude schnell als Bausatz
+
+> Ziel: **extrem schnell viele Modellgebäude** für den Miniatur-Schwarzwald
+> (z. B. Freiburger Münster) produzieren — hohl / als Bausatz, Material sparen.
+
+## TL;DR
+
+1. **Mehrfarb-Druckwerk (AMS/MMU, eine Düse) lohnt für dieses Ziel NICHT.** Es ist
+   langsamer und verschwendet Filament. Lieber das Geld in **mehr Drucker** stecken.
+2. **Schnellster Weg = Druckfarm** (2–4 günstige, schnelle CoreXY-Drucker parallel),
+   jeder einfarbig.
+3. **Pro Modell:** Vase-Mode / hohl, 0,6-mm-Düse, 0,3-mm-Schichten, 0–5 % Infill.
+4. **Riesen (Münster) in plattengroße Teile schneiden → Bausatz**, parallel drucken, kleben.
+5. **Farbe** über getrennt gedruckte Teile in verschiedenen Filamenten **oder** Lackieren
+   (Grundierspray + Wash/Drybrush) — nicht über Düsen-Farbwechsel.
+
+## Warum kein Single-Nozzle-Mehrfarbdruck
+
+Bei AMS/MMU teilen sich alle Farben **eine Düse**. Jeder Farbwechsel braucht einen
+Retract-Load-Purge-Zyklus:
+
+| Effekt | Größenordnung |
+|---|---|
+| Zeit je Farbwechsel | ~30–45 s |
+| Abfall je Farbwechsel | ~2–5 g in den Purge-Tower |
+| Tower-Anteil bei vielen Wechseln | **20–40 % des Gesamtfilaments** |
+| Reales Beispiel (Pinguin) | einfarbig 9,3 g / 1h14 → mehrfarbig **61,9 g / 6h+** |
+
+→ Für „viele Modelle schnell" ist das der falsche Hebel. Ausnahme: einzelne Schaustücke
+oder Schilder, bei denen Farbe im selben Teil wirklich gebraucht wird.
+
+**Purge reduzieren** (falls doch Mehrfarbe nötig): Flush-Volumen senken, ähnliche Farben
+gruppieren, „Flush to infill/support" aktivieren, höhere Schichthöhe. Spart >60 % Spülung.
+
+## Die drei Tempo-Hebel
+
+### 1. Parallelität (Druckfarm) — größter Hebel
+Durchsatz skaliert linear mit der Anzahl Drucker. 3 Drucker = 3× Modelle/Tag. Günstige,
+schnelle CoreXY (Bambu A1 / A1 mini / P1S-Klasse, Creality K-Serie). Zwei einfache Drucker
+schlagen einen teuren Mehrfarb-Combo bei reinem Durchsatz.
+
+### 2. Geometrie- & Slicer-Tricks pro Modell
+- **Vase-Mode (Spiralize):** hohle Einwand-Drucke, eine durchgehende Spirale, keine
+  Retracts, **bis 50 % schneller**. Ideal für Türme, Spitzen, einfache Baukörper
+  (20-cm-Turm in ~3,5 h). Voraussetzung: durchgehende Außenkontur, keine Brücken/Overhangs.
+- **Große Düse + hohe Schicht:** 0,6-mm-Düse, 0,28–0,32-mm-Schichten. Bei Diorama-Maßstab
+  (1:87 … 1:250) kaum sichtbarer Detailverlust, aber vielfaches Tempo.
+- **Hohl & wenig Infill:** 2 Wände, 0–5 % Gyroid-Infill. Gebäude tragen nichts.
+- **Supportfrei orientieren/schneiden:** Dächer separat, Fassaden flach legen.
+
+### 3. Bausatz-Schnitt für große Modelle
+Ein großes Münster passt auf keine Druckplatte und soll laut Vorgabe **nicht voll**, sondern
+als Bausatz gedruckt werden:
+- Im Slicer (Bambu Studio „Cut object", PrusaSlicer „Cut", oder Blender/Meshmixer) in
+  plattengroße, flach liegende Teile zerlegen.
+- Pass-Stifte / Nut-Feder an die Schnittflächen setzen → sauberes Zusammenstecken.
+- Teile **parallel** auf der Farm drucken, mit Sekundenkleber/Epoxid fügen.
+- Vorteil: supportfrei, materialsparend (hohl), beliebig groß skalierbar.
+
+## Empfohlene Druck-Settings (Diorama-Architektur)
+
+| Parameter | Wert | Grund |
+|---|---|---|
+| Material | PLA (ggf. PLA+) | billig, steif, einfach, ideal für Deko |
+| Düse | 0,6 mm | Tempo, robuste Wände |
+| Schichthöhe | 0,28–0,32 mm | Tempo, Detail bei Maßstab ok |
+| Wände | 2 | hohl, spart Material |
+| Infill | 0–5 % Gyroid | Gebäude tragen nichts |
+| Vase-Mode | wo Geometrie es zulässt | max. Tempo + min. Material |
+| Druckgeschwindigkeit | 200–300 mm/s (CoreXY) | Farm-Durchsatz |
+| Supports | durch Schnitt/Orientierung vermeiden | spart Zeit + Nacharbeit |
+
+## Farbe ohne AMS
+
+1. **Teile in verschiedenen Filamentfarben** drucken und zusammenstecken
+   (Münster: sandstein-/ziegelrot + grüne Turmhelme) → null Purge-Abfall.
+2. **Grundieren + bemalen:** Rattle-Can-Primer, dann Wash (dünne dunkle Farbe in die Fugen)
+   + Drybrush (helle Farbe auf Kanten). Sieht bei Architektur plastischer aus als AMS.
+
+## Lohnt ein Mehrmaterial-Druckwerk? — Entscheidungshilfe
+
+| Setup | Für dein Ziel |
+|---|---|
+| **Single-Nozzle + AMS/MMU** (Bambu AMS, Prusa MMU) | ❌ langsam + Abfall; nur für kleine Schauteile |
+| **Mehrere Einzeldrucker (Farm)** | ✅ bester Durchsatz pro € |
+| **IDEX / Tool-Changer** (Prusa XL, IDEX-Drucker) | 〰️ separate Düsen = wenig Purge, aber teuer; nur bei echtem Mehrfarb-Serienbedarf |
+
+**Faustregel:** Budget zuerst in **Drucker-Anzahl + einfarbige Effizienz** stecken, Farbe
+über getrennte Teile oder Lack. Mehrfarb-Hardware erst, wenn ein konkretes Schaustück es
+wirklich verlangt.
+
+## Modellquellen
+
+### Freiburger Münster (fertig druckbar)
+- **Printables – „Freiburg Minster" (depth_craft3d), 1:250, gratis, inkl. 3MF** —
+  https://www.printables.com/model/1831701-freiburg-minster  *(bester Startpunkt)*
+- Cults3D – Freiburger Münster (reduzierte Details, klein druckbar) —
+  https://cults3d.com/en/3d-model/architecture/freiburger-munster-munster-unserer-lieben-frau-katholische-stadtpfarrkirche-von-freiburg-im-breisgau
+- Gambody – Freiburg Minster (detaillierte Gotik-STL) —
+  https://www.gambody.com/stock/freiburg-minster-architecture-stl
+- Sketchfab – Photogrammetrie-Scan (LAD BW), als Mesh-Basis zum Selbstschneiden —
+  https://sketchfab.com/3d-models/freiburger-munster-f0f4d479997f48659658fafebc14f90c
+
+### Weitere Gebäude / Dioramen
+- **Modellbahn-Gebäude** (H0 1:87, TT, N): Fachwerkhäuser, Kirchen, Bahnhöfe, Höfe —
+  Printables/Cults/Thingiverse, viele als steckbare Bausätze.
+- **Wargaming-Terrain** (28 mm): robuste, modulare Gebäude, oft hohl & schnell druckbar.
+- **Parametrische Gebäude-Generatoren** (z. B. OpenSCAD-/Web-Tools) für beliebig viele
+  Häuser-Varianten mit einheitlichem Stil.
+
+## Durchsatz-Überschlag (grob)
+
+Annahme: 4 Drucker, Diorama-Haus ~80–150 g, bei obigen Settings ~2–4 h/Stück.
+→ pro Drucker ~4–6 Häuser/Tag → **Farm ~16–24 Häuser/Tag**, ~100+/Woche.
+Ein großes Münster als Bausatz (z. B. 6–10 Teile) ist in ~2–3 Tagen über die Farm fertig.
+
+> Zahlen sind Richtwerte und hängen stark von Modellgröße, Maßstab und Drucker ab.
