@@ -160,6 +160,23 @@ with open(out,"wb") as o:
     buf['n']=nmn.astype('<f4'); buf['v']=A.astype('<f4'); o.write(buf.tobytes())
 print("STL ->",out)
 
+# --- Detail-Muenster NUR fuer die Vorschau in den Slot setzen (nicht committet; Scan=CC-BY-NC) ---
+for mpath in ("/home/md/Downloads/muenster_kirche150.stl","/home/md/Downloads/muenster_kirche60.stl"):
+    if muenster_poly is not None and os.path.exists(mpath):
+        dd=open(mpath,'rb').read(); nt=struct.unpack("<I",dd[80:84])[0]
+        scv=np.frombuffer(dd[84:84+nt*50],dtype=np.dtype([('n','<3f4'),('v','<3,3f4'),('a','<u2')]))['v'].astype(np.float64)
+        scv=scv-scv.reshape(-1,3).min(0)
+        sh_=max(scv[:,:,0].max(),scv[:,:,1].max())
+        mxs=[p[0] for p in muenster_poly]; mys=[p[1] for p in muenster_poly]
+        slot=max(max(mxs)-min(mxs),max(mys)-min(mys))
+        f=(slot*s)/sh_; scv=scv*f
+        scv[:,:,0]+=(sum(mxs)/len(mxs)-mn[0])*s-(scv[:,:,0].min()+scv[:,:,0].max())/2
+        scv[:,:,1]+=(sum(mys)/len(mys)-mn[1])*s-(scv[:,:,1].min()+scv[:,:,1].max())/2
+        if len(scv)>30000: scv=scv[::len(scv)//30000]
+        sn=np.cross(scv[:,1]-scv[:,0],scv[:,2]-scv[:,0]); ll=np.linalg.norm(sn,axis=1); ll[ll==0]=1; sn=sn/ll[:,None]
+        A=np.concatenate([A,scv]); nmn=np.concatenate([nmn,sn])
+        print("Detail-Muenster in Slot (nur Vorschau, %d Dreiecke)"%len(scv)); break
+
 # --- Render (gefuellte Dreiecke, Z-Buffer) ---
 az,el=math.radians(38),math.radians(32)
 Rz=np.array([[math.cos(az),-math.sin(az),0],[math.sin(az),math.cos(az),0],[0,0,1]])
