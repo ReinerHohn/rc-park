@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RC-Park Freiburg — FPV-Pop-up-Rechner</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{--bg:#0f1720;--card:#1a2530;--ink:#e8eef3;--muted:#8aa0b2;--accent:#2dd4bf;
+        --good:#34d399;--bad:#f87171;--warn:#f59e0b;--line:#2a3a48;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  header{padding:26px 20px;background:linear-gradient(135deg,#0d3b3a,#0f1720);border-bottom:1px solid var(--line)}
+  h1{margin:0 0 6px;font-size:24px}
+  header p{margin:0;color:var(--muted);max-width:75ch}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin:18px 0}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .kpi .label{color:var(--muted);font-size:13px}
+  .kpi .val{font-size:25px;font-weight:700;margin-top:4px}
+  .kpi .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:860px){.grid2{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:18px 0}
+  .panel h2{margin:0 0 14px;font-size:18px}
+  .slider{margin:12px 0}
+  .slider label{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px}
+  .slider label b{color:var(--accent)}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .chartbox{position:relative;height:280px}
+  .btn{background:#0d3b3a;color:var(--accent);border:1px solid #1d5a56;border-radius:8px;padding:8px 14px;cursor:pointer;font-size:14px;margin-right:8px}
+  .btn:hover{background:#12504d}
+  .note{font-size:12px;color:var(--muted);margin-top:8px}
+  footer{color:var(--muted);font-size:12px;padding:28px 20px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>🚁 FPV-Pop-up-Rechner — RC-Park Freiburg</h1>
+  <p>Indoor-FPV-Schlechtwetter-MVP (~120 m²). Zieh an den Reglern oder nimm ein Preset.
+     Kernzahl: <b>wie viele Flüge/Tag</b> bis zum Break-even. Alle Werte editierbar.</p>
+</header>
+<div class="wrap">
+
+  <div class="panel">
+    <h2>⚡ Presets</h2>
+    <button class="btn" id="p_fwtm">FWTM-Pop-up (subventioniert)</button>
+    <button class="btn" id="p_neben">Altstadt-Nebenlage</button>
+    <button class="btn" id="p_reset">Zurücksetzen</button>
+    <p class="note">Presets setzen Miete + Fläche; den Rest stellst du selbst ein.</p>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="grid2">
+    <div class="panel"><h2>⚙️ Betrieb</h2>
+      <div class="slider"><label>FPV-Flüge / Tag <b id="l_fluege"></b></label><input type="range" id="s_fluege" min="0" max="80" step="1"></div>
+      <div class="slider"><label>Preis FPV-Session <b id="l_preis"></b></label><input type="range" id="s_preis" min="8" max="40" step="1"></div>
+      <div class="slider"><label>Eintritt-Besucher / Tag (Mini-Welt/Bagger) <b id="l_bes"></b></label><input type="range" id="s_bes" min="0" max="150" step="5"></div>
+      <div class="slider"><label>Eintrittspreis <b id="l_eintritt"></b></label><input type="range" id="s_eintritt" min="0" max="20" step="1"></div>
+      <div class="slider"><label>Events / Monat (€, Geburtstage/Firmen) <b id="l_events"></b></label><input type="range" id="s_events" min="0" max="8000" step="250"></div>
+      <div class="slider"><label>Öffnungstage / Monat <b id="l_tage"></b></label><input type="range" id="s_tage" min="20" max="30" step="1"></div>
+    </div>
+    <div class="panel"><h2>🏠 Kosten</h2>
+      <div class="slider"><label>Fläche (m²) <b id="l_flaeche"></b></label><input type="range" id="s_flaeche" min="60" max="400" step="10"></div>
+      <div class="slider"><label>Miete €/m²·Monat <b id="l_miete"></b></label><input type="range" id="s_miete" min="4" max="50" step="1"></div>
+      <div class="slider"><label>Personal (Vollzeit-Kräfte) <b id="l_fte"></b></label><input type="range" id="s_fte" min="0" max="5" step="0.5"></div>
+      <div class="slider"><label>Investition CapEx (€) <b id="l_capex"></b></label><input type="range" id="s_capex" min="5000" max="50000" step="1000"></div>
+      <p class="note">Fix pro Monat (editierbar im Code): Personal 2.300 €/Kraft, Nebenkosten 400 €,
+      Marketing 400 €, Wartung 300 €, Sonstiges 200 €, Abschreibung = CapEx/36.</p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel"><h2>💶 Umsatz / Monat</h2><div class="chartbox"><canvas id="umsatzChart"></canvas></div></div>
+    <div class="panel"><h2>📉 Kosten / Monat</h2><div class="chartbox"><canvas id="kostenChart"></canvas></div></div>
+  </div>
+
+  <div class="panel">
+    <h2>⚖️ Break-even: Gewinn/Monat je Flüge pro Tag</h2>
+    <div class="chartbox"><canvas id="beChart"></canvas></div>
+    <p class="note" id="be_note"></p>
+  </div>
+</div>
+<footer>rc-park · FPV-Pop-up-Rechner · begründete Schätzungen, keine Finanzberatung.</footer>
+
+<script>
+// Fixkosten-Konstanten (im Code editierbar)
+const K = { fte_kost:2300, nk:400, marketing:400, wartung:300, sonstiges:200, abschr_monate:36,
+            shop_pp:2.0, shop_cogs:0.40 };
+const DEF = { fluege:15, preis:18, bes:15, eintritt:9, events:1000, tage:26,
+              flaeche:120, miete:6, fte:1.5, capex:14000 };
+let s = {...DEF};
+
+function eur(x){return Math.round(x).toLocaleString('de-DE')+' €';}
+
+function modell(o){
+  const fpv = o.fluege*o.preis*o.tage;
+  const eintr = o.bes*o.eintritt*o.tage;
+  const shop = (o.fluege+o.bes)*K.shop_pp*o.tage;
+  const events = o.events;
+  const umsatz = fpv+eintr+shop+events;
+
+  const miete = o.flaeche*o.miete;
+  const personal = o.fte*K.fte_kost;
+  const abschr = o.capex/K.abschr_monate;
+  const shopCogs = shop*K.shop_cogs;
+  const fix = miete+K.nk+personal+K.marketing+K.wartung+K.sonstiges+abschr;
+  const kosten = fix+shopCogs;
+  const gewinn = umsatz-kosten;
+  return {umsatz,fpv,eintr,shop,events,miete,personal,abschr,shopCogs,
+          nk:K.nk,marketing:K.marketing,wartung:K.wartung,sonstiges:K.sonstiges,
+          fix,kosten,gewinn};
+}
+
+// Break-even Flüge/Tag (Gewinn linear in fluege)
+function breakEvenFluege(){
+  const p0 = modell({...s,fluege:0}).gewinn;
+  const p1 = modell({...s,fluege:1}).gewinn;
+  const a = p1-p0;            // Gewinn pro Flug/Tag
+  return a>0 ? Math.max(0,-p0/a) : Infinity;
+}
+
+let umsatzChart,kostenChart,beChart;
+
+function renderKpis(m){
+  const marge = m.umsatz>0 ? m.gewinn/m.umsatz*100 : 0;
+  const be = breakEvenFluege();
+  const puffer = s.fluege-be;
+  const payback = m.gewinn>0 ? s.capex/m.gewinn : Infinity;
+  const cards = [
+    ['Umsatz / Monat', eur(m.umsatz), (s.tage+' Tage · '+s.fluege+' Flüge/Tag'), ''],
+    ['Gewinn / Monat', eur(m.gewinn), 'Marge '+marge.toFixed(0)+'%', m.gewinn>=0?'good':'bad'],
+    ['Break-even', isFinite(be)?Math.ceil(be)+' Flüge/Tag':'—',
+       isFinite(be)?((puffer>=0?'+':'')+Math.round(puffer)+' Puffer'):'nicht erreichbar',
+       puffer>=3?'good':(puffer>=0?'warn':'bad')],
+    ['Amortisation CapEx', isFinite(payback)?(payback<1?'<1':payback.toFixed(1))+' Monate':'—',
+       'auf '+eur(s.capex), payback<=18?'good':'warn'],
+    ['Kosten / Monat', eur(m.kosten), 'Miete '+eur(m.miete)+' · Personal '+eur(m.personal), ''],
+    ['Gewinn / Jahr', eur(m.gewinn*12), '(bei gleichbleibend)', m.gewinn>=0?'good':'bad'],
+  ];
+  document.getElementById('kpis').innerHTML = cards.map(c=>
+    `<div class="kpi"><div class="label">${c[0]}</div><div class="val ${c[3]}">${c[1]}</div><div class="sub">${c[2]}</div></div>`).join('');
+}
+
+function renderCharts(m){
+  const uData=[m.fpv,m.eintr,m.shop,m.events], uLab=['FPV-Flüge','Eintritt','Shop','Events'];
+  const kData=[m.miete,m.personal,m.nk,m.marketing,m.wartung,m.sonstiges,m.abschr,m.shopCogs];
+  const kLab=['Miete','Personal','Nebenk.','Marketing','Wartung','Sonstiges','Abschr.','Shop-WE'];
+  const pal=['#2dd4bf','#34d399','#60a5fa','#f59e0b','#f87171','#a78bfa','#fbbf24','#94a3b8'];
+  if(!umsatzChart){
+    umsatzChart=new Chart(document.getElementById('umsatzChart'),{type:'doughnut',
+      data:{labels:uLab,datasets:[{data:uData,backgroundColor:pal,borderColor:'#1a2530'}]},
+      options:{plugins:{legend:{labels:{color:'#e8eef3'}},tooltip:{callbacks:{label:c=>c.label+': '+eur(c.raw)}}},maintainAspectRatio:false}});
+    kostenChart=new Chart(document.getElementById('kostenChart'),{type:'bar',
+      data:{labels:kLab,datasets:[{data:kData,backgroundColor:pal}]},
+      options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>eur(c.raw)}}},
+        scales:{x:{ticks:{color:'#8aa0b2'}},y:{ticks:{color:'#8aa0b2',callback:v=>eur(v)}}},maintainAspectRatio:false}});
+  } else { umsatzChart.data.datasets[0].data=uData;umsatzChart.update();
+           kostenChart.data.datasets[0].data=kData;kostenChart.update(); }
+  const xs=[],ys=[];
+  for(let f=0;f<=60;f+=2){xs.push(f);ys.push(Math.round(modell({...s,fluege:f}).gewinn));}
+  if(!beChart){
+    beChart=new Chart(document.getElementById('beChart'),{type:'line',
+      data:{labels:xs,datasets:[{label:'Gewinn/Monat',data:ys,borderColor:'#2dd4bf',
+        backgroundColor:'rgba(45,212,191,.12)',fill:true,tension:.2,pointRadius:0}]},
+      options:{plugins:{legend:{labels:{color:'#e8eef3'}},tooltip:{callbacks:{label:c=>eur(c.raw)}}},
+        scales:{x:{title:{display:true,text:'Flüge/Tag',color:'#8aa0b2'},ticks:{color:'#8aa0b2'}},
+          y:{grid:{color:ctx=>ctx.tick.value===0?'#f87171':'#2a3a48'},ticks:{color:'#8aa0b2',callback:v=>eur(v)}}},maintainAspectRatio:false}});
+  } else { beChart.data.labels=xs;beChart.data.datasets[0].data=ys;beChart.update(); }
+  const be=breakEvenFluege();
+  document.getElementById('be_note').textContent = isFinite(be)
+    ? 'Gewinnschwelle bei ~'+Math.ceil(be)+' Flügen/Tag. Aktuell eingestellt: '+s.fluege+'/Tag.'
+    : 'Mit diesen Kosten/Preisen nicht erreichbar — Preis hoch oder Kosten runter.';
+}
+
+function syncLabels(){
+  l_fluege.textContent=s.fluege; l_preis.textContent=eur(s.preis);
+  l_bes.textContent=s.bes; l_eintritt.textContent=eur(s.eintritt);
+  l_events.textContent=eur(s.events); l_tage.textContent=s.tage;
+  l_flaeche.textContent=s.flaeche+' m²'; l_miete.textContent=s.miete.toFixed(0)+' €';
+  l_fte.textContent=s.fte; l_capex.textContent=eur(s.capex);
+}
+function update(){const m=modell(s);syncLabels();renderKpis(m);renderCharts(m);}
+function bind(id,key){const el=document.getElementById(id);el.value=s[key];
+  el.addEventListener('input',()=>{s[key]=parseFloat(el.value);update();});}
+['s_fluege:fluege','s_preis:preis','s_bes:bes','s_eintritt:eintritt','s_events:events',
+ 's_tage:tage','s_flaeche:flaeche','s_miete:miete','s_fte:fte','s_capex:capex']
+ .forEach(x=>{const[a,b]=x.split(':');bind(a,b);});
+function setAll(){['s_fluege:fluege','s_preis:preis','s_bes:bes','s_eintritt:eintritt',
+ 's_events:events','s_tage:tage','s_flaeche:flaeche','s_miete:miete','s_fte:fte','s_capex:capex']
+ .forEach(x=>{const[a,b]=x.split(':');document.getElementById(a).value=s[b];});update();}
+p_fwtm.onclick=()=>{s={...s,miete:6,flaeche:120};setAll();};
+p_neben.onclick=()=>{s={...s,miete:22,flaeche:120};setAll();};
+p_reset.onclick=()=>{s={...DEF};setAll();};
+update();
+</script>
+</body>
+</html>

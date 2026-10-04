@@ -32,6 +32,7 @@ selbst steuern.
 | [`attraktionen/*.json`](attraktionen/) | Je Attraktion: Beschreibung, Fläche, Invest, USP |
 | `build.py` | Erzeugt `businessplan.html` aus den Daten |
 | `businessplan.html` | Interaktiver Businessplan mit Live-Reglern & Charts (generiert) |
+| [`mvp-rechner.html`](mvp-rechner.html) | **Interaktiver FPV-Pop-up-Rechner** (Presets FWTM/Nebenlage, Break-even) |
 
 ## Businessplan erzeugen
 
