@@ -72,7 +72,31 @@ schlagen einen teuren Mehrfarb-Combo bei reinem Durchsatz.
 - **Hohl & wenig Infill:** 2 Wände, 0–5 % Gyroid-Infill. Gebäude tragen nichts.
 - **Supportfrei orientieren/schneiden:** Dächer separat, Fassaden flach legen.
 
-### 3. Bausatz-Schnitt für große Modelle
+### 3a. ⭐ Flat-Wall-Bauweise (flache Wände → zusammenkleben)
+
+**Der schnellste Weg für große Gebäude.** Statt das Haus als aufrechten Block zu drucken,
+jede **Wand flach liegend** als dünne Platte drucken und zum Hohlkörper zusammenbauen.
+
+Warum es gewinnt:
+- **Höhe = Zeitkiller.** 200-mm-Turm aufrecht ≈ 1000 Schichten nacheinander. Dieselbe Wand
+  flach liegend ≈ 10–15 Schichten → Bruchteil der Zeit.
+- **Kein Support** (Platte liegt satt auf), **hohl = kaum Material**, innen beleuchtbar.
+- **Fassaden-Detail besser**: Fenster/Maßwerk/Relief liegen in der feinen XY-Ebene statt in
+  groben Z-Schichtlinien.
+- **Parallel**: 4 Wände auf 4 Druckern gleichzeitig.
+
+Eckverbindungen (von einfach → stabil):
+1. **Stumpf + Kleber** (Sekundenkleber/Epoxid) — am einfachsten.
+2. **45°-Gehrung** an den Wandkanten — saubere Ecke ohne sichtbare Stirnfläche.
+3. **Steck-Tabs / Nut-Feder** an den Kanten — selbstausrichtend, kein Verrutschen.
+4. **Innen-Eckpfosten** (kleine L-Profile) zum Ankleben — maximale Stabilität + Ausrichtung.
+Boden-/Deckplatte gibt zusätzlich Steifigkeit; Fensteröffnungen direkt in die Platten
+aussparen (für beleuchtete Lithophane-Fenster, siehe [`beleuchtung-detail.md`](beleuchtung-detail.md)).
+
+Faustregel: **winzige Teile** (Mini-Türmchen) ruhig aufrecht; **alles ab Haus-Größe** als
+Flat-Wall-Bausatz.
+
+### 3b. Bausatz-Schnitt für große Modelle
 Ein großes Münster passt auf keine Druckplatte und soll laut Vorgabe **nicht voll**, sondern
 als Bausatz gedruckt werden:
 - Im Slicer (Bambu Studio „Cut object", PrusaSlicer „Cut", oder Blender/Meshmixer) in
