@@ -4,6 +4,14 @@
 > 3D-Stadtmodell (LoD2)** mit **allen Gebäuden + Dachformen** — als **Open Data gratis**.
 > Download → zu STL wandeln → drucken. Die ganze Stadt auf einmal.
 
+---
+## ⭐⭐ F4MAP — die echten Freiburg-3D-Gebäude LIVE im Browser ⭐⭐
+> ## 👉 **https://demo.f4map.com/#lat=47.9956970&lon=7.8535034&zoom=17**
+> **Live-3D-Karte der echten OSM-Gebäude** (inkl. Münster-Turm!) — reinzoomen, drehen,
+> gucken. Perfekt als **visuelle Vorlage** und um zu sehen, welche Gebäude/Dächer es gibt,
+> bevor man sie generiert/druckt. **Das Tool zum Loslegen.**
+---
+
 ## 🎁 Die Quelle (gratis)
 - **3D-Stadtmodell Freiburg i. Br. — LoD2** (alle Gebäude mit echten Dachformen), Format
   **CityGML**, über **daten-bw.de** / **opendata.lgl-bw.de** / Freiburg-Geoportal.
@@ -46,6 +54,27 @@
 - **Menge**: die ganze Stadt ist zu viel Druck — **nur den gewünschten Ausschnitt** nehmen,
   Rest ggf. kaufen/weglassen.
 
+## 🗺️ Noch mehr Datenquellen (alles nutzbar fürs Modell)
+| Quelle | Was | Link |
+|---|---|---|
+| **F4Map** ⭐ | **live 3D der echten OSM-Gebäude im Browser** | demo.f4map.com |
+| OSM Buildings | 3D-OSM-Gebäude-Viewer | osmbuildings.org |
+| **LGL BW Open GeoData** | LoD2 **ganz Baden-Württemberg** (CityGML) | opendata.lgl-bw.de |
+| **BKG** | **LoD2-DE: ganz Deutschland** | gdz.bkg.bund.de |
+| **Freiburg Geoportal / FreiGIS** | Stadt-Open-Data: Gebäude, **DGM (Gelände), ALKIS, Orthophotos, Bäume** | geoportal.freiburg.de |
+| **ALKIS / Kataster** | exakte **Gebäude-Grundrisse + Flurstücke** | Landesvermessung |
+| **LiDAR / ALS-Punktwolken** (LAS) | ultrahochauflösende Punktwolken (teils Open Data) | LGL/Länderportale |
+| Google **Photorealistic 3D Tiles** | fotorealistisches 3D ganzer Städte (API, kostenpflichtig) | Google Maps Platform |
+| **Mapillary / KartaView** | Straßenbilder → eigene Photogrammetrie | mapillary.com |
+| Copernicus / SRTM **DEM** | Höhendaten (Gelände) | opentopography / Copernicus |
+| **Cadmapper** | OSM-Stadt → STL (bis 1 km² gratis) | cadmapper.com |
+| **TouchTerrain** | Gelände → druckbare STL | touchterrain.org |
+| **3DCityDB / 3DCityLoader** | CityGML verwalten/konvertieren → STL/OBJ | 3dcityloader.com |
+
+→ Für dich am wichtigsten: **F4Map** (ansehen) + **LoD2 Freiburg** (echte Dächer, drucken) +
+**TouchTerrain** (Schwarzwald-Sockel). Hero-Wahrzeichen separat (Scan/Faller).
+
 ## Quellen
 daten-bw.de (3D-Stadtmodell Freiburg LoD2), opendata.lgl-bw.de, lgl-bw.de (LoD2-Produkt),
-citygml2stl (PyPI), 3dcityloader.com, cadmapper.com, touchterrain.org.
+geoportal.freiburg.de, gdz.bkg.bund.de, citygml2stl (PyPI), 3dcityloader.com, cadmapper.com,
+touchterrain.org, demo.f4map.com.
