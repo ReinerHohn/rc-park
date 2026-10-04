@@ -41,6 +41,13 @@ if [ -z "$BATCH" ]; then
   ok "Meshroom bereit."
 fi
 
+# Handy-Kamera in Meshroom-Sensor-DB eintragen (sonst wird die Brennweite geraten -> verzerrtes Modell)
+# nubia Focus 2 5G (Z2462N): 5.25 mm Brennweite, Sensorbreite ~7.6 mm (1/1.67")
+SDB=$(find "$(dirname "$BATCH")" -name cameraSensors.db 2>/dev/null | head -1)
+if [ -n "$SDB" ] && ! grep -q "^nubia;Z2462N;" "$SDB"; then
+  echo "nubia;Z2462N;7.6;usercontribution" >> "$SDB" && ok "nubia Focus 2 in Kamera-Datenbank eingetragen."
+fi
+
 # ---------- Scan ----------
 c "1) FOTOS bereitlegen"
 echo "Lege deine Fotos in einen Ordner. Standard: $BASE/Fotos"
