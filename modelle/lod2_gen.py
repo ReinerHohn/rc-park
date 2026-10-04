@@ -180,6 +180,16 @@ for (tx,ty),tl in tiles.items():
     write_stl(os.path.join(tdir,"t%02d_%02d.stl"%(tx,ty)),tl)
 print("Kacheln -> stl/tiles_%dx%d/ (%d Stueck, je ~%.0fx%.0f mm)"%(TILES,TILES,len(tiles),tw,th))
 
+# --- Projektions-Meta fuer deckungsgleiche Laser-Grundplatte (laser_grundplatte.py) ---
+import json as _json
+dlat=R/111320.0; dlon=R/(111320.0*math.cos(math.radians(47.9956970)))
+meta={"gmn":[gmn[0],gmn[1],gmn[2]],"scale_mm_per_m":s,"MAXMM":MAXMM,"TILES":TILES,
+      "W_mm":float(W),"H_mm":float(H),"tw_mm":float(tw),"th_mm":float(th),
+      "muenster_latlon":[47.9956970,7.8535034],"radius_m":R,
+      "bbox_SWNE":[47.9956970-dlat,7.8535034-dlon,47.9956970+dlat,7.8535034+dlon]}
+_json.dump(meta,open(os.path.join(HERE,"stl","altstadt_meta.json"),"w"),indent=1)
+print("Meta -> stl/altstadt_meta.json (fuer Laser-Grundplatte)")
+
 # --- Render (Gesamt, Muenster-frei) ---
 nm=np.cross(A[:,1]-A[:,0],A[:,2]-A[:,0]); ln=np.linalg.norm(nm,axis=1); ln[ln==0]=1; nmn=nm/ln[:,None]
 az,el=math.radians(38),math.radians(32)
