@@ -1,0 +1,4 @@
+*.stl
+*.obj
+*.glb
+# Hero-Detailmodelle liegen nur lokal (Muenster-Scan = CC-BY-NC, nicht committen)

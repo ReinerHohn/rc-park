@@ -13,6 +13,7 @@ selbst steuern.
 |---|---|
 | [`KONZEPT.md`](KONZEPT.md) | Vision, USP, Attraktionen, Zielgruppen, Risiken |
 | [`bauplan-miniaturwunderland.md`](bauplan-miniaturwunderland.md) | **Bauplan** extrem detailliert in Sektionen (Maßstab 1:500, LoD2+Hero+Magnorail) |
+| [`plan-schnellstes-modell.md`](plan-schnellstes-modell.md) | **Schnellster Weg zum Detailmodell**: Hybrid Druck (Körper) + Laser (Flächen), parallel, 36 Kacheln |
 | [`prototyp-konzept.md`](prototyp-konzept.md) | **Schneller Prototyp**: eBay-Gear reparieren + Druckmodule + Personal-Konzept |
 | [`standort.md`](standort.md) | Anforderungsprofil & Standortlogik Freiburg |
 | [`mieten-kalkulation.md`](mieten-kalkulation.md) | Freiburg-Mieten (Tiers) + Kalkulation je Größe/Lage + Lage-Sweet-Spots |

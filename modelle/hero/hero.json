@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Freiburger Muenster",
+    "lat": 47.9956970,
+    "lon": 7.8535034,
+    "radius_m": 60,
+    "stl": "muenster.stl",
+    "height_m": 116,
+    "rot_deg": 0
+  }
+]

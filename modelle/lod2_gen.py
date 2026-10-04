@@ -11,8 +11,11 @@ import xml.etree.ElementTree as ET
 import math, struct, zlib, os, pickle
 import numpy as np
 
-GML="/tmp/freiburg_lod2.gml"; CACHE="/tmp/lod2_muenster_buildings.pkl"
+GML="/tmp/freiburg_lod2.gml"
 TILES=int(os.environ.get("TILES","2"))  # NxN Kacheln (per Env TILES=3 usw.)
+RADIUS=float(os.environ.get("RADIUS","250"))  # Altstadt-Radius ums Muenster in m (RADIUS=700 = ganze Altstadt)
+CACHE="/tmp/lod2_muenster_%dm.pkl"%int(RADIUS)  # Cache pro Radius (sonst alter 250er geladen)
+MAXMM=float(os.environ.get("MAXMM","180"))  # groesste Kante in mm
 
 def utm32(lat,lon):
     a=6378137.0; f=1/298.257222101; e2=f*(2-f); ep2=e2/(1-e2); k0=0.9996; lon0=math.radians(9.0)
@@ -24,7 +27,7 @@ def utm32(lat,lon):
     E=500000+k0*N*(A+(1-T+C)*A**3/6+(5-18*T+T*T+72*C-58*ep2)*A**5/120)
     Nn=k0*(M+N*math.tan(lat)*(A*A/2+(5-T+9*C+4*C*C)*A**4/24+(61-58*T+T*T+600*C-330*ep2)*A**6/720))
     return E,Nn
-ME,MN=utm32(47.9956970,7.8535034); R=250.0
+ME,MN=utm32(47.9956970,7.8535034); R=RADIUS
 X0,X1,Y0,Y1=ME-R,ME+R,MN-R,MN+R
 lname=lambda t:t.split('}')[-1]
 
@@ -72,9 +75,64 @@ else:
 
 # --- globale Skalierung (max 180 mm) ---
 allp=np.array([p for b in buildings for t in b['t'] for p in t],dtype=np.float64)
-gmn=allp.min(0); s=180.0/max((allp[:,0]-gmn[0]).max(),(allp[:,1]-gmn[1]).max())
+gmn=allp.min(0); s=MAXMM/max((allp[:,0]-gmn[0]).max(),(allp[:,1]-gmn[1]).max())
 def to_mm(tri):
     a=np.array(tri,dtype=np.float64); a-=gmn; a*=s; return a
+
+# --- Hero-Overlay: LoD2-Masse durch Detailmodelle ersetzen/ueberlagern, wo vorhanden ---
+# Manifest modelle/hero/hero.json = [{"name","lat","lon","radius_m","stl","height_m"[,"rot_deg"]}]
+# Detail-STLs liegen LOKAL in modelle/hero/ (NICHT committen: Muenster-Scan ist CC-BY-NC).
+# Fehlt das Verzeichnis/Manifest -> no-op, LoD2-Masse bleibt stehen.
+def read_stl(path):
+    with open(path,"rb") as f: head=f.read(5)
+    if head==b"solid":  # evtl. ASCII
+        txt=open(path,"r",errors="ignore").read()
+        if "facet normal" in txt:
+            vs=[]; tri=[]
+            for ln in txt.split("\n"):
+                ln=ln.strip()
+                if ln.startswith("vertex"):
+                    _,x,y,z=ln.split()[:4]; vs.append((float(x),float(y),float(z)))
+                    if len(vs)==3: tri.append(vs); vs=[]
+            return np.array(tri,dtype=np.float64)
+    with open(path,"rb") as f:  # binaer
+        f.read(80); n=struct.unpack("<I",f.read(4))[0]
+        d=np.frombuffer(f.read(50*n),dtype=np.dtype([('n','<3f4'),('v','<3,3f4'),('a','<u2')]),count=n)
+        return d['v'].astype(np.float64)
+
+HERO_DIR=os.path.join(os.path.dirname(os.path.abspath(__file__)),"hero")
+HERO_JSON=os.path.join(HERO_DIR,"hero.json")
+hmset=set(); hero_tris=[]
+if os.path.exists(HERO_JSON):
+    import json
+    heroes=json.load(open(HERO_JSON))
+    gz=gmn[2]
+    for h in heroes:
+        he,hn=utm32(h["lat"],h["lon"]); rad=float(h.get("radius_m",40))
+        # LoD2-Gebaeude im Hero-Radius entfernen
+        rem=[i for i,b in enumerate(buildings) if math.hypot(b['cx']-he,b['cy']-hn)<rad]
+        if not rem:
+            print("  ! Hero '%s' ausserhalb des Ausschnitts, uebersprungen"%h["name"]); continue
+        hmset.update(rem)
+        grd=min(buildings[i]['zmin'] for i in rem)  # Bodenhoehe aus ersetzten Gebaeuden
+        sp=os.path.join(HERO_DIR,h["stl"])
+        if not os.path.exists(sp):
+            print("  ! Hero-STL fehlt: %s (LoD2 nur entfernt, kein Ersatz)"%sp); continue
+        V=read_stl(sp)  # (m,3,3)
+        vmin=V.reshape(-1,3).min(0); vmax=V.reshape(-1,3).max(0); ext=vmax-vmin
+        hs=(float(h["height_m"])/ext[2]) if ext[2]>0 else 1.0   # auf echte Zielhoehe (m) skalieren
+        W=(V-vmin)*hs   # Nullpunkt unten, in Metern
+        if h.get("rot_deg"):
+            th=math.radians(float(h["rot_deg"])); ca,sa=math.cos(th),math.sin(th)
+            cx=(W[:,:,0].max())/2; cy=(W[:,:,1].max())/2
+            x=W[:,:,0]-cx; y=W[:,:,1]-cy
+            W[:,:,0]=x*ca-y*sa+cx; W[:,:,1]=x*sa+y*ca+cy
+        # in UTM-Weltkoordinaten setzen: zentriert auf Hero, Basis auf Bodenhoehe
+        W[:,:,0]+= he-(W[:,:,0].max()/2); W[:,:,1]+= hn-(W[:,:,1].max()/2); W[:,:,2]+= grd
+        Wm=(W-gmn)*s  # ins Modell-mm (gleiche Skalierung wie LoD2)
+        hero_tris.append(((he-gmn[0])*s,(hn-gmn[1])*s,Wm.tolist()))
+        print("  + Hero '%s': %d LoD2-Gebaeude ersetzt, Detailmodell %.0fmm hoch eingefuegt"%(h["name"],len(rem),Wm[:,:,2].max()-Wm[:,:,2].min()))
+if hmset: print("Hero-Overlay: %d Gebaeude durch %d Detailmodelle ersetzt"%(len(hmset),len(hero_tris)))
 
 def box(x0,x1,y0,y1,z0,z1):
     v=[(x0,y0,z0),(x1,y0,z0),(x1,y1,z0),(x0,y1,z0),(x0,y0,z1),(x1,y0,z1),(x1,y1,z1),(x0,y1,z1)]
@@ -92,11 +150,13 @@ def write_stl(path,tri_list):
         b['n']=nn.astype('<f4'); b['v']=A.astype('<f4'); o.write(b.tobytes())
     return A
 
-# --- Gesamt-STL (Muenster-frei + Marker) ---
+# --- Gesamt-STL (LoD2-Masse + Hero-Detailmodelle + ggf. Muenster-Marker) ---
 full=[]; mslot=[]
 for i,b in enumerate(buildings):
+    if i in hmset: continue                       # von Hero-Detailmodell ersetzt
     if i in mset: mslot.append(to_mm(b['t'])); continue
     full.extend(to_mm(b['t']).tolist())
+for _,_,tl in hero_tris: full.extend(tl)          # Detailmodelle (Scan/Faller) einmergen
 if mslot:
     M=np.concatenate(mslot)
     full.extend(box(M[:,:,0].min(),M[:,:,0].max(),M[:,:,1].min(),M[:,:,1].max(),0,1.5))  # Slot-Marker
@@ -107,10 +167,13 @@ print("Gesamt-STL -> altstadt_lod2.stl  (%d Dreiecke, X%.0f Y%.0f Z%.0f mm)"%(le
 W=A[:,:,0].max(); H=A[:,:,1].max(); tw=W/TILES; th=H/TILES
 tiles={}
 for i,b in enumerate(buildings):
-    if i in mset: continue
+    if i in mset or i in hmset: continue
     cx=(b['cx']-gmn[0])*s; cy=(b['cy']-gmn[1])*s
     tx=min(TILES-1,int(cx//tw)); ty=min(TILES-1,int(cy//th))
     tiles.setdefault((tx,ty),[]).extend(to_mm(b['t']).tolist())
+for hx,hy,tl in hero_tris:   # Hero-Detailmodell seiner Kachel zuordnen
+    tx=min(TILES-1,int(hx//tw)); ty=min(TILES-1,int(hy//th))
+    tiles.setdefault((tx,ty),[]).extend(tl)
 tdir=os.path.join(HERE,"stl","tiles_%dx%d"%(TILES,TILES)); os.makedirs(tdir,exist_ok=True)
 for (tx,ty),tl in tiles.items():
     tl=tl+box(tx*tw,(tx+1)*tw,ty*th,(ty+1)*th,-2,0)   # Kachel-Grundplatte
