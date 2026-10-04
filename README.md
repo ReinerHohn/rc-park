@@ -29,6 +29,7 @@ selbst steuern.
 | [`3d-stadtmodell.md`](3d-stadtmodell.md) | **Ganze Stadt Freiburg als amtliches 3D-Modell (LoD2, gratis)** → STL drucken |
 | [`prioliste-freiburg.md`](prioliste-freiburg.md) | Prioliste Freiburg-Wahrzeichen + Faller-Sets + Martinstor-Qualität scannen |
 | [`risikolos-ohne-personal.md`](risikolos-ohne-personal.md) | Risikolos starten & (fast) ohne Personal: Schau-Installation, Self-Service |
+| [`wartung-risiko.md`](wartung-risiko.md) | RC-Aktion vs Display: Wartung/Risiko + low-maintenance Interaktivität |
 | [`demo-standort.md`](demo-standort.md) | Risikoärmster Start: Demo bei bemanntem Partner am Münster |
 | [`host-indoor-spielplatz.md`](host-indoor-spielplatz.md) | **RC-Baustelle bei Indoor-Spielplatz (Kindergalaxie)** via Umsatzbeteiligung |
 | [`schutzbox-plexiglas.md`](schutzbox-plexiglas.md) | Sicherer Schutzkasten (von außen gesteuert, kindersicher, Polycarbonat) |
