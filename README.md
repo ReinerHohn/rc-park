@@ -18,6 +18,7 @@ selbst steuern.
 | [`mvp-kalkulation.md`](mvp-kalkulation.md) | **MVP durchgerechnet**: Sweet Spot Lage + Features, CapEx, Break-even |
 | [`sweet-spots-schnellstart.md`](sweet-spots-schnellstart.md) | Schnell + wenig Personal + viel drucken: Pop-up, Druckfarm, Lage |
 | [`sweet-spots-aktion.md`](sweet-spots-aktion.md) | Gedrucktes Mini-Freiburg + Aktion (Drohnen/Bagger/Flieger) = der USP |
+| [`baggerland-markt.md`](baggerland-markt.md) | Marktgröße RC-Baggerland (Diggerland etc.) + wie man es spannend macht |
 | [`indoor-fpv.md`](indoor-fpv.md) | Indoor-FPV-Bereich konkret: Whoops, Parcours, Netz, Kosten, Schlechtwetter |
 | [`machbarkeit-und-hebel.md`](machbarkeit-und-hebel.md) | Machbarkeit + Beschaffung: gebraucht kaufen, Module, RC-Baggerland |
 | [`risikolos-ohne-personal.md`](risikolos-ohne-personal.md) | Risikolos starten & (fast) ohne Personal: Schau-Installation, Self-Service |
