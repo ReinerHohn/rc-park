@@ -59,13 +59,16 @@ else:
     pickle.dump(buildings,open(CACHE,"wb"))
 print("%d Gebaeude im Muenster-Bereich"%len(buildings))
 
-# --- Muenster = hoechstes Gebaeude (Turm) + alles im Radius -> ausschliessen, Slot markieren ---
-MROUT=float(os.environ.get("MROUT","60"))
-ti=max(range(len(buildings)),key=lambda i:buildings[i]['zmax']-buildings[i]['zmin'])
-tcx,tcy=buildings[ti]['cx'],buildings[ti]['cy']
-mset=set(i for i,b in enumerate(buildings) if math.hypot(b['cx']-tcx,b['cy']-tcy)<MROUT)
-print("Muensterturm=hoechstes Gebaeude (%.0fm), Komplex %d Gebaeude -> Slot frei (Radius %.0fm)"%(
-    buildings[ti]['zmax']-buildings[ti]['zmin'], len(mset), MROUT))
+# --- Muenster behalten (Standard). MROUT>0 wuerde den Komplex ums hoechste Gebaeude freilassen ---
+MROUT=float(os.environ.get("MROUT","0"))
+mset=set()
+if MROUT>0:
+    ti=max(range(len(buildings)),key=lambda i:buildings[i]['zmax']-buildings[i]['zmin'])
+    tcx,tcy=buildings[ti]['cx'],buildings[ti]['cy']
+    mset=set(i for i,b in enumerate(buildings) if math.hypot(b['cx']-tcx,b['cy']-tcy)<MROUT)
+    print("Muenster-Slot frei: %d Gebaeude entfernt (Radius %.0fm)"%(len(mset),MROUT))
+else:
+    print("Muenster bleibt drin.")
 
 # --- globale Skalierung (max 180 mm) ---
 allp=np.array([p for b in buildings for t in b['t'] for p in t],dtype=np.float64)
