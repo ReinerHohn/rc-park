@@ -24,6 +24,24 @@
 > Die konkreten Objekte sind vor Ort zu recherchieren (Gewerbeimmobilien-Börsen, FWTM,
 > städtische Wirtschaftsförderung). Dieses Dokument hält nur das Anforderungsprofil fest.
 
+## Konkrete Leerstands-Kandidaten in der Innenstadt (Stand 2026)
+
+Ein leerstehendes **Kaufhaus** ist der ideale Gebäudetyp (zentral, große zusammenhängende
+Flächen, hohe Decken, tragfähige Böden). Laut aktueller Berichterstattung:
+
+| Objekt | Lage | Status / Eignung |
+|---|---|---|
+| **Kaiser-Damenhaus** (ehem. Modehaus Kaiser) | Kaiser-Joseph-Straße („KaJo") | **Leer** trotz Mietersuche (Nachbarteil ging an Zara, 4.500 m²/4 Etagen). **Top-Lage**, mehrgeschossig → **bester Kandidat**. |
+| **Ehem. Karstadt / Galeria** | Europaplatz | „Schrumpft", gibt Etagen ab (u. a. ~20 % an Decathlon) → **freiwerdende Großflächen**, hohe Decken (gut für Becken + Flughalle). |
+| Kleinflächen | Rathausgasse, Bertoldstraße, Salzstraße | Prominente Altstadt, aber meist **zu klein** für ~2.000 m² (nur kombiniert). |
+
+Rahmenbedingungen: **Gewerbemieten in der Innenstadt sind gefallen** → gute Verhandlungs-
+position; die Stadt **sucht aktiv Nachnutzungen** für Kaufhaus-Leerstände → Rückenwind und
+mögliche Förderung über FWTM/Wirtschaftsförderung.
+
+**Nächster Schritt:** Eigentümer/Verwalter des Kaiser-Damenhauses kontaktieren und bei der
+städtischen Wirtschaftsförderung die freiwerdenden Karstadt-Etagen am Europaplatz ansprechen.
+
 ## Standort-relevante Genehmigungen
 
 - **Versammlungsstätten-Verordnung** (Besucherzahl, Fluchtwege, Brandschutz)
