@@ -14,6 +14,7 @@ selbst steuern.
 | [`KONZEPT.md`](KONZEPT.md) | Vision, USP, Attraktionen, Zielgruppen, Risiken |
 | [`standort.md`](standort.md) | Anforderungsprofil & Standortlogik Freiburg |
 | [`mieten-kalkulation.md`](mieten-kalkulation.md) | Freiburg-Mieten (Tiers) + Kalkulation je Größe/Lage + Lage-Sweet-Spots |
+| [`mvp-kalkulation.md`](mvp-kalkulation.md) | **MVP durchgerechnet**: Sweet Spot Lage + Features, CapEx, Break-even |
 | [`sweet-spots-schnellstart.md`](sweet-spots-schnellstart.md) | Schnell + wenig Personal + viel drucken: Pop-up, Druckfarm, Lage |
 | [`sweet-spots-aktion.md`](sweet-spots-aktion.md) | Gedrucktes Mini-Freiburg + Aktion (Drohnen/Bagger/Flieger) = der USP |
 | [`indoor-fpv.md`](indoor-fpv.md) | Indoor-FPV-Bereich konkret: Whoops, Parcours, Netz, Kosten, Schlechtwetter |
