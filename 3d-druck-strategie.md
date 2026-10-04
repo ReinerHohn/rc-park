@@ -38,6 +38,35 @@ Der Trick: **nicht in einem Druck lösen, sondern aufteilen** — dann bekommst 
 > Module, parallel gedruckt." Jedes Modul maximiert **eine** Achse — das Gesamtergebnis hat
 > alle drei. Details zu Detail-Verfahren & Licht: [`beleuchtung-detail.md`](beleuchtung-detail.md).
 
+## ⚡ Druck zu langsam? → meist gar nicht selbst drucken
+
+Ein ganzes Mini-Freiburg selbst zu drucken ist der langsame Weg. Reihenfolge der Hebel:
+
+### 1. Kaufen statt drucken (größter Hebel, 0 Druckzeit)
+Das **Generische** (Häuser, Bäume, Autos, Züge, Figuren, Gelände) **fertig kaufen** — das ist
+schneller **und** oft billiger als drucken:
+- **Komplette H0-Anlagen gebraucht** (eBay Kleinanzeigen, ~170–1.500 €) → ganze Dioramen fertig.
+- **Modellbau-Gebäude/Bausätze** (Faller, Noch, Vollmer, Kibri) — massengefertigt, nur noch
+  zusammenbauen. Billiger/schneller als Druck.
+- **Wargaming-Terrain**, fertige Bäume/Autos.
+→ **Selbst drucken NUR die einzigartigen Freiburg-Wahrzeichen** (Münster & Co.), die es nicht
+zu kaufen gibt. Das spart ~90 % der Druckzeit.
+
+### 2. Drucken lassen (Druckservice — jemand anders druckt)
+STL hochladen → Preis → geliefert, **kein eigener Zeitaufwand**:
+- **Craftcloud** (Preisvergleich über 100+ Anbieter, DE/AT/CH-Partner), **3Dpresse**,
+  **Lux-3D**, **3D Print Design**. Kostet Geld, aber keine Arbeit/Zeit bei dir.
+
+### 3. Schneller drucken (wenn selbst, dann Farm > ein schneller Drucker)
+Durchsatz = **Drucker × Geschwindigkeit** → **Parallelität schlägt Einzelgerät-Speed**.
+- Schnelle CoreXY 2026: **Bambu P1S** (~500 mm/s), **Creality K2/K1** (~600 mm/s), Bambu
+  X-Serie (bis ~1000 mm/s) — deutlich schneller als ein MK4S im Mengendruck.
+- **Farm aus 4–6 günstigen Schnelldruckern** (z. B. Bambu A1 ~300 €) 24/7 = riesiger Output;
+  Auto-Ausworf + Fleet-Software (siehe [`sweet-spots-schnellstart.md`](sweet-spots-schnellstart.md)).
+
+**Faustregel:** Generisches **kaufen**, Einzigartiges (Freiburg) **drucken/scannen** oder
+**drucken lassen**; wenn selbst, dann **Farm**, nicht ein schnellerer Einzeldrucker.
+
 ## Warum kein Single-Nozzle-Mehrfarbdruck
 
 Bei AMS/MMU teilen sich alle Farben **eine Düse**. Jeder Farbwechsel braucht einen
