@@ -30,6 +30,7 @@ selbst steuern.
 | [`diy-scan.md`](diy-scan.md) | Selbst scannen (Kamera+Drohne+RealityCapture) + Drohnen-Recht |
 | [`annahmen.json`](annahmen.json) | **Alle editierbaren Finanz-Annahmen** |
 | [`attraktionen/*.json`](attraktionen/) | Je Attraktion: Beschreibung, Fläche, Invest, USP |
+| `start.sh` | **Baut + oeffnet beide Dashboards** (businessplan.html + mvp-rechner.html) |
 | `build.py` | Erzeugt `businessplan.html` aus den Daten |
 | `businessplan.html` | Interaktiver Businessplan mit Live-Reglern & Charts (generiert) |
 | [`mvp-rechner.html`](mvp-rechner.html) | **Interaktiver FPV-Pop-up-Rechner** (Presets FWTM/Nebenlage, Break-even) |
