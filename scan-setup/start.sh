@@ -68,8 +68,24 @@ c "3) ERGEBNIS"
 OBJ=$(find "$OUT" -iname '*.obj' 2>/dev/null | head -1)
 if [ $RC -eq 0 ] && [ -n "$OBJ" ]; then
   ok "Fertig! 3D-Modell: $OBJ"
-  command -v xdg-open >/dev/null 2>&1 && xdg-open "$OUT" >/dev/null 2>&1 &
-  echo "Naechste Schritte: in Blender aufbereiten (Boden weg/skalieren) -> STL -> PrusaSlicer -> drucken."
+  # 3D-Ansicht im Browser (three.js, kein Install noetig, kann EXR-Texturen)
+  VIEWER="$(dirname "$0")/viewer.html"
+  if [ -f "$VIEWER" ] && command -v python3 >/dev/null 2>&1; then
+    cp "$VIEWER" "$(dirname "$OBJ")/viewer.html"
+    PORT=$(python3 -c 'import socket;s=socket.socket();s.bind(("127.0.0.1",0));print(s.getsockname()[1])')
+    python3 -m http.server "$PORT" --bind 127.0.0.1 --directory "$(dirname "$OBJ")" >/dev/null 2>&1 &
+    SRV=$!
+    sleep 1
+    LINK="http://127.0.0.1:$PORT/viewer.html?obj=$(basename "$OBJ")"
+    ok "3D-Ansicht: $LINK"
+    xdg-open "$LINK" >/dev/null 2>&1 &
+    echo "Naechste Schritte: in Blender aufbereiten (Boden weg/skalieren) -> STL -> PrusaSlicer -> drucken."
+    read -r -p ">> [Enter] beendet die 3D-Ansicht... " _
+    kill "$SRV" 2>/dev/null
+  else
+    command -v xdg-open >/dev/null 2>&1 && xdg-open "$OUT" >/dev/null 2>&1 &
+    echo "Naechste Schritte: in Blender aufbereiten (Boden weg/skalieren) -> STL -> PrusaSlicer -> drucken."
+  fi
 else
   warn "Kein Modell erzeugt (Code $RC). Haeufige Gruende: zu wenige/unscharfe Fotos oder zu wenig Ueberlappung."
   echo "Tipp: mehr Fotos, gleichmaessiges Licht, Objekt gut umkreisen - dann nochmal 'bash start.sh'."
