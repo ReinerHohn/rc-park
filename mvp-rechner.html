@@ -47,8 +47,10 @@
     <h2>⚡ Presets</h2>
     <button class="btn" id="p_fwtm">FWTM-Pop-up (subventioniert)</button>
     <button class="btn" id="p_neben">Altstadt-Nebenlage</button>
+    <button class="btn" id="p_markt">Marktpreise (20 € FPV / 12 €)</button>
     <button class="btn" id="p_reset">Zurücksetzen</button>
-    <p class="note">Presets setzen Miete + Fläche; den Rest stellst du selbst ein.</p>
+    <p class="note">Lage-Presets (FWTM/Nebenlage) setzen Miete + Fläche; „Marktpreise" setzt
+    FPV-Session 20 € + Eintritt 12 € (optimistisch, lt. Wettbewerb). Rest stellst du selbst ein.</p>
   </div>
 
   <div class="kpis" id="kpis"></div>
@@ -193,6 +195,7 @@ function setAll(){['s_fluege:fluege','s_preis:preis','s_bes:bes','s_eintritt:ein
  .forEach(x=>{const[a,b]=x.split(':');document.getElementById(a).value=s[b];});update();}
 p_fwtm.onclick=()=>{s={...s,miete:6,flaeche:120};setAll();};
 p_neben.onclick=()=>{s={...s,miete:22,flaeche:120};setAll();};
+p_markt.onclick=()=>{s={...s,preis:20,eintritt:12};setAll();};
 p_reset.onclick=()=>{s={...DEF};setAll();};
 update();
 </script>

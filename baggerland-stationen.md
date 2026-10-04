@@ -55,6 +55,14 @@ Jede Station: **Ziel · Aufgabe · Punkte · Material/Aufbau** (alles billig/DIY
 - **Progression/Unlock:** erst Minibagger, großer **Hydraulikbagger** ab Profi freischalten.
 - **Schwierigkeit:** Kinder-Modus (langsam, große Ziele) ↔ Profi-Modus (präzise, Hydraulik).
 
+## ⏱️ Wie lange dauert eine Bagger-Session?
+- **Einzel-Mission:** ~**3–5 min** (eine Challenge, Zeit läuft).
+- **Station-Session / Jeton:** ~**10 min** (10–15) an einem Bagger.
+- **Kompletter Baggerführerschein** (alle 6 Stationen): ~**60–90 min** Besuch.
+- **Premium „Meister" am großen Hydraulik-/1:8-Bagger:** ~**15 min** (mit Einweisung).
+→ Vergleich: echtes Baggern 15 min (Mini), Lasertag/VR/FPV ~20 min. **10-min-Jeton** ist der
+gute Takt (hoher Durchsatz, genug für Erfolgserlebnis, Anreiz nachzukaufen/zu leveln).
+
 ## ⚙️ Betrieb & Material
 - Stationen **self-service** mit Bild-Anleitung + Timer (Tablet/Ampel); **1 Aufsicht**,
   Kinder betreut. Abrechnung per **Jeton/Zeit**.
