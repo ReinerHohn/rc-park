@@ -96,6 +96,23 @@ aussparen (für beleuchtete Lithophane-Fenster, siehe [`beleuchtung-detail.md`](
 Faustregel: **winzige Teile** (Mini-Türmchen) ruhig aufrecht; **alles ab Haus-Größe** als
 Flat-Wall-Bausatz.
 
+### 3c. Detail-Applikation (Detail aufkleben)
+
+Wenn der Grundkörper glatt ist (einfaches Modell oder glatter Scan): **feine Zierteile
+separat drucken und aufkleben**, statt alles hochauflösend zu drucken. Detail genau dort,
+wo das Auge hinschaut.
+
+- **Weg A — fertige Elemente:** Rosette, Maßwerkfenster, Portalbogen, Friese, Fialen als
+  einzelne STLs **flach** (sehr fein) drucken, mit Sekundenkleber auf den Grundkörper setzen.
+  Quellen: „gothic window / tracery / rose window" auf Printables/Cults (z. B. Gothic Rose
+  Window von printbyPW — FDM flach top, Resin ultra-scharf).
+- **Weg B — Foto → Relief:** Fassaden-Foto per Heightmap-Tool (3D Relief Generator,
+  Image-to-Heightmap, Blender „Displace") in eine Relief-Platte wandeln und aufkleben.
+  Caveat: Höhe kommt aus Bild-Helligkeit, nicht echter Form → gut für Textur, Weg A sauberer.
+
+Grundkörper schnell/grob, Detail-Overlays fein (0,12 mm oder Resin). Kombiniert ideal mit der
+Flat-Wall-Bauweise.
+
 ### 3b. Bausatz-Schnitt für große Modelle
 Ein großes Münster passt auf keine Druckplatte und soll laut Vorgabe **nicht voll**, sondern
 als Bausatz gedruckt werden:
