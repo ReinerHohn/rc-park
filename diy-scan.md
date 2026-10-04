@@ -24,9 +24,19 @@
 - **< 250 g** (z. B. DJI Mini): **kein Führerschein** nötig — aber Regeln gelten trotzdem.
 - **≥ 250 g**: EU-Kompetenznachweis **A1/A3** (25–50 €); **A2** (100–150 €) für < 50 m zu Personen.
 - **Verbot: Flug über Menschenansammlungen** (§21h LuftVO) — **der volle Münsterplatz ist
-  genau das** → Drohnenflug dort ist heikel/meist nicht erlaubt.
+  genau das** → Drohnenflug dort **praktisch nicht erlaubt**.
 - Keine Überflüge von Wohngebäuden ohne Zustimmung; Datenschutz beachten.
 - Genehmigung nötig für: Kontrollzonen, >120 m, Nacht, außer Sicht, über Menschen.
+- **Immer vorher verbindlich prüfen: [dipul.de](https://www.dipul.de)** (offizielle Geozonen-
+  Karte; Standort eingeben → zeigt Verbote/Auflagen + ob DFS-Freigabe nötig). Freiburg hat
+  zudem einen Flugplatz (mögliche Kontrollzone).
+
+### Darf die Drohne ums Freiburger Münster? → praktisch nein
+Münsterplatz = fast immer Markt + Touristen = **Menschenansammlung** → Überflug verboten.
+Dazu Altstadt-/Denkmal-Geozone + evtl. Kontrollzone. Nur mit **Sondergenehmigung** und
+menschenleerem Zeitfenster denkbar. Besser: bodennah + Turmgalerie fotografieren, oder Profi
+mit Genehmigung, oder vorhandenen Scan (mit Lizenzfreigabe) nutzen. **DIY-Drohne stattdessen
+an der Kastelburg** üben (abgelegen, legal einfach).
 
 ## Praxis: was für dich realistisch ist
 - **Freiburger Münster (Innenstadt)**: Drohne **schwierig** (Menschenmassen, Airspace,
