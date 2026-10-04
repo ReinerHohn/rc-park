@@ -17,6 +17,7 @@ selbst steuern.
 | [`mieten-kalkulation.md`](mieten-kalkulation.md) | Freiburg-Mieten (Tiers) + Kalkulation je Größe/Lage + Lage-Sweet-Spots |
 | [`preise-wettbewerb.md`](preise-wettbewerb.md) | Was andere Parks verlangen (Benchmark) + eigene Preisempfehlung |
 | [`mvp-kalkulation.md`](mvp-kalkulation.md) | **MVP durchgerechnet**: Sweet Spot Lage + Features, CapEx, Break-even |
+| [`display-mvp.md`](display-mvp.md) | **Pflegeleichtes Display-MVP** durchgerechnet (wenig Wartung, Break-even ~3-4 Souvenirs/Tag) |
 | [`sweet-spots-schnellstart.md`](sweet-spots-schnellstart.md) | Schnell + wenig Personal + viel drucken: Pop-up, Druckfarm, Lage |
 | [`sweet-spots-aktion.md`](sweet-spots-aktion.md) | Gedrucktes Mini-Freiburg + Aktion (Drohnen/Bagger/Flieger) = der USP |
 | [`baggerland-markt.md`](baggerland-markt.md) | Marktgröße RC-Baggerland (Diggerland etc.) + wie man es spannend macht |
