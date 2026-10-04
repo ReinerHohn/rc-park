@@ -13,11 +13,13 @@
 | **Agisoft Metashape** | ab 179 $ | Präzision/Vermessung |
 | **Polycam / KIRI Engine / RealityScan / Scaniverse** | Handy/Cloud, gratis Tier | **kleine Objekte, super einfach, kein GPU nötig** |
 
-### ⚠️ Hinweis zum vorhandenen Laptop (AMD Ryzen/Radeon, keine NVIDIA)
-**Meshroom läuft darauf nicht (gut)** — der Dichte-Schritt braucht CUDA/NVIDIA. Zum **sofort
-Testen mit Handykamera** daher **Cloud-Apps** (KIRI Engine / Polycam / RealityScan /
-Scaniverse): rechnen auf deren Servern, laufen auf jedem Handy. Open-Source (Meshroom/COLMAP)
-nur auf einem Rechner **mit NVIDIA** oder gemieteter Cloud-GPU sinnvoll.
+### Rechner-Situation
+- **AMD-Laptop** (Ryzen/Radeon, keine NVIDIA): Meshroom läuft darauf nicht gut → nur Cloud-Apps.
+- **✅ Zweiter Rechner mit NVIDIA GeForce RTX 4060 (Max-Q, 8 GB) = Scan-Workstation:** darauf
+  laufen **Meshroom/COLMAP (Open Source)** und **RealityScan (gratis)** optimal. Fotos mit dem
+  Handy machen → auf den RTX-Rechner kopieren → dort rechnen.
+- **Schnelltest ohne Installation**: Cloud-Apps (KIRI Engine / Polycam / RealityScan /
+  Scaniverse) auf dem Handy.
 
 ### Test-Rezept (5 Min)
 Kleines Objekt (Figur/Stein/Tasse), 40–80 Fotos rundherum, gleichmäßiges Licht,
