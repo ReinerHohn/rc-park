@@ -9,7 +9,11 @@ warn(){ printf "\033[33m%s\033[0m\n" "$1"; }
 yes(){ read -r -p "$1 [J/n] " a; [[ ! "$a" =~ ^[nN] ]]; }
 
 BASE="$HOME/3DScan"
-mkdir -p "$BASE"/Fotos "$BASE"/Export "$BASE"/Tools
+if ! mkdir -p "$BASE"/Fotos "$BASE"/Export "$BASE"/Tools 2>/dev/null; then
+  # ~/3DScan ist ein Link auf die Volume-Partition -> die ist nach Neustart evtl. nicht eingehaengt
+  printf "\033[33m%s\033[0m\n" "$BASE nicht beschreibbar - Volume-Partition eingehaengt? (udisksctl mount -b /dev/nvme0n1p4)"
+  exit 1
+fi
 
 clear 2>/dev/null
 c "=== 3D-SCAN: Fotos -> Modell ==="
@@ -63,8 +67,83 @@ if [ "$N" -lt 10 ]; then
 fi
 ok "$N Fotos gefunden."
 
+# Fotos automatisch aussortieren (nur verschieben, nie loeschen):
+#  - aeltere Fotoserien (Aufnahmezeit-Luecke > 15 min) -> sonst baut Meshroom zwei Szenen ineinander
+#  - unscharfe Fotos (Laplace-Varianz, verglichen mit den scharfen Fotos der Serie)
+if python3 -c 'import numpy, PIL' 2>/dev/null; then
+  echo "Pruefe Fotos (Serie + Schaerfe)..."
+  mapfile -t RAUS < <(python3 - "$FOTOS" <<'PY'
+import sys, glob, os, numpy as np
+from datetime import datetime
+from PIL import Image
+err = lambda *a: print(*a, file=sys.stderr)
+fs = sorted({f for e in ("jpg","jpeg","png","JPG","JPEG","PNG") for f in glob.glob(os.path.join(sys.argv[1], "*." + e))})
+def zeit(f):
+    try:
+        ex = Image.open(f).getexif()
+        t = ex.get_ifd(0x8769).get(36867) or ex.get(306)  # DateTimeOriginal / DateTime
+        return datetime.strptime(t, "%Y:%m:%d %H:%M:%S").timestamp()
+    except Exception:
+        return os.path.getmtime(f)
+raus = []
+# 1) Serien: nach Zeit sortieren, bei >15 min Pause neue Serie; nur die neueste behalten
+fz = sorted((zeit(f), f) for f in fs)
+serien = [[fz[0]]] if fz else []
+for a, b in zip(fz, fz[1:]):
+    (serien[-1].append(b) if b[0] - a[0] <= 15 * 60 else serien.append([b]))
+if len(serien) > 1:
+    err(f"\033[33m{len(serien)} Fotoserien gefunden - nur die neueste wird benutzt:\033[0m")
+    for s in serien:
+        err(f"  {datetime.fromtimestamp(s[0][0]):%d.%m. %H:%M} - {datetime.fromtimestamp(s[-1][0]):%H:%M}: {len(s)} Fotos")
+    for s in serien[:-1]: raus += [f for _, f in s]
+fs = [f for _, f in serien[-1]] if serien else []
+# 2) Schaerfe innerhalb der verbleibenden Serie
+sc = []
+for f in fs:
+    g = np.asarray(Image.open(f).convert("L").reduce(4), float)
+    lap = g[1:-1,1:-1]*4 - g[:-2,1:-1] - g[2:,1:-1] - g[1:-1,:-2] - g[1:-1,2:]
+    sc.append((lap.var(), f))
+if sc:
+    ref = np.percentile([s for s, _ in sc], 75)  # 75%-Quantil: robust, auch wenn viele Fotos unscharf sind
+    bad = [(s, f) for s, f in sorted(sc) if s < 0.4 * ref]
+    if bad:
+        err("\033[33mVermutlich unscharf:\033[0m")
+        for s, f in bad: err(f"  {os.path.basename(f)}  (Schaerfe {s/ref:.0%} der scharfen Fotos)")
+        raus += [f for _, f in bad]
+    else:
+        err("\033[32mAlle Fotos ausreichend scharf.\033[0m")
+print("\n".join(raus))
+PY
+)
+  if [ "${#RAUS[@]}" -gt 0 ] && [ -n "${RAUS[0]}" ]; then
+    AUS="${FOTOS%/}_aussortiert"
+    if yes "${#RAUS[@]} Fotos nach $AUS verschieben (nicht geloescht)?"; then
+      mkdir -p "$AUS" && mv -n "${RAUS[@]}" "$AUS"/
+      N=$(find "$FOTOS" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) | wc -l)
+      ok "Verschoben. Es bleiben $N Fotos."
+      [ "$N" -lt 20 ] && warn "Wenig Fotos uebrig - fuer gute Details lieber 40-60 scharfe Fotos machen."
+    fi
+  fi
+fi
+
+# Qualitaet: Detail = volle Aufloesung bei Tiefenkarten/Textur, mehr Merkmale, feineres Netz (~3-5x Rechenzeit)
+echo
+echo "Qualitaet:  [1] Schnell (Standard)   [2] Detail (volle Aufloesung, dauert ~3-5x laenger)"
+read -r -p "Auswahl [Enter = 2]: " Q
+OVR=()
+if [ "${Q:-2}" != "1" ]; then
+  OVR=(--paramOverrides
+    FeatureExtraction:describerPreset=high FeatureExtraction:describerQuality=high
+    FeatureMatching:guidedMatching=True
+    DepthMap:downscale=1
+    Meshing:maxPoints=15000000
+    MeshFiltering:keepLargestMeshOnly=True MeshFiltering:smoothingIterations=2
+    Texturing:downscale=1 Texturing:fillHoles=True)
+  ok "Detail-Modus."
+fi
+
 NAME=$(basename "$FOTOS"); [ "$NAME" = "Fotos" ] && NAME="modell"
-OUT="$BASE/Export/$NAME"; mkdir -p "$OUT"
+OUT="$BASE/Export/${NAME}_$(date +%Y-%m-%d_%H%M)"; mkdir -p "$OUT"  # pro Lauf eigener Ordner -> nichts wird ueberschrieben
 
 c "2) RECHNEN (automatisch - das dauert, RTX arbeitet)"
 echo "Meshroom baut jetzt das 3D-Modell aus deinen Fotos..."
@@ -77,7 +156,7 @@ else
   warn "Volume nicht eingehaengt -> Cache in /tmp (wenig Platz!)."
 fi
 mkdir -p "$CACHE"; echo "Cache: $CACHE"
-"$BATCH" --input "$FOTOS" --output "$OUT" --cache "$CACHE"
+"$BATCH" --input "$FOTOS" --output "$OUT" --cache "$CACHE" "${OVR[@]}"
 RC=$?
 
 c "3) ERGEBNIS"
