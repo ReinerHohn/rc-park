@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 """
-lod2_gen.py — liest das amtliche LoD2-CityGML (Freiburg) und baut aus den ECHTEN
-Dachflaechen (Sattel/Walm/Mansarde) einen Altstadt-Ausschnitt ums Muenster als STL.
-Streaming-Parse (memory-safe) + UTM32-Umrechnung ohne pyproj. stdlib + numpy.
+lod2_gen.py — amtliches LoD2-CityGML (Freiburg) -> Altstadt ums Muenster mit ECHTEN
+Dachformen. Laesst den Muenster-Slot frei (Detail-Highlight) und schneidet in Druck-Kacheln
+fuer die Farm. Streaming-Parse (memory-safe) + UTM32 ohne pyproj. stdlib + numpy.
+Cache: /tmp/lod2_muenster_buildings.pkl (kein 1,6-GB-Neuparse beim Iterieren).
 
-Ausgabe: modelle/stl/altstadt_lod2.stl + modelle/altstadt_lod2_vorschau.png
+Datenbasis: Stadt Freiburg (www.freiburg.de) / LGL BW, Datenlizenz Deutschland Namensnennung 2.0.
 """
 import xml.etree.ElementTree as ET
-import math, struct, zlib, os
+import math, struct, zlib, os, pickle
 import numpy as np
 
-GML="/tmp/freiburg_lod2.gml"
-# --- Muenster WGS84 -> UTM32 (EPSG:25832, GRS80) ---
+GML="/tmp/freiburg_lod2.gml"; CACHE="/tmp/lod2_muenster_buildings.pkl"
+TILES=int(os.environ.get("TILES","2"))  # NxN Kacheln (per Env TILES=3 usw.)
+
 def utm32(lat,lon):
     a=6378137.0; f=1/298.257222101; e2=f*(2-f); ep2=e2/(1-e2); k0=0.9996; lon0=math.radians(9.0)
     lat=math.radians(lat); lon=math.radians(lon)
@@ -24,86 +26,119 @@ def utm32(lat,lon):
     return E,Nn
 ME,MN=utm32(47.9956970,7.8535034); R=250.0
 X0,X1,Y0,Y1=ME-R,ME+R,MN-R,MN+R
-print("Muenster UTM32 E=%.1f N=%.1f  bbox +-%.0fm"%(ME,MN,R))
+lname=lambda t:t.split('}')[-1]
 
-def lname(t): return t.split('}')[-1]
+if os.path.exists(CACHE):
+    print("Gebaeude aus Cache..."); buildings=pickle.load(open(CACHE,"rb"))
+else:
+    print("Parse LoD2 (1,6 GB)..."); buildings=[]; seen=0
+    ctx=ET.iterparse(GML,events=('start','end')); ev,root=next(ctx)
+    for ev,elem in ctx:
+        if ev!='end': continue
+        if lname(elem.tag) in ("Building","BuildingPart"):
+            seen+=1; polys=[]
+            for pl in elem.iter():
+                if lname(pl.tag)=="posList" and pl.text:
+                    n=pl.text.split()
+                    if len(n)>=9: polys.append([(float(n[i]),float(n[i+1]),float(n[i+2])) for i in range(0,len(n)-2,3)])
+            elem.clear()
+            if not polys: continue
+            fx,fy=polys[0][0][0],polys[0][0][1]
+            if not(X0<=fx<=X1 and Y0<=fy<=Y1): continue
+            bt=[]; zs=[]
+            for ring in polys:
+                if len(ring)>=4 and ring[0]==ring[-1]: ring=ring[:-1]
+                if len(ring)<3: continue
+                for p in ring: zs.append(p[2])
+                a0=ring[0]
+                for i in range(1,len(ring)-1): bt.append((a0,ring[i],ring[i+1]))
+            if bt:
+                cx=sum(t[0][0] for t in bt)/len(bt); cy=sum(t[0][1] for t in bt)/len(bt)
+                buildings.append({'t':bt,'cx':cx,'cy':cy,'zmin':min(zs),'zmax':max(zs)})
+            if seen%20000==0: root.clear(); print("  ...%d gescannt, %d im Bereich"%(seen,len(buildings)))
+    pickle.dump(buildings,open(CACHE,"wb"))
+print("%d Gebaeude im Muenster-Bereich"%len(buildings))
 
-tris=[]; kept=0; seen=0
-ctx=ET.iterparse(GML, events=('start','end'))
-ev,root=next(ctx)
-for ev,elem in ctx:
-    if ev!='end': continue
-    t=lname(elem.tag)
-    if t in ("Building","BuildingPart"):
-        seen+=1
-        polys=[]
-        for pl in elem.iter():
-            if lname(pl.tag)=="posList" and pl.text:
-                n=pl.text.split()
-                if len(n)>=9:
-                    pts=[(float(n[i]),float(n[i+1]),float(n[i+2])) for i in range(0,len(n)-2,3)]
-                    polys.append(pts)
-        elem.clear()
-        if not polys: continue
-        # Lage ueber ersten Punkt
-        fx,fy=polys[0][0][0],polys[0][0][1]
-        if not (X0<=fx<=X1 and Y0<=fy<=Y1): continue
-        kept+=1
-        for ring in polys:
-            if len(ring)>=4 and ring[0]==ring[-1]: ring=ring[:-1]
-            if len(ring)<3: continue
-            a0=ring[0]
-            for i in range(1,len(ring)-1):
-                tris.append((a0,ring[i],ring[i+1]))   # Fan (planare Flaeche)
-        if seen%20000==0:
-            root.clear(); print("  ...%d Gebaeude gescannt, %d im Bereich"%(seen,kept))
-print("Fertig: %d Gebaeude total, %d im Muenster-Bereich, %d Dreiecke"%(seen,kept,len(tris)))
+# --- Muenster = hoechstes Gebaeude (Turm) + alles im Radius -> ausschliessen, Slot markieren ---
+MROUT=float(os.environ.get("MROUT","60"))
+ti=max(range(len(buildings)),key=lambda i:buildings[i]['zmax']-buildings[i]['zmin'])
+tcx,tcy=buildings[ti]['cx'],buildings[ti]['cy']
+mset=set(i for i,b in enumerate(buildings) if math.hypot(b['cx']-tcx,b['cy']-tcy)<MROUT)
+print("Muensterturm=hoechstes Gebaeude (%.0fm), Komplex %d Gebaeude -> Slot frei (Radius %.0fm)"%(
+    buildings[ti]['zmax']-buildings[ti]['zmin'], len(mset), MROUT))
 
-if not tris: raise SystemExit("keine Flaechen im Bereich gefunden")
-A=np.array(tris,dtype=np.float64)
-A[:,:,0]-=X0; A[:,:,1]-=Y0; A[:,:,2]-=A[:,:,2].min()
-s=180.0/max(A[:,:,0].max(),A[:,:,1].max()); A=A*s
-print("Modellgroesse mm: X%.0f Y%.0f Z%.0f"%(A[:,:,0].max(),A[:,:,1].max(),A[:,:,2].max()))
+# --- globale Skalierung (max 180 mm) ---
+allp=np.array([p for b in buildings for t in b['t'] for p in t],dtype=np.float64)
+gmn=allp.min(0); s=180.0/max((allp[:,0]-gmn[0]).max(),(allp[:,1]-gmn[1]).max())
+def to_mm(tri):
+    a=np.array(tri,dtype=np.float64); a-=gmn; a*=s; return a
 
-nm=np.cross(A[:,1]-A[:,0],A[:,2]-A[:,0]); ln=np.linalg.norm(nm,axis=1); ln[ln==0]=1; nmn=nm/ln[:,None]
+def box(x0,x1,y0,y1,z0,z1):
+    v=[(x0,y0,z0),(x1,y0,z0),(x1,y1,z0),(x0,y1,z0),(x0,y0,z1),(x1,y0,z1),(x1,y1,z1),(x0,y1,z1)]
+    q=[(0,3,2,1),(4,5,6,7),(0,1,5,4),(2,3,7,6),(1,2,6,5),(3,0,4,7)]; o=[]
+    for a,b,c,d in q: o.append((v[a],v[b],v[c])); o.append((v[a],v[c],v[d]))
+    return o
+
 HERE=os.path.dirname(os.path.abspath(__file__)); os.makedirs(os.path.join(HERE,"stl"),exist_ok=True)
-out=os.path.join(HERE,"stl","altstadt_lod2.stl")
-with open(out,"wb") as o:
-    o.write(b" "*80); o.write(struct.pack("<I",len(A)))
-    buf=np.zeros(len(A),dtype=np.dtype([('n','<3f4'),('v','<3,3f4'),('a','<u2')]))
-    buf['n']=nmn.astype('<f4'); buf['v']=A.astype('<f4'); o.write(buf.tobytes())
-print("STL ->",out)
+def write_stl(path,tri_list):
+    A=np.array(tri_list,dtype=np.float64)
+    nm=np.cross(A[:,1]-A[:,0],A[:,2]-A[:,0]); ln=np.linalg.norm(nm,axis=1); ln[ln==0]=1; nn=nm/ln[:,None]
+    with open(path,"wb") as o:
+        o.write(b" "*80); o.write(struct.pack("<I",len(A)))
+        b=np.zeros(len(A),dtype=np.dtype([('n','<3f4'),('v','<3,3f4'),('a','<u2')]))
+        b['n']=nn.astype('<f4'); b['v']=A.astype('<f4'); o.write(b.tobytes())
+    return A
 
-# --- Render (gefuellte Dreiecke, Z-Buffer) ---
+# --- Gesamt-STL (Muenster-frei + Marker) ---
+full=[]; mslot=[]
+for i,b in enumerate(buildings):
+    if i in mset: mslot.append(to_mm(b['t'])); continue
+    full.extend(to_mm(b['t']).tolist())
+if mslot:
+    M=np.concatenate(mslot)
+    full.extend(box(M[:,:,0].min(),M[:,:,0].max(),M[:,:,1].min(),M[:,:,1].max(),0,1.5))  # Slot-Marker
+A=write_stl(os.path.join(HERE,"stl","altstadt_lod2.stl"),full)
+print("Gesamt-STL -> altstadt_lod2.stl  (%d Dreiecke, X%.0f Y%.0f Z%.0f mm)"%(len(A),A[:,:,0].max(),A[:,:,1].max(),A[:,:,2].max()))
+
+# --- Kacheln (TILESxTILES), Gebaeude per Zentroid zuordnen + Grundplatte je Kachel ---
+W=A[:,:,0].max(); H=A[:,:,1].max(); tw=W/TILES; th=H/TILES
+tiles={}
+for i,b in enumerate(buildings):
+    if i in mset: continue
+    cx=(b['cx']-gmn[0])*s; cy=(b['cy']-gmn[1])*s
+    tx=min(TILES-1,int(cx//tw)); ty=min(TILES-1,int(cy//th))
+    tiles.setdefault((tx,ty),[]).extend(to_mm(b['t']).tolist())
+tdir=os.path.join(HERE,"stl","tiles_%dx%d"%(TILES,TILES)); os.makedirs(tdir,exist_ok=True)
+for (tx,ty),tl in tiles.items():
+    tl=tl+box(tx*tw,(tx+1)*tw,ty*th,(ty+1)*th,-2,0)   # Kachel-Grundplatte
+    write_stl(os.path.join(tdir,"t%02d_%02d.stl"%(tx,ty)),tl)
+print("Kacheln -> stl/tiles_%dx%d/ (%d Stueck, je ~%.0fx%.0f mm)"%(TILES,TILES,len(tiles),tw,th))
+
+# --- Render (Gesamt, Muenster-frei) ---
+nm=np.cross(A[:,1]-A[:,0],A[:,2]-A[:,0]); ln=np.linalg.norm(nm,axis=1); ln[ln==0]=1; nmn=nm/ln[:,None]
 az,el=math.radians(38),math.radians(32)
 Rz=np.array([[math.cos(az),-math.sin(az),0],[math.sin(az),math.cos(az),0],[0,0,1]])
 Rx=np.array([[1,0,0],[0,math.cos(el),-math.sin(el)],[0,math.sin(el),math.cos(el)]]); Rr=Rx@Rz
-Vr=A@Rr.T; Nn=nmn@Rr.T
-L=np.array([0.35,-0.75,0.55]); L/=np.linalg.norm(L); sh=np.clip(np.abs(Nn@L),0,1)*0.75+0.25
-sxv=Vr[:,:,0]; syv=Vr[:,:,2]; depv=Vr[:,:,1]
-Wd,Hd,mar=960,720,25
-x0r,x1r,y0r,y1r=sxv.min(),sxv.max(),syv.min(),syv.max()
+Vr=A@Rr.T; Nn=nmn@Rr.T; L=np.array([0.35,-0.75,0.55]); L/=np.linalg.norm(L)
+sh=np.clip(np.abs(Nn@L),0,1)*0.75+0.25; sxv=Vr[:,:,0]; syv=Vr[:,:,2]; depv=Vr[:,:,1]
+Wd,Hd,mar=960,720,25; x0r,x1r,y0r,y1r=sxv.min(),sxv.max(),syv.min(),syv.max()
 sc=min((Wd-2*mar)/(x1r-x0r),(Hd-2*mar)/(y1r-y0r))
 PX=(sxv-x0r)*sc+mar; PY=Hd-1-((syv-y0r)*sc+mar); Z=depv.mean(1)
 img=np.full((Hd,Wd),20,np.float64); zb=np.full((Hd,Wd),1e18)
 for t in np.argsort(-Z):
     xs0=PX[t]; ys0=PY[t]
-    xmin=max(0,int(np.floor(xs0.min()))); xmax=min(Wd-1,int(np.ceil(xs0.max())))
-    ymin=max(0,int(np.floor(ys0.min()))); ymax=min(Hd-1,int(np.ceil(ys0.max())))
-    if xmax<xmin or ymax<ymin: continue
+    xm=max(0,int(xs0.min())); xM=min(Wd-1,int(xs0.max())+1); ym=max(0,int(ys0.min())); yM=min(Hd-1,int(ys0.max())+1)
+    if xM<xm or yM<ym: continue
     x1,y1_=xs0[0],ys0[0]; x2,y2=xs0[1],ys0[1]; x3,y3=xs0[2],ys0[2]
     den=(y2-y3)*(x1-x3)+(x3-x2)*(y1_-y3)
     if abs(den)<1e-9: continue
-    gx,gy=np.meshgrid(np.arange(xmin,xmax+1),np.arange(ymin,ymax+1))
-    a=((y2-y3)*(gx-x3)+(x3-x2)*(gy-y3))/den; b=((y3-y1_)*(gx-x3)+(x1-x3)*(gy-y3))/den; cc=1-a-b
-    m=(a>=0)&(b>=0)&(cc>=0)
+    gx,gy=np.meshgrid(np.arange(xm,xM+1),np.arange(ym,yM+1))
+    a=((y2-y3)*(gx-x3)+(x3-x2)*(gy-y3))/den; bb=((y3-y1_)*(gx-x3)+(x1-x3)*(gy-y3))/den; cc=1-a-bb
+    m=(a>=0)&(bb>=0)&(cc>=0)
     if not m.any(): continue
-    sub=zb[ymin:ymax+1,xmin:xmax+1]; subi=img[ymin:ymax+1,xmin:xmax+1]
-    upd=m&(Z[t]<sub); sub[upd]=Z[t]; subi[upd]=sh[t]*255
+    su=zb[ym:yM+1,xm:xM+1]; si=img[ym:yM+1,xm:xM+1]; up=m&(Z[t]<su); su[up]=Z[t]; si[up]=sh[t]*255
 img=img.astype(np.uint8)
-def png(fn,arr):
-    H,Wi=arr.shape; raw=b''.join(b'\x00'+arr[i].tobytes() for i in range(H))
-    ch=lambda ty,d:struct.pack(">I",len(d))+ty+d+struct.pack(">I",zlib.crc32(ty+d)&0xffffffff)
-    open(fn,"wb").write(b'\x89PNG\r\n\x1a\n'+ch(b'IHDR',struct.pack(">IIBBBBB",Wi,H,8,0,0,0,0))+ch(b'IDAT',zlib.compress(raw,9))+ch(b'IEND',b''))
-png(os.path.join(HERE,"altstadt_lod2_vorschau.png"),img)
+H_,Wi=img.shape; raw=b''.join(b'\x00'+img[i].tobytes() for i in range(H_))
+ch=lambda ty,d:struct.pack(">I",len(d))+ty+d+struct.pack(">I",zlib.crc32(ty+d)&0xffffffff)
+open(os.path.join(HERE,"altstadt_lod2_vorschau.png"),"wb").write(b'\x89PNG\r\n\x1a\n'+ch(b'IHDR',struct.pack(">IIBBBBB",Wi,H_,8,0,0,0,0))+ch(b'IDAT',zlib.compress(raw,9))+ch(b'IEND',b''))
 print("Render -> modelle/altstadt_lod2_vorschau.png")
