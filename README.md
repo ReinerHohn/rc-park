@@ -20,6 +20,7 @@ selbst steuern.
 | [`sweet-spots-schnellstart.md`](sweet-spots-schnellstart.md) | Schnell + wenig Personal + viel drucken: Pop-up, Druckfarm, Lage |
 | [`sweet-spots-aktion.md`](sweet-spots-aktion.md) | Gedrucktes Mini-Freiburg + Aktion (Drohnen/Bagger/Flieger) = der USP |
 | [`baggerland-markt.md`](baggerland-markt.md) | Marktgröße RC-Baggerland (Diggerland etc.) + wie man es spannend macht |
+| [`rc-baustellenwelt.md`](rc-baustellenwelt.md) | **MVP ohne Drohnen**: Bagger/Kräne/Radlader/Kipper + Flotte ~6.300 € |
 | [`baggerland-stationen.md`](baggerland-stationen.md) | Stationen-Konzept + Baggerführerschein (6 Missionen, Punkte, Level) |
 | [`bagger-auswahl.md`](bagger-auswahl.md) | Größter RC-Bagger (1:8) + Preis-Leistungs-Sweet-Spot + Flotten-Stufen |
 | [`indoor-fpv.md`](indoor-fpv.md) | Indoor-FPV-Bereich konkret: Whoops, Parcours, Netz, Kosten, Schlechtwetter |
