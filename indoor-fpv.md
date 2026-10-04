@@ -58,6 +58,39 @@ kurze Sessions/Woche** (hohe Auslastung).
 
 → Günstig, robust, **indoor rechtlich frei**, Ersatzteile billig. Perfekter **Pop-up-Kern**.
 
+## 6b. Start-Flotte durchgerechnet + „möglichst wenig kaputt"-Strategie
+
+### 🛡️ Anti-Kaputt-Strategie (dein wichtigster Punkt)
+FPV-Whoops sind die **risikoärmste** Fluggeräte-Klasse — Schaden ist fast immer billig:
+1. **Ducted Props (geschützte Rotoren)** → übersteht Crashs, schützt Wände/Finger.
+2. **Gyro/Self-Level-Modus** für Anfänger → crasht kaum (hält Lage selbst).
+3. **Speed-/Leistungslimit** im Anfänger-Modus → langsamer = weniger Schaden.
+4. **Sim-Station zuerst** → üben **ganz ohne Hardware-Risiko**, dann erst fliegen.
+5. **Weiche Gates (Pool-Noodle/Schaum) + Netz** → keine harten Aufpralle.
+6. **Günstige, baugleiche Modelle** → Schaden = **Cent-Teile** (Props ~0,50 €, Frame ~2–5 €),
+   nicht die ganze Drohne; **Ersatzteil-Lager + Schnell-Reparatur** (Schau-Werkstatt).
+→ Selbst ein harter Crash = meist ein neuer Prop oder Frame, nicht ein neues Gerät.
+
+### Start-Flotte (Kosten)
+| Posten | Menge | Einzel | Summe |
+|---|---|---|---|
+| **Ducted Whoops** (brushless, Cetus-Pro-Klasse) | 8 | ~90 € | 720 € |
+| **Videobrillen** (FPV Goggles) | 5 | ~80 € | 400 € |
+| **Controller/Funken** | 5 | ~50 € | 250 € |
+| **Akkus** (viele, für Schnellwechsel) | 30 | ~4 € | 120 € |
+| **Lader/Parallellader** | 2 | ~60 € | 120 € |
+| **Ersatzteile** (Props/Frames/Motoren, Bulk) | — | — | 300 € |
+| **Gates** (Pool-Noodle/Schaum, weich) | 8 | ~15 € | 120 € |
+| **Einhausungs-Netz** (HDPE, ~60 m²) | — | — | 1.500 € |
+| **Sim-Station** (gebr. PC + Monitor + Controller) | 1 | — | 400 € |
+| **Licht/Deko/Schilder** | — | — | 200 € |
+| **Summe FPV-Zone** | | | **~4.130 €** |
+
+- Damit **4 Flug-Stationen parallel** (4 aktive Drohnen + Reserve) + Zuschauer-Brille.
+- **Gebraucht/Set-RTF** drückt den Preis (Cetus-Pro-RTF-Kit bündelt Drohne+Brille+Controller).
+- Laufende Wartung: v. a. Props/Frames — **wenige €/Woche**.
+→ Passt zum FPV-Posten (~4.000 €) in [`mvp-kalkulation.md`](mvp-kalkulation.md).
+
 ## 7. Positionierung (der eigentliche Sweet Spot)
 - **Innenstadt-Leerstand** → zentral, Touristen/Locals laufen rein, **kein Rausfahren**.
 - **Schlechtwetter-Magnet**: „Bei Regen in Freiburg? → FPV Vollgas." Freiburg hat an Regentagen
