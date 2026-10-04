@@ -16,11 +16,23 @@ Q = f"""[out:json][timeout:60];
 (._;>;);
 out body;"""
 
-print("Hole OSM-Gebaeude (Overpass)...")
+CACHE="/tmp/osm_muenster.json"
 data = urllib.parse.urlencode({"data": Q}).encode()
-req = urllib.request.Request("https://overpass-api.de/api/interpreter", data=data,
-                             headers={"User-Agent":"rc-park-citybuilder"})
-j = json.load(urllib.request.urlopen(req, timeout=90))
+if os.path.exists(CACHE):
+    print("OSM aus Cache..."); j=json.load(open(CACHE))
+else:
+    print("Hole OSM-Gebaeude (Overpass)...")
+    eps=["https://overpass-api.de/api/interpreter",
+         "https://overpass.kumi.systems/api/interpreter",
+         "https://lz4.overpass-api.de/api/interpreter"]
+    j=None
+    for ep in eps:
+        try:
+            req=urllib.request.Request(ep,data=data,headers={"User-Agent":"rc-park-citybuilder"})
+            j=json.load(urllib.request.urlopen(req,timeout=120)); break
+        except Exception as e: print("  Server fehlgeschlagen:",ep.split('/')[2],e)
+    if j is None: raise SystemExit("Overpass nicht erreichbar - spaeter erneut versuchen")
+    json.dump(j,open(CACHE,"w"))
 els = j["elements"]
 nodes = {e["id"]:(e["lon"],e["lat"]) for e in els if e["type"]=="node"}
 ways  = [e for e in els if e["type"]=="way" and "nodes" in e]
@@ -76,17 +88,31 @@ for w in ways:
     h=height_of(w.get("tags"))
     ct=earclip(poly)
     if not ct: continue
-    # Boden (z=0, Normale unten) + Dach (z=h, Normale oben)
+    m=len(poly)
+    # Hip-Dach: verkleinerter Grundriss (Firstflaeche) auf Hoehe h+rh
+    pxs=[p[0] for p in poly]; pys=[p[1] for p in poly]
+    mind=min(max(pxs)-min(pxs), max(pys)-min(pys))
+    rh=min(7.0, max(2.0, mind*0.45))
+    cx=sum(pxs)/m; cy=sum(pys)/m
+    top=[(cx+0.42*(x-cx), cy+0.42*(y-cy)) for (x,y) in poly]
+    # Boden (z=0)
     for (i,jx,k) in ct:
         A,B,C=poly[i],poly[jx],poly[k]
         tris.append(((A[0],A[1],0),(C[0],C[1],0),(B[0],B[1],0)))
-        tris.append(((A[0],A[1],h),(B[0],B[1],h),(C[0],C[1],h)))
-    # Waende
-    m=len(poly)
+    # Waende (0..h)
     for e in range(m):
         A=poly[e]; B=poly[(e+1)%m]
         a0=(A[0],A[1],0); b0=(B[0],B[1],0); a1=(A[0],A[1],h); b1=(B[0],B[1],h)
         tris.append((a0,b0,b1)); tris.append((a0,b1,a1))
+    # Dach-Schraegen (h..h+rh)
+    for e in range(m):
+        A=poly[e]; B=poly[(e+1)%m]; TA=top[e]; TB=top[(e+1)%m]
+        a1=(A[0],A[1],h); b1=(B[0],B[1],h); ta=(TA[0],TA[1],h+rh); tb=(TB[0],TB[1],h+rh)
+        tris.append((a1,b1,tb)); tris.append((a1,tb,ta))
+    # Dach-First-Deckel (z=h+rh)
+    for (i,jx,k) in earclip(top):
+        A=top[i];B=top[jx];C=top[k]
+        tris.append(((A[0],A[1],h+rh),(B[0],B[1],h+rh),(C[0],C[1],h+rh)))
 
 # Grundplatte (duenn) unter allem
 xs=[p[0] for t in tris for p in t]; ys=[p[1] for t in tris for p in t]
@@ -113,19 +139,39 @@ with open(out,"wb") as o:
     buf['n']=nmn.astype('<f4'); buf['v']=A.astype('<f4'); o.write(buf.tobytes())
 print("STL ->",out)
 
-# --- Render (3/4) ---
-c=A.mean(1); az,el=math.radians(40),math.radians(28)
+# --- Render (gefuellte Dreiecke, Z-Buffer) ---
+az,el=math.radians(38),math.radians(32)
 Rz=np.array([[math.cos(az),-math.sin(az),0],[math.sin(az),math.cos(az),0],[0,0,1]])
 Rx=np.array([[1,0,0],[0,math.cos(el),-math.sin(el)],[0,math.sin(el),math.cos(el)]]); R=Rx@Rz
-P=c@R.T; Nn=nmn@R.T; sx,sy,dep=P[:,0],P[:,2],P[:,1]
-L=np.array([0.3,-0.8,0.5]); L/=np.linalg.norm(L); sh=np.clip(Nn@L,0,1)*0.8+0.2
-Wd,Hd,mar=900,680,30
-x0r,x1r,y0r,y1r=sx.min(),sx.max(),sy.min(),sy.max()
+Vr=A@R.T                                   # (n,3,3) rotierte Vertices
+Nn=nmn@R.T
+L=np.array([0.35,-0.75,0.55]); L/=np.linalg.norm(L)
+sh=np.clip(np.abs(Nn@L),0,1)*0.75+0.25     # abs -> auch falsch gewickelte Flaechen hell
+sxv=Vr[:,:,0]; syv=Vr[:,:,2]; depv=Vr[:,:,1]
+Wd,Hd,mar=960,720,25
+x0r,x1r,y0r,y1r=sxv.min(),sxv.max(),syv.min(),syv.max()
 sc=min((Wd-2*mar)/(x1r-x0r),(Hd-2*mar)/(y1r-y0r))
-px=((sx-x0r)*sc+mar).astype(int); py=(Hd-1-((sy-y0r)*sc+mar)).astype(int)
-img=np.full((Hd,Wd),26,np.uint8); o2=np.argsort(-dep); px,py,sh=px[o2],py[o2],sh[o2]; val=(sh*255).astype(np.uint8)
-for dx in(0,1):
-  for dy in(0,1): img[np.clip(py+dy,0,Hd-1),np.clip(px+dx,0,Wd-1)]=val
+PX=(sxv-x0r)*sc+mar; PY=Hd-1-((syv-y0r)*sc+mar); Z=depv.mean(1)
+img=np.full((Hd,Wd),20,np.float64); zb=np.full((Hd,Wd),1e18)
+order=np.argsort(-Z)                        # fern zuerst (Z-Buffer macht Rest)
+for t in order:
+    xs0=PX[t]; ys0=PY[t]
+    xmin=max(0,int(np.floor(xs0.min()))); xmax=min(Wd-1,int(np.ceil(xs0.max())))
+    ymin=max(0,int(np.floor(ys0.min()))); ymax=min(Hd-1,int(np.ceil(ys0.max())))
+    if xmax<xmin or ymax<ymin: continue
+    x1,y1_=xs0[0],ys0[0]; x2,y2=xs0[1],ys0[1]; x3,y3=xs0[2],ys0[2]
+    den=(y2-y3)*(x1-x3)+(x3-x2)*(y1_-y3)
+    if abs(den)<1e-9: continue
+    gx,gy=np.meshgrid(np.arange(xmin,xmax+1),np.arange(ymin,ymax+1))
+    a=((y2-y3)*(gx-x3)+(x3-x2)*(gy-y3))/den
+    b=((y3-y1_)*(gx-x3)+(x1-x3)*(gy-y3))/den
+    cc=1-a-b
+    m=(a>=0)&(b>=0)&(cc>=0)
+    if not m.any(): continue
+    sub=zb[ymin:ymax+1,xmin:xmax+1]; subi=img[ymin:ymax+1,xmin:xmax+1]
+    upd=m&(Z[t]<sub)
+    sub[upd]=Z[t]; subi[upd]=sh[t]*255
+img=img.astype(np.uint8)
 def png(fn,a):
     H,Wi=a.shape; raw=b''.join(b'\x00'+a[i].tobytes() for i in range(H))
     ch=lambda t,d:struct.pack(">I",len(d))+t+d+struct.pack(">I",zlib.crc32(t+d)&0xffffffff)
