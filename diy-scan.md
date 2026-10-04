@@ -8,9 +8,20 @@
 | Tool | Kosten | Für wen |
 |---|---|---|
 | **RealityCapture** (= RealityScan, Epic) | **gratis** unter 1 Mio $ Umsatz | **Top-Empfehlung**: schnellstes (2–4× via GPU), Profi-Standard, baute den LAD-BW-Münster-Scan |
-| **Meshroom** (AliceVision) | gratis, Open Source | Budget/Lernen; braucht NVIDIA-GPU |
+| **Meshroom** (AliceVision) | gratis, **Open Source** | **braucht NVIDIA-GPU (CUDA)** |
+| **COLMAP** | gratis, Open Source | technisch; CPU möglich (langsam) |
 | **Agisoft Metashape** | ab 179 $ | Präzision/Vermessung |
-| **Polycam / KIRI Engine** | Handy/Cloud, Freemium | kleine Objekte, super einfach |
+| **Polycam / KIRI Engine / RealityScan / Scaniverse** | Handy/Cloud, gratis Tier | **kleine Objekte, super einfach, kein GPU nötig** |
+
+### ⚠️ Hinweis zum vorhandenen Laptop (AMD Ryzen/Radeon, keine NVIDIA)
+**Meshroom läuft darauf nicht (gut)** — der Dichte-Schritt braucht CUDA/NVIDIA. Zum **sofort
+Testen mit Handykamera** daher **Cloud-Apps** (KIRI Engine / Polycam / RealityScan /
+Scaniverse): rechnen auf deren Servern, laufen auf jedem Handy. Open-Source (Meshroom/COLMAP)
+nur auf einem Rechner **mit NVIDIA** oder gemieteter Cloud-GPU sinnvoll.
+
+### Test-Rezept (5 Min)
+Kleines Objekt (Figur/Stein/Tasse), 40–80 Fotos rundherum, gleichmäßiges Licht,
+70–80 % Überlappung, 2–3 Höhen-Ringe → App → fertiges Modell.
 
 ## Aufnahme — so wird's detailliert
 - **200–500 Fotos** pro Objekt; jeder Punkt in **3–5 Bildern** sichtbar.
@@ -42,6 +53,12 @@
   Sperre, braucht es eine Genehmigung (zeitunabhängig).
 - Immer: keine erkennbaren Personen filmen, Kirchen-/Denkmal-Hausrecht beachten.
 - **Einfacher Weg zum Üben: Kastelburg** (abgelegen, keine Menschenmassen).
+
+**Praxis-Beleg (logxon, Drohnen-Vermessung am Münster):** brauchte eine **Sondergenehmigung
+(Einzelerlaubnis + Ausnahmen von Betriebsverboten)**, flog **5:15–6:30 Uhr** an 3 Tagen, bis
+136 m, mit **teilgesperrtem Platz + Absperrpersonal + Luftraumbeobachter im Turm**. → Ums
+Münster ist Drohnenflug **nicht „einfach so" erlaubt — Genehmigung nötig.** Fürs freie DIY
+daher Kastelburg; fürs Münster Boden+Turmgalerie, Profi mit Genehmigung, oder vorhandenen Scan.
 
 ### Grundregeln „wo erlaubt / wo nicht"
 - **A1, < 250 g (C0):** Stadt/Wohngebiet erlaubt, über *einzelne* Unbeteiligte ok — **nie
