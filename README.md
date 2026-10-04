@@ -30,6 +30,7 @@ selbst steuern.
 | [`risikolos-ohne-personal.md`](risikolos-ohne-personal.md) | Risikolos starten & (fast) ohne Personal: Schau-Installation, Self-Service |
 | [`demo-standort.md`](demo-standort.md) | Risikoärmster Start: Demo bei bemanntem Partner am Münster |
 | [`host-indoor-spielplatz.md`](host-indoor-spielplatz.md) | **RC-Baustelle bei Indoor-Spielplatz (Kindergalaxie)** via Umsatzbeteiligung |
+| [`schutzbox-plexiglas.md`](schutzbox-plexiglas.md) | Sicherer Schutzkasten (von außen gesteuert, kindersicher, Polycarbonat) |
 | [`lean-phasen.md`](lean-phasen.md) | Lean-Start in Phasen: Demo & Pop-up & große Fläche (Gates) |
 | [`startausstattung.md`](startausstattung.md) | Einkaufsliste mit Preisen (gebraucht/neu) + Kastelburg-Vorbild |
 | [`3d-druck-strategie.md`](3d-druck-strategie.md) | Schnell Gebäude/Dioramen als Bausatz drucken; Mehrfarb-Druck-Urteil |
