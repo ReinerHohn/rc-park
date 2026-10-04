@@ -22,6 +22,7 @@ selbst steuern.
 | [`baggerland-stationen.md`](baggerland-stationen.md) | Stationen-Konzept + Baggerführerschein (6 Missionen, Punkte, Level) |
 | [`indoor-fpv.md`](indoor-fpv.md) | Indoor-FPV-Bereich konkret: Whoops, Parcours, Netz, Kosten, Schlechtwetter |
 | [`machbarkeit-und-hebel.md`](machbarkeit-und-hebel.md) | Machbarkeit + Beschaffung: gebraucht kaufen, Module, RC-Baggerland |
+| [`kaufen-statt-drucken.md`](kaufen-statt-drucken.md) | Einkaufsliste H0-Stadt (fertig/gebraucht) + Maßstabs-Guide + nur Unikate drucken |
 | [`risikolos-ohne-personal.md`](risikolos-ohne-personal.md) | Risikolos starten & (fast) ohne Personal: Schau-Installation, Self-Service |
 | [`demo-standort.md`](demo-standort.md) | Risikoärmster Start: Demo bei bemanntem Partner am Münster |
 | [`lean-phasen.md`](lean-phasen.md) | Lean-Start in Phasen: Demo & Pop-up & große Fläche (Gates) |
