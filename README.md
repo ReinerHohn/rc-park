@@ -23,6 +23,7 @@ selbst steuern.
 | [`modelle-schwarzwald.md`](modelle-schwarzwald.md) | Sweet-Spot-Modelle (Freiburg/Schwarzwald), sortiert nach Erfolg × Wow |
 | [`beleuchtung-detail.md`](beleuchtung-detail.md) | Max. Detail (Resin) + Beleuchtung der Wahrzeichen (Wow-Hebel) |
 | [`max-detail-scan.md`](max-detail-scan.md) | Detail-Obergrenze via echtem 3D-Scan (Photogrammetrie) + Lizenz |
+| [`diy-scan.md`](diy-scan.md) | Selbst scannen (Kamera+Drohne+RealityCapture) + Drohnen-Recht |
 | [`annahmen.json`](annahmen.json) | **Alle editierbaren Finanz-Annahmen** |
 | [`attraktionen/*.json`](attraktionen/) | Je Attraktion: Beschreibung, Fläche, Invest, USP |
 | `build.py` | Erzeugt `businessplan.html` aus den Daten |
