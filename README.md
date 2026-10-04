@@ -28,6 +28,7 @@ selbst steuern.
 | [`machbarkeit-und-hebel.md`](machbarkeit-und-hebel.md) | Machbarkeit + Beschaffung: gebraucht kaufen, Module, RC-Baggerland |
 | [`kaufen-statt-drucken.md`](kaufen-statt-drucken.md) | Einkaufsliste H0-Stadt (fertig/gebraucht) + Maßstabs-Guide + nur Unikate drucken |
 | [`3d-stadtmodell.md`](3d-stadtmodell.md) | **Ganze Stadt Freiburg als amtliches 3D-Modell (LoD2, gratis)** → STL drucken |
+| `modelle/terrain_gen.py` | Schwarzwald-Gelände-Sockel aus echten Höhendaten (SRTM) → STL |
 | [`prioliste-freiburg.md`](prioliste-freiburg.md) | Prioliste Freiburg-Wahrzeichen + Faller-Sets + Martinstor-Qualität scannen |
 | [`risikolos-ohne-personal.md`](risikolos-ohne-personal.md) | Risikolos starten & (fast) ohne Personal: Schau-Installation, Self-Service |
 | [`wartung-risiko.md`](wartung-risiko.md) | RC-Aktion vs Display: Wartung/Risiko + low-maintenance Interaktivität |
