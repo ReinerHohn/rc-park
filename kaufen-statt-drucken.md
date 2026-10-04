@@ -24,6 +24,31 @@
 **Beispiel-Budget erste Mini-Stadt:** ~500 € (Anlage) + ~300 € (10–15 Gebäude) + ~80 € (Bäume)
 + ~100 € (Autos/Figuren) = **~1.000 € für eine ansehnliche Stadt** — statt Wochen Druckzeit.
 
+## A2. Was ist Freiburg-SPEZIFISCH kaufbar? (du hast recht: echte Häuser gibt's nicht)
+Die exakten Freiburger Häuserzeilen gibt es **nicht** als Fertigmodell. Aber:
+- **Freiburg-Wahrzeichen als Fertig-/Bausatz kaufbar:**
+  - **Münsterladen Freiburg**: Münster **Miniatur-Holzbausatz** (~9,90 €), **Münsterplatz-
+    Holzbausatz** (59 Teile), **Bastelbögen/Kartonmodelle** (u. a. Kurt Fehling 1:500), Kinder-
+    Bastelbogen. → auch als **Shop-Ware zum Weiterverkaufen** super.
+  - **Faller Martinstor Freiburg** als **N-Bausatz (1:160)** – ein echtes Freiburg-Modell!
+  - **STL kaufen** (zum selbst drucken/drucken lassen): Gambody-Münster u. a.
+    (siehe [`modelle-schwarzwald.md`](modelle-schwarzwald.md)).
+- **Generische „sieht aus wie Freiburg"-Häuser** (für die Fläche): Freiburgs Altstadt =
+  süddeutsche Bürgerhäuser/Fachwerk/Erker/steile Dächer. Dafür passen **Faller-Altstadt-Sets**:
+  „6 Reliefhäuser Altstadt", „Aktions-Set Altstadthäuser" (190063), „Stadthäuser Römer" (190077).
+  Treffen den **Stil**, auch wenn's nicht die exakten Häuser sind.
+- **Das Freiburg-Gefühl** entsteht aus **wenigen Signatur-Elementen**: Münster, Schwabentor/
+  Martinstor, **Historisches Kaufhaus** (rot, Arkaden!), **Bächle** (die Wasserrinnen – super
+  einfach selbst zu machen und typisch Freiburg), Straßenbahn. Die + der Altstadt-Stil = „das
+  ist eindeutig Freiburg", obwohl die Lückenhäuser generisch sind.
+
+⚠️ **Maßstab-Mix beachten:** gekaufte Freiburg-Teile sind klein/uneinheitlich (Münster-Holzbaus.,
+Martinstor in N 1:160). Für eine **einheitliche große Display-Stadt** die Wahrzeichen lieber
+**selbst in deinem Maßstab drucken/scannen** (Souvenir-Kits dann als Shop-Ware + Demo-Stücke).
+
+> 💡 Der **Münsterladen** ist auch ein **Partner-Kandidat** fürs Demo (siehe
+> [`demo-standort.md`](demo-standort.md)) und Bezugsquelle für Freiburg-Souvenirs im eigenen Shop.
+
 ## B. Nur SELBST drucken: die Freiburg-Unikate
 Das gibt's **nicht** zu kaufen → dein MK4S / Druckfarm / Druckservice:
 - **Freiburger Münster** (hast du schon), **Schwabentor/Martinstor**, **Historisches Kaufhaus**,
