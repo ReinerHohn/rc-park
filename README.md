@@ -12,6 +12,7 @@ selbst steuern.
 | Datei | Inhalt |
 |---|---|
 | [`KONZEPT.md`](KONZEPT.md) | Vision, USP, Attraktionen, Zielgruppen, Risiken |
+| [`bauplan-miniaturwunderland.md`](bauplan-miniaturwunderland.md) | **Bauplan** extrem detailliert in Sektionen (Maßstab 1:500, LoD2+Hero+Magnorail) |
 | [`prototyp-konzept.md`](prototyp-konzept.md) | **Schneller Prototyp**: eBay-Gear reparieren + Druckmodule + Personal-Konzept |
 | [`standort.md`](standort.md) | Anforderungsprofil & Standortlogik Freiburg |
 | [`mieten-kalkulation.md`](mieten-kalkulation.md) | Freiburg-Mieten (Tiers) + Kalkulation je Größe/Lage + Lage-Sweet-Spots |
