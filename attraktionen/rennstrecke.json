@@ -1,0 +1,21 @@
+{
+  "id": "rennstrecke",
+  "name": "RC-Rennstrecke & Zeitmessung",
+  "kategorie": "Boden",
+  "icon": "🏎️",
+  "beschreibung": "Asphaltierte und geschotterte RC-Rennstrecke mit elektronischer Rundenzeitmessung, Startampel, Boxengasse und Bestenliste auf dem Monitor. Leih-Autos vom Einsteiger-Buggy bis zum Speed-Touringcar. Ideal für Gruppen, Firmen-Events und den sportlichen Ehrgeiz.",
+  "usp": "Wettkampf-Faktor + Wiederkehr. Treibt Gruppen-/Event-Buchungen und die Verweildauer.",
+  "flaeche_m2": 240,
+  "invest_eur": 160000,
+  "zielgruppe": ["Jugendliche", "Erwachsene", "Firmen", "Vereine"],
+  "wetterfest": true,
+  "wow": 4,
+  "aufwand": 3,
+  "stationen": 8,
+  "highlights": [
+    "Elektronische Rundenzeit mit Live-Bestenliste",
+    "Leihfahrzeuge in mehreren Leistungsklassen",
+    "Boxengasse mit Schnell-Ladestation",
+    "Liga-/Turnierbetrieb an Abenden"
+  ]
+}

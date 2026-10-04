@@ -1,0 +1,21 @@
+{
+  "id": "kinderland",
+  "name": "Mini-Fahrschule & Kinderland",
+  "kategorie": "Kinder",
+  "icon": "🧒",
+  "beschreibung": "Niederschwelliger Einstieg für die Kleinsten (ab ca. 4 Jahren): robuste, langsame RC-Autos auf einem weichen Teppich-Parcours mit Ampeln, Tankstelle und Waschstraße. Betreutes 'Fahrschul'-Programm mit Mini-Führerschein als Mitnehm-Souvenir.",
+  "usp": "Senkt die Einstiegshürde für Familien und bindet die jüngste Zielgruppe – Wiederkehr-Treiber.",
+  "flaeche_m2": 120,
+  "invest_eur": 60000,
+  "zielgruppe": ["Kinder", "Familien"],
+  "wetterfest": true,
+  "wow": 3,
+  "aufwand": 2,
+  "stationen": 10,
+  "highlights": [
+    "Crash-sichere, langsame Einsteigermodelle",
+    "Spielstadt mit Ampeln und Tankstelle",
+    "'Mini-Führerschein' als Souvenir",
+    "Betreuung durch Personal"
+  ]
+}

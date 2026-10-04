@@ -1,0 +1,21 @@
+{
+  "id": "schwarzwald-diorama",
+  "name": "Miniatur-Schwarzwald (Schaulandschaft)",
+  "kategorie": "Schaulandschaft",
+  "icon": "🌲",
+  "beschreibung": "Die Miniatur-Wunderland-Hommage mit regionalem Twist: eine detailverliebte Modelllandschaft mit Freiburger Münster, Schauinsland-Bahn, Höllental, Weinbergen und Schwarzwaldhöfen – durchzogen von Straßen, auf denen Besucher maßstäbliche RC-Autos, Busse und Feuerwehr selbst durch die Dörfer steuern. Tag-/Nacht-Lichtwechsel.",
+  "usp": "Regionale Identifikation + der Wiedererkennungs-Effekt für Touristen. Verbindet 'Zuschauen' und 'Selbst fahren'.",
+  "flaeche_m2": 260,
+  "invest_eur": 380000,
+  "zielgruppe": ["Touristen", "Familien", "Senioren", "Alle"],
+  "wetterfest": true,
+  "wow": 5,
+  "aufwand": 4,
+  "stationen": 6,
+  "highlights": [
+    "Freiburger Wahrzeichen im Modell (Münster, Bächle, Schauinsland)",
+    "Selbst steuerbare RC-Fahrzeuge auf echten Straßenführungen",
+    "Tag-Nacht-Lichtshow alle 15 Minuten",
+    "Fahrende Modellbahn als Hintergrund-Automatik"
+  ]
+}

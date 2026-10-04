@@ -1,0 +1,40 @@
+# 🏎️ RC-Park Freiburg
+
+**Miniatur-Wunderland zum Selbersteuern** — Konzept & Businessplan für eine
+wetterunabhängige Indoor-Erlebniswelt in Freiburg, in der Besucher RC-**Fahrzeuge**,
+-**Schiffe** (inkl. Flugzeugträger) und -**Flugobjekte** (Helikopter, Flieger, Drohnen)
+selbst steuern.
+
+> In Hamburg schaut man zu — in Freiburg fährt, fliegt und schippert man selbst.
+
+## Inhalt
+
+| Datei | Inhalt |
+|---|---|
+| [`KONZEPT.md`](KONZEPT.md) | Vision, USP, Attraktionen, Zielgruppen, Risiken |
+| [`standort.md`](standort.md) | Anforderungsprofil & Standortlogik Freiburg |
+| [`annahmen.json`](annahmen.json) | **Alle editierbaren Finanz-Annahmen** |
+| [`attraktionen/*.json`](attraktionen/) | Je Attraktion: Beschreibung, Fläche, Invest, USP |
+| `build.py` | Erzeugt `businessplan.html` aus den Daten |
+| `businessplan.html` | Interaktiver Businessplan mit Live-Reglern & Charts (generiert) |
+
+## Businessplan erzeugen
+
+```bash
+python3 build.py          # schreibt businessplan.html + Konsolen-Zusammenfassung
+```
+
+Nur Python-Standardbibliothek, keine Abhängigkeiten. `businessplan.html` ist
+self-contained (Chart.js via CDN) und in jedem Browser ohne Server lauffähig.
+
+## Eckdaten (Default-Annahmen)
+
+- Fläche ~2.000 m², ~110.000 Besucher/Jahr, 8 Attraktionen
+- Investition **~2,9 Mio €** · Umsatz **~3,6 Mio €** · Gewinn **~0,46 Mio €** (Marge ~13 %)
+- **Break-even ~93.000 Besucher/Jahr** (~15 % Sicherheitspuffer)
+
+Zahlen anpassen → `annahmen.json` oder die Attraktions-JSONs editieren, `build.py` neu
+laufen lassen. Oder im Browser live an den Reglern ziehen.
+
+> Begründete Schätzungen auf Basis öffentlicher Benchmarks (Miniatur Wunderland Hamburg,
+> Freiburg-Tourismusstatistik). Keine testierte Finanzplanung / keine Anlageberatung.

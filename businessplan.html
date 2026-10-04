@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RC-Park Freiburg — Businessplan</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {{
+    --bg:#0f1720; --card:#1a2530; --ink:#e8eef3; --muted:#8aa0b2;
+    --accent:#2dd4bf; --warn:#f59e0b; --good:#34d399; --bad:#f87171;
+    --line:#2a3a48;
+  }}
+  * {{ box-sizing:border-box; }}
+  body {{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+         background:var(--bg); color:var(--ink); line-height:1.5; }}
+  header {{ padding:28px 20px; background:linear-gradient(135deg,#0d3b3a,#0f1720);
+           border-bottom:1px solid var(--line); }}
+  h1 {{ margin:0 0 6px; font-size:26px; }}
+  header p {{ margin:0; color:var(--muted); max-width:70ch; }}
+  .wrap {{ max-width:1180px; margin:0 auto; padding:20px; }}
+  .kpis {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; margin:18px 0; }}
+  .kpi {{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; }}
+  .kpi .label {{ color:var(--muted); font-size:13px; }}
+  .kpi .val {{ font-size:26px; font-weight:700; margin-top:4px; }}
+  .kpi .sub {{ font-size:12px; color:var(--muted); margin-top:2px; }}
+  .good {{ color:var(--good); }} .bad {{ color:var(--bad); }} .warn {{ color:var(--warn); }}
+  .grid2 {{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }}
+  @media(max-width:860px){{ .grid2 {{ grid-template-columns:1fr; }} }}
+  .panel {{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px; margin:18px 0; }}
+  .panel h2 {{ margin:0 0 14px; font-size:18px; }}
+  .slider {{ margin:12px 0; }}
+  .slider label {{ display:flex; justify-content:space-between; font-size:14px; margin-bottom:4px; }}
+  .slider label b {{ color:var(--accent); }}
+  input[type=range] {{ width:100%; accent-color:var(--accent); }}
+  table {{ width:100%; border-collapse:collapse; font-size:14px; }}
+  th,td {{ text-align:left; padding:9px 8px; border-bottom:1px solid var(--line); }}
+  th {{ color:var(--muted); font-weight:600; }}
+  td.num, th.num {{ text-align:right; font-variant-numeric:tabular-nums; }}
+  .pill {{ display:inline-block; font-size:11px; padding:2px 8px; border-radius:20px;
+          background:#0d3b3a; color:var(--accent); border:1px solid #1d5a56; }}
+  .wow {{ color:var(--warn); letter-spacing:1px; }}
+  .attr-card {{ background:var(--card); border:1px solid var(--line); border-radius:12px;
+              padding:16px; }}
+  .attr-grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; }}
+  .attr-card h3 {{ margin:0 0 6px; font-size:16px; }}
+  .attr-card .meta {{ font-size:12px; color:var(--muted); margin:8px 0; }}
+  .attr-card ul {{ margin:8px 0 0; padding-left:18px; font-size:13px; color:#cdd8e1; }}
+  .chartbox {{ position:relative; height:280px; }}
+  footer {{ color:var(--muted); font-size:12px; padding:30px 20px; text-align:center; }}
+  .note {{ font-size:12px; color:var(--muted); margin-top:8px; }}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏎️ RC-Park Freiburg — Businessplan</h1>
+  <p>Indoor-Erlebniswelt zum <b>Selbststeuern</b> von RC-Fahrzeugen, -Schiffen und -Flugobjekten.
+     Wetterunabhängiges Ganzjahresziel für Freiburgs ~1 Mio Tagesgäste und 2,17 Mio Übernachtungen.
+     Alle Zahlen sind editierbare Annahmen — zieh an den Reglern.</p>
+</header>
+<div class="wrap">
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="panel">
+    <h2>⚙️ Annahmen (live)</h2>
+    <div class="grid2">
+      <div>
+        <div class="slider"><label>Besucher / Jahr <b id="l_bes"></b></label>
+          <input type="range" id="s_bes" min="40000" max="200000" step="5000"></div>
+        <div class="slider"><label>Ticket Erwachsene <b id="l_terw"></b></label>
+          <input type="range" id="s_terw" min="12" max="32" step="1"></div>
+        <div class="slider"><label>Gastro-Umsatz / Besucher <b id="l_gastro"></b></label>
+          <input type="range" id="s_gastro" min="0" max="15" step="0.5"></div>
+      </div>
+      <div>
+        <div class="slider"><label>Miete €/m²·Monat <b id="l_miete"></b></label>
+          <input type="range" id="s_miete" min="5" max="22" step="0.5"></div>
+        <div class="slider"><label>Fläche (m²) <b id="l_flaeche"></b></label>
+          <input type="range" id="s_flaeche" min="1000" max="4000" step="100"></div>
+        <div class="slider"><label>Vollzeitstellen <b id="l_fte"></b></label>
+          <input type="range" id="s_fte" min="10" max="40" step="1"></div>
+      </div>
+    </div>
+    <p class="note" id="reset_note">Tipp: <a href="#" id="reset" style="color:var(--accent)">Annahmen zurücksetzen</a></p>
+  </div>
+
+  <div class="grid2">
+    <div class="panel"><h2>💶 Umsatz-Struktur</h2><div class="chartbox"><canvas id="umsatzChart"></canvas></div></div>
+    <div class="panel"><h2>📉 Kostenblöcke (p.a.)</h2><div class="chartbox"><canvas id="kostenChart"></canvas></div></div>
+  </div>
+
+  <div class="panel">
+    <h2>⚖️ Break-even: Gewinn in Abhängigkeit der Besucherzahl</h2>
+    <div class="chartbox"><canvas id="beChart"></canvas></div>
+    <p class="note" id="be_note"></p>
+  </div>
+
+  <div class="panel">
+    <h2>🎢 Attraktionen & Investition</h2>
+    <table id="attrTable">
+      <thead><tr>
+        <th>Attraktion</th><th>Kategorie</th><th class="num">Fläche m²</th>
+        <th class="num">Invest</th><th>Wow</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>📋 Attraktionen im Detail</h2>
+    <div class="attr-grid" id="attrCards"></div>
+  </div>
+
+</div>
+<footer>
+  rc-park · build.py · Zahlen = begründete Schätzungen (Stand 2026), keine Finanzberatung.
+  Benchmarks: Miniatur Wunderland Hamburg (>1 Mio Besucher, 42,7 Mio € Umsatz), Freiburg-Tourismus (2,17 Mio Übernachtungen 2024).
+</footer>
+
+<script>
+const ANNAHMEN = {"_hinweis": "Alle Annahmen sind editierbar. build.py erzeugt daraus businessplan.html mit Live-Reglern. Zahlen sind begruendete Schaetzungen fuer einen mittelgrossen Indoor-Freizeitstandort in Freiburg, Stand 2026.", "standort": {"flaeche_gesamt_m2": 2000, "miete_eur_pro_m2_monat": 11.0, "nebenkosten_eur_pro_m2_monat": 3.5}, "besucher": {"besucher_pro_jahr": 110000, "anteil_erwachsene": 0.42, "anteil_kinder": 0.33, "anteil_ermaessigt": 0.15, "anteil_familienticket_haushalte": 0.1, "oeffnungstage_pro_jahr": 330}, "preise_eur": {"ticket_erwachsen": 21.0, "ticket_kind": 14.0, "ticket_ermaessigt": 18.0, "familienticket_2e_2k": 58.0, "umsatz_gastro_pro_besucher": 6.5, "umsatz_shop_pro_besucher": 3.2, "umsatz_jetons_fahrzeit_pro_besucher": 3.5, "events_firmen_pro_jahr_eur": 180000}, "wareneinsatz": {"gastro_cogs_anteil": 0.32, "shop_cogs_anteil": 0.55}, "personal": {"vollzeitstellen": 22, "kosten_pro_vollzeit_jahr_eur": 46000, "saisonale_aushilfen_jahr_eur": 140000}, "betriebskosten_jahr_eur": {"energie": 160000, "versicherung": 45000, "marketing": 220000, "instandhaltung_rc_flotte": 150000, "verwaltung_it_sonstiges": 120000}, "investition": {"umbau_halle_eur": 900000, "gastro_shop_einrichtung_eur": 240000, "it_kassensystem_eur": 90000, "abschreibungsdauer_jahre": 8, "attraktionen_invest_quelle": "summe aus attraktionen/*.json", "eigenkapital_eur": 800000, "fremdkapital_zins_pa": 0.06}};
+const ATTRAKTIONEN = [{"id": "crawler-parcours", "name": "Offroad- & Crawler-Parcours", "kategorie": "Boden", "icon": "🪨", "beschreibung": "Ein spektakuläres Fels- und Geländemassiv aus Kunstfelsen, Wasserfurten und Steilrampen für RC-Crawler und Trial-Trucks. Besucher meistern mit hochgeländegängigen Modellen eine markierte Trial-Strecke mit Schwierigkeitsgraden – von 'Familie' bis 'Experte'.", "usp": "Geschicklichkeit statt Tempo – langsames, konzentriertes Spiel, das auch Ältere fesselt.", "flaeche_m2": 160, "invest_eur": 120000, "zielgruppe": ["Familien", "Technikfans", "Erwachsene"], "wetterfest": true, "wow": 4, "aufwand": 2, "stationen": 6, "highlights": ["Kunstfelsen-Massiv mit Wasserfurt", "Trial-Strecke mit 4 Schwierigkeitsgraden", "Portalachsen-Crawler zum Ausleihen", "Zeit- und Punkte-Challenges"]}, {"id": "flugzeugtraeger-becken", "name": "Flottenbecken & Flugzeugträger", "kategorie": "Wasser", "icon": "🚢", "beschreibung": "Großes begehbares Wasserbecken (ca. 12 x 6 m) mit RC-Schiffen: Frachter, Schlepper, Rettungsboote, U-Boote und das Herzstück – ein maßstäblicher Flugzeugträger mit startenden Modellflugzeugen. Besucher übernehmen Kapitänsstände an der Beckenkante und manövrieren durch einen Miniatur-Hafen mit Schleuse und Kränen.", "usp": "Das fotogene Aushängeschild – jeder will den Träger steuern. Social-Media-Magnet.", "flaeche_m2": 180, "invest_eur": 320000, "zielgruppe": ["Familien", "Technikfans", "Erwachsene", "Touristen"], "wetterfest": true, "wow": 5, "aufwand": 4, "stationen": 8, "highlights": ["Maßstäblicher Flugzeugträger mit Katapult-Startrampe", "Tauchfähige RC-U-Boote", "Hafen mit funktionierender Schleuse und Verladekränen", "Wellen- und Nebeleffekte"]}, {"id": "gastro-shop-werkstatt", "name": "Gastronomie, Shop & Schau-Werkstatt", "kategorie": "Service", "icon": "🍔", "beschreibung": "Das wirtschaftliche Rückgrat: Café/Bistro mit Blick auf Becken und Rennstrecke, ein Modellbau-Shop (Fahrzeuge, Ersatzteile, Souvenirs) und eine gläserne Schau-Werkstatt, in der Technik gewartet und repariert wird – als Attraktion und als Service für Besucher-Modelle.", "usp": "Höchste Marge im Haus. Verlängert Verweildauer, erzeugt Zusatzumsatz und Wiederkäufe.", "flaeche_m2": 260, "invest_eur": 240000, "zielgruppe": ["Alle"], "wetterfest": true, "wow": 2, "aufwand": 3, "stationen": 0, "highlights": ["Bistro mit Blick auf die Attraktionen", "Shop mit Fahrzeugen, Ersatzteilen, Merch", "Gläserne Reparatur-Werkstatt als Schaustation", "Reparatur-Service auch für mitgebrachte Modelle"]}, {"id": "heli-flughalle", "name": "Flughalle: Helikopter, Flugzeuge & Drohnen", "kategorie": "Luft", "icon": "🚁", "beschreibung": "Großzügige, komplett vernetzte Flughalle (hohe Decke) für RC-Helikopter, Flächenflieger und FPV-Drohnen. Anfänger fliegen mit gyrostabilisierten Einsteigermodellen über eine Miniatur-Landschaft; Fortgeschrittene nutzen einen FPV-Drohnen-Rennparcours mit Toren. Flugzeiten per Jeton.", "usp": "Fliegen bei jedem Wetter – einzigartig in Südbaden. FPV-Racing als Event-Format.", "flaeche_m2": 300, "invest_eur": 220000, "zielgruppe": ["Jugendliche", "Technikfans", "Erwachsene", "Vereine"], "wetterfest": true, "wow": 5, "aufwand": 3, "stationen": 10, "highlights": ["Sicherheits-Fangnetze rundum und oben", "Gyro-stabilisierte Einsteiger-Helis (crash-sicher)", "FPV-Drohnen-Rennparcours mit Videobrillen", "Flugsimulator-Ecke für den ersten Versuch"]}, {"id": "kinderland", "name": "Mini-Fahrschule & Kinderland", "kategorie": "Kinder", "icon": "🧒", "beschreibung": "Niederschwelliger Einstieg für die Kleinsten (ab ca. 4 Jahren): robuste, langsame RC-Autos auf einem weichen Teppich-Parcours mit Ampeln, Tankstelle und Waschstraße. Betreutes 'Fahrschul'-Programm mit Mini-Führerschein als Mitnehm-Souvenir.", "usp": "Senkt die Einstiegshürde für Familien und bindet die jüngste Zielgruppe – Wiederkehr-Treiber.", "flaeche_m2": 120, "invest_eur": 60000, "zielgruppe": ["Kinder", "Familien"], "wetterfest": true, "wow": 3, "aufwand": 2, "stationen": 10, "highlights": ["Crash-sichere, langsame Einsteigermodelle", "Spielstadt mit Ampeln und Tankstelle", "'Mini-Führerschein' als Souvenir", "Betreuung durch Personal"]}, {"id": "rennstrecke", "name": "RC-Rennstrecke & Zeitmessung", "kategorie": "Boden", "icon": "🏎️", "beschreibung": "Asphaltierte und geschotterte RC-Rennstrecke mit elektronischer Rundenzeitmessung, Startampel, Boxengasse und Bestenliste auf dem Monitor. Leih-Autos vom Einsteiger-Buggy bis zum Speed-Touringcar. Ideal für Gruppen, Firmen-Events und den sportlichen Ehrgeiz.", "usp": "Wettkampf-Faktor + Wiederkehr. Treibt Gruppen-/Event-Buchungen und die Verweildauer.", "flaeche_m2": 240, "invest_eur": 160000, "zielgruppe": ["Jugendliche", "Erwachsene", "Firmen", "Vereine"], "wetterfest": true, "wow": 4, "aufwand": 3, "stationen": 8, "highlights": ["Elektronische Rundenzeit mit Live-Bestenliste", "Leihfahrzeuge in mehreren Leistungsklassen", "Boxengasse mit Schnell-Ladestation", "Liga-/Turnierbetrieb an Abenden"]}, {"id": "schwarzwald-diorama", "name": "Miniatur-Schwarzwald (Schaulandschaft)", "kategorie": "Schaulandschaft", "icon": "🌲", "beschreibung": "Die Miniatur-Wunderland-Hommage mit regionalem Twist: eine detailverliebte Modelllandschaft mit Freiburger Münster, Schauinsland-Bahn, Höllental, Weinbergen und Schwarzwaldhöfen – durchzogen von Straßen, auf denen Besucher maßstäbliche RC-Autos, Busse und Feuerwehr selbst durch die Dörfer steuern. Tag-/Nacht-Lichtwechsel.", "usp": "Regionale Identifikation + der Wiedererkennungs-Effekt für Touristen. Verbindet 'Zuschauen' und 'Selbst fahren'.", "flaeche_m2": 260, "invest_eur": 380000, "zielgruppe": ["Touristen", "Familien", "Senioren", "Alle"], "wetterfest": true, "wow": 5, "aufwand": 4, "stationen": 6, "highlights": ["Freiburger Wahrzeichen im Modell (Münster, Bächle, Schauinsland)", "Selbst steuerbare RC-Fahrzeuge auf echten Straßenführungen", "Tag-Nacht-Lichtshow alle 15 Minuten", "Fahrende Modellbahn als Hintergrund-Automatik"]}, {"id": "truck-baustelle", "name": "RC-Baustelle & Truck-Spedition", "kategorie": "Boden", "icon": "🚜", "beschreibung": "Ein voll funktionsfähiger Miniatur-Baustellen- und Logistikhof: RC-Bagger baggern echten Granulat-Kies, Muldenkipper fahren ihn ab, Kräne verladen Container, und maßstäbliche LKW mit Anhänger rangieren an Laderampen. Hydraulik-Modelle für Fortgeschrittene, einfache Modelle für Kinder.", "usp": "Haptisch und endlos: echtes Material bewegen. Kinder bleiben hier am längsten.", "flaeche_m2": 220, "invest_eur": 190000, "zielgruppe": ["Kinder", "Familien", "Technikfans"], "wetterfest": true, "wow": 4, "aufwand": 3, "stationen": 12, "highlights": ["Funktions-Hydraulikbagger mit echtem Schüttgut", "Kran-Verladung mit Containern", "LKW-Rangierparcours mit Laderampe", "Einsteiger-Zone für die Kleinsten"]}];
+
+function eur(x){{ return Math.round(x).toLocaleString('de-DE') + ' €'; }}
+function eurk(x){{ return Math.round(x/1000).toLocaleString('de-DE') + 'k €'; }}
+
+// --- Finanzmodell (Spiegel von rechne() in build.py) ---
+function modell(ov){{
+  const a = ANNAHMEN, p = a.preise_eur, bes = a.besucher, w = a.wareneinsatz;
+  const b        = ov.besucher;
+  const t_erw    = ov.ticket_erwachsen;
+  const gastroPB = ov.gastro_pb;
+  const miete_m2 = ov.miete_m2;
+  const flaeche  = ov.flaeche;
+  const fte      = ov.fte;
+
+  const avg_ticket = bes.anteil_erwachsene*t_erw
+    + bes.anteil_kinder*p.ticket_kind
+    + bes.anteil_ermaessigt*p.ticket_ermaessigt
+    + bes.anteil_familienticket_haushalte*(p.familienticket_2e_2k/4);
+
+  const ticket = b*avg_ticket;
+  const gastro = b*gastroPB;
+  const shop   = b*p.umsatz_shop_pro_besucher;
+  const jetons = b*p.umsatz_jetons_fahrzeit_pro_besucher;
+  const events = p.events_firmen_pro_jahr_eur;
+  const umsatz = ticket+gastro+shop+jetons+events;
+
+  const cogs = gastro*w.gastro_cogs_anteil + shop*w.shop_cogs_anteil;
+  const personal = fte*a.personal.kosten_pro_vollzeit_jahr_eur + a.personal.saisonale_aushilfen_jahr_eur;
+  const miete = flaeche*miete_m2*12;
+  const nk    = flaeche*a.standort.nebenkosten_eur_pro_m2_monat*12;
+  const betrieb = Object.values(a.betriebskosten_jahr_eur).reduce((s,x)=>s+x,0);
+
+  const attrInvest = ATTRAKTIONEN.reduce((s,x)=>s+(x.invest_eur||0),0);
+  const inv = a.investition;
+  const capex = inv.umbau_halle_eur + inv.gastro_shop_einrichtung_eur + inv.it_kassensystem_eur + attrInvest;
+  const abschr = capex/inv.abschreibungsdauer_jahre;
+  const fk = Math.max(0, capex - inv.eigenkapital_eur);
+  const zins = fk*inv.fremdkapital_zins_pa;
+
+  const fixkosten = personal+miete+nk+betrieb+abschr;
+  const ebit = umsatz-cogs-fixkosten;
+  const gewinn = ebit-zins;
+
+  const dbPB = avg_ticket
+    + gastroPB*(1-w.gastro_cogs_anteil)
+    + p.umsatz_shop_pro_besucher*(1-w.shop_cogs_anteil)
+    + p.umsatz_jetons_fahrzeit_pro_besucher;
+  const nettoFix = fixkosten+zins-events;
+  const breakEven = dbPB>0 ? nettoFix/dbPB : 0;
+
+  return {{umsatz,ticket,gastro,shop,jetons,events,cogs,personal,miete,nk,betrieb,
+           abschr,zins,capex,attrInvest,ebit,gewinn,breakEven,dbPB,avg_ticket}};
+}}
+
+const DEFAULTS = {{
+  besucher: ANNAHMEN.besucher.besucher_pro_jahr,
+  ticket_erwachsen: ANNAHMEN.preise_eur.ticket_erwachsen,
+  gastro_pb: ANNAHMEN.preise_eur.umsatz_gastro_pro_besucher,
+  miete_m2: ANNAHMEN.standort.miete_eur_pro_m2_monat,
+  flaeche: ANNAHMEN.standort.flaeche_gesamt_m2,
+  fte: ANNAHMEN.personal.vollzeitstellen,
+}};
+let state = {{...DEFAULTS}};
+
+let umsatzChart, kostenChart, beChart;
+
+function renderKpis(m){{
+  const marge = (m.gewinn/m.umsatz*100);
+  const sicherheit = ((state.besucher-m.breakEven)/state.besucher*100);
+  const payback = m.gewinn>0 ? (ANNAHMEN.investition.eigenkapital_eur/m.gewinn) : Infinity;
+  const cards = [
+    ['Umsatz p.a.', eur(m.umsatz), 'Tickets + Gastro + Shop + Events', ''],
+    ['Gewinn vor Steuer', eur(m.gewinn), 'Marge ' + marge.toFixed(1) + '%', m.gewinn>=0?'good':'bad'],
+    ['Break-even', Math.round(m.breakEven).toLocaleString('de-DE') + ' Besucher',
+       (sicherheit>=0?'+':'') + sicherheit.toFixed(0) + '% Sicherheitspuffer', sicherheit>=10?'good':(sicherheit>=0?'warn':'bad')],
+    ['Investition (CapEx)', eur(m.capex), 'davon Attraktionen ' + eur(m.attrInvest), ''],
+    ['Ø Ticket', eur(m.avg_ticket), 'Deckungsbeitrag ' + eur(m.dbPB) + '/Besucher', ''],
+    ['Amortisation EK', isFinite(payback)? payback.toFixed(1)+' Jahre':'—', 'auf ' + eur(ANNAHMEN.investition.eigenkapital_eur) + ' Eigenkapital', payback<=5?'good':'warn'],
+  ];
+  document.getElementById('kpis').innerHTML = cards.map(c=>
+    `<div class="kpi"><div class="label">${{c[0]}}</div>
+     <div class="val ${{c[3]}}">${{c[1]}}</div><div class="sub">${{c[2]}}</div></div>`).join('');
+}}
+
+function renderCharts(m){{
+  const uData = [m.ticket, m.gastro, m.shop, m.jetons, m.events];
+  const uLabels = ['Tickets','Gastronomie','Shop','Jetons/Fahrzeit','Events/Firmen'];
+  const kData = [m.cogs, m.personal, m.miete+m.nk, m.betrieb, m.abschr, m.zins];
+  const kLabels = ['Wareneinsatz','Personal','Miete+NK','Betrieb','Abschreibung','Zins'];
+  const palette = ['#2dd4bf','#34d399','#60a5fa','#f59e0b','#f87171','#a78bfa'];
+
+  if(!umsatzChart){{
+    umsatzChart = new Chart(document.getElementById('umsatzChart'), {{
+      type:'doughnut',
+      data:{{labels:uLabels, datasets:[{{data:uData, backgroundColor:palette, borderColor:'#1a2530'}}]}},
+      options:{{plugins:{{legend:{{labels:{{color:'#e8eef3'}}}},
+        tooltip:{{callbacks:{{label:c=>c.label+': '+eur(c.raw)}}}}}}, maintainAspectRatio:false}}
+    }});
+    kostenChart = new Chart(document.getElementById('kostenChart'), {{
+      type:'bar',
+      data:{{labels:kLabels, datasets:[{{data:kData, backgroundColor:palette}}]}},
+      options:{{plugins:{{legend:{{display:false}},
+        tooltip:{{callbacks:{{label:c=>eur(c.raw)}}}}}},
+        scales:{{x:{{ticks:{{color:'#8aa0b2'}}}},y:{{ticks:{{color:'#8aa0b2',callback:v=>eurk(v)}}}}}},
+        maintainAspectRatio:false}}
+    }});
+  }} else {{
+    umsatzChart.data.datasets[0].data = uData; umsatzChart.update();
+    kostenChart.data.datasets[0].data = kData; kostenChart.update();
+  }}
+
+  // Break-even Linie
+  const xs=[], ys=[];
+  for(let b=0; b<=200000; b+=10000){{
+    const mm = modell({{...state, besucher:b}});
+    xs.push((b/1000)+'k'); ys.push(Math.round(mm.gewinn));
+  }}
+  if(!beChart){{
+    beChart = new Chart(document.getElementById('beChart'), {{
+      type:'line',
+      data:{{labels:xs, datasets:[{{label:'Gewinn p.a.', data:ys, borderColor:'#2dd4bf',
+        backgroundColor:'rgba(45,212,191,.12)', fill:true, tension:.2, pointRadius:0}}]}},
+      options:{{plugins:{{legend:{{labels:{{color:'#e8eef3'}}}},
+        tooltip:{{callbacks:{{label:c=>eur(c.raw)}}}}}},
+        scales:{{x:{{ticks:{{color:'#8aa0b2'}}}},
+          y:{{grid:{{color:ctx=>ctx.tick.value===0?'#f87171':'#2a3a48'}},
+             ticks:{{color:'#8aa0b2',callback:v=>eurk(v)}}}}}},
+        maintainAspectRatio:false}}
+    }});
+  }} else {{
+    beChart.data.datasets[0].data = ys; beChart.update();
+  }}
+  document.getElementById('be_note').textContent =
+    'Gewinnschwelle bei ~' + Math.round(m.breakEven).toLocaleString('de-DE') +
+    ' Besuchern/Jahr. Geplant: ' + state.besucher.toLocaleString('de-DE') + '.';
+}}
+
+function renderAttraktionen(){{
+  const rows = ATTRAKTIONEN.slice().sort((a,b)=>(b.invest_eur||0)-(a.invest_eur||0));
+  document.querySelector('#attrTable tbody').innerHTML = rows.map(a=>
+    `<tr><td>${{a.icon||''}} ${{a.name}}</td><td><span class="pill">${{a.kategorie}}</span></td>
+     <td class="num">${{a.flaeche_m2}}</td><td class="num">${{eur(a.invest_eur||0)}}</td>
+     <td class="wow">${{'★'.repeat(a.wow||0)}}</td></tr>`).join('') +
+    `<tr><td><b>Summe Attraktionen</b></td><td></td>
+     <td class="num"><b>${{rows.reduce((s,a)=>s+(a.flaeche_m2||0),0)}}</b></td>
+     <td class="num"><b>${{eur(rows.reduce((s,a)=>s+(a.invest_eur||0),0))}}</b></td><td></td></tr>`;
+
+  document.getElementById('attrCards').innerHTML = rows.map(a=>
+    `<div class="attr-card"><h3>${{a.icon||''}} ${{a.name}}</h3>
+      <div><span class="pill">${{a.kategorie}}</span> <span class="wow">${{'★'.repeat(a.wow||0)}}</span></div>
+      <p style="font-size:13px;color:#cdd8e1;margin:10px 0">${{a.beschreibung}}</p>
+      <div class="meta">💡 <b>USP:</b> ${{a.usp||''}}</div>
+      <div class="meta">${{a.flaeche_m2}} m² · Invest ${{eur(a.invest_eur||0)}} · Zielgruppe: ${{(a.zielgruppe||[]).join(', ')}}</div>
+      <ul>${{(a.highlights||[]).map(h=>`<li>${{h}}</li>`).join('')}}</ul>
+    </div>`).join('');
+}}
+
+function syncLabels(){{
+  document.getElementById('l_bes').textContent = state.besucher.toLocaleString('de-DE');
+  document.getElementById('l_terw').textContent = eur(state.ticket_erwachsen);
+  document.getElementById('l_gastro').textContent = state.gastro_pb.toFixed(1)+' €';
+  document.getElementById('l_miete').textContent = state.miete_m2.toFixed(1)+' €';
+  document.getElementById('l_flaeche').textContent = state.flaeche.toLocaleString('de-DE');
+  document.getElementById('l_fte').textContent = state.fte;
+}}
+
+function update(){{
+  const m = modell(state);
+  syncLabels(); renderKpis(m); renderCharts(m);
+}}
+
+function bind(id, key, parse){{
+  const el = document.getElementById(id);
+  el.value = state[key];
+  el.addEventListener('input', ()=>{{ state[key] = parse(el.value); update(); }});
+}}
+
+bind('s_bes','besucher',parseFloat);
+bind('s_terw','ticket_erwachsen',parseFloat);
+bind('s_gastro','gastro_pb',parseFloat);
+bind('s_miete','miete_m2',parseFloat);
+bind('s_flaeche','flaeche',parseFloat);
+bind('s_fte','fte',parseFloat);
+
+document.getElementById('reset').addEventListener('click', e=>{{
+  e.preventDefault(); state={{...DEFAULTS}};
+  ['s_bes','s_terw','s_gastro','s_miete','s_flaeche','s_fte'].forEach((id,i)=>{{
+    document.getElementById(id).value = Object.values(DEFAULTS)[i];
+  }});
+  update();
+}});
+
+renderAttraktionen();
+update();
+</script>
+</body>
+</html>

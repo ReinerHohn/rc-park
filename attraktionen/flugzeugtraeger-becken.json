@@ -1,0 +1,21 @@
+{
+  "id": "flugzeugtraeger-becken",
+  "name": "Flottenbecken & Flugzeugträger",
+  "kategorie": "Wasser",
+  "icon": "🚢",
+  "beschreibung": "Großes begehbares Wasserbecken (ca. 12 x 6 m) mit RC-Schiffen: Frachter, Schlepper, Rettungsboote, U-Boote und das Herzstück – ein maßstäblicher Flugzeugträger mit startenden Modellflugzeugen. Besucher übernehmen Kapitänsstände an der Beckenkante und manövrieren durch einen Miniatur-Hafen mit Schleuse und Kränen.",
+  "usp": "Das fotogene Aushängeschild – jeder will den Träger steuern. Social-Media-Magnet.",
+  "flaeche_m2": 180,
+  "invest_eur": 320000,
+  "zielgruppe": ["Familien", "Technikfans", "Erwachsene", "Touristen"],
+  "wetterfest": true,
+  "wow": 5,
+  "aufwand": 4,
+  "stationen": 8,
+  "highlights": [
+    "Maßstäblicher Flugzeugträger mit Katapult-Startrampe",
+    "Tauchfähige RC-U-Boote",
+    "Hafen mit funktionierender Schleuse und Verladekränen",
+    "Wellen- und Nebeleffekte"
+  ]
+}

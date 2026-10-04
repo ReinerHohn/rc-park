@@ -1,0 +1,21 @@
+{
+  "id": "heli-flughalle",
+  "name": "Flughalle: Helikopter, Flugzeuge & Drohnen",
+  "kategorie": "Luft",
+  "icon": "🚁",
+  "beschreibung": "Großzügige, komplett vernetzte Flughalle (hohe Decke) für RC-Helikopter, Flächenflieger und FPV-Drohnen. Anfänger fliegen mit gyrostabilisierten Einsteigermodellen über eine Miniatur-Landschaft; Fortgeschrittene nutzen einen FPV-Drohnen-Rennparcours mit Toren. Flugzeiten per Jeton.",
+  "usp": "Fliegen bei jedem Wetter – einzigartig in Südbaden. FPV-Racing als Event-Format.",
+  "flaeche_m2": 300,
+  "invest_eur": 220000,
+  "zielgruppe": ["Jugendliche", "Technikfans", "Erwachsene", "Vereine"],
+  "wetterfest": true,
+  "wow": 5,
+  "aufwand": 3,
+  "stationen": 10,
+  "highlights": [
+    "Sicherheits-Fangnetze rundum und oben",
+    "Gyro-stabilisierte Einsteiger-Helis (crash-sicher)",
+    "FPV-Drohnen-Rennparcours mit Videobrillen",
+    "Flugsimulator-Ecke für den ersten Versuch"
+  ]
+}

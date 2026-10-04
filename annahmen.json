@@ -1,0 +1,58 @@
+{
+  "_hinweis": "Alle Annahmen sind editierbar. build.py erzeugt daraus businessplan.html mit Live-Reglern. Zahlen sind begruendete Schaetzungen fuer einen mittelgrossen Indoor-Freizeitstandort in Freiburg, Stand 2026.",
+
+  "standort": {
+    "flaeche_gesamt_m2": 2000,
+    "miete_eur_pro_m2_monat": 11.0,
+    "nebenkosten_eur_pro_m2_monat": 3.5
+  },
+
+  "besucher": {
+    "besucher_pro_jahr": 110000,
+    "anteil_erwachsene": 0.42,
+    "anteil_kinder": 0.33,
+    "anteil_ermaessigt": 0.15,
+    "anteil_familienticket_haushalte": 0.10,
+    "oeffnungstage_pro_jahr": 330
+  },
+
+  "preise_eur": {
+    "ticket_erwachsen": 21.0,
+    "ticket_kind": 14.0,
+    "ticket_ermaessigt": 18.0,
+    "familienticket_2e_2k": 58.0,
+    "umsatz_gastro_pro_besucher": 6.5,
+    "umsatz_shop_pro_besucher": 3.2,
+    "umsatz_jetons_fahrzeit_pro_besucher": 3.5,
+    "events_firmen_pro_jahr_eur": 180000
+  },
+
+  "wareneinsatz": {
+    "gastro_cogs_anteil": 0.32,
+    "shop_cogs_anteil": 0.55
+  },
+
+  "personal": {
+    "vollzeitstellen": 22,
+    "kosten_pro_vollzeit_jahr_eur": 46000,
+    "saisonale_aushilfen_jahr_eur": 140000
+  },
+
+  "betriebskosten_jahr_eur": {
+    "energie": 160000,
+    "versicherung": 45000,
+    "marketing": 220000,
+    "instandhaltung_rc_flotte": 150000,
+    "verwaltung_it_sonstiges": 120000
+  },
+
+  "investition": {
+    "umbau_halle_eur": 900000,
+    "gastro_shop_einrichtung_eur": 240000,
+    "it_kassensystem_eur": 90000,
+    "abschreibungsdauer_jahre": 8,
+    "attraktionen_invest_quelle": "summe aus attraktionen/*.json",
+    "eigenkapital_eur": 800000,
+    "fremdkapital_zins_pa": 0.06
+  }
+}

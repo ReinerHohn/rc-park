@@ -1,0 +1,21 @@
+{
+  "id": "truck-baustelle",
+  "name": "RC-Baustelle & Truck-Spedition",
+  "kategorie": "Boden",
+  "icon": "🚜",
+  "beschreibung": "Ein voll funktionsfähiger Miniatur-Baustellen- und Logistikhof: RC-Bagger baggern echten Granulat-Kies, Muldenkipper fahren ihn ab, Kräne verladen Container, und maßstäbliche LKW mit Anhänger rangieren an Laderampen. Hydraulik-Modelle für Fortgeschrittene, einfache Modelle für Kinder.",
+  "usp": "Haptisch und endlos: echtes Material bewegen. Kinder bleiben hier am längsten.",
+  "flaeche_m2": 220,
+  "invest_eur": 190000,
+  "zielgruppe": ["Kinder", "Familien", "Technikfans"],
+  "wetterfest": true,
+  "wow": 4,
+  "aufwand": 3,
+  "stationen": 12,
+  "highlights": [
+    "Funktions-Hydraulikbagger mit echtem Schüttgut",
+    "Kran-Verladung mit Containern",
+    "LKW-Rangierparcours mit Laderampe",
+    "Einsteiger-Zone für die Kleinsten"
+  ]
+}

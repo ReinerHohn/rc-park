@@ -1,0 +1,21 @@
+{
+  "id": "crawler-parcours",
+  "name": "Offroad- & Crawler-Parcours",
+  "kategorie": "Boden",
+  "icon": "🪨",
+  "beschreibung": "Ein spektakuläres Fels- und Geländemassiv aus Kunstfelsen, Wasserfurten und Steilrampen für RC-Crawler und Trial-Trucks. Besucher meistern mit hochgeländegängigen Modellen eine markierte Trial-Strecke mit Schwierigkeitsgraden – von 'Familie' bis 'Experte'.",
+  "usp": "Geschicklichkeit statt Tempo – langsames, konzentriertes Spiel, das auch Ältere fesselt.",
+  "flaeche_m2": 160,
+  "invest_eur": 120000,
+  "zielgruppe": ["Familien", "Technikfans", "Erwachsene"],
+  "wetterfest": true,
+  "wow": 4,
+  "aufwand": 2,
+  "stationen": 6,
+  "highlights": [
+    "Kunstfelsen-Massiv mit Wasserfurt",
+    "Trial-Strecke mit 4 Schwierigkeitsgraden",
+    "Portalachsen-Crawler zum Ausleihen",
+    "Zeit- und Punkte-Challenges"
+  ]
+}

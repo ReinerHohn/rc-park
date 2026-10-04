@@ -1,0 +1,21 @@
+{
+  "id": "gastro-shop-werkstatt",
+  "name": "Gastronomie, Shop & Schau-Werkstatt",
+  "kategorie": "Service",
+  "icon": "🍔",
+  "beschreibung": "Das wirtschaftliche Rückgrat: Café/Bistro mit Blick auf Becken und Rennstrecke, ein Modellbau-Shop (Fahrzeuge, Ersatzteile, Souvenirs) und eine gläserne Schau-Werkstatt, in der Technik gewartet und repariert wird – als Attraktion und als Service für Besucher-Modelle.",
+  "usp": "Höchste Marge im Haus. Verlängert Verweildauer, erzeugt Zusatzumsatz und Wiederkäufe.",
+  "flaeche_m2": 260,
+  "invest_eur": 240000,
+  "zielgruppe": ["Alle"],
+  "wetterfest": true,
+  "wow": 2,
+  "aufwand": 3,
+  "stationen": 0,
+  "highlights": [
+    "Bistro mit Blick auf die Attraktionen",
+    "Shop mit Fahrzeugen, Ersatzteilen, Merch",
+    "Gläserne Reparatur-Werkstatt als Schaustation",
+    "Reparatur-Service auch für mitgebrachte Modelle"
+  ]
+}
