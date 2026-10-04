@@ -79,13 +79,18 @@ def earclip(poly):
     return tris
 
 tris=[]  # list of (p1,p2,p3) in meters, z up
+muenster_poly=None; cand=[]   # Kirchen/Muenster werden NICHT extrudiert (Platz bleibt frei)
 for w in ways:
     ring=[nodes[nid] for nid in w["nodes"] if nid in nodes]
     if len(ring)<4: continue
     if ring[0]==ring[-1]: ring=ring[:-1]
     if len(ring)<3: continue
     poly=[proj(lo,la) for lo,la in ring]
-    h=height_of(w.get("tags"))
+    tg=w.get("tags") or {}
+    # Kirchen/Muenster NICHT extrudieren -> Platz bleibt frei fuers Highlight (Faller/Druck)
+    if tg.get("building") in ("cathedral","church","chapel") or "ünster" in tg.get("name",""):
+        cand.append(poly); continue
+    h=height_of(tg)
     ct=earclip(poly)
     if not ct: continue
     m=len(poly)
@@ -113,6 +118,22 @@ for w in ways:
     for (i,jx,k) in earclip(top):
         A=top[i];B=top[jx];C=top[k]
         tris.append(((A[0],A[1],h+rh),(B[0],B[1],h+rh),(C[0],C[1],h+rh)))
+
+# Muenster-Platz freilassen: duenner Marker-Sockel zeigt den reservierten Highlight-Slot
+if cand:
+    def _area(p):
+        n=len(p); return abs(sum(p[i][0]*p[(i+1)%n][1]-p[(i+1)%n][0]*p[i][1] for i in range(n)))/2
+    muenster_poly=max(cand,key=_area); mh=1.2
+    for (i,jx,k) in earclip(muenster_poly):
+        A=muenster_poly[i];B=muenster_poly[jx];C=muenster_poly[k]
+        tris.append(((A[0],A[1],0),(C[0],C[1],0),(B[0],B[1],0)))
+        tris.append(((A[0],A[1],mh),(B[0],B[1],mh),(C[0],C[1],mh)))
+    mm=len(muenster_poly)
+    for e in range(mm):
+        A=muenster_poly[e];B=muenster_poly[(e+1)%mm]
+        a0=(A[0],A[1],0);b0=(B[0],B[1],0);a1=(A[0],A[1],mh);b1=(B[0],B[1],mh)
+        tris.append((a0,b0,b1)); tris.append((a0,b1,a1))
+    print("Highlight-Slot (Muenster-Platz) freigelassen + markiert.")
 
 # Grundplatte (duenn) unter allem
 xs=[p[0] for t in tris for p in t]; ys=[p[1] for t in tris for p in t]
