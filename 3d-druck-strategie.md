@@ -14,6 +14,30 @@
 5. **Farbe** über getrennt gedruckte Teile in verschiedenen Filamenten **oder** Lackieren
    (Grundierspray + Wash/Drybrush) — nicht über Düsen-Farbwechsel.
 
+## ⭐ Der Sweet Spot: groß + detailliert + schnell *zugleich*
+
+Die drei Ziele widersprechen sich auf **einem** Druck / **einer** Maschine:
+Detail will fein & langsam, Speed will grob, Groß passt nicht auf die Platte.
+Der Trick: **nicht in einem Druck lösen, sondern aufteilen** — dann bekommst du alle drei.
+
+1. **Modularer Bausatz** → löst „groß" UND macht Parallelität erst möglich. Großes Modell
+   in plattengroße Module schneiden (Pass-Stifte an die Schnittflächen).
+2. **Detail-Zoning (LOD):** hochauflösend nur, wo man hinschaut — **sichtbare Fassaden,
+   Türme, Maßwerk**. Rückwände, Basis, Innenwände grob & schnell. Detail kostet nur dort Zeit,
+   wo es wirkt.
+3. **Parallele Druckfarm** → macht das *Gesamtwerk* schnell, obwohl Detail-Teile langsam sind.
+   Wall-clock ≈ langsamstes Modul, **nicht** Summe aller Teile. Das ist der eigentliche
+   Speed-Hebel bei großen Modellen.
+4. **Verfahren je Modul:** Resin oder 0,2-mm-FDM für die filigranen Hero-Teile (Turmhelm,
+   Maßwerk), schnelles 0,6-mm/0,3-mm-FDM für die Masse-Module.
+5. **FDM-Maschinen-Sweet-Spot:** schneller CoreXY (Bambu P1S/X1C, Prusa Core One, Creality K)
+   mit **0,4-mm-Düse @ 0,12–0,16 mm Schicht** = bester Detail/Speed-Kompromiss *ohne*
+   Resin-Aufwand. Separate **0,2-mm-Düse** nur für die wenigen Hero-Detail-Teile.
+
+> **Faustregel:** „Ein großes, detailreiches Modell = viele kleine, je einzeln optimierte
+> Module, parallel gedruckt." Jedes Modul maximiert **eine** Achse — das Gesamtergebnis hat
+> alle drei. Details zu Detail-Verfahren & Licht: [`beleuchtung-detail.md`](beleuchtung-detail.md).
+
 ## Warum kein Single-Nozzle-Mehrfarbdruck
 
 Bei AMS/MMU teilen sich alle Farben **eine Düse**. Jeder Farbwechsel braucht einen
