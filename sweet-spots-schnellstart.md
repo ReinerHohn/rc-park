@@ -21,6 +21,18 @@ dafür **1,18 Mio € Fördermittel**. Bereits 9 Pop-ups realisiert, 5 wurden da
 - **Tun:** FWTM-Innenstadtmanagement / Pop-up-Programm direkt ansprechen (Kontakt über
   fwtm.freiburg.de bzw. freiburg.de/Pop-Up-Stores).
 
+**Wie die FWTM-Subvention konkret funktioniert:**
+- FWTM ist **Hauptmieter** (mietet Leerstand mit ZIZ-Bundesmitteln) und gibt ihn **zu
+  vergünstigten Konditionen** an dich (Endnutzer) weiter.
+- Bei den jüngsten Pop-ups (Schwabentor, Schlossberg) zahlten Nutzer **weder Miete noch
+  Nebenkosten** (beides gesponsert) + FWTM macht Marketing mit → **quasi kostenlos**.
+- **Aber nur kurz** (Wochen bis wenige Monate) und eher Labels/Kultur/Gastro, oft rotierend.
+- **Lage:** zentrale Altstadt (frühere Standorte: Rathausgasse, Schusterstraße, Schwabentor,
+  Rotteckring, Schlossberg) — **nicht** 1a-KaJo. Für FPV reicht ~3 m Deckenhöhe, ~120 m².
+- **Für FPV**: als **kurzen Proof-of-Concept** (fast gratis) nutzen, dann in reguläre
+  **vergünstigte Zwischennutzung** übergehen (dann reduzierte Miete statt 0).
+- **Erfolg bisher:** 5 Pop-up-Nutzer sind danach in ein festes Ladengeschäft gegangen.
+
 ### 🥈 2. Druck-Farm mit Automatisierung — „wenig Personal, viel Output"
 Automatisierte Print-Farmen schaffen **99,7 % Uptime mit nur ~3 h Mensch-Arbeit pro 1.000 h
 Druckzeit**. Mit Fleet-Software skaliert **eine Person von 3 auf 300 Drucker** ohne mehr
