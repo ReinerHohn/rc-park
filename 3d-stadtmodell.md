@@ -74,6 +74,41 @@
 → Für dich am wichtigsten: **F4Map** (ansehen) + **LoD2 Freiburg** (echte Dächer, drucken) +
 **TouchTerrain** (Schwarzwald-Sockel). Hero-Wahrzeichen separat (Scan/Faller).
 
+## 🌍 Noch viel mehr Datenquellen (Vollliste)
+
+**Globale Gebäudedaten (gratis):**
+- **Overture Maps** — offener globaler Gebäude-Datensatz (Meta/MS/Amazon/TomTom), Footprints+Höhen.
+- **Microsoft Building Footprints** — weltweit, ML-erzeugt, gratis (GitHub).
+- **Google Open Buildings** — gratis (v. a. globaler Süden).
+
+**Andere Bundesländer (eigene LoD2/LoD3 Open Data):** Bayern, NRW, Berlin (3D), **Hamburg 3D**,
+Thüringen, Sachsen … — falls ihr über Freiburg hinauswollt.
+
+**Komfort-Tools (Buildings + Terrain + Satellit in einem):**
+- **Blosm / Blender-OSM** (Blender-Addon) — OSM-Gebäude **+ Google 3D-Tiles + Gelände** importieren.
+- **BlenderGIS** — OSM, DGM, Orthofotos nach Blender. · **OSM2World** — OSM → 3D.
+
+**Gelände / Höhe (präzise):**
+- **DGM1 (1 m!)** der Landesvermessung (LGL BW, Open Data) — viel feiner als SRTM.
+- **OpenTopography** (DEM + LiDAR), **Copernicus DEM GLO-30**, **ALOS AW3D30**.
+
+**Bilder / Textur (für Farbe/Hueforge):**
+- **Orthophotos DOP20** (20 cm, Open Data der Länder) — Dachtexturen von oben.
+- **Mapillary / KartaView / Panoramax** — Straßenbilder → eigene Photogrammetrie.
+
+**Fertige Modelle (kaufen/gratis):**
+- **Sketchfab** (Scans, teils CC), **Printables / MakerWorld / Thingiverse / Cults / MyMiniFactory**
+  (druckbar), **Gambody** (Detail), **Thangs**, **GrabCAD**, **3D Warehouse** (SketchUp-Architektur),
+  **BIMobject** (Bauteile).
+
+**Historisch / Kontext:**
+- **Historische Karten** (Landesarchiv BW, David Rumsey) — fürs „historische Freiburg".
+- **Wikidata / Wikimedia Commons** — Landmark-Fotos als Photogrammetrie-Vorlage.
+- **OSM-POIs** (Bäume, Bänke, Straßenmöbel, Läden) — zum Ausstatten des Dioramas.
+
+**KI (Bild/Text → 3D):**
+- **Meshy · Luma · Tripo · Rodin** — aus Fotos/Prompts 3D-Modelle generieren.
+
 ## Quellen
 daten-bw.de (3D-Stadtmodell Freiburg LoD2), opendata.lgl-bw.de, lgl-bw.de (LoD2-Produkt),
 geoportal.freiburg.de, gdz.bkg.bund.de, citygml2stl (PyPI), 3dcityloader.com, cadmapper.com,
