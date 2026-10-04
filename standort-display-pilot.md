@@ -27,11 +27,17 @@
 - **Münsterturm/Türmerstube** (Eintritt €5): **wartendes Publikum**, aber **sehr wenig Platz**
   (historisch eng) → eher der c-punkt.
 
-## 💡 Wichtiger Fund: StadtModell Freiburg e.V.
-Es gibt **bereits einen Verein, der ein Freiburg-Stadtmodell betreibt** (burgey.eu) — für
-öffentliche/stadtplanerische/kulturelle Zwecke, mit Vorträgen/Ausstellungen/Führungen am
-Modell-Standort. → **Möglicher Partner/Verbündeter** (nicht Konkurrenz): Know-how, evtl.
-gemeinsamer Standort oder Türöffner. (Wie Kastelburg/Elztalmuseum ein Vorbild.)
+## 💡 Wichtiger Fund: StadtModell Freiburg e.V. (KEIN Konkurrent!)
+stadtmodellfreiburg.de — ein **Stadtplanungs-/Baukultur-Modell** (Verein, 2012, an der Uni
+Freiburg): Zweck = **Bürgerbeteiligung + Stadtplanung** (Dreisamufer, Dietenbach), **Bildung**
+(Schulen), Treffpunkt für Stadtführungen. **Modular** (Platten max. 1×1 m zum Umstellen).
+- **Deshalb grobe Klötze — mit Absicht:** ein Planungsmodell zeigt **Massen/Struktur**, nicht
+  Fassaden (Detail wäre nutzlos, Platten werden umgestellt, um Bauvorhaben zu simulieren).
+- **Völlig anderer Zweck als unserer:** sie **planen/verstehen** die Stadt, wir **unterhalten/
+  begeistern** (Detail + Höllentalbahn + Licht). → **Unsere Nische (detailliertes
+  Miniaturwunderland) ist frei.**
+- **Aber potenzieller Partner:** Stadt-/Uni-Kontakte, Baukultur-Glaubwürdigkeit, Schulen,
+  Bürgerbeteiligung → Cross-Promotion/Türöffner. (Wie Kastelburg/Elztalmuseum ein Verbündeter.)
 
 ## Empfohlene Reihenfolge
 1. **Stadtbibliothek Münsterplatz** anfragen → **kostenloser Pilot** (ein beleuchtetes
