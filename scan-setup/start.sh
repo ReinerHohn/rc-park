@@ -68,7 +68,16 @@ OUT="$BASE/Export/$NAME"; mkdir -p "$OUT"
 
 c "2) RECHNEN (automatisch - das dauert, RTX arbeitet)"
 echo "Meshroom baut jetzt das 3D-Modell aus deinen Fotos..."
-"$BATCH" --input "$FOTOS" --output "$OUT"
+# Cache (2-5 GB pro Lauf) auf die grosse Volume-Partition statt /tmp (Linux-Root ist knapp)
+VOL=/media/oem/Volume
+if [ -w "$VOL" ] && mountpoint -q "$VOL"; then
+  CACHE="$VOL/MeshroomCache/$NAME"
+else
+  CACHE="/tmp/MeshroomCache/$NAME"
+  warn "Volume nicht eingehaengt -> Cache in /tmp (wenig Platz!)."
+fi
+mkdir -p "$CACHE"; echo "Cache: $CACHE"
+"$BATCH" --input "$FOTOS" --output "$OUT" --cache "$CACHE"
 RC=$?
 
 c "3) ERGEBNIS"
