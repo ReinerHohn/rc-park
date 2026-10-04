@@ -12,6 +12,7 @@ selbst steuern.
 | Datei | Inhalt |
 |---|---|
 | [`KONZEPT.md`](KONZEPT.md) | Vision, USP, Attraktionen, Zielgruppen, Risiken |
+| [`prototyp-konzept.md`](prototyp-konzept.md) | **Schneller Prototyp**: eBay-Gear reparieren + Druckmodule + Personal-Konzept |
 | [`standort.md`](standort.md) | Anforderungsprofil & Standortlogik Freiburg |
 | [`mieten-kalkulation.md`](mieten-kalkulation.md) | Freiburg-Mieten (Tiers) + Kalkulation je Größe/Lage + Lage-Sweet-Spots |
 | [`mvp-kalkulation.md`](mvp-kalkulation.md) | **MVP durchgerechnet**: Sweet Spot Lage + Features, CapEx, Break-even |
