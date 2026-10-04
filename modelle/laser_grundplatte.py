@@ -88,30 +88,57 @@ print("  Strassen %d / Baechle %d / Haeuser %d"%(len(strassen),len(baechle),len(
 os.makedirs(os.path.join(HERE,"laser","tiles"),exist_ok=True)
 def ysvg(y): return Hmm-y   # SVG y nach unten -> Norden oben
 
-def poly_svg(pts,close=False):
-    d="M "+" L ".join("%.2f,%.2f"%(x,ysvg(y)) for x,y in pts)
-    return d+(" Z" if close else "")
+def clip_poly(pts,rx0,ry0,rx1,ry1,close=False):
+    """Liang-Barsky: Polylinie GEOMETRISCH auf Rechteck beschneiden (nicht per clip-path,
+    das viele Laser-Programme ignorieren). Gibt Liste beschnittener Teil-Polylinien zurueck."""
+    pp=list(pts)+([pts[0]] if close and len(pts)>2 else [])
+    out=[]; cur=[]
+    for i in range(len(pp)-1):
+        x1,y1=pp[i]; x2,y2=pp[i+1]; dx=x2-x1; dy=y2-y1; t0=0.0; t1=1.0; rej=False
+        for p,qq in ((-dx,x1-rx0),(dx,rx1-x1),(-dy,y1-ry0),(dy,ry1-y1)):
+            if p==0:
+                if qq<0: rej=True; break
+            else:
+                r=qq/p
+                if p<0:
+                    if r>t1: rej=True; break
+                    if r>t0: t0=r
+                else:
+                    if r<t0: rej=True; break
+                    if r<t1: t1=r
+        if rej:
+            if len(cur)>1: out.append(cur)
+            cur=[]; continue
+        a=(x1+t0*dx,y1+t0*dy); b=(x1+t1*dx,y1+t1*dy)
+        if cur and abs(t0)<1e-9 and abs(cur[-1][0]-a[0])<1e-6 and abs(cur[-1][1]-a[1])<1e-6:
+            cur.append(b)
+        else:
+            if len(cur)>1: out.append(cur)
+            cur=[a,b]
+        if t1<1-1e-9:   # Segment verlaesst das Rechteck -> Polylinie hier trennen
+            if len(cur)>1: out.append(cur)
+            cur=[]
+    if len(cur)>1: out.append(cur)
+    return out
 
-def write_svg(path,x0,y0,w,h,clip=False):
+def paths_svg(polys,rx0,ry0,rx1,ry1,close):
+    out=[]
+    for p in polys:
+        for seg in clip_poly(p,rx0,ry0,rx1,ry1,close):
+            out.append('<path d="M '+" L ".join("%.2f,%.2f"%(x,ysvg(y)) for x,y in seg)+'"/>')
+    return out
+
+def write_svg(path,x0,y0,w,h):
+    rx0,ry0,rx1,ry1=x0,y0,x0+w,y0+h
     L=['<?xml version="1.0" encoding="UTF-8"?>',
        '<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" viewBox="%.2f %.2f %.2f %.2f">'
        %(w,h,x0,ysvg(y0+h),w,h),
        '<!-- Laser: schnitt=rot Plattenrand, raster=blau Kachelgrenze(Score), strassen=schwarz, baechle=cyan, haeuser=grau. Datenbasis (c) OpenStreetMap ODbL. -->']
-    cp=""
-    if clip:
-        L.append('<clipPath id="c"><rect x="%.2f" y="%.2f" width="%.2f" height="%.2f"/></clipPath>'%(x0,ysvg(y0+h),w,h))
-        cp=' clip-path="url(#c)"'
-    L.append('<g%s fill="none" stroke-linecap="round" stroke-linejoin="round">'%cp)
-    # Gravur: Haeuser (grau), Baechle (cyan), Strassen (schwarz)
-    L.append('<g stroke="#999999" stroke-width="0.3">')
-    for p in haeuser: L.append('<path d="%s"/>'%poly_svg(p,close=True))
-    L.append('</g>')
-    L.append('<g stroke="#00b0d0" stroke-width="0.5">')
-    for p in baechle: L.append('<path d="%s"/>'%poly_svg(p))
-    L.append('</g>')
-    L.append('<g stroke="#000000" stroke-width="0.6">')
-    for p in strassen: L.append('<path d="%s"/>'%poly_svg(p))
-    L.append('</g>')
+    L.append('<g fill="none" stroke-linecap="round" stroke-linejoin="round">')
+    # Gravur: Haeuser (grau), Baechle (cyan), Strassen (schwarz) -- geometrisch geclippt
+    L.append('<g stroke="#999999" stroke-width="0.3">'); L+=paths_svg(haeuser,rx0,ry0,rx1,ry1,True); L.append('</g>')
+    L.append('<g stroke="#00b0d0" stroke-width="0.5">'); L+=paths_svg(baechle,rx0,ry0,rx1,ry1,False); L.append('</g>')
+    L.append('<g stroke="#000000" stroke-width="0.6">'); L+=paths_svg(strassen,rx0,ry0,rx1,ry1,False); L.append('</g>')
     L.append('</g>')
     # Kachelraster (Score, blau gestrichelt)
     L.append('<g fill="none" stroke="#2040ff" stroke-width="0.4" stroke-dasharray="3,2">')
@@ -133,7 +160,7 @@ print("SVG -> modelle/laser/grundplatte_uebersicht.svg (%.0fx%.0f mm)"%(Wmm,Hmm)
 nt=0
 for tx in range(TILES):
     for ty in range(TILES):
-        write_svg(os.path.join(HERE,"laser","tiles","t%02d_%02d.svg"%(tx,ty)),tx*tw,ty*th,tw,th,clip=True); nt+=1
+        write_svg(os.path.join(HERE,"laser","tiles","t%02d_%02d.svg"%(tx,ty)),tx*tw,ty*th,tw,th); nt+=1
 print("Kachel-SVGs -> modelle/laser/tiles/ (%d, je %.0fx%.0f mm, passend zu tiles_%dx%d)"%(nt,tw,th,TILES,TILES))
 
 # ============================ Farb-Preview PNG ============================
