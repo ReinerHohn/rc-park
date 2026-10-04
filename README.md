@@ -14,6 +14,7 @@ selbst steuern.
 | [`KONZEPT.md`](KONZEPT.md) | Vision, USP, Attraktionen, Zielgruppen, Risiken |
 | [`standort.md`](standort.md) | Anforderungsprofil & Standortlogik Freiburg |
 | [`3d-druck-strategie.md`](3d-druck-strategie.md) | Schnell Gebäude/Dioramen als Bausatz drucken; Mehrfarb-Druck-Urteil |
+| [`modelle-schwarzwald.md`](modelle-schwarzwald.md) | Sweet-Spot-Modelle (Freiburg/Schwarzwald), sortiert nach Erfolg × Wow |
 | [`annahmen.json`](annahmen.json) | **Alle editierbaren Finanz-Annahmen** |
 | [`attraktionen/*.json`](attraktionen/) | Je Attraktion: Beschreibung, Fläche, Invest, USP |
 | `build.py` | Erzeugt `businessplan.html` aus den Daten |
