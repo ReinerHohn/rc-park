@@ -17,10 +17,17 @@
 - Die **öffentliche FWTM-Fläche** (die FWTM-„Zentrale" selbst, Neuer Messplatz 3, ist nur
   Verwaltung — dort kein Publikum). Für die FWTM-Schiene = Tourist-Info.
 
-## 🥉 Museen (thematisch perfekt)
-- **Museum für Stadtgeschichte** (Wentzingerhaus, am Münsterplatz) — **Stadtgeschichte** →
-  ein Mini-Freiburg passt ideal. **Augustinermuseum** — Kulturpublikum.
-- Formeller / längere Vorlaufzeit, aber hohe Glaubwürdigkeit.
+## 🥉 Museen (top Lage + perfekter Themen-Fit, aber höhere Hürde)
+- **Museum für Stadtgeschichte** (Wentzingerhaus, **Münsterplatz 30**) — handelt von **Freiburgs
+  Stadtgeschichte** → Mini-Freiburg passt **wie angegossen**. Zentral, zahlende Touristen.
+- **Augustinermuseum** — beherbergt die **originalen Münster-Figuren/Wasserspeier** → starke
+  Synergie mit einem gedruckten/gescannten Münster.
+- **Aber:** kuratorischer Prozess, Eintritt, **längere Vorlaufzeit**; eher **Sonderausstellung /
+  würdiges Bildungs-Exponat** als „kostenlos hinstellen". Der **kommerzielle Souvenir-/Animations-
+  Teil** passt besser in Bibliothek/Tourist-Info.
+- **Ansprechen:** Städtische Museen Freiburg / Kulturamt.
+- **Kluge Kombi:** Bibliothek = schneller, kostenloser Pilot; **Museum = Glaubwürdigkeits-/
+  Touristen-Standort** (Sonderausstellung, Presse, Türöffner) mit Vorlauf → parallel anbahnen.
 
 ## 🏅 Rund ums Münster
 - **c-punkt Münsterforum** (Herrenstraße 33) — Besucherzentrum, Führungen starten hier.
