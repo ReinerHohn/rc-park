@@ -17,6 +17,8 @@ selbst steuern.
 | [`machbarkeit-und-hebel.md`](machbarkeit-und-hebel.md) | Machbarkeit + Beschaffung: gebraucht kaufen, Module, RC-Baggerland |
 | [`risikolos-ohne-personal.md`](risikolos-ohne-personal.md) | Risikolos starten & (fast) ohne Personal: Schau-Installation, Self-Service |
 | [`demo-standort.md`](demo-standort.md) | Risikoärmster Start: Demo bei bemanntem Partner am Münster |
+| [`lean-phasen.md`](lean-phasen.md) | Lean-Start in Phasen: Demo & Pop-up & große Fläche (Gates) |
+| [`startausstattung.md`](startausstattung.md) | Einkaufsliste mit Preisen (gebraucht/neu) + Kastelburg-Vorbild |
 | [`3d-druck-strategie.md`](3d-druck-strategie.md) | Schnell Gebäude/Dioramen als Bausatz drucken; Mehrfarb-Druck-Urteil |
 | [`modelle-schwarzwald.md`](modelle-schwarzwald.md) | Sweet-Spot-Modelle (Freiburg/Schwarzwald), sortiert nach Erfolg × Wow |
 | [`beleuchtung-detail.md`](beleuchtung-detail.md) | Max. Detail (Resin) + Beleuchtung der Wahrzeichen (Wow-Hebel) |
