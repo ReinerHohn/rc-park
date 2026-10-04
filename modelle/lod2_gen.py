@@ -122,14 +122,24 @@ if os.path.exists(HERO_JSON):
         vmin=V.reshape(-1,3).min(0); vmax=V.reshape(-1,3).max(0); ext=vmax-vmin
         hs=(float(h["height_m"])/ext[2]) if ext[2]>0 else 1.0   # auf echte Zielhoehe (m) skalieren
         W=(V-vmin)*hs   # Nullpunkt unten, in Metern
-        if h.get("rot_deg"):
-            th=math.radians(float(h["rot_deg"])); ca,sa=math.cos(th),math.sin(th)
-            cx=(W[:,:,0].max())/2; cy=(W[:,:,1].max())/2
-            x=W[:,:,0]-cx; y=W[:,:,1]-cy
-            W[:,:,0]=x*ca-y*sa+cx; W[:,:,1]=x*sa+y*ca+cy
-        # in UTM-Weltkoordinaten setzen: zentriert auf Hero, Basis auf Bodenhoehe
-        W[:,:,0]+= he-(W[:,:,0].max()/2); W[:,:,1]+= hn-(W[:,:,1].max()/2); W[:,:,2]+= grd
+        def _pca_angle(P):
+            P=np.asarray(P,dtype=np.float64); P=P-P.mean(0); C=P.T@P
+            w,v=np.linalg.eigh(C); ax=v[:,int(np.argmax(w))]; return math.atan2(ax[1],ax[0])
+        # Ziel-Orientierung aus den HOHEN (=Muenster-)Teilen der entfernten LoD2-Masse
+        hmax=max(buildings[i]['zmax']-buildings[i]['zmin'] for i in rem)
+        tall=np.array([(p[0],p[1]) for i in rem if (buildings[i]['zmax']-buildings[i]['zmin'])>0.4*hmax
+                       for t in buildings[i]['t'] for p in t],dtype=np.float64)
+        a_lod=_pca_angle(tall) if len(tall)>=3 else 0.0
+        a_scan=_pca_angle(W[:,:,:2].reshape(-1,2))
+        rot=(a_lod-a_scan)+math.radians(float(h.get("rot_deg",0)))  # Auto-Align (+ optionaler Zusatzwinkel)
+        ca,sa=math.cos(rot),math.sin(rot)
+        cx=(W[:,:,0].min()+W[:,:,0].max())/2; cy=(W[:,:,1].min()+W[:,:,1].max())/2
+        x=W[:,:,0]-cx; y=W[:,:,1]-cy
+        W[:,:,0]=x*ca-y*sa; W[:,:,1]=x*sa+y*ca   # um eigenes Zentrum drehen
+        # in UTM-Weltkoordinaten: Bbox-Zentrum auf Hero-Lage, Basis auf Bodenhoehe
+        W[:,:,0]+= he; W[:,:,1]+= hn; W[:,:,2]+= grd-W[:,:,2].min()
         Wm=(W-gmn)*s  # ins Modell-mm (gleiche Skalierung wie LoD2)
+        print("  Auto-Align: LoD2 %.0f deg, Scan %.0f deg -> drehe %.0f deg"%(math.degrees(a_lod),math.degrees(a_scan),math.degrees(rot)))
         hero_tris.append(((he-gmn[0])*s,(hn-gmn[1])*s,Wm.tolist()))
         print("  + Hero '%s': %d LoD2-Gebaeude ersetzt, Detailmodell %.0fmm hoch eingefuegt"%(h["name"],len(rem),Wm[:,:,2].max()-Wm[:,:,2].min()))
 if hmset: print("Hero-Overlay: %d Gebaeude durch %d Detailmodelle ersetzt"%(len(hmset),len(hero_tris)))

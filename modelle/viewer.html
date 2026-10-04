@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Freiburg Altstadt – 3D</title>
+<style>
+ html,body{margin:0;height:100%;overflow:hidden;background:#15161c;font-family:sans-serif}
+ #hud{position:fixed;left:12px;top:10px;color:#cdd;font-size:13px;line-height:1.4;
+      background:rgba(0,0,0,.45);padding:8px 12px;border-radius:8px}
+ #hud b{color:#ffd27a}
+ #err{position:fixed;left:12px;bottom:12px;color:#ff8080;font-size:13px}
+</style>
+<script type="importmap">
+{"imports":{
+ "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+ "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+</head>
+<body>
+<div id="hud"><b>Freiburg Altstadt</b> (LoD2 + Münster-Scan)<br>
+ 🖱️ links = drehen · rechts = schieben · Rad = zoomen</div>
+<div id="err"></div>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {STLLoader} from 'three/addons/loaders/STLLoader.js';
+
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x15161c);
+const cam=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,0.1,500000);
+cam.up.set(0,0,1);                                  // Z ist oben (STL-Konvention)
+const rnd=new THREE.WebGLRenderer({antialias:true,logarithmicDepthBuffer:true});
+rnd.setSize(innerWidth,innerHeight); rnd.setPixelRatio(devicePixelRatio);
+document.body.appendChild(rnd.domElement);
+
+scene.add(new THREE.HemisphereLight(0xffffff,0x40404a,1.4));
+const sun=new THREE.DirectionalLight(0xfff4e0,1.3); sun.position.set(0.5,-1,1.4); scene.add(sun);
+const head=new THREE.PointLight(0xffffff,0.9,0,0); cam.add(head); scene.add(cam);  // mitlaufendes Licht
+const ctl=new OrbitControls(cam,rnd.domElement); ctl.enableDamping=true;
+
+const file=new URLSearchParams(location.search).get('stl')||'altstadt_lod2.stl';
+const bust=file+(file.includes('?')?'&':'?')+'t='+Date.now();   // Cache-Bust: immer frische STL
+new STLLoader().load(bust,g=>{
+  g.computeVertexNormals();
+  const mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial(
+    {color:0xd2ccbe,roughness:0.95,metalness:0.0,flatShading:true,side:THREE.DoubleSide}));
+  g.computeBoundingBox(); const b=g.boundingBox,c=new THREE.Vector3(),sz=new THREE.Vector3();
+  b.getCenter(c); b.getSize(sz); const r=Math.max(sz.x,sz.y,sz.z);
+  mesh.position.sub(c); scene.add(mesh);
+  // Bodenplatte
+  const plate=new THREE.Mesh(new THREE.PlaneGeometry(sz.x*1.15,sz.y*1.15),
+    new THREE.MeshStandardMaterial({color:0x2a2c34,roughness:1}));
+  plate.position.z=-sz.z/2-1; scene.add(plate);
+  cam.position.set(0,-r*1.25,r*0.85); cam.lookAt(0,0,0); ctl.update();
+}, undefined, e=>{document.getElementById('err').textContent='Ladefehler: '+file+' – '+e;});
+
+addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();
+  rnd.setSize(innerWidth,innerHeight);});
+(function loop(){requestAnimationFrame(loop);ctl.update();rnd.render(scene,cam);})();
+</script>
+</body>
+</html>
