@@ -16,6 +16,7 @@ selbst steuern.
 | [`plan-schnellstes-modell.md`](plan-schnellstes-modell.md) | **Schnellster Weg zum Detailmodell**: Hybrid Druck (Körper) + Laser (Flächen), parallel, 36 Kacheln |
 | [`plan-wahrzeichen-drucken.md`](plan-wahrzeichen-drucken.md) | **Wahrzeichen in Top-Qualität drucken**: scannen → aufbereiten → FDM/Resin → Finish |
 | [`datenquellen.md`](datenquellen.md) | **3D-Daten „aus allen Rohren"**: Android-Scan-Apps, Drohne, Fusion, offene Meshes, Kitbash |
+| [`sweet-spot-fertigung.md`](sweet-spot-fertigung.md) | **Sweet Spot HW+SW**: gut scannen + schnell drucken, 3 Budget-Stufen, Produktlogik |
 | [`prototyp-konzept.md`](prototyp-konzept.md) | **Schneller Prototyp**: eBay-Gear reparieren + Druckmodule + Personal-Konzept |
 | [`standort.md`](standort.md) | Anforderungsprofil & Standortlogik Freiburg |
 | [`mieten-kalkulation.md`](mieten-kalkulation.md) | Freiburg-Mieten (Tiers) + Kalkulation je Größe/Lage + Lage-Sweet-Spots |
