@@ -70,3 +70,40 @@ Bezug: [`datenquellen.md`](datenquellen.md) (Scan-Apps/Quellen),
 [`scan-setup/`](scan-setup/) (RTX-Pipeline).
 
 Preise: 2026-Marktstand (Elegoo/Anycubic, DJI), Richtwerte.
+
+---
+
+## FDM-Slicer-Sweet-Spots (MK4S, Massendruck Gebäude)
+
+Zwei PrusaSlicer-Profile für die hohle Gebäude-Masse, beide importierbar über
+*Datei → Import → Konfiguration importieren…*. Original `mk4s_pla_flat.ini` bleibt als Fallback.
+
+| Einstellung | **Tag — schnell + hohl** | **Nacht — leise + hohl** | Warum |
+|---|---|---|---|
+| Datei | `mk4s_pla_tag_hohl.ini` | `mk4s_pla_nacht_silent.ini` | |
+| Füllung | **Lightning 15 %** | Lightning 15 % | hohl, stützt nur unter Decken → kein Durchhängen |
+| Wände (Perimeter) | 2 | 2 | stabil genug für Deko |
+| Boden-Lagen | **1** (min. Dicke 0) | 1 | dicke Bodenplatte = unnötiger Zeitfresser |
+| Deck-Lagen | 3 | 3 | reicht mit Lightning darunter |
+| Erst-Layer-Höhe | 0,2 mm | 0,2 mm | nicht dünner → sonst schlechte Haftung |
+| Perimeter-Tempo | 200 mm/s | **60 mm/s** | Nacht leise |
+| Beschleunigung / Jerk | 4000 / 8 | **800–1000 / 4** | Nacht: weniger Rahmen-Resonanz |
+| Lüfter min/max | 70 / 100 % | **30 / 55 %** | Teilkühler = lautester Posten nachts |
+| Flow-Limit | 24 mm³/s | 24 mm³/s | High-Flow-Düse; verhindert Stottern bei Tempo |
+| Naht | hinten | hinten | Fassaden vorne sauber |
+| Außentextur | Fuzzy Skin 0,3 mm | Fuzzy Skin 0,3 mm | Steinputz-Look fast gratis |
+
+**Nacht-Zusatz (Hardware/Firmware):** MK4S-**Stealth-Modus** am Display dazuschalten +
+Drucker auf Gehwegplatte/Sorbothane entkoppeln (Körperschall > Luftschall beim Nachbarn).
+
+**Sequenzdruck (`complete_objects`) = Entscheidung pro Druckauftrag, NICHT im Profil.**
+Baut jedes Gebäude einzeln komplett fertig statt alle parallel → weniger Reisewege, ein
+umgefallenes Teil ruiniert nicht die ganze Platte, läuft über Nacht ohne Babysitting.
+Nur für Teile **niedriger als der Portalrahmen** (~Türme ausgenommen) und mit Abstand.
+Beim Batch von Häuschen aktivieren, bei hohen Einzelmodellen aus lassen.
+
+**Noch offene Hardware-Hebel (größter Durchsatz):**
+- **0,6-mm-Düse** → Layer 0,4 mm, Wand in einem Zug → **~2× schneller** für ganze Altstadt.
+  Feine Heroes (Münster) weiter mit 0,4 mm bzw. Resin.
+- **Batch-Platten über Nacht** (s. Sequenzdruck) statt mm/s-Optimierung — bringt mehr als
+  jede weitere Tempo-Schraube.
