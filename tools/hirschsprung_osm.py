@@ -83,7 +83,7 @@ def main():
     # ENGER CROP (User „klüger drucken", aber Tunnel-EIN+AUSGANG beide dran):
     # Hirsch(West) + Portal A→B + steile Wände. Unnötiges (lange Vorbeifahrt NW,
     # dicker Bergrücken dahinter, Tiefe) weg. Echte LiDAR.
-    r0,r1,c0,c1=824,888,826,890   # QUADRAT 64x64 (400mm): Süd/Ost fix (super), NW-Ecke getrimmt (Gegenseite hatte zu viel Berg)
+    r0,r1,c0,c1=830,888,832,890   # QUADRAT 58x58 (362mm): Süd/Ost fix, NW-Ecke weiter getrimmt -> extrem hoher 625m-Peak der Gegenseite weg
     win=big[r0:r1,c0:c1].astype(float); ny,nx=win.shape; zmin=win.min()
     xs=np.arange(nx)*MM; ys=np.arange(ny)*MM; zz=(win-zmin)*MM
     # KEINE künstliche Abflachung (User-Vorgabe): echte Höhen behalten.
