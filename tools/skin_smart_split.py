@@ -24,6 +24,44 @@ from laser_relief_kit import contour_polys
 BIG = "daten/hoellental/hirsch_big.npy"; MM = 6.25
 
 
+def solid_block(Z, cell, base_z):
+    """Solider Höhenfeld-Block: Oberseite=Z (Gelände), Unterseite=FLACHE Ebene base_z.
+    Liegt plan aufs Bett (Gelände oben) -> kein Support, flacher Druck."""
+    ny, nx = Z.shape
+    xs = np.arange(nx)*cell; ys = np.arange(ny)*cell
+    TX, TY = np.meshgrid(xs, ys)
+    top = np.column_stack([TX.ravel(), TY.ravel(), Z.ravel()])
+    bot = np.column_stack([TX.ravel(), TY.ravel(), np.full(TX.size, base_z)])
+    V = np.vstack([top, bot]); nt = nx*ny
+    ti = lambda r, c: r*nx+c; bi = lambda r, c: nt+r*nx+c; F = []
+    for r in range(ny-1):
+        for c in range(nx-1):
+            F += [[ti(r,c),ti(r+1,c),ti(r+1,c+1)], [ti(r,c),ti(r+1,c+1),ti(r,c+1)]]
+            F += [[bi(r,c),bi(r+1,c+1),bi(r+1,c)], [bi(r,c),bi(r,c+1),bi(r+1,c+1)]]
+    R, C = ny-1, nx-1
+    for c in range(nx-1):
+        F += [[ti(0,c),ti(0,c+1),bi(0,c)], [ti(0,c+1),bi(0,c+1),bi(0,c)]]
+        F += [[ti(R,c),bi(R,c),ti(R,c+1)], [ti(R,c+1),bi(R,c),bi(R,c+1)]]
+    for r in range(ny-1):
+        F += [[ti(r,0),bi(r,0),ti(r+1,0)], [ti(r+1,0),bi(r,0),bi(r+1,0)]]
+        F += [[ti(r,C),ti(r+1,C),bi(r,C)], [ti(r+1,C),bi(r+1,C),bi(r,C)]]
+    m = trimesh.Trimesh(V, np.array(F), process=False)
+    trimesh.repair.fix_normals(m)
+    return m
+
+
+def flat_bottom(piece, base_z):
+    """Alles unter base_z wegschneiden -> flacher Boden; dann auf z=0 absenken."""
+    (x0, y0, z0), (x1, y1, z1) = piece.bounds
+    box = trimesh.creation.box(extents=[(x1-x0)+20, (y1-y0)+20, (z1-base_z)+20])
+    box.apply_translation([(x0+x1)/2, (y0+y1)/2, base_z + ((z1-base_z)+20)/2])
+    try: p = piece.intersection(box)
+    except Exception: p = piece
+    if p is None or p.is_empty or len(p.faces) == 0: p = piece
+    p.apply_translation(-p.bounds[0])
+    return p
+
+
 def orient_flat(m):
     """Mesh flach legen (min Bauhöhe): dünnste PCA-Achse der Punkte -> +z."""
     V = m.vertices - m.vertices.mean(0)
@@ -74,6 +112,7 @@ def main():
     ap.add_argument("--flat-deg", type=float, default=25); ap.add_argument("--steep-deg", type=float, default=55)
     ap.add_argument("--slope-smooth", type=float, default=3.0, help="Neigungsfeld glätten (höher=weniger/größere Stücke)")
     ap.add_argument("--min-cells", type=int, default=200, help="kleinere Flecken verwerfen (mit großem Rest-Fleck verschmolzen)")
+    ap.add_argument("--all-solid", action="store_true", help="auch Steilwände als Solid/Gelände-oben (statt PCA-umlegen+Support)")
     ap.add_argument("--bed-x", type=float, default=250); ap.add_argument("--bed-y", type=float, default=210)
     ap.add_argument("--layer", type=float, default=0.2, help="Layerhöhe mm (für Zeit-Schätzung)")
     ap.add_argument("--out", default="/tmp/smartskin")
@@ -88,7 +127,8 @@ def main():
     win = win[::-1]                                     # +y=Nord (nicht gespiegelt)
     Z = gaussian_filter(win - win.min(), a.smooth) * a.nscale * a.vscale
     cell = a.mm
-    full = shell(Z, cell, a.skin)
+    full = shell(Z, cell, a.skin)                          # steil: dünne Schale (wird PCA-umgelegt)
+    full_solid = solid_block(Z, cell, Z.min() - a.skin)    # sanft: solider Block, flacher Boden
 
     # --- Hangneigung -> Bänder -> zusammenhängende Flecken ---
     gy, gx = np.gradient(Z, cell)
@@ -112,18 +152,23 @@ def main():
     for idx, (nm, mk) in enumerate(patches):
         polys = mask_polys(mk, cell)
         if not polys: continue
+        steep = (nm == "steil") and not a.all_solid
         try:
             pg = Polygon(max(polys, key=len))
             if not pg.is_valid: pg = pg.buffer(0)
             prism = trimesh.creation.extrude_polygon(pg, Z.max() - Z.min() + 4*a.skin + 20)
             prism.apply_translation([0, 0, Z.min() - 2*a.skin - 10])
-            piece = full.intersection(prism)
+            piece = (full if steep else full_solid).intersection(prism)
         except Exception:
             continue
         if piece.is_empty or len(piece.faces) == 0: continue
         h_before = piece.extents[2]
-        piece = orient_flat(piece)
-        ext = piece.extents                                  # flach gelegt (vor XY-Kachelung)
+        if steep:
+            piece = orient_flat(piece)                       # Wand umlegen: min Bauhöhe (+Support)
+        else:
+            pzmin = float(Z[mk].min())                       # Gelände oben, flacher Boden
+            piece = flat_bottom(piece, pzmin - a.skin)       # -> plan aufs Bett, 0 Support
+        ext = piece.extents
         saved = (h_before - ext[2]) / max(a.layer, 1e-6)
         tiles = tile_xy(piece, a.bed_x, a.bed_y)             # zu große Stücke aufs Bett kacheln
         labmap[mk] = idx + 1
@@ -133,8 +178,12 @@ def main():
             sfx = "" if len(tiles) == 1 else f"_t{ti}"
             fn = f"{a.out}/haut_{idx:02d}_{nm}{sfx}.stl"; tp.export(fn); made += 1
             stats.append((idx, nm, te, h_before, saved, fit))
-            man.append(f"  {idx:02d}{sfx} {nm}: liegend {te[0]:.0f}x{te[1]:.0f}x{te[2]:.0f} mm "
-                       f"(statt {h_before:.0f} hoch -> ~{saved:.0f} Layer gespart)" + ("" if fit else "  !!>Bett"))
+            if steep:
+                note = f"(umgelegt, war {h_before:.0f} hoch -> ~{saved:.0f} Layer gespart; SUPPORT)"
+            else:
+                note = "(Gelände oben, flacher Boden -> plan, KEIN Support)"
+            man.append(f"  {idx:02d}{sfx} {nm}: {te[0]:.0f}x{te[1]:.0f}x{te[2]:.0f} mm {note}"
+                       + ("" if fit else "  !!>Bett"))
     open(f"{a.out}/MANIFEST.txt", "w").write("\n".join(man) + "\n")
     print("\n".join(man[3:]))
     print(f"\n{made} Stücke -> {a.out}/")
