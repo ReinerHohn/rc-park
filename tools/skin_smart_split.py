@@ -62,9 +62,11 @@ def flat_bottom(piece, base_z):
     return p
 
 
-def flat_slab(piece, cell, skin):
-    """Hang FLACH legen: Fläche per PCA waagerecht, dann als dünne Platte neu aufbauen
-    (Top = echtes Relief, Boden = plan). -> wenige Layer, kein Support, Detail = Rasterauflösung."""
+def flat_slab(piece, cell, skin, membrane=True):
+    """Hang FLACH legen: Fläche per PCA waagerecht, dann neu aufbauen.
+    membrane=True (Default): echte dünne HAUT (Schale Dicke skin, folgt Gelände, unten offen/hohl)
+      -> extrem wenig Plastik, braucht beim Druck Stütze. membrane=False: Solid mit flachem Boden
+      (steht ohne Support, aber massiver)."""
     from scipy.interpolate import griddata
     p = orient_flat(piece.copy())                         # Fläche waagerecht, min z -> 0
     topf = p.face_normals[:, 2] > 0.3                     # Oberseiten-Facetten
@@ -79,7 +81,7 @@ def flat_slab(piece, cell, skin):
     mask = ~np.isnan(Ztop)
     if mask.sum() < 12: return None
     Ztop[~mask] = np.nanmin(Ztop)                         # außerhalb Footprint flach
-    slab = solid_block(Ztop, cell, float(np.nanmin(Ztop)) - skin)
+    slab = shell(Ztop, cell, skin) if membrane else solid_block(Ztop, cell, float(np.nanmin(Ztop)) - skin)
     polys = mask_polys(mask, cell)                        # auf echten Footprint trimmen
     if polys:
         try:
@@ -126,11 +128,11 @@ def tile_xy(m, bx, by):
     return out
 
 
-def split_flatten(piece, cell, skin, bx, by, max_h, min_span=18, depth=0):
+def split_flatten(piece, cell, skin, bx, by, max_h, membrane=True, min_span=18, depth=0):
     """Stück flach legen; wenn zu groß ODER zu dick, das ORIGINAL entlang seiner LÄNGSTEN
     Achse halbieren (senkrechte Wand -> Z -> Höhenbänder) und JEDE Hälfte NEU flach legen
     (eigene Best-Fit-Ebene) -> rekursiv, bis alle Teile aufs Bett passen UND dünn sind."""
-    slab = flat_slab(piece, cell, skin)
+    slab = flat_slab(piece, cell, skin, membrane)
     (x0, y0, z0), (x1, y1, z1) = piece.bounds
     ext = [x1-x0, y1-y0, z1-z0]; big = max(ext)
     if slab is not None and not slab.is_empty and len(slab.faces) > 0:
@@ -148,7 +150,7 @@ def split_flatten(piece, cell, skin, bx, by, max_h, min_span=18, depth=0):
         try: sub = piece.intersection(box)
         except Exception: sub = None
         if sub is not None and not sub.is_empty and len(sub.faces) > 0:
-            out += split_flatten(sub, cell, skin, bx, by, max_h, min_span, depth+1)
+            out += split_flatten(sub, cell, skin, bx, by, max_h, membrane, min_span, depth+1)
     return out
 
 
@@ -173,6 +175,7 @@ def main():
     ap.add_argument("--min-cells", type=int, default=200, help="kleinere Flecken verwerfen (mit großem Rest-Fleck verschmolzen)")
     ap.add_argument("--bed-x", type=float, default=250); ap.add_argument("--bed-y", type=float, default=210)
     ap.add_argument("--max-h", type=float, default=30, help="max Bauhöhe/Dicke je Stück mm -> dickere flach-Platten weiter teilen")
+    ap.add_argument("--membrane", action="store_true", help="freischwebende dünne Schale statt flachem Boden — MEIST schlechter (Support kostet mehr als der Boden spart); flach-Boden hohl+offen drucken ist leaner")
     ap.add_argument("--layer", type=float, default=0.2, help="Layerhöhe mm (für Zeit-Schätzung)")
     ap.add_argument("--out", default="/tmp/smartskin")
     a = ap.parse_args()
@@ -221,7 +224,7 @@ def main():
             continue
         if piece.is_empty or len(piece.faces) == 0: continue
         h_before = piece.extents[2]                          # Höhe, WENN man es aufrecht ließe
-        tiles = split_flatten(piece, cell, a.skin, a.bed_x, a.bed_y, a.max_h)  # alles flach + dünn
+        tiles = split_flatten(piece, cell, a.skin, a.bed_x, a.bed_y, a.max_h, a.membrane)  # alles flach + dünn
         if not tiles: continue
         saved = (h_before - max(t.extents[2] for t in tiles)) / max(a.layer, 1e-6)
         labmap[mk] = idx + 1
