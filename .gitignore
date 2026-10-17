@@ -7,5 +7,11 @@ modelle/stl/altstadt_lod2.stl
 modelle/stl/altstadt_print.stl
 modelle/stl/tiles_6x6/
 modelle/altstadt_lod2_vorschau.png
-
 modelle/stl/altstadt_preview.stl
+
+# Große/regenerierbare LiDAR-Rohdaten — nicht ins Repo (Download-Rezept im Memory)
+*.zip
+*.tif
+*.tfw
+*.laz
+daten/hoellental/dgm025_full.npy
