@@ -62,6 +62,39 @@ def flat_bottom(piece, base_z):
     return p
 
 
+def flat_slab(piece, cell, skin):
+    """Hang FLACH legen: Fläche per PCA waagerecht, dann als dünne Platte neu aufbauen
+    (Top = echtes Relief, Boden = plan). -> wenige Layer, kein Support, Detail = Rasterauflösung."""
+    from scipy.interpolate import griddata
+    p = orient_flat(piece.copy())                         # Fläche waagerecht, min z -> 0
+    topf = p.face_normals[:, 2] > 0.3                     # Oberseiten-Facetten
+    if topf.sum() < 4: return None
+    tv = p.vertices[np.unique(p.faces[topf])]
+    if len(tv) < 12: return None
+    x0, y0 = tv[:, 0].min(), tv[:, 1].min(); x1, y1 = tv[:, 0].max(), tv[:, 1].max()
+    nx = max(2, int((x1-x0)/cell)+1); ny = max(2, int((y1-y0)/cell)+1)
+    gx = x0 + np.arange(nx)*cell; gy = y0 + np.arange(ny)*cell
+    GX, GY = np.meshgrid(gx, gy)
+    Ztop = griddata(tv[:, :2], tv[:, 2], (GX, GY), method="linear")
+    mask = ~np.isnan(Ztop)
+    if mask.sum() < 12: return None
+    Ztop[~mask] = np.nanmin(Ztop)                         # außerhalb Footprint flach
+    slab = solid_block(Ztop, cell, float(np.nanmin(Ztop)) - skin)
+    polys = mask_polys(mask, cell)                        # auf echten Footprint trimmen
+    if polys:
+        try:
+            pg = Polygon(max(polys, key=len))
+            if not pg.is_valid: pg = pg.buffer(0)
+            prism = trimesh.creation.extrude_polygon(pg, Ztop.max()-Ztop.min()+4*skin+20)
+            prism.apply_translation([gx[0], gy[0], np.nanmin(Ztop)-2*skin-10])
+            t = slab.intersection(prism)
+            if t is not None and not t.is_empty and len(t.faces) > 0: slab = t
+        except Exception:
+            pass
+    slab.apply_translation(-slab.bounds[0])
+    return slab
+
+
 def orient_flat(m):
     """Mesh flach legen (min Bauhöhe): dünnste PCA-Achse der Punkte -> +z."""
     V = m.vertices - m.vertices.mean(0)
@@ -93,6 +126,32 @@ def tile_xy(m, bx, by):
     return out
 
 
+def split_flatten(piece, cell, skin, bx, by, max_h, min_span=18, depth=0):
+    """Stück flach legen; wenn zu groß ODER zu dick, das ORIGINAL entlang seiner LÄNGSTEN
+    Achse halbieren (senkrechte Wand -> Z -> Höhenbänder) und JEDE Hälfte NEU flach legen
+    (eigene Best-Fit-Ebene) -> rekursiv, bis alle Teile aufs Bett passen UND dünn sind."""
+    slab = flat_slab(piece, cell, skin)
+    (x0, y0, z0), (x1, y1, z1) = piece.bounds
+    ext = [x1-x0, y1-y0, z1-z0]; big = max(ext)
+    if slab is not None and not slab.is_empty and len(slab.faces) > 0:
+        w, d, h = slab.extents
+        if (w <= bx+1 and d <= by+1 and h <= max_h) or depth >= 14 or big <= min_span:
+            return [slab]
+    elif depth >= 14 or big <= min_span:
+        return []
+    axis = int(np.argmax(ext)); out = []                  # längste Original-Achse teilen
+    for f0, f1 in [(0.0, 0.5), (0.5, 1.0)]:
+        lo = [x0, y0, z0][axis] + ext[axis]*f0; hi = [x0, y0, z0][axis] + ext[axis]*f1
+        e = [x1-x0+20, y1-y0+20, z1-z0+20]; e[axis] = hi-lo
+        c = [(x0+x1)/2, (y0+y1)/2, (z0+z1)/2]; c[axis] = (lo+hi)/2
+        box = trimesh.creation.box(extents=e); box.apply_translation(c)
+        try: sub = piece.intersection(box)
+        except Exception: sub = None
+        if sub is not None and not sub.is_empty and len(sub.faces) > 0:
+            out += split_flatten(sub, cell, skin, bx, by, max_h, min_span, depth+1)
+    return out
+
+
 def mask_polys(mask, cell):
     """Rand-Polygone einer bool-Maske (mm), via Kontur @0.5."""
     pad = np.pad(mask.astype(float), 1, constant_values=0.0)
@@ -112,8 +171,8 @@ def main():
     ap.add_argument("--flat-deg", type=float, default=25); ap.add_argument("--steep-deg", type=float, default=55)
     ap.add_argument("--slope-smooth", type=float, default=3.0, help="Neigungsfeld glätten (höher=weniger/größere Stücke)")
     ap.add_argument("--min-cells", type=int, default=200, help="kleinere Flecken verwerfen (mit großem Rest-Fleck verschmolzen)")
-    ap.add_argument("--all-solid", action="store_true", help="auch Steilwände als Solid/Gelände-oben (statt PCA-umlegen+Support)")
     ap.add_argument("--bed-x", type=float, default=250); ap.add_argument("--bed-y", type=float, default=210)
+    ap.add_argument("--max-h", type=float, default=30, help="max Bauhöhe/Dicke je Stück mm -> dickere flach-Platten weiter teilen")
     ap.add_argument("--layer", type=float, default=0.2, help="Layerhöhe mm (für Zeit-Schätzung)")
     ap.add_argument("--out", default="/tmp/smartskin")
     a = ap.parse_args()
@@ -146,31 +205,25 @@ def main():
     print(f"Oberfläche {Z.shape[1]*cell:.0f}x{Z.shape[0]*cell:.0f} mm -> {len(patches)} kluge Stücke "
           f"(flach<{a.flat_deg:.0f}° / schräg / steil>{a.steep_deg:.0f}°)")
 
-    man = ["SMART-SPLIT HAUT — Stücke nach Hangneigung, flach-liegend druckbar.",
+    man = ["SMART-SPLIT HAUT — JEDES Stück flach aufs Bett gelegt (dünne Platte, kein Support).",
            "Montage: jedes Stück an seinem Footprint aufs Gerüst (siehe _montage.png).", ""]
     labmap = np.zeros(Z.shape, int); made = 0; stats = []
     for idx, (nm, mk) in enumerate(patches):
         polys = mask_polys(mk, cell)
         if not polys: continue
-        steep = (nm == "steil") and not a.all_solid
         try:
             pg = Polygon(max(polys, key=len))
             if not pg.is_valid: pg = pg.buffer(0)
             prism = trimesh.creation.extrude_polygon(pg, Z.max() - Z.min() + 4*a.skin + 20)
             prism.apply_translation([0, 0, Z.min() - 2*a.skin - 10])
-            piece = (full if steep else full_solid).intersection(prism)
+            piece = full.intersection(prism)                 # dünne Schale (folgt Gelände)
         except Exception:
             continue
         if piece.is_empty or len(piece.faces) == 0: continue
-        h_before = piece.extents[2]
-        if steep:
-            piece = orient_flat(piece)                       # Wand umlegen: min Bauhöhe (+Support)
-        else:
-            pzmin = float(Z[mk].min())                       # Gelände oben, flacher Boden
-            piece = flat_bottom(piece, pzmin - a.skin)       # -> plan aufs Bett, 0 Support
-        ext = piece.extents
-        saved = (h_before - ext[2]) / max(a.layer, 1e-6)
-        tiles = tile_xy(piece, a.bed_x, a.bed_y)             # zu große Stücke aufs Bett kacheln
+        h_before = piece.extents[2]                          # Höhe, WENN man es aufrecht ließe
+        tiles = split_flatten(piece, cell, a.skin, a.bed_x, a.bed_y, a.max_h)  # alles flach + dünn
+        if not tiles: continue
+        saved = (h_before - max(t.extents[2] for t in tiles)) / max(a.layer, 1e-6)
         labmap[mk] = idx + 1
         for ti, tp in enumerate(tiles):
             te = tp.extents
@@ -178,11 +231,8 @@ def main():
             sfx = "" if len(tiles) == 1 else f"_t{ti}"
             fn = f"{a.out}/haut_{idx:02d}_{nm}{sfx}.stl"; tp.export(fn); made += 1
             stats.append((idx, nm, te, h_before, saved, fit))
-            if steep:
-                note = f"(umgelegt, war {h_before:.0f} hoch -> ~{saved:.0f} Layer gespart; SUPPORT)"
-            else:
-                note = "(Gelände oben, flacher Boden -> plan, KEIN Support)"
-            man.append(f"  {idx:02d}{sfx} {nm}: {te[0]:.0f}x{te[1]:.0f}x{te[2]:.0f} mm {note}"
+            man.append(f"  {idx:02d}{sfx} {nm}: flach {te[0]:.0f}x{te[1]:.0f}x{te[2]:.0f} mm "
+                       f"(aufrecht wären {h_before:.0f} -> ~{saved:.0f} Layer gespart, KEIN Support)"
                        + ("" if fit else "  !!>Bett"))
     open(f"{a.out}/MANIFEST.txt", "w").write("\n".join(man) + "\n")
     print("\n".join(man[3:]))
