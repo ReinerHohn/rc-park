@@ -43,33 +43,40 @@ addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProje
     open(fn, "w").write(html)
 
 
-def rib(L, hs, cross, slotw, from_top):
-    """Rippen-Polygon. L=Länge, hs(s)->Höhe, cross=[(pos,hmid)], Schlitz von oben/unten."""
+def rib(L, hs, cross, slotw, from_top, bs=None):
+    """Rippen-Polygon. L=Länge, hs(s)->Oberkante, bs(s)->Unterkante (None=0=bis Boden),
+    cross=[(pos,hmid)] Kreuzungs-Schlitze, Schlitz von oben (from_top) oder unten."""
+    if bs is None: bs = lambda s: 0.0
     S = np.arange(0, L + 0.5, 1.0)
-    pts = [(0.0, 0.0)]
-    # Bodenkante links->rechts (Schlitze von unten falls not from_top)
+    pts = [(0.0, bs(0.0))]
+    # --- Unterkante links->rechts (folgt bs; Schlitze nach OBEN falls not from_top) ---
     if from_top:
-        pts.append((L, 0.0))
+        for s in S[1:]:
+            pts.append((float(s), bs(float(s))))
     else:
-        for (pos, hmid) in sorted(cross):
-            pts += [(pos - slotw/2, 0.0), (pos - slotw/2, hmid),
-                    (pos + slotw/2, hmid), (pos + slotw/2, 0.0)]
-        pts.append((L, 0.0))
-    # rechte Kante hoch
+        crs = sorted(cross)
+        for s in S[1:]:
+            su = float(s)
+            for (pos, hmid) in crs:
+                if su - 1.0 <= pos < su:
+                    pts += [(pos - slotw/2, bs(pos)), (pos - slotw/2, hmid),
+                            (pos + slotw/2, hmid), (pos + slotw/2, bs(pos))]
+            pts.append((su, bs(su)))
+    if pts[-1][0] < L - 1e-6: pts.append((L, bs(L)))
+    # --- rechte Kante hoch ---
     pts.append((L, hs(L)))
-    # Oberkante rechts->links (Schlitze von oben falls from_top)
+    # --- Oberkante rechts->links (folgt hs; Schlitze nach UNTEN falls from_top) ---
     if from_top:
         for s in S[::-1]:
-            # Schlitz einfügen, wenn eine Kreuzung in diesem Schritt liegt
             for (pos, hmid) in sorted(cross, reverse=True):
                 if s <= pos < s + 1.0:
                     pts += [(pos + slotw/2, hs(pos)), (pos + slotw/2, hmid),
                             (pos - slotw/2, hmid), (pos - slotw/2, hs(pos))]
-            pts.append((s, hs(s)))
+            pts.append((float(s), hs(float(s))))
     else:
         for s in S[::-1]:
-            pts.append((s, hs(s)))
-    pts.append((0.0, 0.0))
+            pts.append((float(s), hs(float(s))))
+    pts.append((0.0, bs(0.0)))
     return pts
 
 
@@ -100,6 +107,7 @@ def main():
     ap.add_argument("--uniform", action="store_true", help="gleichmäßiges Raster statt adaptiv (Default: adaptiv nach Krümmung)")
     ap.add_argument("--min-gap", type=float, default=15.0, help="Mindestabstand zwischen Rippen mm (adaptiv)")
     ap.add_argument("--thickness", type=float, default=3.0)
+    ap.add_argument("--rib-depth", type=float, default=0.0, help="Rippen als konstant-tiefes Band (mm unter Oberkante) statt bis Boden -> spart Material; 0=bis Boden")
     ap.add_argument("--fit", type=float, default=0.15, help="Schlitz-Spiel mm")
     ap.add_argument("--vscale", type=float, default=1.0, help="Höhen-Überhöhung (1=true-N)")
     ap.add_argument("--trans-frac", type=float, default=0.85,
@@ -133,6 +141,9 @@ def main():
         return float(Hf[int(round(yi)), int(round(xi))])
     z_t = Hf.max() * a.trans_frac                 # Übergangshöhe Gitter->Stack
     def Hc(xmm, ymm): return min(Hat(xmm, ymm), z_t)   # geklemmt: Gitter nur bis z_t
+    band = a.rib_depth > 0                         # Rippen als konstant-tiefes Band (Material sparen)
+    def Htop(x, y): return Hat(x, y) if band else Hc(x, y)
+    def Hbot(x, y): return max(0.0, Htop(x, y) - a.rib_depth) if band else 0.0
 
     # --- Trasse (Höllentalbahn): Freiraum entlang der GANZEN Strecke, falls --tunnel ---
     # Tunnel-Teil (TUN, gedeckelt) = geschlossenes 30x36-Loch; offene Strecke (EAST) =
@@ -208,21 +219,23 @@ def main():
 
     ribdata = []
     for j, yr in enumerate(ypos):     # X-Rippen: Schlitz OBEN, Kreuzung an xpos (Höhe geklemmt auf z_t)
-        cross = [(xp, Hc(xp, yr)/2) for xp in xpos]
-        poly = np.array(rib(Wx, lambda s, yr=yr: Hc(s, yr), cross, slotw, True), float)
+        cross = [(xp, (Hbot(xp, yr)+Htop(xp, yr))/2) for xp in xpos]
+        bsf = (lambda s, yr=yr: Hbot(s, yr)) if band else None
+        poly = np.array(rib(Wx, lambda s, yr=yr: Htop(s, yr), cross, slotw, True, bsf), float)
         th = tunnel_holes("x", yr)
         bb = emit(f"ribX_{j:02d}", poly, f"X{j}", th); ribdata.append((f"X{j}", poly, "x", yr, th))
         manifest.append(f"  X{j}: {bb[0]:.0f}x{bb[1]:.0f} mm" + (f"  (+{len(th)} Tunnel-Loch)" if th else ""))
     for i, xr in enumerate(xpos):     # Y-Rippen: Schlitz UNTEN, Kreuzung an ypos
-        cross = [(yp, Hc(xr, yp)/2) for yp in ypos]
-        poly = np.array(rib(Dy, lambda s, xr=xr: Hc(xr, s), cross, slotw, False), float)
+        cross = [(yp, (Hbot(xr, yp)+Htop(xr, yp))/2) for yp in ypos]
+        bsf = (lambda s, xr=xr: Hbot(xr, s)) if band else None
+        poly = np.array(rib(Dy, lambda s, xr=xr: Htop(xr, s), cross, slotw, False, bsf), float)
         th = tunnel_holes("y", xr)
         bb = emit(f"ribY_{i:02d}", poly, f"Y{i}", th); ribdata.append((f"Y{i}", poly, "y", xr, th))
         manifest.append(f"  Y{i}: {bb[0]:.0f}x{bb[1]:.0f} mm" + (f"  (+{len(th)} Tunnel-Loch)" if th else ""))
 
     # --- KONTUR-STACK oben drauf (z_t .. Hmax), nur wenn trans_frac < 1 ---
     stackdata = []; hr = a.dowel_d/2
-    if a.trans_frac < 0.999:
+    if a.trans_frac < 0.999 and not band:
         levels = np.arange(z_t + a.thickness*0.5, Hf.max(), a.thickness)
         holes_xy = []
         for lv in levels[::-1]:                    # Dübel in breiter hoher Lage
