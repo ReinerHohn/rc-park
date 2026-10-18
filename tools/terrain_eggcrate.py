@@ -153,7 +153,8 @@ def main():
     ap.add_argument("--dowel-d", type=float, default=3.2)
     ap.add_argument("--smooth", type=float, default=4.0)
     ap.add_argument("--bed-x", type=float, default=410); ap.add_argument("--bed-y", type=float, default=400)
-    ap.add_argument("--tunnel", action="store_true", help="Höllentalbahn-Tunnel als Loch (30x36mm) in die Rippen schneiden")
+    ap.add_argument("--tunnel", action="store_true", help="Bahn-Lichtraum (30x36mm) in die Rippen schneiden: Tunnel=gedeckelt, offen=Einschnitt")
+    ap.add_argument("--track", default="", help="ECHTE Trasse als .npy (Zeilen mx,my,mz,is_tunnel in Modell-mm, z.B. aus OSM); leer=keine")
     ap.add_argument("--tunnel-drop", type=float, default=0.0, help="Tunnel-Gleis um N mm tiefer legen (unters Dach statt drauf)")
     ap.add_argument("--gcode", action="store_true")
     ap.add_argument("--feed", type=float, default=400); ap.add_argument("--power", type=float, default=100)
@@ -186,28 +187,25 @@ def main():
     # --- Trasse (Höllentalbahn): Freiraum entlang der GANZEN Strecke, falls --tunnel ---
     # Tunnel-Teil (TUN, gedeckelt) = geschlossenes 30x36-Loch; offene Strecke (EAST) =
     # offener Einschnitt (Trog) bis zur Oberkante, sonst fährt der Zug in die Rippen.
+    # Tunnel-Teil (gedeckelt) = geschlossenes 30x36-Loch; offene Strecke = offener Einschnitt
+    # (Trog) bis zur Oberkante. Trasse kommt als ECHTE OSM-Datei (mx,my,mz,is_tunnel).
     CLEAR_W, CLEAR_H = 30.0, 36.0; tun_pts = []; track = []
     if a.tunnel:
-        # Trasse in 0.25m-DGM-Pixel (row,col), aus OSM-Portalen via pyproj abgeleitet:
-        # Portal A (West, px213/3088) -> Portal B Ostausgang (px525/3481), dann offen SE.
-        TUN  = [(213,3088),(380,3285),(525,3481)]              # Tunnel A->B (gedeckelt)
-        EAST = [(525,3481),(560,3525),(595,3560)]              # offen nach SE raus
-        tterr = [float(dem_full[r,c]) for (r,c) in TUN]
-        railtun = np.linspace(tterr[0], tterr[-1], len(TUN))   # gerade Steigung im Tunnel
-        def _mdl(rr, cc, zr): return ((cc-a.c0)*a.mm, (a.r1-1-rr)*a.mm, (zr-win_min)*a.nscale*a.vscale)  # row geflippt wie win
-        for k in range(len(TUN)-1):                            # TUN = gedeckelt
-            (rA,cA),(rB,cB) = TUN[k], TUN[k+1]; L = max(2, int(np.hypot(rB-rA, cB-cA)*4))
-            for tt in np.linspace(0, 1, L, endpoint=False):
-                rr=rA+(rB-rA)*tt; cc=cA+(cB-cA)*tt; zr=railtun[k]+(railtun[k+1]-railtun[k])*tt
-                mx,my,mz = _mdl(rr,cc,zr)
-                track.append((mx, my, mz - a.tunnel_drop, True))   # tiefer legen -> Dach drüber
-        for k in range(len(EAST)-1):                           # EAST = offen (auf Oberfläche)
-            (rA,cA),(rB,cB) = EAST[k], EAST[k+1]; L = max(2, int(np.hypot(rB-rA, cB-cA)*4))
-            for tt in np.linspace(0, 1, L, endpoint=True):
-                rr=rA+(rB-rA)*tt; cc=cA+(cB-cA)*tt; zr=float(dem_full[int(round(rr)),int(round(cc))])
-                track.append((*_mdl(rr,cc,zr), False))
-        track = [p for p in track if -5 <= p[0] <= Wx+5 and -5 <= p[1] <= Dy+5]
-        tun_pts = [(p[0],p[1],p[2]) for p in track]
+        if not a.track or not os.path.exists(a.track):
+            print(f"!! --tunnel ohne gültige --track Datei ({a.track!r}) -> kein Tunnel");
+        else:
+            raw = np.load(a.track)                             # (N,4): mx,my,mz,is_tunnel
+            dense = []                                         # ~2mm feiner interpolieren
+            for k in range(len(raw)-1):
+                p, q = raw[k], raw[k+1]
+                L = max(2, int(np.hypot(q[0]-p[0], q[1]-p[1])/2))
+                for tt in np.linspace(0, 1, L, endpoint=(k == len(raw)-2)):
+                    mx = p[0]+(q[0]-p[0])*tt; my = p[1]+(q[1]-p[1])*tt
+                    mz = p[2]+(q[2]-p[2])*tt; istun = p[3] > 0.5
+                    dense.append((mx, my, mz - (a.tunnel_drop if istun else 0.0), istun))
+            track = [p for p in dense if -6 <= p[0] <= Wx+6 and -6 <= p[1] <= Dy+6]
+            tun_pts = [(p[0], p[1], p[2]) for p in track]
+            print(f"Trasse geladen: {len(track)} Punkte ({sum(1 for p in track if p[3])} Tunnel / {sum(1 for p in track if not p[3])} offen)")
 
     def _rect2(cs, zlo, zhi, w):
         return [(cs-w/2,zlo),(cs+w/2,zlo),(cs+w/2,zhi),(cs-w/2,zhi),(cs-w/2,zlo)]
