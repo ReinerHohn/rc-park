@@ -130,6 +130,53 @@ def rib_positions(Hf, cell, nx, ny, min_gap, max_gap=None, uniform=False):
     return xpos, ypos
 
 
+def choose_seams(cross_s, L, maxlen, minwid):
+    """Naht-Positionen (entlang s) wählen: möglichst gleichmäßig alle <=maxlen, aber IMMER
+    in eine Lücke zwischen zwei Kreuzungen (nie auf einen Steck-Schlitz), breit genug für Zinken."""
+    cs = sorted(c for c in cross_s if 1 < c < L-1)
+    bnds = [0.0] + cs + [float(L)]
+    cand = [(bnds[i]+bnds[i+1])/2 for i in range(len(bnds)-1)
+            if (bnds[i+1]-bnds[i]) >= minwid and 0.12*L < (bnds[i]+bnds[i+1])/2 < 0.88*L]
+    if not cand: return []
+    n = max(1, int(np.ceil(L/maxlen))); seams = []
+    for i in range(1, n):
+        sc = min(cand, key=lambda c: abs(c - L*i/n))
+        if sc not in seams: seams.append(sc)
+    return sorted(seams)
+
+
+def finger_split(poly, seams, fdepth, fw):
+    """(s,z)-Rippenpolygon an vertikalen Nähten mit INEINANDERGREIFENDEN Fingerzinken teilen.
+    Linkes Stück bekommt gerade Zinken-Bänder (ragen nach rechts), rechtes die ungeraden ->
+    passen formschlüssig zusammen (verleimen). Gibt Liste von Teil-Polygonen zurück."""
+    from shapely.geometry import Polygon as SP, box
+    from shapely.ops import unary_union
+    g = SP(poly)
+    if not g.is_valid: g = g.buffer(0)
+    smin, zmin, smax, zmax = g.bounds
+    out = []; cur = g
+    for sc in sorted(seams):
+        bands = []; k = 0; z = zmin
+        while z < zmax:
+            bands.append((k % 2, z, min(z+fw, zmax))); z += fw; k += 1
+        Lf = [box(sc, z0, sc+fdepth, z1) for (par, z0, z1) in bands if par == 0]
+        leftreg = box(smin-50, zmin-50, sc, zmax+50)
+        if Lf: leftreg = leftreg.union(unary_union(Lf))
+        # rechte Zinken (ungerade Bänder) aus dem linken Teil ausschneiden = Nut
+        Rf = [box(sc-fdepth, z0, sc, z1) for (par, z0, z1) in bands if par == 1]
+        if Rf: leftreg = leftreg.difference(unary_union(Rf))
+        left = cur.intersection(leftreg); cur = cur.difference(leftreg)
+        out.append(left)
+    out.append(cur)
+    res = []
+    for gg in out:
+        geoms = list(gg.geoms) if gg.geom_type == "MultiPolygon" else [gg]
+        best = max(geoms, key=lambda h: h.area) if geoms else None    # Hauptstück (Slivers verwerfen)
+        if best is not None and best.area >= 20:
+            res.append(np.array(best.exterior.coords))
+    return res
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dem", default=BIG); ap.add_argument("--mm", type=float, default=MM, help="HORIZONTAL mm/DEM-Zelle")
@@ -142,6 +189,8 @@ def main():
     ap.add_argument("--uniform", action="store_true", help="gleichmäßiges Raster statt adaptiv (Default: adaptiv nach Krümmung)")
     ap.add_argument("--min-gap", type=float, default=7.0, help="Mindestabstand zwischen Rippen mm — so eng dürfen scharfe Kanten die Rippen packen")
     ap.add_argument("--max-gap", type=float, default=0.0, help="Max Rippenabstand mm in flachen Zonen (0=auto)")
+    ap.add_argument("--split-len", type=float, default=0.0, help="lange Rippen in Puzzle-Stücke <= N mm mit Fingerzinken teilen (spart Verschnitt); 0=aus")
+    ap.add_argument("--finger", type=float, default=12.0, help="Fingerzinken-Höhe (mm) entlang der Naht")
     ap.add_argument("--thickness", type=float, default=3.0)
     ap.add_argument("--rib-depth", type=float, default=0.0, help="Rippen als konstant-tiefes Band (mm unter Oberkante) statt bis Boden -> spart Material; 0=bis Boden")
     ap.add_argument("--base", type=float, default=12.0, help="Sockel mm: Gelände anheben, damit Rippen am Talboden nicht auf 0 pinchen (gegen 'schwebende' Teile)")
@@ -251,20 +300,44 @@ def main():
         return bb
 
     ribdata = []
+    fdepth = max(8.0, 2*a.thickness)                 # Zinken-Tiefe (in s) = min. 2× Materialdicke
+    def clip_holes(sp, holes):                        # Tunnel-Löcher aufs Teilstück beschneiden
+        from shapely.geometry import Polygon as SP
+        seg = SP(sp); seg = seg if seg.is_valid else seg.buffer(0); out = []
+        for h in holes:
+            hp = SP(h); hp = hp if hp.is_valid else hp.buffer(0)
+            it = seg.intersection(hp)
+            if it.is_empty or it.area < 1: continue
+            for gg in (list(it.geoms) if it.geom_type == "MultiPolygon" else [it]):
+                if gg.area >= 1: out.append(np.array(gg.exterior.coords))
+        return out
+
+    def add_rib(prefix, coordlab, poly, axis, pos, th, L, cross_s):
+        """emittiert eine Rippe; teilt sie bei --split-len in verzinkte Puzzle-Stücke."""
+        seams = (choose_seams(cross_s, L, a.split_len, 2*fdepth+slotw+4)
+                 if a.split_len > 0 and np.ptp(poly[:, 0]) > a.split_len else [])
+        if not seams:
+            bb = emit(f"rib{prefix}", poly, f"{prefix} {coordlab}", th)
+            ribdata.append((prefix, poly, axis, pos, th))
+            manifest.append(f"  {prefix}: {bb[0]:.0f}x{bb[1]:.0f} mm" + (f"  (+{len(th)} Tunnel)" if th else ""))
+            return
+        segs = finger_split(poly, seams, fdepth, a.finger)
+        for si, sp in enumerate(segs):
+            lt = chr(97+si); hh = clip_holes(sp, th)
+            bb = emit(f"rib{prefix}{lt}", sp, f"{prefix}{lt} {coordlab}", hh)
+            ribdata.append((f"{prefix}{lt}", sp, axis, pos, hh))
+            manifest.append(f"  {prefix}{lt}: {bb[0]:.0f}x{bb[1]:.0f} mm (Zinken)" + (f" (+{len(hh)} Tunnel)" if hh else ""))
+
     for j, yr in enumerate(ypos):     # X-Rippen: Schlitz OBEN, Kreuzung an xpos (Höhe geklemmt auf z_t)
         cross = [(xp, (Hbot(xp, yr)+Htop(xp, yr))/2) for xp in xpos]
         bsf = (lambda s, yr=yr: Hbot(s, yr)) if band else None
         poly = np.array(rib(Wx, lambda s, yr=yr: Htop(s, yr), cross, slotw, True, bsf), float)
-        th = tunnel_holes("x", yr)
-        bb = emit(f"ribX_{j:02d}", poly, f"X{j} Y{yr:.0f}", th); ribdata.append((f"X{j}", poly, "x", yr, th))
-        manifest.append(f"  X{j}: {bb[0]:.0f}x{bb[1]:.0f} mm" + (f"  (+{len(th)} Tunnel-Loch)" if th else ""))
+        add_rib(f"X{j}", f"Y{yr:.0f}", poly, "x", yr, tunnel_holes("x", yr), Wx, list(xpos))
     for i, xr in enumerate(xpos):     # Y-Rippen: Schlitz UNTEN, Kreuzung an ypos
         cross = [(yp, (Hbot(xr, yp)+Htop(xr, yp))/2) for yp in ypos]
         bsf = (lambda s, xr=xr: Hbot(xr, s)) if band else None
         poly = np.array(rib(Dy, lambda s, xr=xr: Htop(xr, s), cross, slotw, False, bsf), float)
-        th = tunnel_holes("y", xr)
-        bb = emit(f"ribY_{i:02d}", poly, f"Y{i} X{xr:.0f}", th); ribdata.append((f"Y{i}", poly, "y", xr, th))
-        manifest.append(f"  Y{i}: {bb[0]:.0f}x{bb[1]:.0f} mm" + (f"  (+{len(th)} Tunnel-Loch)" if th else ""))
+        add_rib(f"Y{i}", f"X{xr:.0f}", poly, "y", xr, tunnel_holes("y", xr), Dy, list(ypos))
 
     # --- KONTUR-STACK oben drauf (z_t .. Hmax), nur wenn trans_frac < 1 ---
     stackdata = []; hr = a.dowel_d/2
