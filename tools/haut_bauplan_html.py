@@ -75,7 +75,7 @@ def main():
 <div class=legend>Nord oben · Ost rechts · Klick auf eine Nummer markiert sie · Nummer = Gravur unten am Teil</div>
 <div id=map><img src="data:image/png;base64,{b64}">{dots}</div>
 <script>
-const POS={ {','.join(f'"{n}":[{cx:.0f},{cy:.0f}]' for n,(cx,cy) in pos.items())} };
+const POS={{{','.join(f'"{n}":[{cx:.0f},{cy:.0f}]' for n,(cx,cy) in pos.items())}}};
 function clr(){{document.querySelectorAll('.pt.hit').forEach(e=>e.classList.remove('hit'));document.getElementById('info').textContent=''}}
 function mark(n){{const el=document.getElementById('p'+n);if(!el){{document.getElementById('info').textContent='Teil '+n+' gibt es nicht';return}}
  el.classList.add('hit');el.scrollIntoView({{block:'center',behavior:'smooth'}});
