@@ -115,7 +115,7 @@ def main():
             sheets.append(sh)
 
     used = SW*SH*len(sheets)
-    print(f"\n==> {len(sheets)} Platten 1200x600 noetig  (Verschnitt {100*(1-tot_area/used):.0f} %, Minimum waere {int(np.ceil(tot_area/(SW*SH)))})")
+    print(f"\n==> {len(sheets)} x {SW:.0f}x{SH:.0f} noetig  (Verschnitt {100*(1-tot_area/used):.0f} %, Minimum waere {int(np.ceil(tot_area/(SW*SH)))})")
 
     for si, sh in enumerate(sheets):
         fig, ax = plt.subplots(figsize=(12, 12*SH/SW))
@@ -124,7 +124,7 @@ def main():
             ax.add_patch(MplPoly(pm, closed=True, fc="tan", ec="saddlebrown", lw=0.4))
             c = pm.mean(0); ax.text(c[0], c[1], nm.replace("deck", "d").replace("rib", ""), fontsize=4.5, ha="center")
         ax.set_xlim(-10, SW+10); ax.set_ylim(-10, SH+10); ax.set_aspect("equal")
-        ax.set_title(f"Platte {si+1}/{len(sheets)}  ({len(sh['placed'])} Teile) 1200x600x4mm")
+        ax.set_title(f"Platte {si+1}/{len(sheets)}  ({len(sh['placed'])} Teile) {SW:.0f}x{SH:.0f}x4mm")
         plt.tight_layout(); plt.savefig(f"{a.out}/platte_{si+1:02d}.png", dpi=95); plt.close(fig)
     print(f"Layouts -> {os.path.abspath(a.out)}/platte_*.png")
 
