@@ -14,7 +14,7 @@ werden gelistet -> die schließt du mit Gipsbinde/Karton (flache Platte sitzt da
 import argparse, os, sys, numpy as np, matplotlib
 matplotlib.use("Agg"); import matplotlib.pyplot as plt
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from terrain_eggcrate import adaptive_pos
+from terrain_eggcrate import adaptive_pos, rib_positions
 from laser_relief_kit import svg_write, gcode_write, glyph_strokes
 from scipy.ndimage import gaussian_filter, zoom
 
@@ -27,7 +27,8 @@ def main():
     ap.add_argument("--c0", type=int, required=True); ap.add_argument("--c1", type=int, required=True)
     ap.add_argument("--vscale", type=float, default=0.85)
     ap.add_argument("--nx", type=int, default=10); ap.add_argument("--ny", type=int, default=10)
-    ap.add_argument("--min-gap", type=float, default=15.0)
+    ap.add_argument("--min-gap", type=float, default=7.0)
+    ap.add_argument("--max-gap", type=float, default=0.0, help="Max Rippenabstand mm in flachen Zonen (0=auto, MUSS zum Gerüst passen)")
     ap.add_argument("--smooth", type=float, default=4.0)
     ap.add_argument("--kerf", type=float, default=0.5, help="Platte pro Seite kleiner (Laser-Spalt/Spiel)")
     ap.add_argument("--flat-mm", type=float, default=18.0, help="max Höhendiff je Zelle für flache Platte (sonst Gips)")
@@ -48,12 +49,9 @@ def main():
     cell = a.mm/zf; Hf = rel*a.nscale*a.vscale
     NY, NX = Hf.shape; Wx, Dy = NX*cell, NY*cell
 
-    # dieselben adaptiven Rippen-Positionen wie das Gerüst
-    Hs = gaussian_filter(Hf, 1.0)
-    cx = np.abs(np.gradient(np.gradient(Hs, axis=1), axis=1)).sum(axis=0)
-    cy = np.abs(np.gradient(np.gradient(Hs, axis=0), axis=0)).sum(axis=1)
-    xpos = adaptive_pos(cx, a.nx, Wx*0.06, Wx*0.94, cell, a.min_gap)
-    ypos = adaptive_pos(cy, a.ny, Dy*0.06, Dy*0.94, cell, a.min_gap)
+    # EXAKT dieselben adaptiven Rippen-Positionen wie das Gerüst (eine gemeinsame Quelle)
+    mg = a.max_gap if a.max_gap > 0 else None
+    xpos, ypos = rib_positions(Hf, cell, a.nx, a.ny, a.min_gap, mg)
     bx = np.array(sorted({0.0, *xpos.tolist(), Wx})); by = np.array(sorted({0.0, *ypos.tolist(), Dy}))
 
     def hrange(x0, x1, y0, y1):

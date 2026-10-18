@@ -80,19 +80,54 @@ def rib(L, hs, cross, slotw, from_top, bs=None):
     return pts
 
 
-def adaptive_pos(detail, n, lo, hi, cell, min_gap):
-    """Rippen-Positionen (mm) nach Krümmungs-Dichte verteilen: zwischen je zwei Rippen
-    gleich viel 'Detail'. Flach -> große Abstände, viel Krümmung -> eng. min_gap mm Mindestabstand."""
-    d = np.asarray(detail, float)
-    d = d + d.max() * 0.08 + 1e-9                 # Boden: auch flache Zonen kriegen ein paar Rippen
-    cum = np.concatenate([[0.0], np.cumsum(d)]); cum /= cum[-1]     # 0..1 über die Zellen
-    tgt = np.linspace(0, 1, n)
-    idx = np.interp(tgt, cum, np.arange(len(cum)))                  # inverse: Zell-Index je Ziel
-    pos = np.clip(idx * cell, lo, hi)
-    out = []                                                         # Mindestabstand erzwingen
-    for p in np.sort(pos):
-        if not out or p - out[-1] >= min_gap: out.append(float(p))
-    return np.array(out if out else [(lo+hi)/2])
+def adaptive_pos(detail, n, lo, hi, cell, min_gap, max_gap=None):
+    """Rippen-Positionen (mm), DICHTE folgt dem Detail — KEINE feste Anzahl.
+    Scharfe Features (Hirsch-Sporn, Steilkante) bekommen AUTOMATISCH mehr Rippen, bis
+    hinunter zu min_gap; lange flache Strecken nur bis max_gap auseinander.
+    n = Auflösungs-Regler (Detail-Budget pro Intervall), nicht die feste Rippenzahl."""
+    d = np.clip(np.asarray(detail, float), 0, None)
+    d = d + d.max() * 0.04 + 1e-9                 # Boden: flache Zonen nur bis max_gap, nicht unendlich
+    L = len(d)
+    xs = (np.arange(L) + 0.5) * cell              # Zell-Mitten in mm
+    budget = float(d.sum()) / max(1, n)           # Ziel-Krümmung zwischen zwei Rippen
+    if max_gap is None: max_gap = 2.2 * (hi - lo) / max(1, n - 1)
+    pos = []; acc = 0.0; last = None
+    for i in range(L):
+        x = xs[i]
+        if x < lo:  acc += d[i]; continue         # vor dem Fenster Detail schon sammeln
+        if x > hi:  break
+        acc += d[i]
+        if last is None:                          # erste Rippe am linken Rand
+            pos.append(float(x)); last = x; acc = 0.0; continue
+        gap = x - last
+        if gap < min_gap: continue                # zu nah -> warten (verhindert Überlappung)
+        if acc >= budget or gap >= max_gap:       # genug Detail gesammelt ODER zu weit weg
+            pos.append(float(x)); last = x; acc = 0.0
+    if not pos: return np.array([(lo + hi) / 2])
+    if pos[0] - lo > min_gap: pos.insert(0, float(lo))     # Ränder absichern
+    if hi - pos[-1] > min_gap: pos.append(float(hi))
+    return np.array(sorted({round(p, 2) for p in pos}))
+
+
+def rib_positions(Hf, cell, nx, ny, min_gap, max_gap=None, uniform=False):
+    """DIE eine Quelle der Rippen-X/Y-Positionen — genutzt von Gerüst UND Deckplatten,
+    damit die Platten exakt zwischen die Rippen passen. Dichte folgt der SCHÄRFE:
+    Detail je Spalte = 0.5*Summe (breite Krümmung) + 1.0*Max (eine scharfe Kante zieht
+    die Dichte hoch, geht nicht im Spaltenmittel unter)."""
+    from scipy.ndimage import gaussian_filter
+    NY, NX = Hf.shape; Wx, Dy = NX*cell, NY*cell
+    if uniform:
+        return np.linspace(Wx*0.08, Wx*0.92, nx), np.linspace(Dy*0.08, Dy*0.92, ny)
+    Hs = gaussian_filter(Hf, 1.0)
+    cx = np.abs(np.gradient(np.gradient(Hs, axis=1), axis=1))
+    cy = np.abs(np.gradient(np.gradient(Hs, axis=0), axis=0))
+    def sharp(c, axis):
+        s = c.sum(axis=axis); m = c.max(axis=axis)
+        s /= (s.max() + 1e-9); m /= (m.max() + 1e-9)
+        return 0.5*s + 1.0*m
+    xpos = adaptive_pos(sharp(cx, 0), nx, Wx*0.06, Wx*0.94, cell, min_gap, max_gap)
+    ypos = adaptive_pos(sharp(cy, 1), ny, Dy*0.06, Dy*0.94, cell, min_gap, max_gap)
+    return xpos, ypos
 
 
 def main():
@@ -105,7 +140,8 @@ def main():
     ap.add_argument("--nx", type=int, default=6, help="max Rippen in Y-Richtung (an X-Positionen)")
     ap.add_argument("--ny", type=int, default=6, help="max Rippen in X-Richtung (an Y-Positionen)")
     ap.add_argument("--uniform", action="store_true", help="gleichmäßiges Raster statt adaptiv (Default: adaptiv nach Krümmung)")
-    ap.add_argument("--min-gap", type=float, default=15.0, help="Mindestabstand zwischen Rippen mm (adaptiv)")
+    ap.add_argument("--min-gap", type=float, default=7.0, help="Mindestabstand zwischen Rippen mm — so eng dürfen scharfe Kanten die Rippen packen")
+    ap.add_argument("--max-gap", type=float, default=0.0, help="Max Rippenabstand mm in flachen Zonen (0=auto)")
     ap.add_argument("--thickness", type=float, default=3.0)
     ap.add_argument("--rib-depth", type=float, default=0.0, help="Rippen als konstant-tiefes Band (mm unter Oberkante) statt bis Boden -> spart Material; 0=bis Boden")
     ap.add_argument("--base", type=float, default=12.0, help="Sockel mm: Gelände anheben, damit Rippen am Talboden nicht auf 0 pinchen (gegen 'schwebende' Teile)")
@@ -189,16 +225,8 @@ def main():
                     cuts.append(_rect2(s, z-4, max(top, z+CLEAR_H), CLEAR_W))
         return cuts
 
-    if a.uniform:
-        xpos = np.linspace(Wx*0.08, Wx*0.92, a.nx)    # X-Positionen der Y-Rippen (gleichmäßig)
-        ypos = np.linspace(Dy*0.08, Dy*0.92, a.ny)    # Y-Positionen der X-Rippen
-    else:
-        # ADAPTIV: Rippen nach Krümmung konzentrieren (flach->wenige, Detail->viele)
-        Hs = gaussian_filter(Hf, 1.0)
-        curv_x = np.abs(np.gradient(np.gradient(Hs, axis=1), axis=1))   # Krümmung in X
-        curv_y = np.abs(np.gradient(np.gradient(Hs, axis=0), axis=0))   # Krümmung in Y
-        xpos = adaptive_pos(curv_x.sum(axis=0), a.nx, Wx*0.06, Wx*0.94, cell, a.min_gap)
-        ypos = adaptive_pos(curv_y.sum(axis=1), a.ny, Dy*0.06, Dy*0.94, cell, a.min_gap)
+    mg = a.max_gap if a.max_gap > 0 else None
+    xpos, ypos = rib_positions(Hf, cell, a.nx, a.ny, a.min_gap, mg, a.uniform)
     slotw = a.thickness + a.fit
     made = []; oversize = []
     manifest = [f"EGG-CRATE Gerüst  {Wx:.0f}x{Dy:.0f} mm, Höhe bis {Hf.max():.0f} mm "
