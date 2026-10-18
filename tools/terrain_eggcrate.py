@@ -73,6 +73,21 @@ def rib(L, hs, cross, slotw, from_top):
     return pts
 
 
+def adaptive_pos(detail, n, lo, hi, cell, min_gap):
+    """Rippen-Positionen (mm) nach Krümmungs-Dichte verteilen: zwischen je zwei Rippen
+    gleich viel 'Detail'. Flach -> große Abstände, viel Krümmung -> eng. min_gap mm Mindestabstand."""
+    d = np.asarray(detail, float)
+    d = d + d.max() * 0.08 + 1e-9                 # Boden: auch flache Zonen kriegen ein paar Rippen
+    cum = np.concatenate([[0.0], np.cumsum(d)]); cum /= cum[-1]     # 0..1 über die Zellen
+    tgt = np.linspace(0, 1, n)
+    idx = np.interp(tgt, cum, np.arange(len(cum)))                  # inverse: Zell-Index je Ziel
+    pos = np.clip(idx * cell, lo, hi)
+    out = []                                                         # Mindestabstand erzwingen
+    for p in np.sort(pos):
+        if not out or p - out[-1] >= min_gap: out.append(float(p))
+    return np.array(out if out else [(lo+hi)/2])
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dem", default=BIG); ap.add_argument("--mm", type=float, default=MM, help="HORIZONTAL mm/DEM-Zelle")
@@ -80,8 +95,10 @@ def main():
     ap.add_argument("--zoom", type=int, default=4, help="1 für feine 0.25m-Daten, 4 für 1m")
     ap.add_argument("--r0", type=int, default=854); ap.add_argument("--r1", type=int, default=880)
     ap.add_argument("--c0", type=int, default=850); ap.add_argument("--c1", type=int, default=886)
-    ap.add_argument("--nx", type=int, default=6, help="Rippen in Y-Richtung (an X-Positionen)")
-    ap.add_argument("--ny", type=int, default=6, help="Rippen in X-Richtung (an Y-Positionen)")
+    ap.add_argument("--nx", type=int, default=6, help="max Rippen in Y-Richtung (an X-Positionen)")
+    ap.add_argument("--ny", type=int, default=6, help="max Rippen in X-Richtung (an Y-Positionen)")
+    ap.add_argument("--uniform", action="store_true", help="gleichmäßiges Raster statt adaptiv (Default: adaptiv nach Krümmung)")
+    ap.add_argument("--min-gap", type=float, default=15.0, help="Mindestabstand zwischen Rippen mm (adaptiv)")
     ap.add_argument("--thickness", type=float, default=3.0)
     ap.add_argument("--fit", type=float, default=0.15, help="Schlitz-Spiel mm")
     ap.add_argument("--vscale", type=float, default=1.0, help="Höhen-Überhöhung (1=true-N)")
@@ -158,13 +175,22 @@ def main():
                     cuts.append(_rect2(s, z-4, max(top, z+CLEAR_H), CLEAR_W))
         return cuts
 
-    xpos = np.linspace(Wx*0.08, Wx*0.92, a.nx)    # X-Positionen der Y-Rippen
-    ypos = np.linspace(Dy*0.08, Dy*0.92, a.ny)    # Y-Positionen der X-Rippen
+    if a.uniform:
+        xpos = np.linspace(Wx*0.08, Wx*0.92, a.nx)    # X-Positionen der Y-Rippen (gleichmäßig)
+        ypos = np.linspace(Dy*0.08, Dy*0.92, a.ny)    # Y-Positionen der X-Rippen
+    else:
+        # ADAPTIV: Rippen nach Krümmung konzentrieren (flach->wenige, Detail->viele)
+        Hs = gaussian_filter(Hf, 1.0)
+        curv_x = np.abs(np.gradient(np.gradient(Hs, axis=1), axis=1))   # Krümmung in X
+        curv_y = np.abs(np.gradient(np.gradient(Hs, axis=0), axis=0))   # Krümmung in Y
+        xpos = adaptive_pos(curv_x.sum(axis=0), a.nx, Wx*0.06, Wx*0.94, cell, a.min_gap)
+        ypos = adaptive_pos(curv_y.sum(axis=1), a.ny, Dy*0.06, Dy*0.94, cell, a.min_gap)
     slotw = a.thickness + a.fit
     made = []; oversize = []
     manifest = [f"EGG-CRATE Gerüst  {Wx:.0f}x{Dy:.0f} mm, Höhe bis {Hf.max():.0f} mm "
                 f"(vscale {a.vscale}, {a.mm} mm/Zelle)",
-                f"Material {a.thickness} mm, Schlitz {slotw:.2f} mm  |  {a.nx} X-Rippen + {a.ny} Y-Rippen",
+                f"Material {a.thickness} mm, Schlitz {slotw:.2f} mm  |  {len(ypos)} X-Rippen + {len(xpos)} Y-Rippen"
+                f" ({'gleichmäßig' if a.uniform else 'ADAPTIV: dicht bei Detail, weit bei flach'})",
                 "MONTAGE: X-Rippen (Schlitz oben) + Y-Rippen (Schlitz unten) ineinanderstecken.",
                 "Dann Gips/Haut über die Rippen-Oberkanten.", ""]
 
@@ -252,7 +278,7 @@ def main():
         T = np.array(tun_pts); ax.plot(T[:,0], T[:,1], T[:,2], color="red", lw=2.5, alpha=0.7)
     ax.set_xlim(0, Wx); ax.set_ylim(0, Dy); ax.set_zlim(0, Hf.max())
     ax.set_box_aspect((Wx, Dy, max(Hf.max(), 1))); ax.view_init(elev=25, azim=-55)
-    ax.set_title(f"ZUSAMMENGESTECKT — {a.nx}x{a.ny} Rippen, {Hf.max():.0f} mm (Gips kommt drüber)")
+    ax.set_title(f"ZUSAMMENGESTECKT — {len(ypos)}+{len(xpos)} Rippen {'(adaptiv)' if not a.uniform else ''}, {Hf.max():.0f} mm (Gips kommt drüber)")
     plt.tight_layout(); plt.savefig(f"{a.out}/_3d_assembled.png", dpi=95)
 
     # --- Vorschau 2: 2D CUT-LAYOUT (wie geschnitten, auf Bettbreite genestet) ---
