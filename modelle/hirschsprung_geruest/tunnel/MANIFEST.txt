@@ -1,0 +1,4 @@
+TUNNEL-KIT  Trasse 356mm, Gleisbett 22mm, Lichtraum 30x36
+Gleisbett: 1 Segment(e) -> gleisbett_N.svg (fällt in die Rippen-Löcher, Mittellinie+Kreuzungen graviert)
+Portal-Galerie (Ostportal 349,97): 4 Platten (Dach, 2 Wände, Stirnrahmen), Länge 48mm
+MONTAGE: Gleisbett in die Lichtraum-Löcher legen -> Kork+N-Flexgleis drauf. Galerie am Portal aufkleben, innen schwarz.
