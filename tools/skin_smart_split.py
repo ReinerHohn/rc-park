@@ -15,13 +15,33 @@ separat flach gedruckt. Jedes Stück als STL (druckfertig orientiert) + Montage-
 import argparse, os, sys, numpy as np, trimesh, matplotlib
 matplotlib.use("Agg"); import matplotlib.pyplot as plt
 import trimesh.transformations as T
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon, LineString
+from shapely.ops import unary_union
 from scipy.ndimage import label, gaussian_filter
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from terrain_skin_panels import shell
-from laser_relief_kit import contour_polys
+from laser_relief_kit import contour_polys, glyph_strokes
 
 BIG = "daten/hoellental/hirsch_big.npy"; MM = 6.25
+
+
+def emboss_number(piece, text, h=9.0, depth=0.8, width=1.4):
+    """Nummer spiegelverkehrt in die UNTERSEITE gravieren (von unten lesbar, nach Montage versteckt)."""
+    strokes = glyph_strokes(text, 0, 0, h)
+    geo = unary_union([LineString(s).buffer(width/2, cap_style=2, join_style=1) for s in strokes if len(s) >= 2])
+    if geo.is_empty: return piece
+    polys = list(geo.geoms) if geo.geom_type == "MultiPolygon" else [geo]
+    parts = [trimesh.creation.extrude_polygon(p, depth+0.5) for p in polys if p.area > 1e-6]
+    if not parts: return piece
+    prism = trimesh.util.concatenate(parts)
+    minx, miny, maxx, maxy = geo.bounds
+    (x0, y0, z0), (x1, y1, z1) = piece.bounds
+    prism.apply_translation([-(minx+maxx)/2, -(miny+maxy)/2, 0])
+    prism.apply_transform(T.reflection_matrix([0, 0, 0], [1, 0, 0]))   # von unten lesbar
+    prism.apply_translation([(x0+x1)/2, (y0+y1)/2, z0-0.25])
+    try: out = piece.difference(prism)
+    except Exception: return piece
+    return out if (out is not None and not out.is_empty and len(out.faces) > 0) else piece
 
 
 def solid_block(Z, cell, base_z):
@@ -134,11 +154,12 @@ def split_flatten(piece, cell, skin, bx, by, max_h, membrane=True, min_span=18, 
     (eigene Best-Fit-Ebene) -> rekursiv, bis alle Teile aufs Bett passen UND dünn sind."""
     slab = flat_slab(piece, cell, skin, membrane)
     (x0, y0, z0), (x1, y1, z1) = piece.bounds
+    cx, cy = (x0+x1)/2, (y0+y1)/2                          # Szenen-Position (für Bauplan)
     ext = [x1-x0, y1-y0, z1-z0]; big = max(ext)
     if slab is not None and not slab.is_empty and len(slab.faces) > 0:
         w, d, h = slab.extents
         if (w <= bx+1 and d <= by+1 and h <= max_h) or depth >= 14 or big <= min_span:
-            return [slab]
+            return [(slab, cx, cy)]
     elif depth >= 14 or big <= min_span:
         return []
     axis = int(np.argmax(ext)); out = []                  # längste Original-Achse teilen
@@ -177,6 +198,7 @@ def main():
     ap.add_argument("--max-h", type=float, default=30, help="max Bauhöhe/Dicke je Stück mm -> dickere flach-Platten weiter teilen")
     ap.add_argument("--membrane", action="store_true", help="freischwebende dünne Schale statt flachem Boden — MEIST schlechter (Support kostet mehr als der Boden spart); flach-Boden hohl+offen drucken ist leaner")
     ap.add_argument("--layer", type=float, default=0.2, help="Layerhöhe mm (für Zeit-Schätzung)")
+    ap.add_argument("--no-number", dest="number", action="store_false", help="Teil-Nummer NICHT unten eingravieren")
     ap.add_argument("--out", default="/tmp/smartskin")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -208,9 +230,9 @@ def main():
     print(f"Oberfläche {Z.shape[1]*cell:.0f}x{Z.shape[0]*cell:.0f} mm -> {len(patches)} kluge Stücke "
           f"(flach<{a.flat_deg:.0f}° / schräg / steil>{a.steep_deg:.0f}°)")
 
-    man = ["SMART-SPLIT HAUT — JEDES Stück flach aufs Bett gelegt (dünne Platte, kein Support).",
-           "Montage: jedes Stück an seinem Footprint aufs Gerüst (siehe _montage.png).", ""]
-    labmap = np.zeros(Z.shape, int); made = 0; stats = []
+    man = ["SMART-SPLIT HAUT — JEDES Stück flach, nummeriert (Gravur unten), Bauplan _bauplan.png.",
+           "Montage: Teil Nr. N an seine Stelle laut Bauplan aufs Gerüst.", ""]
+    made = 0; place = []; pid = 0
     for idx, (nm, mk) in enumerate(patches):
         polys = mask_polys(mk, cell)
         if not polys: continue
@@ -223,35 +245,35 @@ def main():
         except Exception:
             continue
         if piece.is_empty or len(piece.faces) == 0: continue
-        h_before = piece.extents[2]                          # Höhe, WENN man es aufrecht ließe
-        tiles = split_flatten(piece, cell, a.skin, a.bed_x, a.bed_y, a.max_h, a.membrane)  # alles flach + dünn
+        tiles = split_flatten(piece, cell, a.skin, a.bed_x, a.bed_y, a.max_h, a.membrane)
         if not tiles: continue
-        saved = (h_before - max(t.extents[2] for t in tiles)) / max(a.layer, 1e-6)
-        labmap[mk] = idx + 1
-        for ti, tp in enumerate(tiles):
+        for (tp, cx, cy) in tiles:
+            pid += 1
+            if a.number:
+                tp = emboss_number(tp, str(pid))             # Nummer unten eingravieren
             te = tp.extents
             fit = te[0] <= a.bed_x + 1 and te[1] <= a.bed_y + 1
-            sfx = "" if len(tiles) == 1 else f"_t{ti}"
-            fn = f"{a.out}/haut_{idx:02d}_{nm}{sfx}.stl"; tp.export(fn); made += 1
-            stats.append((idx, nm, te, h_before, saved, fit))
-            man.append(f"  {idx:02d}{sfx} {nm}: flach {te[0]:.0f}x{te[1]:.0f}x{te[2]:.0f} mm "
-                       f"(aufrecht wären {h_before:.0f} -> ~{saved:.0f} Layer gespart, KEIN Support)"
-                       + ("" if fit else "  !!>Bett"))
+            tp.export(f"{a.out}/haut_{pid:03d}.stl"); made += 1
+            place.append((pid, cx, cy, te, nm, fit))
+            man.append(f"  Nr {pid:3d} ({nm}): flach {te[0]:.0f}x{te[1]:.0f}x{te[2]:.0f} mm @ Szene "
+                       f"({cx:.0f},{cy:.0f}) mm" + ("" if fit else "  !!>Bett"))
     open(f"{a.out}/MANIFEST.txt", "w").write("\n".join(man) + "\n")
-    print("\n".join(man[3:]))
-    print(f"\n{made} Stücke -> {a.out}/")
+    print(f"\n{made} nummerierte Stücke -> {a.out}/")
 
-    # --- Montage-Karte: Footprint eingefärbt nach Stück ---
-    fig, ax = plt.subplots(figsize=(8, 7))
-    ax.imshow(labmap, origin="lower", cmap="tab20",
-              extent=[0, Z.shape[1]*cell, 0, Z.shape[0]*cell])
-    for (idx, nm, ext, hb, sv, fit) in stats:
-        ys, xs = np.where(labmap == idx + 1)
-        if len(xs): ax.text(xs.mean()*cell, ys.mean()*cell, str(idx), fontsize=9, weight="bold", ha="center")
-    ax.set_title("Montage-Karte: welches Haut-Stück wohin (Nr. = STL)")
-    ax.set_xlabel("x mm (Ost)"); ax.set_ylabel("y mm (Nord)")
-    plt.tight_layout(); plt.savefig(f"{a.out}/_montage.png", dpi=95)
-    print(f"Montage-Karte -> {os.path.abspath(a.out)}/_montage.png")
+    # --- BAUPLAN: Hillshade + Teil-Nummer an seiner Szenen-Position ---
+    from matplotlib.colors import LightSource
+    fig, ax = plt.subplots(figsize=(10, 7*Z.shape[0]/max(Z.shape[1],1)+2))
+    ls = LightSource(azdeg=315, altdeg=45)
+    ax.imshow(ls.hillshade(Z, vert_exag=1, dx=cell, dy=cell), cmap="gray",
+              origin="lower", extent=[0, Z.shape[1]*cell, 0, Z.shape[0]*cell])
+    ax.imshow(Z, cmap="terrain", alpha=0.4, origin="lower", extent=[0, Z.shape[1]*cell, 0, Z.shape[0]*cell])
+    for (pid, cx, cy, te, nm, fit) in place:
+        ax.text(cx, cy, str(pid), fontsize=8, weight="bold", ha="center", va="center",
+                color="k", bbox=dict(boxstyle="circle,pad=0.15", fc="white", ec="k", alpha=0.85))
+    ax.set_title(f"BAUPLAN HAUT — Teil-Nr (Gravur unten) an seine Stelle. {made} Teile.\nNord oben, Ost rechts")
+    ax.set_xlabel("Ost mm"); ax.set_ylabel("Nord mm"); ax.set_aspect("equal")
+    plt.tight_layout(); plt.savefig(f"{a.out}/_bauplan.png", dpi=110)
+    print(f"BAUPLAN -> {os.path.abspath(a.out)}/_bauplan.png")
 
 
 if __name__ == "__main__":
