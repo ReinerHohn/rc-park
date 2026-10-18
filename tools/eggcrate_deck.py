@@ -81,7 +81,8 @@ def main():
     for (nm, pw, pd, poly, sx, sy) in panels:
         if ox + pw + a.gap > a.bed_x: ox = a.gap; oy += rowh + a.gap; rowh = 0
         cut_polys.append([(px+ox, py+oy) for (px, py) in poly])
-        for st in glyph_strokes(nm, ox+3, oy+pd/2-3, h=6): engrave.append(st)
+        label = f"{nm} {sx+pw/2:.0f},{sy+pd/2:.0f}"       # Zelle + Szenen-X,Y (Mitte) gravieren
+        for st in glyph_strokes(label, ox+3, oy+pd/2-3, h=5): engrave.append(st)
         ox += pw + a.gap; rowh = max(rowh, pd); placed += 1
     svg_write(f"{a.out}/deck_cut_layout.svg", cut_polys, [], [], engrave, 0)
     if a.gcode:

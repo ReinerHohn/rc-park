@@ -7,4 +7,17 @@
 <path d="M 19.20,15.00 L 26.40,15.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
 <path d="M 19.20,15.00 L 19.20,9.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
 <path d="M 19.20,9.00 L 26.40,9.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 37.60,21.00 L 41.20,15.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 44.80,21.00 L 41.20,15.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 41.20,15.00 L 41.20,9.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 46.80,21.00 L 54.00,21.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 46.80,21.00 L 46.80,15.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 46.80,15.00 L 54.00,15.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 54.00,15.00 L 54.00,9.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 46.80,9.00 L 54.00,9.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 46.80,15.00 L 46.80,9.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 56.00,21.00 L 56.00,15.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 56.00,15.00 L 63.20,15.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 63.20,21.00 L 63.20,15.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<path d="M 63.20,15.00 L 63.20,9.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
 </svg>

@@ -118,6 +118,7 @@ def main():
     ap.add_argument("--smooth", type=float, default=4.0)
     ap.add_argument("--bed-x", type=float, default=410); ap.add_argument("--bed-y", type=float, default=400)
     ap.add_argument("--tunnel", action="store_true", help="Höllentalbahn-Tunnel als Loch (30x36mm) in die Rippen schneiden")
+    ap.add_argument("--tunnel-drop", type=float, default=0.0, help="Tunnel-Gleis um N mm tiefer legen (unters Dach statt drauf)")
     ap.add_argument("--gcode", action="store_true")
     ap.add_argument("--feed", type=float, default=400); ap.add_argument("--power", type=float, default=100)
     ap.add_argument("--passes", type=int, default=4); ap.add_argument("--eng-power", type=float, default=20)
@@ -162,7 +163,8 @@ def main():
             (rA,cA),(rB,cB) = TUN[k], TUN[k+1]; L = max(2, int(np.hypot(rB-rA, cB-cA)*4))
             for tt in np.linspace(0, 1, L, endpoint=False):
                 rr=rA+(rB-rA)*tt; cc=cA+(cB-cA)*tt; zr=railtun[k]+(railtun[k+1]-railtun[k])*tt
-                track.append((*_mdl(rr,cc,zr), True))
+                mx,my,mz = _mdl(rr,cc,zr)
+                track.append((mx, my, mz - a.tunnel_drop, True))   # tiefer legen -> Dach drüber
         for k in range(len(EAST)-1):                           # EAST = offen (auf Oberfläche)
             (rA,cA),(rB,cB) = EAST[k], EAST[k+1]; L = max(2, int(np.hypot(rB-rA, cB-cA)*4))
             for tt in np.linspace(0, 1, L, endpoint=True):
@@ -224,14 +226,14 @@ def main():
         bsf = (lambda s, yr=yr: Hbot(s, yr)) if band else None
         poly = np.array(rib(Wx, lambda s, yr=yr: Htop(s, yr), cross, slotw, True, bsf), float)
         th = tunnel_holes("x", yr)
-        bb = emit(f"ribX_{j:02d}", poly, f"X{j}", th); ribdata.append((f"X{j}", poly, "x", yr, th))
+        bb = emit(f"ribX_{j:02d}", poly, f"X{j} Y{yr:.0f}", th); ribdata.append((f"X{j}", poly, "x", yr, th))
         manifest.append(f"  X{j}: {bb[0]:.0f}x{bb[1]:.0f} mm" + (f"  (+{len(th)} Tunnel-Loch)" if th else ""))
     for i, xr in enumerate(xpos):     # Y-Rippen: Schlitz UNTEN, Kreuzung an ypos
         cross = [(yp, (Hbot(xr, yp)+Htop(xr, yp))/2) for yp in ypos]
         bsf = (lambda s, xr=xr: Hbot(xr, s)) if band else None
         poly = np.array(rib(Dy, lambda s, xr=xr: Htop(xr, s), cross, slotw, False, bsf), float)
         th = tunnel_holes("y", xr)
-        bb = emit(f"ribY_{i:02d}", poly, f"Y{i}", th); ribdata.append((f"Y{i}", poly, "y", xr, th))
+        bb = emit(f"ribY_{i:02d}", poly, f"Y{i} X{xr:.0f}", th); ribdata.append((f"Y{i}", poly, "y", xr, th))
         manifest.append(f"  Y{i}: {bb[0]:.0f}x{bb[1]:.0f} mm" + (f"  (+{len(th)} Tunnel-Loch)" if th else ""))
 
     # --- KONTUR-STACK oben drauf (z_t .. Hmax), nur wenn trans_frac < 1 ---
