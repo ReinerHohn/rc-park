@@ -216,11 +216,15 @@ def main():
             a0,a1,s0,s1 = (p[1],q[1],p[0],q[0]) if axis=="x" else (p[0],q[0],p[1],q[1])
             if (a0-pos)*(a1-pos) <= 0 and abs(a1-a0) > 1e-6:
                 t=(pos-a0)/(a1-a0); s=s0+(s1-s0)*t; z=p[2]+(q[2]-p[2])*t
+                # Trasse schräg zur Rippe -> Loch in Schnittrichtung aufweiten, damit SENKRECHT
+                # zum Gleis volle CLEAR_W bleiben (sonst klemmt ein N-Waggon an den Rippenkanten):
+                seglen = float(np.hypot(s1-s0, a1-a0))
+                w = CLEAR_W * min(2.6, seglen/abs(a1-a0))      # /sin(Winkel), gekappt
                 if p[3]:                                       # Tunnel: geschlossenes Loch
-                    cuts.append(_rect2(s, z-4, z+CLEAR_H, CLEAR_W))
+                    cuts.append(_rect2(s, z-4, z+CLEAR_H, w))
                 else:                                          # offen: Einschnitt bis Oberkante
                     top = (Hc(s, pos) if axis=="x" else Hc(pos, s)) + 6
-                    cuts.append(_rect2(s, z-4, max(top, z+CLEAR_H), CLEAR_W))
+                    cuts.append(_rect2(s, z-4, max(top, z+CLEAR_H), w))
         return cuts
 
     mg = a.max_gap if a.max_gap > 0 else None
