@@ -22,14 +22,29 @@ class _FTPI(ftplib.FTP_TLS):
 
 
 def upload(path, remote):
+    import socket
     f = _FTPI(context=ssl._create_unverified_context())
-    f.connect(IP, 990, timeout=40); f.login("bblp", CODE); f.prot_p()
-    with open(path, "rb") as fp:
-        f.storbinary("STOR " + remote, fp, blocksize=524288)
-    sz = None
-    try: sz = f.size(remote)
+    f.connect(IP, 990, timeout=60); f.login("bblp", CODE); f.prot_p()
+    try:
+        with open(path, "rb") as fp:
+            f.storbinary("STOR " + remote, fp, blocksize=262144)
+    except (ssl.SSLError, socket.timeout, TimeoutError, OSError):
+        pass                              # Server bricht TLS des Daten-Kanals am Ende hart ab — Datei ist durch
+    try: f.quit()
     except Exception: pass
-    f.quit(); return sz
+    # Vollständigkeit per frischer Verbindung prüfen (remote==lokal)
+    import os
+    for _ in range(3):
+        try:
+            f2 = _FTPI(context=ssl._create_unverified_context())
+            f2.connect(IP, 990, timeout=30); f2.login("bblp", CODE); f2.prot_p()
+            sz = f2.size(remote)
+            try: f2.quit()
+            except Exception: pass
+            if sz == os.path.getsize(path): return sz
+        except Exception:
+            time.sleep(2)
+    raise RuntimeError("Upload unvollständig/nicht verifizierbar")
 
 
 def _mqtt(on_msg=None):
