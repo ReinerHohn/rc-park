@@ -31,10 +31,30 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("dir")
     ap.add_argument("--sheet", default="1200x600"); ap.add_argument("--gap", type=float, default=4.0)
+    ap.add_argument("--split-len", type=float, default=0.0,
+                    help="Rippen in Stücke <= N mm zerteilen (Puzzle/Fingerzinken) -> packt dichter, spart Verschnitt. 0=aus")
     ap.add_argument("--out", default="/tmp/nest")
     a = ap.parse_args()
     SW, SH = (float(x) for x in a.sheet.lower().split("x"))
     os.makedirs(a.out, exist_ok=True)
+
+    def split_poly(p, maxlen):
+        """Polygon entlang vertikaler Linien in Stücke <= maxlen (für geteilte Rippen)."""
+        from shapely.geometry import Polygon as SPoly, box
+        g = SPoly(p)
+        if not g.is_valid: g = g.buffer(0)
+        x0, y0, x1, y1 = g.bounds; W = x1 - x0
+        n = max(1, int(np.ceil(W / maxlen)))
+        if n == 1: return [p]
+        step = W / n; out = []
+        for k in range(n):
+            clip = box(x0 + k*step, y0 - 1, x0 + (k+1)*step, y1 + 1)
+            seg = g.intersection(clip)
+            geoms = list(seg.geoms) if seg.geom_type == "MultiPolygon" else [seg]
+            for gg in geoms:
+                if gg.area < 1: continue
+                out.append(np.array(gg.exterior.coords))
+        return out
 
     parts = []   # (name, poly_local(0-based), w, h, area)
     # Rippen: je SVG das GRÖSSTE Polygon = das Teil (Tunnel-Löcher/Gravur ignorieren fürs Nesten)
@@ -42,7 +62,10 @@ def main():
         ps = polys_from_svg(fn)
         if not ps: continue
         p = max(ps, key=area); p = p - p.min(0)
-        parts.append((os.path.basename(fn)[:-4], p, np.ptp(p[:, 0]), np.ptp(p[:, 1]), area(p)))
+        segs = split_poly(p, a.split_len) if a.split_len > 0 else [p]
+        for si, sp in enumerate(segs):
+            sp = sp - sp.min(0); nm = os.path.basename(fn)[:-4] + (f"_{si}" if len(segs) > 1 else "")
+            parts.append((nm, sp, np.ptp(sp[:, 0]), np.ptp(sp[:, 1]), area(sp)))
     # Deck: jedes Polygon im Layout = eine Platte
     for fn in glob.glob(os.path.join(a.dir, "deck", "deck_cut_layout.svg")) + glob.glob(os.path.join(a.dir, "deck_cut_layout.svg")):
         for k, p in enumerate(polys_from_svg(fn)):
