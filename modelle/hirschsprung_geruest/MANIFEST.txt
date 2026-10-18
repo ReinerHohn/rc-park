@@ -1,0 +1,32 @@
+EGG-CRATE Gerüst  406x266 mm, Höhe bis 365 mm (vscale 0.85, 1.5625 mm/Zelle)
+Material 4.0 mm, Schlitz 4.15 mm  |  12 X-Rippen + 15 Y-Rippen (ADAPTIV: dicht bei Detail, weit bei flach)
+MONTAGE: X-Rippen (Schlitz oben) + Y-Rippen (Schlitz unten) ineinanderstecken.
+Dann Gips/Haut über die Rippen-Oberkanten.
+
+  X0: 406x220 mm
+  X1: 406x206 mm
+  X2: 406x180 mm
+  X3: 406x134 mm  (+1 Tunnel-Loch)
+  X4: 406x138 mm  (+1 Tunnel-Loch)
+  X5: 406x159 mm  (+1 Tunnel-Loch)
+  X6: 406x178 mm  (+1 Tunnel-Loch)
+  X7: 406x194 mm  (+1 Tunnel-Loch)
+  X8: 406x261 mm  (+1 Tunnel-Loch)
+  X9: 406x302 mm  (+1 Tunnel-Loch)
+  X10: 406x331 mm  (+1 Tunnel-Loch)
+  X11: 406x297 mm  (+1 Tunnel-Loch)
+  Y0: 266x215 mm
+  Y1: 266x203 mm
+  Y2: 266x258 mm
+  Y3: 266x254 mm
+  Y4: 266x291 mm
+  Y5: 266x305 mm  (+1 Tunnel-Loch)
+  Y6: 266x304 mm  (+1 Tunnel-Loch)
+  Y7: 266x308 mm  (+1 Tunnel-Loch)
+  Y8: 266x306 mm  (+1 Tunnel-Loch)
+  Y9: 266x263 mm  (+1 Tunnel-Loch)
+  Y10: 266x320 mm  (+1 Tunnel-Loch)
+  Y11: 266x311 mm  (+1 Tunnel-Loch)
+  Y12: 266x325 mm  (+1 Tunnel-Loch)
+  Y13: 266x347 mm  (+1 Tunnel-Loch)
+  Y14: 266x330 mm  (+1 Tunnel-Loch)
