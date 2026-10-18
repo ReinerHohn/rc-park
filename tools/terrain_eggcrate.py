@@ -17,14 +17,22 @@ from laser_relief_kit import glyph_strokes, svg_write, gcode_write, contour_poly
 BIG = "daten/hoellental/hirsch_big.npy"; MM = 6.25
 
 
-def write_html(fn, scene):
-    """Drehbarer three.js-Viewer der zusammengesteckten Rippen (GLB eingebettet)."""
-    import base64
+def write_html(fn, scene, engrave_lines=None):
+    """Drehbarer three.js-Viewer der zusammengesteckten Rippen (GLB eingebettet).
+    engrave_lines = Liste von Nx3-Polylinien (Gravur X/Y+Nr. auf der Holzfläche)."""
+    import base64, json
     b64 = base64.b64encode(scene.export(file_type="glb")).decode()
+    seg = []                                       # Gravur -> Segment-Paare (flach x,y,z,...)
+    for pl in (engrave_lines or []):
+        pl = np.asarray(pl, float)
+        for i in range(len(pl)-1):
+            seg += [*pl[i].tolist(), *pl[i+1].tolist()]
+    eng_json = json.dumps([round(v, 2) for v in seg])
     html = '''<!doctype html><html><head><meta charset=utf8><title>Egg-Crate 3D</title>
 <style>body{margin:0;background:#dde6ef;font-family:sans-serif}#i{position:fixed;top:10px;left:10px;background:#000a;color:#fff;padding:8px 12px;border-radius:8px;font-size:13px}</style>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
 </head><body><div id=i><b>Egg-Crate — zusammengesteckt</b><br><span style=color:#8cf>Maus drehen · Rad zoom</span></div>
+<div id=i2 style="position:fixed;bottom:10px;left:10px;background:#000a;color:#fff;padding:6px 10px;border-radius:8px;font-size:12px">Jede Farbe = ein Puzzle-Stück · dunkle Linien = Laser-Gravur (X/Y + Nr.) auf dem Holz</div>
 <script type=module>
 import*as THREE from'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';import{GLTFLoader}from'three/addons/loaders/GLTFLoader.js';
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
@@ -34,12 +42,16 @@ const ct=new OrbitControls(cam,rn.domElement);ct.enableDamping=true;
 sc.add(new THREE.AmbientLight(0xffffff,0.75));sc.add(new THREE.HemisphereLight(0xffffff,0x556,1.0));
 const d1=new THREE.DirectionalLight(0xffffff,1.2);d1.position.set(200,-300,500);sc.add(d1);
 const mat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,side:THREE.DoubleSide,flatShading:true});
+const ENG=%ENG%;
 new GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{const m=g.scene;m.traverse(o=>{if(o.isMesh)o.material=mat;});
  const bx=new THREE.Box3().setFromObject(m),c=bx.getCenter(new THREE.Vector3()),s=bx.getSize(new THREE.Vector3());
- m.position.sub(c);sc.add(m);const d=Math.max(s.x,s.y,s.z);cam.position.set(d*0.9,-d*1.2,d*0.8);cam.lookAt(0,0,0);ct.update();});
+ m.position.sub(c);sc.add(m);
+ if(ENG.length){const gg=new THREE.BufferGeometry();gg.setAttribute('position',new THREE.Float32BufferAttribute(ENG,3));
+  const ls=new THREE.LineSegments(gg,new THREE.LineBasicMaterial({color:0x1a0f06}));m.add(ls);}
+ const d=Math.max(s.x,s.y,s.z);cam.position.set(d*0.9,-d*1.2,d*0.8);cam.lookAt(0,0,0);ct.update();});
 addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();rn.setSize(innerWidth,innerHeight)});
 (function x(){requestAnimationFrame(x);ct.update();rn.render(sc,cam)})();
-</script></body></html>'''.replace("%B64%", b64)
+</script></body></html>'''.replace("%B64%", b64).replace("%ENG%", eng_json)
     open(fn, "w").write(html)
 
 
@@ -427,7 +439,13 @@ def main():
             geoms = list(g.geoms) if g.geom_type == "MultiPolygon" else [g]
             ms = [_tm.creation.extrude_polygon(gg, h) for gg in geoms if gg.area >= 1]
             return _tm.util.concatenate(ms) if ms else None
-        plates = []
+        import colorsys
+        def pcolor(k, warm):                       # je Puzzle-Stück eigene Farbe -> Nähte sichtbar
+            h = ((0.07 if warm else 0.33) + (k*0.11)) % 1.0
+            r, g, b = colorsys.hsv_to_rgb(h, 0.5, 0.92)
+            return [int(r*255), int(g*255), int(b*255), 255]
+        eh = min(12, max(6, Hf.max()*0.12))        # Gravur-Texthöhe wie beim Laser
+        plates = []; engrave_lines = []; kc = 0
         for (nm, poly, axis, pos, th) in ribdata:
             pg = Polygon(poly)
             if not pg.is_valid: pg = pg.buffer(0)
@@ -438,12 +456,19 @@ def main():
             pm = _extrude(pg, a.thickness)
             if pm is None: continue
             V = pm.vertices.copy()
+            # Gravur (X/Y + Nummer) auf die Holz-Vorderfläche legen, wie der Laser sie einbrennt
+            smin = float(np.array(poly)[:,0].min())
+            label = f"{nm} Y{pos:.0f}" if axis == "x" else f"{nm} X{pos:.0f}"
+            face = pos + a.thickness/2 + 0.25
+            for st in glyph_strokes(label, smin+4, 3, h=eh):
+                st = np.array(st, float)
+                if axis == "x": engrave_lines.append(np.column_stack([st[:,0], np.full(len(st), face), st[:,1]]))
+                else:           engrave_lines.append(np.column_stack([np.full(len(st), face), st[:,0], st[:,1]]))
             if axis == "x":
                 pm.vertices = np.column_stack([V[:,0], V[:,2]+pos-a.thickness/2, V[:,1]])
-                pm.visual.vertex_colors = [200,165,110,255]
             else:
                 pm.vertices = np.column_stack([V[:,2]+pos-a.thickness/2, V[:,0], V[:,1]])
-                pm.visual.vertex_colors = [110,160,125,255]
+            pm.visual.vertex_colors = pcolor(kc, axis == "x"); kc += 1
             pm.fix_normals(); plates.append(pm)
         for (li, lv, ps, hh) in stackdata:          # Stack-Lagen als flache Platten bei z=lv
             for pm2 in ps:
@@ -455,7 +480,7 @@ def main():
                 if sm is None: continue
                 sm.apply_translation([0, 0, lv]); sm.visual.vertex_colors = [190,95,120,255]
                 plates.append(sm)
-        write_html(f"{a.out}/_assembled.html", _tm.util.concatenate(plates))
+        write_html(f"{a.out}/_assembled.html", _tm.util.concatenate(plates), engrave_lines)
         html_ok = True
     except Exception as e:
         html_ok = False; print("HTML-Viewer übersprungen:", e)
