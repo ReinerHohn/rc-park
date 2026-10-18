@@ -108,6 +108,7 @@ def main():
     ap.add_argument("--min-gap", type=float, default=15.0, help="Mindestabstand zwischen Rippen mm (adaptiv)")
     ap.add_argument("--thickness", type=float, default=3.0)
     ap.add_argument("--rib-depth", type=float, default=0.0, help="Rippen als konstant-tiefes Band (mm unter Oberkante) statt bis Boden -> spart Material; 0=bis Boden")
+    ap.add_argument("--base", type=float, default=12.0, help="Sockel mm: Gelände anheben, damit Rippen am Talboden nicht auf 0 pinchen (gegen 'schwebende' Teile)")
     ap.add_argument("--fit", type=float, default=0.15, help="Schlitz-Spiel mm")
     ap.add_argument("--vscale", type=float, default=1.0, help="Höhen-Überhöhung (1=true-N)")
     ap.add_argument("--trans-frac", type=float, default=0.85,
@@ -132,7 +133,7 @@ def main():
     win_min = float(win.min()); zf = max(1, a.zoom)
     rel = gaussian_filter(zoom(win - win_min, zf, order=1) if zf > 1 else (win - win_min), a.smooth)
     cell = a.mm / zf                              # HORIZONTAL mm/Zelle
-    Hf = rel * a.nscale * a.vscale                # VERTIKAL: Relief_m × mm/Meter
+    Hf = rel * a.nscale * a.vscale + a.base       # VERTIKAL: Relief_m × mm/Meter (+ Sockel, damit Rippen nie auf 0 pinchen)
     NY, NX = Hf.shape; Wx, Dy = NX * cell, NY * cell
     os.makedirs(a.out, exist_ok=True)
 
