@@ -72,16 +72,30 @@ def main():
     def Hat(x, y):
         xi = min(max(x/cell, 0), NX-1); yi = min(max(y/cell, 0), NY-1); return float(Hf[int(round(yi)), int(round(xi))])
 
+    tr = np.load(a.track)                                    # Trasse (mx,my,mz,is_tunnel)
+    CW, CH = 30.0, 36.0
+    def holes(axis, pos):
+        cuts = []
+        for k in range(len(tr)-1):
+            p, q = tr[k], tr[k+1]
+            a0, a1, s0, s1 = (p[1], q[1], p[0], q[0]) if axis == "x" else (p[0], q[0], p[1], q[1])
+            if (a0-pos)*(a1-pos) <= 0 and abs(a1-a0) > 1e-6:
+                t = (pos-a0)/(a1-a0); s = s0+(s1-s0)*t; z = p[2]+(q[2]-p[2])*t
+                w = CW*min(2.6, float(np.hypot(s1-s0, a1-a0))/abs(a1-a0))
+                cuts.append(Polygon([(s-w/2, z-4), (s+w/2, z-4), (s+w/2, z+CH), (s-w/2, z+CH)]))
+        return cuts
+
     from shapely.geometry import Polygon
     def extrude(pg, h):
         geoms = list(pg.geoms) if pg.geom_type == "MultiPolygon" else [pg]
         ms = [trimesh.creation.extrude_polygon(g, h) for g in geoms if g.area >= 1]
         return trimesh.util.concatenate(ms) if ms else None
     meshes = []
-    for yr in ypos:                                          # X-Rippen
+    for yr in ypos:                                          # X-Rippen (Lichtraum-Loch wo Trasse kreuzt)
         cross = [(xp, Hat(xp, yr)/2) for xp in xpos]
         poly = np.array(te.rib(Wx, lambda s, yr=yr: Hat(s, yr), cross, slotw, True), float)
         pg = Polygon(poly).buffer(0)
+        for hp in holes("x", yr): pg = pg.difference(hp)
         if pg.is_empty: continue
         pm = extrude(pg, a.thick)
         if pm is None: continue
@@ -91,6 +105,7 @@ def main():
         cross = [(yp, Hat(xr, yp)/2) for yp in ypos]
         poly = np.array(te.rib(Dy, lambda s, xr=xr: Hat(xr, s), cross, slotw, False), float)
         pg = Polygon(poly).buffer(0)
+        for hp in holes("y", xr): pg = pg.difference(hp)
         if pg.is_empty: continue
         pm = extrude(pg, a.thick)
         if pm is None: continue
@@ -98,7 +113,6 @@ def main():
         pm.vertices = np.column_stack([V[:, 2]+xr-a.thick/2, V[:, 0], V[:, 1]]); pm.visual.vertex_colors = [110, 160, 125, 255]; meshes.append(pm)
 
     # Gleisbett auf Schienenhöhe
-    tr = np.load(a.track)
     def resample(pts, step=2.0):
         out = [pts[0]]
         for i in range(len(pts)-1):
