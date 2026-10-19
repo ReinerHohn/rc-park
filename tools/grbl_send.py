@@ -60,6 +60,7 @@ def main():
     ap.add_argument("--frame-power", type=float, default=2.0, help="Frame-Leistung %% (sichtbar, schneidet nicht)")
     ap.add_argument("--frame-only", action="store_true")
     ap.add_argument("--no-frame", action="store_true")
+    ap.add_argument("--yes", action="store_true", help="ohne ENTER-Rückfrage schneiden (für Hintergrund-Lauf)")
     a = ap.parse_args()
 
     x0, y0, x1, y1 = bbox(a.gcode)
@@ -85,10 +86,11 @@ def main():
             cmd(ser, "M5"); cmd(ser, "G0 X0 Y0")
             if a.frame_only:
                 print("Frame fertig."); return
+        if not a.yes:
             try:
                 input("Material ausgerichtet? ENTER = schneiden,  Strg-C = Abbruch ... ")
-            except KeyboardInterrupt:
-                print("\nabgebrochen."); soft_reset(ser); return
+            except (KeyboardInterrupt, EOFError):
+                print("\nabgebrochen (kein ENTER / --yes fehlt)."); soft_reset(ser); return
 
         print("-- SCHNEIDEN -- (Strg-C = Not-Halt)")
         lines = [l for l in open(a.gcode) if l.strip() and not l.strip().startswith(";")]
