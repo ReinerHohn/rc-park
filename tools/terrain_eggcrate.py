@@ -354,7 +354,12 @@ def main():
     def emit(name, poly, label, extra_cuts=None):
         poly = np.array(poly, float)
         cuts = [poly] + list(extra_cuts or [])      # extra = Tunnel-Löcher
-        eng = glyph_strokes(label, poly[:,0].min()+4, 3, h=min(12, max(6, Hf.max()*0.12)))
+        # Gravur KLEIN (~5mm) + ganz unten (bei base>0 immer Material) + Breite aufs Teil begrenzen,
+        # damit die Schrift NIE über den Teilrand / in einen Schlitz läuft.
+        pw = float(np.ptp(poly[:, 0])); lh = 5.0
+        cw = len(str(label)) * (6*(lh/10.0) + 2.0)
+        if cw > pw - 4: lh = max(2.5, lh*(pw-4)/cw)
+        eng = glyph_strokes(label, poly[:, 0].min()+3, 2, h=lh)
         svg_write(f"{a.out}/{name}.svg", cuts, [], [], eng, 0)
         if a.gcode:
             gcode_write(f"{a.out}/{name}.gcode", cuts, [], [], eng, 0,
@@ -496,7 +501,7 @@ def main():
             h = ((0.07 if warm else 0.33) + (k*0.11)) % 1.0
             r, g, b = colorsys.hsv_to_rgb(h, 0.5, 0.92)
             return [int(r*255), int(g*255), int(b*255), 255]
-        eh = min(12, max(6, Hf.max()*0.12))        # Gravur-Texthöhe wie beim Laser
+        eh = 5.0                                    # Gravur-Texthöhe klein (wie Laser-Gravur)
         plates = []; engrave_lines = []; named_pieces = []; kc = 0
         for (nm, poly, axis, pos, th) in ribdata:
             pg = Polygon(poly)
