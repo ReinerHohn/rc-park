@@ -69,11 +69,27 @@ def xf(p, rot, flip):
     return q
 
 
+def upright(strokes, rot, flip):
+    """Gravur-Striche nach dem Drehen/Spiegeln wieder AUFRICHTEN (Schwerpunkt bleibt), damit die
+    Schrift lesbar ist (inverse von xf: erst inv-Rotation, dann Spiegeln zurück)."""
+    if not strokes or (not rot and not flip): return strokes
+    c = np.vstack(strokes).mean(0); out = []
+    for s in strokes:
+        q = np.asarray(s, float) - c
+        if rot == 1:   q = np.column_stack([q[:, 1], -q[:, 0]])
+        elif rot == 2: q = np.column_stack([-q[:, 0], -q[:, 1]])
+        elif rot == 3: q = np.column_stack([-q[:, 1], q[:, 0]])
+        if flip:       q = np.column_stack([-q[:, 0], q[:, 1]])
+        out.append(q + c)
+    return out
+
+
 def nest(parts, SW, SH, gap, res=4.0):
     GW, GH = int(SW/res), int(SH/res); gm = max(1, int(round(gap/res)))
 
     def prep(part, rot, flip):
-        ac = [xf(p, rot, flip) for p in part["cut"]]; ae = [xf(p, rot, flip) for p in part["eng"]]
+        ac = [xf(p, rot, flip) for p in part["cut"]]
+        ae = upright([xf(p, rot, flip) for p in part["eng"]], rot, flip)   # Schrift aufrecht halten
         mn = np.vstack(ac).min(0); ac = [p-mn for p in ac]; ae = [p-mn for p in ae]
         outline = max(ac, key=area)
         w = int(np.ceil(np.ptp(outline[:, 0])/res))+1; h = int(np.ceil(np.ptp(outline[:, 1])/res))+1

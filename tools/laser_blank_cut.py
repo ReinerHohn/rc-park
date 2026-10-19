@@ -18,6 +18,7 @@ from scipy.ndimage import binary_dilation
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from laser_relief_kit import glyph_strokes, svg_write, gcode_write
+from laser_zone_nest import upright
 
 
 def area(p):
@@ -69,7 +70,8 @@ def nest(parts, SW, SH, gap, res=4.0):
     GW, GH = int(SW/res), int(SH/res); gm = max(1, int(round(gap/res)))
 
     def prep(part, rot, flip):
-        ac = [xf(p, rot, flip) for p in part["cut"]]; ae = [xf(p, rot, flip) for p in part["eng"]]
+        ac = [xf(p, rot, flip) for p in part["cut"]]
+        ae = upright([xf(p, rot, flip) for p in part["eng"]], rot, flip)   # Schrift aufrecht halten
         mn = np.vstack(ac).min(0); ac = [p-mn for p in ac]; ae = [p-mn for p in ae]
         outline = max(ac, key=area)
         w = int(np.ceil(np.ptp(outline[:, 0])/res))+1; h = int(np.ceil(np.ptp(outline[:, 1])/res))+1
