@@ -22,6 +22,16 @@ Große/lange Teile brauchen evtl. +1 Pass (Wärme-Effekt bei langen Strecken).
   Mit 4,15 mm (alter Default) war es **viel zu locker**. **Kerf ≈ 0,4 mm** bei diesem Material + 4 Pässen.
 - Getestet mit Breiten-Lehre 3,4/3,6/3,8/4,0/4,2 → **3,6 greift**.
 
+## ⭐ 3 mm Pappelsperr + glueless Steck-Joint (2026-10-19, am Gerät erkämpft)
+Wechsel auf **3 mm** (statt 4 mm) für den Rahmen → **halbe Schnittzeit**.
+- **Schnitt: 100 % / 300 mm/min / nur 2 DURCHGÄNGE** (bestätigt: Pass-Test + 1-vs-2-Vergleich; 1× reicht nicht, 2× sauber durch).
+- **Steck-Joint für Rippen-Segmente (hält OHNE Kleber):**
+  - **GERADE FINGER, KEIN Schwalbenschwanz/Taper!** Ein Dovetail lässt sich geradeaus **nicht** zusammenstecken (breite Spitze passt nie durch den schmalen Hals) → „passt gar nichts". Nur gerade Finger (`finger_split`) schieben sich zusammen + halten per Reibung.
+  - **Teile GETRENNT mit Lücke** erzeugen (nicht überlappend in Steck-Position!) und **jedes einzeln um K nach außen** kompensieren (`buffer(+K, join_style=2)`). Übereinander-legen + Buffer = Konturen überlappen = Laser-Murks.
+  - **Kerf-Ausgleich K ≈ 0,09 mm** (`truss_kit --kerf 0.09`). Fein-Sweep: K06 zu locker, **K09 passt**, K12/K15 zu stramm. ACHTUNG: **Kerf schwankt ~0,05 mm/Lauf** (Fokus/Ruß/Brettstelle) → lieber minimal lockerer (zu stramm = geht gar nicht rein).
+- **Kalibrier-Tool:** `tools/laser_calib.py --mode pass|fit` (Quadrate/Schlitze, graviert beschriftet). Steck-Tests: gerade Finger-Paare getrennt, K-Sweep.
+- Streben-SCHLITZ-`--fit` fürs 3 mm noch separat prüfen (Kerf ~0,3 → eher ~-0,15 statt der 4mm--0.4).
+
 ## Gravur (Beschriftung) — kräftig lesbar
 | Parameter | Wert |
 |---|---|

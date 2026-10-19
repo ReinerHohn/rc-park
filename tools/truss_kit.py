@@ -78,7 +78,14 @@ def main():
     ap.add_argument("--fnx", type=int, default=4); ap.add_argument("--fny", type=int, default=3, help="Balken-Anzahl (grob)")
     ap.add_argument("--fth", type=float, default=4.0); ap.add_argument("--dth", type=float, default=2.0)
     ap.add_argument("--ddepth", type=float, default=55.0, help="Streben-Bandtiefe")
+    ap.add_argument("--bdepth", type=float, default=110.0, help="Balken-Bandtiefe (tiefer=stabiler; Band statt massiv-bis-Boden -> viel weniger Schnitt bei hohem Modell)")
     ap.add_argument("--fit", type=float, default=-0.4)
+    ap.add_argument("--step", type=float, default=1.0, help="Balken-Oberkanten-Abtastung mm (fein=1.0; groeber spart kaum, Hoehe ist der Treiber)")
+    ap.add_argument("--no-split", action="store_true", help="Generator NICHT finger-splitten (Zonen-Nester teilt sowieso -> keine Doppel-Zinken)")
+    ap.add_argument("--puzzle", action="store_true", help="Schwalbenschwanz-/Puzzle-Nasen statt gerader Zinken -> halten OHNE Kleber")
+    ap.add_argument("--maxlen", type=float, default=200.0, help="max Stuecklaenge mm vor Naht (an Materialbreite anpassen)")
+    ap.add_argument("--taper", type=float, default=1.6, help="Puzzle-Nasen-Weitung mm/Seite (NICHT fuer Press-Fit, Dovetail steckt nicht geradeaus)")
+    ap.add_argument("--kerf", type=float, default=0.09, help="Kerf-Ausgleich mm/Seite: geteilte Teile um K groesser schneiden -> Finger stecken satt (S9/3mm: 0.09; Kerf schwankt ~0.05/Lauf, lieber lockerer)")
     ap.add_argument("--track", default="daten/hoellental/hoellental_track.npy")
     ap.add_argument("--out", default="modelle/hirschsprung_truss")
     a = ap.parse_args()
@@ -97,9 +104,11 @@ def main():
     bx = set(np.round(fxs, 2)); by = set(np.round(fys, 2))
     is_bx = lambda x: round(x, 2) in bx; is_by = lambda y: round(y, 2) in by
 
-    def meetz(x, y, both_full):
-        return Hat(x, y)/2 if both_full else max(0.0, Hat(x, y) - a.ddepth/2)
-    def Hbot(x, y): return max(0.0, Hat(x, y)-a.ddepth)
+    def Hbot(x, y): return max(0.0, Hat(x, y)-a.ddepth)          # Streben-Band-Unterkante
+    def Hbotb(x, y): return max(0.0, Hat(x, y)-a.bdepth)         # Balken-Band-Unterkante (tiefer); Fuss am Boden wo Gelaende tief
+    def meetz(x, y, both_bal):
+        # Balken×Balken: Halblap in Band-Mitte; sonst Strebe haengt in Balken (Streben-Band-Mitte)
+        return (Hbotb(x, y)+Hat(x, y))/2 if both_bal else max(0.0, Hat(x, y) - a.ddepth/2)
 
     # --- Tunnel: Lichtraum-Löcher wo Trasse Rippen kreuzt (wie terrain_eggcrate) ---
     CW, CH = 30.0, 36.0; track = None
@@ -142,18 +151,18 @@ def main():
     bi = 0
     for yr in dys:                                 # X-Rippen (an dys)
         bthis = is_by(yr); th = a.fth if bthis else a.dth
-        bs = (lambda s: 0.0) if bthis else (lambda s, yr=yr: Hbot(s, yr))
+        bs = (lambda s, yr=yr: Hbotb(s, yr)) if bthis else (lambda s, yr=yr: Hbot(s, yr))
         cross = [(xp, (a.fth if is_bx(xp) else a.dth)+a.fit, meetz(xp, yr, bthis and is_bx(xp))) for xp in dxs]
-        poly = np.array(rib2(Wx, lambda s, yr=yr: Hat(s, yr), bs, cross, True), float)
+        poly = np.array(rib2(Wx, lambda s, yr=yr: Hat(s, yr), bs, cross, True, a.step), float)
         hl = holes("x", yr)
         addmesh(poly, "x", yr, th, BALK if bthis else STREB, hl)
         if bthis: balken.append((f"BX{bi}", poly, "x", yr, hl)); bi += 1
     bi = 0
     for xr in dxs:                                 # Y-Rippen (an dxs)
         bthis = is_bx(xr); th = a.fth if bthis else a.dth
-        bs = (lambda s: 0.0) if bthis else (lambda s, xr=xr: Hbot(xr, s))
+        bs = (lambda s, xr=xr: Hbotb(xr, s)) if bthis else (lambda s, xr=xr: Hbot(xr, s))
         cross = [(yp, (a.fth if is_by(yp) else a.dth)+a.fit, meetz(xr, yp, bthis and is_by(yp))) for yp in dys]
-        poly = np.array(rib2(Dy, lambda s, xr=xr: Hat(xr, s), bs, cross, False), float)
+        poly = np.array(rib2(Dy, lambda s, xr=xr: Hat(xr, s), bs, cross, False, a.step), float)
         hl = holes("y", xr)
         addmesh(poly, "y", xr, th, BALK if bthis else STREB, hl)
         if bthis: balken.append((f"BY{bi}", poly, "y", xr, hl)); bi += 1
@@ -171,8 +180,19 @@ def main():
     for (nm, poly, axis, pos, hl) in balken:
         L = Wx if axis == "x" else Dy
         cs = list(dxs) if axis == "x" else list(dys)      # Naht nie auf eine Kreuzung
-        seams = te.choose_seams(cs, L, 200, 2*fdepth+slotw4+4) if np.ptp(poly[:, 0]) > 200 else []
-        segs = te.finger_split(poly, seams, fdepth, 12) if seams else [poly]
+        seams = [] if a.no_split else (te.choose_seams(cs, L, a.maxlen, 2*fdepth+slotw4+4) if np.ptp(poly[:, 0]) > a.maxlen else [])
+        if seams:
+            # GERADE Finger (Dovetail lässt sich nicht geradeaus stecken!). Kerf-Comp: jedes Teil +K nach außen.
+            segs = te.puzzle_split(poly, seams, fdepth, 12, a.taper) if a.puzzle else te.finger_split(poly, seams, fdepth, 12)
+        else:
+            segs = [poly]
+        if a.kerf > 0 and len(segs) > 1:                   # nur geteilte Teile kompensieren (Steck-Finger satt)
+            kseg = []
+            for sp in segs:
+                g = Polygon(sp).buffer(a.kerf, join_style=2)
+                g = g if g.geom_type == "Polygon" else max(g.geoms, key=lambda h: h.area)
+                kseg.append(np.array(g.exterior.coords))
+            segs = kseg
         for si, sp in enumerate(segs):
             lt = chr(97+si) if len(segs) > 1 else ""
             hh = clip_holes(sp, hl) if hl else []
@@ -194,9 +214,9 @@ def main():
     ax.add_collection3d(Line3DCollection(segs[::3].reshape(-1, 4, 3), colors="#555", lw=0.15))
     ax.set_xlim(0, Wx); ax.set_ylim(0, Dy); ax.set_zlim(0, Hf.max())
     ax.set_box_aspect((Wx, Dy, Hf.max())); ax.view_init(18, -60)
-    ax.set_title(f"Zwei-Lagen: {len(fxs)}+{len(fys)} Balken(4mm) + {len(dxs)-len(fxs)}+{len(dys)-len(fys)} Streben(2mm Band)")
+    ax.set_title(f"Zwei-Lagen: {len(fxs)}+{len(fys)} Balken({a.fth:.0f}mm) + {len(dxs)-len(fxs)}+{len(dys)-len(fys)} Streben({a.dth:.0f}mm Band)")
     plt.tight_layout(); plt.savefig(f"{a.out}/_truss3d.png", dpi=110); plt.close(fig)
-    print(f"Balken {len(fxs)}+{len(fys)} (4mm voll) | Streben {len(dxs)-len(fxs)}+{len(dys)-len(fys)} (2mm Band)")
+    print(f"Balken {len(fxs)}+{len(fys)} ({a.fth:.0f}mm Band bdepth{a.bdepth:.0f}) | Streben {len(dxs)-len(fxs)}+{len(dys)-len(fys)} ({a.dth:.0f}mm Band)")
     print(f"watertight={scene.is_watertight}  -> {a.out}/_truss3d.html + _truss3d.png")
 
 

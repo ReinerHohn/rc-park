@@ -250,8 +250,44 @@ def finger_split(poly, seams, fdepth, fw):
     out.append(cur)
     res = []
     for gg in out:
-        geoms = list(gg.geoms) if gg.geom_type == "MultiPolygon" else [gg]
+        geoms = [gg] if gg.geom_type == "Polygon" else [g for g in getattr(gg, "geoms", []) if g.geom_type == "Polygon"]
         best = max(geoms, key=lambda h: h.area) if geoms else None    # Hauptstück (Slivers verwerfen)
+        if best is not None and best.area >= 20:
+            res.append(np.array(best.exterior.coords))
+    return res
+
+
+def puzzle_split(poly, seams, fdepth, fw, taper=1.6):
+    """Wie finger_split, aber SCHWALBENSCHWANZ-/Puzzle-Nasen: am Hals (an der Naht) schmaler,
+    an der Spitze breiter -> verhaken sich formschlüssig und HALTEN OHNE KLEBER (Press-Fit mit
+    Materialflex). taper = wie stark sich die Nase pro Seite weitet (mm). Gibt Teil-Polygone zurück."""
+    from shapely.geometry import Polygon as SP, box
+    from shapely.ops import unary_union
+    def dove(sc, z0, z1, depth, side):                 # side=+1 ragt rechts, -1 links; Hals schmal, Spitze breit
+        tp = min(taper, max(0.0, (z1-z0)/2 - 0.4))     # Taper gegen duenne (Rand-)Baender begrenzen
+        tip = sc + side*depth
+        return SP([(sc, z0+tp), (tip, z0), (tip, z1), (sc, z1-tp)]).buffer(0)
+    g = SP(poly)
+    if not g.is_valid: g = g.buffer(0)
+    smin, zmin, smax, zmax = g.bounds
+    out = []; cur = g
+    for sc in sorted(seams):
+        bands = []; k = 0; z = zmin
+        while z < zmax:
+            bands.append((k % 2, z, min(z+fw, zmax))); z += fw; k += 1
+        Lf = [dove(sc, z0, z1, fdepth, +1) for (par, z0, z1) in bands if par == 0 and z1-z0 > 1.0]
+        leftreg = box(smin-50, zmin-50, sc, zmax+50)
+        if Lf: leftreg = leftreg.union(unary_union(Lf).buffer(0))
+        Rf = [dove(sc, z0, z1, fdepth, -1) for (par, z0, z1) in bands if par == 1 and z1-z0 > 1.0]
+        if Rf: leftreg = leftreg.difference(unary_union(Rf).buffer(0))
+        leftreg = leftreg.buffer(0)
+        left = cur.intersection(leftreg).buffer(0); cur = cur.difference(leftreg).buffer(0)
+        out.append(left)
+    out.append(cur)
+    res = []
+    for gg in out:
+        geoms = [gg] if gg.geom_type == "Polygon" else [g for g in getattr(gg, "geoms", []) if g.geom_type == "Polygon"]
+        best = max(geoms, key=lambda h: h.area) if geoms else None
         if best is not None and best.area >= 20:
             res.append(np.array(best.exterior.coords))
     return res
