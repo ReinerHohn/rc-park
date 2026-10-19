@@ -138,6 +138,13 @@ def main():
     s_tr = np.concatenate([[0], np.cumsum(np.hypot(np.diff(tr[:, 0]), np.diff(tr[:, 1])))])
     s_cl = np.concatenate([[0], np.cumsum(np.hypot(np.diff(cl[:, 0]), np.diff(cl[:, 1])))])
     zc = np.interp(s_cl, s_tr, tr[:, 2])
+    is_tun_cl = np.interp(s_cl, s_tr, tr[:, 3].astype(float)) > 0.5
+    # TUNNEL-BODEN-TEIL (zum Einlegen): breiter Boden (Lichtraum-Breite) im Tunnel, auf z-4
+    if is_tun_cl.any():
+        idx = np.where(is_tun_cl)[0]
+        tcl = cl[idx[0]:idx[-1]+1]; tz = zc[idx[0]:idx[-1]+1] - 4.0
+        meshes.append(strip_mesh(tcl, tz, CW, 3.0, [150, 120, 80, 255]))     # Holzboden
+    # GLEISBETT (Kork/Gleis-Auflage) oben drauf, ganze Strecke
     meshes.append(strip_mesh(cl, zc, a.bw, 2.0, [60, 60, 70, 255]))
 
     # Portal-Galerie am letzten Tunnelpunkt
