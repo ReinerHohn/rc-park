@@ -59,6 +59,7 @@ def main():
     ap.add_argument("--c0", type=int, default=3310); ap.add_argument("--c1", type=int, default=3570)
     ap.add_argument("--vscale", type=float, default=0.85); ap.add_argument("--base", type=float, default=12.0)
     ap.add_argument("--bw", type=float, default=22.0); ap.add_argument("--thick", type=float, default=4.0)
+    ap.add_argument("--surface", action="store_true", help="ganze Gelände-Oberfläche statt nur Rippen (Szenen-Profil)")
     ap.add_argument("--out", default="modelle/hirschsprung_geruest/tunnel/_tunnel3d.html")
     a = ap.parse_args()
 
@@ -91,7 +92,21 @@ def main():
         ms = [trimesh.creation.extrude_polygon(g, h) for g in geoms if g.area >= 1]
         return trimesh.util.concatenate(ms) if ms else None
     meshes = []
-    for yr in ypos:                                          # X-Rippen (Lichtraum-Loch wo Trasse kreuzt)
+    if a.surface:                                            # ganze Gelände-Oberfläche (Szenen-Profil)
+        import matplotlib.cm as cm
+        st = 2; Z = Hf[::st, ::st]; ny, nx = Z.shape
+        xs = np.arange(nx)*cell*st; ys = np.arange(ny)*cell*st
+        X, Y = np.meshgrid(xs, ys)
+        V = np.column_stack([X.ravel(), Y.ravel(), Z.ravel()])
+        F = []
+        for j in range(ny-1):
+            for i in range(nx-1):
+                a0 = j*nx+i; F += [[a0, a0+1, a0+nx], [a0+1, a0+nx+1, a0+nx]]
+        surf = trimesh.Trimesh(V, np.array(F), process=False)
+        zc0 = (Z.ravel()-Z.min())/max(np.ptp(Z), 1)
+        surf.visual.vertex_colors = (cm.terrain(0.25+0.6*zc0)*255).astype(np.uint8)
+        meshes.append(surf)
+    for yr in ([] if a.surface else ypos):                   # X-Rippen (Lichtraum-Loch wo Trasse kreuzt)
         cross = [(xp, Hat(xp, yr)/2) for xp in xpos]
         poly = np.array(te.rib(Wx, lambda s, yr=yr: Hat(s, yr), cross, slotw, True), float)
         pg = Polygon(poly).buffer(0)
@@ -101,7 +116,7 @@ def main():
         if pm is None: continue
         V = pm.vertices
         pm.vertices = np.column_stack([V[:, 0], V[:, 2]+yr-a.thick/2, V[:, 1]]); pm.visual.vertex_colors = [200, 165, 110, 255]; meshes.append(pm)
-    for xr in xpos:                                          # Y-Rippen
+    for xr in ([] if a.surface else xpos):                   # Y-Rippen
         cross = [(yp, Hat(xr, yp)/2) for yp in ypos]
         poly = np.array(te.rib(Dy, lambda s, xr=xr: Hat(xr, s), cross, slotw, False), float)
         pg = Polygon(poly).buffer(0)
