@@ -185,7 +185,7 @@ def write_svg(fn, cuts, engr, MW, MH):
     L.append("</svg>"); open(fn, "w").write("\n".join(L)+"\n")
 
 
-def write_gcode(fn, cuts, engr, feed, power, passes, eng_power):
+def write_gcode(fn, cuts, engr, feed, power, passes, eng_power, eng_feed=3000):
     S, ES = int(power*10), int(eng_power*10)
     L = ["G21", "G90", "G17", "M5 S0", "G92 X0 Y0"]
     def trace(poly, close, s, f):
@@ -193,7 +193,7 @@ def write_gcode(fn, cuts, engr, feed, power, passes, eng_power):
         for p in poly[1:]: L.append(f"G1 X{p[0]:.2f} Y{p[1]:.2f} F{f:.0f}")
         if close: L.append(f"G1 X{poly[0][0]:.2f} Y{poly[0][1]:.2f} F{f:.0f}")
         L.append("M5")
-    for s in engr: trace(s, False, ES, 3000)
+    for s in engr: trace(s, False, ES, eng_feed)
     for _ in range(passes):
         for p in cuts: trace(p, True, S, feed)
     L += ["M5 S0", "G0 X0 Y0"]; open(fn, "w").write("\n".join(L)+"\n")
@@ -208,6 +208,7 @@ def main():
     ap.add_argument("--gcode", action="store_true")
     ap.add_argument("--feed", type=float, default=300); ap.add_argument("--power", type=float, default=100)
     ap.add_argument("--passes", type=int, default=4); ap.add_argument("--eng-power", type=float, default=20)
+    ap.add_argument("--eng-feed", type=float, default=3000, help="Gravur-Vorschub mm/min (kleiner=kräftiger)")
     ap.add_argument("--out", default="/tmp/zonen")
     a = ap.parse_args()
     SW, SH = (float(x) for x in a.sheet.lower().split("x"))
@@ -257,7 +258,7 @@ def main():
             eng = eng + frame_marks(MW, MH) + glyph_strokes(f"P{si+1} Z{row}{col}", 14, MH-16, h=9)
             base = os.path.join(a.out, f"platte{si+1}_zone_r{row}c{col}")
             write_svg(f"{base}.svg", cut, eng, MW, MH)
-            if a.gcode: write_gcode(f"{base}.gcode", cut, eng, a.feed, a.power, a.passes, a.eng_power)
+            if a.gcode: write_gcode(f"{base}.gcode", cut, eng, a.feed, a.power, a.passes, a.eng_power, a.eng_feed)
             ax.text(col*STEPX+STEPX/2, row*STEPY+STEPY/2, f"Z{row}{col}\n{len(z['cut'])}T\n{w:.0f}x{h:.0f}",
                     ha="center", va="center", color="purple", fontsize=10, weight="bold", alpha=0.55)
         ax.set_xlim(-10, SW+10); ax.set_ylim(-10, SH+10); ax.set_aspect("equal"); ax.invert_yaxis()

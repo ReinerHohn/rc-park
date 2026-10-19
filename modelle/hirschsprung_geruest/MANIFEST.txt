@@ -1,5 +1,5 @@
 EGG-CRATE Gerüst  406x266 mm, Höhe bis 378 mm (vscale 0.85, 1.5625 mm/Zelle)
-Material 4.0 mm, Schlitz 4.15 mm  |  15 X-Rippen + 20 Y-Rippen (ADAPTIV: dicht bei Detail, weit bei flach)
+Material 4.0 mm, Schlitz 3.60 mm  |  15 X-Rippen + 20 Y-Rippen (ADAPTIV: dicht bei Detail, weit bei flach)
 MONTAGE: X-Rippen (Schlitz oben) + Y-Rippen (Schlitz unten) ineinanderstecken.
 Dann Gips/Haut über die Rippen-Oberkanten.
 
@@ -43,7 +43,7 @@ Dann Gips/Haut über die Rippen-Oberkanten.
   X12b: 250x211 mm (Zinken) (+2 Tunnel)
   X12c: 113x348 mm (Zinken)
   X13a: 74x115 mm (Zinken)
-  X13b: 250x235 mm (Zinken) (+2 Tunnel)
+  X13b: 250x237 mm (Zinken) (+2 Tunnel)
   X13c: 113x352 mm (Zinken)
   X14a: 74x156 mm (Zinken)
   X14b: 250x300 mm (Zinken) (+1 Tunnel)

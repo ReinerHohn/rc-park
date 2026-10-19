@@ -1,5 +1,5 @@
 ZONEN-NEST  Blatt 1200x600  |  Cutter 410x400  (Zinken 3, Rand 2)
-206 Teile, Fläche 11160 cm²  |  3 Blätter, 3x2 Zonen/Blatt (~400x300)
+206 Teile, Fläche 11328 cm²  |  3 Blätter, 3x2 Zonen/Blatt (~400x300)
 ==> 3 Blätter, 18 Schnitt-Durchgänge (Umsetzungen), Verschnitt 48 %
 TILING: Werkstück an fester Anschlag-Ecke; pro Zone Rahmen+Füße+Kreuze graviert. Nächste Zone: Werkstück
 um genau eine Zonenbreite weiterschieben, bis die Registrier-Kreuze wieder am Rahmen/Nullpunkt liegen. Zinken verleimen.
