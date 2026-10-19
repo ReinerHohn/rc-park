@@ -98,6 +98,18 @@ def main():
         if a.gcode: gcode_write(f"{a.out}/gleisbett_{si+1}.gcode", [poly], [], [], segeng, 0, a.feed, a.power, a.passes, a.eng_power)
         bett_parts.append(poly)
 
+    # --- TUNNEL-BODENTEIL (zum Einlegen in den Lichtraum-Ausschnitt, Breite=Lichtraum) ---
+    s_cl = np.concatenate([[0], np.cumsum(np.hypot(np.diff(cl[:, 0]), np.diff(cl[:, 1])))])
+    s_tr = np.concatenate([[0], np.cumsum(np.hypot(np.diff(tr[:, 0]), np.diff(tr[:, 1])))])
+    tun_cl = np.interp(s_cl, s_tr, tr[:, 3].astype(float)) > 0.5
+    if tun_cl.any():
+        idx = np.where(tun_cl)[0]; tcl = cl[idx[0]:idx[-1]+1]
+        tpoly = ribbon(tcl, a.clear_w); mn = tpoly.min(0); tpoly = tpoly - mn
+        teng = [tcl - mn] + [t - mn for t in ticks if (tcl[:, 0].min()-2 <= t[:, 0].mean() <= tcl[:, 0].max()+2)]
+        teng += glyph_strokes("TUNNELBODEN", 4, a.clear_w+3, h=6)
+        svg_write(f"{a.out}/tunnelboden.svg", [tpoly], [], [], teng, 0)
+        if a.gcode: gcode_write(f"{a.out}/tunnelboden.gcode", [tpoly], [], [], teng, 0, a.feed, a.power, a.passes, a.eng_power)
+
     # --- STEINSCHLAGGALERIE am Ostportal (letzter Tunnelpunkt) ---
     tun = tr[:, 3] > 0.5; pi = np.where(tun)[0][-1]
     GL, CW, CH, th = a.gal_len, a.clear_w, a.clear_h, a.thick
