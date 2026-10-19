@@ -1,0 +1,62 @@
+Betreff: Anfrage: CityGML/3D-Modelle für touristisches Miniaturmodell-Projekt
+
+Sehr geehrte Damen und Herren,
+
+mein Name ist [DEIN NAME]. Ich arbeite derzeit an einem innovativen
+touristischen Projekt für Freiburg: "Freiburg Miniaturwunderland" –
+eine interaktive Ausstellung mit hochpräzisen 3D-gedruckten
+Miniaturmodellen der Freiburger Innenstadt.
+
+Das Projekt nutzt *Hybrid Rapid Prototyping*:
+- 3D-Laser-geschnittene Sperrholzkomponenten (für ebene Flächen)
+- Hochpräzise 3D-gedruckte Details (für komplexe Geometrien)
+- Automatisierte Verarbeitung mit eigenen Python-Tools
+- Ziel: Minimal-invasive Herstellung, maximal-realistische Details
+
+Ich bin auf die qualitativ hochwertigen 3D-Modelle von 3d.freiburg.de
+aufmerksam geworden und möchte diese gerne für das Projekt nutzen.
+
+**Konkrete Fragen:**
+
+1. Sind die CityGML/3D-Modelle von 3d.freiburg.de zum Download verfügbar?
+   (als ZIP, WFS-Stream, oder API-Zugang?)
+
+2. Welche LOD-Level sind verfügbar?
+   (LoD1, LoD2, LoD3? Wir benötigen Dach-Details + Fassaden-Struktur)
+
+3. Lizenzierung für kommerzielle Nutzung:
+   - Ist die Nutzung für eine ticketed Museum-Installation erlaubt?
+   - Muss ich die Stadt Freiburg im Impressum/Danksagungen nennen?
+   - Gibt es Einschränkungen bei Gewerbeanmeldung?
+
+4. Aktualität der Daten:
+   - Wann wurden die Modelle erstellt/aktualisiert?
+   - Welche Gebäude sind enthalten? (Innenstadt vollständig?)
+
+5. Technische Specs:
+   - Format: CityGML, GML, OBJ, STL?
+   - Koordinatensystem: EPSG-Code?
+   - Maßstab: Echte Meter oder relative Einheiten?
+
+**Mein Plan:**
+- Priorität 1: Hintergrund-Gebäude automatisiert mit Eurer Datenbasis
+- Priorität 2: Highlights (Münster, Rathaus, Uni-Bib) mit eigener
+  Drohnen-Photogrammetrie hochdetailliert
+- Ziel: Sommer 2026 Eröffnung einer touristischen Installation
+  in der Freiburger Innenstadt
+
+Die Stadt Freiburg würde natürlich prominente Erwähnung finden –
+als "Offizieller Datenpartner" oder ähnlich.
+
+**Zeitrahmen:** Ich würde gerne nächste Woche mit der Modellverarbeitung
+starten. Könntet Ihr mir bis [DATUM +5 Tage] antworten?
+
+Für Rückfragen:
+[DEIN NAME]
+[DEINE EMAIL]
+[DEINE TELEFON]
+
+Danke vielmals für Eure Unterstützung!
+
+Mit freundlichen Grüßen,
+[DEIN NAME]

@@ -54,6 +54,9 @@ def load_parts(d):
             mn, mx = panel.min(0), panel.max(0)
             pe = [s for s in eng if (mn[0]-2 <= s[:, 0].mean() <= mx[0]+2 and mn[1]-2 <= s[:, 1].mean() <= mx[1]+2)]
             parts.append({"name": f"deck{i}", "cut": [panel], "eng": pe})
+    for fn in sorted(glob.glob(os.path.join(d, "tunnel", "*.svg"))):   # Tunnel-Kit mitschneiden
+        cut, eng = parse_paths(open(fn).read())
+        if cut: parts.append({"name": os.path.basename(fn)[:-4], "cut": cut, "eng": eng})
     return parts
 
 
