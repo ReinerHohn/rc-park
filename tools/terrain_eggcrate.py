@@ -354,12 +354,31 @@ def main():
     def emit(name, poly, label, extra_cuts=None):
         poly = np.array(poly, float)
         cuts = [poly] + list(extra_cuts or [])      # extra = Tunnel-Löcher
-        # Gravur KLEIN (~5mm) + ganz unten (bei base>0 immer Material) + Breite aufs Teil begrenzen,
-        # damit die Schrift NIE über den Teilrand / in einen Schlitz läuft.
-        pw = float(np.ptp(poly[:, 0])); lh = 5.0
-        cw = len(str(label)) * (6*(lh/10.0) + 2.0)
-        if cw > pw - 4: lh = max(2.5, lh*(pw-4)/cw)
-        eng = glyph_strokes(label, poly[:, 0].min()+3, 2, h=lh)
+        # Gravur KLEIN (~5mm) in eine GARANTIERT SOLIDE Stelle legen (nicht in einen Schlitz/
+        # Ausschnitt!). Y-Rippen haben Schlitze unten, X-Rippen oben -> per Polygon-Check eine
+        # Position suchen, wo das ganze Label-Rechteck INNERHALB des Teils liegt.
+        from matplotlib.path import Path as _MP
+        def _dense(strokes):                       # Glyphen -> dichte Punktwolke (alle ~0.8mm)
+            pts = []
+            for s in strokes:
+                s = np.array(s, float)
+                for k in range(len(s)-1):
+                    d = np.hypot(*(s[k+1]-s[k])); n = max(1, int(d/0.8))
+                    for t in np.linspace(0, 1, n+1): pts.append(s[k] + (s[k+1]-s[k])*t)
+            return np.array(pts) if pts else np.zeros((1, 2))
+        mp = _MP(poly[:, :2]); x0 = float(poly[:, 0].min()); x1 = float(poly[:, 0].max())
+        ph = float(np.ptp(poly[:, 1])); bx, by, lh = x0+3, 2.0, 5.0; placed = False
+        for lh in (5.0, 4.0, 3.0, 2.5, 2.0):       # notfalls kleiner, bis es in eine Lücke passt
+            tmpl = _dense(glyph_strokes(str(label), 0, 0, h=lh))   # echte Glyphen-Punkte am Ursprung
+            cw = float(tmpl[:, 0].max()); ch = float(tmpl[:, 1].max())
+            if cw > (x1-x0) - 4: continue
+            for yb in np.linspace(2.0, max(2.0, ph-ch-2), 16):     # unten->oben (über Schlitztiefe)
+                for cand in np.linspace(x0+2, max(x0+2, x1-cw-2), 50):
+                    if mp.contains_points(tmpl + [cand, yb]).all():
+                        bx, by, placed = cand, yb, True; break
+                if placed: break
+            if placed: break
+        eng = glyph_strokes(str(label), bx, by, h=lh)
         svg_write(f"{a.out}/{name}.svg", cuts, [], [], eng, 0)
         if a.gcode:
             gcode_write(f"{a.out}/{name}.gcode", cuts, [], [], eng, 0,
