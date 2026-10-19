@@ -44,6 +44,29 @@ def rib2(L, hs, bs, cross, from_top, step=1.0):
     return pts
 
 
+def place_label(poly, label):
+    """Gravur in eine garantiert SOLIDE Stelle (nicht in einen Schlitz) — echte Glyphen gegen Polygon."""
+    from matplotlib.path import Path as _MP
+    poly = np.asarray(poly, float)
+    def dense(strokes):
+        pts = []
+        for s in strokes:
+            s = np.array(s, float)
+            for k in range(len(s)-1):
+                d = np.hypot(*(s[k+1]-s[k])); n = max(1, int(d/0.8))
+                for t in np.linspace(0, 1, n+1): pts.append(s[k]+(s[k+1]-s[k])*t)
+        return np.array(pts) if pts else np.zeros((1, 2))
+    mp = _MP(poly[:, :2]); x0 = float(poly[:, 0].min()); x1 = float(poly[:, 0].max()); ph = float(np.ptp(poly[:, 1]))
+    for lh in (5.0, 4.0, 3.0, 2.5):
+        tmpl = dense(te.glyph_strokes(str(label), 0, 0, h=lh)); cw = float(tmpl[:, 0].max()); ch = float(tmpl[:, 1].max())
+        if cw > (x1-x0)-4: continue
+        for yb in np.linspace(2.0, max(2.0, ph-ch-2), 16):
+            for cand in np.linspace(x0+2, max(x0+2, x1-cw-2), 45):
+                if mp.contains_points(tmpl + [cand, yb]).all():
+                    return te.glyph_strokes(str(label), cand, yb, h=lh)
+    return te.glyph_strokes(str(label), x0+3, 2, h=5.0)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dem", default="daten/hoellental/dgm025_full.npy")
@@ -56,6 +79,7 @@ def main():
     ap.add_argument("--fth", type=float, default=4.0); ap.add_argument("--dth", type=float, default=2.0)
     ap.add_argument("--ddepth", type=float, default=55.0, help="Streben-Bandtiefe")
     ap.add_argument("--fit", type=float, default=-0.4)
+    ap.add_argument("--track", default="daten/hoellental/hoellental_track.npy")
     ap.add_argument("--out", default="modelle/hirschsprung_truss")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -77,9 +101,33 @@ def main():
         return Hat(x, y)/2 if both_full else max(0.0, Hat(x, y) - a.ddepth/2)
     def Hbot(x, y): return max(0.0, Hat(x, y)-a.ddepth)
 
+    # --- Tunnel: Lichtraum-Löcher wo Trasse Rippen kreuzt (wie terrain_eggcrate) ---
+    CW, CH = 30.0, 36.0; track = None
+    if a.track and os.path.exists(a.track):
+        tr = np.load(a.track)
+        dense = []
+        for k in range(len(tr)-1):
+            p, q = tr[k], tr[k+1]; Lk = max(2, int(np.hypot(q[0]-p[0], q[1]-p[1])/2))
+            for tt in np.linspace(0, 1, Lk, endpoint=(k == len(tr)-2)):
+                dense.append((p[0]+(q[0]-p[0])*tt, p[1]+(q[1]-p[1])*tt, p[2]+(q[2]-p[2])*tt))
+        track = [pp for pp in dense if -6 <= pp[0] <= Wx+6 and -6 <= pp[1] <= Dy+6]
+    def holes(axis, pos):
+        cuts = []
+        if not track: return cuts
+        for k in range(len(track)-1):
+            p, q = track[k], track[k+1]
+            a0, a1, s0, s1 = (p[1], q[1], p[0], q[0]) if axis == "x" else (p[0], q[0], p[1], q[1])
+            if (a0-pos)*(a1-pos) <= 0 and abs(a1-a0) > 1e-6:
+                t = (pos-a0)/(a1-a0); s = s0+(s1-s0)*t; z = p[2]+(q[2]-p[2])*t
+                w = CW*min(2.6, float(np.hypot(s1-s0, a1-a0))/abs(a1-a0))
+                cuts.append(Polygon([(s-w/2, z-4), (s+w/2, z-4), (s+w/2, z+CH), (s-w/2, z+CH)]))
+        return cuts
+
     meshes = []
-    def addmesh(poly, axis, pos, th, color):
+    def addmesh(poly, axis, pos, th, color, hls=None):
         pg = Polygon(poly).buffer(0)
+        for h in (hls or []):
+            if h.is_valid and not h.is_empty: pg = pg.difference(h)
         if pg.is_empty: return
         geoms = list(pg.geoms) if pg.geom_type == "MultiPolygon" else [pg]
         ms = [trimesh.creation.extrude_polygon(g, th) for g in geoms if g.area >= 2]
@@ -90,30 +138,49 @@ def main():
         pm.visual.vertex_colors = color; pm.fix_normals(); meshes.append(pm)
 
     BALK = [120, 85, 45, 255]; STREB = [205, 175, 115, 255]
-    # X-Rippen (an dys)
-    for yr in dys:
+    balken = []                                    # (name, poly, axis, pos, holeslist)
+    bi = 0
+    for yr in dys:                                 # X-Rippen (an dys)
         bthis = is_by(yr); th = a.fth if bthis else a.dth
         bs = (lambda s: 0.0) if bthis else (lambda s, yr=yr: Hbot(s, yr))
-        cross = []
-        for xp in dxs:
-            partner_full = is_bx(xp)
-            both_full = bthis and partner_full
-            sw = (a.fth if partner_full else a.dth) + a.fit
-            cross.append((xp, sw, meetz(xp, yr, both_full)))
+        cross = [(xp, (a.fth if is_bx(xp) else a.dth)+a.fit, meetz(xp, yr, bthis and is_bx(xp))) for xp in dxs]
         poly = np.array(rib2(Wx, lambda s, yr=yr: Hat(s, yr), bs, cross, True), float)
-        addmesh(poly, "x", yr, th, BALK if bthis else STREB)
-    # Y-Rippen (an dxs)
-    for xr in dxs:
+        hl = holes("x", yr)
+        addmesh(poly, "x", yr, th, BALK if bthis else STREB, hl)
+        if bthis: balken.append((f"BX{bi}", poly, "x", yr, hl)); bi += 1
+    bi = 0
+    for xr in dxs:                                 # Y-Rippen (an dxs)
         bthis = is_bx(xr); th = a.fth if bthis else a.dth
         bs = (lambda s: 0.0) if bthis else (lambda s, xr=xr: Hbot(xr, s))
-        cross = []
-        for yp in dys:
-            partner_full = is_by(yp)
-            both_full = bthis and partner_full
-            sw = (a.fth if partner_full else a.dth) + a.fit
-            cross.append((yp, sw, meetz(xr, yp, both_full)))
+        cross = [(yp, (a.fth if is_by(yp) else a.dth)+a.fit, meetz(xr, yp, bthis and is_by(yp))) for yp in dys]
         poly = np.array(rib2(Dy, lambda s, xr=xr: Hat(xr, s), bs, cross, False), float)
-        addmesh(poly, "y", xr, th, BALK if bthis else STREB)
+        hl = holes("y", xr)
+        addmesh(poly, "y", xr, th, BALK if bthis else STREB, hl)
+        if bthis: balken.append((f"BY{bi}", poly, "y", xr, hl)); bi += 1
+
+    # --- 4mm-BALKEN als Laser-Teile (Fingerzinken-Split + Tunnel + Nummer) ---
+    fdepth = max(8.0, 2*a.fth); slotw4 = a.fth + 0.15
+    def clip_holes(sp, hls):
+        seg = Polygon(sp); seg = seg if seg.is_valid else seg.buffer(0); out = []
+        for h in hls:
+            it = seg.intersection(h)
+            if it.is_empty or it.area < 1: continue
+            for g in (list(it.geoms) if it.geom_type == "MultiPolygon" else [it]):
+                if g.area >= 1: out.append(np.array(g.exterior.coords))
+        return out
+    for (nm, poly, axis, pos, hl) in balken:
+        L = Wx if axis == "x" else Dy
+        cs = list(dxs) if axis == "x" else list(dys)      # Naht nie auf eine Kreuzung
+        seams = te.choose_seams(cs, L, 200, 2*fdepth+slotw4+4) if np.ptp(poly[:, 0]) > 200 else []
+        segs = te.finger_split(poly, seams, fdepth, 12) if seams else [poly]
+        for si, sp in enumerate(segs):
+            lt = chr(97+si) if len(segs) > 1 else ""
+            hh = clip_holes(sp, hl) if hl else []
+            lbl = f"{nm}{lt} {pos:.0f}"
+            eng = place_label(sp, lbl)
+            cuts = [np.array(sp)] + hh
+            te.svg_write(f"{a.out}/rib{nm}{lt}.svg", cuts, [], [], eng, 0)
+            te.gcode_write(f"{a.out}/rib{nm}{lt}.gcode", cuts, [], [], eng, 0, 300, 100, 4, 85)
 
     scene = trimesh.util.concatenate(meshes)
     te.write_html(f"{a.out}/_truss3d.html", scene)
