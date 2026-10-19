@@ -61,6 +61,8 @@ def main():
     ap.add_argument("--frame-only", action="store_true")
     ap.add_argument("--no-frame", action="store_true")
     ap.add_argument("--yes", action="store_true", help="ohne ENTER-Rückfrage schneiden (für Hintergrund-Lauf)")
+    ap.add_argument("--mark", action="store_true", help="ANZEICHNEN: Umrisse 1x bei niedriger Leistung, schneidet NICHT")
+    ap.add_argument("--mark-power", type=float, default=12.0, help="Leistung %% fürs Anzeichnen")
     a = ap.parse_args()
 
     x0, y0, x1, y1 = bbox(a.gcode)
@@ -86,20 +88,32 @@ def main():
             cmd(ser, "M5"); cmd(ser, "G0 X0 Y0")
             if a.frame_only:
                 print("Frame fertig."); return
-        if not a.yes:
+        if not a.yes and not a.mark:
             try:
                 input("Material ausgerichtet? ENTER = schneiden,  Strg-C = Abbruch ... ")
             except (KeyboardInterrupt, EOFError):
                 print("\nabgebrochen (kein ENTER / --yes fehlt)."); soft_reset(ser); return
 
-        print("-- SCHNEIDEN -- (Strg-C = Not-Halt)")
-        lines = [l for l in open(a.gcode) if l.strip() and not l.strip().startswith(";")]
-        n = len(lines)
-        for i, ln in enumerate(lines):
+        import re as _re
+        print(f"-- ANZEICHNEN -- ({a.mark_power:.0f}% , 1x, schneidet NICHT)" if a.mark
+              else "-- SCHNEIDEN -- (Strg-C = Not-Halt)")
+        out = []
+        for l in open(a.gcode):
+            s = l.strip()
+            if s.startswith("; CUT-PASS"):                   # Pass-Marker
+                k = int(s.split()[2].split("/")[0]) if len(s.split()) > 2 else 1
+                if a.mark and k >= 2: break                  # Anzeichnen: nach Pass 1 stoppen
+                continue
+            if not s or s.startswith(";"): continue
+            if a.mark:                                       # Leistung auf Mark-Power zwingen
+                m = _re.search(r"M4 S\d+", l)
+                if m: l = l.replace(m.group(0), f"M4 S{int(a.mark_power*10)}")
+            out.append(l)
+        n = max(1, len(out))
+        for i, ln in enumerate(out):
             cmd(ser, ln)
-            if i % 50 == 0:
-                print(f"  {100*i//n}%")
-        print("FERTIG. Laser aus.")
+            if i % 50 == 0: print(f"  {100*i//n}%")
+        print("ANGEZEICHNET — jetzt prüfen, dann cutten." if a.mark else "FERTIG. Laser aus.")
         cmd(ser, "M5 S0")
     except KeyboardInterrupt:
         print("\n!! NOT-HALT (Soft-Reset) !!"); soft_reset(ser)

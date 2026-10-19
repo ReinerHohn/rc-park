@@ -194,7 +194,8 @@ def write_gcode(fn, cuts, engr, feed, power, passes, eng_power, eng_feed=3000):
         if close: L.append(f"G1 X{poly[0][0]:.2f} Y{poly[0][1]:.2f} F{f:.0f}")
         L.append("M5")
     for s in engr: trace(s, False, ES, eng_feed)
-    for _ in range(passes):
+    for k in range(passes):
+        L.append(f"; CUT-PASS {k+1}/{passes}")      # Marker: --mark fährt nur bis Pass 1
         for p in cuts: trace(p, True, S, feed)
     L += ["M5 S0", "G0 X0 Y0"]; open(fn, "w").write("\n".join(L)+"\n")
 
