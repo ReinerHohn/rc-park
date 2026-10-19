@@ -55,6 +55,58 @@ addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProje
     open(fn, "w").write(html)
 
 
+def write_assembly_html(fn, named_pieces):
+    """Interaktiver ZUSAMMENBAU-Finder: Teil-Nr eintippen -> Teil leuchtet rot, Rest blass.
+    named_pieces = [(label, mesh, is_x)] mit label = Gravur ('X0a Y123')."""
+    import base64, trimesh as _tm
+    sc = _tm.Scene()
+    for (label, mesh, is_x) in named_pieces:
+        sc.add_geometry(mesh, geom_name=label, node_name=label)
+    b64 = base64.b64encode(sc.export(file_type="glb")).decode()
+    HTML = '''<!doctype html><html><head><meta charset=utf8><title>Zusammenbau-Finder</title>
+<style>body{margin:0;background:#dde6ef;font-family:sans-serif}
+#bar{position:fixed;top:0;left:0;right:0;background:#111e;color:#fff;padding:8px 12px;z-index:10}
+#bar input{font-size:18px;padding:5px 9px;width:170px}#bar button{font-size:15px;padding:5px 11px;margin-left:4px}
+#info{margin-left:12px;font-size:15px}
+#tip{position:fixed;bottom:8px;left:8px;background:#000a;color:#fff;padding:6px 10px;border-radius:6px;font-size:12px}</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head><body>
+<div id=bar>🔎 Teil-Nr: <input id=q placeholder="z.B. X0a oder 123" autofocus>
+<button onclick=find()>finden</button><button onclick=clr()>alle</button><span id=info></span></div>
+<div id=tip>Maus drehen · Rad zoom · Teil anklicken markiert es · Gesuchtes leuchtet ROT, Rest blass</div>
+<script type=module>
+import*as THREE from'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';import{GLTFLoader}from'three/addons/loaders/GLTFLoader.js';
+const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
+const cam=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,0.1,99999);
+const rn=new THREE.WebGLRenderer({antialias:true});rn.setSize(innerWidth,innerHeight);document.body.appendChild(rn.domElement);
+const ct=new OrbitControls(cam,rn.domElement);ct.enableDamping=true;
+sc.add(new THREE.AmbientLight(0xffffff,0.8));sc.add(new THREE.HemisphereLight(0xffffff,0x556,1.0));
+const d1=new THREE.DirectionalLight(0xffffff,1.1);d1.position.set(200,-300,500);sc.add(d1);
+let meshes=[];const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
+new GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
+ const root=g.scene,bx=new THREE.Box3().setFromObject(root),c=bx.getCenter(new THREE.Vector3()),s=bx.getSize(new THREE.Vector3());
+ root.position.sub(c);sc.add(root);
+ root.traverse(o=>{if(o.isMesh){const warm=(o.name||"").toUpperCase().startsWith("X");
+  o.material=new THREE.MeshStandardMaterial({color:warm?0xc8a56a:0x6ea07e,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
+  o.userData.base=o.material.color.getHex();meshes.push(o);}});
+ const d=Math.max(s.x,s.y,s.z);cam.position.set(d*0.9,-d*1.2,d*0.8);cam.lookAt(0,0,0);ct.update();});
+function apply(q){q=(q||"").toUpperCase().trim();let n=0,hit=[];
+ meshes.forEach(o=>{if(!q){o.material.color.setHex(o.userData.base);o.material.opacity=1;o.material.emissive.setHex(0);return;}
+  if((o.name||"").toUpperCase().includes(q)){o.material.color.setHex(0xff2020);o.material.emissive.setHex(0x661111);o.material.opacity=1;n++;hit.push(o.name);}
+  else{o.material.color.setHex(0x999999);o.material.emissive.setHex(0);o.material.opacity=0.1;}});
+ document.getElementById("info").textContent=q?(n?("→ "+n+" Teil(e): "+hit.slice(0,6).join(", ")+(hit.length>6?"…":"")):("„"+q+"“ nicht gefunden")):"";}
+window.find=()=>apply(document.getElementById("q").value);
+window.clr=()=>{document.getElementById("q").value="";apply("");};
+document.getElementById("q").addEventListener("input",e=>apply(e.target.value));
+addEventListener("click",e=>{if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON")return;
+ M.x=(e.clientX/innerWidth)*2-1;M.y=-(e.clientY/innerHeight)*2+1;RAY.setFromCamera(M,cam);
+ const h=RAY.intersectObjects(meshes,false);if(h.length){document.getElementById("q").value=h[0].object.name;apply(h[0].object.name);}});
+addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();rn.setSize(innerWidth,innerHeight)});
+(function x(){requestAnimationFrame(x);ct.update();rn.render(sc,cam)})();
+</script></body></html>'''.replace("%B64%", b64)
+    open(fn, "w").write(HTML)
+
+
 def rib(L, hs, cross, slotw, from_top, bs=None):
     """Rippen-Polygon. L=Länge, hs(s)->Oberkante, bs(s)->Unterkante (None=0=bis Boden),
     cross=[(pos,hmid)] Kreuzungs-Schlitze, Schlitz von oben (from_top) oder unten."""
@@ -445,7 +497,7 @@ def main():
             r, g, b = colorsys.hsv_to_rgb(h, 0.5, 0.92)
             return [int(r*255), int(g*255), int(b*255), 255]
         eh = min(12, max(6, Hf.max()*0.12))        # Gravur-Texthöhe wie beim Laser
-        plates = []; engrave_lines = []; kc = 0
+        plates = []; engrave_lines = []; named_pieces = []; kc = 0
         for (nm, poly, axis, pos, th) in ribdata:
             pg = Polygon(poly)
             if not pg.is_valid: pg = pg.buffer(0)
@@ -470,6 +522,7 @@ def main():
                 pm.vertices = np.column_stack([V[:,2]+pos-a.thickness/2, V[:,0], V[:,1]])
             pm.visual.vertex_colors = pcolor(kc, axis == "x"); kc += 1
             pm.fix_normals(); plates.append(pm)
+            named_pieces.append((label, pm.copy(), axis == "x"))   # für Zusammenbau-Finder
         for (li, lv, ps, hh) in stackdata:          # Stack-Lagen als flache Platten bei z=lv
             for pm2 in ps:
                 if len(pm2) < 4: continue
@@ -481,6 +534,7 @@ def main():
                 sm.apply_translation([0, 0, lv]); sm.visual.vertex_colors = [190,95,120,255]
                 plates.append(sm)
         write_html(f"{a.out}/_assembled.html", _tm.util.concatenate(plates), engrave_lines)
+        write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces)
         html_ok = True
     except Exception as e:
         html_ok = False; print("HTML-Viewer übersprungen:", e)
