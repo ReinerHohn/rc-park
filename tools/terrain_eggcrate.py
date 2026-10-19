@@ -55,25 +55,35 @@ addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProje
     open(fn, "w").write(html)
 
 
-def write_assembly_html(fn, named_pieces):
-    """Interaktiver ZUSAMMENBAU-Finder: Teil-Nr eintippen -> Teil leuchtet rot, Rest blass.
-    named_pieces = [(label, mesh, is_x)] mit label = Gravur ('X0a Y123')."""
-    import base64, trimesh as _tm
+def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None):
+    """ZUSAMMENBAUANLEITUNG: Suchleiste -> Teil leuchtet rot im 3D (wo es hinkommt), Rest blass.
+    + Gravur-Nummern auf dem Holz + ein-/ausblendbares RELIEF als Kontext.
+    named_pieces=[(label,mesh,is_x)], engrave_lines=Nx3-Polylinien, relief_mesh=Trimesh (optional)."""
+    import base64, json, trimesh as _tm
     sc = _tm.Scene()
     for (label, mesh, is_x) in named_pieces:
         sc.add_geometry(mesh, geom_name=label, node_name=label)
+    if relief_mesh is not None:
+        relief_mesh.visual.vertex_colors = [200, 180, 140, 255]
+        sc.add_geometry(relief_mesh, geom_name="RELIEF", node_name="RELIEF")
     b64 = base64.b64encode(sc.export(file_type="glb")).decode()
-    HTML = '''<!doctype html><html><head><meta charset=utf8><title>Zusammenbau-Finder</title>
+    seg = []
+    for pl in (engrave_lines or []):
+        pl = np.asarray(pl, float)
+        for i in range(len(pl)-1): seg += [*pl[i].tolist(), *pl[i+1].tolist()]
+    eng_json = json.dumps([round(v, 2) for v in seg])
+    HTML = '''<!doctype html><html><head><meta charset=utf8><title>Zusammenbauanleitung</title>
 <style>body{margin:0;background:#dde6ef;font-family:sans-serif}
 #bar{position:fixed;top:0;left:0;right:0;background:#111e;color:#fff;padding:8px 12px;z-index:10}
-#bar input{font-size:18px;padding:5px 9px;width:170px}#bar button{font-size:15px;padding:5px 11px;margin-left:4px}
+#bar input{font-size:18px;padding:5px 9px;width:160px}#bar button{font-size:14px;padding:5px 10px;margin-left:4px}
 #info{margin-left:12px;font-size:15px}
 #tip{position:fixed;bottom:8px;left:8px;background:#000a;color:#fff;padding:6px 10px;border-radius:6px;font-size:12px}</style>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
 </head><body>
 <div id=bar>🔎 Teil-Nr: <input id=q placeholder="z.B. X0a oder 123" autofocus>
-<button onclick=find()>finden</button><button onclick=clr()>alle</button><span id=info></span></div>
-<div id=tip>Maus drehen · Rad zoom · Teil anklicken markiert es · Gesuchtes leuchtet ROT, Rest blass</div>
+<button onclick=find()>finden</button><button onclick=clr()>alle</button>
+<button onclick=tRelief()>Relief ein/aus</button><button onclick=tNum()>Nummern ein/aus</button><span id=info></span></div>
+<div id=tip>Suchleiste: Teil-Nr -> leuchtet ROT wo es hinkommt · Teil anklicken = markieren · Relief als Kontext einblendbar · dunkle Linien = Gravur-Nr</div>
 <script type=module>
 import*as THREE from'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';import{GLTFLoader}from'three/addons/loaders/GLTFLoader.js';
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
@@ -82,13 +92,17 @@ const rn=new THREE.WebGLRenderer({antialias:true});rn.setSize(innerWidth,innerHe
 const ct=new OrbitControls(cam,rn.domElement);ct.enableDamping=true;
 sc.add(new THREE.AmbientLight(0xffffff,0.8));sc.add(new THREE.HemisphereLight(0xffffff,0x556,1.0));
 const d1=new THREE.DirectionalLight(0xffffff,1.1);d1.position.set(200,-300,500);sc.add(d1);
-let meshes=[];const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
+let meshes=[],relief=null,nums=null;const ENG=%ENG%;const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
 new GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  const root=g.scene,bx=new THREE.Box3().setFromObject(root),c=bx.getCenter(new THREE.Vector3()),s=bx.getSize(new THREE.Vector3());
  root.position.sub(c);sc.add(root);
- root.traverse(o=>{if(o.isMesh){const warm=(o.name||"").toUpperCase().startsWith("X");
+ root.traverse(o=>{if(o.isMesh){
+  if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0xc8b48c,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.35,flatShading:true});o.visible=false;relief=o;return;}
+  const warm=(o.name||"").toUpperCase().startsWith("X");
   o.material=new THREE.MeshStandardMaterial({color:warm?0xc8a56a:0x6ea07e,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
   o.userData.base=o.material.color.getHex();meshes.push(o);}});
+ if(ENG.length){const gg=new THREE.BufferGeometry();gg.setAttribute('position',new THREE.Float32BufferAttribute(ENG,3));
+  nums=new THREE.LineSegments(gg,new THREE.LineBasicMaterial({color:0x1a0f06}));root.add(nums);}
  const d=Math.max(s.x,s.y,s.z);cam.position.set(d*0.9,-d*1.2,d*0.8);cam.lookAt(0,0,0);ct.update();});
 function apply(q){q=(q||"").toUpperCase().trim();let n=0,hit=[];
  meshes.forEach(o=>{if(!q){o.material.color.setHex(o.userData.base);o.material.opacity=1;o.material.emissive.setHex(0);return;}
@@ -97,13 +111,15 @@ function apply(q){q=(q||"").toUpperCase().trim();let n=0,hit=[];
  document.getElementById("info").textContent=q?(n?("→ "+n+" Teil(e): "+hit.slice(0,6).join(", ")+(hit.length>6?"…":"")):("„"+q+"“ nicht gefunden")):"";}
 window.find=()=>apply(document.getElementById("q").value);
 window.clr=()=>{document.getElementById("q").value="";apply("");};
+window.tRelief=()=>{if(relief)relief.visible=!relief.visible;};
+window.tNum=()=>{if(nums)nums.visible=!nums.visible;};
 document.getElementById("q").addEventListener("input",e=>apply(e.target.value));
 addEventListener("click",e=>{if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON")return;
  M.x=(e.clientX/innerWidth)*2-1;M.y=-(e.clientY/innerHeight)*2+1;RAY.setFromCamera(M,cam);
  const h=RAY.intersectObjects(meshes,false);if(h.length){document.getElementById("q").value=h[0].object.name;apply(h[0].object.name);}});
 addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();rn.setSize(innerWidth,innerHeight)});
 (function x(){requestAnimationFrame(x);ct.update();rn.render(sc,cam)})();
-</script></body></html>'''.replace("%B64%", b64)
+</script></body></html>'''.replace("%B64%", b64).replace("%ENG%", eng_json)
     open(fn, "w").write(HTML)
 
 
@@ -558,7 +574,19 @@ def main():
                 sm.apply_translation([0, 0, lv]); sm.visual.vertex_colors = [190,95,120,255]
                 plates.append(sm)
         write_html(f"{a.out}/_assembled.html", _tm.util.concatenate(plates), engrave_lines)
-        write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces)
+        # Relief-Oberfläche als Kontext fürs Zusammenbau-Tool (das „geile Relief" daneben)
+        try:
+            st = 2; Zs = Hf[::st, ::st]; rny, rnx = Zs.shape
+            rxs = np.arange(rnx)*cell*st; rys = np.arange(rny)*cell*st
+            RX, RY = np.meshgrid(rxs, rys)
+            RV = np.column_stack([RX.ravel(), RY.ravel(), Zs.ravel()]); RF = []
+            for j in range(rny-1):
+                for i in range(rnx-1):
+                    aa = j*rnx+i; RF += [[aa, aa+rnx, aa+rnx+1], [aa, aa+rnx+1, aa+1]]
+            relief_mesh = _tm.Trimesh(RV, np.array(RF), process=False)
+        except Exception:
+            relief_mesh = None
+        write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh)
         html_ok = True
     except Exception as e:
         html_ok = False; print("HTML-Viewer übersprungen:", e)
