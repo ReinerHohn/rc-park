@@ -82,7 +82,7 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None):
 </head><body>
 <div id=bar>🔎 Teil-Nr: <input id=q placeholder="z.B. X0a oder 123" autofocus>
 <button onclick=find()>finden</button><button onclick=clr()>alle</button>
-<button onclick=tRelief()>Relief ein/aus</button><button onclick=tNum()>Nummern ein/aus</button><span id=info></span></div>
+<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=65 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tNum()>Nummern ein/aus</button><span id=info></span></div>
 <div id=tip>1 Teil (z.B. Y10) -> leuchtet ROT wo es hinkommt · ZWEI Teile (klick+klick ODER „X8 Y10" tippen) -> rot+blau + GRUENE Kugel wo sie sich verbinden · Relief/Nummern ein-aus</div>
 <script type=module>
 import*as THREE from'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';import{GLTFLoader}from'three/addons/loaders/GLTFLoader.js';
@@ -97,7 +97,7 @@ new GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  const root=g.scene,bx=new THREE.Box3().setFromObject(root),c=bx.getCenter(new THREE.Vector3()),s=bx.getSize(new THREE.Vector3());
  root.position.sub(c);sc.add(root);
  root.traverse(o=>{if(o.isMesh){
-  if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0xc8b48c,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.35,flatShading:true});o.visible=false;relief=o;return;}
+  if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0xc8b48c,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.65,flatShading:true});o.visible=false;relief=o;return;}
   const warm=(o.name||"").toUpperCase().startsWith("X");
   o.material=new THREE.MeshStandardMaterial({color:warm?0xc8a56a:0x6ea07e,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
   o.userData.base=o.material.color.getHex();meshes.push(o);}});
@@ -128,6 +128,7 @@ function apply(q){q=(q||"").toUpperCase().trim();const toks=q.split(/ +/).filter
 window.find=()=>apply(document.getElementById("q").value);
 window.clr=()=>{SEL.length=0;document.getElementById("q").value="";apply("");};
 window.tRelief=()=>{if(relief)relief.visible=!relief.visible;};
+window.setRopac=v=>{if(relief){const o=v/100;relief.material.opacity=o;relief.material.transparent=o<1;relief.visible=o>0;}};
 window.tNum=()=>{if(nums)nums.visible=!nums.visible;};
 document.getElementById("q").addEventListener("input",e=>apply(e.target.value));
 addEventListener("click",e=>{if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON")return;
