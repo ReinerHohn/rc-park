@@ -106,10 +106,11 @@ def main():
         rcache = {}
         def parea(p):
             x = p[:, 0]; y = p[:, 1]; return abs(np.dot(x, np.roll(y, 1))-np.dot(y, np.roll(x, 1)))/2
-        def raster(pc, flip):
-            key = (pc[0], flip)
+        def raster(pc, flip, r90):
+            key = (pc[0], flip, r90)
             if key not in rcache:
-                cc, ee = (rot180(pc[1], pc[2]) if flip else (pc[1], pc[2]))
+                cc, ee = (rot90(pc[1], pc[2]) if r90 else (pc[1], pc[2]))
+                if flip: cc, ee = rot180(cc, ee)
                 polys = [np.array(c, float) for c in cc if len(c) >= 4]
                 fp = max(polys, key=parea) if polys else None
                 if fp is None: rcache[key] = None; return None
@@ -124,7 +125,7 @@ def main():
         def fit(occ, mask):
             mny, mnx = mask.shape
             if mny > BHg or mnx > BWg: return None
-            for yy in range(0, BHg-mny+1):
+            for yy in range(0, BHg-mny+1):                 # bottom-left (beste Ausnutzung bei brett~=rippenhoehe)
                 band = occ[yy:yy+mny]
                 for xx in range(0, BWg-mnx+1):
                     if not (band[:, xx:xx+mnx] & mask).any(): return (yy, xx)
@@ -132,7 +133,8 @@ def main():
         for gi, grp in enumerate(groups):
             gsheets = []
             for pc in grp:
-                cand = [(f, r) for f in (False, True) for r in [raster(pc, f)] if r]
+                cand = [(o, r) for o in ((False, False), (True, False), (False, True), (True, True))
+                        for r in [raster(pc, o[0], o[1])] if r]
                 done = False
                 for sh in gsheets:
                     best = None
