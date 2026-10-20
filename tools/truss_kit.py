@@ -79,15 +79,16 @@ def place_label(poly, label):
                 d = np.hypot(*(s[k+1]-s[k])); n = max(1, int(d/0.8))
                 for t in np.linspace(0, 1, n+1): pts.append(s[k]+(s[k+1]-s[k])*t)
         return np.array(pts) if pts else np.zeros((1, 2))
-    mp = _MP(poly[:, :2]); x0 = float(poly[:, 0].min()); x1 = float(poly[:, 0].max()); ph = float(np.ptp(poly[:, 1]))
+    mp = _MP(poly[:, :2]); x0 = float(poly[:, 0].min()); x1 = float(poly[:, 0].max())
+    y0 = float(poly[:, 1].min()); y1 = float(poly[:, 1].max())   # Teil startet NICHT immer bei 0 (Höhen-Split!)
     for lh in (9.0, 8.0, 7.0, 6.0, 5.0, 4.0):              # groesse Nummern zuerst (gut lesbar aufm Holz)
         tmpl = dense(te.glyph_strokes(str(label), 0, 0, h=lh)); cw = float(tmpl[:, 0].max()); ch = float(tmpl[:, 1].max())
         if cw > (x1-x0)-4: continue
-        for yb in np.linspace(2.0, max(2.0, ph-ch-2), 16):
+        for yb in np.linspace(y0+2, max(y0+2, y1-ch-2), 16):
             for cand in np.linspace(x0+2, max(x0+2, x1-cw-2), 45):
                 if mp.contains_points(tmpl + [cand, yb]).all():
                     return te.glyph_strokes(str(label), cand, yb, h=lh)
-    return te.glyph_strokes(str(label), x0+3, 2, h=5.0)
+    return te.glyph_strokes(str(label), x0+3, y0+2, h=5.0)
 
 
 def main():
