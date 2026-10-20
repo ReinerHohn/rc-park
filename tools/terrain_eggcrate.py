@@ -98,9 +98,9 @@ new GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  root.position.sub(c);sc.add(root);
  root.traverse(o=>{if(o.isMesh){
   if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0xc8b48c,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.65,flatShading:true});o.visible=false;relief=o;return;}
-  const warm=(o.name||"").toUpperCase().startsWith("X");
-  o.material=new THREE.MeshStandardMaterial({color:warm?0xc8a56a:0x6ea07e,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
-  o.userData.base=o.material.color.getHex();meshes.push(o);}});
+  const hue=((meshes.length*137.508)%360)/360,col=new THREE.Color().setHSL(hue,0.58,0.55);
+  o.material=new THREE.MeshStandardMaterial({color:col,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
+  o.userData.base=col.getHex();meshes.push(o);}});
  if(ENG.length){const gg=new THREE.BufferGeometry();gg.setAttribute('position',new THREE.Float32BufferAttribute(ENG,3));
   nums=new THREE.LineSegments(gg,new THREE.LineBasicMaterial({color:0x1a0f06}));root.add(nums);}
  const d=Math.max(s.x,s.y,s.z);cam.position.set(d*0.9,-d*1.2,d*0.8);cam.lookAt(0,0,0);ct.update();});
@@ -108,11 +108,11 @@ let marker=null;const SEL=[];
 function clrMark(){if(marker){sc.remove(marker);marker=null;}}
 function apply(q){q=(q||"").toUpperCase().trim();const toks=q.split(/ +/).filter(x=>x);clrMark();
  const cols=[0xff2020,0x2068ff];const grp=[[],[]];let hit=[];
- meshes.forEach(o=>{const nm=(o.name||"").toUpperCase();
+ meshes.forEach(o=>{const nm=(o.name||"").toUpperCase();const rid=(nm.match(/^[XY]\d+/)||[nm])[0];
   if(toks.length===0){o.material.color.setHex(o.userData.base);o.material.opacity=1;o.material.emissive.setHex(0);return;}
-  let gi=-1;for(let t=0;t<Math.min(2,toks.length);t++){if(toks[t]&&nm.includes(toks[t]))gi=t;}
+  let gi=-1;for(let t=0;t<Math.min(2,toks.length);t++){const tk=toks[t];if(tk&&(rid===tk||nm===tk))gi=t;}
   if(gi>=0){o.material.color.setHex(cols[gi]);o.material.emissive.setHex(gi?0x11244d:0x661111);o.material.opacity=1;grp[gi].push(o);hit.push(o.name);}
-  else{o.material.color.setHex(0x999999);o.material.emissive.setHex(0);o.material.opacity=0.08;}});
+  else{o.material.color.setHex(0x999999);o.material.emissive.setHex(0);o.material.opacity=0.06;}});
  if(toks.length>=2&&grp[0].length&&grp[1].length){
   const bA=new THREE.Box3();grp[0].forEach(o=>bA.expandByObject(o));
   const bB=new THREE.Box3();grp[1].forEach(o=>bB.expandByObject(o));
