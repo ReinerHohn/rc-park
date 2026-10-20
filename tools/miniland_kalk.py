@@ -36,8 +36,17 @@ def kosten(a):
               ("Instandhaltung/Verbrauch", a.instand)]
     return posten, sum(p[1] for p in posten)
 
+def kit_marge(a):
+    cogs = a.kit_material + a.kit_schnitt + a.kit_verpackung
+    return a.kit_preis - cogs, cogs      # (Deckungsbeitrag/Kit, COGS/Kit)
+
+def shop_db_pro_besucher(a):
+    marge, _ = kit_marge(a)
+    return marge * a.kit_quote            # Marge × Kaufquote
+
 def umsatz_pro_besucher(a):
-    return a.eintritt + a.extra          # Eintritt (netto) + Zusatz (Shop etc.)
+    # Deckungsbeitrag pro Besucher: Eintritt (~0 variable Kosten) + Shop-Marge + manueller Zusatz
+    return a.eintritt + shop_db_pro_besucher(a) + a.extra
 
 def rechne(a):
     posten, gesamt = kosten(a)
@@ -62,7 +71,14 @@ def report(name, a):
         print(f"    {n:<40}{eur(v)}")
     print(f"    {'─'*40}{'─'*14}")
     print(f"    {'SUMME Kosten':<40}{eur(r['gesamt'])}")
-    print(f"\n  UMSATZ / Jahr  ({a.besucher} Besucher/Tag × {a.tage} Tage × {eur(r['pb']).strip()})")
+    marge, cogs = kit_marge(a); sdb = shop_db_pro_besucher(a)
+    print(f"\n  SHOP (Lasercut-Kit)")
+    print(f"    {'Verkaufspreis/Kit':<40}{eur(a.kit_preis)}")
+    print(f"    {'− COGS (Material+Schnitt+Verpackung)':<40}{eur(cogs)}")
+    print(f"    {'= Deckungsbeitrag/Kit':<40}{eur(marge)}")
+    print(f"    {'Kaufquote → DB/Besucher (%.0f%%)'%(a.kit_quote*100):<40}{eur(sdb)}")
+    print(f"\n  UMSATZ(=Deckungsbeitrag) / Jahr  ({a.besucher:.0f} Besucher/Tag × {a.tage} Tage × "
+          f"{eur(r['pb']).strip()}  [Eintritt {a.eintritt:.0f} + Shop {sdb:.2f}])")
     print(f"    {'Umsatz':<40}{eur(r['umsatz'])}")
     vz = "GEWINN" if r["gewinn"] >= 0 else "VERLUST"
     print(f"\n  >>> {vz}: {eur(r['gewinn']).strip()}   "
@@ -87,7 +103,12 @@ def main():
     ap.add_argument("--besucher", type=float, help="Besucher/Tag")
     ap.add_argument("--tage", type=int, default=300, help="Öffnungstage/Jahr")
     ap.add_argument("--eintritt", type=float, default=10.0, help="ø Eintritt netto €")
-    ap.add_argument("--extra", type=float, default=0.0, help="ø Zusatzumsatz/Besucher (Shop etc.) €")
+    ap.add_argument("--extra", type=float, default=0.0, help="ø manueller Zusatz-DB/Besucher € (zusätzlich zum Shop)")
+    ap.add_argument("--kit-preis", type=float, default=25.0, help="Verkaufspreis Lasercut-Kit €")
+    ap.add_argument("--kit-material", type=float, default=5.0, help="Holz/Material je Kit €")
+    ap.add_argument("--kit-schnitt", type=float, default=3.0, help="Laserzeit/Strom/Anteil je Kit €")
+    ap.add_argument("--kit-verpackung", type=float, default=2.0, help="Verpackung+Anleitung je Kit €")
+    ap.add_argument("--kit-quote", type=float, default=0.15, help="Kaufquote (0.15 = 15%% kaufen ein Kit)")
     ap.add_argument("--personal", type=float); ap.add_argument("--energie", type=float)
     ap.add_argument("--marketing", type=float); ap.add_argument("--verwaltung", type=float)
     ap.add_argument("--instand", type=float)
@@ -103,7 +124,10 @@ def main():
                   "marketing","verwaltung","instand"):
             v = getattr(a, k)
             if v is not None: p[k] = v
-        sa = argparse.Namespace(tage=a.tage, eintritt=a.eintritt, extra=a.extra, **p)
+        sa = argparse.Namespace(tage=a.tage, eintritt=a.eintritt, extra=a.extra,
+                                kit_preis=a.kit_preis, kit_material=a.kit_material,
+                                kit_schnitt=a.kit_schnitt, kit_verpackung=a.kit_verpackung,
+                                kit_quote=a.kit_quote, **p)
         r = report(name, sa)
         if len(namen) == 1:
             sweep(sa, [int(x) for x in a.sweep.split(",")])
@@ -114,7 +138,10 @@ def main():
         for k in ("flaeche","eur_m2","nk","personal","energie","marketing","verwaltung","instand"):
             v = getattr(a, k)
             if v is not None: p[k] = v
-        sa = argparse.Namespace(tage=a.tage, eintritt=a.eintritt, extra=a.extra, besucher=0, **p)
+        sa = argparse.Namespace(tage=a.tage, eintritt=a.eintritt, extra=a.extra, besucher=0,
+                                kit_preis=a.kit_preis, kit_material=a.kit_material,
+                                kit_schnitt=a.kit_schnitt, kit_verpackung=a.kit_verpackung,
+                                kit_quote=a.kit_quote, **p)
         sweep(sa, [int(x) for x in a.sweep.split(",")])
 
 if __name__ == "__main__":
