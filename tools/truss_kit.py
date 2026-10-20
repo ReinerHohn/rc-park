@@ -44,24 +44,57 @@ def rib2(L, hs, bs, cross, from_top, step=1.0):
     return pts
 
 
-def height_split(poly, maxh, fdepth, fw, depth=0):
-    """Teil zu hoch fuers Brett -> waagrechte Finger-Naht (via 90deg-Rotation von finger_split).
-    REKURSIV: zu hohe Rest-Stuecke werden nochmal geteilt, bis alle <= maxh. Gibt Teil-Polygone."""
+def _mindim(poly):
+    p = np.asarray(poly, float); return min(float(np.ptp(p[:, 0])), float(np.ptp(p[:, 1])))
+
+
+def comb_hsplit(poly, zc, fw, fd, minteeth=3):
+    """ROBUSTER Waagrecht-Split mit Kamm-Naht (Shapely-Clip, kein Sliver).
+    Zahnbreite = Breite/n (geht exakt auf -> Zaehne passen IMMER). Untere+obere Haelfte
+    greifen ineinander. Gibt [untere, obere] oder [poly] wenn <minteeth Zaehne passen."""
+    from shapely.geometry import Polygon as SP
+    p = np.asarray(poly, float)
+    x0, x1 = float(p[:, 0].min()), float(p[:, 0].max())
+    z0 = float(p[:, 1].min())
+    W = x1 - x0
+    n = int(W / fw)
+    if n < minteeth:
+        return [p]
+    fw2 = W / n                                            # exakt aufgehende Zahnbreite
+    pts = [(x0, z0-5.0)]
+    for i in range(n):
+        xi = x0 + i*fw2; xe = x0 + (i+1)*fw2
+        top = zc + fd/2 if i % 2 == 0 else zc - fd/2       # abwechselnd Zahn/Nut
+        pts.append((xi, top)); pts.append((xe, top))
+    pts.append((x1, z0-5.0))
+    region = SP(pts).buffer(0)
+    P = SP(p).buffer(0)
+    res = []
+    for g in (P.intersection(region), P.difference(region)):   # untere, obere
+        geoms = [g] if g.geom_type == "Polygon" else [h for h in getattr(g, "geoms", []) if h.geom_type == "Polygon"]
+        best = max(geoms, key=lambda h: h.area) if geoms else None
+        if best is not None and best.area >= 30:
+            res.append(np.array(best.exterior.coords))
+    return res if len(res) == 2 else [p]
+
+
+def height_split(poly, maxh, fdepth, fw, depth=0, minpiece=40.0):
+    """Teil zu hoch fuers Brett -> waagrechte KAMM-Naht (comb_hsplit, Shapely-sauber).
+    REKURSIV bis alle <= maxh. GUARD: nur splitten wenn beide Stuecke >= minpiece UND >=3
+    Zaehne passen (sonst GANZ lassen -> keine Sliver, Nummer passt, echter umschliessender Kamm)."""
     p = np.asarray(poly, float)
     if np.ptp(p[:, 1]) <= maxh or depth >= 5:
         return [p]
-    zmin = float(p[:, 1].min()); H = float(np.ptp(p[:, 1]))
-    raw = te.choose_seams([], H, maxh, 2*fdepth+10)        # gleichmaessige Nähte in [0,H]
-    if not raw:
+    z0 = float(p[:, 1].min()); H = float(np.ptp(p[:, 1]))
+    if H < 2*minpiece:                                     # Mittel-Split waere < minpiece -> ganz lassen
         return [p]
-    seams = [zmin + s for s in raw]
-    rot = np.column_stack([p[:, 1], p[:, 0]])              # x'=z (Hoehe), y'=s -> finger_split schneidet waagrecht
-    parts = te.finger_split(rot, seams, fdepth, fw)
+    parts = comb_hsplit(p, z0 + H/2.0, fw, fdepth)         # Naht mittig, Kamm-Zaehne passen immer
+    if len(parts) < 2 or any(_mindim(q) < minpiece for q in parts):
+        return [p]
     out = []
-    for q in parts:
-        qp = np.column_stack([q[:, 1], q[:, 0]])           # zurueckdrehen
-        if np.ptp(qp[:, 1]) > maxh and depth < 5:          # Rest noch zu hoch -> nochmal teilen
-            out += height_split(qp, maxh, fdepth, fw, depth+1)
+    for qp in parts:
+        if np.ptp(qp[:, 1]) > maxh and depth < 5:
+            out += height_split(qp, maxh, fdepth, fw, depth+1, minpiece)
         else:
             out.append(qp)
     return out
@@ -109,6 +142,7 @@ def main():
     ap.add_argument("--puzzle", action="store_true", help="Schwalbenschwanz-/Puzzle-Nasen statt gerader Zinken -> halten OHNE Kleber")
     ap.add_argument("--maxlen", type=float, default=200.0, help="max Stueck-BREITE mm vor senkrechter Naht (an Materialbreite anpassen)")
     ap.add_argument("--maxh", type=float, default=0.0, help="max Stueck-HOEHE mm vor waagrechter Naht (0=aus; fuers 20x25-Brett ~240)")
+    ap.add_argument("--minpiece", type=float, default=40.0, help="Mindest-Teilgroesse mm: kleiner wird NICHT gesplittet (Nummer muss drauf, echter Kamm, kein Sliver)")
     ap.add_argument("--taper", type=float, default=1.6, help="Puzzle-Nasen-Weitung mm/Seite (NICHT fuer Press-Fit, Dovetail steckt nicht geradeaus)")
     ap.add_argument("--kerf", type=float, default=0.09, help="Kerf-Ausgleich mm/Seite: geteilte Teile um K groesser schneiden -> Finger stecken satt (S9/3mm: 0.09; Kerf schwankt ~0.05/Lauf, lieber lockerer)")
     ap.add_argument("--balken-only", action="store_true", help="NUR Balken×Balken-Verzahnung, KEINE Streben-Einhaengeschlitze (fuer reines Balken-Testgeruest ohne Streben -> starke Rippen)")
@@ -224,12 +258,14 @@ def main():
         if seams:
             # GERADE Finger (Dovetail lässt sich nicht geradeaus stecken!). Kerf-Comp: jedes Teil +K nach außen.
             segs = te.puzzle_split(poly, seams, fdepth, 12, a.taper) if a.puzzle else te.finger_split(poly, seams, fdepth, 12)
+            if any(_mindim(s) < a.minpiece for s in segs):  # Breiten-Split erzeugt Mini-Teil -> ganz lassen
+                segs = [poly]
         else:
             segs = [poly]
         if a.maxh > 0:                                     # zu hohe Teile zusaetzlich waagrecht teilen (Brett-Hoehe)
             hsplit = []
             for sp in segs:
-                hsplit += height_split(sp, a.maxh, fdepth, 12)
+                hsplit += height_split(sp, a.maxh, fdepth, 12, minpiece=a.minpiece)
             segs = hsplit
         split_now = sum(1 for _ in segs) > 1 or bool(seams)
         if a.kerf > 0 and split_now:                       # geteilte Teile kompensieren (Steck-Finger satt)
