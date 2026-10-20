@@ -83,7 +83,7 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None):
 <div id=bar>🔎 Teil-Nr: <input id=q placeholder="z.B. X0a oder 123" autofocus>
 <button onclick=find()>finden</button><button onclick=clr()>alle</button>
 <button onclick=tRelief()>Relief ein/aus</button><button onclick=tNum()>Nummern ein/aus</button><span id=info></span></div>
-<div id=tip>Suchleiste: Teil-Nr -> leuchtet ROT wo es hinkommt · Teil anklicken = markieren · Relief als Kontext einblendbar · dunkle Linien = Gravur-Nr</div>
+<div id=tip>1 Teil (z.B. Y10) -> leuchtet ROT wo es hinkommt · ZWEI Teile (klick+klick ODER „X8 Y10" tippen) -> rot+blau + GRUENE Kugel wo sie sich verbinden · Relief/Nummern ein-aus</div>
 <script type=module>
 import*as THREE from'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';import{GLTFLoader}from'three/addons/loaders/GLTFLoader.js';
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
@@ -104,19 +104,37 @@ new GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  if(ENG.length){const gg=new THREE.BufferGeometry();gg.setAttribute('position',new THREE.Float32BufferAttribute(ENG,3));
   nums=new THREE.LineSegments(gg,new THREE.LineBasicMaterial({color:0x1a0f06}));root.add(nums);}
  const d=Math.max(s.x,s.y,s.z);cam.position.set(d*0.9,-d*1.2,d*0.8);cam.lookAt(0,0,0);ct.update();});
-function apply(q){q=(q||"").toUpperCase().trim();let n=0,hit=[];
- meshes.forEach(o=>{if(!q){o.material.color.setHex(o.userData.base);o.material.opacity=1;o.material.emissive.setHex(0);return;}
-  if((o.name||"").toUpperCase().includes(q)){o.material.color.setHex(0xff2020);o.material.emissive.setHex(0x661111);o.material.opacity=1;n++;hit.push(o.name);}
-  else{o.material.color.setHex(0x999999);o.material.emissive.setHex(0);o.material.opacity=0.1;}});
- document.getElementById("info").textContent=q?(n?("→ "+n+" Teil(e): "+hit.slice(0,6).join(", ")+(hit.length>6?"…":"")):("„"+q+"“ nicht gefunden")):"";}
+let marker=null;const SEL=[];
+function clrMark(){if(marker){sc.remove(marker);marker=null;}}
+function apply(q){q=(q||"").toUpperCase().trim();const toks=q.split(/ +/).filter(x=>x);clrMark();
+ const cols=[0xff2020,0x2068ff];const grp=[[],[]];let hit=[];
+ meshes.forEach(o=>{const nm=(o.name||"").toUpperCase();
+  if(toks.length===0){o.material.color.setHex(o.userData.base);o.material.opacity=1;o.material.emissive.setHex(0);return;}
+  let gi=-1;for(let t=0;t<Math.min(2,toks.length);t++){if(toks[t]&&nm.includes(toks[t]))gi=t;}
+  if(gi>=0){o.material.color.setHex(cols[gi]);o.material.emissive.setHex(gi?0x11244d:0x661111);o.material.opacity=1;grp[gi].push(o);hit.push(o.name);}
+  else{o.material.color.setHex(0x999999);o.material.emissive.setHex(0);o.material.opacity=0.08;}});
+ if(toks.length>=2&&grp[0].length&&grp[1].length){
+  const bA=new THREE.Box3();grp[0].forEach(o=>bA.expandByObject(o));
+  const bB=new THREE.Box3();grp[1].forEach(o=>bB.expandByObject(o));
+  const ix=Math.max(bA.min.x,bB.min.x),ax=Math.min(bA.max.x,bB.max.x);
+  const iy=Math.max(bA.min.y,bB.min.y),ay=Math.min(bA.max.y,bB.max.y);
+  const iz=Math.max(bA.min.z,bB.min.z),az=Math.min(bA.max.z,bB.max.z);
+  if(ix<=ax&&iy<=ay){const r=Math.max(6,Math.min(ax-ix,ay-iy)+5);
+   marker=new THREE.Mesh(new THREE.SphereGeometry(r,20,20),new THREE.MeshBasicMaterial({color:0x00ff66,transparent:true,opacity:0.55,depthTest:false}));
+   marker.position.set((ix+ax)/2,(iy+ay)/2,(iz+az)/2);marker.renderOrder=999;sc.add(marker);}}
+ const inf=document.getElementById("info");
+ if(toks.length>=2)inf.textContent=(grp[0].length&&grp[1].length)?("🔗 "+toks[0]+" × "+toks[1]+" — Verbindung GRÜN markiert"):("eins von „"+toks.join(" / ")+"“ nicht gefunden");
+ else inf.textContent=toks.length?(hit.length?("→ "+hit.slice(0,6).join(", ")+(hit.length>6?"…":"")):("„"+q+"“ nicht gefunden")):"";}
 window.find=()=>apply(document.getElementById("q").value);
-window.clr=()=>{document.getElementById("q").value="";apply("");};
+window.clr=()=>{SEL.length=0;document.getElementById("q").value="";apply("");};
 window.tRelief=()=>{if(relief)relief.visible=!relief.visible;};
 window.tNum=()=>{if(nums)nums.visible=!nums.visible;};
 document.getElementById("q").addEventListener("input",e=>apply(e.target.value));
 addEventListener("click",e=>{if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON")return;
  M.x=(e.clientX/innerWidth)*2-1;M.y=-(e.clientY/innerHeight)*2+1;RAY.setFromCamera(M,cam);
- const h=RAY.intersectObjects(meshes,false);if(h.length){document.getElementById("q").value=h[0].object.name;apply(h[0].object.name);}});
+ const h=RAY.intersectObjects(meshes,false);if(h.length){const nm=(h[0].object.name||"").toUpperCase();
+  const i=SEL.indexOf(nm);if(i>=0)SEL.splice(i,1);else{SEL.push(nm);if(SEL.length>2)SEL.shift();}
+  document.getElementById("q").value=SEL.join(" ");apply(SEL.join(" "));}});
 addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();rn.setSize(innerWidth,innerHeight)});
 (function x(){requestAnimationFrame(x);ct.update();rn.render(sc,cam)})();
 </script></body></html>'''.replace("%B64%", b64).replace("%ENG%", eng_json)

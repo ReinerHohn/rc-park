@@ -63,6 +63,7 @@ def main():
     ap.add_argument("--yes", action="store_true", help="ohne ENTER-Rückfrage schneiden (für Hintergrund-Lauf)")
     ap.add_argument("--mark", action="store_true", help="ANZEICHNEN: Umrisse 1x bei niedriger Leistung, schneidet NICHT")
     ap.add_argument("--mark-power", type=float, default=12.0, help="Leistung %% fürs Anzeichnen")
+    ap.add_argument("--mark-feed", type=float, default=2500.0, help="Vorschub fürs Anzeichnen (schnell, schneidet nicht)")
     a = ap.parse_args()
 
     x0, y0, x1, y1 = bbox(a.gcode)
@@ -105,14 +106,23 @@ def main():
                 if a.mark and k >= 2: break                  # Anzeichnen: nach Pass 1 stoppen
                 continue
             if not s or s.startswith(";"): continue
-            if a.mark:                                       # Leistung auf Mark-Power zwingen
+            if a.mark:                                       # Leistung auf Mark-Power + schnellen Vorschub zwingen
                 m = _re.search(r"M4 S\d+", l)
                 if m: l = l.replace(m.group(0), f"M4 S{int(a.mark_power*10)}")
+                fm = _re.search(r"F\d+\.?\d*", l)
+                if fm: l = l.replace(fm.group(0), f"F{int(a.mark_feed)}")
             out.append(l)
         n = max(1, len(out))
+        t0 = time.time(); last_pct = -1
         for i, ln in enumerate(out):
             cmd(ser, ln)
-            if i % 50 == 0: print(f"  {100*i//n}%")
+            pct = 100*i//n
+            if pct != last_pct and pct % 5 == 0:
+                el = time.time()-t0
+                eta = el*(n-i)/i if i > 0 else 0.0
+                print(f"  {pct:3d}%  |  {el/60:4.1f} min gelaufen, noch ~{eta/60:4.1f} min")
+                last_pct = pct
+        print(f"  (Gesamt {(time.time()-t0)/60:.1f} min)")
         print("ANGEZEICHNET — jetzt prüfen, dann cutten." if a.mark else "FERTIG. Laser aus.")
         cmd(ser, "M5 S0")
     except KeyboardInterrupt:
