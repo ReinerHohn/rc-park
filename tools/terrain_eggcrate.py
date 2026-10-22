@@ -251,17 +251,21 @@ def rib_positions(Hf, cell, nx, ny, min_gap, max_gap=None, uniform=False):
     return xpos, ypos
 
 
-def choose_seams(cross_s, L, maxlen, minwid):
+def choose_seams(cross_s, L, maxlen, minwid, phase=0.0):
     """Naht-Positionen (entlang s) wählen: möglichst gleichmäßig alle <=maxlen, aber IMMER
-    in eine Lücke zwischen zwei Kreuzungen (nie auf einen Steck-Schlitz), breit genug für Zinken."""
+    in eine Lücke zwischen zwei Kreuzungen (nie auf einen Steck-Schlitz), breit genug für Zinken.
+    phase (Rippen-Index): VERSETZT die Naht pro Rippe (zielt auf eine andere Lücke), damit die
+    Nähte benachbarter Rippen NICHT auf eine Linie fallen (sonst durchgehende Sollbruch-Linie)."""
     cs = sorted(c for c in cross_s if 1 < c < L-1)
     bnds = [0.0] + cs + [float(L)]
     cand = [(bnds[i]+bnds[i+1])/2 for i in range(len(bnds)-1)
             if (bnds[i+1]-bnds[i]) >= minwid and 0.12*L < (bnds[i]+bnds[i+1])/2 < 0.88*L]
     if not cand: return []
-    n = max(1, int(np.ceil(L/maxlen))); seams = []
+    n = max(1, int(np.ceil(L/maxlen))); step = L/n; seams = []
+    off = (0.4 * step) * (1 if int(phase) % 2 else -1)  # strikt abwechselnd (ABAB): kein Nachbar teilt eine Nahtlinie
     for i in range(1, n):
-        sc = min(cand, key=lambda c: abs(c - L*i/n))
+        target = L*i/n + off
+        sc = min(cand, key=lambda c: abs(c - target))
         if sc not in seams: seams.append(sc)
     return sorted(seams)
 
@@ -493,9 +497,10 @@ def main():
                 if gg.area >= 1: out.append(np.array(gg.exterior.coords))
         return out
 
-    def add_rib(prefix, coordlab, poly, axis, pos, th, L, cross_s):
-        """emittiert eine Rippe; teilt sie bei --split-len in verzinkte Puzzle-Stücke."""
-        seams = (choose_seams(cross_s, L, a.split_len, 2*fdepth+slotw+4)
+    def add_rib(prefix, coordlab, poly, axis, pos, th, L, cross_s, ph=0):
+        """emittiert eine Rippe; teilt sie bei --split-len in verzinkte Puzzle-Stücke.
+        ph=Rippen-Index -> Naht pro Rippe versetzt (keine durchgehende Nahtlinie)."""
+        seams = (choose_seams(cross_s, L, a.split_len, 2*fdepth+slotw+4, phase=ph)
                  if a.split_len > 0 and np.ptp(poly[:, 0]) > a.split_len else [])
         if not seams:
             bb = emit(f"rib{prefix}", poly, f"{prefix} {coordlab}", th)
@@ -513,12 +518,12 @@ def main():
         cross = [(xp, (Hbot(xp, yr)+Htop(xp, yr))/2) for xp in xpos]
         bsf = (lambda s, yr=yr: Hbot(s, yr)) if band else None
         poly = np.array(rib(Wx, lambda s, yr=yr: Htop(s, yr), cross, slotw, True, bsf), float)
-        add_rib(f"X{j}", f"Y{yr:.0f}", poly, "x", yr, tunnel_holes("x", yr), Wx, list(xpos))
+        add_rib(f"X{j}", f"Y{yr:.0f}", poly, "x", yr, tunnel_holes("x", yr), Wx, list(xpos), ph=j)
     for i, xr in enumerate(xpos):     # Y-Rippen: Schlitz UNTEN, Kreuzung an ypos
         cross = [(yp, (Hbot(xr, yp)+Htop(xr, yp))/2) for yp in ypos]
         bsf = (lambda s, xr=xr: Hbot(xr, s)) if band else None
         poly = np.array(rib(Dy, lambda s, xr=xr: Htop(xr, s), cross, slotw, False, bsf), float)
-        add_rib(f"Y{i}", f"X{xr:.0f}", poly, "y", xr, tunnel_holes("y", xr), Dy, list(ypos))
+        add_rib(f"Y{i}", f"X{xr:.0f}", poly, "y", xr, tunnel_holes("y", xr), Dy, list(ypos), ph=i)
 
     # --- KONTUR-STACK oben drauf (z_t .. Hmax), nur wenn trans_frac < 1 ---
     stackdata = []; hr = a.dowel_d/2

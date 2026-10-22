@@ -36,3 +36,4 @@ python3 tools/laser_pack.py modelle/hoellental_geruest_a3 --sheet 410x297 \
 - `terrain_eggcrate.rib()`: Schlitzmund-**Zacken/Verengung beseitigt** (keine Kantenpunkte mehr im Mund; slotw/2 > 1mm-Schritt hatte Rückwärts-Haken erzeugt → Rippe klemmte) **+ Einführtrichter** (`flare=0.4` mm/Seite): Mund breiter, verjüngt sich auf slotw → Rippe gleitet rein, Griff bleibt 2,5 mm.
 - **Die hier geschnittenen Teile sind VOR dem Fix** (alter Zacken) → Mundkanten entgraten ODER mit gefixtem Generator neu schneiden.
 - Zusammenbau-HTML: **🧩 Baustand-Marker** — Teile anklicken = „hab ich" (solide), Rest blass; gespeichert pro Modell (localStorage). Öffnen via `./zusammenbau.sh`.
+- **Naht-Versatz (choose_seams):** Fingerzinken-Nähte benachbarter Rippen strikt **abwechselnd (ABAB)** → **keine durchgehende Sollbruch-Linie** mehr (vorher lagen alle X-Nähte auf einer Linie bei Y8).
