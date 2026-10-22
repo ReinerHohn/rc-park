@@ -10,7 +10,7 @@ python3 tools/terrain_eggcrate.py --dem daten/hoellental/dgm025_full.npy \
   --mm 0.78125 --nscale 3.125 --zoom 1 --r0 470 --r1 640 --c0 3310 --c1 3570 \
   --vscale 0.85 --nx 12 --ny 8 --thickness 3 --base 12 --rib-depth 0 \
   --trans-frac 1.0 --smooth 0.6 --min-gap 7 \
-  --tunnel --track daten/hoellental/hoellental_track.npy \
+  --tunnel --track daten/hoellental/hoellental_track_50.npy \
   --split-len 200 --finger 12 --fit -0.50 --gcode \
   --out modelle/hoellental_geruest_a3
 ```
@@ -37,3 +37,4 @@ python3 tools/laser_pack.py modelle/hoellental_geruest_a3 --sheet 410x297 \
 - **Die hier geschnittenen Teile sind VOR dem Fix** (alter Zacken) → Mundkanten entgraten ODER mit gefixtem Generator neu schneiden.
 - Zusammenbau-HTML: **🧩 Baustand-Marker** — Teile anklicken = „hab ich" (solide), Rest blass; gespeichert pro Modell (localStorage). Öffnen via `./zusammenbau.sh`.
 - **Naht-Versatz (choose_seams):** Fingerzinken-Nähte benachbarter Rippen strikt **abwechselnd (ABAB)** → **keine durchgehende Sollbruch-Linie** mehr (vorher lagen alle X-Nähte auf einer Linie bei Y8).
+- **TUNNEL-Trasse SKALIERT (wichtig!):** `hoellental_track.npy` ist in VOLL-Modell-mm (bis ~424×250) → fiel beim 50%-Modell (203×133) komplett raus → „Trasse 0 Punkte, kein Tunnel". Fix: **`hoellental_track_50.npy`** (x/y/z ×0,5) — NUR die im Befehl nutzen. Die zuvor geschnittenen Teile hatten KEINEN Tunnel → beim Neuschnitt kommt er mit. (83 Punkte, 68 Tunnel/15 offen, 14 Rippen mit Lichtraum.)

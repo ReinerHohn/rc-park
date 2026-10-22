@@ -4,27 +4,27 @@ MONTAGE: X-Rippen (Schlitz oben) + Y-Rippen (Schlitz unten) ineinanderstecken.
 Dann Gips/Haut über die Rippen-Oberkanten.
 
   X0a: 33x122 mm (Zinken)
-  X0b: 186x96 mm (Zinken)
+  X0b: 186x96 mm (Zinken) (+1 Tunnel)
   X1a: 169x89 mm (Zinken)
-  X1b: 51x66 mm (Zinken)
+  X1b: 51x66 mm (Zinken) (+3 Tunnel)
   X2a: 33x20 mm (Zinken)
-  X2b: 186x86 mm (Zinken)
-  X3a: 169x66 mm (Zinken)
-  X3b: 51x102 mm (Zinken)
+  X2b: 186x86 mm (Zinken) (+3 Tunnel)
+  X3a: 169x66 mm (Zinken) (+2 Tunnel)
+  X3b: 51x102 mm (Zinken) (+2 Tunnel)
   X4a: 33x18 mm (Zinken)
-  X4b: 186x136 mm (Zinken)
-  X5a: 169x108 mm (Zinken)
+  X4b: 186x136 mm (Zinken) (+4 Tunnel)
+  X5a: 169x108 mm (Zinken) (+2 Tunnel)
   X5b: 51x175 mm (Zinken)
   X6a: 33x63 mm (Zinken)
-  X6b: 186x182 mm (Zinken)
+  X6b: 186x182 mm (Zinken) (+3 Tunnel)
   Y0: 133x120 mm
   Y1: 133x139 mm
   Y2: 133x140 mm
   Y3: 133x161 mm
   Y4: 133x166 mm
-  Y5: 133x167 mm
-  Y6: 133x167 mm
-  Y7: 133x154 mm
-  Y8: 133x167 mm
-  Y9: 133x175 mm
-  Y10: 133x191 mm
+  Y5: 133x167 mm  (+1 Tunnel)
+  Y6: 133x167 mm  (+1 Tunnel)
+  Y7: 133x154 mm  (+1 Tunnel)
+  Y8: 133x167 mm  (+1 Tunnel)
+  Y9: 133x175 mm  (+1 Tunnel)
+  Y10: 133x191 mm  (+1 Tunnel)
