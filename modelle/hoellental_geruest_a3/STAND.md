@@ -31,3 +31,8 @@ python3 tools/laser_pack.py modelle/hoellental_geruest_a3 --sheet 410x297 \
 - `--fit -0.50` = lockere Slip-Fit-Schlitze (Vollgitter: eine Rippe kreuzt 8–11 Schlitze → lieber locker).
 - Fingerzinken nur wo Rippe am Stoß hoch genug (mehrere Finger), nie Einzelzahn.
 - S9-USB **direkt an den Laptop** (nicht HP-Dock) — sonst Serial-Abbruch bei langen Läufen.
+
+## Slot-Mund-Fix (2026-10-22) + Baustand-Marker
+- `terrain_eggcrate.rib()`: Schlitzmund-**Zacken/Verengung beseitigt** (keine Kantenpunkte mehr im Mund; slotw/2 > 1mm-Schritt hatte Rückwärts-Haken erzeugt → Rippe klemmte) **+ Einführtrichter** (`flare=0.4` mm/Seite): Mund breiter, verjüngt sich auf slotw → Rippe gleitet rein, Griff bleibt 2,5 mm.
+- **Die hier geschnittenen Teile sind VOR dem Fix** (alter Zacken) → Mundkanten entgraten ODER mit gefixtem Generator neu schneiden.
+- Zusammenbau-HTML: **🧩 Baustand-Marker** — Teile anklicken = „hab ich" (solide), Rest blass; gespeichert pro Modell (localStorage). Öffnen via `./zusammenbau.sh`.

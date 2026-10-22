@@ -82,8 +82,8 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None):
 </head><body>
 <div id=bar>🔎 Teil-Nr: <input id=q placeholder="z.B. X0a oder 123" autofocus>
 <button onclick=find()>finden</button><button onclick=clr()>alle</button>
-<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=65 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tNum()>Nummern ein/aus</button><span id=info></span></div>
-<div id=tip>1 Teil (z.B. Y10) -> leuchtet ROT wo es hinkommt · ZWEI Teile (klick+klick ODER „X8 Y10" tippen) -> rot+blau + GRUENE Kugel wo sie sich verbinden · Relief/Nummern ein-aus</div>
+<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=65 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
+<div id=tip>1 Teil (z.B. Y10) -> leuchtet ROT wo es hinkommt · ZWEI Teile (klick+klick ODER „X8 Y10" tippen) -> rot+blau + GRUENE Kugel wo sie sich verbinden · Relief/Nummern ein-aus · 🧩 BAUSTAND an → Teil anklicken = „hab ich" (solide), Rest blass → mit echtem Modell abgleichen</div>
 <script type=module>
 import*as THREE from'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';import{GLTFLoader}from'three/addons/loaders/GLTFLoader.js';
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
@@ -92,7 +92,7 @@ const rn=new THREE.WebGLRenderer({antialias:true});rn.setSize(innerWidth,innerHe
 const ct=new OrbitControls(cam,rn.domElement);ct.enableDamping=true;
 sc.add(new THREE.AmbientLight(0xffffff,0.8));sc.add(new THREE.HemisphereLight(0xffffff,0x556,1.0));
 const d1=new THREE.DirectionalLight(0xffffff,1.1);d1.position.set(200,-300,500);sc.add(d1);
-let meshes=[],relief=null,nums=null;const ENG=%ENG%;const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
+let meshes=[],relief=null,nums=null,prog=false;const DONE=new Set();let KEY='zbdone';const ENG=%ENG%;const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
 new GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  const root=g.scene,bx=new THREE.Box3().setFromObject(root),c=bx.getCenter(new THREE.Vector3()),s=bx.getSize(new THREE.Vector3());
  root.position.sub(c);sc.add(root);
@@ -101,6 +101,7 @@ new GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
   const hue=((meshes.length*137.508)%360)/360,col=new THREE.Color().setHSL(hue,0.58,0.55);
   o.material=new THREE.MeshStandardMaterial({color:col,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
   o.userData.base=col.getHex();meshes.push(o);}});
+ {let s=meshes.map(o=>(o.name||'').toUpperCase()).sort().join('|'),h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;KEY='zbdone_'+(h>>>0);try{JSON.parse(localStorage.getItem(KEY)||'[]').forEach(n=>DONE.add(n))}catch(e){}updProgInfo();apply(document.getElementById('q').value);}
  if(ENG.length){const gg=new THREE.BufferGeometry();gg.setAttribute('position',new THREE.Float32BufferAttribute(ENG,3));
   nums=new THREE.LineSegments(gg,new THREE.LineBasicMaterial({color:0x1a0f06}));root.add(nums);}
  const d=Math.max(s.x,s.y,s.z);cam.position.set(d*0.9,-d*1.2,d*0.8);cam.lookAt(0,0,0);ct.update();});
@@ -109,7 +110,7 @@ function clrMark(){if(marker){sc.remove(marker);marker=null;}}
 function apply(q){q=(q||"").toUpperCase().trim();const toks=q.split(/ +/).filter(x=>x);clrMark();
  const cols=[0xff2020,0x2068ff];const grp=[[],[]];let hit=[];
  meshes.forEach(o=>{const nm=(o.name||"").toUpperCase();const rid=(nm.match(/^[XY]\d+/)||[nm])[0];
-  if(toks.length===0){o.material.color.setHex(o.userData.base);o.material.opacity=1;o.material.emissive.setHex(0);return;}
+  if(toks.length===0){o.material.color.setHex(o.userData.base);o.material.emissive.setHex(0);o.material.opacity=(prog&&!DONE.has(nm))?0.12:1;return;}
   let gi=-1;for(let t=0;t<Math.min(2,toks.length);t++){const tk=toks[t];if(tk&&(rid===tk||nm===tk))gi=t;}
   if(gi>=0){o.material.color.setHex(cols[gi]);o.material.emissive.setHex(gi?0x11244d:0x661111);o.material.opacity=1;grp[gi].push(o);hit.push(o.name);}
   else{o.material.color.setHex(0x999999);o.material.emissive.setHex(0);o.material.opacity=0.06;}});
@@ -130,10 +131,15 @@ window.clr=()=>{SEL.length=0;document.getElementById("q").value="";apply("");};
 window.tRelief=()=>{if(relief)relief.visible=!relief.visible;};
 window.setRopac=v=>{if(relief){const o=v/100;relief.material.opacity=o;relief.material.transparent=o<1;relief.visible=o>0;}};
 window.tNum=()=>{if(nums)nums.visible=!nums.visible;};
+function saveProg(){try{localStorage.setItem(KEY,JSON.stringify([...DONE]))}catch(e){}}
+function updProgInfo(){const el=document.getElementById('pinfo');if(el)el.textContent=prog?('🧩 Baustand AN · '+DONE.size+'/'+meshes.length+' fertig'):'';}
+window.tProg=()=>{prog=!prog;SEL.length=0;document.getElementById('q').value='';apply('');updProgInfo();};
+window.resetProg=()=>{DONE.clear();saveProg();updProgInfo();apply(document.getElementById('q').value);};
 document.getElementById("q").addEventListener("input",e=>apply(e.target.value));
 addEventListener("click",e=>{if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON")return;
  M.x=(e.clientX/innerWidth)*2-1;M.y=-(e.clientY/innerHeight)*2+1;RAY.setFromCamera(M,cam);
  const h=RAY.intersectObjects(meshes,false);if(h.length){const nm=(h[0].object.name||"").toUpperCase();
+  if(prog){if(DONE.has(nm))DONE.delete(nm);else DONE.add(nm);saveProg();updProgInfo();apply(document.getElementById("q").value);return;}
   const i=SEL.indexOf(nm);if(i>=0)SEL.splice(i,1);else{SEL.push(nm);if(SEL.length>2)SEL.shift();}
   document.getElementById("q").value=SEL.join(" ");apply(SEL.join(" "));}});
 addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();rn.setSize(innerWidth,innerHeight)});
@@ -142,36 +148,52 @@ addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProje
     open(fn, "w").write(HTML)
 
 
-def rib(L, hs, cross, slotw, from_top, bs=None):
+def rib(L, hs, cross, slotw, from_top, bs=None, flare=0.4):
     """Rippen-Polygon. L=Länge, hs(s)->Oberkante, bs(s)->Unterkante (None=0=bis Boden),
-    cross=[(pos,hmid)] Kreuzungs-Schlitze, Schlitz von oben (from_top) oder unten."""
+    cross=[(pos,hmid)] Kreuzungs-Schlitze, Schlitz von oben (from_top) oder unten.
+    flare=Einführtrichter am Schlitzmund (mm je Seite): Mund breiter als slotw, verjüngt
+    sich nach ~1mm auf slotw -> Rippe gleitet rein, Griff bleibt slotw. KEINE Kantenpunkte
+    mehr im Mund (verhindert den Rückwärts-Zacken/Verengung, der den Zusammenbau blockiert)."""
     if bs is None: bs = lambda s: 0.0
     S = np.arange(0, L + 0.5, 1.0)
     pts = [(0.0, bs(0.0))]
-    # --- Unterkante links->rechts (folgt bs; Schlitze nach OBEN falls not from_top) ---
+    half = slotw/2 + max(0.0, flare)                 # Mund-Halbbreite (mit Trichter)
+    def _inside(x):                                  # x liegt im Schlitzmund eines Kreuzes?
+        return any(pos - half < x < pos + half for (pos, _h) in cross)
+    # --- Unterkante links->rechts (Schlitze nach OBEN wenn not from_top) ---
     if from_top:
         for s in S[1:]:
             pts.append((float(s), bs(float(s))))
     else:
-        crs = sorted(cross)
+        crs = sorted(cross); emit = set()
         for s in S[1:]:
             su = float(s)
             for (pos, hmid) in crs:
-                if su - 1.0 <= pos < su:
-                    pts += [(pos - slotw/2, bs(pos)), (pos - slotw/2, hmid),
-                            (pos + slotw/2, hmid), (pos + slotw/2, bs(pos))]
-            pts.append((su, bs(su)))
+                if (pos, hmid) not in emit and su >= pos - half:   # linken Mund erreicht
+                    eL = bs(pos - half); eR = bs(pos + half)
+                    ch = min(1.2, max(0.0, (hmid - bs(pos)) * 0.4))
+                    pts += [(pos - half, eL), (pos - slotw/2, eL + ch),
+                            (pos - slotw/2, hmid), (pos + slotw/2, hmid),
+                            (pos + slotw/2, eR + ch), (pos + half, eR)]
+                    emit.add((pos, hmid))
+            if not _inside(su): pts.append((su, bs(su)))
     if pts[-1][0] < L - 1e-6: pts.append((L, bs(L)))
     # --- rechte Kante hoch ---
     pts.append((L, hs(L)))
-    # --- Oberkante rechts->links (folgt hs; Schlitze nach UNTEN falls from_top) ---
+    # --- Oberkante rechts->links (Schlitze nach UNTEN wenn from_top) ---
     if from_top:
+        crs = sorted(cross, reverse=True); emit = set()
         for s in S[::-1]:
-            for (pos, hmid) in sorted(cross, reverse=True):
-                if s <= pos < s + 1.0:
-                    pts += [(pos + slotw/2, hs(pos)), (pos + slotw/2, hmid),
-                            (pos - slotw/2, hmid), (pos - slotw/2, hs(pos))]
-            pts.append((float(s), hs(float(s))))
+            su = float(s)
+            for (pos, hmid) in crs:
+                if (pos, hmid) not in emit and su <= pos + half:   # rechten Mund erreicht
+                    eR = hs(pos + half); eL = hs(pos - half)
+                    ch = min(1.2, max(0.0, (hs(pos) - hmid) * 0.4))
+                    pts += [(pos + half, eR), (pos + slotw/2, eR - ch),
+                            (pos + slotw/2, hmid), (pos - slotw/2, hmid),
+                            (pos - slotw/2, eL - ch), (pos - half, eL)]
+                    emit.add((pos, hmid))
+            if not _inside(su): pts.append((su, hs(su)))
     else:
         for s in S[::-1]:
             pts.append((float(s), hs(float(s))))
