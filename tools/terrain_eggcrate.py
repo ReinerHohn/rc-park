@@ -90,7 +90,7 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None, 
 </head><body>
 <div id=bar>🔎 Teil-Nr: <input id=q placeholder="z.B. X0a oder 123" autofocus>
 <button onclick=find()>finden</button><button onclick=clr()>alle</button>
-<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=65 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tPlatten()>Platten ein/aus</button><button onclick=tTunnel() style="background:#ff5522;color:#fff">🚇 Tunnel</button><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
+<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=50 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tPlatten()>Platten ein/aus</button><button onclick=tTunnel() style="background:#ff5522;color:#fff">🚇 Tunnel</button><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
 <div id=tip>1 Teil (z.B. Y10) -> leuchtet ROT wo es hinkommt · ZWEI Teile (klick+klick ODER „X8 Y10" tippen) -> rot+blau + GRUENE Kugel wo sie sich verbinden · Relief/Nummern ein-aus · 🧩 BAUSTAND an → Teil anklicken = „hab ich" (solide), Rest blass → mit echtem Modell abgleichen</div>
 <script>
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
@@ -104,7 +104,7 @@ new THREE.GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  const root=g.scene,bx=new THREE.Box3().setFromObject(root),c=bx.getCenter(new THREE.Vector3()),s=bx.getSize(new THREE.Vector3());
  root.position.sub(c);sc.add(root);
  root.traverse(o=>{if(o.isMesh){
-  if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0xc8b48c,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.65,flatShading:true});o.visible=true;relief=o;return;}
+  if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0x6d5c3e,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.5,flatShading:true});o.visible=true;relief=o;return;}
   if(/^TUNNEL/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,depthTest:false,transparent:true,opacity:0.95});o.renderOrder=999;extras.push(o);tunnels.push(o);return;}
   if(/^PLATTE/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,transparent:true,opacity:0.9});extras.push(o);return;}
   const hue=((meshes.length*137.508)%360)/360,col=new THREE.Color().setHSL(hue,0.58,0.55);
