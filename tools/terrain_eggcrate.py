@@ -777,10 +777,31 @@ def main():
                 if _tcp is None:
                     _tcp = _ipa.tunnel_cut_from_track(Hf, cell, track)   # Fallback
                 if _tcp is not None and len(_tcp) >= 4:
-                    _zq = lambda x, y: float(Hf[min(int(y / cell), Hf.shape[0] - 1), min(int(x / cell), Hf.shape[1] - 1)])
-                    _PV = np.array([[float(x), float(y), _zq(x, y) + 2.0] for x, y in _tcp[:, :2]])
-                    _PF = np.array([[0, i, i + 1] for i in range(1, len(_tcp) - 1)])
-                    extra_meshes.append(("TUNNEL_deckplatte", _tm.Trimesh(_PV, _PF, process=False), [0, 210, 255, 255]))
+                    # Platte liegt AUF dem Gelände (Grid-Clip): Polygon rastern, Gelände-Zellen drin
+                    # als Dreiecke -> folgt der Kontur statt als flaches Segel hochzustehen.
+                    try:
+                        from matplotlib.path import Path as _MPath
+                        _ny, _nx = Hf.shape
+                        _gx, _gy = np.meshgrid(np.arange(_nx) * cell, np.arange(_ny) * cell)
+                        _inside = _MPath(_tcp[:, :2]).contains_points(
+                            np.column_stack([_gx.ravel(), _gy.ravel()])).reshape(_ny, _nx)
+                        _V = []; _F = []; _idx = -np.ones((_ny, _nx), int)
+                        for _j in range(_ny):
+                            for _i in range(_nx):
+                                if _inside[_j, _i]:
+                                    _idx[_j, _i] = len(_V)
+                                    _V.append([_i * cell, _j * cell, float(Hf[_j, _i]) + 1.5])
+                        for _j in range(_ny - 1):
+                            for _i in range(_nx - 1):
+                                _a = _idx[_j, _i]; _b = _idx[_j, _i + 1]
+                                _c = _idx[_j + 1, _i]; _d = _idx[_j + 1, _i + 1]
+                                if _a >= 0 and _b >= 0 and _c >= 0 and _d >= 0:
+                                    _F.append([_a, _c, _b]); _F.append([_b, _c, _d])
+                        if len(_F) >= 1:
+                            extra_meshes.append(("TUNNEL_deckplatte",
+                                _tm.Trimesh(np.array(_V), np.array(_F, int), process=False), [0, 210, 255, 255]))
+                    except Exception:
+                        pass
                 # Felssturzschutz-GALERIE: zwei SENKRECHTE Seitenwände + DACH entlang der Trasse (nicht nur Boden)
                 _h = CLEAR_H * 0.5
                 _WV = []; _WF = []

@@ -178,50 +178,51 @@ def tunnel_cut_from_track(Hf, cell, track, slope_edge=28.0, max_half=45.0):
     return np.vstack([Lp, Rp[::-1], Lp[:1]])
 
 
-def einschnitt_corridor_poly(Hf, cell, track, corridor_mm=45.0, flat_pct=46.0,
-                             wall_pct=78.0, rdp_mm=4.0, use_tunnel_only=False):
-    """EINSCHNITT-Platte (Welt-mm, geschlossenes Polygon mit GERADEN Kanten) — die Methode, die im
-    2D-Diagnose-Bild zuverlässig den Cut trifft: NICHT Canny/Hough (Natur-Gelände = 2500 Rausch-Kanten),
-    sondern die GRENZE flach<->steil entlang der Trasse:
-      flach (slope < flat-Perzentil) + an der Trasse hängend + im Korridor um die Trasse = Talboden-Platte,
-      deren Kontur Douglas-Peucker-vereinfacht wird = gerade Kanten. Perzentil-Schwellen => robust gegen
-      die vertikale Überhöhung des Hf. None, wenn keine Trasse/zu klein."""
-    import cv2
+def einschnitt_corridor_poly(Hf, cell, track, rim_cap_mm=90.0, no_rim_mm=40.0,
+                             wall_pct=70.0, flat_pct=45.0, rdp_mm=4.0, step_mm=1.0):
+    """EINSCHNITT-Platte (Welt-mm, geschlossenes Polygon mit GERADEN Kanten), BIS AN DEN RAND der
+    Einschnitt-Wände — das, was der Nutzer nachzieht. Methode = von der Trasse senkrecht nach außen
+    wachsen, bis man über die STEILWAND (slope > wall-Perzentil) hinweg oben WIEDER FLACH ist
+    (slope < flat-Perzentil) = Wand-OBERKANTE/Rand. Wo es keine Wand gibt (Tal öffnet sich), auf
+    no_rim_mm gedeckelt, damit die Platte nicht bis zum Bildrand ausläuft. Perzentil-Schwellen =>
+    robust gegen die vertikale Überhöhung des Hf. KEIN Canny/Hough (Natur-Gelände = Rausch-Kanten).
+    None, wenn keine Trasse."""
     NY, NX = Hf.shape
     slope = np.degrees(np.arctan(np.hypot(*np.gradient(gaussian_filter(Hf, 1.0), cell))))
-    flat_t = np.percentile(slope, flat_pct)
+    wall_t = np.percentile(slope, wall_pct); flat_t = np.percentile(slope, flat_pct)
     tr = np.array([[p[0], p[1], p[3]] for p in track], float)
-    pts = tr[tr[:, 2] > 0.5] if use_tunnel_only else tr
-    if len(pts) < 2:
-        pts = tr
-    if len(pts) < 2:
+    cl = tr[tr[:, 2] > 0.5][:, :2]                      # Tunnel-Abschnitt = Ort des Einschnitts
+    if len(cl) < 2:
+        cl = tr[:, :2]
+    if len(cl) < 2:
         return None
-    # flacher Korridor, der an der Trasse hängt
-    flat = binary_closing(slope < flat_t, iterations=2)
-    lab, _ = _label(flat)
-    trkmask = np.zeros((NY, NX), np.uint8)
-    seeds = set()
-    for i in range(len(pts) - 1):
-        p = (int(pts[i, 0] / cell), int(pts[i, 1] / cell))
-        q = (int(pts[i + 1, 0] / cell), int(pts[i + 1, 1] / cell))
-        cv2.line(trkmask, p, q, 255, 1)
-        if 0 <= p[1] < NY and 0 <= p[0] < NX and lab[p[1], p[0]] > 0:
-            seeds.add(lab[p[1], p[0]])
-    keep = np.zeros_like(flat)
-    for s in seeds:
-        keep |= (lab == s)
-    dist = cv2.distanceTransform(255 - trkmask, cv2.DIST_L2, 5)
-    keep &= (dist < corridor_mm / cell)
-    if keep.sum() < 20:
+    dense = []                                          # Mittellinie verdichten
+    for i in range(len(cl) - 1):
+        for t in np.linspace(0, 1, 30):
+            dense.append(cl[i] + (cl[i + 1] - cl[i]) * t)
+    dense = np.array(dense)
+    d = np.gradient(dense, axis=0); tg = d / np.maximum(np.hypot(d[:, 0], d[:, 1])[:, None], 1e-9)
+    nrm = np.column_stack([-tg[:, 1], tg[:, 0]])
+
+    def grow(p, n, sgn):
+        seen_wall = False
+        for s in np.arange(2.0, rim_cap_mm, step_mm):
+            q = p + sgn * n * s; ci = int(q[0] / cell); cj = int(q[1] / cell)
+            if not (0 <= ci < NX and 0 <= cj < NY):
+                return min(s, no_rim_mm)
+            sl = slope[cj, ci]
+            if sl > wall_t:
+                seen_wall = True
+            if seen_wall and sl < flat_t:              # oben wieder flach = Wand-Oberkante (Rand)
+                return s
+        return no_rim_mm                               # keine Wand gefunden => Deckel
+    Lp = np.array([dense[i] + nrm[i] * grow(dense[i], nrm[i], 1.0) for i in range(len(dense))])
+    Rp = np.array([dense[i] - nrm[i] * grow(dense[i], nrm[i], -1.0) for i in range(len(dense))])
+    poly = np.vstack([Lp, Rp[::-1], Lp[:1]])
+    simp = _rdp(poly, rdp_mm)                           # gerade Kanten (schon in Welt-mm)
+    if len(simp) < 4:
         return None
-    cnts, _ = cv2.findContours(keep.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    cnts = [c for c in cnts if cv2.contourArea(c) >= NY * NX * 0.008]
-    if not cnts:
-        return None
-    c = max(cnts, key=cv2.contourArea).reshape(-1, 2).astype(float)      # größter Korridor
-    simp = _rdp(c, rdp_mm / cell)                                        # gerade Kanten (Pixel)
-    poly_mm = simp * cell                                                # -> Welt-mm
-    return np.vstack([poly_mm, poly_mm[:1]])
+    return np.vstack([simp, simp[:1]])
 
 
 def detect_tunnel_lines(Hf, cell, min_len_mm=25.0, ang_tol=18.0, min_perp=12.0, max_perp=48.0, min_overlap=18.0):
