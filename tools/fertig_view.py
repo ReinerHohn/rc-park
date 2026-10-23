@@ -20,10 +20,12 @@ from terrain_eggcrate import rib_positions
 def detect_plates(Hf, cell, a):
     out = []
     for m in ipa.segment_planes(Hf, cell, 2.5, 12.0, a.min_area, 90.0)[:a.max_plates]:   # JEDE Facette (jeder Winkel)
+        av, bv, cv, _rms = ipa.fit_plane_mask(Hf, cell, m)
+        if _rms > 3.0:                                        # GENERELL: nur saubere planare Flächen, kein Berg-Rauschen
+            continue
         w = ipa.mask_contour_mm(m, cell, 2.5)
         if w is None:
             continue
-        av, bv, cv, _rms = ipa.fit_plane_mask(Hf, cell, m)
         out.append((w, (av, bv, cv)))
     return out
 

@@ -746,16 +746,8 @@ def main():
             _pal = [[181, 101, 29, 255], [66, 133, 204, 255], [102, 166, 74, 255],
                     [217, 153, 33, 255], [148, 103, 189, 255], [87, 179, 186, 255]]
             _k = 0
-            _corr = None                                      # nur Facetten im Trassen-Korridor (Bahnlinie + Vorbau), kein Berg
-            if track:
-                from scipy.ndimage import distance_transform_edt as _dt
-                _cm = np.zeros(Hf.shape, bool)
-                for _p in track:
-                    _ci = int(round(_p[0]/cell)); _cj = int(round(_p[1]/cell))
-                    if 0 <= _ci < Hf.shape[1] and 0 <= _cj < Hf.shape[0]: _cm[_cj, _ci] = True
-                _corr = _dt(~_cm)*cell <= 30.0
             for _m in _ipa.segment_planes(Hf, cell, 2.5, 12.0, 120.0, 90.0):
-                if _corr is not None and (_m & _corr).sum() < 0.4*_m.sum(): continue
+                if _ipa.fit_plane_mask(Hf, cell, _m)[3] > 3.0: continue   # GENERELL: nur saubere planare Flächen (Trasse/Tunnel), kein Berg-Rauschen
                 _w = _ipa.mask_contour_mm(_m, cell, 2.5)
                 if _w is None or len(_w) < 4:
                     continue

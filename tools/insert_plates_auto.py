@@ -187,7 +187,8 @@ def main():
     ap.add_argument("--contour-simplify", type=float, default=2.5, help="Kontur-Punkte mind. N mm auseinander")
     ap.add_argument("--normal-tol", type=float, default=12.0, help="Normalen-Winkeltoleranz Grad fürs Zusammenfassen coplanar: höher = größere Platten (mehr verschmolzen), kleiner = feiner an Kanten getrennt (12 fängt Gullys/Rinnen)")
     ap.add_argument("--flat-max-slope", type=float, default=40.0, help="Facetten mit mittlerer Neigung über N° = senkrechte Wand (raus bei den flachen Platten)")
-    ap.add_argument("--track", default="", help="Trasse .npy — Platten NUR im Korridor um die Trasse (Tunnel/Einschnitt-Wände), NICHT der Scheiß am Steilberg")
+    ap.add_argument("--max-rms", type=float, default=3.0, help="GENERELL: nur SAUBERE planare Flächen (Fit-RMS <= N mm) -> man-made/gerade Kanten (Tunnel/Trasse/Portal) bleiben, raues Berg-Rauschen (RMS groß) fällt weg. 0=aus. (skaliert mit Modellhöhe)")
+    ap.add_argument("--track", default="", help="OPTIONAL zusätzlich: Trasse .npy — Platten nur im Korridor um die Trasse")
     ap.add_argument("--corridor", type=float, default=45.0, help="Korridor-Breite um die Trasse mm (nur Facetten die ihn berühren werden Platten)")
     ap.add_argument("--seeds", default="", help="MANUELL: Platten-Stellen 'x,y x,y ...' (mm). Je Seed EINE Platte (flache Bank um den Punkt, echte Kante). Leer=Auto.")
     ap.add_argument("--max-plates", type=int, default=8); ap.add_argument("--max-walls", type=int, default=6)
@@ -209,7 +210,9 @@ def main():
     else:                                                     # AUTO: ALLE planaren Facetten — flach=Platte, STEIL=Wand (gleiche Erkennung)
         _ms = lambda m: float(np.median(slope[m]))
         _facets = segment_planes(Hf, cell, a.seg_smooth, a.normal_tol, min(a.min_area, a.wall_min_area), 90.0)
-        if a.track and os.path.exists(a.track):               # NUR im Korridor um die Trasse (Bahnlinie + Vorbau am Ausgang), NICHT der Berg
+        if a.max_rms > 0:                                     # GENERELL: nur saubere planare Flächen (gerade Kanten), raues Berg-Rauschen raus
+            _facets = [m for m in _facets if fit_plane_mask(Hf, cell, m)[3] <= a.max_rms]
+        if a.track and os.path.exists(a.track):               # OPTIONAL zusätzlich: nur im Korridor um die Trasse
             _tr = np.load(a.track).astype(float); _c = np.zeros((NY, NX), bool)
             for _x, _y in _tr[:, :2]:
                 _ci = int(round(_x / cell)); _cj = int(round(_y / cell))
