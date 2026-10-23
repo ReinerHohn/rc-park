@@ -21,10 +21,10 @@ def detect_plates(Hf, cell, a):
     out = []
     for m in ipa.segment_planes(Hf, cell, 2.5, 12.0, a.min_area, 90.0)[:a.max_plates]:   # JEDE Facette (jeder Winkel)
         av, bv, cv, _rms = ipa.fit_plane_mask(Hf, cell, m)
-        if _rms > 3.0:                                        # GENERELL: nur saubere planare Flächen, kein Berg-Rauschen
+        if _rms > 3.0:                                        # nur saubere planare Flächen
             continue
         w = ipa.mask_contour_mm(m, cell, 2.5)
-        if w is None:
+        if w is None or ipa.longest_straight_edge(w) < 14.0:  # GERADE KANTEN = man-made (Tunnel/Trasse), kein Naturgelände
             continue
         out.append((w, (av, bv, cv)))
     return out

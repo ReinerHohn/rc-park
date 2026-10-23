@@ -28,6 +28,37 @@ from laser_relief_kit import glyph_strokes, svg_write, gcode_write, contour_poly
 SHOE = lambda p: abs(np.dot(p[:, 0], np.roll(p[:, 1], 1)) - np.dot(p[:, 1], np.roll(p[:, 0], 1))) / 2.0
 
 
+def _rdp(pts, eps):
+    """Douglas-Peucker: Polygon auf markante Ecken reduzieren -> GERADE Kanten werden lange
+    Segmente, krumme Konturen bleiben viele kurze. Iterativ (kein Rekursionslimit)."""
+    pts = np.asarray(pts, float); n = len(pts)
+    if n < 3:
+        return pts
+    keep = np.zeros(n, bool); keep[0] = keep[-1] = True
+    stack = [(0, n - 1)]
+    while stack:
+        i, j = stack.pop()
+        if j <= i + 1:
+            continue
+        a = pts[i]; ab = pts[j] - a; L = float(np.hypot(ab[0], ab[1]))
+        seg = pts[i + 1:j] - a
+        d = np.abs(ab[0] * seg[:, 1] - ab[1] * seg[:, 0]) / L if L > 1e-9 else np.hypot(seg[:, 0], seg[:, 1])
+        k = int(np.argmax(d))
+        if d[k] > eps:
+            keep[i + 1 + k] = True; stack.append((i, i + 1 + k)); stack.append((i + 1 + k, j))
+    return pts[keep]
+
+
+def longest_straight_edge(w, eps=1.2):
+    """Länge der LÄNGSTEN geraden Kante einer Kontur (mm). Groß = man-made (Tunnel/Trasse/
+    Portal mit geraden Kanten), klein = krummes Naturgelände."""
+    s = _rdp(np.asarray(w, float), eps)
+    if len(s) < 2:
+        return 0.0
+    seg = np.hypot(np.diff(s[:, 0]), np.diff(s[:, 1]))
+    return float(seg.max()) if len(seg) else 0.0
+
+
 def slope_field(Hf, cell, smooth_px):
     Hs = gaussian_filter(Hf, smooth_px)
     gy, gx = np.gradient(Hs, cell)
@@ -187,7 +218,8 @@ def main():
     ap.add_argument("--contour-simplify", type=float, default=2.5, help="Kontur-Punkte mind. N mm auseinander")
     ap.add_argument("--normal-tol", type=float, default=12.0, help="Normalen-Winkeltoleranz Grad fürs Zusammenfassen coplanar: höher = größere Platten (mehr verschmolzen), kleiner = feiner an Kanten getrennt (12 fängt Gullys/Rinnen)")
     ap.add_argument("--flat-max-slope", type=float, default=40.0, help="Facetten mit mittlerer Neigung über N° = senkrechte Wand (raus bei den flachen Platten)")
-    ap.add_argument("--max-rms", type=float, default=3.0, help="GENERELL: nur SAUBERE planare Flächen (Fit-RMS <= N mm) -> man-made/gerade Kanten (Tunnel/Trasse/Portal) bleiben, raues Berg-Rauschen (RMS groß) fällt weg. 0=aus. (skaliert mit Modellhöhe)")
+    ap.add_argument("--min-straight", type=float, default=14.0, help="GERADEN-KANTEN-ERKENNUNG: Facette nur Platte, wenn ihre Kontur eine GERADE Kante >= N mm hat (gerade Kanten = menschgemacht/markant: Tunnel/Trasse/Portal). Krummes Naturgelände (nur kurze, wacklige Kanten) fällt weg. 0=aus")
+    ap.add_argument("--max-rms", type=float, default=3.0, help="zusätzlich: nur SAUBERE planare Flächen (Fit-RMS <= N mm). 0=aus")
     ap.add_argument("--track", default="", help="OPTIONAL zusätzlich: Trasse .npy — Platten nur im Korridor um die Trasse")
     ap.add_argument("--corridor", type=float, default=45.0, help="Korridor-Breite um die Trasse mm (nur Facetten die ihn berühren werden Platten)")
     ap.add_argument("--seeds", default="", help="MANUELL: Platten-Stellen 'x,y x,y ...' (mm). Je Seed EINE Platte (flache Bank um den Punkt, echte Kante). Leer=Auto.")
@@ -210,8 +242,15 @@ def main():
     else:                                                     # AUTO: ALLE planaren Facetten — flach=Platte, STEIL=Wand (gleiche Erkennung)
         _ms = lambda m: float(np.median(slope[m]))
         _facets = segment_planes(Hf, cell, a.seg_smooth, a.normal_tol, min(a.min_area, a.wall_min_area), 90.0)
-        if a.max_rms > 0:                                     # GENERELL: nur saubere planare Flächen (gerade Kanten), raues Berg-Rauschen raus
+        if a.max_rms > 0:                                     # nur saubere planare Flächen
             _facets = [m for m in _facets if fit_plane_mask(Hf, cell, m)[3] <= a.max_rms]
+        if a.min_straight > 0:                                # GERADE KANTEN = menschgemacht -> Platte; krummes Naturgelände raus
+            _kept = []
+            for m in _facets:
+                _w = mask_contour_mm(m, cell, 1.5)
+                if _w is not None and longest_straight_edge(_w) >= a.min_straight:
+                    _kept.append(m)
+            _facets = _kept
         if a.track and os.path.exists(a.track):               # OPTIONAL zusätzlich: nur im Korridor um die Trasse
             _tr = np.load(a.track).astype(float); _c = np.zeros((NY, NX), bool)
             for _x, _y in _tr[:, :2]:

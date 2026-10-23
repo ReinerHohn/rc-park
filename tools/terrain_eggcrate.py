@@ -747,10 +747,11 @@ def main():
                     [217, 153, 33, 255], [148, 103, 189, 255], [87, 179, 186, 255]]
             _k = 0
             for _m in _ipa.segment_planes(Hf, cell, 2.5, 12.0, 120.0, 90.0):
-                if _ipa.fit_plane_mask(Hf, cell, _m)[3] > 3.0: continue   # GENERELL: nur saubere planare Flächen (Trasse/Tunnel), kein Berg-Rauschen
+                if _ipa.fit_plane_mask(Hf, cell, _m)[3] > 3.0: continue   # nur saubere planare Flächen
                 _w = _ipa.mask_contour_mm(_m, cell, 2.5)
                 if _w is None or len(_w) < 4:
                     continue
+                if _ipa.longest_straight_edge(_w) < 14.0: continue        # GERADE KANTEN = man-made (Tunnel/Trasse), kein krummes Naturgelände
                 _av, _bv, _cv, _r = _ipa.fit_plane_mask(Hf, cell, _m)
                 _V = np.array([[float(x), float(y), _av * x + _bv * y + _cv + 1.0] for x, y in _w])
                 _F = np.array([[0, i, i + 1] for i in range(1, len(_w) - 1)])
