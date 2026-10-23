@@ -829,21 +829,7 @@ def main():
                 extra_meshes.append(("TUNNEL_galerie", _tm.Trimesh(np.array(_WV), np.array(_WF, int), process=False), [255, 90, 40, 255]))
         except Exception:
             extra_meshes = []
-        # FLÄCHEN-PLATTEN-LAYER: jede planare Fläche als EBENE (plan-gefittete) Platte, die in die
-        # Rippen integriert/gecuttet wird — fängt die Kanten, die die groben Rippen verschlucken.
         overlay_edges = []
-        try:
-            import plane_segment as _pseg
-            _lab, _cell2, _ = _pseg.segment_facets(Hf, cell, scale=200.0, sigma=0.8, min_size=70, smooth=1.5)
-            _fcol = [[66, 133, 204, 255], [102, 166, 74, 255], [217, 153, 33, 255], [148, 103, 189, 255],
-                     [87, 179, 186, 255], [204, 102, 153, 255], [181, 101, 29, 255], [120, 160, 60, 255]]
-            for _k, (_p, (_av, _bv, _cv), _rms) in enumerate(
-                    _pseg.facet_plates(_lab, _cell2, Hf, cell, min_area_mm2=150.0, rdp_mm=5.0, max_rms=4.0)):
-                _V = np.array([[float(x), float(y), _av*x + _bv*y + _cv + 0.6] for x, y in _p])
-                _F = np.array([[0, i, i+1] for i in range(1, len(_p)-1)])
-                extra_meshes.append((f"FLAECHE{_k}", _tm.Trimesh(_V, _F, process=False), _fcol[_k % len(_fcol)]))
-        except Exception as _ee:
-            print("Flächen-Platten übersprungen:", _ee)
         write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes, overlay_edges)
         html_ok = True
     except Exception as e:
