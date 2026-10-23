@@ -206,7 +206,7 @@ def main():
         walls = []
     else:                                                     # AUTO: ALLE planaren Facetten — flach=Platte, STEIL=Wand (gleiche Erkennung)
         _ms = lambda m: float(np.median(slope[m]))
-        _facets = segment_planes(Hf, cell, a.seg_smooth, a.normal_tol, a.wall_min_area, 90.0)
+        _facets = segment_planes(Hf, cell, a.seg_smooth, a.normal_tol, min(a.min_area, a.wall_min_area), 90.0)
         flats = [m for m in _facets if _ms(m) < a.flat_max_slope and m.sum() * cell * cell >= a.min_area][:a.max_plates]
         walls = [m for m in _facets if _ms(m) >= a.flat_max_slope and m.sum() * cell * cell <= a.wall_max_area][:a.max_walls]   # nur lokale Wände (keine ganzen Hänge)
 
