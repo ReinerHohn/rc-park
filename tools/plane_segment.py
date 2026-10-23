@@ -24,12 +24,41 @@ def surface_normals(Hf, cell, smooth=1.5):
     return n
 
 
-def segment_facets(Hf, cell, scale=140.0, sigma=0.6, min_size=90, smooth=1.5):
-    """Planare Flächen (Label-Bild) + ihre Normalen. Felzenszwalb auf dem Normalen-Bild."""
-    n = surface_normals(Hf, cell, smooth)
-    img = (n * 0.5 + 0.5).astype(np.float64)           # Normalen -> [0,1]-RGB
-    lab = felzenszwalb(img, scale=scale, sigma=sigma, min_size=min_size)
-    return lab, n
+def _smooth_labels(lab, px=3):
+    """Flächen-Ränder ENTZACKEN: je Fläche Maske morphologisch schließen+öffnen (Treppen weg),
+    dann per Mehrheits-Mode die Löcher/Overlaps auflösen. Gibt entzacktes Label-Bild zurück."""
+    from scipy.ndimage import binary_closing, binary_opening, distance_transform_edt
+    out = np.full(lab.shape, -1, int)
+    k = np.ones((px, px), bool)
+    best = np.full(lab.shape, -1.0)
+    for lb in np.unique(lab):
+        m = binary_opening(binary_closing(lab == lb, k), k)
+        d = distance_transform_edt(m)                  # „innerster" gewinnt bei Überlapp -> glatte Grenze
+        take = d > best
+        out[take] = lb; best[take] = d[take]
+    # Rest (von Morphologie gefressene Pixel) auf nächstgelegenes Label füllen
+    from scipy.ndimage import distance_transform_edt as edt
+    miss = out < 0
+    if miss.any():
+        idx = edt(miss, return_distances=False, return_indices=True)
+        out = out[tuple(idx)]
+    return out
+
+
+def segment_facets(Hf, cell, scale=140.0, sigma=0.6, min_size=90, smooth=1.5, up=4):
+    """Planare Flächen (Label-Bild, HOCHAUFGELÖST) + Normalen. DGM-Fenster ist grob (260x170 px),
+    darum VOR der Segmentierung up-fach upsampeln -> feine, glatte Ränder statt Pixel-Treppen.
+    Danach Flächen-Masken morphologisch entzacken."""
+    nlo = surface_normals(Hf, cell, smooth)
+    NY, NX = Hf.shape
+    img = (nlo * 0.5 + 0.5).astype(np.float32)
+    imgU = cv2.resize(img, (NX * up, NY * up), interpolation=cv2.INTER_CUBIC)
+    imgU = np.clip(imgU, 0, 1).astype(np.float64)
+    lab = felzenszwalb(imgU, scale=scale, sigma=max(sigma, 0.8),
+                       min_size=int(min_size * up * up))   # min_size in Hochauflösung skalieren
+    lab = _smooth_labels(lab, px=max(3, up))
+    n_hi = cv2.resize(nlo, (NX * up, NY * up), interpolation=cv2.INTER_NEAREST)
+    return lab, cell / up, n_hi               # lab/n in HOCHAUFLÖSUNG, cell_eff = cell/up
 
 
 def facet_polys(lab, cell, min_area_mm2=150.0, rdp_mm=3.0):
@@ -51,6 +80,35 @@ def facet_polys(lab, cell, min_area_mm2=150.0, rdp_mm=3.0):
     return polys
 
 
+def facet_plates(lab, cell2, Hf, cell, min_area_mm2=150.0, rdp_mm=5.0, max_rms=4.0):
+    """Je Fläche eine EBENE Platte: Kontur (Welt-mm) + best-fit Ebene z=a*x+b*y+c (least squares
+    über die Gelände-Höhen der Fläche). Nur Flächen, die WIRKLICH planar sind (RMS <= max_rms mm),
+    werden als Platte ausgegeben — der Rest bleibt den Rippen überlassen. Rückgabe: Liste
+    (poly_mm[N,2], (a,b,c), rms)."""
+    NY, NX = Hf.shape
+    out = []
+    for p in facet_polys(lab, cell2, min_area_mm2, rdp_mm):
+        # Gelände-Punkte der Fläche sammeln (über Bounding-Box der Kontur, Punkt-in-Polygon)
+        x0, y0 = p.min(0); x1, y1 = p.max(0)
+        xs = np.arange(max(0, x0), min(NX*cell, x1), cell)
+        ys = np.arange(max(0, y0), min(NY*cell, y1), cell)
+        if len(xs) < 2 or len(ys) < 2:
+            continue
+        XX, YY = np.meshgrid(xs, ys)
+        from matplotlib.path import Path as _MP
+        inside = _MP(p).contains_points(np.column_stack([XX.ravel(), YY.ravel()]))
+        if inside.sum() < 6:
+            continue
+        px = XX.ravel()[inside]; py = YY.ravel()[inside]
+        pz = Hf[np.clip((py/cell).astype(int), 0, NY-1), np.clip((px/cell).astype(int), 0, NX-1)]
+        A = np.column_stack([px, py, np.ones_like(px)])
+        coef, *_ = np.linalg.lstsq(A, pz, rcond=None)         # a,b,c
+        rms = float(np.sqrt(np.mean((A @ coef - pz)**2)))
+        if rms <= max_rms:                                    # nur echte Ebenen -> Platte
+            out.append((p, tuple(float(v) for v in coef), rms))
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dem", default="daten/hoellental/dgm025_full.npy")
@@ -67,23 +125,20 @@ def main():
     o.zoom = 1; o.mm = 0.78125; o.nscale = 3.125; o.vscale = 0.85; o.base = 12.0; o.smooth = 0.4
     Hf, cell = ip.load_hf(o); NY, NX = Hf.shape
 
-    lab, n = segment_facets(Hf, cell, a.scale, a.sigma, a.min_size, a.smooth)
-    polys = facet_polys(lab, cell, a.min_area, a.rdp)
+    lab, cell2, n = segment_facets(Hf, cell, a.scale, a.sigma, a.min_size, a.smooth)   # lab/n HOCHAUFLÖSUNG
+    polys = facet_polys(lab, cell2, a.min_area, a.rdp)
     nseg = lab.max() + 1
 
-    # Render: Flächen eingefärbt nach Normalen-Orientierung + saubere Kanten-Polygone
-    U = 4
+    # Render in Hochauflösung (lab/n sind schon up-fach): Flächen nach Orientierung + saubere Ränder
     base = (n * 0.5 + 0.5)[..., :3]
-    labU = cv2.resize(lab.astype(np.int32), (NX*U, NY*U), interpolation=cv2.INTER_NEAREST)
-    # mittlere Normalenfarbe je Fläche
-    col = np.zeros((NY*U, NX*U, 3), np.uint8)
+    col = np.zeros((*lab.shape, 3), np.uint8)
     for r in regionprops(lab + 1):
-        m = (labU == r.label - 1)
-        c = (base[r.slice][r.image].mean(0) * 255).astype(np.uint8) if r.image.any() else np.array([128,128,128],np.uint8)
+        m = (lab == r.label - 1)
+        c = (base[m].mean(0) * 255).astype(np.uint8) if m.any() else np.array([128, 128, 128], np.uint8)
         col[m] = c[::-1]
     for p in polys:
-        pts = (p / cell * U).astype(np.int32)
-        cv2.polylines(col, [pts], True, (255, 255, 255), 1)
+        pts = (p / cell2).astype(np.int32)
+        cv2.polylines(col, [pts], True, (255, 255, 255), 2)
     txt = f"Felzenszwalb-Flaechen: {len(polys)} saubere Flaechen + Kanten (scale={a.scale:.0f})"
     for dy, cc in ((0, (0, 0, 0)), (1, (255, 255, 255))):
         cv2.putText(col, txt, (10, 22+dy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, cc, 2 if dy == 0 else 1)

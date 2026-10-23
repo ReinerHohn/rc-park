@@ -15,21 +15,23 @@ def main():
     a.zoom = 1; a.mm = 0.78125; a.nscale = 3.125; a.vscale = 0.85; a.base = 12.0; a.smooth = 0.4
     Hf, cell = ip.load_hf(a); NY, NX = Hf.shape
 
-    lab, n = segment_facets(Hf, cell, scale=140.0, sigma=0.6, min_size=90, smooth=1.5)
-    polys = facet_polys(lab, cell, min_area_mm2=150.0, rdp_mm=3.0)
+    lab, cell2, n = segment_facets(Hf, cell, scale=200.0, sigma=0.8, min_size=70, smooth=1.5)
+    polys = facet_polys(lab, cell2, min_area_mm2=150.0, rdp_mm=5.0)
+    up = int(round(cell / cell2))                      # Hochauflösungs-Faktor der Labels
 
     # Farbe je Fläche = mittlere Normalen-Orientierung (wie im 2D-Bild)
     rgb01 = (n * 0.5 + 0.5)
     facecol = {}
     for r in regionprops(lab + 1):
-        facecol[r.label - 1] = rgb01[r.slice][r.image].mean(0) if r.image.any() else np.array([.5, .5, .5])
+        m = (lab == r.label - 1)
+        facecol[r.label - 1] = rgb01[m].mean(0) if m.any() else np.array([.5, .5, .5])
 
     cx = NX*cell/2; cz = NY*cell/2; cy = (float(Hf.min())+float(Hf.max()))/2
     verts, cols, idx = [], [], []
     for j in range(NY):
         for i in range(NX):
             verts += [round(i*cell-cx, 1), round(float(Hf[j, i])-cy, 1), round(j*cell-cz, 1)]
-            c = facecol.get(int(lab[j, i]), np.array([.5, .5, .5]))
+            c = facecol.get(int(lab[min(j*up, lab.shape[0]-1), min(i*up, lab.shape[1]-1)]), np.array([.5, .5, .5]))
             cols += [round(float(c[0]), 3), round(float(c[1]), 3), round(float(c[2]), 3)]
     for j in range(NY-1):
         for i in range(NX-1):

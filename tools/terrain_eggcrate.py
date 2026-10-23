@@ -95,7 +95,7 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None, 
 </head><body>
 <div id=bar>🔎 Teil-Nr: <input id=q placeholder="z.B. X0a oder 123" autofocus>
 <button onclick=find()>finden</button><button onclick=clr()>alle</button>
-<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=50 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tPlatten()>Platten ein/aus</button><button onclick=tTunnel() style="background:#ff5522;color:#fff">🚇 Tunnel</button><button onclick=tEdges() style="background:#1030c0;color:#fff">📐 Geo-Kanten</button><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
+<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=50 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tPlatten()>Platten ein/aus</button><button onclick=tTunnel() style="background:#ff5522;color:#fff">🚇 Tunnel</button><button onclick=tFlaechen() style="background:#1030c0;color:#fff">📐 Flächen</button><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
 <div id=tip>1 Teil (z.B. Y10) -> leuchtet ROT wo es hinkommt · ZWEI Teile (klick+klick ODER „X8 Y10" tippen) -> rot+blau + GRUENE Kugel wo sie sich verbinden · Relief/Nummern ein-aus · 🧩 BAUSTAND an → Teil anklicken = „hab ich" (solide), Rest blass → mit echtem Modell abgleichen</div>
 <script>
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
@@ -104,13 +104,14 @@ const rn=new THREE.WebGLRenderer({antialias:true});rn.setSize(innerWidth,innerHe
 const ct=new THREE.OrbitControls(cam,rn.domElement);ct.enableDamping=true;
 sc.add(new THREE.AmbientLight(0xffffff,0.8));sc.add(new THREE.HemisphereLight(0xffffff,0x556,1.0));
 const d1=new THREE.DirectionalLight(0xffffff,1.1);d1.position.set(200,-300,500);sc.add(d1);
-let meshes=[],extras=[],tunnels=[],relief=null,nums=null,edges=null,prog=false;const DONE=new Set();let KEY='zbdone';const ENG=%ENG%;const EDG=%EDG%;const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
+let meshes=[],extras=[],tunnels=[],flaechen=[],relief=null,nums=null,edges=null,prog=false;const DONE=new Set();let KEY='zbdone';const ENG=%ENG%;const EDG=%EDG%;const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
 new THREE.GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  const root=g.scene,bx=new THREE.Box3().setFromObject(root),c=bx.getCenter(new THREE.Vector3()),s=bx.getSize(new THREE.Vector3());
  root.position.sub(c);sc.add(root);
  root.traverse(o=>{if(o.isMesh){
   if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0x6d5c3e,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.5,flatShading:true});o.visible=true;relief=o;return;}
   if(/^TUNNEL/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,depthTest:false,transparent:true,opacity:0.95});o.renderOrder=999;o.visible=true;tunnels.push(o);return;}
+  if(/^FLAECHE/.test(o.name||"")){o.material=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:0.85,transparent:true,opacity:0.92,flatShading:true});o.visible=true;flaechen.push(o);return;}
   if(/^PLATTE/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,transparent:true,opacity:0.9});o.visible=false;extras.push(o);return;}
   const hue=((meshes.length*137.508)%360)/360,col=new THREE.Color().setHSL(hue,0.58,0.55);
   o.material=new THREE.MeshStandardMaterial({color:col,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
@@ -150,6 +151,7 @@ window.tTunnel=()=>{tunnels.forEach(o=>o.visible=!o.visible);};
 window.setRopac=v=>{if(relief){const o=v/100;relief.material.opacity=o;relief.material.transparent=o<1;relief.visible=o>0;}};
 window.tNum=()=>{if(nums)nums.visible=!nums.visible;};
 window.tEdges=()=>{if(edges)edges.visible=!edges.visible;};
+window.tFlaechen=()=>{flaechen.forEach(o=>o.visible=!o.visible);};
 function saveProg(){try{localStorage.setItem(KEY,JSON.stringify([...DONE]))}catch(e){}}
 function updProgInfo(){const el=document.getElementById('pinfo');if(el)el.textContent=prog?('🧩 Baustand AN · '+DONE.size+'/'+meshes.length+' fertig'):'';}
 window.tProg=()=>{prog=!prog;SEL.length=0;document.getElementById('q').value='';apply('');updProgInfo();};
@@ -827,16 +829,21 @@ def main():
                 extra_meshes.append(("TUNNEL_galerie", _tm.Trimesh(np.array(_WV), np.array(_WF, int), process=False), [255, 90, 40, 255]))
         except Exception:
             extra_meshes = []
-        # GEO-KANTEN-OVERLAY: Felzenszwalb-Flächenränder (saubere, GERADE Kanten) als schaltbarer Layer
+        # FLÄCHEN-PLATTEN-LAYER: jede planare Fläche als EBENE (plan-gefittete) Platte, die in die
+        # Rippen integriert/gecuttet wird — fängt die Kanten, die die groben Rippen verschlucken.
         overlay_edges = []
         try:
             import plane_segment as _pseg
-            _lab, _ = _pseg.segment_facets(Hf, cell, scale=160.0, sigma=0.6, min_size=90, smooth=1.5)
-            _zc = lambda x, y: float(Hf[min(int(y / cell), Hf.shape[0] - 1), min(int(x / cell), Hf.shape[1] - 1)])
-            for _p in _pseg.facet_polys(_lab, cell, min_area_mm2=150.0, rdp_mm=6.0):   # rdp 6 = gerader, kein „kindlich rund"
-                overlay_edges.append([[float(x), float(y), _zc(x, y) + 2.0] for x, y in _p])
+            _lab, _cell2, _ = _pseg.segment_facets(Hf, cell, scale=200.0, sigma=0.8, min_size=70, smooth=1.5)
+            _fcol = [[66, 133, 204, 255], [102, 166, 74, 255], [217, 153, 33, 255], [148, 103, 189, 255],
+                     [87, 179, 186, 255], [204, 102, 153, 255], [181, 101, 29, 255], [120, 160, 60, 255]]
+            for _k, (_p, (_av, _bv, _cv), _rms) in enumerate(
+                    _pseg.facet_plates(_lab, _cell2, Hf, cell, min_area_mm2=150.0, rdp_mm=5.0, max_rms=4.0)):
+                _V = np.array([[float(x), float(y), _av*x + _bv*y + _cv + 0.6] for x, y in _p])
+                _F = np.array([[0, i, i+1] for i in range(1, len(_p)-1)])
+                extra_meshes.append((f"FLAECHE{_k}", _tm.Trimesh(_V, _F, process=False), _fcol[_k % len(_fcol)]))
         except Exception as _ee:
-            overlay_edges = []
+            print("Flächen-Platten übersprungen:", _ee)
         write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes, overlay_edges)
         html_ok = True
     except Exception as e:
