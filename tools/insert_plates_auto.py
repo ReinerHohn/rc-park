@@ -179,7 +179,7 @@ def tunnel_cut_from_track(Hf, cell, track, slope_edge=28.0, max_half=45.0):
 
 
 def einschnitt_corridor_poly(Hf, cell, track, rim_cap_mm=90.0, no_rim_mm=40.0,
-                             wall_pct=70.0, flat_pct=45.0, rdp_mm=4.0, step_mm=1.0):
+                             wall_pct=70.0, flat_pct=50.0, rdp_mm=4.0, step_mm=1.0):
     """EINSCHNITT-Platte (Welt-mm, geschlossenes Polygon mit GERADEN Kanten), BIS AN DEN RAND der
     Einschnitt-Wände — das, was der Nutzer nachzieht. Methode = von der Trasse senkrecht nach außen
     wachsen, bis man über die STEILWAND (slope > wall-Perzentil) hinweg oben WIEDER FLACH ist
@@ -205,6 +205,10 @@ def einschnitt_corridor_poly(Hf, cell, track, rim_cap_mm=90.0, no_rim_mm=40.0,
     nrm = np.column_stack([-tg[:, 1], tg[:, 0]])
 
     def grow(p, n, sgn):
+        # Rand = nach dem Wand-Kamm (slope > wall_t) die erste Stelle, wo es WIEDER FLACH wird
+        # (slope < flat_t) = Wand-Oberkante. wall_t/flat_t sind PERZENTILE des Geländes selbst
+        # (oberes Quartil = steil, Median = flach) => datengetrieben, kein Gelände-spezifischer
+        # Magic-Wert. Offene Seite ohne Kamm: auf no_rim_mm gedeckelt.
         seen_wall = False
         for s in np.arange(2.0, rim_cap_mm, step_mm):
             q = p + sgn * n * s; ci = int(q[0] / cell); cj = int(q[1] / cell)
@@ -213,9 +217,9 @@ def einschnitt_corridor_poly(Hf, cell, track, rim_cap_mm=90.0, no_rim_mm=40.0,
             sl = slope[cj, ci]
             if sl > wall_t:
                 seen_wall = True
-            if seen_wall and sl < flat_t:              # oben wieder flach = Wand-Oberkante (Rand)
+            if seen_wall and sl < flat_t:
                 return s
-        return no_rim_mm                               # keine Wand gefunden => Deckel
+        return no_rim_mm
     Lp = np.array([dense[i] + nrm[i] * grow(dense[i], nrm[i], 1.0) for i in range(len(dense))])
     Rp = np.array([dense[i] - nrm[i] * grow(dense[i], nrm[i], -1.0) for i in range(len(dense))])
     poly = np.vstack([Lp, Rp[::-1], Lp[:1]])
