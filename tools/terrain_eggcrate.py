@@ -105,8 +105,8 @@ new THREE.GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  root.position.sub(c);sc.add(root);
  root.traverse(o=>{if(o.isMesh){
   if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0x6d5c3e,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.5,flatShading:true});o.visible=true;relief=o;return;}
-  if(/^TUNNEL/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,depthTest:false,transparent:true,opacity:0.95});o.renderOrder=999;o.visible=false;extras.push(o);tunnels.push(o);return;}
-  if(/^PLATTE/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,transparent:true,opacity:0.9});extras.push(o);return;}
+  if(/^TUNNEL/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,depthTest:false,transparent:true,opacity:0.95});o.renderOrder=999;o.visible=true;tunnels.push(o);return;}
+  if(/^PLATTE/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,transparent:true,opacity:0.9});o.visible=false;extras.push(o);return;}
   const hue=((meshes.length*137.508)%360)/360,col=new THREE.Color().setHSL(hue,0.58,0.55);
   o.material=new THREE.MeshStandardMaterial({color:col,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
   o.userData.base=col.getHex();meshes.push(o);}});
@@ -769,15 +769,13 @@ def main():
                 for i in range(len(track) - 1):
                     _aa = 2 * i; _TF += [[_aa, _aa + 1, _aa + 2], [_aa + 1, _aa + 3, _aa + 2]]
                 extra_meshes.append(("TUNNEL_gleisbett", _tm.Trimesh(np.array(_TV), np.array(_TF, int), process=False), [70, 70, 70, 255]))
-                # TUNNEL-PLATTE (EXAKT aus der Trasse = Ground Truth, kein Kanten-Raten): Boden-Band über den is_tunnel-Abschnitt, leuchtend cyan, sichtbar
-                _ti = [i for i in range(len(track)) if track[i][3] > 0.5]
-                if len(_ti) >= 2:
-                    _PV = []; _PF = []
-                    for n, i in enumerate(_ti):
-                        _PV.append([_L[i, 0], _L[i, 1], _zt[i] + 1.2]); _PV.append([_R[i, 0], _R[i, 1], _zt[i] + 1.2])
-                    for n in range(len(_ti) - 1):
-                        _aa = 2 * n; _PF += [[_aa, _aa + 1, _aa + 2], [_aa + 1, _aa + 3, _aa + 2]]
-                    extra_meshes.append(("PLATTE_tunnel", _tm.Trimesh(np.array(_PV), np.array(_PF, int), process=False), [0, 210, 255, 255]))
+                # TUNNEL-PLATTE = Trasse (Ort) + perp bis zur Einschnitt-Kante (echte BREITE), cyan, sichtbar
+                _tcp = _ipa.tunnel_cut_from_track(Hf, cell, track)
+                if _tcp is not None and len(_tcp) >= 4:
+                    _zq = lambda x, y: float(Hf[min(int(y / cell), Hf.shape[0] - 1), min(int(x / cell), Hf.shape[1] - 1)])
+                    _PV = np.array([[float(x), float(y), _zq(x, y) + 2.0] for x, y in _tcp[:, :2]])
+                    _PF = np.array([[0, i, i + 1] for i in range(1, len(_tcp) - 1)])
+                    extra_meshes.append(("TUNNEL_deckplatte", _tm.Trimesh(_PV, _PF, process=False), [0, 210, 255, 255]))
                 # Felssturzschutz-GALERIE: zwei SENKRECHTE Seitenwände + DACH entlang der Trasse (nicht nur Boden)
                 _h = CLEAR_H * 0.5
                 _WV = []; _WF = []

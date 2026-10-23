@@ -7,7 +7,7 @@ G-Code (Gravur zuerst, dann N Cut-Durchgänge) + eine Pack-Vorschau PNG.
 
   python3 tools/laser_pack.py <dir> --sheet 200x250 --passes 2 --out <dir>/bretter
 """
-import argparse, glob, os, re, math, numpy as np
+import argparse, glob, os, re, math, fnmatch, numpy as np
 
 
 def parse(fn):
@@ -75,18 +75,33 @@ def main():
     ap.add_argument("--priority", action="store_true", help="Coarse-first: jede zweite Rippe zuerst (ergibt frueh ein stehendes grobes Gitter), Detail spaeter")
     ap.add_argument("--nest", action="store_true", help="Skyline-Nesting (Gelaende-Rippen verzahnen sich in die Taeler der vorigen -> viel weniger Verschnitt)")
     ap.add_argument("--res", type=float, default=2.0, help="Nesting-Raster mm")
+    ap.add_argument("--only", default="", help="Nur diese Teile packen: Komma-Liste von Rippen-Namen OHNE 'rib'-Prefix (z.B. Y0,X0a), fnmatch-Globs erlaubt (z.B. 'X*a'). Fuer das Nachlegen schon geschnittener Saetze.")
+    ap.add_argument("--exclude", default="", help="Diese Teile AUSLASSEN (z.B. schon geschnittene), gleiche Syntax wie --only")
     ap.add_argument("--out", default="")
     a = ap.parse_args()
     out = a.out or os.path.join(a.dir, "bretter"); os.makedirs(out, exist_ok=True)
     SW, SH = [float(v) for v in a.sheet.lower().split("x")]
     BW, BH = SW-2*a.margin, SH-2*a.margin
 
-    pieces = []
+    only = [s.strip() for s in a.only.split(",") if s.strip()]
+    excl = [s.strip() for s in a.exclude.split(",") if s.strip()]
+    def _keep(nm):
+        if only and not any(fnmatch.fnmatch(nm, p) for p in only): return False
+        if excl and any(fnmatch.fnmatch(nm, p) for p in excl): return False
+        return True
+    pieces = []; skipped = []
     for fn in sorted(glob.glob(os.path.join(a.dir, "rib*.svg"))):
+        nm = os.path.basename(fn)[3:-4]
+        if not _keep(nm): skipped.append(nm); continue
         c, e = parse(fn)
         if not c: continue
         c, e = norm(c, e); _, _, w, h = bbox(c)
-        pieces.append([os.path.basename(fn)[3:-4], c, e, w, h])
+        pieces.append([nm, c, e, w, h])
+    if only or excl:
+        print("[pack] %d Teile ausgewaehlt: %s" % (len(pieces), ", ".join(p[0] for p in pieces)))
+        if skipped: print("[pack] %d uebersprungen: %s" % (len(skipped), ", ".join(skipped)))
+    if not pieces:
+        print("!! Keine Teile nach Filter uebrig — --only/--exclude pruefen."); return
     if a.priority:
         def num(nm):
             m = re.search(r'(\d+)', nm); return int(m.group(1)) if m else 0

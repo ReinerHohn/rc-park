@@ -146,6 +146,38 @@ def seed_regions(slope, cell, seeds, slope_max, min_area, close_mm):
     return out
 
 
+def tunnel_cut_from_track(Hf, cell, track, slope_edge=28.0, max_half=45.0):
+    """Tunnel-Einschnitt-Polygon (Welt-mm, geschlossen) ZUVERLÄSSIG aus der Trasse (Ground Truth):
+    Mittellinie = is_tunnel-Abschnitt der OSM-Trasse (exakter ORT), dann beidseitig PERPENDIKULAR
+    raus bis die Neigung die Einschnitt-Kante erreicht (slope > slope_edge) = echte BREITE aus dem
+    Gelände. So sitzt der Tunnel am richtigen Ort UND ist so breit wie der reale Einschnitt.
+    None, wenn kein Tunnel-Abschnitt. Kein fragiles Kanten-Raten."""
+    NY, NX = Hf.shape
+    slope = np.degrees(np.arctan(np.hypot(*np.gradient(gaussian_filter(Hf, 1.0), cell))))
+    tr = np.array([[p[0], p[1], p[3]] for p in track], float)
+    tun = tr[tr[:, 2] > 0.5][:, :2]
+    if len(tun) < 2:
+        return None
+    dense = []
+    for i in range(len(tun) - 1):
+        for t in np.linspace(0, 1, 20):
+            dense.append(tun[i] + (tun[i + 1] - tun[i]) * t)
+    dense = np.array(dense)
+    d = np.gradient(dense, axis=0); tg = d / np.maximum(np.hypot(d[:, 0], d[:, 1])[:, None], 1e-9)
+    nrm = np.column_stack([-tg[:, 1], tg[:, 0]])
+    def ed(p, n, sgn):
+        for s in np.arange(2, max_half, 1.5):
+            q = p + sgn * n * s; ci = int(q[0] / cell); cj = int(q[1] / cell)
+            if not (0 <= ci < NX and 0 <= cj < NY):
+                return s
+            if slope[cj, ci] > slope_edge:
+                return s
+        return max_half - 1
+    Lp = np.array([dense[i] + nrm[i] * ed(dense[i], nrm[i], 1.0) for i in range(len(dense))])
+    Rp = np.array([dense[i] - nrm[i] * ed(dense[i], nrm[i], -1.0) for i in range(len(dense))])
+    return np.vstack([Lp, Rp[::-1], Lp[:1]])
+
+
 def detect_tunnel_lines(Hf, cell, min_len_mm=25.0, ang_tol=18.0, min_perp=12.0, max_perp=48.0, min_overlap=18.0):
     """VOLLAUTOMATISCHE Tunnel-Erkennung über GERADE Kanten (OpenCV): Canny+HoughLinesP finden
     die geraden Kanten als Segmente; dann werden die 2 längsten PARALLELEN Segmente (die beiden
