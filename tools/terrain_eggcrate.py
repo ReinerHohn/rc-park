@@ -833,10 +833,11 @@ def main():
             _surf, _edg, _c2 = _mm.detect_manmade(_Hfd, cell)
             _zc = lambda x, y: float(Hf[min(int(y/cell), Hf.shape[0]-1), min(int(x/cell), Hf.shape[1]-1)])
             def _proj(x, y, _c):
-                # Geländepunkt auf die gefittete Ebene projizieren -> Platte EBEN + tight (kein Überschießen)
+                # Geländepunkt ORTHOGONAL auf die gefittete Ebene -> liegt EXAKT drauf (eben, kein Spike)
                 _z0 = _c[0]*x + _c[1]*y + _c[2]; _n2 = _c[0]*_c[0] + _c[1]*_c[1] + 1.0
                 _t = (_zc(x, y) - _z0) / _n2
-                return x + _c[0]*_t, y + _c[1]*_t, _z0 + _t
+                _px = x + _c[0]*_t; _py = y + _c[1]*_t
+                return _px, _py, _c[0]*_px + _c[1]*_py + _c[2]
             for _k, (_p, _coef, _rms, _ps) in enumerate(_surf):
                 _col = [240, 140, 30, 255] if _ps >= 45 else [60, 150, 230, 255]   # orange steil / blau flach
                 _V = np.array([[*_proj(float(x), float(y), _coef)[:2], _proj(float(x), float(y), _coef)[2] + 0.6] for x, y in _p])

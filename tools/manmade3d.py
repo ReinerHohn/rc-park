@@ -32,10 +32,11 @@ def main():
     nflat = nsteep = 0
 
     def proj(x, y, a, b, c):
-        # Punkt (x,y,Gelände) auf die gefittete Ebene projizieren -> Platte bleibt EBEN (sauber)
-        # und sitzt tight an der echten Fläche (kein Überschießen, egal wie steil).
+        # Punkt (x,y,Gelände) ORTHOGONAL auf die gefittete Ebene projizieren -> liegt EXAKT auf der
+        # Ebene (pz = Ebene(px,py)) => Platte perfekt eben, keine Spikes, tight (kein Überschießen).
         z0 = a*x + b*y + c; n2 = a*a + b*b + 1.0; t = (zq(x, y) - z0) / n2
-        return x + a*t, y + b*t, z0 + t
+        px = x + a*t; py = y + b*t
+        return px, py, a*px + b*py + c
 
     P = []
     for k, (poly, (av, bv, cvv), rms, pslope) in enumerate(surf):
@@ -54,11 +55,35 @@ def main():
             ed += ctr(qx, qy, qz+0.7)
         P.append({"v": tri, "e": ed, "c": col})
 
+    # SENKRECHTE SEITENWÄNDE (Schürze): wo die flache Platte an der Kante über dem tieferen Gelände
+    # abfällt, eine vertikale Wand von der Platten-Kante runter aufs Gelände dahinter.
+    SK = []
+    for (poly, (av, bv, cvv), rms, pslope) in surf:
+        if pslope >= 45.0:                                          # nur FLACHE Bänke brauchen Schürzen (steile sind schon Wände)
+            continue
+        cxp = float(poly[:, 0].mean()); cyp = float(poly[:, 1].mean())
+        for i in range(len(poly)):
+            x0, y0 = float(poly[i][0]), float(poly[i][1])
+            x1, y1 = float(poly[(i+1) % len(poly)][0]), float(poly[(i+1) % len(poly)][1])
+            mx, my = (x0+x1)/2, (y0+y1)/2
+            ex, ey = x1-x0, y1-y0; el = (ex*ex+ey*ey)**0.5 or 1.0    # Kanten-Normale nach AUSSEN
+            nx, ny = -ey/el, ex/el
+            if (nx*(mx-cxp) + ny*(my-cyp)) < 0: nx, ny = -nx, -ny    # weg vom Platten-Zentrum
+            zt0 = av*x0+bv*y0+cvv; zt1 = av*x1+bv*y1+cvv            # Platten-Oberkante
+            def _bot(x, y):
+                return zq(x + nx*8.0, y + ny*8.0)                   # Gelände 8mm senkrecht nach außen
+            # Boden NIE über der Oberkante (sonst Spike nach oben) und max 40mm tief:
+            zb0 = min(zt0, max(zt0-40.0, _bot(x0, y0))); zb1 = min(zt1, max(zt1-40.0, _bot(x1, y1)))
+            if min(zt0-zb0, zt1-zb1) < 2.0:                        # beide Enden müssen abfallen = echte Wand
+                continue
+            A0 = ctr(x0, y0, zt0); B0 = ctr(x1, y1, zt1); C0 = ctr(x1, y1, zb1); D0 = ctr(x0, y0, zb0)
+            SK += A0 + B0 + C0 + A0 + C0 + D0
+
     E = []
     for x0, y0, x1, y1 in edges:
         E += ctr(x0, y0, zq(x0, y0)+1.5) + ctr(x1, y1, zq(x1, y1)+1.5)
 
-    D = {"verts": verts, "idx": idx, "plates": P, "edges": E,
+    D = {"verts": verts, "idx": idx, "plates": P, "edges": E, "skirt": SK,
          "span": round(max(NX*cell, NY*cell), 1), "ns": len(surf), "ne": len(edges)}
     html = ('<!doctype html><html><head><meta charset=utf8><title>Menschgemachte Objekte 3D</title>'
             '<style>body{margin:0;background:#eef2f6;font-family:sans-serif}'
@@ -83,6 +108,8 @@ def main():
             'const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:new THREE.Color(p.c[0],p.c[1],p.c[2]),side:THREE.DoubleSide,roughness:0.55}));m.renderOrder=5;sc.add(m);'
             'const eg=new THREE.BufferGeometry();eg.setAttribute("position",new THREE.Float32BufferAttribute(p.e,3));'
             'sc.add(new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:0x101014})));});'
+            'if(D.skirt.length){const kg=new THREE.BufferGeometry();kg.setAttribute("position",new THREE.Float32BufferAttribute(D.skirt,3));kg.computeVertexNormals();'
+            'sc.add(new THREE.Mesh(kg,new THREE.MeshStandardMaterial({color:0xf25a00,side:THREE.DoubleSide,roughness:0.5})));}'
             'if(D.edges.length){const xg=new THREE.BufferGeometry();xg.setAttribute("position",new THREE.Float32BufferAttribute(D.edges,3));'
             'const xl=new THREE.LineSegments(xg,new THREE.LineBasicMaterial({color:0xff3b3b,depthTest:false}));xl.renderOrder=20;sc.add(xl);}'
             'const d=D.span;cam.position.set(d*0.2,d*1.0,d*0.95);cam.lookAt(0,0,0);ct.update();'
