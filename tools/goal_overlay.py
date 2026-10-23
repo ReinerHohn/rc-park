@@ -51,7 +51,33 @@ def main():
     for x0, y0, x1, y1 in segs:
         lsdlines += C(x0, y0, 4.0) + C(x1, y1, 4.0)
 
+    # TUNNELDACH (bore): Deckel in Lichtraum-Höhe ueber dem Gleis + Seitenwaende runter zum Gleis,
+    # ueber den GANZEN ueberdeckten Abschnitt (is_tunnel) — deckt auch den tief ueberdeckten Oberteil.
+    CLEAR_W, CLEAR_H = 30.0, 18.0                       # Bore-Breite / Lichtraum-Hoehe (0.5-Massstab)
+    tun = tr[tr[:, 3] > 0.5]
+    rv = []; rf = []; wv = []; wf = []
+    if len(tun) >= 2:
+        td = []
+        for i in range(len(tun)-1):
+            for t in np.linspace(0, 1, 24):
+                td.append(tun[i, :3] + (tun[i+1, :3]-tun[i, :3])*t)
+        td = np.array(td)
+        dd = np.gradient(td[:, :2], axis=0); tgt = dd/np.maximum(np.hypot(dd[:, 0], dd[:, 1])[:, None], 1e-9)
+        nn = np.column_stack([-tgt[:, 1], tgt[:, 0]])
+        ctr = lambda x, y, z: [round(float(x)-cx, 1), round(float(z)-cy, 1), round(float(y)-cz, 1)]
+        for i in range(len(td)):
+            zt = td[i, 2]; zr = zt + CLEAR_H
+            L = td[i, :2] + nn[i]*CLEAR_W/2; R = td[i, :2] - nn[i]*CLEAR_W/2
+            rv += ctr(L[0], L[1], zr) + ctr(R[0], R[1], zr)          # Dach-Kante L,R
+            wv += ctr(L[0], L[1], zr) + ctr(L[0], L[1], zt) + ctr(R[0], R[1], zr) + ctr(R[0], R[1], zt)
+        for i in range(len(td)-1):
+            a = 2*i; rf += [a, a+1, a+2, a+1, a+3, a+2]              # Dach-Strip
+            b = 4*i
+            wf += [b, b+1, b+5, b, b+5, b+4]                          # linke Wand
+            wf += [b+2, b+6, b+7, b+2, b+7, b+3]                      # rechte Wand
+
     D = {"verts": verts, "idx": idx, "rim": rim, "pv": pv, "pf": pf, "lsd": lsdlines,
+         "rv": rv, "rf": rf, "wv": wv, "wf": wf,
          "span": round(max(NX*cell, NY*cell), 1), "nrim": len(poly), "nlsd": len(segs)}
     html = ('<!doctype html><html><head><meta charset=utf8><title>Erkannte Kanten 3D</title>'
             '<style>body{margin:0;background:#eef2f6;font-family:sans-serif}'
@@ -74,6 +100,9 @@ def main():
             'if(D.pf.length){const pg=new THREE.BufferGeometry();pg.setAttribute("position",new THREE.Float32BufferAttribute(D.pv,3));'
             'pg.setIndex(D.pf);pg.computeVertexNormals();'
             'sc.add(new THREE.Mesh(pg,new THREE.MeshStandardMaterial({color:0x00c8ff,transparent:true,opacity:0.55,side:THREE.DoubleSide})));}'
+            'function solid(v,f,col,op){if(!f.length)return;const g=new THREE.BufferGeometry();'
+            'g.setAttribute("position",new THREE.Float32BufferAttribute(v,3));g.setIndex(f);g.computeVertexNormals();'
+            'sc.add(new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:col,transparent:op<1,opacity:op,side:THREE.DoubleSide})));}'
             'function tube(flat,col,rad){const P=[];for(let i=0;i<flat.length;i+=3)P.push(new THREE.Vector3(flat[i],flat[i+1],flat[i+2]));'
             'if(P.length<2)return;const cv=new THREE.CatmullRomCurve3(P,false);'
             'const g=new THREE.TubeGeometry(cv,P.length*3,rad,8,false);'

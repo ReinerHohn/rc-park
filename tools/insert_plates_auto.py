@@ -223,6 +223,30 @@ def einschnitt_corridor_poly(Hf, cell, track, rim_cap_mm=90.0, no_rim_mm=40.0,
     Lp = np.array([dense[i] + nrm[i] * grow(dense[i], nrm[i], 1.0) for i in range(len(dense))])
     Rp = np.array([dense[i] - nrm[i] * grow(dense[i], nrm[i], -1.0) for i in range(len(dense))])
     poly = np.vstack([Lp, Rp[::-1], Lp[:1]])
+
+    # TUNNELDACH-LÜCKE schließen: wo der Berg den Tunnel komplett überdeckt (kein offener Rim),
+    # kappt grow-to-rim auf no_rim und lässt den tief überdeckten Oberteil schmal. Darum den
+    # grow-to-rim-Bereich mit einem MINDEST-Korridor (±min_half) entlang der GANZEN Tunnel-Trasse
+    # vereinigen (Raster-Union), damit die Dachfläche lückenlos den kompletten Tunnel abdeckt.
+    try:
+        import cv2
+        min_half = max(no_rim_mm * 0.5, 16.0)          # mind. halbe Bore-Breite (~Lichtraum)
+        mask = np.zeros((NY, NX), np.uint8)
+        pp = (poly / cell).astype(np.int32)
+        cv2.fillPoly(mask, [pp], 1)
+        thick = int(round(2 * min_half / cell))
+        for i in range(len(dense) - 1):
+            cv2.line(mask, (int(dense[i, 0]/cell), int(dense[i, 1]/cell)),
+                     (int(dense[i+1, 0]/cell), int(dense[i+1, 1]/cell)), 1, max(1, thick))
+        mask = binary_closing(mask, iterations=2).astype(np.uint8)
+        cnts, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if cnts:
+            c = max(cnts, key=cv2.contourArea).reshape(-1, 2).astype(float) * cell
+            simp = _rdp(c, rdp_mm)
+            if len(simp) >= 4:
+                return np.vstack([simp, simp[:1]])
+    except Exception:
+        pass
     simp = _rdp(poly, rdp_mm)                           # gerade Kanten (schon in Welt-mm)
     if len(simp) < 4:
         return None
