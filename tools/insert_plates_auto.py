@@ -115,6 +115,34 @@ def seed_regions(slope, cell, seeds, slope_max, min_area, close_mm):
     return out
 
 
+def segment_planes(Hf, cell, smooth_px, normal_tol_deg, min_area, max_slope_deg):
+    """GERADE Flächen zusammenfassen: Region-Growing über die Oberflächen-NORMALEN. Benachbarte
+    Zellen mit fast gleicher Normale (coplanar, Winkel < normal_tol) werden EIN Segment; an KANTEN
+    (Normalensprung = Bruchkante) wird getrennt. -> große planare Facetten (Talboden/Bänke/Trog),
+    begrenzt GENAU an den Kanten. Nur nicht-senkrechte (Neigung <= max_slope) = flache Platten."""
+    Hs = gaussian_filter(Hf, smooth_px)
+    gy, gx = np.gradient(Hs, cell)
+    slope = np.degrees(np.arctan(np.hypot(gx, gy)))           # Zenit (Neigung)
+    azim = np.degrees(np.arctan2(gy, gx)) % 360.0             # Ausrichtung (wohin es abfällt)
+    b = max(5.0, normal_tol_deg)                              # Bin-Größe Grad
+    sb = np.round(slope / b).astype(int)
+    ab = np.round(azim / b).astype(int) % max(1, int(round(360.0 / b)))
+    ab[slope < b] = -1                                        # flache Zellen: Azimut egal -> EINE Flach-Familie
+    binimg = sb * 1000 + ab                                   # gleiche Orientierung = gleicher Bin = coplanar
+    out = []
+    for v in np.unique(binimg):                               # je Orientierungs-Bin: zusammenhängende Facetten
+        comp, ncomp = _label(binimg == v)
+        for i in range(1, ncomp + 1):
+            m = comp == i
+            if m.sum() * cell * cell < min_area:
+                continue
+            if float(np.median(slope[m])) > max_slope_deg:    # senkrechte Wände raus (flache Platten)
+                continue
+            out.append(binary_fill_holes(m))
+    out.sort(key=lambda m: -m.sum())
+    return out
+
+
 def fit_plane_mask(Hf, cell, m):
     rr, cc = np.where(m)
     X = (cc + 0.5) * cell; Y = (rr + 0.5) * cell; Z = Hf[rr, cc]
@@ -157,6 +185,8 @@ def main():
     ap.add_argument("--wall-max-area", type=float, default=3000.0, help="max Wand-Grundriss mm² — nur LOKALE Steilwände (Tunnel/Stützmauer), keine ganzen Hänge")
     ap.add_argument("--rib-miss", type=float, default=0.0, help="optional: Platte nur wo Rippen die Form um >N mm verfehlen (0=aus; reagiert sonst auf Flach-Wackeln)")
     ap.add_argument("--contour-simplify", type=float, default=2.5, help="Kontur-Punkte mind. N mm auseinander")
+    ap.add_argument("--normal-tol", type=float, default=15.0, help="Normalen-Winkeltoleranz Grad fürs Zusammenfassen coplanar: höher = größere Platten (mehr verschmolzen), kleiner = feiner an Kanten getrennt")
+    ap.add_argument("--flat-max-slope", type=float, default=40.0, help="Facetten mit mittlerer Neigung über N° = senkrechte Wand (raus bei den flachen Platten)")
     ap.add_argument("--seeds", default="", help="MANUELL: Platten-Stellen 'x,y x,y ...' (mm). Je Seed EINE Platte (flache Bank um den Punkt, echte Kante). Leer=Auto.")
     ap.add_argument("--max-plates", type=int, default=8); ap.add_argument("--max-walls", type=int, default=6)
     ap.add_argument("--feed", type=float, default=150); ap.add_argument("--power", type=float, default=100)
@@ -175,10 +205,8 @@ def main():
     if a.seeds.strip():                                       # MANUELL: du gibst die Stellen vor
         _sd = [tuple(float(v) for v in s.split(",")) for s in a.seeds.split()]
         flats = seed_regions(slope, cell, _sd, a.slope_max, a.min_area, a.close_mm)[:a.max_plates]
-    else:                                                     # AUTO: flache Bänke an Steilkanten
-        flats_all = detect_regions(slope, cell, 0.0, a.slope_max, a.min_area, a.close_mm, True, gate, a.split_necks)
-        flats = [m for m in flats_all
-                 if (not a.need_steep_edge) or (binary_dilation(m, iterations=3) & steepmask).any()][:a.max_plates]
+    else:                                                     # AUTO: planare Flächen zusammenfassen, an Kanten trennen
+        flats = segment_planes(Hf, cell, a.seg_smooth, a.normal_tol, a.min_area, a.flat_max_slope)[:a.max_plates]
     walls = [m for m in detect_regions(slope, cell, a.steep_min, 90.0, a.wall_min_area, a.close_mm, False, gate)
              if m.sum() * cell * cell <= a.wall_max_area][:a.max_walls]   # nur lokale Wände (keine ganzen Hänge)
 
