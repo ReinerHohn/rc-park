@@ -768,11 +768,19 @@ def main():
                 for i in range(len(track) - 1):
                     _aa = 2 * i; _TF += [[_aa, _aa + 1, _aa + 2], [_aa + 1, _aa + 3, _aa + 2]]
                 extra_meshes.append(("TUNNEL_gleisbett", _tm.Trimesh(np.array(_TV), np.array(_TF, int), process=False), [70, 70, 70, 255]))
-                _pc = next((i for i in range(len(track) - 1) if track[i][3] and not track[i + 1][3]), None)
-                if _pc is not None:
-                    _box = _tm.creation.box(extents=[CLEAR_W * 0.5 + 4, 24.0, CLEAR_H * 0.5])
-                    _box.apply_translation([track[_pc][0], track[_pc][1], track[_pc][2] + CLEAR_H * 0.25])
-                    extra_meshes.append(("TUNNEL_galerie", _box, [120, 90, 60, 255]))
+                # Felssturzschutz-GALERIE: zwei SENKRECHTE Seitenwände + DACH entlang der Trasse (nicht nur Boden)
+                _h = CLEAR_H * 0.5
+                _WV = []; _WF = []
+                for i in range(len(track)):
+                    _z0 = _zt[i] + 0.3; _z1 = _z0 + _h
+                    _WV += [[_L[i, 0], _L[i, 1], _z0], [_L[i, 0], _L[i, 1], _z1],
+                            [_R[i, 0], _R[i, 1], _z0], [_R[i, 0], _R[i, 1], _z1]]
+                for i in range(len(track) - 1):
+                    _b = 4 * i
+                    _WF += [[_b, _b + 1, _b + 5], [_b, _b + 5, _b + 4]]              # linke Wand
+                    _WF += [[_b + 2, _b + 6, _b + 7], [_b + 2, _b + 7, _b + 3]]      # rechte Wand
+                    _WF += [[_b + 1, _b + 3, _b + 7], [_b + 1, _b + 7, _b + 5]]      # Dach
+                extra_meshes.append(("TUNNEL_galerie", _tm.Trimesh(np.array(_WV), np.array(_WF, int), process=False), [150, 120, 90, 255]))
         except Exception:
             extra_meshes = []
         write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes)
