@@ -27,58 +27,37 @@ def main():
         for i in range(NX-1):
             p = j*NX+i; idx += [p, p+NX, p+1, p+1, p+NX, p+NX+1]
 
+    from matplotlib.path import Path as _MP
+    gx, gy = np.meshgrid(np.arange(NX)*cell, np.arange(NY)*cell)
+    gpts = np.column_stack([gx.ravel(), gy.ravel()])
     FLAT = [0.26, 0.56, 0.86]      # blau = flache/schräge Fläche
     STEEP = [0.95, 0.45, 0.12]     # orange = steile Fläche (Wand)
     nflat = nsteep = 0
-
-    def proj(x, y, a, b, c):
-        # Punkt (x,y,Gelände) ORTHOGONAL auf die gefittete Ebene projizieren -> liegt EXAKT auf der
-        # Ebene (pz = Ebene(px,py)) => Platte perfekt eben, keine Spikes, tight (kein Überschießen).
-        z0 = a*x + b*y + c; n2 = a*a + b*b + 1.0; t = (zq(x, y) - z0) / n2
-        px = x + a*t; py = y + b*t
-        return px, py, a*px + b*py + c
-
     P = []
     for k, (poly, (av, bv, cvv), rms, pslope) in enumerate(surf):
         col = STEEP if pslope >= 45.0 else FLAT
         nsteep += pslope >= 45.0; nflat += pslope < 45.0
-        tri = []
-        for i in range(1, len(poly)-1):
-            for q in (0, i, i+1):
-                x, y = float(poly[q][0]), float(poly[q][1]); px, py, pz = proj(x, y, av, bv, cvv)
-                tri += ctr(px, py, pz+0.5)
+        # GRID-CLIP mit EBENEN-Z: Facette rastern, Innen-Zellen auf der gefitteten Ebene vernetzen.
+        # Proper Triangulation (keine Fächer-Zacken) + strikt im Umriss (kein Überschießen) + eben.
+        inside = _MP(poly).contains_points(gpts).reshape(NY, NX)
+        V = []; F = []; gi = -np.ones((NY, NX), int)
+        for j in range(NY):
+            for i in range(NX):
+                if inside[j, i]:
+                    x, y = i*cell, j*cell; gi[j, i] = len(V); V.append(ctr(x, y, av*x+bv*y+cvv+0.4))
+        for j in range(NY-1):
+            for i in range(NX-1):
+                a0, b0, c0, d0 = gi[j, i], gi[j, i+1], gi[j+1, i], gi[j+1, i+1]
+                if min(a0, b0, c0, d0) >= 0:
+                    F += [int(a0), int(c0), int(b0), int(b0), int(c0), int(d0)]
         ed = []
         for i in range(len(poly)):
-            x, y = float(poly[i][0]), float(poly[i][1]); px, py, pz = proj(x, y, av, bv, cvv)
-            ed += ctr(px, py, pz+0.7)
-            xn, yn = float(poly[(i+1) % len(poly)][0]), float(poly[(i+1) % len(poly)][1]); qx, qy, qz = proj(xn, yn, av, bv, cvv)
-            ed += ctr(qx, qy, qz+0.7)
-        P.append({"v": tri, "e": ed, "c": col})
+            x, y = float(poly[i][0]), float(poly[i][1]); ed += ctr(x, y, av*x+bv*y+cvv+0.6)
+            xn, yn = float(poly[(i+1) % len(poly)][0]), float(poly[(i+1) % len(poly)][1]); ed += ctr(xn, yn, av*xn+bv*yn+cvv+0.6)
+        if F:
+            P.append({"vi": [c for v in V for c in v], "f": F, "e": ed, "c": col})
 
-    # SENKRECHTE SEITENWÄNDE (Schürze): wo die flache Platte an der Kante über dem tieferen Gelände
-    # abfällt, eine vertikale Wand von der Platten-Kante runter aufs Gelände dahinter.
-    SK = []
-    for (poly, (av, bv, cvv), rms, pslope) in surf:
-        if pslope >= 45.0:                                          # nur FLACHE Bänke brauchen Schürzen (steile sind schon Wände)
-            continue
-        cxp = float(poly[:, 0].mean()); cyp = float(poly[:, 1].mean())
-        for i in range(len(poly)):
-            x0, y0 = float(poly[i][0]), float(poly[i][1])
-            x1, y1 = float(poly[(i+1) % len(poly)][0]), float(poly[(i+1) % len(poly)][1])
-            mx, my = (x0+x1)/2, (y0+y1)/2
-            ex, ey = x1-x0, y1-y0; el = (ex*ex+ey*ey)**0.5 or 1.0    # Kanten-Normale nach AUSSEN
-            nx, ny = -ey/el, ex/el
-            if (nx*(mx-cxp) + ny*(my-cyp)) < 0: nx, ny = -nx, -ny    # weg vom Platten-Zentrum
-            zt0 = av*x0+bv*y0+cvv; zt1 = av*x1+bv*y1+cvv            # Platten-Oberkante
-            def _bot(x, y):
-                return zq(x + nx*8.0, y + ny*8.0)                   # Gelände 8mm senkrecht nach außen
-            # Boden NIE über der Oberkante (sonst Spike nach oben) und max 40mm tief:
-            zb0 = min(zt0, max(zt0-40.0, _bot(x0, y0))); zb1 = min(zt1, max(zt1-40.0, _bot(x1, y1)))
-            if min(zt0-zb0, zt1-zb1) < 2.0:                        # beide Enden müssen abfallen = echte Wand
-                continue
-            A0 = ctr(x0, y0, zt0); B0 = ctr(x1, y1, zt1); C0 = ctr(x1, y1, zb1); D0 = ctr(x0, y0, zb0)
-            SK += A0 + B0 + C0 + A0 + C0 + D0
-
+    SK = []    # Schürzen-Automatik war Müll (wirrer Klumpen an unregelmäßigen Rändern) -> vorerst aus
     E = []
     for x0, y0, x1, y1 in edges:
         E += ctr(x0, y0, zq(x0, y0)+1.5) + ctr(x1, y1, zq(x1, y1)+1.5)
