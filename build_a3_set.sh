@@ -46,12 +46,16 @@ echo "== 4/5 Tunnel-Teile (Gleisbett + Portal-Galerie: Dach/Wände/Stirn) =="
 python3 tools/tunnel_floor_portal.py --dem "$DEM" $WINRC $SCALE --base 12 \
   --track "$OUT/track50.npy" --gcode --out "$OUT/tunnel"
 
-echo "== 5/5 Kombinierte Vorschau (Skelett vs. fertig) =="
+echo "== 5/6 Kombinierte Vorschau (Skelett vs. fertig) =="
 python3 tools/combined_view.py --dem "$DEM" $WIN $SCALE \
   --x0 130 --x1 162 --y0 80 --y1 105 --snap-edges --out "$OUT/vorschau"
+
+echo "== 6/6 FERTIG-Ansicht (Haut voller Detail + Platten, KEINE nackten Rippen) =="
+python3 tools/fertig_view.py --dem "$DEM" $WIN $SCALE --snap-edges \
+  --slope-max 25 --rib-miss 4 --min-area 300 --out "$OUT"
 
 echo
 echo "FERTIG -> $OUT"
 echo "  Rippen+G-Code in $OUT/ , Haut $OUT/haut/ , Platten $OUT/platten/ , Tunnel $OUT/tunnel/"
-echo "  3D-Zusammenbau:  ./zusammenbau.sh $OUT"
-echo "  Vorschau:        $OUT/vorschau/_combined.png"
+echo "  3D FERTIGES Modell:  ./zusammenbau.sh $OUT          (Haut+Platten, keine Rippen)"
+echo "  3D Rippen-Anleitung: ./zusammenbau.sh $OUT rippen   (Skelett zum Zusammenstecken)"
