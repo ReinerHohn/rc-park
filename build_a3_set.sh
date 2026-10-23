@@ -10,7 +10,8 @@ cd "$(dirname "$0")"
 
 OUT="modelle/hoellental_A3_set"
 DEM="daten/hoellental/dgm025_full.npy"
-WIN="--r0 470 --r1 640 --c0 3310 --c1 3570 --zoom 1"
+WINRC="--r0 470 --r1 640 --c0 3310 --c1 3570"   # Fenster ohne --zoom (tunnel_floor_portal kennt kein --zoom)
+WIN="$WINRC --zoom 1"
 # 50%-Maßstab: horizontal 0.78125 mm/Zelle (= halbes Spur-N bei 0.25m-DGM),
 #              vertikal  3.125  mm/echtem Meter (= halbes Spur-N). vscale 0.85 wie A3.
 SCALE="--mm 0.78125 --nscale 3.125 --vscale 0.85"
@@ -40,12 +41,16 @@ echo "== 3/4 Trog-Einhängplatte (ebene Man-made-Fläche, 50%-Region) =="
 python3 tools/insert_plate.py --dem "$DEM" $WIN $SCALE \
   --x0 130 --x1 162 --y0 80 --y1 105 --thickness 3 --snap-edges --gcode --out "$OUT/platte"
 
-echo "== 4/4 Kombinierte Vorschau (Skelett vs. fertig) =="
+echo "== 4/5 Tunnel-Teile (Gleisbett + Portal-Galerie: Dach/Wände/Stirn) =="
+python3 tools/tunnel_floor_portal.py --dem "$DEM" $WINRC $SCALE --base 12 \
+  --track "$OUT/track50.npy" --gcode --out "$OUT/tunnel"
+
+echo "== 5/5 Kombinierte Vorschau (Skelett vs. fertig) =="
 python3 tools/combined_view.py --dem "$DEM" $WIN $SCALE \
   --x0 130 --x1 162 --y0 80 --y1 105 --snap-edges --out "$OUT/vorschau"
 
 echo
 echo "FERTIG -> $OUT"
-echo "  Rippen+G-Code direkt in $OUT/ , Haut in $OUT/haut/ , Platte in $OUT/platte/"
+echo "  Rippen+G-Code in $OUT/ , Haut $OUT/haut/ , Platte $OUT/platte/ , Tunnel $OUT/tunnel/"
 echo "  3D-Zusammenbau:  ./zusammenbau.sh $OUT"
 echo "  Vorschau:        $OUT/vorschau/_combined.png"

@@ -118,7 +118,10 @@ def main():
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
 
-    Hf, cell = ip.load_hf(a)
+    Hf, cell = ip.load_hf(a)                              # fürs Rippen-/Krümmungs-Raster (geglättet)
+    import copy
+    af = copy.copy(a); af.smooth = min(a.smooth, 0.6)     # HAUT-Panel: volle LiDAR-Detailtiefe (nicht grob!)
+    Hf_fine, _ = ip.load_hf(af)
     NY, NX = Hf.shape; Wx, Dy = NX * cell, NY * cell
     mg = a.min_gap
     xpos, ypos = rib_positions(Hf, cell, a.nx, a.ny, mg, None, False, a.snap_edges, a.snap_pct)
@@ -128,7 +131,7 @@ def main():
     plate3d = [(x0, y0, pz(x0, y0)), (x1, y0, pz(x1, y0)), (x1, y1, pz(x1, y1)), (x0, y1, pz(x0, y1))]
 
     # ---- 2-Panel-Render: Skelett (nackte Rippen) vs. fertig (Haut + Dach + Platte) ----
-    ds = 3; H = Hf[::ds, ::ds]; ny, nx = H.shape
+    ds = 1; H = Hf_fine[::ds, ::ds]; ny, nx = H.shape     # volle Auflösung fürs „fertig"-Panel
     XX, YY = np.meshgrid(np.arange(nx) * cell * ds, np.arange(ny) * cell * ds)
     fig = plt.figure(figsize=(15, 6.2))
     axA = fig.add_subplot(1, 2, 1, projection="3d")
@@ -137,7 +140,7 @@ def main():
     axA.set_xlim(0, Wx); axA.set_ylim(0, Dy); axA.set_zlim(0, Hf.max() * 1.05)
     axA.set_title("SKELETT — nur Rippen (grob, löchrig, Tunnel offen)\n= was du im Zusammenbau-Tool siehst")
     axB = fig.add_subplot(1, 2, 2, projection="3d")
-    axB.plot_surface(XX, YY, H, cmap="terrain", alpha=0.97, linewidth=0, antialiased=True, rcount=70, ccount=100)
+    axB.plot_surface(XX, YY, H, cmap="terrain", alpha=0.98, linewidth=0, antialiased=False, rcount=ny, ccount=nx)
     axB.add_collection3d(Poly3DCollection([plate3d], facecolor="#b5651d", edgecolor="#5a2d0c", alpha=0.95, linewidths=2))
     axB.set_title(f"FERTIG — HAUT deckt Lücken + Tunnel-Dach\n+ Einhäng-Platte (RMS {rms:.1f} mm)")
     for ax in (axA, axB):
@@ -146,7 +149,7 @@ def main():
     plt.tight_layout(); png = os.path.join(a.out, "_combined.png"); plt.savefig(png, dpi=120)
 
     html = os.path.join(a.out, "_combined.html")
-    write_combined_html(html, Hf, cell, xpos, ypos, (x0, x1, y0, y1), (av, bv, cv))
+    write_combined_html(html, Hf_fine, cell, xpos, ypos, (x0, x1, y0, y1), (av, bv, cv), ds=2)
     print(f"Fenster {Wx:.0f}x{Dy:.0f} mm | {len(xpos)} X- + {len(ypos)} Y-Rippen | Platte RMS {rms:.1f} mm")
     print(f"-> 2-Panel: {png}")
     print(f"-> 3D-HTML: {html}")
