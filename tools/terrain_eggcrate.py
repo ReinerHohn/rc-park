@@ -844,13 +844,32 @@ def main():
             _Hfd = _reld * a.nscale * a.vscale + a.base
             _surf, _edg, _c2 = _mm.detect_manmade(_Hfd, cell)
             _zc = lambda x, y: float(Hf[min(int(y/cell), Hf.shape[0]-1), min(int(x/cell), Hf.shape[1]-1)])
+            from matplotlib.path import Path as _MPa
+            _NY, _NX = Hf.shape
+            _gx, _gy = np.meshgrid(np.arange(_NX)*cell, np.arange(_NY)*cell)
+            _gpts = np.column_stack([_gx.ravel(), _gy.ravel()])
             for _k, (_p, _coef, _rms, _ps) in enumerate(_surf):
                 _col = [240, 140, 30, 255] if _ps >= 45 else [60, 150, 230, 255]   # orange steil / blau flach
-                # flach -> perfekte Ebene (plan-gefittet); steil -> drapen (kein Überschießen)
-                _zf = (lambda x, y: _zc(x, y)) if _ps >= 45 else (lambda x, y, _c=_coef: _c[0]*x + _c[1]*y + _c[2])
-                _V = np.array([[float(x), float(y), _zf(x, y) + 0.6] for x, y in _p])
-                _F = np.array([[0, i, i + 1] for i in range(1, len(_p) - 1)])
-                extra_meshes.append((f"FLAECHE{_k}", _tm.Trimesh(_V, _F, process=False), _col))
+                if _ps >= 45:
+                    # STEIL -> Grid-Clip auf echte Höhe (folgt der Wand, passt zu Rippen, kein Überschießen)
+                    _ins = _MPa(_p).contains_points(_gpts).reshape(_NY, _NX)
+                    _V = []; _F = []; _gi = -np.ones((_NY, _NX), int)
+                    for _j in range(_NY):
+                        for _i in range(_NX):
+                            if _ins[_j, _i]:
+                                _gi[_j, _i] = len(_V); _V.append([_i*cell, _j*cell, float(Hf[_j, _i])+0.4])
+                    for _j in range(_NY-1):
+                        for _i in range(_NX-1):
+                            _aa, _bb, _cc2, _dd = _gi[_j, _i], _gi[_j, _i+1], _gi[_j+1, _i], _gi[_j+1, _i+1]
+                            if min(_aa, _bb, _cc2, _dd) >= 0:
+                                _F += [[int(_aa), int(_cc2), int(_bb)], [int(_bb), int(_cc2), int(_dd)]]
+                    if _F:
+                        extra_meshes.append((f"FLAECHE{_k}", _tm.Trimesh(np.array(_V), np.array(_F, int), process=False), _col))
+                else:
+                    # FLACH -> perfekte plan-gefittete Ebene (sauber)
+                    _V = np.array([[float(x), float(y), _coef[0]*x + _coef[1]*y + _coef[2] + 0.6] for x, y in _p])
+                    _F = np.array([[0, i, i + 1] for i in range(1, len(_p) - 1)])
+                    extra_meshes.append((f"FLAECHE{_k}", _tm.Trimesh(_V, _F, process=False), _col))
             for (x0, y0, x1, y1) in _edg:
                 overlay_edges.append([[float(x0), float(y0), _zc(x0, y0) + 1.0],
                                       [float(x1), float(y1), _zc(x1, y1) + 1.0]])
