@@ -28,18 +28,19 @@ np.save(f"{out}/track50.npy", t)
 print(f"  track50.npy: {t.shape}, x {t[:,0].min():.0f}..{t[:,0].max():.0f} mm")
 PY
 
-echo "== 1/4 Rippen-Gerüst (Snap auf Bruchkanten, Tunnel, Fit -0.4) =="
+echo "== 1/5 Rippen-Gerüst (Snap auf Bruchkanten, Tunnel, Fit -0.4) =="
 python3 tools/terrain_eggcrate.py --dem "$DEM" $WIN $SCALE --base 12 \
   --thickness 3 --snap-edges --tunnel --track "$OUT/track50.npy" \
   --gcode --out "$OUT"
 
-echo "== 2/4 Haut-Panels (deckt Lücken + Tunnel-Dach) =="
+echo "== 2/5 Haut-Panels (deckt Lücken + Tunnel-Dach) =="
 python3 tools/terrain_skin_panels.py --dem "$DEM" $WIN $SCALE \
   --skin 4 --bed-x 250 --bed-y 210 --max-z 200 --out "$OUT/haut"
 
-echo "== 3/4 Trog-Einhängplatte (ebene Man-made-Fläche, 50%-Region) =="
-python3 tools/insert_plate.py --dem "$DEM" $WIN $SCALE \
-  --x0 130 --x1 162 --y0 80 --y1 105 --thickness 3 --snap-edges --gcode --out "$OUT/platte"
+echo "== 3/5 Einhäng-Platten AUTO (nur wo die groben Rippen die Kontur verfehlen) =="
+python3 tools/insert_plates_auto.py --dem "$DEM" $WIN $SCALE --snap-edges \
+  --slope-max 25 --steep-min 60 --rib-miss 4 --min-area 300 \
+  --wall-min-area 150 --wall-max-area 2500 --gcode --out "$OUT/platten"
 
 echo "== 4/5 Tunnel-Teile (Gleisbett + Portal-Galerie: Dach/Wände/Stirn) =="
 python3 tools/tunnel_floor_portal.py --dem "$DEM" $WINRC $SCALE --base 12 \
@@ -51,6 +52,6 @@ python3 tools/combined_view.py --dem "$DEM" $WIN $SCALE \
 
 echo
 echo "FERTIG -> $OUT"
-echo "  Rippen+G-Code in $OUT/ , Haut $OUT/haut/ , Platte $OUT/platte/ , Tunnel $OUT/tunnel/"
+echo "  Rippen+G-Code in $OUT/ , Haut $OUT/haut/ , Platten $OUT/platten/ , Tunnel $OUT/tunnel/"
 echo "  3D-Zusammenbau:  ./zusammenbau.sh $OUT"
 echo "  Vorschau:        $OUT/vorschau/_combined.png"
