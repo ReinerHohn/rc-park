@@ -120,7 +120,7 @@ new THREE.GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  if(ENG.length){const gg=new THREE.BufferGeometry();gg.setAttribute('position',new THREE.Float32BufferAttribute(ENG,3));
   nums=new THREE.LineSegments(gg,new THREE.LineBasicMaterial({color:0x1a0f06}));root.add(nums);}
  if(EDG.length){const eg=new THREE.BufferGeometry();eg.setAttribute('position',new THREE.Float32BufferAttribute(EDG,3));
-  edges=new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:0x0b2e8c,depthTest:false,transparent:true}));edges.renderOrder=1000;edges.visible=false;root.add(edges);}
+  edges=new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:0xff2a2a,depthTest:false,transparent:true}));edges.renderOrder=1000;edges.visible=true;root.add(edges);}
  const d=Math.max(s.x,s.y,s.z);cam.position.set(d*0.9,-d*1.2,d*0.8);cam.lookAt(0,0,0);ct.update();});
 let marker=null;const SEL=[];
 function clrMark(){if(marker){sc.remove(marker);marker=null;}}
@@ -151,7 +151,7 @@ window.tTunnel=()=>{tunnels.forEach(o=>o.visible=!o.visible);};
 window.setRopac=v=>{if(relief){const o=v/100;relief.material.opacity=o;relief.material.transparent=o<1;relief.visible=o>0;}};
 window.tNum=()=>{if(nums)nums.visible=!nums.visible;};
 window.tEdges=()=>{if(edges)edges.visible=!edges.visible;};
-window.tFlaechen=()=>{flaechen.forEach(o=>o.visible=!o.visible);};
+window.tFlaechen=()=>{flaechen.forEach(o=>o.visible=!o.visible);if(edges)edges.visible=!edges.visible;};
 function saveProg(){try{localStorage.setItem(KEY,JSON.stringify([...DONE]))}catch(e){}}
 function updProgInfo(){const el=document.getElementById('pinfo');if(el)el.textContent=prog?('🧩 Baustand AN · '+DONE.size+'/'+meshes.length+' fertig'):'';}
 window.tProg=()=>{prog=!prog;SEL.length=0;document.getElementById('q').value='';apply('');updProgInfo();};
@@ -829,7 +829,32 @@ def main():
                 extra_meshes.append(("TUNNEL_galerie", _tm.Trimesh(np.array(_WV), np.array(_WF, int), process=False), [255, 90, 40, 255]))
         except Exception:
             extra_meshes = []
+        # MENSCHGEMACHT-LAYER: flache + steile ebene Flächen (scharf berandet) + scharfe Kanten,
+        # auf echte Geländehöhe drapiert (kein Überschießen). Schaltbar über 📐 Flächen.
         overlay_edges = []
+        try:
+            import manmade_edges as _mm
+            # Detektor braucht LEICHT geglättetes Hf (scharfe Kanten); die Rippen nutzen smooth=4.
+            # Deckungsgleich aufbauen (gleicher Flip/Maßstab), nur smooth=0.4:
+            _wd = dem_full[a.r0:a.r1, a.c0:a.c1].astype(float)
+            _wd = np.where(_wd < -1000, np.nan, _wd)
+            if np.isnan(_wd).any(): _wd = np.where(np.isnan(_wd), np.nanmin(_wd), _wd)
+            _wd = _wd[::-1]
+            _reld = gaussian_filter((_wd - float(_wd.min())), 0.4)
+            _Hfd = _reld * a.nscale * a.vscale + a.base
+            _surf, _edg, _c2 = _mm.detect_manmade(_Hfd, cell)
+            _zc = lambda x, y: float(Hf[min(int(y/cell), Hf.shape[0]-1), min(int(x/cell), Hf.shape[1]-1)])
+            for _k, (_p, _coef, _rms, _ps) in enumerate(_surf):
+                _col = [240, 140, 30, 255] if _ps >= 45 else [60, 150, 230, 255]   # orange steil / blau flach
+                _V = np.array([[float(x), float(y), _zc(x, y) + 0.6] for x, y in _p])
+                _F = np.array([[0, i, i + 1] for i in range(1, len(_p) - 1)])
+                extra_meshes.append((f"FLAECHE{_k}", _tm.Trimesh(_V, _F, process=False), _col))
+            for (x0, y0, x1, y1) in _edg:
+                overlay_edges.append([[float(x0), float(y0), _zc(x0, y0) + 1.0],
+                                      [float(x1), float(y1), _zc(x1, y1) + 1.0]])
+            print(f"Menschgemacht-Layer: {len(_surf)} Flächen + {len(_edg)} scharfe Kanten")
+        except Exception as _e:
+            print("Menschgemacht-Layer übersprungen:", _e)
         write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes, overlay_edges)
         html_ok = True
     except Exception as e:
