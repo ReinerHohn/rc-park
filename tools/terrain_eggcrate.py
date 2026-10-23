@@ -55,7 +55,7 @@ addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProje
     open(fn, "w").write(html)
 
 
-def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None, extra_meshes=None):
+def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None, extra_meshes=None, overlay_edges=None):
     """ZUSAMMENBAUANLEITUNG: Suchleiste -> Teil leuchtet rot im 3D (wo es hinkommt), Rest blass.
     + Gravur-Nummern auf dem Holz + ein-/ausblendbares RELIEF als Kontext.
     named_pieces=[(label,mesh,is_x)], engrave_lines=Nx3-Polylinien, relief_mesh=Trimesh (optional)."""
@@ -78,6 +78,11 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None, 
         pl = np.asarray(pl, float)
         for i in range(len(pl)-1): seg += [*pl[i].tolist(), *pl[i+1].tolist()]
     eng_json = json.dumps([round(v, 2) for v in seg])
+    eseg = []                                                      # Geo-Kanten-Overlay (crisp LineSegments, keine Spline-Rundung)
+    for pl in (overlay_edges or []):
+        pl = np.asarray(pl, float)
+        for i in range(len(pl)-1): eseg += [*pl[i].tolist(), *pl[i+1].tolist()]
+    edg_json = json.dumps([round(v, 2) for v in eseg])
     HTML = '''<!doctype html><html><head><meta charset=utf8><title>Zusammenbauanleitung</title>
 <style>body{margin:0;background:#dde6ef;font-family:sans-serif}
 #bar{position:fixed;top:0;left:0;right:0;background:#111e;color:#fff;padding:8px 12px;z-index:10}
@@ -90,7 +95,7 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None, 
 </head><body>
 <div id=bar>🔎 Teil-Nr: <input id=q placeholder="z.B. X0a oder 123" autofocus>
 <button onclick=find()>finden</button><button onclick=clr()>alle</button>
-<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=50 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tPlatten()>Platten ein/aus</button><button onclick=tTunnel() style="background:#ff5522;color:#fff">🚇 Tunnel</button><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
+<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=50 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tPlatten()>Platten ein/aus</button><button onclick=tTunnel() style="background:#ff5522;color:#fff">🚇 Tunnel</button><button onclick=tEdges() style="background:#1030c0;color:#fff">📐 Geo-Kanten</button><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
 <div id=tip>1 Teil (z.B. Y10) -> leuchtet ROT wo es hinkommt · ZWEI Teile (klick+klick ODER „X8 Y10" tippen) -> rot+blau + GRUENE Kugel wo sie sich verbinden · Relief/Nummern ein-aus · 🧩 BAUSTAND an → Teil anklicken = „hab ich" (solide), Rest blass → mit echtem Modell abgleichen</div>
 <script>
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
@@ -99,7 +104,7 @@ const rn=new THREE.WebGLRenderer({antialias:true});rn.setSize(innerWidth,innerHe
 const ct=new THREE.OrbitControls(cam,rn.domElement);ct.enableDamping=true;
 sc.add(new THREE.AmbientLight(0xffffff,0.8));sc.add(new THREE.HemisphereLight(0xffffff,0x556,1.0));
 const d1=new THREE.DirectionalLight(0xffffff,1.1);d1.position.set(200,-300,500);sc.add(d1);
-let meshes=[],extras=[],tunnels=[],relief=null,nums=null,prog=false;const DONE=new Set();let KEY='zbdone';const ENG=%ENG%;const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
+let meshes=[],extras=[],tunnels=[],relief=null,nums=null,edges=null,prog=false;const DONE=new Set();let KEY='zbdone';const ENG=%ENG%;const EDG=%EDG%;const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
 new THREE.GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  const root=g.scene,bx=new THREE.Box3().setFromObject(root),c=bx.getCenter(new THREE.Vector3()),s=bx.getSize(new THREE.Vector3());
  root.position.sub(c);sc.add(root);
@@ -113,6 +118,8 @@ new THREE.GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  {let s=meshes.map(o=>(o.name||'').toUpperCase()).sort().join('|'),h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;KEY='zbdone_'+(h>>>0);try{JSON.parse(localStorage.getItem(KEY)||'[]').forEach(n=>DONE.add(n))}catch(e){}updProgInfo();apply(document.getElementById('q').value);}
  if(ENG.length){const gg=new THREE.BufferGeometry();gg.setAttribute('position',new THREE.Float32BufferAttribute(ENG,3));
   nums=new THREE.LineSegments(gg,new THREE.LineBasicMaterial({color:0x1a0f06}));root.add(nums);}
+ if(EDG.length){const eg=new THREE.BufferGeometry();eg.setAttribute('position',new THREE.Float32BufferAttribute(EDG,3));
+  edges=new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:0x0b2e8c,depthTest:false,transparent:true}));edges.renderOrder=1000;edges.visible=false;root.add(edges);}
  const d=Math.max(s.x,s.y,s.z);cam.position.set(d*0.9,-d*1.2,d*0.8);cam.lookAt(0,0,0);ct.update();});
 let marker=null;const SEL=[];
 function clrMark(){if(marker){sc.remove(marker);marker=null;}}
@@ -142,6 +149,7 @@ window.tPlatten=()=>{extras.forEach(o=>o.visible=!o.visible);};
 window.tTunnel=()=>{tunnels.forEach(o=>o.visible=!o.visible);};
 window.setRopac=v=>{if(relief){const o=v/100;relief.material.opacity=o;relief.material.transparent=o<1;relief.visible=o>0;}};
 window.tNum=()=>{if(nums)nums.visible=!nums.visible;};
+window.tEdges=()=>{if(edges)edges.visible=!edges.visible;};
 function saveProg(){try{localStorage.setItem(KEY,JSON.stringify([...DONE]))}catch(e){}}
 function updProgInfo(){const el=document.getElementById('pinfo');if(el)el.textContent=prog?('🧩 Baustand AN · '+DONE.size+'/'+meshes.length+' fertig'):'';}
 window.tProg=()=>{prog=!prog;SEL.length=0;document.getElementById('q').value='';apply('');updProgInfo();};
@@ -155,7 +163,7 @@ addEventListener("click",e=>{if(e.target.tagName==="INPUT"||e.target.tagName==="
   document.getElementById("q").value=SEL.join(" ");apply(SEL.join(" "));}});
 addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();rn.setSize(innerWidth,innerHeight)});
 (function x(){requestAnimationFrame(x);ct.update();rn.render(sc,cam)})();
-</script></body></html>'''.replace("%B64%", b64).replace("%ENG%", eng_json)
+</script></body></html>'''.replace("%B64%", b64).replace("%ENG%", eng_json).replace("%EDG%", edg_json)
     open(fn, "w").write(HTML)
 
 
@@ -819,7 +827,17 @@ def main():
                 extra_meshes.append(("TUNNEL_galerie", _tm.Trimesh(np.array(_WV), np.array(_WF, int), process=False), [255, 90, 40, 255]))
         except Exception:
             extra_meshes = []
-        write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes)
+        # GEO-KANTEN-OVERLAY: Felzenszwalb-Flächenränder (saubere, GERADE Kanten) als schaltbarer Layer
+        overlay_edges = []
+        try:
+            import plane_segment as _pseg
+            _lab, _ = _pseg.segment_facets(Hf, cell, scale=160.0, sigma=0.6, min_size=90, smooth=1.5)
+            _zc = lambda x, y: float(Hf[min(int(y / cell), Hf.shape[0] - 1), min(int(x / cell), Hf.shape[1] - 1)])
+            for _p in _pseg.facet_polys(_lab, cell, min_area_mm2=150.0, rdp_mm=6.0):   # rdp 6 = gerader, kein „kindlich rund"
+                overlay_edges.append([[float(x), float(y), _zc(x, y) + 2.0] for x, y in _p])
+        except Exception as _ee:
+            overlay_edges = []
+        write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes, overlay_edges)
         html_ok = True
     except Exception as e:
         html_ok = False; print("HTML-Viewer übersprungen:", e)
