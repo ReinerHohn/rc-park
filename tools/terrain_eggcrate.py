@@ -741,13 +741,10 @@ def main():
         extra_meshes = []
         try:
             import insert_plates_auto as _ipa
-            _sl = _ipa.slope_field(Hf, cell, 3.5); _steep = _sl >= 55.0
             _pal = [[181, 101, 29, 255], [66, 133, 204, 255], [102, 166, 74, 255],
                     [217, 153, 33, 255], [148, 103, 189, 255], [87, 179, 186, 255]]
             _k = 0
-            for _m in _ipa.detect_regions(_sl, cell, 0.0, 30.0, 800.0, 3.0, True, None):
-                if not (_ipa.binary_dilation(_m, iterations=3) & _steep).any():
-                    continue
+            for _m in _ipa.segment_planes(Hf, cell, 3.0, 18.0, 400.0, 40.0):   # planar zusammenfassen, an Kanten trennen
                 _w = _ipa.mask_contour_mm(_m, cell, 2.5)
                 if _w is None or len(_w) < 4:
                     continue

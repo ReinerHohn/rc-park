@@ -18,12 +18,8 @@ from terrain_eggcrate import rib_positions
 
 
 def detect_plates(Hf, cell, a):
-    xpos, ypos = rib_positions(Hf, cell, a.nx, a.ny, a.min_gap, None, False, a.snap_edges, a.snap_pct)
-    slope = ipa.slope_field(Hf, cell, 2.0)
-    _err, miss = ipa.rib_miss_mask(Hf, cell, xpos, ypos, a.rib_miss)
-    gate = miss if a.rib_miss > 0 else None
     out = []
-    for m in ipa.detect_regions(slope, cell, 0.0, a.slope_max, a.min_area, a.close_mm, True, gate)[:a.max_plates]:
+    for m in ipa.segment_planes(Hf, cell, 3.0, 18.0, a.min_area, 40.0)[:a.max_plates]:   # planar zusammenfassen
         w = ipa.mask_contour_mm(m, cell, 2.5)
         if w is None:
             continue
