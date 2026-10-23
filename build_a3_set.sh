@@ -40,7 +40,7 @@ python3 tools/terrain_skin_panels.py --dem "$DEM" $WIN $SCALE \
 echo "== 3/5 Einhäng-Platten AUTO (JEDE planare Fläche = eigene Platte, jeder Winkel) =="
 python3 tools/insert_plates_auto.py --dem "$DEM" $WIN $SCALE --snap-edges \
   --seg-smooth 2.5 --normal-tol 12 --flat-max-slope 55 --min-area 150 \
-  --wall-min-area 150 --wall-max-area 99999 --track "$OUT/track50.npy" --corridor 30 --max-plates 25 --max-walls 25 \
+  --wall-min-area 120 --wall-max-area 99999 --track "$OUT/track50.npy" --corridor 30 --max-plates 25 --max-walls 25 \
   --gcode --out "$OUT/platten"
 
 echo "== 4/5 Tunnel-Teile (Gleisbett + Portal-Galerie: Dach/Wände/Stirn) =="
