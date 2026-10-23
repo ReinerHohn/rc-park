@@ -55,7 +55,7 @@ addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProje
     open(fn, "w").write(html)
 
 
-def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None):
+def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None, extra_meshes=None):
     """ZUSAMMENBAUANLEITUNG: Suchleiste -> Teil leuchtet rot im 3D (wo es hinkommt), Rest blass.
     + Gravur-Nummern auf dem Holz + ein-/ausblendbares RELIEF als Kontext.
     named_pieces=[(label,mesh,is_x)], engrave_lines=Nx3-Polylinien, relief_mesh=Trimesh (optional)."""
@@ -66,6 +66,12 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None):
     if relief_mesh is not None:
         relief_mesh.visual.vertex_colors = [200, 180, 140, 255]
         sc.add_geometry(relief_mesh, geom_name="RELIEF", node_name="RELIEF")
+    for (lbl, mesh, rgba) in (extra_meshes or []):                 # Einhäng-Platten als eigene Ebene
+        try:
+            mesh.visual.vertex_colors = rgba
+            sc.add_geometry(mesh, geom_name=lbl, node_name=lbl)
+        except Exception:
+            pass
     b64 = base64.b64encode(sc.export(file_type="glb")).decode()
     seg = []
     for pl in (engrave_lines or []):
@@ -78,26 +84,28 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None):
 #bar input{font-size:18px;padding:5px 9px;width:160px}#bar button{font-size:14px;padding:5px 10px;margin-left:4px}
 #info{margin-left:12px;font-size:15px}
 #tip{position:fixed;bottom:8px;left:8px;background:#000a;color:#fff;padding:6px 10px;border-radius:6px;font-size:12px}</style>
-<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script src="https://unpkg.com/three@0.137.5/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.137.5/examples/js/controls/OrbitControls.js"></script>
+<script src="https://unpkg.com/three@0.137.5/examples/js/loaders/GLTFLoader.js"></script>
 </head><body>
 <div id=bar>🔎 Teil-Nr: <input id=q placeholder="z.B. X0a oder 123" autofocus>
 <button onclick=find()>finden</button><button onclick=clr()>alle</button>
-<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=65 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
+<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=65 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tPlatten()>Platten ein/aus</button><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
 <div id=tip>1 Teil (z.B. Y10) -> leuchtet ROT wo es hinkommt · ZWEI Teile (klick+klick ODER „X8 Y10" tippen) -> rot+blau + GRUENE Kugel wo sie sich verbinden · Relief/Nummern ein-aus · 🧩 BAUSTAND an → Teil anklicken = „hab ich" (solide), Rest blass → mit echtem Modell abgleichen</div>
-<script type=module>
-import*as THREE from'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';import{GLTFLoader}from'three/addons/loaders/GLTFLoader.js';
+<script>
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
 const cam=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,0.1,99999);
 const rn=new THREE.WebGLRenderer({antialias:true});rn.setSize(innerWidth,innerHeight);document.body.appendChild(rn.domElement);
-const ct=new OrbitControls(cam,rn.domElement);ct.enableDamping=true;
+const ct=new THREE.OrbitControls(cam,rn.domElement);ct.enableDamping=true;
 sc.add(new THREE.AmbientLight(0xffffff,0.8));sc.add(new THREE.HemisphereLight(0xffffff,0x556,1.0));
 const d1=new THREE.DirectionalLight(0xffffff,1.1);d1.position.set(200,-300,500);sc.add(d1);
-let meshes=[],relief=null,nums=null,prog=false;const DONE=new Set();let KEY='zbdone';const ENG=%ENG%;const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
-new GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
+let meshes=[],extras=[],relief=null,nums=null,prog=false;const DONE=new Set();let KEY='zbdone';const ENG=%ENG%;const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
+new THREE.GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  const root=g.scene,bx=new THREE.Box3().setFromObject(root),c=bx.getCenter(new THREE.Vector3()),s=bx.getSize(new THREE.Vector3());
  root.position.sub(c);sc.add(root);
  root.traverse(o=>{if(o.isMesh){
   if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0xc8b48c,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.65,flatShading:true});o.visible=true;relief=o;return;}
+  if(/^(PLATTE|TUNNEL)/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,transparent:true,opacity:0.9});extras.push(o);return;}
   const hue=((meshes.length*137.508)%360)/360,col=new THREE.Color().setHSL(hue,0.58,0.55);
   o.material=new THREE.MeshStandardMaterial({color:col,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
   o.userData.base=col.getHex();meshes.push(o);}});
@@ -129,6 +137,7 @@ function apply(q){q=(q||"").toUpperCase().trim();const toks=q.split(/ +/).filter
 window.find=()=>apply(document.getElementById("q").value);
 window.clr=()=>{SEL.length=0;document.getElementById("q").value="";apply("");};
 window.tRelief=()=>{if(relief)relief.visible=!relief.visible;};
+window.tPlatten=()=>{extras.forEach(o=>o.visible=!o.visible);};
 window.setRopac=v=>{if(relief){const o=v/100;relief.material.opacity=o;relief.material.transparent=o<1;relief.visible=o>0;}};
 window.tNum=()=>{if(nums)nums.visible=!nums.visible;};
 function saveProg(){try{localStorage.setItem(KEY,JSON.stringify([...DONE]))}catch(e){}}
@@ -716,7 +725,9 @@ def main():
         write_html(f"{a.out}/_assembled.html", _tm.util.concatenate(plates), engrave_lines)
         # Relief-Oberfläche als Kontext fürs Zusammenbau-Tool (das „geile Relief" daneben)
         try:
-            st = 2; Zs = Hf[::st, ::st]; rny, rnx = Zs.shape
+            raw = zoom(win - win_min, zf, order=1) if zf > 1 else (win - win_min)
+            Hf_rel = gaussian_filter(raw, 0.5) * a.nscale * a.vscale + a.base   # FEINE Topografie (volle Detailtiefe, NICHT die grobe Rippen-Glättung)
+            st = 1; Zs = Hf_rel[::st, ::st]; rny, rnx = Zs.shape
             rxs = np.arange(rnx)*cell*st; rys = np.arange(rny)*cell*st
             RX, RY = np.meshgrid(rxs, rys)
             RV = np.column_stack([RX.ravel(), RY.ravel(), Zs.ravel()]); RF = []
@@ -726,7 +737,28 @@ def main():
             relief_mesh = _tm.Trimesh(RV, np.array(RF), process=False)
         except Exception:
             relief_mesh = None
-        write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh)
+        # Einhäng-Platten (flache Bänke an Steilkanten) als eigene Ebene in den Viewer legen
+        extra_meshes = []
+        try:
+            import insert_plates_auto as _ipa
+            _sl = _ipa.slope_field(Hf, cell, 3.5); _steep = _sl >= 55.0
+            _pal = [[181, 101, 29, 255], [66, 133, 204, 255], [102, 166, 74, 255],
+                    [217, 153, 33, 255], [148, 103, 189, 255], [87, 179, 186, 255]]
+            _k = 0
+            for _m in _ipa.detect_regions(_sl, cell, 0.0, 30.0, 800.0, 3.0, True, None):
+                if not (_ipa.binary_dilation(_m, iterations=3) & _steep).any():
+                    continue
+                _w = _ipa.mask_contour_mm(_m, cell, 2.5)
+                if _w is None or len(_w) < 4:
+                    continue
+                _av, _bv, _cv, _r = _ipa.fit_plane_mask(Hf, cell, _m)
+                _V = np.array([[float(x), float(y), _av * x + _bv * y + _cv + 1.0] for x, y in _w])
+                _F = np.array([[0, i, i + 1] for i in range(1, len(_w) - 1)])
+                extra_meshes.append((f"PLATTE{_k}", _tm.Trimesh(_V, _F, process=False), _pal[_k % len(_pal)]))
+                _k += 1
+        except Exception:
+            extra_meshes = []
+        write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes)
         html_ok = True
     except Exception as e:
         html_ok = False; print("HTML-Viewer übersprungen:", e)
