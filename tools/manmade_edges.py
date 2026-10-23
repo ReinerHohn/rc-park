@@ -32,47 +32,59 @@ def sharpness(Hf, cell, smooth=1.0, up=4):
     return np.sqrt(s), up
 
 
-def detect_manmade(Hf, cell, sharp_pct=90.0, flat_slope=22.0, min_area_mm2=200.0, rdp_mm=4.0):
-    """Menschgemachte Objekte = FLÄCHEN mit flachem Kern, die von SCHARFEN Kanten umschlossen sind.
-    Rückgabe: (surface_polys[Welt-mm], sharp_edges_lsd[(x0,y0,x1,y1)], cell2).
+def detect_manmade(Hf, cell, sharp_pct=90.0, flat_slope=22.0, min_area_mm2=200.0,
+                   rdp_mm=4.0, min_edge_mm=12.0, max_rms=5.0):
+    """Menschgemachte Objekte = FLÄCHEN mit flachem Kern, die von SCHARFEN Kanten umschlossen sind,
+    AN den geraden scharfen Kanten UNTERTEILT, je mit best-fit Ebene.
+    Rückgabe: (surfaces[(poly_mm,(a,b,c),rms)], edges[(x0,y0,x1,y1)], cell2).
       - scharfe Kante: Schärfe > sharp_pct-Perzentil (Normale kippt abrupt)
-      - Fläche darin: flacher Kern (slope < flat_slope) UND nicht selbst scharf, dessen RAND aber
-        scharf ist (vom sharp-Ring umschlossen) => menschgemacht, nicht glatter Naturhang."""
+      - gerade scharfe Kanten (LSD) werden als TRENNWÄNDE in den flachen Kern gelegt -> große
+        Flächen werden dort geteilt, wo eine scharfe Kante durchläuft."""
     from scipy.ndimage import label as _lab, binary_dilation
     NY, NX = Hf.shape
     s, up = sharpness(Hf, cell); cell2 = cell / up
     sharp = s > np.percentile(s, sharp_pct)
     zu = cv2.resize(gaussian_filter(Hf, 1.0), (NX*up, NY*up), interpolation=cv2.INTER_CUBIC)
+    Hu = cv2.resize(Hf, (NX*up, NY*up), interpolation=cv2.INTER_CUBIC)
     gx, gy = np.gradient(zu, cell2)
     slope = np.degrees(np.arctan(np.hypot(gx, gy)))
-    flatcore = (slope < flat_slope) & (~sharp)
-    lab, nl = _lab(flatcore)
-    polys = []
-    for li in range(1, nl+1):
-        m = lab == li
-        area = m.sum() * cell2 * cell2
-        if area < min_area_mm2:
-            continue
-        ring = binary_dilation(m, iterations=3) & (~m)
-        if ring.sum() == 0 or (sharp[ring].mean() < 0.33):     # Rand muss überwiegend scharf sein
-            continue
-        cnts, _ = cv2.findContours(m.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        if not cnts:
-            continue
-        c = max(cnts, key=cv2.contourArea).reshape(-1, 2).astype(float)
-        eps = rdp_mm / cell2
-        simp = cv2.approxPolyDP(c.astype(np.float32).reshape(-1, 1, 2), eps, True).reshape(-1, 2)
-        if len(simp) >= 4:
-            polys.append(simp * cell2)
+
     # gerade scharfe Kanten (LSD auf der Schärfe-Karte)
     sn = np.clip(s / (np.percentile(s, 99) + 1e-9), 0, 1)
     lines = cv2.createLineSegmentDetector().detect((sn*255).astype(np.uint8))[0]
     edges = []
+    barrier = np.zeros(s.shape, np.uint8)
     if lines is not None:
         for x0, y0, x1, y1 in lines.reshape(-1, 4):
-            if np.hypot(x1-x0, y1-y0)*cell2 >= 12:
+            if np.hypot(x1-x0, y1-y0)*cell2 >= min_edge_mm:
                 edges.append((x0*cell2, y0*cell2, x1*cell2, y1*cell2))
-    return polys, edges, cell2
+                cv2.line(barrier, (int(x0), int(y0)), (int(x1), int(y1)), 1, 3)   # Trennwand
+
+    flatcore = (slope < flat_slope) & (~sharp) & (barrier == 0)   # an geraden Kanten geteilt
+    lab, nl = _lab(flatcore)
+    yy, xx = np.mgrid[0:s.shape[0], 0:s.shape[1]]
+    surfaces = []
+    for li in range(1, nl+1):
+        m = lab == li
+        if m.sum() * cell2 * cell2 < min_area_mm2:
+            continue
+        ring = binary_dilation(m, iterations=4) & (~m)
+        if ring.sum() == 0 or (sharp[ring].mean() < 0.30):       # Rand überwiegend scharf = menschgemacht
+            continue
+        px = xx[m] * cell2; py = yy[m] * cell2; pz = Hu[m]
+        A = np.column_stack([px, py, np.ones_like(px)])
+        coef, *_ = np.linalg.lstsq(A, pz, rcond=None)
+        rms = float(np.sqrt(np.mean((A @ coef - pz)**2)))
+        if rms > max_rms:                                        # nur wirklich ebene Flächen
+            continue
+        cnts, _ = cv2.findContours(m.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if not cnts:
+            continue
+        c = max(cnts, key=cv2.contourArea).astype(np.float32)
+        simp = cv2.approxPolyDP(c, rdp_mm / cell2, True).reshape(-1, 2)
+        if len(simp) >= 4:
+            surfaces.append((simp * cell2, tuple(float(v) for v in coef), rms))
+    return surfaces, edges, cell2
 
 
 def main():
