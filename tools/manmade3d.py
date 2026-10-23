@@ -27,43 +27,32 @@ def main():
         for i in range(NX-1):
             p = j*NX+i; idx += [p, p+NX, p+1, p+1, p+NX, p+NX+1]
 
-    from matplotlib.path import Path as _MP
-    gx, gy = np.meshgrid(np.arange(NX)*cell, np.arange(NY)*cell)
-    gpts = np.column_stack([gx.ravel(), gy.ravel()])
-    FLAT = [0.26, 0.56, 0.86]      # blau = flache Fläche
-    STEEP = [0.95, 0.45, 0.12]     # orange = steile/senkrechte Fläche (Wand)
+    FLAT = [0.26, 0.56, 0.86]      # blau = flache/schräge Fläche
+    STEEP = [0.95, 0.45, 0.12]     # orange = steile Fläche (Wand)
     nflat = nsteep = 0
+
+    def proj(x, y, a, b, c):
+        # Punkt (x,y,Gelände) auf die gefittete Ebene projizieren -> Platte bleibt EBEN (sauber)
+        # und sitzt tight an der echten Fläche (kein Überschießen, egal wie steil).
+        z0 = a*x + b*y + c; n2 = a*a + b*b + 1.0; t = (zq(x, y) - z0) / n2
+        return x + a*t, y + b*t, z0 + t
+
     P = []
     for k, (poly, (av, bv, cvv), rms, pslope) in enumerate(surf):
-        steep = pslope >= 45.0
-        col = STEEP if steep else FLAT
-        nsteep += steep; nflat += not steep
+        col = STEEP if pslope >= 45.0 else FLAT
+        nsteep += pslope >= 45.0; nflat += pslope < 45.0
+        tri = []
+        for i in range(1, len(poly)-1):
+            for q in (0, i, i+1):
+                x, y = float(poly[q][0]), float(poly[q][1]); px, py, pz = proj(x, y, av, bv, cvv)
+                tri += ctr(px, py, pz+0.5)
         ed = []
         for i in range(len(poly)):
-            x, y = poly[i]; zz = zq(x, y) if steep else av*x+bv*y+cvv
-            ed += ctr(float(x), float(y), zz+0.8)
-            xn, yn = poly[(i+1) % len(poly)]; zn = zq(xn, yn) if steep else av*xn+bv*yn+cvv
-            ed += ctr(float(xn), float(yn), zn+0.8)
-        if steep:
-            # GRID-CLIP: Geländezellen im Umriss draped vernetzen (folgt der Wand, keine Fächer-Verzerrung)
-            inside = _MP(poly).contains_points(gpts).reshape(NY, NX)
-            V = []; F = []; gidx = -np.ones((NY, NX), int)
-            for j in range(NY):
-                for i in range(NX):
-                    if inside[j, i]:
-                        gidx[j, i] = len(V); V.append(ctr(i*cell, j*cell, float(Hf[j, i])+0.4))
-            for j in range(NY-1):
-                for i in range(NX-1):
-                    a0, b0, c0, d0 = gidx[j, i], gidx[j, i+1], gidx[j+1, i], gidx[j+1, i+1]
-                    if min(a0, b0, c0, d0) >= 0:
-                        F += [int(a0), int(c0), int(b0), int(b0), int(c0), int(d0)]
-            P.append({"vi": [c for v in V for c in v], "f": F, "e": ed, "c": col})
-        else:
-            tri = []
-            for i in range(1, len(poly)-1):
-                for q in (0, i, i+1):
-                    x, y = float(poly[q][0]), float(poly[q][1]); tri += ctr(x, y, av*x+bv*y+cvv+0.6)
-            P.append({"v": tri, "e": ed, "c": col})
+            x, y = float(poly[i][0]), float(poly[i][1]); px, py, pz = proj(x, y, av, bv, cvv)
+            ed += ctr(px, py, pz+0.7)
+            xn, yn = float(poly[(i+1) % len(poly)][0]), float(poly[(i+1) % len(poly)][1]); qx, qy, qz = proj(xn, yn, av, bv, cvv)
+            ed += ctr(qx, qy, qz+0.7)
+        P.append({"v": tri, "e": ed, "c": col})
 
     E = []
     for x0, y0, x1, y1 in edges:

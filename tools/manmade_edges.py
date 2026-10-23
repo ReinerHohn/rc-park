@@ -33,7 +33,7 @@ def sharpness(Hf, cell, smooth=1.0, up=4):
 
 
 def detect_manmade(Hf, cell, sharp_pct=90.0, flat_slope=22.0, min_area_mm2=200.0,
-                   rdp_mm=4.0, min_edge_mm=12.0, max_rms=4.0, steep_max_rms=8.0):
+                   rdp_mm=4.0, min_edge_mm=12.0, max_rms=4.0, steep_max_rms=3.0):
     """Menschgemachte Objekte = FLÄCHEN mit flachem Kern, die von SCHARFEN Kanten umschlossen sind,
     AN den geraden scharfen Kanten UNTERTEILT, je mit best-fit Ebene.
     Rückgabe: (surfaces[(poly_mm,(a,b,c),rms)], edges[(x0,y0,x1,y1)], cell2).
@@ -62,14 +62,14 @@ def detect_manmade(Hf, cell, sharp_pct=90.0, flat_slope=22.0, min_area_mm2=200.0
 
     yy, xx = np.mgrid[0:s.shape[0], 0:s.shape[1]]
 
-    def collect(core, rms_cap):
+    def collect(core, rms_cap, min_a):
         """Zusammenhängende planare Flächen aus einem Kern-Maske-Kriterium: Rand muss scharf sein,
-        Fläche wirklich eben (RMS <= rms_cap). Gibt Liste (poly_mm,(a,b,c),rms,pslope)."""
+        Fläche wirklich eben (RMS <= rms_cap), mind. min_a mm². Gibt (poly_mm,(a,b,c),rms,pslope)."""
         res = []
         lab, nl = _lab(core)
         for li in range(1, nl+1):
             m = lab == li
-            if m.sum() * cell2 * cell2 < min_area_mm2:
+            if m.sum() * cell2 * cell2 < min_a:
                 continue
             ring = binary_dilation(m, iterations=4) & (~m)
             if ring.sum() == 0 or (sharp[ring].mean() < 0.30):   # Rand überwiegend scharf = menschgemacht
@@ -91,8 +91,10 @@ def detect_manmade(Hf, cell, sharp_pct=90.0, flat_slope=22.0, min_area_mm2=200.0
         return res
 
     free = (~sharp) & (barrier == 0)
-    flat_surf = collect((slope < flat_slope) & free, max_rms)                   # flache Flächen (streng)
-    steep_surf = collect((slope >= flat_slope) & (slope < 85.0) & free, steep_max_rms)  # ebene Wände
+    flat_surf = collect((slope < flat_slope) & free, max_rms, min_area_mm2)             # flache + schräge Ebenen
+    # schräge bis steile Ebenen (Bahndamm, Einschnitt-Wände). NICHT bis fast-senkrecht (verbindet
+    # alle Steilklippen zu einem Klumpen); bis 80° deckt Wände ab, die als Ebene darstellbar sind.
+    steep_surf = collect((slope >= flat_slope) & (slope < 80.0) & free, steep_max_rms, min_area_mm2)
     return flat_surf + steep_surf, edges, cell2
 
 
