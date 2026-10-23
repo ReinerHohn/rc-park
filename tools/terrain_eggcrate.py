@@ -230,11 +230,63 @@ def adaptive_pos(detail, n, lo, hi, cell, min_gap, max_gap=None):
     return np.array(sorted({round(p, 2) for p in pos}))
 
 
-def rib_positions(Hf, cell, nx, ny, min_gap, max_gap=None, uniform=False):
+def _edge_peaks(Hf, cell, axis, lo, hi, min_gap, pct):
+    """Positionen (mm) starker BRUCHKANTEN entlang einer Achse: wo das Gelände einen
+    scharfen Gradient-Grat hat (gerade Man-made-Kanten — Einschnitt-Oberkante, Portal-
+    Stirn, Felssporn-Grat). Projektion per MAX über die Gegenachse, damit eine KURZE
+    scharfe Kante nicht im Mittel untergeht (gleiche Philosophie wie der 1.0*Max-Term
+    unten). Rückgabe: Positionen nach Stärke absteigend, mind. min_gap auseinander."""
+    from scipy.ndimage import gaussian_filter
+    Hs = gaussian_filter(Hf, 1.0)
+    gy, gx = np.gradient(Hs)
+    G = np.hypot(gx, gy)
+    prof = G.max(axis=0) if axis == "x" else G.max(axis=1)   # x: vertikale Kanten -> Profil über Spalten
+    thr = np.percentile(prof, pct)
+    cand = []
+    for i in range(1, len(prof) - 1):
+        if prof[i] >= thr and prof[i] >= prof[i-1] and prof[i] >= prof[i+1]:
+            x = (i + 0.5) * cell
+            if lo <= x <= hi:
+                cand.append((x, float(prof[i])))
+    cand.sort(key=lambda t: -t[1])                           # stärkste Kante zuerst
+    picked = []
+    for x, _s in cand:
+        if all(abs(x - p) >= min_gap for p in picked):
+            picked.append(x)
+    return picked
+
+
+def _snap_to_edges(pos, edges, min_gap):
+    """Rippen auf Bruchkanten einrasten: die nächste vorhandene Rippe innerhalb min_gap
+    EXAKT auf die Kante ziehen; sonst (Platz frei) eine neue Rippe auf der Kante einfügen.
+    Danach min_gap durchsetzen (Snap-Kollisionen verwerfen). Stärkste Kante zuerst, damit
+    sie bei Konkurrenz gewinnt. Ergänzt die krümmungsbasierte Verteilung, ERSETZT keine
+    bestehende Rippe und verwirft keine (edges liegen bereits im [lo,hi]-Fenster)."""
+    pos = [float(p) for p in pos]
+    for e in edges:                                          # bereits nach Stärke sortiert
+        if not pos:
+            pos.append(e); continue
+        j = min(range(len(pos)), key=lambda k: abs(pos[k] - e))
+        if abs(pos[j] - e) <= min_gap:
+            pos[j] = e                                       # nächste Rippe exakt auf die Kante
+        elif all(abs(e - p) >= min_gap for p in pos):
+            pos.append(e)                                    # genug Platz -> neue Rippe auf der Kante
+    pos = sorted({round(p, 2) for p in pos})
+    out = []
+    for p in pos:                                            # min_gap durchsetzen (leftmost gewinnt)
+        if not out or p - out[-1] >= min_gap - 1e-6:
+            out.append(p)
+    return np.array(out)
+
+
+def rib_positions(Hf, cell, nx, ny, min_gap, max_gap=None, uniform=False, snap=False, snap_pct=92.0):
     """DIE eine Quelle der Rippen-X/Y-Positionen — genutzt von Gerüst UND Deckplatten,
     damit die Platten exakt zwischen die Rippen passen. Dichte folgt der SCHÄRFE:
     Detail je Spalte = 0.5*Summe (breite Krümmung) + 1.0*Max (eine scharfe Kante zieht
-    die Dichte hoch, geht nicht im Spaltenmittel unter)."""
+    die Dichte hoch, geht nicht im Spaltenmittel unter).
+    snap=True rastet zusätzlich auf starke BRUCHKANTEN ein (scharfe gerade Kanten am
+    Tunnel/Einschnitt/Portal, die im Krümmungs-Budget untergehen) -> keine treppige
+    Silhouette mehr an diesen Kanten."""
     from scipy.ndimage import gaussian_filter
     NY, NX = Hf.shape; Wx, Dy = NX*cell, NY*cell
     if uniform:
@@ -246,8 +298,12 @@ def rib_positions(Hf, cell, nx, ny, min_gap, max_gap=None, uniform=False):
         s = c.sum(axis=axis); m = c.max(axis=axis)
         s /= (s.max() + 1e-9); m /= (m.max() + 1e-9)
         return 0.5*s + 1.0*m
-    xpos = adaptive_pos(sharp(cx, 0), nx, Wx*0.06, Wx*0.94, cell, min_gap, max_gap)
-    ypos = adaptive_pos(sharp(cy, 1), ny, Dy*0.06, Dy*0.94, cell, min_gap, max_gap)
+    xlo, xhi = Wx*0.06, Wx*0.94; ylo, yhi = Dy*0.06, Dy*0.94
+    xpos = adaptive_pos(sharp(cx, 0), nx, xlo, xhi, cell, min_gap, max_gap)
+    ypos = adaptive_pos(sharp(cy, 1), ny, ylo, yhi, cell, min_gap, max_gap)
+    if snap:
+        xpos = _snap_to_edges(xpos, _edge_peaks(Hf, cell, "x", xlo, xhi, min_gap, snap_pct), min_gap)
+        ypos = _snap_to_edges(ypos, _edge_peaks(Hf, cell, "y", ylo, yhi, min_gap, snap_pct), min_gap)
     return xpos, ypos
 
 
@@ -350,6 +406,8 @@ def main():
     ap.add_argument("--uniform", action="store_true", help="gleichmäßiges Raster statt adaptiv (Default: adaptiv nach Krümmung)")
     ap.add_argument("--min-gap", type=float, default=7.0, help="Mindestabstand zwischen Rippen mm — so eng dürfen scharfe Kanten die Rippen packen")
     ap.add_argument("--max-gap", type=float, default=0.0, help="Max Rippenabstand mm in flachen Zonen (0=auto)")
+    ap.add_argument("--snap-edges", action="store_true", help="Rippen zusätzlich auf starke BRUCHKANTEN (Gradient-Grate) snappen — fängt scharfe gerade Kanten (Einschnitt/Portal/Felssporn), die im Krümmungs-Budget untergehen")
+    ap.add_argument("--snap-pct", type=float, default=92.0, help="Perzentil-Schwelle für Bruchkanten-Stärke (höher = nur die schärfsten Kanten bekommen eine Rippe)")
     ap.add_argument("--split-len", type=float, default=0.0, help="lange Rippen in Puzzle-Stücke <= N mm mit Fingerzinken teilen (spart Verschnitt); 0=aus")
     ap.add_argument("--finger", type=float, default=12.0, help="Fingerzinken-Höhe (mm) entlang der Naht")
     ap.add_argument("--thickness", type=float, default=3.0)
@@ -438,7 +496,7 @@ def main():
         return cuts
 
     mg = a.max_gap if a.max_gap > 0 else None
-    xpos, ypos = rib_positions(Hf, cell, a.nx, a.ny, a.min_gap, mg, a.uniform)
+    xpos, ypos = rib_positions(Hf, cell, a.nx, a.ny, a.min_gap, mg, a.uniform, a.snap_edges, a.snap_pct)
     slotw = a.thickness + a.fit
     made = []; oversize = []
     manifest = [f"EGG-CRATE Gerüst  {Wx:.0f}x{Dy:.0f} mm, Höhe bis {Hf.max():.0f} mm "
