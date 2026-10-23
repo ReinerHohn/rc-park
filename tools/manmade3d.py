@@ -27,10 +27,13 @@ def main():
         for i in range(NX-1):
             p = j*NX+i; idx += [p, p+NX, p+1, p+1, p+NX, p+NX+1]
 
-    PAL = [[0.26, 0.56, 0.86], [0.42, 0.72, 0.34], [0.85, 0.58, 0.16], [0.62, 0.40, 0.78],
-           [0.30, 0.74, 0.74], [0.85, 0.44, 0.62], [0.74, 0.42, 0.12]]
+    FLAT = [0.26, 0.56, 0.86]      # blau = flache Fläche
+    STEEP = [0.95, 0.45, 0.12]     # orange = steile/senkrechte Fläche (Wand)
+    nflat = nsteep = 0
     P = []
-    for k, (poly, (av, bv, cvv), rms) in enumerate(surf):
+    for k, (poly, (av, bv, cvv), rms, pslope) in enumerate(surf):
+        col = STEEP if pslope >= 45.0 else FLAT
+        nsteep += pslope >= 45.0; nflat += pslope < 45.0
         tri = []
         for i in range(1, len(poly)-1):
             for q in (0, i, i+1):
@@ -39,7 +42,7 @@ def main():
         for i in range(len(poly)):
             x, y = poly[i]; ed += ctr(float(x), float(y), av*x+bv*y+cvv+1.0)
             xn, yn = poly[(i+1) % len(poly)]; ed += ctr(float(xn), float(yn), av*xn+bv*yn+cvv+1.0)
-        P.append({"v": tri, "e": ed, "c": PAL[k % len(PAL)]})
+        P.append({"v": tri, "e": ed, "c": col})
 
     E = []
     for x0, y0, x1, y1 in edges:
@@ -52,8 +55,9 @@ def main():
             '#i{position:fixed;top:8px;left:8px;background:#000b;color:#fff;padding:7px 11px;border-radius:7px;font-size:13px}</style>'
             '<script src="https://unpkg.com/three@0.137.5/build/three.min.js"></script>'
             '<script src="https://unpkg.com/three@0.137.5/examples/js/controls/OrbitControls.js"></script></head><body>'
-            '<div id=i><b>Menschgemachte Objekte</b> &mdash; farbige Flaechen = ebene Platten ('+str(len(surf))+'), '
-            '<span style=color:#ff3b3b>rot</span> = scharfe Kanten ('+str(len(edges))+') &middot; glattes Gelaende neutral &middot; Maus dreht</div>'
+            '<div id=i><b>Menschgemachte Objekte</b> &mdash; <span style=color:#4a90e0>blau</span> = flache, '
+            '<span style=color:#f27420>orange</span> = steile/senkrechte Flaechen ('+str(nflat)+' flach / '+str(nsteep)+' steil), '
+            '<span style=color:#ff3b3b>rot</span> = scharfe Kanten ('+str(len(edges))+') &middot; Maus dreht</div>'
             '<script>const D=' + json.dumps(D) + ';'
             'const sc=new THREE.Scene();sc.background=new THREE.Color(0xeef2f6);'
             'const cam=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,0.1,99999);'

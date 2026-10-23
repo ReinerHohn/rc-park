@@ -33,7 +33,7 @@ def sharpness(Hf, cell, smooth=1.0, up=4):
 
 
 def detect_manmade(Hf, cell, sharp_pct=90.0, flat_slope=22.0, min_area_mm2=200.0,
-                   rdp_mm=4.0, min_edge_mm=12.0, max_rms=5.0):
+                   rdp_mm=4.0, min_edge_mm=12.0, max_rms=4.0, steep_max_rms=8.0):
     """Menschgemachte Objekte = FLÄCHEN mit flachem Kern, die von SCHARFEN Kanten umschlossen sind,
     AN den geraden scharfen Kanten UNTERTEILT, je mit best-fit Ebene.
     Rückgabe: (surfaces[(poly_mm,(a,b,c),rms)], edges[(x0,y0,x1,y1)], cell2).
@@ -60,31 +60,40 @@ def detect_manmade(Hf, cell, sharp_pct=90.0, flat_slope=22.0, min_area_mm2=200.0
                 edges.append((x0*cell2, y0*cell2, x1*cell2, y1*cell2))
                 cv2.line(barrier, (int(x0), int(y0)), (int(x1), int(y1)), 1, 3)   # Trennwand
 
-    flatcore = (slope < flat_slope) & (~sharp) & (barrier == 0)   # an geraden Kanten geteilt
-    lab, nl = _lab(flatcore)
     yy, xx = np.mgrid[0:s.shape[0], 0:s.shape[1]]
-    surfaces = []
-    for li in range(1, nl+1):
-        m = lab == li
-        if m.sum() * cell2 * cell2 < min_area_mm2:
-            continue
-        ring = binary_dilation(m, iterations=4) & (~m)
-        if ring.sum() == 0 or (sharp[ring].mean() < 0.30):       # Rand überwiegend scharf = menschgemacht
-            continue
-        px = xx[m] * cell2; py = yy[m] * cell2; pz = Hu[m]
-        A = np.column_stack([px, py, np.ones_like(px)])
-        coef, *_ = np.linalg.lstsq(A, pz, rcond=None)
-        rms = float(np.sqrt(np.mean((A @ coef - pz)**2)))
-        if rms > max_rms:                                        # nur wirklich ebene Flächen
-            continue
-        cnts, _ = cv2.findContours(m.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        if not cnts:
-            continue
-        c = max(cnts, key=cv2.contourArea).astype(np.float32)
-        simp = cv2.approxPolyDP(c, rdp_mm / cell2, True).reshape(-1, 2)
-        if len(simp) >= 4:
-            surfaces.append((simp * cell2, tuple(float(v) for v in coef), rms))
-    return surfaces, edges, cell2
+
+    def collect(core, rms_cap):
+        """Zusammenhängende planare Flächen aus einem Kern-Maske-Kriterium: Rand muss scharf sein,
+        Fläche wirklich eben (RMS <= rms_cap). Gibt Liste (poly_mm,(a,b,c),rms,pslope)."""
+        res = []
+        lab, nl = _lab(core)
+        for li in range(1, nl+1):
+            m = lab == li
+            if m.sum() * cell2 * cell2 < min_area_mm2:
+                continue
+            ring = binary_dilation(m, iterations=4) & (~m)
+            if ring.sum() == 0 or (sharp[ring].mean() < 0.30):   # Rand überwiegend scharf = menschgemacht
+                continue
+            px = xx[m] * cell2; py = yy[m] * cell2; pz = Hu[m]
+            A = np.column_stack([px, py, np.ones_like(px)])
+            coef, *_ = np.linalg.lstsq(A, pz, rcond=None)
+            rms = float(np.sqrt(np.mean((A @ coef - pz)**2)))
+            if rms > rms_cap:                                    # nur wirklich ebene Flächen
+                continue
+            pslope = float(np.degrees(np.arctan(np.hypot(coef[0], coef[1]))))
+            cnts, _ = cv2.findContours(m.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            if not cnts:
+                continue
+            c = max(cnts, key=cv2.contourArea).astype(np.float32)
+            simp = cv2.approxPolyDP(c, rdp_mm / cell2, True).reshape(-1, 2)
+            if len(simp) >= 4:
+                res.append((simp * cell2, tuple(float(v) for v in coef), rms, pslope))
+        return res
+
+    free = (~sharp) & (barrier == 0)
+    flat_surf = collect((slope < flat_slope) & free, max_rms)                   # flache Flächen (streng)
+    steep_surf = collect((slope >= flat_slope) & (slope < 85.0) & free, steep_max_rms)  # ebene Wände
+    return flat_surf + steep_surf, edges, cell2
 
 
 def main():
