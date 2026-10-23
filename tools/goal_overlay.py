@@ -16,7 +16,7 @@ def main():
     Hf, cell = ip.load_hf(a); NY, NX = Hf.shape
     tr = np.load("modelle/hoellental_A3_set/track50.npy").astype(float); track = [list(p) for p in tr]
     poly = ipa.einschnitt_corridor_poly(Hf, cell, track)
-    segs = lsd_edges.detect_straight_edges(Hf, cell, min_len_mm=22.0)
+    segs = lsd_edges.detect_straight_edges(Hf, cell, min_len_mm=12.0)   # ALLE geraden Kanten
 
     cx = NX*cell/2; cz = NY*cell/2; cy = (float(Hf.min())+float(Hf.max()))/2
     zq = lambda x, y: float(Hf[min(int(y/cell), NY-1), min(int(x/cell), NX-1)])
