@@ -22,17 +22,24 @@ def hillshade(z, cell, az, alt):
     return np.clip(np.sin(al)*np.sin(slope) + np.cos(al)*np.cos(slope)*np.cos(a - asp), 0, 1)
 
 
-def detect_straight_edges(Hf, cell, up=4, graze_alt=8.0, azimuths=(0, 45, 90, 135),
+def detect_straight_edges(Hf, cell, up=4, graze_alt=8.0,
+                          azimuths=(0, 22, 45, 67, 90, 112, 135, 157),
                           min_len_mm=18.0, presmooth=5.0):
-    """Gerade Kanten (Welt-mm Segmente [[x0,y0,x1,y1],...]) via LSD auf Multi-Azimut-Streiflicht.
-    presmooth unterdrückt Mikro-Textur des DEM, damit LANGE Kanten überleben statt in Fragmente zu
-    zerfallen (ohne Glättung produziert die Naturrauheit nur <10mm-Splitter). Dedupliziert über Azimute."""
+    """Gerade Kanten (Welt-mm Segmente [[x0,y0,x1,y1],...]) via LSD. Zwei komplementäre Quellen gegen
+    den Richtungs-Bias (Kanten parallel zum Licht sind im Hillshade unsichtbar):
+      (1) 8-Azimut-Streiflicht-Hillshade (hebt scharfe Bruchkanten/Cliffs hervor),
+      (2) das SLOPE-Raster selbst (orientierungsUNabhängig — eine Kante ist dort eine Kante, egal
+          aus welcher Richtung). So werden auch die Hang-Kanten gefunden, die ein einzelner
+          Lichtwinkel verschluckt. presmooth unterdrückt Mikro-Textur, damit lange Kanten überleben."""
     NY, NX = Hf.shape
     zu = cv2.resize(gaussian_filter(Hf, presmooth), (NX*up, NY*up), interpolation=cv2.INTER_CUBIC)
     lsd = cv2.createLineSegmentDetector()
+    rasters = [(hillshade(zu, cell/up, az, graze_alt) * 255).astype(np.uint8) for az in azimuths]
+    gx, gy = np.gradient(zu, cell/up)                      # (2) Slope-Raster, orientierungsunabhängig
+    slope = np.degrees(np.arctan(np.hypot(gx, gy)))
+    rasters.append((np.clip(slope / max(1.0, slope.max()), 0, 1) * 255).astype(np.uint8))
     segs = []
-    for az in azimuths:
-        g = (hillshade(zu, cell/up, az, graze_alt) * 255).astype(np.uint8)
+    for g in rasters:
         lines = lsd.detect(g)[0]
         if lines is None:
             continue
