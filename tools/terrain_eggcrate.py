@@ -105,7 +105,7 @@ new THREE.GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  root.position.sub(c);sc.add(root);
  root.traverse(o=>{if(o.isMesh){
   if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0x6d5c3e,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.5,flatShading:true});o.visible=true;relief=o;return;}
-  if(/^TUNNEL/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,depthTest:false,transparent:true,opacity:0.95});o.renderOrder=999;extras.push(o);tunnels.push(o);return;}
+  if(/^TUNNEL/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,depthTest:false,transparent:true,opacity:0.95});o.renderOrder=999;o.visible=false;extras.push(o);tunnels.push(o);return;}
   if(/^PLATTE/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,transparent:true,opacity:0.9});extras.push(o);return;}
   const hue=((meshes.length*137.508)%360)/360,col=new THREE.Color().setHSL(hue,0.58,0.55);
   o.material=new THREE.MeshStandardMaterial({color:col,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
@@ -777,6 +777,8 @@ def main():
                     _WV += [[_L[i, 0], _L[i, 1], _z0], [_L[i, 0], _L[i, 1], _z1],
                             [_R[i, 0], _R[i, 1], _z0], [_R[i, 0], _R[i, 1], _z1]]
                 for i in range(len(track) - 1):
+                    if not (track[i][3] > 0.5 and track[i + 1][3] > 0.5):           # Galerie NUR über Tunnel-Abschnitt, nicht die offene Strecke
+                        continue
                     _b = 4 * i
                     _WF += [[_b, _b + 1, _b + 5], [_b, _b + 5, _b + 4]]              # linke Wand
                     _WF += [[_b + 2, _b + 6, _b + 7], [_b + 2, _b + 7, _b + 3]]      # rechte Wand
