@@ -18,7 +18,7 @@ import argparse, os, sys, numpy as np, matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.colors import LightSource
-from scipy.ndimage import gaussian_filter, label as _label, binary_opening, binary_closing, binary_fill_holes, binary_dilation
+from scipy.ndimage import gaussian_filter, label as _label, binary_opening, binary_closing, binary_fill_holes, binary_dilation, binary_erosion, distance_transform_edt
 from scipy.interpolate import RegularGridInterpolator
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import insert_plate as ip
@@ -50,13 +50,31 @@ def rib_miss_mask(Hf, cell, xpos, ypos, thresh):
     return err, err > thresh
 
 
-def detect_regions(slope, cell, lo_deg, hi_deg, min_area, close_mm, fill, gate=None):
-    """Zusammenhängende Bereiche mit Neigung in [lo,hi] (optional nur innerhalb gate) als Masken."""
+def detect_regions(slope, cell, lo_deg, hi_deg, min_area, close_mm, fill, gate=None, split_mm=0.0):
+    """Zusammenhängende Bereiche mit Neigung in [lo,hi] (optional nur innerhalb gate) als Masken.
+    split_mm>0: GROSSE Flächen an Engstellen (Necks schmaler als ~2*split_mm) auftrennen — Erosion
+    trennt die Bänke, Distanz-Transform wächst jede wieder bis zur Flächen-Grenze zurück. So wird
+    der zusammenhängende Talboden in einzelne Bänke/Platten zerlegt statt EIN Riesen-Blob."""
     sel = (slope >= lo_deg) & (slope <= hi_deg)
     if gate is not None:
         sel = sel & gate
     r = max(1, int(round(close_mm / cell)))
     sel = binary_closing(binary_opening(sel, iterations=1), iterations=r)
+    if split_mm > 0:
+        core = binary_erosion(sel, iterations=max(1, int(round(split_mm / cell))))
+        lab, n = _label(core)
+        if n >= 1:
+            idx = distance_transform_edt(lab == 0, return_distances=False, return_indices=True)
+            grown = lab[tuple(idx)]; grown[~sel] = 0
+            out = []
+            for i in range(1, n + 1):
+                m = grown == i
+                if fill:
+                    m = binary_fill_holes(m)
+                if m.sum() * cell * cell >= min_area:
+                    out.append(m)
+            out.sort(key=lambda m: -m.sum())
+            return out
     lab, n = _label(sel)
     out = []
     for i in range(1, n + 1):
@@ -66,6 +84,34 @@ def detect_regions(slope, cell, lo_deg, hi_deg, min_area, close_mm, fill, gate=N
         if m.sum() * cell * cell >= min_area:
             out.append(m)
     out.sort(key=lambda m: -m.sum())
+    return out
+
+
+def seed_regions(slope, cell, seeds, slope_max, min_area, close_mm):
+    """MANUELL: je Seed-Punkt (x,y mm) EINE flache Platte = die flache Bank um den Punkt,
+    aufgeteilt per Voronoi (jeder Seed bekommt den ihm nächsten Teil der Flachfläche) und auf
+    den flachen Teil (Neigung <= slope_max) begrenzt. Du bestimmst WO, der Code schneidet die
+    echte Flach→Steil-Kante. So kriegst du exakt deine Einteilung mit echten Kanten."""
+    NY, NX = slope.shape
+    flat = (slope <= slope_max)
+    r = max(1, int(round(close_mm / cell)))
+    flat = binary_closing(binary_opening(flat, iterations=1), iterations=r)
+    marker = np.zeros((NY, NX), int); rc = []
+    for k, (sx, sy) in enumerate(seeds):
+        p = (min(max(int(sy / cell), 0), NY - 1), min(max(int(sx / cell), 0), NX - 1))
+        rc.append(p); marker[p] = k + 1
+    idx = distance_transform_edt(marker == 0, return_distances=False, return_indices=True)
+    vor = marker[tuple(idx)]                                   # Voronoi-Zuordnung zu den Seeds
+    out = []
+    for k, p in enumerate(rc):
+        m = (vor == k + 1) & flat
+        lab, n = _label(m)
+        if n == 0:
+            continue
+        sl = lab[p] if lab[p] > 0 else 1 + int(np.argmax([(lab == i).sum() for i in range(1, n + 1)]))
+        m = binary_fill_holes(lab == sl)
+        if m.sum() * cell * cell >= min_area:
+            out.append(m)
     return out
 
 
@@ -104,12 +150,14 @@ def main():
     ap.add_argument("--close-mm", type=float, default=3.0, help="Lücken bis N mm schließen (kleiner = mehr getrennte Bereiche)")
     ap.add_argument("--seg-smooth", type=float, default=3.5, help="Glättung Neigungsfeld px (HÖHER = ignoriert Flach-Wackeln, ruhigere Bänke)")
     ap.add_argument("--need-steep-edge", type=int, default=1, help="1=nur Flächen, die an eine Steilkante grenzen (echte Flach→Steil-Kante); 0=alle flachen")
+    ap.add_argument("--split-necks", type=float, default=7.0, help="große Flächen an Engstellen (schmaler als ~2*N mm) in einzelne Bänke/Platten auftrennen (0=aus, EIN Blob)")
     # STEIL (vertikale Wände)
     ap.add_argument("--steep-min", type=float, default=55.0, help="ab dieser Neigung = steile Wand (vertikale Platte)")
     ap.add_argument("--wall-min-area", type=float, default=200.0, help="min Wand-Fläche mm²")
     ap.add_argument("--wall-max-area", type=float, default=3000.0, help="max Wand-Grundriss mm² — nur LOKALE Steilwände (Tunnel/Stützmauer), keine ganzen Hänge")
     ap.add_argument("--rib-miss", type=float, default=0.0, help="optional: Platte nur wo Rippen die Form um >N mm verfehlen (0=aus; reagiert sonst auf Flach-Wackeln)")
     ap.add_argument("--contour-simplify", type=float, default=2.5, help="Kontur-Punkte mind. N mm auseinander")
+    ap.add_argument("--seeds", default="", help="MANUELL: Platten-Stellen 'x,y x,y ...' (mm). Je Seed EINE Platte (flache Bank um den Punkt, echte Kante). Leer=Auto.")
     ap.add_argument("--max-plates", type=int, default=8); ap.add_argument("--max-walls", type=int, default=6)
     ap.add_argument("--feed", type=float, default=150); ap.add_argument("--power", type=float, default=100)
     ap.add_argument("--passes", type=int, default=4); ap.add_argument("--eng-power", type=float, default=85)
@@ -124,10 +172,13 @@ def main():
     slope = slope_field(Hf, cell, a.seg_smooth)
     gate = rib_miss_mask(Hf, cell, xpos, ypos, a.rib_miss)[1] if a.rib_miss > 0 else None
     steepmask = slope >= a.steep_min
-    flats_all = detect_regions(slope, cell, 0.0, a.slope_max, a.min_area, a.close_mm, True, gate)
-    # Nur FLACHE Bänke, die an eine STEILKANTE grenzen (echte Flach→Steil-Kante); mitten-im-Flachen raus.
-    flats = [m for m in flats_all
-             if (not a.need_steep_edge) or (binary_dilation(m, iterations=3) & steepmask).any()][:a.max_plates]
+    if a.seeds.strip():                                       # MANUELL: du gibst die Stellen vor
+        _sd = [tuple(float(v) for v in s.split(",")) for s in a.seeds.split()]
+        flats = seed_regions(slope, cell, _sd, a.slope_max, a.min_area, a.close_mm)[:a.max_plates]
+    else:                                                     # AUTO: flache Bänke an Steilkanten
+        flats_all = detect_regions(slope, cell, 0.0, a.slope_max, a.min_area, a.close_mm, True, gate, a.split_necks)
+        flats = [m for m in flats_all
+                 if (not a.need_steep_edge) or (binary_dilation(m, iterations=3) & steepmask).any()][:a.max_plates]
     walls = [m for m in detect_regions(slope, cell, a.steep_min, 90.0, a.wall_min_area, a.close_mm, False, gate)
              if m.sum() * cell * cell <= a.wall_max_area][:a.max_walls]   # nur lokale Wände (keine ganzen Hänge)
 
@@ -198,6 +249,8 @@ def main():
         ax.fill(p[:, 0], p[:, 1], facecolor="none", edgecolor="red", linewidth=2.0, hatch="///")
         ax.text(p[:, 0].mean(), p[:, 1].mean(), f"W{k}", color="red", ha="center", va="center", fontsize=8, fontweight="bold")
     ax.set_xlim(0, Wx); ax.set_ylim(0, Dy); ax.set_aspect("equal")
+    ax.set_xticks(np.arange(0, Wx + 1, 20)); ax.set_yticks(np.arange(0, Dy + 1, 20))
+    ax.grid(True, color="w", alpha=0.3, lw=0.5)               # Gitter zum Ablesen der Seed-Koordinaten
     ax.set_title(f"{kept} flache Platten (farbig) + {kw} steile Wände (rot) — auf echte Kontur")
     ax.set_xlabel("x [mm]"); ax.set_ylabel("y [mm]")
     plt.tight_layout(); png = os.path.join(a.out, "_platten_overview.png"); plt.savefig(png, dpi=130)
