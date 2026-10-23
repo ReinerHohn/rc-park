@@ -846,7 +846,9 @@ def main():
             _zc = lambda x, y: float(Hf[min(int(y/cell), Hf.shape[0]-1), min(int(x/cell), Hf.shape[1]-1)])
             for _k, (_p, _coef, _rms, _ps) in enumerate(_surf):
                 _col = [240, 140, 30, 255] if _ps >= 45 else [60, 150, 230, 255]   # orange steil / blau flach
-                _V = np.array([[float(x), float(y), _zc(x, y) + 0.6] for x, y in _p])
+                # flach -> perfekte Ebene (plan-gefittet); steil -> drapen (kein Überschießen)
+                _zf = (lambda x, y: _zc(x, y)) if _ps >= 45 else (lambda x, y, _c=_coef: _c[0]*x + _c[1]*y + _c[2])
+                _V = np.array([[float(x), float(y), _zf(x, y) + 0.6] for x, y in _p])
                 _F = np.array([[0, i, i + 1] for i in range(1, len(_p) - 1)])
                 extra_meshes.append((f"FLAECHE{_k}", _tm.Trimesh(_V, _F, process=False), _col))
             for (x0, y0, x1, y1) in _edg:

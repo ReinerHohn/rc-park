@@ -34,15 +34,17 @@ def main():
     for k, (poly, (av, bv, cvv), rms, pslope) in enumerate(surf):
         col = STEEP if pslope >= 45.0 else FLAT
         nsteep += pslope >= 45.0; nflat += pslope < 45.0
-        # ECHTE Geländehöhe (drapen) statt extrapolierter Ebene -> kein Überschießen an Steilwänden
+        # ORIENTIERUNGSABHÄNGIG: flach -> perfekte Ebene (plan-gefittet, sauber); steil -> drapen
+        # (echte Höhe, kein Überschießen).
+        zf = (lambda x, y: zq(x, y)) if pslope >= 45.0 else (lambda x, y: av*x+bv*y+cvv)
         tri = []
         for i in range(1, len(poly)-1):
             for q in (0, i, i+1):
-                x, y = float(poly[q][0]), float(poly[q][1]); tri += ctr(x, y, zq(x, y)+0.6)
+                x, y = float(poly[q][0]), float(poly[q][1]); tri += ctr(x, y, zf(x, y)+0.6)
         ed = []
         for i in range(len(poly)):
-            x, y = poly[i]; ed += ctr(float(x), float(y), zq(x, y)+0.8)
-            xn, yn = poly[(i+1) % len(poly)]; ed += ctr(float(xn), float(yn), zq(xn, yn)+0.8)
+            x, y = poly[i]; ed += ctr(float(x), float(y), zf(float(x), float(y))+0.8)
+            xn, yn = poly[(i+1) % len(poly)]; ed += ctr(float(xn), float(yn), zf(float(xn), float(yn))+0.8)
         P.append({"v": tri, "e": ed, "c": col})
 
     E = []
