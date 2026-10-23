@@ -769,8 +769,13 @@ def main():
                 for i in range(len(track) - 1):
                     _aa = 2 * i; _TF += [[_aa, _aa + 1, _aa + 2], [_aa + 1, _aa + 3, _aa + 2]]
                 extra_meshes.append(("TUNNEL_gleisbett", _tm.Trimesh(np.array(_TV), np.array(_TF, int), process=False), [70, 70, 70, 255]))
-                # TUNNEL-PLATTE = Trasse (Ort) + perp bis zur Einschnitt-Kante (echte BREITE), cyan, sichtbar
-                _tcp = _ipa.tunnel_cut_from_track(Hf, cell, track)
+                # EINSCHNITT-PLATTE = flach<->steil-Grenze am Trassen-Korridor (gerade Kanten, zuverlässig)
+                try:
+                    _tcp = _ipa.einschnitt_corridor_poly(Hf, cell, track)
+                except Exception:
+                    _tcp = None
+                if _tcp is None:
+                    _tcp = _ipa.tunnel_cut_from_track(Hf, cell, track)   # Fallback
                 if _tcp is not None and len(_tcp) >= 4:
                     _zq = lambda x, y: float(Hf[min(int(y / cell), Hf.shape[0] - 1), min(int(x / cell), Hf.shape[1] - 1)])
                     _PV = np.array([[float(x), float(y), _zq(x, y) + 2.0] for x, y in _tcp[:, :2]])
