@@ -413,7 +413,7 @@ def main():
     ap.add_argument("--thickness", type=float, default=3.0)
     ap.add_argument("--rib-depth", type=float, default=0.0, help="Rippen als konstant-tiefes Band (mm unter Oberkante) statt bis Boden -> spart Material; 0=bis Boden")
     ap.add_argument("--base", type=float, default=12.0, help="Sockel mm: Gelände anheben, damit Rippen am Talboden nicht auf 0 pinchen (gegen 'schwebende' Teile)")
-    ap.add_argument("--fit", type=float, default=0.15, help="Schlitz-Spiel mm")
+    ap.add_argument("--fit", type=float, default=-0.4, help="Schlitz-Spiel mm (slotw = Dicke + fit). KALIBRIERT für 3 mm Pappelsperrholz am Sculpfun S9: -0.4 (Schlitz 2.6 mm) steckt satt mit etwas Spiel (Steck-Test joint_fit_test.py, 26 perfekt); -0.5 (2.5 mm) war zu stramm. Bei anderem Material/Laser neu kalibrieren.")
     ap.add_argument("--vscale", type=float, default=1.0, help="Höhen-Überhöhung (1=true-N)")
     ap.add_argument("--trans-frac", type=float, default=0.85,
                     help="Übergangshöhe als Anteil der Max-Höhe: Gitter bis dahin, DÜNNER Kontur-Stack drüber (1.0=nur Gitter)")
