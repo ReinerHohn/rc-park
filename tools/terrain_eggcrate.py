@@ -95,7 +95,7 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None, 
 </head><body>
 <div id=bar>🔎 Teil-Nr: <input id=q placeholder="z.B. X0a oder 123" autofocus>
 <button onclick=find()>finden</button><button onclick=clr()>alle</button>
-<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=50 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tPlatten()>Platten ein/aus</button><button onclick=tTunnel() style="background:#ff5522;color:#fff">🚇 Tunnel</button><button onclick=tFlaechen() style="background:#1030c0;color:#fff">📐 Flächen</button><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
+<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=50 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tTunnel() style="background:#ff5522;color:#fff">🚇 Tunnel</button><button onclick=tFlaechen() style="background:#1030c0;color:#fff">📐 Flächen</button><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
 <div id=tip>1 Teil (z.B. Y10) -> leuchtet ROT wo es hinkommt · ZWEI Teile (klick+klick ODER „X8 Y10" tippen) -> rot+blau + GRUENE Kugel wo sie sich verbinden · Relief/Nummern ein-aus · 🧩 BAUSTAND an → Teil anklicken = „hab ich" (solide), Rest blass → mit echtem Modell abgleichen</div>
 <script>
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
@@ -753,20 +753,8 @@ def main():
         extra_meshes = []
         try:
             import insert_plates_auto as _ipa
-            _pal = [[181, 101, 29, 255], [66, 133, 204, 255], [102, 166, 74, 255],
-                    [217, 153, 33, 255], [148, 103, 189, 255], [87, 179, 186, 255]]
-            _k = 0
-            for _m in _ipa.segment_planes(Hf, cell, 2.5, 12.0, 120.0, 90.0):
-                if _ipa.fit_plane_mask(Hf, cell, _m)[3] > 3.0: continue   # nur saubere planare Flächen
-                _w = _ipa.mask_contour_mm(_m, cell, 2.5)
-                if _w is None or len(_w) < 4:
-                    continue
-                if _ipa.longest_straight_edge(_w) < 14.0: continue        # GERADE KANTEN = man-made (Tunnel/Trasse), kein krummes Naturgelände
-                _av, _bv, _cv, _r = _ipa.fit_plane_mask(Hf, cell, _m)
-                _V = np.array([[float(x), float(y), _av * x + _bv * y + _cv + 1.0] for x, y in _w])
-                _F = np.array([[0, i, i + 1] for i in range(1, len(_w) - 1)])
-                extra_meshes.append((f"PLATTE{_k}", _tm.Trimesh(_V, _F, process=False), _pal[_k % len(_pal)]))
-                _k += 1
+            # ALTE segment_planes-„PLATTEN" (Facetten-Gewirr) ENTFERNT — ersetzt durch die guten
+            # 📐 Flächen (manmade_edges: flach eben + steile Wände per Grid-Clip).
             # Tunnel-Teile als 3D-Ebene: Gleisbett-Band entlang der Trasse + einfache Portal-Galerie-Box
             if track:
                 _cl = np.array([[p[0], p[1]] for p in track]); _zt = np.array([p[2] for p in track])
