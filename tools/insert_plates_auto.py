@@ -200,15 +200,15 @@ def main():
     NY, NX = Hf.shape; Wx, Dy = NX * cell, NY * cell
     xpos, ypos = rib_positions(Hf, cell, a.nx, a.ny, a.min_gap, None, False, a.snap_edges, a.snap_pct)
     slope = slope_field(Hf, cell, a.seg_smooth)
-    gate = rib_miss_mask(Hf, cell, xpos, ypos, a.rib_miss)[1] if a.rib_miss > 0 else None
-    steepmask = slope >= a.steep_min
     if a.seeds.strip():                                       # MANUELL: du gibst die Stellen vor
         _sd = [tuple(float(v) for v in s.split(",")) for s in a.seeds.split()]
         flats = seed_regions(slope, cell, _sd, a.slope_max, a.min_area, a.close_mm)[:a.max_plates]
-    else:                                                     # AUTO: planare Flächen zusammenfassen, an Kanten trennen
-        flats = segment_planes(Hf, cell, a.seg_smooth, a.normal_tol, a.min_area, a.flat_max_slope)[:a.max_plates]
-    walls = [m for m in detect_regions(slope, cell, a.steep_min, 90.0, a.wall_min_area, a.close_mm, False, gate)
-             if m.sum() * cell * cell <= a.wall_max_area][:a.max_walls]   # nur lokale Wände (keine ganzen Hänge)
+        walls = []
+    else:                                                     # AUTO: ALLE planaren Facetten — flach=Platte, STEIL=Wand (gleiche Erkennung)
+        _ms = lambda m: float(np.median(slope[m]))
+        _facets = segment_planes(Hf, cell, a.seg_smooth, a.normal_tol, a.wall_min_area, 90.0)
+        flats = [m for m in _facets if _ms(m) < a.flat_max_slope and m.sum() * cell * cell >= a.min_area][:a.max_plates]
+        walls = [m for m in _facets if _ms(m) >= a.flat_max_slope and m.sum() * cell * cell <= a.wall_max_area][:a.max_walls]   # nur lokale Wände (keine ganzen Hänge)
 
     man = [f"AUTO-EINHÄNGPLATTEN — Fenster {Wx:.0f}x{Dy:.0f} mm", "", "FLACHE Platten (horizontal, auf echte Kontur):"]
     flat2d = []; wall2d = []; kept = 0
