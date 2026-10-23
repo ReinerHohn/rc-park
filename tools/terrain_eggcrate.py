@@ -756,6 +756,23 @@ def main():
                 _F = np.array([[0, i, i + 1] for i in range(1, len(_w) - 1)])
                 extra_meshes.append((f"PLATTE{_k}", _tm.Trimesh(_V, _F, process=False), _pal[_k % len(_pal)]))
                 _k += 1
+            # Tunnel-Teile als 3D-Ebene: Gleisbett-Band entlang der Trasse + einfache Portal-Galerie-Box
+            if track:
+                _cl = np.array([[p[0], p[1]] for p in track]); _zt = np.array([p[2] for p in track])
+                _dd = np.gradient(_cl, axis=0); _tt = _dd / np.maximum(np.hypot(_dd[:, 0], _dd[:, 1])[:, None], 1e-9)
+                _nn = np.column_stack([-_tt[:, 1], _tt[:, 0]]); _bw = CLEAR_W * 0.5
+                _L = _cl + _nn * _bw / 2; _R = _cl - _nn * _bw / 2
+                _TV = []; _TF = []
+                for i in range(len(track)):
+                    _TV.append([_L[i, 0], _L[i, 1], _zt[i] + 0.3]); _TV.append([_R[i, 0], _R[i, 1], _zt[i] + 0.3])
+                for i in range(len(track) - 1):
+                    _aa = 2 * i; _TF += [[_aa, _aa + 1, _aa + 2], [_aa + 1, _aa + 3, _aa + 2]]
+                extra_meshes.append(("TUNNEL_gleisbett", _tm.Trimesh(np.array(_TV), np.array(_TF, int), process=False), [70, 70, 70, 255]))
+                _pc = next((i for i in range(len(track) - 1) if track[i][3] and not track[i + 1][3]), None)
+                if _pc is not None:
+                    _box = _tm.creation.box(extents=[CLEAR_W * 0.5 + 4, 24.0, CLEAR_H * 0.5])
+                    _box.apply_translation([track[_pc][0], track[_pc][1], track[_pc][2] + CLEAR_H * 0.25])
+                    extra_meshes.append(("TUNNEL_galerie", _box, [120, 90, 60, 255]))
         except Exception:
             extra_meshes = []
         write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes)
