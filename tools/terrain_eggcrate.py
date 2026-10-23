@@ -97,7 +97,7 @@ new GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  const root=g.scene,bx=new THREE.Box3().setFromObject(root),c=bx.getCenter(new THREE.Vector3()),s=bx.getSize(new THREE.Vector3());
  root.position.sub(c);sc.add(root);
  root.traverse(o=>{if(o.isMesh){
-  if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0xc8b48c,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.65,flatShading:true});o.visible=false;relief=o;return;}
+  if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0xc8b48c,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.65,flatShading:true});o.visible=true;relief=o;return;}
   const hue=((meshes.length*137.508)%360)/360,col=new THREE.Color().setHSL(hue,0.58,0.55);
   o.material=new THREE.MeshStandardMaterial({color:col,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
   o.userData.base=col.getHex();meshes.push(o);}});

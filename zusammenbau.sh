@@ -22,11 +22,11 @@ if [ "${1:-}" = "--list" ] || [ "${1:-}" = "-l" ]; then
 fi
 
 DIR="${1:-modelle/hoellental_A3_set}"
-WHICH="${2:-fertig}"                 # fertig | rippen | assembled
+WHICH="${2:-voll}"                   # voll (Rippen + Haut-Deckkraft-Schieber + Teil-Suche + Baustand) | fertig (nur Haut+Platten) | assembled
 case "$WHICH" in
-  rippen|skelett) PREF=(_zusammenbau.html _assembled.html _fertig.html) ;;
-  assembled)      PREF=(_assembled.html _zusammenbau.html _fertig.html) ;;
-  *)              PREF=(_fertig.html _zusammenbau.html _assembled.html) ;;
+  fertig)    PREF=(_fertig.html _zusammenbau.html _assembled.html) ;;
+  assembled) PREF=(_assembled.html _zusammenbau.html _fertig.html) ;;
+  *)         PREF=(_zusammenbau.html _assembled.html _fertig.html) ;;
 esac
 
 HTML=""

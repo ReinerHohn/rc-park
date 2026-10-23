@@ -18,7 +18,7 @@ import argparse, os, sys, numpy as np, matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.colors import LightSource
-from scipy.ndimage import gaussian_filter, label as _label, binary_opening, binary_closing, binary_fill_holes
+from scipy.ndimage import gaussian_filter, label as _label, binary_opening, binary_closing, binary_fill_holes, binary_dilation
 from scipy.interpolate import RegularGridInterpolator
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import insert_plate as ip
@@ -99,15 +99,16 @@ def main():
     ap.add_argument("--snap-edges", action="store_true"); ap.add_argument("--snap-pct", type=float, default=92.0)
     ap.add_argument("--thickness", type=float, default=3.0); ap.add_argument("--dowel-d", type=float, default=3.2)
     # FLACH
-    ap.add_argument("--slope-max", type=float, default=22.0, help="bis zu dieser Neigung = 'flach' (horizontale Platte)")
-    ap.add_argument("--min-area", type=float, default=900.0, help="min Flachplatten-Fläche mm²")
-    ap.add_argument("--close-mm", type=float, default=2.5, help="Lücken bis N mm schließen (kleiner = mehr getrennte Bereiche)")
-    ap.add_argument("--seg-smooth", type=float, default=2.0, help="Glättung Neigungsfeld px (höher = ruhigere Bereiche)")
+    ap.add_argument("--slope-max", type=float, default=30.0, help="bis zu dieser Neigung = 'flach' (Bank reicht bis zur Flach→Steil-Kante)")
+    ap.add_argument("--min-area", type=float, default=800.0, help="min Flachplatten-Fläche mm²")
+    ap.add_argument("--close-mm", type=float, default=3.0, help="Lücken bis N mm schließen (kleiner = mehr getrennte Bereiche)")
+    ap.add_argument("--seg-smooth", type=float, default=3.5, help="Glättung Neigungsfeld px (HÖHER = ignoriert Flach-Wackeln, ruhigere Bänke)")
+    ap.add_argument("--need-steep-edge", type=int, default=1, help="1=nur Flächen, die an eine Steilkante grenzen (echte Flach→Steil-Kante); 0=alle flachen")
     # STEIL (vertikale Wände)
     ap.add_argument("--steep-min", type=float, default=55.0, help="ab dieser Neigung = steile Wand (vertikale Platte)")
     ap.add_argument("--wall-min-area", type=float, default=200.0, help="min Wand-Fläche mm²")
     ap.add_argument("--wall-max-area", type=float, default=3000.0, help="max Wand-Grundriss mm² — nur LOKALE Steilwände (Tunnel/Stützmauer), keine ganzen Hänge")
-    ap.add_argument("--rib-miss", type=float, default=4.0, help="SCHWELLE: Platte nur wo Rippen die Form um mehr als N mm verfehlen (0=aus, ganze Fläche)")
+    ap.add_argument("--rib-miss", type=float, default=0.0, help="optional: Platte nur wo Rippen die Form um >N mm verfehlen (0=aus; reagiert sonst auf Flach-Wackeln)")
     ap.add_argument("--contour-simplify", type=float, default=2.5, help="Kontur-Punkte mind. N mm auseinander")
     ap.add_argument("--max-plates", type=int, default=8); ap.add_argument("--max-walls", type=int, default=6)
     ap.add_argument("--feed", type=float, default=150); ap.add_argument("--power", type=float, default=100)
@@ -121,9 +122,12 @@ def main():
     NY, NX = Hf.shape; Wx, Dy = NX * cell, NY * cell
     xpos, ypos = rib_positions(Hf, cell, a.nx, a.ny, a.min_gap, None, False, a.snap_edges, a.snap_pct)
     slope = slope_field(Hf, cell, a.seg_smooth)
-    err, miss = rib_miss_mask(Hf, cell, xpos, ypos, a.rib_miss)   # DIE Schwelle (wo Rippen verfehlen)
-    gate = miss if a.rib_miss > 0 else None
-    flats = detect_regions(slope, cell, 0.0, a.slope_max, a.min_area, a.close_mm, True, gate)[:a.max_plates]
+    gate = rib_miss_mask(Hf, cell, xpos, ypos, a.rib_miss)[1] if a.rib_miss > 0 else None
+    steepmask = slope >= a.steep_min
+    flats_all = detect_regions(slope, cell, 0.0, a.slope_max, a.min_area, a.close_mm, True, gate)
+    # Nur FLACHE Bänke, die an eine STEILKANTE grenzen (echte Flach→Steil-Kante); mitten-im-Flachen raus.
+    flats = [m for m in flats_all
+             if (not a.need_steep_edge) or (binary_dilation(m, iterations=3) & steepmask).any()][:a.max_plates]
     walls = [m for m in detect_regions(slope, cell, a.steep_min, 90.0, a.wall_min_area, a.close_mm, False, gate)
              if m.sum() * cell * cell <= a.wall_max_area][:a.max_walls]   # nur lokale Wände (keine ganzen Hänge)
 
