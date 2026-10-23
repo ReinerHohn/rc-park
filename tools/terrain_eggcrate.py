@@ -90,7 +90,7 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None, 
 </head><body>
 <div id=bar>🔎 Teil-Nr: <input id=q placeholder="z.B. X0a oder 123" autofocus>
 <button onclick=find()>finden</button><button onclick=clr()>alle</button>
-<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=65 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tPlatten()>Platten ein/aus</button><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
+<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=65 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tPlatten()>Platten ein/aus</button><button onclick=tTunnel() style="background:#ff5522;color:#fff">🚇 Tunnel</button><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
 <div id=tip>1 Teil (z.B. Y10) -> leuchtet ROT wo es hinkommt · ZWEI Teile (klick+klick ODER „X8 Y10" tippen) -> rot+blau + GRUENE Kugel wo sie sich verbinden · Relief/Nummern ein-aus · 🧩 BAUSTAND an → Teil anklicken = „hab ich" (solide), Rest blass → mit echtem Modell abgleichen</div>
 <script>
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
@@ -99,13 +99,14 @@ const rn=new THREE.WebGLRenderer({antialias:true});rn.setSize(innerWidth,innerHe
 const ct=new THREE.OrbitControls(cam,rn.domElement);ct.enableDamping=true;
 sc.add(new THREE.AmbientLight(0xffffff,0.8));sc.add(new THREE.HemisphereLight(0xffffff,0x556,1.0));
 const d1=new THREE.DirectionalLight(0xffffff,1.1);d1.position.set(200,-300,500);sc.add(d1);
-let meshes=[],extras=[],relief=null,nums=null,prog=false;const DONE=new Set();let KEY='zbdone';const ENG=%ENG%;const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
+let meshes=[],extras=[],tunnels=[],relief=null,nums=null,prog=false;const DONE=new Set();let KEY='zbdone';const ENG=%ENG%;const RAY=new THREE.Raycaster(),M=new THREE.Vector2();
 new THREE.GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
  const root=g.scene,bx=new THREE.Box3().setFromObject(root),c=bx.getCenter(new THREE.Vector3()),s=bx.getSize(new THREE.Vector3());
  root.position.sub(c);sc.add(root);
  root.traverse(o=>{if(o.isMesh){
   if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0xc8b48c,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.65,flatShading:true});o.visible=true;relief=o;return;}
-  if(/^(PLATTE|TUNNEL)/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,transparent:true,opacity:0.9});extras.push(o);return;}
+  if(/^TUNNEL/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,depthTest:false,transparent:true,opacity:0.95});o.renderOrder=999;extras.push(o);tunnels.push(o);return;}
+  if(/^PLATTE/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,transparent:true,opacity:0.9});extras.push(o);return;}
   const hue=((meshes.length*137.508)%360)/360,col=new THREE.Color().setHSL(hue,0.58,0.55);
   o.material=new THREE.MeshStandardMaterial({color:col,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
   o.userData.base=col.getHex();meshes.push(o);}});
@@ -138,6 +139,7 @@ window.find=()=>apply(document.getElementById("q").value);
 window.clr=()=>{SEL.length=0;document.getElementById("q").value="";apply("");};
 window.tRelief=()=>{if(relief)relief.visible=!relief.visible;};
 window.tPlatten=()=>{extras.forEach(o=>o.visible=!o.visible);};
+window.tTunnel=()=>{tunnels.forEach(o=>o.visible=!o.visible);};
 window.setRopac=v=>{if(relief){const o=v/100;relief.material.opacity=o;relief.material.transparent=o<1;relief.visible=o>0;}};
 window.tNum=()=>{if(nums)nums.visible=!nums.visible;};
 function saveProg(){try{localStorage.setItem(KEY,JSON.stringify([...DONE]))}catch(e){}}
@@ -777,7 +779,7 @@ def main():
                     _WF += [[_b, _b + 1, _b + 5], [_b, _b + 5, _b + 4]]              # linke Wand
                     _WF += [[_b + 2, _b + 6, _b + 7], [_b + 2, _b + 7, _b + 3]]      # rechte Wand
                     _WF += [[_b + 1, _b + 3, _b + 7], [_b + 1, _b + 7, _b + 5]]      # Dach
-                extra_meshes.append(("TUNNEL_galerie", _tm.Trimesh(np.array(_WV), np.array(_WF, int), process=False), [150, 120, 90, 255]))
+                extra_meshes.append(("TUNNEL_galerie", _tm.Trimesh(np.array(_WV), np.array(_WF, int), process=False), [255, 90, 40, 255]))
         except Exception:
             extra_meshes = []
         write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes)

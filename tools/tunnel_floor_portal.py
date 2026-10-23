@@ -110,6 +110,31 @@ def main():
         svg_write(f"{a.out}/tunnelboden.svg", [tpoly], [], [], teng, 0)
         if a.gcode: gcode_write(f"{a.out}/tunnelboden.gcode", [tpoly], [], [], teng, 0, a.feed, a.power, a.passes, a.eng_power)
 
+        # --- TUNNEL-LINING entlang des GANZEN Tunnels: DECKPLATTE (Dach) + 2 SEITENPLATTEN ---
+        #     Abgewickelte Streifen (Länge = Tunnel-Bogenlänge). Fallen in die Lichtraum-Löcher der
+        #     Rippen -> an die Rippen gebunden; Rippen-Kreuzungen quer eingraviert (Marken) + an jeder
+        #     eine Steck-Kerbe. So ist der Tunnel eine saubere Röhre statt „entstellter" Rippen-Löcher.
+        s_t = np.concatenate([[0], np.cumsum(np.hypot(np.diff(tcl[:, 0]), np.diff(tcl[:, 1])))])
+        Lt = float(s_t[-1])
+        def cross_s(coord_fn, vals):
+            out = []
+            for v in vals:
+                f = coord_fn(tcl); sign = f - v
+                for i in range(len(sign)-1):
+                    if sign[i] == 0 or sign[i]*sign[i+1] < 0:
+                        t = (v - f[i])/(f[i+1]-f[i]+1e-9); out.append(float(s_t[i]+t*(s_t[i+1]-s_t[i])))
+            return out
+        rs = sorted(x for x in (cross_s(lambda c: c[:, 0], xpos) + cross_s(lambda c: c[:, 1], ypos)) if 1 < x < Lt-1)
+        def strip(name, height, label):
+            poly = [(0, 0), (Lt, 0), (Lt, height), (0, height), (0, 0)]
+            eng = [[(r, 0), (r, height)] for r in rs] + glyph_strokes(label, 3, height+3, h=5)   # Rippen-Marken quer
+            svg_write(f"{a.out}/{name}.svg", [poly], [], [], eng, 0)
+            if a.gcode: gcode_write(f"{a.out}/{name}.gcode", [poly], [], [], eng, 0, a.feed, a.power, a.passes, a.eng_power)
+        strip("tunneldecke", a.clear_w, f"TUNNELDECKE L{Lt:.0f}x{a.clear_w:.0f}")
+        strip("tunnelwand_links", a.clear_h, f"TUNNELWAND L{Lt:.0f}x{a.clear_h:.0f}")
+        strip("tunnelwand_rechts", a.clear_h, f"TUNNELWAND R {Lt:.0f}x{a.clear_h:.0f}")
+        print(f"Tunnel-Lining: Deckplatte {Lt:.0f}x{a.clear_w:.0f} + 2 Seitenplatten {Lt:.0f}x{a.clear_h:.0f} mm, {len(rs)} Rippen-Kreuzungen")
+
     # --- STEINSCHLAGGALERIE am Ostportal (letzter Tunnelpunkt) ---
     tun = tr[:, 3] > 0.5; pi = np.where(tun)[0][-1]
     GL, CW, CH, th = a.gal_len, a.clear_w, a.clear_h, a.thick
