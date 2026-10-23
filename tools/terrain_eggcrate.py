@@ -745,6 +745,18 @@ def main():
             import insert_plates_auto as _ipa
             _pal = [[181, 101, 29, 255], [66, 133, 204, 255], [102, 166, 74, 255],
                     [217, 153, 33, 255], [148, 103, 189, 255], [87, 179, 186, 255]]
+            # VOLLAUTOMATISCHER TUNNEL (gerade Kanten, OpenCV) als leuchtendes cyan Plättchen
+            _tp = _ipa.detect_tunnel_lines(Hf, cell)
+            if _tp is not None and len(_tp) >= 4:
+                from matplotlib.path import Path as _MP
+                _ny, _nx = Hf.shape
+                _gx, _gy = np.meshgrid(np.arange(_nx) * cell, np.arange(_ny) * cell)
+                _tm2 = _MP(_tp[:, :2]).contains_points(np.column_stack([_gx.ravel(), _gy.ravel()])).reshape(_ny, _nx)
+                if _tm2.sum() > 8:
+                    _ta, _tb, _tc, _ = _ipa.fit_plane_mask(Hf, cell, _tm2)
+                    _P4 = _tp[:4]
+                    _TVt = np.array([[float(x), float(y), _ta * x + _tb * y + _tc + 2.0] for x, y in _P4])
+                    extra_meshes.append(("PLATTE_tunnel", _tm.Trimesh(_TVt, np.array([[0, 1, 2], [0, 2, 3]]), process=False), [0, 200, 255, 255]))
             _k = 0
             for _m in _ipa.segment_planes(Hf, cell, 2.5, 12.0, 120.0, 90.0):
                 if _ipa.fit_plane_mask(Hf, cell, _m)[3] > 3.0: continue   # nur saubere planare Flächen
