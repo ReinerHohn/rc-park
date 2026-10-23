@@ -19,6 +19,15 @@ from terrain_eggcrate import rib_positions
 
 def detect_plates(Hf, cell, a):
     out = []
+    _tp = ipa.detect_tunnel_lines(Hf, cell)                   # VOLLAUTOMATISCHER Tunnel (gerade Kanten) zuerst
+    if _tp is not None:
+        from matplotlib.path import Path as _MP
+        NY, NX = Hf.shape
+        _gx, _gy = np.meshgrid(np.arange(NX) * cell, np.arange(NY) * cell)
+        _m = _MP(_tp[:, :2]).contains_points(np.column_stack([_gx.ravel(), _gy.ravel()])).reshape(NY, NX)
+        if _m.sum() > 8:
+            _av, _bv, _cv, _ = ipa.fit_plane_mask(Hf, cell, _m)
+            out.append((_tp[:, :2], (_av, _bv, _cv)))         # saubere gerade Kanten des Tunnels
     for m in ipa.segment_planes(Hf, cell, 2.5, 12.0, a.min_area, 90.0)[:a.max_plates]:   # JEDE Facette (jeder Winkel)
         av, bv, cv, _rms = ipa.fit_plane_mask(Hf, cell, m)
         if _rms > 3.0:                                        # nur saubere planare Flächen

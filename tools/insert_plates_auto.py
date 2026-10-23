@@ -146,6 +146,55 @@ def seed_regions(slope, cell, seeds, slope_max, min_area, close_mm):
     return out
 
 
+def detect_tunnel_lines(Hf, cell, min_len_mm=25.0, ang_tol=18.0, min_perp=12.0, max_perp=48.0, min_overlap=18.0):
+    """VOLLAUTOMATISCHE Tunnel-Erkennung über GERADE Kanten (OpenCV): Canny+HoughLinesP finden
+    die geraden Kanten als Segmente; dann werden die 2 längsten PARALLELEN Segmente (die beiden
+    Einschnitt-Wände) gepaart und das Polygon DAZWISCHEN (Welt-mm, geschlossen) zurückgegeben.
+    None, wenn cv2 fehlt oder kein Wand-Paar gefunden wird (Fallback: nur planare Facetten)."""
+    try:
+        import cv2
+    except Exception:
+        return None
+    from scipy.ndimage import sobel
+    Hs = gaussian_filter(Hf, 1.2)
+    gm = np.hypot(sobel(Hs, 0), sobel(Hs, 1))
+    img = np.clip(255 * gm / (np.percentile(gm, 99) + 1e-9), 0, 255).astype(np.uint8)
+    edges = cv2.Canny(img, 30, 90)
+    lines = cv2.HoughLinesP(edges, 1, np.pi / 180, threshold=25,
+                            minLineLength=max(8, int(round(22.0 / cell))), maxLineGap=8)
+    if lines is None:
+        return None
+    seg = np.array(lines).reshape(-1, 4).astype(float) * cell
+    LN = np.hypot(seg[:, 2] - seg[:, 0], seg[:, 3] - seg[:, 1])
+    long = seg[LN >= min_len_mm]; LNl = LN[LN >= min_len_mm]
+    _ang = lambda s: np.arctan2(s[3] - s[1], s[2] - s[0]) % np.pi
+    best = None
+    for i in range(len(long)):
+        for j in range(i + 1, len(long)):
+            s1, s2 = long[i], long[j]
+            da = abs(_ang(s1) - _ang(s2)); da = min(da, np.pi - da)
+            if da > np.deg2rad(ang_tol):
+                continue
+            a1 = _ang(s1); d1 = np.array([np.cos(a1), np.sin(a1)]); nrm = np.array([-d1[1], d1[0]]); p1 = s1[:2]
+            perp = abs(np.dot(((s2[:2] + s2[2:]) / 2) - p1, nrm))
+            if not (min_perp < perp < max_perp):
+                continue
+            pr = lambda p: float(np.dot(np.asarray(p) - p1, d1))
+            t1 = [pr(s1[:2]), pr(s1[2:])]; t2 = [pr(s2[:2]), pr(s2[2:])]
+            ov = min(max(t1), max(t2)) - max(min(t1), min(t2))
+            if ov < min_overlap:
+                continue
+            sc = LNl[i] + LNl[j] + ov
+            if best is None or sc > best[0]:
+                best = (sc, s1, s2, d1, p1)
+    if best is None:
+        return None
+    _, s1, s2, d1, p1 = best
+    pr = lambda p: float(np.dot(np.asarray(p) - p1, d1))
+    o1 = sorted([s1[:2], s1[2:]], key=pr); o2 = sorted([s2[:2], s2[2:]], key=pr)
+    return np.array([o1[0], o1[1], o2[1], o2[0], o1[0]], float)
+
+
 def segment_planes(Hf, cell, smooth_px, normal_tol_deg, min_area, max_slope_deg):
     """GERADE Flächen zusammenfassen: Region-Growing über die Oberflächen-NORMALEN. Benachbarte
     Zellen mit fast gleicher Normale (coplanar, Winkel < normal_tol) werden EIN Segment; an KANTEN
@@ -261,6 +310,16 @@ def main():
             _facets = [m for m in _facets if (m & _corr).sum() >= 0.4 * m.sum()]   # Facette MEHRHEITLICH im Korridor
         flats = [m for m in _facets if _ms(m) < a.flat_max_slope and m.sum() * cell * cell >= a.min_area][:a.max_plates]
         walls = [m for m in _facets if _ms(m) >= a.flat_max_slope and m.sum() * cell * cell <= a.wall_max_area][:a.max_walls]   # nur lokale Wände (keine ganzen Hänge)
+
+    # VOLLAUTOMATISCHE TUNNEL-ERKENNUNG (gerade Kanten -> 2 parallele Wände -> Fläche dazwischen) als erste Platte
+    _tp = detect_tunnel_lines(Hf, cell) if not a.seeds.strip() else None
+    if _tp is not None:
+        from matplotlib.path import Path as _MPath
+        _gx, _gy = np.meshgrid(np.arange(NX) * cell, np.arange(NY) * cell)
+        _tmask = _MPath(_tp[:, :2]).contains_points(np.column_stack([_gx.ravel(), _gy.ravel()])).reshape(NY, NX)
+        if _tmask.sum() * cell * cell >= a.min_area:
+            flats = [_tmask] + [m for m in flats if (m & _tmask).sum() < 0.5 * m.sum()]   # Tunnel zuerst, überlappende Facetten raus
+            print(f"Tunnel automatisch erkannt (gerade Kanten): {_tmask.sum()*cell*cell:.0f} mm²")
 
     man = [f"AUTO-EINHÄNGPLATTEN — Fenster {Wx:.0f}x{Dy:.0f} mm", "", "FLACHE Platten (horizontal, auf echte Kontur):"]
     flat2d = []; wall2d = []; kept = 0
