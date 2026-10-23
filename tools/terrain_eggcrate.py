@@ -746,7 +746,7 @@ def main():
             _pal = [[181, 101, 29, 255], [66, 133, 204, 255], [102, 166, 74, 255],
                     [217, 153, 33, 255], [148, 103, 189, 255], [87, 179, 186, 255]]
             _k = 0
-            for _m in _ipa.segment_planes(Hf, cell, 3.0, 18.0, 250.0, 90.0):   # JEDE planare Facette (jeder Winkel) = eigene Platte
+            for _m in _ipa.segment_planes(Hf, cell, 2.5, 12.0, 150.0, 90.0):   # JEDE planare Facette (jeder Winkel) = eigene Platte
                 _w = _ipa.mask_contour_mm(_m, cell, 2.5)
                 if _w is None or len(_w) < 4:
                     continue

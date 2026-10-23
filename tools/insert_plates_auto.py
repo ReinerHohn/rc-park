@@ -185,7 +185,7 @@ def main():
     ap.add_argument("--wall-max-area", type=float, default=3000.0, help="max Wand-Grundriss mm² — nur LOKALE Steilwände (Tunnel/Stützmauer), keine ganzen Hänge")
     ap.add_argument("--rib-miss", type=float, default=0.0, help="optional: Platte nur wo Rippen die Form um >N mm verfehlen (0=aus; reagiert sonst auf Flach-Wackeln)")
     ap.add_argument("--contour-simplify", type=float, default=2.5, help="Kontur-Punkte mind. N mm auseinander")
-    ap.add_argument("--normal-tol", type=float, default=15.0, help="Normalen-Winkeltoleranz Grad fürs Zusammenfassen coplanar: höher = größere Platten (mehr verschmolzen), kleiner = feiner an Kanten getrennt")
+    ap.add_argument("--normal-tol", type=float, default=12.0, help="Normalen-Winkeltoleranz Grad fürs Zusammenfassen coplanar: höher = größere Platten (mehr verschmolzen), kleiner = feiner an Kanten getrennt (12 fängt Gullys/Rinnen)")
     ap.add_argument("--flat-max-slope", type=float, default=40.0, help="Facetten mit mittlerer Neigung über N° = senkrechte Wand (raus bei den flachen Platten)")
     ap.add_argument("--seeds", default="", help="MANUELL: Platten-Stellen 'x,y x,y ...' (mm). Je Seed EINE Platte (flache Bank um den Punkt, echte Kante). Leer=Auto.")
     ap.add_argument("--max-plates", type=int, default=8); ap.add_argument("--max-walls", type=int, default=6)
