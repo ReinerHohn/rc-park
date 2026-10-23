@@ -745,18 +745,6 @@ def main():
             import insert_plates_auto as _ipa
             _pal = [[181, 101, 29, 255], [66, 133, 204, 255], [102, 166, 74, 255],
                     [217, 153, 33, 255], [148, 103, 189, 255], [87, 179, 186, 255]]
-            # VOLLAUTOMATISCHER TUNNEL (gerade Kanten, OpenCV) als leuchtendes cyan Plättchen
-            _tp = _ipa.detect_tunnel_lines(Hf, cell)
-            if _tp is not None and len(_tp) >= 4:
-                from matplotlib.path import Path as _MP
-                _ny, _nx = Hf.shape
-                _gx, _gy = np.meshgrid(np.arange(_nx) * cell, np.arange(_ny) * cell)
-                _tm2 = _MP(_tp[:, :2]).contains_points(np.column_stack([_gx.ravel(), _gy.ravel()])).reshape(_ny, _nx)
-                if _tm2.sum() > 8:
-                    _ta, _tb, _tc, _ = _ipa.fit_plane_mask(Hf, cell, _tm2)
-                    _P4 = _tp[:4]
-                    _TVt = np.array([[float(x), float(y), _ta * x + _tb * y + _tc + 2.0] for x, y in _P4])
-                    extra_meshes.append(("PLATTE_tunnel", _tm.Trimesh(_TVt, np.array([[0, 1, 2], [0, 2, 3]]), process=False), [0, 200, 255, 255]))
             _k = 0
             for _m in _ipa.segment_planes(Hf, cell, 2.5, 12.0, 120.0, 90.0):
                 if _ipa.fit_plane_mask(Hf, cell, _m)[3] > 3.0: continue   # nur saubere planare Flächen
@@ -781,6 +769,15 @@ def main():
                 for i in range(len(track) - 1):
                     _aa = 2 * i; _TF += [[_aa, _aa + 1, _aa + 2], [_aa + 1, _aa + 3, _aa + 2]]
                 extra_meshes.append(("TUNNEL_gleisbett", _tm.Trimesh(np.array(_TV), np.array(_TF, int), process=False), [70, 70, 70, 255]))
+                # TUNNEL-PLATTE (EXAKT aus der Trasse = Ground Truth, kein Kanten-Raten): Boden-Band über den is_tunnel-Abschnitt, leuchtend cyan, sichtbar
+                _ti = [i for i in range(len(track)) if track[i][3] > 0.5]
+                if len(_ti) >= 2:
+                    _PV = []; _PF = []
+                    for n, i in enumerate(_ti):
+                        _PV.append([_L[i, 0], _L[i, 1], _zt[i] + 1.2]); _PV.append([_R[i, 0], _R[i, 1], _zt[i] + 1.2])
+                    for n in range(len(_ti) - 1):
+                        _aa = 2 * n; _PF += [[_aa, _aa + 1, _aa + 2], [_aa + 1, _aa + 3, _aa + 2]]
+                    extra_meshes.append(("PLATTE_tunnel", _tm.Trimesh(np.array(_PV), np.array(_PF, int), process=False), [0, 210, 255, 255]))
                 # Felssturzschutz-GALERIE: zwei SENKRECHTE Seitenwände + DACH entlang der Trasse (nicht nur Boden)
                 _h = CLEAR_H * 0.5
                 _WV = []; _WF = []
