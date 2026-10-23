@@ -37,10 +37,11 @@ echo "== 2/5 Haut-Panels (deckt Lücken + Tunnel-Dach) =="
 python3 tools/terrain_skin_panels.py --dem "$DEM" $WIN $SCALE \
   --skin 4 --bed-x 250 --bed-y 210 --max-z 200 --out "$OUT/haut"
 
-echo "== 3/5 Einhäng-Platten AUTO (planar zusammenfassen + an Kanten schneiden) =="
+echo "== 3/5 Einhäng-Platten AUTO (JEDE planare Fläche = eigene Platte, jeder Winkel) =="
 python3 tools/insert_plates_auto.py --dem "$DEM" $WIN $SCALE --snap-edges \
-  --seg-smooth 3 --normal-tol 18 --flat-max-slope 40 --min-area 400 \
-  --steep-min 55 --wall-min-area 150 --wall-max-area 2500 --gcode --out "$OUT/platten"
+  --seg-smooth 3 --normal-tol 18 --flat-max-slope 55 --min-area 250 \
+  --wall-min-area 250 --wall-max-area 99999 --max-plates 25 --max-walls 25 \
+  --gcode --out "$OUT/platten"
 
 echo "== 4/5 Tunnel-Teile (Gleisbett + Portal-Galerie: Dach/Wände/Stirn) =="
 python3 tools/tunnel_floor_portal.py --dem "$DEM" $WINRC $SCALE --base 12 \

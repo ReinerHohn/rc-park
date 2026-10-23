@@ -19,7 +19,7 @@ from terrain_eggcrate import rib_positions
 
 def detect_plates(Hf, cell, a):
     out = []
-    for m in ipa.segment_planes(Hf, cell, 3.0, 18.0, a.min_area, 40.0)[:a.max_plates]:   # planar zusammenfassen
+    for m in ipa.segment_planes(Hf, cell, 3.0, 18.0, a.min_area, 90.0)[:a.max_plates]:   # JEDE Facette (jeder Winkel)
         w = ipa.mask_contour_mm(m, cell, 2.5)
         if w is None:
             continue
