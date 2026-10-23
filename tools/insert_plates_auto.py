@@ -187,6 +187,8 @@ def main():
     ap.add_argument("--contour-simplify", type=float, default=2.5, help="Kontur-Punkte mind. N mm auseinander")
     ap.add_argument("--normal-tol", type=float, default=12.0, help="Normalen-Winkeltoleranz Grad fürs Zusammenfassen coplanar: höher = größere Platten (mehr verschmolzen), kleiner = feiner an Kanten getrennt (12 fängt Gullys/Rinnen)")
     ap.add_argument("--flat-max-slope", type=float, default=40.0, help="Facetten mit mittlerer Neigung über N° = senkrechte Wand (raus bei den flachen Platten)")
+    ap.add_argument("--track", default="", help="Trasse .npy — Platten NUR im Korridor um die Trasse (Tunnel/Einschnitt-Wände), NICHT der Scheiß am Steilberg")
+    ap.add_argument("--corridor", type=float, default=45.0, help="Korridor-Breite um die Trasse mm (nur Facetten die ihn berühren werden Platten)")
     ap.add_argument("--seeds", default="", help="MANUELL: Platten-Stellen 'x,y x,y ...' (mm). Je Seed EINE Platte (flache Bank um den Punkt, echte Kante). Leer=Auto.")
     ap.add_argument("--max-plates", type=int, default=8); ap.add_argument("--max-walls", type=int, default=6)
     ap.add_argument("--feed", type=float, default=150); ap.add_argument("--power", type=float, default=100)
@@ -207,6 +209,14 @@ def main():
     else:                                                     # AUTO: ALLE planaren Facetten — flach=Platte, STEIL=Wand (gleiche Erkennung)
         _ms = lambda m: float(np.median(slope[m]))
         _facets = segment_planes(Hf, cell, a.seg_smooth, a.normal_tol, min(a.min_area, a.wall_min_area), 90.0)
+        if a.track and os.path.exists(a.track):               # NUR im Korridor um die Trasse (Bahnlinie + Vorbau am Ausgang), NICHT der Berg
+            _tr = np.load(a.track).astype(float); _c = np.zeros((NY, NX), bool)
+            for _x, _y in _tr[:, :2]:
+                _ci = int(round(_x / cell)); _cj = int(round(_y / cell))
+                if 0 <= _ci < NX and 0 <= _cj < NY:
+                    _c[_cj, _ci] = True
+            _corr = distance_transform_edt(~_c) * cell <= a.corridor
+            _facets = [m for m in _facets if (m & _corr).sum() >= 0.4 * m.sum()]   # Facette MEHRHEITLICH im Korridor
         flats = [m for m in _facets if _ms(m) < a.flat_max_slope and m.sum() * cell * cell >= a.min_area][:a.max_plates]
         walls = [m for m in _facets if _ms(m) >= a.flat_max_slope and m.sum() * cell * cell <= a.wall_max_area][:a.max_walls]   # nur lokale Wände (keine ganzen Hänge)
 
