@@ -112,6 +112,7 @@ new THREE.GLTFLoader().load("data:model/gltf-binary;base64,%B64%",g=>{
   if((o.name||"")==="RELIEF"){o.material=new THREE.MeshStandardMaterial({color:0x6d5c3e,roughness:1,side:THREE.DoubleSide,transparent:true,opacity:0.5,flatShading:true});o.visible=true;relief=o;return;}
   if(/^TUNNEL/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,depthTest:false,transparent:true,opacity:0.95});o.renderOrder=999;o.visible=true;tunnels.push(o);return;}
   if(/^FLAECHE/.test(o.name||"")){o.material=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:0.85,transparent:true,opacity:0.92,flatShading:true});o.visible=true;flaechen.push(o);return;}
+  if(/^KANTE/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({color:0xff1493,side:THREE.DoubleSide,depthTest:false});o.renderOrder=1300;o.visible=true;flaechen.push(o);return;}
   if(/^PLATTE/.test(o.name||"")){o.material=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,transparent:true,opacity:0.9});o.visible=false;extras.push(o);return;}
   const hue=((meshes.length*137.508)%360)/360,col=new THREE.Color().setHSL(hue,0.58,0.55);
   o.material=new THREE.MeshStandardMaterial({color:col,roughness:1,side:THREE.DoubleSide,flatShading:true,transparent:true,opacity:1});
@@ -874,7 +875,28 @@ def main():
             for (x0, y0, x1, y1) in _edg:
                 overlay_edges.append([[float(x0), float(y0), _zc(x0, y0) + 1.0],
                                       [float(x1), float(y1), _zc(x1, y1) + 1.0]])
-            print(f"Flächen-Layer: {_nf} EBENE Platten (plan-gefittet, laser-cutbar) + {_nw} steile Wände + {len(_edg)} scharfe Kanten")
+            # B4 Schritt 1: KANTEN-LINEALE als vertikale Finnen GENAU auf den scharfen Kanten
+            # (beliebige Richtung, auch schräg!). Oberkante = Gelände entlang der Kante -> die Finne
+            # ist die physische Schablone, an die sich der Gips legt => scharfe Kante bleibt scharf,
+            # auch wo achsparallele Rippen sie verfehlen (kantiger Tunnelausgang, Felsgrate).
+            _FIN_H = 9.0; _nk = 0; _minlen = 18.0
+            for _ek, (x0, y0, x1, y1) in enumerate(_edg):
+                _L = float(np.hypot(x1 - x0, y1 - y0))
+                if _L < _minlen:
+                    continue
+                _ns = max(2, int(_L / (cell)) + 1)                    # dicht genug fürs Gelände-Profil
+                _KV = []; _KF = []
+                for _ii in range(_ns):
+                    _tt = _ii / (_ns - 1)
+                    _xx = x0 + (x1 - x0) * _tt; _yy = y0 + (y1 - y0) * _tt
+                    _zt = _zc(_xx, _yy)                               # Oberkante = Gelände = die Kante
+                    _KV.append([_xx, _yy, _zt]); _KV.append([_xx, _yy, max(a.base, _zt - _FIN_H)])
+                for _ii in range(_ns - 1):
+                    _b = 2 * _ii
+                    _KF += [[_b, _b + 1, _b + 2], [_b + 1, _b + 3, _b + 2]]
+                extra_meshes.append((f"KANTE{_ek}", _tm.Trimesh(np.array(_KV), np.array(_KF, int), process=False), [255, 20, 147, 255]))
+                _nk += 1
+            print(f"Flächen-Layer: {_nf} EBENE Platten + {_nw} steile Wände + {_nk} Kanten-Lineale (von {len(_edg)} Kanten)")
         except Exception as _e:
             print("Menschgemacht-Layer übersprungen:", _e)
         write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes, overlay_edges)
