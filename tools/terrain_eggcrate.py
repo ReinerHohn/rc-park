@@ -445,6 +445,8 @@ def main():
     ap.add_argument("--bed-x", type=float, default=410); ap.add_argument("--bed-y", type=float, default=400)
     ap.add_argument("--tunnel", action="store_true", help="Bahn-Lichtraum (30x36mm) in die Rippen schneiden: Tunnel=gedeckelt, offen=Einschnitt")
     ap.add_argument("--track", default="", help="ECHTE Trasse als .npy (Zeilen mx,my,mz,is_tunnel in Modell-mm, z.B. aus OSM); leer=keine")
+    ap.add_argument("--diag", type=float, default=0.0, help="4-RICHTUNGS-GITTER: zusätzlicher 45°-Diagonal-Rippensatz mit diesem senkrechten Abstand (mm); 0=aus. Fängt schräge Kanten (~30%% genauer bei gleichem Material).")
+    ap.add_argument("--diag-both", action="store_true", help="auch 135°-Diagonalen (volles 4-Richtungs-Gitter; ⚠ 45°/135° kreuzen sich, Steck-Kollision noch nicht gelöst)")
     ap.add_argument("--tunnel-drop", type=float, default=0.0, help="Tunnel-Gleis um N mm tiefer legen (unters Dach statt drauf)")
     ap.add_argument("--gcode", action="store_true")
     ap.add_argument("--feed", type=float, default=400); ap.add_argument("--power", type=float, default=100)
@@ -627,49 +629,99 @@ def main():
         def _Hfine(x, y): return float(_Hfe[min(int(y/cell), _ehY-1), min(int(x/cell), _ehX-1)])
         FINH, LAP, MINLEN = 9.0, 4.0, 18.0
         edge_notches = {}                              # ribdata-Index -> [(s_auf_rippe, htop, zmid)]
-        for (x0, y0, x1, y1) in _edgE:
+        def _build_ruler(x0, y0, x1, y1, topfn, botfn, zmidfn, name):
+            """Beliebig gerichtete Rippe (Kante oder Diagonale): Kreuzungen mit X/Y-Rippen ->
+            HALB-ÜBERBLATTUNG. zmidfn(cx,cy) bestimmt die Lap-Höhe (Fin: nahe Oberkante; Voll-Rippe:
+            Mitte, balanciert wie X/Y). Registriert die Rippen-Oberkerben in edge_notches."""
             L = float(np.hypot(x1 - x0, y1 - y0))
-            if L < MINLEN: continue
-            dx, dy = (x1 - x0) / L, (y1 - y0) / L
-            crossings = []                             # (s_entlang_lineal, zmid)
+            if L < MINLEN: return None
+            crossings = []
             for _ri, (_rnm, _rpoly, _rax, _rpos, _rth) in enumerate(ribdata):
-                if _rax == "x":                        # X-Rippe bei y=_rpos (s=x)
+                if _rax == "x":                        # X-Rippe bei y=_rpos
                     if abs(y1 - y0) < 1e-6: continue
                     t = (_rpos - y0) / (y1 - y0)
                     if not (0.02 < t < 0.98): continue
-                    sc = t * L; xc = x0 + (x1 - x0) * t
-                    if not (0 <= xc <= Wx): continue
-                    ht = min(Htop(xc, _rpos), _Hfine(xc, _rpos)); zmid = ht - LAP
-                    if zmid <= a.base + 1: continue
-                    crossings.append((sc, zmid)); edge_notches.setdefault(_ri, []).append((xc, Htop(xc, _rpos), zmid))
-                else:                                  # Y-Rippe bei x=_rpos (s=y)
+                    sc = t * L; cx, cy = x0 + (x1 - x0) * t, _rpos
+                    if not (0 <= cx <= Wx): continue
+                else:                                  # Y-Rippe bei x=_rpos
                     if abs(x1 - x0) < 1e-6: continue
                     t = (_rpos - x0) / (x1 - x0)
                     if not (0.02 < t < 0.98): continue
-                    sc = t * L; yc = y0 + (y1 - y0) * t
-                    if not (0 <= yc <= Dy): continue
-                    ht = min(Htop(_rpos, yc), _Hfine(_rpos, yc)); zmid = ht - LAP
-                    if zmid <= a.base + 1: continue
-                    crossings.append((sc, zmid)); edge_notches.setdefault(_ri, []).append((yc, Htop(_rpos, yc), zmid))
-            # Kreuzungen zu nah beieinander (< slotw+1) zusammenfassen -> keine überlappenden Schlitze
+                    sc = t * L; cx, cy = _rpos, y0 + (y1 - y0) * t
+                    if not (0 <= cy <= Dy): continue
+                zmid = zmidfn(cx, cy)
+                if zmid <= a.base + 1 or zmid >= Htop(cx, cy) - 0.5: continue
+                _rs = cx if _rax == "x" else cy        # Position auf der gekreuzten Rippe (deren s-Achse)
+                crossings.append((sc, zmid)); edge_notches.setdefault(_ri, []).append((_rs, Htop(cx, cy), zmid))
             crossings.sort(); merged = []
             for (sc, zm) in crossings:
                 if merged and sc - merged[-1][0] < slotw + 1: continue
                 merged.append((sc, zm))
-            if not merged: continue
-            _top = (lambda s, x0=x0, y0=y0, dx=dx, dy=dy: _Hfine(x0 + dx*s, y0 + dy*s))
-            _bot = (lambda s, _top=_top: max(a.base, _top(s) - FINH))
-            kpoly = np.array(rib(L, _top, merged, slotw, False, _bot), float)
-            edge_rulers.append((f"K{len(edge_rulers)}", kpoly, (x0, y0, x1, y1)))
-        # TOP-Schlitze in die gekreuzten Rippen schneiden (Gegenstück der Überblattung)
+            if not merged: return None
+            return (name, np.array(rib(L, topfn, merged, slotw, False, botfn), float), (x0, y0, x1, y1))
+        # (1) KANTEN-LINEALE: kurze Finnen, Oberkante = feines Relief, Lap nahe Oberkante
+        for (x0, y0, x1, y1) in _edgE:
+            L = float(np.hypot(x1 - x0, y1 - y0))
+            if L < MINLEN: continue
+            dx, dy = (x1 - x0) / L, (y1 - y0) / L
+            _tf = (lambda s, x0=x0, y0=y0, dx=dx, dy=dy: _Hfine(x0 + dx*s, y0 + dy*s))
+            _bf = (lambda s, tf=_tf: max(a.base, tf(s) - FINH))
+            _zf = (lambda cx, cy: min(Htop(cx, cy), _Hfine(cx, cy)) - LAP)
+            r = _build_ruler(x0, y0, x1, y1, _tf, _bf, _zf, f"K{len(edge_rulers)}")
+            if r: edge_rulers.append(r)
+        # (2) 4-RICHTUNGS-GITTER: diagonale VOLL-HÖHEN-Rippen (45°) steckend in die X/Y-Rippen ->
+        # fängt schräg laufende Kanten, die das Rechteckgitter verfehlt (gemessen ~30% weniger
+        # Rekonstruktions-Fehler bei gleichem Material). Oberkante=Htop (tragend), Boden=0, Lap=Mitte.
+        if getattr(a, "diag", 0.0) > 0:
+            _SPd = a.diag * (2.0 ** 0.5)               # Offset-Schritt -> SENKRECHTER Abstand = a.diag
+            _dsegs = []
+            _k = -Dy + _SPd                            # 45°: x - y = k
+            while _k < Wx:
+                _xa, _xb = max(0.0, _k), min(Wx, _k + Dy)
+                if (_xb - _xa) * (2.0**0.5) > MINLEN: _dsegs.append((_xa, _xa - _k, _xb, _xb - _k))
+                _k += _SPd
+            if getattr(a, "diag_both", False):         # 135°: x + y = k (⚠ kreuzt die 45° — nur wenn gewünscht)
+                _k = _SPd
+                while _k < Wx + Dy:
+                    _xa, _xb = max(0.0, _k - Dy), min(Wx, _k)
+                    if (_xb - _xa) * (2.0**0.5) > MINLEN: _dsegs.append((_xa, _k - _xa, _xb, _k - _xb))
+                    _k += _SPd
+            _zfm = (lambda cx, cy: (Hbot(cx, cy) + Htop(cx, cy)) / 2.0)   # balancierte Mitte
+            for (x0, y0, x1, y1) in _dsegs:
+                _Ld = float(np.hypot(x1 - x0, y1 - y0)); _dxd, _dyd = (x1 - x0) / _Ld, (y1 - y0) / _Ld
+                _tf = (lambda s, x0=x0, y0=y0, dx=_dxd, dy=_dyd: Htop(x0 + dx*s, y0 + dy*s))
+                _bf = ((lambda s, x0=x0, y0=y0, dx=_dxd, dy=_dyd: Hbot(x0 + dx*s, y0 + dy*s)) if band else (lambda s: 0.0))
+                r = _build_ruler(x0, y0, x1, y1, _tf, _bf, _zfm, f"D{len(edge_rulers)}")
+                if r: edge_rulers.append(r)
+        # TOP-Schlitze in die gekreuzten Rippen schneiden (Gegenstück der Überblattung) — SPLIT-SICHER:
+        # eine Kerbe, die die Rippe (zusammen mit dem Tunnelloch) ZERTEILEN würde, wird übersprungen,
+        # damit keine Rippe in lose Stücke zerfällt.
+        _skipped = 0
         for _ri, notches in edge_notches.items():
             _rnm, _rpoly, _rax, _rpos, _rth = ribdata[_ri]
             pg = _ShP(_rpoly); pg = pg if pg.is_valid else pg.buffer(0)
+            _holes = []
+            for _h in _rth:
+                _hp = _ShP(_h); _hp = _hp if _hp.is_valid else _hp.buffer(0)
+                if _hp.is_valid and not _hp.is_empty: _holes.append(_hp)
+            def _would_split(poly):
+                t = poly
+                for _hp in _holes: t = t.difference(_hp)
+                if t.geom_type == "MultiPolygon":
+                    ps = sorted(t.geoms, key=lambda g: g.area, reverse=True)
+                    return len(ps) > 1 and ps[1].area > 3.0
+                return False
             for (sp, ht, zmid) in notches:
-                pg = pg.difference(_shbox(sp - slotw/2, zmid, sp + slotw/2, ht + 50))
-            if pg.is_empty: continue
-            if pg.geom_type == "MultiPolygon": pg = max(pg.geoms, key=lambda g: g.area)
+                cand = pg.difference(_shbox(sp - slotw/2, zmid, sp + slotw/2, ht + 50))
+                if cand.is_empty: continue
+                if _would_split(cand): _skipped += 1; continue      # (mit Loch) würde zerteilen -> weglassen
+                if cand.geom_type == "MultiPolygon":                # Kerbe allein spaltet die Außenkontur?
+                    _cp = sorted(cand.geoms, key=lambda g: g.area, reverse=True)
+                    if len(_cp) > 1 and _cp[1].area > 3.0: _skipped += 1; continue
+                    cand = _cp[0]
+                pg = cand
             ribdata[_ri] = (_rnm, np.array(pg.exterior.coords), _rax, _rpos, _rth)
+        if _skipped: print(f"B4: {_skipped} Kerben übersprungen (hätten eine Rippe zerteilt, Tunnelnähe)")
         # SVG/G-Code-Schnittteile der Lineale
         for (knm, kpoly, seg) in edge_rulers:
             emit(f"kante{knm}", kpoly, knm)
