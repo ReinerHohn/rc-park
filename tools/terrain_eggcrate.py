@@ -605,6 +605,75 @@ def main():
         poly = np.array(rib(Dy, lambda s, xr=xr: Htop(xr, s), cross, slotw, False, bsf), float)
         add_rib(f"Y{i}", f"X{xr:.0f}", poly, "y", xr, tunnel_holes("y", xr), Dy, list(ypos), ph=i)
 
+    # ============ B4 Schritt 2: KANTEN-LINEALE (diagonale Kanten-Rippen) ============
+    # Scharfe Kanten (beliebige Richtung) als vertikale Finnen, die sich per HALB-ÜBERBLATTUNG
+    # in die X/Y-Rippen stecken: Lineal-Oberkante = FEINES Relief (die scharfe Kante, die die
+    # glatten Rippen verfehlen) und bleibt DURCHGEHEND (Schlitz von UNTEN); jede gekreuzte Rippe
+    # bekommt oben einen passenden Schlitz. Gips legt sich an die Lineal-Oberkanten -> Kante scharf.
+    edge_rulers = []                                   # (name, poly2d(s,z), (x0,y0,x1,y1))
+    try:
+        import manmade_edges as _mmE
+        from shapely.geometry import Polygon as _ShP, box as _shbox
+        _we = dem_full[a.r0:a.r1, a.c0:a.c1].astype(float)
+        _we = np.where(_we < -1000, np.nan, _we)
+        if np.isnan(_we).any(): _we = np.where(np.isnan(_we), np.nanmin(_we), _we)
+        _Hfe = gaussian_filter(_we[::-1] - float(np.nanmin(_we)), 0.4) * a.nscale * a.vscale + a.base
+        _surfE, _edgE, _c2E = _mmE.detect_manmade(_Hfe, cell)
+        _ehY, _ehX = _Hfe.shape
+        def _Hfine(x, y): return float(_Hfe[min(int(y/cell), _ehY-1), min(int(x/cell), _ehX-1)])
+        FINH, LAP, MINLEN = 9.0, 4.0, 18.0
+        edge_notches = {}                              # ribdata-Index -> [(s_auf_rippe, htop, zmid)]
+        for (x0, y0, x1, y1) in _edgE:
+            L = float(np.hypot(x1 - x0, y1 - y0))
+            if L < MINLEN: continue
+            dx, dy = (x1 - x0) / L, (y1 - y0) / L
+            crossings = []                             # (s_entlang_lineal, zmid)
+            for _ri, (_rnm, _rpoly, _rax, _rpos, _rth) in enumerate(ribdata):
+                if _rax == "x":                        # X-Rippe bei y=_rpos (s=x)
+                    if abs(y1 - y0) < 1e-6: continue
+                    t = (_rpos - y0) / (y1 - y0)
+                    if not (0.02 < t < 0.98): continue
+                    sc = t * L; xc = x0 + (x1 - x0) * t
+                    if not (0 <= xc <= Wx): continue
+                    ht = min(Htop(xc, _rpos), _Hfine(xc, _rpos)); zmid = ht - LAP
+                    if zmid <= a.base + 1: continue
+                    crossings.append((sc, zmid)); edge_notches.setdefault(_ri, []).append((xc, Htop(xc, _rpos), zmid))
+                else:                                  # Y-Rippe bei x=_rpos (s=y)
+                    if abs(x1 - x0) < 1e-6: continue
+                    t = (_rpos - x0) / (x1 - x0)
+                    if not (0.02 < t < 0.98): continue
+                    sc = t * L; yc = y0 + (y1 - y0) * t
+                    if not (0 <= yc <= Dy): continue
+                    ht = min(Htop(_rpos, yc), _Hfine(_rpos, yc)); zmid = ht - LAP
+                    if zmid <= a.base + 1: continue
+                    crossings.append((sc, zmid)); edge_notches.setdefault(_ri, []).append((yc, Htop(_rpos, yc), zmid))
+            # Kreuzungen zu nah beieinander (< slotw+1) zusammenfassen -> keine überlappenden Schlitze
+            crossings.sort(); merged = []
+            for (sc, zm) in crossings:
+                if merged and sc - merged[-1][0] < slotw + 1: continue
+                merged.append((sc, zm))
+            if not merged: continue
+            _top = (lambda s, x0=x0, y0=y0, dx=dx, dy=dy: _Hfine(x0 + dx*s, y0 + dy*s))
+            _bot = (lambda s, _top=_top: max(a.base, _top(s) - FINH))
+            kpoly = np.array(rib(L, _top, merged, slotw, False, _bot), float)
+            edge_rulers.append((f"K{len(edge_rulers)}", kpoly, (x0, y0, x1, y1)))
+        # TOP-Schlitze in die gekreuzten Rippen schneiden (Gegenstück der Überblattung)
+        for _ri, notches in edge_notches.items():
+            _rnm, _rpoly, _rax, _rpos, _rth = ribdata[_ri]
+            pg = _ShP(_rpoly); pg = pg if pg.is_valid else pg.buffer(0)
+            for (sp, ht, zmid) in notches:
+                pg = pg.difference(_shbox(sp - slotw/2, zmid, sp + slotw/2, ht + 50))
+            if pg.is_empty: continue
+            if pg.geom_type == "MultiPolygon": pg = max(pg.geoms, key=lambda g: g.area)
+            ribdata[_ri] = (_rnm, np.array(pg.exterior.coords), _rax, _rpos, _rth)
+        # SVG/G-Code-Schnittteile der Lineale
+        for (knm, kpoly, seg) in edge_rulers:
+            emit(f"kante{knm}", kpoly, knm)
+        print(f"B4: {len(edge_rulers)} Kanten-Lineale (Halb-Überblattung, Schlitze in {len(edge_notches)} Rippen)")
+    except Exception as _be:
+        edge_rulers = []
+        print("B4 Kanten-Lineale übersprungen:", repr(_be))
+
     # --- KONTUR-STACK oben drauf (z_t .. Hmax), nur wenn trans_frac < 1 ---
     stackdata = []; hr = a.dowel_d/2
     if a.trans_frac < 0.999 and not band:
@@ -669,6 +738,7 @@ def main():
     # --- Vorschau 2: 2D CUT-LAYOUT (wie geschnitten, auf Bettbreite genestet) ---
     parts2d = [(nm, [poly] + list(th)) for (nm, poly, axis, pos, th) in ribdata]
     parts2d += [(f"L{li:02d}", list(ps)) for (li, lv, ps, hh) in stackdata]
+    parts2d += [(knm, [kpoly]) for (knm, kpoly, seg) in edge_rulers]       # B4: Kanten-Lineale mit ins Cut-Layout
     fig, ax = plt.subplots(figsize=(13, 9))
     xoff = yoff = rowh = 0.0; pad = 10.0; bedw = a.bed_x
     for (nm, polys) in parts2d:
@@ -875,28 +945,28 @@ def main():
             for (x0, y0, x1, y1) in _edg:
                 overlay_edges.append([[float(x0), float(y0), _zc(x0, y0) + 1.0],
                                       [float(x1), float(y1), _zc(x1, y1) + 1.0]])
-            # B4 Schritt 1: KANTEN-LINEALE als vertikale Finnen GENAU auf den scharfen Kanten
-            # (beliebige Richtung, auch schräg!). Oberkante = Gelände entlang der Kante -> die Finne
-            # ist die physische Schablone, an die sich der Gips legt => scharfe Kante bleibt scharf,
-            # auch wo achsparallele Rippen sie verfehlen (kantiger Tunnelausgang, Felsgrate).
-            _FIN_H = 9.0; _nk = 0; _minlen = 18.0
-            for _ek, (x0, y0, x1, y1) in enumerate(_edg):
-                _L = float(np.hypot(x1 - x0, y1 - y0))
-                if _L < _minlen:
+            # B4: die KANTEN-LINEALE (mit Halb-Überblattungs-Schlitzen, oben in main gebaut) in 3D,
+            # entlang ihrer Kante platziert (beliebige Richtung). Die Bodenschlitze stecken über die
+            # X/Y-Rippen; die Oberkante = feines Relief = die scharfe Kante.
+            _nk = 0
+            for (_knm, _kpoly, (_x0, _y0, _x1, _y1)) in edge_rulers:
+                _Lk = float(np.hypot(_x1 - _x0, _y1 - _y0))
+                if _Lk < 1e-6: continue
+                _dxk, _dyk = (_x1 - _x0)/_Lk, (_y1 - _y0)/_Lk
+                _nxk, _nyk = -_dyk, _dxk                               # Dicke senkrecht zur Kante
+                try:
+                    _pgk = _Poly(_kpoly)
+                    if not _pgk.is_valid: _pgk = _pgk.buffer(0)
+                    _mk = _tmc.extrude_polygon(_pgk, a.thickness)
+                    _Vk = _mk.vertices
+                    _sk = _Vk[:, 0]; _zk = _Vk[:, 1]; _wk = _Vk[:, 2] - a.thickness/2
+                    _mk.vertices = np.column_stack([_x0 + _dxk*_sk + _nxk*_wk,
+                                                    _y0 + _dyk*_sk + _nyk*_wk, _zk])
+                    extra_meshes.append((f"KANTE{_nk}", _mk, [255, 20, 147, 255]))
+                    _nk += 1
+                except Exception:
                     continue
-                _ns = max(2, int(_L / (cell)) + 1)                    # dicht genug fürs Gelände-Profil
-                _KV = []; _KF = []
-                for _ii in range(_ns):
-                    _tt = _ii / (_ns - 1)
-                    _xx = x0 + (x1 - x0) * _tt; _yy = y0 + (y1 - y0) * _tt
-                    _zt = _zc(_xx, _yy)                               # Oberkante = Gelände = die Kante
-                    _KV.append([_xx, _yy, _zt]); _KV.append([_xx, _yy, max(a.base, _zt - _FIN_H)])
-                for _ii in range(_ns - 1):
-                    _b = 2 * _ii
-                    _KF += [[_b, _b + 1, _b + 2], [_b + 1, _b + 3, _b + 2]]
-                extra_meshes.append((f"KANTE{_ek}", _tm.Trimesh(np.array(_KV), np.array(_KF, int), process=False), [255, 20, 147, 255]))
-                _nk += 1
-            print(f"Flächen-Layer: {_nf} EBENE Platten + {_nw} steile Wände + {_nk} Kanten-Lineale (von {len(_edg)} Kanten)")
+            print(f"Flächen-Layer: {_nf} EBENE Platten + {_nw} steile Wände + {_nk} Kanten-Lineale (3D)")
         except Exception as _e:
             print("Menschgemacht-Layer übersprungen:", _e)
         write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes, overlay_edges)
