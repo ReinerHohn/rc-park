@@ -15,3 +15,4 @@ modelle/stl/altstadt_preview.stl
 *.tfw
 *.laz
 daten/hoellental/dgm025_full.npy
+.venv-pc/
