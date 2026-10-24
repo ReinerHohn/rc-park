@@ -830,23 +830,47 @@ def main():
             _wd = _wd[::-1]
             _reld = gaussian_filter((_wd - float(_wd.min())), 0.4)
             _Hfd = _reld * a.nscale * a.vscale + a.base
+            _NY2, _NX2 = Hf.shape
+            _zc = lambda x, y: float(Hf[min(int(y/cell), _NY2-1), min(int(x/cell), _NX2-1)])
+            # FLACHE BÄNKE (Talboden/Straße/Terrasse) als MASKE per GRID-CLIP aufs ECHTE Gelände drapiert:
+            # endet an der Bruchkante zum Hang (enge Neigungsschwelle) und folgt der Innenkurve, ohne den
+            # Bergsporn zu überspannen (kein vereinfachtes Polygon). GENERISCH, kein Straßen-Sonderfall.
+            _benches = _mm.detect_flat_benches(_Hfd, cell, flat_deg=11.0, min_area_mm2=150.0)
+            _nf = 0
+            for _k, (_m, _nrm, _rms, _sl) in enumerate(_benches):
+                _gi = -np.ones((_NY2, _NX2), int); _V = []; _F = []
+                for _j in range(_NY2):
+                    for _i in range(_NX2):
+                        if _m[_j, _i]:
+                            _gi[_j, _i] = len(_V); _V.append([_i*cell, _j*cell, float(Hf[_j, _i]) + 0.5])
+                for _j in range(_NY2 - 1):
+                    for _i in range(_NX2 - 1):
+                        _a2, _b2, _c3, _d2 = _gi[_j, _i], _gi[_j, _i+1], _gi[_j+1, _i], _gi[_j+1, _i+1]
+                        if min(_a2, _b2, _c3, _d2) >= 0:
+                            _F += [[int(_a2), int(_c3), int(_b2)], [int(_b2), int(_c3), int(_d2)]]
+                if _F:
+                    extra_meshes.append((f"FLAECHE{_k}", _tm.Trimesh(np.array(_V), np.array(_F, int), process=False), [60, 150, 230, 255]))
+                    _nf += 1
+            # STEILE WÄNDE weiter über detect_manmade (plan-gefittetes Polygon = saubere Wandplatte):
             _surf, _edg, _c2 = _mm.detect_manmade(_Hfd, cell)
-            _zc = lambda x, y: float(Hf[min(int(y/cell), Hf.shape[0]-1), min(int(x/cell), Hf.shape[1]-1)])
             def _proj(x, y, _c):
                 # Geländepunkt ORTHOGONAL auf die gefittete Ebene -> liegt EXAKT drauf (eben, kein Spike)
                 _z0 = _c[0]*x + _c[1]*y + _c[2]; _n2 = _c[0]*_c[0] + _c[1]*_c[1] + 1.0
                 _t = (_zc(x, y) - _z0) / _n2
                 _px = x + _c[0]*_t; _py = y + _c[1]*_t
                 return _px, _py, _c[0]*_px + _c[1]*_py + _c[2]
+            _nw = 0
             for _k, (_p, _coef, _rms, _ps) in enumerate(_surf):
-                _col = [240, 140, 30, 255] if _ps >= 45 else [60, 150, 230, 255]   # orange steil / blau flach
+                if _ps < 45:                               # flach kommt jetzt aus den Grid-Clip-Bänken
+                    continue
                 _V = np.array([[*_proj(float(x), float(y), _coef)[:2], _proj(float(x), float(y), _coef)[2] + 0.6] for x, y in _p])
                 _F = np.array([[0, i, i + 1] for i in range(1, len(_p) - 1)])
-                extra_meshes.append((f"FLAECHE{_k}", _tm.Trimesh(_V, _F, process=False), _col))
+                extra_meshes.append((f"FLAECHE_WAND{_k}", _tm.Trimesh(_V, _F, process=False), [240, 140, 30, 255]))
+                _nw += 1
             for (x0, y0, x1, y1) in _edg:
                 overlay_edges.append([[float(x0), float(y0), _zc(x0, y0) + 1.0],
                                       [float(x1), float(y1), _zc(x1, y1) + 1.0]])
-            print(f"Menschgemacht-Layer: {len(_surf)} Flächen + {len(_edg)} scharfe Kanten")
+            print(f"Flächen-Layer: {_nf} flache Bänke (Grid-Clip, an Bruchkante) + {_nw} steile Wände + {len(_edg)} scharfe Kanten")
         except Exception as _e:
             print("Menschgemacht-Layer übersprungen:", _e)
         write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes, overlay_edges)
