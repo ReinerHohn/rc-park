@@ -98,6 +98,47 @@ def detect_manmade(Hf, cell, sharp_pct=90.0, flat_slope=22.0, min_area_mm2=200.0
     return flat_surf + steep_surf, edges, cell2
 
 
+def detect_edges_ridges(Hf, cell, min_len_mm=14.0, thr=0.12, max_gap_mm=6.0, hough_thr=12):
+    """FUSSELIGE/verrauschte Kanten robust finden — deutlich besser als LSD-auf-Schärfe-Perzentil
+    (das nur SAUBERE gerade Linien fängt). Für linienhafte Bauwerke, die im Relief fusselig sind:
+    Bahndamm (heller GRAT), Einschnitt (dunkler GRABEN), kantiger Tunnelausgang.
+      1) RIDGE-Filter (Sato, multi-Skala) hell=Grat UND dunkel=Graben — findet linienhafte Strukturen
+         auch bei Rauschen (Hessian-basiert, nicht nur ein Gradient).
+      2) Canny mit HYSTERESE auf der Neigung — verbindet schwache + starke Kantenstücke zu Linien
+         (die Einzel-Schwelle vorher riss fusselige Kanten auseinander).
+      3) Skelett + Hough -> gerade Segmente (für die Kanten-Lineale B4).
+    Rückgabe: Liste (x0,y0,x1,y1) in Welt-mm. Fällt leer zurück, wenn skimage fehlt."""
+    try:
+        from skimage.filters import sato
+        from skimage.feature import canny
+        from skimage.morphology import skeletonize
+    except Exception:
+        return [e for e in detect_manmade(Hf, cell)[1]]        # Fallback: alte Kanten
+    NY, NX = Hf.shape
+    def _nrm(a):
+        a = np.asarray(a, float); return (a - a.min()) / (np.ptp(a) + 1e-9)
+    gy, gx = np.gradient(gaussian_filter(Hf, 0.8), cell)
+    slope = np.degrees(np.arctan(np.hypot(gx, gy)))
+    rb = sato(Hf, sigmas=range(1, 5), black_ridges=False)       # heller Grat = Damm
+    rd = sato(Hf, sigmas=range(1, 5), black_ridges=True)        # dunkler Graben = Einschnitt
+    can = canny(_nrm(slope), sigma=1.5, low_threshold=0.1, high_threshold=0.25)
+    strength = np.maximum(_nrm(rb), _nrm(rd))
+    binmap = (strength > thr) | can
+    from scipy.ndimage import label as _lab2                 # kleine Rausch-Inseln (<25 px) weg
+    _lb, _nl = _lab2(binmap); _sz = np.bincount(_lb.ravel())
+    binmap = binmap & ~np.isin(_lb, np.where(_sz < 25)[0])
+    sk = skeletonize(binmap)
+    lines = cv2.HoughLinesP((sk * 255).astype(np.uint8), 1, np.pi/180,
+                            threshold=int(hough_thr), minLineLength=max(2, min_len_mm/cell),
+                            maxLineGap=max(1, max_gap_mm/cell))
+    segs = []
+    if lines is not None:
+        for x0, y0, x1, y1 in lines.reshape(-1, 4):
+            if np.hypot(x1-x0, y1-y0) * cell >= min_len_mm:
+                segs.append((float(x0*cell), float(y0*cell), float(x1*cell), float(y1*cell)))
+    return segs
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dem", default="daten/hoellental/dgm025_full.npy")

@@ -611,6 +611,7 @@ def main():
     # glatten Rippen verfehlen) und bleibt DURCHGEHEND (Schlitz von UNTEN); jede gekreuzte Rippe
     # bekommt oben einen passenden Schlitz. Gips legt sich an die Lineal-Oberkanten -> Kante scharf.
     edge_rulers = []                                   # (name, poly2d(s,z), (x0,y0,x1,y1))
+    edge_segs = []                                     # erkannte Kanten-Segmente (Welt-mm) für den Overlay
     try:
         import manmade_edges as _mmE
         from shapely.geometry import Polygon as _ShP, box as _shbox
@@ -618,7 +619,10 @@ def main():
         _we = np.where(_we < -1000, np.nan, _we)
         if np.isnan(_we).any(): _we = np.where(np.isnan(_we), np.nanmin(_we), _we)
         _Hfe = gaussian_filter(_we[::-1] - float(np.nanmin(_we)), 0.4) * a.nscale * a.vscale + a.base
-        _surfE, _edgE, _c2E = _mmE.detect_manmade(_Hfe, cell)
+        # FUSSELIGE Kanten (Bahndamm-Grat, Einschnitt-Graben, Tunnelausgang) via Ridge-Filter +
+        # Canny-Hysterese statt LSD-auf-Schärfe -> fängt die verrauschten Kanten, die vorher fehlten.
+        _edgE = _mmE.detect_edges_ridges(_Hfe, cell, min_len_mm=18.0)
+        edge_segs = _edgE                                  # für den Overlay im Viewer wiederverwenden
         _ehY, _ehX = _Hfe.shape
         def _Hfine(x, y): return float(_Hfe[min(int(y/cell), _ehY-1), min(int(x/cell), _ehX-1)])
         FINH, LAP, MINLEN = 9.0, 4.0, 18.0
@@ -942,7 +946,7 @@ def main():
                 _F = np.array([[0, i, i + 1] for i in range(1, len(_p) - 1)])
                 extra_meshes.append((f"FLAECHE_WAND{_k}", _tm.Trimesh(_V, _F, process=False), [240, 140, 30, 255]))
                 _nw += 1
-            for (x0, y0, x1, y1) in _edg:
+            for (x0, y0, x1, y1) in (edge_segs or _edg):     # Ridge/Hysterese-Kanten (Fallback: LSD)
                 overlay_edges.append([[float(x0), float(y0), _zc(x0, y0) + 1.0],
                                       [float(x1), float(y1), _zc(x1, y1) + 1.0]])
             # B4: die KANTEN-LINEALE (mit Halb-Überblattungs-Schlitzen, oben in main gebaut) in 3D,
