@@ -775,29 +775,26 @@ def main():
                 if _tcp is None:
                     _tcp = _ipa.tunnel_cut_from_track(Hf, cell, track)   # Fallback
                 if _tcp is not None and len(_tcp) >= 4:
-                    # Platte liegt AUF dem Gelände (Grid-Clip): Polygon rastern, Gelände-Zellen drin
-                    # als Dreiecke -> folgt der Kontur statt als flaches Segel hochzustehen.
+                    # DECKPLATTE = EBENE Platte (laser-cutbar): Ebene an die RIM-Höhen des Einschnitt-
+                    # Polygons gefittet (die Oberkanten der Einschnitt-Wände = scharfe Kanten), dann das
+                    # GANZE Polygon via earcut trianguliert -> reicht bis an die scharfen Kanten (kein
+                    # Grid-Clip-Erosionsrand mehr, nicht mehr 'an den Ecken weggeschmolzen'), und flach
+                    # statt ans Gelände drapiert (bridgt die Rinne als Deckel statt reinzuhängen).
                     try:
-                        from matplotlib.path import Path as _MPath
+                        import trimesh.creation as _tmc
+                        from shapely.geometry import Polygon as _Poly
+                        _rim = _tcp[:-1] if np.allclose(_tcp[0], _tcp[-1]) else _tcp
                         _ny, _nx = Hf.shape
-                        _gx, _gy = np.meshgrid(np.arange(_nx) * cell, np.arange(_ny) * cell)
-                        _inside = _MPath(_tcp[:, :2]).contains_points(
-                            np.column_stack([_gx.ravel(), _gy.ravel()])).reshape(_ny, _nx)
-                        _V = []; _F = []; _idx = -np.ones((_ny, _nx), int)
-                        for _j in range(_ny):
-                            for _i in range(_nx):
-                                if _inside[_j, _i]:
-                                    _idx[_j, _i] = len(_V)
-                                    _V.append([_i * cell, _j * cell, float(Hf[_j, _i]) + 1.5])
-                        for _j in range(_ny - 1):
-                            for _i in range(_nx - 1):
-                                _a = _idx[_j, _i]; _b = _idx[_j, _i + 1]
-                                _c = _idx[_j + 1, _i]; _d = _idx[_j + 1, _i + 1]
-                                if _a >= 0 and _b >= 0 and _c >= 0 and _d >= 0:
-                                    _F.append([_a, _c, _b]); _F.append([_b, _c, _d])
-                        if len(_F) >= 1:
+                        _rz = np.array([float(Hf[min(int(_y/cell), _ny-1), min(int(_x/cell), _nx-1)])
+                                        for _x, _y in _rim[:, :2]])
+                        _A = np.column_stack([_rim[:, 0], _rim[:, 1], np.ones(len(_rim))])
+                        _pc, *_ = np.linalg.lstsq(_A, _rz, rcond=None)          # Deck-Ebene aus den Rim-Höhen
+                        _v2, _ff = _tmc.triangulate_polygon(_Poly(_rim[:, :2]), engine="earcut")
+                        if _v2 is not None and len(_ff):
+                            _zz = _pc[0]*_v2[:, 0] + _pc[1]*_v2[:, 1] + _pc[2] + 1.5
+                            _Vd = np.column_stack([_v2[:, 0], _v2[:, 1], _zz])
                             extra_meshes.append(("TUNNEL_deckplatte",
-                                _tm.Trimesh(np.array(_V), np.array(_F, int), process=False), [0, 210, 255, 255]))
+                                _tm.Trimesh(_Vd, np.array(_ff, int), process=False), [0, 210, 255, 255]))
                     except Exception:
                         pass
                 # Felssturzschutz-GALERIE: zwei SENKRECHTE Seitenwände + DACH entlang der Trasse (nicht nur Boden)
