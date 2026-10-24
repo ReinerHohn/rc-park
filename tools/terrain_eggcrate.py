@@ -832,25 +832,32 @@ def main():
             _Hfd = _reld * a.nscale * a.vscale + a.base
             _NY2, _NX2 = Hf.shape
             _zc = lambda x, y: float(Hf[min(int(y/cell), _NY2-1), min(int(x/cell), _NX2-1)])
-            # FLACHE BÄNKE (Talboden/Straße/Terrasse) als MASKE per GRID-CLIP aufs ECHTE Gelände drapiert:
-            # endet an der Bruchkante zum Hang (enge Neigungsschwelle) und folgt der Innenkurve, ohne den
-            # Bergsporn zu überspannen (kein vereinfachtes Polygon). GENERISCH, kein Straßen-Sonderfall.
-            _benches = _mm.detect_flat_benches(_Hfd, cell, flat_deg=11.0, min_area_mm2=150.0)
+            # EBENE PLATTEN (flach/schräg) = DIESELBE Mechanik wie die geschnittenen Einhäng-Platten
+            # (insert_plates_auto): segment_planes -> planare Facetten an den Bruchkanten getrennt,
+            # fit_plane_mask -> ECHTE EBENE, mask_contour_mm -> echte (konkav-fähige) Kontur die der
+            # Kante folgt. Jede Platte wird auf ihre gefittete EBENE trianguliert => WIRKLICH FLACH
+            # (laser-cutbar, in die Rippen integrierbar). Eine gekrümmte Fläche zerfällt dabei in
+            # mehrere ebene Facetten — anders ist flaches Sperrholz nicht abbildbar.
+            import insert_plates_auto as _ipa
+            import trimesh.creation as _tmc
+            from shapely.geometry import Polygon as _Poly
+            _facets = _ipa.segment_planes(_Hfd, cell, 2.5, 12.0, 150.0, 45.0)
             _nf = 0
-            for _k, (_m, _nrm, _rms, _sl) in enumerate(_benches):
-                _gi = -np.ones((_NY2, _NX2), int); _V = []; _F = []
-                for _j in range(_NY2):
-                    for _i in range(_NX2):
-                        if _m[_j, _i]:
-                            _gi[_j, _i] = len(_V); _V.append([_i*cell, _j*cell, float(Hf[_j, _i]) + 0.5])
-                for _j in range(_NY2 - 1):
-                    for _i in range(_NX2 - 1):
-                        _a2, _b2, _c3, _d2 = _gi[_j, _i], _gi[_j, _i+1], _gi[_j+1, _i], _gi[_j+1, _i+1]
-                        if min(_a2, _b2, _c3, _d2) >= 0:
-                            _F += [[int(_a2), int(_c3), int(_b2)], [int(_b2), int(_c3), int(_d2)]]
-                if _F:
-                    extra_meshes.append((f"FLAECHE{_k}", _tm.Trimesh(np.array(_V), np.array(_F, int), process=False), [60, 150, 230, 255]))
-                    _nf += 1
+            for _k, _fm in enumerate(_facets):
+                _aa, _bb, _cc, _frms = _ipa.fit_plane_mask(_Hfd, cell, _fm)
+                _cont = _ipa.mask_contour_mm(_fm, cell, 2.5)
+                if _cont is None or len(_cont) < 4:
+                    continue
+                try:
+                    _v2, _ff = _tmc.triangulate_polygon(_Poly(_cont), engine="earcut")
+                except Exception:
+                    continue
+                if _v2 is None or not len(_ff):
+                    continue
+                _z = _aa*_v2[:, 0] + _bb*_v2[:, 1] + _cc + 0.5          # auf die gefittete EBENE -> wirklich flach
+                _V3 = np.column_stack([_v2[:, 0], _v2[:, 1], _z])
+                extra_meshes.append((f"FLAECHE{_k}", _tm.Trimesh(_V3, np.array(_ff, int), process=False), [60, 150, 230, 255]))
+                _nf += 1
             # STEILE WÄNDE weiter über detect_manmade (plan-gefittetes Polygon = saubere Wandplatte):
             _surf, _edg, _c2 = _mm.detect_manmade(_Hfd, cell)
             def _proj(x, y, _c):
@@ -870,7 +877,7 @@ def main():
             for (x0, y0, x1, y1) in _edg:
                 overlay_edges.append([[float(x0), float(y0), _zc(x0, y0) + 1.0],
                                       [float(x1), float(y1), _zc(x1, y1) + 1.0]])
-            print(f"Flächen-Layer: {_nf} flache Bänke (Grid-Clip, an Bruchkante) + {_nw} steile Wände + {len(_edg)} scharfe Kanten")
+            print(f"Flächen-Layer: {_nf} EBENE Platten (plan-gefittet, laser-cutbar) + {_nw} steile Wände + {len(_edg)} scharfe Kanten")
         except Exception as _e:
             print("Menschgemacht-Layer übersprungen:", _e)
         write_assembly_html(f"{a.out}/_zusammenbau.html", named_pieces, engrave_lines, relief_mesh, extra_meshes, overlay_edges)

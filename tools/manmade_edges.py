@@ -98,55 +98,6 @@ def detect_manmade(Hf, cell, sharp_pct=90.0, flat_slope=22.0, min_area_mm2=200.0
     return flat_surf + steep_surf, edges, cell2
 
 
-def detect_flat_benches(Hf, cell, flat_deg=11.0, min_area_mm2=150.0, smooth=0.6,
-                        close_iter=1, min_hole_mm2=120.0):
-    """GENERISCHE flache Flächen (Bänke: Talboden, Straße, Terrasse) als MASKEN, die GENAU an der
-    Bruchkante zum Berghang enden — für die Grid-Clip-Darstellung (jede echte flache Zelle wird aufs
-    Gelände drapiert).
-
-    Warum Maske statt Polygon: ein vereinfachtes Polygon (Douglas-Peucker + eine Ebene) ÜBERSPANNT
-    Konkavitäten -> an einer Innenkurve deckt es den Bergsporn mit ab ('Straße stoppt nicht, wo der
-    Berg hochgeht'). Die Maske enthält NUR flache Zellen -> die Platte folgt der Innenkurve und endet
-    am Hangfuß. Enge Neigungsschwelle (flat_deg) = Grenze dort, wo der Anstieg WIRKLICH beginnt, nicht
-    erst bei 22°.
-
-    flach = Geländeneigung (auf leicht geglättetem Hf) < flat_deg; zusammenhängende Regionen; je
-    Region min_area_mm2. Rückgabe wie detect_planes_3d: (mask[NY,NX] bool, normal[3], rms, slope_deg)
-    — für Grid-Clip zählt nur die Maske; normal/rms/slope dienen der Einfärbung/Sortierung."""
-    from scipy.ndimage import label as _lab, binary_closing, binary_fill_holes
-    NY, NX = Hf.shape
-    z = gaussian_filter(Hf, smooth)
-    gx, gy = np.gradient(z, cell)
-    slope = np.degrees(np.arctan(np.hypot(gx, gy)))
-    flat = slope < flat_deg
-    if close_iter > 0:                                   # Mikro-Löcher/Rauschen im Bankinneren schließen
-        flat = binary_closing(flat, iterations=int(close_iter))
-    yy, xx = np.mgrid[0:NY, 0:NX]
-    out = []
-    lab, nl = _lab(flat)
-    for li in range(1, nl + 1):
-        m = lab == li
-        if m.sum() * cell * cell < min_area_mm2:
-            continue
-        # kleine Löcher IN der Bank füllen (einzelne steile Pixel), große Aussparungen (Sporn) NICHT
-        filled = binary_fill_holes(m)
-        holes = filled & (~m)
-        if holes.any():
-            hl, hn = _lab(holes)
-            for hi in range(1, hn + 1):
-                hm = hl == hi
-                if hm.sum() * cell * cell < min_hole_mm2:
-                    m = m | hm
-        px = xx[m] * cell; py = yy[m] * cell; pz = Hf[m]
-        P = np.column_stack([px, py, pz]); C = P.mean(0); Q = P - C
-        _, _, vt = np.linalg.svd(Q, full_matrices=False); nrm = vt[2]
-        rms = float(np.sqrt(np.mean((Q @ nrm) ** 2)))
-        sl = float(np.degrees(np.arccos(min(1, abs(nrm[2])))))
-        out.append((m, nrm, rms, sl))
-    out.sort(key=lambda t: -t[0].sum())
-    return out
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dem", default="daten/hoellental/dgm025_full.npy")
