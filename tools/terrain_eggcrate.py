@@ -570,16 +570,9 @@ def main():
                     mz = p[2]+(q[2]-p[2])*tt; istun = p[3] > 0.5
                     dense.append((mx, my, mz - (a.tunnel_drop if istun else 0.0), istun))
             track = [p for p in dense if -6 <= p[0] <= Wx+6 and -6 <= p[1] <= Dy+6]
-            # SCHIENE AUS DEM GELÄNDE ableiten (OSM-z war ~20mm zu tief -> Tunnel zu tief +
-            # offenes Gleisbett wurde als tiefer Graben ausgehoben). Offen = Gleis liegt AUF
-            # dem Boden (flache Bettung). Tunnel = Gleis bleibt auf PORTAL-Niveau, der Berg
-            # steigt drüber (Bohrung + Dach, Portal öffnet sich wo Gelände = Bohrungsdecke).
-            if track:
-                _portal = next((Hc(p[0], p[1]) for p in track if not p[3]), Hc(track[0][0], track[0][1]))
-                track = [(p[0], p[1],
-                          (_portal if p[3] else Hc(p[0], p[1]) - a.bed_depth) - (a.tunnel_drop if p[3] else 0.0),
-                          p[3]) for p in track]
-                print(f"Schiene aus Gelände: Tunnel auf Portal-Niveau {_portal:.0f}mm, offen = Gleisbett auf Oberfläche")
+            # Schiene = echte OSM-z (gibt dem Tunnel das Dach: Gelände steigt darüber).
+            # Das offene Gleisbett wird NICHT bis zu dieser tiefen Schiene ausgehoben, sondern
+            # flach an der Oberfläche geschnitten (siehe tunnel_holes, offener Zweig).
             tun_pts = [(p[0], p[1], p[2]) for p in track]
             print(f"Trasse geladen: {len(track)} Punkte ({sum(1 for p in track if p[3])} Tunnel / {sum(1 for p in track if not p[3])} offen)")
 
@@ -597,10 +590,12 @@ def main():
                 seglen = float(np.hypot(s1-s0, a1-a0))
                 w = CLEAR_W * min(2.6, seglen/abs(a1-a0))      # /sin(Winkel), gekappt
                 terr = (Hc(s, pos) if axis=="x" else Hc(pos, s))
-                if p[3] and terr >= z + CLEAR_H + a.roof_min:  # Tunnel + genug Fels: KONSTANTE Bohrung, Dach bleibt
-                    cuts.append(_rect2(s, z-4, z+CLEAR_H, w))   # feste Lichtraum-Höhe (keine wellige Decke)
-                else:                                          # offener Einschnitt / Portal (zu wenig Fels fürs Dach)
+                if p[3] and terr >= z + CLEAR_H + a.roof_min:  # TUNNEL: genug Fels über der (tiefen) Schiene
+                    cuts.append(_rect2(s, z-4, z+CLEAR_H, w))   # konstante Bohrung auf Schienenhöhe, Dach bleibt
+                elif p[3]:                                     # Tunnel markiert, aber zu wenig Fels -> Portal (offen bis Oberkante)
                     cuts.append(_rect2(s, z-4, terr+6, w))
+                else:                                          # OFFENES GLEISBETT: flache Bettung an der OBERFLÄCHE
+                    cuts.append(_rect2(s, terr-a.bed_depth, terr+6, w))   # nicht bis zur tiefen Schiene graben
         return cuts
 
     mg = a.max_gap if a.max_gap > 0 else None
