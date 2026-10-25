@@ -494,7 +494,7 @@ def main():
     ap.add_argument("--split-len", type=float, default=0.0, help="lange Rippen in Puzzle-Stücke <= N mm mit Fingerzinken teilen (spart Verschnitt); 0=aus")
     ap.add_argument("--finger", type=float, default=12.0, help="Fingerzinken-Höhe (mm) entlang der Naht")
     ap.add_argument("--seam-min-h", type=float, default=0.0, dest="seam_min_h", help="Fingerzinken-Naht NUR in Lücken wo die Rippe >= N mm hoch ist (solide Zähne, kein Mini-Zahn im Talauslauf); 0=auto=2×--finger")
-    ap.add_argument("--min-web", type=float, default=2.5, dest="min_web", help="Mindest-Wandstärke (mm): Schlitze werden so gekappt, dass neben jedem Schlitz >= min_web Material bleibt (Gegenschlitz tiefer); + Hals-Warnschwelle bei der Validierung")
+    ap.add_argument("--min-web", type=float, default=3.0, dest="min_web", help="Mindest-Wandstärke (mm): Schlitze werden so gekappt, dass neben jedem Schlitz >= min_web Material bleibt (Gegenschlitz tiefer); + Hals-Warnschwelle bei der Validierung")
     ap.add_argument("--thickness", type=float, default=3.0)
     ap.add_argument("--rib-depth", type=float, default=0.0, help="Rippen als konstant-tiefes Band (mm unter Oberkante) statt bis Boden -> spart Material; 0=bis Boden")
     ap.add_argument("--base", type=float, default=12.0, help="Sockel mm: Gelände anheben, damit Rippen am Talboden nicht auf 0 pinchen (gegen 'schwebende' Teile)")
@@ -594,8 +594,8 @@ def main():
                     cuts.append(_rect2(s, z-4, z+CLEAR_H, w))   # konstante Bohrung auf Schienenhöhe, Dach bleibt
                 elif p[3]:                                     # Tunnel markiert, aber zu wenig Fels -> Portal (offen bis Oberkante)
                     cuts.append(_rect2(s, z-4, terr+6, w))
-                else:                                          # OFFENES GLEISBETT: flache Bettung an der OBERFLÄCHE
-                    cuts.append(_rect2(s, terr-a.bed_depth, terr+6, w))   # nicht bis zur tiefen Schiene graben
+                else:                                          # offener Einschnitt: Trasse läuft TIEF (bis Schienenhöhe), im steilen Tal ein Fels-Einschnitt
+                    cuts.append(_rect2(s, z-4, terr+6, w))
         return cuts
 
     mg = a.max_gap if a.max_gap > 0 else None
