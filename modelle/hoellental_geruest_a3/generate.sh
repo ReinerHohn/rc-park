@@ -23,8 +23,10 @@ python3 tools/terrain_eggcrate.py \
   --trans-frac 1.0 --smooth 0.6 --min-gap 7 \
   --tunnel --track daten/hoellental/hoellental_track_50.npy \
   --tunnel-w-m 4.0 --tunnel-h-m 5.5 --roof-min 2.0 \
-  --split-len 200 --finger 12 --fit -0.50 --gcode \
+  --split-len 0 --edge-min-len 18 --fit -0.50 --gcode \
   --out "$OUT"
+# --split-len 0 = KEINE Fingerzinken-Teilung (Rippen <=203mm passen aufs 410-Bett) -> weniger
+#   Teile, keine duennen Zinken-Zaehne. --edge-min-len 18 = keine winzigen Fuzzel-Lineale.
 
 echo "== 2/3  RIPPEN auf A3-Bretter packen =="
 python3 tools/laser_pack.py "$OUT" --sheet 410x297 --passes 2 --nest --margin 4 \

@@ -514,6 +514,8 @@ def main():
     ap.add_argument("--tunnel-w-m", type=float, default=4.0, dest="tunnel_w_m", help="ECHTE Tunnel-Breite in METERN (wird mit nscale maßstäblich skaliert); eng einspurig ~4 m")
     ap.add_argument("--tunnel-h-m", type=float, default=5.5, dest="tunnel_h_m", help="ECHTE Tunnel-Höhe in METERN (wird mit nscale·vscale skaliert); ~5.5 m")
     ap.add_argument("--roof-min", type=float, default=2.0, dest="roof_min", help="Mindest-Dachdicke (mm) über dem Tunnel-Loch; sonst wird's ein offener Einschnitt")
+    ap.add_argument("--bed-depth", type=float, default=2.0, dest="bed_depth", help="Gleisbett-Tiefe (mm) im offenen Teil: Gleis liegt so tief unter der Geländeoberkante (flache Bettung statt tiefem Graben)")
+    ap.add_argument("--edge-min-len", type=float, default=18.0, dest="edge_min_len", help="Mindest-Länge (mm) einer scharfen Kante, damit ein Kanten-Lineal erzeugt wird; höher = weniger winzige Fuzzel-Teile")
     ap.add_argument("--gcode", action="store_true")
     ap.add_argument("--feed", type=float, default=400); ap.add_argument("--power", type=float, default=100)
     ap.add_argument("--passes", type=int, default=4); ap.add_argument("--eng-power", type=float, default=20)
@@ -568,6 +570,16 @@ def main():
                     mz = p[2]+(q[2]-p[2])*tt; istun = p[3] > 0.5
                     dense.append((mx, my, mz - (a.tunnel_drop if istun else 0.0), istun))
             track = [p for p in dense if -6 <= p[0] <= Wx+6 and -6 <= p[1] <= Dy+6]
+            # SCHIENE AUS DEM GELÄNDE ableiten (OSM-z war ~20mm zu tief -> Tunnel zu tief +
+            # offenes Gleisbett wurde als tiefer Graben ausgehoben). Offen = Gleis liegt AUF
+            # dem Boden (flache Bettung). Tunnel = Gleis bleibt auf PORTAL-Niveau, der Berg
+            # steigt drüber (Bohrung + Dach, Portal öffnet sich wo Gelände = Bohrungsdecke).
+            if track:
+                _portal = next((Hc(p[0], p[1]) for p in track if not p[3]), Hc(track[0][0], track[0][1]))
+                track = [(p[0], p[1],
+                          (_portal if p[3] else Hc(p[0], p[1]) - a.bed_depth) - (a.tunnel_drop if p[3] else 0.0),
+                          p[3]) for p in track]
+                print(f"Schiene aus Gelände: Tunnel auf Portal-Niveau {_portal:.0f}mm, offen = Gleisbett auf Oberfläche")
             tun_pts = [(p[0], p[1], p[2]) for p in track]
             print(f"Trasse geladen: {len(track)} Punkte ({sum(1 for p in track if p[3])} Tunnel / {sum(1 for p in track if not p[3])} offen)")
 
@@ -585,14 +597,10 @@ def main():
                 seglen = float(np.hypot(s1-s0, a1-a0))
                 w = CLEAR_W * min(2.6, seglen/abs(a1-a0))      # /sin(Winkel), gekappt
                 terr = (Hc(s, pos) if axis=="x" else Hc(pos, s))
-                if p[3]:                                       # Tunnel: geschlossenes Loch MIT Dach
-                    top = min(z+CLEAR_H, terr - a.roof_min)    # mind. roof_min Gelände als Dach lassen
-                    if top - (z-4) < 6:                        # Berg zu flach -> kein echter Tunnel
-                        cuts.append(_rect2(s, z-4, terr+6, w)) # -> offener Einschnitt (ehrlich)
-                    else:
-                        cuts.append(_rect2(s, z-4, top, w))    # geschlossen, Dach bleibt stehen
-                else:                                          # offen: Einschnitt bis Oberkante
-                    cuts.append(_rect2(s, z-4, max(terr+6, z+CLEAR_H), w))
+                if p[3] and terr >= z + CLEAR_H + a.roof_min:  # Tunnel + genug Fels: KONSTANTE Bohrung, Dach bleibt
+                    cuts.append(_rect2(s, z-4, z+CLEAR_H, w))   # feste Lichtraum-Höhe (keine wellige Decke)
+                else:                                          # offener Einschnitt / Portal (zu wenig Fels fürs Dach)
+                    cuts.append(_rect2(s, z-4, terr+6, w))
         return cuts
 
     mg = a.max_gap if a.max_gap > 0 else None
@@ -762,11 +770,11 @@ def main():
         _Hfe = gaussian_filter(_we[::-1] - float(np.nanmin(_we)), 0.4) * a.nscale * a.vscale + a.base
         # FUSSELIGE Kanten (Bahndamm-Grat, Einschnitt-Graben, Tunnelausgang) via Ridge-Filter +
         # Canny-Hysterese statt LSD-auf-Schärfe -> fängt die verrauschten Kanten, die vorher fehlten.
-        _edgE = _mmE.detect_edges_ridges(_Hfe, cell, min_len_mm=10.0)
+        _edgE = _mmE.detect_edges_ridges(_Hfe, cell, min_len_mm=a.edge_min_len)
         edge_segs = _edgE                                  # für den Overlay im Viewer wiederverwenden
         _ehY, _ehX = _Hfe.shape
         def _Hfine(x, y): return float(_Hfe[min(int(y/cell), _ehY-1), min(int(x/cell), _ehX-1)])
-        FINH, LAP, MINLEN = 9.0, 4.0, 10.0
+        FINH, LAP, MINLEN = 9.0, 4.0, a.edge_min_len
         edge_notches = {}                              # ribdata-Index -> [(s_auf_rippe, htop, zmid)]
         def _build_ruler(x0, y0, x1, y1, topfn, botfn, zmidfn, name):
             """Beliebig gerichtete Rippe (Kante oder Diagonale): Kreuzungen mit X/Y-Rippen ->
