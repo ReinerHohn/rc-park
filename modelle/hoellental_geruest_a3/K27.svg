@@ -8,4 +8,5 @@
 <path d="M 28.07,47.61 L 29.57,47.61" fill="none" stroke="#0a0" stroke-width="0.1"/>
 <path d="M 29.57,47.61 L 29.57,46.36" fill="none" stroke="#0a0" stroke-width="0.1"/>
 <path d="M 29.57,46.36 L 29.57,45.11" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<text x="2.75" y="12.08" font-family="Arial" font-size="3" fill="#f00" stroke="none">K27</text>
 </svg>

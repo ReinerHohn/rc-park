@@ -25,4 +25,5 @@
 <path d="M 43.00,10.50 L 46.00,10.50" fill="none" stroke="#0a0" stroke-width="0.1"/>
 <path d="M 46.00,13.00 L 46.00,10.50" fill="none" stroke="#0a0" stroke-width="0.1"/>
 <path d="M 46.00,10.50 L 46.00,8.00" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<text x="9.03" y="9.600000000000001" font-family="Arial" font-size="3" fill="#f00" stroke="none">ribX5a</text>
 </svg>

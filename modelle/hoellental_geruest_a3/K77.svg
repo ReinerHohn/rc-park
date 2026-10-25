@@ -6,4 +6,5 @@
 <path d="M 23.96,15.06 L 26.96,15.06" fill="none" stroke="#0a0" stroke-width="0.1"/>
 <path d="M 26.96,15.06 L 26.96,12.56" fill="none" stroke="#0a0" stroke-width="0.1"/>
 <path d="M 26.96,12.56 L 26.96,10.06" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<text x="2" y="5.18" font-family="Arial" font-size="3" fill="#f00" stroke="none">K77</text>
 </svg>

@@ -10,4 +10,5 @@
 <path d="M 14.40,35.39 L 14.40,34.39" fill="none" stroke="#0a0" stroke-width="0.1"/>
 <path d="M 18.80,35.39 L 18.80,34.39" fill="none" stroke="#0a0" stroke-width="0.1"/>
 <path d="M 18.80,34.39 L 18.80,33.39" fill="none" stroke="#0a0" stroke-width="0.1"/>
+<text x="2.3000000000000003" y="11.15" font-family="Arial" font-size="3" fill="#f00" stroke="none">K101</text>
 </svg>
