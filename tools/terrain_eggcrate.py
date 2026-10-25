@@ -494,7 +494,7 @@ def main():
     ap.add_argument("--split-len", type=float, default=0.0, help="lange Rippen in Puzzle-Stücke <= N mm mit Fingerzinken teilen (spart Verschnitt); 0=aus")
     ap.add_argument("--finger", type=float, default=12.0, help="Fingerzinken-Höhe (mm) entlang der Naht")
     ap.add_argument("--seam-min-h", type=float, default=0.0, dest="seam_min_h", help="Fingerzinken-Naht NUR in Lücken wo die Rippe >= N mm hoch ist (solide Zähne, kein Mini-Zahn im Talauslauf); 0=auto=2×--finger")
-    ap.add_argument("--min-web", type=float, default=1.5, dest="min_web", help="Hals-Warnschwelle (mm): jede Rippe wird geprüft; wird sie nach Schrumpf um --min-web/2 getrennt, kommt eine Bruch-Gefahr-Warnung")
+    ap.add_argument("--min-web", type=float, default=2.5, dest="min_web", help="Mindest-Wandstärke (mm): Schlitze werden so gekappt, dass neben jedem Schlitz >= min_web Material bleibt (Gegenschlitz tiefer); + Hals-Warnschwelle bei der Validierung")
     ap.add_argument("--thickness", type=float, default=3.0)
     ap.add_argument("--rib-depth", type=float, default=0.0, help="Rippen als konstant-tiefes Band (mm unter Oberkante) statt bis Boden -> spart Material; 0=bis Boden")
     ap.add_argument("--base", type=float, default=12.0, help="Sockel mm: Gelände anheben, damit Rippen am Talboden nicht auf 0 pinchen (gegen 'schwebende' Teile)")
@@ -708,9 +708,10 @@ def main():
     # Oberkante neben dem Schlitz stark ab -> sonst dünner Steg = Bruch, wie ribY2). Die X-Rippe
     # (Schlitz OBEN, Steg UNTEN zur flachen Basis) ist unkritisch, braucht nur hmid >= Basis+min_web.
     _hslot = slotw/2 + 0.4
+    _win = _hslot + a.min_web + 1.0     # Fenster = Schlitz-Halbbreite + Wand -> erfasst steilen Abfall NEBEN dem Schlitz
     def hmid_at(x, y):
         raw = (Hbot(x, y) + Htop(x, y)) / 2.0
-        hi = min(Htop(x, y + t) for t in np.linspace(-_hslot, _hslot, 5)) - a.min_web   # Steg oben (Y-Rippe)
+        hi = min(Htop(x, y + t) for t in np.linspace(-_win, _win, 11)) - a.min_web   # Steg oben (Y-Rippe): >= min_web bis zur tiefsten Oberkante im Fenster
         lo = Hbot(x, y) + a.min_web                                                      # Steg unten (X-Rippe)
         return float(np.clip(raw, lo, hi)) if lo <= hi else raw   # zu kurz/steil: bestmöglich (Mitte)
 
