@@ -496,6 +496,9 @@ def main():
     ap.add_argument("--diag", type=float, default=0.0, help="4-RICHTUNGS-GITTER: zusätzlicher 45°-Diagonal-Rippensatz mit diesem senkrechten Abstand (mm); 0=aus. Fängt schräge Kanten (~30%% genauer bei gleichem Material).")
     ap.add_argument("--diag-both", action="store_true", help="auch 135°-Diagonalen (volles 4-Richtungs-Gitter; ⚠ 45°/135° kreuzen sich, Steck-Kollision noch nicht gelöst)")
     ap.add_argument("--tunnel-drop", type=float, default=0.0, help="Tunnel-Gleis um N mm tiefer legen (unters Dach statt drauf)")
+    ap.add_argument("--tunnel-w-m", type=float, default=4.0, dest="tunnel_w_m", help="ECHTE Tunnel-Breite in METERN (wird mit nscale maßstäblich skaliert); eng einspurig ~4 m")
+    ap.add_argument("--tunnel-h-m", type=float, default=5.5, dest="tunnel_h_m", help="ECHTE Tunnel-Höhe in METERN (wird mit nscale·vscale skaliert); ~5.5 m")
+    ap.add_argument("--roof-min", type=float, default=2.0, dest="roof_min", help="Mindest-Dachdicke (mm) über dem Tunnel-Loch; sonst wird's ein offener Einschnitt")
     ap.add_argument("--gcode", action="store_true")
     ap.add_argument("--feed", type=float, default=400); ap.add_argument("--power", type=float, default=100)
     ap.add_argument("--passes", type=int, default=4); ap.add_argument("--eng-power", type=float, default=20)
@@ -530,7 +533,12 @@ def main():
     # offener Einschnitt (Trog) bis zur Oberkante, sonst fährt der Zug in die Rippen.
     # Tunnel-Teil (gedeckelt) = geschlossenes 30x36-Loch; offene Strecke = offener Einschnitt
     # (Trog) bis zur Oberkante. Trasse kommt als ECHTE OSM-Datei (mx,my,mz,is_tunnel).
-    CLEAR_W, CLEAR_H = 30.0, 36.0; tun_pts = []; track = []
+    # Lichtraum MASSSTÄBLICH: echte Tunnelröhre (Meter) × Modell-Maßstab -> skaliert automatisch
+    # mit (hier 50%). Früher absolute 30×36 mm = ein Full-N-Zug (~9.6×13.5 m real!) -> viel zu
+    # groß für das halb-skalierte Gelände -> Loch brach oben durch (kein Dach).
+    CLEAR_W = a.tunnel_w_m * a.nscale
+    CLEAR_H = a.tunnel_h_m * a.nscale * a.vscale
+    tun_pts = []; track = []
     if a.tunnel:
         if not a.track or not os.path.exists(a.track):
             print(f"!! --tunnel ohne gültige --track Datei ({a.track!r}) -> kein Tunnel");
@@ -561,11 +569,15 @@ def main():
                 # zum Gleis volle CLEAR_W bleiben (sonst klemmt ein N-Waggon an den Rippenkanten):
                 seglen = float(np.hypot(s1-s0, a1-a0))
                 w = CLEAR_W * min(2.6, seglen/abs(a1-a0))      # /sin(Winkel), gekappt
-                if p[3]:                                       # Tunnel: geschlossenes Loch
-                    cuts.append(_rect2(s, z-4, z+CLEAR_H, w))
+                terr = (Hc(s, pos) if axis=="x" else Hc(pos, s))
+                if p[3]:                                       # Tunnel: geschlossenes Loch MIT Dach
+                    top = min(z+CLEAR_H, terr - a.roof_min)    # mind. roof_min Gelände als Dach lassen
+                    if top - (z-4) < 6:                        # Berg zu flach -> kein echter Tunnel
+                        cuts.append(_rect2(s, z-4, terr+6, w)) # -> offener Einschnitt (ehrlich)
+                    else:
+                        cuts.append(_rect2(s, z-4, top, w))    # geschlossen, Dach bleibt stehen
                 else:                                          # offen: Einschnitt bis Oberkante
-                    top = (Hc(s, pos) if axis=="x" else Hc(pos, s)) + 6
-                    cuts.append(_rect2(s, z-4, max(top, z+CLEAR_H), w))
+                    cuts.append(_rect2(s, z-4, max(terr+6, z+CLEAR_H), w))
         return cuts
 
     mg = a.max_gap if a.max_gap > 0 else None
