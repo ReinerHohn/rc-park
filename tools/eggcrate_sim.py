@@ -307,7 +307,13 @@ def write_html(Hf, cell, out, a):
     if rr:
         kr = next((r for r in rr if r["n"] == kg["n"]), rr[-1])
         picks.append(kr); pick_rec.append(reconstruct_rulers(Hf, cell, kr["xpos"], kr["ypos"], out["_edges"], a.fin_width, a.fin_drape)[0])
-        pick_lab.append(f"Gitter+{len(out['_edges'])} Kanten-Lineale ({kr['nribs']}R)")
+        pick_lab.append(f"Gitter+{len(out['_edges'])} Kanten-Lineale ({kr['nribs']}T)")
+    tr = out.get("adaptiv+snap+Lineale+Tunnel", [])
+    if tr:
+        kt = next((r for r in tr if r["n"] == kg["n"]), tr[-1])
+        picks.append(kt)
+        pick_rec.append(reconstruct_rulers(Hf, cell, kt["xpos"], kt["ypos"], out["_edges"] + out["_tseg"], a.fin_width, a.fin_drape)[0])
+        pick_lab.append(f"+Tunnel-Finne (Portal {kt['portal_max_mm']:.2f}mm)")
     NY, NX = Hf.shape; st = max(1, max(NX, NY) // 120)
     X = (np.arange(0, NX, st)) * cell; Y = (np.arange(0, NY, st)) * cell
     Ht = Hf[::st, ::st]
@@ -329,7 +335,17 @@ def write_html(Hf, cell, out, a):
         buttons.append(dict(label="Rekon: " + lab, method="update", args=[{"visible": v1}]))
         buttons.append(dict(label="Fehler: " + lab, method="update", args=[{"visible": v2}]))
         vis_idx += 2
-    fig.update_layout(title="Egg-Crate Relief-Rekonstruktion — echt / Rekonstruktion / Fehler",
+    # Trasse als 3D-Linie (Tunnel/offen) — IMMER sichtbar, zeigt wo das Portal sitzt
+    track = out.get("_track", []); ntr = 0
+    if track:
+        P = np.array([(p[0], p[1], p[2], float(p[3])) for p in track]); zc = bilin(Hf, P[:, 0], P[:, 1], cell) + 2
+        seg = [("Tunnel", P[:, 3] > 0.5, "#1f77ff"), ("offen", P[:, 3] <= 0.5, "#ffffff")]
+        for nm, mk, c in seg:
+            if mk.any():
+                fig.add_scatter3d(x=P[mk, 0], y=P[mk, 1], z=zc[mk], mode="markers",
+                                  marker=dict(size=3, color=c), name=f"Trasse {nm}"); ntr += 1
+        for b in buttons: b["args"][0]["visible"] += [True] * ntr   # Trasse in jedem Modus sichtbar
+    fig.update_layout(title="Egg-Crate Relief-Rekonstruktion — echt / Rekonstruktion / Fehler (Trasse: blau=Tunnel, weiß=offen)",
                       updatemenus=[dict(buttons=buttons, x=0.0, y=1.0, xanchor="left")],
                       scene=dict(aspectmode="data", zaxis=dict(title="Höhe (mm)")), height=820)
     fig.write_html(f"{a.out}/sim3d.html", include_plotlyjs="cdn")
