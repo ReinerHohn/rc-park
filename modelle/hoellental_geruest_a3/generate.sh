@@ -33,8 +33,12 @@ python3 tools/laser_pack.py "$OUT" --sheet 410x297 --passes 2 --nest --margin 4 
   --exclude 'K*' --out "$OUT/bretter"
 
 echo "== 3/3  KANTEN-LINEALE (K*) separat packen =="
-python3 tools/laser_pack.py "$OUT" --sheet 410x297 --passes 2 --nest --margin 3 \
+# Blatt bewusst 400 (nicht 410): der Nest-Rastert nur das größte Polygon -> dünne gekrümmte
+# Lineale können am 410-Rand minimal überlaufen. 400 lässt Sicherheits-Reserve zum S9-Fenster.
+python3 tools/laser_pack.py "$OUT" --sheet 400x290 --passes 2 --nest --margin 3 \
   --only 'K*' --out "$OUT/bretter_lineale"
+# WICHTIG vor dem Schneiden: echten G-Code-Bereich prüfen (muss <= 410x400 sein):
+#   grep -oE 'X-?[0-9.]+' brett1.gcode | ... | min/max
 
 echo ""
 echo "FERTIG."
