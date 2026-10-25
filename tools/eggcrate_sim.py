@@ -81,13 +81,21 @@ def _edge_dist(Hf, cell, edges):
         dist = np.minimum(dist, d)
     return dist
 
-def reconstruct_rulers(Hf, cell, xpos, ypos, edges, band):
-    """Gitter-Haut (Coons) PLUS Kanten-Lineale: entlang jeder scharfen Kante pinnt ein
-    aufgeklebtes Lineal die Haut ans echte Gelände, mit Übergang über 'band' mm."""
+def reconstruct_rulers(Hf, cell, xpos, ypos, edges, fin_w, drape=0.0):
+    """Gitter-Haut (Coons) PLUS Kanten-Lineale als EINSEITIGE vertikale Finnen:
+    entlang jeder scharfen Kante folgt die Haut EXAKT dem echten Gelände (die Finne pinnt
+    ihre Linie über die Finnen-Dicke fin_w — KEIN symmetrisches Verschmieren über die Klippe).
+    Optional 'drape' mm: kurze EINSEITIGE Drapierung nur auf der TIEFEREN Seite (wo die
+    Finnen-Oberkante über der Gitter-Haut steht und der Gips an der Finne herunterhängt)."""
     rec, inside = reconstruct(Hf, cell, xpos, ypos)
     if not edges: return rec, inside
-    w = np.clip(1 - _edge_dist(Hf, cell, edges) / band, 0, 1)   # 1 an der Kante -> 0 ab band
-    return w * Hf + (1 - w) * rec, inside
+    d = _edge_dist(Hf, cell, edges); rec = rec.copy()
+    rec[d <= fin_w / 2.0] = Hf[d <= fin_w / 2.0]                 # die Finne selbst = echtes Gelände
+    if drape > 0:                                                # einseitig: nur wo Finne über Haut steht
+        band = (d > fin_w / 2.0) & (d <= fin_w / 2.0 + drape) & (Hf > rec)
+        w = np.clip(1 - (d - fin_w / 2.0) / max(drape, 1e-9), 0, 1)
+        rec = np.where(band, w * Hf + (1 - w) * rec, rec)
+    return rec, inside
 
 def ruler_cut(Hf, cell, edges):
     """Schnitt-Länge der Kanten-Lineale: je Kante Ober+Unterkante (~2× Länge)."""
@@ -132,11 +140,19 @@ def tunnel_masks(Hf, cell, track, corridor):
         pmask = np.zeros(Hf.shape, bool)
     return tmask, pmask
 
-def tun_metrics(Hf, rec, tmask, pmask):
-    e = np.abs(rec - Hf)
-    et = e[tmask] if tmask.any() else np.array([0.0])
-    ep = e[pmask] if pmask.any() else np.array([0.0])
-    return dict(tun_rms_mm=float(np.sqrt((et ** 2).mean())), tun_max_mm=float(et.max()),
+def tun_metrics(Hf, rec, cell, track):
+    """Fehler AUF der Trassen-Linie (wo Tunnel + Portal wirklich liegen), nicht in einem
+    2D-Klecks. Portal = Trassen-Punkte nahe einem Tunnel<->offen-Übergang (±6 mm entlang)."""
+    if not track:
+        return dict(tun_rms_mm=0.0, tun_max_mm=0.0, portal_max_mm=0.0)
+    P = np.array([(p[0], p[1], p[2], float(p[3])) for p in track])
+    e = np.abs(bilin(rec, P[:, 0], P[:, 1], cell) - bilin(Hf, P[:, 0], P[:, 1], cell))
+    it = P[:, 3] > 0.5; trans = np.where(it[1:] != it[:-1])[0]
+    d = np.r_[0.0, np.cumsum(np.hypot(np.diff(P[:, 0]), np.diff(P[:, 1])))]
+    pmask = np.zeros(len(P), bool)
+    for ti in trans: pmask |= np.abs(d - d[ti]) <= 6.0
+    ep = e[pmask] if pmask.any() else e
+    return dict(tun_rms_mm=float(np.sqrt((e ** 2).mean())), tun_max_mm=float(e.max()),
                 portal_max_mm=float(ep.max()))
 
 # ------------------------------------------------------------------ Metriken
@@ -189,7 +205,7 @@ def run_sweep(Hf, cell, a):
             xpos, ypos = te.rib_positions(Hf, cell, n, n, a.min_gap, snap_pct=a.snap_pct, **kw)
             if len(xpos) < 2 or len(ypos) < 2: continue
             rec, inside = reconstruct(Hf, cell, xpos, ypos)
-            m = metrics(Hf, rec, inside, a.nscale, a.vscale); m.update(tun_metrics(Hf, rec, tmask, pmask))
+            m = metrics(Hf, rec, inside, a.nscale, a.vscale); m.update(tun_metrics(Hf, rec, cell, track))
             nribs, rib_len, cut = cut_cost(Hf, cell, xpos, ypos, a.thickness + a.fit)
             rows.append(dict(n=n, nribs=nribs, rib_len=rib_len, cut=cut,
                              nx=len(xpos), ny=len(ypos), xpos=xpos, ypos=ypos, edges=None, **m))
@@ -203,12 +219,12 @@ def run_sweep(Hf, cell, a):
         xpos, ypos = te.rib_positions(Hf, cell, n, n, a.min_gap, snap_pct=a.snap_pct, uniform=False, snap=True)
         if len(xpos) < 2 or len(ypos) < 2: continue
         nribs, rib_len, cut = cut_cost(Hf, cell, xpos, ypos, a.thickness + a.fit)
-        rec, inside = reconstruct_rulers(Hf, cell, xpos, ypos, edges, a.ruler_band)
-        m = metrics(Hf, rec, inside, a.nscale, a.vscale); m.update(tun_metrics(Hf, rec, tmask, pmask))
+        rec, inside = reconstruct_rulers(Hf, cell, xpos, ypos, edges, a.fin_width, a.fin_drape)
+        m = metrics(Hf, rec, inside, a.nscale, a.vscale); m.update(tun_metrics(Hf, rec, cell, track))
         rows4.append(dict(n=n, nribs=nribs + len(edges), rib_len=rib_len, cut=cut + rc,
                           nx=len(xpos), ny=len(ypos), xpos=xpos, ypos=ypos, edges=edges, **m))
-        rec2, _ = reconstruct_rulers(Hf, cell, xpos, ypos, edges + tseg, a.ruler_band)
-        m2 = metrics(Hf, rec2, inside, a.nscale, a.vscale); m2.update(tun_metrics(Hf, rec2, tmask, pmask))
+        rec2, _ = reconstruct_rulers(Hf, cell, xpos, ypos, edges + tseg, a.fin_width, a.fin_drape)
+        m2 = metrics(Hf, rec2, inside, a.nscale, a.vscale); m2.update(tun_metrics(Hf, rec2, cell, track))
         rows5.append(dict(n=n, nribs=nribs + len(edges) + len(tseg), rib_len=rib_len, cut=cut + rc + rc_tun,
                           nx=len(xpos), ny=len(ypos), xpos=xpos, ypos=ypos, edges=edges + tseg, **m2))
     out[f"adaptiv+snap+{len(edges)} Lineale"] = rows4
@@ -268,7 +284,7 @@ def plot_surfaces3d(Hf, cell, out, a):
     if rr:
         kr = next((r for r in rr if r["n"] == kg["n"]), rr[-1])
         panels.append((f"+Kanten-Lineale · RMS {kr['rms_m']:.2f}m · max {kr['max_m']:.1f}m",
-                       reconstruct_rulers(Hf, cell, kr["xpos"], kr["ypos"], out["_edges"], a.ruler_band)[0], None))
+                       reconstruct_rulers(Hf, cell, kr["xpos"], kr["ypos"], out["_edges"], a.fin_width, a.fin_drape)[0], None))
     NY, NX = Hf.shape; X = np.arange(NX) * cell; Y = np.arange(NY) * cell
     XX, YY = np.meshgrid(X, Y); st = max(1, max(NX, NY) // 90)
     fig = plt.figure(figsize=(16, 5))
@@ -290,7 +306,7 @@ def write_html(Hf, cell, out, a):
     pick_lab = [f"Gitter {p['nribs']}R" for p in picks]
     if rr:
         kr = next((r for r in rr if r["n"] == kg["n"]), rr[-1])
-        picks.append(kr); pick_rec.append(reconstruct_rulers(Hf, cell, kr["xpos"], kr["ypos"], out["_edges"], a.ruler_band)[0])
+        picks.append(kr); pick_rec.append(reconstruct_rulers(Hf, cell, kr["xpos"], kr["ypos"], out["_edges"], a.fin_width, a.fin_drape)[0])
         pick_lab.append(f"Gitter+{len(out['_edges'])} Kanten-Lineale ({kr['nribs']}R)")
     NY, NX = Hf.shape; st = max(1, max(NX, NY) // 120)
     X = (np.arange(0, NX, st)) * cell; Y = (np.arange(0, NY, st)) * cell
@@ -333,7 +349,7 @@ def plot_tunnel(Hf, cell, out, a):
     tunk = out.get("adaptiv+snap+Lineale+Tunnel", [])
     if tunk:
         kt = next((r for r in tunk if r["n"] == kg["n"]), tunk[-1])
-        rect, _ = reconstruct_rulers(Hf, cell, kt["xpos"], kt["ypos"], out["_edges"] + out["_tseg"], a.ruler_band)
+        rect, _ = reconstruct_rulers(Hf, cell, kt["xpos"], kt["ypos"], out["_edges"] + out["_tseg"], a.fin_width, a.fin_drape)
         panels.append((f"+Tunnel-Lineale · TunMAX {kt['tun_max_mm']:.2f}mm", np.abs(rect - Hf), "e"))
     fig, axs = plt.subplots(1, len(panels), figsize=(6 * len(panels), 6))
     for ax, (title, Z, kind) in zip(axs, panels):
@@ -364,7 +380,8 @@ def main():
     ap.add_argument("--snap-pct", type=float, default=80.0); ap.add_argument("--thickness", type=float, default=3.0)
     ap.add_argument("--fit", type=float, default=-0.5)
     ap.add_argument("--ns", default="3,4,5,6,8,10,12,15,18", help="Dichte-Sweep (nx=ny)")
-    ap.add_argument("--ruler-band", type=float, default=6.0, dest="ruler_band", help="Einfluss-Breite eines Kanten-Lineals (mm): Haut folgt bis hierher dem echten Gelände")
+    ap.add_argument("--fin-width", type=float, default=3.0, dest="fin_width", help="Finnen-Dicke (mm): Breite des Streifens, auf dem die Haut EXAKT dem Gelände folgt (= Material-Dicke des Kanten-Lineals)")
+    ap.add_argument("--fin-drape", type=float, default=0.0, dest="fin_drape", help="einseitige Drapierung (mm) auf der tieferen Seite der Finne; 0 = reine exakte Kante")
     ap.add_argument("--track", default="daten/hoellental/hoellental_track_50.npy", help="Trasse (.npy mx,my,mz,is_tunnel in Modell-mm) für die Tunnel-Genauigkeits-Analyse; leer=aus")
     ap.add_argument("--corridor", type=float, default=3.0, help="Tunnel-Korridor-Breite (mm) für die Fehler-Messung an den Tunnel-Kanten")
     ap.add_argument("--target-mm", type=float, default=0.5, dest="target_mm", help="Genauigkeits-Ziel an den Tunnel-Kanten (mm Modell)")
