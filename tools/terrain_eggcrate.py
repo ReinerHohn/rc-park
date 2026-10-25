@@ -653,6 +653,7 @@ def main():
     edge_rulers = []                                   # (name, poly2d(s,z), (x0,y0,x1,y1))
     edge_segs = []                                     # erkannte Kanten-Segmente (Welt-mm) für den Overlay
     try:
+        sys.path.insert(0, os.path.dirname(__file__))
         import manmade_edges as _mmE
         from shapely.geometry import Polygon as _ShP, box as _shbox
         _we = dem_full[a.r0:a.r1, a.c0:a.c1].astype(float)
