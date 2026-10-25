@@ -4,7 +4,7 @@
 Steck-Test 2,5 mm perfekt → `--fit -0.50`). Material **3 mm Pappelsperr**, Schnitt **2×@100%/300**,
 gelasert am Sculpfun S9 (`grbl_send.py --yes`). Nest auf **A3 (410×297 nutzbar, S9-Fenster 410×400)**.
 
-## Komplett neu erzeugen (alle 25 Rippen)
+## Komplett neu erzeugen (alle 25+ Rippen + ALLE Kanten erfasst)
 ```bash
 python3 tools/terrain_eggcrate.py --dem daten/hoellental/dgm025_full.npy \
   --mm 0.78125 --nscale 3.125 --zoom 1 --r0 470 --r1 640 --c0 3310 --c1 3570 \
@@ -14,6 +14,7 @@ python3 tools/terrain_eggcrate.py --dem daten/hoellental/dgm025_full.npy \
   --split-len 200 --finger 12 --fit -0.50 --gcode \
   --out modelle/hoellental_geruest_a3
 ```
+→ `--snap-edges=True --snap-pct=80.0` sind JETZT DEFAULT. Nur Gips drüber → Relief mit allen Kanten kommt raus.
 → 203×133 mm, bis 195 mm hoch, **7 X-Rippen + 11 Y-Rippen** (X je a/b geteilt = 14 X-Teile), Schlitz 2,50.
 
 ## Auf A3-Bretter packen
@@ -30,6 +31,7 @@ python3 tools/laser_pack.py modelle/hoellental_geruest_a3 --sheet 410x297 \
 ## Regeln
 - `--fit -0.50` = lockere Slip-Fit-Schlitze (Vollgitter: eine Rippe kreuzt 8–11 Schlitze → lieber locker).
 - Fingerzinken nur wo Rippe am Stoß hoch genug (mehrere Finger), nie Einzelzahn.
+- **`--snap-edges --snap-pct 80.0` ist NOW DEFAULT** — erfasst ALLE scharfen topographischen Kanten (Bruchkanten, Felsgrate, Talränder, Hirsch-Felsvorsprünge), damit die Gips-Haut darüber alle Relief-Details zeigt. **Methode: Gitter schneiden → zusammenstecken → Gips drüber → fertig!**
 - S9-USB **direkt an den Laptop** (nicht HP-Dock) — sonst Serial-Abbruch bei langen Läufen.
 
 ## Slot-Mund-Fix (2026-10-22) + Baustand-Marker

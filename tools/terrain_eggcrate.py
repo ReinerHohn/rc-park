@@ -85,18 +85,46 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None, 
     edg_json = json.dumps([round(v, 2) for v in eseg])
     HTML = '''<!doctype html><html><head><meta charset=utf8><title>Zusammenbauanleitung</title>
 <style>body{margin:0;background:#dde6ef;font-family:sans-serif}
-#bar{position:fixed;top:0;left:0;right:0;background:#111e;color:#fff;padding:8px 12px;z-index:10}
-#bar input{font-size:18px;padding:5px 9px;width:160px}#bar button{font-size:14px;padding:5px 10px;margin-left:4px}
-#info{margin-left:12px;font-size:15px}
-#tip{position:fixed;bottom:8px;left:8px;background:#000a;color:#fff;padding:6px 10px;border-radius:6px;font-size:12px}</style>
+#bar{position:fixed;top:0;left:0;right:0;background:#111e;color:#fff;padding:10px 12px;z-index:10;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+#bar input[type=text]{font-size:16px;padding:6px 8px;width:140px;border-radius:4px}
+#bar button{font-size:13px;padding:7px 11px;margin:0;border-radius:4px;border:1px solid #444;cursor:pointer;background:#222;color:#fff;transition:0.2s}
+#bar button:hover{background:#333}button[title]{position:relative}
+.sep{width:1px;height:20px;background:#444;margin:0 4px}
+#info{margin-left:auto;font-size:14px;font-weight:bold;color:#8f8}
+#tip{position:fixed;bottom:8px;left:8px;right:8px;background:#000b;color:#fff;padding:8px 12px;border-radius:6px;font-size:12px;line-height:1.4;max-width:400px}</style>
 <script src="https://unpkg.com/three@0.137.5/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.137.5/examples/js/controls/OrbitControls.js"></script>
 <script src="https://unpkg.com/three@0.137.5/examples/js/loaders/GLTFLoader.js"></script>
 </head><body>
-<div id=bar>🔎 Teil-Nr: <input id=q placeholder="z.B. X0a oder 123" autofocus>
-<button onclick=find()>finden</button><button onclick=clr()>alle</button>
-<button onclick=tRelief()>Relief ein/aus</button><label style="margin:0 6px">Deckkraft <input id=ropac type=range min=0 max=100 value=50 style="vertical-align:middle;width:90px" oninput=setRopac(this.value)></label><button onclick=tTunnel() style="background:#ff5522;color:#fff">🚇 Tunnel</button><button onclick=tFlaechen() style="background:#1030c0;color:#fff">📐 Flächen</button><button onclick=tNum()>Nummern ein/aus</button><button onclick=tProg()>🧩 Baustand</button><button onclick=resetProg()>Baustand löschen</button><span id=pinfo style="margin-left:8px;color:#2a7"></span><span id=info></span></div>
-<div id=tip>1 Teil (z.B. Y10) -> leuchtet ROT wo es hinkommt · ZWEI Teile (klick+klick ODER „X8 Y10" tippen) -> rot+blau + GRUENE Kugel wo sie sich verbinden · Relief/Nummern ein-aus · 🧩 BAUSTAND an → Teil anklicken = „hab ich" (solide), Rest blass → mit echtem Modell abgleichen</div>
+<div id=bar>
+<div style="display:flex;gap:8px;align-items:center">
+  <label style="margin:0;font-weight:bold">🔎 Teil:</label>
+  <input id=q placeholder="z.B. X0a, Y5, K3" autofocus>
+  <button onclick=find() title="Teil-Nr suchen">Finden</button>
+  <button onclick=clr() title="Alle Teile anzeigen">Alle</button>
+</div>
+<div class=sep></div>
+<div style="display:flex;gap:8px">
+  <button onclick=tRelief() title="Gelände anzeigen/verstecken">🏔️ Relief</button>
+  <label style="margin:0;display:flex;align-items:center;gap:6px">Deckkraft: <input id=ropac type=range min=0 max=100 value=50 style="width:80px" oninput=setRopac(this.value) title="Relief durchsichtig machen"></label>
+</div>
+<div class=sep></div>
+<div style="display:flex;gap:8px">
+  <button onclick=tTunnel() style="background:#d42;border-color:#a30" title="Tunnel-Lichträume zeigen">🚇 Tunnel</button>
+  <button onclick=tFlaechen() style="background:#0047b2;border-color:#0033a0" title="Alle Rippen blau hervorheben">📐 Rippen</button>
+  <button onclick="filterType('spanten')" id=btnSpanten title="Nur Spanten (X/Y Träger-Rippen)" style="background:#4a4">🔲 Spanten</button>
+  <button onclick="filterType('kanten')" id=btnKanten title="Nur Kanten-Lineale (K/D scharfe Grate)" style="background:#f92">🔷 Kanten</button>
+  <button onclick="filterType('')" id=btnAlle title="Alle Rippen + Kanten-Lineale">Alle Typen</button>
+  <button onclick=tNum() title="Teil-Nummern zeigen/verstecken">Nummern</button>
+</div>
+<div class=sep></div>
+<div style="display:flex;gap:8px">
+  <button onclick=tProg() title="Baustand markieren: Teil anklicken = ✓ geschnitten" style="background:#27a">🧩 Baustand</button>
+  <button onclick=resetProg() title="Baustand-Markierungen löschen" style="background:#a53">✕ Zurück</button>
+</div>
+<span id=pinfo style="margin-left:auto;color:#5f5"></span><span id=info></span>
+</div>
+<div id=tip><b>Bedienung:</b> Teil eintippen (z.B. Y10) oder anklicken → ROT = wo es hinkommt. Zwei Teile → rot+blau + grüne Kugel = Kreuzung. Maus: drehen, Rad: zoom</div>
 <script>
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
 const cam=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,0.1,99999);
@@ -153,6 +181,14 @@ window.setRopac=v=>{if(relief){const o=v/100;relief.material.opacity=o;relief.ma
 window.tNum=()=>{if(nums)nums.visible=!nums.visible;};
 window.tEdges=()=>{if(edges)edges.visible=!edges.visible;};
 window.tFlaechen=()=>{flaechen.forEach(o=>o.visible=!o.visible);if(edges)edges.visible=!edges.visible;};
+window.filterType=type=>{
+  const isSpante=o=>(o.name||'').match(/^[XY]\d/);
+  const isKante=o=>(o.name||'').match(/^[KD]\d/);
+  if(type==='spanten'){meshes.forEach(o=>o.visible=isSpante(o));flaechen.forEach(o=>o.visible=isKante(o));}
+  else if(type==='kanten'){meshes.forEach(o=>o.visible=isKante(o));flaechen.forEach(o=>o.visible=isKante(o));}
+  else{meshes.forEach(o=>o.visible=true);flaechen.forEach(o=>o.visible=true);}
+  if(edges)edges.visible=type==='kanten';
+};
 function saveProg(){try{localStorage.setItem(KEY,JSON.stringify([...DONE]))}catch(e){}}
 function updProgInfo(){const el=document.getElementById('pinfo');if(el)el.textContent=prog?('🧩 Baustand AN · '+DONE.size+'/'+meshes.length+' fertig'):'';}
 window.tProg=()=>{prog=!prog;SEL.length=0;document.getElementById('q').value='';apply('');updProgInfo();};
@@ -428,8 +464,10 @@ def main():
     ap.add_argument("--uniform", action="store_true", help="gleichmäßiges Raster statt adaptiv (Default: adaptiv nach Krümmung)")
     ap.add_argument("--min-gap", type=float, default=7.0, help="Mindestabstand zwischen Rippen mm — so eng dürfen scharfe Kanten die Rippen packen")
     ap.add_argument("--max-gap", type=float, default=0.0, help="Max Rippenabstand mm in flachen Zonen (0=auto)")
-    ap.add_argument("--snap-edges", action="store_true", help="Rippen zusätzlich auf starke BRUCHKANTEN (Gradient-Grate) snappen — fängt scharfe gerade Kanten (Einschnitt/Portal/Felssporn), die im Krümmungs-Budget untergehen")
-    ap.add_argument("--snap-pct", type=float, default=92.0, help="Perzentil-Schwelle für Bruchkanten-Stärke (höher = nur die schärfsten Kanten bekommen eine Rippe)")
+    ap.add_argument("--snap-edges", action="store_true", dest="snap_edges", help="(DEFAULT an) Rippen auf BRUCHKANTEN snappen — fängt scharfe gerade Kanten (Einschnitt/Portal/Felssporn), die im Krümmungs-Budget untergehen.")
+    ap.add_argument("--no-snap-edges", action="store_false", dest="snap_edges", help="Schaltet --snap-edges aus (nur Krümmungs-Adaptive Dichte)")
+    ap.set_defaults(snap_edges=True)
+    ap.add_argument("--snap-pct", type=float, default=80.0, help="Perzentil-Schwelle für Bruchkanten-Stärke (höher = nur die schärfsten Kanten; 80 = Top-20% aller Gradienten)")
     ap.add_argument("--split-len", type=float, default=0.0, help="lange Rippen in Puzzle-Stücke <= N mm mit Fingerzinken teilen (spart Verschnitt); 0=aus")
     ap.add_argument("--finger", type=float, default=12.0, help="Fingerzinken-Höhe (mm) entlang der Naht")
     ap.add_argument("--thickness", type=float, default=3.0)
@@ -623,11 +661,11 @@ def main():
         _Hfe = gaussian_filter(_we[::-1] - float(np.nanmin(_we)), 0.4) * a.nscale * a.vscale + a.base
         # FUSSELIGE Kanten (Bahndamm-Grat, Einschnitt-Graben, Tunnelausgang) via Ridge-Filter +
         # Canny-Hysterese statt LSD-auf-Schärfe -> fängt die verrauschten Kanten, die vorher fehlten.
-        _edgE = _mmE.detect_edges_ridges(_Hfe, cell, min_len_mm=18.0)
+        _edgE = _mmE.detect_edges_ridges(_Hfe, cell, min_len_mm=10.0)
         edge_segs = _edgE                                  # für den Overlay im Viewer wiederverwenden
         _ehY, _ehX = _Hfe.shape
         def _Hfine(x, y): return float(_Hfe[min(int(y/cell), _ehY-1), min(int(x/cell), _ehX-1)])
-        FINH, LAP, MINLEN = 9.0, 4.0, 18.0
+        FINH, LAP, MINLEN = 9.0, 4.0, 10.0
         edge_notches = {}                              # ribdata-Index -> [(s_auf_rippe, htop, zmid)]
         def _build_ruler(x0, y0, x1, y1, topfn, botfn, zmidfn, name):
             """Beliebig gerichtete Rippe (Kante oder Diagonale): Kreuzungen mit X/Y-Rippen ->
@@ -720,15 +758,20 @@ def main():
                     if len(_cp) > 1 and _cp[1].area > 3.0: _skipped += 1; continue
                     cand = _cp[0]
                 pg = cand
+                if pg.geom_type == "MultiPolygon": pg = sorted(pg.geoms, key=lambda g: g.area, reverse=True)[0]
+            # NACH dem Loop: pg könnte immer noch MultiPolygon sein
+            if pg.geom_type == "MultiPolygon": pg = sorted(pg.geoms, key=lambda g: g.area, reverse=True)[0]
             ribdata[_ri] = (_rnm, np.array(pg.exterior.coords), _rax, _rpos, _rth)
         if _skipped: print(f"B4: {_skipped} Kerben übersprungen (hätten eine Rippe zerteilt, Tunnelnähe)")
         # SVG/G-Code-Schnittteile der Lineale
         for (knm, kpoly, seg) in edge_rulers:
-            emit(f"kante{knm}", kpoly, knm)
+            emit(knm, kpoly, knm)  # knm ist schon "K0", "K1" etc.
         print(f"B4: {len(edge_rulers)} Kanten-Lineale (Halb-Überblattung, Schlitze in {len(edge_notches)} Rippen)")
     except Exception as _be:
         edge_rulers = []
+        import traceback
         print("B4 Kanten-Lineale übersprungen:", repr(_be))
+        traceback.print_exc()
 
     # --- KONTUR-STACK oben drauf (z_t .. Hmax), nur wenn trans_frac < 1 ---
     stackdata = []; hr = a.dowel_d/2
