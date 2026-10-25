@@ -96,6 +96,49 @@ def ruler_cut(Hf, cell, edges):
         tot += 2.0 * float(np.hypot(x1 - x0, y1 - y0))
     return tot
 
+# ------------------------------------------------------------------ Tunnel (Trasse)
+def load_track(a, Wx, Dy):
+    """Trasse (mx,my,mz,is_tunnel in Modell-mm) laden + ~1mm fein interpolieren, aufs Fenster."""
+    if not a.track or not os.path.exists(a.track): return []
+    raw = np.load(a.track); dense = []
+    for k in range(len(raw) - 1):
+        p, q = raw[k], raw[k + 1]; L = max(2, int(np.hypot(q[0] - p[0], q[1] - p[1]) / 1.0))
+        for tt in np.linspace(0, 1, L, endpoint=(k == len(raw) - 2)):
+            dense.append((p[0] + (q[0] - p[0]) * tt, p[1] + (q[1] - p[1]) * tt,
+                          p[2] + (q[2] - p[2]) * tt, p[3] > 0.5))
+    return [pt for pt in dense if -2 <= pt[0] <= Wx + 2 and -2 <= pt[1] <= Dy + 2]
+
+def track_segs(track):
+    return [(track[i][0], track[i][1], track[i + 1][0], track[i + 1][1]) for i in range(len(track) - 1)]
+
+def _dist_to(shape, cell, segs):
+    NY, NX = shape; X = (np.arange(NX) + 0.5) * cell; Y = (np.arange(NY) + 0.5) * cell
+    XX, YY = np.meshgrid(X, Y); d = np.full(shape, 1e9)
+    for (x0, y0, x1, y1) in segs:
+        dx, dy = x1 - x0, y1 - y0; L2 = dx * dx + dy * dy + 1e-9
+        t = np.clip(((XX - x0) * dx + (YY - y0) * dy) / L2, 0, 1)
+        d = np.minimum(d, np.hypot(XX - (x0 + t * dx), YY - (y0 + t * dy)))
+    return d
+
+def tunnel_masks(Hf, cell, track, corridor):
+    """Masken: Tunnel-Korridor (nahe der Trasse) und Portal-Umkreis (Tunnel<->offen-Übergang)."""
+    if not track: return np.zeros(Hf.shape, bool), np.zeros(Hf.shape, bool)
+    tmask = _dist_to(Hf.shape, cell, track_segs(track)) <= corridor
+    portals = [track[i] for i in range(1, len(track)) if track[i][3] != track[i - 1][3]]
+    if portals:
+        psegs = [(p[0] - .1, p[1] - .1, p[0] + .1, p[1] + .1) for p in portals]
+        pmask = _dist_to(Hf.shape, cell, psegs) <= max(corridor, 4.0)
+    else:
+        pmask = np.zeros(Hf.shape, bool)
+    return tmask, pmask
+
+def tun_metrics(Hf, rec, tmask, pmask):
+    e = np.abs(rec - Hf)
+    et = e[tmask] if tmask.any() else np.array([0.0])
+    ep = e[pmask] if pmask.any() else np.array([0.0])
+    return dict(tun_rms_mm=float(np.sqrt((et ** 2).mean())), tun_max_mm=float(et.max()),
+                portal_max_mm=float(ep.max()))
+
 # ------------------------------------------------------------------ Metriken
 def metrics(Hf, rec, inside, nscale, vscale):
     err = np.abs(rec - Hf)[inside]
@@ -135,6 +178,10 @@ def run_sweep(Hf, cell, a):
                   ("adaptiv+snap", dict(uniform=False, snap=True))]
     ns = [int(x) for x in a.ns.split(",")]
     edges = detect_edges(Hf, cell)
+    NY, NX = Hf.shape; Wx, Dy = NX * cell, NY * cell
+    track = load_track(a, Wx, Dy)
+    tmask, pmask = tunnel_masks(Hf, cell, track, a.corridor)
+    tseg = track_segs(track)
     out = {}
     for name, kw in strategies:
         rows = []
@@ -142,25 +189,31 @@ def run_sweep(Hf, cell, a):
             xpos, ypos = te.rib_positions(Hf, cell, n, n, a.min_gap, snap_pct=a.snap_pct, **kw)
             if len(xpos) < 2 or len(ypos) < 2: continue
             rec, inside = reconstruct(Hf, cell, xpos, ypos)
-            m = metrics(Hf, rec, inside, a.nscale, a.vscale)
+            m = metrics(Hf, rec, inside, a.nscale, a.vscale); m.update(tun_metrics(Hf, rec, tmask, pmask))
             nribs, rib_len, cut = cut_cost(Hf, cell, xpos, ypos, a.thickness + a.fit)
             rows.append(dict(n=n, nribs=nribs, rib_len=rib_len, cut=cut,
-                             nx=len(xpos), ny=len(ypos), xpos=xpos, ypos=ypos,
-                             edges=None, **m))
+                             nx=len(xpos), ny=len(ypos), xpos=xpos, ypos=ypos, edges=None, **m))
         out[name] = rows
-    # 4. Strategie: adaptiv+snap-Gitter PLUS aufgeklebte Kanten-Lineale an scharfen Kanten
+    # 4. adaptiv+snap-Gitter PLUS Kanten-Lineale an scharfen Kanten
     rc = ruler_cut(Hf, cell, edges)
-    rows = []
+    # 5. zusätzlich mit TUNNEL-LINEALEN entlang der Trasse (pinnt die Tunnel-Kanten)
+    rc_tun = ruler_cut(Hf, cell, tseg)
+    rows4, rows5 = [], []
     for n in ns:
         xpos, ypos = te.rib_positions(Hf, cell, n, n, a.min_gap, snap_pct=a.snap_pct, uniform=False, snap=True)
         if len(xpos) < 2 or len(ypos) < 2: continue
-        rec, inside = reconstruct_rulers(Hf, cell, xpos, ypos, edges, a.ruler_band)
-        m = metrics(Hf, rec, inside, a.nscale, a.vscale)
         nribs, rib_len, cut = cut_cost(Hf, cell, xpos, ypos, a.thickness + a.fit)
-        rows.append(dict(n=n, nribs=nribs + len(edges), rib_len=rib_len, cut=cut + rc,
-                         nx=len(xpos), ny=len(ypos), xpos=xpos, ypos=ypos, edges=edges, **m))
-    out[f"adaptiv+snap+{len(edges)} Lineale"] = rows
-    out["_edges"] = edges
+        rec, inside = reconstruct_rulers(Hf, cell, xpos, ypos, edges, a.ruler_band)
+        m = metrics(Hf, rec, inside, a.nscale, a.vscale); m.update(tun_metrics(Hf, rec, tmask, pmask))
+        rows4.append(dict(n=n, nribs=nribs + len(edges), rib_len=rib_len, cut=cut + rc,
+                          nx=len(xpos), ny=len(ypos), xpos=xpos, ypos=ypos, edges=edges, **m))
+        rec2, _ = reconstruct_rulers(Hf, cell, xpos, ypos, edges + tseg, a.ruler_band)
+        m2 = metrics(Hf, rec2, inside, a.nscale, a.vscale); m2.update(tun_metrics(Hf, rec2, tmask, pmask))
+        rows5.append(dict(n=n, nribs=nribs + len(edges) + len(tseg), rib_len=rib_len, cut=cut + rc + rc_tun,
+                          nx=len(xpos), ny=len(ypos), xpos=xpos, ypos=ypos, edges=edges + tseg, **m2))
+    out[f"adaptiv+snap+{len(edges)} Lineale"] = rows4
+    if track: out["adaptiv+snap+Lineale+Tunnel"] = rows5
+    out["_edges"] = edges; out["_track"] = track; out["_tmask"] = tmask; out["_pmask"] = pmask; out["_tseg"] = tseg
     return out
 
 def knee(rows, key_cut="cut", key_err="rms_m"):
@@ -177,11 +230,12 @@ def _strat_rows(out):
             if not n.startswith("_") and isinstance(r, list) and r and isinstance(r[0], dict)]
 
 def _color(name):
+    if "Tunnel" in name: return "#9467bd"                   # +Tunnel-Lineale
     if name.startswith("uniform"): return "#888888"
     if name == "adaptiv": return "#1f77b4"
     if name.startswith("adaptiv+snap+"): return "#2ca02c"   # +Lineale
     if name.startswith("adaptiv+snap"): return "#d62728"
-    return "#9467bd"
+    return "#17becf"
 
 def plot_pareto(out, a):
     import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
@@ -264,6 +318,39 @@ def write_html(Hf, cell, out, a):
                       scene=dict(aspectmode="data", zaxis=dict(title="Höhe (mm)")), height=820)
     fig.write_html(f"{a.out}/sim3d.html", include_plotlyjs="cdn")
 
+def plot_tunnel(Hf, cell, out, a):
+    import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
+    track = out.get("_track", [])
+    if not track: return
+    T = np.array([(p[0], p[1]) for p in track]); it = np.array([bool(p[3]) for p in track])
+    NY, NX = Hf.shape; X = (np.arange(NX) + 0.5) * cell; Y = (np.arange(NY) + 0.5) * cell
+    mx0, mx1 = max(0, T[:, 0].min() - 10), min(NX * cell, T[:, 0].max() + 10)
+    my0, my1 = max(0, T[:, 1].min() - 10), min(NY * cell, T[:, 1].max() + 10)
+    g = out.get("adaptiv+snap", []); kg = knee(g)
+    recg, _ = reconstruct(Hf, cell, kg["xpos"], kg["ypos"])
+    panels = [("ECHTES Gelände (Höhe)", Hf, "h"),
+              (f"Gitter {kg['nribs']}T · TunMAX {kg['tun_max_mm']:.2f}mm", np.abs(recg - Hf), "e")]
+    tunk = out.get("adaptiv+snap+Lineale+Tunnel", [])
+    if tunk:
+        kt = next((r for r in tunk if r["n"] == kg["n"]), tunk[-1])
+        rect, _ = reconstruct_rulers(Hf, cell, kt["xpos"], kt["ypos"], out["_edges"] + out["_tseg"], a.ruler_band)
+        panels.append((f"+Tunnel-Lineale · TunMAX {kt['tun_max_mm']:.2f}mm", np.abs(rect - Hf), "e"))
+    fig, axs = plt.subplots(1, len(panels), figsize=(6 * len(panels), 6))
+    for ax, (title, Z, kind) in zip(axs, panels):
+        if kind == "e":
+            im = ax.pcolormesh(X, Y, Z, cmap="hot", vmin=0, vmax=max(1.0, a.target_mm * 4), shading="auto")
+            plt.colorbar(im, ax=ax, label="|Fehler| mm", fraction=.046)
+        else:
+            im = ax.pcolormesh(X, Y, Z, cmap="terrain", shading="auto")
+            plt.colorbar(im, ax=ax, label="Höhe mm", fraction=.046)
+        ax.plot(T[:, 0], T[:, 1], "c-", lw=1.2, alpha=.7)
+        if it.any(): ax.plot(T[it, 0], T[it, 1], "b.", ms=6, label="Tunnel")
+        if (~it).any(): ax.plot(T[~it, 0], T[~it, 1], "w.", ms=5, label="offen")
+        ax.set_xlim(mx0, mx1); ax.set_ylim(my0, my1); ax.set_aspect("equal"); ax.set_title(title, fontsize=10)
+    axs[0].legend(fontsize=8, loc="upper right")
+    plt.suptitle(f"Tunnel-Zoom — Ziel ≤ {a.target_mm} mm an den Tunnel-Kanten", y=1.02)
+    plt.tight_layout(); plt.savefig(f"{a.out}/tunnel.png", dpi=120, bbox_inches="tight"); plt.close()
+
 # ------------------------------------------------------------------ main
 def main():
     ap = argparse.ArgumentParser()
@@ -278,6 +365,9 @@ def main():
     ap.add_argument("--fit", type=float, default=-0.5)
     ap.add_argument("--ns", default="3,4,5,6,8,10,12,15,18", help="Dichte-Sweep (nx=ny)")
     ap.add_argument("--ruler-band", type=float, default=6.0, dest="ruler_band", help="Einfluss-Breite eines Kanten-Lineals (mm): Haut folgt bis hierher dem echten Gelände")
+    ap.add_argument("--track", default="daten/hoellental/hoellental_track_50.npy", help="Trasse (.npy mx,my,mz,is_tunnel in Modell-mm) für die Tunnel-Genauigkeits-Analyse; leer=aus")
+    ap.add_argument("--corridor", type=float, default=3.0, help="Tunnel-Korridor-Breite (mm) für die Fehler-Messung an den Tunnel-Kanten")
+    ap.add_argument("--target-mm", type=float, default=0.5, dest="target_mm", help="Genauigkeits-Ziel an den Tunnel-Kanten (mm Modell)")
     ap.add_argument("--out", default="/tmp/eggcrate_sim")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -286,25 +376,38 @@ def main():
     print(f"DEM-Fenster {NX}x{NY} Zellen, {NX*cell:.0f}x{NY*cell:.0f} mm, Höhe {Hf.min():.0f}..{Hf.max():.0f} mm")
     print(f"Relief-Spannweite real: {(Hf.max()-Hf.min())/(a.nscale*a.vscale):.0f} m\n")
     out = run_sweep(Hf, cell, a)
-    print(f"{'Strategie':26s} {'n':>3} {'#Teile':>6} {'Schnitt m':>9} {'RMS m':>7} {'P95 m':>7} {'max m':>7}")
+    has_tun = bool(out.get("_track"))
+    hdr = f"{'Strategie':28s} {'n':>3} {'#Teile':>6} {'Schnitt m':>9} {'RMS m':>7} {'max m':>7}"
+    if has_tun: hdr += f" | {'TunRMS':>7} {'TunMAX':>7} {'Portal':>7} (mm)"
+    print(hdr)
     for name, rows in _strat_rows(out):
         for r in rows:
-            print(f"{name:26s} {r['n']:>3} {r['nribs']:>6} {r['cut']/1000:>9.1f} "
-                  f"{r['rms_m']:>7.2f} {r['p95_m']:>7.2f} {r['max_m']:>7.2f}")
+            line = (f"{name:28s} {r['n']:>3} {r['nribs']:>6} {r['cut']/1000:>9.1f} "
+                    f"{r['rms_m']:>7.2f} {r['max_m']:>7.2f}")
+            if has_tun:
+                ok = "✓" if r['tun_max_mm'] <= a.target_mm else " "
+                line += f" | {r['tun_rms_mm']:>7.2f} {r['tun_max_mm']:>7.2f}{ok} {r['portal_max_mm']:>6.2f}"
+            print(line)
         print()
     kn = knee(out.get("adaptiv+snap", []))
     if kn:
-        print(f"★ SWEET-SPOT Gitter (adaptiv+snap, Knie): {kn['nribs']} Teile "
-              f"({kn['nx']}x + {kn['ny']}y), ~{kn['cut']/1000:.1f} m Schnitt, "
-              f"RMS {kn['rms_m']:.2f} m / P95 {kn['p95_m']:.2f} m / max {kn['max_m']:.2f} m")
-    rk = _ruler_key(out); rr = out.get(rk, [])
-    if rr and kn:
-        kr = next((r for r in rr if r["n"] == kn["n"]), rr[-1])
-        print(f"★ Mit Kanten-Linealen (gleiche Dichte): {kr['nribs']} Teile, ~{kr['cut']/1000:.1f} m Schnitt, "
-              f"RMS {kr['rms_m']:.2f} m / P95 {kr['p95_m']:.2f} m / max {kr['max_m']:.2f} m "
-              f"(Max-Fehler {100*(1-kr['max_m']/max(kn['max_m'],1e-9)):.0f}% kleiner)")
+        print(f"★ SWEET-SPOT Gitter (adaptiv+snap, Knie): {kn['nribs']} Teile, ~{kn['cut']/1000:.1f} m, "
+              f"RMS {kn['rms_m']:.2f} m / max {kn['max_m']:.2f} m")
+    if has_tun:
+        print(f"\n== TUNNEL-GENAUIGKEIT (Ziel ≤ {a.target_mm} mm an den Tunnel-Kanten) ==")
+        for name, rows in _strat_rows(out):
+            hit = [r for r in rows if r['tun_max_mm'] <= a.target_mm]
+            if hit:
+                h = min(hit, key=lambda r: r['cut'])
+                print(f"  {name:28s}: ERREICHT ab {h['nribs']} Teilen / ~{h['cut']/1000:.1f} m "
+                      f"(TunMAX {h['tun_max_mm']:.2f} mm, Portal {h['portal_max_mm']:.2f} mm)")
+            else:
+                best = min(rows, key=lambda r: r['tun_max_mm'])
+                print(f"  {name:28s}: NIE erreicht (bestes TunMAX {best['tun_max_mm']:.2f} mm bei {best['nribs']} Teilen)")
     plot_pareto(out, a); plot_surfaces3d(Hf, cell, out, a); write_html(Hf, cell, out, a)
-    print(f"\n-> {a.out}/pareto.png  {a.out}/surfaces3d.png  {a.out}/sim3d.html (interaktiv)")
+    if has_tun: plot_tunnel(Hf, cell, out, a)
+    print(f"\n-> {a.out}/pareto.png  {a.out}/surfaces3d.png  {a.out}/sim3d.html"
+          + (f"  {a.out}/tunnel.png" if has_tun else ""))
 
 if __name__ == "__main__":
     main()
