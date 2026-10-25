@@ -119,12 +119,15 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None, 
 </div>
 <div class=sep></div>
 <div style="display:flex;gap:8px">
-  <button onclick=tProg() title="Baustand markieren: Teil anklicken = ✓ geschnitten" style="background:#27a">🧩 Baustand</button>
-  <button onclick=resetProg() title="Baustand-Markierungen löschen" style="background:#a53">✕ Zurück</button>
+  <button onclick=tProg() title="Baustand-Modus: Teil anklicken = ✓ geschnitten (gespeichert)" style="background:#27a">🧩 Baustand</button>
+  <button onclick="filterDone('todo')" title="NUR die noch nicht geschnittenen Teile zeigen" style="background:#a53">📋 Nur offen</button>
+  <button onclick="filterDone('done')" title="NUR die schon geschnittenen Teile zeigen" style="background:#2a7">✓ Nur fertig</button>
+  <button onclick="filterDone('')" title="Alle Teile wieder zeigen">Alle zeigen</button>
+  <button onclick=resetProg() title="Baustand-Markierungen löschen" style="background:#a33">✕ Reset</button>
 </div>
 <span id=pinfo style="margin-left:auto;color:#5f5"></span><span id=info></span>
 </div>
-<div id=tip><b>Bedienung:</b> Teil eintippen (z.B. Y10) oder anklicken → ROT = wo es hinkommt. Zwei Teile → rot+blau + grüne Kugel = Kreuzung. Maus: drehen, Rad: zoom</div>
+<div id=tip><b>Bedienung:</b> Teil eintippen (z.B. Y10) oder anklicken → ROT = wo es hinkommt. Zwei Teile → rot+blau + grüne Kugel = Kreuzung. <b>Baustand:</b> 🧩 anklicken, dann jedes geschnittene Teil anklicken (✓, gespeichert) → mit „📋 Nur offen" siehst du, was noch fehlt. Maus: drehen, Rad: zoom</div>
 <script>
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xdde6ef);
 const cam=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,0.1,99999);
@@ -181,6 +184,13 @@ window.setRopac=v=>{if(relief){const o=v/100;relief.material.opacity=o;relief.ma
 window.tNum=()=>{if(nums)nums.visible=!nums.visible;};
 window.tEdges=()=>{if(edges)edges.visible=!edges.visible;};
 window.tFlaechen=()=>{flaechen.forEach(o=>o.visible=!o.visible);if(edges)edges.visible=!edges.visible;};
+window.filterDone=mode=>{   // Baustand-FILTER: 'todo'=nur offene, 'done'=nur fertige, ''=alle
+  meshes.forEach(o=>{const nm=(o.name||'').toUpperCase();
+    o.visible = mode==='todo' ? !DONE.has(nm) : mode==='done' ? DONE.has(nm) : true;});
+  const el=document.getElementById('pinfo');
+  if(el)el.textContent = mode==='todo' ? ('📋 '+(meshes.length-DONE.size)+' offen (noch schneiden)')
+                       : mode==='done' ? ('✓ '+DONE.size+' geschnitten') : (prog?('🧩 Baustand AN · '+DONE.size+'/'+meshes.length+' fertig'):'');
+};
 window.filterType=type=>{
   const isSpante=o=>(o.name||'').match(/^[XY]\d/);
   const isKante=o=>(o.name||'').match(/^[KD]\d/);
