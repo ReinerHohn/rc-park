@@ -1,0 +1,20 @@
+EGG-CRATE Gerüst  102x66 mm, Höhe bis 103 mm (vscale 0.85, 0.390625 mm/Zelle)
+Material 3.0 mm, Schlitz 2.50 mm  |  6 X-Rippen + 9 Y-Rippen (ADAPTIV: dicht bei Detail, weit bei flach)
+MONTAGE: X-Rippen (Schlitz oben) + Y-Rippen (Schlitz unten) ineinanderstecken.
+Dann Gips/Haut über die Rippen-Oberkanten.
+
+  X0: 102x67 mm
+  X1: 102x44 mm
+  X2: 102x50 mm
+  X3: 102x57 mm
+  X4: 102x74 mm
+  X5: 102x99 mm
+  Y0: 66x66 mm
+  Y1: 66x76 mm
+  Y2: 66x76 mm
+  Y3: 66x89 mm
+  Y4: 66x89 mm
+  Y5: 66x83 mm
+  Y6: 66x92 mm
+  Y7: 66x90 mm
+  Y8: 66x99 mm
