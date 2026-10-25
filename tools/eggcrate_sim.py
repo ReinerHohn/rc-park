@@ -383,6 +383,45 @@ def plot_tunnel(Hf, cell, out, a):
     plt.suptitle(f"Tunnel-Zoom — Ziel ≤ {a.target_mm} mm an den Tunnel-Kanten", y=1.02)
     plt.tight_layout(); plt.savefig(f"{a.out}/tunnel.png", dpi=120, bbox_inches="tight"); plt.close()
 
+def write_ribs_edges_html(Hf, cell, out, a):
+    """3D: Relief + GITTER-Rippen (X/Y) + ALLE erkannten scharfen Kanten als Kanten-Lineale
+    (auf dem Relief liegend). Zeigt: jede relevante Kante ist durch eine Rippe ODER ein
+    Lineal abgedeckt. + Trasse (Tunnel/offen)."""
+    import plotly.graph_objects as go
+    g = out.get("adaptiv+snap", []); kg = knee(g) if g else None
+    if not kg: return
+    xpos, ypos = kg["xpos"], kg["ypos"]; edges = out.get("_edges", [])
+    NY, NX = Hf.shape; Wx, Dy = NX * cell, NY * cell; st = max(1, max(NX, NY) // 120)
+    X = np.arange(0, NX, st) * cell; Y = np.arange(0, NY, st) * cell
+    fig = go.Figure()
+    fig.add_surface(x=X, y=Y, z=Hf[::st, ::st], colorscale="earth", opacity=0.55, showscale=False, name="Relief")
+    def drape(xs, ys):                                   # z = Relief entlang der Linie (+1mm sichtbar)
+        return bilin(Hf, np.asarray(xs), np.asarray(ys), cell) + 1.0
+    sy = np.linspace(0, Dy, 80); sx = np.linspace(0, Wx, 80)
+    for i, xr in enumerate(xpos):                        # Y-Rippen (x=const, laufen in y) — grün
+        yy = np.full_like(sy, xr)
+        fig.add_scatter3d(x=yy, y=sy, z=drape(yy, sy), mode="lines", line=dict(color="#2ca02c", width=4),
+                          name="Y-Rippen", legendgroup="Y", showlegend=(i == 0))
+    for i, yr in enumerate(ypos):                        # X-Rippen (y=const, laufen in x) — blau
+        xx = np.full_like(sx, yr)
+        fig.add_scatter3d(x=sx, y=xx, z=drape(sx, xx), mode="lines", line=dict(color="#1f77b4", width=4),
+                          name="X-Rippen", legendgroup="X", showlegend=(i == 0))
+    for i, (x0, y0, x1, y1) in enumerate(edges):         # Kanten-Lineale auf scharfen Kanten — ROT, dick
+        tx = np.linspace(x0, x1, 12); ty = np.linspace(y0, y1, 12)
+        fig.add_scatter3d(x=tx, y=ty, z=drape(tx, ty), mode="lines", line=dict(color="#d62728", width=7),
+                          name=f"Kanten-Lineale ({len(edges)})", legendgroup="K", showlegend=(i == 0))
+    track = out.get("_track", [])
+    if track:
+        P = np.array([(p[0], p[1], float(p[3])) for p in track]); zc = drape(P[:, 0], P[:, 1]) + 1
+        for nm, mk, c in [("Tunnel", P[:, 2] > 0.5, "#111"), ("offen", P[:, 2] <= 0.5, "#ffffff")]:
+            if mk.any():
+                fig.add_scatter3d(x=P[mk, 0], y=P[mk, 1], z=zc[mk], mode="markers",
+                                  marker=dict(size=3, color=c), name=f"Trasse {nm}")
+    fig.update_layout(title=f"Alle relevanten Kanten abgedeckt — {len(ypos)} X + {len(xpos)} Y-Rippen "
+                            f"(blau/grün) + {len(edges)} Kanten-Lineale (rot)",
+                      scene=dict(aspectmode="data", zaxis=dict(title="Höhe (mm)")), height=840)
+    fig.write_html(f"{a.out}/ribs_edges.html", include_plotlyjs="cdn")
+
 # ------------------------------------------------------------------ main
 def main():
     ap = argparse.ArgumentParser()
@@ -438,6 +477,7 @@ def main():
                 best = min(rows, key=lambda r: r['tun_max_mm'])
                 print(f"  {name:28s}: NIE erreicht (bestes TunMAX {best['tun_max_mm']:.2f} mm bei {best['nribs']} Teilen)")
     plot_pareto(out, a); plot_surfaces3d(Hf, cell, out, a); write_html(Hf, cell, out, a)
+    write_ribs_edges_html(Hf, cell, out, a)
     if has_tun: plot_tunnel(Hf, cell, out, a)
     print(f"\n-> {a.out}/pareto.png  {a.out}/surfaces3d.png  {a.out}/sim3d.html"
           + (f"  {a.out}/tunnel.png" if has_tun else ""))
