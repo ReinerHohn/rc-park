@@ -365,9 +365,12 @@ def rib_positions(Hf, cell, nx, ny, min_gap, max_gap=None, uniform=False, snap=F
     return xpos, ypos
 
 
-def choose_seams(cross_s, L, maxlen, minwid, phase=0.0):
+def choose_seams(cross_s, L, maxlen, minwid, hfn=None, min_h=0.0, phase=0.0, name=""):
     """Naht-Positionen (entlang s) wählen: möglichst gleichmäßig alle <=maxlen, aber IMMER
     in eine Lücke zwischen zwei Kreuzungen (nie auf einen Steck-Schlitz), breit genug für Zinken.
+    NEU: Nähte NUR dort, wo die Rippe hoch genug ist (h>=min_h) -> die Fingerzinken bekommen
+    solides Material (mehrere Zähne, kein Mini-Zahn im flachen Talauslauf, der abbricht).
+    Gibt es keine hohe Lücke, wird an der HÖCHSTEN verfügbaren Lücke geteilt (Notnagel+Warnung).
     phase (Rippen-Index): VERSETZT die Naht pro Rippe (zielt auf eine andere Lücke), damit die
     Nähte benachbarter Rippen NICHT auf eine Linie fallen (sonst durchgehende Sollbruch-Linie)."""
     cs = sorted(c for c in cross_s if 1 < c < L-1)
@@ -375,11 +378,16 @@ def choose_seams(cross_s, L, maxlen, minwid, phase=0.0):
     cand = [(bnds[i]+bnds[i+1])/2 for i in range(len(bnds)-1)
             if (bnds[i+1]-bnds[i]) >= minwid and 0.12*L < (bnds[i]+bnds[i+1])/2 < 0.88*L]
     if not cand: return []
+    h_at = (lambda s: float(hfn(s))) if hfn is not None else (lambda s: 1e9)
+    tall = [c for c in cand if h_at(c) >= min_h]
+    pool = tall if tall else cand
+    if not tall and name:
+        print(f"  ⚠ {name}: keine Naht-Lücke ≥ {min_h:.0f}mm hoch — teile an höchster ({max(h_at(c) for c in pool):.0f}mm)")
     n = max(1, int(np.ceil(L/maxlen))); step = L/n; seams = []
     off = (0.4 * step) * (1 if int(phase) % 2 else -1)  # strikt abwechselnd (ABAB): kein Nachbar teilt eine Nahtlinie
     for i in range(1, n):
         target = L*i/n + off
-        sc = min(cand, key=lambda c: abs(c - target))
+        sc = min(pool, key=lambda c: abs(c - target))      # nahe am Ziel, aber nur aus hohen Lücken
         if sc not in seams: seams.append(sc)
     return sorted(seams)
 
@@ -470,6 +478,8 @@ def main():
     ap.add_argument("--snap-pct", type=float, default=80.0, help="Perzentil-Schwelle für Bruchkanten-Stärke (höher = nur die schärfsten Kanten; 80 = Top-20% aller Gradienten)")
     ap.add_argument("--split-len", type=float, default=0.0, help="lange Rippen in Puzzle-Stücke <= N mm mit Fingerzinken teilen (spart Verschnitt); 0=aus")
     ap.add_argument("--finger", type=float, default=12.0, help="Fingerzinken-Höhe (mm) entlang der Naht")
+    ap.add_argument("--seam-min-h", type=float, default=0.0, dest="seam_min_h", help="Fingerzinken-Naht NUR in Lücken wo die Rippe >= N mm hoch ist (solide Zähne, kein Mini-Zahn im Talauslauf); 0=auto=2×--finger")
+    ap.add_argument("--min-web", type=float, default=1.5, dest="min_web", help="Hals-Warnschwelle (mm): jede Rippe wird geprüft; wird sie nach Schrumpf um --min-web/2 getrennt, kommt eine Bruch-Gefahr-Warnung")
     ap.add_argument("--thickness", type=float, default=3.0)
     ap.add_argument("--rib-depth", type=float, default=0.0, help="Rippen als konstant-tiefes Band (mm unter Oberkante) statt bis Boden -> spart Material; 0=bis Boden")
     ap.add_argument("--base", type=float, default=12.0, help="Sockel mm: Gelände anheben, damit Rippen am Talboden nicht auf 0 pinchen (gegen 'schwebende' Teile)")
@@ -491,6 +501,7 @@ def main():
     ap.add_argument("--passes", type=int, default=4); ap.add_argument("--eng-power", type=float, default=20)
     ap.add_argument("--out", default="/tmp/crate")
     a = ap.parse_args()
+    if a.seam_min_h <= 0: a.seam_min_h = 2.0 * a.finger   # auto: Naht nur wo >= 2 Finger solide passen
 
     from scipy.ndimage import zoom, gaussian_filter
     dem_full = np.load(a.dem)
@@ -604,7 +615,7 @@ def main():
         if bb[0] > a.bed_x or bb[1] > a.bed_y: oversize.append((name, bb))
         return bb
 
-    ribdata = []
+    ribdata = []; nonlocal_fragile = []              # Rippen mit dünnem Hals (Bruch-Gefahr) -> Report
     fdepth = max(8.0, 2*a.thickness)                 # Zinken-Tiefe (in s) = min. 2× Materialdicke
     def clip_holes(sp, holes):                        # Tunnel-Löcher aufs Teilstück beschneiden
         from shapely.geometry import Polygon as SP
@@ -617,33 +628,95 @@ def main():
                 if gg.area >= 1: out.append(np.array(gg.exterior.coords))
         return out
 
-    def add_rib(prefix, coordlab, poly, axis, pos, th, L, cross_s, ph=0):
+    def _body_necks(poly, web, seams):
+        """Zahl ECHTER Körper-Bruchstücke (Hals < web) ABSEITS der Fingerzinken-Naht.
+        Nach Schrumpf um web/2 zerfällt die Rippe; GROSSE Teilstücke (>=30mm²), deren
+        Schwerpunkt NICHT nahe einer Naht liegt, sind echte Soll-Bruchstellen im Körper
+        (Rippe fällt auseinander). Zinken an der Naht (werden verklebt) werden ignoriert."""
+        from shapely.geometry import Polygon as _P
+        g = _P(poly); g = g if g.is_valid else g.buffer(0)
+        if g.geom_type == "MultiPolygon": g = max(g.geoms, key=lambda h: h.area)
+        er = g.buffer(-web/2.0)
+        comps = list(er.geoms) if er.geom_type == "MultiPolygon" else ([er] if not er.is_empty else [])
+        margin = fdepth + 3.0
+        big = [c for c in comps if c.area >= 30.0 and not any(abs(c.centroid.x - sc) <= margin for sc in seams)]
+        return len(big)
+
+    def _emit_rib(name, poly, label, extra, seams):
+        bb = emit(name, poly, label, extra)
+        if _body_necks(poly, a.min_web, seams) > 1:      # >1 echtes Körperstück = Rippe bricht auseinander
+            nonlocal_fragile.append(name)
+            print(f"  ⚠ {name}: echter Körper-Hals < {a.min_web}mm — Rippe bricht auseinander (nicht an der Naht!)")
+        return bb
+
+    def add_rib(prefix, coordlab, poly, axis, pos, th, L, cross_s, hfn, ph=0):
         """emittiert eine Rippe; teilt sie bei --split-len in verzinkte Puzzle-Stücke.
+        hfn(s)=Rippenhöhe an s -> Naht nur wo hoch genug (solide Zinken, kein Mini-Zahn).
         ph=Rippen-Index -> Naht pro Rippe versetzt (keine durchgehende Nahtlinie)."""
-        seams = (choose_seams(cross_s, L, a.split_len, 2*fdepth+slotw+4, phase=ph)
+        seams = (choose_seams(cross_s, L, a.split_len, 2*fdepth+slotw+4, hfn, a.seam_min_h, phase=ph, name=prefix)
                  if a.split_len > 0 and np.ptp(poly[:, 0]) > a.split_len else [])
         if not seams:
-            bb = emit(f"rib{prefix}", poly, f"{prefix} {coordlab}", th)
+            bb = _emit_rib(f"rib{prefix}", poly, f"{prefix} {coordlab}", th, [])
             ribdata.append((prefix, poly, axis, pos, th))
             manifest.append(f"  {prefix}: {bb[0]:.0f}x{bb[1]:.0f} mm" + (f"  (+{len(th)} Tunnel)" if th else ""))
             return
         segs = finger_split(poly, seams, fdepth, a.finger)
         for si, sp in enumerate(segs):
             lt = chr(97+si); hh = clip_holes(sp, th)
-            bb = emit(f"rib{prefix}{lt}", sp, f"{prefix}{lt} {coordlab}", hh)
+            bb = _emit_rib(f"rib{prefix}{lt}", sp, f"{prefix}{lt} {coordlab}", hh, seams)
             ribdata.append((f"{prefix}{lt}", sp, axis, pos, hh))
             manifest.append(f"  {prefix}{lt}: {bb[0]:.0f}x{bb[1]:.0f} mm (Zinken)" + (f" (+{len(hh)} Tunnel)" if hh else ""))
 
+    # Gemeinsame Schlitz-Mittellinie (hmid) pro Kreuzung — INTERLOCK-SICHER (beide Rippen nutzen
+    # dieselbe Formel): kappe hmid so, dass die Y-Rippe (Schlitz von UNTEN, Steg OBEN zur Oberkante)
+    # über die ganze Schlitzbreite >= min_web Steg behält, auch in STEILEM Gelände (dort fällt die
+    # Oberkante neben dem Schlitz stark ab -> sonst dünner Steg = Bruch, wie ribY2). Die X-Rippe
+    # (Schlitz OBEN, Steg UNTEN zur flachen Basis) ist unkritisch, braucht nur hmid >= Basis+min_web.
+    _hslot = slotw/2 + 0.4
+    def hmid_at(x, y):
+        raw = (Hbot(x, y) + Htop(x, y)) / 2.0
+        hi = min(Htop(x, y + t) for t in np.linspace(-_hslot, _hslot, 5)) - a.min_web   # Steg oben (Y-Rippe)
+        lo = Hbot(x, y) + a.min_web                                                      # Steg unten (X-Rippe)
+        return float(np.clip(raw, lo, hi)) if lo <= hi else raw   # zu kurz/steil: bestmöglich (Mitte)
+
+    # --- AUTO-NUDGE: Y-Rippen mit echtem KÖRPER-Hals (ein Steck-Schlitz liegt an einer near-
+    # vertikalen Gelände-Klippe -> dünner Streifen zwischen Schlitzwand und Kante) um wenige mm
+    # versetzen, bis bruchfrei. Nur Y-Rippen (Schlitz UNTEN) können das haben; die X-Schlitze
+    # folgen automatisch, weil sie dasselbe (jetzt versetzte) xpos nutzen -> Verzahnung bleibt. ---
+    def _ybody_neck(xr):
+        cr = [(yp, hmid_at(xr, yp)) for yp in ypos]
+        bf = (lambda s, xr=xr: Hbot(xr, s)) if band else None
+        pl = np.array(rib(Dy, lambda s, xr=xr: Htop(xr, s), cr, slotw, False, bf), float)
+        return _body_necks(pl, a.min_web, [])
+    xpos = list(np.asarray(xpos, float))
+    for ii in range(len(xpos)):
+        if _ybody_neck(xpos[ii]) <= 1: continue
+        lo_lim = (xpos[ii-1] + a.min_gap) if ii > 0 else 0.0
+        hi_lim = (xpos[ii+1] - a.min_gap) if ii < len(xpos)-1 else Wx
+        best = None
+        for d in (1,-1,2,-2,3,-3,4,-4,5,-5,6,-6):
+            c = xpos[ii] + d
+            if c < lo_lim or c > hi_lim: continue
+            if _ybody_neck(c) <= 1: best = c; break
+        if best is not None:
+            print(f"  ⟳ Auto-Nudge Y{ii}: x {xpos[ii]:.1f} -> {best:.1f} mm (Körper-Hals an Gelände-Klippe vermieden)")
+            xpos[ii] = best
+        else:
+            print(f"  ⚠ Y{ii}: kein bruchfreier Versatz in ±6mm — bleibt (Validierung warnt)")
+    xpos = np.array(sorted(xpos))
+
     for j, yr in enumerate(ypos):     # X-Rippen: Schlitz OBEN, Kreuzung an xpos (Höhe geklemmt auf z_t)
-        cross = [(xp, (Hbot(xp, yr)+Htop(xp, yr))/2) for xp in xpos]
+        cross = [(xp, hmid_at(xp, yr)) for xp in xpos]
         bsf = (lambda s, yr=yr: Hbot(s, yr)) if band else None
+        hfn = (lambda s, yr=yr: Htop(s, yr) - (Hbot(s, yr) if band else 0.0))
         poly = np.array(rib(Wx, lambda s, yr=yr: Htop(s, yr), cross, slotw, True, bsf), float)
-        add_rib(f"X{j}", f"Y{yr:.0f}", poly, "x", yr, tunnel_holes("x", yr), Wx, list(xpos), ph=j)
+        add_rib(f"X{j}", f"Y{yr:.0f}", poly, "x", yr, tunnel_holes("x", yr), Wx, list(xpos), hfn, ph=j)
     for i, xr in enumerate(xpos):     # Y-Rippen: Schlitz UNTEN, Kreuzung an ypos
-        cross = [(yp, (Hbot(xr, yp)+Htop(xr, yp))/2) for yp in ypos]
+        cross = [(yp, hmid_at(xr, yp)) for yp in ypos]
         bsf = (lambda s, xr=xr: Hbot(xr, s)) if band else None
+        hfn = (lambda s, xr=xr: Htop(xr, s) - (Hbot(xr, s) if band else 0.0))
         poly = np.array(rib(Dy, lambda s, xr=xr: Htop(xr, s), cross, slotw, False, bsf), float)
-        add_rib(f"Y{i}", f"X{xr:.0f}", poly, "y", xr, tunnel_holes("y", xr), Dy, list(ypos), ph=i)
+        add_rib(f"Y{i}", f"X{xr:.0f}", poly, "y", xr, tunnel_holes("y", xr), Dy, list(ypos), hfn, ph=i)
 
     # ============ B4 Schritt 2: KANTEN-LINEALE (diagonale Kanten-Rippen) ============
     # Scharfe Kanten (beliebige Richtung) als vertikale Finnen, die sich per HALB-ÜBERBLATTUNG
@@ -732,42 +805,19 @@ def main():
                 _bf = ((lambda s, x0=x0, y0=y0, dx=_dxd, dy=_dyd: Hbot(x0 + dx*s, y0 + dy*s)) if band else (lambda s: 0.0))
                 r = _build_ruler(x0, y0, x1, y1, _tf, _bf, _zfm, f"D{len(edge_rulers)}")
                 if r: edge_rulers.append(r)
-        # TOP-Schlitze in die gekreuzten Rippen schneiden (Gegenstück der Überblattung) — SPLIT-SICHER:
-        # eine Kerbe, die die Rippe (zusammen mit dem Tunnelloch) ZERTEILEN würde, wird übersprungen,
-        # damit keine Rippe in lose Stücke zerfällt.
-        _skipped = 0
-        for _ri, notches in edge_notches.items():
-            _rnm, _rpoly, _rax, _rpos, _rth = ribdata[_ri]
-            pg = _ShP(_rpoly); pg = pg if pg.is_valid else pg.buffer(0)
-            _holes = []
-            for _h in _rth:
-                _hp = _ShP(_h); _hp = _hp if _hp.is_valid else _hp.buffer(0)
-                if _hp.is_valid and not _hp.is_empty: _holes.append(_hp)
-            def _would_split(poly):
-                t = poly
-                for _hp in _holes: t = t.difference(_hp)
-                if t.geom_type == "MultiPolygon":
-                    ps = sorted(t.geoms, key=lambda g: g.area, reverse=True)
-                    return len(ps) > 1 and ps[1].area > 3.0
-                return False
-            for (sp, ht, zmid) in notches:
-                cand = pg.difference(_shbox(sp - slotw/2, zmid, sp + slotw/2, ht + 50))
-                if cand.is_empty: continue
-                if _would_split(cand): _skipped += 1; continue      # (mit Loch) würde zerteilen -> weglassen
-                if cand.geom_type == "MultiPolygon":                # Kerbe allein spaltet die Außenkontur?
-                    _cp = sorted(cand.geoms, key=lambda g: g.area, reverse=True)
-                    if len(_cp) > 1 and _cp[1].area > 3.0: _skipped += 1; continue
-                    cand = _cp[0]
-                pg = cand
-                if pg.geom_type == "MultiPolygon": pg = sorted(pg.geoms, key=lambda g: g.area, reverse=True)[0]
-            # NACH dem Loop: pg könnte immer noch MultiPolygon sein
-            if pg.geom_type == "MultiPolygon": pg = sorted(pg.geoms, key=lambda g: g.area, reverse=True)[0]
-            ribdata[_ri] = (_rnm, np.array(pg.exterior.coords), _rax, _rpos, _rth)
-        if _skipped: print(f"B4: {_skipped} Kerben übersprungen (hätten eine Rippe zerteilt, Tunnelnähe)")
-        # SVG/G-Code-Schnittteile der Lineale
+        # KEINE Top-Kerben mehr in die Rippen (frühere Halb-Überblattung ABGESCHAFFT):
+        # Die Kanten-Lineale werden OBEN AUFGEKLEBT, nicht eingesteckt. Grund:
+        #  (1) die Kerben konnten Rippen zerteilen (Tunnelnähe -> loses Bruchstück, s. Y4),
+        #  (2) sie hätten verlangt, bereits geschnittene Rippen neu zu schneiden, und
+        #  (3) sie waren ohnehin nie im SVG/G-Code gelandet (nur im Tool/Vorschau =
+        #      Phantom-Kerben). Rippen behalten also ihre SAUBERE Oberkante ->
+        #      Schnitt == Tool == Vorschau. ribdata bleibt UNVERÄNDERT; edge_notches
+        #      wird nicht mehr angewendet.
+        # SVG/G-Code der Lineale (nur die K-Teile selbst; sie tragen ihre Kreuzungs-
+        # schlitze, damit sie beim Aufsetzen über die Rippen rutschen und verklebt werden).
         for (knm, kpoly, seg) in edge_rulers:
             emit(knm, kpoly, knm)  # knm ist schon "K0", "K1" etc.
-        print(f"B4: {len(edge_rulers)} Kanten-Lineale (Halb-Überblattung, Schlitze in {len(edge_notches)} Rippen)")
+        print(f"B4: {len(edge_rulers)} Kanten-Lineale (werden OBEN AUFGEKLEBT — keine Rippen-Kerben)")
     except Exception as _be:
         edge_rulers = []
         import traceback
@@ -807,6 +857,11 @@ def main():
     open(f"{a.out}/MANIFEST.txt", "w").write("\n".join(manifest)+"\n")
     print("\n".join(manifest))
     print(f"\n{len(made)} Rippen -> {a.out}/  (SVG"+(" + GRBL" if a.gcode else "")+")")
+    if nonlocal_fragile:
+        print(f"⚠ HALS-WARNUNG: {len(nonlocal_fragile)} Teile mit Hals < {a.min_web}mm (Bruch-Gefahr beim Hantieren): {', '.join(nonlocal_fragile)}")
+        print(f"  -> Gegenmittel: höherer --base (Rippen überall höher), gröberes --min-gap, oder diese Teile vorsichtig entgittern/mit Sekundenkleber stabilisieren.")
+    else:
+        print(f"✓ Alle Rippen robust (kein Hals < {a.min_web}mm).")
 
     # --- Vorschau 1: 3D ZUSAMMENGESTECKT (Rippen als echte Platten) ---
     from mpl_toolkits.mplot3d.art3d import Poly3DCollection

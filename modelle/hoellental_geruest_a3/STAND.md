@@ -40,3 +40,30 @@ python3 tools/laser_pack.py modelle/hoellental_geruest_a3 --sheet 410x297 \
 - Zusammenbau-HTML: **🧩 Baustand-Marker** — Teile anklicken = „hab ich" (solide), Rest blass; gespeichert pro Modell (localStorage). Öffnen via `./zusammenbau.sh`.
 - **Naht-Versatz (choose_seams):** Fingerzinken-Nähte benachbarter Rippen strikt **abwechselnd (ABAB)** → **keine durchgehende Sollbruch-Linie** mehr (vorher lagen alle X-Nähte auf einer Linie bei Y8).
 - **TUNNEL-Trasse SKALIERT (wichtig!):** `hoellental_track.npy` ist in VOLL-Modell-mm (bis ~424×250) → fiel beim 50%-Modell (203×133) komplett raus → „Trasse 0 Punkte, kein Tunnel". Fix: **`hoellental_track_50.npy`** (x/y/z ×0,5) — NUR die im Befehl nutzen. Die zuvor geschnittenen Teile hatten KEINEN Tunnel → beim Neuschnitt kommt er mit. (83 Punkte, 68 Tunnel/15 offen, 14 Rippen mit Lichtraum.)
+
+## Kanten-Lineale: OBEN AUFKLEBEN statt Halb-Überblattung (2026-10-25)
+- **Halb-Überblattung (Kerben in Rippen-Oberkanten) VERWORFEN.** Gründe: (1) Kerben konnten
+  Rippen zerteilen (Tunnelnähe → Code behielt still nur das größere Bruchstück, z.B. Y4 −26 Vertices);
+  (2) die Kerben landeten durch einen Bug **nie im SVG/G-Code** (nur im 3D-Tool + Vorschau =
+  Phantom-Kerben) → „Tool zeigt was anderes als geschnitten"; (3) nachkerben = ~10 schon geschnittene
+  Rippen neu schneiden.
+- **Fix in `terrain_eggcrate.py`:** Rippen-Einkerb-Block (edge_notches auf ribdata) entfernt →
+  Rippen behalten saubere Oberkante, **Schnitt == Tool == Vorschau**. K-Teile werden weiter
+  geschnitten und **oben auf die Rippen-Oberkanten geklebt**.
+- **Die bereits geschnittenen Rippen sind korrekt** — nichts neu schneiden. `_zusammenbau.html` +
+  `_cut_layout.png` wurden passend neu erzeugt (nur Tool/Vorschau, keine Schnitt-Datei angefasst).
+
+## Robustheit gegen Bruchstücke (2026-10-25)
+`terrain_eggcrate.py` erzeugt jetzt keine abbrechenden Mini-Teile mehr:
+- **Höhen-bewusste Fingerzinken-Naht:** Nähte nur wo die Rippe ≥ `--seam-min-h` (auto = 2×--finger)
+  hoch ist → solide Zähne, kein Mini-Zahn im flachen Talauslauf.
+- **Interlock-sichere Schlitz-Kappung:** gemeinsame Schlitz-Mittellinie wird so gekappt, dass immer
+  ≥ `--min-web` Steg zur Oberkante bleibt (beide Rippen dieselbe Formel → Verzahnung stimmt).
+- **Auto-Nudge:** Y-Rippe mit echtem Körper-Hals (Schlitz an Gelände-Klippe wie Hirschsprung-Felswand)
+  wird um ±2–6 mm versetzt bis bruchfrei; X-Schlitze folgen automatisch (gleiches xpos).
+- **Validierung am Ende:** meldet jede Rippe mit echtem Körper-Hals < `--min-web` (ignoriert verklebte
+  Zinken-Nähte). Ziel: `✓ Alle Rippen robust`.
+- **⚠ CAVEAT für DIESEN Satz:** Auto-Nudge/Naht-Logik **verschieben Positionen** → mit dem neuen Tool
+  neu erzeugte Teile passen NICHT zu den schon geschnittenen. Der aktuelle Satz bleibt wie geschnitten;
+  die eine Schwachstelle **ribY2** beim Entgittern mit Sekundenkleber stabilisieren. Neue Features
+  greifen automatisch bei KÜNFTIGEN Modellen.
