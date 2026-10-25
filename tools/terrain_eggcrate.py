@@ -112,9 +112,9 @@ def write_assembly_html(fn, named_pieces, engrave_lines=None, relief_mesh=None, 
 <div style="display:flex;gap:8px">
   <button onclick=tTunnel() style="background:#d42;border-color:#a30" title="Tunnel-Lichträume zeigen">🚇 Tunnel</button>
   <button onclick=tFlaechen() style="background:#0047b2;border-color:#0033a0" title="Alle Rippen blau hervorheben">📐 Rippen</button>
-  <button onclick="filterType('spanten')" id=btnSpanten title="Nur Spanten (X/Y Träger-Rippen)" style="background:#4a4">🔲 Spanten</button>
-  <button onclick="filterType('kanten')" id=btnKanten title="Nur Kanten-Lineale (K/D scharfe Grate)" style="background:#f92">🔷 Kanten</button>
-  <button onclick="filterType('')" id=btnAlle title="Alle Rippen + Kanten-Lineale">Alle Typen</button>
+  <button onclick=toggleSpanten() id=btnSpanten title="Spanten (X/Y Träger-Rippen) EIN/AUS" style="background:#4a4">🔲 Spanten</button>
+  <button onclick=toggleKanten() id=btnKanten title="Kanten-Lineale (K/D scharfe Grate) EIN/AUS" style="background:#f92">🔷 Kanten</button>
+  <button onclick=showAllTypes() id=btnAlle title="Spanten + Kanten beide zeigen">Alle Typen</button>
   <button onclick=tNum() title="Teil-Nummern zeigen/verstecken">Nummern</button>
 </div>
 <div class=sep></div>
@@ -191,14 +191,19 @@ window.filterDone=mode=>{   // Baustand-FILTER: 'todo'=nur offene, 'done'=nur fe
   if(el)el.textContent = mode==='todo' ? ('📋 '+(meshes.length-DONE.size)+' offen (noch schneiden)')
                        : mode==='done' ? ('✓ '+DONE.size+' geschnitten') : (prog?('🧩 Baustand AN · '+DONE.size+'/'+meshes.length+' fertig'):'');
 };
-window.filterType=type=>{
-  const isSpante=o=>(o.name||'').match(/^[XY]\d/);
-  const isKante=o=>(o.name||'').match(/^[KD]\d/);
-  if(type==='spanten'){meshes.forEach(o=>o.visible=isSpante(o));flaechen.forEach(o=>o.visible=isKante(o));}
-  else if(type==='kanten'){meshes.forEach(o=>o.visible=isKante(o));flaechen.forEach(o=>o.visible=isKante(o));}
-  else{meshes.forEach(o=>o.visible=true);flaechen.forEach(o=>o.visible=true);}
-  if(edges)edges.visible=type==='kanten';
-};
+let showSpanten=true, showKanten=true;                       // unabhängige Typ-Toggles
+const _isSpante=o=>(o.name||'').match(/^[XY]\d/);
+const _isKante=o=>(o.name||'').match(/^[KD]\d/)||/^KANTE/.test(o.name||'');
+function _applyTypes(){
+  meshes.forEach(o=>{if(_isSpante(o))o.visible=showSpanten;else if(_isKante(o))o.visible=showKanten;});
+  flaechen.forEach(o=>{if(_isKante(o))o.visible=showKanten;});
+  if(edges)edges.visible=showKanten;
+  const bs=document.getElementById('btnSpanten'),bk=document.getElementById('btnKanten');
+  if(bs)bs.style.opacity=showSpanten?1:0.4; if(bk)bk.style.opacity=showKanten?1:0.4;
+}
+window.toggleSpanten=()=>{showSpanten=!showSpanten;_applyTypes();};
+window.toggleKanten=()=>{showKanten=!showKanten;_applyTypes();};
+window.showAllTypes=()=>{showSpanten=showKanten=true;_applyTypes();};
 function saveProg(){try{localStorage.setItem(KEY,JSON.stringify([...DONE]))}catch(e){}}
 function updProgInfo(){const el=document.getElementById('pinfo');if(el)el.textContent=prog?('🧩 Baustand AN · '+DONE.size+'/'+meshes.length+' fertig'):'';}
 window.tProg=()=>{prog=!prog;SEL.length=0;document.getElementById('q').value='';apply('');updProgInfo();};
