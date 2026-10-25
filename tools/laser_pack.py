@@ -90,8 +90,12 @@ def main():
         if excl and any(fnmatch.fnmatch(nm, p) for p in excl): return False
         return True
     pieces = []; skipped = []
-    for fn in sorted(glob.glob(os.path.join(a.dir, "rib*.svg"))):
-        nm = os.path.basename(fn)[3:-4]
+    files = (sorted(glob.glob(os.path.join(a.dir, "rib*.svg")))
+             + sorted(glob.glob(os.path.join(a.dir, "K*.svg")))      # Kanten-Lineale
+             + sorted(glob.glob(os.path.join(a.dir, "D*.svg"))))     # Diagonal-Lineale
+    for fn in files:
+        base = os.path.basename(fn)[:-4]
+        nm = base[3:] if base.startswith("rib") else base            # ribX0a->X0a, K0->K0
         if not _keep(nm): skipped.append(nm); continue
         c, e = parse(fn)
         if not c: continue
