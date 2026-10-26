@@ -74,7 +74,8 @@ Das Volumen fällt aus Daten — die **Oberfläche** (Gras/Schotter/Fels/Feld/St
 AUCH, sonst wird das Anmalen der Flaschenhals und die Demo dauert zu lange.
 - **LGL DOP20** (Orthophoto, 20 cm, BW gratis) = echtes Luftbild, **gleiche UTM-Kachel wie das DGM** → deckungsgleich zum Relief.
 - Krop `[r0:r1,c0:c1]` deckungsgleich holen → auf Modell-mm skalieren → drucken → **über die Gips-Haut legen/mod-podgen.** Sanftes Gelände = perfekt, 0 Pinsel.
-- Nur Steilfels/Klippen (Ortho verzerrt dort) + scharfe Kanten per Wash nachziehen = die 20 % Handarbeit, die bleiben.
+- **Scharfe Kanten/Felsgrate macht das Laser-Gerüst selbst** (Kanten-Lineale = scharfe Geometrie, Gips legt sich dran). Keine Handarbeit dafür.
+- Bleibt NUR: die FARBE auf **near-vertikalen Felswänden**, wo das Senkrecht-Luftbild kaum Pixel hat (ein Kliff ist von oben eine dünne Linie) → ein dünner **Fels-Textur-Streifen** (gedruckt/generiert) über die Wand, kein Pinsel. → auch das aus Daten.
 - Noch schneller: Ortho direkt auf die **Haut-Platten** (`skin_smart_split`) texturieren → Platten kommen vorgefärbt.
 - Ergebnis: Oberfläche in **Stunden statt Tagen**, farblich EXAKT der echte Ort. (Tool: `tools/ortho_drape.py` — DOP holen, auf Krop+Maßstab zuschneiden, Druck-Bogen.)
 
