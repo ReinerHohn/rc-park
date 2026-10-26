@@ -1,163 +1,81 @@
-# Master-Methodik: Maximal schnell geile Modellbau-Landschaften & Städte
-### mit vollem Technik-Einsatz (KI · Lasercut · 3D-Druck · Farbdrucker · weitere Maschinen)
+# Methodik: echte Orte automatisiert zu Steck-/Druck-Modellen
 
-Ziel: von „ich will Ort X" zur **fertigen, bemalten, beleuchteten, befahrbaren** Szene — in
-Tagen statt Monaten. Die Detail-Terrain-Pipeline steht in `METHODE_WUNSCH_ZU_MODELL.md`;
-DIESES Dokument ist die **Allokation + die Low-Hanging-Fruits**: welche Maschine macht was,
-und wo liegen die schnellsten Siege.
+**Das Prinzip (und der einzige Unterschied zu normalem Modellbau):**
+Was aus Daten rechenbar ist, wird **gerechnet — nicht von Hand modelliert.** Du beschreibst
+den Ort (Koordinaten + Ausschnitt + Maßstab), der Rest fällt als fertige Schnitt-/Druck-Dateien
+raus. Geschwindigkeit und Städte-Skalierung kommen DAHER — nicht aus Bastel-Tricks.
 
----
-
-## 0. Das Grundgesetz
-**Jede Maschine macht NUR, was sie am schnellsten/besten kann. Die falsche Maschine = 10–50× langsamer.**
-Der eigentliche Wert (der Moat) ist nicht das Lasern/Drucken (Commodity) — es ist die
-**Software-Pipeline**, die aus echten Daten in Minuten Schnitt-/Druck-Dateien macht.
+Alles unten ist konkret (Mathe, Parameter, echte Fehler aus diesem Projekt). Generisches
+Modellbau-Wissen (Figuren kaufen, Trockenbürsten) gehört bewusst NICHT hierher.
 
 ---
 
-## 1. Daten — das Fundament (fast am wichtigsten)
-**Garbage in = Garbage out.** Die beste Pipeline rettet keine falschen Daten — die teuersten
-Fehler saßen ALLE in den Daten (falsche LiDAR-Kachel → monatelang „alles flach"; Trasse falsch
-geflaggt → Tunnel im Gleisbett). Datenarbeit = **holen + generieren + prüfen**.
+## 1. Die Daten-Engine (das Herz — fast am wichtigsten)
 
-### 1a. Holen (echte Welt → Zahlen)
-| Datum | Quelle | Weg |
+**Gelände — LGL `dgm025` (0,25 m, ganz BW gratis):**
+- Datei `dgm025_full.npy` = 4000×4000 float32 = eine 1-km-Kachel.
+- Georef aus der `.tfw`: Pixel 0,25 m, Ursprung E=426000.125 / N=5309999.875.
+  - Pixel→UTM: `E = 426000.125 + col·0.25`, `N = 5309999.875 − row·0.25`.
+  - Genau diese Mathe hat Portal 2 (UTM 426870/5309869) auf Modell x132/y90 verifiziert.
+- Ausschnitt `[r0:r1, c0:c1]` → nodata (<−1000) füllen → Zeilen flippen `[::-1]` (+y = Nord).
+- Modell: `cell_mm = 0,25 m × nscale`, `Höhe = Relief_m × nscale × vscale + base`.
+  nscale **6,25** = true-N, **3,125** = 50 %, **1,5625** = 25 %. Alles skaliert damit automatisch.
+
+**Features — OSM Overpass:**
+- `way["railway"](around:600,LAT,LON); way["tunnel"]...` — GET `?data=` + User-Agent; pyproj 4326→25832 → Modell-mm.
+- Tunnel-Flags NUR wo real Fels drüber liegt (sonst offenes Gleisbett). Portal-Koords aus OSM gegen das DGM gegenrechnen.
+
+**Gebäude — LOD2 (BW gratis):** Grundriss + echte Höhe → Box-Generator (noch zu bauen, §4).
+
+---
+
+## 2. Die Generatoren (was automatisch rausfällt)
+
+`tools/terrain_eggcrate.py` — DEM + OSM → komplettes Steck-Gerüst in Minuten:
+- **Adaptive Rippen** (dicht an scharfen Kanten, weit im Flachen, `--min-gap 7`) + **Kanten-Lineale** auf Felsgraten/Bruchkanten (Ridge-Filter, `--edge-min-len 18` = keine Fuzzel-Mini-Teile).
+- **Tunnel/Trasse:** Lichtraum = echte Röhre in Metern × nscale (`--tunnel-w-m 4 --tunnel-h-m 5.5`), **Dach-Garantie** (`--roof-min`), tiefe OSM-Schiene, offene Strecke = Einschnitt.
+- **Auto-robust:** `--min-web 3` kappt Steck-Schlitze (Gegenschlitz wird tiefer, Verzahnung bleibt) → nirgends dünner als 3 mm; **Auto-Nudge** versetzt Rippen mit Körper-Hals; Fingerzinken nur wo die Rippe nicht aufs Bett passt.
+- Output: pro Rippe SVG + G-Code (Nummer + X/Y graviert), 3D-Zusammenbau-Tool (Kreuzungs-Finder, Baustand-Filter), Bauplan.
+
+`modelle/<x>/generate.sh` = generieren + packen in einem Rutsch.
+`tools/laser_pack.py` → A3-Bretter. ⚠️ **G-Code-Bereich IMMER gegen 410×400 prüfen** (Pack-Report lügt: meldete 403, war 442 → Kopf fährt sonst über den Rand).
+
+---
+
+## 3. Die Fallen-Datenbank (die echten, teuren Fehler — NICHT wiederholen)
+
+| Fehler | Symptom | Fix |
 |---|---|---|
-| Gelände (Boden) | LGL **DGM1** (1 m) / **DGM025** (0,25 m), BW gratis | opengeodata.lgl-bw.de · außerhalb BW: Copernicus 30 m (AWS) · GEBCO (Meer) |
-| Oberfläche m. Mauern/Bäumen | LGL **DOM1** (GeoTIFF) | enge Täler/Burgen |
-| Gebäude-Höhen/Formen | **LOD2** (BW gratis) | echte Höhen → Box+Fassade |
-| Bahn/Straße/Tunnel/Brücke/Fluss/Gebäude-Umriss | **OSM Overpass** | GET/POST + User-Agent, pyproj 4326→25832 |
-| Fassaden | Google Street View / eigene Fotos | perspektiv-entzerren → drucken |
-| Texturen (Boden/Wasser/Feld) | Fotos / Bild-KI | kacheln → drucken |
-| Georeferenz der Kachel | `.tfw` (Pixelgröße + Ursprung-UTM) | Pixel→UTM→Modell-mm |
-
-### 1b. Generieren (wo echte Daten fehlen oder stumpf sind — DER KI-Teil)
-Hier entscheidet sich die Qualität; das ist der eigentliche Hebel:
-- **Prozedural aus Daten ableiten:** Egg-Crate-Gerüst, Trasse, Tunnel, Lichtraum, Kanten-Lineale — alles aus DEM+OSM **gerechnet**, nicht modelliert.
-- **Schärfen, was das DEM verschluckt:** DGM rundet Senkrechtfels/Überhänge → scharfe Kanten per Ridge-Filter zurückholen (snap-edges, Kanten-Lineale: Felsgrat, Bruchkante, Portal-Stirn).
-- **Fehlende Features synthetisieren:** Portal/Steinschlaggalerie ohne Scan → prozedural/Hand; Schiene aus Gelände ableiten wenn OSM-z stumpf; nodata füllen.
-- **Texturen/Fassaden mit Bild-KI** erzeugen/vervollständigen (Dach, Putz, Wasser), wo kein Foto taugt.
-- **Maßstab rechnen:** nscale/vscale, Lichtraum **maßstäblich** skalieren (echte Röhre × nscale).
-
-### 1c. Prüfen (VOR dem Bauen — hier sitzen die teuren Lehren)
-- **Lokalisieren + Google-Maps-Gegencheck** — enthält die Kachel den Ort WIRKLICH? (falsche Kachel 2 km daneben = alles „flach/Schrott").
-- **Georeferenz verifizieren** — echtes Feature (Portal, Denkmal) muss im Modell an der richtigen Stelle landen (TFW-Mapping nachrechnen: row→N, col→E).
-- **Feature-Flags echt** — Tunnel nur wo wirklich Fels drüber (sonst offenes Gleisbett); „Trasse N Punkte > 0" checken (sonst fällt der Tunnel still weg).
-- **Geometrie-Checks** — watertight/euler (Tunnel = 1 Röhre), Teil-Maße vs. Bett, Mindest-Wand, Tunnel-Dach.
-
-→ **Merksatz: erst Daten festnageln, DANN bauen.** Jede Stunde Datenprüfung spart Tage Nachschnitt.
+| Falsche LiDAR-Kachel | monatelang „alles flach/Schrott" | **lokalisieren + Google-Maps-Gegencheck VOR allem** |
+| Trasse ×0,5 skaliert, Krop anders referenziert | Tunnel am falschen Ort / fällt still weg | Georef pro Krop neu, **„Trasse N>0" checken** |
+| Lichtraum 30×36 mm absolut bei halb-N | = 9,6×13,5 m real → Tunnel bricht durchs Dach | **maßstäblich** (× nscale) |
+| Tunnel-Flags: Gleisbett als Tunnel markiert | „im Gleisbett statt Tunnel" | Flags aus echten OSM-Portalen |
+| „Schiene aus Gelände" auf Portal-Niveau | Tunnel verliert Dach, Trasse zu hoch | Tunnel = tiefe OSM-Schiene, nur Gleisbett-Oberfläche flach |
+| Steck-Schlitz neben Steilkante | 1,8-mm-Wand bricht beim Entgittern | `--min-web`-Kappung (Fenster = Schlitz + Wand) |
+| S9-Pack-Report falsch | 442 mm statt 410 → Kopf übers Bett | echten G-Code-X/Y-Bereich prüfen |
+| Serieller Abriss bei langem Schnitt | Job stirbt bei ~10 % | USB **direkt** an Laptop, Port während Job **nicht anfassen** |
 
 ---
 
-## 2. Tech-Allokations-Matrix (die ganze Methode auf einen Blick)
+## 4. Stadt-Automatisierung (der Teil, der „Städte schnell" erst möglich macht)
 
-| Element der Szene | Beste Maschine | Warum = Low-Hanging-Fruit |
-|---|---|---|
-| **Gelände-Volumen** (Berge, Täler, Steilwände) | **Laser** Egg-Crate + Gips/Fliesenkleber | dm³ in Stunden, 3 mm Pappel billig. 3D-Druck wäre 50× langsamer. |
-| **Gelände-Oberfläche Natur** (Wiese, Fels, Wald) | **Gips/Fliesenkleber** + Streu + Trockenbürsten | Textur kommt vom Material, nicht aus der Maschine. |
-| **Wasser** (Fluss, See, Wasserfall) | **Farbdrucker** (Foto-Textur) + Klarlack/Resin/Laminierfolie | Gedruckte Fläche + Glanz = sofort überzeugend. |
-| **Straßen, Plätze, Felder, Gleisbett** (flach) | **Farbdrucker** (Textur-Decals aufkleben) | Aufkleben statt bemalen = Minuten, fotorealistisch. |
-| **Masse-Gebäude** (eine ganze Stadt) | **Laser/Druck Box** + **Farbdruck-Fassade** | Simple Box + aufgeklebte Fassade = Haus in Minuten (s. §5). |
-| **Wahrzeichen/Detail-Gebäude** (Münster) | **3D-Druck** (Skelett + Maßwerk) | Feine Geometrie, hinterleuchtbar. Das EINE Hero-Piece. |
-| **Beleuchtete Fenster/Maßwerk** | **Farbdrucker auf Folie** + LED dahinter | Transparent gedruckt → Nacht-Effekt fast gratis. |
-| **Schilder, Reklame, Plakate, Nummern** | **Farbdrucker** | Winzig, scharf, farbig — unschlagbar. |
-| **Technik** (Tunnelportal, Brücke, Galerie, Stützmauer) | **3D-Druck** als separates Teil | Präzise, scharf. |
-| **Figuren, Autos, Bäume, Gleise, Loks, Laternen** | **KAUFEN** (N/H0-Massenware) | 0 Produktionszeit = sofort Leben. NIE selbst machen. |
-| **Hintergrund/Tiefe** | **Farbdrucker** (Panorama-Kulisse) | Foto hinter die Szene = Tiefe ohne Modellbau. |
-| **Lokalisieren · Daten · Cut/Print-Files · QC** | **KI** | Koordinaten, OSM, DEM, Scripts, Fehler VORHER finden. |
+**Noch NICHT gebaut — das ist der nächste Automatisierungs-Schritt, und der eigentliche Hebel für Städte:**
+- LOD2-Grundrisse + echte Höhen → **Box-Generator** (Laser-Spanten oder Druck-Box) **im Batch**, nicht Haus-für-Haus.
+- Luftbild/Street-View → **auto-entzerrte Fassaden-Textur** → Farbdruck-Bogen → aufkleben.
+- Ein Durchlauf = ein ganzer Straßenzug. Das ist die Skalierung; einzeln modellieren skaliert nie.
+
+→ Genau dieselbe Logik wie beim Gelände: **aus Daten rechnen, nicht modellieren.** Wenn du willst, bauen wir diesen Generator als Nächstes.
 
 ---
 
-## 3. Die Maschinen — jede ihr Job
+## 5. Der Loop (warum es schnell ist)
 
-**KI = das Gehirn.** Ort lokalisieren (Koords + Google-Maps-Gegencheck), echte Daten holen
-(LGL-DGM1/025, OSM-Overpass, LOD2), Schnitt-/Druck-Dateien generieren (`terrain_eggcrate.py`
-& Co.), die **Allokation entscheiden** (was Laser/Druck/Farbe/kaufen), Fehler VORHER finden
-(Teil-Maße vs. Bett, Passung, Tunnel-Dach, dünne Wände). Zusätzlich: Fassaden-/Boden-Texturen
-erzeugen/entzerren (Bild-KI), Beschriftung/Reklame texten.
-
-**Lasercut (Sculpfun S9, ~410×400 mm).** Volumen + flache Teile **schnell**: Gelände-Gerüst
-(Egg-Crate), Kanten-Lineale (scharfe Grate), Gebäude-Spanten, flache Dekor-/Masken-Teile.
-3 mm Pappelsperr, 2× @100 %. ⚠️ **Jedes Teil ≤ Bett** — vor dem Schnitt den echten G-Code-X/Y-
-Bereich prüfen (nicht dem Pack-Report trauen: schon mal 442 mm statt 410 gemeldet).
-
-**3D-Druck (Prusa MK4S / Bambu P1S).** Oberfläche/Technik/Detail: Gelände-Haut (watertight,
-hohl), Monumente, Portale, Brücken, alles Präzise. **Langsam → nur wo nötig.** 0,8-Düse fürs
-Grobe (bemalt eh), 0,4 fürs Detail.
-
-**Farbdrucker = der unterschätzte Realismus-Turbo.** 2D-Detail in Masse, billigst, in Minuten:
-Fassaden (echte Fotos entzerrt), Boden-/Wasser-/Feld-Texturen, Schilder/Reklame, **beleuchtbare
-Fenster auf Transparentfolie**. Der größte Hebel für „sieht echt aus" pro Euro/Stunde.
-
-**Weitere Maschinen (wenn vorhanden):**
-- **Schneidplotter/Vinyl** — exakte Masken, Schablonen, Straßenmarkierungen, Folien-Fenster, Gebäude-Umrisse präzise ausschneiden.
-- **Heißdraht/Styroporschneider** — Grob-Volumen aus Styrodur für SEHR große flache Landschaft noch schneller als Laser (dann Gips/Farbe drüber).
-- **Airbrush** — Washes/Verläufe (Himmel am Kulisse, Fels-Schatten) in Sekunden statt Pinsel.
-- **Laminiergerät** — gedruckte Texturen schützen + Glanz geben (= Wasser/nasse Straße).
+```
+Ort (Koords+Ausschnitt) → generate.sh → Bretter gegen Bett prüfen → schneiden/drucken
+→ stecken → Gips (Natur) / Fassade aufkleben (Stadt) → Kaufteile (Figuren/Autos/Gleis)
+```
+Ein **neuer Ort = nur Schritt 1 neu.** Alles dahinter ist Maschine. Das ist der ganze Trick —
+nicht die Bastelei, sondern dass die Bastelei aus Daten abfällt.
 
 ---
-
-## 4. LOW-HANGING-FRUITS (schnellste Siege, nach Wirkung/Aufwand)
-
-1. **Echtes Gelände an einem Abend** — DEM → `terrain_eggcrate.py` → stecken → Fliesenkleber drüber → Trockenbürsten. Ganze Talflanke in Stunden.
-2. **Kaufen statt bauen** — Figuren/Autos/Bäume/Gleise/Loks = sofort Leben, 0 Produktionszeit. (Gebraucht-Sweet-Spots: fertige Anlagen zersägen = Teilespender.)
-3. **Gedruckte Fassaden auf simple Boxen** — Stadt = viele Quader + aufgeklebte Farbdruck-Fassaden (Street-View-Foto entzerren). 20 Häuser an einem Nachmittag.
-4. **Gedruckte Boden-Texturen als Decals** — Straßen/Plätze/Felder/Wasser aufkleben statt bemalen.
-5. **Beleuchtete Fenster für ~nichts** — Fassade mit Fenstern auf Transparentfolie drucken, LED-Streifen dahinter.
-6. **Fels-Magie** — dunkel in die Spalten, hell auf die Kanten (Trockenbürsten): grauer Gips → Fels in Minuten.
-7. **Nummerierte Steck-Teile** (Laser graviert X/Y) + 3D-Zusammenbau-Tool (Kreuzungen grün) → kein Rätselraten.
-8. **Panorama-Kulisse** — Hintergrundfoto gedruckt = Tiefe ohne ein einziges Modellteil.
-
----
-
-## 5. Der schnellste Komplett-Durchlauf (Quick-Start, eine Killer-Szene)
-
-| # | Schritt | Maschine | läuft parallel zu |
-|---|---|---|---|
-| 1 | Ort lokalisieren + DEM/OSM holen | KI | — |
-| 2 | Gerüst + Kanten-Lineale + Tunnel generieren | KI (`terrain_eggcrate.py`) | — |
-| 3 | Gerüst + Lineale schneiden | Laser | Schritt 4 |
-| 4 | Portale/Wahrzeichen drucken | 3D-Druck | Schritt 3 |
-| 5 | Boden-/Wasser-/Fassaden-Texturen vorbereiten | KI + Farbdrucker | Schritt 3/4 |
-| 6 | Stecken → Gips/Fliesenkleber → Lineale aufkleben | Hand | — |
-| 7 | Trockenbürsten + Texturen aufkleben + Streu | Hand | — |
-| 8 | Figuren/Autos/Bäume setzen + LEDs rein | Hand (Kaufteile) | — |
-
-→ **Killer-Szene in ~1 Wochenende**, weil 3/4/5 parallel laufen.
-
----
-
-## 6. Städte speziell (der Stadt-Teil)
-
-- **Masse-Häuser = Box + Fassade.** Einfacher parametrischer Körper (Laser-Spanten oder
-  Druck-Box) + **Fassade aus Farbdruck** (Google-Street-View-Foto perspektiv-entzerren →
-  drucken → aufkleben). Das ist der Städte-Gamechanger: hunderte Häuser, ohne jedes einzeln
-  zu modellieren.
-- **Echte Höhen/Proportionen aus LOD2** (BW gratis) — Gebäudehöhen stimmen, dann Fassade drauf.
-- **Wahrzeichen = das EINE 3D-Druck-Hero-Piece** mit beleuchtetem Maßwerk (Skelett + flach
-  gedruckte, einsteckbare, hinterleuchtbare Maßwerk-Platten). Der Rest drumherum Box+Fassade.
-- **Zwei Beleuchtungs-Regime, nie mischen:** (Hoch)häuser von INNEN (transluzent/Fenster +
-  LED-Strip), Monumente von AUSSEN anstrahlen (opak + Flutlicht). Warm/kühl per LED, Stromschiene
-  + Controller als Skalierungs-Hebel.
-
----
-
-## 7. Prinzipien & teure Lehren (nicht wiederholen)
-- **Echte Daten statt raten** — Gelände aus LiDAR, Features aus OSM; IMMER Google-Maps-gegencheck.
-- **Qualität vor Material an der Oberfläche** — sparen nur unsichtbar (hohl, Nesting, Band-Rippen); nie glätten.
-- **Maschinen-Grenzen VORHER prüfen** — S9 410×400; echten G-Code-Bereich gegen Bett checken (442er-Lektion).
-- **Mindest-Wandstärke** (hier 3 mm) — keine dünnen/Fuzzel-Teile; Steck-Schlitze kappen (Gegenschlitz tiefer) statt Rippe zerbrechen lassen.
-- **Tunnel/Trasse** — Lichtraum maßstäblich (echte Röhre × nscale, NICHT absolut), Dach garantieren, Trassen-Flags echt (Tunnel nur wo wirklich Fels, sonst offenes Gleisbett), Trasse läuft tief im Einschnitt.
-- **Hybrid-Maßstab** — große Landschaft N, Detail/Technik H0; nie in einer Ansicht mischen.
-- **Überhöhung** 1,5–2× Sweet-Spot (0,85–1,0 für true-Proportion), alle Kacheln GLEICH.
-- **Nummerieren + 3D-Zusammenbau-Tool** — jedes Teil graviert, Baustand-Filter im Viewer.
-
----
-
-## 8. Werkzeug-Index (Repo)
-- Gelände-Gerüst: `tools/terrain_eggcrate.py` (+ `eggcrate_sim.py` = Genauigkeits-/Schnitt-Studie)
-- Deckplatten/Haut: `tools/eggcrate_deck.py`, `skin_smart_split.py`, `pack_beds.py`
-- Nesten/Schneiden: `tools/laser_pack.py`, `laser_nest.py`, `grbl_send.py` (S9)
-- Gebäude/Monument: `tools/mesh_former_kit.py`, Skelett+Maßwerk (`gothic_demo.py`), `flatpack_haus.py`
-- Wirtschaftlichkeit (Flächen-Filter): `tools/miniland_kalk.py` (Break-even nach Besucher/Miete)
-- Generieren+Packen in einem Rutsch: `modelle/<modell>/generate.sh`
+Detail-Terrain-Pipeline (12 Schritte, lang): `METHODE_WUNSCH_ZU_MODELL.md`.
