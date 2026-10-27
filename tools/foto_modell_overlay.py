@@ -85,6 +85,7 @@ def refine_edges(gray, rv, tv, K, iters=4, win=7):
 
 def render(cfg_path, out, alpha=0.5, work_w=1400, do_refine=True):
     cfg = json.load(open(cfg_path))
+    work_w = int(cfg.get("emb_w", work_w))          # Picker liefert Klick-Raum-Breite
     img0 = cv2.imread(cfg["foto"]); Hf, Wf = img0.shape[:2]
     img = cv2.resize(img0, (work_w, int(Hf*work_w/Wf))); h = img.shape[0]
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
