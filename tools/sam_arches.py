@@ -58,6 +58,7 @@ def main():
         # Öffnung ist dunkel (Durchsicht) — nicht ein heller Steinblock
         if rgb[seg > 0].mean() > 150:
             continue
+        mm["segmentation"] = seg.astype(bool)
         arches.append(mm)
     # Dedupe (überlappende cx)
     arches.sort(key=lambda d: d["cx"]); dedup = []
@@ -68,11 +69,19 @@ def main():
     print(f"Bögen (SAM + measure_arch): {len(arches)}")
 
     vis = img.copy()
+    overlay = img.copy()
     for d in arches:
-        cv2.ellipse(vis, (int(d["cx"]), int(d["cy"])), (int(d["R"]), int(d["R"])),
-                    0, 180, 360, (0, 230, 0), 3)
-        cv2.line(vis, (int(d["cx"]-d["span"]/2), int(d["cy"])),
-                 (int(d["cx"]+d["span"]/2), int(d["cy"])), (255, 0, 0), 2)
+        if "segmentation" in d:
+            overlay[d["segmentation"]] = (0, 180, 0)
+    vis = cv2.addWeighted(overlay, 0.28, vis, 0.72, 0)   # SAM-Masken translucent grün
+    for i, d in enumerate(arches):
+        cx, cy, R, span = int(d["cx"]), int(d["cy"]), int(d["R"]), d["span"]
+        cv2.ellipse(vis, (cx, cy), (R, R), 0, 180, 360, (255, 255, 0), 3)      # Bogen cyan/gelb
+        cv2.line(vis, (int(cx-span/2), cy), (int(cx+span/2), cy), (0, 0, 255), 3)  # Spann rot
+        cv2.putText(vis, f"R{R} S:S{R/span:.2f}", (cx-70, cy-R-8),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
+    cv2.putText(vis, f"{len(arches)} Boegen erkannt (SAM-Maske gruen, Rundbogen-Fit gelb, Spann rot)",
+                (10, vis.shape[0]-15), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
     cv2.imwrite(a.out, vis)
 
     if len(arches) < 2:
