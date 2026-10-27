@@ -76,6 +76,31 @@ def dam_fit(target_crown_rel, target_base_rel, H=63.5, **kw):
                params, controls, **kw)
 
 
+# ======================= ARCHETYP: Turm (Radius über Höhe) =======================
+# Verjüngter Turm: Radius r_base am Fuß → r_top an der Spitze. Mess-Signatur: Radius über Höhe.
+
+def tower_measure(params, pxm=6.0):
+    """Turm-Silhouette rastern und Radius (halbe Breite) oben/unten MESSEN."""
+    import cv2
+    rb, rt, H = params["r_base"], params["r_top"], params["H"]
+    W = int(2*rb*pxm)+20; Hp = int(H*pxm)+20; cx = W/2
+    img = np.zeros((Hp, W), np.uint8)
+    poly = np.array([[cx-rb*pxm, Hp-10], [cx+rb*pxm, Hp-10],
+                     [cx+rt*pxm, 10], [cx-rt*pxm, 10]], np.int32)
+    cv2.fillPoly(img, [poly], 255)
+    rows = np.where(img.any(1))[0]
+    def rad(frac):
+        y = int(rows.min()+frac*(rows.max()-rows.min()))
+        xs = np.where(img[y] > 0)[0]; return (xs.max()-xs.min())/2/pxm if len(xs) else 0.0
+    return {"rbase_rel": rad(0.97)/H, "rtop_rel": rad(0.03)/H}
+
+
+def tower_fit(target_rbase_rel, target_rtop_rel, H=42.0, **kw):
+    controls = [("rbase_rel", "r_base", H), ("rtop_rel", "r_top", H)]
+    return fit(lambda p: p, tower_measure, {"rbase_rel": target_rbase_rel, "rtop_rel": target_rtop_rel},
+               {"r_base": target_rbase_rel*H, "r_top": target_rtop_rel*H, "H": H}, controls, **kw)
+
+
 # ======================= ARCHETYP: Viadukt (nutzt denselben Kern) =======================
 def viaduct_fit(target_pier_span, target_pier_frac, span=20.0, **kw):
     import sys, os
@@ -110,3 +135,14 @@ if __name__ == "__main__":
         print(f"{cr:12.3f} {m['crown_rel']:9.3f} {d1:+7.3f}   {br:11.3f} {m['base_rel']:9.3f} {d2:+7.3f}")
     print("\n" + ("✅ Staumauer: alle Vorgaben exakt getroffen — derselbe Kern wie Viadukt"
                   if ok else "⚠ nicht exakt"))
+
+    print("\n=== ROUND-TRIP-BEWEIS Turm (3. Archetyp, gleicher Kern) ===\n")
+    print(f"{'Ziel rbase:H':>12} {'→gemess':>9} {'Δ':>7}   {'Ziel rtop:H':>11} {'→gemess':>9} {'Δ':>7}")
+    ok2 = True
+    for rb, rt in [(0.12, 0.08), (0.20, 0.05), (0.15, 0.15), (0.10, 0.03)]:
+        p, m, _ = tower_fit(rb, rt, tol=0.003, log=False)
+        d1, d2 = m["rbase_rel"]-rb, m["rtop_rel"]-rt
+        ok2 &= abs(d1) < 0.01 and abs(d2) < 0.01
+        print(f"{rb:12.3f} {m['rbase_rel']:9.3f} {d1:+7.3f}   {rt:11.3f} {m['rtop_rel']:9.3f} {d2:+7.3f}")
+    print("\n" + ("✅ Turm: alle Vorgaben exakt getroffen — 3 Archetypen, EIN Kern (fit)"
+                  if ok2 else "⚠ Turm nicht exakt"))

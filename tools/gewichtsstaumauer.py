@@ -68,8 +68,9 @@ def centerline(pts, nbins=60):
     return line
 
 
-def build(center, H, crown, base, nscale):
-    """Loft Trapez-Querschnitt entlang Mittellinie. Gibt (verts, faces) in Modell-mm."""
+def build(center, H, crown, base, nscale, face_prof=None):
+    """Loft Querschnitt entlang Mittellinie. face_prof=(z_rel, dev_rel) → echte Luftseiten-KURVE
+    (Dicke-Abweichung über Höhe) statt gerader Böschung. Gibt (verts, faces) in Modell-mm."""
     c0 = center.mean(0)
     cen = (center - c0) * nscale          # Meter→mm, zentriert
     H *= nscale; crown *= nscale; base *= nscale
@@ -78,8 +79,16 @@ def build(center, H, crown, base, nscale):
     nrm = np.c_[-tang[:, 1], tang[:, 0]]  # 90°
     # Querschnitt (u über Mauerdicke, z vertikal) — ECHTE Gewichtsmauer: Wasserseite SENKRECHT
     # (u=0 von Fuß bis Krone), Luftseite GEBÖSCHT (base am Fuß → crown an der Krone).
-    # 4 Konturpunkte (u,z): Wasser-Fuß, Luft-Fuß, Luft-Krone, Wasser-Krone
-    sec = [(0.0, 0), (base, 0), (crown, H), (0.0, H)]
+    if face_prof is None:
+        sec = [(0.0, 0), (base, 0), (crown, H), (0.0, H)]
+    else:
+        zr, dr = face_prof
+        sec = [(0.0, 0)]
+        for t in np.linspace(0, 1, 40):          # Luftseite als gemessene Kurve
+            z = t * H
+            u = base + (crown - base) * t + np.interp(t, zr, dr) * H  # +dev (Meter→mm via H-skaliert)
+            sec.append((u, z))
+        sec.append((0.0, H))
     N = len(cen); V = []
     for i in range(N):
         P = cen[i]; nx, ny = nrm[i]
@@ -110,8 +119,14 @@ def main():
     ap.add_argument("--lat", type=float, default=47.80064)
     ap.add_argument("--lon", type=float, default=8.18361)
     ap.add_argument("--out", default="/tmp/schluchsee/staumauer.stl")
+    ap.add_argument("--face-profile", default="", help="gemessenes Luftseiten-Profil (JSON) statt gerader Böschung")
     a = ap.parse_args()
-    import trimesh
+    import trimesh, json
+    fprof = None
+    if a.face_profile:
+        d = json.load(open(a.face_profile))
+        fprof = (np.array(d["z_rel"]), np.array(d["dev_rel"]))
+        print(f"Luftseite: gemessenes Profil {a.face_profile} (echte Kurve, keine Gerade)")
 
     pts, name = osm_axis(a.lat, a.lon)
     if pts is None:
@@ -119,7 +134,7 @@ def main():
     cen = centerline(pts)
     length_m = np.linalg.norm(np.diff(cen, axis=0), axis=1).sum()
     print(f"OSM '{name}': Kronenachse {len(cen)} Pkt, Länge {length_m:.0f} m")
-    V, F = build(cen, a.H, a.crown, a.base, a.nscale)
+    V, F = build(cen, a.H, a.crown, a.base, a.nscale, face_prof=fprof)
     m = trimesh.Trimesh(vertices=V, faces=F, process=True)
     m.fix_normals()
     import os; os.makedirs(os.path.dirname(a.out), exist_ok=True)
