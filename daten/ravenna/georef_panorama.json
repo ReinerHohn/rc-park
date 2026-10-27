@@ -1,0 +1,6 @@
+{
+ "foto":"daten/ravenna/fotos/rv_panorama.jpg",
+ "f_mm":21.0, "sensor_mm":23.6, "proj":"cylindrical", "frame_px":4928,
+ "cam":{"E":430837,"N":5307463,"alt":726.0,"yaw":356.8,"pitch":0,"roll":0},
+ "model":{"stl":"modelle/ravenna/ravenna_viadukt_echt.stl","E":430860,"N":5307525,"base_alt":690.0,"azimuth":107.0}
+}
