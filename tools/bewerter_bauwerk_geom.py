@@ -59,6 +59,30 @@ def probe(stl, res=0.5, n_sample=500000):
     n_through = len(cxs)
     openness_through = harea / tot
 
+    # --- cols: SPALTEN-basierte Bogenzahl (robust gegen Himmel-Leck am Silhouetten-Rand).
+    # Im Band klar UNTER dem Scheitel sind Pfeiler voll belegt, Bögen offen — reine
+    # Spaltenstatistik, unabhängig von Loch-Topologie/Rand-Verschmelzung (behebt die
+    # Falsch-Negativen bei dünnem Spandrill: 0 Durchsichten trotz 70 % offen).
+    zc0, zc1 = int(0.15 * nz), int(0.55 * nz)
+    colfill = occ[:, zc0:zc1].mean(axis=1) if zc1 > zc0 else np.ones(nx)
+    open_col = colfill < 0.5
+    runs = []                                      # Breiten der offenen Spalten-Läufe
+    i = 0
+    while i < len(open_col):
+        if open_col[i]:
+            j = i
+            while j < len(open_col) and open_col[j]:
+                j += 1
+            runs.append(j - i); i = j
+        else:
+            i += 1
+    # echte Bögen = breite Läufe; schmale Rand-Schlitze (Widerlager) rausfiltern (< 0.4·Median)
+    if runs:
+        thr = max(3.0, 0.4 * float(np.median(runs)))
+        n_cols = int(sum(1 for w in runs if w >= thr))
+    else:
+        n_cols = 0
+
     # --- relief: pfeiler-relative Fronttiefe (Nischen auf massiver Wand)
     pad = 0.06 * L
     xb = np.arange(x0 + pad, x1 - pad, res)
@@ -82,6 +106,7 @@ def probe(stl, res=0.5, n_sample=500000):
     return dict(
         L=round(L), H=round(Hh), LH=round(L / Hh, 2),
         n_through=n_through, openness_through=round(openness_through, 3),
+        n_cols=n_cols,
         n_relief=n_relief, openness_relief=round(openness_relief, 3),
         fill=round(fill, 3),
         width_cv=round(float(np.std(widths) / (np.mean(widths) + 1e-9)), 3) if len(widths) else 0.0,
@@ -110,8 +135,11 @@ def judge(stl, spec):
         score -= 25; reasons.append(f"❌ Proportion L:H weicht {lh_err*100:.0f} % ab")
 
     if arch in ("viadukt", "bruecke"):
-        n_meas = p["n_through"]
-        reasons.append(f"Durchsichten (Tageslicht): {n_meas}  (Soll {N})  · Öffnungsgrad {p['openness_through']}")
+        # robuste Bogenzahl: Spaltenzähler ist rand-/topologie-fest; Durchsicht-Zähler als
+        # Kreuz-Check. Wenn Durchsicht am dünnen Spandrill versagt (0), trägt der Spaltenzähler.
+        n_meas = p["n_cols"] if p["n_cols"] else p["n_through"]
+        reasons.append(f"Bögen: Spalten-Zähler {p['n_cols']}, Durchsicht-Zähler {p['n_through']} "
+                       f"→ gewertet {n_meas}  (Soll {N})  · Öffnungsgrad {p['openness_through']}")
         # harte Tests
         if p["fill"] > 0.72:
             score -= 45; reasons.append("❌ Füllgrad zu hoch → WAND MIT NISCHEN statt echtem Viadukt (nicht durchsichtig)")

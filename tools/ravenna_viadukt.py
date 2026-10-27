@@ -63,29 +63,35 @@ def round_arch(xc, half_w, z_lo, z_spring):
     return Polygon(pts)
 
 
-# ---- Ansicht (x,z) mit 9 Bogen-Löchern, dann zu 3D extrudieren -------------
-crown = Z_SPRING + R                                # 32 m
-body_top = crown + 1.0                              # Spandrill bis knapp unters Deck
-outer = Polygon([(-L/2, 0), (L/2, 0), (L/2, body_top), (-L/2, body_top)])
+# ---- Fassade MIT Deck als EIN extrudiertes Solid → watertight per Konstruktion
+# (früher: viele überlappende Boxen konkateniert → 10–14 Körper, NICHT watertight;
+#  bewiesen in 2 Runden, dass das Ein-Solid garantiert watertight + saubere Bögen liefert.)
+crown = Z_SPRING + R
+body_top = crown + 1.0                              # Spandrill-Oberkante
+deck_top = body_top + DECK_T                        # Deck-Oberkante (im Solid enthalten)
+outer = Polygon([(-L/2, 0), (L/2, 0), (L/2, deck_top), (-L/2, deck_top)])
 holes = [round_arch(-L/2 + (k+0.5)*P, R, 0.0, Z_SPRING) for k in range(N)]
 panel2d = outer.difference(unary_union(holes))
 body = extrude_polygon(panel2d, DEPTH)
 body.vertices = body.vertices[:, [0, 2, 1]]         # (x,z,dicke) -> (x, y=dicke, z)
-
-parts = [body]
+body.merge_vertices(); body.fix_normals()
 
 def box(x0, x1, y0, y1, z0, z1):
     return trimesh.creation.box(bounds=[[x0, y0, z0], [x1, y1, z1]])
 
-# ---- Deck (Fahrbahn) + Brüstung + leichte Kragplatte -----------------------
-parts.append(box(-L/2, L/2, -0.6, DEPTH+0.6, body_top, body_top+DECK_T))       # Deck + Kragplatte
-parts.append(box(-L/2, L/2, -0.6, -0.3, body_top+DECK_T, body_top+DECK_T+1.3)) # Brüstung A
-parts.append(box(-L/2, L/2, DEPTH+0.3, DEPTH+0.6, body_top+DECK_T, body_top+DECK_T+1.3))  # Brüstung B
-
-# ---- Gesims-Band auf Kämpferhöhe (typisch Steinviadukt) --------------------
-parts.append(box(-L/2, L/2, -0.4, DEPTH+0.4, Z_SPRING-0.4, Z_SPRING+0.1))
-
-dam = trimesh.util.concatenate(parts)
+# ---- Deko (Brüstung + Pfeiler-Gesims) per boolescher UNION; überlappend, damit es
+#      verschmilzt. Bleibt die Union nicht watertight → Fallback aufs reine Solid.
+extras = [box(-L/2, L/2, -0.3, 0.4, deck_top-0.2, deck_top+1.3),          # Brüstung A (über Deckkante)
+          box(-L/2, L/2, DEPTH-0.4, DEPTH+0.3, deck_top-0.2, deck_top+1.3)]  # Brüstung B
+for k in range(N + 1):
+    xc = -L/2 + k * P                                # Kämpfergesims NUR auf Pfeilern
+    extras.append(box(xc - PIER/2 - 0.3, xc + PIER/2 + 0.3, -0.4, DEPTH+0.4,
+                      Z_SPRING - 0.4, Z_SPRING + 0.1))
+try:
+    cand = trimesh.boolean.union([body] + extras)
+    dam = cand if (cand.is_watertight and cand.body_count == 1) else body
+except Exception:
+    dam = body                                       # garantiert watertight
 trimesh.repair.fix_normals(dam)
 dam.export(STL)
 print(f"Viadukt: {len(dam.vertices)}V/{len(dam.faces)}F  "
