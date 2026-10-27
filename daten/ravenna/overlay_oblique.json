@@ -1,0 +1,19 @@
+{
+  "foto": "daten/ravenna/fotos/rv_oblique_vollspann.jpg",
+  "stl": "modelle/ravenna/ravenna_viadukt_echt.stl",
+  "f_mm": 10.0,
+  "sensor_mm": 22.3,
+  "_hinweis": "corr = [modell_x, modell_y(tiefe), modell_z, foto_u, foto_v] in 1400-breit-Raum",
+  "_hinweis2": "nur Fassaden-Punkte auf Bogenhöhe (konstante z); Pfeilerfüße weggelassen (echte Schlucht-Sohle schräg, Modell flach)",
+  "corr": [
+    [-99.56, 0, 31.96, 255, 315],
+    [-109.56, 0, 21.96, 210, 385],
+    [-89.56, 0, 21.96, 310, 380],
+    [-74.67, 0, 31.96, 440, 290],
+    [-49.78, 0, 31.96, 625, 250],
+    [-59.78, 0, 21.96, 588, 300],
+    [-39.78, 0, 21.96, 668, 298],
+    [-99.56, 0, 35.96, 258, 292],
+    [-49.78, 0, 35.96, 628, 228]
+  ]
+}
