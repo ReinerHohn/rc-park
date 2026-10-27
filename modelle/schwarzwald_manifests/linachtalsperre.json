@@ -1,0 +1,5 @@
+{ "name":"Linachtalsperre", "typ":"bauwerk", "signatur":"bogenstaumauer",
+  "dem":"daten/linach/linach_dgm1.npy",
+  "cell_m":1.0,"nscale":10.0,"mm_per_cell":10.0,"vscale":1.0,"smooth":1.0,
+  "artifact":"","bed":[256,256],
+  "bauwerk":{"stl":"modelle/linachtalsperre/linach_bogenmauer.stl","archetyp":"bogenstaumauer","n":13,"L":143,"H":25} }

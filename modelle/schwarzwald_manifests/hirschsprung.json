@@ -1,0 +1,5 @@
+{ "name":"Hirschsprung / Höllental", "typ":"gelaende", "signatur":"felswand+schlucht",
+  "dem":"daten/hoellental/dgm025_full.npy",
+  "r0":150,"r1":750,"c0":2900,"c1":3700,
+  "cell_m":0.25,"nscale":3.125,"mm_per_cell":0.78125,"vscale":1.0,"smooth":1.0,
+  "artifact":"modelle/hoellental_geruest_a3","bed":[410,400] }

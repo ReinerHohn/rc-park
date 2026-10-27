@@ -1,0 +1,16 @@
+{
+  "name": "Triberger Wasserfälle",
+  "typ": "gelaende",
+  "signatur": "wasserfall",
+  "dem": "/tmp/schluch/relief_triberg.npy",
+  "cell_m": 0.25,
+  "nscale": 3.125,
+  "mm_per_cell": 0.78125,
+  "vscale": 1.0,
+  "smooth": 1.0,
+  "artifact": "",
+  "bed": [
+    410,
+    400
+  ]
+}

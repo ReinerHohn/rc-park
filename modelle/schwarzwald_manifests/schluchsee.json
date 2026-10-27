@@ -1,0 +1,5 @@
+{ "name":"Schluchsee-Staumauer", "typ":"bauwerk", "signatur":"staumauer+see",
+  "dem":"/tmp/schluchsee/dem_win.npy",
+  "cell_m":0.25,"nscale":3.125,"mm_per_cell":0.78125,"vscale":1.0,"smooth":1.0,
+  "artifact":"/tmp/schluchsee/artifact","bed":[256,256],
+  "bauwerk":{"stl":"/tmp/schluchsee/staumauer.stl","archetyp":"gewichtsstaumauer","n":0,"L":250,"H":63} }

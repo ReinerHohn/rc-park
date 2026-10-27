@@ -1,0 +1,16 @@
+{
+  "name": "Belchen",
+  "typ": "gelaende",
+  "signatur": "gipfel",
+  "dem": "/tmp/schluch/relief_belchen.npy",
+  "cell_m": 0.25,
+  "nscale": 0.78125,
+  "mm_per_cell": 0.195312,
+  "vscale": 1.0,
+  "smooth": 1.0,
+  "artifact": "",
+  "bed": [
+    410,
+    400
+  ]
+}
