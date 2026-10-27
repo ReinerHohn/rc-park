@@ -200,6 +200,8 @@ def main():
     ap.add_argument("--layer", type=float, default=0.2, help="Layerhöhe mm (für Zeit-Schätzung)")
     ap.add_argument("--no-number", dest="number", action="store_false", help="Teil-Nummer NICHT unten eingravieren")
     ap.add_argument("--out", default="/tmp/smartskin")
+    ap.add_argument("--dump-surface", default="", help="Oberflächen-Beleg .npz "
+                    "fürs tools/validate_modell.py")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     for f in os.listdir(a.out):                          # alte Stücke aufräumen
@@ -211,6 +213,11 @@ def main():
     win = win[::-1]                                     # +y=Nord (nicht gespiegelt)
     Z = gaussian_filter(win - win.min(), a.smooth) * a.nscale * a.vscale
     cell = a.mm
+    if getattr(a, "dump_surface", ""):                     # BELEG fürs Validierungstool
+        np.savez(a.dump_surface, real_m=(win - win.min()),
+                 model_m=Z / (a.nscale * a.vscale),
+                 nscale=a.nscale, vscale=a.vscale, mm=a.mm)
+        print(f"Oberflächen-Beleg -> {a.dump_surface}")
     full = shell(Z, cell, a.skin)                          # steil: dünne Schale (wird PCA-umgelegt)
     full_solid = solid_block(Z, cell, Z.min() - a.skin)    # sanft: solider Block, flacher Boden
 

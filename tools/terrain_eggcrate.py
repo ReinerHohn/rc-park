@@ -520,6 +520,8 @@ def main():
     ap.add_argument("--feed", type=float, default=400); ap.add_argument("--power", type=float, default=100)
     ap.add_argument("--passes", type=int, default=4); ap.add_argument("--eng-power", type=float, default=20)
     ap.add_argument("--out", default="/tmp/crate")
+    ap.add_argument("--dump-surface", default="", help="echtes gebautes Höhenfeld "
+                    "als .npz (real_m, model_m) für tools/validate_modell.py speichern")
     a = ap.parse_args()
     if a.seam_min_h <= 0: a.seam_min_h = 2.0 * a.finger   # auto: Naht nur wo >= 2 Finger solide passen
 
@@ -534,6 +536,15 @@ def main():
     cell = a.mm / zf                              # HORIZONTAL mm/Zelle
     Hf = rel * a.nscale * a.vscale + a.base       # VERTIKAL: Relief_m × mm/Meter (+ Sockel, damit Rippen nie auf 0 pinchen)
     NY, NX = Hf.shape; Wx, Dy = NX * cell, NY * cell
+
+    if a.dump_surface:                             # BELEG: echtes gebautes Höhenfeld (Meter) vs. Roh-DEM
+        real_m = win - win_min                     # Roh-DEM-Fenster, Meter, DEM-Gitter
+        model_m = zoom(rel, (real_m.shape[0]/rel.shape[0],
+                             real_m.shape[1]/rel.shape[1]), order=1)  # gebaut, zurück aufs DEM-Gitter
+        np.savez(a.dump_surface, real_m=real_m, model_m=model_m,
+                 nscale=a.nscale, vscale=a.vscale, mm=a.mm)
+        print(f"Oberflächen-Beleg -> {a.dump_surface} "
+              f"(real {real_m.shape}, model {model_m.shape})")
     os.makedirs(a.out, exist_ok=True)
 
     def Hat(xmm, ymm):
