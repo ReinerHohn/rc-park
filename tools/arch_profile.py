@@ -76,6 +76,77 @@ def build_arch_polygon(xc, span, spring_z, prof=None, batter=0.04, nseg=64):
     return Polygon(pts)
 
 
+# ---------- KORBBOGEN: echte 3-zentrige Bogenform (generisch) ----------
+
+def basket_arch_xz(span, rise, haunch_ratio=0.5, nseg=200):
+    """3-zentriger Korbbogen (anse de panier): Scheitelbogen (groß) + zwei Kämpferbögen
+    (klein), tangentenstetig. a=Halbspann, h=Stich. Freier Parameter = Kämpfer-Radius
+    rho=haunch_ratio·a (auf <h geklemmt). rise=span/2 ⇒ exakter Halbkreis.
+    Rückgabe: (x,z)-Punkte Kämpfer(-a,0) → Scheitel(0,h) → Kämpfer(a,0). GENERISCH."""
+    a = span/2.0; h = float(rise)
+    if h >= a - 1e-9:                                  # Halbkreis-Sonderfall
+        t = np.linspace(np.pi, 0.0, 2*nseg)
+        return np.column_stack([a*np.cos(t), a*np.sin(t)])
+    rho = min(haunch_ratio*a, 0.95*h)                  # Kämpfer-Radius (klein)
+    R = ((a-rho)**2 + h**2 - rho**2) / (2.0*(h-rho))   # Scheitel-Radius aus Tangenten-Bedingung
+    C1 = np.array([0.0, h-R]); C2 = np.array([a-rho, 0.0])
+    u = (C2-C1)/np.hypot(*(C2-C1)); T = C1 + R*u       # Übergangspunkt (Tangente stetig)
+    a1 = np.linspace(np.arctan2(h-C1[1], -C1[0]), np.arctan2(T[1]-C1[1], T[0]-C1[0]), nseg)
+    p1 = C1 + R*np.column_stack([np.cos(a1), np.sin(a1)])          # Scheitelbogen
+    a2 = np.linspace(np.arctan2(T[1]-C2[1], T[0]-C2[0]), np.arctan2(-C2[1], a-C2[0]), nseg)
+    p2 = C2 + rho*np.column_stack([np.cos(a2), np.sin(a2)])        # Kämpferbogen
+    right = np.vstack([p1, p2])                        # Scheitel → Kämpfer (rechts)
+    left = right[::-1].copy(); left[:, 0] *= -1        # gespiegelt
+    return np.vstack([left, right])
+
+
+def basket_arch_profile(span, rise, haunch_ratio=0.5, nsamp=61):
+    """Korbbogen als (theta, delta)-Signatur rel. zu R=span/2 → plug-in für profile_fn /
+    build_arch_polygon / archivolt_band (genau wie ein gemessenes Foto-Profil).
+    rise=span/2 ⇒ delta≈0 (Halbkreis). So wird der Korbbogen zum allgemeinen Default."""
+    xz = basket_arch_xz(span, rise, haunch_ratio)
+    R = span/2.0
+    th = np.arctan2(xz[:, 1], xz[:, 0]); r = np.hypot(xz[:, 0], xz[:, 1])
+    o = np.argsort(th); grid = np.linspace(0.0, np.pi, nsamp)
+    rg = np.interp(grid, th[o], r[o])
+    return grid, rg/R - 1.0
+
+
+# ---------- STIRNBOGEN / ARCHIVOLT: Bogen-Verdickung (generisch) ----------
+
+def archivolt_band(xc, half, spring_z, rise=None, d_crown=1.0, d_spring=1.8,
+                   skirt=1.6, prof=None, nseg=96):
+    """Stirnbogen-/Archivolt-BAND (2D x-z) um EINE Bogenöffnung: innere Kante = Intrados,
+    äußere = Intrados nach außen versetzt um eine Bogendicke, die vom Scheitel (d_crown)
+    zum Kämpfer (d_spring) wächst → die charakteristische „Verdickung unterhalb der Bögen".
+
+    Versatz entlang der ECHTEN Kurven-Normalen ⇒ gilt für Halbkreis (rise=half),
+    Korbbogen-Ellipse (rise≠half) UND gemessenes Profil (prof). `skirt` läuft senkrecht
+    unter den Kämpfer. Rückgabe = ein geschlossenes shapely-Polygon (Band).
+
+    Nicht bauwerksspezifisch — jeder Bogen-Generator extrudiert das Band selbst und legt
+    es (vorspringend) auf seine Stirnfläche(n)."""
+    from shapely.geometry import Polygon
+    if rise is None:
+        rise = half
+    f = (lambda t: 0.0) if prof is None else profile_fn(prof[0], prof[1])
+    aa = np.linspace(np.pi, 0.0, nseg)
+    g = 1.0 + f(aa)
+    ix = xc + half * g * np.cos(aa)
+    iz = spring_z + rise * g * np.sin(aa)                  # Intrados (Kreis/Ellipse/Profil)
+    tx, tz = np.gradient(ix), np.gradient(iz)              # Tangente → Normale (90°-Drehung)
+    nx, nz = tz.copy(), -tx.copy()
+    ln = np.hypot(nx, nz) + 1e-9; nx /= ln; nz /= ln
+    out = ((ix - xc) * nx + (iz - spring_z) * nz) < 0      # nach außen (weg von der Bogenmitte)
+    nx[out] *= -1; nz[out] *= -1
+    t = d_crown + (d_spring - d_crown) * (np.abs(aa - np.pi/2) / (np.pi/2))  # Scheitel→Kämpfer
+    ox, oz = ix + t * nx, iz + t * nz                      # Extrados (äußere Bandkante)
+    zlo = spring_z - skirt
+    outer = [(xc-half-d_spring, zlo)] + list(zip(ox, oz)) + [(xc+half+d_spring, zlo)]
+    inner = [(xc-half, zlo)]        + list(zip(ix, iz)) + [(xc+half, zlo)]
+    return Polygon(outer + inner[::-1])                    # geschlossenes Band (offen nach unten)
+
+
 # ---------- VALIDIEREN: gebauten Bogen rastern + Signatur zurückmessen ----------
 
 def measure_built(xc, span, spring_z, prof=None, pxm=10.0):
