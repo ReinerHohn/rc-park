@@ -55,9 +55,9 @@ def dam_measure(params, pxm=6.0):
     crown, base, H = params["crown"], params["base"], params["H"]
     W = int(base * pxm) + 20; Hp = int(H * pxm) + 20
     img = np.zeros((Hp, W), np.uint8)
-    cx = W / 2
-    poly = np.array([[cx - base/2*pxm, Hp-10], [cx + base/2*pxm, Hp-10],
-                     [cx + crown/2*pxm, 10], [cx - crown/2*pxm, 10]], np.int32)
+    cx = 10                                     # Wasserseite SENKRECHT (links), Luftseite geböscht
+    poly = np.array([[cx, Hp-10], [cx + base*pxm, Hp-10],
+                     [cx + crown*pxm, 10], [cx, 10]], np.int32)
     cv2.fillPoly(img, [poly], 255)
     rows = np.where(img.any(1))[0]
     def thick_at(frac):

@@ -76,10 +76,10 @@ def build(center, H, crown, base, nscale):
     # lokale Normale je Stützpunkt
     tang = np.gradient(cen, axis=0); tang /= (np.linalg.norm(tang, axis=1, keepdims=True) + 1e-9)
     nrm = np.c_[-tang[:, 1], tang[:, 0]]  # 90°
-    # Querschnitt (u über Mauerdicke, z vertikal): Wasserseite u=-base/2 vertikal,
-    # Luftseite base/2 unten → crown-Hälfte oben. Krone zentriert.
+    # Querschnitt (u über Mauerdicke, z vertikal) — ECHTE Gewichtsmauer: Wasserseite SENKRECHT
+    # (u=0 von Fuß bis Krone), Luftseite GEBÖSCHT (base am Fuß → crown an der Krone).
     # 4 Konturpunkte (u,z): Wasser-Fuß, Luft-Fuß, Luft-Krone, Wasser-Krone
-    sec = [(-base/2, 0), (base/2, 0), (crown/2, H), (-crown/2, H)]
+    sec = [(0.0, 0), (base, 0), (crown, H), (0.0, H)]
     N = len(cen); V = []
     for i in range(N):
         P = cen[i]; nx, ny = nrm[i]
