@@ -29,7 +29,14 @@ _ap.add_argument("--n", type=int, default=9); _ap.add_argument("--span", type=fl
 _ap.add_argument("--deck-w", type=float, default=6.0)
 _ap.add_argument("--stl", default="modelle/ravenna/ravenna_viadukt.stl")
 _ap.add_argument("--face", default="daten/ravenna/rv_face.png")
+_ap.add_argument("--profile", default="", help="gemessenes Intrados-Profil (JSON) statt Halbkreis")
 _a = _ap.parse_args()
+PROF_FN = None
+if _a.profile:
+    import arch_profile as _apr
+    _th, _dl = _apr.load_profile(_a.profile)
+    PROF_FN = _apr.profile_fn(_th, _dl)
+    print(f"Bogenform: gemessenes Profil {_a.profile} (echte Kurve, kein Halbkreis)")
 L, H = _a.L, _a.H
 N = _a.n;  SPAN = _a.span
 P = L / N                           # Feldteilung
@@ -49,8 +56,9 @@ def round_arch(xc, half_w, z_lo, z_spring):
     Leicht geböscht (unten etwas schmaler Öffnung = breitere Pfeilerfüße)."""
     bw = half_w - BATTER * (z_spring - z_lo)        # Öffnung am Fuß schmaler
     pts = [(xc-bw, z_lo), (xc-half_w, z_spring)]
-    for a in np.linspace(np.pi, 0, 28):
-        pts.append((xc + half_w*np.cos(a), z_spring + half_w*np.sin(a)))
+    for a in np.linspace(np.pi, 0, 64):
+        r = half_w * (1.0 + PROF_FN(a)) if PROF_FN else half_w   # echte Kurve statt Halbkreis
+        pts.append((xc + r*np.cos(a), z_spring + r*np.sin(a)))
     pts.append((xc+bw, z_lo))
     return Polygon(pts)
 
