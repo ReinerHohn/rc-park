@@ -159,7 +159,7 @@ def _load_profile():
     außen fallend → kann nicht self-intersecten/degenerieren). Nur die SCHULTERHÖHE kommt aus der
     GEMESSENEN Kontur (win_profile), die Form ist parametrisch garantiert simpel. GENERELLE LÖSUNG:
     keine freien Multiplikatoren mehr auf die Messung (die hatten die Fenster kollabieren lassen)."""
-    shoulder, keel = 0.60, 1.7                           # Defaults (Schulter 60 %, Kielbogen-Exponent)
+    shoulder, keel, flat = 0.60, 1.7, 0.21               # Schulter 60 %, Kielbogen-Exp, FLACHER Mittel-Oberrand (halbe Breite)
     try:
         d = json.load(open("modelle/kaufhaus_freiburg/win_profile.json"))
         p = sorted(d["profile_top"]); xs = np.array([q[0] for q in p]); hs = np.array([q[1] for q in p])
@@ -168,10 +168,14 @@ def _load_profile():
             shoulder = float(np.clip(np.median(edge), 0.45, 0.80))
         if "keel_exp" in d:
             keel = float(np.clip(d["keel_exp"], 1.0, 3.0))
+        if "flat_half" in d:
+            flat = float(np.clip(d["flat_half"], 0.0, 0.35))
     except Exception:
         pass
-    grid = np.linspace(-0.5, 0.5, 41); t = np.abs(grid*2)       # 0 Mitte .. 1 Rand
-    hi = shoulder + (1.0-shoulder)*np.clip(1.0-t, 0, 1)**keel   # konkav-gespitzter, monotoner Kielbogen
+    # FLACHER Oberrand in der Mitte (|x|<=flat) + konkave Schultern nach außen (Foto: oben mittig FLACH,
+    # NICHT spitz). Monoton (flach, dann fallend) → immer gültig, kann nicht degenerieren.
+    grid = np.linspace(-0.5, 0.5, 41); t = np.abs(grid)
+    hi = np.where(t <= flat, 1.0, shoulder + (1.0-shoulder)*np.clip((0.5-t)/max(1e-6, 0.5-flat), 0, 1)**keel)
     return list(zip(grid, hi))
 
 
