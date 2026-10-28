@@ -31,7 +31,7 @@ DORMER_ROWS = list(P["dormer_rows_bottom_to_top"])
 DORMER_WFRAC = float(P["dormer_width_frac"])
 
 # ---- gemessene Maße (m) ----
-W, D = 24.1, 12.0   # AMTLICH aus LOD2 (DEBW_0010007Tv9r): Fassade 24,1 m (oriented footprint), Front-Range-Tiefe ~12 m; vorher 18,5 (Foto-Verhältnis) war zu schmal
+W, D = 22.8, 12.0   # Fassade (LOD2 24,1 war etwas zu breit im Verhältnis — User); Tiefe wird unten gekappt
 EAVE, RIDGE = 9.7, 15.4   # FOTO-GEMESSEN (proportion_check): Dach/Fassade = 0.59 → RIDGE = EAVE*1.59
 ROOF_INSET = 0.0          # SATTELDACH (gegiebelt): First über volle Breite, Seiten = rote Giebel (Foto), kein Walm
 ARC_SPRING, ARC_APEX = 2.2, 5.2   # FOTO-GEMESSEN: hohe Arkade (~0,52 Fassade, proportion_check „Bögen zu niedrig")
@@ -78,7 +78,7 @@ if _MASS:
 # DACH-TIEFEN-REGEL (UNIVERSELL, wie tools/bauwerk_generator.py): die LOD2-First (21,4) ist das
 # TIEFE Gesamtdach; die Straßenfront zeigt es perspektivisch VERKÜRZT. First aus der am Frontfoto
 # gemessenen Dachhöhe (kh_jm3289: 6,15 m über der Traufe), Tiefe auf Straßenfront kappen.
-RIDGE = round(EAVE + 6.15, 2)
+RIDGE = round(EAVE + 6.9, 2)   # Giebel etwas höher (User: unten zu gedrungen), aber nicht die volle LOD2-First
 D = min(D, 8.5)
 # 1. OG höher (User): Fenster größer -> Sohlbank etwas tiefer, Sturz etwas höher (bleibt < Traufe)
 SILL = round(SILL - 0.3, 2)
@@ -324,7 +324,7 @@ def balcony():
     parts = []; x0, x1 = BAL_X0, BAL_X1; z = BAL_Z0; mid = (x0+x1)/2; wdt = x1-x0
     slab = tbox(extents=(wdt, 1.5, 0.22)); slab.apply_translation((mid, -0.85, z)); parts.append(slab)          # tiefere, kräftigere Platte
     lip = tbox(extents=(wdt+0.12, 0.16, 0.18)); lip.apply_translation((mid, -1.55, z+0.02)); parts.append(lip)   # profilierte Vorderkante
-    for x in np.linspace(x0+0.35, x1-0.35, 11):              # getreppte Kragsteine (3-stufige Konsolen)
+    for x in np.linspace(x0+0.3, x1-0.3, 10):               # 10 regelmäßige getreppte Kragsteine (User)
         for (w, d, h, yy, zz) in [(0.28, 0.55, 0.2, -0.5, z-0.2), (0.22, 0.85, 0.2, -0.68, z-0.4), (0.15, 1.1, 0.2, -0.82, z-0.6)]:
             cb = tbox(extents=(w, d, h)); cb.apply_translation((x, yy, zz)); parts.append(cb)
     return trimesh.util.concatenate(parts)
@@ -874,14 +874,15 @@ def arcade_recess():
 
 
 def arcade_glazing():
-    """Fenster/Türen HINTER den Arkadenbögen (Foto: in den EG-Bögen sind Fenster), knapp vor der
-    roten Rückwand — die Bögen lesen sich als verglaste Öffnungen, nicht als leere Löcher."""
-    pitch = W/N_ARCH; hgt = ARC_APEX-0.6; zc = hgt/2+0.3; parts = []
+    """Fenster in den EG-Bögen: KLEINERES dunkles Glas + Pfosten, sodass die ROTE Rückwand (laube)
+    ringsum sichtbar bleibt — die Bögen lesen sich als rote Öffnungen mit Fenstern darin."""
+    pitch = W/N_ARCH; ww = pitch*0.52; wz0, wz1 = 0.35, ARC_APEX-1.3; zc = (wz0+wz1)/2; hgt = wz1-wz0; parts = []
     for i in range(N_ARCH):
         xc = (i+0.5)*pitch
-        g = tbox(extents=(pitch*0.66, 0.1, hgt)); g.apply_translation((xc, 1.95, zc)); parts.append(g)
-        for mx in (xc-pitch*0.17, xc+pitch*0.17):                          # 2 Pfosten (Sprossen)
-            p = tbox(extents=(0.07, 0.07, hgt)); p.apply_translation((mx, 1.88, zc)); parts.append(p)
+        g = tbox(extents=(ww, 0.1, hgt)); g.apply_translation((xc, 1.9, zc)); parts.append(g)
+        for mx in (xc-ww/4, xc+ww/4):                                      # 2 Pfosten
+            p = tbox(extents=(0.07, 0.12, hgt)); p.apply_translation((mx, 1.82, zc)); parts.append(p)
+        tr = tbox(extents=(ww, 0.12, 0.07)); tr.apply_translation((xc, 1.82, zc)); parts.append(tr)   # Kämpfer
     return trimesh.util.concatenate(parts)
 
 
