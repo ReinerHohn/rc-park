@@ -556,15 +556,25 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
         for s in (-1, 1):                                                       # schlanke Gold-Jamben an den Facettenkanten
             put((0.055, 0.2, wh+0.1), s*fw*0.47, wz, 0.035, gold)
         put((lw+0.06, 0.16, 0.06), 0, wz, 0.05, gold)                           # ein Querkämpfer (Transom)
-        put((fw*0.95, 0.22, 0.12), 0, wz+wh/2+0.08, 0.045, gold)                # flacher Gold-Sturz (gerade Oberkante)
+        otop = wz+wh/2+0.02; orise = 0.5                                        # KONKAVER Bogenkopf statt flachem Sturz (Foto: Erkerfenster-Köpfe konkav)
+        _pr = PROF[::3] if PROF else [(-0.5, 0.6), (-0.25, 0.9), (0, 1.0), (0.25, 0.9), (0.5, 0.6)]
+        for xf, hf in _pr:
+            put((0.09, 0.16, 0.10), xf*lw*0.98, otop+hf*orise, 0.045, gold)     # Gold-Leiste folgt dem Kielbogen → konkaver Kopf
         put((fw*0.92, 0.22, 0.1), 0, wz-wh/2-0.06, 0.045, gold)                 # Sohlbank
         for zr in np.linspace(wz-wh/2+0.25, wz+wh/2-0.25, 3):                   # feine DUNKLE Bleiruten (kein Gold!) — sonst wirkt das Glas wie ein Goldgitter
             put((lw-0.04, 0.125, 0.015), 0, zr, 0.015, wins)
-        # GROSSES buntes Wappen-Rundschild auf der Schürze darunter (Foto: prominente Wappen, Reichsadler)
-        ring = trimesh.creation.cylinder(radius=0.3, height=0.07); ring.apply_transform(trimesh.transformations.rotation_matrix(np.pi/2, [1, 0, 0]))
-        ring.apply_translation((ctr[0]+nout[0]*0.14, ctr[1]+nout[1]*0.14, arz)); gold.append(ring)
-        core = trimesh.creation.cylinder(radius=0.22, height=0.08); core.apply_transform(trimesh.transformations.rotation_matrix(np.pi/2, [1, 0, 0]))
-        core.apply_translation((ctr[0]+nout[0]*0.17, ctr[1]+nout[1]*0.17, arz)); [rot, hell, gruen][j % 3].append(core)
+        # kleines WAPPEN-SCHILD (statt Kugel): Schildform (runder Kopf, Spitze unten) + Gold-Rand + Kreuz
+        sw, sh2 = 0.22, 0.30; fld = [rot, hell, gruen][j % 3]
+        for scale, thick, out2, bucket in [(1.15, 0.05, 0.11, gold), (1.0, 0.08, 0.14, fld)]:
+            sx, sy = sw*scale, sh2*scale
+            poly = Polygon([(-sx, sy), (-sx*0.7, sy*1.08), (sx*0.7, sy*1.08), (sx, sy),
+                            (sx, -sy*0.1), (sx*0.45, -sy*0.7), (0, -sy), (-sx*0.45, -sy*0.7), (-sx, -sy*0.1)])
+            m = extrude_polygon(poly.buffer(0), thick); Vv = m.vertices.copy()
+            m.vertices = np.c_[ctr[0]+tu[0]*Vv[:, 0]+nout[0]*(out2+Vv[:, 2]),
+                               ctr[1]+tu[1]*Vv[:, 0]+nout[1]*(out2+Vv[:, 2]), arz+Vv[:, 1]]
+            bucket.append(m)
+        put((0.05, 0.14, 0.42), 0, arz, 0.20, gold)                             # Kreuz senkrecht
+        put((0.30, 0.14, 0.05), 0, arz+0.04, 0.20, gold)                        # Kreuz waagrecht
     return {"erker": trimesh.util.concatenate(body_parts), "helm": trimesh.util.concatenate(gold),
             "helm_rot": trimesh.util.concatenate(rot), "helm_hell": trimesh.util.concatenate(hell),
             "helm_gruen": trimesh.util.concatenate(gruen), "fenster": trimesh.util.concatenate(wins)}
