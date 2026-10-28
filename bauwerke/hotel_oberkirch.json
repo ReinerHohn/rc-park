@@ -31,7 +31,7 @@
     "fensterraster": { "cols": 2, "rows": 2 },
     "fensterlaeden": {},
     "blumenkaesten": {},
-    "erdgeschoss":   { "door": true, "door_x_frac": 0.24, "style": "restaurant",
+    "erdgeschoss":   { "door": true, "door_x_frac": 0.33, "style": "restaurant",
                        "window_x_frac": [0.08, 0.50, 0.74],
                        "wappen": 2, "lanterns": 2, "menu_board": true, "menu_board_dx": -1.1 },
     "satteldach":    {},

@@ -531,11 +531,11 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
             if np.linalg.norm(p1-p0) > 1e-3:
                 gold.append(trimesh.creation.cylinder(radius=0.022, segment=(tuple(p0), tuple(p1))))
     cx2, cy2 = xc, -proj*0.5
-    cr0 = w*0.48; zf = 0.32; chh = max(3.0, (EAVE+0.62*(RIDGE-EAVE))-z1-zf-0.05)   # Spitze ~62% hoch im (steilen) Dach → hoher, schlanker Spitzhelm wie Foto (nicht mehr gedeckelt-kurz)
+    cr0 = w*0.37; zf = 0.3; chh = max(3.2, (EAVE+0.66*(RIDGE-EAVE))-z1-zf-0.05)   # SCHLANKER Spitzhelm (User: Helm viel schmaler), fein spitz zulaufend
 
     def _r(t):                                                                  # konkaves Helmprofil (t=0 Fuß .. 1 Spitze)
         return cr0*(1-t)**2.3*0.98 + 0.015                                      # STEILER: unten breit, zieht schnell in einer Kurve dünn ein (Foto)
-    prof = [(cr0*1.30, z1), (cr0*1.08, z1+zf)]                                   # breit ÜBERKRAGENDER Glockenfuß, dann rasch einziehen
+    prof = [(cr0*1.12, z1), (cr0*1.0, z1+zf)]                                     # schlanker Fuß (weniger überkragend)
     npro = 18
     for i in range(1, npro+1):
         t = i/npro; prof.append((_r(t), z1+zf+(chh-zf)*t))
@@ -575,7 +575,7 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
             m = tbox(extents=ex); m.apply_transform(Rz)
             px = ctr[0]+tu[0]*dalong+nout[0]*out; py = ctr[1]+tu[1]*dalong+nout[1]*out
             m.apply_translation((px, py, zc)); bucket.append(m)
-        lw = fw*0.82; _P = PROF if PROF else [(-0.5, 0.6), (0.0, 1.0), (0.5, 0.6)]
+        lw = fw*0.82; _P = [(-0.5, 0.78), (-0.28, 0.93), (0.0, 0.86), (0.28, 0.93), (0.5, 0.78)]   # nur LEICHT konkav (User: nicht so spitz)
 
         def facet_poly(poly2d, thick, out):                                     # 2D-Polygon (entlang, höhe) in die Facetten-Ebene heben
             m = extrude_polygon(poly2d.buffer(0), thick); Vv = m.vertices.copy()
@@ -735,13 +735,11 @@ def arcade_muntins():
 
 
 def roof_rake_gold():
-    """zwei schmale GOLDENE Streifen entlang der vorderen Dach-Rakenkanten (Foto: Goldleisten)."""
+    """zwei schmale WAAGERECHTE Goldstreifen an der TRAUFKANTE (Foto: Goldleisten quer, nicht aufs Dach)."""
     parts = []
-    for xe, xr, sgn in [(0.0, ROOF_INSET, 1), (W, W-ROOF_INSET, -1)]:
-        p0 = np.array([xe, 0.0, EAVE]); p1 = np.array([xr, D/2, RIDGE])
-        for off in (0.55, 0.9):                                    # deutlich inboard der roten Stufen + dicker
-            a = p0 + np.array([sgn*off, -0.42, 0.5]); b = p1 + np.array([sgn*off, -0.42, 0.5])
-            parts.append(trimesh.creation.cylinder(radius=0.08, segment=(tuple(a), tuple(b))))
+    for dz in (-0.04, 0.16):
+        c = trimesh.creation.cylinder(radius=0.06, segment=((0.4, -0.34, EAVE+dz), (W-0.4, -0.34, EAVE+dz)))
+        parts.append(c)
     return trimesh.util.concatenate(parts)
 
 
@@ -943,8 +941,8 @@ def plain_gable(x_end, dx=0.5):
 
 
 def build():
-    e0 = oriel(ORIEL_X[0], SILL-0.6, EAVE-1.0, w=2.5, proj=1.5)   # schmalere, höhere Bucht (Foto: Erker schlank+hoch); Körper bis Traufe, Spitze darüber
-    e1 = oriel(ORIEL_X[1], SILL-0.6, EAVE-1.0, w=2.5, proj=1.5)
+    e0 = oriel(ORIEL_X[0], SILL-0.6, EAVE-1.0, w=2.2, proj=1.4)   # schmalere Bucht (User: Erker schlanker)
+    e1 = oriel(ORIEL_X[1], SILL-0.6, EAVE-1.0, w=2.2, proj=1.4)
     parts = {
         "fassade": facade_wall(),
         "balken": red_lintel(),
