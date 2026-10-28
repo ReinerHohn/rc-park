@@ -336,9 +336,13 @@ def window_goldframe():
         if not ring.is_empty:
             for geom in (ring.geoms if ring.geom_type == "MultiPolygon" else [ring]):
                 parts.append(_stand(extrude_polygon(geom, 0.12), y0=0.4))
-        for xr in WIN_MULL:                               # Gold-Pfosten: enden an der KÄMPFERLINIE (Foto: ragen NICHT in den Bogenkopf)
-            mh = 0.58*(HEAD-SILL)
-            parts.append(tbox(extents=(0.055, 0.2, mh)).apply_translation((c+xr*ww, 0.42, SILL+mh/2)))
+        _top = HEAD-0.42                                   # Fenster-Oberkante (wie beim Rahmen oben)
+        _pxs = [xf for xf, _ in PROF] if PROF else [-0.5, 0, 0.5]
+        _phs = [hf for _, hf in PROF] if PROF else [0.6, 1.0, 0.6]
+        for xr in WIN_MULL:                               # Gold-Pfosten laufen GANZ DURCH bis an die Kielbogen-KANTE (Foto), nicht bis zur Kämpferlinie
+            ht = float(np.interp(xr, _pxs, _phs))         # Kielbogen-Höhe an der Pfosten-x-Lage
+            mh = max(0.3, ht*(_top-SILL)-0.06)
+            parts.append(tbox(extents=(0.06, 0.2, mh)).apply_translation((c+xr*ww, 0.42, SILL+0.03+mh/2)))
         for zr in WIN_TRANS:                              # GESTUFTER Kämpfer (Foto): mittleres Segment NACH OBEN versetzt
             zt = SILL+zr*(HEAD-SILL); rise = 0.42
             ml = (min(WIN_MULL) if WIN_MULL else -0.17)*ww; mr = (max(WIN_MULL) if WIN_MULL else 0.17)*ww
