@@ -35,7 +35,7 @@
                        "window_x_frac": [0.08, 0.50, 0.74],
                        "wappen": 2, "lanterns": 2, "menu_board": true },
     "satteldach":    {},
-    "dachziegel":    { "tile_w": 0.34, "course_h": 0.3, "relief": 0.07, "slopes": "both" },
+    "dachziegel":    { "tile_w": 0.18, "course_h": 0.15, "relief": 0.045, "slopes": "both" },
     "gauben":        { "n": 4 },
     "dachluken":     { "n": 4 },
     "schornsteine":  { "n": 2 },
