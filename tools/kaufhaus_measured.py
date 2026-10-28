@@ -722,15 +722,24 @@ def dach_krabben(inset=ROOF_INSET):
 def arcade_muntins():
     """weißer Rahmen + FENSTERKREUZ in jedem (kleinen) Arkaden-Fenster — proud vor dem Glas,
     damit die Bögen als verglaste Fenster auf rotem Hintergrund lesen."""
-    pitch = W/N_ARCH; ww = pitch*ARC_WW_FRAC; wz0, wz1 = ARC_WZ0, ARC_WZ1; zc = (wz0+wz1)/2; hgt = wz1-wz0; parts = []
+    pitch = W/N_ARCH; parts = []
     for i in range(N_ARCH):
         xc = (i+0.5)*pitch
-        for dx in (-ww/2, ww/2):                                                                  # Rahmen senkrecht
+        if i == ARC_DOOR:                                                                         # TÜRRAHMEN + Oberlicht-Riegel
+            dw = pitch*0.32; dh0, dh1 = 0.1, 2.95; zc = (dh0+dh1)/2; hgt = dh1-dh0
+            for dx in (-dw/2, dw/2):
+                b = tbox(extents=(0.09, 0.08, hgt)); b.apply_translation((xc+dx, 1.82, zc)); parts.append(b)
+            top = tbox(extents=(dw+0.1, 0.08, 0.09)); top.apply_translation((xc, 1.82, dh1)); parts.append(top)
+            tr = tbox(extents=(dw, 0.08, 0.08)); tr.apply_translation((xc, 1.82, dh1-0.55)); parts.append(tr)  # Oberlicht-Querriegel
+            v = tbox(extents=(0.07, 0.07, hgt)); v.apply_translation((xc, 1.79, zc)); parts.append(v)          # Türmittelstab
+            continue
+        ww, wz0, wz1 = pitch*ARC_WW_FRAC, ARC_WZ0, ARC_WZ1; zc = (wz0+wz1)/2; hgt = wz1-wz0        # FENSTERRAHMEN + Kreuz
+        for dx in (-ww/2, ww/2):
             b = tbox(extents=(0.08, 0.08, hgt+0.08)); b.apply_translation((xc+dx, 1.82, zc)); parts.append(b)
-        for dz in (-hgt/2, hgt/2):                                                                # Rahmen waagrecht
+        for dz in (-hgt/2, hgt/2):
             b = tbox(extents=(ww+0.08, 0.08, 0.08)); b.apply_translation((xc, 1.82, zc+dz)); parts.append(b)
-        v = tbox(extents=(0.07, 0.07, hgt)); v.apply_translation((xc, 1.79, zc)); parts.append(v)          # Kreuz senkrecht
-        h = tbox(extents=(ww, 0.07, 0.07)); h.apply_translation((xc, 1.79, zc)); parts.append(h)           # Kreuz waagrecht
+        v = tbox(extents=(0.07, 0.07, hgt)); v.apply_translation((xc, 1.79, zc)); parts.append(v)
+        h = tbox(extents=(ww, 0.07, 0.07)); h.apply_translation((xc, 1.79, zc)); parts.append(h)
     return trimesh.util.concatenate(parts)
 
 
@@ -819,6 +828,7 @@ def gables():
 
 # Arkaden-Fenstermaße HOCHKANT (schmal + hoch), klein genug für Rot ringsum
 ARC_WW_FRAC = 0.24; ARC_WZ0, ARC_WZ1 = 1.1, 3.25
+ARC_DOOR = 2            # Arkadenbogen mit TÜR statt Fenster (2. von rechts, wird am Render geprüft)
 PIER_H = ARC_APEX   # vollhohe Pfeiler (Kolonnade); Bogen-Archivolten als Ring davor
 
 
@@ -922,10 +932,14 @@ def arcade_recess():
 def arcade_glazing():
     """Fenster in den EG-Bögen: KLEINERES dunkles Glas + Pfosten, sodass die ROTE Rückwand (laube)
     ringsum sichtbar bleibt — die Bögen lesen sich als rote Öffnungen mit Fenstern darin."""
-    pitch = W/N_ARCH; ww = pitch*ARC_WW_FRAC; wz0, wz1 = ARC_WZ0, ARC_WZ1; zc = (wz0+wz1)/2; parts = []
+    pitch = W/N_ARCH; ww = pitch*ARC_WW_FRAC; wz0, wz1 = ARC_WZ0, ARC_WZ1; parts = []
     for i in range(N_ARCH):
         xc = (i+0.5)*pitch
-        g = tbox(extents=(ww, 0.1, wz1-wz0)); g.apply_translation((xc, 1.92, zc)); parts.append(g)   # HOCHKANT-Fenster (viel Rot drumrum)
+        if i == ARC_DOOR:                                              # TÜR: bis zum Boden, etwas breiter
+            dw = pitch*0.32; dh0, dh1 = 0.1, 2.95
+            g = tbox(extents=(dw, 0.1, dh1-dh0)); g.apply_translation((xc, 1.92, (dh0+dh1)/2)); parts.append(g)
+        else:
+            g = tbox(extents=(ww, 0.1, wz1-wz0)); g.apply_translation((xc, 1.92, (wz0+wz1)/2)); parts.append(g)
     return trimesh.util.concatenate(parts)
 
 
