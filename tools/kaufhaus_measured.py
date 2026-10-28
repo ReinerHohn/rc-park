@@ -542,7 +542,7 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
 
 
 # ---------- giebelständige Gaube (Satteldach) ----------
-DORMER_W = 0.8
+DORMER_W = 1.1
 
 
 def _dormer_specs():
@@ -553,7 +553,7 @@ def _dormer_specs():
     nslots = sum(DORMER_ROWS)                            # z.B. 3+2 = 5 Raster-Spalten
     pitch = span/(nslots-1) if nslots > 1 else span
     nrows = len(DORMER_ROWS)
-    fracs = np.linspace(0.24, 0.24+0.18*(nrows-1), nrows) if nrows > 1 else [0.3]
+    fracs = np.linspace(0.12, 0.12+0.15*(nrows-1), nrows) if nrows > 1 else [0.16]  # Gauben LOW am Traufenrand (Foto: steiles hohes Dach, Gauben unten), nicht übers ganze Dach verteilt
     specs = []
     for r, n in enumerate(DORMER_ROWS):
         z = EAVE+fracs[r]*(RIDGE-EAVE)
