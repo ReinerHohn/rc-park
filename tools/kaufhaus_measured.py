@@ -564,16 +564,26 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
             m = tbox(extents=ex); m.apply_transform(Rz)
             px = ctr[0]+tu[0]*dalong+nout[0]*out; py = ctr[1]+tu[1]*dalong+nout[1]*out
             m.apply_translation((px, py, zc)); bucket.append(m)
-        lw = fw*0.82
-        put((lw, 0.12, wh), 0, wz, 0.0, wins)                                   # dunkles Bleiglas (dominiert → liest als Fenster, nicht Goldgitter)
-        put((0.05, 0.14, wh), 0, wz, 0.045, gold)                               # EIN schlanker Gold-Mittelpfosten → 2 Lichter (Foto kh_erker)
+        lw = fw*0.82; _P = PROF if PROF else [(-0.5, 0.6), (0.0, 1.0), (0.5, 0.6)]
+
+        def facet_poly(poly2d, thick, out):                                     # 2D-Polygon (entlang, höhe) in die Facetten-Ebene heben
+            m = extrude_polygon(poly2d.buffer(0), thick); Vv = m.vertices.copy()
+            m.vertices = np.c_[ctr[0]+tu[0]*Vv[:, 0]+nout[0]*(out+Vv[:, 2]),
+                               ctr[1]+tu[1]*Vv[:, 0]+nout[1]*(out+Vv[:, 2]), (wz-wh/2)+Vv[:, 1]]
+            return m
+        a = lw/2
+        glass = [(-a, 0.0)] + [(xf*lw, hf*wh) for xf, hf in _P] + [(a, 0.0)]    # Bleiglas MIT konkav-durchhängendem Kielbogen-Kopf (wie Hauptfenster)
+        wins.append(facet_poly(Polygon(glass), 0.1, 0.0))
+        og = [(-a-0.06, 0.0)] + [(xf*(lw+0.12), hf*wh+0.1) for xf, hf in _P] + [(a+0.06, 0.0)]   # Gold-Rahmen folgt dem Kielbogen
+        ig = [(-a+0.07, 0.12)] + [(xf*(lw-0.14), hf*wh-0.04) for xf, hf in _P] + [(a-0.07, 0.12)]
+        ring = Polygon(og).difference(Polygon(ig)).buffer(0)
+        for geom in (ring.geoms if ring.geom_type == "MultiPolygon" else [ring]):
+            if not geom.is_empty:
+                gold.append(facet_poly(geom, 0.12, 0.04))
+        put((0.05, 0.14, wh), 0, wz, 0.055, gold)                               # Gold-Mittelpfosten → 2 Lichter
         for s in (-1, 1):                                                       # schlanke Gold-Jamben an den Facettenkanten
             put((0.055, 0.2, wh+0.1), s*fw*0.47, wz, 0.035, gold)
-        put((lw+0.06, 0.16, 0.06), 0, wz, 0.05, gold)                           # ein Querkämpfer (Transom)
-        otop = wz+wh/2+0.02; orise = 0.5                                        # KONKAVER Bogenkopf statt flachem Sturz (Foto: Erkerfenster-Köpfe konkav)
-        _pr = PROF[::3] if PROF else [(-0.5, 0.6), (-0.25, 0.9), (0, 1.0), (0.25, 0.9), (0.5, 0.6)]
-        for xf, hf in _pr:
-            put((0.09, 0.16, 0.10), xf*lw*0.98, otop+hf*orise, 0.045, gold)     # Gold-Leiste folgt dem Kielbogen → konkaver Kopf
+        put((lw+0.06, 0.16, 0.06), 0, wz-0.1, 0.055, gold)                      # Querkämpfer (Transom)
         put((fw*0.92, 0.22, 0.1), 0, wz-wh/2-0.06, 0.045, gold)                 # Sohlbank
         for zr in np.linspace(wz-wh/2+0.25, wz+wh/2-0.25, 3):                   # feine DUNKLE Bleiruten (kein Gold!) — sonst wirkt das Glas wie ein Goldgitter
             put((lw-0.04, 0.125, 0.015), 0, zr, 0.015, wins)
