@@ -644,15 +644,23 @@ def dormers():
 
 
 def dormer_roofs():
-    """HOHES getreppt-ziegeliges WALMDÄCHLEIN über jeder Gaube (Foto: tall, steil aufragender Ziegelhut,
-    gleiche Dachziegel) — 4-seitige Spitze, deutlich höher als breit."""
+    """SPRUNGSCHANZEN-Dächlein (Foto, User): vorn TIEF/flach, nach hinten in einer KONKAVEN Kurve
+    hochgezogen (wie eine Skisprungschanze) — KEINE Spitze, kein Walm. Solider dünner Keil (druckbar)."""
     parts = []
     for xc, z in _dormer_specs():
-        ys = _slope_y(z); o = 0.14; yf = ys-DORMER_PROJ-0.08; zt = z+0.72
-        apex = (xc, yf+0.28, zt+1.25)                       # HOHE schmale Spitze (Foto: tall tiled hip)
-        C = [(xc-DORMER_W/2-o, yf, zt), (xc+DORMER_W/2+o, yf, zt), (xc+DORMER_W/2+o, ys+0.1, zt), (xc-DORMER_W/2-o, ys+0.1, zt)]
-        V = C + [apex]
-        F = [(0, 1, 4), (1, 2, 4), (2, 3, 4), (3, 0, 4), (0, 3, 2), (0, 2, 1)]   # 4 Walmflächen + Boden
+        ys = _slope_y(z); o = 0.14; yf = ys-DORMER_PROJ-0.10
+        xL, xR = xc-DORMER_W/2-o, xc+DORMER_W/2+o
+        ztop = z+0.40                                       # Unterseite (dünner Keil)
+        ym = ys-DORMER_PROJ*0.5
+        zfront, zmid, zback = z+0.58, z+0.78, z+1.28        # vorn tief → konkav (beschleunigt) hoch nach HINTEN = Sprungschanze
+        V = [(xL, ys, zback), (xR, ys, zback), (xL, ym, zmid), (xR, ym, zmid), (xL, yf, zfront), (xR, yf, zfront),
+             (xL, ys, ztop), (xR, ys, ztop), (xL, yf, ztop), (xR, yf, ztop)]
+        F = [(0, 1, 3), (0, 3, 2), (2, 3, 5), (2, 5, 4),     # konkave Oberseite (2 Segmente)
+             (6, 8, 9), (6, 9, 7),                           # Unterseite
+             (0, 2, 6), (2, 8, 6), (2, 4, 8),                # linke Wange
+             (1, 7, 3), (3, 7, 9), (3, 9, 5),                # rechte Wange
+             (4, 5, 9), (4, 9, 8),                           # Vorderkante (tief)
+             (0, 6, 7), (0, 7, 1)]                           # Hinterkante (hoch)
         parts.append(_tri(V, F))
     return trimesh.util.concatenate(parts)
 
