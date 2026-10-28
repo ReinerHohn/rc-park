@@ -33,7 +33,7 @@
     "blumenkaesten": {},
     "erdgeschoss":   { "door": true, "door_x_frac": 0.24, "style": "restaurant",
                        "window_x_frac": [0.08, 0.50, 0.74],
-                       "wappen": 2, "lanterns": 2, "menu_board": true },
+                       "wappen": 2, "lanterns": 2, "menu_board": true, "menu_board_dx": -1.1 },
     "satteldach":    {},
     "dachziegel":    { "tile_w": 0.18, "course_h": 0.15, "relief": 0.045, "slopes": "both" },
     "gauben":        { "n": 4 },
