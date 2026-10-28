@@ -479,13 +479,13 @@ def statue_canopies():
     _, xs = bay_layout(); parts = []
     cap = EAVE - 0.08                                    # Baldachin endet an der DACHKANTE, nicht übers Dach
     for xc in xs:
-        y = -0.52; zb = cap - 1.3
-        plat = tbox(extents=(0.82, 0.5, 0.15)); plat.apply_translation((xc, y, zb)); parts.append(plat)
-        canopy = tcone(radius=0.34, height=0.72, sections=6); canopy.apply_translation((xc, y, zb+0.08)); parts.append(canopy)
-        fin = tcone(radius=0.08, height=0.42, sections=6); fin.apply_translation((xc, y, zb+0.78)); parts.append(fin)
-        kn = trimesh.creation.icosphere(subdivisions=0, radius=0.08); kn.apply_translation((xc, y, cap)); parts.append(kn)   # Spitze AUF der Dachkante
-        for dx in (-0.31, 0.31):
-            sf = tcone(radius=0.075, height=0.5, sections=6); sf.apply_translation((xc+dx, y, zb+0.1)); parts.append(sf)
+        y = -0.5; zb = cap - 1.15
+        plat = tbox(extents=(0.56, 0.4, 0.11)); plat.apply_translation((xc, y, zb)); parts.append(plat)   # schmale Konsolplatte
+        canopy = tcone(radius=0.22, height=0.62, sections=6); canopy.apply_translation((xc, y, zb+0.07)); parts.append(canopy)  # schlanke Spitzhaube
+        fin = tcone(radius=0.05, height=0.36, sections=6); fin.apply_translation((xc, y, zb+0.72)); parts.append(fin)
+        kn = trimesh.creation.icosphere(subdivisions=0, radius=0.055); kn.apply_translation((xc, y, cap)); parts.append(kn)
+        for dx in (-0.2, 0.2):                                                                           # zwei schlanke Eckfialen
+            sf = tcone(radius=0.045, height=0.34, sections=6); sf.apply_translation((xc+dx, y, zb+0.08)); parts.append(sf)
     return trimesh.util.concatenate(parts)
 
 
@@ -563,7 +563,7 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
     # ---- Erker-Bucht-Fenster (Foto kh_erker): hohe BLEIGLAS-Fenster je Facette, GOLD-Pfosten +
     # Querkämpfer + flacher Gold-Sturz + Sohlbank, FACETTENGERECHT gedreht; bunte Wappen darunter ----
     wins = []; bayc = np.array([xc, -proj*0.32])                                # Buchtzentrum (für Außennormale)
-    wh = (z1-z0)*0.42; wz = z0+(z1-z0)*0.62                                     # Fenster im MITTLEREN Teil: Oberkante ~0,83 → ROTES Mauerstück zwischen Fenstersturz und Helmfuß (Foto: Erkerfenster reichen NICHT bis zum Dach), unten Wappen-Schürze
+    wh = (z1-z0)*0.42; wz = BAL_Z1 + wh/2                                       # Fenster-UNTERKANTE an der oberen Balkongeländerkante (User); oben rotes Mauerstück bis Helmfuß
     arz = z0+(z1-z0)*0.26                                                       # Wappen-Rundschilde auf der Schürze darunter
     for j in (1, 2, 3):
         pa = np.array(pts6[j]); pb = np.array(pts6[j+1]); ctr = (pa+pb)/2
@@ -623,6 +623,7 @@ def _dormer_size():                                   # GEMESSEN (gauben_mass.js
     except Exception:
         return 2.0, 1.5
 DORMER_W, DORMER_H = _dormer_size()                   # Gaubenbreite/-höhe aus Foto gemessen (Fenster/Gebäudebreite)
+DORMER_H = max(DORMER_H, 1.75)                        # Gauben höher (User: zu gedrungen)
 
 
 def _dormer_specs():
@@ -633,7 +634,7 @@ def _dormer_specs():
     nslots = sum(DORMER_ROWS)                            # z.B. 3+2 = 5 Raster-Spalten
     pitch = span/(nslots-1) if nslots > 1 else span
     nrows = len(DORMER_ROWS)
-    fracs = np.linspace(0.12, 0.12+0.15*(nrows-1), nrows) if nrows > 1 else [0.16]  # Gauben LOW am Traufenrand (Foto: steiles hohes Dach, Gauben unten), nicht übers ganze Dach verteilt
+    fracs = np.linspace(0.11, 0.11+0.21*(nrows-1), nrows) if nrows > 1 else [0.16]  # obere Reihe höher gezogen (User)
     specs = []
     for r, n in enumerate(DORMER_ROWS):
         z = EAVE+fracs[r]*(RIDGE-EAVE)
@@ -715,6 +716,21 @@ def dach_krabben(inset=ROOF_INSET):
         for k, s in enumerate([0.6, 0.42]):
             st = tbox(extents=(s, s, 0.4)); st.apply_translation((xt, yt, zt+0.22+k*0.32)); parts.append(st)
         tip = tcone(radius=0.18, height=0.4, sections=6); tip.apply_translation((xt, yt, zt+0.55)); parts.append(tip)
+    return trimesh.util.concatenate(parts)
+
+
+def arcade_muntins():
+    """weißer Rahmen + FENSTERKREUZ in jedem (kleinen) Arkaden-Fenster — proud vor dem Glas,
+    damit die Bögen als verglaste Fenster auf rotem Hintergrund lesen."""
+    pitch = W/N_ARCH; ww = pitch*ARC_WW_FRAC; wz0, wz1 = ARC_WZ0, ARC_WZ1; zc = (wz0+wz1)/2; hgt = wz1-wz0; parts = []
+    for i in range(N_ARCH):
+        xc = (i+0.5)*pitch
+        for dx in (-ww/2, ww/2):                                                                  # Rahmen senkrecht
+            b = tbox(extents=(0.08, 0.08, hgt+0.08)); b.apply_translation((xc+dx, 1.82, zc)); parts.append(b)
+        for dz in (-hgt/2, hgt/2):                                                                # Rahmen waagrecht
+            b = tbox(extents=(ww+0.08, 0.08, 0.08)); b.apply_translation((xc, 1.82, zc+dz)); parts.append(b)
+        v = tbox(extents=(0.07, 0.07, hgt)); v.apply_translation((xc, 1.79, zc)); parts.append(v)          # Kreuz senkrecht
+        h = tbox(extents=(ww, 0.07, 0.07)); h.apply_translation((xc, 1.79, zc)); parts.append(h)           # Kreuz waagrecht
     return trimesh.util.concatenate(parts)
 
 
@@ -886,14 +902,15 @@ def arcade_recess():
 def arcade_glazing():
     """Fenster in den EG-Bögen: KLEINERES dunkles Glas + Pfosten, sodass die ROTE Rückwand (laube)
     ringsum sichtbar bleibt — die Bögen lesen sich als rote Öffnungen mit Fenstern darin."""
-    pitch = W/N_ARCH; ww = pitch*0.52; wz0, wz1 = 0.35, ARC_APEX-1.3; zc = (wz0+wz1)/2; hgt = wz1-wz0; parts = []
+    pitch = W/N_ARCH; ww = pitch*0.38; wz0, wz1 = 0.95, 2.85; zc = (wz0+wz1)/2; parts = []
     for i in range(N_ARCH):
         xc = (i+0.5)*pitch
-        g = tbox(extents=(ww, 0.1, hgt)); g.apply_translation((xc, 1.9, zc)); parts.append(g)
-        for mx in (xc-ww/4, xc+ww/4):                                      # 2 Pfosten
-            p = tbox(extents=(0.07, 0.12, hgt)); p.apply_translation((mx, 1.82, zc)); parts.append(p)
-        tr = tbox(extents=(ww, 0.12, 0.07)); tr.apply_translation((xc, 1.82, zc)); parts.append(tr)   # Kämpfer
+        g = tbox(extents=(ww, 0.1, wz1-wz0)); g.apply_translation((xc, 1.92, zc)); parts.append(g)   # KLEINERES Fenster (viel Rot drumrum)
     return trimesh.util.concatenate(parts)
+
+
+# gemeinsame Arkaden-Fenstermaße (klein -> rote Rückwand ringsum)
+ARC_WW_FRAC = 0.38; ARC_WZ0, ARC_WZ1 = 0.95, 2.85
 
 
 SIDE_WINY = (4.2, 6.9, 9.6)    # Y-Lagen der Seitenfenster (3 über die Tiefe, Durchgang vorn frei)
@@ -967,6 +984,7 @@ def build():
         # Wappen-Rundschilde SITZEN AN DEN ERKERN (Foto), nicht als große Goldmünzen in der Balkonbrüstung → raus (entrümpelt)
         "laube": arcade_recess(),
         "arkadenglas": arcade_glazing(),
+        "arkadenkreuz": arcade_muntins(),
     }
     back = tbox(extents=(W, 0.6, EAVE)); back.apply_translation((W/2, D-0.3, EAVE/2))
     wall_m, side_glass = side_walls()
@@ -979,7 +997,7 @@ def build():
             "baldachin": [198, 162, 92, 255],
             "gauben": [40, 34, 32, 255], "gauben_dach": [96, 108, 74, 255], "dachmuster": [88, 102, 70, 255],
             "dachrauten": [64, 82, 52, 255],
-            "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [120, 42, 36, 255], "arkadenglas": [46, 42, 48, 255], "piers": [138, 48, 42, 255], "pierbase": [96, 84, 74, 255],
+            "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [120, 42, 36, 255], "arkadenglas": [66, 74, 92, 255], "arkadenkreuz": [230, 228, 218, 255], "piers": [138, 48, 42, 255], "pierbase": [96, 84, 74, 255],
             "boegen": [192, 154, 72, 255], "first": [182, 150, 80, 255], "rahmen": [198, 168, 120, 255],
             "wappen": [196, 150, 48, 255], "krabben": [150, 42, 36, 255], "dachkante_gold": [196, 160, 78, 255], "nische": [28, 22, 24, 255],
             "helm_rot": [150, 44, 40, 255], "helm_hell": [224, 214, 190, 255], "helm_gruen": [86, 134, 82, 255],
