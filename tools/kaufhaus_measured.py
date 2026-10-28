@@ -172,10 +172,13 @@ def _load_profile():
             flat = float(np.clip(d["flat_half"], 0.0, 0.35))
     except Exception:
         pass
-    # FLACHER Oberrand in der Mitte (|x|<=flat) + konkave Schultern nach außen (Foto: oben mittig FLACH,
-    # NICHT spitz). Monoton (flach, dann fallend) → immer gültig, kann nicht degenerieren.
+    # Foto: ZWEI Spitzen über den Lichtern (bei ±xp) und der Oberrand hängt in der MITTE DURCH (nicht
+    # flach, nicht spitz) + konkave Schultern nach außen. xp aus flat abgeleitet.
+    xp = max(0.12, flat); dip = 0.05                         # Mitte hängt nur LEICHT durch (Foto: subtil, nicht übertrieben)
     grid = np.linspace(-0.5, 0.5, 41); t = np.abs(grid)
-    hi = np.where(t <= flat, 1.0, shoulder + (1.0-shoulder)*np.clip((0.5-t)/max(1e-6, 0.5-flat), 0, 1)**keel)
+    center = 1.0 - dip*(1.0 - np.clip(t/xp, 0, 1)**2)        # Parabel-Durchhang: Mitte tief → Spitze bei xp
+    flank = shoulder + (1.0-shoulder)*np.clip((0.5-t)/max(1e-6, 0.5-xp), 0, 1)**keel
+    hi = np.where(t <= xp, center, flank)                    # Doppelspitze + durchhängende Mitte (valid: einfaches Polygon)
     return list(zip(grid, hi))
 
 
@@ -356,6 +359,12 @@ def window_goldframe():
             parts.append(tbox(extents=(mr-ml, 0.22, 0.09)).apply_translation((c+(ml+mr)/2, 0.43, zt+rise)))     # MITTLERES Segment (erhöht)
             for mx in (ml, mr):                                                                                  # senkrechte Verbinder der Stufe
                 parts.append(tbox(extents=(0.07, 0.22, rise)).apply_translation((c+mx, 0.43, zt+rise/2)))
+        for zf in (0.20, 0.38, 0.56, 0.74, 0.88):         # DÜNNE waagrechte Saddle-Bars (Foto: feine Gold-Querstangen im Bleiglas), oben schmaler (Bogenkopf)
+            zb = SILL + zf*(_top-SILL)
+            tap = 1.0 if zf <= 0.60 else max(0.2, (1.0-zf)/0.40)
+            bw2 = (ww-0.14)*tap
+            if bw2 > 0.2:
+                parts.append(tbox(extents=(bw2, 0.16, 0.035)).apply_translation((c, 0.45, zb)))
         sb = tbox(extents=(ww+0.12, 0.26, 0.14)); sb.apply_translation((c, 0.44, SILL-0.12)); parts.append(sb)
     return trimesh.util.concatenate(parts)
 
