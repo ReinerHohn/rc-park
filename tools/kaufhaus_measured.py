@@ -644,23 +644,22 @@ def dormers():
 
 
 def dormer_roofs():
-    """SPRUNGSCHANZEN-Dächlein (Foto, User): vorn TIEF/flach, nach hinten in einer KONKAVEN Kurve
-    hochgezogen (wie eine Skisprungschanze) — KEINE Spitze, kein Walm. Solider dünner Keil (druckbar)."""
+    """WALMGAUBE mit kurzem FIRST (Foto dorm_B, genau studiert): trapezförmige Ziegel-Vorderfläche
+    schräg nach hinten-oben zu einem KURZEN waagrechten First + dreieckige Hüft-(Walm-)Seiten. KEINE
+    Spitze, kein Keil, moderate Höhe. Solider Körper (druckbar)."""
     parts = []
     for xc, z in _dormer_specs():
         ys = _slope_y(z); o = 0.14; yf = ys-DORMER_PROJ-0.10
         xL, xR = xc-DORMER_W/2-o, xc+DORMER_W/2+o
-        ztop = z+0.40                                       # Unterseite (dünner Keil)
-        ym = ys-DORMER_PROJ*0.5
-        zfront, zmid, zback = z+0.58, z+0.78, z+1.28        # vorn tief → konkav (beschleunigt) hoch nach HINTEN = Sprungschanze
-        V = [(xL, ys, zback), (xR, ys, zback), (xL, ym, zmid), (xR, ym, zmid), (xL, yf, zfront), (xR, yf, zfront),
-             (xL, ys, ztop), (xR, ys, ztop), (xL, yf, ztop), (xR, yf, ztop)]
-        F = [(0, 1, 3), (0, 3, 2), (2, 3, 5), (2, 5, 4),     # konkave Oberseite (2 Segmente)
-             (6, 8, 9), (6, 9, 7),                           # Unterseite
-             (0, 2, 6), (2, 8, 6), (2, 4, 8),                # linke Wange
-             (1, 7, 3), (3, 7, 9), (3, 9, 5),                # rechte Wange
-             (4, 5, 9), (4, 9, 8),                           # Vorderkante (tief)
-             (0, 6, 7), (0, 7, 1)]                           # Hinterkante (hoch)
+        zt = z+0.72                                         # Traufe des Gaubendachs (über dem Fenster)
+        zr = zt+0.52; rh = DORMER_W*0.34; ym = ys-DORMER_PROJ*0.30   # First: kurz, waagrecht, nach hinten versetzt, moderate Höhe
+        V = [(xL, yf, zt), (xR, yf, zt), (xR, ys, zt), (xL, ys, zt),   # 0..3 Traufe (vorn/hinten)
+             (xc-rh, ym, zr), (xc+rh, ym, zr)]                          # 4,5 First
+        F = [(0, 1, 5), (0, 5, 4),                           # Vorderfläche (Trapez, schräg nach hinten-oben)
+             (2, 3, 4), (2, 4, 5),                           # Rückfläche
+             (3, 0, 4),                                      # linker Walm (Dreieck)
+             (1, 2, 5),                                      # rechter Walm (Dreieck)
+             (0, 3, 2), (0, 2, 1)]                           # Boden
         parts.append(_tri(V, F))
     return trimesh.util.concatenate(parts)
 
