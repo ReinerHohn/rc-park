@@ -155,21 +155,24 @@ def curtain_window(xc, w, sill, head, rise, flat=None):
 
 
 def _load_profile():
-    """GEMESSENE Fenster-Kopfkontur aus shape_extract (win_profile.json), resampled+symmetrisch."""
+    """Fenster-Kopf als PARAMETRISCHER Schulter-Kielbogen — IMMER gültig (monoton von der Mitte nach
+    außen fallend → kann nicht self-intersecten/degenerieren). Nur die SCHULTERHÖHE kommt aus der
+    GEMESSENEN Kontur (win_profile), die Form ist parametrisch garantiert simpel. GENERELLE LÖSUNG:
+    keine freien Multiplikatoren mehr auf die Messung (die hatten die Fenster kollabieren lassen)."""
+    shoulder, keel = 0.60, 1.7                           # Defaults (Schulter 60 %, Kielbogen-Exponent)
     try:
         d = json.load(open("modelle/kaufhaus_freiburg/win_profile.json"))
         p = sorted(d["profile_top"]); xs = np.array([q[0] for q in p]); hs = np.array([q[1] for q in p])
-        grid = np.linspace(-0.5, 0.5, 41); hi = np.interp(grid, xs, hs)
-        hi = (hi + hi[::-1]) / 2                         # symmetrisch
-        k = np.array([1, 2, 1.0]); k /= k.sum()          # NUR LEICHT denoisen → Kielbogen-Konkavität bleibt erhalten
-        hi = np.convolve(np.pad(hi, 1, mode="edge"), k, "valid")
-        c = len(hi)//2; hi[c] = max(hi[c-1], hi[c], hi[c+1])   # zentralen Hochpunkt sichern, Schultern NICHT flachklopfen
-        peak = float(hi.max())                                  # KONKAVITÄT verstärken: Schultern stärker absenken (Foto „richtig konkav";
-        hi = peak - (peak-hi)*(1.0+0.9*np.abs(grid*2))          #  Messung+Glättung hatten den Kielbogen zu flach gemacht)
-        hi = np.clip(hi, 0.12, peak)
-        return list(zip(grid, hi))
+        edge = hs[np.abs(xs) > 0.4]                      # Höhe der Kontur an den Rändern = Schulter
+        if len(edge):
+            shoulder = float(np.clip(np.median(edge), 0.45, 0.80))
+        if "keel_exp" in d:
+            keel = float(np.clip(d["keel_exp"], 1.0, 3.0))
     except Exception:
-        return None
+        pass
+    grid = np.linspace(-0.5, 0.5, 41); t = np.abs(grid*2)       # 0 Mitte .. 1 Rand
+    hi = shoulder + (1.0-shoulder)*np.clip(1.0-t, 0, 1)**keel   # konkav-gespitzter, monotoner Kielbogen
+    return list(zip(grid, hi))
 
 
 PROF = _load_profile()
@@ -187,14 +190,23 @@ WIN_MULL, WIN_TRANS, WIN_HEXR = _load_winstruct()
 
 
 def measured_window(xc, w, sill, top):
-    """Fenster-Polygon aus der GEMESSENEN Kopfkontur (PROF). Fallback: curtain_window."""
+    """Fenster-Polygon aus dem Kielbogen-Profil (PROF). GENERELLER GÜLTIGKEITS-GUARD: liefert nur
+    ein einfaches, gültiges, nicht-degeneriertes Polygon zurück — sonst sauberer Rechteck-Fallback
+    (so kann ein schlechtes Profil nie mehr kaputte Fenster erzeugen)."""
     if not PROF:
         return curtain_window(xc, w, sill, top-0.6, 0.55)
-    a = w/2; pts = [(xc-a, sill)]
+    a = w/2; h = max(0.1, top-sill); pts = [(xc-a, sill)]
     for xf, hf in PROF:
-        pts.append((xc + xf*w, sill + hf*(top-sill)))
+        pts.append((xc + xf*w, sill + hf*h))
     pts.append((xc+a, sill))
-    return Polygon(pts)
+    poly = Polygon(pts)
+    if not poly.is_valid:
+        poly = poly.buffer(0)
+    # Degeneriert? (ungültig, leer, MultiPolygon, oder Fläche < 55 % des Schulter-Rechtecks) → Fallback
+    shoulder = min(hf for _, hf in PROF)
+    if (poly.is_empty or poly.geom_type != "Polygon" or poly.area < 0.55*(w*shoulder*h)):
+        return Polygon([(xc-a, sill), (xc-a, sill+shoulder*h), (xc, sill+h), (xc+a, sill+shoulder*h), (xc+a, sill)])
+    return poly
 
 
 def stepped_window(xc, w, sill, head, rise, steps=3):
