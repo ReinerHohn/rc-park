@@ -31,7 +31,7 @@ DORMER_ROWS = list(P["dormer_rows_bottom_to_top"])
 DORMER_WFRAC = float(P["dormer_width_frac"])
 
 # ---- gemessene Maße (m) ----
-W, D = 18.5, 11.0   # Breite aus Foto-Verhältnis gemessen (B/H≈1,13 inkl. Helmspitzen); vorher 23 = deutlich zu breit
+W, D = 24.1, 12.0   # AMTLICH aus LOD2 (DEBW_0010007Tv9r): Fassade 24,1 m (oriented footprint), Front-Range-Tiefe ~12 m; vorher 18,5 (Foto-Verhältnis) war zu schmal
 EAVE, RIDGE = 9.7, 15.4   # FOTO-GEMESSEN (proportion_check): Dach/Fassade = 0.59 → RIDGE = EAVE*1.59
 ROOF_INSET = 0.0          # SATTELDACH (gegiebelt): First über volle Breite, Seiten = rote Giebel (Foto), kein Walm
 ARC_SPRING, ARC_APEX = 2.2, 5.2   # FOTO-GEMESSEN: hohe Arkade (~0,52 Fassade, proportion_check „Bögen zu niedrig")
