@@ -335,7 +335,11 @@ def gen_groundfloor(c, p):
     frames, warms, curts, darkglass = [], [], [], []
     dx = c.W * float(p.get("door_x_frac", 0.5))
     if p.get("door", True):
-        holes.append((dx - 0.6, dx + 0.6, 0.0, 2.6)); darkglass.append(slab(dx, 0.05, 1.3, 1.2, 0.08, 2.6))
+        holes.append((dx - 0.6, dx + 0.6, 0.0, 2.6))
+        frames.append(slab(dx, -0.02, 1.12, 1.14, 0.08, 2.24))     # braunes Türblatt
+        frames.append(slab(dx, -0.05, 2.52, 1.32, 0.1, 0.14))      # Türsturz
+        frames.append(slab(dx, -0.05, 1.12, 0.06, 0.08, 2.24))     # Mittelstab
+        warms.append(slab(dx, 0.06, 2.3, 0.88, 0.06, 0.42))        # oberes Türfenster (warm)
     win_xf = p.get("window_x_frac")
     if win_xf is None:
         n = int(p.get("arched_windows", 0)); win_xf = [(i + 0.5) / n for i in range(n)] if n else []
@@ -352,9 +356,10 @@ def gen_groundfloor(c, p):
         tex = _facade_texture(c.cfg, c.measured["facade_region_eg"])
         if tex is not None:
             texture_panel(out["eg_sockel"], tex, 0, c.W, 0.0, c.eg_top)
-    # dunkler Holz-Sockel (Wainscot) nur unten, EG-Wand darüber bleibt cremefarben
-    wh_ = float(p.get("wainscot_h", 0.72))
-    out["sockel_holz"] = panel(0, c.W, 0.0, wh_, [(dx - 0.6, dx + 0.6, 0.0, wh_)], c.front_t + 0.16, y0=-0.16)
+    # EG-Wand bleibt CREMEFARBEN (kein dunkler Sockel) — opt-in per wainscot_h
+    wh_ = float(p.get("wainscot_h", 0.0))
+    if wh_ > 0:
+        out["sockel_holz"] = panel(0, c.W, 0.0, wh_, [(dx - 0.6, dx + 0.6, 0.0, wh_)], c.front_t + 0.16, y0=-0.16)
     out["eg_glas"] = cat(darkglass)
     out["schaufenster"] = cat(frames); out["gardine"] = cat(curts)
     if p.get("lettering"):
@@ -391,6 +396,39 @@ def gen_roof(c, p):
         tri = Polygon([(0, ea), (D, ea), (D / 2, ri)]); m = extrude_polygon(tri, 0.4); Vv = m.vertices.copy()
         m.vertices = np.c_[x + Vv[:, 2], Vv[:, 0], Vv[:, 1]]; gab.append(m)
     return {"dach": dach, "giebel": cat(gab)}
+
+
+# ---- Dachziegel-Generator (echte 3D-Ziegel zum Drucken) --------------------
+@element("dachziegel")
+def gen_tiles(c, p):
+    """echte überlappende 3D-Ziegel auf den Dachschrägen (versetzt wie Verband) — druckbar.
+    tile_w/course_h/relief parametrisch; slopes=front|both."""
+    tw = float(p.get("tile_w", 0.34)); th = float(p.get("course_h", 0.30)); relief = float(p.get("relief", 0.07))
+    a = c.D / 2; b = c.ridge - c.eave; Ls = math.hypot(a, b)
+    if Ls < 0.1:
+        return {}
+
+    def slope(su, nrm, start):
+        parts = []; xv = np.cross(su, nrm)
+        Rm = np.eye(4); Rm[:3, 0] = xv; Rm[:3, 1] = su; Rm[:3, 2] = nrm
+        nc = max(2, int(Ls / th))
+        for ci in range(nc):
+            t = (ci + 0.5) * th
+            if t > Ls - 0.04:
+                break
+            base = start + su * t
+            x = (tw / 2) if (ci % 2) else 0.0          # jede 2. Reihe versetzt
+            while x + tw <= c.W + 0.01:
+                box = tbox(extents=(tw * 0.9, th * 1.3, relief))   # länger als Reihe -> Überlappung
+                box.apply_transform(Rm)
+                box.apply_translation(np.array([x + tw / 2, base[1], base[2]]) + nrm * (relief * 0.5))
+                parts.append(box); x += tw
+        return parts
+
+    tiles = slope(np.array([0, a, b]) / Ls, np.array([0, -b, a]) / Ls, np.array([0.0, 0.0, c.eave]))
+    if p.get("slopes", "both") == "both":
+        tiles += slope(np.array([0, -a, b]) / Ls, np.array([0, b, a]) / Ls, np.array([0.0, c.D, c.eave]))
+    return {"dachziegel": cat(tiles)}
 
 
 # ---- Dach-Gauben-Generator -------------------------------------------------
@@ -539,7 +577,7 @@ DEFAULT_COL = {
     "luke": [34, 33, 34, 255], "schornstein": [128, 80, 60, 255],
     "schild_arm": [40, 36, 34, 255], "schild": [224, 214, 180, 255],
     "gold": [196, 162, 84, 255], "band": [96, 74, 52, 255], "wappen": [176, 150, 90, 255],
-    "zierband": [120, 140, 185, 255],
+    "zierband": [120, 140, 185, 255], "dachziegel": [96, 78, 70, 255],
 }
 
 
