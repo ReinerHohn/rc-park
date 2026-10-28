@@ -159,15 +159,14 @@ def _load_profile():
     try:
         d = json.load(open("modelle/kaufhaus_freiburg/win_profile.json"))
         p = sorted(d["profile_top"]); xs = np.array([q[0] for q in p]); hs = np.array([q[1] for q in p])
-        grid = np.linspace(-0.5, 0.5, 29); hi = np.interp(grid, xs, hs)
+        grid = np.linspace(-0.5, 0.5, 41); hi = np.interp(grid, xs, hs)
         hi = (hi + hi[::-1]) / 2                         # symmetrisch
-        k = np.array([1, 2, 3, 2, 1.0]); k /= k.sum()    # DENOISE
-        hi = np.convolve(np.pad(hi, 2, mode="edge"), k, "valid")
-        c = len(hi)//2                                   # MITTE = Peak erzwingen: von der Mitte nach außen NICHT STEIGEND
-        for i in range(c+1, len(hi)):                    # (entfernt die Mess-Bumps an den Pfosten → zentraler Plateau-Hochpunkt, kein Durchhängen)
-            hi[i] = min(hi[i], hi[i-1])
-        for i in range(c-1, -1, -1):
-            hi[i] = min(hi[i], hi[i+1])
+        k = np.array([1, 2, 1.0]); k /= k.sum()          # NUR LEICHT denoisen → Kielbogen-Konkavität bleibt erhalten
+        hi = np.convolve(np.pad(hi, 1, mode="edge"), k, "valid")
+        c = len(hi)//2; hi[c] = max(hi[c-1], hi[c], hi[c+1])   # zentralen Hochpunkt sichern, Schultern NICHT flachklopfen
+        peak = float(hi.max())                                  # KONKAVITÄT verstärken: Schultern stärker absenken (Foto „richtig konkav";
+        hi = peak - (peak-hi)*(1.0+0.9*np.abs(grid*2))          #  Messung+Glättung hatten den Kielbogen zu flach gemacht)
+        hi = np.clip(hi, 0.12, peak)
         return list(zip(grid, hi))
     except Exception:
         return None
@@ -325,10 +324,18 @@ def window_goldframe():
         if not ring.is_empty:
             for geom in (ring.geoms if ring.geom_type == "MultiPolygon" else [ring]):
                 parts.append(_stand(extrude_polygon(geom, 0.12), y0=0.4))
-        for xr in WIN_MULL:                               # Gold-Pfosten an den ERKANNTEN Lagen (win_struct.json), kein Hardcoding
-            parts.append(tbox(extents=(0.055, 0.2, HEAD-0.4-SILL)).apply_translation((c+xr*ww, 0.42, (SILL+HEAD-0.4)/2)))
-        for zr in WIN_TRANS:                              # Gold-Kämpfer (Transoms) an den ERKANNTEN Höhen
-            parts.append(tbox(extents=(ww-0.1, 0.22, 0.09)).apply_translation((c, 0.43, SILL+zr*(HEAD-SILL))))
+        for xr in WIN_MULL:                               # Gold-Pfosten: enden an der KÄMPFERLINIE (Foto: ragen NICHT in den Bogenkopf)
+            mh = 0.58*(HEAD-SILL)
+            parts.append(tbox(extents=(0.055, 0.2, mh)).apply_translation((c+xr*ww, 0.42, SILL+mh/2)))
+        for zr in WIN_TRANS:                              # GESTUFTER Kämpfer (Foto): mittleres Segment NACH OBEN versetzt
+            zt = SILL+zr*(HEAD-SILL); rise = 0.42
+            ml = (min(WIN_MULL) if WIN_MULL else -0.17)*ww; mr = (max(WIN_MULL) if WIN_MULL else 0.17)*ww
+            le, re = -0.5*ww+0.05, 0.5*ww-0.05
+            parts.append(tbox(extents=(ml-le, 0.22, 0.09)).apply_translation((c+(le+ml)/2, 0.43, zt)))          # linkes Segment (tief)
+            parts.append(tbox(extents=(re-mr, 0.22, 0.09)).apply_translation((c+(mr+re)/2, 0.43, zt)))          # rechtes Segment (tief)
+            parts.append(tbox(extents=(mr-ml, 0.22, 0.09)).apply_translation((c+(ml+mr)/2, 0.43, zt+rise)))     # MITTLERES Segment (erhöht)
+            for mx in (ml, mr):                                                                                  # senkrechte Verbinder der Stufe
+                parts.append(tbox(extents=(0.07, 0.22, rise)).apply_translation((c+mx, 0.43, zt+rise/2)))
         sb = tbox(extents=(ww+0.12, 0.26, 0.14)); sb.apply_translation((c, 0.44, SILL-0.12)); parts.append(sb)
     return trimesh.util.concatenate(parts)
 
