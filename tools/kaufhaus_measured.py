@@ -634,24 +634,15 @@ def dormers():
 
 
 def dormer_roofs():
-    """flach ablaufendes SCHLEPPDÄCHLEIN (Sprungschanze, Foto): hinten an der Dachhaut HOCH, nach vorn
-    ABFALLEND, leicht konkav — KEINE Spitzhaube. Solider dünner Keil (druckbar)."""
+    """HOHES getreppt-ziegeliges WALMDÄCHLEIN über jeder Gaube (Foto: tall, steil aufragender Ziegelhut,
+    gleiche Dachziegel) — 4-seitige Spitze, deutlich höher als breit."""
     parts = []
     for xc, z in _dormer_specs():
-        ys = _slope_y(z); o = 0.16; yf = ys-DORMER_PROJ-0.10
-        xL, xR = xc-DORMER_W/2-o, xc+DORMER_W/2+o
-        ztop = z+0.72                                       # Gaubenkörper-Oberkante (Unterseite des Dächleins)
-        zback, zmid, zfront = z+1.00, z+0.80, z+0.70        # hinten hoch → vorn tief, konkav (Sprungschanze)
-        ym = ys-DORMER_PROJ*0.5
-        # Oberkante als 3-Punkt-Konkavkurve (hinten→vorn), Unterkante flach auf ztop
-        V = [(xL, ys, zback), (xR, ys, zback), (xL, ym, zmid), (xR, ym, zmid), (xL, yf, zfront), (xR, yf, zfront),
-             (xL, ys, ztop), (xR, ys, ztop), (xL, yf, ztop), (xR, yf, ztop)]
-        F = [(0, 1, 3), (0, 3, 2), (2, 3, 5), (2, 5, 4),     # konkave Oberseite (2 Segmente)
-             (6, 8, 9), (6, 9, 7),                           # Unterseite
-             (0, 2, 6), (2, 8, 6), (2, 4, 8),                # linke Wange
-             (1, 7, 3), (3, 7, 9), (3, 9, 5),                # rechte Wange
-             (4, 5, 9), (4, 9, 8),                           # Vorderkante
-             (0, 6, 7), (0, 7, 1)]                           # Hinterkante
+        ys = _slope_y(z); o = 0.14; yf = ys-DORMER_PROJ-0.08; zt = z+0.72
+        apex = (xc, yf+0.28, zt+1.25)                       # HOHE schmale Spitze (Foto: tall tiled hip)
+        C = [(xc-DORMER_W/2-o, yf, zt), (xc+DORMER_W/2+o, yf, zt), (xc+DORMER_W/2+o, ys+0.1, zt), (xc-DORMER_W/2-o, ys+0.1, zt)]
+        V = C + [apex]
+        F = [(0, 1, 4), (1, 2, 4), (2, 3, 4), (3, 0, 4), (0, 3, 2), (0, 2, 1)]   # 4 Walmflächen + Boden
         parts.append(_tri(V, F))
     return trimesh.util.concatenate(parts)
 
@@ -755,10 +746,20 @@ def arcade_piers():
     pitch = W/N_ARCH; parts = []
     for i in range(N_ARCH+1):
         x = pitch*i
-        shaft = tbox(extents=(0.6, 0.9, PIER_H)); shaft.apply_translation((x, -0.4, PIER_H/2)); parts.append(shaft)
-        base = tbox(extents=(0.8, 1.05, 0.3)); base.apply_translation((x, -0.4, 0.15)); parts.append(base)
+        shaft = tbox(extents=(0.62, 0.9, PIER_H)); shaft.apply_translation((x, -0.4, PIER_H/2)); parts.append(shaft)
         cap = tbox(extents=(0.8, 1.05, 0.26)); cap.apply_translation((x, -0.4, PIER_H-0.2)); parts.append(cap)
         imp = tbox(extents=(0.76, 1.0, 0.22)); imp.apply_translation((x, -0.4, ARC_SPRING)); parts.append(imp)   # Kämpfer/Impost am Bogenansatz (Foto)
+    return trimesh.util.concatenate(parts)
+
+
+def pier_bases():
+    """abgesetzter dunklerer STEIN-SOCKEL je Arkadenpfeiler (Foto: Basis aus grau-braunem Sandstein,
+    deutlich dunkler als der rote Schaft) — zweistufig, leicht breiter."""
+    pitch = W/N_ARCH; parts = []
+    for i in range(N_ARCH+1):
+        x = pitch*i
+        b1 = tbox(extents=(0.92, 1.12, 0.55)); b1.apply_translation((x, -0.4, 0.28)); parts.append(b1)   # Sockelblock
+        b2 = tbox(extents=(0.78, 0.98, 0.18)); b2.apply_translation((x, -0.4, 0.64)); parts.append(b2)   # Anlauf/Abschrägung
     return trimesh.util.concatenate(parts)
 
 
@@ -879,6 +880,7 @@ def build():
         "dach": roof(),
         "giebel": gables(),
         "piers": arcade_piers(),
+        "pierbase": pier_bases(),
         "lisenen": pier_lisenen(),
         "boegen": arch_rings(),
         "galerie": gallery(),
@@ -917,7 +919,7 @@ def build():
             "baldachin": [198, 162, 92, 255],
             "gauben": [40, 34, 32, 255], "gauben_dach": [96, 108, 74, 255], "dachmuster": [88, 102, 70, 255],
             "dachrauten": [64, 82, 52, 255],
-            "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [34, 24, 22, 255], "piers": [138, 48, 42, 255],
+            "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [34, 24, 22, 255], "piers": [138, 48, 42, 255], "pierbase": [96, 84, 74, 255],
             "boegen": [192, 154, 72, 255], "first": [182, 150, 80, 255], "rahmen": [198, 168, 120, 255],
             "wappen": [196, 150, 48, 255], "krabben": [150, 42, 36, 255], "nische": [28, 22, 24, 255],
             "helm_rot": [150, 44, 40, 255], "helm_hell": [224, 214, 190, 255], "helm_gruen": [86, 134, 82, 255],
