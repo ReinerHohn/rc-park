@@ -477,7 +477,7 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
     for c in cor:                                                              # dünne Gold-Rippen auf den Kanten
         gold.append(trimesh.creation.cylinder(radius=0.045, segment=(tuple(boss), tuple(c))))
     cx2, cy2 = xc, -proj*0.5
-    cr0 = w*0.48; zf = 0.32; chh = min(max(2.8, (RIDGE+1.0)-z1-1.95), cr0*3.6)    # breiterer Fuß + GEDECKELTE Höhe → Glocke (Foto kh_erker: wuchtig+kurz), nicht Nadel; Spitze bleibt unter dem First
+    cr0 = w*0.48; zf = 0.32; chh = max(3.0, (EAVE+0.62*(RIDGE-EAVE))-z1-zf-0.05)   # Spitze ~62% hoch im (steilen) Dach → hoher, schlanker Spitzhelm wie Foto (nicht mehr gedeckelt-kurz)
 
     def _r(t):                                                                  # konkaves Helmprofil (t=0 Fuß .. 1 Spitze)
         return cr0*(1-t)**2.3*0.98 + 0.015                                      # STEILER: unten breit, zieht schnell in einer Kurve dünn ein (Foto)
