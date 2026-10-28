@@ -1,0 +1,53 @@
+{
+  "name": "Ganter Brauereiausschank (Münsterplatz 18-20, Haus zum Roten Eber)",
+  "out_dir": "modelle/ganter_ausschank",
+  "prefix": "ga",
+  "glb": "ganter_measured.glb",
+  "quelle": "Masse LOD2 DEBW_0010007Tv9o; Fassade beobachtet aus jm3065 + Oberkirch-Randfoto (keine saubere Frontale -> manuelle Gliederung)",
+
+  "massing": {
+    "W": 9.5,
+    "eave": 11.6,
+    "lod2_depth": 20.8,
+    "lod2_ridge": 16.7,
+    "streetfront_depth": 8.0,
+    "roof_pitch_deg": 48,
+    "wall_thick": 0.5
+  },
+
+  "facade": {
+    "eg_top": 3.4,
+    "floors": 3,
+    "axes_x_frac": [0.21, 0.5, 0.79],
+    "string_course": false,
+    "window": { "w": 1.0, "h": 1.5, "sill_off": 0.6, "cols": 2, "rows": 2,
+                "shutters": false, "flower_boxes": true }
+  },
+
+  "colors": {
+    "fassade": [150, 165, 182], "gaube": [150, 165, 182], "giebel": [150, 165, 182],
+    "gesims": [196, 206, 216], "eg_sockel": [150, 165, 182],
+    "dach": [118, 84, 70], "gaube_dach": [118, 84, 70],
+    "rahmen": [240, 240, 236], "fenster": [60, 70, 82]
+  },
+
+  "ground_floor": {
+    "style": "restaurant",
+    "door": true, "door_x_frac": 0.5,
+    "window_x_frac": [0.22, 0.78],
+    "lettering": "GANTER BRAUEREIAUSSCHANK",
+    "lanterns": 2, "menu_board": false
+  },
+
+  "elements": {
+    "putzfassade":   {},
+    "fensterraster": { "cols": 2, "rows": 2 },
+    "blumenkaesten": {},
+    "erdgeschoss":   { "door": true, "door_x_frac": 0.5, "style": "restaurant",
+                       "window_x_frac": [0.22, 0.78], "lettering": "GANTER", "lanterns": 2 },
+    "satteldach":    {},
+    "gauben":        { "n": 3 },
+    "dachrinne":     { "downpipe_x_frac": [0.03, 0.97] },
+    "ausleger":      { "enabled": true }
+  }
+}
