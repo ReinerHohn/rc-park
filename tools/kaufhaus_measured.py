@@ -564,7 +564,7 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
     # Querkämpfer + flacher Gold-Sturz + Sohlbank, FACETTENGERECHT gedreht; bunte Wappen darunter ----
     wins = []; bayc = np.array([xc, -proj*0.32])                                # Buchtzentrum (für Außennormale)
     wh = (z1-z0)*0.42; wz = BAL_Z1 + wh/2                                       # Fenster-UNTERKANTE an der oberen Balkongeländerkante (User); oben rotes Mauerstück bis Helmfuß
-    arz = z0+(z1-z0)*0.26                                                       # Wappen-Rundschilde auf der Schürze darunter
+    arz = (BAL_Z0+BAL_Z1)/2                                                     # Wappen GENAU auf Balkonhöhe (User)
     for j in (1, 2, 3):
         pa = np.array(pts6[j]); pb = np.array(pts6[j+1]); ctr = (pa+pb)/2
         tang = pb-pa; fw = float(np.linalg.norm(tang)); tu = tang/fw
