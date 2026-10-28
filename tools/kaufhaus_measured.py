@@ -531,11 +531,11 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
             if np.linalg.norm(p1-p0) > 1e-3:
                 gold.append(trimesh.creation.cylinder(radius=0.022, segment=(tuple(p0), tuple(p1))))
     cx2, cy2 = xc, -proj*0.5
-    cr0 = w*0.37; zf = 0.3; chh = max(3.2, (EAVE+0.66*(RIDGE-EAVE))-z1-zf-0.05)   # SCHLANKER Spitzhelm (User: Helm viel schmaler), fein spitz zulaufend
+    cr0 = w*0.48; zf = 0.32; chh = max(3.0, (EAVE+0.62*(RIDGE-EAVE))-z1-zf-0.05)   # Spitzhelm (zurück auf vorherige, bessere Version: leicht überlappend + durchhängend)
 
     def _r(t):                                                                  # konkaves Helmprofil (t=0 Fuß .. 1 Spitze)
         return cr0*(1-t)**2.3*0.98 + 0.015                                      # STEILER: unten breit, zieht schnell in einer Kurve dünn ein (Foto)
-    prof = [(cr0*1.12, z1), (cr0*1.0, z1+zf)]                                     # schlanker Fuß (weniger überkragend)
+    prof = [(cr0*1.30, z1), (cr0*1.08, z1+zf)]                                   # breit ÜBERKRAGENDER Glockenfuß, dann rasch einziehen (vorherige Version)
     npro = 18
     for i in range(1, npro+1):
         t = i/npro; prof.append((_r(t), z1+zf+(chh-zf)*t))
@@ -575,7 +575,7 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
             m = tbox(extents=ex); m.apply_transform(Rz)
             px = ctr[0]+tu[0]*dalong+nout[0]*out; py = ctr[1]+tu[1]*dalong+nout[1]*out
             m.apply_translation((px, py, zc)); bucket.append(m)
-        lw = fw*0.82; _P = [(-0.5, 0.78), (-0.28, 0.93), (0.0, 0.86), (0.28, 0.93), (0.5, 0.78)]   # nur LEICHT konkav (User: nicht so spitz)
+        lw = fw*0.82; _P = PROF if PROF else [(-0.5, 0.6), (0.0, 1.0), (0.5, 0.6)]   # voller Kielbogen (zurück wie vorhin, User)
 
         def facet_poly(poly2d, thick, out):                                     # 2D-Polygon (entlang, höhe) in die Facetten-Ebene heben
             m = extrude_polygon(poly2d.buffer(0), thick); Vv = m.vertices.copy()
@@ -798,7 +798,7 @@ def gables():
 
 
 # Arkaden-Fenstermaße HOCHKANT (schmal + hoch), klein genug für Rot ringsum
-ARC_WW_FRAC = 0.17; ARC_WZ0, ARC_WZ1 = 0.7, 2.95
+ARC_WW_FRAC = 0.24; ARC_WZ0, ARC_WZ1 = 1.1, 3.25
 PIER_H = ARC_APEX   # vollhohe Pfeiler (Kolonnade); Bogen-Archivolten als Ring davor
 
 
@@ -941,8 +941,8 @@ def plain_gable(x_end, dx=0.5):
 
 
 def build():
-    e0 = oriel(ORIEL_X[0], SILL-0.6, EAVE-1.0, w=2.2, proj=1.4)   # schmalere Bucht (User: Erker schlanker)
-    e1 = oriel(ORIEL_X[1], SILL-0.6, EAVE-1.0, w=2.2, proj=1.4)
+    e0 = oriel(ORIEL_X[0], SILL-0.6, EAVE-1.0, w=2.5, proj=1.5)   # zurück auf vorherige Erker-Maße
+    e1 = oriel(ORIEL_X[1], SILL-0.6, EAVE-1.0, w=2.5, proj=1.5)
     parts = {
         "fassade": facade_wall(),
         "balken": red_lintel(),
@@ -994,7 +994,7 @@ def build():
             "gauben": [40, 34, 32, 255], "gauben_dach": [96, 108, 74, 255], "dachmuster": [88, 102, 70, 255],
             "dachrauten": [64, 82, 52, 255],
             "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [96, 34, 28, 255], "arkadenglas": [24, 24, 28, 255], "arkadenkreuz": [48, 44, 46, 255], "piers": [138, 48, 42, 255], "pierbase": [96, 84, 74, 255],
-            "boegen": [192, 154, 72, 255], "first": [182, 150, 80, 255], "rahmen": [198, 168, 120, 255],
+            "boegen": [192, 154, 72, 255], "first": [182, 150, 80, 255], "rahmen": [206, 162, 58, 255],
             "wappen": [196, 150, 48, 255], "krabben": [150, 42, 36, 255], "dachkante_gold": [196, 160, 78, 255], "nische": [28, 22, 24, 255],
             "helm_rot": [150, 44, 40, 255], "helm_hell": [224, 214, 190, 255], "helm_gruen": [86, 134, 82, 255],
             "lisenen": [188, 150, 72, 255], "sprossen": [72, 74, 84, 255],   # dunkle Bleiruten (echtes Bleiglas ist DUNKEL mit feinen Stegen) — Fenster liest als Öffnung, nicht grau
