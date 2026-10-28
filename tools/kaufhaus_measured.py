@@ -306,7 +306,7 @@ BAL_Z1 = SILL-0.05        # Brüstungs-Oberkante bis an die Sohlbank (Foto: Säu
 BAL_Y = -0.62             # Brüstung/Baluster liegen an der Balkon-Vorderkante
 
 
-BAL_X0, BAL_X1 = ORIEL_X[0]+1.4, ORIEL_X[1]-1.4   # Balkon NUR vor dem Fensterband (Foto: stoppt an den Erkern, NICHT über die ganze Breite)
+BAL_X0, BAL_X1 = ORIEL_X[0]+1.9, ORIEL_X[1]-1.9   # Balkon NUR vor dem Fensterband (Foto: stoppt an den Erkern, NICHT über die ganze Breite)
 
 
 def balcony():
@@ -813,7 +813,7 @@ def arcade_recess():
     return trimesh.util.concatenate(parts)
 
 
-SIDE_WINY = (5.4, 7.8)    # Y-Lagen der Seitenfenster
+SIDE_WINY = (4.2, 6.9, 9.6)    # Y-Lagen der Seitenfenster (3 über die Tiefe, Durchgang vorn frei)
 
 
 def side_walls():
