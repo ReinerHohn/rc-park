@@ -31,7 +31,7 @@ DORMER_ROWS = list(P["dormer_rows_bottom_to_top"])
 DORMER_WFRAC = float(P["dormer_width_frac"])
 
 # ---- gemessene Maße (m) ----
-W, D = 22.8, 12.0   # Fassade (LOD2 24,1 war etwas zu breit im Verhältnis — User); Tiefe wird unten gekappt
+W, D = 21.0, 12.0   # Fassade schmaler (User: noch zu breit); Tiefe wird unten gekappt
 EAVE, RIDGE = 9.7, 15.4   # FOTO-GEMESSEN (proportion_check): Dach/Fassade = 0.59 → RIDGE = EAVE*1.59
 ROOF_INSET = 0.0          # SATTELDACH (gegiebelt): First über volle Breite, Seiten = rote Giebel (Foto), kein Walm
 ARC_SPRING, ARC_APEX = 2.2, 5.2   # FOTO-GEMESSEN: hohe Arkade (~0,52 Fassade, proportion_check „Bögen zu niedrig")
@@ -446,7 +446,9 @@ def statue(xc):
     neck = trimesh.creation.cylinder(radius=0.042, height=0.08); neck.apply_translation((xc, y, z0+1.27)); parts.append(neck)
     head = trimesh.creation.icosphere(subdivisions=1, radius=0.11); head.apply_translation((xc, y, z0+1.38)); parts.append(head)
     sceptre = trimesh.creation.cylinder(radius=0.023, height=0.86); sceptre.apply_translation((xc+0.17, y-0.05, z0+0.92)); parts.append(sceptre)  # Zepter
-    return trimesh.util.concatenate(parts)
+    m = trimesh.util.concatenate(parts)
+    m.apply_translation((-xc, 0.86, -z0)); m.apply_scale(1.13); m.apply_translation((xc, -0.86, z0))  # etwas größer (User)
+    return m
 
 
 def statue_corbels():
@@ -475,18 +477,15 @@ def statue_canopies():
     Mittelfiale + 2 Eckfialen + Krabben — alle Teile DICK/verschmolzen (druckbar @1:50, ≥~1 mm),
     nicht mehr dünne freischwebende Spitzen."""
     _, xs = bay_layout(); parts = []
+    cap = EAVE - 0.08                                    # Baldachin endet an der DACHKANTE, nicht übers Dach
     for xc in xs:
-        y = -0.52; zb = HEAD-0.2
-        plat = tbox(extents=(0.80, 0.48, 0.16)); plat.apply_translation((xc, y, zb)); parts.append(plat)   # solide Konsolplatte
-        canopy = tcone(radius=0.34, height=1.0, sections=6); canopy.apply_translation((xc, y, zb+0.1)); parts.append(canopy)   # facettierte Spitzhaube
-        fin = tcone(radius=0.08, height=0.5, sections=6); fin.apply_translation((xc, y, zb+1.05)); parts.append(fin)           # Mittelfiale (dick)
-        kn = trimesh.creation.icosphere(subdivisions=0, radius=0.08); kn.apply_translation((xc, y, zb+1.5)); parts.append(kn)  # Kreuzblume
-        for dx in (-0.30, 0.30):                                                                                              # 2 solide Eckfialen
-            sf = tcone(radius=0.075, height=0.6, sections=6); sf.apply_translation((xc+dx, y, zb+0.12)); parts.append(sf)
-            k = trimesh.creation.icosphere(subdivisions=0, radius=0.06); k.apply_translation((xc+dx, y, zb+0.65)); parts.append(k)
-        for t in (0.35, 0.6, 0.85):                                                                                           # dicke Krabben auf der Haubenkante
-            for s in (-1, 1):
-                cr = trimesh.creation.icosphere(subdivisions=0, radius=0.055); cr.apply_translation((xc+s*0.34*(1-t), y-0.1, zb+0.1+1.0*t)); parts.append(cr)
+        y = -0.52; zb = cap - 1.3
+        plat = tbox(extents=(0.82, 0.5, 0.15)); plat.apply_translation((xc, y, zb)); parts.append(plat)
+        canopy = tcone(radius=0.34, height=0.72, sections=6); canopy.apply_translation((xc, y, zb+0.08)); parts.append(canopy)
+        fin = tcone(radius=0.08, height=0.42, sections=6); fin.apply_translation((xc, y, zb+0.78)); parts.append(fin)
+        kn = trimesh.creation.icosphere(subdivisions=0, radius=0.08); kn.apply_translation((xc, y, cap)); parts.append(kn)   # Spitze AUF der Dachkante
+        for dx in (-0.31, 0.31):
+            sf = tcone(radius=0.075, height=0.5, sections=6); sf.apply_translation((xc+dx, y, zb+0.1)); parts.append(sf)
     return trimesh.util.concatenate(parts)
 
 
@@ -706,16 +705,27 @@ def dach_krabben(inset=ROOF_INSET):
     parts = []
     for p0, p1 in [((0, 0, EAVE), (inset, D/2, RIDGE)), ((W, 0, EAVE), (W-inset, D/2, RIDGE))]:
         p0 = np.array(p0, float); p1 = np.array(p1, float); d = p1-p0
-        beam = trimesh.creation.cylinder(radius=0.3, segment=(tuple(p0+[0, 0, 0.28]), tuple(p1+[0, 0, 0.28])))
+        beam = trimesh.creation.cylinder(radius=0.36, segment=(tuple(p0+[0, 0, 0.3]), tuple(p1+[0, 0, 0.3])))
         parts.append(beam)                                                   # durchgehender Balken → VERBINDET alle Stufen (ein Solid, druckbar)
         n = 9
         for j in range(n):
             c = p0 + d*(j/(n-1))
-            blk = tbox(extents=(0.58, 0.64, 0.8)); blk.apply_translation((c[0], c[1], c[2]+0.42)); parts.append(blk)   # Stufenblock, überlappt den Balken
+            blk = tbox(extents=(0.72, 0.78, 0.98)); blk.apply_translation((c[0], c[1], c[2]+0.5)); parts.append(blk)   # größere Stufenblöcke (User)
         xt, yt, zt = p1                                                      # Giebel-Abschluss: KLEINE Fiale ~ First/Helm-Höhe (nicht 3 m drüber!)
         for k, s in enumerate([0.6, 0.42]):
             st = tbox(extents=(s, s, 0.4)); st.apply_translation((xt, yt, zt+0.22+k*0.32)); parts.append(st)
         tip = tcone(radius=0.18, height=0.4, sections=6); tip.apply_translation((xt, yt, zt+0.55)); parts.append(tip)
+    return trimesh.util.concatenate(parts)
+
+
+def roof_rake_gold():
+    """zwei schmale GOLDENE Streifen entlang der vorderen Dach-Rakenkanten (Foto: Goldleisten)."""
+    parts = []
+    for xe, xr, sgn in [(0.0, ROOF_INSET, 1), (W, W-ROOF_INSET, -1)]:
+        p0 = np.array([xe, 0.0, EAVE]); p1 = np.array([xr, D/2, RIDGE])
+        for off in (0.22, 0.46):
+            a = p0 + np.array([sgn*off, -0.22, 0.32]); b = p1 + np.array([sgn*off, -0.22, 0.32])
+            parts.append(trimesh.creation.cylinder(radius=0.05, segment=(tuple(a), tuple(b))))
     return trimesh.util.concatenate(parts)
 
 
@@ -948,6 +958,7 @@ def build():
         "dachrauten": roof_diaper(),
         "first": ridge_crest(),
         "krabben": dach_krabben(),
+        "dachkante_gold": roof_rake_gold(),
         "rahmen": window_goldframe(),
         "sprossen": window_muntins(),
         "balkon": balcony(),
@@ -970,7 +981,7 @@ def build():
             "dachrauten": [64, 82, 52, 255],
             "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [120, 42, 36, 255], "arkadenglas": [46, 42, 48, 255], "piers": [138, 48, 42, 255], "pierbase": [96, 84, 74, 255],
             "boegen": [192, 154, 72, 255], "first": [182, 150, 80, 255], "rahmen": [198, 168, 120, 255],
-            "wappen": [196, 150, 48, 255], "krabben": [150, 42, 36, 255], "nische": [28, 22, 24, 255],
+            "wappen": [196, 150, 48, 255], "krabben": [150, 42, 36, 255], "dachkante_gold": [196, 160, 78, 255], "nische": [28, 22, 24, 255],
             "helm_rot": [150, 44, 40, 255], "helm_hell": [224, 214, 190, 255], "helm_gruen": [86, 134, 82, 255],
             "lisenen": [188, 150, 72, 255], "sprossen": [72, 74, 84, 255],   # dunkle Bleiruten (echtes Bleiglas ist DUNKEL mit feinen Stegen) — Fenster liest als Öffnung, nicht grau
             "wappen_rot": [150, 46, 42, 255], "wappen_blau": [44, 70, 120, 255], "gitter": [60, 42, 38, 255],   # Balkon-Baluster DUNKELBRAUN (Foto: dunkle Brüstung, nicht rot)
