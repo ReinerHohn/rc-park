@@ -667,7 +667,7 @@ def dormer_roofs():
     Spitze, kein Keil, moderate Höhe. Solider Körper (druckbar)."""
     parts = []
     for xc, z in _dormer_specs():
-        ys = _slope_y(z); o = 0.14; yf = ys-DORMER_PROJ-0.10
+        ys = _slope_y(z); o = 0.16; yf = ys-DORMER_PROJ-0.40           # Dächlein kragt vorn über das Fenster (Überstand, Foto)
         xL, xR = xc-DORMER_W/2-o, xc+DORMER_W/2+o
         zt = z+DORMER_H*0.88                                # Traufe des Gaubendachs (über dem Fenster)
         zr = zt+DORMER_H*0.62; rh = DORMER_W*0.34; ym = ys-DORMER_PROJ*0.30   # First: kurz, waagrecht, nach hinten versetzt, moderate Höhe
@@ -740,6 +740,26 @@ def roof_rake_gold():
     for dz in (-0.04, 0.16):
         c = trimesh.creation.cylinder(radius=0.06, segment=((0.4, -0.34, EAVE+dz), (W-0.4, -0.34, EAVE+dz)))
         parts.append(c)
+    return trimesh.util.concatenate(parts)
+
+
+def roof_tiles_fine():
+    """ganz fein angedeutete Dachziegel (kleine überlappende Schuppen, versetzt) auf der
+    Vorderschräge — granulare Textur zum Drucken, dezent erhaben."""
+    a = D/2; b = RIDGE-EAVE; Ls = (a*a+b*b)**0.5
+    su = np.array([0, a, b])/Ls; nrm = np.array([0, -b, a])/Ls
+    xv = np.cross(su, nrm); Rm = np.eye(4); Rm[:3, 0] = xv; Rm[:3, 1] = su; Rm[:3, 2] = nrm
+    tw, th, rel = 0.26, 0.2, 0.03; parts = []; nc = int(Ls/th)
+    for ci in range(1, nc):
+        t = ci*th
+        if t > Ls-0.12:
+            break
+        base = np.array([0.0, 0.0, EAVE]) + su*t
+        x = (tw/2) if ci % 2 else 0.0
+        while x+tw <= W-0.05:
+            box = tbox(extents=(tw*0.88, th*1.3, rel)); box.apply_transform(Rm)
+            box.apply_translation(np.array([x+tw/2, base[1], base[2]]) + nrm*(rel*0.5)); parts.append(box)
+            x += tw
     return trimesh.util.concatenate(parts)
 
 
@@ -969,6 +989,7 @@ def build():
         "gauben_rahmen": dormer_frames(),
         "dachmuster": roof_courses(),
         "dachrauten": roof_diaper(),
+        "dachziegel": roof_tiles_fine(),
         "first": ridge_crest(),
         "krabben": dach_krabben(),
         "dachkante_gold": roof_rake_gold(),
@@ -991,7 +1012,7 @@ def build():
             "giebel": [116, 38, 34, 255], "balken": [120, 38, 34, 255], "galerie": [138, 48, 42, 255], "fenster": [26, 30, 36, 255], "seitenglas": [26, 30, 36, 255],
             "statuen": [206, 206, 212, 255], "konsole": [198, 160, 90, 255], "erker": [116, 38, 34, 255], "helm": [192, 152, 70, 255],
             "baldachin": [198, 162, 92, 255],
-            "gauben": [40, 34, 32, 255], "gauben_dach": [96, 108, 74, 255], "dachmuster": [88, 102, 70, 255],
+            "gauben": [40, 34, 32, 255], "gauben_dach": [96, 108, 74, 255], "dachmuster": [88, 102, 70, 255], "dachziegel": [90, 102, 70, 255],
             "dachrauten": [64, 82, 52, 255],
             "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [96, 34, 28, 255], "arkadenglas": [24, 24, 28, 255], "arkadenkreuz": [48, 44, 46, 255], "piers": [138, 48, 42, 255], "pierbase": [96, 84, 74, 255],
             "boegen": [192, 154, 72, 255], "first": [182, 150, 80, 255], "rahmen": [206, 162, 58, 255],
