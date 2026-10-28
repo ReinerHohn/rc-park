@@ -505,6 +505,20 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
     body_parts.append(_tri(V, F))                                              # Stein-Trichter (Erker-Farbe)
     for c in cor:                                                              # dünne Gold-Rippen auf den Kanten
         gold.append(trimesh.creation.cylinder(radius=0.045, segment=(tuple(boss), tuple(c))))
+    # feines GEÄSTEL unter dem Erker (Foto: gotisches Rippennetz, verästelt): gekrümmte Haupt- +
+    # Zwischenrippen + 2 Querringe → Netz, nicht nur gerade Speichen
+    boss2 = np.array([xc, -proj*0.34, z0-1.45])
+    for ci in range(len(cor)-1):
+        c, c2 = cor[ci], cor[ci+1]
+        midedge = (c+c2)/2
+        inter = (boss2+midedge)/2 + np.array([0, -0.12, 0.10])                 # Zwischenrippe bauchig nach außen
+        gold.append(trimesh.creation.cylinder(radius=0.028, segment=(tuple(boss2), tuple(inter))))
+        gold.append(trimesh.creation.cylinder(radius=0.028, segment=(tuple(inter), tuple(midedge))))
+    for frac in (0.42, 0.72):                                                  # Querringe verbinden die Rippen → Netz
+        rp = [boss2 + (cor[k]-boss2)*frac for k in range(len(cor))]
+        for p0, p1 in zip(rp[:-1], rp[1:]):
+            if np.linalg.norm(p1-p0) > 1e-3:
+                gold.append(trimesh.creation.cylinder(radius=0.022, segment=(tuple(p0), tuple(p1))))
     cx2, cy2 = xc, -proj*0.5
     cr0 = w*0.48; zf = 0.32; chh = max(3.0, (EAVE+0.62*(RIDGE-EAVE))-z1-zf-0.05)   # Spitze ~62% hoch im (steilen) Dach → hoher, schlanker Spitzhelm wie Foto (nicht mehr gedeckelt-kurz)
 
