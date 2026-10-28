@@ -423,17 +423,22 @@ def statue_niches():
 
 
 def statue_canopies():
-    """hohe ornamentierte Gold-Baldachine (Tabernakel) ÜBER den Statuen (Foto): 3 Fialen
-    (Mitte hoch), Krabben, Fialen-Spitzen — das filigrane Gold über den Figuren."""
+    """SOLIDER gotischer Baldachin (Tabernakel) ÜBER jeder Statue (Foto): facettierte Spitzhaube +
+    Mittelfiale + 2 Eckfialen + Krabben — alle Teile DICK/verschmolzen (druckbar @1:50, ≥~1 mm),
+    nicht mehr dünne freischwebende Spitzen."""
     _, xs = bay_layout(); parts = []
     for xc in xs:
-        y = -0.52; zb = HEAD-0.2                               # Baldachin ÜBER dem Kopf (Figur reicht jetzt bis ~8,7), im Spandrille bis zur Traufe
-        plat = tbox(extents=(0.72, 0.42, 0.12)); plat.apply_translation((xc, y, zb)); parts.append(plat)
-        for dx, hh, rr in [(-0.24, 0.5, 0.06), (0.0, 0.85, 0.08), (0.24, 0.5, 0.06)]:
-            sp = tcone(radius=rr, height=hh, sections=6); sp.apply_translation((xc+dx, y, zb+0.08)); parts.append(sp)
-            for t in (0.4, 0.7):                          # Krabben
-                cr = trimesh.creation.icosphere(subdivisions=0, radius=0.05); cr.apply_translation((xc+dx+rr*0.9, y, zb+0.08+hh*t)); parts.append(cr)
-            fin = trimesh.creation.cylinder(radius=0.022, height=0.22); fin.apply_translation((xc+dx, y, zb+0.08+hh+0.1)); parts.append(fin)
+        y = -0.52; zb = HEAD-0.2
+        plat = tbox(extents=(0.80, 0.48, 0.16)); plat.apply_translation((xc, y, zb)); parts.append(plat)   # solide Konsolplatte
+        canopy = tcone(radius=0.34, height=1.0, sections=6); canopy.apply_translation((xc, y, zb+0.1)); parts.append(canopy)   # facettierte Spitzhaube
+        fin = tcone(radius=0.08, height=0.5, sections=6); fin.apply_translation((xc, y, zb+1.05)); parts.append(fin)           # Mittelfiale (dick)
+        kn = trimesh.creation.icosphere(subdivisions=0, radius=0.08); kn.apply_translation((xc, y, zb+1.5)); parts.append(kn)  # Kreuzblume
+        for dx in (-0.30, 0.30):                                                                                              # 2 solide Eckfialen
+            sf = tcone(radius=0.075, height=0.6, sections=6); sf.apply_translation((xc+dx, y, zb+0.12)); parts.append(sf)
+            k = trimesh.creation.icosphere(subdivisions=0, radius=0.06); k.apply_translation((xc+dx, y, zb+0.65)); parts.append(k)
+        for t in (0.35, 0.6, 0.85):                                                                                           # dicke Krabben auf der Haubenkante
+            for s in (-1, 1):
+                cr = trimesh.creation.icosphere(subdivisions=0, radius=0.055); cr.apply_translation((xc+s*0.34*(1-t), y-0.1, zb+0.1+1.0*t)); parts.append(cr)
     return trimesh.util.concatenate(parts)
 
 
