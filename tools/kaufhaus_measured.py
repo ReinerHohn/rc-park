@@ -605,7 +605,13 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
 
 
 # ---------- giebelständige Gaube (Satteldach) ----------
-DORMER_W = 1.1
+def _dormer_size():                                   # GEMESSEN (gauben_mass.json), NICHT hardcodiert
+    try:
+        d = json.load(open("modelle/kaufhaus_freiburg/gauben_mass.json"))
+        return float(d["dormer_w_m"]), float(d["dormer_h_m"])
+    except Exception:
+        return 2.0, 1.5
+DORMER_W, DORMER_H = _dormer_size()                   # Gaubenbreite/-höhe aus Foto gemessen (Fenster/Gebäudebreite)
 
 
 def _dormer_specs():
@@ -630,7 +636,7 @@ def _slope_y(z):
     return (D/2)*(z-EAVE)/(RIDGE-EAVE)              # y-Lage der Dachhaut auf Höhe z
 
 
-DORMER_PROJ = 0.75   # wie weit die Gaube aus der Dachhaut vorsteht (Foto: deutlich, mit Wangen + Dächlein)
+DORMER_PROJ = 0.95   # wie weit die Gaube aus der Dachhaut vorsteht (Foto: deutlich, mit Wangen + Dächlein)
 
 
 def dormers():
@@ -639,7 +645,7 @@ def dormers():
     parts = []
     for xc, z in _dormer_specs():
         ys = _slope_y(z); yf = ys-DORMER_PROJ
-        body = tbox(extents=(DORMER_W, (ys+0.15)-yf, 0.8)); body.apply_translation((xc, (yf+ys+0.15)/2, z+0.38)); parts.append(body)
+        body = tbox(extents=(DORMER_W, (ys+0.15)-yf, DORMER_H)); body.apply_translation((xc, (yf+ys+0.15)/2, z+DORMER_H/2-0.05)); parts.append(body)
     return trimesh.util.concatenate(parts)
 
 
@@ -651,8 +657,8 @@ def dormer_roofs():
     for xc, z in _dormer_specs():
         ys = _slope_y(z); o = 0.14; yf = ys-DORMER_PROJ-0.10
         xL, xR = xc-DORMER_W/2-o, xc+DORMER_W/2+o
-        zt = z+0.72                                         # Traufe des Gaubendachs (über dem Fenster)
-        zr = zt+0.52; rh = DORMER_W*0.34; ym = ys-DORMER_PROJ*0.30   # First: kurz, waagrecht, nach hinten versetzt, moderate Höhe
+        zt = z+DORMER_H*0.88                                # Traufe des Gaubendachs (über dem Fenster)
+        zr = zt+DORMER_H*0.62; rh = DORMER_W*0.34; ym = ys-DORMER_PROJ*0.30   # First: kurz, waagrecht, nach hinten versetzt, moderate Höhe
         V = [(xL, yf, zt), (xR, yf, zt), (xR, ys, zt), (xL, ys, zt),   # 0..3 Traufe (vorn/hinten)
              (xc-rh, ym, zr), (xc+rh, ym, zr)]                          # 4,5 First
         F = [(0, 1, 5), (0, 5, 4),                           # Vorderfläche (Trapez, schräg nach hinten-oben)
@@ -670,8 +676,8 @@ def dormer_frames():
     for xc, z in _dormer_specs():
         ys = _slope_y(z); yf = ys-DORMER_PROJ; t = 0.1
         for dx in (-DORMER_W/2, DORMER_W/2):               # senkrechte Rahmen-Pfosten
-            parts.append(tbox(extents=(0.12, 0.12, 0.74)).apply_translation((xc+dx, yf-0.03, z+0.37)))
-        lint = tbox(extents=(DORMER_W+0.18, 0.14, 0.14)); lint.apply_translation((xc, yf-0.03, z+0.72)); parts.append(lint)  # Sturz
+            parts.append(tbox(extents=(0.15, 0.15, DORMER_H*0.9)).apply_translation((xc+dx, yf-0.03, z+DORMER_H*0.45)))
+        lint = tbox(extents=(DORMER_W+0.22, 0.16, 0.16)); lint.apply_translation((xc, yf-0.03, z+DORMER_H*0.88)); parts.append(lint)  # Sturz
         sill = tbox(extents=(DORMER_W+0.22, 0.2, 0.1)); sill.apply_translation((xc, yf-0.02, z+0.02)); parts.append(sill)    # Sohlbank
     return trimesh.util.concatenate(parts)
 
