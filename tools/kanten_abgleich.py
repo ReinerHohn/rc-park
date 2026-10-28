@@ -83,15 +83,55 @@ def tight_building(img, is_model):
     return img.crop((x0, y0, x1, y1))
 
 
-REGIONS = {                                                   # Bruchteile der Gebäude-BBox (x0,y0,x1,y1)
-    "Dach+Gauben": (0.06, 0.0, 0.94, 0.34),
-    "Statuen+Baldachine": (0.12, 0.30, 0.88, 0.50),
-    "Fenster": (0.12, 0.44, 0.88, 0.63),
-    "Balkon": (0.08, 0.60, 0.92, 0.72),
-    "Arkade": (0.04, 0.70, 0.96, 0.99),
-    "Erker-links": (0.0, 0.18, 0.18, 0.68),
-    "Erker-rechts": (0.82, 0.18, 1.0, 0.68),
-}
+def detect_bands(img):
+    """markante waagrechte GRENZEN je Bild selbst finden (FEATURE-verankert, nicht feste Bruchteile):
+    Traufe (grünes Dach unten), Fenster-Sturz/Sohlbank (1. dunkle Zone), Arkaden-Scheitel (unterste
+    dunkle Zone), Boden. Gibt y-Bruchteile 0..1 der Gebäudehöhe zurück → Regionen passen trotz
+    anderer Proportionen."""
+    a = np.asarray(img.convert("RGB")); H, W = a.shape[:2]
+    lab = classify(a)
+    xc0, xc1 = int(W*0.25), int(W*0.75)
+    green = (lab[:, xc0:xc1] == 4).mean(1); dark = (lab[:, xc0:xc1] == 3).mean(1)
+    anyb = (lab[:, xc0:xc1] != 0).mean(1)
+    rows = np.where(anyb > 0.15)[0]
+    if len(rows) < 10:
+        return None
+    top, ground = rows.min(), rows.max(); Hs = max(1, ground-top)
+    grows = np.where(green > 0.2)[0]
+    eave = grows.max() if len(grows) else top+int(Hs*0.35)
+    dark = ndimage.uniform_filter1d(dark, 5)
+    on = dark > max(0.12, dark[eave:ground].max()*0.4) if ground > eave else dark > 0.12
+    runs = []; i = eave
+    while i < ground:
+        if on[i]:
+            j = i
+            while j < ground and on[j]:
+                j += 1
+            if j-i > Hs*0.02:
+                runs.append((i, j))
+            i = j
+        else:
+            i += 1
+    win = runs[0] if runs else (eave, eave)
+    arc = runs[-1] if len(runs) >= 2 else (ground-int(Hs*0.2), ground)
+    def f(y): return (y-top)/Hs
+    return {"top": 0.0, "eave": f(eave), "win_top": f(win[0]), "win_bot": f(win[1]),
+            "arc_top": f(arc[0]), "ground": 1.0}
+
+
+def regions_from_bands(bd):
+    """benannte Regionen (x0,y0,x1,y1) aus den erkannten Bändern."""
+    e, wt, wb, at = bd["eave"], bd["win_top"], bd["win_bot"], bd["arc_top"]
+    pad = 0.02
+    return {
+        "Dach+Gauben": (0.06, 0.0, 0.94, e+pad),
+        "Statuen+Baldachine": (0.12, max(0, e-pad), 0.88, wt+pad),
+        "Fenster": (0.12, wt-pad, 0.88, wb+pad),
+        "Balkon": (0.08, wb-pad, 0.92, at+pad),
+        "Arkade": (0.04, at-pad, 0.96, 1.0),
+        "Erker-links": (0.0, e*0.6, 0.17, min(1.0, at)),
+        "Erker-rechts": (0.83, e*0.6, 1.0, min(1.0, at)),
+    }
 
 
 def main():
@@ -101,11 +141,14 @@ def main():
         os.makedirs(outdir, exist_ok=True)
         pb = tight_building(Image.open(foto), False); mb = tight_building(Image.open(modell), True)
         PW, PH = pb.size; MW, MH = mb.size
+        pbd = detect_bands(pb); mbd = detect_bands(mb)                 # Bänder je Bild SELBST erkennen
+        preg = regions_from_bands(pbd); mreg = regions_from_bands(mbd)
         print(f"{'Region':<22}{'Recall':>8}{'Prec':>7}  Urteil")
         rows = []
-        for name, (x0, y0, x1, y1) in REGIONS.items():
+        for name in preg:
+            x0, y0, x1, y1 = preg[name]; mx0, my0, mx1, my1 = mreg[name]
             pc = pb.crop((int(PW*x0), int(PH*y0), int(PW*x1), int(PH*y1)))
-            mc = mb.crop((int(MW*x0), int(MH*y0), int(MW*x1), int(MH*y1)))
+            mc = mb.crop((int(MW*mx0), int(MH*my0), int(MW*mx1), int(MH*my1)))
             rec, pre, ov, _ = compare(pc, mc)
             v = "PASS" if rec >= 0.6 else ("ok" if rec >= 0.45 else "WARN fehlende Kanten")
             ov.save(f"{outdir}/{name}.png")
