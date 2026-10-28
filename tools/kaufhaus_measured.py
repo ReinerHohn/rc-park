@@ -574,15 +574,24 @@ def dormers():
 
 
 def dormer_roofs():
-    """HOHES getreppt-ziegeliges WALMDÄCHLEIN (4-seitig) über jeder Gaube — im Foto ein TALL, steil
-    aufragender Ziegelhut (gleiche Dachziegel), deutlich höher als breit → liest frontal als Gaube."""
+    """flach ablaufendes SCHLEPPDÄCHLEIN (Sprungschanze, Foto): hinten an der Dachhaut HOCH, nach vorn
+    ABFALLEND, leicht konkav — KEINE Spitzhaube. Solider dünner Keil (druckbar)."""
     parts = []
     for xc, z in _dormer_specs():
-        ys = _slope_y(z); zt = z+0.86; o = 0.16; yf = ys-DORMER_PROJ-0.10
-        apex = (xc, yf+0.30, zt+1.15)                      # HOHE Spitze (steiler Ziegelhut, Foto)
-        C = [(xc-DORMER_W/2-o, yf, zt), (xc+DORMER_W/2+o, yf, zt), (xc+DORMER_W/2+o, ys+0.1, zt), (xc-DORMER_W/2-o, ys+0.1, zt)]
-        V = C + [apex]
-        F = [(0, 1, 4), (1, 2, 4), (2, 3, 4), (3, 0, 4), (0, 3, 2), (0, 2, 1)]   # 4 Walmflächen + Boden
+        ys = _slope_y(z); o = 0.16; yf = ys-DORMER_PROJ-0.10
+        xL, xR = xc-DORMER_W/2-o, xc+DORMER_W/2+o
+        ztop = z+0.72                                       # Gaubenkörper-Oberkante (Unterseite des Dächleins)
+        zback, zmid, zfront = z+1.00, z+0.80, z+0.70        # hinten hoch → vorn tief, konkav (Sprungschanze)
+        ym = ys-DORMER_PROJ*0.5
+        # Oberkante als 3-Punkt-Konkavkurve (hinten→vorn), Unterkante flach auf ztop
+        V = [(xL, ys, zback), (xR, ys, zback), (xL, ym, zmid), (xR, ym, zmid), (xL, yf, zfront), (xR, yf, zfront),
+             (xL, ys, ztop), (xR, ys, ztop), (xL, yf, ztop), (xR, yf, ztop)]
+        F = [(0, 1, 3), (0, 3, 2), (2, 3, 5), (2, 5, 4),     # konkave Oberseite (2 Segmente)
+             (6, 8, 9), (6, 9, 7),                           # Unterseite
+             (0, 2, 6), (2, 8, 6), (2, 4, 8),                # linke Wange
+             (1, 7, 3), (3, 7, 9), (3, 9, 5),                # rechte Wange
+             (4, 5, 9), (4, 9, 8),                           # Vorderkante
+             (0, 6, 7), (0, 7, 1)]                           # Hinterkante
         parts.append(_tri(V, F))
     return trimesh.util.concatenate(parts)
 
