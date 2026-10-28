@@ -1,0 +1,44 @@
+EGG-CRATE Gerüst  406x266 mm, Höhe bis 443 mm (vscale 1.0, 1.5625 mm/Zelle)
+Material 3.0 mm, Schlitz 2.60 mm  |  11 X-Rippen + 16 Y-Rippen (ADAPTIV: dicht bei Detail, weit bei flach)
+MONTAGE: X-Rippen (Schlitz oben) + Y-Rippen (Schlitz unten) ineinanderstecken.
+Dann Gips/Haut über die Rippen-Oberkanten.
+
+  X0a: 121x271 mm (Zinken)
+  X0b: 301x146 mm (Zinken) (+1 Tunnel)
+  X1a: 275x188 mm (Zinken)
+  X1b: 147x141 mm (Zinken) (+2 Tunnel)
+  X2a: 121x130 mm (Zinken)
+  X2b: 301x187 mm (Zinken) (+1 Tunnel)
+  X3a: 275x103 mm (Zinken)
+  X3b: 147x202 mm (Zinken) (+1 Tunnel)
+  X4a: 121x31 mm (Zinken)
+  X4b: 301x218 mm (Zinken) (+1 Tunnel)
+  X5a: 275x139 mm (Zinken) (+1 Tunnel)
+  X5b: 147x280 mm (Zinken) (+1 Tunnel)
+  X6a: 121x31 mm (Zinken)
+  X6b: 301x284 mm (Zinken) (+1 Tunnel)
+  X7a: 275x145 mm (Zinken) (+3 Tunnel)
+  X7b: 147x338 mm (Zinken)
+  X8a: 121x90 mm (Zinken)
+  X8b: 301x377 mm (Zinken) (+1 Tunnel)
+  X9a: 275x238 mm (Zinken) (+1 Tunnel)
+  X9b: 147x377 mm (Zinken)
+  X10a: 121x295 mm (Zinken)
+  X10b: 301x377 mm (Zinken) (+2 Tunnel)
+  Y0: 266x266 mm
+  Y1: 266x256 mm
+  Y2: 266x307 mm
+  Y3: 266x325 mm
+  Y4: 266x318 mm
+  Y5: 266x353 mm
+  Y6: 266x360 mm
+  Y7: 266x374 mm
+  Y8: 266x374 mm
+  Y9: 266x369 mm
+  Y10: 266x375 mm  (+1 Tunnel)
+  Y11: 266x374 mm  (+1 Tunnel)
+  Y12: 266x365 mm  (+1 Tunnel)
+  Y13: 266x377 mm  (+1 Tunnel)
+  Y14: 266x377 mm  (+1 Tunnel)
+  Y15: 266x377 mm  (+1 Tunnel)
+  + KONTUR-STACK Lage 00..21 (z_t=377..443 mm, 22 Lagen)

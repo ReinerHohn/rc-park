@@ -1,0 +1,19 @@
+{
+  "img": "daten/hofgut_sternen/fotos/g4.jpg",
+  "n_segments": 262,
+  "baender_m_ueber_unten": [
+    0.0,
+    7.02,
+    11.23,
+    14.99,
+    17.6
+  ],
+  "geschoss_abstaende_m": [
+    2.61,
+    3.76,
+    4.22,
+    7.02
+  ],
+  "achsabstand_median_m": null,
+  "entzerrt": "daten/hofgut_sternen/hofgut_g4_entzerrt.png"
+}

@@ -1,0 +1,17 @@
+RELIEF-KIT  Fenster 1720x1440 -> 2688x2250 mm, zmax 112 mm (vscale 1.0)
+Material 3.0 mm, Schlitz 3.15, Übergang zt=56 mm (50%)
+MONTAGE von unten nach oben:
+  Gitter X0
+  Gitter X1
+  Gitter X2
+  Gitter X3
+  Gitter X4
+  Gitter X5
+  Gitter Y0
+  Gitter Y1
+  Gitter Y2
+  Gitter Y3
+  Gitter Y4
+  Gitter Y5
+  ÜBERGANGSPLATTE P (auf Gitter stecken, Dübel rein)
+  Kontur-Lagen 00..18 (unten->oben, Dübel durch, 19 Stück)

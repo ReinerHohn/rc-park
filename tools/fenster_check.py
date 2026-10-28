@@ -41,7 +41,11 @@ def model_aspect():
     d = os.path.join(ROOT, "tools"); argv = sys.argv; sys.argv = ["x"]
     spec = importlib.util.spec_from_file_location("od", os.path.join(d, "overlay_diff.py"))
     od = importlib.util.module_from_spec(spec); spec.loader.exec_module(od); sys.argv = argv
-    im = od.render(); a = np.asarray(im.convert("RGB")); H, W = a.shape[:2]
+    if "--model" in sys.argv:
+        a = np.asarray(Image.open(sys.argv[sys.argv.index("--model")+1]).convert("RGB"))
+    else:
+        im = od.render(); a = np.asarray(im.convert("RGB"))
+    H, W = a.shape[:2]
     r, g, b = a[:, :, 0].astype(int), a[:, :, 1].astype(int), a[:, :, 2].astype(int)
     glass = (r < 95) & (g < 100) & (b < 115)                            # dunkles Bleiglas im Render
     by0, by1 = int(H*0.40), int(H*0.63)                                 # Fensterband (über Balkon, unter Traufe)

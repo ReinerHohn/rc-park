@@ -1,0 +1,15 @@
+{
+  "img": "daten/hofgut_sternen/fotos/g4.jpg",
+  "ref_height_m": 17.6,
+  "m_per_px": 0.008,
+  "storey_rows_m": [
+    2.86,
+    9.37
+  ],
+  "axis_m": 3.0,
+  "floor_m": 6.51,
+  "win_w": 1.1,
+  "win_h": 1.6,
+  "autocorr": 0.2,
+  "confidence": "niedrige Konfidenz → geklemmt 3–4 m"
+}

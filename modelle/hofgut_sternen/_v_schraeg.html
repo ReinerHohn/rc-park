@@ -1,0 +1,20 @@
+<!doctype html><meta charset=utf-8><style>body{margin:0;background:#aacbe6}</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type=module>
+import*as T from"three";import{GLTFLoader}from"three/addons/loaders/GLTFLoader.js";
+const sc=new T.Scene();sc.background=new T.Color(0xaacbe6);
+const cam=new T.PerspectiveCamera(42,innerWidth/innerHeight,0.1,5000);
+const rn=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});rn.setSize(innerWidth,innerHeight);document.body.appendChild(rn.domElement);
+new GLTFLoader().load("hofgut_textured.glb",g=>{
+  g.scene.traverse(o=>{if(o.isMesh){const m=o.material;o.material=new T.MeshBasicMaterial({map:m.map||null,color:m.map?0xffffff:(m.color||0xcccccc),vertexColors:m.vertexColors});}});
+  g.scene.rotation.x=-Math.PI/2;
+  const box=new T.Box3().setFromObject(g.scene);const c=box.getCenter(new T.Vector3());const s=box.getSize(new T.Vector3());
+  g.scene.position.sub(c);sc.add(g.scene);
+  const R=Math.max(s.x,s.y,s.z);
+  const az=-50, el=24;
+  const ar=az*Math.PI/180, er=el*Math.PI/180;
+  cam.position.set(R*Math.cos(er)*Math.cos(ar),R*Math.sin(er),R*Math.cos(er)*Math.sin(ar));
+  cam.lookAt(0,0,0);
+  rn.render(sc,cam);window.__done=true;
+});
+</script>
