@@ -75,6 +75,16 @@ if _MASS:
     D = float(_MASS.get("tiefe_m", D))   # Gebäudetiefe aus Messung (tiefe_messen.py: Analyse-durch-Synthese am Schrägfoto)
     print(f"  [HYBRID-Messung] RIDGE={RIDGE} EAVE={EAVE} HEAD={HEAD} SILL={SILL} ARC_SPRING={ARC_SPRING} ARC_APEX={ARC_APEX}")
 
+# DACH-TIEFEN-REGEL (UNIVERSELL, wie tools/bauwerk_generator.py): die LOD2-First (21,4) ist das
+# TIEFE Gesamtdach; die Straßenfront zeigt es perspektivisch VERKÜRZT. First aus der am Frontfoto
+# gemessenen Dachhöhe (kh_jm3289: 6,15 m über der Traufe), Tiefe auf Straßenfront kappen.
+RIDGE = round(EAVE + 6.15, 2)
+D = min(D, 8.5)
+# 1. OG höher (User): Fenster größer -> Sohlbank etwas tiefer, Sturz etwas höher (bleibt < Traufe)
+SILL = round(SILL - 0.3, 2)
+HEAD = round(min(HEAD + 0.2, EAVE - 0.2), 2)
+STAT_Z = SILL + 1.0
+
 
 def _tri(V, F):
     return trimesh.Trimesh(np.array(V, float), np.array(F), process=True)
@@ -311,10 +321,12 @@ BAL_X0, BAL_X1 = ORIEL_X[0]+1.9, ORIEL_X[1]-1.9   # Balkon NUR vor dem Fensterba
 
 def balcony():
     """VORKRAGENDER Balkon NUR vor den Fenstern (Foto: endet an den Erkern) — Platte + Konsolsteine."""
-    parts = []; x0, x1 = BAL_X0, BAL_X1; z = BAL_Z0
-    slab = tbox(extents=(x1-x0, 1.25, 0.2)); slab.apply_translation(((x0+x1)/2, -0.72, z)); parts.append(slab)
-    for x in np.linspace(x0+0.4, x1-0.4, 9):                  # Konsolsteine unter der Platte
-        cb = tbox(extents=(0.3, 0.8, 0.5)); cb.apply_translation((x, -0.5, z-0.4)); parts.append(cb)
+    parts = []; x0, x1 = BAL_X0, BAL_X1; z = BAL_Z0; mid = (x0+x1)/2; wdt = x1-x0
+    slab = tbox(extents=(wdt, 1.5, 0.22)); slab.apply_translation((mid, -0.85, z)); parts.append(slab)          # tiefere, kräftigere Platte
+    lip = tbox(extents=(wdt+0.12, 0.16, 0.18)); lip.apply_translation((mid, -1.55, z+0.02)); parts.append(lip)   # profilierte Vorderkante
+    for x in np.linspace(x0+0.35, x1-0.35, 11):              # getreppte Kragsteine (3-stufige Konsolen)
+        for (w, d, h, yy, zz) in [(0.28, 0.55, 0.2, -0.5, z-0.2), (0.22, 0.85, 0.2, -0.68, z-0.4), (0.15, 1.1, 0.2, -0.82, z-0.6)]:
+            cb = tbox(extents=(w, d, h)); cb.apply_translation((x, yy, zz)); parts.append(cb)
     return trimesh.util.concatenate(parts)
 
 
@@ -861,6 +873,18 @@ def arcade_recess():
     return trimesh.util.concatenate(parts)
 
 
+def arcade_glazing():
+    """Fenster/Türen HINTER den Arkadenbögen (Foto: in den EG-Bögen sind Fenster), knapp vor der
+    roten Rückwand — die Bögen lesen sich als verglaste Öffnungen, nicht als leere Löcher."""
+    pitch = W/N_ARCH; hgt = ARC_APEX-0.6; zc = hgt/2+0.3; parts = []
+    for i in range(N_ARCH):
+        xc = (i+0.5)*pitch
+        g = tbox(extents=(pitch*0.66, 0.1, hgt)); g.apply_translation((xc, 1.95, zc)); parts.append(g)
+        for mx in (xc-pitch*0.17, xc+pitch*0.17):                          # 2 Pfosten (Sprossen)
+            p = tbox(extents=(0.07, 0.07, hgt)); p.apply_translation((mx, 1.88, zc)); parts.append(p)
+    return trimesh.util.concatenate(parts)
+
+
 SIDE_WINY = (4.2, 6.9, 9.6)    # Y-Lagen der Seitenfenster (3 über die Tiefe, Durchgang vorn frei)
 
 
@@ -930,6 +954,7 @@ def build():
         "baldachin": statue_canopies(),
         # Wappen-Rundschilde SITZEN AN DEN ERKERN (Foto), nicht als große Goldmünzen in der Balkonbrüstung → raus (entrümpelt)
         "laube": arcade_recess(),
+        "arkadenglas": arcade_glazing(),
     }
     back = tbox(extents=(W, 0.6, EAVE)); back.apply_translation((W/2, D-0.3, EAVE/2))
     wall_m, side_glass = side_walls()
@@ -942,7 +967,7 @@ def build():
             "baldachin": [198, 162, 92, 255],
             "gauben": [40, 34, 32, 255], "gauben_dach": [96, 108, 74, 255], "dachmuster": [88, 102, 70, 255],
             "dachrauten": [64, 82, 52, 255],
-            "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [34, 24, 22, 255], "piers": [138, 48, 42, 255], "pierbase": [96, 84, 74, 255],
+            "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [120, 42, 36, 255], "arkadenglas": [46, 42, 48, 255], "piers": [138, 48, 42, 255], "pierbase": [96, 84, 74, 255],
             "boegen": [192, 154, 72, 255], "first": [182, 150, 80, 255], "rahmen": [198, 168, 120, 255],
             "wappen": [196, 150, 48, 255], "krabben": [150, 42, 36, 255], "nische": [28, 22, 24, 255],
             "helm_rot": [150, 44, 40, 255], "helm_hell": [224, 214, 190, 255], "helm_gruen": [86, 134, 82, 255],
