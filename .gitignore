@@ -16,3 +16,5 @@ modelle/stl/altstadt_preview.stl
 *.laz
 daten/hoellental/dgm025_full.npy
 .venv-pc/
+daten/kaufhaus_freiburg/dop/
+daten/kaufhaus_freiburg/lod2/
