@@ -16,11 +16,11 @@
   },
 
   "facade": {
-    "eg_top": 3.4,
-    "floors": 3,
-    "axes_x_frac": [0.21, 0.5, 0.79],
+    "eg_top": 3.0,
+    "floors": 4,
+    "axes_x_frac": [0.14, 0.28, 0.52, 0.68, 0.84],
     "string_course": false,
-    "window": { "w": 1.0, "h": 1.5, "sill_off": 0.6, "cols": 2, "rows": 2,
+    "window": { "w": 0.9, "h": 1.3, "sill_off": 0.45, "cols": 2, "rows": 2,
                 "shutters": false, "flower_boxes": true }
   },
 
@@ -47,6 +47,7 @@
                        "window_x_frac": [0.22, 0.78], "lettering": "GANTER", "lanterns": 2 },
     "satteldach":    {},
     "gauben":        { "n": 3 },
+    "schornsteine":  { "n": 1 },
     "dachrinne":     { "downpipe_x_frac": [0.03, 0.97] },
     "ausleger":      { "enabled": true }
   }
