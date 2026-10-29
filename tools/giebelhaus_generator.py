@@ -147,46 +147,30 @@ class Giebelhaus:
                 return max((self.W / 2) * (1.0 - 0.90 * up), w)
             return self.W / 2 * 0.90
 
-        # alle Fenster einsammeln, Mitte vs Flanke trennen (Treppengiebel = SYMMETRISCH, die
-        # x-Streuung ist Perspektive/Rauschen). Mittelspalte = das hohe Bogenfenster + zentrale.
-        wins = [(xf, r["z_frac"] * self.peak, bool(a))
-                for r in d["rows"] for xf, a in zip(r["x_fracs"], r.get("arched") or [False]*len(r["x_fracs"]))]
-        central = [(z, af) for xf, z, af in wins if abs(xf - 0.5) < 0.14]
-        flank = [(xf, z, af) for xf, z, af in wins if abs(xf - 0.5) >= 0.14]
-
-        # Mittelspalte nach LAGE trennen: Giebelspitze (ganz oben) + Body-Mitte (unter Traufe)
-        # bleiben einzeln; die MITTLEREN zentralen Treffer sind EIN hohes Bogenfenster -> mergen.
-        peak_w = [t for t in central if t[0] > self.peak - 2.2]
-        body_w = [t for t in central if t[0] < self.z_body + 1.5]
-        midc = [t for t in central if self.z_body + 1.5 <= t[0] <= self.peak - 2.2]
-        if peak_w:
-            specs.append((cx0, max(t[0] for t in peak_w), w, h, False))
-        if midc:                                           # das eine hohe zentrale Bogenfenster
-            zs = [t[0] for t in midc]
-            specs.append((cx0, float(np.mean(zs)), w, min(max(zs) - min(zs) + h, 3.4), True))
-        for t in body_w:
-            specs.append((cx0, t[0], w, h, bool(t[1])))
-        groups = ([1] if peak_w else []) + ([1] if midc else []) + body_w   # nur fürs Log
-
-        # Flanken: je z-Reihe SYMMETRISCH spiegeln (Paare links/rechts im gleichen Abstand)
-        flank.sort(key=lambda t: -t[1]); rows, cur = [], [flank[0]] if flank else []
-        for t in flank[1:]:
-            if abs(t[1] - np.mean([c[1] for c in cur])) < 0.05 * self.peak:
-                cur.append(t)
-            else:
-                rows.append(cur); cur = [t]
-        if cur:
-            rows.append(cur)
-        for r in rows:
-            z = float(np.mean([t[1] for t in r])); af = any(t[2] for t in r)
-            dist = float(np.mean([abs(t[0] - 0.5) for t in r])) * self.W   # mittlerer Abstand v. Mitte
-            dist = min(dist, halfwidth(z) - w / 2)
-            npair = max(1, round(len(r) / 2))
-            for k in range(npair):
-                dd = dist if npair == 1 else dist * (0.6 + 0.4 * k / max(npair - 1, 1))
-                specs.append((cx0 - dd, z, w, h, af)); specs.append((cx0 + dd, z, w, h, af))
-        print(f"  Fenster AUS DETEKTOR {path}: {len(specs)} (Diamant: {len(groups)} zentral + "
-              f"{sum(max(1,round(len(r)/2))*2 for r in rows)} Flanke, symmetrisch)")
+        # ALLE erkannten Fenster BEHALTEN (nicht mergen -> keine Fenster verlieren), nur je Reihe
+        # SYMMETRISCH spiegeln (Treppengiebel ist symmetrisch; x-Streuung = Perspektive/Rauschen).
+        for row in d["rows"]:
+            z = row["z_frac"] * self.peak
+            xfs = row["x_fracs"]; afs = row.get("arched") or [False] * len(xfs)
+            n = len(xfs); af = sum(bool(a) for a in afs) >= max(1, n // 2)
+            hw = halfwidth(z) - w / 2
+            ds = sorted(min(abs(xf - 0.5) * self.W, hw) for xf in xfs)   # Abstände von der Mitte
+            xs = []
+            if n % 2 == 1:                                    # ungerade -> eins mittig
+                xs.append(cx0); ds = ds[1:]
+            for k in range(0, len(ds) - 1, 2):                # Rest als symmetrische Paare
+                dd = (ds[k] + ds[k + 1]) / 2
+                xs.append(cx0 - dd); xs.append(cx0 + dd)
+            if len(ds) % 2 == 1:                              # ungerader Rest -> Paar aus letztem
+                dd = ds[-1]; xs.append(cx0 - dd); xs.append(cx0 + dd)
+            # zentrales Fenster im mittleren Giebel = hohes Bogenfenster
+            for x in xs:
+                tall = h
+                arched = af
+                if abs(x - cx0) < 0.3 and self.z_body + 1.5 < z < self.peak - 2.2:
+                    tall = min(h * 1.5, 3.2); arched = True
+                specs.append((float(x), z, w, tall, arched))
+        print(f"  Fenster AUS DETEKTOR {path}: {len(specs)} (alle behalten, symmetrisch)")
         return specs
 
     def arcade_openings(self):
