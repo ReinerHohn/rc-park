@@ -573,6 +573,13 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
             sc = tbox(extents=(e, e, 0.07)); sc.apply_transform(trimesh.transformations.rotation_matrix(np.pi/4, [0, 0, 1]))
             sc.apply_translation((cx2+rr*np.cos(ang), cy2+rr*np.sin(ang), zz))
             [gruen, hell, rot, gold][(i + k) % 4].append(sc)   # BUNTE Glasur-Schindeln im RAUTEN-/Schachbrettmuster (grün/creme/rot/gelb verstreut) — bunt wie Foto, aber Schachbrett → KEINE waagrechten Ringe (User)
+    # WASSERSPEIER (Gargoyles) am Helmfuß: vorspringende Speier an den vorderen Facettenecken (Foto),
+    # kragen schräg nach außen-unten; solider Körper (druckbar), Erker-Steinfarbe.
+    for a in np.linspace(np.pi*1.12, np.pi*1.88, 5):
+        p0 = np.array([cx2+cr0*1.05*np.cos(a), cy2+cr0*1.05*np.sin(a), z1-0.02])     # Ansatz am Helmfuß
+        p1 = np.array([cx2+cr0*1.75*np.cos(a), cy2+cr0*1.75*np.sin(a), z1-0.42])     # Spitze: vor + runter
+        body_parts.append(trimesh.creation.cylinder(radius=0.075, segment=(tuple(p0), tuple(p1))))
+        head = trimesh.creation.icosphere(subdivisions=0, radius=0.11); head.apply_translation(tuple(p1)); body_parts.append(head)
     zb = z1+chh+0.05; sh = 1.3; r0 = w*0.055                                     # schlanke Fiale über dem Helm
     spire = tcone(radius=r0, height=sh, sections=6); spire.apply_translation((cx2, cy2, zb)); gold.append(spire)
     fin = trimesh.creation.cylinder(radius=0.045, height=0.5); fin.apply_translation((cx2, cy2, zb+sh+0.2)); gold.append(fin)
@@ -1026,11 +1033,14 @@ def _side_hole(s):
 
 
 def side_walls():
-    """SEITENWÄNDE (Giebelseiten x≈0 / x≈W): Durchgangs-Rundbogen ganz vorne + wenige kleine
-    Fenster mit Sandsteingewände (Foto). Gibt (Wand, Glas, Gewände/Rahmen)."""
+    """SEITENWÄNDE (Giebelseiten x≈0 / x≈W): SOLIDE rote Wand + wenige kleine Fenster mit
+    Sandsteingewände (Foto pe_side: Giebelseite ist massiv, KEIN Erd­geschoss-Durchgang).
+    Gibt (Wand, Glas, Gewände/Rahmen)."""
     outer = Polygon([(0, 0), (D, 0), (D, EAVE), (0, EAVE)])      # (Y, Z)
     specs = _side_window_specs()
-    holes = [round_arch(1.9, 3.0, ARC_SPRING)] + [_side_hole(s) for s in specs]
+    # Durchgangs-Rundbogen ENTFERNT: er lag genau vor der Arkaden-Rückwand → durch die Öffnung sah man
+    # deren rote Wand bis zum Boden („hängt rum / geht zum Boden", User). Reale Giebelseite ist massiv.
+    holes = [_side_hole(s) for s in specs]
     poly = outer.difference(unary_union([h.buffer(0) for h in holes]))
     walls, glass, frames = [], [], []
     for x0 in (0.0, W-0.6):
