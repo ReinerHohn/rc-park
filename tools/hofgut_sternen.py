@@ -12,7 +12,7 @@ Maße (m) — Herkunft markiert:
 GROB→FEIN: baut FARBIGES GLB (weiße Wand, dunkles Holz/Dach, Fenster, Blumen) + Teil-STL.
 Verfeinerung Schritt für Schritt gegen g4 (Fresko, EG-Arkade, feinere Gauben) oben drauf.
 """
-import argparse, os
+import argparse, json, os
 import numpy as np
 import trimesh
 
@@ -192,14 +192,30 @@ def eg_wall_windows(Lf, z0, z1, n, y=0.0, door_x=None):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--Lf", type=float, default=40.0); ap.add_argument("--D", type=float, default=13.0)
-    ap.add_argument("--eave", type=float, default=9.0); ap.add_argument("--ridge", type=float, default=17.5)
+    ap.add_argument("--eave", type=float, default=8.2); ap.add_argument("--ridge", type=float, default=17.5)
     ap.add_argument("--socle", type=float, default=3.0); ap.add_argument("--floor", type=float, default=3.0)
     ap.add_argument("--balc-proj", type=float, default=1.3); ap.add_argument("--n-axes", type=int, default=13)
     ap.add_argument("--dormers-low", type=int, default=7); ap.add_argument("--dormers-up", type=int, default=6)
     ap.add_argument("--chimneys", type=int, default=3); ap.add_argument("--inset", type=float, default=5.0)
     ap.add_argument("--outdir", default="modelle/hofgut_sternen")
+    ap.add_argument("--schema", default="modelle/hofgut_sternen/schema.json",
+                    help="gemessenes Schema (LOD2-Massing + Foto-Kanten); überschreibt die Defaults")
     a = ap.parse_args()
+
+    # --- DATEN-GETRIEBEN: Schema aus LOD2+Foto laden und Massing/Achsen daraus setzen (nicht raten) ---
+    if os.path.exists(a.schema):
+        with open(a.schema) as f:
+            sc = json.load(f)
+        a.ridge = sc.get("ridge_m", a.ridge)                 # First  — LOD2 amtlich
+        a.eave = sc.get("eave_m", a.eave)                    # Traufe — LOD2 amtlich
+        a.Lf = sc.get("width_m", a.Lf)                       # Fassadenbreite Hauptflügel — LOD2
+        a.n_axes = sc.get("n_axes", a.n_axes)                # Fensterachsen — Foto-Kanten
+        qc = sc.get("quercheck", "n/a")
+        print(f"[schema] Massing aus LOD2: First {a.ridge} m, Traufe {a.eave} m, Breite {a.Lf} m, "
+              f"{a.n_axes} Achsen | Dachanteil-Quercheck Foto↔LOD2: {qc}")
     Lf, D, E, Rz, S, Fl, bp, N = a.Lf, a.D, a.eave, a.ridge, a.socle, a.floor, a.balc_proj, a.n_axes
+    # Geschosshöhe aus gemessener Traufe ableiten (3 Ebenen: EG + 2 OG) statt fester 3 m
+    S = a.socle; Fl = (E - S) / 2.0
 
     sockel = box(0, 0, 0, Lf, D, S)
     waende = box(0, 0, S, Lf, D, E - S)
