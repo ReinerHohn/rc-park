@@ -47,7 +47,9 @@
       "cols": 2,
       "rows": 2
     },
-    "fensterlaeden": {},
+    "fensterlaeden": {
+      "width_frac": 0.4
+    },
     "blumenkaesten": {},
     "erdgeschoss": {
       "door": true,
