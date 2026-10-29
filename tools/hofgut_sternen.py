@@ -202,6 +202,16 @@ def main():
                     help="gemessenes Schema (LOD2-Massing + Foto-Kanten); überschreibt die Defaults")
     a = ap.parse_args()
 
+    # --- PFLICHT-GATE: Quellen-Inventur (alle Quellen mergen, nichts raten) VOR dem Bau ---
+    import subprocess
+    try:
+        r = subprocess.run(["python3", "tools/quellen_inventar.py", "--name", "hofgut_sternen"],
+                            capture_output=True, text=True, timeout=60)
+        tail = [l for l in r.stdout.splitlines() if "genutzt ·" in l or "OFFEN" in l]
+        print("[quellen] " + " | ".join(tail) if tail else "[quellen] Inventur gelaufen")
+    except Exception as e:
+        print(f"[quellen] Inventur übersprungen ({e})")
+
     # --- DATEN-GETRIEBEN: Schema aus LOD2+Foto laden und Massing/Achsen daraus setzen (nicht raten) ---
     if os.path.exists(a.schema):
         with open(a.schema) as f:

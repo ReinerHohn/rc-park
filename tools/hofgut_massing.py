@@ -93,6 +93,7 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
     print(f"Massing aus LOD2-Grundriss: {len(wall_meshes)} Teile, L×B×H = {ext[0]:.1f}×{ext[1]:.1f}×{ext[2]:.1f} m")
     print(f"  Hauptflügel Teil{main}: Front x {x0:.1f}..{x1:.1f} (B {x1-x0:.1f} m), Traufe {front['eave_m']}, First {front['ridge_m']}")
     print(f"-> {out} (+ massing_frame.json)")
+    return walls, roofs, front
 
 
 if __name__ == "__main__":
