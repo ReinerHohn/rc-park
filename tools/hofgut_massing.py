@@ -109,10 +109,16 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
         E_roof = max(E * float(os.environ.get("ROOF_SWEEP", "0.45")), E - 3.5)
         inset = float(os.environ.get("ROOF_INSET", "0.28"))
     overh = float(np.clip(0.12 * min(x1 - x0, y1 - y0), 0.4, 1.0))
-    roof_meshes = [hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=overh, inset_frac=inset)]  # EIN Dach aus Laser
-    # ZENTRALES QUERSCHIFF (DOP: Kreuz-First, springt mittig zur Talseite -Y vor) — war plattgemacht
-    cx = (x0 + x1) / 2.0; cg_w = (x1 - x0) * 0.24
-    roof_meshes.append(cross_gable(cx, y0 - overh - 1.2, (y0 + y1) / 2.0, E_roof, R, cg_w))
+    # DACH zentral aus dem LUFTBILD (dach_aus_luftbild.py: Firststruktur inkl. Querschiff aus DOP).
+    # Fallback: OBB-Hüftdach aus Laser-Parametern, wenn das Luftbild-Dach (noch) nicht erzeugt wurde.
+    lb = os.path.join(os.path.dirname(out), "dach_luftbild.obj")
+    if os.path.exists(lb):
+        roof_meshes = [trimesh.load(lb)]
+        print(f"  [Dach aus LUFTBILD: {lb} (Firststruktur inkl. Querschiff aus DOP)]")
+    else:
+        roof_meshes = [hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=overh, inset_frac=inset)]
+        cx = (x0 + x1) / 2.0
+        roof_meshes.append(cross_gable(cx, y0 - overh - 1.2, (y0 + y1) / 2.0, E_roof, R, (x1 - x0) * 0.24))
 
     walls = trimesh.util.concatenate(wall_meshes)
     try:                                                          # Teildächer SAUBER verschmelzen (statt Überschneidungs-Hütchen)
