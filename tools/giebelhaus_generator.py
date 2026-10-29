@@ -138,7 +138,8 @@ class Giebelhaus:
         d = json.load(open(path)); specs = []
         cx0 = self.W / 2
         wmed = float(np.median([r["w_frac"] for r in d["rows"]])) * self.W
-        w = min(max(wmed, 0.8), 1.3); h = min(max(w * 1.5, 1.4), 2.0)
+        # echtes Kornhaus-Fenster: HOHES 2-Licht-Fenster (Doppelfenster), ~1:2.2 hochkant
+        w = min(max(wmed, 0.95), 1.25); h = min(max(w * 2.1, 2.0), 2.6)
 
         def halfwidth(z):                                     # verfügbare Giebel-Halbbreite auf z
             if z > self.z_body:
@@ -236,13 +237,15 @@ class Giebelhaus:
             for k in range(int(self.z_body / 0.7)):
                 if k % 2 == 0:
                     parts.append(slab(xe, -0.1, 0.35 + k * 0.7, 0.7, 0.22, 0.5))
-        # Fenstergewände (rosa Rahmen um jedes Fenster)
+        # Fenstergewände (kräftiger rosa Sandstein-Rahmen) + Mittelpfosten + Fensterbank je Fenster
         for cx, zc, w, h, arched in self.window_specs():
-            t = 0.16
-            parts.append(slab(cx, -0.08, zc + h / 2 + t / 2, w + 2 * t, 0.18, t))
-            parts.append(slab(cx, -0.08, zc - h / 2 - t / 2, w + 2 * t, 0.18, t))
-            parts.append(slab(cx - w / 2 - t / 2, -0.08, zc, t, 0.18, h + 2 * t))
-            parts.append(slab(cx + w / 2 + t / 2, -0.08, zc, t, 0.18, h + 2 * t))
+            t = 0.22                                                # dickeres Gewände
+            parts.append(slab(cx, -0.1, zc + h / 2 + t / 2, w + 2 * t, 0.22, t))     # Sturz
+            parts.append(slab(cx, -0.1, zc - h / 2 - t / 2, w + 2 * t, 0.22, t))     # unterer Rahmen
+            parts.append(slab(cx - w / 2 - t / 2, -0.1, zc, t, 0.22, h + 2 * t))     # linkes Gewände
+            parts.append(slab(cx + w / 2 + t / 2, -0.1, zc, t, 0.22, h + 2 * t))     # rechtes Gewände
+            parts.append(slab(cx, -0.12, zc, 0.12, 0.24, h))                         # senkrechter Mittelpfosten
+            parts.append(slab(cx, -0.16, zc - h / 2 - t - 0.07, w + 0.5, 0.34, 0.13))  # Fensterbank (Sims)
         # Arkadenbögen (Spitzbogen-Ring, rosa)
         for xc, aw, spring, apex in self.arcade_openings():
             ring = self._arch_poly(xc, aw + 0.3, 0.0, spring + 0.15, apex + 0.22).difference(
@@ -254,16 +257,24 @@ class Giebelhaus:
         return cat(parts)
 
     def windows_glass(self):
+        """2 Lichter je Fenster (geteilt vom Sandstein-Mittelpfosten) = Doppelfenster."""
         parts = []
+        mw = 0.12                                                    # Mittelpfosten-Breite
         for cx, zc, w, h, _ in self.window_specs():
-            parts.append(slab(cx, self.t - 0.1, zc, w - 0.04, 0.06, h - 0.04))
+            lw = (w - mw) / 2 - 0.03; off = (w + mw) / 4
+            for sx in (cx - off, cx + off):
+                parts.append(slab(sx, self.t - 0.1, zc, lw, 0.06, h - 0.08))
         return cat(parts)
 
     def window_muntins(self):
+        """feine Sprossen: je Licht ein Kämpfer (Querriegel) im oberen Drittel."""
         parts = []
+        mw = 0.12
         for cx, zc, w, h, _ in self.window_specs():
-            parts.append(slab(cx, -0.02, zc, 0.05, 0.05, h))         # Pfosten
-            parts.append(slab(cx, -0.02, zc, w, 0.05, 0.05))         # Kämpfer
+            lw = (w - mw) / 2; off = (w + mw) / 4; zt = zc + h * 0.18
+            for sx in (cx - off, cx + off):
+                parts.append(slab(sx, -0.02, zt, lw, 0.05, 0.04))   # Querriegel je Licht
+                parts.append(slab(sx, -0.02, zc, 0.04, 0.05, h))    # feiner Mittelsteg je Licht
         return cat(parts)
 
     def arcade_recess(self):
