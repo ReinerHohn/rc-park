@@ -22,6 +22,34 @@ def load_dgm_grid(xyz, E0, N0, n):
     return G
 
 
+def regularize_roof(H, build, min_cells=14):
+    """Dachflächen-Regularisierung: Zellen nach NeigungsRICHTUNG clustern (Walm-/Giebelflächen haben
+    je eine Richtung), je zusammenhängende Fläche eine EBENE fitten (least squares) und die Höhen
+    darauf SNAPPEN → crispe Dachflächen + scharfe Firstlinien statt weicher Blob. (RANSAC-artig.)"""
+    Hs = cv2.GaussianBlur(np.nan_to_num(H, nan=0), (5, 5), 0)
+    gx = cv2.Sobel(Hs, cv2.CV_32F, 1, 0, ksize=5)
+    gy = cv2.Sobel(Hs, cv2.CV_32F, 0, 1, ksize=5)
+    mag = np.hypot(gx, gy)
+    az = (np.degrees(np.arctan2(gy, gx)) + 360) % 360
+    sector = np.where(mag < 0.12, 8, (az // 45).astype(int) % 8)   # 8 Richtungen + „flach"(8)
+    lab = np.full(H.shape, -1, np.int32)
+    out = H.copy()
+    nextlab = 0
+    for s in range(9):
+        m = (build & (sector == s) & np.isfinite(H)).astype(np.uint8)
+        nc, cc = cv2.connectedComponents(m, 8)
+        for k in range(1, nc):
+            reg = cc == k
+            if reg.sum() < min_cells:
+                continue
+            ys, xs = np.where(reg)
+            A = np.c_[xs, ys, np.ones(len(xs))]; z = H[ys, xs]
+            coef, *_ = np.linalg.lstsq(A, z, rcond=None)         # Ebene z = a*x+b*y+c
+            out[ys, xs] = A @ coef
+            lab[reg] = nextlab; nextlab += 1
+    return out
+
+
 def main():
     tfw = open(os.path.splitext(DOM)[0] + ".tfw").read().split()
     px, _, _, py, oxc, oyc = [float(x) for x in tfw]
@@ -44,8 +72,8 @@ def main():
         Hf = np.nan_to_num(H, nan=0).astype(np.float32)
         Hf = cv2.inpaint(np.clip(Hf * 12, 0, 255).astype(np.uint8), holes, 5, cv2.INPAINT_TELEA).astype(np.float32) / 12
         H = np.where(build & ~np.isfinite(H), Hf, H)
-    H = cv2.medianBlur(np.nan_to_num(H, nan=0).astype(np.float32), 3)   # kantenerhaltend (Firste/Walme bleiben)
-    H[~build] = np.nan
+    H = cv2.medianBlur(np.nan_to_num(H, nan=0).astype(np.float32), 3)   # Laser = GROB-Form/Validator-Pfeiler,
+    H[~build] = np.nan                                                  # NICHT als Geometrie (Details zu klein fürs 1m-Raster)
     ys, xs = np.where(build)
     r0, r1, c0, c1 = ys.min(), ys.max(), xs.min(), xs.max()
 
