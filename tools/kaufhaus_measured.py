@@ -729,7 +729,11 @@ def dach_krabben(inset=ROOF_INSET):
     """MASSIVE rote STUFEN-Kante (Treppengiebel-Coping) entlang der vorderen Dach-Gratkanten +
     gestufte Fiale am oberen Ende (Foto: deutlich wuchtige rote Stufen, keine dünnen Krabben)."""
     parts = []
-    for p0, p1 in [((0, 0, EAVE), (inset, D/2, RIDGE)), ((W, 0, EAVE), (W-inset, D/2, RIDGE))]:
+    # BEIDE Rakes JEDES Giebels (vorne Y=0→First UND hinten Y=D→First) → symmetrischer Treppengiebel.
+    # Vorher nur die Vorder-Rakes → Zacken nur auf einer Dachseite (User-Bug).
+    rakes = [((0, 0, EAVE), (inset, D/2, RIDGE)), ((0, D, EAVE), (inset, D/2, RIDGE)),
+             ((W, 0, EAVE), (W-inset, D/2, RIDGE)), ((W, D, EAVE), (W-inset, D/2, RIDGE))]
+    for p0, p1 in rakes:
         p0 = np.array(p0, float); p1 = np.array(p1, float); d = p1-p0
         beam = trimesh.creation.cylinder(radius=0.36, segment=(tuple(p0+[0, 0, 0.3]), tuple(p1+[0, 0, 0.3])))
         parts.append(beam)                                                   # durchgehender Balken → VERBINDET alle Stufen (ein Solid, druckbar)
@@ -737,7 +741,8 @@ def dach_krabben(inset=ROOF_INSET):
         for j in range(n):
             c = p0 + d*(j/(n-1))
             blk = tbox(extents=(0.72, 0.78, 0.98)); blk.apply_translation((c[0], c[1], c[2]+0.5)); parts.append(blk)   # größere Stufenblöcke (User)
-        xt, yt, zt = p1                                                      # Giebel-Abschluss: KLEINE Fiale ~ First/Helm-Höhe (nicht 3 m drüber!)
+    for xt in (inset, W-inset):                                              # Giebel-Abschluss-Fiale EINMAL je Giebelspitze
+        yt, zt = D/2, RIDGE
         for k, s in enumerate([0.6, 0.42]):
             st = tbox(extents=(s, s, 0.4)); st.apply_translation((xt, yt, zt+0.22+k*0.32)); parts.append(st)
         tip = tcone(radius=0.18, height=0.4, sections=6); tip.apply_translation((xt, yt, zt+0.55)); parts.append(tip)
