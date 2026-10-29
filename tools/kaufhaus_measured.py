@@ -831,7 +831,9 @@ def gables():
 # Arkaden-Fenstermaße HOCHKANT (schmal + hoch), klein genug für Rot ringsum
 ARC_WW_FRAC = 0.24; ARC_WZ0, ARC_WZ1 = 1.1, 3.25
 ARC_DOOR = 2            # Arkadenbogen mit TÜR statt Fenster (2. von rechts, wird am Render geprüft)
-PIER_H = ARC_SPRING   # Pfeiler enden am BOGENANSATZ (Kämpfer); darüber „gehen sie in den Bogen über" (Foto/User) — NICHT bis zum Balkon durchziehen
+PIER_H = ARC_APEX   # Pfeiler steigen MIT dem Bogen bis zum Scheitel und gehen FLIESSEND in den Bogen über
+                    # (gleiche rote Farbe wie Fassade/Bogenlaibung), KEIN abgeschnittener Stumpf am Kämpfer
+                    # und NICHT bis zum Balkon (Apex 5,2 < Balkon 5,4). User: „unter den Erkern stoppten die Säulen".
 
 
 def arcade_piers():
@@ -1030,7 +1032,7 @@ def build():
             "baldachin": [198, 162, 92, 255],
             "gauben": [40, 34, 32, 255], "gauben_dach": [96, 108, 74, 255], "dachmuster": [88, 102, 70, 255], "dachziegel": [90, 102, 70, 255],
             "dachrauten": [64, 82, 52, 255],
-            "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [96, 34, 28, 255], "arkadenglas": [24, 24, 28, 255], "arkadenkreuz": [48, 44, 46, 255], "piers": [138, 48, 42, 255], "pierbase": [96, 84, 74, 255],
+            "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [96, 34, 28, 255], "arkadenglas": [24, 24, 28, 255], "arkadenkreuz": [48, 44, 46, 255], "piers": [116, 38, 34, 255], "pierbase": [96, 84, 74, 255],   # Pfeiler = GLEICHE Fassadenfarbe (User: Säule geht gleichfarbig in den Bogen über), nicht heller
             "boegen": [192, 154, 72, 255], "first": [182, 150, 80, 255], "rahmen": [206, 162, 58, 255],
             "wappen": [196, 150, 48, 255], "krabben": [150, 42, 36, 255], "dachkante_gold": [196, 160, 78, 255], "nische": [28, 22, 24, 255],
             "helm_rot": [150, 44, 40, 255], "helm_hell": [224, 214, 190, 255], "helm_gruen": [86, 134, 82, 255],
