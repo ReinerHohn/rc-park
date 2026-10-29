@@ -12,6 +12,18 @@ import hofgut_massing as HM
 from hofgut_sternen import box, gaden, window_row, flower_boxes, eg_wall_windows, zwerchhaus
 
 
+def pierced_railing(x0, y, z, length, h=1.0):
+    """Schwarzwald-Laube (Spec wm_hotel1): DURCHBROCHENE flach gesägte Baluster, eng gereiht, WEISS;
+    dunkelbrauner Handlauf + Fußleiste + auskragender Boden. Gibt (holz_braun, baluster_weiss)."""
+    holz = [box(x0, y - 0.62, z - 0.18, length, 0.72, 0.16),          # auskragender Laubenboden
+            box(x0, y - 0.60, z + h - 0.16, length, 0.20, 0.18),      # kräftiger Handlauf
+            box(x0, y - 0.58, z, length, 0.16, 0.14)]                 # Fußleiste
+    slats = []
+    for xi in np.arange(x0 + 0.12, x0 + length - 0.06, 0.135):        # flache Baluster alle ~13,5 cm
+        slats.append(box(xi, y - 0.57, z + 0.12, 0.045, 0.1, h - 0.28))
+    return trimesh.util.concatenate(holz), trimesh.util.concatenate(slats)
+
+
 def hip_dormer(x, E, w=3.0, depth=2.2, h=1.5):
     """WALM-Gaube (Spec: walmgedeckt, KEINE Spitzgiebel): Körper + allseitig geneigtes Walmdach.
     Front bei y=0, ragt nach -Y. Gibt (körper, dach)."""
@@ -32,7 +44,7 @@ def build_facade(Lf, E, FM):
     S = E * 0.46                                            # hoher Naturstein-Sockel (EG)
     N = 11
     cx0, cx1 = Lf * 0.40, Lf * 0.60                          # Fresko-Mittelzone (ohne Balkon)
-    eg_stein, galerie, blumen, fglass, fframe, dach_g = [], [], [], [], [], []
+    eg_stein, galerie, baluster, blumen, fglass, fframe, dach_g = [], [], [], [], [], [], []
     # EG = Natursteinband (als proude Platte über die Front)
     eg_stein.append(box(0.2, -0.25, 0.0, Lf - 0.4, 0.3, S))
     eg_g, eg_fr = eg_wall_windows(Lf, S * 0.45, S * 0.45 + 1.4, N - 2, door_x=Lf * 0.5)
@@ -41,9 +53,9 @@ def build_facade(Lf, E, FM):
     zf = S
     for x0s, x1s in [(0.6, cx0 - 0.2), (cx1 + 0.2, Lf - 0.6)]:
         L = x1s - x0s
-        galerie.append(box(x0s, -1.25, zf - 0.18, L, 1.35, 0.18))     # auskragender Boden
-        galerie.append(gaden(x0s, -1.25, zf, L))                      # durchbrochene Baluster
-        blumen.append(flower_boxes(x0s, -1.25, zf, L))                # Blumentröge
+        holz, slats = pierced_railing(x0s, -0.6, zf, L)               # durchbrochene weiße Baluster + braunes Holz
+        galerie.append(holz); baluster.append(slats)
+        blumen.append(flower_boxes(x0s, -0.95, zf, L))               # Blumentröge am Handlauf
     # Fensterreihe im Laubengeschoss (hinter der Laube)
     g, fr = window_row(Lf, zf + 0.5, zf + 1.9, N); fglass.append(g); fframe.append(fr)
     # Fresko mittig über der Laube
@@ -55,6 +67,7 @@ def build_facade(Lf, E, FM):
     parts = {
         "eg_stein": trimesh.util.concatenate(eg_stein),
         "balkone": trimesh.util.concatenate(galerie),
+        "baluster": trimesh.util.concatenate(baluster),
         "blumen": trimesh.util.concatenate(blumen),
         "fenster": trimesh.util.concatenate(fglass),
         "fensterrahmen": trimesh.util.concatenate(fframe),
@@ -86,7 +99,8 @@ def main():
         orn = orn.get("ornament_rgb", [210, 205, 192])
     COL = {"waende": FM["og_lauben"] + [255], "daecher": FM["dach"] + [255],
            "eg_stein": FM["eg"] + [255], "gauben_dach": FM["dach"] + [255], "kamine": [120, 108, 98, 255],
-           "balkone": orn + [255],                            # WEISS gestrichene durchbrochene Baluster (Kontrast!)
+           "balkone": [int(c * 0.78) for c in FM["og_lauben"]] + [255],   # dunkelbraunes Holz (Boden/Handlauf/Fußleiste)
+           "baluster": orn + [255],                           # WEISS gestrichene durchbrochene Baluster (Kontrast!)
            "blumen": [196, 70, 66, 255], "fenster": [38, 36, 42, 255],
            "fensterrahmen": [205, 178, 120, 255],             # helle ocker Fensterfaschen (Schauseite, Spec)
            "fresko": [172, 150, 118, 255]}
