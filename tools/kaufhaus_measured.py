@@ -575,7 +575,12 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
             m = tbox(extents=ex); m.apply_transform(Rz)
             px = ctr[0]+tu[0]*dalong+nout[0]*out; py = ctr[1]+tu[1]*dalong+nout[1]*out
             m.apply_translation((px, py, zc)); bucket.append(m)
-        lw = fw*0.82; _P = PROF if PROF else [(-0.5, 0.6), (0.0, 1.0), (0.5, 0.6)]   # voller Kielbogen (zurück wie vorhin, User)
+        lw = fw*0.82; _Praw = PROF if PROF else [(-0.5, 0.6), (0.0, 1.0), (0.5, 0.6)]
+        # ERKER-Fensterkopf FLACHER (User mit Markierung: das Konkave fällt zu stark ab, in echt flacher).
+        # Höhen affin zur Oberkante stauchen -> Schultern höher, konkaver Schwung flacher. 1.0 bleibt 1.0,
+        # Monotonie bleibt -> parametrisch gültig. Gilt NUR hier (Erker), nicht für die Hauptfenster-PROF.
+        ERK_DROOP = 0.45
+        _P = [(xf, 1.0 - (1.0 - hf) * ERK_DROOP) for xf, hf in _Praw]
 
         def facet_poly(poly2d, thick, out):                                     # 2D-Polygon (entlang, höhe) in die Facetten-Ebene heben
             m = extrude_polygon(poly2d.buffer(0), thick); Vv = m.vertices.copy()
