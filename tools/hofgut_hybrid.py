@@ -53,20 +53,21 @@ def build_facade(Lf, E, FM, meas=None):
     eg_stein.append(box(0.2, -0.25, 0.0, Lf - 0.4, 0.3, S))
     eg_g, eg_fr = eg_wall_windows(Lf, S * 0.45, S * 0.45 + 1.4, N - 2, door_x=Lf * 0.5)
     fglass.append(eg_g); fframe.append(eg_fr)
-    # 1 durchlaufende Laube im 1.OG — in zwei Segmenten links/rechts der Fresko-Mitte
-    zf = S
-    for x0s, x1s in [(0.6, cx0 - 0.2), (cx1 + 0.2, Lf - 0.6)]:
-        L = x1s - x0s
-        holz, slats = pierced_railing(x0s, -0.6, zf, L)               # durchbrochene weiße Baluster + braunes Holz
-        galerie.append(holz); baluster.append(slats)
-        blumen.append(flower_boxes(x0s, -0.95, zf, L))               # Blumentröge am Handlauf
-    # Fensterreihe im Laubengeschoss (hinter der Laube)
-    g, fr = window_row(Lf, zf + 0.5, zf + 1.9, N); fglass.append(g); fframe.append(fr)
-    # Fresko mittig über der Laube
-    fresko = box(cx0, -0.06, zf + 0.4, cx1 - cx0, 0.06, (E - zf) - 0.6)
-    # 2-3 WALM-Gauben, walmgedeckt (Spec), brechen die Front-Dachlinie
-    for x in np.array([0.30, 0.70]) * Lf:
-        b, cp = hip_dormer(x, E, w=3.2, depth=2.0, h=1.5)
+    # 2 durchlaufende Lauben (hf_front zeigt 2 Balkonebenen), je in Segmenten um die Fresko-Mitte
+    gal_levels = [S + 0.2, min(S + 0.2 + 2.6, E - 1.6)]               # untere + obere Galerie
+    for li, zf in enumerate(gal_levels):
+        segs = [(0.6, cx0 - 0.2), (cx1 + 0.2, Lf - 0.6)] if li == 1 else [(0.6, Lf - 0.6)]  # untere durchgehend
+        for x0s, x1s in segs:
+            L = x1s - x0s
+            holz, slats = pierced_railing(x0s, -0.6, zf, L)
+            galerie.append(holz); baluster.append(slats)
+            blumen.append(flower_boxes(x0s, -0.95, zf, L))
+        g, fr = window_row(Lf, zf + 0.35, zf + 1.6, N); fglass.append(g); fframe.append(fr)
+    # Fresko mittig in der oberen Ebene (zwischen den Galerie-Segmenten)
+    fresko = box(cx0, -0.06, gal_levels[1] + 0.2, cx1 - cx0, 0.06, (E - gal_levels[1]) - 0.4)
+    # ~4 WALM-Gauben (hf_front: mehrere Gauben im Dach), walmgedeckt
+    for x in np.array([0.22, 0.42, 0.60, 0.80]) * Lf:
+        b, cp = hip_dormer(x, E, w=2.8, depth=1.8, h=1.4)
         fframe.append(b); dach_g.append(cp)
     parts = {
         "eg_stein": trimesh.util.concatenate(eg_stein),
