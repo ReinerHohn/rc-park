@@ -155,3 +155,19 @@ KONSEQUENZ (neuer Pflicht-Pass, generisch): tools/element_fotovergleich.py — s
 (Helm/Gaube/Pfeiler/Bogen/Fenster/Statue) denselben Ausschnitt aus Render UND Foto und legt sie
 paarweise nebeneinander; zusätzlich IMMER mind. 2 Blickwinkel rendern (front + 3/4), weil 3D-Details
 head-on verschwinden. Und: aktiv auch nach ZUVIEL suchen (habe ich etwas gebaut, das im Foto fehlt?).
+
+## F6 (2026-10-29): GENERELLE LEHRE — Whack-a-Mole, weil nie ein VOLLSTÄNDIGER Mehrflächen-Audit
+Der User musste Fehler für Fehler selbst finden (Erker-Fenster nur vorn, Sockel grau, Statuen-Nische
+dunkel, Seitenfenster außerhalb/zu wenig, GAUBEN-Form, obere Giebelfenster fehlen). JEDER einzelne
+war am FOTO sofort sichtbar — ich habe nur nie systematisch ALLE Flächen gegen ALLE Fotos geprüft,
+sondern reaktiv auf den jeweils genannten Punkt. ROOT CAUSE (generell, teuer, wiederholt):
+„fertig/besser" gesagt nach FRONT-Ansicht + genanntem Element, statt nach einem VOLLSTÄNDIGEN
+Inventar über alle Ansichten.
+GENERELLE KONSEQUENZ (Pflicht vor „fertig" bei JEDEM Gebäude):
+1. ALLE Ansichten rendern: front, LINKS, RECHTS, 3/4 links, 3/4 rechts, Dach-Aufsicht. Nicht nur front.
+2. ALLE vorhandenen Fotos nebeneinander (nicht nur das Frontfoto) — jedes Bauteil auf JEDER Fläche.
+3. Element-Inventar zone-für-zone (vgl. [[vollstaendigkeits_inventar_juror]]): für jede Fläche
+   auflisten FEHLT / FALSCH / ÜBERFLÜSSIG — erst dann Note/„fertig".
+4. Aktiv auch nach ZU WENIG (fehlende Fenster/Flächen) UND ZU VIEL (erfundene Zierde) suchen.
+Das ist dieselbe Wurzel wie F5 (falsche Granularität/Referenz) — jetzt verschärft: nicht nur
+Element-Nahvergleich, sondern VOLLSTÄNDIGKEIT über alle Flächen, BEVOR ich dem User etwas zeige.
