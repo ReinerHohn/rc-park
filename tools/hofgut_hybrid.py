@@ -81,12 +81,15 @@ def main():
     kamine = trimesh.util.concatenate([box(front["x0"] + fx * Lf, front["y_front"] + 4, R - 1.2, 1.0, 1.0, 2.6)
                                        for fx in (0.35, 0.68)])
 
-    fr_rgb = FM.get("fensterrahmen", [82, 45, 20])
+    orn = FM.get("lueftlmalerei", [210, 205, 192])           # cremeweiße Lüftlmalerei/Baluster (Spec!)
+    if isinstance(orn, dict):
+        orn = orn.get("ornament_rgb", [210, 205, 192])
     COL = {"waende": FM["og_lauben"] + [255], "daecher": FM["dach"] + [255],
            "eg_stein": FM["eg"] + [255], "gauben_dach": FM["dach"] + [255], "kamine": [120, 108, 98, 255],
-           "balkone": [int(c * 0.82) for c in FM["og_lauben"]] + [255],
-           "blumen": [196, 70, 66, 255], "fenster": [40, 38, 44, 255],
-           "fensterrahmen": fr_rgb + [255], "fresko": [168, 150, 120, 255]}
+           "balkone": orn + [255],                            # WEISS gestrichene durchbrochene Baluster (Kontrast!)
+           "blumen": [196, 70, 66, 255], "fenster": [38, 36, 42, 255],
+           "fensterrahmen": [205, 178, 120, 255],             # helle ocker Fensterfaschen (Schauseite, Spec)
+           "fresko": [172, 150, 118, 255]}
     sc = trimesh.Scene()
     walls.visual.face_colors = COL["waende"]; roofs.visual.face_colors = COL["daecher"]
     kamine.visual.face_colors = COL["kamine"]
