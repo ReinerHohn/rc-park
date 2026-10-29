@@ -548,11 +548,11 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
                 if np.linalg.norm(b-a) > 1e-3:
                     gold.append(trimesh.creation.cylinder(radius=0.016, segment=(tuple(a), tuple(b))))
     cx2, cy2 = xc, -proj*0.5
-    cr0 = w*0.42; zf = 0.28; chh = max(3.0, (EAVE+0.62*(RIDGE-EAVE))-z1-zf-0.05)   # Helm-Fußradius < Körper-Halbbreite (w/2) → sitzt AUF dem Erker, KEIN überkragender Glockenfuß
+    cr0 = w*0.38; zf = 0.32; chh = max(3.0, (EAVE+0.62*(RIDGE-EAVE))-z1-zf-0.05)   # KONKAVES Glockenprofil behalten, aber Fuß kleiner → widester Punkt ≈ Körperbreite (w/2), kein Kreisel-Überhang
 
-    def _r(t):                                                                  # konkaves Helmprofil (t=0 Fuß .. 1 Spitze)
-        return cr0*(1-t)**2.3*0.98 + 0.015                                      # STEILER: unten breit, zieht schnell in einer Kurve dünn ein (Foto)
-    prof = [(cr0, z1-0.08), (cr0*0.99, z1+zf)]                                   # Fuß GERADE auf dem Körper (leicht überlappend z1-0.08), KEIN Überhang (User: Helm sitzt nicht gerade drauf)
+    def _r(t):                                                                  # KONKAVES Helmprofil (t=0 Fuß .. 1 Spitze): unten breit, zieht in einer Kurve dünn ein
+        return cr0*(1-t)**2.3*0.98 + 0.015
+    prof = [(cr0*1.30, z1-0.06), (cr0*1.08, z1+zf)]                              # konkav nach außen gewölbter Glockenfuß (wie vorher, User mochte das) — nur schmaler, Fuß ≈ Körperbreite, leicht in den Körper überlappend
     npro = 18
     for i in range(1, npro+1):
         t = i/npro; prof.append((_r(t), z1+zf+(chh-zf)*t))
