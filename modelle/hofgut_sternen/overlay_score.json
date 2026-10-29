@@ -1,0 +1,9 @@
+{
+ "foto": "hf_front",
+ "pose_az": 285,
+ "pose_el": 6,
+ "iou": 0.76,
+ "score": 76,
+ "eave_frac_foto": 0.278,
+ "eave_frac_modell": 0.335
+}
