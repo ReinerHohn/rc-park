@@ -44,6 +44,28 @@ def shed_dormer(x, y_slope, z_slope, w=2.0, proj=1.8, h=1.5):
     return trimesh.Trimesh(vertices=np.array(V, float), faces=np.array(F), process=True)
 
 
+def big_dormer(x, y_slope, z_slope, w=3.6, proj=1.5, h=1.9, gh=1.1):
+    """GROSSES Zwerchhaus (Giebelgaube) an der Traufe: Giebel-Frontwand + Satteldach + dunkles
+    Fenster. Gibt (Körper, Fenster). (Foto g4: wenige grosse statt vieler kleiner Gauben!)"""
+    yf = y_slope - proj; zb = z_slope - 0.5; zt = zb + h; apex = zt + gh; xl, xr = x - w / 2, x + w / 2
+    yb = y_slope
+    V = [(xl, yf, zb), (xr, yf, zb), (xr, yf, zt), (xl, yf, zt), (x, yf, apex),            # Front 0-4
+         (xl, yb, zb), (xr, yb, zb), (xr, yb, zt), (xl, yb, zt), (x, yb, apex)]            # Rück 5-9
+    F = [(0, 1, 2), (0, 2, 3), (3, 2, 4),           # Front Rechteck + Giebeldreieck
+         (5, 7, 6), (5, 8, 7), (8, 9, 7),           # Rück
+         (0, 3, 8), (0, 8, 5), (1, 6, 7), (1, 7, 2),  # Seitenwände
+         (3, 8, 9), (3, 9, 4), (2, 4, 9), (2, 9, 7),  # 2 Dachschrägen
+         (0, 5, 6), (0, 6, 1)]                       # Boden
+    body = trimesh.Trimesh(vertices=np.array(V, float), faces=np.array(F), process=True)
+    win = box(x - w * 0.36, yf - 0.08, zb + 0.45, w * 0.72, 0.1, h - 0.8)
+    return body, win
+
+
+def skylight(x, y_slope, z_slope, w=0.85, h=1.1):
+    """flaches Dachflächenfenster (Velux), liegt ~bündig auf der Schräge (dunkel)."""
+    return box(x - w / 2, y_slope - 0.06, z_slope, w, 0.12, h)
+
+
 def railing(x0, y, z, length, height=1.0, posts=None):
     """Balkonbrüstung: untere+obere Leiste + Pfosten."""
     parts = [box(x0, y, z + height - 0.12, length, 0.08, 0.12), box(x0, y, z, length, 0.08, 0.12)]
@@ -90,21 +112,24 @@ def main():
     balkone = trimesh.util.concatenate(balkone); blumen = trimesh.util.concatenate(blumen)
 
     # Fassadenfenster: EG (im Sockel) + 1.OG + 2.OG hinter den Balkonen
-    fenster = trimesh.util.concatenate([
-        window_row(Lf, 0.9, 2.1, N), window_row(Lf, S + 0.5, S + 1.9, N),
-        window_row(Lf, S + Fl + 0.5, S + Fl + 1.9, N)])
+    fwin = [window_row(Lf, 0.9, 2.1, N), window_row(Lf, S + 0.5, S + 1.9, N),
+            window_row(Lf, S + Fl + 0.5, S + Fl + 1.9, N)]
 
-    def row(n, frac):                                        # Gauben-Reihe auf der Front-Dachschräge
-        z = E + frac * (Rz - E); y_slope = (D / 2) * (z - E) / (Rz - E)
-        return [shed_dormer(x, y_slope, z, w=1.45, proj=1.3, h=0.95)                   # kleine feine Schleppgauben (Foto g4)
-                for x in np.linspace(Lf * 0.12, Lf * 0.88, n)]
-    gauben = trimesh.util.concatenate(row(a.dormers_low, 0.22) + row(a.dormers_up, 0.55))
+    # DACH: wenige GROSSE Zwerchhäuser (an der Traufe) + flache Velux — NICHT viele kleine Gauben (Foto g4)
+    dz = E + 0.13 * (Rz - E); dy = (D / 2) * (dz - E) / (Rz - E)
+    bodies = []
+    for x in np.array([0.24, 0.55, 0.82]) * Lf:
+        b, w_ = big_dormer(x, dy, dz); bodies.append(b); fwin.append(w_)
+    vz = E + 0.5 * (Rz - E); vy = (D / 2) * (vz - E) / (Rz - E)
+    velux = [skylight(x, vy, vz) for x in np.array([0.18, 0.40, 0.63, 0.86]) * Lf]
+    gauben = trimesh.util.concatenate(bodies)
+    fenster = trimesh.util.concatenate(fwin + velux)
 
     kamine = trimesh.util.concatenate(
         [box(x - 0.5, D / 2 - 0.5, Rz - 1.0, 1.0, 1.0, 3.0) for x in np.linspace(Lf * 0.25, Lf * 0.8, a.chimneys)])
 
     COL = {"sockel": [150, 144, 136, 255], "waende": [236, 231, 221, 255], "balkone": [86, 58, 40, 255],
-           "dach": [56, 50, 46, 255], "gauben": [66, 58, 52, 255], "kamine": [116, 104, 94, 255],
+           "dach": [56, 50, 46, 255], "gauben": [92, 66, 46, 255], "kamine": [116, 104, 94, 255],
            "fenster": [44, 42, 48, 255], "blumen": [182, 58, 64, 255]}   # Dach dunkel (Schindel), Holz warm-dunkel
     parts = {"sockel": sockel, "waende": waende, "balkone": balkone, "fenster": fenster,
              "blumen": blumen, "dach": dach, "gauben": gauben, "kamine": kamine}

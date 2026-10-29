@@ -25,3 +25,11 @@ Ravennaviadukts. Lage 47,9167 N / 8,0732 E. Erstnennung als Schänke 1446.
 - Fresko-Textur + Arkadenbögen im Sockel (Foto→Textur)
 - Krüppelwalm exakt (aktuell Vollwalm-Näherung)
 - Platzierung ins DGM1-Gelände + neben Viadukt (`tools/bauwerk_szene.py`)
+
+## Korrektur 2026-10-29 (LEHRE: Foto schlägt Notiz)
+„7+6 Gauben" aus dieser STAND.md war FALSCH und wurde blind in den Generator übernommen → 13
+kleine Schleppgauben = „völliger Schrott" (User). Am Foto g4 NACHGEZÄHLT: das riesige Krüppelwalm-
+Dach ist GROSSTEILS ununterbrochen, mit nur ~3 GROSSEN Zwerchhäusern (Giebelgauben, holzverkleidet,
+an der Traufe) + ~4 flachen Dachflächenfenstern (Velux). LEHRE (wie Kaufhaus F5/F9): geerbte
+Mess-/STAND-Notizen NIE blind übernehmen — Stückzahlen/Formen am Foto neu zählen. Fix: big_dormer()
++ skylight() in hofgut_sternen.py. (Nur das GEBÄUDE bauen — keine Ravenna-Brücke/Landschaft, User.)
