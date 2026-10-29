@@ -838,9 +838,18 @@ def roof():
 
 
 def gables():
-    """ROTE Giebel-Endwände (Treppengiebel-Dreiecke) an den Seiten x=0 und x=W (Foto: die
-    Dachseiten sind rote Giebel mit roter Stufenkante, nicht grün)."""
-    return trimesh.util.concatenate([plain_gable(-0.35, 0.7), plain_gable(W-0.35, 0.7)])
+    """ROTE Giebel-Endwände (Treppengiebel-Dreiecke) an den Seiten x=0 und x=W + kleine
+    Schlitzfenster, die im Giebel hochsteigen (Foto). Gibt (Wände, dunkle Scheiben)."""
+    specs = _gable_window_specs()
+    holes = [Polygon([(s["yc"]-s["hw"], s["zb"]), (s["yc"]+s["hw"], s["zb"]),
+                      (s["yc"]+s["hw"], s["zt"]), (s["yc"]-s["hw"], s["zt"])]) for s in specs]
+    walls = trimesh.util.concatenate([plain_gable(-0.35, 0.7, holes), plain_gable(W-0.35, 0.7, holes)])
+    glass = []
+    for xg in (0.0, W):
+        for s in specs:
+            g = tbox(extents=(0.1, 2*s["hw"]-0.06, s["zt"]-s["zb"]))
+            g.apply_translation((xg, s["yc"], (s["zb"]+s["zt"])/2)); glass.append(g)
+    return walls, trimesh.util.concatenate(glass)
 
 
 # Arkaden-Fenstermaße HOCHKANT (schmal + hoch), klein genug für Rot ringsum
@@ -1025,9 +1034,19 @@ def side_walls():
             trimesh.util.concatenate(frames))
 
 
-def plain_gable(x_end, dx=0.5):
-    """normale Dreiecks-Giebelwand (KEIN Treppengiebel — Original hat Satteldach, Juror)."""
+def _gable_window_specs():
+    """kleine SCHLITZ-Fenster im hohen Treppengiebel (Foto 6eb54ef6 linke Giebelseite: schmale
+    hohe Schlitze, die im Giebel hochsteigen). Y≈Mitte (bleibt im Dreieck), zwei Höhen."""
+    zc = D/2
+    return [dict(yc=zc, hw=0.28, zb=EAVE+0.8,  zt=EAVE+2.4),
+            dict(yc=zc, hw=0.26, zb=EAVE+3.1,  zt=EAVE+4.5)]
+
+
+def plain_gable(x_end, dx=0.5, holes=None):
+    """Dreiecks-Giebelwand (Satteldach) mit optionalen Schlitzfenster-Löchern."""
     P = Polygon([(0, EAVE), (D/2, RIDGE), (D, EAVE)])
+    if holes:
+        P = P.difference(unary_union([h.buffer(0) for h in holes]))
     m = extrude_polygon(P, dx); V = m.vertices.copy()
     m.vertices = np.c_[x_end+V[:, 2], V[:, 0], V[:, 1]]
     return m
@@ -1036,13 +1055,15 @@ def plain_gable(x_end, dx=0.5):
 def build():
     e0 = oriel(ORIEL_X[0], SILL-0.6, EAVE-1.0, w=2.5, proj=1.5)   # zurück auf vorherige Erker-Maße
     e1 = oriel(ORIEL_X[1], SILL-0.6, EAVE-1.0, w=2.5, proj=1.5)
+    giebel_wall, giebel_glas = gables()
     parts = {
         "fassade": facade_wall(),
         "balken": red_lintel(),
         "cornice": cornice(),
         "konsolen": cornice_corbels(),
         "dach": roof(),
-        "giebel": gables(),
+        "giebel": giebel_wall,
+        "giebelglas": giebel_glas,
         "piers": arcade_piers(),
         "pierbase": pier_bases(),
         # "lisenen": pier_lisenen(),  # ENTFERNT — die Pfeiler haben KEINE senkrechte Goldlinie (User)
@@ -1083,7 +1104,7 @@ def build():
     parts["seitenrahmen"] = side_frames
 
     cols = {"fassade": [116, 38, 34, 255], "waende": [104, 34, 30, 255], "dach": [96, 108, 74, 255],   # tieferes Ochsenblut-Rot (Foto); Dach moosig-olivgrün (NICHT rot — Foto zeigt grün)
-            "giebel": [116, 38, 34, 255], "balken": [120, 38, 34, 255], "galerie": [138, 48, 42, 255], "fenster": [26, 30, 36, 255], "seitenglas": [26, 30, 36, 255], "seitenrahmen": [196, 176, 140, 255],   # heller Sandstein-Gewände um die Seitenfenster (Foto)
+            "giebel": [116, 38, 34, 255], "balken": [120, 38, 34, 255], "galerie": [138, 48, 42, 255], "fenster": [26, 30, 36, 255], "seitenglas": [26, 30, 36, 255], "seitenrahmen": [196, 176, 140, 255], "giebelglas": [26, 30, 36, 255],   # heller Sandstein-Gewände + dunkle Giebel-Schlitzfenster (Foto)
             "statuen": [206, 206, 212, 255], "konsole": [198, 160, 90, 255], "erker": [116, 38, 34, 255], "helm": [192, 152, 70, 255],
             "baldachin": [198, 162, 92, 255],
             "gauben": [40, 34, 32, 255], "gauben_dach": [96, 108, 74, 255], "dachmuster": [88, 102, 70, 255], "dachziegel": [90, 102, 70, 255],
