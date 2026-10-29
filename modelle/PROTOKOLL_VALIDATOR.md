@@ -133,3 +133,25 @@ und ansehen, bevor man auch noch die Grundgeometrie (Höhe) ändert. Ein geometr
 ein anderes trägt/überleitet (Pfeiler->Bogen), darf man nicht kürzen, ohne zu prüfen, ob der Übergang
 erhalten bleibt — sonst entsteht ein Stumpf. Immer Render ansehen (Änderungs-Wächter), BESONDERS die
 Sonderfälle an den Rändern/unter Anbauten (Erker), nicht nur die Regelmitte.
+
+## F5 (2026-10-29): warum erst JETZT gefunden (Spitzbögen, Gold-Helm, Pfeiler-Gold, Dächlein)
+Vom User gefunden, nicht von mir: (1) Arkade RUND statt SPITZ, (2) Erker-Helme golddominant statt
+bunt glasiert, (3) senkrechte Gold-Lisene + Kapitellringe an Pfeilern existieren gar nicht,
+(4) Walm-Dächlein zu flach. WARUM übersehen — 4 verschiedene Ursachen, eine gemeinsame Wurzel:
+- **Spitzbögen**: ich habe einer EIGENEN alten Notiz/einem Juror vertraut („Arkade ist rund, Foto/Juror")
+  statt das Foto JEDES MAL selbst neu zu lesen. Anker auf vergangener Schlussfolgerung statt Grundwahrheit.
+  -> Eigene Notizen/Juror-Urteile sind KEINE Grundwahrheit; das Foto schlägt beide (vgl. [[vision_juror_ratsche]]).
+- **Gold-Helm**: nur auf GEBÄUDE-Ebene (Gestalt „bunter Helm = ok") geprüft, nie einen Nah-Crop MEINES
+  Helms neben einen Nah-Crop des ECHTEN gelegt. Element-Nahvergleich (vom User erzwungen) zeigte sofort
+  Gold-Dominanz + Schachbrett statt Farbbänder.
+- **Pfeiler-Gold/Ringe**: SPEKULATIV hinzugefügte „plausible" Zierde („feines Gliederungsdetail"), nie
+  gegen das Foto verifiziert. ÜBER-GENERIERUNG ist eine eigene Fehlerklasse — Details ERFINDEN ist so
+  falsch wie Details übersehen.
+- **Dächlein**: Geometrie war da, aber nur in der FRONT-Ansicht geprüft, wo Walmdächer edge-on
+  verschwinden -> sah aus wie flache Löcher. Nie eine 3/4-Ansicht gerendert.
+GEMEINSAME WURZEL: in der FALSCHEN GRANULARITÄT und gegen die FALSCHE REFERENZ geprüft (Gestalt +
+eigene Notizen statt Element-Nahvergleich gegen das Foto, und nur EIN Blickwinkel).
+KONSEQUENZ (neuer Pflicht-Pass, generisch): tools/element_fotovergleich.py — schneidet je Bauteil
+(Helm/Gaube/Pfeiler/Bogen/Fenster/Statue) denselben Ausschnitt aus Render UND Foto und legt sie
+paarweise nebeneinander; zusätzlich IMMER mind. 2 Blickwinkel rendern (front + 3/4), weil 3D-Details
+head-on verschwinden. Und: aktiv auch nach ZUVIEL suchen (habe ich etwas gebaut, das im Foto fehlt?).
