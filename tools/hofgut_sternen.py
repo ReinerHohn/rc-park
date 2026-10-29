@@ -96,15 +96,16 @@ def main():
 
     def row(n, frac):                                        # Gauben-Reihe auf der Front-Dachschräge
         z = E + frac * (Rz - E); y_slope = (D / 2) * (z - E) / (Rz - E)
-        return [shed_dormer(x, y_slope, z) for x in np.linspace(Lf * 0.12, Lf * 0.88, n)]
+        return [shed_dormer(x, y_slope, z, w=1.45, proj=1.3, h=0.95)                   # kleine feine Schleppgauben (Foto g4)
+                for x in np.linspace(Lf * 0.12, Lf * 0.88, n)]
     gauben = trimesh.util.concatenate(row(a.dormers_low, 0.22) + row(a.dormers_up, 0.55))
 
     kamine = trimesh.util.concatenate(
         [box(x - 0.5, D / 2 - 0.5, Rz - 1.0, 1.0, 1.0, 3.0) for x in np.linspace(Lf * 0.25, Lf * 0.8, a.chimneys)])
 
-    COL = {"sockel": [150, 144, 136, 255], "waende": [234, 229, 219, 255], "balkone": [92, 62, 42, 255],
-           "dach": [72, 64, 58, 255], "gauben": [86, 76, 68, 255], "kamine": [120, 108, 98, 255],
-           "fenster": [46, 44, 50, 255], "blumen": [178, 60, 66, 255]}
+    COL = {"sockel": [150, 144, 136, 255], "waende": [236, 231, 221, 255], "balkone": [86, 58, 40, 255],
+           "dach": [56, 50, 46, 255], "gauben": [66, 58, 52, 255], "kamine": [116, 104, 94, 255],
+           "fenster": [44, 42, 48, 255], "blumen": [182, 58, 64, 255]}   # Dach dunkel (Schindel), Holz warm-dunkel
     parts = {"sockel": sockel, "waende": waende, "balkone": balkone, "fenster": fenster,
              "blumen": blumen, "dach": dach, "gauben": gauben, "kamine": kamine}
     os.makedirs(a.outdir, exist_ok=True)
