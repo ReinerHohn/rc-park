@@ -71,7 +71,7 @@ def main():
 
     # Wände: Front-Flächen (-Y) <- Frontfoto; Rest <- Holz
     fn = walls.face_normals
-    front = fn[:, 1] < -0.5
+    front = fn[:, 1] < -0.3                                   # alle front-zugewandten Flächen (auch leicht schräge)
     (wx0, wy0, wz0), (wx1, wy1, wz1) = walls.bounds[0], walls.bounds[1]
     front_mesh = walls.submesh([np.where(front)[0]], append=True)
     rest_mesh = walls.submesh([np.where(~front)[0]], append=True)
