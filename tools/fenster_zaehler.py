@@ -47,15 +47,12 @@ def detect_windows(crop, thr=None, close_k=5, min_af=3e-4, max_af=0.035,
     gegen Himmel/Boden), close_k reconnektiert durch Himmel-Spiegelung/Sprossen fragmentierte
     Scheiben zu EINER Öffnung, min_af/max_af Flächen-, ar_*/min_fill Form-Grenzen.
     Wide Bänder (Schriftzug/Gesims, aspect gross) und Arkade (zu gross) fallen so raus."""
-    g = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY).astype(np.int16)
+    g = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
     H, W = g.shape
-    # ADAPTIV & FARBUNABHÄNGIG: Fenster = lokal dunkler als die umgebende Wand (egal ob weisse,
-    # rote oder gelbe Fassade). Lokale Wandhelligkeit per grossem Gauss, Schwelle relativ dazu —
-    # verallgemeinert von „dunkles Glas auf weisser Wand" (Kornhaus) auf jede Fassadenfarbe.
-    bg = cv2.GaussianBlur(g.astype(np.float32), (0, 0), max(H, W) * 0.045)
-    rel = bg - g                                              # wie viel dunkler als lokale Wand
-    off = thr if thr is not None else (max(14.0, 0.6 * float(rel[rel > 0].std())) if (rel > 0).any() else 14.0)
-    dark = (rel > off).astype(np.uint8) * 255
+    if thr is None:
+        c = g[int(0.15 * H):int(0.75 * H), int(0.25 * W):int(0.75 * W)]
+        thr = max(70, int(c.mean() - 0.7 * c.std()))
+    dark = (g < thr).astype(np.uint8) * 255
     dark = cv2.morphologyEx(dark, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
     dark = cv2.morphologyEx(dark, cv2.MORPH_CLOSE, np.ones((close_k, close_k), np.uint8))
     n, lab, stats, cent = cv2.connectedComponentsWithStats(dark)

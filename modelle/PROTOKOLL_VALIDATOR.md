@@ -56,3 +56,20 @@ Modellen KALIBRIEREN (Kaufhaus/Oberkirch liefen gut → müssen hoch scoren).
 3. Perspektiv-Overlay (foto_modell_homografie) als SILHOUETTE-Ersatz einhängen (misst echte
    Abweichung statt perspektiv-gedeckelter IoU) — braucht verlässliche Passpunkte/Kalibrierung.
 4. FARBE: pro Farbgruppe (Wand/Dach/Zier) statt nur Fassaden-Median.
+
+## Nachtrag: Kornhaus-Fenster genauer (User: „fehlt ein Fenster, Form passt nicht")
+Diagnose (durch genaues Hinsehen Modell vs Foto-Giebel):
+1. **Adaptiv-Umbau regressierte den Kornhaus** (Lokalisierung brach: Box lief in Café/Nachbar,
+   Giebelfenster verloren). Globale Schwelle ist für HELLE Putzfassaden am stabilsten → auf
+   diese zurück (adaptiv nur als Auto-Fallback für dunkle/farbige Fassaden gedacht; aktuell
+   deaktiviert, da Lokalisierung instabil). Kornhaus wieder sauber 13 Fenster, Box 0.33–0.73.
+2. **Fensterform zu quadratisch** (h/w≈1.1), real HOCHKANT (h/w≈1.5–1.8). Ursache: Detektor
+   misst das DUNKELGLAS, nicht die Öffnung — Himmel-Spiegelung/Bogen kappt oben → Höhe
+   systematisch zu klein. Fix: physik. Prior im Generator (Mindest-h/w 1.5), kein Augenmaß.
+3. OFFEN/ehrlich: exakte Form (Bogen-Oberkante + Kreuzstock-Teilung + Sandstein-Öffnung statt
+   Glas-BBox) braucht KONTUR-Erkennung der Öffnung, nicht nur Dunkel-Blob-BBox. Giebel wirkt
+   noch zu gestreckt (Stufenhöhe ~2 m); Giebelfenster evtl. kleiner als Prior.
+
+LEHRE (hart, selbst): NICHT durch schnelles Parameter-Drehen „generalisieren" — der Adaptiv-
+Umbau verbesserte das rote Kaufhaus, regressierte aber das Kornhaus. Jede Änderung gegen ALLE
+bekannt-guten Fälle testen (Kalibrier-Suite), sonst Oszillation [[fehleranalyse_warum_oszillation]].

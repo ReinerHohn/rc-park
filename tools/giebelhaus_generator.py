@@ -140,6 +140,11 @@ class Giebelhaus:
             z = row["z_frac"] * self.peak                     # Box-Oberkante ≈ First-Höhe
             w = row["w_frac"] * self.W
             h = row["h_frac"] * self.peak
+            # SHAPE-Korrektur: der Detektor misst das DUNKELGLAS (Spiegelung/Bogen kappt oben) ->
+            # systematisch zu niedrig/quadratisch. Altstadt-Fenster sind HOCHKANT -> Mindest-
+            # Seitenverhältnis erzwingen (kein Augenmaß je Fenster, eine physik. Prior-Regel).
+            if h < w * 1.5:
+                h = w * 1.5
             arch_flags = row.get("arched") or [False] * len(row["x_fracs"])
             for xf, af in zip(row["x_fracs"], arch_flags):
                 specs.append((xf * self.W, z, w, h, bool(af)))   # Bogen AUS Detektor-Form
