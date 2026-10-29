@@ -150,6 +150,10 @@ class Giebelhaus:
             if i < self.nsteps:                                                           # senkrechte Riser-Kanten
                 for xe in (xl, xr):
                     parts.append(slab(xe, -0.12, z + sh / 2, 0.22, 0.24, sh))
+        # Gesims-/Gurtbänder (rosa Sandstein-Stringcourse): über der Arkade (das 'Kornhaus'-Band)
+        # und am Giebelfuß (Traufgesims, auf dem der Treppengiebel aufsetzt)
+        for zb_band, hb in self.cfg["facade"].get("string_courses", []):
+            parts.append(slab(self.W / 2, -0.12, zb_band, self.W + 0.2, 0.26, hb))
         # Eckquader (Eckquaderung) links + rechts im Body (abwechselnd)
         for xe in (0.0, self.W):
             for k in range(int(self.z_body / 0.7)):
@@ -196,11 +200,23 @@ class Giebelhaus:
         return cat(parts)
 
     def roof(self):
-        """einfaches Dach hinter dem Giebel: First vorn an der Spitze, läuft nach hinten,
-        Seitenschrägen zu den Traufen (auf z_body)."""
-        W, D, zb, pk = self.W, self.D, self.z_body, self.peak
-        V = [(0, 0, zb), (W, 0, zb), (0, D, zb), (W, D, zb), (W / 2, 0, pk), (W / 2, D, pk)]
-        F = [(0, 4, 5), (0, 5, 2), (1, 3, 5), (1, 5, 4), (2, 5, 3), (0, 1, 4)]
+        """Satteldach HINTER dem Treppengiebel: First läuft front->hinten (parallel zur Tiefe),
+        Traufen auf z_body an x=0/x=W. WICHTIG (giebelständig/Zackenhaus): das Dach darf in der
+        FRONTANSICHT NICHT sichtbar sein — die Giebel-Treppenwand schirmt es ab. Deshalb:
+        - Dach beginnt HINTER der Fassade (y0 = Wandstärke t, nicht y=0)
+        - First-Höhe < peak (Giebelwand ragt als Staffel über das Dach) -> von vorn voll verdeckt
+        - KEINE vordere Giebel-Dreiecksfläche (die war der sichtbare 'Scheindach'-Fehler)."""
+        W, D, zb, pk, t = self.W, self.D, self.z_body, self.peak, self.t
+        z_ridge = zb + (pk - zb) * 0.60             # First deutlich unter Giebelspitze -> verdeckt
+        y0 = t                                      # hinter der Fassadenwand
+        V = [(0, y0, zb), (W, y0, zb), (0, D, zb), (W, D, zb),
+             (W / 2, y0, z_ridge), (W / 2, D, z_ridge)]
+        F = [(0, 4, 5), (0, 5, 2), (1, 3, 5), (1, 5, 4),   # nur die zwei Dachflächen (Satteldach)
+             (2, 5, 3)]                                     # hinterer Giebel geschlossen
+        # KEINE vordere Giebelfläche: die würde als Dreieck in den Himmel-Lücken zwischen den
+        # Treppenstufen sichtbar = genau der 'Scheindach'-Fehler. Die Dachschrägen selbst liegen
+        # unter jeder Stufen-Tread -> von vorn unsichtbar. Front bleibt offen (Dach ist eigenes
+        # Druckteil, bei Bedarf separat solidifizieren).
         return trimesh.Trimesh(vertices=np.array(V, float), faces=np.array(F))
 
     def lanterns(self):
