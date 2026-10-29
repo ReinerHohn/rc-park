@@ -857,12 +857,19 @@ def gables():
     holes = [Polygon([(s["yc"]-s["hw"], s["zb"]), (s["yc"]+s["hw"], s["zb"]),
                       (s["yc"]+s["hw"], s["zt"]), (s["yc"]-s["hw"], s["zt"])]) for s in specs]
     walls = trimesh.util.concatenate([plain_gable(-0.35, 0.7, holes), plain_gable(W-0.35, 0.7, holes)])
-    glass = []
-    for xg in (0.0, W):
+    glass, frames = [], []
+    for xg, xf in ((0.0, -0.3), (W, W+0.3)):          # xg=Glas (mittig in der Wand), xf=Gewände (außen proud)
         for s in specs:
-            g = tbox(extents=(0.1, 2*s["hw"]-0.06, s["zt"]-s["zb"]))
-            g.apply_translation((xg, s["yc"], (s["zb"]+s["zt"])/2)); glass.append(g)
-    return walls, trimesh.util.concatenate(glass)
+            yc, hw, zb, zt = s["yc"], s["hw"], s["zb"], s["zt"]
+            g = tbox(extents=(0.1, 2*hw-0.06, zt-zb)); g.apply_translation((xg, yc, (zb+zt)/2)); glass.append(g)
+            for dy in (-hw, hw):                       # Sandstein-Pfosten
+                frames.append(tbox(extents=(0.12, 0.1, zt-zb)).apply_translation((xf, yc+dy, (zb+zt)/2)))
+            frames.append(tbox(extents=(0.14, 2*hw+0.24, 0.1)).apply_translation((xf, yc, zt)))   # Sturz
+            frames.append(tbox(extents=(0.14, 2*hw+0.24, 0.1)).apply_translation((xf, yc, zb)))   # Sohlbank
+            if s["cross"]:                             # KREUZSTOCK: senkrechter Mittelpfosten + waagrechter Kämpfer
+                frames.append(tbox(extents=(0.1, 0.08, zt-zb)).apply_translation((xf, yc, (zb+zt)/2)))
+                frames.append(tbox(extents=(0.1, 2*hw, 0.08)).apply_translation((xf, yc, (zb+zt)/2)))
+    return walls, trimesh.util.concatenate(glass), trimesh.util.concatenate(frames)
 
 
 # Arkaden-Fenstermaße HOCHKANT (schmal + hoch), klein genug für Rot ringsum
@@ -1048,11 +1055,11 @@ def side_walls():
 
 
 def _gable_window_specs():
-    """kleine SCHLITZ-Fenster im hohen Treppengiebel (Foto 6eb54ef6 linke Giebelseite: schmale
-    hohe Schlitze, die im Giebel hochsteigen). Y≈Mitte (bleibt im Dreieck), zwei Höhen."""
-    zc = D/2
-    return [dict(yc=zc, hw=0.28, zb=EAVE+0.8,  zt=EAVE+2.4),
-            dict(yc=zc, hw=0.26, zb=EAVE+3.1,  zt=EAVE+4.5)]
+    """Fenster im hohen Treppengiebel, GEMESSEN am Foto ac7b01d5 (rechte Giebelseite): EIN kleines
+    zweiflügliges KREUZ-Fenster (2×2, unten) + EIN schmaler SCHLITZ (höher), beide zur VORDERKANTE
+    versetzt (Y<D/2), nicht mittig — und KEINE zwei gleichen Schlitze."""
+    return [dict(yc=round(D*0.34, 2), hw=0.40, zb=EAVE+0.8, zt=EAVE+2.05, cross=True),   # 2×2 Kreuzfenster
+            dict(yc=round(D*0.37, 2), hw=0.15, zb=EAVE+2.7, zt=EAVE+3.95, cross=False)]   # schmaler Schlitz
 
 
 def plain_gable(x_end, dx=0.5, holes=None):
@@ -1068,7 +1075,7 @@ def plain_gable(x_end, dx=0.5, holes=None):
 def build():
     e0 = oriel(ORIEL_X[0], SILL-0.6, EAVE-1.0, w=2.5, proj=1.5)   # zurück auf vorherige Erker-Maße
     e1 = oriel(ORIEL_X[1], SILL-0.6, EAVE-1.0, w=2.5, proj=1.5)
-    giebel_wall, giebel_glas = gables()
+    giebel_wall, giebel_glas, giebel_rahmen = gables()
     parts = {
         "fassade": facade_wall(),
         "balken": red_lintel(),
@@ -1077,6 +1084,7 @@ def build():
         "dach": roof(),
         "giebel": giebel_wall,
         "giebelglas": giebel_glas,
+        "giebelrahmen": giebel_rahmen,
         "piers": arcade_piers(),
         "pierbase": pier_bases(),
         # "lisenen": pier_lisenen(),  # ENTFERNT — die Pfeiler haben KEINE senkrechte Goldlinie (User)
@@ -1118,7 +1126,7 @@ def build():
 
     cols = {"fassade": [116, 38, 34, 255], "waende": [116, 38, 34, 255], "dach": [98, 104, 88, 255],   # Seiten-/Rückwand = Fassadenrot; Dach VERWITTERT grau-grün (entsättigt, Foto ~grau-grün, nicht kräftig grün)
 
-            "giebel": [116, 38, 34, 255], "balken": [120, 38, 34, 255], "galerie": [138, 48, 42, 255], "fenster": [26, 30, 36, 255], "seitenglas": [26, 30, 36, 255], "seitenrahmen": [196, 176, 140, 255], "giebelglas": [26, 30, 36, 255],   # heller Sandstein-Gewände + dunkle Giebel-Schlitzfenster (Foto)
+            "giebel": [116, 38, 34, 255], "balken": [120, 38, 34, 255], "galerie": [138, 48, 42, 255], "fenster": [26, 30, 36, 255], "seitenglas": [26, 30, 36, 255], "seitenrahmen": [196, 176, 140, 255], "giebelglas": [26, 30, 36, 255], "giebelrahmen": [196, 176, 140, 255],   # dunkle Giebelfenster + heller Sandstein-Gewände/Kreuzstock (Foto)
             "statuen": [206, 206, 212, 255], "konsole": [198, 160, 90, 255], "erker": [116, 38, 34, 255], "helm": [192, 152, 70, 255],
             "baldachin": [198, 162, 92, 255],
             "gauben": [40, 34, 32, 255], "gauben_dach": [98, 104, 88, 255], "dachmuster": [92, 99, 83, 255], "dachziegel": [94, 100, 84, 255],
