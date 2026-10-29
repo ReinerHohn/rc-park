@@ -147,25 +147,33 @@ class Giebelhaus:
                 return max((self.W / 2) * (1.0 - 0.90 * up), w)
             return self.W / 2 * 0.90
 
-        # ALLE erkannten Fenster BEHALTEN (nicht mergen -> keine Fenster verlieren), nur je Reihe
-        # SYMMETRISCH spiegeln (Treppengiebel ist symmetrisch; x-Streuung = Perspektive/Rauschen).
-        for row in d["rows"]:
-            # z-Abbildung + ÜBER die Arkade klemmen: Body-Fenster dürfen nicht in die Bögen rutschen
-            z = min(max(row["z_frac"] * self.peak, self.eg_top + 1.3), self.peak - 0.5)
-            xfs = row["x_fracs"]; afs = row.get("arched") or [False] * len(xfs)
-            n = len(xfs); af = sum(bool(a) for a in afs) >= max(1, n // 2)
-            hw = halfwidth(z) - w / 2
-            ds = sorted(min(abs(xf - 0.5) * self.W, hw) for xf in xfs)   # Abstände von der Mitte
-            xs = []
-            if n % 2 == 1:                                    # ungerade -> eins mittig
+        def sym_xs(xfs, z):                                   # Positionen einer Reihe symmetrisch spiegeln
+            n = len(xfs); hw = halfwidth(z) - w / 2
+            ds = sorted(min(abs(xf - 0.5) * self.W, hw) for xf in xfs); xs = []
+            if n % 2 == 1:
                 xs.append(cx0); ds = ds[1:]
-            for k in range(0, len(ds) - 1, 2):                # Rest als symmetrische Paare
-                dd = (ds[k] + ds[k + 1]) / 2
-                xs.append(cx0 - dd); xs.append(cx0 + dd)
-            if len(ds) % 2 == 1:                              # ungerader Rest -> Paar aus letztem
-                dd = ds[-1]; xs.append(cx0 - dd); xs.append(cx0 + dd)
-            for x in xs:                                      # alle gleich hoch; Bogen nur als Oberkante
+            for k in range(0, len(ds) - 1, 2):
+                dd = (ds[k] + ds[k + 1]) / 2; xs.append(cx0 - dd); xs.append(cx0 + dd)
+            if len(ds) % 2 == 1:
+                xs.append(cx0 - ds[-1]); xs.append(cx0 + ds[-1])
+            return xs
+
+        # GIEBEL-Reihen (über der Traufe) einzeln symmetrisch; BODY-Reihen (unter dem Band) zu
+        # EINER Reihe zusammen und ÜBER DIE BÖGEN zentriert (User: über jedem Bogen ein Fenster).
+        band = 0.33                                           # z_frac-Grenze Giebel/Body
+        for row in d["rows"]:
+            if row["z_frac"] < band:
+                continue
+            z = min(row["z_frac"] * self.peak, self.peak - 0.5)
+            afs = row.get("arched") or [False] * len(row["x_fracs"])
+            af = sum(bool(a) for a in afs) >= max(1, len(afs) // 2)
+            for x in sym_xs(row["x_fracs"], z):
                 specs.append((float(x), z, w, h, af))
+        # Body: EINE Reihe auf den Arkaden-Achsen (ein Fenster je Bogen), Zahl = Bogenzahl
+        n_arch = int(self.cfg["facade"].get("arcade", {}).get("n", 3))
+        z_body_row = (self.eg_top + self.z_body) / 2
+        for xc, aw, spring, apex in self.arcade_openings():
+            specs.append((xc, z_body_row, w, h, False))
         # GENAU EIN hohes zentrales Bogenfenster (das markante Mittelfenster), nicht ein Stapel:
         # das unterste mittige Fenster im Giebel wird hoch & arched, die anderen bleiben normal.
         mid = [s for s in specs if abs(s[0] - cx0) < 0.4 and self.z_body + 1.0 < s[1] < self.peak - 2.0]
