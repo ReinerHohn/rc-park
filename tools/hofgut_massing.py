@@ -11,6 +11,7 @@ import json, os
 import numpy as np
 import trimesh
 from shapely.geometry import Polygon
+from shapely.ops import unary_union
 
 
 def pca_angle(pts):
@@ -73,24 +74,21 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
     allp = np.vstack(rings_r); shift = allp.min(0)
     rings_r = [r - shift for r in rings_r]                        # alles in +Quadranten
 
-    # Fassade soll nach -Y zeigen: Hauptflügel-Front = Kante mit kleinstem y → ok nach shift
-    wall_meshes, roof_meshes = [], []
-    for i, (t, r) in enumerate(zip(teile, rings_r)):
-        E = t["eave_m"] or 9.0; R = t["ridge_m"] or (E + 5)
-        poly = Polygon(r).buffer(0)
-        if poly.is_empty or poly.area < 2:
-            continue
-        w = trimesh.creation.extrude_polygon(poly, E)             # Wände 0..Traufe
-        wall_meshes.append(w)
-        x0, y0, x1, y1 = poly.bounds
-        # Schwarzwald: Dach tief heruntergezogen, ABER Überstand GRÖSSENABHÄNGIG (sonst stechen kleine
-        # Teile dreieklig heraus = „Vorgebäude"-Artefakt). Niedrige Anbauten (kleiner R) flacher.
-        side = min(x1 - x0, y1 - y0)
-        overh = float(np.clip(0.12 * side, 0.3, 1.1))
-        sweep = float(os.environ.get("ROOF_SWEEP", "0.45"))    # Variante: wie tief das Dach herunterzieht
-        inset = float(os.environ.get("ROOF_INSET", "0.28"))    # Variante: First-Länge (größer=weniger spitz)
-        E_roof = max(E * sweep, E - 3.5) if R > 7 else E * 0.8  # nur Hauptbauten tief ziehen
-        roof_meshes.append(hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=overh, inset_frac=inset))
+    # Fassade soll nach -Y zeigen: Hauptflügel-Front = Kante mit kleinstem y → ok nach shift.
+    # DOP/Luftbild zeigt EIN zusammenhängendes Dach → Hauptkörper VERSCHMELZEN, EIN Dach drüber
+    # (statt getrennter Teildächer = falsches „zweites Gebäude"). Mini-Anbauten raus.
+    polys = [(i, Polygon(r).buffer(0)) for i, r in enumerate(rings_r)]
+    polys = [(i, p) for i, p in polys if not p.is_empty and p.area > 40]   # nur Hauptkörper
+    merged = unary_union([p.buffer(0.6) for _, p in polys]).buffer(-0.6)   # berührende Teile verschmelzen
+    if merged.geom_type == "MultiPolygon":
+        merged = max(merged.geoms, key=lambda g: g.area)
+    E = teile[main]["eave_m"] or 9.0; R = teile[main]["ridge_m"] or (E + 8)
+    wall_meshes = [trimesh.creation.extrude_polygon(merged.simplify(0.3), E)]   # EIN Wandkörper
+    x0, y0, x1, y1 = merged.bounds
+    sweep = float(os.environ.get("ROOF_SWEEP", "0.45")); inset = float(os.environ.get("ROOF_INSET", "0.28"))
+    E_roof = max(E * sweep, E - 3.5)
+    overh = float(np.clip(0.12 * min(x1 - x0, y1 - y0), 0.4, 1.0))
+    roof_meshes = [hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=overh, inset_frac=inset)]  # EIN Dach
 
     walls = trimesh.util.concatenate(wall_meshes)
     try:                                                          # Teildächer SAUBER verschmelzen (statt Überschneidungs-Hütchen)

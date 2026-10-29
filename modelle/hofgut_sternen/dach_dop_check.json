@@ -1,0 +1,6 @@
+{
+ "modell_dach_komponenten": 1,
+ "dop_dach_komponenten": 2,
+ "ok": true,
+ "regel": "Modell-Dachkomponenten muss DOP-Dach entsprechen (i.d.R. 1, kein falsches 2. Gebaeude)"
+}
