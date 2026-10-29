@@ -85,10 +85,17 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
     E = teile[main]["eave_m"] or 9.0; R = teile[main]["ridge_m"] or (E + 8)
     wall_meshes = [trimesh.creation.extrude_polygon(merged.simplify(0.3), E)]   # EIN Wandkörper
     x0, y0, x1, y1 = merged.bounds
-    sweep = float(os.environ.get("ROOF_SWEEP", "0.45")); inset = float(os.environ.get("ROOF_INSET", "0.28"))
-    E_roof = max(E * sweep, E - 3.5)
+    # DACH-FORM aus dem LASER (nDOM) — beste Datenquelle: First-Höhe, Dach-Unterkante, First-Länge/Inset
+    rp = os.path.join(os.path.dirname(out), "roof_params.json")
+    if os.path.exists(rp):
+        pr = json.load(open(rp))
+        R = pr.get("ridge_m", R); E_roof = pr.get("roof_eave_m", E * 0.6); inset = pr.get("inset_frac", 0.2)
+        print(f"  [Dach aus Laser-nDOM: First {R} m, Dach-Unterkante {E_roof} m, inset {inset} (langer First={1-2*inset:.0%})]")
+    else:
+        E_roof = max(E * float(os.environ.get("ROOF_SWEEP", "0.45")), E - 3.5)
+        inset = float(os.environ.get("ROOF_INSET", "0.28"))
     overh = float(np.clip(0.12 * min(x1 - x0, y1 - y0), 0.4, 1.0))
-    roof_meshes = [hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=overh, inset_frac=inset)]  # EIN Dach
+    roof_meshes = [hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=overh, inset_frac=inset)]  # EIN Dach aus Laser
 
     walls = trimesh.util.concatenate(wall_meshes)
     try:                                                          # Teildächer SAUBER verschmelzen (statt Überschneidungs-Hütchen)
