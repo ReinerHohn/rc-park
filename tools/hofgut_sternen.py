@@ -73,6 +73,23 @@ def big_dormer(x, y_slope, z_slope, w=3.6, proj=1.5, h=1.9, gh=1.1):
     return body, win
 
 
+def zwerchhaus(x, E, Rz, D, overh, w=4.0, body_h=1.6, gh=1.3, dep=2.8):
+    """ZWERCHHAUS (Wandgaube, Foto g4): Giebel-Frontwand FLÜCHTIG mit der Fassade (y=0), steigt ab
+    Traufe E als Rechteck+Giebeldreieck AUF, bricht die vordere Dachlinie. Satteldach nach hinten,
+    Rückkante im Haupt-Dach-Solid versenkt. Gibt (körper, fenster). Pokt sichtbar aus dem tiefen Traufbereich."""
+    xl, xr = x - w / 2, x + w / 2; zt = E + body_h; apex = zt + gh; yb = dep
+    V = [(xl, 0, E), (xr, 0, E), (xr, 0, zt), (xl, 0, zt), (x, 0, apex),        # Front-Giebel 0-4
+         (xl, yb, E), (xr, yb, E), (xr, yb, zt), (xl, yb, zt), (x, yb, apex)]   # Rück 5-9
+    F = [(0, 1, 2), (0, 2, 3), (3, 2, 4),             # Front Rechteck + Giebeldreieck
+         (5, 7, 6), (5, 8, 7), (8, 9, 7),             # Rück
+         (0, 3, 8), (0, 8, 5), (1, 6, 7), (1, 7, 2),  # Seitenwände
+         (3, 9, 8), (3, 4, 9), (2, 7, 9), (2, 9, 4),  # 2 Dachschrägen (Satteldach)
+         (0, 5, 6), (0, 6, 1)]                        # Boden
+    body = trimesh.Trimesh(vertices=np.array(V, float), faces=np.array(F), process=True)
+    win = box(x - w * 0.34, -0.06, E + 0.35, w * 0.68, 0.1, body_h - 0.6)
+    return body, win
+
+
 def skylight(x, y_slope, z_slope, w=0.85, h=1.1):
     """flaches Dachflächenfenster (Velux), liegt ~bündig auf der Schräge (dunkel)."""
     return box(x - w / 2, y_slope - 0.06, z_slope, w, 0.12, h)
@@ -206,12 +223,10 @@ def main():
     # höher auf der Schräge platzieren (frac ~0.30), sonst verschwinden sie unter dem weiten Dachüberstand.
     def on_slope(frac): z = E + frac * (Rz - E); return (D / 2) * (z - E) / (Rz - E), z
     bodies = []
-    dy, dz = on_slope(0.24)
-    for x in np.array([0.24, 0.55, 0.82]) * Lf:
-        b, w_ = big_dormer(x, dy, dz, w=4.0, proj=1.9, h=1.9, gh=1.2); bodies.append(b); fglass.append(w_)
-    sy, sz = on_slope(0.56)                                           # kleine Schleppgauben höher oben
-    for x in np.array([0.16, 0.40, 0.63, 0.88]) * Lf:
-        bodies.append(shed_dormer(x, sy, sz, w=1.6, proj=1.0, h=0.9))
+    for x in np.array([0.24, 0.55, 0.82]) * Lf:                       # 3 grosse Zwerchhäuser (Wandgauben) an der Fassade
+        b, w_ = zwerchhaus(x, E, Rz, D, a.inset, w=4.0, body_h=1.7, gh=1.3); bodies.append(b); fglass.append(w_)
+    vy, vz = on_slope(0.52)                                           # flache Dachflächenfenster (dezent) statt Warzen
+    fglass += [skylight(x, vy, vz) for x in np.array([0.16, 0.40, 0.63, 0.88]) * Lf]
     gauben = trimesh.util.concatenate(bodies)
     fenster = trimesh.util.concatenate(fglass)
     fensterrahmen = trimesh.util.concatenate(fframe)
