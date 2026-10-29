@@ -548,11 +548,11 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
                 if np.linalg.norm(b-a) > 1e-3:
                     gold.append(trimesh.creation.cylinder(radius=0.016, segment=(tuple(a), tuple(b))))
     cx2, cy2 = xc, -proj*0.5
-    cr0 = w*0.48; zf = 0.32; chh = max(3.0, (EAVE+0.62*(RIDGE-EAVE))-z1-zf-0.05)   # Spitzhelm (zurück auf vorherige, bessere Version: leicht überlappend + durchhängend)
+    cr0 = w*0.42; zf = 0.28; chh = max(3.0, (EAVE+0.62*(RIDGE-EAVE))-z1-zf-0.05)   # Helm-Fußradius < Körper-Halbbreite (w/2) → sitzt AUF dem Erker, KEIN überkragender Glockenfuß
 
     def _r(t):                                                                  # konkaves Helmprofil (t=0 Fuß .. 1 Spitze)
         return cr0*(1-t)**2.3*0.98 + 0.015                                      # STEILER: unten breit, zieht schnell in einer Kurve dünn ein (Foto)
-    prof = [(cr0*1.30, z1), (cr0*1.08, z1+zf)]                                   # breit ÜBERKRAGENDER Glockenfuß, dann rasch einziehen (vorherige Version)
+    prof = [(cr0, z1-0.08), (cr0*0.99, z1+zf)]                                   # Fuß GERADE auf dem Körper (leicht überlappend z1-0.08), KEIN Überhang (User: Helm sitzt nicht gerade drauf)
     npro = 18
     for i in range(1, npro+1):
         t = i/npro; prof.append((_r(t), z1+zf+(chh-zf)*t))
@@ -692,11 +692,17 @@ def dormer_roofs():
     Spitze, kein Keil, moderate Höhe. Solider Körper (druckbar)."""
     parts = []
     for xc, z in _dormer_specs():
-        ys = _slope_y(z); o = 0.18; yf = ys-DORMER_PROJ-0.42           # Dächlein kragt vorn über das Fenster (Traufschatten, Foto)
+        # Dachbasis = GENAU die Oberfläche des Gaubenkörpers (Breite + y-Tiefe), mit kleinem Überstand,
+        # und ÜBERLAPPT den Körper (zt unter der Körper-Oberkante z+0.90) → sitzt GERADE drauf + ein
+        # watertight Solid beim Union (druckbar). Hintere Traufe = Körper-Rückseite (ys+0.15, steckt im Dach),
+        # NICHT frei über der Dachhaut schwebend (das war der „sitzt nicht gerade"-Effekt).
+        ys = _slope_y(z); o = 0.14
+        yF = (ys-DORMER_PROJ) - o                          # vordere Traufe (mit Überstand übers Fenster)
+        yB = ys+0.15                                       # hintere Traufe = Körper-Rückkante (im Dach)
         xL, xR = xc-DORMER_W/2-o, xc+DORMER_W/2+o
-        zt = z+DORMER_H*0.92                                # Traufe des Gaubendachs (über dem Fenster)
-        zr = zt+DORMER_H*0.42; rh = DORMER_W*0.46; ym = ys-DORMER_PROJ*0.45   # First NIEDRIG + LANG → FLACHER, kantiger Walm (Foto: niedrige Hüftgaube, KEINE Kuppel)
-        V = [(xL, yf, zt), (xR, yf, zt), (xR, ys, zt), (xL, ys, zt),   # 0..3 Traufe (vorn/hinten)
+        zt = z+DORMER_H-0.13                               # Traufe: 0.08 in die Körper-Oberkante (z+0.90) hinein → Überlappung
+        zr = zt+0.46; rh = DORMER_W*0.30; ym = ys-DORMER_PROJ*0.5    # kurzer First mittig übers Dach, moderate Neigung (niedrige Hüftgaube)
+        V = [(xL, yF, zt), (xR, yF, zt), (xR, yB, zt), (xL, yB, zt),   # 0..3 Traufe (vorn/hinten) = Körper-Oberfläche
              (xc-rh, ym, zr), (xc+rh, ym, zr)]                          # 4,5 First
         F = [(0, 1, 5), (0, 5, 4),                           # Vorderfläche (Trapez, schräg nach hinten-oben)
              (2, 3, 4), (2, 4, 5),                           # Rückfläche
