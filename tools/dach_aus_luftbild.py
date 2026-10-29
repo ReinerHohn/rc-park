@@ -69,8 +69,16 @@ def main():
         roof = (lab == 1 + int(np.argmax(st[1:, cv2.CC_STAT_AREA]))).astype(np.uint8)
     roof = cv2.morphologyEx(roof, cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
 
-    # DISTANZTRANSFORMATION → Grate = medial axis = Firste
+    # RAND REGULARISIEREN: Kontur zu geraden Kanten approximieren (keine Treppen-Traufe)
+    cnts, _ = cv2.findContours(roof, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if cnts:
+        c = max(cnts, key=cv2.contourArea)
+        approx = cv2.approxPolyDP(c, 0.012 * cv2.arcLength(c, True), True)
+        roof = np.zeros_like(roof); cv2.fillPoly(roof, [approx], 1)
+
+    # DISTANZTRANSFORMATION → Grate = medial axis = Firste (auf sauberem Polygon = glatte Grate)
     dist = cv2.distanceTransform(roof, cv2.DIST_L2, 5)
+    dist = cv2.GaussianBlur(dist, (0, 0), 1.2)                           # Grate leicht glätten
     dmax = np.percentile(dist[dist > 0], 97)
     Z = E_roof + np.clip(dist / max(1e-6, dmax), 0, 1) * (R - E_roof)   # Traufe→First entlang Grat
     Z[roof == 0] = np.nan
