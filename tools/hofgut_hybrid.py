@@ -38,11 +38,15 @@ def hip_dormer(x, E, w=3.0, depth=2.2, h=1.5):
     return body, cap
 
 
-def build_facade(Lf, E, FM):
+def build_facade(Lf, E, FM, meas=None):
     """Schaufassade (Spec-getrieben): Naturstein-EG + 1 durchlaufende Laube (Mitte=Fresko-Wand, kein
-    Balkon) + Fensterreihen + Walm-Gauben. Lokaler Frame: Front y=0, ragt -Y, X:0..Lf, Z:0..E."""
-    S = E * 0.46                                            # hoher Naturstein-Sockel (EG)
-    N = 11
+    Balkon) + Fensterreihen + Walm-Gauben. Lokaler Frame: Front y=0, ragt -Y, X:0..Lf, Z:0..E.
+    meas = facade_mass.json (Bauplan): gemessene Galerie-Höhe + Fensterachsen überschreiben die Schätzung."""
+    meas = meas or {}
+    # Galerie-Höhe aus Bauplan (geklammert gegen Mess-Rauschen), EG-Oberkante knapp darunter
+    gal_z = float(np.clip(meas.get("gallery_m", E * 0.5), E * 0.40, E * 0.62))
+    S = float(np.clip(meas.get("eg_top_m", gal_z * 0.72), E * 0.30, gal_z - 1.0))   # Naturstein-EG
+    N = int(np.clip(meas.get("n_axes", 11), 7, 16))        # Fensterachsen aus Foto gemessen
     cx0, cx1 = Lf * 0.40, Lf * 0.60                          # Fresko-Mittelzone (ohne Balkon)
     eg_stein, galerie, baluster, blumen, fglass, fframe, dach_g = [], [], [], [], [], [], []
     # EG = Natursteinband (als proude Platte über die Front)
@@ -85,7 +89,11 @@ def main():
         FM.update(json.load(open(f"{md}/farben.json")))
 
     Lf = front["x1"] - front["x0"]; E = front["eave_m"] or 9.37
-    fac = build_facade(Lf, E, FM)
+    meas = json.load(open(f"{md}/facade_mass.json")) if os.path.exists(f"{md}/facade_mass.json") else {}
+    if meas:
+        print(f"[bauplan] gemessen: {meas.get('n_axes')} Achsen, Galerie {meas.get('gallery_m')} m, "
+              f"EG {meas.get('eg_top_m')} m (aus freigestelltem Foto + LOD2-Massstab)")
+    fac = build_facade(Lf, E, FM, meas)
     for m in fac.values():                                   # Fassade an die Hauptflügel-Front schieben
         m.apply_translation((front["x0"], front["y_front"], 0.0))
 
