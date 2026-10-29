@@ -77,7 +77,17 @@
         "w": 0.7,
         "h": 1.0
       }
-    ]
+    ],
+    "window_layout": {
+      "gable_rows": [
+        1,
+        2,
+        3,
+        2
+      ],
+      "central_arched": true,
+      "body": "over_arches"
+    }
   },
   "colors": {
     "fassade": [

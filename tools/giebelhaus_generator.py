@@ -110,6 +110,8 @@ class Giebelhaus:
     def window_specs(self):
         """alle Fenster (cx, zc, w, h, arched). Primär AUTOMATISCH aus dem Fenster-Detektor
         (fenster_zaehler.py JSON), sonst Fallback auf handgepflegte Config-Reihen."""
+        if self.cfg["facade"].get("window_layout"):
+            return self._windows_from_layout(self.cfg["facade"]["window_layout"])
         if self.cfg["facade"].get("fenster_auto"):
             return self._windows_from_detector(self.cfg["facade"]["fenster_auto"])
         f = self.cfg["facade"]; specs = []
@@ -129,6 +131,36 @@ class Giebelhaus:
             xs = np.linspace(xl + 1.0, xr - 1.0, n) if n > 1 else [self.W / 2]
             for cx in xs:
                 specs.append((cx, z, w, h, gr.get("arched", False)))
+        return specs
+
+    def _windows_from_layout(self, layout):
+        """VERIFIZIERTE Fensterstruktur (am Foto gezählte Grundwahrheit, Checkliste Schritt 1),
+        symmetrisch gebaut. Form/Größe = reale 2-Licht-Hochkantfenster. gable_rows = Zahl je
+        Giebelreihe von OBEN nach unten; central_arched = ein hohes Bogenfenster in der unteren
+        Giebelmitte; body = ein Fenster je Arkadenbogen."""
+        specs = []; cx0 = self.W / 2
+        w = 1.1; h = 2.3
+        gc = layout["gable_rows"]; ng = len(gc)
+        z_top, z_bot = self.peak - 1.3, self.z_body + 1.2
+        for i, n in enumerate(gc):
+            z = z_top - (z_top - z_bot) * i / max(ng - 1, 1)
+            up = min((z - self.z_body) / max(self.peak - self.z_body, 0.1), 1.0)
+            halfw = max((self.W / 2) * (1.0 - 0.88 * up) - w / 2, w)
+            if n == 1:
+                xs = [cx0]
+            else:
+                step = min(halfw * 2 / (n - 0.0), w * 1.9)
+                xs = [cx0 - step * (n - 1) / 2 + step * k for k in range(n)]
+            for x in xs:
+                specs.append((float(x), z, w, h, False))
+        if layout.get("central_arched"):                      # EIN hohes zentrales Bogenfenster
+            za = z_bot + (z_top - z_bot) * 0.33
+            specs.append((cx0, za, w, min(h * 1.6, 3.3), True))
+        if layout.get("body") == "over_arches":               # ein Fenster je Bogen
+            z_body_row = (self.eg_top + self.z_body) / 2
+            for xc, aw, spring, apex in self.arcade_openings():
+                specs.append((xc, z_body_row, w, h, False))
+        print(f"  Fenster AUS LAYOUT (verifiziert): Giebel {gc} + Bogen + Body")
         return specs
 
     def _windows_from_detector(self, path):
