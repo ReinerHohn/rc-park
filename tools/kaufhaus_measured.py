@@ -623,7 +623,7 @@ def _dormer_size():                                   # GEMESSEN (gauben_mass.js
     except Exception:
         return 2.0, 1.5
 DORMER_W, DORMER_H = _dormer_size()                   # Gaubenbreite/-höhe aus Foto gemessen (Fenster/Gebäudebreite)
-DORMER_H = max(min(DORMER_H, 1.4), 1.3)               # Gauben kleiner (User: im Dach zu groß)
+DORMER_H = min(DORMER_H, 1.1)                         # Gauben KLEIN lassen (User: Fenster zu groß) — nicht künstlich auf 1.3 hochklemmen
 
 
 def _dormer_specs():
@@ -635,7 +635,7 @@ def _dormer_specs():
     pitch = span/(nslots-1) if nslots > 1 else span
     nrows = len(DORMER_ROWS)
     base = float(P.get("dormer_base_frac", 0.30))      # Gauben höher ins Dach (User: untere Reihe nicht an der Traufe)
-    gap = float(P.get("dormer_row_gap", 0.33))         # Abstand der Reihen: obere beginnt wo untere Dächer enden
+    gap = float(P.get("dormer_row_gap", 0.27))         # Reihenabstand: obere Reihe tiefer halten, damit Dachfläche ÜBER ihr bleibt (User: obere Reihe war zu weit oben/am First)
     fracs = np.linspace(base, base+gap*(nrows-1), nrows) if nrows > 1 else [base]
     specs = []
     for r, n in enumerate(DORMER_ROWS):
