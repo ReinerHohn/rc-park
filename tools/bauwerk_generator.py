@@ -134,28 +134,6 @@ class Ctx:
             W, eg_top, axes = md["W_m"], md["eg_top_m"], md["axes_x_frac"]
             self.measured = md
             print(f"   [auto-gemessen aus Foto] W={W} m  EG-Oberkante={eg_top} m  Achsen={axes}")
-        # --- Fenster-Achsen aus ML+Struktur-Regularisierung (fenster_ml.py) ---
-        # WICHTIG: die regularisierten x_fracs sind relativ zur FENSTER-Box (schmaler als die
-        # Fassade). Erst auf FASSADEN-Bruchteile umrechnen (über die Mess-Box), sonst ragen die
-        # Fenster über den Rand. Nur nutzen, wenn die Mess-Box bekannt ist.
-        fa = f.get("fenster_auto"); meas_box = (cfg.get("measure") or {}).get("box")
-        if fa and meas_box:
-            import json as _j, os as _o2
-            if _o2.path.exists(fa):
-                d = _j.load(open(fa)); bb = d.get("building_box_frac")
-                full = [r for r in d.get("rows", []) if r["n"] >= 2]
-                if full and bb:
-                    main = max(full, key=lambda r: r["n"])
-                    fl, fr = float(meas_box[0]), float(meas_box[2])     # Fassaden-Rand (Bildfrakt.)
-                    axes = []
-                    for xf in main["x_fracs"]:
-                        xi = bb[0] + float(xf) * (bb[2] - bb[0])        # Fenster-x in Bildfrakt.
-                        axes.append(round((xi - fl) / max(fr - fl, 1e-6), 3))  # -> Fassaden-Frakt.
-                    print(f"   [Fenster-Achsen aus ML+Struktur, fassaden-normiert] {axes}")
-        if f.get("axes_x_frac"):                             # Config-Achsen schlagen alles (Mess-Achsen oft daneben)
-            axes = f["axes_x_frac"]; print(f"   [Fenster-Achsen aus Config] {axes}")
-        if m.get("W"):                                       # Config-W (aus LOD2) schlägt Mess-W (oft zu schmal)
-            W = float(m["W"]); print(f"   [Breite W aus Config/LOD2] {W} m")
         self.W = float(W); self.eg_top = float(eg_top)
         # --- DACH: First aus GEMESSENER Front-Dachhöhe (perspektiv-echt), Tiefe separat gekappt ---
         self.lod2_depth = float(m["lod2_depth"]); self.lod2_ridge = float(m["lod2_ridge"])
@@ -240,7 +218,7 @@ def gen_facade(c, p):
 @element("zierband")
 def gen_band(c, p):
     zb = c.measured.get("zierband") if c.measured else None
-    h = p.get("h") or (zb or {}).get("h_m")           # Config schlägt Messung (Mess-Höhe kann 1 Etage daneben sein)
+    h = (zb or {}).get("h_m") or p.get("h")
     if not h:
         return {}
     return {"zierband": slab(c.W / 2, -0.11, float(h), c.W + 0.08, 0.1, float(p.get("height", 0.13)))}
