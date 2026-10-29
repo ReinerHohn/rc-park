@@ -154,6 +154,8 @@ class Ctx:
                     print(f"   [Fenster-Achsen aus ML+Struktur, fassaden-normiert] {axes}")
         if f.get("axes_x_frac"):                             # Config-Achsen schlagen alles (Mess-Achsen oft daneben)
             axes = f["axes_x_frac"]; print(f"   [Fenster-Achsen aus Config] {axes}")
+        if m.get("W"):                                       # Config-W (aus LOD2) schlägt Mess-W (oft zu schmal)
+            W = float(m["W"]); print(f"   [Breite W aus Config/LOD2] {W} m")
         self.W = float(W); self.eg_top = float(eg_top)
         # --- DACH: First aus GEMESSENER Front-Dachhöhe (perspektiv-echt), Tiefe separat gekappt ---
         self.lod2_depth = float(m["lod2_depth"]); self.lod2_ridge = float(m["lod2_ridge"])
