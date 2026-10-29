@@ -1,0 +1,12 @@
+{
+ "LOD1": "LOD2 vorhanden (höher aufgelöst); LOD1 wäre nur Fallback",
+ "DOP_CIR": "Dachmaterial/Moos bereits aus DOP_RGB-Textur + Bodenfotos; NIR brächte nur Vegetationsindex, für Modelloptik kein Mehrwert",
+ "LAZ_ALS": "Dachgeometrie aus nDOM/DOM1 (1 m) für N/H0-Modellmaßstab ausreichend; rohe Punktwolke nur für Submeter-Gaubenkanten nötig",
+ "ALKIS": "Grundriss aus LOD2 (3D inkl. Höhen) genauer als ALKIS-2D-Umring",
+ "HIST_DOP": "kein historischer Zustand gefragt — aktuelles Modell",
+ "S2_MSI": "Sentinel-2 10 m Multispektral: Landbedeckung, für ein Einzelgebäude irrelevant",
+ "S1_SAR": "Sentinel-1 Radar: für Einzelgebäude-Geometrie irrelevant",
+ "COP_DEM": "Copernicus 30 m gröber als vorhandenes DGM1 1 m — redundant",
+ "OSM": "Lage/Umriss aus LOD2 gedeckt; OSM erst für Umgebungsszene (Straße/Wege) nötig, nicht fürs Gebäude",
+ "STREET": "Bodenfotos (g2/g3/g4, wm_hotel) decken die Fassade; keine Mapillary-Aufnahme nötig"
+}

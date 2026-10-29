@@ -51,7 +51,7 @@ REGISTER = [
     ("FOTO_BODEN", "Bodenfotos",     "Fassadendetail/Material/Farben/Stückzahlen (eigene/Commons)",
      [r".*\.(jpg|jpeg|png)"], "eigene / Wikimedia Commons / Google", True),
     ("STREET",   "Street-Level",     "Panorama/Street-Level (Fassade schräg, Mapillary)",
-     [r".*(mapillary|streetview|pano).*\.(jpg|png)"], "Mapillary API / eigene", False),
+     [r".*(mapillary|streetview|streetlevel|panorama)\w*\.(jpg|png)"], "Mapillary API / eigene", False),
 ]
 SUCHE = ["daten/**", "modelle/**"]
 
@@ -94,64 +94,91 @@ def main():
     E = N = None
     if a.utm:
         E, N = [float(v) for v in a.utm.split(",")]
-    elif os.path.exists(f"modelle/{a.name}/footprint.json"):
-        E, N, *_ = json.load(open(f"modelle/{a.name}/footprint.json"))["origin_utm"]
+    meta, rows = inventory(a.name, (E, N) if E else None)
+    E, N, tile, inBW = meta["E"], meta["N"], meta["tile"], meta["inBW"]
+
+    # Manifest schreiben
+    md = [f"# QUELLEN-MANIFEST — {a.name}", "",
+          f"Kachel UTM32 **{tile}** · E {E:.0f} N {N:.0f} · {'in BW (LGL-Standarddaten upstream verfügbar)' if inBW else 'außerhalb BW'}",
+          "", "Auto-Inventur `tools/quellen_inventar.py` — KANONISCHE Vollständigkeits-Checkliste.",
+          "Status: ✅ genutzt · 🚫 n/a (begründet) · ⚠️ im Repo ungenutzt · ⬇️ upstream Bringschuld.",
+          "", "| # | Quelle | liefert | Dateien | Status | woher / Begründung |", "|--|--|--|--|--|--|"]
+    for i, r in enumerate(rows, 1):
+        note = r["na_reason"] if r["status"] == "NA" else r["upstream"]
+        md.append(f"| {i} | **{r['key']}** ({r['kurz']}) | {r['liefert']} | {len(r['hits'])} | {STAT[r['status']]} | {note} |")
+    open(f"modelle/{a.name}/QUELLEN.md", "w").write("\n".join(md) + "\n")
+
+    offen = [r for r in rows if r["status"] in ("REPO_UNUSED", "UPSTREAM")]
+    print(f"\n=== QUELLEN-INVENTUR  {a.name}  (Kachel {tile}, {'BW' if inBW else '—'}) — {len(REGISTER)} Typen ===")
+    for i, r in enumerate(rows, 1):
+        print(f" {i:2d}. {r['key']:10s} {STAT[r['status']]:42s} [{len(r['hits'])}]  {r['kurz']}")
+        if r["status"] in ("REPO_UNUSED", "UPSTREAM"):
+            print(f"        └─ woher: {r['upstream']}")
+        elif r["status"] == "NA":
+            print(f"        └─ n/a: {r['na_reason']}")
+    genutzt = sum(1 for r in rows if r["status"] == "USED")
+    na = sum(1 for r in rows if r["status"] == "NA")
+    print(f"\n  {genutzt}/{len(REGISTER)} genutzt · {na} n/a · {len(offen)} OFFEN.")
+    if offen:
+        print("  ⚠️  OFFEN (merge-pflichtig, nicht raten!): " + ", ".join(r["key"] for r in offen))
+    else:
+        print("  ✅ GRÜN: jede Quelle genutzt oder begründet n/a — nichts im Limbo.")
+    print(f"-> modelle/{a.name}/QUELLEN.md")
+    sys.exit(2 if offen else 0)
+
+
+# Status-Codes → Anzeige
+STAT = {"USED": "✅ genutzt", "NA": "🚫 n/a (begründet)",
+        "REPO_UNUSED": "⚠️  IM REPO, NICHT GENUTZT", "UPSTREAM": "⬇️  UPSTREAM, NICHT GELADEN"}
+
+
+def inventory(name, utm=None):
+    """EINZIGER Klassifikator (Tool UND Tests nutzen ihn → kein Drift). Gibt (meta, rows).
+    rows: je Typ dict {key,kurz,liefert,hits,used,na_reason,status,upstream}."""
+    E = N = None
+    if utm:
+        E, N = utm
+    elif os.path.exists(f"modelle/{name}/footprint.json"):
+        E, N, *_ = json.load(open(f"modelle/{name}/footprint.json"))["origin_utm"]
     tile = tile_of(E, N) if E else None
-    inBW = bool(E and 400000 < E < 620000 and 5260000 < N < 5520000)   # grob Baden-Württemberg
+    inBW = bool(E and 400000 < E < 620000 and 5260000 < N < 5520000)
     tnums = set()
     if tile:
         e, n = int(E) // 1000, int(N) // 1000
         for de in (-2, -1, 0, 1):
             for dn in (-2, -1, 0, 1):
                 tnums.add(f"{e+de}_{n+dn}")
-
     allfiles = [f for pat in SUCHE for f in glob.glob(pat, recursive=True) if os.path.isfile(f)]
-    used = used_markers(a.name)
+    used = used_markers(name)
+    na = {}
+    if os.path.exists(f"modelle/{name}/quellen_na.json"):
+        na = json.load(open(f"modelle/{name}/quellen_na.json"))
 
-    rows, offen = [], []
+    rows = []
     for key, kurz, liefert, pats, upstream, bw_std in REGISTER:
         rx = re.compile("|".join(pats), re.I)
         hits = [f for f in allfiles if rx.search(os.path.basename(f))]
-        if key in ("FOTO_BODEN",):
-            hits = [f for f in hits if f"/{a.name}/fotos/" in f.replace("\\", "/")
+        if key == "FOTO_BODEN":
+            hits = [f for f in hits if f"/{name}/fotos/" in f.replace("\\", "/")
                     and not re.search(r"_(mask|seg|silhouette)", f)]
         elif key in ("STREET", "HIST_DOP"):
-            hits = [f for f in hits if a.name in f]
-        elif tile:                                            # Geo-Kacheln auf Bauwerks-Umfeld filtern
-            hits = [f for f in hits if any(t in f for t in tnums) or re.search(r"53\d\d", f) and key in ("LOD2", "LOD1")]
+            hits = [f for f in hits if name in f]
+        elif tile:                                            # Geo-Kacheln NUR aus der Bauwerks-Umgebung
+            hits = [f for f in hits if any(t in f for t in tnums)]
         if used.get(key):
-            st = "✅ genutzt"
+            status = "USED"
+        elif key in na:
+            status = "NA"
         elif hits:
-            st = "⚠️  IM REPO, NICHT GENUTZT"; offen.append((key, upstream))
-        elif bw_std and inBW:
-            st = "⬇️  UPSTREAM VERFÜGBAR (BW), NICHT GELADEN"; offen.append((key, upstream))
+            status = "REPO_UNUSED"
         elif bw_std:
-            st = "⬇️  upstream verfügbar, nicht geladen"; offen.append((key, upstream))
+            status = "UPSTREAM"
         else:
-            st = "—  hier n/a"
-        rows.append((key, kurz, liefert, len(hits), st, upstream, hits[:2]))
-
-    # Manifest
-    md = [f"# QUELLEN-MANIFEST — {a.name}", "",
-          f"Kachel UTM32 **{tile}** · E {E:.0f} N {N:.0f} · {'in BW (LGL-Standarddaten upstream verfügbar)' if inBW else 'außerhalb BW'}",
-          "", "Auto-Inventur `tools/quellen_inventar.py` — KANONISCHE Vollständigkeits-Checkliste.",
-          "HARTE REGEL: alles Vorhandene mergen, NICHTS raten. ⚠️=im Repo ungenutzt, ⬇️=upstream Bringschuld.",
-          "", "| # | Quelle | liefert | Dateien | Status | woher |", "|--|--|--|--|--|--|"]
-    for i, (key, kurz, liefert, nf, st, up, ex) in enumerate(rows, 1):
-        md.append(f"| {i} | **{key}** ({kurz}) | {liefert} | {nf} | {st} | {up} |")
-    open(f"modelle/{a.name}/QUELLEN.md", "w").write("\n".join(md) + "\n")
-
-    print(f"\n=== QUELLEN-INVENTUR  {a.name}  (Kachel {tile}, {'BW' if inBW else '—'}) — {len(REGISTER)} Typen ===")
-    for i, (key, kurz, liefert, nf, st, up, ex) in enumerate(rows, 1):
-        print(f" {i:2d}. {key:10s} {st:42s} [{nf}]  {kurz}")
-        if ("NICHT GELADEN" in st or "NICHT GENUTZT" in st):
-            print(f"        └─ woher: {up}")
-    genutzt = sum(1 for r in rows if "✅" in r[4])
-    print(f"\n  {genutzt}/{len(REGISTER)} Typen genutzt · {len(offen)} offen.")
-    if offen:
-        print("  ⚠️  OFFEN (merge-pflichtig, nicht raten!): " + ", ".join(k for k, _ in offen))
-    print(f"-> modelle/{a.name}/QUELLEN.md")
-    sys.exit(2 if offen else 0)
+            status = "UPSTREAM" if inBW else "NA"
+        rows.append({"key": key, "kurz": kurz, "liefert": liefert, "hits": hits,
+                     "used": bool(used.get(key)), "na_reason": na.get(key, "" if status != "NA" else "nicht einschlägig"),
+                     "status": status, "upstream": upstream})
+    return {"E": E or 0, "N": N or 0, "tile": tile, "inBW": inBW}, rows
 
 
 if __name__ == "__main__":

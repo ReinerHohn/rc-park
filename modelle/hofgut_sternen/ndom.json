@@ -1,0 +1,10 @@
+{
+ "quelle": "nDOM = DOM1 − DGM1 (LGL Laser 1 m); DOM dom1_32_430_5307_1_bw_2017.tif",
+ "gelaende_z_nn_m": 714.47,
+ "first_ueber_boden_m": 16.8,
+ "traufe_ueber_boden_m": 12.3,
+ "lod2_first_m": 17.63,
+ "footprint_zellen": 1008,
+ "lod2_first_max_m": 17.63,
+ "quercheck_first": "PASS"
+}
