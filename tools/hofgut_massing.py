@@ -88,8 +88,9 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
         side = min(x1 - x0, y1 - y0)
         overh = float(np.clip(0.12 * side, 0.3, 1.1))
         sweep = float(os.environ.get("ROOF_SWEEP", "0.45"))    # Variante: wie tief das Dach herunterzieht
+        inset = float(os.environ.get("ROOF_INSET", "0.28"))    # Variante: First-Länge (größer=weniger spitz)
         E_roof = max(E * sweep, E - 3.5) if R > 7 else E * 0.8  # nur Hauptbauten tief ziehen
-        roof_meshes.append(hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=overh))
+        roof_meshes.append(hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=overh, inset_frac=inset))
 
     walls = trimesh.util.concatenate(wall_meshes)
     try:                                                          # Teildächer SAUBER verschmelzen (statt Überschneidungs-Hütchen)
