@@ -987,7 +987,7 @@ def arcade_recess():
     """Laubengang hinter der Arkade: SCHATTIGE Steinrückwand + Boden (nicht pechschwarz) → die
     Torbögen lesen sich als TIEFE Öffnungen mit Innenraum (Foto: Stände/Stein), nicht als Löcher."""
     parts = []
-    back = tbox(extents=(W, 0.3, ARC_APEX)); back.apply_translation((W/2, 2.2, ARC_APEX/2)); parts.append(back)
+    back = tbox(extents=(W-3.6, 0.3, ARC_APEX)); back.apply_translation((W/2, 2.2, ARC_APEX/2)); parts.append(back)   # Rückwand NUR über die inneren Joche → Eck-Joche bleiben OFFEN (begehbarer Torbogen an den Enden)
     floor = tbox(extents=(W, 2.6, 0.3)); floor.apply_translation((W/2, 1.1, 0.12)); parts.append(floor)   # Laubengang-Boden
     return trimesh.util.concatenate(parts)
 
@@ -1037,9 +1037,9 @@ def side_walls():
     Gibt (Wand, Glas, Gewände/Rahmen)."""
     outer = Polygon([(0, 0), (D, 0), (D, EAVE), (0, EAVE)])      # (Y, Z)
     specs = _side_window_specs()
-    # Durchgangs-Rundbogen ENTFERNT: er lag genau vor der Arkaden-Rückwand → durch die Öffnung sah man
-    # deren rote Wand bis zum Boden („hängt rum / geht zum Boden", User). Reale Giebelseite ist massiv.
-    holes = [_side_hole(s) for s in specs]
+    # TORBOGEN wieder da (User): die Laube ist an den ENDEN offen → begehbarer Durchgang. Öffnung GANZ
+    # VORNE (Y klein, vor der Arkaden-Rückwand bei y=2.2) → man sieht in die Kolonnade, nicht auf die Wand.
+    holes = [round_arch(1.4, 2.2, ARC_SPRING)] + [_side_hole(s) for s in specs]
     poly = outer.difference(unary_union([h.buffer(0) for h in holes]))
     walls, glass, frames = [], [], []
     for x0 in (0.0, W-0.6):
