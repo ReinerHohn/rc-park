@@ -831,7 +831,7 @@ def gables():
 # Arkaden-Fenstermaße HOCHKANT (schmal + hoch), klein genug für Rot ringsum
 ARC_WW_FRAC = 0.24; ARC_WZ0, ARC_WZ1 = 1.1, 3.25
 ARC_DOOR = 2            # Arkadenbogen mit TÜR statt Fenster (2. von rechts, wird am Render geprüft)
-PIER_H = ARC_APEX   # vollhohe Pfeiler (Kolonnade); Bogen-Archivolten als Ring davor
+PIER_H = ARC_SPRING   # Pfeiler enden am BOGENANSATZ (Kämpfer); darüber „gehen sie in den Bogen über" (Foto/User) — NICHT bis zum Balkon durchziehen
 
 
 def arcade_piers():
