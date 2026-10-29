@@ -22,13 +22,19 @@ def _cluster(vals, tol):
 
 
 def dominant(boxes, img_w):
-    """groesste x-Nachbarschaft = Zielgebaeude (Nachbarn raus)."""
-    if not boxes:
-        return []
+    """groesste x-Nachbarschaft = Zielgebaeude (Nachbarn raus). WICHTIG: nur bei GROSSEN Luecken
+    trennen (echter Nachbarabstand), NICHT bei normalen Fensterabstaenden — sonst zerschneidet es
+    breite regulaere Fassaden in einzelne Spalten."""
+    if len(boxes) <= 2:
+        return boxes
     cx = sorted(boxes, key=lambda b: (b[0] + b[2]) / 2)
+    cen = [(b[0] + b[2]) / 2 for b in cx]
+    gaps = [cen[i + 1] - cen[i] for i in range(len(cen) - 1)]
+    med = np.median([g for g in gaps if g > 1]) if gaps else img_w
+    thr = max(0.13 * img_w, 3.0 * med)                    # Luecke >> typischer Fensterabstand
     groups, cur = [], [cx[0]]
-    for b in cx[1:]:
-        if (b[0] + b[2]) / 2 - (cur[-1][0] + cur[-1][2]) / 2 < 0.07 * img_w:
+    for i, b in enumerate(cx[1:]):
+        if gaps[i] < thr:
             cur.append(b)
         else:
             groups.append(cur); cur = [b]
