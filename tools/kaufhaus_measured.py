@@ -634,7 +634,8 @@ def _dormer_specs():
     nslots = sum(DORMER_ROWS)                            # z.B. 3+2 = 5 Raster-Spalten
     pitch = span/(nslots-1) if nslots > 1 else span
     nrows = len(DORMER_ROWS)
-    fracs = np.linspace(0.11, 0.11+0.21*(nrows-1), nrows) if nrows > 1 else [0.16]  # obere Reihe höher gezogen (User)
+    base = float(P.get("dormer_base_frac", 0.30))      # Gauben höher ins Dach (User: untere Reihe nicht an der Traufe)
+    fracs = np.linspace(base, base+0.21*(nrows-1), nrows) if nrows > 1 else [base]
     specs = []
     for r, n in enumerate(DORMER_ROWS):
         z = EAVE+fracs[r]*(RIDGE-EAVE)
