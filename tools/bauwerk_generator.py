@@ -333,7 +333,8 @@ def shop_window(cx, w, z0, ztop):
 def gen_groundfloor(c, p):
     holes, out = [], {}
     frames, warms, curts, darkglass = [], [], [], []
-    dx = c.W * float(p.get("door_x_frac", 0.5))
+    xs = float(p.get("x_shift", 0.0))                       # ganze EG-Reihe gemeinsam verschieben (m)
+    dx = c.W * float(p.get("door_x_frac", 0.5)) + xs
     if p.get("door", True):
         holes.append((dx - 0.6, dx + 0.6, 0.0, 2.6))
         frames.append(slab(dx, -0.02, 1.12, 1.14, 0.08, 2.24))     # braunes Türblatt
@@ -345,7 +346,7 @@ def gen_groundfloor(c, p):
         n = int(p.get("arched_windows", 0)); win_xf = [(i + 0.5) / n for i in range(n)] if n else []
     ww = float(p.get("shop_w", 1.5))
     for xf in win_xf:
-        sx = c.W * float(xf)
+        sx = c.W * float(xf) + xs
         holes.append((sx - ww / 2, sx + ww / 2, 0.85, 2.65))     # rechteckige Öffnung (kein Bogen)
         fr, wm, cu = shop_window(sx, ww, 0.85, 2.65)
         frames.append(fr); warms.append(wm); curts.append(cu)
@@ -364,7 +365,7 @@ def gen_groundfloor(c, p):
     out["schaufenster"] = cat(frames); out["gardine"] = cat(curts)
     if p.get("lettering"):
         out["band"] = slab(c.W / 2, -0.14, c.eg_top - 0.35, c.W - 0.7, 0.12, 0.42)
-    wap = [disc(0.26, 0.1, (c.W * 0.12, c.W * 0.88)[i % 2], -0.18, c.eg_top - 0.3, sections=20)
+    wap = [disc(0.26, 0.1, (c.W * 0.12, c.W * 0.88)[i % 2] + xs, -0.18, c.eg_top - 0.3, sections=20)
            for i in range(int(p.get("wappen", 0)))]
     out["wappen"] = cat(wap)
     lant, glow = [], []
