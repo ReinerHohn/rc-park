@@ -73,3 +73,10 @@ Diagnose (durch genaues Hinsehen Modell vs Foto-Giebel):
 LEHRE (hart, selbst): NICHT durch schnelles Parameter-Drehen „generalisieren" — der Adaptiv-
 Umbau verbesserte das rote Kaufhaus, regressierte aber das Kornhaus. Jede Änderung gegen ALLE
 bekannt-guten Fälle testen (Kalibrier-Suite), sonst Oszillation [[fehleranalyse_warum_oszillation]].
+
+## Nachtrag 2: Fenster-Durchbruch per ML (Option 1+2, Vollgas)
+Heuristik-Wand bestätigt über 3 Ansätze → Wechsel auf ML: tools/fenster_ml.py (SegFormer
+CMP-Facade, venv /tmp/ml). Farb-/perspektiv-robust, fängt Rundbögen. Dominant-Cluster trennt
+Nachbarn (22→14). Multi-Foto-Konsens funktioniert NUR auf ML-Basis: Heuristik 13/3/5/10 (schräg/
+Nacht kaputt) vs ML 14/13/14/17 → robuster Median 14. LEHRE: an der Heuristik-Rausch-Wand ist ein
+vortrainiertes Open-Source-Netz (CPU reicht) der Hebel, nicht noch ein Schwellwert.
