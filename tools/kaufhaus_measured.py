@@ -526,20 +526,26 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
     body_parts.append(_tri(V, F))                                              # Stein-Trichter (Erker-Farbe)
     for c in cor:                                                              # dünne Gold-Rippen auf den Kanten
         gold.append(trimesh.creation.cylinder(radius=0.045, segment=(tuple(boss), tuple(c))))
-    # feines GEÄSTEL unter dem Erker (Foto: gotisches Rippennetz, verästelt): gekrümmte Haupt- +
-    # Zwischenrippen + 2 Querringe → Netz, nicht nur gerade Speichen
-    boss2 = np.array([xc, -proj*0.34, z0-1.45])
-    for ci in range(len(cor)-1):
-        c, c2 = cor[ci], cor[ci+1]
-        midedge = (c+c2)/2
-        inter = (boss2+midedge)/2 + np.array([0, -0.12, 0.10])                 # Zwischenrippe bauchig nach außen
-        gold.append(trimesh.creation.cylinder(radius=0.028, segment=(tuple(boss2), tuple(inter))))
-        gold.append(trimesh.creation.cylinder(radius=0.028, segment=(tuple(inter), tuple(midedge))))
-    for frac in (0.42, 0.72):                                                  # Querringe verbinden die Rippen → Netz
-        rp = [boss2 + (cor[k]-boss2)*frac for k in range(len(cor))]
-        for p0, p1 in zip(rp[:-1], rp[1:]):
+    # NETZGEWÖLBE unter dem Erker (Foto pe_under2: gotisches Rippennetz — Rippen springen vom Boss
+    # fächerförmig hoch und KREUZEN sich zu Rauten, zur Rim dichter). Feines, DICHTES Netz statt Speichen.
+    NR = 10                                                                     # Winkel-Unterteilungen rund um den halben Trichter
+    rim = [np.array([xc + (w/2)*np.cos(t), -proj*np.sin(t), z0-0.05]) for t in np.linspace(np.pi, 0, NR+1)]
+    rings = [0.38, 0.68, 1.0]                                                   # radiale Ringe (Boss→Rim)
+
+    def _nd(si, k):                                                             # Knoten auf Ring si (si=-1 → Boss)
+        if si < 0:
+            return boss
+        return boss + (rim[k]-boss)*rings[si]
+    for si in range(len(rings)):                                               # Ring-Rippen (quer)
+        pr = [_nd(si, k) for k in range(NR+1)]
+        for p0, p1 in zip(pr[:-1], pr[1:]):
             if np.linalg.norm(p1-p0) > 1e-3:
-                gold.append(trimesh.creation.cylinder(radius=0.022, segment=(tuple(p0), tuple(p1))))
+                gold.append(trimesh.creation.cylinder(radius=0.02, segment=(tuple(p0), tuple(p1))))
+    for si in range(-1, len(rings)-1):                                         # Diagonal-Rippen → Rauten (zwei Scharen)
+        for k in range(NR):
+            for a, b in (((_nd(si, k)), _nd(si+1, k+1)), (_nd(si, k+1), _nd(si+1, k))):
+                if np.linalg.norm(b-a) > 1e-3:
+                    gold.append(trimesh.creation.cylinder(radius=0.016, segment=(tuple(a), tuple(b))))
     cx2, cy2 = xc, -proj*0.5
     cr0 = w*0.48; zf = 0.32; chh = max(3.0, (EAVE+0.62*(RIDGE-EAVE))-z1-zf-0.05)   # Spitzhelm (zurück auf vorherige, bessere Version: leicht überlappend + durchhängend)
 
