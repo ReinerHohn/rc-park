@@ -136,32 +136,26 @@ class Giebelhaus:
         First (LOD2), Box-Breite ≈ W. z_frac 0=unten. KEIN Hardcoding: Zahl/Lage kommt vom
         Foto-Detektor fenster_zaehler.py."""
         d = json.load(open(path)); specs = []
-        # Fenstergrösse EINHEITLICH aus dem robusten Median (merge_boxes bläht einzelne Breiten
-        # auf) -> menschliches Mass, hochkant. Positionen SYMMETRISCH (Treppengiebel ist
-        # symmetrisch; die Detektor-x-Streuung ist Rauschen). Zahl je Reihe = Detektor (robust).
+        # ECHTE Positionen aus dem Detektor (x_frac am Foto) — NICHT symmetrisch wegregeln.
+        # Grösse menschlich/hochkant; Bogen-Flag JE Fenster. x in die Giebelbreite geklemmt,
+        # damit kein Fenster über die Stufenkante ragt.
         wmed = float(np.median([r["w_frac"] for r in d["rows"]])) * self.W
-        w = min(max(wmed, 0.8), 1.25); h = min(max(w * 1.6, 1.4), 2.0)
-        cx0 = self.W / 2
+        w = min(max(wmed, 0.8), 1.3); h = min(max(w * 1.5, 1.4), 2.1)
         for row in d["rows"]:
             z = row["z_frac"] * self.peak
-            n = row["n"]
-            arch_flags = row.get("arched") or [False] * n
-            arched = sum(bool(a) for a in arch_flags) >= max(1, n // 2)
-            # verfügbare Breite: oberhalb der Traufe verjüngt sich der Giebel
-            if z > self.z_body:
+            x_fracs = row["x_fracs"]
+            arch_flags = row.get("arched") or [False] * len(x_fracs)
+            if z > self.z_body:                               # Giebel-Halbbreite auf Höhe z
                 up = (z - self.z_body) / max(self.peak - self.z_body, 0.1)
-                avail = self.W * (1.0 - 0.80 * up)
+                halfw = (self.W / 2) * (1.0 - 0.90 * min(up, 1.0))
             else:
-                avail = self.W * 0.86
-            avail = max(avail, w + 0.4)
-            if n <= 1:
-                xs = [cx0]
-            else:
-                half = min(avail, n * w * 1.8) / 2 - w / 2
-                xs = np.linspace(cx0 - half, cx0 + half, n)
-            for x in xs:
-                specs.append((float(x), z, w, h, arched))
-        print(f"  Fenster AUS DETEKTOR {path}: {len(specs)} ({d['n_rows']} Reihen)")
+                halfw = self.W / 2 * 0.90
+            halfw = max(halfw, w)
+            lo, hi = self.W / 2 - halfw + w / 2, self.W / 2 + halfw - w / 2
+            for xf, af in zip(x_fracs, arch_flags):
+                x = min(max(xf * self.W, lo), hi)             # echte Lage, in Giebel geklemmt
+                specs.append((float(x), z, w, h, bool(af)))
+        print(f"  Fenster AUS DETEKTOR {path}: {len(specs)} an ECHTEN Positionen ({d['n_rows']} Reihen)")
         return specs
 
     def arcade_openings(self):
