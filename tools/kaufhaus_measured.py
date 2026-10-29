@@ -1103,21 +1103,21 @@ def build():
     parts["seitenglas"] = side_glass
     parts["seitenrahmen"] = side_frames
 
-    cols = {"fassade": [116, 38, 34, 255], "waende": [116, 38, 34, 255], "dach": [96, 108, 74, 255],   # Seiten-/Rückwand = GLEICHES Fassadenrot (User: die Seitenwand ist auch rot); Dach moosig-olivgrün
+    cols = {"fassade": [116, 38, 34, 255], "waende": [116, 38, 34, 255], "dach": [98, 104, 88, 255],   # Seiten-/Rückwand = Fassadenrot; Dach VERWITTERT grau-grün (entsättigt, Foto ~grau-grün, nicht kräftig grün)
 
             "giebel": [116, 38, 34, 255], "balken": [120, 38, 34, 255], "galerie": [138, 48, 42, 255], "fenster": [26, 30, 36, 255], "seitenglas": [26, 30, 36, 255], "seitenrahmen": [196, 176, 140, 255], "giebelglas": [26, 30, 36, 255],   # heller Sandstein-Gewände + dunkle Giebel-Schlitzfenster (Foto)
             "statuen": [206, 206, 212, 255], "konsole": [198, 160, 90, 255], "erker": [116, 38, 34, 255], "helm": [192, 152, 70, 255],
             "baldachin": [198, 162, 92, 255],
-            "gauben": [40, 34, 32, 255], "gauben_dach": [96, 108, 74, 255], "dachmuster": [88, 102, 70, 255], "dachziegel": [90, 102, 70, 255],
-            "dachrauten": [64, 82, 52, 255],
+            "gauben": [40, 34, 32, 255], "gauben_dach": [98, 104, 88, 255], "dachmuster": [92, 99, 83, 255], "dachziegel": [94, 100, 84, 255],
+            "dachrauten": [72, 82, 64, 255],
             "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [96, 34, 28, 255], "arkadenglas": [24, 24, 28, 255], "arkadenkreuz": [48, 44, 46, 255], "piers": [116, 38, 34, 255], "pierbase": [104, 40, 34, 255],   # Pfeiler+Sockel = roter Sandstein (User: Sockel sind AUCH rot, nicht grau); Sockel nur eine Spur dunkler
             "boegen": [192, 154, 72, 255], "first": [182, 150, 80, 255], "rahmen": [206, 162, 58, 255],
             "wappen": [196, 150, 48, 255], "krabben": [150, 42, 36, 255], "dachkante_gold": [196, 160, 78, 255], "nische": [116, 38, 34, 255],   # Hintergrund hinter den Statuen = ROTE Wand (User: kein dunkles Nischenloch), Figuren stehen auf Konsolen vor der roten Fassade
             "helm_rot": [150, 44, 40, 255], "helm_hell": [224, 214, 190, 255], "helm_gruen": [86, 134, 82, 255],
             "lisenen": [188, 150, 72, 255], "sprossen": [72, 74, 84, 255],   # dunkle Bleiruten (echtes Bleiglas ist DUNKEL mit feinen Stegen) — Fenster liest als Öffnung, nicht grau
-            "wappen_rot": [150, 46, 42, 255], "wappen_blau": [44, 70, 120, 255], "gitter": [60, 42, 38, 255],   # Balkon-Baluster DUNKELBRAUN (Foto: dunkle Brüstung, nicht rot)
+            "wappen_rot": [150, 46, 42, 255], "wappen_blau": [44, 70, 120, 255], "gitter": [128, 46, 40, 255],   # Balkon-Baluster = ROTER Sandstein (User+Foto p_statbg: rote gedrechselte Baluster, NICHT dunkelbraun)
             "balkon": [92, 40, 34, 255], "firstkamm": [150, 44, 38, 255],
-            "gauben_rahmen": [196, 176, 140, 255]}   # heller Steinrahmen um das Gaubenfenster (Foto)
+            "gauben_rahmen": [150, 134, 108, 255]}   # gedämpfter Steinrahmen (Foto: dunklere Laibung, nicht hell-leuchtend)
     os.makedirs("modelle/kaufhaus_freiburg", exist_ok=True)
     sc = trimesh.Scene()
     for nm, m in parts.items():
