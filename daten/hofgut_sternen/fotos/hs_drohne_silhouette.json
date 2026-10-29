@@ -1,0 +1,17 @@
+{
+  "foto": "daten/hofgut_sternen/fotos/hs_drohne.jpg",
+  "img_wh": [
+    1600,
+    1199
+  ],
+  "x0": 1573,
+  "x1": 1599,
+  "top": 1181,
+  "bottom": 1198,
+  "width_px": 26,
+  "height_px": 17,
+  "aspect_w_h": 1.529,
+  "roof_bumps_x_frac": [],
+  "geb_pixel_frac": 0.0,
+  "quelle": "SegFormer ADE20K (nvidia/segformer-b4-finetuned-ade-512-512); groesste Gebaeudekomponente"
+}
