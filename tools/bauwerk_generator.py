@@ -134,8 +134,6 @@ class Ctx:
             W, eg_top, axes = md["W_m"], md["eg_top_m"], md["axes_x_frac"]
             self.measured = md
             print(f"   [auto-gemessen aus Foto] W={W} m  EG-Oberkante={eg_top} m  Achsen={axes}")
-        if f.get("axes_x_frac"):            # Config-Achsen schlagen Messung (Mess-Achsen oft ungleich/falsch)
-            axes = f["axes_x_frac"]; print(f"   [Fenster-Achsen aus Config] {axes}")
         self.W = float(W); self.eg_top = float(eg_top)
         # --- DACH: First aus GEMESSENER Front-Dachhöhe (perspektiv-echt), Tiefe separat gekappt ---
         self.lod2_depth = float(m["lod2_depth"]); self.lod2_ridge = float(m["lod2_ridge"])
