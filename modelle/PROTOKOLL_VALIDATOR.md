@@ -202,3 +202,15 @@ ist zu breit" sagt, ist das ein GRÖSSEN-/LAGE-Problem → NUR den Größen-/Lag
 (hier cr0), NIE die Form-Parameter (Profil/Silhouette) „sicherheitshalber" mitändern. Vor dem Edit
 fragen: „welche EINE Variable steuert genau die gemeldete Eigenschaft?" — nur die ändern, Rest fix
 lassen. Fix: konkaves Profil zurück + nur cr0=w*0.38 (Fuß ≈ Körperbreite). Verschärft [[parametrisch_gueltig_nie_degeneriert]].
+
+## F9 (2026-10-29): erfundenes Feature (Seiten-Durchgang) nie gegen Foto geprüft
+Der Giebelseiten-„Eck-Durchgang" (round_arch in der Seitenwand) existiert am realen Kaufhaus GAR
+NICHT (Foto pe_side: massive Giebelwand) und lag ausgerechnet vor der Arkaden-Rückwand → durch die
+Öffnung sah man die rote Wand bis zum Boden = „hängt da rum / geht zum Boden" (User, verwirrt).
+Das Feature stammte aus einer früheren Runde und ich habe es im Mehrflächen-Audit zwar GESEHEN,
+aber als gegeben hingenommen statt gegen das Foto zu prüfen.
+LEHRE: der Audit muss auch BESTEHENDE Features hinterfragen „gibt es das am Original überhaupt?",
+nicht nur fehlende/falsche suchen. ÜBER-Generierung (erfundene Durchgänge/Lisenen/Kapitellringe,
+vgl. F5) ist eine eigene Fehlerklasse — jedes Bauteil braucht einen Foto-Beleg, sonst raus.
+Diagnose hier sauber per FARB-ISOLATION (laube/piers/glas je eigene Farbe, ein Render) → sofort
+sichtbar dass die Arkaden-Rückwand (laube) durch den Durchgang schien (vgl. F7/F8: Farb-Isolation zuerst).
