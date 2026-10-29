@@ -575,7 +575,7 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
     wins = []; bayc = np.array([xc, -proj*0.32])                                # Buchtzentrum (für Außennormale)
     wh = (z1 - 0.6) - BAL_Z1; wz = BAL_Z1 + wh/2                                # Unterkante an Balkonkante, Oberkante HÖHER (bis knapp unter Helmfuß) — Fenster größer (User)
     arz = (BAL_Z0+BAL_Z1)/2                                                     # Wappen GENAU auf Balkonhöhe (User)
-    for j in (1, 2, 3):
+    for j in range(5):                                                         # Fenster RUNDHERUM auf ALLEN Facetten (Foto kh_erker: wickeln um den Erker), nicht nur die 3 vorderen
         pa = np.array(pts6[j]); pb = np.array(pts6[j+1]); ctr = (pa+pb)/2
         tang = pb-pa; fw = float(np.linalg.norm(tang)); tu = tang/fw
         ang = float(np.arctan2(tu[1], tu[0])); Rz = trimesh.transformations.rotation_matrix(ang, [0, 0, 1])
