@@ -1,0 +1,37 @@
+{
+  "name": "Haus zum Bohrer (Schusterstraße 13, Freiburg)",
+  "out_dir": "modelle/haus_bohrer",
+  "prefix": "bohrer",
+  "glb": "bohrer_measured.glb",
+  "quelle": "Fassade AUTO-gemessen aus Commons-Foto jm00078; Massing LOD2-Zeile Schusterstraße (grob)",
+  "massing": {
+    "W": 6.5,
+    "eave": 8.8,
+    "lod2_depth": 9.0,
+    "lod2_ridge": 12.6,
+    "streetfront_depth": 6.0,
+    "wall_thick": 0.4
+  },
+  "facade": {
+    "floors": 2,
+    "eg_top": 3.2,
+    "axes_x_frac": [0.32, 0.68],
+    "window": { "w": 1.0, "h": 1.35, "sill_off": 0.6, "cols": 2, "rows": 2 }
+  },
+  "elements": {
+    "putzfassade": { "string_course": false },
+    "fensterraster": { "cols": 2, "rows": 2 },
+    "fensterlaeden": {},
+    "blumenkaesten": {},
+    "erdgeschoss": {
+      "door": true,
+      "door_x_frac": 0.5,
+      "style": "shop",
+      "window_x_frac": [0.26, 0.74]
+    },
+    "satteldach": {},
+    "dachziegel": { "tile_w": 0.18, "course_h": 0.15, "relief": 0.045, "slopes": "both" },
+    "gauben": { "n": 1 },
+    "dachrinne": { "downpipe_x_frac": [0.03, 0.97] }
+  }
+}
