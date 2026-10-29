@@ -30,8 +30,7 @@
       "sill_off": 0.5,
       "cols": 2,
       "rows": 3
-    },
-    "fenster_auto": "modelle/hotel_oberkirch/obk_fenster_ml.json"
+    }
   },
   "elements": {
     "putzfassade": {

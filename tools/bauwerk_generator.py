@@ -135,18 +135,23 @@ class Ctx:
             self.measured = md
             print(f"   [auto-gemessen aus Foto] W={W} m  EG-Oberkante={eg_top} m  Achsen={axes}")
         # --- Fenster-Achsen aus ML+Struktur-Regularisierung (fenster_ml.py) ---
-        fa = f.get("fenster_auto")
-        if fa:
+        # WICHTIG: die regularisierten x_fracs sind relativ zur FENSTER-Box (schmaler als die
+        # Fassade). Erst auf FASSADEN-Bruchteile umrechnen (über die Mess-Box), sonst ragen die
+        # Fenster über den Rand. Nur nutzen, wenn die Mess-Box bekannt ist.
+        fa = f.get("fenster_auto"); meas_box = (cfg.get("measure") or {}).get("box")
+        if fa and meas_box:
             import json as _j, os as _o2
             if _o2.path.exists(fa):
-                d = _j.load(open(fa))
+                d = _j.load(open(fa)); bb = d.get("building_box_frac")
                 full = [r for r in d.get("rows", []) if r["n"] >= 2]
-                if full:
-                    main = max(full, key=lambda r: r["n"])        # breiteste Reihe = die Fensterachsen
-                    axes = [float(x) for x in main["x_fracs"]]
-                    nfl_auto = len(full)                          # Fassaden-Fensterreihen
-                    f.setdefault("_nfl_auto", nfl_auto)
-                    print(f"   [Fenster-Achsen aus ML+Struktur] {len(axes)} Achsen {axes}, {nfl_auto} Reihen")
+                if full and bb:
+                    main = max(full, key=lambda r: r["n"])
+                    fl, fr = float(meas_box[0]), float(meas_box[2])     # Fassaden-Rand (Bildfrakt.)
+                    axes = []
+                    for xf in main["x_fracs"]:
+                        xi = bb[0] + float(xf) * (bb[2] - bb[0])        # Fenster-x in Bildfrakt.
+                        axes.append(round((xi - fl) / max(fr - fl, 1e-6), 3))  # -> Fassaden-Frakt.
+                    print(f"   [Fenster-Achsen aus ML+Struktur, fassaden-normiert] {axes}")
         self.W = float(W); self.eg_top = float(eg_top)
         # --- DACH: First aus GEMESSENER Front-Dachhöhe (perspektiv-echt), Tiefe separat gekappt ---
         self.lod2_depth = float(m["lod2_depth"]); self.lod2_ridge = float(m["lod2_ridge"])

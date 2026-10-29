@@ -80,3 +80,15 @@ CMP-Facade, venv /tmp/ml). Farb-/perspektiv-robust, fängt Rundbögen. Dominant-
 Nachbarn (22→14). Multi-Foto-Konsens funktioniert NUR auf ML-Basis: Heuristik 13/3/5/10 (schräg/
 Nacht kaputt) vs ML 14/13/14/17 → robuster Median 14. LEHRE: an der Heuristik-Rausch-Wand ist ein
 vortrainiertes Open-Source-Netz (CPU reicht) der Hebel, nicht noch ein Schwellwert.
+
+## Fehler-Log (laufend, auf User-Wunsch)
+**F1 (2026-10-29) Koordinaten-Bezugssystem verwechselt.** Traufständig-Wiring: die regularisierten
+x_fracs sind relativ zur FENSTER-Bounding-Box (schmaler als die Fassade). Ich habe sie als
+FASSADEN-Bruchteile (×W) verwendet → Oberkirch-Fenster zu weit gespreizt, ragten über den Rand.
+User: „zu schmal, Fenster ragen raus, davor war es besser." ROOT: Bezugssystem nicht geprüft
+(Detektor-Box ≠ Fassade); Mess-Box ≠ exakter Fassadenrand → Umrechnung asymmetrisch. META-FEHLER
+(wieder): committet + „funktioniert" gesagt, BEVOR ich den Render an den Rändern/Proportionen
+genau geprüft habe (die Fenster am Rand waren sichtbar, ich hab's übersehen) → [[score_ist_nicht_hinschauen]].
+FIX: fenster_auto aus Oberkirch-Config raus → zurück auf fassade_messen (funktioniert). LEHRE:
+(1) vor JEDER Übernahme von Detektor-Koordinaten das Bezugssystem explizit umrechnen + prüfen;
+(2) nach JEDER Änderung Render GANZ anschauen (Ränder, Breite, Proportion), nicht nur „passt grob".
