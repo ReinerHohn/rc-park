@@ -163,14 +163,15 @@ class Giebelhaus:
                 xs.append(cx0 - dd); xs.append(cx0 + dd)
             if len(ds) % 2 == 1:                              # ungerader Rest -> Paar aus letztem
                 dd = ds[-1]; xs.append(cx0 - dd); xs.append(cx0 + dd)
-            # zentrales Fenster im mittleren Giebel = hohes Bogenfenster
-            for x in xs:
-                tall = h
-                arched = af
-                if abs(x - cx0) < 0.3 and self.z_body + 1.5 < z < self.peak - 2.2:
-                    tall = min(h * 1.5, 3.2); arched = True
-                specs.append((float(x), z, w, tall, arched))
-        print(f"  Fenster AUS DETEKTOR {path}: {len(specs)} (alle behalten, symmetrisch)")
+            for x in xs:                                      # alle gleich hoch; Bogen nur als Oberkante
+                specs.append((float(x), z, w, h, af))
+        # GENAU EIN hohes zentrales Bogenfenster (das markante Mittelfenster), nicht ein Stapel:
+        # das unterste mittige Fenster im Giebel wird hoch & arched, die anderen bleiben normal.
+        mid = [s for s in specs if abs(s[0] - cx0) < 0.4 and self.z_body + 1.0 < s[1] < self.peak - 2.0]
+        if mid:
+            low = min(mid, key=lambda s: s[1]); i = specs.index(low)
+            specs[i] = (low[0], low[1] + 0.3, low[2], min(h * 1.6, 3.2), True)
+        print(f"  Fenster AUS DETEKTOR {path}: {len(specs)} (alle behalten, symmetrisch, 1 Bogenfenster)")
         return specs
 
     def arcade_openings(self):
