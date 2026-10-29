@@ -23,7 +23,7 @@ def rot2(a):
     return np.array([[np.cos(a), -np.sin(a)], [np.sin(a), np.cos(a)]])
 
 
-def hip_over_bbox(x0, x1, y0, y1, E, R, inset_frac=0.28, overh=0.5, t=0.4):
+def hip_over_bbox(x0, x1, y0, y1, E, R, inset_frac=0.28, overh=1.5, t=0.4):
     """Krüppelwalm über einem achsenparallelen Rechteck (Teil-Bbox), First entlang der langen Seite."""
     o = overh
     long_x = (x1 - x0) >= (y1 - y0)
@@ -82,7 +82,10 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
         w = trimesh.creation.extrude_polygon(poly, E)             # Wände 0..Traufe
         wall_meshes.append(w)
         x0, y0, x1, y1 = poly.bounds
-        roof_meshes.append(hip_over_bbox(x0, x1, y0, y1, E, R))
+        # Schwarzwald: Dach TIEF heruntergezogen → Dach-Traufe deutlich unter die Wand-Traufe
+        # (tiefer Überstand, Wände darunter in Schatten). Dachanteil dominiert (Laser-Grundwahrheit 0.57).
+        E_roof = max(E * 0.32, E - 5.8)
+        roof_meshes.append(hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=2.2))
 
     walls = trimesh.util.concatenate(wall_meshes)
     roofs = trimesh.util.concatenate(roof_meshes)

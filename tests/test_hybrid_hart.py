@@ -60,6 +60,19 @@ def test_5_farben_gemessen_nicht_weiss():
     assert abs(int(d[0]) - FM["dach"][0]) < 25, f"Dachfarbe {list(d)} ≠ gemessen {FM['dach']}"
 
 
+def test_7_struktur_dach_dominiert_wie_laser():
+    """HÄRTESTE PRÜFUNG (3D-FORM, nicht Farbe): der Dachanteil der Silhouette MUSS dem Laser-nDOM-
+    Grundwahrheits-Dachanteil entsprechen. Flacher Deckel statt dominantem, tief gezogenem
+    Schwarzwald-Dach = FAIL. Kein Betrug mehr über Farbe — der betrogene Ehemann misst die FORM."""
+    import subprocess
+    subprocess.run(["/tmp/ml/bin/python", "tools/struktur_abgleich.py"],
+                   capture_output=True, text=True, timeout=180)
+    s = json.load(open(f"{MD}/struktur_score.json"))
+    assert s["delta"] < 0.12, (
+        f"Dachanteil Modell {s['model_roof_frac']:.2f} vs Laser-Grundwahrheit {s['laser_roof_frac']:.2f} "
+        f"(Δ{s['delta']:.2f}, Struktur-Nähe {s['score']}/100) — FLACHER DECKEL statt dominantem Dach")
+
+
 def test_6_fassade_sitzt_am_hauptfluegel():
     """Fassade darf nicht frei im Raum schweben: ihre x-Spanne muss in der Hauptflügel-Front liegen."""
     fr = json.load(open(f"{MD}/massing_frame.json"))["front"]
