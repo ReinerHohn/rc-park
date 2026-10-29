@@ -77,7 +77,7 @@ def test_8_dach_eine_masse_wie_luftbild():
     """GUARD (User sehr sauer): das DOP-Luftbild zeigt EIN zusammenhängendes Dach. Das Modell darf
     KEINE getrennten Teildächer haben (= falsches 2. Gebäude). Dachdaten von oben MÜSSEN eingreifen."""
     import subprocess
-    r = subprocess.run(["/tmp/ml/bin/python", "tools/dach_dop_check.py", "--name", NAME],
+    r = subprocess.run(["/tmp/ml/bin/python", "tools/dach_dop_check.py", "--name", "hofgut_sternen"],
                        capture_output=True, text=True, timeout=120)
     d = json.load(open(f"{MD}/dach_dop_check.json"))
     assert d["ok"], f"Modell-Dach {d['modell_dach_komponenten']} getrennte Massen vs Luftbild {d['dop_dach_komponenten']} — falsches 2. Gebaeude"
