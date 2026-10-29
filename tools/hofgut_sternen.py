@@ -66,26 +66,42 @@ def skylight(x, y_slope, z_slope, w=0.85, h=1.1):
     return box(x - w / 2, y_slope - 0.06, z_slope, w, 0.12, h)
 
 
-def railing(x0, y, z, length, height=1.0, posts=None):
-    """Balkonbrüstung: untere+obere Leiste + Pfosten."""
-    parts = [box(x0, y, z + height - 0.12, length, 0.08, 0.12), box(x0, y, z, length, 0.08, 0.12)]
-    n = posts or max(2, int(length / 0.9))
-    for xi in np.linspace(x0, x0 + length, n):
-        parts.append(box(xi - 0.03, y, z, 0.06, 0.08, height))
+def gaden(x0, y, z, length, height=0.95):
+    """Schwarzwald-GADEN-Brüstung: SOLIDES dunkles Holz-Füllpaneel + Hand-/Fußleiste + senkrechte
+    Rippen (Foto g4: breite geschlossene Holzbrüstung, NICHT dünne Pfosten) — das prägende Element."""
+    parts = [box(x0, y - 0.05, z + 0.08, length, 0.1, height - 0.2),          # geschlossenes Füllpaneel
+             box(x0, y - 0.11, z + height - 0.14, length, 0.18, 0.15),        # Handlauf (kräftig)
+             box(x0, y - 0.11, z, length, 0.18, 0.13)]                        # Fußleiste
+    for xi in np.arange(x0 + 0.25, x0 + length, 0.55):                        # senkrechte Rippen (Relief)
+        parts.append(box(xi - 0.03, y - 0.13, z + 0.1, 0.06, 0.06, height - 0.24))
     return trimesh.util.concatenate(parts)
 
 
 def window_row(Lf, z0, z1, n, wd=0.95, y=0.0):
-    """Reihe dunkler Fenster PROUD auf der Frontwand (y=0)."""
-    return trimesh.util.concatenate(
-        [box(x - wd / 2, y - 0.08, z0, wd, 0.1, z1 - z0) for x in np.linspace(Lf * 0.07, Lf * 0.93, n)])
+    """Reihe ECHTER Fenster: dunkle Scheibe + heller Rahmen (Sturz/Sohlbank/Jamben) + Kreuzstock.
+    Gibt (glas, rahmen)."""
+    glass, fr = [], []; h = z1 - z0
+    for x in np.linspace(Lf * 0.07, Lf * 0.93, n):
+        xl, xr = x - wd / 2, x + wd / 2
+        glass.append(box(xl, y - 0.05, z0, wd, 0.1, h))
+        fr.append(box(xl - 0.07, y - 0.11, z1 - 0.02, wd + 0.14, 0.13, 0.11))     # Sturz
+        fr.append(box(xl - 0.07, y - 0.11, z0 - 0.06, wd + 0.14, 0.14, 0.1))      # Sohlbank
+        fr.append(box(xl - 0.07, y - 0.11, z0, 0.08, 0.13, h))                    # Jambe links
+        fr.append(box(xr - 0.01, y - 0.11, z0, 0.08, 0.13, h))                    # Jambe rechts
+        fr.append(box(xl, y - 0.13, (z0 + z1) / 2 - 0.03, wd, 0.06, 0.06))        # Kämpfer (quer)
+        fr.append(box(x - 0.03, y - 0.13, z0, 0.06, 0.06, h))                     # Mittelpfosten
+    return trimesh.util.concatenate(glass), trimesh.util.concatenate(fr)
 
 
-def flower_boxes(x0, y, z, length, n):
-    """Blumenkästen vorn an der Balkonbrüstung (rot)."""
-    seg = length / n
-    return trimesh.util.concatenate(
-        [box(x0 + i * seg + seg * 0.08, y - 0.14, z + 0.02, seg * 0.84, 0.3, 0.32) for i in range(n)])
+def flower_boxes(x0, y, z, length, h_rail=0.95):
+    """ÜPPIGE Geranien über die ganze Brüstung (Foto g4): durchlaufender Blütenwulst, überhängend."""
+    parts, x = [], x0
+    while x < x0 + length:
+        seg = min(0.6, x0 + length - x)
+        parts.append(box(x + 0.02, y - 0.22, z + h_rail - 0.1, seg * 0.96, 0.36, 0.3))     # Blütenwulst OBEN am Handlauf
+        parts.append(box(x - 0.01, y - 0.28, z + h_rail - 0.34, seg * 1.02, 0.3, 0.3))     # überhängend nach unten (Holz darunter bleibt sichtbar)
+        x += seg
+    return trimesh.util.concatenate(parts)
 
 
 def main():
@@ -105,34 +121,36 @@ def main():
     dach = hip_roof(Lf, D, E, Rz, a.inset)
 
     balkone, blumen = [], []
-    for zf in (S, S + Fl):                                   # Balkone auf 1.OG + 2.OG
-        balkone.append(box(1.0, -bp, zf - 0.15, Lf - 2.0, bp, 0.15))     # Boden
-        balkone.append(railing(1.0, -bp, zf, Lf - 2.0, height=1.0))      # Brüstung
-        blumen.append(flower_boxes(1.0, -bp, zf, Lf - 2.0, N))           # Blumenkästen
+    for zf in (S, S + Fl):                                   # Gaden-Galerien auf 1.OG + 2.OG
+        balkone.append(box(0.6, -bp, zf - 0.18, Lf - 1.2, bp + 0.1, 0.18))     # auskragender Holzboden
+        balkone.append(gaden(0.6, -bp, zf, Lf - 1.2))                          # solide Holzbrüstung
+        blumen.append(flower_boxes(0.6, -bp, zf, Lf - 1.2))                    # üppige Geranien
     balkone = trimesh.util.concatenate(balkone); blumen = trimesh.util.concatenate(blumen)
 
-    # Fassadenfenster: EG (im Sockel) + 1.OG + 2.OG hinter den Balkonen
-    fwin = [window_row(Lf, 0.9, 2.1, N), window_row(Lf, S + 0.5, S + 1.9, N),
-            window_row(Lf, S + Fl + 0.5, S + Fl + 1.9, N)]
+    # Fassadenfenster (echt, mit Rahmen): EG + 1.OG + 2.OG hinter den Galerien
+    fglass, fframe = [], []
+    for z0, z1 in [(0.9, 2.1), (S + 0.5, S + 1.9), (S + Fl + 0.5, S + Fl + 1.9)]:
+        g, fr = window_row(Lf, z0, z1, N); fglass.append(g); fframe.append(fr)
 
     # DACH: wenige GROSSE Zwerchhäuser (an der Traufe) + flache Velux — NICHT viele kleine Gauben (Foto g4)
     dz = E + 0.13 * (Rz - E); dy = (D / 2) * (dz - E) / (Rz - E)
     bodies = []
     for x in np.array([0.24, 0.55, 0.82]) * Lf:
-        b, w_ = big_dormer(x, dy, dz); bodies.append(b); fwin.append(w_)
+        b, w_ = big_dormer(x, dy, dz); bodies.append(b); fglass.append(w_)
     vz = E + 0.5 * (Rz - E); vy = (D / 2) * (vz - E) / (Rz - E)
-    velux = [skylight(x, vy, vz) for x in np.array([0.18, 0.40, 0.63, 0.86]) * Lf]
+    fglass += [skylight(x, vy, vz) for x in np.array([0.18, 0.40, 0.63, 0.86]) * Lf]
     gauben = trimesh.util.concatenate(bodies)
-    fenster = trimesh.util.concatenate(fwin + velux)
+    fenster = trimesh.util.concatenate(fglass)
+    fensterrahmen = trimesh.util.concatenate(fframe)
 
     kamine = trimesh.util.concatenate(
         [box(x - 0.5, D / 2 - 0.5, Rz - 1.0, 1.0, 1.0, 3.0) for x in np.linspace(Lf * 0.25, Lf * 0.8, a.chimneys)])
 
-    COL = {"sockel": [150, 144, 136, 255], "waende": [236, 231, 221, 255], "balkone": [86, 58, 40, 255],
-           "dach": [56, 50, 46, 255], "gauben": [92, 66, 46, 255], "kamine": [116, 104, 94, 255],
-           "fenster": [44, 42, 48, 255], "blumen": [182, 58, 64, 255]}   # Dach dunkel (Schindel), Holz warm-dunkel
+    COL = {"sockel": [206, 198, 184, 255], "waende": [240, 234, 222, 255], "balkone": [74, 50, 32, 255],
+           "dach": [50, 44, 40, 255], "gauben": [78, 54, 36, 255], "kamine": [112, 100, 90, 255],
+           "fenster": [40, 40, 46, 255], "blumen": [188, 52, 58, 255], "fensterrahmen": [238, 233, 223, 255]}
     parts = {"sockel": sockel, "waende": waende, "balkone": balkone, "fenster": fenster,
-             "blumen": blumen, "dach": dach, "gauben": gauben, "kamine": kamine}
+             "fensterrahmen": fensterrahmen, "blumen": blumen, "dach": dach, "gauben": gauben, "kamine": kamine}
     os.makedirs(a.outdir, exist_ok=True)
     sc = trimesh.Scene()
     for nm, m in parts.items():
