@@ -171,3 +171,18 @@ GENERELLE KONSEQUENZ (Pflicht vor „fertig" bei JEDEM Gebäude):
 4. Aktiv auch nach ZU WENIG (fehlende Fenster/Flächen) UND ZU VIEL (erfundene Zierde) suchen.
 Das ist dieselbe Wurzel wie F5 (falsche Granularität/Referenz) — jetzt verschärft: nicht nur
 Element-Nahvergleich, sondern VOLLSTÄNDIGKEIT über alle Flächen, BEVOR ich dem User etwas zeige.
+
+## F7 (2026-10-29): goldener Überhang — ineffizient diagnostiziert + beim Fix ÜBER das Ziel hinaus
+Zwei Lehren aus einem Vorgang:
+1. **Diagnose ineffizient.** Ich habe ~6 Runden „Element auskommentieren → rendern → schauen"
+   gebraucht, um das Überhang-Element zu finden. Die DEFINITIVE Methode (jedes verdächtige Teil in
+   EINE eigene Farbe umfärben, EIN Render → man SIEHT sofort, welches Teil es ist) habe ich erst
+   zuletzt genutzt. REGEL: bei „welches von N Teilen erzeugt diesen Pixel?" ZUERST Farb-Isolation
+   (ein Render, N Farben), nicht serielles Deaktivieren.
+2. **Fix größer als nötig → Kollateralschaden.** Der Überhang war NUR die durchlaufende Gold-
+   Sohlbank. Ich habe aber „sicherheitshalber" AUCH Rahmen + Transom auf out=0 geflacht → der
+   Querbalken (Transom) versank im Glas → Fenster kaputt (User fand's). REGEL: nur das
+   IDENTIFIZIERTE Teil ändern; nicht benachbarte Teile „mitnehmen". Und nach dem Fix das GANZE
+   betroffene Bauteil (hier: das Fenster selbst, Querbalken/Pfosten) nachprüfen — nicht nur die
+   Artefakt-Stelle. (Gleiche Wurzel wie F3/F4: Überkorrektur + nur die Zielstelle statt des ganzen
+   Bauteils geprüft.) Verschärft [[parametrisch_gueltig_nie_degeneriert]] + [[aenderungs_waechter_pflicht]].
