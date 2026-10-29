@@ -679,7 +679,7 @@ def _slope_y(z):
     return (D/2)*(z-EAVE)/(RIDGE-EAVE)              # y-Lage der Dachhaut auf Höhe z
 
 
-DORMER_PROJ = 0.95   # wie weit die Gaube aus der Dachhaut vorsteht (Foto: deutlich, mit Wangen + Dächlein)
+DORMER_PROJ = 0.62   # Gaube steht weniger weit vor → sitzt INS Dach integriert statt als Kasten davor (Foto: kleine Hüftgauben, Ziegel laufen eng ran)
 
 
 def dormers():
