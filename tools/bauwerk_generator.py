@@ -134,6 +134,19 @@ class Ctx:
             W, eg_top, axes = md["W_m"], md["eg_top_m"], md["axes_x_frac"]
             self.measured = md
             print(f"   [auto-gemessen aus Foto] W={W} m  EG-Oberkante={eg_top} m  Achsen={axes}")
+        # --- Fenster-Achsen aus ML+Struktur-Regularisierung (fenster_ml.py) ---
+        fa = f.get("fenster_auto")
+        if fa:
+            import json as _j, os as _o2
+            if _o2.path.exists(fa):
+                d = _j.load(open(fa))
+                full = [r for r in d.get("rows", []) if r["n"] >= 2]
+                if full:
+                    main = max(full, key=lambda r: r["n"])        # breiteste Reihe = die Fensterachsen
+                    axes = [float(x) for x in main["x_fracs"]]
+                    nfl_auto = len(full)                          # Fassaden-Fensterreihen
+                    f.setdefault("_nfl_auto", nfl_auto)
+                    print(f"   [Fenster-Achsen aus ML+Struktur] {len(axes)} Achsen {axes}, {nfl_auto} Reihen")
         self.W = float(W); self.eg_top = float(eg_top)
         # --- DACH: First aus GEMESSENER Front-Dachhöhe (perspektiv-echt), Tiefe separat gekappt ---
         self.lod2_depth = float(m["lod2_depth"]); self.lod2_ridge = float(m["lod2_ridge"])
