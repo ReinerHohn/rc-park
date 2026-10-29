@@ -45,6 +45,20 @@ def hip_over_bbox(x0, x1, y0, y1, E, R, inset_frac=0.28, overh=1.5, t=0.4):
     return trimesh.Trimesh(vertices=np.array(V, float), faces=np.array(F), process=True)
 
 
+def cross_gable(cx, y_front, y_back, E_roof, R, w):
+    """ZENTRALES QUERSCHIFF / Zwerchgiebel (DOP: Kreuz-First, springt mittig zur Talseite vor).
+    Gegiebelter Flügel: First in Y bei x=cx, Giebel-Front bei y_front, Rückkante im Hauptdach."""
+    xl, xr = cx - w / 2, cx + w / 2
+    V = [(xl, y_front, E_roof), (xr, y_front, E_roof), (cx, y_front, R),      # Front-Giebel 0-2
+         (xl, y_back, E_roof), (xr, y_back, E_roof), (cx, y_back, R)]         # Rück 3-5
+    F = [(0, 1, 2),                     # Front-Giebeldreieck
+         (3, 5, 4),                     # Rück
+         (0, 2, 5), (0, 5, 3),          # linke Dachschräge
+         (1, 4, 5), (1, 5, 2),          # rechte Dachschräge
+         (0, 3, 4), (0, 4, 1)]          # Boden
+    return trimesh.Trimesh(vertices=np.array(V, float), faces=np.array(F), process=True)
+
+
 def build(footprint="modelle/hofgut_sternen/footprint.json",
           out="modelle/hofgut_sternen/hofgut_massing.glb",
           colors="modelle/hofgut_sternen/farben.json"):
@@ -96,6 +110,9 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
         inset = float(os.environ.get("ROOF_INSET", "0.28"))
     overh = float(np.clip(0.12 * min(x1 - x0, y1 - y0), 0.4, 1.0))
     roof_meshes = [hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=overh, inset_frac=inset)]  # EIN Dach aus Laser
+    # ZENTRALES QUERSCHIFF (DOP: Kreuz-First, springt mittig zur Talseite -Y vor) — war plattgemacht
+    cx = (x0 + x1) / 2.0; cg_w = (x1 - x0) * 0.24
+    roof_meshes.append(cross_gable(cx, y0 - overh - 1.2, (y0 + y1) / 2.0, E_roof, R, cg_w))
 
     walls = trimesh.util.concatenate(wall_meshes)
     try:                                                          # Teildächer SAUBER verschmelzen (statt Überschneidungs-Hütchen)
