@@ -345,13 +345,32 @@ def gen_groundfloor(c, p):
     if win_xf is None:
         n = int(p.get("arched_windows", 0)); win_xf = [(i + 0.5) / n for i in range(n)] if n else []
     ww = float(p.get("shop_w", 1.5))
+    grille = []
     for xf in win_xf:
         sx = c.W * float(xf) + xs
         holes.append((sx - ww / 2, sx + ww / 2, 0.85, 2.65))     # rechteckige Öffnung (kein Bogen)
         fr, wm, cu = shop_window(sx, ww, 0.85, 2.65)
         frames.append(fr); warms.append(wm); curts.append(cu)
-        for side in (-1, 1):                                      # braune Klappläden flankierend
-            frames.append(slab(sx + side * (ww / 2 + 0.22), -0.05, 1.75, 0.34, 0.06, 1.7))
+        if p.get("shop_grille"):                                  # RAUTEN-SCHUTZGITTER vorm Schaufenster (Foto Bohrer)
+            gz0, gz1, yg = 0.95, 2.55, -0.17; cz = (gz0 + gz1) / 2; cw = ww - 0.06; gh = gz1 - gz0
+            L = min(cw, gh) * 1.12; step = 0.17; nx = int(cw / step) + 1
+            for sgn in (1, -1):
+                Rm = trimesh.transformations.rotation_matrix(sgn * np.pi / 4, [0, 1, 0])
+                for i in range(-nx, nx + 1):
+                    bar = tbox(extents=(0.02, 0.03, L)); bar.apply_transform(Rm)
+                    bar.apply_translation((sx + i * step, yg, cz)); grille.append(bar)
+        else:
+            for side in (-1, 1):                                  # sonst braune Klappläden flankierend
+                frames.append(slab(sx + side * (ww / 2 + 0.22), -0.05, 1.75, 0.34, 0.06, 1.7))
+    if grille:
+        g = cat(grille); clip = tbox(extents=(ww - 0.05, 0.4, 2.55 - 0.95 - 0.05))
+        clip.apply_translation((c.W * float(win_xf[0]) + xs, -0.17, (0.95 + 2.55) / 2))
+        try:
+            from trimesh.boolean import intersection
+            g = intersection([g, clip])
+        except Exception:
+            pass
+        out["gitter"] = g
     out["eg_sockel"] = panel(0, c.W, 0.0, c.eg_top, holes, c.front_t + 0.12, y0=-0.12)
     if p.get("textured", False) and c.measured.get("facade_region_eg"):      # EG-Wandtextur (opt-in)
         tex = _facade_texture(c.cfg, c.measured["facade_region_eg"])
@@ -383,6 +402,27 @@ def gen_groundfloor(c, p):
                               slab(mx, -0.16, 1.55, 0.5, 0.04, 0.82)])         # heller Aushang
     out["laterne"] = cat(lant); out["warmlicht"] = cat(glow + warms)
     return out
+
+
+# ---- Markise-Generator (gestreifte Laden-Markise überm EG) -----------------
+@element("markise")
+def gen_markise(c, p):
+    x0 = c.W * float(p.get("x0_frac", 0.1)); x1 = c.W * float(p.get("x1_frac", 0.95))
+    w = x1 - x0; stripes = int(p.get("stripes", 7)); sw = w / stripes
+    ztop = c.eg_top - 0.05                               # knapp unter EG-Oberkante
+    proj = float(p.get("proj", 1.0)); drop = float(p.get("drop", 0.42))
+    tilt = math.atan2(drop, proj)                        # nach vorn-unten geneigt
+    red, white = [], []
+    for i in range(stripes):
+        xx = x0 + (i + 0.5) * sw
+        sl = tbox(extents=(sw * 0.98, proj / math.cos(tilt), 0.04))     # geneigtes Streifenfeld
+        sl.apply_transform(trimesh.transformations.rotation_matrix(tilt, [1, 0, 0]))
+        sl.apply_translation((xx, -proj / 2, ztop - drop / 2))
+        v = tbox(extents=(sw * 0.98, 0.04, 0.2))                        # herabhängender Volant vorn
+        v.apply_translation((xx, -proj - 0.02, ztop - drop - 0.07))
+        (red if i % 2 == 0 else white).append(sl)
+        (red if i % 2 == 0 else white).append(v)
+    return {"markise_rot": cat(red), "markise_weiss": cat(white)}
 
 
 # ---- Dach-Generator (traufständiges Satteldach, mit Tiefen-Regel) ----------
@@ -579,6 +619,7 @@ DEFAULT_COL = {
     "schild_arm": [40, 36, 34, 255], "schild": [224, 214, 180, 255],
     "gold": [196, 162, 84, 255], "band": [96, 74, 52, 255], "wappen": [176, 150, 90, 255],
     "zierband": [120, 140, 185, 255], "dachziegel": [96, 78, 70, 255],
+    "gitter": [46, 42, 38, 255], "markise_rot": [198, 120, 132, 255], "markise_weiss": [240, 234, 226, 255],
 }
 
 

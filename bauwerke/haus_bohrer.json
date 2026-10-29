@@ -25,10 +25,12 @@
     "blumenkaesten": {},
     "erdgeschoss": {
       "door": true,
-      "door_x_frac": 0.5,
+      "door_x_frac": 0.27,
       "style": "shop",
-      "window_x_frac": [0.26, 0.74]
+      "window_x_frac": [0.68],
+      "shop_grille": true
     },
+    "markise": { "x0_frac": 0.08, "x1_frac": 0.95, "stripes": 7 },
     "satteldach": {},
     "dachziegel": { "tile_w": 0.18, "course_h": 0.15, "relief": 0.045, "slopes": "both" },
     "gauben": { "n": 1 },
