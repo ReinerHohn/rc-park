@@ -88,6 +88,23 @@ def dominant_cluster(wins, W, H):
     return max(groups, key=len)                      # dominante x-Gruppe = das Zielgebäude
 
 
+def is_arched(gray, box, thr):
+    """Rundbogen-Fenster erkennen: obere Ecken des dunklen Glases fehlen (gerundet), Mitte voll.
+    box=(cx,cy,w,h) in gray-Pixeln. Vergleicht Dunkel-Füllung obere Ecken vs oberer Mittelstreifen."""
+    cx, cy, w, h = box
+    x0, y0 = int(cx - w / 2), int(cy - h / 2)
+    reg = gray[max(0, y0):int(cy + h / 2), max(0, x0):int(cx + w / 2)]
+    if reg.size == 0 or reg.shape[0] < 8 or reg.shape[1] < 8:
+        return False
+    dark = reg < thr
+    hh, ww = dark.shape
+    top = dark[:max(1, hh // 4)]                       # oberes Viertel
+    cw = max(1, ww // 4)
+    corners = (top[:, :cw].mean() + top[:, -cw:].mean()) / 2
+    center = top[:, ww // 2 - cw // 2: ww // 2 + cw // 2 + 1].mean()
+    return (center - corners) > 0.26                   # Mitte deutlich voller als Ecken = Bogen
+
+
 def merge_boxes(wins):
     """benachbarte/überlappende Blobs zu EINER Fensteröffnung vereinen: fängt Sprossen-geteilte
     Scheiben (nah nebeneinander) UND Doppel-Detektion (gestapelt/überlappend) ab. Union-Find
@@ -176,6 +193,11 @@ def main():
         wins = [b for b in wins if (b[1] + b[3] / 2) < 0.90 * ch]
     wins = merge_boxes(wins)                     # Sprossen-Scheiben & Doppel-Detektion vereinen
     H, W = crop.shape[:2]
+    # Rundbogen-Erkennung je Fenster (datengetrieben, kein Augenmaß)
+    gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+    cc = gray[int(0.15 * H):int(0.75 * H), int(0.25 * W):int(0.75 * W)]
+    athr = max(70, int(cc.mean() - 0.7 * cc.std()))
+    arched = {id(b): is_arched(gray, b, athr) for b in wins}
     rows = cluster_rows(wins, H)
 
     rows_out = []
@@ -184,6 +206,7 @@ def main():
         zc = float(np.mean([b[1] for b in r])) / H
         rows_out.append({"z_frac": round(float(1 - zc), 3), "n": len(r),
                          "x_fracs": [round(float(b[0]) / W, 3) for b in r],
+                         "arched": [bool(arched.get(id(b), False)) for b in r],
                          "w_frac": round(float(np.median([b[2] for b in r])) / W, 3),
                          "h_frac": round(float(np.median([b[3] for b in r])) / H, 3)})
     res = {"foto": a.foto, "building_box_frac": [round(x0 / W0, 3), round(y0 / H0, 3),

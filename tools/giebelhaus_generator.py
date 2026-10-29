@@ -140,9 +140,9 @@ class Giebelhaus:
             z = row["z_frac"] * self.peak                     # Box-Oberkante ≈ First-Höhe
             w = row["w_frac"] * self.W
             h = row["h_frac"] * self.peak
-            arched = (h / max(w, 0.1)) > 1.55                 # hohe schmale = Bogenfenster
-            for xf in row["x_fracs"]:
-                specs.append((xf * self.W, z, w, h, arched))
+            arch_flags = row.get("arched") or [False] * len(row["x_fracs"])
+            for xf, af in zip(row["x_fracs"], arch_flags):
+                specs.append((xf * self.W, z, w, h, bool(af)))   # Bogen AUS Detektor-Form
         print(f"  Fenster AUS DETEKTOR {path}: {len(specs)} ({d['n_rows']} Reihen)")
         return specs
 
