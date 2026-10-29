@@ -109,26 +109,26 @@ def main():
     allw, mask = windows_from_seg(seg, win_ids)
     if not allw:
         print("keine Fenster segmentiert"); return
-    wins = dominant_building(allw, W0)                 # Nachbarhäuser abtrennen
-    print(f"({len(allw)} Fenster gesamt -> {len(wins)} im Zielgebäude nach Cluster-Isolierung)")
-    xs = [w[0] for w in wins]; ys = [w[1] for w in wins]
-    ws = [w[2] for w in wins]; hs = [w[3] for w in wins]
-    bx = (min(xs) - max(ws)/2, min(ys) - max(hs), max(xs) + max(ws)/2, max(ys) + max(hs)*1.3)
-    bx = (max(0, bx[0]), max(0, bx[1]), min(W0, bx[2]), min(H0, bx[3]))
-    rows = to_rows(wins, bx)
-    res = {"foto": a.foto, "modell": a.model,
-           "building_box_frac": [round(bx[0]/W0, 3), round(bx[1]/H0, 3), round(bx[2]/W0, 3), round(bx[3]/H0, 3)],
-           "n_windows": len(wins), "n_rows": len(rows), "rows": rows}
-    print(f"-> {len(wins)} Fenster in {len(rows)} Reihen")
-    for r in rows:
-        print(f"   z={r['z_frac']:.2f} n={r['n']} arched={r['arched']}")
+    # STRUKTUR-REGULARISIERUNG fest verdrahtet (Nachbarn raus + Reihen/Spalten-Alignment +
+    # Symmetrie) -> saubere Abstände automatisch für jede reguläre Fassade.
+    import fenster_struktur as FS
+    boxes = [[cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2] for cx, cy, w, h, _ in allw]
+    res = FS.regularize(boxes, W0, H0)
+    res["foto"] = a.foto; res["modell"] = a.model
+    print(f"({len(allw)} Fenster roh -> {res['n_windows']} regularisiert in {res['n_rows']} Reihen)")
+    for r in res["rows"]:
+        print(f"   z={r['z_frac']:.2f} n={r['n']} arched={r['arched'][0] if r['arched'] else False} x={r['x_fracs']}")
     if a.out:
-        json.dump(res, open(a.out, "w"), indent=2, ensure_ascii=False); print(f"-> {a.out}")
-    ov = img.copy()
-    for cx, cy, w, h, ar in wins:
-        col = (0, 140, 255) if ar else (0, 0, 255)
-        cv2.rectangle(ov, (int(cx-w/2), int(cy-h/2)), (int(cx+w/2), int(cy+h/2)), col, 3)
-    cv2.putText(ov, f"ML: {len(wins)} Fenster", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0, 0), 3)
+        json.dump(res, open(a.out, "w"), indent=2, ensure_ascii=False, default=float); print(f"-> {a.out}")
+    # Overlay: regularisierte Positionen
+    ov = img.copy(); bxf = res.get("building_box_frac", [0, 0, 1, 1])
+    bw = (bxf[2] - bxf[0]) * W0; bh = (bxf[3] - bxf[1]) * H0
+    for r in res["rows"]:
+        y = int(bxf[1] * H0 + (1 - r["z_frac"]) * bh)
+        for xf, ar in zip(r["x_fracs"], r["arched"]):
+            x = int(bxf[0] * W0 + xf * bw)
+            cv2.circle(ov, (x, y), 16, (0, 140, 255) if ar else (0, 0, 255), 4)
+    cv2.putText(ov, f"ML+Struktur: {res['n_windows']} Fenster", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0, 0), 3)
     cv2.imwrite(a.overlay or "/tmp/fenster_ml.png", ov); print(f"-> {a.overlay or '/tmp/fenster_ml.png'}")
 
 
