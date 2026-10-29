@@ -546,7 +546,7 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
         pr = [(cx2+r*np.cos(a), cy2+r*np.sin(a), z) for (r, z) in prof]
         for p0, p1 in zip(pr[:-1], pr[1:]):
             if np.linalg.norm(np.array(p1)-np.array(p0)) > 1e-3:
-                gold.append(trimesh.creation.cylinder(radius=0.05, segment=(p0, p1)))
+                gold.append(trimesh.creation.cylinder(radius=0.028, segment=(p0, p1)))   # DÜNNE Gratrippen (Foto: zartes Gold, nicht dominant)
     nring = 17                                                                  # DICHTE 4-farbige Diamant-Glasur, folgt der KONKAVEN Silhouette
     for i in range(nring):
         t = (i+0.4)/nring; rr = _r(t); zz = z1+zf+(chh-zf)*t; nseg = max(8, int(16*(1-t)+6))
@@ -555,7 +555,7 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
             ang = 2*np.pi*k/nseg + i*0.5
             sc = tbox(extents=(e, e, 0.07)); sc.apply_transform(trimesh.transformations.rotation_matrix(np.pi/4, [0, 0, 1]))
             sc.apply_translation((cx2+rr*np.cos(ang), cy2+rr*np.sin(ang), zz))
-            [gruen, rot, hell, gold][(i + k) % 4].append(sc)   # grün/rot/creme/gold Diamanten (glasiert) wie das Foto
+            [gruen, hell, rot, gold][i % 4].append(sc)   # HORIZONTALE Farbbänder je Ring (grün/creme/rot/gelb-glasiert) wie Foto — NICHT Schachbrett, NICHT golddominant
     zb = z1+chh+0.05; sh = 1.3; r0 = w*0.055                                     # schlanke Fiale über dem Helm
     spire = tcone(radius=r0, height=sh, sections=6); spire.apply_translation((cx2, cy2, zb)); gold.append(spire)
     fin = trimesh.creation.cylinder(radius=0.045, height=0.5); fin.apply_translation((cx2, cy2, zb+sh+0.2)); gold.append(fin)
