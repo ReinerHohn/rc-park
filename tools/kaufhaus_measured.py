@@ -968,24 +968,61 @@ def arcade_glazing():
 SIDE_WINY = tuple(round(D*f, 2) for f in (0.46, 0.67, 0.88))   # Y-Lagen aus der TIEFE abgeleitet (D wird gekappt!) — sonst ragte das 3. Fenster (9.6) aus der 8.5 m tiefen Wand (User: Seitenfenster falsch/außerhalb)
 
 
+def _side_window_specs():
+    """Giebelseiten-Fenster GEMESSEN am Foto (kh_erker.jpg Seitenwand): WENIGE kleine Fenster mit
+    hellem Sandsteingewände — ein zweiflügliges Rechteckfenster (vorn/oben) + ein Rundbogenfenster
+    (hinten, hohes schlankes) — NICHT drei gleiche Schlitze. Y aus der Tiefe D abgeleitet."""
+    return [
+        dict(yc=round(D*0.34, 2), hw=0.62, zb=SILL,      zt=HEAD-0.4, round=False, lights=2),  # 2-licht Rechteck
+        dict(yc=round(D*0.66, 2), hw=0.46, zb=SILL-1.3,  zt=HEAD-0.7, round=True,  lights=1),  # Rundbogen, höher
+    ]
+
+
+def _side_hole(s):
+    """Loch-Polygon (Y,Z) eines Seitenfensters — Rechteck oder Rundbogen."""
+    yc, hw, zb, zt = s["yc"], s["hw"], s["zb"], s["zt"]
+    if not s["round"]:
+        return Polygon([(yc-hw, zb), (yc+hw, zb), (yc+hw, zt), (yc-hw, zt)])
+    zc = zt-hw
+    pts = [(yc-hw, zb), (yc-hw, zc)]
+    pts += [(yc+hw*np.cos(a), zc+hw*np.sin(a)) for a in np.linspace(np.pi, 0, 14)]
+    pts += [(yc+hw, zb)]
+    return Polygon(pts)
+
+
 def side_walls():
-    """SEITENWÄNDE (Giebelseiten x≈0 / x≈W): EIN Durchgangs-Rundbogen GANZ VORNE (Y klein → bildet
-    einen Eck-Durchgang, nicht mittig, User) + Fenster im oberen Band (Foto s_side). Gibt (Wand, Glas)."""
+    """SEITENWÄNDE (Giebelseiten x≈0 / x≈W): Durchgangs-Rundbogen ganz vorne + wenige kleine
+    Fenster mit Sandsteingewände (Foto). Gibt (Wand, Glas, Gewände/Rahmen)."""
     outer = Polygon([(0, 0), (D, 0), (D, EAVE), (0, EAVE)])      # (Y, Z)
-    holes = [round_arch(1.9, 3.0, ARC_SPRING)]                   # Durchgang vorne (Y≈1,9), NICHT in der Mitte
-    for yc in SIDE_WINY:                                         # Fenster oben
-        holes.append(Polygon([(yc-0.55, SILL), (yc+0.55, SILL), (yc+0.55, HEAD-0.5), (yc-0.55, HEAD-0.5)]))
+    specs = _side_window_specs()
+    holes = [round_arch(1.9, 3.0, ARC_SPRING)] + [_side_hole(s) for s in specs]
     poly = outer.difference(unary_union([h.buffer(0) for h in holes]))
-    walls = []
+    walls, glass, frames = [], [], []
     for x0 in (0.0, W-0.6):
         m = extrude_polygon(poly, 0.6); V = m.vertices.copy()
         m.vertices = np.c_[x0+V[:, 2], V[:, 0], V[:, 1]]         # Poly-x→Welt-Y (Tiefe), Poly-y→Welt-Z (Höhe), Dicke→Welt-X
         walls.append(m)
-    glass = []                                                  # dunkle Scheiben hinter den Seitenfenstern (kein Durchblick) + Gold-Kreuzstock
-    for x0 in (0.33, W-0.33):
-        for yc in SIDE_WINY:
-            g = tbox(extents=(0.08, 1.05, HEAD-0.5-SILL)); g.apply_translation((x0, yc, (SILL+HEAD-0.5)/2)); glass.append(g)
-    return trimesh.util.concatenate(walls), trimesh.util.concatenate(glass)
+    for xg, xf in ((0.33, 0.08), (W-0.33, W-0.08)):             # xg=Glasebene (mittig), xf=Gewändeebene (außen, leicht proud)
+        for s in specs:
+            yc, hw, zb, zt = s["yc"], s["hw"], s["zb"], s["zt"]
+            g = tbox(extents=(0.08, 2*hw-0.1, zt-zb)); g.apply_translation((xg, yc, (zb+zt)/2)); glass.append(g)
+            for dy in (-hw, hw):                                # senkrechte Gewände-Pfosten
+                frames.append(tbox(extents=(0.14, 0.12, zt-zb)).apply_translation((xf, yc+dy, (zb+zt)/2)))
+            frames.append(tbox(extents=(0.16, 2*hw+0.3, 0.12)).apply_translation((xf, yc, zb)))    # Sohlbank
+            if s["lights"] >= 2:                                # Mittelpfosten (2 Lichter) + Kämpfer
+                frames.append(tbox(extents=(0.12, 0.1, zt-zb)).apply_translation((xf, yc, (zb+zt)/2)))
+                frames.append(tbox(extents=(0.12, 2*hw, 0.1)).apply_translation((xf, yc, (zb+zt)/2)))
+            if not s["round"]:
+                frames.append(tbox(extents=(0.14, 2*hw+0.24, 0.14)).apply_translation((xf, yc, zt)))   # Sturz
+            else:                                               # Rundbogen-Gewände als Saum entlang des Bogens
+                zc = zt-hw
+                curve = LineString([(yc+hw*np.cos(a), zc+hw*np.sin(a)) for a in np.linspace(np.pi, 0, 20)])
+                band = curve.buffer(0.09, cap_style=2).buffer(0)
+                for geom in (band.geoms if band.geom_type == "MultiPolygon" else [band]):
+                    mm = extrude_polygon(geom, 0.14); Vv = mm.vertices.copy()
+                    mm.vertices = np.c_[xf+Vv[:, 2], Vv[:, 0], Vv[:, 1]]; frames.append(mm)
+    return (trimesh.util.concatenate(walls), trimesh.util.concatenate(glass),
+            trimesh.util.concatenate(frames))
 
 
 def plain_gable(x_end, dx=0.5):
@@ -1040,12 +1077,13 @@ def build():
         "arkadenkreuz": arcade_muntins(),
     }
     back = tbox(extents=(W, 0.6, EAVE)); back.apply_translation((W/2, D-0.3, EAVE/2))
-    wall_m, side_glass = side_walls()
+    wall_m, side_glass, side_frames = side_walls()
     parts["waende"] = trimesh.util.concatenate([back, wall_m])
     parts["seitenglas"] = side_glass
+    parts["seitenrahmen"] = side_frames
 
     cols = {"fassade": [116, 38, 34, 255], "waende": [104, 34, 30, 255], "dach": [96, 108, 74, 255],   # tieferes Ochsenblut-Rot (Foto); Dach moosig-olivgrün (NICHT rot — Foto zeigt grün)
-            "giebel": [116, 38, 34, 255], "balken": [120, 38, 34, 255], "galerie": [138, 48, 42, 255], "fenster": [26, 30, 36, 255], "seitenglas": [26, 30, 36, 255],
+            "giebel": [116, 38, 34, 255], "balken": [120, 38, 34, 255], "galerie": [138, 48, 42, 255], "fenster": [26, 30, 36, 255], "seitenglas": [26, 30, 36, 255], "seitenrahmen": [196, 176, 140, 255],   # heller Sandstein-Gewände um die Seitenfenster (Foto)
             "statuen": [206, 206, 212, 255], "konsole": [198, 160, 90, 255], "erker": [116, 38, 34, 255], "helm": [192, 152, 70, 255],
             "baldachin": [198, 162, 92, 255],
             "gauben": [40, 34, 32, 255], "gauben_dach": [96, 108, 74, 255], "dachmuster": [88, 102, 70, 255], "dachziegel": [90, 102, 70, 255],
