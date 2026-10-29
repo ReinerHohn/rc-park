@@ -674,10 +674,10 @@ def dormer_roofs():
     Spitze, kein Keil, moderate Höhe. Solider Körper (druckbar)."""
     parts = []
     for xc, z in _dormer_specs():
-        ys = _slope_y(z); o = 0.16; yf = ys-DORMER_PROJ-0.40           # Dächlein kragt vorn über das Fenster (Überstand, Foto)
+        ys = _slope_y(z); o = 0.22; yf = ys-DORMER_PROJ-0.58           # Dächlein kragt DEUTLICH vorn über das Fenster (Traufschatten, Foto)
         xL, xR = xc-DORMER_W/2-o, xc+DORMER_W/2+o
-        zt = z+DORMER_H*0.88                                # Traufe des Gaubendachs (über dem Fenster)
-        zr = zt+DORMER_H*0.62; rh = DORMER_W*0.34; ym = ys-DORMER_PROJ*0.30   # First: kurz, waagrecht, nach hinten versetzt, moderate Höhe
+        zt = z+DORMER_H*0.9                                 # Traufe des Gaubendachs (über dem Fenster)
+        zr = zt+DORMER_H*0.82; rh = DORMER_W*0.30; ym = ys-DORMER_PROJ*0.30   # First HÖHER + kürzer → klar ablesbares kleines Walmdach (vorher zu flach, las sich head-on nicht)
         V = [(xL, yf, zt), (xR, yf, zt), (xR, ys, zt), (xL, ys, zt),   # 0..3 Traufe (vorn/hinten)
              (xc-rh, ym, zr), (xc+rh, ym, zr)]                          # 4,5 First
         F = [(0, 1, 5), (0, 5, 4),                           # Vorderfläche (Trapez, schräg nach hinten-oben)
