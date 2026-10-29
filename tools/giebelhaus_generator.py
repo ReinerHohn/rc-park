@@ -161,9 +161,15 @@ class Giebelhaus:
         # GIEBEL-Reihen (über der Traufe) einzeln symmetrisch; BODY-Reihen (unter dem Band) zu
         # EINER Reihe zusammen und ÜBER DIE BÖGEN zentriert (User: über jedem Bogen ein Fenster).
         band = 0.33                                           # z_frac-Grenze Giebel/Body
-        for row in d["rows"]:
-            if row["z_frac"] < band:
-                continue
+        gable = [r for r in d["rows"] if r["z_frac"] >= band]
+        gable.sort(key=lambda r: -r["z_frac"])
+        # der ML verteilt das EINE hohe Bogenfenster auf mehrere Höhen -> Phantom-Dreierreihe.
+        # Echte Giebelstruktur hat 1 Dreierreihe; die überzähligen mittleren 3er-Reihen zusammen-
+        # legen, damit Reihenzahl stimmt (User: 5 Reihen gesamt, oberste Dreierreihe war falsch).
+        trip_idx = [i for i, r in enumerate(gable) if r["n"] >= 3]
+        if len(trip_idx) > 1:
+            gable = [r for i, r in enumerate(gable) if i != trip_idx[0]]   # oberste 3er-Reihe raus
+        for row in gable:
             z = min(row["z_frac"] * self.peak, self.peak - 0.5)
             afs = row.get("arched") or [False] * len(row["x_fracs"])
             af = sum(bool(a) for a in afs) >= max(1, len(afs) // 2)
