@@ -1073,8 +1073,10 @@ def _gable_window_specs():
     """Fenster im hohen Treppengiebel, GEMESSEN am Foto ac7b01d5 (rechte Giebelseite): EIN kleines
     zweiflügliges KREUZ-Fenster (2×2, unten) + EIN schmaler SCHLITZ (höher), beide zur VORDERKANTE
     versetzt (Y<D/2), nicht mittig — und KEINE zwei gleichen Schlitze."""
-    return [dict(yc=round(D*0.34, 2), hw=0.40, zb=EAVE+0.8, zt=EAVE+2.05, cross=True),   # 2×2 Kreuzfenster
-            dict(yc=round(D*0.37, 2), hw=0.15, zb=EAVE+2.7, zt=EAVE+3.95, cross=False)]   # schmaler Schlitz
+    # Form+Position korrigiert (User): Kreuzfenster fast QUADRATISCH (war zu hoch/schmal) und TIEFER
+    # knapp über der Traufe, weiter zur Vorderkante; Schlitz ebenfalls tiefer.
+    return [dict(yc=round(D*0.30, 2), hw=0.46, zb=EAVE+0.35, zt=EAVE+1.45, cross=True),   # 2×2 Kreuzfenster, nahezu quadratisch (0.92 breit × 1.1 hoch)
+            dict(yc=round(D*0.33, 2), hw=0.13, zb=EAVE+1.85, zt=EAVE+3.05, cross=False)]  # schmaler Schlitz darüber
 
 
 def plain_gable(x_end, dx=0.5, holes=None):
