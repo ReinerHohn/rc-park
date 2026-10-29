@@ -236,7 +236,7 @@ def gen_facade(c, p):
 @element("zierband")
 def gen_band(c, p):
     zb = c.measured.get("zierband") if c.measured else None
-    h = (zb or {}).get("h_m") or p.get("h")
+    h = p.get("h") or (zb or {}).get("h_m")           # Config schlägt Messung (Mess-Höhe kann 1 Etage daneben sein)
     if not h:
         return {}
     return {"zierband": slab(c.W / 2, -0.11, float(h), c.W + 0.08, 0.1, float(p.get("height", 0.13)))}

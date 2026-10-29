@@ -92,3 +92,11 @@ genau geprüft habe (die Fenster am Rand waren sichtbar, ich hab's übersehen) �
 FIX: fenster_auto aus Oberkirch-Config raus → zurück auf fassade_messen (funktioniert). LEHRE:
 (1) vor JEDER Übernahme von Detektor-Koordinaten das Bezugssystem explizit umrechnen + prüfen;
 (2) nach JEDER Änderung Render GANZ anschauen (Ränder, Breite, Proportion), nicht nur „passt grob".
+
+**F2 (2026-10-29) Guten Stand kaputtgeaendert + nicht am Render geprueft.** Oberkirch-Zierband
+von gemessen (gut) auf 9.25 verschoben -> „wieder Schrott", weil nicht am Render/Foto kontrolliert
+(wieder [[score_ist_nicht_hinschauen]]). KONSEQUENZ (harter Beweis statt Worte): tools/aenderung_check.py
+(VORHER|NACHHER|Heatmap|FOTO) gebaut und an genau diesem Fehler vorgefuehrt -> lokalisiert die
+Band-Linie unuebersehbar. PFLICHTPROZESS: nach JEDER Aenderung aenderung_check laufen lassen,
+Heatmap gegen Foto pruefen, erst dann 'verbessert' sagen; sonst sofort zurueck (git). Siehe
+memory aenderungs_waechter_pflicht.
