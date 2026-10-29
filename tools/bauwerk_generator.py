@@ -152,6 +152,8 @@ class Ctx:
                         xi = bb[0] + float(xf) * (bb[2] - bb[0])        # Fenster-x in Bildfrakt.
                         axes.append(round((xi - fl) / max(fr - fl, 1e-6), 3))  # -> Fassaden-Frakt.
                     print(f"   [Fenster-Achsen aus ML+Struktur, fassaden-normiert] {axes}")
+        if f.get("axes_x_frac"):                             # Config-Achsen schlagen alles (Mess-Achsen oft daneben)
+            axes = f["axes_x_frac"]; print(f"   [Fenster-Achsen aus Config] {axes}")
         self.W = float(W); self.eg_top = float(eg_top)
         # --- DACH: First aus GEMESSENER Front-Dachhöhe (perspektiv-echt), Tiefe separat gekappt ---
         self.lod2_depth = float(m["lod2_depth"]); self.lod2_ridge = float(m["lod2_ridge"])
