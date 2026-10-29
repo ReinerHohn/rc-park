@@ -98,10 +98,15 @@ def main():
     for m in fac.values():                                   # Fassade an die Hauptflügel-Front schieben
         m.apply_translation((front["x0"], front["y_front"], 0.0))
 
-    # 2 Kamine (Spec) auf dem Hauptflügel-First
+    # Kamine aus dem DOP-Luftbild (20 cm, schärfer als Laser) statt geraten
     R = front["ridge_m"] or 17.46
+    kam_fr = [0.35, 0.68]
+    if os.path.exists(f"{md}/dach_aufbauten.json"):
+        kf = json.load(open(f"{md}/dach_aufbauten.json")).get("kamine_x_frac")
+        if kf:
+            kam_fr = kf; print(f"[dop] Kamine x-Anteil aus Luftbild: {kf}")
     kamine = trimesh.util.concatenate([box(front["x0"] + fx * Lf, front["y_front"] + 4, R - 1.2, 1.0, 1.0, 2.6)
-                                       for fx in (0.35, 0.68)])
+                                       for fx in kam_fr])
 
     orn = FM.get("lueftlmalerei", [210, 205, 192])           # cremeweiße Lüftlmalerei/Baluster (Spec!)
     if isinstance(orn, dict):

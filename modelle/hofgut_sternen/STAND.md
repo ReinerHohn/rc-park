@@ -43,3 +43,13 @@ Mess-/STAND-Notizen NIE blind übernehmen — Stückzahlen/Formen am Foto neu z�
 - **Zwerchhäuser** höher/grösser + 4 kleine Schleppgauben oben; **Fresko**-Panel mittig im 2.OG (g4).
 - Offen: Zwerchhäuser von vorn klarer als Giebel durchbrechen lassen; Fensterläden; Krüppelwalm-Winkel
   exakt; Terrasse/Markise im EG. NUR Gebäude — keine Landschaft/Viadukt.
+
+## FERTIG 2026-10-29 — alle Daten gemergt, jede Quelle an ihrer Stärke
+- **Grundriss**: LOD2 (amtlich, 8-Teil → Hauptkörper verschmolzen); Fremdgebäude per Footprint-Gegencheck ausgeschlossen.
+- **Dach-TOPOLOGIE**: DOP-Luftbild → EIN zusammenhängendes Dach (Guard `dach_dop_check` + test_8).
+- **Dach-PLAN/Aufbauten**: DOP 20 cm (schärfer als Laser) → 2 Kaminpositionen (x 0,27/0,82).
+- **Dach-FORM/Höhen**: Laser-nDOM → First 16,3 m, Dach-Unterkante 10,0 m, langer First (Krüppelwalm, inset 0,10).
+- **Fassade**: amtliches Frontfoto (freigestellt+Maßstab) → 11 Achsen, 2 Lauben (weiße Baluster), 4 Gauben, Naturstein-EG, Fresko.
+- **Farben**: zonenweise aus Foto via ML-Maske.
+- **Validierung**: Overlay-Bewerter (perspektiv-genau, IoU), 8/8 harte Tests, Quellen-Gate grün.
+- **Dateien**: hofgut_hybrid.glb (Ansicht/Farbe) · hofgut_3d.html (interaktiv) · hofgut_druckbar.stl (watertight, 52,8×24,2×19 m) · hofgut_ansichten.png.
