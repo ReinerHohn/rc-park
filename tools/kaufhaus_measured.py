@@ -995,7 +995,7 @@ def build():
         "giebel": gables(),
         "piers": arcade_piers(),
         "pierbase": pier_bases(),
-        "lisenen": pier_lisenen(),
+        # "lisenen": pier_lisenen(),  # ENTFERNT — die Pfeiler haben KEINE senkrechte Goldlinie (User)
         "boegen": arch_rings(),
         "galerie": gallery(),
         "fenster": trimesh.util.concatenate([window_glazing(), e0["fenster"], e1["fenster"]]),
