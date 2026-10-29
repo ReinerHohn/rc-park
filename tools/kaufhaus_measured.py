@@ -839,9 +839,9 @@ def arcade_piers():
     pitch = W/N_ARCH; parts = []
     for i in range(N_ARCH+1):
         x = pitch*i
+        # Pfeiler geht FLIESSEND in den Bogen über — KEINE verbreiterten Kapitell-/Impost-Ringe
+        # (User: die zwei Endringe markierten das Säulenende, falsch). Schlichter Schaft bis Bogenansatz.
         shaft = tbox(extents=(0.62, 0.9, PIER_H)); shaft.apply_translation((x, -0.4, PIER_H/2)); parts.append(shaft)
-        cap = tbox(extents=(0.8, 1.05, 0.26)); cap.apply_translation((x, -0.4, PIER_H-0.2)); parts.append(cap)
-        imp = tbox(extents=(0.76, 1.0, 0.22)); imp.apply_translation((x, -0.4, ARC_SPRING)); parts.append(imp)   # Kämpfer/Impost am Bogenansatz (Foto)
     return trimesh.util.concatenate(parts)
 
 
