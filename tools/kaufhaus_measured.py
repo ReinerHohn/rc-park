@@ -628,7 +628,7 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
         for zr in np.linspace(wz-wh/2+0.25, wz+wh/2-0.25, 3):                   # feine DUNKLE Bleiruten (kein Gold!) — sonst wirkt das Glas wie ein Goldgitter
             put((lw-0.04, 0.125, 0.015), 0, zr, 0.015, wins)
         # kleines WAPPEN-SCHILD (statt Kugel): Schildform (runder Kopf, Spitze unten) + Gold-Rand + Kreuz
-        sw, sh2 = 0.22, 0.30; fld = [rot, hell, gruen][j % 3]
+        sw, sh2 = 0.27, 0.37; fld = [rot, hell, gruen][j % 3]   # Wappenschilde kräftiger (Foto: große Wappen)
         for scale, thick, out2, bucket in [(1.15, 0.05, 0.11, gold), (1.0, 0.08, 0.14, fld)]:
             sx, sy = sw*scale, sh2*scale
             poly = Polygon([(-sx, sy), (-sx*0.7, sy*1.08), (sx*0.7, sy*1.08), (sx, sy),
@@ -639,6 +639,13 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
             bucket.append(m)
         put((0.05, 0.14, 0.42), 0, arz, 0.20, gold)                             # Kreuz senkrecht
         put((0.30, 0.14, 0.05), 0, arz+0.04, 0.20, gold)                        # Kreuz waagrecht
+    # KRAGSTEIN-KÖPFCHEN: Reihe kleiner Stein-Köpfe am Erker-Fuß, direkt über dem Netzgewölbe (Foto)
+    hz = z0 - 0.03; hc = np.array([xc, -proj*0.5])
+    head_xy = [tuple(p) for p in pts6] + [tuple((np.array(pts6[k])+np.array(pts6[k+1]))/2) for k in range(len(pts6)-1)]
+    for hx, hy in head_xy:
+        nd = np.array([hx, hy]) - hc; nl = float(np.linalg.norm(nd)); nd = nd/nl if nl > 1e-6 else np.array([0.0, -1.0])
+        hh = trimesh.creation.icosphere(subdivisions=1, radius=0.085)
+        hh.apply_translation((hx+nd[0]*0.07, hy+nd[1]*0.07, hz)); body_parts.append(hh)
     return {"erker": trimesh.util.concatenate(body_parts), "helm": trimesh.util.concatenate(gold),
             "helm_rot": trimesh.util.concatenate(rot), "helm_hell": trimesh.util.concatenate(hell),
             "helm_gruen": trimesh.util.concatenate(gruen), "fenster": trimesh.util.concatenate(wins)}
