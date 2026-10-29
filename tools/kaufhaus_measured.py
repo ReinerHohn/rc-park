@@ -548,15 +548,14 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
                 if np.linalg.norm(b-a) > 1e-3:
                     gold.append(trimesh.creation.cylinder(radius=0.016, segment=(tuple(a), tuple(b))))
     cx2, cy2 = xc, -proj*0.5
-    cr0 = w*0.38; zf = 0.32; chh = max(3.0, (EAVE+0.62*(RIDGE-EAVE))-z1-zf-0.05)   # KONKAVES Glockenprofil behalten, aber Fuß kleiner → widester Punkt ≈ Körperbreite (w/2), kein Kreisel-Überhang
-
-    def _r(t):                                                                  # KONKAVES Helmprofil (t=0 Fuß .. 1 Spitze): unten breit, zieht in einer Kurve dünn ein
-        return cr0*(1-t)**2.3*0.98 + 0.015
-    prof = [(cr0*1.30, z1-0.06), (cr0*1.08, z1+zf)]                              # konkav nach außen gewölbter Glockenfuß (wie vorher, User mochte das) — nur schmaler, Fuß ≈ Körperbreite, leicht in den Körper überlappend
-    npro = 18
-    for i in range(1, npro+1):
-        t = i/npro; prof.append((_r(t), z1+zf+(chh-zf)*t))
-    prof.append((0.015, z1+chh+0.05))                                           # Spitze
+    cr0 = w*0.40; chh = max(2.7, (EAVE+0.62*(RIDGE-EAVE))-z1-0.05)*0.92           # etwas kürzer → Breite:Höhe wie vorher, Konkavität bleibt deutlich sichtbar
+    # EINE glatte, STARK KONKAVE Glockenkurve (kein 2-Punkt-Fuß-Knick → keine falsche Biegung unten):
+    # Fuß breit (≈ Körperbreite w/2), zieht in einer durchgehenden konkaven Kurve zur Spitze ein.
+    def _r(t):                                                                  # t=0 Fuß .. 1 Spitze
+        return cr0*(1.30*(1.0-t)**2.7 + 0.015)
+    npro = 24
+    prof = [(_r(i/npro), (z1-0.08) + (chh+0.08)*(i/npro)) for i in range(npro+1)]
+    prof.append((0.012, z1+chh+0.05))                                           # Spitze
     gruen.append(_revolve(prof, cx2, cy2, sections=8))                          # OKTOGONALER (facettierter) Kern, grün glasiert — Foto: 8-eckiger Helm, NICHT rund
     rib_ang = np.linspace(np.pi/8, 2*np.pi+np.pi/8, 8, endpoint=False)          # 8 Gold-Grat-Rippen auf den Facettenkanten
     for a in rib_ang:
@@ -566,7 +565,7 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
                 gold.append(trimesh.creation.cylinder(radius=0.028, segment=(p0, p1)))   # DÜNNE Gratrippen (Foto: zartes Gold, nicht dominant)
     nring = 17                                                                  # DICHTE 4-farbige Diamant-Glasur, folgt der KONKAVEN Silhouette
     for i in range(nring):
-        t = (i+0.4)/nring; rr = _r(t); zz = z1+zf+(chh-zf)*t; nseg = max(8, int(16*(1-t)+6))
+        t = (i+0.4)/nring; rr = _r(t); zz = (z1-0.08) + (chh+0.08)*t; nseg = max(8, int(16*(1-t)+6))
         e = max(0.12, 2*np.pi*rr/nseg*0.9)
         for k in range(nseg):
             ang = 2*np.pi*k/nseg + i*0.5
