@@ -88,6 +88,45 @@ def dominant_cluster(wins, W, H):
     return max(groups, key=len)                      # dominante x-Gruppe = das Zielgebäude
 
 
+def merge_boxes(wins):
+    """benachbarte/überlappende Blobs zu EINER Fensteröffnung vereinen: fängt Sprossen-geteilte
+    Scheiben (nah nebeneinander) UND Doppel-Detektion (gestapelt/überlappend) ab. Union-Find
+    über Boxen, die sich überlappen oder bei hoher vertikaler Überlappung einen kleinen
+    horizontalen Spalt haben."""
+    if not wins:
+        return []
+    B = [[cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2] for (cx, cy, w, h) in wins]
+    n = len(B); par = list(range(n))
+
+    def find(i):
+        while par[i] != i:
+            par[i] = par[par[i]]; i = par[i]
+        return i
+
+    def near(a, b):
+        ox = min(a[2], b[2]) - max(a[0], b[0]); oy = min(a[3], b[3]) - max(a[1], b[1])
+        if ox > 0 and oy > 0:
+            return True                                           # echte Überlappung
+        hb = min(a[3] - a[1], b[3] - b[1])
+        if oy > 0.5 * hb and -ox < 0.35 * min(a[2] - a[0], b[2] - b[0]):   # Sprossenspalt
+            return True
+        return False
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            if near(B[i], B[j]):
+                par[find(i)] = find(j)
+    groups = {}
+    for i in range(n):
+        groups.setdefault(find(i), []).append(B[i])
+    out = []
+    for g in groups.values():
+        x0 = min(b[0] for b in g); y0 = min(b[1] for b in g)
+        x1 = max(b[2] for b in g); y1 = max(b[3] for b in g)
+        out.append(((x0 + x1) / 2, (y0 + y1) / 2, x1 - x0, y1 - y0))
+    return out
+
+
 def cluster_rows(wins, H, tol=0.035):
     """Fenster nach z (cy) in Reihen gruppieren (tol = Anteil der Höhe)."""
     if not wins:
@@ -135,6 +174,7 @@ def main():
                                     ar_lo=0.3, ar_hi=2.3, min_fill=0.28)
         # Arkade (grosse Bögen im EG, reichen bis zum Boden) verwerfen: Unterkante im untersten 10 %
         wins = [b for b in wins if (b[1] + b[3] / 2) < 0.90 * ch]
+    wins = merge_boxes(wins)                     # Sprossen-Scheiben & Doppel-Detektion vereinen
     H, W = crop.shape[:2]
     rows = cluster_rows(wins, H)
 

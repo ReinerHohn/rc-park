@@ -91,7 +91,10 @@ class Giebelhaus:
         return (cx - w / 2, cx + w / 2, zc - h / 2, zc + h / 2)
 
     def window_specs(self):
-        """alle Fenster (cx, zc, w, h, arched) aus der Config: Body-Reihen + Giebel-Stufen."""
+        """alle Fenster (cx, zc, w, h, arched). Primär AUTOMATISCH aus dem Fenster-Detektor
+        (fenster_zaehler.py JSON), sonst Fallback auf handgepflegte Config-Reihen."""
+        if self.cfg["facade"].get("fenster_auto"):
+            return self._windows_from_detector(self.cfg["facade"]["fenster_auto"])
         f = self.cfg["facade"]; specs = []
         for row in f.get("body_rows", []):
             z = row["z"]; n = row["n"]; w = row.get("w", 0.85); h = row.get("h", 1.5)
@@ -109,6 +112,21 @@ class Giebelhaus:
             xs = np.linspace(xl + 1.0, xr - 1.0, n) if n > 1 else [self.W / 2]
             for cx in xs:
                 specs.append((cx, z, w, h, gr.get("arched", False)))
+        return specs
+
+    def _windows_from_detector(self, path):
+        """Detektor-JSON (Fraktionen der Gebäude-Box) -> Fenster in Modell-Metern. Box-Höhe ≈
+        First (LOD2), Box-Breite ≈ W. z_frac 0=unten. KEIN Hardcoding: Zahl/Lage kommt vom
+        Foto-Detektor fenster_zaehler.py."""
+        d = json.load(open(path)); specs = []
+        for row in d["rows"]:
+            z = row["z_frac"] * self.peak                     # Box-Oberkante ≈ First-Höhe
+            w = row["w_frac"] * self.W
+            h = row["h_frac"] * self.peak
+            arched = (h / max(w, 0.1)) > 1.55                 # hohe schmale = Bogenfenster
+            for xf in row["x_fracs"]:
+                specs.append((xf * self.W, z, w, h, arched))
+        print(f"  Fenster AUS DETEKTOR {path}: {len(specs)} ({d['n_rows']} Reihen)")
         return specs
 
     def arcade_openings(self):

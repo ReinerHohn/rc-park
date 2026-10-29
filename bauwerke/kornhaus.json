@@ -9,16 +9,18 @@
     "W": 13.0,
     "depth": 14.0,
     "wall_thick": 0.6,
-    "gable_start_z": 10.0,
-    "peak_z": 18.2,
+    "gable_start_z": 9.41,
+    "peak_z": 21.15,
     "gable_steps": 6,
-    "gable_top_w": 1.7
+    "gable_top_w": 1.7,
+    "_lod2": "Traufe/First aus LOD2 DEBW_0010007Tv8q (eave 9.41 / ridge 21.15 / Dachtyp 3100 Satteldach)"
   },
 
   "facade": {
     "eg_top": 3.5,
     "arcade": { "n": 3 },
-    "string_courses": [[4.1, 0.65], [9.8, 0.3]],
+    "fenster_auto": "modelle/kornhaus/korn_fenster.json",
+    "string_courses": [[4.1, 0.65], [9.2, 0.3]],
     "body_rows": [
       { "z": 5.2, "n": 3, "w": 1.25, "h": 2.0, "margin": 2.0 },
       { "z": 8.3, "n": 5, "w": 0.8, "h": 1.5, "margin": 1.6 }
