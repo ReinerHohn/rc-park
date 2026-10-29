@@ -136,18 +136,31 @@ class Giebelhaus:
         First (LOD2), Box-Breite ≈ W. z_frac 0=unten. KEIN Hardcoding: Zahl/Lage kommt vom
         Foto-Detektor fenster_zaehler.py."""
         d = json.load(open(path)); specs = []
+        # Fenstergrösse EINHEITLICH aus dem robusten Median (merge_boxes bläht einzelne Breiten
+        # auf) -> menschliches Mass, hochkant. Positionen SYMMETRISCH (Treppengiebel ist
+        # symmetrisch; die Detektor-x-Streuung ist Rauschen). Zahl je Reihe = Detektor (robust).
+        wmed = float(np.median([r["w_frac"] for r in d["rows"]])) * self.W
+        w = min(max(wmed, 0.8), 1.25); h = min(max(w * 1.6, 1.4), 2.0)
+        cx0 = self.W / 2
         for row in d["rows"]:
-            z = row["z_frac"] * self.peak                     # Box-Oberkante ≈ First-Höhe
-            w = row["w_frac"] * self.W
-            h = row["h_frac"] * self.peak
-            # SHAPE/SIZE-Korrektur (physik. Prior, kein Augenmaß): merge_boxes bläht Breiten auf
-            # (verschmilzt Nachbarfenster) und Dunkelglas unterschätzt die Höhe. Fenster sind
-            # MENSCHLICHES MASS: Breite ~0.8-1.3 m, hochkant (h≈1.6·w), Höhe ~1.3-2.0 m.
-            w = min(max(w, 0.8), 1.3)
-            h = min(max(h, w * 1.6), 2.0)
-            arch_flags = row.get("arched") or [False] * len(row["x_fracs"])
-            for xf, af in zip(row["x_fracs"], arch_flags):
-                specs.append((xf * self.W, z, w, h, bool(af)))   # Bogen AUS Detektor-Form
+            z = row["z_frac"] * self.peak
+            n = row["n"]
+            arch_flags = row.get("arched") or [False] * n
+            arched = sum(bool(a) for a in arch_flags) >= max(1, n // 2)
+            # verfügbare Breite: oberhalb der Traufe verjüngt sich der Giebel
+            if z > self.z_body:
+                up = (z - self.z_body) / max(self.peak - self.z_body, 0.1)
+                avail = self.W * (1.0 - 0.80 * up)
+            else:
+                avail = self.W * 0.86
+            avail = max(avail, w + 0.4)
+            if n <= 1:
+                xs = [cx0]
+            else:
+                half = min(avail, n * w * 1.8) / 2 - w / 2
+                xs = np.linspace(cx0 - half, cx0 + half, n)
+            for x in xs:
+                specs.append((float(x), z, w, h, arched))
         print(f"  Fenster AUS DETEKTOR {path}: {len(specs)} ({d['n_rows']} Reihen)")
         return specs
 
