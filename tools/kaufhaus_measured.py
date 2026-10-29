@@ -559,11 +559,11 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
     # EINE glatte, konkave Glockenkurve MIT überkragender Traufe: Fuß breit (1.40 → kragt über den
     # Körper = Überlappung/Traufe) und kommt bis z1-0.14 (überlappt die Körper-Oberkante), zieht dann
     # in einer durchgehenden konkaven Kurve zur Spitze ein (kein 2-Punkt-Knick).
-    FOOT = z1-0.14
+    FDROP = 0.55; FOOT = z1-FDROP                                               # Dach WEITER nach unten gezogen (User: „Dach weiterführen") → Traufe tiefer, schließt die Lücke überm Fenster
     def _r(t):                                                                  # t=0 Fuß .. 1 Spitze
         return cr0*(1.40*(1.0-t)**2.5 + 0.015)
     npro = 24
-    prof = [(_r(i/npro), FOOT + (chh+0.14)*(i/npro)) for i in range(npro+1)]
+    prof = [(_r(i/npro), FOOT + (chh+FDROP)*(i/npro)) for i in range(npro+1)]
     prof.append((0.012, z1+chh+0.05))                                           # Spitze
     gruen.append(_revolve(prof, cx2, cy2, sections=8))                          # OKTOGONALER (facettierter) Kern, grün glasiert — Foto: 8-eckiger Helm, NICHT rund
     rib_ang = np.linspace(np.pi/8, 2*np.pi+np.pi/8, 8, endpoint=False)          # 8 Gold-Grat-Rippen auf den Facettenkanten
@@ -574,20 +574,14 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
                 gold.append(trimesh.creation.cylinder(radius=0.028, segment=(p0, p1)))   # DÜNNE Gratrippen (Foto: zartes Gold, nicht dominant)
     nring = 17                                                                  # DICHTE 4-farbige Diamant-Glasur, folgt der KONKAVEN Silhouette
     for i in range(nring):
-        t = (i+0.4)/nring; rr = _r(t); zz = FOOT + (chh+0.14)*t; nseg = max(8, int(16*(1-t)+6))
+        t = (i+0.4)/nring; rr = _r(t); zz = FOOT + (chh+FDROP)*t; nseg = max(8, int(16*(1-t)+6))
         e = max(0.12, 2*np.pi*rr/nseg*0.9)
         for k in range(nseg):
             ang = 2*np.pi*k/nseg + i*0.5
             sc = tbox(extents=(e, e, 0.07)); sc.apply_transform(trimesh.transformations.rotation_matrix(np.pi/4, [0, 0, 1]))
             sc.apply_translation((cx2+rr*np.cos(ang), cy2+rr*np.sin(ang), zz))
             [gruen, hell, rot, gold][(i + k) % 4].append(sc)   # BUNTE Glasur-Schindeln im RAUTEN-/Schachbrettmuster (grün/creme/rot/gelb verstreut) — bunt wie Foto, aber Schachbrett → KEINE waagrechten Ringe (User)
-    # WASSERSPEIER (Gargoyles) am Helmfuß: vorspringende Speier an den vorderen Facettenecken (Foto),
-    # kragen schräg nach außen-unten; solider Körper (druckbar), Erker-Steinfarbe.
-    for a in (ang8[:-1] + np.pi/NF):                                                 # Wasserspeier an ALLEN Facettenkanten rundherum (voller Erker)
-        p0 = np.array([cx2+rb*0.98*np.cos(a), cy2+rb*0.98*np.sin(a), z1-0.02])       # Ansatz am Helmfuß/Körperrand
-        p1 = np.array([cx2+rb*1.35*np.cos(a), cy2+rb*1.35*np.sin(a), z1-0.42])       # Spitze: vor + runter
-        body_parts.append(trimesh.creation.cylinder(radius=0.07, segment=(tuple(p0), tuple(p1))))
-        head = trimesh.creation.icosphere(subdivisions=0, radius=0.1); head.apply_translation(tuple(p1)); body_parts.append(head)
+    # (Wasserspeier ENTFERNT — sahen wie rote Strippen/Drähte aus, User; stattdessen Dach tiefer gezogen)
     zb = z1+chh+0.05; sh = 1.3; r0 = w*0.055                                     # schlanke Fiale über dem Helm
     spire = tcone(radius=r0, height=sh, sections=6); spire.apply_translation((cx2, cy2, zb)); gold.append(spire)
     fin = trimesh.creation.cylinder(radius=0.045, height=0.5); fin.apply_translation((cx2, cy2, zb+sh+0.2)); gold.append(fin)
