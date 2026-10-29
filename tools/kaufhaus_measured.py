@@ -397,8 +397,9 @@ def gallery():
     """ZWEI schmale GOLD-Leisten der Balkonbrüstung (Handlauf oben + Sohle unten) — KEIN
     Blendarkaden-Fries mehr (war wuselig/„Schrott", User); dazwischen die roten Baluster."""
     parts = []
-    bot = tbox(extents=(W*0.9, 0.3, 0.1)); bot.apply_translation((W/2, BAL_Y, BAL_Z0)); parts.append(bot)   # Sohle
-    top = tbox(extents=(W*0.9, 0.28, 0.1)); top.apply_translation((W/2, BAL_Y, BAL_Z1)); parts.append(top)  # Handlauf
+    mid = (BAL_X0+BAL_X1)/2; wdt = BAL_X1-BAL_X0                                 # NUR zwischen den Erkern (wie der Balkon), NICHT über die ganze Breite
+    bot = tbox(extents=(wdt, 0.3, 0.1)); bot.apply_translation((mid, BAL_Y, BAL_Z0)); parts.append(bot)   # Sohle — endet an den Erkern (sonst goldener ÜBERHANG vor dem Erker-Fuß, User)
+    top = tbox(extents=(wdt, 0.28, 0.1)); top.apply_translation((mid, BAL_Y, BAL_Z1)); parts.append(top)  # Handlauf
     return trimesh.util.concatenate(parts)
 
 
@@ -536,8 +537,8 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
         if si < 0:
             return boss
         return boss + (rim[k]-boss)*rings[si]
-    for si in range(len(rings)):                                               # Ring-Rippen (quer)
-        pr = [_nd(si, k) for k in range(NR+1)]
+    for si in range(len(rings)-1):                                             # Ring-Rippen (quer) — NUR innen; KEIN Gold-Ring an der Rim
+        pr = [_nd(si, k) for k in range(NR+1)]                                  # (der volle Rim-Ring las sich als goldener ÜBERHANG, User) → Rim bleibt Stein
         for p0, p1 in zip(pr[:-1], pr[1:]):
             if np.linalg.norm(p1-p0) > 1e-3:
                 gold.append(trimesh.creation.cylinder(radius=0.02, segment=(tuple(p0), tuple(p1))))
@@ -607,16 +608,17 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
         glass = [(-a, 0.0)] + [(xf*lw, hf*wh) for xf, hf in _P] + [(a, 0.0)]    # Bleiglas MIT konkav-durchhängendem Kielbogen-Kopf (wie Hauptfenster)
         wins.append(facet_poly(Polygon(glass), 0.1, 0.0))
         og = [(-a-0.06, 0.0)] + [(xf*(lw+0.12), hf*wh+0.1) for xf, hf in _P] + [(a+0.06, 0.0)]   # Gold-Rahmen folgt dem Kielbogen
-        ig = [(-a+0.07, 0.12)] + [(xf*(lw-0.14), hf*wh-0.04) for xf, hf in _P] + [(a-0.07, 0.12)]
+        ig = [(-a+0.07, -0.35)] + [(xf*(lw-0.14), hf*wh-0.04) for xf, hf in _P] + [(a-0.07, -0.35)]   # ig bis UNTER die og-Unterkante → Rahmen hat KEINEN waagrechten Gold-Bodenbalken mehr (der las sich als goldener ÜBERHANG am Erker-Fuß, User) — nur Jamben + Bogenkopf
         ring = Polygon(og).difference(Polygon(ig)).buffer(0)
         for geom in (ring.geoms if ring.geom_type == "MultiPolygon" else [ring]):
             if not geom.is_empty:
-                gold.append(facet_poly(geom, 0.12, 0.04))
+                gold.append(facet_poly(geom, 0.12, 0.0))   # Gold-Rahmen FLÄCHIG (out=0), kein nach vorn kragender Gold-Saum am Erker-Fuß
         put((0.05, 0.14, wh), 0, wz, 0.055, gold)                               # Gold-Mittelpfosten → 2 Lichter
         for s in (-1, 1):                                                       # schlanke Gold-Jamben an den Facettenkanten
             put((0.055, 0.2, wh+0.1), s*fw*0.47, wz, 0.035, gold)
-        put((lw+0.06, 0.16, 0.06), 0, wz-0.1, 0.055, gold)                      # Querkämpfer (Transom)
-        put((fw*0.92, 0.22, 0.1), 0, wz-wh/2-0.06, 0.045, gold)                 # Sohlbank
+        put((lw+0.06, 0.1, 0.06), 0, wz-0.1, 0.0, gold)                         # Querkämpfer (Transom) FLÄCHIG, kein Überstand
+        # Sohlbank ENTFERNT — dieses durchlaufende Gold-Sohlbankband am Erker-Fuß war der „goldene
+        # Überhang" (User, per Farb-Isolationstest identifiziert); Fenster sitzen aufs Wappenband (Foto pe_under2)
         for zr in np.linspace(wz-wh/2+0.25, wz+wh/2-0.25, 3):                   # feine DUNKLE Bleiruten (kein Gold!) — sonst wirkt das Glas wie ein Goldgitter
             put((lw-0.04, 0.125, 0.015), 0, zr, 0.015, wins)
         # kleines WAPPEN-SCHILD (statt Kugel): Schildform (runder Kopf, Spitze unten) + Gold-Rand + Kreuz
