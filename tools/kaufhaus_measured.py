@@ -965,7 +965,7 @@ def arcade_glazing():
     return trimesh.util.concatenate(parts)
 
 
-SIDE_WINY = (4.2, 6.9, 9.6)    # Y-Lagen der Seitenfenster (3 über die Tiefe, Durchgang vorn frei)
+SIDE_WINY = tuple(round(D*f, 2) for f in (0.46, 0.67, 0.88))   # Y-Lagen aus der TIEFE abgeleitet (D wird gekappt!) — sonst ragte das 3. Fenster (9.6) aus der 8.5 m tiefen Wand (User: Seitenfenster falsch/außerhalb)
 
 
 def side_walls():
@@ -1050,9 +1050,9 @@ def build():
             "baldachin": [198, 162, 92, 255],
             "gauben": [40, 34, 32, 255], "gauben_dach": [96, 108, 74, 255], "dachmuster": [88, 102, 70, 255], "dachziegel": [90, 102, 70, 255],
             "dachrauten": [64, 82, 52, 255],
-            "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [96, 34, 28, 255], "arkadenglas": [24, 24, 28, 255], "arkadenkreuz": [48, 44, 46, 255], "piers": [116, 38, 34, 255], "pierbase": [96, 84, 74, 255],   # Pfeiler = GLEICHE Fassadenfarbe (User: Säule geht gleichfarbig in den Bogen über), nicht heller
+            "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [96, 34, 28, 255], "arkadenglas": [24, 24, 28, 255], "arkadenkreuz": [48, 44, 46, 255], "piers": [116, 38, 34, 255], "pierbase": [104, 40, 34, 255],   # Pfeiler+Sockel = roter Sandstein (User: Sockel sind AUCH rot, nicht grau); Sockel nur eine Spur dunkler
             "boegen": [192, 154, 72, 255], "first": [182, 150, 80, 255], "rahmen": [206, 162, 58, 255],
-            "wappen": [196, 150, 48, 255], "krabben": [150, 42, 36, 255], "dachkante_gold": [196, 160, 78, 255], "nische": [28, 22, 24, 255],
+            "wappen": [196, 150, 48, 255], "krabben": [150, 42, 36, 255], "dachkante_gold": [196, 160, 78, 255], "nische": [116, 38, 34, 255],   # Hintergrund hinter den Statuen = ROTE Wand (User: kein dunkles Nischenloch), Figuren stehen auf Konsolen vor der roten Fassade
             "helm_rot": [150, 44, 40, 255], "helm_hell": [224, 214, 190, 255], "helm_gruen": [86, 134, 82, 255],
             "lisenen": [188, 150, 72, 255], "sprossen": [72, 74, 84, 255],   # dunkle Bleiruten (echtes Bleiglas ist DUNKEL mit feinen Stegen) — Fenster liest als Öffnung, nicht grau
             "wappen_rot": [150, 46, 42, 255], "wappen_blau": [44, 70, 120, 255], "gitter": [60, 42, 38, 255],   # Balkon-Baluster DUNKELBRAUN (Foto: dunkle Brüstung, nicht rot)
