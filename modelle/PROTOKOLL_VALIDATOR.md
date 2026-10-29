@@ -214,3 +214,13 @@ nicht nur fehlende/falsche suchen. ÜBER-Generierung (erfundene Durchgänge/Lise
 vgl. F5) ist eine eigene Fehlerklasse — jedes Bauteil braucht einen Foto-Beleg, sonst raus.
 Diagnose hier sauber per FARB-ISOLATION (laube/piers/glas je eigene Farbe, ein Render) → sofort
 sichtbar dass die Arkaden-Rückwand (laube) durch den Durchgang schien (vgl. F7/F8: Farb-Isolation zuerst).
+
+## F10 (2026-10-29): Torbogen GANZ entfernt statt nur sauber gemacht (Überkorrektur, 2. Mal)
+User war über Clutter im Seiten-Durchgang verwirrt → ich habe den Durchgang KOMPLETT entfernt.
+Der ist aber real der begehbare Laube-Durchgang (Torbogen) an den Arkaden-Enden → User wollte ihn
+behalten, nur clutterfrei. Exakt die F7/F8-Wurzel: statt die EINE Ursache (Rückwand schien durch)
+zu beheben, das ganze Feature gelöscht. Richtig gewesen wäre von Anfang an: Öffnung nach vorn +
+Rückwand an den Eck-Jochen weg → durchsichtig. LEHRE (jetzt wirklich einbrennen): bei „X stört/
+sieht falsch aus" NIE X löschen, sondern die konkrete störende Eigenschaft minimal beheben; Löschen
+nur wenn das Feature NACHWEISLICH (Foto) nicht existiert (vgl. F9, wo es wirklich nicht existierte —
+hier existiert es doch). Vor Löschen eines Features: „gibt es das am Original?" am Foto klären.
