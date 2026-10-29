@@ -345,14 +345,15 @@ def gen_groundfloor(c, p):
     if win_xf is None:
         n = int(p.get("arched_windows", 0)); win_xf = [(i + 0.5) / n for i in range(n)] if n else []
     ww = float(p.get("shop_w", 1.5))
+    sz0 = float(p.get("shop_z0", 0.85)); sz1 = float(p.get("shop_z1", 2.65))   # GROSSES Schaufenster: tiefer Sockel bis knapp unter Markise
     grille = []
     for xf in win_xf:
         sx = c.W * float(xf) + xs
-        holes.append((sx - ww / 2, sx + ww / 2, 0.85, 2.65))     # rechteckige Öffnung (kein Bogen)
-        fr, wm, cu = shop_window(sx, ww, 0.85, 2.65)
+        holes.append((sx - ww / 2, sx + ww / 2, sz0, sz1))       # rechteckige Öffnung (kein Bogen)
+        fr, wm, cu = shop_window(sx, ww, sz0, sz1)
         frames.append(fr); warms.append(wm); curts.append(cu)
         if p.get("shop_grille"):                                  # RAUTEN-SCHUTZGITTER vorm Schaufenster (Foto Bohrer)
-            gz0, gz1, yg = 0.95, 2.55, -0.17; cz = (gz0 + gz1) / 2; cw = ww - 0.06; gh = gz1 - gz0
+            gz0, gz1, yg = sz0 + 0.1, sz1 - 0.1, -0.17; cz = (gz0 + gz1) / 2; cw = ww - 0.06; gh = gz1 - gz0
             L = min(cw, gh) * 1.12; step = 0.17; nx = int(cw / step) + 1
             for sgn in (1, -1):
                 Rm = trimesh.transformations.rotation_matrix(sgn * np.pi / 4, [0, 1, 0])
@@ -363,8 +364,8 @@ def gen_groundfloor(c, p):
             for side in (-1, 1):                                  # sonst braune Klappläden flankierend
                 frames.append(slab(sx + side * (ww / 2 + 0.22), -0.05, 1.75, 0.34, 0.06, 1.7))
     if grille:
-        g = cat(grille); clip = tbox(extents=(ww - 0.05, 0.4, 2.55 - 0.95 - 0.05))
-        clip.apply_translation((c.W * float(win_xf[0]) + xs, -0.17, (0.95 + 2.55) / 2))
+        g = cat(grille); clip = tbox(extents=(ww - 0.05, 0.4, (sz1 - 0.1) - (sz0 + 0.1) - 0.05))
+        clip.apply_translation((c.W * float(win_xf[0]) + xs, -0.17, (sz0 + sz1) / 2))
         try:
             from trimesh.boolean import intersection
             g = intersection([g, clip])
