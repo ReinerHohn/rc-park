@@ -27,6 +27,29 @@ def pierced_railing(x0, y, z, length, h=1.0, proj=1.25):
     return trimesh.util.concatenate(holz), trimesh.util.concatenate(slats)
 
 
+def fenster_aus_ml(Lf, E, md):
+    """Fenster als echte 3D-STRUKTUR (vertiefte Scheibe + erhabener Rahmen) an den per ML/Kanten
+    GEMESSENEN Positionen (fenster_ml.json). Für den 3D-Druck relevant (Relief, nicht Textur).
+    Gibt (scheiben, rahmen). Front bei y=0, Relief nach -Y (raus) / +Y (rein)."""
+    import json as _j
+    f = f"{md}/fenster_ml.json"
+    if not os.path.exists(f):
+        return None, None
+    d = _j.load(open(f))
+    scheiben, rahmen = [], []
+    for row in d["rows"]:
+        z = row["z_frac"] * E; h = max(0.8, row["h_frac"] * E)
+        for xf in row["x_fracs"]:
+            x = xf * Lf; w = max(0.7, row["w_frac"] * Lf * 1.1)
+            xl = x - w / 2
+            scheiben.append(box(xl, 0.08, z, w, 0.12, h))                    # vertiefte Scheibe (ins Mauerwerk)
+            rahmen.append(box(xl - 0.09, -0.12, z + h, w + 0.18, 0.16, 0.12))   # Sturz (erhaben)
+            rahmen.append(box(xl - 0.09, -0.12, z - 0.12, w + 0.18, 0.18, 0.12))  # Sohlbank (erhaben)
+            rahmen.append(box(xl - 0.09, -0.10, z, 0.09, 0.14, h))           # Jambe links
+            rahmen.append(box(x + w / 2, -0.10, z, 0.09, 0.14, h))           # Jambe rechts
+    return trimesh.util.concatenate(scheiben), trimesh.util.concatenate(rahmen)
+
+
 def hip_dormer(x, E, w=3.0, depth=2.2, h=1.5):
     """WALM-Gaube (Spec: walmgedeckt, KEINE Spitzgiebel): Körper + allseitig geneigtes Walmdach.
     Front bei y=0, ragt nach -Y. Gibt (körper, dach)."""
@@ -52,10 +75,16 @@ def build_facade(Lf, E, FM, meas=None):
     N = int(np.clip(meas.get("n_axes", 11), 7, 16))        # Fensterachsen aus Foto gemessen
     cx0, cx1 = Lf * 0.40, Lf * 0.60                          # Fresko-Mittelzone (ohne Balkon)
     eg_stein, galerie, baluster, blumen, fglass, fframe, dach_g = [], [], [], [], [], [], []
+    md_dir = "modelle/hofgut_sternen"
     # EG = Natursteinband (als proude Platte über die Front)
     eg_stein.append(box(0.2, -0.25, 0.0, Lf - 0.4, 0.3, S))
-    eg_g, eg_fr = eg_wall_windows(Lf, S * 0.45, S * 0.45 + 1.4, N - 2, door_x=Lf * 0.5)
-    fglass.append(eg_g); fframe.append(eg_fr)
+    # FENSTER als 3D-STRUKTUR aus ML/Kanten-Erkennung (vertieft + erhabener Rahmen, druckrelevant)
+    ml_g, ml_fr = fenster_aus_ml(Lf, E, md_dir)
+    if ml_g is not None:
+        fglass.append(ml_g); fframe.append(ml_fr)
+    else:
+        eg_g, eg_fr = eg_wall_windows(Lf, S * 0.45, S * 0.45 + 1.4, N - 2, door_x=Lf * 0.5)
+        fglass.append(eg_g); fframe.append(eg_fr)
     # 2 durchlaufende Lauben (hf_front zeigt 2 Balkonebenen), je in Segmenten um die Fresko-Mitte
     gal_levels = [S + 0.2, min(S + 0.2 + 2.6, E - 1.6)]               # untere + obere Galerie
     for li, zf in enumerate(gal_levels):
@@ -65,7 +94,8 @@ def build_facade(Lf, E, FM, meas=None):
             holz, slats = pierced_railing(x0s, -0.3, zf, L)
             galerie.append(holz); baluster.append(slats)
             blumen.append(flower_boxes(x0s, -1.5, zf, L))      # Geranien hängen an der Lauben-Vorderkante
-        g, fr = window_row(Lf, zf + 0.35, zf + 1.6, N); fglass.append(g); fframe.append(fr)
+    # Haustür mittig im EG
+    fframe.append(box(Lf * 0.5 - 0.8, -0.11, 0.0, 1.6, 0.14, 2.6))
     # Fresko mittig in der oberen Ebene (zwischen den Galerie-Segmenten)
     fresko = box(cx0, -0.06, gal_levels[1] + 0.2, cx1 - cx0, 0.06, (E - gal_levels[1]) - 0.4)
     # ~4 WALM-Gauben (hf_front: mehrere Gauben im Dach), walmgedeckt
