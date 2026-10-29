@@ -612,11 +612,11 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
         ring = Polygon(og).difference(Polygon(ig)).buffer(0)
         for geom in (ring.geoms if ring.geom_type == "MultiPolygon" else [ring]):
             if not geom.is_empty:
-                gold.append(facet_poly(geom, 0.12, 0.0))   # Gold-Rahmen FLÄCHIG (out=0), kein nach vorn kragender Gold-Saum am Erker-Fuß
+                gold.append(facet_poly(geom, 0.12, 0.04))   # Gold-Rahmen proud (Unterkante ist offen → kein Boden-Saum, aber Rahmen bleibt plastisch)
         put((0.05, 0.14, wh), 0, wz, 0.055, gold)                               # Gold-Mittelpfosten → 2 Lichter
         for s in (-1, 1):                                                       # schlanke Gold-Jamben an den Facettenkanten
             put((0.055, 0.2, wh+0.1), s*fw*0.47, wz, 0.035, gold)
-        put((lw+0.06, 0.1, 0.06), 0, wz-0.1, 0.0, gold)                         # Querkämpfer (Transom) FLÄCHIG, kein Überstand
+        put((lw+0.06, 0.16, 0.06), 0, wz-0.1, 0.055, gold)                      # Querkämpfer (Transom) wieder PROUD vor dem Glas (out=0 ließ ihn im Glas versinken → Querbalken weg, User)
         # Sohlbank ENTFERNT — dieses durchlaufende Gold-Sohlbankband am Erker-Fuß war der „goldene
         # Überhang" (User, per Farb-Isolationstest identifiziert); Fenster sitzen aufs Wappenband (Foto pe_under2)
         for zr in np.linspace(wz-wh/2+0.25, wz+wh/2-0.25, 3):                   # feine DUNKLE Bleiruten (kein Gold!) — sonst wirkt das Glas wie ein Goldgitter
