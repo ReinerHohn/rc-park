@@ -635,7 +635,8 @@ def _dormer_specs():
     pitch = span/(nslots-1) if nslots > 1 else span
     nrows = len(DORMER_ROWS)
     base = float(P.get("dormer_base_frac", 0.30))      # Gauben höher ins Dach (User: untere Reihe nicht an der Traufe)
-    fracs = np.linspace(base, base+0.21*(nrows-1), nrows) if nrows > 1 else [base]
+    gap = float(P.get("dormer_row_gap", 0.33))         # Abstand der Reihen: obere beginnt wo untere Dächer enden
+    fracs = np.linspace(base, base+gap*(nrows-1), nrows) if nrows > 1 else [base]
     specs = []
     for r, n in enumerate(DORMER_ROWS):
         z = EAVE+fracs[r]*(RIDGE-EAVE)
