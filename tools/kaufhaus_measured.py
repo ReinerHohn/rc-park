@@ -996,7 +996,7 @@ def arcade_recess():
     """Laubengang hinter der Arkade: SCHATTIGE Steinrückwand + Boden (nicht pechschwarz) → die
     Torbögen lesen sich als TIEFE Öffnungen mit Innenraum (Foto: Stände/Stein), nicht als Löcher."""
     parts = []
-    back = tbox(extents=(W-3.6, 0.3, ARC_APEX)); back.apply_translation((W/2, 2.2, ARC_APEX/2)); parts.append(back)   # Rückwand NUR über die inneren Joche → Eck-Joche bleiben OFFEN (begehbarer Torbogen an den Enden)
+    back = tbox(extents=(W, 0.3, ARC_APEX)); back.apply_translation((W/2, 2.2, ARC_APEX/2)); parts.append(back)   # Rückwand über VOLLE Breite → Laube ist ein GESCHLOSSENER, schattiger Gang (kein Durchblick nach draußen = kein weißes Loch, User)
     floor = tbox(extents=(W, 2.6, 0.3)); floor.apply_translation((W/2, 1.1, 0.12)); parts.append(floor)   # Laubengang-Boden
     return trimesh.util.concatenate(parts)
 
@@ -1023,8 +1023,9 @@ def _side_window_specs():
     hellem Sandsteingewände — ein zweiflügliges Rechteckfenster (vorn/oben) + ein Rundbogenfenster
     (hinten, hohes schlankes) — NICHT drei gleiche Schlitze. Y aus der Tiefe D abgeleitet."""
     return [
-        dict(yc=round(D*0.34, 2), hw=0.62, zb=SILL,      zt=HEAD-0.4, round=False, lights=2),  # 2-licht Rechteck
-        dict(yc=round(D*0.66, 2), hw=0.46, zb=SILL-1.3,  zt=HEAD-0.7, round=True,  lights=1),  # Rundbogen, höher
+        dict(yc=round(D*0.30, 2), hw=0.55, zb=SILL-0.3,  zt=HEAD-1.0, round=False, lights=2),  # 2-licht Rechteck (vorn, unten)
+        dict(yc=round(D*0.62, 2), hw=0.42, zb=SILL-1.3,  zt=HEAD-0.9, round=True,  lights=1),  # Rundbogen (hinten, unten)
+        dict(yc=round(D*0.42, 2), hw=0.30, zb=HEAD-0.5,  zt=EAVE-0.2, round=False, lights=1),  # kleines Einzelfenster MITTE-OBEN (User: fehlte; Foto pe_sideA hat es zwischen unterem Paar und Giebel)
     ]
 
 
