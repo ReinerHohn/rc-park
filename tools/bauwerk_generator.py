@@ -195,13 +195,7 @@ def element(name):
 def gen_facade(c, p):
     w = c.win; ww, wh, so = w["w"], w["h"], w["sill_off"]
     holes = [(cx - ww / 2, cx + ww / 2, sill, sill + wh) for sill, cx in c.floors_windows()]
-    xs = p.get("x_split")                                      # GENERISCH: zwei Farbzonen (Doppelhaus)
-    if xs:
-        xsp = float(xs) * c.W
-        out = {"fassade_links": panel(0, xsp, c.eg_top, c.eave, [h for h in holes if (h[0] + h[1]) / 2 < xsp], c.front_t),
-               "fassade": panel(xsp, c.W, c.eg_top, c.eave, [h for h in holes if (h[0] + h[1]) / 2 >= xsp], c.front_t)}
-    else:
-        out = {"fassade": panel(0, c.W, c.eg_top, c.eave, holes, c.front_t)}
+    out = {"fassade": panel(0, c.W, c.eg_top, c.eave, holes, c.front_t)}
     if p.get("textured", False) and c.measured.get("facade_region_upper"):   # Fassadentextur aus Foto (opt-in)
         tex = _facade_texture(c.cfg, c.measured["facade_region_upper"])
         if tex is not None:
@@ -444,13 +438,8 @@ def gen_dormers(c, p):
     if n <= 0:
         return {}
     dw, dh = float(p.get("w", 1.05)), float(p.get("h", 1.55))
-    xf = p.get("x_frac")                                       # feste Gauben-Positionen (z.B. nur rechtes Haus)
-    if xf:
-        xs = [c.W * float(f) for f in xf]
-    elif p.get("align_windows", True) and n == len(c.winx):
-        xs = c.winx
-    else:
-        xs = [c.W * (i + 0.5) / n for i in range(n)]
+    xs = c.winx if (p.get("align_windows", True) and n == len(c.winx)) else \
+        [c.W * (i + 0.5) / n for i in range(n)]
     zf, yf = c.eave + 0.15, -0.1
     bodies, roofs, glass, frames = [], [], [], []
     for cx in xs:
@@ -575,7 +564,7 @@ def export(cfg):
 
 
 DEFAULT_COL = {
-    "fassade": [228, 208, 150, 255], "fassade_links": [150, 155, 165, 255], "gesims": [238, 232, 214, 255],
+    "fassade": [228, 208, 150, 255], "gesims": [238, 232, 214, 255],
     "eg_sockel": [228, 208, 150, 255], "sockel_holz": [70, 52, 40, 255], "fenster": [40, 46, 54, 255],
     "eg_glas": [70, 54, 44, 255], "warmlicht": [240, 200, 120, 255],
     "schaufenster": [92, 62, 42, 255], "gardine": [240, 237, 230, 255],

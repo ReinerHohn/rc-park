@@ -19,17 +19,9 @@ import cv2
 
 
 def _facade_mask(crop):
-    """GENERISCH: dominante Fassadenfarbe aus dem zentralen Band bestimmen (nicht Himmel, nicht
-    sehr dunkel/Fenster) und die größte zusammenhängende Fläche dieser Farbe segmentieren —
-    funktioniert für Creme, Blaugrau, Grün … (nicht mehr auf Creme festgenagelt)."""
-    ch, cw = crop.shape[:2]
-    cen = crop[int(0.18 * ch):int(0.78 * ch), int(0.28 * cw):int(0.72 * cw)].reshape(-1, 3).astype(int)
-    sky = (cen[:, 2] > 195) & (cen[:, 1] > 195) & (cen[:, 0] > 190)
-    br = cen.sum(1)
-    sel = (~sky) & (br > 150) & (br < 720)
-    med = np.median(cen[sel], 0) if int(sel.sum()) > 50 else np.median(cen, 0)   # dominante Fassadenfarbe (BGR)
-    dist = np.abs(crop.astype(int) - med).sum(2)
-    m = ((dist < 80).astype(np.uint8)) * 255
+    b, g, r = crop[:, :, 0].astype(int), crop[:, :, 1].astype(int), crop[:, :, 2].astype(int)
+    cream = (r > 150) & (g > 140) & (b < 190) & (r >= b) & (g >= b - 12) & ((r + g) > 2.05 * b)
+    m = (cream.astype(np.uint8)) * 255
     m = cv2.morphologyEx(m, cv2.MORPH_CLOSE, np.ones((21, 21), np.uint8))
     m = cv2.morphologyEx(m, cv2.MORPH_OPEN, np.ones((9, 9), np.uint8))
     nl, lbl, st, _ = cv2.connectedComponentsWithStats(m)
@@ -247,13 +239,8 @@ if __name__ == "__main__":
     nax = int(sys.argv[4]) if len(sys.argv) > 4 and not sys.argv[4].startswith("--") else 4
     out = sys.argv[sys.argv.index("--out") + 1] if "--out" in sys.argv else "/tmp/fassade_mass.json"
     res, crop, facade, (fx, fy, fw, fh), ground_y, scale = measure(foto, box, eave, nax)
-    def _np(o):
-        if isinstance(o, np.integer): return int(o)
-        if isinstance(o, np.floating): return float(o)
-        if isinstance(o, np.ndarray): return o.tolist()
-        return str(o)
-    print(json.dumps(res, indent=2, ensure_ascii=False, default=_np))
-    json.dump(res, open(out, "w"), indent=2, ensure_ascii=False, default=_np)
+    print(json.dumps(res, indent=2, ensure_ascii=False))
+    json.dump(res, open(out, "w"), indent=2, ensure_ascii=False)
     vis = crop.copy()
     cv2.rectangle(vis, (fx, fy), (fx + fw, fy + fh), (255, 0, 0), 2)
     cv2.line(vis, (0, ground_y), (vis.shape[1], ground_y), (0, 0, 255), 2)
