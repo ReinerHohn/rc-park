@@ -572,7 +572,7 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
             ang = 2*np.pi*k/nseg + i*0.5
             sc = tbox(extents=(e, e, 0.07)); sc.apply_transform(trimesh.transformations.rotation_matrix(np.pi/4, [0, 0, 1]))
             sc.apply_translation((cx2+rr*np.cos(ang), cy2+rr*np.sin(ang), zz))
-            [gruen, gruen, hell, rot][(i + k) % 4].append(sc)   # kleine GLASUR-Schindeln im Rauten-/Schachbrettmuster (grün-dominant + creme/rot) — KEINE waagrechten Gold-Ringe mehr (User: viele kleine Ziegelschindeln, nicht Ringe)
+            [gruen, hell, rot, gold][(i + k) % 4].append(sc)   # BUNTE Glasur-Schindeln im RAUTEN-/Schachbrettmuster (grün/creme/rot/gelb verstreut) — bunt wie Foto, aber Schachbrett → KEINE waagrechten Ringe (User)
     zb = z1+chh+0.05; sh = 1.3; r0 = w*0.055                                     # schlanke Fiale über dem Helm
     spire = tcone(radius=r0, height=sh, sections=6); spire.apply_translation((cx2, cy2, zb)); gold.append(spire)
     fin = trimesh.creation.cylinder(radius=0.045, height=0.5); fin.apply_translation((cx2, cy2, zb+sh+0.2)); gold.append(fin)
@@ -1162,16 +1162,16 @@ def build():
     parts["seitenglas"] = trimesh.util.concatenate([side_glass, back_glass])
     parts["seitenrahmen"] = trimesh.util.concatenate([side_frames, back_frames])
 
-    cols = {"fassade": [116, 38, 34, 255], "waende": [116, 38, 34, 255], "dach": [98, 104, 88, 255],   # Seiten-/Rückwand = Fassadenrot; Dach VERWITTERT grau-grün (entsättigt, Foto ~grau-grün, nicht kräftig grün)
+    cols = {"fassade": [126, 48, 42, 255], "waende": [126, 48, 42, 255], "dach": [98, 104, 88, 255],   # Seiten-/Rückwand = Fassadenrot; Dach VERWITTERT grau-grün (entsättigt, Foto ~grau-grün, nicht kräftig grün)
 
-            "giebel": [116, 38, 34, 255], "balken": [120, 38, 34, 255], "galerie": [138, 48, 42, 255], "fenster": [26, 30, 36, 255], "seitenglas": [26, 30, 36, 255], "seitenrahmen": [196, 176, 140, 255], "giebelglas": [26, 30, 36, 255], "giebelrahmen": [196, 176, 140, 255],   # dunkle Giebelfenster + heller Sandstein-Gewände/Kreuzstock (Foto)
-            "statuen": [206, 206, 212, 255], "konsole": [198, 160, 90, 255], "erker": [116, 38, 34, 255], "helm": [192, 152, 70, 255],
+            "giebel": [126, 48, 42, 255], "balken": [120, 38, 34, 255], "galerie": [138, 48, 42, 255], "fenster": [26, 30, 36, 255], "seitenglas": [26, 30, 36, 255], "seitenrahmen": [196, 176, 140, 255], "giebelglas": [26, 30, 36, 255], "giebelrahmen": [196, 176, 140, 255],   # dunkle Giebelfenster + heller Sandstein-Gewände/Kreuzstock (Foto)
+            "statuen": [206, 206, 212, 255], "konsole": [198, 160, 90, 255], "erker": [126, 48, 42, 255], "helm": [192, 152, 70, 255],
             "baldachin": [198, 162, 92, 255],
             "gauben": [40, 34, 32, 255], "gauben_dach": [98, 104, 88, 255], "dachmuster": [92, 99, 83, 255], "dachziegel": [94, 100, 84, 255],
             "dachrauten": [72, 82, 64, 255],
-            "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [96, 34, 28, 255], "arkadenglas": [24, 24, 28, 255], "arkadenkreuz": [48, 44, 46, 255], "piers": [116, 38, 34, 255], "pierbase": [104, 40, 34, 255],   # Pfeiler+Sockel = roter Sandstein (User: Sockel sind AUCH rot, nicht grau); Sockel nur eine Spur dunkler
+            "cornice": [182, 150, 80, 255], "konsolen": [176, 144, 78, 255], "laube": [96, 34, 28, 255], "arkadenglas": [24, 24, 28, 255], "arkadenkreuz": [48, 44, 46, 255], "piers": [126, 48, 42, 255], "pierbase": [104, 40, 34, 255],   # Pfeiler+Sockel = roter Sandstein (User: Sockel sind AUCH rot, nicht grau); Sockel nur eine Spur dunkler
             "boegen": [192, 154, 72, 255], "first": [182, 150, 80, 255], "rahmen": [206, 162, 58, 255],
-            "wappen": [196, 150, 48, 255], "krabben": [150, 42, 36, 255], "dachkante_gold": [196, 160, 78, 255], "nische": [116, 38, 34, 255],   # Hintergrund hinter den Statuen = ROTE Wand (User: kein dunkles Nischenloch), Figuren stehen auf Konsolen vor der roten Fassade
+            "wappen": [196, 150, 48, 255], "krabben": [150, 42, 36, 255], "dachkante_gold": [196, 160, 78, 255], "nische": [126, 48, 42, 255],   # Hintergrund hinter den Statuen = ROTE Wand (User: kein dunkles Nischenloch), Figuren stehen auf Konsolen vor der roten Fassade
             "helm_rot": [150, 44, 40, 255], "helm_hell": [224, 214, 190, 255], "helm_gruen": [86, 134, 82, 255],
             "lisenen": [188, 150, 72, 255], "sprossen": [72, 74, 84, 255],   # dunkle Bleiruten (echtes Bleiglas ist DUNKEL mit feinen Stegen) — Fenster liest als Öffnung, nicht grau
             "wappen_rot": [150, 46, 42, 255], "wappen_blau": [44, 70, 120, 255], "gitter": [128, 46, 40, 255],   # Balkon-Baluster = ROTER Sandstein (User+Foto p_statbg: rote gedrechselte Baluster, NICHT dunkelbraun)
