@@ -1,73 +1,89 @@
 #!/usr/bin/env python3
-"""fenster_struktur.py — Fenster-GLIEDERUNG aus dem Foto ERKENNEN (kein Hardcoding).
+"""fenster_struktur.py — STRUKTUR-REGULARISIERUNG von Fenster-Erkennungen (Abstands-/Formen-Fix).
 
-Detektiert per Kanten/Helligkeit die goldenen Stege eines Fensters:
-  - VERTIKALE Pfosten (Mullions) → Anzahl + x-Lagen (zentriert -0.5..0.5, Außenrahmen ausgenommen)
-  - HORIZONTALE Kämpfer (Transoms) → Anzahl + z-Lagen (0=Sohlbank .. 1=Sturz)
-  - Waben-Zellgröße (Hex) relativ zur Fensterbreite (FFT der Bleistege)
-Schreibt modelle/<bau>/win_struct.json. Der Generator LIEST das (kein hartkodierter Pfosten).
+Nimmt rohe Fenster-Boxen (von JEDEM Detektor: MaskFormer-Instanzen / SegFormer / YOLO) und macht
+daraus eine saubere regelmaessige Anordnung — der in der Facade-Parsing-Literatur beschriebene
+Alignment-/Strukturschritt (ar5iv 2604.09260): erkannte Boxen auf gemeinsame Reihen/Spalten +
+Symmetrie schnappen. Behebt genau 'Abstaende passen nicht' + 'Formen stimmen nicht'.
 
-Lauf: python3 tools/fenster_struktur.py [foto] [x0,y0,x1,y1] [out.json]
+  import fenster_struktur as FS; layout = FS.regularize(boxes, img_w, img_h)
 """
-import sys, json
 import numpy as np
-import cv2
-from scipy import ndimage, signal
-
-FOTO = sys.argv[1] if len(sys.argv) > 1 else "/home/md/git/rc-park/daten/kaufhaus_freiburg/fotos/kh_fenster.jpg"
-BOX = [float(v) for v in sys.argv[2].split(",")] if len(sys.argv) > 2 else [0.435, 0.37, 0.575, 0.63]
-OUT = sys.argv[3] if len(sys.argv) > 3 else "/home/md/git/rc-park/modelle/kaufhaus_freiburg/win_struct.json"
 
 
-def main():
-    img = cv2.imread(FOTO); H, W = img.shape[:2]
-    x0, y0, x1, y1 = [int(v) for v in (W*BOX[0], H*BOX[1], W*BOX[2], H*BOX[3])]
-    win = img[y0:y1, x0:x1]; wh, ww = win.shape[:2]
-    b, g, r = win[:, :, 0].astype(int), win[:, :, 1].astype(int), win[:, :, 2].astype(int)
-    gold = ((r > 110) & (g > 85) & (r > b+25) & (g > b+10)).astype(float)
-    dark = ((r < 95) & (g < 95) & (b < 100)).astype(float)       # Glas → Fensterausdehnung
-
-    # VERTIKALE Pfosten: Spalten mit viel Gold im mittleren Höhenband; Außenrand (links/rechts) weg
-    band = gold[int(wh*0.28):int(wh*0.9)]
-    cp = ndimage.uniform_filter1d(band.mean(0), max(3, ww//50))
-    cpk, _ = signal.find_peaks(cp, height=cp.max()*0.45, distance=ww//12)
-    mull = [p/ww for p in cpk if 0.12 < p/ww < 0.88]             # innere Pfosten (Außenrahmen 0/1 raus)
-    # HORIZONTALE Kämpfer: Zeilen mit viel Gold; oberen Bogen-Rahmen (z-rel<0.2) ausnehmen
-    rp = ndimage.uniform_filter1d(gold[:, int(ww*0.12):int(ww*0.88)].mean(1), max(3, wh//50))
-    rpk, _ = signal.find_peaks(rp, height=rp.max()*0.45, distance=wh//12)
-    # Fensterausdehnung vertikal aus dunkler Glasfläche
-    drow = dark.mean(1); gy = np.where(drow > drow.max()*0.4)[0]
-    gtop, gbot = (gy.min(), gy.max()) if len(gy) else (0, wh)
-    trans = [1-(p-gtop)/max(1, gbot-gtop) for p in rpk if 0.2 < p/wh < 0.95]   # 0=Sohlbank..1=Sturz
-
-    # Hex-Zellgröße: FFT der dunklen Bleistege in einer reinen Glaszelle
-    cell = cv2.cvtColor(win[int(wh*0.55):int(wh*0.9), int(ww*0.05):int(ww*0.28)], cv2.COLOR_BGR2GRAY).astype(float)
-    prof = cell.mean(1)-cell.mean(1).mean(); F = np.abs(np.fft.rfft(prof*np.hanning(len(prof)))); F[:2] = 0
-    per = 1/np.fft.rfftfreq(len(prof))[np.argmax(F)] if np.argmax(F) else wh*0.1
-    hexR_rel = (per/wh)/np.sqrt(3)                               # Reihenabstand 2*hh=R*sqrt3 → R
-
-    # Pfosten-Lagen symmetrisieren (Fenster IST symmetrisch — Anzahl bleibt wie erkannt, kein Hardcoding)
-    mc = sorted(m-0.5 for m in mull); nM = len(mc)
-    if nM:
-        mags = sorted(abs(v) for v in mc)
-        if nM % 2 == 0:                                         # paarweise ±
-            pair = [np.mean(mags[2*i:2*i+2]) for i in range(nM//2)]
-            msym = sorted([-p for p in pair]+[p for p in pair])
+def _cluster(vals, tol):
+    vals = sorted(vals); groups = [[vals[0]]]
+    for v in vals[1:]:
+        if v - np.mean(groups[-1]) < tol:
+            groups[-1].append(v)
         else:
-            pair = [0.0]+[np.mean(mags[1+2*i:3+2*i]) for i in range((nM-1)//2)]
-            msym = sorted([-p for p in pair if p > 0]+[0.0]+[p for p in pair if p > 0])
-    else:
-        msym = []
-    out = {"mullions_xrel_centered": [round(float(v), 3) for v in msym],
-           "n_mullions": len(mull),
-           "transoms_zrel": sorted(round(t, 3) for t in trans),
-           "n_transoms": len(trans),
-           "hex_R_rel_breite": round(float(hexR_rel), 4),
-           "_quelle": f"fenster_struktur.py aus {FOTO} box {BOX}"}
-    json.dump(out, open(OUT, "w"), indent=2)
-    print(json.dumps(out, indent=2, ensure_ascii=False))
-    print(f"-> {OUT}")
+            groups.append([v])
+    return [float(np.mean(g)) for g in groups]
 
 
-if __name__ == "__main__":
-    main()
+def dominant(boxes, img_w):
+    """groesste x-Nachbarschaft = Zielgebaeude (Nachbarn raus)."""
+    if not boxes:
+        return []
+    cx = sorted(boxes, key=lambda b: (b[0] + b[2]) / 2)
+    groups, cur = [], [cx[0]]
+    for b in cx[1:]:
+        if (b[0] + b[2]) / 2 - (cur[-1][0] + cur[-1][2]) / 2 < 0.07 * img_w:
+            cur.append(b)
+        else:
+            groups.append(cur); cur = [b]
+    groups.append(cur)
+    return max(groups, key=len)
+
+
+def regularize(boxes, img_w, img_h, mirror=True):
+    boxes = dominant(boxes, img_w)
+    if not boxes:
+        return {"n_windows": 0, "rows": []}
+    B = np.array(boxes, float)
+    cx = (B[:, 0] + B[:, 2]) / 2; cy = (B[:, 1] + B[:, 3]) / 2
+    ws = B[:, 2] - B[:, 0]; hs = B[:, 3] - B[:, 1]
+    # Ausreisser-Boxen (viel zu gross = merged mehrere Fenster) verwerfen
+    mw0, mh0 = np.median(ws), np.median(hs)
+    keep = (ws < 2.2 * mw0) & (hs < 2.8 * mh0) & (ws > 0.4 * mw0)
+    B = B[keep]; cx, cy, ws, hs = cx[keep], cy[keep], ws[keep], hs[keep]
+    if len(B) == 0:
+        return {"n_windows": 0, "rows": []}
+    bx0, bx1 = B[:, 0].min(), B[:, 2].max(); by0, by1 = B[:, 1].min(), B[:, 3].max()
+    axis = (bx0 + bx1) / 2; mh = float(np.median(hs)); mw = float(np.median(ws))
+
+    order = np.argsort(cy); rows_idx, cur = [], [order[0]]
+    for i in order[1:]:
+        if cy[i] - np.mean([cy[j] for j in cur]) < 0.6 * mh:
+            cur.append(i)
+        else:
+            rows_idx.append(cur); cur = [i]
+    rows_idx.append(cur)
+
+    rows = []
+    for ridx in rows_idx:
+        ys = float(np.mean([cy[i] for i in ridx])); xs = sorted(float(cx[i]) for i in ridx)
+        rh = float(np.median([hs[i] for i in ridx])); arched = rh > 1.4 * mh
+        if mirror:
+            ds = sorted(abs(x - axis) for x in xs); placed = []; n = len(xs)
+            if n % 2 == 1:
+                placed.append(axis); ds = ds[1:]
+            for k in range(0, len(ds) - 1, 2):
+                d = (ds[k] + ds[k + 1]) / 2; placed += [axis - d, axis + d]
+            if len(ds) % 2 == 1:
+                placed += [axis - ds[-1], axis + ds[-1]]
+            xs = sorted(placed)
+        rows.append({"y": ys, "xs": xs, "arched": arched, "h": rh})
+
+    allx = [x for r in rows for x in r["xs"]]
+    cols = _cluster(allx, 0.6 * mw) if allx else []
+    bw = max(bx1 - bx0, 1); bh = max(by1 - by0, 1); out_rows = []
+    for r in sorted(rows, key=lambda r: r["y"]):
+        snapped = sorted(set(round(min(cols, key=lambda c: abs(c - x)), 1) for x in r["xs"])) if cols else sorted(set(r["xs"]))
+        out_rows.append({"z_frac": round(1 - (r["y"] - by0) / bh, 3), "n": len(snapped),
+                         "x_fracs": [round((x - bx0) / bw, 3) for x in snapped],
+                         "arched": [r["arched"]] * len(snapped),
+                         "w_frac": round(mw / bw, 3), "h_frac": round(r["h"] / bh, 3)})
+    return {"building_box_frac": [round(bx0 / img_w, 3), round(by0 / img_h, 3),
+                                  round(bx1 / img_w, 3), round(by1 / img_h, 3)],
+            "n_windows": sum(r["n"] for r in out_rows), "n_rows": len(out_rows), "rows": out_rows}
