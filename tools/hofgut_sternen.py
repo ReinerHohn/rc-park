@@ -23,7 +23,7 @@ def box(x0, y0, z0, dx, dy, dz):
     return b
 
 
-def hip_roof(Lf, D, z_eave, z_ridge, inset, overh=1.6):
+def hip_roof(Lf, D, z_eave, z_ridge, inset, overh=1.15):
     """RIESIGES Krüppelwalmdach (DAS prägende Element des Hofgut Sternen) — weiter Dachüberstand
     (schützt die Balkone), First verkürzt (Krüppelwalm). Front -y, Rück +y. Gibt massives Solid."""
     o = overh; E = z_eave; db = -0.25           # Traufe leicht abgesenkt (Dach zieht tief runter)
@@ -206,10 +206,10 @@ def main():
     # höher auf der Schräge platzieren (frac ~0.30), sonst verschwinden sie unter dem weiten Dachüberstand.
     def on_slope(frac): z = E + frac * (Rz - E); return (D / 2) * (z - E) / (Rz - E), z
     bodies = []
-    dy, dz = on_slope(0.30)
+    dy, dz = on_slope(0.24)
     for x in np.array([0.24, 0.55, 0.82]) * Lf:
-        b, w_ = big_dormer(x, dy, dz, w=3.6, proj=1.3, h=1.7, gh=1.0); bodies.append(b); fglass.append(w_)
-    sy, sz = on_slope(0.58)                                           # kleine Schleppgauben höher oben
+        b, w_ = big_dormer(x, dy, dz, w=4.0, proj=1.9, h=1.9, gh=1.2); bodies.append(b); fglass.append(w_)
+    sy, sz = on_slope(0.56)                                           # kleine Schleppgauben höher oben
     for x in np.array([0.16, 0.40, 0.63, 0.88]) * Lf:
         bodies.append(shed_dormer(x, sy, sz, w=1.6, proj=1.0, h=0.9))
     gauben = trimesh.util.concatenate(bodies)
@@ -220,11 +220,14 @@ def main():
     kamine = trimesh.util.concatenate(
         [box(x - 0.5, D / 2 - 0.5, Rz - 1.0, 1.0, 1.0, 3.0) for x in np.linspace(Lf * 0.25, Lf * 0.8, a.chimneys)])
 
+    # FRESKO (Foto g4: grosses Wandgemälde mittig im 2.OG über der Laube) — flaches Panel, warm getönt
+    fresko = box(Lf * 0.5 - 2.6, -0.06, S + Fl + 0.3, 5.2, 0.06, Fl - 0.7)
+
     COL = {"sockel": [198, 190, 176, 255], "waende": [238, 231, 216, 255], "balkone": [86, 56, 34, 255],
            "dach": [92, 64, 44, 255], "gauben": [96, 66, 44, 255], "kamine": [120, 108, 98, 255],
            "fenster": [44, 42, 48, 255], "blumen": [196, 60, 66, 255], "fensterrahmen": [236, 230, 218, 255],
-           "schindel": [78, 52, 36, 255]}
-    parts = {"sockel": sockel, "waende": waende,
+           "schindel": [78, 52, 36, 255], "fresko": [182, 150, 112, 255]}
+    parts = {"sockel": sockel, "waende": waende, "fresko": fresko,
              "balkone": balkone, "fenster": fenster, "fensterrahmen": fensterrahmen, "blumen": blumen,
              "dach": dach, "schindel": schindel, "gauben": gauben, "kamine": kamine}
     os.makedirs(a.outdir, exist_ok=True)

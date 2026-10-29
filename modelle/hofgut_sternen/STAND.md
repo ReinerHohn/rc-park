@@ -33,3 +33,13 @@ Dach ist GROSSTEILS ununterbrochen, mit nur ~3 GROSSEN Zwerchhäusern (Giebelgau
 an der Traufe) + ~4 flachen Dachflächenfenstern (Velux). LEHRE (wie Kaufhaus F5/F9): geerbte
 Mess-/STAND-Notizen NIE blind übernehmen — Stückzahlen/Formen am Foto neu zählen. Fix: big_dormer()
 + skylight() in hofgut_sternen.py. (Nur das GEBÄUDE bauen — keine Ravenna-Brücke/Landschaft, User.)
+
+## Verfeinerung 2026-10-29 (parametrisch sauber, gegen g4)
+- **Riesen-Arkade RAUS** (war schwarze Bogen-Tunnel = Hauptfehler „völliger Müll") → EG schlichte
+  weiße Wand mit kleinen Fenstern + mittigem Haustür-Eingang (`eg_wall_windows`).
+- **Dach = DAS prägende Element**: brauner Schindel-Krüppelwalm, als Solid mit Dachstärke (druckbar),
+  weiter Überstand (1,15 m) über den Lauben; Farbe warm braun statt grau.
+- **Blumen in Gruppen** (Kästen alle ~1,5 m) statt durchlaufendem rotem Streifen.
+- **Zwerchhäuser** höher/grösser + 4 kleine Schleppgauben oben; **Fresko**-Panel mittig im 2.OG (g4).
+- Offen: Zwerchhäuser von vorn klarer als Giebel durchbrechen lassen; Fensterläden; Krüppelwalm-Winkel
+  exakt; Terrasse/Markise im EG. NUR Gebäude — keine Landschaft/Viadukt.
