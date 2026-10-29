@@ -1,0 +1,20 @@
+{
+  "foto": "daten/hofgut_sternen/fotos/g2.jpg",
+  "img_wh": [
+    547,
+    365
+  ],
+  "x0": 50,
+  "x1": 546,
+  "top": 23,
+  "bottom": 311,
+  "width_px": 496,
+  "height_px": 288,
+  "aspect_w_h": 1.722,
+  "roof_bumps_x_frac": [
+    0.236,
+    0.357
+  ],
+  "geb_pixel_frac": 0.463,
+  "quelle": "SegFormer ADE20K (nvidia/segformer-b4-finetuned-ade-512-512); groesste Gebaeudekomponente"
+}

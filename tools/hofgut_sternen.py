@@ -217,6 +217,16 @@ def main():
     # Geschosshöhe aus gemessener Traufe ableiten (3 Ebenen: EG + 2 OG) statt fester 3 m
     S = a.socle; Fl = (E - S) / 2.0
 
+    # --- ECHTE FARBEN zonenweise aus dem Foto (via ML-Maske gemessen) statt geraten ---
+    farben = os.path.join(a.outdir, "farben.json")
+    FM = {"dach": [173, 155, 136], "og_lauben": [105, 85, 62], "eg": [197, 176, 148]}
+    if os.path.exists(farben):
+        with open(farben) as f:
+            FM.update(json.load(f))
+        print(f"[farben] gemessen: Dach {FM['dach']}, OG-Holz {FM['og_lauben']}, EG {FM['eg']}")
+    def shade(c, f):  # abgedunkelte/aufgehellte Variante einer gemessenen Farbe
+        return [max(0, min(255, int(v * f))) for v in c] + [255]
+
     sockel = box(0, 0, 0, Lf, D, S)
     waende = box(0, 0, S, Lf, D, E - S)
     dach = hip_roof(Lf, D, E, Rz, a.inset)
@@ -254,10 +264,13 @@ def main():
     # FRESKO (Foto g4: grosses Wandgemälde mittig im 2.OG über der Laube) — flaches Panel, warm getönt
     fresko = box(Lf * 0.5 - 2.6, -0.06, S + Fl + 0.3, 5.2, 0.06, Fl - 0.7)
 
-    COL = {"sockel": [198, 190, 176, 255], "waende": [238, 231, 216, 255], "balkone": [86, 56, 34, 255],
-           "dach": [92, 64, 44, 255], "gauben": [96, 66, 44, 255], "kamine": [120, 108, 98, 255],
-           "fenster": [44, 42, 48, 255], "blumen": [196, 60, 66, 255], "fensterrahmen": [236, 230, 218, 255],
-           "schindel": [78, 52, 36, 255], "fresko": [182, 150, 112, 255]}
+    COL = {"sockel": FM["eg"] + [255],                       # EG = beiger Stein (gemessen)
+           "waende": FM["og_lauben"] + [255],                # OG = DUNKLES HOLZ (gemessen, nicht weiß!)
+           "balkone": shade(FM["og_lauben"], 0.8),           # Lauben = etwas dunkleres Holz
+           "dach": FM["dach"] + [255],                       # Dach = hell-graubraun (gemessen)
+           "gauben": FM["dach"] + [255], "kamine": [120, 108, 98, 255],
+           "fenster": [44, 42, 48, 255], "blumen": [196, 60, 66, 255], "fensterrahmen": [228, 222, 208, 255],
+           "schindel": shade(FM["dach"], 0.82), "fresko": [182, 150, 112, 255]}
     parts = {"sockel": sockel, "waende": waende, "fresko": fresko,
              "balkone": balkone, "fenster": fenster, "fensterrahmen": fensterrahmen, "blumen": blumen,
              "dach": dach, "schindel": schindel, "gauben": gauben, "kamine": kamine}
