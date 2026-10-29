@@ -186,3 +186,19 @@ Zwei Lehren aus einem Vorgang:
    betroffene Bauteil (hier: das Fenster selbst, Querbalken/Pfosten) nachprüfen — nicht nur die
    Artefakt-Stelle. (Gleiche Wurzel wie F3/F4: Überkorrektur + nur die Zielstelle statt des ganzen
    Bauteils geprüft.) Verschärft [[parametrisch_gueltig_nie_degeneriert]] + [[aenderungs_waechter_pflicht]].
+
+## F8 (2026-10-29): Helm-Überkorrektur — EINE Eigenschaft gemeint, ZWEI geändert
+URSACHE, warum ich den Bug ausgelöst habe:
+Problem war NUR die BREITE: der Helm-Fuß (cr0*1.30 = 1.56) war breiter als der Erker-Körper
+(w/2 = 1.25) → überkragte wie ein Kreisel. Die EINE verantwortliche Stellschraube war cr0 (Radius).
+Ich habe aber ZWEI Dinge gleichzeitig geändert:
+  (a) cr0 kleiner  — richtig, löst den Überhang.
+  (b) das PROFIL plattgemacht: prof-Fuß von [(cr0*1.30,…),(cr0*1.08,…)] auf [(cr0,…),(cr0*0.99,…)]
+      — das hat die KONKAVE Glockensilhouette zerstört (gerader Kegel) = ein Feature gekillt, das
+      der User mochte und das gar nicht das Problem war.
+Ich habe also „Überhang" (ein GRÖSSEN-Problem) mit der FORM verwechselt und beides angefasst.
+LEHRE (gleiche Wurzel wie F3/F4/F7, jetzt auf PARAMETER-Ebene): wenn der User „X ragt über /
+ist zu breit" sagt, ist das ein GRÖSSEN-/LAGE-Problem → NUR den Größen-/Lage-Parameter drehen
+(hier cr0), NIE die Form-Parameter (Profil/Silhouette) „sicherheitshalber" mitändern. Vor dem Edit
+fragen: „welche EINE Variable steuert genau die gemeldete Eigenschaft?" — nur die ändern, Rest fix
+lassen. Fix: konkaves Profil zurück + nur cr0=w*0.38 (Fuß ≈ Körperbreite). Verschärft [[parametrisch_gueltig_nie_degeneriert]].
