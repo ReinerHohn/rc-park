@@ -684,10 +684,10 @@ def dormer_roofs():
     Spitze, kein Keil, moderate Höhe. Solider Körper (druckbar)."""
     parts = []
     for xc, z in _dormer_specs():
-        ys = _slope_y(z); o = 0.22; yf = ys-DORMER_PROJ-0.58           # Dächlein kragt DEUTLICH vorn über das Fenster (Traufschatten, Foto)
+        ys = _slope_y(z); o = 0.18; yf = ys-DORMER_PROJ-0.42           # Dächlein kragt vorn über das Fenster (Traufschatten, Foto)
         xL, xR = xc-DORMER_W/2-o, xc+DORMER_W/2+o
-        zt = z+DORMER_H*0.9                                 # Traufe des Gaubendachs (über dem Fenster)
-        zr = zt+DORMER_H*0.82; rh = DORMER_W*0.30; ym = ys-DORMER_PROJ*0.30   # First HÖHER + kürzer → klar ablesbares kleines Walmdach (vorher zu flach, las sich head-on nicht)
+        zt = z+DORMER_H*0.92                                # Traufe des Gaubendachs (über dem Fenster)
+        zr = zt+DORMER_H*0.42; rh = DORMER_W*0.46; ym = ys-DORMER_PROJ*0.45   # First NIEDRIG + LANG → FLACHER, kantiger Walm (Foto: niedrige Hüftgaube, KEINE Kuppel)
         V = [(xL, yf, zt), (xR, yf, zt), (xR, ys, zt), (xL, ys, zt),   # 0..3 Traufe (vorn/hinten)
              (xc-rh, ym, zr), (xc+rh, ym, zr)]                          # 4,5 First
         F = [(0, 1, 5), (0, 5, 4),                           # Vorderfläche (Trapez, schräg nach hinten-oben)
@@ -1103,7 +1103,8 @@ def build():
     parts["seitenglas"] = side_glass
     parts["seitenrahmen"] = side_frames
 
-    cols = {"fassade": [116, 38, 34, 255], "waende": [104, 34, 30, 255], "dach": [96, 108, 74, 255],   # tieferes Ochsenblut-Rot (Foto); Dach moosig-olivgrün (NICHT rot — Foto zeigt grün)
+    cols = {"fassade": [116, 38, 34, 255], "waende": [116, 38, 34, 255], "dach": [96, 108, 74, 255],   # Seiten-/Rückwand = GLEICHES Fassadenrot (User: die Seitenwand ist auch rot); Dach moosig-olivgrün
+
             "giebel": [116, 38, 34, 255], "balken": [120, 38, 34, 255], "galerie": [138, 48, 42, 255], "fenster": [26, 30, 36, 255], "seitenglas": [26, 30, 36, 255], "seitenrahmen": [196, 176, 140, 255], "giebelglas": [26, 30, 36, 255],   # heller Sandstein-Gewände + dunkle Giebel-Schlitzfenster (Foto)
             "statuen": [206, 206, 212, 255], "konsole": [198, 160, 90, 255], "erker": [116, 38, 34, 255], "helm": [192, 152, 70, 255],
             "baldachin": [198, 162, 92, 255],
