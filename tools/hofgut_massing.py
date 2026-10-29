@@ -83,10 +83,12 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
         w = trimesh.creation.extrude_polygon(poly, E)             # Wände 0..Traufe
         wall_meshes.append(w)
         x0, y0, x1, y1 = poly.bounds
-        # Schwarzwald: Dach TIEF heruntergezogen → Dach-Traufe deutlich unter die Wand-Traufe
-        # (tiefer Überstand, Wände darunter in Schatten). Dachanteil dominiert (Laser-Grundwahrheit 0.57).
-        E_roof = max(E * 0.32, E - 5.8)
-        roof_meshes.append(hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=2.2))
+        # Schwarzwald: Dach tief heruntergezogen, ABER Überstand GRÖSSENABHÄNGIG (sonst stechen kleine
+        # Teile dreieklig heraus = „Vorgebäude"-Artefakt). Niedrige Anbauten (kleiner R) flacher.
+        side = min(x1 - x0, y1 - y0)
+        overh = float(np.clip(0.12 * side, 0.3, 1.1))
+        E_roof = max(E * 0.45, E - 3.5) if R > 7 else E * 0.8   # nur Hauptbauten tief ziehen
+        roof_meshes.append(hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=overh))
 
     walls = trimesh.util.concatenate(wall_meshes)
     roofs = trimesh.util.concatenate(roof_meshes)
