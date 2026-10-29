@@ -150,7 +150,8 @@ class Giebelhaus:
         # ALLE erkannten Fenster BEHALTEN (nicht mergen -> keine Fenster verlieren), nur je Reihe
         # SYMMETRISCH spiegeln (Treppengiebel ist symmetrisch; x-Streuung = Perspektive/Rauschen).
         for row in d["rows"]:
-            z = row["z_frac"] * self.peak
+            # z-Abbildung + ÜBER die Arkade klemmen: Body-Fenster dürfen nicht in die Bögen rutschen
+            z = min(max(row["z_frac"] * self.peak, self.eg_top + 1.3), self.peak - 0.5)
             xfs = row["x_fracs"]; afs = row.get("arched") or [False] * len(xfs)
             n = len(xfs); af = sum(bool(a) for a in afs) >= max(1, n // 2)
             hw = halfwidth(z) - w / 2

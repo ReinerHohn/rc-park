@@ -34,7 +34,7 @@ def segment(foto, model_id):
     return seg, win_ids, id2label
 
 
-def windows_from_seg(seg, win_ids, min_area_frac=2e-4):
+def windows_from_seg(seg, win_ids, min_area_frac=1e-4):
     """'window'-Regionen → Boxen (cx,cy,w,h,arched) + Bounding-Box aller Fenster (Gebäude)."""
     H, W = seg.shape
     mask = np.isin(seg, win_ids).astype(np.uint8)
