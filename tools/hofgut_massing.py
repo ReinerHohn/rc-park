@@ -87,7 +87,8 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
         # Teile dreieklig heraus = „Vorgebäude"-Artefakt). Niedrige Anbauten (kleiner R) flacher.
         side = min(x1 - x0, y1 - y0)
         overh = float(np.clip(0.12 * side, 0.3, 1.1))
-        E_roof = max(E * 0.45, E - 3.5) if R > 7 else E * 0.8   # nur Hauptbauten tief ziehen
+        sweep = float(os.environ.get("ROOF_SWEEP", "0.45"))    # Variante: wie tief das Dach herunterzieht
+        E_roof = max(E * sweep, E - 3.5) if R > 7 else E * 0.8  # nur Hauptbauten tief ziehen
         roof_meshes.append(hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=overh))
 
     walls = trimesh.util.concatenate(wall_meshes)
