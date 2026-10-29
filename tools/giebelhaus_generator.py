@@ -267,14 +267,15 @@ class Giebelhaus:
         return cat(parts)
 
     def window_muntins(self):
-        """feine Sprossen: je Licht ein Kämpfer (Querriegel) im oberen Drittel."""
+        """Sprossen = nur waagrechte Querriegel über die ganze Fensterbreite (mit dem senkrechten
+        Sandstein-Mittelpfosten ergeben sie die Scheiben). UNTEN/Body: 2 Querstriche -> 6 Scheiben
+        (2 Lichter × 3). GIEBEL: 1 Querstrich -> 4 Scheiben. KEINE erfundenen Zusatz-Stege."""
         parts = []
-        mw = 0.12
         for cx, zc, w, h, _ in self.window_specs():
-            lw = (w - mw) / 2; off = (w + mw) / 4; zt = zc + h * 0.18
-            for sx in (cx - off, cx + off):
-                parts.append(slab(sx, -0.02, zt, lw, 0.05, 0.04))   # Querriegel je Licht
-                parts.append(slab(sx, -0.02, zc, 0.04, 0.05, h))    # feiner Mittelsteg je Licht
+            fracs = (1 / 3, 2 / 3) if zc < self.z_body else (0.5,)
+            for fr in fracs:
+                zt = zc - h / 2 + h * fr
+                parts.append(slab(cx, -0.02, zt, w, 0.05, 0.045))   # Querriegel über ganze Breite
         return cat(parts)
 
     def arcade_recess(self):
