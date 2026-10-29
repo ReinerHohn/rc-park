@@ -15,7 +15,7 @@ from PIL import Image
 
 MD = "modelle/hofgut_sternen"
 DOP = "daten/ravenna/dop/dop20rgb_32_429_5306_2_bw/dop20rgb_32_430_5307_1_bw_2025.tif"
-FOTO = "daten/hofgut_sternen/fotos/hf_front.jpg"
+FOTO = "daten/hofgut_sternen/fotos/g2.jpg"   # g2 deckt die GANZE Fassadenbreite ab (hf_front schneidet rechts ab)
 
 
 def dop_roof_texture(roof_bounds, fr, o):
