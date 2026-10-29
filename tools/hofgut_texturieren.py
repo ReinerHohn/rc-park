@@ -39,12 +39,19 @@ def dop_roof_texture(roof_bounds, fr, o):
 
 
 def facade_texture():
-    """Frontfoto auf die Front-Wandbreite zuschneiden (via ML-Maske) → aufrechte Textur."""
+    """Frontfoto SAUBER auf die Wandzone zuschneiden: nur Gebäude (Maske), kein Vordergrund/Zaun."""
     im = cv2.imread(FOTO); m = cv2.imread(FOTO.replace(".jpg", "_mask.png"), 0)
-    ys, xs = np.where(m > 127); y0, y1, x0, x1 = ys.min(), ys.max(), xs.min(), xs.max()
-    # nur Wandzone (unter dem Dach): untere ~55% der Silhouette = Fassade
-    yw = int(y0 + 0.42 * (y1 - y0))
-    crop = im[yw:y1, x0:x1]
+    mb = m > 127
+    ys, xs = np.where(mb); y0, y1, x0, x1 = ys.min(), ys.max(), xs.min(), xs.max()
+    # Wandzone = unter dem Dach (Dachanteil ~0.46) bis knapp über den Fuß (Vordergrund-Terrasse weg)
+    yw0 = int(y0 + 0.46 * (y1 - y0)); yw1 = int(y1 - 0.04 * (y1 - y0))
+    crop = im[yw0:yw1, x0:x1].copy()
+    mm = mb[yw0:yw1, x0:x1]
+    # Nicht-Gebäude-Pixel mit dem Spalten-Median der Wand füllen (statt schwarz) → keine Löcher
+    for c in range(crop.shape[1]):
+        col = crop[:, c][mm[:, c]]
+        if len(col):
+            crop[:, c][~mm[:, c]] = np.median(col, axis=0).astype(np.uint8)
     return Image.fromarray(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB))
 
 
