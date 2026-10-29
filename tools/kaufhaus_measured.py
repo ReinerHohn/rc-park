@@ -1072,6 +1072,38 @@ def plain_gable(x_end, dx=0.5, holes=None):
     return m
 
 
+def _mirror_y(m):
+    """Mesh an der Ebene y=D/2 spiegeln (Vorder- → Rückschräge). Winding danach drehen."""
+    m2 = m.copy(); V = m2.vertices.copy(); V[:, 1] = D - V[:, 1]; m2.vertices = V
+    m2.invert()
+    return m2
+
+
+def back_wall():
+    """RÜCKWAND (Münster-Seite, y≈D): rote Wand mit regelmäßigem Fensterraster (kein Foto → plausibel
+    geschätzt, User-Freigabe) + dunkle Scheiben + Sandsteingewände. Gibt (Wand, Glas, Gewände)."""
+    outer = Polygon([(0, 0), (W, 0), (W, EAVE), (0, EAVE)])      # (x, z)
+    cols = np.linspace(W*0.13, W*0.87, 6)
+    rows = [(2.0, 3.7), (5.6, 8.0)]                             # EG-Band + OG-Band
+    holes, specs = [], []
+    for zb, zt in rows:
+        for xc in cols:
+            holes.append(Polygon([(xc-0.45, zb), (xc+0.45, zb), (xc+0.45, zt), (xc-0.45, zt)]))
+            specs.append((xc, zb, zt))
+    poly = outer.difference(unary_union([h.buffer(0) for h in holes]))
+    m = extrude_polygon(poly, 0.6); V = m.vertices.copy()
+    m.vertices = np.c_[V[:, 0], (D-0.6)+V[:, 2], V[:, 1]]        # x→x, Dicke→y (D-0.6..D), z→z
+    glass, frames = [], []
+    for xc, zb, zt in specs:
+        g = tbox(extents=(0.9, 0.08, zt-zb)); g.apply_translation((xc, D-0.3, (zb+zt)/2)); glass.append(g)
+        for dx in (-0.45, 0.45):
+            frames.append(tbox(extents=(0.1, 0.12, zt-zb)).apply_translation((xc+dx, D-0.02, (zb+zt)/2)))
+        frames.append(tbox(extents=(1.06, 0.12, 0.1)).apply_translation((xc, D-0.02, zt)))
+        frames.append(tbox(extents=(1.06, 0.12, 0.1)).apply_translation((xc, D-0.02, zb)))
+        frames.append(tbox(extents=(0.08, 0.12, zt-zb)).apply_translation((xc, D-0.02, (zb+zt)/2)))   # Mittelpfosten
+    return m, trimesh.util.concatenate(glass), trimesh.util.concatenate(frames)
+
+
 def build():
     e0 = oriel(ORIEL_X[0], SILL-0.6, EAVE-1.0, w=2.5, proj=1.5)   # zurück auf vorherige Erker-Maße
     e1 = oriel(ORIEL_X[1], SILL-0.6, EAVE-1.0, w=2.5, proj=1.5)
@@ -1099,9 +1131,9 @@ def build():
         "helm_rot": trimesh.util.concatenate([e0["helm_rot"], e1["helm_rot"]]),
         "helm_hell": trimesh.util.concatenate([e0["helm_hell"], e1["helm_hell"]]),
         "helm_gruen": trimesh.util.concatenate([e0["helm_gruen"], e1["helm_gruen"]]),
-        "gauben": dormers(),
-        "gauben_dach": dormer_roofs(),
-        "gauben_rahmen": dormer_frames(),
+        "gauben": trimesh.util.concatenate([dormers(), _mirror_y(dormers())]),            # Gauben auf BEIDEN Dachschrägen (User)
+        "gauben_dach": trimesh.util.concatenate([dormer_roofs(), _mirror_y(dormer_roofs())]),
+        "gauben_rahmen": trimesh.util.concatenate([dormer_frames(), _mirror_y(dormer_frames())]),
         "dachmuster": roof_courses(),
         "dachrauten": roof_diaper(),
         "dachziegel": roof_tiles_fine(),
@@ -1118,11 +1150,11 @@ def build():
         "arkadenglas": arcade_glazing(),
         "arkadenkreuz": arcade_muntins(),
     }
-    back = tbox(extents=(W, 0.6, EAVE)); back.apply_translation((W/2, D-0.3, EAVE/2))
+    back_m, back_glass, back_frames = back_wall()
     wall_m, side_glass, side_frames = side_walls()
-    parts["waende"] = trimesh.util.concatenate([back, wall_m])
-    parts["seitenglas"] = side_glass
-    parts["seitenrahmen"] = side_frames
+    parts["waende"] = trimesh.util.concatenate([back_m, wall_m])
+    parts["seitenglas"] = trimesh.util.concatenate([side_glass, back_glass])
+    parts["seitenrahmen"] = trimesh.util.concatenate([side_frames, back_frames])
 
     cols = {"fassade": [116, 38, 34, 255], "waende": [116, 38, 34, 255], "dach": [98, 104, 88, 255],   # Seiten-/Rückwand = Fassadenrot; Dach VERWITTERT grau-grün (entsättigt, Foto ~grau-grün, nicht kräftig grün)
 
