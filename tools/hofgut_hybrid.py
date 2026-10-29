@@ -12,30 +12,53 @@ import hofgut_massing as HM
 from hofgut_sternen import box, gaden, window_row, flower_boxes, eg_wall_windows, zwerchhaus
 
 
-def build_facade(Lf, E, FM, S=3.0):
-    """Detailfassade im LOKALEN Frame: Front bei y=0, projiziert nach -Y, X:0..Lf, Z:0..E.
-    Gibt dict{name:mesh}. Geschosse: EG 0..S, 2 OG S..E (Lauben)."""
-    Fl = (E - S) / 2.0
+def hip_dormer(x, E, w=3.0, depth=2.2, h=1.5):
+    """WALM-Gaube (Spec: walmgedeckt, KEINE Spitzgiebel): Körper + allseitig geneigtes Walmdach.
+    Front bei y=0, ragt nach -Y. Gibt (körper, dach)."""
+    xl, yf = x - w / 2, -depth
+    body = box(xl, yf, E, w, depth, h)
+    # Walmdach: 4 Schrägen zu einem kurzen First
+    zt = E + h; zr = zt + 0.8; ins = w * 0.3
+    V = [(xl, yf, zt), (xl + w, yf, zt), (xl + w, 0, zt), (xl, 0, zt),
+         (xl + ins, (yf) / 2, zr), (xl + w - ins, (yf) / 2, zr)]
+    F = [(0, 1, 5), (0, 5, 4), (2, 3, 4), (2, 4, 5), (0, 4, 3), (1, 2, 5)]
+    cap = trimesh.Trimesh(vertices=np.array(V, float), faces=np.array(F), process=True)
+    return body, cap
+
+
+def build_facade(Lf, E, FM):
+    """Schaufassade (Spec-getrieben): Naturstein-EG + 1 durchlaufende Laube (Mitte=Fresko-Wand, kein
+    Balkon) + Fensterreihen + Walm-Gauben. Lokaler Frame: Front y=0, ragt -Y, X:0..Lf, Z:0..E."""
+    S = E * 0.46                                            # hoher Naturstein-Sockel (EG)
     N = 11
-    balkone, blumen, fglass, fframe = [], [], [], []
-    for zf in (S, S + Fl):
-        balkone.append(box(0.6, -1.3, zf - 0.18, Lf - 1.2, 1.4, 0.18))
-        balkone.append(gaden(0.6, -1.3, zf, Lf - 1.2))
-        blumen.append(flower_boxes(0.6, -1.3, zf, Lf - 1.2))
-    eg_g, eg_fr = eg_wall_windows(Lf, S * 0.55, S * 0.55 + 1.5, N - 2, door_x=Lf * 0.5)
+    cx0, cx1 = Lf * 0.40, Lf * 0.60                          # Fresko-Mittelzone (ohne Balkon)
+    eg_stein, galerie, blumen, fglass, fframe, dach_g = [], [], [], [], [], []
+    # EG = Natursteinband (als proude Platte über die Front)
+    eg_stein.append(box(0.2, -0.25, 0.0, Lf - 0.4, 0.3, S))
+    eg_g, eg_fr = eg_wall_windows(Lf, S * 0.45, S * 0.45 + 1.4, N - 2, door_x=Lf * 0.5)
     fglass.append(eg_g); fframe.append(eg_fr)
-    for z0, z1 in [(S + 0.5, S + 1.9), (S + Fl + 0.5, S + Fl + 1.9)]:
-        g, fr = window_row(Lf, z0, z1, N); fglass.append(g); fframe.append(fr)
-    for x in np.array([0.24, 0.55, 0.82]) * Lf:              # Zwerchhäuser brechen die Front-Dachlinie
-        b, w_ = zwerchhaus(x, E, E + 8, 13, 5, w=4.0, body_h=1.7, gh=1.3)
-        balkone.append(b) if False else None
-        fglass.append(w_); fframe.append(b)                  # Giebelkörper als Rahmen-Gruppe (Holzfarbe)
-    fresko = box(Lf * 0.5 - 2.6, -0.06, S + Fl + 0.3, 5.2, 0.06, Fl - 0.7)
+    # 1 durchlaufende Laube im 1.OG — in zwei Segmenten links/rechts der Fresko-Mitte
+    zf = S
+    for x0s, x1s in [(0.6, cx0 - 0.2), (cx1 + 0.2, Lf - 0.6)]:
+        L = x1s - x0s
+        galerie.append(box(x0s, -1.25, zf - 0.18, L, 1.35, 0.18))     # auskragender Boden
+        galerie.append(gaden(x0s, -1.25, zf, L))                      # durchbrochene Baluster
+        blumen.append(flower_boxes(x0s, -1.25, zf, L))                # Blumentröge
+    # Fensterreihe im Laubengeschoss (hinter der Laube)
+    g, fr = window_row(Lf, zf + 0.5, zf + 1.9, N); fglass.append(g); fframe.append(fr)
+    # Fresko mittig über der Laube
+    fresko = box(cx0, -0.06, zf + 0.4, cx1 - cx0, 0.06, (E - zf) - 0.6)
+    # 2-3 WALM-Gauben, walmgedeckt (Spec), brechen die Front-Dachlinie
+    for x in np.array([0.30, 0.70]) * Lf:
+        b, cp = hip_dormer(x, E, w=3.2, depth=2.0, h=1.5)
+        fframe.append(b); dach_g.append(cp)
     parts = {
-        "balkone": trimesh.util.concatenate(balkone),
+        "eg_stein": trimesh.util.concatenate(eg_stein),
+        "balkone": trimesh.util.concatenate(galerie),
         "blumen": trimesh.util.concatenate(blumen),
         "fenster": trimesh.util.concatenate(fglass),
         "fensterrahmen": trimesh.util.concatenate(fframe),
+        "gauben_dach": trimesh.util.concatenate(dach_g),
         "fresko": fresko,
     }
     return parts
@@ -53,13 +76,22 @@ def main():
     for m in fac.values():                                   # Fassade an die Hauptflügel-Front schieben
         m.apply_translation((front["x0"], front["y_front"], 0.0))
 
+    # 2 Kamine (Spec) auf dem Hauptflügel-First
+    R = front["ridge_m"] or 17.46
+    kamine = trimesh.util.concatenate([box(front["x0"] + fx * Lf, front["y_front"] + 4, R - 1.2, 1.0, 1.0, 2.6)
+                                       for fx in (0.35, 0.68)])
+
+    fr_rgb = FM.get("fensterrahmen", [82, 45, 20])
     COL = {"waende": FM["og_lauben"] + [255], "daecher": FM["dach"] + [255],
-           "balkone": [int(c * 0.8) for c in FM["og_lauben"]] + [255],
-           "blumen": [196, 60, 66, 255], "fenster": [44, 42, 48, 255],
-           "fensterrahmen": FM["og_lauben"] + [255], "fresko": [182, 150, 112, 255]}
+           "eg_stein": FM["eg"] + [255], "gauben_dach": FM["dach"] + [255], "kamine": [120, 108, 98, 255],
+           "balkone": [int(c * 0.82) for c in FM["og_lauben"]] + [255],
+           "blumen": [196, 70, 66, 255], "fenster": [40, 38, 44, 255],
+           "fensterrahmen": fr_rgb + [255], "fresko": [168, 150, 120, 255]}
     sc = trimesh.Scene()
     walls.visual.face_colors = COL["waende"]; roofs.visual.face_colors = COL["daecher"]
+    kamine.visual.face_colors = COL["kamine"]
     sc.add_geometry(walls, geom_name="waende"); sc.add_geometry(roofs, geom_name="daecher")
+    sc.add_geometry(kamine, geom_name="kamine")
     for nm, m in fac.items():
         m.visual.face_colors = COL[nm]; sc.add_geometry(m, geom_name=nm)
     sc.export(f"{md}/hofgut_hybrid.glb")

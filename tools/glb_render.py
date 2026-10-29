@@ -27,8 +27,10 @@ def _sky_bg(h, w):
 
 def render(glb, out_prefix, views):
     ts = trimesh.load(glb)
-    sc = pyrender.Scene.from_trimesh_scene(ts, ambient_light=[0.38, 0.38, 0.40]) \
-        if isinstance(ts, trimesh.Scene) else pyrender.Scene(ambient_light=[0.38]*3)
+    LS = float(os.environ.get("GLB_LIGHT", "1.0"))          # Licht-Skala (1.0=hell default; <1 realistischer/dunkler)
+    amb = 0.30 * LS + 0.08
+    sc = pyrender.Scene.from_trimesh_scene(ts, ambient_light=[amb, amb, amb + 0.02]) \
+        if isinstance(ts, trimesh.Scene) else pyrender.Scene(ambient_light=[amb]*3)
     if not isinstance(ts, trimesh.Scene):
         sc.add(pyrender.Mesh.from_trimesh(ts))
         bounds = ts.bounds
@@ -36,9 +38,9 @@ def render(glb, out_prefix, views):
         bounds = ts.bounds
     ctr = bounds.mean(0); size = (bounds[1] - bounds[0]); R = float(np.max(size))
     # kräftigeres gerichtetes Licht (sattere Farben, klare Form) statt flachem Ambient
-    sc.add(pyrender.DirectionalLight(color=[1, 0.98, 0.93], intensity=2.5),
+    sc.add(pyrender.DirectionalLight(color=[1, 0.98, 0.93], intensity=2.5 * LS),
            pose=look_at(ctr + np.array([0.35, -0.6, 0.9]) * R, ctr))
-    sc.add(pyrender.DirectionalLight(color=[0.82, 0.87, 1.0], intensity=0.9),
+    sc.add(pyrender.DirectionalLight(color=[0.82, 0.87, 1.0], intensity=0.9 * LS),
            pose=look_at(ctr + np.array([-0.6, -0.3, 0.4]) * R, ctr))
     cam = pyrender.PerspectiveCamera(yfov=np.radians(24))   # Telephoto = wenig Verzerrung
     cam_node = sc.add(cam, pose=np.eye(4))

@@ -1,1 +1,28 @@
-{"dach": [173, 155, 136], "og_lauben": [105, 85, 62], "eg": [197, 176, 148]}
+{
+ "dach": [
+  120,
+  108,
+  96
+ ],
+ "og_lauben": [
+  105,
+  85,
+  62
+ ],
+ "eg": [
+  105,
+  90,
+  72
+ ],
+ "fensterrahmen": [
+  82,
+  45,
+  20
+ ],
+ "lueftlmalerei": [
+  190,
+  180,
+  165
+ ],
+ "quelle": "verified_spec.json (13-Agenten-Grundwahrheit, adversarial verifiziert)"
+}
