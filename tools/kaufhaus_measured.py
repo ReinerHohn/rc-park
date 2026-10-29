@@ -125,18 +125,28 @@ def _win_w():
 
 
 # ---------- Fassadenwand mit Arkade + Kielbogen-Fenstern (shapely) ----------
+def _pointed_curve(xc, bw, spring, apex_z, nseg=18):
+    """obere Spitzbogen-KURVE (nur der Bogen, Kämpfer→Scheitel→Kämpfer) als Punktliste.
+    Zweizentrig durch die Kämpfer (xc±a, spring) und den Scheitel (xc, apex_z). Für apex_z
+    knapp über dem Halbkreis = gedrückter (flacher) Spitzbogen, passend zur breiten Arkade."""
+    a = bw/2.0; H = apex_z-spring
+    u = (H*H-a*a)/(2*a)                               # Zentrum der LINKEN Bogenhälfte bei (xc+u, spring)
+    R = (H*H+a*a)/(2*a)                               # Radius
+    aL = np.arctan2(H, -u)                            # Scheitelwinkel von links
+    pts = []
+    for t in np.linspace(np.pi, aL, nseg):            # linke Hälfte: Kämpfer→Scheitel (Zentrum xc+u)
+        pts.append((xc+u + R*np.cos(t), spring + R*np.sin(t)))
+    for t in np.linspace(np.pi-aL, 0.0, nseg):        # rechte Hälfte: Scheitel→Kämpfer (Zentrum xc-u)
+        pts.append((xc-u + R*np.cos(t), spring + R*np.sin(t)))
+    return pts
+
+
 def pointed_arch(xc, bw, spring, apex=None):
-    """echter zweizentriger Spitzbogen: Kämpfer bei spring, Bögen (Radius=bw, Zentren an
-    den gegenüberliegenden Kämpfern) treffen sich im Scheitel (xc, spring+bw*√3/2)."""
-    a = bw/2; R = bw; h = np.sqrt(R*R - a*a)        # Scheitelhöhe über Kämpfer
-    aL = np.arctan2(h, -a)                           # Scheitel-Winkel vom linken Zentrum (~120°)
-    aR = np.arctan2(h, a)                            # vom rechten Zentrum (~60°)
-    pts = [(xc-a, 0.25), (xc-a, spring)]
-    for t in np.linspace(np.pi, aL, 16):             # linker Bogen: Kämpfer→Scheitel
-        pts.append((xc+a + R*np.cos(t), spring + R*np.sin(t)))
-    for t in np.linspace(aR, 0.0, 16):               # rechter Bogen: Scheitel→Kämpfer
-        pts.append((xc-a + R*np.cos(t), spring + R*np.sin(t)))
-    pts += [(xc+a, spring), (xc+a, 0.25)]
+    """Spitzbogen-ÖFFNUNG (mit senkrechten Leibungen) als Polygon. apex = Scheitelhöhe z;
+    default = gedrückter Spitzbogen etwas über dem Halbkreis."""
+    if apex is None:
+        apex = spring + (bw/2.0)*1.16
+    pts = [(xc-bw/2, 0.25), (xc-bw/2, spring)] + _pointed_curve(xc, bw, spring, apex) + [(xc+bw/2, spring), (xc+bw/2, 0.25)]
     return Polygon(pts)
 
 
@@ -263,7 +273,7 @@ def facade_wall():
     holes = []
     pitch = W/N_ARCH
     for i in range(N_ARCH):
-        holes.append(round_arch(pitch*(i+0.5), pitch*ARC_BW, ARC_SPRING))
+        holes.append(pointed_arch(pitch*(i+0.5), pitch*ARC_BW, ARC_SPRING))   # SPITZbögen (Foto: gotisch, nicht rund)
     # Fensterband: je Gruppe EIN BREITES Fenster, Kopf = geschwungener VORHANGBOGEN (Foto)
     wins, _ = bay_layout(); ww = _win_w()
     for c in wins:
@@ -905,12 +915,15 @@ def arch_rings(t=0.17):
     """FEINE Gold-Archivolte: dünne Bogen-Leiste genau auf der Leibung (Foto: schlanke
     goldene Bogenlinie, keine klobige Steinringe) + zierlicher Schlussstein."""
     pitch = W/N_ARCH; spring = ARC_SPRING; bw = pitch*ARC_BW; parts = []
+    apex = spring + (bw/2.0)*1.16
     for i in range(N_ARCH):
-        xc = pitch*(i+0.5); Ri = bw/2; Ro = Ri+t
-        pts = [(xc+Ro*np.cos(a), spring+Ro*np.sin(a)) for a in np.linspace(np.pi, 0, 40)]
-        pts += [(xc+Ri*np.cos(a), spring+Ri*np.sin(a)) for a in np.linspace(0, np.pi, 40)]
-        ring = _stand(extrude_polygon(Polygon(pts).buffer(0), 0.28), y0=-0.22); parts.append(ring)   # dünne Leiste vor der Wand
-        key = tbox(extents=(0.3, 0.3, 0.5)); key.apply_translation((xc, -0.12, spring+Ro-0.05)); parts.append(key)  # zarter Schlussstein
+        xc = pitch*(i+0.5)
+        curve = LineString(_pointed_curve(xc, bw, spring, apex))         # Spitzbogen-Leibungslinie
+        band = curve.buffer(t, cap_style=2, join_style=1).buffer(0)      # dünner Saum ENTLANG des Bogens (robust)
+        for geom in (band.geoms if band.geom_type == "MultiPolygon" else [band]):
+            if not geom.is_empty:
+                parts.append(_stand(extrude_polygon(geom, 0.28), y0=-0.22))   # dünne Gold-Archivolte auf der Spitzbogen-Leibung
+        key = tbox(extents=(0.3, 0.3, 0.5)); key.apply_translation((xc, -0.12, apex-0.05)); parts.append(key)  # zarter Schlussstein am Scheitel
     return trimesh.util.concatenate(parts)
 
 
