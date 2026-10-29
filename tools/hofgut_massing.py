@@ -23,7 +23,7 @@ def rot2(a):
     return np.array([[np.cos(a), -np.sin(a)], [np.sin(a), np.cos(a)]])
 
 
-def hip_over_bbox(x0, x1, y0, y1, E, R, inset_frac=0.28, overh=1.1, t=0.4):
+def hip_over_bbox(x0, x1, y0, y1, E, R, inset_frac=0.28, overh=0.5, t=0.4):
     """Krüppelwalm über einem achsenparallelen Rechteck (Teil-Bbox), First entlang der langen Seite."""
     o = overh
     long_x = (x1 - x0) >= (y1 - y0)
@@ -60,6 +60,15 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
     ang = pca_angle(rings[main]); Rm = rot2(-ang)
     ctr = rings[main].mean(0)
     rings_r = [((r - ctr) @ Rm.T) for r in rings]
+    # FASSADE = unverdeckte Längsseite des Hauptflügels. Welche der beiden langen Seiten (−y/+y)
+    # hat WENIGER andere Bauteile davor? Diese zeigt zur offenen Talseite = echte Schaufassade.
+    my = Polygon(rings_r[main]).centroid.y
+    front_occ = sum(Polygon(rings_r[i]).area for i in range(len(rings_r))
+                    if i != main and Polygon(rings_r[i]).centroid.y < my)
+    back_occ = sum(Polygon(rings_r[i]).area for i in range(len(rings_r))
+                   if i != main and Polygon(rings_r[i]).centroid.y >= my)
+    if front_occ > back_occ:                                      # −y-Seite verdeckt → Fassade ist +y → 180° drehen
+        rings_r = [r * np.array([1.0, -1.0]) for r in rings_r]
     allp = np.vstack(rings_r); shift = allp.min(0)
     rings_r = [r - shift for r in rings_r]                        # alles in +Quadranten
 
