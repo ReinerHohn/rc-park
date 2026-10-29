@@ -1,0 +1,16 @@
+{
+ "quelle": "Bildverarbeitung auf freigestelltem g2 (ML-Maske) + LOD2-Maßstab 16.5px/m",
+ "ridge_m": 17.46,
+ "eave_m": 8.31,
+ "eg_top_m": 2.79,
+ "gallery_m": 6.18,
+ "n_axes": 8,
+ "alle_baender_m": [
+  2.79,
+  4.61,
+  5.4,
+  6.18,
+  7.4,
+  8.31
+ ]
+}

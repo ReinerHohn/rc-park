@@ -92,7 +92,12 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
         roof_meshes.append(hip_over_bbox(x0, x1, y0, y1, E_roof, R, overh=overh))
 
     walls = trimesh.util.concatenate(wall_meshes)
-    roofs = trimesh.util.concatenate(roof_meshes)
+    try:                                                          # Teildächer SAUBER verschmelzen (statt Überschneidungs-Hütchen)
+        roofs = trimesh.boolean.union(roof_meshes)
+        if roofs.is_empty or len(roofs.faces) < 10:
+            raise ValueError("leer")
+    except Exception as e:
+        print(f"  [roof-union Fallback: {e}]"); roofs = trimesh.util.concatenate(roof_meshes)
     walls.visual.face_colors = FM["og_lauben"] + [255]
     roofs.visual.face_colors = FM["dach"] + [255]
     sc = trimesh.Scene()
