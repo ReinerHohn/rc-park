@@ -5,15 +5,13 @@
   "glb": "kornhaus_measured.glb",
   "quelle": "Masse LOD2 DEBW_0010007Tv8q + Frontale kh_20230106.jpg (giebelständig, Treppengiebel)",
 
-  "massing": {
-    "W": 13.0,
-    "depth": 14.0,
+    "massing": {
+    "lod2": "modelle/kornhaus/kornhaus_lod2.json",
+    "_lod2_liefert": "W(front_w)/depth/gable_start_z(eave)/peak_z(ridge) AUS LOD2 DEBW_0010007Tv8q",
+    "depth_cap": 16.0,
     "wall_thick": 0.6,
-    "gable_start_z": 9.41,
-    "peak_z": 21.15,
     "gable_steps": 6,
-    "gable_top_w": 1.7,
-    "_lod2": "Traufe/First aus LOD2 DEBW_0010007Tv8q (eave 9.41 / ridge 21.15 / Dachtyp 3100 Satteldach)"
+    "gable_top_w": 1.8
   },
 
   "facade": {

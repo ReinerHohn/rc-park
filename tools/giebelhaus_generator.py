@@ -78,13 +78,30 @@ def gable_level_x(W, z_body, peak, nsteps, inset, level):
 class Giebelhaus:
     def __init__(self, cfg):
         self.cfg = cfg
-        m = cfg["massing"]
-        self.W = float(m["W"]); self.D = float(m.get("depth", 12.0)); self.t = float(m.get("wall_thick", 0.6))
+        m = dict(cfg["massing"])
+        lod2 = self._lod2_massing(m.get("lod2"))        # HARTE REGEL: alle öffentl. Daten mergen
+        m.update({k: v for k, v in lod2.items() if v is not None})   # LOD2 schlägt Config-Schätzung
+        self.W = float(m["W"]); self.D = float(min(m.get("depth", 12.0), m.get("depth_cap", 16.0)))
+        self.t = float(m.get("wall_thick", 0.6))
         self.z_body = float(m["gable_start_z"]); self.peak = float(m["peak_z"])
         self.nsteps = int(m["gable_steps"])
         self.inset = (self.W - float(m.get("gable_top_w", 1.8))) / 2 / self.nsteps
         self.eg_top = float(cfg["facade"]["eg_top"])
         self.col = {**DEFAULT_COL, **cfg.get("colors", {})}
+
+    def _lod2_massing(self, path):
+        """amtliche Masse aus LOD2-JSON: Front-Breite (giebelständig = kurze Grundriss-Seite),
+        Tiefe, Traufe, First. Ersetzt jede handgetippte Schätzung."""
+        if not path or not os.path.exists(path):
+            return {}
+        d = json.load(open(path))["gebaeude"][0]
+        full_depth = d.get("depth_m")
+        out = {"W": d.get("front_w_m"), "depth": full_depth,
+               "gable_start_z": d.get("eave_m"), "peak_z": d.get("ridge_m")}
+        dt = (d.get("dachtypen") or [None])[0]
+        print(f"  LOD2-Massen {os.path.basename(path)}: W={out['W']} Tiefe={full_depth} "
+              f"Traufe={out['gable_start_z']:.1f} First={out['peak_z']:.1f} Dachtyp={dt}")
+        return {k: v for k, v in out.items() if v is not None}
 
     # -- Fenster-Rechteck (x0,x1,z0,z1) --
     def _win(self, cx, zc, w, h):

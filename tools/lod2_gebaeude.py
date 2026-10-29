@@ -107,6 +107,16 @@ def extract(gml_path, name=None, center=None, radius=40.0):
             meta["eave_m"] = float(rz.min() - gz)
             meta["ridge_m"] = float(rz.max() - gz)
         meta["ground_z"] = float(gz)
+        # Grundriss: Kantenlängen der GroundSurface -> Front-Breite (kurze Seite) + Tiefe (lange)
+        if grnd:
+            xy = np.vstack(grnd)[:, :2]
+            ring = xy[:len(grnd[0])] if len(grnd) == 1 else xy
+            d = np.linalg.norm(np.diff(np.vstack([ring, ring[:1]]), axis=0), axis=1)
+            d = sorted([float(x) for x in d if x > 0.5], reverse=True)
+            if len(d) >= 2:
+                meta["footprint_edges_m"] = [round(x, 2) for x in d]
+                meta["depth_m"] = round(d[0], 2)          # lange Seite = Parzellentiefe
+                meta["front_w_m"] = round(d[-1], 2)       # kurze Seite = giebelständige Front
         if name and meta["name"] and name.lower() in meta["name"].lower():
             picked.append((meta, polys))
         elif center is not None and np.hypot(*(ctr - np.array(center))) <= radius:
@@ -179,6 +189,8 @@ def main():
                 {"id": m["id"], "name": m["name"], "teile": len(m["heights"]),
                  "hoehen_m": m["heights"], "dachtypen": m["rooftypes"],
                  "eave_m": m.get("eave_m"), "ridge_m": m.get("ridge_m"),
+                 "front_w_m": m.get("front_w_m"), "depth_m": m.get("depth_m"),
+                 "footprint_edges_m": m.get("footprint_edges_m"),
                  "center_utm": m["center_utm"]}
                 for m, _ in picked],
         }
