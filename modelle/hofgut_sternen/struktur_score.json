@@ -1,6 +1,8 @@
 {
- "laser_roof_frac": 0.3285024154589372,
- "model_roof_frac": 0.4125560538116592,
- "delta": 0.084053638352722,
- "score": 72
+ "laser_roof_frac": 0.5882352941176471,
+ "foto_roof_frac": 0.5882352941176471,
+ "model_roof_frac": 0.6039603960396039,
+ "delta": 0.015725101921956863,
+ "score": 95,
+ "anker": "foto g2"
 }

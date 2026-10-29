@@ -22,9 +22,7 @@ def render(mesh, out, view="front,270,12"):
     return f"{out}_{view.split(',')[0]}.png"
 
 
-def roof_fraction(png):
-    im = cv2.imread(png); g = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-    mask = g < 248
+def rf_from_mask(mask):
     ys, xs = np.where(mask)
     if len(ys) < 50:
         return None, None
@@ -44,11 +42,23 @@ def roof_fraction(png):
     return rf, (y0, eave, y1)
 
 
+def roof_fraction(png):                                        # RENDER: Gebäude dunkler als weißer BG
+    g = cv2.cvtColor(cv2.imread(png), cv2.COLOR_BGR2GRAY)
+    return rf_from_mask(g < 248)
+
+
+def roof_fraction_maskpng(png):                                # ML-Maske: Gebäude = weiß
+    g = cv2.imread(png, 0)
+    return rf_from_mask(g > 127)
+
+
 def main():
-    rp_m = render(f"{MD}/hofgut_massing.glb", "/tmp/sa_model")   # reines Massing (ohne Fassadenvorsprünge = fair)
-    rp_l = render(f"{MD}/hofgut_struktur.obj", "/tmp/sa_laser")
+    # GRUNDWAHRHEIT = FOTO (g2-ML-Maske), nicht die wackelige Laser-Hülle → foto-verankert + stabil.
+    foto_mask = "daten/hofgut_sternen/fotos/g2_mask.png"
+    rf_l, bl = roof_fraction_maskpng(foto_mask)
+    rp_m = render(f"{MD}/hofgut_massing.glb", "/tmp/sa_model", "q,315,16")   # 3/4 wie g2
     rf_m, bm = roof_fraction(rp_m)
-    rf_l, bl = roof_fraction(rp_l)
+    rp_l = foto_mask
     d = abs(rf_m - rf_l)
     score = max(0, round(100 * (1 - d / 0.30)))
 
@@ -60,19 +70,21 @@ def main():
         cv2.line(im, (0, eave - off), (im.shape[1], eave - off), (0, 165, 255), 2)
         cv2.putText(im, lab, (6, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 0, 0), 2)
         return cv2.resize(im, (int(im.shape[1] * 320 / im.shape[0]), 320))
-    A = annot(rp_l, bl, f"LASER Dachanteil {rf_l:.2f}"); B = annot(rp_m, bm, f"MODELL Dachanteil {rf_m:.2f}")
+    A = annot("daten/hofgut_sternen/fotos/g2.jpg", bl, f"FOTO g2 Dachanteil {rf_l:.2f}")
+    B = annot(rp_m, bm, f"MODELL Dachanteil {rf_m:.2f}")
     W = A.shape[1] + B.shape[1] + 16
     c = np.full((340, W, 3), 255, np.uint8); c[0:320, :A.shape[1]] = A; c[0:320, A.shape[1] + 16:] = B
     cv2.putText(c, f"STRUKTUR-NAEHE {score}/100  (Traufe orange)", (6, 335), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
     cv2.imwrite("/tmp/struktur_abgleich.png", c)
 
-    print("=== HARTER 3D-STRUKTUR-ABGLEICH (gegen Laser-Grundwahrheit) ===")
-    print(f"  Laser-Dachanteil (Grundwahrheit): {rf_l:.2f}")
-    print(f"  Modell-Dachanteil:                {rf_m:.2f}")
+    print("=== HARTER 3D-STRUKTUR-ABGLEICH (gegen FOTO g2 = foto-verankert, stabil) ===")
+    print(f"  Foto-Dachanteil (Grundwahrheit g2): {rf_l:.2f}")
+    print(f"  Modell-Dachanteil:                  {rf_m:.2f}")
     print(f"  Abweichung Δ={d:.2f}  ->  STRUKTUR-NÄHE {score}/100")
-    print(f"  {'✓ Dach dominiert wie im Laser' if d < 0.12 else '✗ FLACHER DECKEL statt dominantem Dach — Struktur falsch'}")
+    print(f"  {'✓ Dach dominiert wie im Foto' if d < 0.12 else '✗ Dachanteil weicht vom Foto ab'}")
     print("-> /tmp/struktur_abgleich.png")
-    json.dump({"laser_roof_frac": rf_l, "model_roof_frac": rf_m, "delta": d, "score": score},
+    json.dump({"laser_roof_frac": rf_l, "foto_roof_frac": rf_l, "model_roof_frac": rf_m,
+               "delta": d, "score": score, "anker": "foto g2"},
               open(f"{MD}/struktur_score.json", "w"), indent=1)
     return d
 

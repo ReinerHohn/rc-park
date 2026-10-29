@@ -69,8 +69,8 @@ def test_7_struktur_dach_dominiert_wie_laser():
                    capture_output=True, text=True, timeout=180)
     s = json.load(open(f"{MD}/struktur_score.json"))
     assert s["delta"] < 0.12, (
-        f"Dachanteil Modell {s['model_roof_frac']:.2f} vs Laser-Grundwahrheit {s['laser_roof_frac']:.2f} "
-        f"(Δ{s['delta']:.2f}, Struktur-Nähe {s['score']}/100) — FLACHER DECKEL statt dominantem Dach")
+        f"Dachanteil Modell {s['model_roof_frac']:.2f} vs FOTO g2 {s['model_roof_frac']:.2f} "
+        f"(Δ{s['delta']:.2f}, Struktur-Nähe {s['score']}/100) — Dachdominanz weicht vom Foto ab")
 
 
 def test_6_fassade_sitzt_am_hauptfluegel():
