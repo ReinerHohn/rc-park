@@ -332,14 +332,14 @@ def shop_window(cx, w, z0, ztop):
 @element("erdgeschoss")
 def gen_groundfloor(c, p):
     holes, out = [], {}
-    frames, warms, curts, darkglass = [], [], [], []
+    frames, warms, curts, darkglass, door_parts = [], [], [], [], []
     xs = float(p.get("x_shift", 0.0))                       # ganze EG-Reihe gemeinsam verschieben (m)
     dx = c.W * float(p.get("door_x_frac", 0.5)) + xs
     if p.get("door", True):
         holes.append((dx - 0.6, dx + 0.6, 0.0, 2.6))
-        frames.append(slab(dx, -0.02, 1.12, 1.14, 0.08, 2.24))     # braunes Türblatt
-        frames.append(slab(dx, -0.05, 2.52, 1.32, 0.1, 0.14))      # Türsturz
-        frames.append(slab(dx, -0.05, 1.12, 0.06, 0.08, 2.24))     # Mittelstab
+        door_parts.append(slab(dx, -0.02, 1.12, 1.14, 0.08, 2.24))     # braunes Türblatt (eigene Gruppe, nicht weiß)
+        door_parts.append(slab(dx, -0.05, 2.52, 1.32, 0.1, 0.14))      # Türsturz
+        door_parts.append(slab(dx, -0.05, 1.12, 0.06, 0.08, 2.24))     # Mittelstab
         warms.append(slab(dx, 0.06, 2.3, 0.88, 0.06, 0.42))        # oberes Türfenster (warm)
     win_xf = p.get("window_x_frac")
     if win_xf is None:
@@ -382,7 +382,7 @@ def gen_groundfloor(c, p):
     if wh_ > 0:
         out["sockel_holz"] = panel(0, c.W, 0.0, wh_, [(dx - 0.6, dx + 0.6, 0.0, wh_)], c.front_t + 0.16, y0=-0.16)
     out["eg_glas"] = cat(darkglass)
-    out["schaufenster"] = cat(frames); out["gardine"] = cat(curts)
+    out["schaufenster"] = cat(frames); out["gardine"] = cat(curts); out["tuer"] = cat(door_parts)
     if p.get("lettering"):
         out["band"] = slab(c.W / 2, -0.14, c.eg_top - 0.35, c.W - 0.7, 0.12, 0.42)
     wap = [disc(0.26, 0.1, (c.W * 0.12, c.W * 0.88)[i % 2] + xs, -0.18, c.eg_top - 0.3, sections=20)
@@ -484,17 +484,29 @@ def gen_dormers(c, p):
         [c.W * (i + 0.5) / n for i in range(n)]
     zf, yf = c.eave + 0.15, -0.1
     bodies, roofs, glass, frames = [], [], [], []
+    shape = p.get("shape", "hip")
     for cx in xs:
         wx0, wx1, wz0, wz1 = cx - dw / 2 + 0.18, cx + dw / 2 - 0.18, zf + 0.25, zf + dh - 0.2
         bodies.append(panel(cx - dw / 2, cx + dw / 2, zf, zf + dh, [(wx0, wx1, wz0, wz1)], 1.0, y0=yf))
         top = zf + dh
-        V = [(cx - dw / 2 - 0.1, yf - 0.05, top), (cx + dw / 2 + 0.1, yf - 0.05, top),
-             (cx + dw / 2 + 0.1, yf + 0.9, top), (cx - dw / 2 - 0.1, yf + 0.9, top),
-             (cx - dw / 4, yf + 0.45, top + 0.4), (cx + dw / 4, yf + 0.45, top + 0.4)]
-        roofs.append(trimesh.Trimesh(vertices=np.array(V, float),
-                     faces=np.array([(0, 1, 5), (0, 5, 4), (3, 4, 5), (3, 5, 2), (0, 4, 3), (1, 2, 5)])))
+        if shape == "gable":                                  # DREIECKIGER Giebel (Zwerchgiebel) + Satteldach
+            gh = float(p.get("gable_h", 0.75)); apex = top + gh; o = 0.12; yb = yf + 0.95
+            TV = [(cx - dw / 2, yf, top), (cx + dw / 2, yf, top), (cx, yf, apex),
+                  (cx - dw / 2, yf + 0.22, top), (cx + dw / 2, yf + 0.22, top), (cx, yf + 0.22, apex)]
+            bodies.append(trimesh.Trimesh(vertices=np.array(TV, float),       # Giebel-Dreieck (Prisma), Verkleidung
+                          faces=np.array([(0, 1, 2), (3, 5, 4), (0, 2, 5), (0, 5, 3), (1, 4, 5), (1, 5, 2)])))
+            RV = [(cx - dw / 2 - o, yf - o, top), (cx + dw / 2 + o, yf - o, top),
+                  (cx + dw / 2 + o, yb, top), (cx - dw / 2 - o, yb, top),
+                  (cx, yf - o, apex), (cx, yb, apex)]
+            roofs.append(trimesh.Trimesh(vertices=np.array(RV, float),        # 2 Dachschrägen + Stirnen
+                         faces=np.array([(0, 3, 5), (0, 5, 4), (1, 4, 5), (1, 5, 2), (0, 4, 1), (2, 5, 3)])))
+        else:
+            V = [(cx - dw / 2 - 0.1, yf - 0.05, top), (cx + dw / 2 + 0.1, yf - 0.05, top),
+                 (cx + dw / 2 + 0.1, yf + 0.9, top), (cx - dw / 2 - 0.1, yf + 0.9, top),
+                 (cx - dw / 4, yf + 0.45, top + 0.4), (cx + dw / 4, yf + 0.45, top + 0.4)]
+            roofs.append(trimesh.Trimesh(vertices=np.array(V, float),
+                         faces=np.array([(0, 1, 5), (0, 5, 4), (3, 4, 5), (3, 5, 2), (0, 4, 3), (1, 2, 5)])))
         glass.append(slab(cx, yf + 0.05, (wz0 + wz1) / 2, wx1 - wx0, 0.06, wz1 - wz0))
-        frames.append(slab(cx, yf - 0.14, wz1 + 0.1, dw + 0.14, 0.28, 0.07))   # vorspringender Dachüberstand über dem Gaubenfenster
         wy, mcx, mcz = yf - 0.14, (wx0 + wx1) / 2, (wz0 + wz1) / 2       # weißes Kreuz PROUD vor der Gaube
         frames += [slab(mcx, wy, wz1, wx1 - wx0 + 0.06, 0.05, 0.05), slab(mcx, wy, wz0, wx1 - wx0 + 0.06, 0.05, 0.05),
                    slab(wx0, wy, mcz, 0.05, 0.05, wz1 - wz0), slab(wx1, wy, mcz, 0.05, 0.05, wz1 - wz0),
@@ -621,6 +633,7 @@ DEFAULT_COL = {
     "gold": [196, 162, 84, 255], "band": [96, 74, 52, 255], "wappen": [176, 150, 90, 255],
     "zierband": [120, 140, 185, 255], "dachziegel": [96, 78, 70, 255],
     "gitter": [46, 42, 38, 255], "markise_rot": [198, 120, 132, 255], "markise_weiss": [240, 234, 226, 255],
+    "tuer": [96, 64, 44, 255],
 }
 
 
