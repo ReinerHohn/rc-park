@@ -12,15 +12,18 @@ import hofgut_massing as HM
 from hofgut_sternen import box, gaden, window_row, flower_boxes, eg_wall_windows, zwerchhaus
 
 
-def pierced_railing(x0, y, z, length, h=1.0):
-    """Schwarzwald-Laube (Spec wm_hotel1): DURCHBROCHENE flach gesägte Baluster, eng gereiht, WEISS;
-    dunkelbrauner Handlauf + Fußleiste + auskragender Boden. Gibt (holz_braun, baluster_weiss)."""
-    holz = [box(x0, y - 0.62, z - 0.18, length, 0.72, 0.16),          # auskragender Laubenboden
-            box(x0, y - 0.60, z + h - 0.16, length, 0.20, 0.18),      # kräftiger Handlauf
-            box(x0, y - 0.58, z, length, 0.16, 0.14)]                 # Fußleiste
+def pierced_railing(x0, y, z, length, h=1.0, proj=1.25):
+    """Schwarzwald-Laube (Spec wm_hotel1): TIEF auskragender Laubenboden (~1,25 m) + Balustrade an der
+    VORDERKANTE (durchbrochene weiße Baluster), dunkelbrauner Handlauf + Fußleiste. Echte Tiefe in der
+    GEOMETRIE (nicht nur flaches Band). Gibt (holz_braun, baluster_weiss)."""
+    yf = y - proj                                                     # Vorderkante der Laube
+    holz = [box(x0, yf, z - 0.18, length, proj, 0.16),                # tief auskragender Boden
+            box(x0, yf - 0.02, z + h - 0.16, length, 0.18, 0.18),     # Handlauf an der Vorderkante
+            box(x0, yf - 0.02, z, length, 0.16, 0.14),                # Fußleiste vorn
+            box(x0, y - 0.1, z - 0.18, length, 0.12, h + 0.1)]        # Rückwand-Anschluss (Tiefe sichtbar)
     slats = []
-    for xi in np.arange(x0 + 0.12, x0 + length - 0.06, 0.135):        # flache Baluster alle ~13,5 cm
-        slats.append(box(xi, y - 0.57, z + 0.12, 0.045, 0.1, h - 0.28))
+    for xi in np.arange(x0 + 0.12, x0 + length - 0.06, 0.135):        # Baluster an der Vorderkante
+        slats.append(box(xi, yf + 0.01, z + 0.12, 0.045, 0.1, h - 0.28))
     return trimesh.util.concatenate(holz), trimesh.util.concatenate(slats)
 
 
@@ -59,9 +62,9 @@ def build_facade(Lf, E, FM, meas=None):
         segs = [(0.6, cx0 - 0.2), (cx1 + 0.2, Lf - 0.6)] if li == 1 else [(0.6, Lf - 0.6)]  # untere durchgehend
         for x0s, x1s in segs:
             L = x1s - x0s
-            holz, slats = pierced_railing(x0s, -0.6, zf, L)
+            holz, slats = pierced_railing(x0s, -0.3, zf, L)
             galerie.append(holz); baluster.append(slats)
-            blumen.append(flower_boxes(x0s, -0.95, zf, L))
+            blumen.append(flower_boxes(x0s, -1.5, zf, L))      # Geranien hängen an der Lauben-Vorderkante
         g, fr = window_row(Lf, zf + 0.35, zf + 1.6, N); fglass.append(g); fframe.append(fr)
     # Fresko mittig in der oberen Ebene (zwischen den Galerie-Segmenten)
     fresko = box(cx0, -0.06, gal_levels[1] + 0.2, cx1 - cx0, 0.06, (E - gal_levels[1]) - 0.4)
