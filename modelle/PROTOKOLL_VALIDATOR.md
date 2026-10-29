@@ -100,3 +100,36 @@ von gemessen (gut) auf 9.25 verschoben -> „wieder Schrott", weil nicht am Rend
 Band-Linie unuebersehbar. PFLICHTPROZESS: nach JEDER Aenderung aenderung_check laufen lassen,
 Heatmap gegen Foto pruefen, erst dann 'verbessert' sagen; sonst sofort zurueck (git). Siehe
 memory aenderungs_waechter_pflicht.
+
+## F3 (2026-10-29): Gauben — VERSTECKTER Hardcode (Clamp überschrieb die Messung) + Überkorrektur
+Fehler, zwei Lagen:
+1. **Clamp fraß die Messung.** `DORMER_H = max(min(DORMER_H, 1.4), 1.3)` zog die aus
+   gauben_mass.json GEMESSENE Höhe (0.95 m) stillschweigend auf 1.3 m hoch. Ein Guard, der den
+   gemessenen Wert ÜBERSCHREIBT, ist ein verdeckter Hardcode — verletzt [[kein_hardcoding_alles_erkennen]].
+   Dazu war dormer_w_m=2.04 selbst falsch (am falschen Bezug gemessen) → Gauben ~2× zu groß.
+2. **Überkorrektur der Reihenhöhe.** Davor base 0.11→0.30 UND gap 0.21→0.33 in EINEM Rutsch →
+   obere Reihe schoss an den First (Oberkante Gaube z=15.45 bei First 16.6 = nur 1.15 m Luft).
+   Klassische „ins Gegenteil überschießen"-Falle ([[parametrisch_gueltig_nie_degeneriert]]).
+Fix: w 2.04→1.05, h-Clamp 1.1 (Messung 0.95 kommt durch), gap 0.33→0.27 (Dach bleibt ÜBER der
+oberen Reihe). GEMESSEN am Dachebenen-Crop (Öffnung ~20px @ ~24px/m → ~0.8m + Rahmen = 1.05m).
+**Beweis gelernt (Mechanismus):** aenderung_check VOR dem „verbessert": 2.6% geändert, Region
+NUR die Gaubenzone — Rest unberührt; Zoom-Vergleich Render-Dach↔Foto-Dach bestätigt kleiner +
+obere Reihe tiefer. Erst dann committet (10e6bd4).
+LEHRE generell: (a) jeder Clamp/Default, der eine Messung nach oben/unten zwingt, ist verdächtig —
+Messung durchlassen, nur echte Degeneration abfangen. (b) nie zwei Positions-Parameter gleichzeitig
+groß drehen; eine Änderung, Wächter, dann die nächste.
+
+## F4 (2026-10-29): Pfeiler — wieder Überkorrektur (zu kurz -> Stumpf in der Luft)
+User wollte: Pfeiler nicht bis zum Balkon, sondern „in den Bogen übergehen", ohne die zwei
+Kapitell-/Impost-RINGE. Ich habe (a) die Ringe entfernt (richtig) ABER (b) PIER_H von ARC_APEX
+auf ARC_SPRING halbiert -> Pfeiler endeten am Kämpfer als abgeschnittener Stumpf, besonders UNTER
+DEN ERKERN, wo der Bogen nur auf der Innenseite ansetzt -> „Säule hängt in der Luft". Dazu war die
+Pfeilerfarbe heller [138,48,42] als die Fassade [116,38,34] -> sichtbarer Farbsprung.
+Fix: PIER_H zurück auf ARC_APEX (Pfeiler steigen MIT dem Bogen bis zum Scheitel, Apex 5,2 < Balkon 5,4
+= trotzdem nicht bis zum Balkon) + Pfeilerfarbe = Fassadenrot -> fließend, gleichfarbig.
+LEHRE (3. Mal dieselbe Klasse, vgl. F3 Gauben, Oberkirch-Band): „X soll weniger weit gehen" heißt
+NICHT „X radikal halbieren". Erst das MINIMALE zielgerichtete Delta (hier: nur die Ringe weg) testen
+und ansehen, bevor man auch noch die Grundgeometrie (Höhe) ändert. Ein geometrisches Element, das
+ein anderes trägt/überleitet (Pfeiler->Bogen), darf man nicht kürzen, ohne zu prüfen, ob der Übergang
+erhalten bleibt — sonst entsteht ein Stumpf. Immer Render ansehen (Änderungs-Wächter), BESONDERS die
+Sonderfälle an den Rändern/unter Anbauten (Erker), nicht nur die Regelmitte.
