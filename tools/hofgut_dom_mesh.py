@@ -36,11 +36,31 @@ def main():
         r_ = np.array(t["ring_xy_m"]) + o
         c = np.round(r_[:, 0] - 0.5 - E0).astype(np.int32); rr = np.round(N0 - 0.5 - r_[:, 1]).astype(np.int32)
         cv2.fillPoly(mask, [np.c_[c, rr]], 1)
-    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))
-    build = (mask > 0) & np.isfinite(nd) & (nd > 1.0)
+    build = mask > 0                                          # NUR sauberer LOD2-Grundriss (keine Vegetations-Fins)
+    # nDOM innerhalb des Grundrisses auf Dach-Höhen einschränken + Löcher füllen (Bäume/Fehlstellen)
+    H = np.where(build & np.isfinite(nd), np.clip(nd, 2.0, 20.0), np.nan).astype(np.float32)
+    holes = (build & ~np.isfinite(H)).astype(np.uint8)
+    if holes.any():
+        Hf = np.nan_to_num(H, nan=0).astype(np.float32)
+        Hf = cv2.inpaint(np.clip(Hf * 12, 0, 255).astype(np.uint8), holes, 5, cv2.INPAINT_TELEA).astype(np.float32) / 12
+        H = np.where(build & ~np.isfinite(H), Hf, H)
+    H = cv2.medianBlur(np.nan_to_num(H, nan=0).astype(np.float32), 3)   # kantenerhaltend (Firste/Walme bleiben)
+    H[~build] = np.nan
     ys, xs = np.where(build)
     r0, r1, c0, c1 = ys.min(), ys.max(), xs.min(), xs.max()
-    H = np.clip(nd, 0, 25); H[~build] = np.nan
+
+    # Transform in den Fassaden-Frame (konsistent mit hofgut_massing)
+    fr = json.load(open(f"{MD}/massing_frame.json"))
+    a = -fr["rot_angle"]; Rm = np.array([[np.cos(a), -np.sin(a)], [np.sin(a), np.cos(a)]])
+    ctr = np.array(fr["ctr"]); flip = fr["flip"]; shift = np.array(fr["shift"])
+
+    def to_model(c, r):                                        # Gitter-Ecke (r,c) → Modell-x,y
+        loc = np.array([E0 + c - o[0], (N0 - r) - o[1]])
+        p = (loc - ctr) @ Rm.T
+        if flip:
+            p = p * np.array([1.0, -1.0])
+        p = p - shift
+        return float(p[0]), float(p[1])
 
     # DURCHGEHENDE Oberfläche über Gitter-ECKEN: Vertex-Höhe = Mittel der angrenzenden Bauzellen
     # → keine Lücken zwischen Nachbarzellen; Randwände nur am Gebäuderand; Boden bei 0.
@@ -65,25 +85,23 @@ def main():
         for c in range(c0, c1 + 1):
             if not build[r, c]:
                 continue
-            x, y = c - c0, (r1 - r)
-            # vier Eckhöhen (Vertex r,c = Ecke oben-links der Zelle)
             hNW = vheight(r, c); hNE = vheight(r, c + 1); hSW = vheight(r + 1, c); hSE = vheight(r + 1, c + 1)
             if None in (hNW, hNE, hSW, hSE):
                 continue
-            # Top (Ecke oben-links=(x,y+1), oben-rechts=(x+1,y+1), unten-rechts=(x+1,y), unten-links=(x,y))
-            quad(vid(x, y + 1, hNW), vid(x + 1, y + 1, hNE), vid(x + 1, y, hSE), vid(x, y, hSW))
+            NW = to_model(c, r); NE = to_model(c + 1, r); SW = to_model(c, r + 1); SE = to_model(c + 1, r + 1)
+            # Top
+            quad(vid(*NW, hNW), vid(*NE, hNE), vid(*SE, hSE), vid(*SW, hSW))
             # Boden
-            quad(vid(x, y, 0), vid(x + 1, y, 0), vid(x + 1, y + 1, 0), vid(x, y + 1, 0))
-            # Randwände nur zum Nicht-Bau-Nachbarn, mit den passenden Eckhöhen
-            edges = [(-1, 0, (x, y + 1, hNW), (x + 1, y + 1, hNE)),   # Nord
-                     (1, 0, (x + 1, y, hSE), (x, y, hSW)),            # Süd
-                     (0, 1, (x + 1, y + 1, hNE), (x + 1, y, hSE)),    # Ost
-                     (0, -1, (x, y, hSW), (x, y + 1, hNW))]           # West
-            for dr, dc, A, B in edges:
+            quad(vid(*SW, 0), vid(*SE, 0), vid(*NE, 0), vid(*NW, 0))
+            # Randwände zum Nicht-Bau-Nachbarn, mit passenden Eckhöhen
+            edges = [(-1, 0, NW, hNW, NE, hNE),   # Nord
+                     (1, 0, SE, hSE, SW, hSW),    # Süd
+                     (0, 1, NE, hNE, SE, hSE),    # Ost
+                     (0, -1, SW, hSW, NW, hNW)]   # West
+            for dr, dc, A, ah, B, bh in edges:
                 nr, nc = r + dr, c + dc
                 if not (r0 <= nr <= r1 and c0 <= nc <= c1 and build[nr, nc]):
-                    ax, ay, ah = A; bx, by, bh = B
-                    quad(vid(ax, ay, 0), vid(bx, by, 0), vid(bx, by, bh), vid(ax, ay, ah))
+                    quad(vid(*A, 0), vid(*B, 0), vid(*B, bh), vid(*A, ah))
 
     with open(f"{MD}/hofgut_struktur.obj", "w") as f:
         for (x, y, z) in V:

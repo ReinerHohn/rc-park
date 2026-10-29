@@ -67,7 +67,8 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
                     if i != main and Polygon(rings_r[i]).centroid.y < my)
     back_occ = sum(Polygon(rings_r[i]).area for i in range(len(rings_r))
                    if i != main and Polygon(rings_r[i]).centroid.y >= my)
-    if front_occ > back_occ:                                      # −y-Seite verdeckt → Fassade ist +y → 180° drehen
+    flip = front_occ > back_occ
+    if flip:                                                      # −y-Seite verdeckt → Fassade ist +y → 180° drehen
         rings_r = [r * np.array([1.0, -1.0]) for r in rings_r]
     allp = np.vstack(rings_r); shift = allp.min(0)
     rings_r = [r - shift for r in rings_r]                        # alles in +Quadranten
@@ -100,7 +101,9 @@ def build(footprint="modelle/hofgut_sternen/footprint.json",
     mr = rings_r[main]; x0, y0, x1, y1 = Polygon(mr).bounds
     front = {"main_idx": main, "x0": float(x0), "x1": float(x1), "y_front": float(y0),
              "eave_m": teile[main]["eave_m"], "ridge_m": teile[main]["ridge_m"]}
-    json.dump({"rot_angle": float(ang), "front": front},
+    # vollständiger Transform (local-from-origin → Modell-Frame): p' = ((p-ctr)@Rm.T){,y*=-1} - shift
+    json.dump({"rot_angle": float(ang), "ctr": [float(v) for v in ctr], "flip": bool(flip),
+               "shift": [float(v) for v in shift], "front": front},
               open("modelle/hofgut_sternen/massing_frame.json", "w"), indent=1)
     print(f"Massing aus LOD2-Grundriss: {len(wall_meshes)} Teile, L×B×H = {ext[0]:.1f}×{ext[1]:.1f}×{ext[2]:.1f} m")
     print(f"  Hauptflügel Teil{main}: Front x {x0:.1f}..{x1:.1f} (B {x1-x0:.1f} m), Traufe {front['eave_m']}, First {front['ridge_m']}")
