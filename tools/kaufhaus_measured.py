@@ -511,26 +511,33 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
     spiralig) + Krabben + Fiale — Blickfang wie im Foto. Gibt Farbgruppen getrennt zurück."""
     body_parts, gold, rot, hell, gruen = [], [], [], [], []
 
-    def bay_poly(sc=1.0):                                   # facettierter Halb-Oktogon-Erker (projiziert nach -y)
-        return Polygon([(xc + (w/2*sc)*np.cos(t), -(proj*sc)*np.sin(t)) for t in np.linspace(np.pi, 0, 6)])
-    for zz, sc in [(z0-1.5, 0.45), (z0-0.8, 0.72)]:        # Konsol-Aufbau unten
+    # VOLLER OKTOGON-ERKER (voll rund, druck- & zusammensetzbar — echtes 3D-Teil): Körper, Netz UND
+    # Fenster laufen RUNDHERUM; Helm (voller Revolve) sitzt konzentrisch drauf → nicht versetzt (User).
+    NF = 8; cy2 = -proj*0.5; rb = w*0.5                     # Buchtzentrum (Y) + Körperradius
+    ang8 = np.linspace(0, 2*np.pi, NF+1)
+
+    def _ring(r, cy):
+        return [(xc + r*np.cos(a), cy + r*np.sin(a)) for a in ang8]
+
+    def bay_poly(sc=1.0):                                   # VOLLER Oktogon (8 Facetten)
+        return Polygon(_ring(rb*sc, cy2)[:-1])
+    for zz, sc in [(z0-1.5, 0.52), (z0-0.8, 0.76)]:        # Konsol-Aufbau unten
         b = extrude_polygon(bay_poly(sc), 0.7); b.apply_translation((0, 0, zz)); body_parts.append(b)
     body = extrude_polygon(bay_poly(1.0), z1-z0); body.apply_translation((0, 0, z0)); body_parts.append(body)
-    pts6 = [(xc + (w/2)*np.cos(t), -proj*np.sin(t)) for t in np.linspace(np.pi, 0, 6)]
-    for vx, vy in pts6[1:-1]:                                                   # Gold-Kantenrippen an den Facetten → klar vieleckig
-        rib = trimesh.creation.cylinder(radius=0.07, segment=((vx, vy, z0-0.3), (vx, vy, z1))); gold.append(rib)
-    # Unterseite = SOLIDER facettierter Rippen-Trichter (Kragstein), druckbar — kein Gespinst:
-    boss = np.array([xc, -proj*0.34, z0-1.7])
-    cor = [np.array([xc + (w/2)*np.cos(t), -proj*np.sin(t), z0-0.05]) for t in np.linspace(np.pi, 0, 6)]
-    V = [tuple(c) for c in cor] + [tuple(boss)]; nb = len(cor)
-    F = [(i, i+1, nb) for i in range(nb-1)] + [(0, i+1, i) for i in range(1, nb-1)]
-    body_parts.append(_tri(V, F))                                              # Stein-Trichter (Erker-Farbe)
+    pts6 = _ring(rb, cy2)                                   # 9 Punkte, pts6[8]==pts6[0] → 8 Facetten
+    for vx, vy in pts6[:-1]:                                                   # Gold-Kantenrippen an ALLEN Facettenkanten
+        gold.append(trimesh.creation.cylinder(radius=0.055, segment=((vx, vy, z0-0.3), (vx, vy, z1))))
+    # Unterseite = SOLIDER voller Rippen-Trichter (Kragstein), druckbar:
+    boss = np.array([xc, cy2, z0-1.7])
+    cor = [np.array([x, y, z0-0.05]) for (x, y) in pts6[:-1]]; nb = len(cor)
+    V = [tuple(c) for c in cor] + [tuple(boss)]
+    F = [(i, (i+1) % nb, nb) for i in range(nb)]                               # voller geschlossener Trichter
+    body_parts.append(_tri(V, F))
     for c in cor:                                                              # dünne Gold-Rippen auf den Kanten
-        gold.append(trimesh.creation.cylinder(radius=0.045, segment=(tuple(boss), tuple(c))))
-    # NETZGEWÖLBE unter dem Erker (Foto pe_under2: gotisches Rippennetz — Rippen springen vom Boss
-    # fächerförmig hoch und KREUZEN sich zu Rauten, zur Rim dichter). Feines, DICHTES Netz statt Speichen.
-    NR = 10                                                                     # Winkel-Unterteilungen rund um den halben Trichter
-    rim = [np.array([xc + (w/2)*np.cos(t), -proj*np.sin(t), z0-0.05]) for t in np.linspace(np.pi, 0, NR+1)]
+        gold.append(trimesh.creation.cylinder(radius=0.04, segment=(tuple(boss), tuple(c))))
+    # NETZGEWÖLBE (voll rund): Rippen vom Boss fächerförmig hoch, kreuzen sich zu Rauten.
+    NR = NF*2                                                                   # Winkel-Unterteilungen rund um den VOLLEN Trichter
+    rim = [np.array([xc + rb*np.cos(a), cy2 + rb*np.sin(a), z0-0.05]) for a in np.linspace(0, 2*np.pi, NR+1)]
     rings = [0.38, 0.68, 1.0]                                                   # radiale Ringe (Boss→Rim)
 
     def _nd(si, k):                                                             # Knoten auf Ring si (si=-1 → Boss)
@@ -576,21 +583,21 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
             [gruen, hell, rot, gold][(i + k) % 4].append(sc)   # BUNTE Glasur-Schindeln im RAUTEN-/Schachbrettmuster (grün/creme/rot/gelb verstreut) — bunt wie Foto, aber Schachbrett → KEINE waagrechten Ringe (User)
     # WASSERSPEIER (Gargoyles) am Helmfuß: vorspringende Speier an den vorderen Facettenecken (Foto),
     # kragen schräg nach außen-unten; solider Körper (druckbar), Erker-Steinfarbe.
-    for a in np.linspace(np.pi*1.12, np.pi*1.88, 5):
-        p0 = np.array([cx2+cr0*1.05*np.cos(a), cy2+cr0*1.05*np.sin(a), z1-0.02])     # Ansatz am Helmfuß
-        p1 = np.array([cx2+cr0*1.75*np.cos(a), cy2+cr0*1.75*np.sin(a), z1-0.42])     # Spitze: vor + runter
-        body_parts.append(trimesh.creation.cylinder(radius=0.075, segment=(tuple(p0), tuple(p1))))
-        head = trimesh.creation.icosphere(subdivisions=0, radius=0.11); head.apply_translation(tuple(p1)); body_parts.append(head)
+    for a in (ang8[:-1] + np.pi/NF):                                                 # Wasserspeier an ALLEN Facettenkanten rundherum (voller Erker)
+        p0 = np.array([cx2+rb*0.98*np.cos(a), cy2+rb*0.98*np.sin(a), z1-0.02])       # Ansatz am Helmfuß/Körperrand
+        p1 = np.array([cx2+rb*1.35*np.cos(a), cy2+rb*1.35*np.sin(a), z1-0.42])       # Spitze: vor + runter
+        body_parts.append(trimesh.creation.cylinder(radius=0.07, segment=(tuple(p0), tuple(p1))))
+        head = trimesh.creation.icosphere(subdivisions=0, radius=0.1); head.apply_translation(tuple(p1)); body_parts.append(head)
     zb = z1+chh+0.05; sh = 1.3; r0 = w*0.055                                     # schlanke Fiale über dem Helm
     spire = tcone(radius=r0, height=sh, sections=6); spire.apply_translation((cx2, cy2, zb)); gold.append(spire)
     fin = trimesh.creation.cylinder(radius=0.045, height=0.5); fin.apply_translation((cx2, cy2, zb+sh+0.2)); gold.append(fin)
     knauf = trimesh.creation.icosphere(subdivisions=1, radius=0.12); knauf.apply_translation((cx2, cy2, zb+sh+0.5)); gold.append(knauf)
     # ---- Erker-Bucht-Fenster (Foto kh_erker): hohe BLEIGLAS-Fenster je Facette, GOLD-Pfosten +
     # Querkämpfer + flacher Gold-Sturz + Sohlbank, FACETTENGERECHT gedreht; bunte Wappen darunter ----
-    wins = []; bayc = np.array([xc, -proj*0.32])                                # Buchtzentrum (für Außennormale)
+    wins = []; bayc = np.array([xc, cy2])                                       # Buchtzentrum (für Außennormale) = Oktogon-Mitte
     wh = (z1 - 0.6) - BAL_Z1; wz = BAL_Z1 + wh/2                                # Unterkante an Balkonkante, Oberkante HÖHER (bis knapp unter Helmfuß) — Fenster größer (User)
     arz = (BAL_Z0+BAL_Z1)/2                                                     # Wappen GENAU auf Balkonhöhe (User)
-    for j in range(5):                                                         # Fenster RUNDHERUM auf ALLEN Facetten (Foto kh_erker: wickeln um den Erker), nicht nur die 3 vorderen
+    for j in range(NF):                                                        # Fenster VOLL RUNDHERUM auf ALLEN 8 Facetten (User: voll rund, nicht nur draufgesetzt)
         pa = np.array(pts6[j]); pb = np.array(pts6[j+1]); ctr = (pa+pb)/2
         tang = pb-pa; fw = float(np.linalg.norm(tang)); tu = tang/fw
         ang = float(np.arctan2(tu[1], tu[0])); Rz = trimesh.transformations.rotation_matrix(ang, [0, 0, 1])
@@ -642,8 +649,8 @@ def oriel(xc, z0, z1, w=4.0, proj=2.2):
         put((0.05, 0.14, 0.42), 0, arz, 0.20, gold)                             # Kreuz senkrecht
         put((0.30, 0.14, 0.05), 0, arz+0.04, 0.20, gold)                        # Kreuz waagrecht
     # KRAGSTEIN-KÖPFCHEN: Reihe kleiner Stein-Köpfe am Erker-Fuß, direkt über dem Netzgewölbe (Foto)
-    hz = z0 - 0.03; hc = np.array([xc, -proj*0.5])
-    head_xy = [tuple(p) for p in pts6] + [tuple((np.array(pts6[k])+np.array(pts6[k+1]))/2) for k in range(len(pts6)-1)]
+    hz = z0 - 0.03; hc = np.array([xc, cy2])
+    head_xy = [tuple(p) for p in pts6[:-1]] + [tuple((np.array(pts6[k])+np.array(pts6[k+1]))/2) for k in range(len(pts6)-1)]
     for hx, hy in head_xy:
         nd = np.array([hx, hy]) - hc; nl = float(np.linalg.norm(nd)); nd = nd/nl if nl > 1e-6 else np.array([0.0, -1.0])
         hh = trimesh.creation.icosphere(subdivisions=1, radius=0.085)
