@@ -79,8 +79,9 @@ def main():
     # DISTANZTRANSFORMATION → Grate = medial axis = Firste. KEINE Glättung → SCHARFE Firste/Grate
     # (= Gerade-Skelett-Walmdach: Abstand zum Rand × Neigung ergibt planare Dachflächen).
     dist = cv2.distanceTransform(roof, cv2.DIST_L2, 5)
-    dmax = np.percentile(dist[dist > 0], 97)
-    Z = E_roof + np.clip(dist / max(1e-6, dmax), 0, 1) * (R - E_roof)   # Traufe→First entlang Grat
+    # First WAAGRECHT: feste Neigung, bei halber Gebäudetiefe erreicht (dann flach auf First gekappt)
+    half_depth_px = np.percentile(dist[dist > 0], 78)                    # ~halbe Trauf-First-Spanne
+    Z = E_roof + np.clip(dist / max(1e-6, half_depth_px), 0, 1) * (R - E_roof)
     Z[roof == 0] = np.nan
 
     # Solid aus DIREKTEN PIXEL-HÖHEN (keine Mittelung → Firste/Grate bleiben SCHARF = planare Flächen)
