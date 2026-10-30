@@ -17,7 +17,7 @@ DOP = "daten/ravenna/dop/dop20rgb_32_429_5306_2_bw/dop20rgb_32_430_5307_1_bw_202
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--name", required=True)
-    ap.add_argument("--px-per-m", type=float, default=4.0); a = ap.parse_args()
+    ap.add_argument("--px-per-m", type=float, default=8.0); a = ap.parse_args()
     md = f"modelle/{a.name}"
     fr = json.load(open(f"{md}/massing_frame.json")); fp = json.load(open(f"{md}/footprint.json"))
     rp = json.load(open(f"{md}/roof_params.json"))
@@ -76,16 +76,16 @@ def main():
         approx = cv2.approxPolyDP(c, 0.012 * cv2.arcLength(c, True), True)
         roof = np.zeros_like(roof); cv2.fillPoly(roof, [approx], 1)
 
-    # DISTANZTRANSFORMATION → Grate = medial axis = Firste (auf sauberem Polygon = glatte Grate)
+    # DISTANZTRANSFORMATION → Grate = medial axis = Firste. KEINE Glättung → SCHARFE Firste/Grate
+    # (= Gerade-Skelett-Walmdach: Abstand zum Rand × Neigung ergibt planare Dachflächen).
     dist = cv2.distanceTransform(roof, cv2.DIST_L2, 5)
-    dist = cv2.GaussianBlur(dist, (0, 0), 1.2)                           # Grate leicht glätten
     dmax = np.percentile(dist[dist > 0], 97)
     Z = E_roof + np.clip(dist / max(1e-6, dmax), 0, 1) * (R - E_roof)   # Traufe→First entlang Grat
     Z[roof == 0] = np.nan
 
-    # Höhenfeld-Solid (Modell-Frame): Top-Surface über Zellen + Rand runter auf E_roof-0.3 + Boden
-    def mx(c): return x0 + (c + 0.5) / a.px_per_m
-    def my(r): return y1 - (r + 0.5) / a.px_per_m                       # Nord oben
+    # Solid aus DIREKTEN PIXEL-HÖHEN (keine Mittelung → Firste/Grate bleiben SCHARF = planare Flächen)
+    def mx(c): return x0 + c / a.px_per_m
+    def my(r): return y1 - r / a.px_per_m                                # Nord oben
     V, F, vi = [], [], {}
     def vid(x, y, z):
         k = (round(x, 2), round(y, 2), round(z, 2))
@@ -96,27 +96,25 @@ def main():
     base = E_roof - 0.4
     bld = np.isfinite(Z)
     ys, xs = np.where(bld); r0, r1, c0, c1 = ys.min(), ys.max(), xs.min(), xs.max()
-    def zc(r, c): return float(Z[r, c]) if (0 <= r < H and 0 <= c < W and np.isfinite(Z[r, c])) else None
+    def P(r, c): return (mx(c), my(r), float(Z[r, c]))                   # Pixel = Vertex mit SEINER Höhe
+    for r in range(r0, r1):
+        for c in range(c0, c1):
+            if not (bld[r, c] and bld[r, c + 1] and bld[r + 1, c] and bld[r + 1, c + 1]):
+                continue
+            NW, NE, SW, SE = P(r, c), P(r, c + 1), P(r + 1, c), P(r + 1, c + 1)
+            quad(vid(*NW), vid(*NE), vid(*SE), vid(*SW))                 # Top (scharfe Grate)
+            quad(vid(NW[0], NW[1], base), vid(SW[0], SW[1], base),
+                 vid(SE[0], SE[1], base), vid(NE[0], NE[1], base))       # Boden
+    # Randwände: pro Bau-Pixel zu Nicht-Bau-Nachbar eine vertikale Wand von base bis Pixelhöhe
     for r in range(r0, r1 + 1):
         for c in range(c0, c1 + 1):
             if not bld[r, c]:
                 continue
-            # Eckhöhen = Mittel benachbarter Zellen (durchgehende Fläche)
-            def corner(rr, cc):
-                vals = [zc(a_, b_) for a_, b_ in [(rr - 1, cc - 1), (rr - 1, cc), (rr, cc - 1), (rr, cc)]]
-                vals = [v for v in vals if v is not None]
-                return float(np.mean(vals)) if vals else None
-            hNW, hNE, hSW, hSE = corner(r, c), corner(r, c + 1), corner(r + 1, c), corner(r + 1, c + 1)
-            if None in (hNW, hNE, hSW, hSE):
-                continue
-            NW = (mx(c - 0.5), my(r - 0.5)); NE = (mx(c + 0.5), my(r - 0.5))
-            SW = (mx(c - 0.5), my(r + 0.5)); SE = (mx(c + 0.5), my(r + 0.5))
-            quad(vid(*NW, hNW), vid(*NE, hNE), vid(*SE, hSE), vid(*SW, hSW))     # Top
-            quad(vid(*SW, base), vid(*SE, base), vid(*NE, base), vid(*NW, base))  # Boden
-            for (dr, dc), (A, ah, B, bh) in [((-1, 0), (NW, hNW, NE, hNE)), ((1, 0), (SE, hSE, SW, hSW)),
-                                             ((0, 1), (NE, hNE, SE, hSE)), ((0, -1), (SW, hSW, NW, hNW))]:
-                if not (r0 <= r + dr <= r1 and c0 <= c + dc <= c1 and bld[r + dr, c + dc]):
-                    quad(vid(*A, base), vid(*B, base), vid(*B, bh), vid(*A, ah))
+            x, y, z = P(r, c); d = 1.0 / a.px_per_m
+            for dr, dc, (ax, ay), (bx, by) in [(-1, 0, (x, y), (x + d, y)), (1, 0, (x + d, y - d), (x, y - d)),
+                                               (0, 1, (x + d, y), (x + d, y - d)), (0, -1, (x, y - d), (x, y))]:
+                if not (0 <= r + dr < H and 0 <= c + dc < W and bld[r + dr, c + dc]):
+                    quad(vid(ax, ay, base), vid(bx, by, base), vid(bx, by, z), vid(ax, ay, z))
     with open(f"{md}/dach_luftbild.obj", "w") as f:
         for (x, y, z) in V:
             f.write(f"v {x} {y} {z}\n")
