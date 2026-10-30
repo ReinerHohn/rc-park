@@ -61,6 +61,8 @@ des Sichtbaren. Schwächen: dünne Spitzen/Geländer verschwimmen, hohe Flächen
 4. **Drohne** klären (Legal!) → Dächer/Türme nachscannen.
 5. **Blender-Feinschliff** der Spitzen → Resin-Druck → Bemalung → LED → Diorama.
 
+Web-Scan ohne Hingehen (YouTube-Drohnenclips + Commons, GPU): [`web-scan-erkenntnisse.md`](web-scan-erkenntnisse.md).
+
 Bezug: [`plan-wahrzeichen-drucken.md`](plan-wahrzeichen-drucken.md) (Druck/Finish),
 [`scan-setup/`](scan-setup/) (RTX-Pipeline), [`3d-stadtmodell.md`](3d-stadtmodell.md) (LoD2/OSM).
 

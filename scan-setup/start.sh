@@ -130,10 +130,14 @@ fi
 echo
 echo "Qualitaet:  [1] Schnell (Standard)   [2] Detail (volle Aufloesung, dauert ~3-5x laenger)"
 read -r -p "Auswahl [Enter = 2]: " Q
-OVR=()
+# GPU: Meshroom 2023.3 rechnet die Merkmalsuche sonst auf der CPU (~3 min/Bild statt Sekunden).
+# PopSift (GPU) kann nur "sift" -> describerTypes in allen Folge-Knoten mitziehen.
+OVR=(--paramOverrides
+  FeatureExtraction:forceCpuExtraction=False
+  FeatureExtraction:describerTypes=sift FeatureMatching:describerTypes=sift
+  StructureFromMotion:describerTypes=sift)
 if [ "${Q:-2}" != "1" ]; then
-  OVR=(--paramOverrides
-    FeatureExtraction:describerPreset=high FeatureExtraction:describerQuality=high
+  OVR+=(FeatureExtraction:describerPreset=high FeatureExtraction:describerQuality=high
     FeatureMatching:guidedMatching=True
     DepthMap:downscale=1
     Meshing:maxPoints=15000000

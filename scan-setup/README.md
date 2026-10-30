@@ -6,6 +6,8 @@ dem **RTX-Rechner**. Siehe auch [`../diy-scan.md`](../diy-scan.md).
 ## Welches Script?
 - **Windows** → `scan-setup-windows.ps1`
 - **Linux** → `scan-setup-linux.sh`
+- **Linux + NVIDIA, volle GPU-Kette** (COLMAP-CUDA, OpenMVS, nvtop) → `gpu-setup.sh`,
+  Doku: [`GPU-PIPELINE.md`](GPU-PIPELINE.md)
 
 (Den **AMD-Laptop** nicht nutzen — keine NVIDIA. Dort nur Handy-Cloud-Apps KIRI/Polycam.)
 
