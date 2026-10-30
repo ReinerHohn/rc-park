@@ -3,66 +3,43 @@
   "out_dir": "modelle/martinstor_gen",
   "prefix": "mt",
   "glb": "martinstor_measured.glb",
-  "quelle": "Massing LOD2 DEBW_001000hPLcn (H=45.3m). Proportionen/Features Augen-kalibriert am CC-Frontal Commons '...Martinstor -- 2025 -- 7999.jpg'. Farben aus Foto.",
+  "quelle": "Massing LOD2 DEBW_001000hPLcn (H=45.3m, Footprint ~13.6x13.9m inkl. Nachbar → Turm ~9m angesetzt); Form: Torturm mit Spitzhelm. FLAG: Turmbreite/Tormaße/Uhrhöhe am Frontfoto gegenprüfen.",
   "massing": {
     "W": 9.0,
     "D": 9.0,
-    "H_tower": 30.0,
-    "_FLAG": "Schafthöhe bis Zinnenkranz; Helm+Türmchen darüber bis ~45m"
+    "H_tower": 32.0,
+    "_FLAG": "W/D aus LOD2-Footprint geschätzt (enthält Nachbarbau); echter Turm schmaler"
   },
   "durchfahrt": {
     "enabled": true,
-    "width": 5.2,
-    "jamb_h": 4.5,
-    "rise": 2.6
-  },
-  "wappen": {
-    "z": 16.5,
-    "w": 1.6,
-    "h": 1.8
-  },
-  "zinnen": {
-    "enabled": true,
-    "z": 28.5,
-    "merlon": 0.7,
-    "h": 1.2,
-    "gap": 0.6
-  },
-  "ecktuermchen": {
-    "enabled": true,
-    "w": 1.6,
-    "h": 5.5,
-    "z": 29.0
-  },
-  "rustika": {
-    "enabled": true,
-    "sockel_h": 9.0,
-    "quoin_w": 1.1
+    "width": 5.0,
+    "jamb_h": 5.0,
+    "rise": 2.8
   },
   "helm": {
     "enabled": true,
-    "height": 14.5,
-    "overhang": 0.5,
+    "height": 13.3,
+    "overhang": 1.05,
     "hip": 0.0,
     "finial": true
   },
-  "gesimse": [12.0, 28.2],
+  "gesimse": [8.0, 20.0, 30.5],
   "uhr": {
-    "z": 24.0,
-    "r": 1.5,
+    "z": 27.0,
+    "r": 1.6,
     "both_faces": true
   },
+  "zinnen": {
+    "enabled": false
+  },
+  "ecktuermchen": {
+    "enabled": false
+  },
   "colors": {
-    "turm": [223, 203, 158],
-    "gesims": [150, 120, 108],
-    "helm": [92, 112, 134],
-    "knauf": [206, 170, 92],
-    "uhr": [228, 222, 206],
-    "zinnen": [205, 190, 165],
-    "et": [205, 190, 165],
-    "etH": [92, 112, 134],
-    "wappen": [168, 120, 96],
-    "sockel": [128, 104, 96],
-    "quoin": [138, 114, 104]
+    "turm": [180, 122, 96],
+    "helm": [74, 80, 76],
+    "knauf": [198, 168, 92],
+    "gesims": [208, 182, 150],
+    "uhr": [238, 232, 216]
   }
 }

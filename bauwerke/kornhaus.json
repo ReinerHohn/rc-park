@@ -1,0 +1,119 @@
+{
+  "name": "Kornhaus (Münsterplatz 11, Freiburg)",
+  "out_dir": "modelle/kornhaus",
+  "prefix": "korn",
+  "glb": "kornhaus_measured.glb",
+  "quelle": "Masse LOD2 DEBW_0010007Tv8q + Frontale kh_20230106.jpg (giebelständig, Treppengiebel)",
+  "massing": {
+    "lod2": "modelle/kornhaus/kornhaus_lod2.json",
+    "_lod2_liefert": "W(front_w)/depth/gable_start_z(eave)/peak_z(ridge) AUS LOD2 DEBW_0010007Tv8q",
+    "depth_cap": 16.0,
+    "wall_thick": 0.6,
+    "gable_steps": 6,
+    "gable_top_w": 1.8
+  },
+  "facade": {
+    "eg_top": 3.5,
+    "arcade": {
+      "n": 3
+    },
+    "fenster_auto": "modelle/kornhaus/korn_fenster_ml.json",
+    "string_courses": [
+      [
+        4.1,
+        0.65
+      ],
+      [
+        9.2,
+        0.3
+      ]
+    ],
+    "body_rows": [
+      {
+        "z": 5.2,
+        "n": 3,
+        "w": 1.25,
+        "h": 2.0,
+        "margin": 2.0
+      },
+      {
+        "z": 8.3,
+        "n": 5,
+        "w": 0.8,
+        "h": 1.5,
+        "margin": 1.6
+      }
+    ],
+    "gable_rows": [
+      {
+        "level": 0,
+        "n": 4,
+        "w": 0.8,
+        "h": 1.3
+      },
+      {
+        "level": 1,
+        "n": 3,
+        "w": 0.8,
+        "h": 1.3,
+        "arched": true
+      },
+      {
+        "level": 2,
+        "n": 2,
+        "w": 0.8,
+        "h": 1.2
+      },
+      {
+        "level": 3,
+        "n": 1,
+        "w": 0.8,
+        "h": 1.2,
+        "arched": true
+      },
+      {
+        "level": 4,
+        "n": 1,
+        "w": 0.7,
+        "h": 1.0
+      }
+    ],
+    "window_layout": {
+      "gable_rows": [
+        1,
+        2,
+        3,
+        3
+      ],
+      "central_arched": true,
+      "body": "over_arches"
+    }
+  },
+  "colors": {
+    "fassade": [
+      236,
+      231,
+      225
+    ],
+    "sandstein": [
+      206,
+      150,
+      142
+    ],
+    "fenster": [
+      48,
+      52,
+      62
+    ],
+    "sprossen": [
+      214,
+      212,
+      206
+    ],
+    "dach": [
+      120,
+      98,
+      88
+    ]
+  }
+}

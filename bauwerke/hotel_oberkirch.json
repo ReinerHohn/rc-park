@@ -1,0 +1,87 @@
+{
+  "name": "Hotel Oberkirch (Münsterplatz 22, Freiburg)",
+  "out_dir": "modelle/hotel_oberkirch",
+  "prefix": "obk",
+  "glb": "oberkirch_measured.glb",
+  "quelle": "Masse LOD2 DEBW_0010007Tv9p; Fassade AUTO-gemessen aus Foto (fassade_messen.py)",
+  "measure": {
+    "foto": "daten/hotel_oberkirch/fotos/ob_platz_jm3399.jpg",
+    "box": [
+      0.05,
+      0.04,
+      0.86,
+      0.985
+    ],
+    "n_axes": 4
+  },
+  "massing": {
+    "W": 10.6,
+    "eave": 11.84,
+    "lod2_depth": 15.7,
+    "lod2_ridge": 21.04,
+    "streetfront_depth": 6.5,
+    "wall_thick": 0.5
+  },
+  "facade": {
+    "floors": 3,
+    "window": {
+      "w": 1.05,
+      "h": 1.45,
+      "sill_off": 0.5,
+      "cols": 2,
+      "rows": 3
+    }
+  },
+  "elements": {
+    "putzfassade": {
+      "string_course": true
+    },
+    "zierband": {},
+    "fensterraster": {
+      "cols": 2,
+      "rows": 2
+    },
+    "fensterlaeden": {},
+    "blumenkaesten": {},
+    "erdgeschoss": {
+      "door": true,
+      "door_x_frac": 0.33,
+      "style": "restaurant",
+      "window_x_frac": [
+        0.08,
+        0.5,
+        0.74
+      ],
+      "wappen": 2,
+      "lanterns": 2,
+      "menu_board": true,
+      "menu_board_dx": -1.1,
+      "x_shift": 1.1
+    },
+    "satteldach": {},
+    "dachziegel": {
+      "tile_w": 0.18,
+      "course_h": 0.15,
+      "relief": 0.045,
+      "slopes": "both"
+    },
+    "gauben": {
+      "n": 4
+    },
+    "dachluken": {
+      "n": 4
+    },
+    "schornsteine": {
+      "n": 2
+    },
+    "dachrinne": {
+      "downpipe_x_frac": [
+        0.02,
+        0.98
+      ]
+    },
+    "ausleger": {
+      "enabled": true
+    }
+  }
+}

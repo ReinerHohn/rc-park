@@ -1,0 +1,47 @@
+{
+  "name": "Haus zum Bohrer (Schusterstraße 13, Freiburg)",
+  "out_dir": "modelle/haus_bohrer",
+  "prefix": "bohrer",
+  "glb": "bohrer_measured.glb",
+  "quelle": "Fassade AUTO-gemessen aus Commons-Foto jm00078; Massing LOD2-Zeile Schusterstraße (grob)",
+  "massing": {
+    "W": 6.5,
+    "eave": 8.8,
+    "lod2_depth": 9.0,
+    "lod2_ridge": 12.6,
+    "streetfront_depth": 6.0,
+    "wall_thick": 0.4
+  },
+  "facade": {
+    "floors": 2,
+    "eg_top": 3.2,
+    "axes_x_frac": [0.32, 0.68],
+    "window": { "w": 1.0, "h": 1.35, "sill_off": 0.6, "cols": 2, "rows": 2 }
+  },
+  "elements": {
+    "putzfassade": { "string_course": false },
+    "fensterraster": { "cols": 2, "rows": 2 },
+    "fensterlaeden": {},
+    "blumenkaesten": {},
+    "erdgeschoss": {
+      "door": true,
+      "door_x_frac": 0.27,
+      "style": "shop",
+      "window_x_frac": [0.66],
+      "shop_w": 2.3,
+      "shop_z0": 0.35,
+      "shop_z1": 2.85,
+      "shop_grille": true
+    },
+    "markise": { "x0_frac": 0.08, "x1_frac": 0.95, "stripes": 7 },
+    "satteldach": {},
+    "dachziegel": { "tile_w": 0.18, "course_h": 0.15, "relief": 0.045, "slopes": "both" },
+    "gauben": { "n": 1, "shape": "gable", "gable_h": 0.8 },
+    "dachrinne": { "downpipe_x_frac": [0.03, 0.97] }
+  },
+  "colors": {
+    "gaube": [60, 62, 66, 255],
+    "gaube_dach": [52, 54, 58, 255],
+    "schaufenster": [240, 238, 232, 255]
+  }
+}
