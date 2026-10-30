@@ -33,7 +33,28 @@ Gemessen auf dem HP-Laptop (i7, 28 Threads, 15 GB RAM, RTX 4060), alles auf ders
 4. **ccache auf `DATA`** (`$DATA/ccache`, 20 GB): Der pip-Bau von pycolmap übersetzt COLMAP ein
    zweites Mal und holt das meiste aus dem Cache. Der Standardort `~/.cache` liegt auf dem vollen Root.
 
+5. **Vollgas-Modus, dauerhaft:** `bash scan-setup/leistung.sh an` (einmal; zurück: `aus`).
+   Grundsatz: Zeit ist wichtiger als Stromverbrauch – bei Last volle Leistung, im Leerlauf ruhig.
+   Alles bleibt über Neustart und Standby erhalten.
+   - Energieprofil stand auf `power-saver` – trotz Netzteil, CPU taktete herunter → `performance`.
+   - GPU hing an der 80-W-Grenze (`nvidia-smi`: „SW power cap“, 2370 statt bis 3105 MHz).
+     `nvidia-powerd` (Dynamic Boost, schiebt Leistung von der CPU zur GPU) ist im Treiber
+     enthalten, aber nicht eingerichtet → Skript richtet den Dienst ein (bleibt aktiv).
+   - Lüfter voll **bei Last** (`hp-wmi` `pwm1_enable=0`, OMEN): Dienst `luefter-last.service`
+     schaltet ab CPU 75 °C / GPU 70 °C auf voll, unter 60 °C / 55 °C zurück auf automatisch.
+     CPU-Paket lag vorher bei 83 °C → mit mehr Kühlung hält der Boost-Takt länger.
+   - Energieprofil merkt sich power-profiles-daemon selbst (`/var/lib/power-profiles-daemon/state.ini`).
+   Ohne Argument zeigt das Skript Profil, Lüfter, GPU-Watt/Takt und Temperatur.
+
 Am Dateisystem selbst (ext4-Optionen) ist nichts Nennenswertes mehr zu holen; `noatime` ist gesetzt.
+
+**Gemessen, Martinstor (653 Videobilder), gleiche Merkmale/Abgleiche, volle Qualität:**
+
+| Schritt | vorher | jetzt |
+|---|---|---|
+| Kamerapositionen (GLOMAP) | 42,4 min (pip-pycolmap, NTFS, power-saver) | **19,6 min** (Ceres+cuDSS, ext4, performance) |
+| Ergebnis | 189 216 Punkte, 0,578 px | 197 598 Punkte, 0,609 px |
+| Tiefenkarten | COLMAP PatchMatch: ~4/min → ~5 h hochgerechnet | **OpenMVS** (CUDA, volle Auflösung): ~2/s → ~6 min |
 
 ## Was wo rechnet
 

@@ -27,8 +27,8 @@ OMVS_VER="${OMVS_VER:-v2.4.0}"; CGAL_VER="${CGAL_VER:-6.1.3}"
 VENV="$DATA/venv-colmap"; CUDA="$DATA/cuda12"; OMVS="$DATA/openmvs-build"
 GBA="$DATA/colmap-build"; GVENV="$DATA/venv-colmap-gpuba"
 SWAP_GB="${SWAP_GB:-16}"
-# COLMAP nutzt ccache von selbst. Cache auf DATA (Root ist voll) und Pfade relativ zu DATA, damit
-# der pip-Bau von pycolmap (uebersetzt COLMAP ein zweites Mal) die Ergebnisse wiederverwendet.
+# COLMAP nutzt ccache von selbst -> Cache auf DATA (Root ist voll), Pfade relativ zu DATA, damit
+# ein Neubau in einem anderen Ordner die Ergebnisse wiederverwendet.
 export CCACHE_DIR="$DATA/ccache" CCACHE_BASEDIR="$DATA" CCACHE_NOHASHDIR=1 CCACHE_MAXSIZE=20G
 
 say(){ printf "\n\033[36m>>> %s\033[0m\n" "$1"; }
@@ -166,7 +166,14 @@ ls "$OMVS/bin/bin/OpenMVS" | grep -E "Densify|Reconstruct|Refine|Texture|Interfa
 # und rechnet die Kamerapositionen nur auf der CPU. Bau ~30-60 min.
 say "6) Ceres + COLMAP mit GPU-Bundle-Adjustment -> $GVENV ($JOBS Compiler parallel)"
 export LD_LIBRARY_PATH="$CUDA/lib:${LD_LIBRARY_PATH:-}"
-if ! "$GVENV/bin/python" -c "import pycolmap" 2>/dev/null; then
+# CASPAR: Bundle Adjustment komplett auf der GPU (Symforce-Kernels, in COLMAP enthalten, experimentell).
+# Mit Ceres+cuDSS loest die GPU nur das Gleichungssystem; Fehler/Ableitungen und Schur-Elimination
+# bleiben CPU (beim Test 15 Kerne voll, GPU ~0 %). CASPAR=0 schaltet ab.
+CASPAR="${CASPAR:-1}"
+COLMAP_OPTS="-DCASPAR_ENABLED=$([ "$CASPAR" = 1 ] && echo ON || echo OFF)"
+# Neu bauen, wenn pycolmap fehlt oder sich die COLMAP-Optionen geaendert haben
+STAMP="$GBA/.colmap-optionen"
+if ! "$GVENV/bin/python" -c "import pycolmap" 2>/dev/null || [ "$(cat "$STAMP" 2>/dev/null)" != "$COLMAP_OPTS" ]; then
   mkdir -p "$GBA"
   # cuDSS gibt es erst im Ceres-Entwicklungsstand (2.2.0 kann es nicht); der braucht Abseil als Submodul
   [ -d "$GBA/ceres" ]  || git clone --depth 1 https://github.com/ceres-solver/ceres-solver.git "$GBA/ceres"
@@ -186,14 +193,20 @@ if ! "$GVENV/bin/python" -c "import pycolmap" 2>/dev/null; then
   fi
   cmake -S "$GBA/colmap" -B "$GBA/colmap-build" -G Ninja -DCMAKE_BUILD_TYPE=Release \
     -DCUDA_ENABLED=ON "${CU[@]}" -DGUI_ENABLED=OFF -DTESTS_ENABLED=OFF \
-    -DCMAKE_PREFIX_PATH="$GBA/prefix" -Dcudss_DIR="$CUDA/lib/cmake/cudss" \
+    -DCMAKE_PREFIX_PATH="$GBA/prefix" -Dcudss_DIR="$CUDA/lib/cmake/cudss" $COLMAP_OPTS \
     -DCMAKE_INSTALL_PREFIX="$GBA/prefix" || exit 1
   cmake --build "$GBA/colmap-build" -j"$JOBS" && cmake --install "$GBA/colmap-build" || exit 1
   python3 -m venv --system-site-packages "$GVENV"
   "$GVENV/bin/pip" install --no-cache-dir scikit-build-core pybind11 numpy build || exit 1
-  # Ceres verlangt cuDSS auch beim Einbinden -> Pfad auch hier mitgeben
-  CMAKE_PREFIX_PATH="$GBA/prefix" CMAKE_ARGS="${CU[*]} -Dcudss_DIR=$CUDA/lib/cmake/cudss" \
-    "$GVENV/bin/pip" install --no-build-isolation --no-cache-dir "$GBA/colmap" || exit 1
+  # pip baut in TMPDIR (Standard /tmp im vollen Root) -> auf DATA. Es baut nur die Python-Anbindung,
+  # COLMAP selbst kommt aus dem prefix.
+  mkdir -p "$DATA/tmp"; export TMPDIR="$DATA/tmp"
+  # Ceres verlangt cuDSS auch beim Einbinden -> Pfad auch hier mitgeben.
+  # GENERATE_STUBS=OFF: Typ-Infos fuer Editoren; der Generator scheitert an Ubuntus numpy 1.26
+  # ("Can't find/import 'numpy.bool'") und bricht sonst den Bau nach dem Linken ab.
+  CMAKE_PREFIX_PATH="$GBA/prefix" CMAKE_ARGS="${CU[*]} -Dcudss_DIR=$CUDA/lib/cmake/cudss -DGENERATE_STUBS=OFF $COLMAP_OPTS" \
+    "$GVENV/bin/pip" install --no-build-isolation --no-cache-dir --force-reinstall --no-deps "$GBA/colmap" || exit 1
+  echo "$COLMAP_OPTS" > "$STAMP"
 fi
 # Starter: setzt den Bibliothekspfad fuer cuDSS/cuBLAS, sonst findet pycolmap sie nicht
 cat > "$DATA/colmap-gpu" <<EOS

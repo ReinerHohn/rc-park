@@ -27,6 +27,9 @@ ap = argparse.ArgumentParser()
 ap.add_argument("images"); ap.add_argument("work")
 ap.add_argument("--max-size", type=int, default=2000, help="max Bildkante fuer PatchMatch")
 ap.add_argument("--overlap", type=int, default=15, help="sequentielle Nachbarn")
+ap.add_argument("--ba", choices=["ceres", "caspar"], default="ceres",
+                help="Bundle Adjustment: ceres (GPU nur fuers Gleichungssystem) oder caspar (komplett GPU, "
+                     "experimentell; braucht gpu-setup.sh mit CASPAR=1)")
 a = ap.parse_args()
 assert pycolmap.has_cuda, "pycolmap ohne CUDA - pycolmap-cuda12 installieren"
 os.makedirs(a.work, exist_ok=True)
@@ -69,8 +72,11 @@ if not os.path.exists(matched):  # bereits gematchte Paare ueberspringt COLMAP -
 if not os.path.exists(os.path.join(sparse, "0")):
     t("GLOMAP globales SfM")
     os.makedirs(sparse, exist_ok=True)
+    gp = pycolmap.GlobalPipelineOptions()
+    gp.mapper.bundle_adjustment.backend = getattr(pycolmap.BundleAdjustmentBackend, a.ba.upper())
+    t(f"  Bundle Adjustment: {a.ba}")
     try:
-        recs = pycolmap.global_mapping(db, a.images, sparse)
+        recs = pycolmap.global_mapping(db, a.images, sparse, options=gp)
     except Exception as e:
         t(f"GLOMAP fehlgeschlagen ({e}) -> inkrementell")
         recs = pycolmap.incremental_mapping(db, a.images, sparse)
