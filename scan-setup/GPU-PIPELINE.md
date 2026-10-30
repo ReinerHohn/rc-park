@@ -4,11 +4,36 @@ Ziel: die RTX für alle Schritte nutzen, die sie kann, und damit schärfere, dru
 schneller bekommen. Einrichten auf jedem NVIDIA-Linux-Rechner mit **einem** Script:
 
 ```bash
-bash scan-setup/gpu-setup.sh                      # Daten nach /media/oem/Volume
+bash scan-setup/gpu-setup.sh                      # Daten nach /media/oem/scan
 DATA=/mnt/daten bash scan-setup/gpu-setup.sh      # anderer Rechner / andere Platte
 ```
 
-Das Script ist wiederholbar: Erledigtes wird übersprungen. Fragt einmal nach sudo (apt).
+Das Script ist wiederholbar: Erledigtes wird übersprungen. Fragt nach sudo (apt, Swap-Datei).
+
+## Tempo: Datenplatte, Swap, Bauen (einmalig einrichten)
+
+Gemessen auf dem HP-Laptop (i7, 28 Threads, 15 GB RAM, RTX 4060), alles auf derselben NVMe-SSD:
+
+| Test | ext4 | NTFS über ntfs-3g |
+|---|---|---|
+| 500 MB am Stück schreiben | **1,6 GB/s** | 131 MB/s (~12× langsamer) |
+| 2000 kleine Dateien lesen + löschen | 0,09 s | 0,48 s (~5×) |
+| Compiler-Auslastung beim Bauen | ~100 % | 36–54 % (`mount.ntfs-3g` frisst einen Kern) |
+
+1. **Eigene ext4-Partition** für `DATA` statt der Windows-Datenpartition:
+   `sudo bash scan-setup/datenpartition.sh 100` verkleinert „Volume“ (NTFS) am Ende um 100 GiB und
+   bindet die neue Partition als `/media/oem/scan` ein (fstab). Nur für den HP-Laptop (Sektoren
+   fest eingetragen, bricht sonst ab); andere Rechner: GParted. `gpu-setup.sh` warnt, wenn `DATA`
+   auf NTFS liegt. Der schnellere Kernel-Treiber `ntfs3` ist in Linux Mint absichtlich gesperrt
+   (`/lib/modprobe.d/mint-blacklist-ntfs3.conf`) – deshalb ext4 statt ntfs3.
+2. **Swap 16 GB** als Datei auf `DATA` (`gpu-setup.sh` Schritt 0b, dauerhaft per fstab,
+   abschalten mit `SWAP_GB=0`). Fängt RAM-Spitzen ab – beim Bauen und bei großen Scans.
+3. **Parallele Compiler (`JOBS`)** nach freiem RAM + halbem Swap, je ~2,5 GB pro Job (hier 8).
+   Ohne Grenze startet Ninja `nproc+2` = 30 Compiler → RAM voll, Absturz.
+4. **ccache auf `DATA`** (`$DATA/ccache`, 20 GB): Der pip-Bau von pycolmap übersetzt COLMAP ein
+   zweites Mal und holt das meiste aus dem Cache. Der Standardort `~/.cache` liegt auf dem vollen Root.
+
+Am Dateisystem selbst (ext4-Optionen) ist nichts Nennenswertes mehr zu holen; `noatime` ist gesetzt.
 
 ## Was wo rechnet
 
@@ -26,7 +51,7 @@ Zum Vergleich: Meshroom auf CPU (AKAZE) brauchte früher ~3 min *pro Bild*.
 
 ## Die Bausteine
 
-| Was | Wo (`DATA=/media/oem/Volume`) | Wozu |
+| Was | Wo (`DATA=/media/oem/scan`) | Wozu |
 |---|---|---|
 | `venv-colmap` | `$DATA/venv-colmap` | `pycolmap-cuda12`: COLMAP + GLOMAP mit CUDA, ohne Systeminstallation |
 | CUDA-Compiler + Bibliotheken | `$DATA/cuda12` | `nvcc`, cuBLAS/cuSOLVER/cuSPARSE, **cuDSS** (NVIDIA-Redist-Archive, nur entpackt) |
@@ -42,8 +67,8 @@ Zum Vergleich: Meshroom auf CPU (AKAZE) brauchte früher ~3 min *pro Bild*.
 nvtop
 
 # COLMAP-Kette: ein Unterordner pro Kamera/Video in <bilder>
-/media/oem/Volume/colmap-gpu scan-setup/colmap_gpu.py <bilder> <arbeitsordner> [--max-size 2000]
-# ohne Schritt 6 (GPU-Bundle-Adjustment): /media/oem/Volume/venv-colmap/bin/python statt colmap-gpu
+/media/oem/scan/colmap-gpu scan-setup/colmap_gpu.py <bilder> <arbeitsordner> [--max-size 2000]
+# ohne Schritt 6 (GPU-Bundle-Adjustment): /media/oem/scan/venv-colmap/bin/python statt colmap-gpu
 #  -> <arbeitsordner>/mesh.ply, dense/fused.ply
 #  Abgebrochen? Einfach nochmal starten: fertige Schritte werden übersprungen.
 
@@ -81,11 +106,16 @@ bash scan-setup/start.sh
 | `CGAL/AABB_traits_3.h` nicht gefunden | Ubuntu hat CGAL 5.6, OpenMVS 2.4 braucht 6 | CGAL 6.1.3 (reine Header) nur entpacken, `CGAL_DIR` (`CGAL_VER`) |
 | Ceres: `find_package(absl)` scheitert | cuDSS gibt es nur im Ceres-Entwicklungsstand (2.2.0 kann es nicht), der braucht Abseil | Submodul `third_party/abseil-cpp` holen; Schalter heißt dort `WITH_CUDA`, nicht `USE_CUDA` |
 | Ceres ohne cuDSS gebaut, merkt man erst beim Lauf | `cudss_DIR` nicht gefunden | Script prüft `config.h` auf `CERES_NO_CUDSS` und bricht ab |
+| Rechner friert ein / Absturz beim Bau von Ceres | Ninja startet `nproc+2` Compiler, je bis 2,5 GB | `JOBS` nach RAM + Swap begrenzen |
+| COLMAP: `OpenImageIO::iconvert` … `/usr/bin/iconvert` does not exist | Ubuntus OIIO-CMake verweist auf Programme aus einem anderen Paket | `openimageio-tools` in der Paketliste |
+| COLMAP: `Could not find … cudss` (aus `CeresConfig.cmake`) | Ceres mit cuDSS verlangt cuDSS auch beim Einbinden | `-Dcudss_DIR` auch an COLMAP und pip-pycolmap |
 
 Neueres Linux macht die Scans **nicht schneller** (Treiber, Kernel, CUDA sind aktuell),
-nur das Selbstbauen einfacher. Upgrade erst zusammen mit eigener ext4-Datenpartition.
-- **Linux-Root voll / Windows-Partition read-only:** alles Große nach `DATA`. NTFS-Partition
-  nur beschreibbar, wenn in Windows der **Schnellstart aus** ist (Energieoptionen).
+nur das Selbstbauen einfacher.
+- **Linux-Root voll:** alles Große nach `DATA` (ext4-Partition, s. „Tempo“). Die NTFS-Partition
+  ist nur beschreibbar, wenn in Windows der **Schnellstart aus** ist (Energieoptionen).
+- **`!` vor Befehlen** gilt nur im Claude-Code-Eingabefeld. Im normalen Terminal kehrt bash damit
+  das Ergebnis um – `! sudo umount … && …` überspringt alles nach `&&`.
 
 ## Nächste Ausbaustufen (Recherche 30.10.2026)
 
