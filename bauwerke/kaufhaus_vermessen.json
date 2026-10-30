@@ -1,0 +1,93 @@
+{
+  "name": "kaufhaus_vermessen",
+  "out_dir": "modelle/kaufhaus_vermessen",
+  "prefix": "kauf",
+  "glb": "kaufhaus_vermessen_measured.glb",
+  "quelle": "AUTO: Massing LOD2 DEBW_0010007Tv9r, Fassade fenster_ml + Farben aus kh_front1.jpg",
+  "measure": {
+    "foto": "daten/kaufhaus_freiburg/fotos/kh_front1.jpg",
+    "box": [
+      0.05,
+      0.04,
+      0.95,
+      0.98
+    ],
+    "n_axes": 4
+  },
+  "massing": {
+    "W": 25.5,
+    "eave": 9.65,
+    "lod2_ridge": 21.4,
+    "lod2_depth": 24.6,
+    "wall_thick": 0.5,
+    "_FLAG_W_depth": "Hüll-Bbox, NICHT echte Front/Tiefe — bei komplexem Grundriss am Foto gegenprüfen"
+  },
+  "facade": {
+    "floors": 3,
+    "body_rows": [
+      {
+        "z": 20.65,
+        "n": 1,
+        "w": 3.54,
+        "h": 1.5,
+        "arched": false
+      },
+      {
+        "z": 1.18,
+        "n": 1,
+        "w": 3.54,
+        "h": 2.08,
+        "arched": true
+      },
+      {
+        "z": 0.43,
+        "n": 2,
+        "w": 3.54,
+        "h": 0.9,
+        "arched": false
+      }
+    ],
+    "arcade": {
+      "n": 1
+    },
+    "fenster_auto": "modelle/kaufhaus_vermessen/kaufhaus_vermessen_fenster.json"
+  },
+  "elements": {
+    "putzfassade": {
+      "string_course": true
+    },
+    "fensterraster": {},
+    "erdgeschoss": {
+      "door": true
+    },
+    "satteldach": {},
+    "dachziegel": {
+      "tile_w": 0.18,
+      "course_h": 0.15,
+      "relief": 0.045,
+      "slopes": "both"
+    },
+    "gauben": {
+      "n": 3
+    },
+    "dachrinne": {}
+  },
+  "colors": {
+    "fassade": [
+      135,
+      56,
+      59
+    ],
+    "dach": [
+      72,
+      68,
+      85
+    ],
+    "fenster": [
+      44,
+      28,
+      33
+    ]
+  },
+  "use_measured_colors": true
+}

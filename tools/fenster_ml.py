@@ -101,12 +101,15 @@ def to_rows(wins, bx):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("foto"); ap.add_argument("--out", default=None); ap.add_argument("--overlay", default=None)
+    ap.add_argument("--out-mask", default=None, help="binäre Fenster-Maske als PNG (Hebel 6→7 Interlock)")
     ap.add_argument("--model", default=DEFAULT_MODEL)
     a = ap.parse_args()
     img = cv2.imread(a.foto); H0, W0 = img.shape[:2]
     seg, win_ids, id2label = segment(a.foto, a.model)
     print(f"Modell {a.model}: Klassen {list(id2label.values())}; window-Ids {win_ids}")
     allw, mask = windows_from_seg(seg, win_ids)
+    if a.out_mask:                      # pixelgenaue window-Maske für foto_displacement.py
+        cv2.imwrite(a.out_mask, (mask * 255).astype(np.uint8)); print(f"-> {a.out_mask}")
     if not allw:
         print("keine Fenster segmentiert"); return
     # STRUKTUR-REGULARISIERUNG fest verdrahtet (Nachbarn raus + Reihen/Spalten-Alignment +
