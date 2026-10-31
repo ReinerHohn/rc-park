@@ -7,7 +7,7 @@
 import sys, json, ssl, ftplib, time
 import paho.mqtt.client as mqtt
 
-IP = "192.168.178.125"; CODE = "1e027750"; SN = "01P00C651601962"
+IP = "192.168.178.125"; CODE = "<P1S_CODE>"; SN = "<P1S_SN>"
 
 
 class _FTPI(ftplib.FTP_TLS):

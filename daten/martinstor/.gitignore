@@ -1,0 +1,2 @@
+# Fotos sind per tools/commons_harvest.py reproduzierbar (siehe modelle/LERNJOURNAL_MARTINSTOR.md); nur das Lizenz-Manifest wird versioniert
+daten/martinstor/fotos/*.jpg

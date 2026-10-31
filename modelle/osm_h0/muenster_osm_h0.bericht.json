@@ -1,0 +1,476 @@
+{
+ "quelle": "OpenStreetMap (ODbL)",
+ "bauteile": 35,
+ "hoehe_echt_m": 116.0,
+ "ausdehnung_mm": [
+  1438.2,
+  489.1,
+  1333.3
+ ],
+ "massstab": "1:87",
+ "wasserdicht": true,
+ "volumen_mm3": 144231914,
+ "geschaetzte_angaben": [],
+ "passt_in_bauraum": true,
+ "teile": [
+  {
+   "nr": "111",
+   "mm": [
+    205.1,
+    97.3,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "112",
+   "mm": [
+    205.1,
+    97.3,
+    203.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "121",
+   "mm": [
+    205.5,
+    163.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "122",
+   "mm": [
+    205.5,
+    163.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "123",
+   "mm": [
+    135.1,
+    143.7,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "124",
+   "mm": [
+    135.1,
+    143.7,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "125",
+   "mm": [
+    118.5,
+    122.4,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "126",
+   "mm": [
+    59.5,
+    63.5,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "131",
+   "mm": [
+    155.2,
+    104.2,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "132",
+   "mm": [
+    155.2,
+    104.2,
+    203.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "211",
+   "mm": [
+    205.5,
+    137.2,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "212",
+   "mm": [
+    204.7,
+    137.2,
+    203.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "221",
+   "mm": [
+    205.5,
+    163.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "222",
+   "mm": [
+    205.5,
+    163.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "223",
+   "mm": [
+    5.4,
+    69.3,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "224",
+   "mm": [
+    5.4,
+    69.3,
+    179.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "231",
+   "mm": [
+    205.5,
+    140.5,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "232",
+   "mm": [
+    205.5,
+    140.5,
+    203.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "311",
+   "mm": [
+    205.5,
+    115.5,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "312",
+   "mm": [
+    101.4,
+    115.5,
+    111.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "321",
+   "mm": [
+    205.5,
+    163.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "322",
+   "mm": [
+    205.5,
+    163.0,
+    180.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "331",
+   "mm": [
+    205.5,
+    142.2,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "332",
+   "mm": [
+    205.5,
+    136.8,
+    111.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "411",
+   "mm": [
+    205.5,
+    163.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "412",
+   "mm": [
+    193.6,
+    108.0,
+    111.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "421",
+   "mm": [
+    205.5,
+    163.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "422",
+   "mm": [
+    205.5,
+    163.0,
+    180.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "431",
+   "mm": [
+    205.5,
+    152.7,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "432",
+   "mm": [
+    205.5,
+    138.0,
+    145.6
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "511",
+   "mm": [
+    205.5,
+    157.2,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "512",
+   "mm": [
+    172.9,
+    87.1,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "513",
+   "mm": [
+    60.6,
+    15.3,
+    108.8
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "521",
+   "mm": [
+    205.5,
+    163.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "522",
+   "mm": [
+    205.5,
+    163.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "523",
+   "mm": [
+    71.9,
+    163.0,
+    164.8
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "531",
+   "mm": [
+    205.5,
+    149.7,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "532",
+   "mm": [
+    205.5,
+    149.7,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "533",
+   "mm": [
+    72.3,
+    70.8,
+    164.8
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "611",
+   "mm": [
+    205.5,
+    85.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "612",
+   "mm": [
+    167.2,
+    85.0,
+    111.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "621",
+   "mm": [
+    205.5,
+    163.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "622",
+   "mm": [
+    205.5,
+    163.0,
+    214.6
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "631",
+   "mm": [
+    205.5,
+    163.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "632",
+   "mm": [
+    205.5,
+    163.0,
+    171.9
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "711",
+   "mm": [
+    162.2,
+    65.9,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "712",
+   "mm": [
+    128.1,
+    65.9,
+    76.6
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "721",
+   "mm": [
+    205.5,
+    163.0,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "722",
+   "mm": [
+    205.5,
+    163.0,
+    214.6
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "731",
+   "mm": [
+    200.7,
+    155.1,
+    222.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "732",
+   "mm": [
+    200.7,
+    155.1,
+    145.4
+   ],
+   "wasserdicht": true
+  }
+ ]
+}

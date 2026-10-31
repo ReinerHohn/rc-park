@@ -1,0 +1,47 @@
+{
+ "quelle": "OpenStreetMap (ODbL)",
+ "bauteile": 6,
+ "hoehe_echt_m": 60.0,
+ "hoehe_osm_m": 53.0,
+ "ausdehnung_mm": [
+  171.7,
+  166.1,
+  689.7
+ ],
+ "massstab": "1:87",
+ "wasserdicht": true,
+ "volumen_mm3": 8146519,
+ "geschaetzte_angaben": [
+  "Hoehe von 53.0 m (OSM) auf 60.0 m (vorgegeben) gestreckt - nur Z, Grundriss unveraendert"
+ ],
+ "passt_in_bauraum": true,
+ "teile": [
+  {
+   "nr": "111",
+   "mm": [
+    154.3,
+    157.3,
+    229.9
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "112",
+   "mm": [
+    171.7,
+    162.7,
+    229.9
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "113",
+   "mm": [
+    171.7,
+    162.7,
+    229.9
+   ],
+   "wasserdicht": true
+  }
+ ]
+}

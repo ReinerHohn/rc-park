@@ -1,0 +1,378 @@
+{
+ "flaechen": 2508,
+ "wasserdicht": true,
+ "volumen_mm3": 15157267.8,
+ "ausdehnung_mm": [
+  2428.7,
+  793.2,
+  539.1
+ ],
+ "passt_in_bauraum": true,
+ "wand_p5_mm": 0.65,
+ "wand_median_mm": 47.71,
+ "anteil_zu_duenn": 0.062,
+ "massstab": "1:87",
+ "min_wand_mm": 0.8,
+ "teile": [
+  {
+   "nr": "142",
+   "mm": [
+    157.5,
+    97.0,
+    14.6
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "143",
+   "mm": [
+    202.4,
+    119.2,
+    62.6
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "241",
+   "mm": [
+    39.6,
+    52.1,
+    27.3
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "242",
+   "mm": [
+    145.1,
+    93.1,
+    179.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "243",
+   "mm": [
+    202.4,
+    124.7,
+    73.3
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "331",
+   "mm": [
+    57.3,
+    25.9,
+    172.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "332",
+   "mm": [
+    113.6,
+    31.6,
+    179.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "333",
+   "mm": [
+    145.8,
+    44.5,
+    84.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "341",
+   "mm": [
+    61.0,
+    37.4,
+    172.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "342",
+   "mm": [
+    126.4,
+    48.9,
+    179.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "343",
+   "mm": [
+    202.4,
+    80.2,
+    83.4
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "431",
+   "mm": [
+    29.0,
+    57.5,
+    179.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "432",
+   "mm": [
+    52.7,
+    63.5,
+    179.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "433",
+   "mm": [
+    202.4,
+    106.3,
+    94.8
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "443",
+   "mm": [
+    60.6,
+    18.5,
+    78.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "531",
+   "mm": [
+    34.6,
+    58.3,
+    174.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "532",
+   "mm": [
+    48.1,
+    64.5,
+    179.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "533",
+   "mm": [
+    202.4,
+    124.8,
+    105.5
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "623",
+   "mm": [
+    103.3,
+    31.5,
+    76.8
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "631",
+   "mm": [
+    63.6,
+    57.5,
+    156.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "632",
+   "mm": [
+    83.2,
+    67.1,
+    179.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "633",
+   "mm": [
+    202.4,
+    93.2,
+    115.8
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "721",
+   "mm": [
+    63.6,
+    57.5,
+    155.4
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "722",
+   "mm": [
+    71.9,
+    66.9,
+    179.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "723",
+   "mm": [
+    202.4,
+    93.3,
+    127.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "733",
+   "mm": [
+    103.2,
+    31.5,
+    75.1
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "821",
+   "mm": [
+    35.0,
+    57.5,
+    71.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "822",
+   "mm": [
+    37.2,
+    58.1,
+    179.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "823",
+   "mm": [
+    202.4,
+    124.8,
+    137.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "913",
+   "mm": [
+    60.8,
+    18.6,
+    82.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "921",
+   "mm": [
+    28.6,
+    58.0,
+    68.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "922",
+   "mm": [
+    28.8,
+    57.9,
+    179.7
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "923",
+   "mm": [
+    202.4,
+    106.2,
+    148.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "1012",
+   "mm": [
+    61.1,
+    37.4,
+    156.6
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "1013",
+   "mm": [
+    202.4,
+    80.3,
+    159.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "1022",
+   "mm": [
+    57.7,
+    25.9,
+    156.6
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "1023",
+   "mm": [
+    145.7,
+    44.5,
+    155.2
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "1112",
+   "mm": [
+    63.6,
+    63.2,
+    74.6
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "1113",
+   "mm": [
+    202.4,
+    124.8,
+    169.9
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "1213",
+   "mm": [
+    202.4,
+    119.2,
+    93.5
+   ],
+   "wasserdicht": true
+  }
+ ]
+}
