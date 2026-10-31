@@ -271,3 +271,9 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - Fix: Konsolen 0,1 m in Zinne hinein; Fenster mit hh=hxy(z). Ergebnis: 1 Koerper, wasserdicht, Laser-Tabelle unveraendert (Median 7 %).
 - Regel: nach jeder Aenderung Koerperzahl pruefen (muss 1 sein); Bauteile immer >=0,1 m ueberlappen.
 - Dachfirst: punktweiser Vergleich (tools/masspruefung_dach.py) im 4,5-m-Umkreis der Spitze: Fehler 2,58 / 2,55 / 2,64 m fuer First 46,2 / 45,0 / 44,0; mittlere Hoehenabweichung +0,01 / -0,50 / -0,91 m. Rasterfehler dominiert, aber nur 46,2 trifft die Hoehe im Mittel -> bleibt.
+
+## 20. Adlerrelief fehlte (CSG-Reihenfolge, zweites Mal)
+- Fund: Eckpunkte in der Wappenzone -x: nur 16, Tiefen 4,85-5,01 m = nur Tafel + Nische, kein Adler. Die Adler-Kugeln lagen in `adds`, die Nische (Einsenken) wird danach abgezogen und nahm sie mit.
+- Fix: Adler in `late` (nach dem Ausschnitt vereinigt), Mitte auf Nischenboden (_hT[0] + rel(0.09)). Danach 523 Eckpunkte, Relief bis 5,07 m (Tafel 5,01).
+- Regel: jedes Relief IN einer Nische gehoert in `late`; Test: Eckpunkte/Tiefenkarte der Zone pruefen, nicht nur Koerperzahl und Wasserdichtheit.
+- Pruefmethode: Oberflaeche abtasten (trimesh.sample) und Tiefe als Farbkarte -> sichtbar auch ohne Renderer.

@@ -237,7 +237,7 @@ cuts.append(fbox("-x", -0.7, 0.7, 8.5, 10.4, rel(0.14) - rel(0.05), 1.0, h=_hT))
 for e in [M.sphere(0.32 * FA, 24).scale((1, 0.8, 1.3)).translate((0, 0, ZA - 0.2)),
           M.sphere(0.2 * FA, 16).translate((0, -0.28 * FA, ZA + 0.5 * FA)), M.sphere(0.2 * FA, 16).translate((0, 0.28 * FA, ZA + 0.5 * FA)),
           M.sphere(0.42 * FA, 24).scale((0.5, 1.0, 0.55)).translate((0, -0.5 * FA, ZA - 0.1)), M.sphere(0.42 * FA, 24).scale((0.5, 1.0, 0.55)).translate((0, 0.5 * FA, ZA - 0.1))]:
-    adds.append(e.scale((rel(0.12) / 0.3, 1, 1)).translate((-DB / 2 - rel(0.1) + 0.07, 0, 0)))
+    late.append(e.scale((rel(0.12) / 0.3, 1, 1)).translate((-_hT[0] - rel(0.09), 0, 0)))   # NACH dem Einsenken vereinigt, sonst weg
 for f in ("+y", "-y"):
     for z in (6.5, 10.5):
         window(f, 0.0, z, 0.5, 1.0, hh=hxy(z))
