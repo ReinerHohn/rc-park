@@ -29,6 +29,15 @@ manifold3d (Apache-2.0), trimesh (MIT), numpy/scipy/scikit-image (BSD), PyTorch 
 COLMAP (BSD), PrusaSlicer (AGPL; **erzeugte G-Code-Dateien sind frei**), OpenMVS (AGPL-3.0, Ergebnisse frei).
 Eigener Code (`tools/`, `modelle/*_gen.py`) gehört dem Projekt.
 
+## Testmodus (Nutzerfreigabe 2026-10-31)
+Alles darf zum **Testen** benutzt werden, auch die ⚠-Werkzeuge. Jedes benutzte Werkzeug wird hier mit Datum und Zweck eingetragen.
+Ergebnisse daraus sind "nur Test" und nicht Teil des Verkaufsprodukts.
+
+### Benutzt (Test)
+| Datum | Werkzeug | Lizenz | Zweck | Ergebnis ins Produkt? |
+|---|---|---|---|---|
+| 2026-10-31 | VGGT-1B (Gewichte `/media/oem/scan/vggt/gewichte`, Code `/media/oem/scan/vggt/repo`) | CC BY-NC 4.0 | Fototest: Kameralage + Punktwolke aus Commons-Fotos, Maßabgleich mit Modell | nein (nur Test) |
+
 ## Regel
 Neues Werkzeug/Modell → hier eintragen, **bevor** Ergebnisse ins Produkt (STL, Anleitung, Zahlen im Bausatz) wandern.
 NC-Modelle nur zur Forschung; was im Verkaufsprodukt steckt, muss aus lizenzfreien Quellen (Laser, Fotos als Messvorlage, eigener Generator) belegbar sein.
