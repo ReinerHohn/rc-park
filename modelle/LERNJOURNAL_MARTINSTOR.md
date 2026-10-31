@@ -203,3 +203,9 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - Änderung: Glockenstock schmaler (D−4,4 / W−4,4 statt −3,4), Dach 9,0 m statt 6,7 m hoch mit schmalerem First (1,4 × 1,8 m), Erkerkegel 7,4 m statt 5,2 m und schlanker (Fuß OR+0,12). Spitze bleibt bei 54 m (kürzerer Dachreiter-Mast).
 - Lehre: Proportionen (Höhe/Breite einzelner Bauteile) systematisch messen, nicht nur Gesamthöhe; Nutzerblick ernst nehmen – er fiel auf, obwohl alle Zahlen grün waren.
 - Ergebnis: 25 920 Flächen, wasserdicht, H0 154,6 × 164,5 × 620,7 mm.
+
+## Eintrag 11 – Torbogen breiter und höher
+
+- Foto 030: Durchfahrt im Verhältnis zum Sockel breiter/höher als im Modell. Änderung: Breite 6,6 m (vorher 6,0), Kämpferhöhe 4,3 m (vorher 4,2); Scheitel 7,6 m, unter der Sockelkante (8,0 m). Keilsteine und Schlussstein im Nahrender intakt.
+- Ergebnis: 26 100 Flächen, wasserdicht, H0 erneut grün (154,6 × 164,5 × 620,7 mm).
+- Ehrlicher Stand: Alle Vergleiche sind Render-gegen-Foto; ein Probedruck fehlt weiterhin, die echte Höhe bleibt ±5 m unsicher.

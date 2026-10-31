@@ -209,7 +209,7 @@ hz = hxy(ZB + 0.2)
 adds.append(box(-hz[0] - 0.25, hz[0] + 0.25, -hz[1] - 0.25, hz[1] + 0.25, ZB, ZB + 0.45))                      # Gurtgesims Sockel/Schaft
 
 # ---------- Tordurchfahrt mit Keilsteinbogen (x-Richtung) ----------
-AW, SPR = 6.0, 4.2
+AW, SPR = 6.6, 4.3
 cuts.append(box(-DB, DB, -AW / 2, AW / 2, -1, SPR))
 cuts.append(M.cylinder(2 * DB, AW / 2, circular_segments=96).rotate((0, 90, 0)).translate((-DB, 0, SPR)))
 for f in ("+x", "-x"):
