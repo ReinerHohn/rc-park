@@ -130,3 +130,8 @@ Aenderung: `H_TOTAL 54,8 -> 60,0` (niedrigster dokumentierter Wert; passt zu Fot
 Laser (optimierung_validieren alt/neu): Ziel/M1/M2/M3 UNVERAENDERT (14,3/16,1/13,9/16,1 %), M4 punktweise 1,98 -> 2,10 m (erwartet: DOM1 sieht die Nadel nicht).
 Foto-Render (049/014/000, `neu60_vergleich.jpg`): Nadelspitze passt jetzt; NEU sichtbar: Dach-Oberkante im Foto ca. 40 px (~1,5-2 m) HOEHER und oben breiter als im Modell (First 46,2) - deckt sich mit IoU-Trend J2 (First +1,6 m besser). Naechster Schritt: First 47,5-48 testen (Foto + Laser), Prueffrage: widerspricht Laser (Hypsometrie bestimmte First mit Spitze 54,8!).
 Offen: Bezugshoehe 60 vs 65 m (Gelaende/Fahne?), Dachhoehe nicht dokumentiert.
+
+### J5. First-Test bei Turm 60 m (2026-10-31): Foto will hoeher, Laser verbietet es
+Gemeinsame Anpassung 10 Fotos (Kamera je Foto verfeinert), Mittel-IoU: First 46,2 -> 0,8842 | 47,0 -> 0,8889 | 47,6 -> 0,8916 | 48,2 -> 0,8934 (stetig steigend, kein Maximum; 049: .805->.837, 042: .817->.857, 014 .782->.791, 001/031 leicht fallend).
+Laser (optimierung_validieren, alt = 46,2): First 47,6: Ziel 14,3 -> 16,0 %, M1 16,1 -> 18,1 %, M2 13,9 -> 15,6 %, M3 16,1 -> 17,5 %; First 48,2: Ziel 19,8 %, M1 20,8 %, M2 19,4 %, M3 20,8 %. M4 punktweise 2,10 -> 2,04/2,07 m (kaum).
+Ergebnis: WIDERSPRUCH bleibt (Foto-IoU +0,009 bei 2 m ~ Rauschniveau; Laser deutlich schlechter und dort messbar). First bleibt 46,2. Hinweis: Laser-Hypsometrie bewertet Flaeche ueber Hoehenstufen im 9-m-Umkreis, sieht also Dachvolumen; ein hoeherer First bei GLEICHER Flaeche (schmaleres Dach unten, steilere Flanke) wurde NICHT getestet -> naechster sinnvoller Test: Dachform (Flanken-Steigung) statt nur First.
