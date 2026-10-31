@@ -196,3 +196,10 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - Ergebnis: 26 482 Flächen, wasserdicht, H0 erneut grün.
 - Lehre: Jedes Detail, das in eine Nische soll, muss nach dem Abziehen eingefügt werden; Details einzeln im Nahrender prüfen, nicht nur die Summenwerte.
 - Foto-Gegenprobe frontal (Foto 030 neben Render 90°/−90°): Proportionen, Zinnenband, Erkertürme, Torbogen und Wappentafel stimmen grob; Torbogen im Foto etwas breiter/höher.
+
+## Eintrag 10 – Dach und Erkertürmchen zu gedrungen (Rückmeldung des Nutzers)
+
+- Beobachtung: Der Nutzer sah im Viewer, dass Dach und Türme zu gedrungen wirken. Der Foto-Render-Vergleich (030) bestätigt es: Foto-Dach ≈ 1,25 × so hoch wie breit, Modell < 1; Erkerkegel im Foto deutlich schlanker.
+- Änderung: Glockenstock schmaler (D−4,4 / W−4,4 statt −3,4), Dach 9,0 m statt 6,7 m hoch mit schmalerem First (1,4 × 1,8 m), Erkerkegel 7,4 m statt 5,2 m und schlanker (Fuß OR+0,12). Spitze bleibt bei 54 m (kürzerer Dachreiter-Mast).
+- Lehre: Proportionen (Höhe/Breite einzelner Bauteile) systematisch messen, nicht nur Gesamthöhe; Nutzerblick ernst nehmen – er fiel auf, obwohl alle Zahlen grün waren.
+- Ergebnis: 25 920 Flächen, wasserdicht, H0 154,6 × 164,5 × 620,7 mm.

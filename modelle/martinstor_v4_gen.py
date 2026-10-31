@@ -274,7 +274,7 @@ for f, L in (("+x", W), ("-x", W), ("+y", D), ("-y", D)):
 adds.append(box(-D / 2 + 0.2, D / 2 - 0.2, -W / 2 + 0.2, W / 2 - 0.2, ZZ, ZZ + 1.6))             # Kern hinter den Zinnen
 adds.append(frustum(0, 0, ZZ + 1.6, D + 1.9, W + 1.9, ZZ + 3.0, D - 2.6, W - 2.6))               # Kupferschraege des Kragdachs
 # ---------- abgesetzter Glockenstock mit Schallarkaden ----------
-GX, GY, GZ0, GZ1 = D - 3.4, W - 3.4, ZZ + 3.0, ZZ + 6.3
+GX, GY, GZ0, GZ1 = D - 4.4, W - 4.4, ZZ + 3.0, ZZ + 6.3
 adds.append(box(-GX / 2, GX / 2, -GY / 2, GY / 2, GZ0 - 0.1, GZ1))
 quoins((0, 0), GX / 2, GY / 2, GZ0, GZ1 - 0.2, a=0.75, b=0.42, course=0.6)
 for f in ("+x", "-x", "+y", "-y"):
@@ -288,8 +288,8 @@ for f in ("+x", "-x", "+y", "-y"):
         cuts.append(fcyl(f, u, GZ0 + 1.95, 0.5, -0.7, 0.5, h=hh, seg=24))
 
 # ---------- Kupferdach (glatt, oben abgeflacht) ----------
-RZ0, RZ1 = GZ1, GZ1 + 6.7
-adds.append(frustum(0, 0, RZ0, GX + 0.8, GY + 0.8, RZ1, 1.9, 2.3))
+RZ0, RZ1 = GZ1, GZ1 + 9.0
+adds.append(frustum(0, 0, RZ0, GX + 0.8, GY + 0.8, RZ1, 1.4, 1.8))
 for sx in (-1, 1):
     for sy in (-1, 1):
         adds.append(M.sphere(0.24, 20).translate((sx * 0.95, sy * 1.15, RZ1 + 0.1)))            # Goldkugeln auf den Dachecken
@@ -358,9 +358,9 @@ for sx in (-1, 1):
             adds.append(M.cylinder(1.4, 0.11, 0.11, 8).translate((c[0] + (OR - 0.14) * math.cos(a), c[1] + (OR - 0.14) * math.sin(a), T1 + 0.95)))
         adds.append(M.cylinder(0.22, OR + 0.1, OR + 0.1, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.3)))
         # spitzes Kupferdach, Kugel, Spitze
-        adds.append(M.cylinder(5.2, OR + 0.25, 0.06, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.52)))
-        adds.append(M.sphere(0.25, 20).translate((c[0], c[1], T1 + 7.72)))
-        adds.append(M.cylinder(0.7, 0.05, 0.015, 8).translate((c[0], c[1], T1 + 7.85)))
+        adds.append(M.cylinder(7.4, OR + 0.12, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.52)))
+        adds.append(M.sphere(0.25, 20).translate((c[0], c[1], T1 + 9.92)))
+        adds.append(M.cylinder(0.7, 0.05, 0.015, 8).translate((c[0], c[1], T1 + 10.05)))
 # ============ CSG ============
 cuts = [c for c in cuts if not c.is_empty()]
 body = M.batch_boolean(adds, OpType.Add)
