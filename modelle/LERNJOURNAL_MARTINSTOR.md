@@ -239,3 +239,9 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - Messung über das kreisrunde Zifferblatt: senkrechte Stauchung 0,88 liefert den lokalen senkrechten Maßstab; Uhrmitte liegt 3,5 m unter dem Gesims (Modell 3,15 m) → ±0,4 m (Teil 3 der Maßprüfung).
 - PnP-Kamerabestimmung aus fünf hochliegenden Ankern: mathematisch „guter“ Fit (6,6 px), aber Kamerahöhe 13,8 m – physikalisch unmöglich. Mit realer Augenhöhe 31 px Fehler, Uhr 256 px daneben. Lehre: Ein kleiner Restfehler beweist nichts, wenn die Anker alle in einer Ebene/einem Höhenband liegen; die Lösung muss auch **plausibel** sein (Kamerahöhe!). Extrapolation aus 40–55 m nach 7 m ist nicht bestimmt.
 - Beim Ablesen am Gitterbild zweimal Koordinatensysteme verwechselt (Anzeige 0,9× gegen Originalpixel). Gitter immer in Originalpixeln beschriften und nur dort ablesen.
+
+## Eintrag 15 – LoD2 als zweite Referenz, und was nicht half
+
+- LGL-BW LoD2 (Geometrie statt Raster) liefert Grundriss 115 m² (Modell −4 %) und Dachfirst 45,0 m (Modell 46,2). Den First auf 45,0 zu setzen verschlechterte den Laser-Vergleich → verworfen. Zwei Referenzen widersprechen sich um 1,2 m, ich entscheide nicht „nach Bauchgefühl“, sondern halte den Widerspruch offen (`MASSPRUEFUNG_MARTINSTOR.md`, Teil 4).
+- Lehre: Eine zweite Quelle bestätigt nur, wo sie unabhängig ist. LoD2 ist selbst aus Laserdaten abgeleitet und verallgemeinert; sie ist keine unabhängige Wahrheit.
+- Rohpunktwolke (ALS) ist bei LGL BW nicht über denselben Weg frei abrufbar (404 für getestete Pfade); damit bleibt 1 m die feinste verfügbare Auflösung.

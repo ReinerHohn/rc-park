@@ -50,6 +50,18 @@ Die Höhe des Gesimses selbst stützt der Laser (Zinnenkrone ≈ 31–32 m). Dam
 Verworfen: Kamerabestimmung (PnP) aus Spitze, Dachbällchen und Erkerspitzen mit EXIF-Brennweite (Pentax Optio 50L, 5,4 mm → 1559 px).
 Alle Anker liegen über 39 m, nach unten ist die Lösung schlecht bestimmt (freie Kamerahöhe 13,8 m, bei realer Augenhöhe 31 px Restfehler, Uhr 256 px daneben).
 
+## Teil 4: Gegenprobe mit dem amtlichen 3D-Gebäudemodell (LoD2, Gebäude DEBW_001000hPLcn)
+Quelle: LGL BW `LoD2_32_413_5316_2_bw.zip` (Stand ALKIS 2025). Geometrie, nicht Raster: 68-Punkt-Grundriss, 68 Wand- und 4 Dachflächen.
+
+| Größe | LoD2 | Modell | Befund |
+|---|---|---|---|
+| Grundrissfläche | 115,1 m² (Mindestrechteck 11,9 × 11,5 m, 15,6° gedreht) | ≈ 111 m² (Fuß 9,8 × 11,3 m) | −4 % |
+| Wandoberkante | 36,5–37,2 m über Gelände | Glockenstock-Oberkante 35,5 m | LoD2 verallgemeinert (Traufe der Dachfläche) |
+| Dachfirst | 45,0 m, Flächen 57–60° | 46,2 m | **+1,2 m, ungeklärt** |
+
+Versuch, den First auf 45,0 m zu senken: Laser-Abweichung steigt (Median 7 → 10 %, Stufen 40–48 m bis −40 %). Der Laser ist eine Messung, das LoD2 eine Modellierung aus Dachebenen, die den Dachreiter und das Dachreiter-Podest ausspart. Die Änderung wurde **verworfen**.
+Offener Widerspruch: LoD2 45,0 m gegen Laser-Fit 46,2 m am Dachfirst (1,2 m).
+
 ## Was damit **widerlegt** ist
 Mehrere Textquellen nennen **60–66 m** (Bauforschung BW „65 m“, Schwarzwaldportal „66 m“, ein Absatz derselben PDF „60 m“).
 Der Laser misst **54,8 m**. Die 65–66 m stimmen nicht für die heutige Spitze. Die Grundfläche „10 × 11 m“ der Quellen stimmt dagegen:
