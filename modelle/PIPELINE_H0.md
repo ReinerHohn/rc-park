@@ -63,6 +63,14 @@ Liest die in `tools/viewer_bauen.py` eingetragenen STLs, schreibt sie als base64
 OrbitControls, STLLoader), Funktionen: Auswahl, Drehen/Zoomen, Gitteransicht, H0-Figur (20,7 mm), Datenblatt (Maße in mm und Original, Flächen,
 Wasserdichtigkeit, Teile, Status), hell/dunkel. Aufruf: `python tools/viewer_bauen.py [ausgabe.html]`. Veröffentlicht wurde sie als privates Artifact.
 
+### 2.4 Mass-Optimierung mit GPU (`hypso_gpu.py`, `generator_optimierer.py`, `optimierung_validieren.py`)
+**Die GPU ist fester Teil der Pipeline** (Schritt "Masse gegen Laser pruefen/optimieren"), mit CPU-Rueckfall (`--cpu`).
+- `tools/hypso_gpu.py`: Hoehenkarten des Modells fuer 2106 Drehungen/Raster-Phasen gleichzeitig (PyTorch `scatter_reduce(amax)`, float64), je Hoehenstufe Flaeche > t gegen das amtliche DOM. **Selbsttest** `--selbsttest`: GPU == CPU bit-gleich (Hoehenkarten und Fehler), Messung: 275 Kombinationen CPU 2,4 s / GPU 0,5 s; feines Raster 1,8 s gesamt.
+- `tools/generator_optimierer.py`: Koordinatensuche ueber 16 Generatormasse (+Mehrfachstart mit festen Seeds). **Annahmeregel:** Trainingsfehler (13 Stufen) > 2 sigma besser UND zurueckgehaltene Stufen (12 andere, an der Trainingslage) nicht signifikant schlechter UND punktweise Hoehe im 4,5-m-Umkreis nicht schlechter als +0,15 m. sigma = Bootstrap der Raster-Suche. Vertrauensbereich +-2 Schritte. Protokoll mit Versionen, GPU, git-Stand: `modelle/optimierung_martinstor.json`.
+- `tools/optimierung_validieren.py`: unabhaengige Pruefung zweier STL (andere Stufen, Umkreis 13 m, feines Raster, punktweise).
+- **Wiederholbar:** Scatter-Max ist ordnungsunabhaengig, alle Seeds fest -> gleiche Eingabe = gleiche Zahlen (Nachweis: zweiter Lauf, siehe `OPTIMIERUNG_MARTINSTOR.md`).
+- Nicht auf der GPU: Modellerzeugung (manifold3d, CPU), Netzunterteilung (trimesh, CPU). Hinweis: GPU stuerzte hier einmal nach Standby ab (Treiber-Eigenheit, siehe Speicher gpu-pc).
+
 ## 3. Rezepte
 
 **Martinstor (aktuell v4):**
