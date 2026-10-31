@@ -34,7 +34,7 @@ def rel(m):  # Relieftiefe in m, mind. MINMM im Druck
 
 # ---- Masse (m) ---- (Herleitung: LERNJOURNAL_MARTINSTOR.md, Eintrag 1+2)
 H_TOTAL = 54.8                # OSM-Spitze 53 m + Knauf/Fahne; Foto-Verhaeltnisse (LERNJOURNAL Eintrag 6) stuetzen 53-60 m
-DB, WB, ZB = 9.8, 11.3, 8.0 # Steinsockel mit Tor: Tiefe (x, Durchfahrt), Breite (y), Hoehe
+DB, WB, ZB = 9.8, 11.3, 6.2 # Steinsockel mit Tor: Tiefe (x, Durchfahrt), Breite (y), Hoehe
 D, W = 9.3, 10.3             # Schaft AM KOPF (bei ZZ); nach unten verjuengt er sich zum Sockel
 ZZ = 30.5                     # Zinnen-Unterkante = Oberkante Schaft (OSM-Traufe 33 m, Foto 33-35 m)
 TOP = H_TOTAL
@@ -209,7 +209,7 @@ hz = hxy(ZB + 0.2)
 adds.append(box(-hz[0] - 0.25, hz[0] + 0.25, -hz[1] - 0.25, hz[1] + 0.25, ZB, ZB + 0.45))                      # Gurtgesims Sockel/Schaft
 
 # ---------- Tordurchfahrt mit Keilsteinbogen (x-Richtung) ----------
-AW, SPR = 4.7, 4.2
+AW, SPR = 4.7, 2.65
 cuts.append(box(-DB, DB, -AW / 2, AW / 2, -1, SPR))
 cuts.append(M.cylinder(2 * DB, AW / 2, circular_segments=96).rotate((0, 90, 0)).translate((-DB, 0, SPR)))
 for f in ("+x", "-x"):
@@ -226,14 +226,14 @@ for f in ("+x", "-x"):
     for j in (-1, 1):
         adds.append(fbox(f, j * (AW / 2 + 0.5) - 0.6, j * (AW / 2 + 0.5) + 0.6, SPR - 0.3, SPR, -0.05, rel(0.24), h=HB))
 _hT = hxy(9.6)
-adds.append(fbox("+x", -2.4, 2.4, 8.6, 10.4, -0.05, rel(0.14), h=_hT))                    # Inschrifttafel
-cuts.append(fbox("+x", -2.1, 2.1, 8.9, 10.1, rel(0.14) - rel(0.05), 1.0, h=_hT))
+adds.append(fbox("+x", -1.7, 1.7, 6.5, 8.5, -0.05, rel(0.14), h=_hT))                    # Inschrifttafel
+cuts.append(fbox("+x", -1.45, 1.45, 6.75, 8.25, rel(0.14) - rel(0.05), 1.0, h=_hT))
 for i in range(5):
-    z = 9.05 + i * 0.22
-    adds.append(fbox("+x", -1.8 + (0.3 if i == 4 else 0), 1.8 - (0.3 if i == 4 else 0), z, z + 0.09, 0, rel(0.12), h=_hT))
-ZA, FA = 10.0, 0.9                                                                          # Adler-Mitte, Vergroesserung (Foto: Tafel ~2,6 x 3 m)
-adds.append(fbox("-x", -0.85, 0.85, 8.8, 11.1, -0.05, rel(0.14), h=_hT))                       # Tafel
-cuts.append(fbox("-x", -0.7, 0.7, 9.0, 10.9, rel(0.14) - rel(0.05), 1.0, h=_hT))         # Feld einsenken
+    z = 6.9 + i * 0.22
+    adds.append(fbox("+x", -1.25 + (0.3 if i == 4 else 0), 1.25 - (0.3 if i == 4 else 0), z, z + 0.09, 0, rel(0.12), h=_hT))
+ZA, FA = 9.45, 0.9                                                                          # Adler-Mitte, Vergroesserung (Foto: Tafel ~2,6 x 3 m)
+adds.append(fbox("-x", -0.85, 0.85, 8.3, 10.6, -0.05, rel(0.14), h=_hT))                       # Tafel
+cuts.append(fbox("-x", -0.7, 0.7, 8.5, 10.4, rel(0.14) - rel(0.05), 1.0, h=_hT))         # Feld einsenken
 for e in [M.sphere(0.32 * FA, 24).scale((1, 0.8, 1.3)).translate((0, 0, ZA - 0.2)),
           M.sphere(0.2 * FA, 16).translate((0, -0.28 * FA, ZA + 0.5 * FA)), M.sphere(0.2 * FA, 16).translate((0, 0.28 * FA, ZA + 0.5 * FA)),
           M.sphere(0.42 * FA, 24).scale((0.5, 1.0, 0.55)).translate((0, -0.5 * FA, ZA - 0.1)), M.sphere(0.42 * FA, 24).scale((0.5, 1.0, 0.55)).translate((0, 0.5 * FA, ZA - 0.1))]:

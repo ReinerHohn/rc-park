@@ -62,6 +62,20 @@ Quelle: LGL BW `LoD2_32_413_5316_2_bw.zip` (Stand ALKIS 2025). Geometrie, nicht 
 Versuch, den First auf 45,0 m zu senken: Laser-Abweichung steigt (Median 7 → 10 %, Stufen 40–48 m bis −40 %). Der Laser ist eine Messung, das LoD2 eine Modellierung aus Dachebenen, die den Dachreiter und das Dachreiter-Podest ausspart. Die Änderung wurde **verworfen**.
 Offener Widerspruch: LoD2 45,0 m gegen Laser-Fit 46,2 m am Dachfirst (1,2 m).
 
+## Teil 5: Bogenhöhe, Sockelhöhe, Inschrifttafel aus drei frontalen Straßenfotos
+Fotos 050 (Straßenhöhe, fast frontal), 002 (Südseite, frontal), 030. Verhältnisse in der Fassadenebene:
+
+| Merkmal | Messung | Meter | Modell vorher → jetzt |
+|---|---|---|---|
+| Durchfahrt-Breite / Fassade | 050: 149/375 = 0,40 (030: 0,42, 042: 0,39) | 4,7 m | 4,7 m (unverändert, 3 Fotos) |
+| Bogenhöhe / Breite (Öffnung) | 050: 1,10, 002: 0,96 (Kamera steigt leicht) | 5,0–5,2 m Scheitel | Scheitel 6,55 → **5,0 m** |
+| Oberkante Bruchsteinsockel | 050: ≈ 1 m über Bogenscheitel, 030 ebenso | ≈ 6,2 m | 8,0 → **6,2 m** |
+| Inschrifttafel (Südseite) | 002: 290/395 = 0,73 der Bogenbreite; Höhe 170 px; unterkante 0,35 m über Bogenring | 3,4 × 2,0 m, direkt über dem Bogen | 4,8 × 1,8 m, 2 m Abstand → **3,4 × 2,0 m, Abstand 0,35 m** |
+| Adlerschild (Nordseite) | 042: Abstand zum Bogen ≈ Schildhöhe | Unterkante ≈ 8,3 m | 8,8 → 8,3 m |
+
+Unsicherheit ±10 % (Ablesefehler, Kamerasteigung 17° nach Fluchtpunkt in Foto 050 ≈ 7 % senkrechte Stauchung). Die frühere Bogenhöhe 6,55 m war zu hoch, weil in Foto 030 (schräg, von links) gemessen.
+Der Laser-Vergleich ist von dieser Korrektur unberührt (alles unter 20 m Höhe wird dort nicht gezählt).
+
 ## Was damit **widerlegt** ist
 Mehrere Textquellen nennen **60–66 m** (Bauforschung BW „65 m“, Schwarzwaldportal „66 m“, ein Absatz derselben PDF „60 m“).
 Der Laser misst **54,8 m**. Die 65–66 m stimmen nicht für die heutige Spitze. Die Grundfläche „10 × 11 m“ der Quellen stimmt dagegen:
@@ -71,7 +85,7 @@ Auch OSM (Spitze 53 m) liegt näher als die Texte.
 ## Grenzen (ehrlich)
 1. Das Raster ist 1 m. Jede Breite ist daher nur auf etwa ±1 m bewiesen, jede Fläche auf etwa ±15 % (Drehung/Phase der Zellen ändern die Zählung).
 2. Die Draufsicht sieht nur die **höchste Fläche je Zelle**. Torbogen, Uhr und Schild sind deshalb nur über Teil 2 (Fotoverhältnis, ±10 %) belegt.
-   Die Uhrlage ist relativ zum Gesims belegt (Teil 3, ±0,5 m). **Torbogenscheitel (6,55 m), Schild, Fenster und Sockelaufweitung** sind **nicht belegt** (nur Fotovergleich ±10 %).
+   Die Uhrlage ist relativ zum Gesims belegt (Teil 3, ±0,5 m). Torbogenscheitel (5,0 m), Sockelhöhe (6,2 m) und Tafeln sind über drei Fotos belegt (Teil 5, ±10 %); **Fenster und Sockelaufweitung** nur durch Fotovergleich.
 3. Bei 35 m liegt das Modell +22 … +35 % über dem Laser (1–2 Randzellen). Eine Parametersuche über Glockenstock-, Erkerkörper- und Traufmaß (8 Varianten) fand keine bessere Lage; der Sprung zwischen 22 und 35 % liegt im Rauschen der Methode (±15 % durch Rasterphase/Drehung). Kein belegter Fehler.
 4. Nicht geprüft ist ein Probedruck.
 

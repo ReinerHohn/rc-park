@@ -251,3 +251,10 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - 8 Varianten gegen den Laser (Glockenstock-Oberkante 4,4–5,3 m über ZZ, Erkerkörper-Oberkante 32,2–33,2 m, Traufüberstand 1,0–2,0 m), jede mit eigener Generierung und der Tabelle `masspruefung_tabelle.py`.
 - Ergebnis: Keine Variante verbessert Mittel (12 %) und Median (7 %) zugleich; der aktuelle Stand (5,0 / 32,7 / 1,5) ist am besten. Stufe 35 m springt zwischen +22 % und +35 %, das sind 17 gegen 27 m², also ein bis zwei Randzellen. Diese Stufe ist damit **innerhalb des Rauschens der Methode** (Raster-Phase und Drehung ändern die Zählung um etwa ±15 %), nicht ein klarer Modellfehler.
 - Lehre: Eine Abweichung ist erst dann ein Fehler, wenn sie größer ist als die Streuung der Messmethode. Das gehört in jede Tabelle als Fehlerband.
+
+## Eintrag 17 – Mehr Fotos, andere Wahrheit: Bogenhöhe und Sockelhöhe
+
+- Kontaktbogen der 46 Fotos, drei frontale Straßenfotos (050, 002, 030) gewählt. Wieder Verhältnis zur Fassade in der Fassadenebene.
+- Bogenbreite bestätigt (3 Fotos: 0,39–0,42). **Bogenhöhe falsch:** der Scheitel war mit 6,55 m 1,5 m zu hoch (aus schräger Aufnahme 030 abgeleitet); Sockeloberkante 8,0 → 6,2 m; Inschrifttafel 3,4 × 2,0 m statt 4,8 × 1,8 m, direkt über dem Bogen.
+- Lehre: Ein Maß erst glauben, wenn es an mindestens drei Fotos aus unterschiedlichen Blickwinkeln übereinstimmt. Aus 030 allein war die Breite richtig, die Höhe aber falsch – bei schräger Aufnahme stimmt nur die Breite am Fuß halbwegs. Frontale, bodennahe Aufnahmen (050, 002) sind für Höhen die besseren.
+- Weiterhin offen: Fenster (Größe/Lage), Sockelaufweitung, Probedruck.
