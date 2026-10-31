@@ -72,7 +72,7 @@ Auch OSM (Spitze 53 m) liegt näher als die Texte.
 1. Das Raster ist 1 m. Jede Breite ist daher nur auf etwa ±1 m bewiesen, jede Fläche auf etwa ±15 % (Drehung/Phase der Zellen ändern die Zählung).
 2. Die Draufsicht sieht nur die **höchste Fläche je Zelle**. Torbogen, Uhr und Schild sind deshalb nur über Teil 2 (Fotoverhältnis, ±10 %) belegt.
    Die Uhrlage ist relativ zum Gesims belegt (Teil 3, ±0,5 m). **Torbogenscheitel (6,55 m), Schild, Fenster und Sockelaufweitung** sind **nicht belegt** (nur Fotovergleich ±10 %).
-3. Bei 35 m liegt das Modell +35 % über dem Laser (3 Randzellen). Vermutlich ist Kragdach-/Dachtraufe etwas anders geformt; mit 1-m-Daten nicht zu klären.
+3. Bei 35 m liegt das Modell +22 … +35 % über dem Laser (1–2 Randzellen). Eine Parametersuche über Glockenstock-, Erkerkörper- und Traufmaß (8 Varianten) fand keine bessere Lage; der Sprung zwischen 22 und 35 % liegt im Rauschen der Methode (±15 % durch Rasterphase/Drehung). Kein belegter Fehler.
 4. Nicht geprüft ist ein Probedruck.
 
 ## Gefundener Hauptfehler und Korrektur

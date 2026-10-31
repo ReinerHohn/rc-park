@@ -245,3 +245,9 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - LGL-BW LoD2 (Geometrie statt Raster) liefert Grundriss 115 m² (Modell −4 %) und Dachfirst 45,0 m (Modell 46,2). Den First auf 45,0 zu setzen verschlechterte den Laser-Vergleich → verworfen. Zwei Referenzen widersprechen sich um 1,2 m, ich entscheide nicht „nach Bauchgefühl“, sondern halte den Widerspruch offen (`MASSPRUEFUNG_MARTINSTOR.md`, Teil 4).
 - Lehre: Eine zweite Quelle bestätigt nur, wo sie unabhängig ist. LoD2 ist selbst aus Laserdaten abgeleitet und verallgemeinert; sie ist keine unabhängige Wahrheit.
 - Rohpunktwolke (ALS) ist bei LGL BW nicht über denselben Weg frei abrufbar (404 für getestete Pfade); damit bleibt 1 m die feinste verfügbare Auflösung.
+
+## Eintrag 16 – Parametersuche: das Modell steht am Optimum
+
+- 8 Varianten gegen den Laser (Glockenstock-Oberkante 4,4–5,3 m über ZZ, Erkerkörper-Oberkante 32,2–33,2 m, Traufüberstand 1,0–2,0 m), jede mit eigener Generierung und der Tabelle `masspruefung_tabelle.py`.
+- Ergebnis: Keine Variante verbessert Mittel (12 %) und Median (7 %) zugleich; der aktuelle Stand (5,0 / 32,7 / 1,5) ist am besten. Stufe 35 m springt zwischen +22 % und +35 %, das sind 17 gegen 27 m², also ein bis zwei Randzellen. Diese Stufe ist damit **innerhalb des Rauschens der Methode** (Raster-Phase und Drehung ändern die Zählung um etwa ±15 %), nicht ein klarer Modellfehler.
+- Lehre: Eine Abweichung ist erst dann ein Fehler, wenn sie größer ist als die Streuung der Messmethode. Das gehört in jede Tabelle als Fehlerband.
