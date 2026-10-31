@@ -277,3 +277,11 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - Fix: Adler in `late` (nach dem Ausschnitt vereinigt), Mitte auf Nischenboden (_hT[0] + rel(0.09)). Danach 523 Eckpunkte, Relief bis 5,07 m (Tafel 5,01).
 - Regel: jedes Relief IN einer Nische gehoert in `late`; Test: Eckpunkte/Tiefenkarte der Zone pruefen, nicht nur Koerperzahl und Wasserdichtheit.
 - Pruefmethode: Oberflaeche abtasten (trimesh.sample) und Tiefe als Farbkarte -> sichtbar auch ohne Renderer.
+
+## 21. Optimierer: Wettlauf um cur.stl, Wiederholbarkeit, Luftbild-Test
+- Fund: lauf1.json und lauf2.json waren nicht bit-gleich. Feld-Diff: nur probe[63] (OR +0,15) wich ab (e 0,092 gegen 0,051). Ursache: parallel laufender Mehrfachstart schrieb dieselbe `cur.stl`/`cur_gen.py` (Wettlauf). Fix: Dateiname je Prozess (`cur<PID>`). Mehrfachstart-Ergebnisse davor verworfen, neu gerechnet.
+- Beleg Wiederholbarkeit: lauf3.json gegen lauf4.json (nacheinander, nichts parallel): 0 Unterschiede. Ergebnis beider: 0 von 64 Proben robust besser, Parameter bleiben an der Basis.
+- Mehrfachstart (5 Starts, sauber): alle erreichen bessere Laserwerte als die Basis (e 0,046-0,089, hold-out 0,055-0,096, punktweise 3,3-3,5 m gegen 0,083/0,147/4,13), aber Parameter streuen um bis zu 1,6 m (T1, rh, T0, ZZ). Das Tal ist flach: die Laserdaten legen diese Masse nicht eindeutig fest. Hold-out stammt aus denselben Daten, also nicht unabhaengig. Alle Loesungen verkleinern D/W, das Luftbild spricht fuer groessere Abstaende. Nicht uebernommen.
+- Luftbild DOP20: Kugelspitzen der Tuermchen ca. 9,1 x 8,0 m gegen Modell 8,5 x 7,5 m. Test: Tuermchen-Versatz 0,4 -> 0,7 m: Laserfehler schlechter (11,9 -> 14,8 %, M1 9,1 -> 14,3 %); mit TWs 2,0/OR 0,9: 12,7 %, M1 12,4 % - ebenfalls schlechter. Ablesefehler im Luftbild ca. +-0,3 m = Grosse der Verschiebung. Verworfen, Generator unveraendert.
+- Regel: eine Aenderung, die eine Quelle stuetzt und eine andere (genauere) verschlechtert, wird nicht uebernommen, solange der Unterschied im Messfehler liegt.
+- Dachflaechen im Orthofoto sind verschmiert (Turm nicht sauber entzerrt); First 46,2 gegen 45,0 m damit nicht entscheidbar.

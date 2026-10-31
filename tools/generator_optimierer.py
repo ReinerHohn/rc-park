@@ -41,23 +41,35 @@ def source(v):
     sub("OR = 1.3 ", f"OR = {v['OR']:.3f} ")
     return re.sub(r"^OUT = .*\n.*\n", f"OUT = '{TMP}/cur.stl'\n", s, count=1, flags=re.M)
 
-def build(v, name="cur"):
+def build(v, name=None):
+    name = name or f"cur{os.getpid()}"  # eindeutig je Prozess: parallele Laeufe teilten sich frueher cur.stl (Wettlauf)
     src = f"{TMP}/{name}_gen.py"; s = source(v).replace(f"{TMP}/cur.stl", f"{TMP}/{name}.stl"); open(src, "w").write(s)
     r = subprocess.run([os.path.expanduser("~/.venvs/rcpark/bin/python"), src], capture_output=True, text=True, env=dict(os.environ, SCALE="87", MINMM="0.8"))
     if r.returncode: raise RuntimeError(r.stderr[-400:])
     return f"{TMP}/{name}.stl"
 
 def evaluate(v, boot=False):
-    P = H.punkte(build(v))
-    Hm = H.hmaps_gpu(P, C) if GPU else H.hmaps_cpu(P, C)
-    d0 = H.fehler(Hm, H.TS0, 9, R0); e0 = np.abs(d0).mean(1); k = int(np.argmin(e0))      # Lage nach Trainingsstufen
-    d1 = H.fehler(Hm[k:k + 1], H.TS1, 9, R1)[0]
-    ept = np.abs(Hm - H.REF[None])[:, WIN].mean(1).min()                                   # punktweise, beste Lage
-    r = dict(e=float(e0[k]), med=float(np.median(np.abs(d0[k]))), eho=float(np.abs(d1).mean()), ept=float(ept), kombi=C[k].tolist(), top=float(P[:, 2].max()))
+    try: P = H.punkte(build(v))
+    except (ValueError, RuntimeError): return None          # ungueltiges Modell (nicht wasserdicht / Generatorfehler)
+    if GPU:
+        import torch
+        Ht = H.hmaps_gpu_t(P, C, zmin=19.0)                  # exakt: alle Stufen > 20 m, Punkte <= 19 m aendern keine Zelle
+        e0 = H.fehler_gpu(Ht, H.TS0, 9, R0).abs().mean(1); k = int(e0.argmin())      # Lage nach Trainingsstufen
+        eho = float(H.fehler_gpu(Ht[k:k + 1], H.TS1, 9, R1)[0].abs().mean())
+        d0k = H.fehler_gpu(Ht[k:k + 1], H.TS0, 9, R0)[0].cpu().numpy()
+        h1 = H.fehler_gpu(Ht, H.TS1, 9, R1).abs().mean(1).cpu().numpy() if boot else None
+        e0 = e0.cpu().numpy(); top = np.argsort(e0, kind="stable")[:48]                 # punktweise: volle Punktzahl, beste 48 Lagen
+        Hf = H.hmaps_gpu_t(P, C[top]); ept = float((Hf - torch.as_tensor(H.REF, device="cuda")[None]).abs()[:, WIN].mean(1).min())
+    else:
+        Pc = P[P[:, 2] > 19.0]; Hm = H.hmaps_cpu(Pc, C)
+        d0 = H.fehler(Hm, H.TS0, 9, R0); e0 = np.abs(d0).mean(1); k = int(np.argmin(e0)); d0k = d0[k]
+        eho = float(np.abs(H.fehler(Hm[k:k + 1], H.TS1, 9, R1)[0]).mean()); top = np.argsort(e0, kind="stable")[:48]
+        Hf = H.hmaps_cpu(P, C[top]); ept = float(np.abs(Hf - H.REF[None])[:, WIN].mean(1).min())
+        h1 = np.abs(H.fehler(Hm, H.TS1, 9, R1)).mean(1) if boot else None
+    r = dict(e=float(e0[k]), med=float(np.median(np.abs(d0k))), eho=eho, ept=ept, kombi=C[k].tolist(), top=float(P[:, 2].max()))
     if boot:
-        rng = np.random.default_rng(0); b = [e0[rng.random(len(e0)) < .5].min() for _ in range(60)]
-        r["sigma"] = float(np.std(b, ddof=1))
-        h1 = np.abs(H.fehler(Hm, H.TS1, 9, R1)).mean(1); r["sigma_ho"] = float(np.std([h1[rng.random(len(h1)) < .5].min() for _ in range(60)], ddof=1))
+        rng = np.random.default_rng(0); r["sigma"] = float(np.std([e0[rng.random(len(e0)) < .5].min() for _ in range(60)], ddof=1))
+        r["sigma_ho"] = float(np.std([h1[rng.random(len(h1)) < .5].min() for _ in range(60)], ddof=1))
     return r
 
 def robust_besser(r, cur, sig, sig_ho):
@@ -72,7 +84,9 @@ def descend(start, cur_r, sig, sig_ho, runden, log, tag):
             for sgn in (-1, 1):
                 v = dict(cur); v[k] = round(v[k] + sgn * st, 3)
                 if not (LO[k] - 1e-9 <= v[k] <= HI[k] + 1e-9): continue
-                r = evaluate(v); log.append(dict(tag=tag, runde=rd, param=k, wert=v[k], **{x: r[x] for x in ("e", "eho", "ept", "med")}))
+                r = evaluate(v)
+                if r is None: log.append(dict(tag=tag, runde=rd, param=k, wert=v[k], ungueltig=True)); continue
+                log.append(dict(tag=tag, runde=rd, param=k, wert=v[k], **{x: r[x] for x in ("e", "eho", "ept", "med")}))
                 if robust_besser(r, rc, sig, sig_ho) and (best is None or r["e"] < best[1]["e"]): best = (v, r, sgn)
             if best:
                 cur, rc = best[0], best[1]; improved = True
@@ -88,7 +102,7 @@ def main():
                git=subprocess.run(["git", "-C", ROOT, "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip())
     print("UMGEBUNG", json.dumps(env), flush=True)
     t0 = time.time(); b = evaluate(BASE, boot=True)
-    sig, sig_ho = max(b["sigma"], 0.005), max(b["sigma_ho"], 0.005)
+    sig, sig_ho = max(b["sigma"], 0.02), max(b["sigma_ho"], 0.02)   # Boden = 1 Zelle auf der obersten Stufe (Zaehlwerte sind ganzzahlig)
     print(f"BASIS e={b['e']:.3f} (hold-out {b['eho']:.3f}, punktweise {b['ept']:.2f} m)  sigma {sig:.4f} / {sig_ho:.4f}  ({time.time()-t0:.0f} s/Auswertung)", flush=True)
     log = []; res = {"umgebung": env, "basis": b, "sigma": sig, "sigma_ho": sig_ho, "laeufe": {}}
     cur, rc = descend(BASE, b, sig, sig_ho, arg("--runden", 4), log, "start0")
@@ -96,7 +110,10 @@ def main():
     rng = np.random.default_rng(12345)
     for i in range(arg("--multistart", 0)):
         st = {k: round(float(np.clip(BASE[k] + rng.uniform(-1.5, 1.5) * STEP[k], LO[k], HI[k])), 3) for k in BASE}
-        r0 = evaluate(st); c2, r2 = descend(st, r0, sig, sig_ho, arg("--runden", 4), log, f"start{i+1}")
+        r0 = evaluate(st)
+        while r0 is None:
+            st = {k: round(float(np.clip(BASE[k] + rng.uniform(-1.5, 1.5) * STEP[k], LO[k], HI[k])), 3) for k in BASE}; r0 = evaluate(st)
+        c2, r2 = descend(st, r0, sig, sig_ho, arg("--runden", 4), log, f"start{i+1}")
         res["laeufe"][f"start{i+1}"] = dict(start=st, params=c2, **{x: r2[x] for x in ("e", "eho", "ept", "med")})
         print(f"START {i+1}: e {r0['e']:.3f} -> {r2['e']:.3f}   Ende {json.dumps(c2)}", flush=True)
     # Umgebungsprobe am Ergebnis von start0: jedes Mass +-Schritt und +-halber Schritt -> keiner robust besser?
@@ -104,9 +121,12 @@ def main():
     for k, st in STEP.items():
         for f in (-1, -.5, .5, 1):
             v = dict(cur); v[k] = round(v[k] + f * st, 3)
-            r = evaluate(v); probe.append(dict(param=k, delta=round(f * st, 3), e=r["e"], eho=r["eho"], ept=r["ept"], besser=bool(robust_besser(r, rc, sig, sig_ho))))
+            r = evaluate(v)
+            if r is None: probe.append(dict(param=k, delta=round(f * st, 3), ungueltig=True, besser=False)); continue
+            probe.append(dict(param=k, delta=round(f * st, 3), e=r["e"], eho=r["eho"], ept=r["ept"], besser=bool(robust_besser(r, rc, sig, sig_ho))))
     res["probe"] = probe; res["log"] = log
-    json.dump(res, open(ROOT + "/modelle/optimierung_martinstor.json", "w"), indent=1, default=float)
+    tag = sys.argv[sys.argv.index("--tag") + 1] if "--tag" in sys.argv else "lauf"
+    json.dump(res, open(f"{ROOT}/modelle/optimierung_martinstor_{tag}.json", "w"), indent=1, default=float)
     print("ENDE", json.dumps(cur), f"e={rc['e']:.3f} hold-out={rc['eho']:.3f} punktweise={rc['ept']:.2f} m", "Probe: robuste Verbesserungen:", sum(p["besser"] for p in probe), "von", len(probe), flush=True)
 
 if __name__ == "__main__":

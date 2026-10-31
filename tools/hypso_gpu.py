@@ -56,6 +56,39 @@ def hmaps_gpu(P, C, chunk=48, device="cuda"):
         out[i:i + len(c)] = h.view(len(c), N, N)
     return out.cpu().numpy()
 
+
+# ------------------------------------------------------------------ GPU, beschleunigt
+def hmaps_gpu_t(P, C, chunk=48, dtype=None, zmin=None, device="cuda"):
+    """Wie hmaps_gpu, aber Ergebnis bleibt als GPU-Tensor (kein Rueckkopieren). zmin: nur Punkte ueber zmin (exakt fuer Stufen t > zmin)."""
+    import torch
+    dtype = dtype or torch.float64
+    if zmin is not None: P = P[P[:, 2] > zmin]
+    Pt = torch.as_tensor(P, dtype=dtype, device=device)
+    out = torch.zeros((len(C), N, N), dtype=dtype, device=device)
+    for i in range(0, len(C), chunk):
+        c = torch.as_tensor(C[i:i + chunk], dtype=dtype, device=device)
+        a = torch.deg2rad(c[:, 0])[:, None]; dx = c[:, 1][:, None]; dy = c[:, 2][:, None]
+        x = torch.cos(a) * Pt[None, :, 0] - torch.sin(a) * Pt[None, :, 1] + dx
+        y = torch.sin(a) * Pt[None, :, 0] + torch.cos(a) * Pt[None, :, 1] + dy
+        ix = torch.floor(x + N / 2).long(); iy = torch.floor(N / 2 - y).long()
+        ok = (ix >= 0) & (ix < N) & (iy >= 0) & (iy < N)
+        b = torch.arange(len(c), device=device)[:, None].expand_as(ix)
+        flat = (b * N * N + iy.clamp(0, N - 1) * N + ix.clamp(0, N - 1))[ok]
+        z = Pt[None, :, 2].expand_as(x)[ok]
+        h = torch.zeros(len(c) * N * N, dtype=dtype, device=device)
+        h.scatter_reduce_(0, flat, z, reduce="amax", include_self=True)
+        out[i:i + len(c)] = h.view(len(c), N, N)
+    return out
+
+def fehler_gpu(Ht, TS, r, R, device="cuda"):
+    """Fehler je Stufe komplett auf der GPU. Peak = erste hoechste Zelle (wie numpy)."""
+    import torch
+    B = Ht.shape[0]; flat = Ht.reshape(B, -1).argmax(1); py, px = flat // N, flat % N
+    yy = torch.arange(N, device=device)[None, :, None]; xx = torch.arange(N, device=device)[None, None, :]
+    D = torch.hypot((yy - py[:, None, None]).double(), (xx - px[:, None, None]).double()) <= r
+    A = torch.stack([((Ht > t) & D).sum((1, 2)) for t in TS], 1).double()
+    return A / torch.as_tensor(R, dtype=torch.float64, device=device)[None] - 1
+
 def fehler(H, TS, r, R):
     """H: (B,N,N) -> d (B, len(TS)) = Flaeche_Modell / Flaeche_Laser - 1 (Spitze = hoechste Zelle, erste bei Gleichstand)."""
     B = len(H); flat = H.reshape(B, -1).argmax(1); py, px = flat // N, flat % N
