@@ -100,3 +100,11 @@ Fensterpaar z≈21,65 (±2,1 m aus der Mitte), drittes z≈18,1, Öffnung 0,6 x 
 ## Teil 7: Firsthoehe und Zusammenhang
 - First 46,2 m: mittlere Abweichung zum Laser im Spitzenumkreis +0,01 m (45,0 m: -0,50 m; 44,0 m: -0,91 m). Die LoD2-Angabe 45,0 m wird damit nicht bestaetigt; Streuung des 1-m-Rasters ~2,6 m je Zelle.
 - Das Modell ist ein einziger wasserdichter Koerper (zuvor 14 lose Teile, behoben).
+
+## Teil 8: Stufe 32-35 m, Dachueberstand (Test)
+Dachfuss-Ueberstand 1,5 / 0,5 / 0,0 m: Median 7 / 12 / 12 %, Mittel 12 / 14 / 15 %. Bei 0,5 m bleibt die Stufe bei 35 m +30 %, bei 0,0 m +12 %, dafuer fallen 38-42 m auf -13...-35 %. Der Ueberstand ist also nicht die Ursache; 1,5 m bleibt das Optimum.
+
+## Beweisgrenze (ehrlich)
+Bewiesen (Laser 0,15 m, 1-m-Raster): Gesamthoehe 54,80 m, Querschnitt 20-28 m (+7...14 %), Belfry/Dach/Spitze 38-50 m (0...+12 %).
+Nur Foto-belegt (+-10 %): Torbogen, Uhr, Wappen, Tafeln, Fenster, Sockelhoehe.
+Mit offenen Daten nicht beweisbar: Nadel (< 1 Rasterzelle), Fensterdetails, Sockelaufweitung (Laser sieht nur von oben), Firsthoehe besser als ~1 m. Dafuer braucht es Rohpunktwolke (nicht frei) oder Vermessung vor Ort / Probedruck.
