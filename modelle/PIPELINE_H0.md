@@ -25,7 +25,8 @@ Ein Foto-Scan liefert Rauschen, Löcher und Nachbargebäude; ein Generator mit a
 
 | Werkzeug | Aufgabe | Eingabe → Ausgabe |
 |---|---|---|
-| `modelle/martinstor_v3_gen.py` | **aktuell:** Martinstor nach Fotos (verjüngter Rumpf, Glockenstock, Erker, Bruchstein, Falze), Höhe 45,3 m; Herleitung der Maße in `LERNJOURNAL_MARTINSTOR.md` | Konstanten oben (`H_TOTAL, DB, WB, ZB, D, W, ZZ`), `SCALE`, `MINMM` → `modelle/stl/martinstor_v3_1-<SCALE>.stl` |
+| `modelle/martinstor_v4_gen.py` | **aktuell** (54 m, Verhältnisse nach Foto, Eintrag 6); `martinstor_v3_gen.py` = Vorgänger 45,3 m | s. v3 | s. v3 |
+| `modelle/martinstor_v3_gen.py` | Vorgänger: Martinstor nach Fotos (verjüngter Rumpf, Glockenstock, Erker, Bruchstein, Falze), Höhe 45,3 m; Herleitung der Maße in `LERNJOURNAL_MARTINSTOR.md` | Konstanten oben (`H_TOTAL, DB, WB, ZB, D, W, ZZ`), `SCALE`, `MINMM` → `modelle/stl/martinstor_v3_1-<SCALE>.stl` |
 | `modelle/martinstor_detail_gen.py` (v2) | CSG-Detailmodell Martinstor (manifold3d): Rundbogentor, Keilsteine, Eckquader, Gesimse, Fenster, Uhr, Walmdach, Gauben, 4 Ecktürmchen | Maße im Kopf der Datei (`D, W, EAVE, TOP, TW…`), `SCALE`, `MINMM` → `modelle/stl/martinstor_detail_1-<SCALE>.stl` |
 | `tools/bauwerk_generator.py` + `bauwerke/*.json` | parametrischer Gebäudetyp (Turm, Helm, Durchfahrt) | JSON → GLB |
 | `tools/scan_zu_koerper.py` | Mesh/Punktwolke → geschlossener **Schichtkörper** (Meter) | PLY + Box + Aufrichtung → STL |
@@ -64,10 +65,10 @@ Wasserdichtigkeit, Teile, Status), hell/dunkel. Aufruf: `python tools/viewer_bau
 
 ## 3. Rezepte
 
-**Martinstor (aktuell v3):**
+**Martinstor (aktuell v4):**
 ```
-~/.venvs/rcpark/bin/python modelle/martinstor_v3_gen.py   # mit SCALE=87 MINMM=0.8 davor; -> modelle/stl/martinstor_v3_1-87.stl
-/media/oem/scan/venv-seg/bin/python -I tools/h0_druckfertig.py modelle/stl/martinstor_v3_1-87.stl modelle/h0/martinstor_v3_h0.stl --hoehe-m 45.3 --up z --teilen
+SCALE=87 MINMM=0.8 ~/.venvs/rcpark/bin/python modelle/martinstor_v4_gen.py   # -> modelle/stl/martinstor_v4_1-87.stl
+/media/oem/scan/venv-seg/bin/python -I tools/h0_druckfertig.py modelle/stl/martinstor_v4_1-87.stl modelle/h0/martinstor_v4_h0.stl --hoehe-m 54.0 --up z --teilen
 ```
 **Martinstor (v2, Vorgänger):**
 ```
@@ -94,7 +95,8 @@ Lehre: **nie dem Bericht eines Werkzeugs trauen, ohne Flächenzahl, Ausdehnung u
 
 | Objekt | Typ | Datei | mm (B × T × H) | wasserdicht | Teile | Anmerkung |
 |---|---|---|---|---|---|---|
-| **Martinstor v3** | Torturm (Foto-Detail, CSG, `martinstor_v3_gen.py`) | `h0/martinstor_v3_h0.stl` | 142 × 159 × 521 | ja | 3 | **Favorit** (45,3 m, verjüngter Rumpf, Erker, Glockenstock, Bruchstein); 0,4 % dünne Wand; siehe `LERNJOURNAL_MARTINSTOR.md` |
+| **Martinstor v4** | Torturm (Foto-Detail, CSG, `martinstor_v4_gen.py`) | `h0/martinstor_v4_h0.stl` | 155 × 165 × 621 | ja | 3 | **Favorit** (54 m; verjüngter Rumpf, Erker, Glockenstock, Bruchstein); 0,5 % dünne Wand; Herleitung in `LERNJOURNAL_MARTINSTOR.md` Eintrag 6 |
+| Martinstor v3 | wie v4, aber 45,3 m | `h0/martinstor_v3_h0.stl` | 142 × 159 × 521 | ja | 3 | überholt: gedrungen (Kopf zu klein), s. Journal Eintrag 6 |
 | Martinstor Detail (v2) | Torturm (OSM+Foto, CSG) | `h0/martinstor_detail_h0.stl` | 186 × 194 × 621 | ja | 3 | Vorgänger, 54 m, falsche Proportionen (Gauben, kein Glockenstock) |
 | Martinstor 65 m | Variante | `h0/martinstor_detail_65m_h0.stl` | 224 × 234 × 747 | ja | 18 | nur gleichmäßig skaliert |
 | Martinstor einfach | Generator v2 | `h0/martinstor_h0.stl` | 115 × 115 × 528 | ja | 3 | grob |
@@ -105,7 +107,7 @@ Lehre: **nie dem Bericht eines Werkzeugs trauen, ohne Flächenzahl, Ausdehnung u
 
 ## 6. Offen
 
-- **Detailschleife Martinstor:** Vorgehen, Messungen und Lehren je Schritt in `LERNJOURNAL_MARTINSTOR.md` (Einträge 0–5). Foto-Ernte: `daten/martinstor/fotos` mit Lizenz-Manifest.
+- **Detailschleife Martinstor:** Vorgehen, Messungen und Lehren je Schritt in `LERNJOURNAL_MARTINSTOR.md` (Einträge 0–6). Foto-Ernte: `daten/martinstor/fotos` mit Lizenz-Manifest.
   Wichtigste Methodenlehre: erst Foto neben Modell rendern und von Auge vergleichen; Zahlen (wasserdicht/Bauraum) fanden die gröbsten Fehler nicht.
 
 - **Mehr Detail** (Wunsch 31.10.): Martinstor-Maße klären (Höhe 54/65 m, Schaft 13,4 vs. 10×11 m), dann Generator-Konstanten anpassen;

@@ -34,7 +34,7 @@ def rel(m):  # Relieftiefe in m, mind. MINMM im Druck
 
 # ---- Masse (m) ---- (Herleitung: LERNJOURNAL_MARTINSTOR.md, Eintrag 1+2)
 H_TOTAL = 45.3                # LOD2 45,3 m = Scan-Verhaeltnis x OSM-Fussbreite
-DB, WB, ZB = 11.6, 13.4, 12.5 # Steinsockel mit Tor: Tiefe (x, Durchfahrt), Breite (y), Hoehe
+DB, WB, ZB = 11.6, 13.4, 10.0 # Steinsockel mit Tor: Tiefe (x, Durchfahrt), Breite (y), Hoehe
 D, W = 9.6, 10.0              # Schaft (verputzt) AM KOPF (bei ZZ); nach unten verjuengt er sich zum Sockel
 ZZ = 32.3                     # Zinnen-Unterkante = Oberkante Schaft
 TOP = H_TOTAL
@@ -169,9 +169,10 @@ def quoins3(z0, z1, a=1.35, b=0.8, course=0.74, joint=0.07):
         for sx in (-1, 1):
             for sy in (-1, 1):
                 X, Y = sx * hx, sy * hy
-                lg, kz = RNG.uniform(0.95, 1.75), RNG.uniform(0.55, 0.95)
+                fz = 1.0 + 0.7 * (1 - (za - SZ0) / (ZZ - SZ0))      # Foto: Quaderbaender unten ca. 1,7x breiter als oben
+                lg, kz = RNG.uniform(0.95, 1.75) * fz, RNG.uniform(0.55, 0.95) * fz
                 lx, ly = (lg, kz) if (i + (sx > 0) + (sy > 0)) % 2 == 0 else (kz, lg)
-                pp = rel(RNG.uniform(0.08, 0.2))
+                pp = rel(RNG.uniform(0.08, 0.28) * fz)
                 xa, xb = sorted((X - sx * lx, X + sx * pp)); ya, yb = sorted((Y - sy * ly, Y + sy * pp))
                 adds.append(box(xa, xb, ya, yb, za, zb))
 
@@ -223,15 +224,16 @@ for f in ("+x", "-x"):
     adds.append(fbox(f, -0.45, 0.45, SPR + AW / 2 - 0.1, SPR + AW / 2 + 1.15, -0.05, rel(0.24), h=HB))
     for j in (-1, 1):
         adds.append(fbox(f, j * (AW / 2 + 0.5) - 0.6, j * (AW / 2 + 0.5) + 0.6, SPR - 0.3, SPR, -0.05, rel(0.24), h=HB))
-adds.append(fbox("+x", -2.4, 2.4, 8.4, 10.2, -0.05, rel(0.14), h=HB))                    # Inschrifttafel
-cuts.append(fbox("+x", -2.1, 2.1, 8.7, 9.9, rel(0.14) - rel(0.05), 1.0, h=HB))
+_hT = hxy(12.6)
+adds.append(fbox("+x", -2.4, 2.4, 11.7, 13.5, -0.05, rel(0.14), h=_hT))                    # Inschrifttafel
+cuts.append(fbox("+x", -2.1, 2.1, 12.0, 13.2, rel(0.14) - rel(0.05), 1.0, h=_hT))
 for i in range(5):
-    z = 8.85 + i * 0.22
-    adds.append(fbox("+x", -1.8 + (0.3 if i == 4 else 0), 1.8 - (0.3 if i == 4 else 0), z, z + 0.09, 0, rel(0.12), h=HB))
-adds.append(fbox("-x", -0.9, 0.9, 8.6, 10.4, -0.05, rel(0.1), h=HB))                      # Doppeladler (Relief)
-for e in [M.sphere(0.32, 24).scale((1, 0.8, 1.3)).translate((0, 0, 9.45)),
-          M.sphere(0.2, 16).translate((0, -0.28, 10.05)), M.sphere(0.2, 16).translate((0, 0.28, 10.05)),
-          M.sphere(0.42, 24).scale((0.5, 1.0, 0.55)).translate((0, -0.5, 9.6)), M.sphere(0.42, 24).scale((0.5, 1.0, 0.55)).translate((0, 0.5, 9.6))]:
+    z = 12.15 + i * 0.22
+    adds.append(fbox("+x", -1.8 + (0.3 if i == 4 else 0), 1.8 - (0.3 if i == 4 else 0), z, z + 0.09, 0, rel(0.12), h=_hT))
+adds.append(fbox("-x", -0.9, 0.9, 11.9, 13.7, -0.05, rel(0.1), h=_hT))                      # Doppeladler (Relief)
+for e in [M.sphere(0.32, 24).scale((1, 0.8, 1.3)).translate((0, 0, 12.75)),
+          M.sphere(0.2, 16).translate((0, -0.28, 13.35)), M.sphere(0.2, 16).translate((0, 0.28, 13.35)),
+          M.sphere(0.42, 24).scale((0.5, 1.0, 0.55)).translate((0, -0.5, 12.9)), M.sphere(0.42, 24).scale((0.5, 1.0, 0.55)).translate((0, 0.5, 12.9))]:
     adds.append(e.scale((rel(0.12) / 0.3, 1, 1)).translate((-DB / 2 - rel(0.1), 0, 0)))
 for f in ("+y", "-y"):
     for z in (6.5, 10.5):
@@ -249,9 +251,9 @@ for f in ("+x", "-x"):
         ang = math.radians(k * 30 + 15)
         u, zz = math.sin(ang) * (UR + 0.28), UZ + math.cos(ang) * (UR + 0.28)
         adds.append(fcyl(f, u, zz, 0.2, -0.2, -0.15 + rel(0.09), h=hh))
-    for u in (-2.3, 0.0, 2.3):
-        window(f, u, 23.2, 0.5, 0.9, hh=hxy(23.2))
-    window(f, 0.0, 20.2, 0.4, 0.8, hh=hxy(20.2))
+    for u in (-2.5, 2.5):
+        window(f, u, 23.4, 0.55, 0.95, hh=hxy(23.4))
+    window(f, 0.0, 20.6, 0.45, 0.85, hh=hxy(20.6))
 for f in ("+y", "-y"):
     for u in (-1.8, 1.8):
         window(f, u, 25.0, 0.5, 0.9, hh=hxy(25.0))

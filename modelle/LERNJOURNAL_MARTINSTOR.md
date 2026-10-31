@@ -131,3 +131,43 @@ braucht vor dem Druck eine Verdickung (`--solid`) oder andere Dachbehandlung. Da
 2. Maße am Bauplan gegenprüfen (`bauforschung-bw.de`-PDF der Denkmalbehörde).
 3. Mit zwei weiteren Fotos (z. B. Rückseite Tor) das Doppeladler-Relief und die Rückfassade prüfen (Foto 026/027).
 4. SfM aus den 46 Commons-Fotos (COLMAP-GPU-Wrapper) als unabhängige 3D-Kontrolle der Proportionen.
+
+## Eintrag 6 — Korrektur der Höhe: v4 mit 54 m (Eintrag 1 war zu optimistisch)
+
+Auslöser: Seitenvergleich v3 gegen `042_…Martinstor_1.jpg` und `030_…7999.jpg` (wiederholtes Vergleichen mit neuem Foto, andere Perspektive).
+Das Modell wirkte **gedrungen**: Kopf (Zinnen bis Spitze) im Foto ≈ 40 % der Gesamthöhe, im v3 nur 26 %; Turmkegel der Erker im Foto doppelt so hoch.
+
+**Messung am Foto (Pixel, `042`, Bild 1500 × 2000):**
+- Torbogen-Öffnung ≈ 215 px breit ↔ im Modell 6,0 m ⇒ Uhr (Ø ≈ 160 px) ≈ **4,6 m** statt der angenommenen 3,5 m.
+- Von Uhrmitte bis Spitze ≈ 5,15 Uhrdurchmesser ⇒ **≈ 24 m** über der Uhr (v3: 18 m).
+- Uhr bei 0,55 der Höhe; Zinnen 0,62–0,65; Kragdach 0,65–0,67; Glockenstock 0,67–0,75; Dachfirst 0,88; Spitze 1,0.
+  Mit H = 54 m ergibt das: Uhrmitte 29,7 m, Zinnen 34 m, Glockenstock 37–40 m, Firstkante 47 m, Spitze 54 m.
+  Das deckt sich mit den **OSM-Werten (Traufe 33 m, Dach bis 47 m, Spitze 53 m)**. Perspektive (Blick nach oben) staucht den Kopf, die wahren Werte liegen eher darüber.
+- Der Dachreiter (Spitze) ist ≈ 6,5 m lang (v3: 4 m).
+
+**Neubewertung von Eintrag 1:** LOD2 (45,3 m) und der Scan (45,9 m angenommen) messen offenbar nur die **Dachfläche bis zur Firstkante** (≈ 47 m laut OSM),
+nicht den Dachreiter. Der Scan hatte die dünne Spitze nicht erfasst (Höhe = Zuschnitt-Obergrenze). Damit sind die „drei übereinstimmenden Quellen“ aus Eintrag 1
+**keine unabhängigen Belege für 45 m**, sondern gemeinsam unvollständig. Die Textquellen (60–66 m) können Spitze + Wetterfahne meinen; 54 m ist die
+bestbelegte Zahl (OSM + Foto-Verhältnisse). Rest-Unsicherheit ± 5 m, bis ein vermessenes Maß vorliegt.
+**Lehre 6:** Nicht auf Übereinstimmung von Quellen vertrauen, wenn sie dieselbe Lücke haben (hier: Spitze nicht erfasst). Ein zweites Foto aus anderer Richtung
+hat den Fehler gezeigt, den die Auswertung des ersten nicht zeigte. Sicherheitsregel: jede Annahme aus einem Foto an einem zweiten gegenprüfen.
+
+**Änderungen v4 (`martinstor_v4_gen.py`, kopiert aus v3, v3 bleibt reproduzierbar):**
+
+| Größe | v3 | v4 | Grund |
+|---|---|---|---|
+| Gesamthöhe | 45,3 m | **54,0 m** | s. o. |
+| Sockel (Stein) | 11,6 × 13,4, 10,0 m hoch | 12,0 × 13,6, **8,0 m** | Foto: Putz beginnt knapp über dem Torbogen |
+| Schaftkopf | 9,6 × 10,0 | 10,6 × 11,4 | Foto: Turm breiter als angenommen |
+| Uhr | Mitte 27,0 m, r 1,75 m | **29,7 m, r 2,3 m** | Maßstab Torbogen |
+| Zinnen | 32,3 m | **34,0 m** | Foto, OSM-Traufe |
+| Glockenstock | 2,5 m hoch | 3,3 m | Foto |
+| Dach | 3,6 m hoch | **6,7 m**, steiler | Foto |
+| Erkerdach | 2,85 m | **5,2 m**, schlanker | Foto: Kegel ≈ 3 : 1 |
+| Fenster unter Uhr | 2 + 1, z 23,4 / 20,6 | z 25,3 / 21,6 | Foto 042 |
+| Adler/Tafel | 11,7–13,5 m | 8,6–10,6 m | Foto 030/042: knapp über dem Stein |
+
+Ergebnis `modelle/h0/martinstor_v4_h0.stl`: 154,6 × 164,5 × 620,7 mm (1:87), 24 258 Flächen, wasserdicht, 3 Teile à ≈ 207 mm, 0,5 % dünne Wand (Wand p5 2,6 mm).
+
+**Noch sichtbar anders als das Foto:** Der Doppeladler ist im Modell zu klein (Foto ≈ 2,6 × 3 m, Modell ≈ 1,8 m); die Quaderbänder könnten noch gröber sein;
+Fachwerk der Erker ist nur ein X (Foto: X mit Zierleisten); es gibt keine Seitenbauten (Erkerhaus links, zweiter Torbogen).
