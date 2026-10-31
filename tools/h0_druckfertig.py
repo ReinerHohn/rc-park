@@ -71,7 +71,7 @@ def voxel_solid(m, pitch):
     try:
         v = m.voxelized(pitch).fill()
         mat, transform = v.matrix, v.transform
-    except ValueError:
+    except (ValueError, MemoryError):
         # trimesh.voxelized scheitert bei sehr grossen/duennen Dreiecken ("max_iter exceeded"):
         # Ausweg ueber dicht abgetastete Oberflaechenpunkte, dann Hohlraeume fuellen
         n = int(min(8e6, max(2e5, m.area / (pitch * pitch) * 6)))

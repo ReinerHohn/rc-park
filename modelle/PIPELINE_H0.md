@@ -102,7 +102,7 @@ Lehre: **nie dem Bericht eines Werkzeugs trauen, ohne Flächenzahl, Ausdehnung u
 | Martinstor einfach | Generator v2 | `h0/martinstor_h0.stl` | 115 × 115 × 528 | ja | 3 | grob |
 | Martinstor Scan-Hülle | Scan | `scan_koerper/martinstor_scan_h0.stl` | 161 × 111 × 527 | ja | 3 | Hülle, kein Bogen, unten angenommen |
 | Ravenna-Viadukt | Brücke (Generator) | `h0/ravenna_h0.stl` | 2429 × 793 × 539 | ja | 40 | 6 % dünne Wand |
-| Hofgut Sternen | Gebäude (LOD2+Laser+Foto) | `h0/hofgut_h0.stl` | 486 × 297 × 225 | ja | 6 | nach Fix neu gerechnet (128 864 Flächen); **26 % dünne Wand**, vor Druck verdicken |
+| Hofgut Sternen | Gebäude (LOD2+Laser+Foto) | `h0/hofgut_h0.stl` | 486 × 297 × 225 | ja | 6 | 128 864 Flächen, 26 % dünne Wand → **`h0/hofgut_solid_h0.stl`** (`--solid 0.8 --teilen`): 486 × 182 × 226 mm, 6 Teile, wasserdicht, 0,1 % dünne Wand, 1,65 Mio. Flächen (zu groß fürs Repo/Viewer) |
 | Kaufhaus Freiburg | Detailmodell (47 Teile) | `h0/kaufhaus_h0.stl` | – | – | – | Lauf mit `--solid 0.5` brach ohne Ausgabe ab (Speicher/Zeit), offen |
 
 ## 6. Offen

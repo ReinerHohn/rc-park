@@ -178,3 +178,13 @@ Fachwerk der Erker ist nur ein X (Foto: X mit Zierleisten); es gibt keine Seiten
 - Prüfung: neu generiert (23 216 Flächen, wasserdicht), Seitenansicht gerendert, H0-Lauf erneut: 154,6 × 164,5 × 620,7 mm, 3 Teile, 0,4 % dünne Wand, wasserdicht.
 - Lehre: Die Differenzliste aus dem Fotovergleich (Eintrag 6) direkt abarbeiten – jede Zeile ist ein überprüfbarer Schritt. Ein Render des Ausschnitts genügt als Kontrolle, bevor die ganze Pipeline läuft.
 - Weiterhin offen: gröbere Quaderbänder, Zierleisten am Erker, Seitenbauten, zweiter Torbogen; echte Höhe ±5 m.
+
+## Eintrag 8 – gröbere Quaderbänder, Zierringe am Erker (v4 final)
+
+- Quaderlagen 0,95 m statt 0,74 m, Fuge 9 cm (bei 1:87 ≈ 11 mm Lage; die feinere Teilung ging beim Druck als Rauschen verloren).
+- Erkerbrüstung: drei Zierringe (unten/Mitte/oben) zusätzlich zum X-Fachwerk.
+- Ergebnis: 24 988 Flächen, wasserdicht; H0-Lauf erneut grün (siehe `martinstor_v4_h0.bericht.json`).
+- Bewusst nicht gebaut: Seitenbauten und zweiter Torbogen gehören nicht zum Tor selbst (Nachbarhäuser); der Druck soll das freistehende Tor zeigen.
+- Offen bleibt nur, was Daten nicht liefern: die echte Höhe (54 m ±5 m) und die Wirkung am gedruckten Teil.
+
+Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe Gestalt stimmt (Schaft mit Eckquadern, Zinnenband, vier Erkertürme, Kupferdach mit Dachreiter, Spitze). Das Modell wirkt im Render breiter als das Foto; wegen unterschiedlicher Blickwinkel (Foto fast frontal, Render diagonal) nicht belastbar → nächster Schritt wäre ein Render exakt frontal mit gleicher Brennweite. Kaufhaus-H0-Lauf scheiterte 2× an RAM (trimesh-Subdivision, 22 Mio. Kanten); gelöst nur teilweise (MemoryError-Fallback), Lauf wurde vom OOM-Killer beendet → separat, wenn nichts anderes läuft.

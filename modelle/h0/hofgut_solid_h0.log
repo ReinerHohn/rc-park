@@ -1,0 +1,46 @@
+geladen: 128864 Flaechen, wasserdicht=True
+{
+ "flaechen": 1651886,
+ "wasserdicht": true,
+ "volumen_mm3": 659049.3,
+ "ausdehnung_mm": [
+  485.7,
+  181.7,
+  225.6
+ ],
+ "passt_in_bauraum": true,
+ "wand_p5_mm": 1.8,
+ "wand_median_mm": 4.37,
+ "anteil_zu_duenn": 0.001,
+ "massstab": "1:87",
+ "min_wand_mm": 0.8,
+ "teile": [
+  {
+   "nr": "111",
+   "mm": [
+    161.9,
+    181.7,
+    225.6
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "211",
+   "mm": [
+    161.9,
+    181.7,
+    225.6
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "311",
+   "mm": [
+    161.9,
+    181.7,
+    225.5
+   ],
+   "wasserdicht": true
+  }
+ ]
+}

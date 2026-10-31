@@ -159,7 +159,7 @@ def clock3(face, z, r, hh):
             u, zz = math.sin(ang) * t, z + math.cos(ang) * t
             adds.append(fbox(face, u - wd, u + wd, zz - wd, zz + wd, -0.2, -0.15 + rel(0.14), h=hh))
 
-def quoins3(z0, z1, a=1.35, b=0.8, course=0.74, joint=0.07):
+def quoins3(z0, z1, a=1.35, b=0.8, course=0.95, joint=0.09):
     """Gezahnte Eckquader entlang des verjuengten Schafts (je Lage mit den Halbmassen auf ihrer Hoehe)."""
     pr = rel(0.12)
     n = int((z1 - z0) / course)
@@ -347,6 +347,9 @@ for sx in (-1, 1):
                 # Schlitz entlang der Seitenflaeche k (Normale bei k*45 Grad)
                 cut = cut.translate((0, 0, T1 + 0.48)).rotate((0, 0, k * 45)).translate((c[0], c[1], 0))
                 cuts.append(cut)
+        # Zierleisten der Bruestung: Ring unten/Mitte/oben (Foto: Fachwerk mit Leisten)
+        for dz in (0.0, 0.45, 0.88):
+            adds.append(M.cylinder(0.12, OR + rel(0.16), OR + rel(0.16), 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + dz)))
         # offene Arkade: Kern + 8 schlanke Saeulen + Deckring
         adds.append(M.cylinder(1.45, 0.55, 0.55, 8).translate((c[0], c[1], T1 + 0.95)))
         for k in range(8):
