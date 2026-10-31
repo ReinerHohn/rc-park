@@ -40,6 +40,16 @@ Unsicherheit je Messung ≈ ±8 % (Ablesefehler ±5 px, leichte Schrägsicht ≈
 **Korrektur:** Frühere Werte (Torbogen 6,0 → 6,6 m, Adler 2,8 × 3,2 m, Uhr Ø 4,6 m) beruhten auf einem Augenvergleich und auf einer Annahme (Bogen ↔ Uhr), also
 zirkulär; sie waren 20–60 % zu groß. Das ist der eigentliche Fund dieses Teils.
 
+## Teil 3: Höhenlage der Uhr (lokaler Maßstab über das kreisrunde Zifferblatt)
+Foto 042 (Originalpixel, Gitter 20 px): Zifferblatt 158 px breit × 139 px hoch → senkrechte Stauchung 0,88 (Kamera blickt nach oben).
+Fassadenbreite auf Uhrhöhe 406 px = 11,5 m → waagrecht 35,3 px/m, senkrecht 35,3 × 0,88 = 31,1 px/m.
+Uhrmitte (950 px) bis Gesimsunterkante (≈ 840 px) = 110 px → **3,5 m**; Uhrmitte bis Rahmenunterkante (1033 px) = 83 px → **2,7 m**.
+Modell: Uhrmitte 26,9 m, Gesimsunterkante 30,05 m → **3,15 m**; Rahmenunterkante 26,9 − 3,0 = 23,9 → **3,0 m**. Abweichung ≤ 0,4 m (≈ 12 %).
+Die Höhe des Gesimses selbst stützt der Laser (Zinnenkrone ≈ 31–32 m). Damit ist die Uhrlage **relativ zum Laser-Gesims** auf ±0,5 m belegt.
+
+Verworfen: Kamerabestimmung (PnP) aus Spitze, Dachbällchen und Erkerspitzen mit EXIF-Brennweite (Pentax Optio 50L, 5,4 mm → 1559 px).
+Alle Anker liegen über 39 m, nach unten ist die Lösung schlecht bestimmt (freie Kamerahöhe 13,8 m, bei realer Augenhöhe 31 px Restfehler, Uhr 256 px daneben).
+
 ## Was damit **widerlegt** ist
 Mehrere Textquellen nennen **60–66 m** (Bauforschung BW „65 m“, Schwarzwaldportal „66 m“, ein Absatz derselben PDF „60 m“).
 Der Laser misst **54,8 m**. Die 65–66 m stimmen nicht für die heutige Spitze. Die Grundfläche „10 × 11 m“ der Quellen stimmt dagegen:
@@ -49,7 +59,7 @@ Auch OSM (Spitze 53 m) liegt näher als die Texte.
 ## Grenzen (ehrlich)
 1. Das Raster ist 1 m. Jede Breite ist daher nur auf etwa ±1 m bewiesen, jede Fläche auf etwa ±15 % (Drehung/Phase der Zellen ändern die Zählung).
 2. Die Draufsicht sieht nur die **höchste Fläche je Zelle**. Torbogen, Uhr und Schild sind deshalb nur über Teil 2 (Fotoverhältnis, ±10 %) belegt.
-   **Höhenlagen** von Uhrmitte (26,9 m), Torbogenscheitel (6,55 m), Schild und Fenstern sind **nicht belegt** (nur Fotovergleich ±10 %), ebenso die Sockelaufweitung.
+   Die Uhrlage ist relativ zum Gesims belegt (Teil 3, ±0,5 m). **Torbogenscheitel (6,55 m), Schild, Fenster und Sockelaufweitung** sind **nicht belegt** (nur Fotovergleich ±10 %).
 3. Bei 35 m liegt das Modell +35 % über dem Laser (3 Randzellen). Vermutlich ist Kragdach-/Dachtraufe etwas anders geformt; mit 1-m-Daten nicht zu klären.
 4. Nicht geprüft ist ein Probedruck.
 

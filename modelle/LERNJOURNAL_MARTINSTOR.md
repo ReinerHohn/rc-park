@@ -233,3 +233,9 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - Ergebnis: Durchfahrt 4,7 m (nicht 6,6), Zifferblatt 4,2 m (nicht 4,6), Wappenschild 1,7 × 2,3 m (nicht 2,8 × 3,2). Mein früheres „Foto zeigt breiter“ war ein Augenvergleich gegen ein schräges Render und lag falsch.
 - Lehre: Ein Augenvergleich zweier Bilder aus verschiedenen Blickwinkeln misst nichts. Messen am **selben** Foto, **in einer Ebene**, **auf gleicher Bildhöhe**, Verhältnis zu einer bekannten Länge. Zwei Fotos geben die Streuung (hier ≤ 10 %).
 - Eine Kameralösung (PnP) aus handgesetzten 2D-3D-Punkten wurde erwogen und verworfen: zu viele mehrdeutige Zuordnungen (welcher der vier Erker), Fehler größer als der Gewinn.
+
+## Eintrag 14 – Höhenlage der Uhr, und eine gescheiterte Kamerabestimmung
+
+- Messung über das kreisrunde Zifferblatt: senkrechte Stauchung 0,88 liefert den lokalen senkrechten Maßstab; Uhrmitte liegt 3,5 m unter dem Gesims (Modell 3,15 m) → ±0,4 m (Teil 3 der Maßprüfung).
+- PnP-Kamerabestimmung aus fünf hochliegenden Ankern: mathematisch „guter“ Fit (6,6 px), aber Kamerahöhe 13,8 m – physikalisch unmöglich. Mit realer Augenhöhe 31 px Fehler, Uhr 256 px daneben. Lehre: Ein kleiner Restfehler beweist nichts, wenn die Anker alle in einer Ebene/einem Höhenband liegen; die Lösung muss auch **plausibel** sein (Kamerahöhe!). Extrapolation aus 40–55 m nach 7 m ist nicht bestimmt.
+- Beim Ablesen am Gitterbild zweimal Koordinatensysteme verwechselt (Anzeige 0,9× gegen Originalpixel). Gitter immer in Originalpixeln beschriften und nur dort ablesen.
