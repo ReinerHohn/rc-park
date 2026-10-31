@@ -108,3 +108,6 @@ Dachfuss-Ueberstand 1,5 / 0,5 / 0,0 m: Median 7 / 12 / 12 %, Mittel 12 / 14 / 15
 Bewiesen (Laser 0,15 m, 1-m-Raster): Gesamthoehe 54,80 m, Querschnitt 20-28 m (+7...14 %), Belfry/Dach/Spitze 38-50 m (0...+12 %).
 Nur Foto-belegt (+-10 %): Torbogen, Uhr, Wappen, Tafeln, Fenster, Sockelhoehe.
 Mit offenen Daten nicht beweisbar: Nadel (< 1 Rasterzelle), Fensterdetails, Sockelaufweitung (Laser sieht nur von oben), Firsthoehe besser als ~1 m. Dafuer braucht es Rohpunktwolke (nicht frei) oder Vermessung vor Ort / Probedruck.
+
+## Teil 9: Grundriss gegen LoD2 (Sockel)
+LoD2-Bodenflaeche (DEBW_001000hPLcn, 69 Punkte): Polygonflaeche 115,1 m2, kleinstes umschliessendes Rechteck 11,7 x 11,4 m. Das Polygon ist unregelmaessig (Anbau/Torvorbau, Rundung), daher nicht auf eine Rechteckmasse reduzierbar. Modellsockel 9,8 x 11,3 m = 110,7 m2 (-4 %), innerhalb der LoD2-Lagegenauigkeit. Die Sockelaufweitung selbst bleibt nicht trennbar vom Anbau und ist damit nicht einzeln beweisbar.
