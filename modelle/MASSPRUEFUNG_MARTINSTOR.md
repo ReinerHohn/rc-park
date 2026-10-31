@@ -93,3 +93,6 @@ Auch OSM (Spitze 53 m) liegt näher als die Texte.
 Das frühere Modell (54,0 m) hatte die richtige Höhe, aber falsche **Binnenhöhen**: Zinnenkrone 34–35 m (Laser ≈ 31,5 m), Glockenstock-Oberkante 39,8 m (≈ 35,5 m),
 Dachfirst 49 m (≈ 46 m), Erkerkörper 37 m (≈ 32,7 m), Erkerkegel-Spitze 47 m (≈ 39,7 m), Dachreiter zu kurz (5 m statt ≈ 9 m), Schaft 1–2 m zu breit.
 Korrigiert in v4 (Eintrag 12 im Lernjournal).
+
+## Teil 6: Fenster (nur Foto, ±10 %)
+Fensterpaar z≈21,65 (±2,1 m aus der Mitte), drittes z≈18,1, Öffnung 0,6 x 0,85 m. Maßstab: Fassadenbreite im selben Bild. Vom Laser nicht prüfbar (Raster 1 m).

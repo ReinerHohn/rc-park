@@ -258,3 +258,9 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - Bogenbreite bestätigt (3 Fotos: 0,39–0,42). **Bogenhöhe falsch:** der Scheitel war mit 6,55 m 1,5 m zu hoch (aus schräger Aufnahme 030 abgeleitet); Sockeloberkante 8,0 → 6,2 m; Inschrifttafel 3,4 × 2,0 m statt 4,8 × 1,8 m, direkt über dem Bogen.
 - Lehre: Ein Maß erst glauben, wenn es an mindestens drei Fotos aus unterschiedlichen Blickwinkeln übereinstimmt. Aus 030 allein war die Breite richtig, die Höhe aber falsch – bei schräger Aufnahme stimmt nur die Breite am Fuß halbwegs. Frontale, bodennahe Aufnahmen (050, 002) sind für Höhen die besseren.
 - Weiterhin offen: Fenster (Größe/Lage), Sockelaufweitung, Probedruck.
+
+## 18. Fenster nach Foto korrigiert
+- Vorher: Fensterpaar bei z=25,3 (nur ~1,1 m unter Uhrmitte, kollidierte mit dem Uhrrahmen), Öffnungen 20 % zu hoch.
+- Foto 042/050 (Originalpixel, Fassadenbreite 11,5 m als Maßstab): Paar ca. 4,8 m unter Uhrmitte (z≈21,65), drittes ca. 8,5 m darunter (z≈18,1), Öffnung ca. 0,6 x 0,85 m.
+- Laser-Tabelle unverändert (Median 7 %), Modell wasserdicht. Beleg nur aus Fotos (±10 %), nicht aus Laser (Fenster < 1 m Raster).
+- Weiter ungeprüft: Stufe 35 m, Nadel 52 m, First 46,2 vs 45,0 (LoD2), Sockelaufweitung, Probedruck.

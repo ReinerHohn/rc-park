@@ -254,9 +254,9 @@ for f in ("+x", "-x"):
         ang = math.radians(k * 30 + 15)
         u, zz = math.sin(ang) * (UR + 0.28), UZ + math.cos(ang) * (UR + 0.28)
         adds.append(fcyl(f, u, zz, 0.2, -0.2, -0.15 + rel(0.09), h=hh))
-    for u in (-3.0, 3.0):
-        window(f, u, 25.3, 0.6, 1.05, hh=hxy(25.3))
-    window(f, 0.0, 21.6, 0.5, 0.95, hh=hxy(21.6))
+    for u in (-2.1, 2.1):   # Foto 050/042/030: zwei Fenster ca. 4,8 m unter der Uhrmitte, aussen 1,1 x 1,35 m
+        window(f, u, 21.65, 0.6, 0.85, hh=hxy(21.65))
+    window(f, 0.5, 18.1, 0.5, 0.8, hh=hxy(18.1))      # drittes Fenster ca. 8,5 m unter der Uhrmitte
 for f in ("+y", "-y"):
     for u in (-1.8, 1.8):
         window(f, u, 26.0, 0.55, 1.0, hh=hxy(26.0))
