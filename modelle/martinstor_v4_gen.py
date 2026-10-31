@@ -33,10 +33,10 @@ def rel(m):  # Relieftiefe in m, mind. MINMM im Druck
     return max(m, MINMM / K)
 
 # ---- Masse (m) ---- (Herleitung: LERNJOURNAL_MARTINSTOR.md, Eintrag 1+2)
-H_TOTAL = 54.0                # OSM-Spitze 53 m + Knauf/Fahne; Foto-Verhaeltnisse (LERNJOURNAL Eintrag 6) stuetzen 53-60 m
-DB, WB, ZB = 12.0, 13.6, 8.0 # Steinsockel mit Tor: Tiefe (x, Durchfahrt), Breite (y), Hoehe
-D, W = 10.6, 11.4             # Schaft AM KOPF (bei ZZ); nach unten verjuengt er sich zum Sockel
-ZZ = 34.0                     # Zinnen-Unterkante = Oberkante Schaft (OSM-Traufe 33 m, Foto 33-35 m)
+H_TOTAL = 54.8                # OSM-Spitze 53 m + Knauf/Fahne; Foto-Verhaeltnisse (LERNJOURNAL Eintrag 6) stuetzen 53-60 m
+DB, WB, ZB = 9.8, 11.3, 8.0 # Steinsockel mit Tor: Tiefe (x, Durchfahrt), Breite (y), Hoehe
+D, W = 9.3, 10.3             # Schaft AM KOPF (bei ZZ); nach unten verjuengt er sich zum Sockel
+ZZ = 31.4                     # Zinnen-Unterkante = Oberkante Schaft (OSM-Traufe 33 m, Foto 33-35 m)
 TOP = H_TOTAL
 adds, cuts = [], []
 
@@ -245,7 +245,7 @@ for f in ("+y", "-y"):
 # ---------- Schaft: Eckquader, Uhr, Schlitzfenster (alles auf der Hoehe der Verjuengung) ----------
 SZ0 = ZB + 0.5
 quoins3(SZ0, ZZ - 0.3)
-UZ, UR = 29.7, 2.3
+UZ, UR = 27.8, 2.3
 for f in ("+x", "-x"):
     hh = hxy(UZ)
     clock3(f, UZ, UR, hh)
@@ -269,30 +269,30 @@ for f, L in (("+x", W), ("-x", W), ("+y", D), ("-y", D)):
     pitch = (L - 1.0) / n
     for i in range(n):
         u = -L / 2 + 0.5 + (i + 0.5) * pitch
-        adds.append(fbox(f, u - 0.4, u + 0.4, ZZ, ZZ + 1.3, -0.5, 0.0, h=HS))                  # Zinne
-        adds.append(fbox(f, u - 0.15, u + 0.15, ZZ + 1.3, ZZ + 1.7, 0.0, 0.5, h=HS))            # Holzkonsole
-adds.append(box(-D / 2 + 0.2, D / 2 - 0.2, -W / 2 + 0.2, W / 2 - 0.2, ZZ, ZZ + 1.6))             # Kern hinter den Zinnen
-adds.append(frustum(0, 0, ZZ + 1.6, D + 1.9, W + 1.9, ZZ + 3.0, D - 2.6, W - 2.6))               # Kupferschraege des Kragdachs
+        adds.append(fbox(f, u - 0.4, u + 0.4, ZZ, ZZ + 1.0, -0.5, 0.0, h=HS))                  # Zinne
+        adds.append(fbox(f, u - 0.15, u + 0.15, ZZ + 1.0, ZZ + 1.35, 0.0, 0.5, h=HS))            # Holzkonsole
+adds.append(box(-D / 2 + 0.2, D / 2 - 0.2, -W / 2 + 0.2, W / 2 - 0.2, ZZ - 0.3, ZZ + 0.2))             # Kern hinter den Zinnen
+adds.append(frustum(0, 0, ZZ + 0.2, D - 2.0, W - 2.0, ZZ + 2.0, D - 3.2, W - 3.2))               # Kupferschraege des Kragdachs
 # ---------- abgesetzter Glockenstock mit Schallarkaden ----------
-GX, GY, GZ0, GZ1 = D - 4.4, W - 4.4, ZZ + 3.0, ZZ + 6.3
+GX, GY, GZ0, GZ1 = D - 4.0, W - 4.3, ZZ + 2.0, ZZ + 5.6
 adds.append(box(-GX / 2, GX / 2, -GY / 2, GY / 2, GZ0 - 0.1, GZ1))
 quoins((0, 0), GX / 2, GY / 2, GZ0, GZ1 - 0.2, a=0.75, b=0.42, course=0.6)
 for f in ("+x", "-x", "+y", "-y"):
     hh = (GX / 2, GY / 2)
     for u in (-1.0, 1.0):
-        cuts.append(fbox(f, u - 0.5, u + 0.5, GZ0 + 0.6, GZ0 + 1.95, -0.7, 0.5, h=hh))
-        cuts.append(fcyl(f, u, GZ0 + 1.95, 0.5, -0.7, 0.5, h=hh, seg=24))
-    adds.append(fbox(f, -2.1, 2.1, GZ0 + 0.4, GZ0 + 2.85, -0.05, rel(0.1), h=hh))
+        cuts.append(fbox(f, u - 0.5, u + 0.5, GZ0 + 0.4, GZ0 + 1.5, -0.7, 0.5, h=hh))
+        cuts.append(fcyl(f, u, GZ0 + 1.5, 0.5, -0.7, 0.5, h=hh, seg=24))
+    adds.append(fbox(f, -2.1, 2.1, GZ0 + 0.3, GZ0 + 2.35, -0.05, rel(0.1), h=hh))
     for u in (-1.0, 1.0):    # Schallarkaden wieder frei schneiden
-        cuts.append(fbox(f, u - 0.5, u + 0.5, GZ0 + 0.6, GZ0 + 1.95, -0.7, 0.5, h=hh))
-        cuts.append(fcyl(f, u, GZ0 + 1.95, 0.5, -0.7, 0.5, h=hh, seg=24))
+        cuts.append(fbox(f, u - 0.5, u + 0.5, GZ0 + 0.4, GZ0 + 1.5, -0.7, 0.5, h=hh))
+        cuts.append(fcyl(f, u, GZ0 + 1.5, 0.5, -0.7, 0.5, h=hh, seg=24))
 
 # ---------- Kupferdach (glatt, oben abgeflacht) ----------
-RZ0, RZ1 = GZ1, GZ1 + 9.0
-adds.append(frustum(0, 0, RZ0, GX + 0.8, GY + 0.8, RZ1, 1.4, 1.8))
+RZ0, RZ1 = GZ1, GZ1 + 8.8
+adds.append(frustum(0, 0, RZ0, GX + 1.0, GY + 1.0, RZ1, 1.3, 3.0))
 for sx in (-1, 1):
     for sy in (-1, 1):
-        adds.append(M.sphere(0.24, 20).translate((sx * 0.95, sy * 1.15, RZ1 + 0.1)))            # Goldkugeln auf den Dachecken
+        adds.append(M.sphere(0.24, 20).translate((sx * 0.65, sy * 1.5, RZ1 + 0.1)))            # Goldkugeln auf den Dachecken
 # Stehfalze im Kupferdach (senkrechte Rillen, wie im Foto)
 def falze(face, hb, ht, ub, ut):
     dz = RZ1 - RZ0
@@ -311,27 +311,26 @@ def falze(face, hb, ht, ub, ut):
         elif face == "+y": cut = cut.rotate((0, 0, 90))
         elif face == "-y": cut = cut.rotate((0, 0, -90))
         cuts.append(cut)
-_bx, _by = (GX + 0.8) / 2, (GY + 0.8) / 2
-for f in ("+x", "-x"): falze(f, _bx, 0.85, _by, 1.05)
-for f in ("+y", "-y"): falze(f, _by, 1.05, _bx, 0.85)
+_bx, _by = (GX + 1.0) / 2, (GY + 1.0) / 2
+for f in ("+x", "-x"): falze(f, _bx, 0.65, _by, 1.5)
+for f in ("+y", "-y"): falze(f, _by, 1.5, _bx, 0.65)
 
-# ---------- Dachreiter ----------
-adds.append(M.cylinder(0.5, 0.55, 0.55, 8).translate((0, 0, RZ1)))
-adds.append(M.cylinder(0.45, 0.75, 0.75, 8).translate((0, 0, RZ1 + 0.5)))
-adds.append(M.cylinder(TOP - (RZ1 + 0.95) - 0.55, 0.38, 0.05, 8).translate((0, 0, RZ1 + 0.95)))
-adds.append(M.sphere(0.2, 16).translate((0, 0, TOP - 0.5)))
-adds.append(M.cylinder(0.55, 0.05, 0.02, 8).translate((0, 0, TOP - 0.55)))
+# ---------- Dachreiter (Laser: Kegel, Fussradius ~1,5 m bei 46 m, Spitze 54,8 m) ----------
+adds.append(M.cylinder(0.6, 1.55, 1.45, 8).translate((0, 0, RZ1 - 0.1)))
+adds.append(M.cylinder(TOP - (RZ1 + 0.5) - 0.7, 1.35, 0.08, 8).translate((0, 0, RZ1 + 0.5)))
+adds.append(M.sphere(0.22, 16).translate((0, 0, TOP - 0.65)))
+adds.append(M.cylinder(0.65, 0.05, 0.02, 8).translate((0, 0, TOP - 0.65)))
 
 # ---------- Ecktuermchen: Sandsteinturm + achteckiger Erker mit Fachwerk-Bruestung und Arkade ----------
-TWs, T0, T1 = 3.2, 31.0, 37.2
+TWs, T0, T1 = 3.2, 30.0, 33.7
 OR = 1.5                                     # Erker-Radius
 for sx in (-1, 1):
     for sy in (-1, 1):
         _h = hxy(T0 + 1.0)
-        c = (sx * (_h[0] - 0.45), sy * (_h[1] - 0.45))
+        c = (sx * (_h[0] - TWs / 2 + 0.4), sy * (_h[1] - TWs / 2 + 0.4))
         hh = (TWs / 2, TWs / 2)
         adds.append(frustum(c[0], c[1], 28.8, 0.9, 0.9, T0, TWs, TWs))                        # Auskragung (Konsole)
-        for z in (29.6, 30.4):
+        for z in (29.2, 29.7):
             w_ = 0.9 + (TWs - 0.9) * (z - 28.8) / (T0 - 28.8)
             adds.append(frustum(c[0], c[1], z - 0.12, w_ + 2 * rel(0.1), w_ + 2 * rel(0.1), z + 0.05, w_ + 2 * rel(0.1), w_ + 2 * rel(0.1)))
         adds.append(box(c[0] - TWs / 2, c[0] + TWs / 2, c[1] - TWs / 2, c[1] + TWs / 2, T0, T1))
@@ -358,9 +357,9 @@ for sx in (-1, 1):
             adds.append(M.cylinder(1.4, 0.11, 0.11, 8).translate((c[0] + (OR - 0.14) * math.cos(a), c[1] + (OR - 0.14) * math.sin(a), T1 + 0.95)))
         adds.append(M.cylinder(0.22, OR + 0.1, OR + 0.1, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.3)))
         # spitzes Kupferdach, Kugel, Spitze
-        adds.append(M.cylinder(7.4, OR + 0.12, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.52)))
-        adds.append(M.sphere(0.25, 20).translate((c[0], c[1], T1 + 9.92)))
-        adds.append(M.cylinder(0.7, 0.05, 0.015, 8).translate((c[0], c[1], T1 + 10.05)))
+        adds.append(M.cylinder(3.5, OR + 0.12, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.52)))
+        adds.append(M.sphere(0.25, 20).translate((c[0], c[1], T1 + 6.02)))
+        adds.append(M.cylinder(0.7, 0.05, 0.015, 8).translate((c[0], c[1], T1 + 6.15)))
 # ============ CSG ============
 cuts = [c for c in cuts if not c.is_empty()]
 body = M.batch_boolean(adds, OpType.Add)

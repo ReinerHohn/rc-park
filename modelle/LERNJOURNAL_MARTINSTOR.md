@@ -209,3 +209,20 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - Foto 030: Durchfahrt im Verhältnis zum Sockel breiter/höher als im Modell. Änderung: Breite 6,6 m (vorher 6,0), Kämpferhöhe 4,3 m (vorher 4,2); Scheitel 7,6 m, unter der Sockelkante (8,0 m). Keilsteine und Schlussstein im Nahrender intakt.
 - Ergebnis: 26 100 Flächen, wasserdicht, H0 erneut grün (154,6 × 164,5 × 620,7 mm).
 - Ehrlicher Stand: Alle Vergleiche sind Render-gegen-Foto; ein Probedruck fehlt weiterhin, die echte Höhe bleibt ±5 m unsicher.
+
+## Eintrag 12 – Maßstabs-Nachweis gegen amtliche LiDAR-Daten (großer Umbau)
+
+- **Auslöser:** Neues Ziel „alle Maße maßstabsgetreu, beweisen“. Textquellen nennen 60–66 m, mein Modell 54 m (nur auf OSM + Foto gestützt).
+- **Neue Datenquelle:** LGL-BW DOM1/DGM1 (1 m LiDAR, ±0,15 m), frei abrufbar. Münster-Gegenprobe: 116,6 m statt amtlich 116 m.
+  Ergebnis: Martinstor = **54,80 m**. Die Texte (65–66 m) sind für die heutige Spitze falsch; mein 54-m-Wert war richtig, aber nur durch Zufall der Annahmen.
+- **Methode:** Modell fein unterteilen → von oben auf 1-m-Raster → je Höhenschwelle Fläche zählen wie der Laser (Zelle zählt, wenn irgendwo darin > t) → gegen Laser tabellieren.
+  Drehung/Rasterphase werden gesucht, weil die Zählung davon abhängt (±15 %).
+- **Fehlversuche (wichtig):** (1) SfM aus 35 Commons-Fotos: Punktwolke fast nur eine Fassadenebene, Höhe/Breite unbrauchbar → verworfen.
+  (2) Punktweise Höhenabweichung nach Drehung/Verschiebung: Nachbarhäuser dominieren, Optimum sinnlos → Hypsometrie (Fläche je Höhe) ist drehfrei und robust.
+  (3) Rasterung nur aus Eckpunkten ließ Löcher → feine Unterteilung (0,45 m) nötig.
+- **Befund:** Gesamthöhe stimmte, aber Binnenhöhen nicht: Glockenstock-Oberkante 39,8 → ≈ 36,9 m, Dachfirst 49 → 46,2 m, Erkerkörper-Oberkante 37,2 → 33,7 m,
+  Erkerkegel-Spitze 43,6 m, Dachreiter 5 → ≈ 9 m (Kegel, Fußradius ≈ 1,5 m), Schaft 12×13,6 m am Fuß → 9,8×11,3 m, oben 9,3×10,3 m (inkl. Quader ≈ 10,7 × 11,7 m im Laser).
+  Zinnen niedriger (Wehrgang), Kragdach flacher, Uhr 1,9 m tiefer (27,8 m).
+- **Ergebnis:** Spitze 54,80 = 54,79 m; Fläche Schaft −/+ 7–14 %, Dach/Glockenstock −10…+12 %; Zone 32–35 m noch +32…+40 %. Siehe `modelle/MASSPRUEFUNG_MARTINSTOR.md`.
+- **Lehre:** (a) Amtliche Höhendaten schlagen Textquellen und Fotoschätzung; zuerst DOM/DGM holen, nicht erst nach Wochen. (b) Eine Stimmigkeit der Gesamthöhe beweist nichts über die Binnenhöhen.
+  (c) Ein Nachweis braucht die Zählweise der Referenz (hier „höchste Fläche je Zelle“), sonst vergleicht man Äpfel mit Birnen. (d) Was von oben unsichtbar ist (Bogen, Uhr), bleibt Fotovergleich.
