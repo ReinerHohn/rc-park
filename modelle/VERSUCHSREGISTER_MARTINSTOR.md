@@ -101,3 +101,15 @@ Misst je Hoehe die Silhouettenbreite in Foto 042/043/044 und im Modell (Kamera p
 - Erste Gegenprobe: Firsthoehe +0,8/+1,6 m: IoU steigt in allen 3 Fotos (042: .809->.815->.837), aber Spitze 54,8 und Foto 049 (First->Spitze 8,6 m) sprechen fuer 46,2 -> WIDERSPRUCH, nicht uebernommen.
 - Dachabschluss breiter (frustum oben 2,0x3,8 statt 1,3x3,0): Profil 44-46 m passt (Verh. ~1,0-1,1), IoU gleich; ABER Laser verschlechtert (Ziel 14,3->15,7 %, M1 16,1->21,2 %). 2,8x4,6: 042 ueberschiesst (0,83). -> NICHT uebernommen; Foto und Laser widersprechen sich, Ursache offen (Kamera-z/Massstab-Kopplung oder Laser-Raster).
 - Offen: unabhaengige Messung der Dachbreite am Vollbild (z. B. Foto 049/000) als Pruefwert, bevor der Generator geaendert wird.
+
+### J2. Gemeinsame Anpassung ueber 10 Fotos (`tools/foto_dach_gemeinsam.py`, 2026-10-31)
+Eine Dachform fuer alle, je Foto Kamera frisch verfeinert (CEM ab Basiskamera). 12 STL-Varianten: First -0,8/0/+0,8/+1,6 m x Dachabschluss 1,3x3,0 / 2,0x3,8 / 2,8x4,6 m. Fotos: 001 006 014 020 021 031 042 043 044 049 (Sichtkontrolle `dach_gemeinsam_pose_sheet.jpg`; 018 022 030 040 041 entfielen: ROI neben dem Turm, IoU-Zahl taeuschte).
+Mittel-IoU (Rohdaten `dach_gemeinsam_tabelle.json`):
+| First \ Abschluss | 1,3x3,0 | 2,0x3,8 | 2,8x4,6 |
+|---|---|---|---|
+| -0,8 | 0,8787 | 0,8794 | 0,8762 |
+| 0 (Ist) | 0,8831 | 0,8840 | 0,8794 |
+| +0,8 | 0,8869 | 0,8874 | 0,8814 |
+| +1,6 | 0,8898 | 0,8893 | 0,8819 |
+Ergebnis: UNENTSCHEIDBAR. Hoehere Firste steigen stetig (~0,004 je 0,8 m, ohne Maximum; Fotos 042, 049, 014 steigen am meisten, 001 und 031 fallen), Unterschiede <= 0,01 im Mittel = Rauschniveau der Silhouette bei 400 px. Abschluss 2,8x4,6 ist durchweg schlechter, 1,3x3,0 und 2,0x3,8 nicht trennbar. Gegenargumente gegen hoeheren First: Foto 049 (First->Spitze 8,6 m), Laser (2,0x3,8 verschlechtert M1 16,1->21,2 %). Generator NICHT geaendert.
+Lehre: Silhouetten-IoU bei 400 px kann Dachhoehe/-breite nicht entscheiden; IoU-Zahl ohne Sichtkontrolle des ROI taeuscht. Naechster Weg: Kanten statt Silhouette (Dachtraufe/First als Linie im Vollbild) oder Foto-Hoehenmessung mit bekanntem Mass (Uhr, Fensterreihe) am Vollbild.
