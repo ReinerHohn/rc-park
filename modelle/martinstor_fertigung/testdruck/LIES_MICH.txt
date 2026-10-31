@@ -1,0 +1,7 @@
+TESTDRUCK 0,4-mm-Duese (Martinstor 1:87)
+Alles liegend/stehend wie gezeigt, 0,12 mm Schicht, 3 Waende, ohne Stuetzen (Tuermchen evtl. mit Stuetzen), PLA.
+1. pruefplatte_0.4.stl  Zeilen von unten: A Rippen 0,4/0,5/0,6/0,8/1,0/1,2 mm dick (stehen sie? zusammenhaengend?)
+   B Spalt 0,2/0,3/0,4/0,5/0,6/0,8 mm (welcher Spalt ist noch offen?)  C Reliefstufen 0,1/0,2/0,3/0,4/0,6/1,0 mm hoch
+   D Bohrungen 0,4/0,6/0,8/1,0/1,5/2,0 mm (welche ist offen?)
+2. test_adlertafel / test_zinnen / test_tuermchen / test_eckquader = echte Ausschnitte. 1 mm = 87 mm am Original.
+Notieren: kleinste Rippe/Spalt/Reliefstufe/Bohrung, die sauber kommt -> das ist die Detailgrenze fuer 0,4 mm.

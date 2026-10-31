@@ -34,3 +34,6 @@ Strahlenmessung der Wanddicke (innen) und Spaltbreite (aussen) an je 6000 Oberfl
 - **0,4 mm:** 108 von 113 Teilen mit > 2 % zu duenner Wand (fast alle Reliefs, Traegerschicht 0,5 mm) -> fuer Details ungeeignet.
 - **0,2 mm:** nur ca. 1/3 der Teile mit > 2 % (meist 3-5 %, Randbereiche) - druckbar. Ausnahmen: Zifferblatt-Scheiben (druck_055/056, ~0,05 mm duenne Stellen, Dicke vorab auf >= 0,5 mm legen), Uhrrahmen. Splitter < 0,3 mm werden jetzt automatisch verworfen.
 - Kein Spaltproblem (kein Teil mit zu engen Fugen).
+
+## Testdruck mit 0,4-mm-Duese (tools/testdruck_bauen.py)
+`modelle/martinstor_fertigung/testdruck/`: `pruefplatte_0.4.stl` (70 x 72 mm: Rippen 0,4-1,2 mm, Spalte 0,2-0,8, Reliefstufen 0,1-1,0, Bohrungen 0,4-2,0) plus echte Ausschnitte `test_adlertafel`, `test_zinnen`, `test_tuermchen`, `test_eckquader`. Ergebnis (kleinste saubere Rippe/Spalt/Stufe/Bohrung) hier eintragen: _offen, noch nicht gedruckt_.
