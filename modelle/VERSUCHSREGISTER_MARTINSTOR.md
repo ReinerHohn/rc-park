@@ -94,3 +94,10 @@ Nutzer: "die Türmchen sind zu gedrungen, die Mittelspitze stimmt nicht". Der Hi
 
 ## H. Stop-Hook-Ziel "alle Maße bewiesen"
 Mit offenen Daten nicht erreichbar (Raster 1 m, Laser nur von oben, Fotos ±10 %). Nur der Nutzer kann es mit `/goal clear` beenden oder lockern. Belegt: Gesamthöhe 54,80 m, Schaftquerschnitt, Glocken-/Dachform als Silhouette, ein wasserdichter Körper.
+
+## J. Allgemeines Breitenprofil Foto <-> Modell (`tools/foto_profil_gpu.py`, 2026-10-31)
+Misst je Hoehe die Silhouettenbreite in Foto 042/043/044 und im Modell (Kamera per GPU angepasst, Faktor auf 36-48 m normiert). Kein Bauteil vorab bekannt.
+- Befund (alle 3 Fotos gleich): 43-47 m ist das Foto 15-60 % BREITER als das Modell (Dach laeuft oben zu schnell zu). Unterhalb 42 m passt es (Streuung durch Verdeckung/Tuermchen).
+- Erste Gegenprobe: Firsthoehe +0,8/+1,6 m: IoU steigt in allen 3 Fotos (042: .809->.815->.837), aber Spitze 54,8 und Foto 049 (First->Spitze 8,6 m) sprechen fuer 46,2 -> WIDERSPRUCH, nicht uebernommen.
+- Dachabschluss breiter (frustum oben 2,0x3,8 statt 1,3x3,0): Profil 44-46 m passt (Verh. ~1,0-1,1), IoU gleich; ABER Laser verschlechtert (Ziel 14,3->15,7 %, M1 16,1->21,2 %). 2,8x4,6: 042 ueberschiesst (0,83). -> NICHT uebernommen; Foto und Laser widersprechen sich, Ursache offen (Kamera-z/Massstab-Kopplung oder Laser-Raster).
+- Offen: unabhaengige Messung der Dachbreite am Vollbild (z. B. Foto 049/000) als Pruefwert, bevor der Generator geaendert wird.
