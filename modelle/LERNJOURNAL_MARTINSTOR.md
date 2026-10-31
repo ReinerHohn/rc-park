@@ -226,3 +226,10 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - **Ergebnis (Endstand):** Spitze 54,80 = 54,79 m; Schaft +7…+14 %, Zinnen +18 %, Glockenstock/Dach/Dachreiter −7…+12 %, nur Stufe 35 m +35 %; Median 7 %, Mittel 12 %. Zinnenkrone lag 0,9 m zu hoch (Randzellen im Laser 31–33 m), das fiel erst im Zellkarten-Vergleich auf, nicht in der Tabelle. Siehe `modelle/MASSPRUEFUNG_MARTINSTOR.md`.
 - **Lehre:** (a) Amtliche Höhendaten schlagen Textquellen und Fotoschätzung; zuerst DOM/DGM holen, nicht erst nach Wochen. (b) Eine Stimmigkeit der Gesamthöhe beweist nichts über die Binnenhöhen.
   (c) Ein Nachweis braucht die Zählweise der Referenz (hier „höchste Fläche je Zelle“), sonst vergleicht man Äpfel mit Birnen. (d) Was von oben unsichtbar ist (Bogen, Uhr), bleibt Fotovergleich.
+
+## Eintrag 13 – Unsichtbares messen: Verhältnisse zur laservermessenen Fassade
+
+- Das Hook-Urteil „Torbogen/Uhr/Fenster unbewiesen“ war berechtigt. Einzige Referenz für die Querrichtung ist die Fassadenbreite (Laser). Torbogen, Zifferblatt, Schild als Verhältnis dazu auf **zwei** Fotos gemessen (Tabelle in `MASSPRUEFUNG_MARTINSTOR.md`, Teil 2).
+- Ergebnis: Durchfahrt 4,7 m (nicht 6,6), Zifferblatt 4,2 m (nicht 4,6), Wappenschild 1,7 × 2,3 m (nicht 2,8 × 3,2). Mein früheres „Foto zeigt breiter“ war ein Augenvergleich gegen ein schräges Render und lag falsch.
+- Lehre: Ein Augenvergleich zweier Bilder aus verschiedenen Blickwinkeln misst nichts. Messen am **selben** Foto, **in einer Ebene**, **auf gleicher Bildhöhe**, Verhältnis zu einer bekannten Länge. Zwei Fotos geben die Streuung (hier ≤ 10 %).
+- Eine Kameralösung (PnP) aus handgesetzten 2D-3D-Punkten wurde erwogen und verworfen: zu viele mehrdeutige Zuordnungen (welcher der vier Erker), Fehler größer als der Gewinn.

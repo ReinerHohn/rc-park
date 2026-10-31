@@ -24,6 +24,22 @@ Dünne Turmspitzen gehen also nicht verloren.
 Vollständige Tabelle (Gesamtfläche je Höhenschwelle im 9-m-Umkreis, gleiches 1-m-Raster): `python tools/masspruefung_tabelle.py`.
 Mittlere Flächenabweichung über alle 13 Höhenstufen: **12 %**, Median **7 %**.
 
+
+## Teil 2: von oben unsichtbare Maße – Foto-Verhältnismessung gegen die laservermessene Fassade
+Was der Laser nicht sieht (Torbogen, Uhr, Wappenschild), wird als **Verhältnis zur Fassadenbreite auf gleicher Höhe** an zwei unabhängigen Fotos
+(`daten/martinstor/fotos/030…7999`, `042…Martinstor_1`) gemessen, mit Gitter in Originalpixeln abgelesen. Verhältnisse in einer Ebene auf gleicher
+Bildhöhe sind gegen Kamerakippung robust; die Fassadenbreite (≈ 11,5 m) stammt aus dem Laser (Schaft 11,7 m inkl. Randzelle).
+
+| Merkmal | Foto 030 | Foto 042 | Mittel | Meter (×11,5 m) | im Modell |
+|---|---|---|---|---|---|
+| Zifferblatt-Ø / Fassade | 204/587 = 0,35 | 142/365 = 0,39 | 0,37 | **4,2 m** | 4,2 m (r 2,1) |
+| Durchfahrt (Öffnung) / Fassade am Fuß | 347/833 = 0,42 | 185/475 = 0,39 | 0,405 | **4,7 m** | 4,7 m |
+| Wappenschild-Breite / Fassade | – | 65/440 = 0,15 | 0,15 | **1,7 m** (Höhe ≈ 2,3 m) | 1,7 × 2,3 m |
+
+Unsicherheit je Messung ≈ ±8 % (Ablesefehler ±5 px, leichte Schrägsicht ≈ ±5 %), beide Fotos weichen bis 10 % voneinander ab.
+**Korrektur:** Frühere Werte (Torbogen 6,0 → 6,6 m, Adler 2,8 × 3,2 m, Uhr Ø 4,6 m) beruhten auf einem Augenvergleich und auf einer Annahme (Bogen ↔ Uhr), also
+zirkulär; sie waren 20–60 % zu groß. Das ist der eigentliche Fund dieses Teils.
+
 ## Was damit **widerlegt** ist
 Mehrere Textquellen nennen **60–66 m** (Bauforschung BW „65 m“, Schwarzwaldportal „66 m“, ein Absatz derselben PDF „60 m“).
 Der Laser misst **54,8 m**. Die 65–66 m stimmen nicht für die heutige Spitze. Die Grundfläche „10 × 11 m“ der Quellen stimmt dagegen:
@@ -32,8 +48,8 @@ Auch OSM (Spitze 53 m) liegt näher als die Texte.
 
 ## Grenzen (ehrlich)
 1. Das Raster ist 1 m. Jede Breite ist daher nur auf etwa ±1 m bewiesen, jede Fläche auf etwa ±15 % (Drehung/Phase der Zellen ändern die Zählung).
-2. Die Draufsicht sieht nur die **höchste Fläche je Zelle**. Torbogen, Uhr (Ø, Höhe), Fenster, Sockelaufweitung und alles unter Vordächern bleiben
-   damit **unbewiesen**; dort gilt nur der Fotovergleich (±10 %, Annahme Torbogenbreite 6,6 m).
+2. Die Draufsicht sieht nur die **höchste Fläche je Zelle**. Torbogen, Uhr und Schild sind deshalb nur über Teil 2 (Fotoverhältnis, ±10 %) belegt.
+   **Höhenlagen** von Uhrmitte (26,9 m), Torbogenscheitel (6,55 m), Schild und Fenstern sind **nicht belegt** (nur Fotovergleich ±10 %), ebenso die Sockelaufweitung.
 3. Bei 35 m liegt das Modell +35 % über dem Laser (3 Randzellen). Vermutlich ist Kragdach-/Dachtraufe etwas anders geformt; mit 1-m-Daten nicht zu klären.
 4. Nicht geprüft ist ein Probedruck.
 

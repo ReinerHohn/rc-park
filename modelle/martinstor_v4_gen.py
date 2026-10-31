@@ -209,7 +209,7 @@ hz = hxy(ZB + 0.2)
 adds.append(box(-hz[0] - 0.25, hz[0] + 0.25, -hz[1] - 0.25, hz[1] + 0.25, ZB, ZB + 0.45))                      # Gurtgesims Sockel/Schaft
 
 # ---------- Tordurchfahrt mit Keilsteinbogen (x-Richtung) ----------
-AW, SPR = 6.6, 4.3
+AW, SPR = 4.7, 4.2
 cuts.append(box(-DB, DB, -AW / 2, AW / 2, -1, SPR))
 cuts.append(M.cylinder(2 * DB, AW / 2, circular_segments=96).rotate((0, 90, 0)).translate((-DB, 0, SPR)))
 for f in ("+x", "-x"):
@@ -231,9 +231,9 @@ cuts.append(fbox("+x", -2.1, 2.1, 8.9, 10.1, rel(0.14) - rel(0.05), 1.0, h=_hT))
 for i in range(5):
     z = 9.05 + i * 0.22
     adds.append(fbox("+x", -1.8 + (0.3 if i == 4 else 0), 1.8 - (0.3 if i == 4 else 0), z, z + 0.09, 0, rel(0.12), h=_hT))
-ZA, FA = 10.2, 1.5                                                                          # Adler-Mitte, Vergroesserung (Foto: Tafel ~2,6 x 3 m)
-adds.append(fbox("-x", -1.4, 1.4, 8.6, 11.8, -0.05, rel(0.14), h=_hT))                       # Tafel
-cuts.append(fbox("-x", -1.15, 1.15, 8.85, 11.55, rel(0.14) - rel(0.05), 1.0, h=_hT))         # Feld einsenken
+ZA, FA = 10.0, 0.9                                                                          # Adler-Mitte, Vergroesserung (Foto: Tafel ~2,6 x 3 m)
+adds.append(fbox("-x", -0.85, 0.85, 8.8, 11.1, -0.05, rel(0.14), h=_hT))                       # Tafel
+cuts.append(fbox("-x", -0.7, 0.7, 9.0, 10.9, rel(0.14) - rel(0.05), 1.0, h=_hT))         # Feld einsenken
 for e in [M.sphere(0.32 * FA, 24).scale((1, 0.8, 1.3)).translate((0, 0, ZA - 0.2)),
           M.sphere(0.2 * FA, 16).translate((0, -0.28 * FA, ZA + 0.5 * FA)), M.sphere(0.2 * FA, 16).translate((0, 0.28 * FA, ZA + 0.5 * FA)),
           M.sphere(0.42 * FA, 24).scale((0.5, 1.0, 0.55)).translate((0, -0.5 * FA, ZA - 0.1)), M.sphere(0.42 * FA, 24).scale((0.5, 1.0, 0.55)).translate((0, 0.5 * FA, ZA - 0.1))]:
@@ -245,7 +245,7 @@ for f in ("+y", "-y"):
 # ---------- Schaft: Eckquader, Uhr, Schlitzfenster (alles auf der Hoehe der Verjuengung) ----------
 SZ0 = ZB + 0.5
 quoins3(SZ0, ZZ - 0.3)
-UZ, UR = 26.9, 2.3
+UZ, UR = 26.9, 2.1
 for f in ("+x", "-x"):
     hh = hxy(UZ)
     clock3(f, UZ, UR, hh)
