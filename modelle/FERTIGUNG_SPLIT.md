@@ -37,3 +37,6 @@ Strahlenmessung der Wanddicke (innen) und Spaltbreite (aussen) an je 6000 Oberfl
 
 ## Testdruck mit 0,4-mm-Duese (tools/testdruck_bauen.py)
 `modelle/martinstor_fertigung/testdruck/`: `pruefplatte_0.4.stl` (70 x 72 mm: Rippen 0,4-1,2 mm, Spalte 0,2-0,8, Reliefstufen 0,1-1,0, Bohrungen 0,4-2,0) plus echte Ausschnitte `test_adlertafel`, `test_zinnen`, `test_tuermchen`, `test_eckquader`. Ergebnis (kleinste saubere Rippe/Spalt/Stufe/Bohrung) hier eintragen: _offen, noch nicht gedruckt_.
+
+### Slicen fuer Prusa MK4S (tools/prusa_slice.py)
+`python3 tools/prusa_slice.py teil.stl --out ordner [--support]` loest die PrusaSlicer-Profile (MK4IS 0.4, 0.10mm FAST DETAIL, Prusament PLA) selbst auf und schreibt G-Code mit Duesenpruefung `M862.1 P0.4` (der Drucker bricht bei falscher Duese ab). Testteile: Pruefplatte 44 min / 10,7 g, Adlertafel 44 min / 3,6 g, Zinnen 39 min / 5,9 g, Eckquader 1:46 h / 15,7 g, Tuermchen (Stuetzen) 3:03 h / 24,7 g. Drucker: `prusa-mk4.local` (192.168.178.55, PrusaLink, Digest-Login noetig).
