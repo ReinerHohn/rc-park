@@ -113,3 +113,12 @@ Mittel-IoU (Rohdaten `dach_gemeinsam_tabelle.json`):
 | +1,6 | 0,8898 | 0,8893 | 0,8819 |
 Ergebnis: UNENTSCHEIDBAR. Hoehere Firste steigen stetig (~0,004 je 0,8 m, ohne Maximum; Fotos 042, 049, 014 steigen am meisten, 001 und 031 fallen), Unterschiede <= 0,01 im Mittel = Rauschniveau der Silhouette bei 400 px. Abschluss 2,8x4,6 ist durchweg schlechter, 1,3x3,0 und 2,0x3,8 nicht trennbar. Gegenargumente gegen hoeheren First: Foto 049 (First->Spitze 8,6 m), Laser (2,0x3,8 verschlechtert M1 16,1->21,2 %). Generator NICHT geaendert.
 Lehre: Silhouetten-IoU bei 400 px kann Dachhoehe/-breite nicht entscheiden; IoU-Zahl ohne Sichtkontrolle des ROI taeuscht. Naechster Weg: Kanten statt Silhouette (Dachtraufe/First als Linie im Vollbild) oder Foto-Hoehenmessung mit bekanntem Mass (Uhr, Fensterreihe) am Vollbild.
+
+### J3. NEUER BEFUND: Dachreiter/Spitze vermutlich LAENGER als 54,8 m (Foto 049 Vollbild 1920x2880, 2026-10-31)
+Silhouettenbreite je Zeile am Vollbild (Himmelsmaske, Spitze bei x=824, y=39):
+- Spitze -> Oberkante Dach (Breitensprung 20 -> 162 px): 590 px. Dach oben ca. 155 px breit, Seiten +0,305 px je px (Dachflanke).
+- Dach Oberkante -> Traufe (Dachunterkante ueber Schallarkaden, Sichtkontrolle `ridge049b.jpg`): ca. 490 px. Verhaeltnis Spitze/Dach = 1,20 (Modell: 8,6/10,7 = 0,80).
+- Massstab im Foto: Dachbasis 304 px = 6,8-7,5 m (Modell) und Schallarkaden-Abstand ~80 px = 2 m (Modell) -> ~41-43 px/m, zwei unabhaengige Hinweise (beide aus Modellmassen, daher nicht unabhaengig vom Modell).
+- Folge: Dach ~11,5-12 m (Modell 10,7: passt), Spitze ~13,8-14,2 m (Modell 8,6) -> Spitzenhoehe ca. 60-62 m statt 54,8 m. Passt zu den Textangaben 60-66 m.
+- Warum der Laser das nicht sah: DOM1 (1 m Raster, ALS-Punkte) trifft eine 0,1 m dicke Nadel kaum; 54,80 m ist die hoechste GETROFFENE Flaeche (Knauf/Mast), nicht bewiesene Spitze. Mein "Texte 60-66 m falsch" (Memory lidar-massnachweis) war fuer die Nadel unbewiesen. Pruefstand-Check "Gesamthoehe 54,7-54,9" ruht auf dieser Annahme.
+- Gegenprobe noetig (vor jeder Aenderung): gleiche Messung an >= 3 weiteren Fotos mit freier Spitze (001, 020, 021, 031, 000), Massstab je Foto aus Uhrscheibe/Arkaden/Fensterreihe; dann Pruefung "Spitzenhoehe" in modell_pruefstand.py (fehlschlagend), dann Generator.
