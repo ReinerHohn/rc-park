@@ -292,3 +292,8 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - Grenzen: Quadratturm -> Azimut-Loesungen um ~90 Grad gleichwertig (044: -60 gegen +27 Grad); Abstand und Brennweite gekoppelt, daher absolute Masse nur ueber bekannte Gesamthoehe 54,8 m; Bereichsgrenzen anfangs zu eng (043 stiess an alle), danach erweitert. Streuung zwischen Startwerten 0,01-0,04 IoU = Rauschen der Anpassung, Unterschiede darunter nicht belastbar.
 - Aussage: bestaetigt die Gesamtform des Oberteils unabhaengig vom Laser (Fotos), nicht einzelne Masse. Keine Modelländerung abgeleitet. Naechster Schritt waere Parametervariation (Dachhoehe, Nadel) mit IoU ueber alle drei Fotos - Effekt muss ueber dem Anpassungsrauschen liegen.
 - Bilder: modelle/foto_silhouette/fit_042|043|044.png (rot = Modellkontur, gruen = Anpassungsbereich).
+
+## 23. Dachfirst-Test gegen drei Fotos (Silhouette, GPU)
+- Aufbau: Firsthoehe 43,5 / 44,8 / 46,2 / 47,6 / 49,0 m (Gesamthoehe fest 54,8 m, Nadel dehnt/staucht mit), je Variante Kamera pro Foto neu angepasst (3 Startposen, bester Wert). Datei `modelle/foto_silhouette/dachtest.json`.
+- Ergebnis (IoU Mittel ueber 042/043/044): 0,854 / 0,866 / 0,877 / 0,885 / 0,888. Alle drei Fotos steigen gleichsinnig, kein Maximum im Bereich.
+- Bewertung: Spanne 0,034 liegt nur knapp ueber dem Anpassungsrauschen (~0,02); die Variation verkuerzt gleichzeitig die Nadel (Verzerrung), Laser und LoD2 sprechen fuer 45-46 m. Kein Beleg fuer ein hoeheres Dach, Modell unveraendert. Eine saubere Messung braucht frontale Fotos mit bekannten Massen oder eine getrennte Variation von Dach und Nadel.

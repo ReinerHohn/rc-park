@@ -68,8 +68,15 @@ Wasserdichtigkeit, Teile, Status), hell/dunkel. Aufruf: `python tools/viewer_bau
 - `tools/hypso_gpu.py`: Hoehenkarten des Modells fuer 2106 Drehungen/Raster-Phasen gleichzeitig (PyTorch `scatter_reduce(amax)`, float64), je Hoehenstufe Flaeche > t gegen das amtliche DOM. **Selbsttest** `--selbsttest`: GPU == CPU bit-gleich (Hoehenkarten und Fehler), Messung: 275 Kombinationen CPU 2,4 s / GPU 0,5 s; feines Raster 1,8 s gesamt.
 - `tools/generator_optimierer.py`: Koordinatensuche ueber 16 Generatormasse (+Mehrfachstart mit festen Seeds). **Annahmeregel:** Trainingsfehler (13 Stufen) > 2 sigma besser UND zurueckgehaltene Stufen (12 andere, an der Trainingslage) nicht signifikant schlechter UND punktweise Hoehe im 4,5-m-Umkreis nicht schlechter als +0,15 m. sigma = Bootstrap der Raster-Suche. Vertrauensbereich +-2 Schritte. Protokoll mit Versionen, GPU, git-Stand: `modelle/optimierung_martinstor.json`.
 - `tools/optimierung_validieren.py`: unabhaengige Pruefung zweier STL (andere Stufen, Umkreis 13 m, feines Raster, punktweise).
-- **Wiederholbar:** Scatter-Max ist ordnungsunabhaengig, alle Seeds fest -> gleiche Eingabe = gleiche Zahlen (Nachweis: zweiter Lauf, siehe `OPTIMIERUNG_MARTINSTOR.md`).
+- **Wiederholbar:** Scatter-Max ist ordnungsunabhaengig, alle Seeds fest -> gleiche Eingabe = gleiche Zahlen (Nachweis: Lauf 3 gegen 4 Feld fuer Feld identisch; frueherer Unterschied lauf1/2 kam von parallelen Prozessen mit gemeinsamer cur.stl, behoben durch cur<PID>; siehe `OPTIMIERUNG_MARTINSTOR.md`).
 - Nicht auf der GPU: Modellerzeugung (manifold3d, CPU), Netzunterteilung (trimesh, CPU). Hinweis: GPU stuerzte hier einmal nach Standby ab (Treiber-Eigenheit, siehe Speicher gpu-pc).
+
+### 2.5 Foto-Silhouetten-Pruefung mit GPU (`foto_silhouette_gpu.py`, `foto_dachtest_gpu.py`)
+Schritt "Form gegen Fotos pruefen" (unabhaengig vom Laser). GPU wie in 2.4 fester Teil, Rueckfall nur ueber Anpassung von `dev` im Skript.
+- `tools/foto_silhouette_gpu.py <Foto 042|043|044> [seed] [out.png]`: 200 000 Modellpunkte je Kandidat-Kamera projiziert, 8 Kameraparameter (Abstand, Azimut, Elevation, Blickhoehe, Roll, Brennweite, Bildverschiebung), Himmelsmaske als Ziel, Kamerahoehe ~1,7 m als weiche Nebenbedingung; Zufallssuche (30 000) + Kreuzentropie. Ausgabe: IoU, Pose, Bild (rote Modellkontur).
+- `tools/foto_dachtest_gpu.py`: Beispiel fuer Parametertest ueber alle Fotos (Dachfirst-Variation per z-Umrechnung der Punkte, Kamera je Variante neu angepasst, bester Start je Foto).
+- **Aussagekraft:** Anpassungsrauschen 0,01-0,04 IoU, Azimut um 90 Grad mehrdeutig (Quadratturm), Abstand/Brennweite gekoppelt. Nur Unterschiede deutlich ueber dem Rauschen zaehlen. Ergebnisse: `LERNJOURNAL_MARTINSTOR.md` Eintrag 22-23, Bilder `modelle/foto_silhouette/`.
+- **Nicht beweisend** fuer Einzelmasse; Fenster, Tafeln, Adler bleiben Verhaeltnismessung (+-10 %).
 
 ## 3. Rezepte
 
