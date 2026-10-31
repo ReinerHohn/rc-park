@@ -78,6 +78,12 @@ Schritt "Form gegen Fotos pruefen" (unabhaengig vom Laser). GPU wie in 2.4 feste
 - **Aussagekraft:** Anpassungsrauschen 0,01-0,04 IoU, Azimut um 90 Grad mehrdeutig (Quadratturm), Abstand/Brennweite gekoppelt. Nur Unterschiede deutlich ueber dem Rauschen zaehlen. Ergebnisse: `LERNJOURNAL_MARTINSTOR.md` Eintrag 22-23, Bilder `modelle/foto_silhouette/`.
 - **Nicht beweisend** fuer Einzelmasse; Fenster, Tafeln, Adler bleiben Verhaeltnismessung (+-10 %).
 
+### 2.6 Abnahme-Pruefstand (`modell_pruefstand.py`, `martinstor_bauen.sh`) – PFLICHT nach jeder Generatoraenderung
+Misst am STL feste Merkmale mit Quelle (Foto-Vollbild oder Laser): Tuermchen-Spitze/Kegelschlankheit, Dachreiter-Dicke/Knauf, Gesamthoehe,
+Wasserdichtigkeit, Koerperzahl. Exit 1 bei Fehlschlag. Entstanden, weil "Tuermchen zu gedrungen" und "Mittelspitze falsch" nach einer Korrektur
+unbemerkt zurueckkamen (Ursachenanalyse: `VERSUCHSREGISTER_MARTINSTOR.md` Abschnitt I). Neue Nutzerbeobachtung -> erst Pruefung (muss fehlschlagen), dann Fix.
+Nachweis der Wirksamkeit: der Stand vor der Korrektur faellt mit 4 Pruefungen durch, der korrigierte besteht alle.
+
 ## 3. Rezepte
 
 **Martinstor (aktuell v4):**

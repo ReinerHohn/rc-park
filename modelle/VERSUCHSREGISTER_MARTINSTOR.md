@@ -82,5 +82,15 @@ Lizenzen der benutzten Werkzeuge/Daten: `LIZENZ_WERKZEUGE.md`.
 - Mapillary (CC BY-SA 4.0) und Staatsarchiv-Fotos; Anfrage Stadtarchiv/Denkmalamt.
 - Zifferblattdicke in der Aufteilung prüfen.
 
+## I. Warum die Türmchen/Spitze nicht selbst gefunden wurden (Nutzerfrage 2026-10-31, Ursachenanalyse)
+Nutzer: "die Türmchen sind zu gedrungen, die Mittelspitze stimmt nicht". Der Hinweis war **schon einmal da** (Journal Eintrag 10, Erkerkegel 7,4 m) und ist trotzdem verloren gegangen. Gründe, belegt:
+1. **Rückschritt unbemerkt:** Journal 10 verlängerte den Erkerkegel auf 7,4 m. Die Laser-Korrektur (Commit 5bfbca1, "Zinnenkrone/Glockenstock/Erker nach LiDAR") senkte den Erkerkörper um 3,5 m und kürzte dabei den Kegel auf 3,5–4,5 m. Erst nach der Änderung wurde nur noch gegen den Laser geprüft, nie wieder gegen das Foto. Backups: `martinstor_v4_vor_lidar.py` 7,4 m, `vor_erker.py` 3,5 m.
+2. **Messblindheit:** Mein einziges Qualitätsmaß war die Hypsometrie (Fläche über Höhe, 1-m-Raster, 13 Stufen). Türmchenkegel (1–2 Zellen) und Nadel (<1 Zelle) tragen dazu fast nichts bei; Schlankheit/Breite ist darin unsichtbar. "Grüne Zahlen" bedeuteten nicht "sieht richtig aus" (Journal 10 hatte genau diese Lehre notiert).
+3. **Suchraum zu klein:** Der Optimierer hatte 16 Parameter; **Kegelhöhe, Nadeldicke, Knauf** waren nicht dabei und konnten gar nicht gefunden werden.
+4. **Gute Signale weggeworfen:** OR (Erkerradius) war in allen 5 Mehrfachstarts der am besten bestimmte Parameter (1,01–1,15 statt 1,3), und mein Rastertest hatte "TWs 2,0 / OR 0,9" schon als besser als die Basis gefunden. Ich habe aber die **ganze** Lösung verworfen (weil D/W streuten bzw. weil der Versatz 0,7 aus dem Luftbild den Laser verschlechterte), statt je Parameter zu entscheiden.
+5. **Laser als Wahrheit überschätzt:** DOM1 ist 1-m-Raster aus interpolierten Rohpunkten. Die "Kegel, Fußradius 1,5 m" für den Dachreiter (Journal 12) war ein Rasterartefakt; ich habe ihn als Befund übernommen. Die Fotos zeigen einen dünnen Mast mit Knauf.
+6. **Falsche Beruhigung:** Silhouetten-IoU 0,92–0,93 hat große Flächen gewichtet; dünne Spitzen zählen kaum. Ich schrieb "Oberteil bestätigt" – das war zu stark.
+**Regel daraus:** (a) jede Nutzer-Sichtbeobachtung ("gedrungen", "stimmt nicht") sofort in ein **messbares Kriterium** übersetzen und Foto-gegen-Render prüfen, bevor ein Laser-Wert gilt; (b) bei Änderungen nach Laserwerten immer auch Foto-Seitenvergleich; (c) Optimierer-Parameter um die sichtbaren Merkmale erweitern (Kegelhöhe, Nadel); (d) Ergebnisse je Parameter bewerten, nicht nur als Ganzes; (e) DOM1 kann **dünne Strukturen (< ~3 m)** nicht belegen.
+
 ## H. Stop-Hook-Ziel "alle Maße bewiesen"
 Mit offenen Daten nicht erreichbar (Raster 1 m, Laser nur von oben, Fotos ±10 %). Nur der Nutzer kann es mit `/goal clear` beenden oder lockern. Belegt: Gesamthöhe 54,80 m, Schaftquerschnitt, Glocken-/Dachform als Silhouette, ein wasserdichter Körper.

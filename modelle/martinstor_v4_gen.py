@@ -317,13 +317,18 @@ for f in ("+y", "-y"): falze(f, _by, 1.5, _bx, 0.65)
 
 # ---------- Dachreiter (Laser: Kegel, Fussradius ~1,5 m bei 46 m, Spitze 54,8 m) ----------
 adds.append(M.cylinder(0.6, 1.55, 1.45, 8).translate((0, 0, RZ1 - 0.1)))
-adds.append(M.cylinder(TOP - (RZ1 + 0.5) - 0.7, 1.35, 0.08, 8).translate((0, 0, RZ1 + 0.5)))
-adds.append(M.sphere(0.22, 16).translate((0, 0, TOP - 0.65)))
-adds.append(M.cylinder(0.65, 0.05, 0.02, 8).translate((0, 0, TOP - 0.65)))
+# Dachreiter: DUENNER Mast mit Knauf. Gemessen an Foto 049 (Vollbild, blauer Himmel; First->Spitze 565 px = 8,6 m, 1,5 cm/px):
+# Nadel 0,08-0,14 m breit, Knauf ~0,67 m Durchmesser bei ~20 % der Spitzenlaenge ueber dem First, Mast darunter 0,09-0,26 m.
+# (Der Laser DOM1 verschmiert die Nadel zu einem breiten Kegel, Fussradius ~1,5 m - Rasterartefakt, kein Befund.)
+# Untergrenzen fuer den Druck: Nadel-Spitze >= 0,08 m Durchmesser (= 0,9 mm bei 1:87), Mast >= 0,24 m.
+KZ = RZ1 + 0.22 * (TOP - RZ1)
+adds.append(M.cylinder(KZ - RZ1 - 0.3, 0.13, 0.12, 8).translate((0, 0, RZ1 + 0.4)))          # Mast bis zum Knauf
+adds.append(M.sphere(0.34, 20).translate((0, 0, KZ)))                                          # Knauf
+adds.append(M.cylinder(TOP - KZ - 0.1, 0.10, 0.04, 8).translate((0, 0, KZ + 0.1)))           # Nadel (konisch)
 
 # ---------- Ecktuermchen: Sandsteinturm + achteckiger Erker mit Fachwerk-Bruestung und Arkade ----------
 TWs, T0, T1 = 2.6, 30.0, 32.7
-OR = 1.3                                     # Erker-Radius
+OR = 1.1                                     # Erker-Radius
 for sx in (-1, 1):
     for sy in (-1, 1):
         _h = hxy(T0 + 1.0)
@@ -357,9 +362,9 @@ for sx in (-1, 1):
             adds.append(M.cylinder(1.4, 0.11, 0.11, 8).translate((c[0] + (OR - 0.14) * math.cos(a), c[1] + (OR - 0.14) * math.sin(a), T1 + 0.95)))
         adds.append(M.cylinder(0.22, OR + 0.1, OR + 0.1, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.3)))
         # spitzes Kupferdach, Kugel, Spitze
-        adds.append(M.cylinder(4.5, OR + 0.12, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.52)))
-        adds.append(M.sphere(0.25, 20).translate((c[0], c[1], T1 + 7.02)))
-        adds.append(M.cylinder(0.7, 0.05, 0.015, 8).translate((c[0], c[1], T1 + 7.15)))
+        adds.append(M.cylinder(5.3, OR + 0.12, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.52)))
+        adds.append(M.sphere(0.25, 20).translate((c[0], c[1], T1 + 7.82)))
+        adds.append(M.cylinder(0.7, 0.05, 0.015, 8).translate((c[0], c[1], T1 + 7.95)))
 # ============ CSG ============
 cuts = [c for c in cuts if not c.is_empty()]
 body = M.batch_boolean(adds, OpType.Add)

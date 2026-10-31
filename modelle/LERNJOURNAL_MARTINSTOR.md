@@ -297,3 +297,10 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - Aufbau: Firsthoehe 43,5 / 44,8 / 46,2 / 47,6 / 49,0 m (Gesamthoehe fest 54,8 m, Nadel dehnt/staucht mit), je Variante Kamera pro Foto neu angepasst (3 Startposen, bester Wert). Datei `modelle/foto_silhouette/dachtest.json`.
 - Ergebnis (IoU Mittel ueber 042/043/044): 0,854 / 0,866 / 0,877 / 0,885 / 0,888. Alle drei Fotos steigen gleichsinnig, kein Maximum im Bereich.
 - Bewertung: Spanne 0,034 liegt nur knapp ueber dem Anpassungsrauschen (~0,02); die Variation verkuerzt gleichzeitig die Nadel (Verzerrung), Laser und LoD2 sprechen fuer 45-46 m. Kein Beleg fuer ein hoeheres Dach, Modell unveraendert. Eine saubere Messung braucht frontale Fotos mit bekannten Massen oder eine getrennte Variation von Dach und Nadel.
+
+## 24. Tuermchen/Dachreiter: Ursachenanalyse und Pruefstand
+- Nutzerhinweis "Tuermchen zu gedrungen, Mittelspitze stimmt nicht" war schon in Eintrag 10 behoben (Kegel 7,4 m) und kam durch die Laser-Korrektur (Kegel 3,5-4,5 m) unbemerkt zurueck. Analyse: `VERSUCHSREGISTER_MARTINSTOR.md` Abschnitt I.
+- Fix: Tuermchen OR 1,3 -> 1,1, Kegel 4,5 -> 5,3 m (Spitze 41,35 m, Laser-Maxima 40,9/41,4 m): Laserfehler 8,3 -> 7,4 %, Hold-out 10,8 -> 9,7 % (nur Tuermchen getrennt gemessen). Dachreiter: statt Kegel (Fussradius 1,5 m, Laser-Rasterartefakt) duenner Mast + Knauf + Nadel nach Foto-049-Vollbildmessung (Nadel 0,08-0,14 m, Knauf 0,67 m bei 22 % der Spitzenlaenge, 1,5 cm/px).
+- Preis: Laser-Hypsometrie wird durch die duenne Nadel schlechter (alt 8,3 % -> 13,7 %, bei 48 m -50 %, 50 m -33 % Flaeche): **erwartet**, weil DOM1 duenne Strukturen verschmiert. Bewusste Entscheidung zugunsten der Foto-Messung; im Pruefstand fest verankert.
+- Silhouetten-IoU (400-px-Fotos) kann die Nadel nicht beurteilen (Nadel 2-5 px, Ergebnis +-0,05): Nadelentscheidungen nur an Vollbildern messen.
+- Neuer Mechanismus: `tools/modell_pruefstand.py`, `tools/martinstor_bauen.sh`, `CLAUDE.md` (Regeln), Gedaechtnisnotiz.
