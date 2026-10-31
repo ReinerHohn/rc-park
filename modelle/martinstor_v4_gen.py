@@ -33,7 +33,8 @@ def rel(m):  # Relieftiefe in m, mind. MINMM im Druck
     return max(m, MINMM / K)
 
 # ---- Masse (m) ---- (Herleitung: LERNJOURNAL_MARTINSTOR.md, Eintrag 1+2)
-H_TOTAL = 54.8                # OSM-Spitze 53 m + Knauf/Fahne; Foto-Verhaeltnisse (LERNJOURNAL Eintrag 6) stuetzen 53-60 m
+H_TOTAL = 60.0                # DOKUMENTIERT: Bauforschung BW 60 m (1901: 22 -> 60 m; Objektbeschreibung 65 m), en.Wikipedia 60 m; Foto 049 Spitze ~14 m ueber First.
+                              # Laser DOM1 54,8 m = hoechste getroffene Flaeche (Nadel 0,1 m unsichtbar) - NICHT die Spitze. Register J3.
 DB, WB, ZB = 9.8, 11.3, 6.2 # Steinsockel mit Tor: Tiefe (x, Durchfahrt), Breite (y), Hoehe
 D, W = 9.3, 10.3             # Schaft AM KOPF (bei ZZ); nach unten verjuengt er sich zum Sockel
 ZZ = 30.5                     # Zinnen-Unterkante = Oberkante Schaft (OSM-Traufe 33 m, Foto 33-35 m)

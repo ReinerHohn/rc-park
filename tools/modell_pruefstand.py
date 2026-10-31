@@ -55,8 +55,10 @@ checks.append(("Dachreiter Dicke bei 50 m (m)", spire_width(50.0), 0.08, 0.40, "
 checks.append(("Dachreiter Dicke bei 52 m (m)", spire_width(52.0), 0.08, 0.30, "wie oben"))
 zs = np.arange(47.0, 52.0, 0.1); ws = [spire_width(z) for z in zs]; kz = float(zs[int(np.argmax(ws))]); kw = float(max(ws))
 checks.append(("Dachreiter Knauf Durchmesser (m)", kw, 0.50, 0.90, "Foto 049: 44 px x 1,5 cm = ~0,67 m"))
-checks.append(("Dachreiter Knauf Lage (Anteil der Laenge ueber First)", (kz - 46.2) / (54.8 - 46.2), 0.12, 0.32, "Foto 049/000: Knauf bei ~20-28 % der Spitzenlaenge ueber dem First"))
-checks.append(("Gesamthoehe (m)", float(m.extents[2]), 54.7, 54.9, "Laser DOM1-DGM1 54,80 m (Journal 12)"))
+TOPZ = float(m.extents[2])
+checks.append(("Dachreiter Knauf Lage (Anteil der Laenge ueber First)", (kz - 46.2) / (TOPZ - 46.2), 0.12, 0.32, "Foto 049/000: Knauf bei ~20-28 % der Spitzenlaenge ueber dem First"))
+checks.append(("Gesamthoehe (m)", TOPZ, 59.5, 66.0, "DOKUMENTIERT: Bauforschung BW (Landesdenkmalamt) 60 m nach 1901 / 65 m Objektbeschreibung; en.Wikipedia 60 m; Structurae ~65 m; de.Wikipedia 66 m (Plan Schaefer). Laser DOM1 54,8 m ist nur hoechste getroffene Flaeche (Nadel unsichtbar)"))
+checks.append(("Spitzenlaenge ueber First (m)", TOPZ - 46.2, 12.0, 16.5, "Foto 049 Vollbild 16,6 / 014: 16,0 / 000: 12,4 m (Massstab aus Modellmassen, grob); Register J3"))
 checks.append(("Wasserdicht (1=ja)", 1.0 if m.is_watertight else 0.0, 1, 1, "Druckfaehigkeit"))
 checks.append(("Anzahl getrennte Koerper", float(len(m.split(only_watertight=False))), 1, 1, "Schwebende Teile (Journal: 14 gefunden)"))
 
