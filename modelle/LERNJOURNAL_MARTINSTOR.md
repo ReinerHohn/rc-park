@@ -223,6 +223,6 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - **Befund:** Gesamthöhe stimmte, aber Binnenhöhen nicht: Glockenstock-Oberkante 39,8 → ≈ 36,9 m, Dachfirst 49 → 46,2 m, Erkerkörper-Oberkante 37,2 → 33,7 m,
   Erkerkegel-Spitze 43,6 m, Dachreiter 5 → ≈ 9 m (Kegel, Fußradius ≈ 1,5 m), Schaft 12×13,6 m am Fuß → 9,8×11,3 m, oben 9,3×10,3 m (inkl. Quader ≈ 10,7 × 11,7 m im Laser).
   Zinnen niedriger (Wehrgang), Kragdach flacher, Uhr 1,9 m tiefer (27,8 m).
-- **Ergebnis:** Spitze 54,80 = 54,79 m; Fläche Schaft −/+ 7–14 %, Dach/Glockenstock −10…+12 %; Zone 32–35 m noch +32…+40 %. Siehe `modelle/MASSPRUEFUNG_MARTINSTOR.md`.
+- **Ergebnis (Endstand):** Spitze 54,80 = 54,79 m; Schaft +7…+14 %, Zinnen +18 %, Glockenstock/Dach/Dachreiter −7…+12 %, nur Stufe 35 m +35 %; Median 7 %, Mittel 12 %. Zinnenkrone lag 0,9 m zu hoch (Randzellen im Laser 31–33 m), das fiel erst im Zellkarten-Vergleich auf, nicht in der Tabelle. Siehe `modelle/MASSPRUEFUNG_MARTINSTOR.md`.
 - **Lehre:** (a) Amtliche Höhendaten schlagen Textquellen und Fotoschätzung; zuerst DOM/DGM holen, nicht erst nach Wochen. (b) Eine Stimmigkeit der Gesamthöhe beweist nichts über die Binnenhöhen.
   (c) Ein Nachweis braucht die Zählweise der Referenz (hier „höchste Fläche je Zelle“), sonst vergleicht man Äpfel mit Birnen. (d) Was von oben unsichtbar ist (Bogen, Uhr), bleibt Fotovergleich.
