@@ -68,8 +68,24 @@ def wasserdicht(m):
 def voxel_solid(m, pitch):
     """Offene/rauhe Flaeche -> massiver Koerper: voxeln, innen fuellen, kleine Spitzen/Rauschen schliessen."""
     from scipy import ndimage
-    v = m.voxelized(pitch).fill()
-    a = ndimage.binary_closing(v.matrix, iterations=1)
+    try:
+        v = m.voxelized(pitch).fill()
+        mat, transform = v.matrix, v.transform
+    except ValueError:
+        # trimesh.voxelized scheitert bei sehr grossen/duennen Dreiecken ("max_iter exceeded"):
+        # Ausweg ueber dicht abgetastete Oberflaechenpunkte, dann Hohlraeume fuellen
+        n = int(min(8e6, max(2e5, m.area / (pitch * pitch) * 6)))
+        pts, _ = trimesh.sample.sample_surface(m, n)
+        lo = pts.min(0) - 2 * pitch
+        idx = np.floor((pts - lo) / pitch).astype(int)
+        mat = np.zeros(idx.max(0) + 3, bool)
+        mat[idx[:, 0], idx[:, 1], idx[:, 2]] = True
+        mat = ndimage.binary_closing(mat, iterations=2)
+        mat = ndimage.binary_fill_holes(mat)
+        transform = np.eye(4); transform[:3, :3] *= pitch; transform[:3, 3] = lo
+        class _V: pass
+        v = _V(); v.transform = transform
+    a = ndimage.binary_closing(mat, iterations=1)
     a = ndimage.binary_opening(a, iterations=1)
     lab, n = ndimage.label(a)
     if n > 1:

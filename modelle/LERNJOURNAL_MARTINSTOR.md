@@ -167,7 +167,14 @@ hat den Fehler gezeigt, den die Auswertung des ersten nicht zeigte. Sicherheitsr
 | Fenster unter Uhr | 2 + 1, z 23,4 / 20,6 | z 25,3 / 21,6 | Foto 042 |
 | Adler/Tafel | 11,7–13,5 m | 8,6–10,6 m | Foto 030/042: knapp über dem Stein |
 
-Ergebnis `modelle/h0/martinstor_v4_h0.stl`: 154,6 × 164,5 × 620,7 mm (1:87), 24 258 Flächen, wasserdicht, 3 Teile à ≈ 207 mm, 0,5 % dünne Wand (Wand p5 2,6 mm).
+Ergebnis `modelle/h0/martinstor_v4_h0.stl` (Stand vor Adler-Vergrößerung, siehe Eintrag 7): 154,6 × 164,5 × 620,7 mm (1:87), 24 258 Flächen, wasserdicht, 3 Teile à ≈ 207 mm, 0,5 % dünne Wand (Wand p5 2,6 mm).
 
 **Noch sichtbar anders als das Foto:** Der Doppeladler ist im Modell zu klein (Foto ≈ 2,6 × 3 m, Modell ≈ 1,8 m); die Quaderbänder könnten noch gröber sein;
 Fachwerk der Erker ist nur ein X (Foto: X mit Zierleisten); es gibt keine Seitenbauten (Erkerhaus links, zweiter Torbogen).
+
+## Eintrag 7 – Doppeladler vergrößert (v4, Detailschleife)
+
+- Änderung: Tafel 2,8 × 3,2 m (vorher 1,8 × 1,8 m), Vertiefung + Adlerkugeln mit Faktor 1,5, Mitte z = 10,2 m (Foto 030/042: Adler ≈ 2,6 × 3 m).
+- Prüfung: neu generiert (23 216 Flächen, wasserdicht), Seitenansicht gerendert, H0-Lauf erneut: 154,6 × 164,5 × 620,7 mm, 3 Teile, 0,4 % dünne Wand, wasserdicht.
+- Lehre: Die Differenzliste aus dem Fotovergleich (Eintrag 6) direkt abarbeiten – jede Zeile ist ein überprüfbarer Schritt. Ein Render des Ausschnitts genügt als Kontrolle, bevor die ganze Pipeline läuft.
+- Weiterhin offen: gröbere Quaderbänder, Zierleisten am Erker, Seitenbauten, zweiter Torbogen; echte Höhe ±5 m.

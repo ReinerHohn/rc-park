@@ -1,0 +1,126 @@
+{
+ "flaechen": 19084,
+ "wasserdicht": true,
+ "volumen_mm3": 17893048.6,
+ "ausdehnung_mm": [
+  224.1,
+  233.8,
+  747.1
+ ],
+ "passt_in_bauraum": true,
+ "wand_p5_mm": 5.53,
+ "wand_median_mm": 175.71,
+ "anteil_zu_duenn": 0.011,
+ "massstab": "1:87",
+ "min_wand_mm": 0.8,
+ "teile": [
+  {
+   "nr": "111",
+   "mm": [
+    91.3,
+    96.2,
+    249.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "112",
+   "mm": [
+    112.1,
+    116.9,
+    249.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "113",
+   "mm": [
+    112.1,
+    116.9,
+    249.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "121",
+   "mm": [
+    91.3,
+    96.2,
+    249.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "122",
+   "mm": [
+    112.1,
+    116.9,
+    249.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "123",
+   "mm": [
+    112.1,
+    116.9,
+    249.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "211",
+   "mm": [
+    91.3,
+    96.2,
+    249.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "212",
+   "mm": [
+    112.1,
+    116.9,
+    249.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "213",
+   "mm": [
+    112.1,
+    116.9,
+    249.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "221",
+   "mm": [
+    91.3,
+    96.2,
+    249.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "222",
+   "mm": [
+    112.1,
+    116.9,
+    249.0
+   ],
+   "wasserdicht": true
+  },
+  {
+   "nr": "223",
+   "mm": [
+    112.1,
+    116.9,
+    249.0
+   ],
+   "wasserdicht": true
+  }
+ ]
+}

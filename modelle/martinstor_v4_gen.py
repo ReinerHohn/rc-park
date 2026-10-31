@@ -230,11 +230,13 @@ cuts.append(fbox("+x", -2.1, 2.1, 8.9, 10.1, rel(0.14) - rel(0.05), 1.0, h=_hT))
 for i in range(5):
     z = 9.05 + i * 0.22
     adds.append(fbox("+x", -1.8 + (0.3 if i == 4 else 0), 1.8 - (0.3 if i == 4 else 0), z, z + 0.09, 0, rel(0.12), h=_hT))
-adds.append(fbox("-x", -0.9, 0.9, 8.8, 10.6, -0.05, rel(0.1), h=_hT))                      # Doppeladler (Relief)
-for e in [M.sphere(0.32, 24).scale((1, 0.8, 1.3)).translate((0, 0, 9.65)),
-          M.sphere(0.2, 16).translate((0, -0.28, 10.25)), M.sphere(0.2, 16).translate((0, 0.28, 10.25)),
-          M.sphere(0.42, 24).scale((0.5, 1.0, 0.55)).translate((0, -0.5, 9.8)), M.sphere(0.42, 24).scale((0.5, 1.0, 0.55)).translate((0, 0.5, 9.8))]:
-    adds.append(e.scale((rel(0.12) / 0.3, 1, 1)).translate((-DB / 2 - rel(0.1), 0, 0)))
+ZA, FA = 10.2, 1.5                                                                          # Adler-Mitte, Vergroesserung (Foto: Tafel ~2,6 x 3 m)
+adds.append(fbox("-x", -1.4, 1.4, 8.6, 11.8, -0.05, rel(0.14), h=_hT))                       # Tafel
+cuts.append(fbox("-x", -1.15, 1.15, 8.85, 11.55, rel(0.14) - rel(0.05), 1.0, h=_hT))         # Feld einsenken
+for e in [M.sphere(0.32 * FA, 24).scale((1, 0.8, 1.3)).translate((0, 0, ZA - 0.2)),
+          M.sphere(0.2 * FA, 16).translate((0, -0.28 * FA, ZA + 0.5 * FA)), M.sphere(0.2 * FA, 16).translate((0, 0.28 * FA, ZA + 0.5 * FA)),
+          M.sphere(0.42 * FA, 24).scale((0.5, 1.0, 0.55)).translate((0, -0.5 * FA, ZA - 0.1)), M.sphere(0.42 * FA, 24).scale((0.5, 1.0, 0.55)).translate((0, 0.5 * FA, ZA - 0.1))]:
+    adds.append(e.scale((rel(0.12) / 0.3, 1, 1)).translate((-DB / 2 - rel(0.1) + 0.07, 0, 0)))
 for f in ("+y", "-y"):
     for z in (6.5, 10.5):
         window(f, 0.0, z, 0.5, 1.0, hh=HB)
