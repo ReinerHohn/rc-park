@@ -285,7 +285,7 @@ def main():
             man = man - to_manifold(core)
             print(f"Kern abgezogen (Schale {a.schale} mm)")
     for cr in carriers: man = man + cr
-    comps = [c for c in man.decompose() if c.volume() > 0.5]
+    comps = [c for c in man.decompose() if c.volume() > 0.5 and min(np.array(c.bounding_box()[3:]) - np.array(c.bounding_box()[:3])) > 0.3]   # Splitter < 0,3 mm raus
     comps.sort(key=lambda c: -c.volume())
     print(f"{len(comps)} Druck-Einzelteile")
     plist = []

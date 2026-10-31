@@ -1,6 +1,6 @@
 FERTIGUNG  martinstor_v4_1-87.stl  ([122.5 139.1 629.9] mm)
 Laser: 30 Platten, 2.0 mm, Summe 1573 cm2 (Bett 410x400)
-Druck: 113 Dateien, Volumen 234.0 cm3 (Bauraum 220x220x250)
+Druck: 112 Dateien, Volumen 234.0 cm3 (Bauraum 220x220x250)
 
 PLATTEN (Nr  BxH mm  Durchbrueche/Klebemarken):
   01  113x269  4/4
@@ -146,4 +146,3 @@ DRUCKTEILE (Datei  Masse mm  cm3  passt):
   druck_109.stl  0x3x3  0.00  ja
   druck_110.stl  0x3x3  0.00  ja
   druck_111.stl  2x69x69  0.00  ja
-  druck_112.stl  2x69x0  0.00  ja

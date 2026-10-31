@@ -28,3 +28,9 @@ Allgemeines Werkzeug (kein Wissen ueber das Objekt): `tools/fertigung_split.py`.
 - Bei 1:87 sind Fugen 0,8 mm und Relief ~1 mm: mit 0,2-mm-Duese druckbar, mit 0,4 mm grob.
 - Schnitt-/Gravurparameter (Material, Leistung) nur Startwerte aus `s9_laser.conf`; am Restmaterial testen.
 - Noch nicht getestet: echter Probeschnitt / Probedruck.
+
+## Duesen-Pruefung (tools/duese_check.py, Martinstor 1:87)
+Strahlenmessung der Wanddicke (innen) und Spaltbreite (aussen) an je 6000 Oberflaechenpunkten; Regel: Wand >= 2 Linien (2,2 x Duese), Spalt >= 1,1 x Duese.
+- **0,4 mm:** 108 von 113 Teilen mit > 2 % zu duenner Wand (fast alle Reliefs, Traegerschicht 0,5 mm) -> fuer Details ungeeignet.
+- **0,2 mm:** nur ca. 1/3 der Teile mit > 2 % (meist 3-5 %, Randbereiche) - druckbar. Ausnahmen: Zifferblatt-Scheiben (druck_055/056, ~0,05 mm duenne Stellen, Dicke vorab auf >= 0,5 mm legen), Uhrrahmen. Splitter < 0,3 mm werden jetzt automatisch verworfen.
+- Kein Spaltproblem (kein Teil mit zu engen Fugen).
