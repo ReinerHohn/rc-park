@@ -56,6 +56,8 @@ Zahlen in `MASSPRUEFUNG_MARTINSTOR.md`. **Vor einem neuen Versuch hier nachsehen
 ## F. Generator-Fallen (bereits behoben)
 Reliefs in Nischen gehören in `late`; Teile müssen ≥ 0,1 m überlappen (14 schwebende Körper); Fenster mit `hh=hxy(z)`; Manifold-Aufteilung mit `decompose()`.
 
+Lizenzen der benutzten Werkzeuge/Daten: `LIZENZ_WERKZEUGE.md`.
+
 ## G. Noch nicht versucht (Ideen)
 - Scan-Punktwolke mit begrenztem Maßstab (5–16) und mehreren Startdrehungen an das Modell legen (ICP, ggf. GPU) → Abweichungskarte je Höhe.
 - VGGT/MASt3R/MoGe-2/Metric3D v2 an den Fotos (kein Fassadentest in der Literatur gefunden).
