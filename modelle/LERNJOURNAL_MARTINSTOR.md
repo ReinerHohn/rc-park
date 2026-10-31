@@ -188,3 +188,11 @@ Fachwerk der Erker ist nur ein X (Foto: X mit Zierleisten); es gibt keine Seiten
 - Offen bleibt nur, was Daten nicht liefern: die echte Höhe (54 m ±5 m) und die Wirkung am gedruckten Teil.
 
 Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe Gestalt stimmt (Schaft mit Eckquadern, Zinnenband, vier Erkertürme, Kupferdach mit Dachreiter, Spitze). Das Modell wirkt im Render breiter als das Foto; wegen unterschiedlicher Blickwinkel (Foto fast frontal, Render diagonal) nicht belastbar → nächster Schritt wäre ein Render exakt frontal mit gleicher Brennweite. Kaufhaus-H0-Lauf scheiterte 2× an RAM (trimesh-Subdivision, 22 Mio. Kanten); gelöst nur teilweise (MemoryError-Fallback), Lauf wurde vom OOM-Killer beendet → separat, wenn nichts anderes läuft.
+
+## Eintrag 9 – Uhr: Relief verschwand (CSG-Reihenfolge)
+
+- Fund: Beim Nahrender der Uhr fehlten Stundenstriche, Zeiger und Nabe. Ursache: Die Nische (`cuts`) wird nach allen `adds` abgezogen und schnitt das Zifferblatt-Relief mit weg. Die Zahlen „wasserdicht, 24 988 Flächen“ hatten das nicht gezeigt.
+- Fix: Zifferblatt, Striche, Zeiger und Nabe in Liste `late`, die nach dem Abzug vereinigt wird; Reliefhöhen gestaffelt (Blatt < Striche < Zeiger < Nabe), sonst koplanar/unsichtbar.
+- Ergebnis: 26 482 Flächen, wasserdicht, H0 erneut grün.
+- Lehre: Jedes Detail, das in eine Nische soll, muss nach dem Abziehen eingefügt werden; Details einzeln im Nahrender prüfen, nicht nur die Summenwerte.
+- Foto-Gegenprobe frontal (Foto 030 neben Render 90°/−90°): Proportionen, Zinnenband, Erkertürme, Torbogen und Wappentafel stimmen grob; Torbogen im Foto etwas breiter/höher.

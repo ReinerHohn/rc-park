@@ -142,22 +142,23 @@ def hxy(z):
     t = min(max((z - ZB) / (ZZ - ZB), 0.0), 1.0)
     return (DB / 2 + (D / 2 - DB / 2) * t, WB / 2 + (W / 2 - WB / 2) * t)
 
+late = []   # Zifferblatt-Relief wird NACH dem Ausschnitt vereinigt (sonst schneidet die Nische es weg)
 def clock3(face, z, r, hh):
     pr = rel(0.1)
     adds.append(fbox(face, -r - 0.9, r + 0.9, z - r - 0.9, z + r + 0.9, -0.05, pr, h=hh))   # Sandsteinrahmen
     cuts.append(fcyl(face, 0, z, r + 0.12, -0.15, 0.6, h=hh))
-    adds.append(fcyl(face, 0, z, r, -0.2, -0.15 + rel(0.06), h=hh))
-    adds.append(fcyl(face, 0, z, 0.2, -0.2, -0.15 + rel(0.16), h=hh))
+    late.append(fcyl(face, 0, z, r, -0.2, -0.15 + rel(0.06), h=hh))
+    late.append(fcyl(face, 0, z, 0.2, -0.2, -0.15 + 3.2 * rel(0.06), h=hh))
     for i in range(12):
         ang = math.radians(i * 30)
         u, zz = math.sin(ang) * r * 0.82, z + math.cos(ang) * r * 0.82
         sz = 0.17 if i % 3 == 0 else 0.1
-        adds.append(fbox(face, u - sz, u + sz, zz - sz, zz + sz, -0.2, -0.15 + rel(0.12), h=hh))
+        late.append(fbox(face, u - sz, u + sz, zz - sz, zz + sz, -0.2, -0.15 + 2.2 * rel(0.06), h=hh))
     for ang, ln, wd in ((math.radians(300), 0.8, 0.09), (math.radians(60), 1.2, 0.06)):
         for k in range(6):
             t = (k + 0.5) / 6 * ln
             u, zz = math.sin(ang) * t, z + math.cos(ang) * t
-            adds.append(fbox(face, u - wd, u + wd, zz - wd, zz + wd, -0.2, -0.15 + rel(0.14), h=hh))
+            late.append(fbox(face, u - wd, u + wd, zz - wd, zz + wd, -0.2, -0.15 + 2.6 * rel(0.06), h=hh))
 
 def quoins3(z0, z1, a=1.35, b=0.8, course=0.95, joint=0.09):
     """Gezahnte Eckquader entlang des verjuengten Schafts (je Lage mit den Halbmassen auf ihrer Hoehe)."""
@@ -363,7 +364,7 @@ for sx in (-1, 1):
 # ============ CSG ============
 cuts = [c for c in cuts if not c.is_empty()]
 body = M.batch_boolean(adds, OpType.Add)
-model = M.batch_boolean([body] + cuts, OpType.Subtract).scale((K, K, K))
+model = M.batch_boolean([M.batch_boolean([body] + cuts, OpType.Subtract)] + late, OpType.Add).scale((K, K, K))
 
 mesh = model.to_mesh()
 V = np.asarray(mesh.vert_properties)[:, :3].astype(np.float32)

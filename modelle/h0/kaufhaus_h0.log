@@ -1,0 +1,55 @@
+geladen: 197660 Flaechen, wasserdicht=False
+Traceback (most recent call last):
+  File "/home/oem/git/rc-park/tools/h0_druckfertig.py", line 72, in voxel_solid
+    v = m.voxelized(pitch).fill()
+        ^^^^^^^^^^^^^^^^^^
+  File "/media/oem/scan/venv-seg/lib/python3.12/site-packages/trimesh/base.py", line 2718, in voxelized
+    return creation.voxelize(mesh=self, pitch=pitch, method=method, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/oem/scan/venv-seg/lib/python3.12/site-packages/trimesh/voxel/creation.py", line 318, in voxelize
+    return voxelizers(method, mesh=mesh, pitch=pitch, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/oem/scan/venv-seg/lib/python3.12/site-packages/trimesh/util.py", line 2476, in __call__
+    return self[key](*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/oem/scan/venv-seg/lib/python3.12/site-packages/trimesh/constants.py", line 151, in timed
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/oem/scan/venv-seg/lib/python3.12/site-packages/trimesh/voxel/creation.py", line 44, in voxelize_subdivide
+    v, _f, _idx = remesh.subdivide_to_size(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/oem/scan/venv-seg/lib/python3.12/site-packages/trimesh/remesh.py", line 159, in subdivide_to_size
+    unique, inverse = grouping.unique_rows(edges)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/oem/scan/venv-seg/lib/python3.12/site-packages/trimesh/grouping.py", line 494, in unique_rows
+    return np.unique(rows, return_index=True, return_inverse=True)[1:]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/oem/scan/venv-seg/lib/python3.12/site-packages/numpy/lib/_arraysetops_impl.py", line 296, in unique
+    ret = _unique1d(ar, return_index, return_inverse, return_counts,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/oem/scan/venv-seg/lib/python3.12/site-packages/numpy/lib/_arraysetops_impl.py", line 407, in _unique1d
+    imask = np.cumsum(mask) - 1
+            ^^^^^^^^^^^^^^^
+  File "/media/oem/scan/venv-seg/lib/python3.12/site-packages/numpy/_core/fromnumeric.py", line 2952, in cumsum
+    return _wrapfunc(a, 'cumsum', axis=axis, dtype=dtype, out=out)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/oem/scan/venv-seg/lib/python3.12/site-packages/numpy/_core/fromnumeric.py", line 54, in _wrapfunc
+    return bound(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 516. MiB for an array with shape (67647912,) and data type int64
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/oem/git/rc-park/tools/h0_druckfertig.py", line 207, in <module>
+    main()
+  File "/home/oem/git/rc-park/tools/h0_druckfertig.py", line 175, in main
+    m = voxel_solid(m, a.solid)
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/oem/git/rc-park/tools/h0_druckfertig.py", line 78, in voxel_solid
+    pts, _ = trimesh.sample.sample_surface(m, n)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/oem/scan/venv-seg/lib/python3.12/site-packages/trimesh/sample.py", line 89, in sample_surface
+    tri_vectors = tri_vectors[face_index]
+                  ~~~~~~~~~~~^^^^^^^^^^^^
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 273. MiB for an array with shape (5958044, 2, 3) and data type float64
