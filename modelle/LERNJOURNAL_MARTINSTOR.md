@@ -264,3 +264,10 @@ Nachtrag Eintrag 8: Foto-Gegenprobe (Foto 042 neben Render, Ansicht 35°). Grobe
 - Foto 042/050 (Originalpixel, Fassadenbreite 11,5 m als Maßstab): Paar ca. 4,8 m unter Uhrmitte (z≈21,65), drittes ca. 8,5 m darunter (z≈18,1), Öffnung ca. 0,6 x 0,85 m.
 - Laser-Tabelle unverändert (Median 7 %), Modell wasserdicht. Beleg nur aus Fotos (±10 %), nicht aus Laser (Fenster < 1 m Raster).
 - Weiter ungeprüft: Stufe 35 m, Nadel 52 m, First 46,2 vs 45,0 (LoD2), Sockelaufweitung, Probedruck.
+
+## 19. Schwebende Teile an der Front gefunden und beseitigt
+- Anlass (Nutzer): "Struktur an der Front nicht genau, komische Artefakte, Kanten aber gut".
+- Pruefung `m.split()`: 15 Koerper statt 1. 12 Holzkonsolen (z 31,5-31,8) beruehrten die Zinnen nur flaechig (Stoss ohne Ueberlappung); 2 Fenster an +y/-y nutzten die Sockelbreite statt der verjuengten Wandbreite hxy(z) und schwebten vor der Wand.
+- Fix: Konsolen 0,1 m in Zinne hinein; Fenster mit hh=hxy(z). Ergebnis: 1 Koerper, wasserdicht, Laser-Tabelle unveraendert (Median 7 %).
+- Regel: nach jeder Aenderung Koerperzahl pruefen (muss 1 sein); Bauteile immer >=0,1 m ueberlappen.
+- Dachfirst: punktweiser Vergleich (tools/masspruefung_dach.py) im 4,5-m-Umkreis der Spitze: Fehler 2,58 / 2,55 / 2,64 m fuer First 46,2 / 45,0 / 44,0; mittlere Hoehenabweichung +0,01 / -0,50 / -0,91 m. Rasterfehler dominiert, aber nur 46,2 trifft die Hoehe im Mittel -> bleibt.

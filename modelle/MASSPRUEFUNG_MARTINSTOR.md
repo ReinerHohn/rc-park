@@ -96,3 +96,7 @@ Korrigiert in v4 (Eintrag 12 im Lernjournal).
 
 ## Teil 6: Fenster (nur Foto, ±10 %)
 Fensterpaar z≈21,65 (±2,1 m aus der Mitte), drittes z≈18,1, Öffnung 0,6 x 0,85 m. Maßstab: Fassadenbreite im selben Bild. Vom Laser nicht prüfbar (Raster 1 m).
+
+## Teil 7: Firsthoehe und Zusammenhang
+- First 46,2 m: mittlere Abweichung zum Laser im Spitzenumkreis +0,01 m (45,0 m: -0,50 m; 44,0 m: -0,91 m). Die LoD2-Angabe 45,0 m wird damit nicht bestaetigt; Streuung des 1-m-Rasters ~2,6 m je Zelle.
+- Das Modell ist ein einziger wasserdichter Koerper (zuvor 14 lose Teile, behoben).

@@ -240,7 +240,7 @@ for e in [M.sphere(0.32 * FA, 24).scale((1, 0.8, 1.3)).translate((0, 0, ZA - 0.2
     adds.append(e.scale((rel(0.12) / 0.3, 1, 1)).translate((-DB / 2 - rel(0.1) + 0.07, 0, 0)))
 for f in ("+y", "-y"):
     for z in (6.5, 10.5):
-        window(f, 0.0, z, 0.5, 1.0, hh=HB)
+        window(f, 0.0, z, 0.5, 1.0, hh=hxy(z))
 
 # ---------- Schaft: Eckquader, Uhr, Schlitzfenster (alles auf der Hoehe der Verjuengung) ----------
 SZ0 = ZB + 0.5
@@ -270,7 +270,7 @@ for f, L in (("+x", W), ("-x", W), ("+y", D), ("-y", D)):
     for i in range(n):
         u = -L / 2 + 0.5 + (i + 0.5) * pitch
         adds.append(fbox(f, u - 0.4, u + 0.4, ZZ, ZZ + 1.0, -0.5, 0.0, h=HS))                  # Zinne
-        adds.append(fbox(f, u - 0.15, u + 0.15, ZZ + 1.0, ZZ + 1.35, 0.0, 0.5, h=HS))            # Holzkonsole
+        adds.append(fbox(f, u - 0.15, u + 0.15, ZZ + 0.9, ZZ + 1.35, -0.1, 0.5, h=HS))            # Holzkonsole
 adds.append(box(-D / 2 + 0.2, D / 2 - 0.2, -W / 2 + 0.2, W / 2 - 0.2, ZZ - 0.3, ZZ + 0.2))             # Kern hinter den Zinnen
 adds.append(frustum(0, 0, ZZ + 0.2, D - 3.0, W - 3.0, ZZ + 2.0, D - 3.4, W - 3.4))               # Kupferschraege des Kragdachs
 # ---------- abgesetzter Glockenstock mit Schallarkaden ----------

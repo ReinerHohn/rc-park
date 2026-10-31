@@ -1,15 +1,15 @@
 {
- "flaechen": 23260,
+ "flaechen": 23368,
  "wasserdicht": true,
- "volumen_mm3": 5580357.4,
+ "volumen_mm3": 5580504.9,
  "ausdehnung_mm": [
   122.5,
   139.1,
   629.9
  ],
  "passt_in_bauraum": true,
- "wand_p5_mm": 3.45,
- "wand_median_mm": 64.26,
+ "wand_p5_mm": 3.91,
+ "wand_median_mm": 69.62,
  "anteil_zu_duenn": 0.001,
  "massstab": "1:87",
  "min_wand_mm": 0.8,
