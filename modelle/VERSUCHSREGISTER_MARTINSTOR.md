@@ -363,3 +363,21 @@ S2. **Alle Werkzeuge auf den Renderkern umgestellt (2026-11-01).** Laufzeiten vo
    (`mem_get_info`, ~40 Byte je Lage und Punkt) - ohne Zutun des Aufrufers.
 **Regression ist Pflicht:** vor der Umstellung wurden Referenzausgaben gesichert und danach verglichen. Ohne das haette ich die 0,1-m-Verschiebung
 in fehlteile_finden nicht bemerkt und nicht erklaeren koennen.
+
+## T. Die 23 Beobachtungen abgearbeitet - und zwar maschinell (2026-11-01)
+**`tools/beobachtungen_sichten.py` (neu)** gruppiert die automatischen Meldungen nach Hoehenzone und entscheidet nach fester Regel:
+BESTAETIGT (>= 2 Fotos, gleiches Vorzeichen, >= 0,5 m) | UNEINS (Fotos gegensaetzlich -> Kamerafehler/Verdeckung, geschlossen) |
+TEXTUR (Fehlteil-Treffer an der Fassadenkante ueber viele Hoehen = Steinfugen/Eckquader, kein Bauteil) | EINZELN (ein Foto, braucht ein zweites).
+**Von 21 Meldungen blieb EINE uebrig:** z 29-33,5 m, Modell 0,72 m zu breit, von Foto 031 UND 041 bestaetigt - dieselbe Zone, die der Laser
+gemeldet hatte. 12 wurden automatisch geschlossen (5x Steinfugen an der SE-Kante, 3 Gruppen gegensaetzlich), 9 blieben einzeln.
+**Ursache isoliert - und es war keine der Vermutungen:** Erker schmaler (TWs 2,2) machte es SCHLECHTER, Kranzueberstand wirkte gar nicht.
+Die Silhouette dort kommt vom SCHAFT. Dessen Verjuengung (9,8x11,3 unten auf 9,3x10,3 oben) war reine Annahme, durch nichts belegt.
+**Ueberkorrektur-Falle (F3/F4) sofort eingetreten:** Schaft durchgehend auf 9,0x10,0 loeste die obere Zone und machte 23,5-28 m um 0,73 m zu
+schmal - die naechste Sichtung meldete das prompt als neu BESTAETIGT. Loesung: **zweistufige Verjuengung mit Knick bei 26 m** (bis dahin
+9,3x10,3 wie bisher, darueber auf 9,0x10,0). Ergebnis ueber drei Kameras: 030 +0,27/+0,25, 031 +0,75/-0,14, 041 +0,09/-0,21.
+Drei neue Pruefzeilen (Zone 23,5-28 / 29-33,5 aus 031, 29-31,5 aus 041) sichern beide Zonen.
+**Drei Mess-Fallen, alle vom Typ "zwei verschiedene Groessen verglichen":** (1) Sollwert aus einem ZONENMITTEL gegen eine Messung bei EINER
+Hoehe (12,60 gegen Soll 11,1-11,9) -> Messer mittelt jetzt ueber dieselbe Zone; (2) Foto verdoppelt die freie Halbbreite, Pruefstand nahm beide
+Seiten (12,50 gegen 11,74) -> Messer kennt jetzt die Seite; (3) Gruppierung der Beobachtungen nach Zonenanfang statt Ueberlappung verdeckte den
+einzigen bestaetigten Befund, danach kettete die Ueberlappung ueber den halben Turm -> echte Ueberlappung UND Gruppe hoechstens 5 m hoch.
+**Stand: 31 Pruefungen gruen, 0 Widersprueche, 6 einzelne Beobachtungen (brauchen ein zweites Foto).**

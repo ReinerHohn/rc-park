@@ -35,7 +35,13 @@ QUELLEN = {
 # ----------------------------------------------------------------------------- generische Messer (alle in Metern)
 class Messer:
     def __init__(self, m, obj=None, root=None): self.m = m; self.obj = obj; self.root = root
-    def silhouettenbreite(self, z, kamera, foto, **k):
+    def silhouettenbreite_zone(self, z_von, z_bis, schritt, kamera, foto, seite="beide", **k):
+        """Mittlere Silhouettenbreite ueber eine Hoehenzone - muss zur Quelle passen: ein Sollwert aus einem Zonenmittel
+        darf nicht gegen eine Einzelhoehe geprueft werden (2026-11-01: 12,60 gegen Soll 11,1-11,9 war genau dieser Fehler)."""
+        w = [self.silhouettenbreite(z, kamera, foto, seite=seite) for z in np.arange(z_von, z_bis + 1e-9, schritt)]
+        w = [x for x in w if not np.isnan(x)]
+        return float(np.mean(w)) if w else float("nan")
+    def silhouettenbreite(self, z, kamera, foto, seite="beide", **k):
         """Breite der Modellsilhouette in Metern auf Hoehe z, gesehen durch eine kalibrierte Kamera (gleiche Rechnung wie tools/foto_breitenprofil.py).
         Sollwert dazu ist der FOTO-Wert - so wird eine Fotomessung zur dauerhaften Pruefung, ohne das Foto im Pruefstand zu brauchen."""
         import sys as _s, cv2, glob
@@ -48,6 +54,9 @@ class Messer:
             P, _ = trimesh.sample.sample_surface(self.m, 2500000, seed=0); self._sz = RK.Szene(np.asarray(P))   # einmal laden, fuer alle Hoehen/Kameras nutzen
         M = self._sz.maske_np(R, t, f, cx, cy, W, H)
         l, r = FB.halbbreite(M, R, t, f, cx, cy, C, z, FB.quer_richtung(C, z))
+        # Muss zur Fotomessung passen: ist dort eine Seite verdeckt, wird die freie verdoppelt - am Modell genauso.
+        if seite == "links": return float(2 * l) if not np.isnan(l) else float("nan")
+        if seite == "rechts": return float(2 * r) if not np.isnan(r) else float("nan")
         return float(l + r) if not (np.isnan(l) or np.isnan(r)) else float("nan")
     def _polys(self, z):
         s = self.m.section(plane_origin=[0, 0, z], plane_normal=[0, 0, 1])
@@ -139,7 +148,7 @@ class Messer:
     def querschnitt_flaeche(self, z, **k):
         """Echte Summe der Querschnittsflaechen bei z (m2). NICHT mit der Laser-Hypsometrie vergleichbar (die rastert) - dafuer hypso_ueber."""
         return float(sum(g.area for _, g in self._polys(z)))
-    def hypso_ueber(self, z, drehung=98.0, dx=-1.0, dy=-1.0, radius=9.0, raster=1.0, **k):
+    def hypso_ueber(self, z, drehung=98.0, dx=-1.0, dy=-1.0, radius=9.0, raster=1.0, N=60, **k):
         """Wie die Laser-Hypsometrie: Modellpunkte auf ein 1-m-Raster projizieren und Zellen zaehlen, deren Hoehe > z ist (im Umkreis um die Spitze).
         Nur so sind Modell und DOM1 vergleichbar - die Rasterung addiert je nach Umfang 15-25 Zellen gegenueber der echten Flaeche."""
         if not hasattr(self, "_hp"):

@@ -1,24 +1,24 @@
 {
- "flaechen": 25798,
+ "flaechen": 27178,
  "wasserdicht": true,
- "volumen_mm3": 5654595.9,
+ "volumen_mm3": 5527787.8,
  "ausdehnung_mm": [
-  142.0,
-  148.2,
+  141.9,
+  148.1,
   689.7
  ],
  "passt_in_bauraum": true,
- "wand_p5_mm": 3.37,
- "wand_median_mm": 71.42,
- "anteil_zu_duenn": 0.003,
+ "wand_p5_mm": 2.87,
+ "wand_median_mm": 68.26,
+ "anteil_zu_duenn": 0.002,
  "massstab": "1:87",
  "min_wand_mm": 0.8,
  "teile": [
   {
    "nr": "111",
    "mm": [
-    142.0,
-    148.2,
+    141.9,
+    148.1,
     229.9
    ],
    "wasserdicht": true
@@ -26,8 +26,8 @@
   {
    "nr": "112",
    "mm": [
-    121.1,
-    132.6,
+    117.7,
+    129.7,
     229.9
    ],
    "wasserdicht": true
@@ -35,8 +35,8 @@
   {
    "nr": "113",
    "mm": [
-    92.0,
-    103.4,
+    88.5,
+    100.0,
     229.9
    ],
    "wasserdicht": true

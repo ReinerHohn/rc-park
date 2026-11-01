@@ -36,7 +36,9 @@ def rel(m):  # Relieftiefe in m, mind. MINMM im Druck
 H_TOTAL = 60.0                # DOKUMENTIERT: Bauforschung BW 60 m (1901: 22 -> 60 m; Objektbeschreibung 65 m), en.Wikipedia 60 m; Foto 049 Spitze ~14 m ueber First.
                               # Laser DOM1 54,8 m = hoechste getroffene Flaeche (Nadel 0,1 m unsichtbar) - NICHT die Spitze. Register J3.
 DB, WB, ZB = 9.8, 11.3, 6.2 # Steinsockel mit Tor: Tiefe (x, Durchfahrt), Breite (y), Hoehe
-D, W = 9.3, 10.3             # Schaft AM KOPF (bei ZZ); nach unten verjuengt er sich zum Sockel
+D, W = 9.0, 10.0             # Schaft AM KOPF (bei ZZ); nach unten verjuengt er sich zum Sockel (9,8 x 11,3, LoD2).
+                             # 2026-11-01: von 9,3 x 10,3 verkleinert - zwei kalibrierte Kameras (031, 041) massen die Silhouette
+                             # bei 29-33,5 m um 0,72 m schmaler, der Laser bei 28-32 m ebenfalls (144/120 gegen 121/97 Zellen).
 ZZ = 30.5                     # Zinnen-Unterkante = Oberkante Schaft (OSM-Traufe 33 m, Foto 33-35 m)
 TOP = H_TOTAL
 adds, cuts = [], []
@@ -142,10 +144,15 @@ import random
 RNG = random.Random(1900)       # fester Startwert: Ergebnis reproduzierbar
 
 # ---------- Rumpf: unten senkrechter Steinsockel, darueber nach oben verjuengter Schaft (Foto: durchgehender Anlauf) ----------
+ZK, DK, WK = 26.0, 9.3, 10.3     # Knick der Verjuengung: bis hier wie bisher (9,3 x 10,3), darueber staerker auf D x W bei ZZ.
+                                 # Quelle: Breitenprofil aus zwei Kameras (Register T) - 23-28 m braucht die alte Breite, 29-33,5 m weniger.
 def hxy(z):
-    """Halbmasse des Rumpfs auf Hoehe z (senkrecht bis ZB, dann linear zum Schaft D x W bei ZZ)."""
-    t = min(max((z - ZB) / (ZZ - ZB), 0.0), 1.0)
-    return (DB / 2 + (D / 2 - DB / 2) * t, WB / 2 + (W / 2 - WB / 2) * t)
+    """Halbmasse des Rumpfs auf Hoehe z: senkrecht bis ZB, linear bis zum Knick ZK, dann staerker verjuengt bis ZZ."""
+    if z <= ZK:
+        t = min(max((z - ZB) / (ZK - ZB), 0.0), 1.0)
+        return (DB / 2 + (DK / 2 - DB / 2) * t, WB / 2 + (WK / 2 - WB / 2) * t)
+    t = min(max((z - ZK) / (ZZ - ZK), 0.0), 1.0)
+    return (DK / 2 + (D / 2 - DK / 2) * t, WK / 2 + (W / 2 - WK / 2) * t)
 
 late = []   # Zifferblatt-Relief wird NACH dem Ausschnitt vereinigt (sonst schneidet die Nische es weg)
 def clock3(face, z, r, hh):
@@ -184,7 +191,7 @@ def quoins3(z0, z1, a=1.35, b=0.8, course=0.95, joint=0.09):
 
 adds.append(box(-DB / 2 - rel(0.15), DB / 2 + rel(0.15), -WB / 2 - rel(0.15), WB / 2 + rel(0.15), 0, 0.9))   # Plinthe
 adds.append(box(-DB / 2, DB / 2, -WB / 2, WB / 2, 0.8, ZB))                                                      # Steinsockel
-adds.append(frustum(0, 0, ZB - 0.01, DB, WB, ZZ, D, W))                                                          # verjuengter Schaft
+adds.append(frustum(0, 0, ZB - 0.01, DB, WB, ZK, DK, WK)); adds.append(frustum(0, 0, ZK - 0.01, DK, WK, ZZ, D, W))                                                          # verjuengter Schaft
 # ---------- runder Eckturm an der NW-Ecke (Stadtseite, zwischen Turm und 1901er Torbau) ----------
 # Foto 001 Vollbild (Tafel 2,0 m = ~195 px -> ~97 px/m): Durchmesser ~2,3 m, Traufe ~10-11 m, Kegel ~3-3,5 m, Spitze ~13-14,5 m;
 # Foto 000: Suedseite ohne Eckturm. Masstabelle "Eckturm NW".

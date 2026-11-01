@@ -6,9 +6,9 @@
   "hoehe": 59.99999816894531,
   "tuermchen_spitze": 41.34999975585937,
   "tuermchen_2m_anzahl": 4.0,
-  "tuermchen_2m_durchmesser": 0.5850286444500309,
+  "tuermchen_2m_durchmesser": 0.5850286576275161,
   "tuermchen_4m_anzahl": 4.0,
-  "tuermchen_4m_durchmesser": 1.4228810693858536,
+  "tuermchen_4m_durchmesser": 1.4228810881277656,
   "nadel_50": 0.18268032793638575,
   "nadel_52": 0.16132585738354077,
   "knauf_breite": 0.6627262212622007,
@@ -19,33 +19,37 @@
   "fenster_S_unten": 1.0,
   "fenster_N_oben": 3.0,
   "fenster_N_unten": 1.0,
-  "sockel_flaeche": 148.84227901311334,
-  "sockel_x": 11.949191333770752,
+  "sockel_flaeche": 148.8422790131133,
+  "sockel_x": 11.94919133377075,
   "sockel_y": 12.456263763427735,
   "zinnen_S": 4.0,
   "zinnen_N": 4.0,
   "uhr_S": 4.45,
-  "dach_u_flaeche": 41.413968934807436,
-  "dach_u_x": 6.028972266442951,
-  "dach_u_y": 6.869158971806213,
-  "dach_o_flaeche": 6.717841856019975,
-  "dach_o_x": 1.9168237436851974,
-  "dach_o_y": 3.5046737490347235,
+  "dach_u_flaeche": 38.153510057825876,
+  "dach_u_x": 5.771028206814652,
+  "dach_u_y": 6.611215313897226,
+  "dach_o_flaeche": 6.536566505908431,
+  "dach_o_x": 1.8831783784997245,
+  "dach_o_y": 3.4710288629778825,
   "eckturm_h": 14.020000350952147,
   "eckturm_x": 1.8023570137023928,
   "eckturm_y": 2.5474043655395504,
-  "eckturm_punkte": 61.0,
+  "eckturm_punkte": 63.0,
   "tafel_N": 3.35,
   "tafel_S": 0.0,
   "adler_S": 1.6500000000000001,
   "dachansatz": 35.60000000000004,
   "kranz_oben": 31.84999960327148,
-  "hyp32": 120.0,
-  "hyp30": 144.0,
+  "hyp32": 114.0,
+  "hyp30": 136.0,
   "hyp40": 42.0,
-  "sil30": 13.58,
-  "sil38": 11.66,
-  "sil45": 3.9800000000000004
+  "sil30": 13.26,
+  "sil38": 11.26,
+  "sil45": 3.92,
+  "sil31_031": 12.620000000000001,
+  "sil_zone_031": 11.736,
+  "sil_zone_041": 11.58,
+  "sil_zone_u031": 11.511999999999999
  },
  "pruefungen": [
   {
@@ -60,7 +64,7 @@
   },
   {
    "name": "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
-   "wert": 0.5850286444500309,
+   "wert": 0.5850286576275161,
    "soll": [
     0.4,
     1.2
@@ -70,7 +74,7 @@
   },
   {
    "name": "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
-   "wert": 1.4228810693858536,
+   "wert": 1.4228810881277656,
    "soll": [
     0.8,
     1.7
@@ -250,7 +254,7 @@
   },
   {
    "name": "Dachflanke: Halbbreiten-Zunahme je m (Silhouette 38-45 m, Kamera K-030)",
-   "wert": 0.5485714285714286,
+   "wert": 0.5242857142857142,
    "soll": [
     0.4,
     0.56
@@ -310,7 +314,7 @@
   },
   {
    "name": "Sockel-Grundriss Rechteck (m2, z 1 m)",
-   "wert": 148.84227901311334,
+   "wert": 148.8422790131133,
    "soll": [
     117.0,
     150.0
@@ -350,10 +354,40 @@
   },
   {
    "name": "Silhouettenbreite bei 30 m (m, 3 Kameras)",
-   "wert": 13.58,
+   "wert": 13.26,
    "soll": [
     12.9,
     14.2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Silhouettenbreite Zone 29-33,5 m (Kamera 031)",
+   "wert": 11.736,
+   "soll": [
+    11.2,
+    12.0
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Silhouettenbreite Zone 29-31,5 m (Kamera 041)",
+   "wert": 11.58,
+   "soll": [
+    10.7,
+    11.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+   "wert": 11.511999999999999,
+   "soll": [
+    11.3,
+    12.7
    ],
    "ok": true,
    "status": "ok"

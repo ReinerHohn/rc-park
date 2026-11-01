@@ -99,6 +99,7 @@ def main():
             aid = f"fehlteile-{nr}-{tr['zelle'][0]}-{tr['zelle'][1]}"
             if aid in vorhanden: continue
             tab.setdefault("beobachtungen_offen", []).append(dict(datum="auto", wer=f"fehlteile_finden (Foto {nr}, Treffer {k})", auto_id=aid,
+                art="fehlteil", foto=nr, z_von=tr["xyz"][2], z_bis=tr["xyz"][2], xyz=tr["xyz"], abweichung=tr["score"],
                 text=f"Foto zeigt Struktur ohne Modellgegenstueck bei z={tr['xyz'][2]} m, y={tr['xyz'][1]} m (Zelle {tr['zelle']}, Score {tr['score']:+.2f})",
                 naechster_schritt=f"audit/fehlteile_{nr}.jpg Treffer {k} ansehen, Element benennen, Zeile + beleg()")); neu += 1
     json.dump(tab, open(tp, "w"), indent=1, ensure_ascii=False); print(f"  -> {neu} neue Beobachtung(en) in der Masstabelle")
