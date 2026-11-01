@@ -162,7 +162,11 @@
   },
   "rms_px": 145.7,
   "plausibel_strassenfoto": true,
-  "brennweite_quelle": "geloest"
+  "brennweite_quelle": "geloest",
+  "ankerzone_z": [
+   31.5,
+   60.0
+  ]
  },
  "auto": {
   "spitzen": [

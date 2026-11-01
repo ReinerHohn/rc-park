@@ -97,6 +97,15 @@ Fotos liefern Verhaeltnisse; Meter brauchen bekannte 3D-Punkte im Bild. Die gibt
 - Grenzen (gelernt): Fotos ohne Bodenanker sind in Hoehe/Brennweite mehrdeutig (Kamera "12 m hoch"); weit entfernte Fotos koppeln Brennweite und Abstand;
   Handpicks aus verkleinerten Gittern (+-20 px) sind der Engpass; Georeferenz jeder Nebendatei pruefen (mt_org war der OSM-Knoten, 37 m daneben).
   Erreichbar mit 2-3 guten Strassenfotos: Hoehen +-1-2 m modellfrei, Breiten auf der Wandebene +-0,1-0,3 m.
+- **Ankerzone (Sperre, 2026-11-01):** Eine geloeste Kamera gilt nur in dem Hoehenbereich, den ihre Anker aufspannen (plus 2 m Rand).
+  `foto_kalibrieren.py` schreibt ihn als `ankerzone_z` ins Protokoll; `messung_pruefen.kamera_zone/kamera_tauglich` liest ihn,
+  `foto_breitenprofil.py` beschneidet den Messbereich darauf, `fehlteile_finden.py` verwirft Treffer ausserhalb.
+  Warum nicht der Anker-RMS als Kriterium: der haette auch die bewaehrte K-030 gesperrt (56,7 px = 1,97 % der Bildhoehe) -
+  der Fehler ist nicht Rauschen, sondern **Extrapolation**. Beleg: K-060 (Schraegluftbild, alle Anker 41-60 m) gibt die
+  Tuermchenspitzen auf 0,7 m genau wieder und rechnet 20 m tiefer die Oberkante der Westwand (30,5 m) auf 23,8 m;
+  `fehlteile_finden` meldete damit sechs "erfundene Teile" bei 33-39 m - alle wertlos.
+  Nebenbefund derselben Sperre: K-031/K-041 haben ihren tiefsten Anker bei 31,5 m, die Pruefzeile "Silhouettenbreite
+  Zone 23,5-28 m (Kamera 031)" stammt also aus einer Extrapolation (als offene Beobachtung notiert).
 
 ## 9. Fehlende und erfundene Teile automatisch finden (Register N)
 `tools/fehlteile_finden.py OBJEKT.json <foto>`: Modell mit der kalibrierten Kamera ins Foto rendern, Modellkanten (Tiefensprung/Kruemmung) gegen Fotokanten

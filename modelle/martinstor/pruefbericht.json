@@ -44,17 +44,19 @@
   "hyp30": 136.0,
   "hyp40": 42.0,
   "sil30": 13.26,
-  "sil38": 11.219999999999999,
+  "sil38": 11.24,
   "sil45": 3.9000000000000004,
   "sil31_031": 12.620000000000001,
-  "sil_zone_031": 11.792,
-  "sil_zone_041": 11.566666666666665,
-  "sil_zone_u031": 11.508,
+  "sil_zone_031": 11.788,
+  "sil_zone_041": 11.573333333333332,
+  "sil_zone_u031": 11.504,
   "erker_34_anzahl": 4.0,
   "erker_34_durchmesser": 2.1363231167355985,
   "helm_37_anzahl": 4.0,
   "helm_37_durchmesser": 1.2560266522725378,
-  "uhr_z": 4.45
+  "uhr_z": 4.45,
+  "fenster_W_oben": 0.0,
+  "fenster_W_mitte": 1.0
  },
  "pruefungen": [
   {
@@ -259,7 +261,7 @@
   },
   {
    "name": "Dachflanke: Halbbreiten-Zunahme je m (Silhouette 38-45 m, Kamera K-030)",
-   "wert": 0.5228571428571428,
+   "wert": 0.5242857142857142,
    "soll": [
     0.4,
     0.56
@@ -369,7 +371,7 @@
   },
   {
    "name": "Silhouettenbreite Zone 29-33,5 m (Kamera 031)",
-   "wert": 11.792,
+   "wert": 11.788,
    "soll": [
     11.2,
     12.0
@@ -379,7 +381,7 @@
   },
   {
    "name": "Silhouettenbreite Zone 29-31,5 m (Kamera 041)",
-   "wert": 11.566666666666665,
+   "wert": 11.573333333333332,
    "soll": [
     10.7,
     11.6
@@ -389,7 +391,7 @@
   },
   {
    "name": "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
-   "wert": 11.508,
+   "wert": 11.504,
    "soll": [
     11.3,
     12.7
@@ -413,6 +415,26 @@
    "soll": [
     0.8,
     1.9
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Oeffnungen Westwand obere Reihe (Anzahl, z 26,5 m)",
+   "wert": 0.0,
+   "soll": [
+    0,
+    0
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Oeffnung Westwand (Anzahl, z 22,3 m)",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
    ],
    "ok": true,
    "status": "ok"

@@ -15,7 +15,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 def kamera_laden(K, obj, nr, root, W, H):
     if "kamera" in K:
-        k = K["kamera"]; R, _ = cv2.Rodrigues(np.array(k["rvec"])); return R, np.array(k["t"]), k["f_px"], "K-%s (amtliche Anker)" % nr
+        k = K["kamera"]
+        import messung_pruefen as MP                              # Treffer nur dort, wo die Anker tragen (sonst Extrapolation)
+        lo, hi = MP.kamera_zone(k)
+        R, _ = cv2.Rodrigues(np.array(k["rvec"]))
+        return R, np.array(k["t"]), k["f_px"], "K-%s (amtliche Anker)" % nr, (lo, hi)
     for kp in glob.glob(os.path.join(root, "modelle", "foto_silhouette", "*kameras.json")):      # Silhouettenkamera (foto_dach_gemeinsam)
         kam = json.load(open(kp))
         if nr in kam:
@@ -23,7 +27,7 @@ def kamera_laden(K, obj, nr, root, W, H):
             tgt = np.array([0, 0, tz]); cam = tgt + d * np.array([math.sin(az) * math.cos(el), -math.cos(az) * math.cos(el), math.sin(el)])
             fw = tgt - cam; fw /= np.linalg.norm(fw); x = np.cross(fw, [0, 0, 1.0]); x /= np.linalg.norm(x); y = np.cross(fw, x)
             cr, sr = math.cos(ro), math.sin(ro); x2 = cr * x + sr * y; y2 = -sr * x + cr * y; R = np.vstack([x2, y2, fw]); t = -R @ cam
-            f = SIL_F0 * 400 * k * fs; return R, t, f, "Silhouettenkamera %s (sx/sy %.0f/%.0f px vernachlaessigt)" % (os.path.basename(kp), sx * k, sy * k)
+            f = SIL_F0 * 400 * k * fs; return R, t, f, "Silhouettenkamera %s (sx/sy %.0f/%.0f px vernachlaessigt)" % (os.path.basename(kp), sx * k, sy * k), (None, None)
     raise SystemExit("keine Kamera fuer Foto " + nr)
 
 def render(m, R, t, f, W, H, cx, cy, n=2500000):
@@ -41,7 +45,7 @@ def main():
     obj = json.load(open(objp)); root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(objp)))); od = os.path.join(root, os.path.dirname(obj["masstabelle"]))
     kp = os.path.join(od, "messprotokoll", f"K-{nr}.json"); K = json.load(open(kp)) if os.path.exists(kp) else {}
     im = cv2.imread(glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]); H, W = im.shape[:2]; cx, cy = W / 2, H / 2
-    R, t, f, quelle = kamera_laden(K, obj, nr, root, W, H)
+    R, t, f, quelle, (zlo, zhi) = kamera_laden(K, obj, nr, root, W, H)
     stl = a[a.index("--stl") + 1] if "--stl" in a else os.path.join(root, obj["stl"])
     m = trimesh.load(stl); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0)
     c = m.bounds.mean(0) if obj.get("zentrierung", "huelle") == "huelle" else np.zeros(3); m.apply_translation([-c[0], -c[1], -m.bounds[0, 2]])
@@ -81,6 +85,11 @@ def main():
         x, y, s_ = tr["zelle"]; j, i = x // cs, y // cs; nb = [heat[ii, jj] for ii in (i - 1, i, i + 1) for jj in (j - 1, j, j + 1) if 0 <= ii < gh and 0 <= jj < gw and (ii, jj) != (i, j)]
         return sum(1 for v in nb if np.sign(v) == np.sign(tr["score"]) and abs(v) >= sch / 2) >= 2
     treffer = [tr for tr in treffer if nachbar_ok(tr)]                                                           # mindestens 2 gleichsinnige Nachbarzellen
+    if zlo is not None:                                                                                          # nur Hoehen, die die Anker tragen (sonst extrapoliert die Kamera)
+        n0 = len(treffer); treffer = [tr for tr in treffer if np.isfinite(tr["xyz"][2]) and zlo <= tr["xyz"][2] <= zhi]
+        if n0 != len(treffer):
+            print(f"  Ankerzone {zlo:.1f}..{zhi:.1f} m: {n0 - len(treffer)} Treffer ausserhalb verworfen "
+                  f"(2026-11-01: K-060 meldete so sechs 'erfundene Teile' bei 33-39 m, obwohl ihre Anker erst bei 41 m beginnen).")
     treffer.sort(key=lambda t: -abs(t["score"])); treffer = treffer[:top]
     o = im.copy(); hm = cv2.resize(heat, (gw * cs, gh * cs), interpolation=cv2.INTER_NEAREST); hm = np.pad(hm, ((0, H - gh * cs), (0, W - gw * cs)))
     col = np.zeros_like(o); col[..., 2] = np.clip(hm / 0.6, 0, 1) * 255; col[..., 0] = np.clip(-hm / 0.6, 0, 1) * 255

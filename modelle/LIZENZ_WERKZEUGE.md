@@ -40,6 +40,29 @@ Ergebnisse daraus sind "nur Test" und nicht Teil des Verkaufsprodukts.
 |---|---|---|---|---|
 | 2026-10-31 | VGGT-1B (Gewichte `/media/oem/scan/vggt/gewichte`, Code `/media/oem/scan/vggt/repo`) | CC BY-NC 4.0 | Fototest: Kameralage + Punktwolke aus Commons-Fotos, Maßabgleich mit Modell | nein (nur Test) |
 
+## Recherche 2026-11-01: Werkzeuge fuer "Foto -> parametrisches Modell" (vor Benutzung selbst nachlesen)
+Quellenstand wie angegeben; "geprueft" heisst: Lizenzdatei/Lizenzseite gelesen, "Treffer" heisst: nur ueber Suchtreffer belegt.
+Keine Rechtsberatung - vor dem Verkauf jede Zeile selbst nachlesen.
+
+| Werkzeug | Lizenz | Verkauf | Stand |
+|---|---|---|---|
+| nvdiffrast | NVIDIA Source Code License, "research or evaluation purposes only" | ⚠ **nein** | geprueft (LICENSE.txt) |
+| Kaolin | Apache-2.0, aber `kaolin/non_commercial/` unter NVIDIA SCL; Diff-Rendering nutzt nvdiffrast | ⚠ Vorsicht | Treffer |
+| PyTorch3D | BSD-3-Clause | ✓ | geprueft |
+| Mitsuba 3 | BSD-3-Clause + "Enhancements"-Zusatz | ✓ | geprueft (LICENSE) |
+| SAM 1 / SAM 2 | Apache-2.0 | ✓ | Treffer |
+| SAM 3 | Meta SAM License: royalty-free kommerziell, Ausschluss Militaer/Waffen/ITAR/Sanktionen, Attribution bei Publikation, Meta kann Bedingungen aendern | ✓ mit Auflage | Treffer |
+| Ultralytics YOLOv8 | AGPL-3.0 oder kommerzielle Lizenz | ⚠ vor Nutzung klaeren | **ungeprueft** |
+| CityEngine SDK / PyPRT | Esri Terms of Use: frei nur privat/edu/nicht-kommerziell; Redistribution untersagt | ⚠ **nein** | Treffer |
+| ShapeML (Grammatik-Interpreter, Burg/Bauernhof-Grammatiken) | GPL-3.0 | Werkzeug GPL, erzeugte Modelle frei (wie PrusaSlicer) | Treffer |
+| Hunyuan3D 2.x | Tencent Community License - **Territorium schliesst EU/UK/KR aus** | ⚠ **nein** | ungeprueft |
+| TRELLIS.2 | Modell/Code MIT, aber NC-Abhaengigkeiten (nvdiffrast, RMBG-2.0) | ⚠ nur ohne diese | ungeprueft |
+| 3DGS / 2DGS / GOF, SuperPoint+SuperGlue, MASt3R, MeshAnything, VGGT-1B | Forschungslizenzen | ⚠ **nein** | Treffer |
+| GLOMAP, LightGlue, ALIKED, DISK, RoMa, gsplat (Apache, 2DGS ab 1.4), MapAnything (Apache-Gewichte) | permissiv | ✓ | Treffer |
+| Metashape Standard (179 $) | Agisoft-Lizenzseite: nur Edu-Lizenzen verbieten kommerzielle Nutzung | EULA vor Verkauf lesen | Treffer |
+| RealityScan 2.0 (Epic) | frei unter 1 Mio. $ Jahresumsatz | ✓ | Treffer |
+| Marktplatz-Assets (Fab, Sketchfab, BlenderKit, TurboSquid) | Standardlizenzen erlauben Nutzung IM Produkt, nicht die Weitergabe des Modells/der STL | ⚠ **nein** fuer Bausatzverkauf | Einschaetzung |
+
 ## Regel
 Neues Werkzeug/Modell → hier eintragen, **bevor** Ergebnisse ins Produkt (STL, Anleitung, Zahlen im Bausatz) wandern.
 NC-Modelle nur zur Forschung; was im Verkaufsprodukt steckt, muss aus lizenzfreien Quellen (Laser, Fotos als Messvorlage, eigener Generator) belegbar sein.

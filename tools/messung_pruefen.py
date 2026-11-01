@@ -14,10 +14,11 @@ sie muss ein Werkzeug sein, das NEIN sagt.
 Regel: Eine Messung desselben Merkmals in mehreren Fotos ist nur gueltig, wenn ihre Streuung zur angegebenen Unsicherheit passt.
 Ist die Streuung groesser, ist die MESSUNG kaputt - nicht das Modell. Dann darf aus ihr kein Befund und kein Sollwert werden.
 
+  kamera_tauglich(kam, z_von, z_bis) -> (ok, text)  Darf diese Kamera in dieser Hoehenzone messen (Ankerzone, nicht RMS)?
   pruefe(werte, sigma)        -> (gueltig, text)   werte: {"foto": wert}, sigma: erwartete Unsicherheit je Messung (m)
   Als Programm:  messung_pruefen.py "031=1.22,030=4.54,041=0.04" 0.5
 """
-import sys
+import sys, os, json
 import numpy as np
 
 
@@ -44,7 +45,44 @@ def plausibel(wert, von, bis, name, einheit=""):
                      f"Das Messverfahren liefert Unsinn - erst reparieren, kein Ergebnis weitergeben.")
 
 
+RAND_M = 2.0          # so weit darf ueber die Ankerzone hinaus gemessen werden (Ankerhoehen streuen selbst um ~1 m)
+
+
+def kamera_zone(kam):
+    """Hoehenbereich, in dem eine geloeste Kamera INTERPOLIERT (= benutzbar ist): von der tiefsten bis zur hoechsten
+    Ankerhoehe, plus Rand. foto_kalibrieren.py schreibt 'ankerzone_z' ins Protokoll."""
+    z = kam.get("ankerzone_z")
+    return (None, None) if not z else (float(z[0]) - RAND_M, float(z[1]) + RAND_M)
+
+
+def kamera_tauglich(kam, z_von, z_bis, name="Kamera", hart=True):
+    """Darf MIT DIESER KAMERA in der Hoehenzone z_von..z_bis gemessen werden?
+
+    Warum nicht einfach der Anker-RMS: der schliesst auch die bewaehrten Strassenkameras aus (K-030: 56,7 px = 1,97 %
+    der Bildhoehe - und sie misst trotzdem gut). Der Fehler ist nicht Rauschen, sondern EXTRAPOLATION.
+    Ausloeser (2026-11-01): K-060 (Schraegluftbild) hat ALLE Anker bei 41-60 m. Innerhalb dieser Zone gibt sie die
+    Tuermchenspitzen auf 0,7 m genau wieder; 20 m tiefer rechnet sie die Oberkante der Westwand (30,5 m) auf 23,8 m -
+    6,7 m daneben. tools/fehlteile_finden.py hat sie trotzdem ueber das ganze Bild laufen lassen und sechs 'erfundene
+    Teile' bei 33-39 m gemeldet - alle wertlos. Eine aufgeschriebene Lehre reicht nicht; die Sperre muss im Weg stehen."""
+    lo, hi = kamera_zone(kam)
+    H = (kam.get("bild") or [None, None])[1]; rms = kam.get("rms_px")
+    guete = f"Anker-RMS {rms:.1f} px" + (f" = {rms / H * 100:.2f} % der Bildhoehe" if rms and H else "") if rms else "ohne Guetezahl"
+    if lo is None:
+        return True, f"{name}: keine Ankerzone im Protokoll ({guete}) - Ergebnis gilt als unbestaetigt, bitte neu kalibrieren"
+    if lo <= z_von and z_bis <= hi:
+        return True, f"{name}: benutzbar fuer z {z_von:.1f}..{z_bis:.1f} m (Ankerzone {lo:.1f}..{hi:.1f} m, {guete})"
+    text = (f"{name}: AUSSERHALB DER ANKERZONE. Gemessen werden soll z {z_von:.1f}..{z_bis:.1f} m, Anker tragen nur "
+            f"{lo:.1f}..{hi:.1f} m ({guete}). Dort extrapoliert die Loesung - daraus darf kein Mass, kein Fehlteil und "
+            f"kein Sollwert werden. Erst Anker IN dieser Hoehenzone picken, dann foto_kalibrieren.py erneut.")
+    if hart: raise SystemExit("KAMERA AUSSERHALB IHRER ZONE: " + text)
+    return False, text
+
+
 def main():
+    if sys.argv[1] == "kamera":                       # messung_pruefen.py kamera <K-datei.json> <z_von> <z_bis>
+        K = json.load(open(sys.argv[2])); zv, zb = (float(sys.argv[3]), float(sys.argv[4])) if len(sys.argv) > 4 else (0.0, 1e9)
+        ok, txt = kamera_tauglich(K["kamera"], zv, zb, os.path.basename(sys.argv[2]), hart=False)
+        print("  " + txt); sys.exit(0 if ok else 1)
     werte = {k: float(v) for k, v in (s.split("=") for s in sys.argv[1].split(","))}
     gueltig, text = pruefe(werte, float(sys.argv[2]), sys.argv[3] if len(sys.argv) > 3 else "Messung")
     print(("  " if gueltig else "  ") + text)

@@ -1,0 +1,115 @@
+{
+ "foto": "060",
+ "seite": "West",
+ "strassenfoto": false,
+ "notiz": "Schraegluftbild aus Nordwesten (2012, Nikon D7000, EXIF 92 mm / KB 138 mm). Das Bild ist beschnitten (4658x2844 statt 4928x3264), Hauptpunkt daher ANNAHME Bildmitte. brennweite_px = 92/23,6*4928 = 19210 (D7000-Sensor 23,6 mm). Picks: Nadelspitze (Goldknauf) und die drei sichtbaren Tuermchenspitzen (Goldknaeufe); Linien auf den drei sichtbaren senkrechten Eckquaderketten (NW = mittlere/naechste Ecke, NE = links, SW = rechts). Nachgepickt 2026-11-01: Nadelspitze = Goldknauf (4136,966) im 9x-Zoom; dazu die beiden aeusseren Goldkugeln am Dachfirst.",
+ "brennweite_px": 19210.0,
+ "punkte": {
+  "spitze_dokument": [
+   4136,
+   966
+  ],
+  "tuermchen_NW": [
+   4127,
+   1362
+  ],
+  "tuermchen_NE": [
+   4020,
+   1327
+  ],
+  "tuermchen_SW": [
+   4234,
+   1337
+  ]
+ },
+ "linien": {
+  "ecke_boden_3": [
+   [
+    4138,
+    1636
+   ],
+   [
+    4133,
+    1839
+   ]
+  ],
+  "ecke_boden_0": [
+   [
+    4002,
+    1640
+   ],
+   [
+    3996,
+    1845
+   ]
+  ],
+  "ecke_boden_2": [
+   [
+    4236,
+    1636
+   ],
+   [
+    4232,
+    1792
+   ]
+  ]
+ },
+ "kamera": {
+  "silhouette_genutzt": false,
+  "residuen_du_dv": {
+   "spitze_dokument": [
+    -3,
+    72
+   ],
+   "tuermchen_NW": [
+    16,
+    -11
+   ],
+   "tuermchen_NE": [
+    11,
+    -1
+   ],
+   "tuermchen_SW": [
+    -13,
+    -6
+   ]
+  },
+  "rvec": [
+   1.7047957041256996,
+   -0.7039678151853697,
+   0.557046416344204
+  ],
+  "t": [
+   113.54853209328088,
+   34.13269386914561,
+   1224.6181556633344
+  ],
+  "f_px": 19210.0,
+  "cx": 2329.0,
+  "cy": 1422.0,
+  "bild": [
+   4658,
+   2844
+  ],
+  "standort_xyz": [
+   -916.52,
+   -755.2,
+   321.57
+  ],
+  "hoehe_ueber_gelaende": 321.57,
+  "abstand_zur_achse": 1187.6,
+  "residuen_px": {
+   "spitze_dokument": 72.4,
+   "tuermchen_NW": 19.7,
+   "tuermchen_NE": 10.9,
+   "tuermchen_SW": 14.1
+  },
+  "rms_px": 38.6,
+  "plausibel_strassenfoto": false,
+  "brennweite_quelle": "EXIF",
+  "ankerzone_z": [
+   41.2,
+   60.0
+  ]
+ }
+}

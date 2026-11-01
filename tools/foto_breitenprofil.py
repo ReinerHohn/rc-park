@@ -116,6 +116,13 @@ def main():
     print(f"  Kamera-Guete: Silhouetten-Ueberdeckung {iou:.2f}, Anker-RMS {rms:.0f} px ({100*rms/H:.1f} % der Bildhoehe)")
     if iou < 0.6:
         raise SystemExit(f"Kamera unbrauchbar fuer Metermessung (Ueberdeckung {iou:.2f} < 0,60). Erst Picks verbessern (tools/foto_pick.py) und neu kalibrieren.")
+    import messung_pruefen as MP                                 # ZWEITE Sperre: nur in der Hoehenzone messen, die die Anker tragen
+    lo, hi = MP.kamera_zone(K["kamera"])
+    if lo is not None and (von < lo or bis > hi):
+        print(f"  Ankerzone K-{nr}: {lo:.1f}..{hi:.1f} m - der Bereich {von:.1f}..{bis:.1f} m wird darauf BESCHNITTEN "
+              f"(ausserhalb extrapoliert die Kamera; 2026-11-01 rechnete K-060 so die Westwandoberkante 6,7 m falsch).")
+        von, bis = max(von, lo), min(bis, hi)
+        if von > bis: raise SystemExit(f"K-{nr} traegt keinen Teil des gewuenschten Bereichs - erst Anker in dieser Hoehe picken.")
     print(f"Breitenprofil Foto {nr} (Kamera f={f:.0f} px, Standort {np.round(C,1).tolist()}, Abstand {np.hypot(*C[:2]):.1f} m, Modell {os.path.basename(stl)})")
     print("Gemessen wird die SILHOUETTENBREITE aus dieser Blickrichtung (schraeg = Diagonale), nicht die Seitenbreite - Foto und Modell sind gleich behandelt.")
     print(f"{'z (m)':>6} | {'Foto links':>10} {'rechts':>7} {'Breite':>7} | {'Modell l':>8} {'r':>6} {'Breite':>7} | {'Diff':>6}   Hinweis")

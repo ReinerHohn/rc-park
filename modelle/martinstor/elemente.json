@@ -85,16 +85,16 @@
  },
  {
   "seite": "+y",
-  "element": "Fenster 2 oben + 1 tiefer",
-  "quelle": "ANNAHME: Ost/West nicht fotografiert",
-  "anzahl": 3,
+  "element": "1 Schlitzfenster, sonst glatte Wand",
+  "quelle": "ANNAHME: Ostwand nicht einsehbar (Foto 061 zeigt nur den Oberbau ueber den Nachbardaechern); uebernommen von der gemessenen Westwand",
+  "anzahl": 1,
   "seite_name": "Ost"
  },
  {
   "seite": "-y",
-  "element": "Fenster 2 oben + 1 tiefer",
-  "quelle": "ANNAHME: Ost/West nicht fotografiert",
-  "anzahl": 3,
+  "element": "1 Schlitzfenster, sonst glatte Wand",
+  "quelle": "Foto 060 Vollbild (Schraegluftbild NW 2012), Zoom 4100-4270/1620-1860",
+  "anzahl": 1,
   "seite_name": "West"
  },
  {

@@ -38,21 +38,23 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 | Silhouettenbreite bei 30 m (m, 3 Kameras) | 13.26 | 12.9..14.2 | foto_kalibriert | foto_kalibriert | OK | tools/foto_breitenprofil.py mit drei unabhaengig kalibrierten Kameras: Foto 030 13,40 m (Differenz zum Modell -0,12 m Median), Foto 031 12,56 (-0,04), Foto 041 11,12 (-0,36; andere Blickrichtung, daher anderer Absolutwert). Alle drei bestaetigen das Modell auf +-0,5 m. |
 | Silhouettenbreite Zone 29-33,5 m (Kamera 031) | 11.79 | 11.2..12 | foto_kalibriert | foto_kalibriert | OK | tools/foto_breitenprofil.py, Zonenmittel ueber 29,0-33,5 m in 0,5-m-Schritten: Foto 11,59 m. Toleranz +-0,4 m (Kameraguete 0,61). Gemessen wird die LINKE Halbbreite verdoppelt - rechts verdeckt ein Nachbarhaus die Kante, das Modell wird genauso behandelt. |
 | Silhouettenbreite Zone 29-31,5 m (Kamera 041) | 11.57 | 10.7..11.6 | foto_kalibriert | foto_kalibriert | OK | wie oben, Foto 041 misst 11,13 m ueber 29,0-31,5 m Gemessen wird die LINKE Halbbreite verdoppelt - rechts verdeckt ein Nachbarhaus die Kante, das Modell wird genauso behandelt. |
-| Silhouettenbreite Zone 23,5-28 m (Kamera 031) | 11.51 | 11.3..12.7 | foto_kalibriert | foto_kalibriert | OK | tools/foto_breitenprofil.py: Foto 031 misst 12,30 m, Foto 030 bestaetigt die Richtung (+0,27). Toleranz +-0,7 m (eine Seite verdeckt, Kameraguete 0,61). |
+| Silhouettenbreite Zone 23,5-28 m (Kamera 031) | 11.50 | 11.3..12.7 | foto_kalibriert | foto_kalibriert | OK | tools/foto_breitenprofil.py: Foto 031 misst 12,30 m, Foto 030 bestaetigt die Richtung (+0,27). Toleranz +-0,7 m (eine Seite verdeckt, Kameraguete 0,61). |
 | Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m) | 2.14 | 2..2.9 | foto_vollbild | modell | OK | Fotos 031/041/043 Vollbild: der achteckige Erker mit Fachwerk-Bruestung ist etwa so breit wie der Sandsteinschaft darunter (2,2-2,6 m); erst darueber beginnt der schlanke Helm |
 | Ecktuermchen: Helm Durchmesser bei 37 m (m) | 1.26 | 0.8..1.9 | foto_vollbild | modell | OK | Fotos 031/041: oberhalb des Erkerdachs ist der Helm deutlich schlanker als der Erker |
+| Oeffnungen Westwand obere Reihe (Anzahl, z 26,5 m) | 0.00 | 0..0 | foto_vollbild | - | OK | Schraegluftbild 060 (Luftbild aus NW 2012, 4658x2844, ~15 px/m) ist die ERSTE Quelle fuer die Westwand. Im 7-fach-Zoom (Vollbild 4100-4270 / 1620-1860) ist die Wand zwischen den Eckquaderketten leer bis auf EINE kleine hochrechteckige Oeffnung bei Pixel (4180, 1732); zwei weitere dunkle Punkte sind Mauerankerloecher (< 0,2 m). Hoehe aus dem senkrechten Massstab 15,4 px/m (Kamera K-060 und unabhaengig die Strecke Zinnenunterkante->Uhrmitte) unter der Oberkante der weissen Wand (v=1611 = ZZ 30,5 m): z = 30,5 - 121/15,4 = 22,6 m +- 1,5 m. In 26 m Hoehe ist die Westwand leer - die zwei Fenster, die der Generator dort als ANNAHME setzt, gibt es nicht. |
+| Oeffnung Westwand (Anzahl, z 22,3 m) | 1.00 | 1..1 | foto_vollbild | - | OK | Schraegluftbild 060 (Luftbild aus NW 2012, 4658x2844, ~15 px/m) ist die ERSTE Quelle fuer die Westwand. Im 7-fach-Zoom (Vollbild 4100-4270 / 1620-1860) ist die Wand zwischen den Eckquaderketten leer bis auf EINE kleine hochrechteckige Oeffnung bei Pixel (4180, 1732); zwei weitere dunkle Punkte sind Mauerankerloecher (< 0,2 m). Hoehe aus dem senkrechten Massstab 15,4 px/m (Kamera K-060 und unabhaengig die Strecke Zinnenunterkante->Uhrmitte) unter der Oberkante der weissen Wand (v=1611 = ZZ 30,5 m): z = 30,5 - 121/15,4 = 22,6 m +- 1,5 m. Genau EINE Oeffnung, auf halber Hoehe zwischen Zinnenunterkante und dem Nachbardach. |
 
 ## Belegt durch
 
 - **laser_dom1**: 3 von 3 Pruefungen gruen (1-m-Raster, interpoliert, nur von oben; Strukturen < ~3 m verschmiert, Nadeln unsichtbar. BLIND auch fuer Grundriss mit Vorspruengen < ~1 m (Gesims, Erker): die Flaeche ueber Hoehe faellt dann 15-20 % zu klein aus (Martinstor 2026-11-01, Register O/P))
 - **foto_verhaeltnis**: 4 von 4 Pruefungen gruen (nur Verhaeltnisse (+-5-10 %), absolute Masse nur mit bekanntem Massstab)
-- **foto_vollbild**: 17 von 17 Pruefungen gruen (Vollaufloesung, Massstab aus Modell oder Dokument -> Werte grob, Richtung sicher)
+- **foto_vollbild**: 19 von 19 Pruefungen gruen (Vollaufloesung, Massstab aus Modell oder Dokument -> Werte grob, Richtung sicher)
 - **dokument**: 2 von 2 Pruefungen gruen (Bauforschung/Denkmalamt/Wikipedia; Bezugshoehe oft unklar (60 vs 65 m))
 - **foto_kalibriert**: 7 von 7 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
 - **lod2**: 1 von 1 Pruefungen gruen (amtlicher Grundriss + Traufe/First, keine Aufbauten/Details)
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
 
-## Elemente des Generators: 24 belegt, 6 Annahmen
+## Elemente des Generators: 24 belegt, 5 Annahmen
 
 - Nord: Runder Eckturm NW mit Kegeldach - Foto 001 Vollbild (Nord); Suedseite ohne (Foto 000)
 - Sued: Torbogen mit Keilsteinen - Fotos 050/030 (Sued), 001 (Nord); MASSPRUEFUNG Teil 5
@@ -65,8 +67,8 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - Nord: Giebel ueber der Uhr mit zwei konkaven Schenkeln - Foto 031 Vollbild (giebel031.jpg), Messung Scheitel 28,96 / Schenkelende 27,67 m; Nutzerhinweis 2026-11-01
 - Nord: Uhr mit Giebel und Stundenmarken - Fotos 041/042 (Sued), 031/001 (Nord); MASSPRUEFUNG Teil 3
 - Nord: Fenster 3 in Reihe + 1 Schlitz - Fotos 031/001 Vollbild (Nord)
-- Ost: Fenster 2 oben + 1 tiefer - ANNAHME: Ost/West nicht fotografiert
-- West: Fenster 2 oben + 1 tiefer - ANNAHME: Ost/West nicht fotografiert
+- Ost: 1 Schlitzfenster, sonst glatte Wand - ANNAHME: Ostwand nicht einsehbar (Foto 061 zeigt nur den Oberbau ueber den Nachbardaechern); uebernommen von der gemessenen Westwand
+- West: 1 Schlitzfenster, sonst glatte Wand - Foto 060 Vollbild (Schraegluftbild NW 2012), Zoom 4100-4270/1620-1860
 - Sued: Zinnenkranz 5 Zinnen - Fotos 041 (Sued), 031 (Nord)
 - Nord: Zinnenkranz 5 Zinnen - Fotos 041 (Sued), 031 (Nord)
 - Ost: Zinnenkranz 5 Zinnen - ANNAHME: Ost/West nicht fotografiert
@@ -82,9 +84,9 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 ## Seiten
 
 - Nord: Fotos vorhanden
-- Ost: KEIN FOTO - ungeprueft
+- Ost: Fotos vorhanden
 - Sued: Fotos vorhanden
-- West: KEIN FOTO - ungeprueft
+- West: Fotos vorhanden
 
 ## Beobachtungen ohne Pruefung
 
@@ -108,6 +110,24 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - auto foto_breitenprofil (Foto 041, Kamera K-041): Silhouettenbreite z 35.0-35.5 m: Foto 11.78 m, Modell 11.12 m (+0.66 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
 - auto foto_breitenprofil (Foto 041, Kamera K-041): Silhouettenbreite z 47.0-48.0 m: Foto 1.37 m, Modell 3.04 m (-1.67 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
 - 2026-11-01 Nutzer + tools/messung_pruefen.py: Nutzer: Uhr sitzt zu weit oben, und ueber der Uhr gehoert ein Giebel mit ZWEI KONKAV eingezogenen Schenkeln (Modell hat eine S-Kurve). Messung der Uhrhoehe ist UNGUELTIG: absolut 24,77/26,79/27,81 m (Streuung 3,0 m), Kante darueber 1,22/4,54/0,04 m - die Fotos treffen nicht dasselbe Merkmal. -> Messverfahren reparieren: Zinnen-Unterkante je Foto als Anker picken (tools/foto_pick.py) statt 'staerkste Kante' zu raten, dann Abstand Zifferblatt-Zinnen in allen drei Fotos; erst bei gueltiger Messung UZ aendern. Der konkave Giebel ist davon unabhaengig und kann sofort gebaut werden.
+- 2026-11-01 Claude (DOP20-Auswertung): Das Luftbild DOP20 2025 (20 cm/px) zeigt als einzige Quelle die Dachflaechen von oben: vier Tuermchenkegel, Hauptdach, Dachreiter - der Teil der Ost/Westseite, den kein Strassenfoto erreicht. Erste Farbmaske unbrauchbar (erfasste Baeume und Schatten: 2712 m2 statt ~100 m2). -> Farbmaske enger fassen (Kupfergruen gegen Laubgruen, Schatten ausschliessen), Gebaeudeversatz aus der Spitze bestimmen, dann Tuermchenlagen und Dachgrundriss messen - Ergebnis jeweils mit messung_pruefen.plausibel absichern
+- 2026-11-01 Claude (Schraegluftbild 060, Sichtung): Die Westwand zeigt im Luftbild nur ein bis zwei kleine Oeffnungen, nicht die drei Fenster, die der Generator dort als ANNAHME setzt (fassade.json, Gruppe +y/-y). Erstmals ueberhaupt eine Quelle fuer diese Seite. -> Oeffnungen im Vollbild 060 zaehlen und ihre Hoehe messen (die Wand ist schraeg gesehen, also ueber Verhaeltnisse zu bekannten Hoehen), dann fassade.json korrigieren und den Beleg von ANNAHME auf Foto 060 umstellen
+- auto fehlteile_finden (Foto 060, Treffer 6): Foto zeigt Struktur ohne Modellgegenstueck bei z=31.7 m, y=2.83 m (Zelle [4032, 1472, 16], Score +1.00) -> audit/fehlteile_060.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()
+- 2026-11-01 Claude (Kamera K-060 geprueft): Die Kamera aus Foto 060 ist NICHT messtauglich: RMS 38,6 px = 1,4 % der Bildhoehe (Grenze 0,5 %). Gegenprobe: die Oberkante der weissen Westwand (muss 30,5 m sein) rechnet sie auf 23,8 m - 6,7 m daneben. Grund: alle Anker liegen bei 41-60 m, nach unten extrapoliert die Loesung. Ihr SENKRECHTER MASSSTAB (15,4 px/m) stimmt dagegen mit der unabhaengigen Strecke Zinnenunterkante->Uhrmitte ueberein - Verhaeltnisse ja, absolute Hoehen nein. tools/fehlteile_finden.py hat sie trotzdem benutzt; die 6 Treffer aus Foto 060 sind damit wertlos. -> Kamera-Guetesperre in foto_kalibrieren.py setzen und in allen Verbrauchern erzwingen; danach K-060 mit Ankern IM Schaft (Zinnenecken, Uhrmitte) neu loesen
+- 2026-11-01 Claude (Fotos 060 + 061, Verhaeltnismessung): WIDERSPRUCH oben am Dach. In den beiden weit entfernten Fotos (060 Luftbild 1,2 km, 061 Schlossberg ~1 km; beide nahezu orthografisch, erkennbar daran, dass die vier gleich hohen Tuermchenspitzen in 061 nur 4 px streuen) liegt der Knauf der Nadel bei 49-51 % der Strecke Tuermchenspitze->Nadelspitze (060: 0,492; 061: 0,508), das Modell bei 0,43; der Dachansatz liegt in 061 bei -0,148, im Modell bei -0,303. Die kalibrierten Strassenkameras 031/041 sagen das Gegenteil (Silhouette bei 47 m: Foto 0,5-1,4 m, Modell 3,0-3,1 m -> Dach ENDET FRUEHER). Die Laser-Stufen 48/50 m (8 und 6 m2 gegen 4 im Modell) beweisen nichts: DOM1 ist fuer Nadeln blind, das ist die Interpolationsfahne. -> Verhaeltnisse sind bisher nur abgelesen, nicht gemessen. Generisches Werkzeug bauen, das aus einem FERNEN Foto massstabsfreie Hoehenverhaeltnisse misst (Gleichhoch-Punkte als eigene Unsicherheit), ueber beide Fotos mit messung_pruefen.pruefe absichern - erst dann darf daraus ein Sollwert werden. Nichts am Generator aendern.
+- auto fehlteile_finden (Foto 030, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=30.58 m, y=2.49 m (Zelle [1071, 945, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 030, Treffer 4): Foto zeigt Struktur ohne Modellgegenstueck bei z=15.42 m, y=5.16 m (Zelle [1323, 1575, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 39.5-39.5 m: Foto 8.92 m, Modell 7.90 m (+1.02 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- auto fehlteile_finden (Foto 060, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=44.3 m, y=-1.54 m (Zelle [4128, 1280, 16], Score +0.95) -> audit/fehlteile_060.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 060, Treffer 2): Foto zeigt Struktur ohne Modellgegenstueck bei z=41.02 m, y=0.25 m (Zelle [4096, 1328, 16], Score +0.83) -> audit/fehlteile_060.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 060, Treffer 3): Foto zeigt Struktur ohne Modellgegenstueck bei z=45.08 m, y=-0.12 m (Zelle [4112, 1264, 16], Score +0.80) -> audit/fehlteile_060.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 060, Treffer 4): Foto zeigt Struktur ohne Modellgegenstueck bei z=41.99 m, y=0.46 m (Zelle [4096, 1312, 16], Score +0.77) -> audit/fehlteile_060.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 060, Treffer 5): Foto zeigt Struktur ohne Modellgegenstueck bei z=44.11 m, y=-0.32 m (Zelle [4112, 1280, 16], Score +0.72) -> audit/fehlteile_060.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 060, Treffer 6): Foto zeigt Struktur ohne Modellgegenstueck bei z=41.22 m, y=-0.98 m (Zelle [4112, 1328, 16], Score +0.66) -> audit/fehlteile_060.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 060, Treffer 8): Foto zeigt Struktur ohne Modellgegenstueck bei z=43.15 m, y=-0.57 m (Zelle [4112, 1296, 16], Score +0.65) -> audit/fehlteile_060.jpg Treffer 8 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 060, Treffer 9): Foto zeigt Struktur ohne Modellgegenstueck bei z=40.26 m, y=-1.21 m (Zelle [4112, 1344, 16], Score +0.65) -> audit/fehlteile_060.jpg Treffer 9 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 060, Treffer 11): Foto zeigt Struktur ohne Modellgegenstueck bei z=45.27 m, y=-1.33 m (Zelle [4128, 1264, 16], Score +0.60) -> audit/fehlteile_060.jpg Treffer 11 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 060, Treffer 12): Foto zeigt Struktur ohne Modellgegenstueck bei z=42.19 m, y=-0.79 m (Zelle [4112, 1312, 16], Score +0.49) -> audit/fehlteile_060.jpg Treffer 12 ansehen, Element benennen, Zeile + beleg()
 
 ## Grenze
 

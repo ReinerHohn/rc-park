@@ -146,7 +146,11 @@
   },
   "rms_px": 56.4,
   "plausibel_strassenfoto": true,
-  "brennweite_quelle": "geloest"
+  "brennweite_quelle": "geloest",
+  "ankerzone_z": [
+   31.5,
+   60.0
+  ]
  },
  "strassenfoto": true,
  "seite": "Sued",

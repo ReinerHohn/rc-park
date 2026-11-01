@@ -157,7 +157,11 @@
   },
   "rms_px": 56.7,
   "plausibel_strassenfoto": true,
-  "brennweite_quelle": "geloest"
+  "brennweite_quelle": "geloest",
+  "ankerzone_z": [
+   -0.3,
+   60.0
+  ]
  },
  "kamera_bundle": {
   "rvec": [

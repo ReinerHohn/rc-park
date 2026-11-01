@@ -21,12 +21,17 @@
       ]
     },
     {
-      "seiten": ["+y", "-y"],
-      "beleg": {"element": "Fenster 2 oben + 1 tiefer", "quelle": "ANNAHME: Ost/West nicht fotografiert", "anzahl": 3},
+      "seiten": ["-y"],
+      "beleg": {"element": "1 Schlitzfenster, sonst glatte Wand", "quelle": "Foto 060 Vollbild (Schraegluftbild NW 2012), Zoom 4100-4270/1620-1860", "anzahl": 1},
       "oeffnungen": [
-        {"typ": "fenster", "u": -1.8, "z": 26.0, "breite": 0.55, "hoehe": 1.0, "was": "Annahme, spiegelbildlich zu den Uhrseiten"},
-        {"typ": "fenster", "u": 1.8, "z": 26.0, "breite": 0.55, "hoehe": 1.0, "was": "Annahme"},
-        {"typ": "fenster", "u": 0.0, "z": 21.8, "breite": 0.45, "hoehe": 0.9, "was": "Annahme"}
+        {"typ": "fenster", "u": 0.0, "z": 21.8, "breite": 0.45, "hoehe": 0.9, "was": "einzige Oeffnung der Westwand; Pixel (4180,1732), Hoehe 22,6 m +-1,5 (Massstab 15,4 px/m unter der Zinnenunterkante 30,5 m). Die beiden Fenster, die hier bis 2026-11-01 als ANNAHME bei z 26 standen, gibt es nicht."}
+      ]
+    },
+    {
+      "seiten": ["+y"],
+      "beleg": {"element": "1 Schlitzfenster, sonst glatte Wand", "quelle": "ANNAHME: Ostwand nicht einsehbar (Foto 061 zeigt nur den Oberbau ueber den Nachbardaechern); uebernommen von der gemessenen Westwand", "anzahl": 1},
+      "oeffnungen": [
+        {"typ": "fenster", "u": 0.0, "z": 21.8, "breite": 0.45, "hoehe": 0.9, "was": "ANNAHME: spiegelbildlich zur gemessenen Westwand (vorher 3 Fenster als Annahme)"}
       ]
     }
   ]

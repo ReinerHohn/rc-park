@@ -602,3 +602,39 @@ mein offener Punkt aus AE. Lizenzfalle: **3DGS, 2DGS und GOF stehen alle unter d
 kommerziell)**, ebenso SuperPoint/SuperGlue, MASt3R und MeshAnything; verkaufstauglich sind COLMAP, GLOMAP, LightGlue, ALIKED,
 DISK, RoMa, **gsplat (Apache, 2DGS ab 1.4 enthalten)**, SAM 2 und **MapAnything mit den Apache-Gewichten**. Letzteres nimmt
 bekannte Intrinsics und Posen als Eingabe und liefert metrische Geometrie - die lizenzsaubere Alternative zu VGGT-1B.
+
+## AG. Westwand gemessen, und die Kamera-Sperre, die dabei entstand (2026-11-01)
+
+**Ergebnis am Modell:** Die Westwand hat **eine** Oeffnung, nicht drei. Im Vollbild 060 (7-fach-Zoom auf 4100-4270 / 1620-1860)
+ist die Wand zwischen den Eckquaderketten leer bis auf ein kleines hochrechteckiges Schlitzfenster bei Pixel (4180, 1732);
+zwei weitere dunkle Punkte sind Mauerankerloecher (< 0,2 m). Hoehe aus dem senkrechten Massstab 15,4 px/m unter der Oberkante
+der weissen Wand (v = 1611 = Zinnenunterkante 30,5 m): **z = 22,6 m +- 1,5**. `fassade.json` hat jetzt getrennte Gruppen
+`-y` (West, Beleg Foto 060) und `+y` (Ost, ANNAHME, von West uebernommen) mit je einer Oeffnung; Annahmen 6 -> 5.
+Zwei Pruefzeilen angelegt; die obere (`fenster_W_oben`, Soll 0) schlug am alten Modell mit 2 fehl, danach gruen - 38/38.
+
+**Falle dabei:** Die erste Fassung der Pruefzeile mass bei z = 26,0 m und war versehentlich **gruen**. `window()` schneidet
+von `z` bis `z + h`, der Strahl lag genau auf der Sohlbank. Messhoehe auf 26,5 m korrigiert - erst dann schlug sie fehl.
+Lehre: eine neue Pruefzeile, die sofort gruen ist, ist verdaechtig, nicht erfreulich.
+
+**Die eigentliche Ausbeute: Ankerzone statt Anker-RMS.** Fuer Foto 060 habe ich erstmals eine Kamera geloest
+(EXIF Nikon D7000, 92 mm -> f = 19210 px; Standort 1,17 km entfernt, 376 m ueber Grund - plausibel fuer ein Schraegluftbild;
+Anker: Nadelspitze + drei Tuermchenspitzen als Goldknaeufe, dazu Linienanker auf den drei sichtbaren Eckquaderketten).
+Gegenprobe: die Oberkante der Westwand muss 30,5 m sein - die Kamera rechnet **23,8 m**, 6,7 m daneben. Innerhalb von
+41-60 m gibt dieselbe Kamera die Tuermchenspitzen auf 0,7 m genau wieder. Der Fehler ist also nicht Rauschen, sondern
+**Extrapolation unter den tiefsten Anker**. Ein RMS-Kriterium haette das nicht gefangen und haette ausserdem jede Kamera
+des Projekts gesperrt (K-030: 56,7 px = 1,97 % der Bildhoehe - und sie misst trotzdem gut).
+Deshalb: `ankerzone_z` im Protokoll, `messung_pruefen.kamera_zone/kamera_tauglich`, `foto_breitenprofil` beschneidet,
+`fehlteile_finden` verwirft. Sofort sichtbar geworden: **K-031 und K-041 haben ihren tiefsten Anker bei 31,5 m** -
+die Pruefzeile "Silhouettenbreite Zone 23,5-28 m (Kamera 031)" steht damit auf einer Extrapolation (Beobachtung offen,
+naechster Schritt: Bodenecken in 031/041 picken und neu kalibrieren).
+
+**Offener Widerspruch oben am Dach (NICHT gemittelt, nichts geaendert).** Beide weit entfernten Fotos sind nahezu
+orthografisch - erkennbar daran, dass die vier gleich hohen Tuermchenspitzen in 061 nur 4 px von 236 px streuen.
+Dort liegt der Knauf der Nadel bei 49-51 % der Strecke Tuermchenspitze -> Nadelspitze (060: 0,492; 061: 0,508),
+im Modell bei 0,43; der Dachansatz in 061 bei -0,148, im Modell bei -0,303. Die kalibrierten Strassenkameras 031/041
+sagen das Gegenteil (Silhouette bei 47 m: Foto 0,5-1,4 m, Modell 3,0-3,1 m - das Dach endet dort FRUEHER).
+Die Laserstufen 48/50 m (8 und 6 m2 gegen 4 im Modell) beweisen nichts: DOM1 ist fuer Nadeln blind, das ist die
+Interpolationsfahne - fast haette ich daraus einen Beleg gemacht.
+Diese Verhaeltnisse sind bisher nur **abgelesen**, nicht gemessen. Naechster Schritt ist ein generisches Werkzeug fuer
+massstabsfreie Hoehenverhaeltnisse aus FERNEN Fotos (Gleichhoch-Punkte liefern die eigene Unsicherheit), abgesichert
+ueber `messung_pruefen.pruefe` - erst dann darf daraus ein Sollwert werden.
