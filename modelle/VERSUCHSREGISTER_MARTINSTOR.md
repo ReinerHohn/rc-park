@@ -456,3 +456,24 @@ sind die Form dieses Turms - ein zweites Bauwerk braucht dort eigene Zeilen, so 
 (`tools/bauwerk_generator.py` hat diesen Ansatz schon: Elemente per Config komponieren). Dann waere ein Generator nur noch eine
 Liste "welches Element mit welchen Massen" - also Daten, nicht Code. Geschaetzter Aufwand: die 17 Funktionen sind bereits
 objektunabhaengig geschrieben und muessten nur umziehen; die Komposition bliebe als Config.
+
+## Z. Umzug der Bauteile in eine Bibliothek - mit Bit-Beweis (2026-11-01)
+**`tools/bauteile.py` (neu, 186 Zeilen):** 11 Bauteil-Generatoren, die bis dahin im Martinstor-Generator lagen, obwohl sie nichts
+Bauwerksspezifisches enthalten: freie Funktionen `box, fbox, fcyl, frustum, prism` und die Klasse `Bau` (haelt adds/cuts/late,
+Massstab, Standard-Halbmasse) mit `window, quoins, clock, clock3, bruchstein, falze`. Der Generator ist von 448 auf 323 Zeilen
+geschrumpft und enthaelt jetzt im Wesentlichen Masse und Komposition.
+**Beweis, dass nichts schlechter wurde:**
+- STL **bitidentisch** (md5 a8dcc8cf... vorher wie nachher), 25.632 Dreiecke, Volumen 5534,5 cm3, Huelle 141,9 x 148,1 x 689,7 mm.
+- Alle Pruefwerte bitidentisch (Toleranz 1e-9), Belegregister (24 Elemente) identisch, 0 Widersprueche.
+- Das zweite Objekt (Schwabentor) nutzt dieselbe Bibliothek (`frustum`) und laeuft gruen durch.
+**Drei Fallen beim Refactor, alle aufgetreten und behoben:**
+1. **Neu geschrieben statt verschoben:** meine erste `quoins`-Fassung in der Bibliothek hatte eine andere Schleifenreihenfolge und
+   `rel(0.1)` statt `rel(0.12)` - das haette die Geometrie still veraendert. Danach wurden die Funktionen per ZEILENBEREICH kopiert.
+2. **Regex ueber den ganzen Text** loeschte beim Entfernen der Funktionen das `import random` mit. Seitdem: Bloecke ueber Zeilenbereiche
+   bestimmen, nicht ueber Regex.
+3. **Geteilter Zufallsgenerator:** `bruchstein` (Bibliothek) und `quoins3` (Generator) ziehen aus DEMSELBEN `random.Random(1900)`.
+   Zwei getrennte Generatoren haetten Mauerwerk und Eckquader veraendert, ohne dass eine Pruefung angeschlagen haette -
+   der Bit-Vergleich hat es sofort gezeigt. `Bau(..., rng=RNG)`.
+**Bilanz: 1700 von 2023 Zeilen generisch = 84 %.** Die verbleibenden 323 Zeilen sind Masse und Zusammenbau dieses Turms.
+Der naechste Schritt zu ~100 % waere, auch die Komposition als Konfiguration zu schreiben (`tools/bauwerk_generator.py`-Ansatz) -
+dann waere ein Bauwerk eine JSON-Datei. Das ist moeglich, aendert aber nichts an der Menge des Objektwissens, nur an seiner Form.

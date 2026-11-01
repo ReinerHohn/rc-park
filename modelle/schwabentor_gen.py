@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """schwabentor_gen.py - Generator-Rumpf (manifold3d). Jedes sichtbare Element meldet sich mit beleg(); Bau + Abnahme: tools/bauen_abnehmen.sh schwabentor"""
-import os, json, numpy as np
+import os, sys, json, numpy as np
 from manifold3d import Manifold as M
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
+from bauteile import box, frustum, Bau
 SCALE = float(os.environ.get("SCALE", "87")); K = 1000.0 / SCALE
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "stl", "schwabentor_1-{SCALE:.0f}.stl".format(SCALE=SCALE))
 ELEMENTE = []
@@ -9,7 +11,7 @@ def beleg(seite, element, quelle, **masse): ELEMENTE.append(dict(seite=seite, el
 SEITEN = {"+x": "Sued", "-x": "Nord", "+y": "Ost", "-y": "West"}
 H = 51                                   # Gesamthoehe (m) - Quelle in masstabelle.json
 beleg("dach", "Grundkoerper", "ANNAHME: Rumpf noch ohne Quelle", hoehe=H)
-model = M.cube((8.0, 8.0, H)).translate((-4.0, -4.0, 0.0)).scale((K, K, K))
+model = frustum(0, 0, 0.0, 9.0, 9.0, H, 6.5, 6.5).scale((K, K, K))   # Bauteil aus der Bibliothek
 mesh = model.to_mesh(); V = np.asarray(mesh.vert_properties)[:, :3]; F = np.asarray(mesh.tri_verts)
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 tri = V[F]; nrm = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]); nrm /= np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-12

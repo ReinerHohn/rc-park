@@ -18,9 +18,11 @@ sichtbar bleiben.  Daten: (c) OpenStreetMap-Mitwirkende (ODbL) + eigene Nachmode
   ~/.venvs/rcpark/bin/python martinstor_detail_gen.py              # 1:500  (~107 mm)
   SCALE=250 MINMM=0.3 ~/.venvs/rcpark/bin/python martinstor_detail_gen.py   # 1:250 FDM
 """
-import math, os
+import math, os, sys, random
 import numpy as np
 from manifold3d import Manifold as M, CrossSection as CS, OpType
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
+from bauteile import box, fbox, fcyl, frustum, prism, Bau      # Bauteil-Bibliothek (objektunabhaengig, tools/bauteile.py)
 
 SCALE = float(os.environ.get("SCALE", "500"))
 MINMM = float(os.environ.get("MINMM", "0.15"))  # kleinste Relief-Tiefe im Druck (mm)
@@ -41,107 +43,29 @@ D, W = 9.0, 10.0             # Schaft AM KOPF (bei ZZ); nach unten verjuengt er 
                              # bei 29-33,5 m um 0,72 m schmaler, der Laser bei 28-32 m ebenfalls (144/120 gegen 121/97 Zellen).
 ZZ = 30.5                     # Zinnen-Unterkante = Oberkante Schaft (OSM-Traufe 33 m, Foto 33-35 m)
 TOP = H_TOTAL
-adds, cuts = [], []
+RNG = random.Random(1900)       # fester Startwert: Ergebnis reproduzierbar (von Generator UND Bauteilen geteilt)
+_B = Bau(K, MINMM, hx=D / 2, hy=W / 2, seg=SEG, rng=RNG)    # Bauteil-Kontext haelt adds/cuts/late und den Massstab
+adds, cuts, late = _B.adds, _B.cuts, _B.late
+window, quoins = _B.window, _B.quoins
+clock, clock3, _bruchstein, _falze = _B.clock, _B.clock3, _B.bruchstein, _B.falze
 ELEMENTE = []   # Beleg-Register: jedes sichtbare Element meldet Seite + Quelle -> modelle/martinstor/elemente.json (Pruefstand: ohne Beleg = FEHLER)
 def beleg(seite, element, quelle, **masse):
     ELEMENTE.append(dict(seite=seite, element=element, quelle=quelle, **masse))
 SEITEN = {"+x": "Sued", "-x": "Nord", "+y": "Ost", "-y": "West"}
 
-def box(x0, x1, y0, y1, z0, z1):
-    return M.cube((x1 - x0, y1 - y0, z1 - z0)).translate((x0, y0, z0))
 
-def fbox(face, u0, u1, z0, z1, n0, n1, c=(0.0, 0.0), h=(D / 2, W / 2)):
-    """Box an einer Fassade: u = waagrecht entlang Fassade, n = Abstand nach aussen."""
-    cx, cy = c; hx, hy = h
-    if face == "+x": return box(cx + hx + n0, cx + hx + n1, cy + u0, cy + u1, z0, z1)
-    if face == "-x": return box(cx - hx - n1, cx - hx - n0, cy - u1, cy - u0, z0, z1)
-    if face == "+y": return box(cx - u1, cx - u0, cy + hy + n0, cy + hy + n1, z0, z1)
-    return box(cx + u0, cx + u1, cy - hy - n1, cy - hy - n0, z0, z1)
 
-def fcyl(face, u, z, r, n0, n1, c=(0.0, 0.0), h=(D / 2, W / 2), seg=SEG):
-    """Zylinder mit Achse senkrecht zur Fassade."""
-    cx, cy = c; hx, hy = h
-    cyl = M.cylinder(n1 - n0, r, circular_segments=seg)
-    if face in ("+x", "-x"):
-        s = 1 if face == "+x" else -1
-        cyl = cyl.rotate((0, 90, 0))  # Achse -> +x, Bereich x in [0, n1-n0]
-        x0 = cx + hx + n0 if s > 0 else cx - hx - n1
-        return cyl.translate((x0, cy + s * u, z))
-    s = 1 if face == "+y" else -1
-    cyl = cyl.rotate((-90, 0, 0))     # Achse -> +y
-    y0 = cy + hy + n0 if s > 0 else cy - hy - n1
-    return cyl.translate((cx - s * u, y0, z))
 
-def frustum(x0, y0, z0, sx0, sy0, z1, sx1, sy1):
-    """Pyramidenstumpf/Walm: Rechteck (sx0,sy0) bei z0 -> (sx1,sy1) bei z1, zentriert."""
-    pts = []
-    for z, sx, sy in ((z0, sx0, sy0), (z1, sx1, sy1)):
-        for a in (-1, 1):
-            for b in (-1, 1):
-                pts.append((x0 + a * sx / 2, y0 + b * sy / 2, z))
-    return M.hull_points(pts)
 
-def window(face, u, z, w, h, c=(0.0, 0.0), hh=(D / 2, W / 2), deep=0.35):
-    fr, sill = rel(0.08), rel(0.14)
-    adds.append(fbox(face, u - w / 2 - 0.25, u + w / 2 + 0.25, z - 0.25, z + h + 0.25, -0.05, fr, c, hh))  # Gewaende
-    adds.append(fbox(face, u - w / 2 - 0.4, u + w / 2 + 0.4, z - 0.42, z - 0.22, -0.05, sill, c, hh))      # Sohlbank
-    adds.append(fbox(face, u - w / 2 - 0.35, u + w / 2 + 0.35, z + h + 0.25, z + h + 0.4, -0.05, sill, c, hh))  # Sturzgesims
-    cuts.append(fbox(face, u - w / 2, u + w / 2, z, z + h, -deep, 0.5, c, hh))
-    cuts.append(fbox(face, u - 0.05, u + 0.05, z, z + h, -deep - 0.1, 0.5, c, hh) if w > 0.8 else M())  # Fensterkreuz-Spalt -> Mittelpfosten
-    if w > 0.8:  # Mittelpfosten + Kaempfer bleiben stehen
-        adds.append(fbox(face, u - 0.07, u + 0.07, z, z + h, -deep, -0.02, c, hh))
-        adds.append(fbox(face, u - w / 2, u + w / 2, z + h * 0.62, z + h * 0.62 + 0.12, -deep, -0.02, c, hh))
 
-def quoins(c, hx, hy, z0, z1, a=1.3, b=0.75, course=0.72, joint=0.07, pr=None):
-    """Eckquader an allen 4 Kanten eines Rechteck-Koerpers (Mitte c, halbe Masse hx, hy)."""
-    pr = pr or rel(0.12)
-    cx, cy = c
-    n = int((z1 - z0) / course)
-    for sx in (-1, 1):
-        for sy in (-1, 1):
-            X, Y = cx + sx * hx, cy + sy * hy
-            for i in range(n):
-                za, zb = z0 + i * course, z0 + (i + 1) * course - joint
-                lx, ly = (a, b) if i % 2 == 0 else (b, a)
-                xa, xb = sorted((X - sx * lx, X + sx * pr))
-                ya, yb = sorted((Y - sy * ly, Y + sy * pr))
-                adds.append(box(xa, xb, ya, yb, za, zb))
 
-def clock(face, z, r=1.35):
-    pr = rel(0.1)
-    adds.append(fbox(face, -r - 0.65, r + 0.65, z - r - 0.65, z + r + 0.65, -0.05, pr))   # Sandstein-Rahmen
-    cuts.append(fcyl(face, 0, z, r + 0.12, -0.15, 0.6))                                   # Nische
-    adds.append(fcyl(face, 0, z, r, -0.2, -0.15 + rel(0.06)))                             # Zifferblatt
-    adds.append(fcyl(face, 0, z, 0.18, -0.2, -0.15 + rel(0.16)))                          # Nabe
-    for i in range(12):  # Stundenmarken
-        ang = math.radians(i * 30)
-        u, zz = math.sin(ang) * r * 0.82, z + math.cos(ang) * r * 0.82
-        s = 0.16 if i % 3 == 0 else 0.1
-        adds.append(fbox(face, u - s, u + s, zz - s, zz + s, -0.2, -0.15 + rel(0.12)))
-    for ang, ln, wd in ((math.radians(300), 0.75, 0.09), (math.radians(60), 1.1, 0.06)):  # Zeiger 10:10
-        steps = 6
-        for k in range(steps):
-            t = (k + 0.5) / steps * ln
-            u, zz = math.sin(ang) * t, z + math.cos(ang) * t
-            adds.append(fbox(face, u - wd, u + wd, zz - wd, zz + wd, -0.2, -0.15 + rel(0.14)))
 
 # ===================== v3: Proportionen und Aufbau aus den Fotos =====================
 HB = (DB / 2, WB / 2)          # Halbmasse Sockel (fuer Fassadenfunktionen)
 HS = (D / 2, W / 2)            # Halbmasse Schaft am Kopf
 GEL = {}                       # Gurtgesims-Hoehen
 
-def prism(face, pts, n0, n1, h):
-    """Prisma (Dreieck/Polygon in u,z) an einer Fassade, Dicke n0..n1 nach aussen."""
-    hx, hy = h
-    P = [(n, u, z) for n in (n0, n1) for (u, z) in pts]
-    m = M.hull_points(P)
-    if face == "+x": return m.translate((hx, 0, 0))
-    if face == "-x": return m.rotate((0, 0, 180)).translate((-hx, 0, 0))
-    if face == "+y": return m.rotate((0, 0, 90)).translate((0, hy, 0))
-    return m.rotate((0, 0, -90)).translate((0, -hy, 0))
 
-import random
-RNG = random.Random(1900)       # fester Startwert: Ergebnis reproduzierbar
 
 # ---------- Rumpf: unten senkrechter Steinsockel, darueber nach oben verjuengter Schaft (Foto: durchgehender Anlauf) ----------
 ZK, DK, WK = 26.0, 9.3, 10.3     # Knick der Verjuengung: bis hier wie bisher (9,3 x 10,3), darueber staerker auf D x W bei ZZ.
@@ -154,23 +78,7 @@ def hxy(z):
     t = min(max((z - ZK) / (ZZ - ZK), 0.0), 1.0)
     return (DK / 2 + (D / 2 - DK / 2) * t, WK / 2 + (W / 2 - WK / 2) * t)
 
-late = []   # Zifferblatt-Relief wird NACH dem Ausschnitt vereinigt (sonst schneidet die Nische es weg)
-def clock3(face, z, r, hh):
-    pr = rel(0.1)
-    adds.append(fbox(face, -r - 0.9, r + 0.9, z - r - 0.9, z + r + 0.9, -0.05, pr, h=hh))   # Sandsteinrahmen
-    cuts.append(fcyl(face, 0, z, r + 0.12, -0.15, 0.6, h=hh))
-    late.append(fcyl(face, 0, z, r, -0.2, -0.15 + rel(0.06), h=hh))
-    late.append(fcyl(face, 0, z, 0.2, -0.2, -0.15 + 3.2 * rel(0.06), h=hh))
-    for i in range(12):
-        ang = math.radians(i * 30)
-        u, zz = math.sin(ang) * r * 0.82, z + math.cos(ang) * r * 0.82
-        sz = 0.17 if i % 3 == 0 else 0.1
-        late.append(fbox(face, u - sz, u + sz, zz - sz, zz + sz, -0.2, -0.15 + 2.2 * rel(0.06), h=hh))
-    for ang, ln, wd in ((math.radians(300), 0.8, 0.09), (math.radians(60), 1.2, 0.06)):
-        for k in range(6):
-            t = (k + 0.5) / 6 * ln
-            u, zz = math.sin(ang) * t, z + math.cos(ang) * t
-            late.append(fbox(face, u - wd, u + wd, zz - wd, zz + wd, -0.2, -0.15 + 2.6 * rel(0.06), h=hh))
+# 'late' (Zifferblatt-Relief nach dem Ausschnitt) kommt aus dem Bauteil-Kontext _B
 
 def quoins3(z0, z1, a=1.35, b=0.8, course=0.95, joint=0.09):
     """Gezahnte Eckquader entlang des verjuengten Schafts (je Lage mit den Halbmassen auf ihrer Hoehe)."""
@@ -205,29 +113,13 @@ for zz in (4.0, 8.0):                                                           
     cuts.append(M.cube((0.6, 0.25, 1.0)).translate((EX - ER - 0.3, EY - 0.125, zz)))
 HB = (DB / 2, WB / 2)
 
-def bruchstein(f, L, hh, frei):
-    """Unregelmaessige Bruchstein-Quader auf einer Sockelseite (Foto: grobe Findlinge mit tiefen Fugen).
-    frei(u0,u1,z0,z1) -> True, wenn dort schon etwas anderes sitzt (Tor, Tafel, Fenster)."""
-    z = 0.95
-    while z < ZB - 0.3:
-        hgt = RNG.uniform(0.48, 0.78)
-        z1 = min(z + hgt, ZB - 0.02)
-        u = -L / 2 + 0.35
-        while u < L / 2 - 0.35:
-            w = RNG.uniform(0.7, 1.7)
-            u1 = min(u + w, L / 2 - 0.35)
-            if u1 - u > 0.3 and not frei(u, u1, z, z1):
-                pr = rel(RNG.uniform(0.05, 0.22))
-                adds.append(fbox(f, u + 0.03, u1 - 0.03, z + 0.03, z1 - 0.03, -0.05, pr, h=hh))
-            u = u1
-        z = z1
 
 def frei_x(u0, u1, z0, z1):
     return (u1 > -4.1 and u0 < 4.1 and z0 < 9.4) or (u1 > -2.6 and u0 < 2.6 and z0 < 10.7)
 def frei_y(u0, u1, z0, z1):
     return (u1 > -0.95 and u0 < 0.95 and ((5.9 < z1 and z0 < 8.0) or (9.9 < z1 and z0 < 12.0)))
-for f in ("+x", "-x"): bruchstein(f, WB, HB, frei_x)
-for f in ("+y", "-y"): bruchstein(f, DB, HB, frei_y)
+for f in ("+x", "-x"): _bruchstein(ZB, f, WB, HB, frei_x)
+for f in ("+y", "-y"): _bruchstein(ZB, f, DB, HB, frei_y)
 hz = hxy(ZB + 0.2)
 adds.append(box(-hz[0] - 0.25, hz[0] + 0.25, -hz[1] - 0.25, hz[1] + 0.25, ZB, ZB + 0.45))                      # Gurtgesims Sockel/Schaft
 
@@ -343,26 +235,9 @@ for sx in (-1, 1):
     for sy in (-1, 1):
         adds.append(M.sphere(0.24, 20).translate((sx * 0.65, sy * 1.5, RZ1 + 0.1)))            # Goldkugeln auf den Dachecken
 # Stehfalze im Kupferdach (senkrechte Rillen, wie im Foto)
-def falze(face, hb, ht, ub, ut):
-    dz = RZ1 - RZ0
-    th = math.degrees(math.atan2(hb - ht, dz))
-    nseam = int(2 * ub / 0.62)
-    for k in range(nseam):
-        u = -ub + (k + 0.5) * 2 * ub / nseam
-        t1 = min(1.0, (ub - abs(u) - 0.2) / (ub - ut))
-        if t1 <= 0.15: continue
-        t0 = 0.04
-        L = (t1 - t0) * dz / math.cos(math.radians(th))
-        zc = RZ0 + (t0 + t1) / 2 * dz
-        xc = hb - (hb - ht) * (t0 + t1) / 2
-        cut = M.cube((0.16, 0.06, L)).translate((-0.08, -0.03, -L / 2)).rotate((0, -th, 0)).translate((xc, u, zc))
-        if face == "-x": cut = cut.rotate((0, 0, 180))
-        elif face == "+y": cut = cut.rotate((0, 0, 90))
-        elif face == "-y": cut = cut.rotate((0, 0, -90))
-        cuts.append(cut)
 _bx, _by = (GX + 1.5) / 2, (GY + 1.5) / 2
-for f in ("+x", "-x"): falze(f, _bx, 0.65, _by, 1.5)
-for f in ("+y", "-y"): falze(f, _by, 1.5, _bx, 0.65)
+for f in ("+x", "-x"): _falze(RZ0, RZ1, f, _bx, 0.65, _by, 1.5)
+for f in ("+y", "-y"): _falze(RZ0, RZ1, f, _by, 1.5, _bx, 0.65)
 
 # ---------- Dachreiter (Laser: Kegel, Fussradius ~1,5 m bei 46 m, Spitze 54,8 m) ----------
 adds.append(M.cylinder(0.6, 1.55, 1.45, 8).translate((0, 0, RZ1 - 0.1)))

@@ -14,14 +14,9 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - **dokument**: 1 von 1 Pruefungen gruen (Bauforschung/Denkmalamt/Wikipedia; Bezugshoehe oft unklar (60 vs 65 m))
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
 
-## Elemente des Generators: 2 belegt, 1 Annahmen
+## Elemente des Generators: 1 belegt, 1 Annahmen
 
 - dach: Grundkoerper - ANNAHME: Rumpf noch ohne Quelle
-- Sued: Erfundener Erker - 
-
-## Seiten
-
-- Sued: KEIN FOTO - ungeprueft
 
 ## Beobachtungen ohne Pruefung
 
