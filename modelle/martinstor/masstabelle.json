@@ -1005,6 +1005,12 @@
    "wer": "Claude (DOP20-Auswertung)",
    "text": "Das Luftbild DOP20 2025 (20 cm/px) zeigt als einzige Quelle die Dachflaechen von oben: vier Tuermchenkegel, Hauptdach, Dachreiter - der Teil der Ost/Westseite, den kein Strassenfoto erreicht. Erste Farbmaske unbrauchbar (erfasste Baeume und Schatten: 2712 m2 statt ~100 m2).",
    "naechster_schritt": "Farbmaske enger fassen (Kupfergruen gegen Laubgruen, Schatten ausschliessen), Gebaeudeversatz aus der Spitze bestimmen, dann Tuermchenlagen und Dachgrundriss messen - Ergebnis jeweils mit messung_pruefen.plausibel absichern"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (Schraegluftbild 060, Sichtung)",
+   "text": "Die Westwand zeigt im Luftbild nur ein bis zwei kleine Oeffnungen, nicht die drei Fenster, die der Generator dort als ANNAHME setzt (fassade.json, Gruppe +y/-y). Erstmals ueberhaupt eine Quelle fuer diese Seite.",
+   "naechster_schritt": "Oeffnungen im Vollbild 060 zaehlen und ihre Hoehe messen (die Wand ist schraeg gesehen, also ueber Verhaeltnisse zu bekannten Hoehen), dann fassade.json korrigieren und den Beleg von ANNAHME auf Foto 060 umstellen"
   }
  ],
  "beobachtungen_erledigt": [

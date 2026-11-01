@@ -576,3 +576,29 @@ Dann haette man 36 Kameras mit amtlichem Massstab, und jede Fotomessung (Breiten
 auf 36 statt auf 3 Fotos. Das waere der groesste Genauigkeitsgewinn, der hier noch moeglich ist.
 **Unverzichtbar bleibt:** die Wolke muss vom Nachbarbestand getrennt werden (Zylinder um die Turmachse reicht nicht, die
 Nachbarhaeuser stehen 3-7 m entfernt).
+
+## AF. Zwei Recherchen - und die Loesung fuer Ost/West lag auf Commons (2026-11-01)
+**Datenquellen-Recherche, wichtigster Fund:** Zwei Schraegaufnahmen, die NICHT in der Commons-Kategorie "Martinstor" liegen und
+deshalb bei der ersten Sammlung durchrutschten:
+- **Foto 060** `Aerial View - Freiburg im Breisgau-Innenstadt1.jpg` (4658x2844, 2012, **CC BY 3.0**): Schraegluftbild aus NW.
+  Zeigt die **WESTWAND ueber die volle Hoehe**, alle vier Tuermchen von oben, das Kragdach und die Dachflaechen. Rund 15 px/m -
+  fuer Schlankheit und Dachneigung besser als jedes Strassenfoto. **Erste Quelle ueberhaupt fuer die verdeckte Seite.**
+- **Foto 061** `Blick vom Schlossberg auf die Freiburger Altstadt mit Martinstor.jpg` (3601x2757, 2016, **CC BY-SA 3.0**):
+  Ostflanke des Oberbaus ueber den Nachbardaechern, ~18 px/m. ShareAlike - nur Masse daraus, Bild nicht in den Bausatz.
+**Erster Befund daraus (noch nicht gemessen, als Beobachtung notiert):** Die Westwand zeigt nur ein bis zwei kleine Oeffnungen,
+nicht die drei Fenster, die `fassade.json` dort als ANNAHME setzt.
+**Lizenzkorrektur:** Mapillary ist laut Terms **CC BY-NC-SA**, nicht BY-SA wie bisher im Register vermerkt - fuer ein
+Verkaufsprodukt unbrauchbar. Eintrag berichtigt. (Zudem: Street-Level erreicht die verdeckten Seiten ohnehin nicht; KartaView
+hat am Martinstor nur eine Sequenz mit defektem GPS und nach oben geneigter Lenkerkamera, Panoramax null Abdeckung.)
+**Negativergebnisse, die Arbeit sparen:** Stadtarchiv-Serie C1 Nr. 9-13 enthaelt KEINE 1901er-Umbauplaene (endet 1891/1901);
+Bauforschung BW hat zum Objekt nur Dendro- und Restauratorenbefund, ausdruecklich "Fotos: keine"; Carl Schaefers Nachlass im
+Generallandesarchiv Karlsruhe sind drei Personalakten ohne Plaene; Sketchfab hat nur einen Scan des Doppeladler-Reliefs ohne
+Lizenz; Zenodo und OpenHeritage3D nichts. **Hoechster offener Erwartungswert:** Volltextsuche in *Deutsche Bauzeitung*,
+*Zentralblatt der Bauverwaltung*, *Die Denkmalpflege* (Jahrgaenge 1901-1903, alle frei digitalisiert) nach einem publizierten
+Aufriss des Umbaus - ein masstaeblicher Aufriss schlaegt jedes Foto.
+**SfM-Recherche, Kernpunkte:** `model_aligner` (RANSAC auf bekannte Kamerazentren, min. 3 Bilder) bzw. `pose_prior_mapper`
+(`--prior_position_std` auf die ehrliche Unsicherheit) sind der vorgesehene Weg, eine COLMAP-Wolke metrisch zu machen - genau
+mein offener Punkt aus AE. Lizenzfalle: **3DGS, 2DGS und GOF stehen alle unter der Inria/MPII-Forschungslizenz (nicht
+kommerziell)**, ebenso SuperPoint/SuperGlue, MASt3R und MeshAnything; verkaufstauglich sind COLMAP, GLOMAP, LightGlue, ALIKED,
+DISK, RoMa, **gsplat (Apache, 2DGS ab 1.4 enthalten)**, SAM 2 und **MapAnything mit den Apache-Gewichten**. Letzteres nimmt
+bekannte Intrinsics und Posen als Eingabe und liefert metrische Geometrie - die lizenzsaubere Alternative zu VGGT-1B.

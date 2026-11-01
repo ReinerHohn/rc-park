@@ -130,6 +130,24 @@
     1893,
     2773
    ]
+  },
+  "060": {
+   "seite": "West",
+   "silhouette_frei": false,
+   "vollbild": [
+    4658,
+    2844
+   ],
+   "notiz": "Schraegluftbild aus NW (2012, CC BY 3.0, Commons 'Aerial View - Freiburg im Breisgau-Innenstadt1'): zeigt die sonst verdeckte WESTWAND ueber die volle Hoehe, alle vier Tuermchen von oben, Kragdach und Dachflaechen. ~15 px/m."
+  },
+  "061": {
+   "seite": "Ost",
+   "silhouette_frei": false,
+   "vollbild": [
+    3601,
+    2757
+   ],
+   "notiz": "Blick vom Schlossberg (2016, CC BY-SA 3.0): Ostflanke des Oberbaus ueber den Nachbardaechern. ~18 px/m im oberen Bereich. ShareAlike beachten."
   }
  },
  "zentrierung": "achse",
