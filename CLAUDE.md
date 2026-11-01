@@ -29,6 +29,7 @@ Je Objekt `modelle/<objekt>/objekt.json` + `masstabelle.json` (Masse = Daten mit
 - `modelle/LERNJOURNAL_MARTINSTOR.md`, `modelle/PIPELINE_H0.md`, `modelle/PROTOKOLL_VALIDATOR.md` (Fehler-Log F1-F10)
 
 ## Technik
+- Grosse Daten (Fotos, Foto-Eingang, SfM-Netze, Wolken, Caches, Nullstart-Objekte) NIE auf der Root-Platte: immer unter `/media/oem/scan/rc-park_daten/<objekt>/` bzw. `/media/oem/scan/rc-park_null/`, im Repo Symlinks (Nutzerregel 2026-11-01; Root war bei 99 %).
 - Python-Umgebungen: `/media/oem/scan/venv-seg/bin/python -I` (trimesh, torch, CUDA), `~/.venvs/rcpark` (manifold3d fuer den Generator).
 - Nie zwei Optimierer/Generatorlaeufe parallel mit gleicher Zwischendatei; Generatordatei nicht aendern, solange Optimierer laufen.
 - Kein Commit/Push ohne Auftrag; Commit-Texte enden mit den Attribution-Zeilen der Sitzung.

@@ -27,3 +27,6 @@ modelle/martinstor/sfm/db_*.db
 modelle/martinstor/sfm/bilder*
 DensifyPointCloud-*.log
 scan-setup/*.log
+daten/martinstor/commons_neu
+modelle/martinstor_null
+daten/martinstor/fotos_eingang

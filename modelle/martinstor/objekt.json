@@ -608,7 +608,7 @@
    "hinweis": "Token unter ~/.config/mapillary_token eintragen (gratis, Mapillary Developers); dann liefert die Quelle georeferenzierte Strassenbilder aller Seiten"
   },
   "videos": [],
-  "ausgabe": "daten/martinstor/fotos_eingang",
+  "ausgabe": "/media/oem/scan/rc-park_daten/martinstor/fotos_eingang",
   "max_neu": 120,
   "min_breite_px": 1000,
   "max_je_blickgruppe": 4,
