@@ -1,0 +1,93 @@
+{
+ "foto": "061",
+ "stl": "/home/oem/git/rc-park/modelle/stl/martinstor_v4_1-87.stl",
+ "kamera": "K-061 (amtliche Anker)",
+ "zelle_px": 9,
+ "schwelle": 0.35,
+ "treffer": [
+  {
+   "zelle": [
+    2376,
+    378,
+    9
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    -0.12,
+    2.29,
+    49.3
+   ]
+  },
+  {
+   "zelle": [
+    2367,
+    414,
+    9
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    0.8,
+    2.31,
+    45.43
+   ]
+  },
+  {
+   "zelle": [
+    2367,
+    423,
+    9
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    0.77,
+    2.42,
+    44.46
+   ]
+  },
+  {
+   "zelle": [
+    2367,
+    432,
+    9
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    0.72,
+    2.54,
+    43.5
+   ]
+  },
+  {
+   "zelle": [
+    2376,
+    630,
+    9
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    -1.02,
+    5.24,
+    22.32
+   ]
+  },
+  {
+   "zelle": [
+    2340,
+    657,
+    9
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    2.83,
+    5.32,
+    19.36
+   ]
+  }
+ ]
+}

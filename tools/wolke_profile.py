@@ -40,7 +40,7 @@ def main():
     ap.add_argument("--zentral-z", nargs=2, type=float, default=[36.0, 57.0]); ap.add_argument("--abseits-z", nargs=2, type=float, default=[30.5, 44.5])
     ap.add_argument("--abseits-min-r", type=float, default=2.8, help="Quadrantenpunkte: |quer| > ... (Tuermchen liegen aussen)")
     ap.add_argument("--rand", type=float, default=0.2, help="Abzug vom p2-p98-Mass quer (Wolkenstreuung; Gratbereiche duenn besetzt -> klein halten)")
-    ap.add_argument("--pruefungen", action="store_true"); ap.add_argument("--generator", action="store_true"); ap.add_argument("--toleranz", type=float, default=0.5); ap.add_argument("--tuerm-rand", type=float, default=0.8, help="Hoehenabstand ueber den Tuermchenspitzen, ab dem die Wolkenbreite ohne Tuermchen gilt")
+    ap.add_argument("--pruefungen", action="store_true"); ap.add_argument("--generator", action="store_true"); ap.add_argument("--toleranz", type=float, default=0.5); ap.add_argument("--tief-quelle", default="wolke", help="wolke | silhouette:<foto> (Silhouettenprofil eines fernen Seitenfotos, messprotokoll/M-<foto>-S1.json: misst die volle Tiefe direkt, ohne Symmetrie- und Driftannahme)"); ap.add_argument("--tuerm-rand", type=float, default=0.8, help="Hoehenabstand ueber den Tuermchenspitzen, ab dem die Wolkenbreite ohne Tuermchen gilt")
     a = ap.parse_args(); obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); s = a.seite.lower()
     P = np.load(os.path.join(od, a.dicht or f"sfm/dicht_{s}_entzerrt.npy")).astype(float)
     tief, sgn, quer = {"nord": ("x", -1.0, "y"), "sued": ("x", 1.0, "y"), "ost": ("y", 1.0, "x"), "west": ("y", -1.0, "x")}[s]
@@ -107,7 +107,12 @@ def main():
         if kegel: return kegel["d_koerper"] if z <= kegel["z_knick"] else max(kegel["steigung_d_je_m"] * (TS - z), 0.0)
         c = [r["d"] for r in mittel if r["z"] >= z]; return max(c) if c else 0.0
     achse_q = float(np.median([r["achse_quer"] for r in mittel])) if mittel else None
-    widerspruch = []
+    widerspruch = []; sil = None
+    if a.tief_quelle.startswith("silhouette:"):
+        foto = a.tief_quelle.split(":", 1)[1]; Sp = json.load(open(os.path.join(od, "messprotokoll", f"M-{foto}-S1.json")))
+        assert Sp.get("achse") == tief, f"Silhouette {foto} misst Achse {Sp.get('achse')}, hier ist tief = {tief}"
+        sz = np.array([q["z"] for q in Sp["profil"]]); sb = np.array([q["breite"] for q in Sp["profil"]]); sil = (foto, sz, sb)
+        print(f"Tiefe aus Silhouette Foto {foto} ({len(sz)} Schichten, {Sp['px_je_m']} px/m); Wolkenfront nur Vergleich")
     for r in zentral:
         # Pass 2: Breite quer im WEITEN Frontfenster (+-0,8 m Tiefe: Wolkenstreuung, Gratbereiche) ohne die Tuermchenzone (|quer| um die Tuermchenachse +-1,6 bis ueber die Spitzen)
         k = (P[:, 2] >= r["z"] - a.dz / 2) & (P[:, 2] < r["z"] + a.dz / 2) & (np.abs(sgn * P[:, it] - r["front_tief"]) < 0.8)
@@ -116,23 +121,41 @@ def main():
         r["dom1_flaeche"] = int(((Wd > r["z"]) & (dd <= 9)).sum())
         r["breite_quer"] = r["breite_quer_wolke"]
         r["breite_tief"] = r["breite_tief_wolke"]                     # Wolkenfront (entzerrt, an LoD2-Wand gehaengt); DOM1 nur Vergleichsspalte
+        if sil and sil[1].min() <= r["z"] <= sil[1].max():
+            r["breite_tief_silhouette"] = round(float(np.interp(r["z"], sil[1], sil[2])), 2); r["breite_tief"] = r["breite_tief_silhouette"]
         if r["breite_tief_dom1"] and abs(r["breite_tief_dom1"] - r["breite_tief"]) > 1.0: widerspruch.append(r["z"])
-    print("\nDachprofil (quer + tief aus der Wolke; DOM1 zum Vergleich):")
-    for r in zentral: print(f"  z {r['z']:5.2f}  quer {r['breite_quer']:5.2f}  tief {r['breite_tief']:5.2f}   DOM1 quer {r['breite_quer_dom1']} tief {r['breite_tief_dom1']}  (DOM1-Flaeche {r['dom1_flaeche']} Zellen)")
+    rampe = None
+    if sil:
+        AN = json.load(open(os.path.join(od, "anker3d.json")))["anker"]; z_ank = max(v["xyz"][2] for v in AN.values() if v.get("quelltyp") == "lod2")   # oberste LoD2-Hoehe = bis hierhin ist die Wolke an amtliche Flaechen gehaengt (Wandebene/Kanten)
+        paare = [(r["z"], r["breite_tief_silhouette"] - r["breite_tief_wolke"]) for r in zentral if "breite_tief_silhouette" in r]
+        if paare:
+            zz_ = np.array([q[0] for q in paare]) - z_ank; dd_ = np.array([q[1] for q in paare]); k_ = float((zz_ * dd_).sum() / (zz_ * zz_).sum())
+            rampe = dict(z_anker=round(z_ank, 2), m_je_m=round(k_, 4), median=round(float(np.median(dd_)), 2), spanne=[round(float(dd_.min()), 2), round(float(dd_.max()), 2)], schichten=len(paare))
+            print(f"  Silhouette minus Wolkenfront: Median {rampe['median']:+.2f} m, Spanne {rampe['spanne'][0]:+.2f}..{rampe['spanne'][1]:+.2f} -> Tiefen-Offset der einseitigen Wolke als Rampe {k_:+.4f} m je m ueber der obersten amtlichen Ankerhoehe {z_ank} m; unterhalb der Silhouette so korrigiert")
+            for r in zentral:
+                if "breite_tief_silhouette" not in r and r["z"] > z_ank: r["breite_tief_korrigiert"] = round(r["breite_tief_wolke"] + k_ * (r["z"] - z_ank), 2); r["breite_tief"] = r["breite_tief_korrigiert"]
+    print("\nDachprofil (quer aus der Wolke; tief aus %s; Wolkenfront roh/DOM1 zum Vergleich; tief ggf. driftkorrigiert):" % ("Silhouette " + sil[0] if sil else "Wolkenfront"))
+    for r in zentral: print(f"  z {r['z']:5.2f}  quer {r['breite_quer']:5.2f}  tief {r['breite_tief']:5.2f}   Wolkenfront {r['breite_tief_wolke']}  DOM1 quer {r['breite_quer_dom1']} tief {r['breite_tief_dom1']}  (DOM1-Flaeche {r['dom1_flaeche']} Zellen)")
+    # Traufe des Zentralkoerpers: breiteste Front-Schicht im Traufbereich (Tropfkante) - ins Generatorprofil, damit der Ueberstand kein Handmass ist
+    traufe = None
+    kand = [r for r in zentral if r["z"] < a.zentral_z[0] + 1.5]
+    if kand:
+        rt = max(kand, key=lambda r: r["breite_tief"]); traufe = dict(z=rt["z"], tief=rt["breite_tief"], quer=rt["breite_quer"], quelle="breiteste Frontschicht im Traufbereich (Tropfkante)" + (", Tiefe driftkorrigiert" if rampe else ""))
+        print(f"  Traufe: z {traufe['z']} tief {traufe['tief']} quer {traufe['quer']}")
     if widerspruch: print(f"  DOM1-Tiefe weicht in {len(widerspruch)} Schichten > 1 m ab ({widerspruch[0]}..{widerspruch[-1]} m): Laser-Zellmaxima auf steilen Helmflaechen (Quellen-Blindheit), Schiedsrichter = fernes Seitenfoto (tools/foto_silhouette_profil.py)")
     out = dict(seite=s, dz=a.dz, zentral=zentral, abseits=abseits, abseits_mittel=mittel, tuerm_top=tuerm_top, tuerm_kegel=kegel, dom1_widerspruch_z=widerspruch, hinweis="Tiefe = 2 x Wolkenfront im Achsstreifen, Breite quer = p2-p98 im Frontfenster minus Rand; DOM1-Schnitte nur Vergleich (blind auf steilen Flaechen); Abseits: robuster Kreisfit je Schicht ausserhalb der Dachbreite")
     json.dump(out, open(os.path.join(od, f"profile_{s}.json"), "w"), indent=1, ensure_ascii=False); print("\ngeschrieben:", os.path.join(od, f"profile_{s}.json"))
     if a.generator:
         # Generatorprofil: zentral (z, tief, quer) - quer aus Wolke, tief aus DOM1 falls vorhanden sonst quer * (DOM1-Verhaeltnis der naechsten Schicht); abseits (z, d)
         dach = [[r["z"], r["breite_tief"], round(r["breite_quer"], 2)] for r in zentral if r["breite_tief"] and r["breite_quer"] > 1.0]
-        # Monotonie nach oben (Helm wird nicht breiter): laufendes Minimum von unten, Ausreisser einzelner Schichten verschwinden
-        for i in range(1, len(dach)): dach[i][1] = min(dach[i][1], dach[i - 1][1] + 0.05); dach[i][2] = min(dach[i][2], dach[i - 1][2] + 0.05)
+        # Monotonie (Helm wird nach oben nicht breiter): von OBEN nach unten laufendes Maximum - die oberen Schichten (Silhouette) gelten, tiefere werden hochgezogen
+        for i in range(len(dach) - 2, -1, -1): dach[i][1] = max(dach[i][1], dach[i + 1][1] - 0.05); dach[i][2] = max(dach[i][2], dach[i + 1][2] - 0.05)
         if kegel:   # Koerper (Zylinder, Median d) + Kegel durch die Spitze - statt der einzelnen, oberhalb des Koerpers streuenden Fits
             tuerm = [[r["z"], kegel["d_koerper"]] for r in mittel if r["z"] <= kegel["z_knick"]] + [[round(float(z), 2), round(d_tuerm(z), 2)] for z in np.arange(kegel["z_knick"], TS - 0.4, a.dz)]
         else: tuerm = [[r["z"], r["d"]] for r in mittel]
         dmax = max(r["d"] for r in mittel); koerper = [r for r in mittel if r["d"] >= 0.8 * dmax]     # Achse aus den Schichten des Erkerkoerpers (grosser Bogen, stabiler Fit)
         achse = dict(tief=float(np.median([r["achse_tief"] for r in koerper])), quer=float(np.median([r["achse_quer"] for r in koerper])), aus_schichten=[koerper[0]["z"], koerper[-1]["z"]])
-        json.dump(dict(seite=s, dach_profil=dach, tuerm_profil=tuerm, tuerm_kegel=kegel, tuerm_achse=achse, quelle="tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)"), open(os.path.join(od, "profile_generator.json"), "w"), indent=1, ensure_ascii=False)
+        json.dump(dict(seite=s, dach_profil=dach, dach_traufe=traufe, tiefen_rampe=rampe, tief_quelle=a.tief_quelle, tuerm_profil=tuerm, tuerm_kegel=kegel, tuerm_achse=achse, quelle="tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)"), open(os.path.join(od, "profile_generator.json"), "w"), indent=1, ensure_ascii=False)
         print("geschrieben:", os.path.join(od, "profile_generator.json"), f"({len(dach)} Dachschichten, {len(tuerm)} Tuermchenschichten, Achse {achse})")
     if a.pruefungen:
         tp = os.path.join(od, "masstabelle.json"); T = json.load(open(tp)); neu = 0

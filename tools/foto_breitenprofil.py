@@ -188,15 +188,19 @@ def main():
         print(f"  {len(zonen)} zusammenhaengende Zone(n):")
         for z in zonen: print(f"    z {z[0][0]:.1f}-{z[-1][0]:.1f} m: Foto {np.mean([x[3] for x in z]):.2f} m, Modell {np.mean([x[6] for x in z]):.2f} m ({np.mean([x[7] for x in z]):+.2f} m)")
         if "--eintragen" in a and zonen:
-            tp = os.path.join(root, obj["masstabelle"]); tab = json.load(open(tp)); vorhanden = {b.get("auto_id") for b in tab.get("beobachtungen_offen", [])}; neu = 0
-            for z in zonen:
-                aid = f"breite-{nr}-{z[0][0]:.0f}-{z[-1][0]:.0f}"
-                if aid in vorhanden: continue
-                tab.setdefault("beobachtungen_offen", []).append(dict(datum="auto", wer=f"foto_breitenprofil (Foto {nr}, Kamera K-{nr})", auto_id=aid,
-                    art="breite", foto=nr, z_von=float(z[0][0]), z_bis=float(z[-1][0]), abweichung=round(float(np.mean([x[7] for x in z])), 2),
-                    text=f"Silhouettenbreite z {z[0][0]:.1f}-{z[-1][0]:.1f} m: Foto {np.mean([x[3] for x in z]):.2f} m, Modell {np.mean([x[6] for x in z]):.2f} m ({np.mean([x[7] for x in z]):+.2f} m)",
-                    naechster_schritt="tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind")); neu += 1
-            json.dump(tab, open(tp, "w"), indent=1, ensure_ascii=False); print(f"  -> {neu} Beobachtung(en) eingetragen")
+            tp = os.path.join(root, obj["masstabelle"])
+            def _eintragen(tab):
+                vorhanden = {b.get("auto_id") for b in tab.get("beobachtungen_offen", [])}; neu = 0
+                for z in zonen:
+                    aid = f"breite-{nr}-{z[0][0]:.0f}-{z[-1][0]:.0f}"
+                    if aid in vorhanden: continue
+                    tab.setdefault("beobachtungen_offen", []).append(dict(datum="auto", wer=f"foto_breitenprofil (Foto {nr}, Kamera K-{nr})", auto_id=aid,
+                        art="breite", foto=nr, z_von=float(z[0][0]), z_bis=float(z[-1][0]), abweichung=round(float(np.mean([x[7] for x in z])), 2),
+                        text=f"Silhouettenbreite z {z[0][0]:.1f}-{z[-1][0]:.1f} m: Foto {np.mean([x[3] for x in z]):.2f} m, Modell {np.mean([x[6] for x in z]):.2f} m ({np.mean([x[7] for x in z]):+.2f} m)",
+                        naechster_schritt="tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind")); neu += 1
+                return neu
+            from masstabelle_io import aendern
+            neu = aendern(tp, _eintragen); print(f"  -> {neu} Beobachtung(en) eingetragen")
     json.dump([dict(z=float(x[0]), foto=None if np.isnan(x[3]) else float(x[3]), modell=None if np.isnan(x[6]) else float(x[6])) for x in zeilen],
               open(os.path.join(root, obj.get("audit", "audit"), f"breitenprofil_{nr}.json"), "w"), indent=1)
 

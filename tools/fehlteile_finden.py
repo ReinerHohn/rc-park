@@ -102,17 +102,21 @@ def main():
     print(f"Fehlteile {nr} ({quelle}; Zelle {cs} px = 1 m; rot = fehlt im Modell, blau = Modell ohne Fotobeleg) -> {out}/fehlteile_{nr}{tag}.jpg")
     for k, tr in enumerate(treffer, 1): print(f"  {k:2d}. {tr['art']:36s} score {tr['score']:+.2f}  bei x={tr['xyz'][0]} y={tr['xyz'][1]} z={tr['xyz'][2]} m")
     # Beobachtungen automatisch eintragen (einmal je Foto/Zelle)
-    tp = os.path.join(root, obj["masstabelle"]); tab = json.load(open(tp)); vorhanden = {b.get("auto_id") for b in tab.get("beobachtungen_offen", [])}; neu = 0
-    for k, tr in enumerate(treffer, 1):
-        if "--stl" in a: break                                                       # Testlaeufe an fremden STL erzeugen keine Beobachtungen
-        if tr["art"].startswith("FEHLT") and tr["score"] >= sch:
-            aid = f"fehlteile-{nr}-{tr['zelle'][0]}-{tr['zelle'][1]}"
-            if aid in vorhanden: continue
-            tab.setdefault("beobachtungen_offen", []).append(dict(datum="auto", wer=f"fehlteile_finden (Foto {nr}, Treffer {k})", auto_id=aid,
-                art="fehlteil", foto=nr, z_von=tr["xyz"][2], z_bis=tr["xyz"][2], xyz=tr["xyz"], abweichung=tr["score"],
-                text=f"Foto zeigt Struktur ohne Modellgegenstueck bei z={tr['xyz'][2]} m, y={tr['xyz'][1]} m (Zelle {tr['zelle']}, Score {tr['score']:+.2f})",
-                naechster_schritt=f"audit/fehlteile_{nr}.jpg Treffer {k} ansehen, Element benennen, Zeile + beleg()")); neu += 1
-    json.dump(tab, open(tp, "w"), indent=1, ensure_ascii=False); print(f"  -> {neu} neue Beobachtung(en) in der Masstabelle")
+    tp = os.path.join(root, obj["masstabelle"])
+    def _eintragen(tab):
+        vorhanden = {b.get("auto_id") for b in tab.get("beobachtungen_offen", [])}; neu = 0
+        for k, tr in enumerate(treffer, 1):
+            if "--stl" in a: break                                                       # Testlaeufe an fremden STL erzeugen keine Beobachtungen
+            if tr["art"].startswith("FEHLT") and tr["score"] >= sch:
+                aid = f"fehlteile-{nr}-{tr['zelle'][0]}-{tr['zelle'][1]}"
+                if aid in vorhanden: continue
+                tab.setdefault("beobachtungen_offen", []).append(dict(datum="auto", wer=f"fehlteile_finden (Foto {nr}, Treffer {k})", auto_id=aid,
+                    art="fehlteil", foto=nr, z_von=tr["xyz"][2], z_bis=tr["xyz"][2], xyz=tr["xyz"], abweichung=tr["score"],
+                    text=f"Foto zeigt Struktur ohne Modellgegenstueck bei z={tr['xyz'][2]} m, y={tr['xyz'][1]} m (Zelle {tr['zelle']}, Score {tr['score']:+.2f})",
+                    naechster_schritt=f"audit/fehlteile_{nr}.jpg Treffer {k} ansehen, Element benennen, Zeile + beleg()")); neu += 1
+        return neu
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from masstabelle_io import aendern
+    neu = aendern(tp, _eintragen); print(f"  -> {neu} neue Beobachtung(en) in der Masstabelle")
     # Fuer Treffer AUF einer Fassade einen fertigen Eintrag fuer fassade.json vorschlagen - seit die Elemente Daten sind,
     # ist der Weg von "hier fehlt etwas" zu "dieses Element einfuegen" ein Textbaustein statt einer Codeaenderung.
     fp = os.path.join(root, os.path.dirname(obj["masstabelle"]), "fassade.json")

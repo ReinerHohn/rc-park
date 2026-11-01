@@ -24,7 +24,7 @@
   ],
   [
    26.0,
-   0.6141553497314458
+   0.5803674468994142
   ],
   [
    30.0,
@@ -33,20 +33,29 @@
  ],
  "tiefe_unsicher": true,
  "drift": [
-  0.017734806316239606,
-  0.04300536026273237
+  0.01713145090852475,
+  0.050245625155310676
  ],
  "entzerrt": true,
  "raster": 0.25,
  "befunde": [
   {
    "art": "modell_weiter_vorn",
-   "flaeche_m2": 29.9,
-   "z_von": 3.2,
+   "flaeche_m2": 34.0,
+   "z_von": 1.2,
    "z_bis": 14.0,
-   "u_von": -2.0,
+   "u_von": -3.0,
    "u_bis": 5.5,
-   "tiefe_diff": -0.66
+   "tiefe_diff": -0.68
+  },
+  {
+   "art": "modell_weiter_vorn",
+   "flaeche_m2": 27.3,
+   "z_von": 43.0,
+   "z_bis": 51.5,
+   "u_von": -2.2,
+   "u_bis": 2.5,
+   "tiefe_diff": -0.55
   },
   {
    "art": "modell_weiter_vorn",
@@ -55,7 +64,7 @@
    "z_bis": 18.8,
    "u_von": 3.5,
    "u_bis": 5.2,
-   "tiefe_diff": -0.55
+   "tiefe_diff": -0.54
   },
   {
    "art": "nur_im_modell",
@@ -94,15 +103,6 @@
    "tiefe_diff": null
   },
   {
-   "art": "fehlt_im_modell",
-   "flaeche_m2": 4.9,
-   "z_von": 41.5,
-   "z_bis": 49.8,
-   "u_von": -3.2,
-   "u_bis": -2.2,
-   "tiefe_diff": null
-  },
-  {
    "art": "modell_weiter_vorn",
    "flaeche_m2": 4.8,
    "z_von": 14.5,
@@ -131,39 +131,39 @@
   },
   {
    "art": "nur_im_modell",
-   "flaeche_m2": 4.5,
-   "z_von": 54.0,
+   "flaeche_m2": 4.2,
+   "z_von": 53.5,
    "z_bis": 57.0,
    "u_von": -2.0,
-   "u_bis": 1.8,
+   "u_bis": 2.0,
    "tiefe_diff": null
-  },
-  {
-   "art": "modell_weiter_vorn",
-   "flaeche_m2": 3.9,
-   "z_von": 1.2,
-   "z_bis": 7.2,
-   "u_von": -3.0,
-   "u_bis": -1.0,
-   "tiefe_diff": -0.83
   },
   {
    "art": "fehlt_im_modell",
-   "flaeche_m2": 3.6,
-   "z_von": 27.5,
-   "z_bis": 35.0,
-   "u_von": -6.2,
-   "u_bis": -5.2,
+   "flaeche_m2": 4.1,
+   "z_von": 41.5,
+   "z_bis": 49.8,
+   "u_von": -3.2,
+   "u_bis": -2.2,
    "tiefe_diff": null
   },
   {
    "art": "modell_weiter_vorn",
-   "flaeche_m2": 3.5,
+   "flaeche_m2": 3.4,
    "z_von": 36.5,
    "z_bis": 41.2,
    "u_von": -4.2,
    "u_bis": -3.2,
    "tiefe_diff": -0.91
+  },
+  {
+   "art": "fehlt_im_modell",
+   "flaeche_m2": 3.2,
+   "z_von": 27.5,
+   "z_bis": 35.0,
+   "u_von": -6.2,
+   "u_bis": -5.5,
+   "tiefe_diff": null
   },
   {
    "art": "wirklichkeit_weiter_vorn",
@@ -175,6 +175,15 @@
    "tiefe_diff": 7.07
   },
   {
+   "art": "wirklichkeit_weiter_vorn",
+   "flaeche_m2": 2.9,
+   "z_von": 32.8,
+   "z_bis": 35.8,
+   "u_von": 2.5,
+   "u_bis": 4.8,
+   "tiefe_diff": 0.83
+  },
+  {
    "art": "fehlt_im_modell",
    "flaeche_m2": 2.9,
    "z_von": 21.2,
@@ -182,15 +191,6 @@
    "u_von": -5.8,
    "u_bis": -5.2,
    "tiefe_diff": null
-  },
-  {
-   "art": "wirklichkeit_weiter_vorn",
-   "flaeche_m2": 2.8,
-   "z_von": 32.8,
-   "z_bis": 35.8,
-   "u_von": 2.5,
-   "u_bis": 4.8,
-   "tiefe_diff": 0.84
   },
   {
    "art": "wirklichkeit_weiter_vorn",
@@ -226,7 +226,7 @@
    "z_bis": 20.5,
    "u_von": -9.5,
    "u_bis": -7.8,
-   "tiefe_diff": -0.76
+   "tiefe_diff": -0.75
   },
   {
    "art": "fehlt_im_modell",
@@ -253,7 +253,7 @@
    "z_bis": 9.0,
    "u_von": -11.8,
    "u_bis": -10.8,
-   "tiefe_diff": 3.19
+   "tiefe_diff": 3.18
   },
   {
    "art": "fehlt_im_modell",
@@ -262,15 +262,6 @@
    "z_bis": 20.0,
    "u_von": -7.8,
    "u_bis": -6.5,
-   "tiefe_diff": null
-  },
-  {
-   "art": "fehlt_im_modell",
-   "flaeche_m2": 1.7,
-   "z_von": 44.5,
-   "z_bis": 47.2,
-   "u_von": 2.2,
-   "u_bis": 3.0,
    "tiefe_diff": null
   },
   {
@@ -310,6 +301,15 @@
    "tiefe_diff": null
   },
   {
+   "art": "fehlt_im_modell",
+   "flaeche_m2": 1.5,
+   "z_von": 44.5,
+   "z_bis": 47.2,
+   "u_von": 2.5,
+   "u_bis": 3.0,
+   "tiefe_diff": null
+  },
+  {
    "art": "nur_im_modell",
    "flaeche_m2": 1.5,
    "z_von": 12.8,
@@ -321,29 +321,29 @@
   {
    "art": "wirklichkeit_weiter_vorn",
    "flaeche_m2": 1.4,
-   "z_von": 27.8,
-   "z_bis": 28.5,
-   "u_von": -5.2,
-   "u_bis": -4.0,
-   "tiefe_diff": 1.66
+   "z_von": 38.0,
+   "z_bis": 39.2,
+   "u_von": -1.5,
+   "u_bis": -0.8,
+   "tiefe_diff": 0.64
   },
   {
    "art": "wirklichkeit_weiter_vorn",
    "flaeche_m2": 1.4,
-   "z_von": 27.8,
-   "z_bis": 29.2,
-   "u_von": 3.5,
-   "u_bis": 4.8,
-   "tiefe_diff": 0.5
+   "z_von": 38.0,
+   "z_bis": 39.2,
+   "u_von": 0.5,
+   "u_bis": 1.2,
+   "tiefe_diff": 0.66
   },
   {
-   "art": "wirklichkeit_weiter_vorn",
-   "flaeche_m2": 1.3,
-   "z_von": 40.2,
-   "z_bis": 40.2,
-   "u_von": -1.8,
-   "u_bis": 3.2,
-   "tiefe_diff": 0.63
+   "art": "modell_weiter_vorn",
+   "flaeche_m2": 1.4,
+   "z_von": 24.5,
+   "z_bis": 25.8,
+   "u_von": -1.0,
+   "u_bis": 0.5,
+   "tiefe_diff": -0.43
   },
   {
    "art": "nur_im_modell",
@@ -357,29 +357,29 @@
   {
    "art": "wirklichkeit_weiter_vorn",
    "flaeche_m2": 1.2,
-   "z_von": 30.5,
-   "z_bis": 31.5,
-   "u_von": -1.5,
-   "u_bis": -0.2,
-   "tiefe_diff": 0.78
-  },
-  {
-   "art": "wirklichkeit_weiter_vorn",
-   "flaeche_m2": 1.1,
-   "z_von": 38.0,
-   "z_bis": 39.2,
-   "u_von": -1.2,
-   "u_bis": -0.8,
-   "tiefe_diff": 0.62
-  },
-  {
-   "art": "wirklichkeit_weiter_vorn",
-   "flaeche_m2": 1.1,
-   "z_von": 38.0,
-   "z_bis": 39.2,
-   "u_von": 0.8,
-   "u_bis": 1.2,
+   "z_von": 40.2,
+   "z_bis": 40.2,
+   "u_von": -1.8,
+   "u_bis": 3.0,
    "tiefe_diff": 0.65
+  },
+  {
+   "art": "modell_weiter_vorn",
+   "flaeche_m2": 1.2,
+   "z_von": 28.5,
+   "z_bis": 32.2,
+   "u_von": 5.2,
+   "u_bis": 5.8,
+   "tiefe_diff": -0.76
+  },
+  {
+   "art": "nur_im_modell",
+   "flaeche_m2": 1.2,
+   "z_von": 28.5,
+   "z_bis": 32.0,
+   "u_von": 5.5,
+   "u_bis": 5.8,
+   "tiefe_diff": null
   },
   {
    "art": "modell_weiter_vorn",
@@ -388,16 +388,7 @@
    "z_bis": 9.5,
    "u_von": -6.2,
    "u_bis": -5.5,
-   "tiefe_diff": -0.48
-  },
-  {
-   "art": "modell_weiter_vorn",
-   "flaeche_m2": 1.1,
-   "z_von": 29.8,
-   "z_bis": 32.5,
-   "u_von": 5.2,
-   "u_bis": 5.8,
-   "tiefe_diff": -0.76
+   "tiefe_diff": -0.49
   },
   {
    "art": "modell_weiter_vorn",
@@ -409,5 +400,5 @@
    "tiefe_diff": -0.6
   }
  ],
- "n_beide": 6775
+ "n_beide": 6806
 }

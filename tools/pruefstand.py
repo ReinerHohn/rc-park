@@ -141,6 +141,26 @@ class Messer:
                 if min_b / schritt <= run <= max_b / schritt: n += 1
                 run = 0
         return float(n)
+    def relief_mitte(self, seite, z0, z1, halb, schwelle=0.08, schritt=0.1, richtung="vor", **k):
+        """Mitte eines aus der Wand HERAUSTRETENDEN Fassadenmerkmals (Uhr: Stundenmarken/Rahmen; Tafel): Strahlen von aussen auf ein Raster
+        (quer x z), Wand je Zeile = Median der Trefferabstaende, Relief = Zellen >= schwelle vor der Wand (richtung 'vor'; 'zurueck' = Nischen,
+        'beide'). Zeilen, in denen mehr als die Haelfte der Zellen heraustritt (durchlaufende Gesimse/Giebelbaender), zaehlen nicht.
+        Rueckgabe {"z", "quer", "radius", "anzahl"}: Kreisfit (kleinste Quadrate) an die Reliefzellen - fuer ringfoermige Merkmale die Mitte,
+        sonst naeherungsweise der Schwerpunkt. nan, wenn < 8 Zellen."""
+        ax = 0 if seite[1] == "x" else 1; sgn = 1.0 if seite[0] == "+" else -1.0
+        us = np.arange(-halb, halb + 1e-6, schritt); zs = np.arange(z0, z1 + 1e-6, schritt); U, Z = np.meshgrid(us, zs)
+        org = np.zeros((U.size, 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = U.ravel(); org[:, 2] = Z.ravel(); dr = np.zeros_like(org); dr[:, ax] = -sgn
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
+        d = np.full(U.size, np.nan); d[ir] = sgn * loc[:, ax]; d = d.reshape(U.shape)
+        aussen = np.abs(us) > 0.7 * halb                                                   # Wand je Zeile aus den Randspalten (dort steht selten ein Merkmal; Giebel/Rahmen mittig verfaelschen den Zeilenmedian nicht)
+        wand = np.nanmedian(np.where(aussen[None, :], d, np.nan), axis=1, keepdims=True); diff = d - wand   # > 0 = vor der Wand (naeher am Strahlursprung)
+        rel = (diff >= schwelle) if richtung == "vor" else ((diff <= -schwelle) if richtung == "zurueck" else (np.abs(diff) >= schwelle))
+        if richtung == "vor": rel &= (rel.mean(axis=1, keepdims=True) <= 0.5)           # durchlaufende Baender (Gesimse) ausblenden; Nischen (Scheibe) ganz lassen
+        if rel.sum() < 8: return {"z": float("nan"), "quer": float("nan"), "radius": float("nan"), "anzahl": float(rel.sum())}
+        X = np.c_[U[rel], Z[rel]]; A = np.c_[2 * X[:, 0], 2 * X[:, 1], np.ones(len(X))]; c = np.linalg.lstsq(A, (X ** 2).sum(1), rcond=None)[0]
+        r = float(np.sqrt(max(c[2] + c[0] ** 2 + c[1] ** 2, 0.0)))
+        # z/quer = Schwerpunkt der Reliefzellen (fuer gefuellte Scheiben/Tafeln exakt), z_kreis = Kreisfit (fuer Ringe/Markenkraenze)
+        return {"z": float(X[:, 1].mean()), "quer": float(X[:, 0].mean()), "z_kreis": float(c[1]), "radius": r, "anzahl": float(rel.sum())}
     def anzahl_im_band(self, z, achse, lo, hi, quer_max, **k):
         """Zaehlt Querschnitte bei z, deren Schwerpunkt auf 'achse' (x|y) zwischen lo..hi liegt und quer < quer_max (z. B. Zinnen einer Seite)."""
         a = 0 if achse == "x" else 1

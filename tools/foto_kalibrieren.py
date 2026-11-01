@@ -62,12 +62,15 @@ def main():
     kp = os.path.join(od, "messprotokoll", f"K-{nr}.json"); K = json.load(open(kp))
     fn = glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]; im = cv2.imread(fn); H, W = im.shape[:2]; cx, cy = W / 2, H / 2
     # Modellrahmen (x Sued, y Ost, z oben) -> Kamerarahmen-Konvention von OpenCV (x rechts, y unten, z vorwaerts) uebernimmt die Drehung
-    P3, P2, S = [], [], []
+    P3, P2, S, namen = [], [], [], []
     for name, uv in K["punkte"].items():
-        ank = A[name]; P3.append(ank["xyz"]); P2.append(uv); S.append(ank["sigma"])   # NICHT 'a' - das ist sys.argv (Namenskonflikt machte alle Optionen wirkungslos, 2026-11-01)
+        if name not in A: print(f"  Pick '{name}' hat keinen Anker in anker3d.json - uebersprungen"); continue
+        ank = A[name]; P3.append(ank["xyz"]); P2.append(uv); S.append(ank["sigma"]); namen.append(name)   # NICHT 'a' - das ist sys.argv (Namenskonflikt machte alle Optionen wirkungslos, 2026-11-01)
     P3, P2, S = np.array(P3, float), np.array(P2, float), np.array(S, float)
     lines = [(np.array(A[n]["xyz"][:2], float), np.array(pts, float)) for n, pts in K.get("linien", {}).items()]
     fexif = K.get("brennweite_px")
+    if K.get("brennweite_frei"):                                            # Bild beschnitten/skaliert: EXIF-Brennweite in px ungueltig -> Brennweite mitschaetzen
+        print(f"  Brennweite FREI ({K.get('brennweite_frei_grund', 'brennweite_frei gesetzt')}); EXIF {fexif} px nur Startwert-Hinweis"); fexif = None
 
     def gewichte(p, fix_f=None):
         """Sigma der Anker (m) -> Pixel, EINMAL je Start eingefroren (sonst 'kauft' sich der Loeser mit grosser Brennweite kleine Residuen)."""
@@ -141,9 +144,9 @@ def main():
             best = (float(np.sum(sol.fun ** 2)), sol.x, best[2])
     cost, p, f0 = best; rvec, t = p[:3], p[3:6]; f = fexif or p[6]
     R, _ = cv2.Rodrigues(rvec); cam = (-R.T @ t); uv, z = projiziere(P3, rvec, t, f, cx, cy); res = np.linalg.norm(uv - P2, axis=1)
-    dres = {n: [int(round(float(x))) for x in (uv[i] - P2[i])] for i, n in enumerate(K["punkte"])}
+    dres = {n: [int(round(float(x))) for x in (uv[i] - P2[i])] for i, n in enumerate(namen)}
     out = dict(silhouette_genutzt=bool(sil), residuen_du_dv=dres, rvec=rvec.tolist(), t=t.tolist(), f_px=float(f), cx=cx, cy=cy, bild=[W, H], standort_xyz=cam.round(2).tolist(), hoehe_ueber_gelaende=round(float(cam[2]), 2),
-               abstand_zur_achse=round(float(math.hypot(cam[0], cam[1])), 1), residuen_px={n: round(float(r), 1) for n, r in zip(K["punkte"], res)},
+               abstand_zur_achse=round(float(math.hypot(cam[0], cam[1])), 1), residuen_px={n: round(float(r), 1) for n, r in zip(namen, res)},
                rms_px=round(float(np.sqrt(np.mean(res ** 2))), 1), plausibel_strassenfoto=bool(1.0 <= cam[2] <= 3.0), brennweite_quelle="EXIF" if fexif else "geloest")
     K["kamera"] = out; json.dump(K, open(kp, "w"), indent=1, ensure_ascii=False)
     print(f"K-{nr}: f={f:.0f} px ({f / H * 24:.1f} mm bei 24-mm-Bildhoehe), Standort {out['standort_xyz']} -> Hoehe {out['hoehe_ueber_gelaende']} m ueber Gelaende, Abstand {out['abstand_zur_achse']} m")

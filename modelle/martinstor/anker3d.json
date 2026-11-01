@@ -21,7 +21,8 @@
     -0.3
    ],
    "sigma": 0.3,
-   "quelle": "LoD2 Grundriss-Ecke (Endpunkt Langwand)"
+   "quelle": "LoD2 Grundriss-Ecke (Endpunkt Langwand)",
+   "quelltyp": "lod2"
   },
   "ecke_boden_1": {
    "xyz": [
@@ -30,7 +31,8 @@
     -0.3
    ],
    "sigma": 0.3,
-   "quelle": "LoD2 Grundriss-Ecke (Endpunkt Langwand)"
+   "quelle": "LoD2 Grundriss-Ecke (Endpunkt Langwand)",
+   "quelltyp": "lod2"
   },
   "ecke_boden_2": {
    "xyz": [
@@ -39,7 +41,8 @@
     -0.3
    ],
    "sigma": 0.3,
-   "quelle": "LoD2 Grundriss-Ecke (Endpunkt Langwand)"
+   "quelle": "LoD2 Grundriss-Ecke (Endpunkt Langwand)",
+   "quelltyp": "lod2"
   },
   "ecke_boden_3": {
    "xyz": [
@@ -48,7 +51,8 @@
     -0.3
    ],
    "sigma": 0.3,
-   "quelle": "LoD2 Grundriss-Ecke (Endpunkt Langwand)"
+   "quelle": "LoD2 Grundriss-Ecke (Endpunkt Langwand)",
+   "quelltyp": "lod2"
   },
   "ecke_wandoben_0": {
    "xyz": [
@@ -57,7 +61,8 @@
     37.27
    ],
    "sigma": 0.6,
-   "quelle": "LoD2 Wandoberkante an der Ecke (generalisiert)"
+   "quelle": "LoD2 Wandoberkante an der Ecke (generalisiert)",
+   "quelltyp": "lod2"
   },
   "ecke_wandoben_1": {
    "xyz": [
@@ -66,7 +71,8 @@
     37.27
    ],
    "sigma": 0.6,
-   "quelle": "LoD2 Wandoberkante an der Ecke (generalisiert)"
+   "quelle": "LoD2 Wandoberkante an der Ecke (generalisiert)",
+   "quelltyp": "lod2"
   },
   "ecke_wandoben_2": {
    "xyz": [
@@ -75,7 +81,8 @@
     37.11
    ],
    "sigma": 0.6,
-   "quelle": "LoD2 Wandoberkante an der Ecke (generalisiert)"
+   "quelle": "LoD2 Wandoberkante an der Ecke (generalisiert)",
+   "quelltyp": "lod2"
   },
   "ecke_wandoben_3": {
    "xyz": [
@@ -84,7 +91,8 @@
     37.11
    ],
    "sigma": 0.6,
-   "quelle": "LoD2 Wandoberkante an der Ecke (generalisiert)"
+   "quelle": "LoD2 Wandoberkante an der Ecke (generalisiert)",
+   "quelltyp": "lod2"
   },
   "spitze_dom": {
    "xyz": [
@@ -93,7 +101,8 @@
     54.84
    ],
    "sigma": 1.0,
-   "quelle": "DOM1 Gipfel (hoechste getroffene Flaeche, Nadel unsichtbar; Lage +-0,7 m)"
+   "quelle": "DOM1 Gipfel (hoechste getroffene Flaeche, Nadel unsichtbar; Lage +-0,7 m)",
+   "quelltyp": "laser_dom1"
   },
   "tuermchen_dom_0": {
    "xyz": [
@@ -102,7 +111,8 @@
     41.44
    ],
    "sigma": 0.8,
-   "quelle": "DOM1 lokales Maximum (Tuermchen; Lage +-0,7 m, Hoehe = getroffene Kegelflaeche)"
+   "quelle": "DOM1 lokales Maximum (Tuermchen; Lage +-0,7 m, Hoehe = getroffene Kegelflaeche)",
+   "quelltyp": "laser_dom1"
   },
   "tuermchen_dom_1": {
    "xyz": [
@@ -111,7 +121,8 @@
     40.98
    ],
    "sigma": 0.8,
-   "quelle": "DOM1 lokales Maximum (Tuermchen; Lage +-0,7 m, Hoehe = getroffene Kegelflaeche)"
+   "quelle": "DOM1 lokales Maximum (Tuermchen; Lage +-0,7 m, Hoehe = getroffene Kegelflaeche)",
+   "quelltyp": "laser_dom1"
   },
   "spitze_dokument": {
    "xyz": [
@@ -122,51 +133,49 @@
    "sigma": 3.0,
    "quelle": "Bauforschung BW 60 m (65 m Objektbeschreibung); Lage = Turmachse",
    "z_frei": "spitze",
-   "sigma_xy": 0.2
+   "sigma_xy": 0.2,
+   "hinweis": "veraltet als Pick-Ziel: in K-Protokollen bezeichnet 'spitze_dokument' den Goldknauf der Nadel -> knauf_nadel verwenden",
+   "quelltyp": "dokument"
   },
   "tuermchen_SW": {
    "xyz": [
-    3.85,
-    -4.6,
-    41.2
+    3.98,
+    -4.44,
+    44.5
    ],
-   "sigma": 1.5,
-   "quelle": "Tuermchenspitze: Lage = LoD2-Ecke 1 m eingerueckt (Symmetrie), Hoehe DOM1 40,98/41,44",
-   "z_frei": "tuermchen",
-   "sigma_xy": 0.6
+   "sigma": 0.4,
+   "quelle": "SfM Nordnetz (Register AH/AK, Wandebenen-Anker AO): Knaeufe tuermchen_NE 44,39 / NW 44,72 +-0,14; Achse Kreisfit wolke_profile.py 3,98 / 4,44 (Register AR); Suedseite per Symmetrie (ANNAHME)",
+   "quelltyp": "sfm_bodenanker"
   },
   "tuermchen_SE": {
    "xyz": [
-    3.85,
-    4.6,
-    41.2
+    3.98,
+    4.44,
+    44.5
    ],
-   "sigma": 1.5,
-   "quelle": "Tuermchenspitze: Lage = LoD2-Ecke 1 m eingerueckt (Symmetrie), Hoehe DOM1 40,98/41,44",
-   "z_frei": "tuermchen",
-   "sigma_xy": 0.6
+   "sigma": 0.4,
+   "quelle": "SfM Nordnetz (Register AH/AK, Wandebenen-Anker AO): Knaeufe tuermchen_NE 44,39 / NW 44,72 +-0,14; Achse Kreisfit wolke_profile.py 3,98 / 4,44 (Register AR); Suedseite per Symmetrie (ANNAHME)",
+   "quelltyp": "sfm_bodenanker"
   },
   "tuermchen_NW": {
    "xyz": [
-    -3.85,
-    -4.6,
-    41.2
+    -3.98,
+    -4.44,
+    44.5
    ],
-   "sigma": 1.5,
-   "quelle": "Tuermchenspitze: Lage = LoD2-Ecke 1 m eingerueckt (Symmetrie), Hoehe DOM1 40,98/41,44",
-   "z_frei": "tuermchen",
-   "sigma_xy": 0.6
+   "sigma": 0.4,
+   "quelle": "SfM Nordnetz (Register AH/AK, Wandebenen-Anker AO): Knaeufe tuermchen_NE 44,39 / NW 44,72 +-0,14; Achse Kreisfit wolke_profile.py 3,98 / 4,44 (Register AR)",
+   "quelltyp": "sfm_bodenanker"
   },
   "tuermchen_NE": {
    "xyz": [
-    -3.85,
-    4.6,
-    41.2
+    -3.98,
+    4.44,
+    44.5
    ],
-   "sigma": 1.5,
-   "quelle": "Tuermchenspitze: Lage = LoD2-Ecke 1 m eingerueckt (Symmetrie), Hoehe DOM1 40,98/41,44",
-   "z_frei": "tuermchen",
-   "sigma_xy": 0.6
+   "sigma": 0.4,
+   "quelle": "SfM Nordnetz (Register AH/AK, Wandebenen-Anker AO): Knaeufe tuermchen_NE 44,39 / NW 44,72 +-0,14; Achse Kreisfit wolke_profile.py 3,98 / 4,44 (Register AR)",
+   "quelltyp": "sfm_bodenanker"
   },
   "kranz_SW": {
    "xyz": [
@@ -177,7 +186,8 @@
    "sigma": 1.5,
    "quelle": "Zinnenkranz-Ecke: Lage LoD2-Ecke, Hoehe Laser DOM1 Stufe 31-32 m (MASSPRUEFUNG)",
    "z_frei": "kranz",
-   "sigma_xy": 0.4
+   "sigma_xy": 0.4,
+   "quelltyp": "laser_dom1"
   },
   "kranz_SE": {
    "xyz": [
@@ -188,7 +198,8 @@
    "sigma": 1.5,
    "quelle": "Zinnenkranz-Ecke: Lage LoD2-Ecke, Hoehe Laser DOM1 Stufe 31-32 m (MASSPRUEFUNG)",
    "z_frei": "kranz",
-   "sigma_xy": 0.4
+   "sigma_xy": 0.4,
+   "quelltyp": "laser_dom1"
   },
   "kranz_NW": {
    "xyz": [
@@ -199,7 +210,8 @@
    "sigma": 1.5,
    "quelle": "Zinnenkranz-Ecke: Lage LoD2-Ecke, Hoehe Laser DOM1 Stufe 31-32 m (MASSPRUEFUNG)",
    "z_frei": "kranz",
-   "sigma_xy": 0.4
+   "sigma_xy": 0.4,
+   "quelltyp": "laser_dom1"
   },
   "kranz_NE": {
    "xyz": [
@@ -210,18 +222,18 @@
    "sigma": 1.5,
    "quelle": "Zinnenkranz-Ecke: Lage LoD2-Ecke, Hoehe Laser DOM1 Stufe 31-32 m (MASSPRUEFUNG)",
    "z_frei": "kranz",
-   "sigma_xy": 0.4
+   "sigma_xy": 0.4,
+   "quelltyp": "laser_dom1"
   },
   "gold_SW": {
    "xyz": [
-    0.65,
-    -1.5,
-    46.5
+    0.75,
+    -1.9,
+    55.4
    ],
-   "sigma": 3.0,
-   "sigma_xy": 0.6,
-   "z_frei": "first",
-   "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
+   "sigma": 0.5,
+   "quelle": "SfM Nordnetz Goldkugeln 55,14/55,61 (Register AM); DOM1 Peak 54,84; Lage KUGEL_X/Y (masse.json)",
+   "quelltyp": "sfm_bodenanker"
   },
   "traufe_SW": {
    "xyz": [
@@ -232,18 +244,18 @@
    "sigma": 3.0,
    "sigma_xy": 0.8,
    "z_frei": "traufe",
-   "quelle": "Dachtraufe/Glockenstock-Oberkante Ecke: Lage aus Modell (+-0,8), Hoehe FREI"
+   "quelle": "Dachtraufe/Glockenstock-Oberkante Ecke: Lage aus Modell (+-0,8), Hoehe FREI",
+   "quelltyp": "annahme"
   },
   "gold_SE": {
    "xyz": [
-    0.65,
-    1.5,
-    46.5
+    0.75,
+    1.9,
+    55.4
    ],
-   "sigma": 3.0,
-   "sigma_xy": 0.6,
-   "z_frei": "first",
-   "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
+   "sigma": 0.5,
+   "quelle": "SfM Nordnetz Goldkugeln 55,14/55,61 (Register AM); DOM1 Peak 54,84; Lage KUGEL_X/Y (masse.json)",
+   "quelltyp": "sfm_bodenanker"
   },
   "traufe_SE": {
    "xyz": [
@@ -254,18 +266,18 @@
    "sigma": 3.0,
    "sigma_xy": 0.8,
    "z_frei": "traufe",
-   "quelle": "Dachtraufe/Glockenstock-Oberkante Ecke: Lage aus Modell (+-0,8), Hoehe FREI"
+   "quelle": "Dachtraufe/Glockenstock-Oberkante Ecke: Lage aus Modell (+-0,8), Hoehe FREI",
+   "quelltyp": "annahme"
   },
   "gold_NW": {
    "xyz": [
-    -0.65,
-    -1.5,
-    46.5
+    -0.75,
+    -1.9,
+    55.4
    ],
-   "sigma": 3.0,
-   "sigma_xy": 0.6,
-   "z_frei": "first",
-   "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
+   "sigma": 0.5,
+   "quelle": "SfM Nordnetz Goldkugeln 55,14/55,61 (Register AM); DOM1 Peak 54,84; Lage KUGEL_X/Y (masse.json)",
+   "quelltyp": "sfm_bodenanker"
   },
   "traufe_NW": {
    "xyz": [
@@ -276,18 +288,18 @@
    "sigma": 3.0,
    "sigma_xy": 0.8,
    "z_frei": "traufe",
-   "quelle": "Dachtraufe/Glockenstock-Oberkante Ecke: Lage aus Modell (+-0,8), Hoehe FREI"
+   "quelle": "Dachtraufe/Glockenstock-Oberkante Ecke: Lage aus Modell (+-0,8), Hoehe FREI",
+   "quelltyp": "annahme"
   },
   "gold_NE": {
    "xyz": [
-    -0.65,
-    1.5,
-    46.5
+    -0.75,
+    1.9,
+    55.4
    ],
-   "sigma": 3.0,
-   "sigma_xy": 0.6,
-   "z_frei": "first",
-   "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
+   "sigma": 0.5,
+   "quelle": "SfM Nordnetz Goldkugeln 55,14/55,61 (Register AM); DOM1 Peak 54,84; Lage KUGEL_X/Y (masse.json)",
+   "quelltyp": "sfm_bodenanker"
   },
   "traufe_NE": {
    "xyz": [
@@ -298,7 +310,168 @@
    "sigma": 3.0,
    "sigma_xy": 0.8,
    "z_frei": "traufe",
-   "quelle": "Dachtraufe/Glockenstock-Oberkante Ecke: Lage aus Modell (+-0,8), Hoehe FREI"
+   "quelle": "Dachtraufe/Glockenstock-Oberkante Ecke: Lage aus Modell (+-0,8), Hoehe FREI",
+   "quelltyp": "annahme"
+  },
+  "first_plattform": {
+   "xyz": [
+    0.0,
+    0.0,
+    55.4
+   ],
+   "sigma": 0.5,
+   "quelle": "Dachplattform/First: DOM1 drei Zellen 53-55 + SfM Goldkugeln 55,1-55,6 (Register AM)",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "knauf_nadel": {
+   "xyz": [
+    0.0,
+    0.0,
+    59.05
+   ],
+   "sigma": 1.0,
+   "quelle": "Goldknauf der Nadel: First 55,4 + KNAUF_ANTEIL 0,25 x (70 - 55,4) (Foto 049 Verhaeltnis)",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "nadel_spitze": {
+   "xyz": [
+    0.0,
+    0.0,
+    70.0
+   ],
+   "sigma": 1.0,
+   "quelle": "Nadelende: SfM Nordnetz 69,7 +-1 (H_TOTAL, Register AH/AK); Dokumente 60/65 m offen",
+   "quelltyp": "sfm_bodenanker"
   }
- }
+ },
+ "historie": [
+  {
+   "datum": "2026-11-01",
+   "anker": "tuermchen_NE",
+   "alt": {
+    "xyz": [
+     -3.85,
+     4.6,
+     41.2
+    ],
+    "sigma": 1.5,
+    "quelle": "Tuermchenspitze: Lage = LoD2-Ecke 1 m eingerueckt (Symmetrie), Hoehe DOM1 40,98/41,44",
+    "z_frei": "tuermchen",
+    "sigma_xy": 0.6
+   },
+   "grund": "Register AS: Oberbau-Anker aus dem SfM-Nordnetz (metrisch ueber LoD2-Wandebene), fuer Fotos ohne Bodenanker (061 Schlossberg)"
+  },
+  {
+   "datum": "2026-11-01",
+   "anker": "tuermchen_NW",
+   "alt": {
+    "xyz": [
+     -3.85,
+     -4.6,
+     41.2
+    ],
+    "sigma": 1.5,
+    "quelle": "Tuermchenspitze: Lage = LoD2-Ecke 1 m eingerueckt (Symmetrie), Hoehe DOM1 40,98/41,44",
+    "z_frei": "tuermchen",
+    "sigma_xy": 0.6
+   },
+   "grund": "Register AS: Oberbau-Anker aus dem SfM-Nordnetz (metrisch ueber LoD2-Wandebene), fuer Fotos ohne Bodenanker (061 Schlossberg)"
+  },
+  {
+   "datum": "2026-11-01",
+   "anker": "tuermchen_SE",
+   "alt": {
+    "xyz": [
+     3.85,
+     4.6,
+     41.2
+    ],
+    "sigma": 1.5,
+    "quelle": "Tuermchenspitze: Lage = LoD2-Ecke 1 m eingerueckt (Symmetrie), Hoehe DOM1 40,98/41,44",
+    "z_frei": "tuermchen",
+    "sigma_xy": 0.6
+   },
+   "grund": "Register AS: Oberbau-Anker aus dem SfM-Nordnetz (metrisch ueber LoD2-Wandebene), fuer Fotos ohne Bodenanker (061 Schlossberg)"
+  },
+  {
+   "datum": "2026-11-01",
+   "anker": "tuermchen_SW",
+   "alt": {
+    "xyz": [
+     3.85,
+     -4.6,
+     41.2
+    ],
+    "sigma": 1.5,
+    "quelle": "Tuermchenspitze: Lage = LoD2-Ecke 1 m eingerueckt (Symmetrie), Hoehe DOM1 40,98/41,44",
+    "z_frei": "tuermchen",
+    "sigma_xy": 0.6
+   },
+   "grund": "Register AS: Oberbau-Anker aus dem SfM-Nordnetz (metrisch ueber LoD2-Wandebene), fuer Fotos ohne Bodenanker (061 Schlossberg)"
+  },
+  {
+   "datum": "2026-11-01",
+   "anker": "gold_NE",
+   "alt": {
+    "xyz": [
+     -0.65,
+     1.5,
+     46.5
+    ],
+    "sigma": 3.0,
+    "sigma_xy": 0.6,
+    "z_frei": "first",
+    "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
+   },
+   "grund": "Register AS: Oberbau-Anker aus dem SfM-Nordnetz (metrisch ueber LoD2-Wandebene), fuer Fotos ohne Bodenanker (061 Schlossberg)"
+  },
+  {
+   "datum": "2026-11-01",
+   "anker": "gold_NW",
+   "alt": {
+    "xyz": [
+     -0.65,
+     -1.5,
+     46.5
+    ],
+    "sigma": 3.0,
+    "sigma_xy": 0.6,
+    "z_frei": "first",
+    "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
+   },
+   "grund": "Register AS: Oberbau-Anker aus dem SfM-Nordnetz (metrisch ueber LoD2-Wandebene), fuer Fotos ohne Bodenanker (061 Schlossberg)"
+  },
+  {
+   "datum": "2026-11-01",
+   "anker": "gold_SE",
+   "alt": {
+    "xyz": [
+     0.65,
+     1.5,
+     46.5
+    ],
+    "sigma": 3.0,
+    "sigma_xy": 0.6,
+    "z_frei": "first",
+    "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
+   },
+   "grund": "Register AS: Oberbau-Anker aus dem SfM-Nordnetz (metrisch ueber LoD2-Wandebene), fuer Fotos ohne Bodenanker (061 Schlossberg)"
+  },
+  {
+   "datum": "2026-11-01",
+   "anker": "gold_SW",
+   "alt": {
+    "xyz": [
+     0.65,
+     -1.5,
+     46.5
+    ],
+    "sigma": 3.0,
+    "sigma_xy": 0.6,
+    "z_frei": "first",
+    "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
+   },
+   "grund": "Register AS: Oberbau-Anker aus dem SfM-Nordnetz (metrisch ueber LoD2-Wandebene), fuer Fotos ohne Bodenanker (061 Schlossberg)"
+  }
+ ]
 }

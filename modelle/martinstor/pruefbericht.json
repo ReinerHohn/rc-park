@@ -26,26 +26,26 @@
   "dach_u_flaeche": 127.1349906782533,
   "dach_u_x": 10.819999740600585,
   "dach_u_y": 11.749999420166015,
-  "dach_o_flaeche": 25.015678242313697,
-  "dach_o_x": 5.3209609169601615,
-  "dach_o_y": 4.701345984816034,
+  "dach_o_flaeche": 29.28315613483191,
+  "dach_o_x": 6.215961527035013,
+  "dach_o_y": 4.710961611887558,
   "eckturm_h": 15.159999572753906,
   "eckturm": 2.221543552550289,
-  "tafel_N": 3.35,
+  "tafel_N": 3.4000000000000004,
   "tafel_S": 0.0,
-  "adler_S": 1.6500000000000001,
-  "dachansatz": 41.0000000000001,
+  "adler_S": 1.7000000000000002,
+  "dachansatz": 40.9000000000001,
   "kranz_oben": 31.70000106811523,
   "hyp32": 150.0,
   "hyp30": 152.0,
   "hyp40": 94.0,
   "sil30": 13.620000000000001,
   "sil38": 13.420000000000002,
-  "sil45": 8.440000000000001,
-  "sil31_031": 13.0,
+  "sil45": 8.58,
+  "sil31_031": 13.54,
   "sil_zone_031": 12.687999999999999,
   "sil_zone_041": 12.213333333333333,
-  "sil_zone_u031": 11.604,
+  "sil_zone_u031": 11.8,
   "erker_34": 2.8820967897544265,
   "helm_37_anzahl": 0.0,
   "helm_37_durchmesser": null,
@@ -56,23 +56,29 @@
   "eckturm_xmin": -6.100000167846679,
   "eckturm_ymitte": -3.70000004196167,
   "tuerm_ne_x40": -3.9750000114440915,
-  "breite_y_295": 10.771666689909578,
+  "breite_y_295": 11.480000198364257,
   "breite_y_315": 11.720000244140625,
   "breite_y_335": 11.55925016784668,
-  "profil_dach_452": 4.6103846677784315,
-  "profil_dach_492": 4.589999828730853,
+  "profil_dach_452": 4.610384591326534,
+  "profil_dach_492": 4.599999794899634,
   "profil_tuerm_3425": 2.8699998866050747,
   "profil_tuerm_3775": 2.817500059767518,
   "profil_tuerm_4025": 1.7774996518886668,
-  "dachx42": 6.481538046029568,
-  "dachx50": 3.0523067911592694,
+  "dachx42": 6.762691769620507,
+  "dachx50": 4.031537598830786,
   "profil_tuerm_4250": 0.8365381174750643,
   "tuermchen_2m_zahl_anzahl": 4.0,
   "tuermchen_2m_zahl_durchmesser": 0.8591477236873392,
-  "profil_dach_532": 3.9919232606154225,
-  "silhouette_061_47": 4.465384741269452,
-  "silhouette_061_50": 3.1705758455719084,
-  "silhouette_061_53": 1.9457693154261104
+  "profil_dach_532": 4.291923316814583,
+  "silhouette_061_47": 5.606346380820485,
+  "silhouette_061_50": 4.150575866554344,
+  "silhouette_061_53": 2.664615528253383,
+  "farb_uhr_nord__mitte_z__m_z": 25.702509410288624,
+  "farb_uhr_nord__mitte_z__m_quer": 0.09046424090339045,
+  "farb_uhr_nord__mitte_z__m_z_kreis": 25.718675334690797,
+  "farb_uhr_nord__mitte_z__m_radius": 1.6796847285378769,
+  "farb_uhr_nord__mitte_z__m_anzahl": 1594.0,
+  "breite_y_285": 11.156922958374023
  },
  "pruefungen": [
   {
@@ -167,7 +173,7 @@
   },
   {
    "name": "Dachansatz / Glockenstock-Oberkante (m)",
-   "wert": 41.0000000000001,
+   "wert": 40.9000000000001,
    "soll": [
     40.0,
     41.5
@@ -277,7 +283,7 @@
   },
   {
    "name": "Helmflanke N-S: Halbtiefen-Abnahme je m (Modelltiefe auf der Achse, 42-50 m)",
-   "wert": 0.21432695342939367,
+   "wert": 0.17069713567435757,
    "soll": [
     0.17,
     0.3
@@ -287,7 +293,7 @@
   },
   {
    "name": "Inschrifttafel NORD Breite (m, z 7,5)",
-   "wert": 3.35,
+   "wert": 3.4000000000000004,
    "soll": [
     3.0,
     3.8
@@ -307,7 +313,7 @@
   },
   {
    "name": "Doppeladler SUED Breite (m, z 9,45)",
-   "wert": 1.6500000000000001,
+   "wert": 1.7000000000000002,
    "soll": [
     1.3,
     3.2
@@ -377,7 +383,7 @@
   },
   {
    "name": "Gesamtbreite y bei 29,5-33,5 m (Modell, mit Tuermchen)",
-   "wert": 11.350305700632292,
+   "wert": 11.586416870117185,
    "soll": [
     10.9,
     11.7
@@ -387,7 +393,7 @@
   },
   {
    "name": "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
-   "wert": 11.604,
+   "wert": 11.8,
    "soll": [
     11.3,
     12.7
@@ -477,7 +483,7 @@
   },
   {
    "name": "Profil Dach: Breite y bei 45.2 m (m)",
-   "wert": 4.6103846677784315,
+   "wert": 4.610384591326534,
    "soll": [
     4.11,
     5.11
@@ -487,7 +493,7 @@
   },
   {
    "name": "Profil Dach: Breite y bei 49.2 m (m)",
-   "wert": 4.589999828730853,
+   "wert": 4.599999794899634,
    "soll": [
     4.1,
     5.1
@@ -537,7 +543,7 @@
   },
   {
    "name": "Profil Dach: Breite y bei 53.2 m (m)",
-   "wert": 3.9919232606154225,
+   "wert": 4.291923316814583,
    "soll": [
     3.71,
     4.71
@@ -547,30 +553,50 @@
   },
   {
    "name": "Profil Dach (Foto 061): Tiefe x bei 47 m (m)",
-   "wert": 4.465384741269452,
+   "wert": 5.606346380820485,
    "soll": [
-    3.65,
-    5.05
+    5.14,
+    6.54
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Profil Dach (Foto 061): Tiefe x bei 50 m (m)",
-   "wert": 3.1705758455719084,
+   "wert": 4.150575866554344,
    "soll": [
-    2.32,
-    3.72
+    3.57,
+    4.97
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Profil Dach (Foto 061): Tiefe x bei 53 m (m)",
-   "wert": 1.9457693154261104,
+   "wert": 2.664615528253383,
    "soll": [
-    0.81,
-    2.21
+    2.11,
+    3.51
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Uhr Nord: Mitte z (m)",
+   "wert": 25.702509410288624,
+   "soll": [
+    25.29,
+    26.09
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+   "wert": 11.156922958374023,
+   "soll": [
+    10.36,
+    11.16
    ],
    "ok": true,
    "status": "ok"

@@ -4,12 +4,8 @@
  "strassenfoto": false,
  "brennweite_px": 4669.0,
  "brennweite_quelle": "EXIF Canon PowerShot A650 IS 9,855 mm / Sensor 1/1.7 Zoll 7,6 mm x 3601 px",
- "notiz": "Blick vom Schlossberg (Ost, ~1 km, fast Turmhoehe). Picks uebernommen aus V-061 (5x-Zoom): spitze_dokument = Goldknauf der Nadel (wie in K-006/014/040/060), nadel_spitze = Nadelende. Vier Tuermchenspitzen T1..T4 bei y 426: von Osten links = Sued, rechts = Nord; welches der beiden je Paar NE/NW bzw. SE/SW ist, wird per --tausch geprueft (ANNAHME).",
+ "notiz": "Blick vom Schlossberg (Ost, ~1 km, fast Turmhoehe). Picks uebernommen aus V-061 (5x-Zoom): spitze_dokument = Goldknauf der Nadel (wie in K-006/014/040/060), nadel_spitze = Nadelende. Vier Tuermchenspitzen T1..T4 bei y 426: von Osten links = Sued, rechts = Nord; welches der beiden je Paar NE/NW bzw. SE/SW ist, wird per --tausch geprueft (ANNAHME). | 2026-11-01: Pick 'spitze_dokument' in knauf_nadel umbenannt (Goldknauf der Nadel, Anker aus SfM-Hoehen, Register AS).",
  "punkte": {
-  "spitze_dokument": [
-   2384,
-   292
-  ],
   "nadel_spitze": [
    2387,
    201
@@ -33,6 +29,10 @@
   "dachansatz_O": [
    2380,
    456
+  ],
+  "knauf_nadel": [
+   2384,
+   292
   ]
  },
  "linien": {},
@@ -80,5 +80,71 @@
    "tuermchen_NE": 1.4,
    "tuermchen_NW": 1.4
   }
- }
+ },
+ "kamera": {
+  "silhouette_genutzt": false,
+  "residuen_du_dv": {
+   "nadel_spitze": [
+    -2,
+    -12
+   ],
+   "tuermchen_SE": [
+    7,
+    0
+   ],
+   "tuermchen_SW": [
+    5,
+    0
+   ],
+   "tuermchen_NE": [
+    -5,
+    1
+   ],
+   "tuermchen_NW": [
+    -6,
+    2
+   ],
+   "knauf_nadel": [
+    0,
+    -1
+   ]
+  },
+  "rvec": [
+   0.19151899536809752,
+   -2.151708425852845,
+   2.1365352806343734
+  ],
+  "t": [
+   61.60588010370374,
+   -57.52704788743564,
+   52226.15904702535
+  ],
+  "f_px": 487237.8366090688,
+  "cx": 1800.5,
+  "cy": 1378.5,
+  "bild": [
+   3601,
+   2757
+  ],
+  "standort_xyz": [
+   -8371.12,
+   51549.6,
+   376.46
+  ],
+  "hoehe_ueber_gelaende": 376.46,
+  "abstand_zur_achse": 52224.9,
+  "residuen_px": {
+   "nadel_spitze": 12.3,
+   "tuermchen_SE": 7.4,
+   "tuermchen_SW": 4.6,
+   "tuermchen_NE": 5.5,
+   "tuermchen_NW": 6.4,
+   "knauf_nadel": 1.1
+  },
+  "rms_px": 7.1,
+  "plausibel_strassenfoto": false,
+  "brennweite_quelle": "geloest"
+ },
+ "brennweite_frei": true,
+ "brennweite_frei_grund": "Bild 3601x2757 px ist kein natives Format der PowerShot A650 IS (4000x3000): beschnitten -> f_px und Hauptpunkt unbekannt; frueherer Fit mit festem f=4669 ergab Standort 528 m (Schlossberg ~1 km) und 13 px Nadelresiduum"
 }

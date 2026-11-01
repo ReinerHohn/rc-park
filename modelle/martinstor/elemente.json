@@ -189,5 +189,13 @@
   "quelle": "Fotos 041/043/044; SfM Nordnetz Knaeufe 44,4-44,7 m (DOM1 41 m = getroffene Kegelflaeche)",
   "anzahl": 4,
   "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Konsolen unter den Ecktuermchen (Auskragung)",
+  "quelle": "Wolke Nord y-Gesamtbreite: Anstieg 27,6 -> 28,9 m (Register AS); Foto 043: gestufte Steinkonsolen",
+  "unten": 27.6,
+  "oben": 28.9,
+  "seite_name": "dach"
  }
 ]

@@ -956,3 +956,31 @@ Pruefstand: alle Pruefungen bestanden (inkl. Kegel 2 m unter Spitze 0,77 in 0,4.
 **Offen:** `foto061_z_offset` (Bezugszeile pruefen), `foto061_kuppelturm` (runder Kuppelturm links in 061, Suedseite?), Schaft-Verjuengung
 (Nutzer: Wand in der Wolke senkrecht), Breite quer des Helms 41-44 m nur als Untergrenze aus dem Frontfenster (Tuermchenzone), Suedseite
 ohne eigene Messung, DACH_OBEN_Y 3,6 aus den Kugeln (Plattform koennte schmaler sein).
+
+## AS. Foto-061-Massstab, Kuppelturm, Uhrhoehe, Konsolen - alles als Werkzeug (2026-11-01)
+**Nutzer:** "klaer den Foto-061-Hoehenversatz und den Kuppelturm, generisch" / "Die Uhr ist im Modell eine halbe Hoehe hoeher als in der
+Punktwolke ... seitliche Tuerme: kleine Erker und Boeckchen fehlen" / "aber alles generalisieren!!!" / "kannst du nicht mehr GPU nehmen?"
+**061-Versatz (aufgeloest):** kein Versatz, sondern meine von Hand gewaehlte Bezugszeile: Pick 303 = Goldknauf der Nadel (59,05 m), nicht
+Plattform. `foto_silhouette_profil.py` nimmt jetzt ALLE K-Picks mit Anker (anker3d.json, neue SfM-Oberbauanker: Tuermchen 44,5 +-0,4,
+Goldkugeln/Plattform 55,4, Knauf 59,05, Nadel 70) und rechnet Massstab + Nullzeile per Ausgleich: 8,90 px/m, Residuen -0,46..+0,26 m,
+Orthografie 0,2 %. Unterhalb der Tuermchenknaeufe (+1 m) keine Silhouette (Knaeufe in der Strecke). `foto_kalibrieren.py`: `brennweite_frei`
+fuer beschnittene Bilder (061 ist 3601x2757, kein A650-Format), unbekannte Picks werden uebersprungen statt abzubrechen; alle anker3d-Eintraege
+tragen jetzt `quelltyp`.
+**Folge fuer das Dach:** Silhouette N-S 5,84 / 4,27 / 2,81 m bei 46,75 / 49,75 / 52,75 - die Wolkenfront (4,58 / 3,30 / 2,06) liegt
+konstant ~1 m darunter: einseitige Wolke, Tiefe oberhalb der LoD2-Anker (37,27) extrapoliert. `wolke_profile.py --tief-quelle silhouette:061`:
+Tiefe aus der Silhouette, darunter Wolkenfront + Driftrampe (0,057 m je m ueber 37,27, aus dem Vergleich gefittet), Traufmass (Tropfkante,
+korrigiert 8,15 x 6,03) ins Generatorprofil (`dach_traufe`), Monotonie von oben. Pruefungen 'Profil Dach (Foto 061)' 47/50/53 gruen.
+**Kuppelturm (aufgeloest, negativ):** `tools/foto_lod2_zuordnen.py` projiziert LoD2 (4 Kacheln, 10 450 Gebaeude, 5 km) in die 061-Kamera:
+an der Bildstelle kein Gebaeude, Martinstor-Block endet 20 px rechts, kein Gebaeude >= 30 m First in +-400 px. Suedfotos 041/043: kein
+Kuppelturm am Martinstor. => Hintergrundbauwerk, kein Modellelement. Kacheln LoD2_32_411_5314/5316 und 413_5314 nachgeladen (LGL, DL-DE-BY-2.0).
+**Uhr (aufgeloest):** `tools/wolke_farbmerkmal.py`: goldene Stundenmarken/Zeiger in der Wolke (515 Punkte) -> Mitte 25,69 m (Modell 26,9);
+neue Modellmessung `relief_mitte` im Pruefstand (Strahlraster, Wand aus den Randspalten der Zeile, Reliefzellen vor/zurueck, Schwerpunkt +
+Kreisfit). Test zuerst rot (26,5/27,9), UZ 26,9 -> 25,7, Suednischen-Fenster wandert mit; gruen (25,70). Lehre: Zeilenmedian als Wand kippt,
+sobald ein Giebel die Zeile dominiert - Randspalten nehmen.
+**Konsolen ('Boeckchen'):** Wolke y-Gesamtbreite je 0,25 m: 10,3 m bis 27,6, Anstieg auf 11,0 bei 28,9. Pruefung 'Gesamtbreite y bei 28,5 m'
+(rot 10,13) -> KONSOLE_Z0/Z1 27,6/28,9 als Masse, Generator-Konsole daran -> gruen. Erker-Details (Fachwerk, Oeffnungen, Daechlein, Foto 043)
+bleiben offen.
+**Tempo:** `bauen_abnehmen.sh` fuehrt die Fotodiagnosen (15 Kameras) parallel aus (xargs -P 4), Masstabelle ueber `tools/masstabelle_io.py`
+(flock, atomar); `embreex` in venv-seg (trimesh-Strahlen). Gesamtlauf 28 s statt ~2 min. GPU bringt hier nichts: manifold3d (CSG) und die
+Strahlmessungen sind CPU-Bibliotheken; GPU bleibt fuer COLMAP/Dichte Wolke/Render.
+**Hygiene offen:** auto-Beobachtungen (fehlteile/breitenprofil) sammeln sich ueber alte Modellstaende an und werden nicht entwertet.

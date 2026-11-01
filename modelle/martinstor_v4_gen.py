@@ -230,14 +230,17 @@ for f in ("+x", "-x", "+y", "-y"):
 RZ0, RZ1 = GZ1, GZ1 + _M["DACHHOEHE"]; RZM, RZM2 = _M["DACH_MITTE_Z"], _M["DACH_MITTE2_Z"]
 MX, MY, M2X, M2Y, OX, OY = _M["DACH_MITTE_X"], _M["DACH_MITTE_Y"], _M["DACH_MITTE2_X"], _M["DACH_MITTE2_Y"], _M["DACH_OBEN_X"], _M["DACH_OBEN_Y"]
 BX, BY = GX + _M["HELM_UEBER"], GY + _M["HELM_UEBER"]                                                 # Helmtraufe mit Ueberstand (Wolke: Tropfkante -4,0 / y +-3,7)
-beleg("dach", "Helm: Traufe 40,5 m mit Ueberstand, Loft bis zur Plattform 55,4 m", "Wolke Nord Front-Tiefenprofil + Frontfenster (Register AR); Foto 061 Silhouette (M-061-S1); SfM Goldkugeln 55,1-55,6 m; DOM1 Peak", traufe=RZ0, first=RZ1)
 _PROF = None
 if _M.get("PROFIL_DATEI", 0) >= 1:
     _pp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "profile_generator.json")
     if os.path.exists(_pp): _PROF = __import__("json").load(open(_pp))
+if _PROF and _PROF.get("dach_traufe"):                                                                 # Traufmass aus dem Profilwerkzeug (Tropfkante der Wolke, driftkorrigiert)
+    BX, BY = max(_PROF["dach_traufe"]["tief"], GX + 0.4), max(_PROF["dach_traufe"]["quer"], GY + 0.4)
+beleg("dach", "Helm: Traufe 40,5 m mit Ueberstand, Loft bis zur Plattform 55,4 m", "Wolke Nord Front-Tiefenprofil + Frontfenster (Register AR); Foto 061 Silhouette (M-061-S1); SfM Goldkugeln 55,1-55,6 m; DOM1 Peak", traufe=RZ0, first=RZ1)
 if _PROF and _PROF.get("dach_profil"):
     # Loft aus dem gemessenen Profil (z, tief = N-S, quer = E-W): Fuss = Helmansatz auf dem Glockenstock, Kopf = Plattform
     lay = [(RZ0, BX, BY)] + [(z, t, q) for z, t, q in _PROF["dach_profil"] if RZ0 + 0.6 < z < RZ1 - 0.4] + [(RZ1, OX, OY)]
+    lay = [l for i, l in enumerate(lay) if i == 0 or abs(l[1] - lay[i - 1][1]) > 0.02 or abs(l[2] - lay[i - 1][2]) > 0.02 or i == len(lay) - 1]   # (fast) gleiche Nachbarschichten zusammenfassen: keine koplanaren Naehte
     for (z0, t0, q0), (z1, t1, q1) in zip(lay[:-1], lay[1:]):
         adds.append(frustum(0, 0, z0 - 0.02, t0, q0, z1, t1, q1))
     beleg("dach", "Helm als Loft aus Profil (%d Schichten)" % len(lay), _PROF.get("quelle", "profile_generator.json"), schichten=len(lay))
@@ -277,9 +280,12 @@ for sx in (-1, 1):
         if _PROF and _PROF.get("tuerm_achse"): c = (sx * _PROF["tuerm_achse"]["tief"], sy * _PROF["tuerm_achse"]["quer"])   # Kreisfit-Achse (Register AR)
         else: c = (sx * (_h[0] - _M["TUERM_ACHSE_DX"]), sy * (_h[1] - _M["TUERM_ACHSE_DY"]))
         hh = (TWs / 2, TWs / 2)
-        adds.append(frustum(c[0], c[1], 28.8, 0.9, 0.9, T0, TWs, TWs))                        # Auskragung (Konsole)
-        for z in (29.2, 29.7):
-            w_ = 0.9 + (TWs - 0.9) * (z - 28.8) / (T0 - 28.8)
+        KZ0, KZ1 = _M["KONSOLE_Z0"], _M["KONSOLE_Z1"]                                        # Konsolen aus der Wolke (Register AS): 27,6 -> 28,9 m
+        adds.append(frustum(c[0], c[1], KZ0, 0.9, 0.9, KZ1, TWs, TWs))                        # Auskragung (Konsole)
+        adds.append(box(c[0] - TWs / 2, c[0] + TWs / 2, c[1] - TWs / 2, c[1] + TWs / 2, KZ1 - 0.02, T0 + 0.02))   # Schaft ab Konsolen-Oberkante
+        beleg("dach", "Konsolen unter den Ecktuermchen (Auskragung)", "Wolke Nord y-Gesamtbreite: Anstieg 27,6 -> 28,9 m (Register AS); Foto 043: gestufte Steinkonsolen", unten=KZ0, oben=KZ1) if (sx, sy) == (-1, -1) else None
+        for z in (KZ0 + 0.4, KZ0 + 0.9):
+            w_ = 0.9 + (TWs - 0.9) * (z - KZ0) / (KZ1 - KZ0)
             adds.append(frustum(c[0], c[1], z - 0.12, w_ + 2 * rel(0.1), w_ + 2 * rel(0.1), z + 0.05, w_ + 2 * rel(0.1), w_ + 2 * rel(0.1)))
         adds.append(box(c[0] - TWs / 2, c[0] + TWs / 2, c[1] - TWs / 2, c[1] + TWs / 2, T0, T1))
         quoins(c, TWs / 2, TWs / 2, T0 + 0.1, T1 - 0.7, a=0.8, b=0.5, course=0.58)

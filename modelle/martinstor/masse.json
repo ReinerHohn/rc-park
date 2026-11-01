@@ -94,11 +94,19 @@
    "quelltyp": "foto_verhaeltnis"
   },
   "UZ": {
-   "wert": 26.9,
+   "wert": 25.7,
    "einheit": "m",
    "was": "Hoehe der Uhrmitte",
-   "quelle": "Farbsuche am Zifferblatt (Register X): Foto 030 26,84 m, Foto 041 26,64/27,94 m",
-   "quelltyp": "foto_kalibriert"
+   "quelle": "Dichte Wolke Nord (entzerrt): Farbklasse gold an der Wandfront, Schwerpunkt 25,69 m (tools/wolke_farbmerkmal.py, Register AS); frueher Foto-Farbsuche 26,6-27,9",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt": 26.9,
+     "neu": 25.7,
+     "grund": "Nutzer (Viewer): Uhr im Modell eine halbe Uhrhoehe zu hoch. wolke_farbmerkmal.py: goldene Stundenmarken/Zeiger in der dichten Wolke Nord, Schwerpunkt z 25,69 / y 0,05, Radius p90 2,28 (515 Punkte). Die Fotofarbsuche (Register X) lag 1,2 m hoeher - Kamerahoehe damals Annahme."
+    }
+   ]
   },
   "UR": {
    "wert": 2.1,
@@ -538,6 +546,20 @@
    "was": "Arkadensohle unter der Helmtraufe",
    "quelle": "Foto 061 (Ost, Achsspalte): Schalloeffnungen 38,4-40,9 Foto-m (~1 m hoeher als Wolke); Wolke: Ruecksprung der Front 38,1-39,6 m -> Arkadensohle 3,0 m unter der Traufe (37,5), Scheitel 39,5",
    "quelltyp": "foto_verhaeltnis"
+  },
+  "KONSOLE_Z0": {
+   "wert": 27.6,
+   "einheit": "m",
+   "was": "Ansatz der Konsolen (Auskragung) unter den Ecktuermchen",
+   "quelle": "Dichte Wolke Nord (entzerrt): y-Gesamtbreite je 0,25 m (Register AS): 10,3 m bis 27,6 m, Anstieg ab 27,9 (10,9) auf 11,0 bei 28,9 m, dann Schaftbreite 11,1-11,3",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "KONSOLE_Z1": {
+   "wert": 28.9,
+   "einheit": "m",
+   "was": "Oberkante der Konsolen = volle Breite des Tuermchenschafts",
+   "quelle": "Dichte Wolke Nord (entzerrt): y-Gesamtbreite je 0,25 m (Register AS): 10,3 m bis 27,6 m, Anstieg ab 27,9 (10,9) auf 11,0 bei 28,9 m, dann Schaftbreite 11,1-11,3",
+   "quelltyp": "sfm_bodenanker"
   }
  }
 }
