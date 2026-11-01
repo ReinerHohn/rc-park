@@ -128,9 +128,9 @@
  {
   "seite": "dach",
   "element": "Kragdach (Kupferschraege) ueber dem Zinnenkranz bis zum Glockenstock",
-  "quelle": "Fotos 031/041/043 Vollbild; Nutzerhinweis 2026-11-01",
-  "unten": 31.6,
-  "oben": 32.9,
+  "quelle": "Fotos 031/041/043 Vollbild; Nutzerhinweis 2026-11-01; Wolke Nord: Tropfkante 31,9 m (x -5,15), Schraege bis 34,1 m (x -3,5) (Register AR)",
+  "unten": 31.9,
+  "oben": 34.1,
   "seite_name": "dach"
  },
  {
@@ -163,12 +163,17 @@
  },
  {
   "seite": "dach",
-  "element": "Helm dreistufig (steile Flanke 37-41, Knick 45, schlanke Spitze bis 55,4)",
-  "quelle": "DOM1-Rohraster Zellmaxima 39-42/44-46/46-53/55 m bei 3/2/1/0 m; SfM Goldkugeln 55,1-55,6 m; LoD2 Traufe 37,27",
-  "traufe": 37.0,
-  "knick1": 41.0,
-  "knick2": 45.0,
+  "element": "Helm: Traufe 40,5 m mit Ueberstand, Loft bis zur Plattform 55,4 m",
+  "quelle": "Wolke Nord Front-Tiefenprofil + Frontfenster (Register AR); Foto 061 Silhouette (M-061-S1); SfM Goldkugeln 55,1-55,6 m; DOM1 Peak",
+  "traufe": 40.5,
   "first": 55.4,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Helm als Loft aus Profil (30 Schichten)",
+  "quelle": "tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)",
+  "schichten": 30,
   "seite_name": "dach"
  },
  {

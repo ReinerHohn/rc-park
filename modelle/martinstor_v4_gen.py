@@ -199,22 +199,23 @@ for f, L in (("+x", W), ("-x", W), ("+y", D), ("-y", D)):
         u = -L / 2 + 0.5 + (i + 0.5) * pitch
         adds.append(fbox(f, u - 0.4, u + 0.4, ZZ, ZZ + 1.0, -0.5, 0.0, h=HS))                  # Zinne
         adds.append(fbox(f, u - 0.15, u + 0.15, ZZ + 0.9, ZZ + 1.35, -0.1, 0.5, h=HS))            # Holzkonsole
-adds.append(box(-D / 2 + 0.2, D / 2 - 0.2, -W / 2 + 0.2, W / 2 - 0.2, ZZ - 0.3, ZZ + 0.2))             # Kern hinter den Zinnen
+adds.append(box(-D / 2 + 0.45, D / 2 - 0.45, -W / 2 + 0.45, W / 2 - 0.45, ZZ - 0.3, ZZ + 1.05))         # Kern hinter den Zinnen (0,45 zurueck: Scharten bleiben >= 0,4 m tief)
 # Gruenes Kragdach (Kupfer) zwischen den Ecktuermchen: Nutzer 2026-11-01 ("zwischen den Tuermen ein gruenes Daechlein"); Fotos 031/041/043:
 # die Schraege beginnt ueber den Zinnen aussen (ueber den Kranz hinaus) und steigt bis zur Glockenstock-Wand an.
-beleg("dach", "Kragdach (Kupferschraege) ueber dem Zinnenkranz bis zum Glockenstock", "Fotos 031/041/043 Vollbild; Nutzerhinweis 2026-11-01", unten=ZZ + 1.1, oben=ZZ + 2.4)
+beleg("dach", "Kragdach (Kupferschraege) ueber dem Zinnenkranz bis zum Glockenstock", "Fotos 031/041/043 Vollbild; Nutzerhinweis 2026-11-01; Wolke Nord: Tropfkante 31,9 m (x -5,15), Schraege bis 34,1 m (x -3,5) (Register AR)", unten=_M["KRAG_TRAUFE"], oben=_M["GZ0"])
 # Das Dach muss BIS AN DIE KRANZKANTE reichen, sonst ist es hinter den Zinnen unsichtbar (Nutzer 2026-11-01: "zwischen den
 # 4 Tuermen ist ein gruenes Daechlein"). Fotos 031/041/043: die gruene Flaeche schaut zwischen den Zinnen hervor und steigt
 # zum Glockenstock an. Beginn bei ZZ-0,45 (Hoehe des Kranzgesimses), damit kein Durchblick-Schlitz entsteht.
-GX, GY, GZ0, GZ1 = _M["GX"], _M["GY"], _M["GZ0"], _M["GZ1"]
-adds.append(frustum(0, 0, ZZ - 0.45, D + 0.7, W + 0.7, ZZ + 2.4, D - 4.0 + 0.4, W - 4.3 + 0.4))
-# ---------- abgesetzter Glockenstock mit Schallarkaden (DOM1-Rohraster 2026-11-01: ~6 x 6,6 m, Oberkante ~40 m; Arkaden oben) ----------
+GX, GY, GZ0, GZ1 = _M["GX"], _M["GY"], _M["GZ0"], _M["GZ1"]; KT, KU = _M["KRAG_TRAUFE"], _M["KRAG_UEBER"]
+adds.append(frustum(0, 0, ZZ + 1.0, D + 0.7, W + 0.7, KT, D + KU, W + KU))                      # Kragdach: Traufzone ueber den Zinnen bis zur Tropfkante (31,9 m, -5,15); Scharten bleiben offen
+adds.append(frustum(0, 0, KT - 0.02, D + KU, W + KU, GZ0, GX, GY))                             # Kragdach-Schraege bis an die Glockenstock-Wand (34,1 m)
+# ---------- abgesetzter Glockenstock mit Schallarkaden (Wolke Nord, Register AR: 6,8 x 6,5 m, 34,1-40,5 m; Schalloeffnungen oben, Foto 061) ----------
 adds.append(box(-GX / 2, GX / 2, -GY / 2, GY / 2, GZ0 - 0.1, GZ1))
 quoins((0, 0), GX / 2, GY / 2, GZ0, GZ1 - 0.2, a=0.75, b=0.42, course=0.6)
 for f in ("+x", "-x", "+y", "-y"):
     hh = (GX / 2, GY / 2)
     beleg(f, "Glockenstock mit 2 Schallarkaden", "Fotos 041/043 (Sued), 031 (Nord)" if f in ("+x", "-x") else "ANNAHME: Ost/West nicht fotografiert", anzahl=2)
-    AZ = GZ0                                                          # Arkadensohle wie bisher (Fotos 031/041/043)
+    AZ = GZ1 - _M["ARKADE_UNTER_TRAUFE"]                               # Arkadensohle 3 m unter der Helmtraufe (Foto 061 Achsspalte, Wolke Ruecksprung 38-39,6)
     for u in (-1.0, 1.0):
         cuts.append(fbox(f, u - 0.5, u + 0.5, AZ + 0.4, AZ + 1.5, -0.7, 0.5, h=hh))
         cuts.append(fcyl(f, u, AZ + 1.5, 0.5, -0.7, 0.5, h=hh, seg=24))
@@ -228,19 +229,31 @@ for f in ("+x", "-x", "+y", "-y"):
 # Knick bei DACH_MITTE_Z (~46 m) mit DACH_MITTE_X/Y (~4 x 4,6), Plattform DACH_OBEN_X/Y (~2,6 x 3,4) bei RZ1 = First 55,4 m.
 RZ0, RZ1 = GZ1, GZ1 + _M["DACHHOEHE"]; RZM, RZM2 = _M["DACH_MITTE_Z"], _M["DACH_MITTE2_Z"]
 MX, MY, M2X, M2Y, OX, OY = _M["DACH_MITTE_X"], _M["DACH_MITTE_Y"], _M["DACH_MITTE2_X"], _M["DACH_MITTE2_Y"], _M["DACH_OBEN_X"], _M["DACH_OBEN_Y"]
-BX, BY = GX + 0.6, GY + 0.6                                                                          # Helmfuss knapp ueber dem Glockenstock (Tuermchenhelme bleiben frei)
-beleg("dach", "Helm dreistufig (steile Flanke 37-41, Knick 45, schlanke Spitze bis 55,4)", "DOM1-Rohraster Zellmaxima 39-42/44-46/46-53/55 m bei 3/2/1/0 m; SfM Goldkugeln 55,1-55,6 m; LoD2 Traufe 37,27", traufe=RZ0, knick1=RZM, knick2=RZM2, first=RZ1)
-adds.append(frustum(0, 0, RZ0, BX, BY, RZM, MX, MY))
-adds.append(frustum(0, 0, RZM - 0.05, MX, MY, RZM2, M2X, M2Y))
-adds.append(frustum(0, 0, RZM2 - 0.05, M2X, M2Y, RZ1, OX, OY))
+BX, BY = GX + _M["HELM_UEBER"], GY + _M["HELM_UEBER"]                                                 # Helmtraufe mit Ueberstand (Wolke: Tropfkante -4,0 / y +-3,7)
+beleg("dach", "Helm: Traufe 40,5 m mit Ueberstand, Loft bis zur Plattform 55,4 m", "Wolke Nord Front-Tiefenprofil + Frontfenster (Register AR); Foto 061 Silhouette (M-061-S1); SfM Goldkugeln 55,1-55,6 m; DOM1 Peak", traufe=RZ0, first=RZ1)
+_PROF = None
+if _M.get("PROFIL_DATEI", 0) >= 1:
+    _pp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "profile_generator.json")
+    if os.path.exists(_pp): _PROF = __import__("json").load(open(_pp))
+if _PROF and _PROF.get("dach_profil"):
+    # Loft aus dem gemessenen Profil (z, tief = N-S, quer = E-W): Fuss = Helmansatz auf dem Glockenstock, Kopf = Plattform
+    lay = [(RZ0, BX, BY)] + [(z, t, q) for z, t, q in _PROF["dach_profil"] if RZ0 + 0.6 < z < RZ1 - 0.4] + [(RZ1, OX, OY)]
+    for (z0, t0, q0), (z1, t1, q1) in zip(lay[:-1], lay[1:]):
+        adds.append(frustum(0, 0, z0 - 0.02, t0, q0, z1, t1, q1))
+    beleg("dach", "Helm als Loft aus Profil (%d Schichten)" % len(lay), _PROF.get("quelle", "profile_generator.json"), schichten=len(lay))
+else:
+    adds.append(frustum(0, 0, RZ0, BX, BY, RZM, MX, MY))
+    adds.append(frustum(0, 0, RZM - 0.05, MX, MY, RZM2, M2X, M2Y))
+    adds.append(frustum(0, 0, RZM2 - 0.05, M2X, M2Y, RZ1, OX, OY))
 KX, KY = _M["KUGEL_X"], _M["KUGEL_Y"]
 adds.append(box(-KX, KX, -0.14, 0.14, RZ1 - 0.35, RZ1 - 0.05)); adds.append(box(-0.14, 0.14, -KY, KY, RZ1 - 0.35, RZ1 - 0.05))   # Kreuzarme fuer die Kugeln
 for sx in (-1, 1):
     adds.append(M.sphere(0.24, 20).translate((sx * KX, 0, RZ1 - 0.05)))
     adds.append(M.sphere(0.24, 20).translate((0, sx * KY, RZ1 - 0.05)))                               # Goldkugeln (SfM: bei +-1,5 / +-1,9 m)
 # Stehfalze im Kupferdach (senkrechte Rillen, wie im Foto) - je Stufe
-for f in ("+x", "-x"): _falze(RZ0, RZM, f, BX / 2, MX / 2, BY / 2, MY / 2); _falze(RZM, RZM2, f, MX / 2, M2X / 2, MY / 2, M2Y / 2)
-for f in ("+y", "-y"): _falze(RZ0, RZM, f, BY / 2, MY / 2, BX / 2, MX / 2); _falze(RZM, RZM2, f, MY / 2, M2Y / 2, MX / 2, M2X / 2)
+if not (_PROF and _PROF.get("dach_profil")):
+    for f in ("+x", "-x"): _falze(RZ0, RZM, f, BX / 2, MX / 2, BY / 2, MY / 2); _falze(RZM, RZM2, f, MX / 2, M2X / 2, MY / 2, M2Y / 2)
+    for f in ("+y", "-y"): _falze(RZ0, RZM, f, BY / 2, MY / 2, BX / 2, MX / 2); _falze(RZM, RZM2, f, MY / 2, M2Y / 2, MX / 2, M2X / 2)
 
 # ---------- Dachreiter (Laser: Kegel, Fussradius ~1,5 m bei 46 m, Spitze 54,8 m) ----------
 adds.append(M.cylinder(0.6, 1.55, 1.45, 8).translate((0, 0, RZ1 - 0.1)))
@@ -261,7 +274,8 @@ OR = _M["OR"]                                # Erker-Radius
 for sx in (-1, 1):
     for sy in (-1, 1):
         _h = hxy(T0 + 1.0)
-        c = (sx * (_h[0] - 0.1), sy * (_h[1] - 0.55))        # Achse 0,1 m innerhalb der N/S-Wand, 0,55 innerhalb der O/W-Wand: Wolke (Register AO) - Erker kragt ueber die Wand aus
+        if _PROF and _PROF.get("tuerm_achse"): c = (sx * _PROF["tuerm_achse"]["tief"], sy * _PROF["tuerm_achse"]["quer"])   # Kreisfit-Achse (Register AR)
+        else: c = (sx * (_h[0] - _M["TUERM_ACHSE_DX"]), sy * (_h[1] - _M["TUERM_ACHSE_DY"]))
         hh = (TWs / 2, TWs / 2)
         adds.append(frustum(c[0], c[1], 28.8, 0.9, 0.9, T0, TWs, TWs))                        # Auskragung (Konsole)
         for z in (29.2, 29.7):
@@ -271,11 +285,14 @@ for sx in (-1, 1):
         quoins(c, TWs / 2, TWs / 2, T0 + 0.1, T1 - 0.7, a=0.8, b=0.5, course=0.58)
         p = rel(0.22)
         adds.append(box(c[0] - TWs / 2 - p, c[0] + TWs / 2 + p, c[1] - TWs / 2 - p, c[1] + TWs / 2 + p, T1 - 0.5, T1))   # Kranz
-        for f in ("+x", "-x", "+y", "-y"):
+        for f in (("+x" if sx > 0 else "-x"), ("+y" if sy > 0 else "-y")):                   # nur Aussenseiten: Innenseiten stecken ab 31,5 m im Kragdach
             window(f, 0.0, T0 + 1.5, 0.45, 1.0, c=c, hh=hh, deep=0.25)
         # Erker: Bruestung (achteckig) mit X-Fachwerk
         adds.append(M.cylinder(0.95, OR, OR, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1)))
+        def zum_turm(k):   # Flaeche k (Normale k*45 Grad) zeigt zum Turmkern -> steckt im Kragdach/Glockenstock: dort keine Oeffnungen (sonst Hohlraeume)
+            return (math.cos(math.radians(k * 45)) * c[0] + math.sin(math.radians(k * 45)) * c[1]) < -0.3 * math.hypot(*c)
         for k in range(8):
+            if zum_turm(k): continue
             for sgn in (-1, 1):
                 cut = M.cube((0.5, 0.085, 0.95)).translate((-0.25 + OR * math.cos(math.radians(22.5)) , -0.04, -0.47)).rotate((sgn * 38, 0, 0)).translate((0, 0, 0))
                 # Schlitz entlang der Seitenflaeche k (Normale bei k*45 Grad)
@@ -287,18 +304,32 @@ for sx in (-1, 1):
         # GESCHLOSSENER achteckiger Erkerkoerper mit Fensteroeffnungen (Nutzer 2026-11-01: "aufgemalte haengende Daecher";
         # Fotos 031/041/043: ein Fachwerk-Erker mit kleinen Fenstern, KEIN offener Saeulenkranz - der liess das Tuermchen
         # bei 34 m auf 0,30 m Durchmesser schrumpfen, im Foto sind es dort 2,2-2,6 m).
-        adds.append(M.cylinder(1.45, OR, OR, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 0.95)))
+        EO = _M["ERKER_OBEN"]; EH = EO - (T1 + 0.95) - 0.5                            # Erkerkoerper bis zur Traufe des Helms (Wolke: ~39,3 m)
+        TS = _M["TUERM_SPITZE"]
+        if _PROF and _PROF.get("tuerm_profil"):
+            # Loft aus dem Kreisfit-Profil (z, d): Achtecke je Schicht, vom Erkerfuss bis unter die Spitze
+            prof = [(z, d) for z, d in _PROF["tuerm_profil"] if T1 + 1.2 < z < TS - 0.8 and d > 0.3]
+            lay = [(T1 + 0.95, 2 * OR)] + prof + [(TS - 0.5, 0.12)]
+            lay = [l for i, l in enumerate(lay) if i == 0 or i == len(lay) - 1 or not (abs(l[1] - lay[i - 1][1]) < 1e-6 and abs(lay[i + 1][1] - l[1]) < 1e-6)]   # gleiche Schichten zusammenfassen (keine koplanaren Naehte)
+            def okt(z, d):   # d = Schluesselweite (Kreisfit-Durchmesser): Umkreisradius = d/2 / cos(22,5 Grad), damit die Schnittausdehnung dem Fit entspricht
+                R = d / 2 / math.cos(math.radians(22.5)); return [(c[0] + R * math.cos(math.radians(k * 45 + 22.5)), c[1] + R * math.sin(math.radians(k * 45 + 22.5)), z) for k in range(8)]
+            for (z0, d0), (z1, d1) in zip(lay[:-1], lay[1:]): adds.append(M.hull_points(okt(z0 - 0.02, d0) + okt(z1, d1)))
+        else:
+            adds.append(M.cylinder(EH, OR, OR, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 0.95)))
         for k in range(8):                                                   # schmale Fenster in jeder zweiten Flaeche
-            if k % 2: continue
+            if k % 2 or zum_turm(k): continue
             a = math.radians(k * 45)
             fen = M.cube((0.5, 0.34, 0.85)).translate((-0.25, -0.17, -0.42)).translate((OR - 0.1, 0, 0)).rotate((0, 0, math.degrees(a)))
-            cuts.append(fen.translate((c[0], c[1], T1 + 1.7)))
-        adds.append(M.cylinder(0.18, OR + 0.14, OR + 0.14, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.3)))   # Traufgesims
-        adds.append(M.cylinder(0.75, OR + 0.16, 0.25, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.48)))      # kleines Pyramidendach ueber dem Erker
+            for zf in (T1 + 1.7, T1 + 4.2):                                           # zwei Fensterzonen im hohen Erker
+                cuts.append(fen.translate((c[0], c[1], zf)))
+        if not (_PROF and _PROF.get("tuerm_profil")):
+            adds.append(M.cylinder(0.18, OR + 0.14, OR + 0.14, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], EO - 0.5)))   # Traufgesims
+            adds.append(M.cylinder(0.3, OR + 0.16, OR * 0.86, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], EO - 0.32)))     # Helmansatz
         # spitzes Kupferdach, Kugel, Spitze
         # Helm: schlanker Kegel bis TUERM_SPITZE - 0,5 (SfM: Knaeufe 44,4-44,7 m; Fotos: 2 m unter der Spitze 0,4-1,2 m dick, bei 37 m 0,8-1,9 m)
-        TS = _M["TUERM_SPITZE"]; HK0 = T1 + 3.22; HK1 = TS - 0.5
-        adds.append(M.cylinder(HK1 - HK0, 1.1, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], HK0)))   # Helm auf dem Erkerdach
+        HK0 = EO - 0.05; HK1 = TS - 0.5
+        if not (_PROF and _PROF.get("tuerm_profil")):
+            adds.append(M.cylinder(HK1 - HK0, OR * 0.86, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], HK0)))   # Helm: steiler Kegel ab Erker-Oberkante
         adds.append(M.sphere(0.2, 20).translate((c[0], c[1], HK1 + 0.15)))
         adds.append(M.cylinder(0.35, 0.05, 0.015, 8).translate((c[0], c[1], HK1 + 0.15)))
 # ============ CSG ============

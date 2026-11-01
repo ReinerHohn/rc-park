@@ -15,7 +15,7 @@ Je Objekt `modelle/<objekt>/objekt.json` + `masstabelle.json` (Masse = Daten mit
     bevor der Nutzer sie findet. Nutzer-Sichtfunde zuerst als automatischen Test nachbauen, dann einbauen.
 3d. Echte Meter aus Fotos nur ueber amtliche Anker (`anker3d.json` aus LoD2/DOM1/DGM1): `foto_kalibrieren.py` -> **`foto_pick_pruefen.py` ansehen** ->
     `foto_bundle.py` -> `foto_mass.py --kamera`. Fotos ohne Bodenanker nur mit EXIF-Brennweite oder `f_gruppe`. Georeferenz jeder Nebendatei pruefen.
-4. Quellen-Blindheit (vom Pruefstand erzwungen, Exit 2): Laser DOM1 sieht keine Bauteile < ~3 m, keine Nadeln, keine Fassade, keine absolute Spitzenhoehe;
+4. Quellen-Blindheit (vom Pruefstand erzwungen, Exit 2): Laser DOM1 sieht keine Bauteile < ~3 m, keine Nadeln, keine Fassade, keine absolute Spitzenhoehe, keinen Fussabdruck steiler Helmflaechen (> ~75 Grad: Zellzahl/Schnitt Faktor 2 zu klein, Register AR);
    LoD2 keine Aufbauten; Fotos keine absoluten Masse ohne Massstab; Dokumente keine Form.
 5. Widersprueche zwischen Quellen (Foto vs Laser) NICHT mitteln - als offene Beobachtung stehen lassen, naechsten Schritt notieren.
 6. Optimierer-/Mehrfachstart-Ergebnisse je Parameter bewerten; neue sichtbare Merkmale als Parameter + Tabellenzeile.

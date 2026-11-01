@@ -5,10 +5,8 @@
   "dach_dz": 18.4,
   "hoehe": 70.00000140380858,
   "tuermchen_spitze": 44.500000854492185,
-  "tuermchen_2m_anzahl": 4.0,
-  "tuermchen_2m_durchmesser": 0.4647956720695302,
-  "tuermchen_4m_anzahl": 4.0,
-  "tuermchen_4m_durchmesser": 0.9580097116361999,
+  "tuermchen_2m": 0.8365377723898058,
+  "tuermchen_4m": 1.6765379215189053,
   "nadel_50": 0.1598615421659155,
   "nadel_52": 0.11788477709574553,
   "knauf_breite": 0.6578125573801751,
@@ -25,45 +23,56 @@
   "zinnen_S": 4.0,
   "zinnen_N": 4.0,
   "uhr_S": 4.45,
-  "dach_u_flaeche": 44.87999736633118,
-  "dach_u_x": 6.599999772643959,
-  "dach_u_y": 6.799999835204883,
-  "dach_o_flaeche": 10.800001827832949,
-  "dach_o_x": 3.0000002249257753,
-  "dach_o_y": 3.6000003393666935,
+  "dach_u_flaeche": 127.1349906782533,
+  "dach_u_x": 10.819999740600585,
+  "dach_u_y": 11.749999420166015,
+  "dach_o_flaeche": 25.015678242313697,
+  "dach_o_x": 5.3209609169601615,
+  "dach_o_y": 4.701345984816034,
   "eckturm_h": 15.159999572753906,
   "eckturm": 2.221543552550289,
   "tafel_N": 3.35,
   "tafel_S": 0.0,
   "adler_S": 1.6500000000000001,
-  "dachansatz": 38.00000000000006,
-  "kranz_oben": 31.84999960327148,
-  "hyp32": 121.0,
-  "hyp30": 153.0,
-  "hyp40": 52.0,
-  "sil30": 13.64,
-  "sil38": 9.8,
-  "sil45": 4.4,
+  "dachansatz": 41.0000000000001,
+  "kranz_oben": 31.70000106811523,
+  "hyp32": 150.0,
+  "hyp30": 152.0,
+  "hyp40": 94.0,
+  "sil30": 13.620000000000001,
+  "sil38": 13.420000000000002,
+  "sil45": 8.440000000000001,
   "sil31_031": 13.0,
-  "sil_zone_031": 12.548,
-  "sil_zone_041": 12.146666666666668,
-  "sil_zone_u031": 11.64,
-  "erker_34_anzahl": 4.0,
-  "erker_34_durchmesser": 2.1363231167355994,
-  "helm_37_anzahl": 4.0,
-  "helm_37_durchmesser": 1.6978309723325724,
+  "sil_zone_031": 12.687999999999999,
+  "sil_zone_041": 12.213333333333333,
+  "sil_zone_u031": 11.604,
+  "erker_34": 2.8820967897544265,
+  "helm_37_anzahl": 0.0,
+  "helm_37_durchmesser": null,
   "uhr_z": 4.45,
   "fenster_W_oben": 0.0,
   "fenster_W_mitte": 1.0,
   "wand_n_x20": -4.889747543334961,
   "eckturm_xmin": -6.100000167846679,
   "eckturm_ymitte": -3.70000004196167,
-  "dach38": 6.249999741577537,
-  "dach45": 3.6000003393666935,
-  "tuerm_ne_x40": -4.399999985591592,
-  "breite_y_295": 10.791666579118491,
-  "breite_y_315": 11.740000579833984,
-  "breite_y_335": 11.080355895996092
+  "tuerm_ne_x40": -3.9750000114440915,
+  "breite_y_295": 10.771666689909578,
+  "breite_y_315": 11.720000244140625,
+  "breite_y_335": 11.55925016784668,
+  "profil_dach_452": 4.6103846677784315,
+  "profil_dach_492": 4.589999828730853,
+  "profil_tuerm_3425": 2.8699998866050747,
+  "profil_tuerm_3775": 2.817500059767518,
+  "profil_tuerm_4025": 1.7774996518886668,
+  "dachx42": 6.481538046029568,
+  "dachx50": 3.0523067911592694,
+  "profil_tuerm_4250": 0.8365381174750643,
+  "tuermchen_2m_zahl_anzahl": 4.0,
+  "tuermchen_2m_zahl_durchmesser": 0.8591477236873392,
+  "profil_dach_532": 3.9919232606154225,
+  "silhouette_061_47": 4.465384741269452,
+  "silhouette_061_50": 3.1705758455719084,
+  "silhouette_061_53": 1.9457693154261104
  },
  "pruefungen": [
   {
@@ -78,7 +87,7 @@
   },
   {
    "name": "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
-   "wert": 0.4647956720695302,
+   "wert": 0.8365377723898058,
    "soll": [
     0.4,
     1.2
@@ -88,10 +97,10 @@
   },
   {
    "name": "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
-   "wert": 0.9580097116361999,
+   "wert": 1.6765379215189053,
    "soll": [
-    0.8,
-    1.7
+    1.6,
+    2.4
    ],
    "ok": true,
    "status": "ok"
@@ -158,10 +167,10 @@
   },
   {
    "name": "Dachansatz / Glockenstock-Oberkante (m)",
-   "wert": 38.00000000000006,
+   "wert": 41.0000000000001,
    "soll": [
-    36.0,
-    38.5
+    40.0,
+    41.5
    ],
    "ok": true,
    "status": "ok"
@@ -178,7 +187,7 @@
   },
   {
    "name": "Zinnenkranz Oberkante (m)",
-   "wert": 31.84999960327148,
+   "wert": 31.70000106811523,
    "soll": [
     29.5,
     32.5
@@ -267,11 +276,11 @@
    "status": "ok"
   },
   {
-   "name": "Dachflanke: Halbbreiten-Zunahme je m (Modellbreite auf der Achse, 38-45 m)",
-   "wert": 0.18928567158648882,
+   "name": "Helmflanke N-S: Halbtiefen-Abnahme je m (Modelltiefe auf der Achse, 42-50 m)",
+   "wert": 0.21432695342939367,
    "soll": [
-    0.15,
-    0.35
+    0.17,
+    0.3
    ],
    "ok": true,
    "status": "ok"
@@ -357,18 +366,8 @@
    "status": "ok"
   },
   {
-   "name": "Laserflaeche ueber 40 m (m2, gerastert)",
-   "wert": 52.0,
-   "soll": [
-    38.0,
-    52.0
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
    "name": "Silhouettenbreite bei 30 m (m, 3 Kameras)",
-   "wert": 13.64,
+   "wert": 13.620000000000001,
    "soll": [
     12.9,
     14.2
@@ -378,7 +377,7 @@
   },
   {
    "name": "Gesamtbreite y bei 29,5-33,5 m (Modell, mit Tuermchen)",
-   "wert": 11.204007684982855,
+   "wert": 11.350305700632292,
    "soll": [
     10.9,
     11.7
@@ -388,7 +387,7 @@
   },
   {
    "name": "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
-   "wert": 11.64,
+   "wert": 11.604,
    "soll": [
     11.3,
     12.7
@@ -398,20 +397,10 @@
   },
   {
    "name": "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
-   "wert": 2.1363231167355994,
+   "wert": 2.8820967897544265,
    "soll": [
-    2.0,
-    2.9
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Ecktuermchen: Helm Durchmesser bei 37,5 m (m)",
-   "wert": 1.6978309723325724,
-   "soll": [
-    0.8,
-    1.9
+    2.5,
+    3.2
    ],
    "ok": true,
    "status": "ok"
@@ -478,10 +467,110 @@
   },
   {
    "name": "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
-   "wert": 0.4897475577433692,
+   "wert": 0.9147475318908693,
    "soll": [
-    0.0,
-    0.8
+    0.4,
+    1.1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Profil Dach: Breite y bei 45.2 m (m)",
+   "wert": 4.6103846677784315,
+   "soll": [
+    4.11,
+    5.11
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Profil Dach: Breite y bei 49.2 m (m)",
+   "wert": 4.589999828730853,
+   "soll": [
+    4.1,
+    5.1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+   "wert": 2.8699998866050747,
+   "soll": [
+    2.47,
+    3.27
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+   "wert": 2.817500059767518,
+   "soll": [
+    2.43,
+    3.23
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+   "wert": 1.7774996518886668,
+   "soll": [
+    1.38,
+    2.18
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+   "wert": 0.8365381174750643,
+   "soll": [
+    0.44,
+    1.24
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Profil Dach: Breite y bei 53.2 m (m)",
+   "wert": 3.9919232606154225,
+   "soll": [
+    3.71,
+    4.71
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Profil Dach (Foto 061): Tiefe x bei 47 m (m)",
+   "wert": 4.465384741269452,
+   "soll": [
+    3.65,
+    5.05
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Profil Dach (Foto 061): Tiefe x bei 50 m (m)",
+   "wert": 3.1705758455719084,
+   "soll": [
+    2.32,
+    3.72
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Profil Dach (Foto 061): Tiefe x bei 53 m (m)",
+   "wert": 1.9457693154261104,
+   "soll": [
+    0.81,
+    2.21
    ],
    "ok": true,
    "status": "ok"

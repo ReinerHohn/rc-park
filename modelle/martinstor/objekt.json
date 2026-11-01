@@ -433,9 +433,12 @@
    "tools/sfm_ausrichten.py --name <seite> --wand <seite> --schreiben",
    "tools/sfm_html_viewer.py",
    "tools/sfm_registrieren.py --netz <seite> --foto <nr> (Fotos ohne Merkmalsmatches ueber Picks einhaengen)",
-   "tools/wolke_vs_modell.py <seite> --entzerren --eintragen (nach jedem Bau: Fotowolke gegen STL, Befunde automatisch)"
+   "tools/wolke_vs_modell.py <seite> --entzerren --eintragen (nach jedem Bau: Fotowolke gegen STL, Befunde automatisch)",
+   "tools/wolke_profile.py <objekt> nord --zentral-z 40.5 56 --generator --pruefungen (Dach-/Tuermchenprofile aus der Wolke -> profile_generator.json + Pruefzeilen; vor jedem Bau nach neuer Wolke)",
+   "tools/foto_silhouette_profil.py <objekt> 061 --achse x --pick-oben 2387 303 --pruefungen 47 50 53 (fernes Seitenfoto: N-S-Tiefe des Helms, unabhaengig von Wolke und DOM1)"
   ],
-  "regel": "Neuer Matcher/Variante NUR mit --name <variante> in eigene Ordner; Referenznetz sparse_<seite> nie ueberschreiben (Panne AK)"
+  "regel": "Neuer Matcher/Variante NUR mit --name <variante> in eigene Ordner; Referenznetz sparse_<seite> nie ueberschreiben (Panne AK)",
+  "quellen_blindheit_dom1_helm": "DOM1-Zellmaxima (1 m) erfassen Helmflaechen steiler als ~75 Grad nur teilweise: Schnittbreiten und Zellzahlen dort keine Obergrenze (Register AR, Foto 061 + Wolke stimmen, DOM1 Faktor 2 kleiner)"
  },
  "nebengebaeude": {
   "torbau_1901": {

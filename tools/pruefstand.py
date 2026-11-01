@@ -14,6 +14,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Was eine Quelle beweisen kann (Erfahrung dieses Projekts; Begruendung in modelle/METHODE_MASSTABELLE.md)
 QUELLEN = {
+    # laser_dom1: 1-m-Zellmaxima. Zusaetzlich praktisch blind fuer den FUSSABDRUCK steiler Helmflaechen (> ~75 Grad): Zellzahl und Schnitt
+    # dort um Faktor 2 zu klein (Register AR, Foto 061 + Wolke vs DOM1) - Flaechenpruefungen am Helm nur unterhalb der Traufe oder am Peak.
     "laser_dom1":      {"sieht": ["hoehe_flaeche", "anzahl"],                            "blind": ["duennes_bauteil", "schlankheit", "fassade", "absolut_hoehe", "verhaeltnis", "grundriss"],
                         "hinweis": "1-m-Raster, interpoliert, nur von oben; Strukturen < ~3 m verschmiert, Nadeln unsichtbar. BLIND auch fuer Grundriss mit "
                                    "Vorspruengen < ~1 m (Gesims, Erker): die Flaeche ueber Hoehe faellt dann 15-20 % zu klein aus (Martinstor 2026-11-01, Register O/P)"},

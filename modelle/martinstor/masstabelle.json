@@ -15,16 +15,22 @@
    "ay": 2.5
   },
   "tuermchen_2m": {
-   "typ": "querschnitte_abseits",
+   "typ": "schnitt_ausdehnung",
    "z": "=tuermchen_spitze - 2.0",
-   "ax": 2.5,
-   "ay": 2.5
+   "x0": -6.0,
+   "x1": -2.0,
+   "y0": 3.6,
+   "y1": 6.5,
+   "achse": "x"
   },
   "tuermchen_4m": {
-   "typ": "querschnitte_abseits",
+   "typ": "schnitt_ausdehnung",
    "z": "=tuermchen_spitze - 4.0",
-   "ax": 2.5,
-   "ay": 2.5
+   "x0": -6.0,
+   "x1": -2.0,
+   "y0": 3.6,
+   "y1": 6.5,
+   "achse": "x"
   },
   "nadel_50": {
    "typ": "breite_achse",
@@ -256,10 +262,13 @@
    "seite": "links"
   },
   "erker_34": {
-   "typ": "querschnitte_abseits",
+   "typ": "schnitt_ausdehnung",
    "z": 34.0,
-   "ax": 3.1,
-   "ay": 3.2
+   "x0": -6.0,
+   "x1": -2.0,
+   "y0": 3.6,
+   "y1": 6.5,
+   "achse": "x"
   },
   "helm_37": {
    "typ": "querschnitte_abseits",
@@ -320,18 +329,6 @@
    "z1": 12.0,
    "achse": "y"
   },
-  "dach38": {
-   "typ": "ausdehnung_streifen",
-   "z": 38.0,
-   "achse": "y",
-   "quer_max": 2.0
-  },
-  "dach45": {
-   "typ": "ausdehnung_streifen",
-   "z": 45.0,
-   "achse": "y",
-   "quer_max": 2.0
-  },
   "tuerm_ne_x40": {
    "typ": "schnitt_mitte",
    "z": 40.5,
@@ -358,6 +355,96 @@
    "z": 33.5,
    "achse": "y",
    "quer_max": 8.0
+  },
+  "profil_dach_452": {
+   "typ": "ausdehnung_streifen",
+   "z": 45.25,
+   "achse": "y",
+   "quer_max": 2.5
+  },
+  "profil_dach_492": {
+   "typ": "ausdehnung_streifen",
+   "z": 49.25,
+   "achse": "y",
+   "quer_max": 2.5
+  },
+  "profil_tuerm_3425": {
+   "typ": "schnitt_ausdehnung",
+   "z": 34.25,
+   "x0": -6.03,
+   "x1": -2.02,
+   "y0": 3.56,
+   "y1": 6.43,
+   "achse": "x"
+  },
+  "profil_tuerm_3775": {
+   "typ": "schnitt_ausdehnung",
+   "z": 37.75,
+   "x0": -6.03,
+   "x1": -2.02,
+   "y0": 3.56,
+   "y1": 6.43,
+   "achse": "x"
+  },
+  "profil_tuerm_4025": {
+   "typ": "schnitt_ausdehnung",
+   "z": 40.25,
+   "x0": -6.03,
+   "x1": -2.02,
+   "y0": 3.56,
+   "y1": 6.43,
+   "achse": "x"
+  },
+  "dachx42": {
+   "typ": "ausdehnung_streifen",
+   "z": 42.25,
+   "achse": "x",
+   "quer_max": 2.0
+  },
+  "dachx50": {
+   "typ": "ausdehnung_streifen",
+   "z": 50.25,
+   "achse": "x",
+   "quer_max": 2.0
+  },
+  "profil_tuerm_4250": {
+   "typ": "schnitt_ausdehnung",
+   "z": 42.5,
+   "x0": -6.03,
+   "x1": -2.02,
+   "y0": 3.56,
+   "y1": 6.43,
+   "achse": "x"
+  },
+  "tuermchen_2m_zahl": {
+   "typ": "querschnitte_abseits",
+   "z": "=tuermchen_spitze - 2.0",
+   "ax": 2.5,
+   "ay": 2.5
+  },
+  "profil_dach_532": {
+   "typ": "ausdehnung_streifen",
+   "z": 53.25,
+   "achse": "y",
+   "quer_max": 2.5
+  },
+  "silhouette_061_47": {
+   "typ": "ausdehnung_streifen",
+   "z": 47.0,
+   "achse": "x",
+   "quer_max": 2.0
+  },
+  "silhouette_061_50": {
+   "typ": "ausdehnung_streifen",
+   "z": 50.0,
+   "achse": "x",
+   "quer_max": 2.0
+  },
+  "silhouette_061_53": {
+   "typ": "ausdehnung_streifen",
+   "z": 53.0,
+   "achse": "x",
+   "quer_max": 2.0
   }
  },
  "pruefungen": [
@@ -387,7 +474,7 @@
   },
   {
    "name": "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
-   "wert": "tuermchen_2m_durchmesser",
+   "wert": "tuermchen_2m",
    "soll": [
     0.4,
     1.2
@@ -395,23 +482,45 @@
    "quelle": "Foto 043/044 + Journal 10/6: Kegel schlank; Nutzer 'zu gedrungen' 2026-10-31",
    "quelltyp": "foto_verhaeltnis",
    "merkmal": "schlankheit",
-   "massstab": "modell"
+   "massstab": "modell",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt_wert": "tuermchen_2m_durchmesser",
+     "grund": "Messung von Schwerpunkt-Filter (querschnitte_abseits) auf Schnittausdehnung im Fenster x -6..-2, y 3,6..6,5 umgestellt: Glockenstock (34,1-40,5 m, 6,8 x 6,5) und Kragdach verschmelzen im Schnitt mit dem Erker (Achse 3,98/4,44, r 1,44), der Schwerpunkt-Filter fand kein Polygon mehr (nan). Sollwert unveraendert."
+    }
+   ]
   },
   {
    "name": "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
-   "wert": "tuermchen_4m_durchmesser",
+   "wert": "tuermchen_4m",
    "soll": [
-    0.8,
-    1.7
+    1.6,
+    2.4
    ],
-   "quelle": "Foto 043/044, Journal 6/10: Kegel ca. 3:1",
-   "quelltyp": "foto_verhaeltnis",
+   "quelle": "Dichte Wolke Nord, Kreisfit je 0,5 m an die Ecktuermchen (Register AR): Erkerkoerper d 2,6-2,9 m von 31 bis ~39,5 m, Helm ab ~40 m (d 2,3 bei 40, 1,4 bei 41, 1,0 bei 42,5, 0,5 bei 43), Achse x -3,8..-4,1 / y +-4,3..4,6; Nutzer: 'Daechlein zu klein' (40,5 m: 1,9-2,3)",
+   "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
-   "massstab": "modell"
+   "massstab": "modell",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt_soll": [
+      0.8,
+      1.7
+     ],
+     "grund": "Kreisfit Wolke: Helm ist am Fuss breiter"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt_wert": "tuermchen_4m_durchmesser",
+     "grund": "Messung von Schwerpunkt-Filter (querschnitte_abseits) auf Schnittausdehnung im Fenster x -6..-2, y 3,6..6,5 umgestellt: Glockenstock (34,1-40,5 m, 6,8 x 6,5) und Kragdach verschmelzen im Schnitt mit dem Erker (Achse 3,98/4,44, r 1,44), der Schwerpunkt-Filter fand kein Polygon mehr (nan). Sollwert unveraendert."
+    }
+   ]
   },
   {
    "name": "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
-   "wert": "tuermchen_2m_anzahl",
+   "wert": "tuermchen_2m_zahl_anzahl",
    "soll": [
     4,
     4
@@ -419,7 +528,14 @@
    "quelle": "Fotos: 4 Ecktuermchen",
    "quelltyp": "foto_verhaeltnis",
    "merkmal": "anzahl",
-   "massstab": "-"
+   "massstab": "-",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt_wert": "tuermchen_2m_anzahl",
+     "grund": "Zaehlung auf eigene Messung tuermchen_2m_zahl (Schwerpunkt-Filter; 2 m unter der Spitze sind die Kegel vom Helm getrennt) - Durchmesser laeuft jetzt ueber das Fenster"
+    }
+   ]
   },
   {
    "name": "Dachreiter Dicke bei 62 m (m)",
@@ -512,11 +628,11 @@
    "name": "Dachansatz / Glockenstock-Oberkante (m)",
    "wert": "dachansatz",
    "soll": [
-    36.0,
-    38.5
+    40.0,
+    41.5
    ],
-   "quelle": "LoD2 Traufe/Wandoberkante 37,27 m (anker3d ecke_wandoben, sigma 0,6) + DOM1-Rohraster: Laserflaeche ueber 40 m nur 43 Zellen (Dach bei 40 m ~5 m breit), Zelle 4 m vom Peak 32-35 m",
-   "quelltyp": "lod2",
+   "quelle": "Dichte Wolke Nord (entzerrt): Front springt bei 40,4-40,7 m auf x -4,0 (Tropfkante), darunter Wand -3,3; Messung: erste Hoehe ab 34 m, bei der die y-Breite auf der Achse unter 6,2 m faellt (Glockenstock 6,5 > 6,2, Helm ab ~41 schmaler)",
+   "quelltyp": "sfm_bodenanker",
    "merkmal": "hoehe_flaeche",
    "massstab": "laser",
    "protokoll": "M-030-003",
@@ -540,6 +656,15 @@
       42.5
      ],
      "grund": "Korrektur am selben Tag: 39-42,5 war ein Fehlschluss aus dem Rohraster (Zellen bei 3 m = Dachflanke); Laserflaeche > 40 m (43 Zellen) und LoD2 Traufe 37,27 verlangen Traufe ~37"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt_soll": [
+      36.0,
+      38.5
+     ],
+     "alt_quelle": "LoD2 Traufe/Wandoberkante 37,27 m (anker3d ecke_wandoben, sigma 0,6) + DOM1-Rohraster: Laserflaeche ueber 40 m nur 43 Zellen (Dach bei 40 m ~5 m breit), Zelle 4 m vom Peak 32-35 m",
+     "grund": "LoD2-Wandoberkante 37,27 = Galeriegesims unter dem Glockenstock (LoD2 blind fuer Aufbauten, Regel 4); Wolke Nord Front-Tiefenprofil: Helm-Tropfkante 40,4-40,7 m; Foto 061 Achsspalte 42,0 +-0,5 Foto-m (offen)"
     }
    ]
   },
@@ -679,13 +804,13 @@
    "massstab": "lod2"
   },
   {
-   "name": "Dachflanke: Halbbreiten-Zunahme je m (Modellbreite auf der Achse, 38-45 m)",
-   "wert": "(dach38 - dach45) / 2 / 7.0",
+   "name": "Helmflanke N-S: Halbtiefen-Abnahme je m (Modelltiefe auf der Achse, 42-50 m)",
+   "wert": "(dachx42 - dachx50) / 2 / 8.0",
    "soll": [
-    0.15,
-    0.35
+    0.17,
+    0.3
    ],
-   "quelle": "DOM1-Rohraster: Dachflaeche bei 3 m Abstand 40,5 m, bei 2 m 45 m -> 0,22 m halbe Breite je m; dichte Wolke 44-54 m: Breite 5,6 -> 4,2 m",
+   "quelle": "Wolke Nord Front: x -3,24 (42,25) -> -1,53 (50,25) = 0,21 m/m je Seite; Foto 061 Silhouette 4,13 (47,25) -> 2,58 (50,25) = 0,26 m/m",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "verhaeltnis",
    "historie": [
@@ -704,6 +829,16 @@
     {
      "datum": "2026-11-01",
      "grund": "Messung von Kamera-Silhouette (K-030, enthielt die Tuermchenhelme: 0,52) auf Modellbreite |x|<2 auf der Achse umgestellt; Sollwert (DOM1) unveraendert"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt_soll": [
+      0.15,
+      0.35
+     ],
+     "alt_wert": "(dach38 - dach45) / 2 / 7.0",
+     "alt_quelle": "DOM1-Rohraster: Dachflaeche bei 3 m Abstand 40,5 m, bei 2 m 45 m -> 0,22 m halbe Breite je m; dichte Wolke 44-54 m: Breite 5,6 -> 4,2 m",
+     "grund": "DOM1-Schnitte auf dem steilen Helm blind (N-S 1,76 m bei 46,75 vs Foto 061 4,35 / Wolke 4,58); Band 38-45 lag ausserdem im Glockenstock. Neu: Helmflanke N-S 42-50 m aus Wolkenfront + Foto 061"
     }
    ],
    "massstab": "foto_kalibriert"
@@ -841,28 +976,6 @@
    "massstab": "-"
   },
   {
-   "name": "Laserflaeche ueber 40 m (m2, gerastert)",
-   "wert": "hyp40",
-   "soll": [
-    38.0,
-    52.0
-   ],
-   "quelle": "DOM1-Profil: 43 m2, Streuung 43-43 (sehr sicher, grosse Dachflaeche) | Rohraster 2026-11-01: 43 Zellen; Tuermchenhelme fehlen im DOM1 (zu duenn), im Modellraster nicht",
-   "quelltyp": "laser_dom1",
-   "merkmal": "hoehe_flaeche",
-   "massstab": "laser",
-   "historie": [
-    {
-     "datum": "2026-11-01",
-     "alt_soll": [
-      38.0,
-      48.0
-     ],
-     "grund": "Obergrenze 48 -> 52: das Modellraster zaehlt die vier Tuermchenhelme (bei 40 m ~1,1 m dick, je 1-3 Zellen), DOM1 registriert sie nicht (Rohraster: Eckzellen 31-35 m; Quellen-Matrix: Laser blind < ~3 m). Dach selbst bei 40 m ~4,4 x 5,0 m = 22 m2 + Rasterzuschlag ~20 = 42 (DOM1 43)"
-    }
-   ]
-  },
-  {
    "name": "Silhouettenbreite bei 30 m (m, 3 Kameras)",
    "wert": "sil30",
    "soll": [
@@ -914,13 +1027,13 @@
   },
   {
    "name": "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
-   "wert": "erker_34_durchmesser",
+   "wert": "erker_34",
    "soll": [
-    2.0,
-    2.9
+    2.5,
+    3.2
    ],
-   "quelle": "Fotos 031/041/043 Vollbild: der achteckige Erker mit Fachwerk-Bruestung ist etwa so breit wie der Sandsteinschaft darunter (2,2-2,6 m); erst darueber beginnt der schlanke Helm",
-   "quelltyp": "foto_vollbild",
+   "quelle": "Dichte Wolke Nord, Kreisfit je 0,5 m an die Ecktuermchen (Register AR): Erkerkoerper d 2,6-2,9 m von 31 bis ~39,5 m, Helm ab ~40 m (d 2,3 bei 40, 1,4 bei 41, 1,0 bei 42,5, 0,5 bei 43), Achse x -3,8..-4,1 / y +-4,3..4,6; Nutzer: 'Daechlein zu klein' (34 m: 2,8-3,0)",
+   "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "modell",
    "historie": [
@@ -928,28 +1041,19 @@
     {
      "datum": "2026-11-01",
      "grund": "Abseits-Schwelle 2,5 -> 3,1/3,2: Glockenstock ist jetzt 6,0 x 6,2 m"
-    }
-   ]
-  },
-  {
-   "name": "Ecktuermchen: Helm Durchmesser bei 37,5 m (m)",
-   "wert": "helm_37_durchmesser",
-   "soll": [
-    0.8,
-    1.9
-   ],
-   "quelle": "Fotos 031/041: oberhalb des Erkerdachs ist der Helm deutlich schlanker als der Erker",
-   "quelltyp": "foto_vollbild",
-   "merkmal": "schlankheit",
-   "massstab": "modell",
-   "historie": [
-    {
-     "datum": "2026-11-01",
-     "grund": "Messhoehe 37 -> 37,5: bei 37,0 beginnt jetzt der Helmfuss (Traufe), Querschnitte verschmelzen"
     },
     {
      "datum": "2026-11-01",
-     "grund": "Abseits-Schwelle 2,5 -> 3,1/3,2: Glockenstock ist jetzt 6,0 x 6,2 m"
+     "alt_soll": [
+      2.0,
+      2.9
+     ],
+     "grund": "Kreisfit Wolke statt Fotoschaetzung"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt_wert": "erker_34_durchmesser",
+     "grund": "Messung von Schwerpunkt-Filter (querschnitte_abseits) auf Schnittausdehnung im Fenster x -6..-2, y 3,6..6,5 umgestellt: Glockenstock (34,1-40,5 m, 6,8 x 6,5) und Kragdach verschmelzen im Schnitt mit dem Erker (Achse 3,98/4,44, r 1,44), der Schwerpunkt-Filter fand kein Polygon mehr (nan). Sollwert unveraendert."
     }
    ]
   },
@@ -1053,14 +1157,252 @@
    "name": "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
    "wert": "tuerm_ne_x40 - wand_n_x20",
    "soll": [
-    0.0,
-    0.8
+    0.4,
+    1.1
    ],
-   "quelle": "Dichte Fotowolke Nord (entzerrt, Register AO): Helmachse NE/NW bei 39-42 m ~0,4 m innerhalb der Wandebene (Rohwert -5,3 bei Wolkenwand -5,7; Erkerkoerper bei 31-35 m sogar 0,5 m aussen = Auskragung). Tiefe der einseitigen Wolke +-0,4 m. Modell hatte 1,22 m Ruecksprung",
+   "quelle": "Dichte Wolke Nord: Erkerkoerper-Achse x -3,85..-3,95 (robuster Kreisfit 30-38 m), Wolkenwand 18-22 m x -4,57 (Median) -> 0,65 wolkenintern; Modellwand (LoD2) -4,89 liegt 0,3 m weiter aussen",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "grundriss",
    "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "audit/wolke_vs_modell_nord.json"
+   "protokoll": "audit/wolke_vs_modell_nord.json",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt_soll": [
+      0.0,
+      0.8
+     ],
+     "grund": "Soll stammte aus Helm-Kreisfits (kleiner Bogen, instabil: 4,05-4,48). Achse jetzt aus dem Erkerkoerper (wolke_profile.py, Schichten mit d >= 0,8 dmax): 3,85-3,95; Wolkenwand bei 20 m -4,57 vs LoD2/Modell -4,89 (0,3 m Anker-Residuum) -> wolkenintern 0,6-0,7, im Modell 0,9-1,0"
+    }
+   ]
+  },
+  {
+   "name": "Profil Dach: Breite y bei 45.2 m (m)",
+   "wert": "profil_dach_452",
+   "soll": [
+    4.11,
+    5.11
+   ],
+   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.61 bei 45.25 m; DOM1-Flaeche 16 Zellen",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_nord.json",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt_soll": [
+      4.61,
+      5.61
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      3.41,
+      4.41
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    }
+   ]
+  },
+  {
+   "name": "Profil Dach: Breite y bei 49.2 m (m)",
+   "wert": "profil_dach_492",
+   "soll": [
+    4.1,
+    5.1
+   ],
+   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.6 bei 49.25 m; DOM1-Flaeche 6 Zellen",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_nord.json",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt_soll": [
+      4.38,
+      5.38
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      2.95,
+      3.95
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    }
+   ]
+  },
+  {
+   "name": "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+   "wert": "profil_tuerm_3425",
+   "soll": [
+    2.47,
+    3.27
+   ],
+   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 2.87 bis 37.64 m, Kegel 0.419 m/m zur Spitze 44.5 -> d 2.87 bei 34.25 m (Einzelfit dort: [2.96]); Fenster seitlich der Dachbreite",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_nord.json",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt_soll": [
+      2.57,
+      3.37
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      2.56,
+      3.36
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    }
+   ]
+  },
+  {
+   "name": "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+   "wert": "profil_tuerm_3775",
+   "soll": [
+    2.43,
+    3.23
+   ],
+   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 2.87 bis 37.64 m, Kegel 0.419 m/m zur Spitze 44.5 -> d 2.83 bei 37.75 m (Einzelfit dort: [2.63]); Fenster seitlich der Dachbreite",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_nord.json",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt_soll": [
+      2.27,
+      3.07
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      2.23,
+      3.03
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    }
+   ]
+  },
+  {
+   "name": "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+   "wert": "profil_tuerm_4025",
+   "soll": [
+    1.38,
+    2.18
+   ],
+   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 2.87 bis 37.64 m, Kegel 0.419 m/m zur Spitze 44.5 -> d 1.78 bei 40.25 m (Einzelfit dort: [0.73]); Fenster seitlich der Dachbreite",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_nord.json",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt_soll": [
+      1.54,
+      2.34
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      1.57,
+      2.37
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      0.33,
+      1.13
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    }
+   ]
+  },
+  {
+   "name": "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+   "wert": "profil_tuerm_4250",
+   "soll": [
+    0.44,
+    1.24
+   ],
+   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 2.87 bis 37.64 m, Kegel 0.419 m/m zur Spitze 44.5 -> d 0.84 bei 42.5 m (Einzelfit dort: [1.0, 1.4]); Fenster seitlich der Dachbreite",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_nord.json"
+  },
+  {
+   "name": "Profil Dach: Breite y bei 53.2 m (m)",
+   "wert": "profil_dach_532",
+   "soll": [
+    3.71,
+    4.71
+   ],
+   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.21 bei 53.25 m; DOM1-Flaeche 2 Zellen",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_nord.json"
+  },
+  {
+   "name": "Profil Dach (Foto 061): Tiefe x bei 47 m (m)",
+   "wert": "silhouette_061_47",
+   "soll": [
+    3.65,
+    5.05
+   ],
+   "quelle": "foto_silhouette_profil.py: Foto 061 Silhouette 4.35 m bei 46.75 m (11.3 px/m aus TUERM_SPITZE/GZ1+DACHHOEHE); Protokoll M-061-S1",
+   "quelltyp": "foto_verhaeltnis",
+   "merkmal": "schlankheit",
+   "massstab": "TUERM_SPITZE + GZ1+DACHHOEHE (Zeilen)",
+   "protokoll": "M-061-S1"
+  },
+  {
+   "name": "Profil Dach (Foto 061): Tiefe x bei 50 m (m)",
+   "wert": "silhouette_061_50",
+   "soll": [
+    2.32,
+    3.72
+   ],
+   "quelle": "foto_silhouette_profil.py: Foto 061 Silhouette 3.02 m bei 49.75 m (11.3 px/m aus TUERM_SPITZE/GZ1+DACHHOEHE); Protokoll M-061-S1",
+   "quelltyp": "foto_verhaeltnis",
+   "merkmal": "schlankheit",
+   "massstab": "TUERM_SPITZE + GZ1+DACHHOEHE (Zeilen)",
+   "protokoll": "M-061-S1"
+  },
+  {
+   "name": "Profil Dach (Foto 061): Tiefe x bei 53 m (m)",
+   "wert": "silhouette_061_53",
+   "soll": [
+    0.81,
+    2.21
+   ],
+   "quelle": "foto_silhouette_profil.py: Foto 061 Silhouette 1.51 m bei 52.75 m (11.3 px/m aus TUERM_SPITZE/GZ1+DACHHOEHE); Protokoll M-061-S1",
+   "quelltyp": "foto_verhaeltnis",
+   "merkmal": "schlankheit",
+   "massstab": "TUERM_SPITZE + GZ1+DACHHOEHE (Zeilen)",
+   "protokoll": "M-061-S1"
   }
  ],
  "beobachtungen_offen": [
@@ -2866,6 +3208,438 @@
    "flaeche_m2": 8.4,
    "text": "Fotowolke hat hier Masse, das Modell nicht (fehlendes Bauteil?): z 16.8-21.0 m, y -11.5..-6.5 m, 8.4 m2",
    "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Nutzer (Viewer, Wolke vor Modell)",
+   "art": "sicht",
+   "text": "Die Daechlein (Helme) der vier Ecktuermchen sind im Modell zu klein (Wolke zeigt breitere, hoehere Helme).",
+   "naechster_schritt": "Kreisfit je 0,5-m-Schicht an die Wolke (NW/NE), Durchmesserprofil 31-45 m gegen STL-Schnitte; Pruefung Helm-Durchmesser je Hoehe eintragen (rot), dann Generator."
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Nutzer (Viewer, Wolke vor Modell)",
+   "art": "sicht",
+   "text": "Das grosse Dach passt in der Seitenansicht nicht zur Wolke (Flanke/Form).",
+   "naechster_schritt": "Dachprofil aus der Wolke: Breite y (verlaesslich) und Nordflanke x je 1 m gegen das Modell; Tiefe nur als Hinweis (Drift), Breite als Pruefung."
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-32-36",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 31.5,
+   "z_bis": 35.5,
+   "abweichung": -1.2,
+   "text": "Silhouettenbreite z 31.5-35.5 m: Foto 12.76 m, Modell 13.96 m (-1.20 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-38-38",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 38.0,
+   "z_bis": 38.0,
+   "abweichung": -1.4,
+   "text": "Silhouettenbreite z 38.0-38.0 m: Foto 11.96 m, Modell 13.36 m (-1.40 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-42-42",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 41.5,
+   "z_bis": 42.5,
+   "abweichung": -1.45,
+   "text": "Silhouettenbreite z 41.5-42.5 m: Foto 7.53 m, Modell 8.98 m (-1.45 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-50-50",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 49.5,
+   "z_bis": 50.0,
+   "abweichung": -3.84,
+   "text": "Silhouettenbreite z 49.5-50.0 m: Foto 1.10 m, Modell 4.94 m (-3.84 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 5)",
+   "auto_id": "fehlteile-030-1116-558",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 38.77,
+   "z_bis": 38.77,
+   "xyz": [
+    2.17,
+    2.6,
+    38.77
+   ],
+   "abweichung": 0.994,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.77 m, y=2.6 m (Zelle [1116, 558, 62], Score +0.99)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-30-34",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 29.5,
+   "z_bis": 34.0,
+   "abweichung": -0.94,
+   "text": "Silhouettenbreite z 29.5-34.0 m: Foto 11.13 m, Modell 12.08 m (-0.94 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-44-44",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 43.5,
+   "z_bis": 44.0,
+   "abweichung": -1.62,
+   "text": "Silhouettenbreite z 43.5-44.0 m: Foto 8.08 m, Modell 9.70 m (-1.62 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-47-50",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 47.0,
+   "z_bis": 50.0,
+   "abweichung": -4.15,
+   "text": "Silhouettenbreite z 47.0-50.0 m: Foto 1.14 m, Modell 5.29 m (-4.15 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 3)",
+   "auto_id": "fehlteile-041-940-564",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 40.56,
+   "z_bis": 40.56,
+   "xyz": [
+    1.44,
+    2.07,
+    40.56
+   ],
+   "abweichung": 0.927,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=40.56 m, y=2.07 m (Zelle [940, 564, 94], Score +0.93)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
+   "auto_id": "fehlteile-041-940-658",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 39.01,
+   "z_bis": 39.01,
+   "xyz": [
+    0.7,
+    2.24,
+    39.01
+   ],
+   "abweichung": 0.789,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.01 m, y=2.24 m (Zelle [940, 658, 94], Score +0.79)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 6)",
+   "auto_id": "fehlteile-041-752-470",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 41.95,
+   "z_bis": 41.95,
+   "xyz": [
+    1.55,
+    -1.23,
+    41.95
+   ],
+   "abweichung": 0.781,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=41.95 m, y=-1.23 m (Zelle [752, 470, 94], Score +0.78)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude",
+   "auto_id": "foto061_z_offset",
+   "text": "Foto 061 (Ost, Achsspalte) liest alle Hoehen ~1-1,5 m hoeher als die Wolke (Traufe 42,0 vs 40,5; Kragdach-Oberkante 35,6 vs 34,1; Kegelansatz 37,3 vs 38,3 - hier umgekehrt). Foto-Massstab haengt an TUERM_SPITZE 44,5 (Zeile der Knaeufe) und First 55,4. Naechster Schritt: Bezugszeile 'unten' auf den Helmscheitel-Knauf statt der Tuermchenknaeufe pruefen oder zweite Bezugshoehe aus dem Kranz (31,5 Laser) nehmen.",
+   "naechster_schritt": "foto_silhouette_profil.py mit --hoehe-unten ZZ+1.4 (Kragdach-Tropfkante) gegenpruefen"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude",
+   "auto_id": "foto061_kuppelturm",
+   "text": "Foto 061 zeigt links (= Sued/Suedost vom Schlossberg aus) einen runden Treppenturm mit gruener Kuppel bis ca. 39 Foto-m neben dem Turmschaft. Im Modell gibt es nur den Eckturm NW (1,2 m Radius, niedrig). Zuordnung offen: eigener Anbau des Martinstors (Suedseite) oder dahinterliegendes Gebaeude.",
+   "naechster_schritt": "Suedfotos 041/043 pruefen; ggf. Suednetz"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-48-50",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 47.5,
+   "z_bis": 50.0,
+   "abweichung": -4.36,
+   "text": "Silhouettenbreite z 47.5-50.0 m: Foto 1.11 m, Modell 5.47 m (-4.36 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
+   "auto_id": "fehlteile-030-1364-1798",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 11.57,
+   "z_bis": 11.57,
+   "xyz": [
+    4.45,
+    5.38,
+    11.57
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=11.57 m, y=5.38 m (Zelle [1364, 1798, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-42-42",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 42.0,
+   "z_bis": 42.5,
+   "abweichung": -0.75,
+   "text": "Silhouettenbreite z 42.0-42.5 m: Foto 12.43 m, Modell 13.18 m (-0.75 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-45-45",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 45.0,
+   "z_bis": 45.0,
+   "abweichung": -8.26,
+   "text": "Silhouettenbreite z 45.0-45.0 m: Foto 4.32 m, Modell 12.58 m (-8.26 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 4)",
+   "auto_id": "fehlteile-041-846-564",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 40.41,
+   "z_bis": 40.41,
+   "xyz": [
+    1.2,
+    0.49,
+    40.41
+   ],
+   "abweichung": 0.768,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=40.41 m, y=0.49 m (Zelle [846, 564, 94], Score +0.77)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
+   "auto_id": "fehlteile-041-1128-564",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 37.3,
+   "z_bis": 37.3,
+   "xyz": [
+    4.36,
+    4.2,
+    37.3
+   ],
+   "abweichung": 0.75,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=37.3 m, y=4.2 m (Zelle [1128, 564, 94], Score +0.75)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 6)",
+   "auto_id": "fehlteile-041-564-470",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 36.96,
+   "z_bis": 36.96,
+   "xyz": [
+    4.18,
+    -4.51,
+    36.96
+   ],
+   "abweichung": 0.696,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=36.96 m, y=-4.51 m (Zelle [564, 470, 94], Score +0.70)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 5)",
+   "auto_id": "fehlteile-060-4192-1344",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 39.76,
+   "z_bis": 39.76,
+   "xyz": [
+    3.05,
+    -3.47,
+    39.76
+   ],
+   "abweichung": 0.943,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.76 m, y=-3.47 m (Zelle [4192, 1344, 16], Score +0.94)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
+   "auto_id": "fehlteile-041-752-564",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 39.92,
+   "z_bis": 39.92,
+   "xyz": [
+    1.18,
+    -1.1,
+    39.92
+   ],
+   "abweichung": 0.664,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.92 m, y=-1.1 m (Zelle [752, 564, 94], Score +0.66)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 3)",
+   "auto_id": "fehlteile-030-1054-1054",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 27.94,
+   "z_bis": 27.94,
+   "xyz": [
+    -0.43,
+    2.1,
+    27.94
+   ],
+   "abweichung": 0.998,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.94 m, y=2.1 m (Zelle [1054, 1054, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
+   "auto_id": "fehlteile-030-1302-1488",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 17.06,
+   "z_bis": 17.06,
+   "xyz": [
+    4.02,
+    4.99,
+    17.06
+   ],
+   "abweichung": 0.981,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.06 m, y=4.99 m (Zelle [1302, 1488, 62], Score +0.98)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-36-42",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 36.0,
+   "z_bis": 42.5,
+   "abweichung": -0.75,
+   "text": "Silhouettenbreite z 36.0-42.5 m: Foto 11.93 m, Modell 12.68 m (-0.75 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-44-45",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 44.5,
+   "z_bis": 45.0,
+   "abweichung": -8.4,
+   "text": "Silhouettenbreite z 44.5-45.0 m: Foto 4.47 m, Modell 12.87 m (-8.40 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-nur_im_modell-35-4",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 35.5,
+   "z_bis": 43.0,
+   "quer_von": 4.5,
+   "quer_bis": 5.8,
+   "flaeche_m2": 5.6,
+   "text": "Modell hat hier Masse, die Fotowolke (mit Daten ringsum) nicht (zu grosses/erfundenes Bauteil?): z 35.5-43.0 m, y 4.5..5.8 m, 5.6 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-wirklichkeit_weiter_vorn-13--10",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 13.8,
+   "z_bis": 18.5,
+   "quer_von": -10.5,
+   "quer_bis": -8.8,
+   "flaeche_m2": 5.3,
+   "text": "Fotowolke steht +7.85 m weiter vor als das Modell [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 13.8-18.5 m, y -10.5..-8.8 m, 5.3 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-nur_im_modell-18--13",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 18.8,
+   "z_bis": 24.0,
+   "quer_von": -13.2,
+   "quer_bis": -12.0,
+   "flaeche_m2": 4.6,
+   "text": "Modell hat hier Masse, die Fotowolke (mit Daten ringsum) nicht (zu grosses/erfundenes Bauteil?): z 18.8-24.0 m, y -13.2..-12.0 m, 4.6 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-nur_im_modell-54--2",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 54.0,
+   "z_bis": 57.0,
+   "quer_von": -2.0,
+   "quer_bis": 1.8,
+   "flaeche_m2": 4.5,
+   "text": "Modell hat hier Masse, die Fotowolke (mit Daten ringsum) nicht (zu grosses/erfundenes Bauteil?): z 54.0-57.0 m, y -2.0..1.8 m, 4.5 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
   }
  ],
  "beobachtungen_erledigt": [
@@ -4083,6 +4857,38 @@
    "wer": "Claude",
    "text": "Pruefung 'Silhouettenbreite Zone 29-31,5 m (Kamera 041)' entfernt: Kamera K-041 (Einzelkalibrierung, Register AI unbrauchbar) und Dopplung zur neuen Wolkenbreite-Pruefung 29,5-33,5 m",
    "erledigt": "2026-11-01"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude",
+   "text": "Handpruefungen 'Ecktuermchen Durchmesser bei 37,5 m' und 'bei 39 m' entfernt - ersetzt durch die automatischen Profilpruefungen aus tools/wolke_profile.py (34,25 / 37,75 / 40,25 m)",
+   "erledigt": "2026-11-01"
+  }
+ ],
+ "pruefungen_zurueckgezogen": [
+  {
+   "name": "Laserflaeche ueber 40 m (m2, gerastert)",
+   "wert": "hyp40",
+   "soll": [
+    38.0,
+    52.0
+   ],
+   "quelle": "DOM1-Profil: 43 m2, Streuung 43-43 (sehr sicher, grosse Dachflaeche) | Rohraster 2026-11-01: 43 Zellen; Tuermchenhelme fehlen im DOM1 (zu duenn), im Modellraster nicht",
+   "quelltyp": "laser_dom1",
+   "merkmal": "hoehe_flaeche",
+   "massstab": "laser",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt_soll": [
+      38.0,
+      48.0
+     ],
+     "grund": "Obergrenze 48 -> 52: das Modellraster zaehlt die vier Tuermchenhelme (bei 40 m ~1,1 m dick, je 1-3 Zellen), DOM1 registriert sie nicht (Rohraster: Eckzellen 31-35 m; Quellen-Matrix: Laser blind < ~3 m). Dach selbst bei 40 m ~4,4 x 5,0 m = 22 m2 + Rasterzuschlag ~20 = 42 (DOM1 43)"
+    }
+   ],
+   "zurueckgezogen": "2026-11-01",
+   "grund": "Quellen-Blindheit: DOM1-Zellmaxima erfassen den steilen Helm (78-86 Grad) nur teilweise - Zellen > 44,75 m: 18, Fussabdruck laut Foto 061 Silhouette (4,7 m N-S) und Wolke (4,7 m E-W) aber >= 30 Zellen; N-S-Schnitt DOM1 1,76 m bei 46,75 vs Foto 4,35 / Wolke 4,58. Die Zellzahl > 40 m (43) ist damit keine Obergrenze fuer das Modell (~80). Ersatz: Profil-Pruefungen Wolke (y) + Foto 061 (x)."
   }
  ]
 }

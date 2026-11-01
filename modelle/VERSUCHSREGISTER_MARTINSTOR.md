@@ -917,3 +917,42 @@ Flecken mit D +7-8 m = Haus weiter noerdlich, das durch Fensterausschnitte 'durc
 **Offen (ehrlich):** Fensterzahl, Staffelstufen, Bogenbreite und Blocktiefe sind Annahmen; kein Pruefstand fuer den Torbau (nur Turm);
 der Frontblock (3,4 m breit) wirkt schmal gegen Foto 003 - die Abgrenzung zum Verbindungsbau (y -7,2..-5,7, Front -4,9) ist unsicher.
 Naechster Schritt: Foto 003 kalibrieren (LoD2-Ecken des Torbaus als Anker) und Fensterachsen/Bogenbreite messen; Torbau-Masstabelle anlegen.
+
+## AR. Dach und Tuermchen als Loft aus Profilen; DOM1 ist auf dem steilen Helm blind; Glockenstock 34,1-40,5 m (2026-11-01)
+**Nutzer:** "Die Daechlein der vier Tuermchen passen noch nicht, die sind zu klein. Und das Modell des grossen Dachs, wenn du seitlich
+schaust, passt auch noch nicht." - "aber generisch!"
+**Werkzeuge (neu, generisch):**
+- `tools/wolke_profile.py <objekt> <seite> --zentral-z 40.5 56 --generator --pruefungen`: Profile je 0,5 m aus der entzerrten Wolke.
+  Zentralkoerper: Tiefe = 2 x Wolkenfront (Median der Tiefe im Achsstreifen |quer| < 1,5), Breite quer = p2-p98 im Frontfenster
+  (+-0,8 m um die Front, Tuermchenzone Achse +- d/2 + 0,3 ausgeblendet) minus 0,2. Abseits (Ecktuermchen): robuster Kreisfit je
+  Quadrant (Dachflaechen-Punkte ausgeblendet, 20 % groesste Residuen verworfen), nur Schichten mit beiden Quadranten; daraus ein
+  Tuermchen-MODELL: Koerper = Median d der grossen Schichten (2,87 m, 31-38,75), Kegel = Gerade durch die Spitze (d = 0,419 x (44,5 - z)
+  aus 9 Schichten), Knick 37,64 m. Schreibt `profile_nord.json`, `profile_generator.json` (dach_profil [z, tief, quer] monoton,
+  tuerm_profil, tuerm_kegel, tuerm_achse 3,98/4,44) und idempotent die Pruefzeilen 'Profil Dach: Breite y bei 45,2/49,2/53,2' und
+  'Profil Ecktuermchen: Durchmesser bei 34,25/37,75/40,25/42,5' (Soll aus dem Modell +-0,4; Messung `schnitt_ausdehnung` im Fenster
+  seitlich der Dachbreite, weil Glockenstock/Kragdach im Schnitt mit dem Erker verschmelzen). Eigene veraltete Zeilen entfernt es selbst.
+- `tools/foto_silhouette_profil.py <objekt> 061 --achse x --pick-oben 2387 303 --pruefungen 47 50 53`: Silhouettenbreite je Zeile aus
+  dem fernen Seitenfoto 061 (Schlossberg, Ost, Orthografie-Abweichung 0,4 %). Massstab 11,26 px/m aus zwei Bezugszeilen (Tuermchenknaeufe
+  44,5 / Helmscheitel 55,4). Himmel = HSV nahe dem Himmel-Median (+-14), Closing gegen Glanzlichter, Monotonie nach oben. Kontrollbild
+  `audit/silhouette_061.png`, Protokoll `messprotokoll/M-061-S1.json`, Pruefzeilen 'Profil Dach (Foto 061): Tiefe x bei 47/50/53'.
+**Befund Dach (drei Quellen):** N-S-Tiefe des Helms 46,75 m: Wolke 4,58, Foto 061 4,35, DOM1-Schnitt 1,76; 50,25 m: 3,06 / 3,02 / 0,52.
+Wolke und Foto stimmen auf 0,3 m, der DOM1 liegt um den Faktor 2 daneben - **Quellen-Blindheit: 1-m-Zellmaxima erfassen 78-86 Grad
+steile Helmflaechen nur teilweise** (wenige Rueckkehrer), Zellzahl und Schnitt sind dort KEINE Obergrenze. Damit war die Pruefung
+'Laserflaeche ueber 40 m 38..52' (43 Zellen) falsch begruendet (zurueckgezogen, `pruefungen_zurueckgezogen`), ebenso 'Dachflanke y 38-45'
+(ersetzt durch 'Helmflanke N-S 42-50: 0,17..0,30 je Seite', Wolke 0,21, Foto 0,26). Die Regel aus AO "oberhalb der Anker entscheidet
+DOM1" gilt nur fuer Peakhoehe und flache Flaechen - Memory korrigiert.
+**Befund Aufbau (Wolke Front-Tiefenprofil 0,25 m, Foto 061 Achsspalte):** Kranz 30-31,9 (-4,8..-5,15, Tropfkante des Kragdachs 31,9),
+Kragdach-Schraege 32,1-34,1 (-5,0 -> -3,5), Glockenstock-Front -3,5 (34-38) / -3,3 (38-39,6), Helm-Tropfkante 40,4-40,7 (-4,0), Helm
+ab 41 linear bis -0,85 bei 54. Foto 061: Gesims 37,5-37,7, Schalloeffnungen 38,4-40,9, Traufkante 42,0 (Foto-Massstab ~1-1,5 m hoeher als
+die Wolke: offen `foto061_z_offset`). => GZ0 = ZZ+3,6 (34,1), GZ1 = ZZ+10 (40,5), GX 6,8, GY 6,5 (Frontfenster y -3,4..+3,0),
+HELM_UEBER 1,1, DACHHOEHE 14,9, KRAG_TRAUFE ZZ+1,4 / KRAG_UEBER 1,3, ARKADE_UNTER_TRAUFE 3,0, ERKER_OBEN 38,3; Dachansatz-Pruefung
+36..38,5 (LoD2 37,27 = Galeriegesims, LoD2 blind fuer Aufbauten) -> 40..41,5 mit Historie. Die 'zweimal korrigierte Traufe 40 -> 37' (AM)
+beruhte auf der DOM1-Zellzahl und war ein Fehlschluss.
+**Generator:** PROFIL_DATEI=1 -> Helm = Loft aus `dach_profil` (Fuss RZ0 40,5 mit BX/BY, Kopf 55,4 mit DACH_OBEN 1,4 x 3,6),
+Ecktuermchen = Loft aus Achtecken (Schluesselweite = Fit-Durchmesser, gleiche Schichten zusammengefasst) von Erkerfuss bis Spitze-0,5;
+Oeffnungen (Bruestungsschlitze, Erkerfenster, Schaftfenster) nur auf Flaechen, die vom Turm wegzeigen (sonst Hohlraeume: 14 -> 1 Koerper);
+Kragdach als zwei Frusta (ueber den Zinnen bis Tropfkante, dann Schraege bis GZ0), Kern hinter den Zinnen 0,45 zurueck (Scharten >= 0,4).
+Pruefstand: alle Pruefungen bestanden (inkl. Kegel 2 m unter Spitze 0,77 in 0,4..1,2, 4 m 1,68, Foto-061-Tiefen 4,47/3,17/1,95).
+**Offen:** `foto061_z_offset` (Bezugszeile pruefen), `foto061_kuppelturm` (runder Kuppelturm links in 061, Suedseite?), Schaft-Verjuengung
+(Nutzer: Wand in der Wolke senkrecht), Breite quer des Helms 41-44 m nur als Untergrenze aus dem Frontfenster (Tuermchenzone), Suedseite
+ohne eigene Messung, DACH_OBEN_Y 3,6 aus den Kugeln (Plattform koennte schmaler sein).

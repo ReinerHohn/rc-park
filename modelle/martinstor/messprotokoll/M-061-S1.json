@@ -1,0 +1,180 @@
+{
+ "foto": "061",
+ "verfahren": "Silhouettenbreite je Zeile, fernes Seitenfoto (orthografisch), Massstab aus zwei Bezugszeilen",
+ "achse": "x",
+ "bezug": {
+  "unten": {
+   "zeile": 425.75,
+   "hoehe": 44.5,
+   "mass": "TUERM_SPITZE",
+   "picks": {
+    "T1": [
+     2331,
+     426
+    ],
+    "T2": [
+     2347,
+     426
+    ],
+    "T3": [
+     2417,
+     426
+    ],
+    "T4": [
+     2431,
+     425
+    ]
+   }
+  },
+  "oben": {
+   "zeile": 303.0,
+   "hoehe": 55.4,
+   "mass": "GZ1+DACHHOEHE",
+   "pick": [
+    2387.0,
+    303.0
+   ]
+  }
+ },
+ "px_je_m": 11.261,
+ "orthografie_abweichung": 0.0035,
+ "himmel": {
+  "s_max": 19.0,
+  "v_min": 238.0
+ },
+ "profil": [
+  {
+   "z": 44.75,
+   "breite_roh": 13.23,
+   "zeilen": 3,
+   "breite": 13.23
+  },
+  {
+   "z": 45.25,
+   "breite_roh": 13.14,
+   "zeilen": 6,
+   "breite": 13.14
+  },
+  {
+   "z": 45.75,
+   "breite_roh": 13.05,
+   "zeilen": 6,
+   "breite": 13.05
+  },
+  {
+   "z": 46.25,
+   "breite_roh": 6.04,
+   "zeilen": 5,
+   "breite": 6.04
+  },
+  {
+   "z": 46.75,
+   "breite_roh": 4.35,
+   "zeilen": 6,
+   "breite": 4.35
+  },
+  {
+   "z": 47.25,
+   "breite_roh": 4.13,
+   "zeilen": 6,
+   "breite": 4.13
+  },
+  {
+   "z": 47.75,
+   "breite_roh": 4.97,
+   "zeilen": 5,
+   "breite": 4.13
+  },
+  {
+   "z": 48.25,
+   "breite_roh": 3.86,
+   "zeilen": 6,
+   "breite": 3.86
+  },
+  {
+   "z": 48.75,
+   "breite_roh": 3.29,
+   "zeilen": 5,
+   "breite": 3.29
+  },
+  {
+   "z": 49.25,
+   "breite_roh": 3.15,
+   "zeilen": 6,
+   "breite": 3.15
+  },
+  {
+   "z": 49.75,
+   "breite_roh": 3.02,
+   "zeilen": 6,
+   "breite": 3.02
+  },
+  {
+   "z": 50.25,
+   "breite_roh": 2.58,
+   "zeilen": 5,
+   "breite": 2.58
+  },
+  {
+   "z": 50.75,
+   "breite_roh": 2.35,
+   "zeilen": 6,
+   "breite": 2.35
+  },
+  {
+   "z": 51.25,
+   "breite_roh": 2.13,
+   "zeilen": 6,
+   "breite": 2.13
+  },
+  {
+   "z": 51.75,
+   "breite_roh": 1.86,
+   "zeilen": 5,
+   "breite": 1.86
+  },
+  {
+   "z": 52.25,
+   "breite_roh": 1.6,
+   "zeilen": 6,
+   "breite": 1.6
+  },
+  {
+   "z": 52.75,
+   "breite_roh": 1.51,
+   "zeilen": 5,
+   "breite": 1.51
+  },
+  {
+   "z": 53.25,
+   "breite_roh": 1.24,
+   "zeilen": 6,
+   "breite": 1.24
+  },
+  {
+   "z": 53.75,
+   "breite_roh": 0.98,
+   "zeilen": 6,
+   "breite": 0.98
+  },
+  {
+   "z": 54.25,
+   "breite_roh": 0.98,
+   "zeilen": 5,
+   "breite": 0.98
+  },
+  {
+   "z": 54.75,
+   "breite_roh": 1.07,
+   "zeilen": 6,
+   "breite": 0.98
+  },
+  {
+   "z": 55.25,
+   "breite_roh": 0.98,
+   "zeilen": 3,
+   "breite": 0.98
+  }
+ ],
+ "kontrollbild": "audit/silhouette_061.png"
+}
