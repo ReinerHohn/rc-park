@@ -116,13 +116,14 @@ def lightglue_in_db(db, tmp, nrs, extractor, max_kp, resize, nur_fotos=None, anh
     con = sqlite3.connect(db); n = con.execute("select count(*) from two_view_geometries where rows >= 15").fetchone()[0]; con.close()
     print(f"  LightGlue: {len(paare)} Paare mit Matches, {n} geometrisch verifiziert (>= 15 Inlier)", flush=True)
 
+KAMERA_MODELL = "SIMPLE_RADIAL"
 def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048)):
     if os.path.exists(db): os.remove(db)
     shutil.rmtree(aus, ignore_errors=True); os.makedirs(aus, exist_ok=True)
     # nur die gewuenschten Bilder: eigener Ordner mit Links
     tmp = aus + "_bilder"; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
     for nr in nrs: os.symlink(os.path.abspath(os.path.join(bilder, nr + ".jpg")), os.path.join(tmp, nr + ".jpg"))
-    _ro = pycolmap.ImageReaderOptions(); _ro.camera_model = a.kamera_modell                 # SIMPLE_RADIAL (Standard) | RADIAL | OPENCV (--kamera-modell)
+    _ro = pycolmap.ImageReaderOptions(); _ro.camera_model = KAMERA_MODELL                 # SIMPLE_RADIAL (Standard) | RADIAL | OPENCV (--kamera-modell)
     pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro)
     # GPU-Rueckfall: scheitert SIFT-GPU (z. B. 'illegal memory access', wenn ein anderer Prozess die GPU belegt), bleiben Bilder ohne Merkmale
     # -> Datenbank neu und auf der CPU extrahieren/zuordnen (langsamer, gleiches Ergebnis in der Geometrie). Nullstart 3, Register BA.
@@ -188,7 +189,7 @@ def main():
     ap.add_argument("--matcher", default="sift", choices=["sift", "lightglue", "hybrid"], help="lightglue = ALIKED+LightGlue fuer alles; hybrid = SIFT fuer alles + LightGlue nur fuer Paare mit --lg-fotos (Register AK)")
     ap.add_argument("--lg-fotos", nargs="*", default=[], help="hybrid: Fotos, deren Paare per LightGlue gematcht werden (z. B. Luftbilder)")
     ap.add_argument("--lg-max-kp", type=int, default=4096); ap.add_argument("--lg-resize", type=int, default=2048)
-    a = ap.parse_args(); obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od))
+    a = ap.parse_args(); global KAMERA_MODELL; KAMERA_MODELL = a.kamera_modell; obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od))
     nrs = a.fotos or obj.get("sfm", {}).get(a.seite)
     if not nrs: raise SystemExit(f"keine Fotoliste: --fotos oder objekt.json['sfm']['{a.seite}']")
     sd = os.path.join(od, "sfm"); bilder = os.path.join(sd, f"bilder_{a.seite}"); db = os.path.join(sd, f"db_{a.seite}.db"); aus = os.path.join(sd, f"sparse_{a.seite}")
