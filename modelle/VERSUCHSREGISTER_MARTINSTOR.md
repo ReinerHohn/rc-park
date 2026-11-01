@@ -1249,3 +1249,17 @@ Reparatur: `masstabelle_io.auto_ersetzen(tab, praefix)` entfernt vor dem Eintrag
 (fehlteile-<foto>-, breite-<foto>-, wolke-<seite>-, band_<koerper>_offen_); eingebunden in `fehlteile_finden` (nicht bei `--stl`), `foto_breitenprofil`
 (auch ohne Zonen = raeumt), `wolke_vs_modell`, `wolke_baender`. Hand-/Nutzerbeobachtungen bleiben. Ergebnis: 207 -> 118, zweiter Lauf 118 (idempotent);
 Pruefstand weiter 'alle bestanden', Regression identisch. Rest: 41 wolke_vs_modell, 35 breite, 18 fehlteil - echte Befunde des jeweils letzten Laufs.
+
+## BE. Seitenzuordnung der 31 Fotos ohne Seite ueber die Seitennetze - Messung (2026-11-01)
+Versuch (Kopie `martinstor_null`, Referenz unberuehrt): alle 31 Fotos mit Seite 'unbekannt' in BEIDE Seitennetze eingespeist, dazu je 10 Fotos mit
+bekannter Gegenseite als Kontrolle (Nord-Fotos in das Sued-Netz und umgekehrt). Mass: 3D-Punkte des Fotos im Netz, Verhaeltnis richtig/falsch.
+- **Der symmetrische Turm registriert in beiden Netzen:** Kontrollfotos hatten im falschen Netz 60-75 % der Punkte des richtigen (Ausnahmen 214 vs 1079).
+  Die blosse Registrierung ('registriert ja/nein') trennt die Seiten NICHT - genau die bekannte Verklebung (sfm-seitentrennung-symmetrie).
+- **Das Verhaeltnis trennt gerichtet, aber knapp:** bei allen 17 messbaren Kontrollen war das richtige Netz vorn (Verhaeltnis 1,30 bis 5,0, Median 1,8);
+  die Ausreisser unten liegen bei 1,3. Bei den Unbekannten: Verhaeltnis >= 1,5 und >= 150 Punkte nur bei 003, 011, 016, 114 (alle Nord); 7 weitere
+  zwischen 1,2 und 1,45 (010, 013, 059, 069, 070, 099 ...), 10 in keinem oder nur einem Netz sinnvoll registriert, 087 mit nur 119 Punkten.
+- **Urteil:** die Methode ist NICHT zuverlaessig genug, um die 31 automatisch zu verteilen (Kontrollmenge 17, kleinste Marge 1,30; Netzgroessen
+  verzerren die Zahl). Als Gate taugt hoechstens 'Verhaeltnis >= 1,5 und >= 150 Punkte' = 4 von 31 Fotos (alle Nord) - Gewinn gering, Risiko:
+  jede Aenderung der Netzlisten veraendert die Nordwolke (Regression). Nicht uebernommen; Seite bleibt 'unbekannt'.
+- Hebel, der stattdessen traegt: Seite aus einem **asymmetrischen Merkmal** (Uhr nur Nord? Zifferblatt/Sonnenuhr, Inschrift, Seitengebaeude Nord/Sued
+  im Bild, Strassenverlauf) - braucht Bilderkennung je Merkmal, nicht Netzgeometrie. Offen.
