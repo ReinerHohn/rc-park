@@ -3,7 +3,7 @@
   "seite": "-x",
   "element": "Runder Eckturm NW mit Kegeldach",
   "quelle": "Foto 001 Vollbild (Nord); Suedseite ohne (Foto 000)",
-  "durchmesser": 2.3,
+  "durchmesser": 2.4,
   "spitze": 13.9,
   "seite_name": "Nord"
  },
@@ -163,15 +163,25 @@
  },
  {
   "seite": "dach",
+  "element": "Helm dreistufig (steile Flanke 37-41, Knick 45, schlanke Spitze bis 55,4)",
+  "quelle": "DOM1-Rohraster Zellmaxima 39-42/44-46/46-53/55 m bei 3/2/1/0 m; SfM Goldkugeln 55,1-55,6 m; LoD2 Traufe 37,27",
+  "traufe": 37.0,
+  "knick1": 41.0,
+  "knick2": 45.0,
+  "first": 55.4,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
   "element": "Dachreiter: Mast, Knauf, Nadel",
   "quelle": "Foto 049 Vollbild; Bauforschung BW 60 m",
-  "spitze": 60.0,
+  "spitze": 70.0,
   "seite_name": "dach"
  },
  {
   "seite": "dach",
   "element": "4 Ecktuermchen mit Kegel",
-  "quelle": "Fotos 041/043/044; Laser DOM1 Spitzen 41 m",
+  "quelle": "Fotos 041/043/044; SfM Nordnetz Knaeufe 44,4-44,7 m (DOM1 41 m = getroffene Kegelflaeche)",
   "anzahl": 4,
   "seite_name": "dach"
  }

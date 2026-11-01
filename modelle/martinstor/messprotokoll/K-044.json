@@ -1,0 +1,27 @@
+{
+ "foto": "044",
+ "punkte": {},
+ "auto": {
+  "spitzen": [
+   {
+    "u": 315.8,
+    "v": 672.4,
+    "spalte": 314,
+    "art": "spitze"
+   },
+   {
+    "u": 579.0,
+    "v": 382.0,
+    "spalte": 579,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 889.0,
+    "v": 387.0,
+    "spalte": 889,
+    "art": "spitze_grob"
+   }
+  ],
+  "kugeln": []
+ }
+}

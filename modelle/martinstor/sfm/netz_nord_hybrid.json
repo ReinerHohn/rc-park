@@ -1,0 +1,261 @@
+{
+ "seite": "nord",
+ "fotos": [
+  "001",
+  "002",
+  "005",
+  "006",
+  "014",
+  "015",
+  "017",
+  "018",
+  "019",
+  "027",
+  "031",
+  "040",
+  "044",
+  "045",
+  "049",
+  "051",
+  "060",
+  "061"
+ ],
+ "runden": [
+  {
+   "aktiv": [
+    "001",
+    "002",
+    "005",
+    "006",
+    "014",
+    "015",
+    "017",
+    "018",
+    "019",
+    "027",
+    "031",
+    "040",
+    "044",
+    "045",
+    "049",
+    "051",
+    "060",
+    "061"
+   ],
+   "registriert": [
+    "001",
+    "002",
+    "005",
+    "006",
+    "014",
+    "015",
+    "017",
+    "018",
+    "019",
+    "027",
+    "031",
+    "040",
+    "044",
+    "045",
+    "049",
+    "051",
+    "060",
+    "061"
+   ],
+   "nicht_registriert": [],
+   "punkte": 9384,
+   "reproj_px": 0.9556864366893802,
+   "kameras": {
+    "001": {
+     "f_px": 1475.7,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.673,
+     "punkte": 3250,
+     "status": "ok",
+     "grund": []
+    },
+    "002": {
+     "f_px": 3376.4,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 1.463,
+     "punkte": 822,
+     "status": "ok",
+     "grund": []
+    },
+    "005": {
+     "f_px": 1111.1,
+     "prior_f_px": 1111.1,
+     "f_zu_prior": 1.0,
+     "f_zu_diag": 0.556,
+     "punkte": 3463,
+     "status": "ok",
+     "grund": []
+    },
+    "006": {
+     "f_px": 1111.1,
+     "prior_f_px": 1111.1,
+     "f_zu_prior": 1.0,
+     "f_zu_diag": 0.556,
+     "punkte": 4222,
+     "status": "ok",
+     "grund": []
+    },
+    "014": {
+     "f_px": 2016.3,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.839,
+     "punkte": 1570,
+     "status": "ok",
+     "grund": []
+    },
+    "015": {
+     "f_px": 1066.7,
+     "prior_f_px": 1066.7,
+     "f_zu_prior": 1.0,
+     "f_zu_diag": 0.693,
+     "punkte": 3911,
+     "status": "ok",
+     "grund": []
+    },
+    "017": {
+     "f_px": 2638.7,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 1.09,
+     "punkte": 2446,
+     "status": "ok",
+     "grund": []
+    },
+    "018": {
+     "f_px": 1594.5,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.663,
+     "punkte": 3679,
+     "status": "ok",
+     "grund": []
+    },
+    "019": {
+     "f_px": 1659.7,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.691,
+     "punkte": 1595,
+     "status": "ok",
+     "grund": []
+    },
+    "027": {
+     "f_px": 1126.7,
+     "prior_f_px": 1126.7,
+     "f_zu_prior": 1.0,
+     "f_zu_diag": 0.88,
+     "punkte": 2161,
+     "status": "ok",
+     "grund": []
+    },
+    "031": {
+     "f_px": 2580.8,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 1.074,
+     "punkte": 3001,
+     "status": "ok",
+     "grund": []
+    },
+    "040": {
+     "f_px": 1892.0,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.787,
+     "punkte": 3412,
+     "status": "ok",
+     "grund": []
+    },
+    "044": {
+     "f_px": 1875.0,
+     "prior_f_px": 1875.0,
+     "f_zu_prior": 1.0,
+     "f_zu_diag": 0.75,
+     "punkte": 3634,
+     "status": "ok",
+     "grund": []
+    },
+    "045": {
+     "f_px": 1863.1,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.776,
+     "punkte": 2830,
+     "status": "ok",
+     "grund": []
+    },
+    "049": {
+     "f_px": 3723.8,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 1.549,
+     "punkte": 2459,
+     "status": "ok",
+     "grund": []
+    },
+    "051": {
+     "f_px": 1550.4,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.62,
+     "punkte": 1550,
+     "status": "ok",
+     "grund": []
+    },
+    "060": {
+     "f_px": 17855.7,
+     "prior_f_px": 17855.7,
+     "f_zu_prior": 1.0,
+     "f_zu_diag": 7.836,
+     "punkte": 53,
+     "status": "ok",
+     "grund": []
+    },
+    "061": {
+     "f_px": 9338.9,
+     "prior_f_px": 9338.9,
+     "f_zu_prior": 1.0,
+     "f_zu_diag": 3.471,
+     "punkte": 48,
+     "status": "ok",
+     "grund": []
+    }
+   },
+   "degeneriert": []
+  }
+ ],
+ "ausgeschlossen": {},
+ "ergebnis": {
+  "sparse": "modelle/martinstor/sfm/sparse_nord/0",
+  "registriert": [
+   "001",
+   "002",
+   "005",
+   "006",
+   "014",
+   "015",
+   "017",
+   "018",
+   "019",
+   "027",
+   "031",
+   "040",
+   "044",
+   "045",
+   "049",
+   "051",
+   "060",
+   "061"
+  ],
+  "punkte": 9384,
+  "reproj_px": 0.9556864366893802
+ }
+}

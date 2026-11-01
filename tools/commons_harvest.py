@@ -33,11 +33,22 @@ def geosearch(lat, lon, radius, limit):
     out, cont = [], None
     while len(out) < limit:
         p = {"action": "query", "list": "geosearch", "gscoord": f"{lat}|{lon}",
-             "gsradius": min(radius, 10000), "gsnamespace": 6, "gslimit": 500}
+             "gsradius": min(radius, 10000), "gsnamespace": 6, "gslimit": 500, "gsprimary": "all"}   # ohne gsprimary=all: 0 Treffer (Martinstor 2026-11-01)
         if cont: p["gscontinue"] = cont
         d = api(p)
         out += [g["title"] for g in d.get("query", {}).get("geosearch", [])]
         cont = d.get("continue", {}).get("gscontinue")
+        if not cont: break
+    return out[:limit]
+
+
+def fulltext(query, limit):
+    """Volltextsuche im Datei-Namensraum (srlimit max. 50 je Anfrage)."""
+    out, cont = [], {}
+    while len(out) < limit:
+        d = api({"action": "query", "list": "search", "srsearch": query, "srnamespace": 6, "srlimit": 50, **cont})
+        out += [x["title"] for x in d.get("query", {}).get("search", [])]
+        cont = d.get("continue")
         if not cont: break
     return out[:limit]
 
@@ -66,18 +77,28 @@ def image_info(titles, width):
     for i in range(0, len(titles), 50):
         batch = titles[i:i+50]
         d = api({"action": "query", "titles": "|".join(batch), "prop": "imageinfo",
-                 "iiprop": "url|extmetadata|mime|size", "iiurlwidth": width})
+                 "iiprop": "url|extmetadata|mime|size|metadata", "iiurlwidth": width})
         for pg in d.get("query", {}).get("pages", {}).values():
             ii = (pg.get("imageinfo") or [None])[0]
             if not ii or not ii.get("mime", "").startswith("image"):
                 continue
             em = ii.get("extmetadata", {})
+            # EXIF aus der API: verkleinerte Commons-Thumbnails tragen KEIN EXIF mehr - fuer SfM-Brennweiten-Prior hier mitschreiben
+            md = {m.get("name"): m.get("value") for m in (ii.get("metadata") or []) if isinstance(m, dict)}
+            def num(v):
+                try: return float(v)
+                except Exception:
+                    try: a, b = str(v).split("/"); return float(a) / float(b)
+                    except Exception: return None
             info[pg["title"]] = {
                 "url": ii.get("thumburl") or ii.get("url"),
                 "w": ii.get("thumbwidth") or ii.get("width"),
                 "h": ii.get("thumbheight") or ii.get("height"),
+                "orig_w": ii.get("width"), "orig_h": ii.get("height"),
                 "license": (em.get("LicenseShortName", {}) or {}).get("value", "?"),
                 "artist": (em.get("Artist", {}) or {}).get("value", "?")[:120],
+                "exif_model": (str(md.get("Model") or "").strip() or None),
+                "exif_f_mm": num(md.get("FocalLength")), "exif_f35": num(md.get("FocalLengthIn35mmFilm")),
             }
     return info
 
@@ -90,6 +111,9 @@ def main():
     ap.add_argument("--max", type=int, default=300)
     ap.add_argument("--width", type=int, default=2048, help="Zielbreite [px]")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--search", default="", help="Volltextsuche im Datei-Namensraum, z. B. 'Martinstor Freiburg'")
+    ap.add_argument("--titel-enthaelt", default="", help="nur Titel mit diesem Text (Geosearch liefert sonst alles im Umkreis)")
+    ap.add_argument("--skip-manifest", nargs="*", default=[], help="manifest.json frueherer Ernten: diese Titel nicht noch einmal laden")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
 
@@ -97,11 +121,20 @@ def main():
     if a.category:
         titles += category_files(a.category, a.max)
         print(f"  Kategorie '{a.category}': {len(titles)} Dateien")
+    if a.search:
+        s = fulltext(a.search, a.max); print(f"  Volltext '{a.search}': {len(s)} Dateien"); titles += s
     if a.lat is not None and a.lon is not None:
         g = geosearch(a.lat, a.lon, a.radius, a.max)
-        print(f"  Geosearch {a.radius} m: {len(g)} Dateien")
+        if a.titel_enthaelt: g = [t for t in g if a.titel_enthaelt.lower() in t.lower()]
+        print(f"  Geosearch {a.radius} m: {len(g)} Dateien" + (f" (Titel enthaelt '{a.titel_enthaelt}')" if a.titel_enthaelt else ""))
         titles += g
     titles = list(dict.fromkeys(titles))[:a.max]        # dedup, Reihenfolge erhalten
+    bekannt = set()
+    for mp in a.skip_manifest:
+        try: bekannt |= {m["title"] for m in json.load(open(mp))["images"]}
+        except Exception as ex: print(f"  skip-manifest {mp}: {ex}")
+    if bekannt:
+        vorher = len(titles); titles = [t for t in titles if t not in bekannt]; print(f"  {vorher - len(titles)} schon vorhanden (skip-manifest), {len(titles)} neu")
     if not titles:
         sys.exit("Nichts gefunden — Kategorie/Koordinate/Radius prüfen.")
     # nur Rasterbilder
@@ -115,11 +148,18 @@ def main():
         safe = t.replace("File:", "").replace(" ", "_")
         safe = "".join(c for c in safe if c.isalnum() or c in "._-")[:80]
         dst = os.path.join(a.out, f"{n:03d}_{safe}")
-        try:
-            req = urllib.request.Request(meta["url"], headers={"User-Agent": UA})
-            open(dst, "wb").write(urllib.request.urlopen(req, timeout=60).read())
-        except Exception as ex:
-            print(f"  dl-err {t[:40]}: {ex}"); continue
+        daten = None
+        for versuch in range(4):                                   # 429 (Ratenlimit) mit Wartezeit wiederholen; Datei erst nach Erfolg schreiben
+            try:
+                req = urllib.request.Request(meta["url"], headers={"User-Agent": UA})
+                daten = urllib.request.urlopen(req, timeout=60).read(); break
+            except urllib.error.HTTPError as ex:
+                if ex.code == 429 and versuch < 3: time.sleep(10 * (versuch + 1)); continue
+                print(f"  dl-err {t[:40]}: {ex}"); break
+            except Exception as ex:
+                print(f"  dl-err {t[:40]}: {ex}"); break
+        if daten is None: continue
+        open(dst, "wb").write(daten); time.sleep(0.5)
         manifest.append({"file": os.path.basename(dst), "title": t, **meta})
         n += 1
         if n % 25 == 0:

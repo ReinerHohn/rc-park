@@ -1,0 +1,18 @@
+{
+ "quelle": "LGL BW LoD2 LoD2_32_414_5316_1_BW.gml Gebaeude DEBW_0010007Tv3w (3 Teile, Dach Shed/Pult/Sattel), Datenlizenz Deutschland Namensnennung 2.0",
+ "umrechnung": "UTM -> Modellsystem via anker3d.json (mitte_utm, xhat/yhat, gelaende 277.93)",
+ "bbox_modell_m": [
+  [
+   -6.0453222733107035,
+   -25.60406018507589,
+   -0.299000000000035
+  ],
+  [
+   11.497773981324151,
+   -5.546260783887992,
+   24.05299928283688
+  ]
+ ],
+ "first_m": 24.05299928283688,
+ "hinweis": "Massenmodell (LoD2 generalisiert): Grundriss und Dachform amtlich, Fassade/Arkaden/Schriftzug nicht enthalten; Westseite des Turms wird von diesem Bau teilweise verdeckt (Foto 060)."
+}

@@ -1,0 +1,71 @@
+{
+ "foto": "005",
+ "punkte": {
+  "ecke_boden_0": [
+   773.3,
+   1560.0
+  ]
+ },
+ "linien": {
+  "ecke_boden_0": [
+   [
+    725.9,
+    480.0
+   ],
+   [
+    766.3,
+    1400.0
+   ]
+  ],
+  "ecke_boden_3": [
+   [
+    1069.8,
+    480.0
+   ],
+   [
+    1164.9,
+    900.0
+   ]
+  ]
+ },
+ "seite": "Nord",
+ "strassenfoto": true,
+ "linien_protokoll": {
+  "ecke_boden_0": {
+   "vorgabe": [
+    [
+     745.0,
+     480.0
+    ],
+    [
+     770.0,
+     1400.0
+    ]
+   ],
+   "inlier": 257,
+   "zeilen": 461,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  },
+  "ecke_boden_3": {
+   "vorgabe": [
+    [
+     1085.0,
+     480.0
+    ],
+    [
+     1130.0,
+     900.0
+    ]
+   ],
+   "inlier": 96,
+   "zeilen": 211,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  }
+ },
+ "punkte_sigma_px": {
+  "ecke_boden_0": 8
+ },
+ "punkte_notiz": {
+  "ecke_boden_0": "ANNAHME Bodenpunkt 2026-11-01: Fusspunkt verdeckt; Pflasterhoehe = Radaufstandspunkte der an der Wand lehnenden Fahrraeder (y 1555-1565), Kante verlaengert; sigma 8 px"
+ }
+}

@@ -13,3 +13,17 @@ modelle/h0/hofgut_solid_h0*.stl
 modelle/martinstor_fertigung/druck/
 modelle/martinstor_fertigung/rohlinge/*.gcode
 modelle/martinstor_fertigung/testdruck/gcode/
+
+# SfM-Zwischenstaende (Register AE-AO): gross oder reproduzierbar; Referenznetze sparse_nord/sparse_sued/sparse_modell_* bleiben im Repo
+daten/martinstor/commons_neu/
+modelle/martinstor/sfm/dicht_nord/
+modelle/martinstor/sfm/sparse_*_hybrid/
+modelle/martinstor/sfm/sparse_suedA/
+modelle/martinstor/sfm/sparse_suedB/
+modelle/martinstor/sfm/sparse_*_bilder/
+modelle/martinstor/sfm/lg_*.npz
+modelle/martinstor/sfm/lg_*_paare.txt
+modelle/martinstor/sfm/db_*.db
+modelle/martinstor/sfm/bilder*
+DensifyPointCloud-*.log
+scan-setup/*.log

@@ -1,8 +1,8 @@
 {
  "_doku": "Masstabelle = einzige Wahrheit ueber Masse des Objekts. Jede Pruefung: Messung am STL (generische Messer in tools/pruefstand.py), Sollbereich, Quelle, Quelltyp, Merkmalstyp. Der Pruefstand lehnt Pruefungen ab, deren Quelltyp fuer den Merkmalstyp blind ist (z. B. Laser DOM1 fuer eine Nadel). Sollwerte nie lockern, um Gruen zu bekommen - nur mit neuer Quelle (Eintrag 'historie'). Messparameter als Text sind Literale (seite '+x', art 'rueck'); Verweise auf andere Messungen beginnen mit '=' (z. B. z: '=tuermchen_spitze - 2.0'). Pruefwerte ('wert') sind immer Formeln ueber Messungen/Konstanten. status 'widerspruch' = Quellen uneins, zaehlt nicht als Fehlschlag, bleibt sichtbar. 'protokoll': Nummer eines Messprotokolls aus tools/foto_mass.py (messprotokoll/M-<foto>-<nr>.json+.jpg) - jede neue Fotomessung so ablegen.",
  "konstanten": {
-  "first": 46.2,
-  "dach_dz": 8.0
+  "first": 55.4,
+  "dach_dz": 18.4
  },
  "messungen": {
   "hoehe": {
@@ -28,18 +28,18 @@
   },
   "nadel_50": {
    "typ": "breite_achse",
-   "z": 50.0,
+   "z": 62.0,
    "r": 1.5
   },
   "nadel_52": {
    "typ": "breite_achse",
-   "z": 52.0,
+   "z": 66.0,
    "r": 1.5
   },
   "knauf": {
    "typ": "knauf_achse",
-   "z0": 47.0,
-   "z1": 52.0,
+   "z0": 56.0,
+   "z1": 66.0,
    "dz": 0.1,
    "r": 1.5
   },
@@ -121,19 +121,19 @@
   "eckturm_h": {
    "typ": "max_z_im_bereich",
    "x0": -9.0,
-   "x1": -5.2,
-   "y0": -9.0,
-   "y1": -3.5,
+   "x1": -5.05,
+   "y0": -5.2,
+   "y1": -2.2,
    "zmax": 20.0
   },
   "eckturm": {
-   "typ": "ausdehnung_im_bereich",
+   "typ": "schnitt_ausdehnung",
+   "z": 8.0,
    "x0": -9.0,
-   "x1": -5.0,
-   "y0": -9.0,
-   "y1": -3.0,
-   "z0": 2.0,
-   "z1": 9.0
+   "x1": -5.15,
+   "y0": -6.0,
+   "y1": -2.0,
+   "achse": "y"
   },
   "tafel_N": {
    "typ": "relief_breite",
@@ -164,18 +164,19 @@
   },
   "dachansatz": {
    "typ": "z_bei_breite",
-   "z0": 33.0,
-   "z1": 42.0,
+   "z0": 34.0,
+   "z1": 48.0,
    "dz": 0.1,
    "r": 6.0,
-   "schwelle": 6.8,
+   "schwelle": 6.2,
    "achse": "y",
-   "quer_max": 2.0
+   "quer_max": 2.0,
+   "richtung": "ab"
   },
   "first": {
    "typ": "z_bei_breite",
-   "z0": 40.0,
-   "z1": 52.0,
+   "z0": 44.0,
+   "z1": 60.0,
    "dz": 0.1,
    "r": 6.0,
    "schwelle": 2.0,
@@ -257,14 +258,14 @@
   "erker_34": {
    "typ": "querschnitte_abseits",
    "z": 34.0,
-   "ax": 2.5,
-   "ay": 2.5
+   "ax": 3.1,
+   "ay": 3.2
   },
   "helm_37": {
    "typ": "querschnitte_abseits",
-   "z": 37.0,
-   "ax": 2.5,
-   "ay": 2.5
+   "z": 37.5,
+   "ax": 3.1,
+   "ay": 3.2
   },
   "uhr_z": {
    "typ": "relief_breite",
@@ -288,6 +289,75 @@
    "z": 22.3,
    "halb": 4.0,
    "tiefe": 0.2
+  },
+  "wand_n_x20": {
+   "typ": "min_im_bereich",
+   "x0": -9,
+   "x1": -3,
+   "y0": -2.5,
+   "y1": 2.5,
+   "z0": 18.0,
+   "z1": 22.0,
+   "achse": "x"
+  },
+  "eckturm_xmin": {
+   "typ": "min_im_bereich",
+   "x0": -9,
+   "x1": -4.5,
+   "y0": -7.5,
+   "y1": -2.0,
+   "z0": 6.0,
+   "z1": 12.0,
+   "achse": "x"
+  },
+  "eckturm_ymitte": {
+   "typ": "mitte_im_bereich",
+   "x0": -9,
+   "x1": -5.5,
+   "y0": -7.5,
+   "y1": -2.0,
+   "z0": 6.0,
+   "z1": 12.0,
+   "achse": "y"
+  },
+  "dach38": {
+   "typ": "ausdehnung_streifen",
+   "z": 38.0,
+   "achse": "y",
+   "quer_max": 2.0
+  },
+  "dach45": {
+   "typ": "ausdehnung_streifen",
+   "z": 45.0,
+   "achse": "y",
+   "quer_max": 2.0
+  },
+  "tuerm_ne_x40": {
+   "typ": "schnitt_mitte",
+   "z": 40.5,
+   "x0": -8.0,
+   "x1": -2.5,
+   "y0": 3.0,
+   "y1": 6.5,
+   "achse": "x"
+  },
+  "breite_y_295": {
+   "typ": "ausdehnung_streifen",
+   "z": 29.5,
+   "achse": "y",
+   "quer_max": 8.0
+  },
+  "breite_y_315": {
+   "typ": "ausdehnung_streifen",
+   "z": 31.5,
+   "achse": "y",
+   "quer_max": 8.0
+  },
+  "breite_y_335": {
+   "typ": "ausdehnung_streifen",
+   "z": 33.5,
+   "achse": "y",
+   "quer_max": 8.0
   }
  },
  "pruefungen": [
@@ -295,13 +365,25 @@
    "name": "Tuermchen-Spitze Hoehe (m)",
    "wert": "tuermchen_spitze",
    "soll": [
-    40.7,
-    41.8
+    43.8,
+    45.2
    ],
-   "quelle": "Laser DOM1: lokale Maxima 40,9 und 41,4 m (Journal 12: 43,6 war OSM)",
-   "quelltyp": "laser_dom1",
-   "merkmal": "hoehe_flaeche",
-   "massstab": "laser"
+   "quelle": "SfM Nordnetz: tuermchen_NE 44,39 / NW 44,72 +-0,14 m (6 Kameras inkl. 060/061, Residuen 1-4 px), SFM-AUSRICHTUNG-nord.json",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "laser",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt_soll": [
+      40.7,
+      41.8
+     ],
+     "alt_quelle": "Laser DOM1: lokale Maxima 40,9 und 41,4 m (Journal 12: 43,6 war OSM)",
+     "alt_quelltyp": "laser_dom1",
+     "grund": "DOM1-Maxima 40,98/41,44 sind die getroffene Kegelflaeche ~3 m unter der Spitze (1-m-Raster blind fuer die Spitze)"
+    }
+   ]
   },
   {
    "name": "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
@@ -340,7 +422,7 @@
    "massstab": "-"
   },
   {
-   "name": "Dachreiter Dicke bei 50 m (m)",
+   "name": "Dachreiter Dicke bei 62 m (m)",
    "wert": "nadel_50",
    "soll": [
     0.08,
@@ -349,10 +431,16 @@
    "quelle": "Foto 049 Vollbild: Nadel 0,08-0,14 m, Mast 0,09-0,26 m (+Druck-Untergrenze); DOM1 verschmiert Nadel",
    "quelltyp": "foto_vollbild",
    "merkmal": "duennes_bauteil",
-   "massstab": "modell"
+   "massstab": "modell",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "grund": "Messhoehe 50 -> 62 m: der First liegt jetzt bei 55,4, die Nadel (Knauf 59) darueber"
+    }
+   ]
   },
   {
-   "name": "Dachreiter Dicke bei 52 m (m)",
+   "name": "Dachreiter Dicke bei 66 m (m)",
    "wert": "nadel_52",
    "soll": [
     0.08,
@@ -361,7 +449,13 @@
    "quelle": "wie oben",
    "quelltyp": "foto_vollbild",
    "merkmal": "duennes_bauteil",
-   "massstab": "modell"
+   "massstab": "modell",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "grund": "Messhoehe 52 -> 66 m"
+    }
+   ]
   },
   {
    "name": "Dachreiter Knauf Durchmesser (m)",
@@ -391,14 +485,24 @@
    "name": "Gesamthoehe (m)",
    "wert": "hoehe",
    "soll": [
-    59.5,
-    66.0
+    68.0,
+    72.0
    ],
-   "quelle": "Bauforschung BW (Landesdenkmalamt) 60 m nach 1901 / 65 m Objektbeschreibung; en.Wikipedia 60 m; Structurae ~65 m; de.Wikipedia 66 m (Plan Schaefer)",
-   "quelltyp": "dokument",
+   "quelle": "SfM Nordnetz: Nadelende ('spitze_dokument') 69,7 +-1,4 m aus 5 Kameras (Residuen 4-30 px, duenn); Knauf bei 20-28 % (Foto 049) -> 59 m. WIDERSPRUCH: Bauforschung BW 60 m / Objektbeschreibung 65 m - offene Beobachtung",
+   "quelltyp": "sfm_bodenanker",
    "merkmal": "absolut_hoehe",
    "historie": [
-    "bis 2026-10-31: 54,7-54,9 aus Laser DOM1 - FALSCH, Laser sieht die Nadel nicht (Register J3/J4)"
+    "bis 2026-10-31: 54,7-54,9 aus Laser DOM1 - FALSCH, Laser sieht die Nadel nicht (Register J3/J4)",
+    {
+     "datum": "2026-11-01",
+     "alt_soll": [
+      59.5,
+      66.0
+     ],
+     "alt_quelle": "Bauforschung BW (Landesdenkmalamt) 60 m nach 1901 / 65 m Objektbeschreibung; en.Wikipedia 60 m; Structurae ~65 m; de.Wik",
+     "alt_quelltyp": "dokument",
+     "grund": "Dokument 60/65 m; DOM1 blind fuer die Nadel; mit First 55,4 (DOM1+SfM) passt 60 m nicht mehr (Nadel waere 4,6 m, Foto 049 misst Spitze/Dach 1,2)"
+    }
    ],
    "massstab": "dokument",
    "status": "widerspruch",
@@ -408,33 +512,61 @@
    "name": "Dachansatz / Glockenstock-Oberkante (m)",
    "wert": "dachansatz",
    "soll": [
-    34.5,
-    36.5
+    36.0,
+    38.5
    ],
-   "quelle": "Laser-Profil (tools/hypso_profil.py, gemeinsame Lage): bei 38/40/42/44 m hat DOM1 null Streuung (62/43/28/20 m2); Traufe 38 ergibt dort +16/+17/+12/+9 m2 (bis +40 %), Traufe 35,5 nur +4/-1/0/-2. Die Foto-Kalibrierung (37,4-38,2 m) hat oben ~1-2 m systematischen Fehler.",
-   "quelltyp": "laser_dom1",
+   "quelle": "LoD2 Traufe/Wandoberkante 37,27 m (anker3d ecke_wandoben, sigma 0,6) + DOM1-Rohraster: Laserflaeche ueber 40 m nur 43 Zellen (Dach bei 40 m ~5 m breit), Zelle 4 m vom Peak 32-35 m",
+   "quelltyp": "lod2",
    "merkmal": "hoehe_flaeche",
    "massstab": "laser",
    "protokoll": "M-030-003",
    "historie": [
     "2026-11-01 angelegt, Modell 35,5 (ZZ+5) faellt durch; LoD2 37,2 war frueher als 'generalisiert' verworfen (MASSPRUEFUNG Teil 4)",
-    "2026-11-01 (1) aus Foto-Kalibrierung 36,9-39,2 angelegt, Modell 35,6 fiel durch; (2) als widerspruch gefuehrt; (3) durch Laser-Profildiagnose aufgeloest -> 34,5-36,5, Modell 35,6 richtig. Lehre: Gesamtnote verdeckte, dass der Laser gerade bei 38-44 m am staerksten ist."
+    "2026-11-01 (1) aus Foto-Kalibrierung 36,9-39,2 angelegt, Modell 35,6 fiel durch; (2) als widerspruch gefuehrt; (3) durch Laser-Profildiagnose aufgeloest -> 34,5-36,5, Modell 35,6 richtig. Lehre: Gesamtnote verdeckte, dass der Laser gerade bei 38-44 m am staerksten ist.",
+    {
+     "datum": "2026-11-01",
+     "alt_soll": [
+      34.5,
+      36.5
+     ],
+     "alt_quelle": "Laser-Profil (tools/hypso_profil.py, gemeinsame Lage): bei 38/40/42/44 m hat DOM1 null Streuung (62/43/28/20 m2); Traufe",
+     "alt_quelltyp": "laser_dom1",
+     "grund": "Hypsometrie-Fit (Register O) hatte Traufe 35,5 - der Fit verwechselte Glockenstock und Dach; Rohraster zeigt Wand bei 3 m Abstand bis 40-42 m"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt_soll": [
+      39.0,
+      42.5
+     ],
+     "grund": "Korrektur am selben Tag: 39-42,5 war ein Fehlschluss aus dem Rohraster (Zellen bei 3 m = Dachflanke); Laserflaeche > 40 m (43 Zellen) und LoD2 Traufe 37,27 verlangen Traufe ~37"
+    }
    ]
   },
   {
    "name": "First / Dach-Oberkante (m)",
    "wert": "first",
    "soll": [
-    46.6,
-    48.7
+    54.3,
+    56.5
    ],
-   "quelle": "Messprotokoll M-030-002: Goldkugeln 47,4-47,9 m; Foto-IoU-Trend J2/J5 (First +1,6 besser) | Messung: hoechste Hoehe, bei der der Dachkoerper im Achsstreifen noch >= 2 m breit ist",
-   "quelltyp": "foto_kalibriert",
+   "quelle": "SfM Nordnetz Goldkugeln 55,14 / 55,61 +-0,18 (Residuen 2-4 px); DOM1-Rohraster (Register AM): Schnitt 55/50/44-46/40-42/32-35 m bei 0/1/2/3/4 m vom Peak; drei Zellen >= 53 m; DOM1-Maximum 54,8",
+   "quelltyp": "sfm_bodenanker",
    "merkmal": "absolut_hoehe",
    "massstab": "foto_kalibriert",
    "protokoll": "M-030-002",
    "historie": [
-    "2026-11-01 angelegt; Modell 46,2 aus Laser-Hypsometrie (mit falscher Spitze 54,8 geschaetzt)"
+    "2026-11-01 angelegt; Modell 46,2 aus Laser-Hypsometrie (mit falscher Spitze 54,8 geschaetzt)",
+    {
+     "datum": "2026-11-01",
+     "alt_soll": [
+      46.6,
+      48.7
+     ],
+     "alt_quelle": "Messprotokoll M-030-002: Goldkugeln 47,4-47,9 m; Foto-IoU-Trend J2/J5 (First +1,6 besser) | Messung: hoechste Hoehe, bei",
+     "alt_quelltyp": "foto_kalibriert",
+     "grund": "M-030-002 (47,4-47,9) kam aus der Einzelkamera K-030 mit RMS 56 px und f_gruppe-Fehler; Hypsometrie-Fit 46,2 hatte das Dach 9 m zu tief"
+    }
    ]
   },
   {
@@ -547,18 +679,32 @@
    "massstab": "lod2"
   },
   {
-   "name": "Dachflanke: Halbbreiten-Zunahme je m (Silhouette 38-45 m, Kamera K-030)",
-   "wert": "(sil38 - sil45) / 2 / 7.0",
+   "name": "Dachflanke: Halbbreiten-Zunahme je m (Modellbreite auf der Achse, 38-45 m)",
+   "wert": "(dach38 - dach45) / 2 / 7.0",
    "soll": [
-    0.4,
-    0.56
+    0.15,
+    0.35
    ],
-   "quelle": "tools/foto_breitenprofil.py --steigung 37,46 mit drei unabhaengigen Kameras: Foto 030 0,486 / 031 0,475 / 041 0,481; Modell 0,437-0,505. Differenz Foto-Modell hoechstens 0,05.",
-   "quelltyp": "foto_kalibriert",
+   "quelle": "DOM1-Rohraster: Dachflaeche bei 3 m Abstand 40,5 m, bei 2 m 45 m -> 0,22 m halbe Breite je m; dichte Wolke 44-54 m: Breite 5,6 -> 4,2 m",
+   "quelltyp": "sfm_bodenanker",
    "merkmal": "verhaeltnis",
    "historie": [
     "2026-11-01 angelegt als fehlschlagende Pruefung VOR der Generatoraenderung (Methode Schritt 2)",
-    "2026-11-01: ersetzt die Zeile 'Halbbreiten-Zunahme 0,11-0,19 aus Foto 049'. Die war ZIRKULAER (Massstab aus Modellmassen) und hat einen Widerspruch vorgetaeuscht; drei kalibrierte Kameras bestaetigen die Modellflanke."
+    "2026-11-01: ersetzt die Zeile 'Halbbreiten-Zunahme 0,11-0,19 aus Foto 049'. Die war ZIRKULAER (Massstab aus Modellmassen) und hat einen Widerspruch vorgetaeuscht; drei kalibrierte Kameras bestaetigen die Modellflanke.",
+    {
+     "datum": "2026-11-01",
+     "alt_soll": [
+      0.4,
+      0.56
+     ],
+     "alt_quelle": "tools/foto_breitenprofil.py --steigung 37,46 mit drei unabhaengigen Kameras: Foto 030 0,486 / 031 0,475 / 041 0,481; Mod",
+     "alt_quelltyp": "foto_kalibriert",
+     "grund": "K-030 (RMS 56 px, Brennweite falsch gekoppelt) mass 0,48; Rohraster und Wolke zeigen ein viel steileres Dach"
+    },
+    {
+     "datum": "2026-11-01",
+     "grund": "Messung von Kamera-Silhouette (K-030, enthielt die Tuermchenhelme: 0,52) auf Modellbreite |x|<2 auf der Achse umgestellt; Sollwert (DOM1) unveraendert"
+    }
    ],
    "massstab": "foto_kalibriert"
   },
@@ -602,8 +748,8 @@
    "massstab": "foto_intern"
   },
   {
-   "name": "Eckturm NW Durchmesser (m, y-Ausdehnung der Punkte x<-5, z 2-9)",
-   "wert": "eckturm_y",
+   "name": "Eckturm NW Durchmesser (m, Sehne der Schnittkontur bei 8 m, 0,45 m vor der Wandebene)",
+   "wert": "eckturm",
    "soll": [
     2.0,
     2.7
@@ -612,7 +758,23 @@
    "quelltyp": "foto_vollbild",
    "merkmal": "anzahl",
    "historie": [
-    "2026-11-01 angelegt als fehlschlagende Pruefung vor der Generatoraenderung"
+    "2026-11-01 angelegt als fehlschlagende Pruefung vor der Generatoraenderung",
+    {
+     "datum": "2026-11-01",
+     "grund": "Messfenster x1 -5 -> -5,5: Eckturm steht jetzt bei x -4,7 (Register AN); sonst zaehlen Wandquader mit"
+    },
+    {
+     "datum": "2026-11-01",
+     "grund": "Messung von y-Ausdehnung auf Kreisfit umgestellt (neuer Messtyp kreis_durchmesser_im_bereich): nach dem Versetzen des Eckturms liegt nur noch die Vorderseite vor der Wand; Sollwert unveraendert"
+    },
+    {
+     "datum": "2026-11-01",
+     "grund": "Kreisfit an 32 groben Zylinder-Eckpunkten war instabil (1,2 m); jetzt Sehne der Schnittkontur bei z 5 m, x < -5,05 (0,35 m vor der Turmachse -> Sehne 2,3 m bei d 2,4). Neuer Messtyp schnitt_ausdehnung"
+    },
+    {
+     "datum": "2026-11-01",
+     "grund": "z 5 -> 8 (ueber dem Bruchsteinsockel, dessen Relief die Sehne auf 2,81 verbreiterte), x < -5,15"
+    }
    ],
    "massstab": "foto_intern",
    "protokoll": "M-001-001"
@@ -627,7 +789,17 @@
    "quelle": "Foto 001: Tafel 2,0 m = ~195 px -> ~97 px/m; Traufe ~5,2-5,9 m ueber Bogenscheitel (5,0 m) = ~10-11 m, Kegel ~3-3,5 m -> Spitze ~13-14,5 m (+-10 %)",
    "quelltyp": "foto_vollbild",
    "merkmal": "verhaeltnis",
-   "massstab": "foto_intern"
+   "massstab": "foto_intern",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "grund": "Messfenster auf die neue Lage (x bis -4,3, y -5,2..-2,2) verschoben; Sollwert unveraendert"
+    },
+    {
+     "datum": "2026-11-01",
+     "grund": "Messfenster x bis -5,05 (nur vor der Wand; sonst zaehlen Wandquader bis zmax)"
+    }
+   ]
   },
   {
    "name": "Sockel-Grundriss Rechteck (m2, z 1 m)",
@@ -673,12 +845,22 @@
    "wert": "hyp40",
    "soll": [
     38.0,
-    48.0
+    52.0
    ],
-   "quelle": "DOM1-Profil: 43 m2, Streuung 43-43 (sehr sicher, grosse Dachflaeche)",
+   "quelle": "DOM1-Profil: 43 m2, Streuung 43-43 (sehr sicher, grosse Dachflaeche) | Rohraster 2026-11-01: 43 Zellen; Tuermchenhelme fehlen im DOM1 (zu duenn), im Modellraster nicht",
    "quelltyp": "laser_dom1",
    "merkmal": "hoehe_flaeche",
-   "massstab": "laser"
+   "massstab": "laser",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt_soll": [
+      38.0,
+      48.0
+     ],
+     "grund": "Obergrenze 48 -> 52: das Modellraster zaehlt die vier Tuermchenhelme (bei 40 m ~1,1 m dick, je 1-3 Zellen), DOM1 registriert sie nicht (Rohraster: Eckzellen 31-35 m; Quellen-Matrix: Laser blind < ~3 m). Dach selbst bei 40 m ~4,4 x 5,0 m = 22 m2 + Rasterzuschlag ~20 = 42 (DOM1 43)"
+    }
+   ]
   },
   {
    "name": "Silhouettenbreite bei 30 m (m, 3 Kameras)",
@@ -697,31 +879,23 @@
    ]
   },
   {
-   "name": "Silhouettenbreite Zone 29-33,5 m (Kamera 031)",
-   "wert": "sil_zone_031",
+   "name": "Gesamtbreite y bei 29,5-33,5 m (Modell, mit Tuermchen)",
+   "wert": "(breite_y_295 + breite_y_315 + breite_y_335) / 3",
    "soll": [
-    11.2,
-    12.0
+    10.9,
+    11.7
    ],
-   "quelle": "tools/foto_breitenprofil.py, Zonenmittel ueber 29,0-33,5 m in 0,5-m-Schritten: Foto 11,59 m. Toleranz +-0,4 m (Kameraguete 0,61). Gemessen wird die LINKE Halbbreite verdoppelt - rechts verdeckt ein Nachbarhaus die Kante, das Modell wird genauso behandelt.",
-   "quelltyp": "foto_kalibriert",
+   "quelle": "Dichte Fotowolke Nord (entzerrt, Register AO): Gesamtbreite (y, p1-p99) bei 29,5/31,5/33,5 m = 11.06/11.19/11.76 m, Mittel 11.34; y der Wolke ist durch LoD2-Eckkanten gesichert (+-0,3). Vorher Kamera K-031/K-041 (RMS 145/56 px, f_gruppe-Fehler, Register AI)",
+   "quelltyp": "sfm_bodenanker",
    "merkmal": "grundriss",
    "massstab": "foto_kalibriert",
    "historie": [
-    "2026-11-01 aus der Sichtung von 21 automatischen Beobachtungen: einzige von ZWEI Fotos bestaetigte Abweichung. Erste Fassung prueefte bei EINER Hoehe gegen einen Zonen-Sollwert - falsch, Messer mittelt jetzt ueber dieselbe Zone."
+    "2026-11-01 aus der Sichtung von 21 automatischen Beobachtungen: einzige von ZWEI Fotos bestaetigte Abweichung. Erste Fassung prueefte bei EINER Hoehe gegen einen Zonen-Sollwert - falsch, Messer mittelt jetzt ueber dieselbe Zone.",
+    {
+     "datum": "2026-11-01",
+     "grund": "Kamera-Silhouette K-031 durch Wolkenbreite ersetzt (Kamera unbrauchbar, Register AI); Tuermchen stehen jetzt an der Wand"
+    }
    ]
-  },
-  {
-   "name": "Silhouettenbreite Zone 29-31,5 m (Kamera 041)",
-   "wert": "sil_zone_041",
-   "soll": [
-    10.7,
-    11.6
-   ],
-   "quelle": "wie oben, Foto 041 misst 11,13 m ueber 29,0-31,5 m Gemessen wird die LINKE Halbbreite verdoppelt - rechts verdeckt ein Nachbarhaus die Kante, das Modell wird genauso behandelt.",
-   "quelltyp": "foto_kalibriert",
-   "merkmal": "grundriss",
-   "massstab": "foto_kalibriert"
   },
   {
    "name": "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
@@ -750,11 +924,15 @@
    "merkmal": "schlankheit",
    "massstab": "modell",
    "historie": [
-    "2026-11-01 angelegt nach Nutzerhinweis 'aufgemalte haengende Daecher' - das Modell verjuengt sich dort zu frueh zum Kegel."
+    "2026-11-01 angelegt nach Nutzerhinweis 'aufgemalte haengende Daecher' - das Modell verjuengt sich dort zu frueh zum Kegel.",
+    {
+     "datum": "2026-11-01",
+     "grund": "Abseits-Schwelle 2,5 -> 3,1/3,2: Glockenstock ist jetzt 6,0 x 6,2 m"
+    }
    ]
   },
   {
-   "name": "Ecktuermchen: Helm Durchmesser bei 37 m (m)",
+   "name": "Ecktuermchen: Helm Durchmesser bei 37,5 m (m)",
    "wert": "helm_37_durchmesser",
    "soll": [
     0.8,
@@ -763,7 +941,17 @@
    "quelle": "Fotos 031/041: oberhalb des Erkerdachs ist der Helm deutlich schlanker als der Erker",
    "quelltyp": "foto_vollbild",
    "merkmal": "schlankheit",
-   "massstab": "modell"
+   "massstab": "modell",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "grund": "Messhoehe 37 -> 37,5: bei 37,0 beginnt jetzt der Helmfuss (Traufe), Querschnitte verschmelzen"
+    },
+    {
+     "datum": "2026-11-01",
+     "grund": "Abseits-Schwelle 2,5 -> 3,1/3,2: Glockenstock ist jetzt 6,0 x 6,2 m"
+    }
+   ]
   },
   {
    "name": "Oeffnungen Westwand obere Reihe (Anzahl, z 26,5 m)",
@@ -811,6 +999,68 @@
    "historie": [
     "2026-11-01 angelegt. Vor der Messung sah es nach einem Widerspruch aus (abgelesen 0,49/0,51 gegen Modell 0,43); mit sauberen Picks und der aus den Fotos berechneten Unsicherheit liegt das Modell (0,421) INNERHALB des Bandes. Der vermutete Widerspruch war ein Ablesefehler - genau dafuer gibt es das Werkzeug."
    ]
+  },
+  {
+   "name": "First / Dach-Oberkante (m) - SfM Nordnetz",
+   "wert": "first",
+   "soll": [
+    53.5,
+    56.0
+   ],
+   "quelle": "SfM Nordnetz (16 Fotos, Register AH), an LoD2-Eckkanten UND drei Bodenpunkten (005/006/014, Pflasterhoehe an der Ecke) ausgerichtet, OHNE Kamerahoehen-Annahme: Dachfirst-Goldkugeln NE/NW bei z 54,5-55,6 m (Neuaufbau 2026-11-01: 55,14 / 55,61) (+-0,24 Triangulation, +-0,6 Hoehenlage); mit Annahme 54,14 / 54,66. Deckt sich mit DOM1-Gipfel 54,84 (hoechste getroffene Flaeche = Dachabschluss, nicht Nadel). messprotokoll/SFM-AUSRICHTUNG.json",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "LoD2-Eckabstand 11,4/11,1 m ueber 4 Fotos (+-2,2 %)",
+   "protokoll": "SFM-AUSRICHTUNG.json",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "text": "neu; widerspricht der bestehenden Zeile 'First / Dach-Oberkante' 46,6-48,7 (foto_kalibriert, Einzelkameras mit RMS 56-145 px, Register AE). Nicht gemittelt: beide Zeilen stehen, bis der Widerspruch aufgeloest ist."
+    },
+    {
+     "datum": "2026-11-01",
+     "text": "Soll 53-55 -> 53,5-56: Bodenpunkte gepickt, Rechnung ohne Kamerahoehen-Annahme (Kamerahoehen kommen frei auf Median 1,9 m heraus = unabhaengige Bestaetigung)."
+    }
+   ]
+  },
+  {
+   "name": "Eckturm NW Vorsprung vor der Nordwand (m)",
+   "wert": "wand_n_x20 - eckturm_xmin",
+   "soll": [
+    0.7,
+    1.4
+   ],
+   "quelle": "Dichte Fotowolke Nord (tools/wolke_vs_modell.py + Kreisfit, Register AN): Eckturm-Front z 6-12 m, Kreis Mitte x -6,00 / y -3,70, Radius 1,26 m; Tiefenversatz der Wolke in diesem Band ~1,3 m -> Vorsprung vor der LoD2-Nordwand ~1,05 m (Modell 1,95). y der Wolke ist durch die LoD2-Eckkanten gesichert (+-0,3).",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "LoD2-Eckkanten",
+   "protokoll": "audit/wolke_vs_modell_nord.json"
+  },
+  {
+   "name": "Eckturm NW Mitte y (m)",
+   "wert": "eckturm_ymitte",
+   "soll": [
+    -4.1,
+    -3.3
+   ],
+   "quelle": "Dichte Fotowolke Nord (tools/wolke_vs_modell.py + Kreisfit, Register AN): Eckturm-Front z 6-12 m, Kreis Mitte x -6,00 / y -3,70, Radius 1,26 m; Tiefenversatz der Wolke in diesem Band ~1,3 m -> Vorsprung vor der LoD2-Nordwand ~1,05 m (Modell 1,95). y der Wolke ist durch die LoD2-Eckkanten gesichert (+-0,3).",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "LoD2-Eckkanten",
+   "protokoll": "audit/wolke_vs_modell_nord.json"
+  },
+  {
+   "name": "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+   "wert": "tuerm_ne_x40 - wand_n_x20",
+   "soll": [
+    0.0,
+    0.8
+   ],
+   "quelle": "Dichte Fotowolke Nord (entzerrt, Register AO): Helmachse NE/NW bei 39-42 m ~0,4 m innerhalb der Wandebene (Rohwert -5,3 bei Wolkenwand -5,7; Erkerkoerper bei 31-35 m sogar 0,5 m aussen = Auskragung). Tiefe der einseitigen Wolke +-0,4 m. Modell hatte 1,22 m Ruecksprung",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "audit/wolke_vs_modell_nord.json"
   }
  ],
  "beobachtungen_offen": [
@@ -1345,6 +1595,1249 @@
    "wer": "Claude (Ankerzonen-Sperre eingebaut)",
    "text": "Die neuen Ankerzonen zeigen: K-031 und K-041 haben ihren tiefsten Anker bei 31,5 m (Zinnenecken), K-000 bei -0,3 m, K-030 bei -0,3 m. Die Pruefzeile 'Silhouettenbreite Zone 23,5-28 m (Kamera 031)' (Soll 11,3..12,7) stammt damit aus einer EXTRAPOLATION 4-8 m unter der tiefsten Ankerhoehe. foto_breitenprofil beschneidet den Bereich ab sofort auf die Zone; der Sollwert selbst bleibt vorerst stehen.",
    "naechster_schritt": "In den Fotos 031 und 041 die Grundriss-Ecken am Boden picken (ecke_boden_*), neu kalibrieren, Zone auf 0..60 m erweitern und den Sollwert der Zone 23,5-28 m neu messen"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (tools/sfm_ausrichten.py, Nordnetz)",
+   "art": "hoehe",
+   "text": "SfM-Netz der Nordseite (16 Fotos, 2562 Punkte) an den LoD2-Eckkanten ausgerichtet (Massstab +-2,2 %, Hoehenlage aus Strassenkamera-Annahme +-0,7 m). Triangulierte Hoehen: Tuermchenknaeufe NE/NW 43,50 / 43,98 (+-0,13), Dachfirst-Kugeln 53,68 / 54,20 (+-0,23), Nadelknauf 66,88 (+-1,3), Hauptdach-Traufe Nordmitte 39,8 (+-1,5, grob). Modell: Tuermchen 41,2, First 46,2, Spitze 60,0, Traufe 36,5. Das gesamte Oberteil sitzt in der SfM-Loesung 2,3-8 m hoeher als im Modell. NACHTRAG ohne Kamerahoehen-Annahme (Bodenpunkte an der NE-Ecke aus 005/006/014, Fusspunkt jeweils verdeckt -> Pflasterhoehe von direkt an der Wand stehenden Personen/Raedern/Lkw, sigma 8-20 px): Tuermchen 44,34 / 44,80, First-Kugeln 54,53 / 55,05, Nadelknauf 67,7 +-1,3, Traufe grob 40,6; freie Kamerahoehen Median 1,9 m. Unterschied zur Annahme-Variante 0,4-0,8 m = Mass fuer die Hoehenlage-Unsicherheit.",
+   "naechster_schritt": "(1) Widerspruch Tuermchen: DOM1 40,98/41,44 sind getroffene Kegelflaechen, nicht Knaeufe - Differenz 2,5 m plausibel? Punktwolke DOM1 um die Tuermchen ansehen. (2) First: DOM1-Gipfel 54,84 + SfM 54,0 stimmen ueberein -> Pruefung 'First - SfM Nordnetz' (53-55) eingetragen, schlaegt am Modell fehl; Generator erst aendern, wenn der Dachansatz (Traufe) ebenfalls belastbar gemessen ist und das Suednetz dieselben Hoehen liefert (Zinnenkranz-Picks verworfen, Traufe nur grob). (3) Suednetz aufbauen (bisher 9 schwache Fotos, 549 Punkte, unbrauchbar) und dieselben Hoehen unabhaengig bestimmen."
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (SfM-Sichtung, Kontaktbogen)",
+   "art": "methode",
+   "text": "COLMAP ueber alle 37 Fotos (Register AE) hatte Nord- und Suedfassade zu EINER Fassade verklebt: alle 36 Kameras auf einer Seite, Nordfotos 031/001/040 teilen untereinander 400-900 Punkte, mit Suedfotos nur 5-70 (Uhrseite ist auf beiden Seiten gleich). Jede Ausrichtung dieses Netzes war deshalb falsch (Register AE Versuch 1/2 und heutiger Versuch: Hoehen 1,35-fach gestreckt). Seitenzuordnung per Sichtkriterium McDonald's links=Sued / rechts=Nord, Tafel=Nord, Adler=Sued: 044 war als 'Sued' falsch eingetragen (ist Nord); 10 Fotos zeigen nur den symmetrischen Oberbau und bleiben draussen.",
+   "naechster_schritt": "Fuer Fotos ohne Sockel (003 010 011 013 016 043 052 059 061 026) ein nicht-symmetrisches Merkmal des Oberbaus finden (z. B. Wetterfahne, Dachreiter-Oeffnungen) oder sie ueber bekannte Kamerastandorte (Bertoldsbrunnen = Nord) zuordnen; dann in das passende Seitennetz registrieren."
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (SfM Nordnetz)",
+   "art": "grundriss",
+   "text": "Im ausgerichteten Nordnetz liegt die Nordfassade (Punktband 4-34 m) bei x -5,3..-7,4 statt LoD2 -4,9: etwa 1 m zu weit nord. Tiefe ist die schwaechste Richtung bei einseitigen Kameras; die Eckkanten-Linie ecke_boden_0 in 031 koennte auf der Innenkante der Quader statt der Aussenkante liegen (Residuum 40 px).",
+   "naechster_schritt": "Bodenpunkte (z = -0,3) in 005/006/014 picken und als Punkte eintragen; 031-Linie ecke_boden_0 in der Lupe pruefen; danach Lage-Sigma x ansehen."
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (tools/sfm_verzerrung_test.py, Suednetz)",
+   "art": "methode",
+   "text": "Suednetz (13 Fotos, 9 mit EXIF-fester Brennweite, Reproj 0,72 px) ist projektiv verbogen: Dachpunkte passen per Aehnlichkeit auf 0,6-1,4 m, Bodenecken liegen dann bei z +10,5 m statt -0,3, Kameras bei 7-10 m. Verhaeltnis Tuermchenhoehe/Eckabstand 5,6 statt 3,9. Alle Ausrichtungen (7 Parameter, Anker im Buendel) scheitern deshalb mit 100-800 px. Ursache: alle Kameras auf der Strassenachse vor einer Fassadenebene, Weitwinkel stark gekippt, Bodenpunkte am Bildrand. Register AI.",
+   "naechster_schritt": "060/061 als Bruecke Nord-Sued registrieren (Ring) oder Kameramodell mit k1,k2; danach sfm_verzerrung_test.py (Exit 0) VOR der Ausrichtung. Bis dahin keine Suedhoehen aus SfM."
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (tools/sfm_registrieren.py, Register AJ)",
+   "art": "hoehe",
+   "text": "060 (Schraegluftbild) und 061 (Schlossberg) ueber Picks ins metrische Nordnetz registriert (RMS 14 px bzw. 1 px; 061 mit Hoehenbedingung 44 +-8 m aus der Zeilengleichheit der vier Tuermchenspitzen). Erster Suedpunkt im Nordsystem: tuermchen_SW = (7,5, -2,7, 42,6) +-2,6 m aus 060+061, Residuen 27/9 px - SCHWACH; Nordtuermchen 44,4/44,7, Nadelknauf 68,6 +-0,7 (6 Kameras).",
+   "naechster_schritt": "Suedtuermchen/First-Kugeln in 060 nachpicken (Lupe) und 065-067 ueber LoD2-Kanten ins Nordsystem registrieren; oder LightGlue/ALIKED installieren (Nutzerfreigabe) und 060/061 per Merkmalen in Nord+Sued registrieren."
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (LightGlue-Test, Register AK)",
+   "art": "methode",
+   "text": "ALIKED+LightGlue (Apache/BSD, Lizenzregister) registriert 060/061 per Merkmalen in beide Netze, verbiegt aber beide (Verzerrungstest: Bodenecken 8-15 m daneben; Tuermchen-Residuen 4-52 px statt 1-3). 061 landet geografisch falsch (NW statt NE). Verworfen; SIFT-Nordnetz neu aufgebaut (reproduzierbar: Tuermchen 44,39/44,72, First-Kugeln 55,14/55,61, Knauf 69,7 +-1,4), 060/061 wieder per Picks eingehaengt.",
+   "naechster_schritt": "Falsche symmetrische Matches ausschliessen (Matching nur in maskierten Turmbereichen je Seite, oder Paare per Standortwissen filtern), dann Verzerrungstest; sonst bleibt die Pick-Registrierung der Weg."
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (DOM1-Rohraster + SfM, Register AM)",
+   "art": "hoehe",
+   "text": "Gesamthoehe: SfM-Nadelende 69,7 +-1,4 m (5 Kameras) gegen Dokument 60 m (Bauforschung BW, 1901) / 65 m (Objektbeschreibung). Mit First 55,4 (DOM1 Zellen 53-55 + SfM Goldkugeln) und Foto 049 (Spitze/Dach 1,2; Knauf 20-28 %) ist 60 m ausgeschlossen; 65 m moeglich, wenn das Nadelende in den Fotos falsch gepickt wurde (duenn, Residuen bis 30 px). Nicht gemittelt: Modell 70, Pruefung 68-72.",
+   "naechster_schritt": "Nadelende in 006/014/040/049 in der Lupe nachpicken (Finial vs Wetterfahne) und mit --name nord neu triangulieren; Hoehenbezug der Dokumente klaeren (Strasse vs Gelaende)."
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
+   "auto_id": "breite-000-38-38",
+   "art": "breite",
+   "foto": "000",
+   "z_von": 37.5,
+   "z_bis": 37.5,
+   "abweichung": 1.08,
+   "text": "Silhouettenbreite z 37.5-37.5 m: Foto 13.56 m, Modell 12.48 m (+1.08 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
+   "auto_id": "breite-000-48-48",
+   "art": "breite",
+   "foto": "000",
+   "z_von": 48.0,
+   "z_bis": 48.0,
+   "abweichung": -5.32,
+   "text": "Silhouettenbreite z 48.0-48.0 m: Foto 0.26 m, Modell 5.58 m (-5.32 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-34-36",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 34.5,
+   "z_bis": 35.5,
+   "abweichung": -0.79,
+   "text": "Silhouettenbreite z 34.5-35.5 m: Foto 12.17 m, Modell 12.96 m (-0.79 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-37-38",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 37.0,
+   "z_bis": 37.5,
+   "abweichung": -1.06,
+   "text": "Silhouettenbreite z 37.0-37.5 m: Foto 9.56 m, Modell 10.62 m (-1.06 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-43-43",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 43.0,
+   "z_bis": 43.0,
+   "abweichung": -3.02,
+   "text": "Silhouettenbreite z 43.0-43.0 m: Foto 5.34 m, Modell 8.36 m (-3.02 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-46-50",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 46.5,
+   "z_bis": 50.0,
+   "abweichung": -3.64,
+   "text": "Silhouettenbreite z 46.5-50.0 m: Foto 1.61 m, Modell 5.25 m (-3.64 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 1)",
+   "auto_id": "fehlteile-030-1054-930",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 30.97,
+   "z_bis": 30.97,
+   "xyz": [
+    -0.43,
+    2.17,
+    30.97
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.97 m, y=2.17 m (Zelle [1054, 930, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 2)",
+   "auto_id": "fehlteile-030-1116-930",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 30.65,
+   "z_bis": 30.65,
+   "xyz": [
+    0.4,
+    3.24,
+    30.65
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.65 m, y=3.24 m (Zelle [1116, 930, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 3)",
+   "auto_id": "fehlteile-030-992-992",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 28.98,
+   "z_bis": 28.98,
+   "xyz": [
+    -0.24,
+    0.81,
+    28.98
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.98 m, y=0.81 m (Zelle [992, 992, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 4)",
+   "auto_id": "fehlteile-030-1054-992",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 29.91,
+   "z_bis": 29.91,
+   "xyz": [
+    -1.05,
+    2.37,
+    29.91
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.91 m, y=2.37 m (Zelle [1054, 992, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 5)",
+   "auto_id": "fehlteile-030-1302-1178",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 23.0,
+   "z_bis": 23.0,
+   "xyz": [
+    4.28,
+    5.05,
+    23.0
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=23.0 m, y=5.05 m (Zelle [1302, 1178, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
+   "auto_id": "fehlteile-030-992-930",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 29.67,
+   "z_bis": 29.67,
+   "xyz": [
+    0.94,
+    0.38,
+    29.67
+   ],
+   "abweichung": 0.996,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.67 m, y=0.38 m (Zelle [992, 930, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-40-43",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 40.0,
+   "z_bis": 43.0,
+   "abweichung": 1.08,
+   "text": "Silhouettenbreite z 40.0-43.0 m: Foto 12.45 m, Modell 11.37 m (+1.08 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-44-46",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 44.5,
+   "z_bis": 46.0,
+   "abweichung": -4.39,
+   "text": "Silhouettenbreite z 44.5-46.0 m: Foto 4.19 m, Modell 8.58 m (-4.39 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-48-50",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 47.5,
+   "z_bis": 50.0,
+   "abweichung": -4.33,
+   "text": "Silhouettenbreite z 47.5-50.0 m: Foto 0.87 m, Modell 5.20 m (-4.33 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 1)",
+   "auto_id": "fehlteile-041-950-665",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 38.97,
+   "z_bis": 38.97,
+   "xyz": [
+    0.63,
+    2.46,
+    38.97
+   ],
+   "abweichung": 0.813,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.97 m, y=2.46 m (Zelle [950, 665, 95], Score +0.81)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 3)",
+   "auto_id": "fehlteile-041-855-665",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 38.67,
+   "z_bis": 38.67,
+   "xyz": [
+    0.48,
+    0.82,
+    38.67
+   ],
+   "abweichung": 0.741,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.67 m, y=0.82 m (Zelle [855, 665, 95], Score +0.74)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 4)",
+   "auto_id": "fehlteile-041-950-570",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 40.75,
+   "z_bis": 40.75,
+   "xyz": [
+    1.21,
+    2.28,
+    40.75
+   ],
+   "abweichung": 0.734,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=40.75 m, y=2.28 m (Zelle [950, 570, 95], Score +0.73)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 6)",
+   "auto_id": "fehlteile-041-760-570",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 39.8,
+   "z_bis": 39.8,
+   "xyz": [
+    1.12,
+    -0.94,
+    39.8
+   ],
+   "abweichung": 0.62,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.8 m, y=-0.94 m (Zelle [760, 570, 95], Score +0.62)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 1)",
+   "auto_id": "fehlteile-060-4128-1120",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 54.67,
+   "z_bis": 54.67,
+   "xyz": [
+    -1.28,
+    -1.42,
+    54.67
+   ],
+   "abweichung": 0.986,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=54.67 m, y=-1.42 m (Zelle [4128, 1120, 16], Score +0.99)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 2)",
+   "auto_id": "fehlteile-060-4128-1168",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 51.63,
+   "z_bis": 51.63,
+   "xyz": [
+    -1.41,
+    -1.62,
+    51.63
+   ],
+   "abweichung": 0.978,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=51.63 m, y=-1.62 m (Zelle [4128, 1168, 16], Score +0.98)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 3)",
+   "auto_id": "fehlteile-060-4128-1136",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 53.66,
+   "z_bis": 53.66,
+   "xyz": [
+    -1.32,
+    -1.49,
+    53.66
+   ],
+   "abweichung": 0.974,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=53.66 m, y=-1.49 m (Zelle [4128, 1136, 16], Score +0.97)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 4)",
+   "auto_id": "fehlteile-060-4112-1248",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 46.42,
+   "z_bis": 46.42,
+   "xyz": [
+    -1.92,
+    -0.92,
+    46.42
+   ],
+   "abweichung": 0.958,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=46.42 m, y=-0.92 m (Zelle [4112, 1248, 16], Score +0.96)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 5)",
+   "auto_id": "fehlteile-060-4128-1152",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 52.65,
+   "z_bis": 52.65,
+   "xyz": [
+    -1.39,
+    -1.57,
+    52.65
+   ],
+   "abweichung": 0.938,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=52.65 m, y=-1.57 m (Zelle [4128, 1152, 16], Score +0.94)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 6)",
+   "auto_id": "fehlteile-060-4128-1216",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 48.61,
+   "z_bis": 48.61,
+   "xyz": [
+    -1.64,
+    -1.91,
+    48.61
+   ],
+   "abweichung": 0.914,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=48.61 m, y=-1.91 m (Zelle [4128, 1216, 16], Score +0.91)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 4)",
+   "auto_id": "fehlteile-030-1116-992",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 29.68,
+   "z_bis": 29.68,
+   "xyz": [
+    -0.34,
+    3.53,
+    29.68
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.68 m, y=3.53 m (Zelle [1116, 992, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-40-42",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 40.0,
+   "z_bis": 41.5,
+   "abweichung": 1.21,
+   "text": "Silhouettenbreite z 40.0-41.5 m: Foto 13.07 m, Modell 11.86 m (+1.21 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-43-43",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 43.0,
+   "z_bis": 43.0,
+   "abweichung": 1.08,
+   "text": "Silhouettenbreite z 43.0-43.0 m: Foto 10.00 m, Modell 8.92 m (+1.08 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-45-50",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 45.0,
+   "z_bis": 50.0,
+   "abweichung": -3.17,
+   "text": "Silhouettenbreite z 45.0-50.0 m: Foto 2.09 m, Modell 5.26 m (-3.17 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 2)",
+   "auto_id": "fehlteile-041-760-475",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 42.41,
+   "z_bis": 42.41,
+   "xyz": [
+    1.17,
+    -1.03,
+    42.41
+   ],
+   "abweichung": 0.794,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=42.41 m, y=-1.03 m (Zelle [760, 475, 95], Score +0.79)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
+   "auto_id": "fehlteile-041-855-475",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 43.28,
+   "z_bis": 43.28,
+   "xyz": [
+    0.99,
+    0.73,
+    43.28
+   ],
+   "abweichung": 0.633,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=43.28 m, y=0.73 m (Zelle [855, 475, 95], Score +0.63)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 6)",
+   "auto_id": "fehlteile-041-950-475",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 42.8,
+   "z_bis": 42.8,
+   "xyz": [
+    1.49,
+    1.92,
+    42.8
+   ],
+   "abweichung": 0.596,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=42.8 m, y=1.92 m (Zelle [950, 475, 95], Score +0.60)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-40-42",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 40.0,
+   "z_bis": 41.5,
+   "abweichung": 0.97,
+   "text": "Silhouettenbreite z 40.0-41.5 m: Foto 8.83 m, Modell 7.86 m (+0.97 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-44-50",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 44.5,
+   "z_bis": 50.0,
+   "abweichung": -1.83,
+   "text": "Silhouettenbreite z 44.5-50.0 m: Foto 2.10 m, Modell 3.93 m (-1.83 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 1)",
+   "auto_id": "fehlteile-030-1054-620",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 38.31,
+   "z_bis": 38.31,
+   "xyz": [
+    0.62,
+    1.89,
+    38.31
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.31 m, y=1.89 m (Zelle [1054, 620, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 5)",
+   "auto_id": "fehlteile-030-1364-1736",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 12.6,
+   "z_bis": 12.6,
+   "xyz": [
+    4.44,
+    5.46,
+    12.6
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=12.6 m, y=5.46 m (Zelle [1364, 1736, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 1)",
+   "auto_id": "fehlteile-041-960-672",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 38.25,
+   "z_bis": 38.25,
+   "xyz": [
+    0.98,
+    2.33,
+    38.25
+   ],
+   "abweichung": 0.905,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.25 m, y=2.33 m (Zelle [960, 672, 96], Score +0.91)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 4)",
+   "auto_id": "fehlteile-041-768-480",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 42.52,
+   "z_bis": 42.52,
+   "xyz": [
+    0.98,
+    -0.78,
+    42.52
+   ],
+   "abweichung": 0.815,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=42.52 m, y=-0.78 m (Zelle [768, 480, 96], Score +0.81)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
+   "auto_id": "fehlteile-041-864-576",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 40.41,
+   "z_bis": 40.41,
+   "xyz": [
+    1.02,
+    0.89,
+    40.41
+   ],
+   "abweichung": 0.753,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=40.41 m, y=0.89 m (Zelle [864, 576, 96], Score +0.75)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 6)",
+   "auto_id": "fehlteile-041-864-480",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 43.33,
+   "z_bis": 43.33,
+   "xyz": [
+    0.84,
+    0.91,
+    43.33
+   ],
+   "abweichung": 0.739,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=43.33 m, y=0.91 m (Zelle [864, 480, 96], Score +0.74)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Nutzer (Viewer: Fotowolke gegen deckendes STL)",
+   "art": "sicht",
+   "text": "Tuermchen passen nicht: in der Fotowolke stehen die Ecktuermchen weiter aussen ('weiter vorne') und etwas tiefer als im Modell.",
+   "naechster_schritt": "Tuermchenachsen (x,y) und Erker-/Helmhoehen aus der dichten Wolke messen, Modellwerte (c = +-3,6/4,1 m; T0/T1 30/32,7) dagegen; Pruefung eintragen, die fehlschlaegt; dann Generator."
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Nutzer (Viewer: Fotowolke gegen deckendes STL)",
+   "art": "sicht",
+   "text": "Die Turmwand ist in der Wolke eher senkrecht; das Modell verjuengt sich (Knick ZK 26 m: 9,3x10,3 -> 9,0x10,0).",
+   "naechster_schritt": "Nordwand-Profil x(z) aus der Wolke 8-36 m gegen das STL; falls senkrecht: Verjuengung (ZK/DK/WK) pruefen und Register T nachlesen, bevor geaendert wird."
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Nutzer (Viewer: Fotowolke gegen deckendes STL)",
+   "art": "sicht",
+   "text": "Der runde Treppenturm an der NW-Ecke ('Seitenbautuermchen') ist in der Wolke hoeher als im Modell.",
+   "naechster_schritt": "Oberkante/Kegelspitze und Radius des Eckturms aus der Wolke messen (Pruefung 'Eckturm NW Kegelspitze 12-15,5' ggf. korrigieren)."
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-wirklichkeit_weiter_vorn-30--3",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 30.5,
+   "z_bis": 43.0,
+   "quer_von": -3.0,
+   "quer_bis": 5.5,
+   "flaeche_m2": 62.4,
+   "text": "Fotowolke steht +1.16 m weiter vor als das Modell: z 30.5-43.0 m, y -3.0..5.5 m, 62.4 m2 [TIEFE UNSICHER: einseitiges Netz, Versatz 0,85-1,4 m je nach Hoehe - nur Hinweis; Silhouette/Hoehen gueltig]",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-fehlt_im_modell-5--9",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 5.8,
+   "z_bis": 20.8,
+   "quer_von": -9.0,
+   "quer_bis": -5.5,
+   "flaeche_m2": 32.6,
+   "text": "Fotowolke hat hier Masse, das Modell nicht (fehlendes Bauteil?): z 5.8-20.8 m, y -9.0..-5.5 m, 32.6 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-wirklichkeit_weiter_vorn-41--2",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 41.0,
+   "z_bis": 49.8,
+   "quer_von": -2.2,
+   "quer_bis": 2.2,
+   "flaeche_m2": 30.8,
+   "text": "Fotowolke steht +1.09 m weiter vor als das Modell: z 41.0-49.8 m, y -2.2..2.2 m, 30.8 m2 [TIEFE UNSICHER: einseitiges Netz, Versatz 0,85-1,4 m je nach Hoehe - nur Hinweis; Silhouette/Hoehen gueltig]",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-nur_im_modell-6--3",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 6.2,
+   "z_bis": 14.2,
+   "quer_von": -3.0,
+   "quer_bis": 3.8,
+   "flaeche_m2": 22.6,
+   "text": "Modell hat hier Masse, die Fotowolke (mit Daten ringsum) nicht (zu grosses/erfundenes Bauteil?): z 6.2-14.2 m, y -3.0..3.8 m, 22.6 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-wirklichkeit_weiter_vorn-27--5",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 27.5,
+   "z_bis": 42.8,
+   "quer_von": -5.5,
+   "quer_bis": -3.0,
+   "flaeche_m2": 18.4,
+   "text": "Fotowolke steht +0.87 m weiter vor als das Modell: z 27.5-42.8 m, y -5.5..-3.0 m, 18.4 m2 [TIEFE UNSICHER: einseitiges Netz, Versatz 0,85-1,4 m je nach Hoehe - nur Hinweis; Silhouette/Hoehen gueltig]",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-wirklichkeit_weiter_vorn-4--4",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 4.0,
+   "z_bis": 14.2,
+   "quer_von": -4.5,
+   "quer_bis": -1.8,
+   "flaeche_m2": 16.9,
+   "text": "Fotowolke steht +1.11 m weiter vor als das Modell: z 4.0-14.2 m, y -4.5..-1.8 m, 16.9 m2 [TIEFE UNSICHER: einseitiges Netz, Versatz 0,85-1,4 m je nach Hoehe - nur Hinweis; Silhouette/Hoehen gueltig]",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-nur_im_modell-15--4",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 15.2,
+   "z_bis": 21.5,
+   "quer_von": -4.5,
+   "quer_bis": 0.2,
+   "flaeche_m2": 16.0,
+   "text": "Modell hat hier Masse, die Fotowolke (mit Daten ringsum) nicht (zu grosses/erfundenes Bauteil?): z 15.2-21.5 m, y -4.5..0.2 m, 16.0 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-nur_im_modell-14-0",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 14.2,
+   "z_bis": 22.0,
+   "quer_von": 0.2,
+   "quer_bis": 4.2,
+   "flaeche_m2": 15.5,
+   "text": "Modell hat hier Masse, die Fotowolke (mit Daten ringsum) nicht (zu grosses/erfundenes Bauteil?): z 14.2-22.0 m, y 0.2..4.2 m, 15.5 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-modell_weiter_vorn-3--6",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 3.5,
+   "z_bis": 14.0,
+   "quer_von": -6.8,
+   "quer_bis": -4.8,
+   "flaeche_m2": 13.4,
+   "text": "Modell steht 1.44 m weiter vor als die Fotowolke: z 3.5-14.0 m, y -6.8..-4.8 m, 13.4 m2 [TIEFE UNSICHER: einseitiges Netz, Versatz 0,85-1,4 m je nach Hoehe - nur Hinweis; Silhouette/Hoehen gueltig]",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-fehlt_im_modell-41--3",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 41.2,
+   "z_bis": 53.8,
+   "quer_von": -3.2,
+   "quer_bis": -1.2,
+   "flaeche_m2": 11.7,
+   "text": "Fotowolke hat hier Masse, das Modell nicht (fehlendes Bauteil?): z 41.2-53.8 m, y -3.2..-1.2 m, 11.7 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-modell_weiter_vorn-5-3",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 5.2,
+   "z_bis": 13.5,
+   "quer_von": 3.0,
+   "quer_bis": 5.5,
+   "flaeche_m2": 10.5,
+   "text": "Modell steht 0.61 m weiter vor als die Fotowolke: z 5.2-13.5 m, y 3.0..5.5 m, 10.5 m2 [TIEFE UNSICHER: einseitiges Netz, Versatz 0,85-1,4 m je nach Hoehe - nur Hinweis; Silhouette/Hoehen gueltig]",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-fehlt_im_modell-41-1",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 41.0,
+   "z_bis": 52.5,
+   "quer_von": 1.2,
+   "quer_bis": 3.0,
+   "flaeche_m2": 9.1,
+   "text": "Fotowolke hat hier Masse, das Modell nicht (fehlendes Bauteil?): z 41.0-52.5 m, y 1.2..3.0 m, 9.1 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 2)",
+   "auto_id": "fehlteile-030-1008-1008",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 28.75,
+   "z_bis": 28.75,
+   "xyz": [
+    -0.29,
+    1.16,
+    28.75
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.75 m, y=1.16 m (Zelle [1008, 1008, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 4)",
+   "auto_id": "fehlteile-030-1386-2079",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 7.2,
+   "z_bis": 7.2,
+   "xyz": [
+    4.38,
+    5.5,
+    7.2
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=7.2 m, y=5.5 m (Zelle [1386, 2079, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
+   "auto_id": "fehlteile-030-1197-882",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 29.83,
+   "z_bis": 29.83,
+   "xyz": [
+    3.4,
+    3.77,
+    29.83
+   ],
+   "abweichung": 0.994,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.83 m, y=3.77 m (Zelle [1197, 882, 63], Score +0.99)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 4)",
+   "auto_id": "fehlteile-041-768-576",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 39.99,
+   "z_bis": 39.99,
+   "xyz": [
+    0.94,
+    -0.78,
+    39.99
+   ],
+   "abweichung": 0.831,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.99 m, y=-0.78 m (Zelle [768, 576, 96], Score +0.83)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-wirklichkeit_weiter_vorn-3--5",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 3.8,
+   "z_bis": 14.2,
+   "quer_von": -5.2,
+   "quer_bis": -1.8,
+   "flaeche_m2": 17.2,
+   "text": "Fotowolke steht +0.68 m weiter vor als das Modell [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.58 m Spreizung - nur Hinweis]: z 3.8-14.2 m, y -5.2..-1.8 m, 17.2 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
+   "auto_id": "wolke-nord-nur_im_modell-2-2",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 2.2,
+   "z_bis": 13.2,
+   "quer_von": 2.5,
+   "quer_bis": 6.0,
+   "flaeche_m2": 9.1,
+   "text": "Modell hat hier Masse, die Fotowolke (mit Daten ringsum) nicht (zu grosses/erfundenes Bauteil?): z 2.2-13.2 m, y 2.5..6.0 m, 9.1 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-wirklichkeit_weiter_vorn-26--5",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 26.0,
+   "z_bis": 54.2,
+   "quer_von": -5.5,
+   "quer_bis": 5.5,
+   "flaeche_m2": 147.8,
+   "text": "Fotowolke steht +1.30 m weiter vor als das Modell [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 26.0-54.2 m, y -5.5..5.5 m, 147.8 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-fehlt_im_modell-6--9",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 6.5,
+   "z_bis": 20.8,
+   "quer_von": -9.0,
+   "quer_bis": -5.5,
+   "flaeche_m2": 36.2,
+   "text": "Fotowolke hat hier Masse, das Modell nicht (fehlendes Bauteil?): z 6.5-20.8 m, y -9.0..-5.5 m, 36.2 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-modell_weiter_vorn-1--3",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 1.2,
+   "z_bis": 14.0,
+   "quer_von": -3.2,
+   "quer_bis": 5.5,
+   "flaeche_m2": 35.6,
+   "text": "Modell steht 0.74 m weiter vor als die Fotowolke [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 1.2-14.0 m, y -3.2..5.5 m, 35.6 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-nur_im_modell-13-0",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 13.2,
+   "z_bis": 22.0,
+   "quer_von": 0.2,
+   "quer_bis": 4.2,
+   "flaeche_m2": 16.1,
+   "text": "Modell hat hier Masse, die Fotowolke (mit Daten ringsum) nicht (zu grosses/erfundenes Bauteil?): z 13.2-22.0 m, y 0.2..4.2 m, 16.1 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-nur_im_modell-2--2",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 2.2,
+   "z_bis": 13.5,
+   "quer_von": -2.0,
+   "quer_bis": 6.0,
+   "flaeche_m2": 12.8,
+   "text": "Modell hat hier Masse, die Fotowolke (mit Daten ringsum) nicht (zu grosses/erfundenes Bauteil?): z 2.2-13.5 m, y -2.0..6.0 m, 12.8 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-nur_im_modell-0--5",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 0.2,
+   "z_bis": 5.0,
+   "quer_von": -5.8,
+   "quer_bis": -2.5,
+   "flaeche_m2": 7.1,
+   "text": "Modell hat hier Masse, die Fotowolke (mit Daten ringsum) nicht (zu grosses/erfundenes Bauteil?): z 0.2-5.0 m, y -5.8..-2.5 m, 7.1 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-fehlt_im_modell-27--6",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 27.5,
+   "z_bis": 35.5,
+   "quer_von": -6.2,
+   "quer_bis": -5.2,
+   "flaeche_m2": 6.1,
+   "text": "Fotowolke hat hier Masse, das Modell nicht (fehlendes Bauteil?): z 27.5-35.5 m, y -6.2..-5.2 m, 6.1 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-fehlt_im_modell-13-6",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 13.0,
+   "z_bis": 18.0,
+   "quer_von": 6.2,
+   "quer_bis": 8.2,
+   "flaeche_m2": 5.4,
+   "text": "Fotowolke hat hier Masse, das Modell nicht (fehlendes Bauteil?): z 13.0-18.0 m, y 6.2..8.2 m, 5.4 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-modell_weiter_vorn-14-3",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 14.5,
+   "z_bis": 17.8,
+   "quer_von": 3.5,
+   "quer_bis": 5.2,
+   "flaeche_m2": 4.2,
+   "text": "Modell steht 0.52 m weiter vor als die Fotowolke [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 14.5-17.8 m, y 3.5..5.2 m, 4.2 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-40-40",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 40.0,
+   "z_bis": 40.5,
+   "abweichung": 1.12,
+   "text": "Silhouettenbreite z 40.0-40.5 m: Foto 13.13 m, Modell 12.01 m (+1.12 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-32-32",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 31.5,
+   "z_bis": 32.5,
+   "abweichung": -0.67,
+   "text": "Silhouettenbreite z 31.5-32.5 m: Foto 13.12 m, Modell 13.79 m (-0.67 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-34-35",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 34.0,
+   "z_bis": 35.0,
+   "abweichung": -1.68,
+   "text": "Silhouettenbreite z 34.0-35.0 m: Foto 12.45 m, Modell 14.13 m (-1.68 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-38-39",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 38.5,
+   "z_bis": 39.0,
+   "abweichung": -0.73,
+   "text": "Silhouettenbreite z 38.5-39.0 m: Foto 9.08 m, Modell 9.81 m (-0.73 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-30-32",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 29.5,
+   "z_bis": 32.0,
+   "abweichung": -0.87,
+   "text": "Silhouettenbreite z 29.5-32.0 m: Foto 11.18 m, Modell 12.05 m (-0.87 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-36-40",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 36.0,
+   "z_bis": 39.5,
+   "abweichung": -0.74,
+   "text": "Silhouettenbreite z 36.0-39.5 m: Foto 11.32 m, Modell 12.06 m (-0.74 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 1)",
+   "auto_id": "fehlteile-041-855-570",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 40.13,
+   "z_bis": 40.13,
+   "xyz": [
+    1.34,
+    0.64,
+    40.13
+   ],
+   "abweichung": 0.99,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=40.13 m, y=0.64 m (Zelle [855, 570, 95], Score +0.99)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-wirklichkeit_weiter_vorn-36--3",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 36.8,
+   "z_bis": 50.0,
+   "quer_von": -3.2,
+   "quer_bis": 3.2,
+   "flaeche_m2": 51.8,
+   "text": "Fotowolke steht +1.02 m weiter vor als das Modell [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 36.8-50.0 m, y -3.2..3.2 m, 51.8 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-modell_weiter_vorn-3--2",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 3.2,
+   "z_bis": 14.0,
+   "quer_von": -2.0,
+   "quer_bis": 5.5,
+   "flaeche_m2": 29.9,
+   "text": "Modell steht 0.66 m weiter vor als die Fotowolke [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 3.2-14.0 m, y -2.0..5.5 m, 29.9 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-modell_weiter_vorn-29--5",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 29.5,
+   "z_bis": 32.8,
+   "quer_von": -5.8,
+   "quer_bis": -3.0,
+   "flaeche_m2": 7.1,
+   "text": "Modell steht 0.68 m weiter vor als die Fotowolke [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 29.5-32.8 m, y -5.8..-3.0 m, 7.1 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-modell_weiter_vorn-29-3",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 29.2,
+   "z_bis": 32.8,
+   "quer_von": 3.0,
+   "quer_bis": 5.8,
+   "flaeche_m2": 6.4,
+   "text": "Modell steht 0.71 m weiter vor als die Fotowolke [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 29.2-32.8 m, y 3.0..5.8 m, 6.4 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-nur_im_modell-3-4",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 3.5,
+   "z_bis": 13.5,
+   "quer_von": 4.8,
+   "quer_bis": 6.0,
+   "flaeche_m2": 5.9,
+   "text": "Modell hat hier Masse, die Fotowolke (mit Daten ringsum) nicht (zu grosses/erfundenes Bauteil?): z 3.5-13.5 m, y 4.8..6.0 m, 5.9 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-modell_weiter_vorn-14--5",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 14.5,
+   "z_bis": 17.8,
+   "quer_von": -5.5,
+   "quer_bis": -3.8,
+   "flaeche_m2": 4.8,
+   "text": "Modell steht 0.45 m weiter vor als die Fotowolke [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 14.5-17.8 m, y -5.5..-3.8 m, 4.8 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
   }
  ],
  "beobachtungen_erledigt": [
@@ -2556,6 +4049,12 @@
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind",
    "status": "WIDERLEGT",
    "begruendung": "Nachpruefung an den anderen Kameras: 031-0.59, 000+0.84, 030+0.31, 041-0.06"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude",
+   "text": "Pruefung 'Silhouettenbreite Zone 29-31,5 m (Kamera 041)' entfernt: Kamera K-041 (Einzelkalibrierung, Register AI unbrauchbar) und Dopplung zur neuen Wolkenbreite-Pruefung 29,5-33,5 m",
+   "erledigt": "2026-11-01"
   }
  ]
 }

@@ -1,0 +1,242 @@
+{
+ "seite": "nord",
+ "fotos": [
+  "001",
+  "002",
+  "005",
+  "006",
+  "014",
+  "015",
+  "017",
+  "018",
+  "019",
+  "027",
+  "031",
+  "040",
+  "044",
+  "045",
+  "049",
+  "051",
+  "060",
+  "061"
+ ],
+ "runden": [
+  {
+   "aktiv": [
+    "001",
+    "002",
+    "005",
+    "006",
+    "014",
+    "015",
+    "017",
+    "018",
+    "019",
+    "027",
+    "031",
+    "040",
+    "044",
+    "045",
+    "049",
+    "051",
+    "060",
+    "061"
+   ],
+   "registriert": [
+    "001",
+    "002",
+    "005",
+    "006",
+    "014",
+    "015",
+    "017",
+    "018",
+    "019",
+    "027",
+    "031",
+    "040",
+    "044",
+    "045",
+    "049",
+    "051"
+   ],
+   "nicht_registriert": [
+    "060",
+    "061"
+   ],
+   "punkte": 2606,
+   "reproj_px": 0.7228694022982873,
+   "kameras": {
+    "001": {
+     "f_px": 1472.5,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.671,
+     "punkte": 909,
+     "status": "ok",
+     "grund": []
+    },
+    "002": {
+     "f_px": 3286.5,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 1.424,
+     "punkte": 254,
+     "status": "ok",
+     "grund": []
+    },
+    "005": {
+     "f_px": 1111.1,
+     "prior_f_px": 1111.1,
+     "f_zu_prior": 1.0,
+     "f_zu_diag": 0.556,
+     "punkte": 985,
+     "status": "ok",
+     "grund": []
+    },
+    "006": {
+     "f_px": 1111.1,
+     "prior_f_px": 1111.1,
+     "f_zu_prior": 1.0,
+     "f_zu_diag": 0.556,
+     "punkte": 1367,
+     "status": "ok",
+     "grund": []
+    },
+    "014": {
+     "f_px": 2040.9,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.849,
+     "punkte": 858,
+     "status": "ok",
+     "grund": []
+    },
+    "015": {
+     "f_px": 1066.7,
+     "prior_f_px": 1066.7,
+     "f_zu_prior": 1.0,
+     "f_zu_diag": 0.693,
+     "punkte": 1214,
+     "status": "ok",
+     "grund": []
+    },
+    "017": {
+     "f_px": 2491.9,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 1.03,
+     "punkte": 500,
+     "status": "ok",
+     "grund": []
+    },
+    "018": {
+     "f_px": 1574.0,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.655,
+     "punkte": 1075,
+     "status": "ok",
+     "grund": []
+    },
+    "019": {
+     "f_px": 1564.6,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.651,
+     "punkte": 669,
+     "status": "ok",
+     "grund": []
+    },
+    "027": {
+     "f_px": 1126.7,
+     "prior_f_px": 1126.7,
+     "f_zu_prior": 1.0,
+     "f_zu_diag": 0.88,
+     "punkte": 628,
+     "status": "ok",
+     "grund": []
+    },
+    "031": {
+     "f_px": 2581.4,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 1.074,
+     "punkte": 804,
+     "status": "ok",
+     "grund": []
+    },
+    "040": {
+     "f_px": 1886.8,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.785,
+     "punkte": 959,
+     "status": "ok",
+     "grund": []
+    },
+    "044": {
+     "f_px": 1875.0,
+     "prior_f_px": 1875.0,
+     "f_zu_prior": 1.0,
+     "f_zu_diag": 0.75,
+     "punkte": 788,
+     "status": "ok",
+     "grund": []
+    },
+    "045": {
+     "f_px": 1823.6,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.76,
+     "punkte": 835,
+     "status": "ok",
+     "grund": []
+    },
+    "049": {
+     "f_px": 4562.0,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 1.898,
+     "punkte": 760,
+     "status": "ok",
+     "grund": []
+    },
+    "051": {
+     "f_px": 1556.4,
+     "prior_f_px": null,
+     "f_zu_prior": null,
+     "f_zu_diag": 0.623,
+     "punkte": 233,
+     "status": "ok",
+     "grund": []
+    }
+   },
+   "degeneriert": []
+  }
+ ],
+ "ausgeschlossen": {},
+ "ergebnis": {
+  "sparse": "modelle/martinstor/sfm/sparse_nord/0",
+  "registriert": [
+   "001",
+   "002",
+   "005",
+   "006",
+   "014",
+   "015",
+   "017",
+   "018",
+   "019",
+   "027",
+   "031",
+   "040",
+   "044",
+   "045",
+   "049",
+   "051"
+  ],
+  "punkte": 2606,
+  "reproj_px": 0.7228694022982873
+ }
+}

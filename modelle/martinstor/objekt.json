@@ -27,39 +27,58 @@
    "vollbild": [
     1280,
     2842
-   ]
+   ],
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
   },
   "006": {
-   "seite": "unbekannt",
-   "silhouette_frei": true
+   "seite": "Nord",
+   "silhouette_frei": true,
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
   },
   "014": {
-   "seite": "unbekannt",
+   "seite": "Nord",
    "silhouette_frei": true,
-   "notiz": "Spitze frei, Nachbarn stoeren unten"
+   "notiz": "Spitze frei, Nachbarn stoeren unten",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
   },
   "018": {
-   "seite": "unbekannt",
+   "seite": "Nord",
    "silhouette_frei": false,
-   "notiz": "ROI landet neben dem Turm"
+   "notiz": "ROI landet neben dem Turm",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
   },
   "020": {
    "seite": "Sued",
-   "silhouette_frei": true
+   "silhouette_frei": true,
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "sued"
   },
   "021": {
    "seite": "Sued",
-   "silhouette_frei": true
+   "silhouette_frei": true,
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "sued"
   },
   "022": {
-   "seite": "unbekannt",
+   "seite": "Sued",
    "silhouette_frei": false,
-   "notiz": "Baum vor dem Turm"
+   "notiz": "Baum vor dem Turm",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "sued",
+   "brennweite_px": 2431.5,
+   "brennweite_quelle": "f_gruppe 'Freiburg 2009 IMG_4xxx' (Weitwinkelende): Mittel aus SfM-Nordnetz 018/019 (Register AI), sigma ~5 %; ANNAHME gleiche Zoomstellung"
   },
   "030": {
    "seite": "Sued",
    "silhouette_frei": false,
-   "notiz": "ROI neben dem Turm; Torbogen/Wappen gut sichtbar"
+   "notiz": "ROI neben dem Turm; Torbogen/Wappen gut sichtbar",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "sued",
+   "brennweite_quelle": "KEIN Prior: Uebertragung von 031 (3825 px) verworfen - Ueberschlag am Bild (Spitze y 84, Boden y 2660, Abstand ~38 m) ergibt ~2300 px; gleiche Serie, aber Zoomobjektiv (Register AI). Einzelkalibrierung K-030: 2357 px (RMS 56 px)."
   },
   "031": {
    "seite": "Nord",
@@ -68,16 +87,24 @@
     1920,
     2880
    ],
-   "notiz": "3 Fenster in Reihe unter der Uhr"
+   "notiz": "3 Fenster in Reihe unter der Uhr",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
   },
   "040": {
-   "seite": "unbekannt",
-   "silhouette_frei": false
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
   },
   "041": {
    "seite": "Sued",
    "silhouette_frei": false,
-   "notiz": "Wappen, 2+1 Fenster"
+   "notiz": "Wappen, 2+1 Fenster",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "sued",
+   "brennweite_px": 2793.3,
+   "brennweite_quelle": "f_gruppe 'Freiburg im Breisgau 45/46': gleiche Kamera/Serie wie 040; Wert = SfM-Nordnetz 040 (Register AI), sigma ~5 %"
   },
   "042": {
    "seite": "Sued",
@@ -87,7 +114,9 @@
     0,
     235,
     165
-   ]
+   ],
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "sued"
   },
   "043": {
    "seite": "Sued",
@@ -97,31 +126,38 @@
     0,
     290,
     330
-   ]
+   ],
+   "seite_quelle": "nur Oberbau sichtbar (symmetrisch) - Seite aus dem Foto nicht entscheidbar; nicht im seitengetrennten SfM"
   },
   "044": {
-   "seite": "Sued",
+   "seite": "Nord",
    "silhouette_frei": true,
    "roi": [
     120,
     0,
     260,
     235
-   ]
+   ],
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
   },
   "049": {
-   "seite": "unbekannt",
+   "seite": "Nord",
    "silhouette_frei": true,
    "vollbild": [
     1920,
     2880
    ],
-   "notiz": "blauer Himmel, Nadel/Knauf messbar"
+   "notiz": "blauer Himmel, Nadel/Knauf messbar",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
   },
   "050": {
-   "seite": "unbekannt",
+   "seite": "Sued",
    "silhouette_frei": false,
-   "notiz": "Torbogen von unten"
+   "notiz": "Torbogen von unten",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "sued"
   },
   "000": {
    "silhouette_frei": true,
@@ -129,7 +165,9 @@
    "vollbild": [
     1893,
     2773
-   ]
+   ],
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "sued"
   },
   "060": {
    "seite": "West",
@@ -138,7 +176,19 @@
     4658,
     2844
    ],
-   "notiz": "Schraegluftbild aus NW (2012, CC BY 3.0, Commons 'Aerial View - Freiburg im Breisgau-Innenstadt1'): zeigt die sonst verdeckte WESTWAND ueber die volle Hoehe, alle vier Tuermchen von oben, Kragdach und Dachflaechen. ~15 px/m."
+   "notiz": "Schraegluftbild aus NW (2012, CC BY 3.0, Commons 'Aerial View - Freiburg im Breisgau-Innenstadt1'): zeigt die sonst verdeckte WESTWAND ueber die volle Hoehe, alle vier Tuermchen von oben, Kragdach und Dachflaechen. ~15 px/m.",
+   "seite_quelle": "Schraegluftbild aus NW: zeigt West- und Nordwand; im SfM-Netz NORD",
+   "sfm_netz": "nord",
+   "sfm_ausschnitt": {
+    "xywh": [
+     3400,
+     500,
+     1258,
+     1900
+    ],
+    "zoom": 1.0,
+    "grund": "Turm nur ~300 px breit im 4658-px-Bild; verkleinert auf 2000 px war er 130 px und wurde nicht registriert (Register AH)"
+   }
   },
   "061": {
    "seite": "Ost",
@@ -147,7 +197,155 @@
     3601,
     2757
    ],
-   "notiz": "Blick vom Schlossberg (2016, CC BY-SA 3.0): Ostflanke des Oberbaus ueber den Nachbardaechern. ~18 px/m im oberen Bereich. ShareAlike beachten."
+   "notiz": "Blick vom Schlossberg (Ost), CC BY-SA 3.0 - nur Masse, nicht in den Bausatz",
+   "sfm_ausschnitt": {
+    "xywh": [
+     1900,
+     0,
+     1000,
+     900
+    ],
+    "zoom": 2.0,
+    "grund": "Turm ~190 px breit (Schlossberg, 1 km); Ausschnitt 2x vergroessert"
+   }
+  },
+  "012": {
+   "seite": "Sued",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "sued"
+  },
+  "025": {
+   "seite": "Sued",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "sued"
+  },
+  "056": {
+   "seite": "Sued",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "sued"
+  },
+  "002": {
+   "seite": "Nord",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
+  },
+  "005": {
+   "seite": "Nord",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
+  },
+  "015": {
+   "seite": "Nord",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
+  },
+  "017": {
+   "seite": "Nord",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
+  },
+  "019": {
+   "seite": "Nord",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
+  },
+  "027": {
+   "seite": "Nord",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
+  },
+  "045": {
+   "seite": "Nord",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
+  },
+  "051": {
+   "seite": "Nord",
+   "seite_quelle": "Sichtpruefung Kontaktbogen 2026-11-01 (Register AH): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord; Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued",
+   "sfm_netz": "nord"
+  },
+  "003": {
+   "seite": "unbekannt",
+   "seite_quelle": "nur Oberbau sichtbar (symmetrisch) - Seite aus dem Foto nicht entscheidbar; nicht im seitengetrennten SfM"
+  },
+  "010": {
+   "seite": "unbekannt",
+   "seite_quelle": "nur Oberbau sichtbar (symmetrisch) - Seite aus dem Foto nicht entscheidbar; nicht im seitengetrennten SfM"
+  },
+  "011": {
+   "seite": "unbekannt",
+   "seite_quelle": "nur Oberbau sichtbar (symmetrisch) - Seite aus dem Foto nicht entscheidbar; nicht im seitengetrennten SfM"
+  },
+  "013": {
+   "seite": "unbekannt",
+   "seite_quelle": "nur Oberbau sichtbar (symmetrisch) - Seite aus dem Foto nicht entscheidbar; nicht im seitengetrennten SfM"
+  },
+  "016": {
+   "seite": "unbekannt",
+   "seite_quelle": "nur Oberbau sichtbar (symmetrisch) - Seite aus dem Foto nicht entscheidbar; nicht im seitengetrennten SfM"
+  },
+  "052": {
+   "seite": "unbekannt",
+   "seite_quelle": "nur Oberbau sichtbar (symmetrisch) - Seite aus dem Foto nicht entscheidbar; nicht im seitengetrennten SfM"
+  },
+  "059": {
+   "seite": "unbekannt",
+   "seite_quelle": "nur Oberbau sichtbar (symmetrisch) - Seite aus dem Foto nicht entscheidbar; nicht im seitengetrennten SfM"
+  },
+  "039": {
+   "notiz": "Postkarte, Aufdruck 'Suedseite des Martinstors' zeigt ein Wandbild ueber dem Bogen - widerspricht objekt.json (Martinsbild auf der Stadtseite = Nord)? offen; im SfM nicht registriert"
+  },
+  "062": {
+   "seite": "Sued",
+   "seite_quelle": "Sichtpruefung 2026-11-01 (Register AI): McDonald's/Torbau links bzw. Adlerrelief ueber dem Bogen",
+   "notiz": "Sued: Adlerrelief ueber dem Bogen, Sockel bis Pflaster (Landesarchiv, CC0, klein, kein EXIF)",
+   "sfm_netz": "sued",
+   "lizenz": "CC0"
+  },
+  "063": {
+   "seite": "Sued",
+   "seite_quelle": "Sichtpruefung 2026-11-01 (Register AI): McDonald's/Torbau links bzw. Adlerrelief ueber dem Bogen",
+   "notiz": "Sued: McDonald's links, Adlerrelief; EX-Z40 5,8 mm",
+   "sfm_netz": "sued",
+   "lizenz": "CC BY-SA 3.0"
+  },
+  "064": {
+   "seite": "Sued",
+   "seite_quelle": "Sichtpruefung 2026-11-01 (Register AI): McDonald's/Torbau links bzw. Adlerrelief ueber dem Bogen",
+   "notiz": "Sued: McDonald's links, Adlerrelief; Nikon D3200 18 mm (f35 27)",
+   "sfm_netz": "sued",
+   "lizenz": "CC BY-SA 4.0"
+  },
+  "065": {
+   "seite": "Sued",
+   "seite_quelle": "Sichtpruefung 2026-11-01 (Register AI): McDonald's/Torbau links bzw. Adlerrelief ueber dem Bogen",
+   "notiz": "Sued (von SW): Torbau links, Adlerrelief, Sockel bis Pflaster; Sony ILCE-6000 16 mm (f35 24)",
+   "sfm_netz": "sued",
+   "lizenz": "CC BY-SA 3.0"
+  },
+  "066": {
+   "seite": "Sued",
+   "seite_quelle": "Sichtpruefung 2026-11-01 (Register AI): McDonald's/Torbau links bzw. Adlerrelief ueber dem Bogen",
+   "notiz": "Sued (von SW): Torbau links, Sockel bis Pflaster; Sony ILCE-6000 16 mm (f35 24)",
+   "sfm_netz": "sued",
+   "lizenz": "CC BY-SA 3.0"
+  },
+  "067": {
+   "seite": "Sued",
+   "seite_quelle": "Sichtpruefung 2026-11-01 (Register AI): McDonald's/Torbau links bzw. Adlerrelief ueber dem Bogen",
+   "notiz": "Sued: McDonald's links, Adlerrelief, Tram im Bogen; Canon A650 IS 9,0 mm",
+   "sfm_netz": "sued",
+   "lizenz": "CC BY-SA 4.0"
+  },
+  "008": {
+   "seite": "Sued",
+   "seite_quelle": "Doppeladler-Nahaufnahme (Suedseite)",
+   "sfm_netz": "sued"
+  },
+  "029": {
+   "seite": "Sued",
+   "seite_quelle": "Doppeladler-Nahaufnahme (Suedseite)",
+   "sfm_netz": "sued"
   }
  },
  "zentrierung": "achse",
@@ -165,5 +363,87 @@
   "spitze_hoehe_m": 60.0,
   "quelle": "LGL BW DOP20 RGB 2025, 20 cm/px, Datenlizenz Deutschland Namensnennung 2.0",
   "hinweis": "Versatz noch NICHT bestimmt - erste Messung war unplausibel (2712 m2 'Dachflaeche' bei 3600 m2 Ausschnitt)"
+ },
+ "sfm": {
+  "hinweis": "Seitengetrennte Netze (Register AH): Nord- und Suedfotos getrennt matchen, sonst verklebt COLMAP die beiden gleichen Uhrseiten zu einer Fassade",
+  "sued": [
+   "000",
+   "012",
+   "022",
+   "030",
+   "041",
+   "042",
+   "050",
+   "008",
+   "029",
+   "062",
+   "063",
+   "064",
+   "065",
+   "066",
+   "067",
+   "060",
+   "061"
+  ],
+  "nord": [
+   "001",
+   "002",
+   "005",
+   "006",
+   "014",
+   "015",
+   "017",
+   "018",
+   "019",
+   "027",
+   "031",
+   "040",
+   "044",
+   "045",
+   "049",
+   "051",
+   "060",
+   "061"
+  ],
+  "ausgeschlossen_nur_oberbau": [
+   "003",
+   "010",
+   "011",
+   "013",
+   "016",
+   "043",
+   "052",
+   "059",
+   "026"
+  ],
+  "sued_ausgeschlossen": {
+   "020": "Fernaufnahme 365 m, 13 Punkte",
+   "021": "Fernaufnahme, nicht registriert",
+   "025": "800x600, degenerierte Brennweite",
+   "056": "nur Torbogen, degeneriert"
+  },
+  "stand_2026-11-01": {
+   "nord": "metrisch, mit LoD2-Wandanker (--wand nord), Drift +17,7 mm/m entzerrt fuer Sichtvergleich (Register AO); 060+061 per Picks",
+   "sued": "VERBOGEN (Register AI): 13 Fotos, Reproj 0,72 px, aber Dach/Sockel-Massstab Faktor 1,4; keine Ausgleichung gueltig, Ausgaben geloescht; Ring ueber 060/061 oder Kameramodell k1,k2 offen; 060/061 dort nicht registriert (Netz verbogen); auch hybrid (LightGlue) verbogen",
+   "modell": "Generator auf Rohraster+SfM+LoD2 umgestellt (Register AM): First 55,4, Traufe 37, Tuermchen 44,5, Spitze 70; Pruefstand gruen (40); AO: Glockenstock 6,0 x 6,2, Tuermchen an der Wand, Pruefstand gruen (43)"
+  },
+  "kette": [
+   "tools/sfm_netz.py <seite> --reparieren",
+   "tools/sfm_verzerrung_test.py --spiegel <gegenseite> (Exit 0 noetig)",
+   "tools/sfm_ausrichten.py --name <seite> --wand <seite> --schreiben",
+   "tools/sfm_html_viewer.py",
+   "tools/sfm_registrieren.py --netz <seite> --foto <nr> (Fotos ohne Merkmalsmatches ueber Picks einhaengen)",
+   "tools/wolke_vs_modell.py <seite> --entzerren --eintragen (nach jedem Bau: Fotowolke gegen STL, Befunde automatisch)"
+  ],
+  "regel": "Neuer Matcher/Variante NUR mit --name <variante> in eigene Ordner; Referenznetz sparse_<seite> nie ueberschreiben (Panne AK)"
+ },
+ "nebengebaeude": {
+  "torbau_1901": {
+   "stl_m": "modelle/martinstor/torbau/torbau_lod2_modell.stl",
+   "stl_1_87": "modelle/martinstor/torbau/torbau_lod2_1-87.stl",
+   "info": "modelle/martinstor/torbau/torbau_modell.json",
+   "quelle": "LoD2 DEBW_0010007Tv3w (LGL BW, DL-DE-BY-2.0)",
+   "stand": "Massenmodell, Register AN; Fassade offen"
+  }
  }
 }

@@ -39,6 +39,11 @@ Ergebnisse daraus sind "nur Test" und nicht Teil des Verkaufsprodukts.
 | Datum | Werkzeug | Lizenz | Zweck | Ergebnis ins Produkt? |
 |---|---|---|---|---|
 | 2026-10-31 | VGGT-1B (Gewichte `/media/oem/scan/vggt/gewichte`, Code `/media/oem/scan/vggt/repo`) | CC BY-NC 4.0 | Fototest: Kameralage + Punktwolke aus Commons-Fotos, Maßabgleich mit Modell | nein (nur Test) |
+| 2026-11-01 | **LightGlue** (Code + Gewichte `aliked_lightglue_v0-1_arxiv.pth`, installiert aus `github.com/cvg/LightGlue` in `/media/oem/scan/venv-seg`, Gewichte in `~/.cache/torch/hub/checkpoints/`) | **Apache-2.0** (geprüft: LICENSE-Datei im Paket + README "pre-trained weights of LightGlue and the code ... Apache-2.0") | Merkmalszuordnung Luftbild gegen Strassenfotos (`tools/lg_match.py`, `tools/sfm_netz.py --matcher lightglue/hybrid`), Register AK | ✓ erlaubt; Ergebnis aber verworfen (Netz wird verbogen) |
+| 2026-11-01 | **ALIKED** (Extraktor, Gewichte `aliked-n16.pth` von `github.com/Shiaoming/ALIKED`) | **BSD-3-Clause** (geprüft: Quellkopf `lightglue/aliked.py` + README) | wie oben | ✓ erlaubt (Namensnennung/Lizenztext beilegen) |
+| 2026-11-01 | DISK (Extraktor, in LightGlue enthalten, nicht benutzt) | Apache-2.0 (README, Treffer) | Alternative zu ALIKED | ✓ |
+| 2026-11-01 | **SuperPoint** (in LightGlue enthalten) | **restriktiv (Magic Leap, nicht kommerziell)** laut README | **bewusst NICHT benutzt** - in `tools/lg_match.py` nicht waehlbar | ⚠ nein |
+| 2026-11-01 | kornia, kornia-rs, opencv-python, matplotlib (LightGlue-Abhaengigkeiten) | Apache-2.0 / Apache-2.0 / Apache-2.0 / PSF-basiert (ungeprüft) | Laufzeit | ✓ |
 
 ## Recherche 2026-11-01: Werkzeuge fuer "Foto -> parametrisches Modell" (vor Benutzung selbst nachlesen)
 Quellenstand wie angegeben; "geprueft" heisst: Lizenzdatei/Lizenzseite gelesen, "Treffer" heisst: nur ueber Suchtreffer belegt.

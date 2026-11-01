@@ -1,0 +1,61 @@
+{
+ "foto": "062",
+ "punkte": {},
+ "linien": {
+  "ecke_boden_2": [
+   [
+    161.5,
+    768.0
+   ],
+   [
+    -32.9,
+    1792.0
+   ]
+  ],
+  "ecke_boden_1": [
+   [
+    587.5,
+    768.0
+   ],
+   [
+    642.5,
+    1792.0
+   ]
+  ]
+ },
+ "seite": "Sued",
+ "strassenfoto": true,
+ "linien_protokoll": {
+  "ecke_boden_2": {
+   "vorgabe": [
+    [
+     141.0,
+     768.0
+    ],
+    [
+     96.0,
+     1792.0
+    ]
+   ],
+   "inlier": 142,
+   "zeilen": 513,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  },
+  "ecke_boden_1": {
+   "vorgabe": [
+    [
+     583.0,
+     768.0
+    ],
+    [
+     602.0,
+     1792.0
+    ]
+   ],
+   "inlier": 274,
+   "zeilen": 513,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  }
+ },
+ "notiz": "Landesarchiv-Foto, Weitwinkel stark gekippt; Fusspunkt der SW-Ecke liegt ausserhalb des Bildes (Kante laeuft bei y 1792 auf x -33) -> nur Linien, kein Bodenpunkt"
+}

@@ -1,0 +1,119 @@
+{
+ "foto": "040",
+ "punkte": {
+  "spitze_dokument": [
+   1164.0,
+   267.0
+  ],
+  "gold_NE": [
+   1064.0,
+   501.0
+  ],
+  "gold_NW": [
+   1234.0,
+   544.0
+  ],
+  "tuermchen_NE": [
+   944.0,
+   596.0
+  ],
+  "tuermchen_NW": [
+   1448.0,
+   731.0
+  ],
+  "traufe_N_mitte": [
+   1182,
+   798
+  ]
+ },
+ "linien": {
+  "ecke_boden_0": [
+   [
+    712.5,
+    1200.0
+   ],
+   [
+    510.9,
+    2700.0
+   ]
+  ],
+  "ecke_boden_3": [
+   [
+    1566.4,
+    1200.0
+   ],
+   [
+    1657.2,
+    2250.0
+   ]
+  ]
+ },
+ "seite": "Nord",
+ "strassenfoto": true,
+ "linien_protokoll": {
+  "ecke_boden_0": {
+   "vorgabe": [
+    [
+     712.0,
+     1200.0
+    ],
+    [
+     545.0,
+     2700.0
+    ]
+   ],
+   "inlier": 204,
+   "zeilen": 751,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  },
+  "ecke_boden_3": {
+   "vorgabe": [
+    [
+     1570.0,
+     1200.0
+    ],
+    [
+     1690.0,
+     2250.0
+    ]
+   ],
+   "inlier": 397,
+   "zeilen": 526,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  }
+ },
+ "auto": {
+  "spitzen": [
+   {
+    "u": 950.8,
+    "v": 577.8,
+    "spalte": 944,
+    "art": "spitze"
+   },
+   {
+    "u": 1161.1,
+    "v": 225.7,
+    "spalte": 1162,
+    "art": "spitze"
+   },
+   {
+    "u": 1447.0,
+    "v": 724.0,
+    "spalte": 1447,
+    "art": "spitze_grob"
+   }
+  ],
+  "kugeln": []
+ },
+ "punkte_quelle": "Picks 2026-11-01 aus Zoom-Gitterblatt (2-3x, 25-px-Raster) auf die GOLDKUGELN (Nadelknauf, Dachfirst-Kugeln, Tuermchenknaeufe), +-3 px; Nordseite: links = Ost (NE), rechts = West (NW). Automatik foto_pick auto bestaetigt Nadel/Tuermchen in 014 und 040 (Konturspitzen 5-20 px ueber den Kugelmitten). GROBE Picks (+-5 px) aus 2-3x Zoom: kranz_* = Oberkante des Zinnenbands am Ansatz des Eckpfeilers; traufe_N_mitte = Mitte der sichtbaren Unterkante des Hauptdachs (Nordseite) - nur die HOEHE ist belastbar, die Lage laengs der Traufe nicht.",
+ "verworfen": [
+  {
+   "datum": "2026-11-01",
+   "picks": [
+    "kranz_NE",
+    "kranz_NW"
+   ],
+   "grund": "Triangulation aus 006/014/031/040: Residuen 30-170 px, Sigma 3,7 m - der Zinnenband-Ansatz wurde in den Fotos nicht einheitlich getroffen (verschiedene Zoomstufen, 031 Handpick auf anderem Merkmal). Kranzhoehe bleibt offen."
+  }
+ ]
+}

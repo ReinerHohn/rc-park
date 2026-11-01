@@ -1,0 +1,147 @@
+{
+ "foto": "014",
+ "punkte": {
+  "spitze_dokument": [
+   917.5,
+   56.5
+  ],
+  "gold_NE": [
+   851.5,
+   441.0
+  ],
+  "gold_NW": [
+   986.5,
+   445.0
+  ],
+  "tuermchen_NE": [
+   757.5,
+   709.0
+  ],
+  "tuermchen_NW": [
+   1122.0,
+   734.0
+  ],
+  "traufe_N_mitte": [
+   942,
+   865
+  ],
+  "ecke_boden_0": [
+   704.4,
+   2695.0
+  ]
+ },
+ "linien": {
+  "ecke_boden_0": [
+   [
+    710.2,
+    1300.0
+   ],
+   [
+    705.8,
+    2350.0
+   ]
+  ],
+  "ecke_boden_3": [
+   [
+    1179.5,
+    1300.0
+   ],
+   [
+    1188.7,
+    1950.0
+   ]
+  ]
+ },
+ "seite": "Nord",
+ "strassenfoto": true,
+ "linien_protokoll": {
+  "ecke_boden_0": {
+   "vorgabe": [
+    [
+     720.0,
+     1300.0
+    ],
+    [
+     690.0,
+     2350.0
+    ]
+   ],
+   "inlier": 297,
+   "zeilen": 526,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  },
+  "ecke_boden_3": {
+   "vorgabe": [
+    [
+     1165.0,
+     1300.0
+    ],
+    [
+     1185.0,
+     1950.0
+    ]
+   ],
+   "inlier": 245,
+   "zeilen": 326,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  }
+ },
+ "auto": {
+  "spitzen": [
+   {
+    "u": 754.0,
+    "v": 703.0,
+    "spalte": 754,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 917.0,
+    "v": 49.0,
+    "spalte": 917,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 1122.0,
+    "v": 728.0,
+    "spalte": 1122,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 1378.6,
+    "v": 1565.4,
+    "spalte": 1386,
+    "art": "spitze"
+   },
+   {
+    "u": 1514.0,
+    "v": 1251.0,
+    "spalte": 1514,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 1619.2,
+    "v": 1075.8,
+    "spalte": 1622,
+    "art": "spitze"
+   }
+  ],
+  "kugeln": []
+ },
+ "punkte_quelle": "Picks 2026-11-01 aus Zoom-Gitterblatt (2-3x, 25-px-Raster) auf die GOLDKUGELN (Nadelknauf, Dachfirst-Kugeln, Tuermchenknaeufe), +-3 px; Nordseite: links = Ost (NE), rechts = West (NW). Automatik foto_pick auto bestaetigt Nadel/Tuermchen in 014 und 040 (Konturspitzen 5-20 px ueber den Kugelmitten). GROBE Picks (+-5 px) aus 2-3x Zoom: kranz_* = Oberkante des Zinnenbands am Ansatz des Eckpfeilers; traufe_N_mitte = Mitte der sichtbaren Unterkante des Hauptdachs (Nordseite) - nur die HOEHE ist belastbar, die Lage laengs der Traufe nicht.",
+ "verworfen": [
+  {
+   "datum": "2026-11-01",
+   "picks": [
+    "kranz_NE",
+    "kranz_NW"
+   ],
+   "grund": "Triangulation aus 006/014/031/040: Residuen 30-170 px, Sigma 3,7 m - der Zinnenband-Ansatz wurde in den Fotos nicht einheitlich getroffen (verschiedene Zoomstufen, 031 Handpick auf anderem Merkmal). Kranzhoehe bleibt offen."
+  }
+ ],
+ "punkte_sigma_px": {
+  "ecke_boden_0": 20
+ },
+ "punkte_notiz": {
+  "ecke_boden_0": "ANNAHME Bodenpunkt 2026-11-01: Fusspunkt vom Lkw verdeckt; Pflasterhoehe = Radaufstand des Lkw (y ~2695, aus Uebersicht), Tiefenversatz < 1 px/m bei 82 m, Kante verlaengert; sigma 20 px"
+ }
+}

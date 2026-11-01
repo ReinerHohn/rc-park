@@ -55,12 +55,12 @@
   ],
   "ecke_boden_3": [
    [
-    1412,
-    1853
+    1517.3,
+    1850.0
    ],
    [
-    1425,
-    2603
+    1515.2,
+    2600.0
    ]
   ]
  },
@@ -208,5 +208,22 @@
    }
   ],
   "kugeln": []
+ },
+ "linien_protokoll": {
+  "ecke_boden_3": {
+   "vorgabe": [
+    [
+     1480.0,
+     1850.0
+    ],
+    [
+     1510.0,
+     2600.0
+    ]
+   ],
+   "inlier": 80,
+   "zeilen": 376,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  }
  }
 }

@@ -27,6 +27,9 @@ QUELLEN = {
                         "hinweis": "Vollaufloesung, Massstab aus Modell oder Dokument -> Werte grob, Richtung sicher"},
     "foto_kalibriert": {"sieht": ["absolut_hoehe", "hoehe_flaeche", "fassade", "verhaeltnis", "anzahl", "schlankheit", "duennes_bauteil", "grundriss"], "blind": [],
                         "hinweis": "Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen)"},
+    "sfm_bodenanker":  {"sieht": ["absolut_hoehe", "hoehe_flaeche", "verhaeltnis", "schlankheit", "duennes_bauteil", "grundriss"], "blind": ["anzahl", "fassade"],
+                        "hinweis": "COLMAP-Netz je Fassadenseite (tools/sfm_ausrichten.py), 7 Parameter aus LoD2-Eckkanten in >= 4 Fotos, Hoehenlage aus ANNAHME Strassenkamera "
+                                   "1,7 +- 0,6 m; Massstab +-2-3 %, Hoehe +-0,7 m systematisch; sieht keine Fassadenzaehlung (Punkte, keine Semantik). Register AH"},
     "dokument":        {"sieht": ["absolut_hoehe", "anzahl", "grundriss"],               "blind": ["schlankheit", "duennes_bauteil", "fassade"],
                         "hinweis": "Bauforschung/Denkmalamt/Wikipedia; Bezugshoehe oft unklar (60 vs 65 m)"},
     "modell":          {"sieht": ["druck"], "blind": [], "hinweis": "Druckbarkeit, keine Realitaetsaussage"},
@@ -79,6 +82,34 @@ class Messer:
         """Hoechster Punkt innerhalb eines Grundriss-Rechtecks unterhalb zmax (z. B. Eckturm am Sockel, ohne den Schaft darueber)."""
         v = self.m.vertices; s = (v[:, 0] >= x0) & (v[:, 0] <= x1) & (v[:, 1] >= y0) & (v[:, 1] <= y1) & (v[:, 2] < zmax)
         return float(v[s, 2].max()) if s.any() else 0.0
+    def _im_bereich(self, x0, x1, y0, y1, z0, z1):
+        V = self.m.vertices; return V[(V[:, 0] >= x0) & (V[:, 0] <= x1) & (V[:, 1] >= y0) & (V[:, 1] <= y1) & (V[:, 2] >= z0) & (V[:, 2] <= z1)]
+    def min_im_bereich(self, x0, x1, y0, y1, z0, z1, achse="x", **k):
+        """Kleinster Wert einer Achse unter den Eckpunkten im Quader (z. B. Nordwand-Lage = min x bei |y| < 2,5)."""
+        Q = self._im_bereich(x0, x1, y0, y1, z0, z1); return float(Q[:, "xyz".index(achse)].min()) if len(Q) else float("nan")
+    def mitte_im_bereich(self, x0, x1, y0, y1, z0, z1, achse="y", **k):
+        """Mitte (min+max)/2 einer Achse im Quader - Lage eines Bauteils (z. B. Eckturm y)."""
+        Q = self._im_bereich(x0, x1, y0, y1, z0, z1); a = "xyz".index(achse); return float((Q[:, a].min() + Q[:, a].max()) / 2) if len(Q) else float("nan")
+    def kreis_durchmesser_im_bereich(self, x0, x1, y0, y1, z0, z1, **k):
+        """Durchmesser eines runden Bauteils aus einem Kreisfit (kleinste Quadrate) an die Eckpunkte im Quader - auch wenn nur die
+        freie Vorderseite im Quader liegt (Eckturm vor der Wand)."""
+        Q = self._im_bereich(x0, x1, y0, y1, z0, z1)
+        if len(Q) < 6: return float("nan")
+        X = Q[:, :2]; A = np.c_[2 * X[:, 0], 2 * X[:, 1], np.ones(len(X))]; b = (X ** 2).sum(1); c = np.linalg.lstsq(A, b, rcond=None)[0]
+        return float(2 * np.sqrt(max(c[2] + c[0] ** 2 + c[1] ** 2, 0.0)))
+    def schnitt_ausdehnung(self, z, x0, x1, y0, y1, achse="y", **k):
+        """Ausdehnung der SCHNITTKONTUR bei z (trimesh.section) innerhalb eines xy-Fensters - z. B. Sehne eines runden Eckturms
+        knapp vor der Wandebene; robuster als Eckpunkt-Fits an groben Zylindern."""
+        sec = self.m.section(plane_origin=(0, 0, z), plane_normal=(0, 0, 1))
+        if sec is None: return float("nan")
+        Q = np.asarray(sec.vertices); Q = Q[(Q[:, 0] >= x0) & (Q[:, 0] <= x1) & (Q[:, 1] >= y0) & (Q[:, 1] <= y1)]
+        a = "xyz".index(achse); return float(Q[:, a].max() - Q[:, a].min()) if len(Q) >= 2 else float("nan")
+    def schnitt_mitte(self, z, x0, x1, y0, y1, achse="x", **k):
+        """Mitte (min+max)/2 der Schnittkontur bei z im xy-Fenster - Achse eines Bauteils, auch wenn das Netz dort keine Eckpunkte hat (Kegel)."""
+        sec = self.m.section(plane_origin=(0, 0, z), plane_normal=(0, 0, 1))
+        if sec is None: return float("nan")
+        Q = np.asarray(sec.vertices); Q = Q[(Q[:, 0] >= x0) & (Q[:, 0] <= x1) & (Q[:, 1] >= y0) & (Q[:, 1] <= y1)]
+        a = "xyz".index(achse); return float((Q[:, a].min() + Q[:, a].max()) / 2) if len(Q) >= 2 else float("nan")
     def ausdehnung_im_bereich(self, x0, x1, y0, y1, z0, z1, **k):
         """x-/y-Ausdehnung aller Punkte in einem Quader (z. B. Durchmesser eines Anbaus, der im Schnitt mit dem Rumpf verschmilzt)."""
         v = self.m.vertices; s = (v[:, 0] >= x0) & (v[:, 0] <= x1) & (v[:, 1] >= y0) & (v[:, 1] <= y1) & (v[:, 2] >= z0) & (v[:, 2] <= z1)

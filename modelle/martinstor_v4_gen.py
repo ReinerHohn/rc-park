@@ -40,7 +40,7 @@ def rel(m):  # Relieftiefe in m, mind. MINMM im Druck
     return max(m, MINMM / K)
 
 # ---- Masse (m) ---- (Herleitung: LERNJOURNAL_MARTINSTOR.md, Eintrag 1+2)
-H_TOTAL = 60.0                # DOKUMENTIERT: Bauforschung BW 60 m (1901: 22 -> 60 m; Objektbeschreibung 65 m), en.Wikipedia 60 m; Foto 049 Spitze ~14 m ueber First.
+# H_TOTAL kommt aus masse.json (2026-11-01: 70,0 = SfM Nadelende 69,7; Dokument 60/65 widerspricht, offen). Alte Zeile: 60,0 DOKUMENTIERT Bauforschung BW.
                               # Laser DOM1 54,8 m = hoechste getroffene Flaeche (Nadel 0,1 m unsichtbar) - NICHT die Spitze. Register J3.
                              # 2026-11-01: von 9,3 x 10,3 verkleinert - zwei kalibrierte Kameras (031, 041) massen die Silhouette
                              # bei 29-33,5 m um 0,72 m schmaler, der Laser bei 28-32 m ebenfalls (144/120 gegen 121/97 Zellen).
@@ -206,32 +206,41 @@ beleg("dach", "Kragdach (Kupferschraege) ueber dem Zinnenkranz bis zum Glockenst
 # Das Dach muss BIS AN DIE KRANZKANTE reichen, sonst ist es hinter den Zinnen unsichtbar (Nutzer 2026-11-01: "zwischen den
 # 4 Tuermen ist ein gruenes Daechlein"). Fotos 031/041/043: die gruene Flaeche schaut zwischen den Zinnen hervor und steigt
 # zum Glockenstock an. Beginn bei ZZ-0,45 (Hoehe des Kranzgesimses), damit kein Durchblick-Schlitz entsteht.
-adds.append(frustum(0, 0, ZZ - 0.45, D + 0.7, W + 0.7, ZZ + 2.4, D - 4.0 + 0.4, W - 4.3 + 0.4))
-# ---------- abgesetzter Glockenstock mit Schallarkaden ----------
 GX, GY, GZ0, GZ1 = _M["GX"], _M["GY"], _M["GZ0"], _M["GZ1"]
+adds.append(frustum(0, 0, ZZ - 0.45, D + 0.7, W + 0.7, ZZ + 2.4, D - 4.0 + 0.4, W - 4.3 + 0.4))
+# ---------- abgesetzter Glockenstock mit Schallarkaden (DOM1-Rohraster 2026-11-01: ~6 x 6,6 m, Oberkante ~40 m; Arkaden oben) ----------
 adds.append(box(-GX / 2, GX / 2, -GY / 2, GY / 2, GZ0 - 0.1, GZ1))
 quoins((0, 0), GX / 2, GY / 2, GZ0, GZ1 - 0.2, a=0.75, b=0.42, course=0.6)
 for f in ("+x", "-x", "+y", "-y"):
     hh = (GX / 2, GY / 2)
     beleg(f, "Glockenstock mit 2 Schallarkaden", "Fotos 041/043 (Sued), 031 (Nord)" if f in ("+x", "-x") else "ANNAHME: Ost/West nicht fotografiert", anzahl=2)
+    AZ = GZ0                                                          # Arkadensohle wie bisher (Fotos 031/041/043)
     for u in (-1.0, 1.0):
-        cuts.append(fbox(f, u - 0.5, u + 0.5, GZ0 + 0.4, GZ0 + 1.5, -0.7, 0.5, h=hh))
-        cuts.append(fcyl(f, u, GZ0 + 1.5, 0.5, -0.7, 0.5, h=hh, seg=24))
-    adds.append(fbox(f, -2.1, 2.1, GZ0 + 0.3, GZ0 + 2.35, -0.05, rel(0.1), h=hh))
+        cuts.append(fbox(f, u - 0.5, u + 0.5, AZ + 0.4, AZ + 1.5, -0.7, 0.5, h=hh))
+        cuts.append(fcyl(f, u, AZ + 1.5, 0.5, -0.7, 0.5, h=hh, seg=24))
+    adds.append(fbox(f, -2.1, 2.1, AZ + 0.3, AZ + 2.35, -0.05, rel(0.1), h=hh))
     for u in (-1.0, 1.0):    # Schallarkaden wieder frei schneiden
-        cuts.append(fbox(f, u - 0.5, u + 0.5, GZ0 + 0.4, GZ0 + 1.5, -0.7, 0.5, h=hh))
-        cuts.append(fcyl(f, u, GZ0 + 1.5, 0.5, -0.7, 0.5, h=hh, seg=24))
+        cuts.append(fbox(f, u - 0.5, u + 0.5, AZ + 0.4, AZ + 1.5, -0.7, 0.5, h=hh))
+        cuts.append(fcyl(f, u, AZ + 1.5, 0.5, -0.7, 0.5, h=hh, seg=24))
 
 # ---------- Kupferdach (glatt, oben abgeflacht) ----------
-RZ0, RZ1 = GZ1, GZ1 + _M["DACHHOEHE"]
-adds.append(frustum(0, 0, RZ0, GX + 1.5, GY + 1.5, RZ1, 1.3, 3.0))
+# Zweistufiger Helm (DOM1-Rohraster + SfM + LoD2 2026-11-01, Register AM): Traufe GZ1 = 37 m (LoD2 37,27) mit Basis GX+1,5 x GY+1,5,
+# Knick bei DACH_MITTE_Z (~46 m) mit DACH_MITTE_X/Y (~4 x 4,6), Plattform DACH_OBEN_X/Y (~2,6 x 3,4) bei RZ1 = First 55,4 m.
+RZ0, RZ1 = GZ1, GZ1 + _M["DACHHOEHE"]; RZM, RZM2 = _M["DACH_MITTE_Z"], _M["DACH_MITTE2_Z"]
+MX, MY, M2X, M2Y, OX, OY = _M["DACH_MITTE_X"], _M["DACH_MITTE_Y"], _M["DACH_MITTE2_X"], _M["DACH_MITTE2_Y"], _M["DACH_OBEN_X"], _M["DACH_OBEN_Y"]
+BX, BY = GX + 0.6, GY + 0.6                                                                          # Helmfuss knapp ueber dem Glockenstock (Tuermchenhelme bleiben frei)
+beleg("dach", "Helm dreistufig (steile Flanke 37-41, Knick 45, schlanke Spitze bis 55,4)", "DOM1-Rohraster Zellmaxima 39-42/44-46/46-53/55 m bei 3/2/1/0 m; SfM Goldkugeln 55,1-55,6 m; LoD2 Traufe 37,27", traufe=RZ0, knick1=RZM, knick2=RZM2, first=RZ1)
+adds.append(frustum(0, 0, RZ0, BX, BY, RZM, MX, MY))
+adds.append(frustum(0, 0, RZM - 0.05, MX, MY, RZM2, M2X, M2Y))
+adds.append(frustum(0, 0, RZM2 - 0.05, M2X, M2Y, RZ1, OX, OY))
+KX, KY = _M["KUGEL_X"], _M["KUGEL_Y"]
+adds.append(box(-KX, KX, -0.14, 0.14, RZ1 - 0.35, RZ1 - 0.05)); adds.append(box(-0.14, 0.14, -KY, KY, RZ1 - 0.35, RZ1 - 0.05))   # Kreuzarme fuer die Kugeln
 for sx in (-1, 1):
-    for sy in (-1, 1):
-        adds.append(M.sphere(0.24, 20).translate((sx * 0.65, sy * 1.5, RZ1 + 0.1)))            # Goldkugeln auf den Dachecken
-# Stehfalze im Kupferdach (senkrechte Rillen, wie im Foto)
-_bx, _by = (GX + 1.5) / 2, (GY + 1.5) / 2
-for f in ("+x", "-x"): _falze(RZ0, RZ1, f, _bx, 0.65, _by, 1.5)
-for f in ("+y", "-y"): _falze(RZ0, RZ1, f, _by, 1.5, _bx, 0.65)
+    adds.append(M.sphere(0.24, 20).translate((sx * KX, 0, RZ1 - 0.05)))
+    adds.append(M.sphere(0.24, 20).translate((0, sx * KY, RZ1 - 0.05)))                               # Goldkugeln (SfM: bei +-1,5 / +-1,9 m)
+# Stehfalze im Kupferdach (senkrechte Rillen, wie im Foto) - je Stufe
+for f in ("+x", "-x"): _falze(RZ0, RZM, f, BX / 2, MX / 2, BY / 2, MY / 2); _falze(RZM, RZM2, f, MX / 2, M2X / 2, MY / 2, M2Y / 2)
+for f in ("+y", "-y"): _falze(RZ0, RZM, f, BY / 2, MY / 2, BX / 2, MX / 2); _falze(RZM, RZM2, f, MY / 2, M2Y / 2, MX / 2, M2X / 2)
 
 # ---------- Dachreiter (Laser: Kegel, Fussradius ~1,5 m bei 46 m, Spitze 54,8 m) ----------
 adds.append(M.cylinder(0.6, 1.55, 1.45, 8).translate((0, 0, RZ1 - 0.1)))
@@ -240,7 +249,7 @@ adds.append(M.cylinder(0.6, 1.55, 1.45, 8).translate((0, 0, RZ1 - 0.1)))
 # (Der Laser DOM1 verschmiert die Nadel zu einem breiten Kegel, Fussradius ~1,5 m - Rasterartefakt, kein Befund.)
 # Untergrenzen fuer den Druck: Nadel-Spitze >= 0,08 m Durchmesser (= 0,9 mm bei 1:87), Mast >= 0,24 m.
 beleg("dach", "Dachreiter: Mast, Knauf, Nadel", "Foto 049 Vollbild; Bauforschung BW 60 m", spitze=TOP)
-beleg("dach", "4 Ecktuermchen mit Kegel", "Fotos 041/043/044; Laser DOM1 Spitzen 41 m", anzahl=4)
+beleg("dach", "4 Ecktuermchen mit Kegel", "Fotos 041/043/044; SfM Nordnetz Knaeufe 44,4-44,7 m (DOM1 41 m = getroffene Kegelflaeche)", anzahl=4)
 KZ = RZ1 + _M["KNAUF_ANTEIL"] * (TOP - RZ1)
 adds.append(M.cylinder(KZ - RZ1 - 0.3, 0.13, 0.12, 8).translate((0, 0, RZ1 + 0.4)))          # Mast bis zum Knauf
 adds.append(M.sphere(0.34, 20).translate((0, 0, KZ)))                                          # Knauf
@@ -252,7 +261,7 @@ OR = _M["OR"]                                # Erker-Radius
 for sx in (-1, 1):
     for sy in (-1, 1):
         _h = hxy(T0 + 1.0)
-        c = (sx * (_h[0] - TWs / 2 + 0.4), sy * (_h[1] - TWs / 2 + 0.4))
+        c = (sx * (_h[0] - 0.1), sy * (_h[1] - 0.55))        # Achse 0,1 m innerhalb der N/S-Wand, 0,55 innerhalb der O/W-Wand: Wolke (Register AO) - Erker kragt ueber die Wand aus
         hh = (TWs / 2, TWs / 2)
         adds.append(frustum(c[0], c[1], 28.8, 0.9, 0.9, T0, TWs, TWs))                        # Auskragung (Konsole)
         for z in (29.2, 29.7):
@@ -287,9 +296,11 @@ for sx in (-1, 1):
         adds.append(M.cylinder(0.18, OR + 0.14, OR + 0.14, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.3)))   # Traufgesims
         adds.append(M.cylinder(0.75, OR + 0.16, 0.25, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.48)))      # kleines Pyramidendach ueber dem Erker
         # spitzes Kupferdach, Kugel, Spitze
-        adds.append(M.cylinder(5.3 - 0.7, OR * 0.72, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 3.22)))   # Helm auf dem Erkerdach
-        adds.append(M.sphere(0.25, 20).translate((c[0], c[1], T1 + 7.82)))
-        adds.append(M.cylinder(0.7, 0.05, 0.015, 8).translate((c[0], c[1], T1 + 7.95)))
+        # Helm: schlanker Kegel bis TUERM_SPITZE - 0,5 (SfM: Knaeufe 44,4-44,7 m; Fotos: 2 m unter der Spitze 0,4-1,2 m dick, bei 37 m 0,8-1,9 m)
+        TS = _M["TUERM_SPITZE"]; HK0 = T1 + 3.22; HK1 = TS - 0.5
+        adds.append(M.cylinder(HK1 - HK0, 1.1, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], HK0)))   # Helm auf dem Erkerdach
+        adds.append(M.sphere(0.2, 20).translate((c[0], c[1], HK1 + 0.15)))
+        adds.append(M.cylinder(0.35, 0.05, 0.015, 8).translate((c[0], c[1], HK1 + 0.15)))
 # ============ CSG ============
 cuts = [c for c in cuts if not c.is_empty()]
 body = M.batch_boolean(adds, OpType.Add)

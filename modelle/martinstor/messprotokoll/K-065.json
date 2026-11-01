@@ -1,0 +1,71 @@
+{
+ "foto": "065",
+ "punkte": {
+  "ecke_boden_2": [
+   1359.0,
+   4600.0
+  ]
+ },
+ "linien": {
+  "ecke_boden_2": [
+   [
+    1187.5,
+    1920.0
+   ],
+   [
+    1347.0,
+    4420.0
+   ]
+  ],
+  "ecke_boden_1": [
+   [
+    2013.6,
+    3000.0
+   ],
+   [
+    2091.5,
+    4400.0
+   ]
+  ]
+ },
+ "seite": "Sued",
+ "strassenfoto": true,
+ "linien_protokoll": {
+  "ecke_boden_2": {
+   "vorgabe": [
+    [
+     1230.0,
+     1920.0
+    ],
+    [
+     1365.0,
+     4420.0
+    ]
+   ],
+   "inlier": 185,
+   "zeilen": 1251,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  },
+  "ecke_boden_1": {
+   "vorgabe": [
+    [
+     2000.0,
+     3000.0
+    ],
+    [
+     2080.0,
+     4400.0
+    ]
+   ],
+   "inlier": 106,
+   "zeilen": 701,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  }
+ },
+ "punkte_sigma_px": {
+  "ecke_boden_2": 15
+ },
+ "punkte_notiz": {
+  "ecke_boden_2": "ANNAHME Bodenpunkt 2026-11-01: Fusspunkt hinter Fahrraedern; Pflasterhoehe = Reifenaufstand der an der Wand stehenden Raeder (y 4580-4610), Kante aus linien.ecke_boden_2 dorthin verlaengert; sigma 15 px"
+ }
+}

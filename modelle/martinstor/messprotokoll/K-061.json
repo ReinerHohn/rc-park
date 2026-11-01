@@ -1,0 +1,84 @@
+{
+ "foto": "061",
+ "seite": "Ost",
+ "strassenfoto": false,
+ "brennweite_px": 4669.0,
+ "brennweite_quelle": "EXIF Canon PowerShot A650 IS 9,855 mm / Sensor 1/1.7 Zoll 7,6 mm x 3601 px",
+ "notiz": "Blick vom Schlossberg (Ost, ~1 km, fast Turmhoehe). Picks uebernommen aus V-061 (5x-Zoom): spitze_dokument = Goldknauf der Nadel (wie in K-006/014/040/060), nadel_spitze = Nadelende. Vier Tuermchenspitzen T1..T4 bei y 426: von Osten links = Sued, rechts = Nord; welches der beiden je Paar NE/NW bzw. SE/SW ist, wird per --tausch geprueft (ANNAHME).",
+ "punkte": {
+  "spitze_dokument": [
+   2384,
+   292
+  ],
+  "nadel_spitze": [
+   2387,
+   201
+  ],
+  "tuermchen_SE": [
+   2331,
+   426
+  ],
+  "tuermchen_SW": [
+   2347,
+   426
+  ],
+  "tuermchen_NE": [
+   2417,
+   426
+  ],
+  "tuermchen_NW": [
+   2431,
+   425
+  ],
+  "dachansatz_O": [
+   2380,
+   456
+  ]
+ },
+ "linien": {},
+ "kamera_netz_nord": {
+  "standort": [
+   -272.45,
+   855.33,
+   43.57
+  ],
+  "f_px_original": 4669.0,
+  "fak": 1.0,
+  "off": [
+   0.0,
+   0.0
+  ],
+  "R": [
+   [
+    -0.8879818593244239,
+    -0.41378162519220507,
+    -0.20068129998591416
+   ],
+   [
+    0.10632148666005348,
+    0.2398379741966874,
+    -0.9649733092721398
+   ],
+   [
+    0.4474192206255058,
+    -0.8782155275252916,
+    -0.1689778927207296
+   ]
+  ],
+  "t": [
+   120.73229108587412,
+   -134.1255961132289,
+   880.4246726762356
+  ],
+  "cx": 1800.5,
+  "cy": 1378.5,
+  "k": [],
+  "registriert": "picks",
+  "rms_px": 1.2,
+  "residuen": {
+   "spitze_dokument": 0.3,
+   "tuermchen_NE": 1.4,
+   "tuermchen_NW": 1.4
+  }
+ }
+}

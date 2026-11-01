@@ -638,3 +638,253 @@ Interpolationsfahne - fast haette ich daraus einen Beleg gemacht.
 Diese Verhaeltnisse sind bisher nur **abgelesen**, nicht gemessen. Naechster Schritt ist ein generisches Werkzeug fuer
 massstabsfreie Hoehenverhaeltnisse aus FERNEN Fotos (Gleichhoch-Punkte liefern die eigene Unsicherheit), abgesichert
 ueber `messung_pruefen.pruefe` - erst dann darf daraus ein Sollwert werden.
+
+## AH. SfM-Netz an den Bodenankern ausgerichtet - erst nach Trennung der Fassadenseiten (2026-11-01)
+**Nutzerfrage:** Kanten perspektivisch normalisieren, Kameras mitschaetzen, viele Bilder, ein absoluter Referenzwert -> Kantenbauplan?
+Antwort: ja, das ist Buendelausgleich; das Netz aus AE war die Basis, die Ausrichtung der offene Punkt. Werkzeug: `tools/sfm_ausrichten.py`
+(7 Parameter Modell->SfM aus LoD2-Eckkanten-Picks durch die FESTEN COLMAP-Kameras; Linien liefern Lot/Drehung/Massstab, Punkte oder
+Kamerahoehen-Annahme die Hoehenlage; danach Triangulation aller Picks mit Sigma; `--schreiben` legt `messprotokoll/SFM-AUSRICHTUNG.json`
+und `sfm/sparse_modell` an).
+**Befund 1 - das AE-Netz war unbrauchbar, nicht die Ausrichtung:** alle 36 Kameras lagen im SfM auf EINER Seite. Nordfotos (031/001/040)
+teilen untereinander 400-900 Punkte, mit Suedfotos 5-70: COLMAP hatte beide Uhrseiten zu einer Fassade verklebt (Regel 7: symmetrisches
+Objekt). Ausrichtung mit allen Picks: Kameras bei -15 m, 031-Residuen 1000 px; nur mit Suedpicks: Grundriss passt, Hoehen 1,35-fach gestreckt,
+Tuermchen diagonal. Jede Zahl aus diesem Netz ist wertlos.
+**Befund 2 - Seitenzuordnung per Sichtkriterium** (Kontaktbogen aller 38 Fotos): McDonald's (Torbau WESTLICH) links im Bild = Sued, rechts = Nord;
+Gedenktafel ueber dem Bogen = Nord, Adlerrelief = Sued. **044 war als Sued eingetragen, ist Nord**; 022/050/012/025/056 Sued; 002/005/006/014/015/
+017/018/019/027/040/045/049/051 Nord. 10 Fotos zeigen nur den symmetrischen Oberbau und sind nicht zuordenbar (003 010 011 013 016 043 052 059,
+dazu 026 Muensterblick, 061 Schlossberg). Die Punktstatistik taeuschte bei Fernaufnahmen (020/021 'nord-aehnlich', sind Sued) - Fernfotos sehen
+fast nur den symmetrischen Oberbau. Alles in `objekt.json` (`seite`, `seite_quelle`, `sfm`).
+**Befund 3 - seitengetrennter Neuaufbau** (`modelle/martinstor/sfm/lauf2.py`: Verkleinern MIT EXIF, Brennweiten-Prior aus EXIF; FALLE: Sensorbreite
+gehoert zur LANGEN Bildseite, mit der kurzen waren 000/042 um Faktor 1,4-1,6 falsch und das Suednetz explodierte):
+- NORD: 16 von 17 Fotos, 2562 Punkte, Reproj 0,71 px, Brennweiten EXIF-konsistent (+-8 %). Luftbild 060 nicht registriert.
+- SUED: 9 von 11, 549 Punkte, Kamera 020 mit 13 Punkten, Brennweiten driften (050: 33 Mio px); auch ohne 050/056 unbrauchbar. **Suednetz offen.**
+**Befund 4 - Ausrichtung Nord:** Eckkanten in 005/006/014/040 mit `tools/foto_kante_fit.py` (Gradient + RANSAC, Kontrollbilder `lupe_<foto>/kante_*.jpg`
+ANGESEHEN); 031-Linie ecke_boden_3 lag 70 px daneben auf der weissen Wand (alter Handpick), neu angepasst. Zwei Fallen beim Loesen:
+(a) senkrechte Linien ohne Richtung sind unter der 180-Grad-Drehung um die Querachse unentscheidbar (Turm haengt nach unten, Kameras auf der
+Gegenseite) -> Richtungsresiduum Boden->oben eingebaut; (b) Linien allein lassen die Hoehenlage frei -> ANNAHME Strassenkamera 1,7 +- 0,6 m
+(15 Kameras, soft_l1; 049 als Fernaufnahme ausgenommen). Ergebnis: Massstab +-2,2 %, Drehung +-2-5 Grad, Lage +-0,5-0,65 m; Kamerahoehen
+Median 1,6 m (15 von 16 auf Strassenniveau), Kameras auf der Nordseite in 20-90 m, Grundriss der Wolke y +-5,0 (LoD2 +-5,6), Nordfassade bei
+x -5,3..-7,4 (LoD2 -4,9: ~1 m Tiefenversatz, offen). Residuen der Eckkanten 1-8 px, Ausreisser 031/040 links 40-51 px.
+**Befund 5 - triangulierte Hoehen (Picks der Goldkugeln in 006/014/031/040, Residuen 1-8 px):** Tuermchenknaeufe NE/NW **43,50 / 43,98 +-0,13**,
+Dachfirst-Kugeln **53,68 / 54,20 +-0,23**, Nadelknauf **66,9 +-1,3** (Residuen 8-31 px, Nadel duenn), Hauptdach-Traufe Nordmitte 39,8 +-1,5 (grob).
+Zinnenkranz-Picks verworfen (Residuen bis 170 px, in den Fotos nicht dasselbe Merkmal getroffen). Dazu +-0,7 m Hoehenlage.
+**Deutung (offen gelassen, nicht gemittelt):** DOM1-Gipfel 54,84 = Dachabschluss/Goldkugel-Ebene, nicht Nadel - SfM und Laser stimmen dort
+ueberein; das Modell hat First 46,2 (aus der Laser-Hypsometrie unter der Annahme 'Nadel = 54,8'). Spitze 66,9 passt zur 65-m-Objektbeschreibung
+(Bauforschung BW). Tuermchen 43,7 gegen DOM1 41,2 (getroffene Kegelflaeche): 2,5 m Differenz, plausibel, aber unbelegt. Alles als
+`beobachtungen_offen`; neue Pruefung 'First / Dach-Oberkante - SfM Nordnetz' 53-55 (Quelltyp `sfm_bodenanker`, neu im Pruefstand) **schlaegt
+am Modell fehl** - das ist der geforderte rote Test VOR einer Generatoraenderung. Generator NICHT geaendert.
+**Naechste Schritte:** Suednetz retten (mehr Suedfotos mit Sockel, feste EXIF-Brennweiten statt Prior) und dieselben Hoehen unabhaengig
+bestimmen; Bodenpunkte Nord picken (Hoehenlage ohne Kamera-Annahme); Traufe/Kranz je Foto in der Lupe als dasselbe Merkmal picken; dann First,
+Traufe, Tuermchen, Spitze im Generator gemeinsam mit den Pruefzeilen umstellen. SfM-Dateien: `sfm/sparse_nord/0` (Rohnetz), `sfm/sparse_modell`
+(in Metern), Datenbanken/Bilder auf `/media/oem/scan/martinstor_sfm_2026-11-01/` (Symlinks).
+**AH-Fortsetzung (2026-11-01): Hoehenlage ohne Kamera-Annahme.** Der Bodenpunkt der NE-Ecke ist in ALLEN Nordfotos verdeckt (Menschen,
+Fahrraeder, Lkw); die Wolke enthaelt kein Pflaster (tiefste Punkte 1,5-3 m, Sockelsteine). Deshalb: Pflasterhoehe an der Ecke aus den
+Sohlen/Radaufstandspunkten der direkt an der Wand stehenden Personen, Raeder (005: y 1560) und des Lkw (014: y 2695) abgelesen, Eckkante
+dorthin verlaengert, je Pick eigenes Sigma 8-20 px (`K-<foto>.json` `punkte_sigma_px`, `punkte_notiz` = ANNAHME-Text). Tiefenversatz der
+Personen zur Wand ist bei 35-80 m Abstand < 3 px, also unerheblich. `sfm_ausrichten.py` ohne `--kamerahoehe`: Massstab +-2,2 %, Lage
++-0,4-0,6 m, Bodenpunkt-Residuen 19-61 px (innerhalb 2-3 Sigma). **Freie Kamerahoehen: Median 1,9 m, 15 von 16 auf Strassenniveau** -
+die vorherige Annahme ist damit unabhaengig bestaetigt. Hoehen: Tuermchenknaeufe 44,34 / 44,80 (+-0,13), Dachfirst-Kugeln **54,53 / 55,05**
+(+-0,24), Nadelknauf **67,7 +-1,3**, Traufe Nordmitte 40,6 +-1,5 (grob). Gegen die Annahme-Variante +0,4-0,8 m = realistische
+Hoehenlage-Unsicherheit. Pruefung 'First - SfM Nordnetz' auf 53,5-56 gesetzt (Historie), bleibt am Modell (46,7) ROT. Generator unveraendert.
+
+## AI. Suednetz retten - gescheitert, aber mit messbarem Grund; sechs Lehren (2026-11-01)
+**Auftrag:** Suednetz mit mehr Sockelfotos retten, generalisiert, und daraus lernen.
+**Getan:** (1) Commons neu geerntet (`tools/commons_harvest.py`, jetzt mit Volltext, Kategorie, `--skip-manifest`, 429-Wartezeit, EXIF aus der
+API): 130 neue Dateien, davon 6 brauchbare Suedfotos mit Sockel (062-067, Lizenzen CC0/BY-SA; 4 mit Brennweite). Rest: Demos, Postkarten,
+Nordseite, Luftbilder ohne Sockel. (2) `tools/sfm_netz.py` (generisch): Netz je Seite aus `objekt.json["sfm"][seite]`, EXIF-Prior aus
+Datei ODER Manifest ODER objekt.json, Brennweitenschranken 0,4-3,5 x Diagonale, EXIF-Brennweiten als konstante Intrinsics im Buendel,
+Qualitaetsschranken je Kamera (f/Prior, f/Diagonale, Punktzahl), Reparaturschleife (degenerierte Kamera austragen + nachgleichen statt
+Neuaufbau - der Neuaufbau wurde beim Suednetz jede Runde schlechter). Ergebnis: 13 Kameras, 1379-1566 Punkte, Reproj 0,72 px, 9 Kameras
+mit fester EXIF-Brennweite. (3) Eckkanten in 062/065/066/067 mit `foto_kante_fit.py`, Bodenpunkte hinter Fahrraedern (sigma 15-20 px).
+(4) `tools/sfm_bundle_anker.py`: Anker IN den Buendelausgleich (Kameras, Punkte, Brennweiten gemeinsam gegen LoD2-Kanten/Bodenpunkte;
+6335 Spurpunkte + 21 Ankerbeobachtungen, duenne Jacobi-Matrix, 35 s). (5) `tools/sfm_verzerrung_test.py`: Umeyama-Fit auf Dach-, Boden-
+und alle Referenzpunkte getrennt.
+**Befund (jede Stufe gleich):** Nachtraegliche Ausrichtung: Residuen 100-800 px, Massstab +-20-30 %, Fassade liegt quer zum LoD2-Grundriss.
+Anker im Buendel: Ankerkosten bleiben 215 (Start 208) - die 12670 Spurresiduen halten das Netz starr in seiner falschen Form.
+Reiner Verhaeltnistest ohne Ausrichtung: Dachpicks untereinander konsistent (0-4 px), aber Tuermchenabstand/Eckabstand 1,19 statt 0,82
+und Tuermchenhoehe/Eckabstand 5,6 statt 3,9 -> **Dach und Sockel haben verschiedene Massstaebe (Faktor 1,4)**. Umeyama auf die vier
+(aus Nord gespiegelten) Dachpunkte: Dach passt auf 0,6-1,4 m, Bodenecken landen bei z +10,5 statt -0,3, Kameras bei 7-10 m Hoehe.
+**Das Suednetz ist projektiv verbogen (unten ~20 % gestaucht); keine Transformation und kein Ankerzwang repariert das.**
+**Lehren (generalisiert):**
+1. **Einseitig + fast eben + unbekannte Brennweiten = verbogenes Netz.** Alle Suedkameras stehen auf der Strassenachse vor EINER Fassadenebene;
+   Brennweite und Tiefe sind dann fast austauschbar, COLMAP waehlt irgendeine Kombination (030: 1839 px statt ~2300). Das Nordnetz hatte
+   16 Kameras von 22-177 m mit Fernaufnahmen (049) - deshalb metrisch. **Vor jeder Ausrichtung `sfm_verzerrung_test.py` laufen lassen**;
+   ein gutes Reprojektionsmass (0,7 px) sagt NICHTS ueber Metrik.
+2. **Feste Brennweiten allein reichen nicht:** mit 9 von 13 EXIF-festen Kameras bleibt die Stauchung. Verbleibende Hebel: Verzeichnung
+   (SIMPLE_RADIAL, ein k, Bodenpunkte am aeussersten Bildrand stark gekippter Weitwinkel), Kameras ausserhalb der Achse (Ost/West,
+   Schraegluftbild), oder Ring um das Bauwerk (Nord-Sued-Verbindung ueber 060/061 - beide bisher nicht registriert).
+3. **Gleiche Serie heisst NICHT gleiche Brennweite.** Uebertragung 031 -> 030 (3825 px) war falsch: Ueberschlag am Bild (Spitze y 84, Boden
+   y 2660, 38 m) ergibt ~2300 px; Zoomobjektiv. Der alte `f_gruppe serie2025` in K-031/foto_bundle war dieselbe Falle (4527 px fuer beide).
+   Prior nur mit Plausibilitaetsrechnung am Bild; 041 <- 040 (2793 vs 2726 Einzelkalibrierung) und 022 <- 018/019 (2431 vs 2281) bestanden.
+4. **Bodenpunkte aus kollinearen Kameras sind tiefen-blind:** Residuen 20-140 px bei paarweiser Triangulation, waehrend Dachpunkte 0-4 px
+   haben. Linien geben Lage/Richtung, der Bodenpunkt nur die Hoehe laengs der Linie - so wird er im Ausrichter auch genutzt.
+5. **Commons-Ernte:** Geosearch braucht `gsprimary=all` (sonst 0 Treffer), verkleinerte Downloads verlieren EXIF (-> `iiprop=metadata`),
+   429-Ratenlimit nach ~100 Dateien (Wartezeit, leere Dateien loeschen). Auf 130 Treffer kamen 6 brauchbare Sockelfotos der Suedseite.
+6. **Werkzeugkette ist jetzt generisch:** `sfm_netz.py` (bauen + pruefen + reparieren) -> `sfm_verzerrung_test.py` (metrisch?) ->
+   `sfm_ausrichten.py` (7 Parameter) oder `sfm_bundle_anker.py` (Anker im Buendel) -> `sfm_html_viewer.py` (3D-Seite).
+**Stand:** Nord metrisch (Register AH), Sued offen. Masstabelle: Beobachtung 'Suednetz verbogen' mit naechstem Schritt. Generator unveraendert.
+**Naechster Schritt (konkret):** (a) 060 (Schraegluftbild NW) und 061 (Schlossberg, Ostflanke) mit groesserer Aufloesung/anderem Matcher in
+Nord UND Sued registrieren -> ein Ring; (b) Suednetz mit Kameramodell RADIAL (k1,k2) oder OPENCV neu bauen und Verzerrungstest wiederholen;
+(c) falls beides scheitert: Suedhoehen nicht aus SfM, sondern aus `foto_verhaeltnis.py` an 049/014/000 gegen die Nordhoehen pruefen.
+
+## AJ. 060 und 061 registrieren (2026-11-01)
+**Auftrag:** Schraegluftbild 060 (NW) und Schlossbergblick 061 (O) in beide Netze registrieren.
+**Merkmalsweg gescheitert, messbar:** Mit Turm-Ausschnitten in voller Aufloesung (`objekt.json fotos[nr].sfm_ausschnitt`, Hauptpunkt
+mitverschoben, in `sfm_netz.py`/`sfm_ausrichten.py` eingebaut) hat SIFT 9300 (060) bzw. 20900 (061) Merkmale, aber **0 geometrisch
+verifizierte Matches** zu irgendeinem Strassenfoto in beiden Datenbanken (Rohmatches < 30). Blickwinkel > 45 Grad plus Massstabssprung.
+Der generische Ausweg (LightGlue + ALIKED, Apache-Lizenz, Register AF) konnte nicht installiert werden - Berechtigung fuer externen Code
+verweigert; braucht den Nutzer.
+**Pick-Weg (`tools/sfm_registrieren.py`, neu):** Kamera aus Handpicks gegen 3D-Kontrolle des metrischen Netzes (triangulierte
+Dachpunkte aus SFM-AUSRICHTUNG-nord.json + LoD2-Eckkanten), Brennweite fest aus EXIF, Hauptpunkt Bildmitte; P3P/EPnP-Start, Verfeinerung
+mit Punkt- und Linienresiduen; danach Triangulation aller Picks, die in >= 2 Kameras liegen.
+- **060** (f 19210 px = 92 mm auf 23,6 mm x 4928 px Vollformatbreite; f35=138 auf die BESCHNITTENE Breite gerechnet waere 7 % zu klein):
+  Standort (-860, -720, +512 m), 1120 m entfernt; Residuen: drei Eckkanten-Linien 1 px, Tuermchen NW/NE 6/2 px, Nadelknauf 34 px;
+  **RMS 14 px = 0,49 % der Bildhoehe** (Grenze 0,5 %). Vorher (Einzelkalibrierung K-060 gegen Modellanker) 38,6 px.
+- **061** (f 4669 px): nur drei Kontrollpunkte (Knauf, Tuermchen NE/NW) -> P3P exakt, Hoehe unbestimmt (Loesungen 0 bis -24 m).
+  Zusatzbedingung aus dem Bild selbst: alle vier Tuermchenspitzen liegen in DERSELBEN Bildzeile (426/426/426/425) -> Kamera auf
+  Tuermchenhoehe (Zeilenversatz 0,1 px je m Hoehendifferenz bei 10 m Tiefenunterschied und 700 m) -> `--hoehe 44 8`.
+  Ergebnis Standort (-243, +817, +43,5 m) = Nordost, 850 m = Schlossberg; die vertauschte Tuermchenzuordnung legt die Kamera nach
+  Suedost (+180, +795) und ist damit geografisch ausgeschlossen. RMS 1 px, aber 6 Unbekannte gegen 7 Gleichungen - die Pose ist so gut
+  wie Picks und Brennweite, nicht besser.
+**Suednetz:** Registrierung dort sinnlos, solange es verbogen ist (Register AI) - nicht gemacht.
+**Ertrag:** Nordknauf/Tuermchen NE/NW nun aus 6 Kameras (Residuen 0-4 px, Knauf 68,6 +-0,7). **Erster Punkt der Suedseite im metrischen
+Nordsystem:** tuermchen_SW aus 060+061 = (7,5, -2,7, 42,6) +-2,6 m, Residuen 27/9 px - schwach (beide Kameras 850-1120 m entfernt, in 061
+sind SE/SW tiefenbedingt kaum trennbar; Zuordnung T2=SW ist ANNAHME). Als Beobachtung notiert, kein Sollwert.
+**Lehren:** (1) Ausschnitte heilen den Massstabssprung, nicht den Blickwinkel - fuer Luft-gegen-Strasse braucht es einen gelernten Matcher
+oder Picks. (2) Zeilengleichheit gleich hoher Punkte ist eine Hoehenmessung der Kamera. (3) f35 immer auf die unbeschnittene Sensorbreite
+beziehen. (4) Pick-Registrierung ist nur so gut wie die 3D-Kontrolle; sie verlaengert ein metrisches Netz, kann aber keines ersetzen.
+**Naechster Schritt:** LightGlue/ALIKED (mit Nutzerfreigabe) fuer 060/061 gegen Nord UND Sued -> echter Ring; bis dahin fuer die Suedseite
+Picks der Suedtuermchen/First-Kugeln in 060 (sichtbar: Tuermchen SW, Dach) und weiteren Suedfotos mit EXIF (065-067) ueber LoD2-Kanten
+in das Nordsystem registrieren (`sfm_registrieren.py --netz nord --foto 065 ...`).
+
+## AK. LightGlue/ALIKED installiert und getestet: verbindet die Luftbilder, verbiegt aber das Netz (2026-11-01)
+**Freigabe des Nutzers:** "alles ist erlaubt, du musst nur dokumentieren" -> Lizenzen in `modelle/LIZENZ_WERKZEUGE.md` (LightGlue Apache-2.0
+geprueft, ALIKED BSD-3 geprueft, DISK Apache, **SuperPoint restriktiv und bewusst nicht waehlbar**; Gewichte in `~/.cache/torch/hub/checkpoints/`).
+Installation: `pip install git+https://github.com/cvg/LightGlue.git` in venv-seg (nicht auf PyPI). Werkzeuge: `tools/lg_match.py` (ALIKED +
+LightGlue, npz), `tools/sfm_netz.py --matcher lightglue|hybrid [--lg-fotos ...]` (schreibt Merkmale/Matches roh in die COLMAP-DB, COLMAP
+verifiziert; hybrid haengt ALIKED-Merkmale an die SIFT-Merkmale an und vereinigt die Matches je Paar).
+**Ergebnis Nord (18 Fotos inkl. 060/061-Ausschnitte):**
+| Variante | registriert | Punkte | Reproj | Tuermchen NE/NW (Residuen) | Verzerrungstest |
+|---|---|---|---|---|---|
+| SIFT | 16/18 (060, 061 nicht) | 2606 | 0,72 px | 44,39 / 44,72 (1-3 px) | **metrisch** (ausgelassene Bodenecke 0,55 m) |
+| nur LightGlue | 18/18 | 6316 | 1,05 px | 45,96 / 46,01 (4-52 px), Gold 67,6 | - |
+| hybrid SIFT+LightGlue | 18/18 | 9384 | 0,96 px | 45,97 / 46,70 (4-14 px), Gold 61 | **VERBOGEN** (Bodenecke 14,9 m daneben) |
+061 landet per Merkmalen bei (-443, -142) = Nordwest - geografisch falsch (Schlossberg ist Nordost; Pick-Registrierung: (-243, +817)).
+**Sued hybrid:** 17/17 registriert, 4915 Punkte, aber weiterhin VERBOGEN (Bodenecken 8-12 m daneben), 060 bei 25 km. Kein Ring.
+**Deutung:** LightGlue liefert fuer ALLE 153 Paare >= 15 Matches, 142-144 davon bestehen COLMAPs Verifikation - auch die falschen
+(symmetrische Fassaden, Fenster-/Quaderraster, Oberleitungen; bei fast ebenen Szenen ist eine Homographie-konsistente Fehlzuordnung
+nicht von einer richtigen zu unterscheiden). Diese Matches ziehen die Buendelausgleichung krumm. **SIFT ist hier nicht schlechter, sondern
+vorsichtiger.** Fuer 060/061 bleibt die Pick-Registrierung (Register AJ) das belastbare Verfahren.
+**Panne, dokumentiert:** Die Sicherung des SIFT-Nordnetzes (`sparse_nord_sift_backup`) wurde erst NACH dem ersten LightGlue-Lauf angelegt
+und enthielt deshalb das LightGlue-Netz; `--schreiben` hatte zudem SFM-AUSRICHTUNG-nord.json ueberschrieben. Wiederhergestellt durch
+Neuaufbau (SIFT ist reproduzierbar: 2606 Punkte, Tuermchen 44,39/44,72 vs vorher 44,34/44,80). **Regel ab jetzt: vor jedem Lauf mit
+neuem Matcher `--name <variante>` und eigenes `sparse_<seite>_<variante>` - nie das Referenznetz ueberschreiben.** Hybrid-Netze liegen
+als `sparse_nord_hybrid`, `sparse_sued_hybrid`, `netz_*_hybrid.json`, `SFM-AUSRICHTUNG-nord_lightglue.json`.
+**Stand Nord (SIFT, neu, Register-Zahlen):** Tuermchen 44,39 / 44,72 +-0,14, Dachfirst-Kugeln 55,14 / 55,61 +-0,18, Nadelknauf 69,7 +-1,4
+(Residuen 4-30 px, Nadel duenn), Massstab +-2,2 %, Kamerahoehen Median 3,0 m; 060 per Picks RMS 8 px (0,26 %).
+**Lehren:** (1) Gelernter Matcher != besseres Netz; jede Matcher-Aenderung durch `sfm_verzerrung_test.py` abnehmen. (2) Luftbild-Registrierung
+ueber Picks + bekannte 3D-Punkte ist bei symmetrischen Bauwerken sicherer als Merkmale. (3) Fuer den Ring Nord-Sued braucht es Fotos der
+Ost-/Westseite vom Boden oder ein Verfahren, das falsche symmetrische Matches ausschliesst (z. B. Matches nur innerhalb per Seite
+maskierter Bildbereiche). (4) Backups VOR dem Lauf, mit Variantennamen.
+
+## AL. Dichte Fotowolke Nord fuer den Sichtvergleich (2026-11-01)
+`tools/sfm_dicht.py nord`: COLMAP undistort -> PatchMatch (CUDA, 1600 px, geometrisch konsistent) -> Fusion -> Transformation ins Modellsystem
+(aus SFM-AUSRICHTUNG-nord.json) -> Zylinder r 25 m: **101 098 farbige Punkte, z 0,9..66,8 m** (`sfm/dicht_nord_modell.npy` + `_farben.npy`,
+Fallen: `undistort_images` nimmt `UndistortCameraOptions`, `stereo_fusion(output, workspace, output_type="ply")`).
+Viewer `tools/sfm_html_viewer.py --dicht ...` bettet sie binaer (base64 float32/uint8, max 400 000 Punkte) ein; Netzpunkte und
+dichte Wolke getrennt schaltbar, STL deckend, Punktgroesse regelbar. Sichtblatt `sfm/dicht_nord_sicht.jpg` (Nordansicht + Draufsicht mit
+LoD2-Rechteck und den gemessenen Hoehen 44,4 / 55,4 / 69,7). Zweck: Sichtvergleich Foto gegen Modell; KEIN Massnachweis
+(Pruefungen bleiben die der Masstabelle). Lizenz: COLMAP BSD; Fotos Messvorlage.
+
+## AM. Dach, Traufe, Tuermchen, Spitze aus Rohraster + SfM umgestellt - und die Lehre ueber Fast-Fehler (2026-11-01)
+**Ausloeser:** Nutzer sah im Viewer (dichte Fotowolke gegen deckendes STL) den grossen Unterschied und forderte die Korrektur.
+**Beinahe-Fehler, dokumentiert:** Ich wollte zuerst aus dem SfM-Nordnetz allein umstellen. Dann fiel der Widerspruch zur Laserflaeche
+(DOM1: 43 Zellen > 40 m; mit Glockenstock bis 43,5 m waeren es > 100) auf, und mein `sfm_verzerrung_test.py` fuer Nord war ZIRKULAER
+(eigene Dachpunkte als Referenz). Entscheidend war dann das **rohe DOM1-Raster** (19x19 Zellen um den Peak gedruckt, `masspruefung_daten`-
+Fenster): drei Zellen 53-55 m (eine Dachflaeche, keine Nadel), Schnitt vom Peak nach aussen 55 / 50 / 44-46 / 39-42 / 32-35 m bei
+0/1/2/3/4 m. Dazu LoD2 Traufe 37,27 und SfM-Goldkugeln 55,1-55,6 (Residuen 2-4 px). Danach ein zweiter Beinahe-Fehler: Traufe 40 m und
+Glockenstock 6 x 6,6 m aus den 3-m-Zellen abgeleitet - das waren aber Zellmaxima der Dachflanke; Laserflaeche sprang auf 74 Zellen.
+Korrektur: Traufe 37,0 (LoD2), Glockenstock wie zuvor (DOM1 sieht ihn unter dem Dach nicht).
+**Neue Masse (masse.json mit Historie):** H_TOTAL 60 -> 70 (SfM Nadelende 69,7 +-1,4; Dokument 60/65 bleibt als offene Beobachtung),
+Traufe GZ1 35,5 -> 37,0, DACHHOEHE 10,7 -> 18,4 (First 46,2 -> 55,4), Helm dreistufig (Fuss GX+0,6 x GY+0,6 = 5,6 x 6,3; 41 m: 4,0 x 4,6;
+45 m: 3,0 x 3,6; oben 1,6 x 2,0), Goldkugeln auf Kreuzarmen bei +-1,5 / +-1,9 (SfM), Tuermchenspitze 41,35 -> 44,5 (Helmkegel 8,1 m,
+Radius 1,1), KNAUF_ANTEIL 0,22 -> 0,25 (Knauf 59 m). Schallarkaden unveraendert.
+**Pruefstand gruen (40 Pruefungen), geaenderte Sollwerte mit Historie:** Tuermchen-Spitze 40,7-41,8 -> 43,8-45,2 (sfm), Dachansatz
+34,5-36,5 -> 36-38,5 (lod2 + Rohraster; Zwischenwert 39-42,5 verworfen), First 46,6-48,7 -> 54,3-56,5 (sfm + Rohraster), Gesamthoehe
+59,5-66 -> 68-72 (sfm; Dokument widerspricht), Dachflanke 0,4-0,56 -> 0,15-0,35 (Rohraster/Wolke; K-030 war unbrauchbar),
+Laserflaeche > 40 m Obergrenze 48 -> 52 (Modellraster zaehlt die Tuermchenhelme, DOM1 nicht). Messfenster: Nadel 50/52 -> 62/66 m,
+first 44-60, dachansatz 34-48 (Schwelle 6,2 ab), knauf 56-66, helm 37 -> 37,5. Sichtblatt `audit/seiten.jpg` angesehen.
+**Noch offen / nicht gemittelt:** Gesamthoehe (SfM 69,7 vs Dokument 60/65), 061-Verhaeltnis 'dachansatz' 42,1 (vermutlich Oberkante
+Schallarkaden), Dachabschluss-Form oben (DOM1 1-m-Zellen 46-53 schliessen eine breite Plattform aus; Kugeln auf Armen ist ANNAHME),
+Suedseite weiterhin ohne eigenes Mass.
+**Lehren:**
+1. **Ein Netz ist erst metrisch, wenn eine FREMDE Quelle oben und unten passt.** Selbstreferenz (eigene Triangulation als Referenz) ist kein
+   Test. `sfm_verzerrung_test.py` braucht Referenzen aus Laser/LoD2 (Kranz 31,5, Traufe 37,3, DOM1-Max 54,8), nie aus demselben Netz.
+2. **Rohdaten vor Kennzahlen.** Die Hypsometrie-Summe (14 %) hatte ein 9 m zu tiefes Dach als "scharfes Minimum" verkauft; 19 Zellen auf
+   dem Bildschirm haben es in einer Minute entschieden. Fuer jede Hoehenfrage zuerst `DOM1-Schnitt durch den Peak` ansehen.
+3. **Zellmaxima sind keine Kanten.** Eine 1-m-Zelle 3 m vom Peak mit 40-42 m sagt: irgendwo in der Zelle ist die Flaeche so hoch - nicht,
+   dass dort eine Wand steht. Daraus Traufe 40 zu machen war falsch; die Flaechenkurve (Zellen > Schwelle) hat es sofort widerlegt.
+4. **Ein roter Test allein reicht nicht fuer eine Generatoraenderung**, wenn er aus EINER Quelle stammt, die fuer das Merkmal selbst
+   fragwuerdig ist. Zwei unabhaengige Quellen (hier Rohraster + SfM + LoD2) oder gar nicht.
+5. **Nutzersicht war richtig:** "man sieht durch die Farbwolke den grossen Unterschied" - die Wolke war vertikal nicht gestreckt (Kranz
+   32,3 gegen Laser 31-32), der Fehler lag im Modell. Der Sichtvergleich Fotowolke/deckendes STL gehoert nach jedem Bau in den Viewer.
+
+## AN. Generisch statt Handmessung: Fotowolke gegen Modell, Eckturm NW, Torbau aus LoD2 (2026-11-01)
+**Nutzer:** "lerne generalisiert daraus, ich will nicht von Hand herumfummeln"; Sichtbefunde: Eckturm ('Tuermchen') kleiner als im
+Modell; Nebengebaeude mit McDonald's-Schriftzug fehlt.
+**Werkzeug `tools/wolke_vs_modell.py <objekt> <seite> [--eintragen]`:** Tiefenkarten der Fassade aus dichter Wolke (vorderster Punkt je
+Zelle) und Modell (Strahlen von aussen, trimesh), Differenzkarte, Silhouette (nur Wolke / nur Modell mit Wolkenumgebung), zusammenhaengende
+Flaechen >= 1 m2 als Befunde, Bild `audit/wolke_vs_modell_<seite>.png`, JSON, automatische Beobachtungen (auto_id, idempotent).
+Versatz quer zur Fassade wird am Schaft (12-26 m) bestimmt und abgezogen, zusaetzlich je 4-m-Band gemessen: **Nord 0,85-1,4 m je nach
+Hoehe (Spreizung > 0,3) -> 'TIEFE UNSICHER'**: einseitige Netze sind in der Tiefe weich (Register AI/AM); Tiefenbefunde sind nur Hinweise,
+Silhouetten- und Hoehenbefunde gueltig. Erster Lauf Nord: 24 Befunde, darunter (gueltig, Silhouette/Lage) **fehlt_im_modell 32,6 m2 bei
+y -9..-5,5, z 6-21 = Torbau**, **modell_weiter_vorn -1,44 m bei y -6,8..-4,8, z 3,5-14 = Eckturm zu gross/zu weit vorn**; (unsicher, Tiefe)
+Dach/Glockenstock +1,1 m, unterer Schaft -0,6/+1,1.
+**Eckturm NW:** Kreisfit an die Wolkenfront (z 6-12, 6077 Punkte): Mitte x -6,00 / y -3,70, r 1,26; Tiefenversatz des Bands ~1,3 m ->
+Vorsprung vor der LoD2-Nordwand ~1,05 m. Modell hatte Mitte (-5,7, -5,45), r 1,15 = Vorsprung 1,95, an der Ecke. Zwei neue Pruefungen
+(neue Messtypen `min_im_bereich`, `mitte_im_bereich` im Pruefstand): 'Vorsprung vor der Nordwand' 0,7-1,4 und 'Mitte y' -4,1..-3,3 -
+beide am alten Modell ROT (nan / -4,85), dann masse.json EX -DB/2+0,2, EY -3,7, ER 1,2; Messfenster der alten Eckturm-Pruefungen auf die
+neue Lage verschoben (Sollwerte unveraendert). Hoehe: Wolke-Vorsprung endet bei 13-14 m = Modell 14,0 (keine Aenderung); der Nutzer-Eindruck
+'hoeher' kam von der NW-Eckquaderkette der Wolke; Korrektur des Nutzers ('kleiner') durch Messung bestaetigt.
+**Torbau (1901, McDonald's):** LoD2 `DEBW_0010007Tv3w` (Kachel 414_5316, 3 Teile, First 24,4 m, Grundriss 23 x 17 m) mit
+`tools/lod2_gebaeude.py --center 414110,5316244` extrahiert, ueber anker3d (mitte_utm, xhat/yhat, Gelaende 277,93) ins Modellsystem
+gebracht: `modelle/martinstor/torbau/torbau_lod2_modell.stl` (m) und `torbau_lod2_1-87.stl` (mm), `torbau_modell.json` (Quelle, Lizenz
+DL-DE-BY-2.0). Lage x -6,0..11,5, y -25,6..-5,5, z bis 24,1 - schliesst westlich an den Turm an (Foto 060: Westwand teils verdeckt).
+Massenmodell; Fassade/Arkaden/Schriftzug fehlen (Fotos 002/003/089 der Ernte zeigen die Front). Im Viewer als zweites STL (`--stl2`).
+**Lehren:** (1) Der Sichtvergleich ist jetzt ein Werkzeug mit Zahlen und Bild - jede Nutzerbeobachtung wird als Flaeche mit Masse gefunden,
+bevor jemand misst. (2) Tiefe einer einseitigen Wolke ist nur bis +-0,5 m und hoehenabhaengig verlaesslich; Lage in der Fassadenebene und
+Hoehen sind es. Das Werkzeug sagt das selbst (Spreizung). (3) Messfenster von Pruefungen muessen mit dem Bauteil wandern - sonst messen
+sie Nachbarn (Eckturm: Wandquader, 10,6 m 'Spitze'). (4) Nebengebaeude kommen zuerst als LoD2-Massenmodell (amtlich, 10 Minuten), Details
+spaeter aus Fotos.
+
+## AO. Wandebenen-Anker, Tiefendrift, Tuermchen an die Wand, Glockenstock 6 m (2026-11-01)
+**Nutzer:** "Wo soll die Verbesserung sein? Die echte Punktwolke weicht immer noch ab" + "lerne generell".
+**Diagnose:** Der sichtbare Unterschied war zu ~1 m ein Versatz der ganzen Wolke quer zur Fassade (Ausrichtungstiefe), nicht das Modell.
+Die Eckkanten-Linien legen Lot, Drehung, Massstab und Seitenlage fest, aber nicht die Tiefe.
+**Werkzeug:** `sfm_ausrichten.py --wand nord`: zweiter Loesungsdurchlauf mit der LoD2-Wandebene (x der Bodenecken) als Anker fuer die
+Netzpunkte des Schafts (|y| < 2,5, z 12-26, vordere Schicht). Ergebnis Nord: Schaftpunkte von -0,63 m auf -0,03 m (Streuung 0,27),
+Massstab +-1,9 %, Drehung +-0,9 Grad, Lage +-0,2-0,35 m. 060/061 neu per Picks (RMS 10 / 1 px), dichte Wolke neu transformiert.
+**Restdrift (einseitiges Netz):** `wolke_vs_modell.py` misst die Wandlage je 4-m-Band: +0,23 (6-10) ... +0,75 (30-34) -> linear +17,7 mm
+je m Hoehe (1,0 Grad), Rest 0,16 m; `--entzerren` zieht die Gerade ab und schreibt `sfm/dicht_<seite>_entzerrt.npy` (NUR Sichtvergleich).
+Oberhalb der Anker wird die Drift steiler (Glockenstock/Dach weiterhin +1,0 m): **DOM1 ist dort der Schiedsrichter** - Peakzelle mittig im
+Grundriss, N-S- und E-W-Schnitt symmetrisch (3 m von der Achse 39-42 m auf beiden Achsen) -> Dach steht zentriert, Glockenstock/Helmfuss
+~6-7 m tief UND breit. Deshalb GX/GY 5,0 x 5,7 -> 6,0 x 6,2 (D-3,0 / W-3,8; Fotoschaetzung 'deutlich abgesetzt' war zu stark);
+Laserflaeche > 40 m im Modell 52 (DOM1 43 + Tuermchen), Dachansatz-Messung 38,0.
+**Ecktuermchen:** Wolke (entzerrt) Helmachse ~0,4 m innerhalb der Nordwand, Erkerkoerper kragt 0,5 m aus; Modell hatte 1,2 m Ruecksprung.
+Neue Pruefung 'Achse Abstand zur Nordwand 39-42 m' 0-0,8 (vorher nan/1,22 rot) -> c = (hx-0,1, hy-0,55) = (4,4, 4,45): jetzt 0,49 gruen.
+Gesamtbreite y bei 29,5-33,5 m aus der Wolke 11,06/11,19/11,76 (Mittel 11,34) ersetzt die Kamera-Silhouettenpruefungen K-031/K-041
+(unbrauchbare Einzelkameras, Register AI); Modell 11,20 gruen. Erker/Helm-Abseitsschwelle 2,5 -> 3,1/3,2 (breiterer Glockenstock).
+**Pruefstand neu:** Messtypen `schnitt_mitte`, `schnitt_ausdehnung`, `min_im_bereich`, `mitte_im_bereich`, `kreis_durchmesser_im_bereich`
+(Kreisfit an grobe Zylinder-Eckpunkte war instabil -> Schnittkontur); Dachflanke jetzt aus der Modellbreite auf der Achse (|x|<2) statt
+Kamera-Silhouette (die enthielt die Tuermchenhelme: 0,52).
+**wolke_vs_modell.py:** 'nur Modell' zaehlt nur am RAND der Wolkensilhouette; Loecher mitten in der Wolke (1282 Zellen: dunkle Fassade,
+Tafel) sind Abdeckungsluecken. Stand Nord nach allem: mittlere Tiefendifferenz +0,13 m, Streuung 0,72; verbleibend: Torbau fehlt (36 m2,
+jetzt als LoD2-Massenmodell daneben), Glockenstock/Dach +1,0 m (Drift, DOM1 widerspricht - offen gelassen), Torbogen/Relief-Zone (Strahlen
+durch die Durchfahrt, Messartefakt).
+**Generelle Lehren (Memory):**
+1. Vor jedem Sichtvergleich die Wolke an eine amtliche FLAECHE (LoD2-Wand) haengen, nicht nur an Linien - Linien lassen die Tiefe frei.
+2. Einseitige Netze driften in der Tiefe mit der Hoehe (hier 1 Grad): je Band messen, linear entzerren fuer die Sicht, Masse nur aus
+   Hoehen/Fassadenlage; fuer Tiefen/Grundrisse oben entscheidet DOM1 (Schnitt durch den Peak, Symmetrie).
+3. Pruefungen, die auf unbrauchbaren Kameras stehen (K-030/031/041), ersetzen statt lockern - durch Wolkenbreiten (y) oder DOM1.
+4. Messtypen am Netz: Eckpunkte reichen nicht (Kegel/Zylinder grob), Schnittkonturen sind die robuste Basis.
+5. Fenster von Messungen und Abseits-Schwellen haengen an Bauteilmassen (Glockenstockbreite!) - bei jeder Massaenderung mitpruefen.

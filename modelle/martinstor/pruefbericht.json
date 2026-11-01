@@ -1,77 +1,84 @@
 {
  "stl": "/home/oem/git/rc-park/modelle/stl/martinstor_v4_1-87.stl",
  "werte": {
-  "first": 46.700000000000095,
-  "dach_dz": 8.0,
-  "hoehe": 59.99999816894531,
-  "tuermchen_spitze": 41.34999975585937,
+  "first": 55.90000000000017,
+  "dach_dz": 18.4,
+  "hoehe": 70.00000140380858,
+  "tuermchen_spitze": 44.500000854492185,
   "tuermchen_2m_anzahl": 4.0,
-  "tuermchen_2m_durchmesser": 0.4808328034711631,
+  "tuermchen_2m_durchmesser": 0.4647956720695302,
   "tuermchen_4m_anzahl": 4.0,
-  "tuermchen_4m_durchmesser": 1.1405723205917273,
-  "nadel_50": 0.18268032793638575,
-  "nadel_52": 0.16132585738354077,
-  "knauf_breite": 0.6627262212622007,
-  "knauf_z": 49.20000000000003,
+  "tuermchen_4m_durchmesser": 0.9580097116361999,
+  "nadel_50": 0.1598615421659155,
+  "nadel_52": 0.11788477709574553,
+  "knauf_breite": 0.6578125573801751,
+  "knauf_z": 59.100000000000044,
   "wasserdicht": 1.0,
   "koerper": 1.0,
   "fenster_S_oben": 2.0,
   "fenster_S_unten": 1.0,
   "fenster_N_oben": 3.0,
   "fenster_N_unten": 1.0,
-  "sockel_flaeche": 148.8422790131133,
-  "sockel_x": 11.94919133377075,
-  "sockel_y": 12.456263763427735,
+  "sockel_flaeche": 128.97452369674417,
+  "sockel_x": 10.999191318511961,
+  "sockel_y": 11.725818740844726,
   "zinnen_S": 4.0,
   "zinnen_N": 4.0,
   "uhr_S": 4.45,
-  "dach_u_flaeche": 38.15351264837979,
-  "dach_u_x": 5.771028448633723,
-  "dach_u_y": 6.611215485761908,
-  "dach_o_flaeche": 6.536566733592092,
-  "dach_o_x": 1.8831785299996728,
-  "dach_o_y": 3.4710287046407795,
-  "eckturm_h": 14.020000350952147,
-  "eckturm_x": 1.8023570137023928,
-  "eckturm_y": 2.5474043655395504,
-  "eckturm_punkte": 63.0,
+  "dach_u_flaeche": 44.87999736633118,
+  "dach_u_x": 6.599999772643959,
+  "dach_u_y": 6.799999835204883,
+  "dach_o_flaeche": 10.800001827832949,
+  "dach_o_x": 3.0000002249257753,
+  "dach_o_y": 3.6000003393666935,
+  "eckturm_h": 15.159999572753906,
+  "eckturm": 2.221543552550289,
   "tafel_N": 3.35,
   "tafel_S": 0.0,
   "adler_S": 1.6500000000000001,
-  "dachansatz": 35.60000000000004,
+  "dachansatz": 38.00000000000006,
   "kranz_oben": 31.84999960327148,
-  "hyp32": 114.0,
-  "hyp30": 136.0,
-  "hyp40": 42.0,
-  "sil30": 13.26,
-  "sil38": 11.24,
-  "sil45": 3.9000000000000004,
-  "sil31_031": 12.620000000000001,
-  "sil_zone_031": 11.788,
-  "sil_zone_041": 11.573333333333332,
-  "sil_zone_u031": 11.504,
+  "hyp32": 121.0,
+  "hyp30": 153.0,
+  "hyp40": 52.0,
+  "sil30": 13.64,
+  "sil38": 9.8,
+  "sil45": 4.4,
+  "sil31_031": 13.0,
+  "sil_zone_031": 12.548,
+  "sil_zone_041": 12.146666666666668,
+  "sil_zone_u031": 11.64,
   "erker_34_anzahl": 4.0,
-  "erker_34_durchmesser": 2.1363231167355985,
+  "erker_34_durchmesser": 2.1363231167355994,
   "helm_37_anzahl": 4.0,
-  "helm_37_durchmesser": 1.2560266522725378,
+  "helm_37_durchmesser": 1.6978309723325724,
   "uhr_z": 4.45,
   "fenster_W_oben": 0.0,
-  "fenster_W_mitte": 1.0
+  "fenster_W_mitte": 1.0,
+  "wand_n_x20": -4.889747543334961,
+  "eckturm_xmin": -6.100000167846679,
+  "eckturm_ymitte": -3.70000004196167,
+  "dach38": 6.249999741577537,
+  "dach45": 3.6000003393666935,
+  "tuerm_ne_x40": -4.399999985591592,
+  "breite_y_295": 10.791666579118491,
+  "breite_y_315": 11.740000579833984,
+  "breite_y_335": 11.080355895996092
  },
  "pruefungen": [
   {
    "name": "Tuermchen-Spitze Hoehe (m)",
-   "wert": 41.34999975585937,
+   "wert": 44.500000854492185,
    "soll": [
-    40.7,
-    41.8
+    43.8,
+    45.2
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
-   "wert": 0.4808328034711631,
+   "wert": 0.4647956720695302,
    "soll": [
     0.4,
     1.2
@@ -81,7 +88,7 @@
   },
   {
    "name": "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
-   "wert": 1.1405723205917273,
+   "wert": 0.9580097116361999,
    "soll": [
     0.8,
     1.7
@@ -100,8 +107,8 @@
    "status": "ok"
   },
   {
-   "name": "Dachreiter Dicke bei 50 m (m)",
-   "wert": 0.18268032793638575,
+   "name": "Dachreiter Dicke bei 62 m (m)",
+   "wert": 0.1598615421659155,
    "soll": [
     0.08,
     0.4
@@ -110,8 +117,8 @@
    "status": "ok"
   },
   {
-   "name": "Dachreiter Dicke bei 52 m (m)",
-   "wert": 0.16132585738354077,
+   "name": "Dachreiter Dicke bei 66 m (m)",
+   "wert": 0.11788477709574553,
    "soll": [
     0.08,
     0.3
@@ -121,7 +128,7 @@
   },
   {
    "name": "Dachreiter Knauf Durchmesser (m)",
-   "wert": 0.6627262212622007,
+   "wert": 0.6578125573801751,
    "soll": [
     0.5,
     0.9
@@ -131,7 +138,7 @@
   },
   {
    "name": "Dachreiter Knauf Lage (Anteil ueber First)",
-   "wert": 0.18796995069046718,
+   "wert": 0.22695033201454534,
    "soll": [
     0.12,
     0.32
@@ -141,30 +148,30 @@
   },
   {
    "name": "Gesamthoehe (m)",
-   "wert": 59.99999816894531,
+   "wert": 70.00000140380858,
    "soll": [
-    59.5,
-    66.0
+    68.0,
+    72.0
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Dachansatz / Glockenstock-Oberkante (m)",
-   "wert": 35.60000000000004,
+   "wert": 38.00000000000006,
    "soll": [
-    34.5,
-    36.5
+    36.0,
+    38.5
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "First / Dach-Oberkante (m)",
-   "wert": 46.700000000000095,
+   "wert": 55.90000000000017,
    "soll": [
-    46.6,
-    48.7
+    54.3,
+    56.5
    ],
    "ok": true,
    "status": "ok"
@@ -181,7 +188,7 @@
   },
   {
    "name": "Spitzenlaenge ueber First (m)",
-   "wert": 13.299998168945216,
+   "wert": 14.100001403808413,
    "soll": [
     12.0,
     16.5
@@ -260,11 +267,11 @@
    "status": "ok"
   },
   {
-   "name": "Dachflanke: Halbbreiten-Zunahme je m (Silhouette 38-45 m, Kamera K-030)",
-   "wert": 0.5242857142857142,
+   "name": "Dachflanke: Halbbreiten-Zunahme je m (Modellbreite auf der Achse, 38-45 m)",
+   "wert": 0.18928567158648882,
    "soll": [
-    0.4,
-    0.56
+    0.15,
+    0.35
    ],
    "ok": true,
    "status": "ok"
@@ -300,8 +307,8 @@
    "status": "ok"
   },
   {
-   "name": "Eckturm NW Durchmesser (m, y-Ausdehnung der Punkte x<-5, z 2-9)",
-   "wert": 2.5474043655395504,
+   "name": "Eckturm NW Durchmesser (m, Sehne der Schnittkontur bei 8 m, 0,45 m vor der Wandebene)",
+   "wert": 2.221543552550289,
    "soll": [
     2.0,
     2.7
@@ -311,7 +318,7 @@
   },
   {
    "name": "Eckturm NW Kegelspitze (m)",
-   "wert": 14.020000350952147,
+   "wert": 15.159999572753906,
    "soll": [
     12.0,
     15.5
@@ -321,7 +328,7 @@
   },
   {
    "name": "Sockel-Grundriss Rechteck (m2, z 1 m)",
-   "wert": 148.8422790131133,
+   "wert": 128.97452369674417,
    "soll": [
     117.0,
     150.0
@@ -351,17 +358,17 @@
   },
   {
    "name": "Laserflaeche ueber 40 m (m2, gerastert)",
-   "wert": 42.0,
+   "wert": 52.0,
    "soll": [
     38.0,
-    48.0
+    52.0
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Silhouettenbreite bei 30 m (m, 3 Kameras)",
-   "wert": 13.26,
+   "wert": 13.64,
    "soll": [
     12.9,
     14.2
@@ -370,28 +377,18 @@
    "status": "ok"
   },
   {
-   "name": "Silhouettenbreite Zone 29-33,5 m (Kamera 031)",
-   "wert": 11.788,
+   "name": "Gesamtbreite y bei 29,5-33,5 m (Modell, mit Tuermchen)",
+   "wert": 11.204007684982855,
    "soll": [
-    11.2,
-    12.0
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Silhouettenbreite Zone 29-31,5 m (Kamera 041)",
-   "wert": 11.573333333333332,
-   "soll": [
-    10.7,
-    11.6
+    10.9,
+    11.7
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
-   "wert": 11.504,
+   "wert": 11.64,
    "soll": [
     11.3,
     12.7
@@ -401,7 +398,7 @@
   },
   {
    "name": "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
-   "wert": 2.1363231167355985,
+   "wert": 2.1363231167355994,
    "soll": [
     2.0,
     2.9
@@ -410,8 +407,8 @@
    "status": "ok"
   },
   {
-   "name": "Ecktuermchen: Helm Durchmesser bei 37 m (m)",
-   "wert": 1.2560266522725378,
+   "name": "Ecktuermchen: Helm Durchmesser bei 37,5 m (m)",
+   "wert": 1.6978309723325724,
    "soll": [
     0.8,
     1.9
@@ -441,10 +438,50 @@
   },
   {
    "name": "Knauf-Lage zwischen Tuermchenspitze und Nadelspitze (Verhaeltnis)",
-   "wert": 0.42091157705582627,
+   "wert": 0.5725489737646008,
    "soll": [
     0.364,
     0.736
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "First / Dach-Oberkante (m) - SfM Nordnetz",
+   "wert": 55.90000000000017,
+   "soll": [
+    53.5,
+    56.0
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Eckturm NW Vorsprung vor der Nordwand (m)",
+   "wert": 1.2102526245117184,
+   "soll": [
+    0.7,
+    1.4
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Eckturm NW Mitte y (m)",
+   "wert": -3.70000004196167,
+   "soll": [
+    -4.1,
+    -3.3
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+   "wert": 0.4897475577433692,
+   "soll": [
+    0.0,
+    0.8
    ],
    "ok": true,
    "status": "ok"

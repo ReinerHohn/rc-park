@@ -1,0 +1,71 @@
+{
+ "foto": "067",
+ "punkte": {
+  "ecke_boden_2": [
+   1624.0,
+   2470.0
+  ]
+ },
+ "linien": {
+  "ecke_boden_2": [
+   [
+    1599.7,
+    256.0
+   ],
+   [
+    1622.0,
+    2300.0
+   ]
+  ],
+  "ecke_boden_1": [
+   [
+    2655.9,
+    1400.0
+   ],
+   [
+    2696.9,
+    2300.0
+   ]
+  ]
+ },
+ "seite": "Sued",
+ "strassenfoto": true,
+ "linien_protokoll": {
+  "ecke_boden_2": {
+   "vorgabe": [
+    [
+     1637.0,
+     256.0
+    ],
+    [
+     1662.0,
+     2300.0
+    ]
+   ],
+   "inlier": 239,
+   "zeilen": 1023,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  },
+  "ecke_boden_1": {
+   "vorgabe": [
+    [
+     2685.0,
+     1400.0
+    ],
+    [
+     2737.0,
+     2300.0
+    ]
+   ],
+   "inlier": 90,
+   "zeilen": 451,
+   "methode": "foto_kante_fit Gradient+RANSAC, Band +-40 px"
+  }
+ },
+ "punkte_sigma_px": {
+  "ecke_boden_2": 20
+ },
+ "punkte_notiz": {
+  "ecke_boden_2": "ANNAHME Bodenpunkt 2026-11-01: Fusspunkt hinter Fahrraedern/Tram; Pflasterhoehe = Reifenaufstand der Raeder am Pfeiler (y 2450-2490), Kante verlaengert; sigma 20 px"
+ }
+}

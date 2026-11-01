@@ -2,11 +2,19 @@
  "_doku": "Masse des Bauwerks als DATEN, nicht als Code. Jeder Wert mit Quelle. Der Generator liest diese Datei (tools/bauteile.lade_masse); der Pruefstand kann sie gegen die Masstabelle halten. Formeln duerfen auf frueher definierte Namen zugreifen (Auswertung in Reihenfolge).",
  "masse": {
   "H_TOTAL": {
-   "wert": 60.0,
+   "wert": 70.0,
    "einheit": "m",
    "was": "Gesamthoehe bis zur Nadelspitze",
-   "quelle": "Bauforschung BW (Landesdenkmalamt): Erhoehung 1901 von 22 auf 60 m; Objektbeschreibung nennt 65 m. en.Wikipedia 60 m. Foto 049: Spitze ~14 m ueber dem First.",
-   "quelltyp": "dokument"
+   "quelle": "SfM Nordnetz (Register AH/AK): Nadelende ('spitze_dokument') 69,7 +-1,4 m aus 5 Kameras; Foto 049: Knauf bei 20-28 % der Spitzenlaenge -> Knauf ~59 m. Dokument 60/65 m (Bauforschung BW) WIDERSPRICHT - offen (Masstabelle)",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt": 60.0,
+     "neu": 70.0,
+     "grund": "SfM Nordnetz (Register AH/AK): Nadelende ('spitze_dokument') 69,7 +-1,4 m aus 5 Kameras; Foto 049: Knauf bei 20-28 % der Spitzenlaenge -> Knauf ~59 m. Dokument 60/65 m (Bauforschung BW) WIDERSPRICHT - offen (Masstabelle)"
+    }
+   ]
   },
   "DB": {
    "wert": 9.8,
@@ -114,40 +122,104 @@
    "quelltyp": "foto_verhaeltnis"
   },
   "EX": {
-   "wert": "-DB / 2 - 0.8",
+   "wert": "-DB / 2 + 0.2",
    "einheit": "m",
    "was": "Eckturm NW, Lage x",
-   "quelle": "Foto 001: runder Treppenturm an der Nordwestecke",
-   "quelltyp": "foto_vollbild"
+   "quelle": "Dichte Fotowolke Nord, Kreisfit an die Eckturm-Front z 6-12 m (Register AN): Mitte y -3,70, Radius 1,26; Vorsprung vor der LoD2-Nordwand ~1,05 m (Wolken-Tiefenversatz 1,3 m abgezogen). Nutzer: 'Tuermchen ist kleiner als im Modell'. Vorher: Lage an der Ecke (-5,7 / -5,45) aus Foto 001 geschaetzt",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt": "-DB / 2 - 0.8",
+     "neu": "-DB / 2 + 0.2",
+     "grund": "Dichte Fotowolke Nord, Kreisfit an die Eckturm-Front z 6-12 m (Register AN): Mitte y -3,70, Radius 1,26; Vorsprung vor der LoD2-Nordwand ~1,05 m (Wolken-Tiefenversatz 1,3 m abgezogen). Nutzer: 'Tuermchen ist kleiner als im Modell'. Vorher: Lage an der Ecke (-5,7 / -5,45) aus Foto 001 geschaetzt"
+    }
+   ]
   },
   "EY": {
-   "wert": "-WB / 2 + 0.2",
+   "wert": -3.7,
    "einheit": "m",
    "was": "Eckturm NW, Lage y",
-   "quelle": "wie EX",
-   "quelltyp": "foto_vollbild"
+   "quelle": "Dichte Fotowolke Nord, Kreisfit an die Eckturm-Front z 6-12 m (Register AN): Mitte y -3,70, Radius 1,26; Vorsprung vor der LoD2-Nordwand ~1,05 m (Wolken-Tiefenversatz 1,3 m abgezogen). Nutzer: 'Tuermchen ist kleiner als im Modell'. Vorher: Lage an der Ecke (-5,7 / -5,45) aus Foto 001 geschaetzt",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt": "-WB / 2 + 0.2",
+     "neu": -3.7,
+     "grund": "Dichte Fotowolke Nord, Kreisfit an die Eckturm-Front z 6-12 m (Register AN): Mitte y -3,70, Radius 1,26; Vorsprung vor der LoD2-Nordwand ~1,05 m (Wolken-Tiefenversatz 1,3 m abgezogen). Nutzer: 'Tuermchen ist kleiner als im Modell'. Vorher: Lage an der Ecke (-5,7 / -5,45) aus Foto 001 geschaetzt"
+    }
+   ]
   },
   "ER": {
-   "wert": 1.15,
+   "wert": 1.2,
    "einheit": "m",
    "was": "Eckturm NW, Radius",
-   "quelle": "Messprotokoll M-001-001: Durchmesser 2,29 +- 0,21 m",
-   "quelltyp": "foto_vollbild",
-   "massstab": "foto_intern"
+   "quelle": "Kreisfit Wolke 1,26 m / Messprotokoll M-001-001 2,29 m Durchmesser -> 1,2",
+   "quelltyp": "sfm_bodenanker",
+   "massstab": "foto_intern",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt": 1.15,
+     "neu": 1.2,
+     "grund": "Kreisfit Wolke 1,26 m / Messprotokoll M-001-001 2,29 m Durchmesser -> 1,2"
+    }
+   ]
   },
   "GX": {
-   "wert": "D - 4.0",
+   "wert": "D - 3.0",
    "einheit": "m",
    "was": "Glockenstock Tiefe",
-   "quelle": "Fotos 031/041/043: deutlich abgesetzt vom Schaft",
-   "quelltyp": "foto_verhaeltnis"
+   "quelle": "DOM1-Rohraster N-S- UND E-W-Schnitt: 3 m von der Achse liegt die Flaeche bei 39-42 m auf beiden Achsen (Glockenstock/Helmfuss ~6 m tief und breit); dichte Wolke (entzerrt, Register AO): Glockenstock/Dach +1,1 m weiter nord als das Modell. Vorher D-4,0 / W-4,3 = 5,0 x 5,7 (Fotoschaetzung 'deutlich abgesetzt')",
+   "quelltyp": "laser_dom1",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt": "D - 4.0",
+     "neu": 6.0,
+     "grund": "Glockenstock-Tiefe: DOM1-Rohraster 2026-11-01 (Register AM): Peakzelle 54,8; Schnitt vom Zentrum nach aussen 55 / 50 / 44-46 / 40-42 / 32-35 m bei 0/1/2/3/4 m; drei Zellen >= 53 m = Dachflaeche, keine Nadel -> Flaeche > 40 m nur 43 Zellen (~6,5 x 6,5); Wand ~3 m von der Achse"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt": 6.0,
+     "neu": "D - 4.0",
+     "grund": "Fotos 031/041/043: deutlich abgesetzt vom Schaft (zurueck auf den Fotowert; DOM1 sieht den Glockenstock unter dem Dach nicht - Zwischenwert 6,0 war ein Fehlschluss, Register AM)"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt": "D - 4.0",
+     "neu": "D - 3.0",
+     "grund": "DOM1-Rohraster N-S- UND E-W-Schnitt: 3 m von der Achse liegt die Flaeche bei 39-42 m auf beiden Achsen (Glockenstock/Helmfuss ~6 m tief und breit); dichte Wolke (entzerrt, Register AO): Glockenstock/Dach +1,1 m weiter nord als das Modell. Vorher D-4,0 / W-4,3 = 5,0 x 5,7 (Fotoschaetzung 'deutlich abgesetzt')"
+    }
+   ]
   },
   "GY": {
-   "wert": "W - 4.3",
+   "wert": "W - 3.8",
    "einheit": "m",
    "was": "Glockenstock Breite",
-   "quelle": "wie GX",
-   "quelltyp": "foto_verhaeltnis"
+   "quelle": "DOM1-Rohraster N-S- UND E-W-Schnitt: 3 m von der Achse liegt die Flaeche bei 39-42 m auf beiden Achsen (Glockenstock/Helmfuss ~6 m tief und breit); dichte Wolke (entzerrt, Register AO): Glockenstock/Dach +1,1 m weiter nord als das Modell. Vorher D-4,0 / W-4,3 = 5,0 x 5,7 (Fotoschaetzung 'deutlich abgesetzt')",
+   "quelltyp": "laser_dom1",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt": "W - 4.3",
+     "neu": 6.6,
+     "grund": "Glockenstock-Breite, wie GX (Verhaeltnis des Schafts 9:10)"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt": 6.6,
+     "neu": "W - 4.3",
+     "grund": "wie GX"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt": "W - 4.3",
+     "neu": "W - 3.8",
+     "grund": "DOM1-Rohraster N-S- UND E-W-Schnitt: 3 m von der Achse liegt die Flaeche bei 39-42 m auf beiden Achsen (Glockenstock/Helmfuss ~6 m tief und breit); dichte Wolke (entzerrt, Register AO): Glockenstock/Dach +1,1 m weiter nord als das Modell. Vorher D-4,0 / W-4,3 = 5,0 x 5,7 (Fotoschaetzung 'deutlich abgesetzt')"
+    }
+   ]
   },
   "GZ0": {
    "wert": "ZZ + 2.0",
@@ -157,25 +229,61 @@
    "quelltyp": "foto_verhaeltnis"
   },
   "GZ1": {
-   "wert": "ZZ + 5.0",
+   "wert": "ZZ + 6.5",
    "einheit": "m",
    "was": "Glockenstock Oberkante = Dachansatz",
-   "quelle": "Laser-Profil (Register O): bei 38-44 m hat DOM1 null Streuung; Traufe 38 m waere dort bis 40 % daneben",
-   "quelltyp": "laser_dom1"
+   "quelle": "Traufe 37,0 m: LoD2 Wandoberkante/Traufe 37,27 m (anker3d ecke_wandoben) + DOM1-Rohraster (Zelle 4 m vom Peak 32-35 = Kragdach/Traufenbereich, 3 m: 40-42 = Dachflanke) + Laserflaeche > 40 m (43 Zellen = ~5 m breites Dach bei 40 m). Zwischenwert 40,0 (Register AM) war falsch: 74 statt 43 Zellen",
+   "quelltyp": "lod2",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt": "ZZ + 5.0",
+     "neu": 40.0,
+     "grund": "Glockenstock-Oberkante/Traufe: DOM1-Rohraster 2026-11-01 (Register AM): Peakzelle 54,8; Schnitt vom Zentrum nach aussen 55 / 50 / 44-46 / 40-42 / 32-35 m bei 0/1/2/3/4 m; drei Zellen >= 53 m = Dachflaeche, keine Nadel (bei 3 m Abstand 39-42 m); Foto 061 Verhaeltnis 42,1; dichte Wolke Sprung bei 43,5 (enthaelt Tuermchen). Vorher 35,5 aus Hypsometrie-Fit"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt": 40.0,
+     "neu": "ZZ + 6.5",
+     "grund": "Traufe 37,0 m: LoD2 Wandoberkante/Traufe 37,27 m (anker3d ecke_wandoben) + DOM1-Rohraster (Zelle 4 m vom Peak 32-35 = Kragdach/Traufenbereich, 3 m: 40-42 = Dachflanke) + Laserflaeche > 40 m (43 Zellen = ~5 m breites Dach bei 40 m). Zwischenwert 40,0 (Register AM) war falsch: 74 statt 43 Zellen"
+    }
+   ]
   },
   "DACHHOEHE": {
-   "wert": 10.7,
+   "wert": 18.4,
    "einheit": "m",
    "was": "Hoehe des Kupferdachs (Dachansatz bis First)",
-   "quelle": "Register J5: Laser-Hypsometrie hat ein scharfes Minimum bei First 46,2 m (45,0 -> 21,1 %, 46,2 -> 14,3 %, 48,2 -> 19,8 %)",
-   "quelltyp": "laser_dom1"
+   "quelle": "First 55,4 m (SfM Goldkugeln 55,14/55,61 +-0,18; DOM1 drei Zellen 53-55; DOM1-Maximum 54,8) minus Traufe 37,0",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt": 10.7,
+     "neu": 15.4,
+     "grund": "First/Dach-Oberkante 55,4 m: SfM Goldkugeln 55,14 / 55,61 +-0,18 (4 Kameras, Residuen 2-4 px) + DOM1 drei Zellen 53-55 m + DOM1-Maximum 54,8; Traufe 40,0 -> 15,4 m. Vorher 10,7 (First 46,2 aus Hypsometrie-Fit, Register J5 - der Fit hatte das Dach 9 m zu tief und viel zu flach)"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt": 15.4,
+     "neu": 18.4,
+     "grund": "First 55,4 m (SfM Goldkugeln 55,14/55,61 +-0,18; DOM1 drei Zellen 53-55; DOM1-Maximum 54,8) minus Traufe 37,0"
+    }
+   ]
   },
   "KNAUF_ANTEIL": {
-   "wert": 0.22,
+   "wert": 0.25,
    "einheit": "-",
    "was": "Lage des Knaufs als Anteil der Spitzenlaenge ueber dem First",
-   "quelle": "Foto 049/000: Knauf bei 20-28 %",
-   "quelltyp": "foto_vollbild"
+   "quelle": "Foto 049/000: Knauf bei 20-28 % der Spitzenlaenge ueber dem First (unveraendert gueltig); mit First 55,4 und Spitze 70 liegt der Knauf bei 59,0 m - Verhaeltnis Tuermchenspitze-Knauf-Nadelende 0,57 (Fotos 060/061: 0,49-0,60)",
+   "quelltyp": "foto_verhaeltnis",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt": 0.22,
+     "neu": 0.25,
+     "grund": "Foto 049/000: Knauf bei 20-28 % der Spitzenlaenge ueber dem First (unveraendert gueltig); mit First 55,4 und Spitze 70 liegt der Knauf bei 59,0 m - Verhaeltnis Tuermchenspitze-Knauf-Nadelende 0,57 (Fotos 060/061: 0,49-0,60)"
+    }
+   ]
   },
   "TWs": {
    "wert": 2.6,
@@ -211,6 +319,91 @@
    "was": "Segmente runder Koerper",
    "quelle": "Druckaufloesung",
    "quelltyp": "modell"
+  },
+  "DACH_MITTE_Z": {
+   "wert": 41.0,
+   "einheit": "m",
+   "was": "Knick des zweistufigen Dachs (unten steil-breit, oben schlank)",
+   "quelle": "DOM1-Rohraster (Register AM): Zellmaxima 39-42 m bei 3 m, 44-46 bei 2 m, 46-53 bei 1 m, 55 bei 0 m vom Peak; Laserflaeche > 40 m = 43 Zellen (Dach bei 40 m ~4,5 x 5 m) -> steile untere Flanke: 3 m halbe Breite bei 37, 2 m bei 41",
+   "quelltyp": "laser_dom1",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt": 45.0,
+     "neu": 41.0,
+     "grund": "Laserflaeche > 40 m: 64 statt 43 Zellen -> Flanke steiler"
+    }
+   ]
+  },
+  "DACH_MITTE_X": {
+   "wert": 4.0,
+   "einheit": "m",
+   "was": "Dachtiefe (x) am Knick",
+   "quelle": "wie DACH_MITTE_Z (halbe Breite ~2 m)",
+   "quelltyp": "laser_dom1"
+  },
+  "DACH_MITTE_Y": {
+   "wert": 4.6,
+   "einheit": "m",
+   "was": "Dachbreite (y) am Knick",
+   "quelle": "wie DACH_MITTE_Z",
+   "quelltyp": "laser_dom1"
+  },
+  "DACH_OBEN_X": {
+   "wert": 1.6,
+   "einheit": "m",
+   "was": "Dachplattform oben, Tiefe (x)",
+   "quelle": "DOM1 Zellen 1 m vom Peak nur 46-53 m: keine breite Plattform; Helm oben ~1,6 x 2,0 m",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "DACH_OBEN_Y": {
+   "wert": 2.0,
+   "einheit": "m",
+   "was": "Dachplattform oben, Breite (y)",
+   "quelle": "wie DACH_OBEN_X",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "TUERM_SPITZE": {
+   "wert": 44.5,
+   "einheit": "m",
+   "was": "Ecktuermchen Knauf/Spitze",
+   "quelle": "SfM Nordnetz: tuermchen_NE 44,39 / NW 44,72 +-0,14 (6 Kameras, Residuen 1-4 px); DOM1 lokale Maxima 41,0/41,4 = getroffene Kegelflaeche (blind fuer die Spitze)",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "DACH_MITTE2_Z": {
+   "wert": 45.0,
+   "einheit": "m",
+   "was": "zweiter Knick des Helms",
+   "quelle": "DOM1-Rohraster (Register AM): Zellmaxima 39-42 m bei 3 m, 44-46 bei 2 m, 46-53 bei 1 m, 55 bei 0 m vom Peak; Laserflaeche > 40 m = 43 Zellen (Dach bei 40 m ~4,5 x 5 m) (1,5 m halbe Breite bei 45)",
+   "quelltyp": "laser_dom1"
+  },
+  "DACH_MITTE2_X": {
+   "wert": 3.0,
+   "einheit": "m",
+   "was": "Helmtiefe am zweiten Knick",
+   "quelle": "wie DACH_MITTE2_Z",
+   "quelltyp": "laser_dom1"
+  },
+  "DACH_MITTE2_Y": {
+   "wert": 3.6,
+   "einheit": "m",
+   "was": "Helmbreite am zweiten Knick",
+   "quelle": "wie DACH_MITTE2_Z",
+   "quelltyp": "laser_dom1"
+  },
+  "KUGEL_X": {
+   "wert": 1.5,
+   "einheit": "m",
+   "was": "Goldkugeln: Abstand von der Achse in x (auf kurzen Armen)",
+   "quelle": "SfM Nordnetz: gold_NE (-1,62, 1,84), gold_NW (-1,47, -1,96) bei 55,1-55,6 m",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "KUGEL_Y": {
+   "wert": 1.9,
+   "einheit": "m",
+   "was": "Goldkugeln: Abstand von der Achse in y",
+   "quelle": "wie KUGEL_X",
+   "quelltyp": "sfm_bodenanker"
   }
  }
 }
