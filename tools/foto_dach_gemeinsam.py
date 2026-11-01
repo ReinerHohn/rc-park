@@ -9,7 +9,7 @@ Stufe 2  `grid`: je STL-Variante (Dateien <pfad>/<name>.stl) Kamera je Foto verf
   /media/oem/scan/venv-seg/bin/python -W ignore -I tools/foto_dach_gemeinsam.py grid OUTDIR STLDIR [Foto-Nr ...]   (nur Fotos, deren Ueberlagerung pose_<nr>.png den Turm im gruenen ROI zeigt!)
 ROI wird automatisch um die Turmspitze gelegt (Nachbarhaeuser koennen stoeren -> Ueberlagerungsbild pruefen).
 """
-import sys, os, glob, json, numpy as np, cv2, torch
+import sys, os, glob, json, math, numpy as np, cv2, torch
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import foto_silhouette_gpu as F
 import foto_profil_gpu as PG
@@ -26,12 +26,20 @@ def load(nr, width=400):
     else: roi = (max(0, x0 - 85), max(0, y0 - 6), min(W, x0 + 85), min(H, y0 + 190))
     return im, N, roi
 
-def fit(P, T, roi, H, W, seeds=(0, 1, 2)):
-    f0 = 5.4 / 4.29 * W; best = None
+AZ_SEITE = {"Sued": math.pi / 2, "Nord": -math.pi / 2, "West": 0.0, "Ost": math.pi}   # Kameraseite -> Azimut in F.render
+
+def grenzen(seite=None, spanne=math.radians(50)):
+    """Suchgrenzen; bei bekannter Fotoseite Azimut auf +-spanne um die Seite (hebt die 90-Grad-Mehrdeutigkeit des Quadratturms auf)."""
+    l, h = lo.clone(), hi.clone()
+    if seite in AZ_SEITE: l[1], h[1] = AZ_SEITE[seite] - spanne, AZ_SEITE[seite] + spanne
+    return l, h
+
+def fit(P, T, roi, H, W, seeds=(0, 1, 2), seite=None):
+    f0 = 5.4 / 4.29 * W; best = None; l, h = grenzen(seite); PG.lo, PG.hi = l, h
     for sd_ in seeds:
         g = torch.Generator(device=dev).manual_seed(sd_); cand = []
         for _ in range(96):
-            th = lo + (hi - lo) * torch.rand((256, 8), device=dev, generator=g); sc, _ = F.score(P, th, T, roi, f0, W, H); k = sc.topk(20).indices; cand.append((sc[k], th[k]))
+            th = l + (h - l) * torch.rand((256, 8), device=dev, generator=g); sc, _ = F.score(P, th, T, roi, f0, W, H); k = sc.topk(20).indices; cand.append((sc[k], th[k]))
         sc = torch.cat([c[0] for c in cand]); th = torch.cat([c[1] for c in cand]); k = sc.topk(40).indices
         s, t = PG.cem(P, T, roi, H, W, f0, th[k].mean(0), th[k].std(0) + 1e-3, 50, seed=sd_)
         if best is None or s > best[0]: best = (s, t)
@@ -47,8 +55,9 @@ def main():
     if mode == "pose":
         nrs = sys.argv[3:] or DEFAULT; F.STL = "/home/oem/git/rc-park/modelle/stl/martinstor_v4_1-87.stl"; P, _ = F.load_points(200000); res = {}
         for nr in nrs:
-            im, N, roi = load(nr); H, W = N.shape; T = torch.as_tensor(N, device=dev); (s, th), f0 = fit(P, T, roi, H, W)
-            res[nr] = dict(iou=float(s), th=[float(x) for x in th], roi=list(map(int, roi))); overlay(im, P, th, f0, W, H, roi, f"{out}/pose_{nr}.png"); print(nr, f"IoU {s:.3f}", flush=True)
+            seite = F.FOTOS.get(nr, (None, {}))[1].get("seite"); seite = seite if seite in AZ_SEITE else None
+            im, N, roi = load(nr); H, W = N.shape; T = torch.as_tensor(N, device=dev); (s, th), f0 = fit(P, T, roi, H, W, seite=seite)
+            res[nr] = dict(iou=float(s), th=[float(x) for x in th], roi=list(map(int, roi)), seite=seite, az_grad=round(math.degrees(float(th[1])), 1)); overlay(im, P, th, f0, W, H, roi, f"{out}/pose_{nr}.png"); print(nr, f"IoU {s:.3f}", flush=True)
         json.dump(res, open(cam, "w"))
     else:
         stldir = sys.argv[3]; base = json.load(open(cam)); keep = [k for k, v in base.items() if v["iou"] >= 0.75 and (len(sys.argv) < 5 or k in sys.argv[4:])]; print("verwendet:", keep, flush=True)
@@ -59,7 +68,7 @@ def main():
         for st in stls:
             name = os.path.basename(st)[:-4]; F.STL = st; P, _ = F.load_points(200000); table[name] = {}
             for nr in keep:
-                T, roi, H, W, th0 = data[nr]; f0 = 5.4 / 4.29 * W
+                T, roi, H, W, th0 = data[nr]; f0 = 5.4 / 4.29 * W; PG.lo, PG.hi = grenzen(base[nr].get("seite"))
                 s, th = PG.cem(P, T, roi, H, W, f0, th0.clone(), (hi - lo) * 0.02, 40, seed=0)
                 table[name][nr] = float(s)
             print(name, " ".join(f"{nr}:{table[name][nr]:.3f}" for nr in keep), f"| Mittel {np.mean(list(table[name].values())):.4f}", flush=True)

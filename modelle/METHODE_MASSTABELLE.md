@@ -72,7 +72,19 @@ verschiebt die Achse bei Anbauten; Anbauten verschmelzen im Schnitt mit dem Rump
   + Foto|Render-Paare aus den angepassten Kameras). `bauen_abnehmen.sh` erzeugt es auch bei rotem Pruefstand. Es wird nicht bewertet, es wird ANGESEHEN -
   jede Seite, nicht nur die fotografierte (F6: Whack-a-Mole entsteht, wenn immer nur eine Flaeche geprueft wird).
 
-## 7. Was dieser Rahmen bewusst NICHT verspricht
+## 7. Massstabskette, Messprotokolle, lebender Nachweis, neue Objekte
+- **`massstab` je Pruefung** (`dokument` / `lod2` / `laser` / `foto_intern` = bekanntes Mass im selben Foto / `modell` = Massstab aus dem Modell). Der Pruefstand
+  listet jede Pruefung mit `modell`-Massstab als zirkulaer: sie belegt die Richtung einer Abweichung, nicht die Zahl. So bleibt sichtbar, was wirklich bewiesen ist.
+- **Fotomessungen nur noch als Protokoll:** `tools/foto_mass.py OBJEKT.json FOTO --mess x1 y1 x2 y2 --massstab-px ... --massstab-m L --massstab-von "..."`
+  schreibt `messprotokoll/M-<foto>-<nr>.json` + markierten Ausschnitt; die Tabellenzeile verweist mit `protokoll`. "44 px x 1,5 cm" im Kommentar gilt nicht mehr.
+- **`MASSNACHWEIS.md`** entsteht bei jedem Pruefstandlauf automatisch aus der Tabelle (Ist/Soll/Quelltyp/Massstab/Status, Belegt-durch, Elemente und Annahmen,
+  Seiten ohne Foto, Widersprueche, offene Beobachtungen). Das ist die ehrliche Antwort auf "beweise alle Masse" - und sie veraltet nicht.
+- **Kameraanpassung mit Seitenwissen:** Fotos mit bekannter Seite (`objekt.json/fotos/<nr>/seite`) suchen den Azimut nur +-50 Grad um diese Seite
+  (`foto_dach_gemeinsam.grenzen`). Ohne das ist jede Silhouettenanpassung an einem symmetrischen Turm um 90 Grad mehrdeutig.
+- **Neues Objekt:** `tools/objekt_anlegen.py <objekt> --name ... --hoehe H --hoehe-quelle "..."` legt Ordner, Tabelle, Generator-Rumpf mit `beleg()` an;
+  `tools/bauen_abnehmen.sh <objekt>` laeuft sofort. Der ganze Rahmen ist damit nicht an das Martinstor gebunden.
+
+## 8. Was dieser Rahmen bewusst NICHT verspricht
 "Alle Masse bewiesen" gibt es mit offenen Daten nicht: Laser 1 m, Fotos +-5-10 %, Dokumente mit unklarer Bezugshoehe. Der Rahmen liefert
 je Mass **Wert, Quelle, Unsicherheit, Status** und verhindert, dass Behobenes zurueckkommt oder eine Quelle fuer etwas herhalten muss,
 was sie nicht sehen kann. Das ist die ehrliche Form von "massstabsgetreu".

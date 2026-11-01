@@ -196,3 +196,16 @@ Naechster Weg: Laserquelle mit mehr Aufloesung (ALS-Rohpunkte) oder Kantenmessun
   (Sued/Nord/Ost/West/Draufsicht orthografisch + Foto|Render-Paare je Foto mit bekannter Seite). Laeuft in `bauen_abnehmen.sh` auch bei rotem Pruefstand.
   Der Pruefstand meldet Seiten ohne Foto als UNGEPRUEFT (Ost, West).
 - Messfalle dabei: gezahnte Eckquader wechseln je Lage die Ecke -> Relief-Messungen an der Wand auf |u| < 2,5 m begrenzen.
+
+### L4. Weitere generelle Mechaniken (2026-11-01, "suche weiter nach Methodikverbesserung")
+1. **Zirkelschluss beim Massstab sichtbar:** Pruefungen tragen `massstab` (dokument/lod2/laser/foto_intern/modell). Der Pruefstand listet alle Masse, deren
+   Massstab aus dem Modell stammt (6 Stueck: Tuermchenkegel, Nadel, Knauf, Spitzenlaenge) - sie belegen Richtung, nicht Zahl. Vorher stand das nirgends.
+2. **Lebender Massnachweis:** `modelle/martinstor/MASSNACHWEIS.md` wird bei jedem Lauf aus der Tabelle erzeugt (Ist/Soll/Quelltyp/Massstab/Status,
+   Belegt-durch-Statistik, Elemente+Annahmen, Seiten mit/ohne Foto, Widersprueche, offene Beobachtungen). Ersetzt die handgeschriebene MASSPRUEFUNG als Antwort
+   auf "beweise alle Masse" - ehrlich: je Mass Quelle und Belastbarkeit.
+3. **Reproduzierbare Fotomessung:** `tools/foto_mass.py` -> `messprotokoll/M-<foto>-<nr>.json/.jpg` (Pixelpunkte, Massstabskette, Unsicherheit, markierter
+   Ausschnitt). Erstes Protokoll M-001-001: Eckturm 2,29 +- 0,21 m. Tabelle verweist per `protokoll`.
+4. **Azimut je Fotoseite:** `foto_dach_gemeinsam.py` schraenkt die Kamerasuche auf +-50 Grad um die bekannte Seite ein (Sued +90, Nord -90, West 0, Ost 180 Grad
+   in F.render) - hebt die 90-Grad-Mehrdeutigkeit des Quadratturms auf. Lauf gestartet (gem2), Ergebnis unten.
+5. **Neues Objekt in Minuten:** `tools/objekt_anlegen.py <objekt> --name --hoehe --hoehe-quelle` legt objekt.json, masstabelle.json, Generator-Rumpf mit beleg()
+   an; `bauen_abnehmen.sh <objekt>` laeuft sofort (getestet mit Wegwerf-Objekt: 3 Pruefungen gruen, Sichtblatt erzeugt, wieder geloescht).

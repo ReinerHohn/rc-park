@@ -1,5 +1,5 @@
 {
- "_doku": "Masstabelle = einzige Wahrheit ueber Masse des Objekts. Jede Pruefung: Messung am STL (generische Messer in tools/pruefstand.py), Sollbereich, Quelle, Quelltyp, Merkmalstyp. Der Pruefstand lehnt Pruefungen ab, deren Quelltyp fuer den Merkmalstyp blind ist (z. B. Laser DOM1 fuer eine Nadel). Sollwerte nie lockern, um Gruen zu bekommen - nur mit neuer Quelle (Eintrag 'historie'). Messparameter als Text sind Literale (seite '+x', art 'rueck'); Verweise auf andere Messungen beginnen mit '=' (z. B. z: '=tuermchen_spitze - 2.0'). Pruefwerte ('wert') sind immer Formeln ueber Messungen/Konstanten. status 'widerspruch' = Quellen uneins, zaehlt nicht als Fehlschlag, bleibt sichtbar.",
+ "_doku": "Masstabelle = einzige Wahrheit ueber Masse des Objekts. Jede Pruefung: Messung am STL (generische Messer in tools/pruefstand.py), Sollbereich, Quelle, Quelltyp, Merkmalstyp. Der Pruefstand lehnt Pruefungen ab, deren Quelltyp fuer den Merkmalstyp blind ist (z. B. Laser DOM1 fuer eine Nadel). Sollwerte nie lockern, um Gruen zu bekommen - nur mit neuer Quelle (Eintrag 'historie'). Messparameter als Text sind Literale (seite '+x', art 'rueck'); Verweise auf andere Messungen beginnen mit '=' (z. B. z: '=tuermchen_spitze - 2.0'). Pruefwerte ('wert') sind immer Formeln ueber Messungen/Konstanten. status 'widerspruch' = Quellen uneins, zaehlt nicht als Fehlschlag, bleibt sichtbar. 'protokoll': Nummer eines Messprotokolls aus tools/foto_mass.py (messprotokoll/M-<foto>-<nr>.json+.jpg) - jede neue Fotomessung so ablegen.",
  "konstanten": {
   "first": 46.2,
   "dach_dz": 8.0
@@ -173,7 +173,8 @@
    ],
    "quelle": "Laser DOM1: lokale Maxima 40,9 und 41,4 m (Journal 12: 43,6 war OSM)",
    "quelltyp": "laser_dom1",
-   "merkmal": "hoehe_flaeche"
+   "merkmal": "hoehe_flaeche",
+   "massstab": "laser"
   },
   {
    "name": "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
@@ -184,7 +185,8 @@
    ],
    "quelle": "Foto 043/044 + Journal 10/6: Kegel schlank; Nutzer 'zu gedrungen' 2026-10-31",
    "quelltyp": "foto_verhaeltnis",
-   "merkmal": "schlankheit"
+   "merkmal": "schlankheit",
+   "massstab": "modell"
   },
   {
    "name": "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
@@ -195,7 +197,8 @@
    ],
    "quelle": "Foto 043/044, Journal 6/10: Kegel ca. 3:1",
    "quelltyp": "foto_verhaeltnis",
-   "merkmal": "schlankheit"
+   "merkmal": "schlankheit",
+   "massstab": "modell"
   },
   {
    "name": "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
@@ -206,7 +209,8 @@
    ],
    "quelle": "Fotos: 4 Ecktuermchen",
    "quelltyp": "foto_verhaeltnis",
-   "merkmal": "anzahl"
+   "merkmal": "anzahl",
+   "massstab": "-"
   },
   {
    "name": "Dachreiter Dicke bei 50 m (m)",
@@ -217,7 +221,8 @@
    ],
    "quelle": "Foto 049 Vollbild: Nadel 0,08-0,14 m, Mast 0,09-0,26 m (+Druck-Untergrenze); DOM1 verschmiert Nadel",
    "quelltyp": "foto_vollbild",
-   "merkmal": "duennes_bauteil"
+   "merkmal": "duennes_bauteil",
+   "massstab": "modell"
   },
   {
    "name": "Dachreiter Dicke bei 52 m (m)",
@@ -228,7 +233,8 @@
    ],
    "quelle": "wie oben",
    "quelltyp": "foto_vollbild",
-   "merkmal": "duennes_bauteil"
+   "merkmal": "duennes_bauteil",
+   "massstab": "modell"
   },
   {
    "name": "Dachreiter Knauf Durchmesser (m)",
@@ -239,7 +245,8 @@
    ],
    "quelle": "Foto 049: 44 px x 1,5 cm = ~0,67 m",
    "quelltyp": "foto_vollbild",
-   "merkmal": "duennes_bauteil"
+   "merkmal": "duennes_bauteil",
+   "massstab": "modell"
   },
   {
    "name": "Dachreiter Knauf Lage (Anteil ueber First)",
@@ -250,7 +257,8 @@
    ],
    "quelle": "Foto 049/000: Knauf bei ~20-28 % der Spitzenlaenge",
    "quelltyp": "foto_verhaeltnis",
-   "merkmal": "verhaeltnis"
+   "merkmal": "verhaeltnis",
+   "massstab": "-"
   },
   {
    "name": "Gesamthoehe (m)",
@@ -264,7 +272,8 @@
    "merkmal": "absolut_hoehe",
    "historie": [
     "bis 2026-10-31: 54,7-54,9 aus Laser DOM1 - FALSCH, Laser sieht die Nadel nicht (Register J3/J4)"
-   ]
+   ],
+   "massstab": "dokument"
   },
   {
    "name": "Spitzenlaenge ueber First (m)",
@@ -275,7 +284,8 @@
    ],
    "quelle": "Foto 049 Vollbild 16,6 / 014: 16,0 / 000: 12,4 m (Massstab aus Modellmassen, grob); Register J3",
    "quelltyp": "foto_vollbild",
-   "merkmal": "duennes_bauteil"
+   "merkmal": "duennes_bauteil",
+   "massstab": "modell"
   },
   {
    "name": "Fenster obere Reihe Suedseite (Anzahl, z 22,1 m)",
@@ -286,7 +296,8 @@
    ],
    "quelle": "Fotos 041/030/042 Vollbild (Suedseite = Adlerseite): zwei Schlitzfenster unter der Uhr",
    "quelltyp": "foto_vollbild",
-   "merkmal": "fassade"
+   "merkmal": "fassade",
+   "massstab": "-"
   },
   {
    "name": "Fenster untere Reihe Suedseite (Anzahl, z 18,5 m)",
@@ -297,7 +308,8 @@
    ],
    "quelle": "Fotos 041/030 Vollbild: ein Fenster tiefer, rechts der Mitte",
    "quelltyp": "foto_vollbild",
-   "merkmal": "fassade"
+   "merkmal": "fassade",
+   "massstab": "-"
   },
   {
    "name": "Fenster obere Reihe Nordseite (Anzahl, z 22,1 m)",
@@ -308,7 +320,8 @@
    ],
    "quelle": "Fotos 031 + 001 Vollbild (Nordseite = Tafelseite): drei Fenster in einer Reihe",
    "quelltyp": "foto_vollbild",
-   "merkmal": "fassade"
+   "merkmal": "fassade",
+   "massstab": "-"
   },
   {
    "name": "Fenster untere Reihe Nordseite (Anzahl, z 18,5 m)",
@@ -319,7 +332,8 @@
    ],
    "quelle": "Fotos 031 + 001 Vollbild: ein Schlitz tiefer in der Mitte",
    "quelltyp": "foto_vollbild",
-   "merkmal": "fassade"
+   "merkmal": "fassade",
+   "massstab": "-"
   },
   {
    "name": "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
@@ -330,7 +344,8 @@
    ],
    "quelle": "Foto 031/041 Vollbild: 5 Zinnen = 4 Scharten je Seite (Zinnen selbst verschmelzen im STL mit den Erkern)",
    "quelltyp": "foto_vollbild",
-   "merkmal": "anzahl"
+   "merkmal": "anzahl",
+   "massstab": "-"
   },
   {
    "name": "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
@@ -341,7 +356,8 @@
    ],
    "quelle": "wie oben",
    "quelltyp": "foto_vollbild",
-   "merkmal": "anzahl"
+   "merkmal": "anzahl",
+   "massstab": "-"
   },
   {
    "name": "Uhr Zifferblatt-Nische Suedseite (Breite m)",
@@ -352,7 +368,8 @@
    ],
    "quelle": "MASSPRUEFUNG Teil 3: Zifferblatt 158 px / 35,3 px/m = 4,5 m (Foto 042), +-12 %",
    "quelltyp": "foto_vollbild",
-   "merkmal": "verhaeltnis"
+   "merkmal": "verhaeltnis",
+   "massstab": "lod2"
   },
   {
    "name": "Dachflanke Halbbreiten-Zunahme je m (Ansicht y, 37->45 m)",
@@ -368,7 +385,8 @@
     "2026-11-01 angelegt als fehlschlagende Pruefung VOR der Generatoraenderung (Methode Schritt 2)"
    ],
    "status": "widerspruch",
-   "widerspruch": "Laser (optimierung_validieren, steilere Flanke 0,15): Ziel 14,3->13,8 und M2 13,9->13,4 besser, aber M1 16,1->18,4 und M3 16,1->18,0 schlechter; Foto-IoU +0,002 (Rauschen). Register J6. Bleibt 0,21 bis eine Quelle entscheidet."
+   "widerspruch": "Laser (optimierung_validieren, steilere Flanke 0,15): Ziel 14,3->13,8 und M2 13,9->13,4 besser, aber M1 16,1->18,4 und M3 16,1->18,0 schlechter; Foto-IoU +0,002 (Rauschen). Register J6. Bleibt 0,21 bis eine Quelle entscheidet.",
+   "massstab": "-"
   },
   {
    "name": "Inschrifttafel NORD Breite (m, z 7,5)",
@@ -382,7 +400,8 @@
    "merkmal": "anzahl",
    "historie": [
     "2026-11-01: Generator hatte Tafel auf +x (Sued) und Adler auf -x (Nord) - gefunden durch das Element-Belegregister (Mechanik F9), getauscht"
-   ]
+   ],
+   "massstab": "dokument"
   },
   {
    "name": "Keine Tafel auf SUED bei z 7,5 (m)",
@@ -393,7 +412,8 @@
    ],
    "quelle": "Fotos 041/030 Vollbild: Suedwand unter dem Adler glatt (Messbereich |u| < 2,5 m, damit die gezahnten Eckquader nicht mitzaehlen)",
    "quelltyp": "foto_vollbild",
-   "merkmal": "fassade"
+   "merkmal": "fassade",
+   "massstab": "-"
   },
   {
    "name": "Doppeladler SUED Breite (m, z 9,45)",
@@ -404,7 +424,8 @@
    ],
    "quelle": "Fotos 041/030: Adlerrelief rechts ueber dem Bogen, Suedseite; de.wikipedia: Toraussenseite",
    "quelltyp": "foto_vollbild",
-   "merkmal": "fassade"
+   "merkmal": "fassade",
+   "massstab": "foto_intern"
   },
   {
    "name": "Eckturm NW Durchmesser (m, y-Ausdehnung der Punkte x<-5, z 2-9)",
@@ -413,12 +434,14 @@
     2.0,
     2.7
    ],
-   "quelle": "Foto 001 Vollbild: ~230 px / 97 px/m = 2,3 m (+-10 %); Suedseite (Foto 000) ohne Eckturm. Im Schnitt verschmilzt der Turm mit dem Rumpf, daher Punktmessung",
+   "quelle": "Messprotokoll M-001-001: 2,29 m +- 0,21 (Foto 001, Massstab Tafelhoehe 2,0 m); Suedseite (Foto 000) ohne Eckturm",
    "quelltyp": "foto_vollbild",
    "merkmal": "anzahl",
    "historie": [
     "2026-11-01 angelegt als fehlschlagende Pruefung vor der Generatoraenderung"
-   ]
+   ],
+   "massstab": "foto_intern",
+   "protokoll": "M-001-001"
   },
   {
    "name": "Eckturm NW Kegelspitze (m)",
@@ -429,7 +452,8 @@
    ],
    "quelle": "Foto 001: Tafel 2,0 m = ~195 px -> ~97 px/m; Traufe ~5,2-5,9 m ueber Bogenscheitel (5,0 m) = ~10-11 m, Kegel ~3-3,5 m -> Spitze ~13-14,5 m (+-10 %)",
    "quelltyp": "foto_vollbild",
-   "merkmal": "verhaeltnis"
+   "merkmal": "verhaeltnis",
+   "massstab": "foto_intern"
   },
   {
    "name": "Sockel-Grundriss Rechteck (m2, z 1 m)",
@@ -443,7 +467,8 @@
    "merkmal": "grundriss",
    "historie": [
     "2026-11-01: vorher 104-127 (Polygonflaeche 115 ohne Eckturm); Modell hat jetzt den NW-Eckturm, Vergleich gegen Huellrechteck"
-   ]
+   ],
+   "massstab": "lod2"
   },
   {
    "name": "Wasserdicht (1=ja)",
@@ -454,7 +479,8 @@
    ],
    "quelle": "Druckfaehigkeit",
    "quelltyp": "modell",
-   "merkmal": "druck"
+   "merkmal": "druck",
+   "massstab": "-"
   },
   {
    "name": "Anzahl getrennte Koerper",
@@ -465,7 +491,8 @@
    ],
    "quelle": "Schwebende Teile (Journal: 14 gefunden)",
    "quelltyp": "modell",
-   "merkmal": "druck"
+   "merkmal": "druck",
+   "massstab": "-"
   }
  ],
  "beobachtungen_offen": [

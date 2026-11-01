@@ -132,6 +132,31 @@ def messen(tab, m):
     if offen: raise ValueError(f"Messungen nicht aufloesbar: {list(offen)}")
     return werte
 
+def massnachweis(obj, tab, zeilen, root, el, seiten_foto):
+    """Schreibt modelle/<objekt>/MASSNACHWEIS.md: was ist womit belegt, was ist Annahme, was Widerspruch - automatisch, nach jedem Lauf."""
+    import datetime
+    L = [f"# Massnachweis {obj['name']} (automatisch aus masstabelle.json, {datetime.date.today()})", "",
+         "Status je Mass: **OK** = Istwert im Sollbereich der Quelle; **WIDERSPRUCH** = Quellen uneins (nicht gemittelt); **FEHLER** = Modell verletzt die Quelle.",
+         "Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im selben Foto; *modell* = zirkulaer (nur Richtung belastbar).", "",
+         "| Merkmal | Ist | Soll | Quelltyp | Massstab | Status | Quelle |", "|---|---|---|---|---|---|---|"]
+    for ok, p, v in zeilen:
+        st = "OK" if ok is True else ("WIDERSPRUCH" if ok else "FEHLER")
+        L.append(f"| {p['name']} | {v:.2f} | {p['soll'][0]:g}..{p['soll'][1]:g} | {p['quelltyp']} | {p.get('massstab', '-')} | {st} | {p['quelle'].replace('|', '/')} |")
+    qt = {}
+    for ok, p, v in zeilen: qt.setdefault(p["quelltyp"], []).append(ok is True)
+    L += ["", "## Belegt durch", ""] + [f"- **{k}**: {sum(v)} von {len(v)} Pruefungen gruen ({QUELLEN[k]['hinweis']})" for k, v in qt.items()]
+    ann = [e for e in el if str(e.get("quelle", "")).startswith("ANNAHME")]
+    if el: L += ["", f"## Elemente des Generators: {len(el)} belegt, {len(ann)} Annahmen", ""] + [f"- {e['seite_name']}: {e['element']} - {e['quelle']}" for e in el]
+    sides = sorted({e["seite_name"] for e in el if e.get("seite") in ("+x", "-x", "+y", "-y")}) if el else []
+    if sides: L += ["", "## Seiten", ""] + [f"- {sn}: {'Fotos vorhanden' if sn in seiten_foto else 'KEIN FOTO - ungeprueft'}" for sn in sides]
+    w = [p for ok, p, v in zeilen if ok == "widerspruch"]
+    if w: L += ["", "## Offene Widersprueche", ""] + [f"- {p['name']}: {p.get('widerspruch', '')}" for p in w]
+    b = tab.get("beobachtungen_offen", [])
+    if b: L += ["", "## Beobachtungen ohne Pruefung", ""] + [f"- {x['datum']} {x['wer']}: {x['text']} -> {x.get('naechster_schritt', '')}" for x in b]
+    L += ["", "## Grenze", "", "Offene Daten (Laser 1 m, Fotos +-5-10 %, Dokumente mit unklarer Bezugshoehe) beweisen keine Masse auf den Zentimeter.",
+          "Dieser Nachweis sagt je Mass, welche Quelle es stuetzt und wie belastbar der Massstab ist; mehr ist ehrlich nicht moeglich."]
+    open(os.path.join(root, os.path.dirname(obj["masstabelle"]), "MASSNACHWEIS.md"), "w").write("\n".join(L) + "\n")
+
 def main():
     a = sys.argv[1:]; md = "--md" in a; a = [x for x in a if x != "--md"]
     obj = json.load(open(a[0])); root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(a[0]))))
@@ -146,6 +171,8 @@ def main():
         elif p.get("merkmal") not in q["sieht"]: unzul.append((p["name"], f"Merkmal '{p.get('merkmal')}' fuer Quelle '{p['quelltyp']}' nicht freigegeben"))
     if unzul:
         print("TABELLE UNZULAESSIG:"); [print(f"  - {n}: {g}") for n, g in unzul]; sys.exit(2)
+    zirk = [p["name"] for p in tab["pruefungen"] if p.get("massstab") == "modell" and p.get("merkmal") not in ("verhaeltnis", "anzahl", "druck")]
+    if zirk: print("MASSSTAB AUS DEM MODELL (zirkulaer - belegt Richtung, nicht Zahl):"); [print(f"  - {n}") for n in zirk]
     # 2) Messen + Pruefen
     m = lade_modell(stl, obj.get("stl_massstab", 1), obj.get("stl_einheit_mm", True), obj.get("zentrierung", "huelle")); werte = messen(tab, m)
     zeilen, bad = [], 0
@@ -184,6 +211,7 @@ def main():
             if k in alt and alt[k] is not None and v is not None and abs(v - alt[k]) > max(0.01, 0.01 * abs(alt[k])): ge.append(f"{k} {alt[k]:.2f}->{v:.2f}")
         print("GEAENDERT seit letztem Lauf:", ", ".join(ge) if ge else "nichts", "  (Pruefen: nur die beabsichtigte Eigenschaft? Lehre F8/F3)")
     json.dump(ber, open(out, "w"), indent=1)
+    massnachweis(obj, tab, zeilen, root, el if ep and os.path.exists(ep) else [], seiten_foto if ep and os.path.exists(ep) else set())
     if md:
         print("\n| Merkmal | Ist | Soll | Quelle | Quelltyp | Status |\n|---|---|---|---|---|---|")
         for ok, p, v in zeilen: print(f"| {p['name']} | {v:.2f} | {p['soll'][0]:g}..{p['soll'][1]:g} | {p['quelle']} | {p['quelltyp']} | {'OK' if ok is True else 'WIDERSPRUCH' if ok else 'FEHLER'} |")

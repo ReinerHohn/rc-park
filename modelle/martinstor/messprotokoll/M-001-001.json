@@ -1,0 +1,30 @@
+{
+ "id": "M-001-001",
+ "foto": "001_2024-10-26_MPM-Days_Freiburg_BR_018.jpg",
+ "bild": [
+  1280,
+  2842
+ ],
+ "name": "Eckturm NW Durchmesser",
+ "merkmal": "duennes_bauteil",
+ "mess_px": [
+  812.0,
+  2400.0,
+  1030.0,
+  2400.0
+ ],
+ "richtung": "h",
+ "stauchung": 1.0,
+ "massstab_px": [
+  600.0,
+  2330.0,
+  600.0,
+  2520.0
+ ],
+ "px_pro_m": 95.0,
+ "massstab_von": "Inschrifttafel Hoehe 2,0 m (MASSPRUEFUNG Teil 5, aus Bogenbreite 4,7 m OSM)",
+ "pixel": 218.0,
+ "meter": 2.295,
+ "unsicherheit_m": 0.205,
+ "hinweis": "+-8 % Ablesung/Perspektive + 2 px"
+}
