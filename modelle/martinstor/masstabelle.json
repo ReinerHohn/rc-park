@@ -464,52 +464,52 @@
    "y1": 9,
    "achse": "y"
   },
-  "tuerm_band_gesims_2788": {
+  "band_tuermchen_gesims_2788": {
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 27.88,
    "quer": 4.44,
    "achse_tief": 3.995
   },
-  "tuerm_band_gesims_3212": {
+  "band_tuermchen_gesims_3212": {
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 32.12,
    "quer": 4.44,
    "achse_tief": 3.995
   },
-  "tuerm_band_fachwerk_3300": {
-   "typ": "tuerm_radius",
-   "seite": "-x",
-   "z": 33.0,
-   "quer": 4.44,
-   "achse_tief": 3.995
-  },
-  "tuerm_band_offen_3425": {
+  "band_tuermchen_offen_3425": {
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 34.25,
    "quer": 4.44,
    "achse_tief": 3.995
   },
-  "tuerm_band_traufe_3525": {
+  "band_tuermchen_traufe_3525": {
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 35.25,
    "quer": 4.44,
    "achse_tief": 3.995
   },
-  "tuerm_band_kupfer_3950": {
+  "band_tuermchen_kupfer_3950": {
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 39.5,
    "quer": 4.44,
    "achse_tief": 3.995
   },
-  "tuerm_band_kegel_4000": {
+  "band_tuermchen_kegel_4000": {
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 40.0,
+   "quer": 4.44,
+   "achse_tief": 3.995
+  },
+  "band_tuermchen_hell_3300": {
+   "typ": "tuerm_radius",
+   "seite": "-x",
+   "z": 33.0,
    "quer": 4.44,
    "achse_tief": 3.995
   }
@@ -1646,95 +1646,95 @@
    ]
   },
   {
-   "name": "Ecktuermchen Band gesims (27.50-28.25 m): Aussenradius bei 27.88 m (m)",
-   "wert": "tuerm_band_gesims_2788",
+   "name": "Band tuermchen gesims (27.50-28.25 m): Aussenradius bei 27.88 m (m)",
+   "wert": "band_tuermchen_gesims_2788",
    "soll": [
     1.02,
     1.32
    ],
-   "quelle": "wolke_tuerm_baender.py: Band gesims 27.5-28.25 m, Aussenradius p97 1.17 (Anteile {'stein': 25.6, 'weiss': 7.5, 'dunkel': 62.9, 'kupfer': 0.3}); Modell: Strahl von -x auf die Tuermchenachse",
+   "quelle": "wolke_baender.py (tuermchen): Band gesims 27.5-28.25 m, Aussenradius p97 1.17 (Anteile {'stein': 25.6, 'weiss': 7.5, 'dunkel': 62.9, 'kupfer': 0.3}); Modell: Strahl von -x auf die Achse",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "profile_tuerm_baender.json"
+   "protokoll": "profile_baender_tuermchen.json"
   },
   {
-   "name": "Ecktuermchen Band gesims (31.75-32.50 m): Aussenradius bei 32.12 m (m)",
-   "wert": "tuerm_band_gesims_3212",
+   "name": "Band tuermchen gesims (31.75-32.50 m): Aussenradius bei 32.12 m (m)",
+   "wert": "band_tuermchen_gesims_3212",
    "soll": [
     1.35,
     1.65
    ],
-   "quelle": "wolke_tuerm_baender.py: Band gesims 31.75-32.5 m, Aussenradius p97 1.50 (Anteile {'stein': 6.1, 'weiss': 0.7, 'dunkel': 78.2, 'kupfer': 4.3}); Modell: Strahl von -x auf die Tuermchenachse",
+   "quelle": "wolke_baender.py (tuermchen): Band gesims 31.75-32.5 m, Aussenradius p97 1.50 (Anteile {'stein': 6.1, 'weiss': 0.7, 'dunkel': 78.2, 'kupfer': 4.3}); Modell: Strahl von -x auf die Achse",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "profile_tuerm_baender.json"
+   "protokoll": "profile_baender_tuermchen.json"
   },
   {
-   "name": "Ecktuermchen Band fachwerk (32.50-33.50 m): Aussenradius bei 33.00 m (m)",
-   "wert": "tuerm_band_fachwerk_3300",
+   "name": "Band tuermchen offen (33.50-35.00 m): Aussenradius bei 34.25 m (m)",
+   "wert": "band_tuermchen_offen_3425",
    "soll": [
     1.4,
     1.7
    ],
-   "quelle": "wolke_tuerm_baender.py: Band fachwerk 32.5-33.5 m, Aussenradius p97 1.55 (Anteile {'stein': 22.2, 'weiss': 7.5, 'dunkel': 7.0, 'kupfer': 0.3}); Modell: Strahl von -x auf die Tuermchenachse",
+   "quelle": "wolke_baender.py (tuermchen): Band offen 33.5-35.0 m, Aussenradius p97 1.55 (Anteile {'stein': 27.4, 'weiss': 1.5, 'dunkel': 60.6, 'kupfer': 0.3}); Modell: Strahl von -x auf die Achse",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "profile_tuerm_baender.json"
+   "protokoll": "profile_baender_tuermchen.json"
   },
   {
-   "name": "Ecktuermchen Band offen (33.50-35.00 m): Aussenradius bei 34.25 m (m)",
-   "wert": "tuerm_band_offen_3425",
-   "soll": [
-    1.4,
-    1.7
-   ],
-   "quelle": "wolke_tuerm_baender.py: Band offen 33.5-35.0 m, Aussenradius p97 1.55 (Anteile {'stein': 27.4, 'weiss': 1.5, 'dunkel': 60.6, 'kupfer': 0.3}); Modell: Strahl von -x auf die Tuermchenachse",
-   "quelltyp": "sfm_bodenanker",
-   "merkmal": "schlankheit",
-   "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "profile_tuerm_baender.json"
-  },
-  {
-   "name": "Ecktuermchen Band traufe (35.00-35.50 m): Aussenradius bei 35.25 m (m)",
-   "wert": "tuerm_band_traufe_3525",
+   "name": "Band tuermchen traufe (35.00-35.50 m): Aussenradius bei 35.25 m (m)",
+   "wert": "band_tuermchen_traufe_3525",
    "soll": [
     1.7,
     2.0
    ],
-   "quelle": "wolke_tuerm_baender.py: Band traufe 35.0-35.5 m, Aussenradius p97 1.85 (Anteile {'stein': 59.9, 'weiss': 0.6, 'dunkel': 54.2, 'kupfer': 1.6}); Modell: Strahl von -x auf die Tuermchenachse",
+   "quelle": "wolke_baender.py (tuermchen): Band traufe 35.0-35.5 m, Aussenradius p97 1.85 (Anteile {'stein': 59.9, 'weiss': 0.6, 'dunkel': 54.2, 'kupfer': 1.6}); Modell: Strahl von -x auf die Achse",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "profile_tuerm_baender.json"
+   "protokoll": "profile_baender_tuermchen.json"
   },
   {
-   "name": "Ecktuermchen Band kupfer (35.50-43.50 m): Aussenradius bei 39.50 m (m)",
-   "wert": "tuerm_band_kupfer_3950",
+   "name": "Band tuermchen kupfer (35.50-43.50 m): Aussenradius bei 39.50 m (m)",
+   "wert": "band_tuermchen_kupfer_3950",
    "soll": [
     0.92,
     1.22
    ],
-   "quelle": "wolke_tuerm_baender.py: Band kupfer 35.5-43.5 m, Aussenradius p97 1.07 (Anteile {'stein': 0.1, 'weiss': 12.8, 'dunkel': 5.1, 'kupfer': 27.6}); Modell: Strahl von -x auf die Tuermchenachse",
+   "quelle": "wolke_baender.py (tuermchen): Band kupfer 35.5-43.5 m, Aussenradius p97 1.07 (Anteile {'stein': 0.1, 'weiss': 12.8, 'dunkel': 5.1, 'kupfer': 27.6}); Modell: Strahl von -x auf die Achse",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "profile_tuerm_baender.json"
+   "protokoll": "profile_baender_tuermchen.json"
   },
   {
-   "name": "Ecktuermchen Band kegel (35.50-44.50 m): Aussenradius bei 40.00 m (m)",
-   "wert": "tuerm_band_kegel_4000",
+   "name": "Band tuermchen kegel (35.50-44.50 m): Aussenradius bei 40.00 m (m)",
+   "wert": "band_tuermchen_kegel_4000",
    "soll": [
     0.78,
     1.08
    ],
-   "quelle": "wolke_tuerm_baender.py: Band kegel 35.5-44.5 m, Aussenradius p97 0.93 (Anteile ); Modell: Strahl von -x auf die Tuermchenachse",
+   "quelle": "wolke_baender.py (tuermchen): Band kegel 35.5-44.5 m, Aussenradius p97 0.93 (Anteile ); Modell: Strahl von -x auf die Achse",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "profile_tuerm_baender.json"
+   "protokoll": "profile_baender_tuermchen.json"
+  },
+  {
+   "name": "Band tuermchen hell (32.50-33.50 m): Aussenradius bei 33.00 m (m)",
+   "wert": "band_tuermchen_hell_3300",
+   "soll": [
+    1.4,
+    1.7
+   ],
+   "quelle": "wolke_baender.py (tuermchen): Band hell 32.5-33.5 m, Aussenradius p97 1.55 (Anteile {'stein': 22.2, 'weiss': 7.5, 'dunkel': 7.0, 'kupfer': 0.3}); Modell: Strahl von -x auf die Achse",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_baender_tuermchen.json"
   }
  ],
  "beobachtungen_offen": [
@@ -4380,6 +4380,13 @@
    "flaeche_m2": 5.8,
    "text": "Modell steht 0.92 m weiter vor als die Fotowolke [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 32.8-40.8 m, y -4.2..-2.8 m, 5.8 m2",
    "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (wolke_baender.py zentral)",
+   "auto_id": "band_zentral_schalloeffnungen",
+   "text": "Band 'offen' am Hauptturm 38,25-39,25 m (dunkel 88 %) = Schalloeffnungen; Modell-Arkaden 37,9-39,5 (ARKADE_UNTER_TRAUFE 3,0). Galeriegesims-Band 36,25-37,75 r 3,70 passt zu LoD2 37,27.",
+   "naechster_schritt": "ARKADE_UNTER_TRAUFE und Oeffnungshoehe aus dem Band ableiten (2,25 / 1,0 m), Pruefzeile 'Band zentral offen' aktivieren"
   }
  ],
  "beobachtungen_erledigt": [

@@ -79,13 +79,13 @@
   "farb_uhr_nord__mitte_z__m_radius": 1.7073737780978249,
   "farb_uhr_nord__mitte_z__m_anzahl": 1608.0,
   "breite_y_285": 11.720000244140625,
-  "tuerm_band_gesims_2788": 1.1700000724792448,
-  "tuerm_band_gesims_3212": 1.4999999694824213,
-  "tuerm_band_fachwerk_3300": 1.550000144958493,
-  "tuerm_band_offen_3425": 1.550000144958493,
-  "tuerm_band_traufe_3525": 1.8499998703002918,
-  "tuerm_band_kupfer_3950": 1.0007041436976012,
-  "tuerm_band_kegel_4000": 0.8950703329438996
+  "band_tuermchen_gesims_2788": 1.1700000724792448,
+  "band_tuermchen_gesims_3212": 1.4999999694824213,
+  "band_tuermchen_offen_3425": 1.550000144958493,
+  "band_tuermchen_traufe_3525": 1.8499998703002918,
+  "band_tuermchen_kupfer_3950": 1.0007041436976012,
+  "band_tuermchen_kegel_4000": 0.8950703329438996,
+  "band_tuermchen_hell_3300": 1.550000144958493
  },
  "pruefungen": [
   {
@@ -609,7 +609,7 @@
    "status": "ok"
   },
   {
-   "name": "Ecktuermchen Band gesims (27.50-28.25 m): Aussenradius bei 27.88 m (m)",
+   "name": "Band tuermchen gesims (27.50-28.25 m): Aussenradius bei 27.88 m (m)",
    "wert": 1.1700000724792448,
    "soll": [
     1.02,
@@ -619,7 +619,7 @@
    "status": "ok"
   },
   {
-   "name": "Ecktuermchen Band gesims (31.75-32.50 m): Aussenradius bei 32.12 m (m)",
+   "name": "Band tuermchen gesims (31.75-32.50 m): Aussenradius bei 32.12 m (m)",
    "wert": 1.4999999694824213,
    "soll": [
     1.35,
@@ -629,7 +629,7 @@
    "status": "ok"
   },
   {
-   "name": "Ecktuermchen Band fachwerk (32.50-33.50 m): Aussenradius bei 33.00 m (m)",
+   "name": "Band tuermchen offen (33.50-35.00 m): Aussenradius bei 34.25 m (m)",
    "wert": 1.550000144958493,
    "soll": [
     1.4,
@@ -639,17 +639,7 @@
    "status": "ok"
   },
   {
-   "name": "Ecktuermchen Band offen (33.50-35.00 m): Aussenradius bei 34.25 m (m)",
-   "wert": 1.550000144958493,
-   "soll": [
-    1.4,
-    1.7
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Ecktuermchen Band traufe (35.00-35.50 m): Aussenradius bei 35.25 m (m)",
+   "name": "Band tuermchen traufe (35.00-35.50 m): Aussenradius bei 35.25 m (m)",
    "wert": 1.8499998703002918,
    "soll": [
     1.7,
@@ -659,7 +649,7 @@
    "status": "ok"
   },
   {
-   "name": "Ecktuermchen Band kupfer (35.50-43.50 m): Aussenradius bei 39.50 m (m)",
+   "name": "Band tuermchen kupfer (35.50-43.50 m): Aussenradius bei 39.50 m (m)",
    "wert": 1.0007041436976012,
    "soll": [
     0.92,
@@ -669,11 +659,21 @@
    "status": "ok"
   },
   {
-   "name": "Ecktuermchen Band kegel (35.50-44.50 m): Aussenradius bei 40.00 m (m)",
+   "name": "Band tuermchen kegel (35.50-44.50 m): Aussenradius bei 40.00 m (m)",
    "wert": 0.8950703329438996,
    "soll": [
     0.78,
     1.08
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Band tuermchen hell (32.50-33.50 m): Aussenradius bei 33.00 m (m)",
+   "wert": 1.550000144958493,
+   "soll": [
+    1.4,
+    1.7
    ],
    "ok": true,
    "status": "ok"

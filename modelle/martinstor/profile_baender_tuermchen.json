@@ -1,9 +1,11 @@
 {
  "seite": "nord",
+ "koerper": "tuermchen",
  "achse": {
   "tief": 3.995,
   "quer": 4.4399999999999995
  },
+ "zone": 1.6,
  "spitze": 44.5,
  "baender": [
   {
@@ -93,7 +95,7 @@
    }
   },
   {
-   "klasse": "fachwerk",
+   "klasse": "hell",
    "z0": 32.5,
    "z1": 33.5,
    "schichten": [
@@ -207,7 +209,13 @@
   "r0": 1.85,
   "r0_aus_steigung": 1.88,
   "spitze": 44.5,
-  "schichten": 32
+  "schichten": 32,
+  "gerade_frei": {
+   "r_je_m": -0.1409,
+   "r_bei_z0": 1.68,
+   "r_oben": 0.56,
+   "z_oben": 43.5
+  }
  },
  "schichten": [
   {
@@ -438,7 +446,7 @@
    "p_weiss": 8.9,
    "p_dunkel": 10.7,
    "p_kupfer": 0.7,
-   "klasse": "fachwerk"
+   "klasse": "hell"
   },
   {
    "z": 32.875,
@@ -448,7 +456,7 @@
    "p_weiss": 7.3,
    "p_dunkel": 7.3,
    "p_kupfer": 0.3,
-   "klasse": "fachwerk"
+   "klasse": "hell"
   },
   {
    "z": 33.125,
@@ -458,7 +466,7 @@
    "p_weiss": 7.6,
    "p_dunkel": 6.0,
    "p_kupfer": 0.0,
-   "klasse": "fachwerk"
+   "klasse": "hell"
   },
   {
    "z": 33.375,
@@ -468,7 +476,7 @@
    "p_weiss": 6.3,
    "p_dunkel": 3.8,
    "p_kupfer": 0.3,
-   "klasse": "fachwerk"
+   "klasse": "hell"
   },
   {
    "z": 33.625,
@@ -798,7 +806,8 @@
    "p_weiss": 29.3,
    "p_dunkel": 0.0,
    "p_kupfer": 9.8,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_kontinuitaet": true
   },
   {
    "z": 41.875,
@@ -858,7 +867,8 @@
    "p_weiss": 60.7,
    "p_dunkel": 0.0,
    "p_kupfer": 0.0,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_kontinuitaet": true
   },
   {
    "z": 43.375,
@@ -871,5 +881,5 @@
    "klasse": "kupfer"
   }
  ],
- "quelle": "tools/wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen je 0,25 m, Baender nach Klassenwechsel"
+ "quelle": "tools/wolke_baender.py: Aussenradius p97 + Farbklassen je 0,25 m, Baender nach Klassenwechsel"
 }

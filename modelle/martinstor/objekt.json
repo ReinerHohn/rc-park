@@ -439,7 +439,7 @@
    "tools/wolke_farbmerkmal.py <objekt> nord --farbe gold --z 20 32 --pruefung 'Uhr Nord: Mitte z (m)' ... (farbige Fassadenmerkmale -> Pruefzeile; Modellseite relief_mitte)",
    "tools/foto_lod2_zuordnen.py <objekt> <foto> --gml-dir /media/oem/scan/tmp/mt_lod2 --u .. --v .. (unbekanntes Ding im Foto: LoD2 in die Kamera projizieren)",
    "Sichtfund Seitenansicht: orthografische Projektion Modell + Wolke rendern (audit/seitenansicht_west_wolke.png, Skript in Register AT) und Nordfront je m tabellieren - vor jeder Generatoraenderung",
-   "tools/wolke_tuerm_baender.py <objekt> nord --pruefungen (Tuermchen-Baender aus Aussenradius + Farbklassen -> profile_tuerm_baender.json, Generator baut daraus; je Band Pruefzeile tuerm_radius)"
+   "tools/wolke_baender.py <objekt> nord --koerper tuermchen --pruefungen (Baender je Koerper aus objekt.json['koerper'] aus Aussenradius + Farbklassen -> profile_tuerm_baender.json, Generator baut daraus; je Band Pruefzeile tuerm_radius)"
   ],
   "regel": "Neuer Matcher/Variante NUR mit --name <variante> in eigene Ordner; Referenznetz sparse_<seite> nie ueberschreiben (Panne AK)",
   "quellen_blindheit_dom1_helm": "DOM1-Zellmaxima (1 m) erfassen Helmflaechen steiler als ~75 Grad nur teilweise: Schnittbreiten und Zellzahlen dort keine Obergrenze (Register AR, Foto 061 + Wolke stimmen, DOM1 Faktor 2 kleiner)"
@@ -459,6 +459,33 @@
    "masse": "modelle/martinstor/torbau/torbau_masse.json",
    "quelle": "Wolke Nord + Fotos 003/089 + LoD2 (Register AQ)",
    "stand": "erste parametrische Front (Arkade, 2 Fensterreihen, Staffelgiebel); Fensterzahl/Stufen/Bogenbreite ANNAHME"
+  }
+ },
+ "koerper": {
+  "tuermchen": {
+   "achse": "profile_generator.json:tuerm_achse",
+   "zone": 1.6,
+   "z": [
+    27.0,
+    45.0
+   ],
+   "spitze": "TUERM_SPITZE",
+   "reichweite": 4.0,
+   "was": "Ecktuermchen (Achse aus Kreisfit, Register AR)"
+  },
+  "zentral": {
+   "achse": [
+    0.0,
+    0.0
+   ],
+   "zone": 1.5,
+   "z": [
+    8.0,
+    56.0
+   ],
+   "spitze": "GZ1+DACHHOEHE",
+   "reichweite": 7.0,
+   "was": "Hauptturm auf der Bauwerksachse (Front = Aussenradius)"
   }
  }
 }

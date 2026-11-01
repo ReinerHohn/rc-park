@@ -1029,3 +1029,19 @@ Achse misst wie die Wolke. (2) Werkzeuge, die Pruefzeilen ersetzen, duerfen Mess
 Kupfer), die der reinen Geometrie fehlt - generisch nutzbar fuer jedes Bauteil mit eigener Farbe.
 **Offen:** Zahl der Bogenoeffnungen je Flaeche und Form der Boeckchen sind Annahmen aus Foto 043 (Sued; kein kalibriertes Nahfoto Nord);
 Suedtuermchen per Symmetrie; auto-Beobachtungs-Hygiene.
+
+## AV. Kein Spezialwerkzeug fuer Tuermchen: `wolke_baender.py` fuer jeden Koerper (2026-11-01)
+**Nutzer:** "dass wir jetzt ein Spezialtool fuer Tuermchen brauchen? ... nur machen, wenn es anders genauso gut ohne Qualitaetsverlust geht."
+**Befund:** Das Werkzeug aus AU war nur im Namen speziell. Umgebaut zu `tools/wolke_baender.py --koerper <name>`: ein Koerper = Achse (tief, quer)
++ Zonenbreite + Hoehenbereich + Spitzenmass, als DATEN in `objekt.json["koerper"]` (tuermchen: Kreisfit-Achse aus profile_generator.json;
+zentral: Bauwerksachse 0/0). Einzige Regelaenderung: statt 'oberhalb der ersten Kupferschicht ist alles Kegel' (Tuermchen-Abkuerzung) jetzt
+generisch 'Kupferdach-Kontinuitaet': Schichten ueber einem Kupferband gehoeren zum Dach, wenn ihr Radius der Dachgeraden folgt (+-0,35 m)
+und kein Stein sichtbar ist. Kupferschwelle 10 % und >= Steinanteil. Klasse 'fachwerk' heisst jetzt 'hell' (Putz/Holz), der Generator deutet
+sie am Tuermchen als Fachwerkbruestung (ANNAHME Foto 043).
+**Regression:** Tuermchen-Baender und Kegel (r0 1,85 / z0 35,5 / 0,2093 r/m) identisch mit AU - kein Qualitaetsverlust. Pruefstand gruen.
+**Probe am Hauptturm (ohne jede Eingabe):** Kragdach-Traufe 31,5-32,0 (r 5,17), Kupferschraege 32-34,5, helle Glockenstock-Wand ab 34,5,
+Galeriegesims 36,25-37,75 (r 3,70; LoD2 Wandoberkante 37,27), Schalloeffnungen 38,25-39,25 (dunkel 88 %), Helmtraufe 40,25-40,5 (r 4,07),
+Kupferhelm ab 40,5 - stimmt mit GZ0 34,1 / GZ1 40,5 / HELM_UEBER aus AR/AS ueberein. Abweichung notiert: Schalloeffnungen im Modell
+37,9-39,5 vs Band 38,25-39,25 (offene Beobachtung, Masse ARKADE_UNTER_TRAUFE spaeter aus dem Band).
+**Lehre:** Vor jedem neuen Werkzeug fragen, welche Eingaben wirklich objektspezifisch sind - meist nur Achse, Zone, Hoehenbereich. Die gehoeren
+als Daten in objekt.json, nicht in den Werkzeugnamen.

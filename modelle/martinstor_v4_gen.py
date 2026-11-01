@@ -274,10 +274,10 @@ adds.append(M.cylinder(TOP - KZ - 0.1, 0.10, 0.04, 8).translate((0, 0, KZ + 0.1)
 # ---------- Ecktuermchen: Sandsteinturm + achteckiger Erker mit Fachwerk-Bruestung und Arkade ----------
 TWs, T0, T1 = _M["TWs"], _M["T0"], _M["T1"]
 OR = _M["OR"]                                # Erker-Radius
-# ---------- Ecktuermchen aus BAENDERN (tools/wolke_tuerm_baender.py -> profile_tuerm_baender.json, Register AU) ----------
+# ---------- Ecktuermchen aus BAENDERN (tools/wolke_baender.py --koerper tuermchen -> profile_baender_tuermchen.json, Register AU) ----------
 _TB = None
 if _M.get("PROFIL_DATEI", 0) >= 1:
-    _tp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "profile_tuerm_baender.json")
+    _tp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "profile_baender_tuermchen.json")
     if os.path.exists(_tp): _TB = __import__("json").load(open(_tp))
 def _okt_prisma(c, r, z0, z1):
     """Achteck mit Schluesselweite 2r (Flaeche zeigt nach +-x/+-y, wie die Schnittmessung), von z0 bis z1."""
@@ -304,7 +304,7 @@ def bau_tuerm_baender(c, sx, sy):
         z0, z1, r = b["z0"], b["z1"], b["r"]
         if b["klasse"] == "gesims":
             adds.append(_okt_prisma(c, r, z0 - 0.02, z1))                                       # Kragplatte / Konsolring
-        elif b["klasse"] == "fachwerk":
+        elif b["klasse"] in ("hell", "fachwerk"):                                             # helles Band = Fachwerkbruestung (ANNAHME Foto 043)
             adds.append(_okt_prisma(c, r, z0 - 0.02, z1))
             for zz in (z0, z1 - 0.12): adds.append(_okt_prisma(c, r + rel(0.12), zz, zz + 0.12))   # Leisten unten/oben
             for k in range(8):                                                                   # X-Fachwerk als Schlitze je Flaeche
@@ -331,10 +331,10 @@ def bau_tuerm_baender(c, sx, sy):
         adds.append(_okt_kegel(c, K["r0"], K["z0"] - 0.02, 0.05, TS - 0.5))                      # Kupferkegel: Gerade Traufe -> Spitze
     adds.append(M.sphere(0.2, 20).translate((c[0], c[1], TS - 0.35))); adds.append(M.cylinder(0.35, 0.05, 0.015, 8).translate((c[0], c[1], TS - 0.35)))
     if (sx, sy) == (-1, 1):
-        for b in B: beleg("dach", f"Ecktuermchen Band {b['klasse']} {b['z0']}-{b['z1']} m, r {b['r']}", "wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)", z0=b["z0"], z1=b["z1"], r=b["r"])
+        for b in B: beleg("dach", f"Ecktuermchen Band {b['klasse']} {b['z0']}-{b['z1']} m, r {b['r']}", "wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)", z0=b["z0"], z1=b["z1"], r=b["r"])
         beleg("dach", "Ecktuermchen Arkadenband: 2 Rundbogenoeffnungen je Aussenflaeche", "ANNAHME aus Foto 043 (Sued, gepaarte Boegen); Bandlage aus der Wolke (dunkel 61 %)", je_flaeche=2)
         beleg("dach", "Ecktuermchen Traufkonsolen ('Boeckchen') 8 je Tuermchen", "ANNAHME aus Foto 043; Traufplatte r aus der Wolke", anzahl=8)
-        if K: beleg("dach", "Ecktuermchen Kupferkegel Traufe -> Spitze", f"wolke_tuerm_baender.py: r {K['r0']} bei {K['z0']} m, Steigung {K['r_je_m']} r/m zur Spitze {TS}", r0=K["r0"], z0=K["z0"])
+        if K: beleg("dach", "Ecktuermchen Kupferkegel Traufe -> Spitze", f"wolke_baender.py: r {K['r0']} bei {K['z0']} m, Steigung {K['r_je_m']} r/m zur Spitze {TS}", r0=K["r0"], z0=K["z0"])
 for sx in (-1, 1):
     for sy in (-1, 1):
         _h = hxy(T0 + 1.0)
