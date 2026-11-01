@@ -181,6 +181,16 @@ def quoins3(z0, z1, a=1.35, b=0.8, course=0.95, joint=0.09):
 adds.append(box(-DB / 2 - rel(0.15), DB / 2 + rel(0.15), -WB / 2 - rel(0.15), WB / 2 + rel(0.15), 0, 0.9))   # Plinthe
 adds.append(box(-DB / 2, DB / 2, -WB / 2, WB / 2, 0.8, ZB))                                                      # Steinsockel
 adds.append(frustum(0, 0, ZB - 0.01, DB, WB, ZZ, D, W))                                                          # verjuengter Schaft
+# ---------- runder Eckturm an der NW-Ecke (Stadtseite, zwischen Turm und 1901er Torbau) ----------
+# Foto 001 Vollbild (Tafel 2,0 m = ~195 px -> ~97 px/m): Durchmesser ~2,3 m, Traufe ~10-11 m, Kegel ~3-3,5 m, Spitze ~13-14,5 m;
+# Foto 000: Suedseite ohne Eckturm. Masstabelle "Eckturm NW".
+EX, EY, ER = -DB / 2 - 0.8, -WB / 2 + 0.2, 1.15
+adds.append(M.cylinder(10.6 - 0.8, ER, ER, 32).translate((EX, EY, 0.8)))                                  # Sandsteinrund
+adds.append(M.cylinder(0.25, ER + 0.2, ER + 0.2, 32).translate((EX, EY, 10.35)))                             # Traufgesims
+adds.append(M.cylinder(3.3, ER + 0.2, 0.03, 32).translate((EX, EY, 10.6)))                                  # Kupferkegel
+adds.append(M.sphere(0.12, 12).translate((EX, EY, 13.9)))                                                   # Knauf
+for zz in (4.0, 8.0):                                                                                     # Schlitzfenster nach Norden
+    cuts.append(M.cube((0.6, 0.25, 1.0)).translate((EX - ER - 0.3, EY - 0.125, zz)))
 HB = (DB / 2, WB / 2)
 
 def bruchstein(f, L, hh, frei):

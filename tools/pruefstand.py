@@ -9,7 +9,7 @@ Sollbereich + Quelle + Quelltyp + Merkmalstyp, offene Beobachtungen. Dieser Prue
 (QUELLEN). Eine Pruefung, deren Quelle fuer ihr Merkmal blind ist, wird ABGELEHNT (Exit 2) - das war die Wurzel des
 Martinstor-Fehlers (Nadelhoehe aus Laser DOM1). Masse immer in Metern, STL wird auf Massstab/Mitte/Boden normiert.
 """
-import sys, os, json, numpy as np, trimesh
+import sys, os, re, json, numpy as np, trimesh
 
 # Was eine Quelle beweisen kann (Erfahrung dieses Projekts; Begruendung in modelle/METHODE_MASSTABELLE.md)
 QUELLEN = {
@@ -34,13 +34,26 @@ class Messer:
     def _polys(self, z):
         s = self.m.section(plane_origin=[0, 0, z], plane_normal=[0, 0, 1])
         if s is None: return []
-        p, _ = s.to_2D(); return [(np.array(g.centroid.coords[0]), g) for g in p.polygons_full]
+        p, T = s.to_2D()                                   # to_2D verschiebt/dreht die Ebene: Schwerpunkte zurueck in Modellkoordinaten
+        self._T = T; return [(T[:2, :2] @ np.array(g.centroid.coords[0]) + T[:2, 3], g) for g in p.polygons_full]
+    def _bounds3(self, g):
+        b = g.bounds; T = self._T; pts = np.array([[b[0], b[1]], [b[2], b[1]], [b[2], b[3]], [b[0], b[3]]]) @ T[:2, :2].T + T[:2, 3]
+        return pts[:, 0].min(), pts[:, 1].min(), pts[:, 0].max(), pts[:, 1].max()
     @staticmethod
     def _diam(g): return 2 * np.sqrt(g.area / np.pi)
     def hoehe_max(self, **k): return float(self.m.extents[2])
     def lokales_max_abseits(self, zmin, ax, ay, **k):
         v = self.m.vertices; s = (v[:, 2] > zmin) & (np.abs(v[:, 0]) > ax) & (np.abs(v[:, 1]) > ay)
         return float(v[s, 2].max()) if s.any() else float("nan")
+    def max_z_im_bereich(self, x0, x1, y0, y1, zmax=1e9, **k):
+        """Hoechster Punkt innerhalb eines Grundriss-Rechtecks unterhalb zmax (z. B. Eckturm am Sockel, ohne den Schaft darueber)."""
+        v = self.m.vertices; s = (v[:, 0] >= x0) & (v[:, 0] <= x1) & (v[:, 1] >= y0) & (v[:, 1] <= y1) & (v[:, 2] < zmax)
+        return float(v[s, 2].max()) if s.any() else 0.0
+    def ausdehnung_im_bereich(self, x0, x1, y0, y1, z0, z1, **k):
+        """x-/y-Ausdehnung aller Punkte in einem Quader (z. B. Durchmesser eines Anbaus, der im Schnitt mit dem Rumpf verschmilzt)."""
+        v = self.m.vertices; s = (v[:, 0] >= x0) & (v[:, 0] <= x1) & (v[:, 1] >= y0) & (v[:, 1] <= y1) & (v[:, 2] >= z0) & (v[:, 2] <= z1)
+        if not s.any(): return {"x": 0.0, "y": 0.0, "punkte": 0.0}
+        q = v[s]; return {"x": float(q[:, 0].max() - q[:, 0].min()), "y": float(q[:, 1].max() - q[:, 1].min()), "punkte": float(s.sum())}
     def querschnitte_abseits(self, z, ax, ay, **k):
         ps = [(c, g) for c, g in self._polys(z) if abs(c[0]) > ax and abs(c[1]) > ay]
         return {"anzahl": float(len(ps)), "durchmesser": float(np.mean([self._diam(g) for _, g in ps])) if ps else float("nan")}
@@ -65,16 +78,38 @@ class Messer:
                 if min_b / schritt <= run <= max_b / schritt: n += 1
                 run = 0
         return float(n)
-    def grundriss_rechteck(self, z, **k):
+    def anzahl_im_band(self, z, achse, lo, hi, quer_max, **k):
+        """Zaehlt Querschnitte bei z, deren Schwerpunkt auf 'achse' (x|y) zwischen lo..hi liegt und quer < quer_max (z. B. Zinnen einer Seite)."""
+        a = 0 if achse == "x" else 1
+        return float(sum(1 for c, _ in self._polys(z) if lo <= c[a] <= hi and abs(c[1 - a]) < quer_max))
+    def relief_breite(self, seite, z, halb, hoehe_min, schritt=0.05, art="vor", max_luecke=0.0, **k):
+        """Breite des laengsten zusammenhaengenden Vorsprungs (art=vor) oder Ruecksprungs (art=rueck) >= hoehe_min entlang einer Fassade bei z (Uhrnische, Rahmen)."""
+        ax = 0 if seite[1] == "x" else 1; sgn = 1.0 if seite[0] == "+" else -1.0
+        us = np.arange(-halb, halb + 1e-6, schritt); org = np.zeros((len(us), 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = us; org[:, 2] = z
+        dr = np.zeros_like(org); dr[:, ax] = -sgn
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
+        d = np.full(len(us), np.nan); d[ir] = np.abs(loc[:, ax]); wall = np.nanmedian(d); dev = (d - wall) if art == "vor" else (wall - d) if art == "rueck" else np.abs(d - wall); vor = dev >= hoehe_min
+        idx = np.nonzero(vor)[0]
+        if len(idx) == 0: return 0.0
+        best = 0; start = idx[0]; prev = idx[0]                      # Laeufe, die durch Luecken <= max_luecke (z. B. Stundenmarken) unterbrochen sind, zusammenfassen
+        for i in list(idx[1:]) + [None]:
+            if i is None or (i - prev - 1) * schritt > max_luecke: best = max(best, prev - start + 1); start = i
+            prev = i if i is not None else prev
+        return float(best * schritt)
+    def grundriss_rechteck(self, z, r=None, **k):
         ps = self._polys(z)
+        if r is not None: ps = [(c, g) for c, g in ps if np.hypot(*c) < r]
         if not ps: return {"flaeche": float("nan"), "x": float("nan"), "y": float("nan")}
-        b = np.array([g.bounds for _, g in ps]); x = b[:, 2].max() - b[:, 0].min(); y = b[:, 3].max() - b[:, 1].min()
+        b = np.array([self._bounds3(g) for _, g in ps]); x = b[:, 2].max() - b[:, 0].min(); y = b[:, 3].max() - b[:, 1].min()
         return {"flaeche": float(x * y), "x": float(x), "y": float(y)}
 
-def lade_modell(stl, massstab, einheit_mm):
+def lade_modell(stl, massstab, einheit_mm, zentrierung="huelle"):
+    """zentrierung: 'huelle' = x/y auf Huellbox-Mitte (Scans), 'achse' = Koordinaten lassen (Generator baut um die Achse 0,0;
+    Anbauten wie ein Eckturm wuerden die Huellbox-Mitte und damit alle Achsmessungen verschieben). z immer auf Boden 0."""
     m = trimesh.load(stl)
     if einheit_mm: m.apply_scale(massstab / 1000.0)
-    c = m.bounds.mean(0); m.apply_translation([-c[0], -c[1], -m.bounds[0, 2]]); return m
+    c = m.bounds.mean(0) if zentrierung == "huelle" else np.zeros(3)
+    m.apply_translation([-c[0], -c[1], -m.bounds[0, 2]]); return m
 
 def auswerten(ausdruck, werte):
     try: return float(eval(ausdruck, {"__builtins__": {}}, dict(werte)))
@@ -85,7 +120,7 @@ def messen(tab, m):
     for _ in range(len(offen) + 1):                                   # Messungen duerfen auf andere verweisen ("z": "tuermchen_spitze - 2")
         for name in list(offen):
             spec = dict(offen[name]); typ = spec.pop("typ")
-            try: args = {k: (auswerten(v, werte) if isinstance(v, str) and k != "seite" else v) for k, v in spec.items()}
+            try: args = {k: (auswerten(v[1:], werte) if isinstance(v, str) and v.startswith("=") else v) for k, v in spec.items()}   # "=formel" verweist auf andere Messungen
             except ValueError: continue
             r = getattr(M, typ)(**args)
             if isinstance(r, dict):
@@ -110,24 +145,35 @@ def main():
     if unzul:
         print("TABELLE UNZULAESSIG:"); [print(f"  - {n}: {g}") for n, g in unzul]; sys.exit(2)
     # 2) Messen + Pruefen
-    m = lade_modell(stl, obj.get("stl_massstab", 1), obj.get("stl_einheit_mm", True)); werte = messen(tab, m)
+    m = lade_modell(stl, obj.get("stl_massstab", 1), obj.get("stl_einheit_mm", True), obj.get("zentrierung", "huelle")); werte = messen(tab, m)
     zeilen, bad = [], 0
     for p in tab["pruefungen"]:
-        v = auswerten(p["wert"], werte); lo, hi = p["soll"]; ok = (not np.isnan(v)) and lo <= v <= hi; bad += 0 if ok else 1
+        v = auswerten(p["wert"], werte); lo, hi = p["soll"]; ok = (not np.isnan(v)) and lo <= v <= hi
+        if not ok and p.get("status") == "widerspruch": ok = "widerspruch"
+        bad += 0 if ok else 1
         zeilen.append((ok, p, v))
     print(f"Pruefstand {obj['name']}  ({stl})")
     for ok, p, v in zeilen:
-        print(f"  {'OK    ' if ok else 'FEHLER'}  {p['name']:56s} {v:8.2f}  Soll {p['soll'][0]:g}..{p['soll'][1]:g}   [{p['quelltyp']}: {p['quelle'][:70]}]")
+        print(f"  {'OK    ' if ok is True else 'WIDERS' if ok else 'FEHLER'}  {p['name']:56s} {v:8.2f}  Soll {p['soll'][0]:g}..{p['soll'][1]:g}   [{p['quelltyp']}: {p['quelle'][:70]}]")
     for b in tab.get("beobachtungen_offen", []):
         print(f"  OFFEN   {b['datum']} {b['wer']}: {b['text'][:90]}  -> {b.get('naechster_schritt', '')[:60]}")
+    nw = sum(1 for ok, _, _ in zeilen if ok == "widerspruch")
+    for ok, p, v in zeilen:
+        if ok == "widerspruch": print(f"  WIDERSPRUCH offen: {p['name']}: {p.get('widerspruch', '')[:110]}")
     print("ERGEBNIS:", "alle Pruefungen bestanden" if not bad else f"{bad} Pruefung(en) FEHLGESCHLAGEN - Modell NICHT freigeben",
-          f"| {len(tab.get('beobachtungen_offen', []))} Beobachtung(en) ohne Pruefung")
+          f"| {nw} Widerspruch/Widersprueche offen | {len(tab.get('beobachtungen_offen', []))} Beobachtung(en) ohne Pruefung")
     ber = {"stl": stl, "werte": {k: (None if isinstance(v, float) and np.isnan(v) else v) for k, v in werte.items()},
-           "pruefungen": [{"name": p["name"], "wert": None if np.isnan(v) else v, "soll": p["soll"], "ok": bool(ok)} for ok, p, v in zeilen], "bestanden": bad == 0}
-    out = os.path.join(root, os.path.dirname(obj["masstabelle"]), "pruefbericht.json"); json.dump(ber, open(out, "w"), indent=1)
+           "pruefungen": [{"name": p["name"], "wert": None if np.isnan(v) else v, "soll": p["soll"], "ok": ok is True, "status": "widerspruch" if ok == "widerspruch" else ("ok" if ok else "fehler")} for ok, p, v in zeilen], "bestanden": bad == 0}
+    out = os.path.join(root, os.path.dirname(obj["masstabelle"]), "pruefbericht.json")
+    if os.path.exists(out) and "--stl" not in a:                       # Aenderungs-Diff: was hat sich seit dem letzten Lauf bewegt?
+        alt = json.load(open(out)).get("werte", {}); ge = []
+        for k, v in ber["werte"].items():
+            if k in alt and alt[k] is not None and v is not None and abs(v - alt[k]) > max(0.01, 0.01 * abs(alt[k])): ge.append(f"{k} {alt[k]:.2f}->{v:.2f}")
+        print("GEAENDERT seit letztem Lauf:", ", ".join(ge) if ge else "nichts", "  (Pruefen: nur die beabsichtigte Eigenschaft? Lehre F8/F3)")
+    json.dump(ber, open(out, "w"), indent=1)
     if md:
         print("\n| Merkmal | Ist | Soll | Quelle | Quelltyp | Status |\n|---|---|---|---|---|---|")
-        for ok, p, v in zeilen: print(f"| {p['name']} | {v:.2f} | {p['soll'][0]:g}..{p['soll'][1]:g} | {p['quelle']} | {p['quelltyp']} | {'OK' if ok else 'FEHLER'} |")
+        for ok, p, v in zeilen: print(f"| {p['name']} | {v:.2f} | {p['soll'][0]:g}..{p['soll'][1]:g} | {p['quelle']} | {p['quelltyp']} | {'OK' if ok is True else 'WIDERSPRUCH' if ok else 'FEHLER'} |")
     sys.exit(1 if bad else 0)
 
 if __name__ == "__main__":

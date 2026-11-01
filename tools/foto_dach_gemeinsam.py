@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import foto_silhouette_gpu as F
 import foto_profil_gpu as PG
 dev = F.dev; lo, hi = PG.lo, PG.hi
-DEFAULT = ["001", "006", "014", "018", "020", "021", "022", "030", "031", "040", "041", "049", "042", "043", "044"]
+DEFAULT = [k for k, v in F.FOTOS.items() if v[1].get("seite")] or ["042", "043", "044"]   # aus objekt.json (silhouette_frei)
 
 def load(nr, width=400):
     fn = glob.glob(F.FD + f"{nr}_*")[0]; im = cv2.imread(fn); h, w = im.shape[:2]; s = width / w
@@ -22,7 +22,7 @@ def load(nr, width=400):
     No = cv2.morphologyEx(N.astype(np.uint8), cv2.MORPH_OPEN, np.ones((7, 7), np.uint8)).astype(bool)   # Leitungen weg
     H, W = N.shape; cols = np.arange(int(W * .2), int(W * .8)); ys = [np.argmax(No[:, c]) if No[:, c].any() else H for c in cols]
     k = int(np.argmin(ys)); x0, y0 = int(cols[k]), int(ys[k])
-    if nr in F.FOTOS: roi = F.FOTOS[nr][1]["roi"]
+    if nr in F.FOTOS and F.FOTOS[nr][1].get("roi"): roi = F.FOTOS[nr][1]["roi"]
     else: roi = (max(0, x0 - 85), max(0, y0 - 6), min(W, x0 + 85), min(H, y0 + 190))
     return im, N, roi
 

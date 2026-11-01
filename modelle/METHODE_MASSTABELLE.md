@@ -51,8 +51,17 @@ Kein Messcode je Objekt mehr. Neue Merkmale = neue Zeile in der Tabelle; neue Me
 ## 5. Neues Objekt anlegen (10 Minuten)
 `mkdir modelle/<objekt>`; `objekt.json` nach Vorbild `modelle/martinstor/objekt.json`; `masstabelle.json` mit den Dokument-/LoD2-Zeilen beginnen
 (Gesamthoehe, Grundriss, wasserdicht, Koerper); `tools/bauen_abnehmen.sh <objekt>`. Messer, die fehlen, in `tools/pruefstand.py` ergaenzen
-(generisch, mit Parametern - kein Objektname im Code). Verfuegbar: hoehe_max, lokales_max_abseits, querschnitte_abseits, breite_achse,
-knauf_achse, nischen_anzahl (Fassade per Strahlen), grundriss_rechteck, wasserdicht, koerper_anzahl.
+(generisch, mit Parametern - kein Objektname im Code). Verfuegbar: hoehe_max, lokales_max_abseits, max_z_im_bereich(zmax), ausdehnung_im_bereich,
+querschnitte_abseits, anzahl_im_band, breite_achse, knauf_achse, nischen_anzahl (Fassade per Strahlen), relief_breite (vor/rueck/beide, max_luecke),
+grundriss_rechteck(r), wasserdicht, koerper_anzahl.
+
+Konventionen der Tabelle: Textparameter sind Literale (`"seite": "+x"`), Verweise auf andere Messungen beginnen mit `=` (`"z": "=tuermchen_spitze - 2.0"`);
+`wert` einer Pruefung ist immer eine Formel ueber Messungen und `konstanten`. `status: "widerspruch"` + `widerspruch: "..."` = Quellen uneins (sichtbar,
+zaehlt nicht als Fehler). `objekt.json` `zentrierung: "achse"` fuer Generatoren (Achse bei 0,0), `"huelle"` fuer Scans. Nach jedem Lauf zeigt der
+Pruefstand "GEAENDERT seit letztem Lauf" (Pruefbericht-Diff): nur die beabsichtigte Eigenschaft darf sich bewegt haben (Lehre F8/F3 aus PROTOKOLL_VALIDATOR).
+
+Messtechnische Fallen (gelernt am Eckturm, Register L2): `section().to_2D()` verschiebt die Ebene -> zuruecktransformieren; Huellbox-Zentrierung
+verschiebt die Achse bei Anbauten; Anbauten verschmelzen im Schnitt mit dem Rumpf -> Punktmesser statt Polygonzaehlung.
 
 ## 6. Was dieser Rahmen bewusst NICHT verspricht
 "Alle Masse bewiesen" gibt es mit offenen Daten nicht: Laser 1 m, Fotos +-5-10 %, Dokumente mit unklarer Bezugshoehe. Der Rahmen liefert

@@ -1,61 +1,422 @@
 {
-  "_doku": "Masstabelle = einzige Wahrheit ueber Masse des Objekts. Jede Pruefung: Messung am STL (generische Messer in tools/pruefstand.py), Sollbereich, Quelle, Quelltyp, Merkmalstyp. Der Pruefstand lehnt Pruefungen ab, deren Quelltyp fuer den Merkmalstyp blind ist (z. B. Laser DOM1 fuer eine Nadel). Sollwerte nie lockern, um Gruen zu bekommen - nur mit neuer Quelle (Eintrag 'historie').",
-  "konstanten": {"first": 46.2},
-  "messungen": {
-    "hoehe":            {"typ": "hoehe_max"},
-    "tuermchen_spitze": {"typ": "lokales_max_abseits", "zmin": 35, "ax": 2.5, "ay": 2.5},
-    "tuermchen_2m":     {"typ": "querschnitte_abseits", "z": "tuermchen_spitze - 2.0", "ax": 2.5, "ay": 2.5},
-    "tuermchen_4m":     {"typ": "querschnitte_abseits", "z": "tuermchen_spitze - 4.0", "ax": 2.5, "ay": 2.5},
-    "nadel_50":         {"typ": "breite_achse", "z": 50.0, "r": 1.5},
-    "nadel_52":         {"typ": "breite_achse", "z": 52.0, "r": 1.5},
-    "knauf":            {"typ": "knauf_achse", "z0": 47.0, "z1": 52.0, "dz": 0.1, "r": 1.5},
-    "wasserdicht":      {"typ": "wasserdicht"},
-    "koerper":          {"typ": "koerper_anzahl"},
-    "fenster_S_oben":   {"typ": "nischen_anzahl", "seite": "+x", "z": 22.07, "halb": 4.6, "tiefe": 0.2},
-    "fenster_S_unten":  {"typ": "nischen_anzahl", "seite": "+x", "z": 18.5,  "halb": 4.6, "tiefe": 0.2},
-    "fenster_N_oben":   {"typ": "nischen_anzahl", "seite": "-x", "z": 22.07, "halb": 4.6, "tiefe": 0.2},
-    "fenster_N_unten":  {"typ": "nischen_anzahl", "seite": "-x", "z": 18.5,  "halb": 4.6, "tiefe": 0.2},
-    "sockel":           {"typ": "grundriss_rechteck", "z": 1.0}
+ "_doku": "Masstabelle = einzige Wahrheit ueber Masse des Objekts. Jede Pruefung: Messung am STL (generische Messer in tools/pruefstand.py), Sollbereich, Quelle, Quelltyp, Merkmalstyp. Der Pruefstand lehnt Pruefungen ab, deren Quelltyp fuer den Merkmalstyp blind ist (z. B. Laser DOM1 fuer eine Nadel). Sollwerte nie lockern, um Gruen zu bekommen - nur mit neuer Quelle (Eintrag 'historie'). Messparameter als Text sind Literale (seite '+x', art 'rueck'); Verweise auf andere Messungen beginnen mit '=' (z. B. z: '=tuermchen_spitze - 2.0'). Pruefwerte ('wert') sind immer Formeln ueber Messungen/Konstanten. status 'widerspruch' = Quellen uneins, zaehlt nicht als Fehlschlag, bleibt sichtbar.",
+ "konstanten": {
+  "first": 46.2,
+  "dach_dz": 8.0
+ },
+ "messungen": {
+  "hoehe": {
+   "typ": "hoehe_max"
   },
-  "pruefungen": [
-    {"name": "Tuermchen-Spitze Hoehe (m)", "wert": "tuermchen_spitze", "soll": [40.7, 41.8],
-     "quelle": "Laser DOM1: lokale Maxima 40,9 und 41,4 m (Journal 12: 43,6 war OSM)", "quelltyp": "laser_dom1", "merkmal": "hoehe_flaeche"},
-    {"name": "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)", "wert": "tuermchen_2m_durchmesser", "soll": [0.4, 1.2],
-     "quelle": "Foto 043/044 + Journal 10/6: Kegel schlank; Nutzer 'zu gedrungen' 2026-10-31", "quelltyp": "foto_verhaeltnis", "merkmal": "schlankheit"},
-    {"name": "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)", "wert": "tuermchen_4m_durchmesser", "soll": [0.8, 1.7],
-     "quelle": "Foto 043/044, Journal 6/10: Kegel ca. 3:1", "quelltyp": "foto_verhaeltnis", "merkmal": "schlankheit"},
-    {"name": "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)", "wert": "tuermchen_2m_anzahl", "soll": [4, 4],
-     "quelle": "Fotos: 4 Ecktuermchen", "quelltyp": "foto_verhaeltnis", "merkmal": "anzahl"},
-    {"name": "Dachreiter Dicke bei 50 m (m)", "wert": "nadel_50", "soll": [0.08, 0.40],
-     "quelle": "Foto 049 Vollbild: Nadel 0,08-0,14 m, Mast 0,09-0,26 m (+Druck-Untergrenze); DOM1 verschmiert Nadel", "quelltyp": "foto_vollbild", "merkmal": "duennes_bauteil"},
-    {"name": "Dachreiter Dicke bei 52 m (m)", "wert": "nadel_52", "soll": [0.08, 0.30],
-     "quelle": "wie oben", "quelltyp": "foto_vollbild", "merkmal": "duennes_bauteil"},
-    {"name": "Dachreiter Knauf Durchmesser (m)", "wert": "knauf_breite", "soll": [0.50, 0.90],
-     "quelle": "Foto 049: 44 px x 1,5 cm = ~0,67 m", "quelltyp": "foto_vollbild", "merkmal": "duennes_bauteil"},
-    {"name": "Dachreiter Knauf Lage (Anteil ueber First)", "wert": "(knauf_z - first) / (hoehe - first)", "soll": [0.12, 0.32],
-     "quelle": "Foto 049/000: Knauf bei ~20-28 % der Spitzenlaenge", "quelltyp": "foto_verhaeltnis", "merkmal": "verhaeltnis"},
-    {"name": "Gesamthoehe (m)", "wert": "hoehe", "soll": [59.5, 66.0],
-     "quelle": "Bauforschung BW (Landesdenkmalamt) 60 m nach 1901 / 65 m Objektbeschreibung; en.Wikipedia 60 m; Structurae ~65 m; de.Wikipedia 66 m (Plan Schaefer)", "quelltyp": "dokument", "merkmal": "absolut_hoehe",
-     "historie": ["bis 2026-10-31: 54,7-54,9 aus Laser DOM1 - FALSCH, Laser sieht die Nadel nicht (Register J3/J4)"]},
-    {"name": "Spitzenlaenge ueber First (m)", "wert": "hoehe - first", "soll": [12.0, 16.5],
-     "quelle": "Foto 049 Vollbild 16,6 / 014: 16,0 / 000: 12,4 m (Massstab aus Modellmassen, grob); Register J3", "quelltyp": "foto_vollbild", "merkmal": "duennes_bauteil"},
-    {"name": "Fenster obere Reihe Suedseite (Anzahl, z 22,1 m)", "wert": "fenster_S_oben", "soll": [2, 2],
-     "quelle": "Fotos 041/030/042/001 (Suedseite): zwei Schlitzfenster unter der Uhr", "quelltyp": "foto_vollbild", "merkmal": "fassade"},
-    {"name": "Fenster untere Reihe Suedseite (Anzahl, z 18,5 m)", "wert": "fenster_S_unten", "soll": [1, 1],
-     "quelle": "Fotos 041/030/001", "quelltyp": "foto_vollbild", "merkmal": "fassade"},
-    {"name": "Fenster obere Reihe Nordseite (Anzahl, z 22,1 m)", "wert": "fenster_N_oben", "soll": [3, 3],
-     "quelle": "Foto 031 (Vollbild 2025): drei Fenster in einer Reihe (u -2,6 / 0 / +2,5 m)", "quelltyp": "foto_vollbild", "merkmal": "fassade"},
-    {"name": "Fenster untere Reihe Nordseite (Anzahl, z 18,5 m)", "wert": "fenster_N_unten", "soll": [1, 1],
-     "quelle": "Foto 031: ein Schlitz tiefer bei u ~ 0", "quelltyp": "foto_vollbild", "merkmal": "fassade"},
-    {"name": "Sockel-Grundriss Rechteck (m2, z 1 m)", "wert": "sockel_flaeche", "soll": [104.0, 127.0],
-     "quelle": "LoD2 DEBW_001000hPLcn: Bodenpolygon 115,1 m2, Huellrechteck 11,7 x 11,4 m (MASSPRUEFUNG Teil 9); +-10 %", "quelltyp": "lod2", "merkmal": "grundriss"},
-    {"name": "Wasserdicht (1=ja)", "wert": "wasserdicht", "soll": [1, 1], "quelle": "Druckfaehigkeit", "quelltyp": "modell", "merkmal": "druck"},
-    {"name": "Anzahl getrennte Koerper", "wert": "koerper", "soll": [1, 1], "quelle": "Schwebende Teile (Journal: 14 gefunden)", "quelltyp": "modell", "merkmal": "druck"}
-  ],
-  "beobachtungen_offen": [
-    {"datum": "2026-10-31", "wer": "Nutzer", "text": "Dach 43-47 m im Foto breiter als Modell (foto_profil_gpu); Laser verbietet breiteren Abschluss - unentschieden (Register J, J2, J5)", "naechster_schritt": "Dachform mit Flankensteigung bei gleichem Volumen testen"},
-    {"datum": "2026-11-01", "wer": "Claude (Fotosichtung 001/018/000)", "text": "Kleiner runder Eckturm mit gruenem Kegel am Sockel neben der Gedenktafel - im Modell nicht belegt", "naechster_schritt": "Vollbild messen, dann Pruefung + Generator"},
-    {"datum": "2026-11-01", "wer": "Claude (Fotosichtung)", "text": "Waagrechter Balken/Blende auf halber Hoehe der Schaftwand (Suedseite)", "naechster_schritt": "Vollbild messen"},
-    {"datum": "2026-11-01", "wer": "Claude", "text": "Ost-/Westseite (+-y) kaum fotografiert; Fenster dort sind Annahme", "naechster_schritt": "Fotos der Seiten beschaffen (Mapillary/eigene)"}
-  ]
+  "tuermchen_spitze": {
+   "typ": "lokales_max_abseits",
+   "zmin": 35,
+   "ax": 2.5,
+   "ay": 2.5
+  },
+  "tuermchen_2m": {
+   "typ": "querschnitte_abseits",
+   "z": "=tuermchen_spitze - 2.0",
+   "ax": 2.5,
+   "ay": 2.5
+  },
+  "tuermchen_4m": {
+   "typ": "querschnitte_abseits",
+   "z": "=tuermchen_spitze - 4.0",
+   "ax": 2.5,
+   "ay": 2.5
+  },
+  "nadel_50": {
+   "typ": "breite_achse",
+   "z": 50.0,
+   "r": 1.5
+  },
+  "nadel_52": {
+   "typ": "breite_achse",
+   "z": 52.0,
+   "r": 1.5
+  },
+  "knauf": {
+   "typ": "knauf_achse",
+   "z0": 47.0,
+   "z1": 52.0,
+   "dz": 0.1,
+   "r": 1.5
+  },
+  "wasserdicht": {
+   "typ": "wasserdicht"
+  },
+  "koerper": {
+   "typ": "koerper_anzahl"
+  },
+  "fenster_S_oben": {
+   "typ": "nischen_anzahl",
+   "seite": "+x",
+   "z": 22.07,
+   "halb": 4.6,
+   "tiefe": 0.2
+  },
+  "fenster_S_unten": {
+   "typ": "nischen_anzahl",
+   "seite": "+x",
+   "z": 18.5,
+   "halb": 4.6,
+   "tiefe": 0.2
+  },
+  "fenster_N_oben": {
+   "typ": "nischen_anzahl",
+   "seite": "-x",
+   "z": 22.07,
+   "halb": 4.6,
+   "tiefe": 0.2
+  },
+  "fenster_N_unten": {
+   "typ": "nischen_anzahl",
+   "seite": "-x",
+   "z": 18.5,
+   "halb": 4.6,
+   "tiefe": 0.2
+  },
+  "sockel": {
+   "typ": "grundriss_rechteck",
+   "z": 1.0
+  },
+  "zinnen_S": {
+   "typ": "nischen_anzahl",
+   "seite": "+x",
+   "z": 31.1,
+   "halb": 4.6,
+   "tiefe": 0.4,
+   "min_b": 0.3,
+   "max_b": 2.5
+  },
+  "zinnen_N": {
+   "typ": "nischen_anzahl",
+   "seite": "-x",
+   "z": 31.1,
+   "halb": 4.6,
+   "tiefe": 0.4,
+   "min_b": 0.3,
+   "max_b": 2.5
+  },
+  "uhr_S": {
+   "typ": "relief_breite",
+   "seite": "+x",
+   "z": 26.9,
+   "halb": 4.5,
+   "hoehe_min": 0.05,
+   "art": "rueck",
+   "max_luecke": 0.4
+  },
+  "dach_u": {
+   "typ": "grundriss_rechteck",
+   "z": 37.0,
+   "r": 3.0
+  },
+  "dach_o": {
+   "typ": "grundriss_rechteck",
+   "z": 45.0,
+   "r": 3.0
+  },
+  "eckturm_h": {
+   "typ": "max_z_im_bereich",
+   "x0": -9.0,
+   "x1": -5.2,
+   "y0": -9.0,
+   "y1": -3.5,
+   "zmax": 20.0
+  },
+  "eckturm": {
+   "typ": "ausdehnung_im_bereich",
+   "x0": -9.0,
+   "x1": -5.0,
+   "y0": -9.0,
+   "y1": -3.0,
+   "z0": 2.0,
+   "z1": 9.0
+  }
+ },
+ "pruefungen": [
+  {
+   "name": "Tuermchen-Spitze Hoehe (m)",
+   "wert": "tuermchen_spitze",
+   "soll": [
+    40.7,
+    41.8
+   ],
+   "quelle": "Laser DOM1: lokale Maxima 40,9 und 41,4 m (Journal 12: 43,6 war OSM)",
+   "quelltyp": "laser_dom1",
+   "merkmal": "hoehe_flaeche"
+  },
+  {
+   "name": "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+   "wert": "tuermchen_2m_durchmesser",
+   "soll": [
+    0.4,
+    1.2
+   ],
+   "quelle": "Foto 043/044 + Journal 10/6: Kegel schlank; Nutzer 'zu gedrungen' 2026-10-31",
+   "quelltyp": "foto_verhaeltnis",
+   "merkmal": "schlankheit"
+  },
+  {
+   "name": "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+   "wert": "tuermchen_4m_durchmesser",
+   "soll": [
+    0.8,
+    1.7
+   ],
+   "quelle": "Foto 043/044, Journal 6/10: Kegel ca. 3:1",
+   "quelltyp": "foto_verhaeltnis",
+   "merkmal": "schlankheit"
+  },
+  {
+   "name": "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+   "wert": "tuermchen_2m_anzahl",
+   "soll": [
+    4,
+    4
+   ],
+   "quelle": "Fotos: 4 Ecktuermchen",
+   "quelltyp": "foto_verhaeltnis",
+   "merkmal": "anzahl"
+  },
+  {
+   "name": "Dachreiter Dicke bei 50 m (m)",
+   "wert": "nadel_50",
+   "soll": [
+    0.08,
+    0.4
+   ],
+   "quelle": "Foto 049 Vollbild: Nadel 0,08-0,14 m, Mast 0,09-0,26 m (+Druck-Untergrenze); DOM1 verschmiert Nadel",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "duennes_bauteil"
+  },
+  {
+   "name": "Dachreiter Dicke bei 52 m (m)",
+   "wert": "nadel_52",
+   "soll": [
+    0.08,
+    0.3
+   ],
+   "quelle": "wie oben",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "duennes_bauteil"
+  },
+  {
+   "name": "Dachreiter Knauf Durchmesser (m)",
+   "wert": "knauf_breite",
+   "soll": [
+    0.5,
+    0.9
+   ],
+   "quelle": "Foto 049: 44 px x 1,5 cm = ~0,67 m",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "duennes_bauteil"
+  },
+  {
+   "name": "Dachreiter Knauf Lage (Anteil ueber First)",
+   "wert": "(knauf_z - first) / (hoehe - first)",
+   "soll": [
+    0.12,
+    0.32
+   ],
+   "quelle": "Foto 049/000: Knauf bei ~20-28 % der Spitzenlaenge",
+   "quelltyp": "foto_verhaeltnis",
+   "merkmal": "verhaeltnis"
+  },
+  {
+   "name": "Gesamthoehe (m)",
+   "wert": "hoehe",
+   "soll": [
+    59.5,
+    66.0
+   ],
+   "quelle": "Bauforschung BW (Landesdenkmalamt) 60 m nach 1901 / 65 m Objektbeschreibung; en.Wikipedia 60 m; Structurae ~65 m; de.Wikipedia 66 m (Plan Schaefer)",
+   "quelltyp": "dokument",
+   "merkmal": "absolut_hoehe",
+   "historie": [
+    "bis 2026-10-31: 54,7-54,9 aus Laser DOM1 - FALSCH, Laser sieht die Nadel nicht (Register J3/J4)"
+   ]
+  },
+  {
+   "name": "Spitzenlaenge ueber First (m)",
+   "wert": "hoehe - first",
+   "soll": [
+    12.0,
+    16.5
+   ],
+   "quelle": "Foto 049 Vollbild 16,6 / 014: 16,0 / 000: 12,4 m (Massstab aus Modellmassen, grob); Register J3",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "duennes_bauteil"
+  },
+  {
+   "name": "Fenster obere Reihe Suedseite (Anzahl, z 22,1 m)",
+   "wert": "fenster_S_oben",
+   "soll": [
+    2,
+    2
+   ],
+   "quelle": "Fotos 041/030/042 Vollbild (Suedseite = Adlerseite): zwei Schlitzfenster unter der Uhr",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade"
+  },
+  {
+   "name": "Fenster untere Reihe Suedseite (Anzahl, z 18,5 m)",
+   "wert": "fenster_S_unten",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Fotos 041/030 Vollbild: ein Fenster tiefer, rechts der Mitte",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade"
+  },
+  {
+   "name": "Fenster obere Reihe Nordseite (Anzahl, z 22,1 m)",
+   "wert": "fenster_N_oben",
+   "soll": [
+    3,
+    3
+   ],
+   "quelle": "Fotos 031 + 001 Vollbild (Nordseite = Tafelseite): drei Fenster in einer Reihe",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade"
+  },
+  {
+   "name": "Fenster untere Reihe Nordseite (Anzahl, z 18,5 m)",
+   "wert": "fenster_N_unten",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Fotos 031 + 001 Vollbild: ein Schlitz tiefer in der Mitte",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade"
+  },
+  {
+   "name": "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+   "wert": "zinnen_S",
+   "soll": [
+    4,
+    4
+   ],
+   "quelle": "Foto 031/041 Vollbild: 5 Zinnen = 4 Scharten je Seite (Zinnen selbst verschmelzen im STL mit den Erkern)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl"
+  },
+  {
+   "name": "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+   "wert": "zinnen_N",
+   "soll": [
+    4,
+    4
+   ],
+   "quelle": "wie oben",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl"
+  },
+  {
+   "name": "Uhr Zifferblatt-Nische Suedseite (Breite m)",
+   "wert": "uhr_S",
+   "soll": [
+    3.9,
+    5.2
+   ],
+   "quelle": "MASSPRUEFUNG Teil 3: Zifferblatt 158 px / 35,3 px/m = 4,5 m (Foto 042), +-12 %",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "verhaeltnis"
+  },
+  {
+   "name": "Dachflanke Halbbreiten-Zunahme je m (Ansicht y, 37->45 m)",
+   "wert": "(dach_u_y - dach_o_y) / 2 / dach_dz",
+   "soll": [
+    0.11,
+    0.19
+   ],
+   "quelle": "Foto 049 Vollbild: Breite +0,305 px je px -> 0,15 je Seite; Foto 000 und 014: 0,125 (foto_spitze_vollbild, Register J3). Modell 0,21 = Dach laeuft zu schnell zu",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "verhaeltnis",
+   "historie": [
+    "2026-11-01 angelegt als fehlschlagende Pruefung VOR der Generatoraenderung (Methode Schritt 2)"
+   ],
+   "status": "widerspruch",
+   "widerspruch": "Laser (optimierung_validieren, steilere Flanke 0,15): Ziel 14,3->13,8 und M2 13,9->13,4 besser, aber M1 16,1->18,4 und M3 16,1->18,0 schlechter; Foto-IoU +0,002 (Rauschen). Register J6. Bleibt 0,21 bis eine Quelle entscheidet."
+  },
+  {
+   "name": "Eckturm NW Durchmesser (m, y-Ausdehnung der Punkte x<-5, z 2-9)",
+   "wert": "eckturm_y",
+   "soll": [
+    2.0,
+    2.7
+   ],
+   "quelle": "Foto 001 Vollbild: ~230 px / 97 px/m = 2,3 m (+-10 %); Suedseite (Foto 000) ohne Eckturm. Im Schnitt verschmilzt der Turm mit dem Rumpf, daher Punktmessung",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "historie": [
+    "2026-11-01 angelegt als fehlschlagende Pruefung vor der Generatoraenderung"
+   ]
+  },
+  {
+   "name": "Eckturm NW Kegelspitze (m)",
+   "wert": "eckturm_h",
+   "soll": [
+    12.0,
+    15.5
+   ],
+   "quelle": "Foto 001: Tafel 2,0 m = ~195 px -> ~97 px/m; Traufe ~5,2-5,9 m ueber Bogenscheitel (5,0 m) = ~10-11 m, Kegel ~3-3,5 m -> Spitze ~13-14,5 m (+-10 %)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "verhaeltnis"
+  },
+  {
+   "name": "Sockel-Grundriss Rechteck (m2, z 1 m)",
+   "wert": "sockel_flaeche",
+   "soll": [
+    117.0,
+    150.0
+   ],
+   "quelle": "LoD2 DEBW_001000hPLcn Huellrechteck 11,7 x 11,4 m = 133 m2 (Polygon 'mit Rundung' = Eckturm enthalten; MASSPRUEFUNG Teil 9); +-12 %",
+   "quelltyp": "lod2",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-01: vorher 104-127 (Polygonflaeche 115 ohne Eckturm); Modell hat jetzt den NW-Eckturm, Vergleich gegen Huellrechteck"
+   ]
+  },
+  {
+   "name": "Wasserdicht (1=ja)",
+   "wert": "wasserdicht",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Druckfaehigkeit",
+   "quelltyp": "modell",
+   "merkmal": "druck"
+  },
+  {
+   "name": "Anzahl getrennte Koerper",
+   "wert": "koerper",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Schwebende Teile (Journal: 14 gefunden)",
+   "quelltyp": "modell",
+   "merkmal": "druck"
+  }
+ ],
+ "beobachtungen_offen": [
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (Fotosichtung)",
+   "text": "Waagrechter Balken/Blende auf halber Hoehe der Schaftwand (Suedseite)",
+   "naechster_schritt": "Vollbild messen"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude",
+   "text": "Ost-/Westseite (+-y) kaum fotografiert; Fenster dort sind Annahme",
+   "naechster_schritt": "Fotos der Seiten beschaffen (Mapillary/eigene)"
+  }
+ ]
 }

@@ -162,3 +162,27 @@ Naechste Schritte: (i) je Foto Seite zuordnen (Torbogenseite vs Uhrseite, aus So
   Tabelle mit laser_dom1 als Quelle fuer Nadeldicke wird abgelehnt (Exit 2); Hook mit gestageter Tabelle: Exit 0.
 - Nicht erledigt: `git config core.hooksPath tools/git_hooks` (Berechtigung verweigert, Nutzer aktiviert selbst); Foto-Werkzeuge lesen `objekt.json/fotos`
   noch nicht (FOTOS-Dict in foto_silhouette_gpu.py bleibt), weitere Messer (Uhr-Durchmesser, Zinnenzahl, Dachneigung) fehlen.
+
+### J6. Dachform-Test "steilere Flanke bei gleichem Volumen" (2026-11-01)
+Anlass: Foto 049/000/014 Vollbild: Halbbreiten-Zunahme der Dachflanke 0,125-0,15 je m; Modell 0,21 (Basis GY+1,5 = 7,5 m, oben 3,0 m).
+Varianten (Turm 60 m, First 46,2): ist | mittel (Basis +0,9, oben 1,6x3,4) | steil (Basis +0,9, oben 2,0x3,7 -> 0,15).
+Foto (10 Fotos, Kamera je Foto verfeinert): Mittel-IoU 0,8844 | 0,8859 | 0,8862 -> +0,002 = Rauschen.
+Laser steil gegen ist: Ziel 14,3->13,8 (besser), M2 13,9->13,4 (besser), M1 16,1->18,4 (schlechter), M3 16,1->18,0 (schlechter), M4 2,10->2,31 m.
+Ergebnis: UNENTSCHIEDEN, Generator unveraendert. Pruefung "Dachflanke" in der Masstabelle mit status=widerspruch (sichtbar, zaehlt nicht als Fehler).
+Naechster Weg: Laserquelle mit mehr Aufloesung (ALS-Rohpunkte) oder Kantenmessung Dachtraufe/-first in zwei Fotos mit bekanntem Massstab.
+
+### K3. Seiten geklaert + runder Eckturm NW eingebaut (2026-11-01)
+- de.wikipedia (gelesen): Gedenktafel 1796 und Martinsbild auf der STADTSEITE; gemalter Reichsadler (bis 1951) an der TORAUSSENSEITE; 1901er Torbau WESTLICH. Stadtseite = Nord.
+- Vollbilder: 001 und 031 = dieselbe Nordfassade (3 Fenster in Reihe + Schlitz, Tafel); 041/030/042 = Suedfassade (Adler, 2 Fenster + 1 tiefer). Meine Zuordnung von K2 ("001 = Sued") war falsch, die Tabelle (Sued 2+1, Nord 3+1) trotzdem richtig. objekt.json korrigiert, Seiten mit Quelle.
+- Runder Eckturm (Sandstein, Kupferkegel) an der NW-Ecke zwischen Turm und Torbau (Foto 001), Suedseite ohne (Foto 000). Masse aus Foto 001 (Tafel 2,0 m = 195 px): Durchmesser 2,3 m, Traufe ~10-11 m, Spitze ~13-14,5 m.
+  Generator: Zylinder r 1,15 bei (-DB/2-0,8, -WB/2+0,2), Traufgesims, Kegel 10,6-13,9 m, Knauf, 2 Schlitze. Pruefungen (vorher fehlschlagend, jetzt gruen): Durchmesser 2,0-2,7 (ist 2,3), Spitze 12-15,5 (ist 14,0). Ueberlagerung Foto 001: Lage passt (`eck_overlay.jpg`).
+- Neue Pruefungen: Zinnen-Scharten 4 je Seite (N und S, Foto 031/041), Uhr-Zifferblattnische 3,9-5,2 m (MASSPRUEFUNG Teil 3: 4,5 m; Modell 4,2), Sockel-Huellrechteck gegen LoD2 11,7 x 11,4 (Polygon enthaelt die "Rundung" = Eckturm).
+
+### L2. Werkzeuglehren aus dem Vollgas-Durchgang (generisch, in tools/pruefstand.py eingebaut)
+1. `section().to_2D()` verschiebt die Schnittebene (Translation je Schnitt) -> Schwerpunkte/Bounds muessen mit der Rueckgabe-Transformation zurueckgerechnet werden. Bisher nur durch Symmetrie des Turms unschaedlich; mit dem Eckturm 2 m daneben.
+2. Huellbox-Zentrierung verschiebt die Achse, sobald ein Anbau existiert -> objekt.json `zentrierung: achse` (Generator baut um 0,0); Foto-Werkzeuge lesen dieselbe Einstellung.
+3. Anbauten verschmelzen im Schnitt mit dem Rumpf -> Zaehlen von Querschnitten reicht nicht; Punktmesser `ausdehnung_im_bereich` / `max_z_im_bereich(zmax)`.
+4. Textparameter vs Formeln: nur `=...` ist eine Formel (seite '+x' wurde als Rechnung gelesen).
+5. Reliefs mit Unterbrechungen (Stundenmarken in der Uhrnische) -> `max_luecke`.
+6. Aenderungs-Diff gegen den letzten Pruefbericht nach jedem Lauf ("GEAENDERT seit letztem Lauf") = Mechanik fuer Lehre F8 (eine Eigenschaft gemeint, zwei geaendert) und F3/F4 (Ueberkorrektur).
+7. status `widerspruch` fuer Pruefungen, bei denen Quellen uneins sind: sichtbar bei jedem Lauf, kein Fake-Gruen, kein Dauer-Rot.

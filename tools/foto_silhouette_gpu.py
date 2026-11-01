@@ -10,6 +10,18 @@ FOTOS = {
 FD = "/home/oem/git/rc-park/daten/martinstor/fotos/"
 STL = "/home/oem/git/rc-park/modelle/stl/martinstor_v4_1-87.stl"
 
+# Objektkonfiguration (generisch): modelle/<objekt>/objekt.json liefert Fotos (mit Seite/ROI), Foto-Ordner und STL. Umgebungsvariable OBJEKT.
+import os as _os, glob as _glob
+OBJEKT = _os.environ.get("OBJEKT", "/home/oem/git/rc-park/modelle/martinstor/objekt.json")
+if _os.path.exists(OBJEKT):
+    _o = json.load(open(OBJEKT)); _root = _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(OBJEKT))))
+    FD = _os.path.join(_root, _o["fotos_dir"]) + "/"; STL = _os.path.join(_root, _o["stl"])
+    for _nr, _cfg in _o.get("fotos", {}).items():
+        _f = _glob.glob(FD + _nr + "_*")
+        if _f and _cfg.get("silhouette_frei"):
+            _alt = FOTOS.get(_nr, (None, {}))[1]
+            FOTOS[_nr] = (_os.path.basename(_f[0]), dict(roi=tuple(_cfg["roi"]) if "roi" in _cfg else _alt.get("roi"), seite=_cfg.get("seite")))
+
 def sky_mask(im):
     lab = cv2.cvtColor(im, cv2.COLOR_BGR2LAB).astype(float)
     ref = np.median(lab[:6, :], axis=(0, 1)); d = np.linalg.norm(lab - ref, axis=2)
@@ -19,7 +31,8 @@ def sky_mask(im):
 
 def load_points(n=200000, seed=0):
     m = trimesh.load(STL); m.apply_scale(87 / 1000.0)
-    c = m.bounds.mean(0); m.apply_translation([-c[0], -c[1], -m.bounds[0, 2]])
+    c = m.bounds.mean(0) if globals().get('_o', {}).get('zentrierung', 'huelle') == 'huelle' else np.zeros(3)   # objekt.json: 'achse' = Generatorachse behalten
+    m.apply_translation([-c[0], -c[1], -m.bounds[0, 2]])
     p, _ = trimesh.sample.sample_surface(m, n, seed=seed)
     return torch.as_tensor(p, dtype=torch.float32, device=dev), m
 
