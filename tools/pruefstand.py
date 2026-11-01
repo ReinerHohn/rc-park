@@ -80,9 +80,15 @@ class Messer:
     def lokales_max_abseits(self, zmin, ax, ay, **k):
         v = self.m.vertices; s = (v[:, 2] > zmin) & (np.abs(v[:, 0]) > ax) & (np.abs(v[:, 1]) > ay)
         return float(v[s, 2].max()) if s.any() else float("nan")
+    def _flaechenpunkte(self):
+        """Dichte Punkte AUF der Modelloberflaeche (Kanten <= 0,3 m unterteilt): Kegel/Zylinder haben nur Ringe als Ecken - Eckpunkte allein
+        verfehlen Spitzen und schraege Flaechen (Register AX: 'Eckturm-Kegelspitze' mass jahrelang einen Eckquader)."""
+        if not hasattr(self, "_fp"):
+            v, fa = trimesh.remesh.subdivide_to_size(self.m.vertices, self.m.faces, max_edge=0.3, max_iter=14); self._fp = np.vstack([v, v[fa].mean(1)])
+        return self._fp
     def max_z_im_bereich(self, x0, x1, y0, y1, zmax=1e9, **k):
-        """Hoechster Punkt innerhalb eines Grundriss-Rechtecks unterhalb zmax (z. B. Eckturm am Sockel, ohne den Schaft darueber)."""
-        v = self.m.vertices; s = (v[:, 0] >= x0) & (v[:, 0] <= x1) & (v[:, 1] >= y0) & (v[:, 1] <= y1) & (v[:, 2] < zmax)
+        """Hoechster Oberflaechenpunkt innerhalb eines Grundriss-Rechtecks unterhalb zmax (z. B. Eckturm-Kegelspitze, ohne den Schaft darueber)."""
+        v = self._flaechenpunkte(); s = (v[:, 0] >= x0) & (v[:, 0] <= x1) & (v[:, 1] >= y0) & (v[:, 1] <= y1) & (v[:, 2] < zmax)
         return float(v[s, 2].max()) if s.any() else 0.0
     def _im_bereich(self, x0, x1, y0, y1, z0, z1):
         V = self.m.vertices; return V[(V[:, 0] >= x0) & (V[:, 0] <= x1) & (V[:, 1] >= y0) & (V[:, 1] <= y1) & (V[:, 2] >= z0) & (V[:, 2] <= z1)]
@@ -172,6 +178,59 @@ class Messer:
         if len(loc) == 0: return float("nan")
         return float(np.percentile(np.abs(loc[:, ax]), 90) - abs(achse_tief))               # p90 der Treffer = Aussenkante (Pfeiler zwischen Oeffnungen), wie p97 in der Wolke
     rand_radius = tuerm_radius                                                           # generischer Name (jeder Koerper neben der Achse)
+    def _front_profil(self, seite, quer, z0, z1, schritt=0.05, band=0.0):
+        """Tiefe der ersten Modellflaeche je z (Strahlen von aussen) entlang einer senkrechten Linie bei quer (+- band gemittelt)."""
+        ax = 0 if seite[1] == "x" else 1; sgn = 1.0 if seite[0] == "+" else -1.0
+        zs = np.arange(z0, z1 + 1e-6, schritt); qs = np.arange(quer - band, quer + band + 1e-6, max(schritt, 0.05)) if band > 0 else np.array([quer])
+        Q, Z = np.meshgrid(qs, zs); org = np.zeros((Q.size, 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = Q.ravel(); org[:, 2] = Z.ravel(); dr = np.zeros_like(org); dr[:, ax] = -sgn
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False); d = np.full(Q.size, np.nan); d[ir] = sgn * loc[:, ax]
+        return zs, np.nanmedian(d.reshape(Q.shape), axis=1)
+    def relief_periode(self, seite, quer, z0, z1, band=0.75, schritt=0.05, max_periode=2.0, **k):
+        """Periode (m) des Reliefs an einer Kante (Eckquader): wie die Wolkenmessung (wolke_baender.py) der ANTEIL hervortretender Zellen je
+        5-cm-Hoehenschicht in einem Band quer +- band; Autokorrelation; Periode = KLEINSTER Peak mit >= 50 % der Staerke des staerksten
+        (Grundperiode statt Oberschwingung). nan ohne Relief."""
+        zs, D = self._front_profil(seite, quer, z0, z1, schritt, band=0.0) if band <= 0 else (None, None)
+        ax = 0 if seite[1] == "x" else 1; sgn = 1.0 if seite[0] == "+" else -1.0
+        zs = np.arange(z0, z1 + 1e-6, schritt); qs = np.arange(quer - band, quer + band + 1e-6, schritt)
+        Q, Z = np.meshgrid(qs, zs); org = np.zeros((Q.size, 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = Q.ravel(); org[:, 2] = Z.ravel(); dr = np.zeros_like(org); dr[:, ax] = -sgn
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False); d = np.full(Q.size, np.nan); d[ir] = sgn * loc[:, ax]; d = d.reshape(Q.shape)
+        wand = np.nanmedian(d); relief = (d > wand + 0.03); anteil = np.array([relief[i][~np.isnan(d[i])].mean() if (~np.isnan(d[i])).any() else np.nan for i in range(len(zs))])
+        ok = ~np.isnan(anteil)
+        if ok.sum() < 20 or np.nanstd(anteil) < 0.02: return float("nan")
+        x = anteil.copy(); x[~ok] = np.nanmean(anteil); x = x - x.mean(); ac = np.correlate(x, x, "full")[len(x) - 1:]; ac = ac / max(ac[0], 1e-9); n = int(max_periode / schritt)
+        cand = [(i * schritt, ac[i]) for i in range(2, min(len(ac) - 1, n)) if ac[i] > ac[i - 1] and ac[i] >= ac[i + 1] and ac[i] > 0]
+        if not cand: return float("nan")
+        st = max(c[1] for c in cand); return float(min(c[0] for c in cand if c[1] >= 0.5 * st))
+    def front_linearitaet(self, seite, z0, z1, quer=0.0, band=0.5, schritt=0.1, **k):
+        """Geradlinigkeit einer Dach-/Wandflaeche: groesste Abweichung (m) der Modellfront von der Ausgleichsgeraden ueber z0..z1 (Hoecker, Knicke)."""
+        zs, d = self._front_profil(seite, quer, z0, z1, schritt, band); ok = ~np.isnan(d)
+        if ok.sum() < 5: return float("nan")
+        A = np.c_[zs[ok], np.ones(ok.sum())]; c, *_ = np.linalg.lstsq(A, d[ok], rcond=None)
+        return float(np.abs(d[ok] - A @ c).max())
+    def flaeche_oeffnungen(self, seite, z, quer0, quer1, tiefe=0.2, schritt=0.04, min_b=0.12, **k):
+        """Oeffnungen entlang einer Flaeche auf Hoehe z zwischen quer0..quer1: Laeufe, in denen die erste Flaeche >= tiefe hinter der Flaechenebene
+        (Median der Treffer) liegt oder kein Treffer kommt. Rueckgabe {"anzahl", "breite_median", "breite_max"}."""
+        ax = 0 if seite[1] == "x" else 1; sgn = 1.0 if seite[0] == "+" else -1.0
+        qs = np.arange(quer0, quer1 + 1e-6, schritt); org = np.zeros((len(qs), 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = qs; org[:, 2] = z; dr = np.zeros_like(org); dr[:, ax] = -sgn
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False); d = np.full(len(qs), np.nan); d[ir] = sgn * loc[:, ax]
+        ebene = np.nanpercentile(d, 90) if np.isfinite(d).any() else np.nan; offen = np.isnan(d) | (d < ebene - tiefe)
+        laeufe = []; run = 0
+        for o in list(offen) + [False]:
+            if o: run += 1
+            else:
+                if run * schritt >= min_b: laeufe.append(run * schritt)
+                run = 0
+        return {"anzahl": float(len(laeufe)), "breite_median": float(np.median(laeufe)) if laeufe else 0.0, "breite_max": float(max(laeufe)) if laeufe else 0.0}
+    def z_nischen_ende(self, seite, z0, z1, dz, halb, tiefe, min_b=0.3, max_b=2.5, **k):
+        """Oberkante eines Zinnenkranzes o. ae.: kleinste Hoehe ab z0, ab der die Fassade keine Nischen (Scharten) mehr zeigt (nischen_anzahl == 0
+        in zwei aufeinanderfolgenden Schichten). Robust gegen darueber liegende Daecher - misst das Ende der Scharten, nicht den hoechsten Punkt."""
+        letzte = None; gesehen = False
+        for z in np.arange(z0, z1 + 1e-6, dz):
+            n = self.nischen_anzahl(seite, float(z), halb, tiefe, min_b=min_b, max_b=max_b)
+            if n > 0: gesehen = True
+            if gesehen and n == 0 and letzte == 0: return float(z - dz)
+            letzte = n
+        return float("nan")
     def anzahl_im_band(self, z, achse, lo, hi, quer_max, **k):
         """Zaehlt Querschnitte bei z, deren Schwerpunkt auf 'achse' (x|y) zwischen lo..hi liegt und quer < quer_max (z. B. Zinnen einer Seite)."""
         a = 0 if achse == "x" else 1

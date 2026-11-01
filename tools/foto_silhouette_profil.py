@@ -85,6 +85,8 @@ def main():
     s_max = np.percentile(sky[:, 1], 50) + a.himmel_delta; v_min = np.percentile(sky[:, 2], 50) - a.himmel_delta   # Median: Fremdkoerper (Kran) im Himmelfenster stoeren nicht; enge Schwelle, sonst zaehlt die sonnenbeschienene Helmflaeche als Himmel
     ist_himmel = (hsv[..., 1] < s_max) & (hsv[..., 2] > v_min)
     nicht = (~ist_himmel).astype(np.uint8); nicht = cv2.morphologyEx(nicht, cv2.MORPH_CLOSE, np.ones((5, 7), np.uint8))   # Glanzlichter/Falze im Helm schliessen
+    aufl_m = 7 / ppm                                                                            # AUFLOESUNGSGRENZE: der Schliessungskern (7 px) macht alles mindestens so breit
+    print(f"   Aufloesungsgrenze der Silhouette: {aufl_m:.2f} m (Schliessungskern 7 px); Breiten < {1.5 * aufl_m:.2f} m sind nur Obergrenzen")
     zeilen = []
     for v in range(int(v_oben) + 2, int(v_unten) - 1):
         row = nicht[v, u0 - a.halbfenster:u0 + a.halbfenster] > 0
@@ -108,7 +110,7 @@ def main():
     # Monotonie: nach oben nie breiter als die Schicht darunter (entfernt Kran/Fahne/Tuermchenueberlappung); von unten nach oben laufendes Minimum
     bmin = np.inf
     for r in prof:
-        bmin = min(bmin, r["breite_roh"]); r["breite"] = round(bmin, 2)
+        bmin = min(bmin, r["breite_roh"]); r["breite"] = round(bmin, 2); r["nur_obergrenze"] = bool(r["breite"] < 1.5 * aufl_m)   # unter 1,5 x Kernbreite: nur Obergrenze
     print(f"Silhouette ({len(prof)} Schichten): z | Breite {a.achse} (m) | roh")
     for r in prof: print(f"  {r['z']:5.2f}  {r['breite']:5.2f}  {r['breite_roh']:5.2f}")
     # Kontrollbild
@@ -118,12 +120,14 @@ def main():
     cv2.imwrite(os.path.join(od, "audit", f"silhouette_{a.foto}.png"), k0)
     proto = dict(foto=a.foto, verfahren="Silhouettenbreite je Zeile, fernes Seitenfoto (orthografisch), Massstab = Ausgleich ueber Bezugspicks (K-Protokoll) mit Ankerhoehen (anker3d)", achse=a.achse,
                  bezug=[dict(name=b[0], u=b[1], zeile=b[2], hoehe=b[3], sigma=b[4], residuum_m=[round(float(r[0]), 2), round(float(r[1]), 2)]) for b, r in zip(bez, res)], verworfen=[dict(name=b[0], residuum_m=[round(float(r[0]), 2), round(float(r[1]), 2)], hoehe_aus_foto=round(float((v0 - b[2]) / ppm), 2), anker_hoehe=b[3]) for b, r in verworfen], azimut_grad=round(float(np.degrees(th)), 1), nullzeile=round(float(v0), 1),
-                 px_je_m=round(ppm, 3), orthografie_abweichung=round(ortho, 4), himmel=dict(s_max=float(s_max), v_min=float(v_min)), profil=prof, kontrollbild=f"audit/silhouette_{a.foto}.png")
+                 px_je_m=round(ppm, 3), aufloesung_m=round(aufl_m, 2), orthografie_abweichung=round(ortho, 4), himmel=dict(s_max=float(s_max), v_min=float(v_min)), profil=prof, kontrollbild=f"audit/silhouette_{a.foto}.png")
     pp = os.path.join(od, "messprotokoll", f"M-{a.foto}-S1.json"); json.dump(proto, open(pp, "w"), indent=1, ensure_ascii=False); print("Protokoll:", pp)
     if a.pruefungen:
         tp = os.path.join(od, "masstabelle.json"); from masstabelle_io import sperren, schreiben; _L = sperren(tp); T = json.load(open(tp)); neu = 0
         for z in a.pruefungen:
-            r = min(prof, key=lambda q: abs(q["z"] - z)); name = f"Profil Dach (Foto {a.foto}): Tiefe {a.achse} bei {z:.0f} m (m)"; wert = f"silhouette_{a.foto}_{int(z)}"
+            r = min(prof, key=lambda q: abs(q["z"] - z))
+            if r.get("nur_obergrenze"): print(f"   Pruefung bei {z} m ausgelassen: Breite {r['breite']} m liegt unter 1,5 x Aufloesungsgrenze ({1.5 * aufl_m:.2f} m)"); continue
+            name = f"Profil Dach (Foto {a.foto}): Tiefe {a.achse} bei {z:.0f} m (m)"; wert = f"silhouette_{a.foto}_{int(z)}"
             T["messungen"][wert] = {"typ": "ausdehnung_streifen", "z": float(z), "achse": a.achse, "quer_max": 2.0}
             soll = [round(r["breite"] - a.toleranz, 2), round(r["breite"] + a.toleranz, 2)]
             quelle = f"foto_silhouette_profil.py: Foto {a.foto} Silhouette {r['breite']} m bei {r['z']} m ({ppm:.1f} px/m, Ausgleich ueber {len(bez)} Bezugspicks: {', '.join(b[0] for b in bez)}); Protokoll M-{a.foto}-S1"
@@ -133,7 +137,7 @@ def main():
                     break
             else:
                 T["pruefungen"].append(dict(name=name, wert=wert, soll=soll, quelle=quelle, quelltyp="foto_verhaeltnis", merkmal="schlankheit", massstab="Bezugspicks K-Protokoll + anker3d (Ausgleich)", protokoll=f"M-{a.foto}-S1")); neu += 1
-        namen = {f"Profil Dach (Foto {a.foto}): Tiefe {a.achse} bei {z:.0f} m (m)" for z in a.pruefungen}
+        namen = {f"Profil Dach (Foto {a.foto}): Tiefe {a.achse} bei {z:.0f} m (m)" for z in a.pruefungen if not min(prof, key=lambda q: abs(q["z"] - z)).get("nur_obergrenze")}
         alt = [pr for pr in T["pruefungen"] if pr["name"].startswith(f"Profil Dach (Foto {a.foto})") and pr["name"] not in namen]
         T["pruefungen"] = [pr for pr in T["pruefungen"] if pr not in alt]
         for pr in alt: T["messungen"].pop(pr["wert"], None)

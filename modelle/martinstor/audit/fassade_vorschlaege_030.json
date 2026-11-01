@@ -4,8 +4,8 @@
   "seite": "+y",
   "vorschlag": {
    "typ": "fenster",
-   "u": -1.0,
-   "z": 31.38,
+   "u": 1.07,
+   "z": 30.14,
    "breite": 0.6,
    "hoehe": 0.85,
    "was": "VORSCHLAG aus fehlteile_finden Foto 030 Treffer 3 - vor dem Einbau am Vollbild pruefen"
@@ -16,8 +16,8 @@
   "seite": "+y",
   "vorschlag": {
    "typ": "fenster",
-   "u": 0.84,
-   "z": 30.31,
+   "u": -0.37,
+   "z": 29.68,
    "breite": 0.6,
    "hoehe": 0.85,
    "was": "VORSCHLAG aus fehlteile_finden Foto 030 Treffer 4 - vor dem Einbau am Vollbild pruefen"
@@ -28,23 +28,11 @@
   "seite": "+y",
   "vorschlag": {
    "typ": "fenster",
-   "u": 4.27,
-   "z": 23.0,
+   "u": 4.13,
+   "z": 23.07,
    "breite": 0.6,
    "hoehe": 0.85,
    "was": "VORSCHLAG aus fehlteile_finden Foto 030 Treffer 5 - vor dem Einbau am Vollbild pruefen"
-  }
- },
- {
-  "treffer": 6,
-  "seite": "+y",
-  "vorschlag": {
-   "typ": "fenster",
-   "u": 4.02,
-   "z": 17.05,
-   "breite": 0.6,
-   "hoehe": 0.85,
-   "was": "VORSCHLAG aus fehlteile_finden Foto 030 Treffer 6 - vor dem Einbau am Vollbild pruefen"
   }
  }
 ]

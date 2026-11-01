@@ -1075,3 +1075,29 @@ foto_* -Experimente); fuer sie gibt es keinen Beweisrahmen, sie werden nicht ang
 Entscheidung des Nutzers.
 **Regel ab jetzt (CLAUDE.md):** nach jeder Werkzeug- oder Bibliotheksaenderung `tools/regression.py <objekt> --pruefen`; Schnappschuss nur
 bewusst erneuern (`--schnappschuss`), wenn eine Aenderung das Ergebnis AENDERN soll - und dann mit Register-Eintrag, warum.
+
+## AX. Hoecker, Boegen, Backsteine - vom Werkzeug gefunden, nicht von Hand (2026-11-01)
+**Nutzer:** "Die rot angedeuteten Backsteine sind zu grob, die Boegen in den 4 Tuermchen zu klein und zu viele, das grosse Hauptdach hat 'nen
+Hoecker und ist nicht durchgaengig" - "aber stop, du musst es generell finden" - "kannst du GPU noch mehr nutzen?"
+**Generische Messungen (neu):**
+- Wolke (`wolke_baender.py`): je Band 'offen' die Dunkellaeufe entlang der sichtbaren Flaeche (8-cm-Zellen) -> Oeffnungen je Flaeche, Breiten,
+  Hoehe; je Steinzone die Farbperiode des Steinanteils senkrecht (Schichthoehe) und quer (Blocklaenge), 5-cm-Zellen, Autokorrelation,
+  Periode = kleinster Peak >= 50 % des staerksten (Grundperiode). Koerper-Flags in objekt.json steuern, was Pruefzeile wird und was
+  Beobachtung bleibt (zentral: offen -> Beobachtungen, Radius aus; Perioden mit Kanten je Hoehenbereich).
+- Modell (`pruefstand.py`): `flaeche_oeffnungen` (Laeufe tiefer Treffer entlang einer Flaeche), `relief_periode` (Anteil hervortretender
+  Zellen je 5 cm im Kantenband, gleiche Peak-Regel wie die Wolke), `front_linearitaet` (max. Abweichung der Front von der Geraden),
+  `z_nischen_ende` (Zinnen-Oberkante = Ende der Scharten); `max_z_im_bereich` tastet jetzt die OBERFLAECHE ab (Kegel haben nur Ringe als
+  Ecken - 'Eckturm-Kegelspitze' hatte bisher einen Eckquader bei 15,16 gemessen, der Kegel liegt bei 13,07).
+- `wolke_profile.py --eben`: Helmflaechen als Ebenen (Gerade durch tief/quer zwischen Traufe+1 und Kopf-1), nur wenn die Daten selbst gerade
+  sind (RMS 0,095/0,128 < 0,15) -> kein Hoecker an der Nahtstelle Wolkenfront/Silhouette mehr; Pruefzeilen 'Helm geradlinig'.
+- `foto_silhouette_profil.py`: meldet seine Aufloesungsgrenze (Schliessungskern 7 px = 0,65 m) und markiert Breiten < 1,5 x als
+  Obergrenze; Pruefzeilen dafuer werden ausgelassen. Folge: der 'Laternenschaft 0,93 m' aus 061 war ein Artefakt -> LATERNE_D 0,26 (Foto 049),
+  DACH_OBEN_X zurueck auf 1,4 (Historie).
+**Befunde -> Daten -> Modell (Test zuerst rot):** Tuermchen-Boegen: 2 je Flaeche, 0,48/0,72 m breit, 33,6-34,9 m hoch (Modell hatte 0,32 m);
+Bauteil `baender_rundkoerper` nimmt Zahl/Breite/Hoehe aus dem Band. Eckquader: Schichthoehe 0,25 m (18-24 m, Staerke 0,67) / 0,5 m
+(22-34 m) / Glockenstock 0,35 / Tuermchenschaft 0,5; Blocklaenge 0,4 m (quer 0,30-0,45); keine Lang/Kurz-Alternanz messbar ->
+QUADER_KURZ_FAKTOR 1,0. Modell hatte 0,95 m Schichten und 0,95-1,75 m x 1,7 lange Bloecke mit bis 0,48 m Relief. `quoins3` nimmt jetzt
+Masse statt Zufallsbereiche. Dachreiter: DOM1-Trommel (3,1 m) entfernt. Regression: 9 Dateien beabsichtigt geaendert, Schnappschuss erneuert.
+**Nebenbefunde des Werkzeugs (Beobachtungen):** Hauptturm Band offen 22,75-24,0 m: 3 Oeffnungen (1,6/0,4/1,44) = obere Fensterreihe,
+aber 0,7 m hoeher als die Modellfenster (22,1); Band 20,75-21,5 eine Oeffnung 0,88; Schalloeffnungen 38,25-39,25 (2 je Flaeche, 1,2/1,5 m).
+**GPU:** Pruefkette 9-28 s, CSG + Strahlen = CPU-Bibliotheken; GPU bleibt fuer COLMAP/Dichtwolke/Render.

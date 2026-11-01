@@ -128,7 +128,7 @@
    "typ": "max_z_im_bereich",
    "x0": -9.0,
    "x1": -5.05,
-   "y0": -5.2,
+   "y0": -4.0,
    "y1": -2.2,
    "zmax": 20.0
   },
@@ -191,12 +191,15 @@
    "quer_max": 1.0
   },
   "kranz_oben": {
-   "typ": "max_z_im_bereich",
-   "x0": 4.3,
-   "x1": 5.2,
-   "y0": -2.5,
-   "y1": 2.5,
-   "zmax": 34.0
+   "typ": "z_nischen_ende",
+   "seite": "+x",
+   "z0": 29.0,
+   "z1": 34.5,
+   "dz": 0.1,
+   "halb": 4.6,
+   "tiefe": 0.4,
+   "min_b": 0.3,
+   "max_b": 2.5
   },
   "hyp32": {
    "typ": "hypso_ueber",
@@ -512,6 +515,81 @@
    "z": 33.0,
    "quer": 4.44,
    "achse_tief": 3.995
+  },
+  "helm_gerade_tief": {
+   "typ": "front_linearitaet",
+   "seite": "-x",
+   "z0": 41.75,
+   "z1": 53.75,
+   "quer": 0.0,
+   "band": 0.5
+  },
+  "helm_gerade_quer": {
+   "typ": "front_linearitaet",
+   "seite": "-y",
+   "z0": 41.75,
+   "z1": 53.75,
+   "quer": 0.0,
+   "band": 0.5
+  },
+  "band_tuermchen_oeffn_3427": {
+   "typ": "flaeche_oeffnungen",
+   "seite": "-x",
+   "z": 34.27,
+   "quer0": 3.8,
+   "quer1": 5.08,
+   "tiefe": 0.2
+  },
+  "band_zentral_oeffn_2113": {
+   "typ": "flaeche_oeffnungen",
+   "seite": "-x",
+   "z": 21.13,
+   "quer0": -1.96,
+   "quer1": 1.96,
+   "tiefe": 0.2
+  },
+  "band_zentral_oeffn_2333": {
+   "typ": "flaeche_oeffnungen",
+   "seite": "-x",
+   "z": 23.33,
+   "quer0": -1.86,
+   "quer1": 1.86,
+   "tiefe": 0.2
+  },
+  "band_zentral_oeffn_3877": {
+   "typ": "flaeche_oeffnungen",
+   "seite": "-x",
+   "z": 38.77,
+   "quer0": -1.44,
+   "quer1": 1.44,
+   "tiefe": 0.2
+  },
+  "band_zentral_periode_20": {
+   "typ": "relief_periode",
+   "seite": "-x",
+   "quer": 4.95,
+   "z0": 20.0,
+   "z1": 24.0
+  },
+  "band_zentral_periode_22": {
+   "typ": "relief_periode",
+   "seite": "-x",
+   "quer": 4.95,
+   "z0": 22.0,
+   "z1": 26.0
+  },
+  "band_tuermchen_periode_28": {
+   "typ": "relief_periode",
+   "seite": "-x",
+   "quer": 5.69,
+   "z0": 28.25,
+   "z1": 31.75
+  },
+  "silhouette_061_55": {
+   "typ": "ausdehnung_streifen",
+   "z": 55.0,
+   "achse": "x",
+   "quer_max": 2.0
   }
  },
  "pruefungen": [
@@ -797,7 +875,13 @@
    "quelltyp": "foto_kalibriert",
    "merkmal": "absolut_hoehe",
    "massstab": "foto_kalibriert",
-   "protokoll": "M-030-005"
+   "protokoll": "M-030-005",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "grund": "Messung von 'hoechster Punkt im Fenster' (fand seit der Flaechenabtastung das Kragdach, 32,96) auf 'Ende der Scharten' (z_nischen_ende) umgestellt - misst die Zinnen selbst (Register AX)"
+    }
+   ]
   },
   {
    "name": "Spitzenlaenge ueber First (m)",
@@ -1042,6 +1126,10 @@
     {
      "datum": "2026-11-01",
      "grund": "Messfenster x bis -5,05 (nur vor der Wand; sonst zaehlen Wandquader bis zmax)"
+    },
+    {
+     "datum": "2026-11-01",
+     "grund": "Messfenster y0 -5,2 -> -4,0: Eckquader der NW-Ecke (y -5..-4,2) ragten mit grossem Relief ins Fenster; Eckturm-Achse y -3,7 bleibt drin (Register AX)"
     }
    ]
   },
@@ -1735,6 +1823,130 @@
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
    "protokoll": "profile_baender_tuermchen.json"
+  },
+  {
+   "name": "Helm geradlinig (tief, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+   "wert": "helm_gerade_tief",
+   "soll": [
+    0.0,
+    0.25
+   ],
+   "quelle": "wolke_profile.py --eben: Wolke/Silhouette sind dort gerade (RMS 0.095 m, max 0.272 m, 25 Schichten) - Dachflaechen ebene Walmflaechen; Nutzer: 'Hoecker, nicht durchgaengig'",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_nord.json"
+  },
+  {
+   "name": "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+   "wert": "helm_gerade_quer",
+   "soll": [
+    0.0,
+    0.32
+   ],
+   "quelle": "wolke_profile.py --eben: Wolke/Silhouette sind dort gerade (RMS 0.128 m, max 0.275 m, 25 Schichten) - Dachflaechen ebene Walmflaechen; Nutzer: 'Hoecker, nicht durchgaengig'",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_nord.json"
+  },
+  {
+   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche anzahl bei 34.27 m",
+   "wert": "band_tuermchen_oeffn_3427_anzahl",
+   "soll": [
+    2,
+    2
+   ],
+   "quelle": "wolke_baender.py (tuermchen): Dunkellaeufe entlang der sichtbaren Flaeche im Band offen: 2 je Flaeche, Breiten [0.48, 0.72, 0.48, 0.4, 0.16], Hoehe [33.62, 34.92]; Nutzer: 'Boegen zu klein und zu viele'",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_baender_tuermchen.json"
+  },
+  {
+   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche breite bei 34.27 m",
+   "wert": "band_tuermchen_oeffn_3427_breite_median",
+   "soll": [
+    0.33,
+    0.63
+   ],
+   "quelle": "wolke_baender.py (tuermchen): Dunkellaeufe entlang der sichtbaren Flaeche im Band offen: 2 je Flaeche, Breiten [0.48, 0.72, 0.48, 0.4, 0.16], Hoehe [33.62, 34.92]; Nutzer: 'Boegen zu klein und zu viele'",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_baender_tuermchen.json"
+  },
+  {
+   "name": "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+   "wert": "band_zentral_periode_20",
+   "soll": [
+    0.13,
+    0.37
+   ],
+   "quelle": "wolke_baender.py (zentral): Farbperiode des Steinanteils an der Kante 20.0-24.0 m = 0.25 m (Staerke 0.67); Nutzer: 'Backsteine zu grob'",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "verhaeltnis",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_baender_zentral.json",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt_soll": [
+      0.15,
+      0.35
+     ],
+     "grund": "wolke_baender.py neu gerechnet"
+    }
+   ]
+  },
+  {
+   "name": "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+   "wert": "band_zentral_periode_22",
+   "soll": [
+    0.38,
+    0.62
+   ],
+   "quelle": "wolke_baender.py (zentral): Farbperiode des Steinanteils an der Kante 22.0-26.0 m = 0.5 m (Staerke 0.5); Nutzer: 'Backsteine zu grob'",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "verhaeltnis",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_baender_zentral.json",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt_soll": [
+      0.4,
+      0.6
+     ],
+     "grund": "wolke_baender.py neu gerechnet"
+    }
+   ]
+  },
+  {
+   "name": "Band tuermchen Quaderperiode 28-32 m: Reliefperiode an der Kante (m)",
+   "wert": "band_tuermchen_periode_28",
+   "soll": [
+    0.38,
+    0.62
+   ],
+   "quelle": "wolke_baender.py (tuermchen): Farbperiode des Steinanteils an der Kante 28.25-31.75 m = 0.5 m (Staerke 0.34); Nutzer: 'Backsteine zu grob'",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "verhaeltnis",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_baender_tuermchen.json"
+  },
+  {
+   "name": "Profil Dach (Foto 061): Tiefe x bei 55 m (m)",
+   "wert": "silhouette_061_55",
+   "soll": [
+    0.33,
+    1.73
+   ],
+   "quelle": "foto_silhouette_profil.py: Foto 061 Silhouette 1.03 m bei 54.75 m (10.7 px/m, Ausgleich ueber 6 Bezugspicks: nadel_spitze, tuermchen_SE, tuermchen_SW, tuermchen_NE, tuermchen_NW, knauf_nadel); Protokoll M-061-S1",
+   "quelltyp": "foto_verhaeltnis",
+   "merkmal": "schlankheit",
+   "massstab": "Bezugspicks K-Protokoll + anker3d (Ausgleich)",
+   "protokoll": "M-061-S1"
   }
  ],
  "beobachtungen_offen": [
@@ -4387,6 +4599,125 @@
    "auto_id": "band_zentral_schalloeffnungen",
    "text": "Band 'offen' am Hauptturm 38,25-39,25 m (dunkel 88 %) = Schalloeffnungen; Modell-Arkaden 37,9-39,5 (ARKADE_UNTER_TRAUFE 3,0). Galeriegesims-Band 36,25-37,75 r 3,70 passt zu LoD2 37,27.",
    "naechster_schritt": "ARKADE_UNTER_TRAUFE und Oeffnungshoehe aus dem Band ableiten (2,25 / 1,0 m), Pruefzeile 'Band zentral offen' aktivieren"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_baender.py (zentral)",
+   "auto_id": "band_zentral_offen_2075",
+   "text": "Band offen 20.75-21.5 m: 1 Oeffnung(en) je Flaeche, Breiten [0.88], Hoehe [20.8, 21.47] (Dunkellaeufe)",
+   "naechster_schritt": "gegen Fassadendaten (fassade.json) pruefen; bei Bestaetigung pruefungen_offen fuer den Koerper setzen"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_baender.py (zentral)",
+   "auto_id": "band_zentral_offen_2275",
+   "text": "Band offen 22.75-24.0 m: 3 Oeffnung(en) je Flaeche, Breiten [1.6, 0.4, 1.44], Hoehe [22.77, 23.89] (Dunkellaeufe)",
+   "naechster_schritt": "gegen Fassadendaten (fassade.json) pruefen; bei Bestaetigung pruefungen_offen fuer den Koerper setzen"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_baender.py (zentral)",
+   "auto_id": "band_zentral_offen_3825",
+   "text": "Band offen 38.25-39.25 m: 2 Oeffnung(en) je Flaeche, Breiten [1.2, 1.52], Hoehe [38.34, 39.19] (Dunkellaeufe)",
+   "naechster_schritt": "gegen Fassadendaten (fassade.json) pruefen; bei Bestaetigung pruefungen_offen fuer den Koerper setzen"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 5)",
+   "auto_id": "fehlteile-030-1364-1860",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 10.59,
+   "z_bis": 10.59,
+   "xyz": [
+    4.53,
+    5.35,
+    10.59
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=10.59 m, y=5.35 m (Zelle [1364, 1860, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 6)",
+   "auto_id": "fehlteile-060-4128-1200",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 49.6,
+   "z_bis": 49.6,
+   "xyz": [
+    -1.5,
+    -1.77,
+    49.6
+   ],
+   "abweichung": 0.903,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=49.6 m, y=-1.77 m (Zelle [4128, 1200, 16], Score +0.90)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-22-24",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 21.5,
+   "z_bis": 24.5,
+   "abweichung": 0.78,
+   "text": "Silhouettenbreite z 21.5-24.5 m: Foto 14.84 m, Modell 14.06 m (+0.78 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
+   "auto_id": "breite-061-42-44",
+   "art": "breite",
+   "foto": "061",
+   "z_von": 42.0,
+   "z_bis": 43.5,
+   "abweichung": -6.18,
+   "text": "Silhouettenbreite z 42.0-43.5 m: Foto 2.49 m, Modell 8.67 m (-6.18 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
+   "auto_id": "breite-061-46-49",
+   "art": "breite",
+   "foto": "061",
+   "z_von": 45.5,
+   "z_bis": 49.0,
+   "abweichung": -0.81,
+   "text": "Silhouettenbreite z 45.5-49.0 m: Foto 4.21 m, Modell 5.02 m (-0.81 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-fehlt_im_modell-15--6",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 15.0,
+   "z_bis": 27.0,
+   "quer_von": -6.2,
+   "quer_bis": -5.5,
+   "flaeche_m2": 5.2,
+   "text": "Fotowolke hat hier Masse, das Modell nicht (fehlendes Bauteil?): z 15.0-27.0 m, y -6.2..-5.5 m, 5.2 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-wirklichkeit_weiter_vorn-10--10",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 10.2,
+   "z_bis": 13.5,
+   "quer_von": -10.2,
+   "quer_bis": -9.2,
+   "flaeche_m2": 3.1,
+   "text": "Fotowolke steht +7.07 m weiter vor als das Modell [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 10.2-13.5 m, y -10.2..-9.2 m, 3.1 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
   }
  ],
  "beobachtungen_erledigt": [
@@ -5646,6 +5977,33 @@
    "naechster_schritt": "Suedfotos 041/043 pruefen; ggf. Suednetz",
    "erledigt": "2026-11-01",
    "loesung": "tools/foto_lod2_zuordnen.py: LoD2-Gebaeude aus 4 Kacheln (411-415 E / 5314-5318 N, 10 450 Gebaeude bis 5 km) in die 061-Kamera projiziert - an der Bildstelle (u 2300, v 480) liegt kein Gebaeude; der LoD2-Block des Martinstors endet 20 px rechts davon, kein Gebaeude >= 30 m First in +-400 px der Spalte. Suedfotos 041/043 zeigen am Martinstor keinen Kuppelturm. => Hintergrundbauwerk ausserhalb der Kacheln oder jenseits 5 km (Kamera-Azimut aus Nahpicks +-2 Grad); NICHT Teil des Martinstors, kein Modellelement."
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Nutzer",
+   "auto_id": "nutzer_dach_hoecker",
+   "text": "Viewer: Das grosse Hauptdach hat einen Hoecker und ist nicht durchgaengig wie in echt (Loft aus 0,5-m-Schichten mit Knick/Beule).",
+   "naechster_schritt": "Modellfront je 0,25 m gegen die Wolkenlinie; Helmflaechen als Ebenen aus der Wolke fitten (Residuum pruefen), Pruefung 'Helm geradlinig'",
+   "erledigt": "2026-11-01",
+   "loesung": "wolke_profile.py --eben: Helm als ebene Flaechen (Daten gerade, RMS < 0,15); Pruefzeilen 'Helm geradlinig' (0,13 m); Dachreiter-Trommel (DOM1-Artefakt) entfernt"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Nutzer",
+   "auto_id": "nutzer_tuermchen_boegen",
+   "text": "Viewer: Die Boegen in den 4 Tuermchen sind zu klein und zu viele (Modell: 2 je Aussenflaeche, ANNAHME Foto 043).",
+   "naechster_schritt": "Dunkelanteil entlang der Nordflaeche im Band 'offen' aus der Wolke zaehlen -> Oeffnungen je Flaeche und Breite als Daten",
+   "erledigt": "2026-11-01",
+   "loesung": "wolke_baender.py Oeffnungsmuster: 2 je Flaeche, 0,48/0,72 m breit, 33,6-34,9 m; Bauteil nimmt die Banddaten; Pruefzeilen 'Band tuermchen offen ... anzahl/breite' gruen"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Nutzer",
+   "auto_id": "nutzer_quader_zu_grob",
+   "text": "Viewer: Die rot angedeuteten Backsteine/Eckquader sind zu grob.",
+   "naechster_schritt": "Farbperiode (stein/weiss) entlang der Gebaeudekanten in der Wolke -> Quaderhoehe; Pruefung gegen die Modell-Schichthoehe",
+   "erledigt": "2026-11-01",
+   "loesung": "Farbperioden der Wolke: Schichthoehe 0,25/0,5/0,35/0,5 m, Blocklaenge 0,4 m statt 0,95 m x 1,7 m; Pruefzeilen 'Quaderperiode' (relief_periode) gruen"
   }
  ],
  "pruefungen_zurueckgezogen": [

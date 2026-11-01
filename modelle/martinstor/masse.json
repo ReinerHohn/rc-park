@@ -413,7 +413,7 @@
    "wert": 1.4,
    "einheit": "m",
    "was": "Dachplattform oben, Tiefe (x)",
-   "quelle": "Plattform oben N-S: Goldkugeln bei x +-0,7 (SfM, Drift korrigiert) + DOM1 N-S nur eine 55-Zelle",
+   "quelle": "Goldkugeln bei x +-0,7 (SfM, Drift korrigiert) + DOM1 N-S eine 55-Zelle; Foto-061-Silhouette (1,03) nahe der Aufloesungsgrenze 0,8 m - nicht verwendet",
    "quelltyp": "sfm_bodenanker",
    "historie": [
     {
@@ -421,6 +421,18 @@
      "alt": 1.6,
      "neu": 1.4,
      "grund": "Plattform oben N-S: Goldkugeln bei x +-0,7 (SfM, Drift korrigiert) + DOM1 N-S nur eine 55-Zelle"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt": 1.4,
+     "neu": 1.03,
+     "grund": "Foto 061 Silhouette: 1,03 m N-S bei 54,25-55,25 m (Plattform/Helmkopf); vorher Goldkugeln +-0,7"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt": 1.03,
+     "neu": 1.4,
+     "grund": "Goldkugeln bei x +-0,7 (SfM, Drift korrigiert) + DOM1 N-S eine 55-Zelle; Foto-061-Silhouette (1,03) nahe der Aufloesungsgrenze 0,8 m - nicht verwendet"
     }
    ]
   },
@@ -565,6 +577,70 @@
    "einheit": "m",
    "was": "Oberkante der Konsolen = volle Breite des Tuermchenschafts",
    "quelle": "Dichte Wolke Nord (entzerrt): y-Gesamtbreite je 0,25 m (Register AS): 10,3 m bis 27,6 m, Anstieg ab 27,9 (10,9) auf 11,0 bei 28,9 m, dann Schaftbreite 11,1-11,3",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "QUADER_SCHAFT_UNTEN": {
+   "wert": 0.25,
+   "einheit": "m",
+   "was": "Eckquader-Schichthoehe Schaft unten (bis QUADER_ZONE_Z)",
+   "quelle": "wolke_baender.py (Register AX): Farbperiode des Steinanteils an der Gebaeudekante (5-cm-Zellen, Autokorrelation), Fenster 20-24 m: 0,25 m (Staerke 0,67), 18-22: 0,25; Nutzer: 'Backsteine zu grob' (Modell hatte 0,95)",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "QUADER_SCHAFT_OBEN": {
+   "wert": 0.5,
+   "einheit": "m",
+   "was": "Eckquader-Schichthoehe Schaft oben (ab QUADER_ZONE_Z)",
+   "quelle": "wolke_baender.py (Register AX): Farbperiode des Steinanteils an der Gebaeudekante (5-cm-Zellen, Autokorrelation), Fenster 22-26 m: 0,5 (0,50), 24-28: 0,45 (0,34), 26-34: 0,55-0,6 (0,17-0,26)",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "QUADER_ZONE_Z": {
+   "wert": 23.0,
+   "einheit": "m",
+   "was": "Hoehe des Wechsels der Quaderschicht",
+   "quelle": "Grenze zwischen 0,25-m-Periode (Fenster 18-24) und 0,5-m-Periode (22-34): Ueberlappung 22-24 -> 23 m",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "QUADER_GLOCKENSTOCK": {
+   "wert": 0.35,
+   "einheit": "m",
+   "was": "Eckquader-Schichthoehe Glockenstock",
+   "quelle": "wolke_baender.py (Register AX): Farbperiode des Steinanteils an der Gebaeudekante (5-cm-Zellen, Autokorrelation), Fenster 34-38 m: 0,35 m (Staerke 0,35); Modell hatte 0,6",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "QUADER_TUERMCHEN": {
+   "wert": 0.5,
+   "einheit": "m",
+   "was": "Eckquader-Schichthoehe Tuermchenschaft",
+   "quelle": "wolke_baender.py (Register AX): Farbperiode des Steinanteils an der Gebaeudekante (5-cm-Zellen, Autokorrelation), Tuermchenschaft-Band 28,25-31,75: 0,5 m (Staerke 0,34); Modell hatte 0,58",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "LATERNE_D": {
+   "wert": 0.26,
+   "einheit": "m",
+   "was": "Durchmesser des Dachreiter-Schafts ueber der Plattform bis zum Knauf",
+   "quelle": "Foto 049 Vollbild (Nahaufnahme, 1,5 cm/px): Mast 0,09-0,26 m; Foto 061 (0,93) liegt unter der Aufloesungsgrenze der Silhouette (Schliessungskern 7 px = 0,8 m) - verworfen",
+   "quelltyp": "foto_vollbild",
+   "historie": [
+    {
+     "datum": "2026-11-01",
+     "alt": 0.93,
+     "neu": 0.26,
+     "grund": "Foto 049 Vollbild (Nahaufnahme, 1,5 cm/px): Mast 0,09-0,26 m; Foto 061 (0,93) liegt unter der Aufloesungsgrenze der Silhouette (Schliessungskern 7 px = 0,8 m) - verworfen"
+    }
+   ]
+  },
+  "QUADER_LAENGE": {
+   "wert": 0.4,
+   "einheit": "m",
+   "was": "Eckquader: Laenge des langen Blocks entlang der Fassade (kurzer Block 0,6 davon)",
+   "quelle": "wolke_baender.py (Register AX): Farbperiode QUER an der Schaftkante: 14-18 m 0,30/0,35 (Staerke 0,35/0,45), 16-20 m 0,45 (0,34), 24-28 m 0,40 (0,32); Modell hatte 0,95-1,75 m x 1,7 unten",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "QUADER_KURZ_FAKTOR": {
+   "wert": 1.0,
+   "einheit": "",
+   "was": "Verhaeltnis kurzer zu langer Eckquader (1,0 = keine Lang/Kurz-Alternanz)",
+   "quelle": "wolke_baender.py: Steinanteil an der Kante ist je SCHICHT periodisch (Grundperiode 0,25/0,5 m), keine Zweischicht-Periode messbar -> Bloecke je Schicht gleich lang (ANNAHME aus dem Fehlen der Alternanz, Register AX)",
    "quelltyp": "sfm_bodenanker"
   }
  }

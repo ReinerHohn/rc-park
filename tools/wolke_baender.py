@@ -93,6 +93,59 @@ def main():
         rr = [q["r"] for q in b["schichten"]]; b["r"] = round(float(np.median(rr)), 2); b["r_max"] = round(float(max(rr)), 2); b["n"] = int(sum(q["n"] for q in b["schichten"]))
         b["anteile"] = {n: round(float(np.mean([q[f"p_{n}"] for q in b["schichten"]])), 1) for n in ("stein", "weiss", "dunkel", "kupfer")}
         b["z0"] = round(b["z0"], 2); b["z1"] = round(b["z1"], 2); b["schichten"] = [q["z"] for q in b["schichten"]]
+    # ---- Strukturen IN den Baendern (generisch, aus denselben Punkten):
+    #  offen : Dunkellaeufe entlang der sichtbaren Flaeche (quer, 8-cm-Zellen) -> Oeffnungen je Flaeche (Anzahl, Breiten, Hoehe p5-p95)
+    #  stein : Farbperiode (Steinanteil entlang z, 5-cm-Zellen, Autokorrelation) an der sichtbaren Kante -> Quader-/Schichthoehe
+    dunkel = kl["dunkel"]; stein_m = kl["stein"]
+    fb_default = lambda r: r * np.tan(np.radians(22.5))                                   # halbe Flaechenbreite eines Achtecks mit Schluesselweite 2r
+    for b in baender:
+        if b["klasse"] == "offen":
+            r = b["r"]; fb = fb_default(r); ergeb = []
+            for vorz in ((1, -1) if aq > 0.5 else (0,)):                                  # beide Koerper (quer +-Achse) oder einer auf der Achse
+                qc = vorz * aq
+                k = (P[:, 2] >= b["z0"]) & (P[:, 2] < b["z1"]) & (sgn * P[:, it] > at + r - 0.45) & (np.abs(P[:, iq] - qc) < fb + 0.1)
+                if k.sum() < 40: continue
+                y = P[k, iq] - qc; d = dunkel[k]; bins = np.arange(-fb - 0.1, fb + 0.1001, 0.08); idx = np.digitize(y, bins) - 1
+                frac = np.array([d[idx == i].mean() if (idx == i).sum() >= 4 else np.nan for i in range(len(bins) - 1)])
+                laeufe = []; cur = None
+                for i, f in enumerate(frac):
+                    if f == f and f > 0.5: cur = [i, i] if cur is None else [cur[0], i]
+                    elif cur: laeufe.append(cur); cur = None
+                if cur: laeufe.append(cur)
+                laeufe = [(round(float(bins[a0] + 0.04), 2), round(float((b1 - a0 + 1) * 0.08), 2)) for a0, b1 in laeufe if (b1 - a0 + 1) * 0.08 >= 0.15]
+                zz = P[k, 2][d]
+                ergeb.append(dict(koerper_quer=round(qc, 2), n=int(k.sum()), dunkel_anteil=round(float(d.mean()), 2), laeufe=laeufe, hoehe=[round(float(np.percentile(zz, 5)), 2), round(float(np.percentile(zz, 95)), 2)] if d.sum() > 10 else None))
+            if ergeb:
+                anz = [len(e["laeufe"]) for e in ergeb]; br = [w for e in ergeb for _, w in e["laeufe"]]
+                b["oeffnungen"] = dict(je_flaeche=int(round(float(np.median(anz)))), breite_median=round(float(np.median(br)), 2) if br else None, breiten=br, hoehe=ergeb[0]["hoehe"], flaechenbreite=round(2 * fb, 2), details=ergeb,
+                                      hinweis="Dunkellaeufe > 50 % je 8 cm entlang der sichtbaren Flaeche; Laeufe < 15 cm verworfen")
+        if b["klasse"] == "stein" and b["z1"] - b["z0"] >= 1.5:
+            # Kante des Koerpers: Punkte nahe der Aussenkante (Tiefe > Achse + 0,85 r) -> Steinanteil je 5 cm Hoehe -> Autokorrelation
+            r = b["r"]; k = (P[:, 2] >= b["z0"]) & (P[:, 2] < b["z1"]) & (sgn * P[:, it] > at + 0.85 * r) & (np.abs(np.abs(P[:, iq]) - aq) < zone)
+            if k.sum() >= 200:
+                zb = np.arange(b["z0"], b["z1"] + 1e-6, 0.05); idx = np.digitize(P[k, 2], zb) - 1; st = stein_m[k]
+                reihe = np.array([st[idx == i].mean() if (idx == i).sum() >= 3 else np.nan for i in range(len(zb) - 1)])
+                ok = ~np.isnan(reihe)
+                if ok.sum() >= 20:
+                    x = reihe.copy(); x[~ok] = np.nanmean(reihe); x = x - x.mean(); ac = np.correlate(x, x, "full")[len(x) - 1:]; ac = ac / max(ac[0], 1e-9)
+                    lags = np.arange(len(ac)) * 0.05; cand = [(lags[i], ac[i]) for i in range(4, min(len(ac), 40)) if ac[i] > ac[i - 1] and ac[i] >= ac[i + 1 if i + 1 < len(ac) else i]]
+                    cand = [q for q in cand if q[1] > 0]
+                    if cand:
+                        _stm = max(q[1] for q in cand); lag, st_ = min((q for q in cand if q[1] >= 0.5 * _stm), key=lambda q: q[0]); b["farbperiode"] = dict(periode_m=round(float(lag), 2), staerke=round(float(st_), 2), zellen=int(ok.sum()), hinweis="Autokorrelation des Steinanteils entlang z (5-cm-Zellen) an der Aussenkante; Periode = Schichthoehe der Quader/Baender")
+    # Farbperiode auch bandunabhaengig in 4-m-Fenstern ueber den ganzen Koerper (Quaderhoehe des Schafts, Bandhoehen) - gleiche Methode
+    perioden = []
+    for zf in np.arange(zr[0], zr[1] - 2.0, 2.0):
+        k = (P[:, 2] >= zf) & (P[:, 2] < zf + 4.0) & (np.abs(np.abs(P[:, iq]) - aq) < zone)
+        rr = np.array([q["r"] for q in schichten if zf <= q["z"] < zf + 4.0]); 
+        if k.sum() < 300 or len(rr) == 0: continue
+        k &= (sgn * P[:, it] > at + 0.85 * float(np.median(rr)))
+        zb = np.arange(zf, zf + 4.0 + 1e-6, 0.05); idx = np.digitize(P[k, 2], zb) - 1; st = stein_m[k]
+        reihe = np.array([st[idx == i].mean() if (idx == i).sum() >= 3 else np.nan for i in range(len(zb) - 1)]); ok = ~np.isnan(reihe)
+        if ok.sum() < 30: continue
+        x = reihe.copy(); x[~ok] = np.nanmean(reihe); x = x - x.mean(); ac = np.correlate(x, x, "full")[len(x) - 1:]; ac = ac / max(ac[0], 1e-9)
+        cand = [(i * 0.05, ac[i]) for i in range(4, min(len(ac), 40)) if ac[i] > ac[i - 1] and ac[i] >= ac[min(i + 1, len(ac) - 1)]]
+        cand = [q for q in cand if q[1] > 0]
+        if cand: _stm = max(q[1] for q in cand); lag, st_ = min((q for q in cand if q[1] >= 0.5 * _stm), key=lambda q: q[0]); perioden.append(dict(z0=round(float(zf), 1), z1=round(float(zf + 4.0), 1), periode_m=round(float(lag), 2), staerke=round(float(st_), 2), zellen=int(ok.sum())))
     # Erste Traufe (Kragplatte unter dem Bruestungsband) heisst 'gesims', die hoechste 'traufe' (Dachtraufe, darauf der Kegel)
     trauf = [b for b in baender if b["klasse"] == "traufe"]
     for b in trauf[:-1]: b["klasse"] = "gesims"
@@ -108,14 +161,37 @@ def main():
             kegel = dict(r_je_m=round(kr, 4), z0=round(float(z0), 2), r0=round(float(r_tr), 2), r0_aus_steigung=round(float(kr * (TS - z0)), 2), spitze=TS, schichten=len(kup),
                          gerade_frei=dict(r_je_m=round(float(m_), 4), r_bei_z0=round(float(m_ * z0 + b_), 2), r_oben=round(float(m_ * ob["z1"] + b_), 2), z_oben=ob["z1"]))
     print(f"Baender Koerper '{a.koerper}' ({s}), Achse tief {at} quer {aq}, Zone +-{zone}, Spitze {TS}:")
-    for b in baender: print(f"  {b['klasse']:9s} {b['z0']:6.2f}..{b['z1']:6.2f}  r {b['r']:.2f} (max {b['r_max']:.2f})  stein {b['anteile']['stein']:4.0f} weiss {b['anteile']['weiss']:4.0f} dunkel {b['anteile']['dunkel']:4.0f} kupfer {b['anteile']['kupfer']:4.0f}  n={b['n']}")
+    for b in baender:
+        print(f"  {b['klasse']:9s} {b['z0']:6.2f}..{b['z1']:6.2f}  r {b['r']:.2f} (max {b['r_max']:.2f})  stein {b['anteile']['stein']:4.0f} weiss {b['anteile']['weiss']:4.0f} dunkel {b['anteile']['dunkel']:4.0f} kupfer {b['anteile']['kupfer']:4.0f}  n={b['n']}")
+        if "oeffnungen" in b: o = b["oeffnungen"]; print(f"            Oeffnungen: {o['je_flaeche']} je Flaeche ({o['flaechenbreite']} m breit), Breiten {o['breiten']}, Hoehe {o['hoehe']}")
+        if "farbperiode" in b: f = b["farbperiode"]; print(f"            Farbperiode (Quader/Schichten): {f['periode_m']} m (Staerke {f['staerke']}, {f['zellen']} Zellen)")
     if kegel: print(f"  Kegel: r = {kegel['r_je_m']} x (Spitze - z) ab {kegel['z0']} m (r0 {kegel['r0']}) aus {kegel['schichten']} Kupferschichten")
-    out = dict(seite=s, koerper=a.koerper, achse=dict(tief=at, quer=aq), zone=zone, spitze=TS, baender=baender, kegel=kegel, schichten=schichten, quelle="tools/wolke_baender.py: Aussenradius p97 + Farbklassen je 0,25 m, Baender nach Klassenwechsel")
+    # Farbperiode QUER (Quaderlaenge entlang der Fassade) in den Steinzonen nahe der Kante: Steinanteil je 5 cm entlang quer, 2 m ab der Kante
+    perioden_quer = []
+    kanten_ = K.get("kanten") or ([dict(z0=-1e9, z1=1e9, quer=K["kante_quer"])] if K.get("kante_quer") is not None else [])
+    for kk in kanten_:
+        for zf in np.arange(max(zr[0], kk["z0"]), min(zr[1], kk["z1"]) - 2.0, 2.0):
+            rr = np.array([q["r"] for q in schichten if zf <= q["z"] < zf + 4.0])
+            if len(rr) == 0: continue
+            front = at + float(np.median(rr))
+            for vorz in (1, -1):
+                k = (P[:, 2] >= zf) & (P[:, 2] < zf + 4.0) & (sgn * P[:, it] > front - 0.6) & (vorz * P[:, iq] > kk["quer"] - 2.0) & (vorz * P[:, iq] < kk["quer"] + 0.1)
+                if k.sum() < 300: continue
+                qb = np.arange(kk["quer"] - 2.0, kk["quer"] + 0.1 + 1e-6, 0.05); idx = np.digitize(vorz * P[k, iq], qb) - 1; st = stein_m[k]
+                reihe = np.array([st[idx == i].mean() if (idx == i).sum() >= 3 else np.nan for i in range(len(qb) - 1)]); ok = ~np.isnan(reihe)
+                if ok.sum() < 25: continue
+                x = reihe.copy(); x[~ok] = np.nanmean(reihe); x = x - x.mean(); ac = np.correlate(x, x, "full")[len(x) - 1:]; ac = ac / max(ac[0], 1e-9)
+                cand = [(i * 0.05, ac[i]) for i in range(4, min(len(ac) - 1, 40)) if ac[i] > ac[i - 1] and ac[i] >= ac[i + 1]]
+                cand = [q for q in cand if q[1] > 0]
+                if cand: _stm = max(q[1] for q in cand); lag, st_ = min((q for q in cand if q[1] >= 0.5 * _stm), key=lambda q: q[0]); perioden_quer.append(dict(z0=round(float(zf), 1), z1=round(float(zf + 4.0), 1), seite_quer=vorz, periode_m=round(float(lag), 2), staerke=round(float(st_), 2), zellen=int(ok.sum())))
+    if perioden_quer: print("  Farbperiode QUER an der Kante (Quaderlaenge) je 4-m-Fenster: " + ", ".join(f"{q['z0']}-{q['z1']}{'+' if q['seite_quer']>0 else '-'}: {q['periode_m']} m (St {q['staerke']})" for q in perioden_quer))
+    if perioden: print("  Farbperiode je 4-m-Fenster (Steinanteil an der Kante): " + ", ".join(f"{q['z0']}-{q['z1']}: {q['periode_m']} m (St {q['staerke']})" for q in perioden))
+    out = dict(seite=s, koerper=a.koerper, achse=dict(tief=at, quer=aq), zone=zone, spitze=TS, baender=baender, kegel=kegel, farbperioden=perioden, farbperioden_quer=perioden_quer, schichten=schichten, quelle="tools/wolke_baender.py: Aussenradius p97 + Farbklassen je 0,25 m, Baender nach Klassenwechsel")
     op = os.path.join(od, f"profile_baender_{a.koerper}.json"); json.dump(out, open(op, "w"), indent=1, ensure_ascii=False); print("geschrieben:", op)
     if a.pruefungen:
         tp = os.path.join(od, "masstabelle.json"); from masstabelle_io import sperren, schreiben; _L = sperren(tp); T = json.load(open(tp)); gesetzt = set(); neu = 0
         seite = ("-" if sgn < 0 else "+") + tief
-        for b in baender + ([dict(klasse="kegel", z0=kegel["z0"], z1=TS, r=None)] if kegel else []):
+        for b in (baender + ([dict(klasse="kegel", z0=kegel["z0"], z1=TS, r=None)] if kegel else [])) if K.get("pruefungen_radius", True) else []:
             if b["klasse"] == "kegel": zm = round((kegel["z0"] + TS) / 2, 2); r = kegel["r0"] * (TS - zm) / (TS - kegel["z0"])
             else: zm = round((b["z0"] + b["z1"]) / 2, 2); r = b["r"]
             if a.koerper == "tuermchen" and b["klasse"] == "stein" and b["z0"] < 30: continue   # Schaft/Konsolen haben eigene Pruefungen (Gesamtbreite 28,5, TWs)
@@ -128,6 +204,45 @@ def main():
                     if pr["soll"] != soll: pr.setdefault("historie", []).append({"datum": "auto", "alt_soll": pr["soll"], "grund": "wolke_tuerm_baender.py neu gerechnet"}); pr["soll"] = soll; pr["quelle"] = quelle
                     pr["wert"] = wert; break
             else: T["pruefungen"].append(dict(name=name, wert=wert, soll=soll, quelle=quelle, quelltyp="sfm_bodenanker", merkmal="schlankheit", massstab="LoD2-Eckkanten + Wandebene", protokoll=f"profile_baender_{a.koerper}.json")); neu += 1
+        # Oeffnungen je Flaeche (Modell: Laeufe tiefer Treffer entlang der sichtbaren Flaeche auf Bandmitte)
+        for b in baender:
+            o = b.get("oeffnungen")
+            if not o or not o.get("je_flaeche"): continue
+            if not K.get("pruefungen_offen", True):                                            # ohne Pruefrecht: Befund als offene Beobachtung (einmal je Band)
+                aid = f"band_{a.koerper}_offen_{int(b['z0'] * 100)}"
+                if not any(x.get("auto_id") == aid for x in T.get("beobachtungen_offen", []) + T.get("beobachtungen_erledigt", [])):
+                    T.setdefault("beobachtungen_offen", []).append(dict(datum="auto", wer=f"wolke_baender.py ({a.koerper})", auto_id=aid, text=f"Band offen {b['z0']}-{b['z1']} m: {o['je_flaeche']} Oeffnung(en) je Flaeche, Breiten {o['breiten']}, Hoehe {o['hoehe']} (Dunkellaeufe)", naechster_schritt="gegen Fassadendaten (fassade.json) pruefen; bei Bestaetigung pruefungen_offen fuer den Koerper setzen"))
+                continue
+            zm = round(float(np.mean(o["hoehe"])) if o.get("hoehe") else (b["z0"] + b["z1"]) / 2, 2); fbh = o["flaechenbreite"] / 2
+            for key, soll, feld in (("anzahl", [o["je_flaeche"], o["je_flaeche"]], "anzahl"), ("breite", [round(o["breite_median"] - 0.15, 2), round(o["breite_median"] + 0.15, 2)], "breite_median")):
+                if key == "breite" and not o.get("breite_median"): continue
+                name = f"Band {a.koerper} offen ({b['z0']:.2f}-{b['z1']:.2f} m): Oeffnungen je Flaeche {key} bei {zm:.2f} m"; wert = f"band_{a.koerper}_oeffn_{int(round(zm * 100))}"
+                gesetzt.add(name); T["messungen"][wert] = {"typ": "flaeche_oeffnungen", "seite": seite, "z": zm, "quer0": round(float(aq - fbh), 2), "quer1": round(float(aq + fbh), 2), "tiefe": 0.2}
+                quelle = f"wolke_baender.py ({a.koerper}): Dunkellaeufe entlang der sichtbaren Flaeche im Band offen: {o['je_flaeche']} je Flaeche, Breiten {o['breiten']}, Hoehe {o['hoehe']}; Nutzer: 'Boegen zu klein und zu viele'"
+                for pr in T["pruefungen"]:
+                    if pr["name"] == name:
+                        if pr["soll"] != soll: pr.setdefault("historie", []).append({"datum": "auto", "alt_soll": pr["soll"], "grund": "wolke_baender.py neu gerechnet"}); pr["soll"] = soll; pr["quelle"] = quelle
+                        pr["wert"] = f"{wert}_{feld}"; break
+                else: T["pruefungen"].append(dict(name=name, wert=f"{wert}_{feld}", soll=soll, quelle=quelle, quelltyp="sfm_bodenanker", merkmal="schlankheit", massstab="LoD2-Eckkanten + Wandebene", protokoll=f"profile_baender_{a.koerper}.json")); neu += 1
+        # Quader-/Schichtperiode an der Kante (Modell: relief_periode entlang der Kantenlinie); Kantenlage quer aus objekt.json['koerper'][..]['kante_quer']
+        kanten = K.get("kanten") or ([dict(z0=-1e9, z1=1e9, quer=K["kante_quer"])] if K.get("kante_quer") is not None else [])
+        def kante_bei(z): return next((kk["quer"] for kk in kanten if kk["z0"] <= z <= kk["z1"]), None)
+        stein_z = [(b["z0"], b["z1"]) for b in baender if b["klasse"] in ("stein", "hell")]
+        per_liste = [dict(z0=b["z0"], z1=b["z1"], **b["farbperiode"]) for b in baender if "farbperiode" in b] + [q for q in perioden if any(z0 <= q["z0"] and q["z1"] <= z1 for z0, z1 in stein_z) or q["staerke"] >= 0.45]
+        for q in (per_liste if K.get("pruefungen_periode", True) else []):
+            kq = kante_bei((q["z0"] + q["z1"]) / 2)
+            if kq is None or q["staerke"] < 0.3: continue
+            if True:
+                name = f"Band {a.koerper} Quaderperiode {q['z0']:.0f}-{q['z1']:.0f} m: Reliefperiode an der Kante (m)"; wert = f"band_{a.koerper}_periode_{int(q['z0'])}"
+                soll = [round(q["periode_m"] - 0.1, 2), round(q["periode_m"] + 0.1, 2)]; gesetzt.add(name)
+                T["messungen"][wert] = {"typ": "relief_periode", "seite": seite, "quer": float(kq), "z0": q["z0"], "z1": q["z1"]}
+                soll = [round(q["periode_m"] - 0.12, 2), round(q["periode_m"] + 0.12, 2)]
+                quelle = f"wolke_baender.py ({a.koerper}): Farbperiode des Steinanteils an der Kante {q['z0']}-{q['z1']} m = {q['periode_m']} m (Staerke {q['staerke']}); Nutzer: 'Backsteine zu grob'"
+                for pr in T["pruefungen"]:
+                    if pr["name"] == name:
+                        if pr["soll"] != soll: pr.setdefault("historie", []).append({"datum": "auto", "alt_soll": pr["soll"], "grund": "wolke_baender.py neu gerechnet"}); pr["soll"] = soll; pr["quelle"] = quelle
+                        pr["wert"] = wert; break
+                else: T["pruefungen"].append(dict(name=name, wert=wert, soll=soll, quelle=quelle, quelltyp="sfm_bodenanker", merkmal="verhaeltnis", massstab="LoD2-Eckkanten + Wandebene", protokoll=f"profile_baender_{a.koerper}.json")); neu += 1
         alt = [pr for pr in T["pruefungen"] if (pr["name"].startswith(f"Band {a.koerper} ") or (a.koerper == "tuermchen" and pr["name"].startswith("Ecktuermchen Band "))) and pr["name"] not in gesetzt]
         T["pruefungen"] = [pr for pr in T["pruefungen"] if pr not in alt]
         noch = {pr["wert"] for pr in T["pruefungen"]}

@@ -41,6 +41,16 @@
  },
  {
   "seite": "+x",
+  "element": "Eckquader Schaft: Schichthoehe 0,25 m unter / 0,5 m ueber QUADER_ZONE_Z, Blocklaenge QUADER_LAENGE",
+  "quelle": "wolke_baender.py Farbperioden senkrecht + quer (Register AX); Nutzer 'Backsteine zu grob'",
+  "unten": 0.25,
+  "oben": 0.5,
+  "grenze": 23.0,
+  "laenge": 0.4,
+  "seite_name": "Sued"
+ },
+ {
+  "seite": "+x",
   "element": "Giebel ueber der Uhr mit zwei konkaven Schenkeln",
   "quelle": "Foto 031 Vollbild (giebel031.jpg), Messung Scheitel 28,96 / Schenkelende 27,67 m; Nutzerhinweis 2026-11-01",
   "spannweite": 6.2,
@@ -171,9 +181,9 @@
  },
  {
   "seite": "dach",
-  "element": "Helm als Loft aus Profil (29 Schichten)",
+  "element": "Helm als Loft aus Profil (30 Schichten)",
   "quelle": "tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)",
-  "schichten": 29,
+  "schichten": 30,
   "seite_name": "dach"
  },
  {

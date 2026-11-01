@@ -471,6 +471,70 @@
     1.4,
     1.7
    ]
+  },
+  {
+   "name": "Helm geradlinig (tief, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+   "wert": "helm_gerade_tief",
+   "soll": [
+    0.0,
+    0.25
+   ]
+  },
+  {
+   "name": "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+   "wert": "helm_gerade_quer",
+   "soll": [
+    0.0,
+    0.32
+   ]
+  },
+  {
+   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche anzahl bei 34.27 m",
+   "wert": "band_tuermchen_oeffn_3427_anzahl",
+   "soll": [
+    2,
+    2
+   ]
+  },
+  {
+   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche breite bei 34.27 m",
+   "wert": "band_tuermchen_oeffn_3427_breite_median",
+   "soll": [
+    0.33,
+    0.63
+   ]
+  },
+  {
+   "name": "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+   "wert": "band_zentral_periode_20",
+   "soll": [
+    0.13,
+    0.37
+   ]
+  },
+  {
+   "name": "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+   "wert": "band_zentral_periode_22",
+   "soll": [
+    0.38,
+    0.62
+   ]
+  },
+  {
+   "name": "Band tuermchen Quaderperiode 28-32 m: Reliefperiode an der Kante (m)",
+   "wert": "band_tuermchen_periode_28",
+   "soll": [
+    0.38,
+    0.62
+   ]
+  },
+  {
+   "name": "Profil Dach (Foto 061): Tiefe x bei 55 m (m)",
+   "wert": "silhouette_061_55",
+   "soll": [
+    0.33,
+    1.73
+   ]
   }
  ],
  "messungen": {
@@ -597,7 +661,7 @@
    "typ": "max_z_im_bereich",
    "x0": -9.0,
    "x1": -5.05,
-   "y0": -5.2,
+   "y0": -4.0,
    "y1": -2.2,
    "zmax": 20.0
   },
@@ -660,12 +724,15 @@
    "quer_max": 1.0
   },
   "kranz_oben": {
-   "typ": "max_z_im_bereich",
-   "x0": 4.3,
-   "x1": 5.2,
-   "y0": -2.5,
-   "y1": 2.5,
-   "zmax": 34.0
+   "typ": "z_nischen_ende",
+   "seite": "+x",
+   "z0": 29.0,
+   "z1": 34.5,
+   "dz": 0.1,
+   "halb": 4.6,
+   "tiefe": 0.4,
+   "min_b": 0.3,
+   "max_b": 2.5
   },
   "hyp32": {
    "typ": "hypso_ueber",
@@ -981,6 +1048,81 @@
    "z": 33.0,
    "quer": 4.44,
    "achse_tief": 3.995
+  },
+  "helm_gerade_tief": {
+   "typ": "front_linearitaet",
+   "seite": "-x",
+   "z0": 41.75,
+   "z1": 53.75,
+   "quer": 0.0,
+   "band": 0.5
+  },
+  "helm_gerade_quer": {
+   "typ": "front_linearitaet",
+   "seite": "-y",
+   "z0": 41.75,
+   "z1": 53.75,
+   "quer": 0.0,
+   "band": 0.5
+  },
+  "band_tuermchen_oeffn_3427": {
+   "typ": "flaeche_oeffnungen",
+   "seite": "-x",
+   "z": 34.27,
+   "quer0": 3.8,
+   "quer1": 5.08,
+   "tiefe": 0.2
+  },
+  "band_zentral_oeffn_2113": {
+   "typ": "flaeche_oeffnungen",
+   "seite": "-x",
+   "z": 21.13,
+   "quer0": -1.96,
+   "quer1": 1.96,
+   "tiefe": 0.2
+  },
+  "band_zentral_oeffn_2333": {
+   "typ": "flaeche_oeffnungen",
+   "seite": "-x",
+   "z": 23.33,
+   "quer0": -1.86,
+   "quer1": 1.86,
+   "tiefe": 0.2
+  },
+  "band_zentral_oeffn_3877": {
+   "typ": "flaeche_oeffnungen",
+   "seite": "-x",
+   "z": 38.77,
+   "quer0": -1.44,
+   "quer1": 1.44,
+   "tiefe": 0.2
+  },
+  "band_zentral_periode_20": {
+   "typ": "relief_periode",
+   "seite": "-x",
+   "quer": 4.95,
+   "z0": 20.0,
+   "z1": 24.0
+  },
+  "band_zentral_periode_22": {
+   "typ": "relief_periode",
+   "seite": "-x",
+   "quer": 4.95,
+   "z0": 22.0,
+   "z1": 26.0
+  },
+  "band_tuermchen_periode_28": {
+   "typ": "relief_periode",
+   "seite": "-x",
+   "quer": 5.69,
+   "z0": 28.25,
+   "z1": 31.75
+  },
+  "silhouette_061_55": {
+   "typ": "ausdehnung_streifen",
+   "z": 55.0,
+   "achse": "x",
+   "quer_max": 2.0
   }
  }
 }

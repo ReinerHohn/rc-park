@@ -81,9 +81,10 @@ def hxy(z):
 
 # 'late' (Zifferblatt-Relief nach dem Ausschnitt) kommt aus dem Bauteil-Kontext _B
 
-def quoins3(z0, z1, a=1.35, b=0.8, course=0.95, joint=0.09):
-    """Gezahnte Eckquader entlang des verjuengten Schafts (je Lage mit den Halbmassen auf ihrer Hoehe)."""
-    pr = rel(0.12)
+def quoins3(z0, z1, a=None, b=None, course=0.95, joint=None):
+    """Gezahnte Eckquader entlang des verjuengten Schafts (je Lage mit den Halbmassen auf ihrer Hoehe).
+    course = Schichthoehe, a = langer Block, b = kurzer Block (Daten: Farbperioden der Wolke, Register AX); Fuge und Relief proportional zur Schicht."""
+    a = a or _M["QUADER_LAENGE"]; b = b or _M["QUADER_KURZ_FAKTOR"] * a; joint = joint if joint is not None else min(0.09, 0.2 * course)
     n = int((z1 - z0) / course)
     for i in range(n):
         za, zb = z0 + i * course, z0 + (i + 1) * course - joint
@@ -91,10 +92,9 @@ def quoins3(z0, z1, a=1.35, b=0.8, course=0.95, joint=0.09):
         for sx in (-1, 1):
             for sy in (-1, 1):
                 X, Y = sx * hx, sy * hy
-                fz = 1.0 + 0.7 * (1 - (za - SZ0) / (ZZ - SZ0))      # Foto: Quaderbaender unten ca. 1,7x breiter als oben
-                lg, kz = RNG.uniform(0.95, 1.75) * fz, RNG.uniform(0.55, 0.95) * fz
+                lg, kz = a * RNG.uniform(0.85, 1.15), b * RNG.uniform(0.85, 1.15)      # leichte Streuung der Blocklaengen (ANNAHME)
                 lx, ly = (lg, kz) if (i + (sx > 0) + (sy > 0)) % 2 == 0 else (kz, lg)
-                pp = rel(RNG.uniform(0.08, 0.28) * fz)
+                pp = rel(RNG.uniform(0.2, 0.4) * course)                               # Relief proportional zur Schicht (ANNAHME)
                 xa, xb = sorted((X - sx * lx, X + sx * pp)); ya, yb = sorted((Y - sy * ly, Y + sy * pp))
                 adds.append(box(xa, xb, ya, yb, za, zb))
 
@@ -163,7 +163,10 @@ for f in ("+y", "-y"):
 
 # ---------- Schaft: Eckquader, Uhr, Schlitzfenster (alles auf der Hoehe der Verjuengung) ----------
 SZ0 = ZB + 0.5
-quoins3(SZ0, ZZ - 0.3)
+_QZ = _M["QUADER_ZONE_Z"]
+quoins3(SZ0, min(_QZ, ZZ - 0.3), course=_M["QUADER_SCHAFT_UNTEN"])      # Schichthoehe + Blocklaenge aus den Farbperioden der Wolke (Register AX)
+quoins3(_QZ, ZZ - 0.3, course=_M["QUADER_SCHAFT_OBEN"])
+beleg("+x", "Eckquader Schaft: Schichthoehe 0,25 m unter / 0,5 m ueber QUADER_ZONE_Z, Blocklaenge QUADER_LAENGE", "wolke_baender.py Farbperioden senkrecht + quer (Register AX); Nutzer 'Backsteine zu grob'", unten=_M["QUADER_SCHAFT_UNTEN"], oben=_M["QUADER_SCHAFT_OBEN"], grenze=_QZ, laenge=_M["QUADER_LAENGE"])
 UZ, UR = _M["UZ"], _M["UR"]
 for f in ("+x", "-x"):
     hh = hxy(UZ)
@@ -211,7 +214,7 @@ adds.append(frustum(0, 0, ZZ + 1.0, D + 0.7, W + 0.7, KT, D + KU, W + KU))      
 adds.append(frustum(0, 0, KT - 0.02, D + KU, W + KU, GZ0, GX, GY))                             # Kragdach-Schraege bis an die Glockenstock-Wand (34,1 m)
 # ---------- abgesetzter Glockenstock mit Schallarkaden (Wolke Nord, Register AR: 6,8 x 6,5 m, 34,1-40,5 m; Schalloeffnungen oben, Foto 061) ----------
 adds.append(box(-GX / 2, GX / 2, -GY / 2, GY / 2, GZ0 - 0.1, GZ1))
-quoins((0, 0), GX / 2, GY / 2, GZ0, GZ1 - 0.2, a=0.75, b=0.42, course=0.6)
+quoins((0, 0), GX / 2, GY / 2, GZ0, GZ1 - 0.2, a=_M["QUADER_LAENGE"], b=_M["QUADER_KURZ_FAKTOR"] * _M["QUADER_LAENGE"], course=_M["QUADER_GLOCKENSTOCK"])   # Schichthoehe aus der Farbperiode 34-38 m
 for f in ("+x", "-x", "+y", "-y"):
     hh = (GX / 2, GY / 2)
     beleg(f, "Glockenstock mit 2 Schallarkaden", "Fotos 041/043 (Sued), 031 (Nord)" if f in ("+x", "-x") else "ANNAHME: Ost/West nicht fotografiert", anzahl=2)
@@ -259,7 +262,7 @@ if not (_PROF and _PROF.get("dach_profil")):
     for f in ("+y", "-y"): _falze(RZ0, RZM, f, BY / 2, MY / 2, BX / 2, MX / 2); _falze(RZM, RZM2, f, MY / 2, M2Y / 2, MX / 2, M2X / 2)
 
 # ---------- Dachreiter (Laser: Kegel, Fussradius ~1,5 m bei 46 m, Spitze 54,8 m) ----------
-adds.append(M.cylinder(0.6, 1.55, 1.45, 8).translate((0, 0, RZ1 - 0.1)))
+adds.append(M.cylinder(KZ_ := (RZ1 + _M["KNAUF_ANTEIL"] * (TOP - RZ1)) - RZ1, _M["LATERNE_D"] / 2, _M["LATERNE_D"] / 2 * 0.9, 8).translate((0, 0, RZ1 - 0.1)))   # Dachreiter-Schaft (Foto 061 Silhouette 0,93 m) statt DOM1-Trommel
 # Dachreiter: DUENNER Mast mit Knauf. Gemessen an Foto 049 (Vollbild, blauer Himmel; First->Spitze 565 px = 8,6 m, 1,5 cm/px):
 # Nadel 0,08-0,14 m breit, Knauf ~0,67 m Durchmesser bei ~20 % der Spitzenlaenge ueber dem First, Mast darunter 0,09-0,26 m.
 # (Der Laser DOM1 verschmiert die Nadel zu einem breiten Kegel, Fussradius ~1,5 m - Rasterartefakt, kein Befund.)
@@ -267,7 +270,7 @@ adds.append(M.cylinder(0.6, 1.55, 1.45, 8).translate((0, 0, RZ1 - 0.1)))
 beleg("dach", "Dachreiter: Mast, Knauf, Nadel", "Foto 049 Vollbild; Bauforschung BW 60 m", spitze=TOP)
 beleg("dach", "4 Ecktuermchen mit Kegel", "Fotos 041/043/044; SfM Nordnetz Knaeufe 44,4-44,7 m (DOM1 41 m = getroffene Kegelflaeche)", anzahl=4)
 KZ = RZ1 + _M["KNAUF_ANTEIL"] * (TOP - RZ1)
-adds.append(M.cylinder(KZ - RZ1 - 0.3, 0.13, 0.12, 8).translate((0, 0, RZ1 + 0.4)))          # Mast bis zum Knauf
+# (Mast im Dachreiter-Schaft enthalten)
 adds.append(M.sphere(0.34, 20).translate((0, 0, KZ)))                                          # Knauf
 adds.append(M.cylinder(TOP - KZ - 0.1, 0.10, 0.04, 8).translate((0, 0, KZ + 0.1)))           # Nadel (konisch)
 
@@ -291,7 +294,7 @@ def bau_tuerm_baender(c, sx, sy):
     KZ0 = _M["KONSOLE_Z0"]
     adds.append(frustum(c[0], c[1], KZ0, 0.9, 0.9, z_schaft0 + 0.02, TWs, TWs))               # Konsole (Auskragung) bis zum Schaftfuss
     adds.append(box(c[0] - TWs / 2, c[0] + TWs / 2, c[1] - TWs / 2, c[1] + TWs / 2, z_schaft0, z_schaft1 + 0.02))
-    quoins(c, TWs / 2, TWs / 2, z_schaft0 + 0.1, z_schaft1 - 0.3, a=0.8, b=0.5, course=0.58)
+    quoins(c, TWs / 2, TWs / 2, z_schaft0 + 0.1, z_schaft1 - 0.3, a=_M["QUADER_LAENGE"], b=_M["QUADER_KURZ_FAKTOR"] * _M["QUADER_LAENGE"], course=_M["QUADER_TUERMCHEN"])   # Schichthoehe aus der Farbperiode des Schaftbands
     hh = (TWs / 2, TWs / 2)
     for f in (("+x" if sx > 0 else "-x"), ("+y" if sy > 0 else "-y")):
         window(f, 0.0, z_schaft0 + 1.5, 0.45, 1.0, c=c, hh=hh, deep=0.25)

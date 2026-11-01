@@ -434,7 +434,7 @@
    "tools/sfm_html_viewer.py",
    "tools/sfm_registrieren.py --netz <seite> --foto <nr> (Fotos ohne Merkmalsmatches ueber Picks einhaengen)",
    "tools/wolke_vs_modell.py <seite> --entzerren --eintragen (nach jedem Bau: Fotowolke gegen STL, Befunde automatisch)",
-   "tools/foto_kalibrieren.py <objekt> 061 (brennweite_frei) -> tools/foto_silhouette_profil.py <objekt> 061 --achse x --pruefungen 47 50 53 (schwache Perspektive ueber ALLE verankerten Picks inkl. waagerechter Abstaende; Residuen lesen, PROBE-Zeilen)",
+   "tools/foto_kalibrieren.py <objekt> 061 (brennweite_frei) -> tools/foto_silhouette_profil.py <objekt> 061 --achse x --pruefungen 47 50 53 55 57 (schwache Perspektive ueber ALLE verankerten Picks inkl. waagerechter Abstaende; Residuen lesen, PROBE-Zeilen)",
    "tools/wolke_profile.py <objekt> nord --zentral-z 40.5 56 --tief-quelle silhouette:061 --generator --pruefungen (Dach: quer Wolke, tief Silhouette + Driftrampe; Tuermchen: Koerper + Kegelgerade)",
    "tools/wolke_farbmerkmal.py <objekt> nord --farbe gold --z 20 32 --pruefung 'Uhr Nord: Mitte z (m)' ... (farbige Fassadenmerkmale -> Pruefzeile; Modellseite relief_mitte)",
    "tools/foto_lod2_zuordnen.py <objekt> <foto> --gml-dir /media/oem/scan/tmp/mt_lod2 --u .. --v .. (unbekanntes Ding im Foto: LoD2 in die Kamera projizieren)",
@@ -471,7 +471,12 @@
    ],
    "spitze": "TUERM_SPITZE",
    "reichweite": 4.0,
-   "was": "Ecktuermchen (Achse aus Kreisfit, Register AR)"
+   "was": "Ecktuermchen (Achse aus Kreisfit, Register AR)",
+   "kante_quer": 5.69,
+   "kante_quelle": "Ecke des Schafts (TWs 2,6) am Tuermchen quer 4,44: Strahl entlang der Quaderkante",
+   "pruefungen_radius": true,
+   "pruefungen_offen": true,
+   "pruefungen_periode": true
   },
   "zentral": {
    "achse": [
@@ -485,13 +490,32 @@
    ],
    "spitze": "GZ1+DACHHOEHE",
    "reichweite": 7.0,
-   "was": "Hauptturm auf der Bauwerksachse (Front = Aussenradius)"
+   "was": "Hauptturm auf der Bauwerksachse (Front = Aussenradius)",
+   "kante_quelle": "Ecke des Schafts (W 10): Strahl entlang der Eckquaderkante",
+   "pruefungen_radius": false,
+   "pruefungen_offen": false,
+   "pruefungen_periode": true,
+   "kanten": [
+    {
+     "z0": 8.0,
+     "z1": 31.5,
+     "quer": 4.95,
+     "quelle": "Schaftecke W/2 = 5,0 (LoD2) minus 5 cm"
+    },
+    {
+     "z0": 34.1,
+     "z1": 40.5,
+     "quer": 3.2,
+     "quelle": "Glockenstock-Ecke GY/2 = 3,25 minus 5 cm"
+    }
+   ],
+   "hinweis": "Radius-Pruefzeilen aus: einseitige Wolke, Wandtiefe gegen LoD2 0,2-0,4 m versetzt (Register AN/AO); offen-Befunde als Beobachtungen"
   }
  },
  "regression": {
   "hinweis": "Deterministische Kette ab der vorhandenen Wolke; Beweis fuer Werkzeug-/Generatoraenderungen (tools/regression.py). Kein SfM, kein GPU.",
   "kette": [
-   "{PY} -W ignore -I tools/foto_silhouette_profil.py {OBJ} 061 --achse x --pruefungen 47 50 53",
+   "{PY} -W ignore -I tools/foto_silhouette_profil.py {OBJ} 061 --achse x --pruefungen 47 50 53 55 57",
    "{PY} -W ignore -I tools/wolke_profile.py {OBJ} nord --zentral-z 40.5 56 --tief-quelle silhouette:061 --generator --pruefungen",
    "{PY} -W ignore -I tools/wolke_farbmerkmal.py {OBJ} nord --farbe gold --z 20 32 --halb 3 --pruefung 'Uhr Nord: Mitte z (m)' --messung '{{\"typ\":\"relief_mitte\",\"seite\":\"-x\",\"z0\":23.0,\"z1\":30.0,\"halb\":3.0,\"schwelle\":0.05,\"richtung\":\"zurueck\"}}' --feld z --toleranz 0.4",
    "{PY} -W ignore -I tools/wolke_baender.py {OBJ} nord --koerper tuermchen --pruefungen",

@@ -1,23 +1,11 @@
 [
  {
-  "treffer": 3,
-  "seite": "+y",
-  "vorschlag": {
-   "typ": "fenster",
-   "u": -1.01,
-   "z": 22.32,
-   "breite": 0.6,
-   "hoehe": 0.85,
-   "was": "VORSCHLAG aus fehlteile_finden Foto 061 Treffer 3 - vor dem Einbau am Vollbild pruefen"
-  }
- },
- {
   "treffer": 4,
   "seite": "+y",
   "vorschlag": {
    "typ": "fenster",
-   "u": 2.82,
-   "z": 19.36,
+   "u": -1.02,
+   "z": 22.32,
    "breite": 0.6,
    "hoehe": 0.85,
    "was": "VORSCHLAG aus fehlteile_finden Foto 061 Treffer 4 - vor dem Einbau am Vollbild pruefen"
@@ -28,7 +16,7 @@
   "seite": "+y",
   "vorschlag": {
    "typ": "fenster",
-   "u": 0.88,
+   "u": 0.87,
    "z": 19.4,
    "breite": 0.6,
    "hoehe": 0.85,

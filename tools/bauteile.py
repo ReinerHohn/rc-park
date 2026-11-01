@@ -243,13 +243,18 @@ def baender_rundkoerper(c, baender, kegel, spitze, rel, nach_innen, adds, cuts, 
                     cuts.append(cut.translate((0, 0, (z0 + z1) / 2)).rotate((0, 0, k * 45)).translate((c[0], c[1], 0)))
         elif kl == "offen":
             adds.append(okt_prisma(c, r, z0 - 0.02, z1))
-            fb = 2 * r * math.tan(math.radians(22.5)); bw = min(0.36, fb / (n_oeffnungen + 1) * 0.8); bh = (z1 - z0) - 0.45
+            fb = 2 * r * math.tan(math.radians(22.5))
+            oe_d = b.get("oeffnungen") or {}                                                      # gemessen (wolke_baender): Zahl, Breite, Hoehe - sonst Annahme n_oeffnungen
+            n_o = int(oe_d.get("je_flaeche") or n_oeffnungen) or 1
+            pf = 0.12                                                                             # Mindestpfeiler zwischen/neben den Oeffnungen
+            bw = min(float(oe_d.get("breite_median") or 0.36), (fb - (n_o + 1) * pf) / n_o)
+            zh = oe_d.get("hoehe"); zu, zo = (max(zh[0], z0 + 0.1), min(zh[1], z1 - 0.1)) if zh else (z0 + 0.2, z1 - 0.25); bh = max(zo - zu, bw)
             for k in range(8):
                 if nach_innen(k): continue
-                for j in range(n_oeffnungen):
-                    u = (j - (n_oeffnungen - 1) / 2) * fb / (n_oeffnungen + 0.5)
-                    oe = M.cube((0.45, bw, bh - bw / 2)).translate((r - 0.35, u - bw / 2, z0 + 0.2))
-                    oe = oe + M.cylinder(0.45, bw / 2, bw / 2, 16).rotate((0, 90, 0)).translate((r - 0.35, u, z0 + 0.2 + bh - bw / 2))
+                for j in range(n_o):
+                    u = (j - (n_o - 1) / 2) * (bw + pf)
+                    oe = M.cube((0.45, bw, bh - bw / 2)).translate((r - 0.35, u - bw / 2, zu))
+                    oe = oe + M.cylinder(0.45, bw / 2, bw / 2, 16).rotate((0, 90, 0)).translate((r - 0.35, u, zu + bh - bw / 2))   # Rundbogen
                     cuts.append(oe.rotate((0, 0, k * 45)).translate((c[0], c[1], 0)))
         elif kl == "traufe":
             adds.append(okt_prisma(c, r, z0, z1))

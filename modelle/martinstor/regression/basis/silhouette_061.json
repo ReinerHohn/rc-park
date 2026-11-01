@@ -74,6 +74,7 @@
  "azimut_grad": 279.0,
  "nullzeile": 902.7,
  "px_je_m": 10.714,
+ "aufloesung_m": 0.65,
  "orthografie_abweichung": 0.0017,
  "himmel": {
   "s_max": 24.0,
@@ -84,241 +85,281 @@
    "z": 45.75,
    "breite_roh": 5.04,
    "zeilen": 6,
-   "breite": 5.04
+   "breite": 5.04,
+   "nur_obergrenze": false
   },
   {
    "z": 46.25,
    "breite_roh": 4.95,
    "zeilen": 5,
-   "breite": 4.95
+   "breite": 4.95,
+   "nur_obergrenze": false
   },
   {
    "z": 46.75,
    "breite_roh": 4.57,
    "zeilen": 5,
-   "breite": 4.57
+   "breite": 4.57,
+   "nur_obergrenze": false
   },
   {
    "z": 47.25,
    "breite_roh": 4.34,
    "zeilen": 6,
-   "breite": 4.34
+   "breite": 4.34,
+   "nur_obergrenze": false
   },
   {
    "z": 47.75,
    "breite_roh": 4.11,
    "zeilen": 5,
-   "breite": 4.11
+   "breite": 4.11,
+   "nur_obergrenze": false
   },
   {
    "z": 48.25,
    "breite_roh": 3.83,
    "zeilen": 5,
-   "breite": 3.83
+   "breite": 3.83,
+   "nur_obergrenze": false
   },
   {
    "z": 48.75,
    "breite_roh": 3.55,
    "zeilen": 6,
-   "breite": 3.55
+   "breite": 3.55,
+   "nur_obergrenze": false
   },
   {
    "z": 49.25,
    "breite_roh": 3.36,
    "zeilen": 5,
-   "breite": 3.36
+   "breite": 3.36,
+   "nur_obergrenze": false
   },
   {
    "z": 49.75,
    "breite_roh": 3.17,
    "zeilen": 5,
-   "breite": 3.17
+   "breite": 3.17,
+   "nur_obergrenze": false
   },
   {
    "z": 50.25,
    "breite_roh": 2.89,
    "zeilen": 6,
-   "breite": 2.89
+   "breite": 2.89,
+   "nur_obergrenze": false
   },
   {
    "z": 50.75,
    "breite_roh": 2.61,
    "zeilen": 5,
-   "breite": 2.61
+   "breite": 2.61,
+   "nur_obergrenze": false
   },
   {
    "z": 51.25,
    "breite_roh": 2.33,
    "zeilen": 6,
-   "breite": 2.33
+   "breite": 2.33,
+   "nur_obergrenze": false
   },
   {
    "z": 51.75,
    "breite_roh": 2.15,
    "zeilen": 5,
-   "breite": 2.15
+   "breite": 2.15,
+   "nur_obergrenze": false
   },
   {
    "z": 52.25,
    "breite_roh": 1.87,
    "zeilen": 5,
-   "breite": 1.87
+   "breite": 1.87,
+   "nur_obergrenze": false
   },
   {
    "z": 52.75,
    "breite_roh": 1.68,
    "zeilen": 6,
-   "breite": 1.68
+   "breite": 1.68,
+   "nur_obergrenze": false
   },
   {
    "z": 53.25,
    "breite_roh": 1.49,
    "zeilen": 5,
-   "breite": 1.49
+   "breite": 1.49,
+   "nur_obergrenze": false
   },
   {
    "z": 53.75,
    "breite_roh": 1.12,
    "zeilen": 5,
-   "breite": 1.12
+   "breite": 1.12,
+   "nur_obergrenze": false
   },
   {
    "z": 54.25,
    "breite_roh": 1.03,
    "zeilen": 6,
-   "breite": 1.03
+   "breite": 1.03,
+   "nur_obergrenze": false
   },
   {
    "z": 54.75,
    "breite_roh": 1.03,
    "zeilen": 5,
-   "breite": 1.03
+   "breite": 1.03,
+   "nur_obergrenze": false
   },
   {
    "z": 55.25,
    "breite_roh": 1.03,
    "zeilen": 5,
-   "breite": 1.03
+   "breite": 1.03,
+   "nur_obergrenze": false
   },
   {
    "z": 55.75,
    "breite_roh": 0.93,
    "zeilen": 6,
-   "breite": 0.93
+   "breite": 0.93,
+   "nur_obergrenze": true
   },
   {
    "z": 56.25,
    "breite_roh": 0.93,
    "zeilen": 5,
-   "breite": 0.93
+   "breite": 0.93,
+   "nur_obergrenze": true
   },
   {
    "z": 56.75,
    "breite_roh": 1.12,
    "zeilen": 5,
-   "breite": 0.93
+   "breite": 0.93,
+   "nur_obergrenze": true
   },
   {
    "z": 57.25,
    "breite_roh": 1.26,
    "zeilen": 6,
-   "breite": 0.93
+   "breite": 0.93,
+   "nur_obergrenze": true
   },
   {
    "z": 57.75,
    "breite_roh": 0.93,
    "zeilen": 5,
-   "breite": 0.93
+   "breite": 0.93,
+   "nur_obergrenze": true
   },
   {
    "z": 58.25,
    "breite_roh": 0.84,
    "zeilen": 6,
-   "breite": 0.84
+   "breite": 0.84,
+   "nur_obergrenze": true
   },
   {
    "z": 58.75,
    "breite_roh": 0.75,
    "zeilen": 5,
-   "breite": 0.75
+   "breite": 0.75,
+   "nur_obergrenze": true
   },
   {
    "z": 59.25,
    "breite_roh": 0.75,
    "zeilen": 5,
-   "breite": 0.75
+   "breite": 0.75,
+   "nur_obergrenze": true
   },
   {
    "z": 59.75,
    "breite_roh": 0.75,
    "zeilen": 6,
-   "breite": 0.75
+   "breite": 0.75,
+   "nur_obergrenze": true
   },
   {
    "z": 60.25,
    "breite_roh": 0.65,
    "zeilen": 5,
-   "breite": 0.65
+   "breite": 0.65,
+   "nur_obergrenze": true
   },
   {
    "z": 60.75,
    "breite_roh": 0.65,
    "zeilen": 5,
-   "breite": 0.65
+   "breite": 0.65,
+   "nur_obergrenze": true
   },
   {
    "z": 61.25,
    "breite_roh": 0.65,
    "zeilen": 6,
-   "breite": 0.65
+   "breite": 0.65,
+   "nur_obergrenze": true
   },
   {
    "z": 61.75,
    "breite_roh": 0.65,
    "zeilen": 5,
-   "breite": 0.65
+   "breite": 0.65,
+   "nur_obergrenze": true
   },
   {
    "z": 62.25,
    "breite_roh": 0.56,
    "zeilen": 5,
-   "breite": 0.56
+   "breite": 0.56,
+   "nur_obergrenze": true
   },
   {
    "z": 62.75,
    "breite_roh": 0.56,
    "zeilen": 6,
-   "breite": 0.56
+   "breite": 0.56,
+   "nur_obergrenze": true
   },
   {
    "z": 63.25,
    "breite_roh": 0.47,
    "zeilen": 5,
-   "breite": 0.47
+   "breite": 0.47,
+   "nur_obergrenze": true
   },
   {
    "z": 63.75,
    "breite_roh": 0.37,
    "zeilen": 5,
-   "breite": 0.37
+   "breite": 0.37,
+   "nur_obergrenze": true
   },
   {
    "z": 64.25,
    "breite_roh": 0.37,
    "zeilen": 6,
-   "breite": 0.37
+   "breite": 0.37,
+   "nur_obergrenze": true
   },
   {
    "z": 64.75,
    "breite_roh": 0.28,
    "zeilen": 5,
-   "breite": 0.28
+   "breite": 0.28,
+   "nur_obergrenze": true
   },
   {
    "z": 65.25,
    "breite_roh": 0.28,
    "zeilen": 4,
-   "breite": 0.28
+   "breite": 0.28,
+   "nur_obergrenze": true
   }
  ],
  "kontrollbild": "audit/silhouette_061.png"
