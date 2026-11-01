@@ -1215,3 +1215,18 @@ Nicht automatisierbar ohne Qualitaetsverlust: Sollwerte aus Dokumenten, Sichtabn
 Quaderperiode, Tuermchen-Kupferradius und -oeffnungen. Massabweichungen > 0,3 m: QUADER_ZONE_Z 17,0 statt 23,0, KONSOLE_Z0 27,0 statt 27,5.
 Naechster Schritt: QUADER_ZONE_Z-Regel (Plausibilitaetsfenster/Bandzuordnung) und Wasserdichtheit am Nullstart-Modell untersuchen, erst dann
 Nullstart 7 (Ziel: drei saubere Laeufe in Folge).
+
+**Nullstart 6, Nachlauf (gleicher Tag): 63/70 -> 66/70.** Zwei generische Reparaturen, Referenz unveraendert (Regression identisch):
+1. `perioden_gruppen` (QUADER_ZONE_Z): Gruppen muessen sich um Faktor >= 1,3 unterscheiden (`min_verhaeltnis`), sonst "kein Wert" und der alte Wert
+   bleibt. Ursache: in der Nullstart-Wolke fehlte das starke 0,25-m-Fenster der Quaderschichten (Staerke 0,67 in der Referenz), die uebrig
+   gebliebenen Fenster 0,30/0,35 m ergaben eine Scheingrenze bei 17 m statt 23 m. Farbperioden sind zwischen Laeufen instabil (wie die Farbklassen).
+   Hinweis: `masse.json` des Nullziels behielt den falschen Wert aus dem Vorlauf - bei Regelaenderungen das Ziel vor dem Wiederholen auf den
+   Eingabestand zuruecksetzen (`cp masse.json`), sonst testet man den Altwert.
+2. Generator-Hygiene: Schlitzschnitte der Bruestungsleisten (hell-Band 1,25 m, Schlitzhoehe 0,95) hinterliessen 2 Paare deckungsgleicher,
+   gegenlaeufiger Dreiecke (Blech ohne Volumen, nichtmanifold angehaengt) -> "3 Koerper, nicht wasserdicht". Solche sich aufhebenden Paare
+   werden entfernt und gemeldet (Referenz: 0). Ursache nicht an einem einzelnen Mass (7 Einzeltausch-Builds: alle 3 Koerper), sondern an der
+   Bandhoehe 1,25 statt 1,0 m - die Schlitzgeometrie streift die Leiste. Offene Frage: Schlitze so setzen, dass sie nie streifen.
+Rest (4 Pruefungen, alle am Aufloesungsboden der einseitigen Nordwolke, nicht an einem Fehler): Silhouette 30 m +0,16 m (GX 7,26 statt 7,10),
+Zone 23,5-28 m -0,06 m, Tuermchen-Kupferradius -0,03 m (Band beginnt 0,5 m tiefer, Traufe 35,0-35,5 fehlt in der Wolke), Oeffnungsbreite 0,44
+statt 0,45 (Pfeilergrenze). Bandkanten springen zwischen Laeufen um 0,25-0,5 m. Sollwerte bleiben (Regel: nie lockern); die Suedwolke liefert
+die zweite Tiefenrichtung und ist der naechste Hebel fuer GX/Kupferband.

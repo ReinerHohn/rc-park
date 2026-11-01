@@ -81,10 +81,12 @@ def main():
             elif typ == "perioden_gruppen":
                 zA, zB = p["bereich"]; fs = [q for q in B[p["koerper"]]["farbperioden"] if q["staerke"] >= p.get("min_staerke", 0.3) and q["z0"] >= zA and q["z1"] <= zB]
                 per = np.array([q["periode_m"] for q in fs]); schwelle = (per.min() + per.max()) / 2; unten = [q for q in fs if q["periode_m"] < schwelle]; oben = [q for q in fs if q["periode_m"] >= schwelle]
-                if p["ziel"] == "unten": w = float(np.median([q["periode_m"] for q in unten]))
+                herk0 = ""; mv = p.get("min_verhaeltnis", 1.3); gv = (np.median([q["periode_m"] for q in oben]) / np.median([q["periode_m"] for q in unten])) if unten and oben else 0.0
+                if gv < mv: w = float("nan"); herk0 = f"Gruppen nicht trennbar (Periodenverhaeltnis {gv:.2f} < {mv}): "     # Nullstart 6: 0,30 vs 0,35 m = Rauschen, Grenze 17 statt 23 m
+                elif p["ziel"] == "unten": w = float(np.median([q["periode_m"] for q in unten]))
                 elif p["ziel"] == "oben": w = float(np.median([q["periode_m"] for q in oben]))
                 else: w = (max(q["z1"] for q in unten) + min(q["z0"] for q in oben)) / 2 if unten and oben else float("nan")
-                herk = f"Fensterperioden {zA}-{zB} m (Staerke >= {p.get('min_staerke', 0.3)}): klein {[(q['z0'], q['periode_m']) for q in unten]}, gross {[(q['z0'], q['periode_m']) for q in oben]}"
+                herk = herk0 + f"Fensterperioden {zA}-{zB} m (Staerke >= {p.get('min_staerke', 0.3)}): klein {[(q['z0'], q['periode_m']) for q in unten]}, gross {[(q['z0'], q['periode_m']) for q in oben]}"
             elif typ == "periode_fenster":
                 zA, zB = (wert_von(x) for x in p["bereich"]); fs = [q for q in B[p["koerper"]]["farbperioden"] if q["staerke"] >= p.get("min_staerke", 0.3) and q["z0"] >= zA - 0.5 and q["z1"] <= zB + 0.5]
                 q = max(fs, key=lambda q: q["staerke"]); w = q["periode_m"]; herk = f"staerkste Fensterperiode {q['z0']}-{q['z1']} m: {q['periode_m']} (Staerke {q['staerke']}) von {len(fs)} Fenstern"

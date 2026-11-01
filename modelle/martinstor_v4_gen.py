@@ -378,6 +378,19 @@ model = M.batch_boolean([M.batch_boolean([body] + cuts, OpType.Subtract)] + late
 mesh = model.to_mesh()
 V = np.asarray(mesh.vert_properties)[:, :3].astype(np.float32)
 F = np.asarray(mesh.tri_verts)
+# Hygiene (Nullstart 6): Schlitzschnitte, die eine Leiste nur streifen, hinterlassen ein Paar deckungsgleicher, gegenlaeufiger Dreiecke
+# (zweiseitiges Blech ohne Volumen, haengt an einer nichtmanifolden Kante) -> "3 Koerper, nicht wasserdicht". Solche sich aufhebenden Paare
+# werden entfernt (kein Material); die Zahl wird gemeldet. Referenz: 0 Paare -> Regression unveraendert.
+_q = np.round(V.astype(np.float64) * 1e4).astype(np.int64); _, _id = np.unique(_q, axis=0, return_inverse=True); _id = _id.ravel(); _g = {}
+for fi, f in enumerate(F):
+    t_ = tuple(int(x) for x in _id[f])
+    rang = tuple(sorted(range(3), key=lambda i_: t_[i_])); par_ = 1 if rang in ((0, 1, 2), (1, 2, 0), (2, 0, 1)) else -1
+    _g.setdefault(tuple(sorted(t_)), {}).setdefault(par_, []).append(fi)
+_weg = []
+for k_, d_ in _g.items():
+    if len(d_.get(1, [])) and len(d_.get(-1, [])): _weg += [d_[1][0], d_[-1][0]]                       # gleiche Eckpunkte, entgegengesetzter Umlaufsinn
+if _weg:
+    F = np.delete(F, _weg, axis=0); print(f"Doppelte gegenlaeufige Dreiecke (Blech ohne Volumen) entfernt: {len(_weg) // 2} Paar(e)")
 tri = V[F]
 nrm = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
 nrm /= np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-12
