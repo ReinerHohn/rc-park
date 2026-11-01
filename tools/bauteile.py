@@ -12,8 +12,19 @@ Zwei Arten:
 
 Alle Masse in Metern; `rel(m)` rechnet eine Relieftiefe so um, dass sie im Druck nicht unter MINMM faellt.
 """
-import math, random
+import math, random, json, os
 from manifold3d import Manifold as M
+
+
+def lade_masse(pfad):
+    """Masse eines Bauwerks aus JSON laden: {"masse": {"NAME": {"wert": 9.8 | "DB / 2 - 0.8", "quelle": ...}}}.
+    Zahlen direkt, Text als Formel ueber die bereits geladenen Namen (Reihenfolge der Datei). Rueckgabe: dict NAME -> float.
+    So stehen die Masse als DATEN mit Quelle neben der Masstabelle, statt als Zahlen im Code verstreut zu sein."""
+    roh = json.load(open(pfad))["masse"]; w = {}
+    for name, eintrag in roh.items():
+        v = eintrag["wert"]
+        w[name] = float(v) if not isinstance(v, str) else float(eval(v, {"__builtins__": {}}, dict(w)))
+    return w
 
 
 def box(x0, x1, y0, y1, z0, z1):

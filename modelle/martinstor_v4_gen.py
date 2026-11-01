@@ -29,7 +29,11 @@ MINMM = float(os.environ.get("MINMM", "0.15"))  # kleinste Relief-Tiefe im Druck
 K = 1000.0 / SCALE                               # m -> mm
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "stl",
                    f"martinstor_v4_1-{SCALE:.0f}.stl")
-SEG = 48
+# ---- Masse: DATEN mit Quelle in modelle/martinstor/masse.json (nicht mehr im Code) ----
+from bauteile import lade_masse
+_M = lade_masse(os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "masse.json"))
+H_TOTAL = _M["H_TOTAL"]; DB, WB, ZB = _M["DB"], _M["WB"], _M["ZB"]; D, W = _M["D"], _M["W"]
+ZK, DK, WK = _M["ZK"], _M["DK"], _M["WK"]; ZZ = _M["ZZ"]; SEG = int(_M["SEG"])
 
 def rel(m):  # Relieftiefe in m, mind. MINMM im Druck
     return max(m, MINMM / K)
@@ -37,11 +41,8 @@ def rel(m):  # Relieftiefe in m, mind. MINMM im Druck
 # ---- Masse (m) ---- (Herleitung: LERNJOURNAL_MARTINSTOR.md, Eintrag 1+2)
 H_TOTAL = 60.0                # DOKUMENTIERT: Bauforschung BW 60 m (1901: 22 -> 60 m; Objektbeschreibung 65 m), en.Wikipedia 60 m; Foto 049 Spitze ~14 m ueber First.
                               # Laser DOM1 54,8 m = hoechste getroffene Flaeche (Nadel 0,1 m unsichtbar) - NICHT die Spitze. Register J3.
-DB, WB, ZB = 9.8, 11.3, 6.2 # Steinsockel mit Tor: Tiefe (x, Durchfahrt), Breite (y), Hoehe
-D, W = 9.0, 10.0             # Schaft AM KOPF (bei ZZ); nach unten verjuengt er sich zum Sockel (9,8 x 11,3, LoD2).
                              # 2026-11-01: von 9,3 x 10,3 verkleinert - zwei kalibrierte Kameras (031, 041) massen die Silhouette
                              # bei 29-33,5 m um 0,72 m schmaler, der Laser bei 28-32 m ebenfalls (144/120 gegen 121/97 Zellen).
-ZZ = 30.5                     # Zinnen-Unterkante = Oberkante Schaft (OSM-Traufe 33 m, Foto 33-35 m)
 TOP = H_TOTAL
 RNG = random.Random(1900)       # fester Startwert: Ergebnis reproduzierbar (von Generator UND Bauteilen geteilt)
 _B = Bau(K, MINMM, hx=D / 2, hy=W / 2, seg=SEG, rng=RNG)    # Bauteil-Kontext haelt adds/cuts/late und den Massstab
@@ -68,7 +69,6 @@ GEL = {}                       # Gurtgesims-Hoehen
 
 
 # ---------- Rumpf: unten senkrechter Steinsockel, darueber nach oben verjuengter Schaft (Foto: durchgehender Anlauf) ----------
-ZK, DK, WK = 26.0, 9.3, 10.3     # Knick der Verjuengung: bis hier wie bisher (9,3 x 10,3), darueber staerker auf D x W bei ZZ.
                                  # Quelle: Breitenprofil aus zwei Kameras (Register T) - 23-28 m braucht die alte Breite, 29-33,5 m weniger.
 def hxy(z):
     """Halbmasse des Rumpfs auf Hoehe z: senkrecht bis ZB, linear bis zum Knick ZK, dann staerker verjuengt bis ZZ."""
@@ -103,7 +103,7 @@ adds.append(frustum(0, 0, ZB - 0.01, DB, WB, ZK, DK, WK)); adds.append(frustum(0
 # ---------- runder Eckturm an der NW-Ecke (Stadtseite, zwischen Turm und 1901er Torbau) ----------
 # Foto 001 Vollbild (Tafel 2,0 m = ~195 px -> ~97 px/m): Durchmesser ~2,3 m, Traufe ~10-11 m, Kegel ~3-3,5 m, Spitze ~13-14,5 m;
 # Foto 000: Suedseite ohne Eckturm. Masstabelle "Eckturm NW".
-EX, EY, ER = -DB / 2 - 0.8, -WB / 2 + 0.2, 1.15
+EX, EY, ER = _M["EX"], _M["EY"], _M["ER"]
 beleg("-x", "Runder Eckturm NW mit Kegeldach", "Foto 001 Vollbild (Nord); Suedseite ohne (Foto 000)", durchmesser=2 * ER, spitze=13.9)
 adds.append(M.cylinder(10.6 - 0.8, ER, ER, 32).translate((EX, EY, 0.8)))                                  # Sandsteinrund
 adds.append(M.cylinder(0.25, ER + 0.2, ER + 0.2, 32).translate((EX, EY, 10.35)))                             # Traufgesims
@@ -124,7 +124,7 @@ hz = hxy(ZB + 0.2)
 adds.append(box(-hz[0] - 0.25, hz[0] + 0.25, -hz[1] - 0.25, hz[1] + 0.25, ZB, ZB + 0.45))                      # Gurtgesims Sockel/Schaft
 
 # ---------- Tordurchfahrt mit Keilsteinbogen (x-Richtung) ----------
-AW, SPR = 4.7, 2.65
+AW, SPR = _M["AW"], _M["SPR"]
 cuts.append(box(-DB, DB, -AW / 2, AW / 2, -1, SPR))
 cuts.append(M.cylinder(2 * DB, AW / 2, circular_segments=96).rotate((0, 90, 0)).translate((-DB, 0, SPR)))
 for f in ("+x", "-x"):
@@ -148,7 +148,7 @@ cuts.append(fbox("-x", -1.45, 1.45, 6.75, 8.25, rel(0.14) - rel(0.05), 1.0, h=_h
 for i in range(5):
     z = 6.9 + i * 0.22
     adds.append(fbox("-x", -1.25 + (0.3 if i == 4 else 0), 1.25 - (0.3 if i == 4 else 0), z, z + 0.09, 0, rel(0.12), h=_hT))
-ZA, FA = 9.45, 0.9                                                                          # Adler-Mitte, Vergroesserung (Foto: Tafel ~2,6 x 3 m)
+ZA, FA = _M["ZA"], _M["FA"]                                      # Adler-Mitte, Vergroesserung
 beleg("+x", "Doppeladler-Relief", "de.wikipedia: Reichsadler an der Toraussenseite; Fotos 041/030 (Sued, rechts ueber dem Bogen)", breite=1.7, hoehe=2.3)
 adds.append(fbox("+x", -0.85, 0.85, 8.3, 10.6, -0.05, rel(0.14), h=_hT))                       # Adler-Tafel (SUED)
 cuts.append(fbox("+x", -0.7, 0.7, 8.5, 10.4, rel(0.14) - rel(0.05), 1.0, h=_hT))         # Feld einsenken
@@ -163,7 +163,7 @@ for f in ("+y", "-y"):
 # ---------- Schaft: Eckquader, Uhr, Schlitzfenster (alles auf der Hoehe der Verjuengung) ----------
 SZ0 = ZB + 0.5
 quoins3(SZ0, ZZ - 0.3)
-UZ, UR = 26.9, 2.1
+UZ, UR = _M["UZ"], _M["UR"]
 for f in ("+x", "-x"):
     hh = hxy(UZ)
     clock3(f, UZ, UR, hh)
@@ -214,7 +214,7 @@ beleg("dach", "Kragdach (Kupferschraege) ueber dem Zinnenkranz bis zum Glockenst
 # zum Glockenstock an. Beginn bei ZZ-0,45 (Hoehe des Kranzgesimses), damit kein Durchblick-Schlitz entsteht.
 adds.append(frustum(0, 0, ZZ - 0.45, D + 0.7, W + 0.7, ZZ + 2.4, D - 4.0 + 0.4, W - 4.3 + 0.4))
 # ---------- abgesetzter Glockenstock mit Schallarkaden ----------
-GX, GY, GZ0, GZ1 = D - 4.0, W - 4.3, ZZ + 2.0, ZZ + 5.0
+GX, GY, GZ0, GZ1 = _M["GX"], _M["GY"], _M["GZ0"], _M["GZ1"]
 adds.append(box(-GX / 2, GX / 2, -GY / 2, GY / 2, GZ0 - 0.1, GZ1))
 quoins((0, 0), GX / 2, GY / 2, GZ0, GZ1 - 0.2, a=0.75, b=0.42, course=0.6)
 for f in ("+x", "-x", "+y", "-y"):
@@ -229,7 +229,7 @@ for f in ("+x", "-x", "+y", "-y"):
         cuts.append(fcyl(f, u, GZ0 + 1.5, 0.5, -0.7, 0.5, h=hh, seg=24))
 
 # ---------- Kupferdach (glatt, oben abgeflacht) ----------
-RZ0, RZ1 = GZ1, GZ1 + 10.7
+RZ0, RZ1 = GZ1, GZ1 + _M["DACHHOEHE"]
 adds.append(frustum(0, 0, RZ0, GX + 1.5, GY + 1.5, RZ1, 1.3, 3.0))
 for sx in (-1, 1):
     for sy in (-1, 1):
@@ -247,14 +247,14 @@ adds.append(M.cylinder(0.6, 1.55, 1.45, 8).translate((0, 0, RZ1 - 0.1)))
 # Untergrenzen fuer den Druck: Nadel-Spitze >= 0,08 m Durchmesser (= 0,9 mm bei 1:87), Mast >= 0,24 m.
 beleg("dach", "Dachreiter: Mast, Knauf, Nadel", "Foto 049 Vollbild; Bauforschung BW 60 m", spitze=TOP)
 beleg("dach", "4 Ecktuermchen mit Kegel", "Fotos 041/043/044; Laser DOM1 Spitzen 41 m", anzahl=4)
-KZ = RZ1 + 0.22 * (TOP - RZ1)
+KZ = RZ1 + _M["KNAUF_ANTEIL"] * (TOP - RZ1)
 adds.append(M.cylinder(KZ - RZ1 - 0.3, 0.13, 0.12, 8).translate((0, 0, RZ1 + 0.4)))          # Mast bis zum Knauf
 adds.append(M.sphere(0.34, 20).translate((0, 0, KZ)))                                          # Knauf
 adds.append(M.cylinder(TOP - KZ - 0.1, 0.10, 0.04, 8).translate((0, 0, KZ + 0.1)))           # Nadel (konisch)
 
 # ---------- Ecktuermchen: Sandsteinturm + achteckiger Erker mit Fachwerk-Bruestung und Arkade ----------
-TWs, T0, T1 = 2.6, 30.0, 32.7
-OR = 1.18                                    # Erker-Radius (2026-11-01: 1,1 -> 1,18; Erkerkoerper bei 34 m misst sonst 1,97 statt 2,0-2,9 m, Fotos 031/041)
+TWs, T0, T1 = _M["TWs"], _M["T0"], _M["T1"]
+OR = _M["OR"]                                # Erker-Radius
 for sx in (-1, 1):
     for sy in (-1, 1):
         _h = hxy(T0 + 1.0)

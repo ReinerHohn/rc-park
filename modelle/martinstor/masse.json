@@ -1,0 +1,216 @@
+{
+ "_doku": "Masse des Bauwerks als DATEN, nicht als Code. Jeder Wert mit Quelle. Der Generator liest diese Datei (tools/bauteile.lade_masse); der Pruefstand kann sie gegen die Masstabelle halten. Formeln duerfen auf frueher definierte Namen zugreifen (Auswertung in Reihenfolge).",
+ "masse": {
+  "H_TOTAL": {
+   "wert": 60.0,
+   "einheit": "m",
+   "was": "Gesamthoehe bis zur Nadelspitze",
+   "quelle": "Bauforschung BW (Landesdenkmalamt): Erhoehung 1901 von 22 auf 60 m; Objektbeschreibung nennt 65 m. en.Wikipedia 60 m. Foto 049: Spitze ~14 m ueber dem First.",
+   "quelltyp": "dokument"
+  },
+  "DB": {
+   "wert": 9.8,
+   "einheit": "m",
+   "was": "Steinsockel Tiefe (x, Richtung der Durchfahrt)",
+   "quelle": "LoD2 DEBW_001000hPLcn: Grundriss-Ecken, x-Ausdehnung 9,79 m",
+   "quelltyp": "lod2"
+  },
+  "WB": {
+   "wert": 11.3,
+   "einheit": "m",
+   "was": "Steinsockel Breite (y)",
+   "quelle": "LoD2: y-Ausdehnung 11,38 m",
+   "quelltyp": "lod2"
+  },
+  "ZB": {
+   "wert": 6.2,
+   "einheit": "m",
+   "was": "Oberkante Bruchsteinsockel",
+   "quelle": "MASSPRUEFUNG Teil 5, Fotos 050/030: etwa 1 m ueber dem Bogenscheitel",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "D": {
+   "wert": 9.0,
+   "einheit": "m",
+   "was": "Schafttiefe am Kopf (bei ZZ)",
+   "quelle": "Breitenprofil aus drei kalibrierten Kameras (Register T): Silhouette bei 29-33,5 m; 9,3 war 0,72 m zu breit",
+   "quelltyp": "foto_kalibriert"
+  },
+  "W": {
+   "wert": 10.0,
+   "einheit": "m",
+   "was": "Schaftbreite am Kopf (bei ZZ)",
+   "quelle": "wie D",
+   "quelltyp": "foto_kalibriert"
+  },
+  "ZK": {
+   "wert": 26.0,
+   "einheit": "m",
+   "was": "Knick der Verjuengung",
+   "quelle": "Register T: unterhalb braucht der Schaft die alte Breite (23,5-28 m), oberhalb die schmalere",
+   "quelltyp": "foto_kalibriert"
+  },
+  "DK": {
+   "wert": 9.3,
+   "einheit": "m",
+   "was": "Schafttiefe am Knick",
+   "quelle": "wie ZK",
+   "quelltyp": "foto_kalibriert"
+  },
+  "WK": {
+   "wert": 10.3,
+   "einheit": "m",
+   "was": "Schaftbreite am Knick",
+   "quelle": "wie ZK",
+   "quelltyp": "foto_kalibriert"
+  },
+  "ZZ": {
+   "wert": 30.5,
+   "einheit": "m",
+   "was": "Zinnen-Unterkante = Oberkante Schaft",
+   "quelle": "Laser DOM1: Zinnenkrone 31-32 m; Foto-Kalibrierung M-030-009: Kranzecken 29,7-31,1 m",
+   "quelltyp": "laser_dom1"
+  },
+  "AW": {
+   "wert": 4.7,
+   "einheit": "m",
+   "was": "Breite der Tordurchfahrt",
+   "quelle": "MASSPRUEFUNG Teil 5: drei frontale Fotos (050/030/042), Durchfahrt/Fassade = 0,39-0,42",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "SPR": {
+   "wert": 2.65,
+   "einheit": "m",
+   "was": "Kaempferhoehe des Torbogens (Bogenansatz)",
+   "quelle": "MASSPRUEFUNG Teil 5: Scheitel 5,0-5,2 m bei 4,7 m Breite",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "UZ": {
+   "wert": 26.9,
+   "einheit": "m",
+   "was": "Hoehe der Uhrmitte",
+   "quelle": "Farbsuche am Zifferblatt (Register X): Foto 030 26,84 m, Foto 041 26,64/27,94 m",
+   "quelltyp": "foto_kalibriert"
+  },
+  "UR": {
+   "wert": 2.1,
+   "einheit": "m",
+   "was": "Radius des Uhr-Zifferblatts",
+   "quelle": "MASSPRUEFUNG Teil 3 und Farbsuche: Durchmesser 3,8-4,5 m",
+   "quelltyp": "foto_kalibriert"
+  },
+  "ZA": {
+   "wert": 9.45,
+   "einheit": "m",
+   "was": "Hoehe der Doppeladler-Mitte (Suedseite)",
+   "quelle": "Fotos 041/030, MASSPRUEFUNG Teil 5: Unterkante ~8,3 m",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "FA": {
+   "wert": 0.9,
+   "einheit": "-",
+   "was": "Groessenfaktor des Adlerreliefs",
+   "quelle": "Foto 041: Tafel ~2,6 x 3 m",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "EX": {
+   "wert": "-DB / 2 - 0.8",
+   "einheit": "m",
+   "was": "Eckturm NW, Lage x",
+   "quelle": "Foto 001: runder Treppenturm an der Nordwestecke",
+   "quelltyp": "foto_vollbild"
+  },
+  "EY": {
+   "wert": "-WB / 2 + 0.2",
+   "einheit": "m",
+   "was": "Eckturm NW, Lage y",
+   "quelle": "wie EX",
+   "quelltyp": "foto_vollbild"
+  },
+  "ER": {
+   "wert": 1.15,
+   "einheit": "m",
+   "was": "Eckturm NW, Radius",
+   "quelle": "Messprotokoll M-001-001: Durchmesser 2,29 +- 0,21 m",
+   "quelltyp": "foto_vollbild",
+   "massstab": "foto_intern"
+  },
+  "GX": {
+   "wert": "D - 4.0",
+   "einheit": "m",
+   "was": "Glockenstock Tiefe",
+   "quelle": "Fotos 031/041/043: deutlich abgesetzt vom Schaft",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "GY": {
+   "wert": "W - 4.3",
+   "einheit": "m",
+   "was": "Glockenstock Breite",
+   "quelle": "wie GX",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "GZ0": {
+   "wert": "ZZ + 2.0",
+   "einheit": "m",
+   "was": "Glockenstock Unterkante",
+   "quelle": "ueber dem Kragdach",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "GZ1": {
+   "wert": "ZZ + 5.0",
+   "einheit": "m",
+   "was": "Glockenstock Oberkante = Dachansatz",
+   "quelle": "Laser-Profil (Register O): bei 38-44 m hat DOM1 null Streuung; Traufe 38 m waere dort bis 40 % daneben",
+   "quelltyp": "laser_dom1"
+  },
+  "DACHHOEHE": {
+   "wert": 10.7,
+   "einheit": "m",
+   "was": "Hoehe des Kupferdachs (Dachansatz bis First)",
+   "quelle": "Register J5: Laser-Hypsometrie hat ein scharfes Minimum bei First 46,2 m (45,0 -> 21,1 %, 46,2 -> 14,3 %, 48,2 -> 19,8 %)",
+   "quelltyp": "laser_dom1"
+  },
+  "KNAUF_ANTEIL": {
+   "wert": 0.22,
+   "einheit": "-",
+   "was": "Lage des Knaufs als Anteil der Spitzenlaenge ueber dem First",
+   "quelle": "Foto 049/000: Knauf bei 20-28 %",
+   "quelltyp": "foto_vollbild"
+  },
+  "TWs": {
+   "wert": 2.6,
+   "einheit": "m",
+   "was": "Ecktuermchen: Breite des Sandsteinschafts",
+   "quelle": "Fotos 041/043",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "T0": {
+   "wert": 30.0,
+   "einheit": "m",
+   "was": "Ecktuermchen: Unterkante des Schafts",
+   "quelle": "Fotos 041/043",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "T1": {
+   "wert": 32.7,
+   "einheit": "m",
+   "was": "Ecktuermchen: Oberkante des Schafts = Beginn des Erkers",
+   "quelle": "Fotos 041/043",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "OR": {
+   "wert": 1.18,
+   "einheit": "m",
+   "was": "Ecktuermchen: Radius des achteckigen Erkerkoerpers",
+   "quelle": "Register U: Erkerkoerper bei 34 m misst 2,0-2,9 m (Fotos 031/041/043); mit 1,1 waren es nur 1,97 m",
+   "quelltyp": "foto_vollbild"
+  },
+  "SEG": {
+   "wert": 48,
+   "einheit": "-",
+   "was": "Segmente runder Koerper",
+   "quelle": "Druckaufloesung",
+   "quelltyp": "modell"
+  }
+ }
+}

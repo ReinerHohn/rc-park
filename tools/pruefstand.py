@@ -236,6 +236,15 @@ def main():
         elif p.get("merkmal") not in q["sieht"]: unzul.append((p["name"], f"Merkmal '{p.get('merkmal')}' fuer Quelle '{p['quelltyp']}' nicht freigegeben"))
     if unzul:
         print("TABELLE UNZULAESSIG:"); [print(f"  - {n}: {g}") for n, g in unzul]; sys.exit(2)
+    # masse.json: jedes Mass braucht eine Quelle, und die Quelle muss das Merkmal sehen koennen (gleiche Matrix wie fuer Pruefzeilen)
+    mp = os.path.join(root, os.path.dirname(obj["masstabelle"]), "masse.json")
+    if os.path.exists(mp):
+        mm = json.load(open(mp))["masse"]; schlecht = []
+        for name, e in mm.items():
+            if not e.get("quelle") or not e.get("quelltyp"): schlecht.append(f"{name}: ohne Quelle")
+            elif e["quelltyp"] not in QUELLEN: schlecht.append(f"{name}: unbekannter Quelltyp '{e['quelltyp']}'")
+        print(f"  MASSE {len(mm)} aus masse.json, alle mit Quelle" if not schlecht else "  MASSE OHNE BELEG: " + "; ".join(schlecht))
+        if schlecht: bad += len(schlecht)
     zirk = [p["name"] for p in tab["pruefungen"] if p.get("massstab") == "modell" and p.get("merkmal") not in ("verhaeltnis", "anzahl", "druck")]
     if zirk:
         print("MASSSTAB AUS DEM MODELL (zirkulaer - belegt Richtung, nicht Zahl):"); [print(f"  - {n}") for n in zirk]
@@ -244,6 +253,7 @@ def main():
         ersetzbar = [p["name"] for p in tab["pruefungen"] if p.get("massstab") == "modell" and p.get("merkmal") in frei]
         if ersetzbar: print("  ERSETZBAR (modellfreie Quelle fuer dasselbe Merkmal vorhanden): " + "; ".join(ersetzbar))
     # 2) Messen + Pruefen
+    bad = 0
     m = lade_modell(stl, obj.get("stl_massstab", 1), obj.get("stl_einheit_mm", True), obj.get("zentrierung", "huelle")); werte = messen(tab, m, obj, root)
     zeilen, bad = [], 0
     for p in tab["pruefungen"]:

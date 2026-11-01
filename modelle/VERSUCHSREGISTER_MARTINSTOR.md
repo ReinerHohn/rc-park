@@ -477,3 +477,18 @@ geschrumpft und enthaelt jetzt im Wesentlichen Masse und Komposition.
 **Bilanz: 1700 von 2023 Zeilen generisch = 84 %.** Die verbleibenden 323 Zeilen sind Masse und Zusammenbau dieses Turms.
 Der naechste Schritt zu ~100 % waere, auch die Komposition als Konfiguration zu schreiben (`tools/bauwerk_generator.py`-Ansatz) -
 dann waere ein Bauwerk eine JSON-Datei. Das ist moeglich, aendert aber nichts an der Menge des Objektwissens, nur an seiner Form.
+
+## AA. Masse als Daten statt als Zahlen im Code (2026-11-01, Nutzer: "mach die Komposition auch als json")
+**`modelle/martinstor/masse.json` (neu): 30 Masse, jedes mit Quelle und Quelltyp** - Gesamthoehe, Sockel, Schaft mit Knick, Zinnenhoehe,
+Torbogen, Uhr, Adler, Eckturm NW, Glockenstock, Dachhoehe, Knauflage, Ecktuermchen. Werte sind Zahlen oder Formeln ueber frueher definierte
+Namen ("EX": "-DB / 2 - 0.8"). Lader `bauteile.lade_masse()` (generisch). Der Generator holt sie von dort, statt sie im Code zu tragen.
+**Der Pruefstand prueft sie jetzt mit:** jedes Mass braucht Quelle und Quelltyp, und der Quelltyp muss in der Quellen-Matrix stehen.
+Beim ersten Lauf fiel sofort mein eigener Fehler auf ("foto_intern" ist ein Massstab, kein Quelltyp); die Gegenprobe mit einem Mass ohne
+Quelle wird ebenfalls gemeldet.
+**Beweis: STL weiterhin BITIDENTISCH** (md5 a8dcc8cf...), alle Pruefungen gruen, 0 Widersprueche.
+**Warum die KOMPOSITION Code bleibt (ehrlich):** Die restlichen 323 Zeilen sind keine Zahlen, sondern Ablauf - Schleifen ueber Seiten und
+Hoehen, Bedingungen (Nord 3 Fenster, Sued 2), berechnete Lagen (`hxy(z)` fuer den verjuengten Schaft), Ausnahmen (Arkaden erst schneiden,
+dann wieder freistellen). Das in JSON zu fassen hiesse, eine Programmiersprache in JSON nachzubauen - mehr Zeilen, schlechter lesbar,
+und das Objektwissen waere nicht kleiner, nur anders geschrieben. **Der Gewinn lag bei den Massen, und der ist eingefahren:**
+sie stehen jetzt als belegte Daten neben der Masstabelle, nicht als nackte Zahlen zwischen Geometriebefehlen.
+**Stand: 1721 Zeilen generischer Code (84 %), 323 Zeilen Komposition, 30 belegte Masse, 3027 Zeilen Objektdaten.**
