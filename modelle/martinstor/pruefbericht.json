@@ -347,11 +347,11 @@
    "status": "ok"
   },
   {
-   "name": "Silhouettenbreite bei 30 m aus Foto 030 (m)",
+   "name": "Silhouettenbreite bei 30 m (m, 3 Kameras)",
    "wert": 13.58,
    "soll": [
-    12.7,
-    14.1
+    12.9,
+    14.2
    ],
    "ok": true,
    "status": "ok"

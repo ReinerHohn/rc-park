@@ -35,7 +35,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 | Wasserdicht (1=ja) | 1.00 | 1..1 | modell | - | OK | Druckfaehigkeit |
 | Anzahl getrennte Koerper | 1.00 | 1..1 | modell | - | OK | Schwebende Teile (Journal: 14 gefunden) |
 | Laserflaeche ueber 40 m (m2, gerastert) | 42.00 | 38..48 | laser_dom1 | laser | OK | DOM1-Profil: 43 m2, Streuung 43-43 (sehr sicher, grosse Dachflaeche) |
-| Silhouettenbreite bei 30 m aus Foto 030 (m) | 13.58 | 12.7..14.1 | foto_kalibriert | foto_kalibriert | OK | tools/foto_breitenprofil.py mit Kamera K-030: Foto 13,40 m, Median-Differenz zum Modell -0,02 m ueber 19 Hoehen (26-43 m); +-0,5 m (Kamera/Maske) |
+| Silhouettenbreite bei 30 m (m, 3 Kameras) | 13.58 | 12.9..14.2 | foto_kalibriert | foto_kalibriert | OK | tools/foto_breitenprofil.py mit drei unabhaengig kalibrierten Kameras: Foto 030 13,40 m (Differenz zum Modell -0,12 m Median), Foto 031 12,56 (-0,04), Foto 041 11,12 (-0,36; andere Blickrichtung, daher anderer Absolutwert). Alle drei bestaetigen das Modell auf +-0,5 m. |
 
 ## Belegt durch
 
@@ -90,24 +90,6 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - 2026-11-01 Claude (Fotosichtung): Waagrechter Balken/Blende auf halber Hoehe der Schaftwand (Suedseite) -> Vollbild messen
 - 2026-11-01 Claude: Ost-/Westseite (+-y) kaum fotografiert; Fenster dort sind Annahme -> Fotos der Seiten beschaffen (Mapillary/eigene)
 - 2026-11-01 fehlteile_finden (Foto 030, alt vs neu) + Nutzer: Finder markierte am alten Modell die Zone Uhrgiebel/Kragdach (z 29-31 m) als FEHLT; nach Einbau von Kielbogen und Kragdach bleiben Treffer nahe der Uhr-Oberkante (Kamera K-030 ~0,5-1 m versetzt) und an der SE-Kante (Eckquader-Muster: Foto hat Quader in jeder Lage, Modell gezahnt nur jede zweite). -> Kamera mit praezisen Picks neu loesen, dann Finder erneut; Eckquader-Muster am Vollbild pruefen
-- auto foto_breitenprofil (Foto 000, Kamera K-000): Silhouettenbreite z 25.5-32.5 m: Foto 11.90 m, Modell 14.63 m (-2.73 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto foto_breitenprofil (Foto 000, Kamera K-000): Silhouettenbreite z 33.0-35.0 m: Foto 11.36 m, Modell 8.15 m (+3.21 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto foto_breitenprofil (Foto 000, Kamera K-000): Silhouettenbreite z 35.5-36.5 m: Foto 10.47 m, Modell 13.16 m (-2.69 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto foto_breitenprofil (Foto 000, Kamera K-000): Silhouettenbreite z 37.0-37.0 m: Foto 10.12 m, Modell 8.98 m (+1.14 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto foto_breitenprofil (Foto 000, Kamera K-000): Silhouettenbreite z 37.5-42.0 m: Foto 5.97 m, Modell 7.15 m (-1.18 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto foto_breitenprofil (Foto 000, Kamera K-000): Silhouettenbreite z 45.5-46.0 m: Foto 3.87 m, Modell 3.21 m (+0.66 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 34.5-35.0 m: Foto 12.22 m, Modell 13.29 m (-1.07 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 35.5-36.0 m: Foto 12.02 m, Modell 9.52 m (+2.50 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 38.0-38.5 m: Foto 9.25 m, Modell 11.66 m (-2.41 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 40.0-41.0 m: Foto 9.33 m, Modell 8.35 m (+0.98 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 42.5-42.5 m: Foto 7.06 m, Modell 5.40 m (+1.66 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 43.5-46.5 m: Foto 3.00 m, Modell 4.03 m (-1.03 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 48.0-48.0 m: Foto 0.32 m, Modell 1.56 m (-1.24 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
-- auto fehlteile_finden (Foto 030, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=30.69 m, y=2.56 m (Zelle [1071, 945, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
-- auto fehlteile_finden (Foto 030, Treffer 2): Foto zeigt Struktur ohne Modellgegenstueck bei z=28.64 m, y=1.13 m (Zelle [1008, 1008, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()
-- auto fehlteile_finden (Foto 030, Treffer 3): Foto zeigt Struktur ohne Modellgegenstueck bei z=21.26 m, y=5.19 m (Zelle [1323, 1260, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()
-- auto fehlteile_finden (Foto 030, Treffer 4): Foto zeigt Struktur ohne Modellgegenstueck bei z=20.11 m, y=5.2 m (Zelle [1323, 1323, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()
-- auto fehlteile_finden (Foto 030, Treffer 5): Foto zeigt Struktur ohne Modellgegenstueck bei z=16.54 m, y=5.2 m (Zelle [1323, 1512, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()
 
 ## Grenze
 

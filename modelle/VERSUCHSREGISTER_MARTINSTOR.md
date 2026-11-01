@@ -299,3 +299,21 @@ waehrend die Silhouette im Foto exakt passte.
 4. Beobachtungen je Hoehe = 60 Eintraege Rauschen. Jetzt zusammenhaengende Zonen.
 **Generelle Lehre:** Jedes Messwerkzeug prueft seine Eingangsdaten selbst (Maske plausibel? Kamera gut genug?) und verweigert die Messung, statt
 eine Zahl zu liefern, die niemand nachprueft. Eine Quelle darf ein Merkmal nur belegen, wenn sie es aufloest - das steht in der Quellen-Matrix.
+
+## Q. Kameras 031 und 041 brauchbar gemacht - Silhouettenterm (2026-11-01)
+**Problem:** Beide Fotos haben keinen Bodenanker, die Kamera haengt an 3-9 Handpicks -> Hoehe und Brennweite mehrdeutig (041: RMS 530 px,
+Modellbreiten 1,5 m statt 13 m). **Loesung (generell, `tools/foto_kalibrieren.py --silhouette`):** zweiter Term aus der GANZEN Silhouettenkante
+gegen den Himmel. Distanztransformation der Fotokante; feste 3D-Randpunkte des Modells werden darauf gezogen, bilinear interpoliert, ICP-artig
+in 3 Runden nachgefuehrt. Ergebnis: 031 Kantenabstand 17,7 -> 7,1 px (Guete 0,59 -> 0,61), 041 29,8 -> 9,4 px (RMS 530 -> 56 px, Guete 0,58 -> 0,62).
+**Drei Fehler dabei, alle mechanisch geschlossen:**
+1. **Namenskonflikt:** `for name, uv in K["punkte"].items(): a = A[name]` ueberschrieb `a = sys.argv` - danach war JEDE Option wirkungslos
+   (`--silhouette` wurde stillschweigend ignoriert, das Ergebnis blieb bitgleich). Variable umbenannt; zusaetzlich meldet das Werkzeug jetzt die
+   erkannten Optionen und bricht bei unbekannten ab.
+2. **Stueckweise konstanter Term:** die gerasterte Modellkante aendert sich bei kleinen Parameteraenderungen nicht -> numerischer Gradient null,
+   der Loeser bewegt nichts. Jetzt feste 3D-Punkte mit stetig interpoliertem Abstand.
+3. **Verdeckte Kanten:** Foto 000 mass rechts 4,1 statt 7,4 m (Baum, mit Himmel dahinter - die Himmelspruefung allein reicht nicht). Zwei Regeln:
+   (a) weichen beide Seiten GEGENSINNIG um > 1 m ab, ist eine Kante verdeckt -> verworfen; (b) eine EINSEITIGE Messung darf bestaetigen, aber keine
+   grosse Abweichung belegen (> 1,5 m -> verworfen). Damit faellt Foto 000 korrekt raus.
+**Ergebnis Turmkopf: Widerspruch aufgeloest, das Modell ist bestaetigt.** Drei unabhaengig kalibrierte Kameras ueber 26-40 m:
+030 Median -0,06 m, 031 +0,12 m, 041 -0,20 m (Spannen +-0,9 m). Die Pruefzeile "Silhouettenbreite bei 30 m" steht auf gruen, der frueher
+vermutete Modellfehler (Laser: "20 % zu breit") bleibt widerlegt.

@@ -70,17 +70,56 @@
   ]
  },
  "kamera": {
+  "silhouette_genutzt": true,
+  "residuen_du_dv": {
+   "spitze_dokument": [
+    5,
+    -112
+   ],
+   "tuermchen_SW": [
+    -13,
+    -19
+   ],
+   "tuermchen_SE": [
+    44,
+    19
+   ],
+   "kranz_SW": [
+    -18,
+    -14
+   ],
+   "kranz_SE": [
+    16,
+    84
+   ],
+   "gold_SW": [
+    7,
+    1
+   ],
+   "gold_SE": [
+    8,
+    17
+   ],
+   "traufe_SW": [
+    -34,
+    1
+   ],
+   "traufe_SE": [
+    -40,
+    49
+   ]
+  },
   "rvec": [
-   0.9282596934517724,
-   0.8648089084434744,
-   -1.3206328042873778
+   0.7898880635801265,
+   0.5882340986262781,
+   -1.226631539235288
   ],
   "t": [
-   -0.6992353458831234,
-   25.595375724219387,
-   54.99617254435335
+   -1.144523525840951,
+   18.752209036542947,
+   22.14829607874902
   ],
-  "f_px": 6108.922814418634,
+  "f_px": 2726.305099443416,
   "cx": 960.0,
   "cy": 1440.0,
   "bild": [
@@ -88,20 +127,24 @@
    2880
   ],
   "standort_xyz": [
-   60.55,
-   -3.27,
-   1.69
+   28.35,
+   -6.13,
+   1.43
   ],
-  "hoehe_ueber_gelaende": 1.69,
-  "abstand_zur_achse": 60.6,
+  "hoehe_ueber_gelaende": 1.43,
+  "abstand_zur_achse": 29.0,
   "residuen_px": {
-   "spitze_dokument": 1053.3,
-   "tuermchen_SW": 251.3,
-   "tuermchen_SE": 324.7,
-   "kranz_SW": 263.7,
-   "kranz_SE": 242.6
+   "spitze_dokument": 111.7,
+   "tuermchen_SW": 22.8,
+   "tuermchen_SE": 47.9,
+   "kranz_SW": 22.4,
+   "kranz_SE": 85.6,
+   "gold_SW": 6.9,
+   "gold_SE": 18.4,
+   "traufe_SW": 33.8,
+   "traufe_SE": 63.1
   },
-  "rms_px": 530.4,
+  "rms_px": 56.4,
   "plausibel_strassenfoto": true,
   "brennweite_quelle": "geloest"
  },

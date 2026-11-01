@@ -23,7 +23,7 @@ def quer_richtung(C, z):
     """Horizontale Richtung senkrecht zur Blickachse: darauf wird das Meter-Lineal gelegt."""
     b = np.array([-C[0], -C[1], 0.0]); b /= np.linalg.norm(b); return np.array([-b[1], b[0], 0.0])
 
-def halbbreite(maske, R, t, f, cx, cy, C, z, vz, grenze=9.0, schritt=0.02):
+def halbbreite(maske, R, t, f, cx, cy, C, z, vz, grenze=9.0, schritt=0.02, himmel=None, pruef_m=0.6):
     """Laeuft vom Achsenpunkt (0,0,z) in beide Richtungen auf dem Lineal nach aussen; letzter Punkt mit Maske=True je Seite."""
     H, W = maske.shape; out = []
     for s in (+1, -1):
@@ -43,7 +43,16 @@ def halbbreite(maske, R, t, f, cx, cy, C, z, vz, grenze=9.0, schritt=0.02):
             while j < len(d) and not drin[j]: j += 1
             if j - i > tol: ende = i - 1; break
             i = j
-        out.append(abs(d[max(ende, 0)]) if ende < len(d) - 1 else np.nan)
+        if ende >= len(d) - 1: out.append(np.nan); continue
+        # ECHTE Silhouettenkante nur, wenn dahinter HIMMEL liegt. Sonst verdeckt ein Nachbarhaus/Baum die Kante
+        # (Foto 000: rechte Haelfte 4,1 statt 7,4 m - das war der scheinbare Widerspruch zu Foto 030).
+        if himmel is not None:
+            nach = np.arange(abs(d[ende]) + 0.05, abs(d[ende]) + pruef_m, schritt) * s
+            X2 = np.outer(nach, vz) + np.array([0, 0, z]); uv2, z2 = projiziere(X2, R, t, f, cx, cy)
+            u2 = np.round(uv2[:, 0]).astype(int); v2 = np.round(uv2[:, 1]).astype(int)
+            g2 = (z2 > 1) & (u2 >= 0) & (u2 < W) & (v2 >= 0) & (v2 < H)
+            if not g2.any() or himmel[v2[g2], u2[g2]].mean() < 0.6: out.append(np.nan); continue
+        out.append(abs(d[max(ende, 0)]))
     return out
 
 def modell_maske(stl, obj, R, t, f, cx, cy, W, H, n=2500000):
@@ -81,14 +90,24 @@ def main():
     zeilen = []
     for z in np.arange(von, bis + 1e-9, schritt):
         vz = quer_richtung(C, z)
-        fl, fr = halbbreite(objekt, R, t, f, cx, cy, C, z, vz)
+        fl, fr = halbbreite(objekt, R, t, f, cx, cy, C, z, vz, himmel=himmel)
         ml, mr = halbbreite(MM, R, t, f, cx, cy, C, z, vz)
         fb = fl + fr if not (np.isnan(fl) or np.isnan(fr)) else np.nan
         mb = ml + mr if not (np.isnan(ml) or np.isnan(mr)) else np.nan
+        einseitig = False
+        if np.isnan(fb) and not np.isnan(fl) and not np.isnan(ml): fb, mb, einseitig = 2 * fl, 2 * ml, True   # nur linke Seite frei
+        elif np.isnan(fb) and not np.isnan(fr) and not np.isnan(mr): fb, mb, einseitig = 2 * fr, 2 * mr, True
         # Nachbarhaus: Silhouette laeuft bis ans Lineal-Ende -> unbrauchbar
         hinweis = ""
         if np.isnan(fb): hinweis = "Foto: keine freie Kante (Nachbarhaus/Baum oder Hoehe ausserhalb)"
         elif max(fl, fr) > 8.5: hinweis = "Foto: Kante am Linealende - vermutlich Nachbarhaus"; fb = np.nan
+        elif einseitig and abs(fb - mb) > 1.5:
+            # Eine EINSEITIGE Messung ist halbe Information: sie darf bestaetigen, aber keine grosse Abweichung belegen -
+            # die sichtbare Kante kann selbst verdeckt sein (Baum mit Himmel dahinter). Grosse Abweichungen brauchen beide Seiten oder ein zweites Foto.
+            hinweis = f"Foto: nur eine Seite frei und Abweichung gross ({fb-mb:+.2f} m) - nicht belastbar, verworfen"; fb = np.nan
+        elif not any(np.isnan(x) for x in (fl, fr, ml, mr)) and abs((fl - ml) - (fr - mr)) > 1.0:
+            # Beide Seiten weichen GEGENSINNIG ab -> eine Kante ist verdeckt (Baum/Haus mit Himmel dahinter besteht die Himmelspruefung).
+            hinweis = f"Foto: Seiten uneins (links {fl-ml:+.2f}, rechts {fr-mr:+.2f}) - eine Kante verdeckt, verworfen"; fb = np.nan
         d = fb - mb if not (np.isnan(fb) or np.isnan(mb)) else np.nan
         zeilen.append((z, fl, fr, fb, ml, mr, mb, d, hinweis))
         print(f"{z:6.1f} | {fl:10.2f} {fr:7.2f} {fb:7.2f} | {ml:8.2f} {mr:6.2f} {mb:7.2f} | {d:+6.2f}   {hinweis}")
