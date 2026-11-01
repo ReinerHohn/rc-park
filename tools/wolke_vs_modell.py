@@ -20,12 +20,18 @@ def main():
     ap.add_argument("--schwelle", type=float, default=0.4); ap.add_argument("--min-flaeche", type=float, default=1.0); ap.add_argument("--eintragen", action="store_true")
     ap.add_argument("--schaft", nargs=2, type=float, default=[12.0, 26.0], help="Hoehenband mit senkrechter, glatter Wand fuer den Versatz")
     ap.add_argument("--dicht", help="npy der dichten Wolke (Standard sfm/dicht_<seite>_modell.npy)")
+    ap.add_argument("--nebengebaeude", action="store_true", help="STLs aus objekt.json['nebengebaeude'] (Meter, Modellsystem) mit vergleichen; Raster deckt dann auch sie ab")
     ap.add_argument("--entzerren", action="store_true", help="Tiefendrift der einseitigen Wolke (linear in z, aus den Hoehenbaendern) abziehen; schreibt sfm/dicht_<seite>_entzerrt.npy - NUR fuer den Sichtvergleich, kein Mass")
     a = ap.parse_args(); obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od))
     s = a.seite.lower(); tief, sgn, quer = SEITE[s]; it = 0 if tief == "x" else 1; iq = 1 - it
     P = np.load(os.path.join(od, a.dicht or f"sfm/dicht_{s}_modell.npy")).astype(float)
     m = trimesh.load(os.path.join(root, obj["stl"])); k = obj.get("stl_massstab", 87) / 1000.0; m.apply_scale(k)
-    V = m.vertices
+    V = m.vertices                                           # Hauptbauwerk (fuer Versatz/Drift am Schaft)
+    teile = [m]; u_lo, u_hi = -9.0, 9.0
+    if a.nebengebaeude:
+        for name, nb in obj.get("nebengebaeude", {}).items():
+            mn = trimesh.load(os.path.join(root, nb["stl_m"])); teile.append(mn); print(f"Nebengebaeude {name}: {len(mn.faces)} Flaechen, Ausdehnung {mn.bounds.round(1).tolist()}")
+        m = trimesh.util.concatenate(teile); b = m.bounds; u_lo, u_hi = float(np.floor(b[0, iq]) - 1), float(np.ceil(b[1, iq]) + 1)
     # Blickrichtung: wir sehen die Seite von aussen; "vorne" = groesstes sgn*tief
     front = lambda X: sgn * X[:, it]
     # ---- 1) Versatz quer zur Fassade am Schaft
@@ -54,8 +60,8 @@ def main():
         np.save(os.path.join(od, "sfm", f"dicht_{s}_entzerrt.npy"), Pk.astype(np.float32)); print(f"entzerrte Wolke geschrieben: sfm/dicht_{s}_entzerrt.npy (Drift {drift[0]*1000:+.1f} mm/m, Offset {drift[1]:+.2f} m abgezogen) - Sichtvergleich, KEIN Mass")
     else: Pk[:, it] -= sgn * dv
     # ---- 2) Tiefenkarten
-    r = a.raster; us = np.arange(-9.0, 9.0 + 1e-9, r); zs = np.arange(0.0, 72.0 + 1e-9, r); U, Z = np.meshgrid(us, zs)
-    iu = np.floor((Pk[:, iq] + 9.0) / r).astype(int); iz = np.floor(Pk[:, 2] / r).astype(int); ok = (iu >= 0) & (iu < len(us)) & (iz >= 0) & (iz < len(zs))
+    r = a.raster; us = np.arange(u_lo, u_hi + 1e-9, r); zs = np.arange(0.0, 72.0 + 1e-9, r); U, Z = np.meshgrid(us, zs)
+    iu = np.floor((Pk[:, iq] - u_lo) / r).astype(int); iz = np.floor(Pk[:, 2] / r).astype(int); ok = (iu >= 0) & (iu < len(us)) & (iz >= 0) & (iz < len(zs))
     W = np.full(U.shape, np.nan); N = np.zeros(U.shape, int)
     f = front(Pk)
     for a_, b_, c_ in zip(iz[ok], iu[ok], f[ok]):

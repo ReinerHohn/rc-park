@@ -888,3 +888,13 @@ durch die Durchfahrt, Messartefakt).
 3. Pruefungen, die auf unbrauchbaren Kameras stehen (K-030/031/041), ersetzen statt lockern - durch Wolkenbreiten (y) oder DOM1.
 4. Messtypen am Netz: Eckpunkte reichen nicht (Kegel/Zylinder grob), Schnittkonturen sind die robuste Basis.
 5. Fenster von Messungen und Abseits-Schwellen haengen an Bauteilmassen (Glockenstockbreite!) - bei jeder Massaenderung mitpruefen.
+
+## AP. wolke_vs_modell mit Nebengebaeuden; Torbau-Massenmodell gegen die Wolke (2026-11-01)
+`tools/wolke_vs_modell.py --nebengebaeude`: STLs aus `objekt.json["nebengebaeude"]` werden mit dem Turm vereinigt, das Raster deckt sie
+mit ab. Lauf Nord: der fruehere Befund 'fehlt im Modell 36 m2 bei y -9..-5,5' ist weg (Torbau vorhanden). Pruefung des LoD2-Torbaus gegen
+die Wolke: Nordfront LoD2 x -6,0, Wolke -5,9..-6,6 (y -12..-8); Dachlinie LoD2 13,9/15,6/17,3/19,0/18,0 m bei y -12..-8, Wolke
+12,5/17,2/19,7/20,5/19,8 -> Massenmodell stimmt auf 1-2 m (Giebel zum Turm hin steigend). Der Befund '+3,95 m bei y -10..-11' stammt von
+einem anderen Gebaeude weiter noerdlich (Punkte bei x -13..-17), nicht vom Torbau. Offen am Torbau: Giebelform, Arkaden/Durchgang,
+Fachwerk, Schriftzug - aus Fotos 002/003/089 (Ernte) und der Wolke (Torbau-Nordfront z 8-20 m vorhanden).
+Commit cdaa625 enthaelt Werkzeuge, Netze, Masse, Register AH-AO; grosse/reproduzierbare Zwischenstaende per .gitignore draussen
+(commons_neu 285 MB, dicht_nord-Werkstatt, Hybrid-/Versuchsnetze, LightGlue-npz, DB-Symlinks).

@@ -2838,6 +2838,34 @@
    "flaeche_m2": 4.8,
    "text": "Modell steht 0.45 m weiter vor als die Fotowolke [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 14.5-17.8 m, y -5.5..-3.8 m, 4.8 m2",
    "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-wirklichkeit_weiter_vorn-9--10",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 9.5,
+   "z_bis": 19.0,
+   "quer_von": -10.2,
+   "quer_bis": -7.0,
+   "flaeche_m2": 23.0,
+   "text": "Fotowolke steht +3.95 m weiter vor als das Modell [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 9.5-19.0 m, y -10.2..-7.0 m, 23.0 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
+   "auto_id": "wolke-nord-fehlt_im_modell-16--11",
+   "art": "wolke_vs_modell",
+   "seite": "nord",
+   "z_von": 16.8,
+   "z_bis": 21.0,
+   "quer_von": -11.5,
+   "quer_bis": -6.5,
+   "flaeche_m2": 8.4,
+   "text": "Fotowolke hat hier Masse, das Modell nicht (fehlendes Bauteil?): z 16.8-21.0 m, y -11.5..-6.5 m, 8.4 m2",
+   "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
   }
  ],
  "beobachtungen_erledigt": [
