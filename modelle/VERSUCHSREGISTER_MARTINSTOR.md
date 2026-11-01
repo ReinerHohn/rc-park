@@ -557,3 +557,22 @@ Wert wurde aus objekt.json zurueckgezogen.
 vier Tuermchenkegeln und dem Dachreiter - also genau den Teil der Ost- und Westseite, den kein Strassenfoto erreicht. Die
 Farbmaske muss nur eng genug werden (Kupfergruen gegen Laubgruen trennen, Schatten ausschliessen). Das bleibt als naechster
 Schritt in der Masstabelle, mit der Pflicht, das Ergebnis vorher plausibel zu pruefen.
+
+## AE. Mehrbild-Rekonstruktion (SfM) ueber ALLE Fotos - der groesste ungenutzte Hebel (2026-11-01)
+**Nie probiert, obwohl COLMAP seit Monaten installiert ist:** 37 Turmfotos (von 46, ohne Detailaufnahmen von Tafeln und Adler),
+auf 2000 px verkleinert, `pycolmap 4.3` mit CUDA. **Ergebnis: 36 von 37 Fotos registriert, 4590 Punkte, Aufbau in 10 Sekunden.**
+Die Fotos stammen aus 16 Jahren, von verschiedenen Kameras, ueberwiegend von der Strassenseite - COLMAP bringt sie trotzdem zusammen.
+Das ist die Basis fuer alles Weitere: **36 untereinander konsistente Kameras statt vier einzeln kalibrierter.**
+**Das Problem ist die AUSRICHTUNG, nicht die Rekonstruktion.** Zwei Versuche, beide unbrauchbar:
+1. Ueber meine vier bereits kalibrierten Kameras (030/031/041/000): Massstab 4.205.990, Restfehler bis 1,7 Mio m. Ursache: diese
+   Kamerazentren sind selbst ungenau (RMS 56-530 px, Foto 041 sprang zwischen 60,5 m und 28,4 m Abstand) - vier schlechte
+   Korrespondenzen ergeben keine gute Transformation.
+2. Ueber die Geometrie der Wolke (Senkrechte aus der Kameraebene, Massstab aus der Turmhoehe): plausiblere Hoehen (-3 bis 63 m),
+   aber Grundrissbreiten von 15-29 m statt 9,8 x 11,3 - die Wolke enthaelt die Nachbargebaeude. **Und der Massstab kaeme aus
+   meiner eigenen Turmhoehe, waere also zirkulaer.**
+**Naechster Schritt (der richtige Weg):** COLMAP georeferenzieren statt nachtraeglich transformieren - entweder mit
+`model_aligner` und Bodenkontrollpunkten (LoD2-Ecken, in mehreren Fotos gepickt) oder indem man die Kamerapositionen vorgibt.
+Dann haette man 36 Kameras mit amtlichem Massstab, und jede Fotomessung (Breitenprofil, Elementhoehen, Fehlteil-Finder) liefe
+auf 36 statt auf 3 Fotos. Das waere der groesste Genauigkeitsgewinn, der hier noch moeglich ist.
+**Unverzichtbar bleibt:** die Wolke muss vom Nachbarbestand getrennt werden (Zylinder um die Turmachse reicht nicht, die
+Nachbarhaeuser stehen 3-7 m entfernt).
