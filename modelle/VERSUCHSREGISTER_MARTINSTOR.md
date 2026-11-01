@@ -260,3 +260,22 @@ M9. **Varianten aus den Fotomassen (grid4), Laser gegen Foto:** V1 Traufe 38 (Gl
   Zaehler plötzlich 3 statt 4 fand - Strahlen gingen durch. (2) `nischen_anzahl` wertete "kein Treffer" (nan) als keine Nische -> jetzt als tiefe Nische. (3) erster
   Kielbogen reichte mit dem Scheitel bis 31,05 in die Scharten.
 - Pruefstand: 29 Pruefungen gruen, 2 Widersprueche (Dachansatz, Dachflanke), 3 Beobachtungen. Viewer v18.
+
+## O. Dachansatz-Widerspruch aufgeloest + neuer Befund Turmkopf (2026-11-01)
+**Werkzeug `tools/hypso_profil.py` (neu): Flaeche je Hoehenstufe statt Gesamtnote**, mit (a) GEMEINSAMER Lage fuer alle Modelle (vorher suchte jedes
+Modell seine eigene beste Drehung - unfairer Vergleich) und (b) der Messunsicherheit des Lasers selbst (Umkreismitte +-1 m, Radius 8,5-9,5 m).
+Nur Abweichungen ausserhalb dieser Spanne sind echt.
+- **Dachansatz: Laser gewinnt, Widerspruch zu.** Bei 38/40/42/44 m hat DOM1 NULL Streuung (62/43/28/20 m2 - grosse, flach liegende Dachflaechen).
+  Traufe 38 weicht dort +16/+17/+12/+9 m2 ab (bis +40 %), die aktuelle Traufe 35,5 nur +4/-1/0/-2. Die Foto-Kalibrierung (37,4-38,2 m) hat oben
+  1-2 m systematischen Fehler (Ankerhoehen +-1 m, Residuen 50-80 px) und was ich als "Traufe" pickte, ist vermutlich nicht die Dachansatzkante.
+  Pruefzeile umgestellt auf Laser (34,5-36,5), Historie dokumentiert. **Lehre: eine Gesamtnote verdeckt, WO eine Quelle stark ist.**
+- **Neuer Befund: Turmkopf 28-32 m rund 20 % zu breit** (Modell 144/144/120 gerastert gegen Laser 121/118/97, Laserstreuung nur +-3).
+  Einzeltests: Erker TWs 2,6->2,2 wirkt nur bei 32 m (120->114), Kranzueberstand 0,35->0,15 wirkt gar nicht (dann ragen die Erker vor),
+  Schaft 9,3x10,3 -> 8,9x9,8 bringt 144->134. **Keine Einzelaenderung reicht** - Ursache noch nicht isoliert.
+  Zweiter, unabhaengiger Beleg: Foto-Messung M-030-009 (kalibrierte Kamera) gibt den Abstand der Zinnenkranz-Ecken SW-SE mit 9,97 m, Modell 11,0 m.
+  Zwei Pruefzeilen stehen ROT (Laserflaeche ueber 30 und 32 m) - Modell NICHT freigegeben, Befund dokumentiert.
+- **Neuer Messer `hypso_ueber`** im Pruefstand rastert jetzt genau wie der Laser. Erster Versuch verglich die ECHTE Querschnittsflaeche (77 m2)
+  mit gerasterten Laserzellen (97) - zwei verschiedene Groessen. Lehre: vor jedem Quellenvergleich pruefen, ob beide Seiten dasselbe messen.
+- **`tools/variante_bauen.sh` (neu):** baut eine Generator-Variante und BRICHT AB, wenn das sed-Muster nicht greift. Ausloeser: drei "Varianten"
+  (TWs 2,2/2,0) waren bitgleich mit dem Ist-Modell, weil das Muster "TWs = 2.6" nicht auf "TWs, T0, T1 = 2.6," passte - der Vergleich zeigte
+  faelschlich "kein Einfluss". Zusaetzlich Warnung, wenn das fertige STL bitgleich mit dem Ist-Modell ist.

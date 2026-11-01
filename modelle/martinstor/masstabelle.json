@@ -190,6 +190,18 @@
    "y0": -2.5,
    "y1": 2.5,
    "zmax": 34.0
+  },
+  "hyp32": {
+   "typ": "hypso_ueber",
+   "z": 32.0
+  },
+  "hyp30": {
+   "typ": "hypso_ueber",
+   "z": 30.0
+  },
+  "hyp40": {
+   "typ": "hypso_ueber",
+   "z": 40.0
   }
  },
  "pruefungen": [
@@ -310,19 +322,18 @@
    "name": "Dachansatz / Glockenstock-Oberkante (m)",
    "wert": "dachansatz",
    "soll": [
-    36.9,
-    39.2
+    34.5,
+    36.5
    ],
-   "quelle": "Messprotokoll M-030-003 (Foto 030, Kamera K-030 aus LoD2/DOM1-Ankern): 37,9-38,2 m; LoD2-Wandoberkante 37,1-37,3 m | Messung: erste Hoehe ab 33,0 m (ueber dem Kragdach), bei der die Dachbreite im Achsstreifen 6,8 m erreicht",
-   "quelltyp": "foto_kalibriert",
-   "merkmal": "absolut_hoehe",
-   "massstab": "foto_kalibriert",
+   "quelle": "Laser-Profil (tools/hypso_profil.py, gemeinsame Lage): bei 38/40/42/44 m hat DOM1 null Streuung (62/43/28/20 m2); Traufe 38 ergibt dort +16/+17/+12/+9 m2 (bis +40 %), Traufe 35,5 nur +4/-1/0/-2. Die Foto-Kalibrierung (37,4-38,2 m) hat oben ~1-2 m systematischen Fehler.",
+   "quelltyp": "laser_dom1",
+   "merkmal": "hoehe_flaeche",
+   "massstab": "laser",
    "protokoll": "M-030-003",
    "historie": [
-    "2026-11-01 angelegt, Modell 35,5 (ZZ+5) faellt durch; LoD2 37,2 war frueher als 'generalisiert' verworfen (MASSPRUEFUNG Teil 4)"
-   ],
-   "status": "widerspruch",
-   "widerspruch": "Foto-Kalibrierung K-030: 37,4-38,2 m und LoD2-Wandoberkante 37,2 (generalisiert) GEGEN Laser-Hypsometrie: Traufe 38 verschlechtert Ziel 14,3->27,3 % (V1) bzw. 19,6 % (V2 mit First 47,6); Foto-IoU +0,003 (Rauschen, Nordfotos schlechter). Modell 35,5 bleibt. Register M9."
+    "2026-11-01 angelegt, Modell 35,5 (ZZ+5) faellt durch; LoD2 37,2 war frueher als 'generalisiert' verworfen (MASSPRUEFUNG Teil 4)",
+    "2026-11-01 (1) aus Foto-Kalibrierung 36,9-39,2 angelegt, Modell 35,6 fiel durch; (2) als widerspruch gefuehrt; (3) durch Laser-Profildiagnose aufgeloest -> 34,5-36,5, Modell 35,6 richtig. Lehre: Gesamtnote verdeckte, dass der Laser gerade bei 38-44 m am staerksten ist."
+   ]
   },
   {
    "name": "First / Dach-Oberkante (m)",
@@ -571,6 +582,45 @@
    "quelltyp": "modell",
    "merkmal": "druck",
    "massstab": "-"
+  },
+  {
+   "name": "Laserflaeche ueber 32 m (m2, gerastert)",
+   "wert": "hyp32",
+   "soll": [
+    90.0,
+    104.0
+   ],
+   "quelle": "DOM1-Profil (tools/hypso_profil.py, gemeinsame Lage 98 Grad/-1/-1): 97 m2, Streuung 94-97 bei Mitte +-1 m und Radius 8,5-9,5. Modell (Erker TWs 2,6) 112 -> zu breit; TWs 2,2 ergibt 100",
+   "quelltyp": "laser_dom1",
+   "merkmal": "grundriss",
+   "massstab": "laser",
+   "historie": [
+    "2026-11-01 erst als echte Querschnittsflaeche angelegt (77 m2 gegen 97) - FALSCH, Laser rastert. Messer hypso_ueber rastert jetzt genauso."
+   ]
+  },
+  {
+   "name": "Laserflaeche ueber 30 m (m2, gerastert)",
+   "wert": "hyp30",
+   "soll": [
+    110.0,
+    128.0
+   ],
+   "quelle": "DOM1-Profil: 118 m2 (115-118); Modell 132-142 je nach Lage",
+   "quelltyp": "laser_dom1",
+   "merkmal": "grundriss",
+   "massstab": "laser"
+  },
+  {
+   "name": "Laserflaeche ueber 40 m (m2, gerastert)",
+   "wert": "hyp40",
+   "soll": [
+    38.0,
+    48.0
+   ],
+   "quelle": "DOM1-Profil: 43 m2, Streuung 43-43 (sehr sicher, grosse Dachflaeche)",
+   "quelltyp": "laser_dom1",
+   "merkmal": "hoehe_flaeche",
+   "massstab": "laser"
   }
  ],
  "beobachtungen_offen": [

@@ -39,7 +39,10 @@
   "tafel_S": 0.0,
   "adler_S": 1.6500000000000001,
   "dachansatz": 35.60000000000004,
-  "kranz_oben": 31.84999960327148
+  "kranz_oben": 31.84999960327148,
+  "hyp32": 120.0,
+  "hyp30": 144.0,
+  "hyp40": 42.0
  },
  "pruefungen": [
   {
@@ -136,11 +139,11 @@
    "name": "Dachansatz / Glockenstock-Oberkante (m)",
    "wert": 35.60000000000004,
    "soll": [
-    36.9,
-    39.2
+    34.5,
+    36.5
    ],
-   "ok": false,
-   "status": "widerspruch"
+   "ok": true,
+   "status": "ok"
   },
   {
    "name": "First / Dach-Oberkante (m)",
@@ -331,7 +334,37 @@
    ],
    "ok": true,
    "status": "ok"
+  },
+  {
+   "name": "Laserflaeche ueber 32 m (m2, gerastert)",
+   "wert": 120.0,
+   "soll": [
+    90.0,
+    104.0
+   ],
+   "ok": false,
+   "status": "fehler"
+  },
+  {
+   "name": "Laserflaeche ueber 30 m (m2, gerastert)",
+   "wert": 144.0,
+   "soll": [
+    110.0,
+    128.0
+   ],
+   "ok": false,
+   "status": "fehler"
+  },
+  {
+   "name": "Laserflaeche ueber 40 m (m2, gerastert)",
+   "wert": 42.0,
+   "soll": [
+    38.0,
+    48.0
+   ],
+   "ok": true,
+   "status": "ok"
   }
  ],
- "bestanden": true
+ "bestanden": false
 }

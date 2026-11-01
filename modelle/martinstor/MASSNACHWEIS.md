@@ -14,7 +14,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 | Dachreiter Knauf Durchmesser (m) | 0.66 | 0.5..0.9 | foto_vollbild | modell | OK | Foto 049: 44 px x 1,5 cm = ~0,67 m |
 | Dachreiter Knauf Lage (Anteil ueber First) | 0.19 | 0.12..0.32 | foto_verhaeltnis | - | OK | Foto 049/000: Knauf bei ~20-28 % der Spitzenlaenge |
 | Gesamthoehe (m) | 60.00 | 59.5..66 | dokument | dokument | OK | Bauforschung BW (Landesdenkmalamt) 60 m nach 1901 / 65 m Objektbeschreibung; en.Wikipedia 60 m; Structurae ~65 m; de.Wikipedia 66 m (Plan Schaefer) |
-| Dachansatz / Glockenstock-Oberkante (m) | 35.60 | 36.9..39.2 | foto_kalibriert | foto_kalibriert | WIDERSPRUCH | Messprotokoll M-030-003 (Foto 030, Kamera K-030 aus LoD2/DOM1-Ankern): 37,9-38,2 m; LoD2-Wandoberkante 37,1-37,3 m / Messung: erste Hoehe ab 33,0 m (ueber dem Kragdach), bei der die Dachbreite im Achsstreifen 6,8 m erreicht |
+| Dachansatz / Glockenstock-Oberkante (m) | 35.60 | 34.5..36.5 | laser_dom1 | laser | OK | Laser-Profil (tools/hypso_profil.py, gemeinsame Lage): bei 38/40/42/44 m hat DOM1 null Streuung (62/43/28/20 m2); Traufe 38 ergibt dort +16/+17/+12/+9 m2 (bis +40 %), Traufe 35,5 nur +4/-1/0/-2. Die Foto-Kalibrierung (37,4-38,2 m) hat oben ~1-2 m systematischen Fehler. |
 | First / Dach-Oberkante (m) | 46.70 | 46.6..48.7 | foto_kalibriert | foto_kalibriert | OK | Messprotokoll M-030-002: Goldkugeln 47,4-47,9 m; Foto-IoU-Trend J2/J5 (First +1,6 besser) / Messung: hoechste Hoehe, bei der der Dachkoerper im Achsstreifen noch >= 2 m breit ist |
 | Zinnenkranz Oberkante (m) | 31.85 | 29.5..32.5 | foto_kalibriert | foto_kalibriert | OK | Messprotokoll M-030-005: Kranzecken 30,2 / 31,2 m; Laser Stufe 31-32 m / Messung: hoechster Punkt der Suedwand-Mitte (/y/<3, Erker bei y=+-4,3 ausgeblendet) unter 34 m |
 | Spitzenlaenge ueber First (m) | 13.30 | 12..16.5 | foto_vollbild | modell | OK | Foto 049 Vollbild 16,6 / 014: 16,0 / 000: 12,4 m (Massstab aus Modellmassen, grob); Register J3 |
@@ -34,14 +34,17 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 | Sockel-Grundriss Rechteck (m2, z 1 m) | 148.84 | 117..150 | lod2 | lod2 | OK | LoD2 DEBW_001000hPLcn Huellrechteck 11,7 x 11,4 m = 133 m2 (Polygon 'mit Rundung' = Eckturm enthalten; MASSPRUEFUNG Teil 9); +-12 % |
 | Wasserdicht (1=ja) | 1.00 | 1..1 | modell | - | OK | Druckfaehigkeit |
 | Anzahl getrennte Koerper | 1.00 | 1..1 | modell | - | OK | Schwebende Teile (Journal: 14 gefunden) |
+| Laserflaeche ueber 32 m (m2, gerastert) | 120.00 | 90..104 | laser_dom1 | laser | FEHLER | DOM1-Profil (tools/hypso_profil.py, gemeinsame Lage 98 Grad/-1/-1): 97 m2, Streuung 94-97 bei Mitte +-1 m und Radius 8,5-9,5. Modell (Erker TWs 2,6) 112 -> zu breit; TWs 2,2 ergibt 100 |
+| Laserflaeche ueber 30 m (m2, gerastert) | 144.00 | 110..128 | laser_dom1 | laser | FEHLER | DOM1-Profil: 118 m2 (115-118); Modell 132-142 je nach Lage |
+| Laserflaeche ueber 40 m (m2, gerastert) | 42.00 | 38..48 | laser_dom1 | laser | OK | DOM1-Profil: 43 m2, Streuung 43-43 (sehr sicher, grosse Dachflaeche) |
 
 ## Belegt durch
 
-- **laser_dom1**: 1 von 1 Pruefungen gruen (1-m-Raster, nur von oben; Strukturen < ~3 m verschmiert, Nadeln unsichtbar)
+- **laser_dom1**: 3 von 5 Pruefungen gruen (1-m-Raster, nur von oben; Strukturen < ~3 m verschmiert, Nadeln unsichtbar)
 - **foto_verhaeltnis**: 4 von 4 Pruefungen gruen (nur Verhaeltnisse (+-5-10 %), absolute Masse nur mit bekanntem Massstab)
 - **foto_vollbild**: 15 von 16 Pruefungen gruen (Vollaufloesung, Massstab aus Modell oder Dokument -> Werte grob, Richtung sicher)
 - **dokument**: 2 von 2 Pruefungen gruen (Bauforschung/Denkmalamt/Wikipedia; Bezugshoehe oft unklar (60 vs 65 m))
-- **foto_kalibriert**: 2 von 3 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
+- **foto_kalibriert**: 2 von 2 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
 - **lod2**: 1 von 1 Pruefungen gruen (amtlicher Grundriss + Traufe/First, keine Aufbauten/Details)
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
 
@@ -81,7 +84,6 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 
 ## Offene Widersprueche
 
-- Dachansatz / Glockenstock-Oberkante (m): Foto-Kalibrierung K-030: 37,4-38,2 m und LoD2-Wandoberkante 37,2 (generalisiert) GEGEN Laser-Hypsometrie: Traufe 38 verschlechtert Ziel 14,3->27,3 % (V1) bzw. 19,6 % (V2 mit First 47,6); Foto-IoU +0,003 (Rauschen, Nordfotos schlechter). Modell 35,5 bleibt. Register M9.
 - Dachflanke Halbbreiten-Zunahme je m (Ansicht y, 37->45 m): Laser (optimierung_validieren, steilere Flanke 0,15): Ziel 14,3->13,8 und M2 13,9->13,4 besser, aber M1 16,1->18,4 und M3 16,1->18,0 schlechter; Foto-IoU +0,002 (Rauschen). Register J6. Bleibt 0,21 bis eine Quelle entscheidet.
 
 ## Beobachtungen ohne Pruefung

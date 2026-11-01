@@ -120,6 +120,20 @@ class Messer:
             b = self.ausdehnung_streifen(z, achse, quer_max)
             if (schwelle > 0 and b >= schwelle) or (schwelle < 0 and 0 < b <= -schwelle): return float(z)
         return float("nan")
+    def querschnitt_flaeche(self, z, **k):
+        """Echte Summe der Querschnittsflaechen bei z (m2). NICHT mit der Laser-Hypsometrie vergleichbar (die rastert) - dafuer hypso_ueber."""
+        return float(sum(g.area for _, g in self._polys(z)))
+    def hypso_ueber(self, z, drehung=98.0, dx=-1.0, dy=-1.0, radius=9.0, raster=1.0, **k):
+        """Wie die Laser-Hypsometrie: Modellpunkte auf ein 1-m-Raster projizieren und Zellen zaehlen, deren Hoehe > z ist (im Umkreis um die Spitze).
+        Nur so sind Modell und DOM1 vergleichbar - die Rasterung addiert je nach Umfang 15-25 Zellen gegenueber der echten Flaeche."""
+        if not hasattr(self, "_hp"):
+            v, fa = trimesh.remesh.subdivide_to_size(self.m.vertices, self.m.faces, max_edge=0.3, max_iter=14); self._hp = v[fa].mean(1)
+        P = self._hp; c, s_ = np.cos(np.radians(drehung)), np.sin(np.radians(drehung))
+        x = (c * P[:, 0] - s_ * P[:, 1] + dx) / raster; y = (s_ * P[:, 0] + c * P[:, 1] + dy) / raster; N = 60
+        ix = np.floor(x + N / 2).astype(int); iy = np.floor(N / 2 - y).astype(int)
+        ok = (ix >= 0) & (ix < N) & (iy >= 0) & (iy < N); H = np.zeros((N, N)); np.maximum.at(H, (iy[ok], ix[ok]), P[ok, 2])
+        pk = np.unravel_index(np.argmax(H), H.shape); yy, xx = np.mgrid[:N, :N]
+        return float(((H > z) & (np.hypot(yy - pk[0], xx - pk[1]) <= radius / raster)).sum()) * raster ** 2
     def grundriss_rechteck(self, z, r=None, **k):
         ps = self._polys(z)
         if r is not None: ps = [(c, g) for c, g in ps if np.hypot(*c) < r]
