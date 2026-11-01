@@ -1,0 +1,12 @@
+[Unit]
+Description=rc-park: temperaturgefuehrter Luefterregler (hp-wmi, voll/Automatik mit Hysterese)
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/home/oem/git/rc-park/tools/luefter_adaptiv.sh 75 62 5
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
