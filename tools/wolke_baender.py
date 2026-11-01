@@ -33,9 +33,9 @@ def main():
     pf = os.path.join(od, a.dicht or f"sfm/dicht_{s}_entzerrt.npy"); P = np.load(pf).astype(float)
     C = np.load(pf.replace("_entzerrt.npy", "_modell.npy").replace("_modell.npy", "_farben.npy"))
     tief, sgn, quer = seite_achsen(s); it = 0 if tief == "x" else 1; iq = 1 - it
-    SUF = "" if s == obj.get("sfm", {}).get("hauptseite", s) else f"_{s}"
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from bauteile import lade_masse
     masse = lade_masse(os.path.join(od, "masse.json")); obj = json.load(open(a.objekt))
+    SUF = "" if s == obj.get("sfm", {}).get("hauptseite", s) else f"_{s}"                 # Nebenseiten: eigene Dateien/Pruefzeilen
     KO = obj.get("koerper", {})
     if a.koerper not in KO: sys.exit(f"Koerper '{a.koerper}' nicht in objekt.json['koerper'] (vorhanden: {list(KO)}) - Achse/Zone/Hoehen/Spitze dort als Daten eintragen")
     K = KO[a.koerper]
