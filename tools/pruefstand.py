@@ -223,7 +223,12 @@ def main():
     if unzul:
         print("TABELLE UNZULAESSIG:"); [print(f"  - {n}: {g}") for n, g in unzul]; sys.exit(2)
     zirk = [p["name"] for p in tab["pruefungen"] if p.get("massstab") == "modell" and p.get("merkmal") not in ("verhaeltnis", "anzahl", "druck")]
-    if zirk: print("MASSSTAB AUS DEM MODELL (zirkulaer - belegt Richtung, nicht Zahl):"); [print(f"  - {n}") for n in zirk]
+    if zirk:
+        print("MASSSTAB AUS DEM MODELL (zirkulaer - belegt Richtung, nicht Zahl):"); [print(f"  - {n}") for n in zirk]
+        # Sobald es fuer ein Merkmal eine modellfreie Messung gibt, gehoert die zirkulaere Zeile ersetzt (sonst taeuscht sie Widersprueche vor).
+        frei = {p.get("merkmal") for p in tab["pruefungen"] if p.get("massstab") in ("dokument", "lod2", "laser", "foto_intern", "foto_kalibriert")}
+        ersetzbar = [p["name"] for p in tab["pruefungen"] if p.get("massstab") == "modell" and p.get("merkmal") in frei]
+        if ersetzbar: print("  ERSETZBAR (modellfreie Quelle fuer dasselbe Merkmal vorhanden): " + "; ".join(ersetzbar))
     # 2) Messen + Pruefen
     m = lade_modell(stl, obj.get("stl_massstab", 1), obj.get("stl_einheit_mm", True), obj.get("zentrierung", "huelle")); werte = messen(tab, m, obj, root)
     zeilen, bad = [], 0

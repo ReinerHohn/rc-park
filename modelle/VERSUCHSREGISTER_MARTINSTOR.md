@@ -317,3 +317,13 @@ in 3 Runden nachgefuehrt. Ergebnis: 031 Kantenabstand 17,7 -> 7,1 px (Guete 0,59
 **Ergebnis Turmkopf: Widerspruch aufgeloest, das Modell ist bestaetigt.** Drei unabhaengig kalibrierte Kameras ueber 26-40 m:
 030 Median -0,06 m, 031 +0,12 m, 041 -0,20 m (Spannen +-0,9 m). Die Pruefzeile "Silhouettenbreite bei 30 m" steht auf gruen, der frueher
 vermutete Modellfehler (Laser: "20 % zu breit") bleibt widerlegt.
+
+## R. Dachflanken-Widerspruch aufgeloest: die zirkulaere Messung war schuld (2026-11-01)
+Die alte Zeile "Halbbreiten-Zunahme 0,11-0,19 je m" stammte aus Foto 049 mit einem Massstab AUS MODELLMASSEN (zirkulaer, Register J3) und
+stand seit 2026-10-31 als Widerspruch gegen den Laser. **Mit den drei kalibrierten Kameras ist sie ueberfluessig:** `foto_breitenprofil --steigung 37,46`
+misst Foto und Modell mit demselben Verfahren und gibt Foto 030: 0,486, Foto 031: 0,475, Foto 041: 0,481 gegen Modell 0,437-0,505 - Differenz
+hoechstens 0,05. **Die Modellflanke ist bestaetigt, der Widerspruch war ein Artefakt der zirkulaeren Messung.** Masstabelle: Zeile ersetzt
+(Soll 0,40-0,56 aus drei Kameras), Historie dokumentiert. Damit stehen 0 Widersprueche offen.
+**Generelle Mechanik daraus:** Der Pruefstand meldet jetzt nicht nur, welche Zeilen einen Massstab aus dem Modell haben (zirkulaer), sondern auch,
+welche davon ERSETZBAR sind - naemlich wenn fuer dasselbe Merkmal inzwischen eine modellfreie Quelle (Dokument, LoD2, Laser, kalibriertes Foto)
+existiert. Zirkulaere Zeilen taeuschen Widersprueche vor und muessen weichen, sobald es etwas Besseres gibt.

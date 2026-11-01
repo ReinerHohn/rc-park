@@ -111,6 +111,14 @@ def main():
         d = fb - mb if not (np.isnan(fb) or np.isnan(mb)) else np.nan
         zeilen.append((z, fl, fr, fb, ml, mr, mb, d, hinweis))
         print(f"{z:6.1f} | {fl:10.2f} {fr:7.2f} {fb:7.2f} | {ml:8.2f} {mr:6.2f} {mb:7.2f} | {d:+6.2f}   {hinweis}")
+    # Formmass: Steigung der Halbbreite je Hoehe (z. B. Dachflanke) - aus denselben Messungen, ohne neuen Massstab
+    if "--steigung" in a:
+        v0, v1 = [float(x) for x in a[a.index("--steigung") + 1].split(",")]
+        ber = [x for x in zeilen if v0 <= x[0] <= v1 and not np.isnan(x[3]) and not np.isnan(x[6])]
+        if len(ber) >= 4:
+            zz = np.array([x[0] for x in ber]); sf = np.polyfit(zz, np.array([x[3] for x in ber]) / 2, 1)[0]; sm = np.polyfit(zz, np.array([x[6] for x in ber]) / 2, 1)[0]
+            print(f"\nFlankensteigung {v0:.0f}-{v1:.0f} m (Halbbreite je Meter, {len(ber)} Stuetzstellen): Foto {-sf:+.3f}  Modell {-sm:+.3f}  Differenz {-(sf-sm):+.3f}")
+        else: print(f"\nFlankensteigung {v0:.0f}-{v1:.0f} m: nur {len(ber)} Stuetzstellen - zu wenig")
     gut = [x for x in zeilen if not np.isnan(x[7])]
     if gut:
         dd = np.array([x[7] for x in gut]); print(f"\n{len(gut)} von {len(zeilen)} Hoehen messbar; Differenz Foto-Modell: Median {np.median(dd):+.2f} m, Spanne {dd.min():+.2f} .. {dd.max():+.2f} m")

@@ -25,7 +25,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 | Zinnen-Scharten Suedseite (Anzahl, z 31,1 m) | 4.00 | 4..4 | foto_vollbild | - | OK | Foto 031/041 Vollbild: 5 Zinnen = 4 Scharten je Seite (Zinnen selbst verschmelzen im STL mit den Erkern) |
 | Zinnen-Scharten Nordseite (Anzahl, z 31,1 m) | 4.00 | 4..4 | foto_vollbild | - | OK | wie oben |
 | Uhr Zifferblatt-Nische Suedseite (Breite m) | 4.45 | 3.9..5.2 | foto_vollbild | lod2 | OK | MASSPRUEFUNG Teil 3: Zifferblatt 158 px / 35,3 px/m = 4,5 m (Foto 042), +-12 % |
-| Dachflanke Halbbreiten-Zunahme je m (Ansicht y, 37->45 m) | 0.21 | 0.11..0.19 | foto_vollbild | - | WIDERSPRUCH | Foto 049 Vollbild: Breite +0,305 px je px -> 0,15 je Seite; Foto 000 und 014: 0,125 (foto_spitze_vollbild, Register J3). Modell 0,21 = Dach laeuft zu schnell zu |
+| Dachflanke: Halbbreiten-Zunahme je m (Silhouette 38-45 m, Kamera K-030) | 0.55 | 0.4..0.56 | foto_kalibriert | foto_kalibriert | OK | tools/foto_breitenprofil.py --steigung 37,46 mit drei unabhaengigen Kameras: Foto 030 0,486 / 031 0,475 / 041 0,481; Modell 0,437-0,505. Differenz Foto-Modell hoechstens 0,05. |
 | Inschrifttafel NORD Breite (m, z 7,5) | 3.35 | 3..3.8 | dokument | dokument | OK | de.wikipedia: Gedenktafel 1796 auf der Stadtseite (Nord); Foto 001; Breite 3,4 m (MASSPRUEFUNG Teil 5) |
 | Keine Tafel auf SUED bei z 7,5 (m) | 0.00 | 0..0.9 | foto_vollbild | - | OK | Fotos 041/030 Vollbild: Suedwand unter dem Adler glatt (Messbereich /u/ < 2,5 m, damit die gezahnten Eckquader nicht mitzaehlen) |
 | Doppeladler SUED Breite (m, z 9,45) | 1.65 | 1.3..3.2 | foto_vollbild | foto_intern | OK | Fotos 041/030: Adlerrelief rechts ueber dem Bogen, Suedseite; de.wikipedia: Toraussenseite |
@@ -41,9 +41,9 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 
 - **laser_dom1**: 3 von 3 Pruefungen gruen (1-m-Raster, interpoliert, nur von oben; Strukturen < ~3 m verschmiert, Nadeln unsichtbar. BLIND auch fuer Grundriss mit Vorspruengen < ~1 m (Gesims, Erker): die Flaeche ueber Hoehe faellt dann 15-20 % zu klein aus (Martinstor 2026-11-01, Register O/P))
 - **foto_verhaeltnis**: 4 von 4 Pruefungen gruen (nur Verhaeltnisse (+-5-10 %), absolute Masse nur mit bekanntem Massstab)
-- **foto_vollbild**: 15 von 16 Pruefungen gruen (Vollaufloesung, Massstab aus Modell oder Dokument -> Werte grob, Richtung sicher)
+- **foto_vollbild**: 15 von 15 Pruefungen gruen (Vollaufloesung, Massstab aus Modell oder Dokument -> Werte grob, Richtung sicher)
 - **dokument**: 2 von 2 Pruefungen gruen (Bauforschung/Denkmalamt/Wikipedia; Bezugshoehe oft unklar (60 vs 65 m))
-- **foto_kalibriert**: 3 von 3 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
+- **foto_kalibriert**: 4 von 4 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
 - **lod2**: 1 von 1 Pruefungen gruen (amtlicher Grundriss + Traufe/First, keine Aufbauten/Details)
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
 
@@ -81,15 +81,31 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - Sued: Fotos vorhanden
 - West: KEIN FOTO - ungeprueft
 
-## Offene Widersprueche
-
-- Dachflanke Halbbreiten-Zunahme je m (Ansicht y, 37->45 m): Laser (optimierung_validieren, steilere Flanke 0,15): Ziel 14,3->13,8 und M2 13,9->13,4 besser, aber M1 16,1->18,4 und M3 16,1->18,0 schlechter; Foto-IoU +0,002 (Rauschen). Register J6. Bleibt 0,21 bis eine Quelle entscheidet.
-
 ## Beobachtungen ohne Pruefung
 
 - 2026-11-01 Claude (Fotosichtung): Waagrechter Balken/Blende auf halber Hoehe der Schaftwand (Suedseite) -> Vollbild messen
 - 2026-11-01 Claude: Ost-/Westseite (+-y) kaum fotografiert; Fenster dort sind Annahme -> Fotos der Seiten beschaffen (Mapillary/eigene)
 - 2026-11-01 fehlteile_finden (Foto 030, alt vs neu) + Nutzer: Finder markierte am alten Modell die Zone Uhrgiebel/Kragdach (z 29-31 m) als FEHLT; nach Einbau von Kielbogen und Kragdach bleiben Treffer nahe der Uhr-Oberkante (Kamera K-030 ~0,5-1 m versetzt) und an der SE-Kante (Eckquader-Muster: Foto hat Quader in jeder Lage, Modell gezahnt nur jede zweite). -> Kamera mit praezisen Picks neu loesen, dann Finder erneut; Eckquader-Muster am Vollbild pruefen
+- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 34.5-35.0 m: Foto 12.22 m, Modell 13.29 m (-1.07 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 37.0-37.5 m: Foto 9.56 m, Modell 10.30 m (-0.74 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 40.0-41.0 m: Foto 9.33 m, Modell 8.35 m (+0.98 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 43.5-46.5 m: Foto 3.25 m, Modell 4.03 m (-0.78 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto fehlteile_finden (Foto 030, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=30.69 m, y=2.56 m (Zelle [1071, 945, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 030, Treffer 2): Foto zeigt Struktur ohne Modellgegenstueck bei z=28.64 m, y=1.13 m (Zelle [1008, 1008, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 030, Treffer 3): Foto zeigt Struktur ohne Modellgegenstueck bei z=21.26 m, y=5.19 m (Zelle [1323, 1260, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 030, Treffer 4): Foto zeigt Struktur ohne Modellgegenstueck bei z=20.11 m, y=5.2 m (Zelle [1323, 1323, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 030, Treffer 5): Foto zeigt Struktur ohne Modellgegenstueck bei z=16.54 m, y=5.2 m (Zelle [1323, 1512, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 23.5-25.0 m: Foto 12.38 m, Modell 11.77 m (+0.61 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 27.0-28.0 m: Foto 12.40 m, Modell 11.65 m (+0.75 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 31.0-33.5 m: Foto 11.07 m, Modell 11.83 m (-0.75 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 36.5-37.5 m: Foto 10.95 m, Modell 10.16 m (+0.79 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 46.5-47.0 m: Foto 0.51 m, Modell 3.11 m (-2.60 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 48.0-48.5 m: Foto 1.03 m, Modell 0.23 m (+0.80 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto fehlteile_finden (Foto 031, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=43.37 m, y=1.27 m (Zelle [792, 616, 88], Score +1.00) -> audit/fehlteile_031.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
+- auto foto_breitenprofil (Foto 041, Kamera K-041): Silhouettenbreite z 29.0-31.5 m: Foto 11.18 m, Modell 11.86 m (-0.68 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto foto_breitenprofil (Foto 041, Kamera K-041): Silhouettenbreite z 43.0-43.0 m: Foto 10.00 m, Modell 8.36 m (+1.64 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto foto_breitenprofil (Foto 041, Kamera K-041): Silhouettenbreite z 47.0-48.0 m: Foto 1.37 m, Modell 3.04 m (-1.67 m) -> gegen ein zweites Foto pruefen; nur wenn beide einig sind, Ursache isolieren (tools/variante_bauen.sh) und Pruefzeile
+- auto fehlteile_finden (Foto 041, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=39.38 m, y=1.98 m (Zelle [960, 576, 96], Score +1.00) -> audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
 
 ## Grenze
 

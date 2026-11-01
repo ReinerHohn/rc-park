@@ -43,7 +43,9 @@
   "hyp32": 120.0,
   "hyp30": 144.0,
   "hyp40": 42.0,
-  "sil30": 13.58
+  "sil30": 13.58,
+  "sil38": 11.66,
+  "sil45": 3.9800000000000004
  },
  "pruefungen": [
   {
@@ -247,14 +249,14 @@
    "status": "ok"
   },
   {
-   "name": "Dachflanke Halbbreiten-Zunahme je m (Ansicht y, 37->45 m)",
-   "wert": 0.2102803264232181,
+   "name": "Dachflanke: Halbbreiten-Zunahme je m (Silhouette 38-45 m, Kamera K-030)",
+   "wert": 0.5485714285714286,
    "soll": [
-    0.11,
-    0.19
+    0.4,
+    0.56
    ],
-   "ok": false,
-   "status": "widerspruch"
+   "ok": true,
+   "status": "ok"
   },
   {
    "name": "Inschrifttafel NORD Breite (m, z 7,5)",

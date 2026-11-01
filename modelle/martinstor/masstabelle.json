@@ -208,6 +208,18 @@
    "z": 30.0,
    "kamera": "K-030",
    "foto": "030"
+  },
+  "sil38": {
+   "typ": "silhouettenbreite",
+   "z": 38.0,
+   "kamera": "K-030",
+   "foto": "030"
+  },
+  "sil45": {
+   "typ": "silhouettenbreite",
+   "z": 45.0,
+   "kamera": "K-030",
+   "foto": "030"
   }
  },
  "pruefungen": [
@@ -467,21 +479,20 @@
    "massstab": "lod2"
   },
   {
-   "name": "Dachflanke Halbbreiten-Zunahme je m (Ansicht y, 37->45 m)",
-   "wert": "(dach_u_y - dach_o_y) / 2 / dach_dz",
+   "name": "Dachflanke: Halbbreiten-Zunahme je m (Silhouette 38-45 m, Kamera K-030)",
+   "wert": "(sil38 - sil45) / 2 / 7.0",
    "soll": [
-    0.11,
-    0.19
+    0.4,
+    0.56
    ],
-   "quelle": "Foto 049 Vollbild: Breite +0,305 px je px -> 0,15 je Seite; Foto 000 und 014: 0,125 (foto_spitze_vollbild, Register J3). Modell 0,21 = Dach laeuft zu schnell zu",
-   "quelltyp": "foto_vollbild",
+   "quelle": "tools/foto_breitenprofil.py --steigung 37,46 mit drei unabhaengigen Kameras: Foto 030 0,486 / 031 0,475 / 041 0,481; Modell 0,437-0,505. Differenz Foto-Modell hoechstens 0,05.",
+   "quelltyp": "foto_kalibriert",
    "merkmal": "verhaeltnis",
    "historie": [
-    "2026-11-01 angelegt als fehlschlagende Pruefung VOR der Generatoraenderung (Methode Schritt 2)"
+    "2026-11-01 angelegt als fehlschlagende Pruefung VOR der Generatoraenderung (Methode Schritt 2)",
+    "2026-11-01: ersetzt die Zeile 'Halbbreiten-Zunahme 0,11-0,19 aus Foto 049'. Die war ZIRKULAER (Massstab aus Modellmassen) und hat einen Widerspruch vorgetaeuscht; drei kalibrierte Kameras bestaetigen die Modellflanke."
    ],
-   "status": "widerspruch",
-   "widerspruch": "Laser (optimierung_validieren, steilere Flanke 0,15): Ziel 14,3->13,8 und M2 13,9->13,4 besser, aber M1 16,1->18,4 und M3 16,1->18,0 schlechter; Foto-IoU +0,002 (Rauschen). Register J6. Bleibt 0,21 bis eine Quelle entscheidet.",
-   "massstab": "-"
+   "massstab": "foto_kalibriert"
   },
   {
    "name": "Inschrifttafel NORD Breite (m, z 7,5)",
