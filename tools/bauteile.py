@@ -100,6 +100,17 @@ class Bau:
     def _h(self, h):
         return (self.hx, self.hy) if h is None else h
 
+    def fassade(self, gruppen, seite, hxy):
+        """Oeffnungen einer Seite aus der Fassadenliste (JSON) bauen. Gibt den Beleg-Eintrag zurueck, damit der Aufrufer
+        ihn registriert. Reihenfolge der Liste = Reihenfolge im CSG - wichtig, sonst aendert sich das Ergebnis."""
+        for g in gruppen:
+            if seite not in g["seiten"]: continue
+            for o in g["oeffnungen"]:
+                if o["typ"] == "fenster":
+                    self.window(seite, o["u"], o["z"], o["breite"], o["hoehe"], hh=hxy(o["z"]))
+            return g.get("beleg")
+        return None
+
     def window(self, face, u, z, w, h, c=(0.0, 0.0), hh=None, deep=0.35):
         hh = self._h(hh)
         fr, sill = self.rel(0.08), self.rel(0.14)

@@ -1,0 +1,33 @@
+{
+  "_doku": "Fassadenelemente als DATEN: welche Oeffnung sitzt auf welcher Seite, in welcher Hoehe, wie gross - mit Beleg. Der Generator arbeitet diese Liste ab (Reihenfolge = Reihenfolge im CSG). Varianten brauchen damit keine Textersetzung im Quelltext mehr, und tools/fehlteile_finden.py kann einen Eintrag direkt vorschlagen. Die Geometrie selbst (wie ein Fenster aus Gewaende, Sohlbank, Sturz und Nische entsteht) bleibt in tools/bauteile.py.",
+  "gruppen": [
+    {
+      "seiten": ["+x"],
+      "beleg": {"element": "Fenster 2 oben + 1 tiefer", "quelle": "Fotos 041/030/042 Vollbild (Sued)", "anzahl": 3},
+      "oeffnungen": [
+        {"typ": "fenster", "u": -2.1, "z": 21.65, "breite": 0.6, "hoehe": 0.85, "was": "Schlitzfenster links, ca. 4,8 m unter der Uhrmitte"},
+        {"typ": "fenster", "u": 2.1, "z": 21.65, "breite": 0.6, "hoehe": 0.85, "was": "Schlitzfenster rechts"},
+        {"typ": "fenster", "u": 0.5, "z": 18.1, "breite": 0.5, "hoehe": 0.8, "was": "drittes Fenster, ca. 8,5 m unter der Uhrmitte, rechts der Mitte"}
+      ]
+    },
+    {
+      "seiten": ["-x"],
+      "beleg": {"element": "Fenster 3 in Reihe + 1 Schlitz", "quelle": "Fotos 031/001 Vollbild (Nord)", "anzahl": 4},
+      "oeffnungen": [
+        {"typ": "fenster", "u": -2.5, "z": 21.65, "breite": 0.6, "hoehe": 0.85, "was": "linkes von drei Fenstern in einer Reihe"},
+        {"typ": "fenster", "u": 0.0, "z": 21.65, "breite": 0.6, "hoehe": 0.85, "was": "mittleres Fenster (fehlte bis 2026-11-01 im Modell)"},
+        {"typ": "fenster", "u": 2.5, "z": 21.65, "breite": 0.6, "hoehe": 0.85, "was": "rechtes Fenster"},
+        {"typ": "fenster", "u": 0.0, "z": 18.1, "breite": 0.5, "hoehe": 0.8, "was": "Schlitz tiefer, mittig"}
+      ]
+    },
+    {
+      "seiten": ["+y", "-y"],
+      "beleg": {"element": "Fenster 2 oben + 1 tiefer", "quelle": "ANNAHME: Ost/West nicht fotografiert", "anzahl": 3},
+      "oeffnungen": [
+        {"typ": "fenster", "u": -1.8, "z": 26.0, "breite": 0.55, "hoehe": 1.0, "was": "Annahme, spiegelbildlich zu den Uhrseiten"},
+        {"typ": "fenster", "u": 1.8, "z": 26.0, "breite": 0.55, "hoehe": 1.0, "was": "Annahme"},
+        {"typ": "fenster", "u": 0.0, "z": 21.8, "breite": 0.45, "hoehe": 0.9, "was": "Annahme"}
+      ]
+    }
+  ]
+}

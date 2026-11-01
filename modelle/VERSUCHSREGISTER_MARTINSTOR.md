@@ -492,3 +492,17 @@ dann wieder freistellen). Das in JSON zu fassen hiesse, eine Programmiersprache 
 und das Objektwissen waere nicht kleiner, nur anders geschrieben. **Der Gewinn lag bei den Massen, und der ist eingefahren:**
 sie stehen jetzt als belegte Daten neben der Masstabelle, nicht als nackte Zahlen zwischen Geometriebefehlen.
 **Stand: 1721 Zeilen generischer Code (84 %), 323 Zeilen Komposition, 30 belegte Masse, 3027 Zeilen Objektdaten.**
+
+## AB. Fassadenelemente als JSON (2026-11-01)
+**`modelle/martinstor/fassade.json`:** drei Gruppen (Sued 2+1, Nord 3+1, Ost/West 3 als Annahme) mit zehn Oeffnungen - je Lage,
+Hoehe, Groesse, Zweck und Beleg. Der generische Abarbeiter `Bau.fassade(gruppen, seite, hxy)` baut sie und gibt den Beleg zurueck.
+Die Geometrie eines Fensters (Gewaende, Sohlbank, Sturz, Nische, Mittelpfosten) bleibt in `tools/bauteile.py` - **die Grenze
+laeuft entlang "Daten gegen Ablauf", nicht quer durch ein Bauteil.**
+**Beweis:** STL bitidentisch (md5 a8dcc8cf...), 25.632 Dreiecke, alle Pruefungen gruen.
+**Nutzen belegt, nicht behauptet:** Ein zusaetzliches Fenster wurde allein durch Bearbeiten der JSON eingefuegt - ohne Textersetzung
+im Quelltext. Der Pruefstand schlug sofort an ("Fenster obere Reihe Suedseite 3,00, Soll 2..2"), danach wurde zurueckgesetzt und das
+STL war wieder bitidentisch. Genau diese Varianten liefen bisher ueber `sed` auf Python-Quelltext und sind mir dreimal fehlgeschlagen
+(Muster griff nicht -> drei identische "Varianten"; eine Regex loeschte `import random`).
+**Was bewusst Code bleibt:** Schleifen ueber Seiten, Bedingungen, berechnete Lagen (`hxy(z)`), CSG-Reihenfolge und Ausnahmen
+(Arkaden erst schneiden, dann freistellen). Das in JSON zu fassen hiesse, eine Programmiersprache in JSON nachzubauen -
+mehr Zeilen, schlechter lesbar, gleiches Objektwissen.

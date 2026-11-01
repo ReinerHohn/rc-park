@@ -32,6 +32,7 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "stl",
 # ---- Masse: DATEN mit Quelle in modelle/martinstor/masse.json (nicht mehr im Code) ----
 from bauteile import lade_masse
 _M = lade_masse(os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "masse.json"))
+_FASSADE = __import__("json").load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "fassade.json")))["gruppen"]
 H_TOTAL = _M["H_TOTAL"]; DB, WB, ZB = _M["DB"], _M["WB"], _M["ZB"]; D, W = _M["D"], _M["W"]
 ZK, DK, WK = _M["ZK"], _M["DK"], _M["WK"]; ZZ = _M["ZZ"]; SEG = int(_M["SEG"])
 
@@ -179,21 +180,11 @@ for f in ("+x", "-x"):
         u, zz = math.sin(ang) * (UR + 0.28), UZ + math.cos(ang) * (UR + 0.28)
         adds.append(fcyl(f, u, zz, 0.2, -0.2, -0.15 + rel(0.09), h=hh))
     beleg(f, "Uhr mit Giebel und Stundenmarken", "Fotos 041/042 (Sued), 031/001 (Nord); MASSPRUEFUNG Teil 3", durchmesser=2 * UR)
-    if f == "+x":   # SUEDSEITE (Konvention; Nutzer: Uhr zeigt nach Sueden): Fotos 041/030/042/001 - zwei Fenster oben, eines tiefer rechts der Mitte
-        beleg(f, "Fenster 2 oben + 1 tiefer", "Fotos 041/030/042 Vollbild (Sued)", anzahl=3)
-        for u in (-2.1, 2.1):   # zwei Fenster ca. 4,8 m unter der Uhrmitte, aussen 1,1 x 1,35 m
-            window(f, u, 21.65, 0.6, 0.85, hh=hxy(21.65))
-        window(f, 0.5, 18.1, 0.5, 0.8, hh=hxy(18.1))      # drittes Fenster ca. 8,5 m unter der Uhrmitte
-    else:           # NORDSEITE: Foto 031 (Vollbild 2025): drei Fenster in einer Reihe (u -2,6 / 0 / +2,5 m), ein Schlitz tiefer bei u ~ 0
-        beleg(f, "Fenster 3 in Reihe + 1 Schlitz", "Fotos 031/001 Vollbild (Nord)", anzahl=4)
-        for u in (-2.5, 0.0, 2.5):
-            window(f, u, 21.65, 0.6, 0.85, hh=hxy(21.65))
-        window(f, 0.0, 18.1, 0.5, 0.8, hh=hxy(18.1))
+    _bg = _B.fassade(_FASSADE, f, hxy)                      # Oeffnungen aus modelle/martinstor/fassade.json
+    if _bg: beleg(f, _bg["element"], _bg["quelle"], anzahl=_bg.get("anzahl"))
 for f in ("+y", "-y"):
-    beleg(f, "Fenster 2 oben + 1 tiefer", "ANNAHME: Ost/West nicht fotografiert", anzahl=3)
-    for u in (-1.8, 1.8):
-        window(f, u, 26.0, 0.55, 1.0, hh=hxy(26.0))
-    window(f, 0.0, 21.8, 0.45, 0.9, hh=hxy(21.8))
+    _bg = _B.fassade(_FASSADE, f, hxy)
+    if _bg: beleg(f, _bg["element"], _bg["quelle"], anzahl=_bg.get("anzahl"))
 
 # ---------- Zinnenkranz + Kragdach ----------
 adds.append(box(-D / 2 - 0.35, D / 2 + 0.35, -W / 2 - 0.35, W / 2 + 0.35, ZZ - 0.45, ZZ))        # Kranzgesims
