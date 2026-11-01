@@ -440,7 +440,8 @@
    "tools/wolke_farbmerkmal.py <objekt> nord --farbe gold --z 20 32 --pruefung 'Uhr Nord: Mitte z (m)' ... (farbige Fassadenmerkmale -> Pruefzeile; Modellseite relief_mitte)",
    "tools/foto_lod2_zuordnen.py <objekt> <foto> --gml-dir /media/oem/scan/tmp/mt_lod2 --u .. --v .. (unbekanntes Ding im Foto: LoD2 in die Kamera projizieren)",
    "Sichtfund Seitenansicht: orthografische Projektion Modell + Wolke rendern (audit/seitenansicht_west_wolke.png, Skript in Register AT) und Nordfront je m tabellieren - vor jeder Generatoraenderung",
-   "tools/wolke_baender.py <objekt> nord --koerper tuermchen --pruefungen (Baender je Koerper aus objekt.json['koerper'] aus Aussenradius + Farbklassen -> profile_tuerm_baender.json, Generator baut daraus; je Band Pruefzeile tuerm_radius)"
+   "tools/wolke_baender.py <objekt> nord --koerper tuermchen --pruefungen (Baender je Koerper aus objekt.json['koerper'] aus Aussenradius + Farbklassen -> profile_tuerm_baender.json, Generator baut daraus; je Band Pruefzeile tuerm_radius)",
+   "tools/masse_aus_profilen.py <objekt> --schreiben (Stufe C: Masse aus Baendern/Profilen/Merkmalen/Ankern nach objekt.json['masse_regeln'] - vor jedem Bau)"
   ],
   "regel": "Neuer Matcher/Variante NUR mit --name <variante> in eigene Ordner; Referenznetz sparse_<seite> nie ueberschreiben (Panne AK)",
   "quellen_blindheit_dom1_helm": "DOM1-Zellmaxima (1 m) erfassen Helmflaechen steiler als ~75 Grad nur teilweise: Schnittbreiten und Zellzahlen dort keine Obergrenze (Register AR, Foto 061 + Wolke stimmen, DOM1 Faktor 2 kleiner)"
@@ -521,6 +522,7 @@
    "{PY} -W ignore -I tools/wolke_farbmerkmal.py {OBJ} nord --farbe gold --z 20 32 --halb 3 --pruefung 'Uhr Nord: Mitte z (m)' --messung '{{\"typ\":\"relief_mitte\",\"seite\":\"-x\",\"z0\":23.0,\"z1\":30.0,\"halb\":3.0,\"schwelle\":0.05,\"richtung\":\"zurueck\"}}' --feld z --toleranz 0.4",
    "{PY} -W ignore -I tools/wolke_baender.py {OBJ} nord --koerper tuermchen --pruefungen",
    "{PY} -W ignore -I tools/wolke_baender.py {OBJ} nord --koerper zentral",
+   "{PY} -W ignore -I tools/masse_aus_profilen.py {OBJ} --schreiben",
    "SCALE=87 MINMM=0.8 {RC} modelle/martinstor_v4_gen.py",
    "{PY} -W ignore -I tools/pruefstand.py {OBJ}",
    "{PY} -W ignore -I tools/wolke_vs_modell.py {OBJ} nord --entzerren --nebengebaeude"
@@ -612,5 +614,279 @@
   "max_je_blickgruppe": 4,
   "min_schaerfe": 40.0,
   "regel": "Mehrwert statt Masse: Duplikate nur das beste, aehnliche mit Parallaxe gedeckelt je Blickgruppe, neue Blickwinkel immer; Lizenz/Autor je Bild Pflicht (LIZENZ_WERKZEUGE.md)"
- }
+ },
+ "masse_regeln": [
+  {
+   "masse": "KRAG_TRAUFE",
+   "regel": "band_z",
+   "params": {
+    "koerper": "zentral",
+    "auswahl": "vor_kupfer_1",
+    "lage": "mitte"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "KRAG_UEBER",
+   "regel": "band_r2",
+   "params": {
+    "koerper": "zentral",
+    "auswahl": "vor_kupfer_1",
+    "minus": "D"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "GZ0",
+   "regel": "band_z",
+   "params": {
+    "koerper": "zentral",
+    "auswahl": "kupfer_1",
+    "lage": "z1"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "GZ1",
+   "regel": "band_z",
+   "params": {
+    "koerper": "zentral",
+    "auswahl": "traufe_vor_letztem_kupfer",
+    "lage": "z1"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "GX",
+   "regel": "baender_r2_median",
+   "params": {
+    "koerper": "zentral",
+    "zwischen": [
+     "GZ0",
+     "GZ1"
+    ],
+    "klassen": [
+     "hell",
+     "stein",
+     "offen"
+    ]
+   },
+   "runden": 2
+  },
+  {
+   "masse": "GY",
+   "regel": "bleibt",
+   "params": {
+    "grund": "Breite quer des Glockenstocks nicht aus der Nordwolke ableitbar: die Ecktuermchen stehen in den Ecken und verdecken die Wandkanten (Frontfenster-Breite ist durch die Tuermchenzone begrenzt); Wert aus dem y-Histogramm 34,5-37,5 m (Register AS)"
+   }
+  },
+  {
+   "masse": "HELM_UEBER",
+   "regel": "band_r2",
+   "params": {
+    "koerper": "zentral",
+    "auswahl": "traufe_vor_letztem_kupfer",
+    "minus": "GX"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "DACHHOEHE",
+   "regel": "differenz",
+   "params": {
+    "a": "first_plattform",
+    "b": "GZ1"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "H_TOTAL",
+   "regel": "anker_z",
+   "params": {
+    "name": "nadel_spitze"
+   },
+   "runden": 1
+  },
+  {
+   "masse": "UZ",
+   "regel": "merkmal",
+   "params": {
+    "datei": "merkmal_gold_nord.json",
+    "feld": "z"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "KONSOLE_Z0",
+   "regel": "band_z",
+   "params": {
+    "koerper": "tuermchen",
+    "auswahl": "klasse:gesims:0",
+    "lage": "z0"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "KONSOLE_Z1",
+   "regel": "band_z",
+   "params": {
+    "koerper": "tuermchen",
+    "auswahl": "stein_ab:1.0",
+    "lage": "z0"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "OR",
+   "regel": "band_r",
+   "params": {
+    "koerper": "tuermchen",
+    "auswahl": "klasse:hell:0"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "ERKER_OBEN",
+   "regel": "band_z",
+   "params": {
+    "koerper": "tuermchen",
+    "auswahl": "klasse:traufe:0",
+    "lage": "z0"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "QUADER_TUERMCHEN",
+   "regel": "band_periode",
+   "params": {
+    "koerper": "tuermchen",
+    "auswahl": "stein_ab:1.0"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "QUADER_SCHAFT_UNTEN",
+   "regel": "perioden_gruppen",
+   "params": {
+    "koerper": "zentral",
+    "bereich": [
+     10.0,
+     31.5
+    ],
+    "ziel": "unten",
+    "min_staerke": 0.3
+   },
+   "runden": 2
+  },
+  {
+   "masse": "QUADER_SCHAFT_OBEN",
+   "regel": "perioden_gruppen",
+   "params": {
+    "koerper": "zentral",
+    "bereich": [
+     10.0,
+     31.5
+    ],
+    "ziel": "oben",
+    "min_staerke": 0.3
+   },
+   "runden": 2
+  },
+  {
+   "masse": "QUADER_ZONE_Z",
+   "regel": "perioden_gruppen",
+   "params": {
+    "koerper": "zentral",
+    "bereich": [
+     10.0,
+     31.5
+    ],
+    "ziel": "grenze",
+    "min_staerke": 0.3
+   },
+   "runden": 1
+  },
+  {
+   "masse": "QUADER_GLOCKENSTOCK",
+   "regel": "periode_fenster",
+   "params": {
+    "koerper": "zentral",
+    "bereich": [
+     "GZ0",
+     "GZ1"
+    ],
+    "min_staerke": 0.3
+   },
+   "runden": 2
+  },
+  {
+   "masse": "QUADER_LAENGE",
+   "regel": "periode_quer",
+   "params": {
+    "koerper": "zentral",
+    "bereich": [
+     8.0,
+     31.5
+    ],
+    "min_staerke": 0.3
+   },
+   "runden": 2
+  },
+  {
+   "masse": "QUADER_KURZ_FAKTOR",
+   "regel": "konstante",
+   "params": {
+    "wert": 1.0,
+    "grund": "keine Zweischicht-Periode (Lang/Kurz-Alternanz) in den Farbperioden messbar -> Bloecke je Schicht gleich lang"
+   }
+  },
+  {
+   "masse": "EX",
+   "regel": "bleibt",
+   "params": {
+    "grund": "WIDERSPRUCH (Regel 5, nicht mitteln): Wolke Nord Front -6,21 / Sehne in halber Tiefe 2,4 m -> r 1,42 (Durchmesser 2,84), Foto 001 (M-001-001, Massstab Tafelhoehe) 2,29 +-0,21 m; Pruefung 'Eckturm NW Durchmesser 2..2,7' wuerde rot. Handwert bleibt bis eine dritte Quelle (Suedwolke/kalibriertes Foto) entscheidet.",
+    "versuch": "zylinder_an_wand: zone z 8-14, quer -5,5..-2,0, Wand -DB/2 -> EX -4,80 EY -3,54 ER 1,42 (Vorsprung 1,31)"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "EY",
+   "regel": "bleibt",
+   "params": {
+    "grund": "WIDERSPRUCH (Regel 5, nicht mitteln): Wolke Nord Front -6,21 / Sehne in halber Tiefe 2,4 m -> r 1,42 (Durchmesser 2,84), Foto 001 (M-001-001, Massstab Tafelhoehe) 2,29 +-0,21 m; Pruefung 'Eckturm NW Durchmesser 2..2,7' wuerde rot. Handwert bleibt bis eine dritte Quelle (Suedwolke/kalibriertes Foto) entscheidet.",
+    "versuch": "zylinder_an_wand: zone z 8-14, quer -5,5..-2,0, Wand -DB/2 -> EX -4,80 EY -3,54 ER 1,42 (Vorsprung 1,31)"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "ER",
+   "regel": "bleibt",
+   "params": {
+    "grund": "WIDERSPRUCH (Regel 5, nicht mitteln): Wolke Nord Front -6,21 / Sehne in halber Tiefe 2,4 m -> r 1,42 (Durchmesser 2,84), Foto 001 (M-001-001, Massstab Tafelhoehe) 2,29 +-0,21 m; Pruefung 'Eckturm NW Durchmesser 2..2,7' wuerde rot. Handwert bleibt bis eine dritte Quelle (Suedwolke/kalibriertes Foto) entscheidet.",
+    "versuch": "zylinder_an_wand: zone z 8-14, quer -5,5..-2,0, Wand -DB/2 -> EX -4,80 EY -3,54 ER 1,42 (Vorsprung 1,31)"
+   },
+   "runden": 2
+  },
+  {
+   "masse": "DACH_MITTE_Z",
+   "regel": "bleibt",
+   "params": {
+    "grund": "nur Fallback ohne Profildatei (PROFIL_DATEI=1 nutzt den Loft); unbenutzt"
+   }
+  },
+  {
+   "masse": "DACH_MITTE2_Z",
+   "regel": "bleibt",
+   "params": {
+    "grund": "nur Fallback ohne Profildatei; unbenutzt"
+   }
+  },
+  {
+   "masse": "PROFIL_DATEI",
+   "regel": "bleibt",
+   "params": {
+    "grund": "Schalter (1 = Loft aus Profilen), keine Messgroesse"
+   }
+  }
+ ]
 }

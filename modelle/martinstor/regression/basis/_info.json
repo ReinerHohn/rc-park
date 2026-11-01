@@ -5,6 +5,7 @@
   "{PY} -W ignore -I tools/wolke_farbmerkmal.py {OBJ} nord --farbe gold --z 20 32 --halb 3 --pruefung 'Uhr Nord: Mitte z (m)' --messung '{{\"typ\":\"relief_mitte\",\"seite\":\"-x\",\"z0\":23.0,\"z1\":30.0,\"halb\":3.0,\"schwelle\":0.05,\"richtung\":\"zurueck\"}}' --feld z --toleranz 0.4",
   "{PY} -W ignore -I tools/wolke_baender.py {OBJ} nord --koerper tuermchen --pruefungen",
   "{PY} -W ignore -I tools/wolke_baender.py {OBJ} nord --koerper zentral",
+  "{PY} -W ignore -I tools/masse_aus_profilen.py {OBJ} --schreiben",
   "SCALE=87 MINMM=0.8 {RC} modelle/martinstor_v4_gen.py",
   "{PY} -W ignore -I tools/pruefstand.py {OBJ}",
   "{PY} -W ignore -I tools/wolke_vs_modell.py {OBJ} nord --entzerren --nebengebaeude"

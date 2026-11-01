@@ -641,7 +641,7 @@
   "uhr_S": {
    "typ": "relief_breite",
    "seite": "+x",
-   "z": 25.7,
+   "z": "=farb_uhr_nord__mitte_z__m_z - 0.8",
    "halb": 3.6,
    "hoehe_min": 0.05,
    "art": "rueck",

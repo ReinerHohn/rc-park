@@ -60,7 +60,8 @@ def main():
         else:
             T["pruefungen"].append(dict(name=a.pruefung, wert=name_wert, soll=soll, quelle=quelle, quelltyp="sfm_bodenanker", merkmal=a.merkmal, massstab="LoD2-Eckkanten + Wandebene", protokoll=f"wolke_farbmerkmal {s} {a.farbe}"))
         schreiben(tp, T, _L); print(f"  Masstabelle: Pruefung '{a.pruefung}' Soll {soll} (Messung {name_wert})")
-    print(json.dumps(erg, ensure_ascii=False))
+    op = os.path.join(od, f"merkmal_{a.farbe}_{s}.json"); json.dump(erg, open(op, "w"), indent=1, ensure_ascii=False)   # fuer masse_aus_profilen.py
+    print(json.dumps(erg, ensure_ascii=False)); print("geschrieben:", op)
 
 if __name__ == "__main__":
     main()

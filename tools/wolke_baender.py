@@ -46,12 +46,24 @@ def main():
     TS = hoehe(K["spitze"])
     hsv = cv2.cvtColor(C.reshape(-1, 1, 3).astype(np.uint8), cv2.COLOR_RGB2HSV).reshape(-1, 3).astype(float); h, sa, v = hsv.T
     kl = {"stein": ((h <= 20) | (h >= 165)) & (sa > 45) & (v > 60) & (v < 200), "weiss": (sa < 45) & (v > 165), "dunkel": v < 75, "kupfer": (h >= 60) & (h <= 100) & (sa > 50)}
+    # Fremdkoerper neben der Achse (z. B. Ecktuermchen) fuer die Breite quer ausblenden: andere Koerper aus profile_baender_<name>.json
+    fremd = []
+    for name, KK in KO.items():
+        if name == a.koerper: continue
+        fp = os.path.join(od, f"profile_baender_{name}.json")
+        if os.path.exists(fp):
+            F = json.load(open(fp)); rr = max([b["r"] for b in F["baender"] if b["klasse"] != "kupfer"] or [1.0]); fremd.append(dict(quer=F["achse"]["quer"], r=rr, z1=F.get("spitze", 1e9) + 0.8))
     schichten = []
     for z in np.arange(zr[0], zr[1], a.dz):
         k = (np.abs(P[:, 2] - (z + a.dz / 2)) < a.dz / 2) & (np.abs(np.abs(P[:, iq]) - aq) < zone) & (sgn * P[:, it] > at) & (sgn * P[:, it] < at + reich)
         if k.sum() < 12: continue
-        x = sgn * P[k, it]; fr = {n: float(m[k].mean()) for n, m in kl.items()}
-        schichten.append(dict(z=round(float(z + a.dz / 2), 3), n=int(k.sum()), r=round(float(np.percentile(x, 97) - at), 3), **{f"p_{n}": round(100 * f, 1) for n, f in fr.items()}))
+        x = sgn * P[k, it]; fr = {n: float(m[k].mean()) for n, m in kl.items()}; front = float(np.percentile(x, 97))
+        # Breite quer des Koerpers in dieser Schicht: Punkte im Frontfenster (Tiefe front-0,8..front+0,2), ohne Fremdkoerperzonen
+        kq = (np.abs(P[:, 2] - (z + a.dz / 2)) < a.dz / 2) & (sgn * P[:, it] > front - 0.8) & (sgn * P[:, it] < front + 0.2)
+        for f in fremd:
+            if z + a.dz / 2 <= f["z1"]: kq &= np.abs(np.abs(P[:, iq]) - f["quer"]) > f["r"] + 0.3
+        bq = float(np.percentile(P[kq, iq], 98) - np.percentile(P[kq, iq], 2)) if kq.sum() >= 15 else None
+        schichten.append(dict(z=round(float(z + a.dz / 2), 3), n=int(k.sum()), r=round(front - at, 3), breite_quer=(round(bq, 2) if bq else None), **{f"p_{n}": round(100 * f, 1) for n, f in fr.items()}))
     # Klasse je Schicht
     rs = np.array([q["r"] for q in schichten])
     for i, q in enumerate(schichten):
@@ -91,6 +103,7 @@ def main():
                 baender[j]["schichten"] += b["schichten"]; baender[j]["z0"] = min(baender[j]["z0"], b["z0"]); baender[j]["z1"] = max(baender[j]["z1"], b["z1"]); baender.pop(i); geaendert = True; break
     for b in baender:
         rr = [q["r"] for q in b["schichten"]]; b["r"] = round(float(np.median(rr)), 2); b["r_max"] = round(float(max(rr)), 2); b["n"] = int(sum(q["n"] for q in b["schichten"]))
+        bqs = [q["breite_quer"] for q in b["schichten"] if q.get("breite_quer")]; b["breite_quer"] = round(float(np.median(bqs)), 2) if bqs else None
         b["anteile"] = {n: round(float(np.mean([q[f"p_{n}"] for q in b["schichten"]])), 1) for n in ("stein", "weiss", "dunkel", "kupfer")}
         b["z0"] = round(b["z0"], 2); b["z1"] = round(b["z1"], 2); b["schichten"] = [q["z"] for q in b["schichten"]]
     # ---- Strukturen IN den Baendern (generisch, aus denselben Punkten):
@@ -156,7 +169,9 @@ def main():
         b, c = baender[i], baender[i + 1]
         if b["klasse"] == c["klasse"] and b["klasse"] != "traufe":
             n_b, n_c = b["n"], c["n"]; b["z1"] = c["z1"]; b["r"] = round((b["r"] * n_b + c["r"] * n_c) / (n_b + n_c), 2); b["r_max"] = max(b["r_max"], c["r_max"]); b["n"] = n_b + n_c
-            b["anteile"] = {k: round((b["anteile"][k] * n_b + c["anteile"][k] * n_c) / (n_b + n_c), 1) for k in b["anteile"]}; b["schichten"] = b["schichten"] + c["schichten"]; baender.pop(i + 1)
+            b["anteile"] = {k: round((b["anteile"][k] * n_b + c["anteile"][k] * n_c) / (n_b + n_c), 1) for k in b["anteile"]}; b["schichten"] = b["schichten"] + c["schichten"]
+            if b.get("breite_quer") and c.get("breite_quer"): b["breite_quer"] = round((b["breite_quer"] * n_b + c["breite_quer"] * n_c) / (n_b + n_c), 2)
+            baender.pop(i + 1)
         else: i += 1
     # Kegel: Gerade von der Dachtraufe (r der Traufplatte) zur Spitze - Steigung aus den Kupferschichten (kleinste Quadrate durch die Spitze)
     kegel = None; kb = [b for b in baender if b["klasse"] == "kupfer"]
@@ -171,7 +186,7 @@ def main():
                          gerade_frei=dict(r_je_m=round(float(m_), 4), r_bei_z0=round(float(m_ * z0 + b_), 2), r_oben=round(float(m_ * ob["z1"] + b_), 2), z_oben=ob["z1"]))
     print(f"Baender Koerper '{a.koerper}' ({s}), Achse tief {at} quer {aq}, Zone +-{zone}, Spitze {TS}:")
     for b in baender:
-        print(f"  {b['klasse']:9s} {b['z0']:6.2f}..{b['z1']:6.2f}  r {b['r']:.2f} (max {b['r_max']:.2f})  stein {b['anteile']['stein']:4.0f} weiss {b['anteile']['weiss']:4.0f} dunkel {b['anteile']['dunkel']:4.0f} kupfer {b['anteile']['kupfer']:4.0f}  n={b['n']}")
+        print(f"  {b['klasse']:9s} {b['z0']:6.2f}..{b['z1']:6.2f}  r {b['r']:.2f} (max {b['r_max']:.2f}) quer {b.get('breite_quer')}  stein {b['anteile']['stein']:4.0f} weiss {b['anteile']['weiss']:4.0f} dunkel {b['anteile']['dunkel']:4.0f} kupfer {b['anteile']['kupfer']:4.0f}  n={b['n']}")
         if "oeffnungen" in b: o = b["oeffnungen"]; print(f"            Oeffnungen: {o['je_flaeche']} je Flaeche ({o['flaechenbreite']} m breit), Breiten {o['breiten']}, Hoehe {o['hoehe']}")
         if "farbperiode" in b: f = b["farbperiode"]; print(f"            Farbperiode (Quader/Schichten): {f['periode_m']} m (Staerke {f['staerke']}, {f['zellen']} Zellen)")
     if kegel: print(f"  Kegel: r = {kegel['r_je_m']} x (Spitze - z) ab {kegel['z0']} m (r0 {kegel['r0']}) aus {kegel['schichten']} Kupferschichten")

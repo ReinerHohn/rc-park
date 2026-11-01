@@ -185,7 +185,7 @@ class Messer:
         Q, Z = np.meshgrid(qs, zs); org = np.zeros((Q.size, 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = Q.ravel(); org[:, 2] = Z.ravel(); dr = np.zeros_like(org); dr[:, ax] = -sgn
         loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False); d = np.full(Q.size, np.nan); d[ir] = sgn * loc[:, ax]
         return zs, np.nanmedian(d.reshape(Q.shape), axis=1)
-    def relief_periode(self, seite, quer, z0, z1, band=0.75, schritt=0.05, max_periode=2.0, **k):
+    def relief_periode(self, seite, quer, z0, z1, band=0.75, schritt=0.025, max_periode=2.0, **k):
         """Periode (m) des Reliefs an einer Kante (Eckquader): wie die Wolkenmessung (wolke_baender.py) der ANTEIL hervortretender Zellen je
         5-cm-Hoehenschicht in einem Band quer +- band; Autokorrelation; Periode = KLEINSTER Peak mit >= 50 % der Staerke des staerksten
         (Grundperiode statt Oberschwingung). nan ohne Relief."""

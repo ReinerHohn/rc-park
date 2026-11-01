@@ -1129,3 +1129,22 @@ Masse der Stufe C und fuer die Picks (Mensch). Der Lauf ist wiederholbar: `tools
 nur Vorschaubilder fuer die Auswahl: Guete (Breite, Schaerfe), pHash-Duplikate (nur das beste), ORB/Homographie-Aehnlichkeit (aehnlich mit
 Parallaxe behalten, gedeckelt je Blickgruppe), neue Blickwinkel immer; Lizenz/Autor je Bild; Mapillary nur mit Token (fehlt), Videos nur
 mit Flag (Urheberrecht). Ergebnis des ersten Laufs: siehe daten/martinstor/fotos_eingang/bericht.json.
+
+## AZ. Stufe C: masse_aus_profilen.py - die Werkzeuge schreiben die Masse selbst (2026-11-01)
+**Nutzer:** "mach Stufe C: Werkzeug, das die Masse selbst schreibt."
+**Werkzeug `tools/masse_aus_profilen.py --schreiben`:** Regeln als Daten in objekt.json['masse_regeln'] (27 Regeln, 12 Regeltypen: band_z,
+band_r/band_r2, baender_r2_median, band_periode, perioden_gruppen, periode_fenster, periode_quer, anker_z, differenz, merkmal, zylinder_an_wand,
+konstante, bleibt). Quellen: profile_baender_<koerper>.json (jetzt mit Breite quer je Band, Fremdkoerper ausgeblendet), merkmal_<farbe>_<seite>.json
+(neu von wolke_farbmerkmal geschrieben), anker3d.json, Formeln ueber andere Masse. Jedes Mass bekommt Quelle mit Zahlenherkunft, Historie nur bei
+Aenderung; Bericht masse_regeln_bericht.json. Schritt steht in beiden Ketten vor dem Generator.
+**Ergebnis am Referenzobjekt:** 20 Masse abgeleitet, davon unveraendert reproduziert: DACHHOEHE 14,9, H_TOTAL 65,3, UZ 25,7, GZ1 40,5, QUADER_TUERMCHEN
+0,5, QUADER_SCHAFT_UNTEN 0,25, QUADER_ZONE_Z 23, QUADER_GLOCKENSTOCK 0,35, KONSOLE_Z0 27,5(27,6). Datengetrieben veraendert: GZ0 34,1 -> 34,5
+(Ende des Kupferbands), GX 6,8 -> 7,1 (2 x Median r von 5 Glockenstock-Baendern), HELM_UEBER 1,1 -> 1,04, KRAG_TRAUFE 31,9 -> 31,8,
+KRAG_UEBER 1,3 -> 1,34, QUADER_SCHAFT_OBEN 0,5 -> 0,4, QUADER_LAENGE 0,4 -> 0,35, OR 1,45 -> 1,55, ERKER_OBEN/KONSOLE_Z1 (nur Fallback).
+Pruefstand gruen; Regression: beabsichtigte Aenderungen, Schnappschuss erneuert.
+**Bleiben Hand (7, mit Grund in der Regel):** GY (Tuermchen verdecken die Glockenstock-Kanten, Breite quer nicht trennbar), EX/EY/ER
+(Widerspruch: Wolke Durchmesser 2,84 / Vorsprung 1,31 vs Foto 001 2,29 +-0,21 - Regel 5, nicht gemittelt, Beobachtung angelegt; Kreisfit am
+einseitigen Bogen war instabil 1,03..1,47, 'Front + Sehne in halber Tiefe' ist die robuste Form), DACH_MITTE_Z/DACH_MITTE2_Z (Fallback),
+PROFIL_DATEI (Schalter).
+**Nebenbefunde:** Sued-Zifferblattnische: auf Uhrmitte unterbrechen die Zeiger die Nische -> Messhoehe = gemessene Uhrmitte - 0,8 (Formel).
+relief_periode tastet 2,5 cm (feiner als die Fuge 5 cm), sonst Aliasing der Schichtperiode (0,5 statt 0,25).

@@ -44,9 +44,9 @@
   "element": "Eckquader Schaft: Schichthoehe 0,25 m unter / 0,5 m ueber QUADER_ZONE_Z, Blocklaenge QUADER_LAENGE",
   "quelle": "wolke_baender.py Farbperioden senkrecht + quer (Register AX); Nutzer 'Backsteine zu grob'",
   "unten": 0.25,
-  "oben": 0.5,
+  "oben": 0.4,
   "grenze": 23.0,
-  "laenge": 0.4,
+  "laenge": 0.35,
   "seite_name": "Sued"
  },
  {
@@ -139,8 +139,8 @@
   "seite": "dach",
   "element": "Kragdach (Kupferschraege) ueber dem Zinnenkranz bis zum Glockenstock",
   "quelle": "Fotos 031/041/043 Vollbild; Nutzerhinweis 2026-11-01; Wolke Nord: Tropfkante 31,9 m (x -5,15), Schraege bis 34,1 m (x -3,5) (Register AR)",
-  "unten": 31.9,
-  "oben": 34.1,
+  "unten": 31.75,
+  "oben": 34.5,
   "seite_name": "dach"
  },
  {

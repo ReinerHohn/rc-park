@@ -22,7 +22,6 @@
   "sockel_y": 11.725818740844726,
   "zinnen_S": 4.0,
   "zinnen_N": 4.0,
-  "uhr_S": 4.45,
   "dach_u_flaeche": 131.88520170194215,
   "dach_u_x": 11.047746548646428,
   "dach_u_y": 11.937746862784497,
@@ -39,17 +38,17 @@
   "hyp32": 155.0,
   "hyp30": 157.0,
   "hyp40": 92.0,
-  "sil30": 13.780000000000001,
+  "sil30": 13.76,
   "sil38": 13.88,
   "sil45": 8.36,
   "sil31_031": 13.86,
   "sil_zone_031": 12.86,
   "sil_zone_041": 12.486666666666666,
-  "sil_zone_u031": 11.956,
+  "sil_zone_u031": 11.924000000000001,
   "erker_34": 3.100000093460083,
   "helm_37_anzahl": 0.0,
   "helm_37_durchmesser": null,
-  "uhr_z": 4.45,
+  "uhr_z": 2.0500000000000003,
   "fenster_W_oben": 0.0,
   "fenster_W_mitte": 1.0,
   "wand_n_x20": -4.889747543334961,
@@ -68,16 +67,16 @@
   "dachx50": 2.8511530160172556,
   "profil_tuerm_4250": 0.7338033024177646,
   "tuermchen_2m_zahl_anzahl": 4.0,
-  "tuermchen_2m_zahl_durchmesser": 0.7536352430320175,
+  "tuermchen_2m_zahl_durchmesser": 0.7536352421785948,
   "profil_dach_532": 4.250000009096473,
   "silhouette_061_47": 4.330577115718877,
   "silhouette_061_50": 2.970575807424936,
   "silhouette_061_53": 1.6057692505762566,
-  "farb_uhr_nord__mitte_z__m_z": 25.70763454317901,
-  "farb_uhr_nord__mitte_z__m_quer": 0.09586983729662354,
-  "farb_uhr_nord__mitte_z__m_z_kreis": 25.74424141404031,
-  "farb_uhr_nord__mitte_z__m_radius": 1.6887175970607118,
-  "farb_uhr_nord__mitte_z__m_anzahl": 1598.0,
+  "farb_uhr_nord__mitte_z__m_z": 25.68922980588608,
+  "farb_uhr_nord__mitte_z__m_quer": 0.09016906700062892,
+  "farb_uhr_nord__mitte_z__m_z_kreis": 25.707581552418603,
+  "farb_uhr_nord__mitte_z__m_radius": 1.6799258273603372,
+  "farb_uhr_nord__mitte_z__m_anzahl": 1597.0,
   "breite_y_285": 11.720000244140625,
   "band_tuermchen_gesims_2788": 1.1700000724792448,
   "band_tuermchen_gesims_3212": 1.4999999694824213,
@@ -86,8 +85,8 @@
   "band_tuermchen_kupfer_3950": 1.0007041436976012,
   "band_tuermchen_kegel_4000": 0.8950703329438996,
   "band_tuermchen_hell_3300": 1.550000144958493,
-  "helm_gerade_tief": 0.004042428530651732,
-  "helm_gerade_quer": 0.002365275473398931,
+  "helm_gerade_tief": 0.00404242840226221,
+  "helm_gerade_quer": 0.002365275532642208,
   "band_tuermchen_oeffn_3427_anzahl": 2.0,
   "band_tuermchen_oeffn_3427_breite_median": 0.48,
   "band_tuermchen_oeffn_3427_breite_max": 0.48,
@@ -101,9 +100,10 @@
   "band_zentral_oeffn_3877_breite_median": 0.96,
   "band_zentral_oeffn_3877_breite_max": 0.96,
   "band_zentral_periode_20": 0.25,
-  "band_zentral_periode_22": 0.5,
+  "band_zentral_periode_22": 0.4,
   "band_tuermchen_periode_28": 0.5,
-  "silhouette_061_55": 1.0477617920661166
+  "silhouette_061_55": 1.0477617920661169,
+  "uhr_S": 4.15
  },
  "pruefungen": [
   {
@@ -298,7 +298,7 @@
   },
   {
    "name": "Uhr Zifferblatt-Nische Suedseite (Breite m)",
-   "wert": 4.45,
+   "wert": 4.15,
    "soll": [
     3.9,
     5.2
@@ -398,7 +398,7 @@
   },
   {
    "name": "Silhouettenbreite bei 30 m (m, 3 Kameras)",
-   "wert": 13.780000000000001,
+   "wert": 13.76,
    "soll": [
     12.9,
     14.2
@@ -418,7 +418,7 @@
   },
   {
    "name": "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
-   "wert": 11.956,
+   "wert": 11.924000000000001,
    "soll": [
     11.3,
     12.7
@@ -608,7 +608,7 @@
   },
   {
    "name": "Uhr Nord: Mitte z (m)",
-   "wert": 25.70763454317901,
+   "wert": 25.68922980588608,
    "soll": [
     25.29,
     26.09
@@ -698,7 +698,7 @@
   },
   {
    "name": "Helm geradlinig (tief, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
-   "wert": 0.004042428530651732,
+   "wert": 0.00404242840226221,
    "soll": [
     0.0,
     0.25
@@ -708,7 +708,7 @@
   },
   {
    "name": "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
-   "wert": 0.002365275473398931,
+   "wert": 0.002365275532642208,
    "soll": [
     0.0,
     0.32
@@ -748,7 +748,7 @@
   },
   {
    "name": "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
-   "wert": 0.5,
+   "wert": 0.4,
    "soll": [
     0.38,
     0.62
@@ -768,7 +768,7 @@
   },
   {
    "name": "Profil Dach (Foto 061): Tiefe x bei 55 m (m)",
-   "wert": 1.0477617920661166,
+   "wert": 1.0477617920661169,
    "soll": [
     0.33,
     1.73

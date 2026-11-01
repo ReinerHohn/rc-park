@@ -108,7 +108,7 @@
   "uhr_S": {
    "typ": "relief_breite",
    "seite": "+x",
-   "z": 25.7,
+   "z": "=farb_uhr_nord__mitte_z__m_z - 0.8",
    "halb": 3.6,
    "hoehe_min": 0.05,
    "art": "rueck",
@@ -993,6 +993,10 @@
     {
      "datum": "2026-11-01",
      "grund": "Messfenster wandert mit dem Bauteil: UZ 26,9 -> 25,7 (Wolke, Register AS)"
+    },
+    {
+     "datum": "2026-11-01",
+     "grund": "Messhoehe = gemessene Uhrmitte (relief_mitte) minus 0,8 m statt fest: auf Uhrmitte unterbrechen die Zeiger die Nische (Register AZ)"
     }
    ]
   },
@@ -4718,6 +4722,83 @@
    "flaeche_m2": 3.1,
    "text": "Fotowolke steht +7.07 m weiter vor als das Modell [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 10.2-13.5 m, y -10.2..-9.2 m, 3.1 m2",
    "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-22-25",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 21.5,
+   "z_bis": 25.0,
+   "abweichung": 0.75,
+   "text": "Silhouettenbreite z 21.5-25.0 m: Foto 14.68 m, Modell 13.93 m (+0.75 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-22-26",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 21.5,
+   "z_bis": 25.5,
+   "abweichung": 0.75,
+   "text": "Silhouettenbreite z 21.5-25.5 m: Foto 14.67 m, Modell 13.91 m (+0.75 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
+   "auto_id": "breite-061-44-44",
+   "art": "breite",
+   "foto": "061",
+   "z_von": 43.5,
+   "z_bis": 43.5,
+   "abweichung": -3.1,
+   "text": "Silhouettenbreite z 43.5-43.5 m: Foto 3.74 m, Modell 6.84 m (-3.10 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 061, Treffer 3)",
+   "auto_id": "fehlteile-061-2376-423",
+   "art": "fehlteil",
+   "foto": "061",
+   "z_von": 44.48,
+   "z_bis": 44.48,
+   "xyz": [
+    -0.22,
+    2.45,
+    44.48
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=44.48 m, y=2.45 m (Zelle [2376, 423, 9], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (masse_aus_profilen.py)",
+   "auto_id": "widerspruch_eckturm_durchmesser",
+   "text": "Eckturm NW: Wolke Nord (Front -6,21, Sehne in halber Vorsprungstiefe 2,4 m) -> Durchmesser 2,84 m, Vorsprung 1,31; Foto 001 (Tafelmassstab) 2,29 +-0,21 m. Nicht gemittelt; Handwert (ER 1,2, EX -DB/2+0,2) bleibt.",
+   "naechster_schritt": "dritte Quelle: Suedwolke sieht ihn nicht (NW-Ecke) -> kalibriertes Foto 001 (Bodenanker) oder Westnetz"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
+   "auto_id": "fehlteile-030-1364-1922",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 9.6,
+   "z_bis": 9.6,
+   "xyz": [
+    4.28,
+    5.33,
+    9.6
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=9.6 m, y=5.33 m (Zelle [1364, 1922, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "beobachtungen_erledigt": [

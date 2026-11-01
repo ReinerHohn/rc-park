@@ -15,7 +15,7 @@
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
     -1.64,
-    0.83,
+    0.82,
     49.3
    ]
   },
@@ -29,7 +29,7 @@
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
     -1.82,
-    1.18,
+    1.19,
     48.34
    ]
   },
@@ -42,7 +42,7 @@
    "score": 1.0,
    "art": "FEHLT im Modell",
    "xyz": [
-    0.73,
+    0.74,
     2.48,
     43.5
    ]
@@ -70,9 +70,9 @@
    "score": 1.0,
    "art": "FEHLT im Modell",
    "xyz": [
-    0.87,
+    0.88,
     5.32,
-    19.4
+    19.39
    ]
   },
   {
@@ -84,7 +84,7 @@
    "score": 1.0,
    "art": "FEHLT im Modell",
    "xyz": [
-    0.86,
+    0.85,
     5.34,
     18.43
    ]

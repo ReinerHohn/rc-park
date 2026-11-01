@@ -5,7 +5,7 @@
    "wert": 65.3,
    "einheit": "m",
    "was": "Gesamthoehe bis zur Nadelspitze",
-   "quelle": "Foto 061 schwache Perspektive: Nadelende Zeile 201 bei 10,81 px/m (Tuermchenabstand) = 65,3 m; Foto 049 Verhaeltnis 64,0; Bauforschung/Objektbeschreibung 65 m (Register AT)",
+   "quelle": "masse_aus_profilen.py (anker_z): Anker nadel_spitze (Foto 061 (Massstab Tuermchenabstand) 65,3; Foto 049 64,0; Dokumente 65)",
    "quelltyp": "foto_kalibriert",
    "historie": [
     {
@@ -100,10 +100,10 @@
    "quelltyp": "foto_verhaeltnis"
   },
   "UZ": {
-   "wert": 25.7,
+   "wert": 25.69,
    "einheit": "m",
    "was": "Hoehe der Uhrmitte",
-   "quelle": "Dichte Wolke Nord (entzerrt): Farbklasse gold an der Wandfront, Schwerpunkt 25,69 m (tools/wolke_farbmerkmal.py, Register AS); frueher Foto-Farbsuche 26,6-27,9",
+   "quelle": "masse_aus_profilen.py (merkmal): merkmal_gold_nord.json: z (515 Punkte, Farbe gold)",
    "quelltyp": "sfm_bodenanker",
    "historie": [
     {
@@ -111,6 +111,12 @@
      "alt": 26.9,
      "neu": 25.7,
      "grund": "Nutzer (Viewer): Uhr im Modell eine halbe Uhrhoehe zu hoch. wolke_farbmerkmal.py: goldene Stundenmarken/Zeiger in der dichten Wolke Nord, Schwerpunkt z 25,69 / y 0,05, Radius p90 2,28 (515 Punkte). Die Fotofarbsuche (Register X) lag 1,2 m hoeher - Kamerahoehe damals Annahme."
+    },
+    {
+     "datum": "auto",
+     "alt": 25.7,
+     "neu": 25.69,
+     "grund": "masse_aus_profilen.py (merkmal): merkmal_gold_nord.json: z (515 Punkte, Farbe gold)"
     }
    ]
   },
@@ -139,7 +145,7 @@
    "wert": "-DB / 2 + 0.2",
    "einheit": "m",
    "was": "Eckturm NW, Lage x",
-   "quelle": "Dichte Fotowolke Nord, Kreisfit an die Eckturm-Front z 6-12 m (Register AN): Mitte y -3,70, Radius 1,26; Vorsprung vor der LoD2-Nordwand ~1,05 m (Wolken-Tiefenversatz 1,3 m abgezogen). Nutzer: 'Tuermchen ist kleiner als im Modell'. Vorher: Lage an der Ecke (-5,7 / -5,45) aus Foto 001 geschaetzt",
+   "quelle": "Handwert; Wolkenversuch (zylinder_an_wand, Widerspruch zu Foto 001): Front -6.21 (p98 Tiefe, 5669 Pkt.) vor Wand -4.90: Vorsprung 1.31; halbe Sehne in 0.66 m Tiefe 1.20 (2117 Pkt.) -> r 1.42, Mitte (-4.80, -3.51) | Wolkenversuch 2026-11-01 (zylinder_an_wand): EX -4,80 EY -3,54 ER 1,42 - Widerspruch zu Foto 001, nicht uebernommen (objekt.json masse_regeln, Beobachtung widerspruch_eckturm_durchmesser)",
    "quelltyp": "sfm_bodenanker",
    "historie": [
     {
@@ -154,7 +160,7 @@
    "wert": -3.7,
    "einheit": "m",
    "was": "Eckturm NW, Lage y",
-   "quelle": "Dichte Fotowolke Nord, Kreisfit an die Eckturm-Front z 6-12 m (Register AN): Mitte y -3,70, Radius 1,26; Vorsprung vor der LoD2-Nordwand ~1,05 m (Wolken-Tiefenversatz 1,3 m abgezogen). Nutzer: 'Tuermchen ist kleiner als im Modell'. Vorher: Lage an der Ecke (-5,7 / -5,45) aus Foto 001 geschaetzt",
+   "quelle": "Handwert; Wolkenversuch (zylinder_an_wand, Widerspruch zu Foto 001): Front -6.21 (p98 Tiefe, 5669 Pkt.) vor Wand -4.90: Vorsprung 1.31; halbe Sehne in 0.66 m Tiefe 1.20 (2117 Pkt.) -> r 1.42, Mitte (-4.80, -3.51) | Wolkenversuch 2026-11-01 (zylinder_an_wand): EX -4,80 EY -3,54 ER 1,42 - Widerspruch zu Foto 001, nicht uebernommen (objekt.json masse_regeln, Beobachtung widerspruch_eckturm_durchmesser)",
    "quelltyp": "sfm_bodenanker",
    "historie": [
     {
@@ -169,7 +175,7 @@
    "wert": 1.2,
    "einheit": "m",
    "was": "Eckturm NW, Radius",
-   "quelle": "Kreisfit Wolke 1,26 m / Messprotokoll M-001-001 2,29 m Durchmesser -> 1,2",
+   "quelle": "Handwert; Wolkenversuch (zylinder_an_wand, Widerspruch zu Foto 001): Front -6.21 (p98 Tiefe, 5669 Pkt.) vor Wand -4.90: Vorsprung 1.31; halbe Sehne in 0.66 m Tiefe 1.20 (2117 Pkt.) -> r 1.42, Mitte (-4.80, -3.51) | Wolkenversuch 2026-11-01 (zylinder_an_wand): EX -4,80 EY -3,54 ER 1,42 - Widerspruch zu Foto 001, nicht uebernommen (objekt.json masse_regeln, Beobachtung widerspruch_eckturm_durchmesser)",
    "quelltyp": "sfm_bodenanker",
    "massstab": "foto_intern",
    "historie": [
@@ -182,10 +188,10 @@
    ]
   },
   "GX": {
-   "wert": "D - 2.2",
+   "wert": 7.1,
    "einheit": "m",
    "was": "Glockenstock Tiefe",
-   "quelle": "Dichte Wolke Nord (entzerrt, an LoD2-Wand), Front-Tiefenprofil je 0,25 m im Achsstreifen (Register AR): Glockenstock-Front -3,5 (34-38 m) / -3,3 (38-39,6 m) -> Tiefe 6,8",
+   "quelle": "masse_aus_profilen.py (baender_r2_median): 2 x Median r von 5 Baendern 34.5-40.5 m (3.51, 3.55, 3.56, 3.46, 3.62)",
    "quelltyp": "sfm_bodenanker",
    "historie": [
     {
@@ -211,6 +217,12 @@
      "alt": "D - 3.0",
      "neu": "D - 2.2",
      "grund": "Dichte Wolke Nord (entzerrt, an LoD2-Wand), Front-Tiefenprofil je 0,25 m im Achsstreifen (Register AR): Glockenstock-Front -3,5 (34-38 m) / -3,3 (38-39,6 m) -> Tiefe 6,8"
+    },
+    {
+     "datum": "auto",
+     "alt": "D - 2.2",
+     "neu": 7.1,
+     "grund": "masse_aus_profilen.py (baender_r2_median): 2 x Median r von 5 Baendern 34.5-40.5 m (3.51, 3.55, 3.56, 3.46, 3.62)"
     }
    ]
   },
@@ -248,10 +260,10 @@
    ]
   },
   "GZ0": {
-   "wert": "ZZ + 3.6",
+   "wert": 34.5,
    "einheit": "m",
    "was": "Glockenstock Unterkante",
-   "quelle": "Dichte Wolke Nord (entzerrt, an LoD2-Wand), Front-Tiefenprofil je 0,25 m im Achsstreifen (Register AR): Kragdach-Schraege endet bei 34,1 m an der Glockenstock-Wand (x -3,5); Foto 061 (Ost, Achsspalte): gruenes Kragdach-Band bis 35,6 Foto-m (Foto-Massstab ~1 m hoeher, offen)",
+   "quelle": "masse_aus_profilen.py (band_z): Band zentral kupfer 32.0-34.5 m (z1)",
    "quelltyp": "sfm_bodenanker",
    "historie": [
     {
@@ -259,14 +271,20 @@
      "alt": "ZZ + 2.0",
      "neu": "ZZ + 3.6",
      "grund": "Dichte Wolke Nord (entzerrt, an LoD2-Wand), Front-Tiefenprofil je 0,25 m im Achsstreifen (Register AR): Kragdach-Schraege endet bei 34,1 m an der Glockenstock-Wand (x -3,5); Foto 061 (Ost, Achsspalte): gruenes Kragdach-Band bis 35,6 Foto-m (Foto-Massstab ~1 m hoeher, offen)"
+    },
+    {
+     "datum": "auto",
+     "alt": "ZZ + 3.6",
+     "neu": 34.5,
+     "grund": "masse_aus_profilen.py (band_z): Band zentral kupfer 32.0-34.5 m (z1)"
     }
    ]
   },
   "GZ1": {
-   "wert": "ZZ + 10.0",
+   "wert": 40.5,
    "einheit": "m",
    "was": "Glockenstock Oberkante = Dachansatz",
-   "quelle": "Dichte Wolke Nord (entzerrt, an LoD2-Wand), Front-Tiefenprofil je 0,25 m im Achsstreifen (Register AR): Helm-Tropfkante bei 40,4-40,7 m (x -4,0), Glockenstock-Wand -3,3 darunter bis 39,6; Foto 061 Achsspalte: Traufkante 42,0 +-0,5 Foto-m (Widerspruch 1,5 m offen, Foto-Massstab haengt an TUERM_SPITZE). LoD2 37,27 = Galeriegesims (LoD2 blind fuer Aufbauten), DOM1-Zellzahl > 40 m blind auf steilen Flaechen",
+   "quelle": "masse_aus_profilen.py (band_z): Band zentral traufe 40.25-40.5 m (z1)",
    "quelltyp": "sfm_bodenanker",
    "historie": [
     {
@@ -286,6 +304,12 @@
      "alt": "ZZ + 6.5",
      "neu": "ZZ + 10.0",
      "grund": "Dichte Wolke Nord (entzerrt, an LoD2-Wand), Front-Tiefenprofil je 0,25 m im Achsstreifen (Register AR): Helm-Tropfkante bei 40,4-40,7 m (x -4,0), Glockenstock-Wand -3,3 darunter bis 39,6; Foto 061 Achsspalte: Traufkante 42,0 +-0,5 Foto-m (Widerspruch 1,5 m offen, Foto-Massstab haengt an TUERM_SPITZE). LoD2 37,27 = Galeriegesims (LoD2 blind fuer Aufbauten), DOM1-Zellzahl > 40 m blind auf steilen Flaechen"
+    },
+    {
+     "datum": "auto",
+     "alt": "ZZ + 10.0",
+     "neu": 40.5,
+     "grund": "masse_aus_profilen.py (band_z): Band zentral traufe 40.25-40.5 m (z1)"
     }
    ]
   },
@@ -293,7 +317,7 @@
    "wert": 14.9,
    "einheit": "m",
    "was": "Hoehe des Kupferdachs (Dachansatz bis First)",
-   "quelle": "First 55,4 m (DOM1 3 Zellen 53-55, SfM Goldkugeln 55,1-55,6) minus Traufe 40,5 m (Wolke, Register AR)",
+   "quelle": "masse_aus_profilen.py (differenz): first_plattform 55.40 - GZ1 40.50",
    "quelltyp": "sfm_bodenanker",
    "historie": [
     {
@@ -353,10 +377,10 @@
    "quelltyp": "foto_verhaeltnis"
   },
   "OR": {
-   "wert": 1.45,
+   "wert": 1.55,
    "einheit": "m",
    "was": "Ecktuermchen: Radius des achteckigen Erkerkoerpers",
-   "quelle": "wolke_profile.py: Kreisfit Erkerkoerper d 2,9-3,0 bei 32-35 m",
+   "quelle": "masse_aus_profilen.py (band_r): Band tuermchen hell 32.5-33.5 m, Aussenradius 1.55",
    "quelltyp": "sfm_bodenanker",
    "historie": [
     {
@@ -370,6 +394,12 @@
      "alt": 1.4,
      "neu": 1.45,
      "grund": "wolke_profile.py: Kreisfit Erkerkoerper d 2,9-3,0 bei 32-35 m"
+    },
+    {
+     "datum": "auto",
+     "alt": 1.45,
+     "neu": 1.55,
+     "grund": "masse_aus_profilen.py (band_r): Band tuermchen hell 32.5-33.5 m, Aussenradius 1.55"
     }
    ]
   },
@@ -502,10 +532,10 @@
    "quelltyp": "sfm_bodenanker"
   },
   "ERKER_OBEN": {
-   "wert": 38.3,
+   "wert": 35.0,
    "einheit": "m",
    "was": "Oberkante Erkerkoerper (Traufgesims des Tuermchenhelms)",
-   "quelle": "wolke_profile.py (robuster Kreisfit): d 2,6-2,7 bis 38,25 m, dann Kegel (2,15 bei 39,25, 1,9 bei 40,25); Foto 061: Kegelansatz 37,3 Foto-m",
+   "quelle": "masse_aus_profilen.py (band_z): Band tuermchen traufe 35.0-35.5 m (z0)",
    "quelltyp": "sfm_bodenanker",
    "historie": [
     {
@@ -513,6 +543,12 @@
      "alt": 39.3,
      "neu": 38.3,
      "grund": "wolke_profile.py (robuster Kreisfit): d 2,6-2,7 bis 38,25 m, dann Kegel (2,15 bei 39,25, 1,9 bei 40,25); Foto 061: Kegelansatz 37,3 Foto-m"
+    },
+    {
+     "datum": "auto",
+     "alt": 38.3,
+     "neu": 35.0,
+     "grund": "masse_aus_profilen.py (band_z): Band tuermchen traufe 35.0-35.5 m (z0)"
     }
    ]
   },
@@ -538,25 +574,49 @@
    "quelltyp": "sfm_bodenanker"
   },
   "KRAG_TRAUFE": {
-   "wert": "ZZ + 1.4",
+   "wert": 31.75,
    "einheit": "m",
    "was": "Kragdach-Traufe (Tropfkante)",
-   "quelle": "Dichte Wolke Nord (entzerrt, an LoD2-Wand), Front-Tiefenprofil je 0,25 m im Achsstreifen (Register AR): Tropfkante des Kragdachs bei 31,9 m (Front -5,15 m, breiteste Stelle); Laser DOM1 Kranz 31,5",
-   "quelltyp": "sfm_bodenanker"
+   "quelle": "masse_aus_profilen.py (band_z): Band zentral gesims 31.5-32.0 m (mitte)",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt": "ZZ + 1.4",
+     "neu": 31.75,
+     "grund": "masse_aus_profilen.py (band_z): Band zentral gesims 31.5-32.0 m (mitte)"
+    }
+   ]
   },
   "KRAG_UEBER": {
-   "wert": 1.3,
+   "wert": 1.34,
    "einheit": "m",
    "was": "Kragdach-Ueberstand (Gesamtmass ueber D bzw. W)",
-   "quelle": "Dichte Wolke Nord (entzerrt, an LoD2-Wand), Front-Tiefenprofil je 0,25 m im Achsstreifen (Register AR): Tropfkante x -5,15 bei Wand -4,57..-4,9 -> Kragdach-Aussenmass D + 1,3",
-   "quelltyp": "sfm_bodenanker"
+   "quelle": "masse_aus_profilen.py (band_r2): Band zentral gesims 31.5-32.0 m, Aussenradius 5.17 minus D 9.00",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt": 1.3,
+     "neu": 1.34,
+     "grund": "masse_aus_profilen.py (band_r2): Band zentral gesims 31.5-32.0 m, Aussenradius 5.17 minus D 9.00"
+    }
+   ]
   },
   "HELM_UEBER": {
-   "wert": 1.1,
+   "wert": 1.04,
    "einheit": "m",
    "was": "Helm-Traufueberstand (Gesamtmass ueber GX bzw. GY)",
-   "quelle": "Dichte Wolke Nord: Helm-Tropfkante x -4,0 (Wand -3,4) und y -3,9..+3,5 (Wand 6,5) -> Ueberstand ~0,55 je Seite",
-   "quelltyp": "sfm_bodenanker"
+   "quelle": "masse_aus_profilen.py (band_r2): Band zentral traufe 40.25-40.5 m, Aussenradius 4.07 minus GX 7.10",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt": 1.1,
+     "neu": 1.04,
+     "grund": "masse_aus_profilen.py (band_r2): Band zentral traufe 40.25-40.5 m, Aussenradius 4.07 minus GX 7.10"
+    }
+   ]
   },
   "ARKADE_UNTER_TRAUFE": {
    "wert": 3.0,
@@ -566,52 +626,76 @@
    "quelltyp": "foto_verhaeltnis"
   },
   "KONSOLE_Z0": {
-   "wert": 27.6,
+   "wert": 27.5,
    "einheit": "m",
    "was": "Ansatz der Konsolen (Auskragung) unter den Ecktuermchen",
-   "quelle": "Dichte Wolke Nord (entzerrt): y-Gesamtbreite je 0,25 m (Register AS): 10,3 m bis 27,6 m, Anstieg ab 27,9 (10,9) auf 11,0 bei 28,9 m, dann Schaftbreite 11,1-11,3",
-   "quelltyp": "sfm_bodenanker"
+   "quelle": "masse_aus_profilen.py (band_z): Band tuermchen gesims 27.5-28.25 m (z0)",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt": 27.6,
+     "neu": 27.5,
+     "grund": "masse_aus_profilen.py (band_z): Band tuermchen gesims 27.5-28.25 m (z0)"
+    }
+   ]
   },
   "KONSOLE_Z1": {
-   "wert": 28.9,
+   "wert": 28.25,
    "einheit": "m",
    "was": "Oberkante der Konsolen = volle Breite des Tuermchenschafts",
-   "quelle": "Dichte Wolke Nord (entzerrt): y-Gesamtbreite je 0,25 m (Register AS): 10,3 m bis 27,6 m, Anstieg ab 27,9 (10,9) auf 11,0 bei 28,9 m, dann Schaftbreite 11,1-11,3",
-   "quelltyp": "sfm_bodenanker"
+   "quelle": "masse_aus_profilen.py (band_z): Band tuermchen stein 28.25-31.75 m (z0)",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt": 28.9,
+     "neu": 28.25,
+     "grund": "masse_aus_profilen.py (band_z): Band tuermchen stein 28.25-31.75 m (z0)"
+    }
+   ]
   },
   "QUADER_SCHAFT_UNTEN": {
    "wert": 0.25,
    "einheit": "m",
    "was": "Eckquader-Schichthoehe Schaft unten (bis QUADER_ZONE_Z)",
-   "quelle": "wolke_baender.py (Register AX): Farbperiode des Steinanteils an der Gebaeudekante (5-cm-Zellen, Autokorrelation), Fenster 20-24 m: 0,25 m (Staerke 0,67), 18-22: 0,25; Nutzer: 'Backsteine zu grob' (Modell hatte 0,95)",
+   "quelle": "masse_aus_profilen.py (perioden_gruppen): Fensterperioden 10.0-31.5 m (Staerke >= 0.3): klein [(20.0, 0.25)], gross [(22.0, 0.35), (24.0, 0.45)]",
    "quelltyp": "sfm_bodenanker"
   },
   "QUADER_SCHAFT_OBEN": {
-   "wert": 0.5,
+   "wert": 0.4,
    "einheit": "m",
    "was": "Eckquader-Schichthoehe Schaft oben (ab QUADER_ZONE_Z)",
-   "quelle": "wolke_baender.py (Register AX): Farbperiode des Steinanteils an der Gebaeudekante (5-cm-Zellen, Autokorrelation), Fenster 22-26 m: 0,5 (0,50), 24-28: 0,45 (0,34), 26-34: 0,55-0,6 (0,17-0,26)",
-   "quelltyp": "sfm_bodenanker"
+   "quelle": "masse_aus_profilen.py (perioden_gruppen): Fensterperioden 10.0-31.5 m (Staerke >= 0.3): klein [(20.0, 0.25)], gross [(22.0, 0.35), (24.0, 0.45)]",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt": 0.5,
+     "neu": 0.4,
+     "grund": "masse_aus_profilen.py (perioden_gruppen): Fensterperioden 10.0-31.5 m (Staerke >= 0.3): klein [(20.0, 0.25)], gross [(22.0, 0.35), (24.0, 0.45)]"
+    }
+   ]
   },
   "QUADER_ZONE_Z": {
    "wert": 23.0,
    "einheit": "m",
    "was": "Hoehe des Wechsels der Quaderschicht",
-   "quelle": "Grenze zwischen 0,25-m-Periode (Fenster 18-24) und 0,5-m-Periode (22-34): Ueberlappung 22-24 -> 23 m",
+   "quelle": "masse_aus_profilen.py (perioden_gruppen): Fensterperioden 10.0-31.5 m (Staerke >= 0.3): klein [(20.0, 0.25)], gross [(22.0, 0.35), (24.0, 0.45)]",
    "quelltyp": "sfm_bodenanker"
   },
   "QUADER_GLOCKENSTOCK": {
    "wert": 0.35,
    "einheit": "m",
    "was": "Eckquader-Schichthoehe Glockenstock",
-   "quelle": "wolke_baender.py (Register AX): Farbperiode des Steinanteils an der Gebaeudekante (5-cm-Zellen, Autokorrelation), Fenster 34-38 m: 0,35 m (Staerke 0,35); Modell hatte 0,6",
+   "quelle": "masse_aus_profilen.py (periode_fenster): staerkste Fensterperiode 34.0-38.0 m: 0.35 (Staerke 0.35) von 1 Fenstern",
    "quelltyp": "sfm_bodenanker"
   },
   "QUADER_TUERMCHEN": {
    "wert": 0.5,
    "einheit": "m",
    "was": "Eckquader-Schichthoehe Tuermchenschaft",
-   "quelle": "wolke_baender.py (Register AX): Farbperiode des Steinanteils an der Gebaeudekante (5-cm-Zellen, Autokorrelation), Tuermchenschaft-Band 28,25-31,75: 0,5 m (Staerke 0,34); Modell hatte 0,58",
+   "quelle": "masse_aus_profilen.py (band_periode): Farbperiode Band tuermchen stein 28.25-31.75 m (Staerke 0.34)",
    "quelltyp": "sfm_bodenanker"
   },
   "LATERNE_D": {
@@ -630,17 +714,25 @@
    ]
   },
   "QUADER_LAENGE": {
-   "wert": 0.4,
+   "wert": 0.35,
    "einheit": "m",
    "was": "Eckquader: Laenge des langen Blocks entlang der Fassade (kurzer Block 0,6 davon)",
-   "quelle": "wolke_baender.py (Register AX): Farbperiode QUER an der Schaftkante: 14-18 m 0,30/0,35 (Staerke 0,35/0,45), 16-20 m 0,45 (0,34), 24-28 m 0,40 (0,32); Modell hatte 0,95-1,75 m x 1,7 unten",
-   "quelltyp": "sfm_bodenanker"
+   "quelle": "masse_aus_profilen.py (periode_quer): Median der Quer-Perioden 8.0-31.5 m aus 5 Fenstern [0.3, 0.3, 0.35, 0.45, 0.4]",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt": 0.4,
+     "neu": 0.35,
+     "grund": "masse_aus_profilen.py (periode_quer): Median der Quer-Perioden 8.0-31.5 m aus 5 Fenstern [0.3, 0.3, 0.35, 0.45, 0.4]"
+    }
+   ]
   },
   "QUADER_KURZ_FAKTOR": {
    "wert": 1.0,
    "einheit": "",
    "was": "Verhaeltnis kurzer zu langer Eckquader (1,0 = keine Lang/Kurz-Alternanz)",
-   "quelle": "wolke_baender.py: Steinanteil an der Kante ist je SCHICHT periodisch (Grundperiode 0,25/0,5 m), keine Zweischicht-Periode messbar -> Bloecke je Schicht gleich lang (ANNAHME aus dem Fehlen der Alternanz, Register AX)",
+   "quelle": "masse_aus_profilen.py (konstante): gesetzt: keine Zweischicht-Periode (Lang/Kurz-Alternanz) in den Farbperioden messbar -> Bloecke je Schicht gleich lang",
    "quelltyp": "sfm_bodenanker"
   }
  }

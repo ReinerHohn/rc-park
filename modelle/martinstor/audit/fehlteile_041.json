@@ -14,9 +14,9 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    1.55,
+    1.53,
     -5.02,
-    31.36
+    31.37
    ]
   },
   {
@@ -25,26 +25,12 @@
     752,
     94
    ],
-   "score": -0.962,
+   "score": -0.876,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    1.08,
+    1.1,
     -5.03,
-    34.05
-   ]
-  },
-  {
-   "zelle": [
-    470,
-    1034,
-    94
-   ],
-   "score": -0.81,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -0.58,
-    -4.82,
-    29.8
+    34.02
    ]
   },
   {
@@ -53,12 +39,26 @@
     658,
     94
    ],
-   "score": -0.771,
+   "score": -0.867,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    2.93,
+    2.9,
     -5.23,
-    33.86
+    33.9
+   ]
+  },
+  {
+   "zelle": [
+    470,
+    1034,
+    94
+   ],
+   "score": -0.808,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.82,
+    -4.81,
+    30.04
    ]
   },
   {
@@ -67,26 +67,26 @@
     940,
     94
    ],
-   "score": -0.751,
+   "score": -0.765,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    0.93,
+    0.78,
     -5.02,
-    30.16
+    30.32
    ]
   },
   {
    "zelle": [
-    940,
+    752,
     564,
     94
    ],
-   "score": 0.676,
+   "score": 0.736,
    "art": "FEHLT im Modell",
    "xyz": [
-    1.57,
-    1.94,
-    40.37
+    1.12,
+    -1.09,
+    40.01
    ]
   }
  ]
