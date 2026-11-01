@@ -40,6 +40,10 @@ def main():
     def dran(n): return schritte.index(n) >= start_i
     stl_name = f"{a.ziel}_v4_1-87.stl"
     if dran("anlegen"):
+        # ALLES Abgeleitete entfernen (sonst fusioniert sfm_dicht alte Tiefenkarten mit neuen Posen: Nullstart 2 lieferte 476 statt 99 000 Punkte)
+        for d in ("sfm", "audit", "regression", "torbau"):
+            if os.path.isdir(os.path.join(zd, d)): shutil.rmtree(os.path.join(zd, d))
+        for f in glob.glob(os.path.join(zd, "*.json")) + glob.glob(os.path.join(zd, "*.md")) + glob.glob(os.path.join(zd, "messprotokoll", "*")): os.remove(f)
         for d in ("sfm", "messprotokoll", "audit", "regression"): os.makedirs(os.path.join(zd, d), exist_ok=True)
         for f in ("masse.json", "anker3d.json", "masstabelle.json", "fassade.json"): shutil.copy(os.path.join(od, f), zd)
         if os.path.isdir(os.path.join(od, "torbau")): shutil.copytree(os.path.join(od, "torbau"), os.path.join(zd, "torbau"), dirs_exist_ok=True)
@@ -91,6 +95,15 @@ def main():
                 okA = sum(A["ok"].values()); okB = sum(B["ok"].values()); diff = RG.vergleiche(A["werte"], B["werte"], tol[name], ign)
                 verg[name] = dict(status="ok" if not diff else "abweichung", bestanden_ref=f"{okA}/{len(A['ok'])}", bestanden_ziel=f"{okB}/{len(B['ok'])}", werte_abweichend=len(diff), beispiele=diff[:10]); continue
             diff = RG.vergleiche(A, B, tol[name], ign); verg[name] = dict(status="ok" if not diff else "abweichung", abweichungen=len(diff), beispiele=diff[:8])
+        # Masse: Referenz vs Nullstart (beide von masse_aus_profilen.py geschrieben) - der eigentliche Stufe-C-Test
+        try:
+            from bauteile import lade_masse
+            MR, MZ = lade_masse(os.path.join(od, "masse.json")), lade_masse(os.path.join(zd, "masse.json")); dm = {}
+            for k in MR:
+                if k in MZ and isinstance(MR[k], float) and abs(MR[k] - MZ[k]) > 0.3 + 1e-6 * abs(MR[k]): dm[k] = [round(MR[k], 2), round(MZ[k], 2)]
+            RB = json.load(open(os.path.join(zd, "masse_regeln_bericht.json")))["bericht"] if os.path.exists(os.path.join(zd, "masse_regeln_bericht.json")) else []
+            verg["masse"] = dict(status="ok" if not dm else "abweichung", abweichend_ueber_0_3=dm, abgeleitet=sum(1 for b in RB if b["status"] == "abgeleitet"), bleibt_hand=[b["masse"] for b in RB if b["status"] == "bleibt_hand"], fehler=[b["masse"] for b in RB if b["status"] == "fehler"])
+        except Exception as e: verg["masse"] = dict(status="fehler", fehler=str(e))
         # Stufe C: Masse, die aus Werkzeugausgaben von Hand uebertragen wurden (Historie mit Werkzeugnamen) - werden im Nullstart NICHT neu abgeleitet
         M = json.load(open(os.path.join(zd, "masse.json")))["masse"]; hand = sorted(k for k, v in M.items() if any(w in (v.get("quelle", "") + " ".join(h.get("grund", "") for h in v.get("historie", []))) for w in ("wolke_", "foto_silhouette", "foto_kalibrieren", "Register A")))
         bericht["vergleich"] = verg; bericht["stufe_C_masse_von_hand_uebertragen"] = hand; bericht["ende"] = time.strftime("%Y-%m-%d %H:%M")

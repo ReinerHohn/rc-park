@@ -95,75 +95,72 @@ def main():
     print(f"  mit Breite >= {min_b} px: {len(kand)}")
     if a.nur_kandidaten:
         json.dump(kand, open(os.path.join(aus, "kandidaten.json"), "w"), indent=1, ensure_ascii=False); print("nur Kandidaten geschrieben"); return
-    # ---- Vorschaubilder + Guete + Hash + Merkmale
-    orb = cv2.ORB_create(1500); bf = cv2.BFMatcher(cv2.NORM_HAMMING)
+    # ---- Vorschaubilder (1024 px) + Guete + Hash + gelernte Merkmale (ALIKED + LightGlue, GPU; Lizenz: Apache/BSD, siehe LIZENZ_WERKZEUGE.md)
+    import torch; from lightglue import LightGlue, ALIKED; from lightglue.utils import load_image
+    dev = "cuda" if torch.cuda.is_available() else "cpu"; ext = ALIKED(max_num_keypoints=2048).eval().to(dev); matcher = LightGlue(features="aliked").eval().to(dev)
+    print(f"  Matcher ALIKED+LightGlue auf {dev}")
     def merkmale(pfad):
         im = cv2.imread(pfad)
         if im is None: return None
-        g = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY); s = max(640 / max(g.shape), 0.01); g = cv2.resize(g, None, fx=s, fy=s) if s < 1 else g
-        kp, de = orb.detectAndCompute(g, None); return dict(sharp=float(cv2.Laplacian(g, cv2.CV_64F).var()), ph=phash(g), kp=kp, de=de, form=g.shape)
-    def inlier_anteil(A, B):
-        if A["de"] is None or B["de"] is None or len(A["kp"]) < 30 or len(B["kp"]) < 30: return 0.0, 0.0
-        m = bf.knnMatch(A["de"], B["de"], k=2); gut = [x[0] for x in m if len(x) == 2 and x[0].distance < 0.75 * x[1].distance]
-        if len(gut) < 15: return 0.0, 0.0
-        p1 = np.float32([A["kp"][x.queryIdx].pt for x in gut]); p2 = np.float32([B["kp"][x.trainIdx].pt for x in gut])
-        H, mask = cv2.findHomography(p1, p2, cv2.RANSAC, 5.0)
-        if H is None: return 0.0, 0.0
-        inl = int(mask.sum()); ident = float(np.abs(H - np.eye(3)).max()) if H[2, 2] else 9.0
-        return inl / min(len(A["kp"]), len(B["kp"])), ident
-    basis = []                                                                              # vorhandene Fotos als Vergleich (Vorschau-Cache)
+        g = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY); s_ = 1024 / max(g.shape); g = cv2.resize(g, None, fx=s_, fy=s_) if s_ < 1 else g
+        with torch.no_grad(): f = ext.extract(load_image(pfad, resize=1024).to(dev))
+        return dict(sharp=float(cv2.Laplacian(g, cv2.CV_64F).var()), ph=phash(g), f=f, kp=f["keypoints"][0].cpu().numpy())
+    def inlier(A, B):
+        """Zahl geometrisch bestaetigter Zuordnungen (LightGlue + Fundamentalmatrix-RANSAC) - Mass fuer 'gleiches Objekt, ueberlappende Sicht'."""
+        with torch.no_grad(): m = matcher({"image0": A["f"], "image1": B["f"]})
+        idx = m["matches"][0].cpu().numpy()
+        if len(idx) < 12: return 0
+        p1, p2 = A["kp"][idx[:, 0]], B["kp"][idx[:, 1]]; F, mask = cv2.findFundamentalMat(p1, p2, cv2.FM_RANSAC, 2.0, 0.999)
+        return int(mask.sum()) if mask is not None else 0
+    basis = []
     for f in sorted(os.listdir(os.path.join(repo, obj["fotos_dir"]))):
         if not f.lower().endswith((".jpg", ".jpeg", ".png")): continue
         pv = os.path.join(th, "basis_" + f + ".jpg")
         if not os.path.exists(pv):
-            im = cv2.imread(os.path.join(repo, obj["fotos_dir"], f)); s = 640 / max(im.shape[:2]); cv2.imwrite(pv, cv2.resize(im, None, fx=s, fy=s) if s < 1 else im)
+            im = cv2.imread(os.path.join(repo, obj["fotos_dir"], f)); s_ = 1024 / max(im.shape[:2]); cv2.imwrite(pv, cv2.resize(im, None, fx=s_, fy=s_) if s_ < 1 else im)
         mk = merkmale(pv)
-        if mk: mk["name"] = f; basis.append(mk)
-    # Seitenstatistik der vorhandenen Fotos (fuer Vorrang schwach belegter Seiten)
+        if mk: mk["name"] = f; mk["seite"] = str((obj.get("fotos") or {}).get(f.split("_")[0], {}).get("seite", "")).lower(); basis.append(mk)
+    # Schwellen aus den VORHANDENEN Fotos kalibrieren (gleiches Objekt): Inlier zwischen Basisfotos derselben Seite = 'aehnlich/ueberlappend',
+    # ueber Seiten hinweg = 'gleiches Objekt, andere Sicht'. T_rel = p10 aller Basispaare mit Inliern > 0 ... konservativ: feste Untergrenze 20
+    paare_gleich, paare_alle = [], []
+    for i in range(len(basis)):
+        for j in range(i + 1, len(basis)):
+            n = inlier(basis[i], basis[j]); paare_alle.append(n)
+            if basis[i]["seite"] and basis[i]["seite"] == basis[j]["seite"]: paare_gleich.append(n)
+    pa, pg = np.array(paare_alle), np.array(paare_gleich)
+    T_rel = max(20, int(np.percentile(pa[pa > 0], 10))) if (pa > 0).sum() > 10 else 20
+    T_sim = max(T_rel * 2, int(np.percentile(pg[pg > 0], 50))) if (pg > 0).sum() > 10 else T_rel * 3
+    print(f"  Kalibrierung an {len(basis)} Basisfotos: Paare gesamt {len(pa)} (Inlier p10/p50/p90 {np.percentile(pa,[10,50,90]).astype(int).tolist()}), gleiche Seite {len(pg)} (p50 {int(np.median(pg)) if len(pg) else '-'}) -> relevant >= {T_rel}, aehnlich >= {T_sim}")
     seiten_vorhanden = {}
-    for nr, fi in (obj.get("fotos") or {}).items():
-        s = str(fi.get("seite", "")).lower()
-        if s: seiten_vorhanden[s] = seiten_vorhanden.get(s, 0) + 1
-    print(f"  Vergleichsbasis: {len(basis)} vorhandene Fotos; Seiten vorhanden: {seiten_vorhanden}")
-    def seite_aus_gps(glat, glon):
-        E, N = wgs84_zu_utm(glat, glon); d = np.array([E - E0, N - N0]); x, y = float(d @ xh), float(d @ yh)   # Modellrahmen: +x Sued, +y Ost
-        if math.hypot(x, y) < 3: return None, None
-        s = ("sued" if x > 0 else "nord") if abs(x) >= abs(y) else ("ost" if y > 0 else "west"); return s, round(math.hypot(x, y), 1)
+    for b in basis: seiten_vorhanden[b["seite"] or "unbekannt"] = seiten_vorhanden.get(b["seite"] or "unbekannt", 0) + 1
+    print(f"  Seiten vorhanden: {seiten_vorhanden}")
     rows = []
     for k in kand:
-        pv = os.path.join(th, hashlib.md5(k["title"].encode()).hexdigest() + ".jpg")
+        pv = os.path.join(th, hashlib.md5(k["title"].encode()).hexdigest() + "_1024.jpg")
         if not lade_bild(k["url"], pv): continue
         mk = merkmale(pv)
         if not mk: continue
         k.update(sharp=round(mk["sharp"], 1)); k["_mk"] = mk
         if mk["sharp"] < min_sharp: k["klasse"] = "unscharf"; rows.append(k); continue
-        # Aehnlichkeit gegen Basis
-        best_b = max(((inlier_anteil(mk, b), b["name"]) for b in basis), default=((0.0, 9.0), None), key=lambda q: q[0][0])
-        k["aehnlich_basis"] = dict(name=best_b[1], inlier=round(best_b[0][0], 3)) if best_b[1] else None
-        k["guete"] = float(k["orig_w"]) * math.log10(max(mk["sharp"], 1.0))
-        rows.append(k)
-    # ---- Auswahl: beste Guete zuerst; Klassen gegen Basis + bereits Gewaehlte
+        best = max(((inlier(mk, b), b) for b in basis), key=lambda q: q[0])
+        k["aehnlich_basis"] = dict(name=best[1]["name"], seite=best[1]["seite"], inlier=int(best[0]))
+        if best[0] < T_rel: k["klasse"] = "irrelevant"; rows.append(k); continue          # zeigt dieses Objekt nicht (oder nur winzig)
+        k["guete"] = float(k["orig_w"]) * math.log10(max(mk["sharp"], 1.0)); rows.append(k)
+    # ---- Auswahl: relevante zuerst nach Guete; dup (pHash) raus, aehnlich gedeckelt je Blickgruppe, neu immer (bis max_neu)
     gew = []; gruppen = {}
-    for k in sorted([r for r in rows if r.get("klasse") != "unscharf"], key=lambda r: -r["guete"]):
-        mk = k["_mk"]; klasse = "neu"; bezug = None; dup_von = None
+    for k in sorted([r for r in rows if r.get("klasse") not in ("unscharf", "irrelevant")], key=lambda r: -r["guete"]):
+        mk = k["_mk"]; klasse = "neu"; bezug = None
         for other in gew + basis:
-            omk = other["_mk"] if "_mk" in other else other
-            hd = hamming(mk["ph"], omk["ph"])
-            if hd <= 6: klasse, dup_von = "dup", other.get("title") or other.get("name"); break
+            if hamming(mk["ph"], (other["_mk"] if "_mk" in other else other)["ph"]) <= 6: klasse, bezug = "dup", other.get("title") or other.get("name"); break
         if klasse != "dup":
-            best = (0.0, None)
-            for other in gew:
-                ia, ident = inlier_anteil(mk, other["_mk"])
-                if ia > best[0]: best = (ia, other["title"])
-                if ia > 0.85 and ident < 0.08: klasse, dup_von = "dup", other["title"]; break
-            if klasse != "dup":
-                ib = k["aehnlich_basis"]["inlier"] if k.get("aehnlich_basis") else 0.0
-                if max(best[0], ib) >= 0.25: klasse, bezug = "aehnlich", (best[1] if best[0] >= ib else k["aehnlich_basis"]["name"])
-        k["klasse"] = klasse; k["aehnlich_zu"] = bezug or dup_von
+            best_g = max(((inlier(mk, o["_mk"]), o["title"]) for o in gew), default=(0, None), key=lambda q: q[0])
+            ib = k["aehnlich_basis"]["inlier"]
+            if max(best_g[0], ib) >= T_sim: klasse, bezug = "aehnlich", (best_g[1] if best_g[0] >= ib else k["aehnlich_basis"]["name"])
+        k["klasse"] = klasse; k["aehnlich_zu"] = bezug
         if klasse == "dup": continue
         if klasse == "aehnlich":
-            g = bezug; gruppen[g] = gruppen.get(g, 0) + 1
-            if gruppen[g] > max_grp: k["klasse"] = "aehnlich_ueberzaehlig"; continue
+            gruppen[bezug] = gruppen.get(bezug, 0) + 1
+            if gruppen[bezug] > max_grp: k["klasse"] = "aehnlich_ueberzaehlig"; continue
         if len(gew) >= max_neu: k["klasse"] = "ueber_max"; continue
         gew.append(k)
     # ---- Gewinner in voller Breite laden + Manifest
@@ -172,13 +169,13 @@ def main():
     for k in gew:
         v = voll.get(k["title"], {}); name = "neu_" + hashlib.md5(k["title"].encode()).hexdigest()[:10] + os.path.splitext(k["title"])[1].lower().replace(".jpeg", ".jpg")
         if not lade_bild(v.get("url") or k["url"], os.path.join(aus, name)): continue
-        man["images"].append(dict(file=name, title=k["title"], url=v.get("url") or k["url"], license=k["license"], artist=k["artist"], orig_w=k["orig_w"], orig_h=k["orig_h"], sharp=k["sharp"], klasse=k["klasse"], aehnlich_zu=k.get("aehnlich_zu"), aehnlich_basis=k.get("aehnlich_basis"), guete=round(k["guete"], 1), exif_f35=k.get("exif_f35"), exif_model=k.get("exif_model"), seite_vorschlag=None))
+        man["images"].append(dict(file=name, title=k["title"], url=v.get("url") or k["url"], license=k["license"], artist=k["artist"], orig_w=k["orig_w"], orig_h=k["orig_h"], sharp=k["sharp"], klasse=k["klasse"], aehnlich_zu=k.get("aehnlich_zu"), aehnlich_basis=k.get("aehnlich_basis"), guete=round(k["guete"], 1), exif_f35=k.get("exif_f35"), exif_model=k.get("exif_model"), seite_vorschlag=(k.get("aehnlich_basis") or {}).get("seite") or None))
     json.dump(man, open(os.path.join(aus, "manifest.json"), "w"), indent=1, ensure_ascii=False)
     z = {}
     for r in rows: z[r.get("klasse", "?")] = z.get(r.get("klasse", "?"), 0) + 1
     liz = {}
     for it in man["images"]: liz[it["license"]] = liz.get(it["license"], 0) + 1
-    bericht = dict(kandidaten=len(kand), klassen=z, geladen=len(man["images"]), lizenzen=liz, max_neu=max_neu, max_je_blickgruppe=max_grp, quellen=dict(commons=True, mapillary="kein Token" if not (os.path.exists(os.path.expanduser("~/.config/mapillary_token")) or os.environ.get("MAPILLARY_TOKEN")) else "moeglich", video="nur mit --mit-video (Urheberrecht)"))
+    bericht = dict(kandidaten=len(kand), klassen=z, geladen=len(man["images"]), lizenzen=liz, max_neu=max_neu, max_je_blickgruppe=max_grp, schwellen=dict(relevant=T_rel, aehnlich=T_sim), matcher="ALIKED+LightGlue (" + dev + ")", quellen=dict(commons=True, mapillary="kein Token" if not (os.path.exists(os.path.expanduser("~/.config/mapillary_token")) or os.environ.get("MAPILLARY_TOKEN")) else "moeglich", video="nur mit --mit-video (Urheberrecht)"))
     json.dump(bericht, open(os.path.join(aus, "bericht.json"), "w"), indent=1, ensure_ascii=False)
     print(f"\nAuswahl: {len(man['images'])} geladen von {len(kand)} Kandidaten; Klassen {z}; Lizenzen {liz}")
     print(f"Manifest: {os.path.join(aus, 'manifest.json')}  Bericht: {os.path.join(aus, 'bericht.json')}")
