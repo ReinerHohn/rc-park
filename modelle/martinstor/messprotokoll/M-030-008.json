@@ -1,0 +1,32 @@
+{
+ "id": "M-030-008",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=2.65",
+ "name": "Dachtraufe (verfeinert)",
+ "mess_px": [
+  832.0,
+  553.0,
+  1188.0,
+  612.0
+ ],
+ "P1": [
+  2.65,
+  -4.247,
+  37.35
+ ],
+ "P2": [
+  2.65,
+  3.444,
+  38.004
+ ],
+ "dz": 0.654,
+ "dy": 7.69,
+ "dx": 0.0,
+ "abstand": 7.718,
+ "z1": 37.35,
+ "z2": 38.004,
+ "unsicherheit_rel": 0.0197,
+ "unsicherheit_m": 0.242,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=2.65 (+-1.0 m)"
+}

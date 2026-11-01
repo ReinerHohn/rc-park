@@ -238,3 +238,25 @@ M7. **Modellfreie Hoehen als Pruefzeilen (Quelltyp `foto_kalibriert`, Kamera K-0
     Zinnenkranz-Oberkante 29,5-32,5 (Modell 31,5 ok), Gesamthoehe 60 (Dokument) jetzt `widerspruch` gegen Foto 57,0 / Buendel 55,0. Neue Messer: `ausdehnung_streifen`,
     `z_bei_breite` (Dachansatz = erste Hoehe mit Dachbreite >= 6,8 m im Achsstreifen; First = hoechste Hoehe mit >= 2 m), Erker/Konsolen aus Regionen ausgeblendet.
     Varianten gestartet (grid4): v1 Traufe 38 (Glockenstock +2,5), v2 + First 47,6 (Dach 9,6 m), v3 + Spitze 57 -> Laser (optimierung_validieren) + Foto-IoU (gem2, Seitenwissen).
+M8. **Pick-Werkzeug Vollaufloesung (`tools/foto_pick.py`, Nutzerauftrag):** `auto` findet Spitzen (Oberkontur, Kantenschnitt) und Goldkugeln (kleine runde goldfarbene
+    Komponenten) in der Himmelsmaske auf +-1-2 px; `lupe` erzeugt 3x-Ausschnitte mit 10-px-Gitter je Pick; `setze` protokolliert Korrekturen (pick_historie).
+    Dazu interaktive Pick-Seite (pick_030.html, Artefakt) mit Zoom/8x-Lupe/Pfeiltasten fuer den Nutzer. Himmelsmaske: Referenzmethode versagte bei 030 (Baum/Leitung
+    am oberen Rand -> 0,1 % Himmel) -> robuster Farb-Fallback (blau-dominant, mit Bildrand verbunden). Auto bestaetigte Handpicks auf 5-13 px (Kugeln) und zeigte,
+    dass "Spitzen"-Picks besser als Kugelmitte definiert werden (stabil, +-1 px).
+M9. **Varianten aus den Fotomassen (grid4), Laser gegen Foto:** V1 Traufe 38 (Glockenstock +2,5, Dach gleich): Laser Ziel 14,3->27,3 %, M1 16,1->34,4 %, Foto-IoU 0,8816->0,8843
+    (Nordfotos 001/031 schlechter, 049/000 besser). V2 Traufe 38 + First 47,6: Laser 19,6 % / M1 25,2 %, Foto 0,8824. V3 + Spitze 57: Laser wie V2, Foto 0,8814.
+    Ergebnis: Laser widerspricht der hoeheren Traufe deutlich; die Foto-Kalibrierung hat oben ~+-1 m systematischen Fehler (Anker-Residuen 50-80 px). Modell unveraendert,
+    Zeile "Dachansatz" = widerspruch. Naechster Schritt: praezises Buendel (Pick-Werkzeug, 3 Fotos mit Boden) ODER ALS-Rohpunkte, bevor Traufe/First/Spitze angefasst werden.
+
+## N. Fehlteil-Finder + Uhrgiebel + Kragdach (2026-11-01, Nutzer: "geschwungenes Daechlein ueber der Uhr, gruenes Daechlein zwischen den Tuermen - loese es generell automatisch")
+- **Mechanik `tools/fehlteile_finden.py`:** Modell mit kalibrierter Kamera (K-<foto>, ersatzweise Silhouettenkamera) rendern -> Tiefe gefuellt (Min-Filter), Modellkanten aus
+  Tiefensprung/Kruemmung; Foto auf 7 cm geglaettet (Steinfugen weg), Canny; beide um 0,3 m dilatiert (Kamerafehler), je 1-m-Zelle Kantendichte Foto vs Modell (auf 90-%-Quantil
+  normiert), Treffer nur mit >= 2 gleichsinnigen Nachbarzellen; 3D-Lage aus dem Render; Treffer werden als Beobachtungen in die Masstabelle geschrieben (einmal je Zelle).
+  Am ALTEN Modell markierte er die Zone Uhr-Oberkante/Kragdach (z 29-31 m) als FEHLT - genau die vom Nutzer genannten Teile. Weitere Treffer: SE-Kante (Eckquader in jeder
+  Lage im Foto, im Modell gezahnt = jede zweite), Torbogen-Inneres (ERFUNDEN?, Schatten). Grenzen: Kamerafehler ~0,5-1 m erzeugt Randtreffer; Verdeckungen (Baum).
+- **Generator:** Kielbogen-Daechlein ueber dem Uhrrahmen (S-Kurve, Spannweite 2*(UR+1), Hoehe 1,25, Scheitel 30,6 unter dem Kranz), Kragdach als Kupferschraege vom
+  Zinnenkern (ZZ+0,2, D-0,3) bis zur Glockenstockwand (ZZ+2,4) - vorher ein kleiner Kegel innen, der in den Fotos nicht sichtbar war. Beide mit beleg().
+- **Fallen dabei:** (1) erster Kragdach-Ansatz begann bei ZZ+1,1 -> Durchblick-Schlitz zwischen Zinnenkern und Kragdach (im Druck ein Loch); gefunden, weil der Scharten-
+  Zaehler plötzlich 3 statt 4 fand - Strahlen gingen durch. (2) `nischen_anzahl` wertete "kein Treffer" (nan) als keine Nische -> jetzt als tiefe Nische. (3) erster
+  Kielbogen reichte mit dem Scheitel bis 31,05 in die Scharten.
+- Pruefstand: 29 Pruefungen gruen, 2 Widersprueche (Dachansatz, Dachflanke), 3 Beobachtungen. Viewer v18.

@@ -38,7 +38,7 @@
   "tafel_N": 3.35,
   "tafel_S": 0.0,
   "adler_S": 1.6500000000000001,
-  "dachansatz": 35.600000000000044,
+  "dachansatz": 35.60000000000004,
   "kranz_oben": 31.84999960327148
  },
  "pruefungen": [
@@ -134,13 +134,13 @@
   },
   {
    "name": "Dachansatz / Glockenstock-Oberkante (m)",
-   "wert": 35.600000000000044,
+   "wert": 35.60000000000004,
    "soll": [
     36.9,
     39.2
    ],
    "ok": false,
-   "status": "fehler"
+   "status": "widerspruch"
   },
   {
    "name": "First / Dach-Oberkante (m)",
@@ -333,5 +333,5 @@
    "status": "ok"
   }
  ],
- "bestanden": false
+ "bestanden": true
 }

@@ -164,7 +164,7 @@
   },
   "dachansatz": {
    "typ": "z_bei_breite",
-   "z0": 32.6,
+   "z0": 33.0,
    "z1": 42.0,
    "dz": 0.1,
    "r": 6.0,
@@ -313,14 +313,16 @@
     36.9,
     39.2
    ],
-   "quelle": "Messprotokoll M-030-003 (Foto 030, Kamera K-030 aus LoD2/DOM1-Ankern): 37,9-38,2 m; LoD2-Wandoberkante 37,1-37,3 m | Messung: erste Hoehe ab 32,6 m, bei der die Dachbreite im Achsstreifen 6,8 m erreicht",
+   "quelle": "Messprotokoll M-030-003 (Foto 030, Kamera K-030 aus LoD2/DOM1-Ankern): 37,9-38,2 m; LoD2-Wandoberkante 37,1-37,3 m | Messung: erste Hoehe ab 33,0 m (ueber dem Kragdach), bei der die Dachbreite im Achsstreifen 6,8 m erreicht",
    "quelltyp": "foto_kalibriert",
    "merkmal": "absolut_hoehe",
    "massstab": "foto_kalibriert",
    "protokoll": "M-030-003",
    "historie": [
     "2026-11-01 angelegt, Modell 35,5 (ZZ+5) faellt durch; LoD2 37,2 war frueher als 'generalisiert' verworfen (MASSPRUEFUNG Teil 4)"
-   ]
+   ],
+   "status": "widerspruch",
+   "widerspruch": "Foto-Kalibrierung K-030: 37,4-38,2 m und LoD2-Wandoberkante 37,2 (generalisiert) GEGEN Laser-Hypsometrie: Traufe 38 verschlechtert Ziel 14,3->27,3 % (V1) bzw. 19,6 % (V2 mit First 47,6); Foto-IoU +0,003 (Rauschen, Nordfotos schlechter). Modell 35,5 bleibt. Register M9."
   },
   {
    "name": "First / Dach-Oberkante (m)",
@@ -583,6 +585,12 @@
    "wer": "Claude",
    "text": "Ost-/Westseite (+-y) kaum fotografiert; Fenster dort sind Annahme",
    "naechster_schritt": "Fotos der Seiten beschaffen (Mapillary/eigene)"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "fehlteile_finden (Foto 030, alt vs neu) + Nutzer",
+   "text": "Finder markierte am alten Modell die Zone Uhrgiebel/Kragdach (z 29-31 m) als FEHLT; nach Einbau von Kielbogen und Kragdach bleiben Treffer nahe der Uhr-Oberkante (Kamera K-030 ~0,5-1 m versetzt) und an der SE-Kante (Eckquader-Muster: Foto hat Quader in jeder Lage, Modell gezahnt nur jede zweite).",
+   "naechster_schritt": "Kamera mit praezisen Picks neu loesen, dann Finder erneut; Eckquader-Muster am Vollbild pruefen"
   }
  ]
 }

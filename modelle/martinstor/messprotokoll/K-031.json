@@ -162,5 +162,46 @@
   "rms_px": 199.0,
   "plausibel_strassenfoto": true,
   "brennweite_quelle": "geloest"
+ },
+ "auto": {
+  "spitzen": [
+   {
+    "u": 344.0,
+    "v": 605.0,
+    "spalte": 344,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 669.0,
+    "v": 651.0,
+    "spalte": 669,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 833.0,
+    "v": 485.0,
+    "spalte": 833,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 955.6,
+    "v": 91.5,
+    "spalte": 956,
+    "art": "spitze"
+   },
+   {
+    "u": 1064.0,
+    "v": 531.0,
+    "spalte": 1064,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 1339.0,
+    "v": 799.0,
+    "spalte": 1339,
+    "art": "spitze_grob"
+   }
+  ],
+  "kugeln": []
  }
 }

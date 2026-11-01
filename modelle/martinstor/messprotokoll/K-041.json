@@ -127,5 +127,34 @@
    1.18
   ],
   "hoehe": 1.18
+ },
+ "auto": {
+  "spitzen": [
+   {
+    "u": 146.9,
+    "v": 1093.2,
+    "spalte": 128,
+    "art": "spitze"
+   },
+   {
+    "u": 646.0,
+    "v": 386.0,
+    "spalte": 646,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 852.0,
+    "v": 219.0,
+    "spalte": 852,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 1131.0,
+    "v": 470.0,
+    "spalte": 1131,
+    "art": "spitze_grob"
+   }
+  ],
+  "kugeln": []
  }
 }

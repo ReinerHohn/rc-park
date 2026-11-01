@@ -1,0 +1,177 @@
+{
+ "foto": "030",
+ "stl": "/home/oem/git/rc-park/modelle/stl/martinstor_v4_1-87.stl",
+ "kamera": "K-030 (amtliche Anker)",
+ "zelle_px": 63,
+ "schwelle": 0.35,
+ "treffer": [
+  {
+   "zelle": [
+    1071,
+    945,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    0.49,
+    2.22,
+    29.97
+   ]
+  },
+  {
+   "zelle": [
+    1008,
+    1008,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    -0.45,
+    1.21,
+    28.85
+   ]
+  },
+  {
+   "zelle": [
+    1323,
+    1260,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    4.38,
+    5.19,
+    21.27
+   ]
+  },
+  {
+   "zelle": [
+    1323,
+    1323,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    4.27,
+    5.21,
+    20.12
+   ]
+  },
+  {
+   "zelle": [
+    1323,
+    1512,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    4.22,
+    5.19,
+    16.53
+   ]
+  },
+  {
+   "zelle": [
+    1323,
+    1575,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    4.18,
+    5.2,
+    15.42
+   ]
+  },
+  {
+   "zelle": [
+    882,
+    1953,
+    63
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.72,
+    -0.93,
+    9.6
+   ]
+  },
+  {
+   "zelle": [
+    1386,
+    2016,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    4.46,
+    5.54,
+    8.18
+   ]
+  },
+  {
+   "zelle": [
+    882,
+    1890,
+    63
+   ],
+   "score": -0.993,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.42,
+    -1.05,
+    10.61
+   ]
+  },
+  {
+   "zelle": [
+    945,
+    2016,
+    63
+   ],
+   "score": -0.993,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.69,
+    0.19,
+    8.61
+   ]
+  },
+  {
+   "zelle": [
+    1197,
+    882,
+    63
+   ],
+   "score": 0.992,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    2.91,
+    3.99,
+    30.21
+   ]
+  },
+  {
+   "zelle": [
+    1260,
+    945,
+    63
+   ],
+   "score": 0.985,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    3.86,
+    4.78,
+    28.25
+   ]
+  }
+ ]
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-030-006",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=0",
+ "name": "Nadelspitze/Knauf (verfeinert)",
+ "mess_px": [
+  1000.8,
+  84.0,
+  1000.8,
+  250.0
+ ],
+ "P1": [
+  0.0,
+  -0.012,
+  56.509
+ ],
+ "P2": [
+  0.0,
+  0.038,
+  50.675
+ ],
+ "dz": -5.834,
+ "dy": 0.049,
+ "dx": 0.0,
+ "abstand": 5.835,
+ "z1": 56.509,
+ "z2": 50.675,
+ "unsicherheit_rel": 0.0074,
+ "unsicherheit_m": 0.164,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=0 (+-0.5 m)"
+}

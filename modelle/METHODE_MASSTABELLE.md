@@ -98,7 +98,16 @@ Fotos liefern Verhaeltnisse; Meter brauchen bekannte 3D-Punkte im Bild. Die gibt
   Handpicks aus verkleinerten Gittern (+-20 px) sind der Engpass; Georeferenz jeder Nebendatei pruefen (mt_org war der OSM-Knoten, 37 m daneben).
   Erreichbar mit 2-3 guten Strassenfotos: Hoehen +-1-2 m modellfrei, Breiten auf der Wandebene +-0,1-0,3 m.
 
-## 9. Was dieser Rahmen bewusst NICHT verspricht
+## 9. Fehlende und erfundene Teile automatisch finden (Register N)
+`tools/fehlteile_finden.py OBJEKT.json <foto>`: Modell mit der kalibrierten Kamera ins Foto rendern, Modellkanten (Tiefensprung/Kruemmung) gegen Fotokanten
+(auf 7 cm geglaettet, Steinfugen weg) je 1-m-Zelle vergleichen, Toleranz 0,3 m, mindestens 2 gleichsinnige Nachbarzellen. **Rot = Foto hat Struktur, Modell nicht
+(fehlt); blau = Modell hat Struktur ohne Fotobeleg (erfunden?).** Treffer bekommen ihre 3D-Lage und landen als Beobachtungen in der Masstabelle. Das ist die
+Mechanik fuer "warum hast du das nicht selbst gesehen": am Martinstor fand sie den Uhrgiebel und das Kragdach, bevor sie eingebaut waren. Grenzen: Kamerafehler
+erzeugt Randtreffer, Verdeckungen (Baeume, Schatten im Torbogen) erzeugen Scheintreffer - jeder Treffer wird angesehen (`audit/fehlteile_<foto>.jpg`), bevor er
+Element wird. Picks fuer die Kamera: `tools/foto_pick.py` (auto: Spitzen/Kugeln auf +-1-2 px, lupe: 3x-Ausschnitte, setze: protokollierte Korrektur) und die
+interaktive Pick-Seite (pick_<foto>.html).
+
+## 10. Was dieser Rahmen bewusst NICHT verspricht
 "Alle Masse bewiesen" gibt es mit offenen Daten nicht: Laser 1 m, Fotos +-5-10 %, Dokumente mit unklarer Bezugshoehe. Der Rahmen liefert
 je Mass **Wert, Quelle, Unsicherheit, Status** und verhindert, dass Behobenes zurueckkommt oder eine Quelle fuer etwas herhalten muss,
 was sie nicht sehen kann. Das ist die ehrliche Form von "massstabsgetreu".

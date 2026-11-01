@@ -171,5 +171,52 @@
   ],
   "hoehe": 1.7
  },
- "brennweite_px_exif": 2248
+ "brennweite_px_exif": 2248,
+ "auto": {
+  "spitzen": [
+   {
+    "u": 2.0,
+    "v": 519.0,
+    "spalte": 2,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 312.0,
+    "v": 633.0,
+    "spalte": 312,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 537.0,
+    "v": 565.0,
+    "spalte": 537,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 697.0,
+    "v": 35.0,
+    "spalte": 697,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 854.0,
+    "v": 575.0,
+    "spalte": 854,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 1019.0,
+    "v": 1019.0,
+    "spalte": 1019,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 1174.1,
+    "v": 914.0,
+    "spalte": 1202,
+    "art": "spitze"
+   }
+  ],
+  "kugeln": []
+ }
 }

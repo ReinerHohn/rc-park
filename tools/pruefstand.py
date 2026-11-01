@@ -72,7 +72,7 @@ class Messer:
         us = np.arange(-halb, halb + 1e-6, schritt); org = np.zeros((len(us), 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = us; org[:, 2] = z
         dr = np.zeros_like(org); dr[:, ax] = -sgn
         loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
-        d = np.full(len(us), np.nan); d[ir] = np.abs(loc[:, ax]); wall = np.nanmedian(d); rec = (wall - d) >= tiefe
+        d = np.full(len(us), np.nan); d[ir] = np.abs(loc[:, ax]); wall = np.nanmedian(d); d = np.where(np.isnan(d), -1e3, d); rec = (wall - d) >= tiefe   # Durchblick (kein Treffer) = tiefe Nische
         n, run = 0, 0
         for rr in list(rec) + [False]:
             if rr: run += 1

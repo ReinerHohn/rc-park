@@ -268,7 +268,13 @@ UZ, UR = 26.9, 2.1
 for f in ("+x", "-x"):
     hh = hxy(UZ)
     clock3(f, UZ, UR, hh)
-    adds.append(prism(f, [(-UR - 0.98, UZ + UR + 0.88), (UR + 0.98, UZ + UR + 0.88), (0, UZ + UR + 2.0)], -0.05, rel(0.2), hh))
+    # Geschwungenes Daechlein (Kielbogen) ueber dem Uhrrahmen: Nutzer 2026-11-01 ("geschwungenes Daechlein ueber der Uhr"); Fotos 031/041 Vollbild:
+    # Spannweite ~ Rahmenbreite + 1 m, Hoehe ~1,3 m, S-Kurve (unten konkav, oben konvex). Als Sandsteinband 0,35 m dick, 0,2 m vor der Wand.
+    beleg(f, "Kielbogen-Daechlein ueber der Uhr", "Fotos 031/041 Vollbild (uhr031.jpg); Nutzerhinweis 2026-11-01", spannweite=2 * (UR + 1.0), hoehe=1.3)
+    _w, _h, _zb = UR + 1.0, 1.25, UZ + UR + 0.35      # Scheitel 30,6 m = knapp unter dem Zinnenkranz (Foto 031: Scheitel beruehrt das Kranzband)
+    def _ogee(tt): return 2 * tt * tt if tt < 0.5 else 1 - 2 * (1 - tt) * (1 - tt)
+    _pts = [(-_w + 2 * _w * k / 24, _zb + _h * _ogee(1 - abs(-1 + 2 * k / 24))) for k in range(25)]
+    adds.append(prism(f, _pts + [(_w, _zb - 0.35), (-_w, _zb - 0.35)], -0.05, rel(0.2), hh))
     for k in range(12):
         ang = math.radians(k * 30 + 15)
         u, zz = math.sin(ang) * (UR + 0.28), UZ + math.cos(ang) * (UR + 0.28)
@@ -301,7 +307,10 @@ for f, L in (("+x", W), ("-x", W), ("+y", D), ("-y", D)):
         adds.append(fbox(f, u - 0.4, u + 0.4, ZZ, ZZ + 1.0, -0.5, 0.0, h=HS))                  # Zinne
         adds.append(fbox(f, u - 0.15, u + 0.15, ZZ + 0.9, ZZ + 1.35, -0.1, 0.5, h=HS))            # Holzkonsole
 adds.append(box(-D / 2 + 0.2, D / 2 - 0.2, -W / 2 + 0.2, W / 2 - 0.2, ZZ - 0.3, ZZ + 0.2))             # Kern hinter den Zinnen
-adds.append(frustum(0, 0, ZZ + 0.2, D - 3.0, W - 3.0, ZZ + 2.0, D - 3.4, W - 3.4))               # Kupferschraege des Kragdachs
+# Gruenes Kragdach (Kupfer) zwischen den Ecktuermchen: Nutzer 2026-11-01 ("zwischen den Tuermen ein gruenes Daechlein"); Fotos 031/041/043:
+# die Schraege beginnt ueber den Zinnen aussen (ueber den Kranz hinaus) und steigt bis zur Glockenstock-Wand an.
+beleg("dach", "Kragdach (Kupferschraege) ueber dem Zinnenkranz bis zum Glockenstock", "Fotos 031/041/043 Vollbild; Nutzerhinweis 2026-11-01", unten=ZZ + 1.1, oben=ZZ + 2.4)
+adds.append(frustum(0, 0, ZZ + 0.2, D - 0.3, W - 0.3, ZZ + 2.4, D - 4.0 + 0.4, W - 4.3 + 0.4))   # hinter den Zinnen beginnend (kein Durchblick), bis zur Glockenstockwand
 # ---------- abgesetzter Glockenstock mit Schallarkaden ----------
 GX, GY, GZ0, GZ1 = D - 4.0, W - 4.3, ZZ + 2.0, ZZ + 5.0
 adds.append(box(-GX / 2, GX / 2, -GY / 2, GY / 2, GZ0 - 0.1, GZ1))

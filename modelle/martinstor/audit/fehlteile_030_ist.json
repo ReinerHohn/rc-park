@@ -1,0 +1,177 @@
+{
+ "foto": "030",
+ "stl": "/tmp/claude-29999/-home-oem-git-rc-park/bf197a0c-a706-4c3e-9f93-17b19691b58c/scratchpad/grid4/ist.stl",
+ "kamera": "K-030 (amtliche Anker)",
+ "zelle_px": 63,
+ "schwelle": 0.35,
+ "treffer": [
+  {
+   "zelle": [
+    1071,
+    945,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    -0.26,
+    2.5,
+    30.53
+   ]
+  },
+  {
+   "zelle": [
+    1008,
+    1008,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    -0.24,
+    1.16,
+    28.66
+   ]
+  },
+  {
+   "zelle": [
+    1323,
+    1260,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    4.41,
+    5.19,
+    21.25
+   ]
+  },
+  {
+   "zelle": [
+    1323,
+    1323,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    4.3,
+    5.2,
+    20.11
+   ]
+  },
+  {
+   "zelle": [
+    1323,
+    1512,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    4.2,
+    5.21,
+    16.54
+   ]
+  },
+  {
+   "zelle": [
+    1008,
+    2016,
+    63
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.76,
+    1.32,
+    8.7
+   ]
+  },
+  {
+   "zelle": [
+    1386,
+    2016,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    4.45,
+    5.54,
+    8.17
+   ]
+  },
+  {
+   "zelle": [
+    1197,
+    882,
+    63
+   ],
+   "score": 0.992,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    3.27,
+    3.87,
+    29.9
+   ]
+  },
+  {
+   "zelle": [
+    1134,
+    945,
+    63
+   ],
+   "score": 0.99,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    1.04,
+    3.36,
+    29.81
+   ]
+  },
+  {
+   "zelle": [
+    1323,
+    1575,
+    63
+   ],
+   "score": 0.989,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    4.18,
+    5.2,
+    15.43
+   ]
+  },
+  {
+   "zelle": [
+    1008,
+    630,
+    63
+   ],
+   "score": 0.983,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    0.97,
+    0.72,
+    37.39
+   ]
+  },
+  {
+   "zelle": [
+    1260,
+    945,
+    63
+   ],
+   "score": 0.983,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    3.86,
+    4.78,
+    28.25
+   ]
+  }
+ ]
+}

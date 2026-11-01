@@ -1,0 +1,32 @@
+{
+ "id": "M-030-009",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=4.85",
+ "name": "Zinnenkranz-Ecken (verfeinert)",
+ "mess_px": [
+  782.0,
+  776.0,
+  1294.0,
+  824.0
+ ],
+ "P1": [
+  4.85,
+  -5.409,
+  29.675
+ ],
+ "P2": [
+  4.85,
+  4.564,
+  31.048
+ ],
+ "dz": 1.373,
+ "dy": 9.973,
+ "dx": 0.0,
+ "abstand": 10.067,
+ "z1": 29.675,
+ "z2": 31.048,
+ "unsicherheit_rel": 0.0114,
+ "unsicherheit_m": 0.193,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.85 (+-0.5 m)"
+}

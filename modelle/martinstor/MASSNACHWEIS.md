@@ -14,7 +14,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 | Dachreiter Knauf Durchmesser (m) | 0.66 | 0.5..0.9 | foto_vollbild | modell | OK | Foto 049: 44 px x 1,5 cm = ~0,67 m |
 | Dachreiter Knauf Lage (Anteil ueber First) | 0.19 | 0.12..0.32 | foto_verhaeltnis | - | OK | Foto 049/000: Knauf bei ~20-28 % der Spitzenlaenge |
 | Gesamthoehe (m) | 60.00 | 59.5..66 | dokument | dokument | OK | Bauforschung BW (Landesdenkmalamt) 60 m nach 1901 / 65 m Objektbeschreibung; en.Wikipedia 60 m; Structurae ~65 m; de.Wikipedia 66 m (Plan Schaefer) |
-| Dachansatz / Glockenstock-Oberkante (m) | 35.60 | 36.9..39.2 | foto_kalibriert | foto_kalibriert | FEHLER | Messprotokoll M-030-003 (Foto 030, Kamera K-030 aus LoD2/DOM1-Ankern): 37,9-38,2 m; LoD2-Wandoberkante 37,1-37,3 m / Messung: erste Hoehe ab 32,6 m, bei der die Dachbreite im Achsstreifen 6,8 m erreicht |
+| Dachansatz / Glockenstock-Oberkante (m) | 35.60 | 36.9..39.2 | foto_kalibriert | foto_kalibriert | WIDERSPRUCH | Messprotokoll M-030-003 (Foto 030, Kamera K-030 aus LoD2/DOM1-Ankern): 37,9-38,2 m; LoD2-Wandoberkante 37,1-37,3 m / Messung: erste Hoehe ab 33,0 m (ueber dem Kragdach), bei der die Dachbreite im Achsstreifen 6,8 m erreicht |
 | First / Dach-Oberkante (m) | 46.70 | 46.6..48.7 | foto_kalibriert | foto_kalibriert | OK | Messprotokoll M-030-002: Goldkugeln 47,4-47,9 m; Foto-IoU-Trend J2/J5 (First +1,6 besser) / Messung: hoechste Hoehe, bei der der Dachkoerper im Achsstreifen noch >= 2 m breit ist |
 | Zinnenkranz Oberkante (m) | 31.85 | 29.5..32.5 | foto_kalibriert | foto_kalibriert | OK | Messprotokoll M-030-005: Kranzecken 30,2 / 31,2 m; Laser Stufe 31-32 m / Messung: hoechster Punkt der Suedwand-Mitte (/y/<3, Erker bei y=+-4,3 ausgeblendet) unter 34 m |
 | Spitzenlaenge ueber First (m) | 13.30 | 12..16.5 | foto_vollbild | modell | OK | Foto 049 Vollbild 16,6 / 014: 16,0 / 000: 12,4 m (Massstab aus Modellmassen, grob); Register J3 |
@@ -45,15 +45,17 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - **lod2**: 1 von 1 Pruefungen gruen (amtlicher Grundriss + Traufe/First, keine Aufbauten/Details)
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
 
-## Elemente des Generators: 21 belegt, 6 Annahmen
+## Elemente des Generators: 24 belegt, 6 Annahmen
 
 - Nord: Runder Eckturm NW mit Kegeldach - Foto 001 Vollbild (Nord); Suedseite ohne (Foto 000)
 - Sued: Torbogen mit Keilsteinen - Fotos 050/030 (Sued), 001 (Nord); MASSPRUEFUNG Teil 5
 - Nord: Torbogen mit Keilsteinen - Fotos 050/030 (Sued), 001 (Nord); MASSPRUEFUNG Teil 5
 - Nord: Inschrifttafel 1796 - de.wikipedia: Gedenktafel auf der Stadtseite; Foto 001 (Nord)
 - Sued: Doppeladler-Relief - de.wikipedia: Reichsadler an der Toraussenseite; Fotos 041/030 (Sued, rechts ueber dem Bogen)
+- Sued: Kielbogen-Daechlein ueber der Uhr - Fotos 031/041 Vollbild (uhr031.jpg); Nutzerhinweis 2026-11-01
 - Sued: Uhr mit Giebel und Stundenmarken - Fotos 041/042 (Sued), 031/001 (Nord); MASSPRUEFUNG Teil 3
 - Sued: Fenster 2 oben + 1 tiefer - Fotos 041/030/042 Vollbild (Sued)
+- Nord: Kielbogen-Daechlein ueber der Uhr - Fotos 031/041 Vollbild (uhr031.jpg); Nutzerhinweis 2026-11-01
 - Nord: Uhr mit Giebel und Stundenmarken - Fotos 041/042 (Sued), 031/001 (Nord); MASSPRUEFUNG Teil 3
 - Nord: Fenster 3 in Reihe + 1 Schlitz - Fotos 031/001 Vollbild (Nord)
 - Ost: Fenster 2 oben + 1 tiefer - ANNAHME: Ost/West nicht fotografiert
@@ -62,6 +64,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - Nord: Zinnenkranz 5 Zinnen - Fotos 041 (Sued), 031 (Nord)
 - Ost: Zinnenkranz 5 Zinnen - ANNAHME: Ost/West nicht fotografiert
 - West: Zinnenkranz 5 Zinnen - ANNAHME: Ost/West nicht fotografiert
+- dach: Kragdach (Kupferschraege) ueber dem Zinnenkranz bis zum Glockenstock - Fotos 031/041/043 Vollbild; Nutzerhinweis 2026-11-01
 - Sued: Glockenstock mit 2 Schallarkaden - Fotos 041/043 (Sued), 031 (Nord)
 - Nord: Glockenstock mit 2 Schallarkaden - Fotos 041/043 (Sued), 031 (Nord)
 - Ost: Glockenstock mit 2 Schallarkaden - ANNAHME: Ost/West nicht fotografiert
@@ -78,12 +81,14 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 
 ## Offene Widersprueche
 
+- Dachansatz / Glockenstock-Oberkante (m): Foto-Kalibrierung K-030: 37,4-38,2 m und LoD2-Wandoberkante 37,2 (generalisiert) GEGEN Laser-Hypsometrie: Traufe 38 verschlechtert Ziel 14,3->27,3 % (V1) bzw. 19,6 % (V2 mit First 47,6); Foto-IoU +0,003 (Rauschen, Nordfotos schlechter). Modell 35,5 bleibt. Register M9.
 - Dachflanke Halbbreiten-Zunahme je m (Ansicht y, 37->45 m): Laser (optimierung_validieren, steilere Flanke 0,15): Ziel 14,3->13,8 und M2 13,9->13,4 besser, aber M1 16,1->18,4 und M3 16,1->18,0 schlechter; Foto-IoU +0,002 (Rauschen). Register J6. Bleibt 0,21 bis eine Quelle entscheidet.
 
 ## Beobachtungen ohne Pruefung
 
 - 2026-11-01 Claude (Fotosichtung): Waagrechter Balken/Blende auf halber Hoehe der Schaftwand (Suedseite) -> Vollbild messen
 - 2026-11-01 Claude: Ost-/Westseite (+-y) kaum fotografiert; Fenster dort sind Annahme -> Fotos der Seiten beschaffen (Mapillary/eigene)
+- 2026-11-01 fehlteile_finden (Foto 030, alt vs neu) + Nutzer: Finder markierte am alten Modell die Zone Uhrgiebel/Kragdach (z 29-31 m) als FEHLT; nach Einbau von Kielbogen und Kragdach bleiben Treffer nahe der Uhr-Oberkante (Kamera K-030 ~0,5-1 m versetzt) und an der SE-Kante (Eckquader-Muster: Foto hat Quader in jeder Lage, Modell gezahnt nur jede zweite). -> Kamera mit praezisen Picks neu loesen, dann Finder erneut; Eckquader-Muster am Vollbild pruefen
 
 ## Grenze
 

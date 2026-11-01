@@ -41,6 +41,14 @@
  },
  {
   "seite": "+x",
+  "element": "Kielbogen-Daechlein ueber der Uhr",
+  "quelle": "Fotos 031/041 Vollbild (uhr031.jpg); Nutzerhinweis 2026-11-01",
+  "spannweite": 6.2,
+  "hoehe": 1.3,
+  "seite_name": "Sued"
+ },
+ {
+  "seite": "+x",
   "element": "Uhr mit Giebel und Stundenmarken",
   "quelle": "Fotos 041/042 (Sued), 031/001 (Nord); MASSPRUEFUNG Teil 3",
   "durchmesser": 4.2,
@@ -52,6 +60,14 @@
   "quelle": "Fotos 041/030/042 Vollbild (Sued)",
   "anzahl": 3,
   "seite_name": "Sued"
+ },
+ {
+  "seite": "-x",
+  "element": "Kielbogen-Daechlein ueber der Uhr",
+  "quelle": "Fotos 031/041 Vollbild (uhr031.jpg); Nutzerhinweis 2026-11-01",
+  "spannweite": 6.2,
+  "hoehe": 1.3,
+  "seite_name": "Nord"
  },
  {
   "seite": "-x",
@@ -108,6 +124,14 @@
   "quelle": "ANNAHME: Ost/West nicht fotografiert",
   "anzahl": 5,
   "seite_name": "West"
+ },
+ {
+  "seite": "dach",
+  "element": "Kragdach (Kupferschraege) ueber dem Zinnenkranz bis zum Glockenstock",
+  "quelle": "Fotos 031/041/043 Vollbild; Nutzerhinweis 2026-11-01",
+  "unten": 31.6,
+  "oben": 32.9,
+  "seite_name": "dach"
  },
  {
   "seite": "+x",
