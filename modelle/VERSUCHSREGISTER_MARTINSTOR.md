@@ -511,3 +511,29 @@ fertigen `fassade.json`-Eintrag uebersetzt (Seite aus dem Vorzeichen, u und z au
 geschrieben - **nicht automatisch eingebaut**, jeder Vorschlag wird erst am Vollbild geprueft. Erst seit die Elemente Daten sind, ist der Weg
 von "hier fehlt etwas" zu "dieses Element einfuegen" ein Textbaustein statt einer Codeaenderung. Erster Lauf (Foto 030): drei Vorschlaege
 auf der Ostseite (z 28,2 / 16,6 / 8,2 m) - die Ostseite ist unfotografiert, deshalb sind das Kandidaten, keine Befunde.
+
+## AC. Die Lehre wird zum Werkzeug: `tools/messung_pruefen.py` (2026-11-01, Nutzer: "lernst du daraus? beweise es!")
+**Befund:** Derselbe Fehler ist in dieser Sitzung FUENFMAL passiert - zwei Dinge verglichen, die nicht dasselbe messen:
+(1) echte Querschnittsflaeche 77 m2 gegen gerasterte Laserzellen 97; (2) Sollwert aus einem Zonenmittel gegen eine Messung bei EINER
+Hoehe; (3) Foto verdoppelt die freie Halbbreite, Pruefstand nahm beide Seiten; (4) Mittelwert ueber uneinige Fotos sah aus wie ein
+Befund; (5) "staerkste Kante ueber der Uhr" traf in drei Fotos drei verschiedene Kanten (1,22 / 4,54 / 0,04 m).
+**Die Lehre stand nach Fall 1 im Register - und kam trotzdem viermal wieder. Eine aufgeschriebene Lehre reicht nicht.**
+**Jetzt eine Regel im Code:** Eine Messung desselben Merkmals in mehreren Fotos ist nur gueltig, wenn ihre Streuung zur angegebenen
+Unsicherheit passt (Spanne <= 4 sigma UND Standardabweichung <= 1,5 sigma). Ist sie groesser, ist die MESSUNG kaputt, nicht das Modell -
+es darf daraus kein Befund und kein Sollwert werden.
+**Rueckprobe auf alle Mehrfoto-Messungen dieser Sitzung - die Regel trennt genau richtig:**
+| Messung | Werte | Urteil | was ich damals tat |
+|---|---|---|---|
+| Silhouettenbreite 29-33,5 m | -0,12 / -0,04 / -0,36 | GUELTIG | Schaft korrigiert - war richtig |
+| Flankensteigung 37-46 m | 0,486 / 0,475 / 0,481 | GUELTIG | Widerspruch geschlossen - war richtig |
+| Befund 36-41 m | 1,13 / 0,35 / 0,28 | UNGUELTIG | hatte ich faelschlich BESTAETIGT |
+| Uhrhoehe absolut | 24,77 / 26,79 / 27,81 | UNGUELTIG | hatte ich als Pruefzeile angelegt |
+| Kante ueber der Uhr | 1,22 / 4,54 / 0,04 | UNGUELTIG | gerade eben gebaut |
+Die Regel ist in `beobachtungen_sichten.py` eingebaut (Status MESSUNG UNGUELTIG) und die ungueltige Uhr-Pruefzeile wurde entfernt.
+**Zur Uhr (Nutzerhinweis "zu weit oben"):** bleibt OFFEN, weil es keine gueltige Messung gibt. Naechster Schritt steht in der Tabelle:
+Zinnen-Unterkante je Foto als Anker PICKEN statt "staerkste Kante" zu raten, dann den Abstand zum Zifferblatt messen.
+**Der Giebel dagegen ist belegt und gebaut:** Foto 031 Vollbild zeigt einen flachen Dreiecksgiebel mit ZWEI KONKAV eingezogenen
+Schenkeln (nicht die S-Kurve, die ich gebaut hatte). Gemessen: Scheitel 28,96 m, Schenkelende 27,67 m, Uhrrahmen-Oberkante 27,62 m.
+**Ost/West-Fotos:** Der Laser zeigt, warum es sie kaum gibt - oestlich und westlich stehen Haeuser mit 14-23 m Hoehe direkt am Turm
+(ab 3-7 m Abstand). Die unteren ~20 m dieser Seiten sind von keiner Strasse aus sichtbar; nur der obere Teil ragt heraus.
+Die Commons-Kategorie (107 Dateien, 60 davon bereits im Repo) enthaelt kein Luftbild und keine reine Ost/West-Ansicht.

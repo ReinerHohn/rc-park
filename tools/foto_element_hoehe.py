@@ -19,6 +19,13 @@ def strahl_ebene(kam, uv, ebene):
     s = (val - C[i]) / d[i]
     return C + s * d
 
+def abstand(kam, uv1, uv2, ebene):
+    """Hoehenabstand zweier Bildpunkte auf derselben Wandebene. ROBUSTER als zwei absolute Hoehen:
+    ein Fehler in Kamerahoehe oder Brennweite verschiebt beide Punkte fast gleich und kuerzt sich heraus
+    (2026-11-01: absolut sagte Foto 031 die Uhr auf 24,7 m und Foto 030 auf 26,8 m - der ABSTAND zum
+    Zinnenkranz war in beiden Fotos dagegen einig und zeigte den Fehler von 2 m)."""
+    return float(strahl_ebene(kam, uv1, ebene)[2] - strahl_ebene(kam, uv2, ebene)[2])
+
 def main():
     a = sys.argv[1:]; objp, nr, was = a[0], a[1], a[2]
     def opt(k, d):

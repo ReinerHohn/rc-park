@@ -11,6 +11,7 @@ Dieses Werkzeug gruppiert sie nach Hoehe und entscheidet nach einer festen Regel
 Ohne --anwenden wird nur berichtet. Mit --anwenden werden UNEINS und TEXTUR mit Begruendung geschlossen (in 'beobachtungen_erledigt').
 """
 import sys, os, json, numpy as np
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 def main():
     objp = sys.argv[1]; anwenden = "--anwenden" in sys.argv
@@ -49,11 +50,15 @@ def main():
                 # (2026-11-01, Befund 36-41 m). Dieselbe Falle wie beim Zonenmittel gegen Einzelhoehe.
                 je = {f: float(np.mean([x["abweichung"] for x in g["b"] if x["foto"] == f])) for f in fotos}
                 paare = ", ".join(f"{f}{v:+.2f}" for f, v in je.items())
-                if min(abs(v) for v in je.values()) >= 0.4: status, grund = "BESTAETIGT", f"je Foto: {paare}"
+                # Zuerst: ist die MESSUNG ueberhaupt gueltig (messen die Fotos dasselbe)? Erst dann die Frage nach dem Befund.
+                import messung_pruefen as MP
+                gueltig, text = MP.pruefe(je, 0.3, "Streuung")
+                if not gueltig: status, grund = "MESSUNG UNGUELTIG", text.split(") ")[1] if ") " in text else text
+                elif min(abs(v) for v in je.values()) >= 0.4: status, grund = "BESTAETIGT", f"je Foto: {paare}"
                 else: status, grund = "SCHWACH", f"je Foto: {paare} - mindestens ein Foto unter 0,4 m, nicht belastbar"
             else: status, grund = "EINZELN", ""
         print(f"  {status:10s} z {zv:5.1f}-{zb:5.1f} m  {g['art']:9s}  Fotos {','.join(fotos):12s}  Abweichung {mw:+.2f} m  {grund[:70]}")
-        if status in ("UNEINS", "TEXTUR", "SCHWACH"):
+        if status in ("UNEINS", "TEXTUR", "SCHWACH", "MESSUNG UNGUELTIG"):
             for b in g["b"]: erledigt.append(dict(b, status=status, begruendung=grund))
         else:
             offen += g["b"]

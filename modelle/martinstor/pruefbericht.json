@@ -44,7 +44,7 @@
   "hyp30": 136.0,
   "hyp40": 42.0,
   "sil30": 13.26,
-  "sil38": 11.24,
+  "sil38": 11.219999999999999,
   "sil45": 3.9000000000000004,
   "sil31_031": 12.620000000000001,
   "sil_zone_031": 11.792,
@@ -259,7 +259,7 @@
   },
   {
    "name": "Dachflanke: Halbbreiten-Zunahme je m (Silhouette 38-45 m, Kamera K-030)",
-   "wert": 0.5242857142857142,
+   "wert": 0.5228571428571428,
    "soll": [
     0.4,
     0.56
@@ -413,16 +413,6 @@
    "soll": [
     0.8,
     1.9
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Uhr Zifferblatt-Hoehe (m, aus Goldfarbe gemessen)",
-   "wert": 26.9,
-   "soll": [
-    26.0,
-    28.2
    ],
    "ok": true,
    "status": "ok"

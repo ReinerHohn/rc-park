@@ -170,10 +170,13 @@ for f in ("+x", "-x"):
     clock3(f, UZ, UR, hh)
     # Geschwungenes Daechlein (Kielbogen) ueber dem Uhrrahmen: Nutzer 2026-11-01 ("geschwungenes Daechlein ueber der Uhr"); Fotos 031/041 Vollbild:
     # Spannweite ~ Rahmenbreite + 1 m, Hoehe ~1,3 m, S-Kurve (unten konkav, oben konvex). Als Sandsteinband 0,35 m dick, 0,2 m vor der Wand.
-    beleg(f, "Kielbogen-Daechlein ueber der Uhr", "Fotos 031/041 Vollbild (uhr031.jpg); Nutzerhinweis 2026-11-01", spannweite=2 * (UR + 1.0), hoehe=1.3)
-    _w, _h, _zb = UR + 1.0, 1.25, UZ + UR + 0.35      # Scheitel 30,6 m = knapp unter dem Zinnenkranz (Foto 031: Scheitel beruehrt das Kranzband)
-    def _ogee(tt): return 2 * tt * tt if tt < 0.5 else 1 - 2 * (1 - tt) * (1 - tt)
-    _pts = [(-_w + 2 * _w * k / 24, _zb + _h * _ogee(1 - abs(-1 + 2 * k / 24))) for k in range(25)]
+    beleg(f, "Giebel ueber der Uhr mit zwei konkaven Schenkeln", "Foto 031 Vollbild (giebel031.jpg), Messung Scheitel 28,96 / Schenkelende 27,67 m; Nutzerhinweis 2026-11-01", spannweite=2 * (UR + 1.0), hoehe=1.3)
+    # Foto 031 Vollbild (giebel031.jpg): KEIN S-Bogen, sondern ein flacher Dreiecksgiebel, dessen beide Schenkel KONKAV
+    # eingezogen sind und in einer Spitze zusammenlaufen; die Schenkel laufen aussen fast waagrecht aus.
+    # Gemessen: Scheitel 28,96 m, Schenkelende 27,67 m, Uhrrahmen-Oberkante 27,62 m -> Hoehe ueber dem Rahmen ~1,3 m.
+    _w, _h, _zb = UR + 1.0, 1.25, UZ + UR + 0.35
+    def _konkav(tt): return tt ** 2.6          # 0 am Schenkelende, 1 am Scheitel; Exponent > 1 = konkav eingezogen
+    _pts = [(-_w + 2 * _w * k / 24, _zb + _h * _konkav(1 - abs(-1 + 2 * k / 24))) for k in range(25)]
     adds.append(prism(f, _pts + [(_w, _zb - 0.35), (-_w, _zb - 0.35)], -0.05, rel(0.2), hh))
     for k in range(12):
         ang = math.radians(k * 30 + 15)
