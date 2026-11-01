@@ -40,6 +40,10 @@ D, W = 9.3, 10.3             # Schaft AM KOPF (bei ZZ); nach unten verjuengt er 
 ZZ = 30.5                     # Zinnen-Unterkante = Oberkante Schaft (OSM-Traufe 33 m, Foto 33-35 m)
 TOP = H_TOTAL
 adds, cuts = [], []
+ELEMENTE = []   # Beleg-Register: jedes sichtbare Element meldet Seite + Quelle -> modelle/martinstor/elemente.json (Pruefstand: ohne Beleg = FEHLER)
+def beleg(seite, element, quelle, **masse):
+    ELEMENTE.append(dict(seite=seite, element=element, quelle=quelle, **masse))
+SEITEN = {"+x": "Sued", "-x": "Nord", "+y": "Ost", "-y": "West"}
 
 def box(x0, x1, y0, y1, z0, z1):
     return M.cube((x1 - x0, y1 - y0, z1 - z0)).translate((x0, y0, z0))
@@ -185,6 +189,7 @@ adds.append(frustum(0, 0, ZB - 0.01, DB, WB, ZZ, D, W))                         
 # Foto 001 Vollbild (Tafel 2,0 m = ~195 px -> ~97 px/m): Durchmesser ~2,3 m, Traufe ~10-11 m, Kegel ~3-3,5 m, Spitze ~13-14,5 m;
 # Foto 000: Suedseite ohne Eckturm. Masstabelle "Eckturm NW".
 EX, EY, ER = -DB / 2 - 0.8, -WB / 2 + 0.2, 1.15
+beleg("-x", "Runder Eckturm NW mit Kegeldach", "Foto 001 Vollbild (Nord); Suedseite ohne (Foto 000)", durchmesser=2 * ER, spitze=13.9)
 adds.append(M.cylinder(10.6 - 0.8, ER, ER, 32).translate((EX, EY, 0.8)))                                  # Sandsteinrund
 adds.append(M.cylinder(0.25, ER + 0.2, ER + 0.2, 32).translate((EX, EY, 10.35)))                             # Traufgesims
 adds.append(M.cylinder(3.3, ER + 0.2, 0.03, 32).translate((EX, EY, 10.6)))                                  # Kupferkegel
@@ -224,6 +229,7 @@ AW, SPR = 4.7, 2.65
 cuts.append(box(-DB, DB, -AW / 2, AW / 2, -1, SPR))
 cuts.append(M.cylinder(2 * DB, AW / 2, circular_segments=96).rotate((0, 90, 0)).translate((-DB, 0, SPR)))
 for f in ("+x", "-x"):
+    beleg(f, "Torbogen mit Keilsteinen", "Fotos 050/030 (Sued), 001 (Nord); MASSPRUEFUNG Teil 5", breite=AW, scheitel=SPR + AW / 2)
     s_ = 1 if f == "+x" else -1
     adds.append(fcyl(f, 0, SPR, AW / 2 + 0.95, -0.05, rel(0.16), h=HB, seg=96))
     adds.append(fbox(f, -AW / 2 - 0.95, AW / 2 + 0.95, 0.9, SPR, -0.05, rel(0.16), h=HB))
@@ -237,18 +243,20 @@ for f in ("+x", "-x"):
     for j in (-1, 1):
         adds.append(fbox(f, j * (AW / 2 + 0.5) - 0.6, j * (AW / 2 + 0.5) + 0.6, SPR - 0.3, SPR, -0.05, rel(0.24), h=HB))
 _hT = hxy(9.6)
-adds.append(fbox("+x", -1.7, 1.7, 6.5, 8.5, -0.05, rel(0.14), h=_hT))                    # Inschrifttafel
-cuts.append(fbox("+x", -1.45, 1.45, 6.75, 8.25, rel(0.14) - rel(0.05), 1.0, h=_hT))
+beleg("-x", "Inschrifttafel 1796", "de.wikipedia: Gedenktafel auf der Stadtseite; Foto 001 (Nord)", breite=3.4, hoehe=2.0)
+adds.append(fbox("-x", -1.7, 1.7, 6.5, 8.5, -0.05, rel(0.14), h=_hT))                    # Inschrifttafel (NORD = Stadtseite)
+cuts.append(fbox("-x", -1.45, 1.45, 6.75, 8.25, rel(0.14) - rel(0.05), 1.0, h=_hT))
 for i in range(5):
     z = 6.9 + i * 0.22
-    adds.append(fbox("+x", -1.25 + (0.3 if i == 4 else 0), 1.25 - (0.3 if i == 4 else 0), z, z + 0.09, 0, rel(0.12), h=_hT))
+    adds.append(fbox("-x", -1.25 + (0.3 if i == 4 else 0), 1.25 - (0.3 if i == 4 else 0), z, z + 0.09, 0, rel(0.12), h=_hT))
 ZA, FA = 9.45, 0.9                                                                          # Adler-Mitte, Vergroesserung (Foto: Tafel ~2,6 x 3 m)
-adds.append(fbox("-x", -0.85, 0.85, 8.3, 10.6, -0.05, rel(0.14), h=_hT))                       # Tafel
-cuts.append(fbox("-x", -0.7, 0.7, 8.5, 10.4, rel(0.14) - rel(0.05), 1.0, h=_hT))         # Feld einsenken
+beleg("+x", "Doppeladler-Relief", "de.wikipedia: Reichsadler an der Toraussenseite; Fotos 041/030 (Sued, rechts ueber dem Bogen)", breite=1.7, hoehe=2.3)
+adds.append(fbox("+x", -0.85, 0.85, 8.3, 10.6, -0.05, rel(0.14), h=_hT))                       # Adler-Tafel (SUED)
+cuts.append(fbox("+x", -0.7, 0.7, 8.5, 10.4, rel(0.14) - rel(0.05), 1.0, h=_hT))         # Feld einsenken
 for e in [M.sphere(0.32 * FA, 24).scale((1, 0.8, 1.3)).translate((0, 0, ZA - 0.2)),
           M.sphere(0.2 * FA, 16).translate((0, -0.28 * FA, ZA + 0.5 * FA)), M.sphere(0.2 * FA, 16).translate((0, 0.28 * FA, ZA + 0.5 * FA)),
           M.sphere(0.42 * FA, 24).scale((0.5, 1.0, 0.55)).translate((0, -0.5 * FA, ZA - 0.1)), M.sphere(0.42 * FA, 24).scale((0.5, 1.0, 0.55)).translate((0, 0.5 * FA, ZA - 0.1))]:
-    late.append(e.scale((rel(0.12) / 0.3, 1, 1)).translate((-_hT[0] - rel(0.09), 0, 0)))   # NACH dem Einsenken vereinigt, sonst weg
+    late.append(e.scale((rel(0.12) / 0.3, 1, 1)).translate((_hT[0] + rel(0.09), 0, 0)))    # NACH dem Einsenken vereinigt, sonst weg (+x = Sued)
 for f in ("+y", "-y"):
     for z in (6.5, 10.5):
         window(f, 0.0, z, 0.5, 1.0, hh=hxy(z))
@@ -265,15 +273,19 @@ for f in ("+x", "-x"):
         ang = math.radians(k * 30 + 15)
         u, zz = math.sin(ang) * (UR + 0.28), UZ + math.cos(ang) * (UR + 0.28)
         adds.append(fcyl(f, u, zz, 0.2, -0.2, -0.15 + rel(0.09), h=hh))
+    beleg(f, "Uhr mit Giebel und Stundenmarken", "Fotos 041/042 (Sued), 031/001 (Nord); MASSPRUEFUNG Teil 3", durchmesser=2 * UR)
     if f == "+x":   # SUEDSEITE (Konvention; Nutzer: Uhr zeigt nach Sueden): Fotos 041/030/042/001 - zwei Fenster oben, eines tiefer rechts der Mitte
+        beleg(f, "Fenster 2 oben + 1 tiefer", "Fotos 041/030/042 Vollbild (Sued)", anzahl=3)
         for u in (-2.1, 2.1):   # zwei Fenster ca. 4,8 m unter der Uhrmitte, aussen 1,1 x 1,35 m
             window(f, u, 21.65, 0.6, 0.85, hh=hxy(21.65))
         window(f, 0.5, 18.1, 0.5, 0.8, hh=hxy(18.1))      # drittes Fenster ca. 8,5 m unter der Uhrmitte
     else:           # NORDSEITE: Foto 031 (Vollbild 2025): drei Fenster in einer Reihe (u -2,6 / 0 / +2,5 m), ein Schlitz tiefer bei u ~ 0
+        beleg(f, "Fenster 3 in Reihe + 1 Schlitz", "Fotos 031/001 Vollbild (Nord)", anzahl=4)
         for u in (-2.5, 0.0, 2.5):
             window(f, u, 21.65, 0.6, 0.85, hh=hxy(21.65))
         window(f, 0.0, 18.1, 0.5, 0.8, hh=hxy(18.1))
 for f in ("+y", "-y"):
+    beleg(f, "Fenster 2 oben + 1 tiefer", "ANNAHME: Ost/West nicht fotografiert", anzahl=3)
     for u in (-1.8, 1.8):
         window(f, u, 26.0, 0.55, 1.0, hh=hxy(26.0))
     window(f, 0.0, 21.8, 0.45, 0.9, hh=hxy(21.8))
@@ -282,6 +294,7 @@ for f in ("+y", "-y"):
 adds.append(box(-D / 2 - 0.35, D / 2 + 0.35, -W / 2 - 0.35, W / 2 + 0.35, ZZ - 0.45, ZZ))        # Kranzgesims
 for f, L in (("+x", W), ("-x", W), ("+y", D), ("-y", D)):
     n = 5
+    beleg(f, "Zinnenkranz 5 Zinnen", "Fotos 041 (Sued), 031 (Nord)" if f in ("+x", "-x") else "ANNAHME: Ost/West nicht fotografiert", anzahl=n)
     pitch = (L - 1.0) / n
     for i in range(n):
         u = -L / 2 + 0.5 + (i + 0.5) * pitch
@@ -295,6 +308,7 @@ adds.append(box(-GX / 2, GX / 2, -GY / 2, GY / 2, GZ0 - 0.1, GZ1))
 quoins((0, 0), GX / 2, GY / 2, GZ0, GZ1 - 0.2, a=0.75, b=0.42, course=0.6)
 for f in ("+x", "-x", "+y", "-y"):
     hh = (GX / 2, GY / 2)
+    beleg(f, "Glockenstock mit 2 Schallarkaden", "Fotos 041/043 (Sued), 031 (Nord)" if f in ("+x", "-x") else "ANNAHME: Ost/West nicht fotografiert", anzahl=2)
     for u in (-1.0, 1.0):
         cuts.append(fbox(f, u - 0.5, u + 0.5, GZ0 + 0.4, GZ0 + 1.5, -0.7, 0.5, h=hh))
         cuts.append(fcyl(f, u, GZ0 + 1.5, 0.5, -0.7, 0.5, h=hh, seg=24))
@@ -337,6 +351,8 @@ adds.append(M.cylinder(0.6, 1.55, 1.45, 8).translate((0, 0, RZ1 - 0.1)))
 # Nadel 0,08-0,14 m breit, Knauf ~0,67 m Durchmesser bei ~20 % der Spitzenlaenge ueber dem First, Mast darunter 0,09-0,26 m.
 # (Der Laser DOM1 verschmiert die Nadel zu einem breiten Kegel, Fussradius ~1,5 m - Rasterartefakt, kein Befund.)
 # Untergrenzen fuer den Druck: Nadel-Spitze >= 0,08 m Durchmesser (= 0,9 mm bei 1:87), Mast >= 0,24 m.
+beleg("dach", "Dachreiter: Mast, Knauf, Nadel", "Foto 049 Vollbild; Bauforschung BW 60 m", spitze=TOP)
+beleg("dach", "4 Ecktuermchen mit Kegel", "Fotos 041/043/044; Laser DOM1 Spitzen 41 m", anzahl=4)
 KZ = RZ1 + 0.22 * (TOP - RZ1)
 adds.append(M.cylinder(KZ - RZ1 - 0.3, 0.13, 0.12, 8).translate((0, 0, RZ1 + 0.4)))          # Mast bis zum Knauf
 adds.append(M.sphere(0.34, 20).translate((0, 0, KZ)))                                          # Knauf
@@ -398,6 +414,9 @@ os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, "wb") as f:
     f.write(b"martinstor_detail (c) OSM ODbL + rc-park".ljust(80, b" "))
     f.write(np.uint32(len(F)).tobytes()); f.write(rec.tobytes())
+import json as _json
+_ep = os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "elemente.json")
+_json.dump([dict(e, seite_name=SEITEN.get(e["seite"], e["seite"])) for e in ELEMENTE], open(_ep, "w"), indent=1, ensure_ascii=False)
 lo, hi = V.min(0), V.max(0)
 print(f"{len(adds)} Teile, {len(cuts)} Schnitte -> {len(F):,} Dreiecke, Genus {model.genus()}, "
       f"Volumen {model.volume()/1000:.1f} cm3")

@@ -186,3 +186,13 @@ Naechster Weg: Laserquelle mit mehr Aufloesung (ALS-Rohpunkte) oder Kantenmessun
 5. Reliefs mit Unterbrechungen (Stundenmarken in der Uhrnische) -> `max_luecke`.
 6. Aenderungs-Diff gegen den letzten Pruefbericht nach jedem Lauf ("GEAENDERT seit letztem Lauf") = Mechanik fuer Lehre F8 (eine Eigenschaft gemeint, zwei geaendert) und F3/F4 (Ueberkorrektur).
 7. status `widerspruch` fuer Pruefungen, bei denen Quellen uneins sind: sichtbar bei jedem Lauf, kein Fake-Gruen, kein Dauer-Rot.
+
+### L3. Lehren F5/F9 als Mechanik (2026-11-01, Nutzerauftrag)
+- **F9 (erfundenes Feature nie gegen Foto geprueft):** Der Generator fuehrt ein Belegregister `beleg(seite, element, quelle, masse)`; jeder Bau schreibt
+  `modelle/martinstor/elemente.json` (21 Elemente). Der Pruefstand: Element ohne Quelle = FEHLER; Quelle "ANNAHME..." wird als Annahme gelistet (6: Ost/West
+  Fenster, Zinnen, Schallarkaden). **Erster Fund beim Eintragen der Belege:** Inschrifttafel sass auf +x (Sued) und Doppeladler auf -x (Nord) - genau
+  verkehrt zu de.wikipedia (Tafel = Stadtseite) und den Fotos. Getauscht; Pruefungen Tafel NORD 3,0-3,8 m / keine Tafel SUED / Adler SUED.
+- **F5/F6 (nie ein vollstaendiger Mehrflaechen-Audit):** `tools/seiten_audit.py` erzeugt nach jedem Bau `modelle/martinstor/audit/seiten.jpg`
+  (Sued/Nord/Ost/West/Draufsicht orthografisch + Foto|Render-Paare je Foto mit bekannter Seite). Laeuft in `bauen_abnehmen.sh` auch bei rotem Pruefstand.
+  Der Pruefstand meldet Seiten ohne Foto als UNGEPRUEFT (Ost, West).
+- Messfalle dabei: gezahnte Eckquader wechseln je Lage die Ecke -> Relief-Messungen an der Wand auf |u| < 2,5 m begrenzen.

@@ -1,0 +1,154 @@
+[
+ {
+  "seite": "-x",
+  "element": "Runder Eckturm NW mit Kegeldach",
+  "quelle": "Foto 001 Vollbild (Nord); Suedseite ohne (Foto 000)",
+  "durchmesser": 2.3,
+  "spitze": 13.9,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "+x",
+  "element": "Torbogen mit Keilsteinen",
+  "quelle": "Fotos 050/030 (Sued), 001 (Nord); MASSPRUEFUNG Teil 5",
+  "breite": 4.7,
+  "scheitel": 5.0,
+  "seite_name": "Sued"
+ },
+ {
+  "seite": "-x",
+  "element": "Torbogen mit Keilsteinen",
+  "quelle": "Fotos 050/030 (Sued), 001 (Nord); MASSPRUEFUNG Teil 5",
+  "breite": 4.7,
+  "scheitel": 5.0,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "-x",
+  "element": "Inschrifttafel 1796",
+  "quelle": "de.wikipedia: Gedenktafel auf der Stadtseite; Foto 001 (Nord)",
+  "breite": 3.4,
+  "hoehe": 2.0,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "+x",
+  "element": "Doppeladler-Relief",
+  "quelle": "de.wikipedia: Reichsadler an der Toraussenseite; Fotos 041/030 (Sued, rechts ueber dem Bogen)",
+  "breite": 1.7,
+  "hoehe": 2.3,
+  "seite_name": "Sued"
+ },
+ {
+  "seite": "+x",
+  "element": "Uhr mit Giebel und Stundenmarken",
+  "quelle": "Fotos 041/042 (Sued), 031/001 (Nord); MASSPRUEFUNG Teil 3",
+  "durchmesser": 4.2,
+  "seite_name": "Sued"
+ },
+ {
+  "seite": "+x",
+  "element": "Fenster 2 oben + 1 tiefer",
+  "quelle": "Fotos 041/030/042 Vollbild (Sued)",
+  "anzahl": 3,
+  "seite_name": "Sued"
+ },
+ {
+  "seite": "-x",
+  "element": "Uhr mit Giebel und Stundenmarken",
+  "quelle": "Fotos 041/042 (Sued), 031/001 (Nord); MASSPRUEFUNG Teil 3",
+  "durchmesser": 4.2,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "-x",
+  "element": "Fenster 3 in Reihe + 1 Schlitz",
+  "quelle": "Fotos 031/001 Vollbild (Nord)",
+  "anzahl": 4,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "+y",
+  "element": "Fenster 2 oben + 1 tiefer",
+  "quelle": "ANNAHME: Ost/West nicht fotografiert",
+  "anzahl": 3,
+  "seite_name": "Ost"
+ },
+ {
+  "seite": "-y",
+  "element": "Fenster 2 oben + 1 tiefer",
+  "quelle": "ANNAHME: Ost/West nicht fotografiert",
+  "anzahl": 3,
+  "seite_name": "West"
+ },
+ {
+  "seite": "+x",
+  "element": "Zinnenkranz 5 Zinnen",
+  "quelle": "Fotos 041 (Sued), 031 (Nord)",
+  "anzahl": 5,
+  "seite_name": "Sued"
+ },
+ {
+  "seite": "-x",
+  "element": "Zinnenkranz 5 Zinnen",
+  "quelle": "Fotos 041 (Sued), 031 (Nord)",
+  "anzahl": 5,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "+y",
+  "element": "Zinnenkranz 5 Zinnen",
+  "quelle": "ANNAHME: Ost/West nicht fotografiert",
+  "anzahl": 5,
+  "seite_name": "Ost"
+ },
+ {
+  "seite": "-y",
+  "element": "Zinnenkranz 5 Zinnen",
+  "quelle": "ANNAHME: Ost/West nicht fotografiert",
+  "anzahl": 5,
+  "seite_name": "West"
+ },
+ {
+  "seite": "+x",
+  "element": "Glockenstock mit 2 Schallarkaden",
+  "quelle": "Fotos 041/043 (Sued), 031 (Nord)",
+  "anzahl": 2,
+  "seite_name": "Sued"
+ },
+ {
+  "seite": "-x",
+  "element": "Glockenstock mit 2 Schallarkaden",
+  "quelle": "Fotos 041/043 (Sued), 031 (Nord)",
+  "anzahl": 2,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "+y",
+  "element": "Glockenstock mit 2 Schallarkaden",
+  "quelle": "ANNAHME: Ost/West nicht fotografiert",
+  "anzahl": 2,
+  "seite_name": "Ost"
+ },
+ {
+  "seite": "-y",
+  "element": "Glockenstock mit 2 Schallarkaden",
+  "quelle": "ANNAHME: Ost/West nicht fotografiert",
+  "anzahl": 2,
+  "seite_name": "West"
+ },
+ {
+  "seite": "dach",
+  "element": "Dachreiter: Mast, Knauf, Nadel",
+  "quelle": "Foto 049 Vollbild; Bauforschung BW 60 m",
+  "spitze": 60.0,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "4 Ecktuermchen mit Kegel",
+  "quelle": "Fotos 041/043/044; Laser DOM1 Spitzen 41 m",
+  "anzahl": 4,
+  "seite_name": "dach"
+ }
+]

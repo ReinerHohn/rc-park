@@ -63,7 +63,16 @@ Pruefstand "GEAENDERT seit letztem Lauf" (Pruefbericht-Diff): nur die beabsichti
 Messtechnische Fallen (gelernt am Eckturm, Register L2): `section().to_2D()` verschiebt die Ebene -> zuruecktransformieren; Huellbox-Zentrierung
 verschiebt die Achse bei Anbauten; Anbauten verschmelzen im Schnitt mit dem Rumpf -> Punktmesser statt Polygonzaehlung.
 
-## 6. Was dieser Rahmen bewusst NICHT verspricht
+## 6. Belege je Element und Sichtblatt je Seite (Mechanik fuer die Lehren F5/F6/F9 aus PROTOKOLL_VALIDATOR)
+- **Belegregister im Generator:** jedes sichtbare Element meldet sich mit `beleg(seite, element, quelle, **masse)`; der Bau schreibt
+  `modelle/<objekt>/elemente.json` (`objekt.json: "elemente"`). Der Pruefstand: Element ohne Quelle = FEHLER (erfundenes Feature, F9);
+  Quelle `ANNAHME: ...` ist erlaubt, wird aber bei jedem Lauf als Annahme gelistet; Seiten ohne Foto in `objekt.json/fotos` = UNGEPRUEFT (F5).
+  Beim Eintragen der Belege am Martinstor fiel sofort auf, dass Tafel und Adler auf den falschen Seiten sassen - das ist der Zweck.
+- **Sichtblatt:** `tools/seiten_audit.py` erzeugt nach jedem Bau `modelle/<objekt>/audit/seiten.jpg` (vier orthografische Ansichten + Draufsicht
+  + Foto|Render-Paare aus den angepassten Kameras). `bauen_abnehmen.sh` erzeugt es auch bei rotem Pruefstand. Es wird nicht bewertet, es wird ANGESEHEN -
+  jede Seite, nicht nur die fotografierte (F6: Whack-a-Mole entsteht, wenn immer nur eine Flaeche geprueft wird).
+
+## 7. Was dieser Rahmen bewusst NICHT verspricht
 "Alle Masse bewiesen" gibt es mit offenen Daten nicht: Laser 1 m, Fotos +-5-10 %, Dokumente mit unklarer Bezugshoehe. Der Rahmen liefert
 je Mass **Wert, Quelle, Unsicherheit, Status** und verhindert, dass Behobenes zurueckkommt oder eine Quelle fuer etwas herhalten muss,
 was sie nicht sehen kann. Das ist die ehrliche Form von "massstabsgetreu".

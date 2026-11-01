@@ -6,7 +6,9 @@ Je Objekt `modelle/<objekt>/objekt.json` + `masstabelle.json` (Masse = Daten mit
    Nur bei "alle Pruefungen bestanden" weiter (Viewer, Commit, H0, Fertigung). Sollwerte nie lockern, um Gruen zu bekommen; nur mit neuer Quelle (+ `historie`).
 2. **Sichtbeobachtung** (Nutzer oder eigene: "zu gedrungen", "stimmt nicht") = Testauftrag: SOFORT als `beobachtungen_offen` in die Masstabelle,
    DANN messen (Vollbild/Dokument/Laser passend zum Merkmal) und als Pruefung eintragen, die am aktuellen Modell FEHLSCHLAEGT, DANN Generator aendern.
-3. Nach Aenderung Foto-gegen-Render ansehen (`tools/foto_render_seite.py`, `tools/foto_profil_gpu.py`), nicht nur Zahlen. IoU-Zahl ohne Blick auf den ROI gilt nicht.
+3. Nach jedem Bau das Sichtblatt `modelle/<objekt>/audit/seiten.jpg` ANSEHEN (alle Seiten, nicht nur die fotografierte) und bei Bedarf
+   `tools/foto_render_seite.py` / `tools/foto_profil_gpu.py`. Zahlen allein (IoU ohne Blick auf den ROI) gelten nicht.
+3b. Jedes neue Generator-Element bekommt `beleg(seite, element, quelle)`; ohne Quelle faellt der Pruefstand durch. Annahmen heissen `ANNAHME: ...`.
 4. Quellen-Blindheit (vom Pruefstand erzwungen, Exit 2): Laser DOM1 sieht keine Bauteile < ~3 m, keine Nadeln, keine Fassade, keine absolute Spitzenhoehe;
    LoD2 keine Aufbauten; Fotos keine absoluten Masse ohne Massstab; Dokumente keine Form.
 5. Widersprueche zwischen Quellen (Foto vs Laser) NICHT mitteln - als offene Beobachtung stehen lassen, naechsten Schritt notieren.

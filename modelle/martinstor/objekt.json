@@ -9,7 +9,8 @@
  "ueberwacht": [
   "modelle/martinstor_v4_gen.py",
   "modelle/stl/martinstor_v4_1-87.stl",
-  "modelle/martinstor/masstabelle.json"
+  "modelle/martinstor/masstabelle.json",
+  "modelle/martinstor/elemente.json"
  ],
  "fotos_dir": "daten/martinstor/fotos",
  "seiten_konvention": {
@@ -131,5 +132,7 @@
    ]
   }
  },
- "zentrierung": "achse"
+ "zentrierung": "achse",
+ "elemente": "modelle/martinstor/elemente.json",
+ "audit": "modelle/martinstor/audit"
 }

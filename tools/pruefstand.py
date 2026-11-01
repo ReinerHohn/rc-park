@@ -88,7 +88,9 @@ class Messer:
         us = np.arange(-halb, halb + 1e-6, schritt); org = np.zeros((len(us), 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = us; org[:, 2] = z
         dr = np.zeros_like(org); dr[:, ax] = -sgn
         loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
-        d = np.full(len(us), np.nan); d[ir] = np.abs(loc[:, ax]); wall = np.nanmedian(d); dev = (d - wall) if art == "vor" else (wall - d) if art == "rueck" else np.abs(d - wall); vor = dev >= hoehe_min
+        d = np.full(len(us), np.nan); d[ir] = np.abs(loc[:, ax]); k = max(3, int(0.15 * len(us)))
+        wall = np.nanmedian(np.r_[d[:k], d[-k:]])                       # Wand = Rand des Messbereichs (das Relief selbst darf den Median nicht stellen)
+        dev = (d - wall) if art == "vor" else (wall - d) if art == "rueck" else np.abs(d - wall); vor = dev >= hoehe_min
         idx = np.nonzero(vor)[0]
         if len(idx) == 0: return 0.0
         best = 0; start = idx[0]; prev = idx[0]                      # Laeufe, die durch Luecken <= max_luecke (z. B. Stundenmarken) unterbrochen sind, zusammenfassen
@@ -155,6 +157,17 @@ def main():
     print(f"Pruefstand {obj['name']}  ({stl})")
     for ok, p, v in zeilen:
         print(f"  {'OK    ' if ok is True else 'WIDERS' if ok else 'FEHLER'}  {p['name']:56s} {v:8.2f}  Soll {p['soll'][0]:g}..{p['soll'][1]:g}   [{p['quelltyp']}: {p['quelle'][:70]}]")
+    # Element-Belege (Mechanik F9/F5): jedes Element des Generators braucht eine Quelle; Annahmen und unfotografierte Seiten werden gezeigt
+    ep = os.path.join(root, obj["elemente"]) if obj.get("elemente") else None
+    if ep and os.path.exists(ep):
+        el = json.load(open(ep)); seiten_foto = {v.get("seite") for v in obj.get("fotos", {}).values()}; ann = []
+        for e in el:
+            q = e.get("quelle", "")
+            if not q: print(f"  FEHLER  Element OHNE BELEG: {e['seite_name']}: {e['element']}  (Lehre F9: erfundenes Feature)"); bad += 1
+            elif q.startswith("ANNAHME"): ann.append(f"{e['seite_name']}: {e['element']}")
+        for sn in sorted({e["seite_name"] for e in el if e["seite"] in ("+x", "-x", "+y", "-y")}):
+            if sn not in seiten_foto: print(f"  UNGEPRUEFT Seite {sn}: kein Foto dieser Seite in objekt.json (Lehre F5: Mehrflaechen-Audit)")
+        print(f"  ELEMENTE {len(el)} belegt" + (f", davon ANNAHMEN {len(ann)}: " + "; ".join(ann) if ann else ""))
     for b in tab.get("beobachtungen_offen", []):
         print(f"  OFFEN   {b['datum']} {b['wer']}: {b['text'][:90]}  -> {b.get('naechster_schritt', '')[:60]}")
     nw = sum(1 for ok, _, _ in zeilen if ok == "widerspruch")
