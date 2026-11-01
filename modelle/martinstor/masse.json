@@ -191,7 +191,7 @@
    "wert": 7.1,
    "einheit": "m",
    "was": "Glockenstock Tiefe",
-   "quelle": "masse_aus_profilen.py (baender_r2_median): 2 x Median r von 5 Baendern 34.5-40.5 m (3.51, 3.55, 3.56, 3.46, 3.62)",
+   "quelle": "masse_aus_profilen.py (baender_r2_median): 2 x Median r von 5 Baendern 34.8-40.5 m (3.53, 3.55, 3.56, 3.46, 3.62)",
    "quelltyp": "sfm_bodenanker",
    "historie": [
     {
@@ -223,6 +223,18 @@
      "alt": "D - 2.2",
      "neu": 7.1,
      "grund": "masse_aus_profilen.py (baender_r2_median): 2 x Median r von 5 Baendern 34.5-40.5 m (3.51, 3.55, 3.56, 3.46, 3.62)"
+    },
+    {
+     "datum": "auto",
+     "alt": 7.1,
+     "neu": 7.08,
+     "grund": "masse_aus_profilen.py (baender_r2_median): 2 x Median r von 3 Baendern 34.8-40.5 m (3.54, 3.49, 3.62)"
+    },
+    {
+     "datum": "auto",
+     "alt": 7.08,
+     "neu": 7.1,
+     "grund": "masse_aus_profilen.py (baender_r2_median): 2 x Median r von 5 Baendern 34.8-40.5 m (3.53, 3.55, 3.56, 3.46, 3.62)"
     }
    ]
   },
@@ -260,10 +272,10 @@
    ]
   },
   "GZ0": {
-   "wert": 34.5,
+   "wert": 34.75,
    "einheit": "m",
    "was": "Glockenstock Unterkante",
-   "quelle": "masse_aus_profilen.py (band_z): Band zentral kupfer 32.0-34.5 m (z1)",
+   "quelle": "masse_aus_profilen.py (band_z): Band zentral kupfer 32.0-34.75 m (z1)",
    "quelltyp": "sfm_bodenanker",
    "historie": [
     {
@@ -277,6 +289,12 @@
      "alt": "ZZ + 3.6",
      "neu": 34.5,
      "grund": "masse_aus_profilen.py (band_z): Band zentral kupfer 32.0-34.5 m (z1)"
+    },
+    {
+     "datum": "auto",
+     "alt": 34.5,
+     "neu": 34.75,
+     "grund": "masse_aus_profilen.py (band_z): Band zentral kupfer 32.0-34.75 m (z1)"
     }
    ]
   },
@@ -613,6 +631,18 @@
     {
      "datum": "auto",
      "alt": 1.1,
+     "neu": 1.04,
+     "grund": "masse_aus_profilen.py (band_r2): Band zentral traufe 40.25-40.5 m, Aussenradius 4.07 minus GX 7.10"
+    },
+    {
+     "datum": "auto",
+     "alt": 1.04,
+     "neu": 1.06,
+     "grund": "masse_aus_profilen.py (band_r2): Band zentral traufe 40.25-40.5 m, Aussenradius 4.07 minus GX 7.08"
+    },
+    {
+     "datum": "auto",
+     "alt": 1.06,
      "neu": 1.04,
      "grund": "masse_aus_profilen.py (band_r2): Band zentral traufe 40.25-40.5 m, Aussenradius 4.07 minus GX 7.10"
     }

@@ -121,12 +121,17 @@ def main():
         except Exception as e:
             bericht.append(dict(masse=name, status="fehler", fehler=f"{type(e).__name__}: {e}")); continue
         if w is None or (isinstance(w, float) and np.isnan(w)): bericht.append(dict(masse=name, status="fehler", fehler="kein Wert")); continue
-        w = round(float(w), rnd); alt = M.get(name, {}).get("wert"); neu[name] = dict(wert=w, herk=herk, typ=typ, alt=alt)
+        w = round(float(w), rnd); alt = M.get(name, {}).get("wert")
+        br = reg.get("bereich")
+        if br and not (br[0] <= w <= br[1]):                                             # Plausibilitaet: ausserhalb -> nicht schreiben (Nullstart 4: GZ0 54,75 -> leeres Modell)
+            bericht.append(dict(masse=name, status="unplausibel", alt=alt, verworfen=w, bereich=br, herkunft=herk, regel=typ)); continue
+        neu[name] = dict(wert=w, herk=herk, typ=typ, alt=alt)
         bericht.append(dict(masse=name, status="abgeleitet", alt=alt, neu=w, herkunft=herk, regel=typ))
     print(f"{'Mass':22s} {'alt':>10s} {'neu':>8s}  Herkunft");
     for b in bericht:
         if b["status"] == "abgeleitet": print(f"{b['masse']:22s} {str(b['alt'])[:10]:>10s} {b['neu']:8.3g}  {b['herkunft'][:110]}")
         elif b["status"] == "bleibt_hand": print(f"{b['masse']:22s} {str(b['wert'])[:10]:>10s} {'bleibt':>8s}  {b['grund'][:110]}")
+        elif b["status"] == "unplausibel": print(f"{b['masse']:22s} {str(b['alt'])[:10]:>10s} {'UNPLAUS':>8s}  {b['verworfen']} ausserhalb {b['bereich']}: {b['herkunft'][:80]}")
         else: print(f"{b['masse']:22s} {'':>10s} {'FEHLER':>8s}  {b['fehler'][:110]}")
     if a.schreiben:
         n_ae = 0
@@ -138,7 +143,7 @@ def main():
                 M[name]["quelle"] = quelle; continue                                        # gleicher Wert: nur Quelle nachziehen
             M[name].setdefault("historie", []).append({"datum": "auto", "alt": alt, "neu": d["wert"], "grund": quelle}); M[name]["wert"] = d["wert"]; M[name]["quelle"] = quelle; n_ae += 1
         json.dump(MJ, open(mp, "w"), indent=1, ensure_ascii=False); json.dump(dict(bericht=bericht), open(os.path.join(od, "masse_regeln_bericht.json"), "w"), indent=1, ensure_ascii=False)
-        print(f"\nmasse.json: {len(neu)} Masse abgeleitet, {n_ae} geaendert/neu; {sum(1 for b in bericht if b['status'] == 'bleibt_hand')} bleiben Hand (Stufe C), {sum(1 for b in bericht if b['status'] == 'fehler')} Fehler")
+        print(f"\nmasse.json: {len(neu)} Masse abgeleitet, {n_ae} geaendert/neu; {sum(1 for b in bericht if b['status'] == 'bleibt_hand')} bleiben Hand (Stufe C), {sum(1 for b in bericht if b['status'] == 'unplausibel')} unplausibel (alter Wert bleibt), {sum(1 for b in bericht if b['status'] == 'fehler')} Fehler")
 
 if __name__ == "__main__":
     main()

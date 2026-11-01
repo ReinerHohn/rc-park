@@ -172,15 +172,15 @@
   },
   {
    "z": 46.75,
-   "front_tief": 2.31,
+   "front_tief": 2.32,
    "breite_tief_wolke": 4.63,
-   "breite_quer_wolke": 4.34,
+   "breite_quer_wolke": 4.23,
    "breite_quer_dom1": 3.64,
    "breite_tief_dom1": 1.76,
-   "n": 209,
+   "n": 207,
    "n_front": 143,
    "dom1_flaeche": 10,
-   "breite_quer": 4.34,
+   "breite_quer": 4.23,
    "breite_tief": 4.57,
    "breite_tief_silhouette": 4.57
   },
@@ -299,7 +299,7 @@
   {
    "z": 51.25,
    "front_tief": 1.35,
-   "breite_tief_wolke": 2.69,
+   "breite_tief_wolke": 2.7,
    "breite_quer_wolke": 4.38,
    "breite_quer_dom1": 1.86,
    "breite_tief_dom1": 0.19,
@@ -410,7 +410,7 @@
   },
   {
    "z": 55.25,
-   "front_tief": 0.72,
+   "front_tief": 0.73,
    "breite_tief_wolke": 1.45,
    "breite_quer_wolke": 0.0,
    "breite_quer_dom1": -3.63,
@@ -1160,7 +1160,7 @@
    ],
    [
     31.25,
-    2.53,
+    2.54,
     799
    ],
    [

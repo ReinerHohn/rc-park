@@ -433,14 +433,6 @@
    ]
   },
   {
-   "name": "Band tuermchen offen (33.50-35.00 m): Aussenradius bei 34.25 m (m)",
-   "wert": "band_tuermchen_offen_3425",
-   "soll": [
-    1.4,
-    1.7
-   ]
-  },
-  {
    "name": "Band tuermchen traufe (35.00-35.50 m): Aussenradius bei 35.25 m (m)",
    "wert": "band_tuermchen_traufe_3525",
    "soll": [
@@ -465,14 +457,6 @@
    ]
   },
   {
-   "name": "Band tuermchen hell (32.50-33.50 m): Aussenradius bei 33.00 m (m)",
-   "wert": "band_tuermchen_hell_3300",
-   "soll": [
-    1.4,
-    1.7
-   ]
-  },
-  {
    "name": "Helm geradlinig (tief, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
    "wert": "helm_gerade_tief",
    "soll": [
@@ -486,22 +470,6 @@
    "soll": [
     0.0,
     0.32
-   ]
-  },
-  {
-   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche anzahl bei 34.27 m",
-   "wert": "band_tuermchen_oeffn_3427_anzahl",
-   "soll": [
-    2,
-    2
-   ]
-  },
-  {
-   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche breite bei 34.27 m",
-   "wert": "band_tuermchen_oeffn_3427_breite_median",
-   "soll": [
-    0.33,
-    0.63
    ]
   },
   {
@@ -534,6 +502,38 @@
    "soll": [
     0.33,
     1.73
+   ]
+  },
+  {
+   "name": "Band tuermchen hell (32.50-33.50 m): Aussenradius bei 33.00 m (m)",
+   "wert": "band_tuermchen_hell_3300",
+   "soll": [
+    1.4,
+    1.7
+   ]
+  },
+  {
+   "name": "Band tuermchen offen (33.50-35.00 m): Aussenradius bei 34.25 m (m)",
+   "wert": "band_tuermchen_offen_3425",
+   "soll": [
+    1.4,
+    1.7
+   ]
+  },
+  {
+   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche anzahl bei 34.27 m",
+   "wert": "band_tuermchen_oeffn_3427_anzahl",
+   "soll": [
+    2,
+    2
+   ]
+  },
+  {
+   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche breite bei 34.27 m",
+   "wert": "band_tuermchen_oeffn_3427_breite_median",
+   "soll": [
+    0.33,
+    0.63
    ]
   }
  ],
@@ -1004,50 +1004,36 @@
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 27.88,
-   "quer": 4.44,
-   "achse_tief": 3.995
+   "quer": 4.42,
+   "achse_tief": 4.0
   },
   "band_tuermchen_gesims_3212": {
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 32.12,
-   "quer": 4.44,
-   "achse_tief": 3.995
-  },
-  "band_tuermchen_offen_3425": {
-   "typ": "tuerm_radius",
-   "seite": "-x",
-   "z": 34.25,
-   "quer": 4.44,
-   "achse_tief": 3.995
+   "quer": 4.42,
+   "achse_tief": 4.0
   },
   "band_tuermchen_traufe_3525": {
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 35.25,
-   "quer": 4.44,
-   "achse_tief": 3.995
+   "quer": 4.42,
+   "achse_tief": 4.0
   },
   "band_tuermchen_kupfer_3950": {
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 39.5,
-   "quer": 4.44,
-   "achse_tief": 3.995
+   "quer": 4.42,
+   "achse_tief": 4.0
   },
   "band_tuermchen_kegel_4000": {
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 40.0,
-   "quer": 4.44,
-   "achse_tief": 3.995
-  },
-  "band_tuermchen_hell_3300": {
-   "typ": "tuerm_radius",
-   "seite": "-x",
-   "z": 33.0,
-   "quer": 4.44,
-   "achse_tief": 3.995
+   "quer": 4.42,
+   "achse_tief": 4.0
   },
   "helm_gerade_tief": {
    "typ": "front_linearitaet",
@@ -1069,8 +1055,8 @@
    "typ": "flaeche_oeffnungen",
    "seite": "-x",
    "z": 34.27,
-   "quer0": 3.8,
-   "quer1": 5.08,
+   "quer0": 3.78,
+   "quer1": 5.06,
    "tiefe": 0.2
   },
   "band_zentral_oeffn_2113": {
@@ -1123,6 +1109,28 @@
    "z": 55.0,
    "achse": "x",
    "quer_max": 2.0
+  },
+  "band_tuermchen_oeffn_3388": {
+   "typ": "flaeche_oeffnungen",
+   "seite": "-x",
+   "z": 33.88,
+   "quer0": 3.76,
+   "quer1": 5.08,
+   "tiefe": 0.2
+  },
+  "band_tuermchen_hell_3300": {
+   "typ": "tuerm_radius",
+   "seite": "-x",
+   "z": 33.0,
+   "quer": 4.42,
+   "achse_tief": 4.0
+  },
+  "band_tuermchen_offen_3425": {
+   "typ": "tuerm_radius",
+   "seite": "-x",
+   "z": 34.25,
+   "quer": 4.42,
+   "achse_tief": 4.0
   }
  }
 }

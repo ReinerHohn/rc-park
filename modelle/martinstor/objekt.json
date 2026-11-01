@@ -1438,7 +1438,11 @@
     "auswahl": "vor_kupfer_1",
     "lage": "mitte"
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    29,
+    34
+   ]
   },
   {
    "masse": "KRAG_UEBER",
@@ -1448,7 +1452,11 @@
     "auswahl": "vor_kupfer_1",
     "minus": "D"
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    0,
+    2.5
+   ]
   },
   {
    "masse": "GZ0",
@@ -1458,7 +1466,11 @@
     "auswahl": "kupfer_1",
     "lage": "z1"
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    30,
+    38
+   ]
   },
   {
    "masse": "GZ1",
@@ -1468,7 +1480,11 @@
     "auswahl": "traufe_vor_letztem_kupfer",
     "lage": "z1"
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    38,
+    43
+   ]
   },
   {
    "masse": "GX",
@@ -1485,7 +1501,11 @@
      "offen"
     ]
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    5,
+    9
+   ]
   },
   {
    "masse": "GY",
@@ -1502,7 +1522,11 @@
     "auswahl": "traufe_vor_letztem_kupfer",
     "minus": "GX"
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    0,
+    2.5
+   ]
   },
   {
    "masse": "DACHHOEHE",
@@ -1511,7 +1535,11 @@
     "a": "first_plattform",
     "b": "GZ1"
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    10,
+    20
+   ]
   },
   {
    "masse": "H_TOTAL",
@@ -1519,7 +1547,11 @@
    "params": {
     "name": "nadel_spitze"
    },
-   "runden": 1
+   "runden": 1,
+   "bereich": [
+    55,
+    75
+   ]
   },
   {
    "masse": "UZ",
@@ -1528,7 +1560,11 @@
     "datei": "merkmal_gold_nord.json",
     "feld": "z"
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    20,
+    30
+   ]
   },
   {
    "masse": "KONSOLE_Z0",
@@ -1538,7 +1574,11 @@
     "auswahl": "klasse:gesims:0",
     "lage": "z0"
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    25,
+    30
+   ]
   },
   {
    "masse": "KONSOLE_Z1",
@@ -1548,7 +1588,11 @@
     "auswahl": "stein_ab:1.0",
     "lage": "z0"
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    26,
+    31
+   ]
   },
   {
    "masse": "OR",
@@ -1557,7 +1601,11 @@
     "koerper": "tuermchen",
     "auswahl": "klasse:hell:0"
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    1.0,
+    2.0
+   ]
   },
   {
    "masse": "ERKER_OBEN",
@@ -1567,7 +1615,11 @@
     "auswahl": "klasse:traufe:0",
     "lage": "z0"
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    33,
+    40
+   ]
   },
   {
    "masse": "QUADER_TUERMCHEN",
@@ -1576,7 +1628,11 @@
     "koerper": "tuermchen",
     "auswahl": "stein_ab:1.0"
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    0.1,
+    1.0
+   ]
   },
   {
    "masse": "QUADER_SCHAFT_UNTEN",
@@ -1590,7 +1646,11 @@
     "ziel": "unten",
     "min_staerke": 0.3
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    0.1,
+    1.0
+   ]
   },
   {
    "masse": "QUADER_SCHAFT_OBEN",
@@ -1604,7 +1664,11 @@
     "ziel": "oben",
     "min_staerke": 0.3
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    0.1,
+    1.0
+   ]
   },
   {
    "masse": "QUADER_ZONE_Z",
@@ -1618,7 +1682,11 @@
     "ziel": "grenze",
     "min_staerke": 0.3
    },
-   "runden": 1
+   "runden": 1,
+   "bereich": [
+    15,
+    30
+   ]
   },
   {
    "masse": "QUADER_GLOCKENSTOCK",
@@ -1631,7 +1699,11 @@
     ],
     "min_staerke": 0.3
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    0.1,
+    1.0
+   ]
   },
   {
    "masse": "QUADER_LAENGE",
@@ -1644,7 +1716,11 @@
     ],
     "min_staerke": 0.3
    },
-   "runden": 2
+   "runden": 2,
+   "bereich": [
+    0.15,
+    1.5
+   ]
   },
   {
    "masse": "QUADER_KURZ_FAKTOR",
@@ -1702,5 +1778,6 @@
     "grund": "Schalter (1 = Loft aus Profilen), keine Messgroesse"
    }
   }
- ]
+ ],
+ "masse_regeln_hinweis": "bereich = Plausibilitaetsfenster (aus Bauwerkstyp/LoD2-Groessenordnung): ausserhalb schreibt das Werkzeug nicht und meldet 'unplausibel' - Schutz vor einer kippenden Wolkenklasse (Nullstart 4)"
 }

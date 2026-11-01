@@ -140,7 +140,7 @@
   "element": "Kragdach (Kupferschraege) ueber dem Zinnenkranz bis zum Glockenstock",
   "quelle": "Fotos 031/041/043 Vollbild; Nutzerhinweis 2026-11-01; Wolke Nord: Tropfkante 31,9 m (x -5,15), Schraege bis 34,1 m (x -3,5) (Register AR)",
   "unten": 31.75,
-  "oben": 34.5,
+  "oben": 34.75,
   "seite_name": "dach"
  },
  {
@@ -202,11 +202,11 @@
  },
  {
   "seite": "dach",
-  "element": "Ecktuermchen Band stein 27.0-27.5 m, r 0.85",
+  "element": "Ecktuermchen Band stein 27.0-27.5 m, r 0.84",
   "quelle": "wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)",
   "z0": 27.0,
   "z1": 27.5,
-  "r": 0.85,
+  "r": 0.84,
   "seite_name": "dach"
  },
  {
@@ -220,11 +220,11 @@
  },
  {
   "seite": "dach",
-  "element": "Ecktuermchen Band stein 28.25-31.75 m, r 1.23",
+  "element": "Ecktuermchen Band stein 28.25-31.75 m, r 1.22",
   "quelle": "wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)",
   "z0": 28.25,
   "z1": 31.75,
-  "r": 1.23,
+  "r": 1.22,
   "seite_name": "dach"
  },
  {
@@ -289,7 +289,7 @@
  {
   "seite": "dach",
   "element": "Ecktuermchen Kupferkegel Traufe -> Spitze",
-  "quelle": "wolke_baender.py: r 1.85 bei 35.5 m, Steigung 0.2093 r/m zur Spitze 44.5",
+  "quelle": "wolke_baender.py: r 1.85 bei 35.5 m, Steigung 0.2085 r/m zur Spitze 44.5",
   "r0": 1.85,
   "z0": 35.5,
   "seite_name": "dach"

@@ -320,7 +320,7 @@
    ],
    [
     31.25,
-    2.53,
+    2.54,
     799
    ],
    [
@@ -451,12 +451,13 @@
   ]
  },
  "tuerm_achse": {
-  "tief": 3.995,
-  "quer": 4.4399999999999995,
+  "tief": 4.0,
+  "quer": 4.42,
   "aus_schichten": [
-   31.25,
-   38.75
-  ]
+   30.75,
+   35.75
+  ],
+  "verfahren": "laengster konsistenter Lauf (+-15 %)"
  },
  "quelle": "tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)"
 }

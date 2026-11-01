@@ -68,7 +68,10 @@ def main():
     rs = np.array([q["r"] for q in schichten])
     for i, q in enumerate(schichten):
         unten = rs[max(0, i - 4):i]; bump = q["r"] - (np.median(unten) if len(unten) else q["r"])   # Kragplatte: springt gegen das DARUNTER liegende Band vor
-        if q["p_kupfer"] >= a.kupfer_schwelle and q["p_kupfer"] >= q["p_stein"]: q["klasse"] = "kupfer"
+        # Dach ('kupfer'): Kupferfarbe ODER geometrisch eine fallende Schraege (Radius nimmt ueber +-2 Schichten um >= 0,25 m je m ab, kein Stein)
+        # - die Farbklassen schwanken zwischen Wolkenrealisierungen (Nullstart 4: Kragdach 12-54 % vs 4-17 % Kupfer), die Geometrie nicht
+        lo_, hi_ = max(0, i - 2), min(len(rs) - 1, i + 2); steig = (rs[hi_] - rs[lo_]) / max((hi_ - lo_) * a.dz, a.dz) if hi_ > lo_ else 0.0
+        if (q["p_kupfer"] >= a.kupfer_schwelle and q["p_kupfer"] >= q["p_stein"]) or (steig <= -0.25 and q["p_stein"] < 35 and bump <= 0.12): q["klasse"] = "kupfer"; q["dach_geometrisch"] = bool(not (q["p_kupfer"] >= a.kupfer_schwelle and q["p_kupfer"] >= q["p_stein"]))
         elif bump > 0.12: q["klasse"] = "traufe"
         elif q["p_dunkel"] > 45 and q["p_stein"] < 35: q["klasse"] = "offen"
         elif q["p_dunkel"] < 20 and q["p_stein"] < 40: q["klasse"] = "hell"                           # Putz/Holz hell (Bruestung, Glockenstock-Wand)
@@ -101,6 +104,19 @@ def main():
                 j = i - 1 if i > 0 else i + 1
                 if i > 0 and i + 1 < len(baender) and len(baender[i + 1]["schichten"]) > len(baender[i - 1]["schichten"]): j = i + 1
                 baender[j]["schichten"] += b["schichten"]; baender[j]["z0"] = min(baender[j]["z0"], b["z0"]); baender[j]["z1"] = max(baender[j]["z1"], b["z1"]); baender.pop(i); geaendert = True; break
+    # Kurze Koerperbaender (< 1,0 m, Klassen stein/hell/offen): nur mit einem Nachbarn zusammenlegen, der ebenfalls kurz ist; die Klasse des
+    # Ergebnisses kommt aus den gemeinsamen Farbanteilen (offen, wenn dunkel > 45 % und Stein < 35 %; hell, wenn dunkel < 20 %; sonst stein).
+    # So zerfaellt ein Oeffnungsband an der Dunkelschwelle nicht in zwei, und ein kurzes Band wird nicht von einem langen Nachbarn geschluckt.
+    def _klasse_aus(schichten):
+        d = np.mean([q["p_dunkel"] for q in schichten]); st = np.mean([q["p_stein"] for q in schichten])
+        return "offen" if (d > 45 and st < 35) else "hell" if (d < 20 and st < 40) else "stein"
+    geaendert = True
+    while geaendert:
+        geaendert = False
+        for i in range(len(baender) - 1):
+            b, c = baender[i], baender[i + 1]
+            if b["klasse"] in ("stein", "hell", "offen") and c["klasse"] in ("stein", "hell", "offen") and (b["z1"] - b["z0"] < 1.0 - 1e-6) and (c["z1"] - c["z0"] < 1.0 - 1e-6):
+                b["schichten"] = b["schichten"] + c["schichten"]; b["z1"] = c["z1"]; b["klasse"] = _klasse_aus(b["schichten"]); baender.pop(i + 1); geaendert = True; break
     for b in baender:
         rr = [q["r"] for q in b["schichten"]]; b["r"] = round(float(np.median(rr)), 2); b["r_max"] = round(float(max(rr)), 2); b["n"] = int(sum(q["n"] for q in b["schichten"]))
         bqs = [q["breite_quer"] for q in b["schichten"] if q.get("breite_quer")]; b["breite_quer"] = round(float(np.median(bqs)), 2) if bqs else None

@@ -2,8 +2,8 @@
  "seite": "nord",
  "koerper": "tuermchen",
  "achse": {
-  "tief": 3.995,
-  "quer": 4.4399999999999995
+  "tief": 4.0,
+  "quer": 4.42
  },
  "zone": 1.6,
  "spitze": 44.5,
@@ -16,14 +16,14 @@
     27.125,
     27.375
    ],
-   "r": 0.85,
-   "r_max": 0.87,
-   "n": 575,
+   "r": 0.84,
+   "r_max": 0.86,
+   "n": 580,
    "breite_quer": null,
    "anteile": {
-    "stein": 45.6,
+    "stein": 45.8,
     "weiss": 20.1,
-    "dunkel": 27.6,
+    "dunkel": 27.4,
     "kupfer": 0.1
    }
   },
@@ -37,13 +37,13 @@
     28.125
    ],
    "r": 1.17,
-   "r_max": 1.24,
-   "n": 1424,
+   "r_max": 1.23,
+   "n": 1432,
    "breite_quer": 5.8,
    "anteile": {
-    "stein": 25.6,
+    "stein": 25.7,
     "weiss": 7.5,
-    "dunkel": 62.9,
+    "dunkel": 62.7,
     "kupfer": 0.3
    }
   },
@@ -67,13 +67,13 @@
     31.375,
     31.625
    ],
-   "r": 1.23,
-   "r_max": 1.31,
-   "n": 4542,
+   "r": 1.22,
+   "r_max": 1.3,
+   "n": 4567,
    "breite_quer": 0.18,
    "anteile": {
-    "stein": 53.9,
-    "weiss": 4.9,
+    "stein": 53.7,
+    "weiss": 5.1,
     "dunkel": 47.6,
     "kupfer": 0.0
    },
@@ -94,14 +94,14 @@
     32.375
    ],
    "r": 1.5,
-   "r_max": 1.54,
-   "n": 1086,
+   "r_max": 1.53,
+   "n": 1089,
    "breite_quer": null,
    "anteile": {
     "stein": 6.1,
-    "weiss": 0.7,
-    "dunkel": 78.2,
-    "kupfer": 4.3
+    "weiss": 0.6,
+    "dunkel": 78.3,
+    "kupfer": 4.4
    }
   },
   {
@@ -115,13 +115,13 @@
     33.375
    ],
    "r": 1.55,
-   "r_max": 1.56,
+   "r_max": 1.55,
    "n": 1206,
    "breite_quer": null,
    "anteile": {
-    "stein": 22.2,
-    "weiss": 7.5,
-    "dunkel": 7.0,
+    "stein": 22.3,
+    "weiss": 7.3,
+    "dunkel": 7.1,
     "kupfer": 0.3
    }
   },
@@ -138,14 +138,14 @@
     34.875
    ],
    "r": 1.55,
-   "r_max": 1.63,
+   "r_max": 1.62,
    "n": 1265,
    "breite_quer": null,
    "anteile": {
-    "stein": 27.4,
-    "weiss": 1.5,
-    "dunkel": 60.6,
-    "kupfer": 0.3
+    "stein": 27.5,
+    "weiss": 1.4,
+    "dunkel": 60.9,
+    "kupfer": 0.2
    },
    "oeffnungen": {
     "je_flaeche": 2,
@@ -164,9 +164,9 @@
     "flaechenbreite": 1.28,
     "details": [
      {
-      "koerper_quer": 4.44,
-      "n": 310,
-      "dunkel_anteil": 0.69,
+      "koerper_quer": 4.42,
+      "n": 307,
+      "dunkel_anteil": 0.7,
       "laeufe": [
        [
         -0.7,
@@ -183,9 +183,9 @@
       ]
      },
      {
-      "koerper_quer": -4.44,
+      "koerper_quer": -4.42,
       "n": 224,
-      "dunkel_anteil": 0.68,
+      "dunkel_anteil": 0.67,
       "laeufe": [
        [
         -0.7,
@@ -218,13 +218,13 @@
     35.375
    ],
    "r": 1.85,
-   "r_max": 1.92,
-   "n": 636,
+   "r_max": 1.91,
+   "n": 637,
    "breite_quer": 0.38,
    "anteile": {
-    "stein": 59.9,
-    "weiss": 0.6,
-    "dunkel": 54.2,
+    "stein": 60.1,
+    "weiss": 0.5,
+    "dunkel": 53.8,
     "kupfer": 1.6
    }
   },
@@ -267,8 +267,8 @@
     43.375
    ],
    "r": 1.07,
-   "r_max": 1.87,
-   "n": 2409,
+   "r_max": 1.86,
+   "n": 2405,
    "breite_quer": null,
    "anteile": {
     "stein": 0.1,
@@ -279,16 +279,16 @@
   }
  ],
  "kegel": {
-  "r_je_m": 0.2093,
+  "r_je_m": 0.2085,
   "z0": 35.5,
   "r0": 1.85,
   "r0_aus_steigung": 1.88,
   "spitze": 44.5,
   "schichten": 32,
   "gerade_frei": {
-   "r_je_m": -0.1409,
+   "r_je_m": -0.1408,
    "r_bei_z0": 1.68,
-   "r_oben": 0.56,
+   "r_oben": 0.55,
    "z_oben": 43.5
   }
  },
@@ -296,7 +296,7 @@
   {
    "z0": 27.0,
    "z1": 31.0,
-   "periode_m": 0.65,
+   "periode_m": 0.6,
    "staerke": 0.05,
    "zellen": 68
   },
@@ -400,162 +400,162 @@
  "schichten": [
   {
    "z": 27.125,
-   "n": 303,
-   "r": 0.826,
+   "n": 305,
+   "r": 0.821,
    "breite_quer": null,
-   "p_stein": 41.9,
-   "p_weiss": 16.8,
-   "p_dunkel": 41.3,
+   "p_stein": 42.0,
+   "p_weiss": 17.0,
+   "p_dunkel": 41.0,
    "p_kupfer": 0.3,
    "klasse": "stein"
   },
   {
    "z": 27.375,
-   "n": 272,
-   "r": 0.866,
+   "n": 275,
+   "r": 0.861,
    "breite_quer": null,
-   "p_stein": 49.3,
-   "p_weiss": 23.5,
-   "p_dunkel": 14.0,
+   "p_stein": 49.5,
+   "p_weiss": 23.3,
+   "p_dunkel": 13.8,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 27.625,
-   "n": 393,
-   "r": 1.051,
+   "n": 398,
+   "r": 1.043,
    "breite_quer": null,
-   "p_stein": 31.3,
+   "p_stein": 31.7,
    "p_weiss": 15.3,
-   "p_dunkel": 45.3,
+   "p_dunkel": 44.7,
    "p_kupfer": 0.3,
    "klasse": "traufe"
   },
   {
    "z": 27.875,
-   "n": 563,
-   "r": 1.173,
+   "n": 565,
+   "r": 1.168,
    "breite_quer": 0.23,
-   "p_stein": 38.0,
+   "p_stein": 37.9,
    "p_weiss": 2.3,
-   "p_dunkel": 63.6,
+   "p_dunkel": 63.5,
    "p_kupfer": 0.0,
    "klasse": "traufe"
   },
   {
    "z": 28.125,
-   "n": 468,
-   "r": 1.238,
+   "n": 469,
+   "r": 1.233,
    "breite_quer": 11.37,
    "p_stein": 7.5,
    "p_weiss": 4.9,
-   "p_dunkel": 79.9,
+   "p_dunkel": 80.0,
    "p_kupfer": 0.6,
    "klasse": "traufe"
   },
   {
    "z": 28.375,
-   "n": 348,
-   "r": 1.2,
+   "n": 351,
+   "r": 1.195,
    "breite_quer": null,
-   "p_stein": 54.0,
-   "p_weiss": 2.6,
-   "p_dunkel": 42.5,
+   "p_stein": 53.6,
+   "p_weiss": 3.1,
+   "p_dunkel": 42.2,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 28.625,
-   "n": 356,
-   "r": 1.197,
+   "n": 357,
+   "r": 1.192,
    "breite_quer": null,
-   "p_stein": 62.1,
+   "p_stein": 62.2,
    "p_weiss": 3.4,
-   "p_dunkel": 48.0,
+   "p_dunkel": 47.9,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 28.875,
-   "n": 349,
-   "r": 1.202,
+   "n": 351,
+   "r": 1.197,
    "breite_quer": null,
-   "p_stein": 44.4,
-   "p_weiss": 11.2,
-   "p_dunkel": 45.0,
+   "p_stein": 44.2,
+   "p_weiss": 11.7,
+   "p_dunkel": 44.7,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 29.125,
-   "n": 342,
-   "r": 1.206,
+   "n": 346,
+   "r": 1.201,
    "breite_quer": null,
-   "p_stein": 46.5,
-   "p_weiss": 7.3,
-   "p_dunkel": 48.2,
+   "p_stein": 46.0,
+   "p_weiss": 8.1,
+   "p_dunkel": 47.7,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 29.375,
-   "n": 333,
-   "r": 1.217,
+   "n": 334,
+   "r": 1.212,
    "breite_quer": null,
-   "p_stein": 42.3,
-   "p_weiss": 10.8,
-   "p_dunkel": 37.2,
+   "p_stein": 42.2,
+   "p_weiss": 11.1,
+   "p_dunkel": 37.1,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 29.625,
-   "n": 317,
-   "r": 1.222,
+   "n": 320,
+   "r": 1.217,
    "breite_quer": null,
-   "p_stein": 43.8,
-   "p_weiss": 10.4,
-   "p_dunkel": 40.7,
+   "p_stein": 43.4,
+   "p_weiss": 10.3,
+   "p_dunkel": 40.6,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 29.875,
-   "n": 325,
-   "r": 1.229,
+   "n": 326,
+   "r": 1.224,
    "breite_quer": null,
-   "p_stein": 49.2,
+   "p_stein": 49.1,
    "p_weiss": 4.3,
-   "p_dunkel": 54.8,
+   "p_dunkel": 54.9,
    "p_kupfer": 0.3,
    "klasse": "stein"
   },
   {
    "z": 30.125,
-   "n": 314,
-   "r": 1.226,
+   "n": 317,
+   "r": 1.221,
    "breite_quer": null,
-   "p_stein": 55.7,
+   "p_stein": 55.2,
    "p_weiss": 3.2,
-   "p_dunkel": 48.1,
+   "p_dunkel": 48.3,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 30.375,
-   "n": 278,
-   "r": 1.249,
+   "n": 280,
+   "r": 1.244,
    "breite_quer": null,
-   "p_stein": 47.1,
-   "p_weiss": 4.0,
-   "p_dunkel": 57.2,
+   "p_stein": 46.8,
+   "p_weiss": 3.9,
+   "p_dunkel": 57.5,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 30.625,
    "n": 282,
-   "r": 1.259,
+   "r": 1.254,
    "breite_quer": null,
    "p_stein": 60.3,
    "p_weiss": 3.5,
@@ -566,7 +566,7 @@
   {
    "z": 30.875,
    "n": 277,
-   "r": 1.264,
+   "r": 1.259,
    "breite_quer": null,
    "p_stein": 62.1,
    "p_weiss": 3.2,
@@ -577,7 +577,7 @@
   {
    "z": 31.125,
    "n": 282,
-   "r": 1.274,
+   "r": 1.269,
    "breite_quer": null,
    "p_stein": 65.6,
    "p_weiss": 3.5,
@@ -587,66 +587,66 @@
   },
   {
    "z": 31.375,
-   "n": 337,
-   "r": 1.269,
+   "n": 338,
+   "r": 1.264,
    "breite_quer": null,
-   "p_stein": 58.2,
+   "p_stein": 58.0,
    "p_weiss": 1.2,
-   "p_dunkel": 51.0,
+   "p_dunkel": 51.2,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 31.625,
-   "n": 402,
-   "r": 1.308,
+   "n": 406,
+   "r": 1.303,
    "breite_quer": 0.18,
-   "p_stein": 63.7,
+   "p_stein": 63.5,
    "p_weiss": 0.5,
-   "p_dunkel": 46.0,
+   "p_dunkel": 46.1,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 31.875,
-   "n": 370,
-   "r": 1.424,
+   "n": 374,
+   "r": 1.419,
    "breite_quer": null,
-   "p_stein": 17.8,
+   "p_stein": 17.6,
    "p_weiss": 0.3,
-   "p_dunkel": 83.5,
-   "p_kupfer": 0.5,
+   "p_dunkel": 83.2,
+   "p_kupfer": 0.8,
    "klasse": "traufe"
   },
   {
    "z": 32.125,
    "n": 392,
-   "r": 1.503,
+   "r": 1.498,
    "breite_quer": null,
    "p_stein": 0.3,
-   "p_weiss": 0.3,
-   "p_dunkel": 72.7,
+   "p_weiss": 0.0,
+   "p_dunkel": 73.0,
    "p_kupfer": 7.1,
    "klasse": "traufe"
   },
   {
    "z": 32.375,
-   "n": 324,
-   "r": 1.536,
+   "n": 323,
+   "r": 1.531,
    "breite_quer": null,
    "p_stein": 0.3,
    "p_weiss": 1.5,
-   "p_dunkel": 78.4,
-   "p_kupfer": 5.2,
+   "p_dunkel": 78.6,
+   "p_kupfer": 5.3,
    "klasse": "traufe"
   },
   {
    "z": 32.625,
-   "n": 271,
-   "r": 1.529,
+   "n": 270,
+   "r": 1.524,
    "breite_quer": null,
-   "p_stein": 12.5,
-   "p_weiss": 8.9,
+   "p_stein": 12.6,
+   "p_weiss": 8.5,
    "p_dunkel": 10.7,
    "p_kupfer": 0.7,
    "klasse": "hell"
@@ -654,7 +654,7 @@
   {
    "z": 32.875,
    "n": 316,
-   "r": 1.551,
+   "r": 1.546,
    "breite_quer": null,
    "p_stein": 25.3,
    "p_weiss": 7.3,
@@ -664,21 +664,21 @@
   },
   {
    "z": 33.125,
-   "n": 302,
-   "r": 1.555,
+   "n": 304,
+   "r": 1.55,
    "breite_quer": null,
-   "p_stein": 24.8,
-   "p_weiss": 7.6,
-   "p_dunkel": 6.0,
+   "p_stein": 24.7,
+   "p_weiss": 7.2,
+   "p_dunkel": 6.6,
    "p_kupfer": 0.0,
    "klasse": "hell"
   },
   {
    "z": 33.375,
-   "n": 317,
-   "r": 1.557,
+   "n": 316,
+   "r": 1.552,
    "breite_quer": null,
-   "p_stein": 26.2,
+   "p_stein": 26.6,
    "p_weiss": 6.3,
    "p_dunkel": 3.8,
    "p_kupfer": 0.3,
@@ -686,360 +686,384 @@
   },
   {
    "z": 33.625,
-   "n": 308,
-   "r": 1.599,
+   "n": 309,
+   "r": 1.594,
    "breite_quer": null,
    "p_stein": 12.3,
    "p_weiss": 3.6,
-   "p_dunkel": 47.1,
+   "p_dunkel": 47.2,
    "p_kupfer": 0.0,
    "klasse": "offen"
   },
   {
    "z": 33.875,
    "n": 230,
-   "r": 1.627,
+   "r": 1.622,
    "breite_quer": null,
    "p_stein": 10.0,
    "p_weiss": 1.7,
-   "p_dunkel": 77.0,
-   "p_kupfer": 1.7,
+   "p_dunkel": 77.4,
+   "p_kupfer": 1.3,
    "klasse": "offen"
   },
   {
    "z": 34.125,
    "n": 162,
-   "r": 1.573,
+   "r": 1.568,
    "breite_quer": null,
    "p_stein": 29.0,
-   "p_weiss": 3.7,
-   "p_dunkel": 59.3,
+   "p_weiss": 3.1,
+   "p_dunkel": 59.9,
    "p_kupfer": 0.0,
    "klasse": "offen"
   },
   {
    "z": 34.375,
-   "n": 153,
-   "r": 1.507,
+   "n": 154,
+   "r": 1.502,
    "breite_quer": null,
-   "p_stein": 35.9,
+   "p_stein": 36.4,
    "p_weiss": 0.0,
-   "p_dunkel": 60.1,
+   "p_dunkel": 60.4,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 34.625,
-   "n": 178,
-   "r": 1.507,
+   "n": 177,
+   "r": 1.502,
    "breite_quer": null,
-   "p_stein": 34.8,
+   "p_stein": 35.0,
    "p_weiss": 0.0,
-   "p_dunkel": 60.7,
+   "p_dunkel": 61.0,
    "p_kupfer": 0.0,
-   "klasse": "offen"
+   "klasse": "stein"
   },
   {
    "z": 34.875,
-   "n": 234,
-   "r": 1.537,
+   "n": 233,
+   "r": 1.532,
    "breite_quer": null,
-   "p_stein": 42.3,
+   "p_stein": 42.5,
    "p_weiss": 0.0,
-   "p_dunkel": 59.4,
+   "p_dunkel": 59.7,
    "p_kupfer": 0.0,
    "klasse": "stein"
   },
   {
    "z": 35.125,
-   "n": 301,
-   "r": 1.786,
+   "n": 304,
+   "r": 1.779,
    "breite_quer": 0.38,
-   "p_stein": 69.4,
+   "p_stein": 69.1,
    "p_weiss": 0.0,
-   "p_dunkel": 46.2,
+   "p_dunkel": 45.7,
    "p_kupfer": 0.0,
    "klasse": "traufe"
   },
   {
    "z": 35.375,
-   "n": 335,
-   "r": 1.917,
+   "n": 333,
+   "r": 1.912,
    "breite_quer": null,
-   "p_stein": 50.4,
-   "p_weiss": 1.2,
-   "p_dunkel": 62.1,
+   "p_stein": 51.1,
+   "p_weiss": 0.9,
+   "p_dunkel": 61.9,
    "p_kupfer": 3.3,
    "klasse": "traufe"
   },
   {
    "z": 35.625,
    "n": 170,
-   "r": 1.867,
+   "r": 1.862,
    "breite_quer": null,
    "p_stein": 4.1,
-   "p_weiss": 12.9,
-   "p_dunkel": 51.8,
+   "p_weiss": 12.4,
+   "p_dunkel": 52.4,
    "p_kupfer": 16.5,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 35.875,
    "n": 28,
-   "r": 1.791,
+   "r": 1.786,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 0.0,
    "p_dunkel": 0.0,
    "p_kupfer": 53.6,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 36.125,
    "n": 63,
-   "r": 1.669,
+   "r": 1.664,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 1.6,
    "p_dunkel": 1.6,
    "p_kupfer": 42.9,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 36.375,
    "n": 93,
-   "r": 1.589,
+   "r": 1.584,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 1.1,
    "p_dunkel": 3.2,
    "p_kupfer": 36.6,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 36.625,
    "n": 96,
-   "r": 1.431,
+   "r": 1.426,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 0.0,
    "p_dunkel": 8.3,
    "p_kupfer": 42.7,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 36.875,
    "n": 129,
-   "r": 1.379,
+   "r": 1.374,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 0.8,
    "p_dunkel": 7.0,
    "p_kupfer": 31.0,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 37.125,
    "n": 139,
-   "r": 1.36,
+   "r": 1.356,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 5.0,
    "p_dunkel": 7.2,
    "p_kupfer": 30.9,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 37.375,
    "n": 154,
-   "r": 1.353,
+   "r": 1.348,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 4.5,
    "p_dunkel": 8.4,
    "p_kupfer": 35.1,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 37.625,
    "n": 129,
-   "r": 1.344,
+   "r": 1.34,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 0.0,
    "p_dunkel": 6.2,
    "p_kupfer": 41.1,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 37.875,
    "n": 122,
-   "r": 1.423,
+   "r": 1.418,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 3.3,
    "p_dunkel": 5.7,
    "p_kupfer": 36.1,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 38.125,
    "n": 103,
-   "r": 1.267,
+   "r": 1.262,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 3.9,
    "p_dunkel": 2.9,
    "p_kupfer": 35.0,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 38.375,
    "n": 98,
-   "r": 1.237,
+   "r": 1.232,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 5.1,
    "p_dunkel": 1.0,
    "p_kupfer": 37.8,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 38.625,
    "n": 87,
-   "r": 1.194,
+   "r": 1.19,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 3.4,
    "p_dunkel": 1.1,
    "p_kupfer": 48.3,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 38.875,
    "n": 97,
-   "r": 1.18,
+   "r": 1.176,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 4.1,
    "p_dunkel": 6.2,
    "p_kupfer": 37.1,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 39.125,
    "n": 64,
-   "r": 1.155,
+   "r": 1.15,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 0.0,
    "p_dunkel": 9.4,
    "p_kupfer": 37.5,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 39.375,
    "n": 55,
-   "r": 1.09,
+   "r": 1.085,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 0.0,
    "p_dunkel": 5.5,
    "p_kupfer": 32.7,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 39.625,
    "n": 60,
-   "r": 1.053,
+   "r": 1.048,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 1.7,
    "p_dunkel": 6.7,
    "p_kupfer": 25.0,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 39.875,
    "n": 56,
-   "r": 1.03,
+   "r": 1.025,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 0.0,
    "p_dunkel": 1.8,
    "p_kupfer": 30.4,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 40.125,
    "n": 58,
-   "r": 1.002,
+   "r": 0.997,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 1.7,
    "p_dunkel": 0.0,
    "p_kupfer": 29.3,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 40.375,
-   "n": 59,
-   "r": 0.951,
+   "n": 60,
+   "r": 0.945,
    "breite_quer": null,
    "p_stein": 0.0,
-   "p_weiss": 3.4,
-   "p_dunkel": 13.6,
-   "p_kupfer": 25.4,
-   "klasse": "kupfer"
+   "p_weiss": 3.3,
+   "p_dunkel": 15.0,
+   "p_kupfer": 25.0,
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 40.625,
-   "n": 72,
+   "n": 67,
    "r": 0.968,
    "breite_quer": null,
    "p_stein": 0.0,
-   "p_weiss": 9.7,
-   "p_dunkel": 9.7,
-   "p_kupfer": 20.8,
-   "klasse": "kupfer"
+   "p_weiss": 10.4,
+   "p_dunkel": 6.0,
+   "p_kupfer": 20.9,
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 40.875,
    "n": 63,
-   "r": 0.927,
+   "r": 0.922,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 22.2,
    "p_dunkel": 0.0,
    "p_kupfer": 25.4,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 41.125,
    "n": 52,
-   "r": 0.819,
+   "r": 0.815,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 23.1,
    "p_dunkel": 1.9,
    "p_kupfer": 21.2,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 41.375,
    "n": 55,
-   "r": 0.987,
+   "r": 0.982,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 34.5,
    "p_dunkel": 0.0,
    "p_kupfer": 21.8,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 41.625,
    "n": 41,
-   "r": 0.77,
+   "r": 0.765,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 29.3,
@@ -1051,62 +1075,67 @@
   {
    "z": 41.875,
    "n": 45,
-   "r": 0.719,
+   "r": 0.714,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 26.7,
    "p_dunkel": 2.2,
    "p_kupfer": 13.3,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 42.125,
    "n": 37,
-   "r": 0.734,
+   "r": 0.73,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 24.3,
    "p_dunkel": 0.0,
    "p_kupfer": 10.8,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 42.375,
    "n": 37,
-   "r": 1.028,
+   "r": 1.023,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 21.6,
    "p_dunkel": 2.7,
    "p_kupfer": 13.5,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 42.625,
    "n": 45,
-   "r": 0.683,
+   "r": 0.678,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 26.7,
    "p_dunkel": 0.0,
    "p_kupfer": 11.1,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 42.875,
    "n": 42,
-   "r": 0.628,
+   "r": 0.623,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 40.5,
    "p_dunkel": 0.0,
    "p_kupfer": 14.3,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   },
   {
    "z": 43.125,
    "n": 28,
-   "r": 0.644,
+   "r": 0.639,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 60.7,
@@ -1118,13 +1147,14 @@
   {
    "z": 43.375,
    "n": 32,
-   "r": 0.55,
+   "r": 0.545,
    "breite_quer": null,
    "p_stein": 0.0,
    "p_weiss": 37.5,
    "p_dunkel": 0.0,
    "p_kupfer": 15.6,
-   "klasse": "kupfer"
+   "klasse": "kupfer",
+   "dach_geometrisch": false
   }
  ],
  "quelle": "tools/wolke_baender.py: Aussenradius p97 + Farbklassen je 0,25 m, Baender nach Klassenwechsel"

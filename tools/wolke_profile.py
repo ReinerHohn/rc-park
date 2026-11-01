@@ -188,8 +188,18 @@ def main():
         if kegel:   # Koerper (Zylinder, Median d) + Kegel durch die Spitze - statt der einzelnen, oberhalb des Koerpers streuenden Fits
             tuerm = [[r["z"], kegel["d_koerper"]] for r in mittel if r["z"] <= kegel["z_knick"]] + [[round(float(z), 2), round(d_tuerm(z), 2)] for z in np.arange(kegel["z_knick"], TS - 0.4, a.dz)]
         else: tuerm = [[r["z"], r["d"]] for r in mittel]
-        dmax = max(r["d"] for r in mittel); koerper = [r for r in mittel if r["d"] >= 0.8 * dmax]     # Achse aus den Schichten des Erkerkoerpers (grosser Bogen, stabiler Fit)
-        achse = dict(tief=float(np.median([r["achse_tief"] for r in koerper])), quer=float(np.median([r["achse_quer"] for r in koerper])), aus_schichten=[koerper[0]["z"], koerper[-1]["z"]])
+        # Achse aus dem LAENGSTEN Lauf aufeinanderfolgender Schichten mit konsistentem Durchmesser (+-15 % des Laufmedians) = der Koerper;
+        # 'd >= 0,8 dmax' griff im Nullstart 4 die Kegelschichten (Ausreisser-dmax) und verschob die Achse um 0,55 m
+        best_lauf = []
+        for i0 in range(len(mittel)):
+            lauf = [mittel[i0]]
+            for r in mittel[i0 + 1:]:
+                med = float(np.median([q["d"] for q in lauf]))
+                if abs(r["d"] - med) <= 0.15 * med: lauf.append(r)
+                else: break
+            if len(lauf) > len(best_lauf) or (len(lauf) == len(best_lauf) and lauf and np.median([q["d"] for q in lauf]) > np.median([q["d"] for q in best_lauf])): best_lauf = lauf
+        koerper = best_lauf if len(best_lauf) >= 4 else [r for r in mittel if r["d"] >= 0.8 * max(q["d"] for q in mittel)]
+        achse = dict(tief=float(np.median([r["achse_tief"] for r in koerper])), quer=float(np.median([r["achse_quer"] for r in koerper])), aus_schichten=[koerper[0]["z"], koerper[-1]["z"]], verfahren="laengster konsistenter Lauf (+-15 %)")
         json.dump(dict(seite=s, dach_profil=dach, dach_traufe=traufe, dach_ebenen=ebenen, tiefen_rampe=rampe, tief_quelle=a.tief_quelle, tuerm_profil=tuerm, tuerm_kegel=kegel, tuerm_achse=achse, quelle="tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)"), open(os.path.join(od, "profile_generator.json"), "w"), indent=1, ensure_ascii=False)
         print("geschrieben:", os.path.join(od, "profile_generator.json"), f"({len(dach)} Dachschichten, {len(tuerm)} Tuermchenschichten, Achse {achse})")
     if a.pruefungen:

@@ -1148,3 +1148,19 @@ einseitigen Bogen war instabil 1,03..1,47, 'Front + Sehne in halber Tiefe' ist d
 PROFIL_DATEI (Schalter).
 **Nebenbefunde:** Sued-Zifferblattnische: auf Uhrmitte unterbrechen die Zeiger die Nische -> Messhoehe = gemessene Uhrmitte - 0,8 (Formel).
 relief_periode tastet 2,5 cm (feiner als die Fuge 5 cm), sonst Aliasing der Schichtperiode (0,5 statt 0,25).
+
+## BA. Nullstart 2-4: was eine andere Wolkenrealisierung kippt - und die Reparaturen (2026-11-01)
+**Laeufe:** Nullstart 2 fusionierte alte Tiefenkarten mit neuen Posen (476 statt 99 000 Punkte) -> nullstart loescht Abgeleitetes. Nullstart 3:
+COLMAP SIFT-GPU 'illegal memory access', weil die Bilderernte (LightGlue, 6 GB) gleichzeitig lief -> sfm_netz CPU-Rueckfall (>= 80 % Bilder mit
+Merkmalen, sonst CPU), nullstart wartet auf freie GPU. Nullstart 4 (7,1 min; Netze 7/8 s, Dichtwolke 320 s): Wolke und Ausrichtung reproduzierbar
+(Wandversatz 0,26 m in beiden Laeufen, Drift gleich), aber der Generator lieferte ein LEERES Modell:
+1. Kupferanteil des Kragdachs 4-17 % statt 12-54 % (andere Fusion, andere Farbabtastung) -> Klasse kippte, 'erstes Kupferband' = Helm,
+   GZ0 54,75, KRAG_TRAUFE 40,5, GX leer. Reparatur: Dachband auch GEOMETRISCH (Radius faellt >= 0,25 m je m ueber +-2 Schichten, kein Stein),
+   Farbe nur Stuetze; Plausibilitaetsfenster je Massregel (objekt.json 'bereich'), ausserhalb bleibt der alte Wert ('unplausibel').
+2. Tuermchenachse aus Kreisfits lag bei 3,45/4,79 statt 3,99/4,44: 'd >= 0,8 dmax' griff Kegelschichten (Ausreisser). Reparatur: Achse aus dem
+   laengsten Lauf konsistenter Schichten (+-15 %) -> Referenz 4,00/4,42 (2 cm Aenderung).
+3. Kurze Koerperbaender zerfallen an der Dunkelschwelle (offen 0,75 + stein 0,75): nur Paare kurzer Baender zusammenlegen, Klasse aus den
+   gemeinsamen Farbanteilen (ein langer Nachbar darf ein kurzes Band nicht schlucken - erster Versuch liess die Arkaden verschwinden).
+Referenz danach: Pruefstand 67/67, Baender wie vorher (8 Tuermchen, Arkaden 33,5-35,0 mit 2 Oeffnungen), Schnappschuss erneuert.
+**Lehre:** Farbklassen aus Fotowolken sind zwischen Laeufen nicht stabil; Geometrie (Radiusverlauf) ist es. Jede Massableitung braucht ein
+Plausibilitaetsfenster, sonst kann eine kippende Klasse das Modell ausloeschen. Der Nullstart ist der Test, der das findet.
