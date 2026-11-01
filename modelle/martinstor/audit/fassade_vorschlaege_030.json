@@ -1,0 +1,26 @@
+[
+ {
+  "treffer": 1,
+  "seite": "+y",
+  "vorschlag": {
+   "typ": "fenster",
+   "u": 3.9,
+   "z": 28.2,
+   "breite": 0.6,
+   "hoehe": 0.85,
+   "was": "VORSCHLAG aus fehlteile_finden Foto 030 Treffer 1 - vor dem Einbau am Vollbild pruefen"
+  }
+ },
+ {
+  "treffer": 2,
+  "seite": "+y",
+  "vorschlag": {
+   "typ": "fenster",
+   "u": 4.17,
+   "z": 16.56,
+   "breite": 0.6,
+   "hoehe": 0.85,
+   "was": "VORSCHLAG aus fehlteile_finden Foto 030 Treffer 2 - vor dem Einbau am Vollbild pruefen"
+  }
+ }
+]

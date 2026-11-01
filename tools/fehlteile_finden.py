@@ -104,6 +104,24 @@ def main():
                 text=f"Foto zeigt Struktur ohne Modellgegenstueck bei z={tr['xyz'][2]} m, y={tr['xyz'][1]} m (Zelle {tr['zelle']}, Score {tr['score']:+.2f})",
                 naechster_schritt=f"audit/fehlteile_{nr}.jpg Treffer {k} ansehen, Element benennen, Zeile + beleg()")); neu += 1
     json.dump(tab, open(tp, "w"), indent=1, ensure_ascii=False); print(f"  -> {neu} neue Beobachtung(en) in der Masstabelle")
+    # Fuer Treffer AUF einer Fassade einen fertigen Eintrag fuer fassade.json vorschlagen - seit die Elemente Daten sind,
+    # ist der Weg von "hier fehlt etwas" zu "dieses Element einfuegen" ein Textbaustein statt einer Codeaenderung.
+    fp = os.path.join(root, os.path.dirname(obj["masstabelle"]), "fassade.json")
+    if os.path.exists(fp):
+        vor = []
+        for k, tr in enumerate(treffer, 1):
+            if not tr["art"].startswith("FEHLT"): continue
+            x, y, z = tr["xyz"]
+            if np.isnan(x): continue
+            seite, u = ("+x" if x > 0 else "-x", y) if abs(x) > abs(y) else ("+y" if y > 0 else "-y", x)
+            if abs(u) > 4.5 or z > 32 or z < 7: continue                       # Kanten und Dachbereich sind keine Fassadenoeffnungen
+            vor.append({"treffer": k, "seite": seite,
+                        "vorschlag": {"typ": "fenster", "u": round(float(u), 2), "z": round(float(z), 2), "breite": 0.6, "hoehe": 0.85,
+                                      "was": f"VORSCHLAG aus fehlteile_finden Foto {nr} Treffer {k} - vor dem Einbau am Vollbild pruefen"}})
+        if vor:
+            print(f"  Vorschlaege fuer {os.path.relpath(fp, root)} (NICHT automatisch eingebaut):")
+            for v in vor: print(f"    Seite {v['seite']}: " + json.dumps(v["vorschlag"], ensure_ascii=False))
+            json.dump(vor, open(os.path.join(out, f"fassade_vorschlaege_{nr}.json"), "w"), indent=1, ensure_ascii=False)
 
 if __name__ == "__main__":
     main()

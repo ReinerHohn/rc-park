@@ -506,3 +506,8 @@ STL war wieder bitidentisch. Genau diese Varianten liefen bisher ueber `sed` auf
 **Was bewusst Code bleibt:** Schleifen ueber Seiten, Bedingungen, berechnete Lagen (`hxy(z)`), CSG-Reihenfolge und Ausnahmen
 (Arkaden erst schneiden, dann freistellen). Das in JSON zu fassen hiesse, eine Programmiersprache in JSON nachzubauen -
 mehr Zeilen, schlechter lesbar, gleiches Objektwissen.
+AB2. **Fehlteil-Finder schlaegt Fassadeneintraege vor (2026-11-01):** Treffer AUF einer Fassade (|u| <= 4,5 m, z 7-32 m) werden in einen
+fertigen `fassade.json`-Eintrag uebersetzt (Seite aus dem Vorzeichen, u und z aus der 3D-Lage) und nach `audit/fassade_vorschlaege_<foto>.json`
+geschrieben - **nicht automatisch eingebaut**, jeder Vorschlag wird erst am Vollbild geprueft. Erst seit die Elemente Daten sind, ist der Weg
+von "hier fehlt etwas" zu "dieses Element einfuegen" ein Textbaustein statt einer Codeaenderung. Erster Lauf (Foto 030): drei Vorschlaege
+auf der Ostseite (z 28,2 / 16,6 / 8,2 m) - die Ostseite ist unfotografiert, deshalb sind das Kandidaten, keine Befunde.
