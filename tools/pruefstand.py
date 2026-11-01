@@ -13,8 +13,9 @@ import sys, os, re, json, numpy as np, trimesh
 
 # Was eine Quelle beweisen kann (Erfahrung dieses Projekts; Begruendung in modelle/METHODE_MASSTABELLE.md)
 QUELLEN = {
-    "laser_dom1":      {"sieht": ["hoehe_flaeche", "grundriss", "anzahl"],              "blind": ["duennes_bauteil", "schlankheit", "fassade", "absolut_hoehe", "verhaeltnis"],
-                        "hinweis": "1-m-Raster, nur von oben; Strukturen < ~3 m verschmiert, Nadeln unsichtbar"},
+    "laser_dom1":      {"sieht": ["hoehe_flaeche", "anzahl"],                            "blind": ["duennes_bauteil", "schlankheit", "fassade", "absolut_hoehe", "verhaeltnis", "grundriss"],
+                        "hinweis": "1-m-Raster, interpoliert, nur von oben; Strukturen < ~3 m verschmiert, Nadeln unsichtbar. BLIND auch fuer Grundriss mit "
+                                   "Vorspruengen < ~1 m (Gesims, Erker): die Flaeche ueber Hoehe faellt dann 15-20 % zu klein aus (Martinstor 2026-11-01, Register O/P)"},
     "laser_punkte":    {"sieht": ["hoehe_flaeche", "grundriss", "anzahl", "schlankheit"], "blind": ["duennes_bauteil", "fassade"],
                         "hinweis": "Rohpunkte >= 8/m2: Kegel ja, Nadel 0,1 m kaum"},
     "lod2":            {"sieht": ["grundriss", "hoehe_flaeche"],                          "blind": ["duennes_bauteil", "schlankheit", "fassade", "absolut_hoehe", "verhaeltnis"],
@@ -23,7 +24,7 @@ QUELLEN = {
                         "hinweis": "nur Verhaeltnisse (+-5-10 %), absolute Masse nur mit bekanntem Massstab"},
     "foto_vollbild":   {"sieht": ["duennes_bauteil", "schlankheit", "verhaeltnis", "anzahl", "fassade"], "blind": ["absolut_hoehe", "grundriss"],
                         "hinweis": "Vollaufloesung, Massstab aus Modell oder Dokument -> Werte grob, Richtung sicher"},
-    "foto_kalibriert": {"sieht": ["absolut_hoehe", "hoehe_flaeche", "fassade", "verhaeltnis", "anzahl", "schlankheit", "duennes_bauteil"], "blind": [],
+    "foto_kalibriert": {"sieht": ["absolut_hoehe", "hoehe_flaeche", "fassade", "verhaeltnis", "anzahl", "schlankheit", "duennes_bauteil", "grundriss"], "blind": [],
                         "hinweis": "Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen)"},
     "dokument":        {"sieht": ["absolut_hoehe", "anzahl", "grundriss"],               "blind": ["schlankheit", "duennes_bauteil", "fassade"],
                         "hinweis": "Bauforschung/Denkmalamt/Wikipedia; Bezugshoehe oft unklar (60 vs 65 m)"},
@@ -32,7 +33,21 @@ QUELLEN = {
 
 # ----------------------------------------------------------------------------- generische Messer (alle in Metern)
 class Messer:
-    def __init__(self, m): self.m = m
+    def __init__(self, m, obj=None, root=None): self.m = m; self.obj = obj; self.root = root
+    def silhouettenbreite(self, z, kamera, foto, **k):
+        """Breite der Modellsilhouette in Metern auf Hoehe z, gesehen durch eine kalibrierte Kamera (gleiche Rechnung wie tools/foto_breitenprofil.py).
+        Sollwert dazu ist der FOTO-Wert - so wird eine Fotomessung zur dauerhaften Pruefung, ohne das Foto im Pruefstand zu brauchen."""
+        import sys as _s, cv2, glob
+        _s.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import foto_breitenprofil as FB
+        K = json.load(open(os.path.join(self.root, os.path.dirname(self.obj["masstabelle"]), "messprotokoll", kamera + ".json")))["kamera"]
+        R, t, C, f, cx, cy = FB.strahlen_setup(K); W, H = K["bild"]
+        P, _ = trimesh.sample.sample_surface(self.m, 2500000, seed=0); uv, zc = FB.projiziere(np.asarray(P), R, t, f, cx, cy)
+        u = np.round(uv[:, 0]).astype(int); v = np.round(uv[:, 1]).astype(int); ok = (zc > 1) & (u >= 0) & (u < W) & (v >= 0) & (v < H)
+        M = np.zeros((H, W), np.uint8); M[v[ok], u[ok]] = 1
+        M = cv2.morphologyEx(M, cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8)).astype(bool)
+        l, r = FB.halbbreite(M, R, t, f, cx, cy, C, z, FB.quer_richtung(C, z))
+        return float(l + r) if not (np.isnan(l) or np.isnan(r)) else float("nan")
     def _polys(self, z):
         s = self.m.section(plane_origin=[0, 0, z], plane_normal=[0, 0, 1])
         if s is None: return []
@@ -153,8 +168,8 @@ def auswerten(ausdruck, werte):
     try: return float(eval(ausdruck, {"__builtins__": {}}, dict(werte)))
     except Exception as e: raise ValueError(f"Formel '{ausdruck}': {e}")
 
-def messen(tab, m):
-    M = Messer(m); werte = dict(tab.get("konstanten", {})); offen = dict(tab["messungen"])
+def messen(tab, m, obj=None, root=None):
+    M = Messer(m, obj, root); werte = dict(tab.get("konstanten", {})); offen = dict(tab["messungen"])
     for _ in range(len(offen) + 1):                                   # Messungen duerfen auf andere verweisen ("z": "tuermchen_spitze - 2")
         for name in list(offen):
             spec = dict(offen[name]); typ = spec.pop("typ")
@@ -210,7 +225,7 @@ def main():
     zirk = [p["name"] for p in tab["pruefungen"] if p.get("massstab") == "modell" and p.get("merkmal") not in ("verhaeltnis", "anzahl", "druck")]
     if zirk: print("MASSSTAB AUS DEM MODELL (zirkulaer - belegt Richtung, nicht Zahl):"); [print(f"  - {n}") for n in zirk]
     # 2) Messen + Pruefen
-    m = lade_modell(stl, obj.get("stl_massstab", 1), obj.get("stl_einheit_mm", True), obj.get("zentrierung", "huelle")); werte = messen(tab, m)
+    m = lade_modell(stl, obj.get("stl_massstab", 1), obj.get("stl_einheit_mm", True), obj.get("zentrierung", "huelle")); werte = messen(tab, m, obj, root)
     zeilen, bad = [], 0
     for p in tab["pruefungen"]:
         v = auswerten(p["wert"], werte); lo, hi = p["soll"]; ok = (not np.isnan(v)) and lo <= v <= hi

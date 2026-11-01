@@ -12,17 +12,33 @@ Kugeln: kleine runde Nicht-Himmel-Komponenten (10-400 px2), ganz von Himmel umge
 import sys, os, json, glob, numpy as np, cv2
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-def himmel(im):
-    """Himmelsmaske: erst die Referenz-Methode (Farbe der obersten Zeilen); findet sie < 5 % Himmel (z. B. Baum/Leitung am oberen Rand),
-    dann robust ueber Farbe: blau-dominant oder sehr hell und ungesaettigt, zusammenhaengend mit dem Bildrand."""
+def plausibel(sk):
+    """Eine Himmelsmaske ist brauchbar, wenn der obere Bildrand ueberwiegend Himmel ist und die untere Bildmitte (dort steht das Bauwerk) kaum.
+    Faengt den Fehler 'weisse Wand als Himmel' und 'Baum am oberen Rand -> fast kein Himmel' ab."""
+    H, W = sk.shape
+    oben = sk[:max(3, H // 50), :].mean(); unten_mitte = sk[int(0.55 * H):int(0.95 * H), int(0.35 * W):int(0.65 * W)].mean()
+    return (0.05 <= sk.mean() <= 0.9) and oben >= 0.3 and unten_mitte <= 0.25, dict(anteil=round(float(sk.mean()), 3), oben=round(float(oben), 2), unten_mitte=round(float(unten_mitte), 2))
+
+def himmel(im, streng=False):
+    """Himmelsmaske mit Pruefung. Drei Verfahren nacheinander, die erste plausible gewinnt; sonst Fehler statt stiller Unsinn.
+    FALLE (2026-11-01): die Regel 'hell und ungesaettigt' machte die weisse Turmwand zu Himmel -> Breitenprofil mass 5,8 m statt 13 m."""
     import foto_silhouette_gpu as F
-    sk = F.sky_mask(im)
-    if sk.mean() >= 0.05: return sk
     hsv = cv2.cvtColor(im, cv2.COLOR_BGR2HSV); b, g, r = [im[:, :, i].astype(int) for i in range(3)]
-    cand = ((b > r + 25) & (b > g + 5) & (hsv[:, :, 2] > 90)) | ((hsv[:, :, 1] < 40) & (hsv[:, :, 2] > 200))
-    cand = cv2.morphologyEx(cand.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
-    n, lab = cv2.connectedComponents(cand); rand = set(np.unique(np.r_[lab[0, :], lab[:, 0], lab[:, -1]])) - {0}
-    return np.isin(lab, list(rand))
+    def randkomponente(cand):
+        cand = cv2.morphologyEx(cand.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
+        n, lab = cv2.connectedComponents(cand); rand = set(np.unique(np.r_[lab[0, :], lab[:, 0], lab[:, -1]])) - {0}
+        return np.isin(lab, list(rand))
+    kandidaten = [("referenz", F.sky_mask(im)),
+                  ("blau", randkomponente((b > r + 20) & (b > g + 8) & (hsv[:, :, 2] > 80))),           # klarer Himmel - KEINE Helligkeitsregel
+                  ("blau weich", randkomponente((b > r + 8) & (hsv[:, :, 2] > 120) & (hsv[:, :, 1] > 15)))]  # dunstig/bewoelkt
+    befunde = []
+    for name, sk in kandidaten:
+        ok, info = plausibel(sk); befunde.append((name, ok, info))
+        if ok:
+            if streng: print(f"  Himmelsmaske: {name} {info}")
+            return sk
+    raise SystemExit("keine plausible Himmelsmaske: " + "; ".join(f"{n} {i}" for n, _, i in befunde) +
+                     "  (oben >= 0,3 und untere Bildmitte <= 0,25 verlangt)")
 
 def spitzen(nicht_himmel, min_abstand=60, hoehe_min=40):
     H, W = nicht_himmel.shape; top = np.array([np.argmax(nicht_himmel[:, c]) if nicht_himmel[:, c].any() else H for c in range(W)], float)

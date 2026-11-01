@@ -279,3 +279,23 @@ Nur Abweichungen ausserhalb dieser Spanne sind echt.
 - **`tools/variante_bauen.sh` (neu):** baut eine Generator-Variante und BRICHT AB, wenn das sed-Muster nicht greift. Ausloeser: drei "Varianten"
   (TWs 2,2/2,0) waren bitgleich mit dem Ist-Modell, weil das Muster "TWs = 2.6" nicht auf "TWs, T0, T1 = 2.6," passte - der Vergleich zeigte
   faelschlich "kein Einfluss". Zusaetzlich Warnung, wenn das fertige STL bitgleich mit dem Ist-Modell ist.
+
+## P. Turmkopfbreite automatisch am Vollbild (2026-11-01, Nutzer: "generalisiert, nie mehr manuell eingreifen")
+**`tools/foto_breitenprofil.py`:** legt fuer jede Hoehe ein METER-Lineal in die Vertikalebene durch die Turmachse (senkrecht zur Blickrichtung),
+projiziert es mit der kalibrierten Kamera ins Bild und tastet es ab - der aeusserste Punkt, der noch zum Bauwerk gehoert, gibt die Halbbreite.
+Dasselbe am Modell. Keine Handpicks, kein Massstab aus dem Modell. Laeuft jetzt bei JEDEM Bau automatisch (`bauen_abnehmen.sh` ueber alle Fotos
+mit Kamera), traegt Abweichungen als ZONEN in die Masstabelle ein und steigt bei schlechter Kamera selbst aus.
+**Ergebnis Turmkopf: die Quellen sind uneins.** Foto 030 (Guete 0,73): 13,40 m bei 30 m = Modell 13,58, Median-Differenz ueber 19 Hoehen -0,02 m.
+Foto 000 (Guete 0,88): bei 25-32 m nur 11,5-12,4 m (-2 bis -3 m). -> Pruefzeile mit status `widerspruch`; die Kameras sind fuer +-0,5 m noch zu ungenau.
+**Der Laser-Befund aus O (Turmkopf 20 % zu breit) ist damit WIDERLEGT als Modellfehler:** DOM1 ist 1-m-interpoliert und verliert Vorspruenge < ~1 m
+(Zinnenkranz 0,35 m, Erkerauskragung) - die Flaeche ueber Hoehe faellt dann 15-20 % zu klein aus. Quellen-Matrix korrigiert: `laser_dom1` ist auch fuer
+`grundriss` BLIND. Die zwei roten Laserzeilen wurden ersetzt. Beleg: kein Einzelparameter (Erker, Kranz, Schaft) konnte die Laserflaeche erreichen,
+waehrend die Silhouette im Foto exakt passte.
+**Vier Fallen, alle mechanisch geschlossen:**
+1. Himmelsmaske machte die WEISSE TURMWAND zu Himmel ("hell und ungesaettigt") -> Breiten von 5,8 m statt 13 m. Jetzt drei Verfahren nacheinander
+   mit Plausibilitaetstest (oberer Rand >= 30 % Himmel, untere Bildmitte <= 25 %); keine plausible Maske = Abbruch statt stiller Unsinn.
+2. Schlechte Kamera (Foto 041: RMS 530 px) lieferte Modellbreiten von 1,5 m. Jetzt prueft das Werkzeug die Silhouetten-Ueberdeckung und bricht unter 0,60 ab.
+3. Punktwolken-Loecher liessen den Abtaststrahl zu frueh abbrechen (8,58 statt 13,58 m). Jetzt werden Luecken bis 0,12 m uebersprungen.
+4. Beobachtungen je Hoehe = 60 Eintraege Rauschen. Jetzt zusammenhaengende Zonen.
+**Generelle Lehre:** Jedes Messwerkzeug prueft seine Eingangsdaten selbst (Maske plausibel? Kamera gut genug?) und verweigert die Messung, statt
+eine Zahl zu liefern, die niemand nachprueft. Eine Quelle darf ein Merkmal nur belegen, wenn sie es aufloest - das steht in der Quellen-Matrix.

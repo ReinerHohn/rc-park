@@ -1,0 +1,47 @@
+[
+ {
+  "z": 26.0,
+  "foto": null,
+  "modell": null
+ },
+ {
+  "z": 28.0,
+  "foto": null,
+  "modell": 6.48
+ },
+ {
+  "z": 30.0,
+  "foto": null,
+  "modell": 1.46
+ },
+ {
+  "z": 32.0,
+  "foto": null,
+  "modell": 3.84
+ },
+ {
+  "z": 34.0,
+  "foto": null,
+  "modell": 11.74
+ },
+ {
+  "z": 36.0,
+  "foto": null,
+  "modell": 4.1
+ },
+ {
+  "z": 38.0,
+  "foto": 8.5,
+  "modell": 1.28
+ },
+ {
+  "z": 40.0,
+  "foto": 2.48,
+  "modell": 4.12
+ },
+ {
+  "z": 42.0,
+  "foto": null,
+  "modell": 5.52
+ }
+]
