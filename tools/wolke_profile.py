@@ -14,6 +14,8 @@ modelle/<objekt>/profile_generator.json, das der Generator als Loft liest.
   /media/oem/scan/venv-seg/bin/python -W ignore -I tools/wolke_profile.py modelle/<objekt>/objekt.json nord --pruefungen --generator
 """
 import sys, os, json, argparse, numpy as np
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from bauteile import seite_achsen
 
 def kreis(X):
     A = np.c_[2 * X[:, 0], 2 * X[:, 1], np.ones(len(X))]; b = (X ** 2).sum(1); c = np.linalg.lstsq(A, b, rcond=None)[0]
@@ -39,17 +41,17 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("seite"); ap.add_argument("--dicht"); ap.add_argument("--dz", type=float, default=0.5)
     ap.add_argument("--zentral-z", nargs=2, type=float, default=[36.0, 57.0]); ap.add_argument("--abseits-z", nargs=2, type=float, default=[30.5, 44.5])
     ap.add_argument("--abseits-min-r", type=float, default=2.8, help="Quadrantenpunkte: |quer| > ... (Tuermchen liegen aussen)")
-    ap.add_argument("--rand", type=float, default=0.2, help="Abzug vom p2-p98-Mass quer (Wolkenstreuung; Gratbereiche duenn besetzt -> klein halten)")
+    ap.add_argument("--achsstreifen", type=float, default=1.5, help="halbe Breite quer des Achsstreifens fuer die Front"); ap.add_argument("--frontfenster", type=float, default=0.8, help="Tiefenfenster um die Front fuer die Breite quer"); ap.add_argument("--rand", type=float, default=0.2, help="Abzug vom p2-p98-Mass quer (Wolkenstreuung; Gratbereiche duenn besetzt -> klein halten)")
     ap.add_argument("--pruefungen", action="store_true"); ap.add_argument("--generator", action="store_true"); ap.add_argument("--toleranz", type=float, default=0.5); ap.add_argument("--tief-quelle", default="wolke", help="wolke | silhouette:<foto> (Silhouettenprofil eines fernen Seitenfotos, messprotokoll/M-<foto>-S1.json: misst die volle Tiefe direkt, ohne Symmetrie- und Driftannahme)"); ap.add_argument("--tuerm-rand", type=float, default=0.8, help="Hoehenabstand ueber den Tuermchenspitzen, ab dem die Wolkenbreite ohne Tuermchen gilt")
     a = ap.parse_args(); obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); s = a.seite.lower()
     P = np.load(os.path.join(od, a.dicht or f"sfm/dicht_{s}_entzerrt.npy")).astype(float)
-    tief, sgn, quer = {"nord": ("x", -1.0, "y"), "sued": ("x", 1.0, "y"), "ost": ("y", 1.0, "x"), "west": ("y", -1.0, "x")}[s]
+    tief, sgn, quer = seite_achsen(s)
     it = 0 if tief == "x" else 1; iq = 1 - it
     # ---- zentral
     zentral = []
     for z in np.arange(a.zentral_z[0], a.zentral_z[1], a.dz):
         # Front der sichtbaren Flaeche: Median der Tiefe im Achsstreifen |quer| < 1,5 -> Tiefe des (symmetrischen) Koerpers = 2 * |Front|
-        ks = (P[:, 2] >= z) & (P[:, 2] < z + a.dz) & (np.abs(P[:, iq]) < 1.5) & (sgn * P[:, it] > 0.3) & (sgn * P[:, it] < 7.0)
+        ks = (P[:, 2] >= z) & (P[:, 2] < z + a.dz) & (np.abs(P[:, iq]) < a.achsstreifen) & (sgn * P[:, it] > 0.3) & (sgn * P[:, it] < 7.0)
         if ks.sum() < 10: continue
         xf = float(np.median(sgn * P[ks, it]))
         # Pass 1: Breite quer im ENGEN Frontfenster (|tief - Front| < 0,2) - nur als Dachmaske fuer den Tuermchen-Fit; endgueltig in Pass 2
@@ -94,7 +96,9 @@ def main():
     tuerm_top = max([r["z"] for r in mittel], default=0.0)
     # Tuermchen-Modell aus den Fits: Koerper = Median d der grossen Schichten (d >= 0,8 dmax), Helm = Kegel durch die Spitze (TUERM_SPITZE),
     # Steigung aus allen Schichten oberhalb des Koerpers (kleinste Quadrate mit festem Nullpunkt an der Spitze) - robust gegen einzelne Fehlfits
-    masse = json.load(open(os.path.join(od, "masse.json")))["masse"]; TS = float(masse["TUERM_SPITZE"]["wert"])
+    from bauteile import lade_masse
+    _m = lade_masse(os.path.join(od, "masse.json")); _sp = obj.get("koerper", {}).get("tuermchen", {}).get("spitze", "TUERM_SPITZE")
+    TS = float(sum(_m[t] if t in _m else float(t) for t in str(_sp).split("+")))            # Spitze des Abseits-Koerpers aus objekt.json['koerper']
     kegel = None
     if mittel:
         dmax = max(r["d"] for r in mittel); koerper = [r for r in mittel if r["d"] >= 0.8 * dmax]; d_k = float(np.median([r["d"] for r in koerper]))
@@ -128,7 +132,7 @@ def main():
         print(f"Tiefe aus Silhouette Foto {foto} ({len(sz)} Schichten, {Sp['px_je_m']} px/m); Wolkenfront nur Vergleich")
     for r in zentral:
         # Pass 2: Breite quer im WEITEN Frontfenster (+-0,8 m Tiefe: Wolkenstreuung, Gratbereiche) ohne die Tuermchenzone (|quer| um die Tuermchenachse +-1,6 bis ueber die Spitzen)
-        k = (P[:, 2] >= r["z"] - a.dz / 2) & (P[:, 2] < r["z"] + a.dz / 2) & (np.abs(sgn * P[:, it] - r["front_tief"]) < 0.8)
+        k = (P[:, 2] >= r["z"] - a.dz / 2) & (P[:, 2] < r["z"] + a.dz / 2) & (np.abs(sgn * P[:, it] - r["front_tief"]) < a.frontfenster)
         if achse_q is not None and r["z"] <= TS + a.tuerm_rand: k &= np.abs(np.abs(P[:, iq]) - achse_q) > d_tuerm(r["z"]) / 2 + 0.3   # Tuermchenzone (Achse +- d/2 + 0,3) ausblenden
         if k.sum() >= 15: r["breite_quer_wolke"] = round(float(np.percentile(P[k, iq], 98) - np.percentile(P[k, iq], 2)) - a.rand, 2); r["n"] = int(k.sum())
         r["dom1_flaeche"] = int(((Wd > r["z"]) & (dd <= 9)).sum())
@@ -171,7 +175,7 @@ def main():
         json.dump(dict(seite=s, dach_profil=dach, dach_traufe=traufe, tiefen_rampe=rampe, tief_quelle=a.tief_quelle, tuerm_profil=tuerm, tuerm_kegel=kegel, tuerm_achse=achse, quelle="tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)"), open(os.path.join(od, "profile_generator.json"), "w"), indent=1, ensure_ascii=False)
         print("geschrieben:", os.path.join(od, "profile_generator.json"), f"({len(dach)} Dachschichten, {len(tuerm)} Tuermchenschichten, Achse {achse})")
     if a.pruefungen:
-        tp = os.path.join(od, "masstabelle.json"); T = json.load(open(tp)); neu = 0
+        tp = os.path.join(od, "masstabelle.json"); from masstabelle_io import sperren, schreiben; _L = sperren(tp); T = json.load(open(tp)); neu = 0
         gesetzt = set()
         def setze(name, wert, soll, quelle, merkmal, messung):
             nonlocal neu
@@ -204,7 +208,7 @@ def main():
         alt = [pr for pr in T["pruefungen"] if pr["name"].startswith(eigene) and pr["name"] not in gesetzt]
         T["pruefungen"] = [pr for pr in T["pruefungen"] if not (pr["name"].startswith(eigene) and pr["name"] not in gesetzt)]
         for pr in alt: T["messungen"].pop(pr["wert"].replace("_durchmesser", ""), None)
-        json.dump(T, open(tp, "w"), indent=1, ensure_ascii=False); print(f"Masstabelle: {neu} neue Profil-Pruefungen, {len(alt)} veraltete entfernt (bestehende aktualisiert)")
+        schreiben(tp, T, _L); print(f"Masstabelle: {neu} neue Profil-Pruefungen, {len(alt)} veraltete entfernt (bestehende aktualisiert)")
 
 if __name__ == "__main__":
     main()

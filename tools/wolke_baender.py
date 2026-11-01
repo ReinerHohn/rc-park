@@ -30,12 +30,12 @@ def main():
     od = os.path.dirname(os.path.abspath(a.objekt)); s = a.seite.lower()
     pf = os.path.join(od, a.dicht or f"sfm/dicht_{s}_entzerrt.npy"); P = np.load(pf).astype(float)
     C = np.load(pf.replace("_entzerrt.npy", "_modell.npy").replace("_modell.npy", "_farben.npy"))
-    tief, sgn, quer = {"nord": ("x", -1.0, "y"), "sued": ("x", 1.0, "y"), "ost": ("y", 1.0, "x"), "west": ("y", -1.0, "x")}[s]; it = 0 if tief == "x" else 1; iq = 1 - it
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from bauteile import lade_masse
+    tief, sgn, quer = seite_achsen(s); it = 0 if tief == "x" else 1; iq = 1 - it
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from bauteile import lade_masse, seite_achsen
     masse = lade_masse(os.path.join(od, "masse.json")); obj = json.load(open(a.objekt))
-    KO = {"tuermchen": {"achse": "profile_generator.json:tuerm_achse", "zone": 1.6, "z": [27.0, 45.0], "spitze": "TUERM_SPITZE", "reichweite": 4.0},
-          "zentral":   {"achse": [0.0, 0.0], "zone": 1.5, "z": [8.0, 56.0], "spitze": "GZ1+DACHHOEHE", "reichweite": 7.0}}
-    KO.update(obj.get("koerper", {})); K = KO[a.koerper]
+    KO = obj.get("koerper", {})
+    if a.koerper not in KO: sys.exit(f"Koerper '{a.koerper}' nicht in objekt.json['koerper'] (vorhanden: {list(KO)}) - Achse/Zone/Hoehen/Spitze dort als Daten eintragen")
+    K = KO[a.koerper]
     ach = K["achse"]
     if isinstance(ach, str) and ach.startswith("profile_generator.json:"):
         G = json.load(open(os.path.join(od, "profile_generator.json")))[ach.split(":", 1)[1]]; ach = [G["tief"], G["quer"]]
@@ -111,7 +111,7 @@ def main():
     out = dict(seite=s, koerper=a.koerper, achse=dict(tief=at, quer=aq), zone=zone, spitze=TS, baender=baender, kegel=kegel, schichten=schichten, quelle="tools/wolke_baender.py: Aussenradius p97 + Farbklassen je 0,25 m, Baender nach Klassenwechsel")
     op = os.path.join(od, f"profile_baender_{a.koerper}.json"); json.dump(out, open(op, "w"), indent=1, ensure_ascii=False); print("geschrieben:", op)
     if a.pruefungen:
-        tp = os.path.join(od, "masstabelle.json"); T = json.load(open(tp)); gesetzt = set(); neu = 0
+        tp = os.path.join(od, "masstabelle.json"); from masstabelle_io import sperren, schreiben; _L = sperren(tp); T = json.load(open(tp)); gesetzt = set(); neu = 0
         seite = ("-" if sgn < 0 else "+") + tief
         for b in baender + ([dict(klasse="kegel", z0=kegel["z0"], z1=TS, r=None)] if kegel else []):
             if b["klasse"] == "kegel": zm = round((kegel["z0"] + TS) / 2, 2); r = kegel["r0"] * (TS - zm) / (TS - kegel["z0"])
@@ -131,7 +131,7 @@ def main():
         noch = {pr["wert"] for pr in T["pruefungen"]}
         for pr in alt:
             if pr["wert"] not in noch: T["messungen"].pop(pr["wert"], None)                     # Messung nur loeschen, wenn keine Zeile sie mehr nutzt
-        json.dump(T, open(tp, "w"), indent=1, ensure_ascii=False); print(f"Masstabelle: {neu} neue Band-Pruefungen, {len(alt)} veraltete entfernt")
+        schreiben(tp, T, _L); print(f"Masstabelle: {neu} neue Band-Pruefungen, {len(alt)} veraltete entfernt")
 
 if __name__ == "__main__":
     main()

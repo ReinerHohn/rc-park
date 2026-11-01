@@ -12,6 +12,8 @@ Mit --pruefung wird die Zeile in der Masstabelle angelegt/aktualisiert (quelltyp
 die Modellmessung muss der Pruefstand kennen (z. B. relief_mitte: Schwerpunkt der aus der Wandflaeche heraustretenden Zellen).
 """
 import sys, os, json, argparse, numpy as np
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from bauteile import seite_achsen
 
 KLASSEN = {"gold": lambda h, s, v: (h >= 15) & (h <= 35) & (s > 80), "gruen": lambda h, s, v: (h >= 60) & (h <= 100) & (s > 60),
            "rot": lambda h, s, v: ((h < 8) | (h > 170)) & (s > 90), "weiss": lambda h, s, v: (s < 30) & (v > 200)}
@@ -24,7 +26,7 @@ def main():
     od = os.path.dirname(os.path.abspath(a.objekt)); s = a.seite.lower()
     pf = os.path.join(od, a.dicht or f"sfm/dicht_{s}_entzerrt.npy"); P = np.load(pf).astype(float)
     cf = pf.replace("_entzerrt.npy", "_modell.npy").replace("_modell.npy", "_farben.npy"); C = np.load(cf)
-    tief, sgn, quer = {"nord": ("x", -1.0, "y"), "sued": ("x", 1.0, "y"), "ost": ("y", 1.0, "x"), "west": ("y", -1.0, "x")}[s]; it = 0 if tief == "x" else 1; iq = 1 - it
+    tief, sgn, quer = seite_achsen(s); it = 0 if tief == "x" else 1; iq = 1 - it
     hsv = cv2.cvtColor(C.reshape(-1, 1, 3).astype(np.uint8), cv2.COLOR_RGB2HSV).reshape(-1, 3).astype(float)
     # Front je 0,5-m-Schicht (Median der Tiefe im Fenster), Frontpunkte = |tief - Front| < 0,8
     fenster = (P[:, 2] >= a.z[0]) & (P[:, 2] < a.z[1]) & (np.abs(P[:, iq]) < a.halb) & (sgn * P[:, it] > 0.5)
@@ -46,7 +48,7 @@ def main():
     print(f"  Schwerpunkt z {zc:.2f} m, {quer} {qc:.2f} m, Radius (p90) {rad:.2f} m, {len(Q)} Punkte nach Ausreisserfilter")
     erg = dict(seite=s, farbe=a.farbe, fenster=dict(z=a.z, halb=a.halb), punkte=n, z=round(zc, 2), quer=round(qc, 2), radius_p90=round(rad, 2), wolke=os.path.basename(pf))
     if a.pruefung:
-        tp = os.path.join(od, "masstabelle.json"); T = json.load(open(tp)); wert = "farb_" + "".join(ch if ch.isalnum() else "_" for ch in a.pruefung.lower()).strip("_")
+        tp = os.path.join(od, "masstabelle.json"); from masstabelle_io import sperren, schreiben; _L = sperren(tp); T = json.load(open(tp)); wert = "farb_" + "".join(ch if ch.isalnum() else "_" for ch in a.pruefung.lower()).strip("_")
         soll_w = {"z": zc, "quer": qc, "radius": rad}[a.feld]; soll = [round(soll_w - a.toleranz, 2), round(soll_w + a.toleranz, 2)]
         if a.messung: T["messungen"][wert] = json.loads(a.messung)
         quelle = f"wolke_farbmerkmal.py: dichte Wolke {s} (entzerrt), Farbklasse {a.farbe} an der Wandfront: {n} Punkte, Schwerpunkt z {zc:.2f} / {quer} {qc:.2f}, Radius p90 {rad:.2f}"
@@ -57,7 +59,7 @@ def main():
                 pr["wert"] = name_wert; break
         else:
             T["pruefungen"].append(dict(name=a.pruefung, wert=name_wert, soll=soll, quelle=quelle, quelltyp="sfm_bodenanker", merkmal=a.merkmal, massstab="LoD2-Eckkanten + Wandebene", protokoll=f"wolke_farbmerkmal {s} {a.farbe}"))
-        json.dump(T, open(tp, "w"), indent=1, ensure_ascii=False); print(f"  Masstabelle: Pruefung '{a.pruefung}' Soll {soll} (Messung {name_wert})")
+        schreiben(tp, T, _L); print(f"  Masstabelle: Pruefung '{a.pruefung}' Soll {soll} (Messung {name_wert})")
     print(json.dumps(erg, ensure_ascii=False))
 
 if __name__ == "__main__":

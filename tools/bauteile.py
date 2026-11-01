@@ -13,7 +13,16 @@ Zwei Arten:
 Alle Masse in Metern; `rel(m)` rechnet eine Relieftiefe so um, dass sie im Druck nicht unter MINMM faellt.
 """
 import math, random, json, os
-from manifold3d import Manifold as M
+try:
+    from manifold3d import Manifold as M
+except ImportError:                       # Analyse-Umgebungen ohne manifold3d duerfen lade_masse/seite_achsen trotzdem nutzen
+    M = None
+
+# Seitenkonvention des Modellrahmens (+x Sued, +y Ost, z oben): je Fassadenseite die Tiefenachse, ihr Vorzeichen nach aussen und die Querachse.
+SEITEN = {"nord": ("x", -1.0, "y"), "sued": ("x", 1.0, "y"), "ost": ("y", 1.0, "x"), "west": ("y", -1.0, "x")}
+def seite_achsen(seite):
+    """(tief, sgn, quer) einer Fassadenseite: Punkte der Seite liegen bei sgn * koordinate[tief] > 0; quer laeuft in der Fassadenebene."""
+    return SEITEN[seite.lower()]
 
 
 def lade_masse(pfad):

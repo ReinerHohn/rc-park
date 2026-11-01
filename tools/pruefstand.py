@@ -171,6 +171,7 @@ class Messer:
         loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
         if len(loc) == 0: return float("nan")
         return float(np.percentile(np.abs(loc[:, ax]), 90) - abs(achse_tief))               # p90 der Treffer = Aussenkante (Pfeiler zwischen Oeffnungen), wie p97 in der Wolke
+    rand_radius = tuerm_radius                                                           # generischer Name (jeder Koerper neben der Achse)
     def anzahl_im_band(self, z, achse, lo, hi, quer_max, **k):
         """Zaehlt Querschnitte bei z, deren Schwerpunkt auf 'achse' (x|y) zwischen lo..hi liegt und quer < quer_max (z. B. Zinnen einer Seite)."""
         a = 0 if achse == "x" else 1

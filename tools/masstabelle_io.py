@@ -7,6 +7,15 @@ laufen in tools/bauen_abnehmen.sh parallel je Foto und tragen Beobachtungen ein;
 """
 import json, os, fcntl
 
+def sperren(pfad):
+    """Exklusive Sperre auf <pfad>.lock holen (Lese-Aendere-Schreibe-Abschnitt); Rueckgabe: offenes Sperrobjekt fuer schreiben()."""
+    L = open(pfad + ".lock", "w"); fcntl.flock(L, fcntl.LOCK_EX); return L
+
+def schreiben(pfad, tab, L=None):
+    """Tabelle atomar schreiben (tmp + rename) und die Sperre freigeben."""
+    tmp = pfad + ".tmp"; json.dump(tab, open(tmp, "w"), indent=1, ensure_ascii=False); os.replace(tmp, pfad)
+    if L is not None: fcntl.flock(L, fcntl.LOCK_UN); L.close()
+
 def aendern(pfad, fn):
     lock = pfad + ".lock"
     with open(lock, "w") as L:

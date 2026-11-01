@@ -19,7 +19,7 @@ Schreibt messprotokoll/M-<foto>-S1.json (Protokoll mit Massstab und Zeilen), aud
 und mit --pruefungen Pruefzeilen 'Profil Dach (Foto <nr>): Tiefe <achse> bei <z> m' in die Masstabelle (Messung
 ausdehnung_streifen, quelltyp foto_verhaeltnis, Soll = Fotowert +- Toleranz).
 """
-import sys, os, json, argparse, numpy as np
+import sys, os, json, math, argparse, numpy as np
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("foto")
@@ -62,7 +62,10 @@ def main():
     for b, r in verworfen:
         z_impl = (v0 - b[2]) / ppm; print(f"   VERWORFEN {b[0]:14s} Residuum du {r[0]:+.2f} dv {r[1]:+.2f} m -> aus dem Foto folgt Hoehe {z_impl:.1f} m statt Anker {b[3]} m")
     ortho = 0.0
-    gleich = [b for b in B if b[0].startswith("tuermchen")]
+    # gleich hohe Picks: groesste Gruppe gleicher Ankerhoehe (statt Namensmuster) - ihre Zeilenstreuung misst die Orthografie
+    grp = {}
+    for b in B: grp.setdefault(round(b[3], 1), []).append(b)
+    gleich = max(grp.values(), key=len) if grp else []
     spanne_px = max(float(uv[1]) for uv in K["punkte"].values()) - min(float(uv[1]) for uv in K["punkte"].values())   # Messstrecke = alle Picks
     if len(gleich) >= 2: ortho = float(np.std([b[2] for b in gleich]) / max(spanne_px, 1.0))
     u_ach = float(u0); v_unten = max(b[2] for b in B); v_oben = min(b[2] for b in B)
@@ -95,7 +98,8 @@ def main():
         while r + 1 < len(row) and row[r + 1]: r += 1
         zeilen.append((v, (l - c), (r - c), (r - l + 1) / ppm, z_von_v(v)))
     Z = np.array(zeilen)
-    z_frei = max([b[3] for b in bez if b[0].startswith("tuermchen")], default=-1e9) + a.rand_unten   # ueber den Tuermchenknaeufen erst ist die Strecke das Dach allein
+    seitlich = [b for b in bez if math.hypot(b[5][0], b[5][1]) > 1.5]                            # Picks abseits der Achse (Ecktuermchen o. ae.) stecken darunter in der Silhouettenstrecke
+    z_frei = max([b[3] for b in seitlich], default=-1e9) + a.rand_unten
     Z = Z[Z[:, 4] >= z_frei]
     prof = []
     for z in np.arange(np.floor(Z[:, 4].min() / a.dz) * a.dz, Z[:, 4].max(), a.dz):
@@ -117,7 +121,7 @@ def main():
                  px_je_m=round(ppm, 3), orthografie_abweichung=round(ortho, 4), himmel=dict(s_max=float(s_max), v_min=float(v_min)), profil=prof, kontrollbild=f"audit/silhouette_{a.foto}.png")
     pp = os.path.join(od, "messprotokoll", f"M-{a.foto}-S1.json"); json.dump(proto, open(pp, "w"), indent=1, ensure_ascii=False); print("Protokoll:", pp)
     if a.pruefungen:
-        tp = os.path.join(od, "masstabelle.json"); T = json.load(open(tp)); neu = 0
+        tp = os.path.join(od, "masstabelle.json"); from masstabelle_io import sperren, schreiben; _L = sperren(tp); T = json.load(open(tp)); neu = 0
         for z in a.pruefungen:
             r = min(prof, key=lambda q: abs(q["z"] - z)); name = f"Profil Dach (Foto {a.foto}): Tiefe {a.achse} bei {z:.0f} m (m)"; wert = f"silhouette_{a.foto}_{int(z)}"
             T["messungen"][wert] = {"typ": "ausdehnung_streifen", "z": float(z), "achse": a.achse, "quer_max": 2.0}
@@ -133,7 +137,7 @@ def main():
         alt = [pr for pr in T["pruefungen"] if pr["name"].startswith(f"Profil Dach (Foto {a.foto})") and pr["name"] not in namen]
         T["pruefungen"] = [pr for pr in T["pruefungen"] if pr not in alt]
         for pr in alt: T["messungen"].pop(pr["wert"], None)
-        json.dump(T, open(tp, "w"), indent=1, ensure_ascii=False); print(f"Masstabelle: {neu} neue Silhouetten-Pruefungen, {len(alt)} veraltete entfernt")
+        schreiben(tp, T, _L); print(f"Masstabelle: {neu} neue Silhouetten-Pruefungen, {len(alt)} veraltete entfernt")
 
 if __name__ == "__main__":
     main()

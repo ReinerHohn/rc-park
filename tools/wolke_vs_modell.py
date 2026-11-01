@@ -13,7 +13,8 @@ Seiten: Nord = Blick auf -x (u = y), Sued = +x, Ost = +y (u = x), West = -y. Mas
 import sys, os, json, argparse, numpy as np, trimesh, cv2
 from scipy import ndimage
 
-SEITE = {"nord": ("x", -1.0, "y"), "sued": ("x", 1.0, "y"), "ost": ("y", 1.0, "x"), "west": ("y", -1.0, "x")}
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from bauteile import SEITEN as SEITE
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("seite"); ap.add_argument("--raster", type=float, default=0.25)

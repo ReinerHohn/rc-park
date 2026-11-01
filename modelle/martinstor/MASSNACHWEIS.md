@@ -103,17 +103,17 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - dach: Helm als Loft aus Profil (29 Schichten) - tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)
 - dach: Dachreiter: Mast, Knauf, Nadel - Foto 049 Vollbild; Bauforschung BW 60 m
 - dach: 4 Ecktuermchen mit Kegel - Fotos 041/043/044; SfM Nordnetz Knaeufe 44,4-44,7 m (DOM1 41 m = getroffene Kegelflaeche)
-- dach: Ecktuermchen Band stein 27.0-27.5 m, r 0.85 - wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
-- dach: Ecktuermchen Band gesims 27.5-28.25 m, r 1.17 - wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
-- dach: Ecktuermchen Band stein 28.25-31.75 m, r 1.23 - wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
-- dach: Ecktuermchen Band gesims 31.75-32.5 m, r 1.5 - wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
-- dach: Ecktuermchen Band fachwerk 32.5-33.5 m, r 1.55 - wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
-- dach: Ecktuermchen Band offen 33.5-35.0 m, r 1.55 - wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
-- dach: Ecktuermchen Band traufe 35.0-35.5 m, r 1.85 - wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
-- dach: Ecktuermchen Band kupfer 35.5-43.5 m, r 1.07 - wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
+- dach: Ecktuermchen Band stein 27.0-27.5 m, r 0.85 - wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
+- dach: Ecktuermchen Band gesims 27.5-28.25 m, r 1.17 - wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
+- dach: Ecktuermchen Band stein 28.25-31.75 m, r 1.23 - wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
+- dach: Ecktuermchen Band gesims 31.75-32.5 m, r 1.5 - wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
+- dach: Ecktuermchen Band hell 32.5-33.5 m, r 1.55 - wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
+- dach: Ecktuermchen Band offen 33.5-35.0 m, r 1.55 - wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
+- dach: Ecktuermchen Band traufe 35.0-35.5 m, r 1.85 - wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
+- dach: Ecktuermchen Band kupfer 35.5-43.5 m, r 1.07 - wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)
 - dach: Ecktuermchen Arkadenband: 2 Rundbogenoeffnungen je Aussenflaeche - ANNAHME aus Foto 043 (Sued, gepaarte Boegen); Bandlage aus der Wolke (dunkel 61 %)
 - dach: Ecktuermchen Traufkonsolen ('Boeckchen') 8 je Tuermchen - ANNAHME aus Foto 043; Traufplatte r aus der Wolke
-- dach: Ecktuermchen Kupferkegel Traufe -> Spitze - wolke_tuerm_baender.py: r 1.85 bei 35.5 m, Steigung 0.2093 r/m zur Spitze 44.5
+- dach: Ecktuermchen Kupferkegel Traufe -> Spitze - wolke_baender.py: r 1.85 bei 35.5 m, Steigung 0.2093 r/m zur Spitze 44.5
 
 ## Seiten
 
@@ -314,6 +314,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - auto foto_breitenprofil (Foto 061, Kamera K-061): Silhouettenbreite z 31.5-34.5 m: Foto 13.38 m, Modell 12.65 m (+0.74 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
 - auto foto_breitenprofil (Foto 061, Kamera K-061): Silhouettenbreite z 42.0-49.0 m: Foto 3.86 m, Modell 6.12 m (-2.26 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
 - auto wolke_vs_modell (nord, Versatz +0.26 m abgezogen): Modell steht 0.92 m weiter vor als die Fotowolke [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 32.8-40.8 m, y -4.2..-2.8 m, 5.8 m2 -> Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator
+- 2026-11-01 Claude (wolke_baender.py zentral): Band 'offen' am Hauptturm 38,25-39,25 m (dunkel 88 %) = Schalloeffnungen; Modell-Arkaden 37,9-39,5 (ARKADE_UNTER_TRAUFE 3,0). Galeriegesims-Band 36,25-37,75 r 3,70 passt zu LoD2 37,27. -> ARKADE_UNTER_TRAUFE und Oeffnungshoehe aus dem Band ableiten (2,25 / 1,0 m), Pruefzeile 'Band zentral offen' aktivieren
 
 ## Grenze
 
