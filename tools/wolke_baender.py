@@ -19,6 +19,8 @@ letzten Traufe als Gerade durch die Spitze (Mass 'spitze' des Koerpers). Ausgabe
   /media/oem/scan/venv-seg/bin/python -W ignore -I tools/wolke_baender.py modelle/<objekt>/objekt.json nord --koerper zentral
 """
 import sys, os, json, argparse, numpy as np
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from bauteile import seite_achsen, lade_masse
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("seite"); ap.add_argument("--dicht"); ap.add_argument("--dz", type=float, default=0.25)
@@ -31,7 +33,7 @@ def main():
     pf = os.path.join(od, a.dicht or f"sfm/dicht_{s}_entzerrt.npy"); P = np.load(pf).astype(float)
     C = np.load(pf.replace("_entzerrt.npy", "_modell.npy").replace("_modell.npy", "_farben.npy"))
     tief, sgn, quer = seite_achsen(s); it = 0 if tief == "x" else 1; iq = 1 - it
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from bauteile import lade_masse, seite_achsen
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from bauteile import lade_masse
     masse = lade_masse(os.path.join(od, "masse.json")); obj = json.load(open(a.objekt))
     KO = obj.get("koerper", {})
     if a.koerper not in KO: sys.exit(f"Koerper '{a.koerper}' nicht in objekt.json['koerper'] (vorhanden: {list(KO)}) - Achse/Zone/Hoehen/Spitze dort als Daten eintragen")
