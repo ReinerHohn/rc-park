@@ -19,7 +19,17 @@ import sys, os, json, glob, shutil, subprocess, time, argparse
 
 PY = "/media/oem/scan/venv-seg/bin/python"; PC = "/media/oem/scan/venv-colmap/bin/python"; RC = os.path.expanduser("~/.venvs/rcpark/bin/python")
 
+def gpu_warten(max_mib=1500, max_s=3600):
+    """Vor GPU-Schritten warten, bis kein anderer Prozess die GPU belegt (COLMAP SIFT-GPU stuerzt sonst mit 'illegal memory access' ab)."""
+    t0 = time.time()
+    while time.time() - t0 < max_s:
+        try: used = int(subprocess.run("nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits", shell=True, capture_output=True, text=True).stdout.strip().split()[0])
+        except Exception: return
+        if used < max_mib: return
+        print(f"    GPU belegt ({used} MiB) - warte", flush=True); time.sleep(30)
+
 def lauf(bericht, name, cmd, repo, log, ok_rcs=(0,)):
+    if "sfm_netz.py" in cmd or "sfm_dicht.py" in cmd: gpu_warten()
     t0 = time.time(); print(f"\n+++ {name}: {cmd[:160]}", flush=True)
     with open(log, "a") as L:
         L.write(f"\n\n=== {name} @ {time.strftime('%H:%M:%S')}\n$ {cmd}\n"); L.flush()

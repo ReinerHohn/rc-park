@@ -123,6 +123,16 @@ def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048)):
     tmp = aus + "_bilder"; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
     for nr in nrs: os.symlink(os.path.abspath(os.path.join(bilder, nr + ".jpg")), os.path.join(tmp, nr + ".jpg"))
     pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE)
+    # GPU-Rueckfall: scheitert SIFT-GPU (z. B. 'illegal memory access', wenn ein anderer Prozess die GPU belegt), bleiben Bilder ohne Merkmale
+    # -> Datenbank neu und auf der CPU extrahieren/zuordnen (langsamer, gleiches Ergebnis in der Geometrie). Nullstart 3, Register BA.
+    _gpu_ok = True
+    try:
+        _c = sqlite3.connect(db); _n_img = _c.execute("select count(*) from images").fetchone()[0]; _n_kp = _c.execute("select count(*) from keypoints where rows > 0").fetchone()[0]; _c.close()
+        _gpu_ok = _n_img > 0 and _n_kp >= 0.8 * _n_img
+    except Exception: _gpu_ok = False
+    if not _gpu_ok:
+        print(f"   SIFT-GPU: nur {_n_kp if '_n_kp' in dir() else '?'} von {_n_img if '_n_img' in dir() else '?'} Bildern mit Merkmalen - Rueckfall auf CPU")
+        os.remove(db); pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, device=pycolmap.Device.cpu)
     con = sqlite3.connect(db); cur = con.cursor()
     for img_id, name, cam_id in cur.execute("select image_id, name, camera_id from images").fetchall():
         if name not in prior and name + ":pp" not in prior: continue
@@ -136,7 +146,7 @@ def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048)):
     elif matcher == "hybrid":
         pycolmap.match_exhaustive(db)                                            # SIFT fuer alles (bewaehrte Geometrie der Strassenfotos)
         lightglue_in_db(db, tmp, nrs, "aliked", lg[0], lg[1], nur_fotos=lg[2], anhaengen=True)   # LightGlue nur fuer Paare mit den schwierigen Fotos
-    else: pycolmap.match_exhaustive(db)
+    else: pycolmap.match_exhaustive(db, device=(pycolmap.Device.auto if _gpu_ok else pycolmap.Device.cpu))
     opt = pycolmap.IncrementalPipelineOptions(); opt.min_focal_length_ratio = 0.4; opt.max_focal_length_ratio = 3.5   # Standard 0,1..10 liess f = 10865 x Diagonale zu
     karten = pycolmap.incremental_mapping(db, tmp, aus, options=opt)
     if not karten: return None, tmp
