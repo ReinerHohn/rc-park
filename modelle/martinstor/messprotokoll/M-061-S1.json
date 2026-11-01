@@ -7,9 +7,12 @@
    "name": "nadel_spitze",
    "u": 2387.0,
    "zeile": 201.0,
-   "hoehe": 70.0,
-   "sigma": 1.0,
-   "residuum_m": 0.26
+   "hoehe": 65.3,
+   "sigma": 0.7,
+   "residuum_m": [
+    0.47,
+    -0.2
+   ]
   },
   {
    "name": "tuermchen_SE",
@@ -17,7 +20,10 @@
    "zeile": 426.0,
    "hoehe": 44.5,
    "sigma": 0.4,
-   "residuum_m": 0.04
+   "residuum_m": [
+    -0.13,
+    0.0
+   ]
   },
   {
    "name": "tuermchen_SW",
@@ -25,7 +31,10 @@
    "zeile": 426.0,
    "hoehe": 44.5,
    "sigma": 0.4,
-   "residuum_m": 0.04
+   "residuum_m": [
+    -0.03,
+    0.0
+   ]
   },
   {
    "name": "tuermchen_NE",
@@ -33,7 +42,10 @@
    "zeile": 426.0,
    "hoehe": 44.5,
    "sigma": 0.4,
-   "residuum_m": 0.04
+   "residuum_m": [
+    0.03,
+    0.0
+   ]
   },
   {
    "name": "tuermchen_NW",
@@ -41,20 +53,28 @@
    "zeile": 425.0,
    "hoehe": 44.5,
    "sigma": 0.4,
-   "residuum_m": -0.08
+   "residuum_m": [
+    -0.05,
+    -0.09
+   ]
   },
   {
    "name": "knauf_nadel",
    "u": 2384.0,
    "zeile": 292.0,
-   "hoehe": 59.05,
+   "hoehe": 57.9,
    "sigma": 1.0,
-   "residuum_m": -0.46
+   "residuum_m": [
+    0.19,
+    0.9
+   ]
   }
  ],
- "nullzeile": 821.9,
- "px_je_m": 8.903,
- "orthografie_abweichung": 0.0019,
+ "verworfen": [],
+ "azimut_grad": 279.0,
+ "nullzeile": 902.7,
+ "px_je_m": 10.714,
+ "orthografie_abweichung": 0.0017,
  "himmel": {
   "s_max": 24.0,
   "v_min": 238.0
@@ -62,291 +82,243 @@
  "profil": [
   {
    "z": 45.75,
-   "breite_roh": 6.29,
-   "zeilen": 4,
-   "breite": 6.29
+   "breite_roh": 5.04,
+   "zeilen": 6,
+   "breite": 5.04
   },
   {
    "z": 46.25,
-   "breite_roh": 5.95,
+   "breite_roh": 4.95,
    "zeilen": 5,
-   "breite": 5.95
+   "breite": 4.95
   },
   {
    "z": 46.75,
-   "breite_roh": 5.84,
-   "zeilen": 4,
-   "breite": 5.84
+   "breite_roh": 4.57,
+   "zeilen": 5,
+   "breite": 4.57
   },
   {
    "z": 47.25,
-   "breite_roh": 5.39,
-   "zeilen": 5,
-   "breite": 5.39
+   "breite_roh": 4.34,
+   "zeilen": 6,
+   "breite": 4.34
   },
   {
    "z": 47.75,
-   "breite_roh": 5.22,
-   "zeilen": 4,
-   "breite": 5.22
+   "breite_roh": 4.11,
+   "zeilen": 5,
+   "breite": 4.11
   },
   {
    "z": 48.25,
-   "breite_roh": 5.05,
-   "zeilen": 4,
-   "breite": 5.05
+   "breite_roh": 3.83,
+   "zeilen": 5,
+   "breite": 3.83
   },
   {
    "z": 48.75,
-   "breite_roh": 4.83,
-   "zeilen": 5,
-   "breite": 4.83
+   "breite_roh": 3.55,
+   "zeilen": 6,
+   "breite": 3.55
   },
   {
    "z": 49.25,
-   "breite_roh": 4.44,
-   "zeilen": 4,
-   "breite": 4.44
+   "breite_roh": 3.36,
+   "zeilen": 5,
+   "breite": 3.36
   },
   {
    "z": 49.75,
-   "breite_roh": 4.27,
+   "breite_roh": 3.17,
    "zeilen": 5,
-   "breite": 4.27
+   "breite": 3.17
   },
   {
    "z": 50.25,
-   "breite_roh": 4.04,
-   "zeilen": 4,
-   "breite": 4.04
+   "breite_roh": 2.89,
+   "zeilen": 6,
+   "breite": 2.89
   },
   {
    "z": 50.75,
-   "breite_roh": 3.82,
+   "breite_roh": 2.61,
    "zeilen": 5,
-   "breite": 3.82
+   "breite": 2.61
   },
   {
    "z": 51.25,
-   "breite_roh": 3.54,
-   "zeilen": 4,
-   "breite": 3.54
+   "breite_roh": 2.33,
+   "zeilen": 6,
+   "breite": 2.33
   },
   {
    "z": 51.75,
-   "breite_roh": 3.26,
+   "breite_roh": 2.15,
    "zeilen": 5,
-   "breite": 3.26
+   "breite": 2.15
   },
   {
    "z": 52.25,
-   "breite_roh": 2.98,
-   "zeilen": 4,
-   "breite": 2.98
+   "breite_roh": 1.87,
+   "zeilen": 5,
+   "breite": 1.87
   },
   {
    "z": 52.75,
-   "breite_roh": 2.81,
-   "zeilen": 5,
-   "breite": 2.81
+   "breite_roh": 1.68,
+   "zeilen": 6,
+   "breite": 1.68
   },
   {
    "z": 53.25,
-   "breite_roh": 2.53,
-   "zeilen": 4,
-   "breite": 2.53
+   "breite_roh": 1.49,
+   "zeilen": 5,
+   "breite": 1.49
   },
   {
    "z": 53.75,
-   "breite_roh": 2.3,
-   "zeilen": 4,
-   "breite": 2.3
+   "breite_roh": 1.12,
+   "zeilen": 5,
+   "breite": 1.12
   },
   {
    "z": 54.25,
-   "breite_roh": 2.02,
-   "zeilen": 5,
-   "breite": 2.02
+   "breite_roh": 1.03,
+   "zeilen": 6,
+   "breite": 1.03
   },
   {
    "z": 54.75,
-   "breite_roh": 1.8,
-   "zeilen": 4,
-   "breite": 1.8
+   "breite_roh": 1.03,
+   "zeilen": 5,
+   "breite": 1.03
   },
   {
    "z": 55.25,
-   "breite_roh": 1.57,
+   "breite_roh": 1.03,
    "zeilen": 5,
-   "breite": 1.57
+   "breite": 1.03
   },
   {
    "z": 55.75,
-   "breite_roh": 1.35,
-   "zeilen": 4,
-   "breite": 1.35
+   "breite_roh": 0.93,
+   "zeilen": 6,
+   "breite": 0.93
   },
   {
    "z": 56.25,
-   "breite_roh": 1.24,
+   "breite_roh": 0.93,
    "zeilen": 5,
-   "breite": 1.24
+   "breite": 0.93
   },
   {
    "z": 56.75,
-   "breite_roh": 1.24,
-   "zeilen": 4,
-   "breite": 1.24
+   "breite_roh": 1.12,
+   "zeilen": 5,
+   "breite": 0.93
   },
   {
    "z": 57.25,
-   "breite_roh": 1.24,
-   "zeilen": 5,
-   "breite": 1.24
+   "breite_roh": 1.26,
+   "zeilen": 6,
+   "breite": 0.93
   },
   {
    "z": 57.75,
-   "breite_roh": 1.18,
-   "zeilen": 4,
-   "breite": 1.18
+   "breite_roh": 0.93,
+   "zeilen": 5,
+   "breite": 0.93
   },
   {
    "z": 58.25,
-   "breite_roh": 1.12,
-   "zeilen": 4,
-   "breite": 1.12
+   "breite_roh": 0.84,
+   "zeilen": 6,
+   "breite": 0.84
   },
   {
    "z": 58.75,
-   "breite_roh": 1.12,
+   "breite_roh": 0.75,
    "zeilen": 5,
-   "breite": 1.12
+   "breite": 0.75
   },
   {
    "z": 59.25,
-   "breite_roh": 1.35,
-   "zeilen": 4,
-   "breite": 1.12
+   "breite_roh": 0.75,
+   "zeilen": 5,
+   "breite": 0.75
   },
   {
    "z": 59.75,
-   "breite_roh": 1.57,
-   "zeilen": 5,
-   "breite": 1.12
+   "breite_roh": 0.75,
+   "zeilen": 6,
+   "breite": 0.75
   },
   {
    "z": 60.25,
-   "breite_roh": 1.12,
-   "zeilen": 4,
-   "breite": 1.12
+   "breite_roh": 0.65,
+   "zeilen": 5,
+   "breite": 0.65
   },
   {
    "z": 60.75,
-   "breite_roh": 1.01,
+   "breite_roh": 0.65,
    "zeilen": 5,
-   "breite": 1.01
+   "breite": 0.65
   },
   {
    "z": 61.25,
-   "breite_roh": 1.01,
-   "zeilen": 4,
-   "breite": 1.01
+   "breite_roh": 0.65,
+   "zeilen": 6,
+   "breite": 0.65
   },
   {
    "z": 61.75,
-   "breite_roh": 0.9,
+   "breite_roh": 0.65,
    "zeilen": 5,
-   "breite": 0.9
+   "breite": 0.65
   },
   {
    "z": 62.25,
-   "breite_roh": 0.9,
-   "zeilen": 4,
-   "breite": 0.9
+   "breite_roh": 0.56,
+   "zeilen": 5,
+   "breite": 0.56
   },
   {
    "z": 62.75,
-   "breite_roh": 0.9,
-   "zeilen": 5,
-   "breite": 0.9
+   "breite_roh": 0.56,
+   "zeilen": 6,
+   "breite": 0.56
   },
   {
    "z": 63.25,
-   "breite_roh": 0.79,
-   "zeilen": 4,
-   "breite": 0.79
+   "breite_roh": 0.47,
+   "zeilen": 5,
+   "breite": 0.47
   },
   {
    "z": 63.75,
-   "breite_roh": 0.79,
-   "zeilen": 4,
-   "breite": 0.79
+   "breite_roh": 0.37,
+   "zeilen": 5,
+   "breite": 0.37
   },
   {
    "z": 64.25,
-   "breite_roh": 0.79,
-   "zeilen": 5,
-   "breite": 0.79
+   "breite_roh": 0.37,
+   "zeilen": 6,
+   "breite": 0.37
   },
   {
    "z": 64.75,
-   "breite_roh": 0.79,
-   "zeilen": 4,
-   "breite": 0.79
+   "breite_roh": 0.28,
+   "zeilen": 5,
+   "breite": 0.28
   },
   {
    "z": 65.25,
-   "breite_roh": 0.79,
-   "zeilen": 5,
-   "breite": 0.79
-  },
-  {
-   "z": 65.75,
-   "breite_roh": 0.67,
+   "breite_roh": 0.28,
    "zeilen": 4,
-   "breite": 0.67
-  },
-  {
-   "z": 66.25,
-   "breite_roh": 0.67,
-   "zeilen": 5,
-   "breite": 0.67
-  },
-  {
-   "z": 66.75,
-   "breite_roh": 0.56,
-   "zeilen": 4,
-   "breite": 0.56
-  },
-  {
-   "z": 67.25,
-   "breite_roh": 0.56,
-   "zeilen": 5,
-   "breite": 0.56
-  },
-  {
-   "z": 67.75,
-   "breite_roh": 0.45,
-   "zeilen": 4,
-   "breite": 0.45
-  },
-  {
-   "z": 68.25,
-   "breite_roh": 0.45,
-   "zeilen": 5,
-   "breite": 0.45
-  },
-  {
-   "z": 68.75,
-   "breite_roh": 0.34,
-   "zeilen": 4,
-   "breite": 0.34
-  },
-  {
-   "z": 69.25,
-   "breite_roh": 0.34,
-   "zeilen": 4,
-   "breite": 0.34
+   "breite": 0.28
   }
  ],
  "kontrollbild": "audit/silhouette_061.png"

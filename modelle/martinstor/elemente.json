@@ -171,16 +171,16 @@
  },
  {
   "seite": "dach",
-  "element": "Helm als Loft aus Profil (30 Schichten)",
+  "element": "Helm als Loft aus Profil (29 Schichten)",
   "quelle": "tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)",
-  "schichten": 30,
+  "schichten": 29,
   "seite_name": "dach"
  },
  {
   "seite": "dach",
   "element": "Dachreiter: Mast, Knauf, Nadel",
   "quelle": "Foto 049 Vollbild; Bauforschung BW 60 m",
-  "spitze": 70.0,
+  "spitze": 65.3,
   "seite_name": "dach"
  },
  {

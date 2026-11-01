@@ -327,21 +327,21 @@
    "xyz": [
     0.0,
     0.0,
-    59.05
+    57.9
    ],
    "sigma": 1.0,
-   "quelle": "Goldknauf der Nadel: First 55,4 + KNAUF_ANTEIL 0,25 x (70 - 55,4) (Foto 049 Verhaeltnis)",
+   "quelle": "First 55,4 + KNAUF_ANTEIL 0,25 x (65,3 - 55,4); Foto 061 Zeile 292 -> 56,9",
    "quelltyp": "foto_verhaeltnis"
   },
   "nadel_spitze": {
    "xyz": [
     0.0,
     0.0,
-    70.0
+    65.3
    ],
-   "sigma": 1.0,
-   "quelle": "Nadelende: SfM Nordnetz 69,7 +-1 (H_TOTAL, Register AH/AK); Dokumente 60/65 m offen",
-   "quelltyp": "sfm_bodenanker"
+   "sigma": 0.7,
+   "quelle": "Foto 061 (Massstab Tuermchenabstand) 65,3; Foto 049 64,0; Dokumente 65 (Register AT); SfM 69,7 verworfen",
+   "quelltyp": "foto_verhaeltnis"
   }
  },
  "historie": [
@@ -472,6 +472,36 @@
     "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
    },
    "grund": "Register AS: Oberbau-Anker aus dem SfM-Nordnetz (metrisch ueber LoD2-Wandebene), fuer Fotos ohne Bodenanker (061 Schlossberg)"
+  },
+  {
+   "datum": "2026-11-01",
+   "anker": "nadel_spitze",
+   "alt": {
+    "xyz": [
+     0.0,
+     0.0,
+     65.3
+    ],
+    "sigma": 0.7,
+    "quelle": "Foto 061 (Massstab Tuermchenabstand) 65,3; Foto 049 64,0; Dokumente 65 (Register AT); SfM 69,7 verworfen",
+    "quelltyp": "foto_verhaeltnis"
+   },
+   "grund": "Register AT: Nadelhoehe aus Foto 061/049/Dokumenten statt SfM"
+  },
+  {
+   "datum": "2026-11-01",
+   "anker": "knauf_nadel",
+   "alt": {
+    "xyz": [
+     0.0,
+     0.0,
+     57.9
+    ],
+    "sigma": 1.0,
+    "quelle": "First 55,4 + KNAUF_ANTEIL 0,25 x (65,3 - 55,4); Foto 061 Zeile 292 -> 56,9",
+    "quelltyp": "foto_verhaeltnis"
+   },
+   "grund": "Register AT: Nadelhoehe aus Foto 061/049/Dokumenten statt SfM"
   }
  ]
 }

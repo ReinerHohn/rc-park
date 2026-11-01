@@ -34,20 +34,46 @@ def main():
     # Bezug: Picks aus K-<foto>.json mit Ankerhoehen aus anker3d.json (sigma) -> Ausgleich v = v0 - ppm * z ueber ALLE Bezugspicks,
     # Residuen je Pick in m zeigen, welche Bezugshoehe nicht passt (statt zwei von Hand gewaehlter Zeilen). Orthografie: Streuung gleich hoher Picks.
     K = json.load(open(os.path.join(od, "messprotokoll", f"K-{a.foto}.json"))); AN = json.load(open(os.path.join(od, "anker3d.json")))["anker"]
-    bez = [(n, float(uv[0]), float(uv[1]), float(AN[n]["xyz"][2]), float(AN[n].get("sigma", 1.0))) for n, uv in K["punkte"].items() if n in AN and (not a.bezug or n in a.bezug)]
-    if len(bez) < 2: sys.exit("weniger als 2 Bezugspicks mit Anker")
-    zz = np.array([b[3] for b in bez]); vv = np.array([b[2] for b in bez]); ww = 1.0 / np.array([max(b[4], 0.2) for b in bez])
-    Aa = np.c_[np.ones(len(zz)), -zz] * ww[:, None]; v0, ppm = np.linalg.lstsq(Aa, vv * ww, rcond=None)[0]
-    res = (vv - (v0 - ppm * zz)) / ppm                                                     # Residuum in m (positiv = Pick liegt tiefer im Bild = niedriger)
-    print(f"Foto {a.foto}: Ausgleich ueber {len(bez)} Bezugspicks -> {ppm:.2f} px/m, Nullzeile {v0:.1f} (z=0)")
-    for b, r in zip(bez, res): print(f"   {b[0]:14s} Zeile {b[2]:6.1f}  Hoehe {b[3]:5.2f} m (sigma {b[4]})  Residuum {r:+.2f} m")
-    schlecht = [b[0] for b, r in zip(bez, res) if abs(r) > 2 * max(b[4], 0.3)]
-    if schlecht: print("   ! Bezugspicks ausserhalb 2 sigma:", schlecht)
+    bez = [(n, float(uv[0]), float(uv[1]), float(AN[n]["xyz"][2]), float(AN[n].get("sigma", 1.0)), np.array(AN[n]["xyz"], float)) for n, uv in K["punkte"].items() if n in AN and (not a.bezug or n in a.bezug)]
+    if len(bez) < 3: sys.exit("weniger als 3 Bezugspicks mit Anker")
+    # Schwache Perspektive (fernes Foto): u = u0 + ppm * (x sin(th) - y cos(th)) [Bildrechts], v = v0 - ppm * z. Unbekannt: ppm, th (Azimut), u0, v0.
+    # So gehen auch WAAGERECHTE Bekanntgroessen ein (Abstand der Tuermchen N-S aus Wolke/DOM1), der Massstab ist ueberbestimmt und ein
+    # falscher Hoehenanker (z. B. SfM-Nadelende) faellt als Residuum auf, statt den Massstab zu verbiegen. Robust: Picks > 3 sigma raus, neu loesen.
+    from scipy.optimize import least_squares
+    def modell(p, X):
+        ppm_, th, u0_, v0_ = p; return np.c_[u0_ + ppm_ * (X[:, 0] * np.sin(th) - X[:, 1] * np.cos(th)), v0_ - ppm_ * X[:, 2]]
+    def loese(B):
+        X = np.array([b[5] for b in B]); UV = np.array([[b[1], b[2]] for b in B]); W = 1.0 / np.array([max(b[4], 0.2) for b in B])
+        best = None
+        for th0 in np.radians(range(0, 360, 30)):
+            for ppm0 in (5.0, 10.0, 20.0):
+                sol = least_squares(lambda p: ((modell(p, X) - UV) * W[:, None]).ravel(), [ppm0, th0, UV[:, 0].mean(), UV[:, 1].mean() + ppm0 * X[:, 2].mean()], method="trf")
+                if best is None or sol.cost < best.cost: best = sol
+        return best
+    B = list(bez); verworfen = []
+    for _ in range(len(bez)):
+        sol = loese(B); X = np.array([b[5] for b in B]); UV = np.array([[b[1], b[2]] for b in B]); ppm, th, u0, v0 = sol.x
+        res_m = (UV - modell(sol.x, X)) / ppm; r2 = np.hypot(res_m[:, 0], res_m[:, 1]); sig = np.array([max(b[4], 0.3) for b in B])
+        if len(B) > 3 and (r2 / sig).max() > 3.0:
+            i = int(np.argmax(r2 / sig)); verworfen.append((B[i], res_m[i])); B.pop(i); continue
+        break
+    print(f"Foto {a.foto}: schwache Perspektive aus {len(B)} Bezugspicks -> {ppm:.2f} px/m, Azimut {np.degrees(th):.1f} Grad, Nullzeile {v0:.1f} (z=0)")
+    for b, r in zip(B, res_m): print(f"   {b[0]:14s} (u {b[1]:.0f}, v {b[2]:.0f})  Anker {b[5].round(2).tolist()} sigma {b[4]}  Residuum du {r[0]:+.2f} m, dv {r[1]:+.2f} m")
+    for b, r in verworfen:
+        z_impl = (v0 - b[2]) / ppm; print(f"   VERWORFEN {b[0]:14s} Residuum du {r[0]:+.2f} dv {r[1]:+.2f} m -> aus dem Foto folgt Hoehe {z_impl:.1f} m statt Anker {b[3]} m")
+    ortho = 0.0
+    gleich = [b for b in B if b[0].startswith("tuermchen")]
+    spanne_px = max(float(uv[1]) for uv in K["punkte"].values()) - min(float(uv[1]) for uv in K["punkte"].values())   # Messstrecke = alle Picks
+    if len(gleich) >= 2: ortho = float(np.std([b[2] for b in gleich]) / max(spanne_px, 1.0))
+    u_ach = float(u0); v_unten = max(b[2] for b in B); v_oben = min(b[2] for b in B)
+    res = [tuple(r) for r in res_m]; bez = B
     def z_von_v(v): return (v0 - v) / ppm
-    gleich = [b for b in bez if b[0].startswith("tuermchen")]; ortho = (np.std([b[2] for b in gleich]) / (vv.max() - vv.min())) if len(gleich) >= 2 else 0.0
-    u_ach = float(np.mean([b[1] for b in bez])); v_unten = max(b[2] for b in bez); v_oben = min(b[2] for b in bez); z_unten = z_von_v(v_unten)
-    print(f"   Orthografie-Streuung (gleich hohe Picks) {ortho:.3f}; Achsspalte u {u_ach:.0f}; Messbereich Zeilen {v_oben:.0f}..{v_unten:.0f} = z {z_von_v(v_unten):.1f}..{z_von_v(v_oben):.1f} m")
+    # Picks mit Anker, die NICHT als Bezug dienen: ihre aus dem Foto folgende Hoehe gegen den Anker (unabhaengige Probe)
+    for n, uv in K["punkte"].items():
+        if n in AN and a.bezug and n not in a.bezug: print(f"   PROBE {n:14s} Zeile {float(uv[1]):.0f} -> Hoehe aus Foto {(v0 - float(uv[1])) / ppm:.1f} m (Anker {AN[n]['xyz'][2]} m, Differenz {(v0 - float(uv[1])) / ppm - AN[n]['xyz'][2]:+.1f})")
+    print(f"   Orthografie-Streuung (gleich hohe Picks) {ortho:.3f}; Achsspalte u {u_ach:.0f}")
     if ortho > 0.1: sys.exit("Foto zu nah (gleich hohe Punkte streuen > 10 % der Messstrecke)")
+    v_oben = min(min(b[2] for b in bez), min((b[2] for b, _ in verworfen), default=1e9))   # Messbereich bis zum hoechsten Pick (auch verworfene: Nadelende)
     fd = obj.get("fotos_dir", "daten/fotos"); fd = fd if os.path.isabs(fd) else os.path.join(os.path.dirname(root), fd)
     datei = [f for f in os.listdir(fd) if f.startswith(a.foto)][0]; im = cv2.imread(os.path.join(fd, datei))
     # Himmelmodell aus zwei Fenstern seitlich des Turms in Scheitelhoehe
@@ -87,7 +113,7 @@ def main():
     k0 = cv2.resize(k0, None, fx=4, fy=4, interpolation=cv2.INTER_NEAREST); os.makedirs(os.path.join(od, "audit"), exist_ok=True)
     cv2.imwrite(os.path.join(od, "audit", f"silhouette_{a.foto}.png"), k0)
     proto = dict(foto=a.foto, verfahren="Silhouettenbreite je Zeile, fernes Seitenfoto (orthografisch), Massstab = Ausgleich ueber Bezugspicks (K-Protokoll) mit Ankerhoehen (anker3d)", achse=a.achse,
-                 bezug=[dict(name=b[0], u=b[1], zeile=b[2], hoehe=b[3], sigma=b[4], residuum_m=round(float(r), 2)) for b, r in zip(bez, res)], nullzeile=round(float(v0), 1),
+                 bezug=[dict(name=b[0], u=b[1], zeile=b[2], hoehe=b[3], sigma=b[4], residuum_m=[round(float(r[0]), 2), round(float(r[1]), 2)]) for b, r in zip(bez, res)], verworfen=[dict(name=b[0], residuum_m=[round(float(r[0]), 2), round(float(r[1]), 2)], hoehe_aus_foto=round(float((v0 - b[2]) / ppm), 2), anker_hoehe=b[3]) for b, r in verworfen], azimut_grad=round(float(np.degrees(th)), 1), nullzeile=round(float(v0), 1),
                  px_je_m=round(ppm, 3), orthografie_abweichung=round(ortho, 4), himmel=dict(s_max=float(s_max), v_min=float(v_min)), profil=prof, kontrollbild=f"audit/silhouette_{a.foto}.png")
     pp = os.path.join(od, "messprotokoll", f"M-{a.foto}-S1.json"); json.dump(proto, open(pp, "w"), indent=1, ensure_ascii=False); print("Protokoll:", pp)
     if a.pruefungen:

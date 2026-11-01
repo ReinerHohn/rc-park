@@ -2,17 +2,23 @@
  "_doku": "Masse des Bauwerks als DATEN, nicht als Code. Jeder Wert mit Quelle. Der Generator liest diese Datei (tools/bauteile.lade_masse); der Pruefstand kann sie gegen die Masstabelle halten. Formeln duerfen auf frueher definierte Namen zugreifen (Auswertung in Reihenfolge).",
  "masse": {
   "H_TOTAL": {
-   "wert": 70.0,
+   "wert": 65.3,
    "einheit": "m",
    "was": "Gesamthoehe bis zur Nadelspitze",
-   "quelle": "SfM Nordnetz (Register AH/AK): Nadelende ('spitze_dokument') 69,7 +-1,4 m aus 5 Kameras; Foto 049: Knauf bei 20-28 % der Spitzenlaenge -> Knauf ~59 m. Dokument 60/65 m (Bauforschung BW) WIDERSPRICHT - offen (Masstabelle)",
-   "quelltyp": "sfm_bodenanker",
+   "quelle": "Foto 061 schwache Perspektive: Nadelende Zeile 201 bei 10,81 px/m (Tuermchenabstand) = 65,3 m; Foto 049 Verhaeltnis 64,0; Bauforschung/Objektbeschreibung 65 m (Register AT)",
+   "quelltyp": "foto_kalibriert",
    "historie": [
     {
      "datum": "2026-11-01",
      "alt": 60.0,
      "neu": 70.0,
      "grund": "SfM Nordnetz (Register AH/AK): Nadelende ('spitze_dokument') 69,7 +-1,4 m aus 5 Kameras; Foto 049: Knauf bei 20-28 % der Spitzenlaenge -> Knauf ~59 m. Dokument 60/65 m (Bauforschung BW) WIDERSPRICHT - offen (Masstabelle)"
+    },
+    {
+     "datum": "2026-11-01",
+     "alt": 70.0,
+     "neu": 65.3,
+     "grund": "Register AT: Foto 061 (Schlossberg, schwache Perspektive, foto_silhouette_profil.py): Massstab 10,81 px/m aus dem N-S-Abstand der vier Tuermchenknaeufe (Achsen +-3,98 aus Wolke-Kreisfit, DOM1-Maxima 3,3-4,2) -> Nadelende 65,3 m. Proben: Foto 049 First->Spitze 8,6 m = 64,0; Dokumente 65 m. SfM-Nadelende 69,7 war 4,7 m zu hoch (duennes Bauteil, wenige Kameras, schlechte Schnittgeometrie)."
     }
    ]
   },

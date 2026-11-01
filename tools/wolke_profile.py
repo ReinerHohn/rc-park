@@ -97,12 +97,25 @@ def main():
     masse = json.load(open(os.path.join(od, "masse.json")))["masse"]; TS = float(masse["TUERM_SPITZE"]["wert"])
     kegel = None
     if mittel:
-        dmax = max(r["d"] for r in mittel); koerper = [r for r in mittel if r["d"] >= 0.8 * dmax]; d_k = float(np.median([r["d"] for r in koerper])); z_k_top = koerper[-1]["z"]
-        ob = [r for r in mittel if r["z"] > z_k_top and r["z"] < TS]
-        if len(ob) >= 3:
-            h = np.array([TS - r["z"] for r in ob]); dd_ = np.array([r["d"] for r in ob]); k_ = float((dd_ * h).sum() / (h * h).sum())
-            z_knick = TS - d_k / k_; kegel = dict(steigung_d_je_m=round(k_, 3), d_koerper=round(d_k, 2), z_knick=round(z_knick, 2), spitze=TS, schichten=len(ob))
-            print(f"\nTuermchen-Modell: Koerper d {d_k:.2f} (Schichten {koerper[0]['z']}-{z_k_top}), Kegel d = {k_:.3f} x (Spitze - z) aus {len(ob)} Schichten -> Knick bei {z_knick:.2f} m, d bei Spitze-2 m = {2 * k_:.2f}")
+        dmax = max(r["d"] for r in mittel); koerper = [r for r in mittel if r["d"] >= 0.8 * dmax]; d_k = float(np.median([r["d"] for r in koerper]))
+        at_ = float(np.median([r["achse_tief"] for r in koerper])); aq_ = float(np.median([r["achse_quer"] for r in koerper]))
+        # Durchmesser je Schicht aus der AUSSENKANTE der Wolke in der Tuermchenzone (p3 der Tiefe, |quer - Achse| < d_k): d = 2 (Kante - Achse).
+        # Robuster als Kreisfits an Teilboegen (die oberhalb des Koerpers streuen): die Kante ist eine Silhouette wie im Seitenfoto.
+        kante = []
+        for z in np.arange(a.abseits_z[0], TS, a.dz):
+            k = (np.abs(P[:, 2] - (z + a.dz / 2)) < a.dz / 2) & (np.abs(np.abs(P[:, iq]) - aq_) < d_k) & (sgn * P[:, it] > at_) & (sgn * P[:, it] < at_ + 4.0)
+            if k.sum() < 15: continue
+            kante.append((round(float(z + a.dz / 2), 2), round(float(2 * (np.percentile(sgn * P[k, it], 97) - at_)), 2), int(k.sum())))
+        d_kante_k = float(np.median([d for z, d, n in kante if d >= 0.8 * max(d for _, d, _ in kante)])) if kante else d_k
+        # Knick = letzte Schicht von unten, deren Kantendurchmesser noch >= 90 % des Koerperwerts ist; Kegel = Gerade durch die Spitze ueber den Schichten darueber
+        ueber = [(z, d) for z, d, n in kante if d < 0.9 * d_kante_k and z > min(z for z, d, n in kante if d >= 0.9 * d_kante_k)]
+        unter = [z for z, d, n in kante if d >= 0.9 * d_kante_k]
+        if len(ueber) >= 3:
+            h = np.array([TS - z for z, d in ueber]); dd_ = np.array([d for z, d in ueber]); k_ = float((dd_ * h).sum() / (h * h).sum())
+            z_knick = TS - d_kante_k / k_
+            kegel = dict(steigung_d_je_m=round(k_, 3), d_koerper=round(d_kante_k, 2), z_knick=round(z_knick, 2), z_koerper_oben=max(unter), spitze=TS, schichten=len(ueber), verfahren="Aussenkante der Wolke (p97 Tiefe) in der Tuermchenzone", kante=kante)
+            print(f"\nTuermchen-Modell (Aussenkante): Koerper d {d_kante_k:.2f} (Kreisfit-Koerper {d_k:.2f}) bis {max(unter)} m, Kegel d = {k_:.3f} x (Spitze - z) aus {len(ueber)} Schichten -> Knick bei {z_knick:.2f} m, d bei Spitze-2 m = {2 * k_:.2f}, bei Spitze-4 m = {4 * k_:.2f}")
+            print("   Kante je Schicht:", " ".join(f"{z}:{d}" for z, d, n in kante if z >= 36))
     def d_tuerm(z):
         if kegel: return kegel["d_koerper"] if z <= kegel["z_knick"] else max(kegel["steigung_d_je_m"] * (TS - z), 0.0)
         c = [r["d"] for r in mittel if r["z"] >= z]; return max(c) if c else 0.0

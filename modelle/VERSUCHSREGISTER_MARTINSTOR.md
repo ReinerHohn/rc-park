@@ -984,3 +984,23 @@ bleiben offen.
 (flock, atomar); `embreex` in venv-seg (trimesh-Strahlen). Gesamtlauf 28 s statt ~2 min. GPU bringt hier nichts: manifold3d (CSG) und die
 Strahlmessungen sind CPU-Bibliotheken; GPU bleibt fuer COLMAP/Dichte Wolke/Render.
 **Hygiene offen:** auto-Beobachtungen (fehlteile/breitenprofil) sammeln sich ueber alte Modellstaende an und werden nicht entwertet.
+
+## AT. Der Helm war 1 m zu tief, weil die Nadel 5 m zu hoch war - Massstab mit waagerechter Bekanntgroesse (2026-11-01)
+**Nutzer:** "das grosse Dach des Hauptturms passt noch nicht und die kleinen Tuermchen sind nicht ganz richtig auf das Punktmodell gesetzt"
+(Seitenansicht im Viewer); "logst du deine Aktivitaeten und lernst aus den Fehlern?"
+**Messbar gemacht:** orthografische Seitenansicht Modell+Wolke (`audit/seitenansicht_west_wolke.png`) und Tabelle Nordfront Wolke vs Modell je m:
+Modell stand 41-53 m um 0,45-0,56 m vor der Wolke (Folge von AS: Helmtiefe aus der Silhouette mit 8,9 px/m).
+**Ursache:** Der Fotomassstab hing an zwei Hoehen (Tuermchen 44,5, SfM-Nadelende 70). Mit der WAAGERECHTEN Bekanntgroesse (N-S-Abstand der
+Tuermchenknaeufe 7,95 m: Wolken-Kreisfit +-3,98, DOM1-Maxima 3,3-4,2) ist der Massstab ueberbestimmt: 10,8 px/m, und das Nadelende faellt
+mit -4,7 m heraus -> 65,3 m (Foto 049 First->Spitze 8,6 m = 64,0; Dokumente 65; SfM 69,7 = duennes Bauteil, schlechte Schnittgeometrie).
+`foto_silhouette_profil.py` loest jetzt eine schwache Perspektive (px/m, Azimut, u0, v0) ueber alle verankerten Picks (du/dv-Residuen,
+3-sigma-Ausschluss, `--bezug` + PROBE-Zeilen fuer ausgelassene Picks). Mit korrigierten Ankern: 10,71 px/m, Residuen <= 0,9 m,
+Silhouette 4,34 / 2,89 / 1,49 m bei 47,25 / 50,25 / 53,25 = Wolkenfront (4,35 / 3,06 / 1,84). Driftrampe jetzt -0,02 m je m (~0).
+**Folgen:** H_TOTAL 70 -> 65,3 (quelltyp foto_kalibriert; Pruefung 'Gesamthoehe' 64,3..66,3), anker3d nadel_spitze 65,3 / knauf_nadel 57,9
+(Historie), 'Spitzenlaenge ueber First' 12..16,5 (zirkulaer, alter First 46) -> 8,5..10,5, Nadeldicken-Messhoehen wandern mit der Spitze.
+Helm wieder auf der Wolkenfront (+-0,2 m, 40-53 m). Tuermchen: Durchmesser jetzt aus der Aussenkante der Wolke in der Tuermchenzone
+(p97 Tiefe) statt Teilbogen-Kreisfits: Koerper 2,85-3,1 bis ~37, Kegel 0,44 d/m zur Spitze - bestaetigt den Kegel aus AR; Restabweichung
+der Kegelkante 0,3-0,5 m (Band der einseitigen Wolke), Achse 3,995/4,44.
+**Lehre (Memory):** Nie nur senkrechte Bezugshoehen fuer einen Fotomassstab - eine waagerechte Bekanntgroesse aus unabhaengiger Quelle
+macht den Massstab pruefbar; ein SfM-Punkt an einem duennen, hohen Bauteil (Nadel) ist kein Anker. Sichtfunde des Nutzers zuerst als
+orthografische Projektion Modell+Wolke rendern (eine Minute), nicht am Viewer-Foto raten.

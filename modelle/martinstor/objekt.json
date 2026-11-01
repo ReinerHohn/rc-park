@@ -434,10 +434,11 @@
    "tools/sfm_html_viewer.py",
    "tools/sfm_registrieren.py --netz <seite> --foto <nr> (Fotos ohne Merkmalsmatches ueber Picks einhaengen)",
    "tools/wolke_vs_modell.py <seite> --entzerren --eintragen (nach jedem Bau: Fotowolke gegen STL, Befunde automatisch)",
-   "tools/foto_kalibrieren.py <objekt> 061 (brennweite_frei: beschnittenes Bild) -> tools/foto_silhouette_profil.py <objekt> 061 --achse x --pruefungen 47 50 53 (Ausgleich ueber alle verankerten Picks)",
+   "tools/foto_kalibrieren.py <objekt> 061 (brennweite_frei) -> tools/foto_silhouette_profil.py <objekt> 061 --achse x --pruefungen 47 50 53 (schwache Perspektive ueber ALLE verankerten Picks inkl. waagerechter Abstaende; Residuen lesen, PROBE-Zeilen)",
    "tools/wolke_profile.py <objekt> nord --zentral-z 40.5 56 --tief-quelle silhouette:061 --generator --pruefungen (Dach: quer Wolke, tief Silhouette + Driftrampe; Tuermchen: Koerper + Kegelgerade)",
    "tools/wolke_farbmerkmal.py <objekt> nord --farbe gold --z 20 32 --pruefung 'Uhr Nord: Mitte z (m)' ... (farbige Fassadenmerkmale -> Pruefzeile; Modellseite relief_mitte)",
-   "tools/foto_lod2_zuordnen.py <objekt> <foto> --gml-dir /media/oem/scan/tmp/mt_lod2 --u .. --v .. (unbekanntes Ding im Foto: LoD2 in die Kamera projizieren)"
+   "tools/foto_lod2_zuordnen.py <objekt> <foto> --gml-dir /media/oem/scan/tmp/mt_lod2 --u .. --v .. (unbekanntes Ding im Foto: LoD2 in die Kamera projizieren)",
+   "Sichtfund Seitenansicht: orthografische Projektion Modell + Wolke rendern (audit/seitenansicht_west_wolke.png, Skript in Register AT) und Nordfront je m tabellieren - vor jeder Generatoraenderung"
   ],
   "regel": "Neuer Matcher/Variante NUR mit --name <variante> in eigene Ordner; Referenznetz sparse_<seite> nie ueberschreiben (Panne AK)",
   "quellen_blindheit_dom1_helm": "DOM1-Zellmaxima (1 m) erfassen Helmflaechen steiler als ~75 Grad nur teilweise: Schnittbreiten und Zellzahlen dort keine Obergrenze (Register AR, Foto 061 + Wolke stimmen, DOM1 Faktor 2 kleiner)"
