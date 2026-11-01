@@ -16,7 +16,7 @@ def entry(name, tag, path, note, parts, scale=1.0, status=("ok",""), maxfaces=No
     return dict(name=name, tag=tag, faces=int(len(m.faces)), watertight=bool(m.is_watertight), parts=parts,
                 status=status[0], status_text=status[1], note=note, stl=base64.b64encode(stl_bytes(m)).decode())
 M=[]
-M.append(entry("Martinstor v4","Torturm - 54 m - Favorit","modelle/h0/martinstor_v4_h0.stl",
+M.append(entry("Martinstor v4","Torturm - 60 m - Favorit","modelle/h0/martinstor_v4_h0.stl",
   "Nach Fotos gebaut (Lernjournal): nach oben verjuengter Rumpf mit Bruchstein-Sockel und Keilsteinbogen, gezahnte Eckquader, Uhr mit Giebel, Zinnenkranz, Kragdach, abgesetzter Glockenstock mit Schallarkaden, steiles Kupferdach mit Stehfalzen, vier achteckige Erkertuermchen mit X-Bruestung und Arkade, langer Dachreiter. Hoehe 54 m nach OSM und Foto-Verhaeltnissen; Textquellen nennen 60 bis 66 m, LOD2 45 m (ohne Dachreiter).",3))
 M.append(entry("Martinstor v3","gedrungen - 45,3 m","modelle/h0/martinstor_v3_h0.stl",
   "Vorstufe mit 45,3 m: gleiche Details, aber Kopf und Dach zu niedrig. Der Vergleich mit einem zweiten Foto zeigte, dass LOD2 und Scan den Dachreiter nicht mitzaehlen.",3,status=("warn","ueberholt")))
