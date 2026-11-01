@@ -62,6 +62,26 @@ checks.append(("Spitzenlaenge ueber First (m)", TOPZ - 46.2, 12.0, 16.5, "Foto 0
 checks.append(("Wasserdicht (1=ja)", 1.0 if m.is_watertight else 0.0, 1, 1, "Druckfaehigkeit"))
 checks.append(("Anzahl getrennte Koerper", float(len(m.split(only_watertight=False))), 1, 1, "Schwebende Teile (Journal: 14 gefunden)"))
 
+def fenster_anzahl(face, z, half=4.6):
+    """Zaehlt Fensternischen (Rueckversatz >= 0,2 m) entlang einer Fassade auf Hoehe z (Strahlen von aussen)."""
+    sgn = 1.0 if face == "+x" else -1.0
+    us = np.arange(-half, half + 1e-6, 0.05)
+    org = np.array([[sgn * 30.0, u, z] for u in us]); dr = np.tile([-sgn, 0.0, 0.0], (len(us), 1))
+    loc, ir, _ = m.ray.intersects_location(org, dr, multiple_hits=False)
+    d = np.full(len(us), np.nan); d[ir] = np.abs(loc[:, 0])             # Abstand der getroffenen Flaeche von der Mitte
+    wall = np.nanmedian(d); rec = (wall - d) >= 0.2; n = 0; run = 0
+    for r in list(rec) + [False]:
+        if r: run += 1
+        else:
+            if 6 <= run <= 40: n += 1                                   # Breite 0,3 - 2,0 m
+            run = 0
+    return float(n)
+SUED, NORD = "+x", "-x"     # Konvention im Generator (Uhrseiten); Zuordnung zur echten Himmelsrichtung: Nutzer 'Uhr zeigt nach Sueden'
+checks.append(("Fenster obere Reihe Suedseite (Anzahl, z 22,1 m)", fenster_anzahl(SUED, 22.07), 2, 2, "Fotos 041/030/042/001 (Suedseite, McDonald's links): zwei Schlitzfenster unter der Uhr"))
+checks.append(("Fenster untere Reihe Suedseite (Anzahl, z 18,5 m)", fenster_anzahl(SUED, 18.5), 1, 1, "Fotos 041/030/001: ein Fenster tiefer"))
+checks.append(("Fenster obere Reihe Nordseite (Anzahl, z 22,1 m)", fenster_anzahl(NORD, 22.07), 3, 3, "Foto 031 (Vollbild 2025): DREI Fenster in einer Reihe (u -2,6 / 0 / +2,5 m)"))
+checks.append(("Fenster untere Reihe Nordseite (Anzahl, z 18,5 m)", fenster_anzahl(NORD, 18.5), 1, 1, "Foto 031: ein Schlitz tiefer bei u ~ 0"))
+
 bad = 0
 print(f"Pruefstand Martinstor  ({STL})")
 for name, val, lo, hi, src in checks:

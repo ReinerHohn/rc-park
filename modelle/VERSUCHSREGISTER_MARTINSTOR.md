@@ -144,3 +144,10 @@ Befunde (Sichtung, noch KEINE Pruefung):
 2. **Foto 031 (Uhrseite, 1920x2880):** unter der Uhr stehen DREI Fenster in einer Reihe (u ca. -2,6 / 0 / +2,5 m; Massstab ~48 px/m aus Schaftbreite 450 px = 9,3 m) und weiter unten ein Schlitz bei u ~ 0; Modell: nur zwei (+-2,1 m) in der Reihe -> mittleres Fenster fehlt. Uhr: Zifferblatt ~150 px (3,1 m), Rahmen ~170 px.
 3. **Methodische Einsicht:** Weil alle Modellseiten gleich sind, ist der Azimut jeder Silhouettenanpassung um 90 Grad mehrdeutig (siehe Fotos 042-044). Sobald die Seiten unterscheidbar sind (Wappenseite, Uhrseite), wird die Kameralage je Foto eindeutig -> bessere Anpassung, bessere Dach-/Hoehenmessung.
 Naechste Schritte: (i) je Foto Seite zuordnen (Torbogenseite vs Uhrseite, aus Sockel/Wappen), (ii) Seitenparameter im Generator (Fensteranzahl je Seite) mit Quelle als Pruefung, (iii) mittleres Fenster auf der Uhrseite ergaenzen - erst NACH Seitenzuordnung, sonst raten wir wieder.
+
+### K2. Nord-/Suedseite unterschieden (2026-11-01, Nutzerhinweis "Uhr zeigt nach Sueden")
+- Der Generator unterschied schon Uhrseiten (+-x: Uhr, 3 Fenster) und Seitenseiten (+-y: 2+1 Fenster ohne Uhr), aber +x und -x waren gleich.
+- Fotosichtung (Blatt `sued_sheet.jpg`): Suedseite = McDonald's links, Fotos 041/030/042/001: zwei Schlitzfenster unter der Uhr + eines tiefer rechts der Mitte, Wappen unten. Foto 031 (andere Seite = Nordseite): DREI Fenster in einer Reihe (u -2,6/0/+2,5) + ein Schlitz tiefer bei u~0.
+- Generator: `+x` = SUED (unveraendert), `-x` = NORD (3+1). Konvention; die Zuordnung zur echten Kompassrichtung stammt aus dem Nutzerhinweis und der McDonald's-Lage, nicht aus Geodaten.
+- Pruefstand: 4 neue Pruefungen (Strahlenmessung der Fensternischen je Seite und Reihe); Nordseite schlug vorher fehl (2 statt 3), danach alle bestanden.
+- Neue Spuren (noch ungeprueft): Foto 001/018/000: kleiner runder Eckturm mit gruenem Kegel am Sockel (neben Gedenktafel) und ein waagrechter Balken/Blende auf halber Hoehe der Schaftwand; Modell hat beides nicht belegt. Ostseite/Westseite (+-y) kaum fotografiert.

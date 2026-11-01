@@ -255,9 +255,14 @@ for f in ("+x", "-x"):
         ang = math.radians(k * 30 + 15)
         u, zz = math.sin(ang) * (UR + 0.28), UZ + math.cos(ang) * (UR + 0.28)
         adds.append(fcyl(f, u, zz, 0.2, -0.2, -0.15 + rel(0.09), h=hh))
-    for u in (-2.1, 2.1):   # Foto 050/042/030: zwei Fenster ca. 4,8 m unter der Uhrmitte, aussen 1,1 x 1,35 m
-        window(f, u, 21.65, 0.6, 0.85, hh=hxy(21.65))
-    window(f, 0.5, 18.1, 0.5, 0.8, hh=hxy(18.1))      # drittes Fenster ca. 8,5 m unter der Uhrmitte
+    if f == "+x":   # SUEDSEITE (Konvention; Nutzer: Uhr zeigt nach Sueden): Fotos 041/030/042/001 - zwei Fenster oben, eines tiefer rechts der Mitte
+        for u in (-2.1, 2.1):   # zwei Fenster ca. 4,8 m unter der Uhrmitte, aussen 1,1 x 1,35 m
+            window(f, u, 21.65, 0.6, 0.85, hh=hxy(21.65))
+        window(f, 0.5, 18.1, 0.5, 0.8, hh=hxy(18.1))      # drittes Fenster ca. 8,5 m unter der Uhrmitte
+    else:           # NORDSEITE: Foto 031 (Vollbild 2025): drei Fenster in einer Reihe (u -2,6 / 0 / +2,5 m), ein Schlitz tiefer bei u ~ 0
+        for u in (-2.5, 0.0, 2.5):
+            window(f, u, 21.65, 0.6, 0.85, hh=hxy(21.65))
+        window(f, 0.0, 18.1, 0.5, 0.8, hh=hxy(18.1))
 for f in ("+y", "-y"):
     for u in (-1.8, 1.8):
         window(f, u, 26.0, 0.55, 1.0, hh=hxy(26.0))
