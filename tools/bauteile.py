@@ -214,3 +214,47 @@ class Bau:
             elif face == "+y": cut = cut.rotate((0, 0, 90))
             elif face == "-y": cut = cut.rotate((0, 0, -90))
             self.cuts.append(cut)
+
+
+def okt_prisma(c, r, z0, z1):
+    """Achteck mit Schluesselweite 2r (Flaechen zeigen nach +-x/+-y, wie Schnitt- und Strahlmessungen), von z0 bis z1."""
+    R = r / math.cos(math.radians(22.5)); return M.cylinder(z1 - z0, R, R, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], z0))
+
+def okt_kegel(c, r0, z0, r1, z1):
+    R0, R1 = r0 / math.cos(math.radians(22.5)), r1 / math.cos(math.radians(22.5)); return M.cylinder(z1 - z0, R0, max(R1, 0.03), 8).rotate((0, 0, 22.5)).translate((c[0], c[1], z0))
+
+def baender_rundkoerper(c, baender, kegel, spitze, rel, nach_innen, adds, cuts, n_oeffnungen=2, knauf=True):
+    """Rundkoerper (Erker/Tuermchen/Laterne) aus gemessenen Hoehenbaendern (tools/wolke_baender.py): je Band {z0, z1, r, klasse}.
+    gesims/traufe = Kragplatte (Achteck r); hell = Bruestung mit Leisten und X-Schlitzen; offen = Band mit n_oeffnungen Rundbogenoeffnungen
+    je Aussenflaeche; traufe zusaetzlich 8 Konsolen darunter; kegel {r0, z0} = Achteckkegel bis spitze - 0,5 + Knauf/Nadel.
+    stein-Baender baut der Aufrufer (Schaft mit Quadern/Fenstern ist bauwerksspezifisch). nach_innen(k) sagt, ob Flaeche k (Normale k*45 Grad)
+    zum Hauptkoerper zeigt - dort keine Oeffnungen (sonst Hohlraeume). rel(m) = Relieftiefe mit Druck-Untergrenze. Fuegt in adds/cuts ein."""
+    for b in baender:
+        z0, z1, r, kl = b["z0"], b["z1"], b["r"], b["klasse"]
+        if kl == "gesims":
+            adds.append(okt_prisma(c, r, z0 - 0.02, z1))
+        elif kl in ("hell", "fachwerk"):
+            adds.append(okt_prisma(c, r, z0 - 0.02, z1))
+            for zz in (z0, z1 - 0.12): adds.append(okt_prisma(c, r + rel(0.12), zz, zz + 0.12))
+            for k in range(8):
+                if nach_innen(k): continue
+                for sg in (-1, 1):
+                    cut = M.cube((0.4, 0.08, z1 - z0 - 0.3)).translate((-0.2 + r + 0.02, -0.04, -(z1 - z0 - 0.3) / 2)).rotate((sg * 38, 0, 0))
+                    cuts.append(cut.translate((0, 0, (z0 + z1) / 2)).rotate((0, 0, k * 45)).translate((c[0], c[1], 0)))
+        elif kl == "offen":
+            adds.append(okt_prisma(c, r, z0 - 0.02, z1))
+            fb = 2 * r * math.tan(math.radians(22.5)); bw = min(0.36, fb / (n_oeffnungen + 1) * 0.8); bh = (z1 - z0) - 0.45
+            for k in range(8):
+                if nach_innen(k): continue
+                for j in range(n_oeffnungen):
+                    u = (j - (n_oeffnungen - 1) / 2) * fb / (n_oeffnungen + 0.5)
+                    oe = M.cube((0.45, bw, bh - bw / 2)).translate((r - 0.35, u - bw / 2, z0 + 0.2))
+                    oe = oe + M.cylinder(0.45, bw / 2, bw / 2, 16).rotate((0, 90, 0)).translate((r - 0.35, u, z0 + 0.2 + bh - bw / 2))
+                    cuts.append(oe.rotate((0, 0, k * 45)).translate((c[0], c[1], 0)))
+        elif kl == "traufe":
+            adds.append(okt_prisma(c, r, z0, z1))
+            for k in range(8):
+                ang = math.radians(k * 45 + 22.5); rr = r - 0.22
+                adds.append(M.cube((0.2, 0.2, 0.3)).translate((-0.1, -0.1, 0)).rotate((0, 0, k * 45 + 22.5)).translate((c[0] + rr * math.cos(ang), c[1] + rr * math.sin(ang), z0 - 0.28)))
+    if kegel: adds.append(okt_kegel(c, kegel["r0"], kegel["z0"] - 0.02, 0.05, spitze - 0.5))
+    if knauf: adds.append(M.sphere(0.2, 20).translate((c[0], c[1], spitze - 0.35))); adds.append(M.cylinder(0.35, 0.05, 0.015, 8).translate((c[0], c[1], spitze - 0.35)))

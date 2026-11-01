@@ -22,7 +22,7 @@ import math, os, sys, random
 import numpy as np
 from manifold3d import Manifold as M, CrossSection as CS, OpType
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
-from bauteile import box, fbox, fcyl, frustum, prism, Bau      # Bauteil-Bibliothek (objektunabhaengig, tools/bauteile.py)
+from bauteile import box, fbox, fcyl, frustum, prism, Bau, baender_rundkoerper      # Bauteil-Bibliothek (objektunabhaengig, tools/bauteile.py)
 
 SCALE = float(os.environ.get("SCALE", "500"))
 MINMM = float(os.environ.get("MINMM", "0.15"))  # kleinste Relief-Tiefe im Druck (mm)
@@ -279,11 +279,6 @@ _TB = None
 if _M.get("PROFIL_DATEI", 0) >= 1:
     _tp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "profile_baender_tuermchen.json")
     if os.path.exists(_tp): _TB = __import__("json").load(open(_tp))
-def _okt_prisma(c, r, z0, z1):
-    """Achteck mit Schluesselweite 2r (Flaeche zeigt nach +-x/+-y, wie die Schnittmessung), von z0 bis z1."""
-    R = r / math.cos(math.radians(22.5)); return M.cylinder(z1 - z0, R, R, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], z0))
-def _okt_kegel(c, r0, z0, r1, z1):
-    R0, R1 = r0 / math.cos(math.radians(22.5)), r1 / math.cos(math.radians(22.5)); return M.cylinder(z1 - z0, R0, max(R1, 0.03), 8).rotate((0, 0, 22.5)).translate((c[0], c[1], z0))
 def bau_tuerm_baender(c, sx, sy):
     """Ein Ecktuermchen aus den gemessenen Baendern: stein = Schaft (Quader TWs, Eckquader, Fenster), gesims = Kragplatte, fachwerk = Bruestung
     mit X-Schlitzen und Leisten, offen = Arkadenband mit Bogenoeffnungen (Zahl je Flaeche ANNAHME Foto 043), traufe = Dachplatte mit Konsolen
@@ -300,36 +295,7 @@ def bau_tuerm_baender(c, sx, sy):
     hh = (TWs / 2, TWs / 2)
     for f in (("+x" if sx > 0 else "-x"), ("+y" if sy > 0 else "-y")):
         window(f, 0.0, z_schaft0 + 1.5, 0.45, 1.0, c=c, hh=hh, deep=0.25)
-    for b in B:
-        z0, z1, r = b["z0"], b["z1"], b["r"]
-        if b["klasse"] == "gesims":
-            adds.append(_okt_prisma(c, r, z0 - 0.02, z1))                                       # Kragplatte / Konsolring
-        elif b["klasse"] in ("hell", "fachwerk"):                                             # helles Band = Fachwerkbruestung (ANNAHME Foto 043)
-            adds.append(_okt_prisma(c, r, z0 - 0.02, z1))
-            for zz in (z0, z1 - 0.12): adds.append(_okt_prisma(c, r + rel(0.12), zz, zz + 0.12))   # Leisten unten/oben
-            for k in range(8):                                                                   # X-Fachwerk als Schlitze je Flaeche
-                if zum_turm(k): continue
-                for sg in (-1, 1):
-                    cut = M.cube((0.4, 0.08, z1 - z0 - 0.3)).translate((-0.2 + r + 0.02, -0.04, -(z1 - z0 - 0.3) / 2)).rotate((sg * 38, 0, 0))
-                    cuts.append(cut.translate((0, 0, (z0 + z1) / 2)).rotate((0, 0, k * 45)).translate((c[0], c[1], 0)))
-        elif b["klasse"] == "offen":
-            adds.append(_okt_prisma(c, r, z0 - 0.02, z1))
-            fb = 2 * r * math.tan(math.radians(22.5)); n_oe = 2; bw = min(0.36, fb / (n_oe + 1) * 0.8); bh = (z1 - z0) - 0.45
-            for k in range(8):
-                if zum_turm(k): continue
-                for j in range(n_oe):
-                    u = (j - (n_oe - 1) / 2) * fb / (n_oe + 0.5)
-                    oe = M.cube((0.45, bw, bh - bw / 2)).translate((r - 0.35, u - bw / 2, z0 + 0.2))
-                    oe = oe + M.cylinder(0.45, bw / 2, bw / 2, 16).rotate((0, 90, 0)).translate((r - 0.35, u, z0 + 0.2 + bh - bw / 2))   # Rundbogen
-                    cuts.append(oe.rotate((0, 0, k * 45)).translate((c[0], c[1], 0)))
-        elif b["klasse"] == "traufe":
-            adds.append(_okt_prisma(c, r, z0, z1))                                              # Dachplatte (Traufe)
-            for k in range(8):                                                                   # Konsolen ('Boeckchen') unter der Traufe an den Ecken
-                ang = math.radians(k * 45 + 22.5); rr = r - 0.22
-                adds.append(M.cube((0.2, 0.2, 0.3)).translate((-0.1, -0.1, 0)).rotate((0, 0, k * 45 + 22.5)).translate((c[0] + rr * math.cos(ang), c[1] + rr * math.sin(ang), z0 - 0.28)))
-    if K:
-        adds.append(_okt_kegel(c, K["r0"], K["z0"] - 0.02, 0.05, TS - 0.5))                      # Kupferkegel: Gerade Traufe -> Spitze
-    adds.append(M.sphere(0.2, 20).translate((c[0], c[1], TS - 0.35))); adds.append(M.cylinder(0.35, 0.05, 0.015, 8).translate((c[0], c[1], TS - 0.35)))
+    baender_rundkoerper(c, B, K, TS, rel, zum_turm, adds, cuts, n_oeffnungen=2)   # objektunabhaengig (tools/bauteile.py): Kragplatten, Bruestung, Arkaden, Traufe + Konsolen, Kegel, Knauf
     if (sx, sy) == (-1, 1):
         for b in B: beleg("dach", f"Ecktuermchen Band {b['klasse']} {b['z0']}-{b['z1']} m, r {b['r']}", "wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)", z0=b["z0"], z1=b["z1"], r=b["r"])
         beleg("dach", "Ecktuermchen Arkadenband: 2 Rundbogenoeffnungen je Aussenflaeche", "ANNAHME aus Foto 043 (Sued, gepaarte Boegen); Bandlage aus der Wolke (dunkel 61 %)", je_flaeche=2)
