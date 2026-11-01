@@ -23,6 +23,8 @@ QUELLEN = {
                         "hinweis": "nur Verhaeltnisse (+-5-10 %), absolute Masse nur mit bekanntem Massstab"},
     "foto_vollbild":   {"sieht": ["duennes_bauteil", "schlankheit", "verhaeltnis", "anzahl", "fassade"], "blind": ["absolut_hoehe", "grundriss"],
                         "hinweis": "Vollaufloesung, Massstab aus Modell oder Dokument -> Werte grob, Richtung sicher"},
+    "foto_kalibriert": {"sieht": ["absolut_hoehe", "hoehe_flaeche", "fassade", "verhaeltnis", "anzahl", "schlankheit", "duennes_bauteil"], "blind": [],
+                        "hinweis": "Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen)"},
     "dokument":        {"sieht": ["absolut_hoehe", "anzahl", "grundriss"],               "blind": ["schlankheit", "duennes_bauteil", "fassade"],
                         "hinweis": "Bauforschung/Denkmalamt/Wikipedia; Bezugshoehe oft unklar (60 vs 65 m)"},
     "modell":          {"sieht": ["druck"], "blind": [], "hinweis": "Druckbarkeit, keine Realitaetsaussage"},
@@ -98,6 +100,26 @@ class Messer:
             if i is None or (i - prev - 1) * schritt > max_luecke: best = max(best, prev - start + 1); start = i
             prev = i if i is not None else prev
         return float(best * schritt)
+    def ausdehnung_streifen(self, z, achse="y", quer_max=2.0, **k):
+        """Ausdehnung des Querschnitts entlang 'achse' innerhalb eines Streifens |quer| < quer_max durch die Achse (blendet Ecktuermchen/Erker aus)."""
+        from shapely.geometry import box
+        a = 0 if achse == "x" else 1; T = getattr(self, "_T", None); ps = self._polys(z); T = self._T
+        lo_, hi_ = np.inf, -np.inf
+        for _, g in ps:
+            b = g.bounds; pts = np.array([[b[0], b[1]], [b[2], b[3]]]) @ T[:2, :2].T + T[:2, 3]        # Modellkoordinaten des Polygons (nur Translation relevant)
+            off = T[:2, 3]; strip = box(-quer_max - off[0], -1e3, quer_max - off[0], 1e3) if a == 1 else box(-1e3, -quer_max - off[1], 1e3, quer_max - off[1])
+            q = g.intersection(strip)
+            if q.is_empty: continue
+            qb = q.bounds; lo_ = min(lo_, qb[a] + off[a]); hi_ = max(hi_, qb[a + 2] + off[a])
+        return float(hi_ - lo_) if hi_ > lo_ else 0.0
+    def z_bei_breite(self, z0, z1, dz, r, schwelle, achse="y", richtung="auf", quer_max=2.0, **k):
+        """Erste Hoehe (aufsteigend), bei der die Ausdehnung des Querschnitts nahe der Achse die Schwelle UEBER- (schwelle>0) bzw. UNTERschreitet (schwelle<0):
+        z. B. Dachansatz (Breite springt ueber 7 m) oder First (Breite faellt unter 3,5 m)."""
+        zs = np.arange(z0, z1, dz); zs = zs[::-1] if richtung == "ab" else zs
+        for z in zs:
+            b = self.ausdehnung_streifen(z, achse, quer_max)
+            if (schwelle > 0 and b >= schwelle) or (schwelle < 0 and 0 < b <= -schwelle): return float(z)
+        return float("nan")
     def grundriss_rechteck(self, z, r=None, **k):
         ps = self._polys(z)
         if r is not None: ps = [(c, g) for c, g in ps if np.hypot(*c) < r]

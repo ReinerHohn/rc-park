@@ -1,0 +1,32 @@
+{
+ "id": "M-030-001",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=0",
+ "name": "Nadelspitze (P1) und Knauf (P2), Turmachse",
+ "mess_px": [
+  1003.0,
+  82.0,
+  1003.0,
+  250.0
+ ],
+ "P1": [
+  0.0,
+  -0.032,
+  57.023
+ ],
+ "P2": [
+  0.0,
+  0.006,
+  51.093
+ ],
+ "dz": -5.929,
+ "dy": 0.038,
+ "dx": 0.0,
+ "abstand": 5.93,
+ "z1": 57.023,
+ "z2": 51.093,
+ "unsicherheit_rel": 0.0073,
+ "unsicherheit_m": 0.165,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=0 (+-0.5 m)"
+}

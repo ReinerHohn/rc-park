@@ -1,0 +1,32 @@
+{
+ "id": "M-030-003",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=2.65",
+ "name": "Dachtraufe = Glockenstock-Oberkante links/rechts",
+ "mess_px": [
+  832.0,
+  553.0,
+  1188.0,
+  612.0
+ ],
+ "P1": [
+  2.65,
+  -4.254,
+  37.896
+ ],
+ "P2": [
+  2.65,
+  3.418,
+  38.237
+ ],
+ "dz": 0.341,
+ "dy": 7.672,
+ "dx": 0.0,
+ "abstand": 7.679,
+ "z1": 37.896,
+ "z2": 38.237,
+ "unsicherheit_rel": 0.0193,
+ "unsicherheit_m": 0.24,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=2.65 (+-1.0 m)"
+}

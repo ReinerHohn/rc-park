@@ -84,7 +84,21 @@ verschiebt die Achse bei Anbauten; Anbauten verschmelzen im Schnitt mit dem Rump
 - **Neues Objekt:** `tools/objekt_anlegen.py <objekt> --name ... --hoehe H --hoehe-quelle "..."` legt Ordner, Tabelle, Generator-Rumpf mit `beleg()` an;
   `tools/bauen_abnehmen.sh <objekt>` laeuft sofort. Der ganze Rahmen ist damit nicht an das Martinstor gebunden.
 
-## 8. Was dieser Rahmen bewusst NICHT verspricht
+## 8. Echte Meter aus Fotos: Kalibrierung gegen amtliche Anker (Register M)
+Fotos liefern Verhaeltnisse; Meter brauchen bekannte 3D-Punkte im Bild. Die gibt es amtlich, ohne Modell:
+- `modelle/<objekt>/anker3d.json`: Modellrahmen aus LoD2 (Ursprung = Mitte der Langwand-Endpunkte, +x entlang der Durchfahrt, z ueber DGM1),
+  Anker = LoD2-Bodenecken (+-0,3 m), DOM1-Maxima (Tuermchen/Gipfel, +-0,8-1 m, Nadel unsichtbar), Dokumenthoehe (+-3 m), dazu Anker mit
+  **freier Hoehe** (`z_frei`: Spitze, Tuermchen, Kranz, First = Goldkugeln, Traufe) deren Lage aus LoD2/Modellgrundriss kommt.
+- Je Foto `messprotokoll/K-<foto>.json`: Picks der Anker im Vollbild + Punkte auf LoD2-Senkrechten (Linienanker), `strassenfoto` (Augenhoehe 1,7 +- 0,6),
+  `brennweite_px` (EXIF) oder `f_gruppe` (gleiche Kamera in einer Serie).
+- `tools/foto_kalibrieren.py` (Einzelkamera: Brennweiten-Scan + PnP + Ausgleich), **`tools/foto_pick_pruefen.py` (PFLICHT: Picks und projizierte Anker im Foto ansehen)**,
+  `tools/foto_bundle.py` (mehrere Fotos, freie Hoehen mit Sigma aus der Kovarianz), `tools/foto_mass.py --kamera K-<foto> --ebene x=4.85 --mess ...`
+  (Pixel -> Meter auf einer LoD2-Wandebene, Protokoll M-<foto>-<nr>).
+- Grenzen (gelernt): Fotos ohne Bodenanker sind in Hoehe/Brennweite mehrdeutig (Kamera "12 m hoch"); weit entfernte Fotos koppeln Brennweite und Abstand;
+  Handpicks aus verkleinerten Gittern (+-20 px) sind der Engpass; Georeferenz jeder Nebendatei pruefen (mt_org war der OSM-Knoten, 37 m daneben).
+  Erreichbar mit 2-3 guten Strassenfotos: Hoehen +-1-2 m modellfrei, Breiten auf der Wandebene +-0,1-0,3 m.
+
+## 9. Was dieser Rahmen bewusst NICHT verspricht
 "Alle Masse bewiesen" gibt es mit offenen Daten nicht: Laser 1 m, Fotos +-5-10 %, Dokumente mit unklarer Bezugshoehe. Der Rahmen liefert
 je Mass **Wert, Quelle, Unsicherheit, Status** und verhindert, dass Behobenes zurueckkommt oder eine Quelle fuer etwas herhalten muss,
 was sie nicht sehen kann. Das ist die ehrliche Form von "massstabsgetreu".

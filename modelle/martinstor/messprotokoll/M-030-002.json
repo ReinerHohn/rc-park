@@ -1,0 +1,32 @@
+{
+ "id": "M-030-002",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=1.3",
+ "name": "Dach-Oberkante: Goldkugel links (P1) / rechts (P2) = First",
+ "mess_px": [
+  929.0,
+  282.0,
+  1062.0,
+  327.0
+ ],
+ "P1": [
+  1.3,
+  -2.081,
+  47.867
+ ],
+ "P2": [
+  1.3,
+  1.08,
+  47.398
+ ],
+ "dz": -0.469,
+ "dy": 3.161,
+ "dx": 0.0,
+ "abstand": 3.196,
+ "z1": 47.867,
+ "z2": 47.398,
+ "unsicherheit_rel": 0.0216,
+ "unsicherheit_m": 0.176,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=1.3 (+-1.3 m)"
+}

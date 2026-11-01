@@ -12,9 +12,12 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 | Dachreiter Dicke bei 50 m (m) | 0.18 | 0.08..0.4 | foto_vollbild | modell | OK | Foto 049 Vollbild: Nadel 0,08-0,14 m, Mast 0,09-0,26 m (+Druck-Untergrenze); DOM1 verschmiert Nadel |
 | Dachreiter Dicke bei 52 m (m) | 0.16 | 0.08..0.3 | foto_vollbild | modell | OK | wie oben |
 | Dachreiter Knauf Durchmesser (m) | 0.66 | 0.5..0.9 | foto_vollbild | modell | OK | Foto 049: 44 px x 1,5 cm = ~0,67 m |
-| Dachreiter Knauf Lage (Anteil ueber First) | 0.22 | 0.12..0.32 | foto_verhaeltnis | - | OK | Foto 049/000: Knauf bei ~20-28 % der Spitzenlaenge |
+| Dachreiter Knauf Lage (Anteil ueber First) | 0.19 | 0.12..0.32 | foto_verhaeltnis | - | OK | Foto 049/000: Knauf bei ~20-28 % der Spitzenlaenge |
 | Gesamthoehe (m) | 60.00 | 59.5..66 | dokument | dokument | OK | Bauforschung BW (Landesdenkmalamt) 60 m nach 1901 / 65 m Objektbeschreibung; en.Wikipedia 60 m; Structurae ~65 m; de.Wikipedia 66 m (Plan Schaefer) |
-| Spitzenlaenge ueber First (m) | 13.80 | 12..16.5 | foto_vollbild | modell | OK | Foto 049 Vollbild 16,6 / 014: 16,0 / 000: 12,4 m (Massstab aus Modellmassen, grob); Register J3 |
+| Dachansatz / Glockenstock-Oberkante (m) | 35.60 | 36.9..39.2 | foto_kalibriert | foto_kalibriert | FEHLER | Messprotokoll M-030-003 (Foto 030, Kamera K-030 aus LoD2/DOM1-Ankern): 37,9-38,2 m; LoD2-Wandoberkante 37,1-37,3 m / Messung: erste Hoehe ab 32,6 m, bei der die Dachbreite im Achsstreifen 6,8 m erreicht |
+| First / Dach-Oberkante (m) | 46.70 | 46.6..48.7 | foto_kalibriert | foto_kalibriert | OK | Messprotokoll M-030-002: Goldkugeln 47,4-47,9 m; Foto-IoU-Trend J2/J5 (First +1,6 besser) / Messung: hoechste Hoehe, bei der der Dachkoerper im Achsstreifen noch >= 2 m breit ist |
+| Zinnenkranz Oberkante (m) | 31.85 | 29.5..32.5 | foto_kalibriert | foto_kalibriert | OK | Messprotokoll M-030-005: Kranzecken 30,2 / 31,2 m; Laser Stufe 31-32 m / Messung: hoechster Punkt der Suedwand-Mitte (/y/<3, Erker bei y=+-4,3 ausgeblendet) unter 34 m |
+| Spitzenlaenge ueber First (m) | 13.30 | 12..16.5 | foto_vollbild | modell | OK | Foto 049 Vollbild 16,6 / 014: 16,0 / 000: 12,4 m (Massstab aus Modellmassen, grob); Register J3 |
 | Fenster obere Reihe Suedseite (Anzahl, z 22,1 m) | 2.00 | 2..2 | foto_vollbild | - | OK | Fotos 041/030/042 Vollbild (Suedseite = Adlerseite): zwei Schlitzfenster unter der Uhr |
 | Fenster untere Reihe Suedseite (Anzahl, z 18,5 m) | 1.00 | 1..1 | foto_vollbild | - | OK | Fotos 041/030 Vollbild: ein Fenster tiefer, rechts der Mitte |
 | Fenster obere Reihe Nordseite (Anzahl, z 22,1 m) | 3.00 | 3..3 | foto_vollbild | - | OK | Fotos 031 + 001 Vollbild (Nordseite = Tafelseite): drei Fenster in einer Reihe |
@@ -38,6 +41,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - **foto_verhaeltnis**: 4 von 4 Pruefungen gruen (nur Verhaeltnisse (+-5-10 %), absolute Masse nur mit bekanntem Massstab)
 - **foto_vollbild**: 15 von 16 Pruefungen gruen (Vollaufloesung, Massstab aus Modell oder Dokument -> Werte grob, Richtung sicher)
 - **dokument**: 2 von 2 Pruefungen gruen (Bauforschung/Denkmalamt/Wikipedia; Bezugshoehe oft unklar (60 vs 65 m))
+- **foto_kalibriert**: 2 von 3 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
 - **lod2**: 1 von 1 Pruefungen gruen (amtlicher Grundriss + Traufe/First, keine Aufbauten/Details)
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
 

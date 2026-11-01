@@ -1,0 +1,32 @@
+{
+ "id": "M-030-005",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=4.85",
+ "name": "Zinnenkranz-Ecken SW/SE",
+ "mess_px": [
+  782.0,
+  776.0,
+  1294.0,
+  824.0
+ ],
+ "P1": [
+  4.85,
+  -5.352,
+  30.203
+ ],
+ "P2": [
+  4.85,
+  4.606,
+  31.236
+ ],
+ "dz": 1.033,
+ "dy": 9.958,
+ "dx": 0.0,
+ "abstand": 10.012,
+ "z1": 30.203,
+ "z2": 31.236,
+ "unsicherheit_rel": 0.0112,
+ "unsicherheit_m": 0.191,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.85 (+-0.5 m)"
+}

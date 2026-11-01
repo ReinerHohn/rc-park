@@ -1,0 +1,164 @@
+{
+ "foto": "030",
+ "seite": "Sued",
+ "strassenfoto": true,
+ "notiz": "Suedseite vom Strassenniveau, Turm komplett (Spitze bis Pflaster). Picks aus k030_oben (Skala 0,85, x0 576) und k030_unten (0,8, x0 480, y0 1584).",
+ "punkte": {
+  "spitze_dokument": [
+   1003,
+   82
+  ],
+  "tuermchen_SW": [
+   864,
+   312
+  ],
+  "tuermchen_SE": [
+   1231,
+   465
+  ],
+  "kranz_SW": [
+   782,
+   776
+  ],
+  "kranz_SE": [
+   1294,
+   824
+  ],
+  "ecke_boden_2": [
+   642,
+   2671
+  ],
+  "ecke_boden_1": [
+   1467,
+   2659
+  ],
+  "gold_SW": [
+   929,
+   282
+  ],
+  "gold_SE": [
+   1062,
+   327
+  ],
+  "traufe_SW": [
+   832,
+   553
+  ],
+  "traufe_SE": [
+   1188,
+   612
+  ]
+ },
+ "linien": {
+  "ecke_boden_2": [
+   [
+    686,
+    2084
+   ],
+   [
+    667,
+    2396
+   ]
+  ],
+  "ecke_boden_1": [
+   [
+    1430,
+    2084
+   ],
+   [
+    1449,
+    2396
+   ]
+  ]
+ },
+ "kamera": {
+  "residuen_du_dv": {
+   "spitze_dokument": [
+    2,
+    -79
+   ],
+   "tuermchen_SW": [
+    -31,
+    73
+   ],
+   "tuermchen_SE": [
+    25,
+    11
+   ],
+   "kranz_SW": [
+    -10,
+    -59
+   ],
+   "kranz_SE": [
+    47,
+    -2
+   ],
+   "ecke_boden_2": [
+    9,
+    -6
+   ],
+   "ecke_boden_1": [
+    0,
+    6
+   ]
+  },
+  "rvec": [
+   0.9631855712556611,
+   0.7630305612738072,
+   -1.1542957561073803
+  ],
+  "t": [
+   0.3384804703227513,
+   18.03929121344088,
+   36.20380237338795
+  ],
+  "f_px": 2372.594215621231,
+  "cx": 960.0,
+  "cy": 1440.0,
+  "bild": [
+   1920,
+   2880
+  ],
+  "standort_xyz": [
+   39.05,
+   -10.41,
+   1.7
+  ],
+  "hoehe_ueber_gelaende": 1.7,
+  "abstand_zur_achse": 40.4,
+  "residuen_px": {
+   "spitze_dokument": 78.9,
+   "tuermchen_SW": 78.9,
+   "tuermchen_SE": 27.1,
+   "kranz_SW": 59.8,
+   "kranz_SE": 47.5,
+   "ecke_boden_2": 10.8,
+   "ecke_boden_1": 5.8
+  },
+  "rms_px": 52.3,
+  "plausibel_strassenfoto": true,
+  "brennweite_quelle": "geloest"
+ },
+ "kamera_bundle": {
+  "rvec": [
+   1.0746545019660945,
+   0.9094959854179765,
+   -1.1847474678568584
+  ],
+  "t": [
+   0.7072166962957036,
+   18.625287959784348,
+   69.6592680756001
+  ],
+  "f_px": 4527.312762743442,
+  "cx": 960.0,
+  "cy": 1440.0,
+  "standort": [
+   70.99,
+   -12.66,
+   -0.04
+  ],
+  "hoehe": -0.04
+ },
+ "f_gruppe": "serie2025"
+}

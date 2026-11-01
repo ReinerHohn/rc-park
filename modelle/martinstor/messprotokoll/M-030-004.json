@@ -1,0 +1,32 @@
+{
+ "id": "M-030-004",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=4.85",
+ "name": "Zifferblatt links/rechts (Suedwand)",
+ "mess_px": [
+  976.0,
+  1024.0,
+  1188.0,
+  1024.0
+ ],
+ "P1": [
+  4.85,
+  -1.66,
+  25.526
+ ],
+ "P2": [
+  4.85,
+  2.317,
+  26.246
+ ],
+ "dz": 0.72,
+ "dy": 3.977,
+ "dx": 0.0,
+ "abstand": 4.042,
+ "z1": 25.526,
+ "z2": 26.246,
+ "unsicherheit_rel": 0.007,
+ "unsicherheit_m": 0.104,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.85 (+-0.3 m)"
+}

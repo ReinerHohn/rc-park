@@ -161,6 +161,35 @@
    "hoehe_min": 0.05,
    "art": "beide",
    "max_luecke": 0.3
+  },
+  "dachansatz": {
+   "typ": "z_bei_breite",
+   "z0": 32.6,
+   "z1": 42.0,
+   "dz": 0.1,
+   "r": 6.0,
+   "schwelle": 6.8,
+   "achse": "y",
+   "quer_max": 2.0
+  },
+  "first": {
+   "typ": "z_bei_breite",
+   "z0": 40.0,
+   "z1": 52.0,
+   "dz": 0.1,
+   "r": 6.0,
+   "schwelle": 2.0,
+   "achse": "y",
+   "richtung": "ab",
+   "quer_max": 1.0
+  },
+  "kranz_oben": {
+   "typ": "max_z_im_bereich",
+   "x0": 4.3,
+   "x1": 5.2,
+   "y0": -2.5,
+   "y1": 2.5,
+   "zmax": 34.0
   }
  },
  "pruefungen": [
@@ -273,7 +302,54 @@
    "historie": [
     "bis 2026-10-31: 54,7-54,9 aus Laser DOM1 - FALSCH, Laser sieht die Nadel nicht (Register J3/J4)"
    ],
-   "massstab": "dokument"
+   "massstab": "dokument",
+   "status": "widerspruch",
+   "widerspruch": "Dokument 60 m (Bauforschung BW; 65 m Objektbeschreibung) gegen Foto-Kalibrierung M-030-001: Nadelspitze 57,0 m (+-1 systematisch); Buendel 030+000: 55,0 +-2,8; DOM1 54,8 = Knauf/Mast. Modell 60 bleibt bis dritte Quelle."
+  },
+  {
+   "name": "Dachansatz / Glockenstock-Oberkante (m)",
+   "wert": "dachansatz",
+   "soll": [
+    36.9,
+    39.2
+   ],
+   "quelle": "Messprotokoll M-030-003 (Foto 030, Kamera K-030 aus LoD2/DOM1-Ankern): 37,9-38,2 m; LoD2-Wandoberkante 37,1-37,3 m | Messung: erste Hoehe ab 32,6 m, bei der die Dachbreite im Achsstreifen 6,8 m erreicht",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "foto_kalibriert",
+   "protokoll": "M-030-003",
+   "historie": [
+    "2026-11-01 angelegt, Modell 35,5 (ZZ+5) faellt durch; LoD2 37,2 war frueher als 'generalisiert' verworfen (MASSPRUEFUNG Teil 4)"
+   ]
+  },
+  {
+   "name": "First / Dach-Oberkante (m)",
+   "wert": "first",
+   "soll": [
+    46.6,
+    48.7
+   ],
+   "quelle": "Messprotokoll M-030-002: Goldkugeln 47,4-47,9 m; Foto-IoU-Trend J2/J5 (First +1,6 besser) | Messung: hoechste Hoehe, bei der der Dachkoerper im Achsstreifen noch >= 2 m breit ist",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "foto_kalibriert",
+   "protokoll": "M-030-002",
+   "historie": [
+    "2026-11-01 angelegt; Modell 46,2 aus Laser-Hypsometrie (mit falscher Spitze 54,8 geschaetzt)"
+   ]
+  },
+  {
+   "name": "Zinnenkranz Oberkante (m)",
+   "wert": "kranz_oben",
+   "soll": [
+    29.5,
+    32.5
+   ],
+   "quelle": "Messprotokoll M-030-005: Kranzecken 30,2 / 31,2 m; Laser Stufe 31-32 m | Messung: hoechster Punkt der Suedwand-Mitte (|y|<3, Erker bei y=+-4,3 ausgeblendet) unter 34 m",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "foto_kalibriert",
+   "protokoll": "M-030-005"
   },
   {
    "name": "Spitzenlaenge ueber First (m)",

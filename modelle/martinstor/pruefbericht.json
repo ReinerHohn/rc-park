@@ -1,7 +1,7 @@
 {
  "stl": "/home/oem/git/rc-park/modelle/stl/martinstor_v4_1-87.stl",
  "werte": {
-  "first": 46.2,
+  "first": 46.700000000000095,
   "dach_dz": 8.0,
   "hoehe": 59.99999816894531,
   "tuermchen_spitze": 41.34999975585937,
@@ -37,7 +37,9 @@
   "eckturm_punkte": 61.0,
   "tafel_N": 3.35,
   "tafel_S": 0.0,
-  "adler_S": 1.6500000000000001
+  "adler_S": 1.6500000000000001,
+  "dachansatz": 35.600000000000044,
+  "kranz_oben": 31.84999960327148
  },
  "pruefungen": [
   {
@@ -112,7 +114,7 @@
   },
   {
    "name": "Dachreiter Knauf Lage (Anteil ueber First)",
-   "wert": 0.21739133319242385,
+   "wert": 0.18796995069046718,
    "soll": [
     0.12,
     0.32
@@ -131,8 +133,38 @@
    "status": "ok"
   },
   {
+   "name": "Dachansatz / Glockenstock-Oberkante (m)",
+   "wert": 35.600000000000044,
+   "soll": [
+    36.9,
+    39.2
+   ],
+   "ok": false,
+   "status": "fehler"
+  },
+  {
+   "name": "First / Dach-Oberkante (m)",
+   "wert": 46.700000000000095,
+   "soll": [
+    46.6,
+    48.7
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Zinnenkranz Oberkante (m)",
+   "wert": 31.84999960327148,
+   "soll": [
+    29.5,
+    32.5
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
    "name": "Spitzenlaenge ueber First (m)",
-   "wert": 13.799998168945308,
+   "wert": 13.299998168945216,
    "soll": [
     12.0,
     16.5
@@ -301,5 +333,5 @@
    "status": "ok"
   }
  ],
- "bestanden": true
+ "bestanden": false
 }

@@ -11,8 +11,29 @@ Schreibt modelle/<objekt>/messprotokoll/M-<foto>-<nr>.json + .jpg. Senkrechte Ma
 """
 import sys, os, json, glob, math, cv2, numpy as np
 
+def strahl_ebene(kam, uv, ebene):
+    """Pixel -> 3D-Punkt auf einer Ebene 'x=4.85' | 'y=-5.6' | 'z=31.5' (Modellrahmen), mit kalibrierter Kamera (foto_kalibrieren)."""
+    import cv2
+    R, _ = cv2.Rodrigues(np.array(kam["rvec"])); t = np.array(kam["t"]); cam = -R.T @ t
+    d = R.T @ np.array([(uv[0] - kam["cx"]) / kam["f_px"], (uv[1] - kam["cy"]) / kam["f_px"], 1.0])
+    ax, val = ebene.split("="); i = "xyz".index(ax.strip()); val = float(val)
+    s = (val - cam[i]) / d[i]; return cam + s * d, float(np.linalg.norm(s * d))
+
 def main():
     a = sys.argv[1:]; obj = json.load(open(a[0])); nr = a[1]; root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(a[0]))))
+    if "--kamera" in a:                                                   # Modus 2: echte Meter ueber kalibrierte Kamera + bekannte Ebene
+        od = os.path.join(root, os.path.dirname(obj["masstabelle"])); kid = a[a.index("--kamera") + 1]; K = json.load(open(os.path.join(od, "messprotokoll", kid + ".json")))["kamera"]
+        ebene = a[a.index("--ebene") + 1]; pts = [float(x) for x in a[a.index("--mess") + 1:a.index("--mess") + 5]]; name = a[a.index("--name") + 1] if "--name" in a else "Messung"
+        P1, d1 = strahl_ebene(K, pts[:2], ebene); P2, d2 = strahl_ebene(K, pts[2:], ebene)
+        tiefe_sigma = float(a[a.index("--tiefe-sigma") + 1]) if "--tiefe-sigma" in a else 0.3        # Unsicherheit der Ebenenlage (m)
+        rel = tiefe_sigma / max(d1, 1.0); pix_m = 3.0 * d1 / K["f_px"]                                   # 3 px Pickfehler in Meter
+        d = os.path.join(od, "messprotokoll"); n = len(glob.glob(os.path.join(d, f"M-{nr}-*.json"))) + 1; pid = f"M-{nr}-{n:03d}"
+        rec = dict(id=pid, foto=nr, kamera=kid, ebene=ebene, name=name, mess_px=pts, P1=P1.round(3).tolist(), P2=P2.round(3).tolist(),
+                   dz=round(float(P2[2] - P1[2]), 3), dy=round(float(P2[1] - P1[1]), 3), dx=round(float(P2[0] - P1[0]), 3), abstand=round(float(np.linalg.norm(P2 - P1)), 3),
+                   z1=round(float(P1[2]), 3), z2=round(float(P2[2]), 3), unsicherheit_rel=round(rel, 4), unsicherheit_m=round(float(np.linalg.norm(P2 - P1)) * rel + pix_m * 1.4, 3),
+                   massstab_von=f"Kamera {kid} aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene {ebene} (+-{tiefe_sigma} m)")
+        json.dump(rec, open(os.path.join(d, pid + ".json"), "w"), indent=1, ensure_ascii=False)
+        print(f"{pid}: {name}: P1 z={rec['z1']:.2f} y={P1[1]:.2f} | P2 z={rec['z2']:.2f} y={P2[1]:.2f} | dz {rec['dz']:.2f} dy {rec['dy']:.2f} Abstand {rec['abstand']:.2f} m +-{rec['unsicherheit_m']} m"); return
     def opt(k, n=1, d=None):
         if k not in a: return d
         i = a.index(k); return a[i + 1] if n == 1 else a[i + 1:i + 1 + n]

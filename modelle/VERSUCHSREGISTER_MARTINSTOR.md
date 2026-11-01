@@ -209,3 +209,32 @@ Naechster Weg: Laserquelle mit mehr Aufloesung (ALS-Rohpunkte) oder Kantenmessun
    in F.render) - hebt die 90-Grad-Mehrdeutigkeit des Quadratturms auf. Lauf gestartet (gem2), Ergebnis unten.
 5. **Neues Objekt in Minuten:** `tools/objekt_anlegen.py <objekt> --name --hoehe --hoehe-quelle` legt objekt.json, masstabelle.json, Generator-Rumpf mit beleg()
    an; `bauen_abnehmen.sh <objekt>` laeuft sofort (getestet mit Wegwerf-Objekt: 3 Pruefungen gruen, Sichtblatt erzeugt, wieder geloescht).
+
+## M. Echte Meter aus Fotos: Kamerakalibrierung gegen amtliche 3D-Punkte (2026-11-01, Nutzer: "tue alles, damit die Fotos echte Meter liefern")
+Prinzip: Fotos liefern nur Verhaeltnisse; absolute Meter brauchen bekannte 3D-Punkte im Bild. Die gibt es amtlich: LoD2 (Grundriss-Ecken, Wandoberkanten in UTM32),
+DOM1 (Tuermchen-/Spitzenhoehen), DGM1 (Gelaende). Je Foto: Pixel dieser Punkte -> Kamera (Lage, Richtung, Brennweite) loesen -> jedes Pixelpaar auf der
+LoD2-Wandebene in Meter umrechnen, ohne Modell.
+M1. **Fund/Fehler:** `mt_org.npy` (E 414096,8 / N 5316272,6) ist der Nominatim/OSM-Punkt, NICHT die Mitte von `mt_win.npy`; das Laserfenster war spaeter auf den
+    Gipfel re-zentriert worden. Echter DOM1-Gipfel: E 414127,5 / N 5316242,5 (37 m vom OSM-Knoten); deckt sich mit der LoD2-Grundflaeche (E 414120-133,5, N 5316236-250).
+    Alle frueheren Hypsometrien benutzten mt_win (richtig zentriert) - nicht betroffen. Lehre: Georeferenz nie aus einer Nebendatei annehmen, immer DOM gegen LoD2 pruefen.
+M2. **Amtlicher Modellrahmen** `modelle/martinstor/anker3d.json`: Ursprung = Mitte der Endpunkte der beiden LoD2-Langwaende (E 414126,82 / N 5316242,42),
+    +x = Sued entlang der Durchfahrt (254,5 Grad von Ost, d. h. SSW - die Strasse laeuft NNE), +y = Ost (344,5 Grad), z ueber DGM1 (277,93). Die "Uhr zeigt nach Sueden"-Konvention
+    stimmt damit bis auf 15 Grad.
+M3. Anker (Modellrahmen, Sigma): 4 Bodenecken LoD2 (+-0,3), 4 Wandoberkanten-Ecken LoD2 37,1-37,3 m (+-0,6; Modell-Glockenstock 35,5 -> pruefen),
+    DOM-Gipfel (-0,3/0,6/54,8, +-1), Tuermchen DOM (4,2/-4,4/41,4) und (-3,3/-3,3/41,0) (+-0,8; nur 2 von 4 als lokale Maxima erkennbar), Spitze Dokument (0/0/60, +-3).
+M4. Seitenwissen in der Silhouettenanpassung (gem2): 042 0,809->0,834, 031 0,885->0,888, 049 0,798->0,800, uebrige gleich; Azimute jetzt eindeutig je Seite.
+Naechste Schritte: 2D-Picks je Foto als Protokoll (K-<foto>.json), `tools/foto_kalibrieren.py` (PnP + Brennweite, Residuen, Kamerahoehe als Plausibilitaet),
+`foto_mass.py --kamera` fuer Meter auf der Wandebene; danach zirkulaere Zeilen (Nadel, Knauf, Spitzenlaenge, Dachflanke) mit echtem Massstab neu messen.
+M5. **Erste echte Meter (Foto 030, Einzelkamera K-030, `foto_kalibrieren.py` + `foto_mass.py --kamera`):** Brennweite 2373 px, Standort 40 m suedlich, Augenhoehe 1,7;
+    Bodenecken-Residuen 6-11 px, Dachanker 30-80 px (= die Unsicherheit der Ankerhoehen DOM/Dokument selbst). Protokolle M-030-001..005:
+    Nadelspitze 57,0 m, Knauf 51,1 m, Dach-Oberkante (Goldkugeln) 47,4-47,9 m, Dachtraufe 37,9-38,2 m (!= Modell 35,5; = LoD2-Wandoberkante 37,2),
+    Zinnenkranz 30,2-31,2 m (Modell 30,5 ok), Kranzbreite 10,0 m (Modell 10,3), Zifferblatt 4,04 m (Modell 4,2). Unsicherheit je Mass +-0,1..0,25 m aus Pick/Ebene,
+    PLUS systematisch ~+-1 m oben aus den Ankerhoehen. Lehre: LoD2-Wandoberkante war richtig, ich hatte sie als "generalisiert" verworfen (Teil 4).
+M6. **Buendel (`foto_bundle.py`, 030+041+000, freie Hoehen Spitze/Tuermchen/Kranz/First/Traufe):** gescheitert - alle Hoehen sinken um 6-19 m, RMS 70-150 px.
+    Ursache: Picks von Foto 000 falsch zugeordnet (Einzelkamera landet oestlich statt suedlich), 041 ohne Bodenanker (Hoehe/Brennweite mehrdeutig,
+    PnP-Scan gibt Kamerahoehe 12-18 m). Lehre: Handpicks aus verkleinerten Gitterbildern (+-20 px, Verwechslungen) sind der Engpass ->
+    `tools/foto_pick_pruefen.py` (Picks + projizierte Anker + LoD2-Kanten im Foto) ist ab jetzt PFLICHT vor jedem Buendel; Fotos ohne Bodenanker nur mit EXIF-Brennweite.
+M7. **Modellfreie Hoehen als Pruefzeilen (Quelltyp `foto_kalibriert`, Kamera K-030):** Dachansatz 36,9-39,2 (Modell 35,6 -> FEHLER), First 46,6-48,7 (Modell 46,7 ok, knapp),
+    Zinnenkranz-Oberkante 29,5-32,5 (Modell 31,5 ok), Gesamthoehe 60 (Dokument) jetzt `widerspruch` gegen Foto 57,0 / Buendel 55,0. Neue Messer: `ausdehnung_streifen`,
+    `z_bei_breite` (Dachansatz = erste Hoehe mit Dachbreite >= 6,8 m im Achsstreifen; First = hoechste Hoehe mit >= 2 m), Erker/Konsolen aus Regionen ausgeblendet.
+    Varianten gestartet (grid4): v1 Traufe 38 (Glockenstock +2,5), v2 + First 47,6 (Dach 9,6 m), v3 + Spitze 57 -> Laser (optimierung_validieren) + Foto-IoU (gem2, Seitenwissen).

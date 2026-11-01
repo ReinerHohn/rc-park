@@ -1,0 +1,304 @@
+{
+ "mitte_utm": [
+  414126.82,
+  5316242.42
+ ],
+ "xhat_utm": [
+  -0.2666,
+  -0.9638
+ ],
+ "yhat_utm": [
+  0.9638,
+  -0.2666
+ ],
+ "gelaende": 277.93,
+ "hinweis": "Modellrahmen: Ursprung Turmmitte (LoD2 Langwand-Endpunkte), +x Sued (entlang der Durchfahrt), +y Ost, z ueber DGM1-Gelaende",
+ "anker": {
+  "ecke_boden_0": {
+   "xyz": [
+    -4.91,
+    5.54,
+    -0.3
+   ],
+   "sigma": 0.3,
+   "quelle": "LoD2 Grundriss-Ecke (Endpunkt Langwand)"
+  },
+  "ecke_boden_1": {
+   "xyz": [
+    4.88,
+    5.69,
+    -0.3
+   ],
+   "sigma": 0.3,
+   "quelle": "LoD2 Grundriss-Ecke (Endpunkt Langwand)"
+  },
+  "ecke_boden_2": {
+   "xyz": [
+    4.82,
+    -5.69,
+    -0.3
+   ],
+   "sigma": 0.3,
+   "quelle": "LoD2 Grundriss-Ecke (Endpunkt Langwand)"
+  },
+  "ecke_boden_3": {
+   "xyz": [
+    -4.79,
+    -5.55,
+    -0.3
+   ],
+   "sigma": 0.3,
+   "quelle": "LoD2 Grundriss-Ecke (Endpunkt Langwand)"
+  },
+  "ecke_wandoben_0": {
+   "xyz": [
+    -4.91,
+    5.54,
+    37.27
+   ],
+   "sigma": 0.6,
+   "quelle": "LoD2 Wandoberkante an der Ecke (generalisiert)"
+  },
+  "ecke_wandoben_1": {
+   "xyz": [
+    4.88,
+    5.69,
+    37.27
+   ],
+   "sigma": 0.6,
+   "quelle": "LoD2 Wandoberkante an der Ecke (generalisiert)"
+  },
+  "ecke_wandoben_2": {
+   "xyz": [
+    4.82,
+    -5.69,
+    37.11
+   ],
+   "sigma": 0.6,
+   "quelle": "LoD2 Wandoberkante an der Ecke (generalisiert)"
+  },
+  "ecke_wandoben_3": {
+   "xyz": [
+    -4.79,
+    -5.55,
+    37.11
+   ],
+   "sigma": 0.6,
+   "quelle": "LoD2 Wandoberkante an der Ecke (generalisiert)"
+  },
+  "spitze_dom": {
+   "xyz": [
+    -0.26,
+    0.63,
+    54.84
+   ],
+   "sigma": 1.0,
+   "quelle": "DOM1 Gipfel (hoechste getroffene Flaeche, Nadel unsichtbar; Lage +-0,7 m)"
+  },
+  "tuermchen_dom_0": {
+   "xyz": [
+    4.23,
+    -4.35,
+    41.44
+   ],
+   "sigma": 0.8,
+   "quelle": "DOM1 lokales Maximum (Tuermchen; Lage +-0,7 m, Hoehe = getroffene Kegelflaeche)"
+  },
+  "tuermchen_dom_1": {
+   "xyz": [
+    -3.32,
+    -3.32,
+    40.98
+   ],
+   "sigma": 0.8,
+   "quelle": "DOM1 lokales Maximum (Tuermchen; Lage +-0,7 m, Hoehe = getroffene Kegelflaeche)"
+  },
+  "spitze_dokument": {
+   "xyz": [
+    0.0,
+    0.0,
+    60.0
+   ],
+   "sigma": 3.0,
+   "quelle": "Bauforschung BW 60 m (65 m Objektbeschreibung); Lage = Turmachse",
+   "z_frei": "spitze",
+   "sigma_xy": 0.2
+  },
+  "tuermchen_SW": {
+   "xyz": [
+    3.85,
+    -4.6,
+    41.2
+   ],
+   "sigma": 1.5,
+   "quelle": "Tuermchenspitze: Lage = LoD2-Ecke 1 m eingerueckt (Symmetrie), Hoehe DOM1 40,98/41,44",
+   "z_frei": "tuermchen",
+   "sigma_xy": 0.6
+  },
+  "tuermchen_SE": {
+   "xyz": [
+    3.85,
+    4.6,
+    41.2
+   ],
+   "sigma": 1.5,
+   "quelle": "Tuermchenspitze: Lage = LoD2-Ecke 1 m eingerueckt (Symmetrie), Hoehe DOM1 40,98/41,44",
+   "z_frei": "tuermchen",
+   "sigma_xy": 0.6
+  },
+  "tuermchen_NW": {
+   "xyz": [
+    -3.85,
+    -4.6,
+    41.2
+   ],
+   "sigma": 1.5,
+   "quelle": "Tuermchenspitze: Lage = LoD2-Ecke 1 m eingerueckt (Symmetrie), Hoehe DOM1 40,98/41,44",
+   "z_frei": "tuermchen",
+   "sigma_xy": 0.6
+  },
+  "tuermchen_NE": {
+   "xyz": [
+    -3.85,
+    4.6,
+    41.2
+   ],
+   "sigma": 1.5,
+   "quelle": "Tuermchenspitze: Lage = LoD2-Ecke 1 m eingerueckt (Symmetrie), Hoehe DOM1 40,98/41,44",
+   "z_frei": "tuermchen",
+   "sigma_xy": 0.6
+  },
+  "kranz_SW": {
+   "xyz": [
+    4.85,
+    -5.6,
+    31.5
+   ],
+   "sigma": 1.5,
+   "quelle": "Zinnenkranz-Ecke: Lage LoD2-Ecke, Hoehe Laser DOM1 Stufe 31-32 m (MASSPRUEFUNG)",
+   "z_frei": "kranz",
+   "sigma_xy": 0.4
+  },
+  "kranz_SE": {
+   "xyz": [
+    4.85,
+    5.6,
+    31.5
+   ],
+   "sigma": 1.5,
+   "quelle": "Zinnenkranz-Ecke: Lage LoD2-Ecke, Hoehe Laser DOM1 Stufe 31-32 m (MASSPRUEFUNG)",
+   "z_frei": "kranz",
+   "sigma_xy": 0.4
+  },
+  "kranz_NW": {
+   "xyz": [
+    -4.85,
+    -5.6,
+    31.5
+   ],
+   "sigma": 1.5,
+   "quelle": "Zinnenkranz-Ecke: Lage LoD2-Ecke, Hoehe Laser DOM1 Stufe 31-32 m (MASSPRUEFUNG)",
+   "z_frei": "kranz",
+   "sigma_xy": 0.4
+  },
+  "kranz_NE": {
+   "xyz": [
+    -4.85,
+    5.6,
+    31.5
+   ],
+   "sigma": 1.5,
+   "quelle": "Zinnenkranz-Ecke: Lage LoD2-Ecke, Hoehe Laser DOM1 Stufe 31-32 m (MASSPRUEFUNG)",
+   "z_frei": "kranz",
+   "sigma_xy": 0.4
+  },
+  "gold_SW": {
+   "xyz": [
+    0.65,
+    -1.5,
+    46.5
+   ],
+   "sigma": 3.0,
+   "sigma_xy": 0.6,
+   "z_frei": "first",
+   "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
+  },
+  "traufe_SW": {
+   "xyz": [
+    2.65,
+    -3.0,
+    36.5
+   ],
+   "sigma": 3.0,
+   "sigma_xy": 0.8,
+   "z_frei": "traufe",
+   "quelle": "Dachtraufe/Glockenstock-Oberkante Ecke: Lage aus Modell (+-0,8), Hoehe FREI"
+  },
+  "gold_SE": {
+   "xyz": [
+    0.65,
+    1.5,
+    46.5
+   ],
+   "sigma": 3.0,
+   "sigma_xy": 0.6,
+   "z_frei": "first",
+   "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
+  },
+  "traufe_SE": {
+   "xyz": [
+    2.65,
+    3.0,
+    36.5
+   ],
+   "sigma": 3.0,
+   "sigma_xy": 0.8,
+   "z_frei": "traufe",
+   "quelle": "Dachtraufe/Glockenstock-Oberkante Ecke: Lage aus Modell (+-0,8), Hoehe FREI"
+  },
+  "gold_NW": {
+   "xyz": [
+    -0.65,
+    -1.5,
+    46.5
+   ],
+   "sigma": 3.0,
+   "sigma_xy": 0.6,
+   "z_frei": "first",
+   "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
+  },
+  "traufe_NW": {
+   "xyz": [
+    -2.65,
+    -3.0,
+    36.5
+   ],
+   "sigma": 3.0,
+   "sigma_xy": 0.8,
+   "z_frei": "traufe",
+   "quelle": "Dachtraufe/Glockenstock-Oberkante Ecke: Lage aus Modell (+-0,8), Hoehe FREI"
+  },
+  "gold_NE": {
+   "xyz": [
+    -0.65,
+    1.5,
+    46.5
+   ],
+   "sigma": 3.0,
+   "sigma_xy": 0.6,
+   "z_frei": "first",
+   "quelle": "Goldkugel an der Dach-Oberkante: Lage aus Modellgrundriss (+-0,6), Hoehe FREI (= First)"
+  },
+  "traufe_NE": {
+   "xyz": [
+    -2.65,
+    3.0,
+    36.5
+   ],
+   "sigma": 3.0,
+   "sigma_xy": 0.8,
+   "z_frei": "traufe",
+   "quelle": "Dachtraufe/Glockenstock-Oberkante Ecke: Lage aus Modell (+-0,8), Hoehe FREI"
+  }
+ }
+}

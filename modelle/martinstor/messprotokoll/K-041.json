@@ -1,0 +1,131 @@
+{
+ "foto": "041",
+ "notiz": "Suedseite von unten (Adler, McDonald's links). Picks aus Gitter-Ausschnitten k041_oben (Skala 0,9) und k041_unten (0,8, y0 1728).",
+ "punkte": {
+  "spitze_dokument": [
+   850,
+   206
+  ],
+  "tuermchen_SW": [
+   633,
+   394
+  ],
+  "tuermchen_SE": [
+   1128,
+   478
+  ],
+  "kranz_SW": [
+   533,
+   711
+  ],
+  "kranz_SE": [
+   1289,
+   767
+  ],
+  "gold_SW": [
+   772,
+   406
+  ],
+  "gold_SE": [
+   931,
+   426
+  ],
+  "traufe_SW": [
+   728,
+   639
+  ],
+  "traufe_SE": [
+   1111,
+   667
+  ]
+ },
+ "linien": {
+  "ecke_boden_2": [
+   [
+    319,
+    1828
+   ],
+   [
+    300,
+    2353
+   ],
+   [
+    288,
+    2790
+   ]
+  ],
+  "ecke_boden_1": [
+   [
+    1500,
+    1828
+   ],
+   [
+    1519,
+    2353
+   ],
+   [
+    1531,
+    2790
+   ]
+  ]
+ },
+ "kamera": {
+  "rvec": [
+   0.9282596934517724,
+   0.8648089084434744,
+   -1.3206328042873778
+  ],
+  "t": [
+   -0.6992353458831234,
+   25.595375724219387,
+   54.99617254435335
+  ],
+  "f_px": 6108.922814418634,
+  "cx": 960.0,
+  "cy": 1440.0,
+  "bild": [
+   1920,
+   2880
+  ],
+  "standort_xyz": [
+   60.55,
+   -3.27,
+   1.69
+  ],
+  "hoehe_ueber_gelaende": 1.69,
+  "abstand_zur_achse": 60.6,
+  "residuen_px": {
+   "spitze_dokument": 1053.3,
+   "tuermchen_SW": 251.3,
+   "tuermchen_SE": 324.7,
+   "kranz_SW": 263.7,
+   "kranz_SE": 242.6
+  },
+  "rms_px": 530.4,
+  "plausibel_strassenfoto": true,
+  "brennweite_quelle": "geloest"
+ },
+ "strassenfoto": true,
+ "seite": "Sued",
+ "kamera_bundle": {
+  "rvec": [
+   0.9423815187030876,
+   0.8029129338154388,
+   -1.254795847224239
+  ],
+  "t": [
+   -1.0180029895846525,
+   20.648788785968463,
+   42.69920669361797
+  ],
+  "f_px": 4631.537689376785,
+  "cx": 960.0,
+  "cy": 1440.0,
+  "standort": [
+   47.03,
+   -6.08,
+   1.18
+  ],
+  "hoehe": 1.18
+ }
+}
