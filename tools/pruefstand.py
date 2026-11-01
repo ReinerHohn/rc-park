@@ -51,8 +51,11 @@ class Messer:
         R, t, C, f, cx, cy = FB.strahlen_setup(K); W, H = K["bild"]
         import render_kern as RK
         if not hasattr(self, "_sz"):
-            P, _ = trimesh.sample.sample_surface(self.m, 2500000, seed=0); self._sz = RK.Szene(np.asarray(P))   # einmal laden, fuer alle Hoehen/Kameras nutzen
-        M = self._sz.maske_np(R, t, f, cx, cy, W, H)
+            P, _ = trimesh.sample.sample_surface(self.m, 2500000, seed=0); self._sz = RK.Szene(np.asarray(P)); self._mcache = {}
+        # Die Maske haengt NUR von der Kamera ab, nicht von der Hoehe - je Kamera einmal rendern statt je Hoehe
+        # (eine Zone mit 10 Hoehen rechnete die identische Maske zehnmal; Pruefstand 4,8 s -> siehe Register W).
+        if kamera not in self._mcache: self._mcache[kamera] = self._sz.maske_np(R, t, f, cx, cy, W, H)
+        M = self._mcache[kamera]
         l, r = FB.halbbreite(M, R, t, f, cx, cy, C, z, FB.quer_richtung(C, z))
         # Muss zur Fotomessung passen: ist dort eine Seite verdeckt, wird die freie verdoppelt - am Modell genauso.
         if seite == "links": return float(2 * l) if not np.isnan(l) else float("nan")

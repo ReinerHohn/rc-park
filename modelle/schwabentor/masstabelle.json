@@ -1,0 +1,59 @@
+{
+ "_doku": "Masstabelle = einzige Wahrheit ueber die Masse; siehe modelle/METHODE_MASSTABELLE.md",
+ "konstanten": {},
+ "messungen": {
+  "hoehe": {
+   "typ": "hoehe_max"
+  },
+  "wasserdicht": {
+   "typ": "wasserdicht"
+  },
+  "koerper": {
+   "typ": "koerper_anzahl"
+  }
+ },
+ "pruefungen": [
+  {
+   "name": "Gesamthoehe (m)",
+   "wert": "hoehe",
+   "soll": [
+    49.47,
+    52.53
+   ],
+   "quelle": "Wikipedia: Schwabentor Freiburg, Turm 51 m",
+   "quelltyp": "dokument",
+   "merkmal": "absolut_hoehe",
+   "massstab": "dokument"
+  },
+  {
+   "name": "Wasserdicht (1=ja)",
+   "wert": "wasserdicht",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Druckfaehigkeit",
+   "quelltyp": "modell",
+   "merkmal": "druck"
+  },
+  {
+   "name": "Anzahl getrennte Koerper",
+   "wert": "koerper",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Schwebende Teile",
+   "quelltyp": "modell",
+   "merkmal": "druck"
+  }
+ ],
+ "beobachtungen_offen": [
+  {
+   "datum": "heute",
+   "wer": "Anlage",
+   "text": "Quellen sichten: Dokumente (Hoehe), LoD2 (Grundriss/Traufe), DOM1 (Dachform), Fotos je Seite",
+   "naechster_schritt": "objekt.json/quellen fuellen, Zeilen mit Quelle anlegen"
+  }
+ ]
+}

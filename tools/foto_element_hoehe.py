@@ -30,6 +30,24 @@ def main():
     kam = K["kamera"]; ebene = opt("--wand", "x=4.5")
     im = cv2.imread(glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]); H, W = im.shape[:2]
     grau = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY); funde = []
+    if was == "farbe":
+        # Element ueber seine FARBE finden (Gold, Kupfergruen, Sandstein ...) statt ueber Form. Robuster als Hough,
+        # weil Bauteile sich farblich von Putz und Himmel abheben, auch wenn ihre Kontur gestoert ist.
+        # --ton H_von,H_bis (OpenCV-Hue 0-179), --saettigung-min, --hell-min, --flaeche-min
+        hsv = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)
+        h0, h1 = [int(x) for x in opt("--ton", "15,35").split(",")]
+        smin, vmin = int(opt("--saettigung-min", 70)), int(opt("--hell-min", 90))
+        maske = ((hsv[:, :, 0] >= h0) & (hsv[:, :, 0] <= h1) & (hsv[:, :, 1] >= smin) & (hsv[:, :, 2] >= vmin)).astype(np.uint8)
+        maske = cv2.morphologyEx(maske, cv2.MORPH_CLOSE, np.ones((int(opt("--schliessen", 25)),) * 2, np.uint8))
+        n, lab, st, cen = cv2.connectedComponentsWithStats(maske, 8)
+        for i in range(1, n):
+            x, y, w, h, flaeche = st[i]
+            if flaeche < int(opt("--flaeche-min", 3000)): continue
+            r = 0.5 * (w + h) / 2
+            Pm = strahl_ebene(kam, cen[i], ebene); Pr = strahl_ebene(kam, (cen[i][0] + r, cen[i][1]), ebene)
+            funde.append(dict(art="farbfleck", px=[int(x), int(y), int(w), int(h)], flaeche_px=int(flaeche),
+                              rundheit=round(float(min(w, h) / max(w, h)), 2), z=round(float(Pm[2]), 2),
+                              y_quer=round(float(Pm[1]), 2), durchmesser=round(2 * float(np.linalg.norm(Pr - Pm)), 2)))
     if was == "uhr":
         kr = cv2.HoughCircles(cv2.medianBlur(grau, 5), cv2.HOUGH_GRADIENT, dp=1, minDist=200,
                               param1=120, param2=60, minRadius=int(opt("--rmin", 60)), maxRadius=int(opt("--rmax", 400)))
@@ -53,7 +71,8 @@ def main():
     qmax = float(opt("--quer-max", 3.5)); zmin_, zmax_ = float(opt("--zmin", 12)), float(opt("--zmax", 34))
     vorher = len(funde)
     funde = [f for f in funde if abs(f["y_quer"]) <= qmax and zmin_ <= f["z"] <= zmax_]
-    if was == "uhr": funde = [f for f in funde if 2.0 <= f["durchmesser"] <= 6.0]        # Zifferblatt eines Torturms
+    if was in ("uhr", "farbe"): funde = [f for f in funde if 1.5 <= f.get("durchmesser", 0) <= 7.0]
+    if was == "farbe" and "--rund" in a: funde = [f for f in funde if f["rundheit"] >= 0.6]        # Zifferblatt eines Torturms
     print(f"  Filter (|quer| <= {qmax} m, z {zmin_}-{zmax_} m): {vorher} -> {len(funde)} Fund(e)")
     funde.sort(key=lambda f: -f["z"])
     print(f"Foto {nr}, Ebene {ebene}, Kamera-RMS {kam.get('rms_px', float('nan')):.0f} px -> {len(funde)} Fund(e):")

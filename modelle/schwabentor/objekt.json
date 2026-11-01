@@ -1,0 +1,35 @@
+{
+ "name": "Schwabentor",
+ "ort": "",
+ "generator": "SCALE=87 MINMM=0.8 ~/.venvs/rcpark/bin/python modelle/schwabentor_gen.py",
+ "stl": "modelle/stl/schwabentor_1-87.stl",
+ "stl_massstab": 87,
+ "stl_einheit_mm": true,
+ "zentrierung": "achse",
+ "masstabelle": "modelle/schwabentor/masstabelle.json",
+ "elemente": "modelle/schwabentor/elemente.json",
+ "audit": "modelle/schwabentor/audit",
+ "ueberwacht": [
+  "modelle/schwabentor_gen.py",
+  "modelle/stl/schwabentor_1-87.stl",
+  "modelle/schwabentor/masstabelle.json",
+  "modelle/schwabentor/elemente.json"
+ ],
+ "fotos_dir": "daten/schwabentor/fotos",
+ "seiten_konvention": {
+  "+x": "Sued (festlegen!)",
+  "-x": "Nord",
+  "+y": "Ost",
+  "-y": "West",
+  "quelle": "OFFEN"
+ },
+ "fotos": {},
+ "quellen": {
+  "dokument": "OFFEN",
+  "lod2": "OFFEN",
+  "dom1_dgm1": "OFFEN",
+  "dop20": "OFFEN",
+  "fotos": "OFFEN",
+  "laser_punkte": "n/a (kostenpflichtig)"
+ }
+}

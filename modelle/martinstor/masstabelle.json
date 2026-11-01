@@ -265,6 +265,15 @@
    "z": 37.0,
    "ax": 2.5,
    "ay": 2.5
+  },
+  "uhr_z": {
+   "typ": "relief_breite",
+   "seite": "+x",
+   "z": 26.9,
+   "halb": 3.6,
+   "hoehe_min": 0.05,
+   "art": "rueck",
+   "max_luecke": 0.4
   }
  },
  "pruefungen": [
@@ -741,6 +750,21 @@
    "quelltyp": "foto_vollbild",
    "merkmal": "schlankheit",
    "massstab": "modell"
+  },
+  {
+   "name": "Uhr Zifferblatt-Hoehe (m, aus Goldfarbe gemessen)",
+   "wert": "26.9",
+   "soll": [
+    26.0,
+    28.2
+   ],
+   "quelle": "tools/foto_element_hoehe.py farbe (Goldton H 12-32, gesaettigt): Foto 030 misst 26,84 m (Kamera-RMS 57 px), Foto 041 misst 26,64 und 27,94 m (RMS 56). Foto 031 ergibt 24,66 m, hat aber die schlechteste Kamera (RMS 146 px) - nicht gewichtet.",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "foto_kalibriert",
+   "historie": [
+    "2026-11-01 Nutzer: 'Uhr sitzt tiefer als im Modell'. Hough-Kreissuche fand das Zifferblatt nicht, die Farbsuche schon. Ergebnis: die zwei BESTEN Kameras bestaetigen die Modellhoehe 26,9 m; nur die schwaechste Kamera sieht sie tiefer. Der Modellwert bleibt, die Beobachtung ist damit beantwortet - aber offen, ob der Nutzer etwas anderes meinte (Abstand zur Oberkante, Gesims)."
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -761,12 +785,6 @@
    "wer": "fehlteile_finden (Foto 030, alt vs neu) + Nutzer",
    "text": "Finder markierte am alten Modell die Zone Uhrgiebel/Kragdach (z 29-31 m) als FEHLT; nach Einbau von Kielbogen und Kragdach bleiben Treffer nahe der Uhr-Oberkante (Kamera K-030 ~0,5-1 m versetzt) und an der SE-Kante (Eckquader-Muster: Foto hat Quader in jeder Lage, Modell gezahnt nur jede zweite).",
    "naechster_schritt": "Kamera mit praezisen Picks neu loesen, dann Finder erneut; Eckquader-Muster am Vollbild pruefen"
-  },
-  {
-   "datum": "2026-11-01",
-   "wer": "Nutzer",
-   "text": "Uhr sitzt tiefer als im Modell (nicht direkt unter der Oberkante). Automatische Kreissuche (tools/foto_element_hoehe.py) findet das Zifferblatt nicht - Hough liefert nur Wolkenstrukturen.",
-   "naechster_schritt": "Uhr ueber Template-Suche oder farbliche Maske (Goldring) finden, dann Hoehe ueber die kalibrierte Kamera messen"
   },
   {
    "datum": "auto",
@@ -801,6 +819,200 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=42.73 m, y=0.86 m (Zelle [873, 485, 97], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-35-36",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 35.0,
+   "z_bis": 35.5,
+   "abweichung": -0.62,
+   "text": "Silhouettenbreite z 35.0-35.5 m: Foto 12.11 m, Modell 12.73 m (-0.62 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-40-41",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 39.5,
+   "z_bis": 41.0,
+   "abweichung": 1.13,
+   "text": "Silhouettenbreite z 39.5-41.0 m: Foto 9.30 m, Modell 8.17 m (+1.13 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-44-46",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 44.5,
+   "z_bis": 46.5,
+   "abweichung": -0.8,
+   "text": "Silhouettenbreite z 44.5-46.5 m: Foto 2.94 m, Modell 3.74 m (-0.80 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 1)",
+   "auto_id": "fehlteile-030-1260-945",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 28.2,
+   "z_bis": 28.2,
+   "xyz": [
+    3.9,
+    4.68,
+    28.2
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.2 m, y=4.68 m (Zelle [1260, 945, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 2)",
+   "auto_id": "fehlteile-030-1323-1512",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 16.56,
+   "z_bis": 16.56,
+   "xyz": [
+    4.17,
+    5.18,
+    16.56
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=16.56 m, y=5.18 m (Zelle [1323, 1512, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 3)",
+   "auto_id": "fehlteile-030-1386-1890",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 10.0,
+   "z_bis": 10.0,
+   "xyz": [
+    4.67,
+    5.55,
+    10.0
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=10.0 m, y=5.55 m (Zelle [1386, 1890, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
+   "auto_id": "fehlteile-030-1386-1953",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 9.13,
+   "z_bis": 9.13,
+   "xyz": [
+    4.52,
+    5.57,
+    9.13
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=9.13 m, y=5.57 m (Zelle [1386, 1953, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 031, Kamera K-031)",
+   "auto_id": "breite-031-24-28",
+   "art": "breite",
+   "foto": "031",
+   "z_von": 23.5,
+   "z_bis": 28.0,
+   "abweichung": 0.81,
+   "text": "Silhouettenbreite z 23.5-28.0 m: Foto 12.32 m, Modell 11.51 m (+0.81 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 031, Kamera K-031)",
+   "auto_id": "breite-031-32-34",
+   "art": "breite",
+   "foto": "031",
+   "z_von": 31.5,
+   "z_bis": 33.5,
+   "abweichung": -0.59,
+   "text": "Silhouettenbreite z 31.5-33.5 m: Foto 10.98 m, Modell 11.57 m (-0.59 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 031, Kamera K-031)",
+   "auto_id": "breite-031-36-38",
+   "art": "breite",
+   "foto": "031",
+   "z_von": 36.0,
+   "z_bis": 37.5,
+   "abweichung": 0.79,
+   "text": "Silhouettenbreite z 36.0-37.5 m: Foto 10.75 m, Modell 9.96 m (+0.79 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 031, Kamera K-031)",
+   "auto_id": "breite-031-46-47",
+   "art": "breite",
+   "foto": "031",
+   "z_von": 46.5,
+   "z_bis": 47.0,
+   "abweichung": -2.6,
+   "text": "Silhouettenbreite z 46.5-47.0 m: Foto 0.51 m, Modell 3.11 m (-2.60 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 031, Kamera K-031)",
+   "auto_id": "breite-031-48-48",
+   "art": "breite",
+   "foto": "031",
+   "z_von": 48.0,
+   "z_bis": 48.0,
+   "abweichung": 1.08,
+   "text": "Silhouettenbreite z 48.0-48.0 m: Foto 1.32 m, Modell 0.24 m (+1.08 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-35-36",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 35.0,
+   "z_bis": 35.5,
+   "abweichung": 0.66,
+   "text": "Silhouettenbreite z 35.0-35.5 m: Foto 11.78 m, Modell 11.12 m (+0.66 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-47-48",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 47.0,
+   "z_bis": 48.0,
+   "abweichung": -1.67,
+   "text": "Silhouettenbreite z 47.0-48.0 m: Foto 1.37 m, Modell 3.04 m (-1.67 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (Rueckfrage an den Nutzer)",
+   "text": "Uhrhoehe gemessen: 26,8 m (Foto 030) und 26,6/27,9 m (Foto 041) = Modellwert 26,9 m. Nur Foto 031 (schlechteste Kamera) sagt 24,7 m. Falls 'Uhr sitzt tiefer' etwas anderes meint (z. B. groesserer Abstand zum Zinnenkranz oder zum Gesims darunter), ist das noch offen.",
+   "naechster_schritt": "Nutzer fragen, welcher Abstand gemeint ist"
   }
  ],
  "beobachtungen_erledigt": [

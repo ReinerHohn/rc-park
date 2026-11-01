@@ -53,7 +53,8 @@
   "erker_34_anzahl": 4.0,
   "erker_34_durchmesser": 2.1363231167355985,
   "helm_37_anzahl": 4.0,
-  "helm_37_durchmesser": 1.2560266522725378
+  "helm_37_durchmesser": 1.2560266522725378,
+  "uhr_z": 4.45
  },
  "pruefungen": [
   {
@@ -412,6 +413,16 @@
    "soll": [
     0.8,
     1.9
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Uhr Zifferblatt-Hoehe (m, aus Goldfarbe gemessen)",
+   "wert": 26.9,
+   "soll": [
+    26.0,
+    28.2
    ],
    "ok": true,
    "status": "ok"

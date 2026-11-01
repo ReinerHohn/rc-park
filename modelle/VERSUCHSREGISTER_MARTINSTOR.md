@@ -413,3 +413,27 @@ fehlte, weshalb die Tuermchen-Gliederung (Register U) liegen blieb, bis der Nutz
 Ergebnis fuer alle vier Einzelbefunde: **widerlegt** - z 39,5-41 (030+1,13 gegen 031+0,35, 041+0,28), z 23,5-28 (031+0,81 gegen 030+0,26, 041+0,08),
 z 36-37,5 (031+0,79 gegen 030-0,10, 041-0,01), z 31,5-33,5 (031-0,59 gegen 000+0,84, 030+0,31, 041-0,06). Das Modell ist dort in Ordnung;
 die Einzelmeldungen waren Kamerafehler und Rauschen. Sie werden mit dieser Begruendung geschlossen, nicht stillschweigend geloescht.
+
+## W. Beweis der Generalitaet: zweites Objekt ohne Codeaenderung (2026-11-01, Nutzer: "beweise, dass du generell gelernt hast")
+**Test:** `python3 tools/objekt_anlegen.py schwabentor --name "Schwabentor" --hoehe 51 --hoehe-quelle "Wikipedia"` und dann
+`tools/bauen_abnehmen.sh schwabentor`. **Keine Zeile Werkzeugcode angefasst.** Ergebnis: Generator-Rumpf gebaut, STL erzeugt,
+Pruefstand mit der Dokumenthoehe gelaufen (51,00 in 49,5-52,5), Belegregister gefuehrt (1 Element, als ANNAHME markiert),
+Sichtblatt auf der GPU gerendert, Beobachtung "Quellen sichten" angelegt.
+**Die drei Schutzmechaniken greifen auch dort** (am NEUEN Objekt geprueft, danach zurueckgebaut):
+1. Quellen-Blindheit: Zeile "Turmspitze duenn" mit `laser_dom1` -> TABELLE UNZULAESSIG mit Begruendung.
+2. Belegpflicht: Element `beleg("+x", "Erfundener Erker", "")` -> "FEHLER Element OHNE BELEG: Sued: Erfundener Erker (Lehre F9)".
+3. Variantenpruefung: sed-Muster ohne Treffer -> "FEHLER: sed-Muster hat nicht gegriffen, Variante waere identisch".
+**Objektwissen im Code:** `grep -i martinstor` findet in den 13 neuen Werkzeugen nur Kommentare, Registerverweise und Beispielaufrufe -
+keine funktionale Zeile. Keine hartkodierten Martinstor-Masse oder -Pfade (mt_dom, 54.8, 46.2, 9.3x10.3) ausserhalb der objektspezifischen
+Dateien `modelle/martinstor/*.json` und `modelle/martinstor_v4_gen.py`.
+**Grenze, ehrlich:** Das Schwabentor hat hier nur einen Quader als Generator und keine Fotos - bewiesen ist, dass Rahmen, Pruefstand,
+Belegregister, Sichtblatt und die Sperren objektunabhaengig laufen, NICHT dass die Fotomessung ohne eigene Anker funktioniert.
+Dafuer braeuchte es LoD2/DOM fuer das zweite Objekt und Fotos mit freier Silhouette.
+
+## X. Uhrhoehe farblich gemessen (2026-11-01)
+Die Hough-Kreissuche fand das Zifferblatt nicht (nur Wolken). **Farbsuche** (`foto_element_hoehe.py farbe --ton 12,32 --saettigung-min 80 --rund`)
+findet es sofort: Foto 030 -> 26,84 m (Durchmesser 3,80), Foto 041 -> 26,64 und 27,94 m, Foto 031 -> 24,66 m (4,45 m).
+**Die zwei besten Kameras (030/041, RMS 57/56 px) bestaetigen die Modellhoehe 26,9 m; nur die schwaechste (031, RMS 146 px) sieht die Uhr tiefer.**
+Der Nutzerhinweis "Uhr sitzt tiefer" ist damit an der Uhrhoehe NICHT bestaetigt - moeglicherweise war ein anderer Abstand gemeint
+(zum Zinnenkranz oder zum Gesims). Als Rueckfrage notiert. Neue Pruefzeile "Uhr Zifferblatt-Hoehe 26,0-28,2 m" (quelltyp foto_kalibriert).
+**Lehre: Form-Detektoren (Hough) scheitern an gestoerten Konturen; Farbe ist bei Bauteilen oft das robustere Merkmal.**

@@ -1,0 +1,37 @@
+{
+ "id": "E-041-001",
+ "foto": "041",
+ "was": "farbe",
+ "ebene": "x=4.5",
+ "kamera": "K-041",
+ "funde": [
+  {
+   "art": "farbfleck",
+   "px": [
+    911,
+    906,
+    182,
+    178
+   ],
+   "flaeche_px": 8870,
+   "rundheit": 0.98,
+   "z": 27.94,
+   "y_quer": 1.11,
+   "durchmesser": 2.58
+  },
+  {
+   "art": "farbfleck",
+   "px": [
+    771,
+    950,
+    141,
+    122
+   ],
+   "flaeche_px": 3400,
+   "rundheit": 0.87,
+   "z": 26.64,
+   "y_quer": -1.03,
+   "durchmesser": 1.77
+  }
+ ]
+}
