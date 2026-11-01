@@ -151,3 +151,14 @@ Naechste Schritte: (i) je Foto Seite zuordnen (Torbogenseite vs Uhrseite, aus So
 - Generator: `+x` = SUED (unveraendert), `-x` = NORD (3+1). Konvention; die Zuordnung zur echten Kompassrichtung stammt aus dem Nutzerhinweis und der McDonald's-Lage, nicht aus Geodaten.
 - Pruefstand: 4 neue Pruefungen (Strahlenmessung der Fensternischen je Seite und Reihe); Nordseite schlug vorher fehl (2 statt 3), danach alle bestanden.
 - Neue Spuren (noch ungeprueft): Foto 001/018/000: kleiner runder Eckturm mit gruenem Kegel am Sockel (neben Gedenktafel) und ein waagrechter Balken/Blende auf halber Hoehe der Schaftwand; Modell hat beides nicht belegt. Ostseite/Westseite (+-y) kaum fotografiert.
+
+## L. Methodik-Umbau: Masstabelle + generischer Pruefstand (2026-11-01, Nutzer: "Methodik massiv verbessern")
+- Befund: 10 Methodendokumente, 242 Werkzeuge, trotzdem Wiederholung derselben Fehler (Validator-Protokoll F5/F6 = Register I/J), weil Lektionen
+  nicht erzwungen, Pruefcode je Objekt hart verdrahtet, Quellen fuer Merkmale benutzt, die sie nicht sehen koennen.
+- Neu: `modelle/martinstor/objekt.json` (Generator, STL, Fotos mit Seite), `masstabelle.json` (17 Pruefungen + LoD2-Grundriss + 4 offene Beobachtungen),
+  `tools/pruefstand.py` (generische Messer, Quellen-Blindheits-Lint Exit 2, Bericht), `tools/bauen_abnehmen.sh <objekt>`, `tools/git_hooks/pre-commit`,
+  `modelle/METHODE_MASSTABELLE.md`. Alte `martinstor_bauen.sh`/`modell_pruefstand.py` sind Weiterleitungen.
+- Beweise: aktuelles Modell 18/18 gruen (Werte identisch zum alten Pruefstand; Sockel 119,7 m2 vs LoD2 115,1); altes 54,8-m-STL faellt generisch durch (3 Fehler);
+  Tabelle mit laser_dom1 als Quelle fuer Nadeldicke wird abgelehnt (Exit 2); Hook mit gestageter Tabelle: Exit 0.
+- Nicht erledigt: `git config core.hooksPath tools/git_hooks` (Berechtigung verweigert, Nutzer aktiviert selbst); Foto-Werkzeuge lesen `objekt.json/fotos`
+  noch nicht (FOTOS-Dict in foto_silhouette_gpu.py bleibt), weitere Messer (Uhr-Durchmesser, Zinnenzahl, Dachneigung) fehlen.

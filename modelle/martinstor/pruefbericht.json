@@ -1,0 +1,181 @@
+{
+ "stl": "/tmp/claude-29999/-home-oem-git-rc-park/bf197a0c-a706-4c3e-9f93-17b19691b58c/scratchpad/stl_alt54.stl",
+ "werte": {
+  "first": 46.2,
+  "hoehe": 54.800001159667964,
+  "tuermchen_spitze": 41.34999975585937,
+  "tuermchen_2m_anzahl": 4.0,
+  "tuermchen_2m_durchmesser": 0.5850286444500308,
+  "tuermchen_4m_anzahl": 4.0,
+  "tuermchen_4m_durchmesser": 1.4228810693858533,
+  "nadel_50": 0.15861646827218354,
+  "nadel_52": 0.12415461061046422,
+  "knauf_breite": 0.6719310779593146,
+  "knauf_z": 48.100000000000016,
+  "wasserdicht": 1.0,
+  "koerper": 1.0,
+  "fenster_S_oben": 2.0,
+  "fenster_S_unten": 1.0,
+  "fenster_N_oben": 2.0,
+  "fenster_N_unten": 1.0,
+  "sockel_flaeche": 119.70115692176881,
+  "sockel_x": 10.208341060638428,
+  "sockel_y": 11.725818740844726
+ },
+ "pruefungen": [
+  {
+   "name": "Tuermchen-Spitze Hoehe (m)",
+   "wert": 41.34999975585937,
+   "soll": [
+    40.7,
+    41.8
+   ],
+   "ok": true
+  },
+  {
+   "name": "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+   "wert": 0.5850286444500308,
+   "soll": [
+    0.4,
+    1.2
+   ],
+   "ok": true
+  },
+  {
+   "name": "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+   "wert": 1.4228810693858533,
+   "soll": [
+    0.8,
+    1.7
+   ],
+   "ok": true
+  },
+  {
+   "name": "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+   "wert": 4.0,
+   "soll": [
+    4,
+    4
+   ],
+   "ok": true
+  },
+  {
+   "name": "Dachreiter Dicke bei 50 m (m)",
+   "wert": 0.15861646827218354,
+   "soll": [
+    0.08,
+    0.4
+   ],
+   "ok": true
+  },
+  {
+   "name": "Dachreiter Dicke bei 52 m (m)",
+   "wert": 0.12415461061046422,
+   "soll": [
+    0.08,
+    0.3
+   ],
+   "ok": true
+  },
+  {
+   "name": "Dachreiter Knauf Durchmesser (m)",
+   "wert": 0.6719310779593146,
+   "soll": [
+    0.5,
+    0.9
+   ],
+   "ok": true
+  },
+  {
+   "name": "Dachreiter Knauf Lage (Anteil ueber First)",
+   "wert": 0.22093020276678313,
+   "soll": [
+    0.12,
+    0.32
+   ],
+   "ok": true
+  },
+  {
+   "name": "Gesamthoehe (m)",
+   "wert": 54.800001159667964,
+   "soll": [
+    59.5,
+    66.0
+   ],
+   "ok": false
+  },
+  {
+   "name": "Spitzenlaenge ueber First (m)",
+   "wert": 8.600001159667961,
+   "soll": [
+    12.0,
+    16.5
+   ],
+   "ok": false
+  },
+  {
+   "name": "Fenster obere Reihe Suedseite (Anzahl, z 22,1 m)",
+   "wert": 2.0,
+   "soll": [
+    2,
+    2
+   ],
+   "ok": true
+  },
+  {
+   "name": "Fenster untere Reihe Suedseite (Anzahl, z 18,5 m)",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true
+  },
+  {
+   "name": "Fenster obere Reihe Nordseite (Anzahl, z 22,1 m)",
+   "wert": 2.0,
+   "soll": [
+    3,
+    3
+   ],
+   "ok": false
+  },
+  {
+   "name": "Fenster untere Reihe Nordseite (Anzahl, z 18,5 m)",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true
+  },
+  {
+   "name": "Sockel-Grundriss Rechteck (m2, z 1 m)",
+   "wert": 119.70115692176881,
+   "soll": [
+    104.0,
+    127.0
+   ],
+   "ok": true
+  },
+  {
+   "name": "Wasserdicht (1=ja)",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true
+  },
+  {
+   "name": "Anzahl getrennte Koerper",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true
+  }
+ ],
+ "bestanden": false
+}

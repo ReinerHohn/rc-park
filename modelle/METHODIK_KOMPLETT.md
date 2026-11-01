@@ -1,5 +1,8 @@
 # Methodik: echte Orte automatisiert zu Steck-/Druck-Modellen
 
+> **Pflichtrahmen seit 2026-11-01:** `METHODE_MASSTABELLE.md` – Masse als Daten je Objekt (`modelle/<objekt>/masstabelle.json`),
+> generischer Pruefstand mit Quellen-Blindheit, Commit-Sperre. Alles unten gilt weiter, laeuft aber durch diesen Rahmen.
+
 **Das Prinzip (und der einzige Unterschied zu normalem Modellbau):**
 Was aus Daten rechenbar ist, wird **gerechnet — nicht von Hand modelliert.** Du beschreibst
 den Ort (Koordinaten + Ausschnitt + Maßstab), der Rest fällt als fertige Schnitt-/Druck-Dateien

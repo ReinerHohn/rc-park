@@ -1,0 +1,31 @@
+{
+  "name": "Martinstor",
+  "ort": "Freiburg im Breisgau, Kaiser-Joseph-Strasse",
+  "generator": "SCALE=87 MINMM=0.8 ~/.venvs/rcpark/bin/python modelle/martinstor_v4_gen.py",
+  "stl": "modelle/stl/martinstor_v4_1-87.stl",
+  "stl_massstab": 87,
+  "stl_einheit_mm": true,
+  "masstabelle": "modelle/martinstor/masstabelle.json",
+  "ueberwacht": ["modelle/martinstor_v4_gen.py", "modelle/stl/martinstor_v4_1-87.stl", "modelle/martinstor/masstabelle.json"],
+  "fotos_dir": "daten/martinstor/fotos",
+  "seiten_konvention": {"+x": "Sued (Uhr, McDonald's links im Foto)", "-x": "Nord (Uhr, 3 Fenster in Reihe)", "+y": "Ost (Annahme)", "-y": "West (Annahme)",
+                        "quelle": "Nutzer 2026-11-01: 'Uhr zeigt nach Sueden'; McDonald's-Lage in Fotos 030/041/042/001"},
+  "fotos": {
+    "001": {"seite": "Sued", "silhouette_frei": true,  "vollbild": [1280, 2842]},
+    "006": {"seite": "Sued", "silhouette_frei": true},
+    "014": {"seite": "Sued", "silhouette_frei": true,  "notiz": "Spitze frei, Nachbarn stoeren unten"},
+    "018": {"seite": "Sued", "silhouette_frei": false, "notiz": "ROI landet neben dem Turm"},
+    "020": {"seite": "Sued", "silhouette_frei": true},
+    "021": {"seite": "Sued", "silhouette_frei": true},
+    "022": {"seite": "Sued", "silhouette_frei": false, "notiz": "Baum vor dem Turm"},
+    "030": {"seite": "Sued", "silhouette_frei": false, "notiz": "ROI neben dem Turm; Torbogen/Wappen gut sichtbar"},
+    "031": {"seite": "Nord", "silhouette_frei": true,  "vollbild": [1920, 2880], "notiz": "3 Fenster in Reihe unter der Uhr"},
+    "040": {"seite": "Sued", "silhouette_frei": false},
+    "041": {"seite": "Sued", "silhouette_frei": false, "notiz": "Wappen, 2+1 Fenster"},
+    "042": {"seite": "Sued", "silhouette_frei": true,  "roi": [100, 0, 235, 165]},
+    "043": {"seite": "Sued", "silhouette_frei": true,  "roi": [40, 0, 290, 330]},
+    "044": {"seite": "Sued", "silhouette_frei": true,  "roi": [120, 0, 260, 235]},
+    "049": {"seite": "Sued", "silhouette_frei": true,  "vollbild": [1920, 2880], "notiz": "blauer Himmel, Nadel/Knauf messbar"},
+    "050": {"seite": "Sued", "silhouette_frei": false, "notiz": "Torbogen von unten"}
+  }
+}

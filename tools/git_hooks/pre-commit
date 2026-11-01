@@ -1,0 +1,20 @@
+#!/bin/bash
+# Commit-Sperre: wird eine ueberwachte Datei eines Objekts committet (Generator, STL, Masstabelle), muss der Pruefstand gruen sein.
+# Aktivieren (einmalig, lokal):  git config core.hooksPath tools/git_hooks
+cd "$(git rev-parse --show-toplevel)"
+STAGED=$(git diff --cached --name-only)
+PY=/media/oem/scan/venv-seg/bin/python
+rc=0
+for OBJ in modelle/*/objekt.json; do
+  [ -f "$OBJ" ] || continue
+  for W in $($PY -c "import json;print(' '.join(json.load(open('$OBJ'))['ueberwacht']))"); do
+    if echo "$STAGED" | grep -qx "$W"; then
+      echo "pre-commit: $W geaendert -> Pruefstand $(dirname $OBJ)"
+      $PY -W ignore -I tools/pruefstand.py "$OBJ" | tail -3 || rc=1
+      [ ${PIPESTATUS[0]} -eq 0 ] || rc=1
+      break
+    fi
+  done
+done
+[ $rc -eq 0 ] || echo "pre-commit: Pruefstand NICHT bestanden - Commit abgebrochen (CLAUDE.md: Sollwerte nicht lockern, Modell korrigieren)"
+exit $rc
