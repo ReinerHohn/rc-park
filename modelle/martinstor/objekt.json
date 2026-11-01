@@ -346,6 +346,773 @@
    "seite": "Sued",
    "seite_quelle": "Doppeladler-Nahaufnahme (Suedseite)",
    "sfm_netz": "sued"
+  },
+  "068": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    11224,
+    7648
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Freiburg 1987 (14) Martinstor.jpg, CC BY-SA 2.0, Rüdiger Stehn; Klasse aehnlich, aehnlich zu 026_Freiburg_Martinstor_Muenster_225_PICT0085_19930415_1023.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz"
+  },
+  "069": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5625,
+    3740
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:View (Freiburg im Breisgau) jm10120.jpg, CC BY-SA 3.0, joergens.mi; Klasse neu",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz"
+  },
+  "070": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5184,
+    3456
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2017-05-02 Altstadt (Freiburg im Breisgau) 23.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Maxim75\" title=\"User:Maxim75\">Maksym Kozlenko</a>; Klasse aehnlich, aehnlich zu 010_Freiburg_Kaiser-Joseph-Straße_mit_Martinstor_19890625.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 010_Freiburg_Kaiser-Joseph-Straße_mit_Martinstor_19890625.jpg (290 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "071": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    5158,
+    3787
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Schienenschleifwagen SF 50 VAG Freiburg jm90009.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">Joergens.mi</a>; Klasse aehnlich, aehnlich zu 001_2024-10-26_MPM-Days_Freiburg_BR_018.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 001_2024-10-26_MPM-Days_Freiburg_BR_018.jpg (315 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "072": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5386,
+    3692
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Freiburg- Fußgängerübergang, Münsterstraße, Kaiser-Joseph-Straße, mit Martinstor - LABW - Staatsarchiv Freiburg W 134 Nr. 094195.jpg, CC BY 4.0, Willy Pragher; Klasse neu",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 010_Freiburg_Kaiser-Joseph-Straße_mit_Martinstor_19890625.jpg (59 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "073": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    4912,
+    7360
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:KaJo Richtung Martinstor (Freiburg im Breisgau) jm88602.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">Joergens.mi</a>; Klasse aehnlich, aehnlich zu 049_Freiburg_im_Sommer_2013_9878631175.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 049_Freiburg_im_Sommer_2013_9878631175.jpg (245 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "074": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5184,
+    3456
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2017-05-02 Altstadt (Freiburg im Breisgau) 18.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Maxim75\" title=\"User:Maxim75\">Maksym Kozlenko</a>; Klasse neu",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 059_Gleiserneuerung_Bertoldsbrunnen_Freiburg_23.jpg (104 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "075": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4257,
+    2840
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Freiburg im Breisgau Martinstor (51733494449).jpg, CC BY 2.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/46191841@N00\">Jorge Franganillo</a>; Klasse aehnlich, aehnlich zu 025_Freiburg_Martinstor.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 025_Freiburg_Martinstor.jpg (287 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "076": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    4787,
+    5740
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Kaser-Joseph-Straße 250-256 (Freiburg im Breisgau) jm59754.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>; Klasse aehnlich, aehnlich zu 051_Freiburg-Martinstor-Mc_Donalds-01ESD.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 051_Freiburg-Martinstor-Mc_Donalds-01ESD.jpg (612 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "077": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4208,
+    3891
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Brunnen KaJo239 (Freiburg) jm34589.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>; Klasse aehnlich, aehnlich zu 056_Gleiserneuerung_Bertoldsbrunnen_Freiburg_02.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 056_Gleiserneuerung_Bertoldsbrunnen_Freiburg_02.jpg (225 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "078": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    4608,
+    3456
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Martinstor Freiburg.JPG, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Avi1111\" title=\"User:Avi1111\">Avi1111</a> dr. avishai teicher; Klasse aehnlich, aehnlich zu 049_Freiburg_im_Sommer_2013_9878631175.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 049_Freiburg_im_Sommer_2013_9878631175.jpg (514 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "079": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    4598,
+    3444
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Martinstor, Freiburg.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Maxim75\" title=\"User:Maxim75\">Maksym Kozlenko</a>; Klasse aehnlich, aehnlich zu File:Martinstor Freiburg.JPG",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 049_Freiburg_im_Sommer_2013_9878631175.jpg (546 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "080": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 07.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau Martinstor (51733494449).jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 025_Freiburg_Martinstor.jpg (131 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "081": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 01.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 07.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (183 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "082": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 27.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 07.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 025_Freiburg_Martinstor.jpg (144 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "083": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 04.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 01.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (124 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "084": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 08.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 07.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (132 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "085": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 05.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 04.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (151 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "086": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 16.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 07.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 025_Freiburg_Martinstor.jpg (113 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "087": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4592,
+    2576
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Freiburg-Martinstor-Mc Donalds-02ASD.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Asurnipal\" title=\"User:Asurnipal\">Asurnipal</a>; Klasse neu",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz"
+  },
+  "088": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 06.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 05.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (132 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "089": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    4284,
+    5712
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Martinstor, Freiburg im Breisgau, Baden-Wuerttemberg, Germany, October 2023.jpg, CC BY-SA 4.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://mathieuchollet.eu/\">Mathieu Chollet</a> - <a href=\"//commons.wikim; Klasse aehnlich, aehnlich zu 006_Altstadt_Freiburg_Germany_-_panoramio_11.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 006_Altstadt_Freiburg_Germany_-_panoramio_11.jpg (725 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "090": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 03.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 05.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (134 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "091": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 09.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 27.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 025_Freiburg_Martinstor.jpg (137 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "092": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4414,
+    2196
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Gezicht op de Martinstor te Freiburg im Breisgau Freiburg I. Br. Martinstor (titel op object), RP-F-00-9051.jpg, CC0, Rijksmuseum; Klasse neu",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz"
+  },
+  "093": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 19.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 09.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (135 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "094": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 21.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 09.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (79 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "095": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Gleiserneuerung Bertoldsbrunnen Freiburg (16).jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2017-05-02 Altstadt (Freiburg im Breisgau) 18.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 059_Gleiserneuerung_Bertoldsbrunnen_Freiburg_23.jpg (305 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "096": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 18.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 09.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (133 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "097": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 25.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 18.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (141 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "098": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 22.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 19.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (94 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "099": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:CSD in Freiburg 2019 63.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu 059_Gleiserneuerung_Bertoldsbrunnen_Freiburg_23.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 059_Gleiserneuerung_Bertoldsbrunnen_Freiburg_23.jpg (329 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "100": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4432,
+    2208
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Gezicht op de Martinstor te Freiburg im Breisgau Freiburg I. Br. Martinstor von aussen (titel op object), RP-F-00-9053.jpg, CC0, Rijksmuseum; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau Martinstor (51733494449).jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz"
+  },
+  "101": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    3953,
+    5946
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Martinstor (Freiburg im Breisgau) jm10177.jpg, CC BY-SA 3.0, joergens.mi; Klasse aehnlich, aehnlich zu File:View (Freiburg im Breisgau) jm10120.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 049_Freiburg_im_Sommer_2013_9878631175.jpg (240 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "102": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Blick von der Dachterrasse Kaiser-Joseph-Straße 192 in Freiburg Richtung Martinstor.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Blick von der Dachterrasse Kaiser-Joseph-Straße 192 in Freiburg Richtung Martinstor und Universität.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 010_Freiburg_Kaiser-Joseph-Straße_mit_Martinstor_19890625.jpg (52 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "103": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 26.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 25.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (162 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "104": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 20.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 18.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (54 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "105": {
+   "seite": "Ost",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Blick vom Freiburger Schwabentor, am Horizont Uni-Turm, Martinstor, Stadttheater und Bahnhofsturm.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse neu",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 061_Schlossberg_Ost_2016.jpg (42 Inlier, Seite ost) - automatisch, nicht gesichtet"
+  },
+  "106": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4719,
+    3454
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Die Kaiserstraße südlich des Martinstors (Stephanienvorstadt) - Gottlieb Theodor Hase - Augustiner M Freiburg.png, CC0, ?; Klasse neu",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 025_Freiburg_Martinstor.jpg (48 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "107": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 23.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 09.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (127 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "108": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    3840,
+    4800
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Kaiser-Joseph-Strasse mit Martinstor in Freiburg im Breisgau (2025).jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:JoachimKohler-HB\" title=\"User:JoachimKohler-HB\">JoachimKohler-HB</a>; Klasse aehnlich, aehnlich zu 049_Freiburg_im_Sommer_2013_9878631175.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 049_Freiburg_im_Sommer_2013_9878631175.jpg (611 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "109": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Gleiserneuerung Bertoldsbrunnen Freiburg (31).jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Gleiserneuerung Bertoldsbrunnen Freiburg (16).jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 059_Gleiserneuerung_Bertoldsbrunnen_Freiburg_23.jpg (266 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "110": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    3910,
+    5013
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Martinstor (Freiburg im Breisgau) jm59748.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>; Klasse aehnlich, aehnlich zu 014_Freiburg_-_panoramio_3.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 014_Freiburg_-_panoramio_3.jpg (620 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "111": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4518,
+    3607
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Kaiserstraße nach Süden mit Bertoldsbrunnen und Martinstor - Gottlieb Theodor Hase - Augustiner M Freiburg.png, CC0, ?; Klasse neu",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz"
+  },
+  "112": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Kaiser-Joseph-Straße mit Bertoldsbrunnen und Martinstor in Freiburg.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Gleiserneuerung Bertoldsbrunnen Freiburg (31).jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 059_Gleiserneuerung_Bertoldsbrunnen_Freiburg_23.jpg (209 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "113": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3493,
+    6014
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Martinstor (Freiburg im Breisgau) jm33958.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>; Klasse aehnlich, aehnlich zu 052_Freiburg-Torturm-02-2016-gje.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 052_Freiburg-Torturm-02-2016-gje.jpg (582 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "114": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Martinstor 4.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu 053_Fribourg-tram.JPG",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz"
+  },
+  "115": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3717,
+    2996
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Tram 56 von 1927 der Freunde der Freiburger Straßenbahn 2.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Gleiserneuerung Bertoldsbrunnen Freiburg (31).jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 059_Gleiserneuerung_Bertoldsbrunnen_Freiburg_23.jpg (262 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "116": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3695,
+    5337
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Freiburg- Kaiser-Joseph-Straße mit Martinstor - LABW - Staatsarchiv Freiburg W 134 Nr. 100969b.jpg, CC BY 4.0, Willy Pragher; Klasse aehnlich, aehnlich zu File:Kaiser-Joseph-Straße mit Bertoldsbrunnen und Martinstor in Freiburg.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 059_Gleiserneuerung_Bertoldsbrunnen_Freiburg_23.jpg (220 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "117": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    3287,
+    2438
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Freiburg i. Br.- Bertoldsbrunnen und Martinstor um 1900 - LABW - Staatsarchiv Freiburg W 134 Nr. 000617.jpeg, CC BY 4.0, <bdi><a href=\"https://www.wikidata.org/wiki/Q2571685\" class=\"extiw\" title=\"d:Q2571685\"><span title=\"German photographer ; Klasse neu",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 019_Freiburg_2009_IMG_4112.jpg (98 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "118": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    3662,
+    4956
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Martinstor jm25063.jpg, CC BY-SA 3.0, joergens.mi; Klasse aehnlich, aehnlich zu File:Martinstor 4.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 014_Freiburg_-_panoramio_3.jpg (706 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "119": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    3117,
+    2909
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Kaiser Josefstraße (Freiburg im Breisgau) jm12975.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>; Klasse aehnlich, aehnlich zu 025_Freiburg_Martinstor.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 025_Freiburg_Martinstor.jpg (618 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "120": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    3024,
+    4032
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Landappbw 1260143 1822 Brunnen vor dem Martinstor Freiburg.jpg, CC0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.spotteron.com/landappbw/users/38131/spots\">Klemens Maier</a>; Klasse aehnlich, aehnlich zu File:Brunnen KaJo239 (Freiburg) jm34589.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 056_Gleiserneuerung_Bertoldsbrunnen_Freiburg_02.jpg (239 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "121": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    3126,
+    3030
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Kaiser Josefstraße (Freiburg im Breisgau) jm12980.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Kaiser Josefstraße (Freiburg im Breisgau) jm12975.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 025_Freiburg_Martinstor.jpg (439 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "122": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Blick aus dem Sommerkarzer im Turm der Freiburger Albert-Ludwigs-Universität zum Martinstor und Sch.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse neu",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz"
+  },
+  "123": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    3000,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Martinstor in Freiburg mit Stadtbahn (GT8Z) 3.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu 000_090928_Freiburg_IMG_5182.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (369 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "124": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    3000,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 02.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 01.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (261 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "125": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    2848,
+    4288
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:The original Martinstor (citytower) of Freiburg - panoramio.jpg, CC BY 3.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161031085338/http://www.panoramio.com/user/1; Klasse aehnlich, aehnlich zu 042_Freiburg_im_Breisgau_Martinstor_1.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 042_Freiburg_im_Breisgau_Martinstor_1.jpg (585 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "126": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3144,
+    4195
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Freiburg Bauten 201.jpg, Public domain, <div class=\"fn value\">\nVarious authors</div>; Klasse aehnlich, aehnlich zu 024_Freiburg_Bauten_b_201.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz"
+  },
+  "127": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    2736,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Martinstor in Freiburg mit Stadtbahnen (GT8Z + Urbos) 13.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Martinstor in Freiburg mit Stadtbahn (GT8Z) 3.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 000_090928_Freiburg_IMG_5182.jpg (301 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "128": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    3037,
+    4020
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:KaJo (Freiburg) 5964.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Kaser-Joseph-Straße 250-256 (Freiburg im Breisgau) jm59754.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 051_Freiburg-Martinstor-Mc_Donalds-01ESD.jpg (495 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "129": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2709,
+    2265
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Bächleputzer auf der Freiburger Kaiser-Joseph-Straße 6.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:KaJo Richtung Martinstor (Freiburg im Breisgau) jm88602.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 010_Freiburg_Kaiser-Joseph-Straße_mit_Martinstor_19890625.jpg (97 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "130": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    2935,
+    3477
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Kaiser-Joseph-Straße (Freiburg im Breisgau) jm61413.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Kaser-Joseph-Straße 250-256 (Freiburg im Breisgau) jm59754.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 051_Freiburg-Martinstor-Mc_Donalds-01ESD.jpg (595 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "131": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    3104,
+    3663
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:MartinsTorFr.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:Joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau Martinstor (51733494449).jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 025_Freiburg_Martinstor.jpg (234 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "132": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    3024,
+    4032
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Freiburg-Martinstor-01ASD.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Asurnipal\" title=\"User:Asurnipal\">Asurnipal</a>; Klasse aehnlich, aehnlich zu File:Kaiser-Joseph-Straße Freiburg 06.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 025_Freiburg_Martinstor.jpg (86 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "133": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    3000,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Blick von der Dachterrasse Kaiser-Joseph-Straße 192 in Freiburg Richtung Martinstor 1.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Martinstor (Freiburg im Breisgau) jm10177.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 019_Freiburg_2009_IMG_4112.jpg (140 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "134": {
+   "seite": "Sued",
+   "silhouette_frei": false,
+   "vollbild": [
+    3024,
+    4032
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Landappbw 1341079 1822 Brunnen vor dem Martinstor Freiburg.jpg, CC0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.spotteron.com/landappbw/users/38131/spots\">Klemens Maier</a>; Klasse aehnlich, aehnlich zu 041_Freiburg_im_Breisgau_46.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 041_Freiburg_im_Breisgau_46.jpg (302 Inlier, Seite sued) - automatisch, nicht gesichtet",
+   "sfm_netz": "sued"
+  },
+  "135": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    3000,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Martinsgässle in Freiburg mit Martinstor.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse neu",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 001_2024-10-26_MPM-Days_Freiburg_BR_018.jpg (130 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "136": {
+   "seite": "Nord",
+   "silhouette_frei": false,
+   "vollbild": [
+    3000,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Martinstor ohne Oberleitungen, die anlässlich von Gleisbauarbeiten entfernt wurden 2.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu 014_Freiburg_-_panoramio_3.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 014_Freiburg_-_panoramio_3.jpg (879 Inlier, Seite nord) - automatisch, nicht gesichtet",
+   "sfm_netz": "nord"
+  },
+  "137": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3000,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:2017-03-13, Kanal- und Gleiserneuerung auf der Freiburger Kaiser-Joseph-Straße, Bänke am Bauzaun, im Hintergrun.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:KaJo Richtung Martinstor (Freiburg im Breisgau) jm88602.jpg",
+   "seite_quelle": "Seitenvorschlag: aehnlichstes Basisfoto 010_Freiburg_Kaiser-Joseph-Straße_mit_Martinstor_19890625.jpg (88 Inlier, Seite unbekannt) - automatisch, nicht gesichtet"
+  },
+  "138": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2944,
+    4056
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Freiburg Bauten 200.jpg, Public domain, <div class=\"fn value\">\nVarious authors</div>; Klasse aehnlich, aehnlich zu 023_Freiburg_Bauten_b_200.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz"
+  },
+  "139": {
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2520,
+    1680
+   ],
+   "quelle": "bilder_holen.py (2026-11-01): File:Landappbw 201882 1817 Kaiser-Joseph-Straße mit Martinstor ca. 1967 Freiburg.jpg, CC0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.spotteron.com/landappbw/users/27487/spots\">WHerzog</a>; Klasse aehnlich, aehnlich zu File:Martinstor in Freiburg im Breisgau (2025).jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz"
   }
  },
  "zentrierung": "achse",
@@ -383,7 +1150,38 @@
    "066",
    "067",
    "060",
-   "061"
+   "061",
+   "075",
+   "077",
+   "080",
+   "081",
+   "082",
+   "083",
+   "084",
+   "085",
+   "086",
+   "088",
+   "090",
+   "091",
+   "093",
+   "094",
+   "096",
+   "097",
+   "098",
+   "103",
+   "104",
+   "106",
+   "107",
+   "119",
+   "120",
+   "121",
+   "123",
+   "124",
+   "125",
+   "127",
+   "131",
+   "132",
+   "134"
   ],
   "nord": [
    "001",
@@ -403,7 +1201,23 @@
    "049",
    "051",
    "060",
-   "061"
+   "061",
+   "071",
+   "073",
+   "076",
+   "078",
+   "079",
+   "089",
+   "101",
+   "108",
+   "110",
+   "117",
+   "118",
+   "128",
+   "130",
+   "133",
+   "135",
+   "136"
   ],
   "ausgeschlossen_nur_oberbau": [
    "003",

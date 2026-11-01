@@ -97,21 +97,34 @@ def main():
         json.dump(kand, open(os.path.join(aus, "kandidaten.json"), "w"), indent=1, ensure_ascii=False); print("nur Kandidaten geschrieben"); return
     # ---- Vorschaubilder (1024 px) + Guete + Hash + gelernte Merkmale (ALIKED + LightGlue, GPU; Lizenz: Apache/BSD, siehe LIZENZ_WERKZEUGE.md)
     import torch; from lightglue import LightGlue, ALIKED; from lightglue.utils import load_image
-    dev = "cuda" if torch.cuda.is_available() else "cpu"; ext = ALIKED(max_num_keypoints=2048).eval().to(dev); matcher = LightGlue(features="aliked").eval().to(dev)
-    print(f"  Matcher ALIKED+LightGlue auf {dev}")
+    from concurrent.futures import ThreadPoolExecutor
+    dev = "cuda" if torch.cuda.is_available() else "cpu"
+    if dev == "cuda": torch.cuda.set_per_process_memory_fraction(float(Q.get("gpu_anteil", 0.45)))   # Deckel: COLMAP/andere GPU-Jobs koennen daneben laufen
+    ext = ALIKED(max_num_keypoints=2048).eval().to(dev); matcher = LightGlue(features="aliked").eval().to(dev)
+    cache = os.path.join(aus, "_merkmale"); os.makedirs(cache, exist_ok=True); pool = ThreadPoolExecutor(max_workers=4)
+    print(f"  Matcher ALIKED+LightGlue auf {dev}; Merkmals-Cache {os.path.relpath(cache, repo) if cache.startswith(repo) else cache}")
     def merkmale(pfad):
+        """ALIKED-Merkmale (gecacht als .pt neben den Vorschauen), Schaerfe und pHash."""
+        cp = os.path.join(cache, os.path.basename(pfad) + ".pt")
+        if os.path.exists(cp):
+            d = torch.load(cp, map_location=dev, weights_only=False); d["f"] = {k: v.to(dev) if hasattr(v, "to") else v for k, v in d["f"].items()}; return d
         im = cv2.imread(pfad)
         if im is None: return None
         g = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY); s_ = 1024 / max(g.shape); g = cv2.resize(g, None, fx=s_, fy=s_) if s_ < 1 else g
         with torch.no_grad(): f = ext.extract(load_image(pfad, resize=1024).to(dev))
-        return dict(sharp=float(cv2.Laplacian(g, cv2.CV_64F).var()), ph=phash(g), f=f, kp=f["keypoints"][0].cpu().numpy())
-    def inlier(A, B):
-        """Zahl geometrisch bestaetigter Zuordnungen (LightGlue + Fundamentalmatrix-RANSAC) - Mass fuer 'gleiches Objekt, ueberlappende Sicht'."""
-        with torch.no_grad(): m = matcher({"image0": A["f"], "image1": B["f"]})
-        idx = m["matches"][0].cpu().numpy()
+        d = dict(sharp=float(cv2.Laplacian(g, cv2.CV_64F).var()), ph=phash(g), f={k: v.detach().cpu() for k, v in f.items()}, kp=f["keypoints"][0].cpu().numpy())
+        torch.save(d, cp); d["f"] = {k: v.to(dev) if hasattr(v, "to") else v for k, v in d["f"].items()}; return d
+    def _geom(kpA, kpB, idx):
         if len(idx) < 12: return 0
-        p1, p2 = A["kp"][idx[:, 0]], B["kp"][idx[:, 1]]; F, mask = cv2.findFundamentalMat(p1, p2, cv2.FM_RANSAC, 2.0, 0.999)
-        return int(mask.sum()) if mask is not None else 0
+        F, mask = cv2.findFundamentalMat(kpA[idx[:, 0]], kpB[idx[:, 1]], cv2.FM_RANSAC, 2.0, 0.999); return int(mask.sum()) if mask is not None else 0
+    def inlier_viele(A, Bs):
+        """Ein Kandidat gegen viele Bilder: GPU matcht der Reihe nach, die RANSAC-Geometrie laeuft parallel im Thread-Pool (GPU wartet nicht auf die CPU)."""
+        futs = []
+        for B in Bs:
+            with torch.no_grad(): m = matcher({"image0": A["f"], "image1": B["f"]})
+            futs.append(pool.submit(_geom, A["kp"], B["kp"], m["matches"][0].cpu().numpy()))
+        return [f.result() for f in futs]
+    def inlier(A, B): return inlier_viele(A, [B])[0]
     basis = []
     for f in sorted(os.listdir(os.path.join(repo, obj["fotos_dir"]))):
         if not f.lower().endswith((".jpg", ".jpeg", ".png")): continue
@@ -122,18 +135,25 @@ def main():
         if mk: mk["name"] = f; mk["seite"] = str((obj.get("fotos") or {}).get(f.split("_")[0], {}).get("seite", "")).lower(); basis.append(mk)
     # Schwellen aus den VORHANDENEN Fotos kalibrieren (gleiches Objekt): Inlier zwischen Basisfotos derselben Seite = 'aehnlich/ueberlappend',
     # ueber Seiten hinweg = 'gleiches Objekt, andere Sicht'. T_rel = p10 aller Basispaare mit Inliern > 0 ... konservativ: feste Untergrenze 20
-    paare_gleich, paare_alle = [], []
+    paare_gleich, paare_alle = [], []; import random; random.seed(0)
     for i in range(len(basis)):
-        for j in range(i + 1, len(basis)):
-            n = inlier(basis[i], basis[j]); paare_alle.append(n)
-            if basis[i]["seite"] and basis[i]["seite"] == basis[j]["seite"]: paare_gleich.append(n)
+        partner = [basis[j] for j in range(i + 1, len(basis)) if basis[i]["seite"] and basis[i]["seite"] == basis[j]["seite"]]
+        fremd = [basis[j] for j in range(i + 1, len(basis)) if not (basis[i]["seite"] and basis[i]["seite"] == basis[j]["seite"])]
+        partner_n = inlier_viele(basis[i], partner) if partner else []; paare_gleich += partner_n; paare_alle += partner_n
+        stich = random.sample(fremd, min(3, len(fremd))) if fremd else []; paare_alle += inlier_viele(basis[i], stich) if stich else []
     pa, pg = np.array(paare_alle), np.array(paare_gleich)
-    T_rel = max(20, int(np.percentile(pa[pa > 0], 10))) if (pa > 0).sum() > 10 else 20
+    # relevant: Untergrenze 40 Inlier (Befund Ernte 2: fremde 'Martinstore' aus Ladenburg/Wangen erreichten 20-35, echte Fernsichten ab ~42),
+    # sonst p10 der Basispaare derselben Seite (gleiches Objekt, ueberlappend)
+    T_rel = max(40, int(np.percentile(pg[pg > 0], 10))) if (pg > 0).sum() > 10 else 40
     T_sim = max(T_rel * 2, int(np.percentile(pg[pg > 0], 50))) if (pg > 0).sum() > 10 else T_rel * 3
     print(f"  Kalibrierung an {len(basis)} Basisfotos: Paare gesamt {len(pa)} (Inlier p10/p50/p90 {np.percentile(pa,[10,50,90]).astype(int).tolist()}), gleiche Seite {len(pg)} (p50 {int(np.median(pg)) if len(pg) else '-'}) -> relevant >= {T_rel}, aehnlich >= {T_sim}")
     seiten_vorhanden = {}
     for b in basis: seiten_vorhanden[b["seite"] or "unbekannt"] = seiten_vorhanden.get(b["seite"] or "unbekannt", 0) + 1
     print(f"  Seiten vorhanden: {seiten_vorhanden}")
+    repr_ = []
+    for sd in sorted({b["seite"] for b in basis}):
+        repr_ += sorted([b for b in basis if b["seite"] == sd], key=lambda b: -len(b["kp"]))[:4]
+    print(f"  Repraesentanten fuer den Relevanz-Vortest: {len(repr_)} ({', '.join(b['name'][:12] for b in repr_)})")
     rows = []
     for k in kand:
         pv = os.path.join(th, hashlib.md5(k["title"].encode()).hexdigest() + "_1024.jpg")
@@ -142,7 +162,9 @@ def main():
         if not mk: continue
         k.update(sharp=round(mk["sharp"], 1)); k["_mk"] = mk
         if mk["sharp"] < min_sharp: k["klasse"] = "unscharf"; rows.append(k); continue
-        best = max(((inlier(mk, b), b) for b in basis), key=lambda q: q[0])
+        vor = inlier_viele(mk, repr_); bestv = max(zip(vor, repr_), key=lambda q: q[0])
+        if bestv[0] < T_rel * 0.5: k["aehnlich_basis"] = dict(name=bestv[1]["name"], seite=bestv[1]["seite"], inlier=int(bestv[0])); k["klasse"] = "irrelevant"; rows.append(k); continue   # Vortest: weit unter relevant
+        alle = inlier_viele(mk, basis); best = max(zip(alle, basis), key=lambda q: q[0])
         k["aehnlich_basis"] = dict(name=best[1]["name"], seite=best[1]["seite"], inlier=int(best[0]))
         if best[0] < T_rel: k["klasse"] = "irrelevant"; rows.append(k); continue          # zeigt dieses Objekt nicht (oder nur winzig)
         k["guete"] = float(k["orig_w"]) * math.log10(max(mk["sharp"], 1.0)); rows.append(k)
@@ -153,7 +175,7 @@ def main():
         for other in gew + basis:
             if hamming(mk["ph"], (other["_mk"] if "_mk" in other else other)["ph"]) <= 6: klasse, bezug = "dup", other.get("title") or other.get("name"); break
         if klasse != "dup":
-            best_g = max(((inlier(mk, o["_mk"]), o["title"]) for o in gew), default=(0, None), key=lambda q: q[0])
+            best_g = max(zip(inlier_viele(mk, [o["_mk"] for o in gew]), [o["title"] for o in gew]), default=(0, None), key=lambda q: q[0]) if gew else (0, None)
             ib = k["aehnlich_basis"]["inlier"]
             if max(best_g[0], ib) >= T_sim: klasse, bezug = "aehnlich", (best_g[1] if best_g[0] >= ib else k["aehnlich_basis"]["name"])
         k["klasse"] = klasse; k["aehnlich_zu"] = bezug
