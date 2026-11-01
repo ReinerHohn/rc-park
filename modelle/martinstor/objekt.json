@@ -134,5 +134,12 @@
  },
  "zentrierung": "achse",
  "elemente": "modelle/martinstor/elemente.json",
- "audit": "modelle/martinstor/audit"
+ "audit": "modelle/martinstor/audit",
+ "laser": {
+  "fenster_npy": "/media/oem/scan/tmp/mt_dom/mt_win.npy",
+  "gelaende_m": 277.98,
+  "raster_n": 60,
+  "quelle": "LGL BW DOM1 1 m, Fenster 60x60 m um den Gipfel (tools/masspruefung_daten.py); Gelaende aus DGM1"
+ },
+ "augenhoehe_m": 1.7
 }

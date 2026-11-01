@@ -10,10 +10,19 @@ an der er entsteht - und nicht an einer Summe, in der sich Fehler gegenseitig au
 Das Modell wird wie in optimierung_validieren gedreht/verschoben (beste Lage aus einem groben Raster), damit der Vergleich fair ist.
 Grenzen: DOM1 ist 1-m-Raster von oben; Flaechen < ~3 m2 und senkrechte Strukturen sind dort unsicher (siehe Quellen-Matrix).
 """
-import sys, os, numpy as np, trimesh
+import sys, os, json, numpy as np, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-DOM = "/media/oem/scan/tmp/mt_dom/mt_win.npy"; N = 60; GELAENDE = 277.98
+# Laserfenster und Gelaendehoehe kommen aus objekt.json (Schluessel "laser"), nicht aus dem Code.
+def _laser(objp=None):
+    for p in ([objp] if objp else []) + sorted(__import__("glob").glob(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "modelle", "*", "objekt.json"))):
+        try:
+            o = json.load(open(p))
+            if "laser" in o: return o["laser"]["fenster_npy"], float(o["laser"]["gelaende_m"]), int(o["laser"].get("raster_n", 60))
+        except Exception: pass
+    raise SystemExit("kein objekt.json mit Schluessel 'laser' gefunden (fenster_npy, gelaende_m)")
+_objp = next((x for x in sys.argv[1:] if x.endswith("objekt.json")), None)
+DOM, GELAENDE, N = _laser(_objp)
 ref = np.load(DOM) - GELAENDE
 yy, xx = np.mgrid[:N, :N]; PR = np.unravel_index(np.argmax(ref), ref.shape)
 

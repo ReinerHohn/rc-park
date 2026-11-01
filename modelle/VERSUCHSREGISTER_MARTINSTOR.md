@@ -437,3 +437,22 @@ findet es sofort: Foto 030 -> 26,84 m (Durchmesser 3,80), Foto 041 -> 26,64 und 
 Der Nutzerhinweis "Uhr sitzt tiefer" ist damit an der Uhrhoehe NICHT bestaetigt - moeglicherweise war ein anderer Abstand gemeint
 (zum Zinnenkranz oder zum Gesims). Als Rueckfrage notiert. Neue Pruefzeile "Uhr Zifferblatt-Hoehe 26,0-28,2 m" (quelltyp foto_kalibriert).
 **Lehre: Form-Detektoren (Hough) scheitern an gestoerten Konturen; Farbe ist bei Bauteilen oft das robustere Merkmal.**
+
+## Y. Wie generisch ist es wirklich? Gemessen (2026-11-01, Nutzer: "wie viel % generell?")
+**Zeilen, gezaehlt:**
+| Teil | Zeilen | generisch? |
+|---|---|---|
+| 12 Messwerkzeuge (`tools/`) | 1489 | ja - laufen fuer jedes Objekt (Beweis Register W) |
+| Generator `martinstor_v4_gen.py`, Funktionen | 173 (39 %) | ja, aber nur hier - 17 Element-Generatoren (box, fbox, fcyl, frustum, prism, quoins, window, bruchstein, clock3, falze, hxy ...) |
+| Generator, Komposition und Masse | 275 (61 %) | nein - und das ist richtig: das IST das Bauwerk |
+| Daten `modelle/martinstor/*.json` | 3027 | nein - und das ist richtig: Masstabelle, Anker, Protokolle |
+**Code, der fuer ein zweites Bauwerk wiederverwendbar ist: 1489 + 173 = 1662 von 1937 Zeilen = 86 %.** Die restlichen 275 Zeilen
+sind die Form dieses Turms - ein zweites Bauwerk braucht dort eigene Zeilen, so wie es einen eigenen Bauplan braucht.
+**Drei echte Hardcodings in den WERKZEUGEN gefunden und behoben** (das waren die letzten):
+1. `hypso_profil.py` hatte Laserfenster und Gelaendehoehe fest im Code (`mt_win.npy`, 277.98) -> jetzt `objekt.json/laser`.
+2. `foto_kalibrieren.py` hatte die Augenhoehe 1,7 m zweimal fest -> jetzt `objekt.json/augenhoehe_m`.
+3. `seiten_audit.py` und `fehlteile_finden.py` hatten den Brennweitenfaktor der Silhouettenkamera (5,4/4,29, aus einer Pentax) im Ausdruck -> benannte Konstante `SIL_F0`.
+**Der Weg zu ~100 %** ist nicht, die 275 Zeilen wegzuoptimieren, sondern die 17 Element-Generatoren in eine BIBLIOTHEK zu ziehen
+(`tools/bauwerk_generator.py` hat diesen Ansatz schon: Elemente per Config komponieren). Dann waere ein Generator nur noch eine
+Liste "welches Element mit welchen Massen" - also Daten, nicht Code. Geschaetzter Aufwand: die 17 Funktionen sind bereits
+objektunabhaengig geschrieben und muessten nur umziehen; die Komposition bliebe als Config.

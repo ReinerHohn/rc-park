@@ -47,6 +47,7 @@ def dt_wert(dt, uv):
     x0 = x.astype(int); y0 = y.astype(int); fx = x - x0; fy = y - y0
     return ((dt[y0, x0] * (1 - fx) + dt[y0, x0 + 1] * fx) * (1 - fy) + (dt[y0 + 1, x0] * (1 - fx) + dt[y0 + 1, x0 + 1] * fx) * fy)
 
+AUGENHOEHE = 1.7      # Standard-Augenhoehe fuer Strassenfotos; je Objekt in objekt.json ueberschreibbar
 ERLAUBT = {"--silhouette", "--sil-gewicht", "--stl"}
 
 def main():
@@ -55,7 +56,8 @@ def main():
     if unbekannt: raise SystemExit(f"unbekannte Option(en): {unbekannt}; erlaubt: {sorted(ERLAUBT)}")
     print(f"  Optionen erkannt: {[x for x in sys.argv[3:] if x.startswith('--')] or 'keine'}")
     a = sys.argv[1:]                                     # Optionsliste (eigener Name; 'a' wurde unten von der Ankerschleife ueberschrieben)
-    obj = json.load(open(objp)); root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(objp))))
+    global AUGENHOEHE
+    obj = json.load(open(objp)); AUGENHOEHE = float(obj.get("augenhoehe_m", 1.7)); root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(objp))))
     od = os.path.join(root, os.path.dirname(obj["masstabelle"])); A = json.load(open(os.path.join(od, "anker3d.json")))["anker"]
     kp = os.path.join(od, "messprotokoll", f"K-{nr}.json"); K = json.load(open(kp))
     fn = glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]; im = cv2.imread(fn); H, W = im.shape[:2]; cx, cy = W / 2, H / 2
@@ -87,7 +89,7 @@ def main():
             L3 = np.array([[xy[0], xy[1], 0.0], [xy[0], xy[1], 40.0]]); l2, _ = projiziere(L3, rvec, t, f, cx, cy); d = l2[1] - l2[0]; n = np.array([-d[1], d[0]]) / np.linalg.norm(d)
             r = np.r_[r, ((pts - l2[0]) @ n) / 3.0]
         if K.get("strassenfoto"):                                              # Strassenfoto: Augenhoehe 1,7 +- 0,5 m als weiche Bedingung
-            R, _ = cv2.Rodrigues(rvec); camz = float((-R.T @ t)[2]); r = np.r_[r, (camz - 1.7) / 0.5 * 3.0]
+            R, _ = cv2.Rodrigues(rvec); camz = float((-R.T @ t)[2]); r = np.r_[r, (camz - AUGENHOEHE) / 0.5 * 3.0]
         if sil and SILP[0] is not None:                                     # Silhouettenterm: feste 3D-Randpunkte auf die Fotokante ziehen
             uvs, zs = projiziere(SILP[0], rvec, t, f, cx, cy)
             d = dt_wert(dt, uvs); d[zs < 1] = 150.0
@@ -110,7 +112,7 @@ def main():
         for az in azs:
             for dist in (12, 20, 32, 50, 80):
                 for zt in (12, 25, 40):
-                    cam = np.array([dist * math.cos(az), dist * math.sin(az), 1.7]); rv, tv = look_at(cam, np.array([0, 0, float(zt)]))
+                    cam = np.array([dist * math.cos(az), dist * math.sin(az), AUGENHOEHE]); rv, tv = look_at(cam, np.array([0, 0, float(zt)]))
                     starts.append(np.r_[rv, tv, f0])
     if len(P3) >= 4 and not fexif:                                        # Brennweiten-Scan: je f PnP (EPnP + iterativ), bestes f als Start
         for f0 in np.linspace(0.25 * H, 2.5 * H, 46):

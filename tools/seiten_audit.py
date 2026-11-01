@@ -7,6 +7,7 @@ darunter je verfuegbarem Foto mit bekannter Seite das Paar Foto | Modell aus der
 Das Blatt wird nicht bewertet - es muss ANGESEHEN werden (CLAUDE.md Regel 3). Jede Seite, die nur als Annahme existiert, ist hier sichtbar.
 """
 import sys, os, json, glob, math, numpy as np, cv2, trimesh
+SIL_F0 = 5.4 / 4.29   # Brennweitenfaktor der Silhouettenkamera (foto_silhouette_gpu); je Objekt in objekt.json ueberschreibbar
 
 def lade(obj, root):
     m = trimesh.load(os.path.join(root, obj["stl"]))
@@ -72,7 +73,7 @@ def main():
             cam = np.array([0, 0, t[3]]) + t[0] * np.array([math.sin(t[1]) * math.cos(t[2]), -math.cos(t[1]) * math.cos(t[2]), math.sin(t[2])])
             fw = np.array([0, 0, t[3]]) - cam; fw /= np.linalg.norm(fw); rt = np.cross(fw, [0, 0, 1.0]); rt /= np.linalg.norm(rt); dn = np.cross(fw, rt)
             cr, sr = math.cos(t[4]), math.sin(t[4]); Rm = np.vstack([cr * rt + sr * dn, -sr * rt + cr * dn, fw]); tm = -Rm @ cam
-            img, _ = sz.schattiert_np(Rm, tm, 5.4 / 4.29 * 400 * k * t[5], W2 / 2 + t[6], H2 / 2 + t[7], W2, H2, hintergrund=238)
+            img, _ = sz.schattiert_np(Rm, tm, SIL_F0 * 400 * k * t[5], W2 / 2 + t[6], H2 / 2 + t[7], W2, H2, hintergrund=238)
             r = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
             pair = np.hstack([im, r]); cv2.putText(pair, f"Foto {nr} ({cfg['seite']})", (8, 26), 0, 0.8, (0, 0, 200), 2); pairs.append(pair)
     except Exception as e:

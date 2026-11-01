@@ -10,6 +10,7 @@ Ausgabe: modelle/<objekt>/audit/fehlteile_<foto>.jpg (Heatmap ueber dem Foto, nu
 Grenzen: nur Kanten (keine Farbe), Verdeckungen (Baeume, Leitungen) erzeugen Scheintreffer -> jeder Treffer wird angesehen, bevor er in den Generator geht.
 """
 import sys, os, json, glob, math, numpy as np, cv2, trimesh
+SIL_F0 = 5.4 / 4.29   # Brennweitenfaktor der Silhouettenkamera (foto_silhouette_gpu); je Objekt in objekt.json ueberschreibbar
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 def kamera_laden(K, obj, nr, root, W, H):
@@ -22,7 +23,7 @@ def kamera_laden(K, obj, nr, root, W, H):
             tgt = np.array([0, 0, tz]); cam = tgt + d * np.array([math.sin(az) * math.cos(el), -math.cos(az) * math.cos(el), math.sin(el)])
             fw = tgt - cam; fw /= np.linalg.norm(fw); x = np.cross(fw, [0, 0, 1.0]); x /= np.linalg.norm(x); y = np.cross(fw, x)
             cr, sr = math.cos(ro), math.sin(ro); x2 = cr * x + sr * y; y2 = -sr * x + cr * y; R = np.vstack([x2, y2, fw]); t = -R @ cam
-            f = 5.4 / 4.29 * 400 * k * fs; return R, t, f, "Silhouettenkamera %s (sx/sy %.0f/%.0f px vernachlaessigt)" % (os.path.basename(kp), sx * k, sy * k)
+            f = SIL_F0 * 400 * k * fs; return R, t, f, "Silhouettenkamera %s (sx/sy %.0f/%.0f px vernachlaessigt)" % (os.path.basename(kp), sx * k, sy * k)
     raise SystemExit("keine Kamera fuer Foto " + nr)
 
 def render(m, R, t, f, W, H, cx, cy, n=2500000):

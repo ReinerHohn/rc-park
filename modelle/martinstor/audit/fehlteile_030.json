@@ -60,6 +60,34 @@
     -0.96,
     9.59
    ]
+  },
+  {
+   "zelle": [
+    945,
+    1953,
+    63
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.6,
+    0.14,
+    9.66
+   ]
+  },
+  {
+   "zelle": [
+    1386,
+    1953,
+    63
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    4.52,
+    5.57,
+    9.13
+   ]
   }
  ]
 }
