@@ -327,3 +327,20 @@ hoechstens 0,05. **Die Modellflanke ist bestaetigt, der Widerspruch war ein Arte
 **Generelle Mechanik daraus:** Der Pruefstand meldet jetzt nicht nur, welche Zeilen einen Massstab aus dem Modell haben (zirkulaer), sondern auch,
 welche davon ERSETZBAR sind - naemlich wenn fuer dasselbe Merkmal inzwischen eine modellfreie Quelle (Dokument, LoD2, Laser, kalibriertes Foto)
 existiert. Zirkulaere Zeilen taeuschen Widersprueche vor und muessen weichen, sobald es etwas Besseres gibt.
+
+## S. GPU-Nutzung gemessen und ausgebaut (2026-11-01, Nutzerfrage "wie stark nutzen wir die GPU?")
+**Befund:** 15 aeltere Werkzeuge nutzen CUDA (foto_silhouette_gpu, hypso_gpu, generator_optimierer, VGGT ...), aber ALLE in dieser Sitzung
+gebauten Messwerkzeuge liefen auf der CPU. Laufzeiten vorher: seiten_audit 26,3 s | hypso_profil 13,5 s je STL | fehlteile_finden 7,8 s |
+pruefstand 4,7 s | foto_breitenprofil 3,1 s - ein Bau-Durchlauf also rund 110 s.
+**Erste Messung war ernuechternd:** GPU-Rasterung allein brachte NICHTS (0,33 s gegen 0,20 s auf CPU) - die Projektion lief in numpy, und der
+Transfer CPU->GPU->CPU frass den Gewinn. **Erst als die Punktwolke auf der GPU BLEIBT** (`render_kern.Szene`), lohnt es: 10 Masken 0,14 s statt
+2,43 s (17x), 10 schattierte Bilder 0,14 s statt 2,90 s (21x).
+**`tools/render_kern.py` (neu): EIN Renderkern fuer alle Werkzeuge** - projizieren, Z-Puffer (scatter_reduce amin), Maske, schattiertes Bild,
+Hypsometrie. Grund ist nicht nur Tempo: dieselbe Rechnung steckte vierfach im Code (pruefstand, foto_breitenprofil, fehlteile_finden,
+seiten_audit) und die Fassungen wichen bereits voneinander ab (8,58 m gegen 13,58 m, weil eine weniger Punkte nahm). Vier Implementierungen
+sind vier Fehlerquellen. `RENDER_CPU=1` schaltet auf CPU, Ergebnis identisch.
+**Umgestellt:** seiten_audit 26,3 s -> 3,5 s (7,4x), bei 2,5 statt 1,5 Mio Punkten. Offen: fehlteile_finden, foto_breitenprofil,
+pruefstand.silhouettenbreite, hypso_profil (Lagesuche: 350 Rasterungen, dort ist der groesste verbleibende Gewinn) und
+foto_kalibrieren --silhouette (hunderte Projektionen je Optimierungslauf).
+**Generelle Lehre:** GPU lohnt nicht pro Aufruf, sondern pro DATENSATZ - die Daten muessen oben bleiben. Und: bevor man optimiert, misst man;
+die erste, naheliegende GPU-Variante war langsamer als die CPU.

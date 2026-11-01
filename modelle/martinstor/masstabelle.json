@@ -787,6 +787,41 @@
    "auto_id": "fehlteile-041-960-576",
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.38 m, y=1.98 m (Zelle [960, 576, 96], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 7)",
+   "auto_id": "fehlteile-030-1386-1890",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=9.99 m, y=5.55 m (Zelle [1386, 1890, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 7 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 8)",
+   "auto_id": "fehlteile-030-1386-2016",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=8.17 m, y=5.52 m (Zelle [1386, 2016, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 8 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 9)",
+   "auto_id": "fehlteile-030-1386-2142",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=6.33 m, y=5.52 m (Zelle [1386, 2142, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 9 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 10)",
+   "auto_id": "fehlteile-030-1197-882",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.06 m, y=3.94 m (Zelle [1197, 882, 63], Score +0.99)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 10 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 11)",
+   "auto_id": "fehlteile-030-1134-945",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.12 m, y=3.52 m (Zelle [1134, 945, 63], Score +0.99)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 11 ansehen, Element benennen, Zeile + beleg()"
   }
  ]
 }

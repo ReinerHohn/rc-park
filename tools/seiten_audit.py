@@ -14,6 +14,18 @@ def lade(obj, root):
     c = m.bounds.mean(0) if obj.get("zentrierung", "huelle") == "huelle" else np.zeros(3)
     m.apply_translation([-c[0], -c[1], -m.bounds[0, 2]]); return m
 
+def ortho_schnell(sz, P, N, view, hoehe=900):
+    """Orthografisch ueber den gemeinsamen Renderkern: Kamera weit weg + passende Brennweite (perspektivischer Fehler < 0,5 %)."""
+    import render_kern as RK
+    d, r, u = [np.array(v, float) for v in view]
+    mit = P.mean(0); ausd = max(P @ r.max() - P @ r.min(), P @ u.max() - P @ u.min()) if False else max(np.ptp(P @ r), np.ptp(P @ u))
+    D = 4000.0; cam = mit - d * D                                    # Blickrichtung d zeigt VOM Betrachter weg
+    R = np.vstack([r, -u, d]); t = -R @ cam
+    s_ = (hoehe - 20) / ausd; f = D * s_
+    W = int(np.ptp(P @ r) * s_) + 20; H = hoehe
+    img, _ = sz.schattiert_np(R, t, f, W / 2, H / 2, W, H)
+    return cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+
 def ortho(P, N, view, hoehe=900):
     """Orthografische Ansicht: view = (Blickrichtung, Rechts-Vektor, Oben-Vektor)."""
     d, r, u = [np.array(v, float) for v in view]
@@ -37,10 +49,12 @@ VIEWS = {"Sued (+x)": ((-1, 0, 0), (0, 1, 0), (0, 0, 1)), "Nord (-x)": ((1, 0, 0
 def main():
     objp = sys.argv[1]; obj = json.load(open(objp)); root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(objp))))
     out = os.path.join(root, obj.get("audit", os.path.join(os.path.dirname(obj["masstabelle"]), "audit"))); os.makedirs(out, exist_ok=True)
-    m = lade(obj, root); P, fi = trimesh.sample.sample_surface(m, 1500000, seed=0); N = m.face_normals[fi]
+    m = lade(obj, root); P, fi = trimesh.sample.sample_surface(m, 2500000, seed=0); P = np.asarray(P); N = m.face_normals[fi]
+    sys.path.insert(0, os.path.join(root, "tools")); import render_kern as RK
+    sz = RK.Szene(P, N); print(f"  Renderkern: {RK.geraet()}")
     tiles = []
     for name, view in VIEWS.items():
-        im = ortho(P, N, view); cv2.putText(im, name, (8, 26), 0, 0.8, (0, 0, 200), 2); tiles.append(im)
+        im = ortho_schnell(sz, P, N, view); cv2.putText(im, name, (8, 26), 0, 0.8, (0, 0, 200), 2); tiles.append(im)
     H = max(t.shape[0] for t in tiles); row1 = np.hstack([cv2.copyMakeBorder(t, 0, H - t.shape[0], 0, 6, cv2.BORDER_CONSTANT, value=(255, 255, 255)) for t in tiles])
     # Foto | Render je Foto mit bekannter Seite und Kamera
     kam = {}
@@ -55,15 +69,11 @@ def main():
             if not fn: continue
             im = cv2.imread(fn[0]); h, w = im.shape[:2]; s = 700 / h; W2, H2 = int(w * s), 700; im = cv2.resize(im, (W2, H2)); k = W2 / 400.
             t = np.array(kam[nr]["th"], float); t[6] *= k; t[7] *= k
-            uv, f, d = PG.project(t, 5.4 / 4.29 * 400 * k, W2, H2, P)
             cam = np.array([0, 0, t[3]]) + t[0] * np.array([math.sin(t[1]) * math.cos(t[2]), -math.cos(t[1]) * math.cos(t[2]), math.sin(t[2])])
-            zc = np.linalg.norm(P - cam, axis=1); vis = ((cam - P) / zc[:, None] * N).sum(1) > 0.05
-            lit = np.clip(N @ np.array([0.35, -0.45, 0.82]), 0, 1); sh = (70 + 170 * (0.25 + 0.75 * lit)).astype(np.uint8)
-            r = np.full((H2, W2, 3), 238, np.uint8); zb = np.full((H2, W2), 1e9)
-            for i in np.argsort(-zc):
-                if not vis[i]: continue
-                u, v = int(uv[i, 0]), int(uv[i, 1])
-                if 0 <= u < W2 and 0 <= v < H2: zb[v, u] = zc[i]; r[max(0, v - 1):v + 1, max(0, u - 1):u + 1] = sh[i]
+            fw = np.array([0, 0, t[3]]) - cam; fw /= np.linalg.norm(fw); rt = np.cross(fw, [0, 0, 1.0]); rt /= np.linalg.norm(rt); dn = np.cross(fw, rt)
+            cr, sr = math.cos(t[4]), math.sin(t[4]); Rm = np.vstack([cr * rt + sr * dn, -sr * rt + cr * dn, fw]); tm = -Rm @ cam
+            img, _ = sz.schattiert_np(Rm, tm, 5.4 / 4.29 * 400 * k * t[5], W2 / 2 + t[6], H2 / 2 + t[7], W2, H2, hintergrund=238)
+            r = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
             pair = np.hstack([im, r]); cv2.putText(pair, f"Foto {nr} ({cfg['seite']})", (8, 26), 0, 0.8, (0, 0, 200), 2); pairs.append(pair)
     except Exception as e:
         print("Foto-Paare uebersprungen:", e)
