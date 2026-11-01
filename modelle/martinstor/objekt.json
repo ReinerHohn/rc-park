@@ -141,5 +141,11 @@
   "raster_n": 60,
   "quelle": "LGL BW DOM1 1 m, Fenster 60x60 m um den Gipfel (tools/masspruefung_daten.py); Gelaende aus DGM1"
  },
- "augenhoehe_m": 1.7
+ "augenhoehe_m": 1.7,
+ "luftbild": {
+  "tif": "/media/oem/scan/tmp/mt_dop/dop20rgb_32_413_5316_2_bw/dop20rgb_32_414_5316_1_bw_2025.tif",
+  "spitze_hoehe_m": 60.0,
+  "quelle": "LGL BW DOP20 RGB 2025, 20 cm/px, Datenlizenz Deutschland Namensnennung 2.0",
+  "hinweis": "Versatz noch NICHT bestimmt - erste Messung war unplausibel (2712 m2 'Dachflaeche' bei 3600 m2 Ausschnitt)"
+ }
 }

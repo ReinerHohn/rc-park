@@ -999,6 +999,12 @@
    "art": null,
    "text": "Nutzer: Uhr sitzt zu weit oben, und ueber der Uhr gehoert ein Giebel mit ZWEI KONKAV eingezogenen Schenkeln (Modell hat eine S-Kurve). Messung der Uhrhoehe ist UNGUELTIG: absolut 24,77/26,79/27,81 m (Streuung 3,0 m), Kante darueber 1,22/4,54/0,04 m - die Fotos treffen nicht dasselbe Merkmal.",
    "naechster_schritt": "Messverfahren reparieren: Zinnen-Unterkante je Foto als Anker picken (tools/foto_pick.py) statt 'staerkste Kante' zu raten, dann Abstand Zifferblatt-Zinnen in allen drei Fotos; erst bei gueltiger Messung UZ aendern. Der konkave Giebel ist davon unabhaengig und kann sofort gebaut werden."
+  },
+  {
+   "datum": "2026-11-01",
+   "wer": "Claude (DOP20-Auswertung)",
+   "text": "Das Luftbild DOP20 2025 (20 cm/px) zeigt als einzige Quelle die Dachflaechen von oben: vier Tuermchenkegel, Hauptdach, Dachreiter - der Teil der Ost/Westseite, den kein Strassenfoto erreicht. Erste Farbmaske unbrauchbar (erfasste Baeume und Schatten: 2712 m2 statt ~100 m2).",
+   "naechster_schritt": "Farbmaske enger fassen (Kupfergruen gegen Laubgruen, Schatten ausschliessen), Gebaeudeversatz aus der Spitze bestimmen, dann Tuermchenlagen und Dachgrundriss messen - Ergebnis jeweils mit messung_pruefen.plausibel absichern"
   }
  ],
  "beobachtungen_erledigt": [

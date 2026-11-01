@@ -537,3 +537,23 @@ Schenkeln (nicht die S-Kurve, die ich gebaut hatte). Gemessen: Scheitel 28,96 m,
 **Ost/West-Fotos:** Der Laser zeigt, warum es sie kaum gibt - oestlich und westlich stehen Haeuser mit 14-23 m Hoehe direkt am Turm
 (ab 3-7 m Abstand). Die unteren ~20 m dieser Seiten sind von keiner Strasse aus sichtbar; nur der obere Teil ragt heraus.
 Die Commons-Kategorie (107 Dateien, 60 davon bereits im Repo) enthaelt kein Luftbild und keine reine Ost/West-Ansicht.
+
+## AD. Sechster Fall desselben Fehlers - und die zweite Sperre (2026-11-01, Nutzer: "dokumentiere das und lerne aus deinen Fehlern")
+**Was passiert ist:** Direkt nachdem ich `messung_pruefen.py` gegen Fall 1-5 gebaut hatte, habe ich `luftbild_messen.py` geschrieben,
+es meldete "groesste gruene Dachflaeche: 2711,9 m2" - in einem Ausschnitt von 3600 m2, fuer ein Dach von rund 100 m2. Die Farbmaske
+hatte Baeume und Schatten erfasst. **Und das Werkzeug hat den daraus berechneten Versatz ungeprueft in objekt.json geschrieben.**
+**Warum die erste Sperre nicht griff:** `messung_pruefen.pruefe()` vergleicht mehrere Messungen desselben Merkmals miteinander.
+Hier gab es nur EINE Messung - und die war in sich widerspruchsfrei, nur eben unmoeglich. Eine Streuungspruefung faengt das nicht.
+**Zweite Sperre:** `messung_pruefen.plausibel(wert, von, bis, name)` haelt ein Ergebnis gegen einen Erwartungsbereich und BRICHT AB.
+Im Luftbildwerkzeug eingebaut (Dachflaeche 40-260 m2, Versatz 2-40 m). Gegenprobe: derselbe Aufruf endet jetzt mit
+"UNPLAUSIBEL: groesste gruene Flaeche (Hauptdach) = 2711,88 m2, erwartet 40..260 m2 - kein Ergebnis weitergeben". Der falsche
+Wert wurde aus objekt.json zurueckgezogen.
+**Die generelle Regel, die daraus folgt und ab jetzt gilt:**
+> Ein Messwerkzeug gibt kein Ergebnis weiter und schreibt in keine Datei, bevor es zwei Fragen beantwortet hat:
+> (1) Ist das Ergebnis ueberhaupt moeglich? (`plausibel`, Erwartungsbereich aus der Bauwerksgroesse)
+> (2) Messen mehrere Quellen dasselbe? (`pruefe`, Streuung gegen Unsicherheit)
+> Beides gehoert in das Werkzeug, nicht in den Kommentar - und beides wird beim Schreiben eingebaut, nicht nachtraeglich.
+**Was das Luftbild trotzdem wert ist:** Das DOP20 von 2025 (20 cm/px) zeigt als EINZIGE Quelle die Dachflaechen von oben, mit den
+vier Tuermchenkegeln und dem Dachreiter - also genau den Teil der Ost- und Westseite, den kein Strassenfoto erreicht. Die
+Farbmaske muss nur eng genug werden (Kupfergruen gegen Laubgruen trennen, Schatten ausschliessen). Das bleibt als naechster
+Schritt in der Masstabelle, mit der Pflicht, das Ergebnis vorher plausibel zu pruefen.

@@ -34,6 +34,16 @@ def pruefe(werte, sigma, name="Messung"):
                    f"Erst das Messverfahren reparieren (trifft es in jedem Foto dieselbe Kante?), dann erneut messen.")
 
 
+def plausibel(wert, von, bis, name, einheit=""):
+    """Haelt ein Messergebnis gegen einen Erwartungsbereich und BRICHT AB, wenn es unmoeglich ist.
+    Jedes Messwerkzeug ruft das auf, BEVOR es ein Ergebnis weitergibt oder in eine Datei schreibt.
+    Ausloeser (2026-11-01): luftbild_messen meldete 2712 m2 'Dachflaeche' in einem 3600-m2-Ausschnitt (die Farbmaske
+    hatte Baeume und Schatten erfasst) - und das Werkzeug schrieb den daraus berechneten Versatz ungeprueft in objekt.json."""
+    if von <= wert <= bis: return wert
+    raise SystemExit(f"UNPLAUSIBEL: {name} = {wert:.2f} {einheit}, erwartet {von:g}..{bis:g} {einheit}. "
+                     f"Das Messverfahren liefert Unsinn - erst reparieren, kein Ergebnis weitergeben.")
+
+
 def main():
     werte = {k: float(v) for k, v in (s.split("=") for s in sys.argv[1].split(","))}
     gueltig, text = pruefe(werte, float(sys.argv[2]), sys.argv[3] if len(sys.argv) > 3 else "Messung")
