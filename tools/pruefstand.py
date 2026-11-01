@@ -161,6 +161,16 @@ class Messer:
         r = float(np.sqrt(max(c[2] + c[0] ** 2 + c[1] ** 2, 0.0)))
         # z/quer = Schwerpunkt der Reliefzellen (fuer gefuellte Scheiben/Tafeln exakt), z_kreis = Kreisfit (fuer Ringe/Markenkraenze)
         return {"z": float(X[:, 1].mean()), "quer": float(X[:, 0].mean()), "z_kreis": float(c[1]), "radius": r, "anzahl": float(rel.sum())}
+    def tuerm_radius(self, seite, z, quer, achse_tief, band=0.6, schritt=0.05, **k):
+        """Aussenradius eines Rundkoerpers neben der Achse (Ecktuermchen): Strahlen von aussen (Seite -x/+x/-y/+y) auf Hoehe z in einem schmalen
+        Streifen quer +- band; erster Treffer = Aussenkante; Radius = Abstand der Kante von der Tuermchenachse (achse_tief, Betrag). Entspricht
+        der Wolken-Aussenkante (p97 der Tiefe in der Tuermchenzone). nan ohne Treffer."""
+        ax = 0 if seite[1] == "x" else 1; sgn = 1.0 if seite[0] == "+" else -1.0
+        qs = np.arange(quer - band, quer + band + 1e-6, schritt); org = np.zeros((len(qs), 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = qs; org[:, 2] = z
+        dr = np.zeros_like(org); dr[:, ax] = -sgn
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
+        if len(loc) == 0: return float("nan")
+        return float(np.percentile(np.abs(loc[:, ax]), 90) - abs(achse_tief))               # p90 der Treffer = Aussenkante (Pfeiler zwischen Oeffnungen), wie p97 in der Wolke
     def anzahl_im_band(self, z, achse, lo, hi, quer_max, **k):
         """Zaehlt Querschnitte bei z, deren Schwerpunkt auf 'achse' (x|y) zwischen lo..hi liegt und quer < quer_max (z. B. Zinnen einer Seite)."""
         a = 0 if achse == "x" else 1

@@ -274,11 +274,73 @@ adds.append(M.cylinder(TOP - KZ - 0.1, 0.10, 0.04, 8).translate((0, 0, KZ + 0.1)
 # ---------- Ecktuermchen: Sandsteinturm + achteckiger Erker mit Fachwerk-Bruestung und Arkade ----------
 TWs, T0, T1 = _M["TWs"], _M["T0"], _M["T1"]
 OR = _M["OR"]                                # Erker-Radius
+# ---------- Ecktuermchen aus BAENDERN (tools/wolke_tuerm_baender.py -> profile_tuerm_baender.json, Register AU) ----------
+_TB = None
+if _M.get("PROFIL_DATEI", 0) >= 1:
+    _tp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "profile_tuerm_baender.json")
+    if os.path.exists(_tp): _TB = __import__("json").load(open(_tp))
+def _okt_prisma(c, r, z0, z1):
+    """Achteck mit Schluesselweite 2r (Flaeche zeigt nach +-x/+-y, wie die Schnittmessung), von z0 bis z1."""
+    R = r / math.cos(math.radians(22.5)); return M.cylinder(z1 - z0, R, R, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], z0))
+def _okt_kegel(c, r0, z0, r1, z1):
+    R0, R1 = r0 / math.cos(math.radians(22.5)), r1 / math.cos(math.radians(22.5)); return M.cylinder(z1 - z0, R0, max(R1, 0.03), 8).rotate((0, 0, 22.5)).translate((c[0], c[1], z0))
+def bau_tuerm_baender(c, sx, sy):
+    """Ein Ecktuermchen aus den gemessenen Baendern: stein = Schaft (Quader TWs, Eckquader, Fenster), gesims = Kragplatte, fachwerk = Bruestung
+    mit X-Schlitzen und Leisten, offen = Arkadenband mit Bogenoeffnungen (Zahl je Flaeche ANNAHME Foto 043), traufe = Dachplatte mit Konsolen
+    ('Boeckchen', ANNAHME Foto 043), kegel = Kupferkegel von der Traufe zur Spitze. Oeffnungen nur auf Flaechen, die vom Turm wegzeigen."""
+    B = _TB["baender"]; K = _TB["kegel"]; TS = _M["TUERM_SPITZE"]
+    def zum_turm(k): return (math.cos(math.radians(k * 45)) * c[0] + math.sin(math.radians(k * 45)) * c[1]) < -0.3 * math.hypot(*c)
+    stein = [b for b in B if b["klasse"] == "stein" and b["z1"] - b["z0"] >= 1.0]
+    sb = stein[-1] if stein else None                                                       # der eigentliche Schaft (laengstes/oberstes Steinband)
+    z_schaft0, z_schaft1 = (sb["z0"], sb["z1"]) if sb else (T0, T1)
+    KZ0 = _M["KONSOLE_Z0"]
+    adds.append(frustum(c[0], c[1], KZ0, 0.9, 0.9, z_schaft0 + 0.02, TWs, TWs))               # Konsole (Auskragung) bis zum Schaftfuss
+    adds.append(box(c[0] - TWs / 2, c[0] + TWs / 2, c[1] - TWs / 2, c[1] + TWs / 2, z_schaft0, z_schaft1 + 0.02))
+    quoins(c, TWs / 2, TWs / 2, z_schaft0 + 0.1, z_schaft1 - 0.3, a=0.8, b=0.5, course=0.58)
+    hh = (TWs / 2, TWs / 2)
+    for f in (("+x" if sx > 0 else "-x"), ("+y" if sy > 0 else "-y")):
+        window(f, 0.0, z_schaft0 + 1.5, 0.45, 1.0, c=c, hh=hh, deep=0.25)
+    for b in B:
+        z0, z1, r = b["z0"], b["z1"], b["r"]
+        if b["klasse"] == "gesims":
+            adds.append(_okt_prisma(c, r, z0 - 0.02, z1))                                       # Kragplatte / Konsolring
+        elif b["klasse"] == "fachwerk":
+            adds.append(_okt_prisma(c, r, z0 - 0.02, z1))
+            for zz in (z0, z1 - 0.12): adds.append(_okt_prisma(c, r + rel(0.12), zz, zz + 0.12))   # Leisten unten/oben
+            for k in range(8):                                                                   # X-Fachwerk als Schlitze je Flaeche
+                if zum_turm(k): continue
+                for sg in (-1, 1):
+                    cut = M.cube((0.4, 0.08, z1 - z0 - 0.3)).translate((-0.2 + r + 0.02, -0.04, -(z1 - z0 - 0.3) / 2)).rotate((sg * 38, 0, 0))
+                    cuts.append(cut.translate((0, 0, (z0 + z1) / 2)).rotate((0, 0, k * 45)).translate((c[0], c[1], 0)))
+        elif b["klasse"] == "offen":
+            adds.append(_okt_prisma(c, r, z0 - 0.02, z1))
+            fb = 2 * r * math.tan(math.radians(22.5)); n_oe = 2; bw = min(0.36, fb / (n_oe + 1) * 0.8); bh = (z1 - z0) - 0.45
+            for k in range(8):
+                if zum_turm(k): continue
+                for j in range(n_oe):
+                    u = (j - (n_oe - 1) / 2) * fb / (n_oe + 0.5)
+                    oe = M.cube((0.45, bw, bh - bw / 2)).translate((r - 0.35, u - bw / 2, z0 + 0.2))
+                    oe = oe + M.cylinder(0.45, bw / 2, bw / 2, 16).rotate((0, 90, 0)).translate((r - 0.35, u, z0 + 0.2 + bh - bw / 2))   # Rundbogen
+                    cuts.append(oe.rotate((0, 0, k * 45)).translate((c[0], c[1], 0)))
+        elif b["klasse"] == "traufe":
+            adds.append(_okt_prisma(c, r, z0, z1))                                              # Dachplatte (Traufe)
+            for k in range(8):                                                                   # Konsolen ('Boeckchen') unter der Traufe an den Ecken
+                ang = math.radians(k * 45 + 22.5); rr = r - 0.22
+                adds.append(M.cube((0.2, 0.2, 0.3)).translate((-0.1, -0.1, 0)).rotate((0, 0, k * 45 + 22.5)).translate((c[0] + rr * math.cos(ang), c[1] + rr * math.sin(ang), z0 - 0.28)))
+    if K:
+        adds.append(_okt_kegel(c, K["r0"], K["z0"] - 0.02, 0.05, TS - 0.5))                      # Kupferkegel: Gerade Traufe -> Spitze
+    adds.append(M.sphere(0.2, 20).translate((c[0], c[1], TS - 0.35))); adds.append(M.cylinder(0.35, 0.05, 0.015, 8).translate((c[0], c[1], TS - 0.35)))
+    if (sx, sy) == (-1, 1):
+        for b in B: beleg("dach", f"Ecktuermchen Band {b['klasse']} {b['z0']}-{b['z1']} m, r {b['r']}", "wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)", z0=b["z0"], z1=b["z1"], r=b["r"])
+        beleg("dach", "Ecktuermchen Arkadenband: 2 Rundbogenoeffnungen je Aussenflaeche", "ANNAHME aus Foto 043 (Sued, gepaarte Boegen); Bandlage aus der Wolke (dunkel 61 %)", je_flaeche=2)
+        beleg("dach", "Ecktuermchen Traufkonsolen ('Boeckchen') 8 je Tuermchen", "ANNAHME aus Foto 043; Traufplatte r aus der Wolke", anzahl=8)
+        if K: beleg("dach", "Ecktuermchen Kupferkegel Traufe -> Spitze", f"wolke_tuerm_baender.py: r {K['r0']} bei {K['z0']} m, Steigung {K['r_je_m']} r/m zur Spitze {TS}", r0=K["r0"], z0=K["z0"])
 for sx in (-1, 1):
     for sy in (-1, 1):
         _h = hxy(T0 + 1.0)
         if _PROF and _PROF.get("tuerm_achse"): c = (sx * _PROF["tuerm_achse"]["tief"], sy * _PROF["tuerm_achse"]["quer"])   # Kreisfit-Achse (Register AR)
         else: c = (sx * (_h[0] - _M["TUERM_ACHSE_DX"]), sy * (_h[1] - _M["TUERM_ACHSE_DY"]))
+        if _TB: bau_tuerm_baender(c, sx, sy); continue
         hh = (TWs / 2, TWs / 2)
         KZ0, KZ1 = _M["KONSOLE_Z0"], _M["KONSOLE_Z1"]                                        # Konsolen aus der Wolke (Register AS): 27,6 -> 28,9 m
         adds.append(frustum(c[0], c[1], KZ0, 0.9, 0.9, KZ1, TWs, TWs))                        # Auskragung (Konsole)

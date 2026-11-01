@@ -192,10 +192,96 @@
  },
  {
   "seite": "dach",
-  "element": "Konsolen unter den Ecktuermchen (Auskragung)",
-  "quelle": "Wolke Nord y-Gesamtbreite: Anstieg 27,6 -> 28,9 m (Register AS); Foto 043: gestufte Steinkonsolen",
-  "unten": 27.6,
-  "oben": 28.9,
+  "element": "Ecktuermchen Band stein 27.0-27.5 m, r 0.85",
+  "quelle": "wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)",
+  "z0": 27.0,
+  "z1": 27.5,
+  "r": 0.85,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Band gesims 27.5-28.25 m, r 1.17",
+  "quelle": "wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)",
+  "z0": 27.5,
+  "z1": 28.25,
+  "r": 1.17,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Band stein 28.25-31.75 m, r 1.23",
+  "quelle": "wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)",
+  "z0": 28.25,
+  "z1": 31.75,
+  "r": 1.23,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Band gesims 31.75-32.5 m, r 1.5",
+  "quelle": "wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)",
+  "z0": 31.75,
+  "z1": 32.5,
+  "r": 1.5,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Band fachwerk 32.5-33.5 m, r 1.55",
+  "quelle": "wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)",
+  "z0": 32.5,
+  "z1": 33.5,
+  "r": 1.55,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Band offen 33.5-35.0 m, r 1.55",
+  "quelle": "wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)",
+  "z0": 33.5,
+  "z1": 35.0,
+  "r": 1.55,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Band traufe 35.0-35.5 m, r 1.85",
+  "quelle": "wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)",
+  "z0": 35.0,
+  "z1": 35.5,
+  "r": 1.85,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Band kupfer 35.5-43.5 m, r 1.07",
+  "quelle": "wolke_tuerm_baender.py: Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)",
+  "z0": 35.5,
+  "z1": 43.5,
+  "r": 1.07,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Arkadenband: 2 Rundbogenoeffnungen je Aussenflaeche",
+  "quelle": "ANNAHME aus Foto 043 (Sued, gepaarte Boegen); Bandlage aus der Wolke (dunkel 61 %)",
+  "je_flaeche": 2,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Traufkonsolen ('Boeckchen') 8 je Tuermchen",
+  "quelle": "ANNAHME aus Foto 043; Traufplatte r aus der Wolke",
+  "anzahl": 8,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Kupferkegel Traufe -> Spitze",
+  "quelle": "wolke_tuerm_baender.py: r 1.85 bei 35.5 m, Steigung 0.2093 r/m zur Spitze 44.5",
+  "r0": 1.85,
+  "z0": 35.5,
   "seite_name": "dach"
  }
 ]

@@ -438,7 +438,8 @@
    "tools/wolke_profile.py <objekt> nord --zentral-z 40.5 56 --tief-quelle silhouette:061 --generator --pruefungen (Dach: quer Wolke, tief Silhouette + Driftrampe; Tuermchen: Koerper + Kegelgerade)",
    "tools/wolke_farbmerkmal.py <objekt> nord --farbe gold --z 20 32 --pruefung 'Uhr Nord: Mitte z (m)' ... (farbige Fassadenmerkmale -> Pruefzeile; Modellseite relief_mitte)",
    "tools/foto_lod2_zuordnen.py <objekt> <foto> --gml-dir /media/oem/scan/tmp/mt_lod2 --u .. --v .. (unbekanntes Ding im Foto: LoD2 in die Kamera projizieren)",
-   "Sichtfund Seitenansicht: orthografische Projektion Modell + Wolke rendern (audit/seitenansicht_west_wolke.png, Skript in Register AT) und Nordfront je m tabellieren - vor jeder Generatoraenderung"
+   "Sichtfund Seitenansicht: orthografische Projektion Modell + Wolke rendern (audit/seitenansicht_west_wolke.png, Skript in Register AT) und Nordfront je m tabellieren - vor jeder Generatoraenderung",
+   "tools/wolke_tuerm_baender.py <objekt> nord --pruefungen (Tuermchen-Baender aus Aussenradius + Farbklassen -> profile_tuerm_baender.json, Generator baut daraus; je Band Pruefzeile tuerm_radius)"
   ],
   "regel": "Neuer Matcher/Variante NUR mit --name <variante> in eigene Ordner; Referenznetz sparse_<seite> nie ueberschreiben (Panne AK)",
   "quellen_blindheit_dom1_helm": "DOM1-Zellmaxima (1 m) erfassen Helmflaechen steiler als ~75 Grad nur teilweise: Schnittbreiten und Zellzahlen dort keine Obergrenze (Register AR, Foto 061 + Wolke stimmen, DOM1 Faktor 2 kleiner)"

@@ -1004,3 +1004,28 @@ der Kegelkante 0,3-0,5 m (Band der einseitigen Wolke), Achse 3,995/4,44.
 **Lehre (Memory):** Nie nur senkrechte Bezugshoehen fuer einen Fotomassstab - eine waagerechte Bekanntgroesse aus unabhaengiger Quelle
 macht den Massstab pruefbar; ein SfM-Punkt an einem duennen, hohen Bauteil (Nadel) ist kein Anker. Sichtfunde des Nutzers zuerst als
 orthografische Projektion Modell+Wolke rendern (eine Minute), nicht am Viewer-Foto raten.
+
+## AU. Erker-Details der Ecktuermchen als Baender aus der farbigen Wolke (2026-11-01)
+**Nutzer:** "mach die Erker-Details an den Tuermchen, generisch".
+**Werkzeug `tools/wolke_tuerm_baender.py`:** je 0,25 m in der Tuermchenzone Aussenradius (p97 der Tiefe = Silhouette) und Farbklassen
+(stein/weiss/dunkel/kupfer, HSV). Klassenregeln: kupfer > 15 % -> Kegel (oberhalb der Dachtraufe alles Kegel); Radius springt gegen das
+Band DARUNTER um > 0,12 -> Kragplatte (erste = gesims, letzte vor dem Kupfer = traufe); dunkel > 45 % ohne Stein -> offen (Arkaden);
+dunkel < 20 %, wenig Stein -> fachwerk; sonst stein. Baender = gleiche Klasse in Folge (Mindesthoehe 0,5 m). Ergebnis Nord:
+konsolring 27,5-28,25 r 1,17 | Schaft 28,25-31,75 r 1,23 | Kragplatte 31,75-32,5 r 1,50 | Fachwerk 32,5-33,5 r 1,55 | offen 33,5-35,0
+r 1,55 | Traufe 35,0-35,5 r 1,85 | Kupferkegel ab 35,5 (r 1,85) gerade zur Spitze 44,5, Steigung 0,21 r/m (32 Schichten).
+Das deckt sich mit Foto 043 (Bruestung mit X-Fachwerk, gepaarte Bogenoeffnungen, kleines Dach, schlanker Kegel).
+**Generator `bau_tuerm_baender`:** baut jedes Tuermchen aus den Baendern: Konsole bis zum Schaftfuss, Schaft (Quader TWs, Eckquader, Fenster
+aussen), Kragplatten als Achtecke (Schluesselweite = gemessener Radius), Fachwerkband mit Leisten und X-Schlitzen, Arkadenband mit 2 Rundbogen-
+oeffnungen je Aussenflaeche (ANNAHME Foto 043), Traufplatte mit 8 Konsolen ('Boeckchen', ANNAHME Foto 043), Kupferkegel Traufe -> Spitze, Knauf.
+Oeffnungen nur auf Flaechen, die vom Turm wegzeigen. Alte Hand-Elemente (Erkerkoerper bis ERKER_OBEN, Fensterzonen, Helmansatz) nur noch Fallback.
+**Pruefstand:** neue Messung `tuerm_radius` (Strahlen von aussen auf die Tuermchenachse, p90 der Treffer ueber +-0,6 m quer = Aussenkante
+trotz Oeffnungen); je Band eine automatische Zeile 'Ecktuermchen Band <klasse>: Aussenradius' (Soll r +-0,15), zuerst rot (Kragplatte 1,34
+statt 1,50; Traufe 1,55 statt 1,85), nach dem Umbau gruen. Konsolring/Kegel/Fachwerk/offen gruen. Zwei Gesamtbreiten-Zeilen und 'Kegel 4 m unter
+Spitze' mit Historie neu belegt (y-p99 einzelner Schichten streut +-0,5: seitliche Raender im streifenden Winkel unterbesetzt - Nordkante p97
+ist der bessere Beleg; Kegel beginnt an der Traufplatte).
+**Lehren:** (1) Schwerpunkt-/Fensterschnitte scheitern, sobald Kragdach/Glockenstock im Schnitt mit dem Erker verschmelzen - Strahl auf die
+Achse misst wie die Wolke. (2) Werkzeuge, die Pruefzeilen ersetzen, duerfen Messungen nur loeschen, wenn keine Zeile sie mehr nutzt
+(gleicher `wert`-Schluessel bei umbenannter Zeile loeschte die neue Messung). (3) Farbklassen aus der Wolke tragen Semantik (Oeffnung, Holz,
+Kupfer), die der reinen Geometrie fehlt - generisch nutzbar fuer jedes Bauteil mit eigener Farbe.
+**Offen:** Zahl der Bogenoeffnungen je Flaeche und Form der Boeckchen sind Annahmen aus Foto 043 (Sued; kein kalibriertes Nahfoto Nord);
+Suedtuermchen per Symmetrie; auto-Beobachtungs-Hygiene.
