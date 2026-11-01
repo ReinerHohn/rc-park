@@ -6,7 +6,7 @@ Warum ein eigenes Werkzeug statt 'COLMAP ueber alles':
      -> Fotoliste je Seite aus objekt.json["sfm"][<seite>] (Seite vorher per Sichtkriterium bestimmt und eingetragen).
   2. Verkleinern MIT EXIF; Brennweiten-Prior aus EXIF (f35 oder Modell-Sensorbreite), bezogen auf die LANGE Bildseite.
   3. Qualitaetsschranken je Kamera NACH dem Aufbau: Brennweite gegen EXIF-Prior (Faktor), Brennweite gegen Bilddiagonale,
-     Punktzahl, Lage weit ausserhalb -> 'degeneriert'. Mit --reparieren werden degenerierte Kameras entfernt und neu gebaut
+     Punktzahl, Lage weit ausserhalb, Punkte hinter der Kamera (Cheiralitaet > 20 % = Spiegelloesung, Register BB) -> 'degeneriert'. Mit --reparieren werden degenerierte Kameras entfernt und neu gebaut
      (max. 3 Runden); Fernaufnahmen (Brennweite > 3 x Bilddiagonale) werden erst gar nicht in den Erstaufbau genommen,
      sondern danach registriert (sie tragen keine Basis bei, verderben aber die Brennweitenschaetzung).
   4. Bericht als JSON (sfm/netz_<seite>.json): je Kamera f, Prior, Verhaeltnis, Punkte, Status; Netzkennzahlen.
@@ -168,6 +168,13 @@ def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048)):
         k.write(aus + "/0")
     return k, tmp
 
+def tiefen(rec, im):
+    """Tiefen (z im Kamerasystem) aller 3D-Punkte eines registrierten Bildes. Cheiralitaet: ein richtig gesetztes Bild sieht seine
+    Punkte VOR sich (z > 0). Liegen sie dahinter, ist die Pose eine Spiegelloesung (Nullstart 5: fuenf Ultraweitwinkel-Fotos mit
+    EXIF-Prior, alle Punkte z < 0; PatchMatch bricht dann ohne Tiefenbereich ab)."""
+    P = np.array([rec.points3D[p.point3D_id].xyz for p in im.points2D if p.has_point3D()])
+    return (im.cam_from_world() * P)[:, 2] if len(P) else np.zeros(0)
+
 def bewerten(rec, info, prior, fern_faktor):
     """je Kamera: Status ok / degeneriert (Grund)."""
     rows = {}
@@ -175,12 +182,14 @@ def bewerten(rec, info, prior, fern_faktor):
         if not im.has_pose: continue                      # nach deregister_frame bleibt das Bild im Objekt, aber ohne Pose
         nr = os.path.splitext(im.name)[0]; c = rec.cameras[im.camera_id]; f = float(c.params[0]); diag = float(np.hypot(c.width, c.height))
         pr = prior.get(im.name); grund = []
+        d = tiefen(rec, im); hinter = float((d <= 0).mean()) if len(d) else 1.0
+        if hinter > 0.2: grund.append(f"{hinter:.0%} der Punkte hinter der Kamera (Spiegelloesung)")
         if pr and not (0.7 <= f / pr <= 1.4): grund.append(f"f/EXIF = {f / pr:.2f}")
         if f > 4.0 * diag and not pr: grund.append(f"f = {f / diag:.1f} x Diagonale (Fernaufnahme/degeneriert)")   # mit EXIF-Prior ist eine lange Brennweite kein Fehler
         if f < 0.3 * diag: grund.append(f"f = {f / diag:.2f} x Diagonale (unplausibel weit)")
         if im.num_points3D < (25 if pr else 40): grund.append(f"nur {im.num_points3D} Punkte")   # Fern-/Luftbilder mit EXIF-Prior: 25 reichen
         rows[nr] = dict(f_px=round(f, 1), prior_f_px=(round(pr, 1) if pr else None), f_zu_prior=(round(f / pr, 3) if pr else None), f_zu_diag=round(f / diag, 3),
-                        punkte=int(im.num_points3D), status="ok" if not grund else "degeneriert", grund=grund)
+                        punkte=int(im.num_points3D), hinter_kamera=round(hinter, 3), status="ok" if not grund else "degeneriert", grund=grund)
     return rows
 
 def main():

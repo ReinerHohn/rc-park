@@ -4,11 +4,26 @@
 Zweck: Sichtvergleich Foto-Wolke gegen Modell-STL (nicht Massnachweis - dafuer gelten die Pruefungen der Masstabelle).
 Kette: undistort_images -> patch_match_stereo (GPU) -> stereo_fusion -> fused.ply -> Transformation aus SFM-AUSRICHTUNG-<seite>.json
 (X_m = R^T (X_sfm - t) / s) -> Beschnitt Zylinder r <= RADIUS um die Turmachse, z in [ZMIN, ZMAX] -> dicht_<seite>_modell.npy (+ _farben.npy).
+Schutz (Register BB): Bilder ohne gueltigen Tiefenbereich (Punkte hinter der Kamera = Spiegelloesung, oder keine Punkte) kommen nicht in den
+dichten Arbeitsordner (gefiltertes Netz sparse_<seite>/0_dicht), sonst bricht PatchMatch mit 'depth_min > 0' ab (Nullstart 5).
   /media/oem/scan/venv-colmap/bin/python -I tools/sfm_dicht.py modelle/<objekt>/objekt.json <seite> [--radius 25] [--max-size 1600] [--nur-fusion]
 Lizenz: COLMAP BSD; Fotos bleiben Messvorlage (Share-Alike-Fotos nicht in den Bausatz).
 """
-import sys, os, json, math, argparse, time, numpy as np, cv2
+import sys, os, json, math, argparse, time, shutil, resource, numpy as np, cv2
 import pycolmap
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from sfm_netz import tiefen
+resource.setrlimit(resource.RLIMIT_CORE, (0, 0))            # ein COLMAP-Abbruch darf keinen 1,3-GB-Core-Dump auf die Root-Platte legen (Datenplatten-Regel)
+
+def netz_fuer_dicht(sparse, sd, seite):
+    """Netz ohne Bilder, die keinen positiven Tiefenbereich haben (Cheiralitaet; selbes Kriterium wie sfm_netz.bewerten)."""
+    rec = pycolmap.Reconstruction(sparse); raus = []
+    for im in list(rec.images.values()):
+        d = tiefen(rec, im)
+        if len(d) == 0 or np.percentile(d, 5) <= 0: raus.append(im.name); rec.deregister_frame(im.frame_id)
+    if not raus: return sparse
+    ziel = os.path.join(sd, f"sparse_{seite}", "0_dicht"); os.makedirs(ziel, exist_ok=True); rec.write(ziel)
+    print(f"ohne Tiefenbereich (Punkte hinter der Kamera/keine Punkte), nicht in der dichten Rekonstruktion: {raus} -> {rec.num_reg_images()} Bilder in {ziel}", flush=True)
+    return ziel
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("seite"); ap.add_argument("--radius", type=float, default=25.0)
@@ -20,7 +35,8 @@ def main():
     if "rvec" not in tr: raise SystemExit("Ausrichtung ohne rvec/t/s (Buendel-Anker-Variante) - zuerst sfm_ausrichten.py --schreiben")
     t0 = time.time()
     if not a.nur_fusion:
-        os.makedirs(out, exist_ok=True)
+        if os.path.isdir(out): shutil.rmtree(out)           # alter Arbeitsordner = andere Kameras -> entzerrte Bilder passen nicht zu den Tiefenkarten (1600 vs 1598 px, Nullstart 6)
+        os.makedirs(out, exist_ok=True); sparse = netz_fuer_dicht(sparse, sd, a.seite)
         uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = a.max_size
         pycolmap.undistort_images(out, sparse, bilder, output_type="COLMAP", undistort_options=uo)
         print(f"entzerrt {time.time() - t0:.0f} s", flush=True)

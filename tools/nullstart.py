@@ -15,7 +15,7 @@ Kette (jeder Schritt mit Laufzeit und Rueckgabewert in <ziel>/nullstart_bericht.
 Ehrlichkeit: masse.json ist Eingabe. Werte darin, die frueher von Hand aus Werkzeugausgaben uebertragen wurden (Historie 'grund'), werden
 NICHT neu abgeleitet - der Bericht listet sie (Stufe C). Automatisch neu entstehen Netze, Wolke, Profile, Baender, Pruefzeilen, Modell (Stufen A+B).
 """
-import sys, os, json, glob, shutil, subprocess, time, argparse
+import sys, os, json, glob, shutil, subprocess, time, argparse, resource
 
 PY = "/media/oem/scan/venv-seg/bin/python"; PC = "/media/oem/scan/venv-colmap/bin/python"; RC = os.path.expanduser("~/.venvs/rcpark/bin/python")
 
@@ -33,7 +33,7 @@ def lauf(bericht, name, cmd, repo, log, ok_rcs=(0,)):
     t0 = time.time(); print(f"\n+++ {name}: {cmd[:160]}", flush=True)
     with open(log, "a") as L:
         L.write(f"\n\n=== {name} @ {time.strftime('%H:%M:%S')}\n$ {cmd}\n"); L.flush()
-        r = subprocess.run(cmd, shell=True, cwd=repo, stdout=L, stderr=subprocess.STDOUT, text=True)
+        r = subprocess.run(cmd, shell=True, cwd=repo, stdout=L, stderr=subprocess.STDOUT, text=True, preexec_fn=lambda: resource.setrlimit(resource.RLIMIT_CORE, (0, 0)))   # kein Core-Dump auf die Root-Platte (Nullstart 5/6: 2 x 1,3 GB)
     dt = time.time() - t0; eintrag = dict(schritt=name, kommando=cmd, rc=r.returncode, sekunden=round(dt, 1), ok=r.returncode in ok_rcs)
     bericht["schritte"].append(eintrag); json.dump(bericht, open(bericht["_pfad"], "w"), indent=1, ensure_ascii=False)
     print(f"    rc {r.returncode}, {dt:.0f} s", flush=True)

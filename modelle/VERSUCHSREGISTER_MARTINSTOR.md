@@ -1164,3 +1164,54 @@ Merkmalen, sonst CPU), nullstart wartet auf freie GPU. Nullstart 4 (7,1 min; Net
 Referenz danach: Pruefstand 67/67, Baender wie vorher (8 Tuermchen, Arkaden 33,5-35,0 mit 2 Oeffnungen), Schnappschuss erneuert.
 **Lehre:** Farbklassen aus Fotowolken sind zwischen Laeufen nicht stabil; Geometrie (Radiusverlauf) ist es. Jede Massableitung braucht ein
 Plausibilitaetsfenster, sonst kann eine kippende Klasse das Modell ausloeschen. Der Nullstart ist der Test, der das findet.
+
+## BB. Nullstart 5/6 (34+48 Fotos nach der Ernte) und die Untersuchung "Automatik zuverlaessig erhoehen" (2026-11-01)
+**Nullstart 5** (erster Lauf mit den geernteten Fotos, Nord 34 / Sued 48): Netze und Ausrichtung ok (Tuermchen-Residuen 1-3 px), aber
+PatchMatch brach ab ("depth_min > 0 ... no sparse model"): fuenf Ultraweitwinkel-Fotos (076, 110, 118, 128, 130; Pentax 15-27 mm,
+EXIF-Prior) standen als **Spiegelloesung** im Netz - 100 % ihrer 3D-Punkte HINTER der Kamera (alle anderen Bilder <= 0,1 %). Kein
+bisheriges Kriterium (f/EXIF, f/Diagonale, Punktzahl) sah das. Reparatur, generisch:
+- `sfm_netz.bewerten`: Cheiralitaet - > 20 % Punkte hinter der Kamera = degeneriert, `--reparieren` nimmt sie heraus (Nullstart 6: Nord 5, Sued 2
+  (119, 121) entfernt, Reproj 0,77 px, degeneriert danach: keine). Referenznetz: 0 Treffer, Kriterium trennt sauber (100 % gegen 0,1 %).
+- `sfm_dicht.netz_fuer_dicht`: Bilder ohne positiven Tiefenbereich kommen nie in den dichten Arbeitsordner (Schutz in der Tiefe).
+**Nullstart 6** (`--ab netz_nord`): PatchMatch brach erneut ab, diesmal "image 1600 vs depth_map 1598 px": der dichte Arbeitsordner aus Lauf 5
+lag noch da, entzerrte Bilder alter Kameras passten nicht zu den neuen (um 1-2 px andere Entzerrung). Reparatur: `sfm_dicht` leert den
+Arbeitsordner vor dem Entzerren (nur `--nur-fusion` behaelt ihn). Beide Abbrueche legten je einen 1,3-GB-Core-Dump auf die ROOT-Platte
+(/var/lib/systemd/coredump, Root wieder 98 %): `nullstart.lauf` und `sfm_dicht` setzen RLIMIT_CORE = 0. Regression nach den Werkzeugaenderungen: identisch.
+**Lehre (Serie):** Nullstart 1-6 fanden sechs verschiedene Fragilitaeten (alte Tiefenkarten, GPU-Kollision, kippende Farbklasse, Achsen-Ausreisser,
+Spiegelkameras, alter Arbeitsordner). Jede Reparatur war generisch und ohne Verlust (Regression). Der Nullstart bleibt der Dauertest; Ziel:
+drei saubere Laeufe in Folge, erst dann gilt die Kette als zuverlaessig.
+
+### Inventar: was am Martinstor heute noch Handarbeit ist (gezaehlt, nicht geschaetzt)
+- Picks: 15 K-Protokolle, 130 Punkt-/Linienpicks; davon tragen nur 5 Nordfotos (005, 006, 014, 031, 040) die Ankertriangulation
+  (7 Punkte: gold_*, tuermchen_*, spitze_dokument, traufe_N_mitte) - die uebrigen Netzfotos brauchen KEINE Picks, SfM registriert sie selbst.
+- Generator-Belege: 38 Elemente - 17 Foto/Mass, 15 Werkzeug/Wolke, 1 LoD2/DOM1, 7 ANNAHME (Schlitzfenster, 2 x Zinnenkranz "5 Zinnen",
+  2 x Schallarkaden, Arkadenband-Runden, Traufkonsolen).
+- Masse: 59 - 20 schreibt `masse_aus_profilen` selbst; 10 `foto_verhaeltnis` (Handmessungen), 12 `sfm_bodenanker` ausserhalb der Regeln, 7 Laser, 2 LoD2.
+- Fotos: 118 in objekt.json - Seite bei 61 automatisch (aehnlichstes Basisfoto), 33 Sichtpruefung, 31 unbekannt.
+- Beobachtungen offen: 207, davon 186 automatisch (fehlteil 81, breite 61, wolke_vs_modell 41) - nie geraeumt, 1 Nutzer-Beobachtung.
+- Pruefzeilen: 67, 30 von Werkzeugen erzeugt.
+
+### Gemessen: taugt "Picks aus dem Netz projizieren" als Ersatz fuer Handpicks? NEIN, nur als Vorschlag
+Leave-one-out am Referenz-Nordnetz (Punkt aus den uebrigen Fotos triangulieren, ins ausgelassene projizieren, Abstand zum Handpick):
+n = 26, Median 5,8 px, p90 80 px, max 188 px (Vollbild). Mit 3 Strahlen und sigma <= 0,2 m (gold_NE): 15-16 px; spitze_dokument 15-66 px
+(Spitze je Foto anders getroffen, sigma_z bis 11 m); 2-Strahl-Punkte (traufe_N_mitte, ecke_boden_0) 60-190 px. Folgerung: Projektion liefert
+einen PRUEFBAREN Vorschlag (Pick-Pruefbild), kein Mass. Zuverlaessig automatisierbar ist nicht das Picken, sondern das, was keine Picks braucht.
+
+### Hebel, geordnet nach Zuverlaessigkeit (Beweis je Hebel = Regression identisch + Nullstart gruen)
+1. Dauertest Nullstart (schon da): jede Werkzeugaenderung -> Regression; jede Ketten-/Datenaenderung -> Nullstart; drei saubere Laeufe = Freigabe.
+2. Seite aus dem Netz statt aus Aehnlichkeit: unbekannte Fotos (31) in beide Seitennetze registrieren, Seite = Netz mit Inliern; in beiden
+   (symmetrische Sicht) -> ausgeschlossen. Geometrisch, deterministisch; Werkzeug `sfm_registrieren` vorhanden, fehlt nur die Schleife.
+3. Beobachtungs-Hygiene: jedes Werkzeug ersetzt seine eigenen Auto-Beobachtungen je Lauf (Schluessel Werkzeug+Merkmal) statt anzuhaengen;
+   Deckel je Werkzeug; Nutzer-Beobachtungen bleiben. Sonst ertrinken die 21 echten in 186 automatischen.
+4. Pick-Vorschlaege: Netzprojektion nur mit >= 3 Strahlen und sigma <= 0,2 m, immer mit Pruefbild (`foto_pick_pruefen`), nie ohne Blick - spart
+   Zeit, kein Massverlust (Gate aus der LOO-Messung oben).
+5. Die 7 ANNAHMEn des Generators aus Bandern ableiten (Zinnenzahl, Schallarkaden, Konsolen = Oeffnungs-/Periodenzaehlung je Koerper wie bei den
+   Tuermchen) - nur wo die Suedwolke die Merkmale wirklich zeigt (Quellen-Blindheit), sonst bleibt ANNAHME stehen.
+6. `foto_verhaeltnis`-Masse (10) durch Silhouetten-/Bandregeln ersetzen, wo eine Wolke oder kalibrierte Kamera existiert; sonst bleiben sie.
+Nicht automatisierbar ohne Qualitaetsverlust: Sollwerte aus Dokumenten, Sichtabnahme des Sichtblatts, Generatorcode fuer einen NEUEN Bautyp.
+
+**Nullstart 6 Ergebnis (nach den Reparaturen, komplette Kette durchgelaufen, Dichtwolke 567 s):** Volumen 0,14 % neben der Referenz, aber Pruefstand
+63/70 statt 67/67. Offen: Modell nicht wasserdicht/mehrere Koerper (Generator mit abgeleiteten Massen), Silhouettenbreite 30 m und 23,5-28 m,
+Quaderperiode, Tuermchen-Kupferradius und -oeffnungen. Massabweichungen > 0,3 m: QUADER_ZONE_Z 17,0 statt 23,0, KONSOLE_Z0 27,0 statt 27,5.
+Naechster Schritt: QUADER_ZONE_Z-Regel (Plausibilitaetsfenster/Bandzuordnung) und Wasserdichtheit am Nullstart-Modell untersuchen, erst dann
+Nullstart 7 (Ziel: drei saubere Laeufe in Folge).
