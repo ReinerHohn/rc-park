@@ -106,6 +106,15 @@ def resid(p, B, kams, roh=False, prior=None, wand=None):
             dimg = uv[-1] - uv[0]; cosw = (dimg @ (q[0] - q[1])) / (np.linalg.norm(dimg) * np.linalg.norm(v) + 1e-9); r.append((1.0 - cosw) / 0.1)
     return (np.array(r), info) if roh else np.array(r)
 
+_MS_B = _MS_KAMS = _MS_PRIOR = None
+def _ms_start(p0):
+    """Ein Start des Mehrfachstarts (Arbeitsprozess): (cost, x, fehlertext)."""
+    try:
+        sol = least_squares(resid, p0, args=(_MS_B, _MS_KAMS, False, _MS_PRIOR), method="trf", x_scale="jac", max_nfev=3000, loss="soft_l1" if _MS_PRIOR else "linear")
+        return (float(sol.cost), sol.x, "")
+    except Exception as e:
+        return (None, None, f"{type(e).__name__}: {e}")
+
 def starts(rec, kams):
     """Mehrfachstart: Massstab grob aus Kamera-Wolken-Abstand (Strassenfotos ~30-60 m), Drehung auf einem Raster, Lage auf die Wolke."""
     P = np.array([q.xyz for q in rec.points3D.values()]); c = np.median(P, 0)
@@ -156,13 +165,17 @@ def main():
     for b in B: print(f"   {b[0]} {b[1]:5s} {b[2]:13s} {len(b[3])} Pick(s)" + (f"  sigma {b[6]:.0f} px" if len(b) > 6 and b[6] != SIGMA_PICK_PX else ""))
     if len(B) < 4: raise SystemExit("zu wenige Bodenanker-Picks (Linien/Punkte ecke_boden_* in K-<foto>.json der SfM-Fotos)")
     # Mehrfachstart
-    best = []
-    for p0 in starts(rec, kams):
-        try: sol = least_squares(resid, p0, args=(B, kams, False, prior), method="trf", x_scale="jac", max_nfev=3000, loss="soft_l1" if prior else "linear")
-        except Exception as e: fehler = f"{type(e).__name__}: {e}"; continue
-        best.append((sol.cost, sol))
+    # Mehrfachstart auf allen Kernen (fork: Beobachtungen B, Kameras, Prior als Modulzustand, kein Pickling der Kameraobjekte).
+    # Verlustfrei: dieselben Starts, dieselbe Zielfunktion; die beste Loesung wird am Ende einmal nachgerechnet (liefert dasselbe sol-Objekt).
+    import multiprocessing as mp
+    global _MS_B, _MS_KAMS, _MS_PRIOR
+    _MS_B, _MS_KAMS, _MS_PRIOR = B, kams, prior
+    liste = list(starts(rec, kams)); kerne = max(1, min(len(liste), os.cpu_count() or 1)); fehler = ""
+    with mp.get_context("fork").Pool(kerne) as pool: erg = pool.map(_ms_start, liste)
+    best = [(c, x) for c, x, f in erg if c is not None]; fehler = next((f for c, x, f in erg if f), "")
     if not best: raise SystemExit("kein Start konvergiert: " + fehler)
-    best.sort(key=lambda x: x[0]); sol = best[0][1]; p = sol.x
+    best.sort(key=lambda x: x[0]); print(f"   Mehrfachstart: {len(liste)} Starts auf {kerne} Kernen, {len(best)} konvergiert")
+    sol = least_squares(resid, best[0][1], args=(B, kams, False, prior), method="trf", x_scale="jac", max_nfev=3000, loss="soft_l1" if prior else "linear"); p = sol.x
     wand = None
     if a.wand:
         # Ebene aus den LoD2-Bodenecken der Seite: nord = kleinstes x der Ecken, sued = groesstes, ost = groesstes y, west = kleinstes y

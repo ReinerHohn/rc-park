@@ -428,6 +428,7 @@
    "modell": "Generator auf Rohraster+SfM+LoD2 umgestellt (Register AM): First 55,4, Traufe 37, Tuermchen 44,5, Spitze 70; Pruefstand gruen (40); AO: Glockenstock 6,0 x 6,2, Tuermchen an der Wand, Pruefstand gruen (43)"
   },
   "kette": [
+   "tools/bilder_holen.py <objekt> (Schritt 0: Fotos mit Mehrwert aus freien Quellen in fotos_eingang; danach einsortieren: Nummer + Seite in objekt.json fotos/sfm)",
    "tools/sfm_netz.py <seite> --reparieren",
    "tools/sfm_verzerrung_test.py --spiegel <gegenseite> (Exit 0 noetig)",
    "tools/sfm_ausrichten.py --name <seite> --wand <seite> --schreiben",
@@ -579,5 +580,37 @@
     ]
    }
   }
+ },
+ "bildquellen": {
+  "commons": {
+   "kategorien": [
+    "Martinstor (Freiburg im Breisgau)"
+   ],
+   "suchen": [
+    "Martinstor Freiburg",
+    "Martinstor Freiburg im Breisgau",
+    "Kaiser-Joseph-Straße Freiburg Martinstor",
+    "Freiburg Martin's Gate"
+   ],
+   "geosearch_radius_m": 150,
+   "titel_enthaelt": [
+    "martinstor",
+    "martin's gate",
+    "kaiser-joseph",
+    "kajo"
+   ]
+  },
+  "mapillary": {
+   "radius_m": 80,
+   "max": 200,
+   "hinweis": "Token unter ~/.config/mapillary_token eintragen (gratis, Mapillary Developers); dann liefert die Quelle georeferenzierte Strassenbilder aller Seiten"
+  },
+  "videos": [],
+  "ausgabe": "daten/martinstor/fotos_eingang",
+  "max_neu": 120,
+  "min_breite_px": 1000,
+  "max_je_blickgruppe": 4,
+  "min_schaerfe": 40.0,
+  "regel": "Mehrwert statt Masse: Duplikate nur das beste, aehnliche mit Parallaxe gedeckelt je Blickgruppe, neue Blickwinkel immer; Lizenz/Autor je Bild Pflicht (LIZENZ_WERKZEUGE.md)"
  }
 }

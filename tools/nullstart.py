@@ -64,14 +64,16 @@ def main():
     for s in seiten:
         if dran(f"ausrichten_{s}") and not lauf(bericht, f"ausrichten_{s}", f"{PC} -I tools/sfm_ausrichten.py {Z} --sparse modelle/{a.ziel}/sfm/sparse_{s}/0 --name {s} --wand {s} --schreiben", repo, log): sys.exit(f"ausrichten_{s} fehlgeschlagen")
     if dran("verzerrung") and not a.ohne_sued:
-        lauf(bericht, "verzerrung_nord", f"{PC} -I tools/sfm_verzerrung_test.py {Z} --sparse modelle/{a.ziel}/sfm/sparse_modell_nord --spiegel modelle/{a.ziel}/messprotokoll/SFM-AUSRICHTUNG-sued.json", repo, log, ok_rcs=(0, 1))   # Gate: protokolliert, bricht den Nullstart nicht ab
+        lauf(bericht, "verzerrung_nord", f"{PC} -I tools/sfm_verzerrung_test.py {Z} --sparse modelle/{a.ziel}/sfm/sparse_modell_nord --spiegel messprotokoll/SFM-AUSRICHTUNG-sued.json", repo, log, ok_rcs=(0, 1))   # Gate: protokolliert, bricht den Nullstart nicht ab
     if dran("registrieren"):
         lauf(bericht, "registrieren_060", f"{PC} -I tools/sfm_registrieren.py {Z} --netz nord --foto 060 --schreiben", repo, log, ok_rcs=(0, 1))
         lauf(bericht, "registrieren_061", f"{PC} -I tools/sfm_registrieren.py {Z} --netz nord --foto 061 --hoehe 44 8 --schreiben", repo, log, ok_rcs=(0, 1))
     if dran("generator0") and not lauf(bericht, "generator0", json.load(open(zobj))["generator"], repo, log): sys.exit("generator0 fehlgeschlagen")
     if dran("dicht") and not lauf(bericht, "dicht_nord", f"{PC} -I tools/sfm_dicht.py {Z} nord", repo, log): sys.exit("dicht fehlgeschlagen")
     if dran("entzerren") and not lauf(bericht, "entzerren", f"{PY} -W ignore -I tools/wolke_vs_modell.py {Z} nord --entzerren --nebengebaeude", repo, log): sys.exit("entzerren fehlgeschlagen")
-    if dran("kalibrieren_061"): lauf(bericht, "kalibrieren_061", f"{PY} -W ignore -I tools/foto_kalibrieren.py {Z} 061", repo, log, ok_rcs=(0, 1))
+    if dran("kalibrieren_061"):   # alle Kameras aus Picks + Ankern neu loesen (Schritt heisst historisch kalibrieren_061): jedes K-Protokoll
+        for kp in sorted(glob.glob(os.path.join(zd, "messprotokoll", "K-*.json"))):
+            nr = os.path.basename(kp)[2:-5]; lauf(bericht, f"kalibrieren_{nr}", f"{PY} -W ignore -I tools/foto_kalibrieren.py {Z} {nr}", repo, log, ok_rcs=(0, 1))
     if dran("auswertung") and not lauf(bericht, "auswertung", f"{PY} -W ignore -I tools/regression.py {Z} --schnappschuss", repo, log): sys.exit("auswertung fehlgeschlagen")
     if dran("vergleich"):
         sys.path.insert(0, os.path.join(repo, "tools")); import regression as RG
