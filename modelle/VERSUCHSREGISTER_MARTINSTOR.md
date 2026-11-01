@@ -1230,3 +1230,15 @@ Rest (4 Pruefungen, alle am Aufloesungsboden der einseitigen Nordwolke, nicht an
 Zone 23,5-28 m -0,06 m, Tuermchen-Kupferradius -0,03 m (Band beginnt 0,5 m tiefer, Traufe 35,0-35,5 fehlt in der Wolke), Oeffnungsbreite 0,44
 statt 0,45 (Pfeilergrenze). Bandkanten springen zwischen Laeufen um 0,25-0,5 m. Sollwerte bleiben (Regel: nie lockern); die Suedwolke liefert
 die zweite Tiefenrichtung und ist der naechste Hebel fuer GX/Kupferband.
+
+## BC. Suedwolke mit 31 neuen Fotos - Versuch 1: weiter verbogen (2026-11-01)
+Suednetz neu (48 Fotos, Ernte 2): 40 Kameras, 5201 Punkte, Reproj 0,77 px, Cheiralitaetsfilter entfernt 119/121. Ausrichtung nur ueber Boden-/Wandanker:
+Massstab 1,30 +-35 %, Residuen 50-490 px, Turmspitze bei z 5 m statt 55 m (hoechster Netzpunkt im Zylinder 7,4 m). `sfm_verzerrung_test`: VERBOGEN
+(Fit alle 4,1 m, nur Dach 3,2 m, ausgelassene Punkte 12 m). Die neuen Fotos haben die Stauchung also NICHT behoben (Register AI Lehre 1:
+einseitig + fast eben + unbekannte Brennweiten). `--kamera-modell RADIAL`: schlechter - nur 31 von 45 Fotos registriert (000 faellt heraus),
+Massstab 0,13, Turm z 25 m, Urteil VERBOGEN; verworfen, SIMPLE_RADIAL-Netz wiederhergestellt. `SFM-AUSRICHTUNG-sued.json` wurde NICHT behalten
+(ungueltig; sonst nutzt `sfm_dicht sued` eine falsche Transformation).
+**Naechste Hebel (nicht gemacht):** (a) die Ausrichtung ueber das Dach statt den Boden: Dachpicks (gold/tuermchen/spitze) liegen in den drei Suedfotos
+000/030/041 konsistent (Register AI: 0-4 px) - Netz in zwei Hoehenstufen getrennt anpassen, (b) Suedfotos ueber 060/061 an das metrische Nordnetz
+binden (Ring), (c) Suedhoehen per `foto_verhaeltnis` an 049/014/000 gegen die Nordhoehen pruefen. Bis dahin liefert nur die Nordwolke Tiefe;
+GX/Kupferband bleiben am Aufloesungsboden (Register BB).
