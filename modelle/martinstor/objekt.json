@@ -444,6 +444,14 @@
    "info": "modelle/martinstor/torbau/torbau_modell.json",
    "quelle": "LoD2 DEBW_0010007Tv3w (LGL BW, DL-DE-BY-2.0)",
    "stand": "Massenmodell, Register AN; Fassade offen"
+  },
+  "torbau_front": {
+   "stl_m": "modelle/martinstor/torbau/torbau_front_modell.stl",
+   "stl_1_87": "modelle/stl/martinstor_torbau_front_1-87.stl",
+   "generator": "SCALE=87 ~/.venvs/rcpark/bin/python modelle/martinstor_torbau_gen.py",
+   "masse": "modelle/martinstor/torbau/torbau_masse.json",
+   "quelle": "Wolke Nord + Fotos 003/089 + LoD2 (Register AQ)",
+   "stand": "erste parametrische Front (Arkade, 2 Fensterreihen, Staffelgiebel); Fensterzahl/Stufen/Bogenbreite ANNAHME"
   }
  }
 }

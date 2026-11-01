@@ -67,30 +67,12 @@
    "tiefe_diff": 1.0
   },
   {
-   "art": "wirklichkeit_weiter_vorn",
-   "flaeche_m2": 23.0,
-   "z_von": 9.5,
-   "z_bis": 19.0,
-   "u_von": -10.2,
-   "u_bis": -7.0,
-   "tiefe_diff": 3.95
-  },
-  {
    "art": "fehlt_im_modell",
    "flaeche_m2": 12.9,
    "z_von": 41.2,
    "z_bis": 53.5,
    "u_von": -3.2,
    "u_bis": -1.2,
-   "tiefe_diff": null
-  },
-  {
-   "art": "fehlt_im_modell",
-   "flaeche_m2": 8.4,
-   "z_von": 16.8,
-   "z_bis": 21.0,
-   "u_von": -11.5,
-   "u_bis": -6.5,
    "tiefe_diff": null
   },
   {
@@ -128,6 +110,15 @@
    "u_von": 4.8,
    "u_bis": 6.0,
    "tiefe_diff": null
+  },
+  {
+   "art": "wirklichkeit_weiter_vorn",
+   "flaeche_m2": 5.3,
+   "z_von": 13.8,
+   "z_bis": 18.5,
+   "u_von": -10.5,
+   "u_bis": -8.8,
+   "tiefe_diff": 7.85
   },
   {
    "art": "fehlt_im_modell",
@@ -220,6 +211,15 @@
    "tiefe_diff": null
   },
   {
+   "art": "wirklichkeit_weiter_vorn",
+   "flaeche_m2": 3.1,
+   "z_von": 10.2,
+   "z_bis": 13.5,
+   "u_von": -10.2,
+   "u_bis": -9.2,
+   "tiefe_diff": 7.07
+  },
+  {
    "art": "fehlt_im_modell",
    "flaeche_m2": 2.9,
    "z_von": 21.2,
@@ -256,6 +256,24 @@
    "tiefe_diff": 0.53
   },
   {
+   "art": "modell_weiter_vorn",
+   "flaeche_m2": 2.4,
+   "z_von": 18.5,
+   "z_bis": 20.5,
+   "u_von": -9.5,
+   "u_bis": -7.8,
+   "tiefe_diff": -0.76
+  },
+  {
+   "art": "fehlt_im_modell",
+   "flaeche_m2": 2.1,
+   "z_von": 18.2,
+   "z_bis": 21.0,
+   "u_von": -11.5,
+   "u_bis": -10.0,
+   "tiefe_diff": null
+  },
+  {
    "art": "wirklichkeit_weiter_vorn",
    "flaeche_m2": 1.9,
    "z_von": 6.2,
@@ -263,6 +281,15 @@
    "u_von": -11.8,
    "u_bis": -10.8,
    "tiefe_diff": 3.19
+  },
+  {
+   "art": "fehlt_im_modell",
+   "flaeche_m2": 1.9,
+   "z_von": 16.8,
+   "z_bis": 20.0,
+   "u_von": -7.8,
+   "u_bis": -6.5,
+   "tiefe_diff": null
   },
   {
    "art": "nur_im_modell",
@@ -301,6 +328,15 @@
    "tiefe_diff": 0.52
   },
   {
+   "art": "modell_weiter_vorn",
+   "flaeche_m2": 1.6,
+   "z_von": 8.0,
+   "z_bis": 10.0,
+   "u_von": -7.8,
+   "u_bis": -6.8,
+   "tiefe_diff": -0.72
+  },
+  {
    "art": "nur_im_modell",
    "flaeche_m2": 1.6,
    "z_von": 14.5,
@@ -337,15 +373,6 @@
    "tiefe_diff": 0.5
   },
   {
-   "art": "modell_weiter_vorn",
-   "flaeche_m2": 1.2,
-   "z_von": 8.0,
-   "z_bis": 9.5,
-   "u_von": -7.5,
-   "u_bis": -6.8,
-   "tiefe_diff": -0.62
-  },
-  {
    "art": "wirklichkeit_weiter_vorn",
    "flaeche_m2": 1.1,
    "z_von": 31.2,
@@ -370,8 +397,8 @@
    "z_bis": 6.2,
    "u_von": -7.2,
    "u_bis": -5.5,
-   "tiefe_diff": -0.59
+   "tiefe_diff": -0.6
   }
  ],
- "n_beide": 6331
+ "n_beide": 6397
 }

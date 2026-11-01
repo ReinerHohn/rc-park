@@ -1,0 +1,65 @@
+{
+ "elemente": [
+  {
+   "seite": "-x",
+   "element": "Arkadengeschoss (Pfeilerfront zurueckgesetzt)",
+   "quelle": "Wolke z 5-9,5: Front bei x -5,2..-5,6, Obergeschosse ab 9,8 m bei -6,3",
+   "front_x": -5.3,
+   "hoehe": 9.8
+  },
+  {
+   "seite": "-x",
+   "element": "Obergeschosse, vorkragend",
+   "quelle": "Wolke z 10-19: Front -6,1..-6,5",
+   "front_x": -6.3,
+   "traufe": 17.0
+  },
+  {
+   "seite": "-x",
+   "element": "Arkadenbogen (Durchgang)",
+   "quelle": "Foto 089/003: Korbbogen unter dem Schriftzug; Scheitel ~8,6 m ANNAHME aus Wolke (Oeffnung bis 9,5)",
+   "breite": 2.3999999999999995,
+   "scheitel": 8.6,
+   "anzahl": 1
+  },
+  {
+   "seite": "-x",
+   "element": "Fenster 2 Reihen x 2",
+   "quelle": "Foto 003 (Zahl ANNAHME); Reihenhoehen Wolke/Foto",
+   "reihen": 2,
+   "je_reihe": 2
+  },
+  {
+   "seite": "-x",
+   "element": "Staffelgiebel",
+   "quelle": "Giebelspitze 20,7 m bei y -8,3 (Wolke); Staffeln je Seite ANNAHME aus Foto 003",
+   "first": 20.7,
+   "traufe": 17.0,
+   "stufen": 3
+  },
+  {
+   "seite": "-x",
+   "element": "Satteldach giebelstaendig",
+   "quelle": "LoD2 Vorderteil 19,6 m; Firstlinie ANNAHME senkrecht zur Front",
+   "first": 20.4
+  }
+ ],
+ "masse": {
+  "FRONT_Y_WEST": -10.6,
+  "FRONT_Y_OST": -7.2,
+  "FRONT_X": -6.3,
+  "TIEFE": 10.0,
+  "EG_RUECKSPRUNG_X": -5.3,
+  "EG_HOEHE": 9.8,
+  "ARKADE_SCHEITEL": 8.6,
+  "ARKADE_ANZAHL": 1.0,
+  "GIEBEL_FIRST": 20.7,
+  "GIEBEL_FIRST_Y": -8.3,
+  "TRAUFE": 17.0,
+  "GIEBEL_STUFEN": 3.0,
+  "FENSTER_JE_REIHE": 2.0,
+  "GIEBEL_FENSTER_Z": 18.0,
+  "FENSTER_Z1": 11.6,
+  "FENSTER_Z2": 14.6
+ }
+}

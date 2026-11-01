@@ -41,7 +41,8 @@ __TABLE__
 <label><input type="checkbox" id="cbDicht" checked> dichte Wolke (Fotofarben)</label>
 <label><input type="checkbox" id="cbCam" checked> Kameras</label>
 <label><input type="checkbox" id="cbStl" __STLCHK__> Modell-STL</label>
-<label><input type="checkbox" id="cbStlT"> STL durchsichtig</label>
+<label><input type="checkbox" id="cbStlT" checked> STL durchsichtig</label>
+<label><input type="checkbox" id="cbVor" checked> Wolke immer vor dem Modell</label>
 <label><input type="checkbox" id="cbFarbe" __FARBCHK__> Fotofarben (sonst Hoehe)</label>
 <label>Punktgroesse <input type="range" id="rgPt" min="0.1" max="1.5" step="0.05" value="0.5" style="width:90px"></label>
 <label><input type="checkbox" id="cbLbl" checked> Beschriftung</label>
@@ -83,7 +84,7 @@ if (D.n_dicht) { const b2f = s => { const b = atob(s); const u = new Uint8Array(
   const xyz = new Float32Array(b2f(D.dicht_xyz).buffer); const rgb = b2f(D.dicht_rgb); const n = D.n_dicht; const dp = new Float32Array(n*3), dc = new Float32Array(n*3);
   for (let i = 0; i < n; i++) { const v = M(xyz[3*i], xyz[3*i+1], xyz[3*i+2]); dp[3*i] = v.x; dp[3*i+1] = v.y; dp[3*i+2] = v.z; dc[3*i] = rgb[3*i]/255; dc[3*i+1] = rgb[3*i+1]/255; dc[3*i+2] = rgb[3*i+2]/255; }
   const dg = new T.BufferGeometry(); dg.setAttribute('position', new T.BufferAttribute(dp,3)); dg.setAttribute('color', new T.BufferAttribute(dc,3));
-  dicht = new T.Points(dg, new T.PointsMaterial({size:0.18, vertexColors:true})); sc.add(dicht); pts.visible = false; document.getElementById('cbPts').checked = false; }
+  dicht = new T.Points(dg, new T.PointsMaterial({size:0.22, vertexColors:true, depthTest:false})); dicht.renderOrder = 10; sc.add(dicht); pts.visible = false; document.getElementById('cbPts').checked = false; }
 else { document.getElementById('cbDicht').disabled = true; }
 // LoD2-Eckkanten + Bodenrechteck
 const lod2 = new T.Group(); const lm = new T.LineBasicMaterial({color: new T.Color(css('--lod2'))});
@@ -106,12 +107,13 @@ let stl = null;
 if (D.stl_b64) { const bin = Uint8Array.from(atob(D.stl_b64), ch => ch.charCodeAt(0)); const geo = new STLLoader().parse(bin.buffer); geo.computeVertexNormals();
   // STL-Achsen wie Modellsystem (x Sued, y Ost, z oben) in mm bei 1:massstab -> gleiche Abbildung wie M(): X=y, Y=z, Z=x, dann Meter
   geo.applyMatrix4(new T.Matrix4().set(0,1,0,0, 0,0,1,0, 1,0,0,0, 0,0,0,1)); const k = D.stl_massstab/1000; geo.scale(k,k,k); geo.computeVertexNormals();
-  stl = new T.Mesh(geo, new T.MeshStandardMaterial({color:0xd9cdb8, transparent:false, opacity:1.0, side:T.DoubleSide, roughness:0.85}));
+  stl = new T.Mesh(geo, new T.MeshStandardMaterial({color:0xd9cdb8, transparent:true, opacity:0.45, depthWrite:false, side:T.DoubleSide, roughness:0.85})); stl.renderOrder = 1;
   stl.visible = D.stl_an; sc.add(stl); }
-if (D.stl2_b64) { const bin2 = Uint8Array.from(atob(D.stl2_b64), ch => ch.charCodeAt(0)); const g2 = new STLLoader().parse(bin2.buffer);
+(D.stl2_b64 || []).forEach((b64, i) => { const bin2 = Uint8Array.from(atob(b64), ch => ch.charCodeAt(0)); const g2 = new STLLoader().parse(bin2.buffer);
   g2.applyMatrix4(new T.Matrix4().set(0,1,0,0, 0,0,1,0, 1,0,0,0, 0,0,0,1)); g2.computeVertexNormals();
-  const stl2 = new T.Mesh(g2, new T.MeshStandardMaterial({color:0xb9b0a0, side:T.DoubleSide, roughness:0.9})); sc.add(stl2); if (stl) stl2.visible = stl.visible;
-  document.getElementById('cbStl').addEventListener('change', e => { stl2.visible = e.target.checked; }); }
+  const stl2 = new T.Mesh(g2, new T.MeshStandardMaterial({color:[0xb9b0a0, 0xc9b79a, 0xa9b0b9][i % 3], side:T.DoubleSide, roughness:0.9, transparent:true, opacity:0.6, depthWrite:false})); stl2.renderOrder = 1; sc.add(stl2); if (stl) stl2.visible = stl.visible;
+  document.getElementById('cbStl').addEventListener('change', e => { stl2.visible = e.target.checked; });
+  document.getElementById('cbStlT').addEventListener('change', e => { stl2.material.transparent = e.target.checked; stl2.material.opacity = e.target.checked ? 0.6 : 1.0; stl2.material.depthWrite = !e.target.checked; stl2.material.needsUpdate = true; }); });
 // Kamera-Start
 const box = new T.Box3().setFromObject(pts); const ctr = box.getCenter(new T.Vector3()); const size = box.getSize(new T.Vector3()).length();
 cam.position.copy(ctr).add(new T.Vector3(-size*0.6, size*0.25, -size*0.9)); ct.target.copy(ctr);
@@ -120,7 +122,8 @@ const grid = new T.GridHelper(80, 16, 0x888888, 0x555555); grid.material.opacity
 // Schalter
 const on = (id, f) => document.getElementById(id).addEventListener('change', e => f(e.target.checked));
 on('cbPts', v => pts.visible = v); on('cbDicht', v => { if (dicht) dicht.visible = v; }); on('cbCam', v => camG.visible = v); on('cbStl', v => { if (stl) stl.visible = v; }); on('cbLbl', v => lblOn = v);
-on('cbStlT', v => { if (stl) { stl.material.transparent = v; stl.material.opacity = v ? 0.35 : 1.0; stl.material.depthWrite = !v; stl.material.needsUpdate = true; } });
+on('cbStlT', v => { if (stl) { stl.material.transparent = v; stl.material.opacity = v ? 0.45 : 1.0; stl.material.depthWrite = !v; stl.material.needsUpdate = true; } });
+on('cbVor', v => { if (dicht) { dicht.material.depthTest = !v; dicht.renderOrder = v ? 10 : 0; dicht.material.needsUpdate = true; } pts.material.depthTest = !v; pts.material.needsUpdate = true; });
 on('cbFarbe', v => { col.set(v && D.farben ? colF : colH); g.attributes.color.needsUpdate = true; });
 document.getElementById('rgPt').addEventListener('input', e => { pts.material.size = parseFloat(e.target.value); if (dicht) dicht.material.size = 0.36 * parseFloat(e.target.value); });
 let lblOn = true; const lblDiv = document.getElementById('lbl'); const tags = labels.map(l => { const d = document.createElement('div'); d.className = 'tag'; d.textContent = l.t; lblDiv.appendChild(d); return d; });
@@ -138,7 +141,7 @@ tick();
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--sfm", default="messprotokoll/SFM-AUSRICHTUNG.json"); ap.add_argument("--punkte", default="sfm/punkte_modell.npy")
     ap.add_argument("--stl", action="store_true", help="Modell-STL einbetten (mm, 1:massstab aus objekt.json)"); ap.add_argument("--out"); ap.add_argument("--titel")
-    ap.add_argument("--stl2", help="zweites STL in METERN (z. B. LoD2-Nebengebaeude im Modellsystem)"); ap.add_argument("--dicht", help="dichte Wolke: sfm/dicht_<seite>_modell.npy (Farben daneben *_farben.npy)"); ap.add_argument("--dicht-max", type=int, default=400000)
+    ap.add_argument("--stl2", action="append", default=[], help="weitere STLs in METERN (mehrfach; z. B. LoD2-Nebengebaeude, Torbau-Front)"); ap.add_argument("--dicht", help="dichte Wolke: sfm/dicht_<seite>_modell.npy (Farben daneben *_farben.npy)"); ap.add_argument("--dicht-max", type=int, default=400000)
     a = ap.parse_args(); obj = json.load(open(a.objekt)); root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(a.objekt)))); od = os.path.dirname(os.path.abspath(a.objekt))
     S = json.load(open(os.path.join(od, a.sfm))); P = np.load(os.path.join(od, a.punkte)); A = json.load(open(os.path.join(od, "anker3d.json")))["anker"]
     fp = os.path.join(od, a.punkte.replace("punkte_modell", "punkte_farben")); F = np.load(fp).astype(int).tolist() if os.path.exists(fp) and "punkte_modell" in a.punkte else None
@@ -152,7 +155,7 @@ def main():
         D = np.load(os.path.join(od, a.dicht)).astype(np.float32); Fc = np.load(os.path.join(od, a.dicht.replace("_entzerrt.npy", "_modell.npy").replace("_modell.npy", "_farben.npy"))).astype(np.uint8)   # Farben gehoeren zur (un)entzerrten Wolke gleichermassen
         if len(D) > a.dicht_max: idx = np.random.default_rng(0).choice(len(D), a.dicht_max, replace=False); D, Fc = D[idx], Fc[idx]
         dicht_xyz = base64.b64encode(D.tobytes()).decode(); dicht_rgb = base64.b64encode(Fc.tobytes()).decode(); n_dicht = len(D)
-    stl2_b64 = base64.b64encode(open(os.path.join(od, a.stl2) if not os.path.isabs(a.stl2) else a.stl2, "rb").read()).decode() if a.stl2 else ""
+    stl2_b64 = [base64.b64encode(open(os.path.join(od, f) if not os.path.isabs(f) else f, "rb").read()).decode() for f in a.stl2]
     stl_b64 = ""
     if a.stl:
         stl_b64 = base64.b64encode(open(os.path.join(root, obj["stl"]), "rb").read()).decode()

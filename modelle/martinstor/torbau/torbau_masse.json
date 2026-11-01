@@ -1,0 +1,117 @@
+{
+ "_doku": "Masse des 1901er Torbaus (McDonald's) westlich des Martinstors als DATEN mit Quelle. Modellsystem wie der Turm (anker3d.json: Ursprung Turmmitte, +x Sued, +y Ost, z ueber Gelaende). Nordfront = -x. Register AQ.",
+ "masse": {
+  "FRONT_Y_WEST": {
+   "wert": -10.6,
+   "einheit": "m",
+   "was": "Westkante des giebelstaendigen Frontblocks",
+   "quelle": "Dichte Wolke Nord (entzerrt): Obergeschosse z 11-16 bei y -10..-7,5 vorn (x -6,2..-6,4); bei y < -10,5 nur -5,8 (zurueck) und wenig Punkte",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "FRONT_Y_OST": {
+   "wert": -7.2,
+   "einheit": "m",
+   "was": "Ostkante des Frontblocks (zur Turmseite)",
+   "quelle": "Wolke: ab y -7,0 liegt die Front bei x -4,7..-5,0 = Turm-Nordwand/Verbindungsbau",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "FRONT_X": {
+   "wert": -6.3,
+   "einheit": "m",
+   "was": "Nordfront der Obergeschosse",
+   "quelle": "Wolke: Median x der vorderen 30 % bei z 10-19: -6,1..-6,5 (LoD2-Nordwand -6,0)",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "TIEFE": {
+   "wert": 10.0,
+   "einheit": "m",
+   "was": "Tiefe des Frontblocks nach Sueden (bis zum LoD2-Dachkoerper)",
+   "quelle": "ANNAHME aus LoD2: Vorderteil 19,6 m hoch, Hauptkoerper (24,4 m) beginnt bei y < -12; Tiefe nicht aus der Wolke messbar",
+   "quelltyp": "lod2"
+  },
+  "EG_RUECKSPRUNG_X": {
+   "wert": -5.3,
+   "einheit": "m",
+   "was": "Erdgeschoss-Arkade: Lauflinie der Pfeilerfront",
+   "quelle": "Wolke z 5-9,5: x_front -5,2..-5,6 bei y -11..-8,5 (zum Turm hin bis -4,6 = Durchgangsinneres)",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "EG_HOEHE": {
+   "wert": 9.8,
+   "einheit": "m",
+   "was": "Oberkante Arkadengeschoss / Beginn der vorkragenden Obergeschosse",
+   "quelle": "Wolke: Tiefensprung von -5,4 (z 9-10) auf -6,3 (z 10-11)",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "ARKADE_SCHEITEL": {
+   "wert": 8.6,
+   "einheit": "m",
+   "was": "Scheitelhoehe der Arkadenboegen",
+   "quelle": "Wolke: Oeffnungsmuster 'o' bis z 9,5, Boegen in Foto 089/003 rund; Scheitel ~1,2 m unter der Geschossdecke (ANNAHME)",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "ARKADE_ANZAHL": {
+   "wert": 1,
+   "einheit": "",
+   "was": "grosse Boegen im Frontblock (McDonald's-Bogen)",
+   "quelle": "Foto 089 (CC BY-SA 3.0): ein grosser Korbbogen unter dem Schriftzug, daneben Schaufensterbogen; Foto 003: links der Turmbogen, dann der McDonald's-Bogen",
+   "quelltyp": "foto_vollbild"
+  },
+  "GIEBEL_FIRST": {
+   "wert": 20.7,
+   "einheit": "m",
+   "was": "Giebelspitze",
+   "quelle": "Wolke: Oberkante je 0,5-m-Spalte: 20,6/20,7/20,2 m bei y -8,75/-8,25/-7,75",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "GIEBEL_FIRST_Y": {
+   "wert": -8.3,
+   "einheit": "m",
+   "was": "Lage der Giebelspitze",
+   "quelle": "wie GIEBEL_FIRST",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "TRAUFE": {
+   "wert": 17.0,
+   "einheit": "m",
+   "was": "Traufe/Ansatz des Giebels",
+   "quelle": "Wolke: Oberkante faellt von 20,7 auf 18,9 (y -6,75) bzw. 18,8 (y -10,25); LoD2 Vorderteil 19,6 m; Staffelgiebel-Stufen ANNAHME nach Foto 003",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "GIEBEL_STUFEN": {
+   "wert": 3,
+   "einheit": "",
+   "was": "Staffeln je Seite",
+   "quelle": "Foto 003 (CC BY-SA 3.0): Staffelgiebel mit je drei Stufen (ANNAHME aus Sichtung, nicht gemessen)",
+   "quelltyp": "foto_vollbild"
+  },
+  "FENSTER_JE_REIHE": {
+   "wert": 2,
+   "einheit": "",
+   "was": "Fenster je Reihe im Frontblock",
+   "quelle": "Foto 003: zwei Fensterachsen im Giebelfeld (ANNAHME)",
+   "quelltyp": "foto_vollbild"
+  },
+  "GIEBEL_FENSTER_Z": {
+   "wert": 18.0,
+   "einheit": "m",
+   "was": "kleines Giebelfenster",
+   "quelle": "Foto 003; Wolke 'o' bei z 18-19 mittig",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "FENSTER_Z1": {
+   "wert": 11.6,
+   "einheit": "m",
+   "was": "Unterkante Fensterreihe 1. OG",
+   "quelle": "Wolke: Luecken-/Mauer-Muster bei z 11-11,5 und 14,5-15 (schwach); Foto 003: zwei Fensterreihen ueber den Arkaden plus Giebelfenster",
+   "quelltyp": "foto_verhaeltnis"
+  },
+  "FENSTER_Z2": {
+   "wert": 14.6,
+   "einheit": "m",
+   "was": "Unterkante Fensterreihe 2. OG",
+   "quelle": "Wolke: Luecken-/Mauer-Muster bei z 11-11,5 und 14,5-15 (schwach); Foto 003: zwei Fensterreihen ueber den Arkaden plus Giebelfenster",
+   "quelltyp": "foto_verhaeltnis"
+  }
+ }
+}

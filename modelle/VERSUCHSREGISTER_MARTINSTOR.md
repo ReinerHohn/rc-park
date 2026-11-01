@@ -898,3 +898,22 @@ einem anderen Gebaeude weiter noerdlich (Punkte bei x -13..-17), nicht vom Torba
 Fachwerk, Schriftzug - aus Fotos 002/003/089 (Ernte) und der Wolke (Torbau-Nordfront z 8-20 m vorhanden).
 Commit cdaa625 enthaelt Werkzeuge, Netze, Masse, Register AH-AO; grosse/reproduzierbare Zwischenstaende per .gitignore draussen
 (commons_neu 285 MB, dicht_nord-Werkstatt, Hybrid-/Versuchsnetze, LightGlue-npz, DB-Symlinks).
+
+## AQ. Torbau-Nordfront parametrisch (erste Fassung) und Viewer: Wolke vor dem Modell (2026-11-01)
+**Nutzer:** "mehr Farben sehen" - die Fotowolke lag auf der Oberflaeche des deckenden STL und wurde verdeckt. Viewer: Wolke wird jetzt
+standardmaessig ohne Tiefentest vor dem Modell gezeichnet, STL halbdurchsichtig (beides schaltbar), mehrere Nebengebaeude-STLs (`--stl2`
+mehrfach). Farbdatei-Suche auch fuer die entzerrte Wolke.
+**Torbau-Front aus der Wolke gemessen** (Frontkarte y -14..-5, z 0-24; Zeichenkarte Mauer/Oeffnung/leer je 0,25 m): Obergeschosse
+y -10,6..-7,2 vorn bei x -6,3 (z 10-19), Erdgeschoss-Arkade zurueckgesetzt auf -5,3 (Oeffnungsmuster z 5-9,5 durchgehend, Durchgang bis
+-4,6), Tiefensprung bei 9,8 m; Giebelspitze 20,7 m bei y -8,3, Oberkante faellt beidseits auf ~18,9; oestlich von y -7,0 liegt die Front
+bei -4,7..-5,0 (Turmwand/Verbindungsbau). Fenster in der Wolke nur schwach (Reihen ~11,6 und ~14,6). Fotos 003 (CC BY-SA 3.0, Nordfront
+von NW: Staffelgiebel, Arkaden, Fachwerk), 089 (CC BY-SA 3.0, McDonald's-Bogen), 002 (CC BY-SA 4.0, Schriftzug) als Formquelle.
+**Generator `modelle/martinstor_torbau_gen.py`** (Masse in `torbau/torbau_masse.json`, je Mass Quelle/ANNAHME): Arkadengeschoss mit
+Rundbogen-Durchgang, vorkragende Obergeschosse, 2 Fensterreihen x 2, Staffelgiebel (3 Stufen ANNAHME) bis 20,7, Satteldach giebelstaendig,
+Giebelfenster; wasserdicht (Genus 0), 334 Dreiecke; `torbau/torbau_front_modell.stl` (m) und `stl/martinstor_torbau_front_1-87.stl`;
+`torbau_elemente.json` = Belege. In objekt.json als `nebengebaeude.torbau_front` neben dem LoD2-Massenmodell (Rest des Baukoerpers).
+`wolke_vs_modell --nebengebaeude` danach im Torbau-Bereich: nur noch Reste (Giebelkopf 18,5-20,5 m: Modell 0,76 m zu weit vorn; zwei
+Flecken mit D +7-8 m = Haus weiter noerdlich, das durch Fensterausschnitte 'durchscheint').
+**Offen (ehrlich):** Fensterzahl, Staffelstufen, Bogenbreite und Blocktiefe sind Annahmen; kein Pruefstand fuer den Torbau (nur Turm);
+der Frontblock (3,4 m breit) wirkt schmal gegen Foto 003 - die Abgrenzung zum Verbindungsbau (y -7,2..-5,7, Front -4,9) ist unsicher.
+Naechster Schritt: Foto 003 kalibrieren (LoD2-Ecken des Torbaus als Anker) und Fensterachsen/Bogenbreite messen; Torbau-Masstabelle anlegen.
