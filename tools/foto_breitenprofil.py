@@ -60,10 +60,9 @@ def modell_maske(stl, obj, R, t, f, cx, cy, W, H, n=2500000):
     if obj.get("stl_einheit_mm", True): m.apply_scale(obj.get("stl_massstab", 87) / 1000.0)
     c = m.bounds.mean(0) if obj.get("zentrierung", "huelle") == "huelle" else np.zeros(3)
     m.apply_translation([-c[0], -c[1], -m.bounds[0, 2]])
-    P, _ = trimesh.sample.sample_surface(m, n, seed=0); uv, z = projiziere(np.asarray(P), R, t, f, cx, cy)
-    u = np.round(uv[:, 0]).astype(int); v = np.round(uv[:, 1]).astype(int); ok = (z > 1) & (u >= 0) & (u < W) & (v >= 0) & (v < H)
-    M = np.zeros((H, W), np.uint8); M[v[ok], u[ok]] = 1
-    return cv2.morphologyEx(M, cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8)).astype(bool)
+    import render_kern as RK
+    P, _ = trimesh.sample.sample_surface(m, n, seed=0)
+    return RK.Szene(np.asarray(P)).maske_np(R, t, f, cx, cy, W, H)
 
 def main():
     a = sys.argv[1:]; objp, nr = a[0], a[1]

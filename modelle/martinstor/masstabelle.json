@@ -822,6 +822,13 @@
    "auto_id": "fehlteile-030-1134-945",
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.12 m, y=3.52 m (Zelle [1134, 945, 63], Score +0.99)",
    "naechster_schritt": "audit/fehlteile_030.jpg Treffer 11 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
+   "auto_id": "fehlteile-030-1323-1575",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=15.45 m, y=5.21 m (Zelle [1323, 1575, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ]
 }

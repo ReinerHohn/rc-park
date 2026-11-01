@@ -96,6 +96,36 @@ def schattiert(P, N, R, t, f, cx, cy, W, H, licht=(0.35, -0.45, 0.82), hintergru
     img[tr] = (70 + 170 * (0.25 + 0.75 * lit[idx[tr]])).astype(np.uint8)
     return img, depth
 
+def hypso_lagen(P, stufen, lagen, radius=9.0, raster=1.0, N=60):
+    """Flaeche ueber mehreren Hoehen fuer VIELE Lagen (Drehung, dx, dy) auf einmal - der Kern der Lagesuche.
+    Auf GPU werden alle Lagen gleichzeitig gerastert (scatter_reduce amax ueber ein Batch), sonst Schleife.
+    Rueckgabe: Array (len(lagen), len(stufen)) mit Flaechen in m2."""
+    P = np.asarray(P, np.float32); T = _torch(); L = len(lagen); S = len(stufen)
+    if not T:
+        return np.array([[hypso(P, z, *lg, radius, raster, N) for z in stufen] for lg in lagen], float)
+    # Blockgroesse nach freiem GPU-Speicher: je Lage und Punkt fallen ~40 Byte an (x, y, ix, iy, Maske, flache Indizes).
+    frei = T.cuda.mem_get_info()[0]; proLage = len(P) * 40
+    blk = max(1, min(L, int(0.5 * frei / max(proLage, 1))))
+    if blk < L:
+        return np.concatenate([hypso_lagen(P, stufen, lagen[i:i + blk], radius, raster, N) for i in range(0, L, blk)], 0)
+    Pg = T.as_tensor(P, device="cuda")
+    ang = T.as_tensor(np.radians([l[0] for l in lagen]).astype(np.float32), device="cuda")
+    dxs = T.as_tensor(np.array([l[1] for l in lagen], np.float32), device="cuda"); dys = T.as_tensor(np.array([l[2] for l in lagen], np.float32), device="cuda")
+    c, s_ = T.cos(ang)[:, None], T.sin(ang)[:, None]
+    x = (c * Pg[None, :, 0] - s_ * Pg[None, :, 1] + dxs[:, None]) / raster           # (L, Npunkte)
+    y = (s_ * Pg[None, :, 0] + c * Pg[None, :, 1] + dys[:, None]) / raster
+    ix = T.floor(x + N / 2).long(); iy = T.floor(N / 2 - y).long()
+    ok = (ix >= 0) & (ix < N) & (iy >= 0) & (iy < N)
+    lid = T.arange(L, device="cuda")[:, None].expand_as(ix)
+    flat = (lid * N * N + iy * N + ix)[ok]
+    H = T.zeros(L * N * N, device="cuda"); H.scatter_reduce_(0, flat, Pg[None, :, 2].expand(L, -1)[ok], reduce="amax")
+    H = H.reshape(L, N, N)
+    pk = H.reshape(L, -1).argmax(1); py, px = pk // N, pk % N
+    yy, xx = T.meshgrid(T.arange(N, device="cuda"), T.arange(N, device="cuda"), indexing="ij")
+    nah = (((yy[None] - py[:, None, None]) ** 2 + (xx[None] - px[:, None, None]) ** 2).sqrt() <= radius / raster)
+    out = T.stack([((H > z) & nah).reshape(L, -1).sum(1) for z in stufen], 1).float() * raster ** 2
+    return out.cpu().numpy()
+
 def hypso(P, z, drehung=98.0, dx=-1.0, dy=-1.0, radius=9.0, raster=1.0, N=60):
     """Flaeche ueber Hoehe z wie die Laser-Hypsometrie (Zellen eines 1-m-Rasters). Auf GPU fuer die Lagesuche (viele Drehungen)."""
     P = np.asarray(P); c, s = np.cos(np.radians(drehung)), np.sin(np.radians(drehung))

@@ -10,7 +10,8 @@ an der er entsteht - und nicht an einer Summe, in der sich Fehler gegenseitig au
 Das Modell wird wie in optimierung_validieren gedreht/verschoben (beste Lage aus einem groben Raster), damit der Vergleich fair ist.
 Grenzen: DOM1 ist 1-m-Raster von oben; Flaechen < ~3 m2 und senkrechte Strukturen sind dort unsicher (siehe Quellen-Matrix).
 """
-import sys, numpy as np, trimesh
+import sys, os, numpy as np, trimesh
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 DOM = "/media/oem/scan/tmp/mt_dom/mt_win.npy"; N = 60; GELAENDE = 277.98
 ref = np.load(DOM) - GELAENDE
@@ -32,15 +33,15 @@ def hoehenfeld(P, ang, dx, dy):
     H = np.zeros((N, N)); np.maximum.at(H, (iy[ok], ix[ok]), P[ok, 2]); return H
 
 def beste_lage(P, stufen):
-    """Dieselbe Suche wie in optimierung_validieren: Drehung/Phase, die die Summe der Abweichungen minimiert."""
-    R = [max(flaeche(ref, PR, t), 1) for t in stufen]; best = None
-    for ang in range(86, 113, 2):
-        for dx in np.arange(-1, 1.01, 0.5):
-            for dy in np.arange(-1, 1.01, 0.5):
-                H = hoehenfeld(P, ang, dx, dy); pk = np.unravel_index(np.argmax(H), H.shape)
-                e = np.mean([abs(flaeche(H, pk, t) - r) / r for t, r in zip(stufen, R)])
-                if best is None or e < best[0]: best = (e, ang, dx, dy, H, pk)
-    return best
+    """Drehung/Phase, die die Summe der Abweichungen minimiert - alle Lagen in EINEM GPU-Durchgang (render_kern.hypso_lagen)."""
+    import render_kern as RK
+    R = [max(flaeche(ref, PR, t), 1) for t in stufen]
+    lagen = [(ang, dx, dy) for ang in range(86, 113, 2) for dx in np.arange(-1, 1.01, 0.5) for dy in np.arange(-1, 1.01, 0.5)]
+    A = RK.hypso_lagen(P, stufen, lagen)                                  # (Lagen, Stufen)
+    e = np.mean(np.abs(A - np.array(R)[None, :]) / np.array(R)[None, :], axis=1)
+    i = int(np.argmin(e)); ang, dx, dy = lagen[i]
+    H = hoehenfeld(P, ang, dx, dy); pk = np.unravel_index(np.argmax(H), H.shape)
+    return (float(e[i]), ang, dx, dy, H, pk)
 
 def main():
     a = sys.argv[1:]

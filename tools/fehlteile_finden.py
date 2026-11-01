@@ -10,6 +10,7 @@ Ausgabe: modelle/<objekt>/audit/fehlteile_<foto>.jpg (Heatmap ueber dem Foto, nu
 Grenzen: nur Kanten (keine Farbe), Verdeckungen (Baeume, Leitungen) erzeugen Scheintreffer -> jeder Treffer wird angesehen, bevor er in den Generator geht.
 """
 import sys, os, json, glob, math, numpy as np, cv2, trimesh
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 def kamera_laden(K, obj, nr, root, W, H):
     if "kamera" in K:
@@ -25,11 +26,13 @@ def kamera_laden(K, obj, nr, root, W, H):
     raise SystemExit("keine Kamera fuer Foto " + nr)
 
 def render(m, R, t, f, W, H, cx, cy, n=2500000):
-    P, fi = trimesh.sample.sample_surface(m, n, seed=0); N = m.face_normals[fi]; Xc = P @ R.T + t; z = Xc[:, 2]; ok = z > 1
-    u = (f * Xc[:, 0] / z + cx).astype(int); v = (f * Xc[:, 1] / z + cy).astype(int); ok &= (u >= 0) & (u < W) & (v >= 0) & (v < H)
-    depth = np.full((H, W), np.inf); nrm = np.zeros((H, W, 3)); pos = np.zeros((H, W, 3)); idx = np.argsort(-z)
-    for i in idx[ok[idx]]:
-        if z[i] < depth[v[i], u[i]]: depth[v[i], u[i]] = z[i]; nrm[v[i], u[i]] = N[i]; pos[v[i], u[i]] = P[i]
+    """Tiefe, Normalen und 3D-Lage je Pixel ueber den gemeinsamen Renderkern (GPU, wenn vorhanden)."""
+    import render_kern as RK
+    P, fi = trimesh.sample.sample_surface(m, n, seed=0); P = np.asarray(P); N = m.face_normals[fi]
+    depth, idx = RK.tiefenbild(P, R, t, f, cx, cy, W, H)
+    if hasattr(depth, "cpu"): depth = depth.cpu().numpy(); idx = idx.cpu().numpy()
+    nrm = np.zeros((H, W, 3)); pos = np.zeros((H, W, 3)); tr = idx >= 0
+    nrm[tr] = N[idx[tr]]; pos[tr] = P[idx[tr]]
     return depth, nrm, pos
 
 def main():

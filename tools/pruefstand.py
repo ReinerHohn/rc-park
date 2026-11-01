@@ -10,6 +10,7 @@ Sollbereich + Quelle + Quelltyp + Merkmalstyp, offene Beobachtungen. Dieser Prue
 Martinstor-Fehlers (Nadelhoehe aus Laser DOM1). Masse immer in Metern, STL wird auf Massstab/Mitte/Boden normiert.
 """
 import sys, os, re, json, numpy as np, trimesh
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Was eine Quelle beweisen kann (Erfahrung dieses Projekts; Begruendung in modelle/METHODE_MASSTABELLE.md)
 QUELLEN = {
@@ -42,10 +43,10 @@ class Messer:
         import foto_breitenprofil as FB
         K = json.load(open(os.path.join(self.root, os.path.dirname(self.obj["masstabelle"]), "messprotokoll", kamera + ".json")))["kamera"]
         R, t, C, f, cx, cy = FB.strahlen_setup(K); W, H = K["bild"]
-        P, _ = trimesh.sample.sample_surface(self.m, 2500000, seed=0); uv, zc = FB.projiziere(np.asarray(P), R, t, f, cx, cy)
-        u = np.round(uv[:, 0]).astype(int); v = np.round(uv[:, 1]).astype(int); ok = (zc > 1) & (u >= 0) & (u < W) & (v >= 0) & (v < H)
-        M = np.zeros((H, W), np.uint8); M[v[ok], u[ok]] = 1
-        M = cv2.morphologyEx(M, cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8)).astype(bool)
+        import render_kern as RK
+        if not hasattr(self, "_sz"):
+            P, _ = trimesh.sample.sample_surface(self.m, 2500000, seed=0); self._sz = RK.Szene(np.asarray(P))   # einmal laden, fuer alle Hoehen/Kameras nutzen
+        M = self._sz.maske_np(R, t, f, cx, cy, W, H)
         l, r = FB.halbbreite(M, R, t, f, cx, cy, C, z, FB.quer_richtung(C, z))
         return float(l + r) if not (np.isnan(l) or np.isnan(r)) else float("nan")
     def _polys(self, z):
@@ -143,7 +144,8 @@ class Messer:
         Nur so sind Modell und DOM1 vergleichbar - die Rasterung addiert je nach Umfang 15-25 Zellen gegenueber der echten Flaeche."""
         if not hasattr(self, "_hp"):
             v, fa = trimesh.remesh.subdivide_to_size(self.m.vertices, self.m.faces, max_edge=0.3, max_iter=14); self._hp = v[fa].mean(1)
-        P = self._hp; c, s_ = np.cos(np.radians(drehung)), np.sin(np.radians(drehung))
+        import render_kern as RK
+        return RK.hypso(self._hp, z, drehung, dx, dy, radius, raster, N)
         x = (c * P[:, 0] - s_ * P[:, 1] + dx) / raster; y = (s_ * P[:, 0] + c * P[:, 1] + dy) / raster; N = 60
         ix = np.floor(x + N / 2).astype(int); iy = np.floor(N / 2 - y).astype(int)
         ok = (ix >= 0) & (ix < N) & (iy >= 0) & (iy < N); H = np.zeros((N, N)); np.maximum.at(H, (iy[ok], ix[ok]), P[ok, 2])

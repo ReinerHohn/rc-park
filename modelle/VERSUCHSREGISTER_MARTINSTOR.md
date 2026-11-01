@@ -344,3 +344,22 @@ pruefstand.silhouettenbreite, hypso_profil (Lagesuche: 350 Rasterungen, dort ist
 foto_kalibrieren --silhouette (hunderte Projektionen je Optimierungslauf).
 **Generelle Lehre:** GPU lohnt nicht pro Aufruf, sondern pro DATENSATZ - die Daten muessen oben bleiben. Und: bevor man optimiert, misst man;
 die erste, naheliegende GPU-Variante war langsamer als die CPU.
+S2. **Alle Werkzeuge auf den Renderkern umgestellt (2026-11-01).** Laufzeiten vorher -> nachher, jeweils mit Regressionsvergleich:
+
+| Werkzeug | vorher | nachher | Ergebnis |
+|---|---|---|---|
+| seiten_audit | 26,3 s | 3,5 s | Bild gleich (bei 2,5 statt 1,5 Mio Punkten) |
+| hypso_profil | 13,5 s | 4,9 s | Zahlen BITIDENTISCH zur CPU-Fassung |
+| fehlteile_finden | 7,8 s | 3,5 s | Treffer gleich, 3D-Lagen um ~0,1 m verschoben (rint statt Abschneiden - korrekter) |
+| pruefstand | 4,7 s | 2,4 s | alle Werte identisch (Toleranz 0,01) |
+| foto_breitenprofil | 3,1 s | 3,2 s | identisch (nur EIN Render - GPU bringt hier nichts) |
+| **Bau-Durchlauf gesamt** | **~110 s** | **33 s** | |
+
+**Zwei Lehren, die generell gelten:**
+1. **GPU lohnt pro Datensatz, nicht pro Aufruf.** Die erste Fassung (nur die Rasterung auf der GPU, Projektion in numpy) war LANGSAMER als die CPU,
+   weil der Transfer den Gewinn frass. Erst `Szene`, die die Punktwolke oben behaelt, bringt 17-21x. Wo nur einmal gerendert wird
+   (foto_breitenprofil), bleibt es bei null Gewinn - und das ist in Ordnung, der Renderkern ist dort trotzdem richtig (eine Fassung statt vier).
+2. **Batch-Groesse nach freiem Speicher.** 350 Lagen x 800k Punkte sprengten die 8 GB (OOM). `hypso_lagen` teilt jetzt selbst in Bloecke
+   (`mem_get_info`, ~40 Byte je Lage und Punkt) - ohne Zutun des Aufrufers.
+**Regression ist Pflicht:** vor der Umstellung wurden Referenzausgaben gesichert und danach verglichen. Ohne das haette ich die 0,1-m-Verschiebung
+in fehlteile_finden nicht bemerkt und nicht erklaeren koennen.

@@ -11,6 +11,7 @@ Plausibilitaet: Strassenfotos haben Kamerahoehe 1,2-2,5 m; RMS-Residuum < ~0,5 %
   /media/oem/scan/venv-seg/bin/python -W ignore -I tools/foto_kalibrieren.py modelle/<objekt>/objekt.json <foto-nr>
 """
 import sys, os, json, glob, math, numpy as np, cv2, trimesh
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from scipy.optimize import least_squares
 
 def projiziere(X, rvec, t, f, cx, cy):
@@ -31,7 +32,9 @@ def silhouetten_punkte3d(P3d, rvec, t, f, cx, cy, W, H, sk, n=500):
     uv, z = projiziere(P3d, rvec, t, f, cx, cy); ok = (z > 1) & (uv[:, 0] >= 0) & (uv[:, 0] < W) & (uv[:, 1] >= 0) & (uv[:, 1] < H)
     if ok.sum() < 1000: return None
     u = uv[ok, 0].astype(int); v = uv[ok, 1].astype(int); idx = np.nonzero(ok)[0]
-    M = np.zeros((H, W), np.uint8); M[v, u] = 1; M = cv2.morphologyEx(M, cv2.MORPH_CLOSE, np.ones((7, 7), np.uint8))
+    import render_kern as RK
+    R3, _ = cv2.Rodrigues(np.asarray(rvec, float))
+    M = RK.maske(P3d, R3, t, f, cx, cy, W, H, schliessen=7).astype(np.uint8)
     rand = cv2.dilate((cv2.Canny(M * 255, 50, 150) > 0).astype(np.uint8), np.ones((3, 3), np.uint8)) > 0
     nah = cv2.dilate(sk.astype(np.uint8), np.ones((21, 21), np.uint8)) > 0
     auf = rand[v, u] & nah[v, u]
