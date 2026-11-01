@@ -20,6 +20,7 @@ Je Objekt `modelle/<objekt>/objekt.json` + `masstabelle.json` (Masse = Daten mit
 5. Widersprueche zwischen Quellen (Foto vs Laser) NICHT mitteln - als offene Beobachtung stehen lassen, naechsten Schritt notieren.
 6. Optimierer-/Mehrfachstart-Ergebnisse je Parameter bewerten; neue sichtbare Merkmale als Parameter + Tabellenzeile.
 7. Symmetrische Objekte: Seiten unterscheidbar machen (Fotos nach Seite in `objekt.json`), sonst ist jede Kameraanpassung mehrdeutig.
+8b. Werkzeug-/Bibliotheksaenderung (tools/*.py, bauteile.py, pruefstand.py): danach `tools/regression.py modelle/<objekt>/objekt.json --pruefen` (Kette + 10 Ergebnisdateien gegen Schnappschuss; Register AW). Schnappschuss (`--schnappschuss`) nur erneuern, wenn das Ergebnis sich AENDERN soll, mit Register-Eintrag.
 8. Commit-Sperre: `tools/git_hooks/pre-commit` prueft ueberwachte Dateien. Aktivierung nur durch den Nutzer: `git config core.hooksPath tools/git_hooks`.
 
 ## Vor neuen Versuchen lesen

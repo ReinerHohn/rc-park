@@ -1045,3 +1045,33 @@ Kupferhelm ab 40,5 - stimmt mit GZ0 34,1 / GZ1 40,5 / HELM_UEBER aus AR/AS ueber
 37,9-39,5 vs Band 38,25-39,25 (offene Beobachtung, Masse ARKADE_UNTER_TRAUFE spaeter aus dem Band).
 **Lehre:** Vor jedem neuen Werkzeug fragen, welche Eingaben wirklich objektspezifisch sind - meist nur Achse, Zone, Hoehenbereich. Die gehoeren
 als Daten in objekt.json, nicht in den Werkzeugnamen.
+
+## AW. Generalisierung mit Beweis: tools/regression.py (2026-11-01)
+**Nutzer:** "aber jetzt haben wir viele Spezialwerkzeuge? generalisiere alles, was ohne Qualitaetsverlust moeglich ist und beweise, dass wir
+nichts verlieren."
+**Beweisrahmen:** `tools/regression.py <objekt> --schnappschuss | --pruefen`. Kette und Vergleichsdateien stehen als DATEN in
+`objekt.json["regression"]` (8 deterministische Schritte ab der vorhandenen Wolke: Silhouette 061, Dach-/Tuermchenprofil, Uhr-Farbmerkmal,
+Baender tuermchen + zentral, Generator, Pruefstand, Wolke-gegen-Modell; 9 s). Verglichen werden 10 Ergebnisdateien: Profile, Baender,
+Silhouettenprotokoll, Masstabelle (Pruefungen name/wert/soll + Messungen), Pruefbericht (85 Werte, 59 ok-Flags), Elemente-Belege, STL
+(Dreieckszahl exakt, Volumen/BBox relativ 1e-6), Wolke-gegen-Modell (Versatz/Drift). Ein Traceback in der Kette = Fehlschlag (haette sonst
+einen Absturz als 'OK' durchgehen lassen - genau das passierte beim ersten Lauf von Gruppe 1 und wurde so gefangen).
+Schnappschuss: `modelle/martinstor/regression/basis/` (vor der Generalisierung, nach AV). Vorab gezeigt: Kette zweimal = identisch.
+**Generalisiert (jede Gruppe mit gruener Regression 10/10):**
+1. Seitenzuordnung (nord/sued/ost/west -> Tiefen-/Querachse) stand 4x kopiert in den Wolken-Werkzeugen -> einmal `bauteile.seite_achsen`/`SEITEN`.
+2. Alle Werkzeuge, die die Masstabelle schreiben, gehen ueber `masstabelle_io` (Dateisperre, atomar) - vorher nur zwei.
+3. `foto_silhouette_profil.py` kennt keine Namen mehr: 'gleich hohe Picks' = groesste Gruppe gleicher Ankerhoehe, 'seitliche Picks' =
+   Anker > 1,5 m abseits der Achse (statt startswith('tuermchen')). `wolke_baender.py` nimmt Koerper NUR aus objekt.json (keine Defaults
+   im Code). `wolke_profile.py`: Spitzenmass aus objekt.json['koerper'], Achsstreifen/Frontfenster als Parameter statt Literale.
+4. Der Baender-Bauer (Kragplatten, Bruestung mit X, Arkaden, Traufe mit Konsolen, Achteckkegel, Knauf) liegt als `bauteile.baender_rundkoerper`
+   objektunabhaengig vor; der Martinstor-Generator baut nur noch den Schaft selbst. STL dreiecksgleich.
+5. `pruefstand.rand_radius` = generischer Name fuer `tuerm_radius` (Alias, Tabellen unveraendert).
+**Bewusst NICHT geaendert (Begruendung):** `wolke_profile.py` behaelt Kreisfit-Achse und Tuermchen-Profil (Achse wird von wolke_baender
+gebraucht, vier 'Profil Ecktuermchen'-Pruefungen haengen daran; Entfernen waere Verlust an Pruefabdeckung). Der Generator bleibt
+bauwerksspezifisch (das ist sein Zweck); Pfade zu profile_*.json haengen am Objektordner.
+**Bestand:** 275 Dateien in tools/, davon nutzt der aktive Arbeitsablauf (Kette, Regression, bauen_abnehmen, CLAUDE.md, Importe) 24
+(`regression/aktive_werkzeuge.json`); dazu SfM-/Dicht-Werkzeuge der Netzphase (sfm_dicht, lg_match, sfm_bundle_anker, foto_pick_pruefen,
+foto_bundle, foto_verhaeltnis, lod2_gebaeude). Die uebrigen ~240 sind Versuchsstaende frueherer Register-Abschnitte (masspruefung_*, hypso_*,
+foto_* -Experimente); fuer sie gibt es keinen Beweisrahmen, sie werden nicht angefasst. Archivieren (tools/archiv/) waere eine eigene
+Entscheidung des Nutzers.
+**Regel ab jetzt (CLAUDE.md):** nach jeder Werkzeug- oder Bibliotheksaenderung `tools/regression.py <objekt> --pruefen`; Schnappschuss nur
+bewusst erneuern (`--schnappschuss`), wenn eine Aenderung das Ergebnis AENDERN soll - und dann mit Register-Eintrag, warum.

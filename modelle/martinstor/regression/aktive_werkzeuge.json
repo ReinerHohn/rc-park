@@ -1,0 +1,30 @@
+{
+ "aktiv": [
+  "bauen_abnehmen.sh",
+  "bauteile.py",
+  "fehlteile_finden.py",
+  "foto_breitenprofil.py",
+  "foto_kalibrieren.py",
+  "foto_lod2_zuordnen.py",
+  "foto_mass.py",
+  "foto_profil_gpu.py",
+  "foto_render_seite.py",
+  "foto_silhouette_gpu.py",
+  "foto_silhouette_profil.py",
+  "masstabelle_io.py",
+  "objekt_anlegen.py",
+  "pruefstand.py",
+  "seiten_audit.py",
+  "sfm_ausrichten.py",
+  "sfm_html_viewer.py",
+  "sfm_netz.py",
+  "sfm_registrieren.py",
+  "sfm_verzerrung_test.py",
+  "wolke_baender.py",
+  "wolke_farbmerkmal.py",
+  "wolke_profile.py",
+  "wolke_vs_modell.py"
+ ],
+ "stand": "2026-11-01",
+ "quelle": "objekt.json sfm.kette + regression.kette + bauen_abnehmen.sh + CLAUDE.md + Importe"
+}
