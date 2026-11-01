@@ -239,7 +239,8 @@ def baender_rundkoerper(c, baender, kegel, spitze, rel, nach_innen, adds, cuts, 
             for k in range(8):
                 if nach_innen(k): continue
                 for sg in (-1, 1):
-                    cut = M.cube((0.4, 0.08, z1 - z0 - 0.3)).translate((-0.2 + r + 0.02, -0.04, -(z1 - z0 - 0.3) / 2)).rotate((sg * 38, 0, 0))
+                    hs = max(z1 - z0 - 0.3, 0.15)                                          # Schlitzhoehe nie <= 0 (sehr flache Baender)
+                    cut = M.cube((0.4, 0.08, hs)).translate((-0.2 + r + 0.02, -0.04, -hs / 2)).rotate((sg * 38, 0, 0))
                     cuts.append(cut.translate((0, 0, (z0 + z1) / 2)).rotate((0, 0, k * 45)).translate((c[0], c[1], 0)))
         elif kl == "offen":
             adds.append(okt_prisma(c, r, z0 - 0.02, z1))

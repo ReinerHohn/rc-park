@@ -1101,3 +1101,31 @@ Masse statt Zufallsbereiche. Dachreiter: DOM1-Trommel (3,1 m) entfernt. Regressi
 **Nebenbefunde des Werkzeugs (Beobachtungen):** Hauptturm Band offen 22,75-24,0 m: 3 Oeffnungen (1,6/0,4/1,44) = obere Fensterreihe,
 aber 0,7 m hoeher als die Modellfenster (22,1); Band 20,75-21,5 eine Oeffnung 0,88; Schalloeffnungen 38,25-39,25 (2 je Flaeche, 1,2/1,5 m).
 **GPU:** Pruefkette 9-28 s, CSG + Strahlen = CPU-Bibliotheken; GPU bleibt fuer COLMAP/Dichtwolke/Render.
+
+## AY. Nullstart: das Martinstor mit der Pipeline von den Eingaben neu gerechnet - Befund in drei Stufen (2026-11-01)
+**Nutzer:** "koenntest du das Martinstor mit der aktuellen Pipeline von 0 aus erstellen? Beweise es!" / "verteil die Starts auf alle Kerne" /
+"das Bilderholen generalisieren in der Pipeline, nur Bilder mit Mehrwert, aehnliche wenn sie etwas bringen".
+**Werkzeug `tools/nullstart.py`:** frischer Objektordner `modelle/martinstor_null` (Symlink auf die Datenplatte: Root hatte 0,8 GB frei) mit
+NUR Eingaben (objekt.json angepasst, masse.json, anker3d.json, masstabelle.json = Sollwerte, fassade.json, K-/V-Picks ohne abgeleitete
+Kameras, torbau/ als Nebengebaeude-Eingabe); Fotos/DOM1/LoD2 geteilt gelesen. Kette: Netz Nord 7 s, Netz Sued 8 s, Ausrichtung Nord 8 s /
+Sued 51 s, Verzerrungstest, Registrierung 060 (ok) / 061 (nur 2 belastbare Kontrollpunkte - Anker heute auf sfm_bodenanker umgestellt,
+Filter 'nicht selbst abgeleitet' greift), Generator ohne Profile, Dichtwolke 353 s (GPU), Entzerrung, 15 Kamerakalibrierungen, Auswertungs-
+kette (regression.py --schnappschuss), Vergleich. Gesamt 8 Minuten.
+**Ergebnis (Stufe B, Fotos -> Modell):** STL-Volumen 6,27 vs 6,28 dm3 (0,2 %), Silhouette 061 identisch, Dachprofil/Traufe bis 0,7 m
+abweichend (quer an der Traufe 5,99 -> 5,25: andere Wolkenrealisierung), Tuermchenbaender gleiche Klassenfolge, Grenzen um eine Schicht
+(0,25 m) verschoben; Pruefstand im frischen Objekt 61/70 gruen (Referenz 67/67). Rot: Tuermchen-Spitze 45,25 (Kegel aus anderem Band-z0),
+Kegeldurchmesser, zwei Silhouettenbreiten aus neu kalibrierten Kameras, Tuermchen-Fensterprofile (Messfenster an der Referenzachse).
+**Befund daraus (generisch behoben):** Bandsegmentierung war empfindlich gegen Schichtjitter (8 -> 12 Baender, Mini-Plattenbaender):
+Baender gleicher Klasse werden nach dem Umbenennen zusammengefasst; Schlitzhoehe im Bauteil nie <= 0. Referenz: Hauptturm 30 -> 25 Baender
+(Schnappschuss erneuert), Tuermchen unveraendert. Nullstart danach: 1 Koerper, Volumen 0,2 %.
+**Stufe C (nicht automatisch):** 24 Masse in masse.json stammen aus Werkzeugausgaben, die von Hand uebertragen wurden (Historie 'grund'):
+DACHHOEHE, GZ0/GZ1, GX/GY, H_TOTAL, KONSOLE_Z0/Z1, KRAG_*, OR, QUADER_*, UZ, ERKER_OBEN, EX/EY, DACH_MITTE*. Sie bleiben im Nullstart Eingabe.
+Naechster Schritt fuer einen echten Nullstart: `masse_aus_profilen.py` - die Werkzeuge schreiben diese Werte selbst (mit Quelle/Historie).
+**Antwort:** Ja fuer Fotos -> Wolke -> Profile -> Baender -> Modell -> Pruefung (8 min, 0,2 % Volumen, gleiche Form), NEIN fuer die 24
+Masse der Stufe C und fuer die Picks (Mensch). Der Lauf ist wiederholbar: `tools/nullstart.py modelle/martinstor/objekt.json --ziel martinstor_null`.
+**Tempo:** `sfm_ausrichten.py` Mehrfachstart auf allen Kernen (fork-Pool, 72 Starts / 28 Kerne), bewiesen identisch am Referenz-Nordnetz
+(Kosten 46,39, Massstab 0,18713, gleiche Sigmas); 22 -> 15 s unter Last.
+**Bilder (`tools/bilder_holen.py`, Konfiguration objekt.json['bildquellen']):** Commons-Kategorien + Suchen + Geosearch mit Stichwort,
+nur Vorschaubilder fuer die Auswahl: Guete (Breite, Schaerfe), pHash-Duplikate (nur das beste), ORB/Homographie-Aehnlichkeit (aehnlich mit
+Parallaxe behalten, gedeckelt je Blickgruppe), neue Blickwinkel immer; Lizenz/Autor je Bild; Mapillary nur mit Token (fehlt), Videos nur
+mit Flag (Urheberrecht). Ergebnis des ersten Laufs: siehe daten/martinstor/fotos_eingang/bericht.json.

@@ -149,6 +149,15 @@ def main():
     # Erste Traufe (Kragplatte unter dem Bruestungsband) heisst 'gesims', die hoechste 'traufe' (Dachtraufe, darauf der Kegel)
     trauf = [b for b in baender if b["klasse"] == "traufe"]
     for b in trauf[:-1]: b["klasse"] = "gesims"
+    # Nach dem Umbenennen: benachbarte Baender gleicher Klasse zusammenfassen (Robustheit: eine andere Wolkenrealisierung darf die
+    # Bandgrenzen um eine Schicht verschieben, aber nicht die Bandzahl veraendern - Nullstart-Befund Register AY)
+    i = 0
+    while i + 1 < len(baender):
+        b, c = baender[i], baender[i + 1]
+        if b["klasse"] == c["klasse"] and b["klasse"] != "traufe":
+            n_b, n_c = b["n"], c["n"]; b["z1"] = c["z1"]; b["r"] = round((b["r"] * n_b + c["r"] * n_c) / (n_b + n_c), 2); b["r_max"] = max(b["r_max"], c["r_max"]); b["n"] = n_b + n_c
+            b["anteile"] = {k: round((b["anteile"][k] * n_b + c["anteile"][k] * n_c) / (n_b + n_c), 1) for k in b["anteile"]}; b["schichten"] = b["schichten"] + c["schichten"]; baender.pop(i + 1)
+        else: i += 1
     # Kegel: Gerade von der Dachtraufe (r der Traufplatte) zur Spitze - Steigung aus den Kupferschichten (kleinste Quadrate durch die Spitze)
     kegel = None; kb = [b for b in baender if b["klasse"] == "kupfer"]
     if kb:
