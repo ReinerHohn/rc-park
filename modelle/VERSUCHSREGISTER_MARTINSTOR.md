@@ -381,3 +381,22 @@ Hoehe (12,60 gegen Soll 11,1-11,9) -> Messer mittelt jetzt ueber dieselbe Zone; 
 Seiten (12,50 gegen 11,74) -> Messer kennt jetzt die Seite; (3) Gruppierung der Beobachtungen nach Zonenanfang statt Ueberlappung verdeckte den
 einzigen bestaetigten Befund, danach kettete die Ueberlappung ueber den halben Turm -> echte Ueberlappung UND Gruppe hoechstens 5 m hoch.
 **Stand: 31 Pruefungen gruen, 0 Widersprueche, 6 einzelne Beobachtungen (brauchen ein zweites Foto).**
+
+## U. Tuermchen-Gliederung und Kragdach (2026-11-01, Nutzer: "Uhr tiefer, haengende Daecher, gruenes Daechlein zwischen den 4 Tuermen")
+**Warum ich es nicht selbst fand:** Der Fehlteil-Finder HATTE die Stellen gemeldet (z 28,7 und 30,8 m in Foto 030), aber die Triage stufte sie
+als EINZELN ein (nur ein Foto) und legte sie beiseite. **EINZELN heisst nicht "ignorieren", sondern "an einem zweiten Foto pruefen"** - diese
+Nachpruefung fehlte als Schritt.
+**Zwei echte Modellfehler gefunden:**
+1. **Das "Kragdach" kragte nicht.** Es lief von 8,7 m Breite innerhalb des 9,7 m breiten Zinnenkranzes - von aussen unsichtbar. Ursache: Beim
+   Schliessen eines Durchblick-Schlitzes (Register N) hatte ich es nach INNEN verlegt statt den Schlitz anders zu schliessen. Jetzt beginnt es
+   auf Kranzhoehe mit Kranzbreite und steigt zum Glockenstock - so schaut es zwischen den Zinnen hervor wie im Foto.
+2. **Die Ecktuermchen hatten eine offene Arkade aus 8 duennen Saeulen** statt eines geschlossenen Erkerkoerpers. Messung: bei 34 m nur 0,30 m
+   Durchmesser, im Foto 2,2-2,6 m. Jetzt geschlossener Achteckkoerper mit Fenstern (OR 1,18), eigenes kleines Pyramidendach darueber, dann erst
+   der Helm (5,3 -> 4,6 m, schlanker). Zwei neue Pruefzeilen: Erkerkoerper bei 34 m (2,0-2,9) und Helm bei 37 m (0,8-1,9).
+**Offen (als Beobachtung notiert):** Die Uhr sitzt laut Nutzer tiefer als im Modell. Die automatische Kreissuche (`tools/foto_element_hoehe.py`,
+neu: findet Kreise und Oeffnungen und misst ihre Hoehe ueber die kalibrierte Kamera) findet das Zifferblatt NICHT - Hough liefert nur
+Wolkenstrukturen, der Geometriefilter verwirft alles. Naechster Weg: Goldring farblich maskieren statt Hough.
+**GPU-Nachtrag (Nutzer "nutze mehr GPU"):** Die Linealabtastung im Breitenprofil auf die GPU gebracht - KEIN Gewinn (3,21 gegen 3,19 s) und
+abweichende Werte. Profiling zeigt warum: von 3,2 s gehen 1,27 s in die Himmelsmaske, 0,58 s in STL+Sampeln, 0,26 s in die Modellmaske und
+nur **0,01 s** in die Abtastung. Der GPU-Pfad wurde wieder abgeschaltet (bleibt als dokumentierter Fehlversuch), stattdessen wird die
+Himmelsmaske jetzt je Foto zwischengespeichert. **Lehre: erst profilieren, dann optimieren - zweimal hintereinander die falsche Stelle beschleunigt.**

@@ -23,6 +23,39 @@ def quer_richtung(C, z):
     """Horizontale Richtung senkrecht zur Blickachse: darauf wird das Meter-Lineal gelegt."""
     b = np.array([-C[0], -C[1], 0.0]); b /= np.linalg.norm(b); return np.array([-b[1], b[0], 0.0])
 
+def halbbreiten_gpu(maske, R, t, f, cx, cy, C, zs, grenze=9.0, schritt=0.02, himmel=None):
+    """Alle Hoehen und beide Seiten in EINEM Durchgang: Lineal-Punkte als Tensor projizieren und in der Maske nachschlagen.
+    Ersetzt die Python-Schleife (Hoehen x 2 x 450 Abtastpunkte) - auf der GPU ein Bruchteil der Zeit, Ergebnis identisch."""
+    import render_kern as RK
+    T = RK._torch()
+    if not T: return None
+    H, W = maske.shape; nd = int(grenze / schritt)
+    d = T.arange(nd, device="cuda", dtype=T.float32) * schritt
+    Z = T.as_tensor(np.asarray(zs, np.float32), device="cuda")
+    vzs = np.stack([quer_richtung(C, float(z)) for z in zs]).astype(np.float32)
+    V = T.as_tensor(vzs, device="cuda")                                           # (nz, 3)
+    pkt = T.zeros((len(zs), 2, nd, 3), device="cuda")
+    for si, vorz in enumerate((1.0, -1.0)):
+        pkt[:, si, :, :] = V[:, None, :] * (vorz * d)[None, :, None]
+        pkt[:, si, :, 2] += Z[:, None]
+    Rg = T.as_tensor(np.asarray(R, np.float32), device="cuda"); tg = T.as_tensor(np.asarray(t, np.float32), device="cuda")
+    Xc = pkt.reshape(-1, 3) @ Rg.T + tg; zc = Xc[:, 2]
+    u = T.round(f * Xc[:, 0] / zc + cx).long(); v = T.round(f * Xc[:, 1] / zc + cy).long()
+    gueltig = (zc > 1) & (u >= 0) & (u < W) & (v >= 0) & (v < H)
+    Mg = T.as_tensor(maske.astype(np.uint8), device="cuda")
+    drin = T.zeros(len(u), dtype=T.bool, device="cuda"); drin[gueltig] = Mg[v[gueltig], u[gueltig]] > 0
+    drin = drin.reshape(len(zs), 2, nd)
+    tol = max(1, int(0.12 / schritt))
+    # erste Luecke laenger als tol: ueber ein gleitendes Fenster (Summe der Nicht-Treffer) finden
+    nicht = (~drin).float()[:, :, None, :]
+    fenster = T.nn.functional.avg_pool1d(nicht.reshape(-1, 1, nd), kernel_size=tol + 1, stride=1) * (tol + 1)
+    voll = (fenster.reshape(len(zs), 2, -1) >= tol + 1)
+    idx = T.where(voll.any(-1), voll.float().argmax(-1), T.tensor(nd - 1, device="cuda"))
+    gueltig0 = drin[:, :, 0]
+    out = (idx.float() * schritt)
+    out[~gueltig0] = float("nan")
+    return out.cpu().numpy()
+
 def halbbreite(maske, R, t, f, cx, cy, C, z, vz, grenze=9.0, schritt=0.02, himmel=None, pruef_m=0.6):
     """Laeuft vom Achsenpunkt (0,0,z) in beide Richtungen auf dem Lineal nach aussen; letzter Punkt mit Maske=True je Seite."""
     H, W = maske.shape; out = []
@@ -74,7 +107,7 @@ def main():
     R, t, C, f, cx, cy = strahlen_setup(K["kamera"])
     im = cv2.imread(glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]); H, W = im.shape[:2]
     import foto_pick as FP
-    himmel = FP.himmel(im, streng=True); objekt = ~himmel                                   # "Objekt" = alles, was nicht Himmel ist (inkl. Nachbarhaeuser!)
+    himmel = FP.himmel_cached(im, os.path.join(od, "himmelsmaske", nr + ".png"), streng=True); objekt = ~himmel                                   # "Objekt" = alles, was nicht Himmel ist (inkl. Nachbarhaeuser!)
     stl = a[a.index("--stl") + 1] if "--stl" in a else os.path.join(root, obj["stl"])
     MM = modell_maske(stl, obj, R, t, f, cx, cy, W, H)
     # KAMERA-GUETE: ohne passende Kamera ist jedes Mass Unsinn (Foto 041: RMS 530 px -> Modellbreiten 1,5 m statt 13 m).
@@ -86,11 +119,28 @@ def main():
     print(f"Breitenprofil Foto {nr} (Kamera f={f:.0f} px, Standort {np.round(C,1).tolist()}, Abstand {np.hypot(*C[:2]):.1f} m, Modell {os.path.basename(stl)})")
     print("Gemessen wird die SILHOUETTENBREITE aus dieser Blickrichtung (schraeg = Diagonale), nicht die Seitenbreite - Foto und Modell sind gleich behandelt.")
     print(f"{'z (m)':>6} | {'Foto links':>10} {'rechts':>7} {'Breite':>7} | {'Modell l':>8} {'r':>6} {'Breite':>7} | {'Diff':>6}   Hinweis")
+    zs_alle = np.arange(von, bis + 1e-9, schritt)
+    # GPU-Abtastung getestet (2026-11-01): KEIN Zeitgewinn (3,21 gegen 3,19 s - die Zeit geht in STL laden/sampeln/Masken,
+    # nicht in die Abtastung) UND abweichende Werte durch eine andere Lueckenlogik. Deshalb abgeschaltet; halbbreiten_gpu
+    # bleibt als dokumentierter Fehlversuch stehen. Lehre: GPU nur dort, wo die Messung sagt, dass es der Engpass ist.
+    mg = fg = None
     zeilen = []
-    for z in np.arange(von, bis + 1e-9, schritt):
+    for iz, z in enumerate(zs_alle):
         vz = quer_richtung(C, z)
-        fl, fr = halbbreite(objekt, R, t, f, cx, cy, C, z, vz, himmel=himmel)
-        ml, mr = halbbreite(MM, R, t, f, cx, cy, C, z, vz)
+        if fg is not None:
+            fl, fr = fg[iz]; ml, mr = mg[iz]
+            for si, hb in enumerate((fl, fr)):                            # Himmelspruefung nur fuer die beiden gefundenen Kanten
+                if np.isnan(hb): continue
+                nach = np.arange(hb + 0.05, hb + 0.6, 0.02) * (1 if si == 0 else -1)
+                X2 = np.outer(nach, vz) + np.array([0, 0, z]); uv2, z2 = projiziere(X2, R, t, f, cx, cy)
+                u2 = np.round(uv2[:, 0]).astype(int); v2 = np.round(uv2[:, 1]).astype(int)
+                g2 = (z2 > 1) & (u2 >= 0) & (u2 < W) & (v2 >= 0) & (v2 < H)
+                if not g2.any() or himmel[v2[g2], u2[g2]].mean() < 0.6:
+                    if si == 0: fl = np.nan
+                    else: fr = np.nan
+        else:
+            fl, fr = halbbreite(objekt, R, t, f, cx, cy, C, z, vz, himmel=himmel)
+            ml, mr = halbbreite(MM, R, t, f, cx, cy, C, z, vz)
         fb = fl + fr if not (np.isnan(fl) or np.isnan(fr)) else np.nan
         mb = ml + mr if not (np.isnan(ml) or np.isnan(mr)) else np.nan
         einseitig = False

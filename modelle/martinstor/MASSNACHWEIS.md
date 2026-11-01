@@ -6,8 +6,8 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 | Merkmal | Ist | Soll | Quelltyp | Massstab | Status | Quelle |
 |---|---|---|---|---|---|---|
 | Tuermchen-Spitze Hoehe (m) | 41.35 | 40.7..41.8 | laser_dom1 | laser | OK | Laser DOM1: lokale Maxima 40,9 und 41,4 m (Journal 12: 43,6 war OSM) |
-| Tuermchen-Kegel Durchmesser 2 m unter Spitze (m) | 0.59 | 0.4..1.2 | foto_verhaeltnis | modell | OK | Foto 043/044 + Journal 10/6: Kegel schlank; Nutzer 'zu gedrungen' 2026-10-31 |
-| Tuermchen-Kegel Durchmesser 4 m unter Spitze (m) | 1.42 | 0.8..1.7 | foto_verhaeltnis | modell | OK | Foto 043/044, Journal 6/10: Kegel ca. 3:1 |
+| Tuermchen-Kegel Durchmesser 2 m unter Spitze (m) | 0.48 | 0.4..1.2 | foto_verhaeltnis | modell | OK | Foto 043/044 + Journal 10/6: Kegel schlank; Nutzer 'zu gedrungen' 2026-10-31 |
+| Tuermchen-Kegel Durchmesser 4 m unter Spitze (m) | 1.14 | 0.8..1.7 | foto_verhaeltnis | modell | OK | Foto 043/044, Journal 6/10: Kegel ca. 3:1 |
 | Tuermchen Anzahl (Querschnitte 2 m unter Spitze) | 4.00 | 4..4 | foto_verhaeltnis | - | OK | Fotos: 4 Ecktuermchen |
 | Dachreiter Dicke bei 50 m (m) | 0.18 | 0.08..0.4 | foto_vollbild | modell | OK | Foto 049 Vollbild: Nadel 0,08-0,14 m, Mast 0,09-0,26 m (+Druck-Untergrenze); DOM1 verschmiert Nadel |
 | Dachreiter Dicke bei 52 m (m) | 0.16 | 0.08..0.3 | foto_vollbild | modell | OK | wie oben |
@@ -36,15 +36,17 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 | Anzahl getrennte Koerper | 1.00 | 1..1 | modell | - | OK | Schwebende Teile (Journal: 14 gefunden) |
 | Laserflaeche ueber 40 m (m2, gerastert) | 42.00 | 38..48 | laser_dom1 | laser | OK | DOM1-Profil: 43 m2, Streuung 43-43 (sehr sicher, grosse Dachflaeche) |
 | Silhouettenbreite bei 30 m (m, 3 Kameras) | 13.26 | 12.9..14.2 | foto_kalibriert | foto_kalibriert | OK | tools/foto_breitenprofil.py mit drei unabhaengig kalibrierten Kameras: Foto 030 13,40 m (Differenz zum Modell -0,12 m Median), Foto 031 12,56 (-0,04), Foto 041 11,12 (-0,36; andere Blickrichtung, daher anderer Absolutwert). Alle drei bestaetigen das Modell auf +-0,5 m. |
-| Silhouettenbreite Zone 29-33,5 m (Kamera 031) | 11.74 | 11.2..12 | foto_kalibriert | foto_kalibriert | OK | tools/foto_breitenprofil.py, Zonenmittel ueber 29,0-33,5 m in 0,5-m-Schritten: Foto 11,59 m. Toleranz +-0,4 m (Kameraguete 0,61). Gemessen wird die LINKE Halbbreite verdoppelt - rechts verdeckt ein Nachbarhaus die Kante, das Modell wird genauso behandelt. |
-| Silhouettenbreite Zone 29-31,5 m (Kamera 041) | 11.58 | 10.7..11.6 | foto_kalibriert | foto_kalibriert | OK | wie oben, Foto 041 misst 11,13 m ueber 29,0-31,5 m Gemessen wird die LINKE Halbbreite verdoppelt - rechts verdeckt ein Nachbarhaus die Kante, das Modell wird genauso behandelt. |
+| Silhouettenbreite Zone 29-33,5 m (Kamera 031) | 11.79 | 11.2..12 | foto_kalibriert | foto_kalibriert | OK | tools/foto_breitenprofil.py, Zonenmittel ueber 29,0-33,5 m in 0,5-m-Schritten: Foto 11,59 m. Toleranz +-0,4 m (Kameraguete 0,61). Gemessen wird die LINKE Halbbreite verdoppelt - rechts verdeckt ein Nachbarhaus die Kante, das Modell wird genauso behandelt. |
+| Silhouettenbreite Zone 29-31,5 m (Kamera 041) | 11.57 | 10.7..11.6 | foto_kalibriert | foto_kalibriert | OK | wie oben, Foto 041 misst 11,13 m ueber 29,0-31,5 m Gemessen wird die LINKE Halbbreite verdoppelt - rechts verdeckt ein Nachbarhaus die Kante, das Modell wird genauso behandelt. |
 | Silhouettenbreite Zone 23,5-28 m (Kamera 031) | 11.51 | 11.3..12.7 | foto_kalibriert | foto_kalibriert | OK | tools/foto_breitenprofil.py: Foto 031 misst 12,30 m, Foto 030 bestaetigt die Richtung (+0,27). Toleranz +-0,7 m (eine Seite verdeckt, Kameraguete 0,61). |
+| Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m) | 2.14 | 2..2.9 | foto_vollbild | modell | OK | Fotos 031/041/043 Vollbild: der achteckige Erker mit Fachwerk-Bruestung ist etwa so breit wie der Sandsteinschaft darunter (2,2-2,6 m); erst darueber beginnt der schlanke Helm |
+| Ecktuermchen: Helm Durchmesser bei 37 m (m) | 1.26 | 0.8..1.9 | foto_vollbild | modell | OK | Fotos 031/041: oberhalb des Erkerdachs ist der Helm deutlich schlanker als der Erker |
 
 ## Belegt durch
 
 - **laser_dom1**: 3 von 3 Pruefungen gruen (1-m-Raster, interpoliert, nur von oben; Strukturen < ~3 m verschmiert, Nadeln unsichtbar. BLIND auch fuer Grundriss mit Vorspruengen < ~1 m (Gesims, Erker): die Flaeche ueber Hoehe faellt dann 15-20 % zu klein aus (Martinstor 2026-11-01, Register O/P))
 - **foto_verhaeltnis**: 4 von 4 Pruefungen gruen (nur Verhaeltnisse (+-5-10 %), absolute Masse nur mit bekanntem Massstab)
-- **foto_vollbild**: 15 von 15 Pruefungen gruen (Vollaufloesung, Massstab aus Modell oder Dokument -> Werte grob, Richtung sicher)
+- **foto_vollbild**: 17 von 17 Pruefungen gruen (Vollaufloesung, Massstab aus Modell oder Dokument -> Werte grob, Richtung sicher)
 - **dokument**: 2 von 2 Pruefungen gruen (Bauforschung/Denkmalamt/Wikipedia; Bezugshoehe oft unklar (60 vs 65 m))
 - **foto_kalibriert**: 7 von 7 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
 - **lod2**: 1 von 1 Pruefungen gruen (amtlicher Grundriss + Traufe/First, keine Aufbauten/Details)
@@ -89,6 +91,29 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - 2026-11-01 Claude (Fotosichtung): Waagrechter Balken/Blende auf halber Hoehe der Schaftwand (Suedseite) -> Vollbild messen
 - 2026-11-01 Claude: Ost-/Westseite (+-y) kaum fotografiert; Fenster dort sind Annahme -> Fotos der Seiten beschaffen (Mapillary/eigene)
 - 2026-11-01 fehlteile_finden (Foto 030, alt vs neu) + Nutzer: Finder markierte am alten Modell die Zone Uhrgiebel/Kragdach (z 29-31 m) als FEHLT; nach Einbau von Kielbogen und Kragdach bleiben Treffer nahe der Uhr-Oberkante (Kamera K-030 ~0,5-1 m versetzt) und an der SE-Kante (Eckquader-Muster: Foto hat Quader in jeder Lage, Modell gezahnt nur jede zweite). -> Kamera mit praezisen Picks neu loesen, dann Finder erneut; Eckquader-Muster am Vollbild pruefen
+- auto foto_breitenprofil (Foto 041, Kamera K-041): Silhouettenbreite z 43.0-43.0 m: Foto 10.00 m, Modell 7.96 m (+2.04 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 39.5-41.0 m: Foto 9.30 m, Modell 8.12 m (+1.18 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 36.5-37.5 m: Foto 10.95 m, Modell 9.88 m (+1.07 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- auto fehlteile_finden (Foto 041, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=39.74 m, y=0.76 m (Zelle [864, 576, 96], Score +1.00) -> audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 23.5-28.0 m: Foto 12.32 m, Modell 11.51 m (+0.80 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 31.5-32.0 m: Foto 11.28 m, Modell 11.82 m (-0.54 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- auto fehlteile_finden (Foto 030, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=28.24 m, y=4.7 m (Zelle [1260, 945, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 030, Treffer 2): Foto zeigt Struktur ohne Modellgegenstueck bei z=16.55 m, y=5.16 m (Zelle [1323, 1512, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 030, Treffer 3): Foto zeigt Struktur ohne Modellgegenstueck bei z=15.42 m, y=5.16 m (Zelle [1323, 1575, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()
+- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 34.5-35.0 m: Foto 12.22 m, Modell 12.89 m (-0.67 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- auto foto_breitenprofil (Foto 030, Kamera K-030): Silhouettenbreite z 44.5-46.5 m: Foto 2.94 m, Modell 3.75 m (-0.80 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 46.5-47.5 m: Foto 0.78 m, Modell 2.68 m (-1.90 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 48.0-48.0 m: Foto 1.32 m, Modell 0.22 m (+1.10 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- auto foto_breitenprofil (Foto 041, Kamera K-041): Silhouettenbreite z 35.0-35.5 m: Foto 11.78 m, Modell 11.12 m (+0.66 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- auto foto_breitenprofil (Foto 041, Kamera K-041): Silhouettenbreite z 47.0-48.0 m: Foto 1.37 m, Modell 3.04 m (-1.67 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- 2026-11-01 Nutzer: Uhr sitzt tiefer als im Modell (nicht direkt unter der Oberkante). Automatische Kreissuche (tools/foto_element_hoehe.py) findet das Zifferblatt nicht - Hough liefert nur Wolkenstrukturen. -> Uhr ueber Template-Suche oder farbliche Maske (Goldring) finden, dann Hoehe ueber die kalibrierte Kamera messen
+- auto fehlteile_finden (Foto 030, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=30.59 m, y=2.5 m (Zelle [1071, 945, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 030, Treffer 3): Foto zeigt Struktur ohne Modellgegenstueck bei z=28.72 m, y=1.14 m (Zelle [1008, 1008, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 030, Treffer 5): Foto zeigt Struktur ohne Modellgegenstueck bei z=10.0 m, y=5.53 m (Zelle [1386, 1890, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 030, Treffer 6): Foto zeigt Struktur ohne Modellgegenstueck bei z=9.13 m, y=5.56 m (Zelle [1386, 1953, 63], Score +1.00) -> audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()
+- auto foto_breitenprofil (Foto 031, Kamera K-031): Silhouettenbreite z 36.0-39.5 m: Foto 10.18 m, Modell 9.35 m (+0.82 m) -> tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind
+- auto fehlteile_finden (Foto 041, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=42.68 m, y=0.84 m (Zelle [873, 485, 97], Score +1.00) -> audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto 041, Treffer 2): Foto zeigt Struktur ohne Modellgegenstueck bei z=39.5 m, y=0.9 m (Zelle [873, 582, 97], Score +1.00) -> audit/fehlteile_041.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()
 
 ## Grenze
 

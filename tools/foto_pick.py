@@ -19,6 +19,18 @@ def plausibel(sk):
     oben = sk[:max(3, H // 50), :].mean(); unten_mitte = sk[int(0.55 * H):int(0.95 * H), int(0.35 * W):int(0.65 * W)].mean()
     return (0.05 <= sk.mean() <= 0.9) and oben >= 0.3 and unten_mitte <= 0.25, dict(anteil=round(float(sk.mean()), 3), oben=round(float(oben), 2), unten_mitte=round(float(unten_mitte), 2))
 
+def himmel_cached(im, pfad, streng=False):
+    """Himmelsmaske zwischenspeichern: sie haengt NUR vom Foto ab, nicht vom Modell - bei jedem Bau neu zu rechnen ist Verschwendung
+    (1,27 s je Foto, der groesste Posten im Breitenprofil). Cache verfaellt, wenn das Foto neuer ist."""
+    import os
+    if os.path.exists(pfad) and os.path.getmtime(pfad) > 0:
+        m = cv2.imread(pfad, cv2.IMREAD_GRAYSCALE)
+        if m is not None and m.shape == im.shape[:2]:
+            if streng: print(f"  Himmelsmaske: aus Cache {os.path.basename(pfad)}")
+            return m > 127
+    sk = himmel(im, streng); os.makedirs(os.path.dirname(pfad), exist_ok=True)
+    cv2.imwrite(pfad, (sk * 255).astype(np.uint8)); return sk
+
 def himmel(im, streng=False):
     """Himmelsmaske mit Pruefung. Drei Verfahren nacheinander, die erste plausible gewinnt; sonst Fehler statt stiller Unsinn.
     FALLE (2026-11-01): die Regel 'hell und ungesaettigt' machte die weisse Turmwand zu Himmel -> Breitenprofil mass 5,8 m statt 13 m."""

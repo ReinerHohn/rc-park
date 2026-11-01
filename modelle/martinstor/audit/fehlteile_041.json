@@ -2,91 +2,91 @@
  "foto": "041",
  "stl": "/home/oem/git/rc-park/modelle/stl/martinstor_v4_1-87.stl",
  "kamera": "K-041 (amtliche Anker)",
- "zelle_px": 96,
+ "zelle_px": 97,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    864,
-    576,
-    96
+    873,
+    485,
+    97
    ],
    "score": 1.0,
    "art": "FEHLT im Modell",
    "xyz": [
-    1.47,
-    0.76,
-    39.74
+    1.04,
+    0.86,
+    42.73
    ]
   },
   {
    "zelle": [
-    288,
-    2112,
-    96
+    873,
+    582,
+    97
    ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "score": 1.0,
+   "art": "FEHLT im Modell",
    "xyz": [
-    0.01,
-    -5.25,
-    13.08
+    1.49,
+    0.92,
+    39.6
    ]
   },
   {
    "zelle": [
-    576,
-    2112,
-    96
+    388,
+    1552,
+    97
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -1.44,
-    -2.05,
-    13.98
+    -0.75,
+    -4.85,
+    20.73
    ]
   },
   {
    "zelle": [
-    768,
-    2208,
-    96
+    679,
+    2037,
+    97
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -1.24,
-    0.2,
-    12.81
+    -1.3,
+    -1.12,
+    15.01
    ]
   },
   {
    "zelle": [
-    288,
-    2400,
-    96
+    679,
+    2231,
+    97
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -1.37,
-    -5.1,
-    10.46
+    -1.18,
+    -1.02,
+    12.64
    ]
   },
   {
    "zelle": [
-    576,
-    2400,
-    96
+    679,
+    2328,
+    97
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -0.62,
-    -2.02,
-    10.44
+    -1.22,
+    -0.95,
+    11.38
    ]
   }
  ]

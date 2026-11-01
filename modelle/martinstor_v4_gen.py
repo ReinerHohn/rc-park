@@ -317,7 +317,10 @@ adds.append(box(-D / 2 + 0.2, D / 2 - 0.2, -W / 2 + 0.2, W / 2 - 0.2, ZZ - 0.3, 
 # Gruenes Kragdach (Kupfer) zwischen den Ecktuermchen: Nutzer 2026-11-01 ("zwischen den Tuermen ein gruenes Daechlein"); Fotos 031/041/043:
 # die Schraege beginnt ueber den Zinnen aussen (ueber den Kranz hinaus) und steigt bis zur Glockenstock-Wand an.
 beleg("dach", "Kragdach (Kupferschraege) ueber dem Zinnenkranz bis zum Glockenstock", "Fotos 031/041/043 Vollbild; Nutzerhinweis 2026-11-01", unten=ZZ + 1.1, oben=ZZ + 2.4)
-adds.append(frustum(0, 0, ZZ + 0.2, D - 0.3, W - 0.3, ZZ + 2.4, D - 4.0 + 0.4, W - 4.3 + 0.4))   # hinter den Zinnen beginnend (kein Durchblick), bis zur Glockenstockwand
+# Das Dach muss BIS AN DIE KRANZKANTE reichen, sonst ist es hinter den Zinnen unsichtbar (Nutzer 2026-11-01: "zwischen den
+# 4 Tuermen ist ein gruenes Daechlein"). Fotos 031/041/043: die gruene Flaeche schaut zwischen den Zinnen hervor und steigt
+# zum Glockenstock an. Beginn bei ZZ-0,45 (Hoehe des Kranzgesimses), damit kein Durchblick-Schlitz entsteht.
+adds.append(frustum(0, 0, ZZ - 0.45, D + 0.7, W + 0.7, ZZ + 2.4, D - 4.0 + 0.4, W - 4.3 + 0.4))
 # ---------- abgesetzter Glockenstock mit Schallarkaden ----------
 GX, GY, GZ0, GZ1 = D - 4.0, W - 4.3, ZZ + 2.0, ZZ + 5.0
 adds.append(box(-GX / 2, GX / 2, -GY / 2, GY / 2, GZ0 - 0.1, GZ1))
@@ -376,7 +379,7 @@ adds.append(M.cylinder(TOP - KZ - 0.1, 0.10, 0.04, 8).translate((0, 0, KZ + 0.1)
 
 # ---------- Ecktuermchen: Sandsteinturm + achteckiger Erker mit Fachwerk-Bruestung und Arkade ----------
 TWs, T0, T1 = 2.6, 30.0, 32.7
-OR = 1.1                                     # Erker-Radius
+OR = 1.18                                    # Erker-Radius (2026-11-01: 1,1 -> 1,18; Erkerkoerper bei 34 m misst sonst 1,97 statt 2,0-2,9 m, Fotos 031/041)
 for sx in (-1, 1):
     for sy in (-1, 1):
         _h = hxy(T0 + 1.0)
@@ -403,14 +406,19 @@ for sx in (-1, 1):
         # Zierleisten der Bruestung: Ring unten/Mitte/oben (Foto: Fachwerk mit Leisten)
         for dz in (0.0, 0.45, 0.88):
             adds.append(M.cylinder(0.12, OR + rel(0.16), OR + rel(0.16), 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + dz)))
-        # offene Arkade: Kern + 8 schlanke Saeulen + Deckring
-        adds.append(M.cylinder(1.45, 0.55, 0.55, 8).translate((c[0], c[1], T1 + 0.95)))
-        for k in range(8):
-            a = math.radians(k * 45 + 22.5)
-            adds.append(M.cylinder(1.4, 0.11, 0.11, 8).translate((c[0] + (OR - 0.14) * math.cos(a), c[1] + (OR - 0.14) * math.sin(a), T1 + 0.95)))
-        adds.append(M.cylinder(0.22, OR + 0.1, OR + 0.1, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.3)))
+        # GESCHLOSSENER achteckiger Erkerkoerper mit Fensteroeffnungen (Nutzer 2026-11-01: "aufgemalte haengende Daecher";
+        # Fotos 031/041/043: ein Fachwerk-Erker mit kleinen Fenstern, KEIN offener Saeulenkranz - der liess das Tuermchen
+        # bei 34 m auf 0,30 m Durchmesser schrumpfen, im Foto sind es dort 2,2-2,6 m).
+        adds.append(M.cylinder(1.45, OR, OR, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 0.95)))
+        for k in range(8):                                                   # schmale Fenster in jeder zweiten Flaeche
+            if k % 2: continue
+            a = math.radians(k * 45)
+            fen = M.cube((0.5, 0.34, 0.85)).translate((-0.25, -0.17, -0.42)).translate((OR - 0.1, 0, 0)).rotate((0, 0, math.degrees(a)))
+            cuts.append(fen.translate((c[0], c[1], T1 + 1.7)))
+        adds.append(M.cylinder(0.18, OR + 0.14, OR + 0.14, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.3)))   # Traufgesims
+        adds.append(M.cylinder(0.75, OR + 0.16, 0.25, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.48)))      # kleines Pyramidendach ueber dem Erker
         # spitzes Kupferdach, Kugel, Spitze
-        adds.append(M.cylinder(5.3, OR + 0.12, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 2.52)))
+        adds.append(M.cylinder(5.3 - 0.7, OR * 0.72, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 3.22)))   # Helm auf dem Erkerdach
         adds.append(M.sphere(0.25, 20).translate((c[0], c[1], T1 + 7.82)))
         adds.append(M.cylinder(0.7, 0.05, 0.015, 8).translate((c[0], c[1], T1 + 7.95)))
 # ============ CSG ============

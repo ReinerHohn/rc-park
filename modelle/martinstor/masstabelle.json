@@ -253,6 +253,18 @@
    "kamera": "K-031",
    "foto": "031",
    "seite": "links"
+  },
+  "erker_34": {
+   "typ": "querschnitte_abseits",
+   "z": 34.0,
+   "ax": 2.5,
+   "ay": 2.5
+  },
+  "helm_37": {
+   "typ": "querschnitte_abseits",
+   "z": 37.0,
+   "ax": 2.5,
+   "ay": 2.5
   }
  },
  "pruefungen": [
@@ -702,6 +714,33 @@
    "historie": [
     "2026-11-01 angelegt, nachdem die erste Korrektur (Schaft durchgehend 9,0x10,0) diesen Bereich UEBERKORRIGIERT hatte (+0,73 m zu schmal) - Lehre F3/F4. Loesung: zweistufige Verjuengung mit Knick bei 26 m."
    ]
+  },
+  {
+   "name": "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+   "wert": "erker_34_durchmesser",
+   "soll": [
+    2.0,
+    2.9
+   ],
+   "quelle": "Fotos 031/041/043 Vollbild: der achteckige Erker mit Fachwerk-Bruestung ist etwa so breit wie der Sandsteinschaft darunter (2,2-2,6 m); erst darueber beginnt der schlanke Helm",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "schlankheit",
+   "massstab": "modell",
+   "historie": [
+    "2026-11-01 angelegt nach Nutzerhinweis 'aufgemalte haengende Daecher' - das Modell verjuengt sich dort zu frueh zum Kegel."
+   ]
+  },
+  {
+   "name": "Ecktuermchen: Helm Durchmesser bei 37 m (m)",
+   "wert": "helm_37_durchmesser",
+   "soll": [
+    0.8,
+    1.9
+   ],
+   "quelle": "Fotos 031/041: oberhalb des Erkerdachs ist der Helm deutlich schlanker als der Erker",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "schlankheit",
+   "massstab": "modell"
   }
  ],
  "beobachtungen_offen": [
@@ -724,6 +763,12 @@
    "naechster_schritt": "Kamera mit praezisen Picks neu loesen, dann Finder erneut; Eckquader-Muster am Vollbild pruefen"
   },
   {
+   "datum": "2026-11-01",
+   "wer": "Nutzer",
+   "text": "Uhr sitzt tiefer als im Modell (nicht direkt unter der Oberkante). Automatische Kreissuche (tools/foto_element_hoehe.py) findet das Zifferblatt nicht - Hough liefert nur Wolkenstrukturen.",
+   "naechster_schritt": "Uhr ueber Template-Suche oder farbliche Maske (Goldring) finden, dann Hoehe ueber die kalibrierte Kamera messen"
+  },
+  {
    "datum": "auto",
    "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
    "auto_id": "breite-041-43-43",
@@ -737,14 +782,14 @@
   },
   {
    "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-40-41",
+   "wer": "foto_breitenprofil (Foto 031, Kamera K-031)",
+   "auto_id": "breite-031-36-40",
    "art": "breite",
-   "foto": "030",
-   "z_von": 39.5,
-   "z_bis": 41.0,
-   "abweichung": 1.18,
-   "text": "Silhouettenbreite z 39.5-41.0 m: Foto 9.30 m, Modell 8.12 m (+1.18 m)",
+   "foto": "031",
+   "z_von": 36.0,
+   "z_bis": 39.5,
+   "abweichung": 0.82,
+   "text": "Silhouettenbreite z 36.0-39.5 m: Foto 10.18 m, Modell 9.35 m (+0.82 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
@@ -761,6 +806,69 @@
   },
   {
    "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-40-41",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 39.5,
+   "z_bis": 41.0,
+   "abweichung": 1.18,
+   "text": "Silhouettenbreite z 39.5-41.0 m: Foto 9.30 m, Modell 8.12 m (+1.18 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 3)",
+   "auto_id": "fehlteile-030-1008-1008",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 28.72,
+   "z_bis": 28.72,
+   "xyz": [
+    -0.24,
+    1.14,
+    28.72
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.72 m, y=1.14 m (Zelle [1008, 1008, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 1)",
+   "auto_id": "fehlteile-030-1071-945",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 30.59,
+   "z_bis": 30.59,
+   "xyz": [
+    -0.31,
+    2.5,
+    30.59
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.59 m, y=2.5 m (Zelle [1071, 945, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 2)",
+   "auto_id": "fehlteile-041-873-582",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 39.5,
+   "z_bis": 39.5,
+   "xyz": [
+    1.56,
+    0.9,
+    39.5
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.5 m, y=0.9 m (Zelle [873, 582, 97], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
    "wer": "fehlteile_finden (Foto 041, Treffer 1)",
    "auto_id": "fehlteile-041-864-576",
    "art": "fehlteil",
@@ -774,6 +882,23 @@
    ],
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.74 m, y=0.76 m (Zelle [864, 576, 96], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 1)",
+   "auto_id": "fehlteile-041-873-485",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 42.68,
+   "z_bis": 42.68,
+   "xyz": [
+    1.08,
+    0.84,
+    42.68
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=42.68 m, y=0.84 m (Zelle [873, 485, 97], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -798,6 +923,18 @@
    "z_bis": 32.0,
    "abweichung": -0.54,
    "text": "Silhouettenbreite z 31.5-32.0 m: Foto 11.28 m, Modell 11.82 m (-0.54 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 031, Kamera K-031)",
+   "auto_id": "breite-031-32-34",
+   "art": "breite",
+   "foto": "031",
+   "z_von": 31.5,
+   "z_bis": 33.5,
+   "abweichung": -0.59,
+   "text": "Silhouettenbreite z 31.5-33.5 m: Foto 10.98 m, Modell 11.57 m (-0.59 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   }
  ],
@@ -1319,6 +1456,213 @@
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind",
    "status": "UNEINS",
    "begruendung": "Fotos gegensaetzlich (030-0.67, 041+0.66) - Kamerafehler oder Verdeckung"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-44-46",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 44.5,
+   "z_bis": 46.5,
+   "abweichung": -0.8,
+   "text": "Silhouettenbreite z 44.5-46.5 m: Foto 2.94 m, Modell 3.75 m (-0.80 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind",
+   "status": "UNEINS",
+   "begruendung": "Fotos gegensaetzlich (030-0.80, 031-1.90, 031-2.60, 041-1.67, 031+1.10) - Kamerafehler oder Verdeckung"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 031, Kamera K-031)",
+   "auto_id": "breite-031-46-48",
+   "art": "breite",
+   "foto": "031",
+   "z_von": 46.5,
+   "z_bis": 47.5,
+   "abweichung": -1.9,
+   "text": "Silhouettenbreite z 46.5-47.5 m: Foto 0.78 m, Modell 2.68 m (-1.90 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind",
+   "status": "UNEINS",
+   "begruendung": "Fotos gegensaetzlich (030-0.80, 031-1.90, 031-2.60, 041-1.67, 031+1.10) - Kamerafehler oder Verdeckung"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 031, Kamera K-031)",
+   "auto_id": "breite-031-46-47",
+   "art": "breite",
+   "foto": "031",
+   "z_von": 46.5,
+   "z_bis": 47.0,
+   "abweichung": -2.6,
+   "text": "Silhouettenbreite z 46.5-47.0 m: Foto 0.51 m, Modell 3.11 m (-2.60 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind",
+   "status": "UNEINS",
+   "begruendung": "Fotos gegensaetzlich (030-0.80, 031-1.90, 031-2.60, 041-1.67, 031+1.10) - Kamerafehler oder Verdeckung"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-47-48",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 47.0,
+   "z_bis": 48.0,
+   "abweichung": -1.67,
+   "text": "Silhouettenbreite z 47.0-48.0 m: Foto 1.37 m, Modell 3.04 m (-1.67 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind",
+   "status": "UNEINS",
+   "begruendung": "Fotos gegensaetzlich (030-0.80, 031-1.90, 031-2.60, 041-1.67, 031+1.10) - Kamerafehler oder Verdeckung"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 031, Kamera K-031)",
+   "auto_id": "breite-031-48-48",
+   "art": "breite",
+   "foto": "031",
+   "z_von": 48.0,
+   "z_bis": 48.0,
+   "abweichung": 1.1,
+   "text": "Silhouettenbreite z 48.0-48.0 m: Foto 1.32 m, Modell 0.22 m (+1.10 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind",
+   "status": "UNEINS",
+   "begruendung": "Fotos gegensaetzlich (030-0.80, 031-1.90, 031-2.60, 041-1.67, 031+1.10) - Kamerafehler oder Verdeckung"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
+   "auto_id": "fehlteile-030-1386-1953",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 9.13,
+   "z_bis": 9.13,
+   "xyz": [
+    4.55,
+    5.56,
+    9.13
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=9.13 m, y=5.56 m (Zelle [1386, 1953, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()",
+   "status": "TEXTUR",
+   "begruendung": "Treffer an der Fassadenkante (|y| > 4,5 m) ueber mehrere Hoehen = Steinfugen/Eckquader, kein fehlendes Bauteil"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 5)",
+   "auto_id": "fehlteile-030-1386-1890",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 10.0,
+   "z_bis": 10.0,
+   "xyz": [
+    4.7,
+    5.53,
+    10.0
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=10.0 m, y=5.53 m (Zelle [1386, 1890, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()",
+   "status": "TEXTUR",
+   "begruendung": "Treffer an der Fassadenkante (|y| > 4,5 m) ueber mehrere Hoehen = Steinfugen/Eckquader, kein fehlendes Bauteil"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 3)",
+   "auto_id": "fehlteile-030-1323-1575",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 15.42,
+   "z_bis": 15.42,
+   "xyz": [
+    4.19,
+    5.16,
+    15.42
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=15.42 m, y=5.16 m (Zelle [1323, 1575, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()",
+   "status": "TEXTUR",
+   "begruendung": "Treffer an der Fassadenkante (|y| > 4,5 m) ueber mehrere Hoehen = Steinfugen/Eckquader, kein fehlendes Bauteil"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 2)",
+   "auto_id": "fehlteile-030-1323-1512",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 16.55,
+   "z_bis": 16.55,
+   "xyz": [
+    4.2,
+    5.16,
+    16.55
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=16.55 m, y=5.16 m (Zelle [1323, 1512, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()",
+   "status": "TEXTUR",
+   "begruendung": "Treffer an der Fassadenkante (|y| > 4,5 m) ueber mehrere Hoehen = Steinfugen/Eckquader, kein fehlendes Bauteil"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 1)",
+   "auto_id": "fehlteile-030-1260-945",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 28.24,
+   "z_bis": 28.24,
+   "xyz": [
+    3.85,
+    4.7,
+    28.24
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.24 m, y=4.7 m (Zelle [1260, 945, 63], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()",
+   "status": "TEXTUR",
+   "begruendung": "Treffer an der Fassadenkante (|y| > 4,5 m) ueber mehrere Hoehen = Steinfugen/Eckquader, kein fehlendes Bauteil"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-34-35",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 34.5,
+   "z_bis": 35.0,
+   "abweichung": -0.67,
+   "text": "Silhouettenbreite z 34.5-35.0 m: Foto 12.22 m, Modell 12.89 m (-0.67 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind",
+   "status": "UNEINS",
+   "begruendung": "Fotos gegensaetzlich (030-0.67, 041+0.66, 030-0.62) - Kamerafehler oder Verdeckung"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-35-36",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 35.0,
+   "z_bis": 35.5,
+   "abweichung": 0.66,
+   "text": "Silhouettenbreite z 35.0-35.5 m: Foto 11.78 m, Modell 11.12 m (+0.66 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind",
+   "status": "UNEINS",
+   "begruendung": "Fotos gegensaetzlich (030-0.67, 041+0.66, 030-0.62) - Kamerafehler oder Verdeckung"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-35-36",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 35.0,
+   "z_bis": 35.5,
+   "abweichung": -0.62,
+   "text": "Silhouettenbreite z 35.0-35.5 m: Foto 12.11 m, Modell 12.73 m (-0.62 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind",
+   "status": "UNEINS",
+   "begruendung": "Fotos gegensaetzlich (030-0.67, 041+0.66, 030-0.62) - Kamerafehler oder Verdeckung"
   }
  ]
 }
