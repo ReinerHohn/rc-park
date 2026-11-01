@@ -28,11 +28,12 @@ SCALE = float(os.environ.get("SCALE", "500"))
 MINMM = float(os.environ.get("MINMM", "0.15"))  # kleinste Relief-Tiefe im Druck (mm)
 K = 1000.0 / SCALE                               # m -> mm
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "stl",
-                   f"martinstor_v4_1-{SCALE:.0f}.stl")
+                   os.environ.get("STL_NAME", f"martinstor_v4_1-{SCALE:.0f}.stl"))
 # ---- Masse: DATEN mit Quelle in modelle/martinstor/masse.json (nicht mehr im Code) ----
 from bauteile import lade_masse
-_M = lade_masse(os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "masse.json"))
-_FASSADE = __import__("json").load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "fassade.json")))["gruppen"]
+OBJ_DIR = os.environ.get("OBJ_DIR", "martinstor")                                          # Objektordner unter modelle/ (Nullstart: martinstor_null)
+_M = lade_masse(os.path.join(os.path.dirname(os.path.abspath(__file__)), OBJ_DIR, "masse.json"))
+_FASSADE = __import__("json").load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), OBJ_DIR, "fassade.json")))["gruppen"]
 H_TOTAL = _M["H_TOTAL"]; DB, WB, ZB = _M["DB"], _M["WB"], _M["ZB"]; D, W = _M["D"], _M["W"]
 ZK, DK, WK = _M["ZK"], _M["DK"], _M["WK"]; ZZ = _M["ZZ"]; SEG = int(_M["SEG"])
 
@@ -235,7 +236,7 @@ MX, MY, M2X, M2Y, OX, OY = _M["DACH_MITTE_X"], _M["DACH_MITTE_Y"], _M["DACH_MITT
 BX, BY = GX + _M["HELM_UEBER"], GY + _M["HELM_UEBER"]                                                 # Helmtraufe mit Ueberstand (Wolke: Tropfkante -4,0 / y +-3,7)
 _PROF = None
 if _M.get("PROFIL_DATEI", 0) >= 1:
-    _pp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "profile_generator.json")
+    _pp = os.path.join(os.path.dirname(os.path.abspath(__file__)), OBJ_DIR, "profile_generator.json")
     if os.path.exists(_pp): _PROF = __import__("json").load(open(_pp))
 if _PROF and _PROF.get("dach_traufe"):                                                                 # Traufmass aus dem Profilwerkzeug (Tropfkante der Wolke, driftkorrigiert)
     BX, BY = max(_PROF["dach_traufe"]["tief"], GX + 0.4), max(_PROF["dach_traufe"]["quer"], GY + 0.4)
@@ -280,7 +281,7 @@ OR = _M["OR"]                                # Erker-Radius
 # ---------- Ecktuermchen aus BAENDERN (tools/wolke_baender.py --koerper tuermchen -> profile_baender_tuermchen.json, Register AU) ----------
 _TB = None
 if _M.get("PROFIL_DATEI", 0) >= 1:
-    _tp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "profile_baender_tuermchen.json")
+    _tp = os.path.join(os.path.dirname(os.path.abspath(__file__)), OBJ_DIR, "profile_baender_tuermchen.json")
     if os.path.exists(_tp): _TB = __import__("json").load(open(_tp))
 def bau_tuerm_baender(c, sx, sy):
     """Ein Ecktuermchen aus den gemessenen Baendern: stein = Schaft (Quader TWs, Eckquader, Fenster), gesims = Kragplatte, fachwerk = Bruestung
@@ -387,7 +388,7 @@ with open(OUT, "wb") as f:
     f.write(b"martinstor_detail (c) OSM ODbL + rc-park".ljust(80, b" "))
     f.write(np.uint32(len(F)).tobytes()); f.write(rec.tobytes())
 import json as _json
-_ep = os.path.join(os.path.dirname(os.path.abspath(__file__)), "martinstor", "elemente.json")
+_ep = os.path.join(os.path.dirname(os.path.abspath(__file__)), OBJ_DIR, "elemente.json")
 _json.dump([dict(e, seite_name=SEITEN.get(e["seite"], e["seite"])) for e in ELEMENTE], open(_ep, "w"), indent=1, ensure_ascii=False)
 lo, hi = V.min(0), V.max(0)
 print(f"{len(adds)} Teile, {len(cuts)} Schnitte -> {len(F):,} Dreiecke, Genus {model.genus()}, "
