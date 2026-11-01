@@ -400,3 +400,16 @@ Wolkenstrukturen, der Geometriefilter verwirft alles. Naechster Weg: Goldring fa
 abweichende Werte. Profiling zeigt warum: von 3,2 s gehen 1,27 s in die Himmelsmaske, 0,58 s in STL+Sampeln, 0,26 s in die Modellmaske und
 nur **0,01 s** in die Abtastung. Der GPU-Pfad wurde wieder abgeschaltet (bleibt als dokumentierter Fehlversuch), stattdessen wird die
 Himmelsmaske jetzt je Foto zwischengespeichert. **Lehre: erst profilieren, dann optimieren - zweimal hintereinander die falsche Stelle beschleunigt.**
+
+## V. Befund 36-41 m: Artefakt der Mittelwertbildung - Triage-Regel verschaerft (2026-11-01)
+**Nachgemessen statt geglaubt:** Das Detailprofil 34-42 m zeigt, dass die beiden Fotos NICHT einig sind - Foto 030 meldet bei 41 m +1,60 m,
+Foto 031 dort +0,00 m. Meine Triage hatte den Befund als BESTAETIGT eingestuft, weil sie nur das Mittel ueber alle Meldungen prueft (+1,02 m).
+**Regel verschaerft:** BESTAETIGT nur noch, wenn JEDES beteiligte Foto fuer sich >= 0,4 m abweicht (je Foto gemittelt) und alle dasselbe
+Vorzeichen haben; sonst SCHWACH und geschlossen. Das ist dieselbe Falle wie "Zonenmittel gegen Einzelhoehe" (Register T): **ein Mittelwert ueber
+uneinige Quellen sieht aus wie ein Befund.** Danach: 0 BESTAETIGT von 17 Meldungen.
+**Neue Mechanik `--nachpruefen` (die fehlende Haelfte):** Fuer jeden EINZELN-Befund werden die UEBRIGEN Kameras an genau dieser Hoehe befragt -
+auch wenn sie dort keine eigene Zone gemeldet haben (eine Abweichung unter der Meldeschwelle ist trotzdem eine Aussage). Genau dieser Schritt
+fehlte, weshalb die Tuermchen-Gliederung (Register U) liegen blieb, bis der Nutzer sie fand.
+Ergebnis fuer alle vier Einzelbefunde: **widerlegt** - z 39,5-41 (030+1,13 gegen 031+0,35, 041+0,28), z 23,5-28 (031+0,81 gegen 030+0,26, 041+0,08),
+z 36-37,5 (031+0,79 gegen 030-0,10, 041-0,01), z 31,5-33,5 (031-0,59 gegen 000+0,84, 030+0,31, 041-0,06). Das Modell ist dort in Ordnung;
+die Einzelmeldungen waren Kamerafehler und Rauschen. Sie werden mit dieser Begruendung geschlossen, nicht stillschweigend geloescht.

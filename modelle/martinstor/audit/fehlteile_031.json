@@ -88,6 +88,34 @@
     -0.24,
     16.02
    ]
+  },
+  {
+   "zelle": [
+    880,
+    2728,
+    88
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    0.77,
+    -1.49,
+    15.28
+   ]
+  },
+  {
+   "zelle": [
+    1320,
+    2728,
+    88
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -3.76,
+    -5.29,
+    14.7
+   ]
   }
  ]
 }

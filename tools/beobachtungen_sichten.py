@@ -43,17 +43,46 @@ def main():
             if len(fotos) >= 2 and min(w) * max(w) < 0:
                 paare = ", ".join(f"{b['foto']}{b['abweichung']:+.2f}" for b in g["b"])
                 status, grund = "UNEINS", f"Fotos gegensaetzlich ({paare}) - Kamerafehler oder Verdeckung"
-            elif len(fotos) >= 2 and abs(mw) >= 0.5: status, grund = "BESTAETIGT", ""
-            elif len(fotos) >= 2: status, grund = "UNEINS", f"beide Fotos unter 0,5 m Abweichung (Mittel {mw:+.2f}) - im Rauschen"
+            elif len(fotos) >= 2:
+                # JE FOTO mitteln und verlangen, dass JEDES fuer sich deutlich abweicht. Ein Mittelwert ueber Fotos
+                # verdeckt Uneinigkeit: 030 mit +1,60 und 031 mit +0,00 ergeben +0,80 und saehen bestaetigt aus
+                # (2026-11-01, Befund 36-41 m). Dieselbe Falle wie beim Zonenmittel gegen Einzelhoehe.
+                je = {f: float(np.mean([x["abweichung"] for x in g["b"] if x["foto"] == f])) for f in fotos}
+                paare = ", ".join(f"{f}{v:+.2f}" for f, v in je.items())
+                if min(abs(v) for v in je.values()) >= 0.4: status, grund = "BESTAETIGT", f"je Foto: {paare}"
+                else: status, grund = "SCHWACH", f"je Foto: {paare} - mindestens ein Foto unter 0,4 m, nicht belastbar"
             else: status, grund = "EINZELN", ""
         print(f"  {status:10s} z {zv:5.1f}-{zb:5.1f} m  {g['art']:9s}  Fotos {','.join(fotos):12s}  Abweichung {mw:+.2f} m  {grund[:70]}")
-        if status in ("UNEINS", "TEXTUR"):
+        if status in ("UNEINS", "TEXTUR", "SCHWACH"):
             for b in g["b"]: erledigt.append(dict(b, status=status, begruendung=grund))
         else:
             offen += g["b"]
             if status == "BESTAETIGT": bestaetigt.append((zv, zb, g["art"], fotos, mw))
     print(f"\n{len(bestaetigt)} BESTAETIGT (Ursache isolieren + Pruefzeile), {len([b for b in offen if b.get('art')])} EINZELN (zweites Foto noetig), {len(erledigt)} geschlossen")
+    print("Regel: BESTAETIGT nur, wenn JEDES beteiligte Foto fuer sich >= 0,4 m abweicht und alle dasselbe Vorzeichen haben.")
     for zv, zb, art, fotos, mw in bestaetigt: print(f"  -> z {zv:.1f}-{zb:.1f} m ({art}, Fotos {','.join(fotos)}, {mw:+.2f} m)")
+    # NACHPRUEFEN: fuer jeden EINZELN-Befund die anderen Kameras an genau dieser Hoehe befragen - auch wenn sie dort
+    # keine eigene Zone gemeldet haben (eine Abweichung unter der Meldeschwelle ist trotzdem eine Aussage).
+    # Diese Mechanik fehlte: Einzelbefunde blieben liegen, darunter die Tuermchen-Gliederung, die der Nutzer fand.
+    if "--nachpruefen" in sys.argv:
+        import subprocess, glob as _g
+        einzel = [b for b in offen if b.get("art") == "breite"]
+        alle = sorted({os.path.basename(x)[2:-5] for x in _g.glob(os.path.join(root, os.path.dirname(obj["masstabelle"]), "messprotokoll", "K-*.json"))})
+        print(f"\nNachpruefung von {len(einzel)} Einzelbefund(en) an den uebrigen Kameras {alle}:")
+        for b in einzel:
+            andere = [f for f in alle if f != b["foto"]]; werte = {b["foto"]: b["abweichung"]}
+            for f in andere:
+                r = subprocess.run([sys.executable, "-W", "ignore", "-I", os.path.join(root, "tools", "foto_breitenprofil.py"), objp, f,
+                                    "--von", str(b["z_von"]), "--bis", str(b["z_bis"]), "--schritt", "0.5"],
+                                   capture_output=True, text=True, env=dict(os.environ, OBJEKT=os.path.abspath(objp)))
+                zs = [l.split("|") for l in r.stdout.split("\n") if l.strip().startswith(("3", "4", "2")) and "|" in l]
+                d = [float(z[-1].split()[0]) for z in zs if z[-1].split() and z[-1].split()[0].replace("+", "").replace("-", "").replace(".", "").isdigit()]
+                if d: werte[f] = round(float(np.mean(d)), 2)
+            einig = [v for v in werte.values() if abs(v) >= 0.4 and np.sign(v) == np.sign(b["abweichung"])]
+            urteil = "BESTAETIGT durch Nachpruefung" if len(einig) >= 2 else ("widerlegt" if len(werte) > 1 else "keine zweite Kamera sieht die Stelle")
+            print(f"  z {b['z_von']:.1f}-{b['z_bis']:.1f} m: " + ", ".join(f"{f}{v:+.2f}" for f, v in werte.items()) + f"  -> {urteil}")
+            if urteil == "widerlegt" and anwenden:
+                offen.remove(b); erledigt.append(dict(b, status="WIDERLEGT", begruendung="Nachpruefung an den anderen Kameras: " + ", ".join(f"{f}{v:+.2f}" for f, v in werte.items())))
     if anwenden:
         tab["beobachtungen_offen"] = offen; tab.setdefault("beobachtungen_erledigt", []).extend(erledigt)
         json.dump(tab, open(tp, "w"), indent=1, ensure_ascii=False); print(f"\nangewendet: {len(erledigt)} geschlossen, {len(offen)} bleiben offen")
