@@ -1258,7 +1258,9 @@
    "tools/masse_aus_profilen.py <objekt> --schreiben (Stufe C: Masse aus Baendern/Profilen/Merkmalen/Ankern nach objekt.json['masse_regeln'] - vor jedem Bau)"
   ],
   "regel": "Neuer Matcher/Variante NUR mit --name <variante> in eigene Ordner; Referenznetz sparse_<seite> nie ueberschreiben (Panne AK)",
-  "quellen_blindheit_dom1_helm": "DOM1-Zellmaxima (1 m) erfassen Helmflaechen steiler als ~75 Grad nur teilweise: Schnittbreiten und Zellzahlen dort keine Obergrenze (Register AR, Foto 061 + Wolke stimmen, DOM1 Faktor 2 kleiner)"
+  "quellen_blindheit_dom1_helm": "DOM1-Zellmaxima (1 m) erfassen Helmflaechen steiler als ~75 Grad nur teilweise: Schnittbreiten und Zellzahlen dort keine Obergrenze (Register AR, Foto 061 + Wolke stimmen, DOM1 Faktor 2 kleiner)",
+  "hauptseite": "nord",
+  "hauptseite_hinweis": "Profile/Baender/Merkmale der Hauptseite heissen profile_*.json (Generator liest sie); andere Seiten bekommen das Suffix _<seite> und dienen als unabhaengige Pruefung (Symmetrie) - Register BB"
  },
  "nebengebaeude": {
   "torbau_1901": {

@@ -45,7 +45,7 @@ def main():
     ap.add_argument("--pruefungen", action="store_true"); ap.add_argument("--generator", action="store_true"); ap.add_argument("--toleranz", type=float, default=0.5); ap.add_argument("--tief-quelle", default="wolke", help="wolke | silhouette:<foto> (Silhouettenprofil eines fernen Seitenfotos, messprotokoll/M-<foto>-S1.json: misst die volle Tiefe direkt, ohne Symmetrie- und Driftannahme)"); ap.add_argument("--tuerm-rand", type=float, default=0.8, help="Hoehenabstand ueber den Tuermchenspitzen, ab dem die Wolkenbreite ohne Tuermchen gilt")
     a = ap.parse_args(); obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); s = a.seite.lower()
     P = np.load(os.path.join(od, a.dicht or f"sfm/dicht_{s}_entzerrt.npy")).astype(float)
-    tief, sgn, quer = seite_achsen(s)
+    tief, sgn, quer = seite_achsen(s); SUF = "" if s == obj.get("sfm", {}).get("hauptseite", s) else f"_{s}"   # Nebenseiten: eigene Dateien
     it = 0 if tief == "x" else 1; iq = 1 - it
     # ---- zentral
     zentral = []
@@ -200,13 +200,14 @@ def main():
             if len(lauf) > len(best_lauf) or (len(lauf) == len(best_lauf) and lauf and np.median([q["d"] for q in lauf]) > np.median([q["d"] for q in best_lauf])): best_lauf = lauf
         koerper = best_lauf if len(best_lauf) >= 4 else [r for r in mittel if r["d"] >= 0.8 * max(q["d"] for q in mittel)]
         achse = dict(tief=float(np.median([r["achse_tief"] for r in koerper])), quer=float(np.median([r["achse_quer"] for r in koerper])), aus_schichten=[koerper[0]["z"], koerper[-1]["z"]], verfahren="laengster konsistenter Lauf (+-15 %)")
-        json.dump(dict(seite=s, dach_profil=dach, dach_traufe=traufe, dach_ebenen=ebenen, tiefen_rampe=rampe, tief_quelle=a.tief_quelle, tuerm_profil=tuerm, tuerm_kegel=kegel, tuerm_achse=achse, quelle="tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)"), open(os.path.join(od, "profile_generator.json"), "w"), indent=1, ensure_ascii=False)
-        print("geschrieben:", os.path.join(od, "profile_generator.json"), f"({len(dach)} Dachschichten, {len(tuerm)} Tuermchenschichten, Achse {achse})")
+        json.dump(dict(seite=s, dach_profil=dach, dach_traufe=traufe, dach_ebenen=ebenen, tiefen_rampe=rampe, tief_quelle=a.tief_quelle, tuerm_profil=tuerm, tuerm_kegel=kegel, tuerm_achse=achse, quelle="tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)"), open(os.path.join(od, f"profile_generator{SUF}.json"), "w"), indent=1, ensure_ascii=False)
+        print("geschrieben:", os.path.join(od, f"profile_generator{SUF}.json"), f"({len(dach)} Dachschichten, {len(tuerm)} Tuermchenschichten, Achse {achse})")
     if a.pruefungen:
         tp = os.path.join(od, "masstabelle.json"); from masstabelle_io import sperren, schreiben; _L = sperren(tp); T = json.load(open(tp)); neu = 0
         gesetzt = set()
         def setze(name, wert, soll, quelle, merkmal, messung):
             nonlocal neu
+            if SUF: name = name.replace("Profil ", f"Profil [{s}] ", 1); wert = wert + SUF
             gesetzt.add(name)
             T["messungen"][wert.replace("_durchmesser", "")] = {k: v for k, v in messung.items() if k != "feld"}   # dict-Messung -> Pruefstand haengt _durchmesser an
             for pr in T["pruefungen"]:
@@ -238,7 +239,7 @@ def main():
                 dz_ = d_tuerm(z); fits = [r["d"] for r in mittel if abs(r["z"] - z) < 0.3]
                 setze(f"Profil Ecktuermchen: Durchmesser bei {z:.2f} m (m)", f"profil_tuerm_{int(round(z * 100))}", [round(dz_ - 0.4, 2), round(dz_ + 0.4, 2)], f"wolke_profile.py (Register AR): Tuermchen-Modell Koerper d {dk} bis {kegel['z_knick']} m, Kegel {kegel['steigung_d_je_m']} m/m zur Spitze {TS} -> d {dz_:.2f} bei {z} m (Einzelfit dort: {fits}); Fenster seitlich der Dachbreite", "schlankheit", {"typ": "schnitt_ausdehnung", "z": round(float(z), 2), **fen, "achse": tief})
         # Profil-Pruefungen frueherer Laeufe, die es in diesem Lauf nicht mehr gibt (andere Stuetzhoehen/Rand), entfernen - sie gehoeren dem Werkzeug
-        eigene = ("Profil Dach: ", "Profil Ecktuermchen: ")                                   # nur eigene Zeilen; 'Profil Dach (Foto ...)' gehoert foto_silhouette_profil.py
+        eigene = ("Profil Dach: ", "Profil Ecktuermchen: ") if not SUF else (f"Profil [{s}] Dach: ", f"Profil [{s}] Ecktuermchen: ")                                   # nur eigene Zeilen; 'Profil Dach (Foto ...)' gehoert foto_silhouette_profil.py
         alt = [pr for pr in T["pruefungen"] if pr["name"].startswith(eigene) and pr["name"] not in gesetzt]
         T["pruefungen"] = [pr for pr in T["pruefungen"] if not (pr["name"].startswith(eigene) and pr["name"] not in gesetzt)]
         for pr in alt: T["messungen"].pop(pr["wert"].replace("_durchmesser", ""), None)

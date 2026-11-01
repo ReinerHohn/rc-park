@@ -33,6 +33,7 @@ def main():
     pf = os.path.join(od, a.dicht or f"sfm/dicht_{s}_entzerrt.npy"); P = np.load(pf).astype(float)
     C = np.load(pf.replace("_entzerrt.npy", "_modell.npy").replace("_modell.npy", "_farben.npy"))
     tief, sgn, quer = seite_achsen(s); it = 0 if tief == "x" else 1; iq = 1 - it
+    SUF = "" if s == obj.get("sfm", {}).get("hauptseite", s) else f"_{s}"
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from bauteile import lade_masse
     masse = lade_masse(os.path.join(od, "masse.json")); obj = json.load(open(a.objekt))
     KO = obj.get("koerper", {})
@@ -40,7 +41,7 @@ def main():
     K = KO[a.koerper]
     ach = K["achse"]
     if isinstance(ach, str) and ach.startswith("profile_generator.json:"):
-        G = json.load(open(os.path.join(od, "profile_generator.json")))[ach.split(":", 1)[1]]; ach = [G["tief"], G["quer"]]
+        G = json.load(open(os.path.join(od, f"profile_generator{SUF}.json")))[ach.split(":", 1)[1]]; ach = [G["tief"], G["quer"]]
     at, aq = (a.achse if a.achse else ach); zone = a.zone or K["zone"]; zr = a.z or K["z"]; reich = K.get("reichweite", 4.0)
     def hoehe(ausdruck): return float(sum(masse[t] if t in masse else float(t) for t in str(ausdruck).split("+")))
     TS = hoehe(K["spitze"])
@@ -50,7 +51,7 @@ def main():
     fremd = []
     for name, KK in KO.items():
         if name == a.koerper: continue
-        fp = os.path.join(od, f"profile_baender_{name}.json")
+        fp = os.path.join(od, f"profile_baender_{name}{SUF}.json")
         if os.path.exists(fp):
             F = json.load(open(fp)); rr = max([b["r"] for b in F["baender"] if b["klasse"] != "kupfer"] or [1.0]); fremd.append(dict(quer=F["achse"]["quer"], r=rr, z1=F.get("spitze", 1e9) + 0.8))
     schichten = []
@@ -227,7 +228,7 @@ def main():
     if perioden_quer: print("  Farbperiode QUER an der Kante (Quaderlaenge) je 4-m-Fenster: " + ", ".join(f"{q['z0']}-{q['z1']}{'+' if q['seite_quer']>0 else '-'}: {q['periode_m']} m (St {q['staerke']})" for q in perioden_quer))
     if perioden: print("  Farbperiode je 4-m-Fenster (Steinanteil an der Kante): " + ", ".join(f"{q['z0']}-{q['z1']}: {q['periode_m']} m (St {q['staerke']})" for q in perioden))
     out = dict(seite=s, koerper=a.koerper, achse=dict(tief=at, quer=aq), zone=zone, spitze=TS, baender=baender, kegel=kegel, farbperioden=perioden, farbperioden_quer=perioden_quer, schichten=schichten, quelle="tools/wolke_baender.py: Aussenradius p97 + Farbklassen je 0,25 m, Baender nach Klassenwechsel")
-    op = os.path.join(od, f"profile_baender_{a.koerper}.json"); json.dump(out, open(op, "w"), indent=1, ensure_ascii=False); print("geschrieben:", op)
+    op = os.path.join(od, f"profile_baender_{a.koerper}{SUF}.json"); json.dump(out, open(op, "w"), indent=1, ensure_ascii=False); print("geschrieben:", op)
     if a.pruefungen:
         tp = os.path.join(od, "masstabelle.json"); from masstabelle_io import sperren, schreiben; _L = sperren(tp); T = json.load(open(tp)); gesetzt = set(); neu = 0
         seite = ("-" if sgn < 0 else "+") + tief
@@ -235,7 +236,7 @@ def main():
             if b["klasse"] == "kegel": zm = round((kegel["z0"] + TS) / 2, 2); r = kegel["r0"] * (TS - zm) / (TS - kegel["z0"])
             else: zm = round((b["z0"] + b["z1"]) / 2, 2); r = b["r"]
             if a.koerper == "tuermchen" and b["klasse"] == "stein" and b["z0"] < 30: continue   # Schaft/Konsolen haben eigene Pruefungen (Gesamtbreite 28,5, TWs)
-            name = f"Band {a.koerper} {b['klasse']} ({b['z0']:.2f}-{b['z1']:.2f} m): Aussenradius bei {zm:.2f} m (m)"; wert = f"band_{a.koerper}_{b['klasse']}_{int(round(zm * 100))}"
+            name = f"Band {a.koerper}{SUF} {b['klasse']} ({b['z0']:.2f}-{b['z1']:.2f} m): Aussenradius bei {zm:.2f} m (m)"; wert = f"band_{a.koerper}{SUF}_{b['klasse']}_{int(round(zm * 100))}"
             soll = [round(r - a.toleranz / 2, 2), round(r + a.toleranz / 2, 2)]; gesetzt.add(name)
             T["messungen"][wert] = {"typ": "tuerm_radius", "seite": seite, "z": zm, "quer": round(float(aq), 2), "achse_tief": round(float(at), 3)}
             quelle = f"wolke_baender.py ({a.koerper}): Band {b['klasse']} {b['z0']}-{b['z1']} m, Aussenradius p97 {r:.2f} (Anteile {b.get('anteile', '')}); Modell: Strahl von {seite} auf die Achse"
@@ -256,7 +257,7 @@ def main():
             zm = round(float(np.mean(o["hoehe"])) if o.get("hoehe") else (b["z0"] + b["z1"]) / 2, 2); fbh = o["flaechenbreite"] / 2
             for key, soll, feld in (("anzahl", [o["je_flaeche"], o["je_flaeche"]], "anzahl"), ("breite", [round(o["breite_median"] - 0.15, 2), round(o["breite_median"] + 0.15, 2)], "breite_median")):
                 if key == "breite" and not o.get("breite_median"): continue
-                name = f"Band {a.koerper} offen ({b['z0']:.2f}-{b['z1']:.2f} m): Oeffnungen je Flaeche {key} bei {zm:.2f} m"; wert = f"band_{a.koerper}_oeffn_{int(round(zm * 100))}"
+                name = f"Band {a.koerper}{SUF} offen ({b['z0']:.2f}-{b['z1']:.2f} m): Oeffnungen je Flaeche {key} bei {zm:.2f} m"; wert = f"band_{a.koerper}{SUF}_oeffn_{int(round(zm * 100))}"
                 gesetzt.add(name); T["messungen"][wert] = {"typ": "flaeche_oeffnungen", "seite": seite, "z": zm, "quer0": round(float(aq - fbh), 2), "quer1": round(float(aq + fbh), 2), "tiefe": 0.2}
                 quelle = f"wolke_baender.py ({a.koerper}): Dunkellaeufe entlang der sichtbaren Flaeche im Band offen: {o['je_flaeche']} je Flaeche, Breiten {o['breiten']}, Hoehe {o['hoehe']}; Nutzer: 'Boegen zu klein und zu viele'"
                 for pr in T["pruefungen"]:
@@ -273,7 +274,7 @@ def main():
             kq = kante_bei((q["z0"] + q["z1"]) / 2)
             if kq is None or q["staerke"] < 0.3: continue
             if True:
-                name = f"Band {a.koerper} Quaderperiode {q['z0']:.0f}-{q['z1']:.0f} m: Reliefperiode an der Kante (m)"; wert = f"band_{a.koerper}_periode_{int(q['z0'])}"
+                name = f"Band {a.koerper}{SUF} Quaderperiode {q['z0']:.0f}-{q['z1']:.0f} m: Reliefperiode an der Kante (m)"; wert = f"band_{a.koerper}{SUF}_periode_{int(q['z0'])}"
                 soll = [round(q["periode_m"] - 0.1, 2), round(q["periode_m"] + 0.1, 2)]; gesetzt.add(name)
                 T["messungen"][wert] = {"typ": "relief_periode", "seite": seite, "quer": float(kq), "z0": q["z0"], "z1": q["z1"]}
                 soll = [round(q["periode_m"] - 0.12, 2), round(q["periode_m"] + 0.12, 2)]
@@ -283,7 +284,7 @@ def main():
                         if pr["soll"] != soll: pr.setdefault("historie", []).append({"datum": "auto", "alt_soll": pr["soll"], "grund": "wolke_baender.py neu gerechnet"}); pr["soll"] = soll; pr["quelle"] = quelle
                         pr["wert"] = wert; break
                 else: T["pruefungen"].append(dict(name=name, wert=wert, soll=soll, quelle=quelle, quelltyp="sfm_bodenanker", merkmal="verhaeltnis", massstab="LoD2-Eckkanten + Wandebene", protokoll=f"profile_baender_{a.koerper}.json")); neu += 1
-        alt = [pr for pr in T["pruefungen"] if (pr["name"].startswith(f"Band {a.koerper} ") or (a.koerper == "tuermchen" and pr["name"].startswith("Ecktuermchen Band "))) and pr["name"] not in gesetzt]
+        alt = [pr for pr in T["pruefungen"] if (pr["name"].startswith(f"Band {a.koerper}{SUF} ") or (a.koerper == "tuermchen" and pr["name"].startswith("Ecktuermchen Band "))) and pr["name"] not in gesetzt]
         T["pruefungen"] = [pr for pr in T["pruefungen"] if pr not in alt]
         noch = {pr["wert"] for pr in T["pruefungen"]}
         for pr in alt:
