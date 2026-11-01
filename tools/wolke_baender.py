@@ -246,6 +246,7 @@ def main():
                     pr["wert"] = wert; break
             else: T["pruefungen"].append(dict(name=name, wert=wert, soll=soll, quelle=quelle, quelltyp="sfm_bodenanker", merkmal="schlankheit", massstab="LoD2-Eckkanten + Wandebene", protokoll=f"profile_baender_{a.koerper}.json")); neu += 1
         # Oeffnungen je Flaeche (Modell: Laeufe tiefer Treffer entlang der sichtbaren Flaeche auf Bandmitte)
+        from masstabelle_io import auto_ersetzen; auto_ersetzen(T, f"band_{a.koerper}_offen_")                          # veraltete Bandbefunde dieses Koerpers raeumen
         for b in baender:
             o = b.get("oeffnungen")
             if not o or not o.get("je_flaeche"): continue

@@ -1242,3 +1242,10 @@ Massstab 0,13, Turm z 25 m, Urteil VERBOGEN; verworfen, SIMPLE_RADIAL-Netz wiede
 000/030/041 konsistent (Register AI: 0-4 px) - Netz in zwei Hoehenstufen getrennt anpassen, (b) Suedfotos ueber 060/061 an das metrische Nordnetz
 binden (Ring), (c) Suedhoehen per `foto_verhaeltnis` an 049/014/000 gegen die Nordhoehen pruefen. Bis dahin liefert nur die Nordwolke Tiefe;
 GX/Kupferband bleiben am Aufloesungsboden (Register BB).
+
+## BD. Beobachtungs-Hygiene: Auto-Beobachtungen werden ersetzt, nicht angehaeuft (2026-11-01)
+Befund (BB): 207 offene Beobachtungen, 186 automatisch - die `auto_id` enthaelt die Position, jeder Lauf mit leicht anderer Geometrie haengte neue an.
+Reparatur: `masstabelle_io.auto_ersetzen(tab, praefix)` entfernt vor dem Eintragen alle `datum == "auto"`-Eintraege mit diesem Praefix
+(fehlteile-<foto>-, breite-<foto>-, wolke-<seite>-, band_<koerper>_offen_); eingebunden in `fehlteile_finden` (nicht bei `--stl`), `foto_breitenprofil`
+(auch ohne Zonen = raeumt), `wolke_vs_modell`, `wolke_baender`. Hand-/Nutzerbeobachtungen bleiben. Ergebnis: 207 -> 118, zweiter Lauf 118 (idempotent);
+Pruefstand weiter 'alle bestanden', Regression identisch. Rest: 41 wolke_vs_modell, 35 breite, 18 fehlteil - echte Befunde des jeweils letzten Laufs.

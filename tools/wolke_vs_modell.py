@@ -118,7 +118,8 @@ def main():
     print("Bild:", bild)
     # ---- 6) Beobachtungen eintragen (auto_id, idempotent)
     if a.eintragen:
-        tp = os.path.join(od, "masstabelle.json"); T = json.load(open(tp)); vorhanden = {b.get("auto_id") for b in T["beobachtungen_offen"]}; neu = 0
+        tp = os.path.join(od, "masstabelle.json"); T = json.load(open(tp)); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from masstabelle_io import auto_ersetzen
+        print(f"{auto_ersetzen(T, f'wolke-{s}-')} veraltete Auto-Beobachtung(en) dieser Seite ersetzt"); vorhanden = {b.get("auto_id") for b in T["beobachtungen_offen"]}; neu = 0
         for b in befunde[:12]:
             aid = f"wolke-{s}-{b['art']}-{int(b['z_von'])}-{int(b['u_von'])}"
             if aid in vorhanden: continue

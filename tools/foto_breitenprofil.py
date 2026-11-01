@@ -187,9 +187,10 @@ def main():
         zonen = [z for z in zonen if len(z) >= 2 or abs(z[0][7]) > 1.0]   # Einzelhoehen nur bei grosser Abweichung
         print(f"  {len(zonen)} zusammenhaengende Zone(n):")
         for z in zonen: print(f"    z {z[0][0]:.1f}-{z[-1][0]:.1f} m: Foto {np.mean([x[3] for x in z]):.2f} m, Modell {np.mean([x[6] for x in z]):.2f} m ({np.mean([x[7] for x in z]):+.2f} m)")
-        if "--eintragen" in a and zonen:
+        if "--eintragen" in a:                                                                   # auch ohne Zonen: veraltete Eintraege dieses Fotos raeumen
             tp = os.path.join(root, obj["masstabelle"])
             def _eintragen(tab):
+                auto_ersetzen(tab, f"breite-{nr}-")
                 vorhanden = {b.get("auto_id") for b in tab.get("beobachtungen_offen", [])}; neu = 0
                 for z in zonen:
                     aid = f"breite-{nr}-{z[0][0]:.0f}-{z[-1][0]:.0f}"
@@ -199,7 +200,7 @@ def main():
                         text=f"Silhouettenbreite z {z[0][0]:.1f}-{z[-1][0]:.1f} m: Foto {np.mean([x[3] for x in z]):.2f} m, Modell {np.mean([x[6] for x in z]):.2f} m ({np.mean([x[7] for x in z]):+.2f} m)",
                         naechster_schritt="tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind")); neu += 1
                 return neu
-            from masstabelle_io import aendern
+            from masstabelle_io import aendern, auto_ersetzen
             neu = aendern(tp, _eintragen); print(f"  -> {neu} Beobachtung(en) eingetragen")
     json.dump([dict(z=float(x[0]), foto=None if np.isnan(x[3]) else float(x[3]), modell=None if np.isnan(x[6]) else float(x[6])) for x in zeilen],
               open(os.path.join(root, obj.get("audit", "audit"), f"breitenprofil_{nr}.json"), "w"), indent=1)

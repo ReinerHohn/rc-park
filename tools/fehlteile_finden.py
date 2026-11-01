@@ -104,6 +104,7 @@ def main():
     # Beobachtungen automatisch eintragen (einmal je Foto/Zelle)
     tp = os.path.join(root, obj["masstabelle"])
     def _eintragen(tab):
+        if "--stl" not in a: ersetzt = auto_ersetzen(tab, f"fehlteile-{nr}-"); print(f"  -> {ersetzt} veraltete Auto-Beobachtung(en) dieses Fotos ersetzt")
         vorhanden = {b.get("auto_id") for b in tab.get("beobachtungen_offen", [])}; neu = 0
         for k, tr in enumerate(treffer, 1):
             if "--stl" in a: break                                                       # Testlaeufe an fremden STL erzeugen keine Beobachtungen
@@ -115,7 +116,7 @@ def main():
                     text=f"Foto zeigt Struktur ohne Modellgegenstueck bei z={tr['xyz'][2]} m, y={tr['xyz'][1]} m (Zelle {tr['zelle']}, Score {tr['score']:+.2f})",
                     naechster_schritt=f"audit/fehlteile_{nr}.jpg Treffer {k} ansehen, Element benennen, Zeile + beleg()")); neu += 1
         return neu
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from masstabelle_io import aendern
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from masstabelle_io import aendern, auto_ersetzen
     neu = aendern(tp, _eintragen); print(f"  -> {neu} neue Beobachtung(en) in der Masstabelle")
     # Fuer Treffer AUF einer Fassade einen fertigen Eintrag fuer fassade.json vorschlagen - seit die Elemente Daten sind,
     # ist der Weg von "hier fehlt etwas" zu "dieses Element einfuegen" ein Textbaustein statt einer Codeaenderung.

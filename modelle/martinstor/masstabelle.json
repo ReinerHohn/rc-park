@@ -1976,144 +1976,6 @@
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 2)",
-   "auto_id": "fehlteile-041-873-582",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 39.6,
-   "z_bis": 39.6,
-   "xyz": [
-    1.49,
-    0.92,
-    39.6
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.6 m, y=0.92 m (Zelle [873, 582, 97], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 1)",
-   "auto_id": "fehlteile-041-873-485",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 42.73,
-   "z_bis": 42.73,
-   "xyz": [
-    1.04,
-    0.86,
-    42.73
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=42.73 m, y=0.86 m (Zelle [873, 485, 97], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-35-36",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 35.0,
-   "z_bis": 35.5,
-   "abweichung": -0.62,
-   "text": "Silhouettenbreite z 35.0-35.5 m: Foto 12.11 m, Modell 12.73 m (-0.62 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-40-41",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 39.5,
-   "z_bis": 41.0,
-   "abweichung": 1.13,
-   "text": "Silhouettenbreite z 39.5-41.0 m: Foto 9.30 m, Modell 8.17 m (+1.13 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-44-46",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 44.5,
-   "z_bis": 46.5,
-   "abweichung": -0.8,
-   "text": "Silhouettenbreite z 44.5-46.5 m: Foto 2.94 m, Modell 3.74 m (-0.80 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 1)",
-   "auto_id": "fehlteile-030-1260-945",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 28.2,
-   "z_bis": 28.2,
-   "xyz": [
-    3.9,
-    4.68,
-    28.2
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.2 m, y=4.68 m (Zelle [1260, 945, 63], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 2)",
-   "auto_id": "fehlteile-030-1323-1512",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 16.56,
-   "z_bis": 16.56,
-   "xyz": [
-    4.17,
-    5.18,
-    16.56
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=16.56 m, y=5.18 m (Zelle [1323, 1512, 63], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 3)",
-   "auto_id": "fehlteile-030-1386-1890",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 10.0,
-   "z_bis": 10.0,
-   "xyz": [
-    4.67,
-    5.55,
-    10.0
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=10.0 m, y=5.55 m (Zelle [1386, 1890, 63], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
-   "auto_id": "fehlteile-030-1386-1953",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 9.13,
-   "z_bis": 9.13,
-   "xyz": [
-    4.52,
-    5.57,
-    9.13
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=9.13 m, y=5.57 m (Zelle [1386, 1953, 63], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
    "wer": "foto_breitenprofil (Foto 031, Kamera K-031)",
    "auto_id": "breite-031-24-28",
    "art": "breite",
@@ -2203,23 +2065,6 @@
    "naechster_schritt": "Farbmaske enger fassen (Kupfergruen gegen Laubgruen, Schatten ausschliessen), Gebaeudeversatz aus der Spitze bestimmen, dann Tuermchenlagen und Dachgrundriss messen - Ergebnis jeweils mit messung_pruefen.plausibel absichern"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 6)",
-   "auto_id": "fehlteile-060-4032-1472",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 31.7,
-   "z_bis": 31.7,
-   "xyz": [
-    -4.76,
-    2.83,
-    31.7
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=31.7 m, y=2.83 m (Zelle [4032, 1472, 16], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-01",
    "wer": "Claude (Kamera K-060 geprueft)",
    "text": "Die Kamera aus Foto 060 ist NICHT messtauglich: RMS 38,6 px = 1,4 % der Bildhoehe (Grenze 0,5 %). Gegenprobe: die Oberkante der weissen Westwand (muss 30,5 m sein) rechnet sie auf 23,8 m - 6,7 m daneben. Grund: alle Anker liegen bei 41-60 m, nach unten extrapoliert die Loesung. Ihr SENKRECHTER MASSSTAB (15,4 px/m) stimmt dagegen mit der unabhaengigen Strecke Zinnenunterkante->Uhrmitte ueberein - Verhaeltnisse ja, absolute Hoehen nein. tools/fehlteile_finden.py hat sie trotzdem benutzt; die 6 Treffer aus Foto 060 sind damit wertlos.",
@@ -2233,40 +2078,6 @@
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 1)",
-   "auto_id": "fehlteile-030-1071-945",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 30.58,
-   "z_bis": 30.58,
-   "xyz": [
-    -0.29,
-    2.49,
-    30.58
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.58 m, y=2.49 m (Zelle [1071, 945, 63], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 4)",
-   "auto_id": "fehlteile-030-1323-1575",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 15.42,
-   "z_bis": 15.42,
-   "xyz": [
-    4.21,
-    5.16,
-    15.42
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=15.42 m, y=5.16 m (Zelle [1323, 1575, 63], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
    "wer": "foto_breitenprofil (Foto 031, Kamera K-031)",
    "auto_id": "breite-031-40-40",
    "art": "breite",
@@ -2276,210 +2087,6 @@
    "abweichung": 1.02,
    "text": "Silhouettenbreite z 39.5-39.5 m: Foto 8.92 m, Modell 7.90 m (+1.02 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 1)",
-   "auto_id": "fehlteile-060-4128-1280",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 44.3,
-   "z_bis": 44.3,
-   "xyz": [
-    -1.03,
-    -1.54,
-    44.3
-   ],
-   "abweichung": 0.955,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=44.3 m, y=-1.54 m (Zelle [4128, 1280, 16], Score +0.95)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 2)",
-   "auto_id": "fehlteile-060-4096-1328",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 41.02,
-   "z_bis": 41.02,
-   "xyz": [
-    -1.88,
-    0.25,
-    41.02
-   ],
-   "abweichung": 0.829,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=41.02 m, y=0.25 m (Zelle [4096, 1328, 16], Score +0.83)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 3)",
-   "auto_id": "fehlteile-060-4112-1264",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 45.08,
-   "z_bis": 45.08,
-   "xyz": [
-    -0.91,
-    -0.12,
-    45.08
-   ],
-   "abweichung": 0.802,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=45.08 m, y=-0.12 m (Zelle [4112, 1264, 16], Score +0.80)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 4)",
-   "auto_id": "fehlteile-060-4096-1312",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 41.99,
-   "z_bis": 41.99,
-   "xyz": [
-    -1.67,
-    0.46,
-    41.99
-   ],
-   "abweichung": 0.766,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=41.99 m, y=0.46 m (Zelle [4096, 1312, 16], Score +0.77)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 5)",
-   "auto_id": "fehlteile-060-4112-1280",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 44.11,
-   "z_bis": 44.11,
-   "xyz": [
-    -1.12,
-    -0.32,
-    44.11
-   ],
-   "abweichung": 0.724,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=44.11 m, y=-0.32 m (Zelle [4112, 1280, 16], Score +0.72)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 6)",
-   "auto_id": "fehlteile-060-4112-1328",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 41.22,
-   "z_bis": 41.22,
-   "xyz": [
-    -1.79,
-    -0.98,
-    41.22
-   ],
-   "abweichung": 0.663,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=41.22 m, y=-0.98 m (Zelle [4112, 1328, 16], Score +0.66)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 8)",
-   "auto_id": "fehlteile-060-4112-1296",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 43.15,
-   "z_bis": 43.15,
-   "xyz": [
-    -1.38,
-    -0.57,
-    43.15
-   ],
-   "abweichung": 0.646,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=43.15 m, y=-0.57 m (Zelle [4112, 1296, 16], Score +0.65)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 8 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 9)",
-   "auto_id": "fehlteile-060-4112-1344",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 40.26,
-   "z_bis": 40.26,
-   "xyz": [
-    -2.04,
-    -1.21,
-    40.26
-   ],
-   "abweichung": 0.645,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=40.26 m, y=-1.21 m (Zelle [4112, 1344, 16], Score +0.65)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 9 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 11)",
-   "auto_id": "fehlteile-060-4128-1264",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 45.27,
-   "z_bis": 45.27,
-   "xyz": [
-    -0.81,
-    -1.33,
-    45.27
-   ],
-   "abweichung": 0.601,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=45.27 m, y=-1.33 m (Zelle [4128, 1264, 16], Score +0.60)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 11 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 12)",
-   "auto_id": "fehlteile-060-4112-1312",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 42.19,
-   "z_bis": 42.19,
-   "xyz": [
-    -1.61,
-    -0.79,
-    42.19
-   ],
-   "abweichung": 0.492,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=42.19 m, y=-0.79 m (Zelle [4112, 1312, 16], Score +0.49)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 12 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 4)",
-   "auto_id": "fehlteile-041-776-582",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 38.99,
-   "z_bis": 38.99,
-   "xyz": [
-    1.55,
-    -0.75,
-    38.99
-   ],
-   "abweichung": 0.999,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.99 m, y=-0.75 m (Zelle [776, 582, 97], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 6)",
-   "auto_id": "fehlteile-041-776-485",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 42.42,
-   "z_bis": 42.42,
-   "xyz": [
-    1.05,
-    -0.68,
-    42.42
-   ],
-   "abweichung": 0.839,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=42.42 m, y=-0.68 m (Zelle [776, 485, 97], Score +0.84)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "2026-11-01",
@@ -2538,180 +2145,6 @@
   },
   {
    "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
-   "auto_id": "breite-000-38-38",
-   "art": "breite",
-   "foto": "000",
-   "z_von": 37.5,
-   "z_bis": 37.5,
-   "abweichung": 1.08,
-   "text": "Silhouettenbreite z 37.5-37.5 m: Foto 13.56 m, Modell 12.48 m (+1.08 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
-   "auto_id": "breite-000-48-48",
-   "art": "breite",
-   "foto": "000",
-   "z_von": 48.0,
-   "z_bis": 48.0,
-   "abweichung": -5.32,
-   "text": "Silhouettenbreite z 48.0-48.0 m: Foto 0.26 m, Modell 5.58 m (-5.32 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-34-36",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 34.5,
-   "z_bis": 35.5,
-   "abweichung": -0.79,
-   "text": "Silhouettenbreite z 34.5-35.5 m: Foto 12.17 m, Modell 12.96 m (-0.79 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-37-38",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 37.0,
-   "z_bis": 37.5,
-   "abweichung": -1.06,
-   "text": "Silhouettenbreite z 37.0-37.5 m: Foto 9.56 m, Modell 10.62 m (-1.06 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-43-43",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 43.0,
-   "z_bis": 43.0,
-   "abweichung": -3.02,
-   "text": "Silhouettenbreite z 43.0-43.0 m: Foto 5.34 m, Modell 8.36 m (-3.02 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-46-50",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 46.5,
-   "z_bis": 50.0,
-   "abweichung": -3.64,
-   "text": "Silhouettenbreite z 46.5-50.0 m: Foto 1.61 m, Modell 5.25 m (-3.64 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 1)",
-   "auto_id": "fehlteile-030-1054-930",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 30.97,
-   "z_bis": 30.97,
-   "xyz": [
-    -0.43,
-    2.17,
-    30.97
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.97 m, y=2.17 m (Zelle [1054, 930, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 2)",
-   "auto_id": "fehlteile-030-1116-930",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 30.65,
-   "z_bis": 30.65,
-   "xyz": [
-    0.4,
-    3.24,
-    30.65
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.65 m, y=3.24 m (Zelle [1116, 930, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 3)",
-   "auto_id": "fehlteile-030-992-992",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 28.98,
-   "z_bis": 28.98,
-   "xyz": [
-    -0.24,
-    0.81,
-    28.98
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.98 m, y=0.81 m (Zelle [992, 992, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 4)",
-   "auto_id": "fehlteile-030-1054-992",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 29.91,
-   "z_bis": 29.91,
-   "xyz": [
-    -1.05,
-    2.37,
-    29.91
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.91 m, y=2.37 m (Zelle [1054, 992, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 5)",
-   "auto_id": "fehlteile-030-1302-1178",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 23.0,
-   "z_bis": 23.0,
-   "xyz": [
-    4.28,
-    5.05,
-    23.0
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=23.0 m, y=5.05 m (Zelle [1302, 1178, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
-   "auto_id": "fehlteile-030-992-930",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 29.67,
-   "z_bis": 29.67,
-   "xyz": [
-    0.94,
-    0.38,
-    29.67
-   ],
-   "abweichung": 0.996,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.67 m, y=0.38 m (Zelle [992, 930, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
    "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
    "auto_id": "breite-041-40-43",
    "art": "breite",
@@ -2748,193 +2181,6 @@
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 1)",
-   "auto_id": "fehlteile-041-950-665",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 38.97,
-   "z_bis": 38.97,
-   "xyz": [
-    0.63,
-    2.46,
-    38.97
-   ],
-   "abweichung": 0.813,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.97 m, y=2.46 m (Zelle [950, 665, 95], Score +0.81)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 3)",
-   "auto_id": "fehlteile-041-855-665",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 38.67,
-   "z_bis": 38.67,
-   "xyz": [
-    0.48,
-    0.82,
-    38.67
-   ],
-   "abweichung": 0.741,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.67 m, y=0.82 m (Zelle [855, 665, 95], Score +0.74)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 4)",
-   "auto_id": "fehlteile-041-950-570",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 40.75,
-   "z_bis": 40.75,
-   "xyz": [
-    1.21,
-    2.28,
-    40.75
-   ],
-   "abweichung": 0.734,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=40.75 m, y=2.28 m (Zelle [950, 570, 95], Score +0.73)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 6)",
-   "auto_id": "fehlteile-041-760-570",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 39.8,
-   "z_bis": 39.8,
-   "xyz": [
-    1.12,
-    -0.94,
-    39.8
-   ],
-   "abweichung": 0.62,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.8 m, y=-0.94 m (Zelle [760, 570, 95], Score +0.62)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 1)",
-   "auto_id": "fehlteile-060-4128-1120",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 54.67,
-   "z_bis": 54.67,
-   "xyz": [
-    -1.28,
-    -1.42,
-    54.67
-   ],
-   "abweichung": 0.986,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=54.67 m, y=-1.42 m (Zelle [4128, 1120, 16], Score +0.99)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 2)",
-   "auto_id": "fehlteile-060-4128-1168",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 51.63,
-   "z_bis": 51.63,
-   "xyz": [
-    -1.41,
-    -1.62,
-    51.63
-   ],
-   "abweichung": 0.978,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=51.63 m, y=-1.62 m (Zelle [4128, 1168, 16], Score +0.98)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 3)",
-   "auto_id": "fehlteile-060-4128-1136",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 53.66,
-   "z_bis": 53.66,
-   "xyz": [
-    -1.32,
-    -1.49,
-    53.66
-   ],
-   "abweichung": 0.974,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=53.66 m, y=-1.49 m (Zelle [4128, 1136, 16], Score +0.97)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 4)",
-   "auto_id": "fehlteile-060-4112-1248",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 46.42,
-   "z_bis": 46.42,
-   "xyz": [
-    -1.92,
-    -0.92,
-    46.42
-   ],
-   "abweichung": 0.958,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=46.42 m, y=-0.92 m (Zelle [4112, 1248, 16], Score +0.96)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 5)",
-   "auto_id": "fehlteile-060-4128-1152",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 52.65,
-   "z_bis": 52.65,
-   "xyz": [
-    -1.39,
-    -1.57,
-    52.65
-   ],
-   "abweichung": 0.938,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=52.65 m, y=-1.57 m (Zelle [4128, 1152, 16], Score +0.94)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 6)",
-   "auto_id": "fehlteile-060-4128-1216",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 48.61,
-   "z_bis": 48.61,
-   "xyz": [
-    -1.64,
-    -1.91,
-    48.61
-   ],
-   "abweichung": 0.914,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=48.61 m, y=-1.91 m (Zelle [4128, 1216, 16], Score +0.91)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 4)",
-   "auto_id": "fehlteile-030-1116-992",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 29.68,
-   "z_bis": 29.68,
-   "xyz": [
-    -0.34,
-    3.53,
-    29.68
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.68 m, y=3.53 m (Zelle [1116, 992, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
    "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
    "auto_id": "breite-041-40-42",
    "art": "breite",
@@ -2968,183 +2214,6 @@
    "abweichung": -3.17,
    "text": "Silhouettenbreite z 45.0-50.0 m: Foto 2.09 m, Modell 5.26 m (-3.17 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 2)",
-   "auto_id": "fehlteile-041-760-475",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 42.41,
-   "z_bis": 42.41,
-   "xyz": [
-    1.17,
-    -1.03,
-    42.41
-   ],
-   "abweichung": 0.794,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=42.41 m, y=-1.03 m (Zelle [760, 475, 95], Score +0.79)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
-   "auto_id": "fehlteile-041-855-475",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 43.28,
-   "z_bis": 43.28,
-   "xyz": [
-    0.99,
-    0.73,
-    43.28
-   ],
-   "abweichung": 0.633,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=43.28 m, y=0.73 m (Zelle [855, 475, 95], Score +0.63)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 6)",
-   "auto_id": "fehlteile-041-950-475",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 42.8,
-   "z_bis": 42.8,
-   "xyz": [
-    1.49,
-    1.92,
-    42.8
-   ],
-   "abweichung": 0.596,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=42.8 m, y=1.92 m (Zelle [950, 475, 95], Score +0.60)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-40-42",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 40.0,
-   "z_bis": 41.5,
-   "abweichung": 0.97,
-   "text": "Silhouettenbreite z 40.0-41.5 m: Foto 8.83 m, Modell 7.86 m (+0.97 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-44-50",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 44.5,
-   "z_bis": 50.0,
-   "abweichung": -1.83,
-   "text": "Silhouettenbreite z 44.5-50.0 m: Foto 2.10 m, Modell 3.93 m (-1.83 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 1)",
-   "auto_id": "fehlteile-030-1054-620",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 38.31,
-   "z_bis": 38.31,
-   "xyz": [
-    0.62,
-    1.89,
-    38.31
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.31 m, y=1.89 m (Zelle [1054, 620, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 5)",
-   "auto_id": "fehlteile-030-1364-1736",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 12.6,
-   "z_bis": 12.6,
-   "xyz": [
-    4.44,
-    5.46,
-    12.6
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=12.6 m, y=5.46 m (Zelle [1364, 1736, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 1)",
-   "auto_id": "fehlteile-041-960-672",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 38.25,
-   "z_bis": 38.25,
-   "xyz": [
-    0.98,
-    2.33,
-    38.25
-   ],
-   "abweichung": 0.905,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.25 m, y=2.33 m (Zelle [960, 672, 96], Score +0.91)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 4)",
-   "auto_id": "fehlteile-041-768-480",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 42.52,
-   "z_bis": 42.52,
-   "xyz": [
-    0.98,
-    -0.78,
-    42.52
-   ],
-   "abweichung": 0.815,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=42.52 m, y=-0.78 m (Zelle [768, 480, 96], Score +0.81)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
-   "auto_id": "fehlteile-041-864-576",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 40.41,
-   "z_bis": 40.41,
-   "xyz": [
-    1.02,
-    0.89,
-    40.41
-   ],
-   "abweichung": 0.753,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=40.41 m, y=0.89 m (Zelle [864, 576, 96], Score +0.75)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 6)",
-   "auto_id": "fehlteile-041-864-480",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 43.33,
-   "z_bis": 43.33,
-   "xyz": [
-    0.84,
-    0.91,
-    43.33
-   ],
-   "abweichung": 0.739,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=43.33 m, y=0.91 m (Zelle [864, 480, 96], Score +0.74)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "2026-11-01",
@@ -3337,74 +2406,6 @@
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 2)",
-   "auto_id": "fehlteile-030-1008-1008",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 28.75,
-   "z_bis": 28.75,
-   "xyz": [
-    -0.29,
-    1.16,
-    28.75
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.75 m, y=1.16 m (Zelle [1008, 1008, 63], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 4)",
-   "auto_id": "fehlteile-030-1386-2079",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 7.2,
-   "z_bis": 7.2,
-   "xyz": [
-    4.38,
-    5.5,
-    7.2
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=7.2 m, y=5.5 m (Zelle [1386, 2079, 63], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
-   "auto_id": "fehlteile-030-1197-882",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 29.83,
-   "z_bis": 29.83,
-   "xyz": [
-    3.4,
-    3.77,
-    29.83
-   ],
-   "abweichung": 0.994,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.83 m, y=3.77 m (Zelle [1197, 882, 63], Score +0.99)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 4)",
-   "auto_id": "fehlteile-041-768-576",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 39.99,
-   "z_bis": 39.99,
-   "xyz": [
-    0.94,
-    -0.78,
-    39.99
-   ],
-   "abweichung": 0.831,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.99 m, y=-0.78 m (Zelle [768, 576, 96], Score +0.83)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
    "wer": "wolke_vs_modell (nord, Versatz +0.89 m abgezogen)",
    "auto_id": "wolke-nord-wirklichkeit_weiter_vorn-3--5",
    "art": "wolke_vs_modell",
@@ -3571,42 +2572,6 @@
   },
   {
    "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-32-32",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 31.5,
-   "z_bis": 32.5,
-   "abweichung": -0.67,
-   "text": "Silhouettenbreite z 31.5-32.5 m: Foto 13.12 m, Modell 13.79 m (-0.67 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-34-35",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 34.0,
-   "z_bis": 35.0,
-   "abweichung": -1.68,
-   "text": "Silhouettenbreite z 34.0-35.0 m: Foto 12.45 m, Modell 14.13 m (-1.68 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-38-39",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 38.5,
-   "z_bis": 39.0,
-   "abweichung": -0.73,
-   "text": "Silhouettenbreite z 38.5-39.0 m: Foto 9.08 m, Modell 9.81 m (-0.73 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
    "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
    "auto_id": "breite-041-30-32",
    "art": "breite",
@@ -3628,23 +2593,6 @@
    "abweichung": -0.74,
    "text": "Silhouettenbreite z 36.0-39.5 m: Foto 11.32 m, Modell 12.06 m (-0.74 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 1)",
-   "auto_id": "fehlteile-041-855-570",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 40.13,
-   "z_bis": 40.13,
-   "xyz": [
-    1.34,
-    0.64,
-    40.13
-   ],
-   "abweichung": 0.99,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=40.13 m, y=0.64 m (Zelle [855, 570, 95], Score +0.99)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
@@ -3774,71 +2722,6 @@
   },
   {
    "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-32-36",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 31.5,
-   "z_bis": 35.5,
-   "abweichung": -1.2,
-   "text": "Silhouettenbreite z 31.5-35.5 m: Foto 12.76 m, Modell 13.96 m (-1.20 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-38-38",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 38.0,
-   "z_bis": 38.0,
-   "abweichung": -1.4,
-   "text": "Silhouettenbreite z 38.0-38.0 m: Foto 11.96 m, Modell 13.36 m (-1.40 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-42-42",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 41.5,
-   "z_bis": 42.5,
-   "abweichung": -1.45,
-   "text": "Silhouettenbreite z 41.5-42.5 m: Foto 7.53 m, Modell 8.98 m (-1.45 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-50-50",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 49.5,
-   "z_bis": 50.0,
-   "abweichung": -3.84,
-   "text": "Silhouettenbreite z 49.5-50.0 m: Foto 1.10 m, Modell 4.94 m (-3.84 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 5)",
-   "auto_id": "fehlteile-030-1116-558",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 38.77,
-   "z_bis": 38.77,
-   "xyz": [
-    2.17,
-    2.6,
-    38.77
-   ],
-   "abweichung": 0.994,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.77 m, y=2.6 m (Zelle [1116, 558, 62], Score +0.99)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
    "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
    "auto_id": "breite-041-30-34",
    "art": "breite",
@@ -3875,86 +2758,6 @@
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 3)",
-   "auto_id": "fehlteile-041-940-564",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 40.56,
-   "z_bis": 40.56,
-   "xyz": [
-    1.44,
-    2.07,
-    40.56
-   ],
-   "abweichung": 0.927,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=40.56 m, y=2.07 m (Zelle [940, 564, 94], Score +0.93)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
-   "auto_id": "fehlteile-041-940-658",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 39.01,
-   "z_bis": 39.01,
-   "xyz": [
-    0.7,
-    2.24,
-    39.01
-   ],
-   "abweichung": 0.789,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.01 m, y=2.24 m (Zelle [940, 658, 94], Score +0.79)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 6)",
-   "auto_id": "fehlteile-041-752-470",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 41.95,
-   "z_bis": 41.95,
-   "xyz": [
-    1.55,
-    -1.23,
-    41.95
-   ],
-   "abweichung": 0.781,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=41.95 m, y=-1.23 m (Zelle [752, 470, 94], Score +0.78)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-48-50",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 47.5,
-   "z_bis": 50.0,
-   "abweichung": -4.36,
-   "text": "Silhouettenbreite z 47.5-50.0 m: Foto 1.11 m, Modell 5.47 m (-4.36 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
-   "auto_id": "fehlteile-030-1364-1798",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 11.57,
-   "z_bis": 11.57,
-   "xyz": [
-    4.45,
-    5.38,
-    11.57
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=11.57 m, y=5.38 m (Zelle [1364, 1798, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
    "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
    "auto_id": "breite-041-42-42",
    "art": "breite",
@@ -3976,125 +2779,6 @@
    "abweichung": -8.26,
    "text": "Silhouettenbreite z 45.0-45.0 m: Foto 4.32 m, Modell 12.58 m (-8.26 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 4)",
-   "auto_id": "fehlteile-041-846-564",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 40.41,
-   "z_bis": 40.41,
-   "xyz": [
-    1.2,
-    0.49,
-    40.41
-   ],
-   "abweichung": 0.768,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=40.41 m, y=0.49 m (Zelle [846, 564, 94], Score +0.77)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
-   "auto_id": "fehlteile-041-1128-564",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 37.3,
-   "z_bis": 37.3,
-   "xyz": [
-    4.36,
-    4.2,
-    37.3
-   ],
-   "abweichung": 0.75,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=37.3 m, y=4.2 m (Zelle [1128, 564, 94], Score +0.75)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 6)",
-   "auto_id": "fehlteile-041-564-470",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 36.96,
-   "z_bis": 36.96,
-   "xyz": [
-    4.18,
-    -4.51,
-    36.96
-   ],
-   "abweichung": 0.696,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=36.96 m, y=-4.51 m (Zelle [564, 470, 94], Score +0.70)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 5)",
-   "auto_id": "fehlteile-060-4192-1344",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 39.76,
-   "z_bis": 39.76,
-   "xyz": [
-    3.05,
-    -3.47,
-    39.76
-   ],
-   "abweichung": 0.943,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.76 m, y=-3.47 m (Zelle [4192, 1344, 16], Score +0.94)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
-   "auto_id": "fehlteile-041-752-564",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 39.92,
-   "z_bis": 39.92,
-   "xyz": [
-    1.18,
-    -1.1,
-    39.92
-   ],
-   "abweichung": 0.664,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.92 m, y=-1.1 m (Zelle [752, 564, 94], Score +0.66)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 3)",
-   "auto_id": "fehlteile-030-1054-1054",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 27.94,
-   "z_bis": 27.94,
-   "xyz": [
-    -0.43,
-    2.1,
-    27.94
-   ],
-   "abweichung": 0.998,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.94 m, y=2.1 m (Zelle [1054, 1054, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
-   "auto_id": "fehlteile-030-1302-1488",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 17.06,
-   "z_bis": 17.06,
-   "xyz": [
-    4.02,
-    4.99,
-    17.06
-   ],
-   "abweichung": 0.981,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.06 m, y=4.99 m (Zelle [1302, 1488, 62], Score +0.98)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
@@ -4186,277 +2870,6 @@
   },
   {
    "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-26-27",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 26.5,
-   "z_bis": 27.0,
-   "abweichung": 1.28,
-   "text": "Silhouettenbreite z 26.5-27.0 m: Foto 12.62 m, Modell 11.34 m (+1.28 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-30-30",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 29.5,
-   "z_bis": 30.0,
-   "abweichung": 0.96,
-   "text": "Silhouettenbreite z 29.5-30.0 m: Foto 12.94 m, Modell 11.98 m (+0.96 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-32-36",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 31.5,
-   "z_bis": 35.5,
-   "abweichung": 0.86,
-   "text": "Silhouettenbreite z 31.5-35.5 m: Foto 13.39 m, Modell 12.53 m (+0.86 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-42-42",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 42.0,
-   "z_bis": 42.0,
-   "abweichung": -10.28,
-   "text": "Silhouettenbreite z 42.0-42.0 m: Foto 0.20 m, Modell 10.48 m (-10.28 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-44-50",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 43.5,
-   "z_bis": 50.0,
-   "abweichung": -1.09,
-   "text": "Silhouettenbreite z 43.5-50.0 m: Foto 4.14 m, Modell 5.24 m (-1.09 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 061, Treffer 1)",
-   "auto_id": "fehlteile-061-2367-432",
-   "art": "fehlteil",
-   "foto": "061",
-   "z_von": 43.5,
-   "z_bis": 43.5,
-   "xyz": [
-    0.75,
-    2.35,
-    43.5
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=43.5 m, y=2.35 m (Zelle [2367, 432, 9], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 061, Treffer 2)",
-   "auto_id": "fehlteile-061-2376-630",
-   "art": "fehlteil",
-   "foto": "061",
-   "z_von": 22.31,
-   "z_bis": 22.31,
-   "xyz": [
-    -1.02,
-    5.24,
-    22.31
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=22.31 m, y=5.24 m (Zelle [2376, 630, 9], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 061, Treffer 3)",
-   "auto_id": "fehlteile-061-2340-657",
-   "art": "fehlteil",
-   "foto": "061",
-   "z_von": 19.35,
-   "z_bis": 19.35,
-   "xyz": [
-    2.83,
-    5.33,
-    19.35
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.35 m, y=5.33 m (Zelle [2340, 657, 9], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 061, Treffer 4)",
-   "auto_id": "fehlteile-061-2358-657",
-   "art": "fehlteil",
-   "foto": "061",
-   "z_von": 19.39,
-   "z_bis": 19.39,
-   "xyz": [
-    0.87,
-    5.32,
-    19.39
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.39 m, y=5.32 m (Zelle [2358, 657, 9], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 061, Treffer 5)",
-   "auto_id": "fehlteile-061-2358-666",
-   "art": "fehlteil",
-   "foto": "061",
-   "z_von": 18.43,
-   "z_bis": 18.43,
-   "xyz": [
-    0.86,
-    5.34,
-    18.43
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.43 m, y=5.34 m (Zelle [2358, 666, 9], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 061, Treffer 6)",
-   "auto_id": "fehlteile-061-2358-675",
-   "art": "fehlteil",
-   "foto": "061",
-   "z_von": 17.46,
-   "z_bis": 17.46,
-   "xyz": [
-    0.84,
-    5.37,
-    17.46
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.46 m, y=5.37 m (Zelle [2358, 675, 9], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 3)",
-   "auto_id": "fehlteile-060-4096-1184",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 50.33,
-   "z_bis": 50.33,
-   "xyz": [
-    -1.97,
-    0.47,
-    50.33
-   ],
-   "abweichung": 0.979,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=50.33 m, y=0.47 m (Zelle [4096, 1184, 16], Score +0.98)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 061, Treffer 1)",
-   "auto_id": "fehlteile-061-2376-378",
-   "art": "fehlteil",
-   "foto": "061",
-   "z_von": 49.31,
-   "z_bis": 49.31,
-   "xyz": [
-    -0.11,
-    2.28,
-    49.31
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=49.31 m, y=2.28 m (Zelle [2376, 378, 9], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 061, Treffer 2)",
-   "auto_id": "fehlteile-061-2367-414",
-   "art": "fehlteil",
-   "foto": "061",
-   "z_von": 45.42,
-   "z_bis": 45.42,
-   "xyz": [
-    0.79,
-    2.31,
-    45.42
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=45.42 m, y=2.31 m (Zelle [2367, 414, 9], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 061, Treffer 3)",
-   "auto_id": "fehlteile-061-2367-423",
-   "art": "fehlteil",
-   "foto": "061",
-   "z_von": 44.47,
-   "z_bis": 44.47,
-   "xyz": [
-    0.76,
-    2.38,
-    44.47
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=44.47 m, y=2.38 m (Zelle [2367, 423, 9], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-42-43",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 42.5,
-   "z_bis": 43.0,
-   "abweichung": -3.6,
-   "text": "Silhouettenbreite z 42.5-43.0 m: Foto 6.20 m, Modell 9.80 m (-3.60 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 6)",
-   "auto_id": "fehlteile-041-940-940",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 32.3,
-   "z_bis": 32.3,
-   "xyz": [
-    0.57,
-    2.12,
-    32.3
-   ],
-   "abweichung": 0.758,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=32.3 m, y=2.12 m (Zelle [940, 940, 94], Score +0.76)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-31-36",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 31.0,
-   "z_bis": 35.5,
-   "abweichung": -1.36,
-   "text": "Silhouettenbreite z 31.0-35.5 m: Foto 12.80 m, Modell 14.16 m (-1.36 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
    "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
    "auto_id": "wolke-nord-modell_weiter_vorn-43--2",
    "art": "wolke_vs_modell",
@@ -4485,35 +2898,6 @@
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 1)",
-   "auto_id": "fehlteile-030-744-496",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 36.36,
-   "z_bis": 36.36,
-   "xyz": [
-    4.0,
-    -5.42,
-    36.36
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=36.36 m, y=-5.42 m (Zelle [744, 496, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-44-49",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 43.5,
-   "z_bis": 49.0,
-   "abweichung": -1.18,
-   "text": "Silhouettenbreite z 43.5-49.0 m: Foto 4.27 m, Modell 5.45 m (-1.18 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
    "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
    "auto_id": "wolke-nord-modell_weiter_vorn-33--4",
    "art": "wolke_vs_modell",
@@ -4525,71 +2909,6 @@
    "flaeche_m2": 5.6,
    "text": "Modell steht 0.94 m weiter vor als die Fotowolke [TIEFE UNSICHER: einseitiges Netz, Versatz je Hoehe 0.60 m Spreizung - nur Hinweis]: z 33.8-41.5 m, y -4.2..-3.0 m, 5.6 m2",
    "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-30-34",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 30.5,
-   "z_bis": 34.0,
-   "abweichung": -1.33,
-   "text": "Silhouettenbreite z 30.5-34.0 m: Foto 13.12 m, Modell 14.46 m (-1.33 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 2)",
-   "auto_id": "fehlteile-030-1302-744",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 32.68,
-   "z_bis": 32.68,
-   "xyz": [
-    4.53,
-    5.32,
-    32.68
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=32.68 m, y=5.32 m (Zelle [1302, 744, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-26-28",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 26.5,
-   "z_bis": 28.0,
-   "abweichung": 1.17,
-   "text": "Silhouettenbreite z 26.5-28.0 m: Foto 12.76 m, Modell 11.59 m (+1.17 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-32-34",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 31.5,
-   "z_bis": 34.5,
-   "abweichung": 0.74,
-   "text": "Silhouettenbreite z 31.5-34.5 m: Foto 13.38 m, Modell 12.65 m (+0.74 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-42-49",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 42.0,
-   "z_bis": 49.0,
-   "abweichung": -2.26,
-   "text": "Silhouettenbreite z 42.0-49.0 m: Foto 3.86 m, Modell 6.12 m (-2.26 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
    "datum": "auto",
@@ -4635,76 +2954,6 @@
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 5)",
-   "auto_id": "fehlteile-030-1364-1860",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 10.59,
-   "z_bis": 10.59,
-   "xyz": [
-    4.53,
-    5.35,
-    10.59
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=10.59 m, y=5.35 m (Zelle [1364, 1860, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 060, Treffer 6)",
-   "auto_id": "fehlteile-060-4128-1200",
-   "art": "fehlteil",
-   "foto": "060",
-   "z_von": 49.6,
-   "z_bis": 49.6,
-   "xyz": [
-    -1.5,
-    -1.77,
-    49.6
-   ],
-   "abweichung": 0.903,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=49.6 m, y=-1.77 m (Zelle [4128, 1200, 16], Score +0.90)",
-   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-22-24",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 21.5,
-   "z_bis": 24.5,
-   "abweichung": 0.78,
-   "text": "Silhouettenbreite z 21.5-24.5 m: Foto 14.84 m, Modell 14.06 m (+0.78 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-42-44",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 42.0,
-   "z_bis": 43.5,
-   "abweichung": -6.18,
-   "text": "Silhouettenbreite z 42.0-43.5 m: Foto 2.49 m, Modell 8.67 m (-6.18 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-46-49",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 45.5,
-   "z_bis": 49.0,
-   "abweichung": -0.81,
-   "text": "Silhouettenbreite z 45.5-49.0 m: Foto 4.21 m, Modell 5.02 m (-0.81 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
    "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
    "auto_id": "wolke-nord-fehlt_im_modell-15--6",
    "art": "wolke_vs_modell",
@@ -4732,59 +2981,6 @@
    "naechster_schritt": "Im Bild audit/wolke_vs_modell_<seite>.png und im Viewer ansehen; wenn echt: Mass bestimmen, Pruefung eintragen, Generator"
   },
   {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-22-25",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 21.5,
-   "z_bis": 25.0,
-   "abweichung": 0.75,
-   "text": "Silhouettenbreite z 21.5-25.0 m: Foto 14.68 m, Modell 13.93 m (+0.75 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-22-26",
-   "art": "breite",
-   "foto": "030",
-   "z_von": 21.5,
-   "z_bis": 25.5,
-   "abweichung": 0.75,
-   "text": "Silhouettenbreite z 21.5-25.5 m: Foto 14.67 m, Modell 13.91 m (+0.75 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-44-44",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 43.5,
-   "z_bis": 43.5,
-   "abweichung": -3.1,
-   "text": "Silhouettenbreite z 43.5-43.5 m: Foto 3.74 m, Modell 6.84 m (-3.10 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 061, Treffer 3)",
-   "auto_id": "fehlteile-061-2376-423",
-   "art": "fehlteil",
-   "foto": "061",
-   "z_von": 44.48,
-   "z_bis": 44.48,
-   "xyz": [
-    -0.22,
-    2.45,
-    44.48
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=44.48 m, y=2.45 m (Zelle [2376, 423, 9], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-01",
    "wer": "Claude (masse_aus_profilen.py)",
    "auto_id": "widerspruch_eckturm_durchmesser",
@@ -4793,20 +2989,441 @@
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
-   "auto_id": "fehlteile-030-1364-1922",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-22-24",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 21.5,
+   "z_bis": 24.5,
+   "abweichung": 0.78,
+   "text": "Silhouettenbreite z 21.5-24.5 m: Foto 14.84 m, Modell 14.06 m (+0.78 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-30-34",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 30.5,
+   "z_bis": 34.0,
+   "abweichung": -1.29,
+   "text": "Silhouettenbreite z 30.5-34.0 m: Foto 13.12 m, Modell 14.41 m (-1.29 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-38-38",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 38.0,
+   "z_bis": 38.0,
+   "abweichung": -1.88,
+   "text": "Silhouettenbreite z 38.0-38.0 m: Foto 11.96 m, Modell 13.84 m (-1.88 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-43-43",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 43.0,
+   "z_bis": 43.0,
+   "abweichung": -4.5,
+   "text": "Silhouettenbreite z 43.0-43.0 m: Foto 5.34 m, Modell 9.84 m (-4.50 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
+   "auto_id": "breite-030-48-50",
+   "art": "breite",
+   "foto": "030",
+   "z_von": 47.5,
+   "z_bis": 50.0,
+   "abweichung": -4.38,
+   "text": "Silhouettenbreite z 47.5-50.0 m: Foto 1.11 m, Modell 5.49 m (-4.38 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
+   "auto_id": "breite-000-38-38",
+   "art": "breite",
+   "foto": "000",
+   "z_von": 37.5,
+   "z_bis": 37.5,
+   "abweichung": -1.16,
+   "text": "Silhouettenbreite z 37.5-37.5 m: Foto 13.56 m, Modell 14.72 m (-1.16 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
+   "auto_id": "breite-000-48-48",
+   "art": "breite",
+   "foto": "000",
+   "z_von": 48.0,
+   "z_bis": 48.0,
+   "abweichung": -5.66,
+   "text": "Silhouettenbreite z 48.0-48.0 m: Foto 0.26 m, Modell 5.92 m (-5.66 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 3)",
+   "auto_id": "fehlteile-041-1128-564",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 36.93,
+   "z_bis": 36.93,
+   "xyz": [
+    4.63,
+    4.08,
+    36.93
+   ],
+   "abweichung": 0.789,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=36.93 m, y=4.08 m (Zelle [1128, 564, 94], Score +0.79)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
+   "auto_id": "fehlteile-041-752-564",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 39.92,
+   "z_bis": 39.92,
+   "xyz": [
+    1.18,
+    -1.09,
+    39.92
+   ],
+   "abweichung": 0.767,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.92 m, y=-1.09 m (Zelle [752, 564, 94], Score +0.77)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 1)",
+   "auto_id": "fehlteile-030-1054-620",
    "art": "fehlteil",
    "foto": "030",
-   "z_von": 9.6,
-   "z_bis": 9.6,
+   "z_von": 38.07,
+   "z_bis": 38.07,
    "xyz": [
-    4.28,
-    5.33,
-    9.6
+    0.84,
+    1.79,
+    38.07
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=9.6 m, y=5.33 m (Zelle [1364, 1922, 62], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.07 m, y=1.79 m (Zelle [1054, 620, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 2)",
+   "auto_id": "fehlteile-030-1302-744",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 32.63,
+   "z_bis": 32.63,
+   "xyz": [
+    4.56,
+    5.29,
+    32.63
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=32.63 m, y=5.29 m (Zelle [1302, 744, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 3)",
+   "auto_id": "fehlteile-030-1054-930",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 31.29,
+   "z_bis": 31.29,
+   "xyz": [
+    -0.86,
+    2.3,
+    31.29
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=31.29 m, y=2.3 m (Zelle [1054, 930, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 4)",
+   "auto_id": "fehlteile-030-1116-930",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 30.2,
+   "z_bis": 30.2,
+   "xyz": [
+    0.98,
+    3.02,
+    30.2
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.2 m, y=3.02 m (Zelle [1116, 930, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 5)",
+   "auto_id": "fehlteile-030-992-992",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 28.88,
+   "z_bis": 28.88,
+   "xyz": [
+    -0.14,
+    0.73,
+    28.88
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.88 m, y=0.73 m (Zelle [992, 992, 62], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
+   "auto_id": "fehlteile-030-1302-1178",
+   "art": "fehlteil",
+   "foto": "030",
+   "z_von": 23.09,
+   "z_bis": 23.09,
+   "xyz": [
+    4.11,
+    4.98,
+    23.09
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=23.09 m, y=4.98 m (Zelle [1302, 1178, 62], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
+   "auto_id": "breite-061-26-28",
+   "art": "breite",
+   "foto": "061",
+   "z_von": 26.5,
+   "z_bis": 28.0,
+   "abweichung": 1.07,
+   "text": "Silhouettenbreite z 26.5-28.0 m: Foto 12.71 m, Modell 11.64 m (+1.07 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
+   "auto_id": "breite-061-32-34",
+   "art": "breite",
+   "foto": "061",
+   "z_von": 31.5,
+   "z_bis": 34.5,
+   "abweichung": 0.71,
+   "text": "Silhouettenbreite z 31.5-34.5 m: Foto 13.38 m, Modell 12.67 m (+0.71 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
+   "auto_id": "breite-061-42-44",
+   "art": "breite",
+   "foto": "061",
+   "z_von": 42.0,
+   "z_bis": 43.5,
+   "abweichung": -6.18,
+   "text": "Silhouettenbreite z 42.0-43.5 m: Foto 2.49 m, Modell 8.67 m (-6.18 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
+   "auto_id": "breite-061-46-49",
+   "art": "breite",
+   "foto": "061",
+   "z_von": 45.5,
+   "z_bis": 49.0,
+   "abweichung": -0.82,
+   "text": "Silhouettenbreite z 45.5-49.0 m: Foto 4.21 m, Modell 5.04 m (-0.82 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 1)",
+   "auto_id": "fehlteile-060-4128-1168",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 51.54,
+   "z_bis": 51.54,
+   "xyz": [
+    -1.12,
+    -1.4,
+    51.54
+   ],
+   "abweichung": 0.98,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=51.54 m, y=-1.4 m (Zelle [4128, 1168, 16], Score +0.98)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 2)",
+   "auto_id": "fehlteile-060-4128-1136",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 53.47,
+   "z_bis": 53.47,
+   "xyz": [
+    -0.68,
+    -0.97,
+    53.47
+   ],
+   "abweichung": 0.976,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=53.47 m, y=-0.97 m (Zelle [4128, 1136, 16], Score +0.98)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 3)",
+   "auto_id": "fehlteile-060-4112-1248",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 46.5,
+   "z_bis": 46.5,
+   "xyz": [
+    -2.21,
+    -1.16,
+    46.5
+   ],
+   "abweichung": 0.96,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=46.5 m, y=-1.16 m (Zelle [4112, 1248, 16], Score +0.96)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 4)",
+   "auto_id": "fehlteile-060-4128-1152",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 52.5,
+   "z_bis": 52.5,
+   "xyz": [
+    -0.88,
+    -1.17,
+    52.5
+   ],
+   "abweichung": 0.939,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=52.5 m, y=-1.17 m (Zelle [4128, 1152, 16], Score +0.94)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 5)",
+   "auto_id": "fehlteile-060-4128-1216",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 48.64,
+   "z_bis": 48.64,
+   "xyz": [
+    -1.73,
+    -1.99,
+    48.64
+   ],
+   "abweichung": 0.915,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=48.64 m, y=-1.99 m (Zelle [4128, 1216, 16], Score +0.92)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 060, Treffer 6)",
+   "auto_id": "fehlteile-060-4128-1200",
+   "art": "fehlteil",
+   "foto": "060",
+   "z_von": 49.61,
+   "z_bis": 49.61,
+   "xyz": [
+    -1.54,
+    -1.81,
+    49.61
+   ],
+   "abweichung": 0.907,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=49.61 m, y=-1.81 m (Zelle [4128, 1200, 16], Score +0.91)",
+   "naechster_schritt": "audit/fehlteile_060.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 061, Treffer 3)",
+   "auto_id": "fehlteile-061-2367-432",
+   "art": "fehlteil",
+   "foto": "061",
+   "z_von": 43.5,
+   "z_bis": 43.5,
+   "xyz": [
+    0.73,
+    2.48,
+    43.5
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=43.5 m, y=2.48 m (Zelle [2367, 432, 9], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 061, Treffer 4)",
+   "auto_id": "fehlteile-061-2376-630",
+   "art": "fehlteil",
+   "foto": "061",
+   "z_von": 22.32,
+   "z_bis": 22.32,
+   "xyz": [
+    -1.03,
+    5.24,
+    22.32
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=22.32 m, y=5.24 m (Zelle [2376, 630, 9], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 061, Treffer 5)",
+   "auto_id": "fehlteile-061-2358-657",
+   "art": "fehlteil",
+   "foto": "061",
+   "z_von": 19.39,
+   "z_bis": 19.39,
+   "xyz": [
+    0.88,
+    5.32,
+    19.39
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.39 m, y=5.32 m (Zelle [2358, 657, 9], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 061, Treffer 6)",
+   "auto_id": "fehlteile-061-2358-666",
+   "art": "fehlteil",
+   "foto": "061",
+   "z_von": 18.43,
+   "z_bis": 18.43,
+   "xyz": [
+    0.86,
+    5.34,
+    18.43
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.43 m, y=5.34 m (Zelle [2358, 666, 9], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "beobachtungen_erledigt": [
