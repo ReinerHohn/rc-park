@@ -122,7 +122,8 @@ def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048)):
     # nur die gewuenschten Bilder: eigener Ordner mit Links
     tmp = aus + "_bilder"; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
     for nr in nrs: os.symlink(os.path.abspath(os.path.join(bilder, nr + ".jpg")), os.path.join(tmp, nr + ".jpg"))
-    pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE)
+    _ro = pycolmap.ImageReaderOptions(); _ro.camera_model = a.kamera_modell                 # SIMPLE_RADIAL (Standard) | RADIAL | OPENCV (--kamera-modell)
+    pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro)
     # GPU-Rueckfall: scheitert SIFT-GPU (z. B. 'illegal memory access', wenn ein anderer Prozess die GPU belegt), bleiben Bilder ohne Merkmale
     # -> Datenbank neu und auf der CPU extrahieren/zuordnen (langsamer, gleiches Ergebnis in der Geometrie). Nullstart 3, Register BA.
     _gpu_ok = True
@@ -132,7 +133,7 @@ def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048)):
     except Exception: _gpu_ok = False
     if not _gpu_ok:
         print(f"   SIFT-GPU: nur {_n_kp if '_n_kp' in dir() else '?'} von {_n_img if '_n_img' in dir() else '?'} Bildern mit Merkmalen - Rueckfall auf CPU")
-        os.remove(db); pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, device=pycolmap.Device.cpu)
+        os.remove(db); pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, device=pycolmap.Device.cpu)
     con = sqlite3.connect(db); cur = con.cursor()
     for img_id, name, cam_id in cur.execute("select image_id, name, camera_id from images").fetchall():
         if name not in prior and name + ":pp" not in prior: continue
@@ -183,7 +184,7 @@ def bewerten(rec, info, prior, fern_faktor):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("seite"); ap.add_argument("--fotos", nargs="*")
-    ap.add_argument("--reparieren", action="store_true"); ap.add_argument("--maxpx", type=int, default=2000); ap.add_argument("--fern-faktor", type=float, default=3.0)
+    ap.add_argument("--kamera-modell", default="SIMPLE_RADIAL", choices=["SIMPLE_RADIAL", "RADIAL", "OPENCV", "SIMPLE_PINHOLE", "PINHOLE"], help="COLMAP-Kameramodell (Suednetz: projektive Verbiegung -> RADIAL/OPENCV testen, Register AI)"); ap.add_argument("--reparieren", action="store_true"); ap.add_argument("--maxpx", type=int, default=2000); ap.add_argument("--fern-faktor", type=float, default=3.0)
     ap.add_argument("--matcher", default="sift", choices=["sift", "lightglue", "hybrid"], help="lightglue = ALIKED+LightGlue fuer alles; hybrid = SIFT fuer alles + LightGlue nur fuer Paare mit --lg-fotos (Register AK)")
     ap.add_argument("--lg-fotos", nargs="*", default=[], help="hybrid: Fotos, deren Paare per LightGlue gematcht werden (z. B. Luftbilder)")
     ap.add_argument("--lg-max-kp", type=int, default=4096); ap.add_argument("--lg-resize", type=int, default=2048)
