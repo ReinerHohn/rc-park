@@ -795,6 +795,22 @@
    "historie": [
     "2026-11-01 angelegt; Modell hatte die untere ANNAHME-Oeffnung bei z 21,8 (Oberkante 22,25) -> Pruefung schlaegt absichtlich fehl"
    ]
+  },
+  {
+   "name": "Knauf-Lage zwischen Tuermchenspitze und Nadelspitze (Verhaeltnis)",
+   "wert": "(knauf_z - tuermchen_spitze) / (hoehe - tuermchen_spitze)",
+   "soll": [
+    0.364,
+    0.736
+   ],
+   "quelle": "tools/foto_verhaeltnis.py ueber die beiden FERNEN Fotos (061 Schlossberg ~1 km, 060 Luftbild 1,2 km; beide nahezu orthografisch, daher massstabsfrei - keine Kamera, keine Brennweite, kein Modell noetig). Gemessen 061 0,595 / 060 0,505, gueltig nach messung_pruefen.pruefe (Spanne 0,09 <= 0,37). Die Unsicherheit kommt aus dem Foto selbst: die gleich hohen Tuermchenspitzen streuen in 061 6 px von 225 (2,7 %), in 060 35 px von 376 (9,3 %) - das 060 ist der Engpass. Protokolle M-061-V1 und M-060-V1.",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "verhaeltnis",
+   "massstab": "-",
+   "protokoll": "M-061-V1",
+   "historie": [
+    "2026-11-01 angelegt. Vor der Messung sah es nach einem Widerspruch aus (abgelesen 0,49/0,51 gegen Modell 0,43); mit sauberen Picks und der aus den Fotos berechneten Unsicherheit liegt das Modell (0,421) INNERHALB des Bandes. Der vermutete Widerspruch war ein Ablesefehler - genau dafuer gibt es das Werkzeug."
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -1071,8 +1087,8 @@
   {
    "datum": "2026-11-01",
    "wer": "Claude (Fotos 060 + 061, Verhaeltnismessung)",
-   "text": "WIDERSPRUCH oben am Dach. In den beiden weit entfernten Fotos (060 Luftbild 1,2 km, 061 Schlossberg ~1 km; beide nahezu orthografisch, erkennbar daran, dass die vier gleich hohen Tuermchenspitzen in 061 nur 4 px streuen) liegt der Knauf der Nadel bei 49-51 % der Strecke Tuermchenspitze->Nadelspitze (060: 0,492; 061: 0,508), das Modell bei 0,43; der Dachansatz liegt in 061 bei -0,148, im Modell bei -0,303. Die kalibrierten Strassenkameras 031/041 sagen das Gegenteil (Silhouette bei 47 m: Foto 0,5-1,4 m, Modell 3,0-3,1 m -> Dach ENDET FRUEHER). Die Laser-Stufen 48/50 m (8 und 6 m2 gegen 4 im Modell) beweisen nichts: DOM1 ist fuer Nadeln blind, das ist die Interpolationsfahne.",
-   "naechster_schritt": "Verhaeltnisse sind bisher nur abgelesen, nicht gemessen. Generisches Werkzeug bauen, das aus einem FERNEN Foto massstabsfreie Hoehenverhaeltnisse misst (Gleichhoch-Punkte als eigene Unsicherheit), ueber beide Fotos mit messung_pruefen.pruefe absichern - erst dann darf daraus ein Sollwert werden. Nichts am Generator aendern."
+   "text": "TEILWEISE AUFGELOEST (2026-11-01). Mit tools/foto_verhaeltnis.py sauber gemessen statt abgelesen: die Knauf-Lage ist 0,595 (061) / 0,505 (060), Band [0,364..0,736] wegen der 9,3 % Orthografie-Abweichung von 060 - das Modell liegt mit 0,421 DRIN. Der vermutete Widerspruch war mein Ablesefehler. OFFEN bleibt allein der DACHANSATZ: 061 misst -0,135, das Modell -0,308 (das waere 3,2 m hoeher); nur EIN Foto, also nach messung_pruefen unbestaetigt. Die Laserstufen 48/50 m beweisen weiterhin nichts (DOM1 ist fuer Nadeln blind, das ist die Interpolationsfahne).",
+   "naechster_schritt": "Ein zweites fernes Foto suchen, auf dem der Dachansatz (Oberkante Glockenstockwand) frei sichtbar ist - in 060 verdeckt ihn der Dachueberstand von oben. Erst mit zwei Fotos darf daraus ein Sollwert werden."
   },
   {
    "datum": "auto",

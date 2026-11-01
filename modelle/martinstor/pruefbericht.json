@@ -438,6 +438,16 @@
    ],
    "ok": true,
    "status": "ok"
+  },
+  {
+   "name": "Knauf-Lage zwischen Tuermchenspitze und Nadelspitze (Verhaeltnis)",
+   "wert": 0.42091157705582627,
+   "soll": [
+    0.364,
+    0.736
+   ],
+   "ok": true,
+   "status": "ok"
   }
  ],
  "bestanden": true

@@ -1,0 +1,42 @@
+{
+ "foto": "061",
+ "verfahren": "massstabsfreies Hoehenverhaeltnis (fernes Foto, nahezu orthografisch)",
+ "unten": {
+  "anker": "tuermchen_NE",
+  "picks": {
+   "T1": [
+    2331,
+    426
+   ],
+   "T2": [
+    2347,
+    426
+   ],
+   "T3": [
+    2417,
+    426
+   ],
+   "T4": [
+    2431,
+    425
+   ]
+  }
+ },
+ "oben": {
+  "anker": "spitze_dokument",
+  "pick": [
+   2387,
+   201
+  ]
+ },
+ "v_unten_mittel": 425.8,
+ "v_oben": 201.0,
+ "messstrecke_px": 224.8,
+ "streuung_gleichhoch_px": 6.0,
+ "orthografie_abweichung": 0.0267,
+ "verhaeltnisse": {
+  "knauf": 0.5951,
+  "dachansatz": -0.1346
+ },
+ "notiz": "Blick vom Schlossberg (2016), rund 1 km entfernt und nahezu auf Turmhoehe -> nahezu orthografisch. Picks aus dem 5-fach-Zoom 2290-2480 / 170-520 im Vollbild 3601x2757."
+}

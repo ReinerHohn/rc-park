@@ -1,0 +1,6 @@
+{
+ "notiz": "Schraegluftbild aus NW (2012), 1,2 km entfernt -> nahezu orthografisch, aber steiler Blickwinkel. Picks aus den Zooms im Vollbild 4658x2844.",
+ "unten": {"anker": "tuermchen_NE", "picks": {"NE": [4020, 1327], "SW": [4234, 1337], "NW": [4127, 1362]}},
+ "oben": {"anker": "spitze_dokument", "pick": [4136, 966]},
+ "punkte": {"knauf": [4134, 1152]}
+}

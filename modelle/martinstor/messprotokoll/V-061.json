@@ -1,0 +1,41 @@
+{
+ "notiz": "Blick vom Schlossberg (2016), rund 1 km entfernt und nahezu auf Turmhoehe -> nahezu orthografisch. Picks aus dem 5-fach-Zoom 2290-2480 / 170-520 im Vollbild 3601x2757.",
+ "unten": {
+  "anker": "tuermchen_NE",
+  "picks": {
+   "T1": [
+    2331,
+    426
+   ],
+   "T2": [
+    2347,
+    426
+   ],
+   "T3": [
+    2417,
+    426
+   ],
+   "T4": [
+    2431,
+    425
+   ]
+  }
+ },
+ "oben": {
+  "anker": "spitze_dokument",
+  "pick": [
+   2387,
+   201
+  ]
+ },
+ "punkte": {
+  "knauf": [
+   2384,
+   292
+  ],
+  "dachansatz": [
+   2380,
+   456
+  ]
+ }
+}

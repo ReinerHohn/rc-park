@@ -107,6 +107,19 @@ Fotos liefern Verhaeltnisse; Meter brauchen bekannte 3D-Punkte im Bild. Die gibt
   Nebenbefund derselben Sperre: K-031/K-041 haben ihren tiefsten Anker bei 31,5 m, die Pruefzeile "Silhouettenbreite
   Zone 23,5-28 m (Kamera 031)" stammt also aus einer Extrapolation (als offene Beobachtung notiert).
 
+## 8b. Massstabsfreie Hoehenverhaeltnisse aus FERNEN Fotos (Register AG)
+Ein Foto aus ~1 km ist nahezu orthografisch: dann ist das Verhaeltnis zweier senkrechter Strecken im Bild gleich dem
+Verhaeltnis in der Wirklichkeit - ohne Kamera, ohne Brennweite, ohne Massstab, ohne Modell. Das schliesst die Luecke
+zwischen "Foto sieht nur Verhaeltnisse" und "Kamera gegen amtliche Anker" (die unten Anker braucht, siehe Ankerzone).
+- Protokoll je Foto `messprotokoll/V-<foto>.json`: `unten` (mehrere Punkte, die in Wirklichkeit GLEICH HOCH sind),
+  `oben` (zweiter Bezugspunkt), `punkte` (was gemessen wird). `tools/foto_verhaeltnis.py objekt.json 061,060`.
+- **Die Unsicherheit kommt aus dem Foto, nicht aus einer Annahme:** die Streuung der gleich hohen Punkte IST die
+  Abweichung von der Orthografie plus Pickfehler (mit einer Untergrenze von 3 px Pickgenauigkeit). Ueber 10 % der
+  Messstrecke bricht das Werkzeug ab - dann ist das Foto zu nah.
+- Lehre aus dem ersten Einsatz: abgelesen sah die Knauf-Lage nach einem klaren Widerspruch aus (0,49/0,51 gegen Modell 0,43);
+  sauber gepickt und mit der berechneten Unsicherheit ist es keiner (Band 0,364..0,736, Modell 0,421). **Ein Verhaeltnis
+  ohne mitgerechnete Unsicherheit ist keine Messung.**
+
 ## 9. Fehlende und erfundene Teile automatisch finden (Register N)
 `tools/fehlteile_finden.py OBJEKT.json <foto>`: Modell mit der kalibrierten Kamera ins Foto rendern, Modellkanten (Tiefensprung/Kruemmung) gegen Fotokanten
 (auf 7 cm geglaettet, Steinfugen weg) je 1-m-Zelle vergleichen, Toleranz 0,3 m, mindestens 2 gleichsinnige Nachbarzellen. **Rot = Foto hat Struktur, Modell nicht
