@@ -48,12 +48,16 @@ def beschneiden(out, tr, halb=8.0, zmin=-2.0, zmax=72.0, rand=0.15):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("seite"); ap.add_argument("--radius", type=float, default=25.0)
-    ap.add_argument("--zmin", type=float, default=-5.0); ap.add_argument("--zmax", type=float, default=85.0); ap.add_argument("--max-size", type=int, default=1600)
+    ap.add_argument("--zmin", type=float, default=-5.0); ap.add_argument("--zmax", type=float, default=85.0); ap.add_argument("--max-size", type=int, default=None, help="Standard: Sweet Spot aus modelle/<objekt>/sweetspot.json (tools/sweetspot.py), sonst 1600")
     ap.add_argument("--fotos", help="nur diese Fotos (Nummern, Komma getrennt, z. B. 014,031,040) entzerren und rechnen - Stufe grob (Register BK); Standard: alle"); ap.add_argument("--nur-fusion", action="store_true", help="PatchMatch ueberspringen (schon gerechnet)"); ap.add_argument("--beschnitt", action="store_true", help="entzerrte Bilder vor PatchMatch auf den Turmquader beschneiden (schneller; Beweis: Register BG)")
     a = ap.parse_args(); od = os.path.dirname(os.path.abspath(a.objekt)); sd = os.path.join(od, "sfm")
     sparse = os.path.join(sd, f"sparse_{a.seite}", "0"); bilder = os.path.join(sd, f"sparse_{a.seite}_bilder"); out = os.path.join(sd, f"dicht_{a.seite}")
     S = json.load(open(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG-{a.seite}.json"))); tr = S["transformation"]
     if "rvec" not in tr: raise SystemExit("Ausrichtung ohne rvec/t/s (Buendel-Anker-Variante) - zuerst sfm_ausrichten.py --schreiben")
+    if a.max_size is None:                                                    # Sweet Spot (Register BN/BO), sonst 1600 px
+        a.max_size = 1600
+        for d_ in (od, os.path.join(os.path.dirname(od), os.path.basename(od).split("_null")[0])):
+            if os.path.exists(os.path.join(d_, "sweetspot.json")): a.max_size = int(json.load(open(os.path.join(d_, "sweetspot.json")))["px"]); print(f"Aufloesung {a.max_size} px (Sweet Spot aus {os.path.relpath(os.path.join(d_, 'sweetspot.json'))})", flush=True); break
     t0 = time.time()
     if not a.nur_fusion:
         if os.path.isdir(out): shutil.rmtree(out)           # alter Arbeitsordner = andere Kameras -> entzerrte Bilder passen nicht zu den Tiefenkarten (1600 vs 1598 px, Nullstart 6)

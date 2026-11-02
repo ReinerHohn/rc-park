@@ -45,7 +45,7 @@ def main():
     else:
         var = [f"px{px}:--max-size {px}" for px in a.leiter]; cmd = [sys.executable, "-I", "tools/stufenversuch.py", a.objekt, "--ziel", a.ziel, "--varianten"] + var
         print("Leiter:", a.leiter, flush=True); r = subprocess.run(cmd, cwd=repo, capture_output=True, text=True); print(r.stdout[-1500:])
-        zd = os.path.realpath(os.path.join(repo, "modelle", a.ziel)); ords = sorted(glob.glob(os.path.join(os.path.dirname(zd), "stufen_*")))[-1]
+        zd = os.path.realpath(os.path.join(repo, "modelle", a.ziel)); ords = sorted(d_ for d_ in glob.glob(os.path.join(os.path.dirname(zd), "stufen_*")) if os.path.isdir(d_))[-1]
         op = {px: os.path.join(ords, f"px{px}") for px in a.leiter if os.path.exists(os.path.join(ords, f"px{px}", "pruefbericht.json"))}
     if len(op) < 2: raise SystemExit(f"zu wenige Stufen ausgewertet: {sorted(op)}")
     T = auswerten(op, a.toleranz); px, grund = waehle_px(T, a.toleranz)

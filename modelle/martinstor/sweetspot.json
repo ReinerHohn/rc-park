@@ -1,26 +1,32 @@
 {
- "datum": "2026-11-02 21:22",
- "px": 1200,
- "grund": "kleinste Aufloesung mit >= 51 von 60 gemeinsamen Pruefungen (beste Stufe: 54, Toleranz 3)",
+ "datum": "2026-11-02 22:08",
+ "px": 1000,
+ "grund": "kleinste Aufloesung mit >= 55 von 61 gemeinsamen Pruefungen (beste Stufe: 58, Toleranz 3)",
  "toleranz": 3,
  "tabelle": {
   "800": {
    "ok": 50,
-   "n": 60,
-   "alle": "63/79",
-   "sek": 303.8
+   "n": 61,
+   "alle": "57/73",
+   "sek": 303.0
+  },
+  "1000": {
+   "ok": 58,
+   "n": 61,
+   "alle": "76/80",
+   "sek": 385.4
   },
   "1200": {
    "ok": 54,
-   "n": 60,
-   "alle": "71/78",
-   "sek": 472.0
+   "n": 61,
+   "alle": "64/73",
+   "sek": 473.1
   },
   "1600": {
-   "ok": 54,
-   "n": 60,
-   "alle": "64/71",
-   "sek": 672.6
+   "ok": 48,
+   "n": 61,
+   "alle": "58/77",
+   "sek": 652.4
   }
  },
  "ziel": "martinstor_null",
