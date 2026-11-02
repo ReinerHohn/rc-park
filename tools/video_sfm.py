@@ -26,7 +26,9 @@ def main():
             cv2.imwrite(os.path.join(mask, c, os.path.basename(f) + ".png"), m); n += 1
     print(f"{n} Frames, Maske Kreis {a.maske_kreis}", flush=True)
     ro = pycolmap.ImageReaderOptions(); ro.camera_model = "SIMPLE_RADIAL"; ro.mask_path = mask
-    dev = pycolmap.Device.cpu if a.cpu else pycolmap.Device.auto
+    gpu = (not a.cpu) and pycolmap.has_cuda
+    if not a.cpu and not gpu: print("WARNUNG: pycolmap ohne CUDA - SIFT/Matching laufen auf der CPU", flush=True)
+    dev = pycolmap.Device.cuda if gpu else pycolmap.Device.cpu; print("SIFT/Matching auf", "GPU" if gpu else "CPU", flush=True)
     pycolmap.extract_features(db, bild, camera_mode=pycolmap.CameraMode.PER_FOLDER, reader_options=ro, device=dev)
     pycolmap.match_exhaustive(db, device=dev)
     karten = pycolmap.incremental_mapping(db, bild, sp)

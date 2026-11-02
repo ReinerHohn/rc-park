@@ -32,7 +32,7 @@ import threading as _th
 _BERICHT_SPERRE = _th.Lock()
 
 def lauf(bericht, name, cmd, repo, log, ok_rcs=(0,)):
-    if ("sfm_netz.py" in cmd and "--cpu" not in cmd) or "sfm_dicht.py" in cmd: gpu_warten()
+    if ("sfm_netz.py" in cmd and "--cpu" not in cmd) or "sfm_dicht.py" in cmd or "video_sfm.py" in cmd or "video_dicht.py" in cmd or "video_ausrichten.py" in cmd: gpu_warten()
     t0 = time.time(); print(f"\n+++ {name}: {cmd[:160]}", flush=True)
     with open(log, "a") as L:
         L.write(f"\n\n=== {name} @ {time.strftime('%H:%M:%S')}\n$ {cmd}\n"); L.flush()
@@ -44,12 +44,12 @@ def lauf(bericht, name, cmd, repo, log, ok_rcs=(0,)):
     return r.returncode in ok_rcs
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ziel", default="martinstor_null"); ap.add_argument("--ab", default="anlegen"); ap.add_argument("--stufe", default="auto", choices=["voll", "fein", "grob", "auto"], help="STANDARD auto = Aufloesung aus modelle/<objekt>/sweetspot.json (tools/sweetspot.py), sonst grob; fein = voll (1600 px, ueber Nacht); grob = Entwurf: dichte Stufe bei --grob-px (Standard 1000 px, alle Fotos; Register BM); voll = alle Fotos, 1600 px (Standard)"); ap.add_argument("--grob-fotos", type=int, default=0, help="0 = alle Fotos (Standard; Foto-Teilmengen verloren Tuermchen/Zinnen, Register BM), N = nur die N besten"); ap.add_argument("--grob-px", type=int, default=1000); ap.add_argument("--dicht-extra", default="", help="zusaetzliche Argumente fuer sfm_dicht.py, z. B. \"--max-size 1200 --fotos 014,031\" (Stufenmodell, Register BK)"); ap.add_argument("--kal-seriell", action="store_true", help="Kalibrierung wie frueher erst nach entzerren (nicht parallel zu PatchMatch)"); ap.add_argument("--streng", action="store_true", help="Startwerte aller regelabgeleiteten Masse auf die MITTE ihres Plausibilitaetsfensters setzen: scheitert eine Ableitung, faellt es im Pruefstand auf, statt dass der Referenzwert still stehen bleibt (Register BF)"); ap.add_argument("--sued-seriell", action="store_true", help="Suednetz vor dem dichten Schritt statt parallel dazu (CPU) rechnen"); ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="Mapper der Hauptseite: incremental (Standard) | global = GLOMAP (Register BF)"); ap.add_argument("--netzversuche", type=int, default=6, help="parallele Mapper-Versuche der Hauptseite (Auswahl nach Massstab-Sigma)"); ap.add_argument("--ohne-sued", action="store_true")
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ziel", default="martinstor_null"); ap.add_argument("--ab", default="anlegen"); ap.add_argument("--stufe", default="auto", choices=["voll", "fein", "grob", "auto"], help="STANDARD auto = Aufloesung aus modelle/<objekt>/sweetspot.json (tools/sweetspot.py), sonst grob; fein = voll (1600 px, ueber Nacht); grob = Entwurf: dichte Stufe bei --grob-px (Standard 1000 px, alle Fotos; Register BM); voll = alle Fotos, 1600 px (Standard)"); ap.add_argument("--grob-fotos", type=int, default=0, help="0 = alle Fotos (Standard; Foto-Teilmengen verloren Tuermchen/Zinnen, Register BM), N = nur die N besten"); ap.add_argument("--grob-px", type=int, default=1000); ap.add_argument("--videos", action="store_true", help="Videostufe: Drohnen-/Videoframes (objekt.json video_stufe) -> SfM -> Ausrichtung -> dichte Wolke -> obere Haelfte einfuegen (Register BQ)"); ap.add_argument("--videos-neu", action="store_true", help="Video-SfM neu rechnen (sonst Zwischenergebnis wiederverwenden)"); ap.add_argument("--dicht-extra", default="", help="zusaetzliche Argumente fuer sfm_dicht.py, z. B. \"--max-size 1200 --fotos 014,031\" (Stufenmodell, Register BK)"); ap.add_argument("--kal-seriell", action="store_true", help="Kalibrierung wie frueher erst nach entzerren (nicht parallel zu PatchMatch)"); ap.add_argument("--streng", action="store_true", help="Startwerte aller regelabgeleiteten Masse auf die MITTE ihres Plausibilitaetsfensters setzen: scheitert eine Ableitung, faellt es im Pruefstand auf, statt dass der Referenzwert still stehen bleibt (Register BF)"); ap.add_argument("--sued-seriell", action="store_true", help="Suednetz vor dem dichten Schritt statt parallel dazu (CPU) rechnen"); ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="Mapper der Hauptseite: incremental (Standard) | global = GLOMAP (Register BF)"); ap.add_argument("--netzversuche", type=int, default=6, help="parallele Mapper-Versuche der Hauptseite (Auswahl nach Massstab-Sigma)"); ap.add_argument("--ohne-sued", action="store_true")
     a = ap.parse_args(); ref = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); repo = os.path.dirname(os.path.dirname(od)); refname = os.path.basename(od)
     zd = os.path.join(repo, "modelle", a.ziel); os.makedirs(zd, exist_ok=True); zobj = os.path.join(zd, "objekt.json"); log = os.path.join(zd, "nullstart.log")
     bp = os.path.join(zd, "nullstart_bericht.json"); bericht = json.load(open(bp)) if os.path.exists(bp) and a.ab != "anlegen" else dict(referenz=refname, ziel=a.ziel, start=time.strftime("%Y-%m-%d %H:%M"), schritte=[])
     bericht["_pfad"] = bp
-    schritte = ["anlegen", "netz_nord", "netz_sued", "ausrichten_nord", "ausrichten_sued", "verzerrung", "registrieren", "generator0", "dicht", "entzerren", "kalibrieren_061", "auswertung", "vergleich"]
+    schritte = ["anlegen", "netz_nord", "netz_sued", "ausrichten_nord", "ausrichten_sued", "verzerrung", "registrieren", "generator0", "dicht", "entzerren", "video", "kalibrieren_061", "auswertung", "vergleich"]
     start_i = schritte.index(a.ab)
     def dran(n): return schritte.index(n) >= start_i
     stl_name = f"{a.ziel}_v4_1-87.stl"
@@ -164,6 +164,14 @@ def main():
         print(f"    Suednetz parallel: {'ok' if all(sued_res.values()) else 'FEHLER'} (Log nullstart_sued.log)", flush=True)
         if dran("verzerrung") and not a.ohne_sued: verzerrung_gate()
     if dran("entzerren") and not lauf(bericht, "entzerren", f"{PY} -W ignore -I tools/wolke_vs_modell.py {Z} nord --entzerren --nebengebaeude", repo, log): sys.exit("entzerren fehlgeschlagen")
+    if dran("video") and a.videos:                                                              # Videostufe (Register BQ): Drohnenclips -> SfM -> Ausrichtung -> dichte Wolke -> obere Haelfte in die Nordwolke
+        vz = json.load(open(zobj)).get("video_stufe") or {}; vd = vz.get("ordner"); PCV = PC
+        if not (vd and vz.get("clips") and vz.get("frames")): print("    Videostufe: keine video_stufe in objekt.json - uebersprungen", flush=True)
+        else:
+            fr = vz["frames"]; clips = " ".join(vz["clips"]); vs = os.path.join(vd, "d_" + a.ziel)
+            if a.videos_neu or not os.path.exists(os.path.join(vs, "sparse")): lauf(bericht, "video_sfm", f"{PCV} -I tools/video_sfm.py {fr} {vs} --clips {clips}", repo, log)
+            if lauf(bericht, "video_ausrichten", f"{PCV} -W ignore -I tools/video_ausrichten.py {Z} {vs} --jeder 2", repo, log) and lauf(bericht, "video_dicht", f"{PCV} -W ignore -I tools/video_dicht.py {Z} {vs}", repo, log):
+                lauf(bericht, "video_merge", f"{PCV} -W ignore -I tools/video_merge.py {Z} {vs} --zmin {vz.get('zmin', 38)}", repo, log)
     if kal_thr is not None: kal_thr.join()
     if dran("kalibrieren_061") and not kal_fertig:   # alle Kameras aus Picks + Ankern neu loesen (Schritt heisst historisch kalibrieren_061): jedes K-Protokoll
         for kp in sorted(glob.glob(os.path.join(zd, "messprotokoll", "K-*.json"))):

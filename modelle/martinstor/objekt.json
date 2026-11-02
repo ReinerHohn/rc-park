@@ -1828,5 +1828,17 @@
    ],
    "grund": "Glockenstock ist gegenueber dem Schaftkopf abgesetzt (Lernjournal: abgesetzter Glockenstock)"
   }
- ]
+ ],
+ "video_stufe": {
+  "ordner": "/media/oem/scan/rc-park_daten/martinstor/video_sfm",
+  "frames": "/media/oem/scan/rc-park_daten/martinstor/video_frames",
+  "clips": [
+   "o34426Ez5_U",
+   "ua1sX3MMh9A",
+   "VEN1zf__KgI",
+   "RBC7Co30Vkc"
+  ],
+  "zmin": 38,
+  "lizenz": "Standard-YouTube-Lizenz, nur private Messvorlage (modelle/LIZENZ_WERKZEUGE.md); Frames nicht verteilen"
+ }
 }

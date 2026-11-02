@@ -79,7 +79,12 @@ def main():
     if a.fotos: kams = {nr: k for nr, k in kams.items() if nr in a.fotos.split(",")}
     root = os.path.realpath(os.path.join(repo, obj["fotos_dir"])) if not os.path.isabs(obj["fotos_dir"]) else obj["fotos_dir"]
     import torch; from transformers import pipeline; torch.set_num_threads(max(1, (os.cpu_count() or 8) // 2))
-    pipe = pipeline("object-detection", model=a.modell, device=-1)
+    import subprocess as _sp
+    try: _belegt = int(_sp.run(["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"], capture_output=True, text=True).stdout.split()[0])
+    except Exception: _belegt = 10 ** 9
+    _gpu = torch.cuda.is_available() and _belegt < 1500                                  # GPU nur, wenn frei (ein GPU-Job zur Zeit, CLAUDE.md)
+    print(f"Detektor auf {'GPU' if _gpu else 'CPU (GPU belegt oder nicht vorhanden)'}", flush=True)
+    pipe = pipeline("object-detection", model=a.modell, device=(0 if _gpu else -1))
     schaetz, verworfen, zeigen = [], {}, []
     def verw(grund): verworfen[grund] = verworfen.get(grund, 0) + 1
     t0 = time.time()

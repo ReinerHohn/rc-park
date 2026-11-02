@@ -2988,6 +2988,38 @@
    "naechster_schritt": "dritte Quelle: Suedwolke sieht ihn nicht (NW-Ecke) -> kalibriertes Foto 001 (Bodenanker) oder Westnetz"
   },
   {
+   "datum": "2026-11-02",
+   "wer": "Nutzer (3D-Viewer Foto)",
+   "art": "wolke_kippt",
+   "text": "Im 3D-Viewer kippt die farbige dichte Fotowolke (dicht_nord_modell.npy) an Tuermchen und Hauptturm nach aussen gegenueber dem Modell-STL.",
+   "messung": "Rand der Wolke (5. Perzentil x, |y|<3,5) gegen Modellschnitt: roh -5,7/-5,6 (z35), -4,3/-4,5 (42), -3,4/-2,4 (46), -2,6/-1,5 (50): Abweichung nach aussen wachsend bis ~1,1 m; entzerrt (dicht_nord_entzerrt.npy, Versatz +0,2 m bei z10 .. +0,9 m bei z50 in x): -5,1 (35), -3,5 (42), -2,6 (46), -1,7 (50): ca. 0,5 innen bis 0,2 aussen. Beide Wolken passen nicht sauber; Schnittkante nur grob (Perzentil).",
+   "naechster_schritt": "Wolke gegen STL je Hoehe per Schnittscheibe messen (wolke_vs_modell), entzerrt vs roh getrennt als Pruefung eintragen; Rule 5: Foto/Wolke vs Laser/Modell nicht mitteln"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
+   "auto_id": "breite-000-38-38",
+   "art": "breite",
+   "foto": "000",
+   "z_von": 37.5,
+   "z_bis": 37.5,
+   "abweichung": -1.16,
+   "text": "Silhouettenbreite z 37.5-37.5 m: Foto 13.56 m, Modell 14.72 m (-1.16 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
+   "auto_id": "breite-000-48-48",
+   "art": "breite",
+   "foto": "000",
+   "z_von": 48.0,
+   "z_bis": 48.0,
+   "abweichung": -5.66,
+   "text": "Silhouettenbreite z 48.0-48.0 m: Foto 0.26 m, Modell 5.92 m (-5.66 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
    "datum": "auto",
    "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
    "auto_id": "breite-030-22-24",
@@ -3045,30 +3077,6 @@
    "z_bis": 50.0,
    "abweichung": -4.38,
    "text": "Silhouettenbreite z 47.5-50.0 m: Foto 1.11 m, Modell 5.49 m (-4.38 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
-   "auto_id": "breite-000-38-38",
-   "art": "breite",
-   "foto": "000",
-   "z_von": 37.5,
-   "z_bis": 37.5,
-   "abweichung": -1.16,
-   "text": "Silhouettenbreite z 37.5-37.5 m: Foto 13.56 m, Modell 14.72 m (-1.16 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
-   "auto_id": "breite-000-48-48",
-   "art": "breite",
-   "foto": "000",
-   "z_von": 48.0,
-   "z_bis": 48.0,
-   "abweichung": -5.66,
-   "text": "Silhouettenbreite z 48.0-48.0 m: Foto 0.26 m, Modell 5.92 m (-5.66 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
@@ -3426,12 +3434,28 @@
    "naechster_schritt": "audit/fehlteile_061.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   },
   {
-   "datum": "2026-11-02",
-   "wer": "Nutzer (3D-Viewer Foto)",
-   "art": "wolke_kippt",
-   "text": "Im 3D-Viewer kippt die farbige dichte Fotowolke (dicht_nord_modell.npy) an Tuermchen und Hauptturm nach aussen gegenueber dem Modell-STL.",
-   "messung": "Rand der Wolke (5. Perzentil x, |y|<3,5) gegen Modellschnitt: roh -5,7/-5,6 (z35), -4,3/-4,5 (42), -3,4/-2,4 (46), -2,6/-1,5 (50): Abweichung nach aussen wachsend bis ~1,1 m; entzerrt (dicht_nord_entzerrt.npy, Versatz +0,2 m bei z10 .. +0,9 m bei z50 in x): -5,1 (35), -3,5 (42), -2,6 (46), -1,7 (50): ca. 0,5 innen bis 0,2 aussen. Beide Wolken passen nicht sauber; Schnittkante nur grob (Perzentil).",
-   "naechster_schritt": "Wolke gegen STL je Hoehe per Schnittscheibe messen (wolke_vs_modell), entzerrt vs roh getrennt als Pruefung eintragen; Rule 5: Foto/Wolke vs Laser/Modell nicht mitteln"
+   "datum": "2026-11-03",
+   "wer": "Drohnenwolke d1 (Register BR, grob)",
+   "auto_id": "drohne-dach-neigung-1",
+   "art": "dach_neigung",
+   "text": "Drohnenwolke: Halbbreite |y| faellt von 4,7 m (z 40-42) auf 3,1 (44-46) und 2,4 (48-50); Generator hat bei z 45 noch 3,6 (DACH_MITTE2_Y), also ~0,5 m zu breit. |x| 5,3 vs 4,0 am Fuss ist durch Tuermchen/Nachbarn verfaelscht (p95).",
+   "naechster_schritt": "Tuermchen/Nachbarn per Achsen-Sektoren ausmaskieren, Dachflaechen-Ebenen (RANSAC) in der Drohnenwolke fitten, Neigung gegen Generator als Pruefung eintragen (muss am aktuellen Modell fehlschlagen), dann hybrid_abgleich.py"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (3D-Ansicht)",
+   "auto_id": "drohne-versatz-dach-1",
+   "art": "wolkenversatz",
+   "text": "Nutzer: Drohnenwolke (Dach) schwebt ~0,5-1 m ueber/versetzt zur Strassenwolke. Passt zu Ausrichtungsresiduum 0,5-0,75 m bei z 30-50 (video_ausrichtung.json).",
+   "naechster_schritt": "Versatzvektor drohne-vs-strasse im Ueberlappungsbereich messen (z 28-45, Nordfassade), je z-Schicht; Pruefung \"Drohne-Strasse Versatz <= 0,3 m\"; dann Ausrichtung verfeinern (ICP/Hoehenverlauf) statt Sim3 global"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (3D-Ansicht)",
+   "auto_id": "drohne-doppeldach-1",
+   "art": "doppelschicht",
+   "text": "Nutzer: Drohnenwolke zeigt zwei parallele Daecher: eines passt (Neigung sehr gut, leicht versetzt), davor eine zweite parallele Punktfront innerhalb der Drohnenwolke.",
+   "naechster_schritt": "Dachebene per RANSAC, Abstandshistogramm senkrecht zur Ebene (bimodal?), Schichtabstand messen; Ursache klaeren (Clip-Registrierung vs. PatchMatch-Doppelflaeche); Pruefung \"Dach einschichtig\""
   }
  ],
  "beobachtungen_erledigt": [
