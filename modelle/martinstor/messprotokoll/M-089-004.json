@@ -1,0 +1,25 @@
+{
+ "id": "M-089-004",
+ "foto": "089_Martinstor_Freiburg_im_Breisgau_Baden-Wuerttemberg_Germany_O.jpg",
+ "bild": [
+  3840,
+  5120
+ ],
+ "name": "Torbau-Bogen Scheitel (innen) ueber Strasse",
+ "merkmal": "verhaeltnis",
+ "mess_px": [
+  2360.0,
+  3980.0,
+  2360.0,
+  4510.0
+ ],
+ "richtung": "v",
+ "stauchung": 1.0,
+ "massstab_px": null,
+ "px_pro_m": 85.5,
+ "massstab_von": "senkrecht: Giebelspitze 20,7 m (Wolke Nord + Drohne) = 1770 px ueber Strassenniveau y 4510 (85,5 px/m, ANNAHME Hoehe aus Wolke); Wert hoeher als Horizontalmassstab 77,2 wegen Kamera-Nickwinkel",
+ "pixel": 530.0,
+ "meter": 6.199,
+ "unsicherheit_m": 0.519,
+ "hinweis": "+-8 % Ablesung/Perspektive + 2 px"
+}

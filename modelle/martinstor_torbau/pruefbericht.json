@@ -1,0 +1,142 @@
+{
+ "stl": "/home/oem/git/rc-park/modelle/stl/martinstor_torbau_front_1-87.stl",
+ "werte": {
+  "turm_breite": 11.2,
+  "bogen_breite": 7.25,
+  "bogen_scheitel": 6.149999999999999,
+  "front_breite_og": 7.099999694824218,
+  "fenster_og1": 4.0,
+  "fenster_og2": 3.0,
+  "fenster_giebel": 2.0,
+  "giebel_breite_fuss": 5.799999778747559,
+  "giebel_breite_hals": 2.605058990478515,
+  "hoehe": 20.700000961303708,
+  "wasserdicht": 1.0,
+  "koerper": 1.0,
+  "erker_front": 6.300000205993655,
+  "wand_front": 5.8000004425048814
+ },
+ "pruefungen": [
+  {
+   "name": "Torbau-Bogen: Oeffnungsbreite / Turmbreite",
+   "wert": 0.6473214285714286,
+   "soll": [
+    0.55,
+    0.74
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Torbau-Bogen: Scheitelhoehe / Oeffnungsbreite (Form: breit, nicht Schlitz)",
+   "wert": 0.8482758620689653,
+   "soll": [
+    0.7,
+    1.02
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Torbau-Front (Obergeschoss) Breite / Turmbreite",
+   "wert": 0.6339285441807339,
+   "soll": [
+    0.54,
+    0.72
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Torbau 1. OG: Fensterzahl",
+   "wert": 4.0,
+   "soll": [
+    4,
+    4
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Torbau 2. OG: Fensterzahl (2 im Erker + 1 in der Wand)",
+   "wert": 3.0,
+   "soll": [
+    3,
+    3
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Torbau Giebelgeschoss: Fensterzahl",
+   "wert": 2.0,
+   "soll": [
+    2,
+    2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Torbau-Giebel: Breite am Fuss / Turmbreite",
+   "wert": 0.5178571231024606,
+   "soll": [
+    0.42,
+    0.58
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Torbau-Giebel: Breite im Hals (z 19,2) / Breite am Fuss",
+   "wert": 0.4491481189402815,
+   "soll": [
+    0.4,
+    0.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Torbau Gesamthoehe (m)",
+   "wert": 20.700000961303708,
+   "soll": [
+    20.0,
+    21.5
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Wasserdicht (1=ja)",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Anzahl getrennte Koerper",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Torbau-Erker: Vorsprung vor der Obergeschosswand (m)",
+   "wert": 0.4999997634887734,
+   "soll": [
+    0.3,
+    0.8
+   ],
+   "ok": true,
+   "status": "ok"
+  }
+ ],
+ "bestanden": true
+}

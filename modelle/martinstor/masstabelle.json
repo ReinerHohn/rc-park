@@ -2996,28 +2996,60 @@
    "naechster_schritt": "Wolke gegen STL je Hoehe per Schnittscheibe messen (wolke_vs_modell), entzerrt vs roh getrennt als Pruefung eintragen; Rule 5: Foto/Wolke vs Laser/Modell nicht mitteln"
   },
   {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
-   "auto_id": "breite-000-38-38",
-   "art": "breite",
-   "foto": "000",
-   "z_von": 37.5,
-   "z_bis": 37.5,
-   "abweichung": -1.16,
-   "text": "Silhouettenbreite z 37.5-37.5 m: Foto 13.56 m, Modell 14.72 m (-1.16 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+   "datum": "2026-11-03",
+   "wer": "Drohnenwolke d1 (Register BR, grob)",
+   "auto_id": "drohne-dach-neigung-1",
+   "art": "dach_neigung",
+   "text": "Drohnenwolke: Halbbreite |y| faellt von 4,7 m (z 40-42) auf 3,1 (44-46) und 2,4 (48-50); Generator hat bei z 45 noch 3,6 (DACH_MITTE2_Y), also ~0,5 m zu breit. |x| 5,3 vs 4,0 am Fuss ist durch Tuermchen/Nachbarn verfaelscht (p95).",
+   "naechster_schritt": "Tuermchen/Nachbarn per Achsen-Sektoren ausmaskieren, Dachflaechen-Ebenen (RANSAC) in der Drohnenwolke fitten, Neigung gegen Generator als Pruefung eintragen (muss am aktuellen Modell fehlschlagen), dann hybrid_abgleich.py"
   },
   {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
-   "auto_id": "breite-000-48-48",
-   "art": "breite",
-   "foto": "000",
-   "z_von": 48.0,
-   "z_bis": 48.0,
-   "abweichung": -5.66,
-   "text": "Silhouettenbreite z 48.0-48.0 m: Foto 0.26 m, Modell 5.92 m (-5.66 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+   "datum": "2026-11-03",
+   "wer": "Nutzer (3D-Ansicht)",
+   "auto_id": "drohne-versatz-dach-1",
+   "art": "wolkenversatz",
+   "text": "Nutzer: Drohnenwolke (Dach) schwebt ~0,5-1 m ueber/versetzt zur Strassenwolke. Passt zu Ausrichtungsresiduum 0,5-0,75 m bei z 30-50 (video_ausrichtung.json).",
+   "naechster_schritt": "Versatzvektor drohne-vs-strasse im Ueberlappungsbereich messen (z 28-45, Nordfassade), je z-Schicht; Pruefung \"Drohne-Strasse Versatz <= 0,3 m\"; dann Ausrichtung verfeinern (ICP/Hoehenverlauf) statt Sim3 global"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (3D-Ansicht)",
+   "auto_id": "drohne-doppeldach-1",
+   "art": "doppelschicht",
+   "text": "Nutzer: Drohnenwolke zeigt zwei parallele Daecher: eines passt (Neigung sehr gut, leicht versetzt), davor eine zweite parallele Punktfront innerhalb der Drohnenwolke.",
+   "naechster_schritt": "Dachebene per RANSAC, Abstandshistogramm senkrecht zur Ebene (bimodal?), Schichtabstand messen; Ursache klaeren (Clip-Registrierung vs. PatchMatch-Doppelflaeche); Pruefung \"Dach einschichtig\""
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (3D-Ansicht)",
+   "auto_id": "nebengebaeude-zweiter-bogen-1",
+   "art": "nebengebaeude",
+   "text": "Nutzer: Das Nebengebaeude ueber dem zweiten Bogen (dort steht McDonalds) ist nicht ganz richtig.",
+   "naechster_schritt": "Torbau-Front (torbau_front_modell.stl, Register AQ: Fensterzahl/Stufen/Bogenbreite ANNAHME) gegen Nord-Wolke + Fotos 006/014 messen (wolke_vs_modell --nebengebaeude), als Pruefung eintragen, dann torbau_gen aendern"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (3D-Ansicht)",
+   "auto_id": "abdeckung-luecken-1",
+   "art": "datenluecke",
+   "text": "Nutzer: Noch nicht in allen Richtungen Daten, es gibt Luecken in der Wolke.",
+   "naechster_schritt": "Luecken je Richtung/Hoehe quantifizieren (Abdeckungskarte aus Wolke + Kamerarichtungen), fehlende Seiten benennen, Ost/West und Suedseite aus Drohnenclips (Clips mit anderen Blickrichtungen) und weiteren Videos auffuellen"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Claude (Foto 089 neben Modell-Render)",
+   "auto_id": "torbau-erker-wand-1",
+   "art": "nebengebaeude",
+   "text": "Torbau-Obergeschoss ist keine durchgehende vorkragende Front: glatte Wand bei x ~ -5,8 (Wolkenmasse: \"bei y < -10,5 nur -5,8\"), nur der Erker (y -11,3..-8,1, z 10,2..17,8) steht bis -6,3 vor; 2. OG hat 3 Fenster (2 im Erker, 1 rechts), nicht 4. Giebelachse: Foto y -9,2 vs Wolke/Drohne -8,3 (Giebel evtl. zurueckgesetzt: Perspektive verzerrt die Fotolage) - nicht gemittelt.",
+   "naechster_schritt": "in martinstor_torbau/masstabelle.json als Pruefung (Erker-Vorsprung, 2. OG = 3 Fenster), Generator aendern"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (3D-Ansicht v3)",
+   "auto_id": "drohne-rest-versatz-025",
+   "art": "wolkenversatz",
+   "text": "Nutzer: Drohnenwolke noch ~0,25 m versetzt (passt zu Rest-Versatz RBC7Co z 38-54: x 0,24-0,25, z 0,39); am Dach liegen noch Teile der zwei kleinen Fenster und etwas Wand im Dachbereich der Wolke.",
+   "naechster_schritt": "Bandkorrektur mit schmaleren Baendern (6 m) und zweitem Durchgang; Pruefung Rest-Versatz je Clip/Band <= 0,15 m; Dachpunkte nur oberhalb der Wandkante (Glockenstock-Oberkante ~40,5 m) fuer die Dachflaechen verwenden"
   },
   {
    "datum": "auto",
@@ -3077,6 +3109,30 @@
    "z_bis": 50.0,
    "abweichung": -4.38,
    "text": "Silhouettenbreite z 47.5-50.0 m: Foto 1.11 m, Modell 5.49 m (-4.38 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
+   "auto_id": "breite-000-38-38",
+   "art": "breite",
+   "foto": "000",
+   "z_von": 37.5,
+   "z_bis": 37.5,
+   "abweichung": -1.16,
+   "text": "Silhouettenbreite z 37.5-37.5 m: Foto 13.56 m, Modell 14.72 m (-1.16 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
+   "auto_id": "breite-000-48-48",
+   "art": "breite",
+   "foto": "000",
+   "z_von": 48.0,
+   "z_bis": 48.0,
+   "abweichung": -5.66,
+   "text": "Silhouettenbreite z 48.0-48.0 m: Foto 0.26 m, Modell 5.92 m (-5.66 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
@@ -3432,30 +3488,6 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.43 m, y=5.34 m (Zelle [2358, 666, 9], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_061.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "2026-11-03",
-   "wer": "Drohnenwolke d1 (Register BR, grob)",
-   "auto_id": "drohne-dach-neigung-1",
-   "art": "dach_neigung",
-   "text": "Drohnenwolke: Halbbreite |y| faellt von 4,7 m (z 40-42) auf 3,1 (44-46) und 2,4 (48-50); Generator hat bei z 45 noch 3,6 (DACH_MITTE2_Y), also ~0,5 m zu breit. |x| 5,3 vs 4,0 am Fuss ist durch Tuermchen/Nachbarn verfaelscht (p95).",
-   "naechster_schritt": "Tuermchen/Nachbarn per Achsen-Sektoren ausmaskieren, Dachflaechen-Ebenen (RANSAC) in der Drohnenwolke fitten, Neigung gegen Generator als Pruefung eintragen (muss am aktuellen Modell fehlschlagen), dann hybrid_abgleich.py"
-  },
-  {
-   "datum": "2026-11-03",
-   "wer": "Nutzer (3D-Ansicht)",
-   "auto_id": "drohne-versatz-dach-1",
-   "art": "wolkenversatz",
-   "text": "Nutzer: Drohnenwolke (Dach) schwebt ~0,5-1 m ueber/versetzt zur Strassenwolke. Passt zu Ausrichtungsresiduum 0,5-0,75 m bei z 30-50 (video_ausrichtung.json).",
-   "naechster_schritt": "Versatzvektor drohne-vs-strasse im Ueberlappungsbereich messen (z 28-45, Nordfassade), je z-Schicht; Pruefung \"Drohne-Strasse Versatz <= 0,3 m\"; dann Ausrichtung verfeinern (ICP/Hoehenverlauf) statt Sim3 global"
-  },
-  {
-   "datum": "2026-11-03",
-   "wer": "Nutzer (3D-Ansicht)",
-   "auto_id": "drohne-doppeldach-1",
-   "art": "doppelschicht",
-   "text": "Nutzer: Drohnenwolke zeigt zwei parallele Daecher: eines passt (Neigung sehr gut, leicht versetzt), davor eine zweite parallele Punktfront innerhalb der Drohnenwolke.",
-   "naechster_schritt": "Dachebene per RANSAC, Abstandshistogramm senkrecht zur Ebene (bimodal?), Schichtabstand messen; Ursache klaeren (Clip-Registrierung vs. PatchMatch-Doppelflaeche); Pruefung \"Dach einschichtig\""
   }
  ],
  "beobachtungen_erledigt": [

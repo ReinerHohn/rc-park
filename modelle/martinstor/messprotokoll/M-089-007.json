@@ -1,0 +1,25 @@
+{
+ "id": "M-089-007",
+ "foto": "089_Martinstor_Freiburg_im_Breisgau_Baden-Wuerttemberg_Germany_O.jpg",
+ "bild": [
+  3840,
+  5120
+ ],
+ "name": "Torbau-Front Breite (Obergeschoss) bis letztes Fenster",
+ "merkmal": "verhaeltnis",
+ "mess_px": [
+  1955.0,
+  3250.0,
+  2500.0,
+  3250.0
+ ],
+ "richtung": "h",
+ "stauchung": 1.0,
+ "massstab_px": null,
+ "px_pro_m": 77.2,
+ "massstab_von": "LoD2 Turm-Nordwand 11,2 m = 865 px (x 1090..1955), gleiche Ebene; Ende am letzten Fenster/Pfeiler vor dem dunkleren Nachbarhaus (korrigiert gegenueber M-089-003, das bis in den Nachbarn reichte)",
+ "pixel": 545.0,
+ "meter": 7.06,
+ "unsicherheit_m": 0.591,
+ "hinweis": "+-8 % Ablesung/Perspektive + 2 px"
+}

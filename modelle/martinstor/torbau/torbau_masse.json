@@ -2,18 +2,32 @@
  "_doku": "Masse des 1901er Torbaus (McDonald's) westlich des Martinstors als DATEN mit Quelle. Modellsystem wie der Turm (anker3d.json: Ursprung Turmmitte, +x Sued, +y Ost, z ueber Gelaende). Nordfront = -x. Register AQ.",
  "masse": {
   "FRONT_Y_WEST": {
-   "wert": -10.6,
+   "wert": -14.7,
    "einheit": "m",
-   "was": "Westkante des giebelstaendigen Frontblocks",
-   "quelle": "Dichte Wolke Nord (entzerrt): Obergeschosse z 11-16 bei y -10..-7,5 vorn (x -6,2..-6,4); bei y < -10,5 nur -5,8 (zurueck) und wenig Punkte",
-   "quelltyp": "sfm_bodenanker"
+   "was": "Westkante des Erdgeschosses (aeusserer Bogenpfeiler)",
+   "quelle": "ANNAHME: Bogen symmetrisch um Scheitelmitte (rechtes Bogenende hinter Schild/Laterne verdeckt); Foto 089 (Commons, nur Messvorlage), Horizontalmassstab Turm-Nordwand 11,2 m (LoD2): M-089-001 Extrados 8,0 m, Scheitel y -10,7, linkes Ende y -6,7",
+   "quelltyp": "foto_vollbild",
+   "historie": [
+    {
+     "datum": "2026-11-03",
+     "alt_wert": -10.6,
+     "grund": "Front war nur 3,4 m breit; Foto 089: Bogen allein 7,25 m; Pruefung Torbau-Front/Bogen/Turmbreite (Beobachtung nebengebaeude-zweiter-bogen-1)"
+    }
+   ]
   },
   "FRONT_Y_OST": {
-   "wert": -7.2,
+   "wert": -5.6,
    "einheit": "m",
-   "was": "Ostkante des Frontblocks (zur Turmseite)",
-   "quelle": "Wolke: ab y -7,0 liegt die Front bei x -4,7..-5,0 = Turm-Nordwand/Verbindungsbau",
-   "quelltyp": "sfm_bodenanker"
+   "was": "Ostkante des Frontblocks = Westkante der Turm-Nordwand",
+   "quelle": "LoD2 Turm-Nordwand y -5,6; Foto 089: Torbau-Front beginnt an der Turmkante (Tourelle davor)",
+   "quelltyp": "lod2",
+   "historie": [
+    {
+     "datum": "2026-11-03",
+     "alt_wert": -7.2,
+     "grund": "Foto 089: Front stoesst an die Turmkante; -7,2 liess 1,6 m Luecke"
+    }
+   ]
   },
   "FRONT_X": {
    "wert": -6.3,
@@ -37,11 +51,18 @@
    "quelltyp": "sfm_bodenanker"
   },
   "EG_HOEHE": {
-   "wert": 9.8,
+   "wert": 10.0,
    "einheit": "m",
    "was": "Oberkante Arkadengeschoss / Beginn der vorkragenden Obergeschosse",
-   "quelle": "Wolke: Tiefensprung von -5,4 (z 9-10) auf -6,3 (z 10-11)",
-   "quelltyp": "sfm_bodenanker"
+   "quelle": "Wolke: Front x -5,4 bis z 10, -6,3 darueber (Stufe bei z 10,0; Klassengrenze 10); Foto 089: Kragplatte/Erker ab ~10,2 m",
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "2026-11-03",
+     "alt_wert": 9.8,
+     "grund": "Klassengrenze der Wolkenstufe z 9-10 / 10-11: Stufe liegt bei 10,0, und die 1. Fensterreihe (8,2..10,0) sitzt in der zurueckgesetzten Wand"
+    }
+   ]
   },
   "ARKADE_SCHEITEL": {
    "wert": 8.6,
@@ -82,14 +103,14 @@
    "wert": 3,
    "einheit": "",
    "was": "Staffeln je Seite",
-   "quelle": "Foto 003 (CC BY-SA 3.0): Staffelgiebel mit je drei Stufen (ANNAHME aus Sichtung, nicht gemessen)",
+   "quelle": "ersetzt durch Schweifgiebel (Voluten) - Foto 089/006 zeigt Renaissance-Schweifgiebel, keine Staffeln (Staffelzahl-ANNAHME aus 'Foto 003' war falsch: Foto 003 zeigt nur die Uhr)",
    "quelltyp": "foto_vollbild"
   },
   "FENSTER_JE_REIHE": {
    "wert": 2,
    "einheit": "",
    "was": "Fenster je Reihe im Frontblock",
-   "quelle": "Foto 003: zwei Fensterachsen im Giebelfeld (ANNAHME)",
+   "quelle": "4 je Reihe im 1./2. OG (2+2 beidseits des Erkers), 2 im Giebelgeschoss: Foto 089 Zoom (frueher ANNAHME aus 'Foto 003': Foto 003 zeigt keinen Torbau)",
    "quelltyp": "foto_vollbild"
   },
   "GIEBEL_FENSTER_Z": {
@@ -100,18 +121,144 @@
    "quelltyp": "foto_verhaeltnis"
   },
   "FENSTER_Z1": {
-   "wert": 11.6,
+   "wert": 8.2,
    "einheit": "m",
    "was": "Unterkante Fensterreihe 1. OG",
-   "quelle": "Wolke: Luecken-/Mauer-Muster bei z 11-11,5 und 14,5-15 (schwach); Foto 003: zwei Fensterreihen ueber den Arkaden plus Giebelfenster",
-   "quelltyp": "foto_verhaeltnis"
+   "quelle": "M-089-006: Hoehe 1,87 m; Unterkante aus Foto 089 y 3800 px (85,5 px/m ab Strasse 4510)",
+   "quelltyp": "foto_vollbild",
+   "historie": [
+    {
+     "datum": "2026-11-03",
+     "alt_wert": 11.6,
+     "grund": "Wolken-Lueckenmuster (schwach) gegen Foto 089 gemessene Fensterreihen 8,3/12,2/16,0"
+    }
+   ]
   },
   "FENSTER_Z2": {
-   "wert": 14.6,
+   "wert": 12.2,
    "einheit": "m",
    "was": "Unterkante Fensterreihe 2. OG",
-   "quelle": "Wolke: Luecken-/Mauer-Muster bei z 11-11,5 und 14,5-15 (schwach); Foto 003: zwei Fensterreihen ueber den Arkaden plus Giebelfenster",
-   "quelltyp": "foto_verhaeltnis"
+   "quelle": "Foto 089 y 3470 px; Hoehe wie M-089-006 (ANNAHME gleiche Hoehe 1,8 m)",
+   "quelltyp": "foto_vollbild",
+   "historie": [
+    {
+     "datum": "2026-11-03",
+     "alt_wert": 14.6,
+     "grund": "siehe FENSTER_Z1"
+    }
+   ]
+  },
+  "FRONT_Y_WEST_OG": {
+   "wert": -12.7,
+   "einheit": "m",
+   "was": "Westkante der Obergeschosse",
+   "quelle": "Foto 089 (Commons, nur Messvorlage), Horizontalmassstab Turm-Nordwand 11,2 m (LoD2): M-089-007 Front 7,06 m +-0,6 (Turmkante bis letztes Fenster)",
+   "quelltyp": "foto_vollbild"
+  },
+  "BOGEN_Y_MITTE": {
+   "wert": -10.7,
+   "einheit": "m",
+   "was": "Querlage der Bogenmitte (Scheitel)",
+   "quelle": "Foto 089 (Commons, nur Messvorlage), Horizontalmassstab Turm-Nordwand 11,2 m (LoD2): Scheitel bei x 2350 px = 395 px = 5,1 m westlich der Turmkante; M-089-001/002",
+   "quelltyp": "foto_vollbild"
+  },
+  "BOGEN_BREITE": {
+   "wert": 7.25,
+   "einheit": "m",
+   "was": "lichte Breite des Durchgangsbogens (McDonalds-Bogen)",
+   "quelle": "Foto 089 (Commons, nur Messvorlage), Horizontalmassstab Turm-Nordwand 11,2 m (LoD2): M-089-002 7,25 m +-0,6 (Extrados 8,03 m M-089-001)",
+   "quelltyp": "foto_vollbild"
+  },
+  "BOGEN_SCHEITEL": {
+   "wert": 6.2,
+   "einheit": "m",
+   "was": "Hoehe des Bogenscheitels (innen) ueber Strasse",
+   "quelle": "M-089-004: 530 px, senkrecht aus Giebelspitze 20,7 m (Wolke) verankert 85,5 px/m, +-0,5 m; altes ARKADE_SCHEITEL 8,6 war aus Wolkenloch-Muster (ANNAHME)",
+   "quelltyp": "foto_vollbild",
+   "historie": [
+    {
+     "datum": "2026-11-03",
+     "alt_wert": 8.6,
+     "grund": "ARKADE_SCHEITEL 8,6 -> BOGEN_SCHEITEL 6,2: Foto 089 M-089-004"
+    }
+   ]
+  },
+  "BOGEN_KAEMPFER": {
+   "wert": 3.0,
+   "einheit": "m",
+   "was": "Hoehe, ab der der Bogen rund wird",
+   "quelle": "M-089-005: 260 px / 85,5 px/m = 3,04 m +-0,3",
+   "quelltyp": "foto_vollbild"
+  },
+  "FENSTER_H1": {
+   "wert": 1.8,
+   "einheit": "m",
+   "was": "Fensterhoehe 1. OG",
+   "quelle": "M-089-006 1,87 m +-0,17; auf 1,8 begrenzt (Oberkante an der Kragplatte z 10,0)",
+   "quelltyp": "foto_vollbild"
+  },
+  "FENSTER_H2": {
+   "wert": 1.8,
+   "einheit": "m",
+   "was": "Fensterhoehe 2. OG",
+   "quelle": "ANNAHME: wie 1. OG (Foto 089: 160 px)",
+   "quelltyp": "foto_vollbild"
+  },
+  "FENSTER_Z3": {
+   "wert": 16.0,
+   "einheit": "m",
+   "was": "Unterkante Giebelgeschoss-Fenster",
+   "quelle": "Foto 089 y 3150 px",
+   "quelltyp": "foto_vollbild"
+  },
+  "FENSTER_H3": {
+   "wert": 1.3,
+   "einheit": "m",
+   "was": "Fensterhoehe Giebelgeschoss",
+   "quelle": "Foto 089: ~110 px / 85,5",
+   "quelltyp": "foto_vollbild"
+  },
+  "GIEBEL_HALB_FUSS": {
+   "wert": 2.8,
+   "einheit": "m",
+   "was": "halbe Giebelbreite am Fuss (z 17)",
+   "quelle": "Foto 089 (Commons, nur Messvorlage), Horizontalmassstab Turm-Nordwand 11,2 m (LoD2): 089 Zoom: Giebelfuss 430 px = 5,6 m",
+   "quelltyp": "foto_vollbild"
+  },
+  "FRONT_X_WAND": {
+   "wert": -5.8,
+   "einheit": "m",
+   "was": "Frontebene der Obergeschosswand neben dem Erker",
+   "quelle": "Wolke Nord (torbau_masse FRONT_Y_WEST-Notiz): bei y < -10,5 liegt die Front bei x -5,8; Foto 089: glatte Wand beidseits des Erkers (ANNAHME: auch links davon)",
+   "quelltyp": "sfm_bodenanker"
+  },
+  "ERKER_Y0": {
+   "wert": -11.3,
+   "einheit": "m",
+   "was": "Westkante des Erkers (2 Geschosse)",
+   "quelle": "Foto 089 Zoom: Erker x 245..440 px (Turmkante-Ursprung, 77,2 px/m); Wolke z 10-19: vorderste Front bei y -10..-7,5",
+   "quelltyp": "foto_vollbild"
+  },
+  "ERKER_Y1": {
+   "wert": -8.1,
+   "einheit": "m",
+   "was": "Ostkante des Erkers",
+   "quelle": "wie ERKER_Y0",
+   "quelltyp": "foto_vollbild"
+  },
+  "ERKER_Z0": {
+   "wert": 10.2,
+   "einheit": "m",
+   "was": "Unterkante Kragplatte des Erkers",
+   "quelle": "Foto 089: Kragplatte y 3540..3640 px -> z 10,2..11,4 (85,5 px/m); Wolkenstufe z 10,0",
+   "quelltyp": "foto_vollbild"
+  },
+  "ERKER_Z1": {
+   "wert": 17.8,
+   "einheit": "m",
+   "was": "Oberkante Erker (Kupferdach-Ansatz)",
+   "quelle": "Foto 089: Erkerkappe bei y ~2990 px (z ~17,8)",
+   "quelltyp": "foto_vollbild"
   }
  }
 }

@@ -137,13 +137,13 @@ class Messer:
         return {"breite": float(ws[i]), "z": float(zs[i])}
     def wasserdicht(self, **k): return 1.0 if self.m.is_watertight else 0.0
     def koerper_anzahl(self, **k): return float(len(self.m.split(only_watertight=False)))
-    def nischen_anzahl(self, seite, z, halb, tiefe, schritt=0.05, min_b=0.3, max_b=2.0, **k):
-        """Zaehlt Rueckspruenge >= tiefe entlang einer Fassade (Strahlen von aussen), Breite min_b..max_b."""
+    def nischen_anzahl(self, seite, z, halb, tiefe, schritt=0.05, min_b=0.3, max_b=2.0, mitte=0.0, wand=None, **k):
+        """Zaehlt Rueckspruenge >= tiefe entlang einer Fassade (Strahlen von aussen), Breite min_b..max_b. mitte = Querkoordinate der Fenstermitte (Standard 0 = Turmachse)."""
         ax = 0 if seite[1] == "x" else 1; sgn = 1.0 if seite[0] == "+" else -1.0
-        us = np.arange(-halb, halb + 1e-6, schritt); org = np.zeros((len(us), 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = us; org[:, 2] = z
+        us = np.arange(-halb, halb + 1e-6, schritt) + mitte; org = np.zeros((len(us), 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = us; org[:, 2] = z
         dr = np.zeros_like(org); dr[:, ax] = -sgn
         loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
-        d = np.full(len(us), np.nan); d[ir] = np.abs(loc[:, ax]); wall = np.nanmedian(d); d = np.where(np.isnan(d), -1e3, d); rec = (wall - d) >= tiefe   # Durchblick (kein Treffer) = tiefe Nische
+        d = np.full(len(us), np.nan); d[ir] = np.abs(loc[:, ax]); wall = np.nanmedian(d) if wand is None else wand; d = np.where(np.isnan(d), -1e3, d); rec = (wall - d) >= tiefe   # Durchblick (kein Treffer) = tiefe Nische; wand = Wandebene (|Tiefe|), sonst Median (versagt, wenn Oeffnungen > 50 % der Strecke)
         n, run = 0, 0
         for rr in list(rec) + [False]:
             if rr: run += 1
@@ -255,6 +255,31 @@ class Messer:
             if i is None or (i - prev - 1) * schritt > max_luecke: best = max(best, prev - start + 1); start = i
             prev = i if i is not None else prev
         return float(best * schritt)
+    def nische_breite(self, seite, z, halb, tiefe, mitte=0.0, schritt=0.05, wand=None, **k):
+        """Breite (m) des BREITESTEN zusammenhaengenden Rueckversprungs >= tiefe entlang einer Fassade bei Hoehe z (z. B. Bogenoeffnung, Durchgang)."""
+        ax = 0 if seite[1] == "x" else 1; sgn = 1.0 if seite[0] == "+" else -1.0
+        us = np.arange(-halb, halb + 1e-6, schritt) + mitte; org = np.zeros((len(us), 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = us; org[:, 2] = z
+        dr = np.zeros_like(org); dr[:, ax] = -sgn
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
+        d = np.full(len(us), np.nan); d[ir] = np.abs(loc[:, ax]); wall = np.nanmedian(d) if wand is None else wand; d = np.where(np.isnan(d), -1e3, d); rec = (wall - d) >= tiefe
+        best, run = 0, 0
+        for rr in list(rec) + [False]:
+            if rr: run += 1
+            else: best = max(best, run); run = 0
+        return float(best * schritt)
+    def oeffnung_oberkante(self, seite, quer, z0, z1, tiefe, schritt=0.05, **k):
+        """Hoechste Hoehe z, bis zu der die Fassade bei Querlage 'quer' ab z0 DURCHGEHEND um >= tiefe zurueckspringt (Scheitel einer Toroeffnung)."""
+        zs, d = self._front_profil(seite, quer, z0, z1, schritt=schritt); wall = np.nanmax(d); rec = (wall - np.where(np.isnan(d), -1e3, d)) >= tiefe
+        if not rec[0]: return float("nan")
+        n = 0
+        while n < len(rec) and rec[n]: n += 1
+        return float(zs[n - 1])
+    def tiefe_bei(self, seite, z, quer, **k):
+        """Tiefe |x| bzw. |y| der ersten Modellflaeche von aussen bei Hoehe z und Querlage quer (ein Strahl); nan ohne Treffer. Zwei Aufrufe liefern einen Vorsprung (Erker gegen Wand)."""
+        ax = 0 if seite[1] == "x" else 1; sgn = 1.0 if seite[0] == "+" else -1.0
+        org = np.zeros((1, 3)); org[0, ax] = sgn * 40.0; org[0, 1 - ax] = quer; org[0, 2] = z; dr = np.zeros((1, 3)); dr[0, ax] = -sgn
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
+        return float(abs(loc[0, ax])) if len(ir) else float("nan")
     def ausdehnung_streifen(self, z, achse="y", quer_max=2.0, **k):
         """Ausdehnung des Querschnitts entlang 'achse' innerhalb eines Streifens |quer| < quer_max durch die Achse (blendet Ecktuermchen/Erker aus)."""
         from shapely.geometry import box

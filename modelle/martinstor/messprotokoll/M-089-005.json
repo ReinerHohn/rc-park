@@ -1,0 +1,25 @@
+{
+ "id": "M-089-005",
+ "foto": "089_Martinstor_Freiburg_im_Breisgau_Baden-Wuerttemberg_Germany_O.jpg",
+ "bild": [
+  3840,
+  5120
+ ],
+ "name": "Torbau-Bogen Kaempferhoehe (Beginn der Rundung) ueber Strasse",
+ "merkmal": "verhaeltnis",
+ "mess_px": [
+  2360.0,
+  4250.0,
+  2360.0,
+  4510.0
+ ],
+ "richtung": "v",
+ "stauchung": 1.0,
+ "massstab_px": null,
+ "px_pro_m": 85.5,
+ "massstab_von": "wie vorher (85,5 px/m senkrecht)",
+ "pixel": 260.0,
+ "meter": 3.041,
+ "unsicherheit_m": 0.267,
+ "hinweis": "+-8 % Ablesung/Perspektive + 2 px"
+}

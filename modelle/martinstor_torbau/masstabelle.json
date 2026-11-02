@@ -1,0 +1,288 @@
+{
+ "_doku": "Torbau (1901, McDonald's) westlich des Turms, Nordfront. Modellsystem wie der Turm. Quelle der Verhaeltnisse: Foto 089 + LoD2-Turmbreite; Beobachtung nebengebaeude-zweiter-bogen-1 (martinstor/masstabelle.json). Messer nischen_anzahl/nische_breite mit wand= (Wandebene |x|: 5,3 = zurueckgesetztes Erdgeschoss, 6,3 = vorkragende Front); der Median-Standard versagt bei Oeffnungen > 50 % der Strecke.",
+ "konstanten": {
+  "turm_breite": 11.2
+ },
+ "messungen": {
+  "bogen_breite": {
+   "typ": "nische_breite",
+   "seite": "-x",
+   "z": 3.0,
+   "halb": 4.7,
+   "mitte": -9.7,
+   "tiefe": 2.0,
+   "wand": 5.3
+  },
+  "bogen_scheitel": {
+   "typ": "oeffnung_oberkante",
+   "seite": "-x",
+   "quer": -10.7,
+   "z0": 0.2,
+   "z1": 12.0,
+   "tiefe": 2.0
+  },
+  "front_breite_og": {
+   "typ": "schnitt_ausdehnung",
+   "z": 12.5,
+   "x0": -7.0,
+   "x1": -5.5,
+   "y0": -20.0,
+   "y1": 0.0,
+   "achse": "y"
+  },
+  "fenster_og1": {
+   "typ": "nischen_anzahl",
+   "seite": "-x",
+   "z": 9.3,
+   "halb": 3.7,
+   "mitte": -9.0,
+   "tiefe": 0.25,
+   "min_b": 0.5,
+   "max_b": 1.6,
+   "wand": 5.3
+  },
+  "fenster_og2": {
+   "typ": "nischen_anzahl",
+   "seite": "-x",
+   "z": 13.1,
+   "halb": 3.7,
+   "mitte": -9.0,
+   "tiefe": 0.25,
+   "min_b": 0.5,
+   "max_b": 1.6,
+   "wand": 6.3
+  },
+  "fenster_giebel": {
+   "typ": "nischen_anzahl",
+   "seite": "-x",
+   "z": 16.6,
+   "halb": 3.7,
+   "mitte": -9.0,
+   "tiefe": 0.25,
+   "min_b": 0.5,
+   "max_b": 1.6,
+   "wand": 6.3
+  },
+  "giebel_breite_fuss": {
+   "typ": "schnitt_ausdehnung",
+   "z": 17.3,
+   "x0": -7.0,
+   "x1": -5.5,
+   "y0": -20.0,
+   "y1": 0.0,
+   "achse": "y"
+  },
+  "giebel_breite_hals": {
+   "typ": "schnitt_ausdehnung",
+   "z": 19.2,
+   "x0": -7.0,
+   "x1": -5.5,
+   "y0": -20.0,
+   "y1": 0.0,
+   "achse": "y"
+  },
+  "hoehe": {
+   "typ": "hoehe_max"
+  },
+  "wasserdicht": {
+   "typ": "wasserdicht"
+  },
+  "koerper": {
+   "typ": "koerper_anzahl"
+  },
+  "erker_front": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 11.6,
+   "quer": -9.7
+  },
+  "wand_front": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 11.6,
+   "quer": -12.2
+  }
+ },
+ "pruefungen": [
+  {
+   "name": "Torbau-Bogen: Oeffnungsbreite / Turmbreite",
+   "wert": "bogen_breite / turm_breite",
+   "soll": [
+    0.55,
+    0.74
+   ],
+   "quelle": "Foto 089 (Commons CC BY-SA 4.0, nur Messvorlage), Messprotokoll M-089-002 (7,25 m +-0,6 innen), M-089-001 (8,0 m aussen); Horizontalmassstab Turm-Nordwand 11,2 m (LoD2) in gleicher Ebene",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "verhaeltnis",
+   "massstab": "foto_intern"
+  },
+  {
+   "name": "Torbau-Bogen: Scheitelhoehe / Oeffnungsbreite (Form: breit, nicht Schlitz)",
+   "wert": "bogen_scheitel / bogen_breite",
+   "soll": [
+    0.7,
+    1.02
+   ],
+   "quelle": "Foto 089 (Commons CC BY-SA 4.0, nur Messvorlage), Messprotokoll M-089-004 (6,2 m) / M-089-002 (7,25 m); senkrecht aus Giebelspitze 20,7 m verankert",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "verhaeltnis",
+   "massstab": "foto_intern"
+  },
+  {
+   "name": "Torbau-Front (Obergeschoss) Breite / Turmbreite",
+   "wert": "front_breite_og / turm_breite",
+   "soll": [
+    0.54,
+    0.72
+   ],
+   "quelle": "Foto 089 (Commons CC BY-SA 4.0, nur Messvorlage), Messprotokoll M-089-007 (7,06 m +-0,6; M-089-003 reichte bis in den Nachbarn); Horizontalmassstab Turm-Nordwand 11,2 m (LoD2) in gleicher Ebene",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "verhaeltnis",
+   "massstab": "foto_intern"
+  },
+  {
+   "name": "Torbau 1. OG: Fensterzahl",
+   "wert": "fenster_og1",
+   "soll": [
+    4,
+    4
+   ],
+   "quelle": "Foto 089 Zoom Bogenzone/Front: 4 Fenster (2+2), Foto 006 gleiche Anordnung",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "foto_intern"
+  },
+  {
+   "name": "Torbau 2. OG: Fensterzahl (2 im Erker + 1 in der Wand)",
+   "wert": "fenster_og2",
+   "soll": [
+    3,
+    3
+   ],
+   "quelle": "Foto 089 Zoom neben Modell-Render: Reihe ueber der Kragplatte: 2 Erkerfenster + 1 Wandfenster; die 4 war eine Fehllesung (Beobachtung torbau-erker-wand-1)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "foto_intern",
+   "historie": [
+    {
+     "datum": "2026-11-03",
+     "alt_soll": [
+      4,
+      4
+     ],
+     "grund": "Sichtvergleich Foto/Render: 2. OG hat 3 Fenster (frueher aus grober Lesung 4)"
+    }
+   ]
+  },
+  {
+   "name": "Torbau Giebelgeschoss: Fensterzahl",
+   "wert": "fenster_giebel",
+   "soll": [
+    2,
+    2
+   ],
+   "quelle": "Foto 089: 2 Fenster unter dem Schweifgiebel",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "foto_intern"
+  },
+  {
+   "name": "Torbau-Giebel: Breite am Fuss / Turmbreite",
+   "wert": "giebel_breite_fuss / turm_breite",
+   "soll": [
+    0.42,
+    0.58
+   ],
+   "quelle": "Foto 089 (Commons CC BY-SA 4.0, nur Messvorlage), Messprotokoll 089 Zoom: Giebelfuss orig. x 2010..2440 = 430 px = 5,6 m; Horizontalmassstab Turm-Nordwand 11,2 m (LoD2) in gleicher Ebene",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "verhaeltnis",
+   "massstab": "foto_intern"
+  },
+  {
+   "name": "Torbau-Giebel: Breite im Hals (z 19,2) / Breite am Fuss",
+   "wert": "giebel_breite_hals / giebel_breite_fuss",
+   "soll": [
+    0.4,
+    0.6
+   ],
+   "quelle": "Foto 089 Zoom: Volutengiebel verjuengt sich von 5,6 m (z 17) auf ~3 m (z 19,2), Kappe ~1,9 m",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "verhaeltnis",
+   "massstab": "foto_intern",
+   "historie": [
+    {
+     "datum": "2026-11-03",
+     "alt_soll": [
+      0.4,
+      0.68
+     ],
+     "grund": "verschaerft: der alte Staffelgiebel (0,67) bestand die weite Grenze; Foto 089 ~3,0/5,6 = 0,54"
+    }
+   ]
+  },
+  {
+   "name": "Torbau Gesamthoehe (m)",
+   "wert": "hoehe",
+   "soll": [
+    20.0,
+    21.5
+   ],
+   "quelle": "Giebelspitze: Nord-Wolke 20,6-20,7 m, Drohnenwolke Kappe 21,5 m (Streuung der Quellen, NICHT gemittelt: Sollbereich deckt beide)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "foto_kalibriert"
+  },
+  {
+   "name": "Wasserdicht (1=ja)",
+   "wert": "wasserdicht",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Druckfaehigkeit",
+   "quelltyp": "modell",
+   "merkmal": "druck",
+   "massstab": "modell"
+  },
+  {
+   "name": "Anzahl getrennte Koerper",
+   "wert": "koerper",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Schwebende Teile",
+   "quelltyp": "modell",
+   "merkmal": "druck",
+   "massstab": "modell"
+  },
+  {
+   "name": "Torbau-Erker: Vorsprung vor der Obergeschosswand (m)",
+   "wert": "erker_front - wand_front",
+   "soll": [
+    0.3,
+    0.8
+   ],
+   "quelle": "Wolke Nord: Erkerfront -6,2..-6,4, Wandfront -5,8 (Differenz 0,4-0,6 m); Foto 089: Erker springt sichtbar vor",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "duennes_bauteil",
+   "massstab": "foto_intern"
+  }
+ ],
+ "beobachtungen_offen": [
+  {
+   "datum": "2026-11-03",
+   "wer": "Claude (Foto 089 vs Wolke)",
+   "text": "Giebelachse: Foto 089 (Turmkante als Ursprung) y -9,2, Nord-Wolke y -8,3, Drohnenwolke ~-7,5..-8. Widerspruch ~1 m, NICHT gemittelt; Modell bleibt bei -8,3 (zwei Quellen).",
+   "naechster_schritt": "zweites frontales Foto mit freier Giebelspitze messen"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Claude (Foto 089)",
+   "text": "Bogen rechtes Ende (y ~ -14,3) liegt hinter Schild/Laterne; Spannweite aus Symmetrie zur Scheitelmitte (x 2350) geschlossen: ANNAHME.",
+   "naechster_schritt": "Foto 006/014 gegenmessen oder Drohne West/Nord Draufsicht"
+  }
+ ],
+ "beobachtungen_erledigt": [],
+ "pruefungen_zurueckgezogen": []
+}

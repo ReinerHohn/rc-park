@@ -1,0 +1,83 @@
+[
+ {
+  "seite": "-x",
+  "element": "Arkadengeschoss (Pfeilerfront zurueckgesetzt)",
+  "quelle": "Wolke z 5-9,5: Front bei x -5,2..-5,6; Breite y -5,6..-14,7 aus Foto 089 (Bogen 8,0 m aussen, M-089-001)",
+  "front_x": -5.3,
+  "hoehe": 10.0,
+  "y_west": -14.7,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "-x",
+  "element": "Obergeschosse (glatte Wand, auf Kragplatte)",
+  "quelle": "Wolke: Front bei x -5,8 neben dem Erker; Breite 7,06 m aus Foto 089 (M-089-007)",
+  "front_x": -5.8,
+  "traufe": 17.0,
+  "y_west": -12.7,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "-x",
+  "element": "Erker (2 Geschosse, vorkragend)",
+  "quelle": "Wolke z 10-19: vorderste Front -6,2..-6,4 bei y -10..-7,5; Foto 089 Zoom: Erker 3,2 m breit, z 10,2..17,8",
+  "front_x": -6.3,
+  "y0": -11.3,
+  "y1": -8.1,
+  "z0": 10.2,
+  "z1": 17.8,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "-x",
+  "element": "Durchgangsbogen (McDonald's-Bogen, elliptisch)",
+  "quelle": "Foto 089 Zoom: Spannweite 7,25 m (M-089-002), Scheitel 6,2 m (M-089-004), Kaempfer 3,0 m (M-089-005); rechtes Bogenende verdeckt: ANNAHME symmetrisch",
+  "breite": 7.25,
+  "scheitel": 6.2,
+  "kaempfer": 3.0,
+  "anzahl": 1,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "-x",
+  "element": "Fenster 1. Obergeschoss (4)",
+  "quelle": "Foto 089 Zoom: 2+2 Fenster beidseits des Erkers; Hoehe M-089-006 (1,87 m); Breite 0,9 m aus 70 px",
+  "reihen": 1,
+  "je_reihe": 4,
+  "z": 8.2,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "-x",
+  "element": "Fenster 2. Obergeschoss (3: 2 im Erker, 1 in der Wand)",
+  "quelle": "Foto 089 Zoom; Hoehe ANNAHME wie 1. OG",
+  "reihen": 1,
+  "je_reihe": 3,
+  "z": 12.2,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "-x",
+  "element": "Fenster Giebelgeschoss (2)",
+  "quelle": "Foto 089: zwei Fenster unter dem Schweifgiebel, symmetrisch zur Giebelachse (Abstand 1,1 m aus 85 px)",
+  "je_reihe": 2,
+  "z": 16.0,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "-x",
+  "element": "Schweifgiebel (Voluten)",
+  "quelle": "Foto 089/006: Renaissance-Schweifgiebel, Fuss 5,6 m, Hals ~3,3 m, Kappe ~1,9 m; Firsthoehe Wolke 20,7 / Drohne 21,5; Achse y -8,3 aus Wolke (Foto 089 ergaebe -9,2: offener Widerspruch, nicht gemittelt)",
+  "first": 20.7,
+  "traufe": 17.0,
+  "achse_y": -8.3,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "-x",
+  "element": "Satteldach giebelstaendig",
+  "quelle": "LoD2 Vorderteil 19,6 m; Firstlinie ANNAHME senkrecht zur Front; Grundbreite = Giebelfuss",
+  "first": 20.4,
+  "seite_name": "Nord"
+ }
+]

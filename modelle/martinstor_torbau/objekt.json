@@ -1,0 +1,36 @@
+{
+ "name": "Martinstor Torbau 1901 (McDonald's)",
+ "ort": "",
+ "generator": "SCALE=87 ~/.venvs/rcpark/bin/python modelle/martinstor_torbau_gen.py",
+ "stl": "modelle/stl/martinstor_torbau_front_1-87.stl",
+ "stl_massstab": 87,
+ "stl_einheit_mm": true,
+ "zentrierung": "achse",
+ "masstabelle": "modelle/martinstor_torbau/masstabelle.json",
+ "elemente": "modelle/martinstor_torbau/elemente.json",
+ "audit": "modelle/martinstor_torbau/audit",
+ "ueberwacht": [
+  "modelle/martinstor_torbau_gen.py",
+  "modelle/martinstor/torbau/torbau_masse.json",
+  "modelle/stl/martinstor_torbau_front_1-87.stl",
+  "modelle/martinstor_torbau/masstabelle.json",
+  "modelle/martinstor_torbau/elemente.json"
+ ],
+ "fotos_dir": "daten/martinstor/fotos",
+ "seiten_konvention": {
+  "+x": "Sued",
+  "-x": "Nord (Front des Torbaus)",
+  "+y": "Ost",
+  "-y": "West",
+  "quelle": "wie Turm (anker3d.json: Ursprung Turmmitte)"
+ },
+ "fotos": {},
+ "quellen": {
+  "dokument": "OFFEN",
+  "lod2": "OFFEN",
+  "dom1_dgm1": "OFFEN",
+  "dop20": "OFFEN",
+  "fotos": "OFFEN",
+  "laser_punkte": "n/a (kostenpflichtig)"
+ }
+}

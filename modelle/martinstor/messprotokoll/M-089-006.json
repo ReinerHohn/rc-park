@@ -1,0 +1,25 @@
+{
+ "id": "M-089-006",
+ "foto": "089_Martinstor_Freiburg_im_Breisgau_Baden-Wuerttemberg_Germany_O.jpg",
+ "bild": [
+  3840,
+  5120
+ ],
+ "name": "Torbau Fensterhoehe 1. Obergeschoss",
+ "merkmal": "verhaeltnis",
+ "mess_px": [
+  2090.0,
+  3640.0,
+  2090.0,
+  3800.0
+ ],
+ "richtung": "v",
+ "stauchung": 1.0,
+ "massstab_px": null,
+ "px_pro_m": 85.5,
+ "massstab_von": "wie vorher (85,5 px/m senkrecht)",
+ "pixel": 160.0,
+ "meter": 1.871,
+ "unsicherheit_m": 0.173,
+ "hinweis": "+-8 % Ablesung/Perspektive + 2 px"
+}
