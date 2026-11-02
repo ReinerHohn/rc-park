@@ -1311,3 +1311,14 @@ Nullstart nutzt Referenzwissen via masse.json (nur 10/59 frisch) -> offengelegt,
 **Offene Teststrecke:** (1) Regression `tools/regression.py modelle/martinstor/objekt.json --pruefen` auf ungebundene Aenderungen; (2) `--beschnitt`
 Wolkengleichheit gegen Vollbild im Turmzylinder (GPU); (3) Nullstart 11 mit Sued-auf-CPU parallel; (4) `--streng`-Lauf; (5) Erker-Anliegen/5 Koerper;
 (6) geometrische Klassifikation der Zentralkoerper-Baender; (7) Erntetempo-Patch `bilder_holen.py`; (8) Suedwolke (Ring via 060/061, Dach/Sockel getrennt).
+
+## BH - Iteration 1: Ecktuermchen-Messfenster (Nullstart 11, 2026-11-02)
+**Beobachtung:** Nullstart 11 64/68; 'Profil Ecktuermchen Durchmesser bei 37,75 m' 3,98 gegen Soll 2,33-3,13. Der Querschnitt durch das Nullstart-Modell selbst ist 2,65 m
+(Referenz 2,74): die Pruefung (Typ `schnitt_ausdehnung`, schon ein Querschnitt) misst in einem Fenster, das `wolke_profile.py` als Achse +- 0,7*d_koerper setzt.
+**Ursache:** Der Kreisfit an die Nullstart-Wolke gab d_koerper 3,76 (Referenz 3,11; vermischt sich mit dem Zentralkoerper) -> Fenster x -6,65..-1,38 statt -6,22..-1,86 ->
+Schnittkontur des mittleren Helms im Fenster -> Messwert 3,86-3,98. Nicht das Modell war zu dick, das Fenster war zu breit.
+**Fehlversuch (zurueckgenommen):** Kegel-r0 aus der Steigung statt aus dem Traufradius (Nullstart: 2,02 gegen 1,83): Messwert 3,98 -> 3,86, Nullstart 62/68; verworfen.
+**Aenderung:** `wolke_profile.py`: Fensterbreite = min(d_koerper, obere Quellgrenze der Zeile 'erker_34' = 3,2). Sollwerte unveraendert. Referenz-Regression identisch;
+Nullstart ab 'entzerren': 64/68, Profil Ecktuermchen 37,75 m besteht.
+**Offen:** Erker 34 m 3,33 gegen 2,5-3,2 (Fenster x -6..-2 enthaelt Anschlusspunkt Turm/Wand, null -2,20 gegen Referenz -2,43); Silhouettenbreite 30 m (14,9) und Zone 23,5-28 m (11,28 gegen >= 11,3);
+Zentralkoerper-Quaderperiode 20-24 m (0,4). `tools/viewer_bauen.sh <objekt> <datei>` baut den 3D-Viewer in einem Schritt (Einheiten: --stl mm, --stl2 Meter).

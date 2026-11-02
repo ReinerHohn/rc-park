@@ -155,6 +155,167 @@
     "kalibrieren_044",
     "kalibrieren_062"
    ]
+  },
+  {
+   "datum": "2026-11-02 17:04",
+   "mapper": "global",
+   "streng": false,
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.5,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.5,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "64/68",
+   "nicht_bestanden": [
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KONSOLE_Z1",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 17:12",
+   "mapper": "global",
+   "streng": false,
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.5,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.5,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "62/68",
+   "nicht_bestanden": [
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen kupfer (35.25-43.00 m): Aussenradius bei 39.12 m (m)"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KONSOLE_Z1",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 17:15",
+   "mapper": "global",
+   "streng": false,
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.5,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.5,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "64/68",
+   "nicht_bestanden": [
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KONSOLE_Z1",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
   }
  ],
  "hinweis": "Laeufe 6-9 nachgetragen aus Sitzungsausgaben (Pruefungsnamen teils verkuerzt); ab Lauf 10 schreibt tools/nullstart.py selbst"

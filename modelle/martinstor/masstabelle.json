@@ -3424,6 +3424,14 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.43 m, y=5.34 m (Zelle [2358, 666, 9], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_061.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-02",
+   "wer": "Nutzer (3D-Viewer Foto)",
+   "art": "wolke_kippt",
+   "text": "Im 3D-Viewer kippt die farbige dichte Fotowolke (dicht_nord_modell.npy) an Tuermchen und Hauptturm nach aussen gegenueber dem Modell-STL.",
+   "messung": "Rand der Wolke (5. Perzentil x, |y|<3,5) gegen Modellschnitt: roh -5,7/-5,6 (z35), -4,3/-4,5 (42), -3,4/-2,4 (46), -2,6/-1,5 (50): Abweichung nach aussen wachsend bis ~1,1 m; entzerrt (dicht_nord_entzerrt.npy, Versatz +0,2 m bei z10 .. +0,9 m bei z50 in x): -5,1 (35), -3,5 (42), -2,6 (46), -1,7 (50): ca. 0,5 innen bis 0,2 aussen. Beide Wolken passen nicht sauber; Schnittkante nur grob (Perzentil).",
+   "naechster_schritt": "Wolke gegen STL je Hoehe per Schnittscheibe messen (wolke_vs_modell), entzerrt vs roh getrennt als Pruefung eintragen; Rule 5: Foto/Wolke vs Laser/Modell nicht mitteln"
   }
  ],
  "beobachtungen_erledigt": [

@@ -232,8 +232,12 @@ def main():
         # verschmelzen im Schnitt mit dem Erker, deshalb kein Schwerpunkt-Filter); Soll aus dem Tuermchen-Modell (Koerper + Kegelgerade)
         if mittel and kegel:
             at, aq = float(np.median([r["achse_tief"] for r in mittel])), achse_q; dk = kegel["d_koerper"]
-            fen = {("x0" if it == 0 else "y0"): round(sgn * at - 0.7 * dk, 2), ("x1" if it == 0 else "y1"): round(sgn * at + 0.7 * dk, 2),
-                   ("y0" if it == 0 else "x0"): round(aq - 0.3 * dk, 2), ("y1" if it == 0 else "x1"): round(aq + 0.7 * dk, 2)}
+            # Fensterbreite aus dem Koerperdurchmesser; der Kreisfit an die Wolke kann sich mit dem Zentralkoerper vermischen (Nullstart 11: d 3,76 statt 3,11) und das Fenster
+            # bis in dessen Schnittkontur aufweiten (Messwert 3,86 statt 2,65 m am selben Modell). Deshalb hoechstens die obere Quellgrenze des Erkerdurchmessers (Tabellenzeile 'erker_34').
+            dkf = dk; _eo = [pr["soll"][1] for pr in T["pruefungen"] if pr.get("wert") == "erker_34" and pr.get("soll")]
+            if _eo and dkf > _eo[0]: print(f"    Fensterbreite: d_koerper {dk} > Quellgrenze {_eo[0]} -> {_eo[0]}"); dkf = _eo[0]
+            fen = {("x0" if it == 0 else "y0"): round(sgn * at - 0.7 * dkf, 2), ("x1" if it == 0 else "y1"): round(sgn * at + 0.7 * dkf, 2),
+                   ("y0" if it == 0 else "x0"): round(aq - 0.3 * dkf, 2), ("y1" if it == 0 else "x1"): round(aq + 0.7 * dkf, 2)}
             if sgn < 0: fen[("x0" if it == 0 else "y0")], fen[("x1" if it == 0 else "y1")] = min(fen[("x0" if it == 0 else "y0")], fen[("x1" if it == 0 else "y1")]), max(fen[("x0" if it == 0 else "y0")], fen[("x1" if it == 0 else "y1")])
             for z in (34.25, 37.75, 40.25, TS - 2.0):
                 dz_ = d_tuerm(z); fits = [r["d"] for r in mittel if abs(r["z"] - z) < 0.3]
