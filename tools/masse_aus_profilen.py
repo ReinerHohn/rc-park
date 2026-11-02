@@ -64,6 +64,46 @@ def main():
             h = float(auswahl.split(":")[1]); return next(b for b in bl if b["klasse"] == "stein" and b["z1"] - b["z0"] >= h)
         raise ValueError(auswahl)
     def lage(b, l): return b["z0"] if l == "z0" else b["z1"] if l == "z1" else round((b["z0"] + b["z1"]) / 2, 3)
+    def kandidaten(bd, auswahl):
+        """ALLE Baender, auf die das Auswahlmuster zutreffen koennte (die Index-Wahl nimmt eines davon). Farbklassen kippen zwischen Wolkenrealisierungen (Nullstart 12:
+        'kupfer' bei 14,25-15 m statt 32,0-34,75 m) - dann zeigt 'kupfer_1' auf das falsche Band; das Plausibilitaetsfenster der Regel entscheidet unter den Kandidaten."""
+        bl = bd["baender"]; kup = [i for i, b in enumerate(bl) if b["klasse"] == "kupfer"]
+        if auswahl in ("kupfer_1", "kupfer_letztes"): return [bl[i] for i in kup]
+        if auswahl == "vor_kupfer_1": return [bl[i - 1] for i in kup if i > 0]
+        if auswahl == "traufe_vor_letztem_kupfer":
+            out = []
+            for i in kup:
+                j = i - 1
+                while j >= 0 and bl[j]["klasse"] not in ("traufe", "gesims"): j -= 1
+                if j >= 0: out.append(bl[j])
+            return out
+        if auswahl.startswith("klasse:"): return [b for b in bl if b["klasse"] == auswahl.split(":")[1]]
+        if auswahl.startswith("stein_ab:"): return [b for b in bl if b["klasse"] == "stein" and b["z1"] - b["z0"] >= float(auswahl.split(":")[1])]
+        return []
+    def band_wert(typ, p, b):
+        if typ == "band_z": return lage(b, p.get("lage", "mitte"))
+        if typ in ("band_r2", "band_r"):
+            w_ = (2 if typ == "band_r2" else 1) * b["r"]; return w_ - wert_von(p["minus"]) if p.get("minus") else w_
+        if typ == "band_periode": return b["farbperiode"]["periode_m"]
+        raise ValueError(typ)
+    def ersatzwahl(reg):
+        """Index-Wahl lag ausserhalb des Plausibilitaetsfensters (oder fehlte): unter allen Kandidaten genau den im Fenster nehmen; mehrere verschiedene Werte -> mehrdeutig (None).
+        Rueckgabe (wert, herkunft, n_im_fenster) oder (None, grund, n)."""
+        typ, p, br, rnd = reg["regel"], reg.get("params", {}), reg.get("bereich"), reg.get("runden", 2)
+        if not br or typ not in ("band_z", "band_r2", "band_r", "band_periode"): return None
+        try: C = kandidaten(B[p["koerper"]], p["auswahl"])
+        except Exception: return None
+        ok = []
+        for b in C:
+            try: w_ = round(float(band_wert(typ, p, b)), rnd)
+            except Exception: continue
+            if br[0] <= w_ <= br[1]: ok.append((w_, b))
+        if not ok: return (None, f"kein Kandidat im Fenster {br} unter {len(C)} Baendern", 0)
+        if max(v for v, _ in ok) - min(v for v, _ in ok) > 0.3:
+            dick = sorted(ok, key=lambda vb: -(vb[1]["z1"] - vb[1]["z0"]))                   # echte Daecher/Baender sind dick, Fragmente nicht: der dickste gilt, wenn er >= 2 x so dick ist wie der naechste
+            if len(dick) > 1 and (dick[0][1]["z1"] - dick[0][1]["z0"]) >= 2.0 * (dick[1][1]["z1"] - dick[1][1]["z0"]): ok = [dick[0]]
+            else: return (None, f"mehrdeutig: {len(ok)} Kandidaten im Fenster {br} mit Werten {[v for v, _ in ok]}", len(ok))
+        w_, b = ok[0]; return (w_, f"Band {p['koerper']} {b['klasse']} {b['z0']}-{b['z1']} m (Kandidat im Plausibilitaetsfenster {br}, {len(ok)} von {len(C)} Baendern)", len(ok))
     bericht = []
     for reg in R:
         name, typ, p = reg["masse"], reg["regel"], reg.get("params", {}); rnd = reg.get("runden", 2); herk = ""
@@ -121,12 +161,16 @@ def main():
             elif typ == "bleibt": bericht.append(dict(masse=name, status="bleibt_hand", grund=p["grund"], wert=M.get(name, {}).get("wert"))); continue
             else: raise ValueError("unbekannte Regel " + typ)
         except Exception as e:
-            bericht.append(dict(masse=name, status="fehler", fehler=f"{type(e).__name__}: {e}")); continue
+            er = ersatzwahl(reg) if isinstance(e, (IndexError, StopIteration)) else None
+            if er and er[0] is not None: neu[name] = dict(wert=er[0], herk=er[1], typ=typ, alt=M.get(name, {}).get("wert")); bericht.append(dict(masse=name, status="abgeleitet", alt=M.get(name, {}).get("wert"), neu=er[0], herkunft=er[1], regel=typ, ersatzwahl=True)); continue
+            bericht.append(dict(masse=name, status="fehler", fehler=f"{type(e).__name__}: {e}" + (f"; Ersatzwahl: {er[1]}" if er else ""))); continue
         if w is None or (isinstance(w, float) and np.isnan(w)): bericht.append(dict(masse=name, status="fehler", fehler="kein Wert")); continue
         w = round(float(w), rnd); alt = M.get(name, {}).get("wert")
         br = reg.get("bereich")
         if br and not (br[0] <= w <= br[1]):                                             # Plausibilitaet: ausserhalb -> nicht schreiben (Nullstart 4: GZ0 54,75 -> leeres Modell)
-            bericht.append(dict(masse=name, status="unplausibel", alt=alt, verworfen=w, bereich=br, herkunft=herk, regel=typ)); continue
+            er = ersatzwahl(reg)                                                         # Index-Wahl falsch (Farbklassen gekippt): Kandidat im Fenster, wenn eindeutig
+            if er and er[0] is not None: neu[name] = dict(wert=er[0], herk=er[1], typ=typ, alt=alt); bericht.append(dict(masse=name, status="abgeleitet", alt=alt, neu=er[0], herkunft=er[1], regel=typ, ersatzwahl=True, index_wahl_verworfen=w)); continue
+            bericht.append(dict(masse=name, status="unplausibel", alt=alt, verworfen=w, bereich=br, herkunft=herk, regel=typ, **({"ersatzwahl": er[1]} if er else {}))); continue
         neu[name] = dict(wert=w, herk=herk, typ=typ, alt=alt)
         bericht.append(dict(masse=name, status="abgeleitet", alt=alt, neu=w, herkunft=herk, regel=typ))
     # Beziehungen zwischen Massen (objekt.json "masse_beziehungen": {a, b, diff:[lo,hi], grund}): lo <= wert(b) - wert(a) <= hi. Eine neu abgeleitete Wolke

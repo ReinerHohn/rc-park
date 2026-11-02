@@ -1347,3 +1347,16 @@ Katalogseiten laden per Skript); keine Orbit-Drohnenvideos zum Martinstor gefund
 Belichtung > 1/60 s, Digitalzoom, kein Brennweiten-EXIF, steiler Blick > 55 Grad, schaut weg, > 5 Jahre alt). Test Mapillary (39): 16 ohne Warnung, alle GPS-Seite 'nord'; Commons-Eingang (100): 74 ohne Warnung,
 Kamera-Modell 26 -> 80/100 und f35 16 -> 31/100 mit Manifest-Rueckfall (verkleinerte Dateien ohne EXIF), nur 18/100 mit GPS-Seite (nord 9, sued 6, ost 3). GPS Altstadt ca. 5-10 m, Kompass 10-20 Grad: Seite = Vorschlag.
 Alter ist nur ein Hinweis (Turm aendert sich nicht, Umgebung schon). Metadaten sagen nicht, ob der Turm im Bild ist (Mapillary 'persp': ~15 von 39).
+
+## BJ - Bandauswahl nach Plausibilitaetsfenster; Pruefung der Vorpruefung (2026-11-02)
+**Bandauswahl:** `masse_aus_profilen.py`: Regeln `band_z/band_r/band_r2/band_periode` waehlen weiter per Index (`kupfer_1`, `vor_kupfer_1`, `klasse:gesims:0`). NEU: liegt der Wert der Index-Wahl ausserhalb des
+`bereich` der Regel (oder das Band fehlt), werden ALLE Kandidaten des Musters geprueft; genau ein Wert im Fenster -> der gilt (`ersatzwahl: true` im Bericht), mehrere verschiedene -> der dickste, wenn >= 2 x so dick
+wie der naechste, sonst 'mehrdeutig' (kein Wert). Referenz-Regression identisch, in der Referenz wird die Ersatzwahl nie benutzt. Nullstart 12 (Daten): KRAG_TRAUFE 8,88 -> 31,0 (Ref 31,75), GZ0 15,0 -> 34,5 (Ref 34,75).
+**Ehrliches Ergebnis:** Nullstart ab 'entzerren' mit den neuen Regeln 62/69 statt 65/69. Neu faellt 'Zinnen-Scharten Nord/Sued (z 31,1 m)' (0 statt 4): mit KRAG_TRAUFE 31,0 liegt 31,1 schon im Dach; die Referenz hat 31,75.
+Die 65/69 vorher kamen mit der Fenstermitte 31,5 (Zufallstreffer, kein abgeleiteter Wert). Das Gesimsband liegt im Nullstart um 0,75 m tiefer als in der Referenz (Bandkanten 0,25-0,5 m gerastert + Wolkenstreuung) - der
+Ableitungsfehler ist echt, die Pruefung zeigt ihn zu Recht. KONSOLE_Z0 und OR bleiben ohne Wert (im Lauf gibt es das Band nicht: kein 'gesims' bei 27,5, kein 'hell'). Offen: Kantenlage der Baender genauer (feineres Raster
+oder Kantenfit statt Schichtraster), dann haengt der Zinnen-Test nicht am Zufall.
+**Vorpruefung (foto_vorpruefung.py) gegen die echten Netzergebnisse geprueft:** Nord 16 von 18 Fotos registriert, Sued 31 von 45 (ohne die 3 'Fernaufnahme (EXIF-Prior)'). Ergebnis: **kein Beleg, dass sie besser filtert.**
+Alle registrierten Fotos tragen eine Warnung (meist 'kein Brennweiten-EXIF': die verkleinerten Netz-Eingangsbilder haben kein EXIF mehr, die Brennweite kommt aus dem Manifest - Fehlalarm). Schaerfe (Laplace-Varianz):
+Sued registriert Median 5620 gegen 4350, AUC 0,66, p = 0,042 (n 31/14) - schwach; Nord nicht testbar (2 nicht registrierte). Die Schwelle 40 passt nicht zu diesen Werten (Wertebereich Tausende). Einzige belegte Metadaten-Filterung:
+EXIF-Prior der Brennweite (netz json: 3 Fernaufnahmen ausgeschlossen). **Naechster Beweis:** Fotos nach Vorpruefung aus dem Netz nehmen und Sigma/Kamerazahl/Wandstreuung gegen Zufallsauswahl gleicher Groesse vergleichen.
