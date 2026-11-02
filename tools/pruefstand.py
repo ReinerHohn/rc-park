@@ -84,8 +84,12 @@ class Messer:
         """Dichte Punkte AUF der Modelloberflaeche (Kanten <= 0,3 m unterteilt): Kegel/Zylinder haben nur Ringe als Ecken - Eckpunkte allein
         verfehlen Spitzen und schraege Flaechen (Register AX: 'Eckturm-Kegelspitze' mass jahrelang einen Eckquader)."""
         if not hasattr(self, "_fp"):
-            v, fa = trimesh.remesh.subdivide_to_size(self.m.vertices, self.m.faces, max_edge=0.3, max_iter=14); self._fp = np.vstack([v, v[fa].mean(1)])
+            v, fa = self._unterteilt(); self._fp = np.vstack([v, v[fa].mean(1)])
         return self._fp
+    def _unterteilt(self):
+        """Kanten <= 0,3 m unterteilt - einmal je Modell (teuer, ~2 s); _flaechenpunkte und hypso_ueber teilen sich das Ergebnis (bitgleich zur getrennten Rechnung)."""
+        if not hasattr(self, "_sub"): self._sub = trimesh.remesh.subdivide_to_size(self.m.vertices, self.m.faces, max_edge=0.3, max_iter=14)
+        return self._sub
     def max_z_im_bereich(self, x0, x1, y0, y1, zmax=1e9, **k):
         """Hoechster Oberflaechenpunkt innerhalb eines Grundriss-Rechtecks unterhalb zmax (z. B. Eckturm-Kegelspitze, ohne den Schaft darueber)."""
         v = self._flaechenpunkte(); s = (v[:, 0] >= x0) & (v[:, 0] <= x1) & (v[:, 1] >= y0) & (v[:, 1] <= y1) & (v[:, 2] < zmax)
@@ -278,7 +282,7 @@ class Messer:
         """Wie die Laser-Hypsometrie: Modellpunkte auf ein 1-m-Raster projizieren und Zellen zaehlen, deren Hoehe > z ist (im Umkreis um die Spitze).
         Nur so sind Modell und DOM1 vergleichbar - die Rasterung addiert je nach Umfang 15-25 Zellen gegenueber der echten Flaeche."""
         if not hasattr(self, "_hp"):
-            v, fa = trimesh.remesh.subdivide_to_size(self.m.vertices, self.m.faces, max_edge=0.3, max_iter=14); self._hp = v[fa].mean(1)
+            v, fa = self._unterteilt(); self._hp = v[fa].mean(1)
         import render_kern as RK
         return RK.hypso(self._hp, z, drehung, dx, dy, radius, raster, N)
         x = (c * P[:, 0] - s_ * P[:, 1] + dx) / raster; y = (s_ * P[:, 0] + c * P[:, 1] + dy) / raster; N = 60
