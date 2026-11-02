@@ -68,6 +68,8 @@ def main():
         ank = A[name]; P3.append(ank["xyz"]); P2.append(uv); S.append(ank["sigma"]); namen.append(name)   # NICHT 'a' - das ist sys.argv (Namenskonflikt machte alle Optionen wirkungslos, 2026-11-01)
     P3, P2, S = np.array(P3, float), np.array(P2, float), np.array(S, float)
     lines = [(np.array(A[n]["xyz"][:2], float), np.array(pts, float)) for n, pts in K.get("linien", {}).items()]
+    if len(P3) == 0:                                                     # Exit 3 = uebersprungen (keine Daten), kein Absturz (Nullstart 5-9: ValueError bei 044/062)
+        print(f"  Foto {nr}: keine Picks mit Anker in anker3d.json ({len(K.get('punkte', {}))} Punkte, {len(lines)} Linien) - keine Kalibrierung moeglich"); sys.exit(3)
     fexif = K.get("brennweite_px")
     if K.get("brennweite_frei"):                                            # Bild beschnitten/skaliert: EXIF-Brennweite in px ungueltig -> Brennweite mitschaetzen
         print(f"  Brennweite FREI ({K.get('brennweite_frei_grund', 'brennweite_frei gesetzt')}); EXIF {fexif} px nur Startwert-Hinweis"); fexif = None

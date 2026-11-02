@@ -88,7 +88,7 @@ def main():
                 else: w = (max(q["z1"] for q in unten) + min(q["z0"] for q in oben)) / 2 if unten and oben else float("nan")
                 herk = herk0 + f"Fensterperioden {zA}-{zB} m (Staerke >= {p.get('min_staerke', 0.3)}): klein {[(q['z0'], q['periode_m']) for q in unten]}, gross {[(q['z0'], q['periode_m']) for q in oben]}"
             elif typ == "periode_fenster":
-                zA, zB = (wert_von(x) for x in p["bereich"]); fs = [q for q in B[p["koerper"]]["farbperioden"] if q["staerke"] >= p.get("min_staerke", 0.3) and q["z0"] >= zA - 0.5 and q["z1"] <= zB + 0.5]
+                zA, zB = (wert_von(x) for x in p["bereich"]); fs = [q for q in B[p["koerper"]]["farbperioden"] if q["staerke"] >= p.get("min_staerke", 0.3) and (min(q["z1"], zB) - max(q["z0"], zA)) >= 0.5 * (q["z1"] - q["z0"])]   # Ueberlappung >= 50 % (Fensterraster 2 m; strenge Einschliessung liess QUADER_GLOCKENSTOCK ins Leere laufen)
                 q = max(fs, key=lambda q: q["staerke"]); w = q["periode_m"]; herk = f"staerkste Fensterperiode {q['z0']}-{q['z1']} m: {q['periode_m']} (Staerke {q['staerke']}) von {len(fs)} Fenstern"
             elif typ == "periode_quer":
                 zA, zB = p["bereich"]; fs = [q for q in B[p["koerper"]].get("farbperioden_quer", []) if q["staerke"] >= p.get("min_staerke", 0.3) and q["z0"] >= zA and q["z1"] <= zB]
@@ -129,10 +129,25 @@ def main():
             bericht.append(dict(masse=name, status="unplausibel", alt=alt, verworfen=w, bereich=br, herkunft=herk, regel=typ)); continue
         neu[name] = dict(wert=w, herk=herk, typ=typ, alt=alt)
         bericht.append(dict(masse=name, status="abgeleitet", alt=alt, neu=w, herkunft=herk, regel=typ))
+    # Beziehungen zwischen Massen (objekt.json "masse_beziehungen": {a, b, diff:[lo,hi], grund}): lo <= wert(b) - wert(a) <= hi. Eine neu abgeleitete Wolke
+    # kann einzelne Klassen kippen (Nullstart 9: KONSOLE_Z0 29,25 ueber KONSOLE_Z1 27,0; GX 8,68 breiter als der Schaft D 9,0 - 0,5). Jedes Maß aus einer
+    # verletzten Beziehung wird verworfen (alter Wert bleibt), das ist auch im Bericht sichtbar.
+    def _wert(n_): return neu[n_]["wert"] if n_ in neu else MW.get(n_)
+    for bz in obj.get("masse_beziehungen", []):
+        wa, wb = _wert(bz["a"]), _wert(bz["b"])
+        if wa is None or wb is None or not isinstance(wa, (int, float)) or not isinstance(wb, (int, float)): continue
+        d_ = wb - wa
+        if not (bz["diff"][0] <= d_ <= bz["diff"][1]):
+            for n_ in (bz["a"], bz["b"]):
+                if n_ in neu:
+                    alt_ = neu.pop(n_)
+                    for b_ in bericht:
+                        if b_["masse"] == n_ and b_["status"] == "abgeleitet": b_.update(status="beziehung_verletzt", verworfen=alt_["wert"], beziehung=f"{bz['b']} - {bz['a']} = {d_:.2f} ausserhalb {bz['diff']} ({bz['grund']})")
     print(f"{'Mass':22s} {'alt':>10s} {'neu':>8s}  Herkunft");
     for b in bericht:
         if b["status"] == "abgeleitet": print(f"{b['masse']:22s} {str(b['alt'])[:10]:>10s} {b['neu']:8.3g}  {b['herkunft'][:110]}")
         elif b["status"] == "bleibt_hand": print(f"{b['masse']:22s} {str(b['wert'])[:10]:>10s} {'bleibt':>8s}  {b['grund'][:110]}")
+        elif b["status"] == "beziehung_verletzt": print(f"{b['masse']:22s} {str(b['alt'])[:10]:>10s} {'BEZIEH.':>8s}  {b['verworfen']} verworfen: {b['beziehung'][:90]}")
         elif b["status"] == "unplausibel": print(f"{b['masse']:22s} {str(b['alt'])[:10]:>10s} {'UNPLAUS':>8s}  {b['verworfen']} ausserhalb {b['bereich']}: {b['herkunft'][:80]}")
         else: print(f"{b['masse']:22s} {'':>10s} {'FEHLER':>8s}  {b['fehler'][:110]}")
     if a.schreiben:

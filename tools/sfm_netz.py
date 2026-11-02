@@ -117,12 +117,7 @@ def lightglue_in_db(db, tmp, nrs, extractor, max_kp, resize, nur_fotos=None, anh
     print(f"  LightGlue: {len(paare)} Paare mit Matches, {n} geometrisch verifiziert (>= 15 Inlier)", flush=True)
 
 KAMERA_MODELL = "SIMPLE_RADIAL"
-def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048)):
-    if os.path.exists(db): os.remove(db)
-    shutil.rmtree(aus, ignore_errors=True); os.makedirs(aus, exist_ok=True)
-    # nur die gewuenschten Bilder: eigener Ordner mit Links
-    tmp = aus + "_bilder"; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
-    for nr in nrs: os.symlink(os.path.abspath(os.path.join(bilder, nr + ".jpg")), os.path.join(tmp, nr + ".jpg"))
+def _merkmale_und_matches(db, tmp, nrs, prior, matcher, lg):
     _ro = pycolmap.ImageReaderOptions(); _ro.camera_model = KAMERA_MODELL                 # SIMPLE_RADIAL (Standard) | RADIAL | OPENCV (--kamera-modell)
     pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro)
     # GPU-Rueckfall: scheitert SIFT-GPU (z. B. 'illegal memory access', wenn ein anderer Prozess die GPU belegt), bleiben Bilder ohne Merkmale
@@ -149,8 +144,29 @@ def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048)):
         pycolmap.match_exhaustive(db)                                            # SIFT fuer alles (bewaehrte Geometrie der Strassenfotos)
         lightglue_in_db(db, tmp, nrs, "aliked", lg[0], lg[1], nur_fotos=lg[2], anhaengen=True)   # LightGlue nur fuer Paare mit den schwierigen Fotos
     else: pycolmap.match_exhaustive(db, device=(pycolmap.Device.auto if _gpu_ok else pycolmap.Device.cpu))
+
+def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048), nur_merkmale=False, db_wieder=False, seed=None, threads=0, mapper="incremental"):
+    """db_wieder: vorhandene Datenbank (Merkmale + Matches) nur fuer die Rekonstruktion nutzen; nur_merkmale: nach dem Matching aufhoeren;
+    seed/threads: der COLMAP-Mapper ist nicht deterministisch (Register BF) - parallele Versuche mit eigenem Seed."""
+    if db_wieder and not os.path.exists(db): db_wieder = False
+    if os.path.exists(db) and not db_wieder: os.remove(db)
+    shutil.rmtree(aus, ignore_errors=True); os.makedirs(aus, exist_ok=True)
+    # nur die gewuenschten Bilder: eigener Ordner mit Links
+    tmp = aus + "_bilder"; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
+    for nr in nrs: os.symlink(os.path.abspath(os.path.join(bilder, nr + ".jpg")), os.path.join(tmp, nr + ".jpg"))
+    if not db_wieder: _merkmale_und_matches(db, tmp, nrs, prior, matcher, lg)
+    if nur_merkmale: return None, tmp
     opt = pycolmap.IncrementalPipelineOptions(); opt.min_focal_length_ratio = 0.4; opt.max_focal_length_ratio = 3.5   # Standard 0,1..10 liess f = 10865 x Diagonale zu
-    karten = pycolmap.incremental_mapping(db, tmp, aus, options=opt)
+    if seed is not None: opt.random_seed = int(seed)
+    if threads: opt.num_threads = int(threads)
+    if mapper == "global":                                                    # GLOMAP (in pycolmap >= 4): alle Kameras gemeinsam, kein Aufbau-Reihenfolge-Zufall
+        gp = pycolmap.GlobalPipelineOptions()
+        if seed is not None:
+            try: gp.random_seed = int(seed)
+            except Exception: pass
+        if threads: gp.num_threads = int(threads)
+        karten = pycolmap.global_mapping(db, tmp, aus, options=gp)
+    else: karten = pycolmap.incremental_mapping(db, tmp, aus, options=opt)
     if not karten: return None, tmp
     k = max(karten.values(), key=lambda r: r.num_reg_images())
     # EXIF-Brennweiten FESTHALTEN: auf Prior zuruecksetzen und globaler Buendelausgleich mit konstanten Intrinsics dieser Kameras
@@ -198,10 +214,14 @@ def main():
     ap.add_argument("--matcher", default="sift", choices=["sift", "lightglue", "hybrid"], help="lightglue = ALIKED+LightGlue fuer alles; hybrid = SIFT fuer alles + LightGlue nur fuer Paare mit --lg-fotos (Register AK)")
     ap.add_argument("--lg-fotos", nargs="*", default=[], help="hybrid: Fotos, deren Paare per LightGlue gematcht werden (z. B. Luftbilder)")
     ap.add_argument("--lg-max-kp", type=int, default=4096); ap.add_argument("--lg-resize", type=int, default=2048)
+    ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="incremental (Standard) | global = GLOMAP")
+    ap.add_argument("--nur-merkmale", action="store_true", help="nur Merkmale + Matches in db_<seite>.db rechnen (GPU), keine Rekonstruktion")
+    ap.add_argument("--db-von", help="vorhandene db_<seite>.db kopieren und nur die Rekonstruktion rechnen (parallele Versuche, CPU)"); ap.add_argument("--seed", type=int, help="Mapper-Seed (Versuch)")
+    ap.add_argument("--tag", default="", help="Suffix fuer db/sparse/netz-Bericht eines Versuchs, z. B. v1"); ap.add_argument("--threads", type=int, default=0, help="Mapper-Threads je Versuch (0 = COLMAP-Standard)")
     a = ap.parse_args(); global KAMERA_MODELL; KAMERA_MODELL = a.kamera_modell; obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od))
     nrs = a.fotos or obj.get("sfm", {}).get(a.seite)
     if not nrs: raise SystemExit(f"keine Fotoliste: --fotos oder objekt.json['sfm']['{a.seite}']")
-    sd = os.path.join(od, "sfm"); bilder = os.path.join(sd, f"bilder_{a.seite}"); db = os.path.join(sd, f"db_{a.seite}.db"); aus = os.path.join(sd, f"sparse_{a.seite}")
+    sd = os.path.join(od, "sfm"); bilder = os.path.join(sd, f"bilder_{a.seite}"); T_ = f"_{a.tag}" if a.tag else ""; db = os.path.join(sd, f"db_{a.seite}{T_}.db"); aus = os.path.join(sd, f"sparse_{a.seite}{T_}")
     for p in (bilder, db):      # Symlinks auf die Datenpartition respektieren
         pass
     prior, info = vorbereiten(root, obj, nrs, bilder, a.maxpx)
@@ -210,9 +230,11 @@ def main():
     def diag(nr): return float(np.hypot(*info[nr]["sfm"]))
     fern = [nr for nr in nrs if info[nr]["prior_f_px"] and info[nr]["prior_f_px"] > a.fern_faktor * diag(nr)]
     aktiv = [nr for nr in nrs if nr not in fern]; ausgeschlossen = {nr: "Fernaufnahme (EXIF-Prior)" for nr in fern}
-    bericht = dict(seite=a.seite, fotos=nrs, runden=[])
+    bericht = dict(seite=a.seite, fotos=nrs, runden=[], seed=a.seed, tag=a.tag)
+    if a.db_von: shutil.copy2(a.db_von if os.path.isabs(a.db_von) else os.path.join(sd, a.db_von), db)
     for runde in range(1, 4):
-        t0 = time.time(); rec, tmp = bauen(bilder, db, aus, aktiv, prior, a.matcher, (a.lg_max_kp, a.lg_resize, a.lg_fotos))
+        t0 = time.time(); rec, tmp = bauen(bilder, db, aus, aktiv, prior, a.matcher, (a.lg_max_kp, a.lg_resize, a.lg_fotos), nur_merkmale=a.nur_merkmale, db_wieder=bool(a.db_von) and runde == 1, seed=a.seed, threads=a.threads, mapper=a.mapper)
+        if a.nur_merkmale: print("Merkmale + Matches fertig:", db); return
         if rec is None: print("kein Modell"); break
         rows = bewerten(rec, info, prior, a.fern_faktor); reg = sorted(rows)
         fehlt = sorted(set(aktiv) - set(reg)); deg = [nr for nr in reg if rows[nr]["status"] != "ok"]
@@ -252,7 +274,7 @@ def main():
         bericht["ergebnis"] = dict(sparse=os.path.relpath(os.path.join(aus, "0"), root), registriert=sorted(os.path.splitext(i.name)[0] for i in rec.images.values()), punkte=rec.num_points3D(), reproj_px=float(rec.compute_mean_reprojection_error()))
         # Fernaufnahmen nachregistrieren (gleiche DB, Bilder liegen im tmp-Ordner nicht - deshalb nur Hinweis)
         if fern: print(f"\nFernaufnahmen nicht im Erstaufbau: {fern} ({len(fern)}); Nachregistrierung: spaeter mit pycolmap (offen)")
-    json.dump(bericht, open(os.path.join(sd, f"netz_{a.seite}.json"), "w"), indent=1, ensure_ascii=False); print("Bericht:", os.path.join(sd, f"netz_{a.seite}.json"))
+    json.dump(bericht, open(os.path.join(sd, f"netz_{a.seite}{T_}.json"), "w"), indent=1, ensure_ascii=False); print("Bericht:", os.path.join(sd, f"netz_{a.seite}{T_}.json"))
 
 if __name__ == "__main__":
     main()

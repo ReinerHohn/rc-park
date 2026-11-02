@@ -1,0 +1,109 @@
+{
+ "laeufe": [
+  {
+   "datum": "2026-11-01 (nachgetragen)",
+   "mapper": "incremental",
+   "streng": false,
+   "netzwahl": null,
+   "bestanden": "66/70",
+   "frisch_abgeleitet": 10,
+   "quelle": "Nullstart 6 nach Reparaturen, aus Sitzungsausgabe",
+   "nicht_bestanden": [
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Band tuermchen kupfer (35.00-42.75 m): Aussenradius bei 38.88 m (m)",
+    "Band tuermchen offen (33.25-34.75 m): Oeffnungen je Flaeche breite bei 33.98 m"
+   ],
+   "masse_abweichend": [
+    "KONSOLE_Z0"
+   ]
+  },
+  {
+   "datum": "2026-11-02 (nachgetragen)",
+   "mapper": "incremental",
+   "streng": false,
+   "netzwahl": null,
+   "bestanden": "56/75",
+   "frisch_abgeleitet": 10,
+   "quelle": "Nullstart 7, aus Sitzungsausgabe, 19 Pruefungen",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Anzahl getrennte Koerper",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m)",
+    "Band tuermchen stein (30.25-30.75 m): Aussenradius bei 30.50 m (m)",
+    "Band tuermchen kupfer (34.50-40.25 m): Aussenradius bei 37.38 m (m)",
+    "Band tuermchen kupfer (40.75-41.50 m): Aussenradius bei 41.12 m (m)",
+    "Band tuermchen Quaderperiode 29-33 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen Quaderperiode 31-35 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "UZ",
+    "GX",
+    "GZ1",
+    "DACHHOEHE"
+   ]
+  },
+  {
+   "datum": "2026-11-02 (nachgetragen)",
+   "mapper": "incremental",
+   "streng": false,
+   "netzwahl": 1,
+   "bestanden": "60/71",
+   "frisch_abgeleitet": null,
+   "quelle": "Nullstart 8 (Netzwahl sequentiell), aus Sitzungsausgabe",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Anzahl getrennte Koerper",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen stein (33.75-34.75 m): Aussenradius bei 34.25 m (m)",
+    "Band tuermchen kupfer (35.00-40.75 m): Aussenradius bei 37.88 m (m)"
+   ],
+   "masse_abweichend": [
+    "UZ",
+    "GZ1",
+    "DACHHOEHE",
+    "KRAG_UEBER"
+   ]
+  },
+  {
+   "datum": "2026-11-02 (nachgetragen)",
+   "mapper": "incremental",
+   "streng": false,
+   "netzwahl": 3,
+   "bestanden": "58/68",
+   "frisch_abgeleitet": null,
+   "quelle": "Nullstart 9 (6 parallele Netzversuche), aus Sitzungsausgabe",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Fenster obere Reihe Nordseite (Anzahl, z 22,1 m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Uhr Nord: Mitte z (m)",
+    "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen kupfer (33.00-40.75 m): Aussenradius bei 36.88 m (m)"
+   ],
+   "masse_abweichend": []
+  }
+ ],
+ "hinweis": "Laeufe 6-9 nachgetragen aus Sitzungsausgaben (Pruefungsnamen teils verkuerzt); ab Lauf 10 schreibt tools/nullstart.py selbst"
+}

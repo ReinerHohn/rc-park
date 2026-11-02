@@ -35,7 +35,7 @@
   {
    "masse": "GX",
    "status": "abgeleitet",
-   "alt": 7.08,
+   "alt": 7.1,
    "neu": 7.1,
    "herkunft": "2 x Median r von 5 Baendern 34.8-40.5 m (3.53, 3.55, 3.56, 3.46, 3.62)",
    "regel": "baender_r2_median"
@@ -49,7 +49,7 @@
   {
    "masse": "HELM_UEBER",
    "status": "abgeleitet",
-   "alt": 1.06,
+   "alt": 1.04,
    "neu": 1.04,
    "herkunft": "Band zentral traufe 40.25-40.5 m, Aussenradius 4.07 minus GX 7.10",
    "regel": "band_r2"
@@ -144,8 +144,11 @@
   },
   {
    "masse": "QUADER_GLOCKENSTOCK",
-   "status": "fehler",
-   "fehler": "ValueError: max() iterable argument is empty"
+   "status": "abgeleitet",
+   "alt": 0.35,
+   "neu": 0.35,
+   "herkunft": "staerkste Fensterperiode 34.0-38.0 m: 0.35 (Staerke 0.35) von 1 Fenstern",
+   "regel": "periode_fenster"
   },
   {
    "masse": "QUADER_LAENGE",

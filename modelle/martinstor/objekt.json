@@ -1781,5 +1781,52 @@
    }
   }
  ],
- "masse_regeln_hinweis": "bereich = Plausibilitaetsfenster (aus Bauwerkstyp/LoD2-Groessenordnung): ausserhalb schreibt das Werkzeug nicht und meldet 'unplausibel' - Schutz vor einer kippenden Wolkenklasse (Nullstart 4)"
+ "masse_regeln_hinweis": "bereich = Plausibilitaetsfenster (aus Bauwerkstyp/LoD2-Groessenordnung): ausserhalb schreibt das Werkzeug nicht und meldet 'unplausibel' - Schutz vor einer kippenden Wolkenklasse (Nullstart 4)",
+ "masse_beziehungen": [
+  {
+   "a": "KONSOLE_Z0",
+   "b": "KONSOLE_Z1",
+   "diff": [
+    0.2,
+    2.5
+   ],
+   "grund": "Konsolen: Ansatz unter der Oberkante, Auskragung hoechstens 2,5 m hoch"
+  },
+  {
+   "a": "GZ0",
+   "b": "GZ1",
+   "diff": [
+    3.0,
+    12.0
+   ],
+   "grund": "Glockenstock: Unterkante unter Oberkante, 3 bis 12 m hoch"
+  },
+  {
+   "a": "KRAG_TRAUFE",
+   "b": "GZ0",
+   "diff": [
+    0.0,
+    6.0
+   ],
+   "grund": "Kragdach liegt unter dem Glockenstock, hoechstens 6 m darunter"
+  },
+  {
+   "a": "UZ",
+   "b": "KRAG_TRAUFE",
+   "diff": [
+    2.0,
+    12.0
+   ],
+   "grund": "Uhrmitte liegt 2 bis 12 m unter der Kragdach-Traufe (Foto: Uhr im Schaft)"
+  },
+  {
+   "a": "GX",
+   "b": "D",
+   "diff": [
+    0.5,
+    4.0
+   ],
+   "grund": "Glockenstock ist gegenueber dem Schaftkopf abgesetzt (Lernjournal: abgesetzter Glockenstock)"
+  }
+ ]
 }

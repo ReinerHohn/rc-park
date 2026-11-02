@@ -1263,3 +1263,25 @@ bekannter Gegenseite als Kontrolle (Nord-Fotos in das Sued-Netz und umgekehrt). 
   jede Aenderung der Netzlisten veraendert die Nordwolke (Regression). Nicht uebernommen; Seite bleibt 'unbekannt'.
 - Hebel, der stattdessen traegt: Seite aus einem **asymmetrischen Merkmal** (Uhr nur Nord? Zifferblatt/Sonnenuhr, Inschrift, Seitengebaeude Nord/Sued
   im Bild, Strassenverlauf) - braucht Bilderkennung je Merkmal, nicht Netzgeometrie. Offen.
+
+## BF. Nullstart 7-9: Netz-Streuung, parallele Versuche, GLOMAP, Serienauswertung, Beziehungsprüfung (2026-11-02)
+**Streuung gemessen (gleiche Eingaben):** Nordnetz inkrementell: Massstab-Sigma 2,8 bis 24,6 %, Wandstreuung 0,39 bis 0,75, Spitzenhoehe 53,3 bis 55,4 m;
+Entfernen von Spiegelkameras (5 von 28) verschlechtert das Netz. Nullstart 6-9: 66, 56, 60, 58 Pruefungen - gleiche Kette, andere Wolke.
+**Werkzeug:** `sfm_netz.py` getrennt in Merkmale/Matches (einmal, GPU) und Mapper-Versuche (CPU, `--db-von --seed --tag`); `nullstart.py` fuehrt K=6 Versuche
+PARALLEL aus (87 s statt > 4 min fuer 4), waehlt nach kleinstem Massstab-Sigma (Kameras nur bei Gleichstand; erste Gewichtung "0 entfernte Kameras
+bevorzugen" waehlte in Lauf 9 Sigma 5,8 % statt 2,9 % -> Turm 3 m zu tief, Glockenstock-Radius 4,2 statt 3,55 m).
+**GLOMAP** (in pycolmap 4.2.1 vorhanden, bisher nur in scan-setup genutzt): `--mapper global`. Drei Seeds auf derselben Datenbank: Mapper 20 s,
+Sigma 2,5 % in allen drei, Wandstreuung 0,30, Spitze 54,7 m (DOM1 54,80) - praktisch dasselbe Netz; Tuermchenresiduen 3-15 px (inkrementell bester 1-4 px).
+Komplettlauf mit GLOMAP steht aus (Nullstart 10).
+**Serienauswertung:** `nullstart.py` haengt jeden Lauf an `nullstart_serie.json` (mit Laeufen 6-9 nachgetragen); `tools/nullstart_serie.py` zaehlt, welche
+Pruefung in wie vielen Laeufen scheitert. Nach 4 Laeufen SYSTEMATISCH (4/4): Tuermchen-Kupferradius und Silhouettenbreite 23,5-28 m; breit bei 30 m 3/4.
+**Ehrliche Schritte:** `foto_kalibrieren` beendet ohne Punkte mit Exit 3 statt ValueError (044, 062); Nullstart fuehrt Exit 3 als 'uebersprungen'.
+**Strenger Modus** `nullstart.py --streng`: Startwerte aller regelabgeleiteten Masse auf die Mitte ihres Plausibilitaetsfensters - scheitert eine
+Ableitung, faellt es im Pruefstand auf, statt dass der Referenzwert still stehen bleibt (bisher: nur 10 von 59 Massen frisch abgeleitet, Rest Referenz).
+**Beziehungsprüfung** (`objekt.json["masse_beziehungen"]`, 5 Beziehungen, von der Referenz erfuellt): Nullstart 9 lieferte KONSOLE_Z0 29,25 ueber
+KONSOLE_Z1 27,0 und GX 8,68 breiter als der Schaft D 9,0 - jetzt verworfen (alter Wert bleibt, im Bericht 'beziehung_verletzt'). Plausibilitaetsfenster
+verwarfen ausserdem KRAG_TRAUFE/GZ0/GZ1/ERKER_OBEN: die Zentralkoerper-Baender waren in Lauf 9 falsch eingeteilt (Klassenfarben instabil).
+**Latenter Fehler behoben:** QUADER_GLOCKENSTOCK ('max() iterable argument is empty') lief seit Stufe C in der Referenz still auf Fehler - Fenster
+muessen jetzt zu >= 50 % im Bereich liegen statt vollstaendig (2-m-Raster). Wert unveraendert 0,35; Referenz-Regression identisch.
+**Offen aus der Serie:** Zentralkoerper-Klassen aus Farbe (gesims/stein/kupfer) kippen zwischen Laeufen; geometrische Klassifikation wie beim Dachband
+der Tuermchen waere der naechste Hebel; Wolke Lauf 9 zusaetzlich vertikal gestaucht (obere Kante 50 m statt 54,5 m).
