@@ -1410,3 +1410,13 @@ Je 15 Pruefungen fallen durch, aber andere: nur in grob (11): Tuermchen-Kegel Du
 nur in voll (11): meist Bandfenster-Pruefungen (fenstername-abhaengig) und Profile; in beiden 4. grob erzeugt 16 Pruefungen weniger (56 statt 72): ohne ausreichende Wolke entstehen Baender/Pruefungen gar nicht.
 **Bewertung:** grob = brauchbarer Entwurf fuer Hoehen und Gesamtform, aber der obere Teil (Tuermchen, Zinnen) geht verloren - kein Ersatz fuer voll. Frueherer Wolken-Test auf dem Netz von Beweislauf 3 (11 Fotos/1000 px: 48/54 gegen Basis 48/54) zeigte das nicht: Ergebnis haengt vom Netz und von der Fotoauswahl ab, einzelne Laeufe streuen.
 **Naechster Schritt:** Fotoauswahl mit Mindestabdeckung der oberen Schichten (27-45 m) erzwingen und auf diesem Netz dichte Stufe neu vergleichen.
+
+## BN - Sweet Spot der dichten Stufe = Aufloesung, nicht Fotozahl (2026-11-02, drei Netze)
+**Foto-Teilmengen verlieren den oberen Teil** (Netz 4, Sigma 2,1 %): 11 Fotos/1000 px 55/69, 16 Fotos 60/73, Schichtauswahl 11/16: 55/69 und 54/74 gegen alle 27 Fotos/1000 px 67/80. Tuermchen-Kegel, Zinnen, Helm fallen durch. -> `--stufe grob` nimmt jetzt ALLE Fotos (`--grob-fotos 0`).
+**Aufloesung (alle Fotos), gleiches Netz je Paar:** Netz 3: 800 px 50/60, 1200 px 54/60, 1600 px 54/60 (gemeinsame Pruefungen; Zeit 304/472/673 s). Netz 4: 1000 px 67/80 (369 s) gegen 1600 px 57/72 (ca. 650 s).
+Netz 5 (Sigma 2,4 %): `grob` 1000 px **72/76** (389 s PatchMatch, 4 durchgefallen) gegen `voll` 1600 px **55/74** (19 durchgefallen: Bandfenster Tuermchen, Profil Ecktuermchen, Zinnen-Scharten, Tuermchen-Kegel). In allen drei Netzen ist 1000-1200 px nicht schlechter,
+zweimal deutlich besser als 1600 px, und 1,8x schneller. Unter 800 px faellt die Quote (Netz 3). Mechanismus nicht belegt (Vermutung: festes PatchMatch-Fenster deckt bei kleineren Bildern mehr Wandflaeche ab, weniger Feinrauschen). Hardware-unabhaengig (nur die Zeit haengt von der GPU ab).
+**Objektabhaengig:** Fotos des Netzes sind 1024-2000 px lang (Median 2000); bei 1600 px werden 27 von 31 verkleinert, bei 1000 px alle. Fuer andere Objekte neu messen.
+**Werkzeuge:** `tools/sweetspot.py` (Leiter 800/1000/1200/1600 auf vorhandenem Netz, Vergleich auf gemeinsamen Pruefungen, kleinste Aufloesung innerhalb Toleranz 3 -> `modelle/<objekt>/sweetspot.json`), `nullstart.py --stufe auto` liest die Datei.
+Aktuelle `sweetspot.json`: 1200 px, nur aus den gespeicherten Ergebnissen von Netz 3 (800/1200/1600 px, ohne 1000 px) - ein Messpunkt, kein Leiterlauf.
+**Offen:** voller Leiterlauf inkl. 1000 px; ob `voll` (1600 px) als Standard auf 1000-1200 px gesetzt wird (Entscheidung beim Nutzer); Mechanismus; zweites Objekt.

@@ -44,7 +44,7 @@ def lauf(bericht, name, cmd, repo, log, ok_rcs=(0,)):
     return r.returncode in ok_rcs
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ziel", default="martinstor_null"); ap.add_argument("--ab", default="anlegen"); ap.add_argument("--stufe", default="voll", choices=["voll", "grob"], help="grob = Entwurf: dichte Stufe nur mit den --grob-fotos besten Fotos (Abdeckung, foto_auswahl.py --waehle) bei --grob-px (Register BL); voll = alle Fotos, 1600 px (Standard)"); ap.add_argument("--grob-fotos", type=int, default=11); ap.add_argument("--grob-px", type=int, default=1000); ap.add_argument("--dicht-extra", default="", help="zusaetzliche Argumente fuer sfm_dicht.py, z. B. \"--max-size 1200 --fotos 014,031\" (Stufenmodell, Register BK)"); ap.add_argument("--kal-seriell", action="store_true", help="Kalibrierung wie frueher erst nach entzerren (nicht parallel zu PatchMatch)"); ap.add_argument("--streng", action="store_true", help="Startwerte aller regelabgeleiteten Masse auf die MITTE ihres Plausibilitaetsfensters setzen: scheitert eine Ableitung, faellt es im Pruefstand auf, statt dass der Referenzwert still stehen bleibt (Register BF)"); ap.add_argument("--sued-seriell", action="store_true", help="Suednetz vor dem dichten Schritt statt parallel dazu (CPU) rechnen"); ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="Mapper der Hauptseite: incremental (Standard) | global = GLOMAP (Register BF)"); ap.add_argument("--netzversuche", type=int, default=6, help="parallele Mapper-Versuche der Hauptseite (Auswahl nach Massstab-Sigma)"); ap.add_argument("--ohne-sued", action="store_true")
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ziel", default="martinstor_null"); ap.add_argument("--ab", default="anlegen"); ap.add_argument("--stufe", default="voll", choices=["voll", "grob", "auto"], help="auto = Aufloesung aus modelle/<objekt>/sweetspot.json (tools/sweetspot.py), sonst grob; grob = Entwurf: dichte Stufe bei --grob-px (Standard 1000 px, alle Fotos; Register BM); voll = alle Fotos, 1600 px (Standard)"); ap.add_argument("--grob-fotos", type=int, default=0, help="0 = alle Fotos (Standard; Foto-Teilmengen verloren Tuermchen/Zinnen, Register BM), N = nur die N besten"); ap.add_argument("--grob-px", type=int, default=1000); ap.add_argument("--dicht-extra", default="", help="zusaetzliche Argumente fuer sfm_dicht.py, z. B. \"--max-size 1200 --fotos 014,031\" (Stufenmodell, Register BK)"); ap.add_argument("--kal-seriell", action="store_true", help="Kalibrierung wie frueher erst nach entzerren (nicht parallel zu PatchMatch)"); ap.add_argument("--streng", action="store_true", help="Startwerte aller regelabgeleiteten Masse auf die MITTE ihres Plausibilitaetsfensters setzen: scheitert eine Ableitung, faellt es im Pruefstand auf, statt dass der Referenzwert still stehen bleibt (Register BF)"); ap.add_argument("--sued-seriell", action="store_true", help="Suednetz vor dem dichten Schritt statt parallel dazu (CPU) rechnen"); ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="Mapper der Hauptseite: incremental (Standard) | global = GLOMAP (Register BF)"); ap.add_argument("--netzversuche", type=int, default=6, help="parallele Mapper-Versuche der Hauptseite (Auswahl nach Massstab-Sigma)"); ap.add_argument("--ohne-sued", action="store_true")
     a = ap.parse_args(); ref = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); repo = os.path.dirname(os.path.dirname(od)); refname = os.path.basename(od)
     zd = os.path.join(repo, "modelle", a.ziel); os.makedirs(zd, exist_ok=True); zobj = os.path.join(zd, "objekt.json"); log = os.path.join(zd, "nullstart.log")
     bp = os.path.join(zd, "nullstart_bericht.json"); bericht = json.load(open(bp)) if os.path.exists(bp) and a.ab != "anlegen" else dict(referenz=refname, ziel=a.ziel, start=time.strftime("%Y-%m-%d %H:%M"), schritte=[])
@@ -143,12 +143,19 @@ def main():
     if dran("kalibrieren_061") and dran("dicht") and not a.kal_seriell:                           # CPU war waehrend PatchMatch zu 93 % leer (Messung 2026-11-02): Kalibrierung dorthin verlegen
         kal_thr = _th.Thread(target=kalibrieren_alle); kal_thr.start(); kal_fertig = True
     dicht_extra = a.dicht_extra
+    if a.stufe == "auto" and not dicht_extra:
+        sp_ = os.path.join(od, "sweetspot.json")
+        if os.path.exists(sp_): a.grob_px = int(json.load(open(sp_))["px"]); print(f"    Stufe auto: Sweet Spot {a.grob_px} px aus {os.path.relpath(sp_, repo)}", flush=True)
+        else: print(f"    Stufe auto: keine sweetspot.json ({os.path.relpath(sp_, repo)}) - Rueckfall grob {a.grob_px} px; Messung: tools/sweetspot.py", flush=True)
+        a.stufe = "grob"
     if a.stufe == "grob" and not dicht_extra and dran("dicht"):                                   # Stufe grob: Fotoauswahl aus dem frisch gebauten Netz
         import re as _re
-        r_ = subprocess.run([PC, "-I", "tools/foto_auswahl.py", Z, "--waehle", str(a.grob_fotos)], cwd=repo, capture_output=True, text=True).stdout
-        m_ = _re.search(r"--fotos (\S+)", r_)
-        if m_: dicht_extra = f"--max-size {a.grob_px} --fotos {m_.group(1)}"; print(f"    Stufe grob: {a.grob_fotos} Fotos bei {a.grob_px} px: {m_.group(1)}", flush=True)
-        else: print("    Stufe grob: keine Fotoauswahl moeglich (kein Modellnetz) - Rueckfall auf alle Fotos", flush=True)
+        dicht_extra = f"--max-size {a.grob_px}"
+        if a.grob_fotos > 0:
+            r_ = subprocess.run([PC, "-I", "tools/foto_auswahl.py", Z, "--waehle", str(a.grob_fotos)], cwd=repo, capture_output=True, text=True).stdout
+            m_ = _re.search(r"--fotos (\S+)", r_)
+            if m_: dicht_extra += f" --fotos {m_.group(1)}"
+        print(f"    Stufe grob: {dicht_extra}", flush=True)
     bericht["stufe"] = a.stufe; bericht["dicht_extra"] = dicht_extra
     if dran("dicht") and not lauf(bericht, "dicht_nord", f"{PC} -I tools/sfm_dicht.py {Z} nord {dicht_extra}", repo, log): sys.exit("dicht fehlgeschlagen")
     for t_ in sued_thr: t_.join()                                                                 # Suednetz (CPU) war parallel zum dichten Schritt unterwegs

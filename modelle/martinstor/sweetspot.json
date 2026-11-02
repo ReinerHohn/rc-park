@@ -1,0 +1,28 @@
+{
+ "datum": "2026-11-02 21:22",
+ "px": 1200,
+ "grund": "kleinste Aufloesung mit >= 51 von 60 gemeinsamen Pruefungen (beste Stufe: 54, Toleranz 3)",
+ "toleranz": 3,
+ "tabelle": {
+  "800": {
+   "ok": 50,
+   "n": 60,
+   "alle": "63/79",
+   "sek": 303.8
+  },
+  "1200": {
+   "ok": 54,
+   "n": 60,
+   "alle": "71/78",
+   "sek": 472.0
+  },
+  "1600": {
+   "ok": 54,
+   "n": 60,
+   "alle": "64/71",
+   "sek": 672.6
+  }
+ },
+ "ziel": "martinstor_null",
+ "hinweis": "objektabhaengig; ANNAHME Rauschband +-3 Pruefungen (Register BL); ein Netz = ein Messpunkt - bei Aenderung der Fotos neu messen"
+}
