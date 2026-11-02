@@ -1343,3 +1343,7 @@ in besserem Abstand, aber keine neue Seite und keine Hoehe - hilft Sued/Spitze n
 **Weitere Quellen geprueft:** LGL BW offen: Hauskoordinaten, Hausumringe, DGM, DOM, DOP20, LoD1 (kein Mesh/Schraegbild belegt); Freiburg 3D-Stadtmodell als Open Data beschrieben (Rohdaten/Lizenz ungeprueft,
 Katalogseiten laden per Skript); keine Orbit-Drohnenvideos zum Martinstor gefunden; Hoehenangaben Wikipedia 60 m / Structurae ~65 m (Widerspruch, Regel 5); keine Plaene von 1901 online (Stadtarchiv, Denkmalpflege).
 **Pruefstand-Tempo:** `_flaechenpunkte` und `hypso_ueber` teilen die 0,3-m-Unterteilung (`_unterteilt`): 9,7 -> 5,9 s, Regression identisch (Commit e8d8b3d). `bauen_abnehmen.sh martinstor` 34 s, Regression 14 s.
+**Foto-Vorpruefung** (`tools/foto_vorpruefung.py`, ohne `-I`): EXIF/Manifest-Metadaten + Schaerfe vor dem Netz; Seite/Entfernung/Blickwinkel aus GPS (+ Peilung gegen Heading), Warnzeichen (unscharf, klein, ISO > 1600,
+Belichtung > 1/60 s, Digitalzoom, kein Brennweiten-EXIF, steiler Blick > 55 Grad, schaut weg, > 5 Jahre alt). Test Mapillary (39): 16 ohne Warnung, alle GPS-Seite 'nord'; Commons-Eingang (100): 74 ohne Warnung,
+Kamera-Modell 26 -> 80/100 und f35 16 -> 31/100 mit Manifest-Rueckfall (verkleinerte Dateien ohne EXIF), nur 18/100 mit GPS-Seite (nord 9, sued 6, ost 3). GPS Altstadt ca. 5-10 m, Kompass 10-20 Grad: Seite = Vorschlag.
+Alter ist nur ein Hinweis (Turm aendert sich nicht, Umgebung schon). Metadaten sagen nicht, ob der Turm im Bild ist (Mapillary 'persp': ~15 von 39).
