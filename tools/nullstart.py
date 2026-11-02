@@ -28,6 +28,9 @@ def gpu_warten(max_mib=1500, max_s=3600):
         if used < max_mib: return
         print(f"    GPU belegt ({used} MiB) - warte", flush=True); time.sleep(30)
 
+import threading as _th
+_BERICHT_SPERRE = _th.Lock()
+
 def lauf(bericht, name, cmd, repo, log, ok_rcs=(0,)):
     if ("sfm_netz.py" in cmd and "--cpu" not in cmd) or "sfm_dicht.py" in cmd: gpu_warten()
     t0 = time.time(); print(f"\n+++ {name}: {cmd[:160]}", flush=True)
@@ -35,12 +38,13 @@ def lauf(bericht, name, cmd, repo, log, ok_rcs=(0,)):
         L.write(f"\n\n=== {name} @ {time.strftime('%H:%M:%S')}\n$ {cmd}\n"); L.flush()
         r = subprocess.run(cmd, shell=True, cwd=repo, stdout=L, stderr=subprocess.STDOUT, text=True, preexec_fn=lambda: resource.setrlimit(resource.RLIMIT_CORE, (0, 0)))   # kein Core-Dump auf die Root-Platte (Nullstart 5/6: 2 x 1,3 GB)
     dt = time.time() - t0; eintrag = dict(schritt=name, kommando=cmd, rc=r.returncode, sekunden=round(dt, 1), ok=r.returncode in ok_rcs, uebersprungen=(r.returncode == 3 and 3 in ok_rcs))
-    bericht["schritte"].append(eintrag); json.dump(bericht, open(bericht["_pfad"], "w"), indent=1, ensure_ascii=False)
+    with _BERICHT_SPERRE:
+        bericht["schritte"].append(eintrag); json.dump(bericht, open(bericht["_pfad"], "w"), indent=1, ensure_ascii=False)
     print(f"    rc {r.returncode}{' (uebersprungen: keine Daten)' if eintrag['uebersprungen'] else ''}, {dt:.0f} s", flush=True)
     return r.returncode in ok_rcs
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ziel", default="martinstor_null"); ap.add_argument("--ab", default="anlegen"); ap.add_argument("--streng", action="store_true", help="Startwerte aller regelabgeleiteten Masse auf die MITTE ihres Plausibilitaetsfensters setzen: scheitert eine Ableitung, faellt es im Pruefstand auf, statt dass der Referenzwert still stehen bleibt (Register BF)"); ap.add_argument("--sued-seriell", action="store_true", help="Suednetz vor dem dichten Schritt statt parallel dazu (CPU) rechnen"); ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="Mapper der Hauptseite: incremental (Standard) | global = GLOMAP (Register BF)"); ap.add_argument("--netzversuche", type=int, default=6, help="parallele Mapper-Versuche der Hauptseite (Auswahl nach Massstab-Sigma)"); ap.add_argument("--ohne-sued", action="store_true")
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ziel", default="martinstor_null"); ap.add_argument("--ab", default="anlegen"); ap.add_argument("--dicht-extra", default="", help="zusaetzliche Argumente fuer sfm_dicht.py, z. B. \"--max-size 1200 --fotos 014,031\" (Stufenmodell, Register BK)"); ap.add_argument("--kal-seriell", action="store_true", help="Kalibrierung wie frueher erst nach entzerren (nicht parallel zu PatchMatch)"); ap.add_argument("--streng", action="store_true", help="Startwerte aller regelabgeleiteten Masse auf die MITTE ihres Plausibilitaetsfensters setzen: scheitert eine Ableitung, faellt es im Pruefstand auf, statt dass der Referenzwert still stehen bleibt (Register BF)"); ap.add_argument("--sued-seriell", action="store_true", help="Suednetz vor dem dichten Schritt statt parallel dazu (CPU) rechnen"); ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="Mapper der Hauptseite: incremental (Standard) | global = GLOMAP (Register BF)"); ap.add_argument("--netzversuche", type=int, default=6, help="parallele Mapper-Versuche der Hauptseite (Auswahl nach Massstab-Sigma)"); ap.add_argument("--ohne-sued", action="store_true")
     a = ap.parse_args(); ref = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); repo = os.path.dirname(os.path.dirname(od)); refname = os.path.basename(od)
     zd = os.path.join(repo, "modelle", a.ziel); os.makedirs(zd, exist_ok=True); zobj = os.path.join(zd, "objekt.json"); log = os.path.join(zd, "nullstart.log")
     bp = os.path.join(zd, "nullstart_bericht.json"); bericht = json.load(open(bp)) if os.path.exists(bp) and a.ab != "anlegen" else dict(referenz=refname, ziel=a.ziel, start=time.strftime("%Y-%m-%d %H:%M"), schritte=[])
@@ -129,13 +133,23 @@ def main():
         lauf(bericht, "registrieren_060", f"{PC} -I tools/sfm_registrieren.py {Z} --netz nord --foto 060 --schreiben", repo, log, ok_rcs=(0, 1))
         lauf(bericht, "registrieren_061", f"{PC} -I tools/sfm_registrieren.py {Z} --netz nord --foto 061 --hoehe 44 8 --schreiben", repo, log, ok_rcs=(0, 1))
     if dran("generator0") and not lauf(bericht, "generator0", json.load(open(zobj))["generator"], repo, log): sys.exit("generator0 fehlgeschlagen")
-    if dran("dicht") and not lauf(bericht, "dicht_nord", f"{PC} -I tools/sfm_dicht.py {Z} nord", repo, log): sys.exit("dicht fehlgeschlagen")
+    kal_fertig = False
+    def kalibrieren_alle():                                                                       # je Foto unabhaengig: liest anker3d.json + eigenes K-<foto>.json, schreibt nur dasselbe K-<foto>.json
+        from concurrent.futures import ThreadPoolExecutor
+        nrs = [os.path.basename(kp)[2:-5] for kp in sorted(glob.glob(os.path.join(zd, "messprotokoll", "K-*.json")))]
+        with ThreadPoolExecutor(max_workers=min(8, max(1, len(nrs)))) as ex:
+            list(ex.map(lambda nr: lauf(bericht, f"kalibrieren_{nr}", f"{PY} -W ignore -I tools/foto_kalibrieren.py {Z} {nr}", repo, log, ok_rcs=(0, 1, 3)), nrs))
+    kal_thr = None
+    if dran("kalibrieren_061") and dran("dicht") and not a.kal_seriell:                           # CPU war waehrend PatchMatch zu 93 % leer (Messung 2026-11-02): Kalibrierung dorthin verlegen
+        kal_thr = _th.Thread(target=kalibrieren_alle); kal_thr.start(); kal_fertig = True
+    if dran("dicht") and not lauf(bericht, "dicht_nord", f"{PC} -I tools/sfm_dicht.py {Z} nord {a.dicht_extra}", repo, log): sys.exit("dicht fehlgeschlagen")
     for t_ in sued_thr: t_.join()                                                                 # Suednetz (CPU) war parallel zum dichten Schritt unterwegs
     if sued_thr:
         print(f"    Suednetz parallel: {'ok' if all(sued_res.values()) else 'FEHLER'} (Log nullstart_sued.log)", flush=True)
         if dran("verzerrung") and not a.ohne_sued: verzerrung_gate()
     if dran("entzerren") and not lauf(bericht, "entzerren", f"{PY} -W ignore -I tools/wolke_vs_modell.py {Z} nord --entzerren --nebengebaeude", repo, log): sys.exit("entzerren fehlgeschlagen")
-    if dran("kalibrieren_061"):   # alle Kameras aus Picks + Ankern neu loesen (Schritt heisst historisch kalibrieren_061): jedes K-Protokoll
+    if kal_thr is not None: kal_thr.join()
+    if dran("kalibrieren_061") and not kal_fertig:   # alle Kameras aus Picks + Ankern neu loesen (Schritt heisst historisch kalibrieren_061): jedes K-Protokoll
         for kp in sorted(glob.glob(os.path.join(zd, "messprotokoll", "K-*.json"))):
             nr = os.path.basename(kp)[2:-5]; lauf(bericht, f"kalibrieren_{nr}", f"{PY} -W ignore -I tools/foto_kalibrieren.py {Z} {nr}", repo, log, ok_rcs=(0, 1, 3))
     if dran("auswertung") and not lauf(bericht, "auswertung", f"{PY} -W ignore -I tools/regression.py {Z} --schnappschuss", repo, log): sys.exit("auswertung fehlgeschlagen")

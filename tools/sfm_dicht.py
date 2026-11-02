@@ -49,7 +49,7 @@ def beschneiden(out, tr, halb=8.0, zmin=-2.0, zmax=72.0, rand=0.15):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("seite"); ap.add_argument("--radius", type=float, default=25.0)
     ap.add_argument("--zmin", type=float, default=-5.0); ap.add_argument("--zmax", type=float, default=85.0); ap.add_argument("--max-size", type=int, default=1600)
-    ap.add_argument("--nur-fusion", action="store_true", help="PatchMatch ueberspringen (schon gerechnet)"); ap.add_argument("--beschnitt", action="store_true", help="entzerrte Bilder vor PatchMatch auf den Turmquader beschneiden (schneller; Beweis: Register BG)")
+    ap.add_argument("--fotos", help="nur diese Fotos (Nummern, Komma getrennt, z. B. 014,031,040) entzerren und rechnen - Stufe grob (Register BK); Standard: alle"); ap.add_argument("--nur-fusion", action="store_true", help="PatchMatch ueberspringen (schon gerechnet)"); ap.add_argument("--beschnitt", action="store_true", help="entzerrte Bilder vor PatchMatch auf den Turmquader beschneiden (schneller; Beweis: Register BG)")
     a = ap.parse_args(); od = os.path.dirname(os.path.abspath(a.objekt)); sd = os.path.join(od, "sfm")
     sparse = os.path.join(sd, f"sparse_{a.seite}", "0"); bilder = os.path.join(sd, f"sparse_{a.seite}_bilder"); out = os.path.join(sd, f"dicht_{a.seite}")
     S = json.load(open(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG-{a.seite}.json"))); tr = S["transformation"]
@@ -59,6 +59,13 @@ def main():
         if os.path.isdir(out): shutil.rmtree(out)           # alter Arbeitsordner = andere Kameras -> entzerrte Bilder passen nicht zu den Tiefenkarten (1600 vs 1598 px, Nullstart 6)
         os.makedirs(out, exist_ok=True); sparse = netz_fuer_dicht(sparse, sd, a.seite)
         uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = a.max_size
+        nm_ = [f"{x.strip()}.jpg" for x in a.fotos.split(",") if x.strip()] if a.fotos else []
+        if nm_:                                                                                 # Teilmenge: Rekonstruktion ohne die anderen Fotos (sonst verweist patch-match.cfg auf nicht entzerrte Bilder -> 'IsGrey' Abbruch)
+            print(f"nur {len(nm_)} Fotos: {a.fotos}", flush=True); rec_ = pycolmap.Reconstruction(sparse); unbekannt = [n for n in nm_ if n not in {im.name for im in rec_.images.values()}]
+            if unbekannt: raise SystemExit(f"Fotos nicht im Netz: {unbekannt}")
+            for im in list(rec_.images.values()):
+                if im.name not in nm_: rec_.deregister_frame(im.frame_id)
+            sparse = os.path.join(out, "sparse_teil"); os.makedirs(sparse, exist_ok=True); rec_.write(sparse)
         pycolmap.undistort_images(out, sparse, bilder, output_type="COLMAP", undistort_options=uo)
         print(f"entzerrt {time.time() - t0:.0f} s", flush=True)
         if a.beschnitt: v_, n_ = beschneiden(out, tr); print(f"Beschnitt auf den Turmquader: {n_ / v_:.0%} der Pixel (Faktor {v_ / max(n_, 1):.1f})", flush=True)

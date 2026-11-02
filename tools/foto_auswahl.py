@@ -70,6 +70,34 @@ def beitrag(sd, seite, H=65.0):
         v["sektor"] = sek.get(n); v["sektor_einzel"] = bool(n in sek and zaehl[sek[n]] <= 2); v["anteil_verloren"] = round(v["verlorene_punkte"] / max(gesamt, 1), 4); v["anteil_verloren_oben"] = round(v["verloren_oben"] / max(oben, 1), 4)
     return dict(punkte=gesamt, punkte_oben=oben, fotos=V)
 
+def waehle(sd, seite, n, H=65.0, w_oben=5.0, schicht=False):
+    """Stufe grob: waehle n Fotos, die moeglichst viele 3D-Punkte weiterhin triangulierbar halten (greedy, Punkt zaehlt, wenn >= 2 gewaehlte Fotos ihn sehen;
+    Punkte ueber 0,5 H zaehlen w_oben-fach). Rein aus dem Netz, deterministisch."""
+    import pycolmap
+    r = pycolmap.Reconstruction(os.path.join(sd, f"sparse_modell_{seite}")); nm = {i: im.name[:3] for i, im in r.images.items() if im.has_pose}
+    sp = []   # (gewicht, set der Foto-Nummern)
+    for pt in r.points3D.values():
+        f = {nm[e.image_id] for e in pt.track.elements if e.image_id in nm}
+        if len(f) >= 2: sp.append((w_oben if pt.xyz[2] > 0.5 * H else 1.0, f, pt.xyz[2]))
+    if schicht:                                                                              # Schichtgleich: jede 5-m-Hoehenschicht traegt gleich viel Gewicht (die duenne obere Haelfte zaehlt wie die dichte untere)
+        zb = lambda z: int(np.floor(z / 5.0)); cnt = {}
+        for _, _, z in sp: cnt[zb(z)] = cnt.get(zb(z), 0) + 1
+        sp = [(1.0 / cnt[zb(z)], f, z) for _, f, z in sp]
+    sp = [(w, f) for w, f, _ in sp]
+    gew = sum(w for w, _ in sp); gewaehlt = []; zaehl = [0] * len(sp); erg = []
+    for _ in range(min(n, len(nm))):
+        best, bw = None, -1.0
+        for nr in nm.values():
+            if nr in gewaehlt: continue
+            g = sum(w for k, (w, f) in enumerate(sp) if nr in f and zaehl[k] == 1)          # Punkt wird mit diesem Foto triangulierbar
+            g += 0.01 * sum(w for k, (w, f) in enumerate(sp) if nr in f and zaehl[k] == 0)   # Vorbereitung (zweites Foto folgt)
+            if g > bw + 1e-12 or (abs(g - bw) <= 1e-12 and best is not None and nr < best): best, bw = nr, g
+        gewaehlt.append(best)
+        for k, (w, f) in enumerate(sp):
+            if best in f: zaehl[k] += 1
+        erg.append((best, round(sum(w for k, (w, f) in enumerate(sp) if zaehl[k] >= 2) / gew, 4)))
+    return erg
+
 def auc_p(x, y, n_perm=4000, seed=1):
     """AUC = P(x > y) (Mann-Whitney) + Permutations-p (zweiseitig). x registriert, y nicht."""
     x, y = np.asarray(x, float), np.asarray(y, float)
@@ -81,8 +109,13 @@ def auc_p(x, y, n_perm=4000, seed=1):
     return a0, (k + 1) / (n_perm + 1)
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--sfm", default="sfm"); ap.add_argument("--json", default="audit/foto_auswahl.json"); ap.add_argument("--beitrag", action="store_true", help="nur den Beitrag je Foto (analytisch) ausgeben und Rangliste")
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--sfm", default="sfm"); ap.add_argument("--json", default="audit/foto_auswahl.json"); ap.add_argument("--schicht", action="store_true", help="mit --waehle: jede 5-m-Hoehenschicht gleich gewichten (statt Obergewicht 5)"); ap.add_argument("--waehle", type=int, help="Stufe grob: n Fotos je Netz per Abdeckung waehlen (greedy) und ausgeben"); ap.add_argument("--beitrag", action="store_true", help="nur den Beitrag je Foto (analytisch) ausgeben und Rangliste")
     a = ap.parse_args(); od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); sd = os.path.join(od, a.sfm)
+    if a.waehle:
+        for sname in ("nord", "sued"):
+            if not os.path.isdir(os.path.join(sd, f"sparse_modell_{sname}")): continue
+            W = waehle(sd, sname, a.waehle, schicht=a.schicht); print(f"Netz {sname}: {a.waehle} Fotos (gewichtete Abdeckung triangulierbarer Punkte):"); print("  " + " ".join(f"{n}({100 * c:.0f}%)" for n, c in W)); print("  --fotos " + ",".join(n for n, _ in W))
+        return
     if a.beitrag:
         B = {}
         for sname in ("nord", "sued"):

@@ -1387,3 +1387,18 @@ Merkmalszahl oder Brennweite; Nord untestbar (2 nicht registrierte). Das sagt nu
 verliert mehr als 1,8 % der Sparse-Punkte (Nord 014 am wertvollsten, 002/051/045/027/001 zusammen ca. 5 %, oben fast nichts) - die Netze sind redundant. Alle Kameras liegen in einem Sektor (Nord 3, Sued 1).
 **Nicht belegt / offen:** Nullstart mit den besten N Fotos und kleinerer Aufloesung gegen den Volllauf (Zeit vs Pruefungen, Stufenmodell grob -> fein); Kalibrierung parallel zu PatchMatch (Patch als Kopie vorbereitet, nicht eingebaut);
 Mapillary-Netztest (39 Bilder geladen, nicht im Netz); Hoehenanker braucht neue Picks (BJ).
+
+## BL - Stufenmodell (grob -> fein), Netzstufe GLOMAP/inkrementell, CPU- gegen GPU-SIFT (2026-11-02)
+**Werkzeuge:** `tools/stufenversuch.py` (gleiches Netz, nur die dichte Stufe variiert: `nullstart.py --ab dicht --dicht-extra ...`), `sfm_dicht.py --fotos` (Teilmenge: Rekonstruktion ohne die anderen Fotos zuschneiden, sonst Abbruch 'Check failed: IsGrey'),
+`foto_auswahl.py --waehle N [--schicht]` (greedy Abdeckung triangulierbarer Punkte; --schicht = 5-m-Hoehenschichten gleich gewichtet), `nullstart.py` Kalibrierung parallel zu PatchMatch (15 K-Dateien byte-gleich seriell/parallel bewiesen, 20 s -> 7 s; `--kal-seriell` = alt).
+**Fehler beim Messen (korrigiert):** erste Teilmengen-Laeufe stuerzten ab, der Treiber zeigte stattdessen den Basiswert; Treiber nahm den ERSTEN statt letzten `dicht_nord`-Eintrag (Bericht sammelt mehrere) -> Zeiten 656,6 s statt 672,6/670,9 s;
+Vergleich muss den neuesten Ordner je Variante laden. Alle Zahlen unten sind nachgerechnet.
+**PatchMatch ist reproduzierbar:** `basis` und `basis2` (gleiches Netz, gleiche Einstellungen): STL byte-gleich, alle 71 Pruefungen gleich, alle Masse gleich. Die Streuung zwischen vollen Nullstarts (62/67, 56/68, 64/71) kommt aus der NETZstufe (BK).
+**Stufen (54 gemeinsame Pruefungen, Netz aus Beweislauf 3):** Basis 27 Fotos/1600 px 672 s 48/54; 27/1200 472 s 49/54; 27/800 304 s 44/54; 16/1200 268 s 44/54; 11/1600 219 s 45/54; **11/1200 160 s 50/54; 11/1000 134 s 48/54**;
+11 Schicht/1200 46/54; 11 Schicht/1000 50/54; 6/1200 84 s 40/54. Ergebnis: 6 Fotos zu wenig; 11 Fotos bei 1000-1200 px nicht nachweisbar schlechter als die Basis und 4-5x schneller; sonst NICHT monoton (16 Fotos schlechter als 11,
+Schichtgewichtung 1200 px schlechter, 1000 px besser) - einzelne Laeufe streuen um +-3-4 Pruefungen, kleinere Unterschiede sind kein Beleg. Hoehenmasse (GZ1, DACHHOEHE) in allen Varianten gleich (Netz, nicht Dichte).
+**Netzstufe, 6 Seeds je Kombination (Basisfotos, CPU, 24 Netze):** GLOMAP + GPU-SIFT-Datenbank: Sigma 2,5-2,6 % (6/6), gold_z 54,09-54,29, 30 Kameras = STABIL. GLOMAP + CPU-SIFT-Datenbank: Sigma 27-54 %, gold_z ~1 m (6/6 UNBRAUCHBAR;
+Parameter- und Matchzahlen beider Datenbanken aehnlich: 9609 gegen 10726 Merkmale/Bild, Inlier CPU/GPU Median 0,95; Ursache offen). Inkrementell + CPU-Datenbank: Sigma 1,9/2,0/2,0/7,4/22,8/24,4; inkrementell + GPU-Datenbank: 2,6/2,8/3,4/4,6/7,3/15,6
+(25-28 Kameras, sehr streuend). **Folgerung:** GLOMAP nur mit GPU-SIFT; `sfm_netz.py` warnt jetzt bei `--cpu --mapper global`. Das Suednetz im Nullstart nutzt `--cpu` mit dem Standard-Mapper (inkrementell) - dort gilt die Streuung der inkrementellen Zeilen.
+**Auslastung (Sampler 81 min):** CPU Mittel 15 %, Median 6 %; GPU Mittel 77 %, 76 % der Zeit > 90 %; RAM 4,7 von 15,7 GB; PatchMatch zieht nur ca. 38-58 W und 333 MiB VRAM - ob die GPU voll ausgelastet ist, ist nicht gemessen.
+**Offen:** Mapillary-Netztest mit GPU-Merkmalen (CPU-Datenbank taugt nicht fuer GLOMAP); Pruefung, ob zwei PatchMatch gleichzeitig auf einer GPU schneller sind; Stufenmodell mit zweiter Stufe nur fuer die obere Haelfte; Wiederholung der Stufen auf einem zweiten Netz.

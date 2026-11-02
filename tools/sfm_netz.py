@@ -223,6 +223,7 @@ def main():
     ap.add_argument("--db-von", help="vorhandene db_<seite>.db kopieren und nur die Rekonstruktion rechnen (parallele Versuche, CPU)"); ap.add_argument("--seed", type=int, help="Mapper-Seed (Versuch)")
     ap.add_argument("--tag", default="", help="Suffix fuer db/sparse/netz-Bericht eines Versuchs, z. B. v1"); ap.add_argument("--threads", type=int, default=0, help="Mapper-Threads je Versuch (0 = COLMAP-Standard)")
     a = ap.parse_args(); global KAMERA_MODELL, NUR_CPU; KAMERA_MODELL = a.kamera_modell; NUR_CPU = a.cpu; obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od))
+    if a.cpu and a.mapper == 'global' and not a.db_von: print('WARNUNG: GLOMAP mit CPU-SIFT-Datenbank lieferte in 6 von 6 Versuchen unbrauchbare Netze (Sigma 27-54 %, Register BK); GPU-SIFT-Datenbank nutzen (--nur-merkmale ohne --cpu) oder --mapper incremental', flush=True)
     nrs = a.fotos or obj.get("sfm", {}).get(a.seite)
     if not nrs: raise SystemExit(f"keine Fotoliste: --fotos oder objekt.json['sfm']['{a.seite}']")
     sd = os.path.join(od, "sfm"); bilder = os.path.join(sd, f"bilder_{a.seite}"); T_ = f"_{a.tag}" if a.tag else ""; db = os.path.join(sd, f"db_{a.seite}{T_}.db"); aus = os.path.join(sd, f"sparse_{a.seite}{T_}")
