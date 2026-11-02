@@ -1372,3 +1372,18 @@ legen nur die Richtung fest, nicht die Hoehe. (3) DOM1-Gipfel 54,84 (`spitze_dom
 unbrauchbar (Ref p90 54,55, Nullstart 55,89, p99 > 63 m). Fruehere Messung (Memory lidar-massnachweis): SfM-Dach 54,0 gegen DOM1 54,80 - dieselbe Richtung (SfM zu niedrig). **Bedingung fuer einen echten Hoehenanker:**
 mindestens 6-8 Bildpunkte der LoD2-Wandoberkanten-Ecken (ecke_wandoben_0..3) in 2-3 Nordfotos (kalibrierte Kameras 000/005/006/014/031) mit Pick-Pruefung (`foto_pick_pruefen.py`), danach Gewicht Sigma 0,6 m in `sfm_ausrichten.beobachtungen`
 (feste Hoehe, kein z_frei). Das braucht neue Picks (von Hand oder per Modellprojektion mit Sichtkontrolle); Regel: Sollwerte nicht lockern, keine Toleranz nach Netz-Sigma. Bis dahin: Nullstart-Hoehen tragen ~+-2 % (Sigma 3 %).
+
+## BK - Kompletter Nullstart 3x ab 'anlegen' (2026-11-02), Beweis und Fotobewertung
+**Aufbau:** `tools/nullstart_beweis.py` laeuft `tools/nullstart.py` N-mal komplett (streng, GLOMAP, 2 Netzversuche), sichert je Lauf Pruefbericht/Masse/STL und wertet automatisch aus (`modelle/martinstor/NULLSTART_BEWEIS.md`).
+**Ergebnis (3 Laeufe):** 62/67, 56/68, 64/71 (Mittel 88,3 %, Standardabweichung 5,3 Prozentpunkte; Referenz 67/67); Wanduhr 764 / 761 / 785 s. STL-Volumen 0,6-1,1 % neben der Referenz.
+Von 56 Pruefungen, die in allen Laeufen vorkommen: 42 immer bestanden, 14 flackernd, 0 nie. Die Pruefungsmenge ist nicht konstant (67/68/71), weil Bandpruefungen die gemessenen Fenster im Namen tragen.
+Masse-Streuung zwischen den Laeufen: ERKER_OBEN 34,25 / 39,75 / 34,25 (Ausreisser Lauf 2), KRAG_TRAUFE 29,88-31,38 (Ref 31,75), GZ1 39,0-40,75, GZ0 34,0-35,5. H_TOTAL 65,3 stammt ohne Regel aus der Referenz.
+**Grenzen (Beweis ist schwach):** nur 2 von 67 Pruefungen unabhaengig von Referenz und Fotos (1 LoD2, 1 Dokument; beide bestanden); Sollwerte stammen aus der Referenz-Tabelle; 24 dynamische Pruefungen ohne Quelltyp in der Tabelle;
+32 von 59 Massen ohne Regel aus der Referenz (Register BI).
+**Zeitprofil Lauf 1:** PatchMatch 652 s (85 %), netz_sued 110 s + ausrichten_sued 31 s (CPU, parallel dazu), registrieren_060/061 37 s, kalibrieren_* (15 Schritte) 20 s, auswertung 11 s. Passiver Sampler (alle 2 s):
+waehrend PatchMatch GPU > 90 % bei CPU < 15 % in 21 von 23 Proben (CPU-Mittel 7 %). CPU-Parallelisierung der Restschritte spart hoechstens ca. 1 min von 760 s; der Hebel ist PatchMatch (Fotozahl, Pixel, `--beschnitt` ungetestet).
+**Fotobewertung (`tools/foto_auswahl.py`):** Registrierung wird von Match-Graph-Kennzahlen vorhergesagt (Sued: Inlier-Summe AUC 0,91 p 0,001; Grad 0,79 p 0,034), NICHT von Schaerfe (AUC 0,74 p 0,08; fruehere Angabe p 0,042 gilt nicht), Aufloesung,
+Merkmalszahl oder Brennweite; Nord untestbar (2 nicht registrierte). Das sagt nur, welche Fotos das Netz ohnehin nicht nutzt, nicht welche es verbessern. `--beitrag`: analytischer Verlust je Foto (Spuren mit 2 Beobachtungen): kein Foto
+verliert mehr als 1,8 % der Sparse-Punkte (Nord 014 am wertvollsten, 002/051/045/027/001 zusammen ca. 5 %, oben fast nichts) - die Netze sind redundant. Alle Kameras liegen in einem Sektor (Nord 3, Sued 1).
+**Nicht belegt / offen:** Nullstart mit den besten N Fotos und kleinerer Aufloesung gegen den Volllauf (Zeit vs Pruefungen, Stufenmodell grob -> fein); Kalibrierung parallel zu PatchMatch (Patch als Kopie vorbereitet, nicht eingebaut);
+Mapillary-Netztest (39 Bilder geladen, nicht im Netz); Hoehenanker braucht neue Picks (BJ).

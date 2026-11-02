@@ -1,0 +1,1404 @@
+{
+ "fotos": {
+  "001": {
+   "seite": "Nord",
+   "breite": 1280,
+   "hoehe": 2842,
+   "f35": null,
+   "schaerfe": 4970.126844497492,
+   "kp_nord": 5270,
+   "grad_nord": 15,
+   "inlier_nord": 3962,
+   "staerkste_nord": 763,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 909
+  },
+  "006": {
+   "seite": "Nord",
+   "breite": 1200,
+   "hoehe": 1600,
+   "f35": 25.0,
+   "schaerfe": 2561.5434587770997,
+   "kp_nord": 9886,
+   "grad_nord": 15,
+   "inlier_nord": 5638,
+   "staerkste_nord": 856,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 1367
+  },
+  "014": {
+   "seite": "Nord",
+   "breite": 1920,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 3072.8339043026353,
+   "kp_nord": 9802,
+   "grad_nord": 15,
+   "inlier_nord": 4164,
+   "staerkste_nord": 740,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 858
+  },
+  "018": {
+   "seite": "Nord",
+   "breite": 1920,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 1611.9934393231445,
+   "kp_nord": 11306,
+   "grad_nord": 15,
+   "inlier_nord": 4676,
+   "staerkste_nord": 573,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 1075
+  },
+  "020": {
+   "seite": "Sued",
+   "breite": 1920,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 3906.4306398649414
+  },
+  "021": {
+   "seite": "Sued",
+   "breite": 1920,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 3347.8135328443536
+  },
+  "022": {
+   "seite": "Sued",
+   "breite": 1920,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 7482.233244548002,
+   "kp_sued": 9888,
+   "grad_sued": 36,
+   "inlier_sued": 3669,
+   "staerkste_sued": 613,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 874
+  },
+  "030": {
+   "seite": "Sued",
+   "breite": 1920,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 15485.461321282064,
+   "kp_sued": 11546,
+   "grad_sued": 23,
+   "inlier_sued": 2597,
+   "staerkste_sued": 507,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 732
+  },
+  "031": {
+   "seite": "Nord",
+   "breite": 1920,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 5824.911702857328,
+   "kp_nord": 10350,
+   "grad_nord": 14,
+   "inlier_nord": 3909,
+   "staerkste_nord": 1561,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 804
+  },
+  "040": {
+   "seite": "Nord",
+   "breite": 1920,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 2989.7973751183117,
+   "kp_nord": 8972,
+   "grad_nord": 14,
+   "inlier_nord": 4504,
+   "staerkste_nord": 1561,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 959
+  },
+  "041": {
+   "seite": "Sued",
+   "breite": 1920,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 6205.897329562048,
+   "kp_sued": 10711,
+   "grad_sued": 22,
+   "inlier_sued": 3326,
+   "staerkste_sued": 406,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 788
+  },
+  "042": {
+   "seite": "Sued",
+   "breite": 1536,
+   "hoehe": 2048,
+   "f35": null,
+   "schaerfe": 3896.0676633524477,
+   "kp_sued": 10792,
+   "grad_sued": 36,
+   "inlier_sued": 3599,
+   "staerkste_sued": 463,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 866
+  },
+  "043": {
+   "seite": "Sued",
+   "breite": 1536,
+   "hoehe": 2048,
+   "f35": null,
+   "schaerfe": 2747.0667703781023
+  },
+  "044": {
+   "seite": "Nord",
+   "breite": 1536,
+   "hoehe": 2048,
+   "f35": null,
+   "schaerfe": 1646.2495249078434,
+   "kp_nord": 10211,
+   "grad_nord": 14,
+   "inlier_nord": 3502,
+   "staerkste_nord": 573,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 788
+  },
+  "049": {
+   "seite": "Nord",
+   "breite": 1920,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 3568.029971678943,
+   "kp_nord": 9341,
+   "grad_nord": 15,
+   "inlier_nord": 3084,
+   "staerkste_nord": 559,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 760
+  },
+  "050": {
+   "seite": "Sued",
+   "breite": 1920,
+   "hoehe": 2560,
+   "f35": null,
+   "schaerfe": 8214.316958319083,
+   "kp_sued": 8286,
+   "grad_sued": 22,
+   "inlier_sued": 3179,
+   "staerkste_sued": 514,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 766
+  },
+  "000": {
+   "seite": "Sued",
+   "breite": 1893,
+   "hoehe": 2773,
+   "f35": null,
+   "schaerfe": 5652.448309720549,
+   "kp_sued": 11808,
+   "grad_sued": 36,
+   "inlier_sued": 1999,
+   "staerkste_sued": 304,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 371
+  },
+  "060": {
+   "seite": "West",
+   "breite": 4658,
+   "hoehe": 2844,
+   "f35": 138.0,
+   "schaerfe": 7475.078176457953,
+   "kp_nord": 9306,
+   "grad_nord": 1,
+   "inlier_nord": 15,
+   "staerkste_nord": 15,
+   "im_netz_nord": true,
+   "registriert_nord": false,
+   "punkte3d_nord": 0
+  },
+  "061": {
+   "seite": "Ost",
+   "breite": 3601,
+   "hoehe": 2757,
+   "f35": null,
+   "schaerfe": 6180.406897286032,
+   "kp_nord": 20888,
+   "grad_nord": 1,
+   "inlier_nord": 15,
+   "staerkste_nord": 15,
+   "im_netz_nord": true,
+   "registriert_nord": false,
+   "punkte3d_nord": 0
+  },
+  "012": {
+   "seite": "Sued",
+   "breite": 1024,
+   "hoehe": 716,
+   "f35": null,
+   "schaerfe": 1092.8638890923771,
+   "kp_sued": 9838,
+   "grad_sued": 18,
+   "inlier_sued": 889,
+   "staerkste_sued": 99,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 239
+  },
+  "025": {
+   "seite": "Sued",
+   "breite": 800,
+   "hoehe": 600,
+   "f35": null,
+   "schaerfe": 4236.6288234249105
+  },
+  "056": {
+   "seite": "Sued",
+   "breite": 1920,
+   "hoehe": 1440,
+   "f35": null,
+   "schaerfe": 11404.601558761215
+  },
+  "002": {
+   "seite": "Nord",
+   "breite": 1920,
+   "hoehe": 1280,
+   "f35": null,
+   "schaerfe": 4133.227173969758,
+   "kp_nord": 10991,
+   "grad_nord": 10,
+   "inlier_nord": 1098,
+   "staerkste_nord": 472,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 254
+  },
+  "005": {
+   "seite": "Nord",
+   "breite": 1200,
+   "hoehe": 1600,
+   "f35": 25.0,
+   "schaerfe": 3699.1107855681416,
+   "kp_nord": 9934,
+   "grad_nord": 15,
+   "inlier_nord": 3909,
+   "staerkste_nord": 856,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 985
+  },
+  "015": {
+   "seite": "Nord",
+   "breite": 853,
+   "hoehe": 1280,
+   "f35": null,
+   "schaerfe": 1335.0476144313322,
+   "kp_nord": 7688,
+   "grad_nord": 15,
+   "inlier_nord": 5289,
+   "staerkste_nord": 740,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 1214
+  },
+  "017": {
+   "seite": "Nord",
+   "breite": 1920,
+   "hoehe": 2818,
+   "f35": null,
+   "schaerfe": 1760.4342058758377,
+   "kp_nord": 10697,
+   "grad_nord": 13,
+   "inlier_nord": 1965,
+   "staerkste_nord": 264,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 500
+  },
+  "019": {
+   "seite": "Nord",
+   "breite": 1920,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 3918.9004754446296,
+   "kp_nord": 9975,
+   "grad_nord": 14,
+   "inlier_nord": 3010,
+   "staerkste_nord": 467,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 669
+  },
+  "027": {
+   "seite": "Nord",
+   "breite": 1024,
+   "hoehe": 768,
+   "f35": null,
+   "schaerfe": 2661.343592354287,
+   "kp_nord": 7500,
+   "grad_nord": 15,
+   "inlier_nord": 2843,
+   "staerkste_nord": 473,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 628
+  },
+  "045": {
+   "seite": "Nord",
+   "breite": 1920,
+   "hoehe": 1440,
+   "f35": null,
+   "schaerfe": 1539.1972002217612,
+   "kp_nord": 9357,
+   "grad_nord": 15,
+   "inlier_nord": 3385,
+   "staerkste_nord": 473,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 835
+  },
+  "051": {
+   "seite": "Nord",
+   "breite": 1920,
+   "hoehe": 2560,
+   "f35": null,
+   "schaerfe": 2373.382110351552,
+   "kp_nord": 8693,
+   "grad_nord": 14,
+   "inlier_nord": 774,
+   "staerkste_nord": 163,
+   "im_netz_nord": true,
+   "registriert_nord": true,
+   "punkte3d_nord": 233
+  },
+  "003": {
+   "seite": "unbekannt",
+   "breite": 1920,
+   "hoehe": 1280,
+   "f35": null,
+   "schaerfe": 2175.650354133134
+  },
+  "010": {
+   "seite": "unbekannt",
+   "breite": 1350,
+   "hoehe": 1008,
+   "f35": null,
+   "schaerfe": 1158.1004134961568
+  },
+  "011": {
+   "seite": "unbekannt",
+   "breite": 1920,
+   "hoehe": 1440,
+   "f35": null,
+   "schaerfe": 3682.1162693735346
+  },
+  "013": {
+   "seite": "unbekannt",
+   "breite": 1024,
+   "hoehe": 668,
+   "f35": null,
+   "schaerfe": 1010.2633559442406
+  },
+  "016": {
+   "seite": "unbekannt",
+   "breite": 1280,
+   "hoehe": 853,
+   "f35": null,
+   "schaerfe": 595.8047138201447
+  },
+  "052": {
+   "seite": "unbekannt",
+   "breite": 1920,
+   "hoehe": 2204,
+   "f35": null,
+   "schaerfe": 7959.85450973202
+  },
+  "059": {
+   "seite": "unbekannt",
+   "breite": 1920,
+   "hoehe": 2560,
+   "f35": null,
+   "schaerfe": 7063.685813816822
+  },
+  "039": {
+   "seite": null,
+   "breite": 1920,
+   "hoehe": 2905,
+   "f35": null,
+   "schaerfe": 4723.150282891852
+  },
+  "062": {
+   "seite": "Sued",
+   "breite": 865,
+   "hoehe": 1920,
+   "f35": null,
+   "schaerfe": 16617.582008847363,
+   "kp_sued": 12860,
+   "grad_sued": 21,
+   "inlier_sued": 2925,
+   "staerkste_sued": 514,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 807
+  },
+  "063": {
+   "seite": "Sued",
+   "breite": 1728,
+   "hoehe": 2304,
+   "f35": null,
+   "schaerfe": 6543.280062601682,
+   "kp_sued": 9059,
+   "grad_sued": 18,
+   "inlier_sued": 1121,
+   "staerkste_sued": 157,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 319
+  },
+  "064": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 5775,
+   "f35": null,
+   "schaerfe": 6498.725687128553,
+   "kp_sued": 8524,
+   "grad_sued": 38,
+   "inlier_sued": 1518,
+   "staerkste_sued": 152,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 331
+  },
+  "065": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 5760,
+   "f35": null,
+   "schaerfe": 13712.6546141604,
+   "kp_sued": 11846,
+   "grad_sued": 29,
+   "inlier_sued": 3938,
+   "staerkste_sued": 1042,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 940
+  },
+  "066": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 5760,
+   "f35": null,
+   "schaerfe": 14215.899696814582,
+   "kp_sued": 12587,
+   "grad_sued": 22,
+   "inlier_sued": 3425,
+   "staerkste_sued": 1042,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 869
+  },
+  "067": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 6610.780577431192,
+   "kp_sued": 8561,
+   "grad_sued": 22,
+   "inlier_sued": 3447,
+   "staerkste_sued": 431,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 872
+  },
+  "008": {
+   "seite": "Sued",
+   "breite": 1481,
+   "hoehe": 1784,
+   "f35": 105.0,
+   "schaerfe": 821.0231897440264,
+   "kp_sued": 9747,
+   "grad_sued": 5,
+   "inlier_sued": 261,
+   "staerkste_sued": 167,
+   "im_netz_sued": true,
+   "registriert_sued": false,
+   "punkte3d_sued": 0
+  },
+  "029": {
+   "seite": "Sued",
+   "breite": 1920,
+   "hoehe": 2560,
+   "f35": null,
+   "schaerfe": 13271.520695609368,
+   "kp_sued": 10558,
+   "grad_sued": 9,
+   "inlier_sued": 517,
+   "staerkste_sued": 167,
+   "im_netz_sued": true,
+   "registriert_sued": false,
+   "punkte3d_sued": 0
+  },
+  "068": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2617,
+   "f35": null,
+   "schaerfe": 6193.275883504038
+  },
+  "069": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2553,
+   "f35": null,
+   "schaerfe": 9307.372549959637
+  },
+  "070": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2560,
+   "f35": null,
+   "schaerfe": 6940.091747356426
+  },
+  "071": {
+   "seite": "Nord",
+   "breite": 3840,
+   "hoehe": 2819,
+   "f35": null,
+   "schaerfe": 4998.032183069216
+  },
+  "072": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2632,
+   "f35": null,
+   "schaerfe": 2543.330438073723
+  },
+  "073": {
+   "seite": "Nord",
+   "breite": 3840,
+   "hoehe": 5754,
+   "f35": null,
+   "schaerfe": 7591.361241671777
+  },
+  "074": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2560,
+   "f35": null,
+   "schaerfe": 2257.4355786119154
+  },
+  "075": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2562,
+   "f35": null,
+   "schaerfe": 8988.685373314687,
+   "kp_sued": 9385,
+   "grad_sued": 28,
+   "inlier_sued": 1534,
+   "staerkste_sued": 160,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 276
+  },
+  "076": {
+   "seite": "Nord",
+   "breite": 3840,
+   "hoehe": 4604,
+   "f35": null,
+   "schaerfe": 8251.616681079691
+  },
+  "077": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 3551,
+   "f35": null,
+   "schaerfe": 6728.129049575054,
+   "kp_sued": 8775,
+   "grad_sued": 13,
+   "inlier_sued": 889,
+   "staerkste_sued": 248,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 266
+  },
+  "078": {
+   "seite": "Nord",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 3417.264183310573
+  },
+  "079": {
+   "seite": "Nord",
+   "breite": 3840,
+   "hoehe": 2876,
+   "f35": null,
+   "schaerfe": 2991.8080165502356
+  },
+  "080": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 6922.92168468217,
+   "kp_sued": 10647,
+   "grad_sued": 24,
+   "inlier_sued": 21592,
+   "staerkste_sued": 2304,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1199
+  },
+  "081": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 7058.0958658649015,
+   "kp_sued": 10006,
+   "grad_sued": 27,
+   "inlier_sued": 12313,
+   "staerkste_sued": 1568,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1390
+  },
+  "082": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 6906.774749039542,
+   "kp_sued": 9617,
+   "grad_sued": 29,
+   "inlier_sued": 17607,
+   "staerkste_sued": 2222,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1004
+  },
+  "083": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 6972.670884785801,
+   "kp_sued": 10083,
+   "grad_sued": 30,
+   "inlier_sued": 10493,
+   "staerkste_sued": 1856,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1369
+  },
+  "084": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 6668.0894395589185,
+   "kp_sued": 10156,
+   "grad_sued": 25,
+   "inlier_sued": 21340,
+   "staerkste_sued": 2278,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1170
+  },
+  "085": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 6695.660410740114,
+   "kp_sued": 10182,
+   "grad_sued": 30,
+   "inlier_sued": 11126,
+   "staerkste_sued": 2149,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1402
+  },
+  "086": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 6528.005373500305,
+   "kp_sued": 9782,
+   "grad_sued": 24,
+   "inlier_sued": 20524,
+   "staerkste_sued": 2304,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1133
+  },
+  "087": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2154,
+   "f35": null,
+   "schaerfe": 2420.101253632965
+  },
+  "088": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 6474.3090987985815,
+   "kp_sued": 10214,
+   "grad_sued": 27,
+   "inlier_sued": 10478,
+   "staerkste_sued": 2149,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1297
+  },
+  "089": {
+   "seite": "Nord",
+   "breite": 3840,
+   "hoehe": 5120,
+   "f35": null,
+   "schaerfe": 8412.412170942423
+  },
+  "090": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 5880.629361768552,
+   "kp_sued": 9338,
+   "grad_sued": 26,
+   "inlier_sued": 8162,
+   "staerkste_sued": 1137,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1270
+  },
+  "091": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 5181.776267479791,
+   "kp_sued": 9832,
+   "grad_sued": 27,
+   "inlier_sued": 20809,
+   "staerkste_sued": 2258,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1032
+  },
+  "092": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 1910,
+   "f35": null,
+   "schaerfe": 2157.9545326330626
+  },
+  "093": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 5194.887961360678,
+   "kp_sued": 9491,
+   "grad_sued": 26,
+   "inlier_sued": 19726,
+   "staerkste_sued": 1806,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1199
+  },
+  "094": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 4996.345384493499,
+   "kp_sued": 8236,
+   "grad_sued": 23,
+   "inlier_sued": 16501,
+   "staerkste_sued": 1573,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 919
+  },
+  "095": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 4579.155560479695
+  },
+  "096": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 4507.924374938954,
+   "kp_sued": 10352,
+   "grad_sued": 30,
+   "inlier_sued": 18619,
+   "staerkste_sued": 1806,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1173
+  },
+  "097": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 4146.214572854348,
+   "kp_sued": 8325,
+   "grad_sued": 27,
+   "inlier_sued": 11390,
+   "staerkste_sued": 1521,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 596
+  },
+  "098": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 4038.547490233517,
+   "kp_sued": 8985,
+   "grad_sued": 27,
+   "inlier_sued": 17849,
+   "staerkste_sued": 1800,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1037
+  },
+  "099": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 3932.8519741692435
+  },
+  "100": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 1913,
+   "f35": null,
+   "schaerfe": 1574.4676936181193
+  },
+  "101": {
+   "seite": "Nord",
+   "breite": 3840,
+   "hoehe": 5776,
+   "f35": null,
+   "schaerfe": 6859.480442948477
+  },
+  "102": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 3432.977909313583
+  },
+  "103": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 3641.9298041422526,
+   "kp_sued": 8677,
+   "grad_sued": 27,
+   "inlier_sued": 10443,
+   "staerkste_sued": 1521,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 611
+  },
+  "104": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 3680.7206089801366,
+   "kp_sued": 8500,
+   "grad_sued": 23,
+   "inlier_sued": 8625,
+   "staerkste_sued": 959,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 506
+  },
+  "105": {
+   "seite": "Ost",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 3163.955610575189
+  },
+  "106": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2811,
+   "f35": null,
+   "schaerfe": 2557.714875151906,
+   "kp_sued": 10574,
+   "grad_sued": 0,
+   "inlier_sued": 0,
+   "staerkste_sued": 0,
+   "im_netz_sued": true,
+   "registriert_sued": false,
+   "punkte3d_sued": 0
+  },
+  "107": {
+   "seite": "Sued",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 2991.720580227904,
+   "kp_sued": 9211,
+   "grad_sued": 31,
+   "inlier_sued": 12560,
+   "staerkste_sued": 1295,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 774
+  },
+  "108": {
+   "seite": "Nord",
+   "breite": 3840,
+   "hoehe": 4800,
+   "f35": 42.0,
+   "schaerfe": 8296.188471069334
+  },
+  "109": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 2735.5755961494347
+  },
+  "110": {
+   "seite": "Nord",
+   "breite": 3840,
+   "hoehe": 4923,
+   "f35": null,
+   "schaerfe": 6987.630888687092
+  },
+  "111": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 3066,
+   "f35": null,
+   "schaerfe": 3122.032628096745
+  },
+  "112": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 2296.595237244065
+  },
+  "113": {
+   "seite": "unbekannt",
+   "breite": 3493,
+   "hoehe": 6014,
+   "f35": 27.0,
+   "schaerfe": 5835.55904996687
+  },
+  "114": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 1571.495053964191
+  },
+  "115": {
+   "seite": "unbekannt",
+   "breite": 3717,
+   "hoehe": 2996,
+   "f35": null,
+   "schaerfe": 2215.835288868454
+  },
+  "116": {
+   "seite": "unbekannt",
+   "breite": 3695,
+   "hoehe": 5337,
+   "f35": null,
+   "schaerfe": 3240.664763845021
+  },
+  "117": {
+   "seite": "Nord",
+   "breite": 3287,
+   "hoehe": 2438,
+   "f35": null,
+   "schaerfe": 5404.103617726756
+  },
+  "118": {
+   "seite": "Nord",
+   "breite": 3662,
+   "hoehe": 4956,
+   "f35": 27.0,
+   "schaerfe": 3187.2743796934838
+  },
+  "119": {
+   "seite": "Sued",
+   "breite": 3117,
+   "hoehe": 2909,
+   "f35": 24.0,
+   "schaerfe": 4334.463697023254,
+   "kp_sued": 10074,
+   "grad_sued": 29,
+   "inlier_sued": 2538,
+   "staerkste_sued": 758,
+   "im_netz_sued": true,
+   "registriert_sued": false,
+   "punkte3d_sued": 0
+  },
+  "120": {
+   "seite": "Sued",
+   "breite": 1920,
+   "hoehe": 2560,
+   "f35": null,
+   "schaerfe": 12557.162859988359,
+   "kp_sued": 11476,
+   "grad_sued": 10,
+   "inlier_sued": 496,
+   "staerkste_sued": 158,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 149
+  },
+  "121": {
+   "seite": "Sued",
+   "breite": 3126,
+   "hoehe": 3030,
+   "f35": 24.0,
+   "schaerfe": 4081.8436320597466,
+   "kp_sued": 10619,
+   "grad_sued": 23,
+   "inlier_sued": 1783,
+   "staerkste_sued": 758,
+   "im_netz_sued": true,
+   "registriert_sued": false,
+   "punkte3d_sued": 0
+  },
+  "122": {
+   "seite": "unbekannt",
+   "breite": 3840,
+   "hoehe": 2880,
+   "f35": null,
+   "schaerfe": 689.1833332374467
+  },
+  "123": {
+   "seite": "Sued",
+   "breite": 3000,
+   "hoehe": 4000,
+   "f35": null,
+   "schaerfe": 8127.799575821938,
+   "kp_sued": 8426,
+   "grad_sued": 28,
+   "inlier_sued": 3458,
+   "staerkste_sued": 1261,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 577
+  },
+  "124": {
+   "seite": "Sued",
+   "breite": 3000,
+   "hoehe": 4000,
+   "f35": null,
+   "schaerfe": 5845.706124127186,
+   "kp_sued": 9563,
+   "grad_sued": 30,
+   "inlier_sued": 9806,
+   "staerkste_sued": 1568,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 948
+  },
+  "125": {
+   "seite": "Sued",
+   "breite": 2848,
+   "hoehe": 4288,
+   "f35": 27.0,
+   "schaerfe": 6934.845069772801,
+   "kp_sued": 11840,
+   "grad_sued": 39,
+   "inlier_sued": 5135,
+   "staerkste_sued": 820,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 1193
+  },
+  "126": {
+   "seite": "unbekannt",
+   "breite": 3144,
+   "hoehe": 4195,
+   "f35": 52.0,
+   "schaerfe": 2935.873596809218
+  },
+  "127": {
+   "seite": "Sued",
+   "breite": 2736,
+   "hoehe": 4000,
+   "f35": null,
+   "schaerfe": 9187.494796072868,
+   "kp_sued": 11800,
+   "grad_sued": 21,
+   "inlier_sued": 2975,
+   "staerkste_sued": 1261,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 570
+  },
+  "128": {
+   "seite": "Nord",
+   "breite": 3037,
+   "hoehe": 4020,
+   "f35": 24.0,
+   "schaerfe": 4274.046881020463
+  },
+  "129": {
+   "seite": "unbekannt",
+   "breite": 2709,
+   "hoehe": 2265,
+   "f35": null,
+   "schaerfe": 4922.063811252075
+  },
+  "130": {
+   "seite": "Nord",
+   "breite": 2935,
+   "hoehe": 3477,
+   "f35": 15.0,
+   "schaerfe": 6101.637890907788
+  },
+  "131": {
+   "seite": "Sued",
+   "breite": 3104,
+   "hoehe": 3663,
+   "f35": 150.0,
+   "schaerfe": 3187.6762853974815
+  },
+  "132": {
+   "seite": "Sued",
+   "breite": 1920,
+   "hoehe": 2560,
+   "f35": null,
+   "schaerfe": 4127.314742394244,
+   "kp_sued": 10189,
+   "grad_sued": 25,
+   "inlier_sued": 707,
+   "staerkste_sued": 82,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 113
+  },
+  "133": {
+   "seite": "Nord",
+   "breite": 3000,
+   "hoehe": 4000,
+   "f35": null,
+   "schaerfe": 3536.297176082992
+  },
+  "134": {
+   "seite": "Sued",
+   "breite": 1920,
+   "hoehe": 2560,
+   "f35": null,
+   "schaerfe": 4268.261091015243,
+   "kp_sued": 8580,
+   "grad_sued": 14,
+   "inlier_sued": 990,
+   "staerkste_sued": 248,
+   "im_netz_sued": true,
+   "registriert_sued": true,
+   "punkte3d_sued": 273
+  },
+  "135": {
+   "seite": "Nord",
+   "breite": 3000,
+   "hoehe": 4000,
+   "f35": null,
+   "schaerfe": 3276.1537031211747
+  },
+  "136": {
+   "seite": "Nord",
+   "breite": 3000,
+   "hoehe": 4000,
+   "f35": null,
+   "schaerfe": 3150.5583195851227
+  },
+  "137": {
+   "seite": "unbekannt",
+   "breite": 3000,
+   "hoehe": 4000,
+   "f35": null,
+   "schaerfe": 3141.0561380835215
+  },
+  "138": {
+   "seite": "unbekannt",
+   "breite": 2944,
+   "hoehe": 4056,
+   "f35": 52.0,
+   "schaerfe": 2612.7013315005593
+  },
+  "139": {
+   "seite": "unbekannt",
+   "breite": 2520,
+   "hoehe": 1680,
+   "f35": null,
+   "schaerfe": 990.5277954746296
+  }
+ },
+ "pruefung": {
+  "nord": {
+   "in_db": 18,
+   "registriert": 16,
+   "nicht": 2,
+   "kennzahlen": {
+    "schaerfe": {
+     "auc": null,
+     "p": null,
+     "median_reg": 2825.570483736299,
+     "median_nicht": 6827.742536871992,
+     "n_reg": 16,
+     "n_nicht": 2
+    },
+    "breite": {
+     "auc": null,
+     "p": null,
+     "median_reg": 1920.0,
+     "median_nicht": 4129.5,
+     "n_reg": 16,
+     "n_nicht": 2
+    },
+    "f35": {
+     "auc": null,
+     "p": null,
+     "median_reg": 25.0,
+     "median_nicht": 138.0,
+     "n_reg": 2,
+     "n_nicht": 1
+    },
+    "kp_nord": {
+     "auc": null,
+     "p": null,
+     "median_reg": 9844.0,
+     "median_nicht": 15097.0,
+     "n_reg": 16,
+     "n_nicht": 2
+    },
+    "grad_nord": {
+     "auc": null,
+     "p": null,
+     "median_reg": 15.0,
+     "median_nicht": 1.0,
+     "n_reg": 16,
+     "n_nicht": 2
+    },
+    "inlier_nord": {
+     "auc": null,
+     "p": null,
+     "median_reg": 3705.5,
+     "median_nicht": 15.0,
+     "n_reg": 16,
+     "n_nicht": 2
+    },
+    "staerkste_nord": {
+     "auc": null,
+     "p": null,
+     "median_reg": 573.0,
+     "median_nicht": 15.0,
+     "n_reg": 16,
+     "n_nicht": 2
+    }
+   }
+  },
+  "sued": {
+   "in_db": 45,
+   "registriert": 40,
+   "nicht": 5,
+   "kennzahlen": {
+    "schaerfe": {
+     "auc": 0.74,
+     "p": 0.07998000499875031,
+     "median_reg": 6535.642718050994,
+     "median_nicht": 4081.8436320597466,
+     "n_reg": 40,
+     "n_nicht": 5
+    },
+    "breite": {
+     "auc": 0.6475,
+     "p": 0.23519120219945014,
+     "median_reg": 3840.0,
+     "median_nicht": 3117.0,
+     "n_reg": 40,
+     "n_nicht": 5
+    },
+    "f35": {
+     "auc": null,
+     "p": null,
+     "median_reg": 27.0,
+     "median_nicht": 24.0,
+     "n_reg": 1,
+     "n_nicht": 3
+    },
+    "kp_sued": {
+     "auc": 0.36,
+     "p": 0.32991752061984503,
+     "median_reg": 9835.0,
+     "median_nicht": 10558.0,
+     "n_reg": 40,
+     "n_nicht": 5
+    },
+    "grad_sued": {
+     "auc": 0.7925,
+     "p": 0.03399150212446888,
+     "median_reg": 26.5,
+     "median_nicht": 9.0,
+     "n_reg": 40,
+     "n_nicht": 5
+    },
+    "inlier_sued": {
+     "auc": 0.91,
+     "p": 0.0014996250937265683,
+     "median_reg": 4536.5,
+     "median_nicht": 517.0,
+     "n_reg": 40,
+     "n_nicht": 5
+    },
+    "staerkste_sued": {
+     "auc": 0.78,
+     "p": 0.041989502624343915,
+     "median_reg": 1089.5,
+     "median_nicht": 167.0,
+     "n_reg": 40,
+     "n_nicht": 5
+    }
+   }
+  }
+ },
+ "belegt": [
+  "sued:grad_sued",
+  "sued:inlier_sued",
+  "sued:staerkste_sued"
+ ]
+}

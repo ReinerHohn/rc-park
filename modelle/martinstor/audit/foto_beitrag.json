@@ -1,0 +1,518 @@
+{
+ "nord": {
+  "punkte": 2606,
+  "punkte_oben": 438.0,
+  "fotos": {
+   "051": {
+    "verlorene_punkte": 5,
+    "verloren_oben": 0,
+    "punkte3d": 233,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0019,
+    "anteil_verloren_oben": 0.0
+   },
+   "049": {
+    "verlorene_punkte": 20,
+    "verloren_oben": 7,
+    "punkte3d": 748,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0077,
+    "anteil_verloren_oben": 0.016
+   },
+   "045": {
+    "verlorene_punkte": 11,
+    "verloren_oben": 0,
+    "punkte3d": 830,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0042,
+    "anteil_verloren_oben": 0.0
+   },
+   "001": {
+    "verlorene_punkte": 9,
+    "verloren_oben": 3,
+    "punkte3d": 903,
+    "sektor": 4,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0035,
+    "anteil_verloren_oben": 0.0068
+   },
+   "002": {
+    "verlorene_punkte": 4,
+    "verloren_oben": 0,
+    "punkte3d": 254,
+    "sektor": 4,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0015,
+    "anteil_verloren_oben": 0.0
+   },
+   "005": {
+    "verlorene_punkte": 11,
+    "verloren_oben": 4,
+    "punkte3d": 977,
+    "sektor": 4,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0042,
+    "anteil_verloren_oben": 0.0091
+   },
+   "006": {
+    "verlorene_punkte": 28,
+    "verloren_oben": 4,
+    "punkte3d": 1359,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0107,
+    "anteil_verloren_oben": 0.0091
+   },
+   "014": {
+    "verlorene_punkte": 46,
+    "verloren_oben": 11,
+    "punkte3d": 853,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0177,
+    "anteil_verloren_oben": 0.0251
+   },
+   "015": {
+    "verlorene_punkte": 37,
+    "verloren_oben": 3,
+    "punkte3d": 1194,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0142,
+    "anteil_verloren_oben": 0.0068
+   },
+   "017": {
+    "verlorene_punkte": 9,
+    "verloren_oben": 3,
+    "punkte3d": 499,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0035,
+    "anteil_verloren_oben": 0.0068
+   },
+   "018": {
+    "verlorene_punkte": 29,
+    "verloren_oben": 5,
+    "punkte3d": 1061,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0111,
+    "anteil_verloren_oben": 0.0114
+   },
+   "019": {
+    "verlorene_punkte": 21,
+    "verloren_oben": 2,
+    "punkte3d": 659,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0081,
+    "anteil_verloren_oben": 0.0046
+   },
+   "027": {
+    "verlorene_punkte": 21,
+    "verloren_oben": 0,
+    "punkte3d": 627,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0081,
+    "anteil_verloren_oben": 0.0
+   },
+   "031": {
+    "verlorene_punkte": 34,
+    "verloren_oben": 10,
+    "punkte3d": 798,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.013,
+    "anteil_verloren_oben": 0.0228
+   },
+   "040": {
+    "verlorene_punkte": 30,
+    "verloren_oben": 7,
+    "punkte3d": 950,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0115,
+    "anteil_verloren_oben": 0.016
+   },
+   "044": {
+    "verlorene_punkte": 15,
+    "verloren_oben": 3,
+    "punkte3d": 780,
+    "sektor": 3,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0058,
+    "anteil_verloren_oben": 0.0068
+   }
+  }
+ },
+ "sued": {
+  "punkte": 5201,
+  "punkte_oben": 7.0,
+  "fotos": {
+   "134": {
+    "verlorene_punkte": 24,
+    "verloren_oben": 0,
+    "punkte3d": 273,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0046,
+    "anteil_verloren_oben": 0.0
+   },
+   "132": {
+    "verlorene_punkte": 4,
+    "verloren_oben": 0,
+    "punkte3d": 113,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0008,
+    "anteil_verloren_oben": 0.0
+   },
+   "127": {
+    "verlorene_punkte": 56,
+    "verloren_oben": 2,
+    "punkte3d": 569,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0108,
+    "anteil_verloren_oben": 0.2857
+   },
+   "125": {
+    "verlorene_punkte": 27,
+    "verloren_oben": 0,
+    "punkte3d": 1183,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0052,
+    "anteil_verloren_oben": 0.0
+   },
+   "124": {
+    "verlorene_punkte": 12,
+    "verloren_oben": 0,
+    "punkte3d": 933,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0023,
+    "anteil_verloren_oben": 0.0
+   },
+   "123": {
+    "verlorene_punkte": 60,
+    "verloren_oben": 1,
+    "punkte3d": 575,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0115,
+    "anteil_verloren_oben": 0.1429
+   },
+   "120": {
+    "verlorene_punkte": 4,
+    "verloren_oben": 0,
+    "punkte3d": 149,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0008,
+    "anteil_verloren_oben": 0.0
+   },
+   "107": {
+    "verlorene_punkte": 3,
+    "verloren_oben": 0,
+    "punkte3d": 767,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0006,
+    "anteil_verloren_oben": 0.0
+   },
+   "104": {
+    "verlorene_punkte": 1,
+    "verloren_oben": 0,
+    "punkte3d": 498,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0002,
+    "anteil_verloren_oben": 0.0
+   },
+   "103": {
+    "verlorene_punkte": 0,
+    "verloren_oben": 0,
+    "punkte3d": 608,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0,
+    "anteil_verloren_oben": 0.0
+   },
+   "098": {
+    "verlorene_punkte": 5,
+    "verloren_oben": 0,
+    "punkte3d": 1026,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.001,
+    "anteil_verloren_oben": 0.0
+   },
+   "067": {
+    "verlorene_punkte": 23,
+    "verloren_oben": 0,
+    "punkte3d": 866,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0044,
+    "anteil_verloren_oben": 0.0
+   },
+   "065": {
+    "verlorene_punkte": 29,
+    "verloren_oben": 0,
+    "punkte3d": 931,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0056,
+    "anteil_verloren_oben": 0.0
+   },
+   "064": {
+    "verlorene_punkte": 16,
+    "verloren_oben": 0,
+    "punkte3d": 330,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0031,
+    "anteil_verloren_oben": 0.0
+   },
+   "063": {
+    "verlorene_punkte": 14,
+    "verloren_oben": 0,
+    "punkte3d": 319,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0027,
+    "anteil_verloren_oben": 0.0
+   },
+   "062": {
+    "verlorene_punkte": 25,
+    "verloren_oben": 0,
+    "punkte3d": 803,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0048,
+    "anteil_verloren_oben": 0.0
+   },
+   "050": {
+    "verlorene_punkte": 14,
+    "verloren_oben": 0,
+    "punkte3d": 764,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0027,
+    "anteil_verloren_oben": 0.0
+   },
+   "042": {
+    "verlorene_punkte": 33,
+    "verloren_oben": 0,
+    "punkte3d": 859,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0063,
+    "anteil_verloren_oben": 0.0
+   },
+   "041": {
+    "verlorene_punkte": 37,
+    "verloren_oben": 0,
+    "punkte3d": 784,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0071,
+    "anteil_verloren_oben": 0.0
+   },
+   "030": {
+    "verlorene_punkte": 30,
+    "verloren_oben": 0,
+    "punkte3d": 727,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0058,
+    "anteil_verloren_oben": 0.0
+   },
+   "022": {
+    "verlorene_punkte": 26,
+    "verloren_oben": 0,
+    "punkte3d": 869,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.005,
+    "anteil_verloren_oben": 0.0
+   },
+   "012": {
+    "verlorene_punkte": 11,
+    "verloren_oben": 0,
+    "punkte3d": 239,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0021,
+    "anteil_verloren_oben": 0.0
+   },
+   "066": {
+    "verlorene_punkte": 35,
+    "verloren_oben": 0,
+    "punkte3d": 866,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0067,
+    "anteil_verloren_oben": 0.0
+   },
+   "000": {
+    "verlorene_punkte": 59,
+    "verloren_oben": 3,
+    "punkte3d": 371,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0113,
+    "anteil_verloren_oben": 0.4286
+   },
+   "096": {
+    "verlorene_punkte": 6,
+    "verloren_oben": 0,
+    "punkte3d": 1160,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0012,
+    "anteil_verloren_oben": 0.0
+   },
+   "075": {
+    "verlorene_punkte": 40,
+    "verloren_oben": 0,
+    "punkte3d": 276,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0077,
+    "anteil_verloren_oben": 0.0
+   },
+   "077": {
+    "verlorene_punkte": 18,
+    "verloren_oben": 0,
+    "punkte3d": 266,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0035,
+    "anteil_verloren_oben": 0.0
+   },
+   "080": {
+    "verlorene_punkte": 10,
+    "verloren_oben": 0,
+    "punkte3d": 1182,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0019,
+    "anteil_verloren_oben": 0.0
+   },
+   "081": {
+    "verlorene_punkte": 14,
+    "verloren_oben": 0,
+    "punkte3d": 1380,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0027,
+    "anteil_verloren_oben": 0.0
+   },
+   "082": {
+    "verlorene_punkte": 12,
+    "verloren_oben": 0,
+    "punkte3d": 990,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0023,
+    "anteil_verloren_oben": 0.0
+   },
+   "083": {
+    "verlorene_punkte": 16,
+    "verloren_oben": 0,
+    "punkte3d": 1356,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0031,
+    "anteil_verloren_oben": 0.0
+   },
+   "084": {
+    "verlorene_punkte": 5,
+    "verloren_oben": 0,
+    "punkte3d": 1147,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.001,
+    "anteil_verloren_oben": 0.0
+   },
+   "085": {
+    "verlorene_punkte": 8,
+    "verloren_oben": 0,
+    "punkte3d": 1394,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0015,
+    "anteil_verloren_oben": 0.0
+   },
+   "086": {
+    "verlorene_punkte": 14,
+    "verloren_oben": 0,
+    "punkte3d": 1118,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0027,
+    "anteil_verloren_oben": 0.0
+   },
+   "088": {
+    "verlorene_punkte": 5,
+    "verloren_oben": 0,
+    "punkte3d": 1285,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.001,
+    "anteil_verloren_oben": 0.0
+   },
+   "090": {
+    "verlorene_punkte": 24,
+    "verloren_oben": 0,
+    "punkte3d": 1262,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0046,
+    "anteil_verloren_oben": 0.0
+   },
+   "091": {
+    "verlorene_punkte": 2,
+    "verloren_oben": 0,
+    "punkte3d": 1023,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0004,
+    "anteil_verloren_oben": 0.0
+   },
+   "093": {
+    "verlorene_punkte": 19,
+    "verloren_oben": 0,
+    "punkte3d": 1188,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0037,
+    "anteil_verloren_oben": 0.0
+   },
+   "094": {
+    "verlorene_punkte": 2,
+    "verloren_oben": 0,
+    "punkte3d": 904,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0004,
+    "anteil_verloren_oben": 0.0
+   },
+   "097": {
+    "verlorene_punkte": 1,
+    "verloren_oben": 0,
+    "punkte3d": 591,
+    "sektor": 1,
+    "sektor_einzel": false,
+    "anteil_verloren": 0.0002,
+    "anteil_verloren_oben": 0.0
+   }
+  }
+ }
+}
