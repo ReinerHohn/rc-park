@@ -1322,3 +1322,24 @@ Schnittkontur des mittleren Helms im Fenster -> Messwert 3,86-3,98. Nicht das Mo
 Nullstart ab 'entzerren': 64/68, Profil Ecktuermchen 37,75 m besteht.
 **Offen:** Erker 34 m 3,33 gegen 2,5-3,2 (Fenster x -6..-2 enthaelt Anschlusspunkt Turm/Wand, null -2,20 gegen Referenz -2,43); Silhouettenbreite 30 m (14,9) und Zone 23,5-28 m (11,28 gegen >= 11,3);
 Zentralkoerper-Quaderperiode 20-24 m (0,4). `tools/viewer_bauen.sh <objekt> <datei>` baut den 3D-Viewer in einem Schritt (Einheiten: --stl mm, --stl2 Meter).
+
+## BI - Nullstart 12 (streng), Vorwissen-Messung, Mapillary, Pruefstand-Tempo (2026-11-02)
+**Nullstart 12 (`--streng`, GLOMAP, 2 Netzversuche):** 65/69 bestanden, 13 min; 16 Masse frisch abgeleitet, 7 bleiben Referenz (GY, EX, EY, ER Quellwiderspruch Regel 5; DACH_MITTE_Z/Z2 unbenutzte Fallbacks;
+PROFIL_DATEI Schalter), 3 'unplausibel' (KRAG_TRAUFE 8,88 statt ~31,75; GZ0 15,0 statt ~34,75; KONSOLE_Z0 31,0 statt 27,5), 1 Fehler (OR: IndexError). Ursache: **Zentralkoerper-/Tuermchen-Baender
+werden nach FARBE klassifiziert und die Klassen (kupfer/gesims/stein/hell) kippen zwischen Laeufen** (Lauf 12: 'kupfer' bei 14,25-15 m und 22-23,5 m statt 32,0-34,75 m); die Regeln waehlen nach Klassennummer
+(`kupfer_1`, `klasse:gesims:0`). Naechster Hebel: geometrische Auswahl (Profilsteigung/Kragdach) statt Farbklasse.
+**Vorwissen-Messung** (`tools/vorwissen_empfindlichkeit.py`, 32 Masse ohne Regel je +-15 %, Kopie des Nullstart-Ordners, STL-Hash): 22 kontrolliert (mind. eine Pruefung faellt), 1 unkontrolliert
+(ARKADE_UNTER_TRAUFE), 9 wirkungslos (STL bitgleich: T0, T1, SEG, DACH_MITTE_X/Y/2, TUERM_ACHSE_DX/DY - vom Generator nicht gelesen). Stark kontrolliert: SPR (36 Pruefungen), AW (34), TUERM_SPITZE (11), ZZ (8);
+schwach (1-2 Pruefungen): ZK, WK, FA, KNAUF_ANTEIL, TWs, DACH_OBEN_X/Y, KUGEL_X/Y, LATERNE_D. Einschraenkung: die Sollwerte stammen aus derselben Referenz-Masstabelle - 'kontrolliert' heisst
+'die Pruefung merkt die Abweichung', nicht 'unabhaengig belegt'. **Fehler der ersten Fassung (verworfen):** die Kopie zeigte mit `obj["masstabelle"]` auf den echten Nullstart-Ordner; 64 Pruefstand-Laeufe
+ueberschrieben dessen pruefbericht.json/MASSNACHWEIS.md (wiederhergestellt durch Neulauf: 65/69), Ergebnis '0 kontrolliert' war wertlos. Behoben: alle Pfade der Kopie umbiegen, alten Bericht loeschen,
+Bericht muss zum Variantenmodell gehoeren, Warnung wenn der echte Bericht sich aendert.
+**Foto-Abdeckung (Referenz-Netze):** Nord 16 Kameras, alle aus EINEM Sektor, 27-150 m (Median 44), Hoehe -10..6 m; Sued 40 Kameras, alle Suedost, 8-17 m (Median 14), Hoehe -3..0 m (sehr steile Blickwinkel,
+kaum Basis -> verbogene Suedwolke). Wolkenpunkte je 5-m-Schicht (Nord): 15.000 bis 30 m, 4.500 bei 40-45 m, 1.300 bei 50-55 m, ~100 darueber (Spitze nie belastbar). Gebraucht: mehr ABSTAND (40-80 m),
+Boegen um beide Seiten, erhoehte Standorte (Fenster/Parkhaus/Hang), Tele fuer die obere Haelfte, Originalbilder ohne Zuschnitt.
+**Mapillary** (Token gueltig, `~/.config/mapillary_token`; `bilder_holen.py` setzt die Quelle NICHT um, Mapillary laeuft ueber `mapillary_rip.py` ohne `-I`): 55 Bilder im Umkreis 80 m, 39 geladen
+(16 persp, 23 360-Ausschnitte), Abstand 31-98 m (Median 72), **alle Nordseite (Peilung 0-45 Grad), Strassenhoehe**, von einer Gehsequenz, Regentropfen auf der Linse; nur ~15 zeigen den Turm. Mehr Nordabdeckung
+in besserem Abstand, aber keine neue Seite und keine Hoehe - hilft Sued/Spitze nicht. Offene Frage: ob die ~15 Turmbilder das Nordnetz verbessern (Test mit Extranetz, nicht in den Nullstart).
+**Weitere Quellen geprueft:** LGL BW offen: Hauskoordinaten, Hausumringe, DGM, DOM, DOP20, LoD1 (kein Mesh/Schraegbild belegt); Freiburg 3D-Stadtmodell als Open Data beschrieben (Rohdaten/Lizenz ungeprueft,
+Katalogseiten laden per Skript); keine Orbit-Drohnenvideos zum Martinstor gefunden; Hoehenangaben Wikipedia 60 m / Structurae ~65 m (Widerspruch, Regel 5); keine Plaene von 1901 online (Stadtarchiv, Denkmalpflege).
+**Pruefstand-Tempo:** `_flaechenpunkte` und `hypso_ueber` teilen die 0,3-m-Unterteilung (`_unterteilt`): 9,7 -> 5,9 s, Regression identisch (Commit e8d8b3d). `bauen_abnehmen.sh martinstor` 34 s, Regression 14 s.
