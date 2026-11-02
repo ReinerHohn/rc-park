@@ -24,6 +24,7 @@ Das ist keine Rechtsberatung. Offen ist immer, ob Messwerte/Ergebnisse, die mit 
 | OpenStreetMap (OSM-Maße/Footprints) | ODbL (ungeprüft) | ✓ mit Namensnennung/Share-Alike für abgeleitete *Datenbanken* | Quelle nennen |
 | Wikimedia-Commons-Fotos Martinstor (`daten/martinstor/fotos/`, 60 Stück) | je Datei: CC BY-SA 4.0 (22), CC BY-SA 3.0 (17), CC BY 4.0 (7), CC BY 3.0 (5), CC BY-SA 2.0 (4), Public domain (3), "Attribution" (2) (geprüft, `manifest.json`) | ✓ als Messvorlage; **Fotos selbst nicht in den Bausatz** | Share-Alike-Fotos nur als Grundlage für Maße, nicht kopieren; Urheber im Anhang nennen |
 | Bauforschung BW, Texte | – | nur Maßangabe gelesen | – |
+| YouTube-Videos Martinstor/Freiburg (`/media/oem/scan/rc-park_daten/martinstor/videos/`, Frames in `video_frames/`) | Standard-YouTube-Lizenz (urheberrechtlich geschuetzt); nur 1 Zeitraffer CC BY (nicht genutzt). Drohnenclips: Kanal 'Black Forest Stock' (Stockmaterial, Wasserzeichen) | ⚠ nur private Messvorlage (2026-11-02) | Frames NICHT ins Repo, NICHT verteilen; vor Verkauf Rechte beim Anbieter klaeren oder Masse aus lizenzfreien Quellen belegen. Werkzeug: tools/video_frames.py, tools/video_sfm.py |
 | Mapillary-Bilder | **CC BY-NC-SA** laut Terms of Use (Stand 2024-02-15), NICHT BY-SA (Recherche 2026-11-01) | ⚠ nicht benutzen | für ein Verkaufsprodukt unbrauchbar; ausserdem erreicht Street-Level die verdeckten Turmseiten ohnehin nicht |
 
 ## Werkzeuge, die kommerziell unkritisch sind (Stand ungeprüft)
