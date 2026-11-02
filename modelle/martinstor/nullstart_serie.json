@@ -103,6 +103,58 @@
     "Band tuermchen kupfer (33.00-40.75 m): Aussenradius bei 36.88 m (m)"
    ],
    "masse_abweichend": []
+  },
+  {
+   "datum": "2026-11-02 16:46",
+   "mapper": "global",
+   "streng": false,
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 4.1,
+     "entfernt": 2,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 4.2,
+     "entfernt": 2,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "64/70",
+   "nicht_bestanden": [
+    "Anzahl getrennte Koerper",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Band tuermchen Quaderperiode 33-37 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GX",
+    "HELM_UEBER",
+    "KRAG_UEBER",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 10,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
   }
  ],
  "hinweis": "Laeufe 6-9 nachgetragen aus Sitzungsausgaben (Pruefungsnamen teils verkuerzt); ab Lauf 10 schreibt tools/nullstart.py selbst"

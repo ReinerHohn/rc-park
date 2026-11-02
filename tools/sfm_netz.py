@@ -116,18 +116,22 @@ def lightglue_in_db(db, tmp, nrs, extractor, max_kp, resize, nur_fotos=None, anh
     con = sqlite3.connect(db); n = con.execute("select count(*) from two_view_geometries where rows >= 15").fetchone()[0]; con.close()
     print(f"  LightGlue: {len(paare)} Paare mit Matches, {n} geometrisch verifiziert (>= 15 Inlier)", flush=True)
 
+NUR_CPU = False
 KAMERA_MODELL = "SIMPLE_RADIAL"
 def _merkmale_und_matches(db, tmp, nrs, prior, matcher, lg):
     _ro = pycolmap.ImageReaderOptions(); _ro.camera_model = KAMERA_MODELL                 # SIMPLE_RADIAL (Standard) | RADIAL | OPENCV (--kamera-modell)
-    pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro)
+    if NUR_CPU: pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, device=pycolmap.Device.cpu)   # --cpu: GPU frei lassen (Suednetz parallel zum dichten Schritt)
+    else: pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro)
     # GPU-Rueckfall: scheitert SIFT-GPU (z. B. 'illegal memory access', wenn ein anderer Prozess die GPU belegt), bleiben Bilder ohne Merkmale
     # -> Datenbank neu und auf der CPU extrahieren/zuordnen (langsamer, gleiches Ergebnis in der Geometrie). Nullstart 3, Register BA.
     _gpu_ok = True
     try:
+        if NUR_CPU: raise StopIteration
         _c = sqlite3.connect(db); _n_img = _c.execute("select count(*) from images").fetchone()[0]; _n_kp = _c.execute("select count(*) from keypoints where rows > 0").fetchone()[0]; _c.close()
         _gpu_ok = _n_img > 0 and _n_kp >= 0.8 * _n_img
+    except StopIteration: _gpu_ok = False
     except Exception: _gpu_ok = False
-    if not _gpu_ok:
+    if not _gpu_ok and not NUR_CPU:
         print(f"   SIFT-GPU: nur {_n_kp if '_n_kp' in dir() else '?'} von {_n_img if '_n_img' in dir() else '?'} Bildern mit Merkmalen - Rueckfall auf CPU")
         os.remove(db); pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, device=pycolmap.Device.cpu)
     con = sqlite3.connect(db); cur = con.cursor()
@@ -214,11 +218,11 @@ def main():
     ap.add_argument("--matcher", default="sift", choices=["sift", "lightglue", "hybrid"], help="lightglue = ALIKED+LightGlue fuer alles; hybrid = SIFT fuer alles + LightGlue nur fuer Paare mit --lg-fotos (Register AK)")
     ap.add_argument("--lg-fotos", nargs="*", default=[], help="hybrid: Fotos, deren Paare per LightGlue gematcht werden (z. B. Luftbilder)")
     ap.add_argument("--lg-max-kp", type=int, default=4096); ap.add_argument("--lg-resize", type=int, default=2048)
-    ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="incremental (Standard) | global = GLOMAP")
+    ap.add_argument("--cpu", action="store_true", help="Merkmale und Matching auf der CPU (laesst die GPU frei)"); ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="incremental (Standard) | global = GLOMAP")
     ap.add_argument("--nur-merkmale", action="store_true", help="nur Merkmale + Matches in db_<seite>.db rechnen (GPU), keine Rekonstruktion")
     ap.add_argument("--db-von", help="vorhandene db_<seite>.db kopieren und nur die Rekonstruktion rechnen (parallele Versuche, CPU)"); ap.add_argument("--seed", type=int, help="Mapper-Seed (Versuch)")
     ap.add_argument("--tag", default="", help="Suffix fuer db/sparse/netz-Bericht eines Versuchs, z. B. v1"); ap.add_argument("--threads", type=int, default=0, help="Mapper-Threads je Versuch (0 = COLMAP-Standard)")
-    a = ap.parse_args(); global KAMERA_MODELL; KAMERA_MODELL = a.kamera_modell; obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od))
+    a = ap.parse_args(); global KAMERA_MODELL, NUR_CPU; KAMERA_MODELL = a.kamera_modell; NUR_CPU = a.cpu; obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od))
     nrs = a.fotos or obj.get("sfm", {}).get(a.seite)
     if not nrs: raise SystemExit(f"keine Fotoliste: --fotos oder objekt.json['sfm']['{a.seite}']")
     sd = os.path.join(od, "sfm"); bilder = os.path.join(sd, f"bilder_{a.seite}"); T_ = f"_{a.tag}" if a.tag else ""; db = os.path.join(sd, f"db_{a.seite}{T_}.db"); aus = os.path.join(sd, f"sparse_{a.seite}{T_}")

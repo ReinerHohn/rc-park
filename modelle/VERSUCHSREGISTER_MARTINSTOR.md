@@ -1285,3 +1285,29 @@ verwarfen ausserdem KRAG_TRAUFE/GZ0/GZ1/ERKER_OBEN: die Zentralkoerper-Baender w
 muessen jetzt zu >= 50 % im Bereich liegen statt vollstaendig (2-m-Raster). Wert unveraendert 0,35; Referenz-Regression identisch.
 **Offen aus der Serie:** Zentralkoerper-Klassen aus Farbe (gesims/stein/kupfer) kippen zwischen Laeufen; geometrische Klassifikation wie beim Dachband
 der Tuermchen waere der naechste Hebel; Wolke Lauf 9 zusaetzlich vertikal gestaucht (obere Kante 50 m statt 54,5 m).
+
+## BG - Nullstart 10 (GLOMAP), Ressourcenlage, offene Teststrecke (2026-11-02)
+**Ergebnis Nullstart 10** (`--mapper global --netzversuche 2`): 64/70. Netzphase 23 s (GLOMAP), dicht 677 s. GLOMAP auf gleicher DB mit 3 Seeds praktisch
+identisch (Sigma 2,5 %, Wandstreuung 0,30, Spitze 54,7 m); COLMAP-incremental streute Sigma 2,8-24,6 %. pycolmap 4.2.1, torch 2.15, kornia 0.9 sind aktuell.
+Nullstart-Punkte bisher: 66, 56, 60, 58, 64 von ~70 (nicht reproduzierbar, Ursache: Mapper-Zufall + instabile Farbklassen der Wolke).
+**Restfehler Lauf 10:** 'Anzahl getrennte Koerper 5'; Silhouettenbreite 23,5-28 m (10,78 statt 11,3-12,7); Ecktuermchen-Erkerkoerper Durchmesser 3,7 statt [2,5;3,2];
+Profil Ecktuermchen 34,25 m 3,7; Gesamtbreite y bei 28,5 m 10,39; Quaderperiode Band tuermchen 33-37 m None.
+**Befund '5 Koerper':** STL = Hauptkoerper + 4 frei schwebende Teile (je 68 Dreiecke, Vol 53, ca. 6x6x3,4 mm bei 1:87, z ~27 m, Ecken +-37/+-55 mm):
+die Ecktuermchen-Erkerkoerper beruehren die Wand nicht. Wahrscheinlich gleiche Ursache wie der zu grosse Durchmesser 3,7 m (falsches abgeleitetes Mass/Lage).
+Naechster Schritt: Lage/Durchmesser der Erker in Lauf 10 gegen Referenz vergleichen, Beziehung 'Erker beruehrt Wand' als Pruefung + masse_beziehungen.
+**Ressourcen (gemessen):** GPU RTX 4060 95 % nur im PatchMatch-Schritt (~670 s von ~13 min), sonst ~14 %; CPU waehrend PatchMatch ~92 % Leerlauf;
+RAM 16 GB (5 belegt, 9 frei, 18 Swap) kein Engpass; Intel-iGPU (Raptor Lake-S) fuer COLMAP/Torch unbrauchbar (kein CUDA/OpenCL/XPU). Leistungsgrenze/Luefter
+sind nicht der Engpass (~54 W, voller Takt). Nicht 'perfekt': Hebel = Suednetz auf CPU parallel zu PatchMatch (`--cpu`, `nullstart.py` Thread, `--sued-seriell`
+zum Abschalten), Bildbeschnitt `sfm_dicht.py --beschnitt` (Pixelfaktor 1,36 mechanisch belegt) - BEIDE NOCH UNGETESTET und nicht committet.
+**Cloud:** Profis: Workstation/gemietete GPU/Cluster/Herstellerclouds. Gratis: Colab (T4), Kaggle (~30 GPU h/Woche), Lightning, HF Spaces; kein Tempogewinn
+gegenueber RTX 4060, nur fuer Serienlaeufe; Datenschutz/Lizenz (LIZENZ_WERKZEUGE, geplanter Verkauf) -> Nutzerentscheidung, nichts hochgeladen.
+**Generik (ehrlich):** nicht generisch sind Generator martinstor_v4_gen.py, ANNAHME-Eintraege, Koerperkonfiguration, Handpicks, masse_regeln/-beziehungen
+je Objekt; Nullstart leitet nur 10 von 59 Massen frisch ab (`--streng` erzwingt Regelwerte nur fuer regelabgedeckte Masse).
+**Serie nach 5 Laeufen:** SYSTEMATISCH Silhouettenbreite 23,5-28 m (5/5), Band tuermchen kupfer Aussenradius (4/5), Profil Ecktuermchen Durchmesser (4/5);
+flackernd Silhouettenbreite bei 30 m (3/5).
+**Fehler/Fixes dieser Etappe:** Spiegelkameras (100 % Punkte hinter Kamera) -> Cheiralitaetskriterium; 1600 vs 1598 px -> Arbeitsordner vor undistort loeschen;
+Core-Dumps -> RLIMIT_CORE=0 (alter Dump: Nutzer `sudo rm /var/lib/systemd/coredump/core.python.*`, Root 96 %); Netzwahl Sigma-0,1*Kameras statt Sigma+2*entfernt;
+Nullstart nutzt Referenzwissen via masse.json (nur 10/59 frisch) -> offengelegt, `--streng`.
+**Offene Teststrecke:** (1) Regression `tools/regression.py modelle/martinstor/objekt.json --pruefen` auf ungebundene Aenderungen; (2) `--beschnitt`
+Wolkengleichheit gegen Vollbild im Turmzylinder (GPU); (3) Nullstart 11 mit Sued-auf-CPU parallel; (4) `--streng`-Lauf; (5) Erker-Anliegen/5 Koerper;
+(6) geometrische Klassifikation der Zentralkoerper-Baender; (7) Erntetempo-Patch `bilder_holen.py`; (8) Suedwolke (Ring via 060/061, Dach/Sockel getrennt).

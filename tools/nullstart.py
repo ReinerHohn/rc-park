@@ -29,7 +29,7 @@ def gpu_warten(max_mib=1500, max_s=3600):
         print(f"    GPU belegt ({used} MiB) - warte", flush=True); time.sleep(30)
 
 def lauf(bericht, name, cmd, repo, log, ok_rcs=(0,)):
-    if "sfm_netz.py" in cmd or "sfm_dicht.py" in cmd: gpu_warten()
+    if ("sfm_netz.py" in cmd and "--cpu" not in cmd) or "sfm_dicht.py" in cmd: gpu_warten()
     t0 = time.time(); print(f"\n+++ {name}: {cmd[:160]}", flush=True)
     with open(log, "a") as L:
         L.write(f"\n\n=== {name} @ {time.strftime('%H:%M:%S')}\n$ {cmd}\n"); L.flush()
@@ -40,7 +40,7 @@ def lauf(bericht, name, cmd, repo, log, ok_rcs=(0,)):
     return r.returncode in ok_rcs
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ziel", default="martinstor_null"); ap.add_argument("--ab", default="anlegen"); ap.add_argument("--streng", action="store_true", help="Startwerte aller regelabgeleiteten Masse auf die MITTE ihres Plausibilitaetsfensters setzen: scheitert eine Ableitung, faellt es im Pruefstand auf, statt dass der Referenzwert still stehen bleibt (Register BF)"); ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="Mapper der Hauptseite: incremental (Standard) | global = GLOMAP (Register BF)"); ap.add_argument("--netzversuche", type=int, default=6, help="parallele Mapper-Versuche der Hauptseite (Auswahl nach Massstab-Sigma)"); ap.add_argument("--ohne-sued", action="store_true")
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ziel", default="martinstor_null"); ap.add_argument("--ab", default="anlegen"); ap.add_argument("--streng", action="store_true", help="Startwerte aller regelabgeleiteten Masse auf die MITTE ihres Plausibilitaetsfensters setzen: scheitert eine Ableitung, faellt es im Pruefstand auf, statt dass der Referenzwert still stehen bleibt (Register BF)"); ap.add_argument("--sued-seriell", action="store_true", help="Suednetz vor dem dichten Schritt statt parallel dazu (CPU) rechnen"); ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="Mapper der Hauptseite: incremental (Standard) | global = GLOMAP (Register BF)"); ap.add_argument("--netzversuche", type=int, default=6, help="parallele Mapper-Versuche der Hauptseite (Auswahl nach Massstab-Sigma)"); ap.add_argument("--ohne-sued", action="store_true")
     a = ap.parse_args(); ref = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); repo = os.path.dirname(os.path.dirname(od)); refname = os.path.basename(od)
     zd = os.path.join(repo, "modelle", a.ziel); os.makedirs(zd, exist_ok=True); zobj = os.path.join(zd, "objekt.json"); log = os.path.join(zd, "nullstart.log")
     bp = os.path.join(zd, "nullstart_bericht.json"); bericht = json.load(open(bp)) if os.path.exists(bp) and a.ab != "anlegen" else dict(referenz=refname, ziel=a.ziel, start=time.strftime("%Y-%m-%d %H:%M"), schritte=[])
@@ -79,14 +79,14 @@ def main():
     Z = os.path.relpath(zobj, repo)
     seiten = ["nord"] + ([] if a.ohne_sued else ["sued"])
     haupt = json.load(open(zobj)).get("sfm", {}).get("hauptseite", "nord"); sfmd = os.path.join(zd, "sfm")
-    def netz_und_ausrichten(s):
+    def netz_und_ausrichten(s, lg_=None, cpu_=False):
         """Netz bauen + ausrichten. COLMAP ist nicht deterministisch (Register BF): gleiche Eingaben gaben Netze mit Massstab-Sigma 2,8 bis 24,6 %.
         Hauptseite: Merkmale + Matches EINMAL (GPU), dann K Mapper-Versuche mit eigenem Seed PARALLEL auf der CPU, je Versuch ausrichten; das Netz mit
         kleinstem Sigma (+ 2 je entfernte Kamera) wird uebernommen und kanonisch neu ausgerichtet. Andere Seiten: ein Versuch."""
-        kan = lambda cmd_: lauf(bericht, f"ausrichten_{s}", cmd_, repo, log)
+        lg_ = lg_ or log; kan = lambda cmd_: lauf(bericht, f"ausrichten_{s}", cmd_, repo, lg_)
         auskmd = lambda sp, name, extra="": f"{PC} -I tools/sfm_ausrichten.py {Z} --sparse {sp} --name {name} --wand {s} {extra}"
         if s != haupt:
-            return lauf(bericht, f"netz_{s}", f"{PC} -I tools/sfm_netz.py {Z} {s} --reparieren", repo, log) and kan(auskmd(f"modelle/{a.ziel}/sfm/sparse_{s}/0", s, "--schreiben"))
+            return lauf(bericht, f"netz_{s}", f"{PC} -I tools/sfm_netz.py {Z} {s} --reparieren" + (" --cpu" if cpu_ else ""), repo, lg_) and kan(auskmd(f"modelle/{a.ziel}/sfm/sparse_{s}/0", s, "--schreiben"))
         if not lauf(bericht, f"merkmale_{s}", f"{PC} -I tools/sfm_netz.py {Z} {s} --nur-merkmale", repo, log): return False
         K = a.netzversuche; procs = []; t0 = time.time()
         for k in range(1, K + 1):
@@ -114,18 +114,26 @@ def main():
         bericht["schritte"].append(dict(schritt=f"netzwahl_{s}", ok=True, versuche=versuche, gewaehlt=k)); json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)
         print(f"    gewaehlt: Versuch {k} von {K}", flush=True)
         return kan(auskmd(f"modelle/{a.ziel}/sfm/sparse_{s}/0", s, "--schreiben"))
+    import threading; sued_thr = []; sued_res = {}
     for s in seiten:
         if dran(f"netz_{s}"):
+            if s != haupt and not a.sued_seriell and dran("dicht"):                                 # Suednetz auf der CPU PARALLEL zum dichten Schritt der Hauptseite (spart ~1,5 min)
+                t_ = threading.Thread(target=lambda s_=s: sued_res.__setitem__(s_, netz_und_ausrichten(s_, os.path.join(zd, "nullstart_sued.log"), True))); t_.start(); sued_thr.append(t_); continue
             if not netz_und_ausrichten(s): sys.exit(f"netz_{s} fehlgeschlagen")
     for s in seiten:
         if dran(f"ausrichten_{s}") and not dran(f"netz_{s}") and not lauf(bericht, f"ausrichten_{s}", f"{PC} -I tools/sfm_ausrichten.py {Z} --sparse modelle/{a.ziel}/sfm/sparse_{s}/0 --name {s} --wand {s} --schreiben", repo, log): sys.exit(f"ausrichten_{s} fehlgeschlagen")
-    if dran("verzerrung") and not a.ohne_sued:
+    def verzerrung_gate():
         lauf(bericht, "verzerrung_nord", f"{PC} -I tools/sfm_verzerrung_test.py {Z} --sparse modelle/{a.ziel}/sfm/sparse_modell_nord --spiegel messprotokoll/SFM-AUSRICHTUNG-sued.json", repo, log, ok_rcs=(0, 1))   # Gate: protokolliert, bricht den Nullstart nicht ab
+    if dran("verzerrung") and not a.ohne_sued and not sued_thr: verzerrung_gate()
     if dran("registrieren"):
         lauf(bericht, "registrieren_060", f"{PC} -I tools/sfm_registrieren.py {Z} --netz nord --foto 060 --schreiben", repo, log, ok_rcs=(0, 1))
         lauf(bericht, "registrieren_061", f"{PC} -I tools/sfm_registrieren.py {Z} --netz nord --foto 061 --hoehe 44 8 --schreiben", repo, log, ok_rcs=(0, 1))
     if dran("generator0") and not lauf(bericht, "generator0", json.load(open(zobj))["generator"], repo, log): sys.exit("generator0 fehlgeschlagen")
     if dran("dicht") and not lauf(bericht, "dicht_nord", f"{PC} -I tools/sfm_dicht.py {Z} nord", repo, log): sys.exit("dicht fehlgeschlagen")
+    for t_ in sued_thr: t_.join()                                                                 # Suednetz (CPU) war parallel zum dichten Schritt unterwegs
+    if sued_thr:
+        print(f"    Suednetz parallel: {'ok' if all(sued_res.values()) else 'FEHLER'} (Log nullstart_sued.log)", flush=True)
+        if dran("verzerrung") and not a.ohne_sued: verzerrung_gate()
     if dran("entzerren") and not lauf(bericht, "entzerren", f"{PY} -W ignore -I tools/wolke_vs_modell.py {Z} nord --entzerren --nebengebaeude", repo, log): sys.exit("entzerren fehlgeschlagen")
     if dran("kalibrieren_061"):   # alle Kameras aus Picks + Ankern neu loesen (Schritt heisst historisch kalibrieren_061): jedes K-Protokoll
         for kp in sorted(glob.glob(os.path.join(zd, "messprotokoll", "K-*.json"))):

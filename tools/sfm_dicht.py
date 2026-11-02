@@ -25,10 +25,31 @@ def netz_fuer_dicht(sparse, sd, seite):
     print(f"ohne Tiefenbereich (Punkte hinter der Kamera/keine Punkte), nicht in der dichten Rekonstruktion: {raus} -> {rec.num_reg_images()} Bilder in {ziel}", flush=True)
     return ziel
 
+def beschneiden(out, tr, halb=8.0, zmin=-2.0, zmax=72.0, rand=0.15):
+    """Entzerrte Bilder auf den Turmquader beschneiden (nur dieser Bereich wird dicht gerechnet): Quader |x|,|y| <= halb, z in [zmin, zmax] (Modellsystem)
+    in jedes Bild projizieren, + rand, Bild und Kamera (Hauptpunkt, Groesse) anpassen. Die Rekonstruktion gilt weiter (Posen unveraendert);
+    PatchMatch nutzt von den 2D-Beobachtungen nur die 3D-Punkte, nicht ihre Pixelkoordinaten. Rueckgabe: (Pixel vorher, Pixel nachher)."""
+    rec = pycolmap.Reconstruction(os.path.join(out, "sparse")); R = cv2.Rodrigues(np.array(tr["rvec"]))[0]; t = np.array(tr["t"]); sc = float(tr["s"])
+    Xm = np.array([[x, y, z] for x in (-halb, 0, halb) for y in (-halb, 0, halb) for z in np.linspace(zmin, zmax, 8)], float); Xs = sc * (Xm @ R.T) + t
+    vor = nach = 0
+    for im in rec.images.values():
+        c = rec.cameras[im.camera_id]; fp = os.path.join(out, "images", im.name); img = cv2.imread(fp)
+        if img is None: continue
+        H, W = img.shape[:2]; vor += W * H
+        P = np.array([im.cam_from_world() * x for x in Xs]); P = P[P[:, 2] > 0.3]
+        if len(P) < 4: nach += W * H; continue
+        uv = c.img_from_cam(P); uv = uv[np.isfinite(uv).all(1)]
+        u0, v0 = uv.min(0); u1, v1 = uv.max(0); mw, mh = rand * (u1 - u0), rand * (v1 - v0)
+        u0, v0, u1, v1 = int(max(0, u0 - mw)), int(max(0, v0 - mh)), int(min(W, u1 + mw)), int(min(H, v1 + mh))
+        if u1 - u0 < 64 or v1 - v0 < 64: nach += W * H; continue
+        cv2.imwrite(fp, img[v0:v1, u0:u1], [cv2.IMWRITE_JPEG_QUALITY, 98]); nach += (u1 - u0) * (v1 - v0)
+        p = list(c.params); p[2] -= u0; p[3] -= v0; c.params = p; c.width, c.height = u1 - u0, v1 - v0
+    rec.write(os.path.join(out, "sparse")); return vor, nach
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("seite"); ap.add_argument("--radius", type=float, default=25.0)
     ap.add_argument("--zmin", type=float, default=-5.0); ap.add_argument("--zmax", type=float, default=85.0); ap.add_argument("--max-size", type=int, default=1600)
-    ap.add_argument("--nur-fusion", action="store_true", help="PatchMatch ueberspringen (schon gerechnet)")
+    ap.add_argument("--nur-fusion", action="store_true", help="PatchMatch ueberspringen (schon gerechnet)"); ap.add_argument("--beschnitt", action="store_true", help="entzerrte Bilder vor PatchMatch auf den Turmquader beschneiden (schneller; Beweis: Register BG)")
     a = ap.parse_args(); od = os.path.dirname(os.path.abspath(a.objekt)); sd = os.path.join(od, "sfm")
     sparse = os.path.join(sd, f"sparse_{a.seite}", "0"); bilder = os.path.join(sd, f"sparse_{a.seite}_bilder"); out = os.path.join(sd, f"dicht_{a.seite}")
     S = json.load(open(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG-{a.seite}.json"))); tr = S["transformation"]
@@ -40,6 +61,7 @@ def main():
         uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = a.max_size
         pycolmap.undistort_images(out, sparse, bilder, output_type="COLMAP", undistort_options=uo)
         print(f"entzerrt {time.time() - t0:.0f} s", flush=True)
+        if a.beschnitt: v_, n_ = beschneiden(out, tr); print(f"Beschnitt auf den Turmquader: {n_ / v_:.0%} der Pixel (Faktor {v_ / max(n_, 1):.1f})", flush=True)
         opt = pycolmap.PatchMatchOptions(); opt.max_image_size = a.max_size; opt.geom_consistency = True; opt.gpu_index = "0"
         pycolmap.patch_match_stereo(out, options=opt); print(f"PatchMatch {time.time() - t0:.0f} s", flush=True)
     ply = os.path.join(out, "fused.ply")
