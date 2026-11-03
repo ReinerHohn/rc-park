@@ -12,7 +12,7 @@ Regeln aus CLAUDE.md gelten: kein Sollwert gelockert, Widersprueche nicht gemitt
 ## Stufe 1 - laeuft/wartet bereits (Maschine arbeitet, ich werte aus)
 | Nr | Schritt | Stand | Entscheidet |
 |---|---|---|---|
-| 1.1 | Drohne mit Linsenmodell OPENCV (`video_sfm/d1_cv`, dicht) | GPU laeuft | verkleinert OPENCV Clip-Tilt/Doppeldach? Abbruch: kein Unterschied -> Register "ohne Wirkung" |
+| 1.1 | Drohne mit Linsenmodell OPENCV (`video_sfm/d1_cv`, dicht) | ERLEDIGT 3.11.: Tiefenversatz vor Korrektur RMS 0,88 -> 0,28 m (z >= 38, ein Lauf); RBC7Co +1,12/+1,66 -> -0,13/+0,09 m; Standard in video_sfm.py jetzt OPENCV | verkleinert OPENCV Clip-Tilt/Doppeldach? Abbruch: kein Unterschied -> Register "ohne Wirkung" |
 | 1.2 | `video_merge` + `hybrid_abgleich` fuer d1_cv im Sandbox-Objekt | Warteschlange (`jobplan.py`) | Zahlen Clip fuer Clip, Hoehenverlauf, Dachbreite |
 | 1.3 | Boden-SfM an Nordnetz ausrichten (GPU-Matching) | Warteschlange | deckt der Boden-SfM die Suedseite ab? |
 
