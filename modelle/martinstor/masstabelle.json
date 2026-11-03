@@ -375,27 +375,27 @@
    "typ": "schnitt_ausdehnung",
    "z": 34.25,
    "x0": -6.22,
-   "x1": -1.86,
-   "y0": 3.49,
-   "y1": 6.6,
+   "x1": -1.88,
+   "y0": 3.45,
+   "y1": 6.55,
    "achse": "x"
   },
   "profil_tuerm_3775": {
    "typ": "schnitt_ausdehnung",
    "z": 37.75,
    "x0": -6.22,
-   "x1": -1.86,
-   "y0": 3.49,
-   "y1": 6.6,
+   "x1": -1.88,
+   "y0": 3.45,
+   "y1": 6.55,
    "achse": "x"
   },
   "profil_tuerm_4025": {
    "typ": "schnitt_ausdehnung",
    "z": 40.25,
    "x0": -6.22,
-   "x1": -1.86,
-   "y0": 3.49,
-   "y1": 6.6,
+   "x1": -1.88,
+   "y0": 3.45,
+   "y1": 6.55,
    "achse": "x"
   },
   "dachx42": {
@@ -414,9 +414,9 @@
    "typ": "schnitt_ausdehnung",
    "z": 42.5,
    "x0": -6.22,
-   "x1": -1.86,
-   "y0": 3.49,
-   "y1": 6.6,
+   "x1": -1.88,
+   "y0": 3.45,
+   "y1": 6.55,
    "achse": "x"
   },
   "tuermchen_2m_zahl": {
@@ -506,7 +506,7 @@
    "typ": "front_linearitaet",
    "seite": "-x",
    "z0": 41.75,
-   "z1": 53.75,
+   "z1": 54.75,
    "quer": 0.0,
    "band": 0.5
   },
@@ -514,7 +514,7 @@
    "typ": "front_linearitaet",
    "seite": "-y",
    "z0": 41.75,
-   "z1": 53.75,
+   "z1": 54.75,
    "quer": 0.0,
    "band": 0.5
   },
@@ -596,6 +596,13 @@
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 34.25,
+   "quer": 4.42,
+   "achse_tief": 4.0
+  },
+  "band_tuermchen_hell_4375": {
+   "typ": "tuerm_radius",
+   "seite": "-x",
+   "z": 43.75,
    "quer": 4.42,
    "achse_tief": 4.0
   }
@@ -1397,10 +1404,10 @@
    "name": "Profil Dach: Breite y bei 45.2 m (m)",
    "wert": "profil_dach_452",
    "soll": [
-    4.11,
-    5.11
+    4.47,
+    5.47
    ],
-   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.61 bei 45.25 m; DOM1-Flaeche 16 Zellen",
+   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.97 bei 45.25 m; DOM1-Flaeche 16 Zellen",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1421,6 +1428,14 @@
       4.41
      ],
      "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      4.11,
+      5.11
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
     }
    ]
   },
@@ -1428,10 +1443,10 @@
    "name": "Profil Dach: Breite y bei 49.2 m (m)",
    "wert": "profil_dach_492",
    "soll": [
-    4.1,
-    5.1
+    3.97,
+    4.97
    ],
-   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.6 bei 49.25 m; DOM1-Flaeche 6 Zellen",
+   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.47 bei 49.25 m; DOM1-Flaeche 6 Zellen",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1452,6 +1467,14 @@
       3.95
      ],
      "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      4.1,
+      5.1
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
     }
    ]
   },
@@ -1459,10 +1482,10 @@
    "name": "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
    "wert": "profil_tuerm_3425",
    "soll": [
-    2.71,
-    3.51
+    2.7,
+    3.5
    ],
-   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.11 bis 37.45 m, Kegel 0.441 m/m zur Spitze 44.5 -> d 3.11 bei 34.25 m (Einzelfit dort: [2.96]); Fenster seitlich der Dachbreite",
+   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.1 bis 37.31 m, Kegel 0.431 m/m zur Spitze 44.5 -> d 3.10 bei 34.25 m (Einzelfit dort: [2.96]); Fenster seitlich der Dachbreite",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1491,6 +1514,14 @@
       3.27
      ],
      "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      2.71,
+      3.51
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
     }
    ]
   },
@@ -1498,10 +1529,10 @@
    "name": "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
    "wert": "profil_tuerm_3775",
    "soll": [
-    2.58,
-    3.38
+    2.51,
+    3.31
    ],
-   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.11 bis 37.45 m, Kegel 0.441 m/m zur Spitze 44.5 -> d 2.98 bei 37.75 m (Einzelfit dort: [2.63]); Fenster seitlich der Dachbreite",
+   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.1 bis 37.31 m, Kegel 0.431 m/m zur Spitze 44.5 -> d 2.91 bei 37.75 m (Einzelfit dort: [2.63]); Fenster seitlich der Dachbreite",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1530,6 +1561,14 @@
       3.23
      ],
      "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      2.58,
+      3.38
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
     }
    ]
   },
@@ -1537,10 +1576,10 @@
    "name": "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
    "wert": "profil_tuerm_4025",
    "soll": [
-    1.47,
-    2.27
+    1.43,
+    2.23
    ],
-   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.11 bis 37.45 m, Kegel 0.441 m/m zur Spitze 44.5 -> d 1.87 bei 40.25 m (Einzelfit dort: [0.73]); Fenster seitlich der Dachbreite",
+   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.1 bis 37.31 m, Kegel 0.431 m/m zur Spitze 44.5 -> d 1.83 bei 40.25 m (Einzelfit dort: [1.69]); Fenster seitlich der Dachbreite",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1577,6 +1616,14 @@
       2.18
      ],
      "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      1.47,
+      2.27
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
     }
    ]
   },
@@ -1584,10 +1631,10 @@
    "name": "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
    "wert": "profil_tuerm_4250",
    "soll": [
-    0.48,
-    1.28
+    0.46,
+    1.26
    ],
-   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.11 bis 37.45 m, Kegel 0.441 m/m zur Spitze 44.5 -> d 0.88 bei 42.5 m (Einzelfit dort: [1.0, 1.4]); Fenster seitlich der Dachbreite",
+   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.1 bis 37.31 m, Kegel 0.431 m/m zur Spitze 44.5 -> d 0.86 bei 42.5 m (Einzelfit dort: [0.71, 1.43]); Fenster seitlich der Dachbreite",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1600,6 +1647,14 @@
       1.24
      ],
      "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      0.48,
+      1.28
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
     }
    ]
   },
@@ -1607,14 +1662,24 @@
    "name": "Profil Dach: Breite y bei 53.2 m (m)",
    "wert": "profil_dach_532",
    "soll": [
-    3.71,
-    4.71
+    3.46,
+    4.46
    ],
-   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.21 bei 53.25 m; DOM1-Flaeche 2 Zellen",
+   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 3.96 bei 53.25 m; DOM1-Flaeche 2 Zellen",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "profile_nord.json"
+   "protokoll": "profile_nord.json",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt_soll": [
+      3.71,
+      4.71
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    }
+   ]
   },
   {
    "name": "Profil Dach (Foto 061): Tiefe x bei 47 m (m)",
@@ -1788,14 +1853,24 @@
    "name": "Band tuermchen kupfer (35.50-43.50 m): Aussenradius bei 39.50 m (m)",
    "wert": "band_tuermchen_kupfer_3950",
    "soll": [
-    0.92,
-    1.22
+    0.91,
+    1.21
    ],
-   "quelle": "wolke_baender.py (tuermchen): Band kupfer 35.5-43.5 m, Aussenradius p97 1.07 (Anteile {'stein': 0.1, 'weiss': 12.8, 'dunkel': 5.1, 'kupfer': 27.6}); Modell: Strahl von -x auf die Achse",
+   "quelle": "wolke_baender.py (tuermchen): Band kupfer 35.5-43.5 m, Aussenradius p97 1.06 (Anteile {'stein': 0.7, 'weiss': 7.0, 'dunkel': 9.5, 'kupfer': 19.9}); Modell: Strahl von -x auf die Achse",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "profile_baender_tuermchen.json"
+   "protokoll": "profile_baender_tuermchen.json",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt_soll": [
+      0.92,
+      1.22
+     ],
+     "grund": "wolke_tuerm_baender.py neu gerechnet"
+    }
+   ]
   },
   {
    "name": "Band tuermchen kegel (35.50-44.50 m): Aussenradius bei 40.00 m (m)",
@@ -1955,6 +2030,45 @@
     0.63
    ],
    "quelle": "wolke_baender.py (tuermchen): Dunkellaeufe entlang der sichtbaren Flaeche im Band offen: 2 je Flaeche, Breiten [0.48, 0.72, 0.48, 0.4, 0.16], Hoehe [33.62, 34.92]; Nutzer: 'Boegen zu klein und zu viele'",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_baender_tuermchen.json"
+  },
+  {
+   "name": "Helm geradlinig (tief, 41.8-54.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+   "wert": "helm_gerade_tief",
+   "soll": [
+    0.0,
+    0.25
+   ],
+   "quelle": "wolke_profile.py --eben: Wolke/Silhouette sind dort gerade (RMS 0.097 m, max 0.26 m, 27 Schichten) - Dachflaechen ebene Walmflaechen; Nutzer: 'Hoecker, nicht durchgaengig'",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_nord.json"
+  },
+  {
+   "name": "Helm geradlinig (quer, 41.8-54.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+   "wert": "helm_gerade_quer",
+   "soll": [
+    0.0,
+    0.41
+   ],
+   "quelle": "wolke_profile.py --eben: Wolke/Silhouette sind dort gerade (RMS 0.174 m, max 0.415 m, 27 Schichten) - Dachflaechen ebene Walmflaechen; Nutzer: 'Hoecker, nicht durchgaengig'",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_nord.json"
+  },
+  {
+   "name": "Band tuermchen hell (43.50-44.00 m): Aussenradius bei 43.75 m (m)",
+   "wert": "band_tuermchen_hell_4375",
+   "soll": [
+    0.55,
+    0.85
+   ],
+   "quelle": "wolke_baender.py (tuermchen): Band hell 43.5-44.0 m, Aussenradius p97 0.70 (Anteile {'stein': 19.3, 'weiss': 9.2, 'dunkel': 4.0, 'kupfer': 1.9}); Modell: Strahl von -x auf die Achse",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -3054,8 +3168,8 @@
   {
    "datum": "2026-11-03",
    "wer": "tools/hybrid_abgleich.py --profil-schreiben (automatisch, Register BU)",
-   "text": "WIDERSPRUCH Helm Querbreite (E-W) z 45-53 m: Silhouette der clip-korrigierten Drohnenwolke (Tuermchen maskiert, stueckweise linear, Rest-RMS 0,04 m) 5,93 m @45,2 / 5,15 @47,9 / 4,32 @50,6 / 3,88 @53,2; Strassen-Frontschicht (Zeilen 'Profil Dach: Breite y') 4,11-5,11 @45,2; Modell 4,84 @45 / 4,65 @48 / 4,25 @53. Uebernahme der Drohnensilhouette in den Generator bricht Dachansatz (44,30 statt 40..41,5), Tuermchen-Spitze 45,25, Kegel 1,26 und Helm-geradlinig. Quellen NICHT gemittelt, Profil unveraendert.",
-   "naechster_schritt": "unabhaengige Dritt-Quelle: Foto-Silhouette Breite/Hoehe-Verhaeltnis (tools/foto_mass.py, Fotos 060/061) und Drohnen-Frames direkt von Osten/Westen; dann entscheidet die Mehrheit unabhaengiger Quellen. Nord-Sued-Tiefe (Generator/Foto 1,9 vs Wolken 1,3) ist derselbe Fall. Pruefzeilen setzen: hybrid_abgleich.py --profil-schreiben --nur-pruefzeilen."
+   "text": "WIDERSPRUCH Helm Querbreite (E-W) z 45-53 m: Silhouette der clip-korrigierten Drohnenwolke (Tuermchen maskiert, stueckweise linear, Rest-RMS 0,04 m) 5,93 m @45,2 / 5,15 @47,9 / 4,32 @50,6 / 3,88 @53,2; Strassen-Frontschicht (Zeilen 'Profil Dach: Breite y') 4,11-5,11 @45,2; Modell 4,84 @45 / 4,65 @48 / 4,25 @53. Uebernahme der Drohnensilhouette in den Generator bricht Dachansatz (44,30 statt 40..41,5), Tuermchen-Spitze 45,25, Kegel 1,26 und Helm-geradlinig. Quellen NICHT gemittelt, Profil unveraendert. NACHTRAG 2026-11-03 (hybrid_abgleich.py --stl, Nordflaeche z 42-54): Neigung/Tiefe@48 m Strasse 78,0 Grad/2,04, Drohne 77,6/1,97, Generator 77,2/1,94 - die N-S-Tiefe der Nordflaeche stimmt in allen drei Quellen (<0,1 m); der fruehere Tiefenwiderspruch war eine andere Auswertung (ohne Rest-Verschiebung/anderes Mass) und gilt nicht mehr. Offen bleibt nur die E-W-Breite (quer). Ost/West: Strasse hat nur ~1400 Punkte (WIDERSPRUCH nur formal), Drohne 80,2/76,2 Grad gegen Generator 85,1. NACHTRAG 2 (tools/breite_quellenvergleich.py, gleicher Silhouetten-Schaetzer fuer alle Quellen, z 45,2/47,9/50,6/53,2): Strasse 5,53/5,56/5,13/4,40; Generator 4,97/4,74/4,25/4,03; Drohne gesamt 5,93/5,12/4,29/3,74; je Clip @45,2: RBC7Co 5,88, VEN1zf 4,93, ua1sX3 5,06 (Clip-Streuung ~1 m). Der urspruengliche 'Widerspruch 4,6 vs 5,9' war ein MASS-Unterschied (Frontschicht-Breite gegen Silhouettenbreite). Mit gleichem Schaetzer liegt der Generator zwischen den Quellen bzw. innerhalb der Clip-Streuung; die 5,93 stammen vom gekippten Clip RBC7Co. Keine belastbare Evidenz, dass der Generator zu schmal ist -> Profil bleibt. Hinweis: p2-p98 ist bei verrauschten Wolken nach aussen verzerrt (Strasse).",
+   "naechster_schritt": "Pruefen mit d1_cv (OPENCV) ob die Clip-Streuung bei 45,2 m kleiner wird (Plan 1.1/1.2). Erst wenn Clips untereinander < 0,3 m streuen, ist die Drohnenbreite als Beleg tauglich."
   },
   {
    "datum": "auto",

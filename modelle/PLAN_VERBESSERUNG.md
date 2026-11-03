@@ -6,7 +6,7 @@ Regeln aus CLAUDE.md gelten: kein Sollwert gelockert, Widersprueche nicht gemitt
 ## Ausgangslage (belegt)
 - Strassenwolke: 16 Kameras, je Bild ein eigenes Linsenmodell (SIMPLE_RADIAL, nur k1), alle < 6 m Hoehe, 2 von 8 Richtungssektoren. Tiefenscherung x += 0,0308 z - 0,188; gefittet gegen den Generator (zirkulaer), gestuetzt nur durch den DOM1-First.
 - Drohne d1: SIMPLE_RADIAL je Clip, Clip-Tilt bis +1,9 m (46-54 m), Doppeldach; per Bandkorrektur auf <= 0,13 m an die Strasse gebunden (daher nicht unabhaengig).
-- Offener Widerspruch: Helmbreite E-W (Drohne 5,93 m @45,2 vs Strasse 4,6 m). Nord-Sued-Tiefe der Nordflaeche stimmt in allen Quellen (<0,1 m).
+- Helmbreite E-W: der 'Widerspruch' (Drohne 5,93 vs Strasse 4,6 m) war ein Mass-Unterschied. Mit gleichem Silhouetten-Schaetzer (`tools/breite_quellenvergleich.py`): Strasse 5,53 / Generator 4,97 / Drohne 5,93 @45,2 m, Clips untereinander ~1 m Streuung -> keine Evidenz fuer ein falsches Profil. Nord-Sued-Tiefe der Nordflaeche stimmt in allen Quellen (<0,1 m).
 - Datenluecken: Sued (Strasse < 100 Punkte), Ost/West (Strasse ~1400 Punkte), alles ueber 50 m duenn.
 
 ## Stufe 1 - laeuft/wartet bereits (Maschine arbeitet, ich werte aus)
@@ -20,7 +20,7 @@ Regeln aus CLAUDE.md gelten: kein Sollwert gelockert, Widersprueche nicht gemitt
 | Nr | Schritt | Warum | Abbruch/Erfolg |
 |---|---|---|---|
 | 2.1 | Strassennetz mit gemeinsamer Intrinsik je Kamera/EXIF-Gruppe (`f_gruppe`) und/oder Modell RADIAL/OPENCV neu rechnen (`sfm_netz.py --kamera-modell`) | 16 Bilder mit je eigenem Linsenmodell sind schwach bestimmt; mogliche Mitursache der Scherung | Scherung/Reprojektion vor-nachher; sonst Register |
-| 2.2 | Monte-Carlo ueber Clips (Bootstrap: Clips weglassen/vertauschen) fuer die Dachbreite | entscheidet "echter Widerspruch" oder "vereinbar" (Chi-Quadrat der Differenz), statt zu mitteln | Intervalle Strasse/Drohne ueberlappen oder nicht |
+| 2.2 | ERLEDIGT 3.11.: Bootstrap ueber Clips + gleicher Schaetzer fuer alle Quellen | Ergebnis: vereinbar innerhalb der Clip-Streuung (~1 m @45 m); nach d1_cv wiederholen | wenn Clips < 0,3 m streuen, Drohnenbreite als Beleg nutzbar |
 | 2.3 | Lot-/Linienpruefung (FLD aus opencv_contrib oder Canny+Hough; DeepLSD MIT nur als Test) der Wolke gegen senkrechte Kanten | misst die Scherung unabhaengig vom Generator | Kantenneigung je Hoehe |
 | 2.4 | Doppelschicht-Detektor als Pruefzeile (1 vs 2 Ebenen per BIC) | verhindert Rueckfall des Doppeldachs | Zeile besteht am Referenzmodell |
 | 2.5 | `wolke_vs_modell --entzerren` so aendern, dass die Drohne erhalten bleibt; danach `video_merge` als erster Kettenschritt | Kette wirft heute die Drohne weg | Regression + Schnappschuss mit Register |
