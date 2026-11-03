@@ -17,7 +17,7 @@ def lauf_n(a, repo, od):
     zd = os.path.realpath(os.path.join(repo, "modelle", a.ziel)); basis = os.path.join(os.path.dirname(zd), f"beweis_{time.strftime('%Y%m%d_%H%M')}"); os.makedirs(basis, exist_ok=True)
     print("Beweisordner:", basis, flush=True)
     for i in range(1, a.laeufe + 1):
-        t0 = time.time(); cmd = [sys.executable, "-I", "tools/nullstart.py", a.objekt, "--ziel", a.ziel, "--mapper", a.mapper, "--netzversuche", str(a.netzversuche)] + (["--streng"] if a.streng else [])
+        t0 = time.time(); cmd = [sys.executable, "-I", "tools/nullstart.py", a.objekt, "--ziel", a.ziel, "--mapper", a.mapper, "--netzversuche", str(a.netzversuche)] + (["--streng"] if a.streng else []) + (a.extra.split() if getattr(a, "extra", "") else [])
         log = os.path.join(basis, f"lauf_{i}.log"); print(f"Lauf {i}/{a.laeufe}: {' '.join(cmd[2:])}", flush=True)
         with open(log, "w") as f: rc = subprocess.run(cmd, cwd=repo, stdout=f, stderr=subprocess.STDOUT).returncode
         d = os.path.join(basis, f"lauf_{i}"); os.makedirs(d, exist_ok=True)
@@ -77,7 +77,7 @@ def auswerten(a, repo, od):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--laeufe", type=int, default=3); ap.add_argument("--ziel", default="martinstor_null"); ap.add_argument("--mapper", default="global")
-    ap.add_argument("--netzversuche", type=int, default=2); ap.add_argument("--streng", action="store_true"); ap.add_argument("--auswerten")
+    ap.add_argument("--netzversuche", type=int, default=2); ap.add_argument("--streng", action="store_true"); ap.add_argument("--auswerten"); ap.add_argument("--extra", default="", help="zusaetzliche Argumente fuer nullstart.py, z. B. \"--kamera-modell OPENCV\"")
     a = ap.parse_args(); repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); od = os.path.dirname(os.path.abspath(a.objekt))
     if a.auswerten: auswerten(a, repo, od)
     else: lauf_n(a, repo, od)
