@@ -23,7 +23,7 @@ def verfeinern(P, V, zb=(14, 48), seite=9.0, it=30, trim=0.7):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("video"); ap.add_argument("--seite", default="nord"); ap.add_argument("--zmin", type=float, default=38.0)
-    ap.add_argument("--rand", type=float, default=8.0); ap.add_argument("--voxel", type=float, default=0.15); ap.add_argument("--min-voxel", type=int, default=3); ap.add_argument("--max-anteil", type=float, default=1.0); ap.add_argument("--zurueck", action="store_true"); ap.add_argument("--ohne-verfeinern", action="store_true"); ap.add_argument("--ohne-clippruefung", action="store_true"); ap.add_argument("--max-clipversatz", type=float, default=0.5, help="Clip-Hoehenband wird verworfen, wenn Restversatz (x,y) zur Strassenwolke darueber liegt (m)"); ap.add_argument("--max-nn", type=float, default=0.3, help="Pruefung: NN-Median nach Verfeinerung (m); darueber wird NICHT eingefuegt")
+    ap.add_argument("--rand", type=float, default=8.0); ap.add_argument("--voxel", type=float, default=0.15); ap.add_argument("--min-voxel", type=int, default=3); ap.add_argument("--max-anteil", type=float, default=1.0); ap.add_argument("--zurueck", action="store_true"); ap.add_argument("--ohne-verfeinern", action="store_true"); ap.add_argument("--ohne-clippruefung", action="store_true"); ap.add_argument("--passen", type=int, default=2, help="Durchgaenge der Clip-Bandkorrektur"); ap.add_argument("--max-clipversatz", type=float, default=0.5, help="Clip-Hoehenband wird verworfen, wenn Restversatz (x,y) zur Strassenwolke darueber liegt (m)"); ap.add_argument("--max-nn", type=float, default=0.3, help="Pruefung: NN-Median nach Verfeinerung (m); darueber wird NICHT eingefuegt")
     a = ap.parse_args(); od = os.path.dirname(os.path.abspath(a.objekt)); sd = os.path.join(od, "sfm"); f = os.path.join(sd, f"dicht_{a.seite}_entzerrt.npy"); fc = f.replace("_entzerrt.npy", "_farben.npy"); f0 = f.replace(".npy", "_ohnevideo.npy"); mk = os.path.join(sd, "video_merge.json")
     if a.zurueck:
         if os.path.exists(f0):
@@ -41,25 +41,48 @@ def main():
     else: print("WARNUNG: keine Drift-Korrektur der Videowolke (nur Nordseite mit wolke_vs_modell-Drift implementiert)")
     # (2) Clip-Konsistenz: Punkte nach dominantem Clip (>= 80 % der Bildsichten) und Hoehenband gegen die Strassenwolke pruefen; abweichende Clip-Baender werden NICHT eingefuegt
     #     (Beobachtung Nutzer: 'zwei parallele Daecher'; Ursache: Clip RBC7Co kippt im Gesamt-SfM, +0,9 m bei z 32-48, +2,1 m darueber).
-    clipinfo = []; pc = os.path.join(a.video, "punkt_clips.npy"); loes = np.zeros(len(V), bool)
+    clipinfo = []; pc = os.path.join(a.video, "punkt_clips.npy"); loes = np.zeros(len(V), bool); V_roh = V.copy()
     if os.path.exists(pc) and not a.ohne_clippruefung:
         from scipy.spatial import cKDTree
         A_ = np.load(pc).astype(float)
         if len(A_) != len(V): sys.exit("punkt_clips.npy passt nicht zur Videowolke - video_dicht.py neu laufen lassen")
         fr = A_ / np.maximum(A_.sum(1, keepdims=True), 1); dom = fr.argmax(1); rein = fr.max(1) >= 0.8; cn = json.load(open(os.path.join(a.video, "punkt_clips.json")))
+        BAENDER = [(14, 20), (20, 26), (26, 32), (32, 38), (38, 44), (44, 50), (50, 56)]; ZM = np.array([(lo + hi) / 2 for lo, hi in BAENDER]); Pt = {}
+        def icp3(aa, bs):
+            tr = cKDTree(aa); tt = np.zeros(3)
+            for _ in range(25): dd, ii = tr.query(bs + tt); kk = dd < np.quantile(dd, 0.7); tt += (aa[ii[kk]] - (bs[kk] + tt)).mean(0)
+            return tt
+        def band_t(Vx, ci, lo, hi):                                                                  # Versatz Clip-Band gegen die Strassenwolke (None: zu wenig Punkte)
+            b = Vx[(dom == ci) & rein & (Vx[:, 2] >= lo) & (Vx[:, 2] < hi) & (np.abs(Vx[:, 0]) < 9) & (np.abs(Vx[:, 1]) < 9)]
+            aa = P[(P[:, 2] >= lo) & (P[:, 2] < hi) & (np.abs(P[:, 0]) < 9) & (np.abs(P[:, 1]) < 9)]
+            if len(b) < 500 or len(aa) < 300: return None, len(b)
+            return icp3(aa, b[np.random.default_rng(0).choice(len(b), min(len(b), 15000), replace=False)]), len(b)
+        # Kippen eines Clips (Register BR): Versatz je Clip UND Hoehenband messen, stueckweise linear ueber z interpolieren und abziehen (statt zu verwerfen). Kreuzprobe 2026-11-03:
+        # RBC7Co gegen Strasse +1,93 (z 46-54) = gegen Referenzclip +2,11 abzueglich Referenz gegen Strasse -0,19 -> bandweise Korrektur ist in sich stimmig. Ueber dem letzten Band fehlt jede Referenz: Fremdclips dort verworfen.
+        shifts = np.zeros((len(V), 3)); obergrenze = BAENDER[-1][1]; V = V_roh.copy()
+        for passe in range(a.passen):                                                                # zweiter Durchgang auf den schon korrigierten Punkten (Rest ~0,25 m nach dem ersten, Nutzer-Sicht 2026-11-03)
+            sp = np.zeros((len(V), 3)); Pt = {}
+            for ci in range(A_.shape[1]):
+                ts = [band_t(V, ci, lo, hi) for lo, hi in BAENDER]; ok_b = [i for i, (t, n) in enumerate(ts) if t is not None]
+                if not ok_b: continue
+                zc = ZM[ok_b]; T = np.array([ts[i][0] for i in ok_b]); Pt[ci] = (zc, T)
+                for j in range(3): sp[:, j] += fr[:, ci] * np.interp(V[:, 2], zc, T[:, j])           # Mischpunkte: gewichtet nach Bildsichten je Clip; ausserhalb der Baender konstant
+            V = V + sp; shifts += sp
+        for ci in range(A_.shape[1]):                                                                 # Nachpruefung je Clip/Band mit korrigierten Punkten
+            for (lo, hi) in BAENDER:
+                t, n = band_t(V, ci, lo, hi)
+                if t is None: continue
+                ok = float(abs(t[0])) <= a.max_clipversatz; vor = band_t(V_roh, ci, lo, hi)[0]
+                clipinfo.append(dict(clip=cn[ci], z=[lo, hi], n=int(n), versatz_vorher_m=vor.round(2).tolist(), rest_nach_korrektur_m=t.round(2).tolist(), ok=bool(ok)))
+                print(f"  Clip {cn[ci][:8]} z {lo}-{hi}: n={n} Versatz {vor.round(2)} -> nach Korrektur {t.round(2)} -> {'ok' if ok else 'VERWORFEN'}")
+                if not ok: loes |= (dom == ci) & rein & (V[:, 2] >= lo) & (V[:, 2] < hi)
+        # Fremdclips ueber dem Referenzbereich: ohne Strassenwolke keine Pruefung -> nur Clips behalten, deren letzte Korrektur klein war (|dx| <= max)
+        for ci, (zc, T) in Pt.items():
+            if abs(T[-1, 0]) > a.max_clipversatz: loes |= (dom == ci) & rein & (V[:, 2] >= obergrenze); print(f"  Clip {cn[ci][:8]}: ueber {obergrenze} m verworfen (letzter Bandversatz {T[-1, 0]:+.2f} m, keine Referenz darueber)")
         for ci in range(A_.shape[1]):
-            for lo, hi in [(14, 32), (32, 48), (48, 70)]:
-                sel = (dom == ci) & rein & (V[:, 2] >= lo) & (V[:, 2] < hi); b = V[sel & (np.abs(V[:, 0]) < 9) & (np.abs(V[:, 1]) < 9)]
-                if len(b) < 500: continue
-                bs = b[np.random.default_rng(0).choice(len(b), min(len(b), 15000), replace=False)]
-                aa = P[(P[:, 2] >= lo) & (P[:, 2] < hi) & (np.abs(P[:, 0]) < 9) & (np.abs(P[:, 1]) < 9)]
-                if len(aa) < 300: continue
-                tr = cKDTree(aa); tt = np.zeros(3)
-                for _ in range(25): dd, ii = tr.query(bs + tt); kk = dd < np.quantile(dd, 0.7); tt += (aa[ii[kk]] - (bs[kk] + tt)).mean(0)
-                ok = float(abs(tt[0])) <= a.max_clipversatz                                  # Tiefenachse x (Nordseite); y/z sind Seiten-/Hoehenlage
-                clipinfo.append(dict(clip=cn[ci], z=[lo, hi], n=int(len(b)), verschiebung_m=tt.round(2).tolist(), ok=bool(ok)))
-                print(f"  Clip {cn[ci][:8]} z {lo}-{hi}: n={len(b)} Rest-Versatz {tt.round(2)} -> {'ok' if ok else 'VERWORFEN (inkonsistent)'}")
-                if not ok: loes |= sel
+            if ci not in Pt: loes |= (dom == ci) & rein & (V[:, 2] >= 30); print(f"  Clip {cn[ci][:8]}: nirgends gegen die Strasse pruefbar -> ueber 30 m verworfen")
+        np.save(os.path.join(a.video, "dicht_korrigiert.npy"), V.astype(np.float32)); np.save(os.path.join(a.video, "dicht_verworfen.npy"), loes)
+
     k = (V[:, 2] >= a.zmin) & (np.abs(V[:, 0]) <= a.rand) & (np.abs(V[:, 1]) <= a.rand) & ~loes; V, Cv = V[k], Cv[k]; n_roh = len(V)
     vox = np.floor(V / a.voxel).astype(np.int64); _, inv, cnt = np.unique(vox, axis=0, return_inverse=True, return_counts=True); keep = cnt[inv.ravel()] >= a.min_voxel; V, Cv = V[keep], Cv[keep]
     print(f"Videopunkte nach Zuschnitt/Clip-Pruefung: {len(V)} ({int(loes.sum())} Punkte aus inkonsistenten Clip-Baendern verworfen)")

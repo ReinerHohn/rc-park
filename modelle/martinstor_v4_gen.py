@@ -243,11 +243,11 @@ if _PROF and _PROF.get("dach_traufe"):                                          
 beleg("dach", "Helm: Traufe 40,5 m mit Ueberstand, Loft bis zur Plattform 55,4 m", "Wolke Nord Front-Tiefenprofil + Frontfenster (Register AR); Foto 061 Silhouette (M-061-S1); SfM Goldkugeln 55,1-55,6 m; DOM1 Peak", traufe=RZ0, first=RZ1)
 if _PROF and _PROF.get("dach_profil"):
     # Loft aus dem gemessenen Profil (z, tief = N-S, quer = E-W): Fuss = Helmansatz auf dem Glockenstock, Kopf = Plattform
-    lay = [(RZ0, BX, BY)] + [(z, t, q) for z, t, q in _PROF["dach_profil"] if RZ0 + 0.6 < z < RZ1 - 0.4] + [(RZ1, OX, OY)]
+    lay = [(RZ0, BX, BY)] + [(z, t, q) for z, t, q in _PROF["dach_profil"] if RZ0 + 0.6 < z < RZ1 - 0.4] + [(RZ1, OX, (_PROF.get("dach_oben") or {}).get("quer", OY))]            # Kopfbreite quer aus dem Profil (Silhouette-Extrapolation, ANNAHME) statt der Kugel-Breite DACH_OBEN_Y
     lay = [l for i, l in enumerate(lay) if i == 0 or abs(l[1] - lay[i - 1][1]) > 0.02 or abs(l[2] - lay[i - 1][2]) > 0.02 or i == len(lay) - 1]   # (fast) gleiche Nachbarschichten zusammenfassen: keine koplanaren Naehte
     for (z0, t0, q0), (z1, t1, q1) in zip(lay[:-1], lay[1:]):
         adds.append(frustum(0, 0, z0 - 0.02, t0, q0, z1, t1, q1))
-    beleg("dach", "Helm als Loft aus Profil (%d Schichten)" % len(lay), _PROF.get("quelle", "profile_generator.json"), schichten=len(lay))
+    beleg("dach", "Helm als Loft aus Profil (%d Schichten)" % len(lay), _PROF.get("quelle", "profile_generator.json") + "; quer: " + _PROF.get("quer_quelle", "wolke_profile"), schichten=len(lay))
 else:
     adds.append(frustum(0, 0, RZ0, BX, BY, RZM, MX, MY))
     adds.append(frustum(0, 0, RZM - 0.05, MX, MY, RZM2, M2X, M2Y))

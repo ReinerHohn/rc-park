@@ -10,7 +10,7 @@ import sys, os, glob, shutil, argparse, json, numpy as np, cv2, pycolmap
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("wurzel"); ap.add_argument("aus"); ap.add_argument("--clips", nargs="+", required=True)
-    ap.add_argument("--maske-kreis", nargs=3, type=float, default=[0.5, 0.5, 0.075]); ap.add_argument("--cpu", action="store_true"); ap.add_argument("--max-frames", type=int, default=0)
+    ap.add_argument("--maske-kreis", nargs=3, type=float, default=[0.5, 0.5, 0.075]); ap.add_argument("--cpu", action="store_true"); ap.add_argument("--kamera", default="SIMPLE_RADIAL", help="COLMAP-Kameramodell; OPENCV/FULL_OPENCV = k1,k2 + Tangential gegen Doming (Register BU)"); ap.add_argument("--max-frames", type=int, default=0)
     a = ap.parse_args(); bild = os.path.join(a.aus, "bilder"); mask = os.path.join(a.aus, "masken"); sp = os.path.join(a.aus, "sparse"); db = os.path.join(a.aus, "db.db")
     for d in (bild, mask): shutil.rmtree(d, ignore_errors=True); os.makedirs(d)
     shutil.rmtree(sp, ignore_errors=True); os.makedirs(sp)
@@ -25,7 +25,7 @@ def main():
             m = np.full((h, w), 255, np.uint8); cv2.circle(m, (int(a.maske_kreis[0] * w), int(a.maske_kreis[1] * h)), int(a.maske_kreis[2] * w), 0, -1)
             cv2.imwrite(os.path.join(mask, c, os.path.basename(f) + ".png"), m); n += 1
     print(f"{n} Frames, Maske Kreis {a.maske_kreis}", flush=True)
-    ro = pycolmap.ImageReaderOptions(); ro.camera_model = "SIMPLE_RADIAL"; ro.mask_path = mask
+    ro = pycolmap.ImageReaderOptions(); ro.camera_model = a.kamera; ro.mask_path = mask
     gpu = (not a.cpu) and pycolmap.has_cuda
     if not a.cpu and not gpu: print("WARNUNG: pycolmap ohne CUDA - SIFT/Matching laufen auf der CPU", flush=True)
     dev = pycolmap.Device.cuda if gpu else pycolmap.Device.cpu; print("SIFT/Matching auf", "GPU" if gpu else "CPU", flush=True)

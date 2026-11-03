@@ -66,15 +66,98 @@ def schicht_halbbreite(P, u, z, dz=0.5, streifen=1.8, vmax=6.5, minpts=150):
     h, e = np.histogram(d[k], bins=np.arange(0.3, vmax + 0.1, 0.1)); h = np.convolve(h, np.ones(3) / 3, mode="same"); i = int(np.argmax(h))
     return float(0.5 * (e[i] + e[i + 1])), int(k.sum()), float(h[i] / max(h.sum(), 1))
 
+def pav_fallend(y, w):
+    """Isotone Regression (Pool-Adjacent-Violators): Folge soll nach oben NICHT zunehmen (Helm wird nach oben schmaler); gewichtet nach Punktzahl."""
+    bl = []
+    for v, ww in zip(y, w):
+        bl.append([v, ww, 1])
+        while len(bl) > 1 and bl[-2][0] < bl[-1][0]:
+            b2 = bl.pop(); b1 = bl.pop(); ws = b1[1] + b2[1]; bl.append([(b1[0] * b1[1] + b2[0] * b2[1]) / ws, ws, b1[2] + b2[2]])
+    return [b[0] for b in bl for _ in range(b[2])]
+
+def tuerm_maske(P, G, margin=0.35):
+    """True fuer Punkte innerhalb der Ecktuermchen (Achse und Radius je Hoehe aus profile_generator.json: tuerm_achse, tuerm_profil, tuerm_kegel) - generisch, keine Handgrenzen."""
+    ach = G.get("tuerm_achse"); prof = G.get("tuerm_profil"); kg = G.get("tuerm_kegel") or {}
+    if not (ach and prof): return np.zeros(len(P), bool)
+    zp = np.array([r[0] for r in prof]); dp = np.array([r[1] for r in prof]); st = kg.get("steigung_d_je_m", 0.44); zt = kg.get("spitze")
+    d = np.interp(P[:, 2], zp, dp); hoch = P[:, 2] > zp[-1]; d[hoch] = np.maximum(dp[-1] - st * (P[hoch, 2] - zp[-1]), 0.0)
+    if zt is not None: d[P[:, 2] > zt + 0.5] = 0.0
+    r = 0.5 * d + margin; return (np.hypot(np.abs(P[:, 0]) - ach["tief"], np.abs(P[:, 1]) - ach["quer"]) < r) & (d > 0)
+
+def silhouette_quer(P, z, dz=0.5, vmax=4.6, minpts=150):
+    """Breite quer (E-W) der Nordflaeche in einer z-Schicht: p98 - p2 der y-Koordinaten (Punkte vor der Achse; Ecktuermchen vorher entfernt)."""
+    k = (np.abs(P[:, 2] - z) <= dz) & (P[:, 0] < -0.2) & (P[:, 0] > -7) & (np.abs(P[:, 1]) < vmax)
+    if k.sum() < minpts: return None
+    y = P[k][:, 1]; return float(np.percentile(y, 98) - np.percentile(y, 2)), int(k.sum())
+
+def segmentiert(z, y, w, kmax=3):
+    """Stetige stueckweise lineare Regression mit automatischer Knotenzahl (0..kmax-1 Knoten, BIC) und Knotenlage (Gitter) - zweistufiger Helm ohne Handgrenzen."""
+    import itertools
+    best = None; n = len(z)
+    for nk in range(0, kmax):
+        for kn in itertools.combinations(range(2, n - 2), nk):
+            if any(b - a < 3 for a, b in zip(kn, kn[1:])): continue
+            X = np.c_[np.ones(n), z] if not kn else np.c_[np.ones(n), z, *[np.maximum(z - z[i], 0) for i in kn]]
+            W = np.sqrt(w)[:, None]; beta, *_ = np.linalg.lstsq(X * W, y * W[:, 0], rcond=None); rss = float((w * (X @ beta - y) ** 2).sum() / w.mean())
+            bic = n * np.log(max(rss / n, 1e-9)) + (2 + nk) * np.log(n)
+            if best is None or bic < best[0]: best = (bic, kn, beta, rss)
+    bic, kn, beta, rss = best; knoten = [float(z[i]) for i in kn]
+    f = lambda zz: float(beta[0] + beta[1] * zz + sum(b * max(zz - k, 0) for b, k in zip(beta[2:], knoten)))
+    return f, knoten, float(np.sqrt(rss / n))
+
+def profil_schreiben(od, Pd, G_masse, dz_raster=0.5, minpts=150, rows=4, schreiben=True):
+    """Querbreite des Helms (profile_generator.json 'dach_profil'/'dach_traufe'/'dach_oben') aus der Silhouette der Drohnenwolke (Register BU), generisch: Tuermchen ueber ihre Achsen maskiert, Knicke automatisch (BIC),
+    Pruefzeilen automatisch (Toleranz aus Rest-RMS). Tiefe bleibt (offene Beobachtung: Foto-061-Silhouette 1,88 vs Wolken 1,23-1,4 bei z 48). Oberhalb der letzten belegten Schicht: Verlaengerung der letzten Geraden (ANNAHME)."""
+    pf = os.path.join(od, "profile_generator.json"); G = json.load(open(pf)); alt = [list(r) for r in G["dach_profil"]]
+    Pd = Pd[~tuerm_maske(Pd, G)]; z0 = float(G["dach_traufe"]["z"]) if G.get("dach_traufe") else alt[0][0]; z1 = alt[-1][0]
+    zs = np.arange(z0, z1 + 0.01, dz_raster); w = [silhouette_quer(Pd, z, minpts=minpts) for z in zs]; ok = [i for i, x in enumerate(w) if x]
+    if len(ok) < 8: raise SystemExit("zu wenige Silhouettenschichten")
+    zz = zs[ok]; ww = np.array([w[i][0] for i in ok]); nn = np.array([w[i][1] for i in ok], float)
+    d = np.diff(ww)[:len(ww) // 2]; ist = int(np.argmin(d)) + 1 if d.min() < -0.8 else 0                                # groesster Sprung nach unten = Fuss des Helms (Sockel darunter gehoert nicht zur Helmgeraden)
+    dicht = nn >= 0.15 * np.median(nn)                                                                   # duenn belegte Schichten (Spitze) nicht fitten
+    sel = (np.arange(len(zz)) >= ist) & dicht
+    if sel.sum() < 8: raise SystemExit("zu wenige dichte Silhouettenschichten")
+    zz, ww, nn = zz[sel], ww[sel], nn[sel]; f, knoten, rms = segmentiert(zz, ww, np.sqrt(nn))
+    zlast = float(zz[-1]); print(f"Silhouette quer: {len(zz)} Schichten z {zz[0]:.1f}-{zlast:.1f} m, Knoten {['%.1f' % k for k in knoten]}, Rest-RMS {rms:.2f} m")
+    def q(z): return max(f(min(z, zlast)) + ((f(zlast) - f(zlast - 1.0)) * (z - zlast) if z > zlast else 0.0), 0.1)
+    G["dach_profil"] = [[z, t, round(q(z), 2) if z >= zz[0] else qq] for z, t, qq in alt]
+    if G.get("dach_traufe"): G["dach_traufe"]["quer_alt"] = G["dach_traufe"].get("quer"); G["dach_traufe"]["quer"] = round(q(z0), 2); G["dach_traufe"]["quer_quelle"] = "Silhouette Drohnenwolke (Register BU)"
+    zt = z1 + dz_raster if False else (G_masse.get("first") or z1); G["dach_oben"] = dict(quer=round(q(zt), 2), quelle="Verlaengerung der letzten Silhouettengeraden bis First %.1f m (ANNAHME, oberhalb z %.1f keine Schicht)" % (zt, zlast))
+    G["quer_quelle"] = "tools/hybrid_abgleich.py --profil-schreiben: Silhouette Nordflaeche, Drohnenwolke clip-korrigiert, Tuermchen maskiert, %d Knoten (BIC), Rest-RMS %.2f m, Register BU" % (len(knoten), rms)
+    if schreiben: json.dump(G, open(pf, "w"), indent=1, ensure_ascii=False)
+    zr = list(np.linspace(zz[0] + 1.0, zlast - 0.5, rows)); tol = round(max(rms, 0.2), 2)
+    return dict(profil_alt=alt, profil_neu=G["dach_profil"], knoten=knoten, rms=rms, tol=tol, zeilen=[(round(float(z), 1), round(f(z), 2)) for z in zr], zlast=zlast)
+
+def pruefzeilen_schreiben(od, erg):
+    """Pruefzeilen 'Helm Silhouette Nord: Breite quer bei z m (m)' (idempotent); bestehende Zeilen anderer Quellen bleiben unangetastet (Widerspruch = offene Beobachtung, Regel 5) neu setzen; frueherer Soll in historie."""
+    mp = os.path.join(od, "masstabelle.json"); T = json.load(open(mp)); tol = erg["tol"]; q = "Register BU: Silhouette der Nordflaeche (p2-p98 y, Schicht +-0,5 m) der clip-korrigierten Drohnenwolke, Tuermchen maskiert, stueckweise linear (BIC); tools/hybrid_abgleich.py"
+    T["pruefungen"] = [r for r in T["pruefungen"] if not r["name"].startswith("Helm Silhouette Nord:")]; T["messungen"] = {k: v for k, v in T["messungen"].items() if not k.startswith("helm_silhouette_")}
+    def setze(name, wert, z, b):
+        T["messungen"][wert] = {"typ": "ausdehnung_streifen", "z": z, "achse": "y", "quer_max": 4.6}; soll = [round(b - tol, 2), round(b + tol, 2)]
+        for r in T["pruefungen"]:
+            if r["name"] == name:
+                if r["soll"] != soll: r.setdefault("historie", []).append({"datum": "auto", "alt_soll": r["soll"], "grund": "hybrid_abgleich.py: Silhouette der Drohnenwolke (Register BU)"})
+                r["soll"] = soll; r["quelle"] = q; return
+        T["pruefungen"].append(dict(name=name, wert=wert, soll=soll, quelle=q, quelltyp="sfm_bodenanker", merkmal="schlankheit", massstab="LoD2-Eckkanten + Wandebene (Strassenwolke); Drohne daran gebunden"))
+    for z, b in erg["zeilen"]: setze(f"Helm Silhouette Nord: Breite quer bei {z:.0f} m (m)", f"helm_silhouette_{int(round(z))}", z, b)
+    json.dump(T, open(mp, "w"), indent=1, ensure_ascii=False)
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--stl"); ap.add_argument("--stl-faktor", type=float, default=87 / 1000.0, help="STL (mm, 1:87) -> Meter")
     ap.add_argument("--drohne", default="/media/oem/scan/rc-park_daten/martinstor/video_sfm/d1"); ap.add_argument("--zlo", type=float, default=42.0); ap.add_argument("--zhi", type=float, default=54.0)
-    ap.add_argument("--zref", type=float, default=48.0); ap.add_argument("--streifen", type=float, default=2.5); ap.add_argument("--min-diff-grad", type=float, default=1.0); ap.add_argument("--min-diff-m", type=float, default=0.15); ap.add_argument("--ohne-rest", action="store_true"); ap.add_argument("--min-punkte", type=int, default=5000, help="Seite fuer das Profil nur ab dieser Punktzahl"); ap.add_argument("--profil", action="store_true", help="Dachprofil (z, tief, quer) aus den Drohnen-Ebenen nach audit/hybrid_dach_profil.json")
+    ap.add_argument("--zref", type=float, default=48.0); ap.add_argument("--streifen", type=float, default=2.5); ap.add_argument("--min-diff-grad", type=float, default=1.0); ap.add_argument("--min-diff-m", type=float, default=0.15); ap.add_argument("--ohne-rest", action="store_true"); ap.add_argument("--profil-schreiben", action="store_true", help="Querbreite des Helms in modelle/<objekt>/profile_generator.json aus der Drohnensilhouette ersetzen"); ap.add_argument("--ohne-korrektur", action="store_true"); ap.add_argument("--nur-pruefzeilen", action="store_true", help="mit --profil-schreiben: nur die Pruefzeilen setzen, Profil unveraendert (Regel 2: Test zuerst)"); ap.add_argument("--min-punkte", type=int, default=5000, help="Seite fuer das Profil nur ab dieser Punktzahl"); ap.add_argument("--profil", action="store_true", help="Dachprofil (z, tief, quer) aus den Drohnen-Ebenen nach audit/hybrid_dach_profil.json")
     a = ap.parse_args(); od = os.path.dirname(os.path.abspath(a.objekt)); sd = os.path.join(od, "sfm"); Q = {}
     nord = os.path.join(sd, "dicht_nord_entzerrt_ohnevideo.npy"); nord = nord if os.path.exists(nord) else os.path.join(sd, "dicht_nord_entzerrt.npy")
     if os.path.exists(nord): Q["strasse"] = np.load(nord).astype(float)
     dj = os.path.join(a.drohne, "dicht_modell.npy")
-    if os.path.exists(dj):
+    dk = os.path.join(a.drohne, "dicht_korrigiert.npy")
+    if os.path.exists(dk) and not a.ohne_korrektur:                                                  # von video_merge.py: Drift + bandweise Clip-Korrektur schon angewandt
+        V = np.load(dk).astype(float); vw = os.path.join(a.drohne, "dicht_verworfen.npy"); ausg = 0
+        if os.path.exists(vw): bad = np.load(vw); ausg = int(bad.sum()); V = V[~bad]
+        vj0 = os.path.join(od, "audit", "video_versatz.json")
+        if os.path.exists(vj0) and not a.ohne_rest: V += np.array(json.load(open(vj0)).get("verschiebung_m") or [0, 0, 0])
+        Q["drohne"] = V; print(f"Drohnenpunkte {len(V)} (korrigiert von video_merge, verworfen {ausg})")
+    elif os.path.exists(dj):
         V = np.load(dj).astype(float); wv = os.path.join(od, "audit", "wolke_vs_modell_nord.json"); drift = json.load(open(wv)).get("drift") if os.path.exists(wv) else None
         if drift: V[:, 0] += drift[0] * V[:, 2] + drift[1]
         vj0 = os.path.join(od, "audit", "video_versatz.json")
@@ -102,6 +185,12 @@ def main():
         for z in np.arange(41.0, 55.01, 1.0):
             n_ = schicht_halbbreite(Pd, SEITEN["Nord(-x)"], z); o_ = schicht_halbbreite(Pd, SEITEN["Ost(+y)"], z); w_ = schicht_halbbreite(Pd, SEITEN["West(-y)"], z)
             q = [x[0] for x in (o_, w_) if x]; lay2.append([round(float(z), 2), round(2 * n_[0], 2) if n_ else None, round(2 * float(np.mean(q)), 2) if q else None, [x[1] if x else 0 for x in (n_, o_, w_)]])
+        for j, nm in ((1, "tief"), (2, "quer")):                                                 # isoton fallend, nur ueber vorhandene Schichten
+            idx = [i for i, r in enumerate(lay2) if r[j] is not None]
+            if len(idx) >= 3:
+                glatt = pav_fallend([lay2[i][j] for i in idx], [max(lay2[i][3][0 if j == 1 else 1] + (lay2[i][3][2] if j == 2 else 0), 1) for i in idx])
+                for i, g in zip(idx, glatt): lay2[i].append(round(float(g), 2)) if False else None
+                for i, g in zip(idx, glatt): lay2[i][j] = round(float(g), 2)
         out["profil_schichten"] = dict(schichten=lay2, hinweis="[z, tief_voll (nur Nord, Gegenseite ANNAHME symmetrisch), quer_voll (Mittel Ost/West), Punkte N/O/W]")
         print("Schichtprofil (z, tief, quer):"); [print("  ", r[:3], r[3]) for r in lay2]
     if a.profil and "drohne" in Q:
@@ -121,6 +210,10 @@ def main():
             out["profil"] = dict(dach_profil=lay, quelle="tools/hybrid_abgleich.py: Dachebenen der Drohnenwolke (Drift-Korrektur, Rest-ICP, inkonsistente Clip-Baender ausgeschlossen); Seiten ab --min-punkte, Gegenseite nur wenn belegt, sonst ANNAHME: symmetrisch zur belegten Seite", seiten_verwendet=dict(tief=len(hx), quer=len(hy)), seiten_streuung_m=streu,
                                  neigung_grad=dict(tief=[h[2]["neigung_grad"] for h in hx], quer=[h[2]["neigung_grad"] for h in hy]))
             print("Profil (z, tief, quer):", lay[::3], "Gegenseiten-Streuung (m):", streu)
+    if a.profil_schreiben:
+        mj = os.path.join(od, "masse.json"); gm = {"first": None}
+        if os.path.exists(mj): M_ = json.load(open(mj))["masse"]; gm["first"] = M_["GZ1"]["wert"] + M_["DACHHOEHE"]["wert"] if "GZ1" in M_ and "DACHHOEHE" in M_ else None
+        erg = profil_schreiben(od, Q["drohne"], gm, schreiben=not a.nur_pruefzeilen); print("Profil quer geschrieben:", [(o[0], o[2], n[2]) for o, n in zip(erg["profil_alt"][::4], erg["profil_neu"][::4])]); pruefzeilen_schreiben(od, erg); print("Pruefzeilen:", erg["zeilen"], "Toleranz +-", erg["tol"])
     os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(out, open(os.path.join(od, "audit", "hybrid_dach.json"), "w"), indent=1, ensure_ascii=False)
 
 if __name__ == "__main__":

@@ -1465,3 +1465,11 @@ Falsch waren: Frontblock 3,4 m statt ~7 m, Bogen 2,4 m breit/Scheitel 8,6 m stat
 Die alte Quelle "Foto 003" war falsch (zeigt die Uhr, nicht den Torbau). Messungen: M-089-001..007 (Massstab: Turmbreite 11,2 m; Hoehe ANNAHME Giebelspitze 20,7 m aus Wolke).
 Offen: Giebelachse Foto -9,2 vs Wolke/Drohne -8,3 (nicht gemittelt, bleibt -8,3); rechtes Bogenende verdeckt (Symmetrie-ANNAHME); Torbau noch nicht im Hauptmodell/Viewer.
 Regression martinstor: 1 Abweichung (wolke_vs_modell n_beide 6782 -> 6836) - stammt NICHT vom Torbau (v4-Generator nutzt ihn nicht), sondern von der wiederhergestellten Wolke/Entzerrung dieser Sitzung; Schnappschuss nicht erneuert, noch zu klaeren.
+
+## BU - Dachsilhouette automatisch, Widerspruch Strasse/Drohne, Kameramodell-Test (2026-11-03)
+- `hybrid_abgleich.py --profil-schreiben` generisch neu: Tuermchen ueber `tuerm_achse/tuerm_profil` maskiert, Helmfuss = groesster Breitensprung (untere Haelfte), duenn belegte Schichten (<15 % Median) nicht gefittet, Knicke stueckweise linear per BIC, Pruefzeilen automatisch (Toleranz = max(Rest-RMS, 0,2 m)); `--nur-pruefzeilen` setzt nur die Zeilen (Regel 2). Keine Handkonstanten mehr.
+- Ergebnis Silhouette E-W (Drohne, clip-korrigiert): 5,93 @45,2 / 5,15 @47,9 / 4,32 @50,6 / 3,88 @53,2 (Rest-RMS 0,04). Modell 4,84/4,65/4,25 -> 3 von 4 Zeilen schlugen am alten Modell fehl (Test ok).
+- Uebernahme ins Profil bricht Dachansatz (44,30), Tuermchen-Spitze (45,25), Kegel (1,26), Helm-geradlinig, 'Profil Dach 45,2' (Strassenwolke 4,11-5,11). Widerspruch Strasse vs Drohne, NICHT gemittelt: Profil unveraendert, Zeilen entfernt, offene Beobachtung eingetragen. Nord-Sued-Tiefe (1,9 Generator/Foto 061 vs 1,3 Wolken) gleicher Fall.
+- Recherche Methoden (Agent, Lizenzen UNVERIFIZIERT): kein Fusionsverfahren loest einen Systemfehler (Doming nach James & Robson 2014); Helmert-VCE/BIC/Konsens helfen nur fuer Restrauschen bzw. Ebenenzahl.
+- Hypothese: d1 nutzt SIMPLE_RADIAL (nur k1) je Clip -> Doming/Clip-Tilt. Test: `video_sfm.py --kamera OPENCV` (neu) als `video_sfm/d1_cv`, startet per `nachtkette.sh` nach Nachtlauf (nullstart_beweis 4 Laeufe) und Boden-SfM. Auswertung: Doppeldach/Clipversatz (video_merge, hybrid_abgleich) vorher/nachher.
+- pycolmap 4.2.1: Pose-Priors ja, 3D-Punkt-Priors nein -> Anker-BA waere Eigenbau.
