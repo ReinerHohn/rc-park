@@ -1,0 +1,127 @@
+{
+ "objekt": "Martinstor",
+ "seiten": {
+  "+x": "Sued",
+  "-x": "Nord",
+  "+y": "Ost",
+  "-y": "West"
+ },
+ "quellen": {
+  "fotos": {
+   "je_seite": {
+    "Nord": 32,
+    "Sued": 51,
+    "West": 1,
+    "Ost": 2,
+    "unbekannt": 31,
+    "ohne Seitenangabe": 1
+   },
+   "gesamt": 118
+  },
+  "boden": {
+   "modell": "0",
+   "bilder_gesamt": 350,
+   "ausreisser": 8,
+   "ausrichtung": "audit/video_ausrichtung_boden.json",
+   "je_seite": {
+    "Nord": {
+     "bilder": 340,
+     "status": "belegt",
+     "abstand_median_m": 48.9,
+     "abstand_min_m": 18.9,
+     "abstand_max_m": 374.1,
+     "hoehe_median_m": 0.4,
+     "hoehe_max_m": 234.7,
+     "blick_neigung_grad": 25.6
+    },
+    "Ost": {
+     "bilder": 0,
+     "status": "LUECKE",
+     "abstand_median_m": null,
+     "abstand_min_m": null,
+     "abstand_max_m": null,
+     "hoehe_median_m": null,
+     "hoehe_max_m": null,
+     "blick_neigung_grad": null
+    },
+    "Sued": {
+     "bilder": 1,
+     "status": "duenn",
+     "abstand_median_m": 440.8,
+     "abstand_min_m": 440.8,
+     "abstand_max_m": 440.8,
+     "hoehe_median_m": 303.8,
+     "hoehe_max_m": 303.8,
+     "blick_neigung_grad": 4.1
+    },
+    "West": {
+     "bilder": 1,
+     "status": "duenn",
+     "abstand_median_m": 61.6,
+     "abstand_min_m": 61.6,
+     "abstand_max_m": 61.6,
+     "hoehe_median_m": 17.0,
+     "hoehe_max_m": 17.0,
+     "blick_neigung_grad": 11.7
+    }
+   }
+  },
+  "d1": {
+   "hinweis": "keine Ausrichtung gefunden (ausrichtung.json, video_ausrichtung_d1.json)"
+  },
+  "d1_cv": {
+   "modell": "1",
+   "bilder_gesamt": 220,
+   "ausreisser": 0,
+   "ausrichtung": "/media/oem/scan/rc-park_daten/martinstor/video_sfm/d1_cv/ausrichtung.json",
+   "je_seite": {
+    "Nord": {
+     "bilder": 161,
+     "status": "belegt",
+     "abstand_median_m": 56.5,
+     "abstand_min_m": 17.5,
+     "abstand_max_m": 215.7,
+     "hoehe_median_m": 34.8,
+     "hoehe_max_m": 87.5,
+     "blick_neigung_grad": -0.8
+    },
+    "Ost": {
+     "bilder": 23,
+     "status": "belegt",
+     "abstand_median_m": 35.0,
+     "abstand_min_m": 28.1,
+     "abstand_max_m": 40.9,
+     "hoehe_median_m": 58.0,
+     "hoehe_max_m": 72.6,
+     "blick_neigung_grad": -13.5
+    },
+    "Sued": {
+     "bilder": 0,
+     "status": "LUECKE",
+     "abstand_median_m": null,
+     "abstand_min_m": null,
+     "abstand_max_m": null,
+     "hoehe_median_m": null,
+     "hoehe_max_m": null,
+     "blick_neigung_grad": null
+    },
+    "West": {
+     "bilder": 36,
+     "status": "belegt",
+     "abstand_median_m": 48.8,
+     "abstand_min_m": 33.6,
+     "abstand_max_m": 74.4,
+     "hoehe_median_m": 57.6,
+     "hoehe_max_m": 73.4,
+     "blick_neigung_grad": -17.1
+    }
+   }
+  },
+  "d1_cv2": {
+   "hinweis": "keine Ausrichtung gefunden (ausrichtung.json, video_ausrichtung_d1_cv2.json)"
+  }
+ },
+ "warnungen": [
+  "Seitenzuordnung der Videos haengt an der Ausrichtung ans Nordnetz; bei zwei fast gleichen Seiten (Register AH) kann sie gespiegelt sein - nicht unabhaengig geprueft."
+ ]
+}

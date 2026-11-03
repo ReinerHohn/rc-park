@@ -2406,6 +2406,197 @@
     "kalibrieren_044",
     "kalibrieren_062"
    ]
+  },
+  {
+   "datum": "2026-11-03 08:49",
+   "mapper": "global",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 13.9,
+     "entfernt": 12,
+     "kameras": 19,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 42.0,
+     "entfernt": 11,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "47/67",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Fenster obere Reihe Nordseite (Anzahl, z 22,1 m)",
+    "Uhr Zifferblatt-Nische Suedseite (Breite m)",
+    "Anzahl getrennte Koerper",
+    "Gesamtbreite y bei 29,5-33,5 m (Modell, mit Tuermchen)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Profil Dach: Breite y bei 49.2 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Uhr Nord: Mitte z (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 41.8-54.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band tuermchen gesims (28.50-29.25 m): Aussenradius bei 28.88 m (m)",
+    "Band tuermchen hell (29.25-30.25 m): Aussenradius bei 29.75 m (m)",
+    "Band tuermchen kupfer (32.25-36.00 m): Aussenradius bei 34.12 m (m)"
+   ],
+   "masse_abweichend": [
+    "GX",
+    "GZ0",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 8,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_062",
+    "kalibrieren_044"
+   ]
+  },
+  {
+   "datum": "2026-11-03 08:55",
+   "mapper": "global",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 2,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 13.1,
+     "entfernt": 9,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 13.0,
+     "entfernt": 9,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "55/69",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Fenster obere Reihe Nordseite (Anzahl, z 22,1 m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Anzahl getrennte Koerper",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Uhr Nord: Mitte z (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 41.8-54.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band tuermchen gesims (28.00-29.25 m): Aussenradius bei 28.62 m (m)",
+    "Band tuermchen stein (30.50-31.25 m): Aussenradius bei 30.88 m (m)"
+   ],
+   "masse_abweichend": [
+    "GX",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 10,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-03 09:02",
+   "mapper": "global",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 3.1,
+     "entfernt": 8,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 13.1,
+     "entfernt": 9,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "52/69",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Fenster obere Reihe Nordseite (Anzahl, z 22,1 m)",
+    "Uhr Zifferblatt-Nische Suedseite (Breite m)",
+    "Anzahl getrennte Koerper",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Gesamtbreite y bei 29,5-33,5 m (Modell, mit Tuermchen)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Uhr Nord: Mitte z (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Helm geradlinig (tief, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen offen (28.50-29.00 m): Aussenradius bei 28.75 m (m)"
+   ],
+   "masse_abweichend": [
+    "GX",
+    "GZ0",
+    "HELM_UEBER",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 14,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
   }
  ],
  "hinweis": "Laeufe 6-9 nachgetragen aus Sitzungsausgaben (Pruefungsnamen teils verkuerzt); ab Lauf 10 schreibt tools/nullstart.py selbst"
