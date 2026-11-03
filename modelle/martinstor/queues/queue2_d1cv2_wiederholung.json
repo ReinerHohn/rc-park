@@ -1,0 +1,10 @@
+{"max_cpu_jobs": 4, "logdir": "/tmp/claude-29999/-home-oem-git-rc-park/7678b191-ef05-470d-a064-2bf675ab18d6/scratchpad/jobs2", "jobs": [
+ {"name": "sfm_d1_cv2", "gpu": true, "cwd": "/home/oem/git/rc-park", "ram_gb": 3,
+  "cmd": "/media/oem/scan/venv-colmap/bin/python -I tools/video_sfm.py /media/oem/scan/rc-park_daten/martinstor/video_sfm/../video_frames /media/oem/scan/rc-park_daten/martinstor/video_sfm/d1_cv2 --clips RBC7Co30Vkc VEN1zf__KgI o34426Ez5_U ua1sX3MMh9A --maske-kreis 0.5 0.5 0.075"},
+ {"name": "ausrichten_d1_cv2", "gpu": true, "cwd": "/home/oem/git/rc-park", "ram_gb": 4, "deps": ["sfm_d1_cv2"],
+  "cmd": "cp modelle/martinstor/audit/video_ausrichtung.json /media/oem/scan/rc-park_daten/martinstor/video_sfm/d1_cv/ausrichtung_gesichert.json; OPENBLAS_NUM_THREADS=12 /media/oem/scan/venv-colmap/bin/python -I tools/video_ausrichten.py modelle/martinstor/objekt.json /media/oem/scan/rc-park_daten/martinstor/video_sfm/d1_cv2"},
+ {"name": "dicht_d1_cv2", "gpu": true, "cwd": "/home/oem/git/rc-park", "ram_gb": 6, "deps": ["ausrichten_d1_cv2"],
+  "cmd": "/media/oem/scan/venv-colmap/bin/python -I tools/video_dicht.py modelle/martinstor/objekt.json /media/oem/scan/rc-park_daten/martinstor/video_sfm/d1_cv2"},
+ {"name": "merge_d1_cv2_sandbox", "cwd": "/home/oem/git/rc-park", "ram_gb": 6, "deps": ["dicht_d1_cv2"],
+  "cmd": "cp /tmp/claude-29999/-home-oem-git-rc-park/7678b191-ef05-470d-a064-2bf675ab18d6/scratchpad/sb/audit/video_versatz.json /tmp/claude-29999/-home-oem-git-rc-park/7678b191-ef05-470d-a064-2bf675ab18d6/scratchpad/sb/audit/video_versatz_d1_cv.json; /media/oem/scan/venv-colmap/bin/python -I tools/video_merge.py /tmp/claude-29999/-home-oem-git-rc-park/7678b191-ef05-470d-a064-2bf675ab18d6/scratchpad/sb/objekt.json /media/oem/scan/rc-park_daten/martinstor/video_sfm/d1_cv --zurueck; /media/oem/scan/venv-colmap/bin/python -I tools/video_merge.py /tmp/claude-29999/-home-oem-git-rc-park/7678b191-ef05-470d-a064-2bf675ab18d6/scratchpad/sb/objekt.json /media/oem/scan/rc-park_daten/martinstor/video_sfm/d1_cv2"}
+]}

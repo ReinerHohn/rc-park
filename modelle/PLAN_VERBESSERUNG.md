@@ -1,5 +1,7 @@
 # Plan Verbesserung (Stand 2026-11-03) - was aussteht, nach Nutzen sortiert
 
+Aktueller Arbeitsstand und laufende Jobs: `modelle/UEBERGABE_2026-11-03.md`.
+
 Grundsatz: erst was billig und aussagekraeftig ist, dann was teuer ist. Jede Stufe hat ein Abbruchkriterium; ein negatives Ergebnis kommt ins Register (BU ff.).
 Regeln aus CLAUDE.md gelten: kein Sollwert gelockert, Widersprueche nicht gemittelt, jede Aenderung ueber `tools/bauen_abnehmen.sh martinstor`, Schnappschuss nur mit Register-Eintrag.
 

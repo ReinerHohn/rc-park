@@ -1,0 +1,379 @@
+{
+ "verschiebung_m": [
+  0.028189682389589927,
+  0.02820751509737109,
+  -0.01592265201935029
+ ],
+ "nn_median_vor_m": 0.1336916695454573,
+ "nn_median_nach_m": 0.12995316661945316,
+ "clips": [
+  {
+   "clip": "RBC7Co30Vkc",
+   "z": [
+    14,
+    20
+   ],
+   "n": 28910,
+   "versatz_vorher_m": [
+    0.1,
+    0.28,
+    0.09
+   ],
+   "rest_nach_korrektur_m": [
+    -0.01,
+    0.03,
+    0.04
+   ],
+   "ok": true
+  },
+  {
+   "clip": "RBC7Co30Vkc",
+   "z": [
+    20,
+    26
+   ],
+   "n": 31907,
+   "versatz_vorher_m": [
+    0.14,
+    -0.02,
+    -0.0
+   ],
+   "rest_nach_korrektur_m": [
+    0.01,
+    -0.02,
+    0.0
+   ],
+   "ok": true
+  },
+  {
+   "clip": "RBC7Co30Vkc",
+   "z": [
+    26,
+    32
+   ],
+   "n": 32347,
+   "versatz_vorher_m": [
+    -0.01,
+    0.0,
+    -0.0
+   ],
+   "rest_nach_korrektur_m": [
+    -0.03,
+    0.01,
+    0.01
+   ],
+   "ok": true
+  },
+  {
+   "clip": "RBC7Co30Vkc",
+   "z": [
+    32,
+    38
+   ],
+   "n": 16277,
+   "versatz_vorher_m": [
+    0.06,
+    -0.04,
+    -0.43
+   ],
+   "rest_nach_korrektur_m": [
+    0.13,
+    0.0,
+    0.08
+   ],
+   "ok": true
+  },
+  {
+   "clip": "RBC7Co30Vkc",
+   "z": [
+    38,
+    44
+   ],
+   "n": 8355,
+   "versatz_vorher_m": [
+    1.12,
+    -0.04,
+    0.15
+   ],
+   "rest_nach_korrektur_m": [
+    -0.02,
+    0.01,
+    0.07
+   ],
+   "ok": true
+  },
+  {
+   "clip": "RBC7Co30Vkc",
+   "z": [
+    44,
+    50
+   ],
+   "n": 2386,
+   "versatz_vorher_m": [
+    1.66,
+    0.63,
+    -0.19
+   ],
+   "rest_nach_korrektur_m": [
+    0.03,
+    0.12,
+    -0.06
+   ],
+   "ok": true
+  },
+  {
+   "clip": "VEN1zf__KgI",
+   "z": [
+    14,
+    20
+   ],
+   "n": 5968,
+   "versatz_vorher_m": [
+    0.14,
+    -0.57,
+    -0.14
+   ],
+   "rest_nach_korrektur_m": [
+    0.0,
+    -0.08,
+    -0.04
+   ],
+   "ok": true
+  },
+  {
+   "clip": "VEN1zf__KgI",
+   "z": [
+    20,
+    26
+   ],
+   "n": 27542,
+   "versatz_vorher_m": [
+    0.1,
+    -0.01,
+    -0.01
+   ],
+   "rest_nach_korrektur_m": [
+    0.01,
+    0.0,
+    0.0
+   ],
+   "ok": true
+  },
+  {
+   "clip": "VEN1zf__KgI",
+   "z": [
+    26,
+    32
+   ],
+   "n": 47176,
+   "versatz_vorher_m": [
+    -0.03,
+    -0.06,
+    0.04
+   ],
+   "rest_nach_korrektur_m": [
+    -0.0,
+    -0.0,
+    -0.0
+   ],
+   "ok": true
+  },
+  {
+   "clip": "VEN1zf__KgI",
+   "z": [
+    32,
+    38
+   ],
+   "n": 44675,
+   "versatz_vorher_m": [
+    -0.26,
+    -0.05,
+    0.04
+   ],
+   "rest_nach_korrektur_m": [
+    0.0,
+    -0.0,
+    0.01
+   ],
+   "ok": true
+  },
+  {
+   "clip": "VEN1zf__KgI",
+   "z": [
+    38,
+    44
+   ],
+   "n": 19246,
+   "versatz_vorher_m": [
+    -0.54,
+    -0.0,
+    0.24
+   ],
+   "rest_nach_korrektur_m": [
+    -0.01,
+    -0.0,
+    0.03
+   ],
+   "ok": true
+  },
+  {
+   "clip": "VEN1zf__KgI",
+   "z": [
+    44,
+    50
+   ],
+   "n": 6703,
+   "versatz_vorher_m": [
+    -0.54,
+    0.1,
+    0.11
+   ],
+   "rest_nach_korrektur_m": [
+    0.02,
+    0.01,
+    -0.01
+   ],
+   "ok": true
+  },
+  {
+   "clip": "VEN1zf__KgI",
+   "z": [
+    50,
+    56
+   ],
+   "n": 1074,
+   "versatz_vorher_m": [
+    -0.7,
+    -0.03,
+    0.16
+   ],
+   "rest_nach_korrektur_m": [
+    -0.02,
+    -0.01,
+    0.04
+   ],
+   "ok": true
+  },
+  {
+   "clip": "ua1sX3MMh9A",
+   "z": [
+    20,
+    26
+   ],
+   "n": 3415,
+   "versatz_vorher_m": [
+    0.08,
+    0.01,
+    -0.01
+   ],
+   "rest_nach_korrektur_m": [
+    0.01,
+    -0.01,
+    -0.01
+   ],
+   "ok": true
+  },
+  {
+   "clip": "ua1sX3MMh9A",
+   "z": [
+    26,
+    32
+   ],
+   "n": 17676,
+   "versatz_vorher_m": [
+    -0.06,
+    0.13,
+    0.03
+   ],
+   "rest_nach_korrektur_m": [
+    0.0,
+    0.0,
+    0.01
+   ],
+   "ok": true
+  },
+  {
+   "clip": "ua1sX3MMh9A",
+   "z": [
+    32,
+    38
+   ],
+   "n": 49352,
+   "versatz_vorher_m": [
+    -0.32,
+    0.09,
+    -0.0
+   ],
+   "rest_nach_korrektur_m": [
+    -0.0,
+    0.01,
+    -0.0
+   ],
+   "ok": true
+  },
+  {
+   "clip": "ua1sX3MMh9A",
+   "z": [
+    38,
+    44
+   ],
+   "n": 46519,
+   "versatz_vorher_m": [
+    -0.37,
+    0.02,
+    0.23
+   ],
+   "rest_nach_korrektur_m": [
+    -0.01,
+    -0.01,
+    0.04
+   ],
+   "ok": true
+  },
+  {
+   "clip": "ua1sX3MMh9A",
+   "z": [
+    44,
+    50
+   ],
+   "n": 18439,
+   "versatz_vorher_m": [
+    -0.22,
+    0.16,
+    0.04
+   ],
+   "rest_nach_korrektur_m": [
+    0.02,
+    -0.0,
+    0.02
+   ],
+   "ok": true
+  },
+  {
+   "clip": "ua1sX3MMh9A",
+   "z": [
+    50,
+    56
+   ],
+   "n": 4708,
+   "versatz_vorher_m": [
+    -0.21,
+    0.18,
+    0.01
+   ],
+   "rest_nach_korrektur_m": [
+    -0.0,
+    0.1,
+    0.0
+   ],
+   "ok": true
+  }
+ ],
+ "schwelle_m": 0.3,
+ "ok": true,
+ "baender_z": [
+  14,
+  48
+ ],
+ "hinweis": "starre Verschiebung Video->Strassenwolke (getrimmter ICP); vor 2026-11-03 fehlte sie: 0,65 m Versatz in x (Register BR)"
+}

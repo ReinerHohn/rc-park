@@ -35,11 +35,11 @@ def _gehoert(pid, wurzel):
         except Exception: return False
     return False
 
-def lade_zustand(sp, jobs):
+def lade_zustand(sp, jobs, anzeige=False):
     st = json.load(open(sp)) if os.path.exists(sp) else {}
     for j in jobs:
         s = st.setdefault(j["name"], {"status": "wartend"})
-        if s["status"] == "laeuft": s["status"] = "wartend"
+        if s["status"] == "laeuft" and not anzeige: s["status"] = "wartend"
     return st
 
 def speichere(sp, st): json.dump(st, open(sp + ".tmp", "w"), indent=1); os.replace(sp + ".tmp", sp)
@@ -52,7 +52,7 @@ def main():
     for j in jobs:
         for d in j.get("deps", []):
             if d not in namen: sys.exit(f"Job {j['name']}: unbekannte Abhaengigkeit {d}")
-    sp = a.queue + ".state.json"; st = lade_zustand(sp, jobs); logdir = Q.get("logdir", os.path.dirname(os.path.abspath(a.queue))); os.makedirs(logdir, exist_ok=True)
+    sp = a.queue + ".state.json"; st = lade_zustand(sp, jobs, a.status); logdir = Q.get("logdir", os.path.dirname(os.path.abspath(a.queue))); os.makedirs(logdir, exist_ok=True)
     if a.status:
         for j in jobs: s = st[j["name"]]; print(f"{j['name']:28} {s['status']:10} {'GPU' if j.get('gpu') else 'CPU'}  rc={s.get('rc','-')}  {s.get('dauer_s','')}")
         return
