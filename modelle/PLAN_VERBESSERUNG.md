@@ -33,6 +33,7 @@ Regeln aus CLAUDE.md gelten: kein Sollwert gelockert, Widersprueche nicht gemitt
 | 3.2 | Primitivenfit Dach/Helm (Ebenenpaar/Kegel) mit Tukey-IRLS, Quelle je Dachflaeche nach Dichte/Unsicherheit | nutzt "Dach = Ebenen" statt verzerrter Punkte |
 | 3.3 | Silhouetten-Huelle als Obergrenze der Dachbreite (Space Carving, Eigenbau) | Plausibilitaetspruefung |
 | 3.4 | Hybrid-Abgleich fuer weitere Bauteile (Tuermchen mit Oeffnungen, Torboegen, Glockenstock), Bericht alt/neu/Konfidenz | wie vom Nutzer gefordert: Generator folgt der Wolke, wo diese belegt ist |
+| 3.6 | Treppe fuer NEUE Objekte (`tools/treppe.py`): grob -> mittel -> fein -> Video, Guete nach jeder Stufe, Stopp bei Gewinn <= Rauschen, Bericht mit naechstem Hebel | GEBAUT 3.11. (Auswertung an den 4 Nachtlaeufen getestet; Lauf ueber `nullstart.py` noch nicht mit echtem Objekt). Befund: nur 2 von 56 gemeinsamen Pruefungen sind unabhaengig (lod2/laser/dokument) -> Guete bei neuen Objekten blind, mehr unabhaengige Sollwerte noetig; gleiche Konfiguration streut 43..49 |
 | 3.5 | Torbau (Fork-Ergebnis, 12/12 Pruefungen) ins Hauptmodell und in den Viewer | Nutzer hat noch nicht verifiziert |
 
 ## Stufe 4 - braucht Daten (der groesste Hebel, nicht in Software loesbar)
