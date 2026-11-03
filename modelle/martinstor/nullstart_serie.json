@@ -316,6 +316,2096 @@
     "kalibrieren_044",
     "kalibrieren_062"
    ]
+  },
+  {
+   "datum": "2026-11-02 17:30",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 3.0,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 3.1,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "65/69",
+   "nicht_bestanden": [
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen offen (27.00-27.75 m): Oeffnungen je Flaeche breite bei 27.39 m"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GX",
+    "GZ0",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z1",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 16,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 18:00",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 3.0,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 3.1,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "62/69",
+   "nicht_bestanden": [
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen offen (27.00-27.75 m): Oeffnungen je Flaeche breite bei 27.39 m"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GX",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 18:21",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.2,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.3,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "62/67",
+   "nicht_bestanden": [
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Helm geradlinig (tief, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen Quaderperiode 29-33 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GX",
+    "GZ0",
+    "GZ1",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 14,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 18:34",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 5.0,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 5.0,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "56/68",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Zinnenkranz Oberkante (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Helmflanke N-S: Halbtiefen-Abnahme je m (Modelltiefe auf der Achse, 42-50 m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Profil Dach: Breite y bei 45.2 m (m)",
+    "Helm geradlinig (tief, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+    "Profil Dach: Breite y bei 41.2 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GX",
+    "GZ1",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_TUERMCHEN",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 17,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 18:47",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": 2,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.6,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.5,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "64/71",
+   "nicht_bestanden": [
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen offen (27.00-27.75 m): Oeffnungen je Flaeche breite bei 27.43 m"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GZ0",
+    "HELM_UEBER",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 19,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 19:06",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": 2,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.6,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.5,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "64/71",
+   "nicht_bestanden": [
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen offen (27.00-27.75 m): Oeffnungen je Flaeche breite bei 27.43 m"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GZ0",
+    "HELM_UEBER",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 19,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "kalibrieren_062",
+    "kalibrieren_044"
+   ]
+  },
+  {
+   "datum": "2026-11-02 19:18",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": 2,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.6,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.5,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "64/71",
+   "nicht_bestanden": [
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen offen (27.00-27.75 m): Oeffnungen je Flaeche breite bei 27.43 m"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GZ0",
+    "HELM_UEBER",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 19,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 19:22",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "57/78",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Anzahl getrennte Koerper",
+    "Gesamtbreite y bei 29,5-33,5 m (Modell, mit Tuermchen)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen hell (32.25-32.75 m): Aussenradius bei 32.50 m (m)",
+    "Profil Dach: Breite y bei 41.2 m (m)",
+    "Band tuermchen offen (29.00-30.00 m): Aussenradius bei 29.50 m (m)",
+    "Band tuermchen stein (30.00-31.25 m): Aussenradius bei 30.62 m (m)",
+    "Band tuermchen gesims (31.25-32.25 m): Aussenradius bei 31.75 m (m)",
+    "Band tuermchen kupfer (33.25-33.75 m): Aussenradius bei 33.50 m (m)",
+    "Band tuermchen kupfer (35.75-37.25 m): Aussenradius bei 36.50 m (m)",
+    "Band tuermchen offen (27.00-28.00 m): Oeffnungen je Flaeche breite bei 27.54 m",
+    "Band tuermchen offen (29.00-30.00 m): Oeffnungen je Flaeche anzahl bei 29.53 m",
+    "Band tuermchen offen (29.00-30.00 m): Oeffnungen je Flaeche breite bei 29.53 m",
+    "Band tuermchen Quaderperiode 29-33 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GX",
+    "HELM_UEBER",
+    "KRAG_TRAUFE",
+    "OR",
+    "QUADER_LAENGE",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 13,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_062",
+    "kalibrieren_044"
+   ]
+  },
+  {
+   "datum": "2026-11-02 19:25",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "65/75",
+   "nicht_bestanden": [
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Profil Dach: Breite y bei 41.2 m (m)",
+    "Band tuermchen Quaderperiode 29-33 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen kupfer (34.75-37.50 m): Aussenradius bei 36.12 m (m)"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GZ0",
+    "HELM_UEBER",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 12,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 19:27",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "48/67",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Anzahl getrennte Koerper",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Gesamtbreite y bei 29,5-33,5 m (Modell, mit Tuermchen)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Helm geradlinig (quer, 41.8-52.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 42.2-52.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band tuermchen Quaderperiode 29-33 m: Reliefperiode an der Kante (m)",
+    "Helm geradlinig (quer, 42.2-52.2 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 41.8-50.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band tuermchen kupfer (31.25-31.75 m): Aussenradius bei 31.50 m (m)"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GZ0",
+    "HELM_UEBER",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 10,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 19:35",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "71/78",
+   "nicht_bestanden": [
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Band tuermchen offen (27.00-27.75 m): Oeffnungen je Flaeche breite bei 27.43 m"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GZ0",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 19,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 19:41",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "63/79",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Dach: Breite y bei 45.2 m (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Helm geradlinig (quer, 41.8-52.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 42.2-52.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 42.2-52.2 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 41.8-50.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band tuermchen offen (27.00-28.00 m): Oeffnungen je Flaeche breite bei 27.64 m",
+    "Band tuermchen offen (33.00-34.50 m): Oeffnungen je Flaeche anzahl bei 33.89 m",
+    "Band tuermchen offen (33.00-34.50 m): Oeffnungen je Flaeche breite bei 33.89 m"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GZ0",
+    "HELM_UEBER",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 15,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 19:45",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "63/79",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Anzahl getrennte Koerper",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Band tuermchen kupfer (35.00-41.00 m): Aussenradius bei 38.00 m (m)",
+    "Band tuermchen kupfer (41.25-41.75 m): Aussenradius bei 41.50 m (m)",
+    "Band tuermchen offen (27.00-27.75 m): Oeffnungen je Flaeche breite bei 27.43 m"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 13,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 19:48",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "71/83",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Dach: Breite y bei 49.2 m (m)",
+    "Helm geradlinig (quer, 41.8-52.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 42.2-52.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 41.8-50.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Profil Dach: Breite y bei 53.2 m (m)",
+    "Helm geradlinig (quer, 41.8-53.2 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 13,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 19:51",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "71/83",
+   "nicht_bestanden": [
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Zinnenkranz Oberkante (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Anzahl getrennte Koerper",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Helm geradlinig (quer, 41.8-50.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Dach: Breite y bei 41.2 m (m)",
+    "Band tuermchen stein (30.50-31.25 m): Aussenradius bei 30.88 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GX",
+    "GZ0",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 12,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 19:54",
+   "mapper": "global",
+   "streng": true,
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "77/84",
+   "nicht_bestanden": [
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Band tuermchen kupfer (31.50-32.00 m): Aussenradius bei 31.75 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GX",
+    "GZ0",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 14,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 20:24",
+   "mapper": "global",
+   "streng": true,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000 --fotos 006,015,018,136,014,005,031,118,049,019,001",
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.1,
+     "entfernt": 4,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.1,
+     "entfernt": 4,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "41/56",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Zinnenkranz Oberkante (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Anzahl getrennte Koerper",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Profil Dach (Foto 061): Tiefe x bei 53 m (m)",
+    "Helm geradlinig (tief, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Profil Dach: Breite y bei 41.2 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GX",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 14,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 20:35",
+   "mapper": "global",
+   "streng": true,
+   "stufe": "voll",
+   "dicht_extra": "",
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.1,
+     "entfernt": 4,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.1,
+     "entfernt": 4,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "57/72",
+   "nicht_bestanden": [
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Helm geradlinig (tief, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+    "Profil Dach: Breite y bei 41.2 m (m)",
+    "Profil Dach: Breite y bei 49.2 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Band tuermchen offen (31.75-32.50 m): Aussenradius bei 32.12 m (m)",
+    "Band tuermchen offen (34.25-34.75 m): Aussenradius bei 34.50 m (m)",
+    "Band tuermchen offen (31.75-32.50 m): Oeffnungen je Flaeche anzahl bei 32.04 m",
+    "Band tuermchen offen (31.75-32.50 m): Oeffnungen je Flaeche breite bei 32.04 m"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "kalibrieren_062",
+    "kalibrieren_044"
+   ]
+  },
+  {
+   "datum": "2026-11-02 20:38",
+   "mapper": "global",
+   "streng": true,
+   "stufe": "voll",
+   "dicht_extra": "--max-size 1000 --fotos 006,031,040,018,118,136,019,049,089,005,015",
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "55/69",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Gesamtbreite y bei 29,5-33,5 m (Modell, mit Tuermchen)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+    "Profil Dach: Breite y bei 41.2 m (m)",
+    "Profil Dach: Breite y bei 49.2 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GX",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 15,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 20:42",
+   "mapper": "global",
+   "streng": true,
+   "stufe": "voll",
+   "dicht_extra": "--max-size 1000 --fotos 006,015,018,136,014,005,031,118,049,019,001,089,045,108,040,076",
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "60/73",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Anzahl getrennte Koerper",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Profil Dach: Breite y bei 45.2 m (m)",
+    "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+    "Profil Dach: Breite y bei 49.2 m (m)",
+    "Helm geradlinig (tief, 41.8-47.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band tuermchen offen (31.50-32.50 m): Oeffnungen je Flaeche anzahl bei 31.91 m",
+    "Band tuermchen offen (31.50-32.50 m): Oeffnungen je Flaeche breite bei 31.91 m"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GX",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 11,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 20:46",
+   "mapper": "global",
+   "streng": true,
+   "stufe": "voll",
+   "dicht_extra": "--max-size 1000 --fotos 006,031,040,018,118,136,019,049,089,005,015,014,001,108,027,076",
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "54/74",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Anzahl getrennte Koerper",
+    "Gesamtbreite y bei 29,5-33,5 m (Modell, mit Tuermchen)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Profil Dach: Breite y bei 45.2 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+    "Profil Dach: Breite y bei 49.2 m (m)",
+    "Helm geradlinig (tief, 41.8-47.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Band tuermchen stein (30.50-31.25 m): Aussenradius bei 30.88 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "GX",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 15,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 20:52",
+   "mapper": "global",
+   "streng": true,
+   "stufe": "voll",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "67/80",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Dach: Breite y bei 45.2 m (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+    "Profil Dach: Breite y bei 49.2 m (m)",
+    "Helm geradlinig (tief, 41.8-47.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Band tuermchen kupfer (35.50-40.75 m): Aussenradius bei 38.12 m (m)",
+    "Band tuermchen kupfer (41.50-43.25 m): Aussenradius bei 42.38 m (m)"
+   ],
+   "masse_abweichend": [
+    "GX",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 17,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 21:01",
+   "mapper": "global",
+   "streng": true,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.4,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.4,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "72/76",
+   "nicht_bestanden": [
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen offen (27.00-27.75 m): Oeffnungen je Flaeche breite bei 27.36 m",
+    "Band tuermchen Quaderperiode 33-37 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GZ0",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 16,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 21:12",
+   "mapper": "global",
+   "streng": true,
+   "stufe": "voll",
+   "dicht_extra": "",
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.4,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.4,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "55/74",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen Quaderperiode 29-33 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen stein (30.50-31.25 m): Aussenradius bei 30.88 m (m)",
+    "Band tuermchen stein (31.75-32.75 m): Aussenradius bei 32.25 m (m)",
+    "Band tuermchen kupfer (35.00-41.25 m): Aussenradius bei 38.12 m (m)",
+    "Band tuermchen kupfer (41.50-43.25 m): Aussenradius bei 42.38 m (m)",
+    "Band tuermchen kegel (41.50-44.50 m): Aussenradius bei 43.00 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GZ0",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 16,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 21:33",
+   "mapper": "global",
+   "streng": true,
+   "stufe": "voll",
+   "dicht_extra": "--max-size 800",
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "57/73",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Dach: Breite y bei 49.2 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Helm geradlinig (quer, 41.8-53.2 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band tuermchen stein (31.50-33.00 m): Aussenradius bei 32.25 m (m)",
+    "Band tuermchen stein (35.00-35.50 m): Aussenradius bei 35.25 m (m)",
+    "Band tuermchen kupfer (35.50-43.00 m): Aussenradius bei 39.25 m (m)",
+    "Band tuermchen offen (33.25-34.50 m): Oeffnungen je Flaeche anzahl bei 33.91 m",
+    "Band tuermchen offen (33.25-34.50 m): Oeffnungen je Flaeche breite bei 33.91 m"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GZ0",
+    "HELM_UEBER",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 12,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 21:40",
+   "mapper": "global",
+   "streng": true,
+   "stufe": "voll",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "76/80",
+   "nicht_bestanden": [
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen Quaderperiode 33-37 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GZ0",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 16,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 21:48",
+   "mapper": "global",
+   "streng": true,
+   "stufe": "voll",
+   "dicht_extra": "--max-size 1200",
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "64/73",
+   "nicht_bestanden": [
+    "Zinnenkranz Oberkante (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen Quaderperiode 29-33 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen stein (30.50-31.25 m): Aussenradius bei 30.88 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GZ0",
+    "GZ1",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 14,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 21:59",
+   "mapper": "global",
+   "streng": true,
+   "stufe": "voll",
+   "dicht_extra": "--max-size 1600",
+   "netzwahl": null,
+   "versuche": null,
+   "bestanden": "58/77",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen Quaderperiode 29-33 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen stein (30.50-31.25 m): Aussenradius bei 30.88 m (m)",
+    "Band tuermchen stein (31.75-32.75 m): Aussenradius bei 32.25 m (m)",
+    "Band tuermchen kupfer (35.00-41.25 m): Aussenradius bei 38.12 m (m)",
+    "Band tuermchen kupfer (41.50-43.25 m): Aussenradius bei 42.38 m (m)",
+    "Band tuermchen kegel (41.50-44.50 m): Aussenradius bei 43.00 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GZ0",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 14,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-02 22:21",
+   "mapper": "incremental",
+   "streng": true,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 3,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.8,
+     "entfernt": 4,
+     "kameras": 27,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 5.4,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.1,
+     "entfernt": 0,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 5.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 2.8,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.8,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    }
+   ],
+   "bestanden": "59/69",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Dach: Breite y bei 45.2 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GZ0",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_062",
+    "kalibrieren_044"
+   ]
+  },
+  {
+   "datum": "2026-11-03 00:06",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "",
+   "netzwahl": 3,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.8,
+     "entfernt": 4,
+     "kameras": 27,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 5.4,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.1,
+     "entfernt": 0,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 5.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 2.8,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.8,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    }
+   ],
+   "bestanden": "61/71",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Profil Dach: Breite y bei 45.2 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GX",
+    "GZ0",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_062",
+    "kalibrieren_044"
+   ]
+  },
+  {
+   "datum": "2026-11-03 00:07",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "",
+   "netzwahl": 3,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.8,
+     "entfernt": 4,
+     "kameras": 27,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 5.4,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.1,
+     "entfernt": 0,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 5.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 2.8,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.8,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    }
+   ],
+   "bestanden": "66/76",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen kupfer (35.00-38.00 m): Aussenradius bei 36.50 m (m)",
+    "Band tuermchen kupfer (39.75-43.75 m): Aussenradius bei 41.75 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "ERKER_OBEN",
+    "GX",
+    "GZ0",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 20,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_062",
+    "kalibrieren_044"
+   ]
+  },
+  {
+   "datum": "2026-11-03 00:12",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "",
+   "netzwahl": 3,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.8,
+     "entfernt": 4,
+     "kameras": 27,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 5.4,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.1,
+     "entfernt": 0,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 5.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 2.8,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.8,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    }
+   ],
+   "bestanden": "64/72",
+   "nicht_bestanden": [
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Helm geradlinig (tief, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Helm geradlinig (tief, 41.8-53.2 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band tuermchen kupfer (35.00-43.75 m): Aussenradius bei 39.38 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "GX",
+    "GZ0",
+    "GZ1",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 20,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_062",
+    "kalibrieren_044"
+   ]
+  },
+  {
+   "datum": "2026-11-03 01:04",
+   "mapper": "global",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 2,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.3,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.2,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "56/79",
+   "nicht_bestanden": [
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Wasserdicht (1=ja)",
+    "Gesamtbreite y bei 29,5-33,5 m (Modell, mit Tuermchen)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Dach: Breite y bei 45.2 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm Silhouette Nord: Breite quer bei 42 m (m)",
+    "Helm Silhouette Nord: Breite quer bei 46 m (m)",
+    "Helm Silhouette Nord: Breite quer bei 50 m (m)",
+    "Helm Silhouette Nord: Breite quer bei 45 m (m)",
+    "Helm Silhouette Nord: Breite quer bei 48 m (m)",
+    "Helm Silhouette Nord: Breite quer bei 51 m (m)",
+    "Helm Silhouette Nord: Breite quer bei 53 m (m)",
+    "Profil Dach: Breite y bei 41.2 m (m)",
+    "Band tuermchen kupfer (35.50-39.25 m): Aussenradius bei 37.38 m (m)",
+    "Band tuermchen kupfer (39.75-42.75 m): Aussenradius bei 41.25 m (m)"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GX",
+    "KONSOLE_Z0"
+   ],
+   "frisch_abgeleitet": 14,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-03 01:12",
+   "mapper": "global",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.3,
+     "entfernt": 4,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.3,
+     "entfernt": 4,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "68/78",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Dach: Breite y bei 45.2 m (m)",
+    "Band tuermchen stein (30.75-31.25 m): Aussenradius bei 31.00 m (m)",
+    "Band tuermchen Quaderperiode 29-33 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "ERKER_OBEN",
+    "GZ0",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE"
+   ],
+   "frisch_abgeleitet": 16,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_062",
+    "kalibrieren_044"
+   ]
+  },
+  {
+   "datum": "2026-11-03 01:21",
+   "mapper": "global",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.2,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.2,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "61/70",
+   "nicht_bestanden": [
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Profil Dach: Breite y bei 49.2 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Profil Dach: Breite y bei 41.2 m (m)",
+    "Band tuermchen stein (34.00-34.75 m): Aussenradius bei 34.38 m (m)"
+   ],
+   "masse_abweichend": [
+    "GX",
+    "HELM_UEBER",
+    "KONSOLE_Z0",
+    "KRAG_UEBER",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 15,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
+  },
+  {
+   "datum": "2026-11-03 01:30",
+   "mapper": "global",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 2,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 5.6,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.2,
+     "entfernt": 3,
+     "kameras": 30,
+     "fehler": false
+    }
+   ],
+   "bestanden": "60/72",
+   "nicht_bestanden": [
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Helmflanke N-S: Halbtiefen-Abnahme je m (Modelltiefe auf der Achse, 42-50 m)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Ecktuermchen NE: Achse Abstand zur Nordwand bei 39-42 m (m, positiv = innen)",
+    "Profil Dach: Breite y bei 45.2 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
+    "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
+    "Gesamtbreite y bei 28,5 m (Konsolen unter den Ecktuermchen) (m)",
+    "Helm geradlinig (tief, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band tuermchen kupfer (35.50-41.25 m): Aussenradius bei 38.38 m (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "GX",
+    "GZ1",
+    "KONSOLE_Z0",
+    "KRAG_TRAUFE",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 14,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_044",
+    "kalibrieren_062"
+   ]
   }
  ],
  "hinweis": "Laeufe 6-9 nachgetragen aus Sitzungsausgaben (Pruefungsnamen teils verkuerzt); ab Lauf 10 schreibt tools/nullstart.py selbst"

@@ -174,7 +174,9 @@
   "Band tuermchen hell (32.50-33.50 m): Aussenradius bei 33.00 m (m)": true,
   "Band tuermchen offen (33.50-35.00 m): Aussenradius bei 34.25 m (m)": true,
   "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche anzahl bei 34.27 m": true,
-  "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche breite bei 34.27 m": true
+  "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche breite bei 34.27 m": true,
+  "Helm geradlinig (tief, 41.8-54.8 m): max. Abweichung der Modellfront von der Geraden (m)": true,
+  "Helm geradlinig (quer, 41.8-54.8 m): max. Abweichung der Modellfront von der Geraden (m)": true
  },
  "bestanden": true
 }

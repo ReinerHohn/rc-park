@@ -375,27 +375,27 @@
    "typ": "schnitt_ausdehnung",
    "z": 34.25,
    "x0": -6.22,
-   "x1": -1.88,
-   "y0": 3.45,
-   "y1": 6.55,
+   "x1": -1.86,
+   "y0": 3.49,
+   "y1": 6.6,
    "achse": "x"
   },
   "profil_tuerm_3775": {
    "typ": "schnitt_ausdehnung",
    "z": 37.75,
    "x0": -6.22,
-   "x1": -1.88,
-   "y0": 3.45,
-   "y1": 6.55,
+   "x1": -1.86,
+   "y0": 3.49,
+   "y1": 6.6,
    "achse": "x"
   },
   "profil_tuerm_4025": {
    "typ": "schnitt_ausdehnung",
    "z": 40.25,
    "x0": -6.22,
-   "x1": -1.88,
-   "y0": 3.45,
-   "y1": 6.55,
+   "x1": -1.86,
+   "y0": 3.49,
+   "y1": 6.6,
    "achse": "x"
   },
   "dachx42": {
@@ -414,9 +414,9 @@
    "typ": "schnitt_ausdehnung",
    "z": 42.5,
    "x0": -6.22,
-   "x1": -1.88,
-   "y0": 3.45,
-   "y1": 6.55,
+   "x1": -1.86,
+   "y0": 3.49,
+   "y1": 6.6,
    "achse": "x"
   },
   "tuermchen_2m_zahl": {
@@ -506,7 +506,7 @@
    "typ": "front_linearitaet",
    "seite": "-x",
    "z0": 41.75,
-   "z1": 54.75,
+   "z1": 53.75,
    "quer": 0.0,
    "band": 0.5
   },
@@ -514,7 +514,7 @@
    "typ": "front_linearitaet",
    "seite": "-y",
    "z0": 41.75,
-   "z1": 54.75,
+   "z1": 53.75,
    "quer": 0.0,
    "band": 0.5
   },
@@ -596,13 +596,6 @@
    "typ": "tuerm_radius",
    "seite": "-x",
    "z": 34.25,
-   "quer": 4.42,
-   "achse_tief": 4.0
-  },
-  "band_tuermchen_hell_4375": {
-   "typ": "tuerm_radius",
-   "seite": "-x",
-   "z": 43.75,
    "quer": 4.42,
    "achse_tief": 4.0
   }
@@ -1404,10 +1397,10 @@
    "name": "Profil Dach: Breite y bei 45.2 m (m)",
    "wert": "profil_dach_452",
    "soll": [
-    4.47,
-    5.47
+    4.11,
+    5.11
    ],
-   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.97 bei 45.25 m; DOM1-Flaeche 16 Zellen",
+   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.61 bei 45.25 m; DOM1-Flaeche 16 Zellen",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1436,6 +1429,14 @@
       5.11
      ],
      "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      4.47,
+      5.47
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
     }
    ]
   },
@@ -1443,10 +1444,10 @@
    "name": "Profil Dach: Breite y bei 49.2 m (m)",
    "wert": "profil_dach_492",
    "soll": [
-    3.97,
-    4.97
+    4.1,
+    5.1
    ],
-   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.47 bei 49.25 m; DOM1-Flaeche 6 Zellen",
+   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.6 bei 49.25 m; DOM1-Flaeche 6 Zellen",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1475,6 +1476,14 @@
       5.1
      ],
      "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      3.97,
+      4.97
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
     }
    ]
   },
@@ -1482,10 +1491,10 @@
    "name": "Profil Ecktuermchen: Durchmesser bei 34.25 m (m)",
    "wert": "profil_tuerm_3425",
    "soll": [
-    2.7,
-    3.5
+    2.71,
+    3.51
    ],
-   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.1 bis 37.31 m, Kegel 0.431 m/m zur Spitze 44.5 -> d 3.10 bei 34.25 m (Einzelfit dort: [2.96]); Fenster seitlich der Dachbreite",
+   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.11 bis 37.45 m, Kegel 0.441 m/m zur Spitze 44.5 -> d 3.11 bei 34.25 m (Einzelfit dort: [2.96]); Fenster seitlich der Dachbreite",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1522,6 +1531,14 @@
       3.51
      ],
      "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      2.7,
+      3.5
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
     }
    ]
   },
@@ -1529,10 +1546,10 @@
    "name": "Profil Ecktuermchen: Durchmesser bei 37.75 m (m)",
    "wert": "profil_tuerm_3775",
    "soll": [
-    2.51,
-    3.31
+    2.58,
+    3.38
    ],
-   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.1 bis 37.31 m, Kegel 0.431 m/m zur Spitze 44.5 -> d 2.91 bei 37.75 m (Einzelfit dort: [2.63]); Fenster seitlich der Dachbreite",
+   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.11 bis 37.45 m, Kegel 0.441 m/m zur Spitze 44.5 -> d 2.98 bei 37.75 m (Einzelfit dort: [2.63]); Fenster seitlich der Dachbreite",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1569,6 +1586,14 @@
       3.38
      ],
      "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      2.51,
+      3.31
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
     }
    ]
   },
@@ -1576,10 +1601,10 @@
    "name": "Profil Ecktuermchen: Durchmesser bei 40.25 m (m)",
    "wert": "profil_tuerm_4025",
    "soll": [
-    1.43,
-    2.23
+    1.47,
+    2.27
    ],
-   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.1 bis 37.31 m, Kegel 0.431 m/m zur Spitze 44.5 -> d 1.83 bei 40.25 m (Einzelfit dort: [1.69]); Fenster seitlich der Dachbreite",
+   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.11 bis 37.45 m, Kegel 0.441 m/m zur Spitze 44.5 -> d 1.87 bei 40.25 m (Einzelfit dort: [0.73]); Fenster seitlich der Dachbreite",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1624,6 +1649,14 @@
       2.27
      ],
      "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      1.43,
+      2.23
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
     }
    ]
   },
@@ -1631,10 +1664,10 @@
    "name": "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
    "wert": "profil_tuerm_4250",
    "soll": [
-    0.46,
-    1.26
+    0.48,
+    1.28
    ],
-   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.1 bis 37.31 m, Kegel 0.431 m/m zur Spitze 44.5 -> d 0.86 bei 42.5 m (Einzelfit dort: [0.71, 1.43]); Fenster seitlich der Dachbreite",
+   "quelle": "wolke_profile.py (Register AR): Tuermchen-Modell Koerper d 3.11 bis 37.45 m, Kegel 0.441 m/m zur Spitze 44.5 -> d 0.88 bei 42.5 m (Einzelfit dort: [1.0, 1.4]); Fenster seitlich der Dachbreite",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1655,6 +1688,14 @@
       1.28
      ],
      "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      0.46,
+      1.26
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
     }
    ]
   },
@@ -1662,10 +1703,10 @@
    "name": "Profil Dach: Breite y bei 53.2 m (m)",
    "wert": "profil_dach_532",
    "soll": [
-    3.46,
-    4.46
+    3.71,
+    4.71
    ],
-   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 3.96 bei 53.25 m; DOM1-Flaeche 2 Zellen",
+   "quelle": "wolke_profile.py (Register AR): Wolkenbreite y p2-p98 minus 0.2 m = 4.21 bei 53.25 m; DOM1-Flaeche 2 Zellen",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1676,6 +1717,14 @@
      "alt_soll": [
       3.71,
       4.71
+     ],
+     "grund": "wolke_profile.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      3.46,
+      4.46
      ],
      "grund": "wolke_profile.py neu gerechnet"
     }
@@ -1853,10 +1902,10 @@
    "name": "Band tuermchen kupfer (35.50-43.50 m): Aussenradius bei 39.50 m (m)",
    "wert": "band_tuermchen_kupfer_3950",
    "soll": [
-    0.91,
-    1.21
+    0.92,
+    1.22
    ],
-   "quelle": "wolke_baender.py (tuermchen): Band kupfer 35.5-43.5 m, Aussenradius p97 1.06 (Anteile {'stein': 0.7, 'weiss': 7.0, 'dunkel': 9.5, 'kupfer': 19.9}); Modell: Strahl von -x auf die Achse",
+   "quelle": "wolke_baender.py (tuermchen): Band kupfer 35.5-43.5 m, Aussenradius p97 1.07 (Anteile {'stein': 0.1, 'weiss': 12.8, 'dunkel': 5.1, 'kupfer': 27.6}); Modell: Strahl von -x auf die Achse",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
@@ -1867,6 +1916,14 @@
      "alt_soll": [
       0.92,
       1.22
+     ],
+     "grund": "wolke_tuerm_baender.py neu gerechnet"
+    },
+    {
+     "datum": "auto",
+     "alt_soll": [
+      0.91,
+      1.21
      ],
      "grund": "wolke_tuerm_baender.py neu gerechnet"
     }
@@ -2060,19 +2117,6 @@
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
    "protokoll": "profile_nord.json"
-  },
-  {
-   "name": "Band tuermchen hell (43.50-44.00 m): Aussenradius bei 43.75 m (m)",
-   "wert": "band_tuermchen_hell_4375",
-   "soll": [
-    0.55,
-    0.85
-   ],
-   "quelle": "wolke_baender.py (tuermchen): Band hell 43.5-44.0 m, Aussenradius p97 0.70 (Anteile {'stein': 19.3, 'weiss': 9.2, 'dunkel': 4.0, 'kupfer': 1.9}); Modell: Strahl von -x auf die Achse",
-   "quelltyp": "sfm_bodenanker",
-   "merkmal": "schlankheit",
-   "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "profile_baender_tuermchen.json"
   }
  ],
  "beobachtungen_offen": [

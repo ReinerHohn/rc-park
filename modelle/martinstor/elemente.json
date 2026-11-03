@@ -182,7 +182,7 @@
  {
   "seite": "dach",
   "element": "Helm als Loft aus Profil (30 Schichten)",
-  "quelle": "tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)",
+  "quelle": "tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen); quer: wolke_profile",
   "schichten": 30,
   "seite_name": "dach"
  },

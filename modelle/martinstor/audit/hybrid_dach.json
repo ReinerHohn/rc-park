@@ -1,0 +1,213 @@
+{
+ "zref": 48.0,
+ "z": [
+  42.0,
+  54.0
+ ],
+ "streifen": 2.5,
+ "quellen": [
+  "strasse",
+  "drohne",
+  "generator"
+ ],
+ "seiten": {
+  "Nord(-x)": {
+   "quellen": {
+    "strasse": {
+     "status": "ok",
+     "n": 5175,
+     "neigung_grad": 77.99,
+     "neigung_sigma": 0.01,
+     "tiefe_bei_zref_m": 2.043,
+     "tiefe_sigma": 0.0,
+     "quer_neigung": 0.01,
+     "inlier_anteil": 0.92
+    },
+    "drohne": {
+     "status": "ok",
+     "n": 36418,
+     "neigung_grad": 77.62,
+     "neigung_sigma": 0.02,
+     "tiefe_bei_zref_m": 1.971,
+     "tiefe_sigma": 0.002,
+     "quer_neigung": 0.06,
+     "inlier_anteil": 0.82
+    },
+    "generator": {
+     "status": "ok",
+     "n": 13007,
+     "neigung_grad": 77.19,
+     "neigung_sigma": 0.0,
+     "tiefe_bei_zref_m": 1.938,
+     "tiefe_sigma": 0.0,
+     "quer_neigung": -0.0,
+     "inlier_anteil": 0.69
+    }
+   },
+   "vergleiche": {
+    "strasse-drohne": {
+     "d_neigung_grad": 0.37,
+     "d_tiefe_m": 0.072,
+     "widerspruch_neigung": false,
+     "widerspruch_tiefe": false
+    },
+    "drohne-generator": {
+     "d_neigung_grad": 0.43,
+     "d_tiefe_m": 0.033,
+     "widerspruch_neigung": false,
+     "widerspruch_tiefe": false
+    },
+    "strasse-generator": {
+     "d_neigung_grad": 0.8,
+     "d_tiefe_m": 0.105,
+     "widerspruch_neigung": false,
+     "widerspruch_tiefe": false
+    }
+   }
+  },
+  "Sued(+x)": {
+   "quellen": {
+    "strasse": {
+     "status": "keine Daten",
+     "n": 0
+    },
+    "drohne": {
+     "status": "ok",
+     "n": 870,
+     "neigung_grad": 73.44,
+     "neigung_sigma": 0.16,
+     "tiefe_bei_zref_m": 2.214,
+     "tiefe_sigma": 0.033,
+     "quer_neigung": -0.921,
+     "inlier_anteil": 0.56
+    },
+    "generator": {
+     "status": "ok",
+     "n": 12926,
+     "neigung_grad": 77.19,
+     "neigung_sigma": 0.0,
+     "tiefe_bei_zref_m": 1.938,
+     "tiefe_sigma": 0.0,
+     "quer_neigung": 0.0,
+     "inlier_anteil": 0.69
+    }
+   },
+   "vergleiche": {
+    "drohne-generator": {
+     "d_neigung_grad": -3.75,
+     "d_tiefe_m": 0.276,
+     "widerspruch_neigung": true,
+     "widerspruch_tiefe": true
+    }
+   }
+  },
+  "Ost(+y)": {
+   "quellen": {
+    "strasse": {
+     "status": "ok",
+     "n": 1380,
+     "neigung_grad": 66.64,
+     "neigung_sigma": 0.26,
+     "tiefe_bei_zref_m": 5.397,
+     "tiefe_sigma": 0.057,
+     "quer_neigung": -2.12,
+     "inlier_anteil": 0.4
+    },
+    "drohne": {
+     "status": "ok",
+     "n": 21833,
+     "neigung_grad": 80.2,
+     "neigung_sigma": 0.07,
+     "tiefe_bei_zref_m": 2.298,
+     "tiefe_sigma": 0.008,
+     "quer_neigung": -0.227,
+     "inlier_anteil": 0.43
+    },
+    "generator": {
+     "status": "ok",
+     "n": 11114,
+     "neigung_grad": 87.87,
+     "neigung_sigma": 0.0,
+     "tiefe_bei_zref_m": 2.316,
+     "tiefe_sigma": 0.0,
+     "quer_neigung": -0.0,
+     "inlier_anteil": 0.62
+    }
+   },
+   "vergleiche": {
+    "strasse-drohne": {
+     "d_neigung_grad": -13.56,
+     "d_tiefe_m": 3.099,
+     "widerspruch_neigung": true,
+     "widerspruch_tiefe": true
+    },
+    "drohne-generator": {
+     "d_neigung_grad": -7.67,
+     "d_tiefe_m": -0.018,
+     "widerspruch_neigung": true,
+     "widerspruch_tiefe": false
+    },
+    "strasse-generator": {
+     "d_neigung_grad": -21.23,
+     "d_tiefe_m": 3.081,
+     "widerspruch_neigung": true,
+     "widerspruch_tiefe": true
+    }
+   }
+  },
+  "West(-y)": {
+   "quellen": {
+    "strasse": {
+     "status": "ok",
+     "n": 1485,
+     "neigung_grad": 71.52,
+     "neigung_sigma": 0.5,
+     "tiefe_bei_zref_m": 4.345,
+     "tiefe_sigma": 0.054,
+     "quer_neigung": 1.522,
+     "inlier_anteil": 0.34
+    },
+    "drohne": {
+     "status": "ok",
+     "n": 11559,
+     "neigung_grad": 76.17,
+     "neigung_sigma": 0.1,
+     "tiefe_bei_zref_m": 2.482,
+     "tiefe_sigma": 0.016,
+     "quer_neigung": 0.423,
+     "inlier_anteil": 0.31
+    },
+    "generator": {
+     "status": "ok",
+     "n": 11138,
+     "neigung_grad": 87.87,
+     "neigung_sigma": 0.61,
+     "tiefe_bei_zref_m": 2.317,
+     "tiefe_sigma": 0.053,
+     "quer_neigung": -0.0,
+     "inlier_anteil": 0.62
+    }
+   },
+   "vergleiche": {
+    "strasse-drohne": {
+     "d_neigung_grad": -4.65,
+     "d_tiefe_m": 1.863,
+     "widerspruch_neigung": true,
+     "widerspruch_tiefe": true
+    },
+    "drohne-generator": {
+     "d_neigung_grad": -11.7,
+     "d_tiefe_m": 0.165,
+     "widerspruch_neigung": true,
+     "widerspruch_tiefe": false
+    },
+    "strasse-generator": {
+     "d_neigung_grad": -16.35,
+     "d_tiefe_m": 2.028,
+     "widerspruch_neigung": true,
+     "widerspruch_tiefe": true
+    }
+   }
+  }
+ }
+}

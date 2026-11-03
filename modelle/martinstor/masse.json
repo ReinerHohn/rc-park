@@ -328,6 +328,18 @@
      "alt": "ZZ + 10.0",
      "neu": 40.5,
      "grund": "masse_aus_profilen.py (band_z): Band zentral traufe 40.25-40.5 m (z1)"
+    },
+    {
+     "datum": "auto",
+     "alt": 40.5,
+     "neu": 40.75,
+     "grund": "masse_aus_profilen.py (band_z): Band zentral gesims 39.5-40.75 m (z1)"
+    },
+    {
+     "datum": "auto",
+     "alt": 40.75,
+     "neu": 40.5,
+     "grund": "masse_aus_profilen.py (band_z): Band zentral traufe 40.25-40.5 m (z1)"
     }
    ]
   },
@@ -355,6 +367,18 @@
      "alt": 18.4,
      "neu": 14.9,
      "grund": "First 55,4 m (DOM1 3 Zellen 53-55, SfM Goldkugeln 55,1-55,6) minus Traufe 40,5 m (Wolke, Register AR)"
+    },
+    {
+     "datum": "auto",
+     "alt": 14.9,
+     "neu": 14.65,
+     "grund": "masse_aus_profilen.py (differenz): first_plattform 55.40 - GZ1 40.75"
+    },
+    {
+     "datum": "auto",
+     "alt": 14.65,
+     "neu": 14.9,
+     "grund": "masse_aus_profilen.py (differenz): first_plattform 55.40 - GZ1 40.50"
     }
    ]
   },
@@ -645,6 +669,18 @@
      "alt": 1.06,
      "neu": 1.04,
      "grund": "masse_aus_profilen.py (band_r2): Band zentral traufe 40.25-40.5 m, Aussenradius 4.07 minus GX 7.10"
+    },
+    {
+     "datum": "auto",
+     "alt": 1.04,
+     "neu": 0.76,
+     "grund": "masse_aus_profilen.py (band_r2): Band zentral gesims 39.5-40.75 m, Aussenradius 3.93 minus GX 7.10"
+    },
+    {
+     "datum": "auto",
+     "alt": 0.76,
+     "neu": 1.04,
+     "grund": "masse_aus_profilen.py (band_r2): Band zentral traufe 40.25-40.5 m, Aussenradius 4.07 minus GX 7.10"
     }
    ]
   },
@@ -719,7 +755,21 @@
    "einheit": "m",
    "was": "Eckquader-Schichthoehe Glockenstock",
    "quelle": "masse_aus_profilen.py (periode_fenster): staerkste Fensterperiode 34.0-38.0 m: 0.35 (Staerke 0.35) von 1 Fenstern",
-   "quelltyp": "sfm_bodenanker"
+   "quelltyp": "sfm_bodenanker",
+   "historie": [
+    {
+     "datum": "auto",
+     "alt": 0.35,
+     "neu": 0.2,
+     "grund": "masse_aus_profilen.py (periode_fenster): staerkste Fensterperiode 36.0-40.0 m: 0.2 (Staerke 0.78) von 2 Fenstern"
+    },
+    {
+     "datum": "auto",
+     "alt": 0.2,
+     "neu": 0.35,
+     "grund": "masse_aus_profilen.py (periode_fenster): staerkste Fensterperiode 34.0-38.0 m: 0.35 (Staerke 0.35) von 1 Fenstern"
+    }
+   ]
   },
   "QUADER_TUERMCHEN": {
    "wert": 0.5,

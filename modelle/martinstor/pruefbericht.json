@@ -778,6 +778,26 @@
    ],
    "ok": true,
    "status": "ok"
+  },
+  {
+   "name": "Helm geradlinig (tief, 41.8-54.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+   "wert": 0.0045457500249821425,
+   "soll": [
+    0.0,
+    0.25
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Helm geradlinig (quer, 41.8-54.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+   "wert": 0.0026080655330713576,
+   "soll": [
+    0.0,
+    0.41
+   ],
+   "ok": true,
+   "status": "ok"
   }
  ],
  "bestanden": true
