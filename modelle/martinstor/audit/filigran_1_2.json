@@ -1,0 +1,538 @@
+{
+ "stl": "modelle/stl/martinstor_v4_1-87.stl",
+ "min_mm": 1.2,
+ "gruppen": [
+  {
+   "art": "STAB",
+   "z_original_m": 64.23,
+   "pos_mm": [
+    0.0,
+    -0.0,
+    738.2
+   ],
+   "achse": [
+    0.0,
+    0.01,
+    1.0
+   ],
+   "laenge_mm": 22.25,
+   "breite_mm": 1.27,
+   "dicke_mm": 1.05,
+   "punkte": 86,
+   "vorschlag": "Stab Ø 1.88 mm x 22.3 mm, Bohrung Ø 1.98 mm, Tiefe 7.5 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 40.5,
+   "pos_mm": [
+    -20.3,
+    39.3,
+    465.5
+   ],
+   "achse": [
+    -1.0,
+    0.0,
+    0.01
+   ],
+   "laenge_mm": 23.94,
+   "breite_mm": 0.93,
+   "dicke_mm": 0.61,
+   "punkte": 67,
+   "vorschlag": "Stab Ø 1.09 mm x 23.9 mm, Bohrung Ø 1.19 mm, Tiefe 4.4 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 40.5,
+   "pos_mm": [
+    29.5,
+    -39.2,
+    465.5
+   ],
+   "achse": [
+    1.0,
+    -0.0,
+    0.01
+   ],
+   "laenge_mm": 23.94,
+   "breite_mm": 0.94,
+   "dicke_mm": 0.63,
+   "punkte": 62,
+   "vorschlag": "Stab Ø 1.14 mm x 23.9 mm, Bohrung Ø 1.24 mm, Tiefe 4.6 mm"
+  },
+  {
+   "art": "WAND",
+   "z_original_m": 40.5,
+   "pos_mm": [
+    43.2,
+    36.0,
+    465.5
+   ],
+   "achse": [
+    -0.41,
+    0.91,
+    0.01
+   ],
+   "laenge_mm": 16.78,
+   "breite_mm": 9.01,
+   "dicke_mm": 0.55,
+   "punkte": 53,
+   "vorschlag": "duenne Wand/Kante: verdicken (Mindestwand) oder weglassen"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.17,
+   "pos_mm": [
+    -60.9,
+    44.6,
+    392.8
+   ],
+   "achse": [
+    0.03,
+    0.02,
+    1.0
+   ],
+   "laenge_mm": 12.59,
+   "breite_mm": 1.21,
+   "dicke_mm": 0.59,
+   "punkte": 42,
+   "vorschlag": "Stab Ø 1.07 mm x 12.6 mm, Bohrung Ø 1.17 mm, Tiefe 4.3 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.23,
+   "pos_mm": [
+    61.0,
+    -57.0,
+    393.4
+   ],
+   "achse": [
+    -0.04,
+    0.01,
+    1.0
+   ],
+   "laenge_mm": 12.54,
+   "breite_mm": 1.35,
+   "dicke_mm": 0.64,
+   "punkte": 41,
+   "vorschlag": "Stab Ø 1.15 mm x 12.5 mm, Bohrung Ø 1.25 mm, Tiefe 4.6 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 37.84,
+   "pos_mm": [
+    -11.4,
+    -38.0,
+    435.0
+   ],
+   "achse": [
+    1.0,
+    0.01,
+    0.01
+   ],
+   "laenge_mm": 10.12,
+   "breite_mm": 1.33,
+   "dicke_mm": 1.15,
+   "punkte": 40,
+   "vorschlag": "Stab Ø 2.07 mm x 10.1 mm, Bohrung Ø 2.17 mm, Tiefe 8.3 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.21,
+   "pos_mm": [
+    39.7,
+    -65.8,
+    393.2
+   ],
+   "achse": [
+    -0.02,
+    -0.01,
+    -1.0
+   ],
+   "laenge_mm": 12.36,
+   "breite_mm": 1.2,
+   "dicke_mm": 0.64,
+   "punkte": 38,
+   "vorschlag": "Stab Ø 1.15 mm x 12.4 mm, Bohrung Ø 1.25 mm, Tiefe 4.6 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.2,
+   "pos_mm": [
+    60.9,
+    44.6,
+    393.1
+   ],
+   "achse": [
+    0.0,
+    -0.01,
+    -1.0
+   ],
+   "laenge_mm": 13.26,
+   "breite_mm": 1.7,
+   "dicke_mm": 0.66,
+   "punkte": 37,
+   "vorschlag": "Stab Ø 1.19 mm x 13.3 mm, Bohrung Ø 1.29 mm, Tiefe 4.8 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.12,
+   "pos_mm": [
+    -60.9,
+    -57.0,
+    392.2
+   ],
+   "achse": [
+    0.0,
+    -0.0,
+    1.0
+   ],
+   "laenge_mm": 10.82,
+   "breite_mm": 1.13,
+   "dicke_mm": 0.51,
+   "punkte": 37,
+   "vorschlag": "Stab Ø 0.92 mm x 10.8 mm, Bohrung Ø 1.02 mm, Tiefe 3.7 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.22,
+   "pos_mm": [
+    39.8,
+    65.8,
+    393.4
+   ],
+   "achse": [
+    -0.01,
+    0.0,
+    -1.0
+   ],
+   "laenge_mm": 12.47,
+   "breite_mm": 1.31,
+   "dicke_mm": 0.72,
+   "punkte": 34,
+   "vorschlag": "Stab Ø 1.3 mm x 12.5 mm, Bohrung Ø 1.4 mm, Tiefe 5.2 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.18,
+   "pos_mm": [
+    60.9,
+    -44.6,
+    392.9
+   ],
+   "achse": [
+    0.0,
+    -0.0,
+    1.0
+   ],
+   "laenge_mm": 11.56,
+   "breite_mm": 1.16,
+   "dicke_mm": 0.46,
+   "punkte": 33,
+   "vorschlag": "Stab Ø 0.82 mm x 11.6 mm, Bohrung Ø 0.92 mm, Tiefe 3.3 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.27,
+   "pos_mm": [
+    -39.8,
+    65.8,
+    393.9
+   ],
+   "achse": [
+    -0.02,
+    -0.06,
+    1.0
+   ],
+   "laenge_mm": 11.16,
+   "breite_mm": 1.09,
+   "dicke_mm": 0.63,
+   "punkte": 33,
+   "vorschlag": "Stab Ø 1.13 mm x 11.2 mm, Bohrung Ø 1.23 mm, Tiefe 4.5 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 37.86,
+   "pos_mm": [
+    12.3,
+    -37.9,
+    435.2
+   ],
+   "achse": [
+    1.0,
+    -0.04,
+    0.01
+   ],
+   "laenge_mm": 10.61,
+   "breite_mm": 1.26,
+   "dicke_mm": 1.15,
+   "punkte": 32,
+   "vorschlag": "Stab Ø 2.07 mm x 10.6 mm, Bohrung Ø 2.17 mm, Tiefe 8.3 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.26,
+   "pos_mm": [
+    61.0,
+    57.1,
+    393.7
+   ],
+   "achse": [
+    0.01,
+    0.0,
+    -1.0
+   ],
+   "laenge_mm": 11.71,
+   "breite_mm": 1.48,
+   "dicke_mm": 0.81,
+   "punkte": 31,
+   "vorschlag": "Stab Ø 1.45 mm x 11.7 mm, Bohrung Ø 1.55 mm, Tiefe 5.8 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.19,
+   "pos_mm": [
+    -52.1,
+    -65.8,
+    392.9
+   ],
+   "achse": [
+    -0.0,
+    -0.02,
+    -1.0
+   ],
+   "laenge_mm": 12.54,
+   "breite_mm": 1.31,
+   "dicke_mm": 0.69,
+   "punkte": 31,
+   "vorschlag": "Stab Ø 1.23 mm x 12.5 mm, Bohrung Ø 1.33 mm, Tiefe 4.9 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 40.49,
+   "pos_mm": [
+    -24.3,
+    -39.3,
+    465.5
+   ],
+   "achse": [
+    -1.0,
+    0.0,
+    -0.01
+   ],
+   "laenge_mm": 11.63,
+   "breite_mm": 0.91,
+   "dicke_mm": 0.53,
+   "punkte": 27,
+   "vorschlag": "Stab Ø 0.95 mm x 11.6 mm, Bohrung Ø 1.05 mm, Tiefe 3.8 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 37.87,
+   "pos_mm": [
+    41.3,
+    -12.4,
+    435.2
+   ],
+   "achse": [
+    0.03,
+    1.0,
+    0.03
+   ],
+   "laenge_mm": 9.74,
+   "breite_mm": 1.43,
+   "dicke_mm": 1.15,
+   "punkte": 27,
+   "vorschlag": "Stab Ø 2.07 mm x 9.7 mm, Bohrung Ø 2.17 mm, Tiefe 8.3 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 37.85,
+   "pos_mm": [
+    -41.5,
+    -12.6,
+    435.1
+   ],
+   "achse": [
+    -0.0,
+    1.0,
+    0.05
+   ],
+   "laenge_mm": 9.18,
+   "breite_mm": 1.57,
+   "dicke_mm": 1.15,
+   "punkte": 26,
+   "vorschlag": "Stab Ø 2.07 mm x 9.2 mm, Bohrung Ø 2.17 mm, Tiefe 8.3 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 37.85,
+   "pos_mm": [
+    -41.4,
+    10.0,
+    435.1
+   ],
+   "achse": [
+    0.04,
+    1.0,
+    -0.03
+   ],
+   "laenge_mm": 7.76,
+   "breite_mm": 1.37,
+   "dicke_mm": 1.15,
+   "punkte": 24,
+   "vorschlag": "Stab Ø 2.07 mm x 7.8 mm, Bohrung Ø 2.17 mm, Tiefe 8.3 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.39,
+   "pos_mm": [
+    -60.9,
+    57.0,
+    395.3
+   ],
+   "achse": [
+    -0.05,
+    -0.01,
+    -1.0
+   ],
+   "laenge_mm": 7.96,
+   "breite_mm": 1.14,
+   "dicke_mm": 0.71,
+   "punkte": 24,
+   "vorschlag": "Stab Ø 1.28 mm x 8.0 mm, Bohrung Ø 1.38 mm, Tiefe 5.1 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 40.49,
+   "pos_mm": [
+    -2.0,
+    39.3,
+    465.4
+   ],
+   "achse": [
+    -1.0,
+    0.03,
+    0.02
+   ],
+   "laenge_mm": 9.3,
+   "breite_mm": 1.01,
+   "dicke_mm": 0.43,
+   "punkte": 24,
+   "vorschlag": "Stab Ø 0.78 mm x 9.3 mm, Bohrung Ø 0.88 mm, Tiefe 3.1 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 40.49,
+   "pos_mm": [
+    -12.7,
+    -39.2,
+    465.4
+   ],
+   "achse": [
+    1.0,
+    -0.04,
+    0.01
+   ],
+   "laenge_mm": 10.76,
+   "breite_mm": 1.14,
+   "dicke_mm": 0.49,
+   "punkte": 23,
+   "vorschlag": "Stab Ø 0.88 mm x 10.8 mm, Bohrung Ø 0.98 mm, Tiefe 3.5 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.35,
+   "pos_mm": [
+    52.2,
+    -65.8,
+    394.9
+   ],
+   "achse": [
+    0.03,
+    0.02,
+    1.0
+   ],
+   "laenge_mm": 7.87,
+   "breite_mm": 1.2,
+   "dicke_mm": 0.54,
+   "punkte": 22,
+   "vorschlag": "Stab Ø 0.97 mm x 7.9 mm, Bohrung Ø 1.07 mm, Tiefe 3.9 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 34.38,
+   "pos_mm": [
+    -60.8,
+    -44.6,
+    395.1
+   ],
+   "achse": [
+    -0.07,
+    0.04,
+    -1.0
+   ],
+   "laenge_mm": 9.19,
+   "breite_mm": 1.02,
+   "dicke_mm": 0.41,
+   "punkte": 22,
+   "vorschlag": "Stab Ø 0.75 mm x 9.2 mm, Bohrung Ø 0.85 mm, Tiefe 3.0 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 40.5,
+   "pos_mm": [
+    -40.9,
+    -39.2,
+    465.6
+   ],
+   "achse": [
+    1.0,
+    -0.06,
+    -0.03
+   ],
+   "laenge_mm": 8.8,
+   "breite_mm": 0.8,
+   "dicke_mm": 0.55,
+   "punkte": 21,
+   "vorschlag": "Stab Ø 0.98 mm x 8.8 mm, Bohrung Ø 1.08 mm, Tiefe 3.9 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 40.49,
+   "pos_mm": [
+    -45.2,
+    8.5,
+    465.4
+   ],
+   "achse": [
+    0.0,
+    -1.0,
+    0.01
+   ],
+   "laenge_mm": 10.64,
+   "breite_mm": 0.53,
+   "dicke_mm": 0.62,
+   "punkte": 21,
+   "vorschlag": "Stab Ø 1.11 mm x 10.6 mm, Bohrung Ø 1.21 mm, Tiefe 4.4 mm"
+  },
+  {
+   "art": "STAB",
+   "z_original_m": 33.95,
+   "pos_mm": [
+    -39.7,
+    -65.8,
+    390.3
+   ],
+   "achse": [
+    -0.01,
+    0.01,
+    1.0
+   ],
+   "laenge_mm": 7.83,
+   "breite_mm": 1.01,
+   "dicke_mm": 0.63,
+   "punkte": 20,
+   "vorschlag": "Stab Ø 1.13 mm x 7.8 mm, Bohrung Ø 1.23 mm, Tiefe 4.5 mm"
+  }
+ ]
+}
