@@ -40,7 +40,7 @@ def ransac(A, B, tol, it=4000, seed=1):
     return inl, s, R, t, e
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("video"); ap.add_argument("--modell", default="1"); ap.add_argument("--jeder", type=int, default=3)
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("video"); ap.add_argument("--modell", default="1"); ap.add_argument("--jeder", type=int, default=3); ap.add_argument("--aus", default="video_ausrichtung.json", help="Dateiname unter audit/ (andere Videos duerfen die Ausrichtung des dichten Laufs nicht ueberschreiben)")
     ap.add_argument("--modus", default="alles", choices=["alles", "dump", "match", "fit", "cpu"], help="alles (Standard) = dump (venv-colmap) -> match (venv-seg, GPU/torch, automatisch) -> fit; cpu = alles in numpy (langsam, Notfall)"); ap.add_argument("--ratio", type=float, default=0.85); ap.add_argument("--tol-m", type=float, default=1.5, help="Inlier-Schwelle in Metern (Modellrahmen)"); a = ap.parse_args()
     a.modus_ursprung = a.modus
     od = os.path.dirname(os.path.abspath(a.objekt)); dev = "cpu (numpy/BLAS; venv-colmap hat kein torch)"
@@ -101,7 +101,7 @@ def main():
             k = (z >= lo) & (z < hi)
             if k.sum() >= 5: hz.append(dict(z=[lo, hi], n=int(k.sum()), median_m=round(float(np.median(res_m[k])), 3))); print(f"  z {lo:2d}-{hi:2d} m: n={k.sum():4d}  Median-Residuum {np.median(res_m[k]):.2f} m")
         out["hoehenverlauf"] = hz
-    os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(out, open(os.path.join(od, "audit", "video_ausrichtung.json"), "w"), indent=1)
+    os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(out, open(os.path.join(od, "audit", a.aus), "w"), indent=1)
 
 if __name__ == "__main__":
     main()
