@@ -74,7 +74,7 @@ def main():
     if a.trocken:
         for s in stufen: print(f"{s['name']:8} x{a.wiederhole}: tools/nullstart.py {a.objekt} --ziel {a.ziel} {s['args']}")
         print("Ziel:", basis); return
-    os.makedirs(basis, exist_ok=True); ordner = []
+    os.makedirs(basis, exist_ok=True); ordner = []; zeiten = {}
     for s in stufen:
         for w in range(a.wiederhole):
             name = f"{s['name']}" + (f"_{w + 1}" if a.wiederhole > 1 else ""); d = os.path.join(basis, "stufe_" + name); os.makedirs(d, exist_ok=True)
@@ -82,7 +82,7 @@ def main():
             with open(os.path.join(d, "lauf.log"), "w") as f: rc = subprocess.run(cmd, cwd=repo, stdout=f, stderr=subprocess.STDOUT).returncode
             for fn in ("pruefbericht.json", "masstabelle.json", "masse.json", "nullstart_bericht.json"):
                 if os.path.exists(os.path.join(zd, fn)): shutil.copy2(os.path.join(zd, fn), d)
-            print(f"   rc {rc}, {time.time() - t0:.0f} s", flush=True)
+            zeiten[name] = round(time.time() - t0, 1); print(f"   rc {rc}, {time.time() - t0:.0f} s", flush=True)
             if rc != 0 or not os.path.exists(os.path.join(d, "pruefbericht.json")): print("   Stufe fehlgeschlagen - Treppe endet", flush=True); break
             ordner.append(d)
         else:
@@ -93,7 +93,7 @@ def main():
     if not ordner: sys.exit("keine Stufe lief durch")
     erg = bewerte(ordner, a.rauschen, a.geduld); txt = bericht(erg, ordner); open(os.path.join(basis, "TREPPE.md"), "w").write(txt); print(txt)
     vp = os.path.join(od, "treppe_verlauf.json"); v = json.load(open(vp)) if os.path.exists(vp) else []
-    v.append(dict(datum=time.strftime("%F %T"), ordner=basis, **erg)); json.dump(v, open(vp, "w"), indent=1, ensure_ascii=False)
+    v.append(dict(datum=time.strftime("%F %T"), ordner=basis, sekunden_je_stufe=zeiten, sekunden_gesamt=round(sum(zeiten.values()), 1), **erg)); json.dump(v, open(vp, "w"), indent=1, ensure_ascii=False)
 
 if __name__ == "__main__":
     main()

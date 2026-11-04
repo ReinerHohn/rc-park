@@ -20,6 +20,7 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("seite"); ap.add_argument("--raster", type=float, default=0.25)
     ap.add_argument("--schwelle", type=float, default=0.4); ap.add_argument("--min-flaeche", type=float, default=1.0); ap.add_argument("--eintragen", action="store_true")
     ap.add_argument("--schaft", nargs=2, type=float, default=[12.0, 26.0], help="Hoehenband mit senkrechter, glatter Wand fuer den Versatz")
+    ap.add_argument("--auto-rahmen", action="store_true", help="GENERISCH (Nullstart, 2026-11-04): Fassadenstreifen, Breite, Hoehenbaender und Wandschwelle aus den Modellgrenzen statt Martinstor-Festwerten (Turm um den Ursprung, u +-9 m, Baender 6-34 m)")
     ap.add_argument("--dicht", help="npy der dichten Wolke (Standard sfm/dicht_<seite>_modell.npy)")
     ap.add_argument("--nebengebaeude", action="store_true", help="STLs aus objekt.json['nebengebaeude'] (Meter, Modellsystem) mit vergleichen; Raster deckt dann auch sie ab")
     ap.add_argument("--entzerren", action="store_true", help="Tiefendrift der einseitigen Wolke (linear in z, aus den Hoehenbaendern) abziehen; schreibt sfm/dicht_<seite>_entzerrt.npy - NUR fuer den Sichtvergleich, kein Mass")
@@ -35,33 +36,43 @@ def main():
         m = trimesh.util.concatenate(teile); b = m.bounds; u_lo, u_hi = float(np.floor(b[0, iq]) - 1), float(np.ceil(b[1, iq]) + 1)
     # Blickrichtung: wir sehen die Seite von aussen; "vorne" = groesstes sgn*tief
     front = lambda X: sgn * X[:, it]
+    mq, halb, fr0, b_von, b_bis, b_schritt, z_max = 0.0, 2.5, 2.0, 6.0, 34.0, 4.0, 72.0                       # Martinstor-Festwerte (Regression unveraendert)
+    if a.auto_rahmen:
+        bb = m.bounds; ext = bb[1] - bb[0]; mq = float(bb.mean(0)[iq]); halb = max(2.5, 0.15 * float(ext[iq])); fr0 = sgn * float(bb.mean(0)[it]) + 0.25 * float(ext[it])
+        u_lo, u_hi = float(np.floor(bb[0, iq]) - 1), float(np.ceil(bb[1, iq]) + 1); hz = float(bb[1, 2]); b_schritt = max(2.0, round(hz / 8.0)); b_von, b_bis = max(0.0, 0.15 * hz), 0.9 * hz; z_max = hz + 3.0
+        P = P[front(P) > sgn * float(bb.mean(0)[it])]                                                      # Gesamtwolke: nur Punkte vor der Modellmitte dieser Seite (sonst misst 'sued' die Nordfassade)
+        if len(P) < 500: print(f"Seite {s}: nur {len(P)} Wolkenpunkte vor der Modellmitte - nicht vergleichbar"); sys.exit(3)
+        print(f"auto-rahmen: Streifen {quer} {mq:+.1f} +-{halb:.1f} m, Wand vorn ab {fr0:+.1f} m, u {u_lo:.0f}..{u_hi:.0f} m, Baender {b_von:.1f}-{b_bis:.1f} m je {b_schritt:.0f} m")
     # ---- 1) Versatz quer zur Fassade am Schaft
-    z0, z1 = a.schaft; kq = np.abs(P[:, iq]) < 2.5; kz = (P[:, 2] >= z0) & (P[:, 2] <= z1)
-    kw = kq & kz & (front(P) > 2.0)
+    z0, z1 = a.schaft; kq = np.abs(P[:, iq] - mq) < halb; kz = (P[:, 2] >= z0) & (P[:, 2] <= z1)
+    kw = kq & kz & (front(P) > fr0)
     wolke_wand = np.percentile(front(P[kw]), 95) if kw.sum() > 50 else np.nan
-    kv = (np.abs(V[:, iq]) < 2.5) & (V[:, 2] >= z0) & (V[:, 2] <= z1)
+    kv = (np.abs(V[:, iq] - mq) < halb) & (V[:, 2] >= z0) & (V[:, 2] <= z1)
     modell_wand = front(V[kv]).max() if kv.sum() else np.nan
     dv = wolke_wand - modell_wand
+    if not np.isfinite(dv):                                                                                  # vorher: NaN-Versatz machte die ganze Wolke NaN, rc 0 mit leerem Ergebnis (Kaufhaus 2026-11-04)
+        print(f"Seite {s}: keine Wandlage am Schaft {z0}-{z1} m (Wolke {int(kw.sum())} Punkte, Modell {int(kv.sum())} Ecken) - Seite nicht vergleichbar"); sys.exit(3)
     print(f"Seite {s}: Wandlage am Schaft {z0}-{z1} m  Wolke {wolke_wand:.2f}  Modell {modell_wand:.2f}  -> Versatz {dv:+.2f} m (wird fuer den Vergleich abgezogen; Ursache Ausrichtungstiefe, siehe Register AN)")
     # Hoehenabhaengigkeit des Versatzes (einseitige Netze sind in der Tiefe weich): Wandlage je 4-m-Band an der Fassadenmitte
     baender = []
-    for b0 in np.arange(6.0, 34.0, 4.0):
-        kb = kq & (P[:, 2] >= b0) & (P[:, 2] < b0 + 4) & (front(P) > 2.0); kv2 = (np.abs(V[:, iq]) < 2.5) & (V[:, 2] >= b0) & (V[:, 2] < b0 + 4)
+    for b0 in np.arange(b_von, b_bis, b_schritt):
+        kb = kq & (P[:, 2] >= b0) & (P[:, 2] < b0 + b_schritt) & (front(P) > fr0); kv2 = (np.abs(V[:, iq] - mq) < halb) & (V[:, 2] >= b0) & (V[:, 2] < b0 + b_schritt)
         if kb.sum() > 50 and kv2.sum(): baender.append((b0, float(np.percentile(front(P[kb]), 95) - front(V[kv2]).max())))
     spreiz = (max(v for _, v in baender) - min(v for _, v in baender)) if len(baender) > 1 else 0.0
     tiefe_unsicher = spreiz > 0.3
     drift = None
     if len(baender) >= 3:
-        zb = np.array([b0 + 2.0 for b0, _ in baender]); vb = np.array([v for _, v in baender]); A_ = np.c_[zb, np.ones_like(zb)]; (m_, c_), *_ = np.linalg.lstsq(A_, vb, rcond=None)
+        zb = np.array([b0 + b_schritt / 2 for b0, _ in baender]); vb = np.array([v for _, v in baender]); A_ = np.c_[zb, np.ones_like(zb)]; (m_, c_), *_ = np.linalg.lstsq(A_, vb, rcond=None)
         drift = (float(m_), float(c_)); print(f"Tiefendrift linear: {m_ * 1000:+.1f} mm je m Hoehe ({np.degrees(np.arctan(m_)):+.2f} Grad), Offset {c_:+.2f} m bei z 0; Rest-Streuung {np.std(vb - A_ @ np.r_[m_, c_]):.2f} m")
-    print("Versatz je Hoehenband: " + ", ".join(f"{b0:.0f}-{b0 + 4:.0f} m: {v:+.2f}" for b0, v in baender) + f"  -> Spreizung {spreiz:.2f} m" + ("  !! TIEFE UNSICHER: Tiefendifferenzen nur als Hinweis, Silhouette/Hoehen bleiben gueltig" if tiefe_unsicher else ""))
+    print("Versatz je Hoehenband: " + ", ".join(f"{b0:.0f}-{b0 + b_schritt:.0f} m: {v:+.2f}" for b0, v in baender) + f"  -> Spreizung {spreiz:.2f} m" + ("  !! TIEFE UNSICHER: Tiefendifferenzen nur als Hinweis, Silhouette/Hoehen bleiben gueltig" if tiefe_unsicher else ""))
     Pk = P.copy()
     if a.entzerren and drift:
         Pk[:, it] -= sgn * (drift[0] * Pk[:, 2] + drift[1]); dv_rest = 0.0
         np.save(os.path.join(od, "sfm", f"dicht_{s}_entzerrt.npy"), Pk.astype(np.float32)); print(f"entzerrte Wolke geschrieben: sfm/dicht_{s}_entzerrt.npy (Drift {drift[0]*1000:+.1f} mm/m, Offset {drift[1]:+.2f} m abgezogen) - Sichtvergleich, KEIN Mass")
+    elif a.auto_rahmen: print(f"auto-rahmen: Versatz {dv:+.2f} m wird NICHT abgezogen (Buendel an LoD2 = absolut; der Versatz ist hier Messergebnis)")
     else: Pk[:, it] -= sgn * dv
     # ---- 2) Tiefenkarten
-    r = a.raster; us = np.arange(u_lo, u_hi + 1e-9, r); zs = np.arange(0.0, 72.0 + 1e-9, r); U, Z = np.meshgrid(us, zs)
+    r = a.raster; us = np.arange(u_lo, u_hi + 1e-9, r); zs = np.arange(0.0, z_max + 1e-9, r); U, Z = np.meshgrid(us, zs)
     iu = np.floor((Pk[:, iq] - u_lo) / r).astype(int); iz = np.floor(Pk[:, 2] / r).astype(int); ok = (iu >= 0) & (iu < len(us)) & (iz >= 0) & (iz < len(zs))
     W = np.full(U.shape, np.nan); N = np.zeros(U.shape, int)
     f = front(Pk)
@@ -87,6 +98,7 @@ def main():
     nur_modell_loch = nur_modell & umgeb & ~rand
     print(f"'nur Modell' innerhalb der Wolke (Abdeckungsluecke, ignoriert): {nur_modell_loch.sum()} Zellen")
     print(f"Zellen: beide {beide.sum()}, nur Wolke {nur_wolke.sum()}, nur Modell (mit Wolken-Umgebung) {nur_modell_sicher.sum()}; mittlere Tiefendifferenz {np.nanmean(D[beide]):+.2f} m, Streuung {np.nanstd(D[beide]):.2f}")
+    if beide.sum() == 0 and nur_wolke.sum() == 0: print(f"Seite {s}: keine Wolkenzelle im Raster - nicht vergleichbar"); sys.exit(3)
     # ---- 4) Flaechen finden
     befunde = []
     def flaechen(mask, art, wert=None):

@@ -13,6 +13,34 @@ import sys, os, json, glob, math, numpy as np, cv2, trimesh
 SIL_F0 = 5.4 / 4.29   # Brennweitenfaktor der Silhouettenkamera (foto_silhouette_gpu); je Objekt in objekt.json ueberschreibbar
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+def k_datei(objp, obj, root, nr):
+    """EINE Stelle fuer die K-Datei eines Fotos (2026-11-04): zuerst der Objektordner (dort schreiben kameras_aus_buendel/kamera_bruecke/beweis_anker),
+    dann der Ordner der Masstabelle (Handkalibrierung alter Objekte). Vorher lasen foto_diff/fehlteile nur den Masstabellenordner, test_foto_diff den Objektordner:
+    bei martinstor_lod2 (Masstabelle -> martinstor_null) verglich foto_diff gegen die alte Handkamera (RMS 92 px, f 4059 statt 3858) -> Beweis T1 55 %."""
+    for d in (os.path.dirname(os.path.abspath(objp)), os.path.join(root, os.path.dirname(obj["masstabelle"]))):
+        kp = os.path.join(d, "messprotokoll", f"K-{nr}.json")
+        if os.path.exists(kp) and "kamera" in json.load(open(kp)): return kp
+    kp = os.path.join(root, os.path.dirname(obj["masstabelle"]), "messprotokoll", f"K-{nr}.json"); return kp
+
+def kmatrix(kk, W, H):
+    return np.array([[float(kk["f_px"]), 0, float(kk.get("cx", W / 2))], [0, float(kk["f_px"]), float(kk.get("cy", H / 2))], [0, 0, 1.0]])
+
+def foto_entzerren(im, kk):
+    """Radiale Verzeichnung (COLMAP SIMPLE_RADIAL k1 = OpenCV k1, normierte Koordinaten) aus dem Foto nehmen, damit es zur Lochkamera der Renderer passt (2026-11-04).
+    Vorher renderten foto_diff/fehlteile ohne k1: Kanten an der Bildecke im Median 44-71 px versetzt (Kaufhaus/Martinstor), tol 16-40 px. Rueckgabe (Bild, k1)."""
+    k1 = float(kk.get("k1") or 0.0) if kk else 0.0
+    if not k1 or "f_px" not in kk: return im, 0.0
+    H, W = im.shape[:2]; Km = kmatrix(kk, W, H)
+    return cv2.undistort(im, Km, np.array([k1, 0, 0, 0], float), None, Km), k1
+
+def foto_verzerren(im, kk):
+    """Umkehrung fuer Pruefbilder (test_foto_diff): Lochkamera-Render -> Bild wie aus der echten Kamera mit k1."""
+    k1 = float(kk.get("k1") or 0.0) if kk else 0.0
+    if not k1: return im
+    H, W = im.shape[:2]; Km = kmatrix(kk, W, H); u, v = np.meshgrid(np.arange(W, dtype=np.float32), np.arange(H, dtype=np.float32))
+    p = cv2.undistortPoints(np.stack([u.ravel(), v.ravel()], 1).reshape(-1, 1, 2), Km, np.array([k1, 0, 0, 0], float), P=Km).reshape(H, W, 2)   # verzerrtes Pixel -> Lochkamera-Pixel
+    return cv2.remap(im, p[..., 0].astype(np.float32), p[..., 1].astype(np.float32), cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+
 def kamera_laden(K, obj, nr, root, W, H):
     if "kamera" in K:
         k = K["kamera"]
@@ -40,12 +68,39 @@ def render(m, R, t, f, W, H, cx, cy, n=2500000):
     nrm[tr] = N[idx[tr]]; pos[tr] = P[idx[tr]]
     return depth, nrm, pos
 
+def versatz_test(a, objp, nr, px, schwelle):
+    """M3 (Plan): Erklaert ein Versatz der Bildmitte (Kamerafehler) die Rot/Blau-Muster? Raster 5 x 5 mit Schritt px (+-2 Schritte), je Punkt dasselbe Werkzeug mit --dx/--dy --nur-metrik
+    (Subprozess, schreibt nichts). Kennzahl = Summe |Heat| (Rot + Blau). Faellt sie bei einer Verschiebung um mehr als `schwelle` (ANNAHME 10 %) unter den Ausgangswert,
+    erklaert Kamerafehler einen Teil der Treffer; sonst nicht. GRENZE: nur Bildhauptpunkt-Verschiebung, keine Rotation/Brennweite/Skalierung."""
+    import subprocess
+    basis = [x for i, x in enumerate(a) if x not in ("--versatz-test", "--nur-versatz-test", "--nur-metrik") and not (i > 0 and a[i - 1] in ("--versatz-test", "--dx", "--dy", "--versatz-schwelle")) and x not in ("--dx", "--dy", "--versatz-schwelle")]
+    me = os.path.abspath(__file__); rows = []
+    for ix in range(-2, 3):
+        for iy in range(-2, 3):
+            r = subprocess.run([sys.executable, "-W", "ignore", "-I", me] + basis + ["--dx", str(ix * px), "--dy", str(iy * px), "--nur-metrik"], capture_output=True, text=True, env=os.environ)
+            m = [l for l in r.stdout.splitlines() if l.startswith("METRIK")]
+            if not m: raise SystemExit("Versatztest: Teilaufruf ohne Kennzahl: " + (r.stderr or r.stdout)[-300:])
+            rot, blau, n = m[-1].split()[1:]; rows.append(dict(dx=ix * px, dy=iy * px, rot=float(rot), blau=float(blau), summe=float(rot) + float(blau), treffer=int(n)))
+    s0 = [r for r in rows if r["dx"] == 0 and r["dy"] == 0][0]["summe"]; smin = min(r["summe"] for r in rows); smax = max(r["summe"] for r in rows)
+    gewinn = (s0 - smin) / s0 if s0 else 0.0
+    urteil = (f"Kamerafehler (Bildmitte +-{2 * px:.0f} px) erklaert die Treffer TEILWEISE: Summe faellt um {100 * gewinn:.1f} % (> {100 * schwelle:.0f} %)" if gewinn > schwelle
+              else f"Bildversatz erklaert die Treffer NICHT: Summe {smin:.1f}..{smax:.1f} (Ausgang {s0:.1f}, groesster Rueckgang {100 * gewinn:.1f} % <= {100 * schwelle:.0f} %)")
+    return dict(schritt_px=px, schwelle=schwelle, summe_ausgang=s0, summe_min=smin, summe_max=smax, rueckgang_anteil=round(gewinn, 4), urteil=urteil, raster=rows,
+                grenze="nur Verschiebung der Bildmitte; Rotation, Brennweite und Skalierung nicht getestet (ANNAHME Schwelle 10 %)")
+
 def main():
-    a = sys.argv[1:]; objp, nr = a[0], a[1]; sch = float(a[a.index("--schwelle") + 1]) if "--schwelle" in a else 0.35; top = int(a[a.index("--top") + 1]) if "--top" in a else 12
+    a = sys.argv[1:]; objp, nr = a[0], a[1]; dx = float(a[a.index("--dx") + 1]) if "--dx" in a else 0.0; dy = float(a[a.index("--dy") + 1]) if "--dy" in a else 0.0; sch = float(a[a.index("--schwelle") + 1]) if "--schwelle" in a else 0.35; top = int(a[a.index("--top") + 1]) if "--top" in a else 12
     obj = json.load(open(objp)); root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(objp)))); od = os.path.join(root, os.path.dirname(obj["masstabelle"]))
-    kp = os.path.join(od, "messprotokoll", f"K-{nr}.json"); K = json.load(open(kp)) if os.path.exists(kp) else {}
-    im = cv2.imread(glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]); H, W = im.shape[:2]; cx, cy = W / 2, H / 2
+    kp = k_datei(objp, obj, root, nr); K = json.load(open(kp)) if os.path.exists(kp) else {}
+    im = cv2.imread(glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]); H, W = im.shape[:2]; kk = K.get("kamera", {}); cx, cy = float(kk.get("cx", W / 2)) + dx, float(kk.get("cy", H / 2)) + dy   # Hauptpunkt aus K (Buendelkameras), sonst Bildmitte
     R, t, f, quelle, (zlo, zhi) = kamera_laden(K, obj, nr, root, W, H)
+    vt = None
+    if "--versatz-test" in a or "--nur-versatz-test" in a:
+        px = float(a[a.index("--versatz-test") + 1]) if "--versatz-test" in a and a.index("--versatz-test") + 1 < len(a) and not a[a.index("--versatz-test") + 1].startswith("--") else 30.0
+        vt = versatz_test(a, objp, nr, px, float(a[a.index("--versatz-schwelle") + 1]) if "--versatz-schwelle" in a else 0.10)
+        if "--nur-versatz-test" in a:
+            out_ = os.path.join(root, obj.get("audit", os.path.dirname(obj["masstabelle"]) + "/audit")); os.makedirs(out_, exist_ok=True); json.dump(dict(foto=nr, versatz_test=vt), open(os.path.join(out_, f"versatz_test_{nr}.json"), "w"), indent=1, ensure_ascii=False)
+            print(f"Versatztest {nr}: {vt['urteil']} -> {out_}/versatz_test_{nr}.json"); return
     stl = a[a.index("--stl") + 1] if "--stl" in a else os.path.join(root, obj["stl"])
     m = trimesh.load(stl); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0)
     c = m.bounds.mean(0) if obj.get("zentrierung", "huelle") == "huelle" else np.zeros(3); m.apply_translation([-c[0], -c[1], -m.bounds[0, 2]])
@@ -91,6 +146,8 @@ def main():
             print(f"  Ankerzone {zlo:.1f}..{zhi:.1f} m: {n0 - len(treffer)} Treffer ausserhalb verworfen "
                   f"(2026-11-01: K-060 meldete so sechs 'erfundene Teile' bei 33-39 m, obwohl ihre Anker erst bei 41 m beginnen).")
     treffer.sort(key=lambda t: -abs(t["score"])); treffer = treffer[:top]
+    if "--nur-metrik" in a:       # interner Aufruf des Versatztests: nur Kennzahl, nichts schreiben
+        print("METRIK %.4f %.4f %d" % (heat[heat > 0].sum(), -heat[heat < 0].sum(), len(treffer))); return
     o = im.copy(); hm = cv2.resize(heat, (gw * cs, gh * cs), interpolation=cv2.INTER_NEAREST); hm = np.pad(hm, ((0, H - gh * cs), (0, W - gw * cs)))
     col = np.zeros_like(o); col[..., 2] = np.clip(hm / 0.6, 0, 1) * 255; col[..., 0] = np.clip(-hm / 0.6, 0, 1) * 255
     o = cv2.addWeighted(o, 0.65, col, 0.35, 0)
@@ -98,7 +155,7 @@ def main():
         x, y, s = tr["zelle"]; cv2.rectangle(o, (x, y), (x + s, y + s), (0, 255, 255), 3); cv2.putText(o, str(k), (x + 4, y + s - 6), 0, 1.0, (0, 255, 255), 3)
     out = os.path.join(root, obj.get("audit", os.path.dirname(obj["masstabelle"]) + "/audit")); os.makedirs(out, exist_ok=True)
     tag = ("_" + os.path.basename(stl)[:-4]) if "--stl" in a else ""
-    cv2.imwrite(os.path.join(out, f"fehlteile_{nr}{tag}.jpg"), o); json.dump(dict(foto=nr, stl=stl, kamera=quelle, zelle_px=cs, schwelle=sch, treffer=treffer), open(os.path.join(out, f"fehlteile_{nr}{tag}.json"), "w"), indent=1, ensure_ascii=False)
+    cv2.imwrite(os.path.join(out, f"fehlteile_{nr}{tag}.jpg"), o); json.dump(dict(foto=nr, stl=stl, kamera=quelle, zelle_px=cs, schwelle=sch, treffer=treffer, versatz_test=vt), open(os.path.join(out, f"fehlteile_{nr}{tag}.json"), "w"), indent=1, ensure_ascii=False)
     print(f"Fehlteile {nr} ({quelle}; Zelle {cs} px = 1 m; rot = fehlt im Modell, blau = Modell ohne Fotobeleg) -> {out}/fehlteile_{nr}{tag}.jpg")
     for k, tr in enumerate(treffer, 1): print(f"  {k:2d}. {tr['art']:36s} score {tr['score']:+.2f}  bei x={tr['xyz'][0]} y={tr['xyz'][1]} z={tr['xyz'][2]} m")
     # Beobachtungen automatisch eintragen (einmal je Foto/Zelle)

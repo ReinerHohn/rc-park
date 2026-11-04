@@ -23,6 +23,7 @@ Token kopieren. Übergabe: --token / ENV MAPILLARY_TOKEN / ~/.config/mapillary_t
 """
 import argparse, os, sys, json, math, urllib.parse, urllib.request
 import numpy as np, cv2
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # python -I laesst den Skriptordner weg (2026-11-04)
 from streetview_rip import reproject, bearing          # Hebel-2-Mathematik teilen
 
 GRAPH = "https://graph.mapillary.com/images"

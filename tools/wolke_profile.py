@@ -42,7 +42,7 @@ def main():
     ap.add_argument("--zentral-z", nargs=2, type=float, default=[36.0, 57.0]); ap.add_argument("--abseits-z", nargs=2, type=float, default=[30.5, 44.5])
     ap.add_argument("--abseits-min-r", type=float, default=2.8, help="Quadrantenpunkte: |quer| > ... (Tuermchen liegen aussen)")
     ap.add_argument("--eben", type=float, default=0.15, help="Dachflaechen als EBENEN: Gerade durch tief(z) und quer(z) oberhalb des Traufknicks; gilt, wenn das Residuum (RMS) unter diesem Wert bleibt (sonst Rohprofil); 0 = aus"); ap.add_argument("--achsstreifen", type=float, default=1.5, help="halbe Breite quer des Achsstreifens fuer die Front"); ap.add_argument("--frontfenster", type=float, default=0.8, help="Tiefenfenster um die Front fuer die Breite quer"); ap.add_argument("--rand", type=float, default=0.2, help="Abzug vom p2-p98-Mass quer (Wolkenstreuung; Gratbereiche duenn besetzt -> klein halten)")
-    ap.add_argument("--pruefungen", action="store_true"); ap.add_argument("--generator", action="store_true"); ap.add_argument("--toleranz", type=float, default=0.5); ap.add_argument("--tief-quelle", default="wolke", help="wolke | silhouette:<foto> (Silhouettenprofil eines fernen Seitenfotos, messprotokoll/M-<foto>-S1.json: misst die volle Tiefe direkt, ohne Symmetrie- und Driftannahme)"); ap.add_argument("--tuerm-rand", type=float, default=0.8, help="Hoehenabstand ueber den Tuermchenspitzen, ab dem die Wolkenbreite ohne Tuermchen gilt")
+    ap.add_argument("--pruefungen", action="store_true"); ap.add_argument("--generator", action="store_true"); ap.add_argument("--toleranz", type=float, default=0.5); ap.add_argument("--tief-quelle", default="wolke", help="wolke | silhouette:<foto> (Silhouettenprofil eines fernen Seitenfotos, messprotokoll/M-<foto>-S1.json: misst die volle Tiefe direkt, ohne Symmetrie- und Driftannahme)"); ap.add_argument("--mitte-unten", type=float, default=8.0, help="m unter dem Tuermchenkoerper, ab denen die Zentralmitte gemessen wird"); ap.add_argument("--asym-schwelle", type=float, default=0.15, help="m: Achsen je Tuermchen erst, wenn sie sich (relativ zur Zentralmitte) um mehr als das unterscheiden (Wolkenstreuung der Kreisfits ~0,1 m)"); ap.add_argument("--zentral-mitte-z", type=float, nargs=2, default=None, help="Hoehenfenster fuer die Quermitte des Zentralkoerpers (Standard: unter dem Tuermchenkoerper + ueber den Tuermchenspitzen, Gerade)"); ap.add_argument("--tuerm-rand", type=float, default=0.8, help="Hoehenabstand ueber den Tuermchenspitzen, ab dem die Wolkenbreite ohne Tuermchen gilt")
     a = ap.parse_args(); obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); s = a.seite.lower()
     P = np.load(os.path.join(od, a.dicht or f"sfm/dicht_{s}_entzerrt.npy")).astype(float)
     tief, sgn, quer = seite_achsen(s); SUF = "" if s == obj.get("sfm", {}).get("hauptseite", s) else f"_{s}"   # Nebenseiten: eigene Dateien
@@ -200,7 +200,38 @@ def main():
             if len(lauf) > len(best_lauf) or (len(lauf) == len(best_lauf) and lauf and np.median([q["d"] for q in lauf]) > np.median([q["d"] for q in best_lauf])): best_lauf = lauf
         koerper = best_lauf if len(best_lauf) >= 4 else [r for r in mittel if r["d"] >= 0.8 * max(q["d"] for q in mittel)]
         achse = dict(tief=float(np.median([r["achse_tief"] for r in koerper])), quer=float(np.median([r["achse_quer"] for r in koerper])), aus_schichten=[koerper[0]["z"], koerper[-1]["z"]], verfahren="laengster konsistenter Lauf (+-15 %)")
-        json.dump(dict(seite=s, dach_profil=dach, dach_traufe=traufe, dach_ebenen=ebenen, tiefen_rampe=rampe, tief_quelle=a.tief_quelle, tuerm_profil=tuerm, tuerm_kegel=kegel, tuerm_achse=achse, quelle="tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)"), open(os.path.join(od, f"profile_generator{SUF}.json"), "w"), indent=1, ensure_ascii=False)
+        # Achse JE Abseits-Koerper (Quadrant), quer RELATIV zur Mitte des Zentralkoerpers derselben Wolke auf derselben Hoehe:
+        # eine Querverschiebung der ganzen Wolke (Ausrichtung) darf nicht als Asymmetrie der Tuermchen ins Modell (Register CH).
+        zk = [r["z"] for r in koerper]
+        # Quermitte des Zentralkoerpers je 1-m-Schicht UNTER dem Tuermchenkoerper (bis zur Konsole) und UEBER den Tuermchenspitzen (dort ist nur der
+        # Zentralkoerper), Gerade mitte(z) (die Wolke kann mit der Hoehe scheren, Register BU) -> Wert auf Tuermchenhoehe + Streuung als Bezugsunsicherheit
+        z_lo = min(zk); fenster = list(np.arange(z_lo - a.mitte_unten, z_lo - 1.0, 1.0)) + list(np.arange(TS + a.tuerm_rand, TS + a.tuerm_rand + 5.0, 1.0))
+        if a.zentral_mitte_z: fenster = list(np.arange(a.zentral_mitte_z[0], a.zentral_mitte_z[1], 1.0))
+        mz = []
+        for z_ in fenster:
+            km = (P[:, 2] >= z_) & (P[:, 2] < z_ + 1.0) & (sgn * P[:, it] > 0.5) & (np.abs(P[:, iq]) < 2 * achse["quer"])
+            if km.sum() < 50: continue
+            q2, q98 = np.percentile(P[km, iq], [2, 98]); mz.append((z_ + 0.5, float((q2 + q98) / 2)))
+        mz = np.array(mz); zt = float(np.median(zk))
+        if len(mz) >= 3:
+            A_ = np.c_[mz[:, 0], np.ones(len(mz))]; co = np.linalg.lstsq(A_, mz[:, 1], rcond=None)[0]
+            mitte_q = float(co[0] * zt + co[1]); mitte_unsicher = float(np.std(mz[:, 1] - A_ @ co))
+        else: mitte_q, mitte_unsicher = 0.0, float("inf")
+        je = {}
+        for qn, rows in abseits.items():
+            rr = [r for r in rows if r["z"] in zk]
+            if len(rr) < 3: continue
+            je[qn] = dict(tief=round(float(np.median([abs(r["achse"][it]) for r in rr])), 2), quer_roh=round(float(np.median([r["achse"][iq] for r in rr])), 2),
+                          d=round(float(np.median([r["d"] for r in rr])), 2), n=len(rr))
+            je[qn]["quer_rel"] = round(je[qn]["quer_roh"] - mitte_q, 2)
+        asym_q = abs(abs(je["quer+"]["quer_rel"]) - abs(je["quer-"]["quer_rel"])) if len(je) == 2 else None
+        asym_t = abs(je["quer+"]["tief"] - je["quer-"]["tief"]) if len(je) == 2 else None
+        grenze = a.asym_schwelle + 2 * mitte_unsicher                         # Asymmetrie zaehlt erst ueber Fitstreuung + 2 sigma Bezugsunsicherheit
+        sym = asym_q is None or (asym_q <= grenze and asym_t <= a.asym_schwelle)
+        tuerm_achsen = dict(je=je, zentral_mitte_quer=round(mitte_q, 2), mitte_unsicher=round(mitte_unsicher, 3), mitte_schichten=[[round(z_, 1), round(m_, 2)] for z_, m_ in mz], grenze_quer=round(grenze, 3), asym_quer=asym_q, asym_tief=asym_t, schwelle=a.asym_schwelle, symmetrisch=bool(sym),
+                            hinweis="tief ist von einer Seite nicht relativ messbar (Rueckseite fehlt) -> Wolkenwert; nicht sichtbare Quadranten = Spiegelung (ANNAHME)")
+        print(f"Tuermchenachsen je Quadrant (quer relativ zur Zentralmitte {mitte_q:+.2f}): {je} -> Asymmetrie quer {asym_q} tief {asym_t}, symmetrisch={sym}")
+        json.dump(dict(seite=s, dach_profil=dach, dach_traufe=traufe, dach_ebenen=ebenen, tiefen_rampe=rampe, tief_quelle=a.tief_quelle, tuerm_profil=tuerm, tuerm_kegel=kegel, tuerm_achse=achse, tuerm_achsen=tuerm_achsen, quelle="tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)"), open(os.path.join(od, f"profile_generator{SUF}.json"), "w"), indent=1, ensure_ascii=False)
         print("geschrieben:", os.path.join(od, f"profile_generator{SUF}.json"), f"({len(dach)} Dachschichten, {len(tuerm)} Tuermchenschichten, Achse {achse})")
     if a.pruefungen:
         tp = os.path.join(od, "masstabelle.json"); from masstabelle_io import sperren, schreiben; _L = sperren(tp); T = json.load(open(tp)); neu = 0

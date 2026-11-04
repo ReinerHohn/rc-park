@@ -255,17 +255,14 @@ def main():
                 if not any(x.get("auto_id") == aid for x in T.get("beobachtungen_offen", []) + T.get("beobachtungen_erledigt", [])):
                     T.setdefault("beobachtungen_offen", []).append(dict(datum="auto", wer=f"wolke_baender.py ({a.koerper})", auto_id=aid, text=f"Band offen {b['z0']}-{b['z1']} m: {o['je_flaeche']} Oeffnung(en) je Flaeche, Breiten {o['breiten']}, Hoehe {o['hoehe']} (Dunkellaeufe)", naechster_schritt="gegen Fassadendaten (fassade.json) pruefen; bei Bestaetigung pruefungen_offen fuer den Koerper setzen"))
                 continue
-            zm = round(float(np.mean(o["hoehe"])) if o.get("hoehe") else (b["z0"] + b["z1"]) / 2, 2); fbh = o["flaechenbreite"] / 2
-            for key, soll, feld in (("anzahl", [o["je_flaeche"], o["je_flaeche"]], "anzahl"), ("breite", [round(o["breite_median"] - 0.15, 2), round(o["breite_median"] + 0.15, 2)], "breite_median")):
-                if key == "breite" and not o.get("breite_median"): continue
-                name = f"Band {a.koerper}{SUF} offen ({b['z0']:.2f}-{b['z1']:.2f} m): Oeffnungen je Flaeche {key} bei {zm:.2f} m"; wert = f"band_{a.koerper}{SUF}_oeffn_{int(round(zm * 100))}"
-                gesetzt.add(name); T["messungen"][wert] = {"typ": "flaeche_oeffnungen", "seite": seite, "z": zm, "quer0": round(float(aq - fbh), 2), "quer1": round(float(aq + fbh), 2), "tiefe": 0.2}
-                quelle = f"wolke_baender.py ({a.koerper}): Dunkellaeufe entlang der sichtbaren Flaeche im Band offen: {o['je_flaeche']} je Flaeche, Breiten {o['breiten']}, Hoehe {o['hoehe']}; Nutzer: 'Boegen zu klein und zu viele'"
-                for pr in T["pruefungen"]:
-                    if pr["name"] == name:
-                        if pr["soll"] != soll: pr.setdefault("historie", []).append({"datum": "auto", "alt_soll": pr["soll"], "grund": "wolke_baender.py neu gerechnet"}); pr["soll"] = soll; pr["quelle"] = quelle
-                        pr["wert"] = f"{wert}_{feld}"; break
-                else: T["pruefungen"].append(dict(name=name, wert=f"{wert}_{feld}", soll=soll, quelle=quelle, quelltyp="sfm_bodenanker", merkmal="schlankheit", massstab="LoD2-Eckkanten + Wandebene", protokoll=f"profile_baender_{a.koerper}.json")); neu += 1
+            # Register CB (2026-11-03): KEINE Pruefung aus Wolken-Dunkellaeufen. Die Wolke (sfm_bodenanker) ist blind fuer Zaehl-/Fassadenmerkmale; die Laeufe
+            # umfassen Nachbarflaechen/Eckpfosten und zerfallen an duennen Zellen (Median 2,5 -> 2: 'zwei Boegen' + Zwischenpfeiler, am Bau EIN Bogen).
+            # Stattdessen: Befund als offene Beobachtung mit Streuung; die Pruefung 'Oeffnungen je Flaeche' kommt aus einer FOTO-Zaehlung (tools/foto_zaehlung.py).
+            aid = f"band_{a.koerper}_offen_{int(b['z0'] * 100)}"
+            streu = sorted({len(e["laeufe"]) for e in o.get("details", [])})
+            if not any(x.get("auto_id") == aid for x in T.get("beobachtungen_offen", []) + T.get("beobachtungen_erledigt", [])):
+                T.setdefault("beobachtungen_offen", []).append(dict(datum="auto", wer=f"wolke_baender.py ({a.koerper})", auto_id=aid, text=f"Band offen {b['z0']}-{b['z1']} m: Wolke liefert {o['je_flaeche']} Dunkellauf/-laeufe je Flaeche (Streuung zwischen Koerpern {streu}, Breiten {o['breiten']}) - NICHT belastbar als Anzahl", naechster_schritt="Oeffnungen je Flaeche am Foto zaehlen: tools/foto_zaehlung.py (Z-Protokoll) und Pruefung mit quelltyp foto_vollbild/merkmal anzahl; Wolke nur fuer Hoehe/Lage des Bandes"))
+            continue
         # Quader-/Schichtperiode an der Kante (Modell: relief_periode entlang der Kantenlinie); Kantenlage quer aus objekt.json['koerper'][..]['kante_quer']
         kanten = K.get("kanten") or ([dict(z0=-1e9, z1=1e9, quer=K["kante_quer"])] if K.get("kante_quer") is not None else [])
         def kante_bei(z): return next((kk["quer"] for kk in kanten if kk["z0"] <= z <= kk["z1"]), None)

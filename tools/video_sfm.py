@@ -10,7 +10,7 @@ import sys, os, glob, shutil, argparse, json, numpy as np, cv2, pycolmap
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("wurzel"); ap.add_argument("aus"); ap.add_argument("--clips", nargs="+", required=True)
-    ap.add_argument("--maske-kreis", nargs=3, type=float, default=[0.5, 0.5, 0.075]); ap.add_argument("--cpu", action="store_true"); ap.add_argument("--kamera", default="OPENCV", help="COLMAP-Kameramodell; Standard OPENCV (k1,k2 + Tangential): Tiefenversatz der Drohnenclips RMS 0,88 -> 0,28 m gegenueber SIMPLE_RADIAL (Register BU, EIN Lauf)"); ap.add_argument("--max-frames", type=int, default=0)
+    ap.add_argument("--maske-kreis", nargs=3, type=float, default=[0.5, 0.5, 0.075]); ap.add_argument("--cpu", action="store_true"); ap.add_argument("--masken-vorlage", help="Ordner mit <clip>/<frame>.png (255 benutzen, 0 ignorieren) aus video_masken.py; wird mit der Wasserzeichenmaske UND-verknuepft"); ap.add_argument("--kamera", default="OPENCV", help="COLMAP-Kameramodell; Standard OPENCV (k1,k2 + Tangential): Tiefenversatz der Drohnenclips RMS 0,88 -> 0,28 m gegenueber SIMPLE_RADIAL (Register BU, EIN Lauf)"); ap.add_argument("--max-frames", type=int, default=0)
     a = ap.parse_args(); bild = os.path.join(a.aus, "bilder"); mask = os.path.join(a.aus, "masken"); sp = os.path.join(a.aus, "sparse"); db = os.path.join(a.aus, "db.db")
     for d in (bild, mask): shutil.rmtree(d, ignore_errors=True); os.makedirs(d)
     shutil.rmtree(sp, ignore_errors=True); os.makedirs(sp)
@@ -23,6 +23,11 @@ def main():
         for f in fs:
             im = cv2.imread(f); h, w = im.shape[:2]; cv2.imwrite(os.path.join(bild, c, os.path.basename(f)), im, [cv2.IMWRITE_JPEG_QUALITY, 95])
             m = np.full((h, w), 255, np.uint8); cv2.circle(m, (int(a.maske_kreis[0] * w), int(a.maske_kreis[1] * h)), int(a.maske_kreis[2] * w), 0, -1)
+            if a.masken_vorlage:
+                vp = os.path.join(a.masken_vorlage, c, os.path.basename(f) + ".png"); vm = cv2.imread(vp, 0) if os.path.exists(vp) else None
+                if vm is not None:
+                    if vm.shape != m.shape: vm = cv2.resize(vm, (w, h), interpolation=cv2.INTER_NEAREST)
+                    m = np.minimum(m, vm)
             cv2.imwrite(os.path.join(mask, c, os.path.basename(f) + ".png"), m); n += 1
     print(f"{n} Frames, Maske Kreis {a.maske_kreis}", flush=True)
     ro = pycolmap.ImageReaderOptions(); ro.camera_model = a.kamera; ro.mask_path = mask

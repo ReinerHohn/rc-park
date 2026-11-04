@@ -223,10 +223,12 @@ def okt_prisma(c, r, z0, z1):
 def okt_kegel(c, r0, z0, r1, z1):
     R0, R1 = r0 / math.cos(math.radians(22.5)), r1 / math.cos(math.radians(22.5)); return M.cylinder(z1 - z0, R0, max(R1, 0.03), 8).rotate((0, 0, 22.5)).translate((c[0], c[1], z0))
 
-def baender_rundkoerper(c, baender, kegel, spitze, rel, nach_innen, adds, cuts, n_oeffnungen=2, knauf=True):
+def baender_rundkoerper(c, baender, kegel, spitze, rel, nach_innen, adds, cuts, n_oeffnungen=2, knauf=True, oeffnungen=None, hohl={"wand": 0.2, "innen": 0.5}):
     """Rundkoerper (Erker/Tuermchen/Laterne) aus gemessenen Hoehenbaendern (tools/wolke_baender.py): je Band {z0, z1, r, klasse}.
     gesims/traufe = Kragplatte (Achteck r); hell = Bruestung mit Leisten und X-Schlitzen; offen = Band mit n_oeffnungen Rundbogenoeffnungen
     je Aussenflaeche; traufe zusaetzlich 8 Konsolen darunter; kegel {r0, z0} = Achteckkegel bis spitze - 0,5 + Knauf/Nadel.
+    oeffnungen = {je_flaeche, breite_anteil} (am FOTO gezaehlt/gemessen, tools/foto_zaehlung.py) hat VORRANG vor den Wolken-Laeufen in b['oeffnungen']
+    (Register CB: Wolken-Dunkellaeufe lieferten 2 Boegen + Zwischenpfeiler, am Bauwerk steht je Flaeche EIN Bogen); breite_anteil = Oeffnungsbreite / Flaechenbreite.
     stein-Baender baut der Aufrufer (Schaft mit Quadern/Fenstern ist bauwerksspezifisch). nach_innen(k) sagt, ob Flaeche k (Normale k*45 Grad)
     zum Hauptkoerper zeigt - dort keine Oeffnungen (sonst Hohlraeume). rel(m) = Relieftiefe mit Druck-Untergrenze. Fuegt in adds/cuts ein."""
     for b in baender:
@@ -243,20 +245,38 @@ def baender_rundkoerper(c, baender, kegel, spitze, rel, nach_innen, adds, cuts, 
                     cut = M.cube((0.4, 0.08, hs)).translate((-0.2 + r + 0.02, -0.04, -hs / 2)).rotate((sg * 38, 0, 0))
                     cuts.append(cut.translate((0, 0, (z0 + z1) / 2)).rotate((0, 0, k * 45)).translate((c[0], c[1], 0)))
         elif kl == "offen":
-            adds.append(okt_prisma(c, r, z0 - 0.02, z1))
+            # Koerper bis an die naechste AUSKRAGENDE Platte (r >= r + 0,2): Baender dazwischen (z. B. Nullstart 'stein' 34,5-35,0) baut sonst niemand -> Luecke unter dem Dach (Register CG)
+            deck = [b2["z0"] for b2 in baender if b2["z0"] >= z1 - 1e-6 and b2["r"] >= r + 0.2]; z_deck = min(deck) if deck else z1
+            adds.append(okt_prisma(c, r, z0 - 0.02, z_deck))
             fb = 2 * r * math.tan(math.radians(22.5))
-            oe_d = b.get("oeffnungen") or {}                                                      # gemessen (wolke_baender): Zahl, Breite, Hoehe - sonst Annahme n_oeffnungen
-            n_o = int(oe_d.get("je_flaeche") or n_oeffnungen) or 1
+            oe_d = b.get("oeffnungen") or {}                                                      # Wolke (wolke_baender): nur Hoehe/Rueckfall; Zahl und Breite haben Foto-Vorrang (oeffnungen=)
+            n_o = int((oeffnungen or {}).get("je_flaeche") or oe_d.get("je_flaeche") or n_oeffnungen) or 1
             pf = 0.12                                                                             # Mindestpfeiler zwischen/neben den Oeffnungen
-            bw = min(float(oe_d.get("breite_median") or 0.36), (fb - (n_o + 1) * pf) / n_o)
-            zh = oe_d.get("hoehe"); zu, zo = (max(zh[0], z0 + 0.1), min(zh[1], z1 - 0.1)) if zh else (z0 + 0.2, z1 - 0.25); bh = max(zo - zu, bw)
+            b_ziel = (oeffnungen or {}).get("breite_anteil", 0) * fb / n_o if (oeffnungen or {}).get("breite_anteil") else float(oe_d.get("breite_median") or 0.36)
+            bw = min(b_ziel, (fb - (n_o + 1) * pf) / n_o)
+            # Oeffnungshoehe ROBUST (Register CG): Oberkante = Unterseite der naechsten AUSKRAGENDEN Platte (r >= r + 0,2) minus Sturz 0,08 m (ANNAHME, Foto 030:
+            # Bogen fast an der Platte). Die Bandgrenze der Wolke springt von Lauf zu Lauf (Ref offen bis 35,0, Nullstart 34,5 + 'stein'); die Plattenunterkante nicht (beide 35,0).
+            zu = (max(oe_d["hoehe"][0], z0 + 0.1) if oe_d.get("hoehe") else z0 + 0.1); zo = z_deck - 0.08; bh = max(zo - zu, bw)
             for k in range(8):
                 if nach_innen(k): continue
                 for j in range(n_o):
                     u = (j - (n_o - 1) / 2) * (bw + pf)
-                    oe = M.cube((0.45, bw, bh - bw / 2)).translate((r - 0.35, u - bw / 2, zu))
-                    oe = oe + M.cylinder(0.45, bw / 2, bw / 2, 16).rotate((0, 90, 0)).translate((r - 0.35, u, zu + bh - bw / 2))   # Rundbogen
+                    st_a = (oeffnungen or {}).get("stich_anteil")                                     # Bogenstich/Breite (Foto); None = Halbkreis (alt)
+                    s_ = bw / 2 if not st_a else min(bw / 2, max(0.03, st_a * bw)); R_ = (bw * bw / 4 + s_ * s_) / (2 * s_); zt_ = zu + bh
+                    oe = M.cube((0.45, bw, bh - s_ + 0.01)).translate((r - 0.35, u - bw / 2, zu))
+                    bogen = M.cylinder(0.45, R_, R_, 64).rotate((0, 90, 0)).translate((r - 0.35, u, zt_ - R_))
+                    oe = oe + (bogen ^ M.cube((0.45, bw, s_ + 0.01)).translate((r - 0.35, u - bw / 2, zt_ - s_)))   # Segmentbogen (Register CF)
                     cuts.append(oe.rotate((0, 0, k * 45)).translate((c[0], c[1], 0)))
+            # Band 'offen' (Wolke: dunkler Anteil hoch = Durchblick) ist ein HOHLRAUM, keine Nischenreihe: sonst zeichnet die Nischenrueckwand jeden Bogen ein
+            # zweites Mal kleiner/versetzt (Register CD). Innenraum = Achteck r - wand von Sohle bis Bandoberkante; zur Turmseite (Ursprung) hin nur bis
+            # hohl_innen hinter die Achse, damit der Hauptkoerper nicht angeschnitten wird. ANNAHME wand 0,2 m (schlanke Pfosten, Foto 043), hohl_innen 0,5 m.
+            if hohl:
+                wand, hi = hohl.get("wand", 0.2), hohl.get("innen", 0.5)
+                h = okt_prisma(c, r - wand, zu, z_deck - 0.01)
+                sx = 0 if abs(c[0]) < 1e-6 else math.copysign(1, c[0]); sy = 0 if abs(c[1]) < 1e-6 else math.copysign(1, c[1]); L = 2 * r + 1
+                bx0, bx1 = (c[0] - L, c[0] + L) if sx == 0 else ((c[0] - hi, c[0] + L) if sx > 0 else (c[0] - L, c[0] + hi))
+                by0, by1 = (c[1] - L, c[1] + L) if sy == 0 else ((c[1] - hi, c[1] + L) if sy > 0 else (c[1] - L, c[1] + hi))
+                cuts.append(h ^ M.cube((bx1 - bx0, by1 - by0, z_deck - zu + 1)).translate((bx0, by0, zu - 0.5)))
         elif kl == "traufe":
             adds.append(okt_prisma(c, r, z0, z1))
             for k in range(8):
@@ -264,3 +284,79 @@ def baender_rundkoerper(c, baender, kegel, spitze, rel, nach_innen, adds, cuts, 
                 adds.append(M.cube((0.2, 0.2, 0.3)).translate((-0.1, -0.1, 0)).rotate((0, 0, k * 45 + 22.5)).translate((c[0] + rr * math.cos(ang), c[1] + rr * math.sin(ang), z0 - 0.28)))
     if kegel: adds.append(okt_kegel(c, kegel["r0"], kegel["z0"] - 0.02, 0.05, spitze - 0.5))
     if knauf: adds.append(M.sphere(0.2, 20).translate((c[0], c[1], spitze - 0.35))); adds.append(M.cylinder(0.35, 0.05, 0.015, 8).translate((c[0], c[1], spitze - 0.35)))
+
+
+def segmentbogen_reihe(laeufe, n_soll, z_oben, hoehe, stich_anteil):
+    """Oeffnungsreihe (Schallarkaden, Lauben ...) GENERISCH aus Wolken-Dunkellaeufen [[start, breite], ...] (wolke_baender.py, Register CD):
+    Lage/Breite je Oeffnung aus der Wolke, ANZAHL n_soll aus der Foto-Zaehlung (Register CB). Stimmt die Laufzahl nicht, werden n_soll gleiche
+    Oeffnungen ueber die Wolkenspanne verteilt (Pfeiler 0,3 m) und das gemeldet. Rueckgabe je Oeffnung dict(u0, u1, uc, zu, zk, zt, R) fuer einen
+    Segmentbogen: Sohle zu, Kaempfer zk, Scheitel zt = z_oben, Kreisradius R (Mittelpunkt bei zt - R)."""
+    L = [(float(a), float(a) + float(b)) for a, b in laeufe]
+    hinweis = ""
+    if len(L) != n_soll:
+        a0, a1 = min(x for x, _ in L), max(y for _, y in L); pf = 0.3; w = (a1 - a0 - (n_soll - 1) * pf) / n_soll
+        L = [(a0 + i * (w + pf), a0 + i * (w + pf) + w) for i in range(n_soll)]; hinweis = f"Wolke {len(laeufe)} Laeufe != Foto {n_soll}: gleich verteilt"
+    out = []
+    for u0, u1 in L:
+        w = u1 - u0; s = max(0.05, stich_anteil * w); R = (w * w / 4 + s * s) / (2 * s)
+        out.append(dict(u0=u0, u1=u1, uc=(u0 + u1) / 2, zu=z_oben - hoehe, zk=z_oben - s, zt=z_oben, R=R, hinweis=hinweis))
+    return out
+
+
+def mauerwerk_aus_protokollen(objekt_dir, bauteil, rueckfall):
+    """Mauerwerksmasse eines Bauteils (z. B. 'Eckband') aus Foto-Messprotokollen (Register CI), GENERISCH fuer jedes Objekt.
+    Liest messprotokoll/M-*.json mit name 'Mauerwerk_<bauteil>_Schichthoehe*' | '_Stein_lang*' | '_Stein_kurz*' (tools/foto_mass.py --kamera).
+    Rueckgabe dict(kurs=f(z) -> Schichthoehe (lineare Interpolation ueber die Protokollhoehen, aussen konstant), lang, kurz, quelle, protokolle);
+    fehlt eine Groesse in den Protokollen, gilt rueckfall[...] (Werte aus masse.json, Quelle dort)."""
+    import glob, json, os
+    sch, lang, kurz, ids = [], [], [], []
+    for p in sorted(glob.glob(os.path.join(objekt_dir, "messprotokoll", "M-*.json"))):
+        r = json.load(open(p)); n = str(r.get("name", ""))
+        if not n.startswith(f"Mauerwerk_{bauteil}_"): continue
+        rest = n[len(f"Mauerwerk_{bauteil}_"):]; ids.append(r["id"])
+        if rest.startswith("Schichthoehe"): sch.append(((r["z1"] + r["z2"]) / 2, abs(r["dz"]) if abs(r["dz"]) > 0.5 * r["abstand"] else r["abstand"]))
+        elif rest.startswith("Stein_lang"): lang.append(r["abstand"])
+        elif rest.startswith("Stein_kurz"): kurz.append(r["abstand"])
+    sch.sort()
+    def kurs(z):
+        if not sch: return rueckfall["kurs"](z)
+        if z <= sch[0][0]: return sch[0][1]
+        if z >= sch[-1][0]: return sch[-1][1]
+        for (za, ka), (zb, kb) in zip(sch, sch[1:]):
+            if za <= z <= zb: return ka + (kb - ka) * (z - za) / max(zb - za, 1e-9)
+    med = lambda v: sorted(v)[len(v) // 2] if len(v) % 2 else (sorted(v)[len(v) // 2 - 1] + sorted(v)[len(v) // 2]) / 2
+    return dict(kurs=kurs, lang=med(lang) if lang else rueckfall["lang"], kurz=med(kurz) if kurz else rueckfall["kurz"],
+                quelle=("Foto-Messprotokolle " + ", ".join(ids)) if ids else "Rueckfall masse.json", protokolle=ids,
+                n=dict(schicht=len(sch), lang=len(lang), kurz=len(kurz)))
+
+
+def tuermchen_achse_je_quadrant(ta, seite, sx, sy):
+    """Achse (x, y) eines Eck-/Abseitskoerpers aus wolke_profile.py['tuerm_achsen'] (Register CH), generisch fuer jede Seite.
+    ta['je'] = {'quer+'|'quer-': {tief, quer_rel}}: quer RELATIV zur Zentralmitte (Wolkenverschiebung herausgerechnet), tief = Betrag.
+    Quadranten auf der Rueckseite (von dieser Seite nicht gesehen) = Spiegelung des Quadranten mit gleichem quer-Vorzeichen (ANNAHME)."""
+    tief, sgn, quer = seite_achsen(seite)
+    s_tief, s_quer = (sx, sy) if tief == "x" else (sy, sx)
+    q = ta["je"]["quer+" if s_quer > 0 else "quer-"]
+    vt, vq = s_tief * q["tief"], s_quer * abs(q["quer_rel"])
+    return (vt, vq) if tief == "x" else (vq, vt)
+
+
+def oeffnungsreihe_aus_profil(profil_pfad, z_min, n_soll, hoehe, stich_anteil, traufabstand=None, rueckfall=None, aktiv=True):
+    """GENERISCH (jedes Objekt): Oeffnungsreihe einer Fassade aus einem Wolken-Baenderprofil (wolke_baender.py) - Register CE/CG.
+    Band = erstes 'offen' mit Dunkellaeufen oberhalb z_min. Lage/Breite je Oeffnung = Wolkenlaeufe; ANZAHL n_soll = Foto-Zaehlung (Register CB);
+    hoehe = Foto-Mass; Scheitel ROBUST = Unterkante des naechsten 'traufe'-Bandes - traufabstand (Foto-Mass), sonst Oberkante des Dunkellaufs.
+    Ohne Profil (erster Generatorlauf im Nullstart) -> rueckfall = dict(breite, pfeiler, scheitel) aus Fotomassen.
+    Rueckgabe (liste segmentbogen_reihe, quelle 'wolke' | 'foto_rueckfall')."""
+    import os as _os, json as _json
+    ob, tr = None, []
+    if aktiv and profil_pfad and _os.path.exists(profil_pfad):
+        B = _json.load(open(profil_pfad))["baender"]
+        ob = ([b["oeffnungen"] for b in B if b["klasse"] == "offen" and b.get("oeffnungen") and b["z0"] > z_min] or [None])[0]
+        tr = [b["z0"] for b in B if b["klasse"] == "traufe" and b["z0"] > z_min]
+    if ob:
+        lf = ob["details"][0]["laeufe"]; zo = (min(tr) - traufabstand) if (tr and traufabstand is not None) else ob["hoehe"][1]; q = "wolke"
+    else:
+        if not rueckfall: return [], "keine"
+        sp = n_soll * rueckfall["breite"] + (n_soll - 1) * rueckfall["pfeiler"]
+        lf = [[-sp / 2 + i * (rueckfall["breite"] + rueckfall["pfeiler"]), rueckfall["breite"]] for i in range(n_soll)]; zo = rueckfall["scheitel"]; q = "foto_rueckfall"
+    return segmentbogen_reihe(lf, n_soll, zo, hoehe, stich_anteil), q

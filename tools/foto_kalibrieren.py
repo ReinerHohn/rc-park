@@ -150,7 +150,9 @@ def main():
     out = dict(silhouette_genutzt=bool(sil), residuen_du_dv=dres, rvec=rvec.tolist(), t=t.tolist(), f_px=float(f), cx=cx, cy=cy, bild=[W, H], standort_xyz=cam.round(2).tolist(), hoehe_ueber_gelaende=round(float(cam[2]), 2),
                abstand_zur_achse=round(float(math.hypot(cam[0], cam[1])), 1), residuen_px={n: round(float(r), 1) for n, r in zip(namen, res)},
                rms_px=round(float(np.sqrt(np.mean(res ** 2))), 1), plausibel_strassenfoto=bool(1.0 <= cam[2] <= 3.0), brennweite_quelle="EXIF" if fexif else "geloest")
-    K["kamera"] = out; json.dump(K, open(kp, "w"), indent=1, ensure_ascii=False)
+    K["kamera"] = out
+    K["kalibrier_optionen"] = [x for i_, x in enumerate(sys.argv[3:]) if x.startswith("--") or (i_ > 0 and sys.argv[3:][i_ - 1] == "--sil-gewicht")]   # Eingabe fuer den Nullstart: gleiche Loesung reproduzierbar (Register CK)
+    json.dump(K, open(kp, "w"), indent=1, ensure_ascii=False)
     print(f"K-{nr}: f={f:.0f} px ({f / H * 24:.1f} mm bei 24-mm-Bildhoehe), Standort {out['standort_xyz']} -> Hoehe {out['hoehe_ueber_gelaende']} m ueber Gelaende, Abstand {out['abstand_zur_achse']} m")
     print("  Residuen px:", out["residuen_px"], "| RMS", out["rms_px"], "| plausibel:", out["plausibel_strassenfoto"])
     print("  signiert (du, dv; dv>0 = Modellpunkt liegt im Bild TIEFER als Pick):", dres)

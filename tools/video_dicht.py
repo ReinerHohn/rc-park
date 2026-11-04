@@ -15,7 +15,8 @@ def ply(fp):
         dt = np.dtype([(p[1], {"float": "<f4", "uchar": "u1", "double": "<f8", "int": "<i4"}[p[0]]) for p in pr]); return np.frombuffer(f.read(n * dt.itemsize), dtype=dt)
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("video"); ap.add_argument("--modell", default="1"); ap.add_argument("--max-size", type=int, default=1280); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("video"); ap.add_argument("--modell", default="1"); ap.add_argument("--max-size", type=int, default=1280)
+    ap.add_argument("--aus", default="video_ausrichtung.json", help="Dateiname unter audit/ mit der Ausrichtung DIESES Videos (wie video_ausrichten.py --aus); ersetzt das Sandbox-Objekt (Plan M1)"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); out = os.path.join(a.video, "dicht"); t0 = time.time()
     if not os.path.exists(os.path.join(out, "fused.ply")):
         os.makedirs(out, exist_ok=True); uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = a.max_size
@@ -23,7 +24,7 @@ def main():
         opt = pycolmap.PatchMatchOptions(); opt.max_image_size = a.max_size; opt.geom_consistency = True; opt.gpu_index = "0"; pycolmap.patch_match_stereo(out, options=opt); print(f"PatchMatch {time.time() - t0:.0f} s", flush=True)
         pycolmap.stereo_fusion(os.path.join(out, "fused.ply"), out, output_type="ply"); print(f"Fusion {time.time() - t0:.0f} s", flush=True)
     arr = ply(os.path.join(out, "fused.ply")); X = np.c_[arr["x"], arr["y"], arr["z"]].astype(np.float64); C = np.c_[arr["red"], arr["green"], arr["blue"]].astype(np.uint8)
-    o = json.load(open(os.path.join(od, "audit", "video_ausrichtung.json"))); S = json.load(open(os.path.join(od, "messprotokoll", "SFM-AUSRICHTUNG-nord.json")))["transformation"]
+    o = json.load(open(os.path.join(od, "audit", a.aus))); S = json.load(open(os.path.join(od, "messprotokoll", "SFM-AUSRICHTUNG-nord.json")))["transformation"]
     s, R, t = o["skala_video_zu_nord"], np.array(o["R"]), np.array(o["t"]); Rm = pycolmap.Rotation3d(np.array(S["rvec"])).matrix(); tm = np.array(S["t"])
     Xm = ((s * (X @ R.T) + t - tm) @ Rm) / S["s"]
     np.save(os.path.join(a.video, "dicht_modell.npy"), Xm.astype(np.float32)); np.save(os.path.join(a.video, "dicht_farben.npy"), C)

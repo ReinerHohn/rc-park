@@ -18,7 +18,6 @@ Methode (robust, kein voll-CityGML-Parser nötig):
 """
 import argparse, json, os, re, sys
 import numpy as np
-import trimesh
 
 NS_POS = re.compile(r'<gml:posList[^>]*>([^<]+)</gml:posList>')
 NS_BLD = re.compile(r'(?=<bldg:Building gml:id=)')
@@ -139,6 +138,7 @@ def build_mesh(picked, types=None, origin=None):
             V.extend(Pl.tolist())
             for tri in planar_triangulate(Pl):
                 F.append((base + tri[0], base + tri[1], base + tri[2]))
+    import trimesh                                                    # nur fuers Netz (Parser laeuft auch ohne trimesh, z. B. venv-colmap)
     mesh = trimesh.Trimesh(vertices=np.array(V), faces=np.array(F), process=True)
     return mesh, o
 

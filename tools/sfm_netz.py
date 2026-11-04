@@ -16,6 +16,7 @@ Danach: tools/sfm_ausrichten.py ... --sparse modelle/<objekt>/sfm/sparse_<seite>
 """
 import sys, os, json, time, glob, sqlite3, argparse, shutil, numpy as np
 from PIL import Image, ExifTags
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pycolmap
 
 T = {v: k for k, v in ExifTags.TAGS.items()}
@@ -33,7 +34,7 @@ def exif_f_px(im, manifest_eintrag=None):
     f35 = exi.get(T["FocalLengthIn35mmFilm"]); fmm = exi.get(T["FocalLength"]); L = max(im.size); q = "EXIF"
     if not (f35 or fmm) and manifest_eintrag:
         model = manifest_eintrag.get("exif_model") or ""; f35 = manifest_eintrag.get("exif_f35"); fmm = manifest_eintrag.get("exif_f_mm"); q = "Manifest"
-    if f35: return float(f35) / 36.0 * L, f"{q} f35={f35}"
+    if f35: return float(f35) * float(np.hypot(*im.size)) / 43.27, f"{q} f35={f35} (Diagonale)"   # 2026-11-04: f35 gilt fuer die DIAGONALE (vorher /36 x Langseite, 4-15 % falsch)
     if fmm and model in SENSOR_MM: return float(fmm) / SENSOR_MM[model] * L, f"{q} {model} {float(fmm):.1f} mm / {SENSOR_MM[model]} mm"
     return None, (f"{model} {fmm} mm ohne Sensorbreite" if fmm else "kein EXIF")
 
@@ -42,11 +43,63 @@ def manifest_laden(root, obj):
         M = json.load(open(os.path.join(root, obj["fotos_dir"], "manifest.json")))["images"]; return {m["file"][:3]: m for m in M}
     except Exception: return {}
 
+def kamera_gruppen(root, obj, nrs, fallback=True):
+    """Automatische Kameragruppen (Plan 2.1, Nutzerregel 'alles vollautomatisch'): Fotos mit gleicher Kamera UND Brennweite UND Bildgroesse bekommen EINE gemeinsame
+    Kamera (Intrinsik) statt je Bild eine eigene. Schluessel aus der EXIF-Datei IM FOTO (Make, Model, FocalLength, FocalLengthIn35mm, Bildgroesse), nicht aus dem Manifest.
+    Verschiedene Zoomstufen haben verschiedene FocalLength und landen deshalb in verschiedenen Gruppen. Ausschnitt-Fotos (sfm_ausschnitt) und Fotos ohne Modell/Brennweite
+    bleiben einzeln; Gruppen mit nur 1 Foto entfallen. GRENZE: gleiche EXIF-Brennweite heisst nicht gleiche Verzeichnung bei Smartphone-Computational-Fotografie (ANNAHME)."""
+    import collections; from PIL import Image
+    key = {}
+    for nr in nrs:
+        if obj.get("fotos", {}).get(nr, {}).get("sfm_ausschnitt"): continue
+        try:
+            im = Image.open(glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]); ex = im.getexif(); sub = ex.get_ifd(0x8769)
+            make, model, fl, f35 = ex.get(0x010F), ex.get(0x0110), sub.get(0x920A), sub.get(0xA405)
+        except Exception: continue
+        if not model or not (fl or f35): continue
+        key[nr] = (str(make or "").strip(), str(model).strip(), round(float(fl), 2) if fl else None, int(f35) if f35 else None, im.size)
+    if fallback:      # M7 FALLBACK (ANNAHME): EXIF-Datei leer (Commons-Downsizes) -> Manifest (exif_model, exif_f_mm, exif_f35, w x h) + Dateiname-SERIE (Datum + Titelanfang = gleiche Aufnahmesitzung)
+        import re; MF = manifest_laden(root, obj)
+        for nr in nrs:
+            if nr in key or obj.get("fotos", {}).get(nr, {}).get("sfm_ausschnitt"): continue
+            m = MF.get(nr) or {}; model = m.get("exif_model")
+            if not model or not m.get("w"): continue
+            toks = [t for t in re.split(r"[_\-\s]+", re.sub(r"\.[A-Za-z]+$", "", m.get("file", "")[4:])) if t and not re.fullmatch(r"\d{1,3}", t)][:5]
+            if len(toks) < 3: continue      # Serie nicht erkennbar -> einzeln lassen
+            key[nr] = ("FALLBACK-Manifest/Dateiname", str(model).strip(), m.get("exif_f_mm"), m.get("exif_f35"), (m.get("w"), m.get("h")), "_".join(toks).lower())
+    n = collections.Counter(key.values()); return {nr: k for nr, k in key.items() if n[k] >= 2}
+
+def gruppen_in_db(db, gruppen):
+    """Legt die Kameras je Gruppe zusammen (COLMAP >= 3.12: Kamera + Rig + Frame + frame_data je Bild, SENSOR_TYPE_CAMERA = 0). Gibt {schluessel: [namen]} zurueck."""
+    con = sqlite3.connect(db); cur = con.cursor(); cur.execute("pragma foreign_keys=on")
+    img = {n: c for n, c in cur.execute("select name, camera_id from images")}; by = {}
+    for nr, k in gruppen.items():
+        if nr + ".jpg" in img: by.setdefault(k, []).append(nr + ".jpg")
+    erg = {}
+    for k, names in by.items():
+        if len(names) < 2: continue
+        names.sort(); m = img[names[0]]; rig_m = cur.execute("select rig_id from rigs where ref_sensor_id=? and ref_sensor_type=0", (m,)).fetchone()[0]
+        for n in names[1:]:
+            c = img[n]
+            if c == m: continue
+            rig_o = cur.execute("select rig_id from rigs where ref_sensor_id=? and ref_sensor_type=0", (c,)).fetchone()[0]
+            cur.execute("update frames set rig_id=? where rig_id=?", (rig_m, rig_o))
+            cur.execute("update frame_data set sensor_id=? where sensor_id=? and sensor_type=0", (m, c))
+            cur.execute("update images set camera_id=? where camera_id=?", (m, c))
+            cur.execute("delete from rigs where rig_id=?", (rig_o,)); cur.execute("delete from cameras where camera_id=?", (c,))
+        erg[str(k)] = names
+    con.commit(); con.close(); return erg
+
 def vorbereiten(root, obj, nrs, bilder, maxpx):
     os.makedirs(bilder, exist_ok=True); prior = {}; info = {}; MF = manifest_laden(root, obj)
     for nr in nrs:
         p = glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]; im = Image.open(p); im = im.convert("RGB") if im.mode != "RGB" else im
-        fpx, grund = exif_f_px(im, MF.get(nr)); s = min(1.0, maxpx / max(im.size)); W0, H0 = im.size; x0 = y0 = 0
+        # Brennweite (2026-11-04, Lernregister 1): zuerst exif_brennweite.py (f35 auf die Diagonale, beschnittfest ueber FocalPlaneXResolution, Sensor-DB),
+        # erst dann die alte Manifest-/Tabellen-Variante (verkleinerte Commons-Downloads ohne EXIF)
+        import exif_brennweite as EB
+        fpx, grund = EB.brennweite_px(p, im.size[0], im.size[1])
+        if not fpx: fpx, grund = exif_f_px(im, MF.get(nr))
+        s = min(1.0, maxpx / max(im.size)); W0, H0 = im.size; x0 = y0 = 0
         if fpx is None and obj.get("fotos", {}).get(nr, {}).get("brennweite_px"):     # dritte Quelle: objekt.json (f_gruppe, aus anderem Netz uebertragen)
             fpx = float(obj["fotos"][nr]["brennweite_px"]); grund = "objekt.json: " + obj["fotos"][nr].get("brennweite_quelle", "brennweite_px")[:60]
         aus = obj.get("fotos", {}).get(nr, {}).get("sfm_ausschnitt")
@@ -117,7 +170,10 @@ def lightglue_in_db(db, tmp, nrs, extractor, max_kp, resize, nur_fotos=None, anh
     print(f"  LightGlue: {len(paare)} Paare mit Matches, {n} geometrisch verifiziert (>= 15 Inlier)", flush=True)
 
 NUR_CPU = False
+MATCH_THREADS = 1      # 1 = reproduzierbar (Register CA); 0 = alle Kerne
+PRIOR_TOL = 0.15       # Brennweiten-Prior nur festhalten, wenn der Mapper ihn auf +-15 % bestaetigt (wie EXIF-Pruefdurchgang sfm_lod2_buendel.py)
 KAMERA_MODELL = "SIMPLE_RADIAL"
+GRUPPEN = {}      # {nr: schluessel} aus kamera_gruppen (--kamera-gruppen); leer = je Bild eine Kamera (Standard, bisheriges Verhalten)
 def _merkmale_und_matches(db, tmp, nrs, prior, matcher, lg):
     _ro = pycolmap.ImageReaderOptions(); _ro.camera_model = KAMERA_MODELL                 # SIMPLE_RADIAL (Standard) | RADIAL | OPENCV (--kamera-modell)
     if NUR_CPU: pycolmap.extract_features(db, tmp, camera_mode=pycolmap.CameraMode.PER_IMAGE, reader_options=_ro, device=pycolmap.Device.cpu)   # --cpu: GPU frei lassen (Suednetz parallel zum dichten Schritt)
@@ -143,13 +199,17 @@ def _merkmale_und_matches(db, tmp, nrs, prior, matcher, lg):
         if name + ":pp" in prior: par[1], par[2] = prior[name + ":pp"]           # Hauptpunkt des Ausschnitts (bleibt fest: ba_refine_principal_point=False)
         cur.execute("update cameras set params=?, prior_focal_length=? where camera_id=?", (par.tobytes(), 1 if name in prior else 0, cam_id))
     con.commit(); con.close()
+    if GRUPPEN:
+        _g = gruppen_in_db(db, GRUPPEN); print(f"   Kameragruppen: {sum(len(v) for v in _g.values())} Bilder in {len(_g)} gemeinsamen Kameras", flush=True)
     if matcher == "lightglue": lightglue_in_db(db, tmp, nrs, "aliked", lg[0], lg[1])
     elif matcher == "hybrid":
         pycolmap.match_exhaustive(db)                                            # SIFT fuer alles (bewaehrte Geometrie der Strassenfotos)
         lightglue_in_db(db, tmp, nrs, "aliked", lg[0], lg[1], nur_fotos=lg[2], anhaengen=True)   # LightGlue nur fuer Paare mit den schwierigen Fotos
-    else: pycolmap.match_exhaustive(db, device=(pycolmap.Device.auto if _gpu_ok else pycolmap.Device.cpu))
+    else:
+        mo = pycolmap.FeatureMatchingOptions(); mo.num_threads = MATCH_THREADS; vo = pycolmap.TwoViewGeometryOptions(); vo.ransac.random_seed = 0          # Register CA: Mehrfaden-RANSAC macht two_view_geometries bei jedem Lauf anders
+        pycolmap.match_exhaustive(db, matching_options=mo, verification_options=vo, device=(pycolmap.Device.auto if _gpu_ok else pycolmap.Device.cpu))
 
-def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048), nur_merkmale=False, db_wieder=False, seed=None, threads=0, mapper="incremental"):
+def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048), nur_merkmale=False, db_wieder=False, seed=None, threads=0, mapper="incremental", ba_gpu=False):
     """db_wieder: vorhandene Datenbank (Merkmale + Matches) nur fuer die Rekonstruktion nutzen; nur_merkmale: nach dem Matching aufhoeren;
     seed/threads: der COLMAP-Mapper ist nicht deterministisch (Register BF) - parallele Versuche mit eigenem Seed."""
     if db_wieder and not os.path.exists(db): db_wieder = False
@@ -158,11 +218,14 @@ def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048), nur_merk
     # nur die gewuenschten Bilder: eigener Ordner mit Links
     tmp = aus + "_bilder"; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
     for nr in nrs: os.symlink(os.path.abspath(os.path.join(bilder, nr + ".jpg")), os.path.join(tmp, nr + ".jpg"))
-    if not db_wieder: _merkmale_und_matches(db, tmp, nrs, prior, matcher, lg)
+    if not db_wieder:
+        pycolmap.set_random_seed(0)      # RANSAC der geometrischen Verifikation (verify_matches/match_exhaustive) ist sonst bei jedem Lauf anders (Register CA: two_view_geometries 80398 vs 80450 Zeilen)
+        _merkmale_und_matches(db, tmp, nrs, prior, matcher, lg)
     if nur_merkmale: return None, tmp
     opt = pycolmap.IncrementalPipelineOptions(); opt.min_focal_length_ratio = 0.4; opt.max_focal_length_ratio = 3.5   # Standard 0,1..10 liess f = 10865 x Diagonale zu
     if seed is not None: opt.random_seed = int(seed)
     if threads: opt.num_threads = int(threads)
+    if ba_gpu: opt.ba_use_gpu = True; opt.ba_gpu_index = "0"          # Buendelausgleich (Ceres) auf der GPU; nur EIN Mapper zur Zeit (Register AY/BA), Messung Register/Versuchslog colmap-ba-gpu
     if mapper == "global":                                                    # GLOMAP (in pycolmap >= 4): alle Kameras gemeinsam, kein Aufbau-Reihenfolge-Zufall
         gp = pycolmap.GlobalPipelineOptions()
         if seed is not None:
@@ -173,19 +236,32 @@ def bauen(bilder, db, aus, nrs, prior, matcher="sift", lg=(4096, 2048), nur_merk
     else: karten = pycolmap.incremental_mapping(db, tmp, aus, options=opt)
     if not karten: return None, tmp
     k = max(karten.values(), key=lambda r: r.num_reg_images())
-    # EXIF-Brennweiten FESTHALTEN: auf Prior zuruecksetzen und globaler Buendelausgleich mit konstanten Intrinsics dieser Kameras
-    fix = []
+    # EXIF-Brennweiten FESTHALTEN (auf den Prior zuruecksetzen, Intrinsics dieser Kameras konstant), die WEICHE Freigabe macht erst sfm_lod2_buendel.py
+    # (EXIF-Prior sigma 5 %, Pruefdurchgang). 2026-11-04 getestet: COLMAP-BA kennt keinen weichen Prior - mit FREIEN Intrinsics kollabierte das
+    # Martinstor-Suednetz in 6 von 6 Seeds (Brennweite gegen Tiefe bei Telefotos, Turm flachgedrueckt, Pick-Massstab +-50..100 %).
+    # Geaendert bleibt: der Prior selbst ist jetzt richtig (exif_brennweite.py: Diagonale, FocalPlane beschnittfest) statt f35/36 x Langseite.
+    # PRUEFUNG vor dem Festhalten (2026-11-04, kaufhaus_null2): der Mapper verfeinert f frei vom Prior aus - weicht er > PRIOR_TOL ab, widersprechen die
+    # Bilder dem EXIF (verkleinerte Panoramio-Bilder 124/125: FocalPlaneXResolution gilt fuer den Originalsensor -> 2904 statt ~1000 px; Beschnitt 065:
+    # f35 2948 statt ~1400 px). Festhalten auf so einem Prior verbog das Netz (33 Punkte hinter Kameras, p90 17,7 px) und liess den Buendelausgleich
+    # divergieren. Widersprochene Priors bleiben frei (Mapper-Wert), Bericht <aus>_prior_pruefung.json. Gleiche Schwelle wie der EXIF-Pruefdurchgang im Buendel.
+    fix = []; pruef = {}
     for im in k.images.values():
         if im.name in prior:
-            c = k.cameras[im.camera_id]; p = list(c.params); p[0] = prior[im.name]; c.params = p; fix.append(c.camera_id)
+            c = k.cameras[im.camera_id]; p = list(c.params); v = float(p[0]) / float(prior[im.name])
+            ok = abs(np.log(v)) <= np.log(1 + PRIOR_TOL); pruef[im.name] = dict(f_mapper_px=round(float(p[0]), 1), f_prior_px=round(float(prior[im.name]), 1), verhaeltnis=round(v, 3), festgehalten=bool(ok))
+            if not ok: continue
+            p[0] = prior[im.name]; c.params = p; fix.append(c.camera_id)
+    weg = {n: d["verhaeltnis"] for n, d in pruef.items() if not d["festgehalten"]}
+    if pruef: json.dump(dict(toleranz=PRIOR_TOL, kameras=pruef, verworfen=sorted(weg)), open(aus + "_prior_pruefung.json", "w"), indent=1)
+    print(f"   Prior-Pruefung: {len(pruef) - len(weg)} von {len(pruef)} Brennweiten-Priors bestaetigt und festgehalten, verworfen (Mapper/Prior): {weg}", flush=True)
     if fix:
         cfg = pycolmap.BundleAdjustmentConfig()
-        for im in k.images.values(): cfg.add_image(im.image_id)
+        for im in k.images.values():
+            if im.has_pose: cfg.add_image(im.image_id)
         for cid in set(fix): cfg.set_constant_cam_intrinsics(cid)
         for pid in list(k.points3D.keys()): cfg.add_variable_point(pid)
         bo = pycolmap.BundleAdjustmentOptions(); bo.refine_focal_length = True; bo.refine_extra_params = True; bo.refine_principal_point = False
-        ba = pycolmap.create_default_bundle_adjuster(bo, cfg, k); ba.solve()
-        k.write(aus + "/0")
+        pycolmap.create_default_bundle_adjuster(bo, cfg, k).solve(); k.write(aus + "/0")
     return k, tmp
 
 def tiefen(rec, im):
@@ -218,7 +294,10 @@ def main():
     ap.add_argument("--matcher", default="sift", choices=["sift", "lightglue", "hybrid"], help="lightglue = ALIKED+LightGlue fuer alles; hybrid = SIFT fuer alles + LightGlue nur fuer Paare mit --lg-fotos (Register AK)")
     ap.add_argument("--lg-fotos", nargs="*", default=[], help="hybrid: Fotos, deren Paare per LightGlue gematcht werden (z. B. Luftbilder)")
     ap.add_argument("--lg-max-kp", type=int, default=4096); ap.add_argument("--lg-resize", type=int, default=2048)
+    ap.add_argument("--kein-gruppen-fallback", action="store_true", help="mit --kamera-gruppen: NUR EXIF-Datei, kein Fallback ueber Manifest/Dateiname (ANNAHME gleicher Zoom)")
+    ap.add_argument("--kamera-gruppen", action="store_true", help="gemeinsame Kamera je (Modell, Brennweite, Bildgroesse) aus der EXIF-Datei statt je Bild eine eigene (Plan 2.1)")
     ap.add_argument("--cpu", action="store_true", help="Merkmale und Matching auf der CPU (laesst die GPU frei)"); ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="incremental (Standard) | global = GLOMAP")
+    ap.add_argument("--ba-gpu", action="store_true", help="Buendelausgleich (Ceres) auf der GPU - GPU rechnet erst ab 50 registrierten Bildern und nur im globalen BA. Messung 2026-11-04 Kaufhaus ~100 Bilder: KEIN Gewinn (Mapper 207-212 s GPU vs 195 s CPU ungestoert, Guete gleich); CASPAR ist im inkrementellen Mapper von COLMAP gesperrt. Nur fuer grosse Netze erneut messen")
     ap.add_argument("--nur-merkmale", action="store_true", help="nur Merkmale + Matches in db_<seite>.db rechnen (GPU), keine Rekonstruktion")
     ap.add_argument("--db-von", help="vorhandene db_<seite>.db kopieren und nur die Rekonstruktion rechnen (parallele Versuche, CPU)"); ap.add_argument("--seed", type=int, help="Mapper-Seed (Versuch)")
     ap.add_argument("--tag", default="", help="Suffix fuer db/sparse/netz-Bericht eines Versuchs, z. B. v1"); ap.add_argument("--threads", type=int, default=0, help="Mapper-Threads je Versuch (0 = COLMAP-Standard)")
@@ -230,15 +309,19 @@ def main():
     for p in (bilder, db):      # Symlinks auf die Datenpartition respektieren
         pass
     prior, info = vorbereiten(root, obj, nrs, bilder, a.maxpx)
+    global GRUPPEN
+    if a.kamera_gruppen:
+        GRUPPEN = kamera_gruppen(root, obj, nrs, fallback=not a.kein_gruppen_fallback); _fb = [nr for nr, k in GRUPPEN.items() if k[0] == "FALLBACK-Manifest/Dateiname"]
+        print(f"Kameragruppen: {len(GRUPPEN)} von {len(nrs)} Fotos in {len(set(GRUPPEN.values()))} Gruppen (EXIF-Datei: {len(GRUPPEN) - len(_fb)}, Fallback Manifest/Dateiname: {len(_fb)})" + ("  ANNAHME: Fallback-Gruppen = gleiche Kamera, gleiche Sitzung, gleicher Zoom (nicht belegt!)" if _fb else ""), flush=True)
     for nr in nrs: print(f"  {nr}: {info[nr]['orig']} -> {info[nr]['sfm']}, Prior {('%.0f px' % info[nr]['prior_f_px']) if info[nr]['prior_f_px'] else '-'} ({info[nr]['prior_grund']})")
     # Fernaufnahmen (Prior > fern_faktor x Diagonale) erst nach dem Erstaufbau registrieren
     def diag(nr): return float(np.hypot(*info[nr]["sfm"]))
     fern = [nr for nr in nrs if info[nr]["prior_f_px"] and info[nr]["prior_f_px"] > a.fern_faktor * diag(nr)]
     aktiv = [nr for nr in nrs if nr not in fern]; ausgeschlossen = {nr: "Fernaufnahme (EXIF-Prior)" for nr in fern}
-    bericht = dict(seite=a.seite, fotos=nrs, runden=[], seed=a.seed, tag=a.tag)
+    bericht = dict(seite=a.seite, fotos=nrs, runden=[], seed=a.seed, tag=a.tag, kamera_gruppen={k: str(v) for k, v in GRUPPEN.items()})
     if a.db_von: shutil.copy2(a.db_von if os.path.isabs(a.db_von) else os.path.join(sd, a.db_von), db)
     for runde in range(1, 4):
-        t0 = time.time(); rec, tmp = bauen(bilder, db, aus, aktiv, prior, a.matcher, (a.lg_max_kp, a.lg_resize, a.lg_fotos), nur_merkmale=a.nur_merkmale, db_wieder=bool(a.db_von) and runde == 1, seed=a.seed, threads=a.threads, mapper=a.mapper)
+        t0 = time.time(); rec, tmp = bauen(bilder, db, aus, aktiv, prior, a.matcher, (a.lg_max_kp, a.lg_resize, a.lg_fotos), nur_merkmale=a.nur_merkmale, db_wieder=bool(a.db_von) and runde == 1, seed=a.seed, threads=a.threads, mapper=a.mapper, ba_gpu=a.ba_gpu)
         if a.nur_merkmale: print("Merkmale + Matches fertig:", db); return
         if rec is None: print("kein Modell"); break
         rows = bewerten(rec, info, prior, a.fern_faktor); reg = sorted(rows)

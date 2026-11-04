@@ -1480,3 +1480,147 @@ Regression martinstor: 1 Abweichung (wolke_vs_modell n_beide 6782 -> 6836) - sta
 - Treppe `tools/treppe.py` (Plan 3.6): Stufenleiter grob(800 px) -> mittel(1000) -> fein(voll) -> Video, je Stufe `nullstart.py`, Guete = bestandene Pruefungen, die in ALLEN Stufen vorkommen, getrennt nach unabhaengigen Quelltypen (lod2, laser_dom1, dokument), Stopp wenn Gewinn <= Rauschband (--geduld), Bericht TREPPE.md mit offenen Merkmalen -> naechster Hebel. Auswertung (`--auswerten`) an den 4 gleich konfigurierten Nachtlaeufen: gemeinsam 56 Pruefungen, bestanden 43/48/49/45 (Streuung 6, nicht +-3) -> Standardrauschband 5; nur 2 von 56 Pruefungen unabhaengig -> bei neuen Objekten ist die Guete blind fuer fast alles. Offen: kompletter Lauf an einem echten neuen Objekt.
 - Kameramodell-Test (Plan 1.1): `video_sfm.py --kamera OPENCV` (d1_cv, 220 Frames, Reprojektion 0,58 statt 0,90 px, dichte Wolke 2,17 Mio Punkte, 61 min) gegen SIMPLE_RADIAL (d1). Tiefenversatz (dx) je Clip/6-m-Band VOR der Bandkorrektur: RBC7Co 38-44 m +1,12 -> -0,13, 44-50 m +1,66 -> +0,09; VEN1zf 38-50 m -0,54 -> -0,21/+0,25; ua1sX3 -0,37/-0,22 -> -0,09/+0,17. RMS Versatz z >= 38 m (Baender n > 2000): 0,88 -> 0,28 m (d1: 7 Baender, d1_cv: 6). Das Doming/der Clip-Tilt war also zum grossen Teil ein Kameramodell-Problem. Einschraenkungen: EIN Lauf je Modell (SfM-Realisierung streut), Clip o34426 jetzt dabei (32-44 m dx -1,45/-0,42, dy +1,28/+0,44, dz +1,02 - schlecht), Baender nicht identisch. Silhouettenbreite je Clip @45,2 m streut weiter (4,81..6,18 m; ohne o34426 1,1 m) - die Breite ist damit NICHT entschieden, p2-p98 ist rauschempfindlich. Boden-SfM (350/433 Frames, 0,89 px) an Nordnetz ausgerichtet: 3270/11800 Inlier, Median-Residuum 0,16-0,29 m bis 50 m. Standard-Kameramodell in video_sfm.py jetzt OPENCV; Wiederholung mit zweitem Lauf offen.
 - Strassennetz mit OPENCV (Plan 2.1, 3 Laeufe, `nullstart_beweis --extra "--kamera-modell OPENCV"`): gemeinsame Pruefungen 40/45/40 von 56 gegen 43/48/49/45 mit SIMPLE_RADIAL (Mittel 41,7 vs 46,3; alle Pruefungen 47/67, 55/69, 52/69 vs 56/79, 68/78, 61/70, 60/72). OPENCV hilft dem Strassennetz NICHT (eher schlechter, am Rand des Rauschbands). Erklaerung (Hypothese): je Bild eine eigene Kamera + mehr Parameter bei nur 16 Bildern = Ueberanpassung; die Drohne bestimmt je Clip EINE Kamera aus vielen Frames. Naechster Test: gemeinsame Intrinsik je Kameragruppe (`f_gruppe`). `nullstart.py --kamera-modell` und `nullstart_beweis.py --extra` bleiben als Werkzeug.
+
+## BV - Suedwand-Lueftungsfenster Breite (2026-11-03)
+Foto 041, Messprotokoll M-041-006 (ein Lauf): 0,75 m statt 0,60 m im Generator. Regel 2: Pruefung `fenster_S_links_breite` (Soll 0,68-0,88) eingetragen, schlug am alten Modell fehl; dann `fassade.json` (breite 0.6 -> 0.77, u=+-2,1, z=21,65 Unterkante), Neubau, Pruefstand "alle Pruefungen bestanden". STL 28.628 Dreiecke, 137,4 x 144,1 x 750,6 mm, wasserdicht, 1 Koerper; H0-Aenderung ca. 2 mm.
+**Offen:** Sichtblatt `audit/seiten.jpg` (GPU, nach Ende der dichten Bodenwolke), `regression.py --pruefen`, Export-STL neu; rechtes Fenster nicht gegengemessen (Symmetrie ANNAHME). Versuchslog: `fenster-S-links-breite-041`. Zurueckgezogen: Beobachtung "Uhr/Zinnen/Fensterreihe fehlen" war falsch (existieren in elemente.json/fassade.json).
+
+## Poisson-Netz v3 (2026-11-03): Sued per LightGlue-Video + Wandebenen-Nachzug
+Sued-Videowolke (sued_f8y3, 1,37 Mio Punkte) per Sim3 aus zwei Ankern ausgerichtet; Nutzer: Sued 'zu gross, krumm'. Messung: Kanten laufen mit Hoehe zusammen, Wandtiefe 5,2-5,7 statt 4,91.
+Fix: Wandebene x=a+b*z+c*y robust (4 Iterationen) aus Punkten z18-37 anpassen und auf LoD2 x=4,91 scheren; Wolke auf Kasten |y|<5,9, |x-4,91|<1,2, z>10 begrenzen. Ergebnis: Wand gerade, Breite +-5,4 (LoD2 +-5,5). Netz export/poisson_alle/netz_v3.
+Offen: Sued-Helm/Nadel fehlt, Eck-Tuermchen (Nutzer: 'kaputt') in Sued/Ost/West zerrissen, Loecher unten; Pruefung 'sued_breite_gerade' noch nicht im Pruefstand. Open3D liegt in venv-mesh. Skripte noch im Scratchpad (sued_pnp/sued_v3), nicht in tools/.
+
+## BW Hybrid Generator + Bildpunkte (2026-11-03) - tools/wolke_auf_generator.py
+Idee (Nutzer): Form vom Generator (LoD2/DOM1/Profile, immer vollstaendig), Bildpunkte liefern Farbe UND geometrische Verfeinerung; hybrid abgleichen statt Poisson (zerriss Tuermchen/Helm/duenne Seiten).
+Verfahren: STL (1:87 -> m) adaptiv auf <=0,15 m Kante unterteilen; Gate je Seite: robuste Wandebene d=a+b*z+c*q der Wolke auf die Generatorwand scheren (allgemein, keine Handwerte), Breite/Lot als Pruefung (tol 0,8 m / 1,5 Grad, Bericht je Seite);
+Ecken: Farbe aus Voxel-Mittel (0,12 m) der naechsten Punkte (keine Foto-Projektion), Verschiebung entlang Normale zum Punktschwerpunkt (max 0,3 m, geglaettet, nur wo >=5 Punkte), sonst unveraendert; belegt = Punkt im Radius.
+Ergebnis auf v3-Wolke: Sued bestanden (Breite 10,49 vs 10,44, Lot -0,8 Grad); Nord/Ost/West 'ABGELEHNT' laut Pruefung, aber Breitenreferenz (Generator 3-97 % Flaechenproben) ist nicht gleich gemessen wie Wolke (4-96 % Punkte, inkl. Nachbarn) -> Tolerierung NICHT gelockert, Messvergleich offen. Belegt 32 % (fein) / 48 % (grob).
+Gescheitert: erste Fassung verwarf abgelehnte Seiten mit ueberlappenden Halbraeumen (belegt 4 %). ICP der Wolke an den Generator (Maßstab 0,89, 3,7 Grad um x) verschlechterte die Rechtskante -> nur Diagnose.
+Offen: Pruefung in pruefstand.py/pipeline einhaengen, Regression-Schnappschuss; Belegt nur 32-48 % (Radius/Voxel), Ost/West-Lot -2,8/-1,9 Grad.
+
+### BW-Untersuchung: Breite/Lot gegen den Generator (2026-11-03)
+Gleiche Messvorschrift (4-96 %-Perzentil je 3-m-Band, Wandfenster +-0,6 m) auf Generator-Flaechenproben und Wolke: Generator Sued/Nord 10,4-12,0 m, Wolke 8,8-9,9 m (Nord, Sued) -> Wolke ist NICHT breiter, sie ist an den Kanten schlecht abgedeckt. Perzentil-Breite ist abdeckungsabhaengig -> als Pruefung ungeeignet (entfernt, nur noch Bericht).
+Ebenso Lot ueber Bandmitte: Ost/West-Mitte driftet -0,6..-0,9 m, weil nur ein Teil der Wand gesehen wird (Verdeckung, Register Verdeckung_nachbarn) -> kein Beleg fuer Kippen. Sued-Lot -0,8 Grad (Nord +1,4) ebenfalls im Rauschen.
+Ersatzpruefung 'ueberstand': Anteil der Wandpunkte > Generator-Fussabdruck + 0,5 m je Band. Ergebnis v3: Sued 0-0,1 %, Ost/West <= 0,5 %, Nord 24 % (z15-18) / 8 % (z18-21) = Strassen-/Nachbarpunkte (Nachbartuermchen unten rechts, passt zur Nutzer-Sicht 'Nachbartuermchen auf der Wand'); alte Sued-Wolke vor Scherung/Kasten: 38 % im unteren Band.
+Offen: (a) Nord unten auf Fussabdruck+0,5 m beschneiden (aus dem Generator abgeleitet, nicht von Hand), (b) Roll/Massstab der Sued nur per Merkmale (Uhr, Zinnenkranz, Fenster) messbar, nicht per Kantenperzentil; ICP am Generator = Einwand-Wand unterbestimmt.
+
+### BW-Loop: Silhouetten-Schleife foto_loop.py (2026-11-03)
+11 Fotos (Nord 001,006,014,031,044,049; Sued 000,020,021,042,043), je eigene Kamera (Zufall+CEM, Start-IoU 0,81-0,96, mittel 0,903), dann 4 Runden abwechselnd Kamera/Modell (Tuermchen dx,dy,hs,rs). Ergebnis: KEIN Parameter uebernommen (Gewinn < 0,002 oder keine Mehrheit), IoU 0,9029 -> 0,9063 allein durch Kameras. Konvergenz bei kleinster Schrittweite.
+Befund (Negativergebnis, aber wertvoll): Die STL-Tuermchen/Helm/Nadel passen auf den Himmel-Silhouetten (044: Kontur eng um Tuermchen, Helm, Nadel). Das fruehere Kanten-Overlay (030/041: Kegel 1,5 m zu hoch) lag an Kameras mit Residuen 50-100 px, nicht am Generator. Folge: nichts am Generator aendern; die sichtbare Tuermchen-Abweichung im 3D-Tool stammt aus der Wolke im oberen Turm (z>34).
+Grenzen: Silhouette sieht nur Aussenkontur (Tuermchen, Helm, Nadel), keine Wandlage/Details; Kamera-Anpassung gilt nur im ROI (oberer Turm), ausserhalb ist die Kamera unbrauchbar (014 zeigt das). Naechstes: Kantenloop (Chamfer, Gradientenabstieg), Wolken am STL ausrichten.
+
+## BX Kanten-Schleife Nulltest (2026-11-03)
+Siehe PIPELINE_H0.md 8c-Nulltest. Ergebnis: Ganzmodell-Versatz unsichtbar (Kamera absorbiert), Teilversatz Tuermchen 1 m in 3/4 Fotos nachweisbar, 1,5 m in z nur 1/4. Kein Generatoraenderungsbedarf aus den Daten. Ungeprueft: Versatz anderer Bauteile, kleinere Versaetze, andere Fotos.
+
+BX-Nachtrag: Teilversatz 1,41 m (nicht 1 m) war die Gruppe 'gefunden'; Reihe 0,35/0,7/1,41/2,83 m siehe PIPELINE_H0.md. `tools/kanten_nulltest.py` + Pruefstand-Block eingebaut. Regression (`regression.py --pruefen`): 3 Abweichungen (masstabelle +1 Pruefung, pruefbericht neue Fensterwerte, STL-Volumen 6317387->6317276), NICHT durch diesen Eintrag verursacht (Vorarbeit aus frueheren Sitzungen, uncommittet); Schnappschuss NICHT erneuert.
+
+## BY Vorzeichenbehafteter Kantenversatz (2026-11-03, tools/kanten_richtung.py)
+Frage: Warum wird Foto 031 'Wand unten/Tor' nach Kameraanpassung schlechter (6,4->9,1 px)? Messung: naechste Fotokante je sichtbarer Modellkante, dx (senkrechte Kanten, links/rechts getrennt), dy (waagerechte). Ergebnis: in ALLEN Fotos und Bauteilen dx und dy ~ -0,5 px (konstanter Pixelkonventions-Offset, kein Modellfehler), Rest <0,3 px. Kein gleichgerichteter Fehler -> Verdacht widerlegt, Generator unveraendert. Die grossen Medianwerte stammen von Kanten ohne Fotogegenstueck (Verdeckung durch Nachbarhaeuser; 031 hat nur 996 Tor-Punkte). GRENZE: Suchradius 15 px verzerrt zu kleinen Versaetzen (Auswahl); Fehler >15 px erscheinen dort nicht, nur im Anteil >8 px der Kantenschleife. Offen, nur 1 von 4 Fotos: Helm 041 rechts -3,2 px (89 Punkte), Tuermchen 040 links -2,6 px (165 Punkte).
+
+## BZ Nullstart und der Foto-Eingang (2026-11-03)
+Frage (Nutzer): gehoert das automatische Bilder-Herunterladen zur Ehrlichkeit des Nullstarts? Befund: `nullstart.py` laedt NICHTS herunter, es liest `fotos_dir` (geteilt). bilder_holen.py/Bilderschleife sind eigene, nicht verdrahtete Werkzeuge; die Schleife fand heute 0 neue Bilder (Stufe 0). Weg 1 (umgesetzt): `tools/fotoliste.py` schreibt `modelle/martinstor/fotoliste.json` (131 Fotos: Groesse, SHA-256, Quelle/URL/Urheber/Lizenz aus manifest.json bzw. LIZENZ_BILDER.json); der Nullstart prueft den Ordner dagegen (FEHLT/GEAENDERT/NEU, rc 1). 2 Fotos ohne Quellenangabe (060 Luftbild NW 2012, 061 Schlossberg Ost 2016); 7 Manifest-Eintraege haben keine Datei im Ordner (u.a. Staatsarchiv-Bilder). GRENZE: das beweist die Kette AB diesen Fotos, nicht dass sie heute wieder aus dem Netz kaemen. Weg 2 (offen): bilder_holen als Nullstart-Schritt in frischen Ordner + Vergleich mit der Liste. Der laufende Nullstart (vor dieser Aenderung gestartet) enthaelt die Pruefung noch nicht.
+
+## CA - Nullstart A/B nach Determinismus-Fixes (2026-11-03 abend)
+Fixes: RANSAC-Seed 0 + 1 Match-Thread (sfm_netz), Fusion 1 Thread (sfm_dicht), `--netz-threads 1` (nullstart). Zwei komplette Laeufe martinstor_nullA / nullB, gleiche Eingaben.
+- **STL bitgleich**: nullA = nullB = sha256 238dd38c19c298562c2fcca29953d9eeb4c6b4b4537f51a72b2383687e74886a. Ebenso gleich: masse.json, dicht_nord_modell/entzerrt/farben.npy, profile_nord.json, profile_generator.json.
+- **Netz Nord gleich** (nur Pfad im JSON verschieden). **Netz Sued NICHT reproduzierbar**: Punkte 5530 vs 5533, reproj 0,738 vs 0,775 px, f_px einzelner Kameras (012, 050) weichen 4-7 % ab. Sued-Netz geht (noch) nicht in das STL ein, daher STL trotzdem gleich. Offen: Mapper/Bundle-Ausgleich Sued (Threads/Reihenfolge) eingrenzen.
+- **Abweichung zur Referenz bleibt**: nullA/B 238dd38c... != martinstor_null (alt) edc5f118... != Referenz 15bb2ae0.... Reproduzierbar heisst nicht gleich der Referenz; Referenzmasse stammen aus frueheren Wolken-Realisierungen/Handwerten (Stufe C). Naechster Schritt: Re-Baseline-Entscheidung + Massvergleich nullA gegen Referenz je Parameter.
+
+## CB - Zwei Boegen + Zwischenpfeiler je Tuermchenflaeche: Ursache, Fix, Gegenbeweis (2026-11-03)
+Sichtfund (Nutzer, H0-Druckteil neben Bildschirmfoto): je Achteckflaeche des Arkadenbands steht eine Zwischensaeule (2 Boegen); am Tor ist es EIN Bogen je Flaeche.
+**Ursachenkette (5 Glieder, jedes haette den Fehler allein stoppen koennen):**
+1. Wert 2 = ANNAHME 'gepaarte Boegen' aus Foto 043; nie gezaehlt. Das Foto zeigt je Flaeche EINE Oeffnung, Pfosten nur an den Ecken (Protokolle Z-043-001/002).
+2. `wolke_baender.py` zaehlte Dunkellaeufe der Wolke in einem Fenster breiter als die Flaeche (Nachbarflaechen, Eckpfosten, Innenraum); duenne Zellen (<4 Punkte) zerschneiden Laeufe;
+   zwei Koerper lieferten 2 und 3 Laeufe -> Median 2,5 -> `int(round())` = 2, ohne Streuungsmeldung.
+3. Die zugehoerige Pruefung trug das Merkmal **'schlankheit'** statt 'anzahl'. Die Quellen-Matrix haette `sfm_bodenanker` fuer 'anzahl' sofort abgelehnt (blind) - das falsche Etikett umging sie.
+4. Soll [2,2] stammte aus derselben Wolkenmessung wie die Modelleingabe (`profile_baender_tuermchen.json` wird vom Generator gelesen) -> Modell besteht per Konstruktion (zirkulaer).
+5. Register AX/Beschwerde 'Boegen zu klein und zu viele' wurde in der Quelle zitiert, aber nur durch dieselbe Messung 'behoben'. Und: Teil vor dem Druck nicht mit Foto 043 verglichen.
+**Fix:** Foto-Zaehlprotokoll (`tools/foto_zaehlung.py`, Z-043-001/002 mit markiertem Bild), Pruefung 'Oeffnungen je Achteckflaeche' (foto_vollbild, merkmal anzahl, Soll 1) - am Altmodell FEHLER 2,00 -> nach Fix OK 1,00.
+Generator: `baender_rundkoerper(oeffnungen=...)` Foto-Vorrang; Masse TUERM_OEFFNUNGEN_JE_FLAECHE = 1, TUERM_OEFFNUNG_BREITE_ANTEIL = 0,78 (Foto 043, zwei Messungen 0,76/0,81, ANNAHME-Hinweis; vorher Wolken-Median 0,48 m = 'Boegen zu klein').
+`wolke_baender.py` schreibt keine Oeffnungs-Pruefungen mehr, nur Beobachtung mit Streuung. Zwei Wolken-Pruefungen nach `pruefungen_zurueckgezogen`.
+**Sperren (Pruefstand, Exit 2):** (i) Zaehlarten (flaeche_oeffnungen, nischen_anzahl, anzahl_im_band) nur mit Merkmal anzahl|fassade; (ii) Merkmal anzahl|fassade darf nicht aus einer Datei stammen, die der Generator liest (SELBSTBEZUG);
+(iii) Protokoll `Z-*` muss existieren und zum Soll passen; Altbestand ohne Zaehlprotokoll wird als HINWEIS gelistet (8 Pruefungen, nachzuziehen).
+**Gegenbeweis:** `tools/test_regeln_cb.py` (laeuft in `bauen_abnehmen.sh`): T1 Etikettenumgehung, T2 Selbstbezug, T3 Zaehlwiderspruch, T4 Altmodell (Git-STL) faellt durch, T5 widerspruechliche Zaehlung, T6 Gutfall - alle bestanden. Der Regressionslauf hat die alte Kette sogar selbst gefangen (wolke_baender schrieb die verbotenen Pruefungen erneut -> Exit 2), danach Werkzeug korrigiert.
+**Regression:** Schnappschuss erneuert (Dreiecke 28 628 -> 27 570, Volumen -0,008 %, Oeffnungen 2 -> 1; weitere Abweichungen im Schnappschuss waren schon vorher da: pruefbericht 'Lueftungsfenster', Wolke/Modell n_beide).
+**Grenzen (ehrlich):** Breitenanteil 0,78 aus 2 Messungen an 1 Foto (Nachprufung an 041/031/044 offen); Bogenform ist Rundbogen, am Bau Kiel-/Schulterbogen (nicht gemessen); 8 Altpruefungen ohne Z-Protokoll; Sichtblatt zeigt die Arkadenzone zu klein (eigener Detailrender gesehen).
+
+## CC - foto_diff.py: Kontur-Diff Modell/Foto (2026-11-03, Nutzerwunsch "Tool, das den Diff z.B. falschen Torbogen sofort MERKT")
+fehlteile_finden.py (1-m-Kantendichtezellen, Ankerzone-Filter) sah den Torbogen nicht (Zellen zu grob, Treffer z < Ankerzone verworfen, 043 ohne Kamera).
+Neu: Kantenlinien selbst vergleichen (Modell-Tiefenkanten vs Canny nach 18 cm Glaettung, Abstand in m per Distanztransformation, Treffer > 0,35 m und > 0,8 m zusammenhaengend).
+Ergebnis Foto 030: Torbogen-Bogen des Modells liegt links/kleiner gegenueber dem Fotobogen, Helm-Silhouette viel zu breit/hoch, linker Sockelpfeiler abweichend (alles ROT im Blatt) - noch NICHT behoben, noch KEIN Pruefstand-Sollwert.
+Grenzen: Kamera 030 evtl. oben ungenau (Anker); Steinfugen/Baeume/Leitungen erzeugen gelbe Scheintreffer; Beobachtungen nur mit --eintragen. Naechste Schritte: Torbogen/Helm am Foto messen (M-Protokoll), Pruefung 'Kontur-Diff < x %' mit Quelle, Lauf in bauen_abnehmen.sh.
+
+## CD - Tuermchen-Arkade: Boegen waren 0,35-m-Nischen vor massivem Kern (2026-11-03)
+Sichtfund Nutzer (Viewer Q16Sr): "immer noch kleine Boegelchen, versetzt ... drinnen sind die kleinen Boegen noch, ueberlagert". Ursache: `baender_rundkoerper` schnitt je Flaeche
+nur 0,35 m tief; die Nischenrueckwand zeichnete jeden Bogen ein zweites Mal kleiner/versetzt (im durchsichtigen STL sichtbar). Hoehen stimmten (Wolke dunkel 33,5-35,0 m, Modell 33,6-34,9 m).
+Pruefung `oeffnung_durchblick` (neuer Messtyp im Pruefstand; Strahl auf Bogenmitte, Ebene aus den Pfosten): vorher 0,35 m -> FEHLER, nachher 2,05 m -> OK.
+Generischer Fix in `tools/bauteile.py`: jedes Wolkenband der Klasse 'offen' wird HOHLRAUM (Achteck r - 0,2 m, zur Turmseite nur 0,5 m hinter die Achse; ANNAHMEN), fuer alle Rundkoerper/Objekte.
+Anzahl der Boegen bleibt Foto-Zaehlung (CB); Lage/Hoehe/Offenheit aus der Wolke. STL wasserdicht. Regression: nur beabsichtigte Abweichungen (Volumen -0,36 %, neue Pruefung/Element, sil_zone_u031 +0,03), Schnappschuss erneuert.
+
+## CE - Schallarkaden Glockenstock generisch aus der Wolke (2026-11-03)
+Nutzer: "kleine Boegelchen", "Schallarkaden an die richtige Stelle, Elemente dort ersetzen". Modell hatte Handkonstanten: 2 x 1,0 m Rundbogen (Mitte +-1,0, Pfeiler 1,0 m), Sohle 37,9.
+Foto 030 (K-030, Ebene x=3,55): Breiten 1,40/1,46 m, Mittelpfeiler 0,28 m, Hoehe 1,90 m (M-030-011..014); Zaehlung 2 je Flaeche (Z-030-001). Wolke Nord Band offen: Laeufe -1,49..-0,29 / 0,03..1,55, Oberkante 39,19.
+Widerspruch (nicht gemittelt): absolute Hoehe Foto 36,3-38,2 vs Wolke 38,3-39,2 -> Oberkante aus der Wolke, Hoehe aus dem Foto (Kamera 030 oben unsicher, Renderueberlagerung oben versetzt).
+Pruefung Breite (foto_kalibriert, Merkmal fassade - die CB-Sperre hat das erste Etikett 'verhaeltnis' abgewiesen): vorher 1,00 FEHLER -> 1,36 OK. Generisch: `bauteile.segmentbogen_reihe` (Lage/Breite aus Wolkenlaeufen, Zahl aus Foto, Segmentbogen).
+ANNAHMEN: Stich 0,27 der Breite (Fotoausschnitt, unprotokolliert), Ost/West wie Nord/Sued, keine Lamellen. Regression: nur beabsichtigte Abweichungen; Schnappschuss erneuert.
+Ecktuermchen-Arkade (Nutzer "grosse Boegen"): Wolke vs STL je Flaeche verglichen (audit-Bild tuerm_wolke_vs_stl) - Hoehe 33,6-34,9 passt zur dunklen Zone 33,6-35,0; Breite fuellt die Flaeche; Abweichung NICHT gefunden -> Nutzer um Markierung gebeten.
+
+## CF - Tuermchen-Arkade: Halbkreis statt flacher Segmentbogen ("kleine Boegelchen", 2026-11-03)
+Nutzer dreimal: "immer noch kleine Boegelchen". Meine Wolkenueberlagerung (CE) fand nichts, weil die Wolke die Bogenform nicht aufloest -> Fehlschluss "keine Abweichung".
+Erst der Nebeneinander-Vergleich Foto 030 | STL (gleiche Kamerarichtung, Ausschnitt Tuermchen) zeigte es: am Bau Pfosten-zu-Pfosten offen, sehr flacher Segmentbogen;
+Modell Halbkreis (Stich 0,5 m, Bogen ab halber Hoehe). Foto 030 kalibriert: Breite 1,06-1,11, Hoehe 1,09, Stich 0,17 m (M-030-015..018).
+Neue Messart `oeffnung_form` (Breite bei 85 % / 30 % der Oeffnungshoehe): vorher 0,80 FEHLER -> 1,00 OK. Generisch: `baender_rundkoerper(oeffnungen={stich_anteil})`, Masse TUERM_BOGEN_STICH 0,16.
+Erste Messfensterwahl bis 35,2 m war falsch (Traufplatte verschob die Bezugsebene, Wert 1,00 trotz Halbkreis) - erkannt, weil der Wert gegen die Vorhersage 0,78 stand; Fenster bis 34,97.
+LEHRE: Formmerkmale (Bogenform, Proportion) nie aus der Wolke beurteilen; IMMER Foto|Modell-Ausschnitt nebeneinander ansehen (Regel 9b), bevor "keine Abweichung" gesagt wird.
+Offen: Zierform (Kielbogen mit Nasen) nicht modelliert; Absoluthoehe K-030 oben ~0,8-1,5 m hoeher als Wolke (Kamera oben unsicher).
+
+## CG - Nullstart deckt auf: Tuermchenbogen haengt an springender Bandgrenze (2026-11-03)
+Nullstart Lauf 53 (ohne Eingriff durchgelaufen, 66/75): Wolke schnitt das Tuermchen offen 33,5-34,5 + stein 34,5-35,0 (Ref: offen 33,5-35,0). Folgen: Oeffnung nur bis 34,44 (flache Oberkante),
+und 34,5-35,0 wurde GAR NICHT gebaut (kurze stein-Baender baut baender_rundkoerper nicht) -> Luecke unter dem Dach. Segmentbogen-Pruefung (festes Fenster) zeigte 1,28/1,30 (rot), aber aus falschem Grund.
+Fix generisch (bauteile): offenes Band reicht bis an die Unterseite der naechsten AUSKRAGENDEN Platte (r >= r+0,2; Ref traufe 35,0, Null gesims 35,0), Oeffnungsoberkante dort - 0,08 (ANNAHME Sturz),
+Hohlraum ebenso. Pruefstand: `_band_fenster` (Fenster aus dem Wolkenprofil des Objekts statt fester Hoehen); neue Pruefung Oeffnungshoehe 1,0-1,45 (Foto M-030-016 1,09 / Wolke Ref 1,4 - Widerspruch offen).
+Gegencheck: Generator mit Null-Profilen -> alle 6 Tuermchen/Schallarkaden-Pruefungen OK, Oeffnungshoehe 1,28 = Referenz. Naechster Beweis: Nullstart A/B.
+Offen: Schallarkaden-Scheitel aus Wolkenlauf springt (Ref 39,19, Null 39,87) - gleiche Robustmachung (Gesims-Unterkante) noetig.
+
+## CH - Tuermchenachsen je Tuermchen aus der Wolke: Asymmetrie war Wolkenscherung (2026-11-03)
+Auftrag: Tuermchenachsen automatisch je Tuermchen statt einer gespiegelten Achse (Spezialcode-Audit Nr. 12).
+Roh-Kreisfits je Quadrant (Koerperschichten 30,75-35,75): NW quer -4,55 / tief 3,94, NO quer +4,27 / tief 4,07 -> scheinbar 0,28 m unsymmetrisch.
+Gegencheck: Quermitte des Zentralkoerpers in derselben Wolke wandert mit der Hoehe (Schaft 23-29 m -0,15..-0,24, Helm 46-50 m -0,12..+0,08) = Scherung (vgl. Register BU).
+Ein festes Bezugsfenster haette je nach Hoehe 0,02 oder 0,26 m Asymmetrie ergeben -> nicht robust.
+Generisch (wolke_profile.py `tuerm_achsen`): Mitte je 1-m-Schicht unter dem Tuermchenkoerper + ueber den Tuermchenspitzen, Gerade, auf Tuermchenhoehe interpoliert (-0,15, Streuung 0,057);
+Achsen quer relativ dazu: -4,40 / +4,42 -> Asymmetrie 0,02 <= Grenze (0,15 + 2 sigma = 0,26) -> symmetrisch, Modell (+-4,42) bleibt. tief 0,13 Unterschied < 0,15 (nicht relativ messbar, nur eine Seite).
+Generator: Achsen je Tuermchen (bauteile.tuermchen_achse_je_quadrant, Rueckseite gespiegelt = ANNAHME) nur wenn wolke_profile Asymmetrie meldet; Beleg mit asym/grenze.
+LEHRE: Lagemerkmale aus der Wolke nie absolut, sondern relativ zum eigenen Bezugskoerper derselben Wolke und mit dessen Unsicherheit vergleichen.
+Regression: Schnappschuss erneuert (neu: tuerm_achsen, Achsen-Beleg; dazu Schallarkaden-Etikett + 2 Dreiecke aus der Scheitel-Robustmachung nach CG).
+Offen: Wolke Nord quer um 0,15-0,25 m gegen die Bauwerksachse verschoben/geschert (Beobachtung); Tuermchen-d Wolke 2,8/2,98 vs Modell.
+
+## CI - Eckquader: Foto zeigt doppelte Groesse und Lang/Kurz-Zahnung (2026-11-03, offen)
+Fotovergleich vor dem Mauerwerk-Testdruck (Regel 9b): Foto 030, Eckquaderband Suedwand. z~10 m: Schicht 0,52/0,58 (M-030-020/021), lang 1,02/0,82 (M-030-022/025), kurz 0,58/0,59 (M-030-023/024);
+z~25 m: Schicht 0,68/0,65 (M-030-026/027, Kamera oben unsicher), lang 0,86/1,11 (M-030-028/029), kurz 0,47 (M-030-030). Masse aus Wolken-Farbperioden: Schicht 0,25/0,40, Laenge 0,35, KURZ_FAKTOR 1,0.
+Zweitbefund: Nullstart Lauf 56 misst die Quaderperiode 20-24 m mit 0,55 m (Ref 0,25) -> Wolken-Periodenschaetzer springt zwischen Grund- und Oberwelle.
+Testplatte tools/testdruck_mauerwerk.py (generisch, Werte aus masse.json oder @M-Protokollen) gedruckt: Feld 2 Foto vs Feld 3 Wolke.
+UMGESETZT: 2 Pruefungen Eckquader-Schichthoehe (Foto 030 kalibriert; rot am alten Modell 0,25/0,40) -> bauteile.mauerwerk_aus_protokollen (liest M-Protokolle 'Mauerwerk_<Bauteil>_Schichthoehe|Stein_lang|Stein_kurz',
+Schicht je z interpoliert, lang/kurz Median; ohne Protokolle Rueckfall masse.json) -> quoins3 mit Schicht(z): jetzt 0,55 / 0,65 m (gruen), lang 1,02 / kurz 0,58 im Wechsel.
+Werkzeugfehler pruefstand.relief_periode: Wandebene = Median -> bei grossen Quadern (> 50 % des Fensters) lag die "Wand" auf den Steinen (Signal zeigte jede 2. Schicht leer) -> p15. Tuermchenperiode unveraendert 0,50.
+Widerspruch (Regel 5, nicht gemittelt): Wolkenpruefungen 'Band zentral Quaderperiode 20-24' (0,25) und '22-26' (0,50) gegen Foto 0,52-0,68 -> status widerspruch. Overlay 030 + Sichtblatt angesehen.
+Regression: Schnappschuss erneuert (gewollt: Eckquader, 2 neue Pruefungen, 2 Widersprueche, Beleg). Offen: Glockenstock-/Tuermchenquader am Foto messen; Wolkenschaetzer f/2f.
+
+## CJ - Ecktuermchen-Altpfad geloescht, Hardcode-Zaehler (2026-11-03)
+Nutzer: "Altpfad loeschen und Hardcodings abbauen und beweisen, dass es nichts verschlechtert".
+Werkzeug tools/hardcode_finden.py (AST): feste Zahlen ausser trivialen/Segmentzahlen/Parameter-Defaults/Texten. Generator vorher 337, nachher 248 (-89).
+Ohne Wolkenprofil (Nullstart-Erstlauf) baut der Generator die Tuermchen jetzt mit Rueckfallbaendern in derselben Form (stein/gesims/hell/offen/traufe + Kegel)
+ueber bauteile.baender_rundkoerper (einziger Bauweg); Masse TUERM_RF_* in masse.json (ANNAHME mit Quelltyp).
+Beweis: (1) mit Profilen Regression identisch, alle Pruefungen bestanden; (2) ohne Profile (Kopie ohne profile_*.json): vorher 60 OK/15 FEHLER, nachher 67 OK/8 FEHLER,
+keine neue rote Pruefung (erst 1 neu: Gesims 31,75-32,5 -> TUERM_RF_GESIMS_H 0,5 -> 0,75 wie gemessenes Gesimsband); Bild: Boegen/Traufe statt X-Schlitz-Fenster;
+(3) Nullstart danach gegen Lauf 56 (66/75).
+Nebenfund pruefstand.py: Masse ohne Quelle/Quelltyp wurden gemeldet, aber nicht gezaehlt (bad = 0 danach) -> masse_bad zaehlt jetzt ins Ergebnis.
+
+## CK - Nullstart allgemein (objekt.json statt Martinstor-Code) + Kalibrier-Optionen reproduzierbar (2026-11-03)
+nullstart.py: Seiten = Fotolisten in objekt.json['sfm'] (Hauptseite sfm.hauptseite), Zusatzfotos sfm.registrieren [{foto, netz, hoehe}] (vorher 060/061 + "--hoehe 44 8" im Code),
+Generator = objekt.json['generator'] (vorher fest martinstor_v4_gen.py), Nebengebaeude-Ordner aus objekt.json['nebengebaeude'] (vorher "torbau"), Toleranzen regression.toleranzen,
+Standardziel <objekt>_null. Alter Fehler: hybrid_abgleich in der Nullstart-Kette pruefte das REFERENZ-STL (Pfad nicht umgelenkt) -> jetzt das eigene.
+Lauf 58 (neues nullstart.py + Eckquader, ohne --ziel): 66/77, aber NEU rot "Silhouettenbreite Zone 23,5-28 m (Kamera 031)" 10,44.
+Ursache (Kreuztest): Kamera, nicht Modell - Ref-Kamera + Null-STL 12,08 (ok), Null-Kamera + Ref-STL 11,13 (rot). Ref-K-031 war mit --silhouette geloest (kamera.silhouette_genutzt),
+der Nullstart loeste ohne (rms 414 statt 146 px); die Option stand nur im abgeleiteten Kamerafeld, das der Nullstart entfernt.
+Fix generisch: foto_kalibrieren.py schreibt K['kalibrier_optionen']; nullstart uebernimmt sie (Altprotokolle: aus silhouette_genutzt) und ruft die Kalibrierung damit auf. Gegenprobe: 12,06 (gruen).
+OFFEN: K-031 schwach bestimmt - f/Abstand tauschen sich (Null 3936 px/38 m, Ref 5064 px/57 m); Silhouetten-Kamera ist an das Modell gefittet (teilweise zirkulaer fuer Breitenpruefungen).

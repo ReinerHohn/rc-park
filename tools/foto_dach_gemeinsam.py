@@ -57,7 +57,8 @@ def main():
         for nr in nrs:
             seite = F.FOTOS.get(nr, (None, {}))[1].get("seite"); seite = seite if seite in AZ_SEITE else None
             im, N, roi = load(nr); H, W = N.shape; T = torch.as_tensor(N, device=dev); (s, th), f0 = fit(P, T, roi, H, W, seite=seite)
-            res[nr] = dict(iou=float(s), th=[float(x) for x in th], roi=list(map(int, roi)), seite=seite, az_grad=round(math.degrees(float(th[1])), 1)); overlay(im, P, th, f0, W, H, roi, f"{out}/pose_{nr}.png"); print(nr, f"IoU {s:.3f}", flush=True)
+            _l, _h = grenzen(seite); res[nr] = dict(iou=float(s), th=[float(x) for x in th], roi=list(map(int, roi)), seite=seite, az_grad=round(math.degrees(float(th[1])), 1), grenzen=[[float(x) for x in _l], [float(x) for x in _h]]);   # grenzen: Suchschranken dieser Anpassung (M4: Pruefung 'Parameter an der Schranke' im Sichtblatt)
+            overlay(im, P, th, f0, W, H, roi, f"{out}/pose_{nr}.png"); print(nr, f"IoU {s:.3f}", flush=True)
         json.dump(res, open(cam, "w"))
     else:
         stldir = sys.argv[3]; base = json.load(open(cam)); keep = [k for k, v in base.items() if v["iou"] >= 0.75 and (len(sys.argv) < 5 or k in sys.argv[4:])]; print("verwendet:", keep, flush=True)

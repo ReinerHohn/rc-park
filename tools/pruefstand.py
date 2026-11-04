@@ -12,6 +12,9 @@ Martinstor-Fehlers (Nadelhoehe aus Laser DOM1). Masse immer in Metern, STL wird 
 import sys, os, re, json, numpy as np, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# Messarten, die Struktur zaehlen/messen (Oeffnungen, Nischen, Elemente je Band): Merkmal nur anzahl|fassade + Foto-Zaehlprotokoll (Register CB)
+STRUKTUR_TYPEN = {"flaeche_oeffnungen", "nischen_anzahl", "anzahl_im_band"}
+
 # Was eine Quelle beweisen kann (Erfahrung dieses Projekts; Begruendung in modelle/METHODE_MASSTABELLE.md)
 QUELLEN = {
     # laser_dom1: 1-m-Zellmaxima. Zusaetzlich praktisch blind fuer den FUSSABDRUCK steiler Helmflaechen (> ~75 Grad): Zellzahl und Schnitt
@@ -198,7 +201,7 @@ class Messer:
         zs = np.arange(z0, z1 + 1e-6, schritt); qs = np.arange(quer - band, quer + band + 1e-6, schritt)
         Q, Z = np.meshgrid(qs, zs); org = np.zeros((Q.size, 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = Q.ravel(); org[:, 2] = Z.ravel(); dr = np.zeros_like(org); dr[:, ax] = -sgn
         loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False); d = np.full(Q.size, np.nan); d[ir] = sgn * loc[:, ax]; d = d.reshape(Q.shape)
-        wand = np.nanmedian(d); relief = (d > wand + 0.03); anteil = np.array([relief[i][~np.isnan(d[i])].mean() if (~np.isnan(d[i])).any() else np.nan for i in range(len(zs))])
+        wand = np.nanpercentile(d, 15); relief = (d > wand + 0.03); anteil = np.array([relief[i][~np.isnan(d[i])].mean() if (~np.isnan(d[i])).any() else np.nan for i in range(len(zs))])   # Wandebene = tiefes Ende (p15), nicht Median: grosse Quader fuellen > 50 % des Fensters (Register CI)
         ok = ~np.isnan(anteil)
         if ok.sum() < 20 or np.nanstd(anteil) < 0.02: return float("nan")
         x = anteil.copy(); x[~ok] = np.nanmean(anteil); x = x - x.mean(); ac = np.correlate(x, x, "full")[len(x) - 1:]; ac = ac / max(ac[0], 1e-9); n = int(max_periode / schritt)
@@ -225,6 +228,46 @@ class Messer:
                 if run * schritt >= min_b: laeufe.append(run * schritt)
                 run = 0
         return {"anzahl": float(len(laeufe)), "breite_median": float(np.median(laeufe)) if laeufe else 0.0, "breite_max": float(max(laeufe)) if laeufe else 0.0}
+    def oeffnung_durchblick(self, seite, z, quer, pfosten, tiefe_min=1.0, **k):
+        """Ist eine Oeffnung OFFEN (Durchblick in einen Innenraum) oder nur eine flache Nische? Strahl senkrecht auf die Flaeche bei (quer, z);
+        Flaechenebene = Median der Treffer an den Pfosten quer +- pfosten. Rueckgabe {"tiefe": Abstand Ebene -> erster Treffer hinter der Oeffnung (m),
+        "durchgehend": 1 wenn tiefe >= tiefe_min}. Register CD (Tuermchen-Arkaden waren 0,35-m-Nischen: Bogen doppelt/versetzt im Viewer)."""
+        ax = 0 if seite[1] == "x" else 1; sgn = 1.0 if seite[0] == "+" else -1.0
+        qs = np.array([quer, quer - pfosten, quer + pfosten]); org = np.zeros((3, 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = qs; org[:, 2] = z; dr = np.zeros_like(org); dr[:, ax] = -sgn
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False); d = np.full(3, np.nan); d[ir] = sgn * loc[:, ax]
+        if not np.isfinite(d[1:]).any(): return {"tiefe": float("nan"), "durchgehend": 0.0}
+        ebene = float(np.nanmedian(d[1:])); t = float(ebene - d[0]) if np.isfinite(d[0]) else 99.0
+        return {"tiefe": t, "durchgehend": 1.0 if t >= tiefe_min else 0.0}
+    def _band_fenster(self, koerper):
+        """Hoehenfenster eines Bandes 'offen' aus dem Wolkenprofil des Objekts (profile_baender_<koerper>.json): unten Bandanfang - 0,2, oben Unterseite der
+        naechsten auskragenden Platte - 0,03; quer = Profilachse. Damit misst eine Pruefung dasselbe Bauteil auch, wenn die Wolke die Baender anders schneidet (Register CG)."""
+        od = os.path.join(self.root, os.path.dirname(self.obj["masstabelle"])); P = json.load(open(os.path.join(od, f"profile_baender_{koerper}.json")))
+        B = P["baender"]; o = [b for b in B if b["klasse"] == "offen"][0]; deck = [b["z0"] for b in B if b["z0"] >= o["z1"] - 1e-6 and b["r"] >= o["r"] + 0.2]
+        return o["z0"] - 0.2, (min(deck) if deck else o["z1"]) - 0.03, P.get("achse", {}).get("quer", 0.0)
+    def oeffnung_form(self, seite, halb, quer=None, z0=None, z1=None, band_koerper=None, tiefe=0.2, frac=0.85, schritt=0.02, **k):
+        """Bogenform einer Oeffnung: Breite bei frac der Oeffnungshoehe / Breite bei 30 %. Rundbogen (Halbkreis) ~0,75, flacher Segmentbogen ~1,0.
+        Ebene = 90-%-Quantil der Treffer im Fenster; offen = kein Treffer oder >= tiefe dahinter. Register CF (Tuermchen 'kleine Boegelchen')."""
+        if band_koerper: z0, z1, q_ = self._band_fenster(band_koerper); quer = q_ if quer is None else quer
+        ax = 0 if seite[1] == "x" else 1; sgn = 1.0 if seite[0] == "+" else -1.0
+        us = np.arange(quer - halb, quer + halb + 1e-6, schritt); zs = np.arange(z0, z1 + 1e-6, schritt); U, Z = np.meshgrid(us, zs)
+        org = np.zeros((U.size, 3)); org[:, ax] = sgn * 40.0; org[:, 1 - ax] = U.ravel(); org[:, 2] = Z.ravel(); dr = np.zeros_like(org); dr[:, ax] = -sgn
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False); d = np.full(U.size, np.nan); d[ir] = sgn * loc[:, ax]; d = d.reshape(U.shape)
+        ebene = np.nanpercentile(d, 90); offen = np.isnan(d) | (d < ebene - tiefe)
+        iq = int(np.argmin(np.abs(us - quer))); col = offen[:, iq]
+        if not col.any(): return {"verhaeltnis": 0.0, "hoehe": 0.0, "breite": 0.0}
+        im = int(np.argmax(col)) if not col[len(col) // 2] else len(col) // 2
+        a = im; b = im
+        while a > 0 and col[a - 1]: a -= 1
+        while b < len(col) - 1 and col[b + 1]: b += 1
+        h = (b - a) * schritt
+        def breite(zi):
+            row = offen[zi]; l = r = iq
+            if not row[iq]: return 0.0
+            while l > 0 and row[l - 1]: l -= 1
+            while r < len(row) - 1 and row[r + 1]: r += 1
+            return (r - l) * schritt
+        w_lo = breite(a + int(0.3 * (b - a))); w_hi = breite(a + int(frac * (b - a)))
+        return {"verhaeltnis": float(w_hi / w_lo) if w_lo else 0.0, "hoehe": float(h), "breite": float(w_lo)}
     def z_nischen_ende(self, seite, z0, z1, dz, halb, tiefe, min_b=0.3, max_b=2.5, **k):
         """Oberkante eines Zinnenkranzes o. ae.: kleinste Hoehe ab z0, ab der die Fassade keine Nischen (Scharten) mehr zeigt (nischen_anzahl == 0
         in zwei aufeinanderfolgenden Schichten). Robust gegen darueber liegende Daecher - misst das Ende der Scharten, nicht den hoechsten Punkt."""
@@ -386,17 +429,43 @@ def main():
         if q is None: unzul.append((p["name"], f"unbekannter Quelltyp '{p.get('quelltyp')}'"))
         elif p.get("merkmal") in q["blind"]: unzul.append((p["name"], f"Quelle '{p['quelltyp']}' ist BLIND fuer '{p['merkmal']}' ({q['hinweis']})"))
         elif p.get("merkmal") not in q["sieht"]: unzul.append((p["name"], f"Merkmal '{p.get('merkmal')}' fuer Quelle '{p['quelltyp']}' nicht freigegeben"))
+    # 1b) Struktur-Lint (Register CB, 2026-11-03: 'zwei Boegen je Flaeche' kam aus der Wolke, getarnt als Merkmal 'schlankheit', Soll aus derselben Wolke):
+    #     (i) Messarten, die ZAEHLEN/STRUKTUR messen, duerfen nur Merkmal anzahl|fassade tragen (sonst umgeht ein falsches Etikett die Quellen-Matrix);
+    #     (ii) eine Pruefung auf anzahl|fassade darf nicht aus einer Datei stammen, die der Generator selbst liest (Selbstbezug = Modell besteht per Konstruktion);
+    #     (iii) Struktur-Pruefungen brauchen ein Foto-Zaehlprotokoll (messprotokoll/Z-*.json, tools/foto_zaehlung.py), dessen Ergebnis im Soll liegt.
+    gen_json = set(); ohne_zaehl = []
+    try:
+        gp = re.search(r"[\w./-]+\.py", obj.get("generator", "")); gp = os.path.join(root, gp.group(0)) if gp else None
+        if gp and os.path.exists(gp): gen_json = set(re.findall(r"[\w.-]+\.json", open(gp).read()))
+    except Exception: pass
+    for p in tab["pruefungen"]:
+        if p.get("status") == "widerspruch" and False: continue
+        mk = max((k for k in tab.get("messungen", {}) if p["wert"] == k or p["wert"].startswith(k + "_")), key=len, default=None)
+        typ = tab["messungen"][mk].get("typ") if mk else None
+        if typ in STRUKTUR_TYPEN:
+            if p.get("merkmal") not in ("anzahl", "fassade"): unzul.append((p["name"], f"Messart '{typ}' zaehlt/misst Struktur - Merkmal muss 'anzahl' oder 'fassade' sein, steht aber '{p.get('merkmal')}' (Etikettenumgehung der Quellen-Matrix)"))
+            pid = os.path.basename(str(p.get("protokoll", ""))); zp = os.path.join(root, os.path.dirname(obj["masstabelle"]), "messprotokoll", pid.replace(".json", "") + ".json")
+            if pid.startswith("Z-"):                                                          # Zaehlprotokoll angegeben: es MUSS existieren und zum Soll passen
+                if not os.path.exists(zp): unzul.append((p["name"], f"Zaehlprotokoll {pid} fehlt"))
+                else:
+                    z = json.load(open(zp)); je = z.get("ergebnis", {}).get("je_flaeche")
+                    if z.get("typ") != "zaehlung" or je is None: unzul.append((p["name"], f"Protokoll {pid} ist kein Zaehlprotokoll"))
+                    elif p["wert"].endswith("_anzahl") and p.get("status") != "widerspruch" and not (p["soll"][0] <= je <= p["soll"][1]): unzul.append((p["name"], f"Soll {p['soll']} widerspricht dem Zaehlprotokoll {pid} (gezaehlt {je})"))
+            else: ohne_zaehl.append(p["name"])
+        if p.get("merkmal") in ("anzahl", "fassade") and os.path.basename(str(p.get("protokoll", ""))) in gen_json:
+            unzul.append((p["name"], f"SELBSTBEZUG: Quelle '{p.get('protokoll')}' wird vom Generator selbst gelesen - Pruefung beweist nichts"))
+    if ohne_zaehl and not unzul: print(f"  HINWEIS Altbestand: {len(ohne_zaehl)} Struktur-Pruefung(en) ohne Foto-Zaehlprotokoll (Z-*) - nachziehen: " + "; ".join(n[:50] for n in ohne_zaehl[:6]))
     if unzul:
         print("TABELLE UNZULAESSIG:"); [print(f"  - {n}: {g}") for n, g in unzul]; sys.exit(2)
     # masse.json: jedes Mass braucht eine Quelle, und die Quelle muss das Merkmal sehen koennen (gleiche Matrix wie fuer Pruefzeilen)
-    mp = os.path.join(root, os.path.dirname(obj["masstabelle"]), "masse.json")
+    mp = os.path.join(root, os.path.dirname(obj["masstabelle"]), "masse.json"); masse_bad = 0
     if os.path.exists(mp):
         mm = json.load(open(mp))["masse"]; schlecht = []
         for name, e in mm.items():
             if not e.get("quelle") or not e.get("quelltyp"): schlecht.append(f"{name}: ohne Quelle")
             elif e["quelltyp"] not in QUELLEN: schlecht.append(f"{name}: unbekannter Quelltyp '{e['quelltyp']}'")
         print(f"  MASSE {len(mm)} aus masse.json, alle mit Quelle" if not schlecht else "  MASSE OHNE BELEG: " + "; ".join(schlecht))
-        if schlecht: bad += len(schlecht)
+        masse_bad = len(schlecht)                                                # zaehlt in das Ergebnis (frueher ging die Zahl durch bad = 0 weiter unten verloren)
     zirk = [p["name"] for p in tab["pruefungen"] if p.get("massstab") == "modell" and p.get("merkmal") not in ("verhaeltnis", "anzahl", "druck")]
     if zirk:
         print("MASSSTAB AUS DEM MODELL (zirkulaer - belegt Richtung, nicht Zahl):"); [print(f"  - {n}") for n in zirk]
@@ -407,7 +476,7 @@ def main():
     # 2) Messen + Pruefen
     bad = 0
     m = lade_modell(stl, obj.get("stl_massstab", 1), obj.get("stl_einheit_mm", True), obj.get("zentrierung", "huelle")); werte = messen(tab, m, obj, root)
-    zeilen, bad = [], 0
+    zeilen, bad = [], masse_bad
     for p in tab["pruefungen"]:
         v = auswerten(p["wert"], werte); lo, hi = p["soll"]; ok = (not np.isnan(v)) and lo <= v <= hi
         if not ok and p.get("status") == "widerspruch": ok = "widerspruch"
@@ -427,6 +496,13 @@ def main():
         for sn in sorted({e["seite_name"] for e in el if e["seite"] in ("+x", "-x", "+y", "-y")}):
             if sn not in seiten_foto: print(f"  UNGEPRUEFT Seite {sn}: kein Foto dieser Seite in objekt.json (Lehre F5: Mehrflaechen-Audit)")
         print(f"  ELEMENTE {len(el)} belegt" + (f", davon ANNAHMEN {len(ann)}: " + "; ".join(ann) if ann else ""))
+    # Werkzeug-Nachweis: Kanten-Schleife muss einen Teilversatz finden und darf nichts erfinden (tools/kanten_nulltest.py, Register BX). Fehlt die Datei: nur Hinweis.
+    kp = os.path.join(root, os.path.dirname(obj["masstabelle"]), "audit", "kanten_nulltest.json")
+    if os.path.exists(kp):
+        kn = json.load(open(kp))
+        if kn.get("bestanden"): print(f"  OK      Kanten-Nulltest ({kn['stand']}): Teilversatz {kn['versatz_m']} m in {kn['gefunden_anteil']:.0%} der Fotos gefunden, Wiederholbarkeit {kn['rausch_max_px']} px - Grenze: {kn['grenze_der_methode'][:60]}")
+        else: print(f"  FEHLER  Kanten-Nulltest NICHT bestanden ({kn['stand']}): gefunden {kn['gefunden_anteil']:.0%}, wiederholbar {kn['wiederholbar']} - Schleife nicht als Beleg verwenden"); bad += 1
+    else: print("  UNGEPRUEFT Kanten-Schleife: audit/kanten_nulltest.json fehlt (tools/kanten_nulltest.py laufen lassen)")
     for b in tab.get("beobachtungen_offen", []):
         print(f"  OFFEN   {b['datum']} {b['wer']}: {b['text'][:90]}  -> {b.get('naechster_schritt', '')[:60]}")
     nw = sum(1 for ok, _, _ in zeilen if ok == "widerspruch")

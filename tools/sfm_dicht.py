@@ -50,9 +50,12 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("seite"); ap.add_argument("--radius", type=float, default=25.0)
     ap.add_argument("--zmin", type=float, default=-5.0); ap.add_argument("--zmax", type=float, default=85.0); ap.add_argument("--max-size", type=int, default=None, help="Standard: Sweet Spot aus modelle/<objekt>/sweetspot.json (tools/sweetspot.py), sonst 1600")
     ap.add_argument("--fotos", help="nur diese Fotos (Nummern, Komma getrennt, z. B. 014,031,040) entzerren und rechnen - Stufe grob (Register BK); Standard: alle"); ap.add_argument("--nur-fusion", action="store_true", help="PatchMatch ueberspringen (schon gerechnet)"); ap.add_argument("--beschnitt", action="store_true", help="entzerrte Bilder vor PatchMatch auf den Turmquader beschneiden (schneller; Beweis: Register BG)")
+    ap.add_argument("--netz", default=None, help="Netz/Ausrichtung eines anderen Namens nehmen (z. B. buendel = sfm_lod2_buendel.py: sparse_buendel/0 + SFM-AUSRICHTUNG-buendel.json); Ausgaben heissen weiter dicht_<seite>_*")
     a = ap.parse_args(); od = os.path.dirname(os.path.abspath(a.objekt)); sd = os.path.join(od, "sfm")
-    sparse = os.path.join(sd, f"sparse_{a.seite}", "0"); bilder = os.path.join(sd, f"sparse_{a.seite}_bilder"); out = os.path.join(sd, f"dicht_{a.seite}")
-    S = json.load(open(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG-{a.seite}.json"))); tr = S["transformation"]
+    nz = a.netz or a.seite
+    sparse = os.path.join(sd, f"sparse_{nz}", "0"); bilder = os.path.join(sd, f"sparse_{nz}_bilder"); out = os.path.join(sd, f"dicht_{a.seite}")
+    S = json.load(open(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG-{nz}.json"))); tr = S["transformation"]
+    if a.netz: print(f"Netz {nz}: {S.get('verfahren', '')}", flush=True)
     if "rvec" not in tr: raise SystemExit("Ausrichtung ohne rvec/t/s (Buendel-Anker-Variante) - zuerst sfm_ausrichten.py --schreiben")
     if a.max_size is None:                                                    # Sweet Spot (Register BN/BO), sonst 1600 px
         a.max_size = 1600
@@ -76,7 +79,8 @@ def main():
         opt = pycolmap.PatchMatchOptions(); opt.max_image_size = a.max_size; opt.geom_consistency = True; opt.gpu_index = "0"
         pycolmap.patch_match_stereo(out, options=opt); print(f"PatchMatch {time.time() - t0:.0f} s", flush=True)
     ply = os.path.join(out, "fused.ply")
-    pycolmap.stereo_fusion(ply, out, output_type="ply"); print(f"Fusion {time.time() - t0:.0f} s", flush=True)
+    fo = pycolmap.StereoFusionOptions(); fo.num_threads = 1          # Register CA: Mehrfaden-Fusion ordnet Punkte je Lauf anders (76268 vs 76277 Punkte bei gleichen Tiefenkarten)
+    pycolmap.stereo_fusion(ply, out, options=fo, output_type="ply"); print(f"Fusion {time.time() - t0:.0f} s", flush=True)
     # PLY lesen (binaer little endian, x y z nx ny nz r g b)
     import struct
     with open(ply, "rb") as f:

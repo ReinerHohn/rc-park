@@ -47,14 +47,32 @@ def ortho(P, N, view, hoehe=900):
 VIEWS = {"Sued (+x)": ((-1, 0, 0), (0, 1, 0), (0, 0, 1)), "Nord (-x)": ((1, 0, 0), (0, -1, 0), (0, 0, 1)),
          "Ost (+y)": ((0, -1, 0), (-1, 0, 0), (0, 0, 1)), "West (-y)": ((0, 1, 0), (1, 0, 0), (0, 0, 1)), "Draufsicht": ((0, 0, -1), (0, 1, 0), (-1, 0, 0))}
 
+PARAM = ["d", "az", "el", "tz", "ro", "fs", "sx", "sy"]     # Reihenfolge von kameras.json["th"] (foto_silhouette_gpu / foto_profil_gpu)
+
+def grenz_check(th, lo, hi, tol, nur=None):
+    """M4 (Plan): Sitzt ein Optimierer-Parameter an der Suchschranke (innerhalb tol * Spanne), ist die Anpassung dort GESCHEITERT (Beispiel 3.11.: sx = -120 bei
+    Foto 022/040 schob das Modell aus dem Bild). Rueckgabe: Liste (Name, Wert, 'unten'|'oben'). ANNAHME: tol = 2 % der Spanne (Argument --grenze-tol)."""
+    out = []
+    for i, nm in enumerate(PARAM):
+        if nur is not None and i not in nur: continue
+        sp = float(hi[i] - lo[i])
+        if sp <= 0: continue
+        if th[i] <= lo[i] + tol * sp: out.append((nm, float(th[i]), "unten"))
+        elif th[i] >= hi[i] - tol * sp: out.append((nm, float(th[i]), "oben"))
+    return out
+
 def main():
+    GRENZ_TOL = float(sys.argv[sys.argv.index('--grenze-tol') + 1]) if '--grenze-tol' in sys.argv else 0.02; unsicher = {}
     objp = sys.argv[1]; obj = json.load(open(objp)); root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(objp))))
     out = os.path.join(root, obj.get("audit", os.path.join(os.path.dirname(obj["masstabelle"]), "audit"))); os.makedirs(out, exist_ok=True)
     m = lade(obj, root); P, fi = trimesh.sample.sample_surface(m, 2500000, seed=0); P = np.asarray(P); N = m.face_normals[fi]
     sys.path.insert(0, os.path.join(root, "tools")); import render_kern as RK
     sz = RK.Szene(P, N); print(f"  Renderkern: {RK.geraet()}")
     tiles = []
+    sk = obj.get("seiten_konvention", {})                                                     # Himmelsrichtung je Achse aus objekt.json (nicht Martinstor-fest)
     for name, view in VIEWS.items():
+        ax = name[name.find("(") + 1:name.find(")")] if "(" in name else None
+        if ax in sk: name = f"{str(sk[ax]).split()[0]} ({ax})"
         im = ortho_schnell(sz, P, N, view); cv2.putText(im, name, (8, 26), 0, 0.8, (0, 0, 200), 2); tiles.append(im)
     H = max(t.shape[0] for t in tiles); row1 = np.hstack([cv2.copyMakeBorder(t, 0, H - t.shape[0], 0, 6, cv2.BORDER_CONSTANT, value=(255, 255, 255)) for t in tiles])
     # Foto | Render je Foto mit bekannter Seite und Kamera
@@ -69,13 +87,24 @@ def main():
             fn = glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))
             if not fn: continue
             im = cv2.imread(fn[0]); h, w = im.shape[:2]; s = 700 / h; W2, H2 = int(w * s), 700; im = cv2.resize(im, (W2, H2)); k = W2 / 400.
-            t = np.array(kam[nr]["th"], float); t[6] *= k; t[7] *= k
+            t = np.array(kam[nr]["th"], float)
+            try:
+                if "grenzen" in kam[nr]: lo_, hi_ = np.array(kam[nr]["grenzen"][0]), np.array(kam[nr]["grenzen"][1]); nur = None      # gespeicherte Schranken dieser Anpassung (alle Parameter)
+                else: lo_, hi_ = PG.lo.cpu().numpy(), PG.hi.cpu().numpy(); nur = [i for i, n_ in enumerate(PARAM) if n_ != "az"]       # aeltere kameras.json: Azimut-Schranke unbekannt/zyklisch -> nicht geprueft
+                gc = grenz_check(t, lo_, hi_, GRENZ_TOL, nur)
+            except Exception as e:
+                gc = []; print("   Grenzpruefung nicht moeglich:", e)
+            if gc: unsicher[nr] = dict(seite=cfg.get("seite"), an_grenze=[dict(parameter=a, wert=round(b, 3), seite=c) for a, b, c in gc], th=[float(x) for x in t])
+            t[6] *= k; t[7] *= k
             cam = np.array([0, 0, t[3]]) + t[0] * np.array([math.sin(t[1]) * math.cos(t[2]), -math.cos(t[1]) * math.cos(t[2]), math.sin(t[2])])
             fw = np.array([0, 0, t[3]]) - cam; fw /= np.linalg.norm(fw); rt = np.cross(fw, [0, 0, 1.0]); rt /= np.linalg.norm(rt); dn = np.cross(fw, rt)
             cr, sr = math.cos(t[4]), math.sin(t[4]); Rm = np.vstack([cr * rt + sr * dn, -sr * rt + cr * dn, fw]); tm = -Rm @ cam
             img, _ = sz.schattiert_np(Rm, tm, SIL_F0 * 400 * k * t[5], W2 / 2 + t[6], H2 / 2 + t[7], W2, H2, hintergrund=238)
             r = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-            pair = np.hstack([im, r]); cv2.putText(pair, f"Foto {nr} ({cfg['seite']})", (8, 26), 0, 0.8, (0, 0, 200), 2); pairs.append(pair)
+            if nr in unsicher:      # Kamera unsicher: Render NICHT als Beleg zeigen (er waere irrefuehrend), sondern Hinweis
+                r = np.full_like(r, 200); txt = ", ".join(f"{d['parameter']}={d['wert']} ({d['seite']})" for d in unsicher[nr]["an_grenze"])
+                cv2.putText(r, "KAMERA UNSICHER", (12, 60), 0, 1.0, (0, 0, 200), 3); cv2.putText(r, "Optimierer an der Schranke:", (12, 100), 0, 0.6, (0, 0, 200), 2); cv2.putText(r, txt[:60], (12, 130), 0, 0.6, (0, 0, 200), 2)
+            pair = np.hstack([im, r]); cv2.putText(pair, f"Foto {nr} ({cfg['seite']})" + (" - KAMERA UNSICHER" if nr in unsicher else ""), (8, 26), 0, 0.8, (0, 0, 200), 2); pairs.append(pair)
     except Exception as e:
         print("Foto-Paare uebersprungen:", e)
     sheet = row1
@@ -94,6 +123,8 @@ def main():
             sheet = np.vstack([sheet, np.full((8, Wn, 3), 255, np.uint8), line])
     fn = os.path.join(out, "seiten.jpg"); cv2.imwrite(fn, sheet, [cv2.IMWRITE_JPEG_QUALITY, 85])
     print(f"ANSEHEN: {fn}  ({len(VIEWS)} Ansichten, {len(pairs)} Foto-Paare)")
+    bp = os.path.join(out, "kamera_grenzen.json"); json.dump(dict(grenze_tol=GRENZ_TOL, unsicher=unsicher, hinweis="Optimierer-Parameter an der Suchschranke = Anpassung gescheitert; Foto im Sichtblatt als KAMERA UNSICHER markiert, nicht als Beleg verwenden"), open(bp, "w"), indent=1, ensure_ascii=False)
+    print(f"Kamerapruefung: {len(unsicher)} Foto(s) mit Parameter an der Schranke: {sorted(unsicher)} -> {bp}")
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,155 @@
+{
+ "_doku": "Pflichtliste des Nullstarts (2026-11-04, Nutzerregel: jede Erkenntnis bewiesen, neues Gebaeude = Martinstor-Umfang ohne Handarbeit). Je Eintrag: Schrittname im Nullstart-Bericht, Werkzeug, das im Nullstart aufgerufen werden MUSS, Erkenntnis + Quelle, Tor (wie der Schritt fehlschlaegt), Beweis (Datei relativ zum Zielordner, muss nach dem Lauf existieren), Test (synthetischer/Regressionsbeweis des Werkzeugs) und Status (bewiesen | teilbewiesen | offen). tools/test_nullstart_schritte.py prueft statisch (nullstart.py ruft jedes Werkzeug) und nach einem Lauf (--bericht: Schritt ok, Beweisdatei da).",
+ "pflicht": [
+  {
+   "schritt": "anlegen",
+   "werkzeug": "nullstart.py",
+   "erkenntnis": "Bauteil-Eingaben (fassade_raster 'datei') mitkopieren - kaufhaus_null2 brach ohne fassade_nord.json ab",
+   "quelle": "Versuchslog Kaufhaus 2026-11-04",
+   "tor": "sys.exit wenn Bauteil-Eingabe fehlt",
+   "beweis": "nullstart_bericht.json",
+   "test": "Lauf kaufhaus_null2b (generator0 rc 0 nach Kopie)",
+   "status": "bewiesen"
+  },
+  {
+   "schritt": "merkmale_",
+   "werkzeug": "sfm_netz.py",
+   "erkenntnis": "Brennweiten-Prior nur festhalten, wenn der Mapper ihn auf +-15 % bestaetigt (verkleinerte Panoramio-Bilder, Beschnitt)",
+   "quelle": "Versuchslog Kaufhaus netz-prior-festhalten-verbiegt",
+   "tor": "Bericht sfm/sparse_*_prior_pruefung.json",
+   "beweis": "audit/beweis_anker_uebersicht.jpg",
+   "test": "beweis-prior-pruefung-lod2-ecken (Anker auf Ecken in 018/043/093)",
+   "status": "teilbewiesen"
+  },
+  {
+   "schritt": "ausrichten_",
+   "werkzeug": "sfm_lod2_ausrichten.py",
+   "erkenntnis": "Ausrichtung ohne Picks an LoD2-Umgebung + DGM1 (Kamerahoehen ~1,7 m)",
+   "quelle": "Plan B7, Lernregister",
+   "tor": "Exit != 0",
+   "beweis": "messprotokoll/SFM-AUSRICHTUNG-alle.json",
+   "test": "Martinstor-Nachweis Lernregister Abschnitt 5",
+   "status": "bewiesen"
+  },
+  {
+   "schritt": "buendel",
+   "werkzeug": "sfm_lod2_buendel.py",
+   "erkenntnis": "Buendel mit LoD2/DGM1-Flaechen, enger Hauptpunkt + Freigabetest, grobe Beobachtungen Gewicht 0, Tor gegen Divergenz",
+   "quelle": "Versuchslog buendel-grobe-beobachtungen-gewicht0, buendel-hauptpunkttest-beweis-pickkette",
+   "tor": "Exit 3 wenn schlechter als Eingang (nichts geschrieben)",
+   "beweis": "messprotokoll/SFM-AUSRICHTUNG-buendel.json",
+   "test": "test_buendel_synthetisch.py (Martinstor 3/3 besser) + regression.py identisch",
+   "status": "bewiesen"
+  },
+  {
+   "schritt": "dicht_",
+   "werkzeug": "sfm_dicht.py",
+   "erkenntnis": "dichte Wolke auf dem Buendelnetz",
+   "quelle": "Lernregister",
+   "tor": "sys.exit",
+   "beweis": "sfm",
+   "test": "Lauf",
+   "status": "bewiesen"
+  },
+  {
+   "schritt": "entzerren",
+   "werkzeug": "wolke_vs_modell.py",
+   "erkenntnis": "Entzerrung nur fuer einseitige Fassadennetze; Netz 'alle' (Buendel an LoD2) wird uebersprungen statt abzubrechen",
+   "quelle": "Kaufhaus-Nullstart brach bei entzerren ab (KeyError 'alle')",
+   "tor": "uebersprungen mit Grund im Bericht",
+   "beweis": "nullstart_bericht.json",
+   "test": "kaufhaus_null2 2026-11-04: uebersprungen mit Grund (Netz 'alle'), Lauf ging weiter",
+   "status": "bewiesen"
+  },
+  {
+   "schritt": "kameras",
+   "werkzeug": "kameras_aus_buendel.py",
+   "erkenntnis": "Kameras fuer ALLE Fotos ohne Picks aus dem Buendel (vorher 0 K-Kameras beim neuen Objekt)",
+   "quelle": "Versuchslog kameras-aus-buendel-anker-probe",
+   "tor": "Exit != 0",
+   "beweis": "messprotokoll",
+   "test": "kaufhaus_null: 76 K-Kameras",
+   "status": "bewiesen"
+  },
+  {
+   "schritt": "kamera_bruecke",
+   "werkzeug": "kamera_bruecke_pruefen.py",
+   "erkenntnis": "Tor je Kamera gegen das eigene Buendel (SfM-Beobachtungen ueber die Kette Ausrichtung -> Werkzeugrahmen -> K-Kamera), nicht gegen LoD2: LoD2 ist ungenauer als die Buendelkameras (Kaufhaus-First in LoD2 = Giebelspitzen, 40-50 px)",
+   "quelle": "Versuchslog kamera-bruecke-statt-lod2-tor (Massvergleich 20 echte Fotos: Kantenmass trennt nicht)",
+   "tor": "K.kamera.buendel_tor.ok (Median <= 0,15 %, p90 <= 0,5 % lange Seite, >= 30 Beobachtungen); Exit 1 wenn die Kette gebrochen ist oder der Selbsttest durchfaellt",
+   "beweis": "audit/kamera_bruecke_selbsttest.json",
+   "test": "--selbsttest (Verstellung Drehung 0,2 Grad / f 1 % / Lage 0,3 m / Rahmen 0,1 m, jede mit Bildwirkung > 1,5 x Grenze muss durchfallen): Kaufhaus 310/310 abgelehnt, 0 Falschannahmen, echt 96/96 im Tor (Median 1,17 px); Martinstor (martinstor_lod2) 0 Falschannahmen, echt 23/23 (0,76 px)",
+   "status": "bewiesen"
+  },
+  {
+   "schritt": "beweis_anker",
+   "werkzeug": "beweis_anker.py",
+   "erkenntnis": "Sichtbeweis je Kamera: amtliche Anker ins Foto (kleiner Netzfehler beweist nichts)",
+   "quelle": "Versuchslog beweis-prior-pruefung-lod2-ecken",
+   "tor": "Exit 3 ohne Kameras",
+   "beweis": "audit/beweis_anker_uebersicht.jpg",
+   "test": "Bild ansehen (Regel 3)",
+   "status": "bewiesen"
+  },
+  {
+   "schritt": "kamera_lod2",
+   "werkzeug": "kamera_lod2_nachfuehren.py",
+   "erkenntnis": "Zahlen-Tor je Kamera an LoD2-Kanten; nur bestandene Kameras vergleichen/messen; NICHT mehr Voraussetzung fuer den Abgleich (kamera_bruecke)",
+   "quelle": "Versuchslog beweis-kamera-lod2-synthetisch (einseitiges Mass entartet)",
+   "tor": "nur pruefen (kein --schreiben): Tor-Ergebnis in audit/kamera_lod2.json, Kameras unveraendert; abgleich nutzt keine Buendelkamera ohne bewiesenes Tor",
+   "beweis": "audit/kamera_lod2.json",
+   "test": "test_kamera_lod2.py: Kaufhaus 018 synthetisch BESTANDEN, Martinstor 030 synthetisch NICHT (senkrechte Kanten, Fangbereich <0,5 Grad, 1/16 Falschannahme). ECHT kaufhaus_null2 (2026-11-04): 2/96 bestanden, beide Nahaufnahmen, 064 FALSCH (Kanten auf Filmscan-Rahmen); Zufallstreffer echt 0,4-0,7 (Pruefbild zu sauber), Kontrast Median 0,02",
+   "status": "offen"
+  },
+  {
+   "schritt": "textur",
+   "werkzeug": "textur_projektion.py",
+   "erkenntnis": "Fotofarbe mit Buendelkameras, LoD2-Nachbarn als Verdecker, Tiefentest gegen Himmel, Texturatlas 2,5 cm statt Eckenfarbe",
+   "quelle": "Versuchslog textur-sfm-kameras-lod2-verdecker, textur-tiefentest-himmel, textur-atlas-fotopixel",
+   "tor": "Exit != 0",
+   "beweis": "audit/textur_abdeckung.json",
+   "test": "4-Seiten-Render angesehen (Kaufhaus)",
+   "status": "teilbewiesen"
+  },
+  {
+   "schritt": "tiefen_kameras",
+   "werkzeug": "tiefen_kameras.py",
+   "erkenntnis": "Tiefenkarten-Kameras fuer den Tiefentest exportieren",
+   "quelle": "textur-tiefentest-himmel",
+   "tor": "Exit != 0",
+   "beweis": "sfm",
+   "test": "kaufhaus_null",
+   "status": "bewiesen"
+  },
+  {
+   "schritt": "abgleich",
+   "werkzeug": "foto_diff.py",
+   "erkenntnis": "Kontur-Diff Modell gegen Foto auf allen Fotos mit bestandener Kamera (Regel 3f)",
+   "quelle": "CLAUDE.md 3f",
+   "tor": "nur Kameras mit buendel_tor.ok, lod2_tor.ok oder handkalibriert; Schritt ok nur bei > 0 verglichenen Fotos",
+   "beweis": "audit",
+   "test": "tools/test_foto_diff.py (Foto = Modellrender mit DERSELBEN Kamera, T0 prueft das; T1 wahr + T1v Versatz <= 0,15 m, T2 0,6 m versetzt per Anteil ODER Versatzschaetzung T2v, T3 erfundener Kasten, T4 fehlender Kasten): Standard --kanten normalen --modell-glatt 1 BESTANDEN an Kaufhaus 004 (T1 15 %, v1 0,03 m, v2 0,61 m) und Martinstor 014 (T1 23 %, v1 0,02 m, v2 0,61 m); Gegenprobe ohne Modellglaettung Martinstor T1 44 % = durchgefallen; echte Fotos 004/014 angesehen (2026-11-04 abend); seit 18:30 Pruefbilder mit k1 der echten Kamera + foto_diff entzerrt, T5 Gegenprobe Martinstor ohne Entzerrung faellt durch; seit 19:00 Verdeckermaske aus Tiefenkarte mit Kamera-Tor: T6 (synthetischer Verdecker), Gegenprobe ohne Maske, T6b fremde Kamera abgelehnt - Kaufhaus 004 + Martinstor 014 bestanden",
+   "status": "bewiesen"
+  },
+  {
+   "schritt": "abgleich",
+   "werkzeug": "fehlteile_finden.py",
+   "erkenntnis": "Fehlteilsuche je Foto (Regel 3e)",
+   "quelle": "CLAUDE.md 3e",
+   "tor": "nur Kameras mit buendel_tor.ok, lod2_tor.ok oder handkalibriert; Schritt ok nur bei > 0 verglichenen Fotos",
+   "beweis": "audit",
+   "test": "Martinstor fehlteile_*",
+   "status": "teilbewiesen"
+  },
+  {
+   "schritt": "wolke_seiten_",
+   "werkzeug": "wolke_vs_modell.py",
+   "erkenntnis": "Wolke gegen Modell je Fassadenseite auch beim Netz 'alle' (Tiefenkarten, Abweichungsflaechen)",
+   "quelle": "Register AN",
+   "tor": "Exit 3 wenn Seite ohne Wolke (vorher NaN-Versatz -> leeres Ergebnis mit rc 0); --auto-rahmen aus Modellgrenzen",
+   "beweis": "audit",
+   "test": "Lauf kaufhaus_null3",
+   "status": "offen"
+  }
+ ]
+}
