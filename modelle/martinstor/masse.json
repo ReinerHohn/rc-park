@@ -814,6 +814,113 @@
    "was": "Verhaeltnis kurzer zu langer Eckquader (1,0 = keine Lang/Kurz-Alternanz)",
    "quelle": "masse_aus_profilen.py (konstante): gesetzt: keine Zweischicht-Periode (Lang/Kurz-Alternanz) in den Farbperioden messbar -> Bloecke je Schicht gleich lang",
    "quelltyp": "sfm_bodenanker"
+  },
+  "TUERM_OEFFNUNGEN_JE_FLAECHE": {
+   "wert": 1,
+   "einheit": "Stueck",
+   "was": "Bogenoeffnungen je Achteckflaeche im Arkadenband der Ecktuermchen",
+   "quelle": "Foto-Zaehlprotokoll Z-043-001/Z-043-002 (Foto 043, linkes und rechtes Ecktuermchen: je voll sichtbarer Flaeche EINE Oeffnung, Pfosten nur an den Ecken); Nutzer 2026-11-03",
+   "quelltyp": "foto_vollbild",
+   "historie": [
+    {
+     "datum": "2026-11-03",
+     "alt": 2,
+     "neu": 1,
+     "grund": "Register CB: 2 stammte aus Wolken-Dunkellaeufen/ANNAHME 'gepaarte Boegen' - am Foto 043 nicht vorhanden; Nutzer sah Zwischensaeule am H0-Druckteil"
+    }
+   ]
+  },
+  "TUERM_OEFFNUNG_BREITE_ANTEIL": {
+   "wert": 0.78,
+   "einheit": "-",
+   "was": "Oeffnungsbreite / Flaechenbreite (Pfostenmitte zu Pfostenmitte) im Arkadenband der Ecktuermchen",
+   "quelle": "Foto 043 Ausschnitte linkes/rechtes Tuermchen: Oeffnung 170 bzw. 182 px bei 225 px Pfostenabstand = 0,76 / 0,81 (Mittel 0,78); ANNAHME: zwei Messungen, beide Flaechen schraeg gesehen (Verkuerzung kuerzt Zaehler und Nenner gleich); Pruefen an 041/031/044",
+   "quelltyp": "foto_vollbild",
+   "historie": [
+    {
+     "datum": "2026-11-03",
+     "alt": null,
+     "neu": 0.78,
+     "grund": "Register CB: vorher Wolken-Median 0,48 m (verschmutzte Dunkellaeufe) -> Boegen 'zu klein' (Nutzerbeschwerde AX)"
+    }
+   ]
+  },
+  "GLOCK_SCHALL_JE_FLAECHE": {
+   "wert": 2,
+   "einheit": "1",
+   "was": "Schallarkaden je Glockenstockflaeche",
+   "quelle": "Foto-Zaehlung Z-030-001 (Sued); Fotos 031/043 gleich",
+   "quelltyp": "foto_vollbild"
+  },
+  "GLOCK_SCHALL_HOEHE": {
+   "wert": 1.9,
+   "einheit": "m",
+   "was": "Schallarkade Hoehe Sohle bis Scheitel",
+   "quelle": "Foto 030 kalibriert K-030, M-030-014 (1,90 +-0,10 m); absolute Lage widerspricht Wolke (Beobachtung), daher nur Hoehe",
+   "quelltyp": "foto_vollbild"
+  },
+  "GLOCK_SCHALL_STICH": {
+   "wert": 0.27,
+   "einheit": "1",
+   "was": "Stich/Breite des Segmentbogens",
+   "quelle": "ANNAHME: Foto 030 Ausschnitt (Scheitel 527 px, Kaempfer ~545 px, Breite 67 px), nicht protokolliert",
+   "quelltyp": "foto_vollbild"
+  },
+  "GLOCK_SCHALL_BREITE": {
+   "wert": 1.43,
+   "einheit": "m",
+   "was": "Schallarkade Breite (Rueckfall ohne Wolkenprofil)",
+   "quelle": "Foto 030 kalibriert: 1,40/1,46 m (M-030-011/012)",
+   "quelltyp": "foto_vollbild"
+  },
+  "GLOCK_SCHALL_PFEILER": {
+   "wert": 0.28,
+   "einheit": "m",
+   "was": "Mittelpfeiler zwischen den Schallarkaden (Rueckfall ohne Wolkenprofil)",
+   "quelle": "Foto 030 kalibriert: M-030-013",
+   "quelltyp": "foto_vollbild"
+  },
+  "TUERM_BOGEN_STICH": {
+   "wert": 0.16,
+   "einheit": "-",
+   "was": "Bogenstich / Oeffnungsbreite im Arkadenband der Ecktuermchen (flacher Segmentbogen)",
+   "quelle": "Foto 030 kalibriert: Stich 0,17 m (M-030-017, +-0,085) bei Breite 1,06-1,11 m (M-030-015); Nutzer 2026-11-03 'kleine Boegelchen'",
+   "quelltyp": "foto_vollbild"
+  },
+  "GLOCK_SCHALL_TRAUFABSTAND": {
+   "wert": 0.81,
+   "einheit": "m",
+   "was": "Schallarkade: Scheitel (Lamellenoberkante) bis Traufkante des Helms",
+   "quelle": "Foto 030 kalibriert K-030 Ebene x=3,55: 0,81 +-0,10 m (M-030-019); robust statt Oberkante des Wolken-Dunkellaufs (Ref 39,19 / Nullstart 39,87), Register CG",
+   "quelltyp": "foto_vollbild"
+  },
+  "TUERM_RF_GESIMS_H": {
+   "wert": 0.75,
+   "quelle": "ANNAHME Rueckfallband (nur ohne Wolkenprofil, Nullstart-Erstlauf): Kragplatte unter der Bruestung, Hoehe wie das gemessene Gesimsband der Referenzwolke (profile_baender_tuermchen gesims 31,75-32,5 = 0,75 m); Register CJ",
+   "quelltyp": "sfm_bodenanker",
+   "einheit": "m",
+   "was": "Rueckfall Ecktuermchen: Kragplatte unter der Bruestung (Hoehe)"
+  },
+  "TUERM_RF_BRUESTUNG_H": {
+   "wert": 0.95,
+   "quelle": "ANNAHME Rueckfallband: Bruestung (Fachwerk) 0,95 m wie bisheriger Altpfad; Fotos 031/041/043 (Register CJ)",
+   "quelltyp": "foto_verhaeltnis",
+   "einheit": "m",
+   "was": "Rueckfall Ecktuermchen: Bruestungshoehe"
+  },
+  "TUERM_RF_TRAUFE_H": {
+   "wert": 0.5,
+   "quelle": "ANNAHME Rueckfallband: Traufplatte 0,5 m dick (Form der gemessenen Baender, profile_baender_tuermchen traufe 35,0-35,5; Register CJ)",
+   "quelltyp": "sfm_bodenanker",
+   "einheit": "m",
+   "was": "Rueckfall Ecktuermchen: Traufplatte (Dicke)"
+  },
+  "TUERM_RF_TRAUFE_UEBER": {
+   "wert": 0.3,
+   "quelle": "ANNAHME Rueckfallband: Traufplatte steht 0,3 m ueber den Erkerradius OR vor, Kegel setzt auf der Traufplatte an (Form wie gemessen: traufe r 1,85 = OR + 0,3; Register CJ)",
+   "quelltyp": "sfm_bodenanker",
+   "einheit": "m",
+   "was": "Rueckfall Ecktuermchen: Traufueberstand ueber OR"
   }
  }
 }

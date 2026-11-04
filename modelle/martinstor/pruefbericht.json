@@ -38,13 +38,13 @@
   "hyp32": 152.0,
   "hyp30": 156.0,
   "hyp40": 92.0,
-  "sil30": 13.72,
+  "sil30": 13.74,
   "sil38": 13.84,
   "sil45": 8.34,
   "sil31_031": 13.8,
   "sil_zone_031": 12.812000000000001,
-  "sil_zone_041": 12.446666666666667,
-  "sil_zone_u031": 11.919999999999998,
+  "sil_zone_041": 12.46,
+  "sil_zone_u031": 12.020000000000001,
   "erker_34": 3.118499125297652,
   "helm_37_anzahl": 0.0,
   "helm_37_durchmesser": null,
@@ -85,9 +85,9 @@
   "band_tuermchen_kegel_4000": 0.8950702797965491,
   "helm_gerade_tief": 0.0045457500249821425,
   "helm_gerade_quer": 0.0026080655330713576,
-  "band_tuermchen_oeffn_3427_anzahl": 2.0,
-  "band_tuermchen_oeffn_3427_breite_median": 0.48,
-  "band_tuermchen_oeffn_3427_breite_max": 0.48,
+  "band_tuermchen_oeffn_3427_anzahl": 1.0,
+  "band_tuermchen_oeffn_3427_breite_median": 1.0,
+  "band_tuermchen_oeffn_3427_breite_max": 1.0,
   "band_zentral_oeffn_2113_anzahl": 0.0,
   "band_zentral_oeffn_2113_breite_median": 0.0,
   "band_zentral_oeffn_2113_breite_max": 0.0,
@@ -95,17 +95,31 @@
   "band_zentral_oeffn_2333_breite_median": 0.0,
   "band_zentral_oeffn_2333_breite_max": 0.0,
   "band_zentral_oeffn_3877_anzahl": 2.0,
-  "band_zentral_oeffn_3877_breite_median": 0.96,
-  "band_zentral_oeffn_3877_breite_max": 0.96,
-  "band_zentral_periode_20": 0.25,
-  "band_zentral_periode_22": 0.4,
+  "band_zentral_oeffn_3877_breite_median": 1.2999999999999998,
+  "band_zentral_oeffn_3877_breite_max": 1.44,
+  "band_zentral_periode_20": 0.625,
+  "band_zentral_periode_22": 0.65,
   "band_tuermchen_periode_28": 0.5,
   "silhouette_061_55": 1.0477617920661169,
-  "band_tuermchen_oeffn_3388_anzahl": 2.0,
-  "band_tuermchen_oeffn_3388_breite_median": 0.45999999999999996,
-  "band_tuermchen_oeffn_3388_breite_max": 0.48,
+  "band_tuermchen_oeffn_3388_anzahl": 1.0,
+  "band_tuermchen_oeffn_3388_breite_median": 1.04,
+  "band_tuermchen_oeffn_3388_breite_max": 1.04,
   "band_tuermchen_hell_3300": 1.5499998970031754,
   "band_tuermchen_offen_3425": 1.5499998970031754,
+  "fenster_S_links_breite": 0.75,
+  "tuermchen_arkade_durchblick_tiefe": 2.0499998931884775,
+  "tuermchen_arkade_durchblick_durchgehend": 1.0,
+  "glockenstock_schall_sued_anzahl": 2.0,
+  "glockenstock_schall_sued_breite_median": 1.3599999999999999,
+  "glockenstock_schall_sued_breite_max": 1.52,
+  "tuermchen_arkade_form_verhaeltnis": 1.0,
+  "tuermchen_arkade_form_hoehe": 1.28,
+  "tuermchen_arkade_form_breite": 1.0,
+  "tuermchen_arkade_hoehe_verhaeltnis": 1.0,
+  "tuermchen_arkade_hoehe_hoehe": 1.28,
+  "tuermchen_arkade_hoehe_breite": 1.0,
+  "eckquader_schaft_periode_10": 0.55,
+  "eckquader_schaft_periode_24": 0.65,
   "uhr_S": 4.15
  },
  "pruefungen": [
@@ -401,7 +415,7 @@
   },
   {
    "name": "Silhouettenbreite bei 30 m (m, 3 Kameras)",
-   "wert": 13.72,
+   "wert": 13.74,
    "soll": [
     12.9,
     14.2
@@ -421,7 +435,7 @@
   },
   {
    "name": "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
-   "wert": 11.919999999999998,
+   "wert": 12.020000000000001,
    "soll": [
     11.3,
     12.7
@@ -701,23 +715,23 @@
   },
   {
    "name": "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
-   "wert": 0.25,
+   "wert": 0.625,
    "soll": [
     0.13,
     0.37
    ],
-   "ok": true,
-   "status": "ok"
+   "ok": false,
+   "status": "widerspruch"
   },
   {
    "name": "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
-   "wert": 0.4,
+   "wert": 0.65,
    "soll": [
     0.38,
     0.62
    ],
-   "ok": true,
-   "status": "ok"
+   "ok": false,
+   "status": "widerspruch"
   },
   {
    "name": "Band tuermchen Quaderperiode 28-32 m: Reliefperiode an der Kante (m)",
@@ -760,26 +774,6 @@
    "status": "ok"
   },
   {
-   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche anzahl bei 34.27 m",
-   "wert": 2.0,
-   "soll": [
-    2,
-    2
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche breite bei 34.27 m",
-   "wert": 0.48,
-   "soll": [
-    0.33,
-    0.63
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
    "name": "Helm geradlinig (tief, 41.8-54.8 m): max. Abweichung der Modellfront von der Geraden (m)",
    "wert": 0.0045457500249821425,
    "soll": [
@@ -795,6 +789,96 @@
    "soll": [
     0.0,
     0.41
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Lueftungsfenster Sued Oeffnung Breite (m, Fenstermitte z 22,07)",
+   "wert": 0.75,
+   "soll": [
+    0.68,
+    0.88
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ecktuermchen Arkadenband: Oeffnungen je Achteckflaeche (Foto-Zaehlung 043)",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ecktuermchen Arkade: Oeffnung offen in den Erker-Innenraum (keine flache Nische)",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Glockenstock Schallarkaden Sued: Breite je Oeffnung (Foto 030 kalibriert)",
+   "wert": 1.3599999999999999,
+   "soll": [
+    1.3,
+    1.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Glockenstock Schallarkaden Sued: Anzahl je Flaeche (Foto-Zaehlung 030)",
+   "wert": 2.0,
+   "soll": [
+    2,
+    2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ecktuermchen Arkade: flacher Segmentbogen (Breite bei 85 % / 30 % der Oeffnungshoehe)",
+   "wert": 1.0,
+   "soll": [
+    0.92,
+    1.0
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ecktuermchen Arkade: Oeffnungshoehe (Bruestung bis Scheitel, Foto 030 kalibriert)",
+   "wert": 1.28,
+   "soll": [
+    1.0,
+    1.45
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Eckquader Schaft z 8-12,5 m: Schichthoehe (Reliefperiode an der Kante, Foto 030 kalibriert) (m)",
+   "wert": 0.55,
+   "soll": [
+    0.45,
+    0.7
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Eckquader Schaft z 22,5-27 m: Schichthoehe (Reliefperiode an der Kante, Foto 030 kalibriert) (m)",
+   "wert": 0.65,
+   "soll": [
+    0.5,
+    0.8
    ],
    "ok": true,
    "status": "ok"

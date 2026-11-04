@@ -521,22 +521,6 @@
    ]
   },
   {
-   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche anzahl bei 34.27 m",
-   "wert": "band_tuermchen_oeffn_3427_anzahl",
-   "soll": [
-    2,
-    2
-   ]
-  },
-  {
-   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche breite bei 34.27 m",
-   "wert": "band_tuermchen_oeffn_3427_breite_median",
-   "soll": [
-    0.33,
-    0.63
-   ]
-  },
-  {
    "name": "Helm geradlinig (tief, 41.8-54.8 m): max. Abweichung der Modellfront von der Geraden (m)",
    "wert": "helm_gerade_tief",
    "soll": [
@@ -550,6 +534,78 @@
    "soll": [
     0.0,
     0.41
+   ]
+  },
+  {
+   "name": "Lueftungsfenster Sued Oeffnung Breite (m, Fenstermitte z 22,07)",
+   "wert": "fenster_S_links_breite",
+   "soll": [
+    0.68,
+    0.88
+   ]
+  },
+  {
+   "name": "Ecktuermchen Arkadenband: Oeffnungen je Achteckflaeche (Foto-Zaehlung 043)",
+   "wert": "band_tuermchen_oeffn_3427_anzahl",
+   "soll": [
+    1,
+    1
+   ]
+  },
+  {
+   "name": "Ecktuermchen Arkade: Oeffnung offen in den Erker-Innenraum (keine flache Nische)",
+   "wert": "tuermchen_arkade_durchblick_durchgehend",
+   "soll": [
+    1,
+    1
+   ]
+  },
+  {
+   "name": "Glockenstock Schallarkaden Sued: Breite je Oeffnung (Foto 030 kalibriert)",
+   "wert": "glockenstock_schall_sued_breite_median",
+   "soll": [
+    1.3,
+    1.6
+   ]
+  },
+  {
+   "name": "Glockenstock Schallarkaden Sued: Anzahl je Flaeche (Foto-Zaehlung 030)",
+   "wert": "glockenstock_schall_sued_anzahl",
+   "soll": [
+    2,
+    2
+   ]
+  },
+  {
+   "name": "Ecktuermchen Arkade: flacher Segmentbogen (Breite bei 85 % / 30 % der Oeffnungshoehe)",
+   "wert": "tuermchen_arkade_form_verhaeltnis",
+   "soll": [
+    0.92,
+    1.0
+   ]
+  },
+  {
+   "name": "Ecktuermchen Arkade: Oeffnungshoehe (Bruestung bis Scheitel, Foto 030 kalibriert)",
+   "wert": "tuermchen_arkade_hoehe_hoehe",
+   "soll": [
+    1.0,
+    1.45
+   ]
+  },
+  {
+   "name": "Eckquader Schaft z 8-12,5 m: Schichthoehe (Reliefperiode an der Kante, Foto 030 kalibriert) (m)",
+   "wert": "eckquader_schaft_periode_10",
+   "soll": [
+    0.45,
+    0.7
+   ]
+  },
+  {
+   "name": "Eckquader Schaft z 22,5-27 m: Schichthoehe (Reliefperiode an der Kante, Foto 030 kalibriert) (m)",
+   "wert": "eckquader_schaft_periode_24",
+   "soll": [
+    0.5,
+    0.8
    ]
   }
  ],
@@ -1147,6 +1203,59 @@
    "z": 34.25,
    "quer": 4.42,
    "achse_tief": 4.0
+  },
+  "fenster_S_links_breite": {
+   "typ": "nische_breite",
+   "seite": "+x",
+   "z": 22.07,
+   "halb": 4.6,
+   "tiefe": 0.2
+  },
+  "tuermchen_arkade_durchblick": {
+   "typ": "oeffnung_durchblick",
+   "seite": "-x",
+   "z": 34.27,
+   "quer": 4.42,
+   "pfosten": 0.6,
+   "tiefe_min": 1.0
+  },
+  "glockenstock_schall_sued": {
+   "typ": "flaeche_oeffnungen",
+   "seite": "+x",
+   "z": 38.7,
+   "quer0": -2.4,
+   "quer1": 2.4,
+   "tiefe": 0.2
+  },
+  "tuermchen_arkade_form": {
+   "typ": "oeffnung_form",
+   "seite": "-x",
+   "halb": 0.6,
+   "band_koerper": "tuermchen",
+   "tiefe": 0.2,
+   "frac": 0.85
+  },
+  "tuermchen_arkade_hoehe": {
+   "typ": "oeffnung_form",
+   "seite": "-x",
+   "halb": 0.6,
+   "band_koerper": "tuermchen",
+   "tiefe": 0.2,
+   "frac": 0.85
+  },
+  "eckquader_schaft_periode_10": {
+   "typ": "relief_periode",
+   "seite": "+x",
+   "quer": 5.2,
+   "z0": 8.0,
+   "z1": 12.5
+  },
+  "eckquader_schaft_periode_24": {
+   "typ": "relief_periode",
+   "seite": "+x",
+   "quer": 4.95,
+   "z0": 22.5,
+   "z1": 27.0
   }
  }
 }

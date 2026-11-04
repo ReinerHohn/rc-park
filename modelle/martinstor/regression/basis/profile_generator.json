@@ -459,5 +459,81 @@
   ],
   "verfahren": "laengster konsistenter Lauf (+-15 %)"
  },
+ "tuerm_achsen": {
+  "je": {
+   "quer-": {
+    "tief": 3.94,
+    "quer_roh": -4.55,
+    "d": 2.98,
+    "n": 11,
+    "quer_rel": -4.4
+   },
+   "quer+": {
+    "tief": 4.07,
+    "quer_roh": 4.27,
+    "d": 2.8,
+    "n": 11,
+    "quer_rel": 4.42
+   }
+  },
+  "zentral_mitte_quer": -0.15,
+  "mitte_unsicher": 0.057,
+  "mitte_schichten": [
+   [
+    23.2,
+    -0.17
+   ],
+   [
+    24.2,
+    -0.24
+   ],
+   [
+    25.2,
+    -0.24
+   ],
+   [
+    26.2,
+    -0.23
+   ],
+   [
+    27.2,
+    -0.17
+   ],
+   [
+    28.2,
+    -0.22
+   ],
+   [
+    29.2,
+    -0.15
+   ],
+   [
+    45.8,
+    0.08
+   ],
+   [
+    46.8,
+    0.0
+   ],
+   [
+    47.8,
+    -0.12
+   ],
+   [
+    48.8,
+    -0.09
+   ],
+   [
+    49.8,
+    0.01
+   ]
+  ],
+  "grenze_quer": 0.263,
+  "asym_quer": 0.019999999999999574,
+  "asym_tief": 0.13000000000000034,
+  "schwelle": 0.15,
+  "symmetrisch": true,
+  "hinweis": "tief ist von einer Seite nicht relativ messbar (Rueckseite fehlt) -> Wolkenwert; nicht sichtbare Quadranten = Spiegelung (ANNAHME)"
+ },
  "quelle": "tools/wolke_profile.py (Register AR): Wolkenfront (tief), Frontfenster (quer), robuster Kreisfit + Kegelgerade durch die Spitze (Tuermchen)"
 }

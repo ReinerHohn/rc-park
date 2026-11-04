@@ -85,19 +85,22 @@ def hxy(z):
 def quoins3(z0, z1, a=None, b=None, course=0.95, joint=None):
     """Gezahnte Eckquader entlang des verjuengten Schafts (je Lage mit den Halbmassen auf ihrer Hoehe).
     course = Schichthoehe, a = langer Block, b = kurzer Block (Daten: Farbperioden der Wolke, Register AX); Fuge und Relief proportional zur Schicht."""
-    a = a or _M["QUADER_LAENGE"]; b = b or _M["QUADER_KURZ_FAKTOR"] * a; joint = joint if joint is not None else min(0.09, 0.2 * course)
-    n = int((z1 - z0) / course)
-    for i in range(n):
-        za, zb = z0 + i * course, z0 + (i + 1) * course - joint
+    a = a or _M["QUADER_LAENGE"]; b = b or _M["QUADER_KURZ_FAKTOR"] * a
+    kurs_f = course if callable(course) else (lambda z, _c=course: _c)                   # Schichthoehe als Funktion von z (Foto-Protokolle je Hoehe, Register CI)
+    za, i = z0, 0
+    while za + kurs_f(za) <= z1 + 1e-6:
+        c_ = kurs_f(za); jt = joint if joint is not None else min(0.09, 0.2 * c_)
+        zb = za + c_ - jt
         hx, hy = hxy((za + zb) / 2)
         for sx in (-1, 1):
             for sy in (-1, 1):
                 X, Y = sx * hx, sy * hy
                 lg, kz = a * RNG.uniform(0.85, 1.15), b * RNG.uniform(0.85, 1.15)      # leichte Streuung der Blocklaengen (ANNAHME)
                 lx, ly = (lg, kz) if (i + (sx > 0) + (sy > 0)) % 2 == 0 else (kz, lg)
-                pp = rel(RNG.uniform(0.2, 0.4) * course)                               # Relief proportional zur Schicht (ANNAHME)
+                pp = rel(RNG.uniform(0.2, 0.4) * c_)                               # Relief proportional zur Schicht (ANNAHME)
                 xa, xb = sorted((X - sx * lx, X + sx * pp)); ya, yb = sorted((Y - sy * ly, Y + sy * pp))
                 adds.append(box(xa, xb, ya, yb, za, zb))
+        za += c_; i += 1
 
 adds.append(box(-DB / 2 - rel(0.15), DB / 2 + rel(0.15), -WB / 2 - rel(0.15), WB / 2 + rel(0.15), 0, 0.9))   # Plinthe
 adds.append(box(-DB / 2, DB / 2, -WB / 2, WB / 2, 0.8, ZB))                                                      # Steinsockel
@@ -165,9 +168,11 @@ for f in ("+y", "-y"):
 # ---------- Schaft: Eckquader, Uhr, Schlitzfenster (alles auf der Hoehe der Verjuengung) ----------
 SZ0 = ZB + 0.5
 _QZ = _M["QUADER_ZONE_Z"]
-quoins3(SZ0, min(_QZ, ZZ - 0.3), course=_M["QUADER_SCHAFT_UNTEN"])      # Schichthoehe + Blocklaenge aus den Farbperioden der Wolke (Register AX)
-quoins3(_QZ, ZZ - 0.3, course=_M["QUADER_SCHAFT_OBEN"])
-beleg("+x", "Eckquader Schaft: Schichthoehe 0,25 m unter / 0,5 m ueber QUADER_ZONE_Z, Blocklaenge QUADER_LAENGE", "wolke_baender.py Farbperioden senkrecht + quer (Register AX); Nutzer 'Backsteine zu grob'", unten=_M["QUADER_SCHAFT_UNTEN"], oben=_M["QUADER_SCHAFT_OBEN"], grenze=_QZ, laenge=_M["QUADER_LAENGE"])
+from bauteile import mauerwerk_aus_protokollen
+_MW = mauerwerk_aus_protokollen(os.path.join(os.path.dirname(os.path.abspath(__file__)), OBJ_DIR), "Eckband",
+                                rueckfall=dict(kurs=lambda z: _M["QUADER_SCHAFT_UNTEN"] if z < _QZ else _M["QUADER_SCHAFT_OBEN"], lang=_M["QUADER_LAENGE"], kurz=_M["QUADER_KURZ_FAKTOR"] * _M["QUADER_LAENGE"]))
+quoins3(SZ0, ZZ - 0.3, a=_MW["lang"], b=_MW["kurz"], course=_MW["kurs"])      # Eckquader: Schichthoehe je z + lang/kurz aus Foto-Messprotokollen (Register CI), sonst Wolken-Farbperioden (Register AX)
+beleg("+x", "Eckquader Schaft: Schichthoehe %.2f-%.2f m (je Hoehe), Steine lang %.2f / kurz %.2f m im Wechsel" % (min(_MW["kurs"](z) for z in (SZ0, ZZ)), max(_MW["kurs"](z) for z in (SZ0, ZZ)), _MW["lang"], _MW["kurz"]), _MW["quelle"] + " (Register CI); Rueckfall Wolken-Farbperioden (Register AX)", lang=_MW["lang"], kurz=_MW["kurz"], n=_MW["n"])
 UZ, UR = _M["UZ"], _M["UR"]
 for f in ("+x", "-x"):
     hh = hxy(UZ)
@@ -216,17 +221,22 @@ adds.append(frustum(0, 0, KT - 0.02, D + KU, W + KU, GZ0, GX, GY))              
 # ---------- abgesetzter Glockenstock mit Schallarkaden (Wolke Nord, Register AR: 6,8 x 6,5 m, 34,1-40,5 m; Schalloeffnungen oben, Foto 061) ----------
 adds.append(box(-GX / 2, GX / 2, -GY / 2, GY / 2, GZ0 - 0.1, GZ1))
 quoins((0, 0), GX / 2, GY / 2, GZ0, GZ1 - 0.2, a=_M["QUADER_LAENGE"], b=_M["QUADER_KURZ_FAKTOR"] * _M["QUADER_LAENGE"], course=_M["QUADER_GLOCKENSTOCK"])   # Schichthoehe aus der Farbperiode 34-38 m
+# Schallarkaden GENERISCH aus der Wolke (Band 'offen' im Zentralprofil: Lage/Breite je Oeffnung, Oberkante), Anzahl aus Foto-Zaehlung Z-030-001,
+# Hoehe aus Foto 030 (M-030-014), Segmentbogen wie am Bau (Register CE; vorher Handkonstanten 2 x 1,0 m Rundbogen = "kleine Boegelchen").
+from bauteile import oeffnungsreihe_aus_profil, tuermchen_achse_je_quadrant
+SCHALL, SCHALL_QUELLE = oeffnungsreihe_aus_profil(os.path.join(os.path.dirname(os.path.abspath(__file__)), OBJ_DIR, "profile_baender_zentral.json"), GZ0,
+    int(_M["GLOCK_SCHALL_JE_FLAECHE"]), _M["GLOCK_SCHALL_HOEHE"], _M["GLOCK_SCHALL_STICH"], traufabstand=_M["GLOCK_SCHALL_TRAUFABSTAND"], aktiv=_M.get("PROFIL_DATEI", 0) >= 1,
+    rueckfall=dict(breite=_M["GLOCK_SCHALL_BREITE"], pfeiler=_M["GLOCK_SCHALL_PFEILER"], scheitel=GZ1 - _M["GLOCK_SCHALL_TRAUFABSTAND"]))
+if SCHALL[0]["hinweis"]: print("Schallarkaden:", SCHALL[0]["hinweis"])
 for f in ("+x", "-x", "+y", "-y"):
     hh = (GX / 2, GY / 2)
-    beleg(f, "Glockenstock mit 2 Schallarkaden", "Fotos 041/043 (Sued), 031 (Nord)" if f in ("+x", "-x") else "ANNAHME: Ost/West nicht fotografiert", anzahl=2)
-    AZ = GZ1 - _M["ARKADE_UNTER_TRAUFE"]                               # Arkadensohle 3 m unter der Helmtraufe (Foto 061 Achsspalte, Wolke Ruecksprung 38-39,6)
-    for u in (-1.0, 1.0):
-        cuts.append(fbox(f, u - 0.5, u + 0.5, AZ + 0.4, AZ + 1.5, -0.7, 0.5, h=hh))
-        cuts.append(fcyl(f, u, AZ + 1.5, 0.5, -0.7, 0.5, h=hh, seg=24))
-    adds.append(fbox(f, -2.1, 2.1, AZ + 0.3, AZ + 2.35, -0.05, rel(0.1), h=hh))
-    for u in (-1.0, 1.0):    # Schallarkaden wieder frei schneiden
-        cuts.append(fbox(f, u - 0.5, u + 0.5, AZ + 0.4, AZ + 1.5, -0.7, 0.5, h=hh))
-        cuts.append(fcyl(f, u, AZ + 1.5, 0.5, -0.7, 0.5, h=hh, seg=24))
+    beleg(f, "Glockenstock: %d Schallarkaden (Segmentbogen) aus %s, Breiten %s m, Scheitel %.2f m" % (len(SCHALL), "Wolkenlaeufen" if SCHALL_QUELLE == "wolke" else "FOTO-RUECKFALL (ohne Wolke)", "/".join("%.2f" % (o["u1"] - o["u0"]) for o in SCHALL), SCHALL[0]["zt"]),
+          ("Wolke Nord Band offen (profile_baender_zentral) + Foto 030 M-030-011..014, Z-030-001" if f in ("+x", "-x") else "ANNAHME: Ost/West wie Nord/Sued (nicht fotografiert)"), anzahl=len(SCHALL))
+    u_a, u_b = min(o["u0"] for o in SCHALL), max(o["u1"] for o in SCHALL); z_a, z_b = min(o["zu"] for o in SCHALL), max(o["zt"] for o in SCHALL)
+    adds.append(fbox(f, u_a - 0.3, u_b + 0.3, z_a - 0.12, z_b + 0.3, -0.05, rel(0.1), h=hh))          # Sandsteinrahmen um die Reihe (Foto 030)
+    for o in SCHALL:
+        cuts.append(fbox(f, o["u0"], o["u1"], o["zu"], o["zk"], -0.7, 0.5, h=hh))
+        cuts.append(fbox(f, o["u0"], o["u1"], o["zk"] - 0.01, o["zt"], -0.7, 0.5, h=hh) ^ fcyl(f, o["uc"], o["zt"] - o["R"], o["R"], -0.7, 0.5, h=hh, seg=64))
 
 # ---------- Kupferdach (glatt, oben abgeflacht) ----------
 # Zweistufiger Helm (DOM1-Rohraster + SfM + LoD2 2026-11-01, Register AM): Traufe GZ1 = 37 m (LoD2 37,27) mit Basis GX+1,5 x GY+1,5,
@@ -283,9 +293,20 @@ _TB = None
 if _M.get("PROFIL_DATEI", 0) >= 1:
     _tp = os.path.join(os.path.dirname(os.path.abspath(__file__)), OBJ_DIR, "profile_baender_tuermchen.json")
     if os.path.exists(_tp): _TB = __import__("json").load(open(_tp))
+if _TB is None:
+    # Ohne Wolkenprofil (Nullstart-Erstlauf generator0): Rueckfallbaender in DERSELBEN Form wie die gemessenen, gebaut vom selben Bauteil
+    # (bauteile.baender_rundkoerper). Ersetzt den frueheren Handkonstruktions-Altpfad (Register CJ); Masse aus masse.json (TUERM_RF_* = ANNAHME).
+    _EO, _TS0 = _M["ERKER_OBEN"], _M["TUERM_SPITZE"]; _rT = OR + _M["TUERM_RF_TRAUFE_UEBER"]
+    _TB = dict(quelle="Rueckfall masse.json (TUERM_RF_*, ANNAHME; Register CJ)", baender=[
+        dict(klasse="stein", z0=_M["KONSOLE_Z1"], z1=T1 - _M["TUERM_RF_GESIMS_H"], r=TWs / 2),
+        dict(klasse="gesims", z0=T1 - _M["TUERM_RF_GESIMS_H"], z1=T1, r=OR),
+        dict(klasse="hell", z0=T1, z1=T1 + _M["TUERM_RF_BRUESTUNG_H"], r=OR),
+        dict(klasse="offen", z0=T1 + _M["TUERM_RF_BRUESTUNG_H"], z1=_EO, r=OR),
+        dict(klasse="traufe", z0=_EO, z1=_EO + _M["TUERM_RF_TRAUFE_H"], r=_rT)],
+        kegel=dict(z0=_EO + _M["TUERM_RF_TRAUFE_H"], r0=_rT, spitze=_TS0, r_je_m=round(_rT / max(_TS0 - 0.5 - _EO - _M["TUERM_RF_TRAUFE_H"], 0.1), 4)))
 def bau_tuerm_baender(c, sx, sy):
     """Ein Ecktuermchen aus den gemessenen Baendern: stein = Schaft (Quader TWs, Eckquader, Fenster), gesims = Kragplatte, fachwerk = Bruestung
-    mit X-Schlitzen und Leisten, offen = Arkadenband mit Bogenoeffnungen (Zahl je Flaeche ANNAHME Foto 043), traufe = Dachplatte mit Konsolen
+    mit X-Schlitzen und Leisten, offen = Arkadenband mit Bogenoeffnungen (Zahl je Flaeche EINE: Foto-Zaehlung Z-043-001/002, Register CB), traufe = Dachplatte mit Konsolen
     ('Boeckchen', ANNAHME Foto 043), kegel = Kupferkegel von der Traufe zur Spitze. Oeffnungen nur auf Flaechen, die vom Turm wegzeigen."""
     B = _TB["baender"]; K = _TB["kegel"]; TS = _M["TUERM_SPITZE"]
     def zum_turm(k): return (math.cos(math.radians(k * 45)) * c[0] + math.sin(math.radians(k * 45)) * c[1]) < -0.3 * math.hypot(*c)
@@ -299,77 +320,27 @@ def bau_tuerm_baender(c, sx, sy):
     hh = (TWs / 2, TWs / 2)
     for f in (("+x" if sx > 0 else "-x"), ("+y" if sy > 0 else "-y")):
         window(f, 0.0, z_schaft0 + 1.5, 0.45, 1.0, c=c, hh=hh, deep=0.25)
-    baender_rundkoerper(c, B, K, TS, rel, zum_turm, adds, cuts, n_oeffnungen=2)   # objektunabhaengig (tools/bauteile.py): Kragplatten, Bruestung, Arkaden, Traufe + Konsolen, Kegel, Knauf
+    baender_rundkoerper(c, B, K, TS, rel, zum_turm, adds, cuts, n_oeffnungen=1, oeffnungen=dict(je_flaeche=int(_M["TUERM_OEFFNUNGEN_JE_FLAECHE"]), breite_anteil=_M["TUERM_OEFFNUNG_BREITE_ANTEIL"], stich_anteil=_M["TUERM_BOGEN_STICH"]))   # objektunabhaengig (tools/bauteile.py): Kragplatten, Bruestung, Arkaden, Traufe + Konsolen, Kegel, Knauf
     if (sx, sy) == (-1, 1):
-        for b in B: beleg("dach", f"Ecktuermchen Band {b['klasse']} {b['z0']}-{b['z1']} m, r {b['r']}", "wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)", z0=b["z0"], z1=b["z1"], r=b["r"])
-        beleg("dach", "Ecktuermchen Arkadenband: 2 Rundbogenoeffnungen je Aussenflaeche", "ANNAHME aus Foto 043 (Sued, gepaarte Boegen); Bandlage aus der Wolke (dunkel 61 %)", je_flaeche=2)
+        for b in B: beleg("dach", f"Ecktuermchen Band {b['klasse']} {b['z0']}-{b['z1']} m, r {b['r']}", _TB.get("quelle") if str(_TB.get("quelle", "")).startswith("Rueckfall") else "wolke_baender.py (tuermchen): Aussenradius p97 + Farbklassen der dichten Wolke Nord (Register AU)", z0=b["z0"], z1=b["z1"], r=b["r"])
+        beleg("dach", "Ecktuermchen Arkadenband: EINE Oeffnung je Aussenflaeche, Breite %.2f der Flaeche" % _M["TUERM_OEFFNUNG_BREITE_ANTEIL"], "Foto-Zaehlprotokoll Z-043-001/002 (Foto 043, linkes und rechtes Tuermchen); Bandlage aus der Wolke (dunkel 61 %)", je_flaeche=int(_M["TUERM_OEFFNUNGEN_JE_FLAECHE"]))
+        beleg("dach", "Ecktuermchen Arkade: flacher Segmentbogen, Stich %.2f der Breite" % _M["TUERM_BOGEN_STICH"], "Foto 030 kalibriert M-030-015/017 (Register CF)", stich=_M["TUERM_BOGEN_STICH"])
+        beleg("dach", "Ecktuermchen Arkadenband HOHL (Bogen offen in den Erker-Innenraum, Wand 0,2 m)", "Foto 043: hinter jedem Bogen dunkler Innenraum (Z-043-001/002); Wolke Band offen dunkel 61 %; ANNAHME Wandstaerke 0,2 m, Register CD", wand=0.2)
         beleg("dach", "Ecktuermchen Traufkonsolen ('Boeckchen') 8 je Tuermchen", "ANNAHME aus Foto 043; Traufplatte r aus der Wolke", anzahl=8)
+        _ta = (_PROF or {}).get("tuerm_achsen")
+        if _ta: beleg("dach", "Ecktuermchen Achsen: %s" % ("symmetrisch (eine Achse gespiegelt)" if _ta.get("symmetrisch", True) else "je Tuermchen, Rueckseite gespiegelt (ANNAHME)"),
+                      "wolke_profile.py tuerm_achsen (Register CH): Kreisfit je Quadrant, quer relativ zur Zentralmitte (Gerade unter/ueber den Tuermchen); Asymmetrie quer %s m <= Grenze %s m" % (round(_ta["asym_quer"], 2), _ta["grenze_quer"]),
+                      asym_quer=round(_ta["asym_quer"], 3), grenze=_ta["grenze_quer"])
         if K: beleg("dach", "Ecktuermchen Kupferkegel Traufe -> Spitze", f"wolke_baender.py: r {K['r0']} bei {K['z0']} m, Steigung {K['r_je_m']} r/m zur Spitze {TS}", r0=K["r0"], z0=K["z0"])
 for sx in (-1, 1):
     for sy in (-1, 1):
         _h = hxy(T0 + 1.0)
-        if _PROF and _PROF.get("tuerm_achse"): c = (sx * _PROF["tuerm_achse"]["tief"], sy * _PROF["tuerm_achse"]["quer"])   # Kreisfit-Achse (Register AR)
+        _TA = (_PROF or {}).get("tuerm_achsen") or {}
+        if _TA and not _TA.get("symmetrisch", True) and len(_TA.get("je", {})) == 2:
+            c = tuermchen_achse_je_quadrant(_TA, _PROF["seite"], sx, sy)                                # Achse JE Tuermchen (Register CH), Rueckseite gespiegelt = ANNAHME
+        elif _PROF and _PROF.get("tuerm_achse"): c = (sx * _PROF["tuerm_achse"]["tief"], sy * _PROF["tuerm_achse"]["quer"])   # Kreisfit-Achse (Register AR); Symmetrie von wolke_profile.py geprueft (Register CH)
         else: c = (sx * (_h[0] - _M["TUERM_ACHSE_DX"]), sy * (_h[1] - _M["TUERM_ACHSE_DY"]))
-        if _TB: bau_tuerm_baender(c, sx, sy); continue
-        hh = (TWs / 2, TWs / 2)
-        KZ0, KZ1 = _M["KONSOLE_Z0"], _M["KONSOLE_Z1"]                                        # Konsolen aus der Wolke (Register AS): 27,6 -> 28,9 m
-        adds.append(frustum(c[0], c[1], KZ0, 0.9, 0.9, KZ1, TWs, TWs))                        # Auskragung (Konsole)
-        adds.append(box(c[0] - TWs / 2, c[0] + TWs / 2, c[1] - TWs / 2, c[1] + TWs / 2, KZ1 - 0.02, T0 + 0.02))   # Schaft ab Konsolen-Oberkante
-        beleg("dach", "Konsolen unter den Ecktuermchen (Auskragung)", "Wolke Nord y-Gesamtbreite: Anstieg 27,6 -> 28,9 m (Register AS); Foto 043: gestufte Steinkonsolen", unten=KZ0, oben=KZ1) if (sx, sy) == (-1, -1) else None
-        for z in (KZ0 + 0.4, KZ0 + 0.9):
-            w_ = 0.9 + (TWs - 0.9) * (z - KZ0) / (KZ1 - KZ0)
-            adds.append(frustum(c[0], c[1], z - 0.12, w_ + 2 * rel(0.1), w_ + 2 * rel(0.1), z + 0.05, w_ + 2 * rel(0.1), w_ + 2 * rel(0.1)))
-        adds.append(box(c[0] - TWs / 2, c[0] + TWs / 2, c[1] - TWs / 2, c[1] + TWs / 2, T0, T1))
-        quoins(c, TWs / 2, TWs / 2, T0 + 0.1, T1 - 0.7, a=0.8, b=0.5, course=0.58)
-        p = rel(0.22)
-        adds.append(box(c[0] - TWs / 2 - p, c[0] + TWs / 2 + p, c[1] - TWs / 2 - p, c[1] + TWs / 2 + p, T1 - 0.5, T1))   # Kranz
-        for f in (("+x" if sx > 0 else "-x"), ("+y" if sy > 0 else "-y")):                   # nur Aussenseiten: Innenseiten stecken ab 31,5 m im Kragdach
-            window(f, 0.0, T0 + 1.5, 0.45, 1.0, c=c, hh=hh, deep=0.25)
-        # Erker: Bruestung (achteckig) mit X-Fachwerk
-        adds.append(M.cylinder(0.95, OR, OR, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1)))
-        def zum_turm(k):   # Flaeche k (Normale k*45 Grad) zeigt zum Turmkern -> steckt im Kragdach/Glockenstock: dort keine Oeffnungen (sonst Hohlraeume)
-            return (math.cos(math.radians(k * 45)) * c[0] + math.sin(math.radians(k * 45)) * c[1]) < -0.3 * math.hypot(*c)
-        for k in range(8):
-            if zum_turm(k): continue
-            for sgn in (-1, 1):
-                cut = M.cube((0.5, 0.085, 0.95)).translate((-0.25 + OR * math.cos(math.radians(22.5)) , -0.04, -0.47)).rotate((sgn * 38, 0, 0)).translate((0, 0, 0))
-                # Schlitz entlang der Seitenflaeche k (Normale bei k*45 Grad)
-                cut = cut.translate((0, 0, T1 + 0.48)).rotate((0, 0, k * 45)).translate((c[0], c[1], 0))
-                cuts.append(cut)
-        # Zierleisten der Bruestung: Ring unten/Mitte/oben (Foto: Fachwerk mit Leisten)
-        for dz in (0.0, 0.45, 0.88):
-            adds.append(M.cylinder(0.12, OR + rel(0.16), OR + rel(0.16), 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + dz)))
-        # GESCHLOSSENER achteckiger Erkerkoerper mit Fensteroeffnungen (Nutzer 2026-11-01: "aufgemalte haengende Daecher";
-        # Fotos 031/041/043: ein Fachwerk-Erker mit kleinen Fenstern, KEIN offener Saeulenkranz - der liess das Tuermchen
-        # bei 34 m auf 0,30 m Durchmesser schrumpfen, im Foto sind es dort 2,2-2,6 m).
-        EO = _M["ERKER_OBEN"]; EH = EO - (T1 + 0.95) - 0.5                            # Erkerkoerper bis zur Traufe des Helms (Wolke: ~39,3 m)
-        TS = _M["TUERM_SPITZE"]
-        if _PROF and _PROF.get("tuerm_profil"):
-            # Loft aus dem Kreisfit-Profil (z, d): Achtecke je Schicht, vom Erkerfuss bis unter die Spitze
-            prof = [(z, d) for z, d in _PROF["tuerm_profil"] if T1 + 1.2 < z < TS - 0.8 and d > 0.3]
-            lay = [(T1 + 0.95, 2 * OR)] + prof + [(TS - 0.5, 0.12)]
-            lay = [l for i, l in enumerate(lay) if i == 0 or i == len(lay) - 1 or not (abs(l[1] - lay[i - 1][1]) < 1e-6 and abs(lay[i + 1][1] - l[1]) < 1e-6)]   # gleiche Schichten zusammenfassen (keine koplanaren Naehte)
-            def okt(z, d):   # d = Schluesselweite (Kreisfit-Durchmesser): Umkreisradius = d/2 / cos(22,5 Grad), damit die Schnittausdehnung dem Fit entspricht
-                R = d / 2 / math.cos(math.radians(22.5)); return [(c[0] + R * math.cos(math.radians(k * 45 + 22.5)), c[1] + R * math.sin(math.radians(k * 45 + 22.5)), z) for k in range(8)]
-            for (z0, d0), (z1, d1) in zip(lay[:-1], lay[1:]): adds.append(M.hull_points(okt(z0 - 0.02, d0) + okt(z1, d1)))
-        else:
-            adds.append(M.cylinder(EH, OR, OR, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 0.95)))
-        for k in range(8):                                                   # schmale Fenster in jeder zweiten Flaeche
-            if k % 2 or zum_turm(k): continue
-            a = math.radians(k * 45)
-            fen = M.cube((0.5, 0.34, 0.85)).translate((-0.25, -0.17, -0.42)).translate((OR - 0.1, 0, 0)).rotate((0, 0, math.degrees(a)))
-            for zf in (T1 + 1.7, T1 + 4.2):                                           # zwei Fensterzonen im hohen Erker
-                cuts.append(fen.translate((c[0], c[1], zf)))
-        if not (_PROF and _PROF.get("tuerm_profil")):
-            adds.append(M.cylinder(0.18, OR + 0.14, OR + 0.14, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], EO - 0.5)))   # Traufgesims
-            adds.append(M.cylinder(0.3, OR + 0.16, OR * 0.86, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], EO - 0.32)))     # Helmansatz
-        # spitzes Kupferdach, Kugel, Spitze
-        # Helm: schlanker Kegel bis TUERM_SPITZE - 0,5 (SfM: Knaeufe 44,4-44,7 m; Fotos: 2 m unter der Spitze 0,4-1,2 m dick, bei 37 m 0,8-1,9 m)
-        HK0 = EO - 0.05; HK1 = TS - 0.5
-        if not (_PROF and _PROF.get("tuerm_profil")):
-            adds.append(M.cylinder(HK1 - HK0, OR * 0.86, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], HK0)))   # Helm: steiler Kegel ab Erker-Oberkante
-        adds.append(M.sphere(0.2, 20).translate((c[0], c[1], HK1 + 0.15)))
-        adds.append(M.cylinder(0.35, 0.05, 0.015, 8).translate((c[0], c[1], HK1 + 0.15)))
+        bau_tuerm_baender(c, sx, sy)                                                            # einziger Bauweg (Altpfad entfernt, Register CJ)
 # ============ CSG ============
 cuts = [c for c in cuts if not c.is_empty()]
 body = M.batch_boolean(adds, OpType.Add)

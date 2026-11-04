@@ -5,8 +5,8 @@
       "seiten": ["+x"],
       "beleg": {"element": "Fenster 2 oben + 1 tiefer", "quelle": "Fotos 041/030/042 Vollbild (Sued)", "anzahl": 3},
       "oeffnungen": [
-        {"typ": "fenster", "u": -2.1, "z": 21.65, "breite": 0.6, "hoehe": 0.85, "was": "Schlitzfenster links, ca. 4,8 m unter der Uhrmitte"},
-        {"typ": "fenster", "u": 2.1, "z": 21.65, "breite": 0.6, "hoehe": 0.85, "was": "Schlitzfenster rechts"},
+        {"typ": "fenster", "u": -2.1, "z": 21.65, "breite": 0.77, "hoehe": 0.85, "was": "Schlitzfenster links, ca. 4,8 m unter der Uhrmitte; Breite 0,77 m nach M-041-006 (Foto 041, +-0,06), vorher 0,6"},
+        {"typ": "fenster", "u": 2.1, "z": 21.65, "breite": 0.77, "hoehe": 0.85, "was": "Schlitzfenster rechts; Breite 0,77 m nach M-041-006, vorher 0,6"},
         {"typ": "fenster", "u": 0.5, "z": 18.1, "breite": 0.5, "hoehe": 0.8, "was": "drittes Fenster, ca. 8,5 m unter der Uhrmitte, rechts der Mitte"}
       ]
     },

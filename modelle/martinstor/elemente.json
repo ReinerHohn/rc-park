@@ -41,12 +41,15 @@
  },
  {
   "seite": "+x",
-  "element": "Eckquader Schaft: Schichthoehe 0,25 m unter / 0,5 m ueber QUADER_ZONE_Z, Blocklaenge QUADER_LAENGE",
-  "quelle": "wolke_baender.py Farbperioden senkrecht + quer (Register AX); Nutzer 'Backsteine zu grob'",
-  "unten": 0.25,
-  "oben": 0.4,
-  "grenze": 23.0,
-  "laenge": 0.35,
+  "element": "Eckquader Schaft: Schichthoehe 0.58-0.68 m (je Hoehe), Steine lang 1.02 / kurz 0.58 m im Wechsel",
+  "quelle": "Foto-Messprotokolle M-030-020, M-030-021, M-030-022, M-030-023, M-030-024, M-030-025, M-030-026, M-030-027, M-030-028, M-030-029, M-030-030 (Register CI); Rueckfall Wolken-Farbperioden (Register AX)",
+  "lang": 1.019,
+  "kurz": 0.581,
+  "n": {
+   "schicht": 4,
+   "lang": 3,
+   "kurz": 3
+  },
   "seite_name": "Sued"
  },
  {
@@ -145,29 +148,29 @@
  },
  {
   "seite": "+x",
-  "element": "Glockenstock mit 2 Schallarkaden",
-  "quelle": "Fotos 041/043 (Sued), 031 (Nord)",
+  "element": "Glockenstock: 2 Schallarkaden (Segmentbogen) aus Wolkenlaeufen, Breiten 1.20/1.52 m, Scheitel 39.44 m",
+  "quelle": "Wolke Nord Band offen (profile_baender_zentral) + Foto 030 M-030-011..014, Z-030-001",
   "anzahl": 2,
   "seite_name": "Sued"
  },
  {
   "seite": "-x",
-  "element": "Glockenstock mit 2 Schallarkaden",
-  "quelle": "Fotos 041/043 (Sued), 031 (Nord)",
+  "element": "Glockenstock: 2 Schallarkaden (Segmentbogen) aus Wolkenlaeufen, Breiten 1.20/1.52 m, Scheitel 39.44 m",
+  "quelle": "Wolke Nord Band offen (profile_baender_zentral) + Foto 030 M-030-011..014, Z-030-001",
   "anzahl": 2,
   "seite_name": "Nord"
  },
  {
   "seite": "+y",
-  "element": "Glockenstock mit 2 Schallarkaden",
-  "quelle": "ANNAHME: Ost/West nicht fotografiert",
+  "element": "Glockenstock: 2 Schallarkaden (Segmentbogen) aus Wolkenlaeufen, Breiten 1.20/1.52 m, Scheitel 39.44 m",
+  "quelle": "ANNAHME: Ost/West wie Nord/Sued (nicht fotografiert)",
   "anzahl": 2,
   "seite_name": "Ost"
  },
  {
   "seite": "-y",
-  "element": "Glockenstock mit 2 Schallarkaden",
-  "quelle": "ANNAHME: Ost/West nicht fotografiert",
+  "element": "Glockenstock: 2 Schallarkaden (Segmentbogen) aus Wolkenlaeufen, Breiten 1.20/1.52 m, Scheitel 39.44 m",
+  "quelle": "ANNAHME: Ost/West wie Nord/Sued (nicht fotografiert)",
   "anzahl": 2,
   "seite_name": "West"
  },
@@ -274,9 +277,23 @@
  },
  {
   "seite": "dach",
-  "element": "Ecktuermchen Arkadenband: 2 Rundbogenoeffnungen je Aussenflaeche",
-  "quelle": "ANNAHME aus Foto 043 (Sued, gepaarte Boegen); Bandlage aus der Wolke (dunkel 61 %)",
-  "je_flaeche": 2,
+  "element": "Ecktuermchen Arkadenband: EINE Oeffnung je Aussenflaeche, Breite 0.78 der Flaeche",
+  "quelle": "Foto-Zaehlprotokoll Z-043-001/002 (Foto 043, linkes und rechtes Tuermchen); Bandlage aus der Wolke (dunkel 61 %)",
+  "je_flaeche": 1,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Arkade: flacher Segmentbogen, Stich 0.16 der Breite",
+  "quelle": "Foto 030 kalibriert M-030-015/017 (Register CF)",
+  "stich": 0.16,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Arkadenband HOHL (Bogen offen in den Erker-Innenraum, Wand 0,2 m)",
+  "quelle": "Foto 043: hinter jedem Bogen dunkler Innenraum (Z-043-001/002); Wolke Band offen dunkel 61 %; ANNAHME Wandstaerke 0,2 m, Register CD",
+  "wand": 0.2,
   "seite_name": "dach"
  },
  {
@@ -284,6 +301,14 @@
   "element": "Ecktuermchen Traufkonsolen ('Boeckchen') 8 je Tuermchen",
   "quelle": "ANNAHME aus Foto 043; Traufplatte r aus der Wolke",
   "anzahl": 8,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Ecktuermchen Achsen: symmetrisch (eine Achse gespiegelt)",
+  "quelle": "wolke_profile.py tuerm_achsen (Register CH): Kreisfit je Quadrant, quer relativ zur Zentralmitte (Gerade unter/ueber den Tuermchen); Asymmetrie quer 0.02 m <= Grenze 0.263 m",
+  "asym_quer": 0.02,
+  "grenze": 0.263,
   "seite_name": "dach"
  },
  {

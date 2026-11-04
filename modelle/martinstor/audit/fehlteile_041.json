@@ -8,43 +8,15 @@
   {
    "zelle": [
     470,
-    752,
-    94
-   ],
-   "score": -0.981,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    1.14,
-    -5.02,
-    33.97
-   ]
-  },
-  {
-   "zelle": [
-    470,
     846,
     94
    ],
-   "score": -0.95,
+   "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    1.51,
+    1.52,
     -5.01,
-    31.4
-   ]
-  },
-  {
-   "zelle": [
-    1128,
-    564,
-    94
-   ],
-   "score": 0.789,
-   "art": "FEHLT im Modell",
-   "xyz": [
-    4.63,
-    4.08,
-    36.93
+    31.39
    ]
   },
   {
@@ -53,26 +25,26 @@
     1034,
     94
    ],
-   "score": -0.788,
+   "score": -0.827,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -0.77,
+    -0.26,
     -4.81,
-    29.98
+    29.53
    ]
   },
   {
    "zelle": [
+    470,
     752,
-    564,
     94
    ],
-   "score": 0.767,
-   "art": "FEHLT im Modell",
+   "score": -0.783,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    1.18,
-    -1.09,
-    39.92
+    0.99,
+    -5.01,
+    34.16
    ]
   },
   {
@@ -81,13 +53,42 @@
     940,
     94
    ],
-   "score": -0.688,
+   "score": -0.781,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    0.78,
-    -5.02,
-    30.33
+    0.8,
+    -5.0,
+    30.28
+   ]
+  },
+  {
+   "zelle": [
+    1128,
+    564,
+    94
+   ],
+   "score": 0.724,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    4.63,
+    4.08,
+    36.92
+   ]
+  },
+  {
+   "zelle": [
+    940,
+    1128,
+    94
+   ],
+   "score": -0.708,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -2.1,
+    2.78,
+    31.0
    ]
   }
- ]
+ ],
+ "versatz_test": null
 }

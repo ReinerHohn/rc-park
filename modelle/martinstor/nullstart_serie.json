@@ -2597,6 +2597,1037 @@
     "kalibrieren_044",
     "kalibrieren_062"
    ]
+  },
+  {
+   "datum": "2026-11-03 16:48",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 6,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 4.2,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.0,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.9,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 2.8,
+     "entfernt": 2,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 2.9,
+     "entfernt": 4,
+     "kameras": 27,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.0,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    }
+   ],
+   "bestanden": "63/70",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Band tuermchen offen (33.25-34.75 m): Oeffnungen je Flaeche breite bei 34.03 m"
+   ],
+   "masse_abweichend": [
+    "KONSOLE_Z0",
+    "QUADER_TUERMCHEN"
+   ],
+   "frisch_abgeleitet": 17,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_022",
+    "kalibrieren_043",
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "hybrid"
+   ]
+  },
+  {
+   "datum": "2026-11-03 17:25",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 1,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 3.4,
+     "entfernt": 4,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 3.5,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 5.5,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 5.5,
+     "entfernt": 4,
+     "kameras": 27,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 4.5,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 5.4,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    }
+   ],
+   "bestanden": "62/71",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Zinnen-Scharten Suedseite (Anzahl, z 31,1 m)",
+    "Zinnen-Scharten Nordseite (Anzahl, z 31,1 m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Helm geradlinig (quer, 41.8-54.8 m): max. Abweichung der Modellfront von der Geraden (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "GZ0",
+    "GZ1",
+    "KRAG_TRAUFE",
+    "KRAG_UEBER",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 15,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_022",
+    "kalibrieren_044",
+    "kalibrieren_043",
+    "kalibrieren_062",
+    "hybrid"
+   ]
+  },
+  {
+   "datum": "2026-11-03 17:34",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 2,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 3.9,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.8,
+     "entfernt": 2,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 4.8,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 5.0,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 37.5,
+     "entfernt": 0,
+     "kameras": 27,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 5.4,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    }
+   ],
+   "bestanden": "61/71",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 2 m unter Spitze (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+    "Band tuermchen offen (33.25-34.50 m): Oeffnungen je Flaeche breite bei 33.88 m",
+    "Band tuermchen Quaderperiode 29-33 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "DACHHOEHE",
+    "GZ0",
+    "GZ1",
+    "KONSOLE_Z0",
+    "KONSOLE_Z1",
+    "KRAG_TRAUFE",
+    "QUADER_ZONE_Z",
+    "UZ"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_022",
+    "kalibrieren_043",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "hybrid"
+   ]
+  },
+  {
+   "datum": "2026-11-03 17:45",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 6,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.0,
+     "entfernt": 2,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 40.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.0,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 2.8,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 4.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.0,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    }
+   ],
+   "bestanden": "62/71",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "KONSOLE_Z0",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_022",
+    "kalibrieren_043",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "hybrid"
+   ]
+  },
+  {
+   "datum": "2026-11-03 17:54",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 6,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.0,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 40.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.0,
+     "entfernt": 2,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 22.6,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 4.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.0,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    }
+   ],
+   "bestanden": "62/71",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)"
+   ],
+   "masse_abweichend": [
+    "KONSOLE_Z0",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_022",
+    "kalibrieren_043",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "hybrid"
+   ]
+  },
+  {
+   "datum": "2026-11-03 18:58",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 5,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.0,
+     "entfernt": 2,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 40.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.0,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 22.6,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 2.0,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.0,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    }
+   ],
+   "bestanden": "66/75",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+    "Ecktuermchen Arkade: flacher Segmentbogen (Breite bei 85 % / 30 % der Oeffnungshoehe)",
+    "Band tuermchen stein (34.50-35.00 m): Aussenradius bei 34.75 m (m)"
+   ],
+   "masse_abweichend": [
+    "KONSOLE_Z0",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 19,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_022",
+    "kalibrieren_043",
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "hybrid"
+   ]
+  },
+  {
+   "datum": "2026-11-03 19:17",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 5,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.0,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 40.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.0,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 22.6,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 2.0,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.0,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    }
+   ],
+   "bestanden": "66/73",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Ecktuermchen: Erkerkoerper Durchmesser bei 34 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Glockenstock Schallarkaden Sued: Breite je Oeffnung (Foto 030 kalibriert)"
+   ],
+   "masse_abweichend": [
+    "KONSOLE_Z0",
+    "KRAG_UEBER"
+   ],
+   "frisch_abgeleitet": 19,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_022",
+    "kalibrieren_043",
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "hybrid"
+   ]
+  },
+  {
+   "datum": "2026-11-03 19:27",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 6,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.0,
+     "entfernt": 2,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.9,
+     "entfernt": 0,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.0,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 22.6,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 4.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.0,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    }
+   ],
+   "bestanden": "66/75",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Glockenstock Schallarkaden Sued: Breite je Oeffnung (Foto 030 kalibriert)"
+   ],
+   "masse_abweichend": [
+    "KONSOLE_Z0",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_022",
+    "kalibrieren_043",
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "hybrid"
+   ]
+  },
+  {
+   "datum": "2026-11-03 20:12",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 6,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.0,
+     "entfernt": 2,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 40.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.0,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 22.6,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 4.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.0,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    }
+   ],
+   "bestanden": "66/75",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Glockenstock Schallarkaden Sued: Breite je Oeffnung (Foto 030 kalibriert)"
+   ],
+   "masse_abweichend": [
+    "KONSOLE_Z0",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_022",
+    "kalibrieren_043",
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "hybrid"
+   ]
+  },
+  {
+   "datum": "2026-11-03 20:28",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 6,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.0,
+     "entfernt": 2,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 40.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.0,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 22.6,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 4.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.0,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    }
+   ],
+   "bestanden": "66/75",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Glockenstock Schallarkaden Sued: Breite je Oeffnung (Foto 030 kalibriert)"
+   ],
+   "masse_abweichend": [
+    "KONSOLE_Z0",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_022",
+    "kalibrieren_044",
+    "kalibrieren_043",
+    "kalibrieren_062",
+    "hybrid"
+   ]
+  },
+  {
+   "datum": "2026-11-03 20:44",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 6,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.0,
+     "entfernt": 2,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 2.9,
+     "entfernt": 0,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.0,
+     "entfernt": 2,
+     "kameras": 25,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 22.6,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 4.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.0,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    }
+   ],
+   "bestanden": "66/77",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Silhouettenbreite Zone 23,5-28 m (Kamera 031)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+    "Glockenstock Schallarkaden Sued: Breite je Oeffnung (Foto 030 kalibriert)"
+   ],
+   "masse_abweichend": [
+    "KONSOLE_Z0",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_022",
+    "kalibrieren_062",
+    "kalibrieren_044",
+    "kalibrieren_043",
+    "hybrid"
+   ]
+  },
+  {
+   "datum": "2026-11-03 21:02",
+   "mapper": "incremental",
+   "streng": false,
+   "stufe": "grob",
+   "dicht_extra": "--max-size 1000",
+   "netzwahl": 6,
+   "versuche": [
+    {
+     "versuch": 1,
+     "sigma": 2.0,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 2,
+     "sigma": 40.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 3,
+     "sigma": 2.0,
+     "entfernt": 3,
+     "kameras": 26,
+     "fehler": false
+    },
+    {
+     "versuch": 4,
+     "sigma": 2.8,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 5,
+     "sigma": 4.0,
+     "entfernt": 0,
+     "kameras": 28,
+     "fehler": false
+    },
+    {
+     "versuch": 6,
+     "sigma": 2.0,
+     "entfernt": 5,
+     "kameras": 28,
+     "fehler": false
+    }
+   ],
+   "bestanden": "67/77",
+   "nicht_bestanden": [
+    "Tuermchen-Spitze Hoehe (m)",
+    "Tuermchen-Kegel Durchmesser 4 m unter Spitze (m)",
+    "Tuermchen Anzahl (Querschnitte 2 m unter Spitze)",
+    "Dachansatz / Glockenstock-Oberkante (m)",
+    "Silhouettenbreite bei 30 m (m, 3 Kameras)",
+    "Profil Ecktuermchen: Durchmesser bei 42.50 m (m)",
+    "Helm geradlinig (quer, 41.8-53.8 m): max. Abweichung der Modellfront von der Geraden (m)",
+    "Band zentral Quaderperiode 20-24 m: Reliefperiode an der Kante (m)",
+    "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
+    "Glockenstock Schallarkaden Sued: Breite je Oeffnung (Foto 030 kalibriert)"
+   ],
+   "masse_abweichend": [
+    "KONSOLE_Z0",
+    "QUADER_ZONE_Z"
+   ],
+   "frisch_abgeleitet": 18,
+   "bleibt_referenz": [
+    "GY",
+    "EX",
+    "EY",
+    "ER",
+    "DACH_MITTE_Z",
+    "DACH_MITTE2_Z",
+    "PROFIL_DATEI"
+   ],
+   "uebersprungen": [
+    "kalibrieren_022",
+    "kalibrieren_043",
+    "kalibrieren_044",
+    "kalibrieren_062",
+    "hybrid"
+   ]
   }
  ],
  "hinweis": "Laeufe 6-9 nachgetragen aus Sitzungsausgaben (Pruefungsnamen teils verkuerzt); ab Lauf 10 schreibt tools/nullstart.py selbst"

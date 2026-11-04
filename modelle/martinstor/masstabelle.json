@@ -598,6 +598,59 @@
    "z": 34.25,
    "quer": 4.42,
    "achse_tief": 4.0
+  },
+  "fenster_S_links_breite": {
+   "typ": "nische_breite",
+   "seite": "+x",
+   "z": 22.07,
+   "halb": 4.6,
+   "tiefe": 0.2
+  },
+  "tuermchen_arkade_durchblick": {
+   "typ": "oeffnung_durchblick",
+   "seite": "-x",
+   "z": 34.27,
+   "quer": 4.42,
+   "pfosten": 0.6,
+   "tiefe_min": 1.0
+  },
+  "glockenstock_schall_sued": {
+   "typ": "flaeche_oeffnungen",
+   "seite": "+x",
+   "z": 38.7,
+   "quer0": -2.4,
+   "quer1": 2.4,
+   "tiefe": 0.2
+  },
+  "tuermchen_arkade_form": {
+   "typ": "oeffnung_form",
+   "seite": "-x",
+   "halb": 0.6,
+   "band_koerper": "tuermchen",
+   "tiefe": 0.2,
+   "frac": 0.85
+  },
+  "tuermchen_arkade_hoehe": {
+   "typ": "oeffnung_form",
+   "seite": "-x",
+   "halb": 0.6,
+   "band_koerper": "tuermchen",
+   "tiefe": 0.2,
+   "frac": 0.85
+  },
+  "eckquader_schaft_periode_10": {
+   "typ": "relief_periode",
+   "seite": "+x",
+   "quer": 5.2,
+   "z0": 8.0,
+   "z1": 12.5
+  },
+  "eckquader_schaft_periode_24": {
+   "typ": "relief_periode",
+   "seite": "+x",
+   "quer": 4.95,
+   "z0": 22.5,
+   "z1": 27.0
   }
  },
  "pruefungen": [
@@ -1989,7 +2042,9 @@
      ],
      "grund": "wolke_baender.py neu gerechnet"
     }
-   ]
+   ],
+   "status": "widerspruch",
+   "widerspruch": "Foto 030 kalibriert: Eckquader-Schicht 0,52-0,68 m (M-030-020/021/026/027) gegen Wolken-Farbperiode 0,25 m; Nullstart Lauf 56 misst hier 0,55 m -> Wolkenschaetzer springt Grund-/Oberwelle (Register CI). Nicht gemittelt; naechster Schritt: wolke_baender Periodenpaar f/2f pruefen."
   },
   {
    "name": "Band zentral Quaderperiode 22-26 m: Reliefperiode an der Kante (m)",
@@ -2012,7 +2067,9 @@
      ],
      "grund": "wolke_baender.py neu gerechnet"
     }
-   ]
+   ],
+   "status": "widerspruch",
+   "widerspruch": "Foto 030 kalibriert z~25 m: Eckquader-Schicht 0,65/0,68 m (M-030-026/027) gegen Wolken-Farbperiode 0,50 m (Soll 0,38-0,62); Modell nach Foto 0,65. Nicht gemittelt (Regel 5, Register CI); naechster Schritt: zweites Foto (031/043) fuer z 22-26 m oder Wolkenschaetzer an grossen Quadern pruefen."
   },
   {
    "name": "Band tuermchen Quaderperiode 28-32 m: Reliefperiode an der Kante (m)",
@@ -2067,32 +2124,6 @@
    "protokoll": "profile_baender_tuermchen.json"
   },
   {
-   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche anzahl bei 34.27 m",
-   "wert": "band_tuermchen_oeffn_3427_anzahl",
-   "soll": [
-    2,
-    2
-   ],
-   "quelle": "wolke_baender.py (tuermchen): Dunkellaeufe entlang der sichtbaren Flaeche im Band offen: 2 je Flaeche, Breiten [0.48, 0.72, 0.48, 0.4, 0.16], Hoehe [33.62, 34.92]; Nutzer: 'Boegen zu klein und zu viele'",
-   "quelltyp": "sfm_bodenanker",
-   "merkmal": "schlankheit",
-   "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "profile_baender_tuermchen.json"
-  },
-  {
-   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche breite bei 34.27 m",
-   "wert": "band_tuermchen_oeffn_3427_breite_median",
-   "soll": [
-    0.33,
-    0.63
-   ],
-   "quelle": "wolke_baender.py (tuermchen): Dunkellaeufe entlang der sichtbaren Flaeche im Band offen: 2 je Flaeche, Breiten [0.48, 0.72, 0.48, 0.4, 0.16], Hoehe [33.62, 34.92]; Nutzer: 'Boegen zu klein und zu viele'",
-   "quelltyp": "sfm_bodenanker",
-   "merkmal": "schlankheit",
-   "massstab": "LoD2-Eckkanten + Wandebene",
-   "protokoll": "profile_baender_tuermchen.json"
-  },
-  {
    "name": "Helm geradlinig (tief, 41.8-54.8 m): max. Abweichung der Modellfront von der Geraden (m)",
    "wert": "helm_gerade_tief",
    "soll": [
@@ -2117,6 +2148,138 @@
    "merkmal": "schlankheit",
    "massstab": "LoD2-Eckkanten + Wandebene",
    "protokoll": "profile_nord.json"
+  },
+  {
+   "name": "Lueftungsfenster Sued Oeffnung Breite (m, Fenstermitte z 22,07)",
+   "wert": "fenster_S_links_breite",
+   "soll": [
+    0.68,
+    0.88
+   ],
+   "quelle": "M-041-006: innere dunkle Oeffnung 0,77 m +-0,06 (Foto 041, K-041 aus amtlichen Ankern, Ebene x=4,85; K-041 RMS 2,0 % = grob). Rechtes Fenster innen NICHT gegengemessen. Messung am Modell: breitester Rueckversprung >= 0,2 m bei z 22,07 (Fenstermitte; fassade.json z=21,65 ist die Unterkante) ueber die ganze Wand (beide Fenster gleich gross im Generator; nur das linke Fenster wurde im Foto gemessen)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "massstab": "anker",
+   "protokoll": [
+    "M-041-006"
+   ],
+   "belegt": "ein_lauf",
+   "historie": [
+    {
+     "datum": "2026-11-03",
+     "grund": "NEUE Pruefung aus Strang B (Fensterbreite Sued): Generator hat 0,6 m, gemessen 0,77 m; vor der Aenderung von fassade.json eingetragen, muss am aktuellen Modell FEHLSCHLAGEN (CLAUDE.md 2)"
+    }
+   ]
+  },
+  {
+   "name": "Ecktuermchen Arkadenband: Oeffnungen je Achteckflaeche (Foto-Zaehlung 043)",
+   "wert": "band_tuermchen_oeffn_3427_anzahl",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Foto 043 (Sued), linkes UND rechtes Ecktuermchen: je voll sichtbarer Achteckflaeche genau EINE Oeffnung, Pfosten nur an den Ecken; Zaehlprotokoll Z-043-001 (2 volle Flaechen, 4 Oeffnungen sichtbar) und Z-043-002, Markierungen im Protokollbild. Nutzer 2026-11-03: 'pro Seite nur ein Bogen, keine Zwischensaeule'.",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "zaehlung",
+   "protokoll": "Z-043-001"
+  },
+  {
+   "name": "Ecktuermchen Arkade: Oeffnung offen in den Erker-Innenraum (keine flache Nische)",
+   "wert": "tuermchen_arkade_durchblick_durchgehend",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Foto 043 (Sued), beide Ecktuermchen: hinter jedem Bogen dunkler Innenraum, keine Rueckwand in Bogenebene (Z-043-001/002 Bild); Nutzer 2026-11-03 Viewer 'kleine Boegen drinnen'. ANNAHME Schwelle 1,0 m Tiefe (= ca. 2/3 Erkerradius; eine Nische waere 0,35 m).",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade",
+   "massstab": "foto_intern",
+   "protokoll": "Z-043-001"
+  },
+  {
+   "name": "Glockenstock Schallarkaden Sued: Breite je Oeffnung (Foto 030 kalibriert)",
+   "wert": "glockenstock_schall_sued_breite_median",
+   "soll": [
+    1.3,
+    1.6
+   ],
+   "quelle": "Foto 030, Kamera K-030 (amtliche Anker), Ebene x=3,55: 1,40 und 1,46 m +-0,10 (M-030-011/012); Wolke Laeufe 1,20/1,52 m bestaetigt; Nutzer 2026-11-03 'kleine Boegelchen'",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade",
+   "massstab": "foto_kalibriert",
+   "protokoll": "M-030-011"
+  },
+  {
+   "name": "Glockenstock Schallarkaden Sued: Anzahl je Flaeche (Foto-Zaehlung 030)",
+   "wert": "glockenstock_schall_sued_anzahl",
+   "soll": [
+    2,
+    2
+   ],
+   "quelle": "Foto 030: zwei Lamellen-Segmentboegen je Flaeche, schmaler Mittelpfeiler (Z-030-001)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "zaehlung",
+   "protokoll": "Z-030-001"
+  },
+  {
+   "name": "Ecktuermchen Arkade: flacher Segmentbogen (Breite bei 85 % / 30 % der Oeffnungshoehe)",
+   "wert": "tuermchen_arkade_form_verhaeltnis",
+   "soll": [
+    0.92,
+    1.0
+   ],
+   "quelle": "Foto 030 kalibriert (K-030, Ebene x=5,55): Stich 0,17 bei Breite 1,06-1,11 m (M-030-015/017) -> bei 85 % Hoehe noch volle Breite; Nutzer 2026-11-03 'kleine Boegelchen' (3x).",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade",
+   "massstab": "foto_kalibriert",
+   "protokoll": "M-030-017"
+  },
+  {
+   "name": "Ecktuermchen Arkade: Oeffnungshoehe (Bruestung bis Scheitel, Foto 030 kalibriert)",
+   "wert": "tuermchen_arkade_hoehe_hoehe",
+   "soll": [
+    1.0,
+    1.45
+   ],
+   "quelle": "Foto 030 kalibriert K-030 Ebene x=5,55: 1,09 m +-0,09 (M-030-016); Wolke Ref dunkel 33,6-35,0 (1,4 m). Bereich 1,0-1,45 deckt beide (Widerspruch Foto/Wolke 0,3 m offen, nicht gemittelt). Nullstart Lauf 53 baute 0,93 m (Bandgrenze 34,5).",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade",
+   "massstab": "foto_kalibriert",
+   "protokoll": "M-030-016"
+  },
+  {
+   "name": "Eckquader Schaft z 8-12,5 m: Schichthoehe (Reliefperiode an der Kante, Foto 030 kalibriert) (m)",
+   "wert": "eckquader_schaft_periode_10",
+   "soll": [
+    0.45,
+    0.7
+   ],
+   "quelle": "Foto 030, Kamera K-030 (amtliche Anker), Ebene x=4,8: Schicht 0,52 / 0,58 m +-0,07 (M-030-020/021); Lang/Kurz-Zahnung 1,02 / 0,58 m (M-030-022/023); Register CI",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "verhaeltnis",
+   "massstab": "foto_kalibriert",
+   "protokoll": "M-030-020",
+   "historie": [
+    "2026-11-03 angelegt als fehlschlagende Pruefung vor der Generatoraenderung (Regel 2, Register CI)"
+   ]
+  },
+  {
+   "name": "Eckquader Schaft z 22,5-27 m: Schichthoehe (Reliefperiode an der Kante, Foto 030 kalibriert) (m)",
+   "wert": "eckquader_schaft_periode_24",
+   "soll": [
+    0.5,
+    0.8
+   ],
+   "quelle": "Foto 030, Kamera K-030, Ebene x=4,75: Schicht 0,68 / 0,65 m +-0,08 (M-030-026/027; Kamera oben unsicher); Register CI",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "verhaeltnis",
+   "massstab": "foto_kalibriert",
+   "protokoll": "M-030-026",
+   "historie": [
+    "2026-11-03 angelegt als fehlschlagende Pruefung vor der Generatoraenderung (Regel 2, Register CI)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -2190,30 +2353,6 @@
    "z_bis": 48.0,
    "abweichung": 1.08,
    "text": "Silhouettenbreite z 48.0-48.0 m: Foto 1.32 m, Modell 0.24 m (+1.08 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-35-36",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 35.0,
-   "z_bis": 35.5,
-   "abweichung": 0.66,
-   "text": "Silhouettenbreite z 35.0-35.5 m: Foto 11.78 m, Modell 11.12 m (+0.66 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-47-48",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 47.0,
-   "z_bis": 48.0,
-   "abweichung": -1.67,
-   "text": "Silhouettenbreite z 47.0-48.0 m: Foto 1.37 m, Modell 3.04 m (-1.67 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
@@ -2300,78 +2439,6 @@
    "art": "hoehe",
    "text": "Gesamthoehe: SfM-Nadelende 69,7 +-1,4 m (5 Kameras) gegen Dokument 60 m (Bauforschung BW, 1901) / 65 m (Objektbeschreibung). Mit First 55,4 (DOM1 Zellen 53-55 + SfM Goldkugeln) und Foto 049 (Spitze/Dach 1,2; Knauf 20-28 %) ist 60 m ausgeschlossen; 65 m moeglich, wenn das Nadelende in den Fotos falsch gepickt wurde (duenn, Residuen bis 30 px). Nicht gemittelt: Modell 70, Pruefung 68-72.",
    "naechster_schritt": "Nadelende in 006/014/040/049 in der Lupe nachpicken (Finial vs Wetterfahne) und mit --name nord neu triangulieren; Hoehenbezug der Dokumente klaeren (Strasse vs Gelaende)."
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-40-43",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 40.0,
-   "z_bis": 43.0,
-   "abweichung": 1.08,
-   "text": "Silhouettenbreite z 40.0-43.0 m: Foto 12.45 m, Modell 11.37 m (+1.08 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-44-46",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 44.5,
-   "z_bis": 46.0,
-   "abweichung": -4.39,
-   "text": "Silhouettenbreite z 44.5-46.0 m: Foto 4.19 m, Modell 8.58 m (-4.39 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-48-50",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 47.5,
-   "z_bis": 50.0,
-   "abweichung": -4.33,
-   "text": "Silhouettenbreite z 47.5-50.0 m: Foto 0.87 m, Modell 5.20 m (-4.33 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-40-42",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 40.0,
-   "z_bis": 41.5,
-   "abweichung": 1.21,
-   "text": "Silhouettenbreite z 40.0-41.5 m: Foto 13.07 m, Modell 11.86 m (+1.21 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-43-43",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 43.0,
-   "z_bis": 43.0,
-   "abweichung": 1.08,
-   "text": "Silhouettenbreite z 43.0-43.0 m: Foto 10.00 m, Modell 8.92 m (+1.08 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-45-50",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 45.0,
-   "z_bis": 50.0,
-   "abweichung": -3.17,
-   "text": "Silhouettenbreite z 45.0-50.0 m: Foto 2.09 m, Modell 5.26 m (-3.17 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
    "datum": "2026-11-01",
@@ -2718,42 +2785,6 @@
   },
   {
    "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-40-40",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 40.0,
-   "z_bis": 40.5,
-   "abweichung": 1.12,
-   "text": "Silhouettenbreite z 40.0-40.5 m: Foto 13.13 m, Modell 12.01 m (+1.12 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-30-32",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 29.5,
-   "z_bis": 32.0,
-   "abweichung": -0.87,
-   "text": "Silhouettenbreite z 29.5-32.0 m: Foto 11.18 m, Modell 12.05 m (-0.87 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-36-40",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 36.0,
-   "z_bis": 39.5,
-   "abweichung": -0.74,
-   "text": "Silhouettenbreite z 36.0-39.5 m: Foto 11.32 m, Modell 12.06 m (-0.74 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
    "wer": "wolke_vs_modell (nord, Versatz +0.26 m abgezogen)",
    "auto_id": "wolke-nord-wirklichkeit_weiter_vorn-36--3",
    "art": "wolke_vs_modell",
@@ -2877,90 +2908,6 @@
    "art": "sicht",
    "text": "Das grosse Dach passt in der Seitenansicht nicht zur Wolke (Flanke/Form).",
    "naechster_schritt": "Dachprofil aus der Wolke: Breite y (verlaesslich) und Nordflanke x je 1 m gegen das Modell; Tiefe nur als Hinweis (Drift), Breite als Pruefung."
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-30-34",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 29.5,
-   "z_bis": 34.0,
-   "abweichung": -0.94,
-   "text": "Silhouettenbreite z 29.5-34.0 m: Foto 11.13 m, Modell 12.08 m (-0.94 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-44-44",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 43.5,
-   "z_bis": 44.0,
-   "abweichung": -1.62,
-   "text": "Silhouettenbreite z 43.5-44.0 m: Foto 8.08 m, Modell 9.70 m (-1.62 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-47-50",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 47.0,
-   "z_bis": 50.0,
-   "abweichung": -4.15,
-   "text": "Silhouettenbreite z 47.0-50.0 m: Foto 1.14 m, Modell 5.29 m (-4.15 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-42-42",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 42.0,
-   "z_bis": 42.5,
-   "abweichung": -0.75,
-   "text": "Silhouettenbreite z 42.0-42.5 m: Foto 12.43 m, Modell 13.18 m (-0.75 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-45-45",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 45.0,
-   "z_bis": 45.0,
-   "abweichung": -8.26,
-   "text": "Silhouettenbreite z 45.0-45.0 m: Foto 4.32 m, Modell 12.58 m (-8.26 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-36-42",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 36.0,
-   "z_bis": 42.5,
-   "abweichung": -0.75,
-   "text": "Silhouettenbreite z 36.0-42.5 m: Foto 11.93 m, Modell 12.68 m (-0.75 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
-   "auto_id": "breite-041-44-45",
-   "art": "breite",
-   "foto": "041",
-   "z_von": 44.5,
-   "z_bis": 45.0,
-   "abweichung": -8.4,
-   "text": "Silhouettenbreite z 44.5-45.0 m: Foto 4.47 m, Modell 12.87 m (-8.40 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
    "datum": "auto",
@@ -3216,6 +3163,214 @@
    "naechster_schritt": "Pruefen mit d1_cv (OPENCV) ob die Clip-Streuung bei 45,2 m kleiner wird (Plan 1.1/1.2). Erst wenn Clips untereinander < 0,3 m streuen, ist die Drohnenbreite als Beleg tauglich."
   },
   {
+   "datum": "2026-11-03",
+   "wer": "Sichtblatt audit/seiten.jpg (Claude, Sichtbeobachtung)",
+   "art": "sicht",
+   "foto": "022,040",
+   "text": "Im Sichtblatt passt der Modellrender zu Foto 022 und 040 nicht zum Fotoausschnitt: das Modell erscheint nur als schmaler, schraeger Streifen am Bildrand, der Turm im Foto steht dagegen in der Bildmitte. Verdacht: Silhouettenkamera/Kamera dieser Fotos falsch, nicht das Modell. URSACHE (Strang A, geprueft): Silhouettenkamera-Fit steht bei 022/040 an der Optimierergrenze sx=-120 px (nicht an K-Dateien; das Sichtblatt nutzt dach_gemeinsam_kameras.json).",
+   "naechster_schritt": "Pruefung 'Optimiererparameter an der Grenze -> Kamera unsicher, im Sichtblatt markieren/ausschliessen' (automatisch); K-022/K-043 nur mit Handpicks loesbar, niedrige Prioritaet"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Sichtblatt audit/seiten.jpg (Claude, Sichtbeobachtung)",
+   "art": "sicht",
+   "foto": "041,043,031",
+   "text": "ZURUECKGEZOGEN 2026-11-03: Die Behauptung 'Uhr, Zinnen und Fensterreihe fehlen im Modell' war FALSCH. elemente.json/fassade.json enthalten Uhr (4,2 m), Giebel, Zinnen, Fenster; das Sichtblatt (kleines graues Rendering) zeigt sie nur nicht erkennbar. Urspruenglicher Text: Modell ist als graue, einfarbige Hohlform ohne erkennbare Uhr (Zifferblatt), Fensteroeffnungen und Zinnen-Zaehne; im Foto 031/043 sind Uhr, Zinnenkranz und Fensterreihe der Glockenstube klar sichtbar. Draufsicht zeigt Punktwolken-Rauschen (Fassade/Dachflaechen punktiert), also gerenderte Wolke statt geschlossener Flaeche in einigen Ansichten.",
+   "naechster_schritt": "keiner (widerlegt durch Strang B, M-041-001..010); Sichtblatt-Aufloesung/Beschriftung verbessern, damit Details erkennbar sind"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "tools/lotpruefung.py (Claude, Messung ohne Generator)",
+   "art": "messung",
+   "text": "Lot der Nordwand in den Wolken: im stufenfreien Abschnitt z 7-23 m neigt die Wand in ALLEN Wolken nach aussen (d nimmt mit z zu): SfM-Strasse roh +37, entzerrt +20, Drohne korrigiert +21 (unkorrigiert +51) mm/m; der Generator verjuengt sich dort um -13 mm/m. Differenz Wolke-Modell nach der Entzerrung ca. 33 mm/m (~1,9 Grad, ca. 0,5 m bei z 23). Eine Wand, die nach oben nach aussen kippt, ist unphysikalisch -> verbleibende Scherung der Wolke (Entzerrung zog nur 17 mm/m ab = Drift 0,0171, der Rest bleibt). ABER: Drohne ist am Nordnetz ausgerichtet, also NICHT unabhaengig von der Strassenwolke; Abschnitte 24-30 und 35-40 unbrauchbar (Wolke hat dort eigene Stufen bei z 27/28 und 33/34, die Abschnittsgrenzen stammen aus dem Generator). Die Verjuengung des Generators (-13 mm/m) ist nicht als echt belegt (Quelle offen).",
+   "naechster_schritt": "Quelle der Generator-Verjuengung klaeren (elemente.json/Profil); Abschnittsgrenzen aus der Wolke statt aus dem Generator; zweite unabhaengige Quelle (Foto-Lot senkrechter Kanten, Plan 2.3 Teil Bild); NICHT den Generator an die Wolkenneigung anpassen",
+   "foto": ""
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Quellenprüfung der Generator-Verjuengung (Claude)",
+   "art": "messung",
+   "foto": "",
+   "text": "Die Verjuengung des Schafts in der TIEFE (x) ist nicht gemessen: masse.json DB 9,8 (z 6,2, LoD2-Grundriss x-Ausdehnung) -> DK 9,3 (z 26) -> D 9,0 (z 30,5); DK/D tragen als Quelle 'Breitenprofil aus Kameras (Register T)', d. h. Silhouetten-BREITE (y). Es gibt keine Pruefzeile fuer die Schafttiefe x zwischen z 7 und 30 (nur Breiten y: sil30, sil_zone_u031, breite_y_*). Die -13 mm/m (0,5 m Halbtiefe-Aenderung ueber 20 m) mischen LoD2-Sockel mit einem Foto-Wert, dessen Skalenfehler (Kameras RMS 2-5 %) in derselben Groessenordnung liegt (0,2-0,45 m). Die Wolke (+20 mm/m nach Entzerrung, Restscherung) kann sie weder bestaetigen noch widerlegen. Einstufung: ANNAHME, nicht belegt.",
+   "naechster_schritt": "Tiefe aus einer SEITENANSICHT (Ost/West-Silhouette, Foto von der Seite oder LoD2-Wandebene Nord/Sued bei z 7 und 26) messen und als Pruefzeile 'Schafttiefe x bei z' eintragen, zuerst am aktuellen Modell fehlschlagen lassen; bis dahin Generator unveraendert; beleg() fuer DK/D als ANNAHME fuer die Tiefe kennzeichnen"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "LoD2-/Suedwand-Test der Schafttiefe (Claude)",
+   "art": "messung",
+   "foto": "",
+   "text": "Schafttiefe x aus LoD2: NICHT moeglich (Quellen-Blindheit). LoD2-Waende sind Extrusionen: Nordecke x -4,91 bei z -0,3 UND bei Wandoberkante 37,27, d. h. senkrecht per Konstruktion, 'generalisiert'; bauwerke/martinstor.json vermerkt zudem 'Footprint enthaelt Nachbarbau, echter Turm schmaler'. LoD2 kann eine Verjuengung weder belegen noch ausschliessen. Dicke T(z)=d_Nord+d_Sued waere gegen eine gemeinsame x-Scherung unempfindlich, aber die Suedwand fehlt in allen Wolken (lotpruefung Sued(+x): 0 brauchbare Schichten in Strasse, Drohne roh und korrigiert).",
+   "naechster_schritt": "Suedwand-Daten beschaffen (Fotos/Video von Sued, Plan 4.1/4.3) - dann T(z) messen; bis dahin bleibt die Verjuengung ANNAHME"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "tools/lotpruefung.py --eigene-abschnitte (Claude)",
+   "art": "messung",
+   "foto": "",
+   "text": "Lot der Nordwand mit Abschnittsgrenzen AUS DER WOLKE (Stufe >= 0,2 m, keine Generatorgrenzen): Restneigung nach aussen bleibt in den entzerrten/korrigierten Wolken in allen belastbaren Abschnitten: Strasse entzerrt z 15-23 +17 [+2,+28] mm/m, z 34-38 +26 [-10,+75]; Drohne korrigiert z 16-22 +18 [-22,+26], z 23-27 +35 [+22,+46], z 28-32 +7 [-19,+23], z 34-38 +22 [+12,+49]. Roh (unentzerrt) deutlich mehr (Strasse +31, Drohne unkorrigiert +48 in z 15-23). Damit hing das fruehere Ergebnis (+20) NICHT an der Abschnittswahl aus dem Generator. Grenzen: Drohne ist am Nordnetz ausgerichtet (nicht unabhaengig von der Strasse), CI teils breit (4-9 Schichten), Abschnitt 28-32 ohne Neigung innerhalb des CI.",
+   "naechster_schritt": "unabhaengige Quelle fuer das Lot (Foto-Kanten, Plan 2.3 Bildteil) oder Bodenwolke nach Jobende mit denselben Abschnitten messen (wolken_vergleich.py); Generator NICHT aendern"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Diagnose Sued-Netz (Claude, CPU, pycolmap)",
+   "art": "messung",
+   "foto": "",
+   "text": "Sued-Netz (sparse_sued/0, 40 Kameras, 5201 Punkte, reproj 0,77 px) ist geometrisch entartet, NICHT nur duenn: (1) ausgerichtet liegen alle Kamerazentren bei x 4,0-5,6 (= in der Suedwandebene x=+4,8), y 6-16, z -2,6..0,2 (Strassenfotos der Suedseite muessten bei x +20..+90 stehen; Nord-Netz: x -96..-27); (2) alle Punkte bei z -2,5..+3,2 (95 %), nur 5 von 5201 ueber 5 m - eine Fassade bis 30 m hat keine Punkte; (3) im eigenen Rahmen liegen die Kameras INNERHALB der Punktausdehnung (Kamera 6 Einheiten, Punkte 5), d. h. Basislaenge ~ Szenentiefe wie bei Nahaufnahmen, nicht wie bei Fassadenfotos aus 30+ m (Verhaeltnis ~0,1-0,3 erwartet). Vermutung (UNBELEGT): Falschmatches/Verkleben symmetrischer Fassadenteile (sfm-seitentrennung-symmetrie) oder Ausrichtung mit falschen Ankern. Die 51 Suedfotos der Abdeckung sind also vorhanden; das Netz nutzt sie nicht.",
+   "naechster_schritt": "Sued-Netz neu aufbauen ohne Handarbeit: Fotos nach Sichtkriterium trennen, Verzerrungstest als Abbruch, Netz je Teilgruppe (suedA/suedB existieren: 9 und 6 Kameras), Kameras+Punkte nach der Rekonstruktion in der Ausrichtung gegen LoD2-Suedwand pruefen (Abstand der Kamerazentren zur Wand >= 15 m); erst dann Wolke/Textur; als Pruefzeile 'Kamerazentren Sued-Netz Abstand zur Suedwand' (Soll >= 15 m) zuerst am aktuellen Netz fehlschlagen lassen"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Quellen-Inventur Bodenkameras (Claude)",
+   "art": "messung",
+   "foto": "",
+   "text": "Keine weiteren Boden-/Videokameras fuer Sued/Ost/West in den vorhandenen Daten: 19 Clips geprueft; verwendet 7 Boden + 4 Drohne; unbenutzt: gjVSpDSd8rU (Strasse, Turm winzig), hcWCTjNOnng/QJHz7vV0LEQ/R7RIkxQNOyE (Schwabentor/Muenster), 6RTrYMs_kYE (Stadt), XlAlc_fVqbg (Blick VOM Turm), F8y3lNgia5c (Datei defekt: ffprobe 'error reading header', 0 Frames; Neuladen gestartet nach videos_neu/). Mapillary (39 Ansichten, mapillary_neu): ALLE auf der Nordseite (30-98 m). Drohne deckt Ost 23 / West 36 Kameras (Hoehe ~58 m).",
+   "naechster_schritt": "F8y3lNgia5c nach Download pruefen (Seite?); sonst fehlende Seiten nur mit neuem Material (Plan 4.1/4.3)"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Gegenprobe Sued-Netz (Claude)",
+   "art": "messung",
+   "foto": "030,041",
+   "text": "UNABHAENGIGE Bestaetigung der Entartung des Sued-Netzes: die Einzelfoto-Kalibrierungen der Suedfotos stellen die Kamera auf der Strasse in 29-40 m Abstand: K-030 standort_xyz (38,0; -11,6; 1,7), K-041 (28,4; -6,1; 1,4) (Strassenfoto plausibel, Hoehe ueber Gelaende 1,4-1,7 m), waehrend das ausgerichtete Sued-Netz alle 40 Kameras bei x 4,0-5,6 m, z -2,6..0,2 setzt: Abstand zur Wand um den Faktor ~7 zu klein. Zusatz: im Repo existiert KEIN messprotokoll/SFM-AUSRICHTUNG-sued.json (nur nord, nord_lightglue, nord_sift) - die Ausrichtung des Sued-Netzes ist nie als Protokoll belegt, nullstart.py verweist aber im Verzerrungs-Gate darauf (--spiegel). Einzelfoto-RMS 56 px (Fotos 030/041) - grob.",
+   "naechster_schritt": "Sued-Netz-Ausrichtung pruefen/neu: Kamerazentren gegen K-030/K-041-Standorte als Pruefung (Abstand < 5 m = ok), Protokoll SFM-AUSRICHTUNG-sued.json erzeugen; Netz neu aufbauen (nach Bodenwolke, GPU-Matching)"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Clip F8y3lNgia5c repariert und angesehen (Claude)",
+   "art": "sicht",
+   "foto": "",
+   "text": "KORREKTUR der Quellen-Inventur: Clip F8y3lNgia5c ('Martinstor Freiburg', 62 s, 4K 30 fps, Strassenbahnfahrt/Gehen) war nur wegen eines defekten HLS-Downloads unbrauchbar. Neu geladen (DASH, videos_neu/F8y3lNgia5c.mkv, vp9). Kontaktbogen: Anfahrt auf das Martinstor mit sichtbarem Zifferblatt (= Uhr auf der Suedseite laut Masstabelle uhr_S) aus ca. 60 m bis nahe an den Torbau (McDonald's), mehrere Blickwinkel; Strassenbahn/Passanten bewegt (muessen maskiert werden). Das ist die ERSTE Bodenquelle fuer die SUEDSEITE (Boden-Kameras Sued bisher 1). 150 scharfe Frames (3 fps, Schaerfe 3060-5873) in video_frames/F8y3lNgia5c.",
+   "naechster_schritt": "nach Ende der Bodenwolke (GPU): video_sfm auf F8y3 (eigene Kamera, Masken fuer Bahn/Personen), Seite per asymmetrischem Merkmal pruefen (Uhr/Torbau, M8), an Suedfotos K-030/K-041 ausrichten; Lizenz: YouTube-Standard = unfrei, nur private Messvorlage"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Auswertung Bodenwolke (Claude, tools/wolken_vergleich.py)",
+   "art": "messung",
+   "foto": "",
+   "text": "Nordwand z 15-23 m: Tiefenlage (Abstand der Aussenflaeche von der Achse) je Quelle: Boden 5,03-5,06 m, Generator ~4,76, Drohne 4,57-4,64, Strasse entzerrt 4,54-4,63 -> Quellen streuen um ~0,5 m, WIDERSPRUCH (nicht gemittelt, Regel 5); LoD2-Nordwand x -4,91. Boden-Lot z 7-23 +37 [+24,+89] mm/m (Strasse +20, Drohne +21). Bodenwolke z 10-13 im Mittelstreifen nur ~100 Punkte je Schicht (Loch). Doppelschichten im Boden z 7-23: 4/13 (z 8 = Gesims bei 8 m plausibel).",
+   "naechster_schritt": "Tiefenlage nur mit unabhaengiger Quelle entscheiden (Suedwand/Seitenansicht, Plan 4.1); Boden nicht als Beleg fuer eine Generatoraenderung verwenden"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (Sichtbeobachtung Textur Nord)",
+   "art": "sicht",
+   "foto": "",
+   "text": "Nordtextur (textur_projektion.py, Foto-Projektion auf das Modell) wirkt 'voellig schraeg verschoben': Nachbar-Tuermchen (gruen) unten rechts liegt auf der Wand, waagerechte Naht bei ~15 m, Streifen an Helm/Uhr. Alt (35 cm) und fein (6 cm) zeigen dasselbe -> Ursache Projektion (Modellgeometrie/Kamera/Verdecker), nicht Aufloesung. Nutzerwunsch: Farbe aus den 3D-Bildpunkten (dichte Wolke) statt Foto-Projektion.",
+   "naechster_schritt": "Messen: Farbe je Modellflaeche aus Wolkenpunkten (Naechster-Nachbar, Radius) und gegen die Projektion vergleichen (Nachbartuermchen/Naht); als Pruefung eintragen, die am aktuellen Modell scheitert; erst dann Generator/Werkzeug aendern."
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (Sichtbeobachtung Poisson-Netz Sued)",
+   "art": "sicht",
+   "foto": "",
+   "text": "Suedseite des Poisson-Netzes 'ganz schoen gross' und 'ganz schoen krumm'. Messung: Wandrand-Kanten laufen mit der Hoehe zusammen (Breite 16 m bei z12-15, ~10,7 m ab z18; LoD2 11,0-11,4); Wandtiefe x=5,2-5,7 statt 4,91 (Neigung 1,6 Grad). Ursache: Strassen-/Nachbarpunkte im unteren Band + Sim3 aus zwei groben Ankern.",
+   "naechster_schritt": "Pruefung 'sued_breite_gerade' (Breite je Band +-0,8 m um LoD2, Wandtiefe +-0,3 m, Kantensteigung < 3 cm/m) eintragen; Sued-Wolke auf Fussabdruck-Kasten begrenzen und Wand per Ebenen-/Kantenfit nachziehen."
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (Sichtbeobachtung Netz v3 Sued)",
+   "art": "sicht",
+   "foto": "",
+   "text": "'Die Suedwand gibt nach rechts.' Messung Wandmitte y je 3-m-Band (z12-36): -0,06..+0,25 m, Schiefe -0,9 Grad (Nord +1,2 Grad) -> als Kippen NICHT bestaetigt; Wandbreite nimmt von 11,1 auf 10,3 m mit der Hoehe ab (Nord 11,4 -> 10,0). Sichtbar eher: rechter Fussbereich/Rand ausgefranst (Strassenpunkte), Spitzenband z36-39 nur 8,6 m breit (duenn).",
+   "naechster_schritt": "Seitenansicht (Schnitt y-z und x-z) des Netzes ansehen; Rechtsrand je Band gegen LoD2 y=+5,5 messen; Pruefung 'sued_mitte_lot' (Schiefe < 1 Grad, Randabweichung < 0,3 m) eintragen."
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (Sichtbeobachtung altes 3D-Tool v6)",
+   "art": "sicht",
+   "foto": "",
+   "text": "Suedwand 'wieder leicht nach rechts gekippt' (Wolke gegen STL im Tool 'Martinstor 3D'); dazu 'wertlose Punkte in der Luft'. Kantenperzentil-Lot ist abdeckungsabhaengig (Register BW) -> Messung gegen die STL-OBERFLAECHE (Abstand Wolke-STL ueber Roll um x-Achse) statt Kanten.",
+   "naechster_schritt": "Roll-Scan: mittlerer Abstand Sued-Wolke zu Sued-Flaechen des STL je Rollwinkel (-6..+6 Grad, y/z-Versatz mitgesucht); nur anwenden, wenn Minimum eindeutig; Luftpunkte per tools/wolke_filtern.py (Radius-Dichte + Abstand zum Generator) entfernen."
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (Sichtbeobachtung altes 3D-Tool v7)",
+   "art": "sicht",
+   "foto": "",
+   "text": "Nordseite, oberer Turmteil: zweite, vorgelagerte Wand (Doppelschicht) und stoerende Punkte; Wunsch: per Median rausfiltern, sauberes Solid.",
+   "naechster_schritt": "Vorzeichenbehafteten Abstand Nord-Wolke zur STL-Oberflaeche je Hoehenband messen (zwei Spitzen?); Filter 'Doppelschicht' (Tiefen-Median je Zelle, Schicht naeher am Generator behalten) als Pruefung eintragen, die am aktuellen Stand scheitert."
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (Sichtbeobachtung altes 3D-Tool v8, 3 Screenshots)",
+   "art": "sicht",
+   "foto": "",
+   "text": "Seitentuermchen (Ecktuermchen): STL-Spitzen liegen sichtbar neben/ueber den Wolken-Tuermchen (gruenes Dach, braune Basis); Lage/Groesse stimmt nicht. Nutzer: generisch aus den Daten loesen.",
+   "naechster_schritt": "Je Ecke und Hoehenscheibe Kreis (robust) in die Wolke fitten -> Achse(z), Radius(z); gegen STL-Schnitt vergleichen; als Pruefung 'tuermchen_achse_wolke_vs_stl' eintragen, die am aktuellen Stand scheitert; dann Generator-Masse (masse.json / masse_aus_profilen) aus den Daten ableiten, nicht von Hand. | ERGEBNIS foto_loop 2026-11-03: Silhouetten-Loop ueber 11 Fotos (Nord+Sued), 4 Runden, kein Tuermchen-Parameter (Achse dx/dy, Hoehe hs, Radius rs) uebernommen; mittleres IoU 0,903->0,906 nur durch Kameras. STL-Tuermchen passen auf den Fotos (z.B. 044 Kontur eng). Das Overlay-Bild 'STL 1,5 m zu hoch' (030/041) kam aus der Kameraguete (Residuen 50-100 px). -> Abweichung im 3D-Tool liegt in den WOLKEN (Tuermchenbereich z>34), nicht im STL. Naechster Schritt: Wolken im oberen Turm am STL ausrichten (Kantenloop)."
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Claude (Kanten-Schleife)",
+   "text": "Foto 031: Region 'Wand unten/Tor' (z<=15 m) wird nach Kameraanpassung SCHLECHTER (6,4 -> 9,1 px); Foto 041 Helm 9,2 px nach Anpassung (030: 5,3; 040: 2,1). Verdacht: Maßfehler unterer Wand/Tor oder Kamera-Brennweite; nicht gesichert | ERGEBNIS 2026-11-03 (kanten_richtung.py, Register BY): vorzeichenbehafteter Versatz je Bauteil in allen 4 Fotos ~ -0,5 px in x UND y (Pixelkonvention, ueberall gleich), nach Abzug <0,3 px; kein Bauteil weicht gleichgerichtet ab. Die 9,1 px bei 031/Tor kommen aus Kanten ohne Fotogegenstueck (Verdeckung/Nachbarhaeuser, nur 996 Punkte), nicht aus einem Massfehler. Generator bleibt unveraendert.",
+   "naechster_schritt": "erledigt fuer Wand/Tor; offen: Helm 041 rechts -3,15 px (nur 89 Punkte) und Tuermchen 040 links -2,55 px (165 Punkte) - nur 1 von 4 Fotos, keine Mehrheit"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (Handy-Screenshot Martinstor 3D, Originaltool)",
+   "text": "Ringe/Platten um die Spitze der Ecktuermchen (roter Rahmen im Screenshot, Spitze mit Knauf; beide sichtbaren Tuermchen): 'das gibt's in Wirklichkeit nicht'. ERSTE MESSUNG 2026-11-03: Schnitte am Ecktuermchen (-4,0/-4,42) im aktuellen STL (15bb2ae0), im Q16Sr-Einbau (f7e1499f) und im XJR7-Einbau (15bb2ae0): Kegel glatt von 35,5 bis 43,96 m (r 1,9 -> 0,06), KEIN Absatz/Ring; einzige Zusatzteile: Knauf-Kugel r 0,2 bei 44,15 m (schwebt 0,1 m ueber dem Kegelende) + Nadel bis 44,5. Ringe also NICHT als Geometrie am Tuermchen nachgewiesen. OFFEN: Ursache (Darstellung? Netzpunkte/Picks um die Knaeufe? anderes Bauteil Helm-Laterne 38-41 m?) - naechster Schritt: Nutzer schaltet im Viewer Modell-STL/Netzpunkte einzeln aus; Pruefung 'keine Ringe/Absaetze im Kegel 36-44 m' im Pruefstand anlegen."
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (Foto Druckteil H0 neben Bildschirmfoto Martinstor)",
+   "text": "Ecktuermchen-Arkadenband: am Druckteil steht je Aussenflaeche eine ZWISCHENSAEULE (2 Boegen je Flaeche). Am echten Tor hat jede Flaeche des Achtecks nur EINEN Bogen, keine Zwischensaeule. Generator: baender_rundkoerper(offen) n_o = oeffnungen.je_flaeche = 2 - das ist laut beleg ANNAHME aus Foto 043 (gepaarte Boegen), Wolkenmessung je Flaeche uneinheitlich (2 bzw. 3 Dunkellaeufe, 0,16-0,72 m). OFFEN: am Foto (043/041/061) Boegen je Flaeche zaehlen (foto_mass.py-Protokoll), Pruefung 'oeffnungen_je_flaeche' am aktuellen Modell als FEHLSCHLAG anlegen, dann je_flaeche=1 mit Quelle. | URSACHE 2026-11-03: (1) Quelle des Wertes 2 = ANNAHME 'gepaarte Boegen' aus Foto 043; Foto 043 zeigt je Aussenflaeche EINE Oeffnung, die Pfosten stehen an den Ecken (Eckpfosten + zwei sichtbare Flaechen wurden als 'Paar' gelesen). (2) wolke_baender.py zaehlt Dunkellaeufe in einem Fenster breiter als die Flaeche (+-fb+0,1 m; Tiefe 0,45 m) = zeigt Nachbarflaechen, Eckpfosten, Innenraum; Luecken in duennen 8-cm-Zellen (<4 Punkte = NaN) beenden einen Lauf und teilen eine Oeffnung; die beiden Koerper liefern 2 und 3 Laeufe, Median 2,5 -> int(round()) = 2 ohne Unsicherheitsmeldung. (3) Die zugehoerige Pruefung 'Oeffnungen je Flaeche anzahl' hat soll [2,2] aus DERSELBEN Wolkenmessung -> zirkulaer, Modell besteht per Konstruktion (quelltyp sfm_bodenanker taeuscht Unabhaengigkeit vor). (4) Register AX nannte die Nutzerbeschwerde 'Boegen zu klein und zu viele' in der Quelle, behob sie aber nur ueber diese Messung statt per Foto-Zaehlung. (5) Generator erzwingt bei n_o=2 einen Pfeiler (pf 0,12 m) zwischen den Boegen. NAECHSTE SCHRITTE: Boegen je Flaeche am Foto zaehlen (043/041/031/044, foto_mass-Protokoll), Pruefung 'oeffnungen_je_flaeche' mit Fotoquelle (nicht Wolke) als FEHLSCHLAG, dann Generator je_flaeche=1; Zaehlfenster in wolke_baender auf Flaechenbreite/Aussenhaut begrenzen und Streuung zwischen Koerpern als Unsicherheit melden."
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (Viewer Q16Sr, Screenshots 18:16)",
+   "art": "sichtbeobachtung",
+   "z_von": 33.5,
+   "z_bis": 35.0,
+   "text": "Ecktuermchen: 'immer noch kleine Boegelchen, versetzt'; grosse Boegen passen, 'drinnen sind die kleinen Boegen noch', 'ueberlagert das in deinem STL'.",
+   "ursache": "STL-Render (eigener, Tuermchen -4/4,42 aussen): Bogenoeffnungen nur 0,35 m tiefe Nischen vor massivem Achteckkern; die Nischenrueckwand zeichnet den Bogen ein zweites Mal kleiner/versetzt (im durchsichtigen Viewer ueberlagert). Am Bau (Foto 043) sind die Boegen offen, dahinter dunkler Innenraum.",
+   "naechster_schritt": "Pruefung 'Arkadenoeffnung durchgehend' (rot am aktuellen Modell), dann Innenraum im Generator aushoehlen"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (Viewer Q16Sr 18:26)",
+   "art": "sichtbeobachtung",
+   "z_von": 37.5,
+   "z_bis": 39.5,
+   "text": "'immer die kleinen Boegelchen' - gemeint: Schallarkaden Glockenstock. Modell (Handkonstanten) 2 x 1,0 m Rundbogen mit 1,0-m-Pfeiler; Foto 030: 2 breite Segmentboegen mit Lamellen, 1,40/1,46 m, Mittelpfeiler 0,28 m (M-030-011..013), Hoehe 1,90 m (M-030-014). Wolke Laeufe -1,49..-0,29 / 0,03..1,55 bestaetigt Lage.",
+   "widerspruch": "Absolute Hoehenlage: Foto K-030 36,3-38,2 m, Wolke dunkel 38,3-39,2 m - nicht gemittelt; Generator nimmt Oberkante aus der Wolke, Hoehe aus dem Foto.",
+   "naechster_schritt": "Pruefung Breite (rot), Generator: Schallarkaden generisch aus Wolkenlaeufen (Zahl aus Z-030-001)"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Nutzer (Viewer 18:34, 'immer noch kleine Boegelchen')",
+   "art": "sichtbeobachtung",
+   "z_von": 33.5,
+   "z_bis": 35.0,
+   "text": "Ecktuermchen-Arkade: Modell = Halbkreis-Rundboegen (hoeher als breit, Stich 0,5 m) mit dicken Rahmen. Foto 030 (Vergleich Foto|STL gleiche Kamerarichtung): jede Flaeche Pfosten-zu-Pfosten offen, sehr flacher breiter Segmentbogen; Breite 1,06-1,11 m, Hoehe 1,09, Stich 0,17 (M-030-015..017).",
+   "naechster_schritt": "Pruefung Bogenform (Breite oben/unten) rot, dann Segmentbogen im Generator (generisch, stich aus Masse)"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "Claude (Nullstart Lauf 53)",
+   "art": "reproduzierbarkeit",
+   "z_von": 33.5,
+   "z_bis": 35.0,
+   "text": "Nullstart: Wolke schneidet Tuermchenbaender anders (offen 33,5-34,5 + stein 34,5-35,0 statt offen 33,5-35,0); Oeffnungshoehe aus Wolke 33,55-34,48 statt 33,62-34,92 -> Boegen im Nullstart niedriger; Segmentbogen-Pruefung im festen Fenster ungueltig (1,28).",
+   "naechster_schritt": "Oeffnungsoberkante an Plattenunterkante (beide Laeufe 35,0), Pruefung bandrelativ; Pruefung Oeffnungshoehe; Nullstart A/B"
+  },
+  {
+   "datum": "2026-11-03",
+   "text": "Wolke Nord (dicht_nord_entzerrt) quer gegen die Bauwerksachse verschoben und mit der Hoehe geschert: Zentralmitte Schaft 23-29 m -0,15..-0,24, Helm 46-50 m -0,12..+0,08 (Register CH).",
+   "wer": "eigene (Claude)",
+   "naechster_schritt": "Entzerrung um Querscherung erweitern (LoD2-Wandmitte je Hoehe) oder Foto-Gegencheck; nicht mitteln (Regel 5)"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "eigene (Claude), Fotovergleich vor Testdruck (Regel 9b)",
+   "text": "Eckquader Schaft (Foto 030, z~10 m, Ebene x=4,8): Schichthoehe 0,52/0,58 m (M-030-020/021), Steine lang 1,02/0,82 m (M-030-022/025), kurz 0,58/0,59 m (M-030-023/024) -> deutliche Lang/Kurz-Zahnung. Masse aus Wolken-Farbperioden: QUADER_SCHAFT_UNTEN 0,25, QUADER_LAENGE 0,35, KURZ_FAKTOR 1,0 = etwa halbe Periode (Oberwelle?). Widerspruch Foto/Wolke, nicht gemittelt.",
+   "naechster_schritt": "umgesetzt 2026-11-03: Pruefungen Eckquader-Schichthoehe (Foto) + bauteile.mauerwerk_aus_protokollen (Register CI); offen: Wolkenschaetzer f/2f, Glockenstock/Tuermchen-Quader am Foto messen"
+  },
+  {
+   "datum": "2026-11-03",
+   "wer": "eigene (Claude), Nullstart Lauf 58",
+   "text": "Kamera K-031 schwach bestimmt: Brennweite und Abstand tauschen sich (Nullstart 3936 px aus 38 m, Referenz 5064 px aus 57 m, gleiche Picks, beide mit --silhouette). Breitenpruefungen mit K-031 (Silhouettenbreite Zone 23,5-28) haengen daran; die Silhouetten-Kamera ist an das Modell gefittet (teils zirkulaer).",
+   "naechster_schritt": "EXIF/f_gruppe serie2025 (wie 030) als feste Brennweite pruefen, mehr Bodenanker picken; bis dahin Pruefungen mit K-031 als unsicher fuehren (Register CK)"
+  },
+  {
    "datum": "auto",
    "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
    "auto_id": "breite-000-38-38",
@@ -3242,13 +3397,13 @@
   {
    "datum": "auto",
    "wer": "foto_breitenprofil (Foto 030, Kamera K-030)",
-   "auto_id": "breite-030-22-24",
+   "auto_id": "breite-030-22-22",
    "art": "breite",
    "foto": "030",
    "z_von": 21.5,
-   "z_bis": 24.5,
-   "abweichung": 0.78,
-   "text": "Silhouettenbreite z 21.5-24.5 m: Foto 14.84 m, Modell 14.06 m (+0.78 m)",
+   "z_bis": 22.5,
+   "abweichung": 0.58,
+   "text": "Silhouettenbreite z 21.5-22.5 m: Foto 14.90 m, Modell 14.32 m (+0.58 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
@@ -3259,8 +3414,8 @@
    "foto": "030",
    "z_von": 30.5,
    "z_bis": 34.0,
-   "abweichung": -1.29,
-   "text": "Silhouettenbreite z 30.5-34.0 m: Foto 13.12 m, Modell 14.41 m (-1.29 m)",
+   "abweichung": -1.3,
+   "text": "Silhouettenbreite z 30.5-34.0 m: Foto 13.12 m, Modell 14.42 m (-1.30 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
@@ -3283,8 +3438,8 @@
    "foto": "030",
    "z_von": 43.0,
    "z_bis": 43.0,
-   "abweichung": -4.5,
-   "text": "Silhouettenbreite z 43.0-43.0 m: Foto 5.34 m, Modell 9.84 m (-4.50 m)",
+   "abweichung": -4.54,
+   "text": "Silhouettenbreite z 43.0-43.0 m: Foto 5.34 m, Modell 9.88 m (-4.54 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
@@ -3295,43 +3450,26 @@
    "foto": "030",
    "z_von": 47.5,
    "z_bis": 50.0,
-   "abweichung": -4.38,
-   "text": "Silhouettenbreite z 47.5-50.0 m: Foto 1.11 m, Modell 5.49 m (-4.38 m)",
+   "abweichung": -4.37,
+   "text": "Silhouettenbreite z 47.5-50.0 m: Foto 1.11 m, Modell 5.48 m (-4.37 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 3)",
-   "auto_id": "fehlteile-041-1128-564",
+   "wer": "fehlteile_finden (Foto 040, Treffer 1)",
+   "auto_id": "fehlteile-040-990-540",
    "art": "fehlteil",
-   "foto": "041",
-   "z_von": 36.93,
-   "z_bis": 36.93,
+   "foto": "040",
+   "z_von": 51.46,
+   "z_bis": 51.46,
    "xyz": [
-    4.63,
-    4.08,
-    36.93
+    -0.82,
+    1.27,
+    51.46
    ],
-   "abweichung": 0.789,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=36.93 m, y=4.08 m (Zelle [1128, 564, 94], Score +0.79)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
-   "auto_id": "fehlteile-041-752-564",
-   "art": "fehlteil",
-   "foto": "041",
-   "z_von": 39.92,
-   "z_bis": 39.92,
-   "xyz": [
-    1.18,
-    -1.09,
-    39.92
-   ],
-   "abweichung": 0.767,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=39.92 m, y=-1.09 m (Zelle [752, 564, 94], Score +0.77)",
-   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=51.46 m, y=1.27 m (Zelle [990, 540, 90], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_040.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
@@ -3339,15 +3477,15 @@
    "auto_id": "fehlteile-030-1054-620",
    "art": "fehlteil",
    "foto": "030",
-   "z_von": 38.07,
-   "z_bis": 38.07,
+   "z_von": 37.95,
+   "z_bis": 37.95,
    "xyz": [
-    0.84,
-    1.79,
-    38.07
+    0.97,
+    1.75,
+    37.95
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.07 m, y=1.79 m (Zelle [1054, 620, 62], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=37.95 m, y=1.75 m (Zelle [1054, 620, 62], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_030.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -3356,84 +3494,115 @@
    "auto_id": "fehlteile-030-1302-744",
    "art": "fehlteil",
    "foto": "030",
-   "z_von": 32.63,
-   "z_bis": 32.63,
+   "z_von": 32.67,
+   "z_bis": 32.67,
    "xyz": [
-    4.56,
-    5.29,
-    32.63
+    4.53,
+    5.3,
+    32.67
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=32.63 m, y=5.29 m (Zelle [1302, 744, 62], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=32.67 m, y=5.3 m (Zelle [1302, 744, 62], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_030.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 030, Treffer 3)",
-   "auto_id": "fehlteile-030-1054-930",
+   "auto_id": "fehlteile-030-1116-930",
    "art": "fehlteil",
    "foto": "030",
-   "z_von": 31.29,
-   "z_bis": 31.29,
+   "z_von": 30.38,
+   "z_bis": 30.38,
    "xyz": [
-    -0.86,
-    2.3,
-    31.29
+    0.77,
+    3.08,
+    30.38
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=31.29 m, y=2.3 m (Zelle [1054, 930, 62], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.38 m, y=3.08 m (Zelle [1116, 930, 62], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_030.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 030, Treffer 4)",
-   "auto_id": "fehlteile-030-1116-930",
+   "auto_id": "fehlteile-030-1302-1178",
    "art": "fehlteil",
    "foto": "030",
-   "z_von": 30.2,
-   "z_bis": 30.2,
+   "z_von": 22.97,
+   "z_bis": 22.97,
    "xyz": [
-    0.98,
-    3.02,
-    30.2
+    4.28,
+    4.94,
+    22.97
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.2 m, y=3.02 m (Zelle [1116, 930, 62], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=22.97 m, y=4.94 m (Zelle [1302, 1178, 62], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_030.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 030, Treffer 5)",
-   "auto_id": "fehlteile-030-992-992",
+   "auto_id": "fehlteile-030-620-1612",
    "art": "fehlteil",
    "foto": "030",
-   "z_von": 28.88,
-   "z_bis": 28.88,
+   "z_von": 15.53,
+   "z_bis": 15.53,
    "xyz": [
-    -0.14,
-    0.73,
-    28.88
+    -1.74,
+    -5.38,
+    15.53
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.88 m, y=0.73 m (Zelle [992, 992, 62], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=15.53 m, y=-5.38 m (Zelle [620, 1612, 62], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 030, Treffer 6)",
-   "auto_id": "fehlteile-030-1302-1178",
-   "art": "fehlteil",
-   "foto": "030",
-   "z_von": 23.09,
-   "z_bis": 23.09,
-   "xyz": [
-    4.11,
-    4.98,
-    23.09
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=23.09 m, y=4.98 m (Zelle [1302, 1178, 62], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_030.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-30-31",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 29.5,
+   "z_bis": 31.0,
+   "abweichung": -1.26,
+   "text": "Silhouettenbreite z 29.5-31.0 m: Foto 11.21 m, Modell 12.47 m (-1.26 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-34-34",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 34.0,
+   "z_bis": 34.5,
+   "abweichung": -1.12,
+   "text": "Silhouettenbreite z 34.0-34.5 m: Foto 11.26 m, Modell 12.38 m (-1.12 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-36-42",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 36.5,
+   "z_bis": 42.5,
+   "abweichung": -0.98,
+   "text": "Silhouettenbreite z 36.5-42.5 m: Foto 12.06 m, Modell 13.04 m (-0.98 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 041, Kamera K-041)",
+   "auto_id": "breite-041-48-50",
+   "art": "breite",
+   "foto": "041",
+   "z_von": 48.0,
+   "z_bis": 50.0,
+   "abweichung": -4.45,
+   "text": "Silhouettenbreite z 48.0-50.0 m: Foto 0.97 m, Modell 5.42 m (-4.45 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
    "datum": "auto",
@@ -3443,8 +3612,8 @@
    "foto": "061",
    "z_von": 26.5,
    "z_bis": 28.0,
-   "abweichung": 1.07,
-   "text": "Silhouettenbreite z 26.5-28.0 m: Foto 12.71 m, Modell 11.64 m (+1.07 m)",
+   "abweichung": 1.12,
+   "text": "Silhouettenbreite z 26.5-28.0 m: Foto 12.76 m, Modell 11.64 m (+1.12 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
@@ -3462,26 +3631,31 @@
   {
    "datum": "auto",
    "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-42-44",
+   "auto_id": "breite-061-42-49",
    "art": "breite",
    "foto": "061",
    "z_von": 42.0,
-   "z_bis": 43.5,
-   "abweichung": -6.18,
-   "text": "Silhouettenbreite z 42.0-43.5 m: Foto 2.49 m, Modell 8.67 m (-6.18 m)",
+   "z_bis": 49.0,
+   "abweichung": -2.22,
+   "text": "Silhouettenbreite z 42.0-49.0 m: Foto 3.86 m, Modell 6.08 m (-2.22 m)",
    "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
    "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 061, Kamera K-061)",
-   "auto_id": "breite-061-46-49",
-   "art": "breite",
-   "foto": "061",
-   "z_von": 45.5,
-   "z_bis": 49.0,
-   "abweichung": -0.82,
-   "text": "Silhouettenbreite z 45.5-49.0 m: Foto 4.21 m, Modell 5.04 m (-0.82 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+   "wer": "fehlteile_finden (Foto 041, Treffer 5)",
+   "auto_id": "fehlteile-041-1128-564",
+   "art": "fehlteil",
+   "foto": "041",
+   "z_von": 36.92,
+   "z_bis": 36.92,
+   "xyz": [
+    4.63,
+    4.08,
+    36.92
+   ],
+   "abweichung": 0.724,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=36.92 m, y=4.08 m (Zelle [1128, 564, 94], Score +0.72)",
+   "naechster_schritt": "audit/fehlteile_041.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
@@ -3506,20 +3680,37 @@
    "auto_id": "fehlteile-061-2376-630",
    "art": "fehlteil",
    "foto": "061",
-   "z_von": 22.32,
-   "z_bis": 22.32,
+   "z_von": 22.31,
+   "z_bis": 22.31,
    "xyz": [
-    -1.03,
+    -1.02,
     5.24,
-    22.32
+    22.31
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=22.32 m, y=5.24 m (Zelle [2376, 630, 9], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=22.31 m, y=5.24 m (Zelle [2376, 630, 9], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_061.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 061, Treffer 5)",
+   "auto_id": "fehlteile-061-2340-657",
+   "art": "fehlteil",
+   "foto": "061",
+   "z_von": 19.36,
+   "z_bis": 19.36,
+   "xyz": [
+    2.83,
+    5.32,
+    19.36
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.36 m, y=5.32 m (Zelle [2340, 657, 9], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 061, Treffer 6)",
    "auto_id": "fehlteile-061-2358-657",
    "art": "fehlteil",
    "foto": "061",
@@ -3532,23 +3723,6 @@
    ],
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.39 m, y=5.32 m (Zelle [2358, 657, 9], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_061.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 061, Treffer 6)",
-   "auto_id": "fehlteile-061-2358-666",
-   "art": "fehlteil",
-   "foto": "061",
-   "z_von": 18.43,
-   "z_bis": 18.43,
-   "xyz": [
-    0.86,
-    5.34,
-    18.43
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.43 m, y=5.34 m (Zelle [2358, 666, 9], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_061.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -3560,12 +3734,12 @@
    "z_von": 51.54,
    "z_bis": 51.54,
    "xyz": [
-    -1.12,
-    -1.4,
+    -1.11,
+    -1.39,
     51.54
    ],
    "abweichung": 0.98,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=51.54 m, y=-1.4 m (Zelle [4128, 1168, 16], Score +0.98)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=51.54 m, y=-1.39 m (Zelle [4128, 1168, 16], Score +0.98)",
    "naechster_schritt": "audit/fehlteile_060.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -3591,15 +3765,15 @@
    "auto_id": "fehlteile-060-4112-1248",
    "art": "fehlteil",
    "foto": "060",
-   "z_von": 46.5,
-   "z_bis": 46.5,
+   "z_von": 46.49,
+   "z_bis": 46.49,
    "xyz": [
-    -2.21,
-    -1.16,
-    46.5
+    -2.19,
+    -1.14,
+    46.49
    ],
    "abweichung": 0.96,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=46.5 m, y=-1.16 m (Zelle [4112, 1248, 16], Score +0.96)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=46.49 m, y=-1.14 m (Zelle [4112, 1248, 16], Score +0.96)",
    "naechster_schritt": "audit/fehlteile_060.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -3608,15 +3782,15 @@
    "auto_id": "fehlteile-060-4128-1152",
    "art": "fehlteil",
    "foto": "060",
-   "z_von": 52.5,
-   "z_bis": 52.5,
+   "z_von": 52.51,
+   "z_bis": 52.51,
    "xyz": [
-    -0.88,
-    -1.17,
-    52.5
+    -0.9,
+    -1.18,
+    52.51
    ],
    "abweichung": 0.939,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=52.5 m, y=-1.17 m (Zelle [4128, 1152, 16], Score +0.94)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=52.51 m, y=-1.18 m (Zelle [4128, 1152, 16], Score +0.94)",
    "naechster_schritt": "audit/fehlteile_060.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -3625,15 +3799,15 @@
    "auto_id": "fehlteile-060-4128-1216",
    "art": "fehlteil",
    "foto": "060",
-   "z_von": 48.64,
-   "z_bis": 48.64,
+   "z_von": 48.62,
+   "z_bis": 48.62,
    "xyz": [
-    -1.73,
-    -1.99,
-    48.64
+    -1.7,
+    -1.96,
+    48.62
    ],
    "abweichung": 0.915,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=48.64 m, y=-1.99 m (Zelle [4128, 1216, 16], Score +0.92)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=48.62 m, y=-1.96 m (Zelle [4128, 1216, 16], Score +0.92)",
    "naechster_schritt": "audit/fehlteile_060.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -3652,6 +3826,13 @@
    "abweichung": 0.907,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=49.61 m, y=-1.81 m (Zelle [4128, 1200, 16], Score +0.91)",
    "naechster_schritt": "audit/fehlteile_060.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "wolke_baender.py (tuermchen)",
+   "auto_id": "band_tuermchen_offen_3350",
+   "text": "Band offen 33.5-35.0 m: Wolke liefert 2 Dunkellauf/-laeufe je Flaeche (Streuung zwischen Koerpern [2, 3], Breiten [0.48, 0.72, 0.48, 0.4, 0.16]) - NICHT belastbar als Anzahl",
+   "naechster_schritt": "Oeffnungen je Flaeche am Foto zaehlen: tools/foto_zaehlung.py (Z-Protokoll) und Pruefung mit quelltyp foto_vollbild/merkmal anzahl; Wolke nur fuer Hoehe/Lage des Bandes"
   }
  ],
  "beobachtungen_erledigt": [
@@ -4964,6 +5145,40 @@
    ],
    "zurueckgezogen": "2026-11-01",
    "grund": "Quellen-Blindheit: DOM1-Zellmaxima erfassen den steilen Helm (78-86 Grad) nur teilweise - Zellen > 44,75 m: 18, Fussabdruck laut Foto 061 Silhouette (4,7 m N-S) und Wolke (4,7 m E-W) aber >= 30 Zellen; N-S-Schnitt DOM1 1,76 m bei 46,75 vs Foto 4,35 / Wolke 4,58. Die Zellzahl > 40 m (43) ist damit keine Obergrenze fuer das Modell (~80). Ersatz: Profil-Pruefungen Wolke (y) + Foto 061 (x)."
+  },
+  {
+   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche anzahl bei 34.27 m",
+   "wert": "band_tuermchen_oeffn_3427_anzahl",
+   "soll": [
+    2,
+    2
+   ],
+   "quelle": "wolke_baender.py (tuermchen): Dunkellaeufe entlang der sichtbaren Flaeche im Band offen: 2 je Flaeche, Breiten [0.48, 0.72, 0.48, 0.4, 0.16], Hoehe [33.62, 34.92]; Nutzer: 'Boegen zu klein und zu viele'",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_baender_tuermchen.json",
+   "zurueckgezogen": {
+    "datum": "2026-11-03",
+    "grund": "Register CB: Zahl/Breite der Oeffnungen kam aus Dunkellaeufen der Wolke (sfm_bodenanker ist blind fuer 'anzahl'/'fassade'), Merkmal als 'schlankheit' getarnt, Soll aus derselben Wolke (zirkulaer). Foto 043 zeigt 1 Oeffnung je Flaeche, nicht 2."
+   }
+  },
+  {
+   "name": "Band tuermchen offen (33.50-35.00 m): Oeffnungen je Flaeche breite bei 34.27 m",
+   "wert": "band_tuermchen_oeffn_3427_breite_median",
+   "soll": [
+    0.33,
+    0.63
+   ],
+   "quelle": "wolke_baender.py (tuermchen): Dunkellaeufe entlang der sichtbaren Flaeche im Band offen: 2 je Flaeche, Breiten [0.48, 0.72, 0.48, 0.4, 0.16], Hoehe [33.62, 34.92]; Nutzer: 'Boegen zu klein und zu viele'",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "LoD2-Eckkanten + Wandebene",
+   "protokoll": "profile_baender_tuermchen.json",
+   "zurueckgezogen": {
+    "datum": "2026-11-03",
+    "grund": "Register CB: Zahl/Breite der Oeffnungen kam aus Dunkellaeufen der Wolke (sfm_bodenanker ist blind fuer 'anzahl'/'fassade'), Merkmal als 'schlankheit' getarnt, Soll aus derselben Wolke (zirkulaer). Foto 043 zeigt 1 Oeffnung je Flaeche, nicht 2."
+   }
   }
  ]
 }

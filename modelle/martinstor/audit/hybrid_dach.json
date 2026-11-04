@@ -35,12 +35,12 @@
     },
     "generator": {
      "status": "ok",
-     "n": 13007,
+     "n": 12555,
      "neigung_grad": 77.19,
      "neigung_sigma": 0.0,
      "tiefe_bei_zref_m": 1.938,
      "tiefe_sigma": 0.0,
-     "quer_neigung": -0.0,
+     "quer_neigung": 0.0,
      "inlier_anteil": 0.69
     }
    },
@@ -83,13 +83,13 @@
     },
     "generator": {
      "status": "ok",
-     "n": 12926,
+     "n": 12515,
      "neigung_grad": 77.19,
      "neigung_sigma": 0.0,
      "tiefe_bei_zref_m": 1.938,
      "tiefe_sigma": 0.0,
-     "quer_neigung": 0.0,
-     "inlier_anteil": 0.69
+     "quer_neigung": -0.0,
+     "inlier_anteil": 0.7
     }
    },
    "vergleiche": {
@@ -125,13 +125,13 @@
     },
     "generator": {
      "status": "ok",
-     "n": 11114,
+     "n": 10781,
      "neigung_grad": 87.87,
-     "neigung_sigma": 0.0,
+     "neigung_sigma": 0.62,
      "tiefe_bei_zref_m": 2.316,
-     "tiefe_sigma": 0.0,
-     "quer_neigung": -0.0,
-     "inlier_anteil": 0.62
+     "tiefe_sigma": 0.061,
+     "quer_neigung": 0.0,
+     "inlier_anteil": 0.61
     }
    },
    "vergleiche": {
@@ -179,12 +179,12 @@
     },
     "generator": {
      "status": "ok",
-     "n": 11138,
+     "n": 10801,
      "neigung_grad": 87.87,
-     "neigung_sigma": 0.61,
+     "neigung_sigma": 0.0,
      "tiefe_bei_zref_m": 2.317,
-     "tiefe_sigma": 0.053,
-     "quer_neigung": -0.0,
+     "tiefe_sigma": 0.0,
+     "quer_neigung": 0.0,
      "inlier_anteil": 0.62
     }
    },
@@ -199,7 +199,7 @@
      "d_neigung_grad": -11.7,
      "d_tiefe_m": 0.165,
      "widerspruch_neigung": true,
-     "widerspruch_tiefe": false
+     "widerspruch_tiefe": true
     },
     "strasse-generator": {
      "d_neigung_grad": -16.35,
