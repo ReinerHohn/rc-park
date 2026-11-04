@@ -1,0 +1,173 @@
+{
+ "parameter": {
+  "abstand_m": 1.0,
+  "verhaeltnis": 2.0,
+  "min_punkte": 200
+ },
+ "merkmale": {
+  "torbau_1901 | x->-x (Sued/Nord)": {
+   "unterschied_anteil": 0.362,
+   "taugt": true
+  },
+  "torbau_front | x->-x (Sued/Nord)": {
+   "unterschied_anteil": 0.372,
+   "taugt": true
+  },
+  "torbau_1901 | y->-y (Ost/West)": {
+   "unterschied_anteil": 1.0,
+   "taugt": true
+  },
+  "torbau_front | y->-y (Ost/West)": {
+   "unterschied_anteil": 1.0,
+   "taugt": true
+  }
+ },
+ "wolken": {
+  "/home/oem/git/rc-park/modelle/martinstor/sfm/dicht_nord_entzerrt.npy": {
+   "punkte": 101107,
+   "pruefungen": {
+    "torbau_1901 | x->-x (Sued/Nord)": {
+     "A": 1301,
+     "B": 41,
+     "punkte_im_bereich": 17945,
+     "urteil": "konsistent (echte Lage)"
+    },
+    "torbau_front | x->-x (Sued/Nord)": {
+     "A": 10234,
+     "B": 152,
+     "punkte_im_bereich": 16819,
+     "urteil": "konsistent (echte Lage)"
+    },
+    "torbau_1901 | y->-y (Ost/West)": {
+     "A": 13141,
+     "B": 2086,
+     "punkte_im_bereich": 57797,
+     "urteil": "konsistent (echte Lage)"
+    },
+    "torbau_front | y->-y (Ost/West)": {
+     "A": 14154,
+     "B": 2531,
+     "punkte_im_bereich": 47435,
+     "urteil": "konsistent (echte Lage)"
+    }
+   }
+  },
+  "/home/oem/git/rc-park/modelle/martinstor/sfm/dicht_nord_modell.npy": {
+   "punkte": 101107,
+   "pruefungen": {
+    "torbau_1901 | x->-x (Sued/Nord)": {
+     "A": 1186,
+     "B": 50,
+     "punkte_im_bereich": 17887,
+     "urteil": "konsistent (echte Lage)"
+    },
+    "torbau_front | x->-x (Sued/Nord)": {
+     "A": 13223,
+     "B": 22,
+     "punkte_im_bereich": 16815,
+     "urteil": "konsistent (echte Lage)"
+    },
+    "torbau_1901 | y->-y (Ost/West)": {
+     "A": 11157,
+     "B": 2092,
+     "punkte_im_bereich": 57739,
+     "urteil": "konsistent (echte Lage)"
+    },
+    "torbau_front | y->-y (Ost/West)": {
+     "A": 14291,
+     "B": 2529,
+     "punkte_im_bereich": 47431,
+     "urteil": "konsistent (echte Lage)"
+    }
+   }
+  },
+  "/media/oem/scan/rc-park_daten/martinstor/video_sfm/d1/dicht_modell.npy": {
+   "punkte": 1857703,
+   "pruefungen": {
+    "torbau_1901 | x->-x (Sued/Nord)": {
+     "A": 8088,
+     "B": 14545,
+     "punkte_im_bereich": 109724,
+     "urteil": "nicht entscheidbar (A/B zu nah beieinander)"
+    },
+    "torbau_front | x->-x (Sued/Nord)": {
+     "A": 27008,
+     "B": 1035,
+     "punkte_im_bereich": 61895,
+     "urteil": "konsistent (echte Lage)"
+    },
+    "torbau_1901 | y->-y (Ost/West)": {
+     "A": 47872,
+     "B": 1522,
+     "punkte_im_bereich": 249415,
+     "urteil": "konsistent (echte Lage)"
+    },
+    "torbau_front | y->-y (Ost/West)": {
+     "A": 34754,
+     "B": 2793,
+     "punkte_im_bereich": 120363,
+     "urteil": "konsistent (echte Lage)"
+    }
+   }
+  },
+  "/media/oem/scan/rc-park_daten/martinstor/video_sfm/d1_cv/dicht_modell.npy": {
+   "punkte": 2167153,
+   "pruefungen": {
+    "torbau_1901 | x->-x (Sued/Nord)": {
+     "A": 10053,
+     "B": 12493,
+     "punkte_im_bereich": 103656,
+     "urteil": "nicht entscheidbar (A/B zu nah beieinander)"
+    },
+    "torbau_front | x->-x (Sued/Nord)": {
+     "A": 31471,
+     "B": 227,
+     "punkte_im_bereich": 64383,
+     "urteil": "konsistent (echte Lage)"
+    },
+    "torbau_1901 | y->-y (Ost/West)": {
+     "A": 49311,
+     "B": 2526,
+     "punkte_im_bereich": 232194,
+     "urteil": "konsistent (echte Lage)"
+    },
+    "torbau_front | y->-y (Ost/West)": {
+     "A": 40955,
+     "B": 3364,
+     "punkte_im_bereich": 122913,
+     "urteil": "konsistent (echte Lage)"
+    }
+   }
+  },
+  "/media/oem/scan/rc-park_daten/martinstor/video_sfm/d1_cv2/dicht_modell.npy": {
+   "punkte": 2166503,
+   "pruefungen": {
+    "torbau_1901 | x->-x (Sued/Nord)": {
+     "A": 9918,
+     "B": 12507,
+     "punkte_im_bereich": 103434,
+     "urteil": "nicht entscheidbar (A/B zu nah beieinander)"
+    },
+    "torbau_front | x->-x (Sued/Nord)": {
+     "A": 31763,
+     "B": 174,
+     "punkte_im_bereich": 64217,
+     "urteil": "konsistent (echte Lage)"
+    },
+    "torbau_1901 | y->-y (Ost/West)": {
+     "A": 48941,
+     "B": 2599,
+     "punkte_im_bereich": 231441,
+     "urteil": "konsistent (echte Lage)"
+    },
+    "torbau_front | y->-y (Ost/West)": {
+     "A": 41030,
+     "B": 3435,
+     "punkte_im_bereich": 122641,
+     "urteil": "konsistent (echte Lage)"
+    }
+   }
+  }
+ },
+ "hinweis": "ANNAHMEN siehe Kopf von tools/video_seite_pruefen.py"
+}

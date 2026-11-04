@@ -1,0 +1,634 @@
+{
+ "objekt": "Martinstor",
+ "stl": "modelle/stl/martinstor_v4_1-87.stl",
+ "kante_m": 0.179,
+ "dreiecke": 2020338,
+ "flaeche_m2": 2828.1,
+ "gesamt_proz": {
+  "foto": 30.8,
+  "drohne": 42.4,
+  "keine": 26.8,
+  "produkt_ja": 0.0,
+  "produkt_bedingt": 30.8
+ },
+ "je_seite": {
+  "Nord": {
+   "flaeche_m2": 613.9,
+   "foto_proz": 54.9,
+   "drohne_proz": 37.0,
+   "keine_proz": 8.1,
+   "lizenz_proz": {
+    "frei_sharealike": 54.9,
+    "unfrei": 37.0
+   }
+  },
+  "Ost": {
+   "flaeche_m2": 552.2,
+   "foto_proz": 1.0,
+   "drohne_proz": 72.3,
+   "keine_proz": 26.6,
+   "lizenz_proz": {
+    "frei_sharealike": 1.0,
+    "unfrei": 72.3
+   }
+  },
+  "Sued": {
+   "flaeche_m2": 618.7,
+   "foto_proz": 63.6,
+   "drohne_proz": 13.2,
+   "keine_proz": 23.3,
+   "lizenz_proz": {
+    "frei_sharealike": 63.6,
+    "unfrei": 13.2
+   }
+  },
+  "West": {
+   "flaeche_m2": 552.4,
+   "foto_proz": 10.0,
+   "drohne_proz": 51.3,
+   "keine_proz": 38.7,
+   "lizenz_proz": {
+    "frei_sharealike": 10.0,
+    "unfrei": 51.3
+   }
+  },
+  "Dach/oben": {
+   "flaeche_m2": 491.0,
+   "foto_proz": 16.4,
+   "drohne_proz": 42.0,
+   "keine_proz": 41.6,
+   "lizenz_proz": {
+    "frei_sharealike": 16.4,
+    "unfrei": 42.0
+   }
+  }
+ },
+ "lizenz_flaeche_proz_gesamt": {
+  "frei_sharealike": 30.8,
+  "unfrei": 42.4
+ },
+ "lizenz_produkt_gruppen": {
+  "ja": 0.0,
+  "bedingt": 30.8,
+  "hinweis": "bedingt = frei_sharealike: nicht stillschweigend als produktfaehig gezaehlt"
+ },
+ "je_seite_und_band": {
+  "Nord": {
+   "z0-15": {
+    "flaeche_m2": 156.4,
+    "foto_proz": 20.8,
+    "drohne_proz": 63.6,
+    "keine_proz": 15.6,
+    "lizenz_proz": {
+     "frei_sharealike": 20.8,
+     "unfrei": 63.6
+    }
+   },
+   "z15-30": {
+    "flaeche_m2": 185.6,
+    "foto_proz": 83.4,
+    "drohne_proz": 13.1,
+    "keine_proz": 3.5,
+    "lizenz_proz": {
+     "frei_sharealike": 83.4,
+     "unfrei": 13.1
+    }
+   },
+   "z30-45": {
+    "flaeche_m2": 222.8,
+    "foto_proz": 52.8,
+    "drohne_proz": 40.7,
+    "keine_proz": 6.5,
+    "lizenz_proz": {
+     "frei_sharealike": 52.8,
+     "unfrei": 40.7
+    }
+   },
+   "z45-60": {
+    "flaeche_m2": 48.6,
+    "foto_proz": 65.3,
+    "drohne_proz": 25.6,
+    "keine_proz": 9.1,
+    "lizenz_proz": {
+     "frei_sharealike": 65.3,
+     "unfrei": 25.6
+    }
+   },
+   "z60-70": {
+    "flaeche_m2": 0.5,
+    "foto_proz": 0.0,
+    "drohne_proz": 69.5,
+    "keine_proz": 30.5,
+    "lizenz_proz": {
+     "unfrei": 69.5
+    }
+   }
+  },
+  "Ost": {
+   "z0-15": {
+    "flaeche_m2": 201.4,
+    "foto_proz": 0.2,
+    "drohne_proz": 59.2,
+    "keine_proz": 40.6,
+    "lizenz_proz": {
+     "frei_sharealike": 0.2,
+     "unfrei": 59.2
+    }
+   },
+   "z15-30": {
+    "flaeche_m2": 159.3,
+    "foto_proz": 1.3,
+    "drohne_proz": 90.1,
+    "keine_proz": 8.5,
+    "lizenz_proz": {
+     "frei_sharealike": 1.3,
+     "unfrei": 90.1
+    }
+   },
+   "z30-45": {
+    "flaeche_m2": 159.6,
+    "foto_proz": 2.0,
+    "drohne_proz": 66.5,
+    "keine_proz": 31.5,
+    "lizenz_proz": {
+     "frei_sharealike": 2.0,
+     "unfrei": 66.5
+    }
+   },
+   "z45-60": {
+    "flaeche_m2": 31.3,
+    "foto_proz": 0.0,
+    "drohne_proz": 96.0,
+    "keine_proz": 4.0,
+    "lizenz_proz": {
+     "unfrei": 96.0
+    }
+   },
+   "z60-70": {
+    "flaeche_m2": 0.5,
+    "foto_proz": 0.0,
+    "drohne_proz": 64.4,
+    "keine_proz": 35.6,
+    "lizenz_proz": {
+     "unfrei": 64.4
+    }
+   }
+  },
+  "Sued": {
+   "z0-15": {
+    "flaeche_m2": 161.3,
+    "foto_proz": 90.7,
+    "drohne_proz": 2.2,
+    "keine_proz": 7.1,
+    "lizenz_proz": {
+     "frei_sharealike": 90.7,
+     "unfrei": 2.2
+    }
+   },
+   "z15-30": {
+    "flaeche_m2": 185.5,
+    "foto_proz": 82.6,
+    "drohne_proz": 12.6,
+    "keine_proz": 4.8,
+    "lizenz_proz": {
+     "frei_sharealike": 82.6,
+     "unfrei": 12.6
+    }
+   },
+   "z30-45": {
+    "flaeche_m2": 222.7,
+    "foto_proz": 41.4,
+    "drohne_proz": 20.9,
+    "keine_proz": 37.7,
+    "lizenz_proz": {
+     "frei_sharealike": 41.4,
+     "unfrei": 20.9
+    }
+   },
+   "z45-60": {
+    "flaeche_m2": 48.6,
+    "foto_proz": 3.4,
+    "drohne_proz": 15.5,
+    "keine_proz": 81.1,
+    "lizenz_proz": {
+     "frei_sharealike": 3.4,
+     "unfrei": 15.5
+    }
+   },
+   "z60-70": {
+    "flaeche_m2": 0.5,
+    "foto_proz": 0.0,
+    "drohne_proz": 69.2,
+    "keine_proz": 30.8,
+    "lizenz_proz": {
+     "unfrei": 69.2
+    }
+   }
+  },
+  "West": {
+   "z0-15": {
+    "flaeche_m2": 201.5,
+    "foto_proz": 20.6,
+    "drohne_proz": 12.7,
+    "keine_proz": 66.7,
+    "lizenz_proz": {
+     "frei_sharealike": 20.6,
+     "unfrei": 12.7
+    }
+   },
+   "z15-30": {
+    "flaeche_m2": 159.3,
+    "foto_proz": 2.9,
+    "drohne_proz": 88.7,
+    "keine_proz": 8.4,
+    "lizenz_proz": {
+     "frei_sharealike": 2.9,
+     "unfrei": 88.7
+    }
+   },
+   "z30-45": {
+    "flaeche_m2": 159.8,
+    "foto_proz": 5.5,
+    "drohne_proz": 61.6,
+    "keine_proz": 32.9,
+    "lizenz_proz": {
+     "frei_sharealike": 5.5,
+     "unfrei": 61.6
+    }
+   },
+   "z45-60": {
+    "flaeche_m2": 31.3,
+    "foto_proz": 0.0,
+    "drohne_proz": 57.0,
+    "keine_proz": 42.9,
+    "lizenz_proz": {
+     "frei_sharealike": 0.0,
+     "unfrei": 57.0
+    }
+   },
+   "z60-70": {
+    "flaeche_m2": 0.5,
+    "foto_proz": 0.0,
+    "drohne_proz": 73.1,
+    "keine_proz": 26.9,
+    "lizenz_proz": {
+     "unfrei": 73.1
+    }
+   }
+  },
+  "Dach/oben": {
+   "z0-15": {
+    "flaeche_m2": 217.2,
+    "foto_proz": 5.3,
+    "drohne_proz": 22.1,
+    "keine_proz": 72.6,
+    "lizenz_proz": {
+     "frei_sharealike": 5.3,
+     "unfrei": 22.1
+    }
+   },
+   "z15-30": {
+    "flaeche_m2": 71.4,
+    "foto_proz": 37.7,
+    "drohne_proz": 51.5,
+    "keine_proz": 10.8,
+    "lizenz_proz": {
+     "frei_sharealike": 37.7,
+     "unfrei": 51.5
+    }
+   },
+   "z30-45": {
+    "flaeche_m2": 195.0,
+    "foto_proz": 21.5,
+    "drohne_proz": 61.1,
+    "keine_proz": 17.4,
+    "lizenz_proz": {
+     "frei_sharealike": 21.5,
+     "unfrei": 61.1
+    }
+   },
+   "z45-60": {
+    "flaeche_m2": 7.5,
+    "foto_proz": 1.1,
+    "drohne_proz": 33.3,
+    "keine_proz": 65.6,
+    "lizenz_proz": {
+     "frei_sharealike": 1.1,
+     "unfrei": 33.3
+    }
+   },
+   "z60-70": {
+    "flaeche_m2": 0.0,
+    "foto_proz": 0.0,
+    "drohne_proz": 0.0,
+    "keine_proz": 100.0,
+    "lizenz_proz": {}
+   }
+  }
+ },
+ "fotos": [
+  {
+   "foto": "000",
+   "rms_px": 73.3,
+   "rms_proz_bildhoehe": 2.64,
+   "f_px": 861949841.2,
+   "bild": [
+    1893,
+    2773
+   ],
+   "benutzt": false,
+   "grund": "unphysikalisch (Standort 24311632 m, f 861949841 px): Kamera nicht belastbar"
+  },
+  {
+   "foto": "005",
+   "benutzt": false,
+   "grund": "keine geloeste Kamera in K-005.json"
+  },
+  {
+   "foto": "006",
+   "benutzt": false,
+   "grund": "keine geloeste Kamera in K-006.json"
+  },
+  {
+   "foto": "014",
+   "benutzt": false,
+   "grund": "keine geloeste Kamera in K-014.json"
+  },
+  {
+   "foto": "022",
+   "benutzt": false,
+   "grund": "keine geloeste Kamera in K-022.json"
+  },
+  {
+   "foto": "030",
+   "rms_px": 56.7,
+   "rms_proz_bildhoehe": 1.97,
+   "f_px": 2357.5,
+   "bild": [
+    1920,
+    2880
+   ],
+   "benutzt": true,
+   "gewicht": 0.061,
+   "ankerzone_z": [
+    -2.3,
+    62.0
+   ],
+   "grob": true,
+   "flaeche_m2": 415.1,
+   "aufl_median_cm_je_px": 1.97,
+   "lizenz": {
+    "klasse": "frei_sharealike",
+    "produkt": "bedingt",
+    "auflage": "Ableitung nur unter gleicher Lizenz (ShareAlike); als Messvorlage ohne Bild im Produkt; Textur im Produkt rechtlich pruefen"
+   },
+   "gain_rgb": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "himmel_maskiert": true
+  },
+  {
+   "foto": "031",
+   "rms_px": 145.7,
+   "rms_proz_bildhoehe": 5.06,
+   "f_px": 5064.6,
+   "bild": [
+    1920,
+    2880
+   ],
+   "benutzt": false,
+   "grund": "RMS 5.1 % der Bildhoehe > Grenze 3.0 %"
+  },
+  {
+   "foto": "040",
+   "rms_px": 75.3,
+   "rms_proz_bildhoehe": 2.61,
+   "f_px": 3442.1,
+   "bild": [
+    1920,
+    2880
+   ],
+   "benutzt": true,
+   "gewicht": 0.035,
+   "ankerzone_z": [
+    null,
+    null
+   ],
+   "grob": true,
+   "flaeche_m2": 377.2,
+   "aufl_median_cm_je_px": 1.56,
+   "lizenz": {
+    "klasse": "frei_sharealike",
+    "produkt": "bedingt",
+    "auflage": "Ableitung nur unter gleicher Lizenz (ShareAlike); als Messvorlage ohne Bild im Produkt; Textur im Produkt rechtlich pruefen"
+   },
+   "gain_rgb": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "himmel_maskiert": true
+  },
+  {
+   "foto": "041",
+   "rms_px": 56.4,
+   "rms_proz_bildhoehe": 1.96,
+   "f_px": 2726.3,
+   "bild": [
+    1920,
+    2880
+   ],
+   "benutzt": true,
+   "gewicht": 0.061,
+   "ankerzone_z": [
+    29.5,
+    62.0
+   ],
+   "grob": true,
+   "flaeche_m2": 79.1,
+   "aufl_median_cm_je_px": 2.34,
+   "lizenz": {
+    "klasse": "frei_sharealike",
+    "produkt": "bedingt",
+    "auflage": "Ableitung nur unter gleicher Lizenz (ShareAlike); als Messvorlage ohne Bild im Produkt; Textur im Produkt rechtlich pruefen"
+   },
+   "gain_rgb": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "himmel_maskiert": true
+  },
+  {
+   "foto": "043",
+   "benutzt": false,
+   "grund": "keine geloeste Kamera in K-043.json"
+  },
+  {
+   "foto": "044",
+   "benutzt": false,
+   "grund": "keine geloeste Kamera in K-044.json"
+  },
+  {
+   "foto": "060",
+   "rms_px": 38.6,
+   "rms_proz_bildhoehe": 1.36,
+   "f_px": 19210.0,
+   "bild": [
+    4658,
+    2844
+   ],
+   "benutzt": false,
+   "grund": "als nicht plausibel markiert (plausibel_strassenfoto=false)"
+  },
+  {
+   "foto": "061",
+   "rms_px": 7.1,
+   "rms_proz_bildhoehe": 0.26,
+   "f_px": 487237.8,
+   "bild": [
+    3601,
+    2757
+   ],
+   "benutzt": false,
+   "grund": "unphysikalisch (Standort 52225 m, f 487238 px): Kamera nicht belastbar"
+  },
+  {
+   "foto": "062",
+   "benutzt": false,
+   "grund": "keine geloeste Kamera in K-062.json"
+  },
+  {
+   "foto": "065",
+   "benutzt": false,
+   "grund": "keine geloeste Kamera in K-065.json"
+  },
+  {
+   "foto": "066",
+   "benutzt": false,
+   "grund": "keine geloeste Kamera in K-066.json"
+  },
+  {
+   "foto": "067",
+   "benutzt": false,
+   "grund": "keine geloeste Kamera in K-067.json"
+  }
+ ],
+ "drohne": {
+  "ordner": "/media/oem/scan/rc-park_daten/martinstor/video_sfm/d1_cv",
+  "punkte": 2167153,
+  "dreiecke_mit_drohne": 1194813,
+  "gefuellt_dreiecke": 939718
+ },
+ "verdecker": [
+  "torbau_1901"
+ ],
+ "filter": {
+  "himmel_verworfen": 132378,
+  "konsistenz_verworfen": 3906,
+  "strittig": 22855,
+  "laub_ersetzt": 853,
+  "laub_keine": 3002
+ },
+ "angleich": {
+  "kanten": [
+   {
+    "von": "030",
+    "nach": "041",
+    "delta_e_median_vorher": 26.3,
+    "delta_e_median_nachher": 26.3
+   },
+   {
+    "von": "030",
+    "nach": "drohne",
+    "delta_e_median_vorher": 24.4,
+    "delta_e_median_nachher": 24.4
+   },
+   {
+    "von": "040",
+    "nach": "drohne",
+    "delta_e_median_vorher": 20.5,
+    "delta_e_median_nachher": 20.5
+   },
+   {
+    "von": "041",
+    "nach": "drohne",
+    "delta_e_median_vorher": 25.1,
+    "delta_e_median_nachher": 25.1
+   }
+  ],
+  "verworfen": [
+   {
+    "quelle": "030",
+    "de_vorher": 25.3,
+    "de_nachher": 26.1
+   },
+   {
+    "quelle": "041",
+    "de_vorher": 25.7,
+    "de_nachher": 27.6
+   },
+   {
+    "quelle": "drohne",
+    "de_vorher": 23.3,
+    "de_nachher": 24.7
+   }
+  ],
+  "de_vorher": 24.1,
+  "de_nachher": 24.1,
+  "bezug": "030",
+  "gain": {
+   "030": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "040": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "041": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "drohne": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "produktmodus": false,
+ "dreiecksform_flaeche_zu_laengste_kante2_p5_median": [
+  0.001,
+  0.042
+ ],
+ "annahmen": {
+  "rms_max_proz": 3.0,
+  "rms_gut_proz": 0.5,
+  "cos_min": 0.25,
+  "kante_m": 0.06,
+  "max_dreiecke": 2500000,
+  "drohne_dist_m": 0.5,
+  "rand_px": 8.0,
+  "himmel_rand_px": 6,
+  "gain_max": 1.6,
+  "angleich_min": 200,
+  "konsistenz_de": 25.0,
+  "laub_hue": "55,125",
+  "laub_sat": 0.25,
+  "schalter": {
+   "ohne_himmel": false,
+   "ohne_angleich": false,
+   "ohne_konsistenz": false,
+   "ohne_laubfilter": false,
+   "ohne_drohne": false
+  }
+ },
+ "lizenz": "Lizenzklassen aus tools/lizenz_register.py (Fotos nach Manifest, Drohne = unfrei, YouTube). --produkt faerbt nur produkt()==ja; 'bedingt' (frei_sharealike) nur mit --produkt-mit-bedingt. Mapillary = nc. Einordnung nach Lizenztext, keine Rechtsberatung.",
+ "grenzen": "Kamerafehler (RMS) = Farbversatz; Verdecker nur Modell+Torbau-LoD2, Laub/Leitungen nur ueber Konsistenz (>= 3 Fotos) bzw. Laubfilter; Gain gleicht nur Belichtung/Weissabgleich an; Drohne ist Angleich-Bruecke ohne Farbtreue-Beleg."
+}

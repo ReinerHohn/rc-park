@@ -1,0 +1,79 @@
+[
+ {
+  "seite": "dach",
+  "element": "Rumpf + Dach aus LoD2 (je Dachflaeche Prisma unter der Dachebene, auf Grundriss begrenzt)",
+  "quelle": "LoD2 DEBW_0010007Tv9r (LGL BW), 6 Dachflaechen, 3 Grundflaechen",
+  "boden_z": -0.431,
+  "first_z": 20.974,
+  "x0": -12.563,
+  "x1": 13.627,
+  "y0": -7.909,
+  "y1": 16.642,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Treppengiebel: 2 Giebel (6 LoD2-Wandstuecke), je 7 Stufen je Flanke + Spitze, Kappe 0.35 m, Spitze 1.0 m ueber First, Scheibe 0.60 m",
+  "quelle": "Stufenzahl: Z-050-001, Z-043-001 (Regel 9); Giebelwaende/First/Neigung LoD2; Kappe/Spitze/Dicke ANNAHME aus Fotos 050/043 (Stufe ueberragt die Dachflaeche um ~eine Kappe, Spitze ~1 m)",
+  "n": 7,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "+y",
+  "element": "Traufueberstand: Dachebene bis zur Rinne 10.42 m verlaengert, Ueberstand 0.84 m",
+  "quelle": "Foto 018 (fassade_nord.json): Rinne (M-018-001); Dachneigung LoD2; Rinne in Fotomitte (x 1960) bei y 690 (M-018-001); DOM1-Kante 1-2 m vor der LoD2-Wand bestaetigt Ueberstand",
+  "rinne": 10.421,
+  "ueberstand": 0.839,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "+y",
+  "element": "Arkade: 4 Segmentboegen, Kaempfer 2.64 m, Scheitel 4.00 m, Tiefe 4.4 m",
+  "quelle": "Foto 018 (fassade_nord.json), Zaehlung Z-018-001; Pfeilerkanten bei y 1900, Kaempfer (Bogenansatz am Pfeiler) und Scheitel (Laibung) abgelesen; Segmentboegen; Tiefe: Dichte Wolke kaufhaus_null (Frontkoordinaten, Wandebene s0): Arkaden-Rueckwand +3,9 m, Erker -0,8..-1,1 m, Galerie -0,66 m, x 1,13 (Erkerabstand Foto 18,8 m / Wolke 16,7 m; Wolke ist zu klein, Register Kaufhaus 2026-11-04). ANNAHME +-20 %; Fensternische ANNAHME",
+  "n": 4,
+  "kaempfer": 2.64,
+  "scheitel": 4.005,
+  "tiefe": 4.4,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "+y",
+  "element": "Fenster: 5 Stueck, je 3 Felder, Bruestung 6.33 / Sturz 8.65 m, Nische 0.25 m",
+  "quelle": "Foto 018 (fassade_nord.json), Zaehlung Z-018-002; Fensterkanten, Unterkante (= Galerie-Handlauf), Sturz (Vorhangbogen-Tiefpunkt), Spitzen; 3 Felder je Fenster (2 Pfosten) am Foto; Nische ANNAHME",
+  "n": 5,
+  "unten": 6.326,
+  "oben": 8.647,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "+y",
+  "element": "Figuren: 4 auf Konsole mit Baldachin, Figur 6.87-8.71 m",
+  "quelle": "Foto 018 (fassade_nord.json), Zaehlung Z-018-003; Figurenmitte, Konsole unten, Baldachin oben; Figur als Kegelstumpf (ANNAHME Detailgrad H0)",
+  "n": 4,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "+y",
+  "element": "Galerie: Platte 5.30 m, Handlauf 6.33 m, Vorsprung 0.75 m, Laenge 15.0 m",
+  "quelle": "Foto 018 (fassade_nord.json); Galerie-Platte unten und Handlauf; Vorsprung: Dichte Wolke kaufhaus_null (Frontkoordinaten, Wandebene s0): Arkaden-Rueckwand +3,9 m, Erker -0,8..-1,1 m, Galerie -0,66 m, x 1,13 (Erkerabstand Foto 18,8 m / Wolke 16,7 m; Wolke ist zu klein, Register Kaufhaus 2026-11-04). ANNAHME +-20 %; Fensternische ANNAHME; Docken als volle Bruestung (ANNAHME H0)",
+  "unten": 5.302,
+  "oben": 6.326,
+  "vorsprung": 0.75,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "+y",
+  "element": "Eckerker: 2 polygonal (Schraege-Front-Schraege), Vorsprung 0.90 m, Koerper 5.03-8.82 m, Konsole bis 3.87 m, Helm bis 14.8 m",
+  "quelle": "Foto 018 (fassade_nord.json), Zaehlung Z-018-004; Erkerkanten (3 Facetten: Schraege-Front-Schraege), Konsolenspitze, Wappenband unten, Erkergesims, Helmspitze; Fussueberstand ANNAHME; Vorsprung: Dichte Wolke kaufhaus_null (Frontkoordinaten, Wandebene s0): Arkaden-Rueckwand +3,9 m, Erker -0,8..-1,1 m, Galerie -0,66 m, x 1,13 (Erkerabstand Foto 18,8 m / Wolke 16,7 m; Wolke ist zu klein, Register Kaufhaus 2026-11-04). ANNAHME +-20 %; Fensternische ANNAHME",
+  "n": 2,
+  "vorsprung": 0.9,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "dach",
+  "element": "Gauben Nordseite: 5 in 2 Reihen (3+2), auf der LoD2-Dachflaeche",
+  "quelle": "Foto 018 (fassade_nord.json), Zaehlung Z-018-005, Z-018-006; Gaubenmitten am Foto; Lage auf der Dachflaeche ueber Kamera-Abstand und LoD2-Dachneigung zurueckgerechnet (ANNAHME Augenhoehe Bildmitte); Gaubengroesse ANNAHME aus Pixel (~120 px breit)",
+  "n": 5,
+  "seite_name": "dach"
+ }
+]

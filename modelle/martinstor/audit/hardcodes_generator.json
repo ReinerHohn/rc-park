@@ -1,0 +1,1573 @@
+{
+ "datei": "modelle/martinstor_v4_gen.py",
+ "gesamt": 337,
+ "zeilen": [
+  {
+   "zeile": 49,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    1900
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "RNG = random.Random(1900)       # fester Startwert: Ergebnis reproduzierbar (von Generator UND Bauteilen geteilt)"
+  },
+  {
+   "zeile": 88,
+   "funktion": "quoins3",
+   "anzahl": 2,
+   "werte": [
+    0.09,
+    0.2
+   ],
+   "annahme": false,
+   "daten": true,
+   "code": "a = a or _M[\"QUADER_LAENGE\"]; b = b or _M[\"QUADER_KURZ_FAKTOR\"] * a; joint = joint if joint is not None else min(0.09, 0.2 * course)"
+  },
+  {
+   "zeile": 96,
+   "funktion": "quoins3",
+   "anzahl": 4,
+   "werte": [
+    0.85,
+    1.15,
+    0.85,
+    1.15
+   ],
+   "annahme": true,
+   "daten": false,
+   "code": "lg, kz = a * RNG.uniform(0.85, 1.15), b * RNG.uniform(0.85, 1.15)      # leichte Streuung der Blocklaengen (ANNAHME)"
+  },
+  {
+   "zeile": 98,
+   "funktion": "quoins3",
+   "anzahl": 2,
+   "werte": [
+    0.2,
+    0.4
+   ],
+   "annahme": true,
+   "daten": false,
+   "code": "pp = rel(RNG.uniform(0.2, 0.4) * course)                               # Relief proportional zur Schicht (ANNAHME)"
+  },
+  {
+   "zeile": 102,
+   "funktion": "<modul>",
+   "anzahl": 5,
+   "werte": [
+    0.9,
+    0.15,
+    0.15,
+    0.15,
+    0.15
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(box(-DB / 2 - rel(0.15), DB / 2 + rel(0.15), -WB / 2 - rel(0.15), WB / 2 + rel(0.15), 0, 0.9))   # Plinthe"
+  },
+  {
+   "zeile": 103,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.8
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(box(-DB / 2, DB / 2, -WB / 2, WB / 2, 0.8, ZB))                                                      # Steinsockel"
+  },
+  {
+   "zeile": 104,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.01,
+    0.01
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(frustum(0, 0, ZB - 0.01, DB, WB, ZK, DK, WK)); adds.append(frustum(0, 0, ZK - 0.01, DK, WK, ZZ, D, W))                          "
+  },
+  {
+   "zeile": 109,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    13.9
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "beleg(\"-x\", \"Runder Eckturm NW mit Kegeldach\", \"Foto 001 Vollbild (Nord); Suedseite ohne (Foto 000)\", durchmesser=2 * ER, spitze=13.9)"
+  },
+  {
+   "zeile": 110,
+   "funktion": "<modul>",
+   "anzahl": 3,
+   "werte": [
+    0.8,
+    10.6,
+    0.8
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.cylinder(10.6 - 0.8, ER, ER, 32).translate((EX, EY, 0.8)))                                  # Sandsteinrund"
+  },
+  {
+   "zeile": 111,
+   "funktion": "<modul>",
+   "anzahl": 4,
+   "werte": [
+    10.35,
+    0.25,
+    0.2,
+    0.2
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.cylinder(0.25, ER + 0.2, ER + 0.2, 32).translate((EX, EY, 10.35)))                             # Traufgesims"
+  },
+  {
+   "zeile": 112,
+   "funktion": "<modul>",
+   "anzahl": 4,
+   "werte": [
+    10.6,
+    3.3,
+    0.03,
+    0.2
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.cylinder(3.3, ER + 0.2, 0.03, 32).translate((EX, EY, 10.6)))                                  # Kupferkegel"
+  },
+  {
+   "zeile": 113,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    13.9,
+    0.12
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.sphere(0.12, 12).translate((EX, EY, 13.9)))                                                   # Knauf"
+  },
+  {
+   "zeile": 114,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    4.0,
+    8.0
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "for zz in (4.0, 8.0):                                                                                     # Schlitzfenster nach Norden"
+  },
+  {
+   "zeile": 115,
+   "funktion": "<modul>",
+   "anzahl": 4,
+   "werte": [
+    0.3,
+    0.125,
+    0.6,
+    0.25
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "cuts.append(M.cube((0.6, 0.25, 1.0)).translate((EX - ER - 0.3, EY - 0.125, zz)))"
+  },
+  {
+   "zeile": 120,
+   "funktion": "frei_x",
+   "anzahl": 6,
+   "werte": [
+    4.1,
+    9.4,
+    2.6,
+    10.7,
+    -4.1,
+    -2.6
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "return (u1 > -4.1 and u0 < 4.1 and z0 < 9.4) or (u1 > -2.6 and u0 < 2.6 and z0 < 10.7)"
+  },
+  {
+   "zeile": 122,
+   "funktion": "frei_y",
+   "anzahl": 6,
+   "werte": [
+    0.95,
+    -0.95,
+    5.9,
+    8.0,
+    9.9,
+    12.0
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "return (u1 > -0.95 and u0 < 0.95 and ((5.9 < z1 and z0 < 8.0) or (9.9 < z1 and z0 < 12.0)))"
+  },
+  {
+   "zeile": 125,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.2
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "hz = hxy(ZB + 0.2)"
+  },
+  {
+   "zeile": 126,
+   "funktion": "<modul>",
+   "anzahl": 5,
+   "werte": [
+    0.25,
+    0.25,
+    0.25,
+    0.25,
+    0.45
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(box(-hz[0] - 0.25, hz[0] + 0.25, -hz[1] - 0.25, hz[1] + 0.25, ZB, ZB + 0.45))                      # Gurtgesims Sockel/Schaft"
+  },
+  {
+   "zeile": 135,
+   "funktion": "<modul>",
+   "anzahl": 3,
+   "werte": [
+    0.95,
+    -0.05,
+    0.16
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(fcyl(f, 0, SPR, AW / 2 + 0.95, -0.05, rel(0.16), h=HB, seg=96))"
+  },
+  {
+   "zeile": 136,
+   "funktion": "<modul>",
+   "anzahl": 5,
+   "werte": [
+    0.9,
+    0.95,
+    0.95,
+    -0.05,
+    0.16
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(fbox(f, -AW / 2 - 0.95, AW / 2 + 0.95, 0.9, SPR, -0.05, rel(0.16), h=HB))"
+  },
+  {
+   "zeile": 137,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    15
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "for i in range(1, 15):"
+  },
+  {
+   "zeile": 138,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    15
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "ang = i * 180 / 15"
+  },
+  {
+   "zeile": 141,
+   "funktion": "<modul>",
+   "anzahl": 6,
+   "werte": [
+    0.035,
+    0.55,
+    -0.035,
+    -0.55,
+    0.16,
+    0.08
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "g = fbox(f, -0.035, 0.035, -0.55, 0.55, rel(0.16) - rel(0.08), 1.0, h=HB)"
+  },
+  {
+   "zeile": 143,
+   "funktion": "<modul>",
+   "anzahl": 6,
+   "werte": [
+    0.45,
+    -0.45,
+    0.1,
+    1.15,
+    -0.05,
+    0.24
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(fbox(f, -0.45, 0.45, SPR + AW / 2 - 0.1, SPR + AW / 2 + 1.15, -0.05, rel(0.24), h=HB))"
+  },
+  {
+   "zeile": 145,
+   "funktion": "<modul>",
+   "anzahl": 5,
+   "werte": [
+    0.6,
+    0.6,
+    0.3,
+    -0.05,
+    0.24
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(fbox(f, j * (AW / 2 + 0.5) - 0.6, j * (AW / 2 + 0.5) + 0.6, SPR - 0.3, SPR, -0.05, rel(0.24), h=HB))"
+  },
+  {
+   "zeile": 146,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    9.6
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "_hT = hxy(9.6)"
+  },
+  {
+   "zeile": 147,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    3.4
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "beleg(\"-x\", \"Inschrifttafel 1796\", \"de.wikipedia: Gedenktafel auf der Stadtseite; Foto 001 (Nord)\", breite=3.4, hoehe=2.0)"
+  },
+  {
+   "zeile": 148,
+   "funktion": "<modul>",
+   "anzahl": 6,
+   "werte": [
+    1.7,
+    6.5,
+    8.5,
+    -1.7,
+    -0.05,
+    0.14
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(fbox(\"-x\", -1.7, 1.7, 6.5, 8.5, -0.05, rel(0.14), h=_hT))                    # Inschrifttafel (NORD = Stadtseite)"
+  },
+  {
+   "zeile": 149,
+   "funktion": "<modul>",
+   "anzahl": 6,
+   "werte": [
+    1.45,
+    6.75,
+    8.25,
+    -1.45,
+    0.14,
+    0.05
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "cuts.append(fbox(\"-x\", -1.45, 1.45, 6.75, 8.25, rel(0.14) - rel(0.05), 1.0, h=_hT))"
+  },
+  {
+   "zeile": 150,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    5
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "for i in range(5):"
+  },
+  {
+   "zeile": 151,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    6.9,
+    0.22
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "z = 6.9 + i * 0.22"
+  },
+  {
+   "zeile": 152,
+   "funktion": "<modul>",
+   "anzahl": 8,
+   "werte": [
+    1.25,
+    0.09,
+    0.12,
+    -1.25,
+    0.3,
+    0.3,
+    4,
+    4
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(fbox(\"-x\", -1.25 + (0.3 if i == 4 else 0), 1.25 - (0.3 if i == 4 else 0), z, z + 0.09, 0, rel(0.12), h=_hT))"
+  },
+  {
+   "zeile": 154,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    1.7,
+    2.3
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "beleg(\"+x\", \"Doppeladler-Relief\", \"de.wikipedia: Reichsadler an der Toraussenseite; Fotos 041/030 (Sued, rechts ueber dem Bogen)\", breite=1."
+  },
+  {
+   "zeile": 155,
+   "funktion": "<modul>",
+   "anzahl": 6,
+   "werte": [
+    0.85,
+    8.3,
+    10.6,
+    -0.85,
+    -0.05,
+    0.14
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(fbox(\"+x\", -0.85, 0.85, 8.3, 10.6, -0.05, rel(0.14), h=_hT))                       # Adler-Tafel (SUED)"
+  },
+  {
+   "zeile": 156,
+   "funktion": "<modul>",
+   "anzahl": 6,
+   "werte": [
+    0.7,
+    8.5,
+    10.4,
+    -0.7,
+    0.14,
+    0.05
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "cuts.append(fbox(\"+x\", -0.7, 0.7, 8.5, 10.4, rel(0.14) - rel(0.05), 1.0, h=_hT))         # Feld einsenken"
+  },
+  {
+   "zeile": 157,
+   "funktion": "<modul>",
+   "anzahl": 4,
+   "werte": [
+    0.2,
+    0.8,
+    1.3,
+    0.32
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "for e in [M.sphere(0.32 * FA, 24).scale((1, 0.8, 1.3)).translate((0, 0, ZA - 0.2)),"
+  },
+  {
+   "zeile": 158,
+   "funktion": "<modul>",
+   "anzahl": 4,
+   "werte": [
+    0.28,
+    0.2,
+    -0.28,
+    0.2
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "M.sphere(0.2 * FA, 16).translate((0, -0.28 * FA, ZA + 0.5 * FA)), M.sphere(0.2 * FA, 16).translate((0, 0.28 * FA, ZA + 0.5 * FA)),"
+  },
+  {
+   "zeile": 159,
+   "funktion": "<modul>",
+   "anzahl": 6,
+   "werte": [
+    0.1,
+    0.1,
+    0.55,
+    0.55,
+    0.42,
+    0.42
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "M.sphere(0.42 * FA, 24).scale((0.5, 1.0, 0.55)).translate((0, -0.5 * FA, ZA - 0.1)), M.sphere(0.42 * FA, 24).scale((0.5, 1.0, 0.55)).transla"
+  },
+  {
+   "zeile": 160,
+   "funktion": "<modul>",
+   "anzahl": 3,
+   "werte": [
+    0.09,
+    0.3,
+    0.12
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "late.append(e.scale((rel(0.12) / 0.3, 1, 1)).translate((_hT[0] + rel(0.09), 0, 0)))    # NACH dem Einsenken vereinigt, sonst weg (+x = Sued)"
+  },
+  {
+   "zeile": 162,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    6.5,
+    10.5
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "for z in (6.5, 10.5):"
+  },
+  {
+   "zeile": 168,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.3
+   ],
+   "annahme": false,
+   "daten": true,
+   "code": "quoins3(SZ0, min(_QZ, ZZ - 0.3), course=_M[\"QUADER_SCHAFT_UNTEN\"])      # Schichthoehe + Blocklaenge aus den Farbperioden der Wolke (Registe"
+  },
+  {
+   "zeile": 169,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.3
+   ],
+   "annahme": false,
+   "daten": true,
+   "code": "quoins3(_QZ, ZZ - 0.3, course=_M[\"QUADER_SCHAFT_OBEN\"])"
+  },
+  {
+   "zeile": 177,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    1.3
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "beleg(f, \"Giebel ueber der Uhr mit zwei konkaven Schenkeln\", \"Foto 031 Vollbild (giebel031.jpg), Messung Scheitel 28,96 / Schenkelende 27,67"
+  },
+  {
+   "zeile": 181,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    1.25,
+    0.35
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "_w, _h, _zb = UR + 1.0, 1.25, UZ + UR + 0.35"
+  },
+  {
+   "zeile": 182,
+   "funktion": "_konkav",
+   "anzahl": 1,
+   "werte": [
+    2.6
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "def _konkav(tt): return tt ** 2.6          # 0 am Schenkelende, 1 am Scheitel; Exponent > 1 = konkav eingezogen"
+  },
+  {
+   "zeile": 183,
+   "funktion": "<modul>",
+   "anzahl": 3,
+   "werte": [
+    25,
+    24,
+    24
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "_pts = [(-_w + 2 * _w * k / 24, _zb + _h * _konkav(1 - abs(-1 + 2 * k / 24))) for k in range(25)]"
+  },
+  {
+   "zeile": 184,
+   "funktion": "<modul>",
+   "anzahl": 4,
+   "werte": [
+    -0.05,
+    0.2,
+    0.35,
+    0.35
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(prism(f, _pts + [(_w, _zb - 0.35), (-_w, _zb - 0.35)], -0.05, rel(0.2), hh))"
+  },
+  {
+   "zeile": 185,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    12
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "for k in range(12):"
+  },
+  {
+   "zeile": 186,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    15,
+    30
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "ang = math.radians(k * 30 + 15)"
+  },
+  {
+   "zeile": 187,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.28,
+    0.28
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "u, zz = math.sin(ang) * (UR + 0.28), UZ + math.cos(ang) * (UR + 0.28)"
+  },
+  {
+   "zeile": 188,
+   "funktion": "<modul>",
+   "anzahl": 4,
+   "werte": [
+    0.2,
+    -0.2,
+    -0.15,
+    0.09
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(fcyl(f, u, zz, 0.2, -0.2, -0.15 + rel(0.09), h=hh))"
+  },
+  {
+   "zeile": 197,
+   "funktion": "<modul>",
+   "anzahl": 5,
+   "werte": [
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.45
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(box(-D / 2 - 0.35, D / 2 + 0.35, -W / 2 - 0.35, W / 2 + 0.35, ZZ - 0.45, ZZ))        # Kranzgesims"
+  },
+  {
+   "zeile": 199,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    5
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "n = 5"
+  },
+  {
+   "zeile": 204,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.4,
+    0.4
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(fbox(f, u - 0.4, u + 0.4, ZZ, ZZ + 1.0, -0.5, 0.0, h=HS))                  # Zinne"
+  },
+  {
+   "zeile": 205,
+   "funktion": "<modul>",
+   "anzahl": 5,
+   "werte": [
+    0.15,
+    0.15,
+    0.9,
+    1.35,
+    -0.1
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(fbox(f, u - 0.15, u + 0.15, ZZ + 0.9, ZZ + 1.35, -0.1, 0.5, h=HS))            # Holzkonsole"
+  },
+  {
+   "zeile": 206,
+   "funktion": "<modul>",
+   "anzahl": 6,
+   "werte": [
+    0.45,
+    0.45,
+    0.45,
+    0.45,
+    0.3,
+    1.05
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(box(-D / 2 + 0.45, D / 2 - 0.45, -W / 2 + 0.45, W / 2 - 0.45, ZZ - 0.3, ZZ + 1.05))         # Kern hinter den Zinnen (0,45 zurue"
+  },
+  {
+   "zeile": 214,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.7,
+    0.7
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(frustum(0, 0, ZZ + 1.0, D + 0.7, W + 0.7, KT, D + KU, W + KU))                      # Kragdach: Traufzone ueber den Zinnen bis z"
+  },
+  {
+   "zeile": 215,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.02
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(frustum(0, 0, KT - 0.02, D + KU, W + KU, GZ0, GX, GY))                             # Kragdach-Schraege bis an die Glockenstock-W"
+  },
+  {
+   "zeile": 217,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.1
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(box(-GX / 2, GX / 2, -GY / 2, GY / 2, GZ0 - 0.1, GZ1))"
+  },
+  {
+   "zeile": 218,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.2
+   ],
+   "annahme": false,
+   "daten": true,
+   "code": "quoins((0, 0), GX / 2, GY / 2, GZ0, GZ1 - 0.2, a=_M[\"QUADER_LAENGE\"], b=_M[\"QUADER_KURZ_FAKTOR\"] * _M[\"QUADER_LAENGE\"], course=_M[\"QUADER_GL"
+  },
+  {
+   "zeile": 231,
+   "funktion": "<modul>",
+   "anzahl": 6,
+   "werte": [
+    0.3,
+    0.3,
+    0.12,
+    0.3,
+    -0.05,
+    0.1
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(fbox(f, u_a - 0.3, u_b + 0.3, z_a - 0.12, z_b + 0.3, -0.05, rel(0.1), h=hh))          # Sandsteinrahmen um die Reihe (Foto 030)"
+  },
+  {
+   "zeile": 233,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    -0.7
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "cuts.append(fbox(f, o[\"u0\"], o[\"u1\"], o[\"zu\"], o[\"zk\"], -0.7, 0.5, h=hh))"
+  },
+  {
+   "zeile": 234,
+   "funktion": "<modul>",
+   "anzahl": 3,
+   "werte": [
+    0.01,
+    -0.7,
+    -0.7
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "cuts.append(fbox(f, o[\"u0\"], o[\"u1\"], o[\"zk\"] - 0.01, o[\"zt\"], -0.7, 0.5, h=hh) ^ fcyl(f, o[\"uc\"], o[\"zt\"] - o[\"R\"], o[\"R\"], -0.7, 0.5, h=hh"
+  },
+  {
+   "zeile": 247,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.4,
+    0.4
+   ],
+   "annahme": false,
+   "daten": true,
+   "code": "BX, BY = max(_PROF[\"dach_traufe\"][\"tief\"], GX + 0.4), max(_PROF[\"dach_traufe\"][\"quer\"], GY + 0.4)"
+  },
+  {
+   "zeile": 251,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.6,
+    0.4
+   ],
+   "annahme": true,
+   "daten": true,
+   "code": "lay = [(RZ0, BX, BY)] + [(z, t, q) for z, t, q in _PROF[\"dach_profil\"] if RZ0 + 0.6 < z < RZ1 - 0.4] + [(RZ1, OX, (_PROF.get(\"dach_oben\") or"
+  },
+  {
+   "zeile": 252,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.02,
+    0.02
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "lay = [l for i, l in enumerate(lay) if i == 0 or abs(l[1] - lay[i - 1][1]) > 0.02 or abs(l[2] - lay[i - 1][2]) > 0.02 or i == len(lay) - 1] "
+  },
+  {
+   "zeile": 254,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.02
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(frustum(0, 0, z0 - 0.02, t0, q0, z1, t1, q1))"
+  },
+  {
+   "zeile": 258,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.05
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(frustum(0, 0, RZM - 0.05, MX, MY, RZM2, M2X, M2Y))"
+  },
+  {
+   "zeile": 259,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.05
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(frustum(0, 0, RZM2 - 0.05, M2X, M2Y, RZ1, OX, OY))"
+  },
+  {
+   "zeile": 261,
+   "funktion": "<modul>",
+   "anzahl": 8,
+   "werte": [
+    0.14,
+    0.14,
+    -0.14,
+    0.35,
+    0.05,
+    -0.14,
+    0.35,
+    0.05
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(box(-KX, KX, -0.14, 0.14, RZ1 - 0.35, RZ1 - 0.05)); adds.append(box(-0.14, 0.14, -KY, KY, RZ1 - 0.35, RZ1 - 0.05))   # Kreuzarme"
+  },
+  {
+   "zeile": 263,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.24,
+    0.05
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.sphere(0.24, 20).translate((sx * KX, 0, RZ1 - 0.05)))"
+  },
+  {
+   "zeile": 264,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.24,
+    0.05
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.sphere(0.24, 20).translate((0, sx * KY, RZ1 - 0.05)))                               # Goldkugeln (SfM: bei +-1,5 / +-1,9 m)"
+  },
+  {
+   "zeile": 271,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.1,
+    0.9
+   ],
+   "annahme": false,
+   "daten": true,
+   "code": "adds.append(M.cylinder(KZ_ := (RZ1 + _M[\"KNAUF_ANTEIL\"] * (TOP - RZ1)) - RZ1, _M[\"LATERNE_D\"] / 2, _M[\"LATERNE_D\"] / 2 * 0.9, 8).translate(("
+  },
+  {
+   "zeile": 277,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    4
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "beleg(\"dach\", \"4 Ecktuermchen mit Kegel\", \"Fotos 041/043/044; SfM Nordnetz Knaeufe 44,4-44,7 m (DOM1 41 m = getroffene Kegelflaeche)\", anzah"
+  },
+  {
+   "zeile": 280,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.34
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.sphere(0.34, 20).translate((0, 0, KZ)))                                          # Knauf"
+  },
+  {
+   "zeile": 281,
+   "funktion": "<modul>",
+   "anzahl": 4,
+   "werte": [
+    0.1,
+    0.04,
+    0.1,
+    0.1
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.cylinder(TOP - KZ - 0.1, 0.10, 0.04, 8).translate((0, 0, KZ + 0.1)))           # Nadel (konisch)"
+  },
+  {
+   "zeile": 296,
+   "funktion": "zum_turm",
+   "anzahl": 3,
+   "werte": [
+    -0.3,
+    45,
+    45
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "def zum_turm(k): return (math.cos(math.radians(k * 45)) * c[0] + math.sin(math.radians(k * 45)) * c[1]) < -0.3 * math.hypot(*c)"
+  },
+  {
+   "zeile": 301,
+   "funktion": "bau_tuerm_baender",
+   "anzahl": 3,
+   "werte": [
+    0.9,
+    0.9,
+    0.02
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(frustum(c[0], c[1], KZ0, 0.9, 0.9, z_schaft0 + 0.02, TWs, TWs))               # Konsole (Auskragung) bis zum Schaftfuss"
+  },
+  {
+   "zeile": 302,
+   "funktion": "bau_tuerm_baender",
+   "anzahl": 1,
+   "werte": [
+    0.02
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(box(c[0] - TWs / 2, c[0] + TWs / 2, c[1] - TWs / 2, c[1] + TWs / 2, z_schaft0, z_schaft1 + 0.02))"
+  },
+  {
+   "zeile": 303,
+   "funktion": "bau_tuerm_baender",
+   "anzahl": 2,
+   "werte": [
+    0.1,
+    0.3
+   ],
+   "annahme": false,
+   "daten": true,
+   "code": "quoins(c, TWs / 2, TWs / 2, z_schaft0 + 0.1, z_schaft1 - 0.3, a=_M[\"QUADER_LAENGE\"], b=_M[\"QUADER_KURZ_FAKTOR\"] * _M[\"QUADER_LAENGE\"], cours"
+  },
+  {
+   "zeile": 306,
+   "funktion": "bau_tuerm_baender",
+   "anzahl": 3,
+   "werte": [
+    0.45,
+    1.5,
+    0.25
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "window(f, 0.0, z_schaft0 + 1.5, 0.45, 1.0, c=c, hh=hh, deep=0.25)"
+  },
+  {
+   "zeile": 312,
+   "funktion": "bau_tuerm_baender",
+   "anzahl": 1,
+   "werte": [
+    0.2
+   ],
+   "annahme": true,
+   "daten": false,
+   "code": "beleg(\"dach\", \"Ecktuermchen Arkadenband HOHL (Bogen offen in den Erker-Innenraum, Wand 0,2 m)\", \"Foto 043: hinter jedem Bogen dunkler Innenr"
+  },
+  {
+   "zeile": 313,
+   "funktion": "bau_tuerm_baender",
+   "anzahl": 1,
+   "werte": [
+    8
+   ],
+   "annahme": true,
+   "daten": false,
+   "code": "beleg(\"dach\", \"Ecktuermchen Traufkonsolen ('Boeckchen') 8 je Tuermchen\", \"ANNAHME aus Foto 043; Traufplatte r aus der Wolke\", anzahl=8)"
+  },
+  {
+   "zeile": 317,
+   "funktion": "bau_tuerm_baender",
+   "anzahl": 1,
+   "werte": [
+    3
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "asym_quer=round(_ta[\"asym_quer\"], 3), grenze=_ta[\"grenze_quer\"])"
+  },
+  {
+   "zeile": 330,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.9,
+    0.9
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(frustum(c[0], c[1], KZ0, 0.9, 0.9, KZ1, TWs, TWs))                        # Auskragung (Konsole)"
+  },
+  {
+   "zeile": 331,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.02,
+    0.02
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(box(c[0] - TWs / 2, c[0] + TWs / 2, c[1] - TWs / 2, c[1] + TWs / 2, KZ1 - 0.02, T0 + 0.02))   # Schaft ab Konsolen-Oberkante"
+  },
+  {
+   "zeile": 333,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.4,
+    0.9
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "for z in (KZ0 + 0.4, KZ0 + 0.9):"
+  },
+  {
+   "zeile": 334,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.9,
+    0.9
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "w_ = 0.9 + (TWs - 0.9) * (z - KZ0) / (KZ1 - KZ0)"
+  },
+  {
+   "zeile": 335,
+   "funktion": "<modul>",
+   "anzahl": 6,
+   "werte": [
+    0.12,
+    0.05,
+    0.1,
+    0.1,
+    0.1,
+    0.1
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(frustum(c[0], c[1], z - 0.12, w_ + 2 * rel(0.1), w_ + 2 * rel(0.1), z + 0.05, w_ + 2 * rel(0.1), w_ + 2 * rel(0.1)))"
+  },
+  {
+   "zeile": 337,
+   "funktion": "<modul>",
+   "anzahl": 4,
+   "werte": [
+    0.1,
+    0.7,
+    0.8,
+    0.58
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "quoins(c, TWs / 2, TWs / 2, T0 + 0.1, T1 - 0.7, a=0.8, b=0.5, course=0.58)"
+  },
+  {
+   "zeile": 338,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.22
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "p = rel(0.22)"
+  },
+  {
+   "zeile": 341,
+   "funktion": "<modul>",
+   "anzahl": 3,
+   "werte": [
+    0.45,
+    1.5,
+    0.25
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "window(f, 0.0, T0 + 1.5, 0.45, 1.0, c=c, hh=hh, deep=0.25)"
+  },
+  {
+   "zeile": 343,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    22.5,
+    0.95
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.cylinder(0.95, OR, OR, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1)))"
+  },
+  {
+   "zeile": 345,
+   "funktion": "zum_turm",
+   "anzahl": 3,
+   "werte": [
+    -0.3,
+    45,
+    45
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "return (math.cos(math.radians(k * 45)) * c[0] + math.sin(math.radians(k * 45)) * c[1]) < -0.3 * math.hypot(*c)"
+  },
+  {
+   "zeile": 346,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    8
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "for k in range(8):"
+  },
+  {
+   "zeile": 349,
+   "funktion": "<modul>",
+   "anzahl": 7,
+   "werte": [
+    38,
+    -0.04,
+    -0.47,
+    0.085,
+    0.95,
+    -0.25,
+    22.5
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "cut = M.cube((0.5, 0.085, 0.95)).translate((-0.25 + OR * math.cos(math.radians(22.5)) , -0.04, -0.47)).rotate((sgn * 38, 0, 0)).translate((0"
+  },
+  {
+   "zeile": 351,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    45,
+    0.48
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "cut = cut.translate((0, 0, T1 + 0.48)).rotate((0, 0, k * 45)).translate((c[0], c[1], 0))"
+  },
+  {
+   "zeile": 354,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.45,
+    0.88
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "for dz in (0.0, 0.45, 0.88):"
+  },
+  {
+   "zeile": 355,
+   "funktion": "<modul>",
+   "anzahl": 4,
+   "werte": [
+    22.5,
+    0.12,
+    0.16,
+    0.16
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.cylinder(0.12, OR + rel(0.16), OR + rel(0.16), 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + dz)))"
+  },
+  {
+   "zeile": 359,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.95
+   ],
+   "annahme": false,
+   "daten": true,
+   "code": "EO = _M[\"ERKER_OBEN\"]; EH = EO - (T1 + 0.95) - 0.5                            # Erkerkoerper bis zur Traufe des Helms (Wolke: ~39,3 m)"
+  },
+  {
+   "zeile": 363,
+   "funktion": "<modul>",
+   "anzahl": 3,
+   "werte": [
+    0.3,
+    1.2,
+    0.8
+   ],
+   "annahme": false,
+   "daten": true,
+   "code": "prof = [(z, d) for z, d in _PROF[\"tuerm_profil\"] if T1 + 1.2 < z < TS - 0.8 and d > 0.3]"
+  },
+  {
+   "zeile": 364,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.12,
+    0.95
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "lay = [(T1 + 0.95, 2 * OR)] + prof + [(TS - 0.5, 0.12)]"
+  },
+  {
+   "zeile": 365,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    1e-06,
+    1e-06
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "lay = [l for i, l in enumerate(lay) if i == 0 or i == len(lay) - 1 or not (abs(l[1] - lay[i - 1][1]) < 1e-6 and abs(lay[i + 1][1] - l[1]) < "
+  },
+  {
+   "zeile": 367,
+   "funktion": "okt",
+   "anzahl": 6,
+   "werte": [
+    22.5,
+    8,
+    22.5,
+    22.5,
+    45,
+    45
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "R = d / 2 / math.cos(math.radians(22.5)); return [(c[0] + R * math.cos(math.radians(k * 45 + 22.5)), c[1] + R * math.sin(math.radians(k * 45"
+  },
+  {
+   "zeile": 368,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.02
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "for (z0, d0), (z1, d1) in zip(lay[:-1], lay[1:]): adds.append(M.hull_points(okt(z0 - 0.02, d0) + okt(z1, d1)))"
+  },
+  {
+   "zeile": 370,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.95,
+    22.5
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.cylinder(EH, OR, OR, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], T1 + 0.95)))"
+  },
+  {
+   "zeile": 371,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    8
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "for k in range(8):                                                   # schmale Fenster in jeder zweiten Flaeche"
+  },
+  {
+   "zeile": 373,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    45
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "a = math.radians(k * 45)"
+  },
+  {
+   "zeile": 374,
+   "funktion": "<modul>",
+   "anzahl": 6,
+   "werte": [
+    0.1,
+    -0.25,
+    -0.17,
+    -0.42,
+    0.34,
+    0.85
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "fen = M.cube((0.5, 0.34, 0.85)).translate((-0.25, -0.17, -0.42)).translate((OR - 0.1, 0, 0)).rotate((0, 0, math.degrees(a)))"
+  },
+  {
+   "zeile": 375,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    1.7,
+    4.2
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "for zf in (T1 + 1.7, T1 + 4.2):                                           # zwei Fensterzonen im hohen Erker"
+  },
+  {
+   "zeile": 378,
+   "funktion": "<modul>",
+   "anzahl": 4,
+   "werte": [
+    22.5,
+    0.18,
+    0.14,
+    0.14
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.cylinder(0.18, OR + 0.14, OR + 0.14, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], EO - 0.5)))   # Traufgesims"
+  },
+  {
+   "zeile": 379,
+   "funktion": "<modul>",
+   "anzahl": 5,
+   "werte": [
+    0.32,
+    22.5,
+    0.3,
+    0.16,
+    0.86
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.cylinder(0.3, OR + 0.16, OR * 0.86, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], EO - 0.32)))     # Helmansatz"
+  },
+  {
+   "zeile": 382,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    0.05
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "HK0 = EO - 0.05; HK1 = TS - 0.5"
+  },
+  {
+   "zeile": 384,
+   "funktion": "<modul>",
+   "anzahl": 3,
+   "werte": [
+    22.5,
+    0.05,
+    0.86
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.cylinder(HK1 - HK0, OR * 0.86, 0.05, 8).rotate((0, 0, 22.5)).translate((c[0], c[1], HK0)))   # Helm: steiler Kegel ab Erker-Ob"
+  },
+  {
+   "zeile": 385,
+   "funktion": "<modul>",
+   "anzahl": 2,
+   "werte": [
+    0.2,
+    0.15
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.sphere(0.2, 20).translate((c[0], c[1], HK1 + 0.15)))"
+  },
+  {
+   "zeile": 386,
+   "funktion": "<modul>",
+   "anzahl": 4,
+   "werte": [
+    0.35,
+    0.05,
+    0.015,
+    0.15
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "adds.append(M.cylinder(0.35, 0.05, 0.015, 8).translate((c[0], c[1], HK1 + 0.15)))"
+  },
+  {
+   "zeile": 393,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    3
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "V = np.asarray(mesh.vert_properties)[:, :3].astype(np.float32)"
+  },
+  {
+   "zeile": 398,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    10000.0
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "_q = np.round(V.astype(np.float64) * 1e4).astype(np.int64); _, _id = np.unique(_q, axis=0, return_inverse=True); _id = _id.ravel(); _g = {}"
+  },
+  {
+   "zeile": 401,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    3
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "rang = tuple(sorted(range(3), key=lambda i_: t_[i_])); par_ = 1 if rang in ((0, 1, 2), (1, 2, 0), (2, 0, 1)) else -1"
+  },
+  {
+   "zeile": 410,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    1e-12
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "nrm /= np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-12"
+  },
+  {
+   "zeile": 411,
+   "funktion": "<modul>",
+   "anzahl": 3,
+   "werte": [
+    3,
+    3,
+    3
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "rec = np.zeros(len(F), dtype=[(\"n\", \"<f4\", 3), (\"v\", \"<f4\", (3, 3)), (\"a\", \"<u2\")])"
+  },
+  {
+   "zeile": 415,
+   "funktion": "<modul>",
+   "anzahl": 1,
+   "werte": [
+    80
+   ],
+   "annahme": false,
+   "daten": false,
+   "code": "f.write(b\"martinstor_detail (c) OSM ODbL + rc-park\".ljust(80, b\" \"))"
+  }
+ ],
+ "nach_funktion": {
+  "<modul>": 292,
+  "quoins3": 8,
+  "frei_x": 6,
+  "frei_y": 6,
+  "_konkav": 1,
+  "zum_turm": 6,
+  "bau_tuerm_baender": 12,
+  "okt": 6
+ }
+}

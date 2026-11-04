@@ -1,0 +1,3345 @@
+{
+ "name": "Historisches Kaufhaus Freiburg",
+ "ort": "Freiburg im Breisgau, Muensterplatz 24",
+ "generator": "SCALE=87 MINMM=0.8 ~/.venvs/rcpark/bin/python tools/baukasten_gen.py kaufhaus",
+ "stl": "modelle/stl/kaufhaus_1-87.stl",
+ "stl_massstab": 87,
+ "stl_einheit_mm": true,
+ "zentrierung": "achse",
+ "masstabelle": "modelle/kaufhaus/masstabelle.json",
+ "elemente": "modelle/kaufhaus/elemente.json",
+ "audit": "modelle/kaufhaus/audit",
+ "ueberwacht": [
+  "tools/baukasten_gen.py",
+  "modelle/stl/kaufhaus_1-87.stl",
+  "modelle/kaufhaus/masstabelle.json",
+  "modelle/kaufhaus/elemente.json",
+  "modelle/kaufhaus/fassade_nord.json"
+ ],
+ "fotos_dir": "daten/kaufhaus/fotos",
+ "seiten_konvention": {
+  "+x": "Ost",
+  "-x": "West",
+  "+y": "Nord",
+  "-y": "Sued",
+  "quelle": "tools/objekt_daten.py: Kompassrichtung der Rahmenachsen (LoD2-Grundriss); Fassadennamen/Merkmale je Seite noch am Foto festlegen"
+ },
+ "fotos": {
+  "000": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "teilweise",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    11224,
+    7648
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg 1987 (06) Historisches Kaufhaus (51087501961).jpg, CC BY-SA 2.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/69570948@N04\">Rüdiger Stehn</a> from Kiel, D; Klasse neu",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "001": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "teilweise",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    6936,
+    2842
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz, Freiburg - Flickr - Mondo79.jpg, CC BY 2.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/50417570@N06\">Mondo79</a>; Klasse aehnlich, aehnlich zu File:Wahlkampfveranstaltung mit Bundeskanzlerin Angela Merkel auf dem Freiburger Münsterplatz.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "002": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    6144,
+    4069
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz (Freiburg) jm3334.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3226.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "003": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5845,
+    3641
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm3289.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Münsterplatz (Freiburg) jm3334.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "004": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5843,
+    3566
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm3226.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3289.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "005": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5840,
+    3166
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz (Freiburg) jm3204.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Wahlkampfveranstaltung mit Bundeskanzlerin Angela Merkel auf dem Freiburger Münsterplatz 8.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "006": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5760,
+    3840
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus im Winter.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:Ploh70&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Pl; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3289.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "007": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5878,
+    3138
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz (Freiburg) jm3221.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Münsterplatz (Freiburg) jm3334.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "008": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5760,
+    3840
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:Ploh70&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Pl; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3226.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "009": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5994,
+    3698
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm3171.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse neu",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "010": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "teilweise",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    6000,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz 24 Freiburg 02.jpg, CC BY-SA 4.0, Giftzwerg 88; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3289.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "011": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5250,
+    3500
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:00 1783 Historisches Kaufhaus Freiburg.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:W._Bulach\" title=\"User:W. Bulach\">W. Bulach</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "012": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5724,
+    3826
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm3166.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3171.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "013": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "teilweise",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    6000,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz 24 Freiburg 03.jpg, CC BY-SA 4.0, Giftzwerg 88; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3226.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "014": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5472,
+    3648
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 50.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse aehnlich, aehnlich zu File:00 1783 Historisches Kaufhaus Freiburg.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "015": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5824,
+    3555
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm3186.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3166.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "016": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5760,
+    3840
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus in Freiburg Dezember 2022.jpg, CC BY 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Wikiolo\" title=\"User:Wikiolo\">Wikiolo</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3226.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "017": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5459,
+    3668
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg- Historisches Kaufhaus, frontal, vom Renaissanceportal des Münsters - LABW - Staatsarchiv Freiburg W 134 Nr. 117013a.jpg, CC BY 4.0, Willy Pragher; Klasse aehnlich, aehnlich zu File:Freiburg 1987 (06) Historisches Kaufhaus (51087501961).jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "018": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5347,
+    3649
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg- Historisches Kaufhaus, frontal, vom Renaissanceportal des Münsters - LABW - Staatsarchiv Freiburg W 134 Nr. 117013b.jpg, CC BY 4.0, Willy Pragher; Klasse aehnlich, aehnlich zu File:Freiburg-Historisches Kaufhaus-04-2012-gje.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "019": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5807,
+    3859
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm3161.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3166.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "020": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5608,
+    3508
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz (Freiburg) jm3065.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:20180423 11 Freiburg - Münsterplatz (39894412760).jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "021": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5807,
+    3559
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm3181.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3186.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "022": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5760,
+    3840
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus in Freiburg Winter 2022.jpg, CC BY 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Wikiolo\" title=\"User:Wikiolo\">Wikiolo</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus im Winter.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "023": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "teilweise",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    6000,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz 24 Freiburg 01.jpg, CC BY-SA 4.0, Giftzwerg 88; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus im Winter.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "024": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5288,
+    3650
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg- Historisches Kaufhaus, frontal, vom mittleren Münstereingang - LABW - Staatsarchiv Freiburg W 134 Nr. 117014b.jpg, CC BY 4.0, Willy Pragher; Klasse aehnlich, aehnlich zu File:Freiburg- Historisches Kaufhaus, frontal, vom Renaissanceportal des Münsters - LABW - Staatsarchiv Freiburg W 134 Nr. 117013b.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "025": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4800,
+    3200
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Fenster und Habsburgerskulpturen des historischen Kaufhauses in Freiburg i Br. (2025).jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:JoachimKohler-HB\" title=\"User:JoachimKohler-HB\">JoachimKohler-HB</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3289.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "026": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4800,
+    3600
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus Freiburg im Breisgau (2025).jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:JoachimKohler-HB\" title=\"User:JoachimKohler-HB\">JoachimKohler-HB</a>; Klasse aehnlich, aehnlich zu File:Fenster und Habsburgerskulpturen des historischen Kaufhauses in Freiburg i Br. (2025).jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "027": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5472,
+    3648
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 41.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse neu",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "028": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5472,
+    3648
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 51.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse aehnlich, aehnlich zu File:Münsterplatz 24 Freiburg 02.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "029": {
+   "lizenz_klasse": "frei",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5184,
+    2912
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Landappbw 107781 1817 Münstermarktstände und Blick zum Historischen Kaufhaus vom Seiteneingang des Freiburger Münsters Freiburg.jpg, CC0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.spotteron.com/landappbw/users/14885/spots\">Elfriede Birkenmaye; Klasse aehnlich, aehnlich zu File:2017-06-15, Fronleichnam auf dem Freiburger Münsterplatz, im Hintergrund das Historische Kaufhaus.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "030": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4765,
+    3741
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg- Historisches Kaufhaus, frontal, vom Renaissanceportal des Münsters - LABW - Staatsarchiv Freiburg W 134 Nr. 117013c.jpg, CC BY 4.0, Willy Pragher; Klasse aehnlich, aehnlich zu File:Freiburg 1987 (06) Historisches Kaufhaus (51087501961).jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "031": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5460,
+    4109
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm3149.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm3171.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "032": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5184,
+    3456
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:20180423 11 Freiburg - Münsterplatz (39894412760).jpg, CC BY 2.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/22991060@N04\">Sjaak Kempe</a> from Groningen; Klasse aehnlich, aehnlich zu File:Münsterplatz (Freiburg) jm3065.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "033": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5472,
+    3648
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 24.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse neu",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "034": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4435,
+    3456
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg- Historisches Kaufhaus, frontal, vom Renaissanceportal des Münsters - LABW - Staatsarchiv Freiburg W 134 Nr. 117013d.jpg, CC BY 4.0, Willy Pragher; Klasse aehnlich, aehnlich zu File:Freiburg- Historisches Kaufhaus, frontal, vom Renaissanceportal des Münsters - LABW - Staatsarchiv Freiburg W 134 Nr. 117013c.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "035": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5472,
+    3648
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 25.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 24.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "036": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5472,
+    3648
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 22.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 21.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "037": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    5102,
+    3662
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm3176.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse neu",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "038": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4926,
+    3264
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz Südseite (Freiburg) 2421.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/Joergens.mi\" class=\"mw-redirect\" title=\"Joergens.mi\">joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "039": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4272,
+    2848
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Sommer 2013 (9878817246).jpg, CC BY-SA 2.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/102769624@N02\">Markus Trienke</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus in Freiburg Winter 2022.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "040": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4272,
+    2848
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg 2009 IMG 4357.jpg, CC BY-SA 4.0, Poudou99; Klasse aehnlich, aehnlich zu File:Münsterplatz 24 Freiburg 03.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "041": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4740,
+    4069
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm8285 jiw.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 24.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "042": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4272,
+    2848
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg 2009 IMG 4241.jpg, CC BY-SA 4.0, Poudou99; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus im Winter.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "043": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4272,
+    2848
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg 2009 IMG 4353.jpg, CC BY-SA 4.0, Poudou99; Klasse aehnlich, aehnlich zu File:Freiburg 2009 IMG 4357.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "044": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4668,
+    5355
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm3309.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Fenster und Habsburgerskulpturen des historischen Kaufhauses in Freiburg i Br. (2025).jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "045": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburger Münsterplatz mit historischem Kaufhaus und Georgsbrunnen.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus in Freiburg Winter 2022.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "046": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Samstagmittag vor der Alten Wache auf dem Freiburger Münsterplatz.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Münsterplatz (Freiburg) jm3204.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "047": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Demonstration der Initiative Maria 2.0 nach einer Priesterweihe im Freiburger Münster (5).jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Freiburger Münsterplatz mit historischem Kaufhaus und Georgsbrunnen.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "048": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Wahlkampfveranstaltung mit Bundeskanzlerin Angela Merkel auf dem Freiburger Münsterplatz.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus in Freiburg Winter 2022.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "049": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Wahlkampfveranstaltung mit Bundeskanzlerin Angela Merkel auf dem Freiburger Münsterplatz 8.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Wahlkampfveranstaltung mit Bundeskanzlerin Angela Merkel auf dem Freiburger Münsterplatz.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "050": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3872,
+    2592
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Ministru prezidents V. Dombrovskis saņem Haijeka fonda balvu (6452807653).jpg, CC BY-SA 2.0, <bdi><a href=\"https://en.wikipedia.org/wiki/en:State_Chancellery_of_Latvia\" class=\"extiw\" title=\"w:en:State Chancellery ; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus in Freiburg Winter 2022.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "051": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3648,
+    2736
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Kaufhaus - panoramio (2).jpg, CC BY 3.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161025133100/http://www.panoramio.com/user/5; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus Freiburg.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "052": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3709,
+    5362
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg- Fronleichnamsprozession, Menschenmenge mit Erker vom Kaufhaus - LABW - Staatsarchiv Freiburg W 134 Nr. 106064.jpg, CC BY 4.0, Willy Pragher; Klasse neu",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "053": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    4000,
+    3000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:2017-06-15, Fronleichnam auf dem Freiburger Münsterplatz, im Hintergrund das Historische Kaufhaus.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Freiburg 2009 IMG 4353.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "054": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3870,
+    3469
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg-Historisches Kaufhaus-10-2007-gje.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Gerd_Eichmann\" title=\"User:Gerd Eichmann\">Gerd Eichmann</a>; Klasse aehnlich, aehnlich zu File:Münsterplatz 24 Freiburg 02.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "055": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3719,
+    5381
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg- Historisches Kaufhaus, frontal, vom mittleren Münstereingang - LABW - Staatsarchiv Freiburg W 134 Nr. 117014d.jpg, CC BY 4.0, Willy Pragher; Klasse aehnlich, aehnlich zu File:Freiburg- Historisches Kaufhaus, frontal, vom mittleren Münstereingang - LABW - Staatsarchiv Freiburg W 134 Nr. 117014b.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "056": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3850,
+    4400
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Das historische Kaufhaus in Freiburg im Breisgau (2025).jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:JoachimKohler-HB\" title=\"User:JoachimKohler-HB\">JoachimKohler-HB</a>; Klasse aehnlich, aehnlich zu File:Freiburg 2009 IMG 4353.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "057": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3811,
+    3284
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg) 2431.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/Joergens.mi\" class=\"mw-redirect\" title=\"Joergens.mi\">joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Münsterplatz Südseite (Freiburg) 2421.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "058": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3756,
+    5102
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus 20230106.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FbrG&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FbrG; Klasse aehnlich, aehnlich zu File:Das historische Kaufhaus in Freiburg im Breisgau (2025).jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "059": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3691,
+    5352
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg- Historisches Kaufhaus, frontal, vom mittleren Münstereingang - LABW - Staatsarchiv Freiburg W 134 Nr. 117014a.jpg, CC BY 4.0, Willy Pragher; Klasse aehnlich, aehnlich zu File:Freiburg- Historisches Kaufhaus, frontal, vom mittleren Münstereingang - LABW - Staatsarchiv Freiburg W 134 Nr. 117014d.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "060": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3996,
+    2486
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz Südseite bei Nacht.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Freiburger Münsterplatz mit historischem Kaufhaus und Georgsbrunnen.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "061": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3419,
+    2722
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:The so called famous Red House (Alte Kaufhaus) A.D. 1532 in Freiburg, almost the same as at Goslar - panoramio.jpg, CC BY 3.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.panoramio.com/user/1100550?with_photo_id=119542478\">Henk Monst; Klasse aehnlich, aehnlich zu File:Freiburg 2009 IMG 4241.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "062": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3375,
+    4500
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Erker und Treppengiebel des historischen Kaufhauses in Freiburg i Br. (2025).jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:JoachimKohler-HB\" title=\"User:JoachimKohler-HB\">JoachimKohler-HB</a>; Klasse aehnlich, aehnlich zu File:Fenster und Habsburgerskulpturen des historischen Kaufhauses in Freiburg i Br. (2025).jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "063": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3658,
+    5403
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg- Historisches Kaufhaus, Erker, westlich - LABW - Staatsarchiv Freiburg W 134 Nr. 117015b.jpg, CC BY 4.0, Willy Pragher; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau Historisches Kaufhaus 3.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "064": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3719,
+    5645
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg- Historisches Kaufhaus, Erker, westlich - LABW - Staatsarchiv Freiburg W 134 Nr. 117015a.jpg, CC BY 4.0, Willy Pragher; Klasse aehnlich, aehnlich zu File:Freiburg- Historisches Kaufhaus, Erker, westlich - LABW - Staatsarchiv Freiburg W 134 Nr. 117015b.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "065": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3500,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Das historische Kaufhaus in Freiburg i. Br. (2025).jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:JoachimKohler-HB\" title=\"User:JoachimKohler-HB\">JoachimKohler-HB</a>; Klasse aehnlich, aehnlich zu File:Das historische Kaufhaus in Freiburg im Breisgau (2025).jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "066": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3648,
+    5472
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 39.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse neu",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "067": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3256,
+    3285
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz (Freiburg) jm3344.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Münsterplatz (Freiburg) jm3334.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "068": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3648,
+    5472
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 21.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 50.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "069": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3648,
+    5472
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 38.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 21.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "070": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3648,
+    5472
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 40.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse aehnlich, aehnlich zu File:Freiburg- Historisches Kaufhaus, Erker, westlich - LABW - Staatsarchiv Freiburg W 134 Nr. 117015a.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "071": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3126,
+    4639
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz (Freiburg) jm3409.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Kaufhaus 05 03 06.JPG",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "072": {
+   "lizenz_klasse": "frei",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3197,
+    2735
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Landappbw 178443 1822 Kaufhaus Historisches Kaufhaus Freiburg.jpg, CC0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.spotteron.com/landappbw/users/20689/spots\">Roland Knobloch</a>; Klasse aehnlich, aehnlich zu File:Középkori bevásárlóközpont (Medieval shopping centre) - panoramio.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "073": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3648,
+    5472
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 23.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 21.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "074": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3338,
+    4913
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz (Freiburg) jm3322.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Münsterplatz (Freiburg) jm3344.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "075": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3072,
+    2304
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg Jul 2012 05 (Historisches Kaufhaus Freiburg).JPG, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Michael_Barera\" title=\"User:Michael Barera\">Michael Barera</a>; Klasse aehnlich, aehnlich zu File:The so called famous Red House (Alte Kaufhaus) A.D. 1532 in Freiburg, almost the same as at Goslar - panoramio.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "076": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3648,
+    5472
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 30.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 21.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "077": {
+   "lizenz_klasse": "frei",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3824,
+    5146
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Markt op de Münsterplatz te Freiburg im Breisgau, met op de achtergrond het Kaufhaus, RP-F-2001-7-554A-10.jpg, CC0, Rijksmuseum; Klasse aehnlich, aehnlich zu File:The Market, Freiburg, Baden, Germany-LCCN2002713579.tif",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "078": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3648,
+    5472
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 31.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse neu",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "079": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3017,
+    2941
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Kaufhausi-in-rot.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:Xchabu&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Xc; Klasse aehnlich, aehnlich zu File:Ministru prezidents V. Dombrovskis saņem Haijeka fonda balvu (6452807653).jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "080": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3072,
+    2048
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg-Muensterplatz-Markt-12-Historisches Kaufhaus-2007-gje.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Gerd_Eichmann\" title=\"User:Gerd Eichmann\">Gerd Eichmann</a>; Klasse aehnlich, aehnlich zu File:Freiburg 2009 IMG 4353.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "081": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3080,
+    4215
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz (Freiburg) jm3402.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Freiburg im Sommer 2013 (9878817246).jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "082": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2984,
+    1428
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz (Freiburg) jm3052.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Wahlkampfveranstaltung mit Bundeskanzlerin Angela Merkel auf dem Freiburger Münsterplatz.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "083": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3118,
+    3900
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz (Freiburg) jm3399.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Allemagne Foret Noire Freiburg Munsterplatz - panoramio.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "084": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3134,
+    3686
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Redoutenhaus (Freiburg) 4146.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Münsterplatz (Freiburg) jm3344.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "085": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3648,
+    5472
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 33.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 31.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "086": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3648,
+    5472
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 37.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 50.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "087": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3648,
+    5472
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau 32.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr; Klasse neu",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "088": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2846,
+    3958
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Gable detail of the Historisches kaufhaus at Freiburg. See also the preceeding image - panoramio.jpg, CC BY 3.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161031193809/http://www.panoramio.com/user/1; Klasse aehnlich, aehnlich zu File:Kaufhausi-in-rot.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "089": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3000,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Einfahrt der Oldtimer der Schauinsland-Klassik auf dem Freiburger Münsterplatz 6.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau TodorBozhinov (20).JPG",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "090": {
+   "lizenz_klasse": "frei",
+   "exif_stufe": "teilweise",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3144,
+    3549
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) 5310.jpg, Public domain, <a href=\"//commons.wikimedia.org/wiki/Joergens.mi\" class=\"mw-redirect\" title=\"Joergens.mi\">joergens.mi</a>; Klasse neu",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "091": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2656,
+    2448
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg Kaufhaus Erker.jpg, CC BY 3.0, Andreas Praefcke; Klasse aehnlich, aehnlich zu File:Dach Historisches Kaufhaus von 1532 Freiburg Deutschland.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "092": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2560,
+    1920
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg Kaufhaus.jpg, CC BY-SA 3.0, <a href=\"https://en.wikipedia.org/wiki/User:Lumos3\" class=\"extiw\" title=\"en:User:Lumos3\">User:Lumos3</a>; Klasse aehnlich, aehnlich zu File:Freiburg Jul 2012 05 (Historisches Kaufhaus Freiburg).JPG",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "093": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2996,
+    3720
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Einfahrt der Oldtimer der Schauinsland-Klassik auf dem Freiburger Münsterplatz 4.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Freiburg 2009 IMG 4353.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "094": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2592,
+    1944
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Muensterplatz with Historisches Kaufhaus.JPG, CC BY 2.0 de, <a href=\"//commons.wikimedia.org/wiki/User:Lutz_H\" title=\"User:Lutz H\">Lutz H</a>; Klasse aehnlich, aehnlich zu File:Freiburg 2009 IMG 4241.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "095": {
+   "lizenz_klasse": "frei",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2736,
+    3648
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Landappbw 178444 1822 Kaufhaus Historisches Kaufhaus Freiburg.jpg, CC0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.spotteron.com/landappbw/users/20689/spots\">Roland Knobloch</a>; Klasse aehnlich, aehnlich zu File:Gable detail of the Historisches kaufhaus at Freiburg. See also the preceeding image - panoramio.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "096": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2720,
+    2347
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Hist. Kaufhaus.jpeg, CC BY 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Parpan05\" title=\"User:Parpan05\">Adrian Michael</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg) 2431.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "097": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3000,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Kaufhausgässle, eines der drei schmalsten Gässle in Freiburg, die zum Münsterplatz führen 2.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse neu",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "098": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    3000,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Kaufhausgässle bei Nacht, eines der drei schmalsten Gässle in Freiburg, die zum Münsterplatz führen 8.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse neu",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "099": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2400,
+    3600
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:00 0780 Historisches Kaufhaus Freiburg.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:W._Bulach\" title=\"User:W. Bulach\">W. Bulach</a>; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 51.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "100": {
+   "lizenz_klasse": "frei",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2580,
+    3502
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:The market hall, Freiburg, Baden, Germany, ca. 1895.jpg, Public domain, Detroit Publishing Co., under license from Photoglob Zürich; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus 20230106.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "101": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2848,
+    4272
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Sommer 2013 (9878832346).jpg, CC BY-SA 2.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/102769624@N02\">Markus Trienke</a>; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 41.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "102": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2446,
+    3650
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm8185.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 31.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "103": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2646,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:2019-04-16, Westerker des Historischen Kaufhauses, Blick von der Achteckhalle des Freiburger Münsterturms.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Kaufhausi-in-rot.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "104": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2529,
+    3930
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm8170.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm8185.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "105": {
+   "lizenz_klasse": "frei",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2156,
+    1379
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg i. Br., Baden-Württemberg - Kaufhaus (Zeno Ansichtskarten).jpg, Public domain, <div class=\"fn value\">\nRheinischer Kunst- und Postkarten-Verlag Hepp, Mannheim</div>; Klasse aehnlich, aehnlich zu File:Freiburg- Historisches Kaufhaus, frontal, vom mittleren Münstereingang - LABW - Staatsarchiv Freiburg W 134 Nr. 117014b.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "106": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2272,
+    1704
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:2008-05-22, Fronleichnamsprozession auf dem Freiburger Münsterplatz.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Münsterplatz (Freiburg) jm3204.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "107": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2272,
+    1704
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:2008-05-22, Fronleichnamsprozession auf dem Freiburger Münsterplatz, Metzgerinnung mit der Reliquienbüste des Hl. Artemisius.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:2008-05-22, Fronleichnamsprozession auf dem Freiburger Münsterplatz.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "108": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2561,
+    3895
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Kaufhausgässle bei Nacht, eines der drei schmalsten Gässle in Freiburg, die zum Münsterplatz führen 3.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Kaufhausgässle bei Nacht, eines der drei schmalsten Gässle in Freiburg, die zum Münsterplatz führen 8.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "109": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2216,
+    3435
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm8190.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm8185.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "110": {
+   "lizenz_klasse": "frei",
+   "exif_stufe": "teilweise",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2428,
+    4215
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) 5298.jpg, Public domain, <a href=\"//commons.wikimedia.org/wiki/Joergens.mi\" class=\"mw-redirect\" title=\"Joergens.mi\">joergens.mi</a>; Klasse neu",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "111": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:March Bourgoisie Freiburg Münster - Master Habitat Rhine Valley Photography 2012 FUGGER KAUFHAUS Mittelalter - Katholischer Doppeladler Wien Maximilian - panoramio.jpg, CC BY 3.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161024141823/http://www.panoramio.com/user/7; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 37.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "112": {
+   "lizenz_klasse": "frei",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2736,
+    3666
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:The Market, Freiburg, Baden, Germany-LCCN2002713579.tif, Public domain, <div class=\"fn value\">\nPhotochrom Print Collection</div>; Klasse aehnlich, aehnlich zu File:The market hall, Freiburg, Baden, Germany, ca. 1895.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "113": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2308,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Kaufhausgässle bei Nacht, eines der drei schmalsten Gässle in Freiburg, die zum Münsterplatz führen 13.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Kaufhausgässle bei Nacht, eines der drei schmalsten Gässle in Freiburg, die zum Münsterplatz führen 8.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "114": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    1955,
+    3800
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:00 0782 Historisches Kaufhaus - Freiburg im Breisgau.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:W._Bulach\" title=\"User:W. Bulach\">W. Bulach</a>; Klasse aehnlich, aehnlich zu File:00 1783 Historisches Kaufhaus Freiburg.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "115": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau Historisches Kaufhaus 3.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Zairon\" title=\"User:Zairon\">Zairon</a>; Klasse aehnlich, aehnlich zu File:Freiburg Jul 2012 05 (Historisches Kaufhaus Freiburg).JPG",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "116": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2272,
+    1704
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Blick aus dem Kaufhausgässle, eines der drei schmalsten Gässle in Freiburg zum Münsterplatz 2.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau 39.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "117": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historische Kaufhaus Detail 2.JPG, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:RicciSpeziari\" class=\"mw-redirect\" title=\"User:RicciSpeziari\">Riccardo Spezia; Klasse aehnlich, aehnlich zu File:Freiburg-Historisches Kaufhaus-10-2007-gje.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "118": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    1948,
+    3232
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Historisches Kaufhaus (Freiburg im Breisgau) jm8197.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>; Klasse aehnlich, aehnlich zu File:Historisches Kaufhaus (Freiburg im Breisgau) jm8190.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "119": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau Historisches Kaufhaus 1.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Zairon\" title=\"User:Zairon\">Zairon</a>; Klasse aehnlich, aehnlich zu File:Freiburg 2009 IMG 4357.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "120": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg im Breisgau Historisches Kaufhaus 2.jpg, CC BY-SA 3.0, <a href=\"//commons.wikimedia.org/wiki/User:Zairon\" title=\"User:Zairon\">Zairon</a>; Klasse aehnlich, aehnlich zu File:Freiburg im Breisgau Historisches Kaufhaus 1.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "121": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2624,
+    4000
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Kaufhausgässle bei Nacht, eines der drei schmalsten Gässle in Freiburg, die zum Münsterplatz führen 24.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>; Klasse aehnlich, aehnlich zu File:Kaufhausgässle bei Nacht, eines der drei schmalsten Gässle in Freiburg, die zum Münsterplatz führen 13.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "122": {
+   "lizenz_klasse": "frei_sharealike",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    2048,
+    3072
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg-Historisches Kaufhaus-02-2007-gje.jpg, CC BY-SA 4.0, <a href=\"//commons.wikimedia.org/wiki/User:Gerd_Eichmann\" title=\"User:Gerd Eichmann\">Gerd Eichmann</a>; Klasse aehnlich, aehnlich zu File:Landappbw 178444 1822 Kaufhaus Historisches Kaufhaus Freiburg.jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "123": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "fehlt",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    1746,
+    1150
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Freiburg- (Fronleichnam), Eucharistiefeier auf dem Münsterplatz, Gläubige mit Kaufhaus - LABW - Staatsarchiv Freiburg W 134 Nr. 103520d.jpg, CC BY 4.0, <bdi><a href=\"https://www.wikidata.org/wiki/Q2571685\" class=\"extiw\" title=\"d:Q2571685\"><span title=\"German photographer ; Klasse aehnlich, aehnlich zu File:Freiburg- Historisches Kaufhaus, frontal, vom Renaissanceportal des Münsters - LABW - Staatsarchiv Freiburg W 134 Nr. 117013b.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "124": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    1600,
+    1200
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz - panoramio (2).jpg, CC BY 3.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161103060326/http://www.panoramio.com/user/5; Klasse aehnlich, aehnlich zu File:2017-06-15, Fronleichnam auf dem Freiburger Münsterplatz, im Hintergrund das Historische Kaufhaus.jpg",
+   "seite_quelle": "offen: kein Bezugsbild mit Seite - Seitentrennung im Netz",
+   "sfm_netz": "alle"
+  },
+  "125": {
+   "lizenz_klasse": "frei_namensnennung",
+   "exif_stufe": "vollstaendig",
+   "seite": "unbekannt",
+   "silhouette_frei": false,
+   "vollbild": [
+    1600,
+    1200
+   ],
+   "quelle": "bilder_holen.py (2026-11-03): File:Münsterplatz - Historisches Kaufhaus - panoramio.jpg, CC BY 3.0, <a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161103081209/http://www.panoramio.com/user/5; Klasse aehnlich, aehnlich zu File:Das historische Kaufhaus in Freiburg im Breisgau (2025).jpg",
+   "seite_quelle": "offen: Kaltstart-Saatbild (Objekt-Kategorie, in der groessten sich bestaetigenden Bildgruppe) - Seite aus der Kameralage im Netz",
+   "sfm_netz": "alle"
+  },
+  "126": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 126_mapillary_1246387683598591.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1246387683598591)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "127": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1152,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 127_mapillary_1096212190883403.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1096212190883403)"
+  },
+  "128": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 128_mapillary_1347797265593861.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1347797265593861)"
+  },
+  "129": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 129_mapillary_1148429778966580.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1148429778966580)"
+  },
+  "130": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 130_mapillary_1362795724091621.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1362795724091621)"
+  },
+  "131": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 131_mapillary_403053224457331.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=403053224457331)"
+  },
+  "132": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 132_mapillary_149594870453315.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=149594870453315)"
+  },
+  "133": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 133_mapillary_4335791359765684.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=4335791359765684)"
+  },
+  "134": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 134_mapillary_145174087614422.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=145174087614422)"
+  },
+  "135": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 135_mapillary_149344157134915.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=149344157134915)"
+  },
+  "136": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 136_mapillary_173775931196113.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=173775931196113)"
+  },
+  "137": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 137_mapillary_26349229761339785.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=26349229761339785)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "138": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 138_mapillary_2663035380729293.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=2663035380729293)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "139": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 139_mapillary_179551994048826.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=179551994048826)"
+  },
+  "140": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 140_mapillary_1446943805645632.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1446943805645632)"
+  },
+  "141": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 141_mapillary_2210095669832095.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=2210095669832095)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "142": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 142_mapillary_2654143538225532.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=2654143538225532)"
+  },
+  "143": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 143_mapillary_1585891339330431.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1585891339330431)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "144": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 144_mapillary_287709756156734.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=287709756156734)"
+  },
+  "145": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 145_mapillary_2825036047826784.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=2825036047826784)"
+  },
+  "146": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 146_mapillary_310068367311508.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=310068367311508)"
+  },
+  "147": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 147_mapillary_1646973323398136.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1646973323398136)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "148": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 148_mapillary_3947198295400559.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=3947198295400559)"
+  },
+  "149": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 149_mapillary_250400030105617.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=250400030105617)"
+  },
+  "150": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 150_mapillary_340371480850683.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=340371480850683)"
+  },
+  "151": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 151_mapillary_201602588240775.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=201602588240775)"
+  },
+  "152": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 152_mapillary_1544916023252068.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1544916023252068)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "153": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 153_mapillary_1141010699748512.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1141010699748512)"
+  },
+  "154": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 154_mapillary_316865346515944.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=316865346515944)"
+  },
+  "155": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 155_mapillary_142039967890957.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=142039967890957)"
+  },
+  "156": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 156_mapillary_346543736943985.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=346543736943985)"
+  },
+  "157": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 157_mapillary_451282045942507.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=451282045942507)"
+  },
+  "158": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 158_mapillary_456713485629559.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=456713485629559)"
+  },
+  "159": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 159_mapillary_292550879085306.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=292550879085306)"
+  },
+  "160": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 160_mapillary_278689950589579.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=278689950589579)"
+  },
+  "161": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 161_mapillary_305343974305562.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=305343974305562)"
+  },
+  "162": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 162_mapillary_268937861593264.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=268937861593264)"
+  },
+  "163": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 163_mapillary_4094224857303407.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=4094224857303407)"
+  },
+  "164": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 164_mapillary_318359689754567.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=318359689754567)"
+  },
+  "165": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 165_mapillary_4531857516827680.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=4531857516827680)"
+  },
+  "166": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 166_mapillary_269347754853297.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=269347754853297)"
+  },
+  "167": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 167_mapillary_472149434108080.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=472149434108080)"
+  },
+  "168": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 168_mapillary_465466231213512.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=465466231213512)"
+  },
+  "169": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 169_mapillary_570916927180376.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=570916927180376)"
+  },
+  "170": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 170_mapillary_751242068885250.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=751242068885250)"
+  },
+  "171": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 171_mapillary_505045030516542.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=505045030516542)"
+  },
+  "172": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 172_mapillary_801562740480057.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=801562740480057)"
+  },
+  "173": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 173_mapillary_805135997080742.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=805135997080742)"
+  },
+  "174": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 174_mapillary_769580873761994.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=769580873761994)"
+  },
+  "175": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 175_mapillary_824470127325179.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=824470127325179)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "176": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 176_mapillary_881337307860238.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=881337307860238)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "177": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 177_mapillary_806378230278117.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=806378230278117)"
+  },
+  "178": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 178_mapillary_888498451754625.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=888498451754625)"
+  },
+  "179": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 179_mapillary_925031201595778.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=925031201595778)"
+  },
+  "180": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 180_mapillary_474672050464760.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=474672050464760)"
+  },
+  "181": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1152,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 181_mapillary_960472387828745.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=960472387828745)"
+  },
+  "182": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 182_mapillary_525382415294803.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=525382415294803)"
+  },
+  "183": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 183_mapillary_933121970834962.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=933121970834962)"
+  },
+  "184": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 184_mapillary_475346973680586.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=475346973680586)"
+  },
+  "185": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 185_mapillary_492754162077482.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=492754162077482)"
+  },
+  "186": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1152,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 186_mapillary_999634007234531.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=999634007234531)"
+  },
+  "187": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 187_mapillary_488790225896483.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=488790225896483)"
+  },
+  "188": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 188_mapillary_470473727594894.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=470473727594894)"
+  },
+  "189": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 189_mapillary_520389296004541.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=520389296004541)"
+  },
+  "190": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 190_mapillary_902179310342344.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=902179310342344)"
+  },
+  "191": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 191_mapillary_1205613668029673.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1205613668029673)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "192": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 192_mapillary_1499060174883021.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1499060174883021)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "193": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 193_mapillary_1441221517664136.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1441221517664136)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "194": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 194_mapillary_1568654291013094.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1568654291013094)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "195": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 195_mapillary_1599279817987837.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1599279817987837)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "196": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 196_mapillary_1154004836696500.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1154004836696500)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "197": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 197_mapillary_1871824400240269.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1871824400240269)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "198": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 198_mapillary_1564194401348845.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1564194401348845)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "199": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 199_mapillary_26218781301096305.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=26218781301096305)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "200": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 200_mapillary_1490476699104664.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1490476699104664)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "201": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 201_mapillary_1655366388970979.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1655366388970979)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "202": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 202_mapillary_2089682661851419.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=2089682661851419)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "203": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 203_mapillary_926796583619602.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=926796583619602)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "204": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 204_mapillary_929147416176256.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=929147416176256)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "205": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 205_mapillary_465742264506140.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=465742264506140)"
+  },
+  "206": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 206_mapillary_1282223870468202.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1282223870468202)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "207": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 207_mapillary_1634370710902182.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1634370710902182)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "208": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 208_mapillary_1746768886731241.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1746768886731241)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "209": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 209_mapillary_323310452681653.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=323310452681653)"
+  },
+  "210": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 210_mapillary_200074441758591.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=200074441758591)"
+  },
+  "211": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 211_mapillary_293116238982627.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=293116238982627)"
+  },
+  "212": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 212_mapillary_231554862080465.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=231554862080465)"
+  },
+  "213": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 213_mapillary_2364297717331958.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=2364297717331958)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "214": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 214_mapillary_2673631492928742.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=2673631492928742)"
+  },
+  "215": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 215_mapillary_296390885462004.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=296390885462004)"
+  },
+  "216": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 216_mapillary_318701533021700.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=318701533021700)"
+  },
+  "217": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 217_mapillary_456421925448720.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=456421925448720)"
+  },
+  "218": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 218_mapillary_386647419106884.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=386647419106884)"
+  },
+  "219": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 219_mapillary_505539250575510.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=505539250575510)"
+  },
+  "220": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 220_mapillary_2860248804214870.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=2860248804214870)"
+  },
+  "221": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 221_mapillary_1438983343123216.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1438983343123216)"
+  },
+  "222": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 222_mapillary_478127896733811.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=478127896733811)"
+  },
+  "223": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 223_mapillary_323508795784374.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=323508795784374)"
+  },
+  "224": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 224_mapillary_500922251061491.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=500922251061491)"
+  },
+  "225": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 225_mapillary_765862379508662.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=765862379508662)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "226": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 226_mapillary_814444402786029.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=814444402786029)"
+  },
+  "227": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 227_mapillary_809062456374517.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=809062456374517)"
+  },
+  "228": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 228_mapillary_912895021452839.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=912895021452839)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "229": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 229_mapillary_1058899737972330.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1058899737972330)"
+  },
+  "230": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 230_mapillary_536287657535680.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=536287657535680)"
+  },
+  "231": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 231_mapillary_1402541707799929.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1402541707799929)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "232": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 232_mapillary_222369549318175.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=222369549318175)"
+  },
+  "233": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 233_mapillary_827163988149720.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=827163988149720)"
+  },
+  "234": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 234_mapillary_914776042643474.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=914776042643474)"
+  },
+  "235": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 235_mapillary_1341170397772336.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1341170397772336)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "236": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 236_mapillary_1242037637441088.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1242037637441088)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "237": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 237_mapillary_1955557985352867.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1955557985352867)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "238": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 238_mapillary_509496780362863.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=509496780362863)"
+  },
+  "239": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 239_mapillary_786955875298062.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=786955875298062)"
+  },
+  "240": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 240_mapillary_582248889360737.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=582248889360737)"
+  },
+  "241": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2048,
+    1536
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 241_mapillary_533716204678670.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=533716204678670)"
+  },
+  "242": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 242_mapillary_1232147449112463.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1232147449112463)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "243": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 243_mapillary_1485564723168131.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1485564723168131)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "244": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 244_mapillary_1983233738900056.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=1983233738900056)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "245": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 245_mapillary_2105159026907483.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=2105159026907483)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "246": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    1280,
+    960
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 246_mapillary_2126699938097747.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=2126699938097747)",
+   "brennweite_px": 914.0,
+   "brennweite_quelle": "Bildwinkel des 360-Grad-Ausschnitts 70.0 Grad (mapillary_rip --fov)"
+  },
+  "247": {
+   "lizenz_klasse": "nc",
+   "seite": "unbekannt",
+   "vollbild": [
+    2047,
+    1545
+   ],
+   "sfm_netz": "alle",
+   "quelle": "fotos_einsortieren.py: 247_mapillary_2786662561586957.jpg (CC BY-SA 4.0, https://www.mapillary.com/app/?pKey=2786662561586957)"
+  }
+ },
+ "quellen": {
+  "dokument": "OFFEN",
+  "lod2": "OFFEN",
+  "dom1_dgm1": "OFFEN",
+  "dop20": "OFFEN",
+  "fotos": "OFFEN",
+  "laser_punkte": "n/a (kostenpflichtig)"
+ },
+ "lage": {
+  "lat": 47.99493,
+  "lon": 7.85266,
+  "utm32": [
+   414405.8,
+   5316373.58
+  ],
+  "quelle": "Eingabe --lat/--lon"
+ },
+ "rahmen": {
+  "mitte_utm": [
+   414405.54,
+   5316373.86
+  ],
+  "xhat_utm": [
+   0.9992,
+   0.0411
+  ],
+  "yhat_utm": [
+   -0.0411,
+   0.9992
+  ],
+  "gelaende": 278.32,
+  "hinweis": "Modellrahmen aus LoD2 (tools/objekt_daten.py): Ursprung Grundriss-Mitte, +x Langachse nach Ost, +y nach Nord (rechtshaendig), z ueber DGM1"
+ },
+ "laser": {
+  "fenster_npy": "/media/oem/scan/rc-park_daten/kaufhaus/dom1_fenster_60m.npy",
+  "gelaende_m": 278.32,
+  "raster_n": 60,
+  "quelle": "LGL BW DOM1 1 m, Fenster 60x60 m um die Grundriss-Mitte (tools/objekt_daten.py); Gelaende DGM1-Median im Grundriss"
+ },
+ "lod2": {
+  "gml": "/media/oem/scan/rc-park_daten/_geo/LoD2_32_413_5316_2_bw/LoD2_32_414_5316_1_BW.gml",
+  "id": "DEBW_0010007Tv9r",
+  "traufe_m": 9.65100000000001,
+  "first_m": 21.404999999999973,
+  "grundriss_kanten_m": [
+   20.4,
+   12.54,
+   8.89,
+   7.78,
+   7.52,
+   7.22,
+   7.22,
+   4.31,
+   4.31,
+   3.86,
+   3.8,
+   3.53,
+   3.44,
+   3.44,
+   3.44,
+   3.43,
+   3.42,
+   3.22,
+   3.05,
+   2.59,
+   2.21,
+   2.21,
+   1.54,
+   1.16
+  ],
+  "dachtyp": [
+   "Satteldach",
+   "Sheddach",
+   "Satteldach"
+  ]
+ },
+ "bildquellen": {
+  "commons": {
+   "kategorien": [
+    "Historisches Kaufhaus Freiburg",
+    "Historisches Kaufhaus Freiburg at night"
+   ],
+   "suchen": [
+    "Historisches Kaufhaus Freiburg",
+    "Kaufhaus Münsterplatz Freiburg"
+   ],
+   "geosearch_radius_m": 100,
+   "titel_enthaelt": [
+    "kaufhaus",
+    "münsterplatz",
+    "muensterplatz",
+    "merchants"
+   ]
+  },
+  "mapillary": {
+   "radius_m": 60,
+   "max": 200
+  },
+  "ausgabe": "daten/kaufhaus/fotos_eingang",
+  "max_neu": 150,
+  "min_breite_px": 1000,
+  "max_je_blickgruppe": 4,
+  "hinweis": "Innenraum-Kategorien (inside, Kaminsaal, Stube, Rokokosaal, events) bewusst nicht: Aussenmodell"
+ },
+ "sfm": {
+  "alle": [
+   "000",
+   "001",
+   "002",
+   "003",
+   "004",
+   "005",
+   "006",
+   "007",
+   "008",
+   "009",
+   "010",
+   "011",
+   "012",
+   "013",
+   "014",
+   "015",
+   "016",
+   "017",
+   "018",
+   "019",
+   "020",
+   "021",
+   "022",
+   "023",
+   "024",
+   "025",
+   "026",
+   "027",
+   "028",
+   "029",
+   "030",
+   "031",
+   "032",
+   "033",
+   "034",
+   "035",
+   "036",
+   "037",
+   "038",
+   "039",
+   "040",
+   "041",
+   "042",
+   "043",
+   "044",
+   "045",
+   "046",
+   "047",
+   "048",
+   "049",
+   "050",
+   "051",
+   "052",
+   "053",
+   "054",
+   "055",
+   "056",
+   "057",
+   "058",
+   "059",
+   "060",
+   "061",
+   "062",
+   "063",
+   "064",
+   "065",
+   "066",
+   "067",
+   "068",
+   "069",
+   "070",
+   "071",
+   "072",
+   "073",
+   "074",
+   "075",
+   "076",
+   "077",
+   "078",
+   "079",
+   "080",
+   "081",
+   "082",
+   "083",
+   "084",
+   "085",
+   "086",
+   "087",
+   "088",
+   "089",
+   "090",
+   "091",
+   "092",
+   "093",
+   "094",
+   "095",
+   "096",
+   "097",
+   "098",
+   "099",
+   "100",
+   "101",
+   "102",
+   "103",
+   "104",
+   "105",
+   "106",
+   "107",
+   "108",
+   "109",
+   "110",
+   "111",
+   "112",
+   "113",
+   "114",
+   "115",
+   "116",
+   "117",
+   "118",
+   "119",
+   "120",
+   "121",
+   "122",
+   "123",
+   "124",
+   "125",
+   "126",
+   "127",
+   "128",
+   "129",
+   "130",
+   "131",
+   "132",
+   "133",
+   "134",
+   "135",
+   "136",
+   "137",
+   "138",
+   "139",
+   "140",
+   "141",
+   "142",
+   "143",
+   "144",
+   "145",
+   "146",
+   "147",
+   "148",
+   "149",
+   "150",
+   "151",
+   "152",
+   "153",
+   "154",
+   "155",
+   "156",
+   "157",
+   "158",
+   "159",
+   "160",
+   "161",
+   "162",
+   "163",
+   "164",
+   "165",
+   "166",
+   "167",
+   "168",
+   "169",
+   "170",
+   "171",
+   "172",
+   "173",
+   "174",
+   "175",
+   "176",
+   "177",
+   "178",
+   "179",
+   "180",
+   "181",
+   "182",
+   "183",
+   "184",
+   "185",
+   "186",
+   "187",
+   "188",
+   "189",
+   "190",
+   "191",
+   "192",
+   "193",
+   "194",
+   "195",
+   "196",
+   "197",
+   "198",
+   "199",
+   "200",
+   "201",
+   "202",
+   "203",
+   "204",
+   "205",
+   "206",
+   "207",
+   "208",
+   "209",
+   "210",
+   "211",
+   "212",
+   "213",
+   "214",
+   "215",
+   "216",
+   "217",
+   "218",
+   "219",
+   "220",
+   "221",
+   "222",
+   "223",
+   "224",
+   "225",
+   "226",
+   "227",
+   "228",
+   "229",
+   "230",
+   "231",
+   "232",
+   "233",
+   "234",
+   "235",
+   "236",
+   "237",
+   "238",
+   "239",
+   "240",
+   "241",
+   "242",
+   "243",
+   "244",
+   "245",
+   "246",
+   "247"
+  ],
+  "netz_ohne_seite": "alle",
+  "hauptseite": "alle",
+  "hinweis": "Kaufhaus: Fassaden nicht symmetrisch (Arkaden/Figuren Nordseite Muensterplatz) -> ein gemeinsames Netz 'alle' (ANNAHME, Regel 7 pruefen sobald Kameras stehen)"
+ },
+ "bauteile": [
+  {
+   "typ": "rumpf_lod2",
+   "hinweis": "Rumpf + Dach aus LoD2 (Baukasten B1)"
+  },
+  {
+   "typ": "treppengiebel",
+   "stufen_je_flanke": 7,
+   "zaehlung": [
+    "Z-050-001",
+    "Z-043-001"
+   ],
+   "dicke_m": 0.6,
+   "kappe_m": 0.35,
+   "spitze_m": 1.0,
+   "quelle": "ANNAHME aus Fotos 050/043 (Stufe ueberragt die Dachflaeche um ~eine Kappe, Spitze ~1 m)"
+  },
+  {
+   "typ": "fassade_raster",
+   "datei": "fassade_nord.json",
+   "hinweis": "Nordfront aus Frontalfoto 018"
+  }
+ ]
+}

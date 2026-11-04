@@ -1,0 +1,188 @@
+{
+ "foto": "030",
+ "kamera": "K-030 (amtliche Anker)",
+ "stl": "/tmp/claude-29999/-home-oem-git-rc-park/ba7321a0-ec63-4508-b2a8-e32d5fa25c06/scratchpad/stl_cf.stl",
+ "elemente": [
+  {
+   "element": "tuermchen (-4.0,-4.4) 33.5-35.0 m",
+   "iou_oeffnungen": 0.006,
+   "spaltenprofil_korr": -0.106,
+   "offen_anteil_foto": 0.768,
+   "offen_anteil_modell": 0.014,
+   "versatz_px": [
+    46,
+    -1
+   ],
+   "kanten_korr": 0.664,
+   "ausschnitt": [
+    660,
+    774,
+    840,
+    884
+   ]
+  },
+  {
+   "element": "tuermchen (-4.0,+4.4) 33.5-35.0 m",
+   "iou_oeffnungen": 0.0,
+   "spaltenprofil_korr": NaN,
+   "offen_anteil_foto": 0.814,
+   "offen_anteil_modell": 0.0,
+   "versatz_px": [
+    -12,
+    -29
+   ],
+   "kanten_korr": 0.551,
+   "ausschnitt": [
+    1037,
+    853,
+    1209,
+    959
+   ]
+  },
+  {
+   "element": "tuermchen (+4.0,-4.4) 33.5-35.0 m",
+   "iou_oeffnungen": 0.003,
+   "spaltenprofil_korr": -0.438,
+   "offen_anteil_foto": 0.513,
+   "offen_anteil_modell": 0.033,
+   "versatz_px": [
+    23,
+    11
+   ],
+   "kanten_korr": 0.68,
+   "ausschnitt": [
+    732,
+    498,
+    940,
+    626
+   ]
+  },
+  {
+   "element": "tuermchen (+4.0,+4.4) 33.5-35.0 m",
+   "iou_oeffnungen": 0.005,
+   "spaltenprofil_korr": 0.118,
+   "offen_anteil_foto": 0.689,
+   "offen_anteil_modell": 0.004,
+   "versatz_px": [
+    10,
+    36
+   ],
+   "kanten_korr": 0.619,
+   "ausschnitt": [
+    1161,
+    604,
+    1359,
+    726
+   ]
+  },
+  {
+   "element": "zentral Seite +x 20.75-21.5 m",
+   "iou_oeffnungen": 0.0,
+   "spaltenprofil_korr": -0.181,
+   "offen_anteil_foto": 0.019,
+   "offen_anteil_modell": 0.007,
+   "versatz_px": [
+    21,
+    21
+   ],
+   "kanten_korr": 0.41,
+   "ausschnitt": [
+    960,
+    1211,
+    1176,
+    1281
+   ]
+  },
+  {
+   "element": "zentral Seite -y 20.75-21.5 m",
+   "iou_oeffnungen": 0.05,
+   "spaltenprofil_korr": -0.406,
+   "offen_anteil_foto": 0.383,
+   "offen_anteil_modell": 0.191,
+   "versatz_px": [
+    8,
+    -19
+   ],
+   "kanten_korr": 0.705,
+   "ausschnitt": [
+    637,
+    1294,
+    839,
+    1358
+   ]
+  },
+  {
+   "element": "zentral Seite +x 22.75-24.0 m",
+   "iou_oeffnungen": 0.0,
+   "spaltenprofil_korr": NaN,
+   "offen_anteil_foto": 0.497,
+   "offen_anteil_modell": 0.0,
+   "versatz_px": [
+    80,
+    -34
+   ],
+   "kanten_korr": 0.448,
+   "ausschnitt": [
+    927,
+    1082,
+    1199,
+    1196
+   ]
+  },
+  {
+   "element": "zentral Seite -y 22.75-24.0 m",
+   "iou_oeffnungen": 0.099,
+   "spaltenprofil_korr": -0.084,
+   "offen_anteil_foto": 0.343,
+   "offen_anteil_modell": 0.158,
+   "versatz_px": [
+    -10,
+    22
+   ],
+   "kanten_korr": 0.63,
+   "ausschnitt": [
+    630,
+    1167,
+    884,
+    1273
+   ]
+  },
+  {
+   "element": "zentral Seite +x 38.25-39.25 m",
+   "iou_oeffnungen": 0.0,
+   "spaltenprofil_korr": NaN,
+   "offen_anteil_foto": 0.609,
+   "offen_anteil_modell": 0.0,
+   "versatz_px": [
+    52,
+    -22
+   ],
+   "kanten_korr": 0.67,
+   "ausschnitt": [
+    929,
+    481,
+    1161,
+    557
+   ]
+  },
+  {
+   "element": "zentral Seite -y 38.25-39.25 m",
+   "iou_oeffnungen": 0.019,
+   "spaltenprofil_korr": 0.333,
+   "offen_anteil_foto": 0.417,
+   "offen_anteil_modell": 0.012,
+   "versatz_px": [
+    49,
+    2
+   ],
+   "kanten_korr": 0.701,
+   "ausschnitt": [
+    729,
+    563,
+    951,
+    637
+   ]
+  }
+ ],
+ "legende": "Foto | Modell | Masken (gelb nur Foto dunkel, blau nur Modell offen, gruen beide)"
+}

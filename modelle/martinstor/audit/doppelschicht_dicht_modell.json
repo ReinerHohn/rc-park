@@ -1,0 +1,164 @@
+{
+ "seite": "Nord(-x)",
+ "parameter": {
+  "zlo": 43.0,
+  "zhi": 49.0,
+  "dz": 0.5,
+  "schritt": 1.0,
+  "tmax": 7.0,
+  "quer": 1.0,
+  "minpts": 300,
+  "abstand_m": 0.4,
+  "gewicht": 0.05,
+  "bic_min": 20.0
+ },
+ "annahme": "Schwellen sind ANNAHMEN; Gesimsstufen sind nicht von Versatz zu unterscheiden",
+ "wolken": {
+  "d1/dicht_modell.npy": {
+   "punkte": 1857703,
+   "doppelte_schichten": 7,
+   "schichten": [
+    {
+     "z": 43.0,
+     "status": "ok",
+     "n": 1556,
+     "mittel": [
+      3.343,
+      5.105
+     ],
+     "sigma": [
+      0.087,
+      0.075
+     ],
+     "gewicht": [
+      0.847,
+      0.153
+     ],
+     "abstand_m": 1.762,
+     "bic_gewinn": 4921.6,
+     "doppelt": true
+    },
+    {
+     "z": 44.0,
+     "status": "ok",
+     "n": 1369,
+     "mittel": [
+      3.127,
+      5.025
+     ],
+     "sigma": [
+      0.105,
+      0.081
+     ],
+     "gewicht": [
+      0.83,
+      0.17
+     ],
+     "abstand_m": 1.898,
+     "bic_gewinn": 4116.2,
+     "doppelt": true
+    },
+    {
+     "z": 45.0,
+     "status": "ok",
+     "n": 1349,
+     "mittel": [
+      2.897,
+      4.945
+     ],
+     "sigma": [
+      0.131,
+      0.138
+     ],
+     "gewicht": [
+      0.832,
+      0.168
+     ],
+     "abstand_m": 2.048,
+     "bic_gewinn": 3533.3,
+     "doppelt": true
+    },
+    {
+     "z": 46.0,
+     "status": "ok",
+     "n": 1145,
+     "mittel": [
+      2.688,
+      4.789
+     ],
+     "sigma": [
+      0.161,
+      0.172
+     ],
+     "gewicht": [
+      0.861,
+      0.139
+     ],
+     "abstand_m": 2.101,
+     "bic_gewinn": 2544.6,
+     "doppelt": true
+    },
+    {
+     "z": 47.0,
+     "status": "ok",
+     "n": 992,
+     "mittel": [
+      2.47,
+      4.61
+     ],
+     "sigma": [
+      0.172,
+      0.154
+     ],
+     "gewicht": [
+      0.871,
+      0.129
+     ],
+     "abstand_m": 2.14,
+     "bic_gewinn": 2134.2,
+     "doppelt": true
+    },
+    {
+     "z": 48.0,
+     "status": "ok",
+     "n": 967,
+     "mittel": [
+      2.243,
+      4.422
+     ],
+     "sigma": [
+      0.187,
+      0.128
+     ],
+     "gewicht": [
+      0.872,
+      0.128
+     ],
+     "abstand_m": 2.179,
+     "bic_gewinn": 2018.2,
+     "doppelt": true
+    },
+    {
+     "z": 49.0,
+     "status": "ok",
+     "n": 838,
+     "mittel": [
+      2.022,
+      4.241
+     ],
+     "sigma": [
+      0.205,
+      0.126
+     ],
+     "gewicht": [
+      0.921,
+      0.079
+     ],
+     "abstand_m": 2.219,
+     "bic_gewinn": 1463.6,
+     "doppelt": true
+    }
+   ]
+  }
+ }
+}

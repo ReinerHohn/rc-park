@@ -1,0 +1,56 @@
+{
+ "id": "Z-043-002",
+ "typ": "zaehlung",
+ "foto": "043",
+ "datei": "043_Freiburg_im_Breisgau_Martinstor_2.jpg",
+ "was": "Ecktuermchen rechts: Oeffnungen je Achteckflaeche im Arkadenband",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-03",
+ "punkte": [
+  {
+   "flaeche": "F0",
+   "art": "teil",
+   "x": 939.0,
+   "y": 1158.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 997.0,
+   "y": 1142.0
+  },
+  {
+   "flaeche": "F2",
+   "art": "teil",
+   "x": 1054.0,
+   "y": 1142.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F0": {
+   "art": "teil",
+   "n": 1
+  },
+  "F1": {
+   "art": "voll",
+   "n": 1
+  },
+  "F2": {
+   "art": "teil",
+   "n": 1
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 1,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-043-002.jpg",
+ "ausschnitt": [
+  689,
+  892,
+  1304,
+  1408
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

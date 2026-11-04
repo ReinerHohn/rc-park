@@ -1,0 +1,272 @@
+{
+ "objekt": "Martinstor",
+ "stand": "2026-11-03 12:26:23",
+ "produkt": false,
+ "lizenzklassen_erlaubt": "alle",
+ "ziel_proz": 60.0,
+ "geduld": 1,
+ "rauschen": {
+  "proz": 2.0,
+  "kameras": 2
+ },
+ "annahmen": [
+  "Luecke = Foto-Farbanteil der Seite < --ziel-proz (flaechengewichtet ueber Hoehenbaender)",
+  "Netz 'schlecht bestimmt' = >= --viele-fotos Fotos auf der Seite und trotzdem Luecke",
+  "Rauschen: Gewinn <= --rauschen-proz bzw. <= --rauschen-kameras (PROXY)",
+  "hoechstens 1 Bild je Hoehenband vor der Kalibrierung nicht umsetzbar -> je Seite",
+  "Mapillary = nc (lizenz_register, Projektregel)"
+ ],
+ "stufen": [
+  {
+   "stufe": 0,
+   "beschreibung": "grobes Annahmemodell: nur 'neu', wenige verschiedene Blickwinkel",
+   "parameter": {
+    "bild_klassen": "neu",
+    "max_je_seite": 1,
+    "aehnlich_seiten": [],
+    "seiten": [
+     "Ost",
+     "West",
+     "Nord"
+    ]
+   },
+   "luecken_vorher": {
+    "Nord": {
+     "foto_proz": 55.0,
+     "fotos_zahl": 32,
+     "luecke": true,
+     "schlechte_baender": {
+      "z0-15": 20.7,
+      "z30-45": 52.9
+     }
+    },
+    "Sued": {
+     "foto_proz": 63.7,
+     "fotos_zahl": 51,
+     "luecke": false,
+     "schlechte_baender": {
+      "z30-45": 41.4,
+      "z45-60": 3.7
+     }
+    },
+    "Ost": {
+     "foto_proz": 1.1,
+     "fotos_zahl": 2,
+     "luecke": true,
+     "schlechte_baender": {
+      "z0-15": 0.2,
+      "z15-30": 1.5,
+      "z30-45": 2.1,
+      "z45-60": 0.0
+     }
+    },
+    "West": {
+     "foto_proz": 10.0,
+     "fotos_zahl": 1,
+     "luecke": true,
+     "schlechte_baender": {
+      "z0-15": 20.6,
+      "z15-30": 3.1,
+      "z30-45": 5.6,
+      "z45-60": 0.0
+     }
+    }
+   },
+   "ordner": "/media/oem/scan/rc-park_daten/martinstor/fotos_eingang_schleife/stufe_0",
+   "bilder_holen_rc": 0,
+   "manifest": "/media/oem/scan/rc-park_daten/martinstor/fotos_eingang_schleife/stufe_0/manifest.json",
+   "neu_geladen": 0,
+   "bilder": [],
+   "neue_brauchbare_kameras_auf_luecken": 0,
+   "texturabwertung": [],
+   "mapillary": {
+    "status": "ok",
+    "bilder": 30,
+    "je_seite": {
+     "Nord": 25,
+     "Ost": 4,
+     "Sued": 1
+    },
+    "lizenz_klasse": "nc",
+    "ordner": "/media/oem/scan/rc-park_daten/martinstor/fotos_eingang_schleife/stufe_0/mapillary"
+   },
+   "gewinn_art": "PROXY (neue brauchbare Kameras, kein Modellgewinn gemessen)",
+   "luecken_nachher": {
+    "Nord": {
+     "foto_proz": 55.0,
+     "fotos_zahl": 32,
+     "luecke": true,
+     "schlechte_baender": {
+      "z0-15": 20.7,
+      "z30-45": 52.9
+     }
+    },
+    "Sued": {
+     "foto_proz": 63.7,
+     "fotos_zahl": 51,
+     "luecke": false,
+     "schlechte_baender": {
+      "z30-45": 41.4,
+      "z45-60": 3.7
+     }
+    },
+    "Ost": {
+     "foto_proz": 1.1,
+     "fotos_zahl": 2,
+     "luecke": true,
+     "schlechte_baender": {
+      "z0-15": 0.2,
+      "z15-30": 1.5,
+      "z30-45": 2.1,
+      "z45-60": 0.0
+     }
+    },
+    "West": {
+     "foto_proz": 10.0,
+     "fotos_zahl": 1,
+     "luecke": true,
+     "schlechte_baender": {
+      "z0-15": 20.6,
+      "z15-30": 3.1,
+      "z30-45": 5.6,
+      "z45-60": 0.0
+     }
+    }
+   },
+   "sekunden": 320
+  }
+ ],
+ "stopp": "keine neue Quelle (nichts Neues gefunden, das die Luecken-Seiten betrifft)",
+ "luecken_start": {
+  "Nord": {
+   "foto_proz": 55.0,
+   "fotos_zahl": 32,
+   "luecke": true,
+   "schlechte_baender": {
+    "z0-15": 20.7,
+    "z30-45": 52.9
+   }
+  },
+  "Sued": {
+   "foto_proz": 63.7,
+   "fotos_zahl": 51,
+   "luecke": false,
+   "schlechte_baender": {
+    "z30-45": 41.4,
+    "z45-60": 3.7
+   }
+  },
+  "Ost": {
+   "foto_proz": 1.1,
+   "fotos_zahl": 2,
+   "luecke": true,
+   "schlechte_baender": {
+    "z0-15": 0.2,
+    "z15-30": 1.5,
+    "z30-45": 2.1,
+    "z45-60": 0.0
+   }
+  },
+  "West": {
+   "foto_proz": 10.0,
+   "fotos_zahl": 1,
+   "luecke": true,
+   "schlechte_baender": {
+    "z0-15": 20.6,
+    "z15-30": 3.1,
+    "z30-45": 5.6,
+    "z45-60": 0.0
+   }
+  }
+ },
+ "luecken_ende": {
+  "Nord": {
+   "foto_proz": 55.0,
+   "fotos_zahl": 32,
+   "luecke": true,
+   "schlechte_baender": {
+    "z0-15": 20.7,
+    "z30-45": 52.9
+   }
+  },
+  "Sued": {
+   "foto_proz": 63.7,
+   "fotos_zahl": 51,
+   "luecke": false,
+   "schlechte_baender": {
+    "z30-45": 41.4,
+    "z45-60": 3.7
+   }
+  },
+  "Ost": {
+   "foto_proz": 1.1,
+   "fotos_zahl": 2,
+   "luecke": true,
+   "schlechte_baender": {
+    "z0-15": 0.2,
+    "z15-30": 1.5,
+    "z30-45": 2.1,
+    "z45-60": 0.0
+   }
+  },
+  "West": {
+   "foto_proz": 10.0,
+   "fotos_zahl": 1,
+   "luecke": true,
+   "schlechte_baender": {
+    "z0-15": 20.6,
+    "z15-30": 3.1,
+    "z30-45": 5.6,
+    "z45-60": 0.0
+   }
+  }
+ },
+ "quellen": {
+  "commons": "angebunden (bilder_holen.py): nur frei lizenzierte Bilder; Kategorien/Suchen/Geosearch aus objekt.json",
+  "mapillary": "angebunden mit --mapillary (mapillary_rip.py, Graph-API, Token): Klasse nc; noch NICHT kalibriert/einsortiert (kein EXIF)",
+  "video": "nicht automatisch: Urheberrecht (Standard-YouTube-Lizenz); nur von Hand als private Messvorlage, Klasse unfrei",
+  "flickr_google_bing_social": "NICHT angebunden: API-Schluessel bzw. Nutzungsbedingungen noetig; Google Street View darf nicht gescrapt werden"
+ },
+ "was_fehlt": {
+  "Nord": {
+   "foto_proz": 55.0,
+   "schlechte_baender": {
+    "z0-15": 20.7,
+    "z30-45": 52.9
+   },
+   "hinweis": "kein (weiteres) Bild aus den angebundenen Quellen gefunden oder Kamera nicht loesbar - Luecke bleibt; neue eigene Fotos von dieser Seite noetig"
+  },
+  "Sued": {
+   "foto_proz": 63.7,
+   "schlechte_baender": {
+    "z30-45": 41.4,
+    "z45-60": 3.7
+   },
+   "hinweis": "ok"
+  },
+  "Ost": {
+   "foto_proz": 1.1,
+   "schlechte_baender": {
+    "z0-15": 0.2,
+    "z15-30": 1.5,
+    "z30-45": 2.1,
+    "z45-60": 0.0
+   },
+   "hinweis": "kein (weiteres) Bild aus den angebundenen Quellen gefunden oder Kamera nicht loesbar - Luecke bleibt; neue eigene Fotos von dieser Seite noetig"
+  },
+  "West": {
+   "foto_proz": 10.0,
+   "schlechte_baender": {
+    "z0-15": 20.6,
+    "z15-30": 3.1,
+    "z30-45": 5.6,
+    "z45-60": 0.0
+   },
+   "hinweis": "kein (weiteres) Bild aus den angebundenen Quellen gefunden oder Kamera nicht loesbar - Luecke bleibt; neue eigene Fotos von dieser Seite noetig"
+  }
+ },
+ "lizenzregister": {
+  "rc": 0,
+  "ausgabe": "modelle/<objekt>/LIZENZ_BILDER.json und .md (von lizenz_register.py)"
+ }
+}

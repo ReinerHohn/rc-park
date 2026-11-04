@@ -1,0 +1,60 @@
+{
+ "id": "Z-018-002",
+ "typ": "zaehlung",
+ "foto": "018",
+ "datei": "018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta.jpg",
+ "was": "Nordfront Obergeschoss: Fenster zwischen den Erkern",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-04",
+ "punkte": [
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 995.0,
+   "y": 1100.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1445.0,
+   "y": 1100.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1890.0,
+   "y": 1100.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 2347.0,
+   "y": 1100.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 2795.0,
+   "y": 1100.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F1": {
+   "art": "voll",
+   "n": 5
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 5,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-018-002.jpg",
+ "ausschnitt": [
+  745,
+  850,
+  3045,
+  1350
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-041-009",
+ "foto": "041",
+ "kamera": "K-041",
+ "ebene": "x=4.85",
+ "name": "Zinnenzahn 2-3 Breite Suedseite",
+ "mess_px": [
+  898.0,
+  770.0,
+  950.0,
+  770.0
+ ],
+ "P1": [
+  4.85,
+  -0.351,
+  31.536
+ ],
+ "P2": [
+  4.85,
+  0.391,
+  31.754
+ ],
+ "dz": 0.218,
+ "dy": 0.742,
+ "dx": 0.0,
+ "abstand": 0.773,
+ "z1": 31.536,
+ "z2": 31.754,
+ "unsicherheit_rel": 0.0129,
+ "unsicherheit_m": 0.07,
+ "massstab_von": "Kamera K-041 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.85 (+-0.5 m)"
+}

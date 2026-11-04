@@ -1,0 +1,32 @@
+{
+ "id": "M-030-016",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=5.55",
+ "name": "Tuermchen_Arkade_Hoehe_Scheitel_bis_Bruestung",
+ "mess_px": [
+  843.0,
+  515.0,
+  843.0,
+  560.0
+ ],
+ "P1": [
+  5.55,
+  -4.672,
+  35.414
+ ],
+ "P2": [
+  5.55,
+  -4.632,
+  34.32
+ ],
+ "dz": -1.093,
+ "dy": 0.04,
+ "dx": 0.0,
+ "abstand": 1.094,
+ "z1": 35.414,
+ "z2": 34.32,
+ "unsicherheit_rel": 0.0063,
+ "unsicherheit_m": 0.091,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=5.55 (+-0.3 m)"
+}

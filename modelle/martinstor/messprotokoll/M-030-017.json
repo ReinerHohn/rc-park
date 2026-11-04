@@ -1,0 +1,32 @@
+{
+ "id": "M-030-017",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=5.55",
+ "name": "Tuermchen_Arkade_Stich",
+ "mess_px": [
+  843.0,
+  515.0,
+  843.0,
+  522.0
+ ],
+ "P1": [
+  5.55,
+  -4.672,
+  35.414
+ ],
+ "P2": [
+  5.55,
+  -4.666,
+  35.242
+ ],
+ "dz": -0.172,
+ "dy": 0.006,
+ "dx": 0.0,
+ "abstand": 0.172,
+ "z1": 35.414,
+ "z2": 35.242,
+ "unsicherheit_rel": 0.0063,
+ "unsicherheit_m": 0.085,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=5.55 (+-0.3 m)"
+}

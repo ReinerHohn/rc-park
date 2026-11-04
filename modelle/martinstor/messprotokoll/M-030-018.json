@@ -1,0 +1,32 @@
+{
+ "id": "M-030-018",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=5.55",
+ "name": "Tuermchen_Bruestung_Hoehe",
+ "mess_px": [
+  843.0,
+  560.0,
+  843.0,
+  605.0
+ ],
+ "P1": [
+  5.55,
+  -4.632,
+  34.32
+ ],
+ "P2": [
+  5.55,
+  -4.593,
+  33.248
+ ],
+ "dz": -1.072,
+ "dy": 0.039,
+ "dx": 0.0,
+ "abstand": 1.073,
+ "z1": 34.32,
+ "z2": 33.248,
+ "unsicherheit_rel": 0.0064,
+ "unsicherheit_m": 0.09,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=5.55 (+-0.3 m)"
+}

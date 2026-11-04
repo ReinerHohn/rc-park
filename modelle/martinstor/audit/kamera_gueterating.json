@@ -1,0 +1,211 @@
+{
+ "parameter": {
+  "rms_gut_proz": 0.5,
+  "rms_max_proz": 3.0,
+  "f_bereich": [
+   0.3,
+   20.0
+  ],
+  "abstand_max_m": 500.0,
+  "hoehe_max_m": 20.0
+ },
+ "zaehler": {
+  "gut": 0,
+  "grob": 3,
+  "unbrauchbar": 14
+ },
+ "fotos": {
+  "000": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": 2.64,
+   "rms_px": 73.3,
+   "art": "strasse",
+   "picks": 12,
+   "seite": "Sued",
+   "gruende": [
+    "Brennweite unphysikalisch: f = 8.62e+08 px = 3.11e+05 x Bildlaenge (erlaubt 0.3..20.0)",
+    "Abstand 24311632 m > 500 m"
+   ]
+  },
+  "005": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": null,
+   "rms_px": null,
+   "art": "strasse",
+   "picks": 3,
+   "seite": "Nord",
+   "gruende": [
+    "keine geloeste Kamera (Picks fehlen oder Loesung gescheitert)"
+   ]
+  },
+  "006": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": null,
+   "rms_px": null,
+   "art": "strasse",
+   "picks": 9,
+   "seite": "Nord",
+   "gruende": [
+    "keine geloeste Kamera (Picks fehlen oder Loesung gescheitert)"
+   ]
+  },
+  "014": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": null,
+   "rms_px": null,
+   "art": "strasse",
+   "picks": 9,
+   "seite": "Nord",
+   "gruende": [
+    "keine geloeste Kamera (Picks fehlen oder Loesung gescheitert)"
+   ]
+  },
+  "022": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": null,
+   "rms_px": null,
+   "art": "strasse",
+   "picks": 0,
+   "seite": "Sued",
+   "gruende": [
+    "keine geloeste Kamera (Picks fehlen oder Loesung gescheitert)"
+   ]
+  },
+  "030": {
+   "klasse": "grob",
+   "rms_prozent_bildhoehe": 1.97,
+   "rms_px": 56.7,
+   "art": "strasse",
+   "picks": 13,
+   "seite": "Sued",
+   "gruende": [
+    "RMS 2.0 % > 0.5 % (Richtwert)"
+   ]
+  },
+  "031": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": 5.06,
+   "rms_px": 145.7,
+   "art": "strasse",
+   "picks": 11,
+   "seite": "Nord",
+   "gruende": [
+    "RMS 5.1 % der Bildhoehe > 3.0 %"
+   ]
+  },
+  "040": {
+   "klasse": "grob",
+   "rms_prozent_bildhoehe": 2.61,
+   "rms_px": 75.3,
+   "art": "strasse",
+   "picks": 8,
+   "seite": "Nord",
+   "gruende": [
+    "RMS 2.6 % > 0.5 % (Richtwert)"
+   ]
+  },
+  "041": {
+   "klasse": "grob",
+   "rms_prozent_bildhoehe": 1.96,
+   "rms_px": 56.4,
+   "art": "strasse",
+   "picks": 11,
+   "seite": "Sued",
+   "gruende": [
+    "RMS 2.0 % > 0.5 % (Richtwert)"
+   ]
+  },
+  "043": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": null,
+   "rms_px": null,
+   "art": "strasse",
+   "picks": 0,
+   "seite": "Sued",
+   "gruende": [
+    "keine geloeste Kamera (Picks fehlen oder Loesung gescheitert)"
+   ]
+  },
+  "044": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": null,
+   "rms_px": null,
+   "art": "strasse",
+   "picks": 0,
+   "seite": "Nord",
+   "gruende": [
+    "keine geloeste Kamera (Picks fehlen oder Loesung gescheitert)"
+   ]
+  },
+  "060": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": 1.36,
+   "rms_px": 38.6,
+   "art": "luft",
+   "picks": 7,
+   "seite": "West",
+   "gruende": [
+    "Kamerahoehe 322 m > 20 m (Luftbild)",
+    "Abstand 1188 m > 500 m"
+   ]
+  },
+  "061": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": 0.26,
+   "rms_px": 7.1,
+   "art": "luft",
+   "picks": 7,
+   "seite": "Ost",
+   "gruende": [
+    "Kamerahoehe 376 m > 20 m (Luftbild)",
+    "Brennweite unphysikalisch: f = 4.87e+05 px = 135 x Bildlaenge (erlaubt 0.3..20.0)",
+    "Abstand 52225 m > 500 m"
+   ]
+  },
+  "062": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": null,
+   "rms_px": null,
+   "art": "strasse",
+   "picks": 2,
+   "seite": "Sued",
+   "gruende": [
+    "keine geloeste Kamera (Picks fehlen oder Loesung gescheitert)"
+   ]
+  },
+  "065": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": null,
+   "rms_px": null,
+   "art": "strasse",
+   "picks": 3,
+   "seite": "Sued",
+   "gruende": [
+    "keine geloeste Kamera (Picks fehlen oder Loesung gescheitert)"
+   ]
+  },
+  "066": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": null,
+   "rms_px": null,
+   "art": "strasse",
+   "picks": 3,
+   "seite": "Sued",
+   "gruende": [
+    "keine geloeste Kamera (Picks fehlen oder Loesung gescheitert)"
+   ]
+  },
+  "067": {
+   "klasse": "unbrauchbar",
+   "rms_prozent_bildhoehe": null,
+   "rms_px": null,
+   "art": "strasse",
+   "picks": 3,
+   "seite": "Sued",
+   "gruende": [
+    "keine geloeste Kamera (Picks fehlen oder Loesung gescheitert)"
+   ]
+  }
+ },
+ "hinweis": "ANNAHMEN siehe Kopf von tools/kamera_gueterating.py; RMS misst nur den Sitz der gepickten Anker"
+}

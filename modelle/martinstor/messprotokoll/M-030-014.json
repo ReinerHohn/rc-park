@@ -1,0 +1,32 @@
+{
+ "id": "M-030-014",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=3.55",
+ "name": "Schallarkade_links_Hoehe",
+ "mess_px": [
+  1003.0,
+  528.0,
+  1003.0,
+  600.0
+ ],
+ "P1": [
+  3.55,
+  -0.93,
+  38.156
+ ],
+ "P2": [
+  3.55,
+  -0.914,
+  36.255
+ ],
+ "dz": -1.901,
+ "dy": 0.015,
+ "dx": 0.0,
+ "abstand": 1.901,
+ "z1": 38.156,
+ "z2": 36.255,
+ "unsicherheit_rel": 0.0059,
+ "unsicherheit_m": 0.102,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=3.55 (+-0.3 m)"
+}

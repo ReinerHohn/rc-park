@@ -1,0 +1,32 @@
+{
+ "id": "M-041-007",
+ "foto": "041",
+ "kamera": "K-041",
+ "ebene": "x=4.85",
+ "name": "Lueftungsfenster links INNERE Oeffnung Hoehe",
+ "mess_px": [
+  778.0,
+  1187.0,
+  778.0,
+  1245.0
+ ],
+ "P1": [
+  4.85,
+  -1.85,
+  23.444
+ ],
+ "P2": [
+  4.85,
+  -1.83,
+  22.534
+ ],
+ "dz": -0.91,
+ "dy": 0.02,
+ "dx": 0.0,
+ "abstand": 0.91,
+ "z1": 23.444,
+ "z2": 22.534,
+ "unsicherheit_rel": 0.0092,
+ "unsicherheit_m": 0.058,
+ "massstab_von": "Kamera K-041 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.85 (+-0.3 m)"
+}

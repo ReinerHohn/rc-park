@@ -1,0 +1,94 @@
+{
+ "id": "Z-050-001",
+ "typ": "zaehlung",
+ "foto": "050",
+ "datei": "050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu.jpg",
+ "was": "Ostgiebel (Treppengiebel): Stufen auf der Nordflanke unter der Spitze",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-04",
+ "punkte": [
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 2550.0,
+   "y": 100.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 2495.0,
+   "y": 170.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 2450.0,
+   "y": 240.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 2400.0,
+   "y": 310.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 2350.0,
+   "y": 380.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 2300.0,
+   "y": 450.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 2250.0,
+   "y": 520.0
+  },
+  {
+   "flaeche": "F2",
+   "art": "teil",
+   "x": 2710.0,
+   "y": 60.0
+  },
+  {
+   "flaeche": "F2",
+   "art": "teil",
+   "x": 2770.0,
+   "y": 150.0
+  },
+  {
+   "flaeche": "F2",
+   "art": "teil",
+   "x": 2830.0,
+   "y": 235.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F1": {
+   "art": "voll",
+   "n": 7
+  },
+  "F2": {
+   "art": "teil",
+   "n": 3
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 7,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-050-001.jpg",
+ "ausschnitt": [
+  2000,
+  0,
+  3080,
+  770
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "F1 Nordflanke voll sichtbar (Kappen), F2 Suedflanke von Nachbardach verdeckt; Spitze (2590,40) nicht mitgezaehlt"
+}

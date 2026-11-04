@@ -1,0 +1,128 @@
+{
+ "mitte_utm": [
+  414405.54,
+  5316373.86
+ ],
+ "xhat_utm": [
+  0.9992,
+  0.0411
+ ],
+ "yhat_utm": [
+  -0.0411,
+  0.9992
+ ],
+ "gelaende": 278.32,
+ "hinweis": "Modellrahmen aus LoD2 (tools/objekt_daten.py): Ursprung Grundriss-Mitte, +x Langachse nach Ost, +y nach Nord (rechtshaendig), z ueber DGM1",
+ "anker": {
+  "ecke_boden_0": {
+   "xyz": [
+    13.629,
+    9.618,
+    0.0
+   ],
+   "sigma": 0.3,
+   "quelle": "LoD2 DEBW_0010007Tv9r Grundrissecke (LGL BW)",
+   "quelltyp": "lod2"
+  },
+  "ecke_wandoben_0": {
+   "xyz": [
+    13.629,
+    9.618,
+    11.65
+   ],
+   "sigma": 0.5,
+   "quelle": "LoD2 DEBW_0010007Tv9r: Traufe an der Ecke (tiefster Dachpunkt dort)",
+   "quelltyp": "lod2"
+  },
+  "ecke_boden_1": {
+   "xyz": [
+    -5.529,
+    16.64,
+    0.0
+   ],
+   "sigma": 0.3,
+   "quelle": "LoD2 DEBW_0010007Tv9r Grundrissecke (LGL BW)",
+   "quelltyp": "lod2"
+  },
+  "ecke_wandoben_1": {
+   "xyz": [
+    -5.529,
+    16.64,
+    11.22
+   ],
+   "sigma": 0.5,
+   "quelle": "LoD2 DEBW_0010007Tv9r: Traufe an der Ecke (tiefster Dachpunkt dort)",
+   "quelltyp": "lod2"
+  },
+  "ecke_boden_2": {
+   "xyz": [
+    -12.559,
+    -6.36,
+    0.0
+   ],
+   "sigma": 0.3,
+   "quelle": "LoD2 DEBW_0010007Tv9r Grundrissecke (LGL BW)",
+   "quelltyp": "lod2"
+  },
+  "ecke_wandoben_2": {
+   "xyz": [
+    -12.559,
+    -6.36,
+    9.24
+   ],
+   "sigma": 0.5,
+   "quelle": "LoD2 DEBW_0010007Tv9r: Traufe an der Ecke (tiefster Dachpunkt dort)",
+   "quelltyp": "lod2"
+  },
+  "ecke_boden_3": {
+   "xyz": [
+    9.437,
+    -7.885,
+    0.0
+   ],
+   "sigma": 0.3,
+   "quelle": "LoD2 DEBW_0010007Tv9r Grundrissecke (LGL BW)",
+   "quelltyp": "lod2"
+  },
+  "ecke_wandoben_3": {
+   "xyz": [
+    9.437,
+    -7.885,
+    13.47
+   ],
+   "sigma": 0.5,
+   "quelle": "LoD2 DEBW_0010007Tv9r: Traufe an der Ecke (tiefster Dachpunkt dort)",
+   "quelltyp": "lod2"
+  },
+  "first_0": {
+   "xyz": [
+    -7.781,
+    9.61,
+    20.97
+   ],
+   "sigma": 0.5,
+   "quelle": "LoD2 DEBW_0010007Tv9r: Firstpunkt",
+   "quelltyp": "lod2"
+  },
+  "first_1": {
+   "xyz": [
+    11.67,
+    2.826,
+    20.97
+   ],
+   "sigma": 0.5,
+   "quelle": "LoD2 DEBW_0010007Tv9r: Firstpunkt",
+   "quelltyp": "lod2"
+  },
+  "spitze_dom": {
+   "xyz": [
+    -7.156,
+    9.441,
+    21.58
+   ],
+   "sigma": 0.5,
+   "quelle": "DOM1 1 m: Maximum im LoD2-Grundriss (Laser blind fuer Bauteile < ~3 m, Regel 4)",
+   "quelltyp": "laser_dom1"
+  }
+ }
+}

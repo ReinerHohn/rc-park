@@ -1,0 +1,46 @@
+{
+ "stand": "2026-11-03 11:17:58",
+ "stufen": {
+  "?": {
+   "laeufe": 17,
+   "median_s": 516.6,
+   "min_s": 126.0,
+   "max_s": 2483.1,
+   "schritte": {
+    "dicht_nord": 472.0,
+    "netz_sued": 106.1,
+    "kalibrieren": 34.4,
+    "registrieren": 32.2,
+    "ausrichten_nord": 14.4,
+    "merkmale_nord": 11.6
+   }
+  },
+  "grob": {
+   "laeufe": 8,
+   "median_s": 693.9,
+   "min_s": 498.2,
+   "max_s": 794.4,
+   "schritte": {
+    "dicht_nord": 349.2,
+    "netz_sued": 152.8,
+    "kalibrieren": 48.7,
+    "registrieren": 24.6,
+    "ausrichten_sued": 22.9,
+    "auswertung": 18.2
+   }
+  },
+  "voll": {
+   "laeufe": 8,
+   "median_s": 380.4,
+   "min_s": 176.8,
+   "max_s": 696.4,
+   "schritte": {
+    "dicht_nord": 336.1,
+    "kalibrieren": 34.2,
+    "auswertung": 9.1,
+    "entzerren": 0.8
+   }
+  }
+ },
+ "grenzen": "Zeiten teils bei parallelen Jobs; Nutzen nicht enthalten"
+}

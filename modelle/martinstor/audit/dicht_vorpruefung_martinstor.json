@@ -1,0 +1,109 @@
+{
+ "annahmen": {
+  "min_kameras": 10,
+  "ziel_kameras": 30,
+  "hoehen_diff_m": 15.0
+ },
+ "grenzen": "Kamerazahl != Punktdichte; Hoehenregel grob; Seitenzuordnung der Videos haengt an der Nordausrichtung",
+ "quellen": {
+  "fotos": {
+   "seiten": {
+    "Nord": {
+     "kameras": 32,
+     "andere_kameras": 501,
+     "hoehe_median_m": null,
+     "urteil": "nicht begruendet: Seite schon von anderen Quellen belegt",
+     "begruendung": null
+    },
+    "Sued": {
+     "kameras": 51,
+     "andere_kameras": 1,
+     "hoehe_median_m": null,
+     "urteil": "lohnt",
+     "begruendung": "schliesst Luecke: andere Quellen nur 1 Kameras (< 30)"
+    },
+    "Ost": {
+     "kameras": 2,
+     "andere_kameras": 23,
+     "hoehe_median_m": null,
+     "urteil": "zu wenige Kameras",
+     "begruendung": null
+    },
+    "West": {
+     "kameras": 1,
+     "andere_kameras": 37,
+     "hoehe_median_m": null,
+     "urteil": "zu wenige Kameras",
+     "begruendung": null
+    }
+   },
+   "lohnt": true
+  },
+  "boden": {
+   "seiten": {
+    "Nord": {
+     "kameras": 340,
+     "andere_kameras": 193,
+     "hoehe_median_m": 0.4,
+     "urteil": "lohnt",
+     "begruendung": "neue Hoehenlage: Standorthoehe 0.4 m, naechste andere Quelle 34 m entfernt (>= 15)"
+    },
+    "Sued": {
+     "kameras": 1,
+     "andere_kameras": 51,
+     "hoehe_median_m": 303.8,
+     "urteil": "zu wenige Kameras",
+     "begruendung": null
+    },
+    "Ost": {
+     "kameras": 0,
+     "andere_kameras": 25,
+     "hoehe_median_m": null,
+     "urteil": "zu wenige Kameras",
+     "begruendung": null
+    },
+    "West": {
+     "kameras": 1,
+     "andere_kameras": 37,
+     "hoehe_median_m": 17.0,
+     "urteil": "zu wenige Kameras",
+     "begruendung": null
+    }
+   },
+   "lohnt": true
+  },
+  "d1_cv": {
+   "seiten": {
+    "Nord": {
+     "kameras": 161,
+     "andere_kameras": 372,
+     "hoehe_median_m": 34.8,
+     "urteil": "lohnt",
+     "begruendung": "neue Hoehenlage: Standorthoehe 34.8 m, naechste andere Quelle 34 m entfernt (>= 15)"
+    },
+    "Sued": {
+     "kameras": 0,
+     "andere_kameras": 52,
+     "hoehe_median_m": null,
+     "urteil": "zu wenige Kameras",
+     "begruendung": null
+    },
+    "Ost": {
+     "kameras": 23,
+     "andere_kameras": 2,
+     "hoehe_median_m": 58.0,
+     "urteil": "lohnt",
+     "begruendung": "schliesst Luecke: andere Quellen nur 2 Kameras (< 30)"
+    },
+    "West": {
+     "kameras": 36,
+     "andere_kameras": 2,
+     "hoehe_median_m": 57.6,
+     "urteil": "lohnt",
+     "begruendung": "schliesst Luecke: andere Quellen nur 2 Kameras (< 30)"
+    }
+   },
+   "lohnt": true
+  }
+ }
+}

@@ -1,0 +1,53 @@
+{
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_1-87.stl",
+ "werte": {
+  "hoehe": 22.404999502658843,
+  "wasserdicht": 1.0,
+  "koerper": 1.0,
+  "traufe_nord_mitte": 12.168947984218597,
+  "first": 21.43115093564987
+ },
+ "pruefungen": [
+  {
+   "name": "Wasserdicht (1=ja)",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Anzahl getrennte Koerper",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Dachebene an der Nordwand, u = 4 m (m)",
+   "wert": 12.168947984218597,
+   "soll": [
+    11.2,
+    12.3
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "First, Mitte (m)",
+   "wert": 21.43115093564987,
+   "soll": [
+    21.0,
+    21.8
+   ],
+   "ok": true,
+   "status": "ok"
+  }
+ ],
+ "bestanden": true
+}

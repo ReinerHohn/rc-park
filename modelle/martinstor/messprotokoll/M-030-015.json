@@ -1,0 +1,32 @@
+{
+ "id": "M-030-015",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=5.55",
+ "name": "Tuermchen_Arkade_Breite_Pfosten_zu_Pfosten",
+ "mess_px": [
+  815.0,
+  522.0,
+  871.0,
+  522.0
+ ],
+ "P1": [
+  5.55,
+  -5.195,
+  35.081
+ ],
+ "P2": [
+  5.55,
+  -4.132,
+  35.405
+ ],
+ "dz": 0.324,
+ "dy": 1.063,
+ "dx": 0.0,
+ "abstand": 1.111,
+ "z1": 35.081,
+ "z2": 35.405,
+ "unsicherheit_rel": 0.0064,
+ "unsicherheit_m": 0.091,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=5.55 (+-0.3 m)"
+}

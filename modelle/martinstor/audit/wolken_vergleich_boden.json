@@ -1,0 +1,306 @@
+{
+ "seite": "Nord(-x)",
+ "annahme": "Dichte/Schaerfe/Lot sind Stellvertreter, kein Modellgewinn; Entscheidung erst per Pruefzeile mit/ohne Quelle",
+ "quellen": {
+  "strasse": {
+   "punkte": 101107,
+   "baender": [
+    {
+     "z": [
+      5.0,
+      10.0
+     ],
+     "n": 2963,
+     "dichte_je_m2": 164.6,
+     "modus_tiefe": 4.284,
+     "scharf_anteil": 0.783,
+     "mad_m": 0.062
+    },
+    {
+     "z": [
+      10.0,
+      15.0
+     ],
+     "n": 782,
+     "dichte_je_m2": 43.4,
+     "modus_tiefe": 4.529,
+     "scharf_anteil": 0.82,
+     "mad_m": 0.051
+    },
+    {
+     "z": [
+      15.0,
+      20.0
+     ],
+     "n": 1950,
+     "dichte_je_m2": 108.3,
+     "modus_tiefe": 4.538,
+     "scharf_anteil": 0.893,
+     "mad_m": 0.035
+    },
+    {
+     "z": [
+      20.0,
+      25.0
+     ],
+     "n": 4382,
+     "dichte_je_m2": 243.4,
+     "modus_tiefe": 4.395,
+     "scharf_anteil": 0.489,
+     "mad_m": 0.142
+    },
+    {
+     "z": [
+      25.0,
+      30.0
+     ],
+     "n": 5218,
+     "dichte_je_m2": 289.9,
+     "modus_tiefe": 4.825,
+     "scharf_anteil": 0.442,
+     "mad_m": 0.284
+    },
+    {
+     "z": [
+      30.0,
+      35.0
+     ],
+     "n": 2281,
+     "dichte_je_m2": 126.7,
+     "modus_tiefe": 4.851,
+     "scharf_anteil": 0.429,
+     "mad_m": 0.229
+    },
+    {
+     "z": [
+      35.0,
+      40.0
+     ],
+     "n": 2596,
+     "dichte_je_m2": 144.2,
+     "modus_tiefe": 3.54,
+     "scharf_anteil": 0.729,
+     "mad_m": 0.086
+    },
+    {
+     "z": [
+      40.0,
+      45.0
+     ],
+     "n": 2516,
+     "dichte_je_m2": 139.8,
+     "modus_tiefe": 3.121,
+     "scharf_anteil": 0.303,
+     "mad_m": 0.276
+    }
+   ],
+   "lot_mm_je_m": 19.6,
+   "lot_ci95": [
+    11.93,
+    24.43
+   ],
+   "lot_schichten": 10,
+   "doppelschichten": "0/10"
+  },
+  "drohne": {
+   "punkte": 1857703,
+   "baender": [
+    {
+     "z": [
+      5.0,
+      10.0
+     ],
+     "n": 1307,
+     "dichte_je_m2": 72.6,
+     "modus_tiefe": 5.184,
+     "scharf_anteil": 0.132,
+     "mad_m": 0.902
+    },
+    {
+     "z": [
+      10.0,
+      15.0
+     ],
+     "n": 1395,
+     "dichte_je_m2": 77.5,
+     "modus_tiefe": 4.116,
+     "scharf_anteil": 0.206,
+     "mad_m": 0.659
+    },
+    {
+     "z": [
+      15.0,
+      20.0
+     ],
+     "n": 5481,
+     "dichte_je_m2": 304.5,
+     "modus_tiefe": 4.592,
+     "scharf_anteil": 0.746,
+     "mad_m": 0.06
+    },
+    {
+     "z": [
+      20.0,
+      25.0
+     ],
+     "n": 39075,
+     "dichte_je_m2": 2170.8,
+     "modus_tiefe": 4.407,
+     "scharf_anteil": 0.603,
+     "mad_m": 0.083
+    },
+    {
+     "z": [
+      25.0,
+      30.0
+     ],
+     "n": 54882,
+     "dichte_je_m2": 3049.0,
+     "modus_tiefe": 4.495,
+     "scharf_anteil": 0.444,
+     "mad_m": 0.209
+    },
+    {
+     "z": [
+      30.0,
+      35.0
+     ],
+     "n": 30276,
+     "dichte_je_m2": 1682.0,
+     "modus_tiefe": 4.864,
+     "scharf_anteil": 0.387,
+     "mad_m": 0.263
+    },
+    {
+     "z": [
+      35.0,
+      40.0
+     ],
+     "n": 23390,
+     "dichte_je_m2": 1299.4,
+     "modus_tiefe": 3.629,
+     "scharf_anteil": 0.654,
+     "mad_m": 0.093
+    },
+    {
+     "z": [
+      40.0,
+      45.0
+     ],
+     "n": 18828,
+     "dichte_je_m2": 1046.0,
+     "modus_tiefe": 3.13,
+     "scharf_anteil": 0.267,
+     "mad_m": 0.31
+    }
+   ],
+   "lot_mm_je_m": 20.91,
+   "lot_ci95": [
+    -33.39,
+    75.78
+   ],
+   "lot_schichten": 10,
+   "doppelschichten": "2/9"
+  },
+  "boden": {
+   "punkte": 2457096,
+   "baender": [
+    {
+     "z": [
+      5.0,
+      10.0
+     ],
+     "n": 22679,
+     "dichte_je_m2": 1259.9,
+     "modus_tiefe": 4.541,
+     "scharf_anteil": 0.569,
+     "mad_m": 0.108
+    },
+    {
+     "z": [
+      10.0,
+      15.0
+     ],
+     "n": 6181,
+     "dichte_je_m2": 343.4,
+     "modus_tiefe": 4.907,
+     "scharf_anteil": 0.476,
+     "mad_m": 0.169
+    },
+    {
+     "z": [
+      15.0,
+      20.0
+     ],
+     "n": 14509,
+     "dichte_je_m2": 806.1,
+     "modus_tiefe": 5.058,
+     "scharf_anteil": 0.6,
+     "mad_m": 0.103
+    },
+    {
+     "z": [
+      20.0,
+      25.0
+     ],
+     "n": 25495,
+     "dichte_je_m2": 1416.4,
+     "modus_tiefe": 4.975,
+     "scharf_anteil": 0.488,
+     "mad_m": 0.155
+    },
+    {
+     "z": [
+      25.0,
+      30.0
+     ],
+     "n": 29748,
+     "dichte_je_m2": 1652.7,
+     "modus_tiefe": 5.06,
+     "scharf_anteil": 0.347,
+     "mad_m": 0.25
+    },
+    {
+     "z": [
+      30.0,
+      35.0
+     ],
+     "n": 12176,
+     "dichte_je_m2": 676.4,
+     "modus_tiefe": 5.473,
+     "scharf_anteil": 0.375,
+     "mad_m": 0.246
+    },
+    {
+     "z": [
+      35.0,
+      40.0
+     ],
+     "n": 8166,
+     "dichte_je_m2": 453.7,
+     "modus_tiefe": 4.214,
+     "scharf_anteil": 0.475,
+     "mad_m": 0.169
+    },
+    {
+     "z": [
+      40.0,
+      45.0
+     ],
+     "n": 4783,
+     "dichte_je_m2": 265.7,
+     "modus_tiefe": 4.078,
+     "scharf_anteil": 0.294,
+     "mad_m": 0.277
+    }
+   ],
+   "lot_mm_je_m": 37.35,
+   "lot_ci95": [
+    24.2,
+    88.68
+   ],
+   "lot_schichten": 15,
+   "doppelschichten": "4/13"
+  }
+ }
+}

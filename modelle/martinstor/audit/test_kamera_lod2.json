@@ -1,0 +1,158 @@
+{
+ "foto": "030",
+ "bestanden": false,
+ "faelle": [
+  {
+   "seed": 0,
+   "fall": "wahr",
+   "tor": true,
+   "treffer": 0.831,
+   "zufall": 0.602
+  },
+  {
+   "seed": 0,
+   "stoerung": [
+    0.5,
+    0.03,
+    0.3
+   ],
+   "T2_tor_gestoert": false,
+   "T3_zurueck": false,
+   "bild_median_px": 49.31,
+   "bild_p90_px": 62.06,
+   "grenze_p90_px": 5.6,
+   "rest_dreh_grad": 5.582,
+   "rest_f": 0.0683,
+   "rest_lage_m": 4.107,
+   "tor_nachher": false
+  },
+  {
+   "seed": 0,
+   "stoerung": [
+    1.0,
+    0.05,
+    0.5
+   ],
+   "T2_tor_gestoert": false,
+   "T3_zurueck": false,
+   "bild_median_px": 35.51,
+   "bild_p90_px": 66.13,
+   "grenze_p90_px": 5.6,
+   "rest_dreh_grad": 5.744,
+   "rest_f": 0.0566,
+   "rest_lage_m": 4.471,
+   "tor_nachher": false
+  },
+  {
+   "seed": 0,
+   "stoerung": [
+    2.0,
+    0.1,
+    1.0
+   ],
+   "T2_tor_gestoert": false,
+   "T3_zurueck": false,
+   "bild_median_px": 50.7,
+   "bild_p90_px": 70.92,
+   "grenze_p90_px": 5.6,
+   "rest_dreh_grad": 4.004,
+   "rest_f": 0.0415,
+   "rest_lage_m": 4.144,
+   "tor_nachher": false
+  },
+  {
+   "seed": 0,
+   "stoerung": [
+    4.0,
+    0.15,
+    2.0
+   ],
+   "T2_tor_gestoert": false,
+   "T3_zurueck": false,
+   "bild_median_px": 156.88,
+   "bild_p90_px": 358.25,
+   "grenze_p90_px": 5.6,
+   "rest_dreh_grad": 30.084,
+   "rest_f": 1.6255,
+   "rest_lage_m": 70.557,
+   "tor_nachher": false
+  },
+  {
+   "seed": 1,
+   "fall": "wahr",
+   "tor": true,
+   "treffer": 0.833,
+   "zufall": 0.558
+  },
+  {
+   "seed": 1,
+   "stoerung": [
+    0.5,
+    0.03,
+    0.3
+   ],
+   "T2_tor_gestoert": false,
+   "T3_zurueck": false,
+   "bild_median_px": 33.42,
+   "bild_p90_px": 112.51,
+   "grenze_p90_px": 5.6,
+   "rest_dreh_grad": 3.639,
+   "rest_f": 0.2408,
+   "rest_lage_m": 13.33,
+   "tor_nachher": false
+  },
+  {
+   "seed": 1,
+   "stoerung": [
+    1.0,
+    0.05,
+    0.5
+   ],
+   "T2_tor_gestoert": false,
+   "T3_zurueck": true,
+   "bild_median_px": 1.43,
+   "bild_p90_px": 2.16,
+   "grenze_p90_px": 5.6,
+   "rest_dreh_grad": 0.141,
+   "rest_f": 0.0049,
+   "rest_lage_m": 0.125,
+   "tor_nachher": true
+  },
+  {
+   "seed": 1,
+   "stoerung": [
+    2.0,
+    0.1,
+    1.0
+   ],
+   "T2_tor_gestoert": false,
+   "T3_zurueck": false,
+   "bild_median_px": 363.14,
+   "bild_p90_px": 784.03,
+   "grenze_p90_px": 5.6,
+   "rest_dreh_grad": 66.099,
+   "rest_f": 0.877,
+   "rest_lage_m": 361.005,
+   "tor_nachher": false
+  },
+  {
+   "seed": 1,
+   "stoerung": [
+    4.0,
+    0.15,
+    2.0
+   ],
+   "T2_tor_gestoert": false,
+   "T3_zurueck": false,
+   "bild_median_px": 4.79,
+   "bild_p90_px": 8.87,
+   "grenze_p90_px": 5.6,
+   "rest_dreh_grad": 1.587,
+   "rest_f": 0.0532,
+   "rest_lage_m": 2.296,
+   "tor_nachher": true,
+   "FALSCH_ANGENOMMEN": true
+  }
+ ],
+ "pflicht": "wahr besteht; Stoerung <= 1 Grad/5 %/0,5 m faellt vorher durch und wird zurueckgeholt (Bild-p90 <= 0,4 % der langen Seite); Tor darf NIE eine falsche Kamera annehmen"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-030-012",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=3.55",
+ "name": "Schallarkade_rechts_Breite",
+ "mess_px": [
+  1050.0,
+  590.0,
+  1118.0,
+  590.0
+ ],
+ "P1": [
+  3.55,
+  0.075,
+  36.803
+ ],
+ "P2": [
+  3.55,
+  1.537,
+  37.228
+ ],
+ "dz": 0.425,
+ "dy": 1.462,
+ "dx": 0.0,
+ "abstand": 1.523,
+ "z1": 36.803,
+ "z2": 37.228,
+ "unsicherheit_rel": 0.0059,
+ "unsicherheit_m": 0.099,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=3.55 (+-0.3 m)"
+}

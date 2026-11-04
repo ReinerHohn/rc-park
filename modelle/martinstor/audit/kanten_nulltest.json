@@ -1,0 +1,55 @@
+{
+ "stand": "2026-11-03 15:56",
+ "region": "Tuermchen",
+ "versatz_m": [
+  1.0,
+  1.0,
+  0.0
+ ],
+ "grenzen": {
+  "faktor": 1.4,
+  "min_px": 2.0,
+  "rausch_px": 0.8,
+  "mehrheit": 0.6
+ },
+ "je_foto": {
+  "030": {
+   "leerlauf_px": 2.4,
+   "verschoben_px": 6.1,
+   "faktor": 2.54,
+   "anstieg_px": 3.7,
+   "gefunden": true,
+   "leerlauf_gegen_referenz_max_px": 0.0
+  },
+  "031": {
+   "leerlauf_px": 3.5,
+   "verschoben_px": 3.9,
+   "faktor": 1.11,
+   "anstieg_px": 0.4,
+   "gefunden": false,
+   "leerlauf_gegen_referenz_max_px": 0.0
+  },
+  "040": {
+   "leerlauf_px": 5.1,
+   "verschoben_px": 7.8,
+   "faktor": 1.53,
+   "anstieg_px": 2.7,
+   "gefunden": true,
+   "leerlauf_gegen_referenz_max_px": 0.0
+  },
+  "041": {
+   "leerlauf_px": 4.1,
+   "verschoben_px": 12.2,
+   "faktor": 2.98,
+   "anstieg_px": 8.1,
+   "gefunden": true,
+   "leerlauf_gegen_referenz_max_px": 0.0
+  }
+ },
+ "gefunden_anteil": 0.75,
+ "rausch_max_px": 0.0,
+ "wiederholbar": true,
+ "teilversatz_gefunden": true,
+ "bestanden": true,
+ "grenze_der_methode": "Starrversatz des GANZEN Modells ist unsichtbar (Kamera gleicht aus); nur Teil-gegen-Rest ab ca. 1 m (Register BX)"
+}

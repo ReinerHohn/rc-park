@@ -1,0 +1,42 @@
+{
+ "id": "Z-030-001",
+ "typ": "zaehlung",
+ "foto": "030",
+ "datei": "030_Freiburg_im_Breisgau_Martinstor_--_2025_--_7999.jpg",
+ "was": "Glockenstock Sued: Schallarkaden je Flaeche",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-03",
+ "punkte": [
+  {
+   "flaeche": "S",
+   "art": "voll",
+   "x": 1003.0,
+   "y": 570.0
+  },
+  {
+   "flaeche": "S",
+   "art": "voll",
+   "x": 1084.0,
+   "y": 575.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "S": {
+   "art": "voll",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 2,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-030-001.jpg",
+ "ausschnitt": [
+  753,
+  320,
+  1334,
+  825
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

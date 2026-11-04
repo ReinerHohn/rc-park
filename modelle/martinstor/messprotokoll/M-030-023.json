@@ -1,0 +1,32 @@
+{
+ "id": "M-030-023",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=4.8",
+ "name": "Mauerwerk_Eckband_Stein_kurz",
+ "mess_px": [
+  1347.0,
+  1935.0,
+  1381.0,
+  1935.0
+ ],
+ "P1": [
+  4.8,
+  4.486,
+  9.727
+ ],
+ "P2": [
+  4.8,
+  5.066,
+  9.771
+ ],
+ "dz": 0.044,
+ "dy": 0.579,
+ "dx": 0.0,
+ "abstand": 0.581,
+ "z1": 9.727,
+ "z2": 9.771,
+ "unsicherheit_rel": 0.0079,
+ "unsicherheit_m": 0.072,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.8 (+-0.3 m)"
+}

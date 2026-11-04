@@ -1,0 +1,182 @@
+{
+ "_doku": "Fassadenraster Nordfront aus Frontalfoto 018 (Pixel = Originalpixel), vom Baukasten-Generator (tools/baukasten_gen.py) in Meter umgerechnet. Zahlen = Ablesung am Foto (Claude, 2026-11-04, Gitterausschnitte), Anzahlen aus Z-018-001..006 (Regel 9).",
+ "foto": "018",
+ "wand": {
+  "a": [
+   -5.529,
+   16.64
+  ],
+  "b": [
+   13.629,
+   9.618
+  ],
+  "quelle": "LoD2 DEBW_0010007Tv9r Nordwand (anker3d ecke_boden_1 -> ecke_boden_0)"
+ },
+ "massstab": {
+  "px_pro_m": 146.5,
+  "x0_px": 420,
+  "y0_px": 2268,
+  "z_strasse": -0.35,
+  "quelle": "M-018-001: 2980 px = LoD2-Frontlaenge 20,34 m; ANNAHME aeussere Kanten der Eckpfeiler = Grundrissecken; Senkrechte im Foto parallel -> Bildebene ~ parallel zur Fassade (ein Massstab fuer u und z); z_strasse = DGM1 vor der Front (DOM1-Schnitt -0,3..-0,4 m ueber rahmen.gelaende)"
+ },
+ "kamera": {
+  "abstand_m": 26.6,
+  "bildmitte_px": [
+   1920,
+   1310
+  ],
+  "quelle": "SfM-Standort Kamera 018 (SFM-AUSRICHTUNG-alle, Abstand zur Front); Augenhoehe = Bildmitte (ANNAHME unbeschnitten) - nur fuer Gauben auf der geneigten Dachflaeche"
+ },
+ "tiefen": {
+  "arkade_m": 4.4,
+  "erker_m": 0.9,
+  "galerie_m": 0.75,
+  "fenster_nische_m": 0.25,
+  "quelle": "Dichte Wolke kaufhaus_null (Frontkoordinaten, Wandebene s0): Arkaden-Rueckwand +3,9 m, Erker -0,8..-1,1 m, Galerie -0,66 m, x 1,13 (Erkerabstand Foto 18,8 m / Wolke 16,7 m; Wolke ist zu klein, Register Kaufhaus 2026-11-04). ANNAHME +-20 %; Fensternische ANNAHME"
+ },
+ "arkade": {
+  "zaehlung": "Z-018-001",
+  "pfeiler_px": [
+   [
+    420,
+    545
+   ],
+   [
+    1150,
+    1250
+   ],
+   [
+    1885,
+    1960
+   ],
+   [
+    2585,
+    2660
+   ],
+   [
+    3290,
+    3400
+   ]
+  ],
+  "kaempfer_y": 1830,
+  "scheitel_y": 1630,
+  "quelle": "Pfeilerkanten bei y 1900, Kaempfer (Bogenansatz am Pfeiler) und Scheitel (Laibung) abgelesen; Segmentboegen"
+ },
+ "fenster": {
+  "zaehlung": "Z-018-002",
+  "x_px": [
+   [
+    840,
+    1150
+   ],
+   [
+    1290,
+    1600
+   ],
+   [
+    1735,
+    2045
+   ],
+   [
+    2195,
+    2500
+   ],
+   [
+    2640,
+    2950
+   ]
+  ],
+  "bruestung_y": 1290,
+  "sturz_y": 950,
+  "spitzen_y": 900,
+  "felder": 3,
+  "pfosten_m": 0.12,
+  "quelle": "Fensterkanten, Unterkante (= Galerie-Handlauf), Sturz (Vorhangbogen-Tiefpunkt), Spitzen; 3 Felder je Fenster (2 Pfosten) am Foto"
+ },
+ "figuren": {
+  "zaehlung": "Z-018-003",
+  "x_px": [
+   1210,
+   1665,
+   2120,
+   2560
+  ],
+  "sockel_y": 1210,
+  "figur_oben_y": 940,
+  "baldachin_oben_y": 790,
+  "breite_px": 90,
+  "quelle": "Figurenmitte, Konsole unten, Baldachin oben"
+ },
+ "galerie": {
+  "x_px": [
+   790,
+   2990
+  ],
+  "unten_y": 1440,
+  "handlauf_y": 1290,
+  "quelle": "Galerie-Platte unten und Handlauf"
+ },
+ "erker": {
+  "zaehlung": "Z-018-004",
+  "x_px": [
+   [
+    270,
+    760
+   ],
+   [
+    3040,
+    3480
+   ]
+  ],
+  "frontfacette_px": [
+   [
+    400,
+    625
+   ],
+   [
+    3170,
+    3350
+   ]
+  ],
+  "konsole_unten_y": 1650,
+  "brustung_unten_y": 1480,
+  "gesims_y": 925,
+  "helm_spitze_y": [
+   45,
+   70
+  ],
+  "helm_fuss_ueberstand_m": 0.2,
+  "quelle": "Erkerkanten (3 Facetten: Schraege-Front-Schraege), Konsolenspitze, Wappenband unten, Erkergesims, Helmspitze; Fussueberstand ANNAHME"
+ },
+ "gauben": {
+  "zaehlung": [
+   "Z-018-005",
+   "Z-018-006"
+  ],
+  "reihen": [
+   {
+    "x_px": [
+     1300,
+     1840,
+     2440
+    ],
+    "y_px": 530
+   },
+   {
+    "x_px": [
+     1580,
+     2120
+    ],
+    "y_px": 262
+   }
+  ],
+  "breite_m": 0.9,
+  "hoehe_m": 0.8,
+  "tiefe_m": 1.2,
+  "quelle": "Gaubenmitten am Foto; Lage auf der Dachflaeche ueber Kamera-Abstand und LoD2-Dachneigung zurueckgerechnet (ANNAHME Augenhoehe Bildmitte); Gaubengroesse ANNAHME aus Pixel (~120 px breit)"
+ },
+ "traufe": {
+  "rinne_y": 690,
+  "quelle": "Rinne in Fotomitte (x 1960) bei y 690 (M-018-001); DOM1-Kante 1-2 m vor der LoD2-Wand bestaetigt Ueberstand"
+ }
+}

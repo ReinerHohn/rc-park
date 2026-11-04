@@ -1,0 +1,32 @@
+{
+ "id": "M-030-027",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=4.75",
+ "name": "Mauerwerk_Eckband_Schichthoehe_oben_b",
+ "mess_px": [
+  1320.0,
+  1067.0,
+  1320.0,
+  1097.0
+ ],
+ "P1": [
+  4.75,
+  4.876,
+  25.68
+ ],
+ "P2": [
+  4.75,
+  4.842,
+  25.03
+ ],
+ "dz": -0.65,
+ "dy": -0.033,
+ "dx": 0.0,
+ "abstand": 0.651,
+ "z1": 25.68,
+ "z2": 25.03,
+ "unsicherheit_rel": 0.0068,
+ "unsicherheit_m": 0.083,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.75 (+-0.3 m)"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-041-008",
+ "foto": "041",
+ "kamera": "K-041",
+ "ebene": "x=4.85",
+ "name": "Zinnen-Scharte 2 Breite Suedseite",
+ "mess_px": [
+  842.0,
+  780.0,
+  898.0,
+  780.0
+ ],
+ "P1": [
+  4.85,
+  -1.136,
+  31.095
+ ],
+ "P2": [
+  4.85,
+  -0.352,
+  31.323
+ ],
+ "dz": 0.228,
+ "dy": 0.784,
+ "dx": 0.0,
+ "abstand": 0.817,
+ "z1": 31.095,
+ "z2": 31.323,
+ "unsicherheit_rel": 0.0131,
+ "unsicherheit_m": 0.07,
+ "massstab_von": "Kamera K-041 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.85 (+-0.5 m)"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-041-002",
+ "foto": "041",
+ "kamera": "K-041",
+ "ebene": "x=4.85",
+ "name": "Lueftungsfenster links unter Uhr Breite",
+ "mess_px": [
+  738.0,
+  1215.0,
+  822.0,
+  1215.0
+ ],
+ "P1": [
+  4.85,
+  -2.314,
+  22.902
+ ],
+ "P2": [
+  4.85,
+  -1.314,
+  23.11
+ ],
+ "dz": 0.209,
+ "dy": 1.0,
+ "dx": 0.0,
+ "abstand": 1.022,
+ "z1": 22.902,
+ "z2": 23.11,
+ "unsicherheit_rel": 0.0094,
+ "unsicherheit_m": 0.059,
+ "massstab_von": "Kamera K-041 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.85 (+-0.3 m)"
+}

@@ -1,0 +1,30 @@
+{
+ "id": "M-018-002",
+ "foto": "018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta.jpg",
+ "bild": [
+  3840,
+  2621
+ ],
+ "name": "Rumpfbreite oben (Treppengiebel-Kante zu Kante)",
+ "merkmal": "-",
+ "mess_px": [
+  640.0,
+  690.0,
+  3130.0,
+  690.0
+ ],
+ "richtung": "h",
+ "stauchung": 1.0,
+ "massstab_px": [
+  420.0,
+  2268.0,
+  3400.0,
+  2268.0
+ ],
+ "px_pro_m": 146.51,
+ "massstab_von": "LoD2 Frontlaenge 20,34 m; ANNAHME wie M-018-001",
+ "pixel": 2490.0,
+ "meter": 16.996,
+ "unsicherheit_m": 1.373,
+ "hinweis": "+-8 % Ablesung/Perspektive + 2 px"
+}

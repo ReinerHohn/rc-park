@@ -1,0 +1,32 @@
+{
+ "id": "M-030-013",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=3.55",
+ "name": "Mittelpfeiler_Breite",
+ "mess_px": [
+  1037.0,
+  590.0,
+  1050.0,
+  590.0
+ ],
+ "P1": [
+  3.55,
+  -0.201,
+  36.723
+ ],
+ "P2": [
+  3.55,
+  0.075,
+  36.803
+ ],
+ "dz": 0.08,
+ "dy": 0.276,
+ "dx": 0.0,
+ "abstand": 0.287,
+ "z1": 36.723,
+ "z2": 36.803,
+ "unsicherheit_rel": 0.0059,
+ "unsicherheit_m": 0.092,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=3.55 (+-0.3 m)"
+}

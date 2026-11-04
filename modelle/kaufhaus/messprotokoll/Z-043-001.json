@@ -1,0 +1,88 @@
+{
+ "id": "Z-043-001",
+ "typ": "zaehlung",
+ "foto": "043",
+ "datei": "043_Freiburg_2009_IMG_4353.jpg",
+ "was": "Westgiebel (Treppengiebel): Stufen auf der Nordflanke unter der Spitze",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-04",
+ "punkte": [
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1370.0,
+   "y": 150.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1420.0,
+   "y": 235.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1470.0,
+   "y": 290.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1520.0,
+   "y": 365.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1570.0,
+   "y": 440.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1620.0,
+   "y": 530.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1660.0,
+   "y": 620.0
+  },
+  {
+   "flaeche": "F2",
+   "art": "teil",
+   "x": 1200.0,
+   "y": 215.0
+  },
+  {
+   "flaeche": "F2",
+   "art": "teil",
+   "x": 1160.0,
+   "y": 310.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F1": {
+   "art": "voll",
+   "n": 7
+  },
+  "F2": {
+   "art": "teil",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 7,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-043-001.jpg",
+ "ausschnitt": [
+  910,
+  0,
+  1910,
+  870
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "F1 Nordflanke voll sichtbar, F2 Suedflanke verdeckt; Spitze (1330,90) nicht mitgezaehlt"
+}

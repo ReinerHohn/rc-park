@@ -1,0 +1,32 @@
+{
+ "id": "M-030-010",
+ "foto": "030",
+ "kamera": "K-030",
+ "ebene": "x=4.85",
+ "name": "Zifferblatt Hauptachse Suedwand (Zoom uhr_030)",
+ "mess_px": [
+  975.0,
+  945.0,
+  1182.0,
+  1005.0
+ ],
+ "P1": [
+  4.85,
+  -1.771,
+  26.835
+ ],
+ "P2": [
+  4.85,
+  2.15,
+  26.393
+ ],
+ "dz": -0.442,
+ "dy": 3.921,
+ "dx": 0.0,
+ "abstand": 3.946,
+ "z1": 26.835,
+ "z2": 26.393,
+ "unsicherheit_rel": 0.007,
+ "unsicherheit_m": 0.104,
+ "massstab_von": "Kamera K-030 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.85 (+-0.3 m)"
+}

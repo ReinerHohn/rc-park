@@ -1,0 +1,304 @@
+{
+ "seite": "Nord(-x)",
+ "parameter": {
+  "zlo": 7.0,
+  "zhi": 23.0,
+  "dz": 0.5,
+  "schritt": 1.0,
+  "tmax": 7.0,
+  "quer": 1.0,
+  "minpts": 300,
+  "abstand_m": 0.4,
+  "gewicht": 0.05,
+  "bic_min": 20.0
+ },
+ "annahme": "Schwellen sind ANNAHMEN; Gesimsstufen sind nicht von Versatz zu unterscheiden",
+ "wolken": {
+  "boden/dicht_modell.npy": {
+   "punkte": 2457096,
+   "doppelte_schichten": 4,
+   "schichten": [
+    {
+     "z": 7.0,
+     "status": "ok",
+     "n": 2527,
+     "mittel": [
+      4.262,
+      4.534
+     ],
+     "sigma": [
+      0.657,
+      0.063
+     ],
+     "gewicht": [
+      0.553,
+      0.447
+     ],
+     "abstand_m": 0.272,
+     "bic_gewinn": 1766.2,
+     "doppelt": false
+    },
+    {
+     "z": 8.0,
+     "status": "ok",
+     "n": 1494,
+     "mittel": [
+      4.439,
+      4.903
+     ],
+     "sigma": [
+      0.692,
+      0.425
+     ],
+     "gewicht": [
+      0.49,
+      0.51
+     ],
+     "abstand_m": 0.464,
+     "bic_gewinn": 31.1,
+     "doppelt": true
+    },
+    {
+     "z": 9.0,
+     "status": "ok",
+     "n": 1620,
+     "mittel": [
+      4.524,
+      4.839
+     ],
+     "sigma": [
+      0.788,
+      0.198
+     ],
+     "gewicht": [
+      0.342,
+      0.658
+     ],
+     "abstand_m": 0.315,
+     "bic_gewinn": 644.7,
+     "doppelt": false
+    },
+    {
+     "z": 10.0,
+     "n": 101,
+     "status": "zu wenige Punkte"
+    },
+    {
+     "z": 11.0,
+     "n": 98,
+     "status": "zu wenige Punkte"
+    },
+    {
+     "z": 12.0,
+     "n": 111,
+     "status": "zu wenige Punkte"
+    },
+    {
+     "z": 13.0,
+     "n": 119,
+     "status": "zu wenige Punkte"
+    },
+    {
+     "z": 14.0,
+     "status": "ok",
+     "n": 513,
+     "mittel": [
+      3.25,
+      5.455
+     ],
+     "sigma": [
+      0.144,
+      0.404
+     ],
+     "gewicht": [
+      0.236,
+      0.764
+     ],
+     "abstand_m": 2.205,
+     "bic_gewinn": 602.7,
+     "doppelt": true
+    },
+    {
+     "z": 15.0,
+     "status": "ok",
+     "n": 4980,
+     "mittel": [
+      4.019,
+      5.002
+     ],
+     "sigma": [
+      0.619,
+      0.152
+     ],
+     "gewicht": [
+      0.047,
+      0.953
+     ],
+     "abstand_m": 0.984,
+     "bic_gewinn": 4306.9,
+     "doppelt": false
+    },
+    {
+     "z": 16.0,
+     "status": "ok",
+     "n": 767,
+     "mittel": [
+      3.952,
+      4.72
+     ],
+     "sigma": [
+      1.02,
+      0.133
+     ],
+     "gewicht": [
+      0.355,
+      0.645
+     ],
+     "abstand_m": 0.769,
+     "bic_gewinn": 808.0,
+     "doppelt": true
+    },
+    {
+     "z": 17.0,
+     "status": "ok",
+     "n": 1668,
+     "mittel": [
+      4.809,
+      5.025
+     ],
+     "sigma": [
+      0.472,
+      0.039
+     ],
+     "gewicht": [
+      0.49,
+      0.51
+     ],
+     "abstand_m": 0.215,
+     "bic_gewinn": 1628.2,
+     "doppelt": false
+    },
+    {
+     "z": 18.0,
+     "status": "ok",
+     "n": 2662,
+     "mittel": [
+      4.714,
+      5.049
+     ],
+     "sigma": [
+      0.397,
+      0.046
+     ],
+     "gewicht": [
+      0.473,
+      0.527
+     ],
+     "abstand_m": 0.335,
+     "bic_gewinn": 2418.3,
+     "doppelt": false
+    },
+    {
+     "z": 19.0,
+     "status": "ok",
+     "n": 2640,
+     "mittel": [
+      4.88,
+      5.057
+     ],
+     "sigma": [
+      0.325,
+      0.074
+     ],
+     "gewicht": [
+      0.473,
+      0.527
+     ],
+     "abstand_m": 0.177,
+     "bic_gewinn": 1013.8,
+     "doppelt": false
+    },
+    {
+     "z": 20.0,
+     "status": "ok",
+     "n": 3227,
+     "mittel": [
+      4.536,
+      5.057
+     ],
+     "sigma": [
+      0.715,
+      0.137
+     ],
+     "gewicht": [
+      0.076,
+      0.924
+     ],
+     "abstand_m": 0.521,
+     "bic_gewinn": 2690.9,
+     "doppelt": true
+    },
+    {
+     "z": 21.0,
+     "status": "ok",
+     "n": 3092,
+     "mittel": [
+      4.221,
+      4.881
+     ],
+     "sigma": [
+      0.705,
+      0.278
+     ],
+     "gewicht": [
+      0.013,
+      0.987
+     ],
+     "abstand_m": 0.66,
+     "bic_gewinn": 138.8,
+     "doppelt": false
+    },
+    {
+     "z": 22.0,
+     "status": "ok",
+     "n": 2987,
+     "mittel": [
+      4.882,
+      5.2
+     ],
+     "sigma": [
+      0.481,
+      0.053
+     ],
+     "gewicht": [
+      0.598,
+      0.402
+     ],
+     "abstand_m": 0.318,
+     "bic_gewinn": 1732.7,
+     "doppelt": false
+    },
+    {
+     "z": 23.0,
+     "status": "ok",
+     "n": 3971,
+     "mittel": [
+      3.609,
+      5.118
+     ],
+     "sigma": [
+      0.431,
+      0.151
+     ],
+     "gewicht": [
+      0.042,
+      0.958
+     ],
+     "abstand_m": 1.508,
+     "bic_gewinn": 4910.7,
+     "doppelt": false
+    }
+   ]
+  }
+ }
+}

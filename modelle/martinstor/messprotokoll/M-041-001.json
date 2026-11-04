@@ -1,0 +1,32 @@
+{
+ "id": "M-041-001",
+ "foto": "041",
+ "kamera": "K-041",
+ "ebene": "x=4.85",
+ "name": "Zifferblatt Hauptachse Suedwand (Zoom uhr_041)",
+ "mess_px": [
+  777.0,
+  953.0,
+  1092.0,
+  1010.0
+ ],
+ "P1": [
+  4.85,
+  -1.953,
+  27.456
+ ],
+ "P2": [
+  4.85,
+  2.231,
+  27.442
+ ],
+ "dz": -0.014,
+ "dy": 4.184,
+ "dx": 0.0,
+ "abstand": 4.184,
+ "z1": 27.456,
+ "z2": 27.442,
+ "unsicherheit_rel": 0.0085,
+ "unsicherheit_m": 0.09,
+ "massstab_von": "Kamera K-041 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.85 (+-0.3 m)"
+}

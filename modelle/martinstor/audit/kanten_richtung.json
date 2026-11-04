@@ -1,0 +1,190 @@
+{
+ "030": {
+  "Helm": {
+   "punkte": 270,
+   "dx_links_px": 0.43,
+   "dx_links_m": 0.033,
+   "dx_rechts_px": -0.94,
+   "dx_rechts_m": -0.074,
+   "dy_px": -0.58,
+   "dy_m": -0.041
+  },
+  "Tuermchen": {
+   "punkte": 221,
+   "dx_links_px": -0.7,
+   "dx_links_m": -0.044,
+   "dx_rechts_px": -0.54,
+   "dx_rechts_m": -0.037,
+   "dy_px": -0.71,
+   "dy_m": -0.046
+  },
+  "Zinnenkranz": {
+   "punkte": 3233,
+   "dx_links_px": -0.61,
+   "dx_links_m": -0.035,
+   "dx_rechts_px": -0.53,
+   "dx_rechts_m": -0.032,
+   "dy_px": -0.52,
+   "dy_m": -0.031
+  },
+  "Wand oben": {
+   "punkte": 6256,
+   "dx_links_px": -0.47,
+   "dx_links_m": -0.024,
+   "dx_rechts_px": -0.59,
+   "dx_rechts_m": -0.032,
+   "dy_px": -0.66,
+   "dy_m": -0.035
+  },
+  "Wand unten/Tor": {
+   "punkte": 6244,
+   "dx_links_px": -0.59,
+   "dx_links_m": -0.024,
+   "dx_rechts_px": -0.54,
+   "dx_rechts_m": -0.024,
+   "dy_px": -0.56,
+   "dy_m": -0.024
+  }
+ },
+ "031": {
+  "Helm": {
+   "punkte": 2244,
+   "dx_links_px": -0.33,
+   "dx_links_m": -0.018,
+   "dx_rechts_px": -0.21,
+   "dx_rechts_m": -0.013,
+   "dy_px": -0.53,
+   "dy_m": -0.028
+  },
+  "Tuermchen": {
+   "punkte": 449,
+   "dx_links_px": -0.88,
+   "dx_links_m": -0.042,
+   "dx_rechts_px": -0.58,
+   "dx_rechts_m": -0.028,
+   "dy_px": -0.49,
+   "dy_m": -0.024
+  },
+  "Zinnenkranz": {
+   "punkte": 3973,
+   "dx_links_px": -0.6,
+   "dx_links_m": -0.027,
+   "dx_rechts_px": -0.35,
+   "dx_rechts_m": -0.015,
+   "dy_px": -0.65,
+   "dy_m": -0.029
+  },
+  "Wand oben": {
+   "punkte": 6942,
+   "dx_links_px": -0.53,
+   "dx_links_m": -0.022,
+   "dx_rechts_px": -0.58,
+   "dx_rechts_m": -0.024,
+   "dy_px": -0.56,
+   "dy_m": -0.024
+  },
+  "Wand unten/Tor": {
+   "punkte": 996,
+   "dx_links_px": -0.64,
+   "dx_links_m": -0.023,
+   "dx_rechts_px": -0.43,
+   "dx_rechts_m": -0.016,
+   "dy_px": -0.66,
+   "dy_m": -0.024
+  }
+ },
+ "040": {
+  "Helm": {
+   "punkte": 268,
+   "dx_links_px": -0.7,
+   "dx_links_m": -0.043,
+   "dx_rechts_px": -0.3,
+   "dx_rechts_m": -0.02,
+   "dy_px": -0.57,
+   "dy_m": -0.031
+  },
+  "Tuermchen": {
+   "punkte": 165,
+   "dx_links_px": -2.55,
+   "dx_links_m": -0.129,
+   "dx_rechts_px": -0.12,
+   "dx_rechts_m": -0.006,
+   "dy_px": -0.54,
+   "dy_m": -0.027
+  },
+  "Zinnenkranz": {
+   "punkte": 3269,
+   "dx_links_px": -0.58,
+   "dx_links_m": -0.026,
+   "dx_rechts_px": -0.56,
+   "dx_rechts_m": -0.025,
+   "dy_px": -0.62,
+   "dy_m": -0.028
+  },
+  "Wand oben": {
+   "punkte": 6668,
+   "dx_links_px": -0.42,
+   "dx_links_m": -0.016,
+   "dx_rechts_px": -0.55,
+   "dx_rechts_m": -0.021,
+   "dy_px": -0.54,
+   "dy_m": -0.021
+  },
+  "Wand unten/Tor": {
+   "punkte": 2623,
+   "dx_links_px": -0.53,
+   "dx_links_m": -0.016,
+   "dx_rechts_px": -0.23,
+   "dx_rechts_m": -0.007,
+   "dy_px": -0.57,
+   "dy_m": -0.018
+  }
+ },
+ "041": {
+  "Helm": {
+   "punkte": 89,
+   "dx_links_px": 0.25,
+   "dx_links_m": 0.016,
+   "dx_rechts_px": -3.15,
+   "dx_rechts_m": -0.199,
+   "dy_px": -0.51,
+   "dy_m": -0.032
+  },
+  "Tuermchen": {
+   "punkte": 88,
+   "dx_links_px": -0.55,
+   "dx_links_m": -0.027,
+   "dx_rechts_px": 0.65,
+   "dx_rechts_m": 0.031,
+   "dy_px": -0.22,
+   "dy_m": -0.011
+  },
+  "Zinnenkranz": {
+   "punkte": 3072,
+   "dx_links_px": -0.44,
+   "dx_links_m": -0.019,
+   "dx_rechts_px": -0.5,
+   "dx_rechts_m": -0.021,
+   "dy_px": -0.54,
+   "dy_m": -0.023
+  },
+  "Wand oben": {
+   "punkte": 6163,
+   "dx_links_px": -0.5,
+   "dx_links_m": -0.017,
+   "dx_rechts_px": -0.56,
+   "dx_rechts_m": -0.02,
+   "dy_px": -0.71,
+   "dy_m": -0.025
+  },
+  "Wand unten/Tor": {
+   "punkte": 4501,
+   "dx_links_px": -0.53,
+   "dx_links_m": -0.013,
+   "dx_rechts_px": -0.56,
+   "dx_rechts_m": -0.015,
+   "dy_px": -0.5,
+   "dy_m": -0.013
+  }
+ }
+}

@@ -1,0 +1,45 @@
+{
+ "foto": "043",
+ "punkte": {},
+ "auto": {
+  "spitzen": [
+   {
+    "u": 380.0,
+    "v": 666.0,
+    "spalte": 380,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 565.0,
+    "v": 44.0,
+    "spalte": 565,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 688.0,
+    "v": 466.0,
+    "spalte": 688,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 943.0,
+    "v": 742.0,
+    "spalte": 943,
+    "art": "spitze_grob"
+   },
+   {
+    "u": 1353.5,
+    "v": 684.0,
+    "spalte": 1352,
+    "art": "spitze"
+   },
+   {
+    "u": 1510.3,
+    "v": 665.8,
+    "spalte": 1491,
+    "art": "spitze"
+   }
+  ],
+  "kugeln": []
+ }
+}

@@ -1,0 +1,1179 @@
+{
+ "stand": "2026-11-03 16:42",
+ "fotos_dir": "daten/martinstor/fotos",
+ "anzahl": 131,
+ "ohne_quelle": 2,
+ "fotos": {
+  "000_090928_Freiburg_IMG_5182.jpg": {
+   "groesse": 2036028,
+   "sha256": "495fd876c5b6d76c0fe3af6fc5fd6a3c7590626d1eb03366e5e3f4c76be8b55e",
+   "titel": "File:090928 Freiburg IMG 5182.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/9/99/090928_Freiburg_IMG_5182.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Roehrensee\" title=\"User:Roehrensee\">Roehrensee</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "001_2024-10-26_MPM-Days_Freiburg_BR_018.jpg": {
+   "groesse": 643264,
+   "sha256": "6b9cb13694b38525491d315bf6ca3f76ca6463f5d8b1ab0a0cf90df6f85bea12",
+   "titel": "File:2024-10-26 MPM-Days Freiburg BR 018.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/2024-10-26_MPM-Days_Freiburg_BR_018.jpg/1280px-2024-10-26_MPM-Days_Freiburg_BR_018.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Ahmet_D%C3%BCz\" title=\"User:Ahmet Düz\">Ahmet Düz, Dreiländer- &amp; Oberrhein",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "002_2024-10-26_MPM-Days_Freiburg_BR_019.jpg": {
+   "groesse": 543199,
+   "sha256": "9f1a737f673ff409b4a7598d8d008fc7d9351c67f775c905b8c48a1691da3685",
+   "titel": "File:2024-10-26 MPM-Days Freiburg BR 019.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/2024-10-26_MPM-Days_Freiburg_BR_019.jpg/1920px-2024-10-26_MPM-Days_Freiburg_BR_019.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Ahmet_D%C3%BCz\" title=\"User:Ahmet Düz\">Ahmet Düz, Dreiländer- &amp; Oberrhein",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "003_2024-10-26_MPM-Days_Freiburg_BR_020.jpg": {
+   "groesse": 341944,
+   "sha256": "601e4e6946ea929825c9ea77991110e0d5e5ca52a201de10a918ca714574307b",
+   "titel": "File:2024-10-26 MPM-Days Freiburg BR 020.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/2024-10-26_MPM-Days_Freiburg_BR_020.jpg/1920px-2024-10-26_MPM-Days_Freiburg_BR_020.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Ahmet_D%C3%BCz\" title=\"User:Ahmet Düz\">Ahmet Düz, Dreiländer- &amp; Oberrhein",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "005_A_belváros_The_city_centre_-_panoramio.jpg": {
+   "groesse": 888596,
+   "sha256": "7a7e6c8e22264d80dcfc8965da6161b2c9a6e6f762f10c8592a4fb4738949469",
+   "titel": "File:A belváros (The city centre) - panoramio.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/e/ed/A_belv%C3%A1ros_%28The_city_centre%29_-_panoramio.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161025225450/http://www.panoramio.com/user/2",
+   "lizenz": "CC BY 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "006_Altstadt_Freiburg_Germany_-_panoramio_11.jpg": {
+   "groesse": 838920,
+   "sha256": "9a009b64d391514b7c6641e7dd803679d72d4e91d54229632c6aa43ac7229629",
+   "titel": "File:Altstadt, Freiburg, Germany - panoramio (11).jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/4/40/Altstadt%2C_Freiburg%2C_Germany_-_panoramio_%2811%29.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161025225506/http://www.panoramio.com/user/2",
+   "lizenz": "CC BY 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "008_Doppeladler_am_Martinstor_Freiburg_3533.jpg": {
+   "groesse": 564027,
+   "sha256": "5a4d2b1b337b5c74286345cde8b9cc445b1f2c5efd5b9379d954272ec128690f",
+   "titel": "File:Doppeladler am Martinstor (Freiburg) 3533.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Doppeladler_am_Martinstor_%28Freiburg%29_3533.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/Joergens.mi\" class=\"mw-redirect\" title=\"Joergens.mi\">joergens.mi</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "009_Franz_revolutionskrieg_1796.jpg": {
+   "groesse": 757305,
+   "sha256": "948018e9954164f074be4d27b99d8d1d019e8f718c46afad3690e9ab6fd0b707",
+   "titel": "File:Franz revolutionskrieg 1796.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Franz_revolutionskrieg_1796.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Manfredjohannes&amp;action=edit&amp;redlink=1\" class=\"new\" title",
+   "lizenz": "Public domain",
+   "quelle": "wikimedia_commons"
+  },
+  "010_Freiburg_Kaiser-Joseph-Straße_mit_Martinstor_19890625.jpg": {
+   "groesse": 1095095,
+   "sha256": "c3af060ecdda3f08fdf033b8bb818e870ed2333f247bc680aea030d8a459e2ef",
+   "titel": "File:Freiburg, Kaiser-Joseph-Straße mit Martinstor 19890625.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Freiburg%2C_Kaiser-Joseph-Stra%C3%9Fe_mit_Martinstor_19890625.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/30728830@N00\">Phyllis Buchanan</a> from Glas",
+   "lizenz": "CC BY-SA 2.0",
+   "quelle": "wikimedia_commons"
+  },
+  "011_Freiburg-Martinstor-01ESD.jpg": {
+   "groesse": 508658,
+   "sha256": "f8e4a65437786798c3c15482db0c00b1ca9030ab7ae0dcd2b436b339f873db35",
+   "titel": "File:Freiburg-Martinstor-01ESD.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Freiburg-Martinstor-01ESD.jpg/1920px-Freiburg-Martinstor-01ESD.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Rikki_Mitterer\" title=\"User:Rikki Mitterer\">Rikki Mitterer</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "012_Freiburg-breisgau-vag-sl-2-691355.jpg": {
+   "groesse": 171205,
+   "sha256": "144ed077054bd2eec5b30d943afb8f4ebcb4cc34176da4df260afbeffb0ec4c8",
+   "titel": "File:Freiburg-breisgau-vag-sl-2-691355.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/8/89/Freiburg-breisgau-vag-sl-2-691355.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"http://www.bahnbilder.de/name/profil/fotograf_id/21073.html\">Kurt Rasmusse",
+   "lizenz": "Attribution",
+   "quelle": "wikimedia_commons"
+  },
+  "013_Freiburg-breisgau-vag-sl-2-691356.jpg": {
+   "groesse": 154805,
+   "sha256": "b61663b827ab8bf01a891848466236b5854d34757f9ad4c52d1d5dc2c263379b",
+   "titel": "File:Freiburg-breisgau-vag-sl-2-691356.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Freiburg-breisgau-vag-sl-2-691356.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"http://www.bahnbilder.de/name/profil/fotograf_id/21073.html\">Kurt Rasmusse",
+   "lizenz": "Attribution",
+   "quelle": "wikimedia_commons"
+  },
+  "014_Freiburg_-_panoramio_3.jpg": {
+   "groesse": 951306,
+   "sha256": "04b2796088a533c33bcd6d1e7505b9e2deb451a2408fe197492866d528b5506e",
+   "titel": "File:Freiburg - panoramio (3).jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/Freiburg_-_panoramio_%283%29.jpg/1920px-Freiburg_-_panoramio_%283%29.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161103204309/http://www.panoramio.com/user/3",
+   "lizenz": "CC BY 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "015_Freiburg_08-2012_-_panoramio_5.jpg": {
+   "groesse": 562250,
+   "sha256": "85269f1b1e5b58cac917ba26f6abd81135c867aeea1eb5d0054bce307e411b7f",
+   "titel": "File:Freiburg 08-2012 - panoramio (5).jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/5/55/Freiburg_08-2012_-_panoramio_%285%29.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161024123117/http://www.panoramio.com/user/2",
+   "lizenz": "CC BY 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "016_Freiburg_08-2012_-_panoramio_6.jpg": {
+   "groesse": 490883,
+   "sha256": "c59a1e0f08c376a6a42ef7a5461ef6e73f1e3012fee98a011c0595507af70f9c",
+   "titel": "File:Freiburg 08-2012 - panoramio (6).jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/2/24/Freiburg_08-2012_-_panoramio_%286%29.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161025171607/http://www.panoramio.com/user/2",
+   "lizenz": "CC BY 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "017_Freiburg_1987_01_Martinstor_51018318240.jpg": {
+   "groesse": 1239340,
+   "sha256": "a6d081d1d7d9ef2d3c0ca260c768687f9780c1b2716cfa2658f9f1dfe831b983",
+   "titel": "File:Freiburg 1987 (01) Martinstor (51018318240).jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Freiburg_1987_%2801%29_Martinstor_%2851018318240%29.jpg/1920px-Freiburg_1987_%2801%29_Martinstor_%2851018318240%29.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/69570948@N04\">Rüdiger Stehn</a> from Kiel, D",
+   "lizenz": "CC BY-SA 2.0",
+   "quelle": "wikimedia_commons"
+  },
+  "018_Freiburg_2009_IMG_4104.jpg": {
+   "groesse": 836150,
+   "sha256": "6b80ccb028f976150019d06f4fb0e88ca615ae6c05c9dfd08090fdf65468ad41",
+   "titel": "File:Freiburg 2009 IMG 4104.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Freiburg_2009_IMG_4104.jpg/1920px-Freiburg_2009_IMG_4104.jpg",
+   "urheber": "Poudou99",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "019_Freiburg_2009_IMG_4112.jpg": {
+   "groesse": 990938,
+   "sha256": "9307752b15e70db52062b86124142a6b0b38c22e616bde9eb30f81644a234fea",
+   "titel": "File:Freiburg 2009 IMG 4112.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Freiburg_2009_IMG_4112.jpg/1920px-Freiburg_2009_IMG_4112.jpg",
+   "urheber": "Poudou99",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "020_Freiburg_2009_IMG_4313.jpg": {
+   "groesse": 1044946,
+   "sha256": "4bda9198d3cea191dceed97111d413be0101a62db4718f3ebed41c0e6573cfda",
+   "titel": "File:Freiburg 2009 IMG 4313.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Freiburg_2009_IMG_4313.jpg/1920px-Freiburg_2009_IMG_4313.jpg",
+   "urheber": "Poudou99",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "021_Freiburg_2009_IMG_4315.jpg": {
+   "groesse": 966208,
+   "sha256": "b2d8e4885b7af9168ecdf1c19afbb5f741e401c718e38eaedee16ae65197f4fd",
+   "titel": "File:Freiburg 2009 IMG 4315.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/Freiburg_2009_IMG_4315.jpg/1920px-Freiburg_2009_IMG_4315.jpg",
+   "urheber": "Poudou99",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "022_Freiburg_2009_IMG_4385.jpg": {
+   "groesse": 1411880,
+   "sha256": "cb5da4e8f0d70789fb703bff04cb84c51b3a8509e490b23e2a820558246353a4",
+   "titel": "File:Freiburg 2009 IMG 4385.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Freiburg_2009_IMG_4385.jpg/1920px-Freiburg_2009_IMG_4385.jpg",
+   "urheber": "Poudou99",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "023_Freiburg_Bauten_b_200.jpg": {
+   "groesse": 815869,
+   "sha256": "c7a3c99e0404091bef5f0007c5033a483bb0b3f06f44857a5032226422f13e7b",
+   "titel": "File:Freiburg Bauten b 200.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b2/Freiburg_Bauten_b_200.jpg/1920px-Freiburg_Bauten_b_200.jpg",
+   "urheber": "<div class=\"fn value\">\nVarious authors</div>",
+   "lizenz": "Public domain",
+   "quelle": "wikimedia_commons"
+  },
+  "024_Freiburg_Bauten_b_201.jpg": {
+   "groesse": 641390,
+   "sha256": "f3d4223dd7bd9305240025f3b9066277d8eb5ef4ec3bce767d12ab2351a54823",
+   "titel": "File:Freiburg Bauten b 201.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Freiburg_Bauten_b_201.jpg",
+   "urheber": "<div class=\"fn value\">\nVarious authors</div>",
+   "lizenz": "Public domain",
+   "quelle": "wikimedia_commons"
+  },
+  "025_Freiburg_Martinstor.jpg": {
+   "groesse": 150713,
+   "sha256": "75b7fbece8e127339a6eaf9a8bf4b36d2f58dfb675d609fa4757c8d03e31b299",
+   "titel": "File:Freiburg Martinstor.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/6/61/Freiburg_Martinstor.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Luidger\" title=\"User:Luidger\">Luidger</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "026_Freiburg_Martinstor_Muenster_225_PICT0085_19930415_1023.jpg": {
+   "groesse": 881185,
+   "sha256": "c717b2aa206a32afe3227697b13001258a9d686e44f5f8bb928575980c234683",
+   "titel": "File:Freiburg Martinstor Muenster 225 PICT0085 19930415 1023.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/Freiburg_Martinstor_Muenster_225_PICT0085_19930415_1023.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Karlunun\" title=\"User:Karlunun\">Karlunun</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "027_Freiburg_Tram.jpg": {
+   "groesse": 711021,
+   "sha256": "c90548eafdf90201c5e08a49f3adc67f67c4263c8400d7ed0d03255efb1e7d51",
+   "titel": "File:Freiburg Tram.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Freiburg_Tram.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/photos/77501394@N00\">kaffeeeinstein</a>",
+   "lizenz": "CC BY-SA 2.0",
+   "quelle": "wikimedia_commons"
+  },
+  "028_Freiburg_im_Breisgau_Martinstor_Gedenktafel_--_2025_--_8003.jpg": {
+   "groesse": 712424,
+   "sha256": "9e72fec0153366733e9c55c7f84ae6a7cf9b50088417aa18457af8699acfd89a",
+   "titel": "File:Freiburg im Breisgau, Martinstor, Gedenktafel -- 2025 -- 8003.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/Freiburg_im_Breisgau%2C_Martinstor%2C_Gedenktafel_--_2025_--_8003.jpg/1920px-Freiburg_im_Breisgau%2C_Martinstor%2C_Gedenktafel_--_2025_--_8003.jpg",
+   "urheber": "<bdi><a href=\"https://www.wikidata.org/wiki/Q34788025\" class=\"extiw\" title=\"d:Q34788025\"><span title=\"German photographe",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "029_Freiburg_im_Breisgau_Martinstor_Wappen_--_2025_--_8001.jpg": {
+   "groesse": 2178562,
+   "sha256": "2a7d521260acd76875482dd144cad754e62af4aaf11a030b765bfadef6ce19d7",
+   "titel": "File:Freiburg im Breisgau, Martinstor, Wappen -- 2025 -- 8001.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Freiburg_im_Breisgau%2C_Martinstor%2C_Wappen_--_2025_--_8001.jpg/1920px-Freiburg_im_Breisgau%2C_Martinstor%2C_Wappen_--_2025_--_8001.jpg",
+   "urheber": "<bdi><a href=\"https://www.wikidata.org/wiki/Q34788025\" class=\"extiw\" title=\"d:Q34788025\"><span title=\"German photographe",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "030_Freiburg_im_Breisgau_Martinstor_--_2025_--_7999.jpg": {
+   "groesse": 1891602,
+   "sha256": "eae8cdd7876c911af3acfea7bca79139bad659de7a6ee07553a5cd6bbab691cc",
+   "titel": "File:Freiburg im Breisgau, Martinstor -- 2025 -- 7999.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Freiburg_im_Breisgau%2C_Martinstor_--_2025_--_7999.jpg/1920px-Freiburg_im_Breisgau%2C_Martinstor_--_2025_--_7999.jpg",
+   "urheber": "<bdi><a href=\"https://www.wikidata.org/wiki/Q34788025\" class=\"extiw\" title=\"d:Q34788025\"><span title=\"German photographe",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "031_Freiburg_im_Breisgau_Martinstor_--_2025_--_8005.jpg": {
+   "groesse": 990943,
+   "sha256": "ca0a480ba84bc023f84d43c46414c372dc844f6cff941a32da400520861fe3d0",
+   "titel": "File:Freiburg im Breisgau, Martinstor -- 2025 -- 8005.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/Freiburg_im_Breisgau%2C_Martinstor_--_2025_--_8005.jpg/1920px-Freiburg_im_Breisgau%2C_Martinstor_--_2025_--_8005.jpg",
+   "urheber": "<bdi><a href=\"https://www.wikidata.org/wiki/Q34788025\" class=\"extiw\" title=\"d:Q34788025\"><span title=\"German photographe",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "039_Freiburg_im_Breisgau_-_Martinstor.jpg": {
+   "groesse": 1986437,
+   "sha256": "6e5e57ae2930dd0f8466566dfa76097c3a908eef0b3c602078d2984291329be8",
+   "titel": "File:Freiburg im Breisgau - Martinstor.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b8/Freiburg_im_Breisgau_-_Martinstor.jpg/1920px-Freiburg_im_Breisgau_-_Martinstor.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Lidine_Mia&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"Use",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "040_Freiburg_im_Breisgau_45.jpg": {
+   "groesse": 821959,
+   "sha256": "f802cc08bc558047f62bdfa267332f5b2ff79bb708ae6cefce7b97a6455c074d",
+   "titel": "File:Freiburg im Breisgau 45.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Freiburg_im_Breisgau_45.jpg/1920px-Freiburg_im_Breisgau_45.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "041_Freiburg_im_Breisgau_46.jpg": {
+   "groesse": 1311791,
+   "sha256": "a520ed6eef3277e4381a9eef9a77c0b99135ab741fbb464e158007f23ca85f04",
+   "titel": "File:Freiburg im Breisgau 46.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Freiburg_im_Breisgau_46.jpg/1920px-Freiburg_im_Breisgau_46.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:FrDr&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:FrDr",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "042_Freiburg_im_Breisgau_Martinstor_1.jpg": {
+   "groesse": 806225,
+   "sha256": "c09c1f46370d668760570b08b572819bdc5c413c4e85c82dae946d20d037e500",
+   "titel": "File:Freiburg im Breisgau Martinstor 1.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Freiburg_im_Breisgau_Martinstor_1.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Zairon\" title=\"User:Zairon\">Zairon</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "043_Freiburg_im_Breisgau_Martinstor_2.jpg": {
+   "groesse": 812661,
+   "sha256": "d65af7928e90c8dd96ec5f91e96ce302bfb9d61104a33069d7d8141ed1b13bb4",
+   "titel": "File:Freiburg im Breisgau Martinstor 2.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/4/44/Freiburg_im_Breisgau_Martinstor_2.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Zairon\" title=\"User:Zairon\">Zairon</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "044_Freiburg_im_Breisgau_Martinstor_3.jpg": {
+   "groesse": 777601,
+   "sha256": "316f1fe637ce7ad930a44591c68f0393f8f43eccd1d6d58e86997bb5a24325e9",
+   "titel": "File:Freiburg im Breisgau Martinstor 3.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Freiburg_im_Breisgau_Martinstor_3.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Zairon\" title=\"User:Zairon\">Zairon</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "045_Freiburg_im_Breisgau_TodorBozhinov.jpg": {
+   "groesse": 445183,
+   "sha256": "27742e1138073c8dfe9bb9108d2110bfabe70716b69803f14742c5e199d179b9",
+   "titel": "File:Freiburg im Breisgau TodorBozhinov.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Freiburg_im_Breisgau_TodorBozhinov.jpg/1920px-Freiburg_im_Breisgau_TodorBozhinov.jpg",
+   "urheber": "Todor Bozhinov / Тодор Божинов / Martyr",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "046_Freiburg_im_Breisgau_TodorBozhinov_5.JPG": {
+   "groesse": 193458,
+   "sha256": "082a0f2c956b9907f60d2d60f7f6bc1bd35c9c248dcbdf1d073dbce8608e82ef",
+   "titel": "File:Freiburg im Breisgau TodorBozhinov (5).JPG",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Freiburg_im_Breisgau_TodorBozhinov_%285%29.JPG",
+   "urheber": "Todor Bozhinov / Тодор Божинов / Martyr",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "047_Freiburg_im_Breisgau_TodorBozhinov_6.JPG": {
+   "groesse": 124812,
+   "sha256": "af876aef8080be3f13780c8716fd75b55457b365de0f3e1c70db076fbe8811f2",
+   "titel": "File:Freiburg im Breisgau TodorBozhinov (6).JPG",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Freiburg_im_Breisgau_TodorBozhinov_%286%29.JPG",
+   "urheber": "Todor Bozhinov / Тодор Божинов / Martyr",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "048_Freiburg_im_Breisgau_TodorBozhinov_8.JPG": {
+   "groesse": 184253,
+   "sha256": "6e52ca166e8a6bbfd1ade2619f5a1673d98e5b3af08627d9d74aa20194d0dfcb",
+   "titel": "File:Freiburg im Breisgau TodorBozhinov (8).JPG",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Freiburg_im_Breisgau_TodorBozhinov_%288%29.JPG",
+   "urheber": "Todor Bozhinov / Тодор Божинов / Martyr",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "049_Freiburg_im_Sommer_2013_9878631175.jpg": {
+   "groesse": 1038254,
+   "sha256": "f71388aa935df3e3398a9c180914df56ebafda37b92fb0cbc654f7134a8e78d4",
+   "titel": "File:Freiburg im Sommer 2013 (9878631175).jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Freiburg_im_Sommer_2013_%289878631175%29.jpg/1920px-Freiburg_im_Sommer_2013_%289878631175%29.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/102769624@N02\">Markus Trienke</a>",
+   "lizenz": "CC BY-SA 2.0",
+   "quelle": "wikimedia_commons"
+  },
+  "050_Freiburg-Martinstor-Mc_Donalds-01ASD.jpg": {
+   "groesse": 1199546,
+   "sha256": "e35908c4bd3d22ed4409b99fd99f6fc824f4eca96713aac28b9e33309de26866",
+   "titel": "File:Freiburg-Martinstor-Mc Donalds-01ASD.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/Freiburg-Martinstor-Mc_Donalds-01ASD.jpg/1920px-Freiburg-Martinstor-Mc_Donalds-01ASD.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Asurnipal\" title=\"User:Asurnipal\">Asurnipal</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "051_Freiburg-Martinstor-Mc_Donalds-01ESD.jpg": {
+   "groesse": 876517,
+   "sha256": "2247b2d297fc49d20393e07be2fad3e660a04d8064519bb3f66519de4c6e8214",
+   "titel": "File:Freiburg-Martinstor-Mc Donalds-01ESD.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Freiburg-Martinstor-Mc_Donalds-01ESD.jpg/1920px-Freiburg-Martinstor-Mc_Donalds-01ESD.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Rikki_Mitterer\" title=\"User:Rikki Mitterer\">Rikki Mitterer</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "052_Freiburg-Torturm-02-2016-gje.jpg": {
+   "groesse": 1028777,
+   "sha256": "629e631ca65e0f164f90ac297b4b08b609b67287a1b875914553be365cb823aa",
+   "titel": "File:Freiburg-Torturm-02-2016-gje.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Freiburg-Torturm-02-2016-gje.jpg/1920px-Freiburg-Torturm-02-2016-gje.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Gerd_Eichmann\" title=\"User:Gerd Eichmann\">Gerd Eichmann</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "053_Fribourg-tram.JPG": {
+   "groesse": 737639,
+   "sha256": "89bba30fd50e0a7cb7165a11b0a0608d6cf39e7d3caba35daffcd23723235718",
+   "titel": "File:Fribourg-tram.JPG",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e1/Fribourg-tram.JPG/1920px-Fribourg-tram.JPG",
+   "urheber": "No machine-readable author provided. <a href=\"//commons.wikimedia.org/wiki/User:Vincent_Ricci\" title=\"User:Vincent Ricci",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "054_GT4_in_Freiburg.JPG": {
+   "groesse": 298585,
+   "sha256": "0a3cdbadbc4d567b0b234aa3dcea565b4d1f82f9ee5bfd87bf794697cd50e287",
+   "titel": "File:GT4 in Freiburg.JPG",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/8/8a/GT4_in_Freiburg.JPG",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Hendrik128\" title=\"User:Hendrik128\">Hendrik128</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "055_GT4_vergrößert.jpg": {
+   "groesse": 149218,
+   "sha256": "ada3cc9602f67a2b51d2cc0cf168c6167ad93d59c1361bf3536e37b877554451",
+   "titel": "File:GT4 vergrößert.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/5/51/GT4_vergr%C3%B6%C3%9Fert.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Hendrik128\" title=\"User:Hendrik128\">Hendrik128</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "056_Gleiserneuerung_Bertoldsbrunnen_Freiburg_02.jpg": {
+   "groesse": 816965,
+   "sha256": "d97395adcef7109ad7e2e47bbeab04eca0a645d31ab0a0a418dc752309eaf398",
+   "titel": "File:Gleiserneuerung Bertoldsbrunnen Freiburg (02).jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Gleiserneuerung_Bertoldsbrunnen_Freiburg_%2802%29.jpg/1920px-Gleiserneuerung_Bertoldsbrunnen_Freiburg_%2802%29.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "057_Gleiserneuerung_Bertoldsbrunnen_Freiburg_09.jpg": {
+   "groesse": 962590,
+   "sha256": "6bb3d27e37d87073d99eb74aa6c3c22e651353afc123cc518cbfe849192ac99d",
+   "titel": "File:Gleiserneuerung Bertoldsbrunnen Freiburg (09).jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Gleiserneuerung_Bertoldsbrunnen_Freiburg_%2809%29.jpg/1920px-Gleiserneuerung_Bertoldsbrunnen_Freiburg_%2809%29.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "058_Gleiserneuerung_Bertoldsbrunnen_Freiburg_17.jpg": {
+   "groesse": 1325604,
+   "sha256": "bdcdfd5f10c3634573f151023b204959c5ca1098d6e96944ea56854886d3afb1",
+   "titel": "File:Gleiserneuerung Bertoldsbrunnen Freiburg (17).jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Gleiserneuerung_Bertoldsbrunnen_Freiburg_%2817%29.jpg/1920px-Gleiserneuerung_Bertoldsbrunnen_Freiburg_%2817%29.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "059_Gleiserneuerung_Bertoldsbrunnen_Freiburg_23.jpg": {
+   "groesse": 1412326,
+   "sha256": "482cf0e4b035757aa64ffe27559ce8c7e065f52b076ffd4951af5b7c0d7f872d",
+   "titel": "File:Gleiserneuerung Bertoldsbrunnen Freiburg (23).jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Gleiserneuerung_Bertoldsbrunnen_Freiburg_%2823%29.jpg/1920px-Gleiserneuerung_Bertoldsbrunnen_Freiburg_%2823%29.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "060_Luftbild_NW_2012.jpg": {
+   "groesse": 8218290,
+   "sha256": "5ce1b9532f662773cdf7547bd3abaa31d7c27627b8a763995ac600ffc7fa6ecf",
+   "quelle_unbekannt": true
+  },
+  "061_Schlossberg_Ost_2016.jpg": {
+   "groesse": 3295885,
+   "sha256": "636e54f33903e743fd731d3b83a2db821d2b9b7791c0decf97a09c7039ae87e9",
+   "quelle_unbekannt": true
+  },
+  "062_Landappbw_573837_1818_Martinstor_Freiburg.jpg": {
+   "groesse": 377053,
+   "sha256": "656f92d99be7e8e40763d760dee0fb31673c0f3652c8d6b4c63bd5c9990164a8",
+   "titel": "File:Landappbw 573837 1818 Martinstor Freiburg.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/7/72/Landappbw_573837_1818_Martinstor_Freiburg.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.spotteron.com/landappbw/users/14866/spots\">Judith Zimmermann</",
+   "lizenz": "CC0",
+   "quelle": "wikimedia_commons"
+  },
+  "063_Martinstor_Freiburg_-_panoramio.jpg": {
+   "groesse": 1046069,
+   "sha256": "6a4d3ee57f3f9c7cac5f0927c088b3eb256e67f82aa025aec6ea5bdec7b2307d",
+   "titel": "File:Martinstor, Freiburg - panoramio.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Martinstor%2C_Freiburg_-_panoramio.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161011231941/http://www.panoramio.com/user/7",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "064_Martinstor1.JPG": {
+   "groesse": 3269045,
+   "sha256": "50f4ff88e2d8b59c0a6becc8813281b38fbf1e6f44a0159aa2cbcec7b72f602e",
+   "titel": "File:Martinstor1.JPG",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/Martinstor1.JPG/3840px-Martinstor1.JPG",
+   "urheber": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Peitho84&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "065_Martinstor_Freiburg_01.jpg": {
+   "groesse": 5506239,
+   "sha256": "e945ca0142926de5f2f8b99bcdd8f62155bb809e55c20829fb38b86d720e4e54",
+   "titel": "File:Martinstor Freiburg 01.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Martinstor_Freiburg_01.jpg/3840px-Martinstor_Freiburg_01.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Giftzwerg_88\" title=\"User:Giftzwerg 88\">Giftzwerg 88</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "066_Martinstor_Freiburg_02.jpg": {
+   "groesse": 5467309,
+   "sha256": "9e311f9e0a205d1de22ab5e1048bdd212d252651c3854f43c2c9d6c6f305e96f",
+   "titel": "File:Martinstor Freiburg 02.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/Martinstor_Freiburg_02.jpg/3840px-Martinstor_Freiburg_02.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Giftzwerg_88\" title=\"User:Giftzwerg 88\">Giftzwerg 88</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "067_Martinstor_in_Freiburg_mit_Stadtbahn_GT8Z_36.jpg": {
+   "groesse": 2103390,
+   "sha256": "f4cd5753476237fd7866f8719617dea67ce291978f562e2ebd7080b7fff176ea",
+   "titel": "File:Martinstor in Freiburg mit Stadtbahn (GT8Z) 36.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Martinstor_in_Freiburg_mit_Stadtbahn_%28GT8Z%29_36.jpg/3840px-Martinstor_in_Freiburg_mit_Stadtbahn_%28GT8Z%29_36.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "068_Freiburg_1987_14_Martinstor.jpg": {
+   "groesse": 2827344,
+   "sha256": "3b3d318d5b9f9577d5e363975a83c5f4620941e6d620e343e3df11172faf060b",
+   "titel": "File:Freiburg 1987 (14) Martinstor.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Freiburg_1987_%2814%29_Martinstor.jpg/3840px-Freiburg_1987_%2814%29_Martinstor.jpg",
+   "urheber": "Rüdiger Stehn",
+   "lizenz": "CC BY-SA 2.0",
+   "quelle": "wikimedia_commons"
+  },
+  "069_View_Freiburg_im_Breisgau_jm10120.jpg": {
+   "groesse": 2550475,
+   "sha256": "bfd430ff3def7366d0ebf3647b29d1500a6857c4d9ba5b1163d816b35e0491a4",
+   "titel": "File:View (Freiburg im Breisgau) jm10120.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/View_%28Freiburg_im_Breisgau%29_jm10120.jpg/3840px-View_%28Freiburg_im_Breisgau%29_jm10120.jpg",
+   "urheber": "joergens.mi",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "070_2017-05-02_Altstadt_Freiburg_im_Breisgau_23.jpg": {
+   "groesse": 2514247,
+   "sha256": "d4cdb5d1eec6a4026fc4e275b64abadd561da813f2c934e84bcd98839e1aafc9",
+   "titel": "File:2017-05-02 Altstadt (Freiburg im Breisgau) 23.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f2/2017-05-02_Altstadt_%28Freiburg_im_Breisgau%29_23.jpg/3840px-2017-05-02_Altstadt_%28Freiburg_im_Breisgau%29_23.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Maxim75\" title=\"User:Maxim75\">Maksym Kozlenko</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "071_Schienenschleifwagen_SF_50_VAG_Freiburg_jm90009.jpg": {
+   "groesse": 2021226,
+   "sha256": "fb27d2540caa3b66d61d57fc56ccab965387a7ad3934a5df4d6cef3d6ceaccea",
+   "titel": "File:Schienenschleifwagen SF 50 VAG Freiburg jm90009.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/54/Schienenschleifwagen_SF_50_VAG_Freiburg_jm90009.jpg/3840px-Schienenschleifwagen_SF_50_VAG_Freiburg_jm90009.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">Joergens.mi</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "072_Freiburg-_Fu_g_nger_bergang_M_nsterstra_e_Kaiser-Joseph-Stra.jpg": {
+   "groesse": 1298292,
+   "sha256": "042352c63c71a996e7a47c0d60e9b827a439f97dbd2728ba0f985343f5d4675d",
+   "titel": "File:Freiburg- Fußgängerübergang, Münsterstraße, Kaiser-Joseph-Straße, mit Martinstor - LABW - Staatsarchiv Freiburg W 134 Nr. 094195.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Freiburg-_Fu%C3%9Fg%C3%A4nger%C3%BCbergang%2C_M%C3%BCnsterstra%C3%9Fe%2C_Kaiser-Joseph-Stra%C3%9Fe%2C_mit_Martinstor_-_LABW_-_Staatsarchiv_Freiburg_W_134_Nr._094195.jpg/3840px-Freiburg-_Fu%C3%9Fg%C3%A4nger%C3%BCbergang%2C_M%C3%BCnsterstra%C3%9Fe%2C_Kaiser-Joseph-Stra%C3%9Fe%2C_mit_Martinstor_-_LABW_-_Staatsarchiv_Freiburg_W_134_Nr._094195.jpg",
+   "urheber": "Willy Pragher",
+   "lizenz": "CC BY 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "073_KaJo_Richtung_Martinstor_Freiburg_im_Breisgau_jm88602.jpg": {
+   "groesse": 3296582,
+   "sha256": "83f8c11a4b12c1c89ec3d5a3933237f4c63ab1af991fe0e967a90c85f7e3abda",
+   "titel": "File:KaJo Richtung Martinstor (Freiburg im Breisgau) jm88602.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/KaJo_Richtung_Martinstor_%28Freiburg_im_Breisgau%29_jm88602.jpg/3840px-KaJo_Richtung_Martinstor_%28Freiburg_im_Breisgau%29_jm88602.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">Joergens.mi</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "074_2017-05-02_Altstadt_Freiburg_im_Breisgau_18.jpg": {
+   "groesse": 1894657,
+   "sha256": "c2dfeccca765654375ec491250a08f00313abe5495f36034a3a12541c448ed60",
+   "titel": "File:2017-05-02 Altstadt (Freiburg im Breisgau) 18.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/2017-05-02_Altstadt_%28Freiburg_im_Breisgau%29_18.jpg/3840px-2017-05-02_Altstadt_%28Freiburg_im_Breisgau%29_18.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Maxim75\" title=\"User:Maxim75\">Maksym Kozlenko</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "075_Freiburg_im_Breisgau_Martinstor_51733494449_.jpg": {
+   "groesse": 2044313,
+   "sha256": "3583b71a431e6dac42a784e48502883dd74632d642dbf8f62a6ed6a223f773e6",
+   "titel": "File:Freiburg im Breisgau Martinstor (51733494449).jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Freiburg_im_Breisgau_Martinstor_%2851733494449%29.jpg/3840px-Freiburg_im_Breisgau_Martinstor_%2851733494449%29.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/46191841@N00\">Jorge Franganillo</a>",
+   "lizenz": "CC BY 2.0",
+   "quelle": "wikimedia_commons"
+  },
+  "076_Kaser-Joseph-Stra_e_250-256_Freiburg_im_Breisgau_jm59754.jpg": {
+   "groesse": 2985256,
+   "sha256": "2a39c32f5f209efe3638a1ac79592184a7b9d3855299f5489fc4b20d734b19a8",
+   "titel": "File:Kaser-Joseph-Straße 250-256 (Freiburg im Breisgau) jm59754.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Kaser-Joseph-Stra%C3%9Fe_250-256_%28Freiburg_im_Breisgau%29_jm59754.jpg/3840px-Kaser-Joseph-Stra%C3%9Fe_250-256_%28Freiburg_im_Breisgau%29_jm59754.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "077_Brunnen_KaJo239_Freiburg_jm34589.jpg": {
+   "groesse": 2576753,
+   "sha256": "811586c0ed6e6adfe257564a03c9de4c1a9d8958206910b1d29193509a2cf788",
+   "titel": "File:Brunnen KaJo239 (Freiburg) jm34589.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Brunnen_KaJo239_%28Freiburg%29_jm34589.jpg/3840px-Brunnen_KaJo239_%28Freiburg%29_jm34589.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "078_Martinstor_Freiburg.JPG": {
+   "groesse": 2173531,
+   "sha256": "3a1f57174f0d0069a3cc4ce44785568756774e1d322876de3cc69ce835ddc642",
+   "titel": "File:Martinstor Freiburg.JPG",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/11/Martinstor_Freiburg.JPG/3840px-Martinstor_Freiburg.JPG",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Avi1111\" title=\"User:Avi1111\">Avi1111</a> dr. avishai teicher",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "079_Martinstor_Freiburg.jpg": {
+   "groesse": 2205794,
+   "sha256": "91845c1345d52ce753391a284b8a5581e3d012c1cbc40bade6ca0749d7a128b2",
+   "titel": "File:Martinstor, Freiburg.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/Martinstor%2C_Freiburg.jpg/3840px-Martinstor%2C_Freiburg.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Maxim75\" title=\"User:Maxim75\">Maksym Kozlenko</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "080_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 2361576,
+   "sha256": "9655d73370c84537b3aab466cebc56a457d33067d8a375329ee31a342d7a113c",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 07.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_07.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_07.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "081_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 2354199,
+   "sha256": "c0c8b0167ad130977f90fac20543e7d229dc1cc55b12f8b994a053834ad6db8b",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 01.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_01.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_01.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "082_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 2335526,
+   "sha256": "7458808341535f9f231bc300401ab681320b5dff3d72b86b5d00e905e8b79a49",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 27.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1b/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_27.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_27.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "083_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 2401525,
+   "sha256": "f4d90aad2d66f0e1112ffd92ed75379b725b6bf9dab7ceda12e4cbe0568fcfa8",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 04.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_04.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_04.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "084_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 2349977,
+   "sha256": "52de6e55c7442ab6b7fe8efaf7595a3c93c35f845355c47e8238192c7ee93046",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 08.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_08.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_08.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "085_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 2305167,
+   "sha256": "8becf5d93455c2b08c1f7db665b1068b6c5d17e849619627e65e56b239b09d78",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 05.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2b/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_05.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_05.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "086_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 2269622,
+   "sha256": "b88158a190073830cdc6ec96746cb72dda383b9e7a21b7052671f26bace5cf9e",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 16.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_16.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_16.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "087_Freiburg-Martinstor-Mc_Donalds-02ASD.jpg": {
+   "groesse": 1362392,
+   "sha256": "cbbcb0af4e14dabd25ab575055252594a26e1ab0383f28dc59ca45847883551b",
+   "titel": "File:Freiburg-Martinstor-Mc Donalds-02ASD.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Freiburg-Martinstor-Mc_Donalds-02ASD.jpg/3840px-Freiburg-Martinstor-Mc_Donalds-02ASD.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Asurnipal\" title=\"User:Asurnipal\">Asurnipal</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "088_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 2337741,
+   "sha256": "e9b1cab11d0b1c30bcc2ba8d94f95bc1e9bf8759859b9d77843cedede282442c",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 06.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_06.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_06.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "089_Martinstor_Freiburg_im_Breisgau_Baden-Wuerttemberg_Germany_O.jpg": {
+   "groesse": 3583373,
+   "sha256": "ff3ec4df773aaf253080d028031c9931a4d142a9205241b1935d3c3509837ece",
+   "titel": "File:Martinstor, Freiburg im Breisgau, Baden-Wuerttemberg, Germany, October 2023.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/Martinstor%2C_Freiburg_im_Breisgau%2C_Baden-Wuerttemberg%2C_Germany%2C_October_2023.jpg/3840px-Martinstor%2C_Freiburg_im_Breisgau%2C_Baden-Wuerttemberg%2C_Germany%2C_October_2023.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://mathieuchollet.eu/\">Mathieu Chollet</a> - <a href=\"//commons.wikim",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "090_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 2285651,
+   "sha256": "2ecdedb98666ead8f72e7814e2647835df8547a76bb1f3d693a866fddb30b62c",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 03.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_03.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_03.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "091_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 2128625,
+   "sha256": "bd37731fcdd5e4c000d05b215db56630caf51eeb76d528f0ebd9edb6b497ccf5",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 09.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/36/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_09.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_09.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "092_Gezicht_op_de_Martinstor_te_Freiburg_im_Breisgau_Freiburg_I..jpg": {
+   "groesse": 868750,
+   "sha256": "f3787932cd389a05953609de6cf38eb5ef50dcccdb78afc0b96149b26c341c48",
+   "titel": "File:Gezicht op de Martinstor te Freiburg im Breisgau Freiburg I. Br. Martinstor (titel op object), RP-F-00-9051.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/00/Gezicht_op_de_Martinstor_te_Freiburg_im_Breisgau_Freiburg_I._Br._Martinstor_%28titel_op_object%29%2C_RP-F-00-9051.jpg/3840px-Gezicht_op_de_Martinstor_te_Freiburg_im_Breisgau_Freiburg_I._Br._Martinstor_%28titel_op_object%29%2C_RP-F-00-9051.jpg",
+   "urheber": "Rijksmuseum",
+   "lizenz": "CC0",
+   "quelle": "wikimedia_commons"
+  },
+  "093_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 2179972,
+   "sha256": "604e689066f6c6fa9033d1c354523455e5ced13220dda1c2cc990cef62c16d9f",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 19.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_19.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_19.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "094_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 2051403,
+   "sha256": "fae2ca600515b728b1a06357fb77e02c4e5033577086bb104d9cc12a62529af5",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 21.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/72/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_21.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_21.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "095_Gleiserneuerung_Bertoldsbrunnen_Freiburg_16_.jpg": {
+   "groesse": 2205511,
+   "sha256": "e16f0fd98046ab90a1bc1e9a7f40c01ac8377d1fd1ce6a1f203d86e46ac5dc82",
+   "titel": "File:Gleiserneuerung Bertoldsbrunnen Freiburg (16).jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Gleiserneuerung_Bertoldsbrunnen_Freiburg_%2816%29.jpg/3840px-Gleiserneuerung_Bertoldsbrunnen_Freiburg_%2816%29.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "096_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 1940131,
+   "sha256": "bc37b1620e55067a6a6c66747dfa12d723964936f4c0e4e464c81fde423757b6",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 18.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_18.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_18.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "097_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 1920614,
+   "sha256": "deea1b21c79a85a0196e20d139067daaec86b3f24ae9c4ed59fab409c0b93e0b",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 25.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_25.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_25.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "098_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 1976773,
+   "sha256": "d5e159af72b29f363c4fd67173f78fb184285c8374fa5c2471bbb84cdc4a5082",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 22.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_22.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_22.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "099_CSD_in_Freiburg_2019_63.jpg": {
+   "groesse": 2167377,
+   "sha256": "36d9967444e018d5675ed63b392b78028cda9203d8a70a916babb4f0840cf559",
+   "titel": "File:CSD in Freiburg 2019 63.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/CSD_in_Freiburg_2019_63.jpg/3840px-CSD_in_Freiburg_2019_63.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "100_Gezicht_op_de_Martinstor_te_Freiburg_im_Breisgau_Freiburg_I..jpg": {
+   "groesse": 994309,
+   "sha256": "35a60ed21abe5f4e65e6f080c06e2f2909248a1d95b17b1471b754e391fd393f",
+   "titel": "File:Gezicht op de Martinstor te Freiburg im Breisgau Freiburg I. Br. Martinstor von aussen (titel op object), RP-F-00-9053.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Gezicht_op_de_Martinstor_te_Freiburg_im_Breisgau_Freiburg_I._Br._Martinstor_von_aussen_%28titel_op_object%29%2C_RP-F-00-9053.jpg/3840px-Gezicht_op_de_Martinstor_te_Freiburg_im_Breisgau_Freiburg_I._Br._Martinstor_von_aussen_%28titel_op_object%29%2C_RP-F-00-9053.jpg",
+   "urheber": "Rijksmuseum",
+   "lizenz": "CC0",
+   "quelle": "wikimedia_commons"
+  },
+  "101_Martinstor_Freiburg_im_Breisgau_jm10177.jpg": {
+   "groesse": 3671033,
+   "sha256": "79625dd4e35efa91b4e37c7c30608512ff14da0b5e9a0ef77daffd3dcc007ff4",
+   "titel": "File:Martinstor (Freiburg im Breisgau) jm10177.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/Martinstor_%28Freiburg_im_Breisgau%29_jm10177.jpg/3840px-Martinstor_%28Freiburg_im_Breisgau%29_jm10177.jpg",
+   "urheber": "joergens.mi",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "102_Blick_von_der_Dachterrasse_Kaiser-Joseph-Stra_e_192_in_Freib.jpg": {
+   "groesse": 2065108,
+   "sha256": "5c858524f73493519eed95eb28b8dfea6acef43439a446daa8b35ecb92ee421a",
+   "titel": "File:Blick von der Dachterrasse Kaiser-Joseph-Straße 192 in Freiburg Richtung Martinstor.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Blick_von_der_Dachterrasse_Kaiser-Joseph-Stra%C3%9Fe_192_in_Freiburg_Richtung_Martinstor.jpg/3840px-Blick_von_der_Dachterrasse_Kaiser-Joseph-Stra%C3%9Fe_192_in_Freiburg_Richtung_Martinstor.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "103_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 1946790,
+   "sha256": "9751c8012feb904bb5e2915cb64ed4ddccd51d8a02246b6f3e8f241c36782e6f",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 26.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_26.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_26.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "104_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 1997510,
+   "sha256": "2ce2d14adc48e6e22ea0cc088991664b9612b00a83953c68ec6d8c7a333b70de",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 20.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_20.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_20.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "105_Blick_vom_Freiburger_Schwabentor_am_Horizont_Uni-Turm_Martin.jpg": {
+   "groesse": 2118144,
+   "sha256": "b7555aa1ae40f0d0d5574623486d5665adcdf682260069504c0dc39aa91434d5",
+   "titel": "File:Blick vom Freiburger Schwabentor, am Horizont Uni-Turm, Martinstor, Stadttheater und Bahnhofsturm.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Blick_vom_Freiburger_Schwabentor%2C_am_Horizont_Uni-Turm%2C_Martinstor%2C_Stadttheater_und_Bahnhofsturm.jpg/3840px-Blick_vom_Freiburger_Schwabentor%2C_am_Horizont_Uni-Turm%2C_Martinstor%2C_Stadttheater_und_Bahnhofsturm.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "106_Die_Kaiserstra_e_s_dlich_des_Martinstors_Stephanienvorstadt_.jpg": {
+   "groesse": 14349947,
+   "sha256": "6083611a4c6b2b4c5042b835bcafd272833ac2c2e5460387b4463a5db507276b",
+   "titel": "File:Die Kaiserstraße südlich des Martinstors (Stephanienvorstadt) - Gottlieb Theodor Hase - Augustiner M Freiburg.png",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Die_Kaiserstra%C3%9Fe_s%C3%BCdlich_des_Martinstors_%28Stephanienvorstadt%29_-_Gottlieb_Theodor_Hase_-_Augustiner_M_Freiburg.png/3840px-Die_Kaiserstra%C3%9Fe_s%C3%BCdlich_des_Martinstors_%28Stephanienvorstadt%29_-_Gottlieb_Theodor_Hase_-_Augustiner_M_Freiburg.png",
+   "urheber": "?",
+   "lizenz": "CC0",
+   "quelle": "wikimedia_commons"
+  },
+  "107_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 1742366,
+   "sha256": "1e2eeb78fde74e3305f50109090e1a75e41eaee7b6ae002dbbeb7e623e52739e",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 23.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_23.jpg/3840px-2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_23.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "108_Kaiser-Joseph-Strasse_mit_Martinstor_in_Freiburg_im_Breisgau.jpg": {
+   "groesse": 11650577,
+   "sha256": "25e02987af72f577556c291fa8ddd22ba03c8b754423d926e624d5a1b3b1d0cf",
+   "titel": "File:Kaiser-Joseph-Strasse mit Martinstor in Freiburg im Breisgau (2025).jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/5/5b/Kaiser-Joseph-Strasse_mit_Martinstor_in_Freiburg_im_Breisgau_%282025%29.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:JoachimKohler-HB\" title=\"User:JoachimKohler-HB\">JoachimKohler-HB</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "109_Gleiserneuerung_Bertoldsbrunnen_Freiburg_31_.jpg": {
+   "groesse": 1797519,
+   "sha256": "bd7967e95829c6be32c0647cf0422fd8d66e14abf688102a7fb4f45ba07a9569",
+   "titel": "File:Gleiserneuerung Bertoldsbrunnen Freiburg (31).jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9d/Gleiserneuerung_Bertoldsbrunnen_Freiburg_%2831%29.jpg/3840px-Gleiserneuerung_Bertoldsbrunnen_Freiburg_%2831%29.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "110_Martinstor_Freiburg_im_Breisgau_jm59748.jpg": {
+   "groesse": 2695408,
+   "sha256": "7fbe4f558a6db55da85c50122a27ab36e06d6d0dbeb8ee2b171470e7156e93d5",
+   "titel": "File:Martinstor (Freiburg im Breisgau) jm59748.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d9/Martinstor_%28Freiburg_im_Breisgau%29_jm59748.jpg/3840px-Martinstor_%28Freiburg_im_Breisgau%29_jm59748.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "111_Kaiserstra_e_nach_S_den_mit_Bertoldsbrunnen_und_Martinstor_-.jpg": {
+   "groesse": 17986720,
+   "sha256": "e1befada133acb93d9ec367bc6c9d2b131843b569a361f5401ec188fd95c81db",
+   "titel": "File:Kaiserstraße nach Süden mit Bertoldsbrunnen und Martinstor - Gottlieb Theodor Hase - Augustiner M Freiburg.png",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Kaiserstra%C3%9Fe_nach_S%C3%BCden_mit_Bertoldsbrunnen_und_Martinstor_-_Gottlieb_Theodor_Hase_-_Augustiner_M_Freiburg.png/3840px-Kaiserstra%C3%9Fe_nach_S%C3%BCden_mit_Bertoldsbrunnen_und_Martinstor_-_Gottlieb_Theodor_Hase_-_Augustiner_M_Freiburg.png",
+   "urheber": "?",
+   "lizenz": "CC0",
+   "quelle": "wikimedia_commons"
+  },
+  "112_Kaiser-Joseph-Stra_e_mit_Bertoldsbrunnen_und_Martinstor_in_F.jpg": {
+   "groesse": 1869091,
+   "sha256": "913d0d414cc0b078bcf17dcb37ef4c5b7bafd6f10235fa9a3687c0fad7d6c6bf",
+   "titel": "File:Kaiser-Joseph-Straße mit Bertoldsbrunnen und Martinstor in Freiburg.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Kaiser-Joseph-Stra%C3%9Fe_mit_Bertoldsbrunnen_und_Martinstor_in_Freiburg.jpg/3840px-Kaiser-Joseph-Stra%C3%9Fe_mit_Bertoldsbrunnen_und_Martinstor_in_Freiburg.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "113_Martinstor_Freiburg_im_Breisgau_jm33958.jpg": {
+   "groesse": 2543981,
+   "sha256": "9bf268d89f4fb5d613883bad950baacdd332fbdea3a4c7de60da78e0b85dcf75",
+   "titel": "File:Martinstor (Freiburg im Breisgau) jm33958.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Martinstor_%28Freiburg_im_Breisgau%29_jm33958.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "114_Martinstor_4.jpg": {
+   "groesse": 2034053,
+   "sha256": "447500c9b8b6527ac4be08146fd3e07f653e628ecfc1b327e6e32e370092e7d4",
+   "titel": "File:Martinstor 4.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/Martinstor_4.jpg/3840px-Martinstor_4.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "115_Tram_56_von_1927_der_Freunde_der_Freiburger_Stra_enbahn_2.jp.jpg": {
+   "groesse": 2938898,
+   "sha256": "d6bb0e42a5f418155d109bbb69dbbfb0d61ee1d156c99d3b39c5b3ca67d4bbc9",
+   "titel": "File:Tram 56 von 1927 der Freunde der Freiburger Straßenbahn 2.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/9/95/Tram_56_von_1927_der_Freunde_der_Freiburger_Stra%C3%9Fenbahn_2.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "116_Freiburg-_Kaiser-Joseph-Stra_e_mit_Martinstor_-_LABW_-_Staat.jpg": {
+   "groesse": 11109780,
+   "sha256": "675ffa6fe0537d5b2680339d49c839b6ab63ee5814b50a3e1bbabbd3cae73b1f",
+   "titel": "File:Freiburg- Kaiser-Joseph-Straße mit Martinstor - LABW - Staatsarchiv Freiburg W 134 Nr. 100969b.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/3/33/Freiburg-_Kaiser-Joseph-Stra%C3%9Fe_mit_Martinstor_-_LABW_-_Staatsarchiv_Freiburg_W_134_Nr._100969b.jpg",
+   "urheber": "Willy Pragher",
+   "lizenz": "CC BY 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "117_Freiburg_i._Br.-_Bertoldsbrunnen_und_Martinstor_um_1900_-_LA.jpg": {
+   "groesse": 5376347,
+   "sha256": "124854362dcf7e80948cb8b4e48aaab773683cf0c0174bdd92ea75402ff598e5",
+   "titel": "File:Freiburg i. Br.- Bertoldsbrunnen und Martinstor um 1900 - LABW - Staatsarchiv Freiburg W 134 Nr. 000617.jpeg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Freiburg_i._Br.-_Bertoldsbrunnen_und_Martinstor_um_1900_-_LABW_-_Staatsarchiv_Freiburg_W_134_Nr._000617.jpeg",
+   "urheber": "<bdi><a href=\"https://www.wikidata.org/wiki/Q2571685\" class=\"extiw\" title=\"d:Q2571685\"><span title=\"German photographer ",
+   "lizenz": "CC BY 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "118_Martinstor_jm25063.jpg": {
+   "groesse": 1446229,
+   "sha256": "caf988c35fee3cb8191db5d00888ad5a8c0ad6a125f3127bb6947c083fe4be6b",
+   "titel": "File:Martinstor jm25063.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Martinstor_jm25063.jpg",
+   "urheber": "joergens.mi",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "119_Kaiser_Josefstra_e_Freiburg_im_Breisgau_jm12975.jpg": {
+   "groesse": 1464663,
+   "sha256": "90bf661bd3f67dbf80ad2140a30a2da9054125cf4a26172d33c9f24c65cf5af5",
+   "titel": "File:Kaiser Josefstraße (Freiburg im Breisgau) jm12975.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Kaiser_Josefstra%C3%9Fe_%28Freiburg_im_Breisgau%29_jm12975.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "120_Landappbw_1260143_1822_Brunnen_vor_dem_Martinstor_Freiburg.j.jpg": {
+   "groesse": 1930441,
+   "sha256": "d5e16e5e998f89c61ce6c56c00ce084e9581777bfdf8bce168609390e0a0328a",
+   "titel": "File:Landappbw 1260143 1822 Brunnen vor dem Martinstor Freiburg.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Landappbw_1260143_1822_Brunnen_vor_dem_Martinstor_Freiburg.jpg/1920px-Landappbw_1260143_1822_Brunnen_vor_dem_Martinstor_Freiburg.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.spotteron.com/landappbw/users/38131/spots\">Klemens Maier</a>",
+   "lizenz": "CC0",
+   "quelle": "wikimedia_commons"
+  },
+  "121_Kaiser_Josefstra_e_Freiburg_im_Breisgau_jm12980.jpg": {
+   "groesse": 1483427,
+   "sha256": "2ab80a1f83bc618b130a6ba735d5371861fe99e50a46140982eada7c33aebce6",
+   "titel": "File:Kaiser Josefstraße (Freiburg im Breisgau) jm12980.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/8/89/Kaiser_Josefstra%C3%9Fe_%28Freiburg_im_Breisgau%29_jm12980.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "122_Blick_aus_dem_Sommerkarzer_im_Turm_der_Freiburger_Albert-Lud.jpg": {
+   "groesse": 1445676,
+   "sha256": "4a3f981e8c8df64560d4660bef42a59e0de167f40fc6f9ca774db854bf204ca9",
+   "titel": "File:Blick aus dem Sommerkarzer im Turm der Freiburger Albert-Ludwigs-Universität zum Martinstor und Sch.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Blick_aus_dem_Sommerkarzer_im_Turm_der_Freiburger_Albert-Ludwigs-Universit%C3%A4t_zum_Martinstor_und_Sch.jpg/3840px-Blick_aus_dem_Sommerkarzer_im_Turm_der_Freiburger_Albert-Ludwigs-Universit%C3%A4t_zum_Martinstor_und_Sch.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "123_Martinstor_in_Freiburg_mit_Stadtbahn_GT8Z_3.jpg": {
+   "groesse": 3844974,
+   "sha256": "fa673125a10baf86a1ece565870569a0e362643772c75d3e864f6189a4cc4445",
+   "titel": "File:Martinstor in Freiburg mit Stadtbahn (GT8Z) 3.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Martinstor_in_Freiburg_mit_Stadtbahn_%28GT8Z%29_3.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "124_2019-07-19_Fridays_for_future_Demo_vor_dem_Freiburger_Martin.jpg": {
+   "groesse": 3728392,
+   "sha256": "5745c3f0fa69b58e34a16b8e26d76dfa31db0274b88830575c564a16b9b6e28b",
+   "titel": "File:2019-07-19, Fridays for future Demo vor dem Freiburger Martinstor 02.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/5/5f/2019-07-19%2C_Fridays_for_future_Demo_vor_dem_Freiburger_Martinstor_02.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "125_The_original_Martinstor_citytower_of_Freiburg_-_panoramio.jp.jpg": {
+   "groesse": 4089610,
+   "sha256": "b95234f410d3789c384014139067f0b9feb0678d6f2f112fa49412c5365154aa",
+   "titel": "File:The original Martinstor (citytower) of Freiburg - panoramio.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/ad/The_original_Martinstor_%28citytower%29_of_Freiburg_-_panoramio.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://web.archive.org/web/20161031085338/http://www.panoramio.com/user/1",
+   "lizenz": "CC BY 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "126_Freiburg_Bauten_201.jpg": {
+   "groesse": 2317297,
+   "sha256": "40747d4232a303c4a39ac8190be39ff1e4f010f403a94026589f897cb12fa5f4",
+   "titel": "File:Freiburg Bauten 201.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/3/33/Freiburg_Bauten_201.jpg",
+   "urheber": "<div class=\"fn value\">\nVarious authors</div>",
+   "lizenz": "Public domain",
+   "quelle": "wikimedia_commons"
+  },
+  "127_Martinstor_in_Freiburg_mit_Stadtbahnen_GT8Z_Urbos_13.jpg": {
+   "groesse": 3631909,
+   "sha256": "c5ad0281075b224a1f263428b43e13edc03dbcd9fee8f719e047b09603beae25",
+   "titel": "File:Martinstor in Freiburg mit Stadtbahnen (GT8Z + Urbos) 13.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/9/92/Martinstor_in_Freiburg_mit_Stadtbahnen_%28GT8Z_%2B_Urbos%29_13.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "128_KaJo_Freiburg_5964.jpg": {
+   "groesse": 1357355,
+   "sha256": "35329eeb1caefb6d5e3e107e516e0f8885c5c4cb0806fc2286e70b8377aa75b9",
+   "titel": "File:KaJo (Freiburg) 5964.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/9/9c/KaJo_%28Freiburg%29_5964.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:joergens.mi</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "129_B_chleputzer_auf_der_Freiburger_Kaiser-Joseph-Stra_e_6.jpg": {
+   "groesse": 2053112,
+   "sha256": "e2b82df308fa3585caee6a9c777e0a8e3d273d30de5b20cb98f4a9f742fd100f",
+   "titel": "File:Bächleputzer auf der Freiburger Kaiser-Joseph-Straße 6.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/B%C3%A4chleputzer_auf_der_Freiburger_Kaiser-Joseph-Stra%C3%9Fe_6.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "130_Kaiser-Joseph-Stra_e_Freiburg_im_Breisgau_jm61413.jpg": {
+   "groesse": 2060087,
+   "sha256": "bda77e3bf5ee61c0fd2c3fd293821d59b1ea94a42a237fd83e4b6b0c911cdfc9",
+   "titel": "File:Kaiser-Joseph-Straße (Freiburg im Breisgau) jm61413.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/6/61/Kaiser-Joseph-Stra%C3%9Fe_%28Freiburg_im_Breisgau%29_jm61413.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">joergens.mi</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "131_MartinsTorFr.jpg": {
+   "groesse": 1593788,
+   "sha256": "e3bddf7f3f7f98c726125780097474b66d021386d451a987d9c730347756a250",
+   "titel": "File:MartinsTorFr.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/7/77/MartinsTorFr.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Joergens.mi\" title=\"User:Joergens.mi\">user:Joergens.mi</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "132_Freiburg-Martinstor-01ASD.jpg": {
+   "groesse": 1135714,
+   "sha256": "3345620d3eec1fb3d23e4f1e0d6b47f40b524a1f575767294dbbf75efa090ea7",
+   "titel": "File:Freiburg-Martinstor-01ASD.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Freiburg-Martinstor-01ASD.jpg/1920px-Freiburg-Martinstor-01ASD.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Asurnipal\" title=\"User:Asurnipal\">Asurnipal</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "133_Blick_von_der_Dachterrasse_Kaiser-Joseph-Stra_e_192_in_Freib.jpg": {
+   "groesse": 3497254,
+   "sha256": "5bd669afa8b1dfa98bf8a66dc81779a0f01585543bec3ffffbcc39f6dfd7dcec",
+   "titel": "File:Blick von der Dachterrasse Kaiser-Joseph-Straße 192 in Freiburg Richtung Martinstor 1.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/4/48/Blick_von_der_Dachterrasse_Kaiser-Joseph-Stra%C3%9Fe_192_in_Freiburg_Richtung_Martinstor_1.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 4.0",
+   "quelle": "wikimedia_commons"
+  },
+  "134_Landappbw_1341079_1822_Brunnen_vor_dem_Martinstor_Freiburg.j.jpg": {
+   "groesse": 1105947,
+   "sha256": "46e8e620005ec2693b48d69c56ab022e1d7d71adecb45384aaaf03ef8149d2a3",
+   "titel": "File:Landappbw 1341079 1822 Brunnen vor dem Martinstor Freiburg.jpg",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Landappbw_1341079_1822_Brunnen_vor_dem_Martinstor_Freiburg.jpg/1920px-Landappbw_1341079_1822_Brunnen_vor_dem_Martinstor_Freiburg.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.spotteron.com/landappbw/users/38131/spots\">Klemens Maier</a>",
+   "lizenz": "CC0",
+   "quelle": "wikimedia_commons"
+  },
+  "135_Martinsg_ssle_in_Freiburg_mit_Martinstor.jpg": {
+   "groesse": 3079352,
+   "sha256": "5e718730f16eb618d71e9ba7d9c9b68b53d9408a79491da874a3bba836403c2f",
+   "titel": "File:Martinsgässle in Freiburg mit Martinstor.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/9/90/Martinsg%C3%A4ssle_in_Freiburg_mit_Martinstor.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "136_Martinstor_ohne_Oberleitungen_die_anl_sslich_von_Gleisbauarb.jpg": {
+   "groesse": 2958999,
+   "sha256": "52b836dc531a19ec7ee9792e7eb3562d6bed34aadb8b0b66b668a6d5b3cfba4f",
+   "titel": "File:Martinstor ohne Oberleitungen, die anlässlich von Gleisbauarbeiten entfernt wurden 2.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Martinstor_ohne_Oberleitungen%2C_die_anl%C3%A4sslich_von_Gleisbauarbeiten_entfernt_wurden_2.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "137_2017-03-13_Kanal-_und_Gleiserneuerung_auf_der_Freiburger_Kai.jpg": {
+   "groesse": 3018487,
+   "sha256": "5afc616085b07cecd504e701aa8733ab4e8780d92717a493a8054ffb11713146",
+   "titel": "File:2017-03-13, Kanal- und Gleiserneuerung auf der Freiburger Kaiser-Joseph-Straße, Bänke am Bauzaun, im Hintergrun.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/4/45/2017-03-13%2C_Kanal-_und_Gleiserneuerung_auf_der_Freiburger_Kaiser-Joseph-Stra%C3%9Fe%2C_B%C3%A4nke_am_Bauzaun%2C_im_Hintergrun.jpg",
+   "urheber": "<a href=\"//commons.wikimedia.org/wiki/User:Andreas_Schwarzkopf\" title=\"User:Andreas Schwarzkopf\">Andreas Schwarzkopf</a>",
+   "lizenz": "CC BY-SA 3.0",
+   "quelle": "wikimedia_commons"
+  },
+  "138_Freiburg_Bauten_200.jpg": {
+   "groesse": 1208760,
+   "sha256": "6ba5c23da396f6fd41e17db767fbe302845761d43565e8d3ad40dd80f8763f3e",
+   "titel": "File:Freiburg Bauten 200.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Freiburg_Bauten_200.jpg",
+   "urheber": "<div class=\"fn value\">\nVarious authors</div>",
+   "lizenz": "Public domain",
+   "quelle": "wikimedia_commons"
+  },
+  "139_Landappbw_201882_1817_Kaiser-Joseph-Stra_e_mit_Martinstor_ca.jpg": {
+   "groesse": 387559,
+   "sha256": "4054769f340fa82ac9d22217c901b17993a01f76d934c8d59da831d62d484fc6",
+   "titel": "File:Landappbw 201882 1817 Kaiser-Joseph-Straße mit Martinstor ca. 1967 Freiburg.jpg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/9/92/Landappbw_201882_1817_Kaiser-Joseph-Stra%C3%9Fe_mit_Martinstor_ca._1967_Freiburg.jpg",
+   "urheber": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.spotteron.com/landappbw/users/27487/spots\">WHerzog</a>",
+   "lizenz": "CC0",
+   "quelle": "wikimedia_commons"
+  }
+ }
+}

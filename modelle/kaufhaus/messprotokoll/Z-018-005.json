@@ -1,0 +1,48 @@
+{
+ "id": "Z-018-005",
+ "typ": "zaehlung",
+ "foto": "018",
+ "datei": "018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta.jpg",
+ "was": "Nordseite Dach: Gauben untere Reihe",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-04",
+ "punkte": [
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1300.0,
+   "y": 530.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1840.0,
+   "y": 535.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 2440.0,
+   "y": 515.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F1": {
+   "art": "voll",
+   "n": 3
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 3,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-018-005.jpg",
+ "ausschnitt": [
+  1050,
+  265,
+  2690,
+  785
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

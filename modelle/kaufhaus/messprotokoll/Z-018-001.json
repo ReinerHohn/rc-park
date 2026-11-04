@@ -1,0 +1,54 @@
+{
+ "id": "Z-018-001",
+ "typ": "zaehlung",
+ "foto": "018",
+ "datei": "018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta.jpg",
+ "was": "Nordfront Arkade: Bogenoeffnungen",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-04",
+ "punkte": [
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 860.0,
+   "y": 1700.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1560.0,
+   "y": 1700.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 2270.0,
+   "y": 1700.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 2960.0,
+   "y": 1700.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F1": {
+   "art": "voll",
+   "n": 4
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 4,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-018-001.jpg",
+ "ausschnitt": [
+  610,
+  1450,
+  3210,
+  1950
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Frontalfoto, alle Boegen voll sichtbar"
+}

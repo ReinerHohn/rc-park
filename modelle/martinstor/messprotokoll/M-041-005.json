@@ -1,0 +1,32 @@
+{
+ "id": "M-041-005",
+ "foto": "041",
+ "kamera": "K-041",
+ "ebene": "x=4.85",
+ "name": "Lueftungsfenster rechts unter Uhr Hoehe",
+ "mess_px": [
+  1170.0,
+  1220.0,
+  1170.0,
+  1292.0
+ ],
+ "P1": [
+  4.85,
+  3.06,
+  23.939
+ ],
+ "P2": [
+  4.85,
+  2.979,
+  22.758
+ ],
+ "dz": -1.182,
+ "dy": -0.081,
+ "dx": 0.0,
+ "abstand": 1.184,
+ "z1": 23.939,
+ "z2": 22.758,
+ "unsicherheit_rel": 0.0089,
+ "unsicherheit_m": 0.063,
+ "massstab_von": "Kamera K-041 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.85 (+-0.3 m)"
+}
