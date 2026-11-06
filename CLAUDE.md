@@ -33,10 +33,13 @@ Je Objekt `modelle/<objekt>/objekt.json` + `masstabelle.json` (Masse = Daten mit
 - `modelle/LERNJOURNAL_MARTINSTOR.md`, `modelle/PIPELINE_H0.md`, `modelle/PROTOKOLL_VALIDATOR.md` (Fehler-Log F1-F10)
 
 ## Technik
+- **Sitzungsbeginn / nach Neustart / nach Kernel-Update: `bash tools/hpwmi_pruefen.sh` laufen lassen** (Nutzerwunsch 6.11.). Das selbstgebaute hp-wmi-Modul (Board 8C77, Profil `performance` = CPU 55 W statt ~38 W) gilt nur fuer EINEN Kernel und verschwindet beim Kernel-Update. Meldet das Skript `ACHTUNG KERNEL-MODUL`, dem Nutzer SOFORT sagen (bauen/signieren/laden = sudo durch ihn); meldet es `HINWEIS ... kennt das Board 8C77 schon`, ist eine Mainline-Version da und das Eigenbau-Modul kann weg. Details `modelle/CPU_LEISTUNG.md` Abschnitt 6.
 - Neuer/anderer Rechner: `EINRICHTUNG_RECHNER.md` abarbeiten (Luefterregler-Dienst, Datenplatte, venvs, Mapillary-Token, GPU-Regeln).
 - Grosse Daten (Fotos, Foto-Eingang, SfM-Netze, Wolken, Caches, Nullstart-Objekte) NIE auf der Root-Platte: immer unter `/media/oem/scan/rc-park_daten/<objekt>/` bzw. `/media/oem/scan/rc-park_null/`, im Repo Symlinks (Nutzerregel 2026-11-01; Root war bei 99 %).
 - Python-Umgebungen: `/media/oem/scan/venv-seg/bin/python -I` (trimesh, torch, CUDA), `~/.venvs/rcpark` (manifold3d fuer den Generator).
 - Lange Jobs (Nullstart, SfM, Optimierer) nur ueber `tools/job_start.sh NAME LOG BEFEHL...` (systemd-Benutzerdienst): Claude-Code-Hintergrundshells werden bei Speicherknappheit beendet (2026-11-03).
-- Nur ein GPU-Job zur Zeit (COLMAP SIFT-GPU stuerzt neben LightGlue/Torch ab): `tools/nullstart.py` wartet per gpu_warten, Ernte deckelt auf 45 %; Werkzeugaenderung danach `tools/nullstart.py ... --ziel martinstor_null` als Wiederholbarkeitstest (Register AY/BA).
+- GPU PARALLEL (Nutzerwunsch 6.11., ersetzt "nur ein GPU-Job"): Der Absturz war VRAM-Ueberbelegung (Summe > ~7,8 von 8,2 GB; SiftGPU scheitert dann still mit 0 Keypoints), kein Parallelverbot (`modelle/GPU_PARALLEL_UNTERSUCHUNG.md`).
+  Neue GPU-Jobs mit VRAM-Budget starten: `JOB_GPU_MB=<MiB> tools/job_start.sh ...` (laeuft parallel, solange belegt + Budget <= 7000 MiB), SIFT mit `RCPARK_SIFT_MAX=1600`, Torch mit `expandable_segments`;
+  Budget je Werkzeug zuerst MESSEN (nvidia-smi-Zeitreihe), nicht raten. Jobs ohne Budget bleiben exklusiv (Altverhalten). `tools/nullstart.py` wartet per gpu_warten, Ernte deckelt auf 45 %; Werkzeugaenderung danach `tools/nullstart.py ... --ziel martinstor_null` als Wiederholbarkeitstest (Register AY/BA).
 - Nie zwei Optimierer/Generatorlaeufe parallel mit gleicher Zwischendatei; Generatordatei nicht aendern, solange Optimierer laufen.
 - Kein Commit/Push ohne Auftrag; Commit-Texte enden mit den Attribution-Zeilen der Sitzung.
