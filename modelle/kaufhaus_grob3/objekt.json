@@ -3415,11 +3415,11 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Lage/Hoehe/Drehung/Massstab: T3d.json = GPU-Distanzfeld+Chamfer-Ausrichtung des alten Generators (kaufhaus_measured.glb) an die Fotowolke (BS51d, Skala 0.94, yaw 160 Grad); Teilform: alter Hand-Generator (ANNAHME: nach Fotos/Plan von Hand, nicht neu gemessen)",
    "dn": 0.0,
-   "du": 0.0,
-   "dz": 0.0,
+   "du": 3.879,
+   "dz": -0.169,
    "sn": 1.0,
-   "su": 1.0,
-   "sz": 1.0,
+   "su": 1.1634,
+   "sz": 1.3845,
    "teil_quellen": {
     "g_fassade.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_fassade.stl",
     "g_waende.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_waende.stl",
@@ -3428,7 +3428,12 @@
     "g_konsolen.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_konsolen.stl",
     "g_dachkante_gold.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_dachkante_gold.stl"
    },
-   "werte_quellen": {}
+   "werte_quellen": {
+    "su": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.879 m, dz -0.169 m), Kanten-Snap nein (Skalierung fu 1.163 fz 1.384)",
+    "sz": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.879 m, dz -0.169 m), Kanten-Snap nein (Skalierung fu 1.163 fz 1.384)",
+    "du": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.879 m, dz -0.169 m), Kanten-Snap nein (Skalierung fu 1.163 fz 1.384)",
+    "dz": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.879 m, dz -0.169 m), Kanten-Snap nein (Skalierung fu 1.163 fz 1.384)"
+   }
   },
   {
    "typ": "bogenreihe:laube",
@@ -3692,12 +3697,12 @@
   {
    "typ": "balkonband:haupt",
    "gruppe": "Balkon/Galerie Hauptfassade",
-   "u_von": -5.149,
-   "u_bis": 12.126,
+   "u_von": -5.256,
+   "u_bis": 12.019,
    "wand_n": 13.439,
    "auskragung": 0.765,
    "unterseite_z": 4.912,
-   "oberseite_z": 8.34,
+   "oberseite_z": 11.117,
    "achse_n": [
     0.3338,
     0.9426
@@ -3707,9 +3712,9 @@
    "werte_quellen": {
     "auskragung": "0.765 +- 0.025 Wolke, balkon_messung.json",
     "unterseite_z": "4.912 +- 0.025 Wolke, balkon_messung.json",
-    "oberseite_z": "messungen_wolke.json balkon_links_ende,balkon_rechts_ende (Wolke, Gegenproben bestaetigt) | Oberkante Bruestung",
-    "u_bis": "messungen_wolke.json balkon_links_ende,balkon_rechts_ende (Wolke, Gegenproben bestaetigt)",
-    "u_von": "messungen_wolke.json balkon_links_ende,balkon_rechts_ende (Wolke, Gegenproben bestaetigt)"
+    "oberseite_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -0.107 m, dz 2.777 m), Kanten-Snap nein",
+    "u_bis": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -0.107 m, dz 2.777 m), Kanten-Snap nein",
+    "u_von": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -0.107 m, dz 2.777 m), Kanten-Snap nein"
    }
   },
   {
@@ -3844,10 +3849,10 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Lage/Hoehe/Drehung/Massstab: T3d.json = GPU-Distanzfeld+Chamfer-Ausrichtung des alten Generators (kaufhaus_measured.glb) an die Fotowolke (BS51d, Skala 0.94, yaw 160 Grad); Teilform: alter Hand-Generator (ANNAHME: nach Fotos/Plan von Hand, nicht neu gemessen)",
    "dn": -0.8325,
-   "du": -0.1292,
-   "dz": 0.0412,
+   "du": 3.836,
+   "dz": 3.356,
    "sn": 1.0197,
-   "su": 0.976,
+   "su": 1.1384,
    "sz": 1.107,
    "teil_quellen": {
     "g_statuen.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_statuen.stl",
@@ -3856,11 +3861,11 @@
    },
    "werte_quellen": {
     "dn": "param_wolke_fit.py (CMA-ES, +-2,5 m) gegen wolke_netzrahmen.npy, Gesamtmedian 0,088->0,086",
-    "du": "param_wolke_fit.py (CMA-ES, +-2,5 m) gegen wolke_netzrahmen.npy, Gesamtmedian 0,088->0,086",
-    "dz": "param_wolke_fit.py (CMA-ES, +-2,5 m) gegen wolke_netzrahmen.npy, Gesamtmedian 0,088->0,086",
+    "du": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.965 m, dz 3.315 m), Kanten-Snap nein (Skalierung fu 1.166 fz 1.000)",
+    "dz": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.965 m, dz 3.315 m), Kanten-Snap nein (Skalierung fu 1.166 fz 1.000)",
     "sn": "param_wolke_fit.py (CMA-ES, +-2,5 m) gegen wolke_netzrahmen.npy, Gesamtmedian 0,088->0,086",
-    "su": "param_wolke_fit.py (CMA-ES, +-2,5 m) gegen wolke_netzrahmen.npy, Gesamtmedian 0,088->0,086",
-    "sz": "param_wolke_fit.py (CMA-ES, +-2,5 m) gegen wolke_netzrahmen.npy, Gesamtmedian 0,088->0,086"
+    "su": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.965 m, dz 3.315 m), Kanten-Snap nein (Skalierung fu 1.166 fz 1.000)",
+    "sz": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.965 m, dz 3.315 m), Kanten-Snap nein (Skalierung fu 1.166 fz 1.000)"
    }
   },
   {

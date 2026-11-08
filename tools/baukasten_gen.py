@@ -784,7 +784,9 @@ def fensterreihe(cfg, ctx):
     for i in range(nf):
         uc = u0 + i * pitch; h = zs - zk; t = np.linspace(0, 1, 16)
         zz = zk + h * (t - kiel * np.sin(2 * np.pi * t) / (2 * np.pi)); right = [(uc + b / 2 * (1 - tt), z_) for tt, z_ in zip(t, zz)]; left = [(uc - b / 2 * (1 - tt), z_) for tt, z_ in zip(t[::-1], zz[::-1])]
-        poly = np.array([(uc - b / 2, z0), (uc + b / 2, z0)] + right + left[1:], float); outer = C([ccw(poly)]); inner = outer.offset(-rb, JoinType.Miter)
+        poly = np.array([(uc - b / 2, z0), (uc + b / 2, z0)] + right + left[1:], float)
+        if cfg.get("kontur"): poly = np.array([(uc + float(x_), z0 + float(z_)) for x_, z_ in cfg["kontur"]], float)   # frei gezeichnete Fensterkontur (tools/editor_modell.py): [[u rel. Fenstermitte, z rel. unterseite_z], ...]
+        outer = C([ccw(poly)]); inner = outer.offset(-rb, JoinType.Miter)
         rahmen = M.extrude(outer - inner, td).transform([[1, 0, 0, 0], [0, 0, -1, wn + td], [0, 1, 0, 0]])
         teile.append(rahmen)
         if gd > 0: teile.append(M.extrude(inner, gd).transform([[1, 0, 0, 0], [0, 0, -1, wn + go + gd], [0, 1, 0, 0]]))   # Verglasung (Wolke sieht die Scheibe): duenne Platte in der Rahmenoeffnung

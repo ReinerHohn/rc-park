@@ -55,6 +55,8 @@ def snap(foto, E, du, dz, rad=0.8, st=0.04):
 ZP = {"fensterreihe": ["unterseite_z", "kaempfer_z", "scheitel_z", "riegel_z"], "bogenreihe": ["kaempfer_z", "scheitel_z", "oberkante_z"], "erker": ["spitze_z", "unterkante_z", "oberkante_z"],
       "satteldach": ["z_first", "z_traufe_v", "z_traufe_h", "z_unten"], "balkonband": ["oberseite_z"], "gaubenreihe": [], "quader": ["z0", "z1"]}
 UP = {"fensterreihe": ["u_mitte"], "bogenreihe": ["u0"], "erker": ["mitte_u"], "satteldach": ["u0", "u1"], "balkonband": ["u_von", "u_bis"], "gaubenreihe": ["u_mitte"], "quader": ["u0", "u1"]}
+SKAL = {"satteldach", "fensterreihe", "bogenreihe", "balkonband"}     # parametrische Familien, bei denen Breite/Hoehe ziehen auf Parameter abbildbar ist
+SKALBR = {"fensterreihe": ["pitch", "breite"], "bogenreihe": ["pitch", "oeffnung_breite", "pfeiler_breite"]}
 def speichern(ed):
     O = obj(); shutil.copy(OJ, OJ + ".edit_bak"); out = []
     for b in O["bauteile"]:
@@ -79,13 +81,42 @@ def speichern(ed):
             else:
                 for k, d in (("du", du), ("dz", dz)): b[k] = round(float(b.get(k, 0.0)) + d, 3); q[k] = txt
         else:
+            if fam not in SKAL: fu = fz = 1.0
+            piv = np.array(e.get("pivot") or [0, 0, 0], float); u_ = uax(); pu, pz = float(piv[:2] @ u_), float(piv[2])    # Skalierung um die Huellmitte (u) bzw. Unterkante (z) des Teils
             for k in UP.get(fam, []):
-                if b.get(k) is not None: b[k] = round(float(b[k]) + du, 3); q[k] = txt
+                if b.get(k) is not None: b[k] = round(pu + (float(b[k]) - pu) * fu + du, 3); q[k] = txt + (" (Breite x%.3f)" % fu if fu != 1 else "")
             for k in ZP.get(fam, []):
-                if b.get(k) is not None: b[k] = round(float(b[k]) + dz, 3); q[k] = txt
+                if b.get(k) is not None: b[k] = round(pz + (float(b[k]) - pz) * fz + dz, 3); q[k] = txt + (" (Hoehe x%.3f)" % fz if fz != 1 else "")
+            if fu != 1:
+                for k in SKALBR.get(fam, []):
+                    if b.get(k) is not None: b[k] = round(float(b[k]) * fu, 4); q[k] = txt + " (Breite x%.3f)" % fu
             if fam == "gaubenreihe" and abs(dz) > 1e-6: out.append("%s: dz nicht uebernommen (Gauben haengen am Dach)" % b["typ"])
         out.append("%s: du %.3f dz %.3f" % (b["typ"], du, dz))
     json.dump(O, open(OJ, "w"), indent=1, ensure_ascii=False); return out
+
+def rdp(P, e):
+    P = np.asarray(P, float)
+    if len(P) < 3: return P
+    a, b = P[0], P[-1]; v = b - a; d = np.abs(v[0] * (P[:, 1] - a[1]) - v[1] * (P[:, 0] - a[0])) / (np.linalg.norm(v) + 1e-9); i = int(np.argmax(d))
+    if d[i] > e: return np.vstack([rdp(P[:i + 1], e)[:-1], rdp(P[i:], e)])
+    return np.vstack([a, b])
+
+def kontur_info(typ):
+    """Fensterkontur eines fensterreihe-Bauteils: gespeicherte 'kontur' oder die Standardform (Rechteck + Kielbogen wie baukasten_gen.fensterreihe), Fenstermitten u, Bezug z0, Wandebene s"""
+    b = [x for x in obj()["bauteile"] if x["typ"] == typ][0]
+    if typ.split(":")[0] != "fensterreihe": return None
+    nf, u0, pitch, bw = int(b["n_fenster"]), float(b["u_mitte"]), float(b["pitch"]), float(b["breite"]); z0, zk, zs = float(b["unterseite_z"]), float(b["kaempfer_z"]), float(b["scheitel_z"]); kiel = float(b.get("kiel", 0.4))
+    if b.get("kontur"): K = [[float(x), float(z)] for x, z in b["kontur"]]; eigen = True
+    else:
+        t = np.linspace(0, 1, 16); zz = zk + (zs - zk) * (t - kiel * np.sin(2 * np.pi * t) / (2 * np.pi)); right = [(bw / 2 * (1 - tt), z_ - z0) for tt, z_ in zip(t, zz)]; left = [(-bw / 2 * (1 - tt), z_ - z0) for tt, z_ in zip(t[::-1], zz[::-1])]
+        K = [[-bw / 2, 0.0], [bw / 2, 0.0]] + [list(map(float, p_)) for p_ in right] + [list(map(float, p_)) for p_ in left[1:]]; eigen = False; K = rdp(K, 0.025).tolist()    # Standardform auf wenige Punkte vereinfachen (leichter zu ziehen)
+    return dict(kontur=[[round(x, 3), round(z, 3)] for x, z in K], mitten=[round(u0 + i * pitch, 3) for i in range(nf)], z0=z0, s=float(b["wand_n"]) + float(b.get("tiefe", 0.3)), eigen=eigen)
+
+def kontur_speichern(typ, K):
+    O = obj(); shutil.copy(OJ, OJ + ".edit_bak")
+    for b in O["bauteile"]:
+        if b["typ"] == typ: b["kontur"] = [[round(float(x), 3), round(float(z), 3)] for x, z in K]; b.setdefault("werte_quellen", {})["kontur"] = "editor_modell.py: Fensterkontur vom Nutzer im Foto %s gezeichnet/verschoben (%d Punkte, relativ zur Fenstermitte und unterseite_z)" % (a.foto, len(K))
+    json.dump(O, open(OJ, "w"), indent=1, ensure_ascii=False)
 
 class H(BaseHTTPRequestHandler):
     def log_message(self, *x): pass
@@ -94,7 +125,7 @@ class H(BaseHTTPRequestHandler):
         u = urllib.parse.urlparse(self.path); q = urllib.parse.parse_qs(u.query)
         if u.path == "/":
             h = open(HTML, encoding="utf-8").read()
-            if "test" in q: h += '<img src="/api/warte" width=1 height=1>'   # Testhilfe: Ladeereignis verzoegern, damit ein Headless-Screenshot das fertige Bild zeigt
+            if "test" in q: h += '<img src="/api/warte" width=1 height=1><script>setTimeout(async()=>{try{sel=%r;zeichne();if(%s){await formUm();const q0=FM.kontur[5],pp=fmPt(0,q0),w=unproj(pp[0],pp[1]);msg("ROUNDTRIP "+q0+" -> "+[(w.u-FM.mitten[0]).toFixed(3),(w.z-FM.z0).toFixed(3)]+" Punkte "+FM.kontur.length);return}const b=c.getBoundingClientRect(),k=b.width/c.width,h=griffe(BB).find(x=>x.hx==%s&&x.hy==%s),E=(t,x,y)=>c.dispatchEvent(new MouseEvent(t,{clientX:b.left+x*k,clientY:b.top+y*k,bubbles:true}));E("mousedown",h.x,h.y);E("mousemove",h.x+(%s),h.y+(%s));window.onmouseup();msg("SIM "+JSON.stringify(off[sel])+" dx="+(h.x)+" BB="+JSON.stringify(BB))}catch(e){msg("SIMFEHLER "+e+e.stack)}},20000)</script>' % (q.get("typ", ["stl_teil:fassade"])[0], "true" if "form" in q else "false", q.get("hx", ["1"])[0], q.get("hy", ["0"])[0], q.get("dx", ["120"])[0], q.get("dy", ["0"])[0])   # Testhilfe: Ladeereignis verzoegern, damit ein Headless-Screenshot das fertige Bild zeigt
             self._send(200, "text/html; charset=utf-8", h.encode())
         elif u.path == "/api/warte": import time; time.sleep(25); self._send(200, "image/gif", b"GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;")
         elif u.path == "/api/start": self._send(200, "application/json", json.dumps(dict(fotos=sorted(KAM), foto=a.foto, teile=[b["typ"] for b in obj()["bauteile"] if b.get("aktiv", True) is not False], u=uax().tolist())).encode())
@@ -102,10 +133,11 @@ class H(BaseHTTPRequestHandler):
             f = q.get("foto", [a.foto])[0]; g = cv2.imread(os.path.join(a.bilder, f), cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION); g = cv2.resize(g, (SW, int(g.shape[0] * SW / g.shape[1])), interpolation=cv2.INTER_AREA)
             self._send(200, "image/jpeg", cv2.imencode(".jpg", g, [cv2.IMWRITE_JPEG_QUALITY, 88])[1].tobytes())
         elif u.path == "/api/kamera": K = KAM[q.get("foto", [a.foto])[0]]; self._send(200, "application/json", json.dumps(dict(K={k: K[k] for k in ("Rn", "tn", "f", "cx", "cy", "W")}, s=SW / K["W"])).encode())
+        elif u.path == "/api/kontur": self._send(200, "application/json", json.dumps(kontur_info(q["typ"][0]) or {}).encode())
         elif u.path == "/api/kanten":
             typ = q["typ"][0]; b = [x for x in obj()["bauteile"] if x["typ"] == typ][0]
             with LOCK: E = kanten(b, os.path.getmtime(OJ))
-            self._send(200, "application/json", json.dumps(dict(typ=typ, kanten=E, pivot=PIV.get(typ), n=(np.array(obj()["fassade_n"]["wert"], float) / np.linalg.norm(obj()["fassade_n"]["wert"])).tolist(), stl=typ.startswith("stl_teil"))).encode())
+            self._send(200, "application/json", json.dumps(dict(typ=typ, kanten=E, pivot=PIV.get(typ), n=(np.array(obj()["fassade_n"]["wert"], float) / np.linalg.norm(obj()["fassade_n"]["wert"])).tolist(), stl=typ.startswith("stl_teil"), skal=typ.startswith("stl_teil") or typ.split(":")[0] in SKAL)).encode())
         else: self._send(404, "text/plain", b"nein")
     def do_POST(self):
         d = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
@@ -114,6 +146,9 @@ class H(BaseHTTPRequestHandler):
             with LOCK: E = kanten(b, os.path.getmtime(OJ))
             if not E: return self._send(200, "application/json", json.dumps(dict(fehler="Teil nicht baubar")).encode())
             du, dz, s0, s1 = snap(d.get("foto", a.foto), E, float(d["du"]), float(d["dz"])); self._send(200, "application/json", json.dumps(dict(du=round(du, 3), dz=round(dz, 3), vorher=round(s0, 2), nachher=round(s1, 2))).encode())
+        elif self.path == "/api/kontur":
+            with LOCK: kontur_speichern(d["typ"], d["kontur"])
+            self._send(200, "application/json", json.dumps(dict(ok=True)).encode())
         elif self.path == "/api/speichern":
             with LOCK: r = speichern(d["teile"])
             self._send(200, "application/json", json.dumps(dict(ok=True, log=r, hinweis="objekt.json geschrieben (Sicherung .edit_bak). Gesamt-STL neu bauen: tools/baukasten_gen.py")).encode())
