@@ -1,8 +1,8 @@
 {
  "objekt": "kaufhaus_grob3",
  "typ": "balkonband:haupt",
- "wolke": "wolke_netzrahmen.npy",
- "n_wolke": 327808,
+ "wolke": "j_voll_lot2_crop.npy",
+ "n_wolke": 759651,
  "parameter": [
   "balkonband:haupt.u_von",
   "balkonband:haupt.u_bis",
@@ -12,25 +12,25 @@
   "balkonband:haupt.wand_n"
  ],
  "vorher": {
-  "balkonband:haupt.u_von": -6.424,
-  "balkonband:haupt.u_bis": 5.736,
+  "balkonband:haupt.u_von": -5.327,
+  "balkonband:haupt.u_bis": 11.948,
   "balkonband:haupt.auskragung": 0.765,
   "balkonband:haupt.unterseite_z": 4.912,
-  "balkonband:haupt.oberseite_z": 6.47,
+  "balkonband:haupt.oberseite_z": 9.548,
   "balkonband:haupt.wand_n": 13.439
  },
  "nachher": {
-  "balkonband:haupt.u_von": -6.4907,
-  "balkonband:haupt.u_bis": 5.7099,
-  "balkonband:haupt.auskragung": 1.1649,
-  "balkonband:haupt.unterseite_z": 5.0065,
-  "balkonband:haupt.oberseite_z": 6.5325,
-  "balkonband:haupt.wand_n": 13.216
+  "balkonband:haupt.u_von": -5.223,
+  "balkonband:haupt.u_bis": 12.0777,
+  "balkonband:haupt.auskragung": 0.8675,
+  "balkonband:haupt.unterseite_z": 4.2292,
+  "balkonband:haupt.oberseite_z": 9.9274,
+  "balkonband:haupt.wand_n": 12.9032
  },
- "J_vorher": 2.939845561981201,
- "J_nachher": 2.873617649078369,
- "median_vorher": 0.14454352855682373,
- "median_nachher": 0.16497902572155,
- "p90_vorher": 0.26271507143974304,
- "p90_nachher": 0.27992531657218933
+ "J_vorher": 0.541302502155304,
+ "J_nachher": 0.314583957195282,
+ "median_vorher": 0.4897236227989197,
+ "median_nachher": 0.12534160912036896,
+ "p90_vorher": 1.1448974609375,
+ "p90_nachher": 1.0535283088684082
 }

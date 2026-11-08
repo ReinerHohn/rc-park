@@ -811,7 +811,7 @@ def quader_bt(cfg, ctx):
 @bauteil("freiform")
 def freiform_bt(cfg, ctx):
     """Frei gezeichnete Form (Nutzer im Foto, tools/editor_modell.py): Kontur [[u, v], ...] auf einer Ebene, ausgezogen um 'tiefe' senkrecht zur Ebene (+ = nach aussen, zur Strasse).
-    Ebene: n-Koordinate ebene_s bei Hoehe ebene_z, Neigung neigung_grad (0 = senkrechte Wand, 40 = Dachflaeche nach hinten ansteigend): Punkt (u, v) -> (u, ebene_s + v sin a, ebene_z + v cos a).
+    Ebene: n-Koordinate ebene_s bei Hoehe ebene_z, Neigung neigung_grad (0 = senkrechte Wand, -40 = Dachflaeche nach hinten ansteigend): Punkt (u, v) -> (u, ebene_s + v sin a, ebene_z + v cos a).
     modus 'anbau' (Standard, Koerper) oder 'ausschnitt' (Aussparung). Pflicht: kontur (>= 3 Punkte), ebene_s, ebene_z, neigung_grad, tiefe, achse_n, achse_quelle, quelle (Regel 3b)."""
     for k in ("kontur", "ebene_s", "ebene_z", "neigung_grad", "tiefe", "achse_n", "achse_quelle", "quelle"):
         if cfg.get(k) in (None, ""): sys.exit(f"freiform: '{k}' fehlt (Regel 3b: jedes Mass mit Quelle)")

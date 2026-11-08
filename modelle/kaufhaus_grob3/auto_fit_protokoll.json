@@ -1,0 +1,93 @@
+[
+ {
+  "typ": "staffelgiebel:ost",
+  "J": [
+   1.2605249881744385,
+   0.6597347259521484
+  ],
+  "median": [
+   0.8513728380203247,
+   0.6686044931411743
+  ],
+  "an_grenze": [
+   "dicke"
+  ],
+  "tor": "Tor staffelgiebel:ost: Gesamtscore 0.7029 -> 0.7012 (ANGENOMMEN)",
+  "zeit": "2026-11-08T22:36:48"
+ },
+ {
+  "typ": "quader:laube_rueck",
+  "J": [
+   1.417162299156189,
+   0.6761457324028015
+  ],
+  "median": [
+   0.7384909987449646,
+   0.7464151382446289
+  ],
+  "an_grenze": [],
+  "tor": "Tor quader:laube_rueck: Gesamtscore 0.7012 -> 0.7049 (abgelehnt/Rollback)",
+  "zeit": "2026-11-08T22:47:44"
+ },
+ {
+  "typ": "fensterreihe:eg0",
+  "J": [
+   1.9873902797698975,
+   1.296467900276184
+  ],
+  "median": [
+   1.4681426286697388,
+   0.9758939146995544
+  ],
+  "an_grenze": [],
+  "tor": "Tor fensterreihe:eg0: Gesamtscore 0.7012 -> 0.7030 (ANGENOMMEN)",
+  "zeit": "2026-11-08T22:59:47"
+ },
+ {
+  "typ": "fensterreihe:eg1",
+  "J": [
+   9.0,
+   1.424039363861084
+  ],
+  "median": [
+   9.0,
+   1.085815668106079
+  ],
+  "an_grenze": [
+   "u_mitte",
+   "scheitel_z"
+  ],
+  "tor": "Tor fensterreihe:eg1: Gesamtscore 0.7030 -> 0.7024 (ANGENOMMEN)",
+  "zeit": "2026-11-08T23:15:29"
+ },
+ {
+  "typ": "fensterreihe:eg2",
+  "J": [
+   9.0,
+   1.4527579545974731
+  ],
+  "median": [
+   9.0,
+   0.9666982889175415
+  ],
+  "an_grenze": [
+   "pitch"
+  ],
+  "tor": "Tor fensterreihe:eg2: Gesamtscore 0.7024 -> 0.7035 (ANGENOMMEN)",
+  "zeit": "2026-11-08T23:29:14"
+ },
+ {
+  "typ": "balkonband:haupt",
+  "J": [
+   0.541302502155304,
+   0.314583957195282
+  ],
+  "median": [
+   0.4897236227989197,
+   0.12534160912036896
+  ],
+  "an_grenze": [],
+  "tor": "Tor balkonband:haupt: Gesamtscore 0.7035 -> 0.7056 (abgelehnt/Rollback)",
+  "zeit": "2026-11-08T23:40:59"
+ }
+]

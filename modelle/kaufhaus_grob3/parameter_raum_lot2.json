@@ -1,0 +1,659 @@
+{
+ "_doku": "AUTO (tools, 8.11. lot2): Raum um die AKTUELLEN Werte (objekt.json), Lage +-0,8 m, Masse +-20 %, stl_teil-Faktoren +-0,15, d* +-1,0 (Regel 9c: Grenze > erwarteter Fehler). Alter Raum (Netzrahmen) war veraltet.",
+ "stl_teil:fassade": {
+  "du": {
+   "lo": 2.879,
+   "hi": 4.879,
+   "start": 3.879
+  },
+  "dz": {
+   "lo": -1.169,
+   "hi": 0.831,
+   "start": -0.169
+  },
+  "su": {
+   "lo": 1.0134,
+   "hi": 1.3134,
+   "start": 1.1634
+  },
+  "sz": {
+   "lo": 1.2345,
+   "hi": 1.5345,
+   "start": 1.3845
+  }
+ },
+ "bogenreihe:laube": {
+  "u0": {
+   "lo": -9.594,
+   "hi": -7.994,
+   "start": -8.794
+  },
+  "pitch": {
+   "lo": 4.912,
+   "hi": 7.368,
+   "start": 6.14
+  },
+  "pfeiler_breite": {
+   "lo": 0.8726,
+   "hi": 1.3088,
+   "start": 1.0907
+  },
+  "pfeiler_tiefe": {
+   "lo": 0.5095,
+   "hi": 0.7643,
+   "start": 0.6369
+  },
+  "pfeiler_n": {
+   "lo": 12.145,
+   "hi": 13.745,
+   "start": 12.945
+  },
+  "kaempfer_z": {
+   "lo": 2.841,
+   "hi": 4.441,
+   "start": 3.641
+  },
+  "scheitel_z": {
+   "lo": 6.441,
+   "hi": 8.041,
+   "start": 7.241
+  },
+  "oeffnung_breite": {
+   "lo": 2.7751,
+   "hi": 4.1627,
+   "start": 3.4689
+  },
+  "oberkante_z": {
+   "lo": 6.643,
+   "hi": 8.243,
+   "start": 7.443
+  },
+  "laibung_tiefe": {
+   "lo": 0.6208,
+   "hi": 0.9312,
+   "start": 0.776
+  },
+  "boden_z": {
+   "lo": 0.653,
+   "hi": 2.253,
+   "start": 1.453
+  },
+  "sockel_weite": {
+   "lo": 1.2,
+   "hi": 1.8,
+   "start": 1.5
+  },
+  "sockel_hoehe": {
+   "lo": 0.44,
+   "hi": 0.66,
+   "start": 0.55
+  },
+  "fase_hoehe": {
+   "lo": 0.16,
+   "hi": 0.24,
+   "start": 0.2
+  }
+ },
+ "erker:0": {
+  "mitte_u": {
+   "lo": -9.426,
+   "hi": -7.826,
+   "start": -8.626
+  },
+  "breite": {
+   "lo": 2.1249,
+   "hi": 3.1873,
+   "start": 2.6561
+  },
+  "auskragung": {
+   "lo": -0.1489,
+   "hi": 1.4511,
+   "start": 0.6511
+  },
+  "unterkante_z": {
+   "lo": 6.758,
+   "hi": 8.358,
+   "start": 7.558
+  },
+  "oberkante_z": {
+   "lo": 10.1368,
+   "hi": 11.7368,
+   "start": 10.9368
+  },
+  "wand_n": {
+   "lo": 12.3207,
+   "hi": 13.9207,
+   "start": 13.1207
+  },
+  "spitze_z": {
+   "lo": 20.573,
+   "hi": 22.173,
+   "start": 21.373
+  }
+ },
+ "erker:1": {
+  "mitte_u": {
+   "lo": 14.921,
+   "hi": 16.521,
+   "start": 15.721
+  },
+  "breite": {
+   "lo": 2.2019,
+   "hi": 3.3029,
+   "start": 2.7524
+  },
+  "auskragung": {
+   "lo": 0.1523,
+   "hi": 1.7523,
+   "start": 0.9523
+  },
+  "unterkante_z": {
+   "lo": 6.917,
+   "hi": 8.517,
+   "start": 7.717
+  },
+  "oberkante_z": {
+   "lo": 8.7363,
+   "hi": 10.3363,
+   "start": 9.5363
+  },
+  "wand_n": {
+   "lo": 12.0285,
+   "hi": 13.6285,
+   "start": 12.8285
+  },
+  "spitze_z": {
+   "lo": 20.586,
+   "hi": 22.186,
+   "start": 21.386
+  }
+ },
+ "balkonband:haupt": {
+  "u_von": {
+   "lo": -6.127,
+   "hi": -4.527,
+   "start": -5.327
+  },
+  "u_bis": {
+   "lo": 11.148,
+   "hi": 12.748,
+   "start": 11.948
+  },
+  "auskragung": {
+   "lo": -0.035,
+   "hi": 1.565,
+   "start": 0.765
+  },
+  "unterseite_z": {
+   "lo": 4.112,
+   "hi": 5.712,
+   "start": 4.912
+  },
+  "oberseite_z": {
+   "lo": 8.748,
+   "hi": 10.348,
+   "start": 9.548
+  },
+  "wand_n": {
+   "lo": 12.639,
+   "hi": 14.239,
+   "start": 13.439
+  }
+ },
+ "quader:laube_rueck": {
+  "u0": {
+   "lo": -10.139,
+   "hi": -8.539,
+   "start": -9.339
+  },
+  "u1": {
+   "lo": 15.511,
+   "hi": 17.111,
+   "start": 16.311
+  },
+  "n0": {
+   "lo": 8.2,
+   "hi": 9.8,
+   "start": 9.0
+  },
+  "n1": {
+   "lo": 8.65,
+   "hi": 10.25,
+   "start": 9.45
+  },
+  "z0": {
+   "lo": 0.7,
+   "hi": 2.3,
+   "start": 1.5
+  },
+  "z1": {
+   "lo": 4.05,
+   "hi": 5.65,
+   "start": 4.85
+  }
+ },
+ "fensterreihe:eg0": {
+  "u_mitte": {
+   "lo": 10.909,
+   "hi": 12.509,
+   "start": 11.709
+  },
+  "pitch": {
+   "lo": 3.3854,
+   "hi": 5.078,
+   "start": 4.2317
+  },
+  "breite": {
+   "lo": 1.1285,
+   "hi": 1.6927,
+   "start": 1.4106
+  },
+  "unterseite_z": {
+   "lo": 2.369,
+   "hi": 3.969,
+   "start": 3.169
+  },
+  "kaempfer_z": {
+   "lo": 4.669,
+   "hi": 6.269,
+   "start": 5.469
+  },
+  "scheitel_z": {
+   "lo": 5.143,
+   "hi": 6.743,
+   "start": 5.943
+  }
+ },
+ "fensterreihe:eg1": {
+  "u_mitte": {
+   "lo": 6.005,
+   "hi": 7.605,
+   "start": 6.805
+  },
+  "pitch": {
+   "lo": 3.1901,
+   "hi": 4.7851,
+   "start": 3.9876
+  },
+  "breite": {
+   "lo": 1.0634,
+   "hi": 1.595,
+   "start": 1.3292
+  },
+  "unterseite_z": {
+   "lo": 2.488,
+   "hi": 4.088,
+   "start": 3.288
+  },
+  "kaempfer_z": {
+   "lo": 4.865,
+   "hi": 6.465,
+   "start": 5.665
+  },
+  "scheitel_z": {
+   "lo": 5.355,
+   "hi": 6.955,
+   "start": 6.155
+  }
+ },
+ "fensterreihe:eg2": {
+  "u_mitte": {
+   "lo": -5.887,
+   "hi": -4.287,
+   "start": -5.087
+  },
+  "pitch": {
+   "lo": 3.3336,
+   "hi": 5.0004,
+   "start": 4.167
+  },
+  "breite": {
+   "lo": 1.1112,
+   "hi": 1.6668,
+   "start": 1.389
+  },
+  "unterseite_z": {
+   "lo": 2.544,
+   "hi": 4.144,
+   "start": 3.344
+  },
+  "kaempfer_z": {
+   "lo": 4.96,
+   "hi": 6.56,
+   "start": 5.76
+  },
+  "scheitel_z": {
+   "lo": 5.457,
+   "hi": 7.057,
+   "start": 6.257
+  }
+ },
+ "stl_teil:figuren": {
+  "du": {
+   "lo": 2.836,
+   "hi": 4.836,
+   "start": 3.836
+  },
+  "dz": {
+   "lo": 2.356,
+   "hi": 4.356,
+   "start": 3.356
+  },
+  "su": {
+   "lo": 0.9884,
+   "hi": 1.2884,
+   "start": 1.1384
+  },
+  "sz": {
+   "lo": 0.957,
+   "hi": 1.257,
+   "start": 1.107
+  }
+ },
+ "satteldach:haupt": {
+  "u0": {
+   "lo": -7.2575,
+   "hi": -5.6575,
+   "start": -6.4575
+  },
+  "u1": {
+   "lo": 9.9569,
+   "hi": 11.5569,
+   "start": 10.7569
+  },
+  "n_traufe_v": {
+   "lo": 12.148,
+   "hi": 13.748,
+   "start": 12.948
+  },
+  "z_traufe_v": {
+   "lo": 11.8544,
+   "hi": 17.7816,
+   "start": 14.818
+  },
+  "z_first": {
+   "lo": 17.2692,
+   "hi": 25.9038,
+   "start": 21.5865
+  }
+ },
+ "gaubenreihe:unten": {
+  "u_mitte": {
+   "lo": -1.1994,
+   "hi": 0.4006,
+   "start": -0.3994
+  },
+  "pitch": {
+   "lo": 3.4422,
+   "hi": 5.1634,
+   "start": 4.3028
+  },
+  "t": {
+   "lo": 0.0584,
+   "hi": 0.0876,
+   "start": 0.073
+  },
+  "breite": {
+   "lo": 0.7513,
+   "hi": 1.1269,
+   "start": 0.9391
+  },
+  "wandhoehe": {
+   "lo": 0.9366,
+   "hi": 1.4048,
+   "start": 1.1707
+  },
+  "vor": {
+   "lo": 0.3001,
+   "hi": 0.4501,
+   "start": 0.3751
+  },
+  "tiefe": {
+   "lo": 1.5639,
+   "hi": 2.3459,
+   "start": 1.9549
+  },
+  "firsthoehe": {
+   "lo": 0.7583,
+   "hi": 1.1375,
+   "start": 0.9479
+  }
+ },
+ "gaubenreihe:oben": {
+  "u_mitte": {
+   "lo": -1.4503,
+   "hi": 0.1497,
+   "start": -0.6503
+  },
+  "pitch": {
+   "lo": 3.9302,
+   "hi": 5.8954,
+   "start": 4.9128
+  },
+  "t": {
+   "lo": 0.265,
+   "hi": 0.3976,
+   "start": 0.3313
+  },
+  "breite": {
+   "lo": 0.7706,
+   "hi": 1.156,
+   "start": 0.9633
+  },
+  "wandhoehe": {
+   "lo": 1.3264,
+   "hi": 1.9896,
+   "start": 1.658
+  },
+  "vor": {
+   "lo": 0.2677,
+   "hi": 0.4015,
+   "start": 0.3346
+  },
+  "tiefe": {
+   "lo": 1.4682,
+   "hi": 2.2024,
+   "start": 1.8353
+  },
+  "firsthoehe": {
+   "lo": 0.8966,
+   "hi": 1.345,
+   "start": 1.1208
+  }
+ },
+ "stl_teil:helme_w": {
+  "du": {
+   "lo": 0.595,
+   "hi": 2.595,
+   "start": 1.595
+  },
+  "dz": {
+   "lo": 1.758,
+   "hi": 3.758,
+   "start": 2.758
+  },
+  "su": {
+   "lo": 0.85,
+   "hi": 1.15,
+   "start": 1.0
+  },
+  "sz": {
+   "lo": 1.047,
+   "hi": 1.347,
+   "start": 1.197
+  }
+ },
+ "stl_teil:helme_o": {
+  "du": {
+   "lo": 5.143,
+   "hi": 7.143,
+   "start": 6.143
+  },
+  "dz": {
+   "lo": 1.917,
+   "hi": 3.917,
+   "start": 2.917
+  },
+  "su": {
+   "lo": 0.85,
+   "hi": 1.15,
+   "start": 1.0
+  },
+  "sz": {
+   "lo": 1.034,
+   "hi": 1.334,
+   "start": 1.184
+  }
+ },
+ "staffelgiebel:ost": {
+  "u_aussen": {
+   "lo": 7.8908,
+   "hi": 9.4908,
+   "start": 8.6908
+  },
+  "dicke": {
+   "lo": 0.3805,
+   "hi": 0.5707,
+   "start": 0.4756
+  },
+  "n_hinten": {
+   "lo": 4.8058,
+   "hi": 6.4058,
+   "start": 5.6058
+  },
+  "n_vorn": {
+   "lo": 13.4348,
+   "hi": 15.0348,
+   "start": 14.2348
+  },
+  "z_traufe": {
+   "lo": 8.1292,
+   "hi": 12.1938,
+   "start": 10.1615
+  },
+  "z_spitze": {
+   "lo": 15.7537,
+   "hi": 23.6305,
+   "start": 19.6921
+  },
+  "spitze_breite": {
+   "lo": 0.7627,
+   "hi": 1.1441,
+   "start": 0.9534
+  },
+  "kappe": {
+   "lo": 0.1477,
+   "hi": 0.2215,
+   "start": 0.1846
+  }
+ },
+ "staffelgiebel:west": {
+  "u_aussen": {
+   "lo": -10.0007,
+   "hi": -8.4007,
+   "start": -9.2007
+  },
+  "dicke": {
+   "lo": 0.3165,
+   "hi": 0.4747,
+   "start": 0.3956
+  },
+  "n_hinten": {
+   "lo": 5.0937,
+   "hi": 6.6937,
+   "start": 5.8937
+  },
+  "n_vorn": {
+   "lo": 13.892,
+   "hi": 15.492,
+   "start": 14.692
+  },
+  "z_traufe": {
+   "lo": 7.875,
+   "hi": 11.8124,
+   "start": 9.8437
+  },
+  "z_spitze": {
+   "lo": 16.1735,
+   "hi": 24.2603,
+   "start": 20.2169
+  },
+  "spitze_breite": {
+   "lo": 0.3477,
+   "hi": 0.5215,
+   "start": 0.4346
+  },
+  "kappe": {
+   "lo": 0.1665,
+   "hi": 0.2497,
+   "start": 0.2081
+  }
+ },
+ "fensterreihe:og": {
+  "u_mitte": {
+   "lo": -5.124,
+   "hi": -3.524,
+   "start": -4.324
+  },
+  "pitch": {
+   "lo": 3.1195,
+   "hi": 4.6793,
+   "start": 3.8994
+  },
+  "breite": {
+   "lo": 1.9221,
+   "hi": 2.8831,
+   "start": 2.4026
+  },
+  "unterseite_z": {
+   "lo": 9.261,
+   "hi": 10.861,
+   "start": 10.061
+  },
+  "kaempfer_z": {
+   "lo": 11.036,
+   "hi": 12.636,
+   "start": 11.836
+  },
+  "scheitel_z": {
+   "lo": 12.877,
+   "hi": 14.477,
+   "start": 13.677
+  },
+  "wand_n": {
+   "lo": 11.866,
+   "hi": 13.466,
+   "start": 12.666
+  },
+  "tiefe": {
+   "lo": 0.24,
+   "hi": 0.36,
+   "start": 0.3
+  },
+  "rahmen_b": {
+   "lo": 0.071,
+   "hi": 0.1066,
+   "start": 0.0888
+  },
+  "pfosten_b": {
+   "lo": 0.0489,
+   "hi": 0.0733,
+   "start": 0.0611
+  },
+  "riegel_z": {
+   "lo": 10.262,
+   "hi": 11.862,
+   "start": 11.062
+  },
+  "kiel": {
+   "lo": -0.5171,
+   "hi": -0.3447,
+   "start": -0.4309
+  },
+  "glas_n": {
+   "lo": 0.1082,
+   "hi": 0.1624,
+   "start": 0.1353
+  }
+ }
+}

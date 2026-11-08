@@ -1,8 +1,8 @@
 {
  "objekt": "kaufhaus_grob3",
  "typ": "staffelgiebel:ost",
- "wolke": "j_crop.npy",
- "n_wolke": 73308,
+ "wolke": "j_voll_lot2_crop.npy",
+ "n_wolke": 354908,
  "parameter": [
   "staffelgiebel:ost.u_aussen",
   "staffelgiebel:ost.dicke",
@@ -14,29 +14,29 @@
   "staffelgiebel:ost.kappe"
  ],
  "vorher": {
-  "staffelgiebel:ost.u_aussen": 9.3,
-  "staffelgiebel:ost.dicke": 0.6,
-  "staffelgiebel:ost.n_hinten": 6.0,
-  "staffelgiebel:ost.n_vorn": 14.3,
-  "staffelgiebel:ost.z_traufe": 9.6,
-  "staffelgiebel:ost.z_spitze": 20.4,
-  "staffelgiebel:ost.spitze_breite": 0.9,
-  "staffelgiebel:ost.kappe": 0.15
+  "staffelgiebel:ost.u_aussen": 8.6908,
+  "staffelgiebel:ost.dicke": 0.4756,
+  "staffelgiebel:ost.n_hinten": 5.6058,
+  "staffelgiebel:ost.n_vorn": 14.2348,
+  "staffelgiebel:ost.z_traufe": 10.1615,
+  "staffelgiebel:ost.z_spitze": 19.6921,
+  "staffelgiebel:ost.spitze_breite": 0.9534,
+  "staffelgiebel:ost.kappe": 0.1846
  },
  "nachher": {
-  "staffelgiebel:ost.u_aussen": 10.4937,
-  "staffelgiebel:ost.dicke": 0.8937,
-  "staffelgiebel:ost.n_hinten": 5.0846,
-  "staffelgiebel:ost.n_vorn": 13.1027,
-  "staffelgiebel:ost.z_traufe": 10.6643,
-  "staffelgiebel:ost.z_spitze": 19.2123,
-  "staffelgiebel:ost.spitze_breite": 0.4671,
-  "staffelgiebel:ost.kappe": 0.0442
+  "staffelgiebel:ost.u_aussen": 9.2947,
+  "staffelgiebel:ost.dicke": 0.6277,
+  "staffelgiebel:ost.n_hinten": 6.3455,
+  "staffelgiebel:ost.n_vorn": 13.7093,
+  "staffelgiebel:ost.z_traufe": 12.9459,
+  "staffelgiebel:ost.z_spitze": 21.3584,
+  "staffelgiebel:ost.spitze_breite": 0.7184,
+  "staffelgiebel:ost.kappe": 0.1968
  },
- "J_vorher": 0.8439396619796753,
- "J_nachher": 0.7454764246940613,
- "median_vorher": 0.6064423322677612,
- "median_nachher": 0.496131956577301,
- "p90_vorher": 1.2798576354980469,
- "p90_nachher": 1.2122087478637695
+ "J_vorher": 1.2605249881744385,
+ "J_nachher": 0.6597347259521484,
+ "median_vorher": 0.8513728380203247,
+ "median_nachher": 0.6686044931411743,
+ "p90_vorher": 1.3655180931091309,
+ "p90_nachher": 1.3245203495025635
 }
