@@ -541,6 +541,32 @@ def fotokanten_auto(d, kandidaten=((0.8, False), (0.9, False), (0.95, False), (0
     if best is None: return dict(fehler="zu wenige frontale Fotos", protokoll=prot)
     d["F"], d["V"] = best[1], best[2]; r = best[0]; r["protokoll"] = prot; return r
 
+def linien_verbinden(L, px, winkel=1.5, abst=1.5, luecke_m=0.5):
+    """Kollineare Stuecke zu durchgehenden Linien verbinden (Winkel < winkel Grad, Querabstand < abst px, Luecke < luecke_m). Lage = laengengewichtete Ausgleichsgerade, Ausdehnung = Vereinigung. Wiederholen bis stabil."""
+    if len(L) < 2: return L
+    A = np.array([l[:4] for l in L], float); ex = [l[4:] for l in L]; gap = luecke_m / px
+    for _ in range(6):
+        ln = np.hypot(A[:, 2] - A[:, 0], A[:, 3] - A[:, 1]); o = np.argsort(-ln); A = A[o]; ex = [ex[i] for i in o]; ln = ln[o]; used = np.zeros(len(A), bool); newA = []; newex = []
+        th = np.arctan2(A[:, 3] - A[:, 1], A[:, 2] - A[:, 0]) % np.pi; changed = False
+        for i in range(len(A)):
+            if used[i]: continue
+            c = np.array([np.cos(th[i]), np.sin(th[i])]); nv = np.array([-c[1], c[0]]); p0 = A[i, :2]
+            dth = np.abs((th - th[i] + np.pi / 2) % np.pi - np.pi / 2); r1 = (A[:, :2] - p0) @ nv; r2 = (A[:, 2:] - p0) @ nv
+            a1 = (A[:, :2] - p0) @ c; a2 = (A[:, 2:] - p0) @ c; lo = np.minimum(a1, a2); hi = np.maximum(a1, a2)
+            g = (~used) & (dth < np.radians(winkel)) & (np.abs(r1) < abst) & (np.abs(r2) < abst); g[i] = True
+            idx = np.where(g)[0]; idx = idx[np.argsort(lo[idx])]; grp = [i]; cur_hi = hi[i]; cur_lo = lo[i]               # von Seed nach beiden Seiten ketten
+            for _r in range(2):
+                for j in idx:
+                    if j in grp: continue
+                    if lo[j] <= cur_hi + gap and hi[j] >= cur_lo - gap: grp.append(j); cur_hi = max(cur_hi, hi[j]); cur_lo = min(cur_lo, lo[j])
+            for j in grp: used[j] = True
+            if len(grp) > 1: changed = True
+            w = ln[grp]; P = np.vstack([A[grp][:, :2], A[grp][:, 2:]]); W2 = np.r_[w, w]; m = (P * W2[:, None]).sum(0) / W2.sum(); C = ((P - m).T * W2) @ (P - m); ev, evec = np.linalg.eigh(C); d_ = evec[:, 1]
+            t = (P - m) @ d_; e0 = t.min(); e1 = t.max(); newA.append(np.r_[m + d_ * e0, m + d_ * e1]); newex.append(ex[i][:1] + [max(ex[j][1] for j in grp)] if False else ex[i])
+        A = np.array(newA); ex = newex
+        if not changed: break
+    return [[float(a[0]), float(a[1]), float(a[2]), float(a[3])] + list(e) for a, e in zip(A, ex)]
+
 def fotokanten_ref(d, stuetz=0.25, minl_m=0.25, nref=1):
     """Allgemeine Methode (wie ein Mensch): Geometrie aus dem SCHAERFSTEN frontalen Foto (Entzerrung, LSD auf grau/gelb-blau/gruen), die uebrigen Fotos stimmen ab (Kantenanteil F aus allen Fotos, 1 px Toleranz,
     entlang der Linie im Mittel >= stuetz). Keine Handwerte je Objekt: Referenz = hoechster cos * Laplace-Schaerfe der Ortho."""
@@ -572,6 +598,13 @@ def fotokanten_ref(d, stuetz=0.25, minl_m=0.25, nref=1):
         if tot == 0: continue
         if (cv2.dilate(occ, np.ones((5, 5), np.uint8)) & m).sum() / tot > 0.7: continue
         occ |= m; keep.append(l)
+    keep = linien_verbinden(keep, px)
+    for l in keep:                                              # Einrasten auf die Hauptrichtungen der entzerrten Ebene (waagerecht/senkrecht), nur innerhalb 2 Grad (Recherche: Fluchtpunkt-/Manhattan-Regel)
+        dx, dy = l[2] - l[0], l[3] - l[1]; ang = np.degrees(np.arctan2(dy, dx)) % 180; mx_, my_ = (l[0] + l[2]) / 2, (l[1] + l[3]) / 2; h = np.hypot(dx, dy) / 2
+        for ziel in (0, 90, 180):
+            if abs(ang - ziel) < 2.0:
+                r_ = np.radians(ziel); l[0], l[1], l[2], l[3] = mx_ - h * np.cos(r_), my_ - h * np.sin(r_), mx_ + h * np.cos(r_), my_ + h * np.sin(r_); break
+    keep = [l for l in keep if np.hypot(l[2] - l[0], l[3] - l[1]) >= 0.3 / px]
     return dict(linien=keep, fotos=len(fl), referenz=ref, methode="ref")
 
 def kantenpunkte(foto, pts, r):
