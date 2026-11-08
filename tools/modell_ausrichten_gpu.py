@@ -12,7 +12,8 @@ ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--wo
 ap.add_argument("--sichtbar", action="store_true"); ap.add_argument("--rand", type=float, default=8.0); ap.add_argument("--stl_aus"); ap.add_argument("--zmin", type=float, default=1.0)
 ap.add_argument("--du_max", type=float, default=5.0); ap.add_argument("--fotos"); ap.add_argument("--bilder"); ap.add_argument("--nfotos", type=int, default=8); ap.add_argument("--w_foto", type=float, default=1.0); ap.add_argument("--su_max", type=float, default=0.30)
 ap.add_argument("--su_lo", type=float, default=0.95); ap.add_argument("--su_hi", type=float, default=1.45); ap.add_argument("--sz_lo", type=float, default=0.95); ap.add_argument("--sz_hi", type=float, default=1.20)   # Grenzen aus Sichtbeobachtung (masstabelle beobachtungen_offen 8.11.): gegen Schrumpf-Falle
-ap.add_argument("--start", help="JSON mit Startzustand (du..sz) aus vorigem Lauf"); ap.add_argument("--py", default=os.path.expanduser("~/.venvs/rcpark/bin/python")); a = ap.parse_args()
+ap.add_argument("--start", help="JSON mit Startzustand (du..sz) aus vorigem Lauf"); ap.add_argument("--basis", help="JSON der Gesamt-Ausrichtung: Modell wird zuerst damit transformiert (Teil-Schleife im Rahmen des Gesamtergebnisses)"); ap.add_argument("--dn_max", type=float, default=4.0); ap.add_argument("--gier_max", type=float, default=10.0); ap.add_argument("--out_json")
+ap.add_argument("--py", default=os.path.expanduser("~/.venvs/rcpark/bin/python")); a = ap.parse_args()
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); OD = os.path.join(ROOT, "modelle", a.objekt); K = 1000.0 / 87.0
 OBJ = json.load(open(os.path.join(OD, "objekt.json"))); nax = np.array(OBJ["fassade_n"]["wert"], dtype=float); nax /= np.linalg.norm(nax); uax = np.array([nax[1], -nax[0]])
 dev = "cuda"; CAP = 1.0
@@ -23,6 +24,13 @@ def bauen(nur, tag):
     if not os.path.exists(p): sys.exit("Bau fehlgeschlagen " + r.stderr[-300:])
     m = trimesh.load(p, process=False); os.remove(p); m.apply_scale(1.0 / K); return m
 m = bauen("" if a.typ == "ganz" else ((a.mit + "," + a.typ) if a.mit else a.typ), "t")
+if a.basis:
+    bs = json.load(open(a.basis)); cB = np.array(bs["zentrum"]); u3b = np.array([uax[0], uax[1], 0.0]); n3b = np.array([nax[0], nax[1], 0.0]); Bb = np.stack([u3b, n3b, np.array([0, 0, 1.0])])
+    def _rz(w): c, s_ = np.cos(w), np.sin(w); return np.array([[c, -s_, 0], [s_, c, 0], [0, 0, 1]])
+    def _rx(w): c, s_ = np.cos(w), np.sin(w); return np.array([[1, 0, 0], [0, c, -s_], [0, s_, c]])
+    def _ry(w): c, s_ = np.cos(w), np.sin(w); return np.array([[c, 0, s_], [0, 1, 0], [-s_, 0, c]])
+    Rb = _rz(np.radians(bs["gier_grad"])) @ _rx(np.radians(bs["nick_grad"])) @ _ry(np.radians(bs["roll_grad"]))
+    Lb = (np.asarray(m.vertices) - cB) @ Bb.T; m.vertices = cB + (((Lb * np.array([bs["su"], 1.0, bs["sz"]])) @ Rb.T) + np.array([bs["du"], bs["dn"], bs["dz"]])) @ Bb; print("Basis-Transformation angewandt", flush=True)
 S, FI = trimesh.sample.sample_surface(m, 120000); NS = m.face_normals[FI]
 if a.sichtbar: kp = (NS[:, :2] @ nax < 0.2) | (NS[:, 2] > 0.5); S = S[kp]
 S = S[np.random.default_rng(0).choice(len(S), min(len(S), 8000), replace=False)]
@@ -106,7 +114,7 @@ if a.start: st = json.load(open(a.start)); x0_ = [st[k] for k in ('du', 'dn', 'd
 x = torch.tensor(x0_, device=dev, dtype=torch.float32); x[6] = x[6].clamp(a.su_lo, a.su_hi); x[7] = x[7].clamp(a.sz_lo, a.sz_hi); t0 = time.time(); s0 = float(bewerte(x[None])[0]); print("Start Abstand %.3f m" % s0, flush=True)
 # Runde 0: 4-D Start (du, dn, gier, su)
 if not a.start: x[6] = (a.su_lo + a.su_hi) / 2
-G = gitter(x, [0, 1, 3, 6], [a.du_max, 4.0, 10.0, (a.su_hi - a.su_lo) / 2], [int(8 * a.du_max) + 1, 33, 21, 25]); sc = bewerte(G)
+G = gitter(x, [0, 1, 3, 6], [a.du_max, a.dn_max, a.gier_max, (a.su_hi - a.su_lo) / 2], [int(8 * a.du_max) + 1, 33, 21, 25]); sc = bewerte(G)
 i = int(sc.argmin()); x = G[i].clone(); print("Runde 0 (4-D, %d Kandidaten): %.3f m  x=%s [%.0f s]" % (len(G), float(sc[i]), np.round(x.cpu().numpy(), 3), time.time() - t0), flush=True)
 best = float(sc[i]); f = 1.0
 for r in range(1, 9):
@@ -116,7 +124,7 @@ for r in range(1, 9):
     print("Runde %d (Bereich x%.3f): %.4f m  x=%s [%.0f s]" % (r, f, best, np.round(x.cpu().numpy(), 3), time.time() - t0), flush=True); f *= 0.6
 xs = x.cpu().numpy(); names = ["du", "dn", "dz", "gier_grad", "nick_grad", "roll_grad", "su", "sz"]
 res = dict(typ=a.typ, abstand_start=s0, abstand_ende=best, **{k: float(v) for k, v in zip(names, xs)}, zentrum=[float(v) for v in c0])
-json.dump(res, open(os.path.join(OD, "ausrichtung_%s.json" % a.typ.replace(":", "_")), "w"), indent=1); print("ERGEBNIS", json.dumps(res))
+json.dump(res, open(a.out_json or os.path.join(OD, "ausrichtung_%s.json" % a.typ.replace(":", "_")), "w"), indent=1); print("ERGEBNIS", json.dumps(res))
 if a.stl_aus:   # ausgerichtetes Netz (m -> mm 1:87 wie Generator)
     R, sk, sh = matrizen(x[None]); V = torch.tensor(np.asarray(m.vertices), device=dev, dtype=torch.float32); Lv = (V - c0g) @ Bg.T; Lp = torch.einsum("ij,nj->ni", R[0], Lv * sk[0]); W = (c0g + (Lp + sh[0]) @ Bg).cpu().numpy()
     mo = m.copy(); mo.vertices = W; mo.apply_scale(K); mo.export(a.stl_aus); print("STL", a.stl_aus)
