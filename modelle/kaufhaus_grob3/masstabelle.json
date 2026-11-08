@@ -41,6 +41,12 @@
    "wer": "Auftrag Grobgenerator",
    "text": "Nicht wasserdicht/nicht druckbar (Rohdreiecke, 43113 getrennte Huellen)",
    "naechster_schritt": "falls Druck gewuenscht: Teile verschweissen (manifold) - eigene Aufgabe"
+  },
+  {
+   "datum": "2026-11-08",
+   "quelle": "Nutzer-Sicht + Overlay ov_lot_6161",
+   "text": "Modell im Foto ~25 % zu schmal (links ~200 px), Dach wirkt zu niedrig (Firsttiefe), Arkadenabstand/Erkerlage falsch. Pruefung: Overlay Wolke+Modell auf kalibriertem Foto (tools/modell_foto_overlay.py), Sweep mit Foto-Kantenterm; Schrumpf-Falle BS145 beachten.",
+   "status": "offen"
   }
  ]
 }

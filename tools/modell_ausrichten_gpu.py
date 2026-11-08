@@ -10,7 +10,9 @@ import torch
 from pytorch3d.ops import knn_points
 ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--wolke", required=True); ap.add_argument("--typ", default="ganz"); ap.add_argument("--mit", default="")
 ap.add_argument("--sichtbar", action="store_true"); ap.add_argument("--rand", type=float, default=8.0); ap.add_argument("--stl_aus"); ap.add_argument("--zmin", type=float, default=1.0)
-ap.add_argument("--du_max", type=float, default=5.0); ap.add_argument("--py", default=os.path.expanduser("~/.venvs/rcpark/bin/python")); a = ap.parse_args()
+ap.add_argument("--du_max", type=float, default=5.0); ap.add_argument("--fotos"); ap.add_argument("--bilder"); ap.add_argument("--nfotos", type=int, default=8); ap.add_argument("--w_foto", type=float, default=1.0); ap.add_argument("--su_max", type=float, default=0.30)
+ap.add_argument("--su_lo", type=float, default=0.95); ap.add_argument("--su_hi", type=float, default=1.45); ap.add_argument("--sz_lo", type=float, default=0.95); ap.add_argument("--sz_hi", type=float, default=1.20)   # Grenzen aus Sichtbeobachtung (masstabelle beobachtungen_offen 8.11.): gegen Schrumpf-Falle
+ap.add_argument("--start", help="JSON mit Startzustand (du..sz) aus vorigem Lauf"); ap.add_argument("--py", default=os.path.expanduser("~/.venvs/rcpark/bin/python")); a = ap.parse_args()
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); OD = os.path.join(ROOT, "modelle", a.objekt); K = 1000.0 / 87.0
 OBJ = json.load(open(os.path.join(OD, "objekt.json"))); nax = np.array(OBJ["fassade_n"]["wert"], dtype=float); nax /= np.linalg.norm(nax); uax = np.array([nax[1], -nax[0]])
 dev = "cuda"; CAP = 1.0
@@ -50,6 +52,38 @@ def rot(axis, ang):
 def matrizen(Xc):   # Xc (M,8): du dn dz gier nick roll su sz (Winkel Grad) -> R (M,3,3), sk (M,3), sh (M,3)
     g, nk, ro = [torch.deg2rad(Xc[:, i]) for i in (3, 4, 5)]; R = rot(2, g) @ rot(0, nk) @ rot(1, ro); sk = torch.stack([Xc[:, 6], torch.ones_like(Xc[:, 6]), Xc[:, 7]], 1); return R, sk, Xc[:, :3]
 def trim(d): return d.sort(dim=1)[0][:, : int(d.shape[1] * 0.8)].mean(1)
+
+# ---- Foto-Kantenterm: Modellkanten aller Teile in mehrere kalibrierte Fotos (aus verschiedenen Richtungen), Abstand zur naechsten Fotokante in m ----
+FOTOS = []
+if a.fotos:
+    import cv2
+    mm = m.copy(); mm.merge_vertices(); V_ = np.asarray(mm.vertices); ed = mm.face_adjacency_edges[mm.face_adjacency_angles > 0.6]; ln = np.linalg.norm(V_[ed[:, 0]] - V_[ed[:, 1]], axis=1); ed = ed[(ln > 0.3) & (ln < 8)]
+    tt = np.linspace(0, 1, 5)[None, :, None]; PE = (V_[ed[:, 0]][:, None] * (1 - tt) + V_[ed[:, 1]][:, None] * tt).reshape(-1, 3)
+    if len(PE) > 5000: PE = PE[np.random.default_rng(2).choice(len(PE), 5000, replace=False)]
+    LE = torch.tensor((PE - c0) @ B.T, device=dev, dtype=torch.float32)
+    KAM = json.load(open(a.fotos)); cen = S.mean(0); cand = []
+    for nm, k in KAM.items():
+        Rk = np.array(k["Rn"]); x = Rk @ cen + np.array(k["tn"]); Ck = -Rk.T @ np.array(k["tn"])
+        if x[2] <= 1: continue
+        uv = k["f"] * x[:2] / x[2] + [k["cx"], k["cy"]]
+        if 0.2 * k["W"] < uv[0] < 0.8 * k["W"] and 0.2 * k["H"] < uv[1] < 0.8 * k["H"] and 15 <= np.linalg.norm(Ck - cen) <= 60: cand.append((nm, k, Ck))
+    # Blickrichtungs-Vielfalt: Fernstes-Punkt-Auswahl nach Kameraposition
+    pick = [0]
+    while len(pick) < min(a.nfotos, len(cand)):
+        dm = [min(np.linalg.norm(cand[i][2] - cand[j][2]) for j in pick) for i in range(len(cand))]; pick.append(int(np.argmax(dm)))
+    SK = 0.25
+    for i in pick:
+        nm, k, _ = cand[i]; g = cv2.imread(os.path.join(a.bilder, nm), cv2.IMREAD_GRAYSCALE | cv2.IMREAD_IGNORE_ORIENTATION)
+        if g is None: continue
+        g = cv2.resize(g, None, fx=SK, fy=SK, interpolation=cv2.INTER_AREA); e = cv2.Canny(cv2.GaussianBlur(g, (0, 0), 1.5), 40, 110)
+        FOTOS.append(dict(DT=torch.tensor(cv2.distanceTransform((e == 0).astype(np.uint8), cv2.DIST_L2, 3), device=dev, dtype=torch.float32), R=torch.tensor(k["Rn"], device=dev, dtype=torch.float32), t=torch.tensor(k["tn"], device=dev, dtype=torch.float32), f=float(k["f"]), c=(float(k["cx"]), float(k["cy"]))))
+    print("Foto-Term: %d Fotos %s, %d Kantenpunkte" % (len(FOTOS), [cand[i][0][-18:] for i in pick], len(PE)), flush=True)
+def foto_kosten(R, sk, sh):
+    Lp = torch.einsum("mij,mnj->mni", R, LE[None] * sk[:, None, :]); We = c0g + (Lp + sh[:, None, :]) @ Bg; tot = 0.0
+    for F in FOTOS:
+        X = We @ F["R"].T + F["t"]; z = X[..., 2].clamp_min(1e-3); iu = ((F["f"] * X[..., 0] / z + F["c"][0]) * SK).round().long(); iv = ((F["f"] * X[..., 1] / z + F["c"][1]) * SK).round().long(); H_, W_ = F["DT"].shape
+        ok = (X[..., 2] > 0.5) & (iu >= 0) & (iv >= 0) & (iu < W_) & (iv < H_); d = F["DT"][iv.clamp(0, H_ - 1), iu.clamp(0, W_ - 1)] / SK * z / F["f"]; tot = tot + torch.where(ok, d.clamp(max=0.5), torch.full_like(d, 0.5)).mean(1)
+    return tot / max(len(FOTOS), 1)
 NCNT = []
 def bewerte(Xc, blk=250):
     out = []
@@ -59,16 +93,20 @@ def bewerte(Xc, blk=250):
         W = c0g + (Lp + sh[:, None, :]) @ Bg; f1 = trim(lookup(D, W))
         # Rueckrichtung: FESTE Wolkenregion (Modellbox +-1 m, unabhaengig vom Kandidaten) -> jeder Wolkenpunkt ohne Modell in der Naehe kostet (gekappt 0.5 m). Verhindert Schrumpfen.
         Li = torch.einsum("mji,mnj->mni", R, Lc[None] - sh[:, None, :]) / sk[:, None, :]; Wm = c0g + Li @ Bg; dd = lookup(DM, Wm).clamp(max=0.5)
-        out.append(0.5 * (f1 + dd.mean(1)))
+        out.append(0.5 * (f1 + dd.mean(1)) + (a.w_foto * foto_kosten(R, sk, sh) if FOTOS else 0.0))
     return torch.cat(out)
 def gitter(x, idx, halfs, nst):
     ax = [torch.linspace(-hf, hf, nst[i], device=dev) for i, hf in enumerate(halfs)]; G = torch.stack([t.ravel() for t in torch.meshgrid(*ax, indexing="ij")], 1)
     Xc = x[None].repeat(len(G), 1)
     for j, i in enumerate(idx): Xc[:, i] += G[:, j]
+    Xc[:, 6] = Xc[:, 6].clamp(a.su_lo, a.su_hi); Xc[:, 7] = Xc[:, 7].clamp(a.sz_lo, a.sz_hi)
     return Xc
-x = torch.tensor([0, 0, 0, 0, 0, 0, 1, 1], device=dev, dtype=torch.float32); t0 = time.time(); s0 = float(bewerte(x[None])[0]); print("Start Abstand %.3f m" % s0, flush=True)
+x0_ = [0, 0, 0, 0, 0, 0, 1.0, 1.0]
+if a.start: st = json.load(open(a.start)); x0_ = [st[k] for k in ('du', 'dn', 'dz', 'gier_grad', 'nick_grad', 'roll_grad', 'su', 'sz')]
+x = torch.tensor(x0_, device=dev, dtype=torch.float32); x[6] = x[6].clamp(a.su_lo, a.su_hi); x[7] = x[7].clamp(a.sz_lo, a.sz_hi); t0 = time.time(); s0 = float(bewerte(x[None])[0]); print("Start Abstand %.3f m" % s0, flush=True)
 # Runde 0: 4-D Start (du, dn, gier, su)
-G = gitter(x, [0, 1, 3, 6], [a.du_max, 4.0, 10.0, 0.30], [int(8 * a.du_max) + 1, 33, 21, 25]); sc = bewerte(G)
+if not a.start: x[6] = (a.su_lo + a.su_hi) / 2
+G = gitter(x, [0, 1, 3, 6], [a.du_max, 4.0, 10.0, (a.su_hi - a.su_lo) / 2], [int(8 * a.du_max) + 1, 33, 21, 25]); sc = bewerte(G)
 i = int(sc.argmin()); x = G[i].clone(); print("Runde 0 (4-D, %d Kandidaten): %.3f m  x=%s [%.0f s]" % (len(G), float(sc[i]), np.round(x.cpu().numpy(), 3), time.time() - t0), flush=True)
 best = float(sc[i]); f = 1.0
 for r in range(1, 9):
