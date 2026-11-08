@@ -43,7 +43,7 @@ REGISTER = [
     ("S2_MSI",   "Sentinel-2",       "MULTISPEKTRAL 10 m, 13 Bänder (regional, Landbedeckung)",
      [r".*(sentinel.?2|S2[AB]_|_MSIL).*"], "Copernicus Open Access Hub", True),
     ("S1_SAR",   "Sentinel-1 Radar", "SAR (wetterunabhängig, Struktur/Feuchte)",
-     [r".*(sentinel.?1|S1[AB]_).*"], "Copernicus Open Access Hub", True),
+     [r".*(sentinel.?1|S1[AB]_(IW|EW|SM)).*"], "Copernicus Open Access Hub", True),
     ("COP_DEM",  "Copernicus DEM",   "30 m globales DEM (grob, Fallback-Gelände)",
      [r".*(cop.?dem|glo.?30|COP30).*\.(tif|dt2)"], "AWS copernicus-dem-30m (no-auth)", True),
     ("OSM",      "OpenStreetMap",    "Vektor: Gebäudeumriss/Wege/Trasse/Tags",
@@ -52,6 +52,13 @@ REGISTER = [
      [r".*\.(jpg|jpeg|png)"], "eigene / Wikimedia Commons / Google", True),
     ("STREET",   "Street-Level",     "Panorama/Street-Level (Fassade schräg, Mapillary)",
      [r".*(mapillary|streetview|streetlevel|panorama)\w*\.(jpg|png)"], "Mapillary API / eigene", False),
+    # 2026-11-05 (Recherche reports/Daten und Qualitaet fuer H0 Modelle.md; Nutzerauftrag "merk's dir in der Pipeline")
+    ("BDOM",     "bDOM 0,2 m",       "bildbasiertes Oberflaechenmodell 0,2 m (LGL, Bildkorrelation, farbig; nicht qualitaetsgesichert): Gauben/Kamine/Erkerdaecher",
+     [r".*bdom\w*\.(laz|las|tif)"], "LGL geodaten@lgl.bwl.de (Bestellung, ca. 60 EUR, DL-DE BY 2.0), Entwurf modelle/LGL_BESTELLUNG_BDOM.txt", True),
+    ("STADT_LOD2", "Stadt-LoD2",     "zweites, unabhaengiges LoD2 der Stadt (Freiburg: tridicon/VCS) - Gegenprobe Dachformen",
+     [r".*freiburg_lod2\w*\.gml"], "geoportal.freiburg.de/stadtmodell (DL-DE BY 2.0)", False),
+    ("STADT_MESH", "Stadt-Mesh",     "texturiertes Photogrammetrie-Mesh der Stadt (Freiburg Befliegung 2025) - NUR Pruefreferenz bis Lizenz schriftlich geklaert",
+     [r".*(mesh3d|stadtmesh)\w*\.(b3dm|glb|obj|ply)"], "3d.freiburg.de/datasource-data/2025_befliegung/22_Mesh3D_Cesium (Lizenz OFFEN: vermessung@freiburg.de)", False),
 ]
 SUCHE = ["daten/**", "modelle/**"]
 
@@ -60,12 +67,57 @@ def tile_of(E, N):
     return f"{int(E)//1000}_{int(N)//1000}"
 
 
+def used_by_reference(name):
+    """G5: Quelle gilt auch als genutzt, wenn objekt.json/masstabelle.json sie strukturell referenziert
+    (Marker-Dateien gibt es nur fuer Altobjekte; Martinstor/Kaufhaus nutzen DOM1/DGM1/DOP/LoD2 ueber objekt.json).
+    Nur strukturierte Schluessel, kein Freitext-Suchen. Nicht verfuegbare Typen (S1/S2/COP/HIST/LAZ/BDOM) werden hier nie gesetzt."""
+    md = f"modelle/{name}"
+    ref = {}
+    try:
+        o = json.load(open(f"{md}/objekt.json"))
+    except Exception:
+        o = {}
+    laser = o.get("laser") or {}
+    lq = str(laser.get("quelle", ""))
+    if o.get("lod2"):
+        ref["LOD2"] = "objekt.json:lod2"
+    if laser and ("DOM1" in lq or laser.get("fenster_npy")):
+        ref["DOM1"] = "objekt.json:laser (DOM1-Fenster)"
+    if laser and ("DGM1" in lq or laser.get("gelaende_m") is not None):
+        ref["DGM1"] = "objekt.json:laser.gelaende_m (DGM1)"
+    lb = o.get("luftbild") or {}
+    if re.search(r"dop\d*rgb", str(lb.get("tif", "")), re.I):
+        ref["DOP_RGB"] = "objekt.json:luftbild.tif (DOP20 RGB)"
+    if o.get("fotos"):
+        ref["FOTO_BODEN"] = "objekt.json:fotos"
+    try:
+        m = json.load(open(f"{md}/masstabelle.json"))
+        typen = set()
+
+        def walk(x):
+            if isinstance(x, dict):
+                if isinstance(x.get("quelltyp"), str):
+                    typen.add(x["quelltyp"])
+                for v in x.values():
+                    walk(v)
+            elif isinstance(x, list):
+                for v in x:
+                    walk(v)
+        walk(m)
+        if "lod2" in typen:
+            ref.setdefault("LOD2", "masstabelle.json:quelltyp lod2")
+    except Exception:
+        pass
+    return ref
+
+
 def used_markers(name):
     md = f"modelle/{name}"
 
     def ex(*fs):
         return any(os.path.exists(f"{md}/{f}") for f in fs)
-    return {
+    refs = used_by_reference(name)
+    mk = {
         "LOD2": ex("footprint.json", "hofgut_lod2.json", "hofgut_massing.glb") or bool(glob.glob(f"{md}/*lod2*")),
         "LOD1": ex("lod1.json"),
         "DOP_RGB": ex("dop_dach.png") or bool(glob.glob(f"{md}/*textured*")) or bool(glob.glob(f"{md}/*dop*")),
@@ -82,7 +134,12 @@ def used_markers(name):
         "OSM": bool(glob.glob(f"{md}/*track*") + glob.glob(f"{md}/*osm*")),
         "FOTO_BODEN": ex("farben.json") or bool(glob.glob(f"daten/{name}/fotos/*_mask.png")),
         "STREET": ex("street.json"),
+        "STADT_LOD2": ex("stadt_lod2.json"),                                              # tools/stadt_lod2_schneiden.py (G4)
+        "STADT_MESH": ex("audit/referenz_stadtmesh/mesh.ply"),                            # tools/stadtmesh_laden.py (G4): nur Pruefreferenz
     }
+    for k in refs:
+        mk[k] = True
+    return mk
 
 
 def main():
@@ -128,7 +185,7 @@ def main():
 
 
 # Status-Codes → Anzeige
-STAT = {"USED": "✅ genutzt", "NA": "🚫 n/a (begründet)",
+STAT = {"USED": "✅ genutzt", "PRUEFREF": "✅ Pruefreferenz (Lizenz ungeklaert)", "NA": "🚫 n/a (begründet)",
         "REPO_UNUSED": "⚠️  IM REPO, NICHT GENUTZT", "UPSTREAM": "⬇️  UPSTREAM, NICHT GELADEN"}
 
 
@@ -140,6 +197,19 @@ def inventory(name, utm=None):
         E, N = utm
     elif os.path.exists(f"modelle/{name}/footprint.json"):
         E, N, *_ = json.load(open(f"modelle/{name}/footprint.json"))["origin_utm"]
+    if not E:                                             # G5: ohne footprint.json Lage aus objekt.json (lage/rahmen) bzw. Kachelname im Luftbildpfad
+        try:
+            o = json.load(open(f"modelle/{name}/objekt.json"))
+            if (o.get("lage") or {}).get("utm32"):
+                E, N = o["lage"]["utm32"][:2]
+            elif (o.get("rahmen") or {}).get("mitte_utm"):
+                E, N = o["rahmen"]["mitte_utm"][:2]
+            else:
+                mt = re.search(r"32_(\d{3})_(\d{4})", json.dumps(o.get("luftbild", {})))
+                if mt:
+                    E, N = int(mt.group(1)) * 1000 + 500, int(mt.group(2)) * 1000 + 500   # ANNAHME: Kachelmitte, nur fuer Kachelfilter/BW-Test
+        except Exception:
+            pass
     tile = tile_of(E, N) if E else None
     inBW = bool(E and 400000 < E < 620000 and 5260000 < N < 5520000)
     tnums = set()
@@ -165,7 +235,9 @@ def inventory(name, utm=None):
             hits = [f for f in hits if name in f]
         elif tile:                                            # Geo-Kacheln NUR aus der Bauwerks-Umgebung
             hits = [f for f in hits if any(t in f for t in tnums)]
-        if used.get(key):
+        if used.get(key) and key == "STADT_MESH":
+            status = "PRUEFREF"                                                           # Lizenz ungeklaert: Pruefreferenz, nie Generator
+        elif used.get(key):
             status = "USED"
         elif key in na:
             status = "NA"

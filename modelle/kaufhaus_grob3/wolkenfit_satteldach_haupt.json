@@ -1,0 +1,33 @@
+{
+ "objekt": "kaufhaus_grob3",
+ "typ": "satteldach:haupt",
+ "wolke": "wolke_netzrahmen.npy",
+ "n_wolke": 342556,
+ "parameter": [
+  "satteldach:haupt.u0",
+  "satteldach:haupt.u1",
+  "satteldach:haupt.n_traufe_v",
+  "satteldach:haupt.z_traufe_v",
+  "satteldach:haupt.z_first"
+ ],
+ "vorher": {
+  "satteldach:haupt.u0": -9.3373,
+  "satteldach:haupt.u1": 8.9229,
+  "satteldach:haupt.n_traufe_v": 12.51,
+  "satteldach:haupt.z_traufe_v": 11.3818,
+  "satteldach:haupt.z_first": 20.6068
+ },
+ "nachher": {
+  "satteldach:haupt.u0": -9.7073,
+  "satteldach:haupt.u1": 9.4193,
+  "satteldach:haupt.n_traufe_v": 12.9478,
+  "satteldach:haupt.z_traufe_v": 10.5766,
+  "satteldach:haupt.z_first": 20.824
+ },
+ "J_vorher": 0.41783684492111206,
+ "J_nachher": 0.4082225263118744,
+ "median_vorher": 0.13854986429214478,
+ "median_nachher": 0.13753867149353027,
+ "p90_vorher": 0.28084081411361694,
+ "p90_nachher": 0.2743195593357086
+}

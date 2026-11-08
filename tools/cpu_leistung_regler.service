@@ -1,0 +1,13 @@
+[Unit]
+Description=RC-Park CPU-Leistungsregler (RAPL PL1 stufenweise, temperaturgefuehrt)
+After=multi-user.target thermald.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /home/oem/git/rc-park/tools/cpu_leistung_regler.sh
+Environment=START=35 MAX=55 SCHRITT=5 TOK=80 THOCH=88 TNOT=92 GOK=83 T=10 PL2=130
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

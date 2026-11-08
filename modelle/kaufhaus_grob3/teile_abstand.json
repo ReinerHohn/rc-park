@@ -1,0 +1,101 @@
+[
+ {
+  "typ": "stl_teil:fassade",
+  "n_wolke": 503158,
+  "median": 0.20664680415626965,
+  "p90": 0.43756998397804353,
+  "gestuetzt": 0.2896,
+  "flaeche_m2": 553.1094826421994,
+  "prioritaet": 4.859977350657924
+ },
+ {
+  "typ": "gaubenreihe:unten",
+  "n_wolke": 84024,
+  "median": 0.13776901641331518,
+  "p90": 0.4065708818483432,
+  "gestuetzt": 0.428725,
+  "flaeche_m2": 477.79475825139036,
+  "prioritaet": 3.011426364691924
+ },
+ {
+  "typ": "satteldach:haupt",
+  "n_wolke": 83925,
+  "median": 0.1365470177316313,
+  "p90": 0.41722407982965065,
+  "gestuetzt": 0.429975,
+  "flaeche_m2": 476.6841184852663,
+  "prioritaet": 2.981244264038581
+ },
+ {
+  "typ": "gaubenreihe:oben",
+  "n_wolke": 83959,
+  "median": 0.13578014186720305,
+  "p90": 0.4164547820377443,
+  "gestuetzt": 0.424325,
+  "flaeche_m2": 479.006055535242,
+  "prioritaet": 2.971712287326424
+ },
+ {
+  "typ": "stl_teil:erker",
+  "n_wolke": 215421,
+  "median": 0.267770954788165,
+  "p90": 0.5236192146527437,
+  "gestuetzt": 0.3665,
+  "flaeche_m2": 114.6611176185501,
+  "prioritaet": 2.8672895536179768
+ },
+ {
+  "typ": "stl_teil:helme",
+  "n_wolke": 112824,
+  "median": 0.2424603503376097,
+  "p90": 0.4771625748581384,
+  "gestuetzt": 0.2331,
+  "flaeche_m2": 133.5120049376477,
+  "prioritaet": 2.801566187489883
+ },
+ {
+  "typ": "stl_teil:fenster",
+  "n_wolke": 311385,
+  "median": 0.17433680033352078,
+  "p90": 0.4963332368572284,
+  "gestuetzt": 0.561025,
+  "flaeche_m2": 178.9088266444938,
+  "prioritaet": 2.331873326358014
+ },
+ {
+  "typ": "stl_teil:figuren",
+  "n_wolke": 30721,
+  "median": 0.48626626822538815,
+  "p90": 0.5765723825451192,
+  "gestuetzt": 0.041025,
+  "flaeche_m2": 15.723028751391947,
+  "prioritaet": 1.9281563560737296
+ },
+ {
+  "typ": "staffelgiebel:ost",
+  "n_wolke": 32407,
+  "median": 0.2116269932863517,
+  "p90": 0.508924734787003,
+  "gestuetzt": 0.408325,
+  "flaeche_m2": 70.6865787997162,
+  "prioritaet": 1.7792605226485736
+ },
+ {
+  "typ": "staffelgiebel:west",
+  "n_wolke": 29277,
+  "median": 0.14221002956209955,
+  "p90": 0.4632888279340675,
+  "gestuetzt": 0.397775,
+  "flaeche_m2": 70.17382359275913,
+  "prioritaet": 1.1912908253043553
+ },
+ {
+  "typ": "bogenreihe:laube",
+  "n_wolke": 68742,
+  "median": 0.1113661390255416,
+  "p90": 0.4763219651073583,
+  "gestuetzt": 0.871825,
+  "flaeche_m2": 38.311709289659916,
+  "prioritaet": 0.6893169021458788
+ }
+]

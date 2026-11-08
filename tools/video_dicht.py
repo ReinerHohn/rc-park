@@ -4,6 +4,7 @@
 Ausgabe: <video_sfm_ordner>/dicht/fused.ply, <video_sfm_ordner>/dicht_modell.npy (x y z im Modellrahmen, Meter; Massstab aus dem Nordnetz!) + dicht_farben.npy
 """
 import sys, os, json, struct, argparse, numpy as np, pycolmap, time
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from video_netz import netz_info, video_modell
 
 def ply(fp):
     with open(fp, "rb") as f:
@@ -16,7 +17,7 @@ def ply(fp):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("video"); ap.add_argument("--modell", default="1"); ap.add_argument("--max-size", type=int, default=1280)
-    ap.add_argument("--aus", default="video_ausrichtung.json", help="Dateiname unter audit/ mit der Ausrichtung DIESES Videos (wie video_ausrichten.py --aus); ersetzt das Sandbox-Objekt (Plan M1)"); a = ap.parse_args()
+    ap.add_argument("--aus", default="video_ausrichtung.json", help="Dateiname unter audit/ mit der Ausrichtung DIESES Videos (wie video_ausrichten.py --aus); ersetzt das Sandbox-Objekt (Plan M1)"); a = ap.parse_args(); a.modell = video_modell(a.video, a.modell)
     od = os.path.dirname(os.path.abspath(a.objekt)); out = os.path.join(a.video, "dicht"); t0 = time.time()
     if not os.path.exists(os.path.join(out, "fused.ply")):
         os.makedirs(out, exist_ok=True); uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = a.max_size
@@ -24,7 +25,7 @@ def main():
         opt = pycolmap.PatchMatchOptions(); opt.max_image_size = a.max_size; opt.geom_consistency = True; opt.gpu_index = "0"; pycolmap.patch_match_stereo(out, options=opt); print(f"PatchMatch {time.time() - t0:.0f} s", flush=True)
         pycolmap.stereo_fusion(os.path.join(out, "fused.ply"), out, output_type="ply"); print(f"Fusion {time.time() - t0:.0f} s", flush=True)
     arr = ply(os.path.join(out, "fused.ply")); X = np.c_[arr["x"], arr["y"], arr["z"]].astype(np.float64); C = np.c_[arr["red"], arr["green"], arr["blue"]].astype(np.uint8)
-    o = json.load(open(os.path.join(od, "audit", a.aus))); S = json.load(open(os.path.join(od, "messprotokoll", "SFM-AUSRICHTUNG-nord.json")))["transformation"]
+    o = json.load(open(os.path.join(od, "audit", a.aus))); S = json.load(open(netz_info(a.objekt)["ausr"]))["transformation"]
     s, R, t = o["skala_video_zu_nord"], np.array(o["R"]), np.array(o["t"]); Rm = pycolmap.Rotation3d(np.array(S["rvec"])).matrix(); tm = np.array(S["t"])
     Xm = ((s * (X @ R.T) + t - tm) @ Rm) / S["s"]
     np.save(os.path.join(a.video, "dicht_modell.npy"), Xm.astype(np.float32)); np.save(os.path.join(a.video, "dicht_farben.npy"), C)
@@ -38,7 +39,7 @@ def main():
             off += 4 * kq
         np.save(os.path.join(a.video, "punkt_clips.npy"), anz); json.dump(clips, open(os.path.join(a.video, "punkt_clips.json"), "w"))
     except Exception as e: print("WARNUNG: Clip-Zuordnung nicht erstellt:", e, flush=True)
-    k = (np.abs(Xm[:, 0]) < 7) & (np.abs(Xm[:, 1]) < 7); print(f"{len(Xm)} Punkte, nahe Turm {k.sum()}, z p50/p99/max nahe Turm: {np.percentile(Xm[k, 2], [50, 99, 100]).round(1)}")
+    k = (np.abs(Xm[:, 0]) < 7) & (np.abs(Xm[:, 1]) < 7); print(f"{len(Xm)} Punkte, nahe Ursprung {k.sum()}" + (f", z p50/p99/max nahe Ursprung: {np.percentile(Xm[k, 2], [50, 99, 100]).round(1)}" if k.sum() else "") + f"; z p1/p50/p99 gesamt: {np.percentile(Xm[:, 2], [1, 50, 99]).round(1)}")
 
 if __name__ == "__main__":
     main()

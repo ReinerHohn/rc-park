@@ -1,0 +1,36 @@
+{
+ "objekt": "kaufhaus_grob3",
+ "typ": "quader:ost",
+ "wolke": "wolke_netzrahmen.npy",
+ "n_wolke": 781547,
+ "parameter": [
+  "quader:ost.u0",
+  "quader:ost.u1",
+  "quader:ost.n0",
+  "quader:ost.n1",
+  "quader:ost.z0",
+  "quader:ost.z1"
+ ],
+ "vorher": {
+  "quader:ost.u0": 9.0,
+  "quader:ost.u1": 14.0,
+  "quader:ost.n0": 7.0,
+  "quader:ost.n1": 12.5,
+  "quader:ost.z0": 1.0,
+  "quader:ost.z1": 11.0
+ },
+ "nachher": {
+  "quader:ost.u0": 9.4386,
+  "quader:ost.u1": 12.8932,
+  "quader:ost.n0": 9.9187,
+  "quader:ost.n1": 10.3478,
+  "quader:ost.z0": 3.9941,
+  "quader:ost.z1": 12.0619
+ },
+ "J_vorher": 0.34628909826278687,
+ "J_nachher": 0.310393750667572,
+ "median_vorher": 0.1629972904920578,
+ "median_nachher": 0.1532844454050064,
+ "p90_vorher": 0.5315296649932861,
+ "p90_nachher": 0.31325042247772217
+}

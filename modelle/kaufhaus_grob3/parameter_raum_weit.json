@@ -1,0 +1,245 @@
+{
+ "_doku": "automatisch breit (parameter_raum_weit.py)",
+ "erker:0": {
+  "mitte_u": {
+   "lo": -10.168,
+   "hi": -7.768,
+   "start": -8.968
+  },
+  "breite": {
+   "lo": 1.117,
+   "hi": 3.349,
+   "start": 2.233
+  },
+  "auskragung": {
+   "lo": -0.324,
+   "hi": 2.076,
+   "start": 0.876
+  },
+  "unterkante_z": {
+   "lo": 3.6,
+   "hi": 6.0,
+   "start": 4.8
+  },
+  "oberkante_z": {
+   "lo": 8.7,
+   "hi": 11.1,
+   "start": 9.9
+  },
+  "wand_n": {
+   "lo": 12.239,
+   "hi": 14.639,
+   "start": 13.439
+  },
+  "spitze_z": {
+   "lo": 12.182,
+   "hi": 14.582,
+   "start": 13.382
+  }
+ },
+ "erker:1": {
+  "mitte_u": {
+   "lo": 7.158,
+   "hi": 9.558,
+   "start": 8.358
+  },
+  "breite": {
+   "lo": 0.877,
+   "hi": 2.631,
+   "start": 1.754
+  },
+  "auskragung": {
+   "lo": -0.483,
+   "hi": 1.917,
+   "start": 0.717
+  },
+  "unterkante_z": {
+   "lo": 3.65,
+   "hi": 6.05,
+   "start": 4.85
+  },
+  "oberkante_z": {
+   "lo": 8.45,
+   "hi": 10.85,
+   "start": 9.65
+  },
+  "wand_n": {
+   "lo": 12.239,
+   "hi": 14.639,
+   "start": 13.439
+  },
+  "spitze_z": {
+   "lo": 10.967,
+   "hi": 13.367,
+   "start": 12.167
+  }
+ },
+ "staffelgiebel:west": {
+  "u_aussen": {
+   "lo": -11.1,
+   "hi": -8.7,
+   "start": -9.9
+  },
+  "dicke": {
+   "lo": 0.3,
+   "hi": 0.9,
+   "start": 0.6
+  },
+  "n_hinten": {
+   "lo": 4.8,
+   "hi": 7.2,
+   "start": 6.0
+  },
+  "n_vorn": {
+   "lo": 13.1,
+   "hi": 15.5,
+   "start": 14.3
+  },
+  "z_traufe": {
+   "lo": 8.4,
+   "hi": 10.8,
+   "start": 9.6
+  },
+  "z_spitze": {
+   "lo": 19.3,
+   "hi": 21.7,
+   "start": 20.5
+  },
+  "spitze_breite": {
+   "lo": 0.45,
+   "hi": 1.35,
+   "start": 0.9
+  },
+  "kappe": {
+   "lo": 0.0,
+   "hi": 0.45,
+   "start": 0.15
+  }
+ },
+ "staffelgiebel:ost": {
+  "u_aussen": {
+   "lo": 8.1,
+   "hi": 10.5,
+   "start": 9.3
+  },
+  "dicke": {
+   "lo": 0.3,
+   "hi": 0.9,
+   "start": 0.6
+  },
+  "n_hinten": {
+   "lo": 4.8,
+   "hi": 7.2,
+   "start": 6.0
+  },
+  "n_vorn": {
+   "lo": 13.1,
+   "hi": 15.5,
+   "start": 14.3
+  },
+  "z_traufe": {
+   "lo": 8.4,
+   "hi": 10.8,
+   "start": 9.6
+  },
+  "z_spitze": {
+   "lo": 19.2,
+   "hi": 21.6,
+   "start": 20.4
+  },
+  "spitze_breite": {
+   "lo": 0.45,
+   "hi": 1.35,
+   "start": 0.9
+  },
+  "kappe": {
+   "lo": 0.0,
+   "hi": 0.45,
+   "start": 0.15
+  }
+ },
+ "gaubenreihe:unten": {
+  "u_mitte": {
+   "lo": -1.826,
+   "hi": 0.574,
+   "start": -0.6257
+  },
+  "pitch": {
+   "lo": 1.89,
+   "hi": 5.89,
+   "start": 3.8897
+  },
+  "t": {
+   "lo": 0.0,
+   "hi": 1.0,
+   "start": 0.0586
+  },
+  "breite": {
+   "lo": 0.47,
+   "hi": 1.409,
+   "start": 0.9391
+  },
+  "wandhoehe": {
+   "lo": 0.6,
+   "hi": 1.8,
+   "start": 1.2
+  },
+  "vor": {
+   "lo": -0.825,
+   "hi": 1.575,
+   "start": 0.3751
+  },
+  "tiefe": {
+   "lo": 0.5,
+   "hi": 1.5,
+   "start": 1.0
+  },
+  "firsthoehe": {
+   "lo": 0.45,
+   "hi": 1.35,
+   "start": 0.9
+  }
+ },
+ "gaubenreihe:oben": {
+  "u_mitte": {
+   "lo": -1.59,
+   "hi": 0.81,
+   "start": -0.3904
+  },
+  "pitch": {
+   "lo": 2.348,
+   "hi": 6.348,
+   "start": 4.3476
+  },
+  "t": {
+   "lo": 0.0,
+   "hi": 1.0,
+   "start": 0.3894
+  },
+  "breite": {
+   "lo": 0.482,
+   "hi": 1.445,
+   "start": 0.9633
+  },
+  "wandhoehe": {
+   "lo": 0.6,
+   "hi": 1.8,
+   "start": 1.2
+  },
+  "vor": {
+   "lo": -0.865,
+   "hi": 1.535,
+   "start": 0.3346
+  },
+  "tiefe": {
+   "lo": 0.5,
+   "hi": 1.5,
+   "start": 1.0
+  },
+  "firsthoehe": {
+   "lo": 0.45,
+   "hi": 1.35,
+   "start": 0.9
+  }
+ }
+}

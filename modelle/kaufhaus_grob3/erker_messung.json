@@ -1,0 +1,291 @@
+{
+ "achse_n": [
+  0.3338,
+  0.9426
+ ],
+ "wandebene_n": {
+  "wert": 13.439,
+  "sigma": 0.025,
+  "n_punkte": 134527,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+  "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+  "merkmal": "Wandebene n (Gipfel im Band 6.8..9.0 m, u -6..6)"
+ },
+ "n_erker_aus_wolke": 2,
+ "kandidaten_verworfen": [
+  {
+   "u0": -6.2,
+   "u1": -6.1,
+   "grund": "Breite < 0.8 m (Pilaster/Gesims, kein Erker)"
+  },
+  {
+   "u0": -5.0,
+   "u1": -4.4,
+   "grund": "Breite < 0.8 m (Pilaster/Gesims, kein Erker)"
+  },
+  {
+   "u0": -2.0,
+   "u1": -1.5,
+   "grund": "Breite < 0.8 m (Pilaster/Gesims, kein Erker)"
+  },
+  {
+   "u0": 5.3,
+   "u1": 5.4,
+   "grund": "Breite < 0.8 m (Pilaster/Gesims, kein Erker)"
+  }
+ ],
+ "erker": [
+  {
+   "index": 0,
+   "mitte_u": {
+    "wert": -8.968,
+    "sigma": 0.025,
+    "n_punkte": 20940,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "Erker-Mitte entlang Fassade (u)"
+   },
+   "breite": {
+    "wert": 2.233,
+    "sigma": 0.025,
+    "n_punkte": 20940,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "Erker-Breite P2-P98 (u)"
+   },
+   "front_n": {
+    "wert": 14.314,
+    "sigma": 0.025,
+    "n_punkte": 20940,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "n der Frontflaeche"
+   },
+   "auskragung": {
+    "wert": 0.876,
+    "sigma": 0.025,
+    "n_punkte": 20940,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "Auskragung = n_front - n_wand"
+   },
+   "unterkante_z": {
+    "wert": 4.8,
+    "sigma": 0.025,
+    "n_punkte": 32555,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py (Block >= 0.25 x mittlere Dichte/5 cm)",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "Unterkante der senkrechten Front"
+   },
+   "oberkante_z": {
+    "wert": 9.9,
+    "sigma": 0.025,
+    "n_punkte": 32555,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "Oberkante der senkrechten Front / Dachansatz"
+   },
+   "spitze_z": {
+    "wert": 13.382,
+    "sigma": 0.026,
+    "n_punkte": 7723,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "hoechster Punkt (P99,5) ueber der Front im Erkerbereich (Laser/SfM blind fuer Nadeln, Untergrenze)"
+   },
+   "dachform": {
+    "art": "geneigt_verjuengend (Helm/Pyramide/Zelt: Silhouette faellt zur Wand, Spitze 3.5 m ueber Oberkante der Front)",
+    "silhouette_steigung_n_je_z": {
+     "wert": -0.168,
+     "sigma": 0.025,
+     "n_punkte": 8,
+     "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+     "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+     "merkmal": "Steigung n_P98(z) in m/m"
+    },
+    "breite_steigung_u_je_z": {
+     "wert": -0.645,
+     "sigma": 0.025,
+     "n_punkte": 8,
+     "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+     "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+     "merkmal": "Steigung u-Breite(z); sigma nicht bestimmt"
+    },
+    "profil": [
+     {
+      "z": 9.75,
+      "n_ueber_wand": 0.83,
+      "u_breite": 2.52,
+      "n_punkte": 4439
+     },
+     {
+      "z": 10.25,
+      "n_ueber_wand": 0.72,
+      "u_breite": 2.3,
+      "n_punkte": 2315
+     },
+     {
+      "z": 10.75,
+      "n_ueber_wand": 0.57,
+      "u_breite": 0.92,
+      "n_punkte": 1420
+     },
+     {
+      "z": 11.25,
+      "n_ueber_wand": 0.5,
+      "u_breite": 0.67,
+      "n_punkte": 1170
+     },
+     {
+      "z": 11.75,
+      "n_ueber_wand": 0.39,
+      "u_breite": 0.5,
+      "n_punkte": 876
+     },
+     {
+      "z": 12.25,
+      "n_ueber_wand": 0.3,
+      "u_breite": 0.43,
+      "n_punkte": 615
+     },
+     {
+      "z": 12.75,
+      "n_ueber_wand": 0.26,
+      "u_breite": 0.34,
+      "n_punkte": 321
+     },
+     {
+      "z": 13.25,
+      "n_ueber_wand": 0.28,
+      "u_breite": 0.28,
+      "n_punkte": 102
+     }
+    ],
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "Dachform des Erkers",
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py"
+   }
+  },
+  {
+   "index": 1,
+   "mitte_u": {
+    "wert": 8.358,
+    "sigma": 0.025,
+    "n_punkte": 29254,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "Erker-Mitte entlang Fassade (u)"
+   },
+   "breite": {
+    "wert": 1.754,
+    "sigma": 0.025,
+    "n_punkte": 29254,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "Erker-Breite P2-P98 (u)"
+   },
+   "front_n": {
+    "wert": 14.156,
+    "sigma": 0.025,
+    "n_punkte": 29254,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "n der Frontflaeche"
+   },
+   "auskragung": {
+    "wert": 0.717,
+    "sigma": 0.025,
+    "n_punkte": 29254,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "Auskragung = n_front - n_wand"
+   },
+   "unterkante_z": {
+    "wert": 4.85,
+    "sigma": 0.025,
+    "n_punkte": 50176,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py (Block >= 0.25 x mittlere Dichte/5 cm)",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "Unterkante der senkrechten Front"
+   },
+   "oberkante_z": {
+    "wert": 9.65,
+    "sigma": 0.068,
+    "n_punkte": 50176,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "Oberkante der senkrechten Front / Dachansatz"
+   },
+   "spitze_z": {
+    "wert": 12.167,
+    "sigma": 0.077,
+    "n_punkte": 4601,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "hoechster Punkt (P99,5) ueber der Front im Erkerbereich (Laser/SfM blind fuer Nadeln, Untergrenze)"
+   },
+   "dachform": {
+    "art": "geneigt_verjuengend (Helm/Pyramide/Zelt: Silhouette faellt zur Wand, Spitze 2.5 m ueber Oberkante der Front)",
+    "silhouette_steigung_n_je_z": {
+     "wert": -0.216,
+     "sigma": 0.041,
+     "n_punkte": 5,
+     "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+     "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+     "merkmal": "Steigung n_P98(z) in m/m"
+    },
+    "breite_steigung_u_je_z": {
+     "wert": -0.718,
+     "sigma": 0.025,
+     "n_punkte": 5,
+     "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py",
+     "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+     "merkmal": "Steigung u-Breite(z); sigma nicht bestimmt"
+    },
+    "profil": [
+     {
+      "z": 9.75,
+      "n_ueber_wand": 0.61,
+      "u_breite": 1.93,
+      "n_punkte": 2539
+     },
+     {
+      "z": 10.25,
+      "n_ueber_wand": 0.44,
+      "u_breite": 0.95,
+      "n_punkte": 1143
+     },
+     {
+      "z": 10.75,
+      "n_ueber_wand": 0.32,
+      "u_breite": 0.61,
+      "n_punkte": 846
+     },
+     {
+      "z": 11.25,
+      "n_ueber_wand": 0.22,
+      "u_breite": 0.45,
+      "n_punkte": 555
+     },
+     {
+      "z": 11.75,
+      "n_ueber_wand": 0.18,
+      "u_breite": 0.39,
+      "n_punkte": 115
+     }
+    ],
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "Dachform des Erkers",
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_erker_messen.py"
+   }
+  }
+ ],
+ "hinweis": "Anzahl_wolke ist KEIN Sollwert (Regel 9); Zaehlung nur Foto.",
+ "konsistenz_foto": {
+  "n_erker_foto": 2,
+  "quelle_foto": "Z-043-002",
+  "n_erker_wolke": 2,
+  "gleich": true,
+  "hinweis": "nur Vergleich, nicht gemittelt; Widerspruch bleibt offen (Regel 5)"
+ }
+}

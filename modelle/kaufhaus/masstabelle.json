@@ -103,6 +103,33 @@
    "text": "3D-Ansicht Kaufhaus (Fotofarben): 'viel zu dunkel, viel zu grob'",
    "merkmal": "farbe/aufloesung der Fototextur (Viewer), nicht Geometrie",
    "naechster_schritt": "messen: (a) Helligkeit Render vs. Fotopixel derselben Flaechen (Median-Luminanz-Verhaeltnis, Soll ~1), (b) Texelgroesse (Soll <= 3 cm/Texel H0-Vorschau statt 25 cm Eckenfarbe); Ursachen-Verdacht: Viewer sRGB->linear ohne Rueckwandlung + Lambert-Schattierung auf bereits belichteten Fotofarben; Eckenfarben auf 25-cm-Netz statt Texturatlas"
+  },
+  {
+   "datum": "2026-11-06",
+   "wer": "Nutzer",
+   "text": "Dichtewolke (kaufhaus_handy3/dicht_neu, Stapel sicher_a_m_v2_00+01): Bogendurchgang/Arkadengang unten 'so schlecht'",
+   "merkmal": "Punktdichte der dichten Wolke im Arkadenbereich (Haus-Kasten x -6..14, y 3..17 m, Modellrahmen)",
+   "messung_6_11": "Punkte je m Hoehe: z0-1 m 7570, z1-2 m 3748, z2-3 m 6815, z3-4 m 26155, z4-5 m 69052, z5-7 m 54048, z7-10 m 47992 -> unter 3 m 5-10x duenner als Fassade darueber (Stapel 02 und npq noch ausstehend)",
+   "ursachen_verdacht": "UNGEPRUEFT (Hypothesen): Gewoelbe texturarm/ueberbelichtet und Sockel durch Markt/Transporter verdeckt (Eignungsbericht foto_eignung/BERICHT.md); 79 'unsicher' Bilder nicht gerechnet; Masken; wenige Standpunkte im Gang",
+   "naechster_schritt": "(1) nach Stapel 02/npq Dichte je Hoehe neu messen; (2) je Bild Anteil Tiefenkarten-Pixel gueltig im Bereich z<3 m, Bilder mit Blick in den Gang zaehlen; (3) pruefen, ob 'unsicher'-Bilder dort liegen; Pruefung 'Dichte z<3 m >= 25 % der Dichte 5-10 m' als FEHLSCHLAEGT eintragen, dann erst Pipeline aendern"
+  },
+  {
+   "datum": "2026-11-06",
+   "wer": "Nutzer",
+   "text": "Dichtewolke: Seitenwand (Gassenwand) ebenfalls duenn/leer; Nutzer vermutet: weil einfarbig",
+   "merkmal": "Punktdichte der dichten Wolke an glatter einfarbiger Wand (Seitenansicht y-z, Wand links vom Haus)",
+   "ursachen_verdacht": "HYPOTHESE (ungeprueft): texturarme Flaeche -> PatchMatch/Photokonsistenz mehrdeutig, Tiefenkarte verworfen. Stuetzt: Eignungsbericht 6.11. 'Gassenwand glatt, dunkel, merkmalsarm, teils verwackelt' (Serie 07/02). Alternativen: zu wenige Standpunkte/streifende Blickwinkel, Masken, 79 'unsicher' Bilder nicht gerechnet",
+   "naechster_schritt": "messen: Textur (Gradientenstaerke/Laplace) je Wandbereich im Foto gegen Tiefenkarten-Gueltigkeit derselben Pixel (Korrelation); pruefen, ob 'unsicher'-Bilder die Wand sehen; erst dann Gegenmassnahme (Ebenenmodell fuer glatte Flaechen, nur aus Wolkenrand; keine LoD2 als Basis, Nutzerentscheid 5.11.)"
+  },
+  {
+   "datum": "2026-11-06",
+   "wer": "Claude (Messung)",
+   "text": "Dach in neuer Dichtewolke (5 Stapel, 754 k Punkte, kaufhaus_handy3/dicht_neu) weiterhin tiefer als LoD2/DOM1",
+   "merkmal": "hoehe_flaeche First/Dach",
+   "messung_6_11": "Hauskasten x -7..14, y 3..17, z>11: 58161 Punkte; z P50 13,56 / P90 17,48 / P99 19,19 / P99,9 20,10 / max 20,98 (Max = Turmspitzen an den Ecken); Zell-Top P95 (1 m Zellen, >=20 Punkte): Median 15,53, P99 19,9, max 20,65. Soll First 21,0-21,8 (LoD2 20,97 + 0,43 Boden; DOM1 20,8).",
+   "befund": "Dachfirst-Punkte der Wolke ca. 1,1-2,0 m unter LoD2/DOM1-First, trotz 224 statt 12 Bildern -> Dach bleibt Wolken-Luecke (texturarm), nicht durch Bildzahl behoben. NICHT mitteln. Einschraenkung: Perzentil duenn besetzter Dachzellen unterschaetzt den First; Rahmenversatz +0,43 m (LoD2-Boden) nicht herausgerechnet.",
+   "naechster_schritt": "(1) First-Linie gezielt messen: Punkte nahe der LoD2-Firstebene +-2 m, Dichte je Hoehe, ob ueberhaupt Punkte bei 20-21 m auf der Dachflaeche liegen; (2) Foto-Gegenprobe (Foto-Hoehe First per foto_mass.py mit Anker); (3) erst dann entscheiden Wolke vs Quellen fuer Dach",
+   "einschraenkung_korrektur_6_11": "Nutzer: Dach sei nicht duenn besetzt. Grobe Dichte: 58161 Punkte z>11 auf ca. 200-300 m2 Dachflaeche (ANNAHME aus Kastenmassen) = ca. 200-300 Punkte/m2, also dicht. Die Einschraenkung 'duenn besetzt' ist damit hinfaellig; der Hoehenunterschied zu LoD2/DOM1-First (1,1-2,0 m) ist dann kein Stichprobeneffekt, sondern systematisch (Wolke tiefer oder LoD2/DOM1 hoeher). Nicht mitteln; Foto-Gegenprobe entscheidet."
   }
  ]
 }

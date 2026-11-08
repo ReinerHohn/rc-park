@@ -360,3 +360,66 @@ def oeffnungsreihe_aus_profil(profil_pfad, z_min, n_soll, hoehe, stich_anteil, t
         sp = n_soll * rueckfall["breite"] + (n_soll - 1) * rueckfall["pfeiler"]
         lf = [[-sp / 2 + i * (rueckfall["breite"] + rueckfall["pfeiler"]), rueckfall["breite"]] for i in range(n_soll)]; zo = rueckfall["scheitel"]; q = "foto_rueckfall"
     return segmentbogen_reihe(lf, n_soll, zo, hoehe, stich_anteil), q
+
+
+# ------------------------------------------------------------------ Netz-Neuvernetzung (S4, 2026-11-05)
+def netz_druckbar(V, F, zelle_m, vol_min=0.90, vol_max=1.00, sigma=0.5, max_unsicher=0.01, simpl=0.02):
+    """Bild-zu-3D-Netz (TripoSR u. a.) auf Druckaufloesung neu vernetzen. V (n,3) Meter, F (m,3) Indizes; zelle_m = Duese x Massstab / 1000 (Zelle des Innen-Gitters).
+    Warum (versuche.jsonl 'figuren-druckbar-ursache'): die Netze sind mannigfaltig, aber ihre Feinstruktur unter Druckaufloesung wird beim Export (simplify, float32-STL) zu
+    Beruehrkanten (123-155 Koerper). Verfahren: Innen-Test = Paritaet entlang z-Strahlen (je Gitterzelle), Besetzung -> groesste zusammenhaengende Komponente ->
+    Gauss-Glaettung (sigma Zellen) -> Oberflaeche bei Level l per manifold3d.level_set (Marching Tetrahedra, garantiert mannigfaltig; skimage-Marching-Cubes fehlt in der
+    Generator-Umgebung). Der Level l wird aus 0,5/0,48/... (nach aussen wachsend) so gewaehlt, dass das Volumen in [vol_min, vol_max] des Originals liegt (Spec 90-100 %); sonst Verwerfen.
+    Schwellen als Argumente: vol_min/vol_max aus Spec S4; sigma 0,5 (bei Nichtgelingen werden 0,4 und 0,6 probiert; gemessen an 4 TripoSR-Figuren: sigma 0,8 zerlegt das Netz in Teile, Hauptteil nur 42-57 % des Volumens; 0,4-0,5: 1 Koerper, 90-97 % bei Level 0,5); simpl = Kantenlaenge (Anteil der Zelle) unter der Level-Set-Dreiecke zusammengezogen werden (0,02: nur Entartete; mit trimesh process=True gemessen: ohne diesen Schritt 1 von 4 Netzen mit Nullflaechen-Dreiecken -> 4 Koerper/Loecher); max_unsicher = Anteil Strahlen mit
+    ungerader Trefferzahl (Netz nicht geschlossen), darueber Verwerfen.
+    Rueckgabe: (V2, F2, info) mit info = dict(ok, grund, zelle_m, vol_orig, vol_neu, anteil, level, dreiecke_alt, dreiecke_neu, unsicher); bei ok=False sind V2/F2 None."""
+    import numpy as np
+    from scipy import ndimage
+    V = np.asarray(V, float); F = np.asarray(F, int); info = dict(ok=False, zelle_m=float(zelle_m), dreiecke_alt=int(len(F)))
+    T = V[F]; vol0 = abs(float(np.einsum("ij,ij->i", T[:, 0], np.cross(T[:, 1], T[:, 2])).sum() / 6.0)); info["vol_orig"] = vol0
+    if vol0 <= 0 or M is None: info["grund"] = "Volumen 0 oder manifold3d fehlt"; return None, None, info
+    lo = V.min(0) - 3 * zelle_m; hi = V.max(0) + 3 * zelle_m; n = np.ceil((hi - lo) / zelle_m).astype(int); n = np.maximum(n, 4); hi = lo + n * zelle_m
+    eps = np.array([0.4142135, 0.7320508]) * 1e-6 * zelle_m                                           # Strahlen leicht versetzt: keine Treffer genau auf Dreieckskanten
+    p = T[:, :, :2]; a, b, c = p[:, 0], p[:, 1], p[:, 2]; d = (b[:, 1] - c[:, 1]) * (a[:, 0] - c[:, 0]) + (c[:, 0] - b[:, 0]) * (a[:, 1] - c[:, 1])
+    ok_t = np.abs(d) > 1e-18                                                                          # senkrechte Dreiecke (Projektionsflaeche 0) treffen keinen z-Strahl
+    i0 = np.floor((p[:, :, 0].min(1) - lo[0]) / zelle_m - 0.5).astype(int) + 1; i1 = np.floor((p[:, :, 0].max(1) - lo[0]) / zelle_m - 0.5).astype(int) + 1
+    j0 = np.floor((p[:, :, 1].min(1) - lo[1]) / zelle_m - 0.5).astype(int) + 1; j1 = np.floor((p[:, :, 1].max(1) - lo[1]) / zelle_m - 0.5).astype(int) + 1
+    hits = []                                                                                         # (ray = i*ny + j, z)
+    def treffer(idx, di, dj):
+        i = i0[idx] + di; j = j0[idx] + dj; ok = ok_t[idx] & (i <= i1[idx]) & (j <= j1[idx]) & (i >= 0) & (j >= 0) & (i < n[0]) & (j < n[1]); idx, i, j = idx[ok], i[ok], j[ok]
+        x = lo[0] + (i + 0.5) * zelle_m + eps[0]; y = lo[1] + (j + 0.5) * zelle_m + eps[1]
+        l1 = ((b[idx, 1] - c[idx, 1]) * (x - c[idx, 0]) + (c[idx, 0] - b[idx, 0]) * (y - c[idx, 1])) / d[idx]; l2 = ((c[idx, 1] - a[idx, 1]) * (x - c[idx, 0]) + (a[idx, 0] - c[idx, 0]) * (y - c[idx, 1])) / d[idx]; l3 = 1 - l1 - l2
+        im = (l1 >= 0) & (l2 >= 0) & (l3 >= 0); idx, i, j, l1, l2, l3 = idx[im], i[im], j[im], l1[im], l2[im], l3[im]
+        hits.append((i * n[1] + j, l1 * T[idx, 0, 2] + l2 * T[idx, 1, 2] + l3 * T[idx, 2, 2]))
+    span = np.maximum(i1 - i0, j1 - j0); klein = np.where(span <= 3)[0]; gross = np.where(span > 3)[0]
+    for di in range(4):
+        for dj in range(4): treffer(klein, di, dj)
+    for t in gross:                                                                                   # wenige grosse Dreiecke (Deckel/Boden): einzeln
+        for di in range(i1[t] - i0[t] + 1):
+            for dj in range(j1[t] - j0[t] + 1): treffer(np.array([t]), di, dj)
+    ray = np.concatenate([h[0] for h in hits]); zz = np.concatenate([h[1] for h in hits]); o = np.lexsort((zz, ray)); ray, zz = ray[o], zz[o]
+    occ = np.zeros(tuple(n), bool); start = np.r_[0, np.where(np.diff(ray))[0] + 1, len(ray)]; ungerade = 0
+    for s0, s1 in zip(start[:-1], start[1:]):
+        if (s1 - s0) % 2: ungerade += 1; continue
+        i, j = divmod(int(ray[s0]), int(n[1]))
+        for q in range(s0, s1, 2):
+            k0 = int(np.ceil((zz[q] - lo[2]) / zelle_m - 0.5)); k1 = int(np.ceil((zz[q + 1] - lo[2]) / zelle_m - 0.5)); occ[i, j, max(k0, 0):max(k1, 0)] = True
+    info["unsicher"] = round(ungerade / max(1, len(start) - 1), 4)
+    if info["unsicher"] > max_unsicher: info["grund"] = f"Netz nicht geschlossen ({info['unsicher']:.1%} Strahlen mit ungerader Trefferzahl)"; return None, None, info
+    lab, nl = ndimage.label(occ)
+    if nl == 0: info["grund"] = "Netz unter Druckaufloesung (keine besetzte Zelle)"; return None, None, info
+    occ = lab == (1 + int(np.argmax(ndimage.sum(occ, lab, range(1, nl + 1)))))                        # groesste Komponente
+    f = lambda x, y, z: float(ndimage.map_coordinates(gl, [[(x - lo[0]) / zelle_m - 0.5], [(y - lo[1]) / zelle_m - 0.5], [(z - lo[2]) / zelle_m - 0.5]], order=1, mode="constant")[0]) - lvl
+    import trimesh as _tm
+    gl = None; sg_alt = None; lvl = 0.5
+    for ver, sg, lvl in [(v_, sg_, l_) for v_ in (0.0, 0.37, 0.71) for sg_ in (sigma, sigma - 0.1, sigma + 0.1) for l_ in (0.5, 0.49, 0.48, 0.47, 0.46, 0.45, 0.44, 0.42)]:   # ver = Versatz des Level-Set-Gitters in Zellen (anderes Schnappen der Punkte)
+        if sg != sg_alt: gl = ndimage.gaussian_filter(occ.astype(float), sg, mode="constant"); sg_alt = sg
+        m = M.level_set(f, list(lo + ver * zelle_m) + list(hi + ver * zelle_m), zelle_m)
+        if m.is_empty(): continue
+        parts = m.decompose(); m = max(parts, key=lambda q: q.volume()).simplify(simpl * zelle_m); r = m.volume() / vol0      # simplify: entartete Dreiecke aus dem Level-Set-Schnappen (Flaeche 0) entfernen
+        mm = m.to_mesh(); t = _tm.Trimesh(np.asarray(mm.vert_properties)[:, :3].astype(np.float32).astype(float), np.asarray(mm.tri_verts), process=True)   # wie der STL-Export: float32 + Punkte verschweissen
+        if not (t.is_watertight and len(t.split(only_watertight=False)) == 1): info["anteil"] = round(float(r), 4); info["grund"] = "Level-Set-Netz nach Verschweissen nicht wasserdicht"; continue   # Beruehrstellen (Level-Set erzeugt doppelte Punkte) -> naechster Level
+        if vol_min <= r <= vol_max:
+            info.update(ok=True, grund="", vol_neu=float(m.volume()), anteil=round(float(r), 4), level=lvl, dreiecke_neu=int(len(t.faces)), komponenten=sum(1 for q in parts if q.volume() > 0.01 * vol0))
+            return np.asarray(t.vertices, float), np.asarray(t.faces, int), info
+        info["anteil"] = round(float(r), 4)
+    info["grund"] = f"Netz unter Druckaufloesung (letzter Versuch: Volumen {info.get('anteil', 0):.0%} ausserhalb {vol_min:.0%}-{vol_max:.0%} oder nicht wasserdicht nach Verschweissen: {info.get('grund', '')})"; return None, None, info

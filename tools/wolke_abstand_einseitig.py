@@ -17,6 +17,7 @@ import os, sys, json, argparse, numpy as np, cv2, trimesh
 from scipy.spatial import cKDTree
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import freiraum_pruefen as FP
+from gpu_knn import min_abstand   # GPU (Nutzerregel); Dichte-Ballabfrage unten bleibt CPU (nur 20000 Abfragepunkte)
 
 
 def wolke_im_modellrahmen(dicht, ausr):
@@ -36,7 +37,7 @@ def bewerten(m, X, baender, n=200000, dichte_min=20.0, tol=(0.5, 1.0), seed=1):
     rng = np.random.default_rng(seed)
     P, fi = trimesh.sample.sample_surface(m, n, seed=seed)                 # gleichmaessig nach Flaeche
     flaeche = m.area; w_je = flaeche / n                                    # m2 je Stichprobe
-    tree = cKDTree(X); d, _ = tree.query(P, k=1, workers=-1)
+    tree = cKDTree(X); d = min_abstand(P, X)
     nb = tree.query_ball_point(P[:: max(1, n // 20000)], r=1.0, workers=-1, return_length=True)   # Wolkenpunkte im Umkreis 1 m (Unterstichprobe)
     nb_full = np.zeros(len(P)); nb_full[:: max(1, n // 20000)] = nb; idx_nb = np.arange(0, len(P), max(1, n // 20000))
     ber = []

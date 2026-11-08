@@ -1,0 +1,19 @@
+{
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob_1-87.stl",
+ "werte": {
+  "hoehe": 16.447071155548095
+ },
+ "pruefungen": [
+  {
+   "name": "Gesamthoehe Unterkante-Oberkante (m), gegen Wolkennetz im selben Rahmen",
+   "wert": 16.447071155548095,
+   "soll": [
+    18.8,
+    19.8
+   ],
+   "ok": false,
+   "status": "fehler"
+  }
+ ],
+ "bestanden": false
+}

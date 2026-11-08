@@ -10,7 +10,11 @@ Beim ersten Start einer Sitzung auf einem neuen/anderen Rechner pruefen und ggf.
   diese Datei ergaenzen.
 - GPU-Leistungslimit: `nvidia-smi -q -d POWER` zeigt Current/Max; OMEN 16: 80 W Standard, 140 W moeglich: `sudo nvidia-smi -pl 140`
   (gilt bis Neustart; nur mit laufendem Luefterregler sinnvoll). Energieprofil: `powerprofilesctl set performance`.
-- Nur EIN GPU-Job zur Zeit: COLMAP SIFT-GPU stuerzt neben LightGlue/Torch ab ('illegal memory access'). `tools/nullstart.py` wartet per
+- **CPU-Leistung (6.11.):** Werkseinstellung 25 W/31 W (Chip darf 55 W), Takt unter Last ~1 GHz. Pakete einmalig: `sudo apt install linux-tools-$(uname -r) msr-tools` + `sudo modprobe msr`
+  (turbostat/rdmsr, ohne sie laeuft `tools/leistung_diagnose.sh` nicht; nach Kernel-Update nachziehen). Messung/Regler/Dienst: `modelle/CPU_LEISTUNG.md`
+  (`sudo bash tools/leistung_testen.sh --beide`, `sudo tools/cpu_leistung_installieren.sh`). GPU-Powerlimit per `nvidia-smi -pl` bringt hier nichts (Karte bleibt bei ~80 W).
+- GPU parallel: Absturz = VRAM-Summe > ~7,8 GB; Budget-Jobs per `JOB_GPU_MB` in `tools/job_start.sh`, SIFT `RCPARK_SIFT_MAX=1600` (Details `modelle/GPU_PARALLEL_UNTERSUCHUNG.md`, `modelle/CPU_LEISTUNG.md` Abschnitt 5).
+- Nur EIN GPU-Job zur Zeit (Altregel, bleibt fuer Jobs OHNE Budget): COLMAP SIFT-GPU stuerzt neben LightGlue/Torch ab ('illegal memory access'). `tools/nullstart.py` wartet per
   gpu_warten(), die Ernte deckelt auf 45 % GPU-Speicher; `sfm_netz.py` hat CPU-Rueckfall.
 
 ## 2. Platten

@@ -13,7 +13,7 @@ import sys, os, re, json, numpy as np, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Messarten, die Struktur zaehlen/messen (Oeffnungen, Nischen, Elemente je Band): Merkmal nur anzahl|fassade + Foto-Zaehlprotokoll (Register CB)
-STRUKTUR_TYPEN = {"flaeche_oeffnungen", "nischen_anzahl", "anzahl_im_band"}
+STRUKTUR_TYPEN = {"flaeche_oeffnungen", "ebene_oeffnungen", "nischen_anzahl", "anzahl_im_band"}
 
 # Was eine Quelle beweisen kann (Erfahrung dieses Projekts; Begruendung in modelle/METHODE_MASSTABELLE.md)
 QUELLEN = {
@@ -37,6 +37,9 @@ QUELLEN = {
                                    "1,7 +- 0,6 m; Massstab +-2-3 %, Hoehe +-0,7 m systematisch; sieht keine Fassadenzaehlung (Punkte, keine Semantik). Register AH"},
     "dokument":        {"sieht": ["absolut_hoehe", "anzahl", "grundriss"],               "blind": ["schlankheit", "duennes_bauteil", "fassade"],
                         "hinweis": "Bauforschung/Denkmalamt/Wikipedia; Bezugshoehe oft unklar (60 vs 65 m)"},
+    "foto_freiraum":   {"sieht": ["fassade", "freiraum"], "blind": ["absolut_hoehe", "anzahl", "schlankheit", "duennes_bauteil"],
+                        "hinweis": "Sichtstrahlen Kamera->Punkt der dichten Fotowolke (fused.ply.vis) gegen das Modell (tools/freiraum_pruefen.py): Modellmaterial, durch das >= 3 Kameras sehen; "
+                                   "sieht Durchgaenge/Arkaden/Nischen, blind hinter Glas/Jalousien und wo keine Kamera hinsieht (Scan2LoD3-Prinzip, Register 5.11.)"},
     "modell":          {"sieht": ["druck"], "blind": [], "hinweis": "Druckbarkeit, keine Realitaetsaussage"},
 }
 
@@ -138,6 +141,15 @@ class Messer:
     def knauf_achse(self, z0, z1, dz, r, **k):
         zs = np.arange(z0, z1, dz); ws = [self.breite_achse(z, r) for z in zs]; i = int(np.argmax(ws))
         return {"breite": float(ws[i]), "z": float(zs[i])}
+    def freiraum_offen(self, ordner, klasse="oeffnung", **k):
+        """Flaeche (m2) gesehenen Freiraums OHNE Modelloeffnung (tools/freiraum_pruefen.py -> freiraum_fassaden.py --stl -> freiraum_oeffnungen.py, Ergebnisse in <ordner>).
+        Gilt nur, wenn die Auswertung zu DIESEM Modell gehoert (Volumen gleich auf 0,5 %), sonst nan (= Pruefung faellt durch, Auswertung neu rechnen)."""
+        d = ordner if os.path.isabs(ordner) else os.path.join(self.root, os.path.dirname(self.obj["masstabelle"]), ordner)
+        try: fr = json.load(open(os.path.join(d, "freiraum.json"))); E = json.load(open(os.path.join(d, "elemente_freiraum.json")))
+        except (OSError, ValueError): return float("nan")
+        v = fr.get("modell_volumen_m3"); vm = abs(float(self.m.volume))
+        if not v or abs(vm / v - 1) > 0.005: return float("nan")
+        return float(sum((e["u1"] - e["u0"]) * (e["z1"] - e["z0"]) for F in E["fassaden"].values() for e in F["elemente"] if e["klasse"] == klasse and "freiraum_oeffnungen" in e.get("quelle", "")))
     def wasserdicht(self, **k): return 1.0 if self.m.is_watertight else 0.0
     def koerper_anzahl(self, **k): return float(len(self.m.split(only_watertight=False)))
     def nischen_anzahl(self, seite, z, halb, tiefe, schritt=0.05, min_b=0.3, max_b=2.0, mitte=0.0, wand=None, **k):
@@ -228,6 +240,32 @@ class Messer:
                 if run * schritt >= min_b: laeufe.append(run * schritt)
                 run = 0
         return {"anzahl": float(len(laeufe)), "breite_median": float(np.median(laeufe)) if laeufe else 0.0, "breite_max": float(max(laeufe)) if laeufe else 0.0}
+    def ebene_oeffnungen(self, o, n, z, u0, u1, tiefe=0.5, vor=3.0, schritt=0.04, min_b=0.3, max_b=8.0, rand=0.5, schief=0.1, **k):
+        """Oeffnungen entlang einer beliebigen FASSADENEBENE (o = Punkt xy, n = Aussennormale xy, Modellkoordinaten; u = Strecke entlang d = (-n_y, n_x); z = Hoehe ueber
+        Boden im Pruefstandrahmen). Strahlen starten `vor` m vor der Ebene entlang -n; Ebene = p10 der Trefferabstaende (vorderste haeufige Flaeche); offen = Treffer
+        >= tiefe hinter der Ebene oder kein Treffer; gezaehlt werden Laeufe min_b..max_b. Randregel: ein Lauf, der den Ebenenrand beruehrt (<= `rand` m davor, nur Eckpfeiler)
+        und dessen Rueckflaeche nicht parallel zur Ebene liegt (Abstandsspanne p95-p5 > `schief` m) oder nur aus Nicht-Treffern besteht, ist die Nachbarfassade/der Gebaeudeabschluss
+        hinter der Ecke, kein Durchblick - ein echter Bogen hat eine ebene, parallele Rueckwand. Gewaehlt statt fester max_tiefe, weil die Nebenflaeche (2,3 m tief) und
+        echte Bogenrueckwaende (3 m) sich in der Tiefe nicht trennen, in der Parallelitaet schon. Rueckgabe {anzahl, breite_median, breite_max, ebene_abstand}."""
+        o = np.array(o, float); n = np.array(n, float); n = n / np.linalg.norm(n); d = np.array([-n[1], n[0]])
+        us = np.arange(u0, u1 + 1e-6, schritt); org = np.zeros((len(us), 3)); org[:, :2] = o + vor * n + us[:, None] * d; org[:, 2] = z
+        dr = np.zeros_like(org); dr[:, :2] = -n
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
+        t = np.full(len(us), np.nan); t[ir] = (loc[:, :2] - org[ir, :2]) @ (-n)
+        ebene = float(np.nanpercentile(t, 10)) if np.isfinite(t).any() else float("nan")
+        offen = np.isnan(t) | (t > ebene + tiefe)
+        laeufe = []; run = 0; i0 = 0
+        for i, off in enumerate(list(offen) + [False]):
+            if off:
+                if run == 0: i0 = i
+                run += 1
+            else:
+                if run and min_b <= run * schritt <= max_b:
+                    s = t[i0:i]; am_rand = (us[i0] - u0 <= rand) or (u1 - us[i - 1] <= rand); ok = s[np.isfinite(s)]
+                    kein_durchblick = ok.size == 0 or (np.percentile(ok, 95) - np.percentile(ok, 5) > schief)
+                    if not (am_rand and kein_durchblick): laeufe.append(run * schritt)
+                run = 0
+        return {"anzahl": float(len(laeufe)), "breite_median": float(np.median(laeufe)) if laeufe else 0.0, "breite_max": float(max(laeufe)) if laeufe else 0.0, "ebene_abstand": ebene}
     def oeffnung_durchblick(self, seite, z, quer, pfosten, tiefe_min=1.0, **k):
         """Ist eine Oeffnung OFFEN (Durchblick in einen Innenraum) oder nur eine flache Nische? Strahl senkrecht auf die Flaeche bei (quer, z);
         Flaechenebene = Median der Treffer an den Pfosten quer +- pfosten. Rueckgabe {"tiefe": Abstand Ebene -> erster Treffer hinter der Oeffnung (m),
@@ -513,6 +551,9 @@ def main():
     ber = {"stl": stl, "werte": {k: (None if isinstance(v, float) and np.isnan(v) else v) for k, v in werte.items()},
            "pruefungen": [{"name": p["name"], "wert": None if np.isnan(v) else v, "soll": p["soll"], "ok": ok is True, "status": "widerspruch" if ok == "widerspruch" else ("ok" if ok else "fehler")} for ok, p, v in zeilen], "bestanden": bad == 0}
     out = os.path.join(root, os.path.dirname(obj["masstabelle"]), "pruefbericht.json")
+    bericht_extra = a[a.index("--bericht") + 1] if "--bericht" in a else None          # Stufen-Tor (qualitaetsstufen): Bericht woandershin, Objektbericht/MASSNACHWEIS unberuehrt
+    if bericht_extra:
+        json.dump(ber, open(bericht_extra, "w"), indent=1); sys.exit(1 if bad else 0)
     if os.path.exists(out) and "--stl" not in a:                       # Aenderungs-Diff: was hat sich seit dem letzten Lauf bewegt?
         alt = json.load(open(out)).get("werte", {}); ge = []
         for k, v in ber["werte"].items():

@@ -25,9 +25,17 @@ Je Objekt `modelle/<objekt>/objekt.json` + `masstabelle.json` (Masse = Daten mit
 9. **Zaehl-/Strukturmerkmale (Anzahl Oeffnungen/Fenster/Zinnen je Flaeche) NUR am Foto zaehlen** (`tools/foto_zaehlung.py` -> messprotokoll/Z-*.json mit markiertem Bild), nie aus Punktwolke/Laser/LoD2 und nie aus Dateien, die der Generator selbst liest (Selbstbezug).
    Merkmal-Etikett ehrlich setzen (Zaehlart -> `anzahl`/`fassade`); der Pruefstand lehnt Umgehung und Selbstbezug ab (Exit 2), `tools/test_regeln_cb.py` beweist das bei jedem Bau. Zahl aus Wolke/Median = nie Sollwert (Register CB).
 9b. **Vor jedem Druck/Zeigen eines Bauteils**: Teil neben das Referenzfoto legen (Detailrender des Teils ansehen), Anzahl/Anordnung der Elemente pro Flaeche mit dem Foto vergleichen - nicht nur Slicer-Bericht und Pruefstand-Zahlen.
+9c. **Lage-Regel (Nutzer 8.11., Erker/Helme)**: (a) Parametergrenzen MUESSEN groesser sein als der erwartete Fehler (Helme: Fehler >1 m, Grenze +-0,5 m = Fit konnte nie ankommen); Fit auf Grenze = Grenze erweitern, nicht aufgeben.
+    (b) Gruppen mit mehreren Gegenstuecken (links/rechts) in EIN Teil je Gegenstueck trennen, sonst gemeinsame Verschiebung.
+    (c) Vor jedem Zeigen: `tools/teile_lage_pruefen.py <objekt>` (Median je Bauteil gegen Wolke, Markierung > 0,4 m) UND Render von vorn/Seite/schraeg ansehen; nie ein Bauteil ersatzlos abschalten (p18-Fehler, BS140).
+    (d) Statt nur lokaler CMA-ES-Suche: globale Formsuche (3D-Template-Matching per FFT-Kreuzkorrelation im Voxelgitter / Hough) fuer Helme, Fenster, Figuren - Status: GPU-Positions-Sweep gebaut (`tools/teil_sweep_gpu.py`, `sweep_alle.py`, Methode `modelle/METHODE_GPU_SWEEP.md`): Beweistest `--synth` Pflicht, Plateaubreite je Achse; Template-Matching/FFT fuer Form weiter offen.
+9d. **Fit-Ziel immer Wolke UND Fotos (Nutzer 8.11., Gauben 'Sprungschanze' nie bemerkt)**: Die Wolke legt nur LAGE/Hoehe fest, die FORM (Dachart, Bogen, Fensterteilung, Anzahl) kommt aus den Fotos. Vor und nach jedem Fit eines neuen/veraenderten Bauteils:
+    (a) Teil gegen mindestens 3 Fotos aus verschiedenen Richtungen ansehen (Detailrender neben Fotoausschnitt, Regel 9b) und Formfamilie festlegen, DANN Maße fitten;
+    (b) Zielfunktion = Wolkenabstand + Foto-Kantenabstand (Modellkanten in kalibrierte Fotos projiziert, `tools/foto_diff.py`-Logik) - Ziel: `param_wolke_fit.py --fotos`, Kameras aus dem gemeinsamen SfM (`kaufhaus_alle/sfm`, per ICP in den Netzrahmen gelegt). Status: noch NICHT gebaut.
 8. Commit-Sperre: `tools/git_hooks/pre-commit` prueft ueberwachte Dateien. Aktivierung nur durch den Nutzer: `git config core.hooksPath tools/git_hooks`.
 
 ## Vor neuen Versuchen lesen
+- `modelle/NICHTS_GEBRACHT.md` (Kurzindex der Sackgassen Kaufhaus Wolke->Netz, 1 Zeile je Versuch; zuerst ansehen, neue Fehlschlaege SOFORT eintragen)
 - `modelle/VERSUCHSREGISTER_MARTINSTOR.md` (was schon probiert wurde, Fehlschlaege, Ursachenanalyse I, Dach/Spitze J-J5, Seiten K)
 - `modelle/LIZENZ_WERKZEUGE.md` (Verkauf geplant: NC-Werkzeuge nur zum Testen, eintragen)
 - `modelle/LERNJOURNAL_MARTINSTOR.md`, `modelle/PIPELINE_H0.md`, `modelle/PROTOKOLL_VALIDATOR.md` (Fehler-Log F1-F10)
@@ -41,5 +49,6 @@ Je Objekt `modelle/<objekt>/objekt.json` + `masstabelle.json` (Masse = Daten mit
 - GPU PARALLEL (Nutzerwunsch 6.11., ersetzt "nur ein GPU-Job"): Der Absturz war VRAM-Ueberbelegung (Summe > ~7,8 von 8,2 GB; SiftGPU scheitert dann still mit 0 Keypoints), kein Parallelverbot (`modelle/GPU_PARALLEL_UNTERSUCHUNG.md`).
   Neue GPU-Jobs mit VRAM-Budget starten: `JOB_GPU_MB=<MiB> tools/job_start.sh ...` (laeuft parallel, solange belegt + Budget <= 7000 MiB), SIFT mit `RCPARK_SIFT_MAX=1600`, Torch mit `expandable_segments`;
   Budget je Werkzeug zuerst MESSEN (nvidia-smi-Zeitreihe), nicht raten. Jobs ohne Budget bleiben exklusiv (Altverhalten). `tools/nullstart.py` wartet per gpu_warten, Ernte deckelt auf 45 %; Werkzeugaenderung danach `tools/nullstart.py ... --ziel martinstor_null` als Wiederholbarkeitstest (Register AY/BA).
+- **Jedes NEUE Rechenwerkzeug nutzt die GPU von Anfang an** (Nutzerregel, 8.11. mehrfach verletzt): Nachbar-/Abstandssuche ueber `tools/gpu_knn.py` (`min_abstand`, PyTorch3D knn_points), nie KD-Baum/`torch.cdist` auf grossen Mengen; vor dem Start der Schleife `nvidia-smi` pruefen (Auslastung > 0). Nur der Manifold-Generatorbau bleibt CPU (Kerne parallel).
 - Nie zwei Optimierer/Generatorlaeufe parallel mit gleicher Zwischendatei; Generatordatei nicht aendern, solange Optimierer laufen.
 - Kein Commit/Push ohne Auftrag; Commit-Texte enden mit den Attribution-Zeilen der Sitzung.

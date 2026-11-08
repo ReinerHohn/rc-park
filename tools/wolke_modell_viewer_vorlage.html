@@ -1,0 +1,66 @@
+<title>TITEL_PLATZ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{--bg:#f4f1ea;--fg:#23201b;--panel:#fffdf8;--line:#cfc8b8;--acc:#b5471f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15130f;--fg:#ece6d8;--panel:#1f1c16;--line:#3a352b;--acc:#ff8a5c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15130f;--fg:#ece6d8;--panel:#1f1c16;--line:#3a352b;--acc:#ff8a5c;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:13px/1.4 system-ui,sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px}
+h1{font:600 16px system-ui;margin:0 0 8px}
+#wrap{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:10px}
+@media(max-width:760px){#wrap{grid-template-columns:minmax(0,1fr)}}
+#c{width:100%;height:72vh;min-height:360px;background:var(--panel);border:1px solid var(--line);border-radius:6px;position:relative;overflow:hidden}
+#c canvas{display:block;width:100%;height:100%}
+#ui{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:7px;min-width:0}
+label{display:flex;align-items:center;gap:6px}
+.sw{width:11px;height:11px;border-radius:2px;display:inline-block}
+input[type=range]{width:100%}
+button{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 8px;cursor:pointer}
+button:hover{border-color:var(--acc)}
+.h{font:600 11px system-ui;letter-spacing:.05em;text-transform:uppercase;color:var(--acc);margin-top:4px}
+small{color:var(--fg);opacity:.7}
+</style>
+<h1>TITEL_PLATZ</h1>
+<div id="wrap"><div id="c"></div><div id="ui"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+/*DATEN*/
+(function(){
+const el=document.getElementById('c'),ui=document.getElementById('ui');
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.localClippingEnabled=true;el.appendChild(renderer.domElement);
+const scene=new THREE.Scene();const cam=new THREE.PerspectiveCamera(40,1,0.1,2000);
+const ctl=new THREE.OrbitControls(cam,renderer.domElement);
+const dec=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0)).buffer;
+// Modellrahmen (x,y,z; z oben) -> three (x,z,-y)
+const T=(x,y,z)=>[x,z,-y];
+const nx=DATEN.n[0],ny=DATEN.n[1];const nT=new THREE.Vector3(nx,0,-ny);
+const m0=DATEN.mitte;const mT=new THREE.Vector3(...T(m0[0],m0[1],m0[2]));
+const pl0=new THREE.Plane(nT.clone(),0),pl1=new THREE.Plane(nT.clone().negate(),0);
+let nlo=-1e9,nhi=1e9;let dmin=1e9,dmax=-1e9;
+function pos(e){const q=new Uint16Array(dec(e.p));const a=new Float32Array(e.n*3);for(let i=0;i<e.n;i++){const x=e.lo[0]+q[3*i]/65535*e.sp[0],y=e.lo[1]+q[3*i+1]/65535*e.sp[1],z=e.lo[2]+q[3*i+2]/65535*e.sp[2];const t=T(x,y,z);a[3*i]=t[0];a[3*i+1]=t[1];a[3*i+2]=t[2];const d=x*nx+y*ny;if(d<dmin)dmin=d;if(d>dmax)dmax=d}return a}
+const objs=[];ui.innerHTML='<div class="h">Ebenen</div>';
+DATEN.ebenen.forEach((e,i)=>{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos(e),3));let o;
+ if(e.art==='punkte'){o=new THREE.Points(g,new THREE.PointsMaterial({color:e.farbe,size:1.6,sizeAttenuation:false,clippingPlanes:[pl0,pl1]}))}
+ else{g.setIndex(new THREE.BufferAttribute(new Uint32Array(dec(e.f)),1));g.computeVertexNormals();
+  o=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:e.farbe,transparent:true,opacity:0.6,side:THREE.DoubleSide,clippingPlanes:[pl0,pl1],metalness:0,roughness:0.9}))}
+ scene.add(o);objs.push(o);const L=document.createElement('label');L.innerHTML='<input type=checkbox '+(i<2?'checked':'')+'><span class=sw style="background:'+e.farbe+'"></span>'+e.name+(e.nf?' <small>('+(e.nf/1000|0)+'k Dreiecke)</small>':' <small>('+(e.n/1000|0)+'k Punkte)</small>');
+ o.visible=i<2;L.firstChild.onchange=ev=>{o.visible=ev.target.checked};ui.appendChild(L)});
+scene.add(new THREE.AmbientLight(0xffffff,0.75));const dl=new THREE.DirectionalLight(0xffffff,0.7);dl.position.set(-5,10,-8);scene.add(dl);
+function sl(lbl,min,max,val,step,fn){const d=document.createElement('div');d.innerHTML='<div>'+lbl+' <small></small></div><input type=range min='+min+' max='+max+' value='+val+' step='+step+'>';const r=d.lastChild,s=d.firstChild.lastChild;r.oninput=()=>{fn(+r.value);s.textContent=(+r.value).toFixed(2)};s.textContent=(+val).toFixed(2);ui.appendChild(d);return r}
+ui.insertAdjacentHTML('beforeend','<div class="h">Darstellung</div>');
+sl('Modell-Deckkraft',0.05,1,0.6,0.05,v=>objs.forEach(o=>{if(o.material.opacity!==undefined&&o.isMesh)o.material.opacity=v}));
+sl('Punktgroesse',0.5,6,1.6,0.1,v=>objs.forEach(o=>{if(o.isPoints)o.material.size=v}));
+ui.insertAdjacentHTML('beforeend','<div class="h">Tiefenschnitt entlang Fassadennormale n</div><small>Wolke und Modelle werden zwischen von/bis gezeigt (m)</small>');
+const rA=sl('von n',Math.floor(dmin),Math.ceil(dmax),Math.floor(dmin),0.05,v=>{nlo=v;upd()});
+const rB=sl('bis n',Math.floor(dmin),Math.ceil(dmax),Math.ceil(dmax),0.05,v=>{nhi=v;upd()});
+function upd(){pl0.constant=-nlo;pl1.constant=nhi}
+nlo=Math.floor(dmin);nhi=Math.ceil(dmax);upd();
+ui.insertAdjacentHTML('beforeend','<div class="h">Ansicht</div>');
+function ansicht(dir,up){const d=new THREE.Vector3(...dir).normalize();cam.position.copy(mT).addScaledVector(d,38);cam.up.set(...(up||[0,1,0]));ctl.target.copy(mT);ctl.update()}
+[['Front (auf Fassade)',()=>ansicht([-nx,0.05,ny])],['Seite',()=>ansicht([ny,0.05,nx])],['Oben',()=>ansicht([0,1,0.001],[0,0,-1])],['Schraeg',()=>ansicht([-nx*0.8-ny*0.5,0.5,ny*0.8-nx*0.5])]].forEach(([t,f])=>{const b=document.createElement('button');b.textContent=t;b.onclick=f;ui.appendChild(b)});
+function rs(){const w=el.clientWidth,h=el.clientHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+window.addEventListener('resize',rs);rs();
+const bg=getComputedStyle(document.body).backgroundColor;renderer.setClearColor(new THREE.Color(getComputedStyle(el).backgroundColor));
+ansicht([-nx,0.05,ny]);(function loop(){requestAnimationFrame(loop);ctl.update();renderer.render(scene,cam)})();
+})();
+</script>

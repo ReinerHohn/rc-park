@@ -1,0 +1,183 @@
+{
+ "achse_n": [
+  0.3338,
+  0.9426
+ ],
+ "n_pfeiler": {
+  "wert": 5.0,
+  "sigma": 0.0,
+  "n_punkte": 4634,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py (Pfeiler = Laeufe im u-Histogramm, Raster)"
+ },
+ "n_boegen_aus_wolke": 4,
+ "u0": {
+  "wert": -8.971,
+  "sigma": 0.007,
+  "n_punkte": 616,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py Mitte erster Pfeiler (Raster aus voll sichtbaren Pfeilern)"
+ },
+ "pitch": {
+  "wert": 4.329,
+  "sigma": 0.003,
+  "n_punkte": 3,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py Pfeilerabstand, Ausgleichung ueber 3 voll sichtbare Pfeiler, Rest max 0.003 m"
+ },
+ "pfeiler_breite": {
+  "wert": 0.76,
+  "sigma": 0.039,
+  "n_punkte": 3244,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py u-Spanne P3-P97 (Rundpfeiler: Ringdurchmesser)"
+ },
+ "pfeiler_tiefe": {
+  "wert": 0.478,
+  "sigma": 0.035,
+  "n_punkte": 3244,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py n-Spanne P3-P97"
+ },
+ "pfeiler_n": {
+  "wert": 13.074,
+  "sigma": 0.044,
+  "n_punkte": 3244,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py n-Mitte der Pfeiler"
+ },
+ "pfeiler_z_unten": {
+  "wert": 1.75,
+  "sigma": 0.614,
+  "n_punkte": 3,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py tiefstes z mit >=4 Pkt/5 cm im Pfeilerring (Wolke ohne Bodenpunkte; Fuss evtl. tiefer) (Boden/Fuss)"
+ },
+ "lichte_breite": {
+  "wert": 3.57,
+  "sigma": 0.039,
+  "n_punkte": 3,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py pitch - pfeiler_breite"
+ },
+ "radius": {
+  "wert": 1.652,
+  "sigma": 0.035,
+  "n_punkte": 132,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py Kreisfit Laibung, RMS 0.101 m, Halbkreis auf Kaempferblock (R <= Pfeilerlichte/2)"
+ },
+ "kreis_zc": {
+  "wert": 2.757,
+  "sigma": 0.039,
+  "n_punkte": 132,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py"
+ },
+ "scheitel_z": {
+  "wert": 4.409,
+  "sigma": 0.005,
+  "n_punkte": 132,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py Laibungsscheitel zc+R"
+ },
+ "kaempfer_z": {
+  "wert": 2.757,
+  "sigma": 0.039,
+  "n_punkte": 132,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py Halbkreis: Kreismitte zc; Segment: Kreis bei u = Pfeilerkante"
+ },
+ "oeffnung_breite": {
+  "wert": 3.305,
+  "sigma": 0.071,
+  "n_punkte": 132,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py Breite der Bogenoeffnung am Kaempfer (Halbkreis 2R; sonst Pfeilerlichte)"
+ },
+ "bogen_art": "halbkreis",
+ "laibung_tiefe": {
+  "wert": 0.379,
+  "sigma": 0.05,
+  "n_punkte": 34463,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py n-Spanne P5-P95 0,05-0,4 m ueber der Laibung (Bogenband)"
+ },
+ "pfeiler": [
+  {
+   "u": -8.864394078911417,
+   "u_s": 0.005922072842156999,
+   "breite": 0.34493063475586005,
+   "breite_s": 0.010052136801947711,
+   "n": 13.009571495564305,
+   "n_s": 0.018351732873045777,
+   "tiefe": 0.5191499741460319,
+   "tiefe_s": 0.0354358481539692,
+   "k": 461,
+   "z_unten": null,
+   "teilsichtbar": true,
+   "index": -1,
+   "u_raster": -8.970594104964992
+  },
+  {
+   "u": -4.63958875374375,
+   "u_s": 0.004257495227858559,
+   "breite": 0.7628421083396661,
+   "breite_s": 0.008487310777203452,
+   "n": 13.08466231749064,
+   "n_s": 0.0026802686582689103,
+   "tiefe": 0.46126632803407297,
+   "tiefe_s": 0.005493419571267,
+   "k": 616,
+   "z_unten": null,
+   "teilsichtbar": false,
+   "index": 0,
+   "u_raster": -4.6412270607717225
+  },
+  {
+   "u": -0.3151366306343948,
+   "u_s": 0.005056145115858353,
+   "breite": 0.7596374630582825,
+   "breite_s": 0.009653964969509836,
+   "n": 13.07436898305302,
+   "n_s": 0.007551533162659569,
+   "tiefe": 0.4777480969258594,
+   "tiefe_s": 0.015072273098759205,
+   "k": 1049,
+   "z_unten": null,
+   "teilsichtbar": false,
+   "index": 1,
+   "u_raster": -0.31186001657845264
+  },
+  {
+   "u": 4.01914533464279,
+   "u_s": 0.0034372134972872883,
+   "breite": 0.6778841630039514,
+   "breite_s": 0.006413767227246485,
+   "n": 12.985999557312153,
+   "n_s": 0.0055635708551782445,
+   "tiefe": 0.5422867262187552,
+   "tiefe_s": 0.010969517151405648,
+   "k": 1579,
+   "z_unten": null,
+   "teilsichtbar": false,
+   "index": 2,
+   "u_raster": 4.017507027614817
+  },
+  {
+   "u": 8.147732384581115,
+   "u_s": 0.0038416207584515165,
+   "breite": 0.18117506832324004,
+   "breite_s": 0.007431283399259255,
+   "n": 12.967843373969952,
+   "n_s": 0.014706690943954994,
+   "tiefe": 0.8536193742650671,
+   "tiefe_s": 0.02945024569610738,
+   "k": 929,
+   "z_unten": null,
+   "teilsichtbar": true,
+   "index": 3,
+   "u_raster": 8.346874071808088
+  }
+ ],
+ "laibungspunkte": 132,
+ "oberkante_z": {
+  "wert": 4.85,
+  "sigma": 0.05,
+  "n_punkte": 119770,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_bogenreihe_messen.py tiefstes z mit >=200 Pkt/5 cm in n 13.9..14.5 (Unterseite des vorspringenden Bandes)"
+ },
+ "konsistenz_foto": {
+  "n_boegen_foto": 4,
+  "quelle_foto": "Z-004-001",
+  "n_boegen_wolke": 4,
+  "gleich": true,
+  "hinweis": "nur Vergleich; Zaehlung = Foto (Regel 9)"
+ }
+}

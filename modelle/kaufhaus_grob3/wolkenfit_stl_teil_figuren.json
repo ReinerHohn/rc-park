@@ -1,0 +1,36 @@
+{
+ "objekt": "kaufhaus_grob3",
+ "typ": "stl_teil:figuren",
+ "wolke": "wolke_netzrahmen.npy",
+ "n_wolke": 744442,
+ "parameter": [
+  "stl_teil:figuren.dn",
+  "stl_teil:figuren.du",
+  "stl_teil:figuren.dz",
+  "stl_teil:figuren.sn",
+  "stl_teil:figuren.su",
+  "stl_teil:figuren.sz"
+ ],
+ "vorher": {
+  "stl_teil:figuren.dn": 0.0,
+  "stl_teil:figuren.du": 0.0,
+  "stl_teil:figuren.dz": 0.0,
+  "stl_teil:figuren.sn": 1.0,
+  "stl_teil:figuren.su": 1.0,
+  "stl_teil:figuren.sz": 1.0
+ },
+ "nachher": {
+  "stl_teil:figuren.dn": -0.8325,
+  "stl_teil:figuren.du": -0.1292,
+  "stl_teil:figuren.dz": 0.0412,
+  "stl_teil:figuren.sn": 1.0197,
+  "stl_teil:figuren.su": 0.976,
+  "stl_teil:figuren.sz": 1.107
+ },
+ "J_vorher": 0.27355194091796875,
+ "J_nachher": 0.2622276544570923,
+ "median_vorher": 0.1409899890422821,
+ "median_nachher": 0.13852675259113312,
+ "p90_vorher": 0.2736177146434784,
+ "p90_nachher": 0.2721623182296753
+}

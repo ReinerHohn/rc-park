@@ -15,6 +15,12 @@ import sys, os, json, shutil, subprocess, tempfile
 
 HIER = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HIER); PY = sys.executable
 OBJ = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "modelle/martinstor/objekt.json")
+NAME_CB = "Ecktuermchen Arkadenband: Oeffnungen je Achteckflaeche (Foto-Zaehlung 043)"
+if not any(p.get("name") == NAME_CB for p in json.load(open(os.path.join(os.path.dirname(os.path.abspath(OBJ)), "masstabelle.json"))).get("pruefungen", [])):
+    # Gegenproben pruefen den PRUEFSTAND (Werkzeug), nicht das Objekt; sie brauchen die Martinstor-Zaehlpruefung 043. Objekte ohne sie
+    # (kaufhaus_null4, 2026-11-04: StopIteration in bauen_abnehmen) laufen die Gegenproben am Martinstor.
+    print(f"  Hinweis: {os.path.basename(os.path.dirname(os.path.abspath(OBJ)))} hat keine Zaehlpruefung '{NAME_CB[:40]}...' -> Gegenproben am Martinstor (Werkzeugtest)")
+    OBJ = os.path.join(ROOT, "modelle/martinstor/objekt.json")
 
 def lauf(args, **k):
     r = subprocess.run(args, capture_output=True, text=True, cwd=ROOT, **k); return r.returncode, r.stdout + r.stderr
@@ -50,9 +56,9 @@ def main():
     rc, out = pruefen(t1); erg.append(("T1 Etikettenumgehung abgelehnt", rc == 2 and "Etikettenumgehung" in out, rc))
     rc, out = pruefen(t2); erg.append(("T2 Selbstbezug abgelehnt", rc == 2 and "SELBSTBEZUG" in out, rc))
     rc, out = pruefen(t3); erg.append(("T3 Zaehlwiderspruch abgelehnt", rc == 2 and "Zaehlprotokoll" in out, rc))
-    # T4: STL vor dem Fix aus Git (HEAD) - zeigt, dass die Foto-Pruefung das alte Modell FAENGT
+    # T4: STL vor dem Fix aus Git (Commit 615f721) - zeigt, dass die Foto-Pruefung das alte Modell FAENGT
     alt = tempfile.NamedTemporaryFile(suffix=".stl", delete=False); alt.close()
-    o = json.load(open(OBJ)); g = subprocess.run(["git", "show", "HEAD:" + o["stl"]], capture_output=True, cwd=ROOT)
+    o = json.load(open(OBJ)); g = subprocess.run(["git", "show", "615f721:" + o["stl"]], capture_output=True, cwd=ROOT)   # STL VOR dem CB-Fix (2 Oeffnungen; seit 0902260 ist HEAD schon der Fix -> T4 fiel immer durch, 2026-11-04)
     if g.returncode == 0 and len(g.stdout) > 1000:
         open(alt.name, "wb").write(g.stdout)
         rc, out = pruefen(None, alt.name); erg.append(("T4 Modell mit 2 Oeffnungen faellt durch (Exit 1, FEHLER-Zeile)", rc == 1 and "FEHLER  Ecktuermchen Arkadenband" in out, rc))

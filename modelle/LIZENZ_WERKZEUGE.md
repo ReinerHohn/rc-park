@@ -76,3 +76,67 @@ Keine Rechtsberatung - vor dem Verkauf jede Zeile selbst nachlesen.
 ## Regel
 Neues Werkzeug/Modell → hier eintragen, **bevor** Ergebnisse ins Produkt (STL, Anleitung, Zahlen im Bausatz) wandern.
 NC-Modelle nur zur Forschung; was im Verkaufsprodukt steckt, muss aus lizenzfreien Quellen (Laser, Fotos als Messvorlage, eigener Generator) belegbar sein.
+
+## Nachtrag 2026-11-05 (Qualitaetsstufe 3/4, Recherche-Agent + eigene Pruefung)
+| Werkzeug / Daten | Lizenz | Status | Wo genutzt | Quelle der Angabe |
+|---|---|---|---|---|
+| OWLv2 `google/owlv2-base-patch16-ensemble` (Zero-Shot-Erkenner) | Apache-2.0 (Modellkarte) | ✓ eingebaut | tools/fassade_parsing.py (Qualitaetsstufe 3) | Treffer, vor Verkauf Modellkarte lesen |
+| pycma `cma` 4.5.0 | BSD-3-Clause | ✓ eingebaut | geplante Stufe 4 (gemeinsame Optimierung) | geprueft: Paket-Metadaten |
+| CMP Facade DB | **CC BY-SA** | nur zum Bewerten, NICHT zum Trainieren (ShareAlike koennte Gewichte binden) | – | geprueft (Recherche-Agent, cmp.felk.cvut.cz/~tylecr1/facade) |
+| Gewichte auf CMP trainiert (z. B. `Xpitfire/segformer-finetuned-segments-cmp-facade` in tools/fenster_ml.py) | unklar (ShareAlike der Trainingsdaten) | ⚠ nicht ins Produkt | tools/fenster_ml.py (alt) | Einschaetzung |
+| PGSR, MILo, Pi3/Pi3X, Depth Anything V2 Base/Large/Giant | NC / nur Forschung | ⚠ nur zum Testen | – | PGSR geprueft, Rest Treffer |
+| Marigold v1-1 | OpenRAIL++-M (kommerziell mit Nutzungsauflagen); v1-0 Apache-2.0 | ? | – | Treffer |
+| MoGe-2 ViT-L | Code MIT, Gewichte laut Mirrors MIT | ? vor Einsatz pruefen | – | Treffer |
+| Metric3D | widerspruechlich (BSD-2 / "non-commercial") | ⚠ meiden bis geklaert | – | Treffer |
+| DINOv3 | eigene Meta-Lizenz (Pflichthinweis, Kuendigungsrecht) | ⚠ umstaendlich; DINOv2 Apache | – | geprueft (Recherche-Agent) |
+| PolyFit / KSR (CGAL) / City3D | GPL (bindet nur Weitergabe der Software, nicht erzeugte Modelle); City3D braucht Gurobi | ✓ als Werkzeug denkbar | – | Treffer |
+| **Fototextur** | Textur aus CC-BY-SA-Fotos wird ShareAlike; Mapillary NC; YouTube geschuetzt | ⚠ Textur/Farbe nur aus CC-BY/PD/eigenen Fotos | geplante Farbstufe | Einschaetzung |
+
+## Nachtrag 2026-11-05 (G4: Stadt Freiburg, Daten getrennt von Code)
+| Daten / Code | Lizenz | Status | Wo genutzt | Quelle der Angabe |
+|---|---|---|---|---|
+| Stadt-Freiburg-LoD2 CityGML `20261007_Freiburg_LoD2.gml` (1.610.391.847 B, Datei-Stand 2026-10-07, creationDate 2025-12-03; Datenplatte `/media/oem/scan/rc-park_daten/freiburg_stadt/lod2/`) | **DL-DE BY 2.0**, Vermerk "Datengrundlage: Stadt Freiburg, www.freiburg.de" (Metadatensatz nennt Zusatz fuer OpenStreetMap-Verwendung, dort nachlesen) | ✓ geprueft (Metadaten gelesen 2026-11-05); Vermerk in Beipackzettel/Shop | `tools/stadt_lod2_schneiden.py` -> `modelle/<objekt>/stadt_lod2.json` (nur Vergleich/Beobachtung, kein Generator) | https://metadaten.geoportal-bw.de/geonetwork/srv/api/records/1c576440-e5e1-4095-bff1-a14d76cec6f4 ; Download https://geoportal.freiburg.de/stadtmodell/20261007_Freiburg_LoD2.gml |
+| Stadtmesh Freiburg 2025 (Cesium 3D Tiles, `https://3d.freiburg.de/datasource-data/2025_befliegung/22_Mesh3D_Cesium/`), Kacheln unter `/media/oem/scan/rc-park_daten/freiburg_stadt/mesh/<objekt>/` | **UNGEKLAERT** (Metadatensatz nennt fuer die 3D-Tilesets DL-DE BY 2.0, widerspricht sich aber selbst: "ohne Textur der Fassaden" vs. texturierte Variante verlinkt; keine Open-Data-Erklaerung fuer das 2025-Mesh gefunden; Viewer-Hinweise Nr. 1/2 nicht abrufbar) | ⚠ NUR Pruefreferenz (Overlay, Kontur-Diff, Sichtvergleich); Mesh-Geometrie NICHT in den Generator; Datei nur unter `audit/referenz_stadtmesh/`; Anfrage vermessung@freiburg.de beim Nutzer ausstehend | `tools/stadtmesh_laden.py`, `tools/stadtmesh_vergleich.py` | Metadatensatz (s. o.), tileset.json HTTP 200 2026-11-05 (ohne Anmeldung) |
+| `tools/stadt_lod2_schneiden.py`, `tools/stadtmesh_laden.py`, `tools/stadtmesh_vergleich.py` (Code, eigen) | eigener Code; Abhaengigkeiten shapely (BSD-3), trimesh (MIT), numpy, opencv | ✓ unkritisch | s. o. | Paket-Lizenzen, ungeprueft im Detail |
+| Open3D 0.20 (Poisson, MIT) in der vorhandenen venv-mesh, pymeshfix (GPL-3 Wrapper um MeshFix, nur als Testwerkzeug im Vergleichslauf), trimesh (MIT); `tools/beweis_ansatz*.py` (eigener Code) | Open3D MIT, trimesh MIT, pymeshfix GPL-3 | ✓ (Open3D/trimesh) / NC-aehnlich pruefen (pymeshfix nur Test) | Beweislauf CM, 2026-11-05 | pymeshfix vor Verkauf nicht in die Pipeline uebernehmen |
+| `tools/kanten_3d.py`, `tools/ebenen_modell.py`, `tools/test_ebenen_modell.py`, `tools/s8_kaufhaus.py` (eigener Code); OpenCV 5.0 LSD (BSD-3), torch (BSD), manifold3d (Apache-2), trimesh (MIT), scipy (BSD) | alle permissiv | ✓ unkritisch | LIMAP/PolyFit/CGAL-KSR bewusst NICHT eingesetzt (Installierbarkeit, GPL), DeepLSD ungeprueft | S8, Register CQ |
+| 2026-11-06 S10 `tools/kanten_pipelines.py`, `tools/test_kanten_pipelines.py`, `tools/kanten_blatt.py` (eigener Code); P1/P2 nur OpenCV (Apache-2.0)/numpy/scikit-image (BSD-3) | permissiv | ✓ unkritisch | Paket-Lizenzen, nicht im Detail nachgelesen |
+| 2026-11-06 S10 P3 DexiNed (Code kornia `kornia.models.dexined`, Apache-2.0; Originalcode xavysp/DexiNed MIT); Gewichte `kornia/dexined/DexiNed_BIPED_10.pth` (HF), trainiert auf BIPED | Code ✓; **Gewichte: BIPED-Datensatzlizenz nicht geprueft/unklar** | ⚠ nur zum Testen (NC angenommen), vor Verkauf BIPED-Lizenz klaeren oder auf TEED/PiDiNet-Gewichte mit eigener Lizenzpruefung wechseln | Treffer (Quellcode-Kopfzeile gelesen), Gewichtslizenz **ungeprueft** |
+| 2026-11-06 S10 P4 SAM ViT-B `facebook/sam-vit-base` via transformers 5.22 (SamModel) | Apache-2.0 (Code + Gewichte laut Model-Card; SA-1B-Trainingsdaten nur Forschung/Meta-Lizenz fuer den Datensatz, nicht fuer das Modell) | ✓ (Hinweis SA-1B) | Treffer, Model-Card nicht im Detail gelesen |
+| 2026-11-06 S10 Teil B Kandidat EMAP (cvg/EMAP) / NEF | EMAP: README nennt MIT fuer die Mehrheit, Basis NeuS/NeuralUDF/MeshUDF nicht einzeln geprueft; NEF nicht geprueft. NICHT eingebaut; Eigenbau tools/kanten_feld3d.py (eigener Code) | (MIT, unvollstaendig) | nicht verwendet |
+
+## Nachtrag 2026-11-06 (Recherche Gaussian-Splatting-Mesh, noch NICHT eingesetzt)
+| Werkzeug | Lizenz (laut Recherche, Quellen in `modelle/RECHERCHE_2026-11-06_METHODEN.md`) | Status |
+|---|---|---|
+| 2DGS Original (hbb1), PGSR (zju3dv), MILo, GOF, 3DGS Inria | Forschungs-/Nicht-kommerzielle Lizenz (PGSR nur ueber Index "other" gesehen, LICENSE.md vor Einsatz lesen) | ⚠ NUR Test (Stufe A), nie in die Verkaufs-Pipeline |
+| gsplat (nerfstudio) | Apache-2.0 | ✓ fuer Stufe B (Eigenbau); 2DGS-Training/Mesh-Extraktion dort nicht dokumentiert |
+| Depth Anything 3 | BASE/SMALL/METRIC/MONO Apache-2.0; GIANT/LARGE/NESTED CC BY-NC | nur BASE/METRIC erlaubt; PyPI-Name ungeprueft |
+| MoGe | Code MIT, Gewichtslizenz OFFEN | ungeprueft |
+| SAM2 | Apache-2.0 (Code+Gewichte laut Recherche; SA-1B nur Forschung) | ✓ (Hinweis SA-1B) |
+| OpenMVS | AGPL-3.0 | Code nicht ins Produkt (Register CP: Ansatz bereits verworfen) |
+| Open3D TSDF | MIT | ✓ |
+
+## Nachtrag 2026-11-06 (SegFormer-B4 ADE20K, Handy-Masken)
+| Werkzeug / Gewichte | Lizenz | Status | Wo genutzt | Quelle der Angabe |
+|---|---|---|---|---|
+| `nvidia/segformer-b4-finetuned-ade-512-512` (Gewichte), Trainingsdaten scene_parse_150 = ADE20K | Modellkarte: `license: other` (NVIDIA SegFormer-Lizenz, im Original-Repo als nicht kommerziell bekannt; ADE20K-Daten ebenfalls Forschungsbedingungen) | ⚠ nur zum Testen / als Zwischenschritt (Masken fliessen nur in SfM-Merkmalsauswahl, nicht in STL/Textur); vor Verkauf Wortlaut pruefen oder durch Apache/MIT-Segmentierer ersetzen | tools/video_masken.py, tools/gebaeude_segment.py, tools/handy_masken.py | Modellkarte per curl 2026-11-06 (nur der Eintrag "other" belegt; NC-Einordnung = Einschaetzung, Lizenztext nicht gelesen) |
+
+## Nachtrag 2026-11-06 (OWLv2, Handy-Masken v2, Register DI)
+| Werkzeug / Gewichte | Lizenz | Status | Wo genutzt | Quelle der Angabe |
+|---|---|---|---|---|
+| `google/owlv2-base-patch16-ensemble` (Gewichte, HF-Cache `models--google--owlv2-base-patch16-ensemble`), Code transformers `Owlv2ForObjectDetection` | Apache-2.0 (Modellkarte/Paper OWLv2; vom Auftrag so vorgegeben, Modellkarte in dieser Sitzung NICHT erneut abgerufen) | ✓ vorbehaltlich Modellkarte; Trainingsdaten (WebLI-Pseudolabels) nicht geprueft | tools/handy_masken_v2.py (Zusatz Marktplanen, nur Masken fuer SfM-Merkmalsauswahl) | Auftrag; Verifikation der Karte offen |
+| `tools/handy_masken_v2.py`, `tools/handy_masken_vergleich.py`, `tools/test_handy_masken_v2.py` | eigener Code; opencv, numpy, torch, torchvision (NMS) | ✓ unkritisch | - | - |
+| SAM2 | Apache-2.0 laut Recherche, aber Gewichte NICHT im Cache und NICHT geladen (Datenplatte ~10 GB frei) | nicht eingesetzt | - | - |
+
+## Nachtrag 7.11. (Recherche modelle/RECHERCHE_2026-11-07_MESH_KANTEN.md, Quelle Subagent aus Repo-Seiten/Suchtreffern - vor Verkauf LICENSE-Dateien selbst lesen)
+- OpenMVS (unser Netz-Sieger Delaunay+GraphCut, RefineMesh): AGPL-3.0 -> fuer Verkauf kritisch, nur Testwerkzeug.
+- CGAL Alpha_wrap_3 / KSR / PolyFit: GPL-3.0+ oder kommerziell (GeometryFactory); City3D GPL-3 -> nur Test.
+- 2DGS / MILo / GOF: nicht-kommerzielle Gaussian-Splatting-Lizenz (2DGS unklar); nvdiffrast: NVIDIA Source Code License. PyTorch3D vermutlich BSD-3 (ungeprueft).
+- Frei: LIMAP (BSD-3), manifold3d (Apache-2.0), fTetWild (MPL-2.0 laut Index; Original-TetWild GPL). Ungeprueft: Line3D++, Instant Meshes, PlanarSplatting-Codestand.
+- 7.11. Nutzerfreigabe: Web-Bilder inkl. Google Maps/Earth/Street View nur fuer privaten Machbarkeitstest; vor Veroeffentlichung/Verkauf jede Bildlizenz (LIZENZ_BILDER.json) pruefen, Google-Inhalte voraussichtlich nicht freigebbar.
+- 7.11. Fenster-Recherche (Agent, Quelle modelle/RECHERCHE_2026-11-07_FENSTER.md): pycma BSD-3 (geprueft), PyTorch3D BSD-3 (geprueft), scipy BSD-3; nvdiffrast NUR nicht-kommerziell (geprueft) -> nicht fuer Verkauf; Optuna/nevergrad aus Gedaechtnis, vor Einsatz pruefen.
+- 7.11. abends: CGAL 6.0.1 (Release-Tarball, GitHub) in /media/oem/scan/cgal_ksr gebaut, Kinetic_surface_reconstruction_3 (KSR) als Testwerkzeug (`/media/oem/scan/cgal_ksr/work/ksr_run`, header-only, GPL-3.0+ / kommerziell GeometryFactory) -> NUR TEST, nicht in ein verkauftes Produkt. Abhaengigkeiten System (Boost, GMP, MPFR, Eigen3), kein sudo.
+- 7.11. PolyGNN (chenzhaiyu/polygnn): MIT (LICENSE-Datei im Klon gelesen). Vortrainierter Checkpoint (Munich, ~42 MB, Google-Drive-Link in conf/dataset/munich.yaml) - Gewichtslizenz/Trainingsdaten (Munich-LoD2/Luftbild-Punktwolken, Zenodo) NICHT geprueft -> vor Verkauf klaeren. abspy 0.2.6 (Zellkomplex) braucht SageMath, nicht installiert; torch_scatter durch eigenen Shim ersetzt (/media/oem/scan/polygnn_test/shim). tools/polygnn_auswahl.py nutzt nur Modell + Checkpoint.
+
+## 2026-11-08 pymeshfix (GPL) nur Test
+- BS124/BS125 (Wasserdicht-Ableitung hlo_pois_wd*.stl) nutzten pymeshfix (GPL; BS20 hatte es wegen geplantem Verkauf ausgeschlossen). Ergebnisse nur Testartefakte unter /media/oem/scan/rc-park_null (hlo_pois_wd*.stl), NICHT in Produkt/Druckpipeline uebernehmen; vor Verkauf Ersatz (z.B. eigener Randschleifen-Schluss, trimesh/manifold3d) oder Lizenz klaeren.

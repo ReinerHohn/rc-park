@@ -1,0 +1,17 @@
+{
+ "sperren": [
+  "balkonband:haupt",
+  "bogenreihe:laube",
+  "erker:0",
+  "erker:1",
+  "stl_teil:dach",
+  "stl_teil:erker",
+  "stl_teil:fenster",
+  "stl_teil:figuren",
+  "stl_teil:gauben",
+  "stl_teil:helme",
+  "stl_teil:laube_alt",
+  "stl_teil:staffelgiebel"
+ ],
+ "_doku": "Basis grob: nur stl_teil:fassade frei, Region = Box des Teils, Koordinatenabstieg"
+}

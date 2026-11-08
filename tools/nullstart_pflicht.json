@@ -128,8 +128,31 @@
    "quelle": "CLAUDE.md 3f",
    "tor": "nur Kameras mit buendel_tor.ok, lod2_tor.ok oder handkalibriert; Schritt ok nur bei > 0 verglichenen Fotos",
    "beweis": "audit",
-   "test": "tools/test_foto_diff.py (Foto = Modellrender mit DERSELBEN Kamera, T0 prueft das; T1 wahr + T1v Versatz <= 0,15 m, T2 0,6 m versetzt per Anteil ODER Versatzschaetzung T2v, T3 erfundener Kasten, T4 fehlender Kasten): Standard --kanten normalen --modell-glatt 1 BESTANDEN an Kaufhaus 004 (T1 15 %, v1 0,03 m, v2 0,61 m) und Martinstor 014 (T1 23 %, v1 0,02 m, v2 0,61 m); Gegenprobe ohne Modellglaettung Martinstor T1 44 % = durchgefallen; echte Fotos 004/014 angesehen (2026-11-04 abend); seit 18:30 Pruefbilder mit k1 der echten Kamera + foto_diff entzerrt, T5 Gegenprobe Martinstor ohne Entzerrung faellt durch; seit 19:00 Verdeckermaske aus Tiefenkarte mit Kamera-Tor: T6 (synthetischer Verdecker), Gegenprobe ohne Maske, T6b fremde Kamera abgelehnt - Kaufhaus 004 + Martinstor 014 bestanden",
-   "status": "bewiesen"
+   "test": "tools/test_foto_diff.py (Foto = Modellrender mit DERSELBEN Kamera, T0 prueft das; T1 wahr + T1v Versatz <= 0,15 m, T2 0,6 m versetzt per Anteil ODER Versatzschaetzung T2v, T3 erfundener Kasten, T4 fehlender Kasten): Standard --kanten normalen --modell-glatt 1 BESTANDEN an Kaufhaus 004 (T1 15 %, v1 0,03 m, v2 0,61 m) und Martinstor 014 (T1 23 %, v1 0,02 m, v2 0,61 m); Gegenprobe ohne Modellglaettung Martinstor T1 44 % = durchgefallen; echte Fotos 004/014 angesehen (2026-11-04 abend); seit 18:30 Pruefbilder mit k1 der echten Kamera + foto_diff entzerrt, T5 Gegenprobe Martinstor ohne Entzerrung faellt durch; seit 19:00 Verdeckermaske aus Tiefenkarte mit Kamera-Tor: T6 (synthetischer Verdecker), Gegenprobe ohne Maske, T6b fremde Kamera abgelehnt - Kaufhaus 004 + Martinstor 014 bestanden | S2 2026-11-05: Gueltigkeitstor (Modellkantenpixel, Versatz im T2-Bild deutlich, Kamerablock) -> Exit 3 'NICHT BEURTEILBAR' = nur teilbewiesen; Beweisobjekte siehe Feld beweisobjekte, Aufruf test_nullstart_schritte.py --foto-diff",
+   "status": "bewiesen",
+   "beweisobjekte": [
+    {
+     "objekt": "modelle/kaufhaus_null5/objekt.json",
+     "foto": "004",
+     "stl": "/media/oem/scan/rc-park_null/qualitaetsstufen_kaufhaus_null6/modell_s3_v9.stl",
+     "fd": "--mehrstufig",
+     "_hinweis": "LoD2-Rumpf null5 allein ohne Innenkanten: nur auf dem besten Stand (s3_v9) | fd --mehrstufig ist VORLAEUFIG (Phase 2 nicht gelaufen, Entscheidung offen)"
+    },
+    {
+     "objekt": "modelle/kaufhaus_null4/objekt.json",
+     "foto": "004"
+    },
+    {
+     "objekt": "modelle/martinstor_lod2/objekt.json",
+     "foto": "014",
+     "_hinweis": "K-014 mit Buendelkamera; martinstor hat fuer 014 nur Picks"
+    },
+    {
+     "objekt": "modelle/martinstor/objekt.json",
+     "foto": "041",
+     "_hinweis": "Handkamera (kein buendel_tor in martinstor vorhanden), Pruefbild synthetisch mit derselben Kamera"
+    }
+   ]
   },
   {
    "schritt": "abgleich",

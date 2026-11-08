@@ -1,0 +1,25 @@
+# Recherche 7.11.2026: Wolke -> wasserdichtes, kantenscharfes Modell (neue Ansaetze)
+Nur Websuche (Suchtreffer, Lizenzen "?" = vor Nutzung LICENSE lesen). Nichts installiert. Abgleich mit NICHTS_GEBRACHT.md / RECHERCHE_2026-11-07_MESH_KANTEN.md: keine Wiederholung von OpenMVS, Poisson, fTetWild, pymeshfix, Carving, 2DGS/MILo, Ebenen+Saeulen, CMA-ES, PyTorch3D.
+
+## Top 5
+1. **CGAL Kinetic Surface Reconstruction (KSR, Bauchet/Lafarge; CGAL >= 6.0)** - Echtes CGAL, nicht unser Nachbau (Register BR: "echtes CGAL-PolyFit nicht messbar").
+   Prinzip: Ebenen-Erkennung + Regularisierung (parallel/orthogonal), kinetische Zerlegung der Bounding-Box in konvexe Zellen, Graph-Cut Innen/Aussen mit lambda (Datentreue vs. Komplexitaet). Ausgabe = Vereinigung von Volumina = wasserdicht, kantenscharf per Konstruktion (Doku: kann mehrere Komponenten haben, nicht zwingend 2-Mannigfaltig -> danach manifold3d).
+   Quelle: https://doc.cgal.org/latest/Kinetic_surface_reconstruction/ (Beispiel mit Punktwolke+Normalen). Lizenz: GPL-3 oder kommerziell (GeometryFactory) -> nur Testwerkzeug, in LIZENZ_WERKZEUGE.md eintragen.
+   Aufwand: CPU, C++-Beispiel bauen (CGAL+Eigen, ~2-3 h) oder pyKSR-Bindings; kein GPU. Gewinn: hoch fuer Dach/Wandebenen, schwach fuer Bogen/Relief (Ebenen). Test <1h: Dachteil-Wolke (Teilbox, ~100k Punkte) -> KSR lambda 0.3/0.5/0.7 -> foto_diff vs. OpenMVS.
+2. **LIMAP / Line3D++ -> 3D-Kanten als Schnittebenen/Snap** (aus Vorrecherche, noch nicht ausgefuehrt). Prinzip: 3D-Linien aus den 94 Kameras (LSD/DeepLSD), Ebenen durch Linien ergaenzen -> Kandidatenebenen fuer #1 bzw. Vertex-Snap im OpenMVS-Netz. https://github.com/cvg/limap (BSD-3, pip pylimap). GPU nur DeepLSD (klein, passt in 8 GB), LSD CPU. Aufwand 2. Gewinn: mittel-hoch (liefert genau die Kanten, die Wolke/Netz rundet). Test <1h: 94 Fotos mit LSD, Linien in foto_diff reprojizieren, Anteil Fotokanten mit 3D-Linie messen; dann Linien als zusaetzliche Ebenen in KSR.
+3. **Generalized Winding Number + Marching/Dual Contouring (libigl, Jacobson 2013) auf dem besten OpenMVS-Netz** - wasserdicht aus Dreiecks-Suppe ohne Loecher-Fuellen: Innen/Aussen-Feld aus Winkelsumme (robust gegen Luecken/Selbstdurchdringung), Iso-Flaeche 0.5 auf feinem Gitter (1-2 cm), Feature-Erhalt per Dual Contouring (QEF) statt Marching Cubes; danach Vertex-Projektion zurueck aufs Original (wie ManifoldPlus-Idee, aber ohne NC). libigl: MPL-2.0 (?), pip igl. CPU, Gitter 1 cm ueber 40 m = gross -> Oktree/Teilkacheln. Unterschied zu fill_holes/pymeshfix/Alpha-Wrap: Luecken werden durch Feld-Konsens geschlossen, nicht durch Fan. Risiko: grosse Luecken (Gassenwand) werden "weich" (Feld ~0.5) -> pruefen. Test <1h: libigl winding_number auf 5-cm-Gitter, Kantenkosten und Loecherzahl.
+4. **PolyGNN (TU Delft, Chen/Nan 2024) / Points2Poly** - gelernte Auswahl von Polyeder-Zellen -> wasserdichtes kompaktes Gebaeude. https://arxiv.org/html/2307.08636v2 , Code github.com/chenzhaiyu/polygnn (Lizenz ?, Paper CC BY). Trainiert auf Gebaeude-Dachwolken (Building3D), Fassadenreliefs/Arkaden ausserhalb der Verteilung -> Gewinn unsicher, GPU klein. Aufwand 3-4. Nur falls #1 an der Zellauswahl scheitert; Test: vortrainiertes Modell auf Dach-Wolke.
+5. **Datenseitig: Schraegluft/Drohne gezielt fuer Dach und Hoffassaden** statt weiterer Methodenarbeit. Studien (ISPRS 2016, TU Dresden 2026, Skyebrowse) bestaetigen: nadir-only liefert Dach+Boden, Waende/Unterseiten nur mit Oblique-Anteil; Kombination erhoeht Vollstaendigkeit deutlich. Mapillary/Street View: keine belastbare Studie zu Dach/Hoffassade gefunden (nur Strasse, Hoehe <= ~3 m, Kamera). Folge: Mapillary bringt fuer die offenen Luecken (Gassenwand, Erker-Unterseite) wenig; eigenes Handy-Foto-Set mit Wunschfotos (modelle/ANLEITUNG_FOTOS_NUBIA.md) oder Drohnenclip hat den groessten Hebel. Aufwand: Nutzer. Test: Luecken-Karte (Wolkendichte je m2 Fassade) vs. Diff-Rot-Zonen korrelieren; wenn Rot = Luecken, hilft keine Methode.
+
+## Geprueft und eher nicht
+- Neuralangelo: 24 GB VRAM Default (Repo) -> RTX 4060 8 GB unrealistisch; NeuS2/PGSR/GOF/Sparse2DGS: GS-Familie schlecht bei uns (BR), Lizenzen NC/unklar, Chamfer-Gewinne nur auf DTU (Objekte, nicht Fassaden).
+- ManifoldPlus (github.com/hjwdzh/ManifoldPlus): Voxel-Aussenflaeche + Projektion, wasserdicht+mannigfaltig, aber NICHT-kommerziell -> nur als Referenz fuer #3.
+- Scan2LoD3 (arxiv 2305.06314): LoD3 aus MLS+Bildern, zielt auf Fensterklassen, kein Netz-Ersatz.
+- TUM 2026 PolyFit-Fassadenkorrektur (arxiv 2606.04891 laut Suche): korrigiert CityGML-LoD2 anhand MLS-Wolke; wir wollen LoD2 nicht als Quelle (wolke-einzige-basis) -> nur Idee.
+- Instant Meshes / Dual Contouring allein: bei offenem Netz keine Loesung (nur Remesh).
+
+## Empfehlung Reihenfolge
+1. #5-Vorpruefung (30 min): Luecken-Karte vs. Diff-Rot - entscheidet, ob Methode ueberhaupt der Engpass ist.
+2. #3 Winding-Number-Hull (billig, behaelt bestes Diff-Netz, liefert Wasserdichtheit).
+3. #1 KSR auf Dach/Wandebenen, danach #2 LIMAP-Linien als Zusatzebenen (kombiniert).
+4. #4 nur bei Bedarf. Lizenz: #1 GPL, nur Test; Produkt-Pfad = eigener Zellen-Min-Cut + LIMAP (BSD) + manifold3d (Apache).

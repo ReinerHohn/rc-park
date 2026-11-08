@@ -10,9 +10,10 @@ Das "Foto" ist ein Render des Modells mit derselben Kamera (Helligkeit je Ebene 
   T3 erfunden:  Modell + Kasten (2 x 2 x 1 m vor der Fassade), Foto ohne -> FALSCH-Kantenlaenge im Bildbereich des Kastens >= T1 + 1,5 m
   T4 fehlt:     Foto mit Kasten, Modell ohne                      -> FEHLT-Kantenlaenge im Bildbereich des Kastens >= T1 + 1,5 m
   /media/oem/scan/venv-seg/bin/python -W ignore -I tools/test_foto_diff.py modelle/<objekt>/objekt.json --foto 004 [--stl ...] [--werkzeug tools/foto_diff.py]
-Ergebnis audit/test_foto_diff_<foto>.json (+ Bilder im Arbeitsordner); Exit 0 nur wenn T1-T4 bestehen.
+Ergebnis audit/test_foto_diff_<foto>.json (+ Bilder im Arbeitsordner); Exit 0 nur wenn T1-T4 bestehen; Exit 3 = NICHT BEURTEILBAR (Gueltigkeitstor S2: Modellkantenpixel >= --min-kanten-px, Versatz im T2-Bild deutlich; fehlende Buendelkamera).
 """
 import sys, os, json, glob, argparse, subprocess, tempfile, numpy as np, cv2, trimesh
+from concurrent.futures import ThreadPoolExecutor
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import fehlteile_finden as FF, render_kern as RK
 
@@ -25,18 +26,56 @@ def modell(obj, stl, kk):
     T_ = np.array(kk["rahmen_verschiebung"] if "rahmen_verschiebung" in kk else [-c[0], -c[1], -m.bounds[0, 2]], float); m.apply_translation(T_); return m, T_
 
 
+def _gpu():
+    """GPU-Abtastung der Pruefbilder (2026-11-04, Nutzerauftrag): Standard, wenn CUDA da ist; PRUEF_CPU=1 = alte trimesh-Fassung (bitgleich zu vorher)."""
+    if os.environ.get("PRUEF_CPU") == "1": return False
+    try:
+        import torch; return torch.cuda.is_available()
+    except Exception: return False
+
+
+def _saat():
+    """PRUEF_SAAT=k verschiebt die Abtast-Saat des Pruefbilds (Streuungsmessung, 2026-11-04); ohne Schalter 0 -> unveraendert."""
+    return int(os.environ.get("PRUEF_SAAT", "0"))
+
+
+_GPU_SPERRE = __import__("threading").Lock()                                                        # Rastern nacheinander (Bruchteil einer Sekunde je Bild); Rest des Pruefbilds parallel (12 gleichzeitig: VRAM voll, 2026-11-04)
+
+
+def gpu_flaechenrender(*a, **k):
+    with _GPU_SPERRE: return _gpu_flaechenrender(*a, **k)
+
+
+def _gpu_flaechenrender(teile, R, t, f, cx, cy, W, H):
+    """Pruefbild-Geometrie: exakte Dreiecksrasterung aus render_kern.dreiecke_rastern (gemeinsam mit foto_diff --raster). teile = [(mesh, _, _), ...]."""
+    mm = trimesh.util.concatenate([p[0] for p in teile]) if len(teile) > 1 else teile[0][0]
+    d, fid, pos = RK.dreiecke_rastern(mm, R, t, f, cx, cy, W, H)
+    Nf = np.asarray(mm.face_normals); return d, fid, pos, Nf, np.einsum("ij,ij->i", Nf, mm.triangles_center)
+
+
 def foto_rendern(m, R, t, f, cx, cy, W0, H0, rng):
     k = min(1.0, 2000.0 / max(W0, H0)); W, H = int(round(W0 * k)), int(round(H0 * k))                  # dicht auf <= 2000 px rendern, dann hochskalieren (bei 1000 px fehlten feine Martinstor-Details im Pruefbild)
-    P, fi = trimesh.sample.sample_surface(m, 20000000, seed=1); P = np.asarray(P)
+    if _gpu():                                                                                      # GPU: gleiche Bildformel, Dreieck je Pixel direkt aus dem Z-Puffer
+        _, fpx, _, Nf, df = gpu_flaechenrender([(m, 20000000, 1 + _saat())], R, t, f * k, cx * k, cy * k, W, H)
+        fu = np.unique(fpx[fpx >= 0]); key = np.round(Nf[fu] * 8).astype(int) * 1000 + np.round(df[fu] / 0.5).astype(int)[:, None]
+        _, inv = np.unique(key, axis=0, return_inverse=True); rng.uniform(80, 220, inv.max() + 1)   # gleicher Zufallsstrom-Aufbau wie CPU (Rauschen unten)
+        img = np.full((H, W), 200.0); img[int(H * 0.6):] = 120.0
+        tr = fpx >= 0; ft = fpx[tr]; n = Nf[ft]; l1 = np.array([0.4, -0.5, 0.75]); l2 = np.array([-0.7, 0.3, 0.2]); l1 /= np.linalg.norm(l1); l2 /= np.linalg.norm(l2)
+        img[tr] = 40 + 80 * np.abs(n @ l1) + 50 * np.abs(n @ l2) + 35 * np.cos(2.3 * df[ft])
+        img = cv2.morphologyEx(img.astype(np.float32), cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))
+        img = cv2.resize(img, (W0, H0), interpolation=cv2.INTER_LINEAR); img += rng.normal(0, 4, img.shape); return cv2.cvtColor(np.clip(img, 0, 255).astype(np.uint8), cv2.COLOR_GRAY2BGR)
+    P, fi = trimesh.sample.sample_surface(m, 20000000, seed=1 + _saat()); P = np.asarray(P)
     depth, idx = RK.tiefenbild(P, R, t, f * k, cx * k, cy * k, W, H)
     if hasattr(depth, "cpu"): depth = depth.cpu().numpy(); idx = idx.cpu().numpy()
-    N = m.face_normals[fi]; d = np.einsum("ij,ij->i", N, m.triangles_center[fi])
-    key = np.round(N * 8).astype(int) * 1000 + np.round(d / 0.5).astype(int)[:, None]               # Ebenen-Schluessel: gleiche Ebene = gleiche Albedo (keine Dreiecksnaehte)
-    _, inv = np.unique(key, axis=0, return_inverse=True); alb = rng.uniform(80, 220, inv.max() + 1)[inv.ravel()]
+    # Je DREIECK statt je Abtastpunkt (2026-11-04, bitgleich: dieselben Werte, nur einmal je Dreieck gerechnet; np.unique ueber 20 M Punkte kostete 27 s je Bild).
+    # Schluesselmenge nur aus den abgetasteten Dreiecken (wie vorher), damit die Zufallsalbedo-Reihenfolge gleich bleibt.
+    Nf = m.face_normals; df = np.einsum("ij,ij->i", Nf, m.triangles_center); fu = np.unique(fi)
+    key = np.round(Nf[fu] * 8).astype(int) * 1000 + np.round(df[fu] / 0.5).astype(int)[:, None]       # Ebenen-Schluessel: gleiche Ebene = gleiche Albedo (keine Dreiecksnaehte)
+    _, inv = np.unique(key, axis=0, return_inverse=True); rng.uniform(80, 220, inv.max() + 1)          # Albedo wird nicht benutzt, Ziehung bleibt fuer gleichen Zufallsstrom (Rauschen unten)
     img = np.full((H, W), 200.0); img[int(H * 0.6):] = 120.0
-    tr = idx >= 0; n = N[idx[tr]]; l1 = np.array([0.4, -0.5, 0.75]); l2 = np.array([-0.7, 0.3, 0.2]); l1 /= np.linalg.norm(l1); l2 /= np.linalg.norm(l2)
+    tr = idx >= 0; ft = fi[idx[tr]]; n = Nf[ft]; l1 = np.array([0.4, -0.5, 0.75]); l2 = np.array([-0.7, 0.3, 0.2]); l1 /= np.linalg.norm(l1); l2 /= np.linalg.norm(l2)
     img[tr] = (40 + 80 * np.abs(n @ l1) + 50 * np.abs(n @ l2)                                         # zwei Lichtrichtungen: jeder Knick hat Kontrast
-               + 35 * np.cos(2.3 * d[idx[tr]]))                                                        # je Ebene aus ihrem Abstand d: parallele Flaechen in anderer Tiefe (Lisene vor Wand) unterscheiden sich, keine Streifen in der Flaeche
+               + 35 * np.cos(2.3 * df[ft]))                                                            # je Ebene aus ihrem Abstand d: parallele Flaechen in anderer Tiefe (Lisene vor Wand) unterscheiden sich, keine Streifen in der Flaeche
                                                                                                       # (vorher Zufallsalbedo allein -> zufaellig gleich hell, Martinstor T1 46 %; Tiefen-Sinus -> Streifen auf Schraegen)
     img = cv2.morphologyEx(img.astype(np.float32), cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))           # Punktrender-Loecher schliessen
     img = cv2.resize(img, (W0, H0), interpolation=cv2.INTER_LINEAR); img += rng.normal(0, 4, img.shape); return cv2.cvtColor(np.clip(img, 0, 255).astype(np.uint8), cv2.COLOR_GRAY2BGR)
@@ -45,15 +84,18 @@ def foto_rendern(m, R, t, f, cx, cy, W0, H0, rng):
 def kasten(m, R, t, f, cx, cy, W, H):
     """Kasten 2 x 2 x 1 m vor der ruhigsten sichtbaren Modellflaeche (geringste Kantendichte), auf der Sichtlinie zur Kamera ausgerichtet."""
     k = min(1.0, 800.0 / max(W, H)); w_, h_ = int(W * k), int(H * k)                                    # ruhige Flaeche suchen (wenig Modellkanten), sonst verschwindet der Kasten zwischen Balkon-/Pfeilerkanten
-    P, fi = trimesh.sample.sample_surface(m, 3000000, seed=2); P = np.asarray(P); depth, idx = RK.tiefenbild(P, R, t, f * k, cx * k, cy * k, w_, h_)
-    if hasattr(idx, "cpu"): depth = depth.cpu().numpy(); idx = idx.cpu().numpy()
-    N = m.face_normals[fi]; nb = np.zeros((h_, w_, 3)); tr = idx >= 0; nb[tr] = N[idx[tr]]
+    if _gpu():
+        depth, fpx, pos, Nf, _ = gpu_flaechenrender([(m, 3000000, 2)], R, t, f * k, cx * k, cy * k, w_, h_); tr = fpx >= 0; nb = np.zeros((h_, w_, 3)); nb[tr] = Nf[fpx[tr]]
+        punkt = lambda y, x: pos[y, x].astype(float)
+    else:
+        P, fi = trimesh.sample.sample_surface(m, 3000000, seed=2); P = np.asarray(P); depth, idx = RK.tiefenbild(P, R, t, f * k, cx * k, cy * k, w_, h_)
+        if hasattr(idx, "cpu"): depth = depth.cpu().numpy(); idx = idx.cpu().numpy()
+        N = m.face_normals[fi]; nb = np.zeros((h_, w_, 3)); tr = idx >= 0; nb[tr] = N[idx[tr]]; punkt = lambda y, x: P[idx[y, x]]
     kante = (np.abs(np.diff(nb, axis=0, prepend=0)).sum(2) > 0.3) | (np.abs(np.diff(nb, axis=1, prepend=0)).sum(2) > 0.3) | ~tr
     dichte = cv2.blur(kante.astype(np.float32), (max(3, w_ // 8),) * 2); dichte[~tr] = 9; rand = int(0.15 * min(w_, h_)); dichte[:rand] = dichte[-rand:] = 9; dichte[:, :rand] = dichte[:, -rand:] = 9
     y, x = np.unravel_index(np.argmin(dichte), dichte.shape)
     if dichte[y, x] >= 9: raise SystemExit("keine ruhige Modellflaeche im Bild")
-    i = idx[y, x]
-    p = P[i]; C = -np.asarray(R).T @ np.asarray(t, float); n = (C - p) / np.linalg.norm(C - p)         # auf der Sichtlinie, zur Kamera gedreht: sicher sichtbar (an der Flaechennormale steckte er im Balkon)
+    p = punkt(y, x); C =-np.asarray(R).T @ np.asarray(t, float); n = (C - p) / np.linalg.norm(C - p)         # auf der Sichtlinie, zur Kamera gedreht: sicher sichtbar (an der Flaechennormale steckte er im Balkon)
     p = p + 0.6 * n                                                                                    # Rueckseite 0,1 m vor der Flaeche (Mitte unten + 0,5 n)
     up = np.array([0, 0, 1.0]) if abs(n[2]) < 0.9 else np.array([1.0, 0, 0]); u = np.cross(up, n); u /= np.linalg.norm(u); w = np.cross(n, u)
     k = trimesh.creation.box(extents=[2.0, 2.0, 1.0]); T = np.eye(4); T[:3, 0], T[:3, 1], T[:3, 2] = u, w, n; T[:3, 3] = p + 0.5 * n; k.apply_transform(T)
@@ -72,38 +114,42 @@ def foto_diff(werkzeug, objp, nr, bild, stl, aus, extra=()):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--foto", required=True); ap.add_argument("--stl"); ap.add_argument("--werkzeug", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "foto_diff.py"))
-    ap.add_argument("--t1-max", type=float, default=0.25); ap.add_argument("--arbeit"); ap.add_argument("--fd", default="", help="weitere foto_diff-Argumente, z. B. \"--kanten normalen\""); a = ap.parse_args()
+    ap.add_argument("--t1-max", type=float, default=0.25); ap.add_argument("--arbeit"); ap.add_argument("--min-kanten-px", type=int, default=2000, help="Gueltigkeitstor (S2): Modellkantenpixel in der Bewertungsmaske des wahren Pruefbilds mindestens so viele (Herleitung: Median der bestandenen Laeufe / 5, Register CN)"); ap.add_argument("--audit-aus", help="Ordner fuer test_foto_diff_<foto>.json statt <objekt>/audit (Beweislaeufe nicht ins Objekt schreiben)"); ap.add_argument("--fd", default="", help="weitere foto_diff-Argumente, z. B. \"--kanten normalen\""); a = ap.parse_args()
     objp = os.path.abspath(a.objekt); obj = json.load(open(objp)); od = os.path.dirname(objp); root = os.path.dirname(os.path.dirname(od)); nr = a.foto
-    kp = FF.k_datei(objp, obj, root, nr); K = json.load(open(kp)); kk = K["kamera"]; W, H = kk["bild"]   # dieselbe Aufloesung wie foto_diff (vorher Objektordner hier, Masstabellenordner dort -> zwei Kameras, Martinstor T1 55 %)
+    kp = FF.k_datei(objp, obj, root, nr); K = json.load(open(kp)) if os.path.exists(kp) else {}
+    if "kamera" not in K or not K["kamera"].get("bild"):                                            # S2: Foto ohne Buendelkamera (z. B. martinstor 014: nur Picks) -> NICHT BEURTEILBAR statt KeyError
+        res = dict(foto=nr, gueltig=False, grund=f"{kp}: kein Block 'kamera' (nur Picks/keine Kalibrierung) - Beweis nicht moeglich", fd_argumente=a.fd)
+        ad = a.audit_aus or os.path.join(od, "audit"); os.makedirs(ad, exist_ok=True); json.dump(res, open(os.path.join(ad, f"test_foto_diff_{nr}.json"), "w"), indent=1)
+        print(json.dumps(res, ensure_ascii=False)); print("BEWEIS foto_diff: NICHT BEURTEILBAR (Exit 3, gilt nicht als bestanden)"); sys.exit(3)
+    kk = K["kamera"]; W, H = kk["bild"]   # dieselbe Aufloesung wie foto_diff (vorher Objektordner hier, Masstabellenordner dort -> zwei Kameras, Martinstor T1 55 %)
     R, t, f, _, _ = FF.kamera_laden(K, obj, nr, root, W, H); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2))
     stl0 = a.stl or os.path.join(root, obj["stl"]); m, T_ = modell(obj, stl0, kk); rng = np.random.default_rng(0)
-    wd = a.arbeit or tempfile.mkdtemp(prefix="test_foto_diff_"); os.makedirs(wd, exist_ok=True)
+    wd = a.arbeit or tempfile.mkdtemp(prefix="test_foto_diff_", dir="/media/oem/scan/rc-park_null"); os.makedirs(wd, exist_ok=True)   # Datenplatte (Nutzerregel; vorher /tmp auf der Root-Platte, ~30 MB je Lauf)
     kb, kpos = kasten(m, R, t, f, cx, cy, W, H); mk = trimesh.util.concatenate([m, kb])
     ms = m.copy(); Rm = np.asarray(R); seit = np.cross(Rm.T @ np.array([0, 0, 1.0]), [0, 0, 1.0]); seit /= np.linalg.norm(seit); ms.apply_translation(0.6 * seit)   # waagerecht quer zur Blickrichtung (vorher Bild-x ohne z: bei Hochkantfotos fast Blickrichtung, Martinstor 014 nur 6 px = 0,13 m < tol)
-    bilder = {}
-    for name, mm in (("wahr", m), ("versetzt", ms), ("mit_kasten", mk)):
-        p = os.path.join(wd, f"foto_{name}.jpg"); cv2.imwrite(p, FF.foto_verzerren(foto_rendern(mm, R, t, f, cx, cy, W, H, np.random.default_rng(0)), kk), [cv2.IMWRITE_JPEG_QUALITY, 95]); bilder[name] = p   # mit k1 der echten Kamera (vorher Lochkamera auf beiden Seiten: Verzeichnungsfehler unsichtbar)
-    pz = lambda X: (lambda Xc: f * Xc[:2] / Xc[2])(Rm @ X + np.asarray(t, float))                    # Bildversatz T2 geometrisch (Phasenkorrelation zog wegen gleichen Rauschens beider Bilder zu 0)
-    sp = m.centroid; v2_vek = pz(sp + 0.6 * seit) - pz(sp); v2_px = float(np.linalg.norm(v2_vek)); v2_m = v2_px * float((Rm @ sp + np.asarray(t, float))[2]) / f
-    if v2_m < 1.5 * 0.35: raise SystemExit(f"T2-Pruefbild ungueltig: Bildversatz {v2_px:.1f} px = {v2_m:.2f} m < 1,5 x tol")
-    stl_k = os.path.join(wd, "modell_mit_kasten.stl"); stl_schreiben(mk, T_, obj, stl_k)
-    erg = {}
-    for fall, bild, stl in (("T1_wahr", "wahr", stl0), ("T2_versetzt", "versetzt", stl0), ("T3_erfunden", "wahr", stl_k), ("T4_fehlt", "mit_kasten", stl0)):
-        aus = os.path.join(wd, fall); os.makedirs(aus, exist_ok=True); erg[fall] = foto_diff(a.werkzeug, objp, nr, bilder[bild], stl, aus, a.fd.split() + ["--tiefen", "aus"])   # echte Tiefenkarten passen nicht zu synthetischen Bildern
-    k1 = float(kk.get("k1") or 0.0); t5 = None
-    if abs(k1) >= 0.02:                                                                             # T5 Gegenprobe: ohne Entzerrung muss das wahre Bild bei nennenswertem k1 durchfallen (Anteil > t1_max oder Versatz > 0,15 m)
-        aus = os.path.join(wd, "T5_ohne_entzerrung"); os.makedirs(aus, exist_ok=True); e5 = foto_diff(a.werkzeug, objp, nr, bilder["wahr"], stl0, aus, a.fd.split() + ["--keine-entzerrung", "--tiefen", "aus"])
-        t5 = dict(k1=k1, anteil=e5["anteil_modellkanten_ohne_foto"], versatz=e5.get("versatz"), faellt=bool(e5["anteil_modellkanten_ohne_foto"] > a.t1_max or (e5.get("versatz") or {}).get("versatz_m", 0) > 0.15))
     # T6 VERDECKER: Kasten 3 x 4 x 0,5 m auf 40 % des Weges Kamera -> Fassade nur im Pruefbild; Tiefenkarte (synthetisch, COLMAP-Format) zeigt ihn.
     # Mit Maske darf foto_diff im Bildbereich des Verdeckers nicht mehr FEHLT/FALSCH melden als T1; ohne Maske (Gegenprobe) muss es dort Scheintreffer geben.
     Cc = -Rm.T @ np.asarray(t, float); pv = Cc + 0.4 * (np.asarray(kpos) - Cc); nv = (Cc - pv) / np.linalg.norm(Cc - pv)
     upv = np.array([0, 0, 1.0]); uv_ = np.cross(upv, nv); uv_ /= np.linalg.norm(uv_); wv = np.cross(nv, uv_)
     vb = trimesh.creation.box(extents=[3.0, 4.0, 0.5]); Tv = np.eye(4); Tv[:3, 0], Tv[:3, 1], Tv[:3, 2] = uv_, wv, nv; Tv[:3, 3] = pv; vb.apply_transform(Tv); mv = trimesh.util.concatenate([m, vb])
-    bilder["verdeckt"] = os.path.join(wd, "foto_verdeckt.jpg"); cv2.imwrite(bilder["verdeckt"], FF.foto_verzerren(foto_rendern(mv, R, t, f, cx, cy, W, H, np.random.default_rng(0)), kk), [cv2.IMWRITE_JPEG_QUALITY, 95])
+    # Pruefbilder PARALLEL (2026-11-04, Nutzerregel maximal parallel; je Bild eigener Zufallsstrom -> bitgleich zur Reihenfolge). Arbeiter nach freiem RAM (gemessen 3,6 GB je Render).
+    import param_suche as PS
+    bilder = {name: os.path.join(wd, f"foto_{name}.jpg") for name in ("wahr", "versetzt", "mit_kasten", "verdeckt")}
+    def _bild(nm):
+        cv2.imwrite(bilder[nm[0]], FF.foto_verzerren(foto_rendern(nm[1], R, t, f, cx, cy, W, H, np.random.default_rng(0)), kk), [cv2.IMWRITE_JPEG_QUALITY, 95])   # mit k1 der echten Kamera (vorher Lochkamera auf beiden Seiten: Verzeichnungsfehler unsichtbar)
+    with ThreadPoolExecutor(PS.arbeiter_zahl(4, gb_je=0.8 if _gpu() else 3.8, reserve_gb=1.5)) as ex: list(ex.map(_bild, (("wahr", m), ("versetzt", ms), ("mit_kasten", mk), ("verdeckt", mv))))
+    pz = lambda X: (lambda Xc: f * Xc[:2] / Xc[2])(Rm @ X + np.asarray(t, float))                    # Bildversatz T2 geometrisch (Phasenkorrelation zog wegen gleichen Rauschens beider Bilder zu 0)
+    sp = m.centroid; v2_vek = pz(sp + 0.6 * seit) - pz(sp); v2_px = float(np.linalg.norm(v2_vek)); v2_m = v2_px * float((Rm @ sp + np.asarray(t, float))[2]) / f
+    if v2_m < 1.5 * 0.35: raise SystemExit(f"T2-Pruefbild ungueltig: Bildversatz {v2_px:.1f} px = {v2_m:.2f} m < 1,5 x tol")
+    stl_k = os.path.join(wd, "modell_mit_kasten.stl"); stl_schreiben(mk, T_, obj, stl_k)
+    k1 = float(kk.get("k1") or 0.0); t5 = None
     td = os.path.join(wd, "tiefen_synth"); os.makedirs(os.path.join(td, "stereo", "depth_maps"), exist_ok=True); ks = min(1.0, 1600.0 / max(W, H)); Wt, Ht = int(round(W * ks)), int(round(H * ks))
-    Pv = np.vstack([np.asarray(trimesh.sample.sample_surface(m, 8000000, seed=3)[0]), np.asarray(trimesh.sample.sample_surface(vb, 2000000, seed=4)[0])])   # Verdecker eigens dicht (nach Flaeche verteilt bekam er zu wenige Punkte: Karte loechrig, Maske leer)
-    Dv, _ = RK.tiefenbild(Pv, R, t, f * ks, cx * ks, cy * ks, Wt, Ht)
-    Dv = Dv.cpu().numpy() if hasattr(Dv, "cpu") else Dv; Dv = np.where(np.isfinite(Dv), Dv, 0).astype(np.float32)
+    if _gpu(): Dv = gpu_flaechenrender([(m, 8000000, 3), (vb, 2000000, 4)], R, t, f * ks, cx * ks, cy * ks, Wt, Ht)[0]   # Verdecker eigens dicht
+    else:
+        Pv = np.vstack([np.asarray(trimesh.sample.sample_surface(m, 8000000, seed=3)[0]), np.asarray(trimesh.sample.sample_surface(vb, 2000000, seed=4)[0])])   # Verdecker eigens dicht (nach Flaeche verteilt bekam er zu wenige Punkte: Karte loechrig, Maske leer)
+        Dv, _ = RK.tiefenbild(Pv, R, t, f * ks, cx * ks, cy * ks, Wt, Ht)
+        Dv = Dv.cpu().numpy() if hasattr(Dv, "cpu") else Dv
+    Dv = np.where(np.isfinite(Dv), Dv, 0).astype(np.float32)
     Dv = cv2.morphologyEx(Dv, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))                              # Punktrender-Loecher (Tiefe 0 = keine)
     with open(os.path.join(td, "stereo", "depth_maps", f"{nr}.jpg.geometric.bin"), "wb") as fh:
         fh.write(f"{Wt}&{Ht}&1&".encode()); fh.write(Dv.T[:, :, None].ravel(order="F").astype(np.float32).tobytes())
@@ -113,8 +159,16 @@ def main():
     import shutil; shutil.copy(os.path.join(td, "stereo", "depth_maps", f"{nr}.jpg.geometric.bin"), os.path.join(tdf, "stereo", "depth_maps", f"{nr}.jpg.geometric.bin"))
     Rf = cv2.Rodrigues(np.array([0, np.radians(1.0), 0]))[0] @ np.asarray(R)
     json.dump({nr: dict(bild=f"{nr}.jpg", W=Wt, H=Ht, fx=f * ks, fy=f * ks, cx=cx * ks + 0.5, cy=cy * ks + 0.5, R=Rf.tolist(), t=t_sfm.tolist())}, open(os.path.join(tdf, "kameras_unverzerrt.json"), "w"))
-    for fall, extra in (("T6_verdecker", ["--tiefen", td]), ("T6_ohne_maske", ["--tiefen", "aus"]), ("T6b_fremde_kamera", ["--tiefen", tdf])):
-        aus = os.path.join(wd, fall); os.makedirs(aus, exist_ok=True); erg[fall] = foto_diff(a.werkzeug, objp, nr, bilder["verdeckt"], stl0, aus, a.fd.split() + extra)
+    # Alle foto_diff-Faelle PARALLEL (2026-11-04; unabhaengig voneinander, je eigener Ausgabeordner). Echte Tiefenkarten passen nicht zu synthetischen Bildern -> T1-T5 "--tiefen aus".
+    # T5 Gegenprobe: ohne Entzerrung muss das wahre Bild bei nennenswertem k1 durchfallen (Anteil > t1_max oder Versatz > 0,15 m)
+    faelle = [("T1_wahr", "wahr", stl0, ["--tiefen", "aus"]), ("T2_versetzt", "versetzt", stl0, ["--tiefen", "aus"]), ("T3_erfunden", "wahr", stl_k, ["--tiefen", "aus"]),
+              ("T4_fehlt", "mit_kasten", stl0, ["--tiefen", "aus"]), ("T6_verdecker", "verdeckt", stl0, ["--tiefen", td]), ("T6_ohne_maske", "verdeckt", stl0, ["--tiefen", "aus"]),
+              ("T6b_fremde_kamera", "verdeckt", stl0, ["--tiefen", tdf])] + ([("T5_ohne_entzerrung", "wahr", stl0, ["--keine-entzerrung", "--tiefen", "aus"])] if abs(k1) >= 0.02 else [])
+    def _fd(c):
+        aus = os.path.join(wd, c[0]); os.makedirs(aus, exist_ok=True); return foto_diff(a.werkzeug, objp, nr, bilder[c[1]], c[2], aus, a.fd.split() + c[3])
+    with ThreadPoolExecutor(PS.arbeiter_zahl(len(faelle))) as ex: erg = dict(zip([c[0] for c in faelle], ex.map(_fd, faelle)))
+    if "T5_ohne_entzerrung" in erg:
+        e5 = erg.pop("T5_ohne_entzerrung"); t5 = dict(k1=k1, anteil=e5["anteil_modellkanten_ohne_foto"], versatz=e5.get("versatz"), faellt=bool(e5["anteil_modellkanten_ohne_foto"] > a.t1_max or (e5.get("versatz") or {}).get("versatz_m", 0) > 0.15))
     uvv, _ = cv2.projectPoints(vb.vertices.reshape(-1, 1, 3), cv2.Rodrigues(np.asarray(R))[0], np.asarray(t, float), np.array([[f, 0, cx], [0, f, cy], [0, 0, 1.0]]), None); uvv = uvv.reshape(-1, 2)
     bxv = [uvv[:, 0].min(), uvv[:, 1].min(), uvv[:, 0].max(), uvv[:, 1].max()]
     im_v = lambda d: d["box"][0] <= bxv[2] and d["box"][2] >= bxv[0] and d["box"][1] <= bxv[3] and d["box"][3] >= bxv[1]
@@ -145,11 +199,19 @@ def main():
     pr["T6"] = bool(l6 <= l6b + 1.5 and erg["T6_verdecker"]["anteil_modellkanten_ohne_foto"] <= a1 + 0.05)   # gegen T1 (Nutzerentscheid 2026-11-04: T6 prueft die Maske, nicht die Grundgenauigkeit; vorher <= t1_max, Martinstor 28,1 %% bei T1 24,3 %%, Verdeckerbereich 0 m)
     pr["T6_gegenprobe"] = bool(l6o >= l6b + 1.5)
     v6b = erg["T6b_fremde_kamera"].get("verdecker") or {}; pr["T6b"] = bool("passt nicht" in str(v6b.get("quelle")) and v6b.get("anteil_silhouette", 1) == 0)   # fremde Tiefenkamera abgelehnt, keine Maske
+    # S2 Gueltigkeitstor (2026-11-05, keine Schwelle der Tests geaendert): ohne genug Modellkanten ODER wenn die Versatzschaetzung den echten 0,6-m-Versatz im Pruefbild T2 nicht
+    # als DEUTLICH (Gewinn >= 0,08) erkennt, sind T1v/T2v nicht beurteilbar (Beispiel kaufhaus_null5 mit LoD2-Rumpf: Gewinn 0,014, T1v zufaellig). Nicht beurteilbar = NICHT bestanden.
+    npx = erg["T1_wahr"].get("modellkanten_px"); gruende = []
+    if npx is not None and npx < a.min_kanten_px: gruende.append(f"nur {npx} Modellkantenpixel (< {a.min_kanten_px})")
+    if npx is None: gruende.append("foto_diff meldet modellkanten_px nicht (altes Werkzeug)")
+    if not v2.get("deutlich"): gruende.append(f"Versatzschaetzung im 0,6-m-Pruefbild nicht deutlich (Gewinn {v2.get('gewinn')})")
+    gueltig = not gruende
     ok = pr["T1"] and pr["T1v"] and (pr["T2_anteil"] or pr["T2v"]) and pr["T3"] and pr["T4"] and pr["T6"] and pr["T6_gegenprobe"] and pr["T6b"]
-    res = dict(foto=nr, fd_argumente=a.fd, T6=dict(treffer_m=round(l6, 2), ohne_maske_m=round(l6o, 2), basis_m=round(l6b, 2), anteil=erg['T6_verdecker']['anteil_modellkanten_ohne_foto'], anteil_ohne=erg['T6_ohne_maske']['anteil_modellkanten_ohne_foto'], verdeckt=erg['T6_verdecker'].get('verdecker'), fremd=erg['T6b_fremde_kamera'].get('verdecker'), bildbox=[round(float(x)) for x in bxv]), T5_ohne_entzerrung=t5, T2_bildversatz_m=round(v2_m, 3), werkzeug=os.path.relpath(a.werkzeug, root) if a.werkzeug.startswith(root) else a.werkzeug, bestanden=ok, pruefungen=pr, T1_anteil=a1, T2_anteil=a2, T1_versatz=v1, T2_versatz=v2, T2_erwartet_px=[round(float(x), 1) for x in v2_vek],
+    res = dict(foto=nr, gueltig=gueltig, ungueltig_grund=gruende, modellkanten_px=npx, versatz_gewinn_T1=v1.get("gewinn"), versatz_gewinn_T2=v2.get("gewinn"), fd_argumente=a.fd, T6=dict(treffer_m=round(l6, 2), ohne_maske_m=round(l6o, 2), basis_m=round(l6b, 2), anteil=erg['T6_verdecker']['anteil_modellkanten_ohne_foto'], anteil_ohne=erg['T6_ohne_maske']['anteil_modellkanten_ohne_foto'], verdeckt=erg['T6_verdecker'].get('verdecker'), fremd=erg['T6b_fremde_kamera'].get('verdecker'), bildbox=[round(float(x)) for x in bxv]), T5_ohne_entzerrung=t5, T2_bildversatz_m=round(v2_m, 3), werkzeug=os.path.relpath(a.werkzeug, root) if a.werkzeug.startswith(root) else a.werkzeug, bestanden=ok, pruefungen=pr, T1_anteil=a1, T2_anteil=a2, T1_versatz=v1, T2_versatz=v2, T2_erwartet_px=[round(float(x), 1) for x in v2_vek],
                T1_fehlt_anteil=erg["T1_wahr"]["anteil_fotokanten_ohne_modell"], T3_treffer=t3[:3], T3_laenge_m=round(l3, 2), T3_basis_m=round(l3b, 2), T4_treffer=t4[:3], T4_laenge_m=round(l4, 2), T4_basis_m=round(l4b, 2), kasten_xyz=kpos.round(2).tolist(), kasten_bildbox=[round(float(x)) for x in bx], arbeit=wd)
-    os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(res, open(os.path.join(od, "audit", f"test_foto_diff_{nr}.json"), "w"), indent=1)
+    ad = a.audit_aus or os.path.join(od, "audit"); os.makedirs(ad, exist_ok=True); json.dump(res, open(os.path.join(ad, f"test_foto_diff_{nr}.json"), "w"), indent=1)
     print(json.dumps({k: v for k, v in res.items() if k not in ("T3_treffer", "T4_treffer")}, ensure_ascii=False))
+    if not gueltig: print("BEWEIS foto_diff: NICHT BEURTEILBAR (Exit 3, gilt nicht als bestanden) -", "; ".join(gruende)); sys.exit(3)
     print("BEWEIS foto_diff:", "BESTANDEN" if ok else "NICHT BESTANDEN"); sys.exit(0 if ok else 1)
 
 

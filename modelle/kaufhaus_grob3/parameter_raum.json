@@ -1,0 +1,793 @@
+{
+ "_doku": "satteldach:haupt (grob3): Geometrie +-0.6 m, Ziegelreihen. Start = Werte aus altem Netz (ANNAHME) bzw. Foto-Kantenabstand folgt.",
+ "satteldach:haupt": {
+  "u0": {
+   "lo": -12,
+   "hi": -7
+  },
+  "u1": {
+   "lo": 6.5,
+   "hi": 11
+  },
+  "n_traufe_v": {
+   "lo": 11.5,
+   "hi": 15
+  },
+  "z_traufe_v": {
+   "lo": 9,
+   "hi": 12.5
+  },
+  "z_first": {
+   "lo": 17,
+   "hi": 23
+  }
+ },
+ "gaubenreihe:unten": {
+  "u_mitte": {
+   "lo": -3.5,
+   "hi": 2.5,
+   "start": -0.6257
+  },
+  "pitch": {
+   "lo": 3.0,
+   "hi": 6.0,
+   "start": 3.8897
+  },
+  "t": {
+   "lo": -0.1,
+   "hi": 0.8,
+   "start": 0.0586
+  },
+  "breite": {
+   "lo": 0.6,
+   "hi": 2.2
+  },
+  "wandhoehe": {
+   "lo": 0.6,
+   "hi": 2.4,
+   "start": 1.2
+  },
+  "vor": {
+   "lo": -0.3,
+   "hi": 1.0
+  },
+  "tiefe": {
+   "lo": 0.6,
+   "hi": 2.0,
+   "start": 1.0
+  },
+  "firsthoehe": {
+   "lo": 0.4,
+   "hi": 1.6,
+   "start": 0.9
+  }
+ },
+ "gaubenreihe:oben": {
+  "u_mitte": {
+   "lo": -3.5,
+   "hi": 2.5,
+   "start": -0.3904
+  },
+  "pitch": {
+   "lo": 3.0,
+   "hi": 6.5,
+   "start": 4.3476
+  },
+  "t": {
+   "lo": 0.0,
+   "hi": 0.95,
+   "start": 0.3894
+  },
+  "breite": {
+   "lo": 0.6,
+   "hi": 2.2
+  },
+  "wandhoehe": {
+   "lo": 0.6,
+   "hi": 2.4,
+   "start": 1.2
+  },
+  "vor": {
+   "lo": -0.3,
+   "hi": 1.0
+  },
+  "tiefe": {
+   "lo": 0.6,
+   "hi": 2.0,
+   "start": 1.0
+  },
+  "firsthoehe": {
+   "lo": 0.4,
+   "hi": 1.6,
+   "start": 0.9
+  }
+ },
+ "staffelgiebel:ost": {
+  "u_aussen": {
+   "lo": 8.600000000000001,
+   "hi": 10.0,
+   "start": 9.3
+  },
+  "dicke": {
+   "lo": 0.3,
+   "hi": 1.2,
+   "start": 0.6
+  },
+  "n_hinten": {
+   "lo": 4.5,
+   "hi": 8.0,
+   "start": 6.0
+  },
+  "n_vorn": {
+   "lo": 13.0,
+   "hi": 15.2,
+   "start": 14.3
+  },
+  "z_traufe": {
+   "lo": 8.8,
+   "hi": 11.5,
+   "start": 9.6
+  },
+  "z_spitze": {
+   "lo": 19.0,
+   "hi": 21.5,
+   "start": 20.4
+  },
+  "spitze_breite": {
+   "lo": 0.4,
+   "hi": 1.8,
+   "start": 0.9
+  },
+  "kappe": {
+   "lo": 0.0,
+   "hi": 0.5,
+   "start": 0.15
+  }
+ },
+ "staffelgiebel:west": {
+  "u_aussen": {
+   "lo": -10.6,
+   "hi": -9.200000000000001,
+   "start": -9.9
+  },
+  "dicke": {
+   "lo": 0.3,
+   "hi": 1.2,
+   "start": 0.6
+  },
+  "n_hinten": {
+   "lo": 4.5,
+   "hi": 8.0,
+   "start": 6.0
+  },
+  "n_vorn": {
+   "lo": 13.0,
+   "hi": 15.2,
+   "start": 14.3
+  },
+  "z_traufe": {
+   "lo": 8.8,
+   "hi": 11.5,
+   "start": 9.6
+  },
+  "z_spitze": {
+   "lo": 19.0,
+   "hi": 21.5,
+   "start": 20.5
+  },
+  "spitze_breite": {
+   "lo": 0.4,
+   "hi": 1.8,
+   "start": 0.9
+  },
+  "kappe": {
+   "lo": 0.0,
+   "hi": 0.5,
+   "start": 0.15
+  }
+ },
+ "stl_teil:fassade": {
+  "dn": {
+   "lo": -2.5,
+   "hi": 2.5,
+   "start": 0.0
+  },
+  "du": {
+   "lo": -2.5,
+   "hi": 2.5,
+   "start": 0.0
+  },
+  "dz": {
+   "lo": -2.5,
+   "hi": 2.5,
+   "start": 0.0
+  },
+  "sn": {
+   "lo": 0.85,
+   "hi": 1.15,
+   "start": 1.0
+  },
+  "su": {
+   "lo": 0.85,
+   "hi": 1.15,
+   "start": 1.0
+  },
+  "sz": {
+   "lo": 0.85,
+   "hi": 1.15,
+   "start": 1.0
+  }
+ },
+ "stl_teil:fenster": {
+  "dn": {
+   "lo": -0.5,
+   "hi": 0.5,
+   "schritt": 0.05,
+   "start": 0.0
+  },
+  "du": {
+   "lo": -0.5,
+   "hi": 0.5,
+   "schritt": 0.05,
+   "start": 0.0
+  },
+  "dz": {
+   "lo": -0.5,
+   "hi": 0.5,
+   "schritt": 0.05,
+   "start": 0.0
+  },
+  "sn": {
+   "lo": 0.9,
+   "hi": 1.1,
+   "schritt": 0.01,
+   "start": 1.0
+  },
+  "su": {
+   "lo": 0.9,
+   "hi": 1.1,
+   "schritt": 0.01,
+   "start": 1.0
+  },
+  "sz": {
+   "lo": 0.9,
+   "hi": 1.1,
+   "schritt": 0.01,
+   "start": 1.0
+  }
+ },
+ "stl_teil:helme": {
+  "dn": {
+   "lo": -0.5,
+   "hi": 0.5,
+   "schritt": 0.05,
+   "start": 0.0
+  },
+  "du": {
+   "lo": -0.5,
+   "hi": 0.5,
+   "schritt": 0.05,
+   "start": 0.0
+  },
+  "dz": {
+   "lo": -0.5,
+   "hi": 3.5,
+   "schritt": 0.05,
+   "start": 0.0
+  },
+  "sn": {
+   "lo": 0.9,
+   "hi": 1.1,
+   "schritt": 0.01,
+   "start": 1.0
+  },
+  "su": {
+   "lo": 0.9,
+   "hi": 1.1,
+   "schritt": 0.01,
+   "start": 1.0
+  },
+  "sz": {
+   "lo": 0.9,
+   "hi": 1.35,
+   "schritt": 0.01,
+   "start": 1.0
+  }
+ },
+ "stl_teil:figuren": {
+  "dn": {
+   "lo": -2.5,
+   "hi": 2.5,
+   "start": 0.0
+  },
+  "du": {
+   "lo": -2.5,
+   "hi": 2.5,
+   "start": 0.0
+  },
+  "dz": {
+   "lo": -2.5,
+   "hi": 2.5,
+   "start": 0.0
+  },
+  "sn": {
+   "lo": 0.85,
+   "hi": 1.15,
+   "start": 1.0
+  },
+  "su": {
+   "lo": 0.85,
+   "hi": 1.15,
+   "start": 1.0
+  },
+  "sz": {
+   "lo": 0.85,
+   "hi": 1.15,
+   "start": 1.0
+  }
+ },
+ "erker:0": {
+  "mitte_u": {
+   "lo": -9.118,
+   "hi": -8.818,
+   "schritt": 0.02,
+   "start": -8.968
+  },
+  "breite": {
+   "lo": 2.083,
+   "hi": 2.383,
+   "schritt": 0.02,
+   "start": 2.233
+  },
+  "auskragung": {
+   "lo": 0.726,
+   "hi": 1.026,
+   "schritt": 0.02,
+   "start": 0.876
+  },
+  "unterkante_z": {
+   "lo": 4.65,
+   "hi": 4.95,
+   "schritt": 0.02,
+   "start": 4.8
+  },
+  "oberkante_z": {
+   "lo": 9.75,
+   "hi": 10.05,
+   "schritt": 0.02,
+   "start": 9.9
+  },
+  "wand_n": {
+   "lo": 13.289,
+   "hi": 13.589,
+   "schritt": 0.02,
+   "start": 13.439
+  },
+  "spitze_z": {
+   "lo": 13.082,
+   "hi": 13.682,
+   "schritt": 0.05,
+   "start": 13.382
+  }
+ },
+ "erker:1": {
+  "mitte_u": {
+   "lo": 8.208,
+   "hi": 8.508,
+   "schritt": 0.02,
+   "start": 8.358
+  },
+  "breite": {
+   "lo": 1.604,
+   "hi": 1.904,
+   "schritt": 0.02,
+   "start": 1.754
+  },
+  "auskragung": {
+   "lo": 0.567,
+   "hi": 0.867,
+   "schritt": 0.02,
+   "start": 0.717
+  },
+  "unterkante_z": {
+   "lo": 4.7,
+   "hi": 5.0,
+   "schritt": 0.02,
+   "start": 4.85
+  },
+  "oberkante_z": {
+   "lo": 9.5,
+   "hi": 9.8,
+   "schritt": 0.02,
+   "start": 9.65
+  },
+  "wand_n": {
+   "lo": 13.289,
+   "hi": 13.589,
+   "schritt": 0.02,
+   "start": 13.439
+  },
+  "spitze_z": {
+   "lo": 11.867,
+   "hi": 12.467,
+   "schritt": 0.05,
+   "start": 12.167
+  }
+ },
+ "balkonband:haupt": {
+  "u_von": {
+   "lo": -6.574,
+   "hi": -6.274,
+   "schritt": 0.02,
+   "start": -6.424
+  },
+  "u_bis": {
+   "lo": 5.586,
+   "hi": 5.886,
+   "schritt": 0.02,
+   "start": 5.736
+  },
+  "auskragung": {
+   "lo": 0.615,
+   "hi": 0.915,
+   "schritt": 0.02,
+   "start": 0.765
+  },
+  "unterseite_z": {
+   "lo": 4.762,
+   "hi": 5.062,
+   "schritt": 0.02,
+   "start": 4.912
+  },
+  "oberseite_z": {
+   "lo": 6.32,
+   "hi": 6.62,
+   "schritt": 0.02,
+   "start": 6.47
+  },
+  "wand_n": {
+   "lo": 13.289,
+   "hi": 13.589,
+   "schritt": 0.02,
+   "start": 13.439
+  }
+ },
+ "bogenreihe:laube": {
+  "u0": {
+   "lo": -9.121,
+   "hi": -8.821,
+   "schritt": 0.05,
+   "start": -8.971
+  },
+  "pitch": {
+   "lo": 4.229,
+   "hi": 4.429,
+   "schritt": 0.02,
+   "start": 4.329
+  },
+  "pfeiler_breite": {
+   "lo": 0.6,
+   "hi": 1.4,
+   "schritt": 0.02,
+   "start": 0.76
+  },
+  "pfeiler_tiefe": {
+   "lo": 0.6,
+   "hi": 1.4,
+   "schritt": 0.02,
+   "start": 0.478
+  },
+  "pfeiler_n": {
+   "lo": 12.924,
+   "hi": 13.224,
+   "schritt": 0.02,
+   "start": 13.074
+  },
+  "kaempfer_z": {
+   "lo": 2.607,
+   "hi": 2.907,
+   "schritt": 0.05,
+   "start": 2.757
+  },
+  "scheitel_z": {
+   "lo": 4.259,
+   "hi": 4.559,
+   "schritt": 0.05,
+   "start": 4.409
+  },
+  "oeffnung_breite": {
+   "lo": 3.092,
+   "hi": 3.518,
+   "schritt": 0.05,
+   "start": 3.305
+  },
+  "oberkante_z": {
+   "lo": 4.65,
+   "hi": 5.05,
+   "schritt": 0.05,
+   "start": 4.85
+  },
+  "laibung_tiefe": {
+   "lo": 0.3,
+   "hi": 0.8,
+   "schritt": 0.02,
+   "start": 0.478
+  },
+  "boden_z": {
+   "lo": 1.1,
+   "hi": 1.9,
+   "schritt": 0.05,
+   "start": 1.5
+  },
+  "sockel_weite": {
+   "lo": 1.1,
+   "hi": 2.0,
+   "start": 1.5
+  },
+  "sockel_hoehe": {
+   "lo": 0.2,
+   "hi": 0.9,
+   "start": 0.55
+  },
+  "fase_hoehe": {
+   "lo": 0.05,
+   "hi": 0.5,
+   "start": 0.2
+  }
+ },
+ "quader:ost": {
+  "u0": {
+   "lo": 8,
+   "hi": 11,
+   "start": 9
+  },
+  "u1": {
+   "lo": 11,
+   "hi": 17
+  },
+  "n0": {
+   "lo": 5,
+   "hi": 10
+  },
+  "n1": {
+   "lo": 10,
+   "hi": 15
+  },
+  "z0": {
+   "lo": 0,
+   "hi": 4
+  },
+  "z1": {
+   "lo": 8,
+   "hi": 14
+  }
+ },
+ "quader:og": {
+  "u0": {
+   "lo": -10.9,
+   "hi": -9.700000000000001
+  },
+  "u1": {
+   "lo": 8.8,
+   "hi": 10.0
+  },
+  "n0": {
+   "lo": 5.2,
+   "hi": 6.3999999999999995
+  },
+  "n1": {
+   "lo": 12.700000000000001,
+   "hi": 13.9
+  },
+  "z0": {
+   "lo": 4.25,
+   "hi": 5.449999999999999
+  },
+  "z1": {
+   "lo": 9.9,
+   "hi": 11.1
+  }
+ },
+ "quader:west_w": {
+  "u0": {
+   "lo": -10.8,
+   "hi": -9.8
+  },
+  "u1": {
+   "lo": -10.3,
+   "hi": -9.3
+  },
+  "n0": {
+   "lo": 5.3,
+   "hi": 6.3
+  },
+  "n1": {
+   "lo": 12.8,
+   "hi": 13.8
+  },
+  "z0": {
+   "lo": 1.0,
+   "hi": 2.0
+  },
+  "z1": {
+   "lo": 4.4,
+   "hi": 5.4
+  }
+ },
+ "quader:ost_w": {
+  "u0": {
+   "lo": 8.4,
+   "hi": 9.4
+  },
+  "u1": {
+   "lo": 8.9,
+   "hi": 9.9
+  },
+  "n0": {
+   "lo": 5.3,
+   "hi": 6.3
+  },
+  "n1": {
+   "lo": 12.8,
+   "hi": 13.8
+  },
+  "z0": {
+   "lo": 1.0,
+   "hi": 2.0
+  },
+  "z1": {
+   "lo": 4.4,
+   "hi": 5.4
+  }
+ },
+ "quader:hinten": {
+  "u0": {
+   "lo": -10.8,
+   "hi": -9.8
+  },
+  "u1": {
+   "lo": 8.9,
+   "hi": 9.9
+  },
+  "n0": {
+   "lo": 5.3,
+   "hi": 6.3
+  },
+  "n1": {
+   "lo": 5.9,
+   "hi": 6.9
+  },
+  "z0": {
+   "lo": 1.0,
+   "hi": 2.0
+  },
+  "z1": {
+   "lo": 4.4,
+   "hi": 5.4
+  }
+ },
+ "quader:gesims": {
+  "u0": {
+   "lo": -11.0,
+   "hi": -10.2
+  },
+  "u1": {
+   "lo": 9.299999999999999,
+   "hi": 10.1
+  },
+  "n0": {
+   "lo": 12.9,
+   "hi": 13.700000000000001
+  },
+  "n1": {
+   "lo": 13.799999999999999,
+   "hi": 14.6
+  },
+  "z0": {
+   "lo": 9.7,
+   "hi": 10.5
+  },
+  "z1": {
+   "lo": 10.1,
+   "hi": 10.9
+  }
+ },
+ "fensterreihe:og": {
+  "u_mitte": {
+   "lo": -7.5,
+   "hi": -6.7
+  },
+  "pitch": {
+   "lo": 3.1,
+   "hi": 3.5
+  },
+  "breite": {
+   "lo": 1.9,
+   "hi": 2.7
+  },
+  "unterseite_z": {
+   "lo": 6.5,
+   "hi": 7.2
+  },
+  "kaempfer_z": {
+   "lo": 8.4,
+   "hi": 9.3
+  },
+  "scheitel_z": {
+   "lo": 9.5,
+   "hi": 10.3
+  },
+  "wand_n": {
+   "lo": 13.1,
+   "hi": 13.5
+  },
+  "tiefe": {
+   "lo": 0.15,
+   "hi": 0.6
+  },
+  "rahmen_b": {
+   "lo": 0.06,
+   "hi": 0.2
+  },
+  "pfosten_b": {
+   "lo": 0.05,
+   "hi": 0.2
+  },
+  "riegel_z": {
+   "lo": 7.6,
+   "hi": 8.6
+  },
+  "kiel": {
+   "lo": -0.5,
+   "hi": 1.0
+  },
+  "glas_n": {
+   "lo": 0.0,
+   "hi": 0.3
+  }
+ },
+ "stl_teil:helme_w": {
+  "dn": {
+   "lo": -2.5,
+   "hi": 2.5,
+   "start": 0.0
+  },
+  "du": {
+   "lo": -2.5,
+   "hi": 2.5,
+   "start": 0.0
+  },
+  "dz": {
+   "lo": -3.0,
+   "hi": 1.0,
+   "start": 0.0
+  },
+  "sz": {
+   "lo": 0.8,
+   "hi": 1.2,
+   "start": 1.0
+  }
+ },
+ "stl_teil:helme_o": {
+  "dn": {
+   "lo": -2.5,
+   "hi": 2.5,
+   "start": 0.0
+  },
+  "du": {
+   "lo": -2.5,
+   "hi": 2.5,
+   "start": 0.0
+  },
+  "dz": {
+   "lo": -3.0,
+   "hi": 1.0,
+   "start": 0.0
+  },
+  "sz": {
+   "lo": 0.8,
+   "hi": 1.2,
+   "start": 1.0
+  }
+ }
+}

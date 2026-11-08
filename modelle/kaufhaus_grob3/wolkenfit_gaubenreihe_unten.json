@@ -1,0 +1,42 @@
+{
+ "objekt": "kaufhaus_grob3",
+ "typ": "gaubenreihe:unten",
+ "wolke": "j_crop.npy",
+ "n_wolke": 69609,
+ "parameter": [
+  "gaubenreihe:unten.u_mitte",
+  "gaubenreihe:unten.pitch",
+  "gaubenreihe:unten.t",
+  "gaubenreihe:unten.breite",
+  "gaubenreihe:unten.wandhoehe",
+  "gaubenreihe:unten.vor",
+  "gaubenreihe:unten.tiefe",
+  "gaubenreihe:unten.firsthoehe"
+ ],
+ "vorher": {
+  "gaubenreihe:unten.u_mitte": -0.6257,
+  "gaubenreihe:unten.pitch": 3.8897,
+  "gaubenreihe:unten.t": 0.0586,
+  "gaubenreihe:unten.breite": 0.9391,
+  "gaubenreihe:unten.wandhoehe": 1.2,
+  "gaubenreihe:unten.vor": 0.3751,
+  "gaubenreihe:unten.tiefe": 1.0,
+  "gaubenreihe:unten.firsthoehe": 0.9
+ },
+ "nachher": {
+  "gaubenreihe:unten.u_mitte": 0.3047,
+  "gaubenreihe:unten.pitch": 2.4523,
+  "gaubenreihe:unten.t": 0.0038,
+  "gaubenreihe:unten.breite": 1.4084,
+  "gaubenreihe:unten.wandhoehe": 0.6213,
+  "gaubenreihe:unten.vor": 1.2709,
+  "gaubenreihe:unten.tiefe": 1.4866,
+  "gaubenreihe:unten.firsthoehe": 0.5438
+ },
+ "J_vorher": 0.740897536277771,
+ "J_nachher": 0.7107723951339722,
+ "median_vorher": 0.6040434241294861,
+ "median_nachher": 0.5938071012496948,
+ "p90_vorher": 1.2666534185409546,
+ "p90_nachher": 1.265145182609558
+}

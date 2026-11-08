@@ -1,0 +1,150 @@
+{
+ "achse_n": [
+  0.3338,
+  0.9426
+ ],
+ "wandebene_n": {
+  "wert": 13.439,
+  "sigma": 0.025,
+  "n_punkte": 101636,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+  "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+  "merkmal": "Wandebene n (Gipfel Band z 6.8..9.0, u -6..6)"
+ },
+ "front_n": {
+  "wert": 14.203,
+  "sigma": 0.025,
+  "n_punkte": 29691,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+  "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+  "merkmal": "n der Balkon-/Bruestungsfront"
+ },
+ "auskragung": {
+  "wert": 0.765,
+  "sigma": 0.025,
+  "n_punkte": 29691,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+  "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+  "merkmal": "Auskragung zur Wandebene = n_front - n_wand"
+ },
+ "front_unterkante_z": {
+  "wert": 4.95,
+  "sigma": 0.025,
+  "n_punkte": 67990,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py (Block >= 0.25 x mittlere Dichte/5 cm)",
+  "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+  "merkmal": "Unterkante der senkrechten Front"
+ },
+ "front_oberkante_z": {
+  "wert": 6.35,
+  "sigma": 0.025,
+  "n_punkte": 67990,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+  "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+  "merkmal": "Oberkante der Front (= Bruestungsoberkante)"
+ },
+ "front_hoehe": {
+  "wert": 1.4,
+  "sigma": 0.025,
+  "n_punkte": 67990,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+  "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+  "merkmal": "Hoehe der senkrechten Front"
+ },
+ "unterseite_z": {
+  "wert": 4.912,
+  "sigma": 0.025,
+  "n_punkte": 3202,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+  "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+  "merkmal": "z der Unterseite (Soffit, Gipfel zwischen Wand und Front)"
+ },
+ "oberseite_z": {
+  "wert": 6.47,
+  "sigma": 0.025,
+  "n_punkte": 747,
+  "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+  "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+  "merkmal": "z der Oberseite/Bruestungsoberkante (Gipfel zwischen Wand und Front)"
+ },
+ "bruestung": {
+  "oberseite_n_spanne_P5_P95": {
+   "wert": 0.775,
+   "sigma": 0.036,
+   "n_punkte": 733,
+   "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+   "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+   "merkmal": "n-Spanne der Oberseitenpunkte = OBERGRENZE der Bruestungs-/Plattendicke (Oberseite kann Wand dahinter einschliessen)"
+  },
+  "oberseite_n_von": {
+   "wert": 13.421,
+   "sigma": 0.025,
+   "n_punkte": 733,
+   "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+   "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+   "merkmal": "n-Anfang Oberseite (P5)"
+  },
+  "oberseite_n_bis": {
+   "wert": 14.196,
+   "sigma": 0.025,
+   "n_punkte": 733,
+   "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+   "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+   "merkmal": "n-Ende Oberseite (P95)"
+  },
+  "dichte_innen_zu_front": {
+   "wert": 0.023,
+   "sigma": 0.025,
+   "n_punkte": 112628,
+   "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+   "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+   "merkmal": "Punktdichte (je m n) Inneres/Front im Frontband; ~0 = Front duenn/hohl ohne Fuellung, sigma nicht bestimmt"
+  }
+ },
+ "u_laeufe": [
+  {
+   "index": 0,
+   "u_von": {
+    "wert": -6.424,
+    "sigma": 0.025,
+    "n_punkte": 64157,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "u-Anfang des Frontlaufs (P2)"
+   },
+   "u_bis": {
+    "wert": 5.736,
+    "sigma": 0.025,
+    "n_punkte": 64157,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "u-Ende des Frontlaufs (P98)"
+   },
+   "laenge": {
+    "wert": 12.16,
+    "sigma": 0.025,
+    "n_punkte": 64157,
+    "quelle": "Wolke wolke_netzrahmen.npy (961488 Pkt), n=(0.3338,0.9426), tools/wolke_balkon_messen.py",
+    "quelltyp": "Laser/Fotowolke (SfM-Punktwolke)",
+    "merkmal": "u-Laenge des Frontlaufs"
+   }
+  }
+ ],
+ "n_laeufe_wolke": 1,
+ "laeufe_als_erker_verworfen": [
+  {
+   "u_von": -9.9,
+   "u_bis": -8.3,
+   "grund": "liegt im Erker (erker_messung.json), nicht Balkon"
+  },
+  {
+   "u_von": 7.7,
+   "u_bis": 9.1,
+   "grund": "liegt im Erker (erker_messung.json), nicht Balkon"
+  }
+ ],
+ "luecken_zwischen_laeufen": [],
+ "band_art": "durchgehend (ein Lauf)",
+ "hinweis": "Zaehlung/Plattenzahl nur Konsistenz (Regel 9: Zaehlung = Foto). Wolke blind fuer Verdeckung: Lauf-Enden an Erkern sind Verdeckung/Seitenflaeche, keine Bauteilfuge. Unterseite oft nur schraeg gesehen -> Untergrenze unsicher.",
+ "foto_hinweis": null
+}

@@ -1,0 +1,42 @@
+{
+ "objekt": "kaufhaus_grob3",
+ "typ": "staffelgiebel:west",
+ "wolke": "j_crop.npy",
+ "n_wolke": 40227,
+ "parameter": [
+  "staffelgiebel:west.u_aussen",
+  "staffelgiebel:west.dicke",
+  "staffelgiebel:west.n_hinten",
+  "staffelgiebel:west.n_vorn",
+  "staffelgiebel:west.z_traufe",
+  "staffelgiebel:west.z_spitze",
+  "staffelgiebel:west.spitze_breite",
+  "staffelgiebel:west.kappe"
+ ],
+ "vorher": {
+  "staffelgiebel:west.u_aussen": -9.9,
+  "staffelgiebel:west.dicke": 0.6,
+  "staffelgiebel:west.n_hinten": 6.0,
+  "staffelgiebel:west.n_vorn": 14.3,
+  "staffelgiebel:west.z_traufe": 9.6,
+  "staffelgiebel:west.z_spitze": 20.5,
+  "staffelgiebel:west.spitze_breite": 0.9,
+  "staffelgiebel:west.kappe": 0.15
+ },
+ "nachher": {
+  "staffelgiebel:west.u_aussen": -10.0056,
+  "staffelgiebel:west.dicke": 0.6226,
+  "staffelgiebel:west.n_hinten": 5.9571,
+  "staffelgiebel:west.n_vorn": 13.798,
+  "staffelgiebel:west.z_traufe": 9.7455,
+  "staffelgiebel:west.z_spitze": 20.493,
+  "staffelgiebel:west.spitze_breite": 0.9734,
+  "staffelgiebel:west.kappe": 0.1532
+ },
+ "J_vorher": 0.7761021852493286,
+ "J_nachher": 0.7295289635658264,
+ "median_vorher": 0.4476641118526459,
+ "median_nachher": 0.4248086214065552,
+ "p90_vorher": 1.2186779975891113,
+ "p90_nachher": 1.1937644481658936
+}

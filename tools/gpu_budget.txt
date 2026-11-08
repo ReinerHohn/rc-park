@@ -1,0 +1,12 @@
+# gpu_budget.txt - VRAM-Spitzenbedarf (MiB, Messung + 20 %) je GPU-Werkzeug; Format: <werkzeug.py> <MiB> <Quelle/Messbefehl/Bedingung>
+# job_start.sh nimmt den Wert, wenn JOB_GPU_MB nicht gesetzt ist (Treffer wie in gpu_werkzeuge.txt). Kein Eintrag = EXKLUSIV (Altverhalten).
+# Messung: tools/gpu_messen.py (nvidia-smi 0,5 s, je Prozess, nur neue Compute-Prozesse); Details/Rohlogs: modelle/GPU_PARALLEL_UNTERSUCHUNG.md Abschnitt "Budgets je Werkzeug".
+# Der Wert gilt NUR mit der genannten Einstellung - der Job muss sie selbst einhalten.
+lg_match.py 3900 Spitze 3240 bei --resize 1600 (Pflicht; Standard 2048 = 5176 -> 6200 MiB; 1024 = 1458); PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True; gpu_messen.py ... lg_match.py <4 Bilder> --resize 1600
+zusatzfotos_registrieren.py 2510 Spitze 2092 bei RCPARK_SIFT_MAX=1600 (Pflicht; ohne bis 7400); gemessen mit pycolmap-extract_features-Aequivalent (50 Fotos), NICHT mit dem Werkzeug selbst
+foto_diff.py 1330 Spitze 1102 (martinstor 030, 2 Laeufe); gpu_messen.py ... foto_diff.py modelle/martinstor/objekt.json 030 --aus <tmp>
+test_foto_diff.py 3050 Spitze 2534 (zwei foto_diff parallel + Testprozess; 2 Laeufe 1416/2534); gpu_messen.py ... test_foto_diff.py modelle/martinstor/objekt.json --foto 030
+hypso_gpu.py 2050 Spitze 1684 nur --selbsttest (2 Laeufe); Echtlauf nicht gemessen
+dicht_handy.py 1030 Spitze 856 (Beobachtung am LAUFENDEN rcpark-video_dicht = dicht_video.py PatchMatch max-size 1600, 2,5 min Zeitreihe, GPU 100 %); kein eigener Lauf, Wert gilt nur bei max-size 1600
+# NICHT eingetragen (exklusiv): foto_silhouette_gpu.py (6760 gemessen, Caching-Allocator/ungebremst), foto_profil_gpu.py (gleicher Kern, nicht gemessen),
+#   sfm_netz.py (SiftGPU ohne max_image_size-Kappung -> bis 7400), nullstart.py/Orchestratoren (Summe der Kindprozesse), fenster_ml.py (laeuft auf CPU: 0 MiB, kein GPU-Werkzeug), render_kern.py (Bibliothek) u. a. siehe Untersuchung

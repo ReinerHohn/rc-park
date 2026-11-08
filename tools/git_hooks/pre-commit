@@ -2,9 +2,18 @@
 # Commit-Sperre: wird eine ueberwachte Datei eines Objekts committet (Generator, STL, Masstabelle), muss der Pruefstand gruen sein.
 # Aktivieren (einmalig, lokal):  git config core.hooksPath tools/git_hooks
 cd "$(git rev-parse --show-toplevel)"
-STAGED=$(git diff --cached --name-only)
+STAGED=${PRECOMMIT_TEST_STAGED-$(git diff --cached --name-only)}   # PRECOMMIT_TEST_STAGED nur fuer Tests (ersetzt die gestagte Liste, Zeilen oder Leerzeichen getrennt)
+STAGED=$(echo "$STAGED" | tr ' ' '\n' | sed '/^$/d')
 PY=/media/oem/scan/venv-seg/bin/python
 rc=0
+# G5: Generatoraenderung braucht im selben Commit eine Pruefung (Masstabelle, Test oder Messprotokoll)
+if echo "$STAGED" | grep -qxE 'tools/(baukasten_gen|bauteile)\.py'; then
+  if ! echo "$STAGED" | grep -qE '^(modelle/[^/]+/masstabelle\.json|tools/test_[^/]*\.py|modelle/[^/]+/messprotokoll/[^/]*\.json)$'; then
+    echo "pre-commit: Generator (baukasten_gen.py/bauteile.py) ohne Pruefung im Commit."
+    echo "pre-commit: CLAUDE.md Regel 2: Generatoraenderung braucht eine (fehlschlagende) Pruefung; Sichtfund zuerst in die Masstabelle"
+    exit 1
+  fi
+fi
 for OBJ in modelle/*/objekt.json; do
   [ -f "$OBJ" ] || continue
   for W in $($PY -c "import json;print(' '.join(json.load(open('$OBJ'))['ueberwacht']))"); do

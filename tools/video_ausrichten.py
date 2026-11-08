@@ -7,6 +7,7 @@ unabhaengig sind hier nur die FORM-Residuen (Verzerrung/Hoehenverlauf), nicht di
   /media/oem/scan/venv-colmap/bin/python -I tools/video_ausrichten.py modelle/<objekt>/objekt.json <video_sfm_ordner> [--modell 1] [--jeder 3]
 """
 import sys, os, json, sqlite3, argparse, numpy as np, pycolmap
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from video_netz import netz_info, video_modell
 
 def lade_db(dbp):
     c = sqlite3.connect(f"file:{dbp}?mode=ro", uri=True); names = {i: n for i, n in c.execute("select image_id,name from images")}
@@ -41,12 +42,13 @@ def ransac(A, B, tol, it=4000, seed=1):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("video"); ap.add_argument("--modell", default="1"); ap.add_argument("--jeder", type=int, default=3); ap.add_argument("--aus", default="video_ausrichtung.json", help="Dateiname unter audit/ (andere Videos duerfen die Ausrichtung des dichten Laufs nicht ueberschreiben)")
-    ap.add_argument("--modus", default="alles", choices=["alles", "dump", "match", "fit", "cpu"], help="alles (Standard) = dump (venv-colmap) -> match (venv-seg, GPU/torch, automatisch) -> fit; cpu = alles in numpy (langsam, Notfall)"); ap.add_argument("--ratio", type=float, default=0.85); ap.add_argument("--tol-m", type=float, default=1.5, help="Inlier-Schwelle in Metern (Modellrahmen)"); a = ap.parse_args()
+    ap.add_argument("--modus", default="alles", choices=["alles", "dump", "match", "fit", "cpu"], help="alles (Standard) = dump (venv-colmap) -> match (venv-seg, GPU/torch, automatisch) -> fit; cpu = alles in numpy (langsam, Notfall)"); ap.add_argument("--ratio", type=float, default=0.85); ap.add_argument("--tol-m", type=float, default=1.5, help="Inlier-Schwelle in Metern (Modellrahmen)"); a = ap.parse_args(); a.modell = video_modell(a.video, a.modell)   # --modell auto = groesstes Teilmodell
     a.modus_ursprung = a.modus
     od = os.path.dirname(os.path.abspath(a.objekt)); dev = "cpu (numpy/BLAS; venv-colmap hat kein torch)"
     recV = pycolmap.Reconstruction(os.path.join(a.video, "sparse", a.modell)); nV, kV, dV = lade_db(os.path.join(a.video, "db.db")); n2V = {n: i for i, n in nV.items()}
-    recN = pycolmap.Reconstruction(os.path.join(od, "sfm", "sparse_nord", "0")); nN, kN, dN = lade_db(os.path.join(od, "sfm", "db_nord.db")); n2N = {n: i for i, n in nN.items()}
-    S = json.load(open(os.path.join(od, "messprotokoll", "SFM-AUSRICHTUNG-nord.json")))["transformation"]; sN = S["s"]
+    NI = netz_info(a.objekt); print(f"Netz {NI['netz']}{' (Buendel)' if NI['buendel'] else ''}: {NI['sparse']}", flush=True)       # Register CR: Netz aus objekt.json, nicht fest 'nord'
+    recN = pycolmap.Reconstruction(NI["sparse"]); nN, kN, dN = lade_db(NI["db"]); n2N = {n: i for i, n in nN.items()}
+    S = json.load(open(NI["ausr"]))["transformation"]; sN = S["s"]
     imV = sorted([im.name for im in recV.images.values()])[::a.jeder]; imN = sorted([im.name for im in recN.images.values()])
     print(f"Video-Frames {len(imV)} (jeder {a.jeder}.) x Strassenfotos {len(imN)}, Geraet {dev}", flush=True)
     tN = {n: dN[n2N[n]].astype(np.float32) / 512.0 for n in imN if n2N.get(n) in dN}; idN = {n: punkt3d(recN, n2N, n) for n in imN}

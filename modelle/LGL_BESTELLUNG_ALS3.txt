@@ -1,24 +1,26 @@
-ENTWURF - NICHT GESENDET. Empfaenger: geodaten@lgl.bwl.de (Tel. 0711 95980-200)
+ENTWURF - NICHT GESENDET (ueberarbeitet 2026-11-05: Ausschnitt Altstadt 1 km, Verwendungszweck kommerziell). Empfaenger: geodaten@lgl.bwl.de (Tel. 0711 95980-200)
 Quelle der Angaben: https://www.lgl-bw.de/Produkte/3D-Produkte/Laserscandaten/ALS_3/index.html (Stand der Pruefung 2026-10-31):
   ALS_3 = "Open Data", Bestellung per E-Mail, Mindestentgelt 60 EUR zzgl. USt., aufwandabhaengig; >= 8 Punkte/m2; LAZ/LAS;
   7 Klassen; Hoehen NHN (DHHN2016); Kampagne 2022 bis ca. 2029, Abdeckung Freiburg dort nicht bestaetigt.
 
-Betreff: Anfrage Laserscandaten (ALS) - kleiner Ausschnitt Freiburg, Martinstor
+Betreff: Anfrage Laserscandaten (ALS) - Freiburg im Breisgau, Altstadt
 
 Guten Tag,
 
 ich moechte die Laserscandaten (Punktwolke, LAZ, alle Klassen) fuer einen kleinen Ausschnitt in Freiburg im Breisgau bestellen:
 
   Koordinatensystem ETRS89 / UTM 32N (EPSG:25832)
-  Ausschnitt 200 m x 200 m:  Ost 414027 - 414227,  Nord 5316143 - 5316343
-  (Mitte: Martinstor, ca. Ost 414127 / Nord 5316243)
+  Ausschnitt 1 km x 1 km:  Ost 413700 - 414700,  Nord 5315800 - 5316800  (Freiburger Altstadt, u. a. Martinstor und Historisches Kaufhaus)
+  Falls nur ganze Kacheln abgegeben werden: die Kacheln, die diesen Ausschnitt ueberdecken.
 
 Bitte teilen Sie mir mit:
   1. ob dieser Bereich bereits in der Kampagne ALS_3 beflogen ist (sonst: aktuellste verfuegbare Befliegung und deren Punktdichte),
   2. das Befliegungsdatum und die Lage-/Hoehengenauigkeit,
   3. die voraussichtlichen Kosten fuer diesen Ausschnitt (Mindestentgelt?) und die Lizenzbedingungen (Namensnennung).
 
-Verwendung: privates Modellbau-Projekt (Messung von Bauwerkshoehen/Dachformen, Maßstab 1:87). 
+Verwendung: Messgrundlage fuer massstaebliche Gebaeudemodelle (1:87), die spaeter auch verkauft werden sollen;
+die Quellenangabe "Datenquelle: LGL, www.lgl-bw.de, dl-de/by-2-0" wuerde ich in den Produktunterlagen fuehren.
+Falls sinnvoll, bitte zusammen mit dem bildbasierten Oberflaechenmodell (bDOM) desselben Ausschnitts abrechnen (separate Mail).
 
 Mit freundlichen Gruessen
-[Name]
+[Name, Anschrift]

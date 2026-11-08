@@ -167,6 +167,23 @@ def netz_exportieren(prefix, fine, farbe):
     except Exception as e: print(f"WARNUNG: obj-Export fehlgeschlagen: {e}")
     return aus
 
+def fotowahl_dreieck(fine, P, tri, nG, gpu=False, k=4, blk=1500000):
+    """Fotowahl je Texel: unter den k naechsten feinen Dreiecken (Schwerpunkte) das erste mit Normalen-Skalarprodukt > 0,7 (sonst das naechste). gpu: PyTorch3D knn_points (sortiert wie cKDTree.query), Standard CPU (cKDTree, Originalverhalten): GPU-knn_points ist brute force und bei 20k-1M Dreiecken 2-17x LANGSAMER als cKDTree (workers=-1); GPU nur mit TEXTUR_KNN_GPU=1."""
+    fn = fine.face_normals; C = np.asarray(fine.triangles_center); jf = np.zeros(len(P), np.int64)
+    if gpu:
+        import sys, torch; sys.path.insert(0, "/media/oem/scan/p3d_site"); from pytorch3d.ops import knn_points
+        c0 = C.mean(0); Cg = torch.as_tensor(np.asarray(C - c0, np.float32), device="cuda")[None]
+    else:
+        from scipy.spatial import cKDTree; kd = cKDTree(C)
+    for a0 in range(0, len(P), blk):                                                                 # in Bloecken (Speicher)
+        sl = slice(a0, a0 + blk)
+        if gpu: j_ = knn_points(torch.as_tensor(np.asarray(P[sl] - c0, np.float32), device="cuda")[None], Cg, K=k).idx[0].cpu().numpy()
+        else: _, j_ = kd.query(P[sl], k=k, workers=-1)
+        dots = np.einsum("ikj,ij->ik", fn[j_], nG[tri[sl]]); gut = dots > 0.7
+        erst = np.where(gut.any(1), np.argmax(gut, 1), 0); jf[sl] = j_[np.arange(len(j_)), erst]
+    return jf
+
+
 def atlas_backen(m, fine, wahl, farbe, ben, gain, texel, kante_grob, prefix, max_texel=16e6):
     """TEXTURATLAS (2026-11-04, Nutzer: 'viel zu grob'): statt EINER Farbe je 25-cm-Dreieck echte Fotopixel. Traeger = Modell auf <= kante_grob unterteilt;
     je Dreieck eine Rechteckzelle (Regalpackung) mit 1 Texel Rand, Texelmitte -> 3D-Punkt (baryzentrisch, ausserhalb des Dreiecks in der Ebene fortgesetzt =
@@ -197,11 +214,8 @@ def atlas_backen(m, fine, wahl, farbe, ben, gain, texel, kante_grob, prefix, max
     xs = ((ix + 0.5 - 1.0) * texel).astype(np.float32); ys = ((iy + 0.5 - 1.0) * texel).astype(np.float32)
     P = T[tri, 0] + xs[:, None] * ua[tri] + ys[:, None] * nb[tri]
     # Fotowahl vom naechsten feinen Dreieck mit passender Normale
-    fn = fine.face_normals; kd = cKDTree(fine.triangles_center); nG = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]); nG /= np.maximum(np.linalg.norm(nG, axis=1), 1e-12)[:, None]
-    jf = np.zeros(len(P), np.int64)
-    for a0 in range(0, len(P), 1500000):                                                             # in Bloecken (Speicher)
-        sl = slice(a0, a0 + 1500000); _, j_ = kd.query(P[sl], k=4, workers=-1); dots = np.einsum("ikj,ij->ik", fn[j_], nG[tri[sl]]); gut = dots > 0.7
-        erst = np.where(gut.any(1), np.argmax(gut, 1), 0); jf[sl] = j_[np.arange(len(j_)), erst]
+    nG = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]); nG /= np.maximum(np.linalg.norm(nG, axis=1), 1e-12)[:, None]
+    jf = fotowahl_dreieck(fine, P, tri, nG, gpu=os.environ.get("TEXTUR_KNN_GPU", "") == "1")
     col = farbe[jf].astype(np.float32); w_ = wahl[jf].astype(object); quellen = {}
     # LOECHER (Sprenkel): feine Dreiecke ohne Foto (Tiefenkarte lueckig) mitten in fotografierten Flaechen -> haeufigstes Foto des Traegerdreiecks, wenn dort
     # >= fuell_min der Texel ein Foto haben (sonst bleibt grau: echte Luecke, Himmel/Verdecker-Entscheid nicht ueberstimmen).

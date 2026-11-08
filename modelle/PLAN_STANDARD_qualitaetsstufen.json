@@ -1,0 +1,250 @@
+{
+ "mass": "lr",
+ "ohne_nacht": true,
+ "_doku": "STANDARDPLAN fuer neue Gebaeude (nullstart Schritt 'stufen', Nachtlauf 2026-11-05). Aus kaufhaus_null5 (ohne Handwerte, kosten_lr, ohne Nachtfotos). Fassaden: 'haupt' | 'alle' | 'seiten' (qualitaetsstufen.fassaden_aufloesen). Keine objektbezogenen Werte. Giebelspitze wird in Stufe 1 trianguliert (giebel_spitze_messen), nicht gesucht. tor_restfeld: true seit S1b (2026-11-06): Restfeld je STL 7,7 s gemessen (< 90 s), Buchstabe (c) im Uebernahmetor bewiesen (T1: f02 0,578 -> 0,617 lehnt ab).",
+ "stufen": [
+  {
+   "name": "Ausgangsmodell",
+   "verfahren": "ausgang",
+   "giebel_zaehlen": true,
+   "giebel_spitze_messen": true
+  },
+  {
+   "name": "Parameter gegen Fotos",
+   "verfahren": "parameter",
+   "runden": 2,
+   "parameter": [
+    {
+     "bauteil": "rumpf_lod2",
+     "param": "first_versatz_m",
+     "werte": "-3:1:0.5"
+    },
+    {
+     "bauteil": "rumpf_lod2",
+     "param": "dach_versatz_m",
+     "werte": "-1.5:1.5:0.5"
+    },
+    {
+     "bauteil": "treppengiebel",
+     "param": "kappe_m",
+     "werte": "0:1.2:0.2",
+     "hinweis": "bisher ANNAHME 0,35 m"
+    },
+    {
+     "bauteil": "treppengiebel",
+     "param": "dicke_m",
+     "werte": "0.2:1.4:0.2",
+     "hinweis": "bisher ANNAHME 0,6 m"
+    }
+   ]
+  },
+  {
+   "name": "Fassaden automatisch (OWLv2, Wolke, Bloecke, Figuren)",
+   "verfahren": "fassade",
+   "versuche": [
+    {
+     "name": "Alle Fassaden: Fenster + Boegen",
+     "klassen": [
+      "fenster",
+      "bogen"
+     ],
+     "fassaden": "alle"
+    },
+    {
+     "name": "Hauptfassade: Formsuche Fenster/Boegen",
+     "klassen": [
+      "fenster",
+      "bogen"
+     ],
+     "fassaden": "haupt",
+     "suche": [
+      {
+       "param": "skala_u",
+       "werte": "0.9:1.14:0.02"
+      },
+      {
+       "param": "pfosten_m",
+       "werte": "0.06:0.36:0.06"
+      },
+      {
+       "param": "fenster_einzug_m",
+       "werte": "0:0.4:0.1"
+      },
+      {
+       "param": "bogen_kaempfer_versatz_m",
+       "werte": "-1:1:0.25"
+      }
+     ]
+    },
+    {
+     "name": "Gauben (alle Fassaden)",
+     "klassen": [
+      "gaube"
+     ],
+     "fassaden": "alle"
+    },
+    {
+     "name": "Seitenfassaden: Relief aus Wolke",
+     "relief": {
+      "fassaden": "seiten",
+      "vor": true,
+      "zurueck": false
+     }
+    },
+    {
+     "name": "Hauptfassade: Erker + Galerie aus Wolkenbloecken, Spitzen trianguliert",
+     "fassaden": "haupt",
+     "bloecke": {
+      "fassaden": "haupt"
+     },
+     "spitzen_messen": true
+    },
+    {
+     "name": "Hauptfassade: Figuren automatisch (OWLv2-Pruefung + TripoSR)",
+     "fassaden": "haupt",
+     "figuren_auto": true,
+     "entscheid": "zier"
+    },
+    {
+     "name": "Hauptfassade: Figuren-Erkennerkasten (Kegelstumpf) statt Netz",
+     "klassen": [
+      "figur"
+     ],
+     "fassaden": "haupt"
+    }
+   ]
+  },
+  {
+   "name": "Konvergenzschleife (Fehlerkarte -> Kandidaten -> Tor)",
+   "verfahren": "konvergenz",
+   "laeufe": 3,
+   "max_kandidaten_je_lauf": 8,
+   "minuten": 240,
+   "ziel_gelb": 0.25,
+   "ziel_rot": 0.1,
+   "ziel_min_kameras": 3,
+   "konvergenz": {
+    "_doku": "S3 (SPEC_S3_KONVERGENZ): alle Schwellen der Konvergenzschleife; KEINE Festwerte im Code (hardcode_finden.py). Standardwerte = Spec 1-3, ANNAHME bis zum Beweis T1-T4; nicht nachjustieren, um Gruen zu bekommen.",
+    "zelle_m": 0.1,
+    "fenster_m": 0.25,
+    "fenster_min_px": 2,
+    "min_fotos": 3,
+    "stimmen": 0.5,
+    "min_flaeche_m2": 0.25,
+    "rest_tol_m": 0.1,
+    "rest_n_min": 8,
+    "widerspruch_m": 0.5,
+    "kante_tol": 0.999,
+    "min_kantenpixel": 3,
+    "min_anteil": 0.0,
+    "versatz_anwenden": true,
+    "streif_cos": 0.2,
+    "sicht_toleranz_m": 0.15,
+    "frei_tiefe_m": 0.5,
+    "max_je_cluster": 3,
+    "feinlage_m": 0.25,
+    "feinlage_breiten": [
+     0.8,
+     1.2
+    ],
+    "ruecksprung_boden_m": 0.5,
+    "frei_ruecksprung": 0.3,
+    "abbruch_f_rel": 0.01,
+    "textur_klassen": [
+     "fenster",
+     "gaube",
+     "figur",
+     "balkon"
+    ],
+    "flaechenelement_min_px": 40,
+    "dach_parameter": [
+     "first_versatz_m",
+     "dach_versatz_m"
+    ],
+    "dach_quellen_min": 1,
+    "_f_dach": "Tor-Buchstabe (f): Dachparameter nur uebernehmen, wenn Stadtmesh ODER Stadt-LoD2 die Richtung bestaetigen (dach_quellen_min Quellen ausser DOM1/Wolke)",
+    "feinlage_behalten": 3,
+    "dach_nz_min": 0.1,
+    "strahl_reserve_m": 5.0,
+    "ausgabe_max_kandidaten": 25
+   }
+  },
+  {
+   "name": "Gemeinsame Optimierung (CMA-ES)",
+   "verfahren": "gemeinsam",
+   "generationen": 12,
+   "sigma": 0.2,
+   "parameter": [
+    {
+     "bauteil": "rumpf_lod2",
+     "param": "first_versatz_m",
+     "min": -3,
+     "max": 1,
+     "start": 0.0
+    },
+    {
+     "bauteil": "rumpf_lod2",
+     "param": "dach_versatz_m",
+     "min": -1.5,
+     "max": 1.5,
+     "start": 0.0
+    },
+    {
+     "bauteil": "treppengiebel",
+     "param": "kappe_m",
+     "min": 0,
+     "max": 1.2,
+     "start": 0.35
+    },
+    {
+     "bauteil": "treppengiebel",
+     "param": "dicke_m",
+     "min": 0.2,
+     "max": 1.4,
+     "start": 0.6
+    },
+    {
+     "bauteil": "fassade_auto",
+     "param": "skala_u",
+     "min": 0.85,
+     "max": 1.16,
+     "nur_wenn": "fassade_auto",
+     "start": 1.0
+    },
+    {
+     "bauteil": "fassade_auto",
+     "param": "nische_m",
+     "min": 0.05,
+     "max": 0.8,
+     "nur_wenn": "fassade_auto",
+     "start": 0.25
+    },
+    {
+     "bauteil": "fassade_auto",
+     "param": "bogen_kaempfer_versatz_m",
+     "min": -1,
+     "max": 1,
+     "nur_wenn": "fassade_auto",
+     "start": 0.0
+    },
+    {
+     "bauteil": "fassade_auto",
+     "param": "bogen_tiefe_m",
+     "min": 1,
+     "max": 6,
+     "nur_wenn": "fassade_auto",
+     "start": 3.0
+    },
+    {
+     "bauteil": "relief_wolke",
+     "param": "faktor_tiefe",
+     "min": 0.5,
+     "max": 1.8,
+     "nur_wenn": "relief_wolke",
+     "start": 1.0
+    }
+   ]
+  }
+ ],
+ "tor_restfeld": true
+}

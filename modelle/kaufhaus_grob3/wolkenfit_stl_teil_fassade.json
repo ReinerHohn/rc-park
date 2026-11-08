@@ -1,0 +1,36 @@
+{
+ "objekt": "kaufhaus_grob3",
+ "typ": "stl_teil:fassade",
+ "wolke": "wolke_netzrahmen.npy",
+ "n_wolke": 744442,
+ "parameter": [
+  "stl_teil:fassade.dn",
+  "stl_teil:fassade.du",
+  "stl_teil:fassade.dz",
+  "stl_teil:fassade.sn",
+  "stl_teil:fassade.su",
+  "stl_teil:fassade.sz"
+ ],
+ "vorher": {
+  "stl_teil:fassade.dn": 0.0,
+  "stl_teil:fassade.du": 0.0,
+  "stl_teil:fassade.dz": 0.0,
+  "stl_teil:fassade.sn": 1.0,
+  "stl_teil:fassade.su": 1.0,
+  "stl_teil:fassade.sz": 1.0
+ },
+ "nachher": {
+  "stl_teil:fassade.dn": 0.1947,
+  "stl_teil:fassade.du": 0.3599,
+  "stl_teil:fassade.dz": -0.7804,
+  "stl_teil:fassade.sn": 0.9023,
+  "stl_teil:fassade.su": 0.9622,
+  "stl_teil:fassade.sz": 1.0115
+ },
+ "J_vorher": 0.27349913120269775,
+ "J_nachher": 0.2484685182571411,
+ "median_vorher": 0.1409899890422821,
+ "median_nachher": 0.13670173287391663,
+ "p90_vorher": 0.2736177146434784,
+ "p90_nachher": 0.2704550623893738
+}

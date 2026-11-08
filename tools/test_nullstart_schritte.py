@@ -6,6 +6,10 @@ Quelle der Pflicht: tools/nullstart_pflicht.json (Schritt, Werkzeug, Erkenntnis,
   nach Lauf:  python3 tools/test_nullstart_schritte.py --bericht modelle/<ziel>/nullstart_bericht.json
               -> zusaetzlich: jeder Pflicht-Schritt kam im Bericht vor und war ok (oder begruendet uebersprungen), Beweisdatei existiert im Zielordner.
               Schreibt <ziel>/nullstart_beweise.json (je Pflicht: lauf_ok, beweis_da, status) - der Nachweis fuer den Nutzer.
+  Foto-Diff-Beweis (S2, 2026-11-05): python3 tools/test_nullstart_schritte.py --foto-diff [--bericht ...]
+              -> tools/test_foto_diff.py an den Beweisobjekten aus nullstart_pflicht.json (Eintrag foto_diff.py, Feld 'beweisobjekte'); Exit je Objekt 0 = bestanden,
+              1 = durchgefallen (Fehler), 3 = NICHT BEURTEILBAR (Gueltigkeitstor/keine Buendelkamera) = nur 'teilbewiesen', kein Fehler. Schreibt foto_diff_beweise.json
+              (neben dem Bericht, sonst Arbeitsordner). GPU, Minuten je Objekt: im Nullstart-Schritt 'beweise' nur mit NULLSTART_FD_BEWEIS=1.
 Exit 0 = alles erfuellt, 1 = etwas fehlt (Liste wird gedruckt). Status 'offen' wird NICHT als bestanden gezaehlt, nur ehrlich ausgewiesen.
 """
 import sys, os, re, json, argparse
@@ -50,14 +54,33 @@ def nach_lauf(pfl, bp):
     return fehler, erg
 
 
+def foto_diff_beweise(pfl, aus):
+    """test_foto_diff an den Beweisobjekten (nullstart_pflicht.json, Eintrag werkzeug foto_diff.py, Feld beweisobjekte). Rueckgabe (Fehlerliste, Ergebnisliste)."""
+    import subprocess
+    py = "/media/oem/scan/venv-seg/bin/python"; objekte = [b for p in pfl if p["werkzeug"] == "foto_diff.py" for b in p.get("beweisobjekte", [])]; erg = []; fehler = []
+    root = os.path.dirname(HIER)
+    for b in objekte:
+        nm = b["objekt"].replace("/", "_").replace(".json", "") + "_" + b["foto"]; ad = os.path.join(aus, nm); os.makedirs(ad, exist_ok=True)
+        cmd = [py, "-W", "ignore", "-I", os.path.join(HIER, "test_foto_diff.py"), b["objekt"], "--foto", b["foto"], "--audit-aus", ad, "--arbeit", os.path.join(ad, "arbeit")] + (["--stl", b["stl"]] if b.get("stl") else [])
+        if b.get("fd"): cmd.append("--fd=" + b["fd"])
+        r = subprocess.run(cmd, cwd=root, capture_output=True, text=True); st = {0: "bestanden", 1: "durchgefallen", 3: "teilbewiesen (nicht beurteilbar)"}.get(r.returncode, f"Fehler rc {r.returncode}")
+        erg.append(dict(objekt=b["objekt"], foto=b["foto"], rc=r.returncode, status=st, ende=(r.stdout.strip().splitlines() or [""])[-1][:300]))
+        if r.returncode not in (0, 3): fehler.append(f"foto_diff-Beweis {b['objekt']} {b['foto']}: {st}")
+    return fehler, erg
+
+
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("--bericht"); ap.add_argument("--pflicht", default=os.path.join(HIER, "nullstart_pflicht.json")); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument("--bericht"); ap.add_argument("--pflicht", default=os.path.join(HIER, "nullstart_pflicht.json")); ap.add_argument("--foto-diff", action="store_true"); a = ap.parse_args()
     pfl = json.load(open(a.pflicht))["pflicht"]; qt = open(os.path.join(HIER, "nullstart.py")).read()
     fehler = statisch(pfl, qt)
     print(f"statisch: {len(pfl)} Pflichtschritte, {len(fehler)} Fehler")
     if a.bericht:
         f2, erg = nach_lauf(pfl, a.bericht); fehler += f2
         for e in erg: print(f"  {'OK ' if e['lauf_ok'] and e['beweis_da'] else 'FEHLT'} {e['schritt']:<14} {e['werkzeug']:<28} Status {e['status']}" + (f"  (uebersprungen: {e['uebersprungen']})" if e['uebersprungen'] else ""))
+    if a.foto_diff:
+        zd = os.path.dirname(os.path.abspath(a.bericht)) if a.bericht else os.getcwd(); f3, e3 = foto_diff_beweise(pfl, os.path.join(zd, "foto_diff_beweise")); fehler += f3
+        json.dump(e3, open(os.path.join(zd, "foto_diff_beweise.json"), "w"), indent=1, ensure_ascii=False)
+        for e in e3: print(f"  foto_diff {e['objekt']} {e['foto']}: {e['status']}")
     st = {}
     for p in pfl: st[p["status"]] = st.get(p["status"], 0) + 1
     print("Status:", st)

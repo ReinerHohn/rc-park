@@ -1,0 +1,46 @@
+{
+ "_doku": "Masstabelle Grobgenerator Kaufhaus (Foto-Diff-Fahrzeug aus 9 Teilgruppen, Rohdreiecke). Wasserdicht/1-Koerper-Zeilen sind HIER BEWUSST NICHT gefuehrt: das Modell besteht aus unverschweissten Teil-STL und ist nicht fuer den Druck bestimmt (Nutzerauftrag 7.11.: 'wasserdicht nicht noetig'); fuer den Druck gilt kaufhaus_null5 bzw. das Wolkennetz. Siehe modelle/METHODE_MASSTABELLE.md",
+ "konstanten": {},
+ "messungen": {
+  "hoehe": {
+   "typ": "hoehe_max"
+  }
+ },
+ "pruefungen": [
+  {
+   "name": "Gesamthoehe Unterkante-Oberkante (m), gegen Wolkennetz im selben Rahmen",
+   "wert": "hoehe",
+   "soll": [
+    18.8,
+    19.8
+   ],
+   "quelle": "mvs_d03_fix.stl (OpenMVS-Netz der Fotowolke, gleicher Netzrahmen wie die Teile): Ausdehnung z 19.33 m (0.59..19.92); Toleranz +-0.5 m = ANNAHME (halbe Fehlerbudget-Ordnung BS64)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "historie": [
+    "2026-11-07 angelegt; Ist 16.45 m (Teile z 1.48..17.93) = 2.9 m zu niedrig -> FEHLER ist der Befund, Soll nicht gelockert (Regel 5: Widerspruch Generator/Wolke, nicht mitteln)"
+   ]
+  }
+ ],
+ "beobachtungen_offen": [
+  {
+   "datum": "2026-11-07",
+   "wer": "Auftrag Grobgenerator",
+   "text": "Gesamthoehe des aus dem alten Generator ausgerichteten Grobgenerators 16.45 m (z 1.48..17.93), Wolkennetz d03_fix 19.33 m (P99.5-Oberkante 18.9 vs 16.9). Foto-Diff bestraft das kaum (-0.032/-0.044 ist reiner Kantenabgleich, Laube/Fassade dominieren) - Dach/Giebel/Helme sind evtl. 2 m zu niedrig oder die Wolke hat Oberkantenaufbauten. Parameterraum dz +-0.5 m reicht dafuer nicht.",
+   "naechster_schritt": "Wolke-RANSAC Giebelspitze/Helmspitze gegen Teil g_giebel/g_helm im selben Rahmen messen (Z-Profil), dann dz-Bereich der Gruppen dach/staffelgiebel/helme gezielt weiten (BS72)"
+  },
+  {
+   "datum": "2026-11-07",
+   "wer": "Auftrag Grobgenerator",
+   "text": "Teilformen (Fenster, Boegen, Erker ...) stammen aus dem alten Hand-Generator (ANNAHME nach Fotos/Plan), nicht neu gemessen; nur Lage/Masstab stammt aus der GPU-Ausrichtung an die Wolke",
+   "naechster_schritt": "ELEMENTE.md pruefen (Nutzer), Zaehlung nur am Foto (Regel 9)"
+  },
+  {
+   "datum": "2026-11-07",
+   "wer": "Auftrag Grobgenerator",
+   "text": "Nicht wasserdicht/nicht druckbar (Rohdreiecke, 43113 getrennte Huellen)",
+   "naechster_schritt": "falls Druck gewuenscht: Teile verschweissen (manifold) - eigene Aufgabe"
+  }
+ ]
+}

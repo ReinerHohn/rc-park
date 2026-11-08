@@ -167,3 +167,77 @@ Schritte: … `buendel`, `generator0`, `dicht`, `entzerren`, `video`, **`kameras
   - Erster Parameter: Dachversatz für `rumpf_lod2`, weil der LoD2-First auf Höhe der Stufengiebel-Spitzen liegt.
   - Danach die Treppengiebel-Maße (heute als ANNAHME gesetzt).
   - Die statistische Absicherung (5) und die echte GPU-Beschleunigung von `foto_diff` (7) sind zurückgestellt.
+
+## Stand 4.11. spaet (nach 21 Uhr)
+- **param_suche** (generisch, ein Generatorparameter gegen Fotos): feste Bewertungsmaske (`kosten_param`), Prozess-Pool (alle Probewert x Foto, Arbeiter nach RAM/VRAM), Deutlichkeitstor (gepaarter t, beidseitig >= 2), Einzelfoto-Kosten im Bericht. Beweis `test_param_suche.py` BESTANDEN (CPU und GPU).
+- **foto_diff GPU-Fassung** (`--gpu` / `FD_GPU=1`, Standard in param_suche, `--cpu` zurueck): Abtastung + Z-Puffer + Versatzsuche auf torch. Bewiesen: test_foto_diff T0-T6b (Kaufhaus 004, Martinstor 014), test_param_suche, `tools/test_gpu_gleichwertig.py` (GPU-CPU <= 2x CPU-Saatwechsel, `FD_SAAT`). foto_diff allein bleibt CPU (Regression stabil). Regression Martinstor identisch.
+- **Kaufhaus Dach**: Foto-Suche First -1,28 m (deutlich) gegen LoD2/DOM1 (stimmen ueberein) = offener Widerspruch in `kaufhaus_null4/masstabelle.json` (mit Diagnose und naechstem Schritt). NICHT uebernommen.
+- **Luecken**: martinstor_lod2 Buendelkameras ohne `buendel_tor` -> fotos_waehlen findet keine; Kaufhaus ohne Regressions-Schnappschuss; Bildkette (Canny/Abstandskarten/Normalenkanten) noch CPU, RAM 2,2 GB je Arbeiter -> nur 4 parallel.
+- **Platz**: /media/oem/scan von 0 auf 26 GB frei (Archiv /media/oem/Volume/scan_archiv, LIESMICH.txt). Nutzer loescht noch: `rm -rf /media/oem/scan/{cuda12,colmap-test,colmap-build,vggt}` (geprueft archiviert).
+- **Regel neu im Gedaechtnis**: immer maximal parallel UND GPU, GPU-Frage beim Entwurf stellen.
+- **GPU Schritt 2** (Normalenkanten, nrm/pos, Verdecker auf GPU) alle 5 Beweise BESTANDEN, Regression Martinstor identisch.
+- **Pruefwerkzeuge** (22 Uhr): `foto_rendern` bitgleich 2-4x schneller (Schluessel je Dreieck), Pruefbilder + foto_diff-Faelle + Wahrheiten parallel, Arbeitsordner Datenplatte; Gegenbeweis identisch (fd Kaufhaus 45 s, Martinstor 50 s, param_suche 245 s). Engpass jetzt RAM (3,6 GB je Render).
+- **Pruefbilder exakt gerastert** (23 Uhr, `render_kern.dreiecke_rastern`): alter Martinstor-Beweis bestand nur per Saat-Glueck (T1 je Saat 24,8-32,2 %). Jetzt saatunabhaengig, 6x schneller, 1,35 GB statt 3,6 GB RAM. `PRUEF_CPU=1` = alte Fassung.
+- **foto_diff --raster / FD_RASTER=1** (Entwurf, NICHT Standard): Martinstor T1 23,5 % bestanden (Punktmodell 26,7 % durchgefallen), Kaufhaus T1 7 % (19,6 %), test_param_suche -0,789/+0,491. Nachteil sichtbar: Fotokanten ohne Modell steigt (Punkt-Pfeffer hatte das verdeckt) -> `sprung_m` 0,25 m zu grob fuer Traufe/Bruestung. **Nutzerentscheid offen: Raster als Standard?** Danach test_gpu_gleichwertig neu fassen (Raster ist absichtlich nicht CPU-gleich).
+- **Naechste Hebel**: Raster-Arbeiter brauchen 1,6 GB VRAM (4 parallel); gemischter GPU+CPU-Pool in param_suche, nach FOTO getrennt. RAM-Kauf erst nach Messung (Laptop 2x8 GB, Firmware meldet max 64 GB, HP offiziell 32 GB).
+
+## Stand 5.11. nachts (Qualitaetsstufen, Nutzerauftrag "autonom weiter bis Modell + Methodik + Pipeline stehen")
+- **Qualitaetsstufen** `tools/qualitaetsstufen.py` (Plan `modelle/kaufhaus_null4/qualitaetsstufen.json`, Ausgabe `/media/oem/scan/rc-park_null/qualitaetsstufen_kaufhaus_null4/`, Artifact HWmkJcxsVGprFEWn9z918Z): Stufe 1 Ausgang 1,0186; Stufe 2 Parameter 0,9913 (First -1,17, Kappe 0,41 uebernommen); Stufe 3 Fassaden-Parsing; Stufe 4 CMA-ES (`v_gemeinsam`, pycma BSD). stand.json atomar.
+- **Stufe 3 Werkzeuge**: `tools/fassade_ortho.py` (Einzelfoto-Orthos je LoD2-Fassade, Embree-Sicht gegen Stufenmodell + LoD2-Nachbarn, 94 Fotos 40 s), `tools/fassade_parsing.py` (OWLv2 Apache-2.0, HF_HOME=/media/oem/scan/hf_cache, Foto-Abstimmung, Reihenregel, Boegen zusammengelegt, Felder AM FOTO gezaehlt), Generator-Bauteil `fassade_auto` (+ `fassade_raster.ohne_abschnitte`, BAUTEIL_PARAM `anhaengen`/`aktiv`).
+- **Befunde**: Erkennung Nordfront 5 Fenster/4 Boegen/4 Figuren = Handablesung; Achsmass Automatik 2,84 vs Hand 3,07 m -> skala_u-Suche bevorzugt 0,94-0,96 (flach), also NICHT die Handteilung - Widerspruch offen. Komplett-Ersatz der Handablesung verliert (Erker/Traufe fehlen als Bauteiltyp). Entscheidung je Fassade nur auf Fotos, die sie sehen (12 Bewertungsfotos verwaessern). Anzahlen (Felder) nie suchen (Regel 9; Suche wollte 4 statt 3).
+- **Offen/Naechstes**: Bauteiltypen Erker (+Helm), Traufe, Treppengiebel-Stufenzahl automatisch zaehlen; grosse Fotos (bis 86 MP, 7,3 GB VRAM einzeln, 068 passt nicht) fuer foto_diff verkleinern (Werkzeugaenderung -> Regression); fassade_ortho-Sicht auf GPU-Rasterer; Z-Protokolle fuer automatische Zaehlungen in die Masstabelle; Kaufhaus ohne Anzahl-Pruefung (test_regeln_cb laeuft daher am Martinstor, T4 an Commit 615f721 gebunden).
+
+## Stand 5.11. frueh (nach Stufe 4)
+- Stufe 4 (CMA-ES, 12 Gen.) verworfen: bestes 0,9793 (t -1,1), Mittelpunkt 0,9771 (t -1,4) -> Stand bleibt Stufe 3 = 0,9904. HTML Artifact HWmkJcxsVGprFEWn9z918Z v3.
+- Neu: `tools/druckteile_auto.py` (rekursiver Schnitt, Aushoehlen, Stiftbohrungen, Slice je Teil; Kaufhaus s2: 4 Teile ok, 1,37 kg) - Nutzer: erst Pipeline, Druck spaeter.
+- Neu: `fassade_relief.py` Bloecke (Erker W/O 0,64/0,75 m, Galerie 0,59 m) -> Beobachtung Widerspruch Hand 0,90 in masstabelle; naechster Schritt Bauteil "relief_bloecke" im Generator (Stufe 5).
+- Neu: `tools/zier_ausschnitt.py` (Zierteile in voller Fotoaufloesung): von 9 "figur" nur 3 echte Figuren, 4 Wirtshausschilder/Ausleger, 2 Baldachine (Box zu hoch) -> Figurenerkennung braucht Gegenbegriffe + Reliefpruefung.
+- TripoSR in /media/oem/scan/venv-tsr (pth auf venv-seg, transformers 4.44 lokal, Marching Cubes via scikit-image).
+- Recherche: reports/Pipeline Beschleunigung per Software.md, reports/Daten und Qualitaet fuer H0 Modelle.md; gegen Register geprueft (Caspar schon gemessen: kein Gewinn).
+- Neue Quellen 17-19 (bDOM, Stadt-LoD2, Stadt-Mesh) in quellen_inventar.py/QUELLEN_REGISTER.md; Bestellentwuerfe LGL_BESTELLUNG_BDOM.txt + ALS3 (Nutzer sendet).
+- Stufenplan weiter: 5 Erker/Galerie-Bloecke + Helme, 6 Treppengiebel (Foto-Zaehlung), 7 Figuren/Baldachine, 8 Feindetails (Gesimse, Faschen), 9 Lauf ohne Hand.
+
+## Stand 5.11. vormittags (nach Stillstand 02:51-08:03, eigene Schuld: Turn beendet statt weitergearbeitet)
+- Herzschlag: CronCreate alle 20 min (nur diese Sitzung). Memory nie-idle-warten.md.
+- Stufe 5 "Vorbauten aus Wolkenbloecken": fassade_relief.py Bloecke + Profilform (Front, Koerper 4,85-8,9, Gesims 8,9 m/0,81-0,94 m, Helmneigung); baukasten_gen.py bloecke_wolke. Ergebnis: Automatik = Hand-Gleichstand (Nadel 9 m: -0,003 t -0,3), Bewertungsfotos 0,9761 statt 0,9904. Nicht uebernommen (Regel t<=-2); in Stufe 9 (ohne Handwerte) gegen "kein Erker". Widersprueche offen: Erkerbreite Wolke 2,0 / Hand 3,3 m; Nadelspitze (Kanten flach 9-13 m) vs Hand 14,7 m.
+- Figuren: zier_ausschnitt.py --pruefen (OWLv2 Ziel vs Gegenbegriffe, Box >= 0,5 Ausschnitthoehe, Score >= 0,5 VORLAEUFIG) findet alle 4 Ritter (Figur 19 hinter Wirtshausschild -> Ausweichfoto 025). zier_3d.py (TripoSR, ~1 min fuer 4). baukasten_gen figuren_netz. Stufe 6 im Plan misst gerade.
+- Schatten: schatten.py (Schattenkarte), sonne_fotos.py (EXIF+NOAA+DWD 01443) -> sonne.json (58 Fotos: 26 Sonne/15 bedeckt/11 Nacht). foto_diff --schatten (Standard aus): GEGENPROBE GESCHEITERT - gedrehte Sonnen senken die Kosten ebenso -> kosten_param belohnt Zusatzkanten. NAECHSTER SCHRITT: faires Kantenmass (Zusatzkanten duerfen nicht von selbst gewinnen), dann Schatten + Nadel neu bewerten.
+- param_suche.fotos_waehlen(ohne_nacht) + Plan-Schluessel "ohne_nacht" (fuer null5: Bewertungsfotos 075/119 sind Daemmerung/Nacht).
+- qualitaetsstufen.py: ortho_von_stufe, Versuchsschluessel bloecke/bauteile, fertige Stufen mit neuen Versuchen werden fortgesetzt.
+- OFFEN: tools/regression.py --pruefen nach den Werkzeugaenderungen (GPU frei abwarten).
+
+## Stand 5.11. mittags
+- FAIRES MASS: foto_diff kosten_lr ('a contrario' Likelihood-Verhaeltnis, Summe/Fotokantenzahl). Beweis: +10 % Zufallskanten senken kosten_param um 0,3-0,57 (!), kosten_lr steigt +0,02..+0,05. Schatten mit EXIF-Sonne: kosten_lr schlechter (061 0,533->0,673) -> Schatten bleiben aus. Plan-Schluessel "mass": "lr" (setzt FD_MASS=lr).
+- Treppengiebel: giebel_stufen_zaehlen.py (Bandabtastung, Spektrum) -> 9 Kappen-Perioden = 8 Stufen + Spitze (Z-042-001 in null5); Hand Z-050-001 = 7 -> Widerspruch offen. 7/8/9 per kosten_lr nicht unterscheidbar (0,422/0,437/0,430). In qualitaetsstufen Stufe 1 "giebel_zaehlen".
+- kaufhaus_null5 (/media/oem/scan/rc-park_null/kaufhaus_null5, Symlink modelle/): OHNE fassade_raster und Hand-Zaehlungen, Plan mass lr + ohne_nacht, Fassadenstufe mit Fenster/Boegen/Gauben/Relief/Bloecken/Figuren automatisch (figuren_auto = zier_ausschnitt + zier_3d im Lauf). Laeuft als rcpark-qs_null5 (Log qualitaetsstufen_null5.log).
+- beobachtungen_offen brauchen Felder 'wer' + 'text' (pruefstand KeyError sonst) - repariert.
+
+## Stand 5.11. 11:20 (Mass-Korrektur, Nachtlauf-Bausteine)
+- **kosten_lr korrigiert** (foto_diff.lr_mischung): altes festes sigma=Kappe/3 bestrafte Details (Haelfte der Kanten weg = besser). Jetzt ML-Mischung; Gegenproben (Wegnehmen, Zufall, Versatz) bestanden. Altwert als `kosten_lr_alt` im JSON. Versuchslog Kaufhaus.
+- **null5 neu ab Stufe 2** (11:16, Log `rc-park_null/qualitaetsstufen_null5c.log`), Plan = `modelle/PLAN_STANDARD_qualitaetsstufen.json` (gebaeudeunabhaengig: Fassaden `haupt|alle|seiten`, `spitzen_messen`, `entscheid: zier`). Alte Stufen 2/3 in `qualitaetsstufen_kaufhaus_null5/alt_vor_lrmix/`, alter Plan `qualitaetsstufen_vor_lrmix.json`.
+- **Neu:** `tools/spitze_hoehe.py` (Spitzen per RANSAC-Triangulation, Test `tools/test_spitze_hoehe.py`; Kaufhaus Erker 16,13/16,16 m aus je 11 Fotos), Generator `bloecke_wolke` gibt `spitzen` im Beleg aus und nutzt `spitzen_z`; Figurenhalter 0,2 m und hinter der Figur; Runner: `zier_entscheid` (Silhouetten-IoU je Figur, Trockentest kh_zier4: 0,59 vs 0, t -18), Grafikspeicher-Budget je Foto (0,5 + 0,2 GB/MP) in Runner und param_suche, Fehlerursache `fehler.log` je Foto; `nullstart.py` Schritt `stufen` (Standardplan) fuer den Nachtlauf je Gebaeude.
+- Offen: Zier-Tor vergleicht gegen "keine Figur" (IoU 0) - schwach; lokaler Kameraversatz (0,35-1,3 m) bleibt groesster Hebel fuer Detailschaerfe; test_foto_diff (Kaufhaus 004 + Martinstor 014) nach null5 laufen lassen (GPU).
+
+## Stand 5.11. 12:35
+- null5e GESTOPPT: Stufe 2 nahm first_versatz -0,63 aus Fotos -> Pruefstand First/wasserdicht/Koerper rot (Laeufer pruefte nie). Fotorahmen am Dach >= 0,5 m zu tief (Wolke vs DOM1).
+- NEU: Pruefstand-Tor in qualitaetsstufen (tor_ok an jeder Uebernahme), pruefstand.py --bericht, baukasten_gen verwirft verdeckte Schnitte (Hohlraeume), genauigkeit_ampel.py (Gegenprobe bestanden), punkte_messen.py GESPERRT (Zirkelschluss).
+- null5f laeuft ab Stufe 2 (Stand s1 behalten, Backup stand_null5e_vor_tor.json), Log /media/oem/scan/rc-park_null/qualitaetsstufen_null5f.log.
+- Offen: spitze_m -0,62 (Foto) evtl. Rahmen-Bias; vertikaler Kameraanker an DOM1-Dachflaechen; Erkerfenster auf Erkerflaeche.
+- NACH null5i (Generatorsperre waehrend Lauf): (1) baukasten_gen: `BAUTEILE["fassade_vorbau"] = fassade_auto` (Datei aus fassade_ortho --waende-stl), bauen_abnehmen + Regression;
+  (2) PLAN_STANDARD + kaufhaus_null5: Versuch {"name": "Erkerfenster auf Vorbauflaechen", "vorbau_fenster": true, "klassen": ["fenster"]} NACH dem Blockversuch;
+  (3) foto_diff --sprung-m 0,08/0,12 vs 0,25 testen (GPU, test_foto_diff + Fensternische); Laeuferteil vorbau_fenster ist schon drin (13:20).
+  (4) tiefen_messen.py einbauen: qualitaetsstufen nach fassade_parsing -> tiefen.json; fassade_auto-Parameter (nische_m, bogen_tiefe_m, figur_vorsprung_m) aus gemessenen Klassenwerten, Beleg "gemessen" statt ANNAHME; 2. Objekt pruefen.
+
+### Nutzerbefunde 5.11. 13:50 (Zwischenmodell s3_v1) - alles automatisch loesen, keine Handarbeit
+- Seitliche Arkadenbogen (Durchgang): Parsing findet f00-Bogen (6 Stimmen), f06 nicht; Generator baut nur Frontgalerie -> Regel "Seitenbogen in Arkadentiefe = Durchlass" + Strahltest-Pruefung.
+- Bogen leicht verschoben: automatischer lokaler Versatz je Element (Chamfer im Foto) als Pruefung + Feinlage.
+- Fehlend: Erkerhelme/-fenster, Bruestung/Balkon, Gauben, Figuren; Dachvernetzung (Splitterdreiecke).
+- NUTZER 13:53: "das ist wieder ein Spezialfall - muss generell gefunden werden". -> KEINE Bogen-/Durchgangsregel. Stattdessen zwei generelle Pruefungen fuer jedes Objekt:
+  (a) Freiraum aus Sichtstrahlen: jede Tiefenkarte (dichte Rekonstruktion) sagt "Strahl frei bis Tiefe d" -> Modellvolumen, das Kameras durchschauen, ist falsch (Durchgaenge, Arkaden, Nischen, Hoefe);
+      umgekehrt Fotooberflaeche, wo Modell Luft hat = Fehlteil. Pruefstand-Merkmal "Freiraumverletzung m3 / Fehlvolumen" + Generator schneidet/ergaenzt daraus. Vorher Stand der Technik (Space Carving / Sichtbarkeitskonsistenz) und Gegenprobe (Modell mit zugemauertem Bogen muss fehlschlagen).
+  (b) Feinlage je Element (alle Klassen) gegen Fotokanten statt Bogen-Sonderfall.
+- 5.11. 14:16 Datenplatte voll (Errno 28 in Stufe 4): verschoben nach /media/oem/Volume/rc-park_archiv_2026-11-05/ : qualitaetsstufen_kaufhaus_null4 (8,8 G, alter Lauf) und null5/alt_vor_lrmix + alt_vor_giebelspitze (4,1 G). Platte danach 13 G frei. Laeufer braucht eine Platzpruefung vor jeder Stufe.
+- 5.11. 14:32 Figuren (s3_v6, TripoSR) vom Tor verworfen, obwohl Fotokosten t -11,9: 4 Figuren (0,5-0,7 x 1,5-1,6 m) stehen FREI vor der Fassade (y 12-15, kein Kontakt), eine nicht wasserdicht, + Splitter (<0,001 m3).
+  Allgemeine Regel fuer ALLE Anbauteile (nicht nur Figuren): Teilkoerper ohne Kontakt -> Konsole = Huelle(untere 20 %% der Teilpunkte + dieselben bis 0,1 m in die naechste Modellflaeche verschoben), danach vereinigen; nicht wasserdichte Netze vorher reparieren (fill_holes/Voxel-Neuvernetzung), Splitter < 1e-3 m3 verwerfen mit beleg. Gegenprobe: s3_v6 -> 1 Koerper, wasserdicht, Fotokosten nicht schlechter.
+- 5.11. 14:29 freiraum_oeffnungen Gegenprobe bestanden (nach Fix: nur Strahlstuecke IM Modell). Eingabe fuer Generator: <scratchpad>/freiraum_s3v1/elemente_freiraum.json (neu erzeugen auf Endmodell s4!).
+- 5.11. 15:01 Entwurf Pruefstand-Merkmal Freiraum: NICHT im Pruefstand rechnen (2-4 min, Tor ruft Pruefstand je Kandidat), sondern nach jedem Bau audit/freiraum_oeffnungen.json erzeugen (freiraum_pruefen -> _fassaden --stl -> _oeffnungen), Merkmal liest 'Freiraumflaeche ohne Oeffnung je Fassade (m2)' daraus; Datei aelter als STL = Pruefung ungueltig (Exit 2).

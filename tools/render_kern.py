@@ -64,20 +64,23 @@ def tiefenbild(P, R, t, f, cx, cy, W, H, werte=None):
     """Z-Puffer: fuer jedes Pixel die kleinste Tiefe und (optional) den Wert des naechsten Punktes.
     Rueckgabe: depth (H,W) mit inf wo leer, idx (H,W) int32 mit -1 wo leer.
     Auf GPU per scatter_reduce(amin) - auf CPU per np.minimum.at; Ergebnis gleich."""
-    uv, z = projiziere(P, R, t, f, cx, cy)
-    u = np.rint(uv[:, 0]).astype(np.int64); v = np.rint(uv[:, 1]).astype(np.int64)
-    ok = (z > 1) & (u >= 0) & (u < W) & (v >= 0) & (v < H)
-    flat = (v[ok] * W + u[ok]); zz = z[ok].astype(np.float32); wo = np.nonzero(ok)[0]
-    T = _torch()
-    if T:
-        d = T.full((H * W,), float("inf"), device="cuda")
-        d.scatter_reduce_(0, T.as_tensor(flat, device="cuda"), T.as_tensor(zz, device="cuda"), reduce="amin")
-        depth = d.cpu().numpy().reshape(H, W)
-    else:
-        depth = np.full(H * W, np.inf, np.float32); np.minimum.at(depth, flat, zz); depth = depth.reshape(H, W)
+    # Bloecke (2026-11-04): vorher 8 M Punkte auf einmal -> ~0,7 GB Zwischenfelder je Aufruf (begrenzte die parallelen foto_diff-Arbeiter).
+    # Z-Puffer = Minimum (reihenfolgeunabhaengig); Gewinnerzuordnung in derselben Punktreihenfolge (letzter gewinnt wie vorher) -> bitgleich.
+    B = 1 << 20; n = len(P); T = _torch(); teile = []
+    d = T.full((H * W,), float("inf"), device="cuda") if T else np.full(H * W, np.inf, np.float32)
+    for s in range(0, n, B):
+        uv, z = projiziere(P[s:s + B], R, t, f, cx, cy)
+        u = np.rint(uv[:, 0]).astype(np.int64); v = np.rint(uv[:, 1]).astype(np.int64)
+        ok = (z > 1) & (u >= 0) & (u < W) & (v >= 0) & (v < H)
+        flat = (v[ok] * W + u[ok]); zz = z[ok].astype(np.float32); wo = np.nonzero(ok)[0] + s; del uv, z, u, v, ok
+        if T: d.scatter_reduce_(0, T.as_tensor(flat, device="cuda"), T.as_tensor(zz, device="cuda"), reduce="amin")
+        else: np.minimum.at(d, flat, zz)
+        teile.append((flat, zz, wo))
+    depth = (d.cpu().numpy() if T else d).reshape(H, W); dr = depth.ravel()
     idx = np.full(H * W, -1, np.int64)
-    treffer = np.isclose(depth.ravel()[flat], zz)                      # Punkte, die den Z-Puffer gewonnen haben
-    idx[flat[treffer]] = wo[treffer]
+    for flat, zz, wo in teile:
+        treffer = np.isclose(dr[flat], zz)                             # Punkte, die den Z-Puffer gewonnen haben
+        idx[flat[treffer]] = wo[treffer]
     return depth, idx.reshape(H, W)
 
 def maske(P, R, t, f, cx, cy, W, H, schliessen=5):
@@ -95,6 +98,63 @@ def schattiert(P, N, R, t, f, cx, cy, W, H, licht=(0.35, -0.45, 0.82), hintergru
     lit = np.clip(np.asarray(N) @ np.asarray(licht), 0, 1)
     img[tr] = (70 + 170 * (0.25 + 0.75 * lit[idx[tr]])).astype(np.uint8)
     return img, depth
+
+def dreiecke_rastern(mm, R, t, f, cx, cy, W, H, block=1 << 20, als_torch=False):
+    """Netz (trimesh, Weltrahmen) auf der GPU EXAKT rastern (Z-Puffer je Pixel, perspektivisch korrekte Tiefe), kein Punkt-Abtasten mehr.
+    Warum (2026-11-04): Punkt-Abtastung liess Pixel ohne Punkt auf der Vorderflaeche -> dahinterliegende (dunkle) Flaeche schien durch = Pixel-Pfeffer und
+    Scheinkanten im 'Foto'. Streuungsmessung Martinstor 014: T1 je Saat CPU 24,8/32,2/29,8/27,5 %, GPU-Punkte 26,4/25,0/25,6/23,8 % (Grenze 25 %) - der Beweis
+    hing an der Saat. Exakt gerastert gibt es weder Loecher noch Zufall. Pixel i deckt [i-0.5, i+0.5] wie der Punktrenderer (Rundung), Pruefpunkt = Pixelmitte.
+    Gleichstand (deckungsgleiche Flaechen, relativ 1e-6 der Tiefe): zur Kamera
+    gewandt vor abgewandt, dann kleinste Dreiecksnummer. ANNAHME: Dreiecke mit einer Ecke <= 1 m vor der Kamera fallen weg (wie z > 1 im Punktrenderer).
+    Rueckgabe depth (H,W float32, inf leer), fid (H,W, Dreiecksnummer, -1 leer), pos (H,W,3 Weltpunkt der Pixelmitte); numpy, mit als_torch=True fid/pos als GPU-Tensoren."""
+    import torch
+    Rg = torch.as_tensor(np.asarray(R, float), dtype=torch.float64, device="cuda"); tg = torch.as_tensor(np.asarray(t, float).ravel(), dtype=torch.float64, device="cuda")
+    Tw = torch.as_tensor(np.asarray(mm.triangles), dtype=torch.float64, device="cuda"); X = Tw @ Rg.T + tg; z = X[..., 2]   # (F,3) Kameratiefe der Ecken
+    Nc = torch.as_tensor(np.asarray(mm.face_normals), dtype=torch.float64, device="cuda") @ Rg.T
+    zs = z.clamp(min=1e-9); u = f * X[..., 0] / zs + cx; v = f * X[..., 1] / zs + cy
+    x0 = torch.ceil(u.min(1).values - 0.5).clamp(min=0); x1 = torch.floor(u.max(1).values + 0.5).clamp(max=W - 1)
+    y0 = torch.ceil(v.min(1).values - 0.5).clamp(min=0); y1 = torch.floor(v.max(1).values + 0.5).clamp(max=H - 1)
+    fl2 = (u[:, 1] - u[:, 0]) * (v[:, 2] - v[:, 0]) - (u[:, 2] - u[:, 0]) * (v[:, 1] - v[:, 0])
+    gut = (z > 1).all(1) & (x1 >= x0) & (y1 >= y0) & (fl2.abs() > 1e-12)
+    ids = torch.nonzero(gut, as_tuple=True)[0]; nx = (x1 - x0 + 1)[ids].long(); ny = (y1 - y0 + 1)[ids].long(); cnt = nx * ny
+    grenzen = [0]; summe = 0                                                                        # Dreiecks-Bloecke mit <= block Pixel-Paaren
+    for i, c in enumerate(cnt.tolist()):
+        if summe + c > block and i > grenzen[-1]: grenzen.append(i); summe = 0
+        summe += c
+    grenzen.append(len(ids))
+    def paare():                                                                                    # (Dreiecksnummer, flacher Pixelindex, Tiefe, abgewandt) je ueberdecktem Pixel
+        for a_, b_ in zip(grenzen[:-1], grenzen[1:]):
+            if b_ <= a_: continue
+            fi = ids[a_:b_]; c = cnt[a_:b_]; k = torch.repeat_interleave(torch.arange(b_ - a_, device="cuda"), c)
+            off = torch.cumsum(c, 0) - c; lok = torch.arange(int(c.sum()), device="cuda") - off[k]; f_ = fi[k]
+            px = x0[f_] + (lok % nx[a_:b_][k]); py = y0[f_] + (lok // nx[a_:b_][k])
+            U, V = u[f_], v[f_]; A = fl2[f_]
+            w1 = ((px - U[:, 0]) * (V[:, 2] - V[:, 0]) - (U[:, 2] - U[:, 0]) * (py - V[:, 0])) / A
+            w2 = ((U[:, 1] - U[:, 0]) * (py - V[:, 0]) - (px - U[:, 0]) * (V[:, 1] - V[:, 0])) / A; w0 = 1 - w1 - w2
+            drin = (w0 >= 0) & (w1 >= 0) & (w2 >= 0)
+            Z = z[f_]; tief = 1.0 / (w0 / Z[:, 0] + w1 / Z[:, 1] + w2 / Z[:, 2])                    # perspektivisch korrekt: 1/z linear im Bild
+            f_, px, py, tief = f_[drin], px[drin].long(), py[drin].long(), tief[drin]
+            Xp = torch.stack([(px - cx) / f * tief, (py - cy) / f * tief, tief], 1)
+            yield f_, py * W + px, tief, ((Nc[f_] * Xp).sum(1) > 0).long()
+    d = torch.full((H * W,), float("inf"), dtype=torch.float64, device="cuda")
+    for _, fl, tief, _ in paare(): d.scatter_reduce_(0, fl, tief, reduce="amin")
+    # Gleichstand nur fuer wirklich deckungsgleiche Flaechen: relative Toleranz 1e-6 der Tiefe (~30 um, float64 exakt gerastert). Erst 2 cm (aus der Punktfassung)
+    # -> Kaufhaus-Gauben 1-2 cm vor der Dachflaeche verschwanden hinter dem Dach (kleinere Dreiecksnummer gewann), Sichtpruefung 2026-11-04.
+    EPS_REL = 1e-6
+    # Speicher (2026-11-04, Kaufhaus 023/000 mit 24-86 MP liefen ueber): Auswahl in int32, Weltpunkte blockweise statt H*W x 3 in 64 Bit am Stueck. Werte gleich.
+    GROSS = len(mm.faces) + 1; it = torch.int32 if 2 * GROSS < 2 ** 31 else torch.long; fw = torch.full((H * W,), 2 * GROSS, dtype=it, device="cuda")
+    for f_, fl, tief, ab in paare():
+        dm = d[fl]; w = tief <= dm * (1 + EPS_REL) + 1e-9; fw.scatter_reduce_(0, fl[w], (ab[w] * GROSS + f_[w]).to(it), reduce="amin")
+    fid = torch.where(fw >= 2 * GROSS, torch.full_like(fw, -1), fw % GROSS).long(); del fw
+    pos = torch.zeros((H * W, 3), dtype=torch.float32, device="cuda")
+    for s in range(0, H * W, 1 << 22):
+        pi = torch.arange(s, min(s + (1 << 22), H * W), device="cuda"); dd = d[s:s + len(pi)]; dd = torch.where(torch.isfinite(dd), dd, torch.zeros_like(dd))
+        Xp = torch.stack([((pi % W) - cx) / f * dd, ((pi // W) - cy) / f * dd, dd], 1); pos[s:s + len(pi)] = ((Xp - tg) @ Rg).float()   # Welt = R^T (X - t)
+    pos[fid < 0] = 0; dn = d.float().reshape(H, W).cpu().numpy(); del d
+    if als_torch: return dn, fid.reshape(H, W), pos.reshape(H, W, 3)
+    out = (dn, fid.reshape(H, W).cpu().numpy(), pos.reshape(H, W, 3).cpu().numpy())
+    del Tw, X, Nc, fid, pos; torch.cuda.empty_cache(); return out
+
 
 def hypso_lagen(P, stufen, lagen, radius=9.0, raster=1.0, N=60):
     """Flaeche ueber mehreren Hoehen fuer VIELE Lagen (Drehung, dx, dy) auf einmal - der Kern der Lagesuche.

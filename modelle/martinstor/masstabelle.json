@@ -3371,28 +3371,11 @@
    "naechster_schritt": "EXIF/f_gruppe serie2025 (wie 030) als feste Brennweite pruefen, mehr Bodenanker picken; bis dahin Pruefungen mit K-031 als unsicher fuehren (Register CK)"
   },
   {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
-   "auto_id": "breite-000-38-38",
-   "art": "breite",
-   "foto": "000",
-   "z_von": 37.5,
-   "z_bis": 37.5,
-   "abweichung": -1.16,
-   "text": "Silhouettenbreite z 37.5-37.5 m: Foto 13.56 m, Modell 14.72 m (-1.16 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
-  },
-  {
-   "datum": "auto",
-   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
-   "auto_id": "breite-000-48-48",
-   "art": "breite",
-   "foto": "000",
-   "z_von": 48.0,
-   "z_bis": 48.0,
-   "abweichung": -5.66,
-   "text": "Silhouettenbreite z 48.0-48.0 m: Foto 0.26 m, Modell 5.92 m (-5.66 m)",
-   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+   "datum": "2026-11-05",
+   "wer": "stadt_lod2_schneiden.py (G4)",
+   "quelle": "STADT_LOD2",
+   "text": "STADT_LOD2 (Typ 18) vs LGL-LoD2 (gleicher Schaetzer, Hoehen ueber min. Boden-z des Gebaeudes): First LGL 45.30 m (abs 322.93) | Stadt 65.07 m (abs 342.21); Traufe min LGL 34.52 | Stadt 10.05 m; Traufebenen LGL [34.5, 36.75, 37.0] | Stadt [10.0, 10.5, 32.0, 35.25, 35.75, 42.0, 43.0, 53.0]; Grundriss LGL 115.1 m2 | Stadt 121.1 m2; Dachflaechen LGL 4 | Stadt 162; Boden-z abs LGL 277.63 | Stadt 277.14. Stadt-Gebaeude ['DEBWL001000hPLcn'], GML 2026-11-05, EPSG 25832. Datei modelle/martinstor/stadt_lod2.json",
+   "naechster_schritt": "zweite Quelle, nicht mitteln; bDOM/Foto als dritte"
   },
   {
    "datum": "auto",
@@ -3456,20 +3439,27 @@
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 040, Treffer 1)",
-   "auto_id": "fehlteile-040-990-540",
-   "art": "fehlteil",
-   "foto": "040",
-   "z_von": 51.46,
-   "z_bis": 51.46,
-   "xyz": [
-    -0.82,
-    1.27,
-    51.46
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=51.46 m, y=1.27 m (Zelle [990, 540, 90], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_040.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
+   "auto_id": "breite-000-38-38",
+   "art": "breite",
+   "foto": "000",
+   "z_von": 37.5,
+   "z_bis": 37.5,
+   "abweichung": -1.16,
+   "text": "Silhouettenbreite z 37.5-37.5 m: Foto 13.56 m, Modell 14.72 m (-1.16 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
+  },
+  {
+   "datum": "auto",
+   "wer": "foto_breitenprofil (Foto 000, Kamera K-000)",
+   "auto_id": "breite-000-48-48",
+   "art": "breite",
+   "foto": "000",
+   "z_von": 48.0,
+   "z_bis": 48.0,
+   "abweichung": -5.66,
+   "text": "Silhouettenbreite z 48.0-48.0 m: Foto 0.26 m, Modell 5.92 m (-5.66 m)",
+   "naechster_schritt": "tools/beobachtungen_sichten.py entscheidet, ob mehrere Fotos einig sind"
   },
   {
    "datum": "auto",
@@ -3555,6 +3545,23 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=15.53 m, y=-5.38 m (Zelle [620, 1612, 62], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_030.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 040, Treffer 1)",
+   "auto_id": "fehlteile-040-990-540",
+   "art": "fehlteil",
+   "foto": "040",
+   "z_von": 51.46,
+   "z_bis": 51.46,
+   "xyz": [
+    -0.82,
+    1.27,
+    51.46
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=51.46 m, y=1.27 m (Zelle [990, 540, 90], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_040.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",

@@ -5,12 +5,14 @@
 # Danach zeigen/committen/Viewer NUR bei "alle Pruefungen bestanden" UND nachdem das Sichtblatt angesehen wurde (Lehre F5/F6).
 set -e
 cd "$(dirname "$0")/.."
+python3 tools/platz_pruefen.py || exit 3   # Platztor (G1)
 OBJ="modelle/$1/objekt.json"; [ -f "$OBJ" ] || { echo "kein $OBJ"; exit 2; }
 PY=/media/oem/scan/venv-seg/bin/python
 if [ "$2" != "--nur-pruefen" ]; then
   GEN=$($PY -c "import json;print(json.load(open('$OBJ'))['generator'])")
   echo "+ $GEN"; eval "$GEN"
 fi
+$PY -W ignore -I tools/freiraum_audit.py "$OBJ" || echo "freiraum_audit fehlgeschlagen - Freiraumpruefung wird nan (FEHLER)"   # Sichtstrahlen gegen Modell (nur mit objekt.json "freiraum")
 set +e; $PY -W ignore -I tools/pruefstand.py "$OBJ"; RC=$?; set -e
 $PY -W ignore -I tools/seiten_audit.py "$OBJ"     # Sichtblatt auch bei rotem Pruefstand (man will hinsehen)
 # Automatische Foto-Diagnosen fuer jedes Foto mit kalibrierter Kamera (Breite je Hoehe in Metern, fehlende/erfundene Teile).

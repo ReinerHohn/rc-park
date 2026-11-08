@@ -1,0 +1,14 @@
+{
+ "sperren": [
+  "stl_teil:fassade",
+  "bogenreihe:laube",
+  "stl_teil:laube_alt",
+  "stl_teil:fenster",
+  "stl_teil:erker",
+  "stl_teil:figuren",
+  "stl_teil:staffelgiebel",
+  "stl_teil:gauben",
+  "stl_teil:helme"
+ ],
+ "_doku": "nur satteldach:haupt frei, Region Dach-Box, Koordinatenabstieg"
+}

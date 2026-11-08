@@ -57,7 +57,7 @@ def _stl_hoehe(pfad):
     return float(z.max() - z.min())
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ziel", default=None, help="Zielordner unter modelle/ (Standard <referenz>_null)"); ap.add_argument("--netz-threads", type=int, default=1, help="Mapper-Threads je Netzversuch. STANDARD 1 = bit-reproduzierbares Netz (Register CA: mit 4 Threads streuen Punktzahl/Kameras bei gleichem Seed)"); ap.add_argument("--ab", default="anlegen"); ap.add_argument("--stufe", default="auto", choices=["voll", "fein", "grob", "auto"], help="STANDARD auto = Aufloesung aus modelle/<objekt>/sweetspot.json (tools/sweetspot.py), sonst grob; fein = voll (1600 px, ueber Nacht); grob = Entwurf: dichte Stufe bei --grob-px (Standard 1000 px, alle Fotos; Register BM); voll = alle Fotos, 1600 px (Standard)"); ap.add_argument("--grob-fotos", type=int, default=0, help="0 = alle Fotos (Standard; Foto-Teilmengen verloren Tuermchen/Zinnen, Register BM), N = nur die N besten"); ap.add_argument("--grob-px", type=int, default=1000); ap.add_argument("--kamera-modell", default="", help="COLMAP-Kameramodell fuer die Strassennetze (sfm_netz.py --kamera-modell); leer = SIMPLE_RADIAL (Register BU)"); ap.add_argument("--videos", action="store_true", help="Videostufe: Drohnen-/Videoframes (objekt.json video_stufe) -> SfM -> Ausrichtung -> dichte Wolke -> obere Haelfte einfuegen (Register BQ)"); ap.add_argument("--videos-neu", action="store_true", help="Video-SfM neu rechnen (sonst Zwischenergebnis wiederverwenden)"); ap.add_argument("--dicht-extra", default="", help="zusaetzliche Argumente fuer sfm_dicht.py, z. B. \"--max-size 1200 --fotos 014,031\" (Stufenmodell, Register BK)"); ap.add_argument("--kal-seriell", action="store_true", help="Kalibrierung wie frueher erst nach entzerren (nicht parallel zu PatchMatch)"); ap.add_argument("--streng", action="store_true", help="Startwerte aller regelabgeleiteten Masse auf die MITTE ihres Plausibilitaetsfensters setzen: scheitert eine Ableitung, faellt es im Pruefstand auf, statt dass der Referenzwert still stehen bleibt (Register BF)"); ap.add_argument("--sued-seriell", action="store_true", help="Suednetz vor dem dichten Schritt statt parallel dazu (CPU) rechnen"); ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="Mapper der Hauptseite: incremental (Standard) | global = GLOMAP (Register BF)"); ap.add_argument("--netzversuche", type=int, default=6, help="parallele Mapper-Versuche der Hauptseite (Auswahl nach Massstab-Sigma)"); ap.add_argument("--ohne-sued", action="store_true")
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ziel", default=None, help="Zielordner unter modelle/ (Standard <referenz>_null)"); ap.add_argument("--netz-threads", type=int, default=1, help="Mapper-Threads je Netzversuch. STANDARD 1 = bit-reproduzierbares Netz (Register CA: mit 4 Threads streuen Punktzahl/Kameras bei gleichem Seed)"); ap.add_argument("--ab", default="anlegen"); ap.add_argument("--stufe", default="auto", choices=["voll", "fein", "grob", "auto"], help="STANDARD auto = Aufloesung aus modelle/<objekt>/sweetspot.json (tools/sweetspot.py), sonst grob; fein = voll (1600 px, ueber Nacht); grob = Entwurf: dichte Stufe bei --grob-px (Standard 1000 px, alle Fotos; Register BM); voll = alle Fotos, 1600 px (Standard)"); ap.add_argument("--grob-fotos", type=int, default=0, help="0 = alle Fotos (Standard; Foto-Teilmengen verloren Tuermchen/Zinnen, Register BM), N = nur die N besten"); ap.add_argument("--grob-px", type=int, default=1000); ap.add_argument("--kamera-modell", default="", help="COLMAP-Kameramodell fuer die Strassennetze (sfm_netz.py --kamera-modell); leer = SIMPLE_RADIAL (Register BU)"); ap.add_argument("--videos", action="store_true", help="Videostufe: Drohnen-/Videoframes (objekt.json video_stufe) -> SfM -> Ausrichtung -> dichte Wolke -> obere Haelfte einfuegen (Register BQ)"); ap.add_argument("--nur-video", action="store_true", help="Schritt video als letzten ausfuehren (nach video_merge Ende: keine Folgeschritte, kein auswertung/regression-Schnappschuss; Register CR)"); ap.add_argument("--video-clips", default="", help="nur diese Clips (Komma) statt video_stufe.clips; eigener Arbeitsordner d_<ziel>_<clips>"); ap.add_argument("--videos-neu", action="store_true", help="Video-SfM neu rechnen (sonst Zwischenergebnis wiederverwenden)"); ap.add_argument("--dicht-extra", default="", help="zusaetzliche Argumente fuer sfm_dicht.py, z. B. \"--max-size 1200 --fotos 014,031\" (Stufenmodell, Register BK)"); ap.add_argument("--kal-seriell", action="store_true", help="Kalibrierung wie frueher erst nach entzerren (nicht parallel zu PatchMatch)"); ap.add_argument("--streng", action="store_true", help="Startwerte aller regelabgeleiteten Masse auf die MITTE ihres Plausibilitaetsfensters setzen: scheitert eine Ableitung, faellt es im Pruefstand auf, statt dass der Referenzwert still stehen bleibt (Register BF)"); ap.add_argument("--sued-seriell", action="store_true", help="Suednetz vor dem dichten Schritt statt parallel dazu (CPU) rechnen"); ap.add_argument("--mapper", default="incremental", choices=["incremental", "global"], help="Mapper der Hauptseite: incremental (Standard) | global = GLOMAP (Register BF)"); ap.add_argument("--netzversuche", type=int, default=6, help="parallele Mapper-Versuche der Hauptseite (Auswahl nach Massstab-Sigma)"); ap.add_argument("--ohne-sued", action="store_true"); ap.add_argument("--ohne-stufen", action="store_true", help="Qualitaetsstufen (Plan modelle/PLAN_STANDARD_qualitaetsstufen.json) NICHT anschliessen")
     a = ap.parse_args(); KM = f" --kamera-modell {a.kamera_modell}" if a.kamera_modell else ""; ref = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); repo = os.path.dirname(os.path.dirname(od)); refname = os.path.basename(od)
     a.ziel = a.ziel or f"{refname}_null"
     # GENERISCH (modelle/NULLSTART_GENERALITAET.md B2-B5): Seiten, Registrierfotos, Generator, Nebengebaeude-Ordner, Toleranzen aus objekt.json - kein Objektwissen hier
@@ -79,7 +79,7 @@ def main():
     zobj = os.path.join(zd, "objekt.json"); log = os.path.join(zd, "nullstart.log")
     bp = os.path.join(zd, "nullstart_bericht.json"); bericht = json.load(open(bp)) if os.path.exists(bp) and a.ab != "anlegen" else dict(referenz=refname, ziel=a.ziel, start=time.strftime("%Y-%m-%d %H:%M"), schritte=[])
     bericht["_pfad"] = bp
-    schritte = ["anlegen"] + [f"netz_{s_}" for s_ in seiten_cfg] + [f"ausrichten_{s_}" for s_ in seiten_cfg] + ["verzerrung", "registrieren", "buendel", "generator0", "dicht", "entzerren", "video", "kameras", "kamera_bruecke", "kalibrieren", "beweis_anker", "kamera_lod2", "textur", "abgleich", "wolke_seiten", "auswertung", "overlay", "hybrid", "vergleich", "beweise"]
+    schritte = ["anlegen"] + [f"netz_{s_}" for s_ in seiten_cfg] + [f"ausrichten_{s_}" for s_ in seiten_cfg] + ["verzerrung", "registrieren", "buendel", "generator0", "dicht", "entzerren", "video", "kameras", "kamera_bruecke", "kalibrieren", "beweis_anker", "kamera_lod2", "textur", "abgleich", "wolke_seiten", "auswertung", "overlay", "hybrid", "vergleich", "beweise", "stufen"]
     a.ab = {"kalibrieren_061": "kalibrieren", "netz_nord": f"netz_{haupt}"}.get(a.ab, a.ab)          # alte Schrittnamen weiter erlaubt
     start_i = schritte.index(a.ab)
     def dran(n): return schritte.index(n) >= start_i
@@ -233,13 +233,25 @@ def main():
         bericht["schritte"].append(dict(schritt="entzerren", ok=True, uebersprungen=True, grund=f"Netz '{haupt}' ist keine Fassadenseite {sorted(_SEITEN)}; Buendel haelt die Wolke an LoD2/DGM1")); json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)
     elif dran("entzerren") and not lauf(bericht, "entzerren", f"{PY} -W ignore -I tools/wolke_vs_modell.py {Z} {haupt} --entzerren" + (" --nebengebaeude" if ref.get("nebengebaeude") else ""), repo, log): sys.exit("entzerren fehlgeschlagen")
     if dran("video") and a.videos:                                                              # Videostufe (Register BQ): Drohnenclips -> SfM -> Ausrichtung -> dichte Wolke -> obere Haelfte in die Nordwolke
-        vz = json.load(open(zobj)).get("video_stufe") or {}; vd = vz.get("ordner"); PCV = PC
+        vz = json.load(open(zobj)).get("video_stufe") or {}; vd = vz.get("ordner"); PCV = PC; _n0v = len(bericht["schritte"])
         if not (vd and vz.get("clips") and vz.get("frames")): print("    Videostufe: keine video_stufe in objekt.json - uebersprungen", flush=True)
         else:
-            fr = vz["frames"]; clips = " ".join(vz["clips"]); vs = os.path.join(vd, "d_" + a.ziel)
-            if a.videos_neu or not os.path.exists(os.path.join(vs, "sparse")): lauf(bericht, "video_sfm", f"{PCV} -I tools/video_sfm.py {fr} {vs} --clips {clips}", repo, log)
-            if lauf(bericht, "video_ausrichten", f"{PCV} -W ignore -I tools/video_ausrichten.py {Z} {vs} --jeder 2", repo, log) and lauf(bericht, "video_dicht", f"{PCV} -W ignore -I tools/video_dicht.py {Z} {vs}", repo, log):
-                lauf(bericht, "video_merge", f"{PCV} -W ignore -I tools/video_merge.py {Z} {vs} --zmin {vz.get('zmin', 38)}", repo, log)
+            cl_ = [c_ for c_ in a.video_clips.split(",") if c_] or vz["clips"]; fr = vz["frames"]; clips = " ".join(cl_); vs = os.path.join(vd, "d_" + a.ziel + ("_" + "+".join(c_[:6] for c_ in cl_) if a.video_clips else ""))
+            # Register CR: Netz/Pfade aus objekt.json (video_netz.py); Frames je Clip begrenzt, Matching sequenziell + Retrieval (100-450 Frames < 1 h statt exhaustiv)
+            vmf = vz.get("max_frames_je_clip", 40); vmm = vz.get("matching", "sequenziell"); vmod = "--modell auto"
+            # Eigene Videos (Nutzer 6.11.): fehlen Frames eines Clips, aber liegt <video_ordner>/<clip>/<clip>.* lokal, Frames automatisch ziehen (video_frames.py --file)
+            vvo = vz.get("video_ordner") or os.path.join(os.path.dirname(fr.rstrip("/")), "video")
+            for c_ in cl_:
+                if os.path.exists(os.path.join(fr, c_, "manifest.json")): continue
+                vq = sorted(glob.glob(os.path.join(vvo, c_, c_ + ".*")))
+                if vq: lauf(bericht, "video_frames_" + c_, f"{PCV} -I tools/video_frames.py --file {vq[0]} --out {os.path.join(fr, c_)} --fps {vz.get('fps', 2)}", repo, log)
+                else: print(f"    Videostufe: Clip {c_} ohne Frames und ohne lokale Videodatei in {vvo} - video_sfm wird ihn nicht finden", flush=True)
+            if a.videos_neu or not os.path.exists(os.path.join(vs, "sparse")): lauf(bericht, "video_sfm", f"{PCV} -I tools/video_sfm.py {fr} {vs} --clips {clips} --max-frames-je-clip {vmf} --matching {vmm}", repo, log)
+            if lauf(bericht, "video_ausrichten", f"{PCV} -W ignore -I tools/video_ausrichten.py {Z} {vs} {vmod} --jeder {vz.get('jeder', 2)}" + (f" --tol-m {vz['tol_m']}" if vz.get("tol_m") else ""), repo, log) and lauf(bericht, "video_dicht", f"{PCV} -W ignore -I tools/video_dicht.py {Z} {vs} {vmod}", repo, log):
+                lauf(bericht, "video_merge", f"{PCV} -W ignore -I tools/video_merge.py {Z} {vs} --zmin {vz.get('zmin', 38)}", repo, log)   # Standard: nach sfm/dicht_<netz>_video/, Basiswolke bleibt; objekt.json freiraum_video
+    if a.nur_video and a.videos and dran("video"):
+        bericht["ende"] = time.strftime("%Y-%m-%d %H:%M"); bericht["nur_video"] = True; json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)
+        print("    --nur-video: Schritt video fertig - keine Folgeschritte (kein auswertung/regression-Schnappschuss)", flush=True); sys.exit(0 if all(x.get("ok", True) for x in bericht["schritte"][_n0v:]) else 1)
     if kal_thr is not None: kal_thr.join()
     ausr_b = os.path.join(zd, "messprotokoll", "SFM-AUSRICHTUNG-buendel.json")
     if dran("kameras") and os.path.exists(ausr_b):                                                  # Kameras fuer ALLE Fotos ohne Picks (Pflichtliste: kameras)
@@ -285,7 +297,7 @@ def main():
         if os.path.exists(wk) and os.path.exists(os.path.join(repo, "modelle", "stl", stl_name)):
             lauf(bericht, "hybrid", f"/media/oem/scan/venv-mesh/bin/python -I tools/wolke_auf_generator.py {wk} {hy} --stl modelle/stl/{stl_name}", repo, log, ok_rcs=(0, 3))
         else: print(f"    hybrid uebersprungen: dicht_{haupt}_entzerrt.npy oder STL fehlt", flush=True); bericht["schritte"].append(dict(schritt="hybrid", ok=True, uebersprungen=True, grund="Eingabe fehlt")); json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)
-    if dran("beweise"): lauf(bericht, "beweise", f"{PY} -I tools/test_nullstart_schritte.py --bericht {bp}", repo, log, ok_rcs=(0, 1))   # Pflichtliste gegen den Lauf (Schritt ok + Beweisdatei)
+    if dran("beweise"): lauf(bericht, "beweise", f"{PY} -I tools/test_nullstart_schritte.py --bericht {bp}" + (" --foto-diff" if os.environ.get("NULLSTART_FD_BEWEIS") == "1" else ""), repo, log, ok_rcs=(0, 1))   # Pflichtliste gegen den Lauf (Schritt ok + Beweisdatei)
     if dran("vergleich"):
         sys.path.insert(0, os.path.join(repo, "tools")); import regression as RG
         R = json.load(open(zobj))["regression"]; basis_ref = os.path.join(od, "regression", "basis"); basis_ziel = os.path.join(zd, "regression", "basis")
@@ -327,6 +339,13 @@ def main():
             json.dump(S_, open(sp, "w"), indent=1, ensure_ascii=False); print(f"  Serie: Lauf {len(S_['laeufe'])} protokolliert in {os.path.relpath(sp, repo)} (tools/nullstart_serie.py)")
         except Exception as e: print("  Serienprotokoll fehlgeschlagen:", e)
         print(f"  Stufe C (Masse aus Werkzeugausgaben, von Hand in masse.json): {len(hand)} - {hand[:12]}{' ...' if len(hand) > 12 else ''}")
+
+    if dran("stufen") and not a.ohne_stufen:                                                        # Nachtlauf je Gebaeude (Nutzer 2026-11-05): Qualitaetsstufen ohne Handwerte direkt anschliessen
+        pq = os.path.join(zd, "qualitaetsstufen.json")
+        if not os.path.exists(pq):
+            vorlage = os.path.join(repo, "modelle", "PLAN_STANDARD_qualitaetsstufen.json"); shutil.copy(vorlage, pq)
+        lauf(bericht, "stufen", f"{PY} -u -I tools/qualitaetsstufen.py {zobj} --plan {pq}", repo, log, ok_rcs=(0,))
+
 
 if __name__ == "__main__":
     main()

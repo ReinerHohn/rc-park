@@ -1,0 +1,39 @@
+{
+ "objekt": "kaufhaus_grob3",
+ "typ": "erker:0",
+ "wolke": "j_crop.npy",
+ "n_wolke": 32592,
+ "parameter": [
+  "erker:0.mitte_u",
+  "erker:0.breite",
+  "erker:0.auskragung",
+  "erker:0.unterkante_z",
+  "erker:0.oberkante_z",
+  "erker:0.wand_n",
+  "erker:0.spitze_z"
+ ],
+ "vorher": {
+  "erker:0.mitte_u": -8.968,
+  "erker:0.breite": 2.233,
+  "erker:0.auskragung": 0.876,
+  "erker:0.unterkante_z": 4.8,
+  "erker:0.oberkante_z": 9.9,
+  "erker:0.wand_n": 13.439,
+  "erker:0.spitze_z": 13.382
+ },
+ "nachher": {
+  "erker:0.mitte_u": -8.006,
+  "erker:0.breite": 2.3901,
+  "erker:0.auskragung": 1.5468,
+  "erker:0.unterkante_z": 4.1437,
+  "erker:0.oberkante_z": 9.8246,
+  "erker:0.wand_n": 12.4321,
+  "erker:0.spitze_z": 13.9124
+ },
+ "J_vorher": 0.6256400346755981,
+ "J_nachher": 0.5211250185966492,
+ "median_vorher": 0.31907638907432556,
+ "median_nachher": 0.23102456331253052,
+ "p90_vorher": 1.254370927810669,
+ "p90_nachher": 1.226054310798645
+}

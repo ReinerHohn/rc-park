@@ -1,4 +1,4 @@
-# Massnachweis Historisches Kaufhaus Freiburg (automatisch aus masstabelle.json, 2026-11-04)
+# Massnachweis Historisches Kaufhaus Freiburg (automatisch aus masstabelle.json, 2026-11-05)
 
 Status je Mass: **OK** = Istwert im Sollbereich der Quelle; **WIDERSPRUCH** = Quellen uneins (nicht gemittelt); **FEHLER** = Modell verletzt die Quelle.
 Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im selben Foto; *modell* = zirkulaer (nur Richtung belastbar).
@@ -35,6 +35,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 
 - heute Anlage: Quellen sichten: Dokumente (Hoehe), LoD2 (Grundriss/Traufe), DOM1 (Dachform), Fotos je Seite -> teilweise erledigt 2026-11-03: LoD2/DOM1/DGM1 + Anker (objekt_daten.py), 126 Fotos (bilder_holen Kaltstart), SfM-Netz 76 Kameras + dichte Wolke 200k Punkte (nullstart, sfm_lod2_ausrichten); offen: Zeilen mit Quelle anlegen, Fotos je Seite (Rueckseite fehlt)
 - 2026-11-03 Claude (eigene Sichtpruefung, audit/wolke_dicht_nord.jpg + _quer.jpg): Dichte Wolke (Nullstart kaufhaus_null, automatisch an LoD2/DGM1 ausgerichtet, ohne Picks): Fassadenbreite Nord ~18,5 m passt zur LoD2-Front (~18,3 m), aber Traufe/Dachansatz der Wolke liegt bei ~8,5-9 m, LoD2-Frontwand reicht bis ~11,7 m (LoD2 traufe_m min 9,65). Breite passt, Hoehe nicht -> Widerspruch Wolke vs LoD2 (Regel 5: nicht mitteln). -> 2026-11-04 geklaert (Sichtbeobachtung -> Messung): DOM1 mit EXAKTER Pixelmitte (tfw 414000,5/5316999,5; frueher 1,1 m versetzt gelesen) liegt deckungsgleich auf der LoD2-Dachflaeche (First 20,8 vs 20,97, Neigung ~52 Grad). Foto 018 frontal: Traufe 10,77 +-0,88 m (M-018-001). Foto + DOM1 + LoD2 einig -> Rumpf/Dach aus LoD2 bleibt. WIDERSPRUCH: Wolke-Dach liegt 3,35 m (MAD 0,27) unter DOM1; Nachbarfassaden passen bei jetziger Lage (Median 0,15 m) -> Wolke ist im Massstab/vertikal falsch (Erker-Abstand Wolke 17,3 m vs LoD2-Front 20,34 m -> ~0,85); Fassadenpunkte nur entlang einer Linie bestimmen den Massstab nicht. Naechster Schritt: sfm_lod2_ausrichten um DOM1-Dachhoehen als Ziel erweitern (Klassen gleich gewichten), dann Wolke neu transformieren; Fassadendetails bis dahin aus Foto 018 (foto_mass).
+- 2026-11-04 Nutzer: 3D-Ansicht Kaufhaus (Fotofarben): 'viel zu dunkel, viel zu grob' -> messen: (a) Helligkeit Render vs. Fotopixel derselben Flaechen (Median-Luminanz-Verhaeltnis, Soll ~1), (b) Texelgroesse (Soll <= 3 cm/Texel H0-Vorschau statt 25 cm Eckenfarbe); Ursachen-Verdacht: Viewer sRGB->linear ohne Rueckwandlung + Lambert-Schattierung auf bereits belichteten Fotofarben; Eckenfarben auf 25-cm-Netz statt Texturatlas
 
 ## Grenze
 

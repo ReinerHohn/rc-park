@@ -1,0 +1,27 @@
+ENTWURF - NICHT GESENDET (2026-11-05). Empfaenger: geodaten@lgl.bwl.de (Tel. 0711 95980-200)
+Quelle der Angaben: Recherche reports/Daten und Qualitaet fuer H0 Modelle.md (LGL-Produktseite bDOM; Stand 2026-11-05, nicht selbst bestellt):
+  bDOM = bildbasiertes Digitales Oberflaechenmodell aus Bildkorrelation der Landesbefliegung, Raster 0,2 m, LAS/LAZ mit Farbe,
+  Open Data (DL-DE BY 2.0), Bestellung per E-Mail, Servicegebuehr ca. 60 EUR, laut LGL "nicht qualitaetsgesichert".
+Ausschnitt: Freiburger Altstadt 1 km x 1 km, enthaelt Martinstor (O 414127 / N 5316243) und Historisches Kaufhaus (O ~414250 / N ~5316370).
+
+Betreff: Bestellung bildbasiertes Oberflaechenmodell (bDOM) - Freiburg im Breisgau, Altstadt
+
+Guten Tag,
+
+ich moechte das bildbasierte Digitale Oberflaechenmodell (bDOM, 0,2 m, als Punktwolke LAS/LAZ mit Farbwerten und - falls verfuegbar -
+zusaetzlich als Raster GeoTIFF) fuer folgenden Ausschnitt bestellen:
+
+  Koordinatensystem ETRS89 / UTM 32N (EPSG:25832)
+  Ausschnitt 1 km x 1 km:  Ost 413700 - 414700,  Nord 5315800 - 5316800  (Freiburg im Breisgau, Altstadt)
+  Falls nur ganze Kacheln abgegeben werden: die Kacheln, die diesen Ausschnitt ueberdecken.
+
+Bitte teilen Sie mir mit:
+  1. das Bildflugdatum und die Bodenaufloesung der zugrunde liegenden Luftbilder,
+  2. die Lage- und Hoehengenauigkeit sowie bekannte Einschraenkungen (steile Flaechen, Schattenbereiche),
+  3. die Kosten fuer diesen Ausschnitt,
+  4. die Lizenzbedingungen. Die Daten sollen als Messgrundlage fuer massstaebliche Gebaeudemodelle (1:87) dienen, die spaeter
+     auch verkauft werden sollen; die Quellenangabe "Datenquelle: LGL, www.lgl-bw.de, dl-de/by-2-0" wuerde ich in den Produktunterlagen fuehren.
+  5. ob fuer denselben Ausschnitt auch die orientierten Einzelluftbilder (mit innerer/aeusserer Orientierung) erhaeltlich sind und zu welchen Bedingungen.
+
+Mit freundlichen Gruessen
+[Name, Anschrift]

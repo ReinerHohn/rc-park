@@ -1,0 +1,817 @@
+{
+ "quelle": "EXIF + NOAA-Sonnenstand + DWD Stundenwerte Sonnenschein (CC BY 4.0, Deutscher Wetterdienst)",
+ "fotos": {
+  "051": {
+   "exif": "2012:03:09 17:39:39",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2012-03-09T16:39:39",
+   "azimut": 255.9,
+   "hoehe": 6.7,
+   "sonne_modell": [
+    -0.9754,
+    -0.1876,
+    0.1162
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "057": {
+   "exif": "2010:12:26 21:42:11",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2010-12-26T20:42:11",
+   "azimut": 291.8,
+   "hoehe": -48.9,
+   "sonne_modell": [
+    -0.5959,
+    0.2779,
+    -0.7535
+   ],
+   "dwd_sonne_min": null,
+   "urteil": "Nacht"
+  },
+  "058": {
+   "exif": "2023:01:06 15:51:03",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2023-01-06T14:51:03",
+   "azimut": 224.8,
+   "hoehe": 6.7,
+   "sonne_modell": [
+    -0.7387,
+    -0.6638,
+    0.1175
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "bedeckt"
+  },
+  "061": {
+   "exif": "2015:05:12 14:33:27",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2015-05-12T12:33:27",
+   "azimut": 210.9,
+   "hoehe": 56.8,
+   "sonne_modell": [
+    -0.307,
+    -0.4529,
+    0.8371
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "062": {
+   "exif": "2025:06:02 10:13:46",
+   "zeitzone": "EXIF-Offset +01:00",
+   "utc": "2025-06-02T09:13:46",
+   "azimut": 122.7,
+   "hoehe": 53.0,
+   "sonne_modell": [
+    0.4871,
+    -0.3533,
+    0.7988
+   ],
+   "dwd_sonne_min": 1.0,
+   "urteil": "bedeckt"
+  },
+  "065": {
+   "exif": "2025:06:02 10:05:40",
+   "zeitzone": "EXIF-Offset +01:00",
+   "utc": "2025-06-02T09:05:40",
+   "azimut": 120.3,
+   "hoehe": 51.9,
+   "sonne_modell": [
+    0.5149,
+    -0.3412,
+    0.7865
+   ],
+   "dwd_sonne_min": 1.0,
+   "urteil": "bedeckt"
+  },
+  "066": {
+   "exif": "2016:05:06 12:55:14",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2016-05-06T10:55:14",
+   "azimut": 166.5,
+   "hoehe": 58.0,
+   "sonne_modell": [
+    0.0949,
+    -0.5215,
+    0.848
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "067": {
+   "exif": "2013:09:12 18:35:06",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-09-12T16:35:06",
+   "azimut": 263.6,
+   "hoehe": 11.6,
+   "sonne_modell": [
+    -0.9781,
+    -0.0539,
+    0.2013
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "bedeckt"
+  },
+  "068": {
+   "exif": "2016:05:06 12:49:42",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2016-05-06T10:49:42",
+   "azimut": 164.0,
+   "hoehe": 57.8,
+   "sonne_modell": [
+    0.1179,
+    -0.5203,
+    0.8458
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "069": {
+   "exif": "2016:05:06 12:54:39",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2016-05-06T10:54:39",
+   "azimut": 166.2,
+   "hoehe": 58.0,
+   "sonne_modell": [
+    0.0973,
+    -0.5214,
+    0.8478
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "070": {
+   "exif": "2016:05:06 12:56:44",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2016-05-06T10:56:44",
+   "azimut": 167.1,
+   "hoehe": 58.1,
+   "sonne_modell": [
+    0.0887,
+    -0.5217,
+    0.8485
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "071": {
+   "exif": "2013:09:12 18:49:16",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-09-12T16:49:16",
+   "azimut": 266.3,
+   "hoehe": 9.3,
+   "sonne_modell": [
+    -0.987,
+    -0.0083,
+    0.1608
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "bedeckt"
+  },
+  "073": {
+   "exif": "2016:05:06 12:50:09",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2016-05-06T10:50:09",
+   "azimut": 164.2,
+   "hoehe": 57.8,
+   "sonne_modell": [
+    0.1161,
+    -0.5205,
+    0.846
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "074": {
+   "exif": "2013:09:12 18:30:44",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-09-12T16:30:44",
+   "azimut": 262.8,
+   "hoehe": 12.3,
+   "sonne_modell": [
+    -0.9746,
+    -0.0678,
+    0.2137
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "bedeckt"
+  },
+  "075": {
+   "exif": "2012:07:08 05:30:36",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2012-07-08T03:30:36",
+   "azimut": 52.6,
+   "hoehe": -1.8,
+   "sonne_modell": [
+    0.827,
+    0.5615,
+    -0.0313
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "Nacht"
+  },
+  "076": {
+   "exif": "2016:05:06 12:52:09",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2016-05-06T10:52:09",
+   "azimut": 165.1,
+   "hoehe": 57.9,
+   "sonne_modell": [
+    0.1077,
+    -0.5209,
+    0.8468
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "078": {
+   "exif": "2016:05:06 12:52:20",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2016-05-06T10:52:20",
+   "azimut": 165.2,
+   "hoehe": 57.9,
+   "sonne_modell": [
+    0.107,
+    -0.5209,
+    0.8469
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "079": {
+   "exif": "2013:09:08 17:11:42",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-09-08T15:11:42",
+   "azimut": 247.6,
+   "hoehe": 26.5,
+   "sonne_modell": [
+    -0.8453,
+    -0.2939,
+    0.4463
+   ],
+   "dwd_sonne_min": null,
+   "urteil": "unklar"
+  },
+  "080": {
+   "exif": "2007:10:06 12:51:19",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2007-10-06T10:51:19",
+   "azimut": 172.1,
+   "hoehe": 36.9,
+   "sonne_modell": [
+    0.065,
+    -0.7967,
+    0.6009
+   ],
+   "dwd_sonne_min": 53.0,
+   "urteil": "Sonne"
+  },
+  "081": {
+   "exif": "2013:09:12 18:48:54",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-09-12T16:48:54",
+   "azimut": 266.2,
+   "hoehe": 9.3,
+   "sonne_modell": [
+    -0.9868,
+    -0.0095,
+    0.1618
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "bedeckt"
+  },
+  "082": {
+   "exif": "2013:09:12 17:15:57",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-09-12T15:15:57",
+   "azimut": 247.8,
+   "hoehe": 24.4,
+   "sonne_modell": [
+    -0.861,
+    -0.296,
+    0.4137
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "bedeckt"
+  },
+  "083": {
+   "exif": "2013:09:12 18:48:37",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-09-12T16:48:37",
+   "azimut": 266.2,
+   "hoehe": 9.4,
+   "sonne_modell": [
+    -0.9867,
+    -0.0104,
+    0.1626
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "bedeckt"
+  },
+  "084": {
+   "exif": "2011:08:21 09:01:40",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2011-08-21T07:01:40",
+   "azimut": 98.3,
+   "hoehe": 24.1,
+   "sonne_modell": [
+    0.8943,
+    -0.1822,
+    0.4088
+   ],
+   "dwd_sonne_min": 42.0,
+   "urteil": "Sonne"
+  },
+  "085": {
+   "exif": "2016:05:06 12:52:47",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2016-05-06T10:52:47",
+   "azimut": 165.4,
+   "hoehe": 57.9,
+   "sonne_modell": [
+    0.1051,
+    -0.521,
+    0.8471
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "086": {
+   "exif": "2016:05:06 12:54:20",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2016-05-06T10:54:20",
+   "azimut": 166.1,
+   "hoehe": 58.0,
+   "sonne_modell": [
+    0.0987,
+    -0.5213,
+    0.8477
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "087": {
+   "exif": "2016:05:06 12:52:37",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2016-05-06T10:52:37",
+   "azimut": 165.3,
+   "hoehe": 57.9,
+   "sonne_modell": [
+    0.1058,
+    -0.521,
+    0.847
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "088": {
+   "exif": "2015:05:12 14:21:06",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2015-05-12T12:21:06",
+   "azimut": 205.8,
+   "hoehe": 57.8,
+   "sonne_modell": [
+    -0.2583,
+    -0.4659,
+    0.8463
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "089": {
+   "exif": "2015:07:31 20:27:22",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2015-07-31T18:27:22",
+   "azimut": 291.8,
+   "hoehe": 5.2,
+   "sonne_modell": [
+    -0.9022,
+    0.4218,
+    0.0911
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "bedeckt"
+  },
+  "090": {
+   "exif": "2011:03:12 11:49:06",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2011-03-12T10:49:06",
+   "azimut": 164.3,
+   "hoehe": 37.2,
+   "sonne_modell": [
+    0.1726,
+    -0.7774,
+    0.6049
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "092": {
+   "exif": "2004:01:08 19:01:35",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2004-01-08T18:01:35",
+   "azimut": 259.3,
+   "hoehe": -20.8,
+   "sonne_modell": [
+    -0.927,
+    -0.1217,
+    -0.3548
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "Nacht"
+  },
+  "093": {
+   "exif": "2015:07:31 20:26:04",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2015-07-31T18:26:04",
+   "azimut": 291.6,
+   "hoehe": 5.4,
+   "sonne_modell": [
+    -0.9036,
+    0.418,
+    0.0946
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "bedeckt"
+  },
+  "094": {
+   "exif": "2004:02:03 14:18:00",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2004-02-03T13:18:00",
+   "azimut": 204.8,
+   "hoehe": 21.8,
+   "sonne_modell": [
+    -0.4358,
+    -0.8199,
+    0.3714
+   ],
+   "dwd_sonne_min": 56.0,
+   "urteil": "Sonne"
+  },
+  "096": {
+   "exif": "2024:02:18 18:42:32",
+   "zeitzone": "EXIF-Offset +01:00",
+   "utc": "2024-02-18T17:42:32",
+   "azimut": 262.0,
+   "hoehe": -8.7,
+   "sonne_modell": [
+    -0.985,
+    -0.0828,
+    -0.1517
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "Nacht"
+  },
+  "097": {
+   "exif": "2018:08:04 13:21:23",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2018-08-04T11:21:23",
+   "azimut": 173.7,
+   "hoehe": 59.3,
+   "sonne_modell": [
+    0.0279,
+    -0.5092,
+    0.8602
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "098": {
+   "exif": "2018:10:13 19:52:34",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2018-10-13T17:52:34",
+   "azimut": 272.0,
+   "hoehe": -12.0,
+   "sonne_modell": [
+    -0.9744,
+    0.0881,
+    -0.2072
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "Nacht"
+  },
+  "099": {
+   "exif": "2019:09:20 14:07:17",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2019-09-20T12:07:17",
+   "azimut": 195.4,
+   "hoehe": 42.4,
+   "sonne_modell": [
+    -0.2355,
+    -0.6999,
+    0.6743
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "100": {
+   "exif": "2008:12:11 15:59:02",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2008-12-11T14:59:02",
+   "azimut": 228.4,
+   "hoehe": 4.0,
+   "sonne_modell": [
+    -0.782,
+    -0.6194,
+    0.0699
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "bedeckt"
+  },
+  "101": {
+   "exif": "2013:08:16 12:07:24",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-08-16T10:07:24",
+   "azimut": 145.1,
+   "hoehe": 51.6,
+   "sonne_modell": [
+    0.3261,
+    -0.528,
+    0.7842
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "102": {
+   "exif": "2013:05:25 11:45:53",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-05-25T09:45:53",
+   "azimut": 135.0,
+   "hoehe": 56.3,
+   "sonne_modell": [
+    0.3698,
+    -0.4144,
+    0.8316
+   ],
+   "dwd_sonne_min": 11.0,
+   "urteil": "unklar"
+  },
+  "103": {
+   "exif": "2019:04:16 14:05:26",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2019-04-16T12:05:26",
+   "azimut": 194.5,
+   "hoehe": 51.1,
+   "sonne_modell": [
+    -0.1916,
+    -0.5986,
+    0.7778
+   ],
+   "dwd_sonne_min": 9.0,
+   "urteil": "unklar"
+  },
+  "104": {
+   "exif": "2013:05:25 11:45:11",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-05-25T09:45:11",
+   "azimut": 134.8,
+   "hoehe": 56.2,
+   "sonne_modell": [
+    0.3725,
+    -0.4136,
+    0.8308
+   ],
+   "dwd_sonne_min": 11.0,
+   "urteil": "unklar"
+  },
+  "106": {
+   "exif": "2008:05:22 10:00:08",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2008-05-22T08:00:08",
+   "azimut": 105.5,
+   "hoehe": 40.7,
+   "sonne_modell": [
+    0.7181,
+    -0.2437,
+    0.6519
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "bedeckt"
+  },
+  "107": {
+   "exif": "2008:05:22 10:00:19",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2008-05-22T08:00:19",
+   "azimut": 105.6,
+   "hoehe": 40.7,
+   "sonne_modell": [
+    0.7176,
+    -0.2441,
+    0.6523
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "bedeckt"
+  },
+  "108": {
+   "exif": "2018:10:13 19:47:49",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2018-10-13T17:47:49",
+   "azimut": 271.1,
+   "hoehe": -11.2,
+   "sonne_modell": [
+    -0.9784,
+    0.0733,
+    -0.1936
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "Nacht"
+  },
+  "109": {
+   "exif": "2013:05:25 11:45:59",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-05-25T09:45:59",
+   "azimut": 135.1,
+   "hoehe": 56.3,
+   "sonne_modell": [
+    0.3694,
+    -0.4145,
+    0.8317
+   ],
+   "dwd_sonne_min": 11.0,
+   "urteil": "unklar"
+  },
+  "110": {
+   "exif": "2011:03:12 11:43:59",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2011-03-12T10:43:59",
+   "azimut": 162.7,
+   "hoehe": 37.0,
+   "sonne_modell": [
+    0.1945,
+    -0.7749,
+    0.6015
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "111": {
+   "exif": "2013:03:04 10:42:58",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-03-04T09:42:58",
+   "azimut": 145.9,
+   "hoehe": 29.4,
+   "sonne_modell": [
+    0.4478,
+    -0.7474,
+    0.4908
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "113": {
+   "exif": "2018:10:13 19:58:03",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2018-10-13T17:58:03",
+   "azimut": 273.0,
+   "hoehe": -12.9,
+   "sonne_modell": [
+    -0.9692,
+    0.1052,
+    -0.2229
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "Nacht"
+  },
+  "114": {
+   "exif": "2019:09:20 14:08:40",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2019-09-20T12:08:40",
+   "azimut": 195.9,
+   "hoehe": 42.3,
+   "sonne_modell": [
+    -0.2414,
+    -0.6987,
+    0.6735
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "115": {
+   "exif": "2007:11:01 21:29:58",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2007-11-01T20:29:58",
+   "azimut": 301.2,
+   "hoehe": -42.5,
+   "sonne_modell": [
+    -0.6078,
+    0.4164,
+    -0.6762
+   ],
+   "dwd_sonne_min": null,
+   "urteil": "Nacht"
+  },
+  "116": {
+   "exif": "2006:10:29 16:49:31",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2006-10-29T15:49:31",
+   "azimut": 245.8,
+   "hoehe": 3.4,
+   "sonne_modell": [
+    -0.9321,
+    -0.3574,
+    0.0598
+   ],
+   "dwd_sonne_min": 1.0,
+   "urteil": "bedeckt"
+  },
+  "118": {
+   "exif": "2013:05:25 11:46:03",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2013-05-25T09:46:03",
+   "azimut": 135.1,
+   "hoehe": 56.3,
+   "sonne_modell": [
+    0.3692,
+    -0.4146,
+    0.8318
+   ],
+   "dwd_sonne_min": 11.0,
+   "urteil": "unklar"
+  },
+  "119": {
+   "exif": "2007:11:01 21:29:14",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2007-11-01T20:29:14",
+   "azimut": 301.0,
+   "hoehe": -42.4,
+   "sonne_modell": [
+    -0.6102,
+    0.415,
+    -0.6749
+   ],
+   "dwd_sonne_min": null,
+   "urteil": "Nacht"
+  },
+  "120": {
+   "exif": "2007:11:01 21:29:24",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2007-11-01T20:29:24",
+   "azimut": 301.1,
+   "hoehe": -42.5,
+   "sonne_modell": [
+    -0.6097,
+    0.4153,
+    -0.6752
+   ],
+   "dwd_sonne_min": null,
+   "urteil": "Nacht"
+  },
+  "121": {
+   "exif": "2018:10:13 20:06:59",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2018-10-13T18:06:59",
+   "azimut": 274.7,
+   "hoehe": -14.4,
+   "sonne_modell": [
+    -0.9596,
+    0.1328,
+    -0.2482
+   ],
+   "dwd_sonne_min": 0.0,
+   "urteil": "Nacht"
+  },
+  "122": {
+   "exif": "2007:10:06 13:09:21",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2007-10-06T11:09:21",
+   "azimut": 177.8,
+   "hoehe": 37.2,
+   "sonne_modell": [
+    -0.0133,
+    -0.7965,
+    0.6045
+   ],
+   "dwd_sonne_min": 60.0,
+   "urteil": "Sonne"
+  },
+  "124": {
+   "exif": "2016:05:03 11:24:28",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2016-05-03T09:24:28",
+   "azimut": 132.1,
+   "hoehe": 49.3,
+   "sonne_modell": [
+    0.4589,
+    -0.4637,
+    0.7579
+   ],
+   "dwd_sonne_min": 36.0,
+   "urteil": "Sonne"
+  },
+  "125": {
+   "exif": "2016:05:03 11:25:27",
+   "zeitzone": "ANNAHME Europe/Berlin (kein Offset)",
+   "utc": "2016-05-03T09:25:27",
+   "azimut": 132.4,
+   "hoehe": 49.4,
+   "sonne_modell": [
+    0.4553,
+    -0.4651,
+    0.7593
+   ],
+   "dwd_sonne_min": 36.0,
+   "urteil": "Sonne"
+  }
+ }
+}

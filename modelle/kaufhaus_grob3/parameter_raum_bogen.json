@@ -1,0 +1,65 @@
+{
+ "_doku": "nur bogenreihe:laube (aus parameter_raum.json) fuer Feinabstimmung gegen Foto innerhalb Wolke-Messunsicherheit",
+ "bogenreihe:laube": {
+  "u0": {
+   "lo": -9.121,
+   "hi": -8.821,
+   "schritt": 0.05,
+   "start": -8.971
+  },
+  "pitch": {
+   "lo": 4.229,
+   "hi": 4.429,
+   "schritt": 0.02,
+   "start": 4.329
+  },
+  "pfeiler_breite": {
+   "lo": 0.61,
+   "hi": 0.91,
+   "schritt": 0.02,
+   "start": 0.76
+  },
+  "pfeiler_tiefe": {
+   "lo": 0.358,
+   "hi": 0.598,
+   "schritt": 0.02,
+   "start": 0.478
+  },
+  "pfeiler_n": {
+   "lo": 12.924,
+   "hi": 13.224,
+   "schritt": 0.02,
+   "start": 13.074
+  },
+  "kaempfer_z": {
+   "lo": 2.607,
+   "hi": 2.907,
+   "schritt": 0.05,
+   "start": 2.757
+  },
+  "scheitel_z": {
+   "lo": 4.259,
+   "hi": 4.559,
+   "schritt": 0.05,
+   "start": 4.409
+  },
+  "oeffnung_breite": {
+   "lo": 3.092,
+   "hi": 3.518,
+   "schritt": 0.05,
+   "start": 3.305
+  },
+  "oberkante_z": {
+   "lo": 4.65,
+   "hi": 5.05,
+   "schritt": 0.05,
+   "start": 4.85
+  },
+  "laibung_tiefe": {
+   "lo": 0.3,
+   "hi": 0.8,
+   "schritt": 0.02,
+   "start": 0.478
+  }
+ }
+}

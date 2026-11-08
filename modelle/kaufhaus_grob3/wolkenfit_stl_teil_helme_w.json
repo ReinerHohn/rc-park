@@ -1,0 +1,30 @@
+{
+ "objekt": "kaufhaus_grob3",
+ "typ": "stl_teil:helme_w",
+ "wolke": "wolke_netzrahmen.npy",
+ "n_wolke": 724227,
+ "parameter": [
+  "stl_teil:helme_w.dn",
+  "stl_teil:helme_w.du",
+  "stl_teil:helme_w.dz",
+  "stl_teil:helme_w.sz"
+ ],
+ "vorher": {
+  "stl_teil:helme_w.dn": 0.0,
+  "stl_teil:helme_w.du": 0.0,
+  "stl_teil:helme_w.dz": 0.0,
+  "stl_teil:helme_w.sz": 1.0
+ },
+ "nachher": {
+  "stl_teil:helme_w.dn": -1.3617,
+  "stl_teil:helme_w.du": 1.2459,
+  "stl_teil:helme_w.dz": -0.4372,
+  "stl_teil:helme_w.sz": 1.0758
+ },
+ "J_vorher": 0.3232021629810333,
+ "J_nachher": 0.30113592743873596,
+ "median_vorher": 0.14735843241214752,
+ "median_nachher": 0.14188607037067413,
+ "p90_vorher": 0.2782398760318756,
+ "p90_nachher": 0.272310733795166
+}

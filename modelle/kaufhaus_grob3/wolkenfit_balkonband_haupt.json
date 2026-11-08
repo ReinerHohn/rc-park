@@ -1,0 +1,36 @@
+{
+ "objekt": "kaufhaus_grob3",
+ "typ": "balkonband:haupt",
+ "wolke": "wolke_netzrahmen.npy",
+ "n_wolke": 327808,
+ "parameter": [
+  "balkonband:haupt.u_von",
+  "balkonband:haupt.u_bis",
+  "balkonband:haupt.auskragung",
+  "balkonband:haupt.unterseite_z",
+  "balkonband:haupt.oberseite_z",
+  "balkonband:haupt.wand_n"
+ ],
+ "vorher": {
+  "balkonband:haupt.u_von": -6.424,
+  "balkonband:haupt.u_bis": 5.736,
+  "balkonband:haupt.auskragung": 0.765,
+  "balkonband:haupt.unterseite_z": 4.912,
+  "balkonband:haupt.oberseite_z": 6.47,
+  "balkonband:haupt.wand_n": 13.439
+ },
+ "nachher": {
+  "balkonband:haupt.u_von": -6.4907,
+  "balkonband:haupt.u_bis": 5.7099,
+  "balkonband:haupt.auskragung": 1.1649,
+  "balkonband:haupt.unterseite_z": 5.0065,
+  "balkonband:haupt.oberseite_z": 6.5325,
+  "balkonband:haupt.wand_n": 13.216
+ },
+ "J_vorher": 2.939845561981201,
+ "J_nachher": 2.873617649078369,
+ "median_vorher": 0.14454352855682373,
+ "median_nachher": 0.16497902572155,
+ "p90_vorher": 0.26271507143974304,
+ "p90_nachher": 0.27992531657218933
+}
