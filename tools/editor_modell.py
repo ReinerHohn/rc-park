@@ -110,8 +110,8 @@ def ebenen():
 ORC = {}; ORD = {}
 def ortho(s0, z0, neig, vor, hinter, px=0.025):
     k = (round(s0, 3), round(z0, 3), round(neig, 2), round(vor, 2), round(hinter, 2), px)
-    if k not in ORC: ORC[k] = ortho_(s0, z0, neig, vor, hinter, px); ORD[k] = ORD["last"]
-    ORD["last"] = ORD[k]; return ORC[k]
+    if k not in ORC: ORC[k] = ortho_(s0, z0, neig, vor, hinter, px); ORD[k] = ORD["last"]; ORD[k]["meth"] = ORD["meth"]; ORD[k]["lin"] = ORC[k]["linien"]
+    ORD["last"] = ORD[k]; ORD["meth"] = ORD[k]["meth"]; return ORC[k]
 
 def ortho_(s0, z0, neig, vor, hinter, px=0.025):
     """Ortho-Ansicht der Wolke auf einer Ebene (Linie im (s,z)-Schnitt, Neigung um u): Blick von aussen, +u links. Farbbild + erkannte Kanten
@@ -145,7 +145,7 @@ def ortho_(s0, z0, neig, vor, hinter, px=0.025):
             Ls = np.asarray(Ls).reshape(-1, 4) / sk; Ls = Ls[np.hypot(Ls[:, 2] - Ls[:, 0], Ls[:, 3] - Ls[:, 1]) > minl]; Ls = Ls[np.argsort(-np.hypot(Ls[:, 2] - Ls[:, 0], Ls[:, 3] - Ls[:, 1]))][:700]
             segs.append(Ls); mid += [(name + "/" + var, name)] * len(Ls)
     S = np.vstack(segs); meth = np.array([m[0] for m in mid]); fam = np.array([m[1] for m in mid]); ln = np.hypot(S[:, 2] - S[:, 0], S[:, 3] - S[:, 1]); o2 = np.argsort(-ln); S, meth, fam, ln = S[o2], meth[o2], fam[o2], ln[o2]
-    d = (S[:, 2:] - S[:, :2]) / ln[:, None]; ang = np.arctan2(d[:, 1], d[:, 0]) % np.pi; used = np.zeros(len(S), bool); out = []
+    ORD["meth"] = (S.copy(), meth.copy(), fam.copy()); d = (S[:, 2:] - S[:, :2]) / ln[:, None]; ang = np.arctan2(d[:, 1], d[:, 0]) % np.pi; used = np.zeros(len(S), bool); out = []
     for i in range(len(S)):
         if used[i]: continue
         di = d[i]; nrm = np.array([-di[1], di[0]]); p0 = S[i, :2]
@@ -157,7 +157,7 @@ def ortho_(s0, z0, neig, vor, hinter, px=0.025):
         q0 = p0 + di * t0; q1 = p0 + di * t1; out.append([round(float(q0[0]), 1), round(float(q0[1]), 1), round(float(q1[0]), 1), round(float(q1[1]), 1), votes, fam_n, "t" if "Tiefe" in set(fam[g_]) else "f"])
     out.sort(key=lambda l: -(l[4]))
     jpg = cv2.imencode(".jpg", img2, [cv2.IMWRITE_JPEG_QUALITY, 88])[1].tobytes()
-    ORD["last"] = dict(dep=dep, mk=(bm >= 0.02), px=px, vor=vor, hinter=hinter, gray=cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY), d8=d0)
+    ORD["last"] = dict(dep=dep, mk=(bm >= 0.02), px=px, vor=vor, hinter=hinter, u0=float(um), v0=float(vm), s0=s0, z0=z0, neig=neig, gray=cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY), d8=d0)
     return dict(bild="data:image/jpeg;base64," + base64.b64encode(jpg).decode(), w=W, h=Hh, u0=float(um), v0=float(vm), px=px, linien=out, s0=s0, z0=z0, neig=neig, punkte=int(k.sum()))
 
 def regionen(linien, minfl=0.05, luecke=12):
@@ -298,6 +298,37 @@ def gruppen(thr=0.12, minfl=0.15):
         out.append(dict(n=len(ix), m2=round(float(np.mean([zellen[i]["m2"] for i in ix])), 2), dt=round(dt, 3), rect=round(float(np.mean([zellen[i].get("rect", 0) for i in ix])), 2), roh=polys, mittel=mittel,
                         abw_cm=round(float(np.mean(m["abweichung"])) * px * 100, 1) if m else None))
     out.sort(key=lambda e: (-e["n"], -e["m2"])); return dict(gruppen=out[:60], wand_t=round(float(wand_t), 3))
+
+WFILE = os.path.join(os.path.dirname(OJ), "kanten_wahrheit.jsonl")
+def wahrheit_speichern(d):
+    """vom Nutzer bestaetigte Kanten (nachgezeichnet/gezogen/Umriss erzeugter Bauteile) mit Ortho-Parametern ablegen, damit Kantenverfahren daran gemessen werden koennen"""
+    with open(WFILE, "a") as f: f.write(json.dumps(dict(zeit=datetime.datetime.now().isoformat(timespec="seconds"), art=d.get("art", ""), plane=d["plane"], linien=d["linien"])) + "\n")
+    return sum(1 for _ in open(WFILE))
+
+def kanten_bewerten(tol=3.0):
+    """Trefferquote (Recall) je Verfahren und fuer die Stimmen-Zusammenfuehrung gegen die bestaetigten Kanten der aktuellen Ortho-Ebene: Anteil der Wahrheits-Linienlaenge, der innerhalb tol Pixel
+    einer erkannten Linie liegt. Zusaetzlich Dichte (erkannte Linienlaenge je Bildflaeche), weil Recall allein ein 'alles zeichnen' belohnt."""
+    d = ORD["last"]; px = d["px"]; H, W = d["gray"].shape; u0, v0 = d["u0"], d["v0"]; T = []
+    if not os.path.exists(WFILE): return dict(fehler="noch keine bestaetigten Kanten (nachzeichnen oder Bauteile erzeugen)")
+    for z in open(WFILE):
+        r = json.loads(z); pl = r["plane"]
+        if abs(pl["s0"] - d["s0"]) < 0.02 and abs(pl["z0"] - d["z0"]) < 0.02 and abs(pl["neig"] - d["neig"]) < 0.2:
+            for l in r["linien"]: T.append([(pl["u0"] - l[0] * pl["px"] - 0) , 0, 0, 0] if False else [(u0 - (pl["u0"] - l[0] * pl["px"])) / px, (v0 - (pl["v0"] - l[1] * pl["px"])) / px, (u0 - (pl["u0"] - l[2] * pl["px"])) / px, (v0 - (pl["v0"] - l[3] * pl["px"])) / px])
+    if not T: return dict(fehler="keine bestaetigten Kanten fuer diese Ebene")
+    T = np.array(T, float); Ls = np.hypot(T[:, 2] - T[:, 0], T[:, 3] - T[:, 1]); tot = float(Ls.sum()); S, meth, fam = d["meth"]; out = []
+    P = np.vstack([np.c_[np.linspace(t[0], t[2], max(int(l / 2), 2)), np.linspace(t[1], t[3], max(int(l / 2), 2))] for t, l in zip(T, Ls)])
+    def recall(segs):
+        if len(segs) == 0: return 0.0
+        m = np.zeros((H, W), np.uint8)
+        for q in segs: cv2.line(m, (int(round(q[0])), int(round(q[1]))), (int(round(q[2])), int(round(q[3]))), 255, 1)
+        dt = cv2.distanceTransform(255 - m, cv2.DIST_L2, 3); xi = P[:, 0].round().astype(int).clip(0, W - 1); yi = P[:, 1].round().astype(int).clip(0, H - 1); return float((dt[yi, xi] <= tol).mean())
+    def dichte(segs): return float(np.hypot(segs[:, 2] - segs[:, 0], segs[:, 3] - segs[:, 1]).sum() * px / (H * W * px * px)) if len(segs) else 0.0
+    for name in sorted(set(meth)):
+        sg = S[meth == name]; out.append(dict(verfahren=name, recall=round(recall(sg), 3), segmente=int(len(sg)), dichte=round(dichte(sg), 3)))
+    L = np.array([l[:4] for l in d["lin"]], float)
+    for k in (1, 3, 6, 12, 20):
+        sg = np.array([l[:4] for l in d["lin"] if l[4] >= k], float).reshape(-1, 4); out.append(dict(verfahren="FUSION >= %d Stimmen" % k, recall=round(recall(sg), 3), segmente=int(len(sg)), dichte=round(dichte(sg), 3)))
+    out.sort(key=lambda e: -e["recall"]); return dict(tabelle=out, wahrheit_laenge_m=round(tot * px, 1), n_linien=int(len(T)))
 
 def kantenpunkte(foto, pts, r):
     """naechster Fotokantenpunkt (Canny, 1613 px) je Eingabepunkt innerhalb r px; sonst unveraendert. Rueckgabe Liste [x,y,bewegt]"""
@@ -512,6 +543,10 @@ class H(BaseHTTPRequestHandler):
         elif self.path == "/api/griff":
             with LOCK: err = griff_anwenden(d["typ"], d["id"], float(d["u"]), float(d["z"]))
             self._send(200, "application/json", json.dumps(dict(ok=err is None, fehler=err)).encode())
+        elif self.path == "/api/wahrheit":
+            self._send(200, "application/json", json.dumps(dict(n=wahrheit_speichern(d))).encode())
+        elif self.path == "/api/bewerten":
+            self._send(200, "application/json", json.dumps(kanten_bewerten(float(d.get("tol", 3.0)))).encode())
         elif self.path == "/api/gruppen":
             self._send(200, "application/json", json.dumps(gruppen(float(d.get("thr", 0.12)), float(d.get("minfl", 0.15)))).encode())
         elif self.path == "/api/pfad":

@@ -39,6 +39,9 @@ Schwelle <input id=gth value=0.5 size=3> <label><input type=checkbox id=gsk> je 
 <label><input type=checkbox id=gm checked onchange="zeichne()"> Mittelform zeigen (grün); aus = Rohzellen (gelb)</label><br>
 <button onclick="glErzeugen()" style="background:#0c6;font-weight:bold">Alle gewählten als Bauteile</button><br>
 <small>Treffer sind Vorschläge: Anzahl prüfst du am Foto. Abweichung = wie weit eine Zelle von der Mittelform liegt.</small></fieldset>
+<fieldset><legend>Prüfung</legend>
+<button onclick="bewerten()">Kantenverfahren bewerten</button>
+<small>Vergleicht jedes Kantenverfahren mit den Kanten, die DU bestätigt hast (nachgezeichnet, gezogen, Umrisse erzeugter Bauteile). Je mehr du bestätigst, desto aussagekräftiger.</small></fieldset>
 <fieldset id=spf><legend>3b. Spraydose / Zauberstab</legend>
 Toleranz <input id=stol type=range min=5 max=120 value=35 style="width:110px"> <span id=stolv>35</span><br>
 Pinsel px <input id=srad type=range min=2 max=60 value=12 style="width:110px"> <span id=sradv>12</span><br>
@@ -95,7 +98,7 @@ async function glErzeugen(){const sel=GL.filter(q=>q.an);if(!sel.length){msg('Ke
  for(const q of sel){const P=$('gm').checked?q.mittel:q.roh,kontur=P.map(p=>[+(D.u0-p[0]*D.px).toFixed(3),+(D.v0-p[1]*D.px).toFixed(3)]);await J('/api/freiform',{method:'POST',body:JSON.stringify({name:typ+'_'+t0+'_'+(n++),kontur,s0:D.s0,z0:D.z0,neig:D.neig,tiefe:parseFloat($('tf').value),modus:$('md').value,foto:'Ortho-Ansicht, gemittelte Gleichteile ('+sel.length+' Instanzen)'})})}
  msg(n+' Bauteile angelegt ('+typ+'). In „→ 3D“ sichtbar.');GL=[];$('gl').innerHTML='';zeichne()}
 async function tracen(wp){msg('Rastet auf der Kante ein …');const r=await J('/api/pfad',{method:'POST',body:JSON.stringify({wp})});if(!r.pfad.length){msg('Kein Weg gefunden (Start/Ende im Bild?).');zeichne();return}
- const GID=++GCNT;let n=0;for(let i=0;i<r.pfad.length-1;i++){const a=r.pfad[i],b=r.pfad[i+1];if(Math.hypot(b[0]-a[0],b[1]-a[1])<1)continue;LIN.push([a[0],a[1],b[0],b[1],99,9,'u']);LIN[LIN.length-1].grp=GID;n++}BARR=null;zeichne();regNeu();msg('Kante nachgezeichnet ('+n+' Stücke, magenta). Strg+Z löscht das letzte Stück; Flächen werden neu berechnet.')}
+ const GID=++GCNT;let n=0;for(let i=0;i<r.pfad.length-1;i++){const a=r.pfad[i],b=r.pfad[i+1];if(Math.hypot(b[0]-a[0],b[1]-a[1])<1)continue;LIN.push([a[0],a[1],b[0],b[1],99,9,'u']);LIN[LIN.length-1].grp=GID;n++}wahrheit('nachgezeichnet',LIN.filter(l=>l.grp===GID).map(l=>[l[0],l[1],l[2],l[3]]));BARR=null;zeichne();regNeu();msg('Kante nachgezeichnet ('+n+' Stücke, magenta). Strg+Z löscht das letzte Stück; Flächen werden neu berechnet.')}
 async function gruppen(){if(!REG.length){msg('Erst „Flächen vorschlagen“ drücken.');return}msg('Gruppiere Flächen …');const r=await J('/api/gruppen',{method:'POST',body:JSON.stringify({})});if(r.fehler){msg(r.fehler);return}GR=r.gruppen;GR.forEach(q=>{q.an=false;q.art=q.dt<-0.03?'fensterscheibe':(q.dt>0.03?'balkon':'wand')});const d=$('grl');d.innerHTML='';
  GR.forEach((q,i)=>{const l=document.createElement('div');l.style.cssText='border-bottom:1px solid #333;padding:2px 0';l.innerHTML='<input type=checkbox> <b>'+q.n+'×</b> '+q.m2+' m², Tiefe '+(q.dt*100).toFixed(0)+' cm '+(q.dt<-0.03?'(hinter der Wand)':(q.dt>0.03?'(vor der Wand)':'(in der Wand)'))+'<br><select>'+['fensterscheibe','fensterrahmen','erker','wand','dach','bogen','gaube','balkon','sonstiges'].map(a=>'<option'+(a==q.art?' selected':'')+'>'+a+'</option>').join('')+'</select>'+(q.abw_cm!=null?' Abw. '+q.abw_cm+' cm':'');l.firstChild.onchange=e=>{q.an=e.target.checked;zeichne()};l.querySelector('select').onchange=e=>{q.art=e.target.value};l.onmouseenter=()=>{GRH=i;zeichne()};l.onmouseleave=()=>{GRH=-1;zeichne()};d.appendChild(l)});msg(GR.length+' Gruppen (Wandtiefe '+r.wand_t+' m als Bezug). Mit der Maus über einen Eintrag fahren zeigt ihn im Bild; Haken setzen, Art prüfen, „Gewählte Gruppen als Bauteile“.')}
 async function grErzeugen(){const sel=GR.filter(q=>q.an);if(!sel.length){msg('Keine Gruppe gewählt.');return}let n=0;const t0=Date.now().toString(36).slice(-3),al=D.neig*Math.PI/180;
@@ -103,6 +106,9 @@ async function grErzeugen(){const sel=GR.filter(q=>q.an);if(!sel.length){msg('Ke
   // hinter der Wand: Ebene um dt nach innen schieben und bis zur Wand ausziehen (Aussparung); sonst Ebene an der Wand, nach aussen ausziehen (Körper)
   const off=rueck?q.dt:0,s0=D.s0+off*Math.cos(al),z0=D.z0-off*Math.sin(al);await J('/api/freiform',{method:'POST',body:JSON.stringify({name:q.art+'_'+t0+'_'+(n++),kontur,s0,z0,neig:D.neig,tiefe:tief,modus:rueck?'ausschnitt':'anbau',foto:'Ortho-Ansicht, Gruppe '+q.n+'x '+q.art+', Tiefe aus Wolke ('+(q.dt*100).toFixed(0)+' cm rel. Wand)'})})}}
  msg(n+' Bauteile angelegt (Tiefe aus der Wolke gemessen). In „→ 3D“ ansehen, dort „Solid (STL) bauen“.');GR=[];$('grl').innerHTML='';zeichne()}
+function planeD(){return{s0:D.s0,z0:D.z0,neig:D.neig,u0:D.u0,v0:D.v0,px:D.px}}
+function wahrheit(art,L){if(!D||!L.length)return;J('/api/wahrheit',{method:'POST',body:JSON.stringify({art,plane:planeD(),linien:L})})}
+async function bewerten(){msg('Bewerte Verfahren …');const r=await J('/api/bewerten',{method:'POST',body:'{}'});if(r.fehler){msg(r.fehler);return}msg('Bestätigte Kanten: '+r.n_linien+' Linien, '+r.wahrheit_laenge_m+' m. Trefferquote (Anteil der bestätigten Kantenlänge innerhalb 3 px einer erkannten Linie) | Dichte:\n'+r.tabelle.map(t=>t.verfahren+': '+(t.recall*100).toFixed(0)+' %  ('+t.segmente+' Seg., Dichte '+t.dichte+')').join('\n'))}
 // --- Spraydose / Zauberstab
 function farbeBei(x,y,r){let R=0,G=0,B=0,n=0;for(let j=-r;j<=r;j++)for(let i=-r;i<=r;i++){const X=Math.round(x+i),Y=Math.round(y+j);if(X<0||Y<0||X>=D.w||Y>=D.h)continue;const k=4*(Y*D.w+X);if(PXD[k]+PXD[k+1]+PXD[k+2]===0)continue;R+=PXD[k];G+=PXD[k+1];B+=PXD[k+2];n++}return n?[R/n,G/n,B/n]:null}
 function fd(k,c){const r=(PXD[k]+c[0])/2,dr=PXD[k]-c[0],dg=PXD[k+1]-c[1],db=PXD[k+2]-c[2];return Math.sqrt((2+r/256)*dr*dr+4*dg*dg+(2+(255-r)/256)*db*db)/3}
@@ -150,14 +156,14 @@ cv.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect(),mx=e.cl
  if(drag!=null){POLY[drag]=[ix(mx),iy(my)];zeichne();return}if(PV){const p=snap(mx,my);PV[2]=p[0];PV[3]=p[1];zeichne()}});
 cv.addEventListener('pointerup',e=>{const r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
  if(pan){pan=null;return}if(drag!=null){drag=null;return}if(SPR){SPR=false;LASTP=null;return}if(TRC){const wp=TRC;TRC=null;if(wp.length<2){zeichne();return}tracen(wp);return}
- if(PV){if(Math.hypot(sx(PV[2])-sx(PV[0]),sy(PV[3])-sy(PV[1]))>6){LIN.push([PV[0],PV[1],PV[2],PV[3],99,9,'u']);LIN[LIN.length-1].sel=false;msg('Linie hinzugefügt (magenta). Flächen werden neu berechnet. Strg+Z löscht sie wieder.');regNeu()}PV=null;zeichne();return}
+ if(PV){if(Math.hypot(sx(PV[2])-sx(PV[0]),sy(PV[3])-sy(PV[1]))>6){LIN.push([PV[0],PV[1],PV[2],PV[3],99,9,'u']);wahrheit('gezogen',[[PV[0],PV[1],PV[2],PV[3]]]);LIN[LIN.length-1].sel=false;msg('Linie hinzugefügt (magenta). Flächen werden neu berechnet. Strg+Z löscht sie wieder.');regNeu()}PV=null;zeichne();return}
  if(!down||Math.hypot(mx-down.x,my-down.y)>4||!IMG)return;
  if(mode()=='k'){const ri=$('rz').checked?regAt(mx,my):-1;let b=null,bd=9;let ab=-1,abd=10;ARC.forEach((a,i)=>{for(let j=0;j<a.poly.length-1;j++){const dd=dseg(mx,my,[a.poly[j][0],a.poly[j][1],a.poly[j+1][0],a.poly[j+1][1]]);if(dd<abd){abd=dd;ab=i}}});if(ab>=0){POLY=ARC[ab].poly.map(p=>p.slice());zeichne();msg('Bogen #'+ab+' als Fläche übernommen (R='+ARC[ab].r_m+' m, Breite '+ARC[ab].breite_m+' m). Ecken ziehen: unten die Öffnung bis zum Boden verlängern.');return}LIN.forEach(l=>{if(!sicht(l)&&!l.sel)return;const d=dseg(mx,my,l);if(d<bd){bd=d;b=l}});if(b){b.sel=!b.sel;zeichne()}else if(ri>=0){POLY=REG[ri].poly.map(p=>p.slice());zeichne();msg('Zelle #'+ri+' übernommen ('+REG[ri].m2+' m², '+POLY.length+' Ecken). Ecken ziehen/einrasten, dann Art wählen und „Bauteil erzeugen“.')}}
  else if(mode()=='e'){const p=snap(mx,my);POLY.push(p);zeichne()}
  else if(mode()=='z'){flood(mx,my)}});
 // --- Bauteil
 async function erzeugen(){if(POLY.length<3){msg('Erst eine Fläche bilden (mind. 3 Ecken).');return}
- const kontur=POLY.map(p=>[+(D.u0-p[0]*D.px).toFixed(3),+(D.v0-p[1]*D.px).toFixed(3)]),typ=$('art').value,name=typ+'_'+Date.now().toString(36).slice(-4);
+ wahrheit('bauteil-umriss',POLY.map((p,i)=>{const q=POLY[(i+1)%POLY.length];return[p[0],p[1],q[0],q[1]]}));const kontur=POLY.map(p=>[+(D.u0-p[0]*D.px).toFixed(3),+(D.v0-p[1]*D.px).toFixed(3)]),typ=$('art').value,name=typ+'_'+Date.now().toString(36).slice(-4);
  await J('/api/freiform',{method:'POST',body:JSON.stringify({name,kontur,s0:D.s0,z0:D.z0,neig:D.neig,tiefe:parseFloat($('tf').value),modus:$('md').value,foto:'Ortho-Ansicht der Wolke (Kanten vom Nutzer gewählt)'})});
  msg('Bauteil freiform:'+name+' angelegt ('+kontur.length+' Ecken, Ebene s='+D.s0+', Neigung '+D.neig+'°). In „→ 3D" sichtbar. Weiter mit der nächsten Fläche.');POLY=[];LIN.forEach(l=>l.sel=false);zeichne()}
 rs();vsLaden();
