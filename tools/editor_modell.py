@@ -340,6 +340,47 @@ def kanten_bewerten(tol=3.0):
         sg = np.array([l[:4] for l in d["lin"] if l[4] >= k], float).reshape(-1, 4); out.append(dict(verfahren="FUSION >= %d Stimmen" % k, recall=round(recall(sg), 3), segmente=int(len(sg)), dichte=round(dichte(sg), 3)))
     out.sort(key=lambda e: -e["recall"]); return dict(tabelle=out, wahrheit_laenge_m=round(tot * px, 1), n_linien=int(len(T)))
 
+def modellkanten_px(d, winkel=25.0, minlaenge_px=40):
+    """Kanten des Modells (Knickkanten der Teilnetze, Winkel > winkel) in die Pixel der Ortho-Ansicht d projizieren; nur Kanten in der Ortho-Scheibe. Unabhaengig von den Kantenverfahren (Modell stammt aus Wolke+Fotos+Nutzer)."""
+    U_ = uax(); n_ = np.array(obj()["fassade_n"]["wert"], float); n_ /= np.linalg.norm(n_); al = np.radians(d["neig"]); sn, cn = np.sin(al), np.cos(al); px = d["px"]; out = []
+    for typ, b in MESH.items():
+        T = np.frombuffer(b, np.float32).reshape(-1, 3).astype(np.float64)
+        try: m = trimesh.Trimesh(T, np.arange(len(T)).reshape(-1, 3), process=True); m.merge_vertices()
+        except Exception: continue
+        if len(m.faces) < 2: continue
+        adj = m.face_adjacency; ang = np.degrees(m.face_adjacency_angles); e = m.face_adjacency_edges[ang > winkel]
+        # Randkanten (nur eine Flaeche) ebenfalls
+        if len(e) == 0: continue
+        P = m.vertices[e]                                          # (n,2,3)
+        u = P[..., :2] @ U_; sS = P[..., :2] @ n_; z = P[..., 2]; t = (sS - d["s0"]) * cn - (z - d["z0"]) * sn; v = (sS - d["s0"]) * sn + (z - d["z0"]) * cn
+        ok = np.all((t >= -d["hinter"]) & (t <= d["vor"]), 1)
+        for i in np.where(ok)[0]: out.append([(d["u0"] - u[i, 0]) / px, (d["v0"] - v[i, 0]) / px, (d["u0"] - u[i, 1]) / px, (d["v0"] - v[i, 1]) / px])
+    out = np.array(out, float).reshape(-1, 4)
+    return out[np.hypot(out[:, 2] - out[:, 0], out[:, 3] - out[:, 1]) >= minlaenge_px]
+
+def verfahren_vs_modell(tol=6.0):
+    """Trefferquote (Modellkante von Verfahren erkannt) UND Praezision (erkannte Linie liegt an Modellkante) je Verfahren auf der aktuellen Ebene. F = harmonisches Mittel."""
+    d = ORD["last"]; M = modellkanten_px(d)
+    if len(M) < 5: return dict(fehler="zu wenige Modellkanten in der Scheibe")
+    H, W = d["gray"].shape; S, meth, fam = d["meth"]
+    def raster(segs):
+        m = np.zeros((H, W), np.uint8)
+        for q in segs: cv2.line(m, (int(round(q[0])), int(round(q[1]))), (int(round(q[2])), int(round(q[3]))), 255, 1)
+        return m
+    def samp(segs):
+        return np.vstack([np.c_[np.linspace(q[0], q[2], max(int(np.hypot(q[2] - q[0], q[3] - q[1]) / 2), 2)), np.linspace(q[1], q[3], max(int(np.hypot(q[2] - q[0], q[3] - q[1]) / 2), 2))] for q in segs])
+    def hit(P, m):
+        dt = cv2.distanceTransform(255 - m, cv2.DIST_L2, 3); xi = P[:, 0].round().astype(int).clip(0, W - 1); yi = P[:, 1].round().astype(int).clip(0, H - 1); return float((dt[yi, xi] <= tol).mean())
+    PM = samp(M); mM = raster(M); res = []
+    def bewerte(name, sg):
+        if len(sg) == 0: return
+        F_ = lambda r_, p_: 2 * r_ * p_ / max(r_ + p_, 1e-9); rec = hit(PM, raster(sg)); pre = hit(samp(sg), mM); sh = sg + np.array([41.0, 27.0, 41.0, 27.0]); rec0 = hit(PM, raster(sh)); pre0 = hit(samp(sh), mM)   # Zufallsbasis: Linien um (41,27) px versetzt
+        res.append(dict(verfahren=name, recall=round(rec, 3), praez=round(pre, 3), F=round(F_(rec, pre), 3), F_zufall=round(F_(rec0, pre0), 3), gewinn=round(F_(rec, pre) - F_(rec0, pre0), 3), seg=int(len(sg))))
+    for name in sorted(set(meth)): bewerte(name, S[meth == name])
+    for nm in sorted(set(fam)): bewerte("FAMILIE " + nm, S[fam == nm])
+    for k in (1, 3, 6, 12, 20, 30): bewerte("FUSION >= %d" % k, np.array([l[:4] for l in d["lin"] if l[4] >= k], float).reshape(-1, 4))
+    res.sort(key=lambda e: -e["gewinn"]); return dict(tabelle=res, modellkanten=int(len(M)), tol_px=tol)
+
 def kantenpunkte(foto, pts, r):
     """naechster Fotokantenpunkt (Canny, 1613 px) je Eingabepunkt innerhalb r px; sonst unveraendert. Rueckgabe Liste [x,y,bewegt]"""
     g = cv2.imread(os.path.join(a.bilder, foto), cv2.IMREAD_GRAYSCALE | cv2.IMREAD_IGNORE_ORIENTATION); g = cv2.resize(g, (SW, int(g.shape[0] * SW / g.shape[1])), interpolation=cv2.INTER_AREA)
@@ -555,6 +596,8 @@ class H(BaseHTTPRequestHandler):
             self._send(200, "application/json", json.dumps(dict(ok=err is None, fehler=err)).encode())
         elif self.path == "/api/wahrheit":
             self._send(200, "application/json", json.dumps(dict(n=wahrheit_speichern(d))).encode())
+        elif self.path == "/api/vsmodell":
+            self._send(200, "application/json", json.dumps(verfahren_vs_modell(float(d.get("tol", 6.0)))).encode())
         elif self.path == "/api/bewerten":
             self._send(200, "application/json", json.dumps(kanten_bewerten(float(d.get("tol", 3.0)))).encode())
         elif self.path == "/api/gruppen":
