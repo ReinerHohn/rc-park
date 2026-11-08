@@ -11,7 +11,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--kameras", required=True); ap.add_argument("--bilder", required=True)
 ap.add_argument("--foto", default="ip_IMG_6161.jpg"); ap.add_argument("--port", type=int, default=8766); a = ap.parse_args()
 R0 = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); OJ = os.path.join(R0, "modelle", a.objekt, "objekt.json"); KAM = json.load(open(a.kameras)); SW = 1613
-HTML = os.path.join(os.path.dirname(os.path.abspath(__file__)), "editor_modell.html"); LOCK = threading.Lock(); CACHE = {}; DT = {}; PIV = {}
+HTML = os.path.join(os.path.dirname(os.path.abspath(__file__)), "editor_modell.html"); LOCK = threading.Lock(); CACHE = {}; DT = {}; PIV = {}; MESH = {}
 def obj(): return json.load(open(OJ))
 def uax():
     n = np.array(obj()["fassade_n"]["wert"], float); n /= np.linalg.norm(n); return np.array([n[1], -n[0]])
@@ -26,6 +26,7 @@ def kanten(b, mt):
     if not os.path.exists(p): CACHE[k] = None; return None
     m = trimesh.load(p, process=False); os.remove(p); m.apply_scale(87 / 1000); m.merge_vertices(); V = np.asarray(m.vertices); e = m.face_adjacency_edges[m.face_adjacency_angles > 0.6]
     if len(e) > 4000: e = e[np.random.default_rng(0).choice(len(e), 4000, replace=False)]
+    MESH[b["typ"]] = np.asarray(m.triangles, np.float32).tobytes()
     lo, hi = m.bounds; PIV[b["typ"]] = [float((lo[0] + hi[0]) / 2), float((lo[1] + hi[1]) / 2), float(lo[2])]   # Drehpunkt/Skalenanker = Huellmitte (x,y), Unterkante (z) des AKTUELLEN Teils
     CACHE[k] = np.hstack([V[e[:, 0]], V[e[:, 1]]]).round(3).tolist(); return CACHE[k]
 
@@ -104,13 +105,69 @@ def rdp(P, e):
 def kontur_info(typ):
     """Fensterkontur eines fensterreihe-Bauteils: gespeicherte 'kontur' oder die Standardform (Rechteck + Kielbogen wie baukasten_gen.fensterreihe), Fenstermitten u, Bezug z0, Wandebene s"""
     b = [x for x in obj()["bauteile"] if x["typ"] == typ][0]
+    if typ.split(":")[0] == "freiform": return dict(kontur=b["kontur"], mitten=[0.0], z0=float(b["ebene_z"]), s=float(b["ebene_s"]), neig=float(b["neigung_grad"]), eigen=True)
     if typ.split(":")[0] != "fensterreihe": return None
     nf, u0, pitch, bw = int(b["n_fenster"]), float(b["u_mitte"]), float(b["pitch"]), float(b["breite"]); z0, zk, zs = float(b["unterseite_z"]), float(b["kaempfer_z"]), float(b["scheitel_z"]); kiel = float(b.get("kiel", 0.4))
     if b.get("kontur"): K = [[float(x), float(z)] for x, z in b["kontur"]]; eigen = True
     else:
         t = np.linspace(0, 1, 16); zz = zk + (zs - zk) * (t - kiel * np.sin(2 * np.pi * t) / (2 * np.pi)); right = [(bw / 2 * (1 - tt), z_ - z0) for tt, z_ in zip(t, zz)]; left = [(-bw / 2 * (1 - tt), z_ - z0) for tt, z_ in zip(t[::-1], zz[::-1])]
         K = [[-bw / 2, 0.0], [bw / 2, 0.0]] + [list(map(float, p_)) for p_ in right] + [list(map(float, p_)) for p_ in left[1:]]; eigen = False; K = rdp(K, 0.025).tolist()    # Standardform auf wenige Punkte vereinfachen (leichter zu ziehen)
-    return dict(kontur=[[round(x, 3), round(z, 3)] for x, z in K], mitten=[round(u0 + i * pitch, 3) for i in range(nf)], z0=z0, s=float(b["wand_n"]) + float(b.get("tiefe", 0.3)), eigen=eigen)
+    return dict(kontur=[[round(x, 3), round(z, 3)] for x, z in K], mitten=[round(u0 + i * pitch, 3) for i in range(nf)], z0=z0, s=float(b["wand_n"]) + float(b.get("tiefe", 0.3)), eigen=eigen, neig=0.0)
+
+def griffe_von(b):
+    """Ziehbare Parameter-Griffe je Familie: (id, Beschriftung, u, s (n-Ebene), z). Ziehen -> griff_anwenden schreibt die betroffenen Parameter."""
+    fam = b["typ"].split(":")[0]; G = []
+    if fam == "bogenreihe":
+        nb, u0, pt, ow, sn = int(b["n_boegen"]), float(b["u0"]), float(b["pitch"]), float(b["oeffnung_breite"]), float(b["pfeiler_n"])
+        for i in range(nb):
+            uc = u0 + (i + 0.5) * pt
+            G += [("scheitel_%d" % i, "Scheitel", uc, sn, float(b["scheitel_z"])), ("kaempfer_%d" % i, "Kaempfer rechts", uc + ow / 2, sn, float(b["kaempfer_z"])), ("fuss_%d" % i, "Fuss rechts", uc + ow / 2, sn, float(b["boden_z"])), ("ober_%d" % i, "Oberkante", uc, sn, float(b["oberkante_z"]))]
+    elif fam == "satteldach":
+        u0, u1 = float(b["u0"]), float(b["u1"])
+        G = [("first_l", "First links", u1, float(b["n_first"]), float(b["z_first"])), ("first_r", "First rechts", u0, float(b["n_first"]), float(b["z_first"])),
+             ("traufe_l", "Traufe links", u1, float(b["n_traufe_v"]), float(b["z_traufe_v"])), ("traufe_r", "Traufe rechts", u0, float(b["n_traufe_v"]), float(b["z_traufe_v"]))]
+    elif fam == "fensterreihe":
+        u0, pt, bw, sn = float(b["u_mitte"]), float(b["pitch"]), float(b["breite"]), float(b["wand_n"]) + float(b.get("tiefe", 0.3))
+        G = [("scheitel", "Scheitel", u0, sn, float(b["scheitel_z"])), ("kaempfer", "Kaempfer", u0 + bw / 2, sn, float(b["kaempfer_z"])), ("unten", "Unterkante rechts", u0 + bw / 2, sn, float(b["unterseite_z"])),
+             ("pitch", "Abstand (naechstes Fenster)", u0 + pt, sn, float(b["kaempfer_z"])), ("lage", "Reihe verschieben", u0, sn, float(b["unterseite_z"]))]
+    return [dict(id=i, label=l, u=round(u, 3), s=round(sv, 3), z=round(z, 3)) for i, l, u, sv, z in G]
+
+def griff_anwenden(typ, gid, u, z):
+    O = obj(); b = [x for x in O["bauteile"] if x["typ"] == typ][0]; fam = typ.split(":")[0]; q = b.setdefault("werte_quellen", {}); txt = "editor_modell.py: Griff '%s' im Foto %s gezogen" % (gid, a.foto); n = dict(b)   # n = neue Werte
+    if fam == "bogenreihe":
+        k, i = gid.rsplit("_", 1); i = int(i); uc = float(b["u0"]) + (i + 0.5) * float(b["pitch"])
+        if k == "scheitel": n["scheitel_z"] = z; n["oberkante_z"] = float(b["oberkante_z"]) + (z - float(b["scheitel_z"])); n["u0"] = float(b["u0"]) + (u - uc)     # Oberkante (Abstand zum Scheitel) folgt
+        elif k == "kaempfer": n["kaempfer_z"] = z; n["oeffnung_breite"] = 2 * (u - uc)
+        elif k == "fuss": n["boden_z"] = z; n["oeffnung_breite"] = 2 * (u - uc)
+        elif k == "ober": n["oberkante_z"] = z
+        if not (n["boden_z"] < n["kaempfer_z"] < n["scheitel_z"] < n["oberkante_z"]) or n["oeffnung_breite"] < 0.5: return "Unplausibel: Reihenfolge boden < kaempfer < scheitel < oberkante bzw. Oeffnung >= 0,5 m verletzt"
+    elif fam == "satteldach":
+        if gid.endswith("_l"): n["u1"] = u
+        else: n["u0"] = u
+        if gid.startswith("first"): n["z_first"] = z
+        else: n["z_traufe_v"] = z
+        if not (n["z_traufe_v"] < n["z_first"]) or n["u1"] - n["u0"] < 1: return "Unplausibel: Traufe muss unter dem First liegen, Dach >= 1 m breit"
+    elif fam == "fensterreihe":
+        u0 = float(b["u_mitte"])
+        if gid == "scheitel": n["scheitel_z"] = z
+        elif gid == "kaempfer": n["kaempfer_z"] = z; n["breite"] = 2 * (u - u0)
+        elif gid == "unten": n["unterseite_z"] = z; n["breite"] = 2 * (u - u0)
+        elif gid == "pitch": n["pitch"] = u - u0
+        elif gid == "lage": n["u_mitte"] = u; dz = z - float(b["unterseite_z"]); [n.__setitem__(k_, float(b[k_]) + dz) for k_ in ("unterseite_z", "kaempfer_z", "scheitel_z", "riegel_z")]
+        if not (n["unterseite_z"] < n["kaempfer_z"] < n["scheitel_z"]) or n["breite"] >= n["pitch"] or n["breite"] < 0.3: return "Unplausibel: unten < kaempfer < scheitel, Breite 0,3 m bis kleiner als Abstand"
+    else: return "Dieses Teil hat keine Griffe"
+    shutil.copy(OJ, OJ + ".edit_bak")
+    for k, v in n.items():
+        if k != "werte_quellen" and v != b.get(k) and isinstance(v, (int, float)): b[k] = round(float(v), 3); q[k] = txt
+    json.dump(O, open(OJ, "w"), indent=1, ensure_ascii=False); return None
+
+def freiform_anlegen(d):
+    """neues Bauteil freiform:<name> (oder ersetzen) mit der im Foto gezeichneten Kontur; Quelle = Nutzerzeichnung (Regel 3b)"""
+    O = obj(); shutil.copy(OJ, OJ + ".edit_bak"); ref = [b for b in O["bauteile"] if b.get("achse_n")][0]; typ = "freiform:" + d["name"]
+    b = dict(typ=typ, gruppe="Freiform vom Nutzer gezeichnet: " + d["name"], kontur=[[round(float(x), 3), round(float(z), 3)] for x, z in d["kontur"]], ebene_s=round(float(d["s0"]), 3), ebene_z=round(float(d["z0"]), 3), neigung_grad=round(float(d["neig"]), 2),
+             tiefe=round(float(d["tiefe"]), 3), modus=d.get("modus", "anbau"), achse_n=ref["achse_n"], achse_quelle=ref.get("achse_quelle", ""),
+             quelle="editor_modell.py: Kontur vom Nutzer im Foto %s gezeichnet (%s), auf Ebene s=%.2f z=%.2f Neigung %.1f Grad projiziert; Tiefe %.2f m ist ANNAHME (Foto sieht keine Tiefe)" % (d.get("foto", a.foto), datetime.date.today().isoformat(), float(d["s0"]), float(d["z0"]), float(d["neig"]), float(d["tiefe"])))
+    O["bauteile"] = [x for x in O["bauteile"] if x["typ"] != typ] + [b]; json.dump(O, open(OJ, "w"), indent=1, ensure_ascii=False)
 
 def kontur_speichern(typ, K):
     O = obj(); shutil.copy(OJ, OJ + ".edit_bak")
@@ -132,8 +189,15 @@ class H(BaseHTTPRequestHandler):
         elif u.path == "/api/bild":
             f = q.get("foto", [a.foto])[0]; g = cv2.imread(os.path.join(a.bilder, f), cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION); g = cv2.resize(g, (SW, int(g.shape[0] * SW / g.shape[1])), interpolation=cv2.INTER_AREA)
             self._send(200, "image/jpeg", cv2.imencode(".jpg", g, [cv2.IMWRITE_JPEG_QUALITY, 88])[1].tobytes())
-        elif u.path == "/api/kamera": K = KAM[q.get("foto", [a.foto])[0]]; self._send(200, "application/json", json.dumps(dict(K={k: K[k] for k in ("Rn", "tn", "f", "cx", "cy", "W")}, s=SW / K["W"])).encode())
+        elif u.path == "/api/kamera": K = KAM[q.get("foto", [a.foto])[0]]; self._send(200, "application/json", json.dumps(dict(K={k: K[k] for k in ("Rn", "tn", "f", "cx", "cy", "W", "H") if k in K}, s=SW / K["W"])).encode())
         elif u.path == "/api/kontur": self._send(200, "application/json", json.dumps(kontur_info(q["typ"][0]) or {}).encode())
+        elif u.path == "/3d": self._send(200, "text/html; charset=utf-8", (open(os.path.join(os.path.dirname(HTML), "editor_3d.html"), encoding="utf-8").read() + ('<img src="/api/warte" width=1 height=1>' if "test" in q else "")).encode())
+        elif u.path.startswith("/vendor/"): self._send(200, "application/javascript", open(os.path.join(os.path.dirname(HTML), "vendor", os.path.basename(u.path)), "rb").read())
+        elif u.path == "/api/mesh":
+            typ = q["typ"][0]; b = [x for x in obj()["bauteile"] if x["typ"] == typ][0]
+            with LOCK: E = kanten(b, os.path.getmtime(OJ))
+            self._send(200, "application/octet-stream", MESH.get(typ, b"") if E else b"")
+        elif u.path == "/api/griffe": typ = q["typ"][0]; b = [x for x in obj()["bauteile"] if x["typ"] == typ][0]; self._send(200, "application/json", json.dumps(dict(g=griffe_von(b))).encode())
         elif u.path == "/api/kanten":
             typ = q["typ"][0]; b = [x for x in obj()["bauteile"] if x["typ"] == typ][0]
             with LOCK: E = kanten(b, os.path.getmtime(OJ))
@@ -146,6 +210,17 @@ class H(BaseHTTPRequestHandler):
             with LOCK: E = kanten(b, os.path.getmtime(OJ))
             if not E: return self._send(200, "application/json", json.dumps(dict(fehler="Teil nicht baubar")).encode())
             du, dz, s0, s1 = snap(d.get("foto", a.foto), E, float(d["du"]), float(d["dz"])); self._send(200, "application/json", json.dumps(dict(du=round(du, 3), dz=round(dz, 3), vorher=round(s0, 2), nachher=round(s1, 2))).encode())
+        elif self.path == "/api/bauen":
+            with LOCK:
+                env = dict(os.environ, SCALE="87", OBJ_DIR=os.path.join(R0, "modelle", a.objekt)); t0 = datetime.datetime.now()
+                r = subprocess.run([os.path.expanduser("~/.venvs/rcpark/bin/python"), os.path.join(R0, "tools", "baukasten_gen.py"), a.objekt], env=env, capture_output=True, text=True, cwd=os.path.join(R0, "modelle", a.objekt))
+            self._send(200, "application/json", json.dumps(dict(ok=r.returncode == 0, sek=round((datetime.datetime.now() - t0).total_seconds(), 1), log=(r.stdout + r.stderr)[-400:])).encode())
+        elif self.path == "/api/griff":
+            with LOCK: err = griff_anwenden(d["typ"], d["id"], float(d["u"]), float(d["z"]))
+            self._send(200, "application/json", json.dumps(dict(ok=err is None, fehler=err)).encode())
+        elif self.path == "/api/freiform":
+            with LOCK: freiform_anlegen(d)
+            self._send(200, "application/json", json.dumps(dict(ok=True)).encode())
         elif self.path == "/api/kontur":
             with LOCK: kontur_speichern(d["typ"], d["kontur"])
             self._send(200, "application/json", json.dumps(dict(ok=True)).encode())

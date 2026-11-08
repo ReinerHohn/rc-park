@@ -1,0 +1,50 @@
+<!doctype html><html lang="de"><meta charset="utf-8"><title>Modell 3D-Editor</title>
+<style>body{margin:0;background:#111;color:#ddd;font:14px sans-serif;display:flex;height:100vh}#l{width:270px;padding:8px;overflow:auto;flex:none}#v{flex:1;position:relative;overflow:hidden}canvas{display:block;width:100%;height:100%}#foto{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;display:none;pointer-events:none}
+.t{padding:4px 6px;margin:2px 0;border-radius:4px;background:#222;cursor:pointer}.t.s{outline:2px solid #0f0}button{margin:2px;padding:6px 10px;font-size:14px}#msg{color:#ff0;position:fixed;bottom:0;left:0;width:262px;background:#000;padding:6px;z-index:9;max-height:30vh;overflow:auto}</style>
+<div id=l><b>3D-Editor</b> <a href="/" style="color:#8cf">→ Foto-Editor</a><br>
+<button onclick="bauen()" style="background:#0a0;color:#fff;font-weight:bold">Solid (STL) bauen</button><br><button onclick="blickFoto()">Blick wie Foto</button><button onclick="frei()">Frei drehen</button><br><label><input type=checkbox id=ov onchange="ovUm()"> Foto dahinter</label><br><select id=foto2></select>
+<div id=li></div><div id=msg>Lade …</div><small><b>Bedienung:</b> linke Maustaste drehen, rechte schieben, Rad zoomen. Teil in der Liste oder im Bild anklicken = gewählt (grün). <b>Blaue Kugeln</b> = Parameter-Griffe (ziehen, loslassen: Teil wird neu gebaut, 3D zeigt es sofort). <b>Gelbe Kugeln</b> = Konturpunkte (Fensterreihe/Freiform). Die Änderung wird in objekt.json geschrieben; das Solid entsteht aus diesen Parametern.</small></div>
+<div id=v><img id=foto><canvas id=c></canvas></div>
+<script src="/vendor/three.min.js"></script><script src="/vendor/OrbitControls.js"></script>
+<script>
+window.onerror=(m,u,l)=>{document.getElementById('msg').textContent='JS-FEHLER: '+m+' Zeile '+l};const msg=t=>document.getElementById('msg').textContent=t;async function J(u,o){const r=await fetch(u,o);return r.json()}
+const cv=document.getElementById('c'),V=document.getElementById('v');
+const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true,preserveDrawingBuffer:true});const sc=new THREE.Scene();const cam=new THREE.PerspectiveCamera(40,1,0.1,500);cam.up.set(0,0,1);
+const ctl=new THREE.OrbitControls(cam,cv);sc.add(new THREE.AmbientLight(0xffffff,.55));const dl=new THREE.DirectionalLight(0xffffff,.8);dl.position.set(-30,-60,80);sc.add(dl);
+const grid=new THREE.GridHelper(80,40,0x444444,0x2a2a2a);grid.rotation.x=Math.PI/2;sc.add(grid);
+let teile=[],M={},sel=null,vis={},hand=[],U=[1,0],N=[0,1],kam={},ovOn=false,fotoName=null;
+const farbe=i=>new THREE.Color().setHSL((i*0.137)%1,.45,.55);
+function resize(){const w=V.clientWidth,h=V.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}window.onresize=resize;
+async function meshLaden(k,i){const b=await (await fetch('/api/mesh?typ='+encodeURIComponent(k))).arrayBuffer();if(M[k]&&M[k].o){sc.remove(M[k].o);M[k].o.geometry.dispose()}if(!b.byteLength){M[k]={o:null};return}
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(b),3));g.computeVertexNormals();
+ const mat=new THREE.MeshLambertMaterial({color:farbe(i),side:THREE.DoubleSide,transparent:ovOn,opacity:ovOn?.55:1});const o=new THREE.Mesh(g,mat);o.userData.k=k;o.visible=vis[k]!==false;sc.add(o);M[k]={o,i}}
+function liste(){const d=document.getElementById('li');d.innerHTML='';teile.forEach((k,i)=>{const e=document.createElement('div');e.className='t'+(k==sel?' s':'');e.style.borderLeft='6px solid '+farbe(i).getStyle();e.innerHTML='<input type=checkbox '+(vis[k]!==false?'checked':'')+'> '+k+(M[k]&&!M[k].o?' <small>(nicht baubar)</small>':'');e.onclick=ev=>{if(ev.target.tagName=='INPUT'){vis[k]=ev.target.checked;if(M[k]&&M[k].o)M[k].o.visible=vis[k]}else waehle(k);liste()};d.appendChild(e)})}
+function farben(){for(const k in M)if(M[k].o){M[k].o.material.emissive=new THREE.Color(k==sel?0x113311:0x000000)}}
+async function waehle(k){sel=k;farben();liste();await handleLaden()}
+function clearH(){hand.forEach(h=>sc.remove(h));hand=[]}
+const kug=(x,y,z,col,d)=>{const m=new THREE.Mesh(new THREE.SphereGeometry(.14,14,10),new THREE.MeshBasicMaterial({color:col,depthTest:false}));m.position.set(x,y,z);m.renderOrder=9;m.userData=d;sc.add(m);hand.push(m);return m};
+async function handleLaden(){clearH();if(!sel)return;const g=await J('/api/griffe?typ='+encodeURIComponent(sel));for(const h of(g.g||[]))kug(h.u*U[0]+h.s*N[0],h.u*U[1]+h.s*N[1],h.z,0x00ccff,{art:'griff',h});
+ const kt=await J('/api/kontur?typ='+encodeURIComponent(sel));if(kt.kontur){const al=(kt.neig||0)*Math.PI/180,sa=Math.sin(al),ca=Math.cos(al);kt.mitten.forEach((mu,j)=>kt.kontur.forEach((q,i)=>{const u=mu+q[0],s=kt.s+q[1]*sa,z=kt.z0+q[1]*ca;kug(u*U[0]+s*N[0],u*U[1]+s*N[1],z,0xffee00,{art:'kontur',kt,i,j,mu})}))}}
+// Zeigen/Ziehen
+const ray=new THREE.Raycaster(),mp=new THREE.Vector2();let drag=null,down=null;
+function setMp(ev){const b=cv.getBoundingClientRect();mp.set((ev.clientX-b.left)/b.width*2-1,-(ev.clientY-b.top)/b.height*2+1);ray.setFromCamera(mp,cam)}
+cv.addEventListener('pointerdown',ev=>{setMp(ev);down={x:ev.clientX,y:ev.clientY};const h=ray.intersectObjects(hand,false)[0];if(h&&ev.button==0){drag={o:h.object,d:h.object.userData};ctl.enabled=false;cv.setPointerCapture(ev.pointerId)}});
+cv.addEventListener('pointermove',ev=>{if(!drag)return;setMp(ev);const o=drag.o,d=drag.d;let nrm;if(d.art=='griff'||(d.art=='kontur'&&!(d.kt.neig))){nrm=new THREE.Vector3(N[0],N[1],0)}else{const al=d.kt.neig*Math.PI/180;nrm=new THREE.Vector3(N[0]*Math.cos(al),N[1]*Math.cos(al),-Math.sin(al))}
+ const pl=new THREE.Plane().setFromNormalAndCoplanarPoint(nrm,o.position),p=new THREE.Vector3();if(ray.ray.intersectPlane(pl,p))o.position.copy(p)});
+cv.addEventListener('pointerup',async ev=>{ctl.enabled=true;if(drag){const o=drag.o,d=drag.d;drag=null;const x=o.position.x,y=o.position.y,z=o.position.z,u=x*U[0]+y*U[1];
+  if(d.art=='griff'){msg('Griff übernommen? …');const r=await J('/api/griff',{method:'POST',body:JSON.stringify({typ:sel,id:d.h.id,u,z})});if(!r.ok){msg('Abgelehnt: '+r.fehler)}else msg('Teil neu gebaut – 3D zeigt den neuen Stand.')}
+  else{const al=(d.kt.neig||0)*Math.PI/180,s=x*N[0]+y*N[1],v=(s-d.kt.s)*Math.sin(al)+(z-d.kt.z0)*Math.cos(al);d.kt.kontur[d.i]=[+(u-d.mu).toFixed(3),+v.toFixed(3)];await J('/api/kontur',{method:'POST',body:JSON.stringify({typ:sel,kontur:d.kt.kontur})});msg('Kontur gespeichert, Teil neu gebaut.')}
+  await meshLaden(sel,M[sel]?M[sel].i:0);farben();await handleLaden();return}
+ if(down&&Math.hypot(ev.clientX-down.x,ev.clientY-down.y)<4){setMp(ev);const ms=teile.filter(k=>M[k]&&M[k].o&&M[k].o.visible).map(k=>M[k].o),h=ray.intersectObjects(ms,false)[0];if(h)waehle(h.object.userData.k)}});
+// Kamera
+async function kamLaden(f){const r=await J('/api/kamera?foto='+encodeURIComponent(f));kam={K:r.K,s:r.s,f}}
+function blickFoto(){if(!kam.K)return;const K=kam.K,Rn=K.Rn,t=K.tn;const C=[0,1,2].map(i=>-(Rn[0][i]*t[0]+Rn[1][i]*t[1]+Rn[2][i]*t[2]));const xw=new THREE.Vector3(...Rn[0]),yw=new THREE.Vector3(...Rn[1]),zw=new THREE.Vector3(...Rn[2]);
+ const m=new THREE.Matrix4().makeBasis(xw,yw.clone().negate(),zw.clone().negate());cam.quaternion.setFromRotationMatrix(m);cam.position.set(...C);const H=K.H||2*K.cy;cam.fov=2*Math.atan(H/2/K.f)*180/Math.PI;cam.aspect=K.W/H;cam.updateProjectionMatrix();ctl.target.copy(cam.position).addScaledVector(zw,25);ctl.update();
+ if(document.getElementById('ov').checked)ovUm()}
+async function bauen(){msg('Baue das ganze STL-Solid aus den Parametern … (kann etwas dauern)');const r=await J('/api/bauen',{method:'POST',body:'{}'});msg((r.ok?'Fertig in '+r.sek+' s: modelle/stl/kaufhaus_grob3_1-87.stl\n':'FEHLER:\n')+r.log)}
+function frei(){ctl.target.set(5,10,10);cam.position.set(-5,-40,22);cam.aspect=V.clientWidth/V.clientHeight;cam.fov=40;cam.updateProjectionMatrix();ctl.update();const f=document.getElementById('foto');f.style.display='none';ovOn=false}
+function ovUm(){const on=document.getElementById('ov').checked,f=document.getElementById('foto');ovOn=on;for(const k in M)if(M[k].o){M[k].o.material.transparent=on;M[k].o.material.opacity=on?.55:1;M[k].o.material.needsUpdate=true}if(on&&kam.K){blickFoto();f.src='/api/bild?foto='+encodeURIComponent(kam.f);f.style.display='block';const H=kam.K.H||2*kam.K.cy;R.setSize(V.clientHeight*kam.K.W/H,V.clientHeight,false)}else{f.style.display='none';resize()}}
+function loop(){requestAnimationFrame(loop);ctl.update();R.render(sc,cam)}
+(async()=>{const st=await J('/api/start');U=st.u;const n=await J('/api/kanten?typ='+encodeURIComponent(st.teile[0]));N=n.n;teile=st.teile;const s=document.getElementById('foto2');st.fotos.forEach(f=>{const o=document.createElement('option');o.textContent=f;s.appendChild(o)});s.value=st.foto;s.onchange=async()=>{await kamLaden(s.value)};await kamLaden(st.foto);resize();frei();loop();
+ for(let i=0;i<teile.length;i++){msg('Lade '+teile[i]+' …');vis[teile[i]]=true;await meshLaden(teile[i],i);liste()}setTimeout(()=>{if(location.search.includes('test')||!R.info.render.triangles)msg('DIAG V '+V.clientWidth+'x'+V.clientHeight+' canvas '+cv.width+'x'+cv.height+' rect '+JSON.stringify(cv.getBoundingClientRect())+' tri '+R.info.render.triangles+' gl '+!!R.getContext()+' meshes '+Object.values(M).filter(m=>m.o).length+' cam '+cam.position.toArray().map(v=>v.toFixed(1)));if(location.search.includes('test')){R.render(sc,cam);const c2=document.createElement('canvas');c2.width=cv.width;c2.height=cv.height;c2.style.cssText='position:fixed;left:286px;top:0;width:'+cv.width+'px;height:'+cv.height+'px;z-index:5;background:#111';c2.getContext('2d').drawImage(cv,0,0);document.body.appendChild(c2)}},1500);sel=teile[0];farben();liste();handleLaden()})();
+</script></html>

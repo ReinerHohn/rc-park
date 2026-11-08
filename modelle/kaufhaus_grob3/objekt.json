@@ -3697,12 +3697,12 @@
   {
    "typ": "balkonband:haupt",
    "gruppe": "Balkon/Galerie Hauptfassade",
-   "u_von": -5.256,
-   "u_bis": 12.019,
+   "u_von": -5.327,
+   "u_bis": 11.948,
    "wand_n": 13.439,
    "auskragung": 0.765,
    "unterseite_z": 4.912,
-   "oberseite_z": 11.117,
+   "oberseite_z": 9.548,
    "achse_n": [
     0.3338,
     0.9426
@@ -3712,9 +3712,9 @@
    "werte_quellen": {
     "auskragung": "0.765 +- 0.025 Wolke, balkon_messung.json",
     "unterseite_z": "4.912 +- 0.025 Wolke, balkon_messung.json",
-    "oberseite_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -0.107 m, dz 2.777 m), Kanten-Snap nein",
-    "u_bis": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -0.107 m, dz 2.777 m), Kanten-Snap nein",
-    "u_von": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -0.107 m, dz 2.777 m), Kanten-Snap nein"
+    "oberseite_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -0.071 m, dz 2.852 m), Kanten-Snap nein (Hoehe x0.299)",
+    "u_bis": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -0.071 m, dz 2.852 m), Kanten-Snap nein",
+    "u_von": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -0.071 m, dz 2.852 m), Kanten-Snap nein"
    }
   },
   {
@@ -3745,17 +3745,17 @@
    "typ": "fensterreihe:eg0",
    "gruppe": "Fenster Laube EG 1",
    "n_fenster": 1,
-   "u_mitte": -5.724,
-   "pitch": 3.0,
-   "breite": 1.0,
-   "unterseite_z": 2.2,
-   "kaempfer_z": 3.9,
-   "scheitel_z": 4.25,
+   "u_mitte": 11.709,
+   "pitch": 4.2317,
+   "breite": 1.4106,
+   "unterseite_z": 3.169,
+   "kaempfer_z": 5.469,
+   "scheitel_z": 5.943,
    "wand_n": 9.45,
    "tiefe": 0.12,
    "rahmen_b": 0.07,
    "pfosten_b": 0.05,
-   "riegel_z": 3.1,
+   "riegel_z": 4.387,
    "riegel_h": 0.07,
    "kiel": 0.0,
    "achse_n": [
@@ -3769,24 +3769,30 @@
    "bucht": 0.0,
    "werte_quellen": {
     "bucht": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | Bucht von rechts (0 = rechts), einmal aus alter Arkade bestimmt",
-    "u_mitte": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | ANNAHME: Fenster bleibt in Bucht 1 (von rechts) der Arkade"
+    "u_mitte": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 17.433 m, dz 0.969 m), Kanten-Snap nein (Breite x1.411)",
+    "unterseite_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 17.433 m, dz 0.969 m), Kanten-Snap nein (Hoehe x1.353)",
+    "kaempfer_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 17.433 m, dz 0.969 m), Kanten-Snap nein (Hoehe x1.353)",
+    "scheitel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 17.433 m, dz 0.969 m), Kanten-Snap nein (Hoehe x1.353)",
+    "riegel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 17.433 m, dz 0.969 m), Kanten-Snap nein (Hoehe x1.353)",
+    "pitch": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 17.433 m, dz 0.969 m), Kanten-Snap nein (Breite x1.411)",
+    "breite": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 17.433 m, dz 0.969 m), Kanten-Snap nein (Breite x1.411)"
    }
   },
   {
    "typ": "fensterreihe:eg1",
    "gruppe": "Fenster Laube EG 2",
    "n_fenster": 1,
-   "u_mitte": 0.416,
-   "pitch": 3.0,
-   "breite": 1.0,
-   "unterseite_z": 2.2,
-   "kaempfer_z": 3.9,
-   "scheitel_z": 4.25,
+   "u_mitte": 6.805,
+   "pitch": 3.9876,
+   "breite": 1.3292,
+   "unterseite_z": 3.288,
+   "kaempfer_z": 5.665,
+   "scheitel_z": 6.155,
    "wand_n": 9.45,
    "tiefe": 0.12,
    "rahmen_b": 0.07,
    "pfosten_b": 0.05,
-   "riegel_z": 3.1,
+   "riegel_z": 4.546,
    "riegel_h": 0.07,
    "kiel": 0.0,
    "achse_n": [
@@ -3800,24 +3806,30 @@
    "bucht": 1.0,
    "werte_quellen": {
     "bucht": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | Bucht von rechts (0 = rechts), einmal aus alter Arkade bestimmt",
-    "u_mitte": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | ANNAHME: Fenster bleibt in Bucht 2 (von rechts) der Arkade"
+    "u_mitte": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -5.058 m, dz -0.024 m), Kanten-Snap nein (Breite x1.183)",
+    "unterseite_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -5.058 m, dz -0.024 m), Kanten-Snap nein (Hoehe x1.060)",
+    "kaempfer_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -5.058 m, dz -0.024 m), Kanten-Snap nein (Hoehe x1.060)",
+    "scheitel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -5.058 m, dz -0.024 m), Kanten-Snap nein (Hoehe x1.060)",
+    "riegel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -5.058 m, dz -0.024 m), Kanten-Snap nein (Hoehe x1.060)",
+    "pitch": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -5.058 m, dz -0.024 m), Kanten-Snap nein (Breite x1.183)",
+    "breite": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -5.058 m, dz -0.024 m), Kanten-Snap nein (Breite x1.183)"
    }
   },
   {
    "typ": "fensterreihe:eg2",
    "gruppe": "Fenster Laube EG 3",
    "n_fenster": 1,
-   "u_mitte": 6.556,
-   "pitch": 3.0,
-   "breite": 1.0,
-   "unterseite_z": 2.2,
-   "kaempfer_z": 3.9,
-   "scheitel_z": 4.25,
+   "u_mitte": -5.087,
+   "pitch": 4.167,
+   "breite": 1.389,
+   "unterseite_z": 3.344,
+   "kaempfer_z": 5.76,
+   "scheitel_z": 6.257,
    "wand_n": 9.45,
    "tiefe": 0.12,
    "rahmen_b": 0.07,
    "pfosten_b": 0.05,
-   "riegel_z": 3.1,
+   "riegel_z": 4.623,
    "riegel_h": 0.07,
    "kiel": 0.0,
    "achse_n": [
@@ -3831,7 +3843,13 @@
    "bucht": 2.0,
    "werte_quellen": {
     "bucht": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | Bucht von rechts (0 = rechts), einmal aus alter Arkade bestimmt",
-    "u_mitte": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | ANNAHME: Fenster bleibt in Bucht 3 (von rechts) der Arkade"
+    "u_mitte": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -11.781 m, dz 0.028 m), Kanten-Snap nein",
+    "unterseite_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -11.781 m, dz 0.028 m), Kanten-Snap nein",
+    "kaempfer_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -11.781 m, dz 0.028 m), Kanten-Snap nein",
+    "scheitel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -11.781 m, dz 0.028 m), Kanten-Snap nein",
+    "riegel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -11.781 m, dz 0.028 m), Kanten-Snap nein",
+    "pitch": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 0.138 m, dz 1.116 m), Kanten-Snap nein (Breite x1.389)",
+    "breite": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 0.138 m, dz 1.116 m), Kanten-Snap nein (Breite x1.389)"
    }
   },
   {
@@ -4282,17 +4300,17 @@
     "Z-004-002",
     "Z-043-001"
    ],
-   "u_mitte": -5.938,
-   "pitch": 3.994,
-   "breite": 2.4609,
-   "unterseite_z": 11.753,
-   "kaempfer_z": 13.292,
-   "scheitel_z": 14.889,
+   "u_mitte": -4.324,
+   "pitch": 3.8994,
+   "breite": 2.4026,
+   "unterseite_z": 10.061,
+   "kaempfer_z": 11.836,
+   "scheitel_z": 13.677,
    "wand_n": 12.666,
    "tiefe": 0.3,
    "rahmen_b": 0.0888,
    "pfosten_b": 0.0611,
-   "riegel_z": 12.621,
+   "riegel_z": 11.062,
    "riegel_h": 0.1,
    "kiel": -0.4309,
    "achse_n": [
@@ -4306,17 +4324,17 @@
    "werte_quellen": {
     "glas_d": "ANNAHME Platte statt Bleiverglasung (Wolke sieht Scheibenflaeche)",
     "glas_n": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
-    "u_mitte": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt) | Ausgleich 4 Fenstermitten, Rest 0.07 m (u_mitte = rechtes Fenster)",
-    "pitch": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt)",
-    "breite": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
-    "unterseite_z": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt) | ANNAHME: Fensterform unveraendert, Mitte z auf gemessene Mitte 13.32 (Punkt in Fenstermitte)",
-    "kaempfer_z": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt) | ANNAHME: Fensterform unveraendert, Mitte z auf gemessene Mitte 13.32 (Punkt in Fenstermitte)",
-    "scheitel_z": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt) | ANNAHME: Fensterform unveraendert, Mitte z auf gemessene Mitte 13.32 (Punkt in Fenstermitte)",
+    "u_mitte": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 1.425 m, dz -1.692 m), Kanten-Snap nein (Breite x0.976)",
+    "pitch": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 1.425 m, dz -1.692 m), Kanten-Snap nein (Breite x0.976)",
+    "breite": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 1.425 m, dz -1.692 m), Kanten-Snap nein (Breite x0.976)",
+    "unterseite_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 1.425 m, dz -1.692 m), Kanten-Snap nein (Hoehe x1.153)",
+    "kaempfer_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 1.425 m, dz -1.692 m), Kanten-Snap nein (Hoehe x1.153)",
+    "scheitel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 1.425 m, dz -1.692 m), Kanten-Snap nein (Hoehe x1.153)",
     "wand_n": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt) | Wolkenflaeche (Glas/Wand) n",
     "tiefe": "ANNAHME 0,3 (Fit an Grenze)",
     "rahmen_b": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
     "pfosten_b": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
-    "riegel_z": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt) | ANNAHME: Fensterform unveraendert, Mitte z auf gemessene Mitte 13.32 (Punkt in Fenstermitte)",
+    "riegel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 1.425 m, dz -1.692 m), Kanten-Snap nein (Hoehe x1.153)",
     "kiel": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)"
    }
   }

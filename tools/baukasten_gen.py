@@ -808,6 +808,20 @@ def quader_bt(cfg, ctx):
     beleg("alle", f"Quader ({modus})", cfg["quelle"], u0=u0, u1=u1, n0=n0, n1=n1, z0=z0, z1=z1)
     return ([k], []) if modus != "ausschnitt" else ([], [k])
 
+@bauteil("freiform")
+def freiform_bt(cfg, ctx):
+    """Frei gezeichnete Form (Nutzer im Foto, tools/editor_modell.py): Kontur [[u, v], ...] auf einer Ebene, ausgezogen um 'tiefe' senkrecht zur Ebene (+ = nach aussen, zur Strasse).
+    Ebene: n-Koordinate ebene_s bei Hoehe ebene_z, Neigung neigung_grad (0 = senkrechte Wand, 40 = Dachflaeche nach hinten ansteigend): Punkt (u, v) -> (u, ebene_s + v sin a, ebene_z + v cos a).
+    modus 'anbau' (Standard, Koerper) oder 'ausschnitt' (Aussparung). Pflicht: kontur (>= 3 Punkte), ebene_s, ebene_z, neigung_grad, tiefe, achse_n, achse_quelle, quelle (Regel 3b)."""
+    for k in ("kontur", "ebene_s", "ebene_z", "neigung_grad", "tiefe", "achse_n", "achse_quelle", "quelle"):
+        if cfg.get(k) in (None, ""): sys.exit(f"freiform: '{k}' fehlt (Regel 3b: jedes Mass mit Quelle)")
+    P = np.array(cfg["kontur"], float); s0, z0, al, td = float(cfg["ebene_s"]), float(cfg["ebene_z"]), np.radians(float(cfg["neigung_grad"])), float(cfg["tiefe"])
+    if len(P) < 3 or td < 0.005: sys.exit(f"freiform: unplausibel ({len(P)} Punkte, tiefe {td})")
+    sa, ca = np.sin(al), np.cos(al); poly = ccw(np.c_[-P[:, 0], P[:, 1]])                          # x = -u (damit die Abbildung nach (u,s,z) eigentlich = Drehung bleibt)
+    solid = M.extrude(C([poly]), td).transform([[-1, 0, 0, 0], [0, sa, ca, s0], [0, ca, -sa, z0]]).transform(_uszT(cfg)); modus = cfg.get("modus", "anbau")
+    beleg("alle", f"Freiform {cfg.get('typ', '')} ({modus})", cfg["quelle"], punkte=len(P), ebene_s=s0, ebene_z=z0, neigung_grad=float(cfg["neigung_grad"]), tiefe=td)
+    return ([solid], []) if modus != "ausschnitt" else ([], [solid])
+
 @bauteil("zylinder")
 def zylinder_bt(cfg, ctx):
     """Senkrechter Zylinder/Kegelstumpf (Saeule, Pfeiler, Rundturm) bei (u, n): radius unten, radius_oben (Standard = radius), z0..z1. modus 'anbau'|'ausschnitt'.
