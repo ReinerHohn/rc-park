@@ -1,0 +1,134 @@
+[
+ {
+  "id": "spitze_links",
+  "frage": "Spitze des LINKEN Turmhelms (oberster Punkt)"
+ },
+ {
+  "id": "spitze_rechts",
+  "frage": "Spitze des RECHTEN Turmhelms"
+ },
+ {
+  "id": "turm_links_unten",
+  "frage": "Unterseite des Erkerkastens LINKS (wo der Kasten unten aufhoert, ueber der Arkade)"
+ },
+ {
+  "id": "turm_rechts_unten",
+  "frage": "Unterseite des Erkerkastens RECHTS"
+ },
+ {
+  "id": "bogen1_scheitel",
+  "frage": "Scheitel (hoechster Punkt) des Bogens 1 von LINKS in der Arkade"
+ },
+ {
+  "id": "bogen2_scheitel",
+  "frage": "Scheitel Bogen 2 von links"
+ },
+ {
+  "id": "bogen3_scheitel",
+  "frage": "Scheitel Bogen 3 von links"
+ },
+ {
+  "id": "bogen4_scheitel",
+  "frage": "Scheitel Bogen 4 von links"
+ },
+ {
+  "id": "first_links",
+  "frage": "linkes Ende des Dachfirsts"
+ },
+ {
+  "id": "first_rechts",
+  "frage": "rechtes Ende des Dachfirsts"
+ },
+ {
+  "id": "traufe_links",
+  "frage": "linkes Ende der Dachtraufe (Dachunterkante)"
+ },
+ {
+  "id": "traufe_rechts",
+  "frage": "rechtes Ende der Dachtraufe"
+ },
+ {
+  "id": "boden_mitte",
+  "frage": "Boden vor der Fassade (Pflaster, Mitte)"
+ },
+ {
+  "id": "balkon_links_ende",
+  "frage": "linkes Ende des Balkons / der Bruestung (Obergeschoss, Oberkante)"
+ },
+ {
+  "id": "balkon_rechts_ende",
+  "frage": "rechtes Ende des Balkons / der Bruestung (Oberkante)"
+ },
+ {
+  "id": "fenster_og_1",
+  "frage": "Obergeschoss, Fenster 1 von LINKS: Rechteck um die Glasoeffnung (Modus Rechteck)"
+ },
+ {
+  "id": "fenster_og_2",
+  "frage": "Obergeschoss, Fenster 2 von LINKS: Rechteck um die Glasoeffnung (Modus Rechteck)"
+ },
+ {
+  "id": "fenster_og_3",
+  "frage": "Obergeschoss, Fenster 3 von LINKS: Rechteck um die Glasoeffnung (Modus Rechteck)"
+ },
+ {
+  "id": "fenster_og_4",
+  "frage": "Obergeschoss, Fenster 4 von LINKS: Rechteck um die Glasoeffnung (Modus Rechteck)"
+ },
+ {
+  "id": "fenster_og_5",
+  "frage": "Obergeschoss, Fenster 5 von LINKS: Rechteck um die Glasoeffnung (Modus Rechteck)"
+ },
+ {
+  "id": "fenster_eg_bucht1",
+  "frage": "Erdgeschoss/Arkade: Fenster in Bucht 1 von LINKS (Rechteck um die Oeffnung) - ueberspringen, wenn die Bucht keins hat"
+ },
+ {
+  "id": "fenster_eg_bucht2",
+  "frage": "Erdgeschoss/Arkade: Fenster in Bucht 2 von LINKS (Rechteck um die Oeffnung) - ueberspringen, wenn die Bucht keins hat"
+ },
+ {
+  "id": "fenster_eg_bucht3",
+  "frage": "Erdgeschoss/Arkade: Fenster in Bucht 3 von LINKS (Rechteck um die Oeffnung) - ueberspringen, wenn die Bucht keins hat"
+ },
+ {
+  "id": "fenster_eg_bucht4",
+  "frage": "Erdgeschoss/Arkade: Fenster in Bucht 4 von LINKS (Rechteck um die Oeffnung) - ueberspringen, wenn die Bucht keins hat"
+ },
+ {
+  "id": "dach_ecke_oben_links",
+  "frage": "Dachflaeche: obere LINKE Ecke (First, linkes Ende) - Punkt"
+ },
+ {
+  "id": "dach_ecke_oben_rechts",
+  "frage": "Dachflaeche: obere RECHTE Ecke (First, rechtes Ende) - Punkt"
+ },
+ {
+  "id": "dach_ecke_unten_links",
+  "frage": "Dachflaeche: untere LINKE Ecke (Traufe links, Dachunterkante) - Punkt"
+ },
+ {
+  "id": "dach_ecke_unten_rechts",
+  "frage": "Dachflaeche: untere RECHTE Ecke (Traufe rechts) - Punkt"
+ },
+ {
+  "id": "gaube_unten_1",
+  "frage": "Dachgaube UNTERE Reihe, Nr. 1 von LINKS: Rechteck um die Front der Gaube (Modus Rechteck) - ueberspringen, wenn es sie nicht gibt"
+ },
+ {
+  "id": "gaube_unten_2",
+  "frage": "Dachgaube UNTERE Reihe, Nr. 2 von LINKS: Rechteck um die Front der Gaube (Modus Rechteck) - ueberspringen, wenn es sie nicht gibt"
+ },
+ {
+  "id": "gaube_unten_3",
+  "frage": "Dachgaube UNTERE Reihe, Nr. 3 von LINKS: Rechteck um die Front der Gaube (Modus Rechteck) - ueberspringen, wenn es sie nicht gibt"
+ },
+ {
+  "id": "gaube_oben_1",
+  "frage": "Dachgaube OBERE Reihe, Nr. 1 von LINKS: Rechteck um die Front (Modus Rechteck) - ueberspringen, wenn es sie nicht gibt"
+ },
+ {
+  "id": "gaube_oben_2",
+  "frage": "Dachgaube OBERE Reihe, Nr. 2 von LINKS: Rechteck um die Front (Modus Rechteck) - ueberspringen, wenn es sie nicht gibt"
+ }
+]

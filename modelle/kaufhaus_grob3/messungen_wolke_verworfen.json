@@ -1,0 +1,143 @@
+[
+ {
+  "id": "traufe_rechts",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   1284,
+   357.1333312988281,
+   1296,
+   369.1333312988281
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 45,
+   "xyz": [
+    -2.839,
+    14.735,
+    14.807
+   ],
+   "u": -7.595,
+   "u_p10_p90": [
+    -7.67,
+    -7.48
+   ],
+   "n": 12.943,
+   "z": 14.807,
+   "z_p10_p90": [
+    14.76,
+    14.84
+   ]
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "an_handy_2026-11-06_e_handy_e_10.jpg",
+   "an_handy_2026-11-06_c_handy_c_12.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:10:22",
+  "verworfen": "Punkt u -7,6 / z 14,8 liegt im rechten Erkerhelm, Traufende von vorn vom Erker verdeckt (Nutzerbefund 8.11.)"
+ },
+ {
+  "id": "first_links",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   438,
+   175.13333129882812,
+   450,
+   187.13333129882812
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": 2.5,
+   "punkte": 36,
+   "xyz": [
+    16.262,
+    -0.765,
+    25.725
+   ],
+   "u": 15.568,
+   "u_p10_p90": [
+    15.53,
+    15.62
+   ],
+   "n": 4.703,
+   "z": 25.725,
+   "z_p10_p90": [
+    25.54,
+    25.93
+   ],
+   "kasten": {
+    "u_min": 14.944,
+    "u_max": 15.369,
+    "z_min": 25.693,
+    "z_max": 26.146,
+    "breite": 0.426,
+    "hoehe": 0.454,
+    "n": 4.703
+   }
+  },
+  "gegenproben": [
+   "ip_IMG_6254.jpg",
+   "nu_aca3a5e5-image.jpg",
+   "an_handy_2026-11-06_j_handy_j_13.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:24:57",
+  "verworfen": "z 25,7 m statt ~21,4-22,1 (First laut Fit/LoD2): Wolkenpunkte im Himmel/ueber dem Treppengiebel, 8.11."
+ },
+ {
+  "id": "first_rechts",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   1171,
+   137.13333129882812,
+   1183,
+   149.13333129882812
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": 2.5,
+   "punkte": 49,
+   "xyz": [
+    -6.006,
+    7.359,
+    25.795
+   ],
+   "u": -8.122,
+   "u_p10_p90": [
+    -8.16,
+    -8.09
+   ],
+   "n": 4.923,
+   "z": 25.795,
+   "z_p10_p90": [
+    25.71,
+    25.89
+   ],
+   "kasten": {
+    "u_min": -7.94,
+    "u_max": -7.552,
+    "z_min": 25.787,
+    "z_max": 26.221,
+    "breite": 0.388,
+    "hoehe": 0.434,
+    "n": 4.923
+   }
+  },
+  "gegenproben": [
+   "ip_IMG_6254.jpg",
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "nu_3b35ded5-image.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:27:42",
+  "verworfen": "z 25,8 m statt ~21,4-22,1: gleiche Ursache"
+ }
+]

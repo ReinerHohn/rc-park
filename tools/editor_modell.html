@@ -1,0 +1,28 @@
+<!doctype html><html lang="de"><meta charset="utf-8"><title>Modell-Editor</title>
+<style>body{margin:0;background:#111;color:#ddd;font:14px sans-serif;display:flex;height:100vh}#l{width:270px;padding:8px;overflow:auto;flex:none}#r{flex:1;overflow:auto}canvas{display:block;cursor:move;max-width:none}
+.t{padding:4px 6px;margin:2px 0;border-radius:4px;background:#222;cursor:pointer}.t.s{outline:2px solid #0f0}.t small{color:#999}button{margin:2px;padding:6px 10px;font-size:14px}#msg{color:#ff0;min-height:3em}</style>
+<div id=l><b>Teile</b> <select id=foto></select><div id=li></div><hr>
+<button onclick=snap()>Kanten-Snap</button><button onclick=reset()>Zurücksetzen</button><br><button onclick=speichern() style="background:#0a0;color:#fff">Speichern</button>
+<div id=msg></div><small>Teil in der Liste wählen, dann im Bild ziehen. Pfeiltasten = 2 cm (Shift = 10 cm). Haken = sichtbar. Weiß = gewähltes Teil, rot = Rest.</small></div>
+<div id=r><canvas id=c></canvas></div>
+<script>
+let img=new Image(),K,S=1,U=[1,0],T={},sel=null,off={},vis={},drag=null,foto;
+const c=document.getElementById('c'),g=c.getContext('2d'),msg=t=>document.getElementById('msg').textContent=t;
+async function J(u,o){const r=await fetch(u,o);return r.json()}
+function proj(X,du,dz){const R=K.Rn,t=K.tn,x=X[0]+U[0]*du,y=X[1]+U[1]*du,z=X[2]+dz;const a=R[0][0]*x+R[0][1]*y+R[0][2]*z+t[0],b=R[1][0]*x+R[1][1]*y+R[1][2]*z+t[1],d=R[2][0]*x+R[2][1]*y+R[2][2]*z+t[2];return[(K.f*a/d+K.cx)*S,(K.f*b/d+K.cy)*S,d]}
+function zeichne(){if(!img.width)return;c.width=img.width;c.height=img.height;g.drawImage(img,0,0);for(const k in T){if(!vis[k]||!T[k])continue;const o=off[k]||{du:0,dz:0};g.strokeStyle=k==sel?'#fff':'rgba(255,40,40,.85)';g.lineWidth=k==sel?2:1;g.beginPath();for(const e of T[k]){const p=proj(e.slice(0,3),o.du,o.dz),q=proj(e.slice(3),o.du,o.dz);if(p[2]<.5||q[2]<.5)continue;g.moveTo(p[0],p[1]);g.lineTo(q[0],q[1])}g.stroke()}}
+function liste(){const d=document.getElementById('li');d.innerHTML='';for(const k of Object.keys(vis)){const o=off[k]||{du:0,dz:0},e=document.createElement('div');e.className='t'+(k==sel?' s':'');e.innerHTML='<input type=checkbox '+(vis[k]?'checked':'')+'> '+k+(T[k]===null?' <small>(nicht baubar)</small>':'')+'<br><small>du '+o.du.toFixed(2)+' dz '+o.dz.toFixed(2)+'</small>';e.onclick=ev=>{if(ev.target.tagName=='INPUT'){vis[k]=ev.target.checked}else sel=k;liste();zeichne()};d.appendChild(e)}}
+function zentrum(k){const E=T[k];let s=[0,0,0];for(const e of E){s[0]+=e[0];s[1]+=e[1];s[2]+=e[2]}return s.map(v=>v/E.length)}
+function jac(k){const X=zentrum(k),o=off[k]||{du:0,dz:0},p0=proj(X,o.du,o.dz),pu=proj(X,o.du+.1,o.dz),pz=proj(X,o.du,o.dz+.1);return[[(pu[0]-p0[0])/.1,(pz[0]-p0[0])/.1],[(pu[1]-p0[1])/.1,(pz[1]-p0[1])/.1]]}
+function pos(ev){const b=c.getBoundingClientRect();return[(ev.clientX-b.left)*c.width/b.width,(ev.clientY-b.top)*c.height/b.height]}
+c.onmousedown=ev=>{if(sel&&T[sel])drag={p:pos(ev),J:jac(sel),o:{...(off[sel]||{du:0,dz:0})}}};
+c.onmousemove=ev=>{if(!drag)return;const p=pos(ev),dx=p[0]-drag.p[0],dy=p[1]-drag.p[1],J=drag.J,det=J[0][0]*J[1][1]-J[0][1]*J[1][0];if(Math.abs(det)<1e-6)return;off[sel]={du:drag.o.du+(J[1][1]*dx-J[0][1]*dy)/det,dz:drag.o.dz+(-J[1][0]*dx+J[0][0]*dy)/det};zeichne()};
+window.onmouseup=()=>{if(drag){drag=null;liste()}};
+window.onkeydown=ev=>{if(!sel)return;const s=ev.shiftKey?.1:.02,o=off[sel]=off[sel]||{du:0,dz:0};let h=true;if(ev.key=='ArrowLeft')o.du+=s;else if(ev.key=='ArrowRight')o.du-=s;else if(ev.key=='ArrowUp')o.dz+=s;else if(ev.key=='ArrowDown')o.dz-=s;else h=false;if(h){ev.preventDefault();zeichne();liste()}};
+function reset(){if(sel){off[sel]={du:0,dz:0};zeichne();liste()}}
+async function snap(){if(!sel)return msg('Erst ein Teil wählen.');const o=off[sel]||{du:0,dz:0};msg('Snap läuft …');const r=await J('/api/snap',{method:'POST',body:JSON.stringify({typ:sel,foto,du:o.du,dz:o.dz})});if(r.fehler)return msg(r.fehler);off[sel]={du:r.du,dz:r.dz,snap:true};msg('Snap: mittl. Kantenabstand '+r.vorher+' → '+r.nachher+' px (kleiner = besser). Bitte im Bild prüfen, ob die Kanten wirklich auf den Fotokanten liegen.');zeichne();liste()}
+async function speichern(){const t={};for(const k in off){const o=off[k];if(Math.abs(o.du)>1e-4||Math.abs(o.dz)>1e-4)t[k]=o}if(!Object.keys(t).length)return msg('Nichts verschoben.');const r=await J('/api/speichern',{method:'POST',body:JSON.stringify({teile:t})});msg(r.log.join(' | ')+' — '+r.hinweis);off={}; for(const k in T)delete T[k]; await laden(); }
+async function laden(){const st=await J('/api/start');U=st.u;if(!foto){foto=st.foto;const s=document.getElementById('foto');st.fotos.forEach(n=>{const o=document.createElement('option');o.textContent=n;s.appendChild(o)});s.value=foto;s.onchange=async()=>{foto=s.value;await ladeBild()}}await ladeBild();zeichne();for(const k of st.teile)if(!(k in vis))vis[k]=true;liste();for(const k of st.teile){msg('Lade Kanten '+k+' …');const r=await J('/api/kanten?typ='+encodeURIComponent(k));T[k]=r.kanten;if(!sel&&r.kanten)sel=k;liste();zeichne()}msg('Bereit.')}
+async function ladeBild(){const r=await J('/api/kamera?foto='+foto);K=r.K;S=r.s;await new Promise(res=>{img.onload=res;img.src='/api/bild?foto='+foto})}
+laden();
+</script></html>

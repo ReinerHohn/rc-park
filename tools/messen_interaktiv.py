@@ -16,8 +16,11 @@ STD = [("spitze_links", "Spitze des LINKEN Turmhelms (oberster Punkt)"), ("spitz
        ("turm_rechts_unten", "Unterseite des Erkerkastens RECHTS"), ("bogen1_scheitel", "Scheitel (hoechster Punkt) des Bogens 1 von LINKS in der Arkade"), ("bogen2_scheitel", "Scheitel Bogen 2 von links"),
        ("bogen3_scheitel", "Scheitel Bogen 3 von links"), ("bogen4_scheitel", "Scheitel Bogen 4 von links"), ("first_links", "linkes Ende des Dachfirsts"), ("first_rechts", "rechtes Ende des Dachfirsts"),
        ("traufe_links", "linkes Ende der Dachtraufe (Dachunterkante)"), ("traufe_rechts", "rechtes Ende der Dachtraufe"), ("boden_mitte", "Boden vor der Fassade (Pflaster, Mitte)")]
-LISTE = json.load(open(os.path.join(OD, "messliste.json"))) if os.path.exists(os.path.join(OD, "messliste.json")) else [{"id": i, "frage": q} for i, q in STD]
-ERG = json.load(open(AUS)) if os.path.exists(AUS) else []; LOCK = threading.Lock(); SW = 1613
+def liste_laden():   # bei jedem /start neu: Liste aendern ohne Serverneustart (messliste.json im Objektordner, sonst Standardliste)
+    f = os.path.join(OD, "messliste.json"); return json.load(open(f)) if os.path.exists(f) else [{"id": i, "frage": q} for i, q in STD]
+LISTE = liste_laden()
+def erg_laden(): return json.load(open(AUS)) if os.path.exists(AUS) else []
+ERG = erg_laden(); LOCK = threading.Lock(); SW = 1613
 
 def bild(name, w=None):
     g = cv2.imread(os.path.join(a.bilder, name), cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION)   # roh, wie kalibriert
@@ -47,26 +50,56 @@ def messen(foto, box, pfad=None):
     Q = P[m]; d = z[m]; Q = Q[d <= np.percentile(d, 100 * a.tiefe)]; U = Q[:, :2] @ UAX; N = Q[:, :2] @ nax
     r = dict(box_erweitert=(erw if not pfad and erw > 1 else None), punkte=int(len(Q)), xyz=[round(float(v), 3) for v in np.median(Q, 0)], u=round(float(np.median(U)), 3), u_p10_p90=[round(float(v), 2) for v in np.percentile(U, [10, 90])],
              n=round(float(np.median(N)), 3), z=round(float(np.median(Q[:, 2])), 3), z_p10_p90=[round(float(v), 2) for v in np.percentile(Q[:, 2], [10, 90])])
+    if not pfad and box is not None:   # Maße des Rechtecks auf der Fassadenebene n = Median: Ecken -> Strahl -> Ebene (Fenster/Oeffnungen)
+        Rn_ = np.array(K["Rn"]); C_ = np.array(K["C"], float); nmed = float(np.median(N)); es = []
+        for px, py in ((box[0], box[1]), (box[2], box[1]), (box[0], box[3]), (box[2], box[3])):
+            dc = np.array([(px * S - K["cx"]) / K["f"], (py * S - K["cy"]) / K["f"], 1.0]); dw = Rn_.T @ dc; den = float(dw[:2] @ nax)
+            if abs(den) < 1e-6: continue
+            t_ = (nmed - float(C_[:2] @ nax)) / den; X_ = C_ + t_ * dw; es.append((float(X_[:2] @ UAX), float(X_[2])))
+        if len(es) == 4: us_, zs_ = [e[0] for e in es], [e[1] for e in es]; r["kasten"] = dict(u_min=round(min(us_), 3), u_max=round(max(us_), 3), z_min=round(min(zs_), 3), z_max=round(max(zs_), 3), breite=round(max(us_) - min(us_), 3), hoehe=round(max(zs_) - min(zs_), 3), n=round(nmed, 3))
     if pfad and len(Q) >= 40: r["u_min_max"] = [round(float(U.min()), 2), round(float(U.max()), 2)]; r["z_min_max"] = [round(float(Q[:, 2].min()), 2), round(float(Q[:, 2].max()), 2)]; r["kreis_u_z"] = kreis(U, Q[:, 2])
     return r
 
+def bauteil_warnung(fid, m):
+    """Plausibilitaet gegen bekannte Bauteile: liegt der gemessene Punkt im Erker-Volumen, obwohl das Feature kein Erkermerkmal ist, warnen (Nutzerbefund 8.11.: Traufe rechts im Erkerturm)."""
+    if fid.startswith("spitze") or fid.startswith("turm"): return ""
+    for b in OBJ["bauteile"]:
+        if b["typ"].startswith("erker:") and b.get("aktiv", True):
+            hb = float(b["breite"]) / 2 + 0.3
+            if abs(m["u"] - float(b["mitte_u"])) < hb and float(b["unterkante_z"]) - 0.3 < m["z"] < float(b["spitze_z"]) + 0.3 and abs(m["n"] - float(b["wand_n"])) < float(b["auskragung"]) + 1.5:
+                return "WARNUNG: Punkt liegt im Bereich des Erkers %s (u %.1f..%.1f, z %.1f..%.1f). Ist das wirklich das gefragte Feature? Vermutlich verdeckt der Erker die Stelle - anders markieren oder ueberspringen." % (b["typ"], b["mitte_u"] - hb, b["mitte_u"] + hb, b["unterkante_z"], b["spitze_z"])
+    return ""
+
+def verdeckt(nm, X, tol=1.0, zelle=12, rad=2):
+    """Tiefenpuffer-Sichtbarkeit: ganze (halbierte) Wolke ins Foto nm, Zellen zelle x zelle Pixel (Vollaufloesung) mit minimaler Tiefe; Punkt X gilt als verdeckt, wenn in der Umgebung (+-rad Zellen)
+    etwas mehr als tol Meter naeher an der Kamera liegt (Erker/Glas/Dach). Liefert (verdeckt, Tiefe_naechster)."""
+    K = KAM[nm]; Q = P[::2]; uv, z, ok = projiziere(K, Q); W, H = int(K["W"]), int(K["H"]); gw, gh = W // zelle + 1, H // zelle + 1
+    m = ok & (uv[:, 0] >= 0) & (uv[:, 0] < W) & (uv[:, 1] >= 0) & (uv[:, 1] < H); cx = (uv[m, 0] // zelle).astype(int); cy = (uv[m, 1] // zelle).astype(int)
+    Z = np.full(gw * gh, np.inf, np.float32); np.minimum.at(Z, cy * gw + cx, z[m].astype(np.float32)); Z = Z.reshape(gh, gw)
+    u0, zt, _ = projiziere(K, X[None].astype(np.float32)); tx, ty = int(u0[0, 0] // zelle), int(u0[0, 1] // zelle)
+    nb = Z[max(0, ty - rad):ty + rad + 1, max(0, tx - rad):tx + rad + 1]; zmin = float(nb.min()) if nb.size else np.inf
+    return bool(zmin < float(zt[0]) - tol), zmin
+
 def gegenproben(foto, xyz, k=3):
-    X = np.array([xyz], np.float32); cand = []; Ps = P[::8]; sicht = 0
+    X = np.array([xyz], np.float32); cand = []
     for nm, K in KAM.items():
         if nm == foto: continue
         uv, z, ok = projiziere(K, X)
-        if ok[0] and 0.1 * K["W"] < uv[0, 0] < 0.9 * K["W"] and 0.1 * K["H"] < uv[0, 1] < 0.9 * K["H"] and 4 < z[0] < 80 and os.path.exists(os.path.join(a.bilder, nm)):
-            C = np.array(K["C"], np.float32); ray = X[0] - C; L = float(np.linalg.norm(ray)); r = ray / L; t = (Ps - C) @ r; perp = np.linalg.norm((Ps - C) - t[:, None] * r, axis=1)
-            cand.append((int(((t > 1) & (t < L - 1.5) & (perp < 0.6)).sum()), nm, np.array(K["C"]), uv[0]))   # Sichtlinientest: Punkte VOR dem Ziel = verdeckt
-    frei = [c for c in cand if c[0] <= 4]; hinweis = ""
+        if ok[0] and 0.1 * K["W"] < uv[0, 0] < 0.9 * K["W"] and 0.1 * K["H"] < uv[0, 1] < 0.9 * K["H"] and 8 < z[0] < 80 and os.path.exists(os.path.join(a.bilder, nm)): cand.append((nm, np.array(K["C"]), uv[0]))
     if not cand: return dict(gegen=[], hinweis="Keine Gegenprobe: kein Foto sieht diesen Punkt im Bild (Abstand 4-80 m, Bildrand-Abstand).")
-    if not frei: frei = sorted(cand)[:k * 3]; hinweis = "ACHTUNG: alle %d Fotos mit Blick auf den Punkt sind verdeckt - gezeigte Fotos evtl. verdeckt, Punkt pruefen." % len(cand)
-    cand = [(c[1], c[2], c[3]) for c in frei]
-    pick = [int(np.argmin([-np.linalg.norm(c[1] - np.array(KAM[foto]["C"])) for c in cand]))]
-    while len(pick) < min(k, len(cand)): pick.append(int(np.argmax([min(np.linalg.norm(cand[i][1] - cand[j][1]) for j in pick) for i in range(len(cand))])))
+    # Reihenfolge nach Blickrichtungs-Vielfalt (weit entfernte Kameras zuerst), dann Tiefenpuffer-Test bis k sichtbare gefunden (max. 18 Tests)
+    C0 = np.array(KAM[foto]["C"]); order = [int(np.argmax([np.linalg.norm(c[1] - C0) for c in cand]))]
+    while len(order) < min(len(cand), 18): order.append(int(np.argmax([min(np.linalg.norm(cand[i][1] - cand[j][1]) for j in order) for i in range(len(cand))])))
+    sicht, verd = [], 0
+    for i in order:
+        v, _ = verdeckt(cand[i][0], X[0]); verd += int(v)
+        if not v: sicht.append(cand[i])
+        if len(sicht) >= k: break
+    hinweis = "" if len(sicht) >= k else ("ACHTUNG: nur %d von %d geprueften Fotos sehen den Punkt frei (%d verdeckt) - Punkt liegt vermutlich hinter/in einem Bauteil." % (len(sicht), verd + len(sicht), verd))
+    if not sicht: return dict(gegen=[], hinweis=hinweis or "Alle geprueften Fotos verdeckt.")
     out = []
-    for i in pick:
-        nm, _, uv = cand[i]; g = bild(nm); h = 420; x, y = int(uv[0]), int(uv[1]); c = g[max(0, y - h):y + h, max(0, x - h):x + h].copy(); cx, cy = x - max(0, x - h), y - max(0, y - h)
+    for nm, _, uv in sicht:
+        g = bild(nm); Kc = KAM[nm]; zc = float(projiziere(Kc, X)[1][0]); h = int(np.clip(7.0 * Kc["f"] / zc, 300, 1100)); x, y = int(uv[0]), int(uv[1]); c = g[max(0, y - h):y + h, max(0, x - h):x + h].copy(); cx, cy = x - max(0, x - h), y - max(0, y - h)
         cv2.drawMarker(c, (cx, cy), (0, 0, 255), cv2.MARKER_CROSS, 80, 4); c = cv2.resize(c, (360, int(c.shape[0] * 360 / c.shape[1]))); ok_, jb = cv2.imencode(".jpg", c, [cv2.IMWRITE_JPEG_QUALITY, 80])
         out.append(dict(foto=nm, jpg=base64.b64encode(jb.tobytes()).decode()))
     return dict(gegen=out, hinweis=hinweis)
@@ -112,7 +145,8 @@ class H(BaseHTTPRequestHandler):
         u = urllib.parse.urlparse(self.path)
         if u.path == "/": b = open(HTML_PFAD, encoding="utf-8").read().encode(); self.send_response(200); self.send_header("Content-Type", "text/html; charset=utf-8"); self.send_header("Content-Length", str(len(b))); self.end_headers(); self.wfile.write(b)
         elif u.path == "/start":
-            fo = [n for n in KAM if os.path.exists(os.path.join(a.bilder, n))]; self._j(dict(liste=LISTE, erg={e["id"]: e["mess"] for e in ERG}, fotos=fo, foto=a.foto))
+            ERG[:] = erg_laden()   # Datei ist die Wahrheit (Werkzeuge/Nutzer duerfen Eintraege entfernen)
+            fo = [n for n in KAM if os.path.exists(os.path.join(a.bilder, n))]; self._j(dict(liste=liste_laden(), erg={e["id"]: e["mess"] for e in ERG}, fotos=fo, foto=a.foto))
         elif u.path == "/foto":
             n = urllib.parse.parse_qs(u.query)["n"][0]; ok, jb = cv2.imencode(".jpg", bild(n, SW), [cv2.IMWRITE_JPEG_QUALITY, 88]); b = jb.tobytes()
             self.send_response(200); self.send_header("Content-Type", "image/jpeg"); self.send_header("Content-Length", str(len(b))); self.end_headers(); self.wfile.write(b)
@@ -122,12 +156,12 @@ class H(BaseHTTPRequestHandler):
     def do_POST(self):
         d = json.loads(self.rfile.read(int(self.headers["Content-Length"])));
         if self.path == "/messen":
-            m = messen(d["foto"], d["box"], d.get("pfad")); self._j(dict(ok=False) if m is None else dict(ok=True, mess=m, gegen=[]))
+            m = messen(d["foto"], d["box"], d.get("pfad")); self._j(dict(ok=False) if m is None else dict(ok=True, mess=m, gegen=[], warnung=bauteil_warnung(d.get("id", ""), m)))
         elif self.path == "/gegen":
             self._j(gegenproben(d["foto"], d["xyz"]))
         elif self.path == "/uebernehmen":
             with LOCK:
-                ERG[:] = [e for e in ERG if e["id"] != d["id"]]; ERG.append(dict(id=d["id"], foto=d["foto"], box_px=d["box"], pfad_px=d.get("pfad"), bildbreite=SW, mess=d["mess"], gegenproben=d["gegen"], wolke=os.path.basename(a.wolke),
+                ERG[:] = [e for e in erg_laden() if e["id"] != d["id"]]; ERG.append(dict(id=d["id"], foto=d["foto"], box_px=d["box"], pfad_px=d.get("pfad"), bildbreite=SW, mess=d["mess"], gegenproben=d["gegen"], wolke=os.path.basename(a.wolke),
                     methode="messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (%.0f %%), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt" % (100 * a.tiefe), zeit=datetime.datetime.now().isoformat(timespec="seconds")))
                 json.dump(ERG, open(AUS, "w"), indent=1, ensure_ascii=False)
             self._j(dict(ok=True))

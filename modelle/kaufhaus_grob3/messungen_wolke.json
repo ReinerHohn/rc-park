@@ -315,5 +315,739 @@
   "wolke": "j_voll_lot2_crop.npy",
   "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
   "zeit": "2026-11-08T21:08:45"
+ },
+ {
+  "id": "first_links",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   433,
+   170.13333129882812,
+   445,
+   182.13333129882812
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": 2.5,
+   "punkte": 45,
+   "xyz": [
+    16.39,
+    -0.152,
+    25.601
+   ],
+   "u": 15.496,
+   "u_p10_p90": [
+    15.47,
+    15.54
+   ],
+   "n": 5.328,
+   "z": 25.601,
+   "z_p10_p90": [
+    25.45,
+    25.85
+   ],
+   "kasten": {
+    "u_min": 14.86,
+    "u_max": 15.279,
+    "z_min": 25.455,
+    "z_max": 25.902,
+    "breite": 0.419,
+    "hoehe": 0.447,
+    "n": 5.328
+   }
+  },
+  "gegenproben": [
+   "ip_IMG_6254.jpg",
+   "an_handy_2026-11-06_handy_07.jpg",
+   "ip_IMG_6143.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:33:40"
+ },
+ {
+  "id": "first_rechts",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   1170,
+   132.13333129882812,
+   1182,
+   144.13333129882812
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": 2.5,
+   "punkte": 20,
+   "xyz": [
+    -5.98,
+    7.405,
+    25.819
+   ],
+   "u": -8.102,
+   "u_p10_p90": [
+    -8.13,
+    -8.09
+   ],
+   "n": 4.986,
+   "z": 25.819,
+   "z_p10_p90": [
+    25.74,
+    25.95
+   ],
+   "kasten": {
+    "u_min": -7.906,
+    "u_max": -7.518,
+    "z_min": 25.918,
+    "z_max": 26.353,
+    "breite": 0.388,
+    "hoehe": 0.434,
+    "n": 4.986
+   }
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_q_handy_q_14.jpg",
+   "an_handy_2026-11-06_i_handy_i_04.jpg",
+   "an_handy_2026-11-06_handy_14.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:33:47"
+ },
+ {
+  "id": "traufe_links",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   1275,
+   355.1333312988281,
+   1287,
+   367.1333312988281
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 31,
+   "xyz": [
+    -2.642,
+    14.666,
+    14.818
+   ],
+   "u": -7.384,
+   "u_p10_p90": [
+    -7.47,
+    -7.26
+   ],
+   "n": 12.948,
+   "z": 14.818,
+   "z_p10_p90": [
+    14.8,
+    14.85
+   ],
+   "kasten": {
+    "u_min": -7.518,
+    "u_max": -7.236,
+    "z_min": 14.79,
+    "z_max": 15.083,
+    "breite": 0.282,
+    "hoehe": 0.293,
+    "n": 12.948
+   }
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_c_handy_c_08.jpg",
+   "an_handy_2026-11-06_e_handy_e_09.jpg",
+   "an_handy_2026-11-06_handy_02.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:34:00"
+ },
+ {
+  "id": "boden_mitte",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   780,
+   999.7833404541016,
+   792,
+   1011.7833404541016
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": 1.6,
+   "punkte": 89,
+   "xyz": [
+    7.88,
+    12.434,
+    1.451
+   ],
+   "u": 3.272,
+   "u_p10_p90": [
+    3.14,
+    3.42
+   ],
+   "n": 14.346,
+   "z": 1.451,
+   "z_p10_p90": [
+    1.45,
+    1.46
+   ],
+   "kasten": {
+    "u_min": 3.172,
+    "u_max": 3.396,
+    "z_min": 1.499,
+    "z_max": 1.712,
+    "breite": 0.224,
+    "hoehe": 0.213,
+    "n": 14.346
+   }
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_p_handy_p_16.jpg",
+   "ip_IMG_6142.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:34:30"
+ },
+ {
+  "id": "balkon_links_ende",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   357,
+   657.7833404541016,
+   369,
+   669.7833404541016
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 137,
+   "xyz": [
+    16.037,
+    8.984,
+    8.276
+   ],
+   "u": 12.126,
+   "u_p10_p90": [
+    12.07,
+    12.17
+   ],
+   "n": 13.821,
+   "z": 8.276,
+   "z_p10_p90": [
+    8.21,
+    8.38
+   ],
+   "kasten": {
+    "u_min": 12.068,
+    "u_max": 12.349,
+    "z_min": 8.189,
+    "z_max": 8.448,
+    "breite": 0.281,
+    "hoehe": 0.259,
+    "n": 13.821
+   }
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "an_handy_2026-11-06_handy_05.jpg",
+   "ip_IMG_6115.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:34:43"
+ },
+ {
+  "id": "balkon_rechts_ende",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   1209,
+   637.7833404541016,
+   1221,
+   649.7833404541016
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 406,
+   "xyz": [
+    -0.24,
+    14.748,
+    8.403
+   ],
+   "u": -5.149,
+   "u_p10_p90": [
+    -5.2,
+    -5.1
+   ],
+   "n": 13.817,
+   "z": 8.403,
+   "z_p10_p90": [
+    8.35,
+    8.48
+   ],
+   "kasten": {
+    "u_min": -5.344,
+    "u_max": -5.09,
+    "z_min": 8.343,
+    "z_max": 8.591,
+    "breite": 0.254,
+    "hoehe": 0.248,
+    "n": 13.817
+   }
+  },
+  "gegenproben": [
+   "ip_IMG_6254.jpg",
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "an_handy_2026-11-06_c_handy_c_08.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:34:53"
+ },
+ {
+  "id": "fenster_og_1",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   490,
+   449.78334045410156,
+   502,
+   461.78334045410156
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 90,
+   "xyz": [
+    13.727,
+    8.529,
+    13.269
+   ],
+   "u": 10.091,
+   "u_p10_p90": [
+    9.99,
+    10.19
+   ],
+   "n": 12.619,
+   "z": 13.269,
+   "z_p10_p90": [
+    13.23,
+    13.36
+   ],
+   "kasten": {
+    "u_min": 9.944,
+    "u_max": 10.241,
+    "z_min": 13.204,
+    "z_max": 13.503,
+    "breite": 0.297,
+    "hoehe": 0.299,
+    "n": 12.619
+   }
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "an_handy_2026-11-06_c_handy_c_09.jpg",
+   "ip_IMG_6163.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:35:05"
+ },
+ {
+  "id": "fenster_og_2",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   665,
+   442.78334045410156,
+   677,
+   454.78334045410156
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 112,
+   "xyz": [
+    9.921,
+    9.949,
+    13.299
+   ],
+   "u": 6.01,
+   "u_p10_p90": [
+    5.93,
+    6.12
+   ],
+   "n": 12.689,
+   "z": 13.299,
+   "z_p10_p90": [
+    13.22,
+    13.43
+   ],
+   "kasten": {
+    "u_min": 5.924,
+    "u_max": 6.204,
+    "z_min": 13.233,
+    "z_max": 13.528,
+    "breite": 0.28,
+    "hoehe": 0.296,
+    "n": 12.689
+   }
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "an_handy_2026-11-06_c_handy_c_08.jpg",
+   "an_handy_2026-11-06_q_handy_q_14.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:35:14"
+ },
+ {
+  "id": "fenster_og_3",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   844,
+   433.78334045410156,
+   856,
+   445.78334045410156
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 127,
+   "xyz": [
+    6.097,
+    11.345,
+    13.489
+   ],
+   "u": 1.955,
+   "u_p10_p90": [
+    1.92,
+    2
+   ],
+   "n": 12.728,
+   "z": 13.489,
+   "z_p10_p90": [
+    13.37,
+    13.57
+   ],
+   "kasten": {
+    "u_min": 1.909,
+    "u_max": 2.178,
+    "z_min": 13.318,
+    "z_max": 13.611,
+    "breite": 0.269,
+    "hoehe": 0.293,
+    "n": 12.728
+   }
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "an_handy_2026-11-06_c_handy_c_08.jpg",
+   "an_handy_2026-11-06_q_handy_q_14.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:35:21"
+ },
+ {
+  "id": "fenster_og_4",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   1022,
+   436.78334045410156,
+   1034,
+   448.78334045410156
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 48,
+   "xyz": [
+    2.492,
+    12.531,
+    13.226
+   ],
+   "u": -1.87,
+   "u_p10_p90": [
+    -1.97,
+    -1.77
+   ],
+   "n": 12.629,
+   "z": 13.226,
+   "z_p10_p90": [
+    13.19,
+    13.28
+   ],
+   "kasten": {
+    "u_min": -2.012,
+    "u_max": -1.737,
+    "z_min": 13.175,
+    "z_max": 13.465,
+    "breite": 0.274,
+    "hoehe": 0.29,
+    "n": 12.629
+   }
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "an_handy_2026-11-06_c_handy_c_08.jpg",
+   "an_handy_2026-11-06_q_handy_q_14.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:35:28"
+ },
+ {
+  "id": "fenster_og_5",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   1214,
+   425.78334045410156,
+   1226,
+   437.78334045410156
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 18,
+   "xyz": [
+    -1.489,
+    13.943,
+    13.352
+   ],
+   "u": -6.057,
+   "u_p10_p90": [
+    -6.13,
+    -5.97
+   ],
+   "n": 12.634,
+   "z": 13.352,
+   "z_p10_p90": [
+    13.33,
+    13.42
+   ],
+   "kasten": {
+    "u_min": -6.169,
+    "u_max": -5.89,
+    "z_min": 13.311,
+    "z_max": 13.599,
+    "breite": 0.279,
+    "hoehe": 0.288,
+    "n": 12.634
+   }
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_c_handy_c_08.jpg",
+   "an_handy_2026-11-06_e_handy_e_09.jpg",
+   "an_handy_2026-11-06_q_handy_q_14.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:35:34"
+ },
+ {
+  "id": "fenster_eg_bucht1",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   472,
+   910.7833404541016,
+   484,
+   922.7833404541016
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 353,
+   "xyz": [
+    13.411,
+    8.369,
+    3.221
+   ],
+   "u": 9.847,
+   "u_p10_p90": [
+    9.77,
+    9.89
+   ],
+   "n": 12.364,
+   "z": 3.221,
+   "z_p10_p90": [
+    3.11,
+    3.31
+   ],
+   "kasten": {
+    "u_min": 9.768,
+    "u_max": 10.04,
+    "z_min": 3.086,
+    "z_max": 3.329,
+    "breite": 0.272,
+    "hoehe": 0.242,
+    "n": 12.364
+   }
+  },
+  "gegenproben": [
+   "ip_IMG_6254.jpg",
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "ns_8fa3c7ec-image.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:35:49"
+ },
+ {
+  "id": "fenster_eg_bucht2",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   684,
+   778.7833404541016,
+   696,
+   790.7833404541016
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": 1.6,
+   "punkte": 35,
+   "xyz": [
+    8.3,
+    4.75,
+    6.311
+   ],
+   "u": 6.24,
+   "u_p10_p90": [
+    6.19,
+    6.51
+   ],
+   "n": 7.263,
+   "z": 6.311,
+   "z_p10_p90": [
+    6.22,
+    6.33
+   ],
+   "kasten": {
+    "u_min": 6.205,
+    "u_max": 6.519,
+    "z_min": 6.295,
+    "z_max": 6.6,
+    "breite": 0.314,
+    "hoehe": 0.305,
+    "n": 7.263
+   }
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_d_handy_d_17.jpg",
+   "an_handy_2026-11-06_c_handy_c_13.jpg",
+   "an_handy_2026-11-06_c_handy_c_11.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:36:03"
+ },
+ {
+  "id": "fenster_eg_bucht3",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   940,
+   802.7833404541016,
+   952,
+   814.7833404541016
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": 2.5,
+   "punkte": 45,
+   "xyz": [
+    1.99,
+    6.86,
+    6.129
+   ],
+   "u": -0.419,
+   "u_p10_p90": [
+    -0.45,
+    -0.35
+   ],
+   "n": 7.133,
+   "z": 6.129,
+   "z_p10_p90": [
+    6.03,
+    6.17
+   ],
+   "kasten": {
+    "u_min": -0.236,
+    "u_max": 0.07,
+    "z_min": 5.666,
+    "z_max": 5.964,
+    "breite": 0.307,
+    "hoehe": 0.298,
+    "n": 7.133
+   }
+  },
+  "gegenproben": [
+   "ip_IMG_6210.jpg",
+   "an_handy_2026-11-06_handy_13.jpg",
+   "ip_IMG_6256.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:36:12"
+ },
+ {
+  "id": "fenster_eg_bucht4",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   1198,
+   781.7833404541016,
+   1210,
+   793.7833404541016
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 32,
+   "xyz": [
+    -3.539,
+    9.057,
+    6.219
+   ],
+   "u": -6.361,
+   "u_p10_p90": [
+    -6.44,
+    -6.31
+   ],
+   "n": 7.35,
+   "z": 6.219,
+   "z_p10_p90": [
+    6.15,
+    6.29
+   ],
+   "kasten": {
+    "u_min": -6.541,
+    "u_max": -6.229,
+    "z_min": 6.119,
+    "z_max": 6.414,
+    "breite": 0.312,
+    "hoehe": 0.295,
+    "n": 7.35
+   }
+  },
+  "gegenproben": [
+   "ip_IMG_6209.jpg",
+   "an_handy_2026-11-06_handy_13.jpg",
+   "an_handy_2026-11-06_handy_03.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:36:21"
  }
 ]

@@ -588,6 +588,11 @@ def stl_teil(cfg, ctx):
     else: lo, hi = P.min(0), P.max(0); A = np.array([(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, lo[2]])
     d = P - A; c_n = d[:, :2] @ n_; c_u = d[:, :2] @ u_
     c_n, c_u, c_z = c_n * sn + dn, c_u * su + du, d[:, 2] * sz + dz
+    rl, gi = float(cfg.get("roll_grad", 0.0)), float(cfg.get("gier_grad", 0.0))      # Drehung NACH Skalierung/Verschiebung (tools/editor_modell.py): roll = in der Fassadenebene (u,z), gier = um die Senkrechte (n,u); Pivot rot_pivot = [n,u,z] im Ankerrahmen
+    if rl or gi:
+        pn, pu, pz = (float(v) for v in cfg["rot_pivot"]); rot = lambda a_, b_, w: (np.cos(np.radians(w)) * a_ - np.sin(np.radians(w)) * b_, np.sin(np.radians(w)) * a_ + np.cos(np.radians(w)) * b_)
+        if rl: c_u, c_z = (v + q for v, q in zip(rot(c_u - pu, c_z - pz, rl), (pu, pz)))
+        if gi: c_n, c_u = (v + q for v, q in zip(rot(c_n - pn, c_u - pu, gi), (pn, pu)))
     Q = np.c_[A[0] + c_n * n_[0] + c_u * u_[0], A[1] + c_n * n_[1] + c_u * u_[1], A[2] + c_z]
     ctx.setdefault("roh", []).append(Q.reshape(-1, 3, 3))
     i0 = 0

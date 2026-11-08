@@ -3438,17 +3438,17 @@
     "Z-004-003",
     "Z-004-001"
    ],
-   "u0": -9.0188,
-   "pitch": 4.3832,
+   "u0": -8.794,
+   "pitch": 6.14,
    "pfeiler_breite": 1.0907,
    "pfeiler_tiefe": 0.6369,
    "pfeiler_n": 12.945,
    "pfeiler_form": "rund",
-   "boden_z": 1.7844,
-   "kaempfer_z": 2.8318,
-   "scheitel_z": 4.5548,
+   "boden_z": 1.453,
+   "kaempfer_z": 3.641,
+   "scheitel_z": 7.241,
    "oeffnung_breite": 3.4689,
-   "oberkante_z": 4.6512,
+   "oberkante_z": 7.443,
    "laibung_tiefe": 0.776,
    "achse_n": [
     0.3338,
@@ -3457,17 +3457,17 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Wolke wolke_netzrahmen.npy (Netzrahmen) per tools/wolke_bogenreihe_messen.py (Messung 8.11., modelle/kaufhaus_grob/bogenreihe_messung.json); Anzahl Boegen am Foto: Z-004-003 (4 Scheitel), Z-004-001",
    "werte_quellen": {
-    "u0": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
-    "pitch": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
+    "u0": "messungen_wolke.json bogen1_scheitel,bogen2_scheitel,bogen3_scheitel,bogen4_scheitel (Wolke, Gegenproben bestaetigt) | Ausgleich 4 Boegen, Rest 0.02 m",
+    "pitch": "messungen_wolke.json bogen1_scheitel,bogen2_scheitel,bogen3_scheitel,bogen4_scheitel (Wolke, Gegenproben bestaetigt)",
     "pfeiler_breite": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
     "pfeiler_tiefe": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
     "pfeiler_n": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
-    "kaempfer_z": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
-    "scheitel_z": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
+    "kaempfer_z": "messungen_wolke.json bogen1_scheitel,bogen2_scheitel,bogen3_scheitel,bogen4_scheitel (Wolke, Gegenproben bestaetigt) | ANNAHME: relative Lage zwischen Boden und Scheitel beibehalten",
+    "scheitel_z": "messungen_wolke.json bogen1_scheitel,bogen2_scheitel,bogen3_scheitel,bogen4_scheitel (Wolke, Gegenproben bestaetigt)",
     "oeffnung_breite": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
-    "oberkante_z": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
+    "oberkante_z": "messungen_wolke.json bogen1_scheitel,bogen2_scheitel,bogen3_scheitel,bogen4_scheitel (Wolke, Gegenproben bestaetigt) | ANNAHME: relative Lage zwischen Boden und Scheitel beibehalten",
     "laibung_tiefe": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
-    "boden_z": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
+    "boden_z": "messungen_wolke.json boden_mitte (Wolke, Gegenproben bestaetigt)",
     "sockel_weite": "ANNAHME Startwert aus Nutzerfotos 8.11. (Oktogon ~1,4x Schaftdurchmesser); Feinwert per Wolkenfit",
     "sockel_hoehe": "ANNAHME Startwert Nutzerfotos",
     "fase_hoehe": "ANNAHME Startwert Nutzerfotos"
@@ -3576,13 +3576,13 @@
   {
    "typ": "erker:0",
    "gruppe": "Erker 1",
-   "mitte_u": -8.4154,
+   "mitte_u": -8.626,
    "breite": 2.6561,
    "wand_n": 13.1207,
    "auskragung": 0.6511,
-   "unterkante_z": 5.2876,
+   "unterkante_z": 7.558,
    "oberkante_z": 10.9368,
-   "spitze_z": 12.2191,
+   "spitze_z": 21.373,
    "dachprofil": [
     {
      "t": 0.101,
@@ -3627,25 +3627,25 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Wolke wolke_netzrahmen.npy per tools/wolke_erker_messen.py -> modelle/kaufhaus_grob/erker_messung.json (Erker 0); Anzahl 2: Foto Z-043-002",
    "werte_quellen": {
-    "mitte_u": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "mitte_u": "messungen_wolke.json spitze_rechts,turm_rechts_unten (Wolke, Gegenproben bestaetigt)",
     "breite": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "auskragung": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "unterkante_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "unterkante_z": "messungen_wolke.json turm_rechts_unten (Wolke, Gegenproben bestaetigt)",
     "oberkante_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "spitze_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "spitze_z": "messungen_wolke.json spitze_rechts (Wolke, Gegenproben bestaetigt)",
     "wand_n": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen"
    }
   },
   {
    "typ": "erker:1",
    "gruppe": "Erker 2",
-   "mitte_u": 9.0127,
+   "mitte_u": 15.721,
    "breite": 2.7524,
    "wand_n": 12.8285,
    "auskragung": 0.9523,
-   "unterkante_z": 3.6139,
+   "unterkante_z": 7.717,
    "oberkante_z": 9.5363,
-   "spitze_z": 11.8377,
+   "spitze_z": 21.386,
    "dachprofil": [
     {
      "t": 0.04,
@@ -3680,24 +3680,24 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Wolke wolke_netzrahmen.npy per tools/wolke_erker_messen.py -> modelle/kaufhaus_grob/erker_messung.json (Erker 1); Anzahl 2: Foto Z-043-002",
    "werte_quellen": {
-    "mitte_u": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "mitte_u": "messungen_wolke.json spitze_links,turm_links_unten (Wolke, Gegenproben bestaetigt)",
     "breite": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "auskragung": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "unterkante_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "unterkante_z": "messungen_wolke.json turm_links_unten (Wolke, Gegenproben bestaetigt)",
     "oberkante_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "spitze_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "spitze_z": "messungen_wolke.json spitze_links (Wolke, Gegenproben bestaetigt)",
     "wand_n": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen"
    }
   },
   {
    "typ": "balkonband:haupt",
    "gruppe": "Balkon/Galerie Hauptfassade",
-   "u_von": -6.424,
-   "u_bis": 5.736,
+   "u_von": -5.149,
+   "u_bis": 12.126,
    "wand_n": 13.439,
    "auskragung": 0.765,
    "unterseite_z": 4.912,
-   "oberseite_z": 6.47,
+   "oberseite_z": 8.34,
    "achse_n": [
     0.3338,
     0.9426
@@ -3707,14 +3707,16 @@
    "werte_quellen": {
     "auskragung": "0.765 +- 0.025 Wolke, balkon_messung.json",
     "unterseite_z": "4.912 +- 0.025 Wolke, balkon_messung.json",
-    "oberseite_z": "6.47 +- 0.025 Wolke, balkon_messung.json"
+    "oberseite_z": "messungen_wolke.json balkon_links_ende,balkon_rechts_ende (Wolke, Gegenproben bestaetigt) | Oberkante Bruestung",
+    "u_bis": "messungen_wolke.json balkon_links_ende,balkon_rechts_ende (Wolke, Gegenproben bestaetigt)",
+    "u_von": "messungen_wolke.json balkon_links_ende,balkon_rechts_ende (Wolke, Gegenproben bestaetigt)"
    }
   },
   {
    "typ": "quader:laube_rueck",
    "gruppe": "Laubenrueckwand",
-   "u0": -10.3,
-   "u1": 4.2,
+   "u0": -9.339,
+   "u1": 16.311,
    "n0": 9.0,
    "n1": 9.45,
    "z0": 1.5,
@@ -3729,14 +3731,16 @@
    "aktiv": true,
    "werte_quellen": {
     "n0": "Wolke Schnitt z 3: Rueckwandflaeche n 9,45",
-    "n1": "Wolke Schnitt z 3: Rueckwandflaeche n 9,45"
+    "n1": "Wolke Schnitt z 3: Rueckwandflaeche n 9,45",
+    "u0": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | ANNAHME: Rueckwand spannt die Arkade (aus Bogenreihe u0/pitch)",
+    "u1": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | ANNAHME: Rueckwand spannt die Arkade"
    }
   },
   {
    "typ": "fensterreihe:eg0",
    "gruppe": "Fenster Laube EG 1",
    "n_fenster": 1,
-   "u_mitte": -6.6,
+   "u_mitte": -5.724,
    "pitch": 3.0,
    "breite": 1.0,
    "unterseite_z": 2.2,
@@ -3756,13 +3760,18 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "ANNAHME: je 1 Fenster (2x2 Scheiben) im 1., 2. und 3. Bogen laut 5 Fassadenfotos 8.11. (Zaehlprotokoll Z-* steht aus, Regel 9); u: Bogen 1 aus Wolkenfragment u -7..-6,2, Bogen 2/3 aus Bogenmitte +-Foto, +-0,5 m unsicher; Wand n 9,45 aus Wolkenschnitt z 3",
    "glas_d": 0.05,
-   "glas_n": 0.03
+   "glas_n": 0.03,
+   "bucht": 0.0,
+   "werte_quellen": {
+    "bucht": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | Bucht von rechts (0 = rechts), einmal aus alter Arkade bestimmt",
+    "u_mitte": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | ANNAHME: Fenster bleibt in Bucht 1 (von rechts) der Arkade"
+   }
   },
   {
    "typ": "fensterreihe:eg1",
    "gruppe": "Fenster Laube EG 2",
    "n_fenster": 1,
-   "u_mitte": -3.8,
+   "u_mitte": 0.416,
    "pitch": 3.0,
    "breite": 1.0,
    "unterseite_z": 2.2,
@@ -3782,13 +3791,18 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "ANNAHME: je 1 Fenster (2x2 Scheiben) im 1., 2. und 3. Bogen laut 5 Fassadenfotos 8.11. (Zaehlprotokoll Z-* steht aus, Regel 9); u: Bogen 1 aus Wolkenfragment u -7..-6,2, Bogen 2/3 aus Bogenmitte +-Foto, +-0,5 m unsicher; Wand n 9,45 aus Wolkenschnitt z 3",
    "glas_d": 0.05,
-   "glas_n": 0.03
+   "glas_n": 0.03,
+   "bucht": 1.0,
+   "werte_quellen": {
+    "bucht": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | Bucht von rechts (0 = rechts), einmal aus alter Arkade bestimmt",
+    "u_mitte": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | ANNAHME: Fenster bleibt in Bucht 2 (von rechts) der Arkade"
+   }
   },
   {
    "typ": "fensterreihe:eg2",
    "gruppe": "Fenster Laube EG 3",
    "n_fenster": 1,
-   "u_mitte": 3.1,
+   "u_mitte": 6.556,
    "pitch": 3.0,
    "breite": 1.0,
    "unterseite_z": 2.2,
@@ -3808,7 +3822,12 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "ANNAHME: je 1 Fenster (2x2 Scheiben) im 1., 2. und 3. Bogen laut 5 Fassadenfotos 8.11. (Zaehlprotokoll Z-* steht aus, Regel 9); u: Bogen 1 aus Wolkenfragment u -7..-6,2, Bogen 2/3 aus Bogenmitte +-Foto, +-0,5 m unsicher; Wand n 9,45 aus Wolkenschnitt z 3",
    "glas_d": 0.05,
-   "glas_n": 0.03
+   "glas_n": 0.03,
+   "bucht": 2.0,
+   "werte_quellen": {
+    "bucht": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | Bucht von rechts (0 = rechts), einmal aus alter Arkade bestimmt",
+    "u_mitte": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | ANNAHME: Fenster bleibt in Bucht 3 (von rechts) der Arkade"
+   }
   },
   {
    "typ": "stl_teil:figuren",
@@ -3849,8 +3868,8 @@
    "gruppe": "Dach Hauptbau",
    "u0": -6.4575,
    "u1": 10.7569,
-   "n_traufe_v": 12.5976,
-   "z_traufe_v": 14.7965,
+   "n_traufe_v": 12.948,
+   "z_traufe_v": 14.818,
    "n_first": 7.3537,
    "z_first": 21.5865,
    "n_traufe_h": 6.6324,
@@ -3869,8 +3888,8 @@
     "ziegel_abstand": "ANNAHME Startwert; Foto-Kantenabstand und Foto-Diff stimmen ab",
     "u0": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "u1": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "n_traufe_v": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "z_traufe_v": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "n_traufe_v": "messungen_wolke.json traufe_links (Wolke, Gegenproben bestaetigt)",
+    "z_traufe_v": "messungen_wolke.json traufe_links (Wolke, Gegenproben bestaetigt)",
     "n_first": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "z_first": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "n_traufe_h": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
@@ -4019,11 +4038,11 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Lage/Hoehe/Drehung/Massstab: T3d.json = GPU-Distanzfeld+Chamfer-Ausrichtung des alten Generators (kaufhaus_measured.glb) an die Fotowolke (BS51d, Skala 0.94, yaw 160 Grad); Teilform: alter Hand-Generator (ANNAHME: nach Fotos/Plan von Hand, nicht neu gemessen)",
    "dn": -1.3617,
-   "du": 1.2459,
-   "dz": -0.4372,
+   "du": 1.595,
+   "dz": 2.758,
    "sn": 1.0,
    "su": 1.0,
-   "sz": 1.0758,
+   "sz": 1.197,
    "teil_quellen": {
     "g_helm.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_helm.stl",
     "g_helm_rot.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_helm_rot.stl",
@@ -4034,9 +4053,9 @@
    "hinweis": "aus stl_teil:helme nach Seite getrennt 8.11., damit jeder Helm eigene Lage bekommt (Fit)",
    "werte_quellen": {
     "dn": "param_wolke_fit.py (CMA-ES, weite Grenzen +-2,5 m) gegen wolke_netzrahmen.npy, Median 0.147->0.142",
-    "du": "param_wolke_fit.py (CMA-ES, weite Grenzen +-2,5 m) gegen wolke_netzrahmen.npy, Median 0.147->0.142",
-    "dz": "param_wolke_fit.py (CMA-ES, weite Grenzen +-2,5 m) gegen wolke_netzrahmen.npy, Median 0.147->0.142",
-    "sz": "param_wolke_fit.py (CMA-ES, weite Grenzen +-2,5 m) gegen wolke_netzrahmen.npy, Median 0.147->0.142"
+    "du": "messungen_wolke.json spitze_rechts (Wolke, Gegenproben bestaetigt) | Helmspitze (u -8.67) auf gemessene Spitze spitze_rechts",
+    "dz": "messungen_wolke.json spitze_rechts,turm_rechts_unten (Wolke, Gegenproben bestaetigt) | Unterkante auf Messung",
+    "sz": "messungen_wolke.json spitze_rechts,turm_rechts_unten (Wolke, Gegenproben bestaetigt) | Spitze z 21.37, Unterkante z 7.56"
    }
   },
   {
@@ -4055,11 +4074,11 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Lage/Hoehe/Drehung/Massstab: T3d.json = GPU-Distanzfeld+Chamfer-Ausrichtung des alten Generators (kaufhaus_measured.glb) an die Fotowolke (BS51d, Skala 0.94, yaw 160 Grad); Teilform: alter Hand-Generator (ANNAHME: nach Fotos/Plan von Hand, nicht neu gemessen)",
    "dn": -1.0596,
-   "du": -0.8601,
-   "dz": -0.5717,
+   "du": 6.143,
+   "dz": 2.917,
    "sn": 1.0,
    "su": 1.0,
-   "sz": 1.0795,
+   "sz": 1.184,
    "teil_quellen": {
     "g_helm.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_helm.stl",
     "g_helm_rot.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_helm_rot.stl",
@@ -4070,9 +4089,9 @@
    "hinweis": "aus stl_teil:helme nach Seite getrennt 8.11., damit jeder Helm eigene Lage bekommt (Fit)",
    "werte_quellen": {
     "dn": "param_wolke_fit.py (CMA-ES, weite Grenzen +-2,5 m) gegen wolke_netzrahmen.npy, Median 0.147->0.144",
-    "du": "param_wolke_fit.py (CMA-ES, weite Grenzen +-2,5 m) gegen wolke_netzrahmen.npy, Median 0.147->0.144",
-    "dz": "param_wolke_fit.py (CMA-ES, weite Grenzen +-2,5 m) gegen wolke_netzrahmen.npy, Median 0.147->0.144",
-    "sz": "param_wolke_fit.py (CMA-ES, weite Grenzen +-2,5 m) gegen wolke_netzrahmen.npy, Median 0.147->0.144"
+    "du": "messungen_wolke.json spitze_links (Wolke, Gegenproben bestaetigt) | Helmspitze (u 15.58) auf gemessene Spitze spitze_links",
+    "dz": "messungen_wolke.json spitze_links,turm_links_unten (Wolke, Gegenproben bestaetigt) | Unterkante auf Messung",
+    "sz": "messungen_wolke.json spitze_links,turm_links_unten (Wolke, Gegenproben bestaetigt) | Spitze z 21.39, Unterkante z 7.72"
    }
   },
   {
@@ -4258,17 +4277,17 @@
     "Z-004-002",
     "Z-043-001"
    ],
-   "u_mitte": -6.8042,
-   "pitch": 3.1694,
+   "u_mitte": -5.938,
+   "pitch": 3.994,
    "breite": 2.4609,
-   "unterseite_z": 7.0219,
-   "kaempfer_z": 8.561,
-   "scheitel_z": 10.1584,
-   "wand_n": 13.2508,
+   "unterseite_z": 11.753,
+   "kaempfer_z": 13.292,
+   "scheitel_z": 14.889,
+   "wand_n": 12.666,
    "tiefe": 0.3,
    "rahmen_b": 0.0888,
    "pfosten_b": 0.0611,
-   "riegel_z": 7.8905,
+   "riegel_z": 12.621,
    "riegel_h": 0.1,
    "kiel": -0.4309,
    "achse_n": [
@@ -4282,17 +4301,17 @@
    "werte_quellen": {
     "glas_d": "ANNAHME Platte statt Bleiverglasung (Wolke sieht Scheibenflaeche)",
     "glas_n": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
-    "u_mitte": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
-    "pitch": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
+    "u_mitte": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt) | Ausgleich 4 Fenstermitten, Rest 0.07 m (u_mitte = rechtes Fenster)",
+    "pitch": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt)",
     "breite": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
-    "unterseite_z": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
-    "kaempfer_z": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
-    "scheitel_z": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
-    "wand_n": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
+    "unterseite_z": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt) | ANNAHME: Fensterform unveraendert, Mitte z auf gemessene Mitte 13.32 (Punkt in Fenstermitte)",
+    "kaempfer_z": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt) | ANNAHME: Fensterform unveraendert, Mitte z auf gemessene Mitte 13.32 (Punkt in Fenstermitte)",
+    "scheitel_z": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt) | ANNAHME: Fensterform unveraendert, Mitte z auf gemessene Mitte 13.32 (Punkt in Fenstermitte)",
+    "wand_n": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt) | Wolkenflaeche (Glas/Wand) n",
     "tiefe": "ANNAHME 0,3 (Fit an Grenze)",
     "rahmen_b": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
     "pfosten_b": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
-    "riegel_z": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
+    "riegel_z": "messungen_wolke.json fenster_og_1,fenster_og_2,fenster_og_3,fenster_og_4 (Wolke, Gegenproben bestaetigt) | ANNAHME: Fensterform unveraendert, Mitte z auf gemessene Mitte 13.32 (Punkt in Fenstermitte)",
     "kiel": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)"
    }
   }
