@@ -605,7 +605,48 @@ def fotokanten_ref(d, stuetz=0.25, minl_m=0.25, nref=1):
             if abs(ang - ziel) < 2.0:
                 r_ = np.radians(ziel); l[0], l[1], l[2], l[3] = mx_ - h * np.cos(r_), my_ - h * np.sin(r_), mx_ + h * np.cos(r_), my_ + h * np.sin(r_); break
     keep = [l for l in keep if np.hypot(l[2] - l[0], l[3] - l[1]) >= 0.3 / px]
+    d["ref"] = keep; d["roh"] = [l for l in out]
     return dict(linien=keep, fotos=len(fl), referenz=ref, methode="ref")
+
+def vergleich_heldout(d, mengen, anz=14, tol=2.5):
+    """Fairer Vergleich von Linienmengen (Name -> Liste [x1,y1,x2,y2,..] in Ortho-Pixeln) an Fotos, die NICHT in Referenz/Abstimmung (cos >= 0,8) vorkamen (0,5 <= cos < 0,8).
+    Praezision = Anteil der Linienpunkte (3D auf der Ebene, Tiefe 0) mit Canny-Kante <= tol px im Foto; Zufallsbasis = Linien um (41,27) px versetzt; Recall = Anteil der Canny-Pixel im Ortho-Bereich, die
+    <= tol px an einer projizierten Linie liegen; F = harmonisches Mittel; Gewinn = F - F(Zufall). Gleiche Fotos und Region fuer alle Mengen."""
+    U_ = uax(); n_ = np.array(obj()["fassade_n"]["wert"], float); n_ = n_[:2] / np.linalg.norm(n_[:2]); al = np.radians(d["neig"]); sn, cn = np.sin(al), np.cos(al); px = d["px"]; H, W = d["gray"].shape
+    nrm = np.array([n_[0] * cn, n_[1] * cn, -sn]); c0 = np.r_[((d["u0"] - W / 2 * px) * U_ + d["s0"] * n_), d["z0"] + (d["v0"] - H / 2 * px) * cn]; cand = []
+    for f, K in KAM.items():
+        if not os.path.exists(os.path.join(a.bilder, f)): continue
+        v = np.array(K["C"], float) - c0; dist = np.linalg.norm(v); cs = float(v @ nrm) / dist
+        if 0.5 <= cs < 0.8 and 3 < dist < 60: cand.append((dist, f))
+    fl = [f for _, f in sorted(cand)[:anz]]
+    if len(fl) < 3: return dict(fehler="zu wenige Held-out-Fotos (%d)" % len(fl))
+    def welt(P):
+        u = d["u0"] - P[:, 0] * px; v = d["v0"] - P[:, 1] * px; sS = d["s0"] + v * sn; z = d["z0"] + v * cn; return np.c_[np.outer(u, U_) + np.outer(sS, n_), z]
+    gy, gx = np.mgrid[0:H:6, 0:W:6]; reg = np.c_[gx.ravel(), gy.ravel()].astype(float); reg = reg[d["gray"][gy.ravel(), gx.ravel()] > 0]
+    def samp(sg, off=(0, 0)):
+        sg = np.asarray(sg, float).reshape(-1, 4)[:, :4]; L = np.hypot(sg[:, 2] - sg[:, 0], sg[:, 3] - sg[:, 1]); n = np.maximum((L / 3).astype(int), 2)
+        return np.vstack([np.c_[np.linspace(q[0], q[2], k), np.linspace(q[1], q[3], k)] for q, k in zip(sg, n)]) + np.array(off, float)
+    acc = {k: dict(p=[], p0=[], r=[], r0=[]) for k in mengen}; PS = {k: (samp(v), samp(v, (41, 27))) for k, v in mengen.items()}; RW = welt(reg)
+    for f in fl:
+        g = cv2.imread(os.path.join(a.bilder, f), cv2.IMREAD_GRAYSCALE | cv2.IMREAD_IGNORE_ORIENTATION); g = cv2.resize(g, (SW, int(g.shape[0] * SW / g.shape[1])), interpolation=cv2.INTER_AREA)
+        ed = cv2.Canny(cv2.GaussianBlur(g, (3, 3), 0), 60, 140); Dd = dt_foto(f); K = KAM[f]; Hh, Ww = ed.shape
+        uvr, zr = proj(K, RW); okr = (zr > 1) & (uvr[:, 0] >= 0) & (uvr[:, 0] < Ww) & (uvr[:, 1] >= 0) & (uvr[:, 1] < Hh); region = np.zeros((Hh, Ww), np.uint8)
+        for x_, y_ in uvr[okr].astype(int): region[y_, x_] = 255
+        region = cv2.dilate(region, np.ones((25, 25), np.uint8)) > 0; E = (ed > 0) & region
+        if E.sum() < 500: continue
+        for k, (P, P0) in PS.items():
+            for nm, PP in (("", P), ("0", P0)):
+                uv, z = proj(K, welt(PP)); ok = (z > 1) & (uv[:, 0] >= 0) & (uv[:, 0] < Ww - 1) & (uv[:, 1] >= 0) & (uv[:, 1] < Hh - 1)
+                if ok.sum() < 30: continue
+                x = uv[ok, 0].round().astype(int); y = uv[ok, 1].round().astype(int); pr = float((Dd[y, x] <= tol).mean()); m = np.zeros((Hh, Ww), np.uint8); m[y, x] = 255
+                dm = cv2.distanceTransform(255 - cv2.dilate(m, np.ones((3, 3), np.uint8)), cv2.DIST_L2, 3); rc = float((dm[E] <= tol).mean())
+                acc[k]["p" + nm].append(pr); acc[k]["r" + ("0" if nm else "")].append(rc)
+    res = []
+    for k, v in acc.items():
+        if not v["p"]: continue
+        F_ = lambda p_, r_: 2 * p_ * r_ / max(p_ + r_, 1e-9); p, r, p0, r0 = [float(np.mean(v[q])) for q in ("p", "r", "p0", "r0")]
+        res.append(dict(methode=k, linien=len(mengen[k]), praez=round(p, 3), recall=round(r, 3), F=round(F_(p, r), 3), F_zufall=round(F_(p0, r0), 3), gewinn=round(F_(p, r) - F_(p0, r0), 3)))
+    res.sort(key=lambda e: -e["gewinn"]); return dict(tabelle=res, fotos=fl)
 
 def kantenpunkte(foto, pts, r):
     """naechster Fotokantenpunkt (Canny, 1613 px) je Eingabepunkt innerhalb r px; sonst unveraendert. Rueckgabe Liste [x,y,bewegt]"""
@@ -822,6 +863,10 @@ class H(BaseHTTPRequestHandler):
             self._send(200, "application/json", json.dumps(dict(ok=err is None, fehler=err)).encode())
         elif self.path == "/api/wahrheit":
             self._send(200, "application/json", json.dumps(dict(n=wahrheit_speichern(d))).encode())
+        elif self.path == "/api/heldout":
+            dd = ORD["last"]; M = {"Wolken-Ortho Fusion >=8": [l[:4] for l in dd["lin"] if l[4] >= 8], "Wolken-Ortho Fusion >=20": [l[:4] for l in dd["lin"] if l[4] >= 20],
+                 "Foto: LSD je Foto ohne Verbinden (ref roh)": [l[:4] for l in dd.get("roh", [])], "Foto-Ref (verbunden+eingerastet)": [l[:4] for l in dd.get("ref", [])]}
+            M = {k: v for k, v in M.items() if v}; self._send(200, "application/json", json.dumps(vergleich_heldout(dd, M, int(d.get("anz", 14)), float(d.get("tol", 2.5)))).encode())
         elif self.path == "/api/fotokanten":
             r_ = fotokanten_ref(ORD["last"], float(d.get("stuetz", 0.25))) if d.get("ref", True) else fotokanten_auto(ORD["last"]) if d.get("auto", True) else fotokanten_voll(ORD["last"], float(d.get("cmin", 0.9)), int(d.get("anz", 80)), bool(d.get("tiefe", False)), float(d.get("anteil", 0.3)))
             if "fehler" in r_: self._send(200, "application/json", json.dumps(r_).encode()); return
