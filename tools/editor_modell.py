@@ -144,6 +144,16 @@ def ortho_(s0, z0, neig, vor, hinter, px=0.025):
             if Ls is None: continue
             Ls = np.asarray(Ls).reshape(-1, 4) / sk; Ls = Ls[np.hypot(Ls[:, 2] - Ls[:, 0], Ls[:, 3] - Ls[:, 1]) > minl]; Ls = Ls[np.argsort(-np.hypot(Ls[:, 2] - Ls[:, 0], Ls[:, 3] - Ls[:, 1]))][:700]
             segs.append(Ls); mid += [(name + "/" + var, name)] * len(Ls)
+    try:                                                   # Phasenkongruenz (helligkeits-/kontrastunabhaengig, Kovesi): PC-Karte -> LSD; eigene Verfahren fuer Bewertung
+        from phasepack import phasecong
+        for name in ("grau", "Lab-a", "Lab-b", "Tiefe"):
+            pc = phasecong(kan[name].astype(np.float64), nscale=4, norient=6)[0]; pc8 = (np.clip(pc / max(np.percentile(pc, 99.5), 1e-6), 0, 1) * 255).astype(np.uint8)
+            for var, gg in (("pc", pc8), ("pc-fein", cv2.GaussianBlur(pc8, (0, 0), 1.2))):
+                Ls = lsd.detect(gg)[0]
+                if Ls is None: continue
+                Ls = np.asarray(Ls).reshape(-1, 4); Ls = Ls[np.hypot(Ls[:, 2] - Ls[:, 0], Ls[:, 3] - Ls[:, 1]) > minl]; Ls = Ls[np.argsort(-np.hypot(Ls[:, 2] - Ls[:, 0], Ls[:, 3] - Ls[:, 1]))][:700]
+                segs.append(Ls); mid += [(name + "/" + var, "PC-" + name)] * len(Ls)
+    except Exception as e_: print("Phasenkongruenz uebersprungen:", e_)
     S = np.vstack(segs); meth = np.array([m[0] for m in mid]); fam = np.array([m[1] for m in mid]); ln = np.hypot(S[:, 2] - S[:, 0], S[:, 3] - S[:, 1]); o2 = np.argsort(-ln); S, meth, fam, ln = S[o2], meth[o2], fam[o2], ln[o2]
     ORD["meth"] = (S.copy(), meth.copy(), fam.copy()); d = (S[:, 2:] - S[:, :2]) / ln[:, None]; ang = np.arctan2(d[:, 1], d[:, 0]) % np.pi; used = np.zeros(len(S), bool); out = []
     for i in range(len(S)):
