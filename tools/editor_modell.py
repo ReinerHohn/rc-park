@@ -381,6 +381,49 @@ def verfahren_vs_modell(tol=6.0):
     for k in (1, 3, 6, 12, 20, 30): bewerte("FUSION >= %d" % k, np.array([l[:4] for l in d["lin"] if l[4] >= k], float).reshape(-1, 4))
     res.sort(key=lambda e: -e["gewinn"]); return dict(tabelle=res, modellkanten=int(len(M)), tol_px=tol)
 
+def foto_stuetzung(d, anz=12, tol=2.5):
+    """Unabhaengige Pruefung der Kantenverfahren an den FOTOS: jeder Linienpunkt (u,v, Tiefe t aus der Wolke) wird in die besten Fotos projiziert (Blick auf die Ebene, cos>0,5);
+    Stuetzung = Anteil der Fotos, in denen dort eine Canny-Kante liegt (<= tol px bei 1613 px Breite). Zufallsbasis: dieselben Linien um (41,27) px versetzt. Misst Praezision (Linie ist im Foto sichtbare Kante), nicht Vollstaendigkeit."""
+    U_ = uax(); n_ = np.array(obj()["fassade_n"]["wert"], float); n_ = n_[:2] / np.linalg.norm(n_[:2]); al = np.radians(d["neig"]); sn, cn = np.sin(al), np.cos(al); px = d["px"]; H, W = d["gray"].shape
+    nrm = np.array([n_[0] * cn, n_[1] * cn, -sn])                  # Ebenennormale (zeigt von Fassade weg, +t)
+    mid = np.array([d["u0"] - W / 2 * px, d["v0"] - H / 2 * px]); sS = d["s0"]; c0 = np.r_[(mid[0] * U_ + sS * n_), d["z0"] + mid[1] * cn]     # grobe Ebenenmitte
+    sc = []
+    for f, K in KAM.items():
+        if not os.path.exists(os.path.join(a.bilder, f)): continue
+        C = np.array(K["C"], float); v = C - c0; dist = np.linalg.norm(v); cs = float(v @ nrm) / dist
+        if cs > 0.5 and 3 < dist < 60: sc.append((dist * (2 - cs), f))
+    fotos = [f for _, f in sorted(sc)[:anz]]
+    if len(fotos) < 3: return dict(fehler="zu wenige Fotos sehen die Ebene (%d)" % len(fotos))
+    dep = d["d8"].astype(np.float32) / 255 * (d["vor"] + d["hinter"]) - d["hinter"]
+    S, meth, fam = d["meth"]
+    def welt(P):
+        x = np.clip(P[:, 0].round().astype(int), 0, W - 1); y = np.clip(P[:, 1].round().astype(int), 0, H - 1); t = dep[y, x]; u = d["u0"] - P[:, 0] * px; v = d["v0"] - P[:, 1] * px
+        sS_ = d["s0"] + t * cn + v * sn; z = d["z0"] - t * sn + v * cn; return np.c_[np.outer(u, U_) + np.outer(sS_, n_), z]
+    DTs = [dt_foto(f) for f in fotos]
+    def stuetz(P):
+        X = welt(P); acc = np.zeros(len(X)); cnt = np.zeros(len(X))
+        for f, D in zip(fotos, DTs):
+            uv, z = proj(KAM[f], X); ok = (z > 1) & (uv[:, 0] >= 0) & (uv[:, 0] < D.shape[1] - 1) & (uv[:, 1] >= 0) & (uv[:, 1] < D.shape[0] - 1)
+            x = uv[:, 0].clip(0, D.shape[1] - 1).round().astype(int); y = uv[:, 1].clip(0, D.shape[0] - 1).round().astype(int); acc += ok * (D[y, x] <= tol); cnt += ok
+        return acc, cnt
+    def samp(sg, off=(0, 0)):
+        L = np.hypot(sg[:, 2] - sg[:, 0], sg[:, 3] - sg[:, 1]); n = np.maximum((L / 4).astype(int), 2); P = np.vstack([np.c_[np.linspace(q[0], q[2], k), np.linspace(q[1], q[3], k)] for q, k in zip(sg, n)]) + np.array(off, float)
+        idx = np.repeat(np.arange(len(sg)), n); return P, idx
+    def bewerte(name, sg):
+        if len(sg) < 3: return None
+        P, idx = samp(sg); a_, c_ = stuetz(P); ok = c_ >= 3; P0, idx0 = samp(sg, (41, 27)); a0, c0_ = stuetz(P0); ok0 = c0_ >= 3
+        if ok.sum() < 10 or ok0.sum() < 10: return None
+        pr = float((a_[ok] / c_[ok]).mean()); pz = float((a0[ok0] / c0_[ok0]).mean())
+        L = np.hypot(sg[:, 2] - sg[:, 0], sg[:, 3] - sg[:, 1]); li = np.bincount(idx[ok], weights=(a_[ok] / c_[ok]), minlength=len(sg)) / np.maximum(np.bincount(idx[ok], minlength=len(sg)), 1)
+        best_m = float((L * (li > 0.5)).sum() * px)                # Laenge der Linien, die in > 50 % der Fotos auf einer Kante liegen
+        return dict(verfahren=name, praez=round(pr, 3), zufall=round(pz, 3), gewinn=round(pr - pz, 3), bestaetigt_m=round(best_m, 1), seg=int(len(sg)))
+    res = [r for r in (bewerte(nm, S[meth == nm]) for nm in sorted(set(meth))) if r]
+    res += [r for r in (bewerte("FAMILIE " + nm, S[fam == nm]) for nm in sorted(set(fam))) if r]
+    res += [r for r in (bewerte("FUSION >= %d" % k, np.array([l[:4] for l in d["lin"] if l[4] >= k], float).reshape(-1, 4)) for k in (1, 3, 6, 8, 12, 20, 30)) if r]
+    res += [r for r in (bewerte("FUSION Familien >= %d" % k, np.array([l[:4] for l in d["lin"] if l[5] >= k], float).reshape(-1, 4)) for k in (2, 3, 4, 5, 6)) if r]
+    res += [r for r in (bewerte("FUSION Lab-b-Stimmen", np.array([l[:4] for l in d["lin"] if l[4] >= 8 and l[5] >= 3], float).reshape(-1, 4)),) if r]
+    return dict(tabelle=res, fotos=fotos)
+
 def kantenpunkte(foto, pts, r):
     """naechster Fotokantenpunkt (Canny, 1613 px) je Eingabepunkt innerhalb r px; sonst unveraendert. Rueckgabe Liste [x,y,bewegt]"""
     g = cv2.imread(os.path.join(a.bilder, foto), cv2.IMREAD_GRAYSCALE | cv2.IMREAD_IGNORE_ORIENTATION); g = cv2.resize(g, (SW, int(g.shape[0] * SW / g.shape[1])), interpolation=cv2.INTER_AREA)
@@ -596,6 +639,8 @@ class H(BaseHTTPRequestHandler):
             self._send(200, "application/json", json.dumps(dict(ok=err is None, fehler=err)).encode())
         elif self.path == "/api/wahrheit":
             self._send(200, "application/json", json.dumps(dict(n=wahrheit_speichern(d))).encode())
+        elif self.path == "/api/vsfoto":
+            self._send(200, "application/json", json.dumps(foto_stuetzung(ORD["last"], int(d.get("anz", 12)), float(d.get("tol", 2.5)))).encode())
         elif self.path == "/api/vsmodell":
             self._send(200, "application/json", json.dumps(verfahren_vs_modell(float(d.get("tol", 6.0)))).encode())
         elif self.path == "/api/bewerten":
