@@ -47,6 +47,20 @@
    "quelle": "Nutzer-Sicht + Overlay ov_lot_6161",
    "text": "Modell im Foto ~25 % zu schmal (links ~200 px), Dach wirkt zu niedrig (Firsttiefe), Arkadenabstand/Erkerlage falsch. Pruefung: Overlay Wolke+Modell auf kalibriertem Foto (tools/modell_foto_overlay.py), Sweep mit Foto-Kantenterm; Schrumpf-Falle BS145 beachten.",
    "status": "offen"
+  },
+  {
+   "datum": "2026-11-08",
+   "quelle": "Nutzer-Sicht, Overlay schleife_lot2/schleife_1.jpg",
+   "text": "Nach Lotkorrektur+Gesamt-Schleife (dz +2,73, nick -4,8, su 1,377) sitzen die Boegen ~60-80 px ZU HOCH, Modellunterkante y~860 vs Fotoboden ~1000: ganzes Modell zu hoch, Score 0,69 trotzdem besser. Verdacht: dz/Boden (boden_z 1,66 Festwert) oder Wolke-Dachterm zieht Modell hoch.",
+   "naechster_schritt": "Hoehe messen: Bogenscheitel/Sockel Modell vs Foto (foto_mass), Pruefung die jetzt fehlschlaegt; dann dz-Grenze/Boden aus Ankern",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-08",
+   "quelle": "Overlay audit/dachfit_lot2_6161.jpg (Dach neu gefittet)",
+   "text": "Dach ok in Hoehe (Median 0,16 m zur Wolke) aber Modell links ~250 px zu kurz: linker Erkerturm bei x~540 statt ~290, linker Bogen (x~410) fehlt, Modell zwischen Tuermen ~19 % zu schmal; Dach First noch ~60 px zu tief im Foto. Erker/Bogenreihe stammen aus altem gekippten Rahmen.",
+   "naechster_schritt": "erker_0/erker_1/bogenreihe_laube im lot2-Rahmen neu fitten (weite Grenzen), Overlay ansehen",
+   "status": "offen"
   }
  ]
 }

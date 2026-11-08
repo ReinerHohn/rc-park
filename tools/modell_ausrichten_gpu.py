@@ -12,7 +12,7 @@ ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--wo
 ap.add_argument("--sichtbar", action="store_true"); ap.add_argument("--rand", type=float, default=8.0); ap.add_argument("--stl_aus"); ap.add_argument("--zmin", type=float, default=1.0)
 ap.add_argument("--du_max", type=float, default=5.0); ap.add_argument("--fotos"); ap.add_argument("--bilder"); ap.add_argument("--nfotos", type=int, default=8); ap.add_argument("--w_foto", type=float, default=1.0); ap.add_argument("--su_max", type=float, default=0.30)
 ap.add_argument("--su_lo", type=float, default=0.95); ap.add_argument("--su_hi", type=float, default=1.45); ap.add_argument("--sz_lo", type=float, default=0.95); ap.add_argument("--sz_hi", type=float, default=1.20)   # Grenzen aus Sichtbeobachtung (masstabelle beobachtungen_offen 8.11.): gegen Schrumpf-Falle
-ap.add_argument("--start", help="JSON mit Startzustand (du..sz) aus vorigem Lauf"); ap.add_argument("--basis", help="JSON der Gesamt-Ausrichtung: Modell wird zuerst damit transformiert (Teil-Schleife im Rahmen des Gesamtergebnisses)"); ap.add_argument("--dn_max", type=float, default=4.0); ap.add_argument("--gier_max", type=float, default=10.0); ap.add_argument("--out_json")
+ap.add_argument("--start", help="JSON mit Startzustand (du..sz) aus vorigem Lauf"); ap.add_argument("--basis", help="JSON der Gesamt-Ausrichtung: Modell wird zuerst damit transformiert (Teil-Schleife im Rahmen des Gesamtergebnisses)"); ap.add_argument("--dn_max", type=float, default=4.0); ap.add_argument("--gier_max", type=float, default=10.0); ap.add_argument("--out_json"); ap.add_argument("--ns", type=int, default=8000, help="Modell-Oberflaechenpunkte (mehr = weniger Rauschen)"); ap.add_argument("--nur_bewerten", action="store_true", help="nur Score des Startzustands (Wolke+Foto) ausgeben, nicht optimieren (Annahme-Tor teil_tor.py)")
 ap.add_argument("--py", default=os.path.expanduser("~/.venvs/rcpark/bin/python")); a = ap.parse_args()
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); OD = os.path.join(ROOT, "modelle", a.objekt); K = 1000.0 / 87.0
 OBJ = json.load(open(os.path.join(OD, "objekt.json"))); nax = np.array(OBJ["fassade_n"]["wert"], dtype=float); nax /= np.linalg.norm(nax); uax = np.array([nax[1], -nax[0]])
@@ -31,9 +31,9 @@ if a.basis:
     def _ry(w): c, s_ = np.cos(w), np.sin(w); return np.array([[c, 0, s_], [0, 1, 0], [-s_, 0, c]])
     Rb = _rz(np.radians(bs["gier_grad"])) @ _rx(np.radians(bs["nick_grad"])) @ _ry(np.radians(bs["roll_grad"]))
     Lb = (np.asarray(m.vertices) - cB) @ Bb.T; m.vertices = cB + (((Lb * np.array([bs["su"], 1.0, bs["sz"]])) @ Rb.T) + np.array([bs["du"], bs["dn"], bs["dz"]])) @ Bb; print("Basis-Transformation angewandt", flush=True)
-S, FI = trimesh.sample.sample_surface(m, 120000); NS = m.face_normals[FI]
+S, FI = trimesh.sample.sample_surface(m, 120000, seed=0); NS = m.face_normals[FI]
 if a.sichtbar: kp = (NS[:, :2] @ nax < 0.2) | (NS[:, 2] > 0.5); S = S[kp]
-S = S[np.random.default_rng(0).choice(len(S), min(len(S), 8000), replace=False)]
+S = S[np.random.default_rng(0).choice(len(S), min(len(S), a.ns), replace=False)]
 c0 = S.mean(0); u3 = np.array([uax[0], uax[1], 0.0]); n3 = np.array([nax[0], nax[1], 0.0]); e3 = np.array([0, 0, 1.0]); B = np.stack([u3, n3, e3])   # Zeilen = lokale Achsen
 L = (S - c0) @ B.T; lo_m, hi_m = L.min(0) - 0.3, L.max(0) + 0.3
 lo, hi = S.min(0) - a.rand, S.max(0) + a.rand
@@ -112,6 +112,7 @@ def gitter(x, idx, halfs, nst):
 x0_ = [0, 0, 0, 0, 0, 0, 1.0, 1.0]
 if a.start: st = json.load(open(a.start)); x0_ = [st[k] for k in ('du', 'dn', 'dz', 'gier_grad', 'nick_grad', 'roll_grad', 'su', 'sz')]
 x = torch.tensor(x0_, device=dev, dtype=torch.float32); x[6] = x[6].clamp(a.su_lo, a.su_hi); x[7] = x[7].clamp(a.sz_lo, a.sz_hi); t0 = time.time(); s0 = float(bewerte(x[None])[0]); print("Start Abstand %.3f m" % s0, flush=True)
+if a.nur_bewerten: print("SCORE %.5f" % s0); sys.exit(0)
 # Runde 0: 4-D Start (du, dn, gier, su)
 if not a.start: x[6] = (a.su_lo + a.su_hi) / 2
 G = gitter(x, [0, 1, 3, 6], [a.du_max, a.dn_max, a.gier_max, (a.su_hi - a.su_lo) / 2], [int(8 * a.du_max) + 1, 33, 21, 25]); sc = bewerte(G)

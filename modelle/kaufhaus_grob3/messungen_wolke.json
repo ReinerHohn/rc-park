@@ -1,0 +1,319 @@
+[
+ {
+  "id": "spitze_links",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   296,
+   154.13333129882812,
+   312,
+   171.13333129882812
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "punkte": 42,
+   "xyz": [
+    18.802,
+    6.419,
+    21.386
+   ],
+   "u": 15.581,
+   "u_p10_p90": [
+    15.51,
+    15.69
+   ],
+   "n": 12.316,
+   "z": 21.386,
+   "z_p10_p90": [
+    21.28,
+    21.5
+   ]
+  },
+  "gegenproben": [
+   "ip_IMG_6254.jpg",
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "an_handy_2026-11-06_k_handy_k_01.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T20:59:18"
+ },
+ {
+  "id": "spitze_rechts",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   1288,
+   113.13333129882812,
+   1307,
+   128.13333129882812
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "punkte": 55,
+   "xyz": [
+    -4.076,
+    14.473,
+    21.373
+   ],
+   "u": -8.669,
+   "u_p10_p90": [
+    -8.75,
+    -8.59
+   ],
+   "n": 12.286,
+   "z": 21.373,
+   "z_p10_p90": [
+    21.24,
+    21.49
+   ]
+  },
+  "gegenproben": [
+   "ip_IMG_6254.jpg",
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "an_handy_2026-11-06_q_handy_q_01.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T20:59:47"
+ },
+ {
+  "id": "turm_links_unten",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   153,
+   678.1333312988281,
+   304,
+   724.1333312988281
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "punkte": 20244,
+   "xyz": [
+    19.406,
+    7.209,
+    7.717
+   ],
+   "u": 15.862,
+   "u_p10_p90": [
+    14.39,
+    16.81
+   ],
+   "n": 13.103,
+   "z": 7.717,
+   "z_p10_p90": [
+    7.35,
+    8.04
+   ]
+  },
+  "gegenproben": [
+   "ip_IMG_6254.jpg",
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "ip_IMG_6215.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:02:38"
+ },
+ {
+  "id": "turm_rechts_unten",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   1383,
+   687.1333312988281,
+   1395,
+   699.1333312988281
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 272,
+   "xyz": [
+    -3.637,
+    15.436,
+    7.558
+   ],
+   "u": -8.582,
+   "u_p10_p90": [
+    -8.64,
+    -8.54
+   ],
+   "n": 13.332,
+   "z": 7.558,
+   "z_p10_p90": [
+    7.48,
+    7.61
+   ]
+  },
+  "gegenproben": [
+   "ip_IMG_6254.jpg",
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "an_handy_2026-11-06_k_handy_k_06.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:07:46"
+ },
+ {
+  "id": "bogen1_scheitel",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   359,
+   726.1333312988281,
+   371,
+   738.1333312988281
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 75,
+   "xyz": [
+    16.082,
+    7.435,
+    7.192
+   ],
+   "u": 12.681,
+   "u_p10_p90": [
+    12.58,
+    12.8
+   ],
+   "n": 12.378,
+   "z": 7.192,
+   "z_p10_p90": [
+    7.16,
+    7.22
+   ]
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "ip_IMG_6256.jpg",
+   "ip_IMG_6187.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:08:04"
+ },
+ {
+  "id": "bogen2_scheitel",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   635,
+   719.1333312988281,
+   647,
+   731.1333312988281
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 163,
+   "xyz": [
+    10.369,
+    9.531,
+    7.238
+   ],
+   "u": 6.592,
+   "u_p10_p90": [
+    6.48,
+    6.69
+   ],
+   "n": 12.451,
+   "z": 7.238,
+   "z_p10_p90": [
+    7.18,
+    7.3
+   ]
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "ip_IMG_6256.jpg",
+   "ns_9812e9cb-image.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:08:14"
+ },
+ {
+  "id": "bogen3_scheitel",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   925,
+   713.1333312988281,
+   937,
+   725.1333312988281
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 132,
+   "xyz": [
+    4.523,
+    11.627,
+    7.306
+   ],
+   "u": 0.386,
+   "u_p10_p90": [
+    0.3,
+    0.49
+   ],
+   "n": 12.469,
+   "z": 7.306,
+   "z_p10_p90": [
+    7.24,
+    7.35
+   ]
+  },
+  "gegenproben": [
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "ip_IMG_6255.jpg",
+   "an_handy_2026-11-06_q_handy_q_02.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:08:21"
+ },
+ {
+  "id": "bogen4_scheitel",
+  "foto": "ip_IMG_6161.jpg",
+  "box_px": [
+   1220,
+   712.1333312988281,
+   1232,
+   724.1333312988281
+  ],
+  "pfad_px": null,
+  "bildbreite": 1613,
+  "mess": {
+   "box_erweitert": null,
+   "punkte": 241,
+   "xyz": [
+    -1.236,
+    13.634,
+    7.229
+   ],
+   "u": -5.716,
+   "u_p10_p90": [
+    -5.79,
+    -5.61
+   ],
+   "n": 12.447,
+   "z": 7.229,
+   "z_p10_p90": [
+    7.18,
+    7.27
+   ]
+  },
+  "gegenproben": [
+   "ip_IMG_6254.jpg",
+   "an_handy_2026-11-06_q_handy_q_15.jpg",
+   "an_handy_2026-11-06_p_handy_p_01.jpg"
+  ],
+  "wolke": "j_voll_lot2_crop.npy",
+  "methode": "messen_interaktiv.py: Nutzerbox im Foto -> vorderste Wolkenschicht (40 %), Median; Gegenprobe Kreuz in 3 Fotos vom Nutzer bestaetigt",
+  "zeit": "2026-11-08T21:08:45"
+ }
+]

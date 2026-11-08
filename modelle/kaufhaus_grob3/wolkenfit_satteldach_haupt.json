@@ -1,33 +1,42 @@
 {
  "objekt": "kaufhaus_grob3",
  "typ": "satteldach:haupt",
- "wolke": "wolke_netzrahmen.npy",
- "n_wolke": 342556,
+ "wolke": "j_voll_lot2_crop.npy",
+ "n_wolke": 494032,
  "parameter": [
   "satteldach:haupt.u0",
   "satteldach:haupt.u1",
   "satteldach:haupt.n_traufe_v",
   "satteldach:haupt.z_traufe_v",
-  "satteldach:haupt.z_first"
+  "satteldach:haupt.n_first",
+  "satteldach:haupt.z_first",
+  "satteldach:haupt.n_traufe_h",
+  "satteldach:haupt.z_traufe_h"
  ],
  "vorher": {
   "satteldach:haupt.u0": -9.3373,
   "satteldach:haupt.u1": 8.9229,
   "satteldach:haupt.n_traufe_v": 12.51,
   "satteldach:haupt.z_traufe_v": 11.3818,
-  "satteldach:haupt.z_first": 20.6068
+  "satteldach:haupt.n_first": 5.9,
+  "satteldach:haupt.z_first": 20.6068,
+  "satteldach:haupt.n_traufe_h": 5.84,
+  "satteldach:haupt.z_traufe_h": 11.6
  },
  "nachher": {
-  "satteldach:haupt.u0": -9.7073,
-  "satteldach:haupt.u1": 9.4193,
-  "satteldach:haupt.n_traufe_v": 12.9478,
-  "satteldach:haupt.z_traufe_v": 10.5766,
-  "satteldach:haupt.z_first": 20.824
+  "satteldach:haupt.u0": -6.4575,
+  "satteldach:haupt.u1": 10.7569,
+  "satteldach:haupt.n_traufe_v": 12.5976,
+  "satteldach:haupt.z_traufe_v": 14.7965,
+  "satteldach:haupt.n_first": 7.3537,
+  "satteldach:haupt.z_first": 21.5865,
+  "satteldach:haupt.n_traufe_h": 6.6324,
+  "satteldach:haupt.z_traufe_h": 15.812
  },
- "J_vorher": 0.41783684492111206,
- "J_nachher": 0.4082225263118744,
- "median_vorher": 0.13854986429214478,
- "median_nachher": 0.13753867149353027,
- "p90_vorher": 0.28084081411361694,
- "p90_nachher": 0.2743195593357086
+ "J_vorher": 1.4351938962936401,
+ "J_nachher": 0.2395913153886795,
+ "median_vorher": 0.7116143703460693,
+ "median_nachher": 0.16289022564888,
+ "p90_vorher": 1.332010269165039,
+ "p90_nachher": 0.6127586364746094
 }

@@ -29,3 +29,9 @@ Pfade: venv `/media/oem/scan/venv-seg/bin/python -I`; Jobs `RCPARK_DATEN_MIN_GB=
 
 ## Regeln/Nutzerwuensche heute
 Immer mitloggen (Logbuch), iterative konvergierende Loops, je Bauteil, Bildfeedback vor Zahlen, nichts von Hand messen, Commit nur auf Auftrag (heute erteilt).
+
+## Nachtrag (spaeter am 8.11.)
+- Lot ist automatisch berechnet (lot_aus_fotos/rahmen_lot_foto), aber NICHT in der Pipeline eingehaengt; boden_z 1,66 ist Festwert im Aufruf. Offen: einhaengen + Synthetiktest (Rahmen 25 Grad kippen -> Kette holt zurueck).
+- Befund: alle Bauteilparameter stammten aus dem alten Rahmen -> je Bauteil neu gegen lot2-Wolke fitten (Dach fertig: Median 0,16 m; Erker/Bogenreihe Job teilefit_lot2; Gauben/Fenster/Staffelgiebel offen). Gesamt-dz nie als Ausgleich missbrauchen (dz +2,73 war Symptom).
+- tools/lod2_winkel_abgleich.py: LoD2 nur Winkel/Richtung (Nutzerwunsch), nicht Hoehen.
+- Overlay immer ansehen: audit/dachfit_lot2_6161.jpg.

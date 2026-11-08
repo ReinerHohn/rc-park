@@ -3457,17 +3457,17 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Wolke wolke_netzrahmen.npy (Netzrahmen) per tools/wolke_bogenreihe_messen.py (Messung 8.11., modelle/kaufhaus_grob/bogenreihe_messung.json); Anzahl Boegen am Foto: Z-004-003 (4 Scheitel), Z-004-001",
    "werte_quellen": {
-    "u0": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
-    "pitch": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
+    "u0": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
+    "pitch": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
     "pfeiler_breite": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
     "pfeiler_tiefe": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
     "pfeiler_n": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
-    "kaempfer_z": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
-    "scheitel_z": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
-    "oeffnung_breite": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
-    "oberkante_z": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
+    "kaempfer_z": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
+    "scheitel_z": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
+    "oeffnung_breite": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
+    "oberkante_z": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
     "laibung_tiefe": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
-    "boden_z": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
+    "boden_z": "zurueckgesetzt 8.11.: Fit entartet (3 Parameter an Grenze), siehe NICHTS_GEBRACHT",
     "sockel_weite": "ANNAHME Startwert aus Nutzerfotos 8.11. (Oktogon ~1,4x Schaftdurchmesser); Feinwert per Wolkenfit",
     "sockel_hoehe": "ANNAHME Startwert Nutzerfotos",
     "fase_hoehe": "ANNAHME Startwert Nutzerfotos"
@@ -3576,13 +3576,13 @@
   {
    "typ": "erker:0",
    "gruppe": "Erker 1",
-   "mitte_u": -8.968,
-   "breite": 2.233,
-   "wand_n": 13.439,
-   "auskragung": 0.876,
-   "unterkante_z": 4.8,
-   "oberkante_z": 9.9,
-   "spitze_z": 13.382,
+   "mitte_u": -8.4154,
+   "breite": 2.6561,
+   "wand_n": 13.1207,
+   "auskragung": 0.6511,
+   "unterkante_z": 5.2876,
+   "oberkante_z": 10.9368,
+   "spitze_z": 12.2191,
    "dachprofil": [
     {
      "t": 0.101,
@@ -3627,24 +3627,25 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Wolke wolke_netzrahmen.npy per tools/wolke_erker_messen.py -> modelle/kaufhaus_grob/erker_messung.json (Erker 0); Anzahl 2: Foto Z-043-002",
    "werte_quellen": {
-    "mitte_u": "-8.968 +- 0.025 Wolke, erker_messung.json",
-    "breite": "2.233 +- 0.025 Wolke, erker_messung.json",
-    "auskragung": "0.876 +- 0.025 Wolke, erker_messung.json",
-    "unterkante_z": "4.8 +- 0.025 Wolke, erker_messung.json",
-    "oberkante_z": "9.9 +- 0.025 Wolke, erker_messung.json",
-    "spitze_z": "13.382 +- 0.026 Wolke, erker_messung.json"
+    "mitte_u": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "breite": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "auskragung": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "unterkante_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "oberkante_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "spitze_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "wand_n": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen"
    }
   },
   {
    "typ": "erker:1",
    "gruppe": "Erker 2",
-   "mitte_u": 8.358,
-   "breite": 1.754,
-   "wand_n": 13.439,
-   "auskragung": 0.717,
-   "unterkante_z": 4.85,
-   "oberkante_z": 9.65,
-   "spitze_z": 12.167,
+   "mitte_u": 9.0127,
+   "breite": 2.7524,
+   "wand_n": 12.8285,
+   "auskragung": 0.9523,
+   "unterkante_z": 3.6139,
+   "oberkante_z": 9.5363,
+   "spitze_z": 11.8377,
    "dachprofil": [
     {
      "t": 0.04,
@@ -3679,12 +3680,13 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Wolke wolke_netzrahmen.npy per tools/wolke_erker_messen.py -> modelle/kaufhaus_grob/erker_messung.json (Erker 1); Anzahl 2: Foto Z-043-002",
    "werte_quellen": {
-    "mitte_u": "8.358 +- 0.025 Wolke, erker_messung.json",
-    "breite": "1.754 +- 0.025 Wolke, erker_messung.json",
-    "auskragung": "0.717 +- 0.025 Wolke, erker_messung.json",
-    "unterkante_z": "4.85 +- 0.025 Wolke, erker_messung.json",
-    "oberkante_z": "9.65 +- 0.068 Wolke, erker_messung.json",
-    "spitze_z": "12.167 +- 0.077 Wolke, erker_messung.json"
+    "mitte_u": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "breite": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "auskragung": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "unterkante_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "oberkante_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "spitze_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "wand_n": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen"
    }
   },
   {
@@ -3845,14 +3847,14 @@
   {
    "typ": "satteldach:haupt",
    "gruppe": "Dach Hauptbau",
-   "u0": -9.3373,
-   "u1": 8.9229,
-   "n_traufe_v": 12.51,
-   "z_traufe_v": 11.3818,
-   "n_first": 5.9,
-   "z_first": 20.6068,
-   "n_traufe_h": 5.84,
-   "z_traufe_h": 11.6,
+   "u0": -6.4575,
+   "u1": 10.7569,
+   "n_traufe_v": 12.5976,
+   "z_traufe_v": 14.7965,
+   "n_first": 7.3537,
+   "z_first": 21.5865,
+   "n_traufe_h": 6.6324,
+   "z_traufe_h": 15.812,
    "z_unten": 10.5,
    "achse_n": [
     0.3338,
@@ -3865,12 +3867,14 @@
    "ziegel_anteil": 0.4,
    "werte_quellen": {
     "ziegel_abstand": "ANNAHME Startwert; Foto-Kantenabstand und Foto-Diff stimmen ab",
-    "u0": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (satteldach:haupt,gaubenreihe:unten,gaubenreihe:oben), Median 0.316->0.130 m",
-    "u1": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (satteldach:haupt,gaubenreihe:unten,gaubenreihe:oben), Median 0.316->0.130 m",
-    "n_traufe_v": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (satteldach:haupt,gaubenreihe:unten,gaubenreihe:oben), Median 0.316->0.130 m",
-    "z_traufe_v": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (satteldach:haupt,gaubenreihe:unten,gaubenreihe:oben), Median 0.316->0.130 m",
-    "n_first": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Dach (z>=10.5), Median 0.335->0.191 m",
-    "z_first": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (satteldach:haupt,gaubenreihe:unten,gaubenreihe:oben), Median 0.316->0.130 m"
+    "u0": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "u1": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "n_traufe_v": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "z_traufe_v": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "n_first": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "z_first": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "n_traufe_h": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "z_traufe_h": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen"
    },
    "symmetrisch": false,
    "pult_quelle": "Schnitt Wolke u -2..2/4..6: nur EINE steile Vorderflaeche bis z 19,3 (Rueckhang unsichtbar); LoD2-dachtyp enthaelt 'Sheddach'; Rueckwand n 5,84/z 11,6 = ANNAHME aus dem vorgebauten Modell (stl_teil:dach); n_first 5,9 fest, First = Verlaengerung der Vorderflaeche bis zur Rueckwand"

@@ -1,0 +1,78 @@
+{
+ "gier_versatz_grad": 84.0,
+ "korrelation": 0.597,
+ "wand_rest": [
+  {
+   "flaeche_m2": 242.2,
+   "yaw_nach_versatz": 156.22,
+   "rest_grad": -4.78,
+   "ok": false
+  },
+  {
+   "flaeche_m2": 132.6,
+   "yaw_nach_versatz": 337.98,
+   "rest_grad": 77.48,
+   "ok": false
+  },
+  {
+   "flaeche_m2": 128.3,
+   "yaw_nach_versatz": 249.7,
+   "rest_grad": -0.3,
+   "ok": true
+  },
+  {
+   "flaeche_m2": 125.5,
+   "yaw_nach_versatz": 74.58,
+   "rest_grad": 4.08,
+   "ok": false
+  },
+  {
+   "flaeche_m2": 85.9,
+   "yaw_nach_versatz": 249.69,
+   "rest_grad": -0.31,
+   "ok": true
+  },
+  {
+   "flaeche_m2": 78.8,
+   "yaw_nach_versatz": 69.81,
+   "rest_grad": -0.69,
+   "ok": true
+  },
+  {
+   "flaeche_m2": 67.3,
+   "yaw_nach_versatz": 249.7,
+   "rest_grad": -0.3,
+   "ok": true
+  },
+  {
+   "flaeche_m2": 62.1,
+   "yaw_nach_versatz": 74.56,
+   "rest_grad": 4.06,
+   "ok": false
+  }
+ ],
+ "dachneigung_lod2_grad": [
+  46.8,
+  47.1,
+  51.7,
+  52.9,
+  54.3,
+  56.3
+ ],
+ "dachneigung_wolke_peaks_grad": [
+  53.5,
+  54.5,
+  77.5
+ ],
+ "wolke_wandpeaks_yaw": [
+  250.0,
+  70.5,
+  260.5,
+  239.5,
+  81.0,
+  161.0
+ ],
+ "objekt": "kaufhaus_grob3",
+ "wolke": "j_voll_lot2_crop.npy",
+ "tol_grad": 3.0
+}
