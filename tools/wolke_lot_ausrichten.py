@@ -5,7 +5,7 @@ Grund (8.11.): Umeyama auf Kamerazentren legt die Drehung um flach liegende Kame
 (Boden eben, Fassade lotrecht), Drehpunkt = Wandmitte. Pruefung: Ebenen nach der Drehung neu angepasst (Ausgabe)."""
 import sys, os, json, argparse, numpy as np
 ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--wolke", required=True); ap.add_argument("--kameras", required=True); ap.add_argument("--wolke_aus", required=True); ap.add_argument("--kameras_aus", required=True)
-ap.add_argument("--zmin_wand", type=float, default=2.5); a = ap.parse_args()
+ap.add_argument("--zmin_wand", type=float, default=2.5); ap.add_argument("--gier_grad", type=float, default=0.0, help="zusaetzliche Gier-Korrektur (Grad) aus RANSAC-Linie Fassadenwand z6-9 / Rueckwand: Wand dn/du -2.0 / -1.3 Grad"); a = ap.parse_args()
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); OBJ = json.load(open(os.path.join(ROOT, "modelle", a.objekt, "objekt.json")))
 nax = np.array(OBJ["fassade_n"]["wert"], dtype=float); nax /= np.linalg.norm(nax); uax = np.array([nax[1], -nax[0]])
 B = np.array([[uax[0], uax[1], 0], [nax[0], nax[1], 0], [0, 0, 1.0]])    # Welt -> lokal (u,n,z)
@@ -33,6 +33,8 @@ for sg in (1, -1):
     Rl_ = np.array([[np.cos(sg * ang), -np.sin(sg * ang), 0], [np.sin(sg * ang), np.cos(sg * ang), 0], [0, 0, 1]]) @ R1; c1, c2, _ = fits((L - piv) @ Rl_.T + piv); e = abs(c2[0])
     if best is None or e < best[0]: best = (e, Rl_)
 Rl = best[1]
+if a.gier_grad:   # Gierkorrektur um z (lokal), Vorzeichen so, dass Wandneigung (RANSAC) kleiner wird
+    g = np.radians(a.gier_grad); Rz2 = np.array([[np.cos(g), -np.sin(g), 0], [np.sin(g), np.cos(g), 0], [0, 0, 1]]); Rl = Rz2 @ Rl
 cg, cw, _ = fits((L - piv) @ Rl.T + piv)
 print("NACH Drehung: Boden u-Neigung %.3f Grad, Wand Gier %.3f Grad, Wand Ueberhang %.3f Grad" % (np.degrees(np.arctan(cg[0])), np.degrees(np.arctan(cw[0])), np.degrees(np.arctan(cw[1]))))
 Rw = B.T @ Rl @ B; pw = piv @ B                    # Drehung in Weltachsen, Pivot in Welt
