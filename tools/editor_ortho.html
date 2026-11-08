@@ -39,6 +39,9 @@ Schwelle <input id=gth value=0.5 size=3> <label><input type=checkbox id=gsk> je 
 <label><input type=checkbox id=gm checked onchange="zeichne()"> Mittelform zeigen (grün); aus = Rohzellen (gelb)</label><br>
 <button onclick="glErzeugen()" style="background:#0c6;font-weight:bold">Alle gewählten als Bauteile</button><br>
 <small>Treffer sind Vorschläge: Anzahl prüfst du am Foto. Abweichung = wie weit eine Zelle von der Mittelform liegt.</small></fieldset>
+<fieldset><legend>2e Kanten aus Fotos (Mehrheit)</legend>
+<button onclick="fotoKanten()">Kanten aus den Fotos ermitteln</button>
+<small>Ebene wird aus bis zu 8 Fotos scharf entzerrt, Kanten je Foto erkannt, übereinandergelegt; nur Linien, die die Mehrheit der Fotos zeigt, Lage = Median. Dauert ca. 30 s. Ersetzt die Wolken-Kanten (deine eigenen Linien bleiben).</small></fieldset>
 <fieldset><legend>Prüfung</legend>
 <button onclick="bewerten()">Kantenverfahren bewerten</button>
 <small>Vergleicht jedes Kantenverfahren mit den Kanten, die DU bestätigt hast (nachgezeichnet, gezogen, Umrisse erzeugter Bauteile). Je mehr du bestätigst, desto aussagekräftiger.</small></fieldset>
@@ -106,6 +109,8 @@ async function grErzeugen(){const sel=GR.filter(q=>q.an);if(!sel.length){msg('Ke
   // hinter der Wand: Ebene um dt nach innen schieben und bis zur Wand ausziehen (Aussparung); sonst Ebene an der Wand, nach aussen ausziehen (Körper)
   const off=rueck?q.dt:0,s0=D.s0+off*Math.cos(al),z0=D.z0-off*Math.sin(al);await J('/api/freiform',{method:'POST',body:JSON.stringify({name:q.art+'_'+t0+'_'+(n++),kontur,s0,z0,neig:D.neig,tiefe:tief,modus:rueck?'ausschnitt':'anbau',foto:'Ortho-Ansicht, Gruppe '+q.n+'x '+q.art+', Tiefe aus Wolke ('+(q.dt*100).toFixed(0)+' cm rel. Wand)'})})}}
  msg(n+' Bauteile angelegt (Tiefe aus der Wolke gemessen). In „→ 3D“ ansehen, dort „Solid (STL) bauen“.');GR=[];$('grl').innerHTML='';zeichne()}
+async function fotoKanten(){msg('Entzerre Fotos und erkenne Kanten (ca. 30 s) …');const r=await J('/api/fotokanten',{method:'POST',body:JSON.stringify({anz:8,tiefe:true})});if(!r.linien){msg('Fehler');return}
+ LIN=LIN.filter(l=>l[6]==='u').concat(r.linien.map(l=>[l[0],l[1],l[2],l[3],l[4],9,'f']));$('mv').value=3;zeichne();regNeu();msg('Foto-Kanten: '+r.linien.length+' Linien (Stimmen = Zahl der Fotos, Regler "Mindest-Stimmen" auf 3).')}
 function planeD(){return{s0:D.s0,z0:D.z0,neig:D.neig,u0:D.u0,v0:D.v0,px:D.px}}
 function wahrheit(art,L){if(!D||!L.length)return;J('/api/wahrheit',{method:'POST',body:JSON.stringify({art,plane:planeD(),linien:L})})}
 async function bewerten(){msg('Bewerte Verfahren …');const r=await J('/api/bewerten',{method:'POST',body:'{}'});if(r.fehler){msg(r.fehler);return}msg('Bestätigte Kanten: '+r.n_linien+' Linien, '+r.wahrheit_laenge_m+' m. Trefferquote (Anteil der bestätigten Kantenlänge innerhalb 3 px einer erkannten Linie) | Dichte:\n'+r.tabelle.map(t=>t.verfahren+': '+(t.recall*100).toFixed(0)+' %  ('+t.segmente+' Seg., Dichte '+t.dichte+')').join('\n'))}

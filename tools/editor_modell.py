@@ -108,10 +108,11 @@ def ebenen():
     WOLKE["E"] = out; WOLKE["Emt"] = os.path.getmtime(OJ); return out
 
 ORC = {}; ORD = {}
+ORC_LAST = {}
 def ortho(s0, z0, neig, vor, hinter, px=0.025):
     k = (round(s0, 3), round(z0, 3), round(neig, 2), round(vor, 2), round(hinter, 2), px)
     if k not in ORC: ORC[k] = ortho_(s0, z0, neig, vor, hinter, px); ORD[k] = ORD["last"]; ORD[k]["meth"] = ORD["meth"]; ORD[k]["lin"] = ORC[k]["linien"]
-    ORD["last"] = ORD[k]; ORD["meth"] = ORD[k]["meth"]; return ORC[k]
+    ORD["last"] = ORD[k]; ORD["meth"] = ORD[k]["meth"]; ORC_LAST["bild"] = ORC[k]["bild"]; return ORC[k]
 
 def ortho_(s0, z0, neig, vor, hinter, px=0.025):
     """Ortho-Ansicht der Wolke auf einer Ebene (Linie im (s,z)-Schnitt, Neigung um u): Blick von aussen, +u links. Farbbild + erkannte Kanten
@@ -424,6 +425,62 @@ def foto_stuetzung(d, anz=12, tol=2.5):
     res += [r for r in (bewerte("FUSION Lab-b-Stimmen", np.array([l[:4] for l in d["lin"] if l[4] >= 8 and l[5] >= 3], float).reshape(-1, 4)),) if r]
     return dict(tabelle=res, fotos=fotos)
 
+def foto_ortho(d, foto, mitTiefe=False):
+    """Ortho-Ansicht der Ebene direkt aus dem FOTO (Homographie, volle Aufloesung) statt aus eingefaerbten Wolkenpunkten: scharfe, gerade Kanten. Rueckgabe BGR-Bild in Ortho-Pixeln (gleiches Raster wie die Wolken-Ortho), Maske gueltig."""
+    U_ = uax(); n_ = np.array(obj()["fassade_n"]["wert"], float); n_ = n_[:2] / np.linalg.norm(n_[:2]); al = np.radians(d["neig"]); sn, cn = np.sin(al), np.cos(al); px = d["px"]; H, W = d["gray"].shape
+    im = cv2.imread(os.path.join(a.bilder, foto), cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION); K = KAM[foto]; sc = im.shape[1] / K["W"]
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float64); u = d["u0"] - xx * px; v = d["v0"] - yy * px
+    t = (d["d8"].astype(np.float64) / 255 * (d["vor"] + d["hinter"]) - d["hinter"]) if mitTiefe else np.zeros_like(u)
+    sS = d["s0"] + t * cn + v * sn; z = d["z0"] - t * sn + v * cn
+    X = np.stack([u * U_[0] + sS * n_[0], u * U_[1] + sS * n_[1], z], -1).reshape(-1, 3)
+    Xc = X @ np.array(K["Rn"]).T + np.array(K["tn"]); zc = Xc[:, 2]; uv = (K["f"] * Xc[:, :2] / np.where(zc > 0.5, zc, 0.5)[:, None] + [K["cx"], K["cy"]]) * sc
+    mx = uv[:, 0].reshape(H, W).astype(np.float32); my = uv[:, 1].reshape(H, W).astype(np.float32)
+    out = cv2.remap(im, mx, my, cv2.INTER_CUBIC, borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0)); ok = (zc.reshape(H, W) > 1) & (mx >= 0) & (mx < im.shape[1]) & (my >= 0) & (my < im.shape[0])
+    return out, ok
+
+def beste_fotos(d, anz=6):
+    U_ = uax(); n_ = np.array(obj()["fassade_n"]["wert"], float); n_ = n_[:2] / np.linalg.norm(n_[:2]); al = np.radians(d["neig"]); sn, cn = np.sin(al), np.cos(al); px = d["px"]; H, W = d["gray"].shape
+    nrm = np.array([n_[0] * cn, n_[1] * cn, -sn]); c0 = np.r_[((d["u0"] - W / 2 * px) * U_ + d["s0"] * n_), d["z0"] + (d["v0"] - H / 2 * px) * cn]; sc = []
+    for f, K in KAM.items():
+        if not os.path.exists(os.path.join(a.bilder, f)): continue
+        v = np.array(K["C"], float) - c0; dist = np.linalg.norm(v); cs = float(v @ nrm) / dist
+        if cs > 0.6 and 3 < dist < 60: sc.append((-cs - 0.02 / dist * 0, f))
+    return [f for _, f in sorted(sc)[:anz]]
+
+def fotokanten(d, anz=8, tiefe=True, minl_m=0.25, winkel=2.5, abst=2.5):
+    """Kanten aus FOTOS: je Foto Ortho (Homographie, scharf) -> Linienfinder auf grau/R/G/B/Lab-b -> Linien ueber die Fotos stapeln; behalten, wenn die Mehrheit der Fotos, die die Stelle sehen,
+    die Kante hat; Lage/Ausdehnung = Median ueber die Fotos (Nutzerwunsch 9.11.)."""
+    H, W = d["gray"].shape; px = d["px"]; fl = beste_fotos(d, anz); segs = []; masks = []; lsd = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD)
+    for fi, f in enumerate(fl):
+        im, ok = foto_ortho(d, f, tiefe); ok = cv2.erode(ok.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0; masks.append(ok); lab = cv2.cvtColor(im, cv2.COLOR_BGR2LAB)
+        for g in (cv2.cvtColor(im, cv2.COLOR_BGR2GRAY), im[:, :, 2], im[:, :, 1], im[:, :, 0], lab[:, :, 2]):
+            g = cv2.GaussianBlur(g, (0, 0), 1.0); L = lsd.detect(g)[0]
+            if L is None: continue
+            L = np.asarray(L).reshape(-1, 4); ln = np.hypot(L[:, 2] - L[:, 0], L[:, 3] - L[:, 1]); L = L[ln > minl_m / px]
+            mx = ((L[:, 0] + L[:, 2]) / 2).astype(int).clip(0, W - 1); my = ((L[:, 1] + L[:, 3]) / 2).astype(int).clip(0, H - 1); L = L[ok[my, mx]]
+            segs.append(np.c_[L, np.full(len(L), fi)])
+    if not segs: return []
+    S = np.vstack(segs); ln = np.hypot(S[:, 2] - S[:, 0], S[:, 3] - S[:, 1]); S = S[np.argsort(-ln)]; ln = np.sort(ln)[::-1]
+    th = np.arctan2(S[:, 3] - S[:, 1], S[:, 2] - S[:, 0]) % np.pi; used = np.zeros(len(S), bool); out = []; M = np.array([m for m in masks])
+    for i in range(len(S)):
+        if used[i]: continue
+        c = np.array([np.cos(th[i]), np.sin(th[i])]); nvec = np.array([-c[1], c[0]]); p0 = S[i, :2]
+        dth = np.abs((th - th[i] + np.pi / 2) % np.pi - np.pi / 2); rho = (S[:, :2] - p0) @ nvec; rho2 = (S[:, 2:4] - p0) @ nvec
+        g = (~used) & (dth < np.radians(winkel)) & (np.abs(rho) < abst) & (np.abs(rho2) < abst)
+        if not g[i]: continue
+        a1 = (S[:, :2] - p0) @ c; a2 = (S[:, 2:4] - p0) @ c; lo = np.minimum(a1, a2); hi = np.maximum(a1, a2); s0_, s1_ = lo[i], hi[i]; g &= (hi > s0_ - 3) & (lo < s1_ + 3)
+        idx = np.where(g)[0]; used[idx] = True; fot = S[idx, 4].astype(int)
+        # Fotos, die die Mitte sehen
+        mid = p0 + c * (s0_ + s1_) / 2; mx, my = int(np.clip(mid[0], 0, W - 1)), int(np.clip(mid[1], 0, H - 1)); sehen = int(M[:, my, mx].sum())
+        nf = len(set(fot.tolist()))
+        if sehen < 2 or nf < max(2, int(np.ceil(0.5 * sehen))): continue
+        w = ln[idx]; off = float(np.median(rho[idx] * 0.5 + rho2[idx] * 0.5)); ex = []
+        for f_ in sorted(set(fot.tolist())): k = idx[fot == f_]; ex.append((lo[k].min(), hi[k].max()))
+        e0 = float(np.median([e[0] for e in ex])); e1 = float(np.median([e[1] for e in ex]))
+        if (e1 - e0) < minl_m / px: continue
+        A = p0 + c * e0 + nvec * off; Bp = p0 + c * e1 + nvec * off; out.append([float(A[0]), float(A[1]), float(Bp[0]), float(Bp[1]), nf, round(nf / sehen, 2), "p"])
+    return out
+
 def kantenpunkte(foto, pts, r):
     """naechster Fotokantenpunkt (Canny, 1613 px) je Eingabepunkt innerhalb r px; sonst unveraendert. Rueckgabe Liste [x,y,bewegt]"""
     g = cv2.imread(os.path.join(a.bilder, foto), cv2.IMREAD_GRAYSCALE | cv2.IMREAD_IGNORE_ORIENTATION); g = cv2.resize(g, (SW, int(g.shape[0] * SW / g.shape[1])), interpolation=cv2.INTER_AREA)
@@ -639,6 +696,15 @@ class H(BaseHTTPRequestHandler):
             self._send(200, "application/json", json.dumps(dict(ok=err is None, fehler=err)).encode())
         elif self.path == "/api/wahrheit":
             self._send(200, "application/json", json.dumps(dict(n=wahrheit_speichern(d))).encode())
+        elif self.path == "/api/fotokanten":
+            out = fotokanten(ORD["last"], int(d.get("anz", 8)), bool(d.get("tiefe", True))); ORD["last"]["fk"] = out
+            self._send(200, "application/json", json.dumps(dict(linien=out)).encode())
+        elif self.path == "/api/fotoortho":
+            fl = beste_fotos(ORD["last"], int(d.get("anz", 3))); outs = []
+            for i, f in enumerate(fl):
+                im, ok = foto_ortho(ORD["last"], f, bool(d.get("tiefe", False))); im[~ok] = 0; pth = d["pfad"] + "_%d.png" % i; cv2.imwrite(pth, im); outs.append([f, pth])
+            cv2.imwrite(d["pfad"] + "_wolke.png", cv2.imdecode(np.frombuffer(__import__("base64").b64decode(ORC_LAST["bild"].split(",")[1]), np.uint8), 1))
+            self._send(200, "application/json", json.dumps(dict(fotos=outs)).encode())
         elif self.path == "/api/vsfoto":
             self._send(200, "application/json", json.dumps(foto_stuetzung(ORD["last"], int(d.get("anz", 12)), float(d.get("tol", 2.5)))).encode())
         elif self.path == "/api/vsmodell":
