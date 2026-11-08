@@ -481,6 +481,99 @@ def fotokanten(d, anz=8, tiefe=True, minl_m=0.25, winkel=2.5, abst=2.5):
         A = p0 + c * e0 + nvec * off; Bp = p0 + c * e1 + nvec * off; out.append([float(A[0]), float(A[1]), float(Bp[0]), float(Bp[1]), nf, round(nf / sehen, 2), "p"])
     return out
 
+def fotokanten_voll(d, cmin=0.9, maxn=80, tiefe=False, anteil=0.3, minl_m=0.25):
+    """Kantenkarte wie eine Tiefenkarte aus ALLEN Fotos, die die Ebene sehen (GPU): je Foto Entzerrung (grid_sample, volle Aufloesung, Tiefe aus Wolke), Kantenmaske auf grau/Gelb-Blau/Gruen,
+    Summe ueber Fotos / Zahl der Fotos, die den Pixel sehen = Kantenanteil F. Median-/Mehrheitsregel: F >= anteil. Linien per LSD auf F."""
+    import torch, torch.nn.functional as Fn
+    dev = "cuda"; U_ = uax(); n_ = np.array(obj()["fassade_n"]["wert"], float); n_ = n_[:2] / np.linalg.norm(n_[:2]); al = np.radians(d["neig"]); sn, cn = np.sin(al), np.cos(al); px = d["px"]; H, W = d["gray"].shape
+    nrm = np.array([n_[0] * cn, n_[1] * cn, -sn]); c0 = np.r_[((d["u0"] - W / 2 * px) * U_ + d["s0"] * n_), d["z0"] + (d["v0"] - H / 2 * px) * cn]
+    cand = []
+    for f, K in KAM.items():
+        if not os.path.exists(os.path.join(a.bilder, f)): continue
+        v = np.array(K["C"], float) - c0; dist = np.linalg.norm(v); cs = float(v @ nrm) / dist
+        if cs > cmin and 3 < dist < 70: cand.append((-cs, f))
+    fl = [f for _, f in sorted(cand)[:maxn]]
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float64); u = d["u0"] - xx * px; v = d["v0"] - yy * px
+    t = (d["d8"].astype(np.float64) / 255 * (d["vor"] + d["hinter"]) - d["hinter"]) if tiefe else np.zeros_like(u)
+    sS = d["s0"] + t * cn + v * sn; z = d["z0"] - t * sn + v * cn; X = np.stack([u * U_[0] + sS * n_[0], u * U_[1] + sS * n_[1], z], -1).reshape(-1, 3)
+    E = torch.zeros(H, W, device=dev); V = torch.zeros(H, W, device=dev); kern = torch.ones(1, 1, 3, 3, device=dev)
+    sob = torch.tensor([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], dtype=torch.float32, device=dev)[None, None]
+    for f in fl:
+        K = KAM[f]; im = cv2.imread(os.path.join(a.bilder, f), cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION)
+        if im is None: continue
+        sc = im.shape[1] / K["W"]; Xc = X @ np.array(K["Rn"]).T + np.array(K["tn"]); zc = Xc[:, 2]; uv = (K["f"] * Xc[:, :2] / np.where(zc > 0.5, zc, 0.5)[:, None] + [K["cx"], K["cy"]]) * sc
+        gx = torch.tensor(uv[:, 0].reshape(H, W) / (im.shape[1] - 1) * 2 - 1, dtype=torch.float32, device=dev); gy = torch.tensor(uv[:, 1].reshape(H, W) / (im.shape[0] - 1) * 2 - 1, dtype=torch.float32, device=dev)
+        ok = torch.tensor(zc.reshape(H, W) > 1, device=dev) & (gx.abs() < 0.995) & (gy.abs() < 0.995)
+        T = torch.tensor(im[:, :, ::-1].copy(), device=dev).permute(2, 0, 1)[None].float(); R = Fn.grid_sample(T, torch.stack([gx, gy], -1)[None], mode="bicubic", padding_mode="zeros", align_corners=True)[0]; del T
+        ch = torch.stack([R.mean(0), R[1], (R[0] + R[1]) / 2 - R[2]])[:, None]                # grau, Gruen, Gelb-Blau (Lab-b-aehnlich)
+        ch = Fn.avg_pool2d(ch, 3, 1, 1); gxs = Fn.conv2d(ch, sob, padding=1); gys = Fn.conv2d(ch, sob.transpose(2, 3), padding=1); mag = torch.sqrt(gxs ** 2 + gys ** 2)[:, 0]
+        okm = ok & (Fn.max_pool2d((~ok)[None, None].float(), 7, 1, 3)[0, 0] == 0)           # Rand der Sichtbarkeit abziehen
+        e = torch.zeros(H, W, device=dev, dtype=torch.bool)
+        for c in range(3):
+            m = mag[c]; vals = m[okm]
+            if vals.numel() < 1000: continue
+            thr = torch.quantile(vals[::max(1, vals.numel() // 200000)], 0.90); loc = Fn.max_pool2d(m[None, None], 5, 1, 2)[0, 0]; e |= (m >= thr) & (m >= loc * 0.999)      # starke lokale Maxima (duenne Kante)
+        e = Fn.conv2d(e[None, None].float(), kern, padding=1)[0, 0] > 0                    # 1 px Toleranz fuer Restversatz
+        E += (e & okm).float(); V += okm.float(); del R, ch, gxs, gys, mag
+    torch.cuda.empty_cache()
+    if len(fl) < 3 or float((V >= 3).sum()) < 1000: d["F"] = np.zeros((H, W), np.uint8); d["V"] = np.zeros((H, W), np.float32); return dict(linien=[], fotos=len(fl), score=0.0, cmin=cmin, tiefe=bool(tiefe))
+    F = torch.where(V >= 3, E / V.clamp(min=1), torch.zeros_like(E)); Fn_ = F.cpu().numpy(); Vn = V.cpu().numpy()
+    f8 = (np.clip(Fn_, 0, 1) * 255).astype(np.uint8); d["F"] = f8; d["V"] = Vn
+    G_ = cv2.GaussianBlur(np.clip(Fn_ / max(float(np.percentile(Fn_[Vn >= 3], 99.5)), 1e-3), 0, 1).astype(np.float32), (0, 0), 1.2); bin_ = (G_ * 255).astype(np.uint8)
+    lsd = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD); L = lsd.detect(bin_)[0]; out = []
+    if L is not None:
+        for q in np.asarray(L).reshape(-1, 4):
+            if np.hypot(q[2] - q[0], q[3] - q[1]) < minl_m / px: continue
+            n = max(int(np.hypot(q[2] - q[0], q[3] - q[1])), 2); xs = np.linspace(q[0], q[2], n).round().astype(int).clip(0, W - 1); ys = np.linspace(q[1], q[3], n).round().astype(int).clip(0, H - 1)
+            out.append([float(q[0]), float(q[1]), float(q[2]), float(q[3]), int(np.median(Vn[ys, xs])), round(float(np.median(Fn_[ys, xs])), 2), "p"])
+    ok_ = Vn >= 8; sc_ = 0.0
+    if ok_.sum() > 5000:                                       # Selbstpruefung ohne Wahrheit: wie einig sind die Fotos an ihren staerksten Kanten? (scharf ausgerichtet = hoher Anteil)
+        v_ = Fn_[ok_]; top = v_ >= np.percentile(v_, 97); sc_ = float(v_[top].mean())
+    return dict(linien=out, fotos=len(fl), score=round(sc_, 3), cmin=cmin, tiefe=bool(tiefe))
+
+def fotokanten_auto(d, kandidaten=((0.8, False), (0.9, False), (0.95, False), (0.8, True), (0.9, True)), minfotos=6):
+    """Sweet Spot je Ebene automatisch: Blickwinkel-Schwelle x Tiefe aus der Wolke durchprobieren, die Einstellung mit der groessten Foto-Einigkeit (score) nehmen; mindestens minfotos Fotos."""
+    best = None; prot = []
+    for cm, tf in kandidaten:
+        r = fotokanten_voll(d, cm, 80, tf)
+        prot.append(dict(cmin=cm, tiefe=tf, fotos=r["fotos"], score=r["score"], linien=len(r["linien"])))
+        if r["fotos"] >= minfotos and (best is None or r["score"] > best[0]["score"]): best = (r, d["F"].copy(), d["V"].copy())
+    if best is None: return dict(fehler="zu wenige frontale Fotos", protokoll=prot)
+    d["F"], d["V"] = best[1], best[2]; r = best[0]; r["protokoll"] = prot; return r
+
+def fotokanten_ref(d, stuetz=0.25, minl_m=0.25, nref=1):
+    """Allgemeine Methode (wie ein Mensch): Geometrie aus dem SCHAERFSTEN frontalen Foto (Entzerrung, LSD auf grau/gelb-blau/gruen), die uebrigen Fotos stimmen ab (Kantenanteil F aus allen Fotos, 1 px Toleranz,
+    entlang der Linie im Mittel >= stuetz). Keine Handwerte je Objekt: Referenz = hoechster cos * Laplace-Schaerfe der Ortho."""
+    H, W = d["gray"].shape; px = d["px"]; fl = beste_fotos(d, 30)
+    if len(fl) < 3: return dict(fehler="zu wenige frontale Fotos")
+    sh = []
+    for f in fl[:12]:
+        im, ok = foto_ortho(d, f, False); g = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY); okk = cv2.erode(ok.astype(np.uint8), np.ones((9, 9), np.uint8)) > 0
+        sh.append((float(cv2.Laplacian(g, cv2.CV_32F)[okk].var()) * okk.mean() if okk.sum() > 5000 else 0.0, f))
+    sh.sort(reverse=True); ref = [f for _, f in sh[:nref]]
+    Fm = fotokanten_voll(d, 0.8, 80, False)                                  # F-Karte aller Fotos (Abstimmung) in d["F"]
+    F = d["F"].astype(np.float32) / 255; F = cv2.dilate(F, np.ones((3, 3), np.uint8)); V = d["V"]; lsd = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD); out = []
+    for f in ref:
+        im, ok = foto_ortho(d, f, False); lab = cv2.cvtColor(im, cv2.COLOR_BGR2LAB); okk = cv2.erode(ok.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0
+        for g in (cv2.cvtColor(im, cv2.COLOR_BGR2GRAY), lab[:, :, 2], im[:, :, 1]):
+            L = lsd.detect(cv2.GaussianBlur(g, (0, 0), 0.8))[0]
+            if L is None: continue
+            for q in np.asarray(L).reshape(-1, 4):
+                ln = np.hypot(q[2] - q[0], q[3] - q[1])
+                if ln < minl_m / px: continue
+                n = max(int(ln), 2); xs = np.linspace(q[0], q[2], n).round().astype(int).clip(0, W - 1); ys = np.linspace(q[1], q[3], n).round().astype(int).clip(0, H - 1)
+                if not okk[ys, xs].all() or np.median(V[ys, xs]) < 3: continue
+                sup = float(np.median(F[ys, xs]) * 0 + F[ys, xs].mean())
+                if sup >= stuetz: out.append([float(q[0]), float(q[1]), float(q[2]), float(q[3]), int(np.median(V[ys, xs])), round(sup, 2), "p"])
+    # doppelte Linien (gleicher Ort aus mehreren Kanaelen) entfernen: laengste zuerst, Rasterbelegung
+    out.sort(key=lambda l: -np.hypot(l[2] - l[0], l[3] - l[1])); occ = np.zeros((H, W), np.uint8); keep = []
+    for l in out:
+        m = np.zeros((H, W), np.uint8); cv2.line(m, (int(l[0]), int(l[1])), (int(l[2]), int(l[3])), 1, 1); tot = m.sum()
+        if tot == 0: continue
+        if (cv2.dilate(occ, np.ones((5, 5), np.uint8)) & m).sum() / tot > 0.7: continue
+        occ |= m; keep.append(l)
+    return dict(linien=keep, fotos=len(fl), referenz=ref, methode="ref")
+
 def kantenpunkte(foto, pts, r):
     """naechster Fotokantenpunkt (Canny, 1613 px) je Eingabepunkt innerhalb r px; sonst unveraendert. Rueckgabe Liste [x,y,bewegt]"""
     g = cv2.imread(os.path.join(a.bilder, foto), cv2.IMREAD_GRAYSCALE | cv2.IMREAD_IGNORE_ORIENTATION); g = cv2.resize(g, (SW, int(g.shape[0] * SW / g.shape[1])), interpolation=cv2.INTER_AREA)
@@ -697,8 +790,10 @@ class H(BaseHTTPRequestHandler):
         elif self.path == "/api/wahrheit":
             self._send(200, "application/json", json.dumps(dict(n=wahrheit_speichern(d))).encode())
         elif self.path == "/api/fotokanten":
-            out = fotokanten(ORD["last"], int(d.get("anz", 8)), bool(d.get("tiefe", True))); ORD["last"]["fk"] = out
-            self._send(200, "application/json", json.dumps(dict(linien=out)).encode())
+            r_ = fotokanten_ref(ORD["last"], float(d.get("stuetz", 0.25))) if d.get("ref", True) else fotokanten_auto(ORD["last"]) if d.get("auto", True) else fotokanten_voll(ORD["last"], float(d.get("cmin", 0.9)), int(d.get("anz", 80)), bool(d.get("tiefe", False)), float(d.get("anteil", 0.3)))
+            if "fehler" in r_: self._send(200, "application/json", json.dumps(r_).encode()); return
+            im_ = cv2.imencode(".png", ORD["last"]["F"])[1].tobytes(); r_["F"] = "data:image/png;base64," + __import__("base64").b64encode(im_).decode()
+            self._send(200, "application/json", json.dumps(r_).encode())
         elif self.path == "/api/fotoortho":
             fl = beste_fotos(ORD["last"], int(d.get("anz", 3))); outs = []
             for i, f in enumerate(fl):
