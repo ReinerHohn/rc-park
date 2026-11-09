@@ -2,8 +2,8 @@
 je Punkt zaehlen: in wie vielen Fotos, die den Punkt SEHEN, liegt er auf einer Maskengrenze. Echte Kanten (Kreten, Fensterrahmen, Bogen) stimmen in vielen
 Fotos ueberein, Silhouetten/Verdeckungsgrenzen nur in wenigen. GPU: Projektion, Z-Puffer, Grenzbild, Zaehlung.
 Aufruf: python -I tools/kanten_3d_vote.py KAMERAS.json WOLKE.npy FOTOS.npz(key fotos) MASKENDIR OUT.npz [--tol 2]"""
-import sys, os, json, numpy as np, torch, torch.nn.functional as Fn
-dev = "cuda"; tol = int(sys.argv[sys.argv.index("--tol") + 1]) if "--tol" in sys.argv else 2
+import sys, os, json, numpy as np, torch, cv2, torch.nn.functional as Fn
+dev = "cuda"; tol = int(sys.argv[sys.argv.index("--tol") + 1]) if "--tol" in sys.argv else 2; BD = sys.argv[sys.argv.index("--bilder") + 1] if "--bilder" in sys.argv else None   # --bilder: zusaetzlich feine Fotokanten (Canny) = Sprossen/Rahmen, die SAM verschmilzt
 KAM = json.load(open(sys.argv[1])); P = np.load(sys.argv[2])[:, :3].astype(np.float32); fotos = list(np.load(sys.argv[3])["fotos"]); md = sys.argv[4]; Pt = torch.from_numpy(P).to(dev); N = len(P)
 vis_n = torch.zeros(N, dtype=torch.int16, device=dev); kan_n = torch.zeros(N, dtype=torch.int16, device=dev)
 for j, f in enumerate(fotos):
@@ -12,6 +12,9 @@ for j, f in enumerate(fotos):
     K = KAM[f]; lab = torch.from_numpy(np.load(cp)["lab"]).to(dev); h, w = lab.shape; s = w / K["W"]
     # Grenzbild: Label unterscheidet sich vom Nachbarn (rechts/unten); Rand zu "kein Label" zaehlt auch
     b = torch.zeros((h, w), dtype=torch.bool, device=dev); b[:, :-1] |= lab[:, :-1] != lab[:, 1:]; b[:-1, :] |= lab[:-1, :] != lab[1:, :]
+    if BD:
+        im = cv2.imread(os.path.join(BD, f), cv2.IMREAD_GRAYSCALE | cv2.IMREAD_IGNORE_ORIENTATION)
+        if im is not None: im = cv2.GaussianBlur(cv2.resize(im, (w, h), interpolation=cv2.INTER_AREA), (0, 0), 1.2); b |= torch.from_numpy(cv2.Canny(im, 50, 130) > 0).to(dev)
     b = Fn.max_pool2d(b.float()[None, None], 2 * tol + 1, 1, tol)[0, 0] > 0; del lab
     Xc = Pt @ torch.tensor(K["Rn"], device=dev, dtype=torch.float32).T + torch.tensor(K["tn"], device=dev, dtype=torch.float32); z = Xc[:, 2]
     uv = (K["f"] * Xc[:, :2] / z.clamp(min=0.5)[:, None] + torch.tensor([K["cx"], K["cy"]], device=dev)) * s; u = uv[:, 0].round().long(); v = uv[:, 1].round().long()
