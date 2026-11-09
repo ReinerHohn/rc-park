@@ -140,3 +140,4 @@ NC-Modelle nur zur Forschung; was im Verkaufsprodukt steckt, muss aus lizenzfrei
 
 ## 2026-11-08 pymeshfix (GPL) nur Test
 - BS124/BS125 (Wasserdicht-Ableitung hlo_pois_wd*.stl) nutzten pymeshfix (GPL; BS20 hatte es wegen geplantem Verkauf ausgeschlossen). Ergebnisse nur Testartefakte unter /media/oem/scan/rc-park_null (hlo_pois_wd*.stl), NICHT in Produkt/Druckpipeline uebernehmen; vor Verkauf Ersatz (z.B. eigener Randschleifen-Schluss, trimesh/manifold3d) oder Lizenz klaeren.
+- DexiNed (kornia, Gewichte DexiNed_BIPED_10.pth von huggingface.co/kornia/dexined): Code MIT/Apache, Gewichte-/BIPED-Lizenz unverifiziert; 9.11.2026 eingebaut (Kantenerkennung Foto-Ortho)

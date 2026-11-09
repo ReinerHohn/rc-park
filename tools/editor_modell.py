@@ -551,6 +551,28 @@ def fotokanten_auto(d, kandidaten=((0.8, False), (0.9, False), (0.95, False), (0
     if best is None: return dict(fehler="zu wenige frontale Fotos", protokoll=prot)
     d["F"], d["V"] = best[1], best[2]; r = best[0]; r["protokoll"] = prot; return r
 
+DEXI = {}
+def dexined_linien(bgr, dicht=0.88, minp=0.6, minlen=10):
+    """Trainierte Kantenkarte (DexiNed/BIPED via kornia, Gewichte in /media/oem/scan/tools_src/torch_cache), Sigmoid -> Skelett -> LSD; Rueckgabe Linien (x1,y1,x2,y2,p_mittel). Lizenz Gewichte: BIPED/DexiNed - vor Verkauf pruefen."""
+    import torch
+    from skimage.morphology import skeletonize
+    os.environ.setdefault("TORCH_HOME", "/media/oem/scan/tools_src/torch_cache")
+    if "m" not in DEXI:
+        from kornia.models.dexined import DexiNed
+        DEXI["m"] = DexiNed(pretrained=True).cuda().eval()
+    x = torch.tensor(bgr[:, :, ::-1].copy()).permute(2, 0, 1)[None].float().cuda()
+    with torch.no_grad(): ys = DEXI["m"](x)
+    y = ys[-1] if isinstance(ys, (list, tuple)) else ys; pm = torch.sigmoid(y)[0, 0].cpu().numpy(); del x, ys, y; torch.cuda.empty_cache()
+    th = max(float(np.percentile(pm, dicht * 100)), 0.3); sk = skeletonize(pm > th).astype(np.uint8) * 255
+    L = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD).detect(cv2.GaussianBlur(sk, (0, 0), 1.0))[0]; out = []
+    if L is None: return pm, out
+    for q in np.asarray(L).reshape(-1, 4):
+        ln = np.hypot(q[2] - q[0], q[3] - q[1])
+        if ln < minlen: continue
+        n = max(int(ln), 2); xs = np.linspace(q[0], q[2], n).round().astype(int).clip(0, pm.shape[1] - 1); ys_ = np.linspace(q[1], q[3], n).round().astype(int).clip(0, pm.shape[0] - 1); pp = float(pm[ys_, xs].mean())
+        if pp >= minp: out.append([float(q[0]), float(q[1]), float(q[2]), float(q[3]), pp])
+    return pm, out
+
 def linien_verbinden(L, px, winkel=1.5, abst=1.5, luecke_m=0.5):
     """Kollineare Stuecke zu durchgehenden Linien verbinden (Winkel < winkel Grad, Querabstand < abst px, Luecke < luecke_m). Lage = laengengewichtete Ausgleichsgerade, Ausdehnung = Vereinigung. Wiederholen bis stabil."""
     if len(L) < 2: return L
@@ -604,6 +626,12 @@ def fotokanten_ref(d, stuetz=0.25, minl_m=0.15, nref=1):
         kt = np.array([c[1] for c in cand]); thr_k = max(float(np.percentile(kt, 60)), 0.12)      # starker Kontrast im scharfen Foto zaehlt auch ohne Abstimmung (Relief steht vor der Ebene -> Parallaxe)
         for q, kon, sup, nv in cand:
             if (sup >= stuetz and nv >= 3) or kon >= thr_k: out.append([float(q[0]), float(q[1]), float(q[2]), float(q[3]), nv, round(max(sup, kon), 2), "p"])
+    try:                                                       # trainierte Kantenkarte als zusaetzliche Quelle (Relief, Saeulen, Fensterteilung)
+        im_r, ok_r = foto_ortho(d, ref[0], False); _, DL = dexined_linien(im_r); okr = cv2.erode(ok_r.astype(np.uint8), np.ones((9, 9), np.uint8)) > 0
+        for q in DL:
+            mx_, my_ = int(np.clip((q[0] + q[2]) / 2, 0, W - 1)), int(np.clip((q[1] + q[3]) / 2, 0, H - 1))
+            if okr[my_, mx_]: out.append([q[0], q[1], q[2], q[3], int(V[my_, mx_]), round(q[4], 2), "p"])
+    except Exception as e_: print("DexiNed uebersprungen:", e_)
     # doppelte Linien (gleicher Ort aus mehreren Kanaelen) entfernen: laengste zuerst, Rasterbelegung
     out.sort(key=lambda l: -np.hypot(l[2] - l[0], l[3] - l[1])); occ = np.zeros((H, W), np.uint8); keep = []
     for l in out:
