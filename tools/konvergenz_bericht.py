@@ -129,7 +129,9 @@ try:
                                 capture_output=True, text=True).stdout.strip())
 except Exception:
     git, dirty = "?", True
-zeile = {"zeit": time.strftime("%Y-%m-%d %H:%M"), "git": git + ("+" if dirty else ""), "etikett": ETIKETT, "stl": STL, "skala": SK,
+import hashlib
+STL_SHA = hashlib.sha256(open(STL, "rb").read()).hexdigest()[:16]
+zeile = {"zeit": time.strftime("%Y-%m-%d %H:%M"), "git": git + ("+" if dirty else ""), "etikett": ETIKETT, "stl": STL, "stl_sha": STL_SHA, "skala": SK,
          "gitter": GIT, "tol_m": TOL, "min_kante_m": MINK, "kanten": {"gesamt": gesamt, "baender": baender},
          "pruefstand": pb, "teile_sicht": ts, "foto_diff": fd, "wolkenbeleg_teile": teile, "rechenzeit_s": round(time.time() - t0, 1)}
 

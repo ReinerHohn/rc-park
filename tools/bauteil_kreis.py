@@ -147,7 +147,17 @@ for runde in range(1, RUNDEN + 1):
         kf = os.path.join(ROOT, "modelle", OBJ, "konvergenz.jsonl")
         z0 = json.loads([l for l in open(kf) if l.strip()][-1])
     else:
-        rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
+        # Wiederverwendung (verlustfrei): letzte Konvergenz-Zeile gilt, wenn ihr STL-Hash dem STL dieses Stands gleicht und sie den Wolkenbeleg traegt
+        import hashlib
+        z0 = None; kf = os.path.join(wt, "modelle", OBJ, "konvergenz.jsonl"); sp = os.path.join(wt, STL)
+        if os.path.exists(kf) and os.path.exists(sp):
+            sha = hashlib.sha256(open(sp, "rb").read()).hexdigest()[:16]
+            for l in reversed([l for l in open(kf) if l.strip()]):
+                zz = json.loads(l)
+                if zz.get("stl_sha") == sha and zz.get("wolkenbeleg_teile"):
+                    z0 = zz; print(f"Runde {runde}: Messung vorher wiederverwendet (STL {sha})"); break
+        if z0 is None:
+            rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
     ziel = waehlen(z0, sperre)
     if not ziel:
         print("kein Kandidat mehr - Ende"); protokoll({"runde": runde, "ende": "kein Kandidat"}); break
