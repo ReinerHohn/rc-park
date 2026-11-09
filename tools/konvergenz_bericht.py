@@ -16,7 +16,7 @@ Druckschwelle: Kanten feiner als --min_kante (Standard 0,035 m = 0,4-mm-Duese in
   Gittersegmente kuerzer als --min_kante werden verworfen.
 
 Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/konvergenz_bericht.py <objekt> --stl STL_IN_M_ODER_H0 [--skala 0.087]
-        --gitter SEGMENTE.json [--teile_sicht JSON] [--tol 0.10] [--winkel 25] [--baender 0,5,10,15,20,40] [--etikett TEXT] [--trocken]
+        --gitter SEGMENTE.json [--teile_sicht JSON] [--wolke VOLLE_WOLKE.npy --teile_dir BAUTEILE_STL_DIR [--nah 1.0 --beleg 0.15]] [--tol 0.10] [--winkel 25] [--baender 0,5,10,15,20,40] [--etikett TEXT] [--trocken]
   --stl: Modell; --skala multipliziert die Koordinaten (H0-STL in mm -> m: 0.087). Modell und Gitter muessen im selben Rahmen liegen
   (Kaufhaus: H0-STL * 0,087 = lot2-Rahmen, wie der Viewer). --trocken: nichts anhaengen.
 Rueckschritt = eine Kennzahl faellt um mehr als --rausch (Standard 0,01) gegen die letzte Zeile (Recall/Praezision je Band mit >= 200 Punkten,
@@ -102,6 +102,27 @@ for f in sorted(os.listdir(os.path.join(ODIR, "audit"))):
         d = json.load(open(os.path.join(ODIR, "audit", f)))
         fd[d.get("foto", f[10:-5])] = {"rot": d.get("anteil_modellkanten_ohne_foto"), "gelb": d.get("anteil_fotokanten_ohne_modell")}
 
+# 6. Wolkenbeleg je Bauteil (generischer Fehlerfinder, 9.11.: Staffelgiebel/Erker fielen hier ohne Handarbeit auf):
+#    Anteil der Modellflaeche MIT Wolkendaten in < --nah m, die naeher als --beleg m an der Wolke liegt. Rueckseiten ohne Daten zaehlen nicht.
+#    Niedriger Wert = Teil steht neben echten Daten, trifft sie aber nicht (falsche Form/Lage). Nur Hinweisliste, bis per Synth + 2. Objekt bewiesen.
+teile = None
+WOLKE = opt("--wolke"); TDIR = opt("--teile_dir")
+if WOLKE and TDIR and os.path.isdir(TDIR):
+    Wv = np.load(WOLKE, mmap_mode="r")[:, :3].astype(np.float32)
+    zw = float(Wv[:, 2].max())
+    NAH = opt("--nah", 1.0, float); BEL = opt("--beleg", 0.15, float)
+    teile = []
+    for f in sorted(os.listdir(TDIR)):
+        if not f.endswith(".stl") or "ausschnitt" in f:
+            continue
+        tm = trimesh.load(os.path.join(TDIR, f), force="mesh"); tm.apply_scale(SK)
+        Pt = tm.sample(60000).astype(np.float32); dt = md(Pt, Wv); nah = dt < NAH
+        teile.append({"teil": f[:-4], "anteil_mit_daten": round(float(nah.mean()), 3),
+                      "beleg": round(float((dt[nah] < BEL).mean()), 3) if nah.any() else None,
+                      "median_m": round(float(np.median(dt[nah])), 3) if nah.any() else None,
+                      "ueber_wolke_z": round(float((Pt[:, 2] > zw).mean()), 3)})
+    teile.sort(key=lambda t: (t["beleg"] is None, t["beleg"] if t["beleg"] is not None else 9))
+
 try:
     git = subprocess.run(["git", "-C", ROOT, "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip()
     dirty = bool(subprocess.run(["git", "-C", ROOT, "status", "--porcelain", "--", os.path.abspath(STL)],
@@ -110,7 +131,7 @@ except Exception:
     git, dirty = "?", True
 zeile = {"zeit": time.strftime("%Y-%m-%d %H:%M"), "git": git + ("+" if dirty else ""), "etikett": ETIKETT, "stl": STL, "skala": SK,
          "gitter": GIT, "tol_m": TOL, "min_kante_m": MINK, "kanten": {"gesamt": gesamt, "baender": baender},
-         "pruefstand": pb, "teile_sicht": ts, "foto_diff": fd, "rechenzeit_s": round(time.time() - t0, 1)}
+         "pruefstand": pb, "teile_sicht": ts, "foto_diff": fd, "wolkenbeleg_teile": teile, "rechenzeit_s": round(time.time() - t0, 1)}
 
 # Vergleich mit Vorlauf
 KF = os.path.join(ODIR, "konvergenz.jsonl")
@@ -153,6 +174,11 @@ if pb: print(f"Pruefstand: bestanden={pb['bestanden']}  ok {pb['ok']}/{pb['n']} 
 if ts: print(f"Teile-Sicht: GRUEN {ts['gruen']}  ROT {ts['rot']}  UNGEPRUEFT {ts['ungeprueft']}  "
              f"({'Gate bewiesen' if ts['gate_bewiesen'] else 'NUR HINWEIS, Gate nicht bewiesen'})")
 for k, v in fd.items(): print(f"foto_diff {k}: rot {v['rot']}  gelb {v['gelb']}")
+if teile:
+    print("Wolkenbeleg je Bauteil (schlechteste zuerst; Hinweis, kein Gate): Teil | Flaeche mit Daten | davon auf Wolke | Median m | ueber Wolken-zmax")
+    for t in teile:
+        flag = "  <- pruefen" if t["beleg"] is not None and t["beleg"] < 0.3 else ""
+        print(f"  {t['teil']:30s} {t['anteil_mit_daten']:.2f}  {t['beleg']}  {t['median_m']}  {t['ueber_wolke_z']}{flag}")
 if rueck:
     print("RUECKSCHRITT: " + "; ".join(rueck))
 if not TROCKEN:
