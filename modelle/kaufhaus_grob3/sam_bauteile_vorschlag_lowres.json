@@ -1,0 +1,4258 @@
+[
+ {
+  "typ": "quader:sam_2",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 15.055,
+  "u1": 16.086,
+  "n0": 11.758,
+  "n1": 12.726,
+  "z0": 2.878,
+  "z1": 6.379,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #2 (44242 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   163,
+   100,
+   93
+  ],
+  "punkte": 44242
+ },
+ {
+  "typ": "quader:sam_3",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 14.847,
+  "u1": 17.159,
+  "n0": 12.505,
+  "n1": 14.03,
+  "z0": 12.358,
+  "z1": 13.122,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #3 (3017 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   137,
+   76,
+   74
+  ],
+  "punkte": 3017
+ },
+ {
+  "typ": "quader:sam_4",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -2.949,
+  "u1": -1.943,
+  "n0": 7.298,
+  "n1": 12.593,
+  "z0": 2.847,
+  "z1": 5.557,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #4 (23403 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   173,
+   112,
+   98
+  ],
+  "punkte": 23403
+ },
+ {
+  "typ": "quader:sam_5",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -10.145,
+  "u1": -6.802,
+  "n0": 11.824,
+  "n1": 13.948,
+  "z0": 6.519,
+  "z1": 9.715,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #5 (84415 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   106,
+   66,
+   55
+  ],
+  "punkte": 84415
+ },
+ {
+  "typ": "quader:sam_6",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -9.036,
+  "u1": -4.467,
+  "n0": 7.233,
+  "n1": 12.792,
+  "z0": 2.771,
+  "z1": 6.409,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #6 (5467 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   187,
+   120,
+   109
+  ],
+  "punkte": 5467
+ },
+ {
+  "typ": "quader:sam_7",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -5.232,
+  "u1": 12.073,
+  "n0": 12.873,
+  "n1": 13.909,
+  "z0": 8.27,
+  "z1": 9.672,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #7 (149488 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   140,
+   81,
+   78
+  ],
+  "punkte": 149488
+ },
+ {
+  "typ": "quader:sam_8",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 3.08,
+  "u1": 3.978,
+  "n0": 11.951,
+  "n1": 12.626,
+  "z0": 2.674,
+  "z1": 5.372,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #8 (23386 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   156,
+   103,
+   94
+  ],
+  "punkte": 23386
+ },
+ {
+  "typ": "quader:sam_9",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 13.774,
+  "u1": 16.852,
+  "n0": 12.137,
+  "n1": 14.087,
+  "z0": 13.153,
+  "z1": 20.354,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #9 (15801 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   158,
+   154,
+   147
+  ],
+  "punkte": 15801
+ },
+ {
+  "typ": "quader:sam_10",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 13.969,
+  "u1": 17.283,
+  "n0": 10.749,
+  "n1": 13.905,
+  "z0": 6.531,
+  "z1": 9.681,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #10 (85138 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   93,
+   55,
+   47
+  ],
+  "punkte": 85138
+ },
+ {
+  "typ": "quader:sam_11",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 14.136,
+  "u1": 17.146,
+  "n0": 11.572,
+  "n1": 13.829,
+  "z0": 9.903,
+  "z1": 12.411,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #11 (21598 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   108,
+   83,
+   80
+  ],
+  "punkte": 21598
+ },
+ {
+  "typ": "quader:sam_12",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -8.747,
+  "u1": -8.097,
+  "n0": 5.571,
+  "n1": 10.239,
+  "z0": 18.862,
+  "z1": 25.776,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #12 (3085 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   139,
+   94,
+   97
+  ],
+  "punkte": 3085
+ },
+ {
+  "typ": "quader:sam_13",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 10.099,
+  "u1": 12.7,
+  "n0": 12.301,
+  "n1": 12.648,
+  "z0": 10.441,
+  "z1": 13.299,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #13 (15633 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   92,
+   71,
+   66
+  ],
+  "punkte": 15633
+ },
+ {
+  "typ": "quader:sam_14",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 6.186,
+  "u1": 8.796,
+  "n0": 12.386,
+  "n1": 12.686,
+  "z0": 10.546,
+  "z1": 13.335,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #14 (17637 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   102,
+   80,
+   74
+  ],
+  "punkte": 17637
+ },
+ {
+  "typ": "quader:sam_15",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -9.603,
+  "u1": -6.49,
+  "n0": 12.055,
+  "n1": 14.102,
+  "z0": 13.03,
+  "z1": 20.577,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #15 (14834 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   155,
+   146,
+   137
+  ],
+  "punkte": 14834
+ },
+ {
+  "typ": "quader:sam_16",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 2.191,
+  "u1": 4.816,
+  "n0": 12.361,
+  "n1": 12.716,
+  "z0": 10.43,
+  "z1": 13.322,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #16 (20013 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   102,
+   81,
+   74
+  ],
+  "punkte": 20013
+ },
+ {
+  "typ": "quader:sam_17",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -1.779,
+  "u1": 0.822,
+  "n0": 12.401,
+  "n1": 12.683,
+  "z0": 10.559,
+  "z1": 13.327,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #17 (15366 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   95,
+   73,
+   67
+  ],
+  "punkte": 15366
+ },
+ {
+  "typ": "quader:sam_18",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -5.714,
+  "u1": -3.122,
+  "n0": 12.395,
+  "n1": 12.671,
+  "z0": 10.475,
+  "z1": 13.353,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #18 (16933 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   85,
+   66,
+   61
+  ],
+  "punkte": 16933
+ },
+ {
+  "typ": "quader:sam_19",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -11.361,
+  "u1": -7.089,
+  "n0": 7.579,
+  "n1": 8.457,
+  "z0": 2.86,
+  "z1": 7.108,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #19 (598 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   78,
+   69,
+   64
+  ],
+  "punkte": 598
+ },
+ {
+  "typ": "quader:sam_20",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -10.039,
+  "u1": -7.022,
+  "n0": 12.272,
+  "n1": 13.841,
+  "z0": 9.958,
+  "z1": 12.41,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #20 (23745 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   110,
+   84,
+   79
+  ],
+  "punkte": 23745
+ },
+ {
+  "typ": "quader:sam_21",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 22.175,
+  "u1": 23.335,
+  "n0": 8.557,
+  "n1": 9.093,
+  "z0": 9.673,
+  "z1": 11.541,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #21 (619 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   159,
+   154,
+   161
+  ],
+  "punkte": 619
+ },
+ {
+  "typ": "quader:sam_22",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 2.759,
+  "u1": 4.122,
+  "n0": 11.692,
+  "n1": 13.565,
+  "z0": 1.551,
+  "z1": 2.793,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #22 (5900 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   161,
+   147,
+   162
+  ],
+  "punkte": 5900
+ },
+ {
+  "typ": "quader:sam_23",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 19.41,
+  "u1": 20.719,
+  "n0": 7.771,
+  "n1": 8.445,
+  "z0": 9.702,
+  "z1": 11.545,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #23 (491 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   111,
+   108,
+   112
+  ],
+  "punkte": 491
+ },
+ {
+  "typ": "quader:sam_24",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 22.15,
+  "u1": 23.373,
+  "n0": 8.45,
+  "n1": 9.107,
+  "z0": 13.722,
+  "z1": 15.361,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #24 (491 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   163,
+   161,
+   169
+  ],
+  "punkte": 491
+ },
+ {
+  "typ": "quader:sam_25",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.709,
+  "u1": 18.049,
+  "n0": 7.284,
+  "n1": 7.793,
+  "z0": 9.734,
+  "z1": 11.581,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #25 (1399 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   80,
+   74,
+   78
+  ],
+  "punkte": 1399
+ },
+ {
+  "typ": "quader:sam_26",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 19.413,
+  "u1": 20.732,
+  "n0": 7.793,
+  "n1": 8.378,
+  "z0": 13.842,
+  "z1": 15.473,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #26 (733 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   126,
+   128,
+   146
+  ],
+  "punkte": 733
+ },
+ {
+  "typ": "quader:sam_27",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -17.448,
+  "u1": -15.341,
+  "n0": 7.571,
+  "n1": 8.131,
+  "z0": 6.529,
+  "z1": 7.732,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #27 (766 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   125,
+   130,
+   129
+  ],
+  "punkte": 766
+ },
+ {
+  "typ": "quader:sam_28",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 8.71,
+  "u1": 10.132,
+  "n0": 10.431,
+  "n1": 11.323,
+  "z0": 16.812,
+  "z1": 18.158,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #28 (2263 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   60,
+   55,
+   64
+  ],
+  "punkte": 2263
+ },
+ {
+  "typ": "quader:sam_29",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 8.966,
+  "u1": 9.822,
+  "n0": 12.748,
+  "n1": 13.26,
+  "z0": 11.333,
+  "z1": 14.701,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #29 (11858 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   154,
+   115,
+   103
+  ],
+  "punkte": 11858
+ },
+ {
+  "typ": "quader:sam_30",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 2.843,
+  "u1": 4.326,
+  "n0": 9.883,
+  "n1": 11.31,
+  "z0": 16.829,
+  "z1": 18.66,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #30 (2894 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   61,
+   56,
+   64
+  ],
+  "punkte": 2894
+ },
+ {
+  "typ": "quader:sam_31",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 5.008,
+  "u1": 5.811,
+  "n0": 12.801,
+  "n1": 13.188,
+  "z0": 11.28,
+  "z1": 14.604,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #31 (14081 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   162,
+   122,
+   109
+  ],
+  "punkte": 14081
+ },
+ {
+  "typ": "quader:sam_32",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 5.963,
+  "u1": 7.202,
+  "n0": 8.073,
+  "n1": 8.589,
+  "z0": 20.518,
+  "z1": 21.338,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #32 (1612 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   65,
+   60,
+   71
+  ],
+  "punkte": 1612
+ },
+ {
+  "typ": "quader:sam_33",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -10.677,
+  "u1": -6.742,
+  "n0": 9.793,
+  "n1": 12.895,
+  "z0": 1.395,
+  "z1": 2.306,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #33 (700 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   178,
+   122,
+   114
+  ],
+  "punkte": 700
+ },
+ {
+  "typ": "quader:sam_34",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 18.159,
+  "u1": 19.322,
+  "n0": 6.678,
+  "n1": 7.076,
+  "z0": 18.094,
+  "z1": 19.31,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #34 (635 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   132,
+   133,
+   149
+  ],
+  "punkte": 635
+ },
+ {
+  "typ": "quader:sam_37",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -10.075,
+  "u1": 9.364,
+  "n0": 5.758,
+  "n1": 11.965,
+  "z0": 2.659,
+  "z1": 25.396,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #37 (3322 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   136,
+   88,
+   84
+  ],
+  "punkte": 3322
+ },
+ {
+  "typ": "quader:sam_38",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -5.494,
+  "u1": -4.824,
+  "n0": 12.671,
+  "n1": 13.924,
+  "z0": 7.698,
+  "z1": 8.39,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #38 (13484 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   138,
+   81,
+   74
+  ],
+  "punkte": 13484
+ },
+ {
+  "typ": "quader:sam_39",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -8.891,
+  "u1": -7.192,
+  "n0": 7.273,
+  "n1": 8.362,
+  "z0": 2.636,
+  "z1": 7.425,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #39 (5342 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   102,
+   55,
+   51
+  ],
+  "punkte": 5342
+ },
+ {
+  "typ": "quader:sam_41",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 11.304,
+  "u1": 11.561,
+  "n0": 12.64,
+  "n1": 14.734,
+  "z0": 13.338,
+  "z1": 14.315,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #41 (2846 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   92,
+   79,
+   80
+  ],
+  "punkte": 2846
+ },
+ {
+  "typ": "quader:sam_42",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -17.484,
+  "u1": -16.773,
+  "n0": 7.981,
+  "n1": 8.099,
+  "z0": 9.658,
+  "z1": 11.242,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #42 (323 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   141,
+   148,
+   140
+  ],
+  "punkte": 323
+ },
+ {
+  "typ": "quader:sam_43",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 6.194,
+  "u1": 10.061,
+  "n0": 7.286,
+  "n1": 12.661,
+  "z0": 1.639,
+  "z1": 5.266,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #43 (39902 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   158,
+   104,
+   94
+  ],
+  "punkte": 39902
+ },
+ {
+  "typ": "quader:sam_47",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -15.152,
+  "u1": -14.31,
+  "n0": 7.728,
+  "n1": 7.927,
+  "z0": 9.603,
+  "z1": 11.186,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #47 (635 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   150,
+   158,
+   152
+  ],
+  "punkte": 635
+ },
+ {
+  "typ": "quader:sam_48",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 1.127,
+  "u1": 1.886,
+  "n0": 12.798,
+  "n1": 13.106,
+  "z0": 11.215,
+  "z1": 13.246,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #48 (7855 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   180,
+   153,
+   135
+  ],
+  "punkte": 7855
+ },
+ {
+  "typ": "quader:sam_49",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -15.214,
+  "u1": -14.462,
+  "n0": 7.875,
+  "n1": 8.044,
+  "z0": 13.119,
+  "z1": 14.627,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #49 (480 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   147,
+   153,
+   146
+  ],
+  "punkte": 480
+ },
+ {
+  "typ": "quader:sam_50",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -12.63,
+  "u1": -11.861,
+  "n0": 7.599,
+  "n1": 7.762,
+  "z0": 6.213,
+  "z1": 7.741,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #50 (1018 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   135,
+   143,
+   138
+  ],
+  "punkte": 1018
+ },
+ {
+  "typ": "quader:sam_51",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -12.632,
+  "u1": -11.895,
+  "n0": 7.564,
+  "n1": 7.688,
+  "z0": 9.603,
+  "z1": 11.171,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #51 (704 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   153,
+   161,
+   154
+  ],
+  "punkte": 704
+ },
+ {
+  "typ": "quader:sam_52",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -9.95,
+  "u1": -9.281,
+  "n0": 12.971,
+  "n1": 13.645,
+  "z0": 8.752,
+  "z1": 9.588,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #52 (4446 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   153,
+   121,
+   97
+  ],
+  "punkte": 4446
+ },
+ {
+  "typ": "quader:sam_53",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -3.808,
+  "u1": -3.324,
+  "n0": 11.595,
+  "n1": 12.533,
+  "z0": 1.725,
+  "z1": 2.887,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #53 (8038 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   198,
+   198,
+   194
+  ],
+  "punkte": 8038
+ },
+ {
+  "typ": "quader:sam_54",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -5.367,
+  "u1": 7.524,
+  "n0": 10.704,
+  "n1": 13.38,
+  "z0": 7.121,
+  "z1": 15.502,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #54 (1257 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   119,
+   86,
+   84
+  ],
+  "punkte": 1257
+ },
+ {
+  "typ": "quader:sam_55",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 4.202,
+  "u1": 5.964,
+  "n0": 10.112,
+  "n1": 11.737,
+  "z0": 6.419,
+  "z1": 7.896,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #55 (516 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   70,
+   28,
+   20
+  ],
+  "punkte": 516
+ },
+ {
+  "typ": "quader:sam_56",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 4.868,
+  "u1": 5.394,
+  "n0": 12.76,
+  "n1": 13.921,
+  "z0": 7.617,
+  "z1": 8.274,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #56 (6060 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   90,
+   41,
+   39
+  ],
+  "punkte": 6060
+ },
+ {
+  "typ": "quader:sam_57",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -4.853,
+  "u1": -1.084,
+  "n0": 7.93,
+  "n1": 11.118,
+  "z0": 1.483,
+  "z1": 1.654,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #57 (9113 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   97,
+   91,
+   83
+  ],
+  "punkte": 9113
+ },
+ {
+  "typ": "quader:sam_59",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -2.653,
+  "u1": -2.134,
+  "n0": 7.277,
+  "n1": 7.503,
+  "z0": 2.327,
+  "z1": 5.684,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #59 (6626 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   114,
+   60,
+   52
+  ],
+  "punkte": 6626
+ },
+ {
+  "typ": "quader:sam_60",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 15.989,
+  "u1": 23.861,
+  "n0": 7.237,
+  "n1": 9.216,
+  "z0": 2.395,
+  "z1": 16.421,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #60 (21702 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   169,
+   167,
+   171
+  ],
+  "punkte": 21702
+ },
+ {
+  "typ": "quader:sam_61",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 2.895,
+  "u1": 3.452,
+  "n0": 11.556,
+  "n1": 12.647,
+  "z0": 1.521,
+  "z1": 2.413,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #61 (1087 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   131,
+   85,
+   77
+  ],
+  "punkte": 1087
+ },
+ {
+  "typ": "quader:sam_62",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -2.613,
+  "u1": -1.688,
+  "n0": 11.572,
+  "n1": 12.736,
+  "z0": 1.492,
+  "z1": 2.415,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #62 (1623 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   135,
+   83,
+   81
+  ],
+  "punkte": 1623
+ },
+ {
+  "typ": "quader:sam_63",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -1.429,
+  "u1": 2.737,
+  "n0": 6.88,
+  "n1": 7.314,
+  "z0": 2.317,
+  "z1": 6.658,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #63 (7048 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   62,
+   39,
+   34
+  ],
+  "punkte": 7048
+ },
+ {
+  "typ": "quader:sam_64",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -4.046,
+  "u1": -2.734,
+  "n0": 7.272,
+  "n1": 7.374,
+  "z0": 3.626,
+  "z1": 4.55,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #64 (4108 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   65,
+   59,
+   53
+  ],
+  "punkte": 4108
+ },
+ {
+  "typ": "quader:sam_65",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -8.934,
+  "u1": 15.787,
+  "n0": 6.844,
+  "n1": 12.581,
+  "z0": 18.705,
+  "z1": 25.069,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #65 (1732 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   254,
+   255,
+   255
+  ],
+  "punkte": 1732
+ },
+ {
+  "typ": "quader:sam_66",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -7.066,
+  "u1": 13.947,
+  "n0": 9.1,
+  "n1": 12.995,
+  "z0": 14.628,
+  "z1": 19.589,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #66 (16108 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   83,
+   85,
+   89
+  ],
+  "punkte": 16108
+ },
+ {
+  "typ": "quader:sam_67",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -23.402,
+  "u1": -11.003,
+  "n0": 6.921,
+  "n1": 8.79,
+  "z0": 3.997,
+  "z1": 17.977,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #67 (9163 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   172,
+   162,
+   143
+  ],
+  "punkte": 9163
+ },
+ {
+  "typ": "quader:sam_68",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 15.109,
+  "u1": 15.871,
+  "n0": 5.734,
+  "n1": 10.352,
+  "z0": 18.755,
+  "z1": 25.689,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #68 (1439 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   139,
+   96,
+   104
+  ],
+  "punkte": 1439
+ },
+ {
+  "typ": "quader:sam_69",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 13.273,
+  "u1": 15.62,
+  "n0": 7.522,
+  "n1": 9.25,
+  "z0": 5.694,
+  "z1": 7.863,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #69 (1349 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   72,
+   34,
+   34
+  ],
+  "punkte": 1349
+ },
+ {
+  "typ": "quader:sam_70",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -15.011,
+  "u1": -12.881,
+  "n0": 7.309,
+  "n1": 7.961,
+  "z0": 6.386,
+  "z1": 7.729,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #70 (2474 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   132,
+   135,
+   132
+  ],
+  "punkte": 2474
+ },
+ {
+  "typ": "quader:sam_72",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -2.188,
+  "u1": 3.255,
+  "n0": 12.111,
+  "n1": 12.661,
+  "z0": 5.473,
+  "z1": 7.45,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #72 (25361 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   123,
+   71,
+   59
+  ],
+  "punkte": 25361
+ },
+ {
+  "typ": "quader:sam_73",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 3.855,
+  "u1": 9.215,
+  "n0": 12.02,
+  "n1": 12.653,
+  "z0": 5.437,
+  "z1": 7.414,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #73 (23720 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   115,
+   61,
+   53
+  ],
+  "punkte": 23720
+ },
+ {
+  "typ": "quader:sam_74",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -3.321,
+  "u1": -2.486,
+  "n0": 13.011,
+  "n1": 13.316,
+  "z0": 1.713,
+  "z1": 2.728,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #74 (3824 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   193,
+   199,
+   202
+  ],
+  "punkte": 3824
+ },
+ {
+  "typ": "quader:sam_75",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 9.044,
+  "u1": 9.422,
+  "n0": 7.263,
+  "n1": 7.306,
+  "z0": 2.362,
+  "z1": 2.968,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #75 (372 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   114,
+   62,
+   61
+  ],
+  "punkte": 372
+ },
+ {
+  "typ": "quader:sam_76",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 23.784,
+  "u1": 24.198,
+  "n0": 9.02,
+  "n1": 9.462,
+  "z0": 5.94,
+  "z1": 15.561,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #76 (507 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   147,
+   152,
+   159
+  ],
+  "punkte": 507
+ },
+ {
+  "typ": "quader:sam_77",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -17.511,
+  "u1": -11.627,
+  "n0": 7.49,
+  "n1": 8.039,
+  "z0": 11.796,
+  "z1": 12.066,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #77 (647 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   168,
+   159,
+   154
+  ],
+  "punkte": 647
+ },
+ {
+  "typ": "quader:sam_78",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -4.762,
+  "u1": -4.099,
+  "n0": 12.3,
+  "n1": 12.557,
+  "z0": 10.532,
+  "z1": 12.184,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #78 (1178 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   75,
+   68,
+   71
+  ],
+  "punkte": 1178
+ },
+ {
+  "typ": "quader:sam_79",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 7.496,
+  "u1": 11.788,
+  "n0": 7.509,
+  "n1": 10.237,
+  "z0": 6.045,
+  "z1": 7.833,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #79 (8941 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   71,
+   37,
+   35
+  ],
+  "punkte": 8941
+ },
+ {
+  "typ": "quader:sam_80",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -16.619,
+  "u1": -15.328,
+  "n0": 7.586,
+  "n1": 7.993,
+  "z0": 10.033,
+  "z1": 11.16,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #80 (722 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   111,
+   108,
+   106
+  ],
+  "punkte": 722
+ },
+ {
+  "typ": "quader:sam_81",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -3.048,
+  "u1": -1.724,
+  "n0": 9.577,
+  "n1": 11.271,
+  "z0": 17.03,
+  "z1": 19.159,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #81 (2085 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   58,
+   53,
+   61
+  ],
+  "punkte": 2085
+ },
+ {
+  "typ": "quader:sam_82",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -0.843,
+  "u1": -0.176,
+  "n0": 12.293,
+  "n1": 12.534,
+  "z0": 10.469,
+  "z1": 12.197,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #82 (1764 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   92,
+   90,
+   96
+  ],
+  "punkte": 1764
+ },
+ {
+  "typ": "quader:sam_83",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -14.091,
+  "u1": -12.836,
+  "n0": 7.337,
+  "n1": 7.56,
+  "z0": 10.062,
+  "z1": 11.133,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #83 (535 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   80,
+   73,
+   72
+  ],
+  "punkte": 535
+ },
+ {
+  "typ": "quader:sam_84",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 19.399,
+  "u1": 20.701,
+  "n0": 7.799,
+  "n1": 8.312,
+  "z0": 5.771,
+  "z1": 7.03,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #84 (732 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   157,
+   154,
+   159
+  ],
+  "punkte": 732
+ },
+ {
+  "typ": "quader:sam_85",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 3.156,
+  "u1": 3.821,
+  "n0": 12.296,
+  "n1": 12.511,
+  "z0": 10.573,
+  "z1": 12.232,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #85 (3415 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   109,
+   123,
+   137
+  ],
+  "punkte": 3415
+ },
+ {
+  "typ": "quader:sam_86",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -5.681,
+  "u1": -5.065,
+  "n0": 12.3,
+  "n1": 12.589,
+  "z0": 10.199,
+  "z1": 11.694,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #86 (1720 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   103,
+   86,
+   97
+  ],
+  "punkte": 1720
+ },
+ {
+  "typ": "quader:sam_87",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 22.139,
+  "u1": 23.456,
+  "n0": 8.414,
+  "n1": 9.0,
+  "z0": 5.76,
+  "z1": 7.155,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #87 (438 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   157,
+   155,
+   159
+  ],
+  "punkte": 438
+ },
+ {
+  "typ": "quader:sam_88",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 7.087,
+  "u1": 7.801,
+  "n0": 12.29,
+  "n1": 12.519,
+  "z0": 10.446,
+  "z1": 12.226,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #88 (2409 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   106,
+   110,
+   124
+  ],
+  "punkte": 2409
+ },
+ {
+  "typ": "quader:sam_89",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.568,
+  "u1": 18.167,
+  "n0": 7.206,
+  "n1": 7.73,
+  "z0": 5.788,
+  "z1": 7.14,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #89 (2447 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   113,
+   110,
+   111
+  ],
+  "punkte": 2447
+ },
+ {
+  "typ": "quader:sam_90",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 14.856,
+  "u1": 16.213,
+  "n0": 11.583,
+  "n1": 12.88,
+  "z0": 1.65,
+  "z1": 2.412,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #90 (2411 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   161,
+   103,
+   98
+  ],
+  "punkte": 2411
+ },
+ {
+  "typ": "quader:sam_91",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -17.28,
+  "u1": -15.456,
+  "n0": 7.712,
+  "n1": 8.26,
+  "z0": 13.206,
+  "z1": 14.614,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #91 (797 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   134,
+   138,
+   132
+  ],
+  "punkte": 797
+ },
+ {
+  "typ": "quader:sam_92",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -14.138,
+  "u1": -12.982,
+  "n0": 7.472,
+  "n1": 7.788,
+  "z0": 13.573,
+  "z1": 14.601,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #92 (418 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   76,
+   74,
+   76
+  ],
+  "punkte": 418
+ },
+ {
+  "typ": "quader:sam_93",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -1.735,
+  "u1": -1.088,
+  "n0": 12.207,
+  "n1": 12.54,
+  "z0": 10.495,
+  "z1": 11.675,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #93 (931 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   92,
+   78,
+   82
+  ],
+  "punkte": 931
+ },
+ {
+  "typ": "quader:sam_94",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 4.059,
+  "u1": 4.763,
+  "n0": 12.245,
+  "n1": 12.564,
+  "z0": 10.457,
+  "z1": 11.686,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #94 (2070 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   110,
+   103,
+   112
+  ],
+  "punkte": 2070
+ },
+ {
+  "typ": "quader:sam_95",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 0.088,
+  "u1": 1.383,
+  "n0": 8.055,
+  "n1": 8.691,
+  "z0": 20.628,
+  "z1": 21.413,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #95 (1486 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   65,
+   60,
+   69
+  ],
+  "punkte": 1486
+ },
+ {
+  "typ": "quader:sam_96",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -16.575,
+  "u1": -15.245,
+  "n0": 7.841,
+  "n1": 8.189,
+  "z0": 9.177,
+  "z1": 9.87,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #96 (365 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   47,
+   52,
+   36
+  ],
+  "punkte": 365
+ },
+ {
+  "typ": "quader:sam_97",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -9.025,
+  "u1": -8.101,
+  "n0": 13.773,
+  "n1": 13.83,
+  "z0": 8.704,
+  "z1": 9.589,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #97 (4849 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   180,
+   152,
+   119
+  ],
+  "punkte": 4849
+ },
+ {
+  "typ": "quader:sam_98",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 6.217,
+  "u1": 6.905,
+  "n0": 12.256,
+  "n1": 12.584,
+  "z0": 10.459,
+  "z1": 11.702,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #98 (2083 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   106,
+   96,
+   101
+  ],
+  "punkte": 2083
+ },
+ {
+  "typ": "quader:sam_99",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 1.188,
+  "u1": 1.974,
+  "n0": 12.756,
+  "n1": 13.281,
+  "z0": 13.341,
+  "z1": 14.701,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #99 (5568 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   133,
+   96,
+   82
+  ],
+  "punkte": 5568
+ },
+ {
+  "typ": "quader:sam_100",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -12.776,
+  "u1": -12.113,
+  "n0": 7.651,
+  "n1": 7.81,
+  "z0": 13.157,
+  "z1": 14.636,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #100 (491 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   138,
+   140,
+   132
+  ],
+  "punkte": 491
+ },
+ {
+  "typ": "quader:sam_104",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -14.202,
+  "u1": -12.813,
+  "n0": 7.56,
+  "n1": 8.043,
+  "z0": 5.802,
+  "z1": 6.48,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #104 (336 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   57,
+   63,
+   50
+  ],
+  "punkte": 336
+ },
+ {
+  "typ": "quader:sam_105",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 10.143,
+  "u1": 10.843,
+  "n0": 12.178,
+  "n1": 12.61,
+  "z0": 10.351,
+  "z1": 11.665,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #105 (1500 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   84,
+   72,
+   77
+  ],
+  "punkte": 1500
+ },
+ {
+  "typ": "quader:sam_108",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -1.733,
+  "u1": -1.059,
+  "n0": 12.286,
+  "n1": 12.596,
+  "z0": 11.89,
+  "z1": 12.733,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #108 (456 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   89,
+   70,
+   72
+  ],
+  "punkte": 456
+ },
+ {
+  "typ": "quader:sam_110",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -0.833,
+  "u1": -0.179,
+  "n0": 12.224,
+  "n1": 12.516,
+  "z0": 12.473,
+  "z1": 13.225,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #110 (771 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   104,
+   110,
+   126
+  ],
+  "punkte": 771
+ },
+ {
+  "typ": "quader:sam_111",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 2.239,
+  "u1": 2.895,
+  "n0": 12.221,
+  "n1": 12.608,
+  "z0": 11.916,
+  "z1": 12.782,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #111 (1128 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   112,
+   120,
+   135
+  ],
+  "punkte": 1128
+ },
+ {
+  "typ": "quader:sam_112",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 6.234,
+  "u1": 6.899,
+  "n0": 12.241,
+  "n1": 12.537,
+  "z0": 11.968,
+  "z1": 12.815,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #112 (1091 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   136,
+   145,
+   166
+  ],
+  "punkte": 1091
+ },
+ {
+  "typ": "quader:sam_113",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 4.071,
+  "u1": 4.736,
+  "n0": 12.256,
+  "n1": 12.566,
+  "z0": 11.933,
+  "z1": 12.792,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #113 (1170 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   129,
+   135,
+   156
+  ],
+  "punkte": 1170
+ },
+ {
+  "typ": "quader:sam_114",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 19.367,
+  "u1": 20.635,
+  "n0": 7.831,
+  "n1": 8.147,
+  "z0": 3.386,
+  "z1": 5.467,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #114 (675 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   128,
+   122,
+   119
+  ],
+  "punkte": 675
+ },
+ {
+  "typ": "quader:sam_115",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -7.435,
+  "u1": -7.143,
+  "n0": 12.904,
+  "n1": 13.241,
+  "z0": 9.914,
+  "z1": 11.259,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #115 (809 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   119,
+   112,
+   115
+  ],
+  "punkte": 809
+ },
+ {
+  "typ": "quader:sam_116",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 10.137,
+  "u1": 10.816,
+  "n0": 12.182,
+  "n1": 12.469,
+  "z0": 11.962,
+  "z1": 12.762,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #116 (611 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   120,
+   127,
+   144
+  ],
+  "punkte": 611
+ },
+ {
+  "typ": "quader:sam_117",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 11.532,
+  "u1": 19.035,
+  "n0": 10.575,
+  "n1": 18.583,
+  "z0": 1.519,
+  "z1": 1.798,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #117 (2234 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   125,
+   119,
+   112
+  ],
+  "punkte": 2234
+ },
+ {
+  "typ": "quader:sam_118",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 19.086,
+  "u1": 20.866,
+  "n0": 7.79,
+  "n1": 8.491,
+  "z0": 9.457,
+  "z1": 11.863,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #118 (456 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   184,
+   182,
+   188
+  ],
+  "punkte": 456
+ },
+ {
+  "typ": "quader:sam_119",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.507,
+  "u1": 18.102,
+  "n0": 7.169,
+  "n1": 7.507,
+  "z0": 2.3,
+  "z1": 4.82,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #119 (4675 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   54,
+   38,
+   38
+  ],
+  "punkte": 4675
+ },
+ {
+  "typ": "quader:sam_120",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.479,
+  "u1": 18.205,
+  "n0": 7.32,
+  "n1": 7.837,
+  "z0": 9.38,
+  "z1": 11.816,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #120 (926 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   169,
+   168,
+   176
+  ],
+  "punkte": 926
+ },
+ {
+  "typ": "quader:sam_121",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 9.793,
+  "u1": 15.008,
+  "n0": 12.132,
+  "n1": 12.624,
+  "z0": 5.378,
+  "z1": 7.385,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #121 (10390 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   122,
+   68,
+   58
+  ],
+  "punkte": 10390
+ },
+ {
+  "typ": "quader:sam_122",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 12.627,
+  "u1": 13.403,
+  "n0": 6.987,
+  "n1": 7.256,
+  "z0": 5.457,
+  "z1": 6.16,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #122 (1488 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   59,
+   38,
+   40
+  ],
+  "punkte": 1488
+ },
+ {
+  "typ": "quader:sam_123",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 6.23,
+  "u1": 8.149,
+  "n0": 7.053,
+  "n1": 7.291,
+  "z0": 3.295,
+  "z1": 6.234,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #123 (6885 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   66,
+   36,
+   34
+  ],
+  "punkte": 6885
+ },
+ {
+  "typ": "quader:sam_124",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.33,
+  "u1": 17.067,
+  "n0": 12.974,
+  "n1": 13.674,
+  "z0": 8.621,
+  "z1": 9.544,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #124 (2770 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   183,
+   159,
+   120
+  ],
+  "punkte": 2770
+ },
+ {
+  "typ": "quader:sam_125",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.732,
+  "u1": 18.056,
+  "n0": 7.283,
+  "n1": 7.759,
+  "z0": 13.8,
+  "z1": 15.577,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #125 (1138 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   87,
+   79,
+   87
+  ],
+  "punkte": 1138
+ },
+ {
+  "typ": "quader:sam_126",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 5.228,
+  "u1": 5.764,
+  "n0": 12.742,
+  "n1": 13.081,
+  "z0": 10.697,
+  "z1": 11.171,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #126 (1746 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   123,
+   65,
+   53
+  ],
+  "punkte": 1746
+ },
+ {
+  "typ": "quader:sam_127",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -2.728,
+  "u1": -2.164,
+  "n0": 12.727,
+  "n1": 13.064,
+  "z0": 10.676,
+  "z1": 11.157,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #127 (1303 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   125,
+   71,
+   61
+  ],
+  "punkte": 1303
+ },
+ {
+  "typ": "quader:sam_128",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -1.221,
+  "u1": 2.524,
+  "n0": 6.441,
+  "n1": 7.349,
+  "z0": 2.313,
+  "z1": 6.252,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #128 (4170 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   47,
+   36,
+   38
+  ],
+  "punkte": 4170
+ },
+ {
+  "typ": "quader:sam_129",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.521,
+  "u1": 18.09,
+  "n0": 7.258,
+  "n1": 7.597,
+  "z0": 4.865,
+  "z1": 5.455,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #129 (1400 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   39,
+   39,
+   43
+  ],
+  "punkte": 1400
+ },
+ {
+  "typ": "quader:sam_130",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 1.209,
+  "u1": 1.752,
+  "n0": 12.737,
+  "n1": 13.068,
+  "z0": 10.688,
+  "z1": 11.146,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #130 (1671 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   126,
+   70,
+   53
+  ],
+  "punkte": 1671
+ },
+ {
+  "typ": "quader:sam_131",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 12.637,
+  "u1": 13.39,
+  "n0": 6.941,
+  "n1": 7.265,
+  "z0": 3.219,
+  "z1": 5.232,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #131 (5110 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   90,
+   78,
+   63
+  ],
+  "punkte": 5110
+ },
+ {
+  "typ": "quader:sam_132",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.237,
+  "u1": 16.503,
+  "n0": 13.232,
+  "n1": 13.547,
+  "z0": 9.993,
+  "z1": 11.249,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #132 (694 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   125,
+   127,
+   139
+  ],
+  "punkte": 694
+ },
+ {
+  "typ": "quader:sam_133",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 15.178,
+  "u1": 16.06,
+  "n0": 13.79,
+  "n1": 13.846,
+  "z0": 8.68,
+  "z1": 9.52,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #133 (3104 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   169,
+   144,
+   127
+  ],
+  "punkte": 3104
+ },
+ {
+  "typ": "quader:sam_134",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.697,
+  "u1": 16.885,
+  "n0": 12.868,
+  "n1": 13.088,
+  "z0": 9.959,
+  "z1": 11.219,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #134 (374 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   133,
+   136,
+   145
+  ],
+  "punkte": 374
+ },
+ {
+  "typ": "quader:sam_135",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 17.093,
+  "u1": 17.147,
+  "n0": 11.725,
+  "n1": 12.65,
+  "z0": 8.701,
+  "z1": 9.577,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #135 (1458 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   191,
+   168,
+   123
+  ],
+  "punkte": 1458
+ },
+ {
+  "typ": "quader:sam_136",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 10.495,
+  "u1": 10.941,
+  "n0": 12.735,
+  "n1": 13.899,
+  "z0": 7.624,
+  "z1": 8.272,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #136 (3757 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   84,
+   35,
+   34
+  ],
+  "punkte": 3757
+ },
+ {
+  "typ": "quader:sam_137",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 8.611,
+  "u1": 9.086,
+  "n0": 12.733,
+  "n1": 13.904,
+  "z0": 7.644,
+  "z1": 8.275,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #137 (4902 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   87,
+   37,
+   36
+  ],
+  "punkte": 4902
+ },
+ {
+  "typ": "quader:sam_138",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 12.078,
+  "u1": 14.145,
+  "n0": 7.26,
+  "n1": 7.586,
+  "z0": 2.167,
+  "z1": 2.582,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #138 (1590 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   154,
+   113,
+   104
+  ],
+  "punkte": 1590
+ },
+ {
+  "typ": "quader:sam_139",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 7.333,
+  "u1": 8.219,
+  "n0": 6.927,
+  "n1": 7.302,
+  "z0": 3.26,
+  "z1": 5.163,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #139 (4463 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   46,
+   37,
+   39
+  ],
+  "punkte": 4463
+ },
+ {
+  "typ": "quader:sam_140",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 17.084,
+  "u1": 17.148,
+  "n0": 11.705,
+  "n1": 12.543,
+  "z0": 8.825,
+  "z1": 9.495,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #140 (2503 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   142,
+   130,
+   130
+  ],
+  "punkte": 2503
+ },
+ {
+  "typ": "quader:sam_141",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 11.937,
+  "u1": 12.707,
+  "n0": 12.214,
+  "n1": 12.622,
+  "z0": 9.977,
+  "z1": 11.631,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #141 (1178 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   96,
+   82,
+   88
+  ],
+  "punkte": 1178
+ },
+ {
+  "typ": "quader:sam_143",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 3.0,
+  "u1": 3.463,
+  "n0": 12.764,
+  "n1": 13.937,
+  "z0": 7.629,
+  "z1": 8.288,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #143 (5533 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   92,
+   43,
+   40
+  ],
+  "punkte": 5533
+ },
+ {
+  "typ": "quader:sam_144",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -2.826,
+  "u1": -2.091,
+  "n0": 12.787,
+  "n1": 13.288,
+  "z0": 11.311,
+  "z1": 14.655,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #144 (10347 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   152,
+   119,
+   107
+  ],
+  "punkte": 10347
+ },
+ {
+  "typ": "quader:sam_145",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 13.418,
+  "u1": 16.414,
+  "n0": 12.629,
+  "n1": 14.226,
+  "z0": 12.834,
+  "z1": 13.36,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #145 (2465 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   92,
+   49,
+   47
+  ],
+  "punkte": 2465
+ },
+ {
+  "typ": "quader:sam_146",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 6.674,
+  "u1": 7.19,
+  "n0": 12.74,
+  "n1": 13.92,
+  "z0": 7.626,
+  "z1": 8.275,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #146 (5003 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   84,
+   37,
+   36
+  ],
+  "punkte": 5003
+ },
+ {
+  "typ": "quader:sam_147",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -8.673,
+  "u1": -8.108,
+  "n0": 10.281,
+  "n1": 11.13,
+  "z0": 17.381,
+  "z1": 19.038,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #147 (970 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   142,
+   94,
+   95
+  ],
+  "punkte": 970
+ },
+ {
+  "typ": "quader:sam_149",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 9.172,
+  "u1": 9.716,
+  "n0": 12.706,
+  "n1": 13.046,
+  "z0": 10.697,
+  "z1": 11.191,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #149 (1476 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   122,
+   66,
+   53
+  ],
+  "punkte": 1476
+ },
+ {
+  "typ": "quader:sam_150",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 7.319,
+  "u1": 8.118,
+  "n0": 6.93,
+  "n1": 7.284,
+  "z0": 5.528,
+  "z1": 6.199,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #150 (901 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   31,
+   26,
+   28
+  ],
+  "punkte": 901
+ },
+ {
+  "typ": "quader:sam_151",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 11.619,
+  "u1": 13.446,
+  "n0": 6.979,
+  "n1": 7.273,
+  "z0": 3.273,
+  "z1": 6.115,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #151 (13299 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   75,
+   47,
+   46
+  ],
+  "punkte": 13299
+ },
+ {
+  "typ": "quader:sam_152",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 11.087,
+  "u1": 12.905,
+  "n0": 7.257,
+  "n1": 7.302,
+  "z0": 2.405,
+  "z1": 3.189,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #152 (495 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   127,
+   71,
+   67
+  ],
+  "punkte": 495
+ },
+ {
+  "typ": "quader:sam_153",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 6.361,
+  "u1": 9.204,
+  "n0": 7.197,
+  "n1": 9.229,
+  "z0": 6.438,
+  "z1": 7.915,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #153 (1629 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   100,
+   82,
+   80
+  ],
+  "punkte": 1629
+ },
+ {
+  "typ": "quader:sam_154",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 9.271,
+  "u1": 11.038,
+  "n0": 7.266,
+  "n1": 7.575,
+  "z0": 2.373,
+  "z1": 6.017,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #154 (9131 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   85,
+   43,
+   41
+  ],
+  "punkte": 9131
+ },
+ {
+  "typ": "quader:sam_155",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 11.884,
+  "u1": 12.522,
+  "n0": 12.704,
+  "n1": 13.883,
+  "z0": 7.647,
+  "z1": 8.238,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #155 (2598 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   94,
+   43,
+   40
+  ],
+  "punkte": 2598
+ },
+ {
+  "typ": "quader:sam_156",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 6.327,
+  "u1": 7.079,
+  "n0": 6.93,
+  "n1": 7.263,
+  "z0": 5.517,
+  "z1": 6.194,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #156 (847 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   33,
+   28,
+   31
+  ],
+  "punkte": 847
+ },
+ {
+  "typ": "quader:sam_157",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 3.152,
+  "u1": 3.801,
+  "n0": 12.256,
+  "n1": 12.524,
+  "z0": 12.508,
+  "z1": 13.234,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #157 (1099 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   105,
+   111,
+   123
+  ],
+  "punkte": 1099
+ },
+ {
+  "typ": "quader:sam_158",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 11.624,
+  "u1": 12.358,
+  "n0": 7.0,
+  "n1": 7.185,
+  "z0": 5.463,
+  "z1": 6.134,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #158 (2290 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   60,
+   47,
+   41
+  ],
+  "punkte": 2290
+ },
+ {
+  "typ": "quader:sam_159",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 8.02,
+  "u1": 8.703,
+  "n0": 12.217,
+  "n1": 12.53,
+  "z0": 11.949,
+  "z1": 12.804,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #159 (699 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   93,
+   93,
+   103
+  ],
+  "punkte": 699
+ },
+ {
+  "typ": "quader:sam_160",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -11.097,
+  "u1": -8.72,
+  "n0": 6.565,
+  "n1": 8.472,
+  "z0": 3.15,
+  "z1": 7.267,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #160 (684 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   92,
+   67,
+   55
+  ],
+  "punkte": 684
+ },
+ {
+  "typ": "quader:sam_161",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -8.217,
+  "u1": -6.561,
+  "n0": 7.308,
+  "n1": 7.683,
+  "z0": 2.303,
+  "z1": 6.416,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #161 (610 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   108,
+   55,
+   49
+  ],
+  "punkte": 610
+ },
+ {
+  "typ": "quader:sam_162",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -1.67,
+  "u1": 2.685,
+  "n0": 7.296,
+  "n1": 9.182,
+  "z0": 6.675,
+  "z1": 7.819,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #162 (1159 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   102,
+   86,
+   83
+  ],
+  "punkte": 1159
+ },
+ {
+  "typ": "quader:sam_164",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -2.407,
+  "u1": -0.724,
+  "n0": 7.641,
+  "n1": 11.048,
+  "z0": 6.465,
+  "z1": 7.836,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #164 (1386 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   119,
+   106,
+   102
+  ],
+  "punkte": 1386
+ },
+ {
+  "typ": "quader:sam_165",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -6.024,
+  "u1": -1.531,
+  "n0": 7.501,
+  "n1": 7.774,
+  "z0": 1.641,
+  "z1": 2.117,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #165 (4877 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   149,
+   104,
+   92
+  ],
+  "punkte": 4877
+ },
+ {
+  "typ": "quader:sam_166",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 1.146,
+  "u1": 1.588,
+  "n0": 12.764,
+  "n1": 13.924,
+  "z0": 7.623,
+  "z1": 8.261,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #166 (4216 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   89,
+   42,
+   40
+  ],
+  "punkte": 4216
+ },
+ {
+  "typ": "quader:sam_167",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -2.385,
+  "u1": -2.001,
+  "n0": 12.713,
+  "n1": 13.91,
+  "z0": 7.669,
+  "z1": 8.299,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #167 (6369 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   97,
+   48,
+   45
+  ],
+  "punkte": 6369
+ },
+ {
+  "typ": "quader:sam_168",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -0.582,
+  "u1": -0.203,
+  "n0": 12.778,
+  "n1": 13.924,
+  "z0": 7.645,
+  "z1": 8.275,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #168 (4567 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   99,
+   49,
+   47
+  ],
+  "punkte": 4567
+ },
+ {
+  "typ": "quader:sam_169",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -2.598,
+  "u1": -0.343,
+  "n0": 7.398,
+  "n1": 9.075,
+  "z0": 5.808,
+  "z1": 7.758,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #169 (5529 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   64,
+   33,
+   32
+  ],
+  "punkte": 5529
+ },
+ {
+  "typ": "quader:sam_170",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -3.954,
+  "u1": -3.59,
+  "n0": 12.701,
+  "n1": 13.915,
+  "z0": 7.644,
+  "z1": 8.286,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #170 (5507 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   94,
+   48,
+   45
+  ],
+  "punkte": 5507
+ },
+ {
+  "typ": "quader:sam_171",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -6.29,
+  "u1": -4.465,
+  "n0": 7.044,
+  "n1": 7.317,
+  "z0": 3.477,
+  "z1": 6.26,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #171 (3460 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   97,
+   49,
+   42
+  ],
+  "punkte": 3460
+ },
+ {
+  "typ": "quader:sam_172",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 0.062,
+  "u1": 0.75,
+  "n0": 12.24,
+  "n1": 12.546,
+  "z0": 10.503,
+  "z1": 11.657,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #172 (1383 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   82,
+   71,
+   78
+  ],
+  "punkte": 1383
+ },
+ {
+  "typ": "quader:sam_173",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -8.103,
+  "u1": -6.534,
+  "n0": 7.842,
+  "n1": 10.589,
+  "z0": 6.803,
+  "z1": 7.851,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #173 (581 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   102,
+   89,
+   85
+  ],
+  "punkte": 581
+ },
+ {
+  "typ": "quader:sam_174",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -5.154,
+  "u1": 5.33,
+  "n0": 7.408,
+  "n1": 11.418,
+  "z0": 5.754,
+  "z1": 16.93,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #174 (2285 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   76,
+   42,
+   38
+  ],
+  "punkte": 2285
+ },
+ {
+  "typ": "quader:sam_175",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -4.619,
+  "u1": -4.359,
+  "n0": 12.687,
+  "n1": 14.716,
+  "z0": 13.399,
+  "z1": 14.446,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #175 (1976 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   98,
+   81,
+   84
+  ],
+  "punkte": 1976
+ },
+ {
+  "typ": "quader:sam_176",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -1.421,
+  "u1": -0.87,
+  "n0": 6.657,
+  "n1": 7.38,
+  "z0": 1.732,
+  "z1": 2.113,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #176 (594 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   90,
+   56,
+   55
+  ],
+  "punkte": 594
+ },
+ {
+  "typ": "quader:sam_177",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -7.839,
+  "u1": -7.589,
+  "n0": 13.316,
+  "n1": 13.54,
+  "z0": 10.07,
+  "z1": 11.282,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #177 (397 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   129,
+   132,
+   144
+  ],
+  "punkte": 397
+ },
+ {
+  "typ": "quader:sam_178",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 0.058,
+  "u1": 0.677,
+  "n0": 12.206,
+  "n1": 12.55,
+  "z0": 11.904,
+  "z1": 12.771,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #178 (995 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   118,
+   129,
+   155
+  ],
+  "punkte": 995
+ },
+ {
+  "typ": "quader:sam_180",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -3.86,
+  "u1": -3.136,
+  "n0": 12.266,
+  "n1": 12.681,
+  "z0": 10.515,
+  "z1": 11.644,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #180 (685 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   70,
+   61,
+   66
+  ],
+  "punkte": 685
+ },
+ {
+  "typ": "quader:sam_181",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -3.841,
+  "u1": -3.2,
+  "n0": 12.293,
+  "n1": 12.505,
+  "z0": 12.007,
+  "z1": 12.676,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #181 (359 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   52,
+   45,
+   50
+  ],
+  "punkte": 359
+ },
+ {
+  "typ": "quader:sam_186",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -6.042,
+  "u1": -5.565,
+  "n0": 12.623,
+  "n1": 12.643,
+  "z0": 7.656,
+  "z1": 8.424,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #186 (977 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   182,
+   115,
+   102
+  ],
+  "punkte": 977
+ },
+ {
+  "typ": "quader:sam_187",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 15.104,
+  "u1": 15.838,
+  "n0": 9.989,
+  "n1": 11.047,
+  "z0": 17.565,
+  "z1": 19.177,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #187 (747 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   133,
+   90,
+   97
+  ],
+  "punkte": 747
+ },
+ {
+  "typ": "quader:sam_189",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -8.971,
+  "u1": -8.632,
+  "n0": 13.604,
+  "n1": 13.761,
+  "z0": 10.025,
+  "z1": 11.276,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #189 (1184 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   131,
+   136,
+   150
+  ],
+  "punkte": 1184
+ },
+ {
+  "typ": "quader:sam_190",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 15.185,
+  "u1": 15.82,
+  "n0": 7.959,
+  "n1": 9.019,
+  "z0": 20.272,
+  "z1": 21.858,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #190 (575 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   138,
+   93,
+   98
+  ],
+  "punkte": 575
+ },
+ {
+  "typ": "quader:sam_192",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -5.202,
+  "u1": -5.08,
+  "n0": 13.154,
+  "n1": 13.265,
+  "z0": 8.619,
+  "z1": 9.44,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #192 (300 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   133,
+   80,
+   75
+  ],
+  "punkte": 300
+ },
+ {
+  "typ": "quader:sam_193",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 10.061,
+  "u1": 13.825,
+  "n0": 7.1,
+  "n1": 7.55,
+  "z0": 3.472,
+  "z1": 6.352,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #193 (836 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   83,
+   37,
+   34
+  ],
+  "punkte": 836
+ },
+ {
+  "typ": "quader:sam_194",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 4.317,
+  "u1": 6.661,
+  "n0": 7.139,
+  "n1": 7.363,
+  "z0": 5.226,
+  "z1": 7.292,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #194 (442 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   97,
+   40,
+   31
+  ],
+  "punkte": 442
+ },
+ {
+  "typ": "quader:sam_195",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 7.178,
+  "u1": 7.803,
+  "n0": 12.174,
+  "n1": 12.448,
+  "z0": 12.585,
+  "z1": 13.26,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #195 (809 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   141,
+   151,
+   168
+  ],
+  "punkte": 809
+ },
+ {
+  "typ": "quader:sam_196",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 1.868,
+  "u1": 5.093,
+  "n0": 7.335,
+  "n1": 9.123,
+  "z0": 5.039,
+  "z1": 7.703,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #196 (6102 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   64,
+   33,
+   32
+  ],
+  "punkte": 6102
+ },
+ {
+  "typ": "quader:sam_197",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 8.028,
+  "u1": 8.708,
+  "n0": 12.257,
+  "n1": 12.54,
+  "z0": 10.431,
+  "z1": 11.658,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #197 (1465 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   87,
+   81,
+   91
+  ],
+  "punkte": 1465
+ },
+ {
+  "typ": "quader:sam_198",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 4.508,
+  "u1": 16.569,
+  "n0": 8.096,
+  "n1": 13.496,
+  "z0": 1.476,
+  "z1": 1.817,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #198 (69060 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   106,
+   96,
+   89
+  ],
+  "punkte": 69060
+ },
+ {
+  "typ": "quader:sam_199",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 8.663,
+  "u1": 14.104,
+  "n0": 13.478,
+  "n1": 16.469,
+  "z0": 1.49,
+  "z1": 1.594,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #199 (2851 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   128,
+   117,
+   105
+  ],
+  "punkte": 2851
+ },
+ {
+  "typ": "quader:sam_200",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 10.08,
+  "u1": 13.486,
+  "n0": 7.302,
+  "n1": 9.185,
+  "z0": 6.27,
+  "z1": 8.039,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #200 (1977 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   105,
+   85,
+   80
+  ],
+  "punkte": 1977
+ },
+ {
+  "typ": "quader:sam_202",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 5.837,
+  "u1": 14.308,
+  "n0": 7.284,
+  "n1": 7.786,
+  "z0": 1.781,
+  "z1": 2.328,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #202 (5416 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   128,
+   85,
+   77
+  ],
+  "punkte": 5416
+ },
+ {
+  "typ": "quader:sam_203",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 15.912,
+  "u1": 16.056,
+  "n0": 11.826,
+  "n1": 12.05,
+  "z0": 3.743,
+  "z1": 3.987,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #203 (365 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   131,
+   76,
+   67
+  ],
+  "punkte": 365
+ },
+ {
+  "typ": "quader:sam_205",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 3.231,
+  "u1": 5.341,
+  "n0": 6.911,
+  "n1": 7.333,
+  "z0": 2.807,
+  "z1": 4.511,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #205 (6561 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   81,
+   47,
+   37
+  ],
+  "punkte": 6561
+ },
+ {
+  "typ": "quader:sam_207",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 12.391,
+  "u1": 12.769,
+  "n0": 9.5,
+  "n1": 9.898,
+  "z0": 7.778,
+  "z1": 7.836,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #207 (367 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   62,
+   45,
+   38
+  ],
+  "punkte": 367
+ },
+ {
+  "typ": "quader:sam_208",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 8.0,
+  "u1": 9.066,
+  "n0": 7.274,
+  "n1": 7.421,
+  "z0": 2.162,
+  "z1": 2.389,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #208 (787 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   166,
+   118,
+   108
+  ],
+  "punkte": 787
+ },
+ {
+  "typ": "quader:sam_209",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -11.349,
+  "u1": -11.176,
+  "n0": 7.579,
+  "n1": 8.26,
+  "z0": 4.547,
+  "z1": 13.828,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #209 (1381 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   84,
+   76,
+   73
+  ],
+  "punkte": 1381
+ },
+ {
+  "typ": "quader:sam_211",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -10.07,
+  "u1": -10.007,
+  "n0": 11.757,
+  "n1": 12.5,
+  "z0": 8.837,
+  "z1": 9.564,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #211 (1011 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   157,
+   143,
+   142
+  ],
+  "punkte": 1011
+ },
+ {
+  "typ": "quader:sam_212",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -9.977,
+  "u1": -9.779,
+  "n0": 12.096,
+  "n1": 12.395,
+  "z0": 7.878,
+  "z1": 8.061,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #212 (422 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   92,
+   46,
+   41
+  ],
+  "punkte": 422
+ },
+ {
+  "typ": "quader:sam_214",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -2.121,
+  "u1": -1.289,
+  "n0": 7.273,
+  "n1": 7.334,
+  "z0": 2.479,
+  "z1": 4.73,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #214 (5601 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   132,
+   75,
+   64
+  ],
+  "punkte": 5601
+ },
+ {
+  "typ": "quader:sam_215",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -3.245,
+  "u1": -2.252,
+  "n0": 7.566,
+  "n1": 9.542,
+  "z0": 6.393,
+  "z1": 7.854,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #215 (642 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   72,
+   42,
+   40
+  ],
+  "punkte": 642
+ },
+ {
+  "typ": "quader:sam_216",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -5.253,
+  "u1": -4.532,
+  "n0": 7.002,
+  "n1": 7.32,
+  "z0": 3.383,
+  "z1": 5.268,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #216 (1723 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   43,
+   38,
+   36
+  ],
+  "punkte": 1723
+ },
+ {
+  "typ": "quader:sam_219",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -6.424,
+  "u1": -2.985,
+  "n0": 12.152,
+  "n1": 12.6,
+  "z0": 5.616,
+  "z1": 7.393,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #219 (17403 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   126,
+   68,
+   56
+  ],
+  "punkte": 17403
+ },
+ {
+  "typ": "quader:sam_220",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -4.636,
+  "u1": -2.515,
+  "n0": 7.657,
+  "n1": 10.762,
+  "z0": 6.646,
+  "z1": 8.032,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #220 (1278 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   130,
+   115,
+   105
+  ],
+  "punkte": 1278
+ },
+ {
+  "typ": "quader:sam_221",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -6.265,
+  "u1": -5.472,
+  "n0": 6.994,
+  "n1": 7.313,
+  "z0": 3.384,
+  "z1": 5.282,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #221 (2018 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   41,
+   37,
+   36
+  ],
+  "punkte": 2018
+ },
+ {
+  "typ": "quader:sam_222",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -8.399,
+  "u1": -8.102,
+  "n0": 13.61,
+  "n1": 13.685,
+  "z0": 10.121,
+  "z1": 11.24,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #222 (717 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   139,
+   147,
+   162
+  ],
+  "punkte": 717
+ },
+ {
+  "typ": "quader:sam_223",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -5.255,
+  "u1": -4.523,
+  "n0": 6.999,
+  "n1": 7.31,
+  "z0": 5.586,
+  "z1": 6.236,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #223 (459 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   34,
+   32,
+   33
+  ],
+  "punkte": 459
+ },
+ {
+  "typ": "quader:sam_224",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -6.271,
+  "u1": -5.474,
+  "n0": 6.994,
+  "n1": 7.325,
+  "z0": 5.593,
+  "z1": 6.242,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #224 (706 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   30,
+   28,
+   30
+  ],
+  "punkte": 706
+ },
+ {
+  "typ": "quader:sam_225",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -5.6,
+  "u1": -5.142,
+  "n0": 7.713,
+  "n1": 7.753,
+  "z0": 1.646,
+  "z1": 1.941,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #225 (457 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   137,
+   84,
+   76
+  ],
+  "punkte": 457
+ },
+ {
+  "typ": "quader:sam_226",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 3.946,
+  "u1": 5.913,
+  "n0": 7.325,
+  "n1": 8.879,
+  "z0": 6.6,
+  "z1": 7.876,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #226 (715 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   94,
+   77,
+   75
+  ],
+  "punkte": 715
+ },
+ {
+  "typ": "quader:sam_228",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.898,
+  "u1": 17.196,
+  "n0": 11.775,
+  "n1": 12.155,
+  "z0": 9.88,
+  "z1": 11.31,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #228 (362 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   162,
+   172,
+   181
+  ],
+  "punkte": 362
+ },
+ {
+  "typ": "quader:sam_230",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 3.573,
+  "u1": 4.986,
+  "n0": 6.627,
+  "n1": 7.306,
+  "z0": 1.96,
+  "z1": 4.102,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #230 (1694 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   27,
+   32,
+   37
+  ],
+  "punkte": 1694
+ },
+ {
+  "typ": "quader:sam_232",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 15.152,
+  "u1": 15.447,
+  "n0": 13.585,
+  "n1": 13.671,
+  "z0": 10.012,
+  "z1": 11.217,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #232 (587 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   127,
+   124,
+   136
+  ],
+  "punkte": 587
+ },
+ {
+  "typ": "quader:sam_233",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 11.933,
+  "u1": 12.619,
+  "n0": 12.145,
+  "n1": 12.465,
+  "z0": 11.938,
+  "z1": 12.682,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #233 (440 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   99,
+   117,
+   132
+  ],
+  "punkte": 440
+ },
+ {
+  "typ": "quader:sam_234",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 11.013,
+  "u1": 11.621,
+  "n0": 12.151,
+  "n1": 12.434,
+  "z0": 12.513,
+  "z1": 13.21,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #234 (459 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   136,
+   142,
+   163
+  ],
+  "punkte": 459
+ },
+ {
+  "typ": "quader:sam_236",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -8.736,
+  "u1": -7.995,
+  "n0": 8.077,
+  "n1": 9.491,
+  "z0": 6.858,
+  "z1": 7.643,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #236 (394 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   48,
+   24,
+   26
+  ],
+  "punkte": 394
+ },
+ {
+  "typ": "quader:sam_239",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -2.01,
+  "u1": 17.76,
+  "n0": 14.364,
+  "n1": 22.152,
+  "z0": 1.449,
+  "z1": 1.686,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #239 (342 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   157,
+   145,
+   125
+  ],
+  "punkte": 342
+ },
+ {
+  "typ": "quader:sam_240",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 13.497,
+  "u1": 15.871,
+  "n0": 7.27,
+  "n1": 7.553,
+  "z0": 2.295,
+  "z1": 6.019,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #240 (6162 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   114,
+   63,
+   62
+  ],
+  "punkte": 6162
+ },
+ {
+  "typ": "quader:sam_242",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 2.252,
+  "u1": 3.694,
+  "n0": 11.242,
+  "n1": 12.011,
+  "z0": 5.87,
+  "z1": 7.294,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #242 (353 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   53,
+   26,
+   28
+  ],
+  "punkte": 353
+ },
+ {
+  "typ": "quader:sam_246",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 6.327,
+  "u1": 7.077,
+  "n0": 6.963,
+  "n1": 7.256,
+  "z0": 3.322,
+  "z1": 5.196,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #246 (2635 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   46,
+   37,
+   39
+  ],
+  "punkte": 2635
+ },
+ {
+  "typ": "quader:sam_247",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -4.392,
+  "u1": -3.286,
+  "n0": 7.273,
+  "n1": 12.501,
+  "z0": 2.407,
+  "z1": 4.017,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #247 (319 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   155,
+   92,
+   79
+  ],
+  "punkte": 319
+ },
+ {
+  "typ": "quader:sam_248",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -23.997,
+  "u1": -17.029,
+  "n0": 7.972,
+  "n1": 8.841,
+  "z0": 3.787,
+  "z1": 14.265,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #248 (403 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   188,
+   176,
+   155
+  ],
+  "punkte": 403
+ },
+ {
+  "typ": "quader:sam_249",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -4.416,
+  "u1": -1.395,
+  "n0": 7.261,
+  "n1": 7.492,
+  "z0": 4.653,
+  "z1": 6.591,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #249 (300 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   93,
+   45,
+   37
+  ],
+  "punkte": 300
+ },
+ {
+  "typ": "quader:sam_253",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -1.959,
+  "u1": -0.941,
+  "n0": 7.321,
+  "n1": 7.757,
+  "z0": 6.316,
+  "z1": 7.37,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #253 (308 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   113,
+   96,
+   90
+  ],
+  "punkte": 308
+ },
+ {
+  "typ": "quader:sam_254",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 2.573,
+  "u1": 3.575,
+  "n0": 7.288,
+  "n1": 7.764,
+  "z0": 1.741,
+  "z1": 2.308,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #254 (845 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   101,
+   60,
+   55
+  ],
+  "punkte": 845
+ },
+ {
+  "typ": "quader:sam_256",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.209,
+  "u1": 17.101,
+  "n0": 10.723,
+  "n1": 12.565,
+  "z0": 10.362,
+  "z1": 12.443,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #256 (2447 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   91,
+   77,
+   73
+  ],
+  "punkte": 2447
+ },
+ {
+  "typ": "quader:sam_257",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.227,
+  "u1": 16.748,
+  "n0": 10.757,
+  "n1": 11.26,
+  "z0": 8.896,
+  "z1": 9.399,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #257 (1424 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   155,
+   128,
+   102
+  ],
+  "punkte": 1424
+ },
+ {
+  "typ": "quader:sam_261",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.79,
+  "u1": 17.032,
+  "n0": 11.26,
+  "n1": 11.482,
+  "z0": 9.018,
+  "z1": 9.541,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #261 (627 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   93,
+   80,
+   79
+  ],
+  "punkte": 627
+ },
+ {
+  "typ": "quader:sam_262",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 16.009,
+  "u1": 16.189,
+  "n0": 10.513,
+  "n1": 10.727,
+  "z0": 9.108,
+  "z1": 9.52,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #262 (422 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   103,
+   86,
+   84
+  ],
+  "punkte": 422
+ },
+ {
+  "typ": "quader:sam_264",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -8.011,
+  "u1": -4.042,
+  "n0": 7.15,
+  "n1": 8.172,
+  "z0": 4.453,
+  "z1": 7.218,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #264 (880 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   111,
+   58,
+   47
+  ],
+  "punkte": 880
+ },
+ {
+  "typ": "quader:sam_265",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 10.604,
+  "u1": 13.555,
+  "n0": 7.083,
+  "n1": 7.333,
+  "z0": 2.354,
+  "z1": 6.352,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #265 (485 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   122,
+   68,
+   65
+  ],
+  "punkte": 485
+ },
+ {
+  "typ": "quader:sam_266",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -4.074,
+  "u1": 4.128,
+  "n0": 11.22,
+  "n1": 17.425,
+  "z0": 1.379,
+  "z1": 1.533,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #266 (18025 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   141,
+   132,
+   120
+  ],
+  "punkte": 18025
+ },
+ {
+  "typ": "quader:sam_267",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 0.665,
+  "u1": 9.52,
+  "n0": 6.653,
+  "n1": 11.354,
+  "z0": 16.287,
+  "z1": 22.734,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #267 (6348 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   110,
+   107,
+   102
+  ],
+  "punkte": 6348
+ },
+ {
+  "typ": "quader:sam_268",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -0.427,
+  "u1": 0.772,
+  "n0": 10.294,
+  "n1": 12.328,
+  "z0": 15.321,
+  "z1": 17.651,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #268 (365 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   115,
+   113,
+   106
+  ],
+  "punkte": 365
+ },
+ {
+  "typ": "quader:sam_269",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -4.882,
+  "u1": 0.059,
+  "n0": 10.285,
+  "n1": 12.353,
+  "z0": 6.125,
+  "z1": 12.745,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #269 (329 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   70,
+   39,
+   40
+  ],
+  "punkte": 329
+ },
+ {
+  "typ": "quader:sam_271",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -6.25,
+  "u1": -5.421,
+  "n0": 7.292,
+  "n1": 7.332,
+  "z0": 2.297,
+  "z1": 3.23,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #271 (466 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   160,
+   95,
+   81
+  ],
+  "punkte": 466
+ },
+ {
+  "typ": "quader:sam_273",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -0.406,
+  "u1": 4.623,
+  "n0": 7.713,
+  "n1": 11.223,
+  "z0": 1.526,
+  "z1": 1.725,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #273 (8969 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   86,
+   78,
+   71
+  ],
+  "punkte": 8969
+ },
+ {
+  "typ": "quader:sam_275",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 14.321,
+  "u1": 15.497,
+  "n0": 8.321,
+  "n1": 9.446,
+  "z0": 6.875,
+  "z1": 7.482,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #275 (313 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   53,
+   23,
+   26
+  ],
+  "punkte": 313
+ },
+ {
+  "typ": "quader:sam_277",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": 15.846,
+  "u1": 16.389,
+  "n0": 4.644,
+  "n1": 10.641,
+  "z0": 16.747,
+  "z1": 25.578,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #277 (847 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   141,
+   101,
+   101
+  ],
+  "punkte": 847
+ },
+ {
+  "typ": "quader:sam_279",
+  "gruppe": "SAM-Objekte (automatisch)",
+  "u0": -3.42,
+  "u1": -2.804,
+  "n0": 7.278,
+  "n1": 7.319,
+  "z0": 2.394,
+  "z1": 3.299,
+  "modus": "anbau",
+  "aktiv": false,
+  "quelle": "tools/sam_mehrfoto_3d.py: SAM-Masken aus 80 Fotos, Objekt #279 (1044 Wolkenpunkte); Box = Perzentil 2-98 im u/n/z-Rahmen (Rueckseite nicht gemessen: ANNAHME)",
+  "farbe": [
+   155,
+   94,
+   78
+  ],
+  "punkte": 1044
+ }
+]

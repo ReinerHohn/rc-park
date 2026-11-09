@@ -1,0 +1,52 @@
+<title>Kaufhaus Objekt-Hüllen</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{--bg:#f1ede6;--fg:#2a2622;--panel:#fbf9f5;--line:#d8d0c3}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1917;--fg:#ece6dc;--panel:#25221f;--line:#3a352f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1b1917;--fg:#ece6dc;--panel:#25221f;--line:#3a352f;color-scheme:dark}
+html,body{height:100%}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px;display:flex;flex-direction:column;gap:8px;box-sizing:border-box}
+h1{font:600 16px/1.2 Georgia,serif;margin:0}
+#bar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:0}
+#bar label{display:flex;gap:6px;align-items:center;white-space:nowrap}
+#cv{flex:1;min-height:60vh;border:1px solid var(--line);border-radius:8px;overflow:hidden;min-width:0}
+#cv canvas{display:block;width:100%;height:100%}
+#info{font-size:12px;opacity:.8}
+button,select{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:4px 10px}
+</style>
+<h1>Kaufhaus: Hüllen der 3D-Objekte</h1>
+<div id="bar">
+<label>Farbe <select id="fm"><option value="o">Objekt</option><option value="f">Fotofarbe</option></select></label>
+<label>Objekt <select id="os"><option value="-1">alle</option></select></label>
+<label><input type="checkbox" id="ce" checked> Kanten</label>
+<label><input type="checkbox" id="cw"> Wand ausblenden</label>
+<button id="v1">Vorn</button><button id="v2">Schraeg</button><button id="v3">Seite</button>
+</div>
+<div id="cv"></div>
+<div id="info"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const D=__DATA__;
+const b64=(s,T)=>{const bin=atob(s),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new T(u.buffer)};
+const Q=b64(D.v,Uint16Array),FI=b64(D.f,Uint32Array),OFF=D.off,IDS=D.ids,NP=D.npts,FC=D.farbe,lo=D.lo,sp=D.sp;
+const el=document.getElementById('cv');const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));el.appendChild(R.domElement);
+const sc=new THREE.Scene();const cam=new THREE.PerspectiveCamera(40,1,0.1,800);const OC=new THREE.OrbitControls(cam,R.domElement);
+function bg(){const dk=matchMedia('(prefers-color-scheme: dark)').matches&&document.documentElement.dataset.theme!=='light'||document.documentElement.dataset.theme==='dark';sc.background=new THREE.Color(dk?0x1b1917:0xf1ede6)}bg();
+sc.add(new THREE.HemisphereLight(0xffffff,0x776655,0.85));const dl=new THREE.DirectionalLight(0xffffff,0.7);dl.position.set(6,12,9);sc.add(dl);
+const nv=Q.length/3,pos=new Float32Array(nv*3);for(let i=0;i<nv;i++){pos[i*3]=lo[0]+Q[i*3]*sp[0];pos[i*3+1]=lo[2]+Q[i*3+2]*sp[2];pos[i*3+2]=-(lo[1]+Q[i*3+1]*sp[1])}
+const grp=new THREE.Group();sc.add(grp);const objs=[];
+function hsl(o){const c=new THREE.Color();c.setHSL(((o*0.61803)%1),0.6,0.55);return c}
+IDS.forEach((id,k)=>{const a=OFF[k],b=OFF[k+1];const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setIndex(new THREE.BufferAttribute(FI.subarray(a*3,b*3),1));g.computeVertexNormals();
+const m=new THREE.Mesh(g,new THREE.MeshLambertMaterial({color:hsl(id),side:THREE.DoubleSide,flatShading:true}));m.userData={id,np:NP[k],k};const e=new THREE.LineSegments(new THREE.EdgesGeometry(g,35),new THREE.LineBasicMaterial({color:0x000000,transparent:true,opacity:0.3}));m.add(e);grp.add(m);objs.push(m)});
+const os=document.getElementById('os');[...objs].sort((a,b)=>b.userData.np-a.userData.np).forEach(m=>{const e=document.createElement('option');e.value=m.userData.id;e.textContent='#'+m.userData.id+' ('+m.userData.np+' Punkte)';os.appendChild(e)});
+const maxNp=Math.max(...NP);
+function upd(){const sel=+os.value,hw=document.getElementById('cw').checked;objs.forEach(m=>{const u=m.userData;m.visible=(sel<0||u.id===sel)&&!(hw&&u.np>=maxNp*0.5&&sel<0);m.children[0].visible=document.getElementById('ce').checked;
+const f=fm.value==='f'?new THREE.Color(FC[u.k][0]/255,FC[u.k][1]/255,FC[u.k][2]/255):hsl(u.id);m.material.color.copy(f)})}
+fm.onchange=upd;os.onchange=upd;ce.onchange=upd;cw.onchange=upd;upd();
+const bx=new THREE.Box3().setFromBufferAttribute(new THREE.BufferAttribute(pos,3));const c=bx.getCenter(new THREE.Vector3()),sz=bx.getSize(new THREE.Vector3());OC.target.copy(c);
+function view(a){const r=Math.max(sz.x,sz.y,sz.z)*1.1;const dirs={1:[0.3,0.1,1],2:[0.9,0.35,0.9],3:[1,0.1,0]};const d=dirs[a];cam.position.set(c.x+d[0]*r,c.y+d[1]*r,c.z+d[2]*r);cam.lookAt(c);OC.update()}
+v1.onclick=()=>view(1);v2.onclick=()=>view(2);v3.onclick=()=>view(3);view(2);
+document.getElementById('info').textContent=IDS.length+' Objekte, '+(FI.length/3)+' Dreiecke. Jede Huelle ist aus der Punktmenge eines SAM-Objekts gebaut (Voxel, Fuellen, Marching Cubes), Faerbung = Objekt oder Median-Fotofarbe.';
+function rs(){const wd=el.clientWidth,ht=el.clientHeight;R.setSize(wd,ht,false);cam.aspect=wd/ht;cam.updateProjectionMatrix()}addEventListener('resize',rs);rs();
+(function loop(){requestAnimationFrame(loop);OC.update();R.render(sc,cam)})();
+</script>

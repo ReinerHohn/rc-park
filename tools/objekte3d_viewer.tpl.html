@@ -1,0 +1,54 @@
+<title>Kaufhaus 3D-Objekte</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{--bg:#f1ede6;--fg:#2a2622;--panel:#fbf9f5;--line:#d8d0c3;--acc:#9c2f2f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1917;--fg:#ece6dc;--panel:#25221f;--line:#3a352f;--acc:#e0705f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1b1917;--fg:#ece6dc;--panel:#25221f;--line:#3a352f;--acc:#e0705f;color-scheme:dark}
+html,body{height:100%}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px;display:flex;flex-direction:column;gap:8px;box-sizing:border-box}
+h1{font:600 16px/1.2 Georgia,serif;margin:0}
+#bar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:0}
+#bar label{display:flex;gap:6px;align-items:center;white-space:nowrap}
+#cv{flex:1;min-height:60vh;border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative;min-width:0}
+#cv canvas{display:block;width:100%;height:100%}
+#info{font-size:12px;opacity:.8}
+button,select{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:4px 10px}
+</style>
+<h1>Kaufhaus: 3D-Objekte aus vielen Fotos</h1>
+<div id="bar">
+<label>Farbe <select id="fm"><option value="o">Objekt</option><option value="f">Foto</option></select></label>
+<label>Objekt <select id="os"><option value="-1">alle</option></select></label>
+<label><input type="checkbox" id="ro" checked> Punkte ohne Objekt</label>
+<label>Punktgroesse <input type="range" id="ps" min="1" max="6" step="0.5" value="2"></label>
+<button id="v1">Vorn</button><button id="v2">Schraeg</button><button id="v3">Seite</button>
+</div>
+<div id="cv"></div>
+<div id="info"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const D=__DATA__;
+const b64=(s,T)=>{const bin=atob(s),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new T(u.buffer)};
+const Q=b64(D.p,Uint16Array),RG=b64(D.c,Uint8Array),OB=b64(D.o,Int32Array),n=OB.length,lo=D.lo,sp=D.sp;
+const el=document.getElementById('cv');const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));el.appendChild(R.domElement);
+const sc=new THREE.Scene();const cam=new THREE.PerspectiveCamera(40,1,0.1,800);const OC=new THREE.OrbitControls(cam,R.domElement);
+function bg(){const dk=matchMedia('(prefers-color-scheme: dark)').matches&&document.documentElement.dataset.theme!=='light'||document.documentElement.dataset.theme==='dark';sc.background=new THREE.Color(dk?0x1b1917:0xf1ede6)}bg();
+const pos=new Float32Array(n*3);for(let i=0;i<n;i++){pos[i*3]=lo[0]+Q[i*3]*sp[0];pos[i*3+1]=lo[2]+Q[i*3+2]*sp[2];pos[i*3+2]=-(lo[1]+Q[i*3+1]*sp[1])}
+function hsl(o){const c=new THREE.Color();c.setHSL(((o*0.61803)%1),0.65,0.5);return c}
+let geo=new THREE.BufferGeometry();const pts=new THREE.Points(geo,new THREE.PointsMaterial({size:0.04,vertexColors:true,sizeAttenuation:true}));sc.add(pts);
+const cnt={};for(let i=0;i<n;i++){const o=OB[i];if(o>=0)cnt[o]=(cnt[o]||0)+1}
+const ol=Object.keys(cnt).map(Number).sort((a,b)=>cnt[b]-cnt[a]);const os=document.getElementById('os');ol.slice(0,300).forEach(o=>{const e=document.createElement('option');e.value=o;e.textContent='#'+o+' ('+cnt[o]+' Punkte)';os.appendChild(e)});
+function paint(){const m=fm.value,sel=+os.value,ro=document.getElementById('ro').checked,cc={};const P=[],C=[];
+for(let i=0;i<n;i++){const o=OB[i];if(sel>=0&&o!==sel)continue;let r,g,b;
+if(o<0){if(!ro)continue;r=RG[i*3]/255*0.55+0.2;g=RG[i*3+1]/255*0.55+0.2;b=RG[i*3+2]/255*0.55+0.2}
+else if(m==='f'){r=RG[i*3]/255;g=RG[i*3+1]/255;b=RG[i*3+2]/255}else{const c=cc[o]||(cc[o]=hsl(o));r=c.r;g=c.g;b=c.b}
+P.push(pos[i*3],pos[i*3+1],pos[i*3+2]);C.push(r,g,b)}
+const g2=new THREE.BufferGeometry();g2.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g2.setAttribute('color',new THREE.Float32BufferAttribute(C,3));pts.geometry.dispose();pts.geometry=g2;geo=g2}
+const paint2=paint;fm.onchange=paint;os.onchange=paint;document.getElementById('ro').onchange=paint;ps.oninput=()=>{pts.material.size=0.02*ps.value};
+paint();
+const bx=new THREE.Box3().setFromBufferAttribute(new THREE.BufferAttribute(pos,3));const c=bx.getCenter(new THREE.Vector3()),sz=bx.getSize(new THREE.Vector3());OC.target.copy(c);
+function view(a){const r=Math.max(sz.x,sz.y,sz.z)*1.1;const dirs={1:[0.3,0.1,1],2:[0.9,0.35,0.9],3:[1,0.1,0]};const d=dirs[a];cam.position.set(c.x+d[0]*r,c.y+d[1]*r,c.z+d[2]*r);cam.lookAt(c);OC.update()}
+v1.onclick=()=>view(1);v2.onclick=()=>view(2);v3.onclick=()=>view(3);view(2);
+document.getElementById('info').textContent=n+' Punkte der Wolke, '+ol.length+' Objekte (je >= '+D.minpts+' Punkte), aus '+D.nfotos+' Fotos. Jedes Objekt ist eine echte 3D-Punktmenge, entstanden aus SAM-Masken vieler Ansichten. Punkte ohne Objekt in Fotofarbe, gedaempft.';
+function rs(){const wd=el.clientWidth,ht=el.clientHeight;R.setSize(wd,ht,false);cam.aspect=wd/ht;cam.updateProjectionMatrix()}addEventListener('resize',rs);rs();
+(function loop(){requestAnimationFrame(loop);OC.update();R.render(sc,cam)})();
+</script>
