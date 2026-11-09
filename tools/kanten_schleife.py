@@ -14,8 +14,13 @@ import kanten_vote_quellen as KV                                                
 from concurrent.futures import ProcessPoolExecutor
 ok_f = [f for f in fotos if os.path.exists(os.path.join(md, os.path.splitext(f)[0] + ".npz"))]
 def dtbild(E): return (np.minimum(cv2.distanceTransform((~E.any(0)).astype(np.uint8), cv2.DIST_L2, 3)[::2, ::2], 255).astype(np.uint8), np.minimum(cv2.distanceTransform((E.sum(0) < 2).astype(np.uint8), cv2.DIST_L2, 3)[::2, ::2], 255).astype(np.uint8))      # lax: irgendeine Quelle; streng: Median (>=2 von 3 Quellen)
+STAB = sys.argv[sys.argv.index("--stabil") + 1] if "--stabil" in sys.argv else None
+def stab_kb(f):                                                                               # Beleg = Stabilitaetskarte (kanten_stabil.py): Kanal 0 >=0.55, 1 >=0.40, 2 >=0.25 -> lax = V>=0.25, streng (>=2 von 3) = V>=0.40
+    V = cv2.imread(os.path.join(STAB, os.path.splitext(f)[0] + ".png"), 0)
+    return (f, None) if V is None else (f, np.stack([V >= 140, V >= 102, V >= 64]))
+KB = stab_kb if STAB else KV.kantenbilder
 with ProcessPoolExecutor(8) as ex:
-    for f, E in ex.map(KV.kantenbilder, ok_f, chunksize=1):
+    for f, E in ex.map(KB, ok_f, chunksize=1):
         if E is None: continue
         K = KAM[f]; h, w = E.shape[1:]; s = w / K["W"]; _d1, _d2 = dtbild(E); DT.append(torch.from_numpy(_d1).to(dev)); DT2.append(torch.from_numpy(_d2).to(dev)); INF.append((f, K, s, h, w)); del E
         lt = Pt @ torch.tensor(K["Rn"], device=dev, dtype=torch.float32).T + torch.tensor(K["tn"], device=dev, dtype=torch.float32); z = lt[:, 2]

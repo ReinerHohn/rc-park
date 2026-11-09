@@ -1,0 +1,65 @@
+<title>Kaufhaus Kantenviewer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{--bg:#f4f1ec;--fg:#23201c;--mut:#6d665d;--pnl:#fffdf9;--ln:#d9d2c6;--acc:#b3412a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15130f;--fg:#ece6dc;--mut:#a39a8c;--pnl:#201d18;--ln:#3a352d;--acc:#e8805f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15130f;--fg:#ece6dc;--mut:#a39a8c;--pnl:#201d18;--ln:#3a352d;--acc:#e8805f;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px}
+h1{font-size:1.1rem;margin:0 0 8px;font-weight:650}
+#wrap{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+#cv{flex:1 1 560px;min-width:0;max-width:100%;height:min(74vh,760px);background:var(--bg);border:1px solid var(--ln);border-radius:6px;touch-action:none;display:block}
+#pnl{flex:0 1 250px;min-width:0;background:var(--pnl);border:1px solid var(--ln);border-radius:6px;padding:10px 12px;font-size:.88rem;line-height:1.5}
+label{display:flex;gap:8px;align-items:center}
+.sw{width:11px;height:11px;border-radius:2px;display:inline-block}
+.mut{color:var(--mut);font-size:.8rem}
+input[type=range]{width:100%}
+button{font:inherit;padding:4px 10px;border:1px solid var(--ln);background:var(--bg);color:var(--fg);border-radius:4px;cursor:pointer}
+</style>
+<h1>Kaufhaus: Wolke, Kantenpunkte und Drahtgitter</h1>
+<div id="wrap"><canvas id="cv"></canvas><div id="pnl">
+<b>Ebenen</b>
+<label><input type="checkbox" id="lw" checked>Wolke (Fotofarben)</label>
+<label><input type="checkbox" id="lk" checked><span class="sw" style="background:#e08a1e"></span>Kantenpunkte (Tiefen-Sweep)</label>
+<label><input type="checkbox" id="ls" checked>Drahtgitter</label>
+<div class="mut" style="margin:2px 0 6px 24px"><span class="sw" style="background:#d94a3a"></span> Wolken-Vote &nbsp;<span class="sw" style="background:#3b7dd8"></span> Triangulation &nbsp;<span class="sw" style="background:#2f9e5b"></span> Tiefen-Sweep &nbsp;<span class="sw" style="background:#e08a1e"></span> Dach</div>
+<label>Wolke dunkler <input type="range" id="dk" min="0" max="90" value="45"></label>
+<label>Punktgröße <input type="range" id="ps" min="1" max="4" value="1"></label>
+<label>Linienbreite <input type="range" id="lb" min="1" max="4" value="1"></label>
+<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><button id="bf">Front</button><button id="bs">Seite</button><button id="bo">Oben</button><button id="b3">3D</button></div>
+<p class="mut" id="inf"></p>
+<p class="mut">Ziehen = drehen, Shift/2 Finger = verschieben, Rad/Pinch = zoomen. Höhe z in Metern im Netzrahmen (Boden ca. 2–3 m).</p>
+</div></div>
+<script>
+/*DATA*/
+function b64(s){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+function i16(s){const u=b64(s);return new Int16Array(u.buffer,0,u.length>>1)}
+const W=i16(DATA.w),K=i16(DATA.k),Sg=i16(DATA.s),Cc=b64(DATA.c),Sq=b64(DATA.sq),sc=1/DATA.sc;
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+let yaw=-0.45,pit=0.18,zoom=1.15,px=0,py=0,cw=0,ch=0,dpr=1;
+const COL={0:'#d94a3a',1:'#3b7dd8',2:'#2f9e5b',3:'#e08a1e'};
+function fit(){dpr=Math.min(window.devicePixelRatio||1,2);const r=cv.getBoundingClientRect();cw=Math.max(200,Math.round(r.width*dpr));ch=Math.max(200,Math.round(r.height*dpr));cv.width=cw;cv.height=ch;draw()}
+function cam(){const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pit),sp=Math.sin(pit);return{cy,sy,cp,sp}}
+function proj(x,y,z,c,s){ // x,y,z in Metern relativ zum Zentrum; z oben
+ const a=x*c.cy-y*c.sy,b=x*c.sy+y*c.cy; return [a*s+cw/2+px*dpr, -(z*c.cp-b*c.sp)*s+ch/2+py*dpr, b*c.cp+z*c.sp]}
+const q=id=>document.getElementById(id);
+function draw(){
+ const c=cam(),s=zoom*Math.min(cw,ch)/45;ctx.clearRect(0,0,cw,ch);
+ const img=ctx.createImageData(cw,ch),d=img.data,zb=new Float32Array(cw*ch).fill(1e9),psz=+q('ps').value,dk=1-(+q('dk').value)/100;
+ const put=(u,v,zz,r,g,b)=>{for(let j=0;j<psz;j++)for(let i=0;i<psz;i++){const X=u+i,Y=v+j;if(X<0||Y<0||X>=cw||Y>=ch)continue;const o=Y*cw+X;if(zz<zb[o]){zb[o]=zz;d[o*4]=r;d[o*4+1]=g;d[o*4+2]=b;d[o*4+3]=255}}};
+ if(q('lw').checked)for(let i=0;i<DATA.nw;i++){const p=proj(W[i*3]*sc,W[i*3+1]*sc,W[i*3+2]*sc,c,s);put(p[0]|0,p[1]|0,p[2],Cc[i*3]*dk,Cc[i*3+1]*dk,Cc[i*3+2]*dk)}
+ if(q('lk').checked)for(let i=0;i<DATA.nk;i++){const p=proj(K[i*3]*sc,K[i*3+1]*sc,K[i*3+2]*sc,c,s);put(p[0]|0,p[1]|0,p[2]-0.5,240,150,20)}
+ ctx.putImageData(img,0,0);
+ if(q('ls').checked){ctx.lineWidth=+q('lb').value*dpr;const byq={};for(let i=0;i<DATA.ns;i++)(byq[Sq[i]]=byq[Sq[i]]||[]).push(i);
+  for(const k in byq){ctx.strokeStyle=COL[k]||'#888';ctx.beginPath();for(const i of byq[k]){const a=proj(Sg[i*6]*sc,Sg[i*6+1]*sc,Sg[i*6+2]*sc,c,s),b=proj(Sg[i*6+3]*sc,Sg[i*6+4]*sc,Sg[i*6+5]*sc,c,s);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}ctx.stroke()}}
+ q('inf').textContent=DATA.nw.toLocaleString('de')+' Wolkenpunkte (Auswahl), '+DATA.nk.toLocaleString('de')+' Kantenpunkte, '+DATA.ns+' Linien'}
+let drag=null;const ptr=new Map();
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,pan:e.shiftKey||e.button==2}});
+cv.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const o=ptr.get(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY]);
+ if(ptr.size==2){const [a,b]=[...ptr.values()];const nd=Math.hypot(a[0]-b[0],a[1]-b[1]);if(cv._pd){zoom*=nd/cv._pd;px+=(e.clientX-o[0])/2;py+=(e.clientY-o[1])/2}cv._pd=nd;draw();return}
+ const dx=e.clientX-o[0],dy=e.clientY-o[1];if(drag&&drag.pan){px+=dx;py+=dy}else{yaw+=dx*0.006;pit=Math.max(-1.5,Math.min(1.5,pit+dy*0.006))}draw()});
+const up=e=>{ptr.delete(e.pointerId);cv._pd=0;drag=null};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+cv.addEventListener('wheel',e=>{e.preventDefault();zoom*=Math.exp(-e.deltaY*0.0012);draw()},{passive:false});cv.addEventListener('contextmenu',e=>e.preventDefault());
+for(const id of['lw','lk','ls','dk','ps','lb'])q(id).addEventListener('input',draw);
+const V=(y,p)=>()=>{yaw=y;pit=p;zoom=1;px=0;py=0;draw()};q('bf').onclick=V(0,0);q('bs').onclick=V(-Math.PI/2,0);q('bo').onclick=V(0,1.5);q("b3").onclick=V(-0.9,0.35);
+new ResizeObserver(fit).observe(cv);fit();
+</script>
