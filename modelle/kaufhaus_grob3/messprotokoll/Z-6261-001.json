@@ -1,0 +1,136 @@
+{
+ "id": "Z-6261-001",
+ "typ": "zaehlung",
+ "foto": "6261",
+ "datei": "6261_ip_IMG_6261.jpg",
+ "was": "Kaufhaus Hauptfassade 1. OG: Lichter je Fenstergruppe (alle 5 Gruppen, ip_IMG_6261 vom Platz schraeg von West)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-09",
+ "punkte": [
+  {
+   "flaeche": "G1",
+   "art": "voll",
+   "x": 1175.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G1",
+   "art": "voll",
+   "x": 1240.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G1",
+   "art": "voll",
+   "x": 1305.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G2",
+   "art": "voll",
+   "x": 1430.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G2",
+   "art": "voll",
+   "x": 1495.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G2",
+   "art": "voll",
+   "x": 1560.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G3",
+   "art": "voll",
+   "x": 1660.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G3",
+   "art": "voll",
+   "x": 1715.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G3",
+   "art": "voll",
+   "x": 1770.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G4",
+   "art": "voll",
+   "x": 1850.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G4",
+   "art": "voll",
+   "x": 1900.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G4",
+   "art": "voll",
+   "x": 1950.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G5",
+   "art": "voll",
+   "x": 2035.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G5",
+   "art": "voll",
+   "x": 2080.0,
+   "y": 2154.0
+  },
+  {
+   "flaeche": "G5",
+   "art": "voll",
+   "x": 2125.0,
+   "y": 2154.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "G1": {
+   "art": "voll",
+   "n": 3
+  },
+  "G2": {
+   "art": "voll",
+   "n": 3
+  },
+  "G3": {
+   "art": "voll",
+   "n": 3
+  },
+  "G4": {
+   "art": "voll",
+   "n": 3
+  },
+  "G5": {
+   "art": "voll",
+   "n": 3
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 3,
+  "voll_sichtbare_flaechen": 5
+ },
+ "bild": "Z-6261-001.jpg",
+ "ausschnitt": [
+  925,
+  1904,
+  2375,
+  2404
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Regel 9: 5 Gruppen x 3 Lichter; Zweitzaehlung zu Z-6120-002; 2. Fassung"
+}

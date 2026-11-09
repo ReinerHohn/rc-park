@@ -837,6 +837,22 @@ def zylinder_bt(cfg, ctx):
     beleg("alle", f"Zylinder ({modus})", cfg["quelle"], u=u_, n=n_, z0=z0, z1=z1, radius=r)
     return ([k], []) if modus != "ausschnitt" else ([], [k])
 
+@bauteil("bruestung")
+def bruestung_bt(cfg, ctx):
+    """Balkonbruestung: n_baluster gleiche Baluster (Zylinder, Radius r) im Raster pitch ab u0 (Achse n), zwischen Platten-Oberkante z0 und Handlauf
+    (z_handlauf_unten..z_handlauf_oben, Breite handlauf_b quer). Anzahl/Periode NUR aus Foto-Zaehlung (Regel 9: 'zaehlung' = Z-Protokolle). Baluster als Zylinder = ANNAHME H0
+    (Vasenform nicht druckbar). Pflicht: n_baluster, u0, pitch, n, r, z0, z_handlauf_unten, z_handlauf_oben, handlauf_b, achse_n, achse_quelle, quelle."""
+    for k in ("n_baluster", "u0", "pitch", "n", "r", "z0", "z_handlauf_unten", "z_handlauf_oben", "handlauf_b", "achse_n", "achse_quelle", "quelle"):
+        if cfg.get(k) in (None, ""): sys.exit(f"bruestung: '{k}' fehlt (Regel 3b)")
+    nb = int(cfg["n_baluster"]); u0, pitch, n_, r, z0, zh0, zh1, hb = (float(cfg[k]) for k in ("u0", "pitch", "n", "r", "z0", "z_handlauf_unten", "z_handlauf_oben", "handlauf_b"))
+    if nb < 1 or pitch <= 2 * r or r < 0.01 or not (z0 < zh0 < zh1): sys.exit(f"bruestung: unplausible Masse (n={nb}, pitch={pitch}, r={r}, z={z0}/{zh0}/{zh1})")
+    teile = [M.cylinder(zh0 - z0 + 0.04, r, r, 16).translate((u0 + i * pitch, n_, z0 - 0.02)) for i in range(nb)]   # 2 cm in Platte und Handlauf eingebunden (ein Koerper)
+    teile.append(quader(u0 - pitch / 2, u0 + (nb - 1) * pitch + pitch / 2, n_ - hb / 2, n_ + hb / 2, zh0, zh1))
+    k = UNION(teile).transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; q = lambda p_: (wq.get(p_) or cfg["quelle"])
+    beleg("alle", f"Bruestung: {nb} Baluster (Zylinder r {r:.3f}) + Handlauf", f"Anzahl/Periode {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + q("pitch") + " | Lage: " + q("u0") + " | Handlauf: " + q("z_handlauf_oben"),
+          n_baluster=nb, u0=u0, pitch=pitch, n=n_, r=r, z0=z0, z_handlauf_unten=zh0, z_handlauf_oben=zh1)
+    return [k], []
+
 @bauteil("pyramide")
 def pyramide_bt(cfg, ctx):
     """Pyramide/Helm: Rechteckgrundflaeche (breite_u x breite_n) bei (u, n) auf z0, Spitze bei z0+hoehe (Versatz spitze_du/spitze_dn optional), Huelle ueber Grundflaeche und Spitze.

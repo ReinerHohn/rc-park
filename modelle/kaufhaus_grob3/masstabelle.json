@@ -87,6 +87,42 @@
    "z0": "=9.3 - z_unterkante_lot2",
    "z1": "=10.0 - z_unterkante_lot2",
    "achse": "z"
+  },
+  "lichter_g2": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    3.807,
+    12.242
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=12.0 - z_unterkante_lot2",
+   "u0": -1.75,
+   "u1": 1.75,
+   "tiefe": 0.1,
+   "vor": 2.0,
+   "min_b": 0.5,
+   "max_b": 1.3,
+   "rand": 0.0
+  },
+  "handlauf_z": {
+   "typ": "max_z_im_bereich",
+   "x0": 6.941,
+   "x1": 7.984,
+   "y0": 11.738,
+   "y1": 12.356,
+   "zmax": "=10.3 - z_unterkante_lot2"
+  },
+  "helm_w_fussbreite": {
+   "typ": "ausdehnung_im_bereich",
+   "x0": -5.297,
+   "x1": -2.616,
+   "y0": 13.064,
+   "y1": 15.746,
+   "z0": "=14.6 - z_unterkante_lot2",
+   "z1": "=14.9 - z_unterkante_lot2"
   }
  },
  "pruefungen": [
@@ -282,6 +318,40 @@
     "2026-11-09 Kasten von der Helm-STL (9,43) auf die Frontkante des parametrischen Erkers verlegt",
     "2026-11-09 Kasten ans freie Westende des Erkers (along -10,4..-9,95): zwischen den Erkern liegt die Unterkante im Balkonband (Oberkante 10,0)"
    ]
+  },
+  {
+   "name": "Fenstergruppe 2 (1. OG): Lichter je Gruppe (Oeffnungen in der Rahmenfront 12,81, z 12,0)",
+   "wert": "lichter_g2_anzahl",
+   "soll": [
+    3,
+    3
+   ],
+   "quelle": "Foto-Zaehlung: Z-6120-002 (ip_IMG_6120, Gruppen 2+3 voll: 3), Z-6261-001 (5 Gruppen: 3), Z-hc12-001 (5 Gruppen: 3) - Vorhangbogenfenster zwischen den Figurenkonsolen",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "foto_intern",
+   "protokoll": "Z-6261-001",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 2)",
+    "2026-11-09 Rahmenfront 12,81 (tiefe 0,15), Oeffnung = Wand 12,65 (>= 0,1 hinter der Front); erster Lauf 0 Lichter: Wand buendig mit Rahmenfront",
+    "2026-11-09 u-Bereich auf die Gruppe (+-1,75 um Mitte -0,51) begrenzt: die Figurenkonsole links (off 12,96) stellte sonst die p10-Ebene und der ganze Rahmen zaehlte als eine Oeffnung; Glas in der Wandebene 12,66-12,69 (0,12 hinter der Rahmenfront)"
+   ]
+  },
+  {
+   "name": "Bruestung Handlauf Oberkante z (m), along 2,5..3,5",
+   "wert": "handlauf_z + z_unterkante_lot2",
+   "soll": [
+    9.6,
+    9.8
+   ],
+   "quelle": "Koordinator 9.11.: Handlauf 9,48-9,71 aus dem Balusterband 8,35-9,65 (baluster_fit v10, formen/baluster_abgenommen.json band; Baluster am Foto Z-6120-001 gezaehlt); Platte 8,16-8,37",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/formen/baluster_abgenommen.json band",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 2)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -380,6 +450,38 @@
    "quelle": "Kantengitter lot2 vs Generator/LoD2",
    "text": "Boden: Gitter z_min 1,5 (p1 2,3), Pfeilerfuesse 1,5-2,7; Generator boden_z 1,45 (Altwert). Baluster-Band 8,35-9,65 / Periode 0,287 nur Hinweis (unverifiziert).",
    "naechster_schritt": "Bodenlinie aus Fotos mit Bodenanker; Baluster-Zaehlung am Foto",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 2",
+   "quelle": "Formfits Kantengitter vs Foto",
+   "text": "Helmfuss: Kegelfit r_fuss 0,84/0,85 (formen/helme.json, 3512/2407 Inlier) vs Sichtbefund Koerper-Agent am Foto ~r 1,6 (Helmfuss ueber dem Erkergesims breiter als der Kegelschaft). NICHT gemittelt; Generator nutzt den Fit 0,84. Messung helm_w_fussbreite (Modell-Ausdehnung am Fuss) nur zur Beobachtung, foto_mass braucht eine Ebene in u/n (nur x=/y= moeglich).",
+   "naechster_schritt": "foto_mass auf Erkerkante (K-6261) sobald --ebene in Fassadenkoordinaten geht; Fotoauswertung des Helmfusses (Dachueberstand/Kragen vs Schaft)",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 2",
+   "quelle": "Formfits Kantengitter vs Foto",
+   "text": "Gaubenlagen aus gauben_r3_lagen.json (Ortho-Flecken, parallaxe-verschmiert, nicht abgenommen): unten along -3,15/2,90/9,16 auf Dach-Off 10,3 (3,2 m ueber Traufe), oben 0,89/6,94 auf Off 8,1-8,4 (5,7-6,2 m); Koordinator nannte t -9,08/-2,83/3,22 bzw. -6,88/-0,83 und 1,9-2,7 / 4,4-4,8 m - andere Bezugsachse/Hoehe, hier die JSON-Geometrie direkt im lot2-Rahmen genommen. Form (Breite 0,94/0,96, Tiefe 1,9) = Altwert.",
+   "naechster_schritt": "Gauben-Formfit (Kehlen-Dreieck im Foto) und Lagen am Overlay 6261 pruefen",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 2",
+   "quelle": "Formfits Kantengitter vs Foto",
+   "text": "Rueckseite/LoD2 (nur dokumentiert, nichts geaendert): Gitter-Rueckwand = Firstspiegel-ANNAHME (off_back -6,56, Tiefe 19,2 m); LoD2 DEBW_0010007Tv9r: Grundrisskanten 20,4/12,54 m, First-Traufe 21,40-9,65 = 11,75 m vs Gitter 27,51-14,68 = 12,83 m (lot2-z gegen DGM1 unbekannt). Widerspruch Tiefe 12,54 vs 19,2 offen.",
+   "naechster_schritt": "LoD2-Grundriss per Umeyama (Pfeiler/Ecken) in lot2 legen; Rueckwandfotos (Suedseite) in die SfM",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 2",
+   "quelle": "Formfits Kantengitter vs Foto",
+   "text": "Kamera-Bruecke K-6120/K-6261 aus kam_lot2 (SfM-Buendel): keine amtlichen Anker, ankerzone_z = Gebaeude (1,5-29,5) gesetzt; foto_diff/fehlteile_finden laufen damit, Treffer gelten im lot2-Massstab (sfm_buendel), nicht amtlich.",
+   "naechster_schritt": "Anker aus LoD2 in lot2 uebertragen und K-Protokolle damit pruefen (foto_pick_pruefen)",
    "status": "offen"
   }
  ],

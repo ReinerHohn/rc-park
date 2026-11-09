@@ -1,0 +1,136 @@
+{
+ "id": "Z-hc12-001",
+ "typ": "zaehlung",
+ "foto": "hc12",
+ "datei": "hc12_an_handy_2026-11-06_c_handy_c_12.jpg",
+ "was": "Kaufhaus Hauptfassade 1. OG: Lichter je Fenstergruppe (alle 5 Gruppen, Handyfoto c_12 frontal)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-09",
+ "punkte": [
+  {
+   "flaeche": "G1",
+   "art": "voll",
+   "x": 1000.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G1",
+   "art": "voll",
+   "x": 1102.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G1",
+   "art": "voll",
+   "x": 1204.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G2",
+   "art": "voll",
+   "x": 1380.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G2",
+   "art": "voll",
+   "x": 1482.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G2",
+   "art": "voll",
+   "x": 1584.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G3",
+   "art": "voll",
+   "x": 1760.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G3",
+   "art": "voll",
+   "x": 1862.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G3",
+   "art": "voll",
+   "x": 1964.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G4",
+   "art": "voll",
+   "x": 2140.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G4",
+   "art": "voll",
+   "x": 2242.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G4",
+   "art": "voll",
+   "x": 2344.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G5",
+   "art": "voll",
+   "x": 2520.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G5",
+   "art": "voll",
+   "x": 2622.0,
+   "y": 1306.0
+  },
+  {
+   "flaeche": "G5",
+   "art": "voll",
+   "x": 2724.0,
+   "y": 1306.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "G1": {
+   "art": "voll",
+   "n": 3
+  },
+  "G2": {
+   "art": "voll",
+   "n": 3
+  },
+  "G3": {
+   "art": "voll",
+   "n": 3
+  },
+  "G4": {
+   "art": "voll",
+   "n": 3
+  },
+  "G5": {
+   "art": "voll",
+   "n": 3
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 3,
+  "voll_sichtbare_flaechen": 5
+ },
+ "bild": "Z-hc12-001.jpg",
+ "ausschnitt": [
+  750,
+  1056,
+  2974,
+  1556
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Regel 9: 5 Gruppen x 3 Lichter; Drittzaehlung (frontal); 2. Fassung"
+}

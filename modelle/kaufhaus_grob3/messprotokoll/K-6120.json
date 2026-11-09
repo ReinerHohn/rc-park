@@ -1,0 +1,43 @@
+{
+ "foto": "6120",
+ "datei": "ip_IMG_6120.jpg",
+ "seite": "+y",
+ "strassenfoto": true,
+ "typ": "kamera_bruecke_sfm",
+ "kamera": {
+  "rvec": [
+   0.28110157633434146,
+   1.6744545596346436,
+   -2.3310288701335895
+  ],
+  "t": [
+   5.8300602431714275,
+   10.492154960318487,
+   19.794644977340006
+  ],
+  "f_px": 3111.0560749224237,
+  "cx": 1512.0,
+  "cy": 2016.0,
+  "bild": [
+   3024,
+   4032
+  ],
+  "k1": 0.008961357684566792,
+  "modell": "SIMPLE_RADIAL",
+  "standort_xyz": [
+   12.52,
+   19.12,
+   3.69
+  ],
+  "hoehe_ueber_gelaende": 2.19,
+  "ankerzone_z": [
+   1.5,
+   29.5
+  ],
+  "brennweite_quelle": "SfM (COLMAP, gemeinsames Buendel 440 Fotos + 336 Frames, lot2)",
+  "rms_px": null,
+  "plausibel_strassenfoto": true
+ },
+ "quelle": "Kamera-Bruecke 2026-11-09 (Agent): Pose/Brennweite/k1 aus /media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/kam_lot2.json (lot2-Rahmen = Generatorrahmen); Anker = SfM-Buendel, KEINE amtlichen Anker; Massstab sfm_buendel; ankerzone_z = Gebaeudehoehe (Buendelkamera gilt ueberall, nicht interpolationsbegrenzt)",
+ "datum": "2026-11-09"
+}

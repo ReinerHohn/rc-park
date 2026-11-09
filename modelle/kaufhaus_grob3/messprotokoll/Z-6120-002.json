@@ -1,0 +1,102 @@
+{
+ "id": "Z-6120-002",
+ "typ": "zaehlung",
+ "foto": "6120",
+ "datei": "6120_ip_IMG_6120.jpg",
+ "was": "Kaufhaus Hauptfassade 1. OG: Lichter je Fenstergruppe (Vorhangbogenfenster zwischen den Figurenkonsolen; ip_IMG_6120 von unten, Gruppen 2 und 3 voll, 1 und 4 am Bildrand angeschnitten)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-09",
+ "punkte": [
+  {
+   "flaeche": "G2",
+   "art": "voll",
+   "x": 744.0,
+   "y": 800.0
+  },
+  {
+   "flaeche": "G2",
+   "art": "voll",
+   "x": 989.0,
+   "y": 800.0
+  },
+  {
+   "flaeche": "G2",
+   "art": "voll",
+   "x": 1233.0,
+   "y": 800.0
+  },
+  {
+   "flaeche": "G3",
+   "art": "voll",
+   "x": 1811.0,
+   "y": 800.0
+  },
+  {
+   "flaeche": "G3",
+   "art": "voll",
+   "x": 2044.0,
+   "y": 800.0
+  },
+  {
+   "flaeche": "G3",
+   "art": "voll",
+   "x": 2289.0,
+   "y": 800.0
+  },
+  {
+   "flaeche": "G1",
+   "art": "teil",
+   "x": 44.0,
+   "y": 800.0
+  },
+  {
+   "flaeche": "G1",
+   "art": "teil",
+   "x": 222.0,
+   "y": 800.0
+  },
+  {
+   "flaeche": "G4",
+   "art": "teil",
+   "x": 2867.0,
+   "y": 800.0
+  },
+  {
+   "flaeche": "G4",
+   "art": "teil",
+   "x": 3000.0,
+   "y": 800.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "G2": {
+   "art": "voll",
+   "n": 3
+  },
+  "G3": {
+   "art": "voll",
+   "n": 3
+  },
+  "G1": {
+   "art": "teil",
+   "n": 2
+  },
+  "G4": {
+   "art": "teil",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 3,
+  "voll_sichtbare_flaechen": 2
+ },
+ "bild": "Z-6120-002.jpg",
+ "ausschnitt": [
+  0,
+  550,
+  3250,
+  1050
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Regel 9: Anzahl Lichter je Gruppe (3) fuer fensterreihe:og n_lichter; Gruppenzahl 5 aus Z-004-002/Z-043-001; 2. Fassung (1. Fassung traf die Balkonplatte)"
+}
