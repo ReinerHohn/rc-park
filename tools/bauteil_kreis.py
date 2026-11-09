@@ -67,6 +67,25 @@ def sh(cmd, cwd, log=None, env=None, timeout=None):
                            stderr=subprocess.STDOUT, text=True, env=e, timeout=timeout)
     return r.returncode, (r.stdout if not log else open(log).read()[-4000:])
 
+OOM_MUSTER = ("out of memory", "CUDA_ERROR_OUT_OF_MEMORY", "OutOfMemoryError")
+
+def sh_tor(cmd, cwd, log, env=None, versuche=4, pause=90):
+    """Torschritt (Bau/Abnahme/Messung): Spuren-uebergreifend per flock serialisiert (deterministische Messung -> verlustfrei)
+    und bei CUDA-OOM wiederholt. Ein OOM ist ein Infrastrukturfehler, kein rotes Tor (Kreis1 R1 10.11.: Abnahme 'rot' war OOM in wandstaerke)."""
+    import fcntl
+    rc, out = 1, ""
+    for v in range(versuche):
+        start = os.path.getsize(log) if os.path.exists(log) else 0
+        with open(os.path.join(KREISDIR, "gpu_tor.lock"), "w") as lk:
+            fcntl.flock(lk, fcntl.LOCK_EX)
+            rc, _ = sh(cmd, cwd, log=log, env=env)
+        with open(log, errors="replace") as f: f.seek(start); neu = f.read()
+        out = neu[-4000:]
+        if not any(m in neu for m in OOM_MUSTER): return rc, out
+        print(f"  OOM im Torschritt ({os.path.basename(log)}), Versuch {v + 1}/{versuche}, warte {pause} s", flush=True)
+        time.sleep(pause)
+    return rc, out + "\nINFRA_OOM"
+
 def protokoll(z):
     z["zeit"] = time.strftime("%Y-%m-%d %H:%M:%S")
     with open(PROT, "a") as f: f.write(json.dumps(z, ensure_ascii=False) + "\n")
@@ -75,8 +94,8 @@ def messen(wt, tag):
     """Bauteile exportieren (baut neu) und Konvergenz messen; liefert (exitcode, letzte konvergenz-zeile)."""
     tdir = os.path.join(LDIR, f"teile_{tag}"); os.makedirs(tdir, exist_ok=True)
     gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
-    rc, _ = sh(gen, wt, log=os.path.join(LDIR, f"export_{tag}.log"), env={"BAUTEILE_AUS": tdir})
-    rc2, out = sh([PY, "-W", "ignore", "-I", "tools/konvergenz_bericht.py", OBJ, "--stl", STL, "--skala", str(SK), "--gitter", GIT,
+    rc, _ = sh_tor(gen, wt, log=os.path.join(LDIR, f"export_{tag}.log"), env={"BAUTEILE_AUS": tdir})
+    rc2, out = sh_tor([PY, "-W", "ignore", "-I", "tools/konvergenz_bericht.py", OBJ, "--stl", STL, "--skala", str(SK), "--gitter", GIT,
                    "--wolke", WOLKE, "--teile_dir", tdir, "--etikett", f"kreis {LAUF} {tag}"] + (["--trocken"] if TROCKEN else []),
                   wt, log=os.path.join(LDIR, f"konvergenz_{tag}.log"))
     kf = os.path.join(wt, "modelle", OBJ, "konvergenz.jsonl")
@@ -171,7 +190,7 @@ for runde in range(1, RUNDEN + 1):
     t0 = time.time()
     rcA, _ = sh(["claude", "-p", txt, "--model", MODELL, "--permission-mode", RECHTE], wt,
                 log=os.path.join(LDIR, f"agent_r{runde}.log"), timeout=MAX_MIN * 60)
-    rcB, outB = sh(["bash", "tools/bauen_abnehmen.sh", OBJ], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"))
+    rcB, outB = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"))
     tor_abnahme = rcB == 0 and "alle Pruefungen bestanden" in outB
     rcK, z1, outK = messen(wt, f"r{runde}_nachher")
     vor = {t["teil"]: t["beleg"] for t in z0.get("wolkenbeleg_teile") or []}
@@ -204,7 +223,7 @@ for runde in range(1, RUNDEN + 1):
         sperre[ziel["teil"]] = sperre.get(ziel["teil"], 0) + 1; ohne_annahme += 1
     freigeben(ziel["teil"])
     protokoll({"runde": runde, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
-               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "konvergenz_rc": rcK, "gewinn": round(gewinn, 3),
+               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "gewinn": round(gewinn, 3),
                "tor_konvergenz": tor_konv, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")
