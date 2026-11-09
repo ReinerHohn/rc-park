@@ -1,6 +1,6 @@
 """Kanten-Tiefen-Sweep (GPU): fuer jedes starke Kantenpixel eines Referenzfotos (Stabilitaetskarte) die Tiefe entlang des Strahls durchsweepen;
 je Tiefe zaehlen, in wie vielen Nachbarfotos an der Projektion wieder eine stabile Kante steht; Peak = 3D-Kantenpunkt. Keine Linienpaare, keine Wolke noetig.
-Aufruf: kanten_tiefe_sweep.py KAM.json STABILDIR OUT.npz [--refs 40] [--nb 12] [--vmin 0.6] [--hit 0.4] [--smin 0.7] [--dmin 4] [--dmax 90] [--maxpx 40000] [--box WOLKE.npy]"""
+Aufruf: kanten_tiefe_sweep.py KAM.json STABILDIR OUT.npz [--refs 40] [--nb 12] [--vmin 0.6] [--hit 0.4] [--smin 0.7] [--dmin 4] [--dmax 90] [--maxpx 40000] [--box WOLKE.npy] [--exclude ANDERER.npz]"""
 import sys, os, json, time, numpy as np, cv2, torch, torch.nn.functional as Fn
 def opt(n, d, t=float): return t(sys.argv[sys.argv.index(n) + 1]) if n in sys.argv else d
 NREF = opt("--refs", 40, int); NB = opt("--nb", 12, int); VMIN = opt("--vmin", 0.6); HIT = opt("--hit", 0.4); SMIN = opt("--smin", 0.7); DMIN = opt("--dmin", 4.0); DMAX = opt("--dmax", 90.0); MAXPX = opt("--maxpx", 40000, int)
@@ -18,7 +18,9 @@ def strahl(j, u, v):                                                            
     d = torch.stack([xu, yu, torch.ones_like(xu)], 1); d = d / d.norm(dim=1, keepdim=True); return d @ R[j]
 def proj(Q, j):
     Xc = Q @ R[j].T + tt[j]; z = Xc[:, 2]; x = Xc[:, 0] / z.clamp(min=0.3); y = Xc[:, 1] / z.clamp(min=0.3); f = 1 + K1[j] * (x * x + y * y); return (FL[j] * x * f + CX[j]) * SJ[j], (FL[j] * y * f + CY[j]) * SJ[j], z
-Cn = C.cpu().numpy(); Dn = R[:, 2].cpu().numpy(); rng = np.random.default_rng(0); refs = rng.choice(J, min(NREF, J), replace=False); ds = torch.exp(torch.linspace(np.log(DMIN), np.log(DMAX), 360, device=dev)); out = []
+Cn = C.cpu().numpy(); Dn = R[:, 2].cpu().numpy(); rng = np.random.default_rng(0); pool = np.arange(J)
+if "--exclude" in sys.argv: pool = np.setdiff1d(pool, np.unique(np.load(opt("--exclude", "", str))["ref"]))   # nur Referenzfotos, die der andere Lauf nicht benutzt hat (unabhaengige Pruefmenge)
+refs = rng.choice(pool, min(NREF, len(pool)), replace=False); ds = torch.exp(torch.linspace(np.log(DMIN), np.log(DMAX), 360, device=dev)); out = []
 for a in refs:
     cand = [(abs(np.linalg.norm(Cn[b] - Cn[a]) - 6.0), b) for b in range(J) if b != a and 1.0 < np.linalg.norm(Cn[b] - Cn[a]) < 25 and float(Dn[a] @ Dn[b]) > 0.6]; cand.sort(); nb = [b for _, b in cand[:NB]]
     if len(nb) < 5: continue
