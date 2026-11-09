@@ -19,9 +19,15 @@ S = json.load(open(opt("--seg", D + "/segmente_karte4.json")))["segmente"]
 ctr = np.median(W, axis=0); SC = 400.0
 def q(a): return base64.b64encode(np.round((np.asarray(a, np.float32) - ctr) * SC).astype("<i2").tobytes()).decode()
 seg = np.array([[*s[0], *s[1]] for s in S], np.float32); sq = np.array([s[2] for s in S], np.uint8)
-KB = np.zeros((0, 6), np.float32); MP = np.zeros((0, 3), np.float32); MC = np.zeros(0, np.uint8)
+KB = np.zeros((0, 6), np.float32); SE = np.zeros((0, 6), np.float32); SN = np.zeros((0, 6), np.int8); MP = np.zeros((0, 3), np.float32); MC = np.zeros(0, np.uint8)
 if "--koerper" in sys.argv:
     import trimesh; m = trimesh.load(opt("--koerper", "")); e = m.face_adjacency_edges[m.face_adjacency_angles > np.radians(25)]; KB = m.vertices[e].reshape(-1, 6).astype(np.float32); print("Koerper-Formkanten", len(KB), flush=True)
+    # Umrisskanten (Nutzer 10.11. "Saeulen vergessen"): gekruemmte Flaechen (runde Pfeiler, Helme) haben keine Knickkante > 25 Grad.
+    # Alle Nachbarkanten > 1 Grad mit beiden Flaechennormalen ausliefern; der Viewer zeichnet je Blickrichtung die, deren Normalen
+    # zur Blickrichtung verschiedene Vorzeichen haben (Silhouette) - allgemein fuer jede gekruemmte Form.
+    sel = m.face_adjacency_angles > np.radians(1); fa = m.face_adjacency[sel]
+    SE = m.vertices[m.face_adjacency_edges[sel]].reshape(-1, 6).astype(np.float32)
+    SN = np.round(np.concatenate([m.face_normals[fa[:, 0]], m.face_normals[fa[:, 1]]], 1) * 127).astype(np.int8); print("Umriss-Kandidaten", len(SE), flush=True)
     # 10.11. Nutzerbefund "Modell spiegelverkehrt, Saeulen fehlen": Formkanten ohne Verdeckung zeigen die Fassade von hinten wie gespiegelt,
     # runde Pfeiler haben keine Kante > 25 Grad. Deshalb zusaetzlich die Flaeche als schattierte Punkte (z-gepuffert, verdeckt Hinteres).
     MP, fi = trimesh.sample.sample_surface_even(m, opt("--n_flaeche", 400000, int), seed=0) if hasattr(trimesh.sample, "sample_surface_even") else trimesh.sample.sample_surface(m, opt("--n_flaeche", 400000, int))
@@ -33,6 +39,6 @@ if "--objekt" in sys.argv:
     _o = json.load(open(__file__.replace("tools/viewer_kanten_bauen.py", f"modelle/{opt('--objekt', '')}/objekt.json")))
     _n = next((b["achse_n"] for b in _o.get("bauteile", []) if b.get("achse_n") and b.get("aktiv", True)), None)
     if _n: fy = float(np.arctan2(-_n[0], -_n[1])); print("Front-Blick entgegen achse_n", _n, "yaw", round(fy, 3), flush=True)
-data = {"fy": fy, "m": q(MP) if len(MP) else "", "mc": base64.b64encode(MC.tobytes()).decode(), "nm": len(MP), "kb": q(KB.reshape(-1, 3)) if len(KB) else "", "nkb": len(KB), "ctr": ctr.tolist(), "sc": SC, "w": q(W), "c": base64.b64encode(C.tobytes()).decode(), "k": q(KP), "s": q(seg.reshape(-1, 3)), "sq": base64.b64encode(sq.tobytes()).decode(), "nw": len(W), "nk": len(KP), "ns": len(S)}
+data = {"se": q(SE.reshape(-1, 3)) if len(SE) else "", "sn": base64.b64encode(SN.tobytes()).decode(), "nse": len(SE), "fy": fy, "m": q(MP) if len(MP) else "", "mc": base64.b64encode(MC.tobytes()).decode(), "nm": len(MP), "kb": q(KB.reshape(-1, 3)) if len(KB) else "", "nkb": len(KB), "ctr": ctr.tolist(), "sc": SC, "w": q(W), "c": base64.b64encode(C.tobytes()).decode(), "k": q(KP), "s": q(seg.reshape(-1, 3)), "sq": base64.b64encode(sq.tobytes()).decode(), "nw": len(W), "nk": len(KP), "ns": len(S)}
 html = open(__file__.replace("viewer_kanten_bauen.py", "viewer_kanten_vorlage.html")).read().replace("/*DATA*/", "const DATA=" + json.dumps(data) + ";")
 open(sys.argv[1], "w").write(html); print("geschrieben", sys.argv[1], len(html) // 1024, "KB")

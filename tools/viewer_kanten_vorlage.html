@@ -35,7 +35,7 @@ button{font:inherit;padding:4px 10px;border:1px solid var(--ln);background:var(-
 /*DATA*/
 function b64(s){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
 function i16(s){const u=b64(s);return new Int16Array(u.buffer,0,u.length>>1)}
-const KB=DATA.nkb?i16(DATA.kb):new Int16Array(0);const MP=DATA.nm?i16(DATA.m):new Int16Array(0),MC=DATA.nm?b64(DATA.mc):new Uint8Array(0);
+const KB=DATA.nkb?i16(DATA.kb):new Int16Array(0);const SE=DATA.nse?i16(DATA.se):new Int16Array(0),SNb=DATA.nse?b64(DATA.sn):new Uint8Array(0),SN=new Int8Array(SNb.buffer,SNb.byteOffset,SNb.length);const MP=DATA.nm?i16(DATA.m):new Int16Array(0),MC=DATA.nm?b64(DATA.mc):new Uint8Array(0);
 const W=i16(DATA.w),K=i16(DATA.k),Sg=i16(DATA.s),Cc=b64(DATA.c),Sq=b64(DATA.sq),sc=1/DATA.sc;
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
 let yaw=-0.45,pit=0.18,zoom=1.15,px=0,py=0,cw=0,ch=0,dpr=1;
@@ -57,6 +57,7 @@ function draw(){
  if(q('ls').checked){ctx.lineWidth=+q('lb').value*dpr;const byq={};for(let i=0;i<DATA.ns;i++)(byq[Sq[i]]=byq[Sq[i]]||[]).push(i);
   for(const k in byq){ctx.strokeStyle=COL[k]||'#888';ctx.beginPath();for(const i of byq[k]){const a=proj(Sg[i*6]*sc,Sg[i*6+1]*sc,Sg[i*6+2]*sc,c,s),b=proj(Sg[i*6+3]*sc,Sg[i*6+4]*sc,Sg[i*6+5]*sc,c,s);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}ctx.stroke()}}
  if(q('lkb').checked&&DATA.nkb){ctx.lineWidth=+q('lb').value*dpr;ctx.strokeStyle='#7a4fc9';ctx.beginPath();for(let i=0;i<DATA.nkb;i++){const a=proj(KB[i*6]*sc,KB[i*6+1]*sc,KB[i*6+2]*sc,c,s),b=proj(KB[i*6+3]*sc,KB[i*6+4]*sc,KB[i*6+5]*sc,c,s);if(!sichtbar(a,b))continue;ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}ctx.stroke()}
+ if(q('lkb').checked&&DATA.nse){const fx=c.sy*c.cp,fyv=c.cy*c.cp,fz=c.sp;ctx.lineWidth=+q('lb').value*dpr;ctx.strokeStyle='#7a4fc9';ctx.beginPath();for(let i=0;i<DATA.nse;i++){const o=i*6,d1=SN[o]*fx+SN[o+1]*fyv+SN[o+2]*fz,d2=SN[o+3]*fx+SN[o+4]*fyv+SN[o+5]*fz;if(d1*d2>0)continue;const a=proj(SE[o]*sc,SE[o+1]*sc,SE[o+2]*sc,c,s),b=proj(SE[o+3]*sc,SE[o+4]*sc,SE[o+5]*sc,c,s);if(!sichtbar(a,b))continue;ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}ctx.stroke()}
  q('inf').textContent=DATA.nw.toLocaleString('de')+' Wolkenpunkte (Auswahl), '+DATA.nk.toLocaleString('de')+' Kantenpunkte, '+DATA.ns+' Linien'+(DATA.nkb?', '+DATA.nkb+' Körperkanten':'')}
 let drag=null;const ptr=new Map();
 cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,pan:e.shiftKey||e.button==2}});
