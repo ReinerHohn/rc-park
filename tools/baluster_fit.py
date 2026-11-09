@@ -324,6 +324,59 @@ for x in inst:
     t = x["t"]; M = mantel(t); seg.append([[float(v) for v in welt(t, 0, knoten[0][1])], [float(v) for v in welt(t, 0, knoten[-1][1])], 13, 1.0])
     for j in range(NM):
         for k in range(len(knoten) - 1): seg.append([[float(v) for v in M[j, k]], [float(v) for v in M[j, k + 1]], 13, 1.0])
+# --protokoll Z-....json (Runde 3, Koordinator): Abnahme der Reihe ueber das Zaehlprotokoll (Regel 9: Anzahl am Foto gezaehlt). Periode/Phase aus diesem Lauf, t-Bereich = Bruestung
+# zwischen den Erkern (--erker helme.json: Erkermitten = Helmmitten, --erker_halbbreite 1,75 m ANNAHME), Score = Anteil der gezaehlten Punkte, an denen (in Zeilenhoehe des Punkts) eine
+# Modellachse innerhalb --match_px (30 px) projiziert ist. Ausgabe OUT_abgenommen.json (quelle 13), automatisches Gradienten-Gate bleibt offen (nur Bericht).
+if "--protokoll" in a:
+    PR = json.load(open(g("--protokoll", "", str))); fk = [f for f in KAM if PR["datei"].endswith(f)]; assert fk, "Protokollfoto %s nicht in den Kameras" % PR["datei"]; fk = fk[0]; k = KAM[fk]
+    R = np.array(k["Rn"]); t_ = np.array(k["tn"]); tr_ = [x["t"] for x in inst]
+    tlo, thi = ta, tb
+    if "--erker" in a:
+        HE = json.load(open(g("--erker", "", str)))["helme"]; te = sorted([float((np.array([h["cx"], h["cy"]]) - c2) @ d) for h in HE]); hb = g("--erker_halbbreite", 1.75)
+        if len(te) >= 2: tlo, thi = te[0] + hb, te[-1] - hb
+        print("Erkermitten t %s -> Bruestung zwischen den Erkern t %.2f..%.2f (Halbbreite %.2f ANNAHME)" % ([round(x, 2) for x in te], tlo, thi, hb), flush=True)
+    # Periode/Phase aus dem Protokoll nachmessen (Lauf v17: Abstaende Modell-Punkt stiegen je Feld linear 9 -> 42 px = Periodenfehler ~4 %): Pixelstrahl jedes gezaehlten Punkts mit der
+    # senkrechten Bruestungsebene (q = 0) schneiden -> t_i; Periode = Median der Nachbarabstaende innerhalb der Felder (Pfostenluecken > 1,5 x Median raus); Phase = Kreismittel
+    Cc = np.array(k["C"]); Rinv = R.T; tpk = []
+    for pnt in PR["punkte"]:
+        x = (pnt["x"] - k["cx"]) / k["f"]; y = (pnt["y"] - k["cy"]) / k["f"]
+        for _ in range(3): r2 = x * x + y * y; x, y = (pnt["x"] - k["cx"]) / k["f"] / (1 + k["params"][3] * r2), (pnt["y"] - k["cy"]) / k["f"] / (1 + k["params"][3] * r2)   # Verzeichnung rueckwaerts
+        ray = Rinv @ np.array([x, y, 1.0]); n3 = np.array([nrm[0], nrm[1], 0.0]); p0 = np.array([c2[0] + q0 * nrm[0], c2[1] + q0 * nrm[1], 0.0])
+        lam = (n3 @ (p0 - Cc)) / max(n3 @ ray, 1e-9); X = Cc + lam * ray; tpk.append(float((X[:2] - c2) @ d)); pnt["t_foto"] = tpk[-1]; pnt["z_foto"] = float(X[2])
+    tpk = np.array(tpk); o = np.argsort(tpk); dts = np.diff(tpk[o]); med = np.median(dts); feld = dts[dts < 1.5 * med]
+    per_prot = float(np.median(feld)); ph_ang = np.angle(np.mean(np.exp(2j * np.pi * tpk / per_prot))); ph_prot = float((ph_ang / (2 * np.pi) * per_prot) % per_prot)
+    print("Protokollpunkte in 3D: t %.2f..%.2f, z %.2f..%.2f; Nachbarabstaende %s -> Periode aus Protokoll %.4f m (Modell %.4f), Phase %.3f (Modell %.3f); Pfostenluecken %s" % (
+        tpk.min(), tpk.max(), min(p_["z_foto"] for p_ in PR["punkte"]), max(p_["z_foto"] for p_ in PR["punkte"]), np.round(dts, 3).tolist(), per_prot, periode, ph_prot, phase, np.round(dts[dts >= 1.5 * med], 2).tolist()), flush=True)
+    if abs(per_prot - periode) < 0.05:
+        periode_alt, phase_alt = periode, phase; periode, phase = per_prot, ph_prot
+        i0 = int(np.floor((tlo - phase) / periode)); i1 = int(np.ceil((thi - phase) / periode))
+        inst = [dict(index=i, t=phase + i * periode, mitte=[float(x) for x in welt(phase + i * periode, 0, (zlo + zhi) / 2)], quelle_lage="Protokoll-Periode/Phase") for i in range(i0, i1 + 1) if tlo - 0.15 <= phase + i * periode <= thi + 0.15]
+        print("Reihe neu aufgebaut mit Protokoll-Periode: %d Instanzen zwischen den Erkern (vorher Periode %.4f Phase %.3f)" % (len(inst), periode_alt, phase_alt), flush=True)
+    zz_ = np.linspace(zlo + 0.1, zhi - 0.1, 12); treff = []
+    for pnt in PR["punkte"]:
+        best = None
+        for x in inst:
+            if not (tlo - 0.15 <= x["t"] <= thi + 0.15): continue
+            X = R @ np.stack([welt(x["t"], 0, z) for z in zz_]).T + t_[:, None]; xx = X[0] / X[2]; yy = X[1] / X[2]; f1 = 1 + k["params"][3] * (xx * xx + yy * yy)
+            u = k["f"] * xx * f1 + k["cx"]; v = k["f"] * yy * f1 + k["cy"]
+            if not (v.min() - 40 <= pnt["y"] <= v.max() + 40): continue
+            uu = float(np.interp(pnt["y"], v[np.argsort(v)], u[np.argsort(v)])); du = abs(uu - pnt["x"])
+            if best is None or du < best[0]: best = (du, x["t"])
+        treff.append(dict(x=pnt["x"], y=pnt["y"], flaeche=pnt["flaeche"], art=pnt["art"], abstand_px=None if best is None else round(best[0], 1), t_modell=None if best is None else round(best[1], 3), getroffen=bool(best is not None and best[0] <= g("--match_px", 30.0))))
+    n_ok = sum(tr["getroffen"] for tr in treff); score = n_ok / max(len(treff), 1); im_ber = [x for x in inst if tlo - 0.15 <= x["t"] <= thi + 0.15]
+    print("Protokoll %s: %d gezaehlte Punkte, %d mit Modellachse innerhalb %.0f px -> Score %.2f; je Flaeche %s; Modellinstanzen zwischen den Erkern: %d (Periode %.3f -> %.1f m)" % (
+        PR["id"], len(treff), n_ok, g("--match_px", 30.0), score, PR["je_flaeche_gezaehlt"], len(im_ber), periode, thi - tlo), flush=True)
+    print("  Abstaende px:", [tr["abstand_px"] for tr in treff], flush=True)
+    seg_ab = []
+    for x in im_ber:
+        t = x["t"]; M = mantel(t); seg_ab.append([[float(v) for v in welt(t, 0, knoten[0][1])], [float(v) for v in welt(t, 0, knoten[-1][1])], 13, round(score, 3)])
+        for j in range(NM):
+            for kk in range(len(knoten) - 1): seg_ab.append([[float(v) for v in M[j, kk]], [float(v) for v in M[j, kk + 1]], 13, round(score, 3)])
+    json.dump({"band": [zlo, zhi], "fassade": dict(mitte=[float(x) for x in c2], richtung=[float(x) for x in d], q0=q0, t0=tlo, t1=thi), "periode": periode, "phase": phase, "profil": knoten,
+               "beleg": dict(protokoll=PR["id"], datei=PR["datei"], je_flaeche=PR["ergebnis"], je_flaeche_gezaehlt=PR["je_flaeche_gezaehlt"], punkte_gezaehlt=len(treff), punkte_getroffen=n_ok, score=score, treffer=treff,
+                             regel="Regel 9: Anzahl am Foto gezaehlt (foto_zaehlung), Modellreihe (Periode/Phase aus Fotosignal) gegen die gezaehlten Punkte geprueft; automatisches Gradienten-Gate OFFEN"),
+               "anzahl_modell_zwischen_erkern": len(im_ber), "baluster": im_ber, "segmente": seg_ab}, open(a[4].replace(".json", "") + "_abgenommen.json", "w"), indent=1)
+    print("geschrieben:", a[4].replace(".json", "") + "_abgenommen.json", len(im_ber), "Instanzen,", len(seg_ab), "Segmente", flush=True)
 json.dump({"band": [zlo, zhi], "fassade": dict(mitte=[float(x) for x in c2], richtung=[float(x) for x in d], q0=q0, t0=t0, t1=t1), "periode": periode, "phase": phase,
            "profil": knoten, "anzahl_fotogeprueft": best_n, "luecken": [x["t"] for x in inst if x.get("luecke")], "periodischer_bereich": [ta, tb], "gate": GATE, "baluster": inst, "segmente": seg}, open(a[4], "w"), indent=1)
 print("fertig: %d Baluster, %d Segmente" % (best_n, len(seg)))

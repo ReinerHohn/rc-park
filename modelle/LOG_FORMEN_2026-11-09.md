@@ -106,6 +106,46 @@ Ausgabe `formen/gitter_v7_formen.json`, Bilder `modelle/kaufhaus_grob3/audit/for
   Naechster Schritt: Gate als 1D-Profil quer zur Bruestung je Foto (Gradient ueber t aufsummiert, Spitzenpaare im Abstand 2r suchen) statt Punktstichprobe; Kontrollstreifen
   relativ zur Schaftbreite (0,5 r) statt fest 4-6 px.
 
+## Runde 3 (Koordinator, ab 20:01): Baluster-Abnahme ueber Zaehlprotokoll, Gauben aus 2D-Kehlen-Dreiecken
+### Baluster (`baluster_fit.py --protokoll Z-....json --erker helme.json`)
+- Koordinator-Entscheid: Reihe wird ueber Z-6120-001 abgenommen (Regel 9), Gradienten-Gate bleibt OFFEN.
+- v17: t-Bereich = zwischen den Erkern (Erkermitten = Helmmitten t -12,91/11,18, Halbbreite 1,75 m ANNAHME -> t -11,16..9,43 = 20,6 m, 73 Instanzen bei 0,287 m);
+  Score = Anteil der 28 gezaehlten Punkte mit Modellachse innerhalb 30 px in Zeilenhoehe: 18/28 = 0,64. Abstaende steigen je Feld linear 9 -> 42 px und springen zurueck
+  = Periodenfehler ~4 % (Modell zu eng), nicht Zufall. Aenderung v18: Periode/Phase aus dem PROTOKOLL nachmessen (Pixelstrahl jedes gezaehlten Punkts mit der senkrechten
+  Bruestungsebene q=0 geschnitten -> t_i; Periode = Median der Nachbarabstaende ohne Pfostenluecken, Phase = Kreismittel), Reihe damit neu aufgebaut.
+- v18 (`baluster18.log`): Protokollpunkte in 3D t -7,45..1,51, z 8,91-9,12 (Schafthoehe passt ins Band 8,35-9,65); Nachbarabstaende 0,295-0,316 m, Pfostenluecken 0,66/0,67 m
+  -> Periode aus Protokoll 0,3062 m (Fotosignal hatte 0,2869 = 6 % zu eng), Phase 0,256. Reihe neu: 68 Instanzen zwischen den Erkern (20,6 m), Score 28/28 = 1,00 (alle gezaehlten
+  Punkte mit Modellachse < 22 px, Median ~9 px bei 3024 px). ABGENOMMEN per Koordinator-Entscheid: `formen/baluster_abgenommen.json` (quelle 13, Score 1,0, 612 Segmente),
+  Overlay `audit/formen/baluster_abgenommen_ip_IMG_6120_crop.jpg` ANGESEHEN. Gradienten-Gate bleibt offen (Bericht in jeder Instanz: grad_quotienten).
+  Hinweis: Die 68 Instanzen laufen ueber die zwei Pfosten hinweg (Pfosten ~0,66 m = 2,15 Perioden, nicht modelliert) - 2 Pfosten je ~1 Baluster zu viel, Restabweichung der Reihe
+  ueber 9 m im Foto 0,3 -> 22 px (Periode noch ~1 % unsicher).
+### Gauben (`tools/gauben_ortho.py` neu)
+- Ansatz wie vorgeschlagen, aber statt Triangulation: Dachebene aus Gitter (Traufe/First) ist bekannt -> je Foto ein ORTHO der Stabilitaetskarte in Ebenenkoordinaten (5 cm);
+  Kehlen und Firstende liegen in der Ebene, die Dreiecke erscheinen in allen Fotos an derselben (t,s)-Stelle; Dreiecksschablonen (w 0,8-1,8, L 1,5-3,5) per TM_CCOEFF_NORMED auf
+  dem Mittel-Ortho, NMS; Gate je Einzelfoto-Ortho (Umriss-Belegung >= 0,5 in >= 3 Fotos); Hoehen h_t/h_f per GPU-Raster auf Sweep-Punkten; Reihenregel; quelle 12.
+  Lauf 1: Bandwahl falsch (laengstes Band = Traufe als "First") -> 0 Treffer; behoben (Traufe aus Sweep-Histogramm wie gauben_fit, First = hoechstes Band >= 10 m).
+- Lauf 4 (`gauben_ortho4.log`): Dachviereck t -14,7..8,1, s 9,5 m, Orthos der 4 Fotos (`audit/formen/r3/gauben_ortho_*.png`, Mittel ANGESEHEN): die 5 Gauben sind im Mittel-Ortho
+  als deutliche Flecken sichtbar (2 oben, 3 unten) - aber nicht als saubere Dreiecke, sondern schraeg verschmiert: Front und Scheitel liegen 0,5-1,5 m UEBER der Ebene, in der
+  Ebenen-Projektion wandern sie je Kamera (Parallaxe). Nur die Kehlen/das Firstende liegen in der Ebene. Dreiecksschablonen (w 0,8-1,8, L 1,5-3,5) finden 340 Treffer, nach NMS 15,
+  fast alle an der Traufzone (0,3-0,8 m ueber der Traufe), keiner besteht das Gate. SACKGASSE: Dreiecks-Template im Plane-Ortho.
+- Lauf 5 (`gauben_ortho5.log`, --detektor blob): Flecken im Dachinneren (Mittel >= 0,4, 0,5-8 m^2): 6 Kandidaten = 5 GAUBEN-LAGEN + Staffelgiebel-Fleck (t -12,5, 5,75 m tief):
+  untere Reihe t -9,08/-2,83/3,22 bei s -10,2..-11,0 (1,9-2,7 m ueber der Traufe), obere Reihe t -6,88/-0,83 bei s -8,1..-8,5 (4,4-4,8 m). Lage der 5 Gauben damit AUS DEN FOTOS
+  (ueber 4 Fotos konsistent, Schnitt mit der bekannten Dachebene). Masse aus den Flecken unbrauchbar (Breite 1,3-2,6, Tiefe 0,55-1,35 = Parallaxe), Dreiecks-Gate (Umrissbelegung
+  >= 0,5 in >= 3 Fotos) nicht bestanden (0,2-0,5, je ein Nahfoto 0,74-0,8). Overlay der Lagen `audit/formen/r3/gauben_r3_lagen_*` ANGESEHEN (s.u.).
+  ENDSTAND Gauben Runde 3: 5 Lagen fotobelegt, Form/Masse NICHT abgenommen, Familiengate nicht erfuellt -> keine Gauben in formen2; `formen/gauben_r3.json` (Kandidaten), `gauben_r3_lagen.json` (quelle 14).
+  Naechster Schritt: Form je Foto in 2D direkt an der Fleck-Lage (Front-Dreieck + Kehlen als Hough-Linien im Fenster um die projizierte Lage), Scheitel/Front-Endpunkte ueber
+  >= 3 Fotos triangulieren (nicht in der Ebene, sondern echte Strahlenschnitte, weil sie UEBER der Ebene liegen) - genau die urspruengliche Vorgabe; die Ebenen-Ortho-Abkuerzung
+  gilt nur fuer Kehlen/Firstende.
+
+- Overlays der 5 Lagen auf 6261 + nu_9e19 ANGESEHEN (`audit/formen/r3/gauben_r3_lagen_*_dach.jpg`): jedes der 5 Dreiecke sitzt an einer echten Gaube (3 untere, 2 obere), die
+  Dreiecksform (aus Fleckausdehnung) ist jedoch zu flach/zu breit - Lage ja, Form nein.
+
+## Ergebnisdateien Runde 3 (20:10)
+- `formen/gitter_v7_formen2.json` = v7 + 2 Helme (quelle 4, 32 Seg.) + 68 Baluster (quelle 13, Score 1,0, 612 Seg., abgenommen ueber Z-6120-001) = 3669 Segmente. Keine Gauben.
+- `formen/baluster_abgenommen.json` (= baluster_v18_abgenommen): Band 8,35-9,65, Periode 0,3062 m (aus Protokoll), Phase 0,256, t -11,16..9,43, Beleg-Block mit allen 28 Punkten.
+- `formen/gauben_r3.json` (Kandidaten + Dachebene), `formen/gauben_r3_lagen.json` (5 Lagen quelle 14, unverifizierte Form), Orthos `audit/formen/r3/`.
+- Werkzeuge: `tools/baluster_fit.py` (--protokoll/--erker, --gate gradient offen), `tools/gauben_ortho.py` (neu). Keine Commits.
+
 ## Ergebnisdateien Runde 2 (20:00)
 - `formen/gitter_v7_formen2.json` = v7 + 2 Helme (quelle 4) + 11 fotogeprueft bestandene Baluster (quelle 13, 99 Segmente); keine Gauben (Familiengate nicht erfuellt). 3156 Segmente.
 - Overlays: `audit/formen/gitter_v7_formen2_ip_IMG_6120*.jpg`, `baluster_v16_alle_ip_IMG_6120*.jpg` (alle 97 Instanzen), `gauben_v9_alle_*` (6261 + nu), Diagnose `scratchpad/bal_grad_6120.jpg`.
