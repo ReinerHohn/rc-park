@@ -1,0 +1,161 @@
+#!/usr/bin/env python3
+"""konvergenz_bericht.py - Konvergenz je Bau: wird das Modell von Lauf zu Lauf besser? (Nutzerziel 9.11.: 'konvergieren gegen ein druckbares Modell, alle Kanten beschrieben')
+
+Je Lauf eine Zeile in modelle/<objekt>/konvergenz.jsonl, Vergleich mit der letzten Zeile, Exit 3 bei Rueckschritt.
+Kennzahlen (alle modellfremd belegt, keine Selbstbezuege):
+  1. Kanten-Recall je Hoehenband: Anteil der Kantengitter-Punkte (3D-Kanten aus allen Fotos trianguliert), die
+     naeher als --tol am Modell liegen. "Fotokante hat Modell" (Regel 'nie belegte Kanten verlieren').
+  2. Kanten-Praezision je Hoehenband: Anteil der Modell-Formkanten (Flaechenwinkel > --winkel), die naeher als --tol an
+     einer Gitterkante liegen. "Modellkante hat Fotobeleg". Nur aussagekraeftig, wo das Gitter dicht ist (Dach > 15 m: Abdeckung ~0,2)
+     -> je Band wird die Gitterdichte (Punkte je m Modellkante) mitgeschrieben.
+  3. Pruefstand: bestanden, Anzahl ok/fehler/widerspruch (pruefbericht.json).
+  4. Bauteil-Sichtpruefung (optional --teile_sicht JSON von tools/teile_sichtpruefung.py): GRUEN/ROT/UNGEPRUEFT.
+     Zaehlt erst als Konvergenzmass, wenn das Werkzeug als Gate bewiesen ist (Feld 'gate_bewiesen' in der Eingabe oder --ts_gate).
+  5. foto_diff je kalibriertem Foto (audit/foto_diff_<foto>.json): rot/gelb-Anteil.
+Druckschwelle: Kanten feiner als --min_kante (Standard 0,035 m = 0,4-mm-Duese in H0) sind nicht druckbar und zaehlen nicht:
+  Gittersegmente kuerzer als --min_kante werden verworfen.
+
+Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/konvergenz_bericht.py <objekt> --stl STL_IN_M_ODER_H0 [--skala 0.087]
+        --gitter SEGMENTE.json [--teile_sicht JSON] [--tol 0.10] [--winkel 25] [--baender 0,5,10,15,20,40] [--etikett TEXT] [--trocken]
+  --stl: Modell; --skala multipliziert die Koordinaten (H0-STL in mm -> m: 0.087). Modell und Gitter muessen im selben Rahmen liegen
+  (Kaufhaus: H0-STL * 0,087 = lot2-Rahmen, wie der Viewer). --trocken: nichts anhaengen.
+Rueckschritt = eine Kennzahl faellt um mehr als --rausch (Standard 0,01) gegen die letzte Zeile (Recall/Praezision je Band mit >= 200 Punkten,
+GRUEN-Anteil, Pruefstand). Exit 3, Grund in der Zeile ('rueckschritt').
+"""
+import sys, os, json, time, subprocess
+import numpy as np
+
+a = sys.argv
+def opt(k, d=None, t=str):
+    return t(a[a.index(k) + 1]) if k in a else d
+
+if len(a) < 2 or a[1].startswith("-"):
+    print(__doc__); sys.exit(1)
+OBJ = a[1]
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ODIR = os.path.join(ROOT, "modelle", OBJ)
+STL = opt("--stl"); SK = opt("--skala", 1.0, float); GIT = opt("--gitter"); TS = opt("--teile_sicht")
+TOL = opt("--tol", 0.10, float); WINKEL = opt("--winkel", 25.0, float); MINK = opt("--min_kante", 0.035, float)
+BAND = [float(x) for x in opt("--baender", "0,5,10,15,20,40").split(",")]
+RAUSCH = opt("--rausch", 0.01, float); ETIKETT = opt("--etikett", ""); TROCKEN = "--trocken" in a
+if not STL or not GIT:
+    print("--stl und --gitter sind Pflicht"); sys.exit(1)
+
+import trimesh, torch
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from gpu_knn import min_abstand
+assert torch.cuda.is_available(), "GPU erwartet (Nutzerregel: neue Rechenwerkzeuge auf der GPU)"
+
+def entlang(P0, P1, schritt=0.05):
+    """Punkte entlang von Segmenten (je Segment mind. 2)."""
+    L = np.linalg.norm(P1 - P0, axis=1); n = np.maximum(2, np.ceil(L / schritt).astype(int))
+    idx = np.repeat(np.arange(len(P0)), n); t = np.concatenate([np.linspace(0, 1, k) for k in n])
+    return (P0[idx] + (P1[idx] - P0[idx]) * t[:, None]).astype(np.float32)
+
+def md(Q, X):
+    d = min_abstand(Q, X)
+    return np.asarray(d.cpu() if hasattr(d, "cpu") else d)
+
+# Modell
+m = trimesh.load(STL, force="mesh"); m.apply_scale(SK)
+OBF = m.sample(1_500_000).astype(np.float32)
+sel = m.face_adjacency_angles > np.radians(WINKEL)
+E = m.vertices[m.face_adjacency_edges[sel]]
+lang = np.linalg.norm(E[:, 1] - E[:, 0], axis=1) >= MINK
+MK = entlang(E[lang, 0], E[lang, 1])
+# Gitter
+S = json.load(open(GIT))["segmente"]
+G0 = np.array([s[0] for s in S], float); G1 = np.array([s[1] for s in S], float)
+gl = np.linalg.norm(G1 - G0, axis=1) >= MINK
+GP = entlang(G0[gl], G1[gl])
+
+t0 = time.time()
+d_rec = md(GP, OBF)    # Gitterpunkt -> Modelloberflaeche
+d_pra = md(MK, GP)     # Modellkante -> Gitter
+baender = []
+for lo, hi in zip(BAND[:-1], BAND[1:]):
+    g = (GP[:, 2] >= lo) & (GP[:, 2] < hi); k = (MK[:, 2] >= lo) & (MK[:, 2] < hi)
+    baender.append({"band": f"{lo:g}-{hi:g}", "gitter_pkt": int(g.sum()), "modellkante_pkt": int(k.sum()),
+                    "recall": round(float((d_rec[g] < TOL).mean()), 4) if g.sum() else None,
+                    "praezision": round(float((d_pra[k] < TOL).mean()), 4) if k.sum() else None,
+                    "gitterdichte": round(float(g.sum() / max(k.sum(), 1)), 3)})
+gesamt = {"recall": round(float((d_rec < TOL).mean()), 4), "praezision": round(float((d_pra < TOL).mean()), 4)}
+
+# Pruefstand
+pb = {}
+pf = os.path.join(ODIR, "pruefbericht.json")
+if os.path.exists(pf):
+    d = json.load(open(pf)); st = [p.get("status", "ok" if p.get("ok") else "fehler") for p in d.get("pruefungen", [])]
+    pb = {"bestanden": bool(d.get("bestanden")), "n": len(st), "ok": sum(1 for p in d["pruefungen"] if p.get("ok")),
+          "widerspruch": st.count("widerspruch")}
+# Bauteil-Sichtpruefung
+ts = None
+if TS and os.path.exists(TS):
+    d = json.load(open(TS)); u = [t.get("urteil") for t in d.get("teile", []) if t.get("typ") != "GANZ"]
+    ts = {"datei": TS, "gruen": u.count("GRUEN"), "rot": u.count("ROT"), "ungeprueft": u.count("UNGEPRUEFT"),
+          "gate_bewiesen": bool(d.get("gate_bewiesen") or "--ts_gate" in a),
+          "rot_teile": sorted(t["typ"] for t in d.get("teile", []) if t.get("urteil") == "ROT")}
+# foto_diff
+fd = {}
+for f in sorted(os.listdir(os.path.join(ODIR, "audit"))):
+    if f.startswith("foto_diff_") and f.endswith(".json"):
+        d = json.load(open(os.path.join(ODIR, "audit", f)))
+        fd[d.get("foto", f[10:-5])] = {"rot": d.get("anteil_modellkanten_ohne_foto"), "gelb": d.get("anteil_fotokanten_ohne_modell")}
+
+try:
+    git = subprocess.run(["git", "-C", ROOT, "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip()
+    dirty = bool(subprocess.run(["git", "-C", ROOT, "status", "--porcelain", "--", os.path.abspath(STL)],
+                                capture_output=True, text=True).stdout.strip())
+except Exception:
+    git, dirty = "?", True
+zeile = {"zeit": time.strftime("%Y-%m-%d %H:%M"), "git": git + ("+" if dirty else ""), "etikett": ETIKETT, "stl": STL, "skala": SK,
+         "gitter": GIT, "tol_m": TOL, "min_kante_m": MINK, "kanten": {"gesamt": gesamt, "baender": baender},
+         "pruefstand": pb, "teile_sicht": ts, "foto_diff": fd, "rechenzeit_s": round(time.time() - t0, 1)}
+
+# Vergleich mit Vorlauf
+KF = os.path.join(ODIR, "konvergenz.jsonl")
+vor = None
+if os.path.exists(KF):
+    z = [l for l in open(KF) if l.strip()]
+    vor = json.loads(z[-1]) if z else None
+rueck = []
+if vor:
+    vb = {b["band"]: b for b in vor["kanten"]["baender"]}
+    for b in baender:
+        v = vb.get(b["band"])
+        if not v: continue
+        for k, n in (("recall", "gitter_pkt"), ("praezision", "modellkante_pkt")):
+            if b[k] is not None and v.get(k) is not None and min(b[n], v[n]) >= 200 and b[k] < v[k] - RAUSCH:
+                rueck.append(f"{k} {b['band']} m: {v[k]:.3f} -> {b[k]:.3f}")
+    if vor.get("pruefstand", {}).get("bestanden") and not pb.get("bestanden"):
+        rueck.append("Pruefstand nicht mehr bestanden")
+    vt, nt = vor.get("teile_sicht"), ts
+    if vt and nt and vt.get("gate_bewiesen") and nt.get("gate_bewiesen"):
+        if nt["gruen"] < vt["gruen"]:
+            rueck.append(f"GRUEN-Teile {vt['gruen']} -> {nt['gruen']}")
+        neu_rot = sorted(set(nt["rot_teile"]) - set(vt["rot_teile"]))
+        if neu_rot:
+            rueck.append("neu ROT: " + ", ".join(neu_rot))
+zeile["rueckschritt"] = rueck
+
+# Ausgabe
+print(f"Konvergenz {OBJ}  git {zeile['git']}  tol {TOL} m  min_kante {MINK} m  ({zeile['rechenzeit_s']} s GPU)")
+print(f"{'Band m':>8} {'Gitterpkt':>9} {'Recall':>7} {'Vorlauf':>7} | {'Modellk.':>8} {'Praez.':>7} {'Vorlauf':>7}  Gitterdichte")
+vb = {b["band"]: b for b in vor["kanten"]["baender"]} if vor else {}
+f3 = lambda x: "-" if x is None else f"{x:.3f}"
+for b in baender:
+    v = vb.get(b["band"], {})
+    print(f"{b['band']:>8} {b['gitter_pkt']:>9} {f3(b['recall']):>7} {f3(v.get('recall')):>7} | {b['modellkante_pkt']:>8} "
+          f"{f3(b['praezision']):>7} {f3(v.get('praezision')):>7}  {b['gitterdichte']}")
+print(f"{'gesamt':>8} {'':>9} {f3(gesamt['recall']):>7} {f3(vor['kanten']['gesamt']['recall']) if vor else '-':>7} | {'':>8} "
+      f"{f3(gesamt['praezision']):>7} {f3(vor['kanten']['gesamt']['praezision']) if vor else '-':>7}")
+if pb: print(f"Pruefstand: bestanden={pb['bestanden']}  ok {pb['ok']}/{pb['n']}  widerspruch {pb['widerspruch']}")
+if ts: print(f"Teile-Sicht: GRUEN {ts['gruen']}  ROT {ts['rot']}  UNGEPRUEFT {ts['ungeprueft']}  "
+             f"({'Gate bewiesen' if ts['gate_bewiesen'] else 'NUR HINWEIS, Gate nicht bewiesen'})")
+for k, v in fd.items(): print(f"foto_diff {k}: rot {v['rot']}  gelb {v['gelb']}")
+if rueck:
+    print("RUECKSCHRITT: " + "; ".join(rueck))
+if not TROCKEN:
+    with open(KF, "a") as f: f.write(json.dumps(zeile, ensure_ascii=False) + "\n")
+    print("angehaengt:", KF)
+sys.exit(3 if rueck else 0)
