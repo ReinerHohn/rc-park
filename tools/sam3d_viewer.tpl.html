@@ -1,0 +1,64 @@
+<title>Kaufhaus SAM 3D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{--bg:#f1ede6;--fg:#2a2622;--panel:#fbf9f5;--line:#d8d0c3;--acc:#9c2f2f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1917;--fg:#ece6dc;--panel:#25221f;--line:#3a352f;--acc:#e0705f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1b1917;--fg:#ece6dc;--panel:#25221f;--line:#3a352f;--acc:#e0705f;color-scheme:dark}
+html,body{height:100%}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px;display:flex;flex-direction:column;gap:8px;box-sizing:border-box}
+h1{font:600 16px/1.2 Georgia,serif;margin:0}
+#bar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:0}
+#bar label{display:flex;gap:6px;align-items:center;white-space:nowrap}
+#cv{flex:1;min-height:60vh;border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative;min-width:0}
+#cv canvas{display:block;width:100%;height:100%}
+#info{font-size:12px;opacity:.8}
+button{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:4px 10px}
+</style>
+<h1>Kaufhaus: SAM-Objekte in 3D</h1>
+<div id="bar">
+<label><input type="checkbox" id="cg" checked> Grosse Flaechen (&gt; 3 m²)</label>
+<label><input type="checkbox" id="cm" checked> Bauteile (0,3–3 m²)</label>
+<label><input type="checkbox" id="cd" checked> Details (&lt; 0,3 m²)</label>
+<label>Tiefe <input type="range" id="tf" min="0" max="3" step="0.1" value="1"><span id="tv">1,0x</span></label>
+<label><input type="checkbox" id="ce" checked> Kanten</label>
+<button id="v1">Vorn</button><button id="v2">Schraeg</button><button id="v3">Seite</button>
+</div>
+<div id="cv"></div>
+<div id="info"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const D=__DATA__;
+const el=document.getElementById('cv');const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));el.appendChild(R.domElement);
+const sc=new THREE.Scene();const cam=new THREE.PerspectiveCamera(40,1,0.1,500);const OC=new THREE.OrbitControls(cam,R.domElement);
+sc.add(new THREE.HemisphereLight(0xffffff,0x887766,0.9));const dl=new THREE.DirectionalLight(0xffffff,0.6);dl.position.set(5,10,8);sc.add(dl);
+function bg(){const dk=matchMedia('(prefers-color-scheme: dark)').matches&&document.documentElement.dataset.theme!=='light'||document.documentElement.dataset.theme==='dark';sc.background=new THREE.Color(dk?0x1b1917:0xf1ede6)}bg();
+const [U0,U1]=D.U,[n0,n1]=D.n,{s0,z0,sn,cn}=D;
+function W(u,v,t){const S=s0+t*cn+v*sn;return [u*U0+S*n0,z0-t*sn+v*cn,-(u*U1+S*n1)]}
+const tw=D.t_wand;let sg=0,k=0;D.flaechen.forEach(f=>{if(f.t!=null){sg+=Math.sign(f.t-tw)*Math.min(Math.abs(f.t-tw),1);k++}});const out=sg>=0?1:-1;
+const groups={g:new THREE.Group(),m:new THREE.Group(),d:new THREE.Group()};Object.values(groups).forEach(g=>sc.add(g));
+const V2=a=>a.map(p=>new THREE.Vector2(p[0],p[1]));
+function build(){Object.values(groups).forEach(g=>{while(g.children.length){const c=g.children.pop();c.geometry&&c.geometry.dispose()}});
+const TF=+document.getElementById('tf').value;let nT=0;
+D.flaechen.forEach(f=>{const tb=tw;let tf=f.t!=null?tb+(f.t-tb)*TF:tb;let dt=tf-tb;if(Math.abs(dt)<0.03){tf=tb+out*0.03}
+tf+=out*0.012/(1+f.m2*3);
+const ring=V2(f.poly);const holes=f.loecher.map(V2);let cl=ring.slice();if(THREE.ShapeUtils.isClockWise(cl))cl.reverse();
+const hs=holes.map(h=>{h=h.slice();if(!THREE.ShapeUtils.isClockWise(h))h.reverse();return h});
+const tri=THREE.ShapeUtils.triangulateShape(cl,hs);const pts=cl.concat(...hs);
+const pos=[],idx=[];pts.forEach(p=>pos.push(...W(p.x,p.y,tf)));tri.forEach(t=>idx.push(t[0],t[1],t[2]));
+const nb=pos.length/3;pts.forEach(p=>pos.push(...W(p.x,p.y,tb)));
+const rings=[cl,...hs];let o=0;rings.forEach(r=>{for(let i=0;i<r.length;i++){const a=o+i,b=o+(i+1)%r.length;idx.push(a,b,nb+b,a,nb+b,nb+a)}o+=r.length});
+const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
+const m=new THREE.Mesh(g,new THREE.MeshLambertMaterial({color:new THREE.Color(f.farbe[0]/255,f.farbe[1]/255,f.farbe[2]/255),side:THREE.DoubleSide}));m.userData.f=f;
+if(document.getElementById('ce').checked){const eg=new THREE.EdgesGeometry(g,40);m.add(new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:0x000000,transparent:true,opacity:0.35})))}
+(f.m2>3?groups.g:f.m2>0.3?groups.m:groups.d).add(m);nT+=tri.length});
+vis();document.getElementById('info').textContent=D.flaechen.length+' Flaechen, '+nT+' Dreiecke, Wandtiefe t='+tw+' m, Referenzfoto '+D.referenz+'. Farben = Median aus dem scharfen Foto. Tiefe aus der Punktwolke (Leerstellen: Wandtiefe + 3 cm).'}
+function vis(){groups.g.visible=cg.checked;groups.m.visible=cm.checked;groups.d.visible=cd.checked}
+['cg','cm','cd'].forEach(i=>document.getElementById(i).onchange=vis);document.getElementById('ce').onchange=build;
+const tfE=document.getElementById('tf');tfE.oninput=()=>{document.getElementById('tv').textContent=(+tfE.value).toFixed(1).replace('.',',')+'x'};tfE.onchange=build;
+build();
+let bx=new THREE.Box3();Object.values(groups).forEach(g=>bx.expandByObject(g));const c=bx.getCenter(new THREE.Vector3()),sz=bx.getSize(new THREE.Vector3());OC.target.copy(c);
+function view(a){const r=Math.max(sz.x,sz.y)*1.4;const nx=n0,nz=-n1;const dirs={1:[nx*out,0.0,nz*out],2:[nx*out*0.7+nz*0.5,0.25,nz*out*0.7-nx*0.5],3:[-nz,0.1,nx]};const d=dirs[a];cam.position.set(c.x+d[0]*r,c.y+d[1]*r,c.z+d[2]*r);cam.lookAt(c);OC.update()}
+document.getElementById('v1').onclick=()=>view(1);document.getElementById('v2').onclick=()=>view(2);document.getElementById('v3').onclick=()=>view(3);view(2);
+function rs(){const w=el.clientWidth,h=el.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}addEventListener('resize',rs);rs();
+(function loop(){requestAnimationFrame(loop);bg();OC.update();R.render(sc,cam)})();
+</script>

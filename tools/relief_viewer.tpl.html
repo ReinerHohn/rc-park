@@ -1,0 +1,56 @@
+<title>Kaufhaus Tiefenrelief</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{--bg:#f1ede6;--fg:#2a2622;--panel:#fbf9f5;--line:#d8d0c3;--acc:#9c2f2f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1917;--fg:#ece6dc;--panel:#25221f;--line:#3a352f;--acc:#e0705f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1b1917;--fg:#ece6dc;--panel:#25221f;--line:#3a352f;--acc:#e0705f;color-scheme:dark}
+html,body{height:100%}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px;display:flex;flex-direction:column;gap:8px;box-sizing:border-box}
+h1{font:600 16px/1.2 Georgia,serif;margin:0}
+#bar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:0}
+#bar label{display:flex;gap:6px;align-items:center;white-space:nowrap}
+#cv{flex:1;min-height:60vh;border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative;min-width:0}
+#cv canvas{display:block;width:100%;height:100%}
+#info{font-size:12px;opacity:.8}
+button{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:4px 10px}
+</style>
+<h1>Kaufhaus: Tiefenrelief aus Wolke + Foto</h1>
+<div id="bar">
+<label>Tiefe <input type="range" id="tf" min="0" max="4" step="0.1" value="1"><span id="tv">1,0x</span></label>
+<label><input type="checkbox" id="cs" checked> Schnitt an Objektgrenzen</label>
+<label><input type="checkbox" id="cw"> Drahtgitter</label>
+<button id="v1">Vorn</button><button id="v2">Schraeg</button><button id="v3">Seite</button>
+</div>
+<div id="cv"></div>
+<div id="info"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const D=__DATA__;
+const b64=(s,T)=>{const bin=atob(s),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new T(u.buffer)};
+const DEP=b64(D.tiefe,Int16Array),LAB=b64(D.label,Uint16Array),w=D.w,h=D.h;
+const el=document.getElementById('cv');const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));el.appendChild(R.domElement);
+const sc=new THREE.Scene();const cam=new THREE.PerspectiveCamera(40,1,0.1,500);const OC=new THREE.OrbitControls(cam,R.domElement);
+function bg(){const dk=matchMedia('(prefers-color-scheme: dark)').matches&&document.documentElement.dataset.theme!=='light'||document.documentElement.dataset.theme==='dark';sc.background=new THREE.Color(dk?0x1b1917:0xf1ede6)}bg();
+const [U0,U1]=D.U,[n0,n1]=D.n,{s0,z0,sn,cn}=D;
+function Wd(u,v,t){const S=s0+t*cn+v*sn;return [u*U0+S*n0,z0-t*sn+v*cn,-(u*U1+S*n1)]}
+const tex=new THREE.TextureLoader().load(D.tex,()=>{});tex.minFilter=THREE.LinearFilter;
+let mesh=null;
+function build(){if(mesh){sc.remove(mesh);mesh.geometry.dispose()}
+const TF=+document.getElementById('tf').value,cut=document.getElementById('cs').checked;
+const pos=new Float32Array(w*h*3),uv=new Float32Array(w*h*2);
+for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=y*w+x;const u=D.u0-(x+0.5)*D.px,v=D.v0-(y+0.5)*D.px;const t=DEP[i]===-32768?0:DEP[i]/1000;const p=Wd(u,v,D.t_wand+(t-D.t_wand)*TF);pos[i*3]=p[0];pos[i*3+1]=p[1];pos[i*3+2]=p[2];uv[i*2]=(x+0.5)/w;uv[i*2+1]=1-(y+0.5)/h}
+const idx=[];const ok=i=>DEP[i]!==-32768;
+for(let y=0;y<h-1;y++)for(let x=0;x<w-1;x++){const a=y*w+x,b=a+1,c=a+w,d=c+1;if(!(ok(a)&&ok(b)&&ok(c)&&ok(d)))continue;
+if(cut){const j=Math.max(Math.abs(DEP[a]-DEP[b]),Math.abs(DEP[a]-DEP[c]),Math.abs(DEP[d]-DEP[b]));if(j>70||(LAB[a]!==LAB[d]&&j>35))continue}
+idx.push(a,c,b,b,c,d)}
+const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('uv',new THREE.BufferAttribute(uv,2));g.setIndex(idx);
+mesh=new THREE.Mesh(g,new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide,wireframe:document.getElementById('cw').checked}));sc.add(mesh);
+document.getElementById('info').textContent=w+'x'+h+' Zellen a '+(D.px*100).toFixed(1)+' cm, '+(idx.length/3)+' Dreiecke. Wolkenabdeckung der Ebene nur '+(D.abdeckung*100).toFixed(0)+' %, Rest aus Nachbarschaft innerhalb der Objektflaeche gefuellt. Textur: '+D.referenz+'.'}
+const tfE=document.getElementById('tf');tfE.oninput=()=>{document.getElementById('tv').textContent=(+tfE.value).toFixed(1).replace('.',',')+'x'};tfE.onchange=build;cs.onchange=build;cw.onchange=build;
+build();
+const bx=new THREE.Box3().setFromObject(mesh);const c=bx.getCenter(new THREE.Vector3()),sz=bx.getSize(new THREE.Vector3());OC.target.copy(c);
+function view(a){const r=Math.max(sz.x,sz.y)*1.4;const dirs={1:[n0,0,-n1],2:[n0*0.7-n1*0.5,0.25,-n1*0.7-n0*0.5],3:[n1,0.1,n0]};const d=dirs[a];cam.position.set(c.x+d[0]*r,c.y+d[1]*r,c.z+d[2]*r);cam.lookAt(c);OC.update()}
+v1.onclick=()=>view(1);v2.onclick=()=>view(2);v3.onclick=()=>view(3);view(2);
+function rs(){const wd=el.clientWidth,ht=el.clientHeight;R.setSize(wd,ht,false);cam.aspect=wd/ht;cam.updateProjectionMatrix()}addEventListener('resize',rs);rs();
+(function loop(){requestAnimationFrame(loop);bg();OC.update();R.render(sc,cam)})();
+</script>

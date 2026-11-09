@@ -840,6 +840,64 @@ def sam_flaechen(d, minfl=0.02, maxanteil=0.6, eps=1.3, fein=False):
         out.append(dict(poly=ap.round(1).tolist(), loecher=loecher, m2=round(float(m2), 2), t=round(float(np.median(tt)), 2), rect=round(rect, 2)))
     out.sort(key=lambda e: -e["m2"]); ORD["regs"] = out[:1500]; res_ = dict(flaechen=out[:1500], referenz=sh[0][1]); json.dump(res_, open(cp, "w")); return res_
 
+def sam3d(d, minfl=0.03, mindicke=0.03):
+    """SAM-Flaechen als 3D-Koerper: Umriss (u,v in m) + Tiefe t aus der Wolke (nur gueltige Wolkenpixel, nicht der Leerwert -hinter) + Fotofarbe. Vorderseite bei t, Rueckseite an der Wand (t_wand = Median der grossen Flaechen)."""
+    r = sam_flaechen(d, minfl); F = r["flaechen"]; px = d["px"]; H, W = d["gray"].shape; dep = d["d8"].astype(np.float32) / 255 * (d["vor"] + d["hinter"]) - d["hinter"]
+    valid = d["mk"] & (d["d8"] > 0); im, ok = foto_ortho(d, r["referenz"], False); al = np.radians(d["neig"]); n_ = np.array(obj()["fassade_n"]["wert"], float); n_ = n_[:2] / np.linalg.norm(n_[:2]); U_ = uax(); out = []
+    for f in F:
+        P = np.array(f["poly"], np.float32); x0, y0 = np.floor(P.min(0)).astype(int) - 1; x1, y1 = np.ceil(P.max(0)).astype(int) + 2; x0, y0 = max(x0, 0), max(y0, 0); x1, y1 = min(x1, W), min(y1, H)
+        if x1 <= x0 or y1 <= y0: continue
+        m = np.zeros((y1 - y0, x1 - x0), np.uint8); cv2.fillPoly(m, [np.round(P - [x0, y0]).astype(np.int32)], 1)
+        for l in f["loecher"]: cv2.fillPoly(m, [np.round(np.array(l, np.float32) - [x0, y0]).astype(np.int32)], 0)
+        mb = m > 0; vv = valid[y0:y1, x0:x1] & mb; nv = int(vv.sum())
+        t = float(np.median(dep[y0:y1, x0:x1][vv])) if nv >= 8 else None
+        c = im[y0:y1, x0:x1][mb & ok[y0:y1, x0:x1]]; col = [int(v) for v in np.median(c, 0)[::-1]] if len(c) else [128, 128, 128]
+        uv = lambda Q: [[round(d["u0"] - q[0] * px, 3), round(d["v0"] - q[1] * px, 3)] for q in Q]
+        out.append(dict(poly=uv(f["poly"]), loecher=[uv(l) for l in f["loecher"]], m2=f["m2"], t=t, farbe=col))
+    big = sorted([o for o in out if o["t"] is not None and o["m2"] > 2.0], key=lambda o: -o["m2"])[:12]; tw = float(np.median([o["t"] for o in big])) if big else 0.0
+    return dict(flaechen=out, t_wand=round(tw, 3), U=U_.tolist(), n=n_.tolist(), s0=d["s0"], z0=d["z0"], sn=float(np.sin(al)), cn=float(np.cos(al)), referenz=r["referenz"], mindicke=mindicke)
+
+def relief3d(d, schritt=4, minfl=0.03):
+    """Tiefenrelief der Ebene: dichte Tiefenkarte aus der Wolke, Luecken NUR innerhalb derselben SAM-Flaeche gefuellt (normierte Faltung, Wand = Hintergrund-Label), Foto-Textur; Rueckgabe base64 (int16 mm, uint16 Label, JPEG)."""
+    import base64
+    r = sam_flaechen(d, minfl); F = sorted(r["flaechen"], key=lambda f: -f["m2"]); H, W = d["gray"].shape; k = schritt; H2, W2 = H // k, W // k
+    dep = d["d8"].astype(np.float32) / 255 * (d["vor"] + d["hinter"]) - d["hinter"]; val = (d["d8"] > 0).astype(np.float32)
+    num = cv2.resize(dep * val, (W2, H2), interpolation=cv2.INTER_AREA); den = cv2.resize(val, (W2, H2), interpolation=cv2.INTER_AREA); has = den > 0.02; T = np.where(has, num / np.maximum(den, 1e-6), 0).astype(np.float32)
+    lab = np.zeros((H2, W2), np.uint16)
+    for i, f in enumerate(F, 1):
+        P = (np.array(f["poly"], np.float32) / k).round().astype(np.int32); cv2.fillPoly(lab, [P], i)
+        for l in f["loecher"]: cv2.fillPoly(lab, [(np.array(l, np.float32) / k).round().astype(np.int32)], 0)       # Loch = Hintergrund (Bogenoeffnung); innere Flaechen werden danach ueberschrieben, da kleiner -> spaeter
+    for i, f in enumerate(F, 1):
+        if not f["loecher"]: continue
+        for l in f["loecher"]:                                           # Loch wieder mit den INNEREN (kleineren) Flaechen fuellen
+            pass
+    for i, f in enumerate(F, 1):                                          # kleinere Flaechen liegen oben: erneut zeichnen, dabei Loecher des Elters nicht ueberdecken
+        m = np.zeros((H2, W2), np.uint8); cv2.fillPoly(m, [(np.array(f["poly"], np.float32) / k).round().astype(np.int32)], 1)
+        for l in f["loecher"]: cv2.fillPoly(m, [(np.array(l, np.float32) / k).round().astype(np.int32)], 0)
+        lab[(m > 0) & ((lab == 0) | (lab < i))] = i
+    def fuellen(mask, hv):                                                # normierte Faltung nur innerhalb der Maske
+        out = np.where(hv & mask, T, 0).astype(np.float32); w = (hv & mask).astype(np.float32); res = np.full(T.shape, np.nan, np.float32)
+        if w.sum() < 3: return None
+        for sg in (2, 4, 8, 16, 32, 64):
+            b = cv2.GaussianBlur(out, (0, 0), sg); wb = cv2.GaussianBlur(w, (0, 0), sg); ok_ = (wb > 1e-3) & np.isnan(res) & mask; res[ok_] = b[ok_] / wb[ok_]
+            if not np.isnan(res[mask]).any(): break
+        return res
+    Tf = T.copy(); wand = fuellen(lab == 0, has); wandt = float(np.median(T[(lab == 0) & has])) if ((lab == 0) & has).any() else float(np.median(T[has]))
+    if wand is not None: m0 = (lab == 0) & np.isnan(wand) == False; Tf[m0] = wand[m0]
+    Tf[(lab == 0) & np.isnan(Tf)] = wandt
+    for i, f in enumerate(F, 1):
+        mk_ = lab == i
+        if not mk_.any(): continue
+        fl = fuellen(mk_, has)
+        if fl is not None: ok_ = mk_ & ~np.isnan(fl); Tf[ok_] = fl[ok_]
+        else:                                                              # keine Wolkenpunkte: Tiefe des Umfelds (Ring um die Flaeche) uebernehmen
+            ring = cv2.dilate(mk_.astype(np.uint8), np.ones((9, 9), np.uint8)) > 0; ring &= ~mk_; Tf[mk_] = float(np.median(Tf[ring])) if ring.any() else wandt
+    Tf = np.where(np.isnan(Tf), wandt, Tf); okm = cv2.resize(d["mk"].astype(np.uint8), (W2, H2), interpolation=cv2.INTER_AREA) > 0
+    im, ok = foto_ortho(d, r["referenz"], False); tex = cv2.resize(im, (W2 * 2, H2 * 2), interpolation=cv2.INTER_AREA); okf = cv2.resize(ok.astype(np.uint8), (W2, H2), interpolation=cv2.INTER_AREA) > 0
+    D16 = np.where(okf, (Tf * 1000).clip(-30000, 30000), -32768).astype(np.int16); al = np.radians(d["neig"]); n_ = np.array(obj()["fassade_n"]["wert"], float); n_ = n_[:2] / np.linalg.norm(n_[:2])
+    return dict(w=W2, h=H2, px=d["px"] * k, u0=d["u0"], v0=d["v0"], U=uax().tolist(), n=n_.tolist(), s0=d["s0"], z0=d["z0"], sn=float(np.sin(al)), cn=float(np.cos(al)), t_wand=wandt, abdeckung=float(has.mean()),
+                tiefe=base64.b64encode(D16.tobytes()).decode(), label=base64.b64encode(lab.tobytes()).decode(), tex="data:image/jpeg;base64," + base64.b64encode(cv2.imencode(".jpg", tex, [cv2.IMWRITE_JPEG_QUALITY, 85])[1].tobytes()).decode(), referenz=r["referenz"])
+
 def kantenpunkte(foto, pts, r):
     """naechster Fotokantenpunkt (Canny, 1613 px) je Eingabepunkt innerhalb r px; sonst unveraendert. Rueckgabe Liste [x,y,bewegt]"""
     g = cv2.imread(os.path.join(a.bilder, foto), cv2.IMREAD_GRAYSCALE | cv2.IMREAD_IGNORE_ORIENTATION); g = cv2.resize(g, (SW, int(g.shape[0] * SW / g.shape[1])), interpolation=cv2.INTER_AREA)
@@ -1091,6 +1149,10 @@ class H(BaseHTTPRequestHandler):
             self._send(200, "application/json", json.dumps(dict(boegen=boegen(d["linien"], ORD["last"]["px"]))).encode())
         elif self.path == "/api/sam_flaechen":
             self._send(200, "application/json", json.dumps(sam_flaechen(ORD["last"], float(d.get("minfl", 0.03)), fein=bool(d.get("fein", False)))).encode())
+        elif self.path == "/api/sam3d":
+            self._send(200, "application/json", json.dumps(sam3d(ORD["last"])).encode())
+        elif self.path == "/api/relief3d":
+            self._send(200, "application/json", json.dumps(relief3d(ORD["last"], int(d.get("k", 4)))).encode())
         elif self.path == "/api/regionen":
             self._send(200, "application/json", json.dumps(dict(regionen=regionen(d["linien"], float(d.get("minfl", 0.05)), int(d.get("luecke", 12))))).encode())
         elif self.path == "/api/freiform":
