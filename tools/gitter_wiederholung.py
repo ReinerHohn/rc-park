@@ -16,20 +16,23 @@ KART = {}
 def karte(f):
     if f not in KART: v = torch.from_numpy(cv2.imread(os.path.join(sd, os.path.splitext(f)[0] + ".png"), 0)).to(dev); KART[f] = torch.nn.functional.max_pool2d((v >= 255 * THR).float()[None, None], 5, 1, 2)[0, 0].to(torch.uint8)   # uint8: 440 Karten ~1,3 GB statt 5 GB
     return KART[f]
-def stuetzung(seg):
-    """Anteil der Fotos (mit Segment im Bild, Abstand < 40 m), in denen >= STUETZ der Segmentpunkte auf einer Kante liegen."""
-    p0 = np.array(seg[0]); p1 = np.array(seg[1]); n = max(3, int(np.linalg.norm(p1 - p0) / 0.03)); Q = torch.tensor(p0 + (p1 - p0) * np.linspace(0, 1, n)[:, None], device=dev, dtype=torch.float32)
-    ja = nein = 0
+def stuetzung_alle(segs):
+    """Vektorisiert: fuer ALLE Kandidatensegmente je Foto auf einmal. Rueckgabe ja[M], nein[M] = Zahl Fotos mit/ohne Kantenbeleg (>= STUETZ der Punkte auf Karte)."""
+    if not segs: return np.zeros(0, int), np.zeros(0, int)
+    n = 24; A = torch.tensor([s[0] for s in segs], device=dev, dtype=torch.float32); B = torch.tensor([s[1] for s in segs], device=dev, dtype=torch.float32)
+    tt = torch.linspace(0, 1, n, device=dev); Q = (A[:, None] + (B - A)[:, None] * tt[None, :, None]).reshape(-1, 3); M = len(segs); mid = ((A + B) / 2).cpu().numpy()
+    ja = torch.zeros(M, device=dev, dtype=torch.int32); nein = torch.zeros(M, device=dev, dtype=torch.int32)
     for f in fs:
-        k = KAM[f]; C = np.array(k["C"])
-        if np.linalg.norm(C - (p0 + p1) / 2) > 40: continue
-        R = torch.tensor(k["Rn"], device=dev); t = torch.tensor(k["tn"], device=dev); X = Q @ R.T + t; z = X[:, 2]
-        if (z < 1).any(): continue
-        V = karte(f); sj = V.shape[1] / k["W"]; x = X[:, 0] / z; y = X[:, 1] / z; f1 = 1 + k["params"][3] * (x * x + y * y); u = ((k["f"] * x * f1 + k["cx"]) * sj).round().long(); v = ((k["f"] * y * f1 + k["cy"]) * sj).round().long()
-        H, W = V.shape; ok = (u >= 0) & (u < W) & (v >= 0) & (v < H)
-        if ok.float().mean() < 0.9: continue
-        hit = V[v[ok], u[ok]].float().mean().item(); ja += hit >= STUETZ; nein += hit < STUETZ
-    return ja, nein
+        k = KAM[f]; C = np.array(k["C"]); nah = torch.from_numpy((np.linalg.norm(mid - C, axis=1) < 40)).to(dev)
+        if not nah.any(): continue
+        R = torch.tensor(k["Rn"], device=dev); t = torch.tensor(k["tn"], device=dev); X = Q @ R.T + t; z = X[:, 2].clamp(min=0.3)
+        V = karte(f); sj = V.shape[1] / k["W"]; x = X[:, 0] / z; y = X[:, 1] / z; f1 = 1 + k["params"][3] * (x * x + y * y)
+        u = ((k["f"] * x * f1 + k["cx"]) * sj).round().long(); v = ((k["f"] * y * f1 + k["cy"]) * sj).round().long(); H, W = V.shape
+        ok = (X[:, 2] > 1) & (u >= 0) & (u < W) & (v >= 0) & (v < H)
+        hit = torch.zeros(len(Q), device=dev); hit[ok] = V[v[ok], u[ok]].float()
+        okm = ok.view(M, n).float().mean(1); hm = hit.view(M, n).sum(1) / ok.view(M, n).float().sum(1).clamp(min=1)
+        g_ = nah & (okm >= 0.9); ja += (g_ & (hm >= STUETZ)).int(); nein += (g_ & (hm < STUETZ)).int()
+    return ja.cpu().numpy(), nein.cpu().numpy()
 neu = []; bericht = []
 for z0 in np.arange(ZMIN, ZMAX, BAND):
     B = P[(P[:, 2] >= z0) & (P[:, 2] < z0 + BAND)]
@@ -56,15 +59,17 @@ for z0 in np.arange(ZMIN, ZMAX, BAND):
     Mv = np.zeros((cnt.size, 3), np.float32); np.add.at(Mv, inv, M); Mv /= cnt[:, None]; Mv = Mv[cnt >= max(2, len(kopien) // 3)]      # nur Voxel, die in mehreren Instanzen belegt sind
     if len(Mv) < 50: bericht.append(dict(z=float(z0), periode=float(per), korr=float(staerke), status="Musterzelle leer")); continue
     segs = ransac_segmente(torch.from_numpy(Mv).to(dev), tol=TOL, minlen=0.12, minpts=8, maxit=600, log=False)
-    gepr = 0; verw = 0
+    kand = []
     for sg in segs:
         for kk in kopien:
             q = []
             for pt in (sg[0], sg[1]):
                 sxy = c + u * (pt[0] + ph + kk * per) + nrm * pt[1]; q.append([float(sxy[0]), float(sxy[1]), float(pt[2])])
-            ja, nein = stuetzung(q)
-            if ja >= NMIN and ja >= nein: neu.append([q[0], q[1], 5, round(ja / max(ja + nein, 1), 3)]); gepr += 1
-            else: verw += 1
+            kand.append(q)
+    ja, nein = stuetzung_alle(kand); gepr = verw = 0
+    for q, j, nn in zip(kand, ja, nein):
+        if j >= NMIN and j >= nn: neu.append([q[0], q[1], 5, round(float(j) / max(j + nn, 1), 3)]); gepr += 1
+        else: verw += 1
     bericht.append(dict(z=float(z0), periode=round(float(per), 3), korr=round(float(staerke), 3), kopien=int(len(kopien)), muster_segmente=len(segs), uebernommen=gepr, verworfen=verw, status="ok"))
     print("Band z %.1f: Periode %.2f m (Korr %.2f), %d Instanzen, Muster-Segmente %d -> Kopien uebernommen %d, verworfen %d" % (z0, per, staerke, len(kopien), len(segs), gepr, verw), flush=True)
 S0["segmente"] = S0["segmente"] + neu; S0["wiederholung"] = bericht; json.dump(S0, open(a[5], "w")); print("neu", len(neu), "gesamt", len(S0["segmente"]))

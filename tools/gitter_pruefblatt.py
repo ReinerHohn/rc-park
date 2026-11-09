@@ -2,10 +2,14 @@
 (1) Je Foto Stuetzung = Anteil der projizierten Segmentpunkte (ohne Z-Puffer, im Bild), an denen die Stabilitaetskarte >= thr ist (Toleranz 2 px).
 (2) Fotos nach Blickrichtung/Position in k Gruppen (k-means auf Kamerazentrum + Blickvektor), je Gruppe das Foto mit den meisten Gitterpunkten im Bild -> Kontaktbogen OUT.jpg.
 (3) Ausgabe OUT.json: Stuetzung je Foto, Mittel, schwaechste 10 Fotos.
-Aufruf: gitter_pruefblatt.py KAM.json STABILDIR BILDER SEG.json OUT.jpg [--k 12] [--thr 0.25] [--zmin -99] [--nur N]"""
+Aufruf: gitter_pruefblatt.py KAM.json STABILDIR BILDER SEG.json OUT.jpg [--k 12] [--thr 0.25] [--zmin -99] [--nur N] [--wolke KANTEN.npz|.npy --ztol 0.5]
+--wolke: Z-Puffer aus der Wolke (1/4 Aufloesung, 3x3-Splat): verdeckte Gitterpunkte zaehlen nicht und werden im Blatt grau gezeichnet (sonst zaehlt Verdecktes als falsch)."""
 import sys, os, json, numpy as np, cv2, torch
 a = sys.argv; g = lambda k, d, t=float: t(a[a.index(k) + 1]) if k in a else d
-K, THR, ZMIN = g("--k", 12, int), g("--thr", 0.25), g("--zmin", -99.0)
+K, THR, ZMIN, ZTOL = g("--k", 12, int), g("--thr", 0.25), g("--zmin", -99.0), g("--ztol", 0.5)
+WOLKE = None
+if "--wolke" in a:
+    w = g("--wolke", "", str); W_ = np.load(w); W_ = W_["P"] if hasattr(W_, "files") else W_; WOLKE = torch.tensor(W_[:, :3], device="cuda", dtype=torch.float32)
 KAM = json.load(open(a[1])); sd = a[2]; bd = a[3]; S = json.load(open(a[4]))["segmente"]; S = [s for s in S if max(s[0][2], s[1][2]) >= ZMIN]
 dev = "cuda"
 pts = []; col = []
@@ -19,7 +23,14 @@ def proj(k, V):
     R = torch.tensor(k["Rn"], device=dev, dtype=torch.float32); t = torch.tensor(k["tn"], device=dev, dtype=torch.float32); sj = V.shape[1] / k["W"]
     X = P @ R.T + t; z = X[:, 2]; x = X[:, 0] / z.clamp(min=0.3); y = X[:, 1] / z.clamp(min=0.3); f1 = 1 + k["params"][3] * (x * x + y * y)
     u = (k["f"] * x * f1 + k["cx"]) * sj; v = (k["f"] * y * f1 + k["cy"]) * sj; H, W = V.shape
-    ok = (z > 1) & (u >= 0) & (u < W - 1) & (v >= 0) & (v < H - 1); return u, v, ok
+    ok = (z > 1) & (u >= 0) & (u < W - 1) & (v >= 0) & (v < H - 1)
+    if WOLKE is not None:                                                                    # Sichtbarkeit: Z-Puffer der Wolke bei 1/4 Aufloesung
+        Xw = WOLKE @ R.T + t; zw = Xw[:, 2]; m = zw > 0.5; xw = Xw[m, 0] / zw[m]; yw = Xw[m, 1] / zw[m]; fw = 1 + k["params"][3] * (xw * xw + yw * yw)
+        uw = ((k["f"] * xw * fw + k["cx"]) * sj / 4).long(); vw = ((k["f"] * yw * fw + k["cy"]) * sj / 4).long(); Hq, Wq = H // 4 + 1, W // 4 + 1
+        inb = (uw >= 0) & (uw < Wq) & (vw >= 0) & (vw < Hq); zb = torch.full((Hq * Wq,), 1e9, device=dev); zb.scatter_reduce_(0, (vw[inb] * Wq + uw[inb]), zw[m][inb], reduce="amin"); zb = zb.view(Hq, Wq)
+        zb = -torch.nn.functional.max_pool2d(-zb[None, None], 3, 1, 1)[0, 0]
+        uq = (u / 4).long().clamp(0, Wq - 1); vq = (v / 4).long().clamp(0, Hq - 1); sichtbar = z <= zb[vq, uq] + ZTOL; ok = ok & sichtbar
+    return u, v, ok
 for f in fs:
     V = torch.from_numpy(cv2.imread(os.path.join(sd, os.path.splitext(f)[0] + ".png"), 0)).to(dev)
     Vm = torch.nn.functional.max_pool2d(V[None, None].float(), 5, 1, 2)[0, 0]
