@@ -1,0 +1,39 @@
+{
+ "id": "M-6120-021",
+ "typ": "triangulation",
+ "foto": "6120",
+ "name": "Bogen 3 Tuer: linke Goldquaste unten",
+ "beobachtungen": [
+  {
+   "kamera": "K-6120",
+   "px": [
+    1612.0,
+    3275.0
+   ]
+  },
+  {
+   "kamera": "K-6117",
+   "px": [
+    2058.0,
+    3338.0
+   ]
+  }
+ ],
+ "P": [
+  7.376,
+  5.129,
+  2.779
+ ],
+ "strahl_abstand_m": [
+  0.008,
+  0.008
+ ],
+ "schnittwinkel_grad": [
+  35.0
+ ],
+ "z": 2.779,
+ "unsicherheit_m": 0.044,
+ "massstab_von": "Kameras K-6120, K-6117 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.296,
+ "u": 5.24
+}

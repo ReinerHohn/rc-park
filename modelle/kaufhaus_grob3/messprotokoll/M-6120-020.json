@@ -1,0 +1,39 @@
+{
+ "id": "M-6120-020",
+ "typ": "triangulation",
+ "foto": "6120",
+ "name": "Bogen 3 Tuer: Scheitel Tuerblatt",
+ "beobachtungen": [
+  {
+   "kamera": "K-6120",
+   "px": [
+    1815.0,
+    2948.0
+   ]
+  },
+  {
+   "kamera": "K-6117",
+   "px": [
+    2135.0,
+    3085.0
+   ]
+  }
+ ],
+ "P": [
+  6.33,
+  5.115,
+  4.222
+ ],
+ "strahl_abstand_m": [
+  0.039,
+  0.039
+ ],
+ "schnittwinkel_grad": [
+  32.9
+ ],
+ "z": 4.222,
+ "unsicherheit_m": 0.078,
+ "massstab_von": "Kameras K-6120, K-6117 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 6.934,
+ "u": 4.259
+}

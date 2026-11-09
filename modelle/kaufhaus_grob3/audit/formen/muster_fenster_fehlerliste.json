@@ -1,0 +1,137 @@
+[
+{
+"gruppe": -3,
+"licht": 0,
+"sohle": "NEIN (15/80)",
+"pfosten_links": "NEIN (22/95)",
+"pfosten_rechts": "ja",
+"bogen": "NEIN (14/103)",
+"kaempfer": "ja"
+},
+{
+"gruppe": -3,
+"licht": 1,
+"sohle": "NEIN (17/66)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "NEIN (6/102)",
+"kaempfer": "ja"
+},
+{
+"gruppe": -3,
+"licht": 2,
+"sohle": "NEIN (3/57)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "ja",
+"kaempfer": "ja"
+},
+{
+"gruppe": -2,
+"licht": 0,
+"sohle": "NEIN (8/68)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "ja",
+"kaempfer": "ja"
+},
+{
+"gruppe": -2,
+"licht": 1,
+"sohle": "NEIN (13/68)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "ja",
+"kaempfer": "ja"
+},
+{
+"gruppe": -2,
+"licht": 2,
+"sohle": "NEIN (10/64)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "ja",
+"kaempfer": "ja"
+},
+{
+"gruppe": -1,
+"licht": 0,
+"sohle": "NEIN (16/75)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "ja",
+"kaempfer": "ja"
+},
+{
+"gruppe": -1,
+"licht": 1,
+"sohle": "NEIN (10/70)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "NEIN (40/147)",
+"kaempfer": "ja"
+},
+{
+"gruppe": -1,
+"licht": 2,
+"sohle": "NEIN (12/80)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "ja",
+"kaempfer": "ja"
+},
+{
+"gruppe": 0,
+"licht": 0,
+"sohle": "NEIN (11/78)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "NEIN (35/133)",
+"kaempfer": "ja"
+},
+{
+"gruppe": 0,
+"licht": 1,
+"sohle": "NEIN (15/66)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "NEIN (35/142)",
+"kaempfer": "ja"
+},
+{
+"gruppe": 0,
+"licht": 2,
+"sohle": "NEIN (16/66)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "ja",
+"kaempfer": "ja"
+},
+{
+"gruppe": 1,
+"licht": 0,
+"sohle": "NEIN (6/43)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "ja",
+"kaempfer": "ja"
+},
+{
+"gruppe": 1,
+"licht": 1,
+"sohle": "NEIN (10/60)",
+"pfosten_links": "ja",
+"pfosten_rechts": "ja",
+"bogen": "NEIN (53/190)",
+"kaempfer": "ja"
+},
+{
+"gruppe": 1,
+"licht": 2,
+"sohle": "NEIN (14/81)",
+"pfosten_links": "ja",
+"pfosten_rechts": "NEIN (33/131)",
+"bogen": "NEIN (55/187)",
+"kaempfer": "ja"
+}
+]

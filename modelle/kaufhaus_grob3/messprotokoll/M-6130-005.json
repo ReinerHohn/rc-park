@@ -1,0 +1,32 @@
+{
+ "id": "M-6130-005",
+ "foto": "6130",
+ "kamera": "K-6130",
+ "ebene": "0.33471889,0.94231803,0=12.63",
+ "name": "Bogen 1 (6130) innere Goldlinie hoechster Punkt (Blick sehr schraeg: along -6,3 statt Bogenmitte -5,5, unsicher), Ebene Bandfront 12,63",
+ "mess_px": [
+  1166.0,
+  1046.0,
+  1166.0,
+  1046.0
+ ],
+ "P1": [
+  -1.697,
+  14.006,
+  6.991
+ ],
+ "P2": [
+  -1.697,
+  14.006,
+  6.991
+ ],
+ "dz": 0.0,
+ "dy": 0.0,
+ "dx": 0.0,
+ "abstand": 0.0,
+ "z1": 6.991,
+ "z2": 6.991,
+ "unsicherheit_rel": 0.0434,
+ "unsicherheit_m": 0.009,
+ "massstab_von": "Kamera K-6130 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.63 (+-0.3 m)"
+}

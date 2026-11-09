@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-026",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=7.28",
+ "name": "EG Bogen 3 Fenster Aussenrahmen unten (links->rechts) (Neuberechnung von M-6120-002 auf Wandebene 7,28 statt 6,54: Wolke + Triangulation M-6120-021)",
+ "mess_px": [
+  995.0,
+  3175.0,
+  1395.0,
+  3175.0
+ ],
+ "P1": [
+  9.98,
+  4.181,
+  3.221
+ ],
+ "P2": [
+  8.281,
+  4.784,
+  3.209
+ ],
+ "dz": -0.013,
+ "dy": 0.604,
+ "dx": -1.7,
+ "abstand": 1.804,
+ "z1": 3.221,
+ "z2": 3.209,
+ "unsicherheit_rel": 0.0053,
+ "unsicherheit_m": 0.03,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=7.28 (+-0.08 m)"
+}

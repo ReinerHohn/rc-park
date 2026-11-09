@@ -1,0 +1,58 @@
+{
+ "id": "Z-6119-001",
+ "typ": "zaehlung",
+ "foto": "6119",
+ "datei": "6119_ip_IMG_6119.jpg",
+ "was": "Laubenrueckwand Bogen 4: Fensterlichter je Zeile (Kreuzstockfenster)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-09",
+ "punkte": [
+  {
+   "flaeche": "B4o",
+   "art": "voll",
+   "x": 520.0,
+   "y": 2660.0
+  },
+  {
+   "flaeche": "B4o",
+   "art": "voll",
+   "x": 715.0,
+   "y": 2660.0
+  },
+  {
+   "flaeche": "B4u",
+   "art": "voll",
+   "x": 500.0,
+   "y": 2950.0
+  },
+  {
+   "flaeche": "B4u",
+   "art": "voll",
+   "x": 700.0,
+   "y": 2950.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "B4o": {
+   "art": "voll",
+   "n": 2
+  },
+  "B4u": {
+   "art": "voll",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 2,
+  "voll_sichtbare_flaechen": 2
+ },
+ "bild": "Z-6119-001.jpg",
+ "ausschnitt": [
+  250,
+  2410,
+  965,
+  3200
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Bogen 4 (linker Bogen in 6119): 1 Kreuzstockfenster, 2 Lichter oben + 2 unten, keine Tuer; Lage M-6119-001..003"
+}

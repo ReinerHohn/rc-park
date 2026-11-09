@@ -1,0 +1,32 @@
+{
+ "id": "M-6119-001",
+ "foto": "6119",
+ "kamera": "K-6119",
+ "ebene": "0.33471889,0.94231803,0=7.28",
+ "name": "EG Bogen 4 Fenster Aussenrahmen oben (links->rechts), Wandebene 7,28",
+ "mess_px": [
+  458.0,
+  2556.0,
+  875.0,
+  2556.0
+ ],
+ "P1": [
+  15.103,
+  2.361,
+  6.271
+ ],
+ "P2": [
+  13.267,
+  3.013,
+  6.291
+ ],
+ "dz": 0.02,
+ "dy": 0.652,
+ "dx": -1.836,
+ "abstand": 1.949,
+ "z1": 6.271,
+ "z2": 6.291,
+ "unsicherheit_rel": 0.005,
+ "unsicherheit_m": 0.031,
+ "massstab_von": "Kamera K-6119 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=7.28 (+-0.08 m)"
+}

@@ -988,7 +988,9 @@ def main():
             os.makedirs(os.environ["BAUTEILE_AUS"], exist_ok=True); m_ = UNION(a or c).scale((K, K, K)).to_mesh()
             _V, _F = np.asarray(m_.vert_properties)[:, :3], np.asarray(m_.tri_verts)
             if len(_F):
-                import trimesh as _tmb; _tmb.Trimesh(_V, _F, process=False).export(os.path.join(os.environ["BAUTEILE_AUS"], spec["typ"].replace(":", "__") + ("__ausschnitt" if not a else "") + ".stl"))
+                import trimesh as _tmb; _fn = spec["typ"].replace(":", "__") + ("__ausschnitt" if not a else "") + ".stl"; _tmb.Trimesh(_V, _F, process=False).export(os.path.join(os.environ["BAUTEILE_AUS"], _fn))
+                _lp = os.path.join(os.environ["BAUTEILE_AUS"], "liste.json"); _l = json.load(open(_lp)) if os.path.exists(_lp) and ctx.get("_liste_neu") else {}; ctx["_liste_neu"] = True   # Liste DIESES Laufs (alte STL im Ordner bleiben liegen, zaehlen nicht)
+                _l[spec["typ"]] = dict(datei=_fn, modus="anbau" if a else "ausschnitt"); json.dump(_l, open(_lp, "w"), indent=1)
     if not adds:                                                                                  # nur Rohdreiecke (stl_teil): kein Manifold-Koerper
         model = None; V = np.zeros((0, 3)); Fi = np.zeros((0, 3), int)
     else:

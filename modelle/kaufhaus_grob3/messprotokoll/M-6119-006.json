@@ -1,0 +1,32 @@
+{
+ "id": "M-6119-006",
+ "foto": "6119",
+ "kamera": "K-6119",
+ "ebene": "0.33471889,0.94231803,0=12.63",
+ "name": "Bogen (links 6119) innere Goldlinie Kaempfer rechts, Ebene Bandfront 12,63 (Wolke)",
+ "mess_px": [
+  1290.0,
+  2590.0,
+  1290.0,
+  2590.0
+ ],
+ "P1": [
+  13.292,
+  8.682,
+  5.27
+ ],
+ "P2": [
+  13.292,
+  8.682,
+  5.27
+ ],
+ "dz": 0.0,
+ "dy": 0.0,
+ "dx": 0.0,
+ "abstand": 0.0,
+ "z1": 5.27,
+ "z2": 5.27,
+ "unsicherheit_rel": 0.0099,
+ "unsicherheit_m": 0.013,
+ "massstab_von": "Kamera K-6119 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.63 (+-0.1 m)"
+}

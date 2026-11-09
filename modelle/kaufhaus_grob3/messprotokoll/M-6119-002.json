@@ -1,0 +1,32 @@
+{
+ "id": "M-6119-002",
+ "foto": "6119",
+ "kamera": "K-6119",
+ "ebene": "0.33471889,0.94231803,0=7.28",
+ "name": "EG Bogen 4 Fenster Riegel Mitte, Wandebene 7,28",
+ "mess_px": [
+  460.0,
+  2752.0,
+  860.0,
+  2752.0
+ ],
+ "P1": [
+  15.003,
+  2.396,
+  5.361
+ ],
+ "P2": [
+  13.277,
+  3.009,
+  5.369
+ ],
+ "dz": 0.008,
+ "dy": 0.613,
+ "dx": -1.726,
+ "abstand": 1.831,
+ "z1": 5.361,
+ "z2": 5.369,
+ "unsicherheit_rel": 0.0051,
+ "unsicherheit_m": 0.03,
+ "massstab_von": "Kamera K-6119 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=7.28 (+-0.08 m)"
+}

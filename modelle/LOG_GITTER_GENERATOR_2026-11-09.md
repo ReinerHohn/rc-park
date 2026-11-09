@@ -264,3 +264,51 @@ Ablauf nach Regel 2: zuerst 4 Beobachtungen + 6 Pruefungen eingetragen, am Runde
 
 ### Testdateien in modelle/stl/ (nicht geloescht, Loeschen nur durch den Nutzer)
 - `_tmp_r4.stl`, `_tmp_alt.stl`, `_tmp_fig.stl`, `_tmp_eg0.stl`, `_tmp_eg2.stl`, `_tmp_laube.stl`, `_tmp_kons.stl`
+
+## Runde 6 (Agent, 9.11. abends) - Prioritaeten nach Koordinator-Aenderungen
+Reihenfolge laut Koordinator: Slicen GESTRICHEN; Vorrang Pruefer-/Nutzerbefunde 6261, dann A Erker/Helme, B EG-Fenster Boegen 1/2/4 (+ Rueckwand-Ebene zuerst), dann alte Punkte 1-3.
+Alle Pruefungen vor der Generatoraenderung angelegt und ROT gesehen, danach gruen (Regel 2).
+
+### Ergebnisse (jede Aenderung mit Pruefung vorher rot -> nachher gruen)
+1. OG-Fenster Kaempfer je Licht: neue Option `fensterreihe.licht_riegel_z` / `licht_scheitel_z` (aussen->Mitte, gespiegelt). OG: [11,753, 12,283] aus kaempfer_sweep.json;
+   am Foto 6120 Differenz Mitte-Seite 0,53-0,56 bestaetigt (M-6120-011..013, absolut 0,1 tiefer: nicht gemittelt). Pruefungen offene Lichter bei z 11,753 (1) und 12,283 (2): vorher 0/3, nachher 1/2.
+   Sweep-Seitenscheitel 14,334 (Wolke) liegt UEBER der Rahmenoberkante 13,30 (M-6120-017) -> verworfen; Seiten folgen der Kontur. M-6120-014 = Fehlpick (Ausschnitt-Versatz vergessen), ersetzt durch M-6120-016; M-6120-015 = Probemessung Sohlbank 10,50.
+2. Laubenrueckwand-Ebene: Wolke (161 282 Punkte) Spitze n 7,275; Triangulation 6120+6117 (neuer foto_mass-Modus `--tri`): Goldquaste 7,30, Glas 7,11-7,20, Tuerblatt 6,8-7,2.
+   6,54 (rohkoerper_v7, nie gemessen) verworfen. Rueckwand/Rumpf-EG/EG-Fenster/Nischen +0,74; M-6120-001..005 auf 7,28 neu gerechnet (M-6120-025..029, mess_px gleich).
+   Pruefung Wandflaeche hinter 7,28: vorher +0,74, nachher 0,00.
+3. Erkerhelme (Nutzerbefund): neuer Bauteiltyp `helm_geschweift` (N-Eck, Profil r(z), Kranz, Knauf), Erker-Option `ohne_dach`. Profil aus Foto nu_3b29472b (K-nu3b, 19 m):
+   M-nu3b-001..008; Wolke r p50 einig +-0,07 ab z 15. Foto 6261 (34 m) 0,1-0,2 schmaler, Traufe 0,7 tiefer -> Widerspruch in beobachtungen_offen.
+   Achtung: in 6261 ist der LINKE Helm der Osthelm (u 15,5), der rechte der Westhelm (Projektion geprueft); M-6261-004..012 = falsche Achsebene (ungueltig), ersetzt durch M-6261-013..021.
+   Pruefungen Ost z 14,64/16,18/17,76: vorher 1,36/0,73/0,57 (rot), nachher 1,21/0,59/0,35. West (Kopplung auf Probe, Wolke): 0,56/0,51 (16,25 an der Grenze).
+4. Bogen 2 grosses Tor: Triangulation 6117+6127 (84-87 Grad) M-6117-001..005, Zaehlung Z-6117-001. freiform-Ausschnitt (Spitzbogen, Kaempfer 5,23, Scheitel 6,66, Spannweite 4,0, Torblatt 0,55 zurueck).
+   Pruefungen Tiefe/Oeffnung: vorher 0,00/0, nachher 0,55/1.
+5. Boegen 1 und 4 EG-Fenster (vorher ANNAHME eg0/eg2): Kreuzstockfenster wie Bogen 3, Fotos 6119/6130 (neue Kamera-Bruecken) auf Ebene 7,28: M-6119-001..003, M-6130-001..003, Z-6119-001, Z-6130-001.
+   eg0 along 12,47 b 1,95 z 3,20-6,28; eg2 along -5,36 b 1,84 z 3,30-6,39; Glasnischen eg0/eg2_nische. Pruefungen Lichter je Zeile: vorher 0/0, nachher 2/2.
+6. 8-cm-Stufe z 8,0: Wolke Band = OG-Wand (n 12,63) -> laibung_tiefe 0,776 -> 0,94 (Bandfront 12,66). Pruefung: vorher 0,08, nachher 0.
+7. Bogenprofil: drittes Foto 6119 (14 m, 10 Grad): Bogen 3 Kaempfer 5,26/5,29, Lichte 5,12, Scheitel 7,13; Bogen 4 Kaempfer 5,27, Scheitel 7,08; Bogen 1 (6130, sehr schraeg) ~6,99.
+   Entscheid Scheitel-Widerspruch: 6120 (7,11) + 6119 (7,13) einig, 6261 (7,31, 34 m) Ausreisser -> kaempfer 5,28 / scheitel 7,12 / oeffnung 5,15. Bogen 2 nicht gemessen.
+   Pruefung Scheitel: vorher 7,22, nachher 7,10. Soll 'Lichte' mit neuer Quelle M-6119-004 auf [5,05, 5,25] (historie).
+8. Pruefer Punkt 1 (hohe Umrisslinie links in 6261): das ist das OSTende (u 17,15; in 6261 waechst u nach links). Modell-Hinterecke (n -6,56) projiziert auf x 61-143 bei 42-46 m Tiefe,
+   die Wolke hat dort 5 098 Punkte bei 30-33 m = Nachbarhaus davor -> Brandwand verdeckt, kein sichtbarer Modellfehler. Offen bleibt die Tiefe n -6,56 (ANNAHME Firstspiegel, LoD2 12,54 widerspricht)
+   und die fehlende Stirnwand der Laube (along 16,0-17,15, Seitenbogen im Foto, Modell offen = 'Kasten x 190-290').
+9. Druckreparatur: Simplify-Toleranz-Fallback (5 -> 4 -> 6 -> 3 -> 7 mm), weil die Union-Numerik zufaellig Splitter erzeugt (Lauf mit Lichtriegeln: 37 Koerper bei 5 mm, wasserdicht bei 3 mm).
+10. Sichtliste je Bauteil: Generator `BAUTEILE_AUS=<dir>` schreibt jedes Bauteil als STL + liste.json; `tools/bauteil_sichtliste.py` waehlt je Bauteil das Foto mit der groessten unverdeckten Flaeche (GPU-Z-Puffer)
+    und schreibt Overlay-Ausschnitte nach audit/sichtliste/ (sichtliste.json, uebersicht.jpg).
+
+### Neue/geaenderte Werkzeuge (generisch)
+- `tools/baukasten_gen.py`: fensterreihe licht_riegel_z/licht_scheitel_z; erker ohne_dach; Bauteil helm_geschweift; Druckreparatur-Toleranzfallback; BAUTEILE_AUS + liste.json.
+- `tools/foto_mass.py`: Modus `--tri K-A x y K-B x y ...` (Strahlschnitt, Tiefe ohne Ebenenannahme, Protokoll typ triangulation mit Schnittwinkel).
+- `tools/kamera_bruecke.py` (neu): K-<nr> aus Buendelkameradatei + Symlink; `--kandidaten X Y Z` listet Fotos nach Blickwinkel.
+- `tools/pruefstand.py`: Messart `schnitt_reichweite` (Konturreichweite ab Achse in Richtung, Streifen).
+- `tools/bauteil_sichtliste.py` (neu).
+Neue Kameras: K-6117, K-6119, K-6127, K-6130, K-6206, K-nu3b (alle kamera_bruecke_sfm, rahmen_verschiebung [0,0,0]).
+
+### Testdateien (nicht geloescht, Loeschen nur durch den Nutzer)
+- modelle/stl/_tmp_r6_alt.stl, _tmp_r6_neu.stl, _tmp_r6_teil.stl, _tmp_r6_voll_alt.stl
+- Bauteil-STL: /media/oem/scan/rc-park_daten/kaufhaus_alle/bauteile_stl/ (alt, enthaelt abgeschaltete zylinder:helm_*), bauteile_r6/ (aktuell, liste.json)
+- Agent-Scratch (Root-Platte war bei 4,7 GB < 5 GB Platztor): nach /media/oem/scan/rc-park_daten/kaufhaus_alle/agent_scratch_r6/ VERSCHOBEN (nicht geloescht)
+
+### Runde 6 Nachtrag: Sichtliste-Auswahl mit Fremdverdeckung (bauteil_sichtliste.py --wolke, --kandidaten)
+- Bewertung = sichtbare px x Sichtanteil x Bildanteil x (1 - Fremdverdeckung)^2; Fremdverdeckung = Anteil Teilpixel, vor denen ein Wolkenpunkt > 0,5 m naeher liegt.
+- Besser: satteldach (j_07, ganzes Dach), helm_geschweift:o (j_01 statt leerem 6185, aber nur Spitze), balkonband, rumpf_og, gaubenreihe:unten.
+- Weiter schlecht (ungeprueft): staffelgiebel:ost/west, stl_teil:figuren, quader:laube_rueck -> Gewoelbe-Innenansichten; Ursache: Gewoelbe weder im Modell noch dicht in der Wolke -> Kamera unter der Arkade 'sieht' Giebel. Abhilfe offen: Kamera-Standort ausserhalb Modellhuelle / Blickrichtung zur Teilnormalen erzwingen.

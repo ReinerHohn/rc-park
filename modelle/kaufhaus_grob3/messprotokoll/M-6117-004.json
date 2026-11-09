@@ -1,0 +1,39 @@
+{
+ "id": "M-6117-004",
+ "typ": "triangulation",
+ "foto": "6117",
+ "name": "Grosses Tor: Torblatt unten rechts",
+ "beobachtungen": [
+  {
+   "kamera": "K-6117",
+   "px": [
+    2728.0,
+    3490.0
+   ]
+  },
+  {
+   "kamera": "K-6127",
+   "px": [
+    2776.0,
+    3321.0
+   ]
+  }
+ ],
+ "P": [
+  1.558,
+  6.615,
+  1.749
+ ],
+ "strahl_abstand_m": [
+  0.016,
+  0.016
+ ],
+ "schnittwinkel_grad": [
+  83.9
+ ],
+ "z": 1.749,
+ "unsicherheit_m": 0.041,
+ "massstab_von": "Kameras K-6117, K-6127 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 6.756,
+ "u": -0.739
+}

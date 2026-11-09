@@ -1,0 +1,39 @@
+{
+ "id": "M-6117-001",
+ "typ": "triangulation",
+ "foto": "6117",
+ "name": "Grosses Tor: gelbes Plakat Ecke oben links",
+ "beobachtungen": [
+  {
+   "kamera": "K-6117",
+   "px": [
+    2627.0,
+    3156.0
+   ]
+  },
+  {
+   "kamera": "K-6127",
+   "px": [
+    2644.0,
+    2767.0
+   ]
+  }
+ ],
+ "P": [
+  1.963,
+  6.364,
+  3.887
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.0
+ ],
+ "schnittwinkel_grad": [
+  84.7
+ ],
+ "z": 3.887,
+ "unsicherheit_m": 0.025,
+ "massstab_von": "Kameras K-6117, K-6127 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 6.654,
+ "u": -0.274
+}

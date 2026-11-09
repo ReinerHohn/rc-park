@@ -1,0 +1,485 @@
+[
+{
+"id": "0",
+"gruppe": "fenster.kaempfer.seite0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "1",
+"gruppe": "fenster.sohlbank.seite0",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "2",
+"gruppe": "fenster.scheitel.seite0"
+},
+{
+"id": "3",
+"gruppe": "fenster.kaempfer.mitte",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "4",
+"gruppe": "fenster.sohlbank.mitte",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "5",
+"gruppe": "fenster.scheitel.mitte",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "6",
+"gruppe": "fenster.kaempfer.seite0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "7",
+"gruppe": "fenster.sohlbank.seite0",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "8",
+"gruppe": "fenster.scheitel.seite0",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "9",
+"gruppe": "fenster.pfosten.aussen0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "10",
+"gruppe": "fenster.pfosten.aussen1",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "11",
+"gruppe": "fenster.pfosten.aussen1",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "12",
+"gruppe": "fenster.pfosten.aussen0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "13",
+"gruppe": "fenster.kaempfer.seite0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "14",
+"gruppe": "fenster.sohlbank.seite0",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "15",
+"gruppe": "fenster.scheitel.seite0"
+},
+{
+"id": "16",
+"gruppe": "fenster.kaempfer.mitte",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "17",
+"gruppe": "fenster.sohlbank.mitte",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "18",
+"gruppe": "fenster.scheitel.mitte",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "19",
+"gruppe": "fenster.kaempfer.seite0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "20",
+"gruppe": "fenster.sohlbank.seite0",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "21",
+"gruppe": "fenster.scheitel.seite0",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "22",
+"gruppe": "fenster.pfosten.aussen0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "23",
+"gruppe": "fenster.pfosten.aussen1",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "24",
+"gruppe": "fenster.pfosten.aussen1",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "25",
+"gruppe": "fenster.pfosten.aussen0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "26",
+"gruppe": "fenster.kaempfer.seite0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "27",
+"gruppe": "fenster.sohlbank.seite0",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "28",
+"gruppe": "fenster.scheitel.seite0",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "29",
+"gruppe": "fenster.kaempfer.mitte",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "30",
+"gruppe": "fenster.sohlbank.mitte",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "31",
+"gruppe": "fenster.scheitel.mitte",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "32",
+"gruppe": "fenster.kaempfer.seite0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "33",
+"gruppe": "fenster.sohlbank.seite0",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "34",
+"gruppe": "fenster.scheitel.seite0",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "35",
+"gruppe": "fenster.pfosten.aussen0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "36",
+"gruppe": "fenster.pfosten.aussen1",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "37",
+"gruppe": "fenster.pfosten.aussen1",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "38",
+"gruppe": "fenster.pfosten.aussen0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "39",
+"gruppe": "fenster.kaempfer.seite0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "40",
+"gruppe": "fenster.sohlbank.seite0",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "41",
+"gruppe": "fenster.scheitel.seite0"
+},
+{
+"id": "42",
+"gruppe": "fenster.kaempfer.mitte",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "43",
+"gruppe": "fenster.sohlbank.mitte",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "44",
+"gruppe": "fenster.scheitel.mitte",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "45",
+"gruppe": "fenster.kaempfer.seite0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "46",
+"gruppe": "fenster.sohlbank.seite0",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "47",
+"gruppe": "fenster.scheitel.seite0"
+},
+{
+"id": "48",
+"gruppe": "fenster.pfosten.aussen0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "49",
+"gruppe": "fenster.pfosten.aussen1",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "50",
+"gruppe": "fenster.pfosten.aussen1",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "51",
+"gruppe": "fenster.pfosten.aussen0"
+},
+{
+"id": "52",
+"gruppe": "fenster.kaempfer.seite0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "53",
+"gruppe": "fenster.sohlbank.seite0",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "54",
+"gruppe": "fenster.scheitel.seite0"
+},
+{
+"id": "55",
+"gruppe": "fenster.kaempfer.mitte",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "56",
+"gruppe": "fenster.sohlbank.mitte",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "57",
+"gruppe": "fenster.scheitel.mitte",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "58",
+"gruppe": "fenster.kaempfer.seite0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "59",
+"gruppe": "fenster.sohlbank.seite0",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "60",
+"gruppe": "fenster.scheitel.seite0"
+},
+{
+"id": "61",
+"gruppe": "fenster.pfosten.aussen0"
+},
+{
+"id": "62",
+"gruppe": "fenster.pfosten.aussen1",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "63",
+"gruppe": "fenster.pfosten.aussen1",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "64",
+"gruppe": "fenster.pfosten.aussen0",
+"versatz_ebene": "BESTAETIGT"
+},
+{
+"id": "65",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "66",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "67",
+"gruppe": "konsole.unten"
+},
+{
+"id": "68",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "69",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "70",
+"gruppe": "konsole.unten",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "71",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "72",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "73",
+"gruppe": "konsole.unten"
+},
+{
+"id": "74",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "75",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "76",
+"gruppe": "konsole.unten",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "77",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "78",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "79",
+"gruppe": "konsole.unten",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "80",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "81",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "82",
+"gruppe": "konsole.unten"
+},
+{
+"id": "83",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "84",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "85",
+"gruppe": "konsole.unten",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "86",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "87",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "88",
+"gruppe": "konsole.unten",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "89",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "90",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "91",
+"gruppe": "konsole.unten",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "92",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "93",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "94",
+"gruppe": "konsole.unten"
+},
+{
+"id": "95",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "96",
+"gruppe": "konsole.seite",
+"versatz_ebene": "OFFEN"
+},
+{
+"id": "97",
+"gruppe": "konsole.unten",
+"versatz_ebene": "KORRIGIERT"
+},
+{
+"id": "98",
+"gruppe": "balkon.platte_unten",
+"versatz_ebene": "OFFEN"
+}
+]

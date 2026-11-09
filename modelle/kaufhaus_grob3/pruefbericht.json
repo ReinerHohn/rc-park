@@ -9,8 +9,8 @@
   "helm_w_z": 20.88700064849853,
   "helm_o_z": 21.32700006866455,
   "dach_z_off11": 15.762130348205567,
-  "pfeiler3_d": 0.8810006134403175,
-  "arkade1_scheitel": 5.762366729736328,
+  "pfeiler3_d": 0.8810006134404144,
+  "arkade1_scheitel": 5.643319862365722,
   "fenster2_sohl": 8.856999847412109,
   "erker_w_unterkante": 8.066999862670897,
   "lichter_g2_anzahl": 3.0,
@@ -18,9 +18,9 @@
   "lichter_g2_breite_max": 0.92,
   "lichter_g2_ebene_abstand": 1.9997724345705832,
   "handlauf_z": 8.25699973297119,
-  "helm_w_fussbreite_x": 1.8309022293090824,
-  "helm_w_fussbreite_y": 1.6691916961669921,
-  "helm_w_fussbreite_punkte": 97.0,
+  "helm_w_fussbreite_x": 2.5630182609558103,
+  "helm_w_fussbreite_y": 2.592074569702147,
+  "helm_w_fussbreite_punkte": 36.0,
   "rueck_z6": -0.005787998491273427,
   "rueck_z10": -0.005788051692975138,
   "rueck_z143": -0.005788051692975138,
@@ -29,7 +29,7 @@
   "tuer_b3_anzahl": 1.0,
   "tuer_b3_breite_median": 1.3900000000000001,
   "tuer_b3_breite_max": 1.3900000000000001,
-  "tuer_b3_ebene_abstand": 1.2562016787665828,
+  "tuer_b3_ebene_abstand": 1.2562017062033648,
   "bal_feld_anzahl": 10.0,
   "bal_feld_breite_median": 0.16,
   "bal_feld_breite_max": 0.17,
@@ -41,16 +41,16 @@
   "teilnetze": 1.0,
   "dicht": 1.0,
   "wand_pq": 0.13989810645580292,
-  "wand_anteil_unter": 0.0004,
+  "wand_anteil_unter": 0.0002666666666666667,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
-  "kons_b3_grund_abstand": 0.07797270770619535,
+  "kons_b3_grund_abstand": -0.004027439078454709,
   "bogen3_licht_anzahl": 1.0,
-  "bogen3_licht_breite_median": 5.24,
-  "bogen3_licht_breite_max": 5.24,
-  "bogen3_licht_ebene_abstand": 1.991164567136624,
-  "teile_ueberhang": 0.00955,
+  "bogen3_licht_breite_median": 5.0600000000000005,
+  "bogen3_licht_breite_max": 5.0600000000000005,
+  "bogen3_licht_ebene_abstand": 1.9090876846058489,
+  "teile_ueberhang": 0.00782,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.88,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.88,
@@ -59,12 +59,27 @@
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.8,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.8,
   "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 1.9991922203691888,
-  "laube_rueckwand_n728_z7": -0.003980470011784032,
-  "helm_o_r_14_64": 1.3592913551091492,
-  "helm_o_r_16_18": 0.7332400984162366,
-  "helm_o_r_17_76": 0.5650099531841414,
-  "helm_w_r_16_25": 0.665109869201685,
-  "helm_w_r_17_75": 0.5068990264498032
+  "laube_rueckwand_n728_z7": -0.00332701019786219,
+  "helm_o_r_14_64": 1.2110453487912292,
+  "helm_o_r_16_18": 0.5909803150327241,
+  "helm_o_r_17_76": 0.3508848000261934,
+  "helm_w_r_16_25": 0.5645895467319909,
+  "helm_w_r_17_75": 0.5068990264498032,
+  "tor_b2_tiefe": 0.5493055786789243,
+  "tor_b2_oeffnung_anzahl": 1.0,
+  "tor_b2_oeffnung_breite_median": 4.0,
+  "tor_b2_oeffnung_breite_max": 4.0,
+  "tor_b2_oeffnung_ebene_abstand": 3.001464821295761,
+  "fenster_b4_anzahl": 2.0,
+  "fenster_b4_breite_median": 0.8250000000000001,
+  "fenster_b4_breite_max": 0.8300000000000001,
+  "fenster_b4_ebene_abstand": 1.8689588600095906,
+  "fenster_b1_anzahl": 2.0,
+  "fenster_b1_breite_median": 0.77,
+  "fenster_b1_breite_max": 0.77,
+  "fenster_b1_ebene_abstand": 1.8860301355502789,
+  "bandfront_z76": -0.0057697451080986895,
+  "bogen3_scheitel": 5.643319862365722
  },
  "pruefungen": [
   {
@@ -139,7 +154,7 @@
   },
   {
    "name": "Pfeiler 3 Durchmesser (m), Schaftansatz z 2,1-2,35 (Ring ueber der Fase)",
-   "wert": 0.8810006134403175,
+   "wert": 0.8810006134404144,
    "soll": [
     0.81,
     0.94
@@ -149,7 +164,7 @@
   },
   {
    "name": "Arkade 1 Scheitel z (m) (tiefster Modellpunkt im Scheitelkasten)",
-   "wert": 7.215366729736329,
+   "wert": 7.096319862365722,
    "soll": [
     7.05,
     7.35
@@ -299,17 +314,17 @@
   },
   {
    "name": "Arkade Bogen 3: Lichte knapp ueber dem Kaempfer (z 5,40, Ebene Bandfront 12,578)",
-   "wert": 5.24,
+   "wert": 5.0600000000000005,
    "soll": [
-    5.17,
-    5.41
+    5.05,
+    5.25
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00955,
+   "wert": 0.00782,
    "soll": [
     0,
     0.01
@@ -339,7 +354,7 @@
   },
   {
    "name": "Laubenrueckwand: Wandflaeche hinter der Ebene n 7,28 (z 7,0, alle Boegen; 0 = in der Ebene)",
-   "wert": -0.003980470011784032,
+   "wert": -0.00332701019786219,
    "soll": [
     -0.08,
     0.08
@@ -349,37 +364,37 @@
   },
   {
    "name": "Erkerhelm Ost: Halbbreite vor der Achse bei z 14,64 (geschweiftes Profil)",
-   "wert": 1.3592913551091492,
+   "wert": 1.2110453487912292,
    "soll": [
     1.08,
     1.32
    ],
-   "ok": false,
-   "status": "fehler"
+   "ok": true,
+   "status": "ok"
   },
   {
    "name": "Erkerhelm Ost: Halbbreite vor der Achse bei z 16,18 (geschweiftes Profil)",
-   "wert": 0.7332400984162366,
+   "wert": 0.5909803150327241,
    "soll": [
     0.46,
     0.7
    ],
-   "ok": false,
-   "status": "fehler"
+   "ok": true,
+   "status": "ok"
   },
   {
    "name": "Erkerhelm Ost: Halbbreite vor der Achse bei z 17,76 (geschweiftes Profil)",
-   "wert": 0.5650099531841414,
+   "wert": 0.3508848000261934,
    "soll": [
     0.22,
     0.46
    ],
-   "ok": false,
-   "status": "fehler"
+   "ok": true,
+   "status": "ok"
   },
   {
    "name": "Erkerhelm West: Halbbreite vor der Achse bei z 16,25 (Kopplung auf Probe)",
-   "wert": 0.665109869201685,
+   "wert": 0.5645895467319909,
    "soll": [
     0.56,
     0.8
@@ -396,7 +411,67 @@
    ],
    "ok": true,
    "status": "ok"
+  },
+  {
+   "name": "Laubenrueckwand Bogen 2: grosses Tor - Torblatt hinter der Wandflaeche 7,28 (z 3,5, along -0,5..2,0)",
+   "wert": 0.5493055786789243,
+   "soll": [
+    0.45,
+    0.7
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laubenrueckwand Bogen 2: grosses Tor - Oeffnungen >= 2,5 m Breite an der Fotolage (z 3,5, along -1,9..3,0)",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laubenrueckwand Bogen 4: Fensterlichter je Zeile an der Fotolage (along 11,2..13,7, z 4,0)",
+   "wert": 2.0,
+   "soll": [
+    2,
+    2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laubenrueckwand Bogen 1: Fensterlichter je Zeile an der Fotolage (along -6,6..-4,1, z 4,0)",
+   "wert": 2.0,
+   "soll": [
+    2,
+    2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Bogenband (z 7,6) buendig mit der OG-Wand 12,66 - keine Stufe bei z 8,0 (0 = in der Ebene)",
+   "wert": -0.0057697451080986895,
+   "soll": [
+    -0.03,
+    0.03
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Arkade Bogen 3: Scheitel innere Leibung z (Bogenmitte)",
+   "wert": 7.096319862365722,
+   "soll": [
+    7.03,
+    7.18
+   ],
+   "ok": true,
+   "status": "ok"
   }
  ],
- "bestanden": false
+ "bestanden": true
 }

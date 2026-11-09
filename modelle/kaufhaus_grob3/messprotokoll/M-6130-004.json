@@ -1,0 +1,32 @@
+{
+ "id": "M-6130-004",
+ "foto": "6130",
+ "kamera": "K-6130",
+ "ebene": "0.33471889,0.94231803,0=12.63",
+ "name": "Bogen 1 (6130) innere Goldlinie Kaempfer (Ende Goldlinie rechts), Ebene Bandfront 12,63 (Wolke)",
+ "mess_px": [
+  2002.0,
+  1647.0,
+  2002.0,
+  1647.0
+ ],
+ "P1": [
+  -3.402,
+  14.612,
+  5.4
+ ],
+ "P2": [
+  -3.402,
+  14.612,
+  5.4
+ ],
+ "dz": 0.0,
+ "dy": 0.0,
+ "dx": 0.0,
+ "abstand": 0.0,
+ "z1": 5.4,
+ "z2": 5.4,
+ "unsicherheit_rel": 0.018,
+ "unsicherheit_m": 0.008,
+ "massstab_von": "Kamera K-6130 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.63 (+-0.1 m)"
+}

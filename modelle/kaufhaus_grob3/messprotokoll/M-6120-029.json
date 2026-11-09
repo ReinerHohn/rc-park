@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-029",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=7.28",
+ "name": "EG Bogen 3 Tuer Kaempfer links -> Scheitel (Neuberechnung von M-6120-005 auf Wandebene 7,28 statt 6,54: Wolke + Triangulation M-6120-021)",
+ "mess_px": [
+  1663.0,
+  3010.0,
+  1823.0,
+  2945.0
+ ],
+ "P1": [
+  7.131,
+  5.193,
+  3.905
+ ],
+ "P2": [
+  6.433,
+  5.441,
+  4.184
+ ],
+ "dz": 0.279,
+ "dy": 0.248,
+ "dx": -0.697,
+ "abstand": 0.791,
+ "z1": 3.905,
+ "z2": 4.184,
+ "unsicherheit_rel": 0.0054,
+ "unsicherheit_m": 0.024,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=7.28 (+-0.08 m)"
+}

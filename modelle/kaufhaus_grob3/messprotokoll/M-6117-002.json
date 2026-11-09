@@ -1,0 +1,39 @@
+{
+ "id": "M-6117-002",
+ "typ": "triangulation",
+ "foto": "6117",
+ "name": "Grosses Tor: Spitzbogen Scheitel (Goldlinie)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6117",
+   "px": [
+    2522.0,
+    2745.0
+   ]
+  },
+  {
+   "kamera": "K-6127",
+   "px": [
+    2338.0,
+    2161.0
+   ]
+  }
+ ],
+ "P": [
+  3.099,
+  6.471,
+  6.661
+ ],
+ "strahl_abstand_m": [
+  0.007,
+  0.007
+ ],
+ "schnittwinkel_grad": [
+  86.7
+ ],
+ "z": 6.661,
+ "unsicherheit_m": 0.031,
+ "massstab_von": "Kameras K-6117, K-6127 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.135,
+ "u": 0.761
+}

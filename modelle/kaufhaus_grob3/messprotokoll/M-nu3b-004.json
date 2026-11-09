@@ -1,0 +1,32 @@
+{
+ "id": "M-nu3b-004",
+ "foto": "nu3b",
+ "kamera": "K-nu3b",
+ "ebene": "-0.62979,-0.77676,0=-16.7129",
+ "name": "Erkerhelm Ost (u 15,5) Silhouettenbreite Zeile 900, Ebene durch Helmachse quer zur Blickrichtung (zweites Foto, Blickwinkel -41 statt +31 Grad)",
+ "mess_px": [
+  609.0,
+  900.0,
+  787.0,
+  900.0
+ ],
+ "P1": [
+  19.164,
+  5.978,
+  16.095
+ ],
+ "P2": [
+  18.269,
+  6.704,
+  16.263
+ ],
+ "dz": 0.167,
+ "dy": 0.726,
+ "dx": -0.895,
+ "abstand": 1.165,
+ "z1": 16.095,
+ "z2": 16.263,
+ "unsicherheit_rel": 0.0238,
+ "unsicherheit_m": 0.06,
+ "massstab_von": "Kamera K-nu3b aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene -0.62979,-0.77676,0=-16.7129 (+-0.5 m)"
+}

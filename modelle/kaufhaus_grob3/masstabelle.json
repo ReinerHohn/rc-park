@@ -422,6 +422,107 @@
    ],
    "quer_max": 0.3,
    "r_max": 3.0
+  },
+  "tor_b2_tiefe": {
+   "typ": "ebene_abstand",
+   "o": [
+    2.4368,
+    6.8601
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=3.5 - z_unterkante_lot2",
+   "u0": -2.0,
+   "u1": 0.5,
+   "vor": 3.0,
+   "quantil": 50.0
+  },
+  "tor_b2_oeffnung": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    2.4368,
+    6.8601
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=3.5 - z_unterkante_lot2",
+   "u0": -3.0,
+   "u1": 1.9,
+   "tiefe": 0.3,
+   "vor": 3.0,
+   "min_b": 2.5,
+   "max_b": 5.0,
+   "rand": 0.0
+  },
+  "fenster_b4": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    2.4368,
+    6.8601
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=4.0 - z_unterkante_lot2",
+   "tiefe": 0.15,
+   "vor": 2.0,
+   "schritt": 0.01,
+   "min_b": 0.6,
+   "max_b": 1.1,
+   "rand": 0.0,
+   "u0": -13.7,
+   "u1": -11.2
+  },
+  "fenster_b1": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    2.4368,
+    6.8601
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=4.0 - z_unterkante_lot2",
+   "tiefe": 0.15,
+   "vor": 2.0,
+   "schritt": 0.01,
+   "min_b": 0.6,
+   "max_b": 1.1,
+   "rand": 0.0,
+   "u0": 4.1,
+   "u1": 6.6
+  },
+  "bandfront_z76": {
+   "typ": "ebene_abstand",
+   "o": [
+    4.2375,
+    11.9297
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=7.6 - z_unterkante_lot2",
+   "u0": -15.0,
+   "u1": 8.0,
+   "vor": 3.0,
+   "quantil": 50.0
+  },
+  "bogen3_scheitel": {
+   "typ": "min_im_bereich",
+   "x0": 9.878,
+   "x1": 10.678,
+   "y0": 9.032,
+   "y1": 9.892,
+   "z0": "=6.5 - z_unterkante_lot2",
+   "z1": "=8.0 - z_unterkante_lot2",
+   "achse": "z"
   }
  },
  "pruefungen": [
@@ -813,16 +914,17 @@
    "name": "Arkade Bogen 3: Lichte knapp ueber dem Kaempfer (z 5,40, Ebene Bandfront 12,578)",
    "wert": "bogen3_licht_breite_max",
    "soll": [
-    5.17,
-    5.41
+    5.05,
+    5.25
    ],
-   "quelle": "Fotomessung zweier Fotos, gleiche Stelle (innere Goldlinie = vordere Leibungskante, Kaempfer = Ende der Goldlinie am Pfeilerkopf): M-6120-008 Lichte 5,17 +-0,16 bei z 5,25/5,30; M-6261-001 Lichte 5,33 +-0,09 bei z 5,35 (beide K-Kamera-Bruecke, Ebene Bandfront 12,578); gewichtet 5,29 +-0,08, Soll +-1,5 sigma. Bogenstueck zwischen den Boegen am Kaempfer M-6261-003 0,72 m (= pitch - Lichte). Bei z 5,40 liegt der Messpunkt knapp ueber dem gemessenen Kaempfer 5,33 (im Modell Runde 4 darunter: dort sind es die Pfeiler, Lichte 5,14)",
+   "quelle": "Fotomessung zweier Fotos, gleiche Stelle (innere Goldlinie = vordere Leibungskante, Kaempfer = Ende der Goldlinie am Pfeilerkopf): M-6120-008 Lichte 5,17 +-0,16 bei z 5,25/5,30; M-6261-001 Lichte 5,33 +-0,09 bei z 5,35 (beide K-Kamera-Bruecke, Ebene Bandfront 12,578); gewichtet 5,29 +-0,08, Soll +-1,5 sigma. Bogenstueck zwischen den Boegen am Kaempfer M-6261-003 0,72 m (= pitch - Lichte). Bei z 5,40 liegt der Messpunkt knapp ueber dem gemessenen Kaempfer 5,33 (im Modell Runde 4 darunter: dort sind es die Pfeiler, Lichte 5,14) | Runde 6: drittes Foto 6119 M-6119-004 Lichte 5,12 (Kaempfer 5,26/5,29) bestaetigt 6120; 6261 verworfen",
    "quelltyp": "foto_vollbild",
    "merkmal": "fassade",
    "massstab": "kamera_bruecke",
-   "protokoll": "M-6261-001",
+   "protokoll": "M-6119-004",
    "historie": [
-    "2026-11-09 angelegt (Agent Runde 5); Modell Runde 4 (Kaempfer 5,46, Lichte 5,13) muss fehlschlagen"
+    "2026-11-09 angelegt (Agent Runde 5); Modell Runde 4 (Kaempfer 5,46, Lichte 5,13) muss fehlschlagen",
+    "2026-11-09 Agent Runde 6: Soll [5,17, 5,41] -> [5,05, 5,25] mit NEUER Quelle M-6119-004 (drittes Foto 6119, Lichte 5,12; 6120 5,17 einig; 6261 5,33 schraeg/34 m verworfen wie beim Scheitel)"
    ]
   },
   {
@@ -966,6 +1068,102 @@
    "protokoll": "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2_crop.npy (r-Profil um die Helmachse, Log Runde 6)",
    "historie": [
     "2026-11-09 angelegt (Agent Runde 6, Nutzerbefund geschweifter Erkerhelm): am Modell runde5 (Kegel r 0,85 auf gestuftem Erkerdach) muss mindestens eine Hoehe fehlschlagen"
+   ]
+  },
+  {
+   "name": "Laubenrueckwand Bogen 2: grosses Tor - Torblatt hinter der Wandflaeche 7,28 (z 3,5, along -0,5..2,0)",
+   "wert": "tor_b2_tiefe",
+   "soll": [
+    0.45,
+    0.7
+   ],
+   "quelle": "Triangulation 6117+6127 (Schnittwinkel 84-87 Grad): Torblatt n 6,63-6,76 (M-6117-001/003/004) = 0,52-0,65 hinter der Wandflaeche 7,28; Goldlinie (Leibungskante) n 7,12-7,14, Kaempfer rechts u -1,24 z 5,23 (M-6117-005), Scheitel u 0,76 z 6,66 (M-6117-002); Anzahl Z-6117-001 (1 Tor in Bogen 2)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6117-001",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 6, Pruefer: 'Bogen 2 - das grosse Tor fehlt'): am Modell runde5/6a (glatte Rueckwand) muss sie fehlschlagen"
+   ]
+  },
+  {
+   "name": "Laubenrueckwand Bogen 2: grosses Tor - Oeffnungen >= 2,5 m Breite an der Fotolage (z 3,5, along -1,9..3,0)",
+   "wert": "tor_b2_oeffnung_anzahl",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Triangulation 6117+6127 (Schnittwinkel 84-87 Grad): Torblatt n 6,63-6,76 (M-6117-001/003/004) = 0,52-0,65 hinter der Wandflaeche 7,28; Goldlinie (Leibungskante) n 7,12-7,14, Kaempfer rechts u -1,24 z 5,23 (M-6117-005), Scheitel u 0,76 z 6,66 (M-6117-002); Anzahl Z-6117-001 (1 Tor in Bogen 2)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "foto_intern",
+   "protokoll": "Z-6117-001",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 6, Pruefer: 'Bogen 2 - das grosse Tor fehlt'): am Modell runde5/6a (glatte Rueckwand) muss sie fehlschlagen"
+   ]
+  },
+  {
+   "name": "Laubenrueckwand Bogen 4: Fensterlichter je Zeile an der Fotolage (along 11,2..13,7, z 4,0)",
+   "wert": "fenster_b4_anzahl",
+   "soll": [
+    2,
+    2
+   ],
+   "quelle": "Foto-Zaehlung Z-6119-001 (Kreuzstockfenster 2+2 Lichter); Lage M-6119-001..003 (along 11,49..13,44, z 3,20..6,28, Riegel 5,37) auf der gemessenen Wandebene 7,28",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "foto_intern",
+   "protokoll": "Z-6119-001",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 6, Pruefer: eg0/eg2 = ANNAHME, Fenster sitzen daneben): am Modell vor Runde 6 muss sie fehlschlagen"
+   ]
+  },
+  {
+   "name": "Laubenrueckwand Bogen 1: Fensterlichter je Zeile an der Fotolage (along -6,6..-4,1, z 4,0)",
+   "wert": "fenster_b1_anzahl",
+   "soll": [
+    2,
+    2
+   ],
+   "quelle": "Foto-Zaehlung Z-6130-001 (Kreuzstockfenster 2+2 Lichter); Lage M-6130-001..003 (along -6,28..-4,44, z 3,30..6,39, Riegel 5,39) auf der gemessenen Wandebene 7,28",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "foto_intern",
+   "protokoll": "Z-6130-001",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 6, Pruefer: eg0/eg2 = ANNAHME, Fenster sitzen daneben): am Modell vor Runde 6 muss sie fehlschlagen"
+   ]
+  },
+  {
+   "name": "Bogenband (z 7,6) buendig mit der OG-Wand 12,66 - keine Stufe bei z 8,0 (0 = in der Ebene)",
+   "wert": "bandfront_z76",
+   "soll": [
+    -0.03,
+    0.03
+   ],
+   "quelle": "Wolke lot2 Frontebene: Band ueber den Boegen z 7,35-7,9 Spitze n 12,63 (54 281 Punkte), Zwickel z 6-7 12,63, OG-Wand z 10,4-14,4 12,63 (262 568 Punkte) = eine Ebene; Foto (Koordinator/Nutzer): glatter Putz ohne Stufe. Modell: OG 12,66 (rohkoerper_v7), Band 12,578 -> 8 cm Stufe",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2_crop.npy (Histogramm n, Log Runde 6)",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 6, Punkt 2 '8-cm-Stufe'): am Modell mit Bandfront 12,578 muss sie fehlschlagen (+0,08)"
+   ]
+  },
+  {
+   "name": "Arkade Bogen 3: Scheitel innere Leibung z (Bogenmitte)",
+   "wert": "bogen3_scheitel + z_unterkante_lot2",
+   "soll": [
+    7.03,
+    7.18
+   ],
+   "quelle": "Drittes Foto 6119 (14 m, Blick 10 Grad, Ebene Bandfront 12,63 aus der Wolke): Scheitel innere Goldlinie 7,13 (M-6119-005), Bogen 4 7,08 (M-6119-007); 6120 7,11 (M-6120-010) einig; 6261 7,31 (M-6261-003, 34 m, schraeg) = Ausreisser -> verworfen (zwei nahe Fotos einig, Entscheidregel bessere Datenlage)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6119-005",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 6, Scheitel-Widerspruch Bogen 3): am Modell mit scheitel_z 7,24 muss sie fehlschlagen"
    ]
   }
  ],
@@ -1246,20 +1444,56 @@
    "art": "form",
    "foto": "6120",
    "text": "Waagerechte Modellkante bei z 8,0 ueber den Boegen (Stufe 8 cm: Bandfront 12,578 gegen OG-Wand 12,66) - im Foto glatter Putz ohne Kante; zweite Linie knapp darueber (Balkonplatte-Unterseite 7,9 / Rumpf-OG 7,9)",
-   "naechster_schritt": "Bandfront und OG-Wand am Foto/Gitter vergleichen (ebene_abstand bei z 7,0 und 9,0 gegen Kantengitter), dann laibung_tiefe/pfeiler_n oder wand_n angleichen"
+   "naechster_schritt": "Bandfront und OG-Wand am Foto/Gitter vergleichen (ebene_abstand bei z 7,0 und 9,0 gegen Kantengitter), dann laibung_tiefe/pfeiler_n oder wand_n angleichen",
+   "entschieden": "2026-11-09 Agent Runde 6: Wolke Band = OG-Wand (n 12,63) -> laibung_tiefe 0,94 (Bandfront 12,66); Pruefzeile 'Bogenband buendig'"
   },
   {
    "datum": "2026-11-09",
    "wer": "Agent Runde 5 (Bogen 3, zwei Fotos)",
    "art": "widerspruch",
    "text": "Scheitel Bogen 3: M-6120-009 7,11 +-0,11 gegen M-6261-002 7,31 +-0,08 (1,5 sigma); Modell gewichtet 7,24. Boegen 1/2/4 nicht gemessen (gleiche Boegen = ANNAHME)",
-   "naechster_schritt": "dritte Ansicht (frontal, z. B. 6161) fuer Scheitel; Boegen 1/2/4 an Fotos mit freier Sicht messen"
+   "naechster_schritt": "dritte Ansicht (frontal, z. B. 6161) fuer Scheitel; Boegen 1/2/4 an Fotos mit freier Sicht messen",
+   "entschieden": "2026-11-09 Agent Runde 6: drittes Foto 6119 (14 m, 10 Grad) Scheitel 7,13 = 6120 7,11 -> 7,12; 6261 verworfen (schraeg, 34 m, auch Lichte/Kaempfer abweichend). Pruefzeile 'Arkade Bogen 3: Scheitel'. Bogen 4 gemessen (5,27/7,08), Bogen 1 nur schraeg (~7,0), Bogen 2 offen"
   },
   {
    "datum": "2026-11-09",
    "wer": "Nutzer (Koordinator bewiesen), Agent Runde 6",
    "text": "Erkerhelme sind geschweifte Polygonhelme (konkav, Fuss fast erkerbreit, Traufkranz, Nadel mit Knauf); Modell runde5 = gerader Kegel r 0,85 auf gestuftem Erkerdach. Foto 6261 misst das Profil 0,1-0,2 m schmaler und die Traufe 0,7 m tiefer als nu3b + Wolke (Widerspruch, nicht gemittelt).",
    "naechster_schritt": "Grundriss-Seitenzahl am Foto zaehlen (foto_zaehlung, Grate je Helm), drittes Foto fuer Traufhoehe (6261 vs nu3b), Traufkranz/Aufschieblinge messen"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
+   "auto_id": "fehlteile-6261-316-1817",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.46,
+   "z_bis": 17.46,
+   "xyz": [
+    15.42,
+    -6.1,
+    17.46
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.46 m, y=-6.1 m (Zelle [316, 1817, 79], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-2054-1817",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 19.39,
+   "z_bis": 19.39,
+   "xyz": [
+    -4.65,
+    12.6,
+    19.39
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.39 m, y=12.6 m (Zelle [2054, 1817, 79], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

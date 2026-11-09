@@ -1,0 +1,32 @@
+{
+ "id": "M-6130-003",
+ "foto": "6130",
+ "kamera": "K-6130",
+ "ebene": "0.33471889,0.94231803,0=7.28",
+ "name": "EG Bogen 1 Fenster Aussenrahmen unten, Wandebene 7,28",
+ "mess_px": [
+  1452.0,
+  2812.0,
+  1900.0,
+  2800.0
+ ],
+ "P1": [
+  -1.85,
+  8.383,
+  3.261
+ ],
+ "P2": [
+  -3.436,
+  8.946,
+  3.352
+ ],
+ "dz": 0.092,
+ "dy": 0.564,
+ "dx": -1.587,
+ "abstand": 1.686,
+ "z1": 3.261,
+ "z2": 3.352,
+ "unsicherheit_rel": 0.007,
+ "unsicherheit_m": 0.027,
+ "massstab_von": "Kamera K-6130 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=7.28 (+-0.08 m)"
+}

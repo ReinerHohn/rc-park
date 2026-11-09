@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-027",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=7.28",
+ "name": "EG Bogen 3 Fenster Kaempfer/Riegel Mitte (Neuberechnung von M-6120-003 auf Wandebene 7,28 statt 6,54: Wolke + Triangulation M-6120-021)",
+ "mess_px": [
+  1195.0,
+  2685.0,
+  1195.0,
+  2685.0
+ ],
+ "P1": [
+  9.183,
+  4.464,
+  5.383
+ ],
+ "P2": [
+  9.183,
+  4.464,
+  5.383
+ ],
+ "dz": 0.0,
+ "dy": 0.0,
+ "dx": 0.0,
+ "abstand": 0.0,
+ "z1": 5.383,
+ "z2": 5.383,
+ "unsicherheit_rel": 0.0053,
+ "unsicherheit_m": 0.02,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=7.28 (+-0.08 m)"
+}

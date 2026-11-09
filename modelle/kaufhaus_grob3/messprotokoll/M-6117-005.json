@@ -1,0 +1,39 @@
+{
+ "id": "M-6117-005",
+ "typ": "triangulation",
+ "foto": "6117",
+ "name": "Grosses Tor: Goldlinie rechts Kaempfer (Uebergang senkrecht)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6117",
+   "px": [
+    2750.0,
+    2950.0
+   ]
+  },
+  {
+   "kamera": "K-6127",
+   "px": [
+    2734.0,
+    2440.0
+   ]
+  }
+ ],
+ "P": [
+  1.206,
+  7.121,
+  5.228
+ ],
+ "strahl_abstand_m": [
+  0.089,
+  0.089
+ ],
+ "schnittwinkel_grad": [
+  84.7
+ ],
+ "z": 5.228,
+ "unsicherheit_m": 0.114,
+ "massstab_von": "Kameras K-6117, K-6127 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.115,
+ "u": -1.24
+}

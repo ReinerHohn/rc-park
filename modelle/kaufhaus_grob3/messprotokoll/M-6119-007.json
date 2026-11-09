@@ -1,0 +1,32 @@
+{
+ "id": "M-6119-007",
+ "foto": "6119",
+ "kamera": "K-6119",
+ "ebene": "0.33471889,0.94231803,0=12.63",
+ "name": "Bogen (links 6119) innere Goldlinie Scheitel, Ebene Bandfront 12,63 (Wolke)",
+ "mess_px": [
+  450.0,
+  2025.0,
+  450.0,
+  2025.0
+ ],
+ "P1": [
+  15.904,
+  7.754,
+  7.083
+ ],
+ "P2": [
+  15.904,
+  7.754,
+  7.083
+ ],
+ "dz": 0.0,
+ "dy": 0.0,
+ "dx": 0.0,
+ "abstand": 0.0,
+ "z1": 7.083,
+ "z2": 7.083,
+ "unsicherheit_rel": 0.0092,
+ "unsicherheit_m": 0.014,
+ "massstab_von": "Kamera K-6119 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.63 (+-0.1 m)"
+}

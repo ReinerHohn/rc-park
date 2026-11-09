@@ -1,0 +1,32 @@
+{
+ "id": "M-6261-015",
+ "foto": "6261",
+ "kamera": "K-6261",
+ "ebene": "-0.77138,-0.63638,0=-18.4762",
+ "name": "Erkerhelm Ost (u 15,5; im Foto 6261 LINKS) Silhouettenbreite Zeile 1850, Ebene durch Helmachse quer zur Blickrichtung (ersetzt M-6261-004..012 = falsche Achse)",
+ "mess_px": [
+  772.0,
+  1850.0,
+  1003.0,
+  1850.0
+ ],
+ "P1": [
+  19.586,
+  5.292,
+  14.304
+ ],
+ "P2": [
+  18.029,
+  7.18,
+  14.401
+ ],
+ "dz": 0.097,
+ "dy": 1.888,
+ "dx": -1.558,
+ "abstand": 2.449,
+ "z1": 14.304,
+ "z2": 14.401,
+ "unsicherheit_rel": 0.0147,
+ "unsicherheit_m": 0.083,
+ "massstab_von": "Kamera K-6261 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene -0.77138,-0.63638,0=-18.4762 (+-0.5 m)"
+}

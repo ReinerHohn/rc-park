@@ -1,0 +1,58 @@
+{
+ "id": "Z-6130-001",
+ "typ": "zaehlung",
+ "foto": "6130",
+ "datei": "6130_ip_IMG_6130.jpg",
+ "was": "Laubenrueckwand Bogen 1: Fensterlichter je Zeile (Kreuzstockfenster)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-09",
+ "punkte": [
+  {
+   "flaeche": "B1o",
+   "art": "voll",
+   "x": 1560.0,
+   "y": 2100.0
+  },
+  {
+   "flaeche": "B1o",
+   "art": "voll",
+   "x": 1770.0,
+   "y": 2080.0
+  },
+  {
+   "flaeche": "B1u",
+   "art": "voll",
+   "x": 1550.0,
+   "y": 2500.0
+  },
+  {
+   "flaeche": "B1u",
+   "art": "voll",
+   "x": 1760.0,
+   "y": 2500.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "B1o": {
+   "art": "voll",
+   "n": 2
+  },
+  "B1u": {
+   "art": "voll",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 2,
+  "voll_sichtbare_flaechen": 2
+ },
+ "bild": "Z-6130-001.jpg",
+ "ausschnitt": [
+  1300,
+  1830,
+  2020,
+  2750
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Bogen 1 (rechts des Tors in 6130): 1 Kreuzstockfenster, 2 Lichter oben + 2 unten, keine Tuer (Gedenktafel daneben); Lage M-6130-001..003"
+}

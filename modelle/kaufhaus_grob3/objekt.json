@@ -3641,11 +3641,11 @@
    "pfeiler_n": 12.19,
    "pfeiler_form": "rund",
    "boden_z": 1.453,
-   "kaempfer_z": 5.33,
-   "scheitel_z": 7.24,
-   "oeffnung_breite": 5.29,
+   "kaempfer_z": 5.28,
+   "scheitel_z": 7.12,
+   "oeffnung_breite": 5.15,
    "oberkante_z": 8.0,
-   "laibung_tiefe": 0.776,
+   "laibung_tiefe": 0.94,
    "achse_n": [
     0.3338,
     0.9426
@@ -3658,11 +3658,11 @@
     "pfeiler_breite": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json saeulen gemeinsamer Radius 0.441 m (Gleichheitsregel, 7 Pfeiler) -> 2R",
     "pfeiler_tiefe": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json saeulen: runder Pfeiler, 2R",
     "pfeiler_n": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json saeulen Achs-Offset Median 12.19 (Pfeilerfront = Frontebene 12,66)",
-    "kaempfer_z": "Fotomessung Bogen 3 (Ende der inneren Goldlinie am Pfeilerkopf, Ebene Bandfront 12,578): M-6120-008 z 5,25/5,30 (+-0,16), M-6261-001 z 5,35/5,35 (+-0,09); gewichtet 5,33. Boegen 1/2/4 nicht gemessen (ANNAHME gleiche Boegen)",
-    "scheitel_z": "Fotomessung Bogen 3 Scheitel innere Goldlinie: M-6120-009 7,11 (+-0,11), M-6261-002 7,31 (+-0,08); gewichtet 7,24 (Abweichung 1,5 sigma, offen)",
-    "oeffnung_breite": "Fotomessung Bogen 3 Lichte am Kaempfer: M-6120-008 5,17 (+-0,16), M-6261-001 5,33 (+-0,09); gewichtet 5,29; Bogensteg am Kaempfer M-6261-003 0,72 = pitch - Lichte (6,022-5,29 = 0,73)",
+    "kaempfer_z": "Innere Goldlinie: 6119 Bogen 3 5,26/5,29 (M-6119-004), Bogen 4 5,27 (M-6119-006), 6120 5,25/5,30 (M-6120-008/009) -> 5,28; 6261 5,35 (schraeg, 34 m) verworfen",
+    "scheitel_z": "Innere Goldlinie: 6119 Bogen 3 7,13 (M-6119-005), Bogen 4 7,08 (M-6119-007), 6120 Bogen 3 7,11 (M-6120-010); Bogen 1 ~6,99 (M-6130-005, sehr schraeg, unsicher); 6261 7,31 verworfen (Ausreisser, entschieden Runde 6)",
+    "oeffnung_breite": "Lichte am Kaempfer: 6119 Bogen 3 5,12 (M-6119-004), 6120 5,17 (M-6120-008) -> 5,15; 6261 5,33 verworfen; Bogen 2 nicht gemessen (ANNAHME gleich), Bogen 1/4 Kaempfer+Scheitel innerhalb 0,1 m gleich",
     "oberkante_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json vorspruenge z_min_voll 8.0 (Balkon-/Vorsprungsunterkante, 0,5-m-Band) = Oberkante des Bogenbands (ANNAHME: Wand bis Balkon)",
-    "laibung_tiefe": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
+    "laibung_tiefe": "Bandfront = OG-Wand 12,66 (pfeiler_n 12,19 + 0,94/2): Wolke lot2 Band z 7,35-7,9 und OG-Wand z 10,4-14,4 beide Spitze n 12,63 (eine Ebene), Foto glatter Putz (Koordinator R6); vorher 0,776 aus param_wolke_fit (Bandfront 12,578 -> 8-cm-Stufe bei z 8,0)",
     "boden_z": "messungen_wolke.json boden_mitte (Wolke, Gegenproben bestaetigt)",
     "sockel_weite": "ANNAHME Startwert aus Nutzerfotos 8.11. (Oktogon ~1,4x Schaftdurchmesser); Feinwert per Wolkenfit",
     "sockel_hoehe": "ANNAHME Startwert Nutzerfotos",
@@ -3723,6 +3723,30 @@
       "oeffnung_breite": 5.29
      },
      "grund": "Koordinator Runde 5 Auftrag 4: Bogenprofil mit foto_mass gemessen (2 Fotos)"
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 6",
+     "alt": {
+      "laibung_tiefe": 0.776
+     },
+     "neu": {
+      "laibung_tiefe": 0.94
+     }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 6",
+     "alt": {
+      "kaempfer_z": 5.33,
+      "scheitel_z": 7.24,
+      "oeffnung_breite": 5.29
+     },
+     "neu": {
+      "kaempfer_z": 5.28,
+      "scheitel_z": 7.12,
+      "oeffnung_breite": 5.15
+     }
     }
    ],
    "druck_verbinder": true
@@ -4384,41 +4408,50 @@
   },
   {
    "typ": "fensterreihe:eg0",
-   "gruppe": "Fenster Laube EG 1",
+   "gruppe": "Fenster Laube EG 1 (Kreuzstock, Runde 6)",
    "n_fenster": 1,
-   "u_mitte": 11.7517,
+   "u_mitte": 12.47,
    "pitch": 4.9578,
-   "breite": 1.8258,
-   "unterseite_z": 2.1022,
-   "kaempfer_z": 5.3945,
-   "scheitel_z": 5.4941,
-   "wand_n": 7.28,
-   "tiefe": 0.12,
-   "rahmen_b": 0.07,
-   "pfosten_b": 0.05,
-   "riegel_z": 4.387,
-   "riegel_h": 0.07,
+   "breite": 1.95,
+   "unterseite_z": 3.2,
+   "kaempfer_z": 6.18,
+   "scheitel_z": 6.28,
+   "wand_n": 7.24,
+   "tiefe": 0.16,
+   "rahmen_b": 0.1,
+   "pfosten_b": 0.1,
+   "riegel_z": 5.37,
+   "riegel_h": 0.1,
    "kiel": 0.0,
    "achse_n": [
     0.3338,
     0.9426
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
-   "quelle": "ANNAHME: je 1 Fenster (2x2 Scheiben) im 1., 2. und 3. Bogen laut 5 Fassadenfotos 8.11. (Zaehlprotokoll Z-* steht aus, Regel 9); u: Bogen 1 aus Wolkenfragment u -7..-6,2, Bogen 2/3 aus Bogenmitte +-Foto, +-0,5 m unsicher; Wand n 9,45 aus Wolkenschnitt z 3",
-   "glas_d": 0.05,
-   "glas_n": 0.03,
+   "quelle": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+   "glas_d": 0.0,
+   "glas_n": 0.0,
    "bucht": 0.0,
    "werte_quellen": {
     "bucht": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | Bucht von rechts (0 = rechts), einmal aus alter Arkade bestimmt",
-    "u_mitte": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "unterseite_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "kaempfer_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "scheitel_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "riegel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 17.433 m, dz 0.969 m), Kanten-Snap nein (Hoehe x1.353)",
+    "u_mitte": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "unterseite_z": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "kaempfer_z": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "scheitel_z": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "riegel_z": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
     "pitch": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "breite": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "wand_n": "Laubenrueckwand-Ebene n 7,28 statt 6,54 (2026-11-09 R6): Wolke lot2 Histogrammspitze 7,275 (161 282 Punkte Laube) + 2-Foto-Triangulation 6120/6117 Goldquaste Wandflaeche 7,30 (M-6120-021), Glas 7,11-7,20 (M-6120-022..024); 6,54 aus rohkoerper_v7 nie gemessen -> verworfen",
-    "einbindung": "Druck: Rahmen 0,04 m hinter die Wandebene (sonst nur flaechige Beruehrung = eigener Koerper), Ansicht unveraendert"
+    "breite": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "wand_n": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "einbindung": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "riegel_h": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "n_lichter": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "rahmen_b": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "pfosten_b": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "tiefe": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "kiel": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "glas_d": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "glas_n": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "zaehlung": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)"
    },
    "historie": [
     {
@@ -4450,9 +4483,57 @@
      "neu": {
       "wand_n": 7.28
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 6",
+     "alt": {
+      "u_mitte": 11.7517,
+      "breite": 1.8258,
+      "unterseite_z": 2.1022,
+      "kaempfer_z": 5.3945,
+      "scheitel_z": 5.4941,
+      "riegel_z": 4.387,
+      "riegel_h": 0.07,
+      "n_lichter": null,
+      "rahmen_b": 0.07,
+      "pfosten_b": 0.05,
+      "tiefe": 0.12,
+      "wand_n": 7.28,
+      "kiel": 0.0,
+      "glas_d": 0.05,
+      "glas_n": 0.03,
+      "einbindung": 0.04,
+      "zaehlung": null
+     },
+     "neu": {
+      "u_mitte": 12.47,
+      "breite": 1.95,
+      "unterseite_z": 3.2,
+      "kaempfer_z": 6.18,
+      "scheitel_z": 6.28,
+      "riegel_z": 5.37,
+      "riegel_h": 0.1,
+      "n_lichter": 2,
+      "rahmen_b": 0.1,
+      "pfosten_b": 0.1,
+      "tiefe": 0.16,
+      "wand_n": 7.24,
+      "kiel": 0.0,
+      "glas_d": 0.0,
+      "glas_n": 0.0,
+      "einbindung": 0.04,
+      "zaehlung": [
+       "Z-6119-001"
+      ]
+     }
     }
    ],
-   "einbindung": 0.04
+   "einbindung": 0.04,
+   "n_lichter": 2,
+   "zaehlung": [
+    "Z-6119-001"
+   ]
   },
   {
    "typ": "fensterreihe:eg1",
@@ -4801,42 +4882,85 @@
    ]
   },
   {
+   "typ": "quader:eg0_nische",
+   "gruppe": "quader:eg0_nische",
+   "u0": 11.56,
+   "u1": 13.38,
+   "n0": 7.07,
+   "n1": 7.3,
+   "z0": 3.28,
+   "z1": 6.2,
+   "modus": "ausschnitt",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Glasnische hinter dem Rahmen von fensterreihe:eg0 (Rahmeninnenkante = Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebe...); Tiefe 0,23 wie eg1_nische (Glas trianguliert 7,11-7,20 = M-6120-022..024, ANNAHME gleicher Fenstertyp)"
+  },
+  {
+   "typ": "quader:eg2_nische",
+   "gruppe": "quader:eg2_nische",
+   "u0": -6.2,
+   "u1": -4.52,
+   "n0": 7.07,
+   "n1": 7.3,
+   "z0": 3.38,
+   "z1": 6.31,
+   "modus": "ausschnitt",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Glasnische hinter dem Rahmen von fensterreihe:eg2 (Rahmeninnenkante = Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebe...); Tiefe 0,23 wie eg1_nische (Glas trianguliert 7,11-7,20 = M-6120-022..024, ANNAHME gleicher Fenstertyp)"
+  },
+  {
    "typ": "fensterreihe:eg2",
-   "gruppe": "Fenster Laube EG 3",
+   "gruppe": "Fenster Laube EG 3 (Kreuzstock, Runde 6)",
    "n_fenster": 1,
-   "u_mitte": -4.9035,
+   "u_mitte": -5.36,
    "pitch": 2.8556,
-   "breite": 1.1283,
-   "unterseite_z": 3.0802,
-   "kaempfer_z": 6.3516,
-   "scheitel_z": 7.959,
-   "wand_n": 7.28,
-   "tiefe": 0.12,
-   "rahmen_b": 0.07,
-   "pfosten_b": 0.05,
-   "riegel_z": 4.623,
-   "riegel_h": 0.07,
+   "breite": 1.84,
+   "unterseite_z": 3.3,
+   "kaempfer_z": 6.29,
+   "scheitel_z": 6.39,
+   "wand_n": 7.24,
+   "tiefe": 0.16,
+   "rahmen_b": 0.1,
+   "pfosten_b": 0.1,
+   "riegel_z": 5.39,
+   "riegel_h": 0.1,
    "kiel": 0.0,
    "achse_n": [
     0.3338,
     0.9426
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
-   "quelle": "ANNAHME: je 1 Fenster (2x2 Scheiben) im 1., 2. und 3. Bogen laut 5 Fassadenfotos 8.11. (Zaehlprotokoll Z-* steht aus, Regel 9); u: Bogen 1 aus Wolkenfragment u -7..-6,2, Bogen 2/3 aus Bogenmitte +-Foto, +-0,5 m unsicher; Wand n 9,45 aus Wolkenschnitt z 3",
-   "glas_d": 0.05,
-   "glas_n": 0.03,
+   "quelle": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+   "glas_d": 0.0,
+   "glas_n": 0.0,
    "bucht": 2.0,
    "werte_quellen": {
     "bucht": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | Bucht von rechts (0 = rechts), einmal aus alter Arkade bestimmt",
-    "u_mitte": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "unterseite_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "kaempfer_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "scheitel_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "riegel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -11.781 m, dz 0.028 m), Kanten-Snap nein",
+    "u_mitte": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "unterseite_z": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "kaempfer_z": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "scheitel_z": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "riegel_z": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
     "pitch": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "breite": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "wand_n": "Laubenrueckwand-Ebene n 7,28 statt 6,54 (2026-11-09 R6): Wolke lot2 Histogrammspitze 7,275 (161 282 Punkte Laube) + 2-Foto-Triangulation 6120/6117 Goldquaste Wandflaeche 7,30 (M-6120-021), Glas 7,11-7,20 (M-6120-022..024); 6,54 aus rohkoerper_v7 nie gemessen -> verworfen",
-    "einbindung": "Druck: Rahmen 0,04 m hinter die Wandebene (sonst nur flaechige Beruehrung = eigener Koerper), Ansicht unveraendert"
+    "breite": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "wand_n": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "einbindung": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "riegel_h": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "n_lichter": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "rahmen_b": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "pfosten_b": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "tiefe": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "kiel": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "glas_d": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "glas_n": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)",
+    "zaehlung": "Foto 6130 (K-6130 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6130-001 (oben 6,39, along -6,28..-4,44), M-6130-002 (Riegel 5,39), M-6130-003 (unten 3,30); Zaehlung Z-6130-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp)"
    },
    "historie": [
     {
@@ -4868,9 +4992,166 @@
      "neu": {
       "wand_n": 7.28
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 6",
+     "alt": {
+      "u_mitte": -4.9035,
+      "breite": 1.1283,
+      "unterseite_z": 3.0802,
+      "kaempfer_z": 6.3516,
+      "scheitel_z": 7.959,
+      "riegel_z": 4.623,
+      "riegel_h": 0.07,
+      "n_lichter": null,
+      "rahmen_b": 0.07,
+      "pfosten_b": 0.05,
+      "tiefe": 0.12,
+      "wand_n": 7.28,
+      "kiel": 0.0,
+      "glas_d": 0.05,
+      "glas_n": 0.03,
+      "einbindung": 0.04,
+      "zaehlung": null
+     },
+     "neu": {
+      "u_mitte": -5.36,
+      "breite": 1.84,
+      "unterseite_z": 3.3,
+      "kaempfer_z": 6.29,
+      "scheitel_z": 6.39,
+      "riegel_z": 5.39,
+      "riegel_h": 0.1,
+      "n_lichter": 2,
+      "rahmen_b": 0.1,
+      "pfosten_b": 0.1,
+      "tiefe": 0.16,
+      "wand_n": 7.24,
+      "kiel": 0.0,
+      "glas_d": 0.0,
+      "glas_n": 0.0,
+      "einbindung": 0.04,
+      "zaehlung": [
+       "Z-6130-001"
+      ]
+     }
     }
    ],
-   "einbindung": 0.04
+   "einbindung": 0.04,
+   "n_lichter": 2,
+   "zaehlung": [
+    "Z-6130-001"
+   ]
+  },
+  {
+   "typ": "freiform:tor_b2",
+   "gruppe": "Grosses Tor Laube Bogen 2 (Nische)",
+   "kontur": [
+    [
+     -1.24,
+     0.0
+    ],
+    [
+     2.76,
+     0.0
+    ],
+    [
+     2.76,
+     3.7300000000000004
+    ],
+    [
+     2.56,
+     4.089
+    ],
+    [
+     2.36,
+     4.274
+    ],
+    [
+     2.16,
+     4.424
+    ],
+    [
+     1.96,
+     4.555
+    ],
+    [
+     1.76,
+     4.673
+    ],
+    [
+     1.56,
+     4.783
+    ],
+    [
+     1.36,
+     4.885
+    ],
+    [
+     1.16,
+     4.981
+    ],
+    [
+     0.96,
+     5.072
+    ],
+    [
+     0.76,
+     5.16
+    ],
+    [
+     0.56,
+     5.072
+    ],
+    [
+     0.36,
+     4.981
+    ],
+    [
+     0.16,
+     4.885
+    ],
+    [
+     -0.04,
+     4.783
+    ],
+    [
+     -0.24,
+     4.673
+    ],
+    [
+     -0.44,
+     4.555
+    ],
+    [
+     -0.64,
+     4.424
+    ],
+    [
+     -0.84,
+     4.274
+    ],
+    [
+     -1.04,
+     4.089
+    ],
+    [
+     -1.24,
+     3.7300000000000004
+    ]
+   ],
+   "ebene_s": 6.73,
+   "ebene_z": 1.5,
+   "neigung_grad": 0.0,
+   "tiefe": 0.62,
+   "modus": "ausschnitt",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Triangulation 6117+6127 (84-87 Grad): Goldlinie Kaempfer u -1,24 z 5,23 (M-6117-005), Scheitel u 0,76 z 6,66 (M-6117-002) -> Spannweite 4,0 symmetrisch um 0,76; Torblatt n 6,63-6,76 (M-6117-001/003/004) -> Nischengrund 6,73; Anzahl Z-6117-001. ANNAHME: Bogenform z = Kaempfer + Stich*(1-|x|/2)^0,6 (gedrueckter Spitzbogen, nur Kaempfer/Scheitel/Spannweite gemessen); Leibungsschraege und Goldprofil fehlen; Boden 1,5 = rumpf z_boden"
   },
   {
    "typ": "stl_teil:figuren",

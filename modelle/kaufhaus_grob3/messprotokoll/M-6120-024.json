@@ -1,0 +1,39 @@
+{
+ "id": "M-6120-024",
+ "typ": "triangulation",
+ "foto": "6120",
+ "name": "Bogen 3 Fenster: unteres linkes Glasfeld Ecke unten links",
+ "beobachtungen": [
+  {
+   "kamera": "K-6120",
+   "px": [
+    998.0,
+    3172.0
+   ]
+  },
+  {
+   "kamera": "K-6117",
+   "px": [
+    1656.0,
+    3260.0
+   ]
+  }
+ ],
+ "P": [
+  9.955,
+  4.109,
+  3.224
+ ],
+ "strahl_abstand_m": [
+  0.008,
+  0.008
+ ],
+ "schnittwinkel_grad": [
+  38.8
+ ],
+ "z": 3.224,
+ "unsicherheit_m": 0.039,
+ "massstab_von": "Kameras K-6120, K-6117 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.196,
+ "u": 8.013
+}

@@ -1,6 +1,6 @@
 {
  "stl": "modelle/stl/kaufhaus_grob3_1-87.stl",
- "modell_volumen_m3": 9092.593,
+ "modell_volumen_m3": 9086.046,
  "massstab": 87.0,
  "winkel_grad": 60.0,
  "ziel_anteil": 0.01,
@@ -9,14 +9,14 @@
   "d_mm": 2.0,
   "laenge_mm": 6.0,
   "toleranz_mm": 0.2,
-  "anzahl": 53
+  "anzahl": 66
  },
  "schnitte": [
   {
    "achse": "z",
    "wert": 7.9,
-   "grund": "Unterseite 142.8 m2 waagerecht nach unten -> Bettflaeche",
-   "gewinn_m2": 155.85,
+   "grund": "Unterseite 139.0 m2 waagerecht nach unten -> Bettflaeche",
+   "gewinn_m2": 155.73,
    "stifte": [
     [
      10.456,
@@ -49,11 +49,6 @@
      7.9
     ],
     [
-     -3.981,
-     14.518,
-     7.9
-    ],
-    [
      -10.121,
      -3.061,
      7.9
@@ -69,68 +64,68 @@
      7.9
     ],
     [
-     -6.543,
-     7.044,
+     -6.54,
+     7.054,
      7.9
     ]
    ]
   },
   {
    "achse": "u",
-   "wert": 3.6406,
+   "wert": 0.7268,
    "grund": "Bett 244 mm: Teil [304.0, 161.0, 74.0] mm, Mitte der laengsten Achse",
    "stifte": [
     [
-     2.309,
-     -4.386,
+     -0.438,
+     -3.414,
      4.7
     ],
     [
-     5.76,
-     5.361,
+     3.014,
+     6.333,
      7.6
     ],
     [
-     4.442,
-     1.637,
+     1.695,
+     2.61,
      1.8
     ],
     [
-     3.898,
-     0.101,
+     1.151,
+     1.073,
      7.6
     ],
     [
-     1.341,
-     -7.12,
+     -1.406,
+     -6.147,
      1.8
     ],
     [
-     1.341,
-     -7.12,
+     -1.406,
+     -6.147,
      7.6
     ],
     [
-     5.66,
-     5.078,
-     3.56
+     2.83,
+     5.815,
+     3.73
     ],
     [
-     3.157,
-     -1.992,
+     0.41,
+     -1.019,
      1.8
     ]
    ]
   },
   {
    "achse": "u",
-   "wert": 6.5809,
+   "wert": 0.4671,
    "grund": "Bett 244 mm: Teil [293.0, 26.0, 74.0] mm, Mitte der laengsten Achse",
    "stifte": [
     [
-     10.253,
-     9.239,
-     7.569
+     4.483,
+     11.259,
+     7.509
     ]
    ]
   },
@@ -180,48 +175,13 @@
      18.482
     ],
     [
-     4.129,
-     -5.126,
-     11.0
-    ],
-    [
-     9.42,
-     9.815,
-     8.2
-    ],
-    [
-     7.023,
-     3.046,
-     13.8
-    ],
-    [
-     6.028,
-     0.237,
-     8.2
-    ],
-    [
-     8.952,
-     8.495,
-     13.8
-    ],
-    [
-     7.724,
-     5.026,
-     9.09
-    ],
-    [
-     5.424,
-     -1.469,
-     13.8
-    ],
-    [
      4.316,
      -4.598,
      16.14
     ],
     [
-     9.547,
-     10.173,
+     9.543,
+     10.163,
      14.4
     ],
     [
@@ -235,14 +195,14 @@
      14.4
     ],
     [
-     8.555,
-     7.373,
-     17.88
+     8.018,
+     5.855,
+     14.4
     ],
     [
-     7.791,
-     5.214,
-     14.4
+     8.579,
+     7.439,
+     17.88
     ],
     [
      3.191,
@@ -253,6 +213,86 @@
      5.417,
      -1.488,
      17.88
+    ],
+    [
+     3.361,
+     -7.294,
+     8.71
+    ],
+    [
+     9.42,
+     9.815,
+     8.2
+    ],
+    [
+     6.399,
+     1.284,
+     9.22
+    ],
+    [
+     4.893,
+     -2.968,
+     8.2
+    ],
+    [
+     7.928,
+     5.601,
+     9.2
+    ],
+    [
+     7.163,
+     3.442,
+     8.2
+    ],
+    [
+     4.156,
+     -5.051,
+     9.22
+    ],
+    [
+     5.684,
+     -0.734,
+     8.2
+    ],
+    [
+     3.855,
+     -5.899,
+     11.81
+    ],
+    [
+     9.406,
+     9.777,
+     9.82
+    ],
+    [
+     6.749,
+     2.273,
+     13.8
+    ],
+    [
+     5.531,
+     -1.167,
+     9.82
+    ],
+    [
+     7.744,
+     5.082,
+     9.82
+    ],
+    [
+     8.575,
+     7.43,
+     13.8
+    ],
+    [
+     5.09,
+     -2.412,
+     13.8
+    ],
+    [
+     6.636,
+     1.953,
+     10.44
     ]
    ]
   },
@@ -262,18 +302,18 @@
    "grund": "Bett 244 mm: Teil [182.0, 236.0, 246.0] mm, Mitte der laengsten Achse",
    "stifte": [
     [
-     -0.721,
-     3.485,
+     -0.722,
+     3.486,
      18.182
     ],
     [
-     -3.95,
-     14.558,
+     -3.992,
+     14.382,
      18.182
     ],
     [
-     -6.256,
-     7.864,
+     -6.298,
+     7.751,
      18.182
     ]
    ]
@@ -281,17 +321,17 @@
   {
    "achse": "z",
    "wert": 14.1,
-   "grund": "Unterseite 5.5 m2 waagerecht nach unten -> Bettflaeche",
-   "gewinn_m2": 5.45,
+   "grund": "Unterseite 5.4 m2 waagerecht nach unten -> Bettflaeche",
+   "gewinn_m2": 5.93,
    "stifte": [
     [
-     -1.303,
+     -1.302,
      1.145,
      14.1
     ],
     [
-     -4.055,
-     15.572,
+     -4.047,
+     15.622,
      14.1
     ],
     [
@@ -300,24 +340,57 @@
      14.1
     ],
     [
-     -10.127,
+     -10.126,
      -3.071,
      14.1
     ],
     [
-     -6.325,
-     7.666,
+     -6.314,
+     7.694,
      14.1
+    ],
+    [
+     1.259,
+     9.817,
+     14.1
+    ]
+   ]
+  },
+  {
+   "achse": "z",
+   "wert": 9.52,
+   "grund": "Unterseite 4.8 m2 waagerecht nach unten -> Bettflaeche",
+   "gewinn_m2": 4.77,
+   "stifte": [
+    [
+     -1.302,
+     1.145,
+     9.52
+    ],
+    [
+     -10.126,
+     -3.071,
+     9.52
+    ],
+    [
+     2.905,
+     -7.675,
+     9.52
+    ],
+    [
+     0.586,
+     9.472,
+     9.52
     ],
     [
      6.486,
-     2.44,
-     14.1
+     2.439,
+     9.52
     ],
     [
-     1.257,
-     9.754,
-     14.1
+     -6.654,
+     6.732,
+     9.52
     ]
    ]
   }
@@ -332,11 +405,11 @@
     242.3
    ],
    "passt": true,
-   "ueberhang_m2": 12.376,
-   "flaeche_m2": 1622.54,
-   "ueberhang_anteil": 0.00763,
+   "ueberhang_m2": 12.653,
+   "flaeche_m2": 1617.98,
+   "ueberhang_anteil": 0.00782,
    "wasserdicht": true,
-   "volumen_m3": 3011.35,
+   "volumen_m3": 3007.94,
    "rahmen_u": [
     5.6,
     17.54
@@ -356,53 +429,20 @@
   },
   {
    "teil": "teil_02",
-   "lage": "aufrecht",
-   "bett_mm": [
-    181.9,
-    236.5,
-    71.3
-   ],
-   "passt": true,
-   "ueberhang_m2": 10.438,
-   "flaeche_m2": 1093.35,
-   "ueberhang_anteil": 0.00955,
-   "wasserdicht": true,
-   "volumen_m3": 1750.94,
-   "rahmen_u": [
-    -10.22,
-    5.6
-   ],
-   "rahmen_n": [
-    -6.64,
-    13.94
-   ],
-   "rahmen_z": [
-    7.9,
-    14.1
-   ],
-   "schnitte": [
-    0,
-    3,
-    4,
-    5
-   ]
-  },
-  {
-   "teil": "teil_03",
    "lage": "hinten_unten",
    "bett_mm": [
-    155.3,
+    188.8,
     73.6,
     160.5
    ],
    "passt": true,
-   "ueberhang_m2": 1.105,
-   "flaeche_m2": 737.5,
-   "ueberhang_anteil": 0.0015,
+   "ueberhang_m2": 2.0,
+   "flaeche_m2": 861.7,
+   "ueberhang_anteil": 0.00232,
    "wasserdicht": true,
-   "volumen_m3": 1195.51,
+   "volumen_m3": 1447.0,
    "rahmen_u": [
-    3.64,
+    0.73,
     17.15
    ],
    "rahmen_n": [
@@ -419,57 +459,60 @@
    ]
   },
   {
-   "teil": "teil_04",
-   "lage": "kopfueber",
-   "bett_mm": [
-    149.2,
-    160.5,
-    73.6
-   ],
-   "passt": true,
-   "ueberhang_m2": 0.397,
-   "flaeche_m2": 693.57,
-   "ueberhang_anteil": 0.00057,
-   "wasserdicht": true,
-   "volumen_m3": 1105.83,
-   "rahmen_u": [
-    -9.34,
-    3.64
-   ],
-   "rahmen_n": [
-    -6.56,
-    7.4
-   ],
-   "rahmen_z": [
-    1.5,
-    7.9
-   ],
-   "schnitte": [
-    0,
-    1
-   ]
-  },
-  {
-   "teil": "teil_05",
+   "teil": "teil_03",
    "lage": "aufrecht",
    "bett_mm": [
-    172.5,
-    232.9,
-    46.9
+    181.9,
+    236.3,
+    52.6
    ],
    "passt": true,
-   "ueberhang_m2": 0.879,
-   "flaeche_m2": 850.4,
-   "ueberhang_anteil": 0.00103,
+   "ueberhang_m2": 5.695,
+   "flaeche_m2": 932.3,
+   "ueberhang_anteil": 0.00611,
    "wasserdicht": true,
-   "volumen_m3": 1013.3,
+   "volumen_m3": 1294.19,
    "rahmen_u": [
-    -9.4,
+    -10.22,
     5.6
    ],
    "rahmen_n": [
     -6.64,
-    13.63
+    13.92
+   ],
+   "rahmen_z": [
+    9.52,
+    14.1
+   ],
+   "schnitte": [
+    0,
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  {
+   "teil": "teil_04",
+   "lage": "aufrecht",
+   "bett_mm": [
+    180.5,
+    234.4,
+    46.9
+   ],
+   "passt": true,
+   "ueberhang_m2": 0.38,
+   "flaeche_m2": 852.23,
+   "ueberhang_anteil": 0.00045,
+   "wasserdicht": true,
+   "volumen_m3": 1014.39,
+   "rahmen_u": [
+    -10.1,
+    5.6
+   ],
+   "rahmen_n": [
+    -6.64,
+    13.76
    ],
    "rahmen_z": [
     14.1,
@@ -483,21 +526,21 @@
    ]
   },
   {
-   "teil": "teil_06",
+   "teil": "teil_05",
    "lage": "aufrecht",
    "bett_mm": [
-    168.1,
+    166.3,
     222.6,
     128.0
    ],
    "passt": true,
    "ueberhang_m2": 0.295,
-   "flaeche_m2": 915.79,
+   "flaeche_m2": 913.71,
    "ueberhang_anteil": 0.00032,
    "wasserdicht": true,
-   "volumen_m3": 971.91,
+   "volumen_m3": 971.34,
    "rahmen_u": [
-    -9.02,
+    -8.86,
     5.6
    ],
    "rahmen_n": [
@@ -515,52 +558,86 @@
    ]
   },
   {
-   "teil": "teil_07",
+   "teil": "teil_06",
    "lage": "kopfueber",
    "bett_mm": [
-    181.5,
-    26.3,
-    74.1
+    115.7,
+    160.5,
+    73.6
    ],
    "passt": true,
-   "ueberhang_m2": 0.524,
-   "flaeche_m2": 122.85,
-   "ueberhang_anteil": 0.00427,
+   "ueberhang_m2": 1.217,
+   "flaeche_m2": 578.57,
+   "ueberhang_anteil": 0.0021,
    "wasserdicht": true,
-   "volumen_m3": 26.23,
+   "volumen_m3": 841.4,
    "rahmen_u": [
-    -9.21,
-    6.58
+    -9.34,
+    0.73
    ],
    "rahmen_n": [
-    11.5,
-    13.79
+    -6.56,
+    7.4
    ],
    "rahmen_z": [
-    1.45,
+    1.5,
     7.9
    ],
    "schnitte": [
     0,
-    2
+    1
+   ]
+  },
+  {
+   "teil": "teil_07",
+   "lage": "aufrecht",
+   "bett_mm": [
+    171.7,
+    236.5,
+    18.6
+   ],
+   "passt": true,
+   "ueberhang_m2": 1.946,
+   "flaeche_m2": 726.83,
+   "ueberhang_anteil": 0.00268,
+   "wasserdicht": true,
+   "volumen_m3": 457.47,
+   "rahmen_u": [
+    -9.34,
+    5.6
+   ],
+   "rahmen_n": [
+    -6.64,
+    13.94
+   ],
+   "rahmen_z": [
+    7.9,
+    9.52
+   ],
+   "schnitte": [
+    0,
+    3,
+    4,
+    5,
+    6
    ]
   },
   {
    "teil": "teil_08",
    "lage": "kopfueber",
    "bett_mm": [
-    111.3,
+    181.5,
     26.5,
     74.1
    ],
    "passt": true,
-   "ueberhang_m2": 0.331,
-   "flaeche_m2": 78.55,
-   "ueberhang_anteil": 0.00422,
+   "ueberhang_m2": 0.248,
+   "flaeche_m2": 131.7,
+   "ueberhang_anteil": 0.00188,
    "wasserdicht": true,
-   "volumen_m3": 16.69,
+   "volumen_m3": 31.47,
    "rahmen_u": [
-    6.58,
+    0.47,
     16.26
    ],
    "rahmen_n": [
@@ -575,17 +652,49 @@
     0,
     2
    ]
+  },
+  {
+   "teil": "teil_09",
+   "lage": "kopfueber",
+   "bett_mm": [
+    111.3,
+    26.0,
+    74.1
+   ],
+   "passt": true,
+   "ueberhang_m2": 0.174,
+   "flaeche_m2": 83.51,
+   "ueberhang_anteil": 0.00208,
+   "wasserdicht": true,
+   "volumen_m3": 19.8,
+   "rahmen_u": [
+    -9.21,
+    0.47
+   ],
+   "rahmen_n": [
+    11.5,
+    13.76
+   ],
+   "rahmen_z": [
+    1.45,
+    7.9
+   ],
+   "schnitte": [
+    0,
+    2
+   ]
   }
  ],
- "max_ueberhang_anteil": 0.00955,
+ "max_ueberhang_anteil": 0.00782,
  "alle_passen": true,
  "log": [
-  "Schnitt z 7.900: Ueberhang -155.85 m2",
-  "Bettschnitt u 3.641",
-  "Bettschnitt u 6.581",
+  "Schnitt z 7.900: Ueberhang -155.73 m2",
+  "Bettschnitt u 0.727",
+  "Bettschnitt u 0.467",
   "Bettschnitt u 5.603",
   "Bettschnitt z 18.182",
-  "Schnitt z 14.100: Ueberhang -5.45 m2"
+  "Schnitt z 14.100: Ueberhang -5.93 m2",
+  "Schnitt z 9.520: Ueberhang -4.77 m2"
  ],
  "hinweis": "Ueberhang = Flaechen mit Normale steiler als winkel nach unten, ohne Bettflaeche (bett_tol_m); Lage = beste von 6 Achslagen. ANNAHME Stift 2 x 6 mm, Spiel 0,2 mm"
 }

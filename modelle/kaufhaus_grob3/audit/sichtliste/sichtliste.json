@@ -1,0 +1,351 @@
+{
+ "fotos_geprueft": 220,
+ "stufe": 0.2,
+ "bauteile": {
+  "balkonband:haupt": {
+   "foto": "ip_IMG_6236.jpg",
+   "pixel_sichtbar": 1668399,
+   "sichtanteil": 0.729,
+   "im_bild": 0.111,
+   "fremdverdeckt": 0.0,
+   "bild": "balkonband__haupt.jpg",
+   "ausschnitt_px": [
+    0,
+    994,
+    3023,
+    2571
+   ],
+   "kanten_sichtbar": 0.48
+  },
+  "bogenreihe:laube": {
+   "foto": "an_handy_2026-11-06_k_handy_k_10.jpg",
+   "pixel_sichtbar": 4502049,
+   "sichtanteil": 1.0,
+   "im_bild": 0.364,
+   "fremdverdeckt": 0.004,
+   "bild": "bogenreihe__laube.jpg",
+   "ausschnitt_px": [
+    0,
+    0,
+    2100,
+    3999
+   ],
+   "kanten_sichtbar": 0.486
+  },
+  "bruestung:balkon": {
+   "foto": "an_handy_2026-11-06_e_handy_e_15.jpg",
+   "pixel_sichtbar": 2094699,
+   "sichtanteil": 1.0,
+   "im_bild": 0.315,
+   "fremdverdeckt": 0.0,
+   "bild": "bruestung__balkon.jpg",
+   "ausschnitt_px": [
+    0,
+    0,
+    2999,
+    3904
+   ],
+   "kanten_sichtbar": 0.736
+  },
+  "erker:0": {
+   "foto": "an_handy_2026-11-06_i_handy_i_08.jpg",
+   "pixel_sichtbar": 2531274,
+   "sichtanteil": 0.975,
+   "im_bild": 0.778,
+   "fremdverdeckt": 0.015,
+   "bild": "erker__0.jpg",
+   "ausschnitt_px": [
+    1519,
+    439,
+    2999,
+    3018
+   ],
+   "kanten_sichtbar": 0.641
+  },
+  "erker:1": {
+   "foto": "an_handy_2026-11-06_d_handy_d_11.jpg",
+   "pixel_sichtbar": 1690074,
+   "sichtanteil": 0.906,
+   "im_bild": 1.0,
+   "fremdverdeckt": 0.031,
+   "bild": "erker__1.jpg",
+   "ausschnitt_px": [
+    128,
+    119,
+    2142,
+    2277
+   ],
+   "kanten_sichtbar": 0.618
+  },
+  "fensterreihe:eg0": {
+   "foto": "ip_IMG_6192.jpg",
+   "pixel_sichtbar": 3279749,
+   "sichtanteil": 1.0,
+   "im_bild": 0.938,
+   "fremdverdeckt": 0.0,
+   "bild": "fensterreihe__eg0.jpg",
+   "ausschnitt_px": [
+    0,
+    0,
+    2832,
+    4031
+   ],
+   "kanten_sichtbar": 0.731
+  },
+  "fensterreihe:eg1": {
+   "foto": "an_handy_2026-11-06_k_handy_k_12.jpg",
+   "pixel_sichtbar": 757599,
+   "sichtanteil": 1.0,
+   "im_bild": 1.0,
+   "fremdverdeckt": 0.0,
+   "bild": "fensterreihe__eg1.jpg",
+   "ausschnitt_px": [
+    869,
+    1132,
+    1937,
+    3544
+   ],
+   "kanten_sichtbar": 0.725
+  },
+  "fensterreihe:eg1_tuer": {
+   "foto": "an_handy_2026-11-06_k_handy_k_12.jpg",
+   "pixel_sichtbar": 207499,
+   "sichtanteil": 1.0,
+   "im_bild": 1.0,
+   "fremdverdeckt": 0.001,
+   "bild": "fensterreihe__eg1_tuer.jpg",
+   "ausschnitt_px": [
+    1832,
+    2579,
+    2510,
+    3999
+   ],
+   "kanten_sichtbar": 0.912
+  },
+  "fensterreihe:eg2": {
+   "foto": "ip_IMG_6240.jpg",
+   "pixel_sichtbar": 375549,
+   "sichtanteil": 1.0,
+   "im_bild": 1.0,
+   "fremdverdeckt": 0.0,
+   "bild": "fensterreihe__eg2.jpg",
+   "ausschnitt_px": [
+    1645,
+    1984,
+    2657,
+    3512
+   ],
+   "kanten_sichtbar": 0.721
+  },
+  "fensterreihe:og": {
+   "foto": "an_handy_2026-11-06_j_handy_j_11.jpg",
+   "pixel_sichtbar": 1736674,
+   "sichtanteil": 0.944,
+   "im_bild": 0.782,
+   "fremdverdeckt": 0.001,
+   "bild": "fensterreihe__og.jpg",
+   "ausschnitt_px": [
+    0,
+    2035,
+    2999,
+    3528
+   ],
+   "kanten_sichtbar": 0.951
+  },
+  "gaubenreihe:oben": {
+   "foto": "an_handy_2026-11-06_j_handy_j_05.jpg",
+   "pixel_sichtbar": 191424,
+   "sichtanteil": 0.906,
+   "im_bild": 1.0,
+   "fremdverdeckt": 0.017,
+   "bild": "gaubenreihe__oben.jpg",
+   "ausschnitt_px": [
+    33,
+    337,
+    1864,
+    1182
+   ],
+   "kanten_sichtbar": 0.682
+  },
+  "gaubenreihe:unten": {
+   "foto": "an_handy_2026-11-06_j_handy_j_09.jpg",
+   "pixel_sichtbar": 221749,
+   "sichtanteil": 0.889,
+   "im_bild": 0.833,
+   "fremdverdeckt": 0.008,
+   "bild": "gaubenreihe__unten.jpg",
+   "ausschnitt_px": [
+    0,
+    813,
+    2790,
+    1962
+   ],
+   "kanten_sichtbar": 0.794
+  },
+  "helm_geschweift:o": {
+   "foto": "an_handy_2026-11-06_j_handy_j_01.jpg",
+   "pixel_sichtbar": 308599,
+   "sichtanteil": 0.627,
+   "im_bild": 1.0,
+   "fremdverdeckt": 0.009,
+   "bild": "helm_geschweift__o.jpg",
+   "ausschnitt_px": [
+    584,
+    825,
+    1509,
+    3042
+   ],
+   "kanten_sichtbar": 0.586
+  },
+  "helm_geschweift:w": {
+   "foto": "an_handy_2026-11-06_i_handy_i_12.jpg",
+   "pixel_sichtbar": 3177224,
+   "sichtanteil": 0.959,
+   "im_bild": 0.785,
+   "fremdverdeckt": 0.0,
+   "bild": "helm_geschweift__w.jpg",
+   "ausschnitt_px": [
+    617,
+    30,
+    2999,
+    3999
+   ],
+   "kanten_sichtbar": 0.79
+  },
+  "konsolenreihe:balkon": {
+   "foto": "an_handy_2026-11-06_k_handy_k_10.jpg",
+   "pixel_sichtbar": 1081874,
+   "sichtanteil": 0.956,
+   "im_bild": 0.846,
+   "fremdverdeckt": 0.023,
+   "bild": "konsolenreihe__balkon.jpg",
+   "ausschnitt_px": [
+    0,
+    0,
+    2200,
+    3567
+   ],
+   "kanten_sichtbar": 0.596
+  },
+  "quader:gesims": {
+   "foto": "an_handy_2026-11-06_g_handy_g_07.jpg",
+   "pixel_sichtbar": 708424,
+   "sichtanteil": 0.833,
+   "im_bild": 0.5,
+   "fremdverdeckt": 0.009,
+   "bild": "quader__gesims.jpg",
+   "ausschnitt_px": [
+    0,
+    0,
+    2335,
+    1655
+   ],
+   "kanten_sichtbar": 0.597
+  },
+  "quader:laube_rueck": {
+   "foto": "ip_IMG_6175.jpg",
+   "pixel_sichtbar": 5901974,
+   "sichtanteil": 0.897,
+   "im_bild": 0.611,
+   "fremdverdeckt": 0.022,
+   "bild": "quader__laube_rueck.jpg",
+   "ausschnitt_px": [
+    0,
+    269,
+    2850,
+    4031
+   ],
+   "kanten_sichtbar": 0.317
+  },
+  "quader:rumpf_eg": {
+   "foto": "an_handy_2026-11-06_h_handy_h_09.jpg",
+   "pixel_sichtbar": 5292299,
+   "sichtanteil": 0.843,
+   "im_bild": 0.639,
+   "fremdverdeckt": 0.01,
+   "bild": "quader__rumpf_eg.jpg",
+   "ausschnitt_px": [
+    827,
+    0,
+    2999,
+    3875
+   ],
+   "kanten_sichtbar": 0.631
+  },
+  "quader:rumpf_og": {
+   "foto": "an_handy_2026-11-06_p_handy_p_10.jpg",
+   "pixel_sichtbar": 5349549,
+   "sichtanteil": 0.907,
+   "im_bild": 0.5,
+   "fremdverdeckt": 0.036,
+   "bild": "quader__rumpf_og.jpg",
+   "ausschnitt_px": [
+    0,
+    0,
+    2386,
+    3552
+   ],
+   "kanten_sichtbar": 0.509
+  },
+  "satteldach:haupt": {
+   "foto": "an_handy_2026-11-06_j_handy_j_07.jpg",
+   "pixel_sichtbar": 3965249,
+   "sichtanteil": 0.435,
+   "im_bild": 0.485,
+   "fremdverdeckt": 0.009,
+   "bild": "satteldach__haupt.jpg",
+   "ausschnitt_px": [
+    0,
+    405,
+    2999,
+    3999
+   ],
+   "kanten_sichtbar": 0.326
+  },
+  "staffelgiebel:ost": {
+   "foto": "ip_IMG_6202.jpg",
+   "pixel_sichtbar": 4490249,
+   "sichtanteil": 0.973,
+   "im_bild": 0.586,
+   "fremdverdeckt": 0.011,
+   "bild": "staffelgiebel__ost.jpg",
+   "ausschnitt_px": [
+    0,
+    0,
+    2575,
+    3722
+   ],
+   "kanten_sichtbar": 0.623
+  },
+  "staffelgiebel:west": {
+   "foto": "ip_IMG_6181.jpg",
+   "pixel_sichtbar": 2546749,
+   "sichtanteil": 0.801,
+   "im_bild": 0.616,
+   "fremdverdeckt": 0.05,
+   "bild": "staffelgiebel__west.jpg",
+   "ausschnitt_px": [
+    0,
+    0,
+    1856,
+    2359
+   ],
+   "kanten_sichtbar": 0.431
+  },
+  "stl_teil:figuren": {
+   "foto": "ip_IMG_6183.jpg",
+   "pixel_sichtbar": 295849,
+   "sichtanteil": 0.644,
+   "im_bild": 1.0,
+   "fremdverdeckt": 0.03,
+   "bild": "stl_teil__figuren.jpg",
+   "ausschnitt_px": [
+    117,
+    171,
+    2249,
+    2585
+   ],
+   "kanten_sichtbar": 0.228
+  }
+ }
+}

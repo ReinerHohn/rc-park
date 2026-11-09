@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-028",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=7.28",
+ "name": "EG Bogen 3 Tuer Lichte unten (links->rechts) (Neuberechnung von M-6120-004 auf Wandebene 7,28 statt 6,54: Wolke + Triangulation M-6120-021)",
+ "mess_px": [
+  1663.0,
+  3505.0,
+  1983.0,
+  3505.0
+ ],
+ "P1": [
+  7.174,
+  5.177,
+  1.859
+ ],
+ "P2": [
+  5.866,
+  5.642,
+  1.853
+ ],
+ "dz": -0.005,
+ "dy": 0.465,
+ "dx": -1.308,
+ "abstand": 1.388,
+ "z1": 1.859,
+ "z2": 1.853,
+ "unsicherheit_rel": 0.0053,
+ "unsicherheit_m": 0.028,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=7.28 (+-0.08 m)"
+}

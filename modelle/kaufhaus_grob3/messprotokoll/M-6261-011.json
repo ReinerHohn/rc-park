@@ -1,0 +1,32 @@
+{
+ "id": "M-6261-011",
+ "foto": "6261",
+ "kamera": "K-6261",
+ "ebene": "-0.96705,-0.25459,0=0.1781",
+ "name": "Erkerhelm West Silhouettenbreite Zeile 1500 (Ebene durch Helmachse quer zur Blickrichtung)",
+ "mess_px": [
+  887.0,
+  1500.0,
+  921.0,
+  1500.0
+ ],
+ "P1": [
+  1.929,
+  -8.026,
+  28.617
+ ],
+ "P2": [
+  1.754,
+  -7.361,
+  28.528
+ ],
+ "dz": -0.089,
+ "dy": 0.665,
+ "dx": -0.175,
+ "abstand": 0.693,
+ "z1": 28.617,
+ "z2": 28.528,
+ "unsicherheit_rel": 0.0083,
+ "unsicherheit_m": 0.088,
+ "massstab_von": "Kamera K-6261 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene -0.96705,-0.25459,0=0.1781 (+-0.5 m)"
+}
