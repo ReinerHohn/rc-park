@@ -109,12 +109,12 @@ def ebenen():
 
 ORC = {}; ORD = {}
 ORC_LAST = {}
-def ortho(s0, z0, neig, vor, hinter, px=0.025):
-    k = (round(s0, 3), round(z0, 3), round(neig, 2), round(vor, 2), round(hinter, 2), px)
-    if k not in ORC: ORC[k] = ortho_(s0, z0, neig, vor, hinter, px); ORD[k] = ORD["last"]; ORD[k]["meth"] = ORD["meth"]; ORD[k]["lin"] = ORC[k]["linien"]
+def ortho(s0, z0, neig, vor, hinter, px=0.025, schnell=False):
+    k = (round(s0, 3), round(z0, 3), round(neig, 2), round(vor, 2), round(hinter, 2), px, bool(schnell))
+    if k not in ORC: ORC[k] = ortho_(s0, z0, neig, vor, hinter, px, schnell); ORD[k] = ORD["last"]; ORD[k]["meth"] = ORD["meth"]; ORD[k]["lin"] = ORC[k]["linien"]
     ORD["last"] = ORD[k]; ORD["meth"] = ORD[k]["meth"]; ORC_LAST["bild"] = ORC[k]["bild"]; return ORC[k]
 
-def ortho_(s0, z0, neig, vor, hinter, px=0.025):
+def ortho_(s0, z0, neig, vor, hinter, px=0.025, schnell=False):
     """Ortho-Ansicht der Wolke auf einer Ebene (Linie im (s,z)-Schnitt, Neigung um u): Blick von aussen, +u links. Farbbild + erkannte Kanten
     (Farbkanten 'f' und Tiefenkanten 't', LSD) in (u,v). Nur Wolke; Kantenlisten sind Vorschlaege, der Nutzer waehlt (Regel: Wolke legt Lage fest, Nutzer benennt)."""
     import base64
@@ -133,6 +133,10 @@ def ortho_(s0, z0, neig, vor, hinter, px=0.025):
     mk = (~np.isnan(dep)).astype(np.float32); bl = cv2.GaussianBlur(img.astype(np.float32), (0, 0), 2.0); bm = cv2.GaussianBlur(mk, (0, 0), 2.0)
     fill = (bl / np.maximum(bm[:, :, None], 1e-3)).astype(np.uint8); img2 = np.where(mk[:, :, None] > 0, img, fill); img2[bm < 0.02] = 0
     d0 = np.where(np.isnan(dep), -hinter, dep); d0 = cv2.medianBlur(((d0 + hinter) / (vor + hinter) * 255).clip(0, 255).astype(np.uint8), 3)
+    if schnell:                                               # nur Geometrie (fuer SAM/Foto-Entzerrung): keine CPU-Kantensuche auf der Wolken-Ortho
+        jpg = cv2.imencode(".jpg", img2, [cv2.IMWRITE_JPEG_QUALITY, 88])[1].tobytes()
+        ORD["last"] = dict(dep=dep, mk=(bm >= 0.02), px=px, vor=vor, hinter=hinter, u0=float(um), v0=float(vm), s0=s0, z0=z0, neig=neig, gray=cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY), d8=d0); ORD["meth"] = (np.zeros((0, 4)), np.array([]), np.array([]))
+        return dict(bild="data:image/jpeg;base64," + base64.b64encode(jpg).decode(), w=W, h=Hh, u0=float(um), v0=float(vm), px=px, linien=[], s0=s0, z0=z0, neig=neig, punkte=int(k.sum()))
     lsd = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD); hsv = cv2.cvtColor(img2, cv2.COLOR_BGR2HSV); lab = cv2.cvtColor(img2, cv2.COLOR_BGR2LAB)
     kan = {"grau": cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY), "R": img2[:, :, 2], "G": img2[:, :, 1], "B": img2[:, :, 0], "Farbton": hsv[:, :, 0] * 1, "Saettigung": hsv[:, :, 1], "Lab-a": lab[:, :, 1], "Lab-b": lab[:, :, 2], "Tiefe": d0}
     segs = []; mid = []; minl = 0.3 / px
@@ -752,11 +756,15 @@ def synth_pruefstand(d, anz=14, pos_cm=3.0, rot_grad=0.15, breite=1500, seed=5, 
     return dict(tabelle=res, fotos=len(fl), pos_cm=pos_cm, rot_grad=rot_grad, wahrheit=int(len(M)))
 
 SAMP = {}
-def sam_flaechen(d, minfl=0.02, maxanteil=0.6, eps=1.3):
+def sam_flaechen(d, minfl=0.02, maxanteil=0.6, eps=1.3, fein=False):
     """Objekte statt Kontrastlinien: SAM (facebook/sam-vit-base via transformers, Gewichte /media/oem/scan/tools_src/hf_cache) auf der scharfen Ortho des Referenzfotos -> Masken -> Polygone im Format von regionen().
     Wie ein Mensch: Fensterscheiben, Gelaenderband, Statuen, Konsolen, Bogenoeffnungen als eigene Flaechen. Lizenz: SAM Apache-2.0 (Gewichte, Meta)."""
     import torch
     from PIL import Image
+    ck = ("sam", round(d["s0"], 3), round(d["z0"], 3), round(d["neig"], 2), round(d["px"], 4), d["gray"].shape, round(minfl, 4), round(maxanteil, 2), eps, bool(fein))      # Ergebnis je Ebene merken (2 min Rechenzeit)
+    cp = os.path.join(os.path.dirname(OJ), "sam_cache_%s.json" % abs(hash(ck[1:]) % 10**8))
+    if os.path.exists(cp):
+        r0 = json.load(open(cp)); ORD["regs"] = r0["flaechen"][:500]; return r0
     os.environ.setdefault("HF_HOME", "/media/oem/scan/tools_src/hf_cache")
     if "g" not in SAMP:
         from transformers import pipeline
@@ -766,7 +774,20 @@ def sam_flaechen(d, minfl=0.02, maxanteil=0.6, eps=1.3):
         im, ok = foto_ortho(d, f, False); g_ = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY); okk = cv2.erode(ok.astype(np.uint8), np.ones((9, 9), np.uint8)) > 0
         sh.append((float(cv2.Laplacian(g_, cv2.CV_32F)[okk].var()) * okk.mean() if okk.sum() > 5000 else 0.0, f))
     sh.sort(reverse=True); im, ok = foto_ortho(d, sh[0][1], False); H, W = im.shape[:2]
-    okE = cv2.erode(ok.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0; M = []; tw, th_ = int(min(W, 620)), int(min(H, 470)); sx_, sy_ = max(int(tw * 0.65), 1), max(int(th_ * 0.65), 1)     # Kacheln: SAM sieht jedes Objekt in ~2x Aufloesung
+    okE = cv2.erode(ok.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0; M = []
+    if not fein:                                                           # GROB (Nutzer 9.11.: bester Stand): Ganzbild + grosse Kacheln -> Balkon, Statuen, Fenster, Boegen als Ganzes
+        sk = 1200.0 / W if W > 1500 else 1.0; im_s = cv2.resize(im, None, fx=sk, fy=sk, interpolation=cv2.INTER_AREA) if sk < 1 else im
+        r = SAMP["g"](Image.fromarray(im_s[:, :, ::-1]), points_per_batch=32, pred_iou_thresh=0.88, stability_score_thresh=0.92)
+        for m_ in r["masks"]:
+            mm_ = np.asarray(m_.cpu() if hasattr(m_, "cpu") else m_).astype(np.uint8); yy_, xx_ = np.where(mm_)
+            if len(yy_) < 30: continue
+            bx0, bx1, by0, by1 = int(xx_.min() / sk), int(xx_.max() / sk) + 2, int(yy_.min() / sk), int(yy_.max() / sk) + 2; bx1, by1 = min(bx1, W), min(by1, H)
+            if sk < 1: cr = cv2.resize(mm_, (W2 := int(round(mm_.shape[1] / sk)), H2 := int(round(mm_.shape[0] / sk))), interpolation=cv2.INTER_NEAREST)[by0:by1, bx0:bx1] if False else cv2.resize(mm_[int(by0 * sk):int(by1 * sk) + 1, int(bx0 * sk):int(bx1 * sk) + 1], (bx1 - bx0, by1 - by0), interpolation=cv2.INTER_NEAREST)
+            else: cr = mm_[by0:by1, bx0:bx1]
+            cr = cr.astype(bool) & okE[by0:by1, bx0:bx1]
+            if cr.sum() > 30 and (W <= 1500 or cr.sum() > 0.03 * H * W): M.append((bx0, by0, cr))
+        torch.cuda.empty_cache(); tw, th_ = (int(min(W, W * 0.6)), int(min(H, H * 0.6))) if W <= 1500 else (700, 520); sx_, sy_ = max(int(tw * 0.7), 1), max(int(th_ * 0.7), 1)      # feine Ortho (>1500 px): SAM-Kacheln in 1:1 statt Verkleinerung
+    else: tw, th_ = int(min(W, 620)), int(min(H, 470)); sx_, sy_ = max(int(tw * 0.65), 1), max(int(th_ * 0.65), 1)     # Kacheln: SAM sieht jedes Objekt in ~2x Aufloesung
     xs_t = list(range(0, max(W - tw, 0) + 1, sx_)); ys_t = list(range(0, max(H - th_, 0) + 1, sy_))
     if xs_t[-1] != max(W - tw, 0): xs_t.append(max(W - tw, 0))
     if ys_t[-1] != max(H - th_, 0): ys_t.append(max(H - th_, 0))
@@ -779,14 +800,19 @@ def sam_flaechen(d, minfl=0.02, maxanteil=0.6, eps=1.3):
                 mm = np.asarray(m_.cpu() if hasattr(m_, "cpu") else m_).astype(bool); ys2, xs2 = np.where(mm)
                 if len(ys2) < 30: continue
                 if (x0 > 0 and xs2.min() <= 1) or (y0 > 0 and ys2.min() <= 1) or (x0 + tw < W and xs2.max() >= tw - 2) or (y0 + th_ < H and ys2.max() >= th_ - 2): continue     # am Kachelrand abgeschnitten -> verwerfen
-                full = np.zeros((H, W), bool); full[y0:y0 + th_, x0:x0 + tw] = mm; M.append(full & okE)
+                bx0, bx1, by0, by1 = xs2.min(), xs2.max() + 1, ys2.min(), ys2.max() + 1; M.append((x0 + bx0, y0 + by0, mm[by0:by1, bx0:bx1] & okE[y0 + by0:y0 + by1, x0 + bx0:x0 + bx1]))
             torch.cuda.empty_cache()
-    M.sort(key=lambda m: -m.sum()); keep = []; out = []; dep = d["d8"].astype(np.float32) / 255 * (d["vor"] + d["hinter"]) - d["hinter"]; px = d["px"]
-    for m in M:
-        ar = int(m.sum()); m2 = ar * px * px
+    M = [(x_, y_, c_) for x_, y_, c_ in M if c_.any()]; M.sort(key=lambda t: -int(t[2].sum())); keep = []; out = []; dep = d["d8"].astype(np.float32) / 255 * (d["vor"] + d["hinter"]) - d["hinter"]; px = d["px"]
+    def iou_(A, B):
+        ax, ay, am = A; bx, by, bm = B; x0_, y0_ = max(ax, bx), max(ay, by); x1_, y1_ = min(ax + am.shape[1], bx + bm.shape[1]), min(ay + am.shape[0], by + bm.shape[0])
+        if x1_ <= x0_ or y1_ <= y0_: return 0.0
+        i_ = int((am[y0_ - ay:y1_ - ay, x0_ - ax:x1_ - ax] & bm[y0_ - by:y1_ - by, x0_ - bx:x1_ - bx]).sum()); return i_ / max(int(am.sum()) + int(bm.sum()) - i_, 1)
+    for mt in M:
+        ar = int(mt[2].sum()); m2 = ar * px * px
         if m2 < minfl or ar > maxanteil * H * W: continue
-        if any((m & k).sum() / max((m | k).sum(), 1) > 0.8 for k in keep): continue
-        keep.append(m); cs, hi = cv2.findContours(m.astype(np.uint8), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)          # mit Loechern (Ringe: Bogenraender, Rahmen)
+        if any(iou_(mt, k) > 0.8 for k in keep): continue
+        m = np.zeros((H, W), bool); m[mt[1]:mt[1] + mt[2].shape[0], mt[0]:mt[0] + mt[2].shape[1]] = mt[2]       # Vollbild nur fuer behaltene Masken
+        keep.append(mt); cs, hi = cv2.findContours(m.astype(np.uint8), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)          # mit Loechern (Ringe: Bogenraender, Rahmen)
         if not cs: continue
         hi = hi[0]; top = [i for i in range(len(cs)) if hi[i][3] < 0]
         if not top: continue
@@ -799,7 +825,7 @@ def sam_flaechen(d, minfl=0.02, maxanteil=0.6, eps=1.3):
             if ang < 3.0:
                 ys_, xs_ = np.where(m); x0_, x1_ = float(np.percentile(xs_, 0.5)), float(np.percentile(xs_, 99.5)); y0_, y1_ = float(np.percentile(ys_, 0.5)), float(np.percentile(ys_, 99.5)); ap = np.array([[x0_, y0_], [x1_, y0_], [x1_, y1_], [x0_, y1_]], float); rect = 1.0
         out.append(dict(poly=ap.round(1).tolist(), loecher=loecher, m2=round(float(m2), 2), t=round(float(np.median(tt)), 2), rect=round(rect, 2)))
-    out.sort(key=lambda e: -e["m2"]); ORD["regs"] = out[:500]; return dict(flaechen=out[:500], referenz=sh[0][1])
+    out.sort(key=lambda e: -e["m2"]); ORD["regs"] = out[:500]; res_ = dict(flaechen=out[:500], referenz=sh[0][1]); json.dump(res_, open(cp, "w")); return res_
 
 def kantenpunkte(foto, pts, r):
     """naechster Fotokantenpunkt (Canny, 1613 px) je Eingabepunkt innerhalb r px; sonst unveraendert. Rueckgabe Liste [x,y,bewegt]"""
@@ -968,7 +994,7 @@ class H(BaseHTTPRequestHandler):
         elif u.path == "/api/kamera": K = KAM[q.get("foto", [a.foto])[0]]; self._send(200, "application/json", json.dumps(dict(K={k: K[k] for k in ("Rn", "tn", "f", "cx", "cy", "W", "H") if k in K}, s=SW / K["W"])).encode())
         elif u.path == "/ortho": self._send(200, "text/html; charset=utf-8", (open(os.path.join(os.path.dirname(HTML), "editor_ortho.html"), encoding="utf-8").read() + ('<img src="/api/warte" width=1 height=1><script>' + open(q["js"][0]).read() + '</script>' if "js" in q else "")).encode())
         elif u.path == "/api/ortho":
-            f = lambda k, d: float(q.get(k, [d])[0]); self._send(200, "application/json", json.dumps(ortho(f("s0", 12.6), f("z0", 9.5), f("neig", 0), f("vor", 2.0), f("hinter", 0.4), f("px", 0.025))).encode())
+            f = lambda k, d: float(q.get(k, [d])[0]); self._send(200, "application/json", json.dumps(ortho(f("s0", 12.6), f("z0", 9.5), f("neig", 0), f("vor", 2.0), f("hinter", 0.4), f("px", 0.025), bool(int(q.get("schnell", ["0"])[0])))).encode())
         elif u.path == "/api/ebenen":
             E = ebenen()
             self._send(200, "application/json", json.dumps(dict(ebenen=E, u=uax().tolist())).encode())
@@ -1051,7 +1077,7 @@ class H(BaseHTTPRequestHandler):
         elif self.path == "/api/boegen":
             self._send(200, "application/json", json.dumps(dict(boegen=boegen(d["linien"], ORD["last"]["px"]))).encode())
         elif self.path == "/api/sam_flaechen":
-            self._send(200, "application/json", json.dumps(sam_flaechen(ORD["last"], float(d.get("minfl", 0.03)))).encode())
+            self._send(200, "application/json", json.dumps(sam_flaechen(ORD["last"], float(d.get("minfl", 0.03)), fein=bool(d.get("fein", False)))).encode())
         elif self.path == "/api/regionen":
             self._send(200, "application/json", json.dumps(dict(regionen=regionen(d["linien"], float(d.get("minfl", 0.05)), int(d.get("luecke", 12))))).encode())
         elif self.path == "/api/freiform":
