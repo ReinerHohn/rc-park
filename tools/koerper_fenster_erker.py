@@ -217,11 +217,14 @@ def fenstergruppe(m3, mitte, F, basis_z, tief_face, n_licht, w_licht, profil=Tru
     Liefert (abzuege, stege) als Manifold-Listen in lokalen Koordinaten (x, y, z)."""
     z_sohl = F["z_sohl"] if z_sohl is None else z_sohl; z_kaem = F["z_kaempfer"] if z_kaem is None else z_kaem; z_schul = F["z_schulter"] if z_schul is None else z_schul; z_scheit = F["z_scheitel"] if z_scheit is None else z_scheit
     b = F["b_rahmen"]; abz = []; stege = []
+    z_sohl_g, z_kaem_g = z_sohl, z_kaem
+    jl = F.get("je_licht") if profil and len(F.get("je_licht") or []) == n_licht else None   # Teilungsparameter je Licht (aus dem Kanten-Tor zurueckgelesen)
     for i in range(n_licht):
+        if jl: z_sohl = jl[i].get("z_sohl", z_sohl_g); z_kaem = jl[i].get("z_kaempfer", z_kaem_g)
         x0 = (i - n_licht / 2) * w_licht + b / 2; x1 = x0 + w_licht - b; xm = 0.5 * (x0 + x1)
         # Oberkante: Bekroenungsprofil ueber |x| (Gruppenmitte), fuer Erker/2 Lichter: Schulter mit kleinem Vorhangbogen
         xs = np.linspace(x0, x1, 9);
-        if profil: top = [profil_z(F["profil"], abs(x), z_schul, z_scheit, w_licht) - b for x in xs]
+        if profil: top = [profil_z(F["profil"], abs(x), z_schul, z_scheit, w_licht) - b + ((jl[i].get("z_scheitel", F["z_scheitel"]) - F["z_scheitel"]) if jl else 0.0) for x in xs]
         else: top = [z_schul - b + 0.25 * (1 - abs(x - xm) / (0.5 * (x1 - x0))) ** 2 for x in xs]   # ANNAHME Erker: kleiner Vorhangbogen 25 cm
         poly = [[x0, z_sohl + b], [x1, z_sohl + b]] + [[x, z] for x, z in zip(xs[::-1], top[::-1])]
         o = m3.Manifold.extrude(cs(poly), T_OEFF + 0.05).transform(np.array([[1, 0, 0, 0], [0, 0, 1, -T_OEFF], [0, 1, 0, 0]], float))   # y von -T_OEFF bis +0.05

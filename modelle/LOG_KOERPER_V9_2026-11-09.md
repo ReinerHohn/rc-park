@@ -178,3 +178,44 @@ Weder kette_video noch kette_video_alle enthalten Kurven quelle 10/11; `kurven/`
 
 ## Stand v11 nach Runde 4 (kette_video)
 Gate bestanden (0 offene Kanten, 0 Doppelpunkte, 1 Koerper, Genus 69), 9216 Dreiecke, 9135 m^3, H0 377 x 326 x 299 mm; Wolkennaehe 58,9 % / Median 0,12; Rueckwand ohne Nische; Konsolen 10 im Raster (Trapez); Stirnbogen ANNAHME; Decke flach.
+
+## Runde 5 (9.11. abends): Konsolen aus Daten, Gate kette_video_alle, Kaempfer je Licht, Kantenliste fuer das Tor
+**Gate kette_video_alle (generisch behoben):** Die 27 offenen Kanten bzw. 16 Doppelpunkte lagen an der Stirnwand. Ihre Rueckseite lag in der Flaeche `ol` des Hinterhauses, ihre Vorderseite in der Frontebene. Jetzt sitzt die Stirnwand vorn 2 cm zurueck und hinten 2 cm im Hinterhaus (koerper_v11.py). Ergebnis: Roundtrip wasserdicht, 0 offene Kanten, 1 Koerper.
+
+**Konsolen-Sweeps mit Raster (konsolen_sweep.py, verworfen):**
+- Periode = Pfeilerabstand/3 = 2,006 m, Phase und Form per GPU-Sweep.
+- Foto (Stabilitaetskarte) mit Kanten- und Flaechenkontrast und Wolke (Kasten-Kontrast) liefen getrennt.
+- Fotos: Phase -4,88 bei 4,5 MAD. Die Form ist unplausibel (h 1,2 / w 0,2). Synth 1 (Umriss) NICHT bestanden, Synth 2 bestanden.
+- Wolke: Phase -4,86, Breite auf der Suchgrenze (0,6 bzw. 0,9).
+- Nutzerentscheid: beide disqualifiziert. Lehre: Ein Flaechenkontrast auf Linienbildern bevorzugt schmale Kaesten auf Kanten.
+
+**Konsolen aus der Musterzelle (konsolen_zelle.py, uebernommen):**
+- Die Instanzen kommen EINZELN aus dem ungefalteten Wolkenhistogramm. Kernband: 5 bis 60 cm unter der Platte, 15 cm bis 1 m vor der Wand, Schwelle Median + 10 MAD.
+- Ergebnis: 11 Bloecke bei -5,15 / -3,70 / -2,12 / -0,35 / 1,43 / 3,30 / 5,23 / 7,03 / 8,93 / 10,78 / 12,25.
+- **OFFENE BEOBACHTUNG:** Die Abstaende 1,45-1,93 m (Mittel 1,74) widersprechen der Periode 2,006. Deshalb verschmierte jede Faltung mit fester Periode (nur 3,9 MAD). Die Lagen werden je Instanz bestimmt, nicht im Raster.
+- Fotos je Instanz: Mitte ±0,3 m und Halbbreite per Kantenkontrast. 9 von 11 Instanzen weichen ≤ 0,05 m von der Wolke ab (5-17 MAD). Rand-Instanzen: -5,15 liegt auf der Grenze, 12,25 hat 2,9 MAD.
+- Lage: Wolke (alle 11 Bloecke qualifiziert). Breite: Foto-Vorderkanten 0,22-0,34 m, falls qualifiziert, sonst der Wolkenblock (0,4-0,5 m, schwellenabhaengig).
+- Profil (Wolke, an den Instanzen ausgerichtet, ≥ 3 sigma gegen den Lueckenhintergrund): Hoehe 0,55 m unter der Platte. Ausladung 0,54 unten bis 1,22 oben (90-%-Quantil).
+- Overlay 6120 (`audit/kette_video_alle/konsolen/konsolen_zelle_vorher_nachher_ip_IMG_6120.jpg`): alle 5 sitzen auf den echten Konsolen.
+- Overlay 6261: Die Reihe liegt im Bild etwa 0,3-0,4 m zu tief, die Abstaende stimmen. Vermutlich die Kameralage von 6261 (schraeg, weit); das Vorher-Bild zeigt denselben Versatz. Offen.
+- Bau: Huelle aus Profil x Breite, Gate bestanden.
+
+**Kaempfer/Fenster (kaempfer_sweep.py, Diagnose fuer das Tor, NICHT angewendet):**
+- Je Licht-Klasse (Spiegelklasse) getrennt.
+- Kaempfer Seitenlichter: 11,753 (Foto 53,9 MAD, Wolke 11,753).
+- **Kaempfer Mittellicht: 12,283 (Foto 27,4 MAD) / 12,293 (Wolke)** - das bestaetigt den Nutzerbefund.
+- Scheitel Mitte 13,31 (Foto). Scheitel Seite: Foto 12,75 vs Wolke 14,33 - Widerspruch.
+- Sohlbank: Foto auf der Suchgrenze, Wolke 10,27 (MAD entartet).
+- Pfosten dx 0, w 0,896 (Foto 16,6 MAD).
+- Nach dem Nutzerentscheid uebernimmt das kantenneutrale Tor (kanten_tor.py, muster_fit-Agent). Dieses Werkzeug wird nicht weiter ausgebaut.
+
+**Kantenliste fuer das Tor (koerper_kantenliste.py):**
+- `export`: Segmente mit gruppe_id, instanz und spiegel_partner. Teilungsparameter gibt es je Licht-Klasse (fenster.kaempfer.mitte/seite, sohlbank, scheitel, pfosten.*) und je Konsole (seite/unten).
+- `zuruecklesen TOR.json AUSDIR` schreibt Korrekturen in die JSON-Pfade, z. B. `fenster.je_licht[1].z_kaempfer`, und haelt sie in `tor_historie` fest.
+- koerper_fenster_erker.fenstergruppe liest `fenster.je_licht` (z_kaempfer, z_sohl und Scheitelversatz je Licht).
+- Kette: Stufe 5b konsolen_zelle, Stufe 8 Kantenliste.
+- **Komplettlauf (koerper_kette.sh) nach Runde 5:**
+  - kette_video_alle: Gate BESTANDEN, 11 Konsolen, Wolkennaehe 64,5 %, Kantenliste 99 Segmente / 11 Gruppen.
+  - kette_foto (nach foto2, 20:34): Gate BESTANDEN, 11 Konsolen, Wolkennaehe 66,4 %.
+  - Vergleichsbild 6120 (`audit/kette_video_alle/koerper/vergleich_ip_IMG_6120.jpg`): Die Konsolen sitzen auf den echten. Die Fenstergruppen liegen sichtbar versetzt (das Tor ist noch offen).
+- **Rueckweg-Test** (Kopie in scratch): Das Tor-JSON setzt `fenster.je_licht[1].z_kaempfer = 12,283` (Testwert, nicht ins Modell uebernommen). Beim Neubau sitzt der Riegel des Mittellichts bei 12,21-12,35, die Seitenlichter bleiben bei 11,63-11,77. Gate bestanden.

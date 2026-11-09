@@ -131,7 +131,8 @@ def bauen(seg_json, roh_json, fe_json, helme_json, bal_json, ausdir):
     L_("Joche: " + "; ".join(f"{j['typ']} {j['along'][0]:.1f}..{j['along'][1]:.1f} Oeffnung {j['anteil_oeffnung']:.2f} -> {'offen' if j['offen'] else 'WAND'}" for j in joche))
     # Stirnwaende EG (Giebelwand unten) mit Seitenbogen, wenn der Test Oeffnung sagt (Hinweis: Stirn-Test schwach belegt, siehe Log)
     for name, a0 in (("stirn_minus", aw_u + ABST), ("stirn_plus", ae_u - 0.52 - ABST)):   # 2 cm hinter der Stirnflaeche (keine koplanare Naht)
-        wand = m3.Manifold.cube([0.52, abs(of - ol), zp0 + ABST - zb]).translate([a0, min(of, ol), zb]); f_ = FL[name]
+        sg = 1.0 if of > ol else -1.0; yv, yr = of - sg * ABST, ol - sg * ABST   # Front 2 cm zurueck, Rueckseite 2 cm ins Hinterhaus (keine koplanaren/beruehrenden Flaechen)
+        wand = m3.Manifold.cube([0.52, abs(yv - yr), zp0 + ABST - zb]).translate([a0, min(yv, yr), zb]); f_ = FL[name]
         ant = f_["anteil"]["oeffnung"]; auf_n = f_["n_punkte_auf"]
         if ant >= 0.5:
             yl, yh = min(of, ol) + 0.6, max(of, ol) - tp_b - ABST; span = yh - yl; R = span / 2; zm = zc + R_b - R   # Scheitel wie Reihenboegen
@@ -198,9 +199,15 @@ def bauen(seg_json, roh_json, fe_json, helme_json, bal_json, ausdir):
         annahmen.append("OFFEN: konsolen_v11.json fehlt - nur Gitter-Bloecke, keine Wiederholung")
     for k in kons:   # nach unten schmaler werdende Stuetze (Huelle): oben 0,45 breit / Platte-0,15 tief, unten 0,2 breit / 0,15 tief (ANNAHME Trapez; Gitter liefert keine Konsolenprofile)
         x_, zt_, zb_ = k["along"], zp0 + ABST, k["z0"]; d_ = tp - 0.15
+        if k.get("profil"):   # Form aus der Musterzelle (konsolen_zelle.py): Ausladung je z aus der Wolke (an den Instanzen ausgerichtet), Breite je Instanz (Foto-Vorderkanten)
+            hw = k["breite"] / 2; pr = sorted(k["profil"]); pts = []
+            for zz, dd in pr: dd = min(dd, tp - ABST); pts += [[x_ - hw, of - 0.2, zz], [x_ + hw, of - 0.2, zz], [x_ - hw, of + dd, zz], [x_ + hw, of + dd, zz]]
+            dtop = min(pr[-1][1], tp - ABST); pts += [[x_ - hw, of - 0.2, zt_], [x_ + hw, of - 0.2, zt_], [x_ - hw, of + dtop, zt_], [x_ + hw, of + dtop, zt_]]
+            zb0 = pr[0][0] - 0.025; pts += [[x_ - hw, of - 0.2, zb0], [x_ + hw, of - 0.2, zb0], [x_ - hw, of + pr[0][1], zb0], [x_ + hw, of + pr[0][1], zb0]]
+            teile.append(m3.Manifold.hull_points(pts)); continue
         teile.append(m3.Manifold.hull_points([[x_ - 0.225, of - 0.2, zt_], [x_ + 0.225, of - 0.2, zt_], [x_ - 0.225, of + d_, zt_], [x_ + 0.225, of + d_, zt_], [x_ - 0.1, of - 0.2, zb_], [x_ + 0.1, of - 0.2, zb_], [x_ - 0.1, of + 0.15, zb_], [x_ + 0.1, of + 0.15, zb_]]))
     balkon["konsolen"] = kons; n_ann = sum(1 for k in kons if k["status"].startswith("ANNAHME"))
-    L_(f"Konsolen: {len(kons)} ({n_ann} nur ANNAHME Wiederholung)"); annahmen.append("ANNAHME: Konsolenform Trapez (oben 0,45 x Platte-0,15, unten 0,2 x 0,15), Lagen nur aus dem Periodenraster (konsolen_v11.json, verworfene Gitterbloecke dort)")
+    L_(f"Konsolen: {len(kons)} ({n_ann} nur ANNAHME Wiederholung)"); annahmen.append("Konsolen: Form aus konsolen_v11.json 'zelle' (Wolkenprofil je z, Foto-Breite je Instanz; Huelle = konvex, Voluten nicht modelliert)" if any(k.get("profil") for k in kons) else "ANNAHME: Konsolenform Trapez (oben 0,45 x Platte-0,15, unten 0,2 x 0,15), Lagen nur aus dem Periodenraster (konsolen_v11.json, verworfene Gitterbloecke dort)")
     # ---------- Erker + Schaft + Helme (v10)
     erker_teile = []; helme_lok = []
     for h in HL:
