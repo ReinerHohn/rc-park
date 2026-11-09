@@ -92,7 +92,7 @@ Format: Lehre (allgemein formuliert) | Anlass | wo im Werkzeug/Ablauf umgesetzt.
 1. `tools/objekt_anlegen.py`, Fotos und Video nach `/media/oem/scan/rc-park_daten/<objekt>/`.
 2. SfM + Stabilitätskarten (Nachtlauf).
 3. `gitter_kette.sh <objekt>` (Nachtlauf), morgens Bericht + Viewer ansehen.
-4. Formfamilien wählen (Fotos aus 3 Richtungen), Generator-Masstabelle aus dem Gitter füllen, `bauen_abnehmen.sh`.
+4. Formfamilien wählen (Fotos aus 3 Richtungen), Generator-Masstabelle aus dem Gitter füllen, `bauen_abnehmen.sh`. Je Bauteil ein Agentenauftrag nach `modelle/VORLAGE_BAUTEIL_RUNDE.md` (Stufe 0 Formbeschreibung vor jeder Messung).
 5. Zählprotokolle am Foto, foto_diff, Sichtblatt mit Fehlerliste.
 6. H0-Teileteilung, Slicer-Vorcheck, Teil neben Foto (Regel 9b), Probedruck eines Ausschnitts.
 

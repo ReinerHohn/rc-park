@@ -35,6 +35,7 @@ Je Objekt `modelle/<objekt>/objekt.json` + `masstabelle.json` (Masse = Daten mit
 8. Commit-Sperre: `tools/git_hooks/pre-commit` prueft ueberwachte Dateien. Aktivierung nur durch den Nutzer: `git config core.hooksPath tools/git_hooks`.
 
 ## Vor neuen Versuchen lesen
+- **Bauteil neu/falsch → Agentenauftrag immer aus `modelle/VORLAGE_BAUTEIL_RUNDE.md`** (Stufe 0 Formbeschreibung aus >=3 Fotos vor jeder Messung, feste Berichtform; Nutzerwunsch 9.11.)
 - `modelle/NICHTS_GEBRACHT.md` (Kurzindex der Sackgassen Kaufhaus Wolke->Netz, 1 Zeile je Versuch; zuerst ansehen, neue Fehlschlaege SOFORT eintragen)
 - `modelle/VERSUCHSREGISTER_MARTINSTOR.md` (was schon probiert wurde, Fehlschlaege, Ursachenanalyse I, Dach/Spitze J-J5, Seiten K)
 - `modelle/LIZENZ_WERKZEUGE.md` (Verkauf geplant: NC-Werkzeuge nur zum Testen, eintragen)
