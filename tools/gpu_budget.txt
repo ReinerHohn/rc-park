@@ -10,3 +10,7 @@ hypso_gpu.py 2050 Spitze 1684 nur --selbsttest (2 Laeufe); Echtlauf nicht gemess
 dicht_handy.py 1030 Spitze 856 (Beobachtung am LAUFENDEN rcpark-video_dicht = dicht_video.py PatchMatch max-size 1600, 2,5 min Zeitreihe, GPU 100 %); kein eigener Lauf, Wert gilt nur bei max-size 1600
 # NICHT eingetragen (exklusiv): foto_silhouette_gpu.py (6760 gemessen, Caching-Allocator/ungebremst), foto_profil_gpu.py (gleicher Kern, nicht gemessen),
 #   sfm_netz.py (SiftGPU ohne max_image_size-Kappung -> bis 7400), nullstart.py/Orchestratoren (Summe der Kindprozesse), fenster_ml.py (laeuft auf CPU: 0 MiB, kein GPU-Werkzeug), render_kern.py (Bibliothek) u. a. siehe Untersuchung
+gitter_kurven.py 2500 Schaetzung (Konsens 2,2 Mio Pkt + knn ~300k; set_per_process_memory_fraction im Werkzeug, --gpu_mb); noch nicht mit gpu_messen.py gemessen
+helm_fit.py 1600 Deckel torch.cuda.set_per_process_memory_fraction(0.18) = 1,5 GB (RCPARK_GPU_ANTEIL), Spitze nicht gemessen; OOM 9.11. bei fremdem 6-GB-Prozess
+gauben_fit.py 1600 Deckel wie helm_fit.py (0.18), Spitze nicht gemessen
+baluster_fit.py 700 Deckel RCPARK_GPU_ANTEIL=0.08; nvidia-smi 9.11.: 130 MiB waehrend des Laufs

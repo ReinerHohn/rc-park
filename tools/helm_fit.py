@@ -13,13 +13,15 @@ import sys, os, json, numpy as np, torch, cv2
 a = sys.argv; g = lambda k, d, t=float: t(a[a.index(k) + 1]) if k in a else d
 ZMIN, ZMAX, N, TOL, MIND = g("--zmin", 15.0), g("--zmax", 30.0), g("--n", 8, int), g("--tol", 0.12), g("--mind", 1500, int)
 EBENEN, ETOL, EANTEIL, NFOTO = g("--ebenen", 2, int), g("--etol", 0.25), g("--eanteil", 0.2), g("--nfoto", 3, int)
-CAP, FUSS_MIN, KMAX = g("--cap", 300.0), g("--fuss_min", 0.25), g("--kmax", 0.25)              # ANNAHME Formklasse Helm: Halbwinkel <= atan(0,25) = 14 Grad (Turmhelm), flachere Kegel sind Walme/Zelte                                       # Scheibenkappung der Inlier-Gewichte; Mindestbelegung des Mantels je Scheibe fuer den Fuss
+CAP, FUSS_MIN, KMAX, MINLIER = g("--cap", 300.0), g("--fuss_min", 0.25), g("--kmax", 0.25), g("--minlier", 1000, int)             # ANNAHME Formklasse Helm: Halbwinkel <= atan(0,25) = 14 Grad (Turmhelm), flachere Kegel sind Walme/Zelte                                       # Scheibenkappung der Inlier-Gewichte; Mindestbelegung des Mantels je Scheibe fuer den Fuss
 dev = "cuda"; torch.cuda.set_per_process_memory_fraction(float(os.environ.get("RCPARK_GPU_ANTEIL", "0.18")))         # VRAM-Budget (<= 1,5 GB von 8,2)
+torch.manual_seed(g("--seed", 0, int)); RANSAC_IT = g("--ransac_it", 12000, int)                   # Laeufe v4/v5/v6 (9.11.) gaben am grossen Helm Spitze 22,44/22,76/26,55: Ebenen-RANSAC zufaellig -> fester Seed + 3x Iterationen
 Z = np.load(a[1]); P = Z["P"]; P = P[(P[:, 2] > ZMIN) & (P[:, 2] < ZMAX)]; Pt = torch.tensor(P, device=dev, dtype=torch.float32)
 print("Punkte im Hoehenband", len(P), flush=True)
 
 NZ = tuple(float(x) for x in g("--nz", "0.3,0.85", str).split(","))
-def ebene_ransac(Q, tol=ETOL, it=4000, nz=NZ):
+def ebene_ransac(Q, tol=ETOL, it=None, nz=NZ):
+    it = it or RANSAC_IT
     """Beste geneigte Ebene (3 Punkte -> Ebene, Inlier |Abstand| < tol) in Q [M,3] GPU; nur Normalen mit nz in --nz (0,3..0,85) = Dachneigung 32-72 Grad
     (Waende nz~0, steile Kegelfacetten nz~k und Ebenen durch Kegelflanken > 72 Grad bleiben, flache/waagerechte Traufringe nz > 0,85 bleiben). Gibt (Inlier, n, d) oder None."""
     M = len(Q)
@@ -152,7 +154,7 @@ def drehung(h):
 helme = []; seg = []
 for c in K:
     h = fit(c[0], c[1])
-    if h is None or h["inlier"] < 150: print("Kandidat", c[:2], "kein Fit", flush=True); continue
+    if h is None or h["inlier"] < MINLIER: print("Kandidat", c[:2], "kein Fit / zu wenig Inlier (%s < %d; Lauf v5: Staffelgiebel-Kopf -5,8/10,1 mit 782 Inliern, r 0,52)" % (None if h is None else h["inlier"], MINLIER), flush=True); continue
     if h["k"] > KMAX: print("Kandidat", c[:2], "verworfen: Neigung k %.2f > %.2f (Halbwinkel %.0f Grad: flacher Kegel/Walm, kein Helm; Lauf v4 fand so Gaube+Dachschraege bei 3,7/10,2)" % (h["k"], KMAX, np.rad2deg(np.arctan(h["k"]))), flush=True); continue
     if h["anteil"] < g("--anteil", 0.3) or h["sektoren"] < g("--sektoren", 10, int):
         print("Kandidat", c[:2], "verworfen: Anteil %.2f Sektoren %d (Giebel/Dachkante, kein Helm); Fit war Mitte %.2f %.2f Spitze %.2f Fuss %.2f r %.2f k %.2f Inlier %d Zyl %d" % (h["anteil"], h["sektoren"], h["cx"], h["cy"], h["z_spitze"], h["z_fuss"], h["r_fuss"], h["k"], h["inlier"], h["punkte_zylinder"]), flush=True); continue

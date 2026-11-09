@@ -16,6 +16,7 @@ from pytorch3d.ops import ball_query
 a = sys.argv; g = lambda k, d, t=float: t(a[a.index(k) + 1]) if k in a else d
 ZMIN, ZMAX, HMIN, HMAX, TOL, MIND = g("--zmin", 10.0), g("--zmax", 30.0), g("--hmin", 0.2), g("--hmax", 1.5), g("--tol", 0.12), g("--mind", 150, int)
 MAXB, GLEICH, GTOL, EBENEN, RHO, FOTOMIN = g("--maxbreite", 3.5), g("--gleich", 1, int), g("--gleich_tol", 0.15), g("--ebenen", 2, int), g("--rho", 0.25), g("--fotomin", 0.4)
+ALLE_PUNKTE, PX = g("--alle_punkte", 0, int), g("--px", 3, int)
 dev = "cuda"; torch.cuda.set_per_process_memory_fraction(float(os.environ.get("RCPARK_GPU_ANTEIL", "0.18")))
 Z = np.load(a[1]); P = Z["P"]; P = P[(P[:, 2] > ZMIN) & (P[:, 2] < ZMAX)].astype(np.float32); Pt = torch.tensor(P, device=dev)
 print("Punkte im Hoehenband", len(P), flush=True)
@@ -107,9 +108,9 @@ def segmente_gaube(E, t0, s0, w, hf, ht, tiefe):
 def inlier_score(C, S, rho):
     """C [N,3], S [B,8,2,3] -> Score [B] = Inlier (Abstand zu einer Kante < TOL) - Laenge*rho."""
     A_ = S[:, :, 0]; B_ = S[:, :, 1]; AB = B_ - A_; L2 = (AB ** 2).sum(-1).clamp(min=1e-9)                     # [B,8,3]
-    best = torch.full((S.shape[0],), -1e9, device=dev)
-    for c0 in range(0, S.shape[0], 256):
-        sl = slice(c0, c0 + 256); Ap = A_[sl][:, :, None]; ABp = AB[sl][:, :, None]                        # [b,8,1,3]
+    best = torch.full((S.shape[0],), -1e9, device=dev); blk = max(8, min(256, int(1.5e7 / (8 * max(len(C), 1)))))   # Blockgroesse nach Punktzahl (VRAM-Deckel 1,5 GB; OOM Lauf v6 bei 256 x 8 x 20k Punkten)
+    for c0 in range(0, S.shape[0], blk):
+        sl = slice(c0, c0 + blk); Ap = A_[sl][:, :, None]; ABp = AB[sl][:, :, None]                        # [b,8,1,3]
         tt = (((C[None, None] - Ap) * ABp).sum(-1) / L2[sl][:, :, None]).clamp(0, 1)                      # [b,8,N]
         dist = (C[None, None] - (Ap + tt[..., None] * ABp)).norm(dim=-1).min(1).values                     # [b,N]
         inl = (dist < TOL).sum(1).float(); best[sl] = inl - rho * L2[sl].sqrt().sum(1)
@@ -136,7 +137,11 @@ def fit(C, E):
 
 gauben = []
 for C, ie in cl:
-    E = ebenen[ie]; gparams, S = fit(C, E); gparams["ebene"] = ie; O = S[3, 0].cpu().numpy() * 0.5 + S[3, 1].cpu().numpy() * 0.5
+    E = ebenen[ie]
+    if ALLE_PUNKTE:                                                                              # Fit auf ALLEN Sweep-Punkten im Umfeld des Clusters (Kehlen/Firstende liegen IN der Dachebene, nicht 0,2 m darueber)
+        t = (C * E["et"][None]).sum(1); s = (C * E["eh"][None]).sum(1); hh = (Pt * E["n"][None]).sum(1) + E["d"]; tp = (Pt * E["et"][None]).sum(1); sp = (Pt * E["eh"][None]).sum(1)
+        m = (tp > t.min() - 0.4) & (tp < t.max() + 0.4) & (sp > s.min() - 0.4) & (sp < s.max() + 1.5) & (hh > -0.3) & (hh < 2.0); C = Pt[m]
+    gparams, S = fit(C, E); gparams["ebene"] = ie; O = S[3, 0].cpu().numpy() * 0.5 + S[3, 1].cpu().numpy() * 0.5
     gparams.update(mitte_front=[float(x) for x in O]); gauben.append(gparams)
     print("  Gaube Front %.2f %.2f %.2f: Breite %.2f  First +%.2f  Traufe +%.2f  Tiefe %.2f  Inlier %d/%d  Score %.0f" % (*O, gparams["breite"], gparams["h_first"], gparams["h_traufe"], gparams["tiefe"], gparams["inlier"], len(C), gparams["score"]), flush=True)
 
@@ -174,7 +179,7 @@ def kanten_belegung(S, KAM, sd):
         V = cv2.imread(pf, 0); H, W = V.shape; sj = W / k["W"]; X = (R @ pts.T + t[:, None]); x = X[0] / X[2]; y = X[1] / X[2]; f1 = 1 + k["params"][3] * (x * x + y * y)
         u = np.round((k["f"] * x * f1 + k["cx"]) * sj).astype(int); v = np.round((k["f"] * y * f1 + k["cy"]) * sj).astype(int); ok = (u >= 3) & (u < W - 3) & (v >= 3) & (v < H - 3)
         if ok.sum() < 0.8 * len(u): continue
-        Vd = cv2.dilate(V, np.ones((7, 7), np.uint8)); vals.append(float((Vd[v[ok], u[ok]] >= 0.3 * 255).mean())); nf += 1
+        Vd = cv2.dilate(V, np.ones((2 * PX + 1, 2 * PX + 1), np.uint8)); vals.append(float((Vd[v[ok], u[ok]] >= 0.3 * 255).mean())); nf += 1
         if nf >= 40: break
     return dict(fotos=nf, belegung=float(np.mean(vals)) if vals else None)
 
