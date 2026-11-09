@@ -27,3 +27,8 @@ Phasenkongruenz auf Ortho (Präzision 0,06–0,15), DexiNed, Subpixel-Canny, Lab
 
 ## Offene Lizenz-/Annahmefragen
 Keine neuen Fremdgewichte, nur OpenCV/PyTorch-Standardoperationen.
+
+## Ergebnis Tiefen-Sweep (9.11. nacht) `tools/kanten_tiefe_sweep.py`
+Statt Linienpaare zu triangulieren: jedes starke Kantenpixel (Karte >= 0,6) eines Referenzfotos wird entlang seines Strahls (4-90 m, 360 Tiefen) durchgesweept; je Tiefe zaehlt der Anteil der 12 Nachbarfotos (Basis 1-25 m), in denen an der Projektion wieder eine stabile Kante steht (>= 0,4, 1 px Toleranz). Peak (>= 0,7 und zweiter Peak <= 0,8 x erster) = 3D-Kantenpunkt. 5 s je Referenzfoto auf der GPU; 80 Referenzfotos -> 631 022 Punkte.
+Befund: Voxel-Konsens (>= 2-3 verschiedene Referenzfotos) zeigt Boegen, Fenster UND das Dach: Firstlinie bei z ~ 27 m (x -6..19), Traufe bei z ~ 14,5 m, Giebelkanten an den Enden, Dachneigung in der Seitenansicht. Das Dach lag also ueber der Obergrenze, die der alte Suchkasten (Wolken-Perzentil + 8 m) zuliess, und die Wolke hat dort kaum Punkte. Segmente: `segmente_hoch_ts.json` (45, RANSAC tol 0,12 m, auf Punkten z > 14), `segmente_tsweep.json` (513, tol 0,05 m, Konsens >= 3).
+Offen: Ein Teil der Dachpunkte ist duenn gepunktet; Staffelgiebel-Zacken noch nicht als Segmente; Suchkasten der Triangulation (HI z) anheben; Schleife gegen Stabilitaetskarten.
