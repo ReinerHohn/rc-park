@@ -1,6 +1,7 @@
 """3D-Viewer: Wolke (Fotofarben) + Kantenpunkte + Drahtgitter, Ebenen schaltbar, eigener Canvas-Renderer (kein WebGL noetig).
-Aufruf: viewer_kanten_bauen.py OUT.html [--seg SEGMENTE.json] [--kp KANTENPUNKTE.npy] [--n 120000] [--koerper KOERPER.stl] (Formkanten > 25 Grad als eigene Ebene)"""
+Aufruf: viewer_kanten_bauen.py OUT.html [--seg SEGMENTE.json] [--kp KANTENPUNKTE.npy] [--n 120000] [--koerper KOERPER.stl] [--objekt NAME] (Formkanten > 25 Grad + schattierte Flaeche; Front = Fassade von aussen)"""
 import sys, json, base64, numpy as np
+if len(sys.argv) < 2 or sys.argv[1].startswith("-"): sys.exit(__doc__)
 def opt(n, d, t=str): return t(sys.argv[sys.argv.index(n) + 1]) if n in sys.argv else d
 D = "/media/oem/scan/rc-park_daten/kaufhaus_alle"; Wd = "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2"
 P = np.load(Wd + "/j_voll_lot2_crop.npy", mmap_mode="r"); rgb = np.load(Wd + "/j_crop_rgb2.npy", mmap_mode="r"); print("Wolke", P.shape, "RGB", rgb.shape, rgb.dtype, flush=True)
@@ -18,9 +19,20 @@ S = json.load(open(opt("--seg", D + "/segmente_karte4.json")))["segmente"]
 ctr = np.median(W, axis=0); SC = 400.0
 def q(a): return base64.b64encode(np.round((np.asarray(a, np.float32) - ctr) * SC).astype("<i2").tobytes()).decode()
 seg = np.array([[*s[0], *s[1]] for s in S], np.float32); sq = np.array([s[2] for s in S], np.uint8)
-KB = np.zeros((0, 6), np.float32)
+KB = np.zeros((0, 6), np.float32); MP = np.zeros((0, 3), np.float32); MC = np.zeros(0, np.uint8)
 if "--koerper" in sys.argv:
     import trimesh; m = trimesh.load(opt("--koerper", "")); e = m.face_adjacency_edges[m.face_adjacency_angles > np.radians(25)]; KB = m.vertices[e].reshape(-1, 6).astype(np.float32); print("Koerper-Formkanten", len(KB), flush=True)
-data = {"kb": q(KB.reshape(-1, 3)) if len(KB) else "", "nkb": len(KB), "ctr": ctr.tolist(), "sc": SC, "w": q(W), "c": base64.b64encode(C.tobytes()).decode(), "k": q(KP), "s": q(seg.reshape(-1, 3)), "sq": base64.b64encode(sq.tobytes()).decode(), "nw": len(W), "nk": len(KP), "ns": len(S)}
+    # 10.11. Nutzerbefund "Modell spiegelverkehrt, Saeulen fehlen": Formkanten ohne Verdeckung zeigen die Fassade von hinten wie gespiegelt,
+    # runde Pfeiler haben keine Kante > 25 Grad. Deshalb zusaetzlich die Flaeche als schattierte Punkte (z-gepuffert, verdeckt Hinteres).
+    MP, fi = trimesh.sample.sample_surface_even(m, opt("--n_flaeche", 400000, int), seed=0) if hasattr(trimesh.sample, "sample_surface_even") else trimesh.sample.sample_surface(m, opt("--n_flaeche", 400000, int))
+    nrm = m.face_normals[fi]; L = np.array([0.35, -0.55, 0.76]); L /= np.linalg.norm(L)
+    MC = np.clip(70 + 150 * np.abs(nrm @ L), 0, 255).astype(np.uint8); print("Modellflaeche Punkte", len(MP), flush=True)
+# Front-Ansicht = Hauptfassade VON AUSSEN (Blick entgegen der Fassadennormale achse_n aus objekt.json; --objekt NAME). Ohne Angabe Blick nach +y.
+fy = 0.0
+if "--objekt" in sys.argv:
+    _o = json.load(open(__file__.replace("tools/viewer_kanten_bauen.py", f"modelle/{opt('--objekt', '')}/objekt.json")))
+    _n = next((b["achse_n"] for b in _o.get("bauteile", []) if b.get("achse_n") and b.get("aktiv", True)), None)
+    if _n: fy = float(np.arctan2(-_n[0], -_n[1])); print("Front-Blick entgegen achse_n", _n, "yaw", round(fy, 3), flush=True)
+data = {"fy": fy, "m": q(MP) if len(MP) else "", "mc": base64.b64encode(MC.tobytes()).decode(), "nm": len(MP), "kb": q(KB.reshape(-1, 3)) if len(KB) else "", "nkb": len(KB), "ctr": ctr.tolist(), "sc": SC, "w": q(W), "c": base64.b64encode(C.tobytes()).decode(), "k": q(KP), "s": q(seg.reshape(-1, 3)), "sq": base64.b64encode(sq.tobytes()).decode(), "nw": len(W), "nk": len(KP), "ns": len(S)}
 html = open(__file__.replace("viewer_kanten_bauen.py", "viewer_kanten_vorlage.html")).read().replace("/*DATA*/", "const DATA=" + json.dumps(data) + ";")
 open(sys.argv[1], "w").write(html); print("geschrieben", sys.argv[1], len(html) // 1024, "KB")

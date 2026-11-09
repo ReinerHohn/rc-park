@@ -21,6 +21,7 @@ button{font:inherit;padding:4px 10px;border:1px solid var(--ln);background:var(-
 <label><input type="checkbox" id="lw" checked>Wolke (Fotofarben)</label>
 <label><input type="checkbox" id="lk" checked><span class="sw" style="background:#e08a1e"></span>Kantenpunkte (Tiefen-Sweep)</label>
 <label><input type="checkbox" id="ls" checked>Drahtgitter</label>
+<label id="lmw"><input type="checkbox" id="lm" checked><span class="sw" style="background:#9a9a9a"></span>Modell (Fläche, verdeckt)</label>
 <label id="lkbw"><input type="checkbox" id="lkb" checked><span class="sw" style="background:#7a4fc9"></span>Modell (Formkanten)</label>
 <div class="mut" style="margin:2px 0 6px 24px"><span class="sw" style="background:#d94a3a"></span> Wolken-Vote &nbsp;<span class="sw" style="background:#3b7dd8"></span> Triangulation &nbsp;<span class="sw" style="background:#2f9e5b"></span> Tiefen-Sweep &nbsp;<span class="sw" style="background:#e08a1e"></span> Dach</div>
 <label>Wolke dunkler <input type="range" id="dk" min="0" max="90" value="45"></label>
@@ -34,7 +35,7 @@ button{font:inherit;padding:4px 10px;border:1px solid var(--ln);background:var(-
 /*DATA*/
 function b64(s){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
 function i16(s){const u=b64(s);return new Int16Array(u.buffer,0,u.length>>1)}
-const KB=DATA.nkb?i16(DATA.kb):new Int16Array(0);
+const KB=DATA.nkb?i16(DATA.kb):new Int16Array(0);const MP=DATA.nm?i16(DATA.m):new Int16Array(0),MC=DATA.nm?b64(DATA.mc):new Uint8Array(0);
 const W=i16(DATA.w),K=i16(DATA.k),Sg=i16(DATA.s),Cc=b64(DATA.c),Sq=b64(DATA.sq),sc=1/DATA.sc;
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
 let yaw=-0.45,pit=0.18,zoom=1.15,px=0,py=0,cw=0,ch=0,dpr=1;
@@ -50,10 +51,12 @@ function draw(){
  const put=(u,v,zz,r,g,b)=>{for(let j=0;j<psz;j++)for(let i=0;i<psz;i++){const X=u+i,Y=v+j;if(X<0||Y<0||X>=cw||Y>=ch)continue;const o=Y*cw+X;if(zz<zb[o]){zb[o]=zz;d[o*4]=r;d[o*4+1]=g;d[o*4+2]=b;d[o*4+3]=255}}};
  if(q('lw').checked)for(let i=0;i<DATA.nw;i++){const p=proj(W[i*3]*sc,W[i*3+1]*sc,W[i*3+2]*sc,c,s);put(p[0]|0,p[1]|0,p[2],Cc[i*3]*dk,Cc[i*3+1]*dk,Cc[i*3+2]*dk)}
  if(q('lk').checked)for(let i=0;i<DATA.nk;i++){const p=proj(K[i*3]*sc,K[i*3+1]*sc,K[i*3+2]*sc,c,s);put(p[0]|0,p[1]|0,p[2]-0.5,240,150,20)}
+ if(q('lm').checked)for(let i=0;i<DATA.nm;i++){const p=proj(MP[i*3]*sc,MP[i*3+1]*sc,MP[i*3+2]*sc,c,s),g=MC[i];put(p[0]|0,p[1]|0,p[2],g,g,g+12)}
  ctx.putImageData(img,0,0);
+ const sichtbar=(a,b)=>{if(!q('lm').checked||!DATA.nm)return true;const X=((a[0]+b[0])/2)|0,Y=((a[1]+b[1])/2)|0;if(X<0||Y<0||X>=cw||Y>=ch)return true;return (a[2]+b[2])/2<=zb[Y*cw+X]+0.25};
  if(q('ls').checked){ctx.lineWidth=+q('lb').value*dpr;const byq={};for(let i=0;i<DATA.ns;i++)(byq[Sq[i]]=byq[Sq[i]]||[]).push(i);
   for(const k in byq){ctx.strokeStyle=COL[k]||'#888';ctx.beginPath();for(const i of byq[k]){const a=proj(Sg[i*6]*sc,Sg[i*6+1]*sc,Sg[i*6+2]*sc,c,s),b=proj(Sg[i*6+3]*sc,Sg[i*6+4]*sc,Sg[i*6+5]*sc,c,s);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}ctx.stroke()}}
- if(q('lkb').checked&&DATA.nkb){ctx.lineWidth=+q('lb').value*dpr;ctx.strokeStyle='#7a4fc9';ctx.beginPath();for(let i=0;i<DATA.nkb;i++){const a=proj(KB[i*6]*sc,KB[i*6+1]*sc,KB[i*6+2]*sc,c,s),b=proj(KB[i*6+3]*sc,KB[i*6+4]*sc,KB[i*6+5]*sc,c,s);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}ctx.stroke()}
+ if(q('lkb').checked&&DATA.nkb){ctx.lineWidth=+q('lb').value*dpr;ctx.strokeStyle='#7a4fc9';ctx.beginPath();for(let i=0;i<DATA.nkb;i++){const a=proj(KB[i*6]*sc,KB[i*6+1]*sc,KB[i*6+2]*sc,c,s),b=proj(KB[i*6+3]*sc,KB[i*6+4]*sc,KB[i*6+5]*sc,c,s);if(!sichtbar(a,b))continue;ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}ctx.stroke()}
  q('inf').textContent=DATA.nw.toLocaleString('de')+' Wolkenpunkte (Auswahl), '+DATA.nk.toLocaleString('de')+' Kantenpunkte, '+DATA.ns+' Linien'+(DATA.nkb?', '+DATA.nkb+' Körperkanten':'')}
 let drag=null;const ptr=new Map();
 cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,pan:e.shiftKey||e.button==2}});
@@ -62,7 +65,7 @@ cv.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const o=pt
  const dx=e.clientX-o[0],dy=e.clientY-o[1];if(drag&&drag.pan){px+=dx;py+=dy}else{yaw+=dx*0.006;pit=Math.max(-1.5,Math.min(1.5,pit+dy*0.006))}draw()});
 const up=e=>{ptr.delete(e.pointerId);cv._pd=0;drag=null};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 cv.addEventListener('wheel',e=>{e.preventDefault();zoom*=Math.exp(-e.deltaY*0.0012);draw()},{passive:false});cv.addEventListener('contextmenu',e=>e.preventDefault());
-for(const id of['lw','lk','ls','lkb','dk','ps','lb'])q(id).addEventListener('input',draw);
-const V=(y,p)=>()=>{yaw=y;pit=p;zoom=1;px=0;py=0;draw()};q('bf').onclick=V(0,0);q('bs').onclick=V(-Math.PI/2,0);q('bo').onclick=V(0,1.5);q("b3").onclick=V(-0.9,0.35);
+for(const id of['lw','lk','ls','lm','lkb','dk','ps','lb'])q(id).addEventListener('input',draw);
+const V=(y,p)=>()=>{yaw=y;pit=p;zoom=1;px=0;py=0;draw()};q('bf').onclick=V(DATA.fy||0,0);q('bs').onclick=V((DATA.fy||0)-Math.PI/2,0);q('bo').onclick=V(0,1.5);q("b3").onclick=V((DATA.fy||0)-0.45,0.35);yaw=(DATA.fy||0)-0.45;
 new ResizeObserver(fit).observe(cv);fit();
 </script>
