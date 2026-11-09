@@ -577,7 +577,7 @@ def linien_verbinden(L, px, winkel=1.5, abst=1.5, luecke_m=0.5):
         if not changed: break
     return [[float(a[0]), float(a[1]), float(a[2]), float(a[3])] + list(e) for a, e in zip(A, ex)]
 
-def fotokanten_ref(d, stuetz=0.25, minl_m=0.25, nref=1):
+def fotokanten_ref(d, stuetz=0.25, minl_m=0.15, nref=1):
     """Allgemeine Methode (wie ein Mensch): Geometrie aus dem SCHAERFSTEN frontalen Foto (Entzerrung, LSD auf grau/gelb-blau/gruen), die uebrigen Fotos stimmen ab (Kantenanteil F aus allen Fotos, 1 px Toleranz,
     entlang der Linie im Mittel >= stuetz). Keine Handwerte je Objekt: Referenz = hoechster cos * Laplace-Schaerfe der Ortho."""
     H, W = d["gray"].shape; px = d["px"]; fl = beste_fotos(d, 30)
@@ -590,17 +590,20 @@ def fotokanten_ref(d, stuetz=0.25, minl_m=0.25, nref=1):
     Fm = fotokanten_voll(d, 0.8, 80, False)                                  # F-Karte aller Fotos (Abstimmung) in d["F"]
     F = d["F"].astype(np.float32) / 255; F = cv2.dilate(F, np.ones((3, 3), np.uint8)); V = d["V"]; lsd = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD); out = []
     for f in ref:
-        im, ok = foto_ortho(d, f, False); lab = cv2.cvtColor(im, cv2.COLOR_BGR2LAB); okk = cv2.erode(ok.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0
+        im, ok = foto_ortho(d, f, False); lab = cv2.cvtColor(im, cv2.COLOR_BGR2LAB); okk = cv2.erode(ok.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0; cand = []
         for g in (cv2.cvtColor(im, cv2.COLOR_BGR2GRAY), lab[:, :, 2], im[:, :, 1]):
-            L = lsd.detect(cv2.GaussianBlur(g, (0, 0), 0.8))[0]
+            gb = cv2.GaussianBlur(g, (0, 0), 0.8); mg = np.hypot(cv2.Sobel(gb.astype(np.float32), cv2.CV_32F, 1, 0), cv2.Sobel(gb.astype(np.float32), cv2.CV_32F, 0, 1)); L = lsd.detect(gb)[0]
             if L is None: continue
             for q in np.asarray(L).reshape(-1, 4):
                 ln = np.hypot(q[2] - q[0], q[3] - q[1])
                 if ln < minl_m / px: continue
                 n = max(int(ln), 2); xs = np.linspace(q[0], q[2], n).round().astype(int).clip(0, W - 1); ys = np.linspace(q[1], q[3], n).round().astype(int).clip(0, H - 1)
-                if not okk[ys, xs].all() or np.median(V[ys, xs]) < 3: continue
-                sup = float(np.median(F[ys, xs]) * 0 + F[ys, xs].mean())
-                if sup >= stuetz: out.append([float(q[0]), float(q[1]), float(q[2]), float(q[3]), int(np.median(V[ys, xs])), round(sup, 2), "p"])
+                if not okk[ys, xs].all(): continue
+                cand.append((q, float(mg[ys, xs].mean() / max(np.percentile(mg[okk], 99), 1e-3)), float(F[ys, xs].mean()), int(np.median(V[ys, xs]))))   # (Segment, Kontrast rel., Foto-Abstimmung, Zahl Fotos)
+        if not cand: continue
+        kt = np.array([c[1] for c in cand]); thr_k = max(float(np.percentile(kt, 60)), 0.12)      # starker Kontrast im scharfen Foto zaehlt auch ohne Abstimmung (Relief steht vor der Ebene -> Parallaxe)
+        for q, kon, sup, nv in cand:
+            if (sup >= stuetz and nv >= 3) or kon >= thr_k: out.append([float(q[0]), float(q[1]), float(q[2]), float(q[3]), nv, round(max(sup, kon), 2), "p"])
     # doppelte Linien (gleicher Ort aus mehreren Kanaelen) entfernen: laengste zuerst, Rasterbelegung
     out.sort(key=lambda l: -np.hypot(l[2] - l[0], l[3] - l[1])); occ = np.zeros((H, W), np.uint8); keep = []
     for l in out:
