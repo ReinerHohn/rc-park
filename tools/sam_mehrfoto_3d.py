@@ -5,7 +5,7 @@ Aufruf: python -I tools/sam_mehrfoto_3d.py --kameras K.json --bilder DIR --wolke
 import argparse, json, os, sys, time, numpy as np, torch, cv2
 import torch.nn.functional as Fn
 ap = argparse.ArgumentParser(); ap.add_argument("--kameras", required=True); ap.add_argument("--bilder", required=True); ap.add_argument("--wolke", required=True); ap.add_argument("--ausgabe", required=True)
-ap.add_argument("--nfotos", type=int, default=80); ap.add_argument("--iou", type=float, default=0.3); ap.add_argument("--minpts", type=int, default=150); ap.add_argument("--cache", default=None); ap.add_argument("--kachel", type=int, default=0, help="Kachelkantenlaenge in Originalpixeln (0 = Ganzbild 1024)"); ap.add_argument("--ppc", type=int, default=24); a = ap.parse_args()
+ap.add_argument("--nfotos", type=int, default=80); ap.add_argument("--iou", type=float, default=0.3); ap.add_argument("--minpts", type=int, default=150); ap.add_argument("--cache", default=None); ap.add_argument("--kachel", type=int, default=0, help="Kachelkantenlaenge in Originalpixeln (0 = Ganzbild 1024)"); ap.add_argument("--ppc", type=int, default=24); ap.add_argument("--konsens", type=float, default=0.0, help="View-Consensus-Merge (MaskClustering-artig), z.B. 0.9; 0 = aus"); ap.add_argument("--runden", type=int, default=3); a = ap.parse_args()
 os.environ.setdefault("HF_HOME", "/media/oem/scan/tools_src/hf_cache"); dev = "cuda"
 KAM = json.load(open(a.kameras)); P = np.load(a.wolke)[:, :3].astype(np.float32); N = len(P); RGB = np.load(os.path.join(os.path.dirname(a.wolke), "j_crop_rgb2.npy")) if os.path.exists(os.path.join(os.path.dirname(a.wolke), "j_crop_rgb2.npy")) else None
 Pt = torch.from_numpy(P).to(dev); cache = a.cache or os.path.splitext(a.ausgabe)[0] + "_masken"; os.makedirs(cache, exist_ok=True); SL = 1024
@@ -101,6 +101,38 @@ lut = torch.full((J * MAXM + 1,), -1, dtype=torch.int32, device=dev)
 for k, c in cid.items(): lut[k] = c
 Cl = torch.empty_like(L)
 for c0 in range(0, J, 16): blk = L[:, c0:c0 + 16]; cb = lut[blk.long().clamp(min=0)]; cb[blk < 0] = -1; Cl[:, c0:c0 + 16] = cb; del cb
+def konsens_kanten(Cl, thr):
+    """Cluster-Paare, deren Punkte in den Fotos, die BEIDE sehen, von derselben SAM-Maske (>=30 % je Cluster) erfasst werden: Unterstuetzung / Beobachter >= thr (Widerspruch = beide sichtbar, keine gemeinsame Maske)."""
+    C = int(Cl.max()) + 1; sup = {}; vis = torch.zeros((C, J), dtype=torch.bool, device=dev); B = J * MAXM + 1
+    for j in range(J):
+        c = Cl[:, j]; lb = L[:, j]; v = (c >= 0) & (lb >= 0)
+        if int(v.sum()) < 100: continue
+        cc = c[v].long(); ll = lb[v].long(); Vc = torch.bincount(cc, minlength=C); vis[:, j] = Vc >= 50
+        u, n = torch.unique(cc * B + ll, return_counts=True); uc = u // B; ul = u % B; k = (n.float() / Vc[uc].float() >= 0.3) & (Vc[uc] >= 50); uc = uc[k].cpu().numpy(); ul = ul[k].cpu().numpy()
+        o = np.argsort(ul, kind="stable"); uc = uc[o]; ul = ul[o]
+        for grp in np.split(uc, np.flatnonzero(np.diff(ul)) + 1):
+            if len(grp) > 1:
+                for x in range(len(grp)):
+                    for y in range(x + 1, len(grp)): kk = (int(min(grp[x], grp[y])), int(max(grp[x], grp[y]))); sup[kk] = sup.get(kk, 0) + 1
+    vn = vis.cpu().numpy(); ed = []
+    for (x, y), sv in sup.items():
+        both = int((vn[x] & vn[y]).sum())
+        if both >= 3 and sv >= 2 and sv / both >= thr: ed.append((sv / both, x, y))
+    return ed
+if a.konsens > 0:
+    for rd in range(a.runden):
+        ed = konsens_kanten(Cl, a.konsens); C = int(Cl.max()) + 1; pr = list(range(C))
+        def fd(x):
+            while pr[x] != x: pr[x] = pr[pr[x]]; x = pr[x]
+            return x
+        nm = 0
+        for sc_, x, y in sorted(ed, reverse=True):
+            rx, ry = fd(x), fd(y)
+            if rx != ry: pr[rx] = ry; nm += 1
+        mp = torch.tensor([fd(i) for i in range(C)], dtype=torch.int32, device=dev); print("Konsens-Runde %d: %d Kandidaten, %d Vereinigungen, Cluster %d -> %d" % (rd + 1, len(ed), nm, C, len(set(mp.tolist()))), flush=True)
+        for c0 in range(0, J, 16): blk = Cl[:, c0:c0 + 16]; Cl[:, c0:c0 + 16] = torch.where(blk >= 0, mp[blk.long().clamp(min=0)], blk)
+        lut = torch.where(lut >= 0, mp[lut.long().clamp(min=0)], lut)
+        if nm == 0: break
 neg = -(torch.arange(J, device=dev, dtype=torch.int32) + 2)[None, :]; Cl = torch.where(Cl < 0, neg.expand_as(Cl), Cl)
 mode = torch.mode(Cl, dim=1).values; cnt = (Cl == mode[:, None]).sum(1); obj = torch.where((mode >= 0) & (cnt >= 2), mode, torch.full_like(mode, -1))
 ids, cts = torch.unique(obj[obj >= 0], return_counts=True); keep = ids[cts >= a.minpts]; ok = torch.isin(obj, keep); obj = torch.where(ok, obj, torch.full_like(obj, -1))
