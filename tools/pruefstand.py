@@ -151,6 +151,24 @@ class Messer:
         if not v or abs(vm / v - 1) > 0.005: return float("nan")
         return float(sum((e["u1"] - e["u0"]) * (e["z1"] - e["z0"]) for F in E["fassaden"].values() for e in F["elemente"] if e["klasse"] == klasse and "freiraum_oeffnungen" in e.get("quelle", "")))
     def wasserdicht(self, **k): return 1.0 if self.m.is_watertight else 0.0
+    def wandstaerke(self, n=30000, quantil=1.0, grenze_m=0.0348, seed=0, **k):
+        """Wandstaerke-Vorcheck (Druck): n Flaechenstichproben, Strahl entlang der Innennormalen bis zur naechsten Gegenflaeche (Moeller-Trumbore auf der GPU,
+        torch; CPU-Rueckfall). Rueckgabe {pq = Quantil der Dicke (m), anteil_unter = Anteil Stichproben mit Dicke < grenze_m (Standard 0,4 mm in H0 1:87),
+        ohne_treffer = Anteil ohne Gegenflaeche (offenes Netz)}. Spitzen (Kegel, Grate) liefern lokal kleine Dicken - deshalb Quantil statt Minimum."""
+        import torch
+        dev = "cuda" if torch.cuda.is_available() else "cpu"
+        P, fi = trimesh.sample.sample_surface(self.m, n, seed=seed); Nn = self.m.face_normals[fi]
+        T = torch.tensor(self.m.triangles, dtype=torch.float32, device=dev); v0, e1, e2 = T[:, 0], T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]
+        O = torch.tensor(P - Nn * 1e-4, dtype=torch.float32, device=dev); D = torch.tensor(-Nn, dtype=torch.float32, device=dev); t_best = torch.full((len(P),), float("inf"), device=dev)
+        for i in range(0, len(P), 1024):
+            o, d = O[i:i + 1024, None, :], D[i:i + 1024, None, :]
+            pv = torch.cross(d.expand(-1, len(T), -1), e2[None].expand(len(o), -1, -1), dim=2); det = (e1[None] * pv).sum(2)
+            inv = 1.0 / torch.where(det.abs() < 1e-12, torch.full_like(det, 1e-12), det); tv = o - v0[None]
+            uu = (tv * pv).sum(2) * inv; qv = torch.cross(tv, e1[None].expand(len(o), -1, -1), dim=2); vv = (d * qv).sum(2) * inv; tt = (e2[None] * qv).sum(2) * inv
+            ok = (det.abs() > 1e-12) & (uu >= 0) & (vv >= 0) & (uu + vv <= 1) & (tt > 1e-5)
+            t_best[i:i + 1024] = torch.where(ok, tt, torch.full_like(tt, float("inf"))).min(1).values
+        t = t_best.cpu().numpy(); fin = np.isfinite(t)
+        return {"pq": float(np.percentile(t[fin], quantil)) if fin.any() else float("nan"), "anteil_unter": float((t[fin] < grenze_m).mean()) if fin.any() else float("nan"), "ohne_treffer": float(1 - fin.mean())}
     def koerper_anzahl(self, **k): return float(len(self.m.split(only_watertight=False)))
     def nischen_anzahl(self, seite, z, halb, tiefe, schritt=0.05, min_b=0.3, max_b=2.0, mitte=0.0, wand=None, **k):
         """Zaehlt Rueckspruenge >= tiefe entlang einer Fassade (Strahlen von aussen), Breite min_b..max_b. mitte = Querkoordinate der Fenstermitte (Standard 0 = Turmachse)."""

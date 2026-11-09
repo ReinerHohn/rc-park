@@ -140,3 +140,37 @@ Ablauf nach Regel 2: zuerst 4 Beobachtungen + 6 Pruefungen eingetragen, am Runde
 - fehlteile 6120: 1 Zelle in der Konsolenzone (wie zuvor). fehlteile 6261: 5 ERFUNDEN am Ostgiebel, 1 FEHLT am Nachbarhaus.
 - Overlays: `audit/gitter_generator/runde3_ip_IMG_6120.jpg`, `runde3_ip_IMG_6261.jpg`; Vorher/Nachher `vergleich_runde2_runde3_ip_IMG_6120.jpg`, `..._6261.jpg`. Das Runde-2-Bild enthielt zusaetzlich die gelbe Gitterebene, die Bilder sind also nicht stilgleich.
 - Regression: Der Schnappschuss ist NICHT erneuert (Ergebnis aendert sich beabsichtigt). Erneuern nur per Auftrag und mit Register-Eintrag.
+
+## Runde 4 (Agent, 9.11. abend) - Druckbarkeit, Versatz 6120, linker Pfeiler, Traufzone
+
+### 1 Druckbarkeit
+- Pruefungen zuerst eingetragen (Merkmal druck, quelltyp modell): Teilnetze = 1, wasserdicht, Wandstaerke p1 >= 0,0348 m (0,4 mm H0; neue Messart `wandstaerke` in pruefstand.py, Strahl entlang Innennormale, GPU). Am Runde-3-Modell: 545 / 0 / 0,03 = fehlschlagend.
+- Generator (alles per cfg, Standard aus): `stl_teil.koerper` (+`koerper_dehnung`, `koerper_min_m3`: Teil-STL als manifold-Koerper; flache Reste ohne Dicke verworfen und gezaehlt), `fensterreihe.einbindung` (Rahmen/Pfosten/Riegel 0,04 m in die Wand, Glas 1 cm in den Rahmen, Rueckseite ein/2), `satteldach.ziegel_einbindung` (1 cm), `bogenreihe.druck_verbinder` (Schaft endet am Kaempfer, Verbinder = Schaft geschnitten mit dem Band - ragt nie ueber Bandflucht/Laibung).
+- objekt.json: traufzone_alt aus; neu `stl_teil:konsolen_alt` (nur g_konsolen.stl, gleicher Anker) und `quader:gesims` (Gitter: z 14,1..14,70, n 12,62..13,08; u-Enden ANNAHME); figuren koerper; Fenster og/eg0/eg2 einbindung 0,04; Nischen eg1/Tuer 1 cm groesser als das Licht; druck.anbau_konsolen = true; Helme z0 -0,07 statt -0,04 unter Traufe (historie).
+- Fehlersuche per Teilmengen-Bau (NUR_BAUTEIL) + Kantenzaehlung: Ursachen waren deckungsgleiche Flaechen (Ziegel/Dach, Glas/Rahmen, Nische/Rahmen, Gesims/Traufe), Pfeilerkopf 5,5 mm neben der Bogenlaibung, flache Figurenreste ohne Volumen und die Helmbasis 1 cm unter der Erkerspitze an der Westecke. VEREINFACHEN_M (0 / 0,0005 / 0,001 / 0,005 / 0,01) aenderte daran nichts.
+- Ergebnis: 1 Koerper, wasserdicht, Wandstaerke p1 0,14 m (1,6 mm H0), Anteil < 0,4 mm 0,02 % (Dachfirst-Grat z 27,5 und Figurenkanten z 12,5). Pruefstand: alle bestanden.
+- Slicer-Vorcheck: neues Werkzeug `tools/druck_vorcheck.py <objekt>` (generisch, GPU) -> `audit/druck_vorcheck.json`. Ueberhaenge > 60 Grad 206,6 m2 (5,6 %): Laubendecke z 7-8 173 m2, Erkerunterseiten 11,4 m2, Gesimsunterseite 9,8 m2, Fensterstuerze klein. Laubendecke braucht Stuetzen oder Teilung (Entscheidung offen).
+
+### 2 Versatz 0,93 m in foto_diff 6120
+- K-6120 = kam_lot2-Eintrag (gleiche R, t, f, k1). Kontrollversuch mit gleichem Modell, nur traufzone_alt wieder an (und gesims/konsolen_alt aus): Versatz 0,928 m [0, -291] px, DEUTLICH. Ohne traufzone_alt (Runde 4): 0,249 m [-16, 73] px, nicht deutlich (Gewinn 0,065).
+- Ursache: Modell, nicht Kamera. Die Alt-Traufzone lag rund 0,6-0,9 m unter Gesims/Traufe aus dem Gitter (Beobachtung Runde 3); ihre dichten waagerechten Kanten zogen die Chamfer-Suche 291 px nach oben. foto_diff 6120 jetzt 0,118 / 0,318 (Runde 3 0,149 / 0,439), 6261 0,169 / 0,483 (0,164 / 0,526).
+
+### 3 Linker Pfeiler (schiefes Viereck)
+- Einzelteil-Overlays (eg0, eg2, laube) auf 6120: Das Viereck ist `fensterreihe:eg0` (Rueckwandfenster u 11,75 in Bogen 4) und liegt hinter dem Pfeiler u 9,55. Das Overlay zeichnet ohne Verdeckung, Zylinder nur als Ringe. Es ist kein falsches Bauteil. Im Foto ist am linken Rand hinter dem Pfeiler ein Gitterfenster sichtbar, eg0 bleibt aber ANNAHME (Lage nicht gemessen).
+
+### 4 Traufzone
+- traufzone_alt aus. Gesims als Quader nach Gitter (14,1-14,68, + 2 cm Einbindung), Konsolen unveraendert aus derselben Alt-Datei (g_konsolen.stl, gleiche Transformation).
+
+### Sichtblatt seiten.jpg - Fehlerliste (angesehen)
+1. Nord: Gesims als Leiste an der Traufe sichtbar, kein glattes 0,6-m-Band mehr unter der Traufe. Die Arkade hat 4 Boegen mit runden Pfeilern und Sockeln, das Rueckwandfenster ist sichtbar.
+2. Sued: Die Vorderseite scheint durch, das ist ein Renderer-Artefakt. 8 Strahlen von hinten treffen die Rueckwand bei n -6,56. Beobachtung eingetragen.
+3. Ost/West: Die Giebel sind gestuft und das Dach sitzt auf dem Rumpf. Der dunkle Block am Ostende in Nord ist die Giebelstirn schraeg gesehen (Gebaeude 19,5 Grad gedreht), kein Fehler. Die Rueckhaelfte ist weiter glatt (ungemessen).
+4. Draufsicht: Ziegelreihen nur auf einer Dachseite erkennbar (unveraendert seit Runde 3, Ursache nicht geprueft).
+5. Druck: 1 Koerper, wasserdicht. Offen sind die Ueberhaenge (Laubendecke).
+
+### Overlays/Diff (angesehen)
+- `audit/gitter_generator/runde4_ip_IMG_6120.jpg`, `runde4_ip_IMG_6261.jpg`, `vergleich_runde3_runde4_ip_IMG_6120.jpg`, `..._6261.jpg`. Der "Teppich" ueber OG/Balkon in 6120 bleibt auch ohne traufzone_alt: Es sind ueberwiegend die Ziegelreihen des Daches, durch die Fassade gezeichnet (Overlay ohne Tiefenpuffer). Abhilfe waere eine Werkzeugaenderung, Beobachtung ist eingetragen.
+- foto_diff 6120 rot: Bogen 3 rechts vom Scheitel und Bogen 4 links (Treffer 2/6), dazu die Bandoberkante/Laubendecke als Doppellinie (Treffer 4/7). Das Bogenprofil muss am Foto gemessen werden (Beobachtung).
+- fehlteile 6261: 3 FEHLT/3 ERFUNDEN am Ostgiebel z 15-18,5. fehlteile 6120: 4 ERFUNDEN? z 20-21,5 (Dach, durch die Fassade gesehen).
+- Regression `--pruefen`: "identisch - nichts verloren". Der Schnappschuss ist nicht erneuert. Kein Commit.
+- Testdateien in modelle/stl/: `_tmp_r4.stl`, `_tmp_alt.stl`, `_tmp_fig.stl`, `_tmp_eg0.stl`, `_tmp_eg2.stl`, `_tmp_laube.stl` (nicht geloescht, Regel "nichts loeschen").

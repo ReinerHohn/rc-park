@@ -242,6 +242,18 @@
    "min_b": 0.6,
    "max_b": 1.1,
    "rand": 0.0
+  },
+  "teilnetze": {
+   "typ": "koerper_anzahl"
+  },
+  "dicht": {
+   "typ": "wasserdicht"
+  },
+  "wand": {
+   "typ": "wandstaerke",
+   "n": 30000,
+   "quantil": 1.0,
+   "grenze_m": 0.0348
   }
  },
  "pruefungen": [
@@ -567,6 +579,51 @@
    "historie": [
     "2026-11-09 angelegt (Agent Runde 3); schlaegt am Modell Runde 2 fehl (Glas vor der Wand, Fenster bei along 6,05)"
    ]
+  },
+  {
+   "name": "Druck: Teilnetze (getrennte Koerper) = 1",
+   "wert": "teilnetze",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Druckziel H0 (Koordinator 9.11. Runde 4): ein Koerper, wasserdicht, keine Wand unter 0,4 mm bei 1:87 (= 0,0348 m); Runde 3: 545 Teilnetze (Rohdreiecke stl_teil + nur flaechig beruehrende Teile)",
+   "quelltyp": "modell",
+   "merkmal": "druck",
+   "massstab": "-",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 4); schlaegt am Modell Runde 3 fehl (Regel 2)"
+   ]
+  },
+  {
+   "name": "Druck: wasserdicht",
+   "wert": "dicht",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Druckziel H0 (Koordinator 9.11. Runde 4): ein Koerper, wasserdicht, keine Wand unter 0,4 mm bei 1:87 (= 0,0348 m); Runde 3: Druckreparatur fehlgeschlagen",
+   "quelltyp": "modell",
+   "merkmal": "druck",
+   "massstab": "-",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 4); schlaegt am Modell Runde 3 fehl"
+   ]
+  },
+  {
+   "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
+   "wert": "wand_pq",
+   "soll": [
+    0.0348,
+    100
+   ],
+   "quelle": "Druckziel H0 (Koordinator 9.11. Runde 4): ein Koerper, wasserdicht, keine Wand unter 0,4 mm bei 1:87 (= 0,0348 m); Messung: 30000 Flaechenstichproben, Strahl entlang der Innennormalen (pruefstand.wandstaerke, GPU); p1 statt Minimum wegen Kegelspitzen",
+   "quelltyp": "modell",
+   "merkmal": "druck",
+   "massstab": "-",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 4)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -794,21 +851,92 @@
    "status": "offen"
   },
   {
+   "datum": "2026-11-09",
+   "wer": "Koordinator (Pruefer) Runde 4",
+   "quelle": "Bau Runde 3: Druckreparatur fehlgeschlagen, 545 Teilnetze",
+   "text": "Modell nicht druckbar: Rohdreiecke (traufzone_alt, figuren) unverschweisst, flaechig beruehrende Teile (OG-Fenster, eg0/eg2, Helme) eigene Koerper.",
+   "naechster_schritt": "Pruefungen Teilnetze/wasserdicht/Wandstaerke, dann stl_teil koerper=true + Einbindung 0,04 m",
+   "status": "Runde 4 Agent: Pruefungen Teilnetze=1, wasserdicht, Wandstaerke p1 eingetragen (vorher 545/0/0,03 fehlschlagend), jetzt 1/1/0,14 bestanden; Slicer-Vorcheck audit/druck_vorcheck.json (Ueberhaenge offen, s. eigene Beobachtung)"
+  },
+  {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
+   "auto_id": "fehlteile-6261-316-1738",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.49,
+   "z_bis": 18.49,
+   "xyz": [
+    15.76,
+    -5.88,
+    18.49
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.49 m, y=-5.88 m (Zelle [316, 1738, 79], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
    "auto_id": "fehlteile-6261-237-1817",
    "art": "fehlteil",
    "foto": "6261",
-   "z_von": 17.88,
-   "z_bis": 17.88,
+   "z_von": 17.89,
+   "z_bis": 17.89,
    "xyz": [
-    15.09,
+    15.1,
     -8.06,
-    17.88
+    17.89
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.88 m, y=-8.06 m (Zelle [237, 1817, 79], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.89 m, y=-8.06 m (Zelle [237, 1817, 79], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "auto_id": "fehlteile-6261-316-1817",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.35,
+   "z_bis": 17.35,
+   "xyz": [
+    15.65,
+    -5.85,
+    17.35
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.35 m, y=-5.85 m (Zelle [316, 1817, 79], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 4 (druck_vorcheck)",
+   "art": "druck",
+   "text": "Ueberhaenge > 60 Grad: 206,6 m2 (5,6 % der Flaeche), davon 173 m2 Laubendecke z 7-8 (Unterseite Balkon-/OG-Boden ueber der offenen Arkade, n 6,6-13,5), 11,4 m2 Erkerunterseiten z 9-10, 9,8 m2 Gesimsunterseite z 14-15 (Auskragung 0,42 m)",
+   "naechster_schritt": "Druckstrategie festlegen: Laubendecke nur mit Stuetzen oder Teilung (EG/OG getrennt drucken, Arkade kopfueber); Gesims ggf. 45-Grad-Fase unten (Foto pruefen, ob Hohlkehle) - Entscheidung Koordinator"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 4 (foto_diff 6120)",
+   "art": "form",
+   "foto": "6120",
+   "text": "Bogen 3 (und Bogen 4 linke Laibung): rote Modellkante innerhalb des Fotobogens rechts vom Scheitel (Treffer 2 und 6, ca. 1 m lang) - Bogenleibung im Modell zu tief/zu flach gegen die Foto-Laibung; Bandoberkante z 8,0 / Laubendecke als rote Doppellinie (Treffer 4/7)",
+   "naechster_schritt": "Bogenprofil (scheitel_z 7,2, Segmentbogen) am Foto 6120 per foto_mass messen (Kaempfer/Scheitel/Laibungsbreite), Pruefung eintragen, dann bogenreihe anpassen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 4 (Sichtblatt)",
+   "art": "werkzeug",
+   "text": "audit/seiten.jpg Ansicht Sued (-y): Arkadenboegen, Balkon und Figuren der Vorderseite scheinen durch die Rueckwand. Strahltest (8 Strahlen von hinten, z 4/10) trifft die Rueckwand bei n=-6,56: Rueckwand geschlossen, Netz wasserdicht -> Darstellungsfehler des Sichtblatt-Renderers (Punktsplats ohne vollstaendige Verdeckung), kein Modellfehler",
+   "naechster_schritt": "Sichtblatt-Renderer mit Tiefenpuffer pruefen (Werkzeugaenderung, Regression)"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 4 (Overlay)",
+   "art": "werkzeug",
+   "text": "modell_foto_overlay zeichnet alle Kanten ohne Verdeckung: der 'Linienteppich' ueber OG/Balkon in 6120 sind ueberwiegend die Ziegelreihen des Daches (durch die Fassade projiziert), das 'schiefe Viereck' am linken Pfeiler ist fensterreihe:eg0 (Rueckwand u 11,75, hinter dem Pfeiler u 9,55; Einzelteil-Overlay bestaetigt); Zylinder zeigen nur Ringe, keine Silhouette",
+   "naechster_schritt": "Overlay mit Tiefenpuffer (verdeckte Kanten weglassen/blass) und Silhouettenkanten - Werkzeugaenderung"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

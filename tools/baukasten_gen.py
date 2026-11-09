@@ -594,6 +594,24 @@ def stl_teil(cfg, ctx):
         if rl: c_u, c_z = (v + q for v, q in zip(rot(c_u - pu, c_z - pz, rl), (pu, pz)))
         if gi: c_n, c_u = (v + q for v, q in zip(rot(c_n - pn, c_u - pu, gi), (pn, pu)))
     Q = np.c_[A[0] + c_n * n_[0] + c_u * u_[0], A[1] + c_n * n_[1] + c_u * u_[1], A[2] + c_z]
+    if cfg.get("koerper"):                                                                           # Druckstufe (Runde 4, 2026-11-09): Teil-STL als manifold-Koerper in die Vereinigung statt Rohdreiecke.
+        import trimesh as _tm                                                                        # Je Zusammenhangsteil: wasserdicht -> exakt (Form unveraendert); sonst konvexe Huelle (ANNAHME, beleg + Zaehler).
+        from manifold3d import Mesh as _Mesh
+        tm = _tm.Trimesh(Q, np.arange(len(Q)).reshape(-1, 3), process=True); tm.merge_vertices()
+        koerper, n_ok, n_huelle, n_flach = [], 0, 0, 0
+        vmin = float(cfg.get("koerper_min_m3", 1e-5))                                                 # flache Restflaechen (Volumen ~0, z. B. Nischenrueckwand ohne Dicke) sind nicht druckbar und gaeben entartete Huellen -> verwerfen, zaehlen
+        dh = float(cfg.get("koerper_dehnung") or 0.0)                                                 # relative Dehnung je Teil um seinen Schwerpunkt (Druck: sich nur beruehrende Teile ueberlappen dann; Form +-dh)
+        for t_ in tm.split(only_watertight=False):
+            if dh: c_ = t_.centroid.copy(); t_.apply_translation(-c_); t_.apply_scale(1.0 + dh); t_.apply_translation(c_)
+            if t_.is_watertight: t_.fix_normals(); n_ok += 1
+            else: t_ = t_.convex_hull; n_huelle += 1
+            mf = M(_Mesh(vert_properties=np.asarray(t_.vertices, np.float32), tri_verts=np.asarray(t_.faces, np.uint32)))
+            if mf.status() != mf.status().__class__.NoError or mf.is_empty(): mf = M.hull_points(np.asarray(t_.vertices, float).tolist()); n_huelle += 1
+            if mf.is_empty() or abs(mf.volume()) < vmin: n_flach += 1; continue
+            koerper.append(mf)
+        beleg("alle", f"{cfg.get('gruppe', cfg['typ'])}: {len(koerper)} Teilkoerper manifold ({n_ok} exakt, {n_huelle} Huelle, {n_flach} flach verworfen)", cfg["quelle"] + f" | Druckstufe koerper=true: Teile als manifold-Koerper vereinigt (wasserdichte Teile exakt, sonst konvexe Huelle = ANNAHME; Teile < {vmin:g} m3 = flache Restflaechen ohne Dicke verworfen)",
+              n_teile=len(koerper), exakt=n_ok, huelle=n_huelle, flach=n_flach)
+        return [UNION(koerper)], []
     ctx.setdefault("roh", []).append(Q.reshape(-1, 3, 3))
     i0 = 0
     for f, n_t in zip(cfg["dateien"], nT):                                                                           # ein beleg je Teil (Regel 3b), Quelle = Gruppenquelle + Teilquelle
@@ -622,7 +640,7 @@ def bogenreihe(cfg, ctx):
     T = [[u_[0], n_[0], 0.0, 0.0], [u_[1], n_[1], 0.0, 0.0], [0.0, 0.0, 1.0, 0.0]]            # (u, s, z) -> (x, y, z), rechtshaendig
     teile = []
     for i in range(nb + 1):                                                                       # Pfeilerschaefte (leicht in das Wandband hinein: ein Koerper)
-        uc = u0 + i * pitch; h = zk - zb + 0.02
+        uc = u0 + i * pitch; h = zk - zb + (0.0 if cfg.get("druck_verbinder") else 0.02)          # druck_verbinder: Schaft endet am Kaempfer, Verbinder = Schaft geschnitten mit dem Band (s.u.; vorher 2-cm-Absatz ragte ueber die Bandflucht -> Splitter im STL)
         if form == "rechteck": sh = quader(uc - pb / 2, uc + pb / 2, pn - pt / 2, pn + pt / 2, zb, zb + h)
         else: sh = M.extrude(C.circle(0.5, 48).scale((pb, pt)).translate((uc, pn)), h).translate((0, 0, zb))
         teile.append(sh)
@@ -636,6 +654,13 @@ def bogenreihe(cfg, ctx):
         um = u0 + (i + 0.5) * pitch; poly = np.array(segmentbogen(um - ob / 2, um + ob / 2, zk, zs, zk - 0.05, n=48), float)
         band = band - prisma_uz(poly, pn - lt / 2 - 0.05, pn + lt / 2 + 0.05)
     teile.append(band)
+    if cfg.get("druck_verbinder"):                                                                # Kaempferstueck: Schaft (zk-0,05..zk+0,15) geschnitten mit Band (unten 0,05 verlaengert, Boegen ausgeschnitten) -> nie ueber Bandflucht/Laibung, keine Beruehrflaechen
+        bl = M.cube((ur - ul, lt, zo - zk + 0.05)).translate((ul, pn - lt / 2, zk - 0.05))
+        for i in range(nb):
+            um = u0 + (i + 0.5) * pitch; bl = bl - prisma_uz(np.array(segmentbogen(um - ob / 2, um + ob / 2, zk, zs, zk - 0.10, n=48), float), pn - lt / 2 - 0.05, pn + lt / 2 + 0.05)
+        for i in range(nb + 1):
+            uc = u0 + i * pitch; pe = quader(uc - pb / 2, uc + pb / 2, pn - pt / 2, pn + pt / 2, zk - 0.05, zk + 0.15) if form == "rechteck" else M.extrude(C.circle(0.5, 48).scale((pb, pt)).translate((uc, pn)), 0.2).translate((0, 0, zk - 0.05))
+            teile.append(pe ^ bl)
     k = UNION(teile).transform(T)
     q = lambda p_: (wq.get(p_) or cfg["quelle"])
     for i in range(nb + 1):
@@ -697,15 +722,15 @@ def satteldach(cfg, ctx):
     poly = [(ntv, zu), (ntv, ztv), (nf, zf), (nth, zth), (nth, zu)]
     q = M.extrude(C([ccw(np.array(poly, float))]), u1 - u0)                                          # x=n, y=z, Extrusion z=u
     q = q.transform([[0, 0, 1, u0], [1, 0, 0, 0], [0, 1, 0, 0]])                                    # (n,z,u) -> (u,n,z): x=u0+extr, y=n, z=z
-    ab, tf, an = float(cfg.get("ziegel_abstand") or 0), float(cfg.get("ziegel_tiefe") or 0), float(cfg.get("ziegel_anteil") or 0.4)                    # Ziegelreihen: Leisten quer zum Hang (Kanten fuer den Foto-Diff); 0 = glatt
+    ab, tf, an = float(cfg.get("ziegel_abstand") or 0), float(cfg.get("ziegel_tiefe") or 0), float(cfg.get("ziegel_anteil") or 0.4); ze = float(cfg.get("ziegel_einbindung") or 0.0)                    # Ziegelreihen: Leisten quer zum Hang (Kanten fuer den Foto-Diff); 0 = glatt
     if ab > 0.05 and tf > 0.005:
         streifen = []
         for (na, za, nb_, zb_) in ((ntv, ztv, nf, zf), (nf, zf, nth, zth)):                                                                        # Vorder- und Hinterhang
             L = math.hypot(nb_ - na, zb_ - za); t_ = np.array([(nb_ - na) / L, (zb_ - za) / L]); n_out = np.array([t_[1], -t_[0]]) * (1 if za < zb_ else -1) if False else np.array([-t_[1], t_[0]]) * (1 if (nb_ < na) else -1)
             if (n_out[1] < 0): n_out = -n_out                                                                                                          # Aussenseite zeigt nach oben
             for i in range(int(L / ab)):
-                s0 = (i + 0.5) * ab; p0 = np.array([na, za]) + t_ * s0; p1 = p0 + t_ * ab * an
-                poly = [tuple(p0), tuple(p1), tuple(p1 + n_out * tf), tuple(p0 + n_out * tf)]
+                s0 = (i + 0.5) * ab; p0 = np.array([na, za]) + t_ * s0 - n_out * ze; p1 = p0 + t_ * ab * an                                       # ze = ziegel_einbindung (m) in die Dachflaeche (Druck: sonst Beruehrflaeche -> Splitterkanten im STL)
+                poly = [tuple(p0), tuple(p1), tuple(p1 + n_out * (tf + ze)), tuple(p0 + n_out * (tf + ze))]
                 e = M.extrude(C([ccw(np.array(poly, float))]), u1 - u0).transform([[0, 0, 1, u0], [1, 0, 0, 0], [0, 1, 0, 0]]); streifen.append(e)
         if streifen: q = UNION([q] + streifen)
     ctx["dach"] = dict(ntv=ntv, ztv=ztv, nf=nf, zf=zf, u0=u0, u1=u1)                              # fuer gaubenreihe (sitzt auf dem Vorderhang)
@@ -779,7 +804,7 @@ def fensterreihe(cfg, ctx):
         if cfg.get(k) in (None, ""): sys.exit(f"fensterreihe: '{k}' fehlt (Regel 3b: jedes Mass mit Quelle)")
     nf = int(cfg["n_fenster"]); u0, pitch, b = float(cfg["u_mitte"]), float(cfg["pitch"]), float(cfg["breite"]); nl = max(1, int(cfg.get("n_lichter", 2)))
     z0, zk, zs = float(cfg["unterseite_z"]), float(cfg["kaempfer_z"]), float(cfg["scheitel_z"]); wn, td = float(cfg["wand_n"]), float(cfg["tiefe"])
-    rb, pf, rz, rh = float(cfg["rahmen_b"]), float(cfg["pfosten_b"]), float(cfg["riegel_z"]), float(cfg["riegel_h"]); kiel = float(cfg.get("kiel", 0.4)); gd, go = float(cfg.get("glas_d", 0.0)), float(cfg.get("glas_n", 0.1)); wq = cfg.get("werte_quellen") or {}
+    rb, pf, rz, rh = float(cfg["rahmen_b"]), float(cfg["pfosten_b"]), float(cfg["riegel_z"]), float(cfg["riegel_h"]); kiel = float(cfg.get("kiel", 0.4)); gd, go = float(cfg.get("glas_d", 0.0)), float(cfg.get("glas_n", 0.1)); wq = cfg.get("werte_quellen") or {}; ein = float(cfg.get("einbindung", 0.0))   # optional Einbindung (m) von Rahmen/Pfosten/Riegel hinter wand_n
     if nf < 1 or b >= pitch or not (z0 < zk < zs) or rb * 2 >= b or td < 0.01: sys.exit(f"fensterreihe: unplausible Masse (n={nf}, b={b}, pitch={pitch}, z={z0}/{zk}/{zs})")
     n_ = np.array(cfg["achse_n"], float); n_ /= np.linalg.norm(n_); u_ = np.array([n_[1], -n_[0]])
     T = [[u_[0], n_[0], 0.0, 0.0], [u_[1], n_[1], 0.0, 0.0], [0.0, 0.0, 1.0, 0.0]]
@@ -790,13 +815,13 @@ def fensterreihe(cfg, ctx):
         poly = np.array([(uc - b / 2, z0), (uc + b / 2, z0)] + right + left[1:], float)
         if cfg.get("kontur"): poly = np.array([(uc + float(x_), z0 + float(z_)) for x_, z_ in cfg["kontur"]], float)   # frei gezeichnete Fensterkontur (tools/editor_modell.py): [[u rel. Fenstermitte, z rel. unterseite_z], ...]
         outer = C([ccw(poly)]); inner = outer.offset(-rb, JoinType.Miter)
-        rahmen = M.extrude(outer - inner, td).transform([[1, 0, 0, 0], [0, 0, -1, wn + td], [0, 1, 0, 0]])
+        rahmen = M.extrude(outer - inner, td + ein).transform([[1, 0, 0, 0], [0, 0, -1, wn + td], [0, 1, 0, 0]])   # ein = Einbindung hinter die Wandebene (Druck: sonst nur flaechige Beruehrung = eigener Koerper)
         teile.append(rahmen)
-        if gd > 0: teile.append(M.extrude(inner, gd).transform([[1, 0, 0, 0], [0, 0, -1, wn + go + gd], [0, 1, 0, 0]]))   # Verglasung (Wolke sieht die Scheibe): duenne Platte in der Rahmenoeffnung
+        if gd > 0: teile.append(M.extrude(outer.offset(-rb + min(0.01, rb / 2), JoinType.Miter) if ein > 0 else inner, gd + ein / 2).transform([[1, 0, 0, 0], [0, 0, -1, wn + go + gd], [0, 1, 0, 0]]))   # mit Einbindung: Platte reicht ein/2 nach hinten (nicht ein: Rueckseite sonst koplanar mit Pfosten/Riegel -> Splitter) (Druck: Platte vor der Wand beruehrt sonst nur die Rahmenkanten)   # Verglasung (Wolke sieht die Scheibe): duenne Platte in der Rahmenoeffnung
         wl = (b - 2 * rb - (nl - 1) * pf) / nl                                                        # Lichtbreite; nl = 2 ergibt exakt den alten Mittelpfosten bei uc
         for j in range(1, nl):
-            up = uc - b / 2 + rb + j * wl + (j - 0.5) * pf; teile.append(quader(up - pf / 2, up + pf / 2, wn, wn + td, z0 + rb * 0.5, zs - rb * 1.5))
-        teile.append(quader(uc - b / 2 + rb * 0.5, uc + b / 2 - rb * 0.5, wn, wn + td, rz - rh / 2, rz + rh / 2))
+            up = uc - b / 2 + rb + j * wl + (j - 0.5) * pf; teile.append(quader(up - pf / 2, up + pf / 2, wn - ein, wn + td, z0 + rb * 0.5, zs - rb * 1.5))
+        teile.append(quader(uc - b / 2 + rb * 0.5, uc + b / 2 - rb * 0.5, wn - ein, wn + td, rz - rh / 2, rz + rh / 2))
     k = UNION(teile).transform(T); q = lambda p_: (wq.get(p_) or cfg["quelle"])
     beleg("alle", f"Fensterreihe {nf} Kielbogenfenster" + (f" ({nl} Lichter)" if nl != 2 else ""), f"Anzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + (q("n_lichter") + "; " if nl != 2 else "") + q("breite") + " | Lage: " + q("u_mitte"), n_fenster=nf, n_lichter=nl, pitch=pitch, breite=b, unterseite_z=z0, kaempfer_z=zk, scheitel_z=zs, wand_n=wn, tiefe=td)
     return [k], []

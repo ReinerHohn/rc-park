@@ -18,9 +18,9 @@
   "lichter_g2_breite_max": 0.92,
   "lichter_g2_ebene_abstand": 1.9997724348657184,
   "handlauf_z": 8.25699973297119,
-  "helm_w_fussbreite_x": 1.985299152374267,
-  "helm_w_fussbreite_y": 2.0641060638427735,
-  "helm_w_fussbreite_punkte": 52.0,
+  "helm_w_fussbreite_x": 1.8309022293090824,
+  "helm_w_fussbreite_y": 1.6691916961669921,
+  "helm_w_fussbreite_punkte": 97.0,
   "rueck_z6": -0.005787998491273427,
   "rueck_z10": -0.005788051692975138,
   "rueck_z143": -0.005788051692975138,
@@ -37,7 +37,12 @@
   "fenster_b3_anzahl": 2.0,
   "fenster_b3_breite_median": 0.8300000000000001,
   "fenster_b3_breite_max": 0.8300000000000001,
-  "fenster_b3_ebene_abstand": 1.8740168794981424
+  "fenster_b3_ebene_abstand": 1.8740168794981424,
+  "teilnetze": 1.0,
+  "dicht": 1.0,
+  "wand_pq": 0.13989824056625366,
+  "wand_anteil_unter": 0.0002666666666666667,
+  "wand_ohne_treffer": 0.0
  },
  "pruefungen": [
   {
@@ -226,6 +231,36 @@
    "soll": [
     2,
     2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Druck: Teilnetze (getrennte Koerper) = 1",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Druck: wasserdicht",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
+   "wert": 0.13989824056625366,
+   "soll": [
+    0.0348,
+    100
    ],
    "ok": true,
    "status": "ok"

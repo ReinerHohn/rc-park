@@ -3542,6 +3542,16 @@
      "neu": {
       "dateien": 4
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "aktiv": true
+     },
+     "neu": {
+      "aktiv": false
+     }
     }
    ],
    "anker_m": [
@@ -3549,7 +3559,60 @@
     9.657358926773073,
     1.5102628040313721
    ],
-   "hinweis": "Runde 3: aus stl_teil:fassade abgespalten (Regel 9c b, nie ersatzlos abschalten); Konsolen gehoeren dem Koerper-Agenten (Foto-Sweep) - unveraendert. Traufzone liegt bei z 12,8-14,1, Gitter-Traufe 14,68 (offen)"
+   "hinweis": "Runde 3: aus stl_teil:fassade abgespalten (Regel 9c b, nie ersatzlos abschalten); Konsolen gehoeren dem Koerper-Agenten (Foto-Sweep) - unveraendert. Traufzone liegt bei z 12,8-14,1, Gitter-Traufe 14,68 (offen)",
+   "aktiv": false,
+   "ersetzt_durch": "quader:gesims (Kantengitter z 14,1-14,68) + stl_teil:konsolen_alt (unveraendert)"
+  },
+  {
+   "typ": "stl_teil:konsolen_alt",
+   "gruppe": "Konsolen alt (Koerper-Agent)",
+   "dateien": [
+    "/media/oem/scan/rc-park_null/generator_alt/teile/g_konsolen.stl"
+   ],
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Lage/Hoehe/Drehung/Massstab: T3d.json = GPU-Distanzfeld+Chamfer-Ausrichtung des alten Generators (kaufhaus_measured.glb) an die Fotowolke (BS51d, Skala 0.94, yaw 160 Grad); Teilform: alter Hand-Generator (ANNAHME: nach Fotos/Plan von Hand, nicht neu gemessen)",
+   "dn": -1.3,
+   "du": 3.879,
+   "dz": -0.169,
+   "sn": 1.0,
+   "su": 1.1634,
+   "sz": 1.3845,
+   "teil_quellen": {
+    "g_konsolen.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_konsolen.stl"
+   },
+   "werte_quellen": {
+    "su": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.879 m, dz -0.169 m), Kanten-Snap nein (Skalierung fu 1.163 fz 1.384)",
+    "sz": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.879 m, dz -0.169 m), Kanten-Snap nein (Skalierung fu 1.163 fz 1.384)",
+    "du": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.879 m, dz -0.169 m), Kanten-Snap nein (Skalierung fu 1.163 fz 1.384)",
+    "dz": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.879 m, dz -0.169 m), Kanten-Snap nein (Skalierung fu 1.163 fz 1.384)",
+    "dn": "kantengitter rohkoerper_v7 off_front 12.66 = Wandoberflaeche: alte g_fassade-Vorderseite (p95 off 13,95) auf 12,65 gelegt (dn -1,3; Runde 1 -1,0 liess die Wand 0,25 m vor der Ebene, bündig mit der Rahmenfront -> Fensterlichter geschlossen); Rumpftiefe 8 m bleibt falsch",
+    "anker_m": "Huellmitte/Unterkante der ALTEN Gesamtgruppe stl_teil:fassade (6 Dateien), festgeschrieben, damit die Teile beim Abspalten bitgleich liegen bleiben",
+    "koerper_dehnung": "Druck: je Teil +0,3 % um den Schwerpunkt, damit sich nur beruehrende Teile ueberlappen (Form +-1-2 mm)"
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "teil_von": "stl_teil:traufzone_alt"
+     },
+     "neu": {
+      "koerper": true
+     }
+    }
+   ],
+   "anker_m": [
+    3.0563107566833496,
+    9.657358926773073,
+    1.5102628040313721
+   ],
+   "hinweis": "Runde 4: aus traufzone_alt abgespalten, Form und Lage unveraendert (Koordinator: Konsolen nicht anfassen); koerper=true nur fuer die Vereinigung (26 wasserdichte Teile, exakt)",
+   "koerper": true,
+   "koerper_dehnung": 0.003
   },
   {
    "typ": "bogenreihe:laube",
@@ -3591,7 +3654,8 @@
     "boden_z": "messungen_wolke.json boden_mitte (Wolke, Gegenproben bestaetigt)",
     "sockel_weite": "ANNAHME Startwert aus Nutzerfotos 8.11. (Oktogon ~1,4x Schaftdurchmesser); Feinwert per Wolkenfit",
     "sockel_hoehe": "ANNAHME Startwert Nutzerfotos",
-    "fase_hoehe": "ANNAHME Startwert Nutzerfotos"
+    "fase_hoehe": "ANNAHME Startwert Nutzerfotos",
+    "druck_verbinder": "Druck: Pfeilerschaft endet an der Bandunterkante, innenliegender Verbinderblock (vorher 2-cm-Absatz ueber die Bandflucht hinaus -> Splitterkanten)"
    },
    "sockel_weite": 1.5,
    "sockel_hoehe": 0.55,
@@ -3622,8 +3686,19 @@
       "scheitel_z": 7.2,
       "oberkante_z": 8.0
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "druck_verbinder": false
+     },
+     "neu": {
+      "druck_verbinder": true
+     }
     }
-   ]
+   ],
+   "druck_verbinder": true
   },
   {
    "typ": "stl_teil:laube_alt",
@@ -3657,7 +3732,9 @@
     "g_arkadenkreuz.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_arkadenkreuz.stl"
    },
    "aktiv": false,
-   "hinweis": "ersetzt durch bogenreihe:laube (8.11.); nur noch zum Vergleich"
+   "hinweis": "ersetzt durch bogenreihe:laube (8.11.); nur noch zum Vergleich",
+   "werte_quellen": {},
+   "historie": []
   },
   {
    "typ": "stl_teil:fenster",
@@ -3689,7 +3766,9 @@
     "g_seitenrahmen.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_seitenrahmen.stl"
    },
    "aktiv": false,
-   "hinweis": "ersetzt durch fensterreihe:og (8.11.); Rahmen/Sprossen/Seitenglas (Erkerfenster) fehlen dadurch"
+   "hinweis": "ersetzt durch fensterreihe:og (8.11.); Rahmen/Sprossen/Seitenglas (Erkerfenster) fehlen dadurch",
+   "werte_quellen": {},
+   "historie": []
   },
   {
    "typ": "stl_teil:erker",
@@ -3720,7 +3799,9 @@
     "g_galerie.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_galerie.stl",
     "g_baldachin.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_baldachin.stl"
    },
-   "aktiv": false
+   "aktiv": false,
+   "werte_quellen": {},
+   "historie": []
   },
   {
    "typ": "erker:0",
@@ -4156,6 +4237,39 @@
    ]
   },
   {
+   "typ": "quader:gesims",
+   "gruppe": "Traufgesims",
+   "u0": -8.82,
+   "u1": 17.15,
+   "n0": 12.62,
+   "n1": 13.08,
+   "z0": 14.1,
+   "z1": 14.7,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v12.json: waagerechte Kanten vor der Front, Laengenhistogramm z 14,1-14,8 (z 14,1: 31 m, Versatz Median 13,08; z 14,2-14,8: 25-39 m je 0,1 m, Versatz 12,8-13,1); Traufe 14,68 = rohkoerper_v7 traufe.kante",
+   "werte_quellen": {
+    "z0": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v12.json unterste dichte waagerechte Kantenlage z 14,1 (31 m; darunter 13,5-14,0 nur 0,6-6 m)",
+    "z1": "kantengitter rohkoerper_v7 traufe.kante.z 14,68 (Dachfuss, kein Band dazwischen) + 0,02 m Einbindung in den Dachfuss (Druck: Traufkante sonst deckungsgleich mit der Gesimskante)",
+    "n1": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v12.json Versatz-Median der Kanten bei z 14,1: 13,08 (p90 13,19)",
+    "n0": "Wandebene 12,66 minus 0,04 Einbindung",
+    "u0": "ANNAHME Rumpfenden (Gitterkanten along -8,5..14,3, Enden von Erkern verdeckt)",
+    "u1": "ANNAHME Rumpfenden"
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": "traufzone_alt (Balken/Gesims/Dachkante z 12,8-14,1)",
+     "neu": "Gesims 14,1-14,68"
+    }
+   ]
+  },
+  {
    "typ": "fensterreihe:eg0",
    "gruppe": "Fenster Laube EG 1",
    "n_fenster": 1,
@@ -4190,7 +4304,8 @@
     "riegel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 17.433 m, dz 0.969 m), Kanten-Snap nein (Hoehe x1.353)",
     "pitch": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "breite": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "wand_n": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json ebene laube_rueckwand offset 6.54 (Fenster sitzen in der Rueckwand)"
+    "wand_n": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json ebene laube_rueckwand offset 6.54 (Fenster sitzen in der Rueckwand)",
+    "einbindung": "Druck: Rahmen 0,04 m hinter die Wandebene (sonst nur flaechige Beruehrung = eigener Koerper), Ansicht unveraendert"
    },
    "historie": [
     {
@@ -4202,8 +4317,19 @@
      "neu": {
       "wand_n": 6.54
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "einbindung": 0
+     },
+     "neu": {
+      "einbindung": 0.04
+     }
     }
-   ]
+   ],
+   "einbindung": 0.04
   },
   {
    "typ": "fensterreihe:eg1",
@@ -4387,12 +4513,12 @@
   {
    "typ": "quader:eg1_nische",
    "gruppe": "quader:eg1_nische",
-   "u0": 6.345,
-   "u1": 8.105,
+   "u0": 6.335,
+   "u1": 8.115,
    "n0": 6.33,
    "n1": 6.56,
-   "z0": 3.3,
-   "z1": 6.35,
+   "z0": 3.29,
+   "z1": 6.36,
    "modus": "ausschnitt",
    "achse_n": [
     0.3338,
@@ -4403,7 +4529,8 @@
    "werte_quellen": {
     "u0": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-001/002 Aussenrahmen minus rahmen_b",
     "z0": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-002 + rahmen_b",
-    "n0": "ANNAHME Glas 0,21 hinter der Wand"
+    "n0": "ANNAHME Glas 0,21 hinter der Wand",
+    "druck": "Nische 0,01 m groesser als die Rahmenlichte (sonst deckungsgleiche Flaechen Nische/Rahmen -> nicht-mannigfaltige Kanten im STL, Runde 4)"
    },
    "historie": [
     {
@@ -4411,18 +4538,34 @@
      "wer": "Agent Runde 3",
      "alt": null,
      "neu": "angelegt"
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "u0": 6.345,
+      "u1": 8.105,
+      "z0": 3.3,
+      "z1": 6.35
+     },
+     "neu": {
+      "u0": 6.335,
+      "u1": 8.115,
+      "z0": 3.29,
+      "z1": 6.36
+     }
     }
    ]
   },
   {
    "typ": "quader:eg1_tuer_nische",
    "gruppe": "quader:eg1_tuer_nische",
-   "u0": 3.55,
-   "u1": 5.01,
+   "u0": 3.54,
+   "u1": 5.02,
    "n0": 6.24,
    "n1": 6.56,
-   "z0": 1.77,
-   "z1": 3.92,
+   "z0": 1.79,
+   "z1": 3.9,
    "modus": "ausschnitt",
    "achse_n": [
     0.3338,
@@ -4434,7 +4577,8 @@
     "u0": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-004 Lichte links/rechts 3,55..5,01",
     "z0": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-004 Schwelle 1,77",
     "z1": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-005 Kaempfer 3,92 (Bogenfeld bleibt Wand)",
-    "n0": "ANNAHME Tuerblatt 0,30 hinter der Wand"
+    "n0": "ANNAHME Tuerblatt 0,30 hinter der Wand",
+    "druck": "Nische 0,01 m breiter als die Lichte, Unterkante 0,02 ueber der Schwelle, Oberkante 0,02 unter dem Kaempfer (sonst deckungsgleiche Flaechen mit dem Rahmen -> Splitterkanten, Runde 4)"
    },
    "historie": [
     {
@@ -4442,6 +4586,22 @@
      "wer": "Agent Runde 3",
      "alt": null,
      "neu": "angelegt"
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "u0": 3.55,
+      "u1": 5.01,
+      "z0": 1.77,
+      "z1": 3.92
+     },
+     "neu": {
+      "u0": 3.54,
+      "u1": 5.02,
+      "z0": 1.79,
+      "z1": 3.9
+     }
     }
    ]
   },
@@ -4480,7 +4640,8 @@
     "riegel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -11.781 m, dz 0.028 m), Kanten-Snap nein",
     "pitch": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "breite": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "wand_n": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json ebene laube_rueckwand offset 6.54 (Fenster sitzen in der Rueckwand)"
+    "wand_n": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json ebene laube_rueckwand offset 6.54 (Fenster sitzen in der Rueckwand)",
+    "einbindung": "Druck: Rahmen 0,04 m hinter die Wandebene (sonst nur flaechige Beruehrung = eigener Koerper), Ansicht unveraendert"
    },
    "historie": [
     {
@@ -4492,8 +4653,19 @@
      "neu": {
       "wand_n": 6.54
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "einbindung": 0
+     },
+     "neu": {
+      "einbindung": 0.04
+     }
     }
-   ]
+   ],
+   "einbindung": 0.04
   },
   {
    "typ": "stl_teil:figuren",
@@ -4526,7 +4698,8 @@
     "dz": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.965 m, dz 3.315 m), Kanten-Snap nein (Skalierung fu 1.166 fz 1.000)",
     "sn": "param_wolke_fit.py (CMA-ES, +-2,5 m) gegen wolke_netzrahmen.npy, Gesamtmedian 0,088->0,086",
     "su": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.965 m, dz 3.315 m), Kanten-Snap nein (Skalierung fu 1.166 fz 1.000)",
-    "sz": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.965 m, dz 3.315 m), Kanten-Snap nein (Skalierung fu 1.166 fz 1.000)"
+    "sz": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.965 m, dz 3.315 m), Kanten-Snap nein (Skalierung fu 1.166 fz 1.000)",
+    "koerper_dehnung": "Druck: je Teil +0,3 % um den Schwerpunkt, damit sich nur beruehrende Teile ueberlappen (Form +-1-2 mm)"
    },
    "historie": [
     {
@@ -4538,8 +4711,20 @@
      "neu": {
       "dn": -1.833
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "koerper": false
+     },
+     "neu": {
+      "koerper": true
+     }
     }
-   ]
+   ],
+   "koerper": true,
+   "koerper_dehnung": 0.003
   },
   {
    "typ": "satteldach:haupt",
@@ -4572,7 +4757,8 @@
     "z_first": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json first.z 27.51 (First-Kante 35 m; Rohsegmente waagerecht z 26,5-28: Median 27,29 bei off 3,38 -> +-0,25 m)",
     "n_traufe_h": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "z_traufe_h": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "symmetrisch": "ANNAHME: Rueckhang spiegelt den Vorderhang (Rohkoerper 'Rueckwand ANNAHME Firstspiegel'; Gitter sieht die Rueckseite nicht)"
+    "symmetrisch": "ANNAHME: Rueckhang spiegelt den Vorderhang (Rohkoerper 'Rueckwand ANNAHME Firstspiegel'; Gitter sieht die Rueckseite nicht)",
+    "ziegel_einbindung": "Druck: Ziegelleisten 0,01 m in die Dachflaeche (sonst Beruehrflaeche -> nicht-mannigfaltige Kanten im STL), sichtbare Tiefe unveraendert"
    },
    "symmetrisch": true,
    "pult_quelle": "Schnitt Wolke u -2..2/4..6: nur EINE steile Vorderflaeche bis z 19,3 (Rueckhang unsichtbar); LoD2-dachtyp enthaelt 'Sheddach'; Rueckwand n 5,84/z 11,6 = ANNAHME aus dem vorgebauten Modell (stl_teil:dach); n_first 5,9 fest, First = Verlaengerung der Vorderflaeche bis zur Rueckwand",
@@ -4598,9 +4784,20 @@
       "u1": 17.15,
       "symmetrisch": true
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "ziegel_einbindung": 0
+     },
+     "neu": {
+      "ziegel_einbindung": 0.01
+     }
     }
    ],
-   "symmetrisch_quelle": "ANNAHME Firstspiegel (Rohkoerper_v7 off_back -6.56 = 2*3.05-12.66); LoD2 First-Traufe 11,75 m passt zu 12,8 m Dachhoehe"
+   "symmetrisch_quelle": "ANNAHME Firstspiegel (Rohkoerper_v7 off_back -6.56 = 2*3.05-12.66); LoD2 First-Traufe 11,75 m passt zu 12,8 m Dachhoehe",
+   "ziegel_einbindung": 0.01
   },
   {
    "typ": "gaubenreihe:unten",
@@ -4729,7 +4926,9 @@
     "g_giebelrahmen.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_giebelrahmen.stl",
     "g_krabben.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_krabben.stl"
    },
-   "aktiv": false
+   "aktiv": false,
+   "werte_quellen": {},
+   "historie": []
   },
   {
    "typ": "stl_teil:gauben",
@@ -4756,7 +4955,9 @@
     "g_gauben_dach.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_gauben_dach.stl",
     "g_gauben_rahmen.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_gauben_rahmen.stl"
    },
-   "aktiv": false
+   "aktiv": false,
+   "werte_quellen": {},
+   "historie": []
   },
   {
    "typ": "stl_teil:helme_w",
@@ -4893,7 +5094,7 @@
    "gruppe": "Helm w (Kegel)",
    "u": -8.56,
    "n": 12.22,
-   "z0": 14.67,
+   "z0": 14.6,
    "z1": 22.34,
    "radius": 0.844,
    "radius_oben": 0.02,
@@ -4906,17 +5107,40 @@
    "werte_quellen": {
     "u": "helme cx/cy",
     "n": "helme cx/cy",
-    "z0": "helme z_fuss",
+    "z0": "formen/helme.json Kegelfuss 14.67 minus 0,04 m Einbindung in die Erkerspitze (Druck: sonst Punktberuehrung) | Runde 4: -0,03 m Einbindung fuer Druck (ANNAHME: unsichtbar, im Rumpf)",
     "z1": "helme z_spitze (fotogeprueft)",
     "radius": "helme r_fuss; WIDERSPRUCH offen: Koerper-Agent sieht am Foto Helmfuss ~r 1,6 (beobachtungen_offen)"
-   }
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "z0": 14.67
+     },
+     "neu": {
+      "z0": 14.63
+     }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "z0": 14.63
+     },
+     "neu": {
+      "z0": 14.6
+     },
+     "grund": "Druck: Einbindung 0,04 -> 0,07 m (Basis 4 cm unter Traufe 14,68 lag 1 cm unter der Erkerspitze und schnitt die Rumpf-Stirnflaeche fast deckungsgleich -> 3 nicht-manifold Kanten an der Westecke; mit 0,07 m 1 Koerper wasserdicht). Sichtbare Form unveraendert (Basis liegt im Rumpf/Erkerdach)."
+    }
+   ]
   },
   {
    "typ": "zylinder:helm_o",
    "gruppe": "Helm o (Kegel)",
    "u": 15.53,
    "n": 12.23,
-   "z0": 15.09,
+   "z0": 15.02,
    "z1": 22.78,
    "radius": 0.846,
    "radius_oben": 0.02,
@@ -4929,10 +5153,33 @@
    "werte_quellen": {
     "u": "helme cx/cy",
     "n": "helme cx/cy",
-    "z0": "helme z_fuss",
+    "z0": "formen/helme.json Kegelfuss 15.09 minus 0,04 m Einbindung in die Erkerspitze (Druck: sonst Punktberuehrung) | Runde 4: -0,03 m Einbindung fuer Druck (ANNAHME: unsichtbar, im Rumpf)",
     "z1": "helme z_spitze (fotogeprueft)",
     "radius": "helme r_fuss; WIDERSPRUCH offen: Koerper-Agent sieht am Foto Helmfuss ~r 1,6 (beobachtungen_offen)"
-   }
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "z0": 15.09
+     },
+     "neu": {
+      "z0": 15.05
+     }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "z0": 15.05
+     },
+     "neu": {
+      "z0": 15.02
+     },
+     "grund": "Druck: Einbindung 0,04 -> 0,07 m (Basis 4 cm unter Traufe 14,68 lag 1 cm unter der Erkerspitze und schnitt die Rumpf-Stirnflaeche fast deckungsgleich -> 3 nicht-manifold Kanten an der Westecke; mit 0,07 m 1 Koerper wasserdicht). Sichtbare Form unveraendert (Basis liegt im Rumpf/Erkerdach)."
+    }
+   ]
   },
   {
    "typ": "staffelgiebel:ost",
@@ -5081,7 +5328,9 @@
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Wolke wolke_netzrahmen.npy: ~73000 Punkte >0,3 m vom Modell bei u 9-15, n 6-12, z 0-12 (Restfehler-Auswertung 8.11.); Form = ANNAHME Quader (Nachbar-/Seitenbau)",
-   "aktiv": false
+   "aktiv": false,
+   "werte_quellen": {},
+   "historie": []
   },
   {
    "typ": "quader:og",
@@ -5099,7 +5348,9 @@
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Startwerte aus alter Fassadengruppe generator_alt/teile/g_fassade.stl+g_waende.stl (u -10,3..9,4, n 5,8..14,0, z 1,5..10,5; Huellmasse); Feinwerte per param_wolke_fit gegen wolke_netzrahmen.npy; Fuellung massiv = ANNAHME (Wolke sieht nur Aussenflaechen)",
-   "aktiv": false
+   "aktiv": false,
+   "werte_quellen": {},
+   "historie": []
   },
   {
    "typ": "quader:west_w",
@@ -5117,7 +5368,9 @@
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Startwerte aus alter Fassadengruppe generator_alt/teile/g_fassade.stl+g_waende.stl (u -10,3..9,4, n 5,8..14,0, z 1,5..10,5; Huellmasse); Feinwerte per param_wolke_fit gegen wolke_netzrahmen.npy; Fuellung massiv = ANNAHME (Wolke sieht nur Aussenflaechen)",
-   "aktiv": false
+   "aktiv": false,
+   "werte_quellen": {},
+   "historie": []
   },
   {
    "typ": "quader:ost_w",
@@ -5135,7 +5388,9 @@
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Startwerte aus alter Fassadengruppe generator_alt/teile/g_fassade.stl+g_waende.stl (u -10,3..9,4, n 5,8..14,0, z 1,5..10,5; Huellmasse); Feinwerte per param_wolke_fit gegen wolke_netzrahmen.npy; Fuellung massiv = ANNAHME (Wolke sieht nur Aussenflaechen)",
-   "aktiv": false
+   "aktiv": false,
+   "werte_quellen": {},
+   "historie": []
   },
   {
    "typ": "quader:hinten",
@@ -5153,7 +5408,9 @@
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Startwerte aus alter Fassadengruppe generator_alt/teile/g_fassade.stl+g_waende.stl (u -10,3..9,4, n 5,8..14,0, z 1,5..10,5; Huellmasse); Feinwerte per param_wolke_fit gegen wolke_netzrahmen.npy; Fuellung massiv = ANNAHME (Wolke sieht nur Aussenflaechen)",
-   "aktiv": false
+   "aktiv": false,
+   "werte_quellen": {},
+   "historie": []
   },
   {
    "typ": "quader:gesims",
@@ -5163,7 +5420,7 @@
    "n0": 13.3,
    "n1": 14.2,
    "z0": 10.1,
-   "z1": 10.5,
+   "z1": 14.7,
    "modus": "anbau",
    "achse_n": [
     0.3338,
@@ -5171,7 +5428,11 @@
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Startwerte aus alter Fassadengruppe generator_alt/teile/g_fassade.stl+g_waende.stl (u -10,3..9,4, n 5,8..14,0, z 1,5..10,5; Huellmasse); Feinwerte per param_wolke_fit gegen wolke_netzrahmen.npy; Fuellung massiv = ANNAHME (Wolke sieht nur Aussenflaechen)",
-   "aktiv": false
+   "aktiv": false,
+   "werte_quellen": {
+    "z1": " + 0,02 m Einbindung in den Dachfuss (Druck: Traufkante sonst deckungsgleich mit der Gesimskante)"
+   },
+   "historie": []
   },
   {
    "typ": "fensterreihe:og",
@@ -5221,7 +5482,8 @@
     "riegel_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json z_kaempfer 11.72 (Kaempfer-Riegel = staerkste Horizontale)",
     "kiel": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
     "n_lichter": "Foto-Zaehlung Z-6120-002 (2 Gruppen voll), Z-6261-001 (5 Gruppen), Z-hc12-001 (5 Gruppen): je 3 Lichter (Regel 9); Gitter fenster_erker_v9 n_licht 3 bestaetigt",
-    "kontur": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json fenster.profil (Bekroenungsprofil |dx| -> z, 75%-Quantil schraeger Kanten, >= 40 Kanten je Bin) + z_schulter 12.25 am Rahmenrand; Vorhangbogen statt Kielbogen"
+    "kontur": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json fenster.profil (Bekroenungsprofil |dx| -> z, 75%-Quantil schraeger Kanten, >= 40 Kanten je Bin) + z_schulter 12.25 am Rahmenrand; Vorhangbogen statt Kielbogen",
+    "einbindung": "Druck: Rahmen 0,04 m hinter die Wandebene (sonst nur flaechige Beruehrung = eigener Koerper), Ansicht unveraendert"
    },
    "n_lichter": 3,
    "kontur": [
@@ -5545,8 +5807,19 @@
       "glas_d": 0.03,
       "glas_n": 0.0
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 4",
+     "alt": {
+      "einbindung": 0
+     },
+     "neu": {
+      "einbindung": 0.04
+     }
     }
-   ]
+   ],
+   "einbindung": 0.04
   }
  ],
  "hinweis_grob": "2026-11-07: Bauteile = 9 Gruppen aus dem an die Wolke ausgerichteten alten Generator (generator_alt/teile/g_*.stl, 41 Teile), Rohdreiecke (stl_teil), nicht wasserdicht, nicht druckbar. Schleife stellt je Gruppe dn/du/dz/sn/su/sz.",
@@ -5555,8 +5828,8 @@
   "dateien": {}
  },
  "druck": {
-  "anbau_konsolen": false,
-  "anbau_konsolen_quelle": "Anpassungsphase 8.11.: Rumpf ist stl_teil (Rohdreiecke), parametrische Teile schweben als eigene Koerper; Konsolen-Huelle (Druckregel) fuellte die Arkadenboegen. Vor dem Druck: true + Rumpf als Volumen"
+  "anbau_konsolen": true,
+  "anbau_konsolen_quelle": "Runde 4 (2026-11-09): Rumpf ist jetzt Volumen (quader:rumpf_eg/og) -> Druckregel an: frei schwebende Anbauteile (Figuren/Konsolen-Teile vor der Wand) per Konsolenhuelle an die naechste Flaeche | vorher (8.11.): Anpassungsphase 8.11.: Rumpf ist stl_teil (Rohdreiecke), parametrische Teile schweben als eigene Koerper; Konsolen-Huelle (Druckregel) fuellte die Arkadenboegen. Vor dem Druck: true + Rumpf als Volumen"
  },
  "fassade_n": {
   "wert": [
@@ -5567,5 +5840,6 @@
  },
  "rahmen_hinweis_lot2": "Parametrische Bauteile (u/n/z) rechnen im lot2-Rahmen der gemeinsamen SfM (sfm/kam_lot2.json): u = n um -90 Grad, n = achse_n (0.3338, 0.9426), Ursprung 0/0, z wie Wolke (Boden ~1,5-2,5). Kantengitter-Dateien (segmente_gitter_v10, rohkoerper_v7: u (0.9423,-0.3347), n (0.3347,0.9423)) nutzen dieselbe Konvention -> Masse direkt uebertragbar (Beweis: Frontebene 12,66 = fensterreihe wand_n 12,666; Pfeiler-along -8,52..15,56 = bogenreihe u0..u0+4*pitch; Overlay audit/gitter_generator/). 'rahmen' (UTM/LoD2) gilt nur fuer rumpf_lod2.",
  "hinweis_runde2": "2026-11-09 Runde 2: Helme als Kegel (zylinder:helm_*), Nadel-STL-Gruppen inaktiv; bruestung:balkon (68 Baluster Z-6120-001); Gaubenlagen aus gauben_r3_lagen; Z-Protokolle Lichter; K-6120/K-6261 aus kam_lot2 (sfm_buendel, keine amtlichen Anker)",
- "hinweis_runde3": "2026-11-09 Agent Runde 3: Rumpf aus dem Gitter (quader:rumpf_eg/og) statt Alt-Fassadengruppe (Traufzone abgespalten), Staffelgiebel spiegel, EG Bogen 3 Fenster+Tuer an der Fotolage (M-6120-001..005, Z-6120-003..005), Bruestungspfosten (Z-6120-001, M-6120-006/007)"
+ "hinweis_runde3": "2026-11-09 Agent Runde 3: Rumpf aus dem Gitter (quader:rumpf_eg/og) statt Alt-Fassadengruppe (Traufzone abgespalten), Staffelgiebel spiegel, EG Bogen 3 Fenster+Tuer an der Fotolage (M-6120-001..005, Z-6120-003..005), Bruestungspfosten (Z-6120-001, M-6120-006/007)",
+ "hinweis_runde4": "2026-11-09 Agent Runde 4: Druckstufe (stl_teil koerper=true, Einbindung 0,04), Traufgesims aus dem Gitter statt traufzone_alt"
 }
