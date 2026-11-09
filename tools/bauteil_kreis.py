@@ -54,7 +54,7 @@ STL = K.get("stl", f"modelle/stl/{OBJ}_1-87.stl"); SK = K.get("skala", 0.087)
 GIT = K.get("gitter", D + "/segmente_gitter_v12.json")
 WOLKE = K.get("wolke", "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2.npy")
 TABU = K.get("tabu", [])
-LAUF = time.strftime("%Y%m%d_%H%M")
+LAUF = time.strftime("%Y%m%d_%H%M%S") + opt("--spur", "")
 LDIR = os.path.join(KREISDIR, OBJ, LAUF); os.makedirs(LDIR, exist_ok=True)
 PROT = os.path.join(LDIR, "kreis.jsonl")
 
@@ -81,11 +81,24 @@ def messen(wt, tag):
     z = json.loads([l for l in open(kf) if l.strip()][-1]) if (os.path.exists(kf) and not TROCKEN) else None
     return rc2, z, out
 
+BELEGT = os.path.join(KREISDIR, OBJ, "belegt"); os.makedirs(BELEGT, exist_ok=True)   # Spuren parallel: je Bauteil eine Sperrdatei
+
 def waehlen(z, sperre):
     kand = [t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["beleg"] is not None and t["anteil_mit_daten"] >= MIN_DATEN
-            and sperre.get(t["teil"], 0) < MAX_FEHL]
+            and sperre.get(t["teil"], 0) < MAX_FEHL and not os.path.exists(os.path.join(BELEGT, t["teil"]))
+            and t["teil"].split("__")[0] not in {f.split("__")[0] for f in os.listdir(BELEGT)}]   # gleiche Formfamilie (gleicher Generatorcode) nie parallel
     kand.sort(key=lambda t: t["beleg"])
-    return kand[0] if kand else None
+    for t in kand:   # atomar belegen (O_EXCL), damit zwei Spuren nie dasselbe Teil nehmen
+        try:
+            fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
+            return t
+        except FileExistsError:
+            continue
+    return None
+
+def freigeben(teil):
+    try: os.remove(os.path.join(BELEGT, teil))
+    except FileNotFoundError: pass
 
 def auftrag(ziel, runde, wt):
     v = open(os.path.join(ROOT, "modelle", "VORLAGE_BAUTEIL_RUNDE.md")).read()
@@ -142,7 +155,7 @@ for runde in range(1, RUNDEN + 1):
     open(os.path.join(LDIR, f"auftrag_r{runde}.md"), "w").write(txt)
     print(f"Runde {runde}: Ziel {ziel['teil']} (Wolkenbeleg {ziel['beleg']}) -> Auftrag {LDIR}/auftrag_r{runde}.md")
     if TROCKEN:
-        protokoll({"runde": runde, "trocken": True, "ziel": ziel}); print(txt[:1500]); break
+        freigeben(ziel["teil"]); protokoll({"runde": runde, "trocken": True, "ziel": ziel}); print(txt[:1500]); break
     t0 = time.time()
     rcA, _ = sh(["claude", "-p", txt, "--model", MODELL, "--permission-mode", RECHTE], wt,
                 log=os.path.join(LDIR, f"agent_r{runde}.log"), timeout=MAX_MIN * 60)
@@ -161,6 +174,7 @@ for runde in range(1, RUNDEN + 1):
         basis = subprocess.run(["git", "-C", wt, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
         ohne_annahme = 0
         if "--nach_main" in a:   # Nutzerentscheid 9.11.: angenommene Runden direkt nach main (revertierbar)
+            import fcntl; _lk = open(os.path.join(KREISDIR, OBJ, "merge.lock"), "w"); fcntl.flock(_lk, fcntl.LOCK_EX)
             mr = subprocess.run(["git", "-C", ROOT, "merge", "--no-edit", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} nach main (automatisch)", br],
                                 capture_output=True, text=True)
             if mr.returncode != 0:
@@ -169,12 +183,14 @@ for runde in range(1, RUNDEN + 1):
             else:
                 basis = subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
                 print(f"Runde {runde}: nach main gemergt ({basis[:7]})")
+            fcntl.flock(_lk, fcntl.LOCK_UN); _lk.close()
     else:
         patch = os.path.join(LDIR, f"verworfen_r{runde}.patch")
         with open(patch, "w") as f:
             subprocess.run(["git", "-C", wt, "add", "-A", "-N", "."], check=False)
             subprocess.run(["git", "-C", wt, "diff"], stdout=f, check=False)
         sperre[ziel["teil"]] = sperre.get(ziel["teil"], 0) + 1; ohne_annahme += 1
+    freigeben(ziel["teil"])
     protokoll({"runde": runde, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
                "agent_rc": rcA, "tor_abnahme": tor_abnahme, "konvergenz_rc": rcK, "gewinn": round(gewinn, 3),
                "tor_konvergenz": tor_konv, "pruefer": urteil, "angenommen": angenommen,
