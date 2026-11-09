@@ -854,8 +854,19 @@ def fensterreihe(cfg, ctx):
         wl = (b - 2 * rb - (nl - 1) * pf) / nl                                                        # Lichtbreite; nl = 2 ergibt exakt den alten Mittelpfosten bei uc
         for j in range(1, nl):
             up = uc - b / 2 + rb + j * wl + (j - 0.5) * pf; teile.append(quader(up - pf / 2, up + pf / 2, wn - ein, wn + td, z0 + rb * 0.5, zs - rb * 1.5))
-        teile.append(quader(uc - b / 2 + rb * 0.5, uc + b / 2 - rb * 0.5, wn - ein, wn + td, rz - rh / 2, rz + rh / 2))
+        lk, ls = cfg.get("licht_riegel_z"), cfg.get("licht_scheitel_z")                              # optional je Licht (von aussen zur Mitte, gespiegelt): Riegelhoehe / Lichtoberkante
+        if not lk: teile.append(quader(uc - b / 2 + rb * 0.5, uc + b / 2 - rb * 0.5, wn - ein, wn + td, rz - rh / 2, rz + rh / 2))
+        for j in range(nl):
+            a_ = uc - b / 2 + rb + j * (wl + pf); e_ = a_ + wl; sp = min(j, nl - 1 - j)                  # Licht j: a_..e_; sp = Spiegelindex (0 = aussen)
+            a2, e2 = a_ - (rb * 0.5 if j == 0 else pf / 2), e_ + (rb * 0.5 if j == nl - 1 else pf / 2)   # bis in Rahmen/Pfosten (Ueberlappung, keine Splitter)
+            if lk: zr = float(lk[min(sp, len(lk) - 1)]); teile.append(quader(a2, e2, wn - ein, wn + td, zr - rh / 2, zr + rh / 2))
+            if ls and ls[min(sp, len(ls) - 1)] is not None:                                          # Lichtoberkante tiefer als die Kontur: Fuellung zwischen Scheitel und Rahmen
+                zt = float(ls[min(sp, len(ls) - 1)]); fuell = C([ccw(np.array([(a2, zt), (e2, zt), (e2, zs + 1.0), (a2, zs + 1.0)]))]) ^ outer
+                teile.append(M.extrude(fuell, td + ein).transform([[1, 0, 0, 0], [0, 0, -1, wn + td], [0, 1, 0, 0]]))
     k = UNION(teile).transform(T); q = lambda p_: (wq.get(p_) or cfg["quelle"])
+    if cfg.get("licht_riegel_z") or cfg.get("licht_scheitel_z"):
+        beleg("alle", "Fensterreihe: Kaempferriegel/Scheitel je Licht (gespiegelt, aussen->Mitte)", q("licht_riegel_z") + (" | Scheitel: " + q("licht_scheitel_z") if cfg.get("licht_scheitel_z") else ""),
+              licht_riegel_z=cfg.get("licht_riegel_z"), licht_scheitel_z=cfg.get("licht_scheitel_z"))
     beleg("alle", f"Fensterreihe {nf} Kielbogenfenster" + (f" ({nl} Lichter)" if nl != 2 else ""), f"Anzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + (q("n_lichter") + "; " if nl != 2 else "") + q("breite") + " | Lage: " + q("u_mitte"), n_fenster=nf, n_lichter=nl, pitch=pitch, breite=b, unterseite_z=z0, kaempfer_z=zk, scheitel_z=zs, wand_n=wn, tiefe=td)
     return [k], []
 
@@ -947,6 +958,11 @@ def main():
         if spec.get("aktiv", True) is False: continue                                             # nach dem Ueberschreiben: BAUTEIL_PARAM darf Bauteile abschalten
         a, c = BAUTEILE[spec["typ"] if spec["typ"] in BAUTEILE else spec["typ"].split(":")[0]](spec, ctx); adds += a; cuts += c   # "typ:name" = Instanz eines Typs (eigener Schluessel in BAUTEIL_PARAM/Parameterraum)
         print(f"  {spec['typ']}: +{len(a)} / -{len(c)}")
+        if os.environ.get("BAUTEILE_AUS") and (a or c):                                               # 2026-11-09 R6 Sichtliste je Bauteil: jedes Bauteil einzeln als STL (mm, gleicher Rahmen wie das Modell)
+            os.makedirs(os.environ["BAUTEILE_AUS"], exist_ok=True); m_ = UNION(a or c).scale((K, K, K)).to_mesh()
+            _V, _F = np.asarray(m_.vert_properties)[:, :3], np.asarray(m_.tri_verts)
+            if len(_F):
+                import trimesh as _tmb; _tmb.Trimesh(_V, _F, process=False).export(os.path.join(os.environ["BAUTEILE_AUS"], spec["typ"].replace(":", "__") + ("__ausschnitt" if not a else "") + ".stl"))
     if not adds:                                                                                  # nur Rohdreiecke (stl_teil): kein Manifold-Koerper
         model = None; V = np.zeros((0, 3)); Fi = np.zeros((0, 3), int)
     else:
@@ -972,19 +988,21 @@ def main():
                 model = model + t_ + M.hull_points(hp.tolist()); n_k += 1                                                # (T3b: ohne Rundung 61 Koerper/Loecher nach Druckreparatur, mit 2 mm: 1 Koerper, wasserdicht)
             print(f"  Anbauteile: {n_k} mit Konsole angebunden, {n_s} Splitter verworfen")
             beleg("alle", f"Anbauteile ohne Kontakt: {n_k} Konsolen, {n_s} Splitter verworfen", "baukasten_gen Druckregel (tools/anbau_verbinden.py-Prototyp 5.11.): Konsole = Huelle der unteren 20 % des Teils + 0,1 m in die naechste Modellflaeche; Form des Teils unveraendert")
-        model = model.simplify(float(os.environ.get("VEREINFACHEN_M", "0.005"))).scale((K, K, K))   # Splitter-Dreiecke (Naht-Offsets) entfernen; 5 mm << Druckaufloesung
-        mesh = model.to_mesh(); V = np.asarray(mesh.vert_properties)[:, :3]; Fi = np.asarray(mesh.tri_verts)
-        os.makedirs(os.path.dirname(OUT), exist_ok=True)
-        try:                                                                                           # Druckreparatur (2026-11-05): fast deckungsgleiche Punkte (< 1 um) werden im STL zu Splittern ->
-            import trimesh as _tm                                                                      # Pruefstand 'nicht wasserdicht / 8 Koerper' verwarf Fotowert First -0,63. Schweissen, entartete Dreiecke weg,
-            tm = _tm.Trimesh(np.asarray(V, np.float32).astype(float), Fi, process=True)                                                    # Loecher schliessen; nur wenn noetig und nur bei Volumenaenderung < 0,1 %
-            if not (tm.is_watertight and len(tm.split(only_watertight=False)) == 1):
-                v0 = abs(model.volume()); tm.merge_vertices(digits_vertex=3); tm.update_faces(tm.nondegenerate_faces(height=1e-4)); tm.remove_unreferenced_vertices(); _tm.repair.fill_holes(tm)
-                if tm.is_watertight and len(tm.split(only_watertight=False)) == 1 and abs(abs(tm.volume) - v0) < 1e-3 * v0:
-                    print(f"  Druckreparatur: Splitter geschweisst ({len(Fi)} -> {len(tm.faces)} Dreiecke)"); V, Fi = np.asarray(tm.vertices), np.asarray(tm.faces)
-                    beleg("alle", "Druckreparatur Splitter", "baukasten_gen: Punkte < 1 um verschweisst, entartete Dreiecke entfernt, Loecher geschlossen (trimesh MIT), Volumen +-0,1 %")
-                else: print("  Druckreparatur fehlgeschlagen - Netz unveraendert")
-        except ImportError: print("  (trimesh fehlt: keine Druckreparatur)")
+        os.makedirs(os.path.dirname(OUT), exist_ok=True); roh_model = model; t0_ = float(os.environ.get("VEREINFACHEN_M", "0.005"))
+        for tol_ in [t0_] + [t0_ * f_ for f_ in (0.8, 1.2, 0.6, 1.4)]:                                  # 2026-11-09 R6: Simplify-Toleranz ist ein Zufallsschalter fuer Splitter (Union-Numerik);
+            model = roh_model.simplify(tol_).scale((K, K, K))                                             # bei gescheiterter Reparatur naechste Toleranz (alle <= 7 mm << Druckaufloesung), erste wasserdichte gewinnt
+            mesh = model.to_mesh(); V = np.asarray(mesh.vert_properties)[:, :3]; Fi = np.asarray(mesh.tri_verts); ok_ = True
+            try:                                                                                           # Druckreparatur (2026-11-05): fast deckungsgleiche Punkte (< 1 um) werden im STL zu Splittern ->
+                import trimesh as _tm                                                                      # Pruefstand 'nicht wasserdicht / 8 Koerper' verwarf Fotowert First -0,63. Schweissen, entartete Dreiecke weg,
+                tm = _tm.Trimesh(np.asarray(V, np.float32).astype(float), Fi, process=True)                                                    # Loecher schliessen; nur wenn noetig und nur bei Volumenaenderung < 0,1 %
+                if not (tm.is_watertight and len(tm.split(only_watertight=False)) == 1):
+                    v0 = abs(model.volume()); tm.merge_vertices(digits_vertex=3); tm.update_faces(tm.nondegenerate_faces(height=1e-4)); tm.remove_unreferenced_vertices(); _tm.repair.fill_holes(tm)
+                    if tm.is_watertight and len(tm.split(only_watertight=False)) == 1 and abs(abs(tm.volume) - v0) < 1e-3 * v0:
+                        print(f"  Druckreparatur: Splitter geschweisst ({len(Fi)} -> {len(tm.faces)} Dreiecke, Vereinfachung {tol_ * 1000:.1f} mm)"); V, Fi = np.asarray(tm.vertices), np.asarray(tm.faces)
+                        beleg("alle", "Druckreparatur Splitter", f"baukasten_gen: Punkte < 1 um verschweisst, entartete Dreiecke entfernt, Loecher geschlossen (trimesh MIT), Volumen +-0,1 %, Vereinfachung {tol_ * 1000:.1f} mm")
+                    else: print(f"  Druckreparatur fehlgeschlagen bei Vereinfachung {tol_ * 1000:.1f} mm" + (" - naechste Toleranz" if tol_ != t0_ * 1.4 else " - Netz unveraendert")); ok_ = False
+            except ImportError: print("  (trimesh fehlt: keine Druckreparatur)")
+            if ok_: break
     roh = ctx.get("roh") or []
     if roh:                                                                                        # stl_teil: Rohdreiecke (m) -> mm, unverschweisst an das Netz haengen
         R_ = np.concatenate(roh) * K; V = np.vstack([V, R_.reshape(-1, 3)]); Fi = np.vstack([Fi, np.arange(len(R_) * 3).reshape(-1, 3) + len(V) - len(R_) * 3])

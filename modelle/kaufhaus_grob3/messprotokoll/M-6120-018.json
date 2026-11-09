@@ -1,0 +1,39 @@
+{
+ "id": "M-6120-018",
+ "typ": "triangulation",
+ "foto": "6120",
+ "name": "Bogen 3 Tuer: Tuerklopfer Mitte (Tiefe Laubenrueckwand)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6120",
+   "px": [
+    1765.0,
+    3215.0
+   ]
+  },
+  {
+   "kamera": "K-6117",
+   "px": [
+    2133.0,
+    3295.0
+   ]
+  }
+ ],
+ "P": [
+  6.673,
+  5.228,
+  3.015
+ ],
+ "strahl_abstand_m": [
+  0.01,
+  0.01
+ ],
+ "schnittwinkel_grad": [
+  33.7
+ ],
+ "z": 3.015,
+ "unsicherheit_m": 0.048,
+ "massstab_von": "Kameras K-6120, K-6117 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.155,
+ "u": 4.545
+}

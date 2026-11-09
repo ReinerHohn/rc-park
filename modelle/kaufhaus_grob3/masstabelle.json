@@ -298,6 +298,60 @@
    "typ": "druck_teile_ueberhang",
    "ordner": "modelle/stl/kaufhaus_grob3_teile",
    "winkel": 60.0
+  },
+  "lichter_g2_bei_kaempfer_seite": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    3.807,
+    12.242
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=11.753 - z_unterkante_lot2",
+   "u0": -1.75,
+   "u1": 1.75,
+   "tiefe": 0.1,
+   "vor": 2.0,
+   "min_b": 0.5,
+   "max_b": 1.3,
+   "rand": 0.0
+  },
+  "lichter_g2_bei_kaempfer_mitte": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    3.807,
+    12.242
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=12.283 - z_unterkante_lot2",
+   "u0": -1.75,
+   "u1": 1.75,
+   "tiefe": 0.1,
+   "vor": 2.0,
+   "min_b": 0.5,
+   "max_b": 1.3,
+   "rand": 0.0
+  },
+  "laube_rueckwand_n728_z7": {
+   "typ": "ebene_abstand",
+   "o": [
+    2.4368,
+    6.8601
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=7.0 - z_unterkante_lot2",
+   "u0": -14.5,
+   "u1": 7.5,
+   "vor": 3.0,
+   "quantil": 50.0
   }
  },
  "pruefungen": [
@@ -714,6 +768,54 @@
    "massstab": "-",
    "historie": [
     "2026-11-09 angelegt (Agent Runde 5); ungeteiltes Modell 0,056 = fehlschlagend"
+   ]
+  },
+  {
+   "name": "Fenstergruppe 2 (1. OG): offene Lichter auf Hoehe Seiten-Kaempfer z 11,753 (Seitenlichter zu, Mittellicht offen)",
+   "wert": "lichter_g2_bei_kaempfer_seite_anzahl",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "kaempfer_sweep.json (/media/oem/scan/rc-park_daten/kaufhaus_alle/kette_video_alle/koerper/kaempfer_sweep.json): Kaempfer je Licht seite 11,753 / mitte 12,283 (foto_sweep, Wolke 11,753 / 12,293 einig; kanten_tor Mitte 12,269); Abstand Mitte-Seite 0,53 m am Foto bestaetigt: M-6120-011/013 Seitenriegel-Oberkante 11,64/11,69, M-6120-012 Mittelriegel 12,20 (absolut 0,1 m tiefer, siehe beobachtungen_offen)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6120-012",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 6): Kaempfer je Licht; vorher ein durchgehender Riegel 11,72 -> 0 bzw. 3 offene Lichter (Pruefung muss fehlschlagen)"
+   ]
+  },
+  {
+   "name": "Fenstergruppe 2 (1. OG): offene Lichter auf Hoehe Mittel-Kaempfer z 12,283 (Mittellicht zu, Seitenlichter offen)",
+   "wert": "lichter_g2_bei_kaempfer_mitte_anzahl",
+   "soll": [
+    2,
+    2
+   ],
+   "quelle": "kaempfer_sweep.json (/media/oem/scan/rc-park_daten/kaufhaus_alle/kette_video_alle/koerper/kaempfer_sweep.json): Kaempfer je Licht seite 11,753 / mitte 12,283 (foto_sweep, Wolke 11,753 / 12,293 einig; kanten_tor Mitte 12,269); Abstand Mitte-Seite 0,53 m am Foto bestaetigt: M-6120-011/013 Seitenriegel-Oberkante 11,64/11,69, M-6120-012 Mittelriegel 12,20 (absolut 0,1 m tiefer, siehe beobachtungen_offen)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6120-012",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 6): Kaempfer je Licht; vorher ein durchgehender Riegel 11,72 -> 0 bzw. 3 offene Lichter (Pruefung muss fehlschlagen)"
+   ]
+  },
+  {
+   "name": "Laubenrueckwand: Wandflaeche hinter der Ebene n 7,28 (z 7,0, alle Boegen; 0 = in der Ebene)",
+   "wert": "laube_rueckwand_n728_z7",
+   "soll": [
+    -0.08,
+    0.08
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2_crop.npy, 161 282 Punkte in der Laube u -8..15, z 2,5..6,5): Histogrammspitze n 7,275 (7,275/7,325 = 27 191/16 224 Punkte; je Bogen B1-B3 7,275, B4 7,03 = Glas/Schaufenster); Foto-Triangulation 6120+6117 (Schnittwinkel 33-39 Grad): Goldquaste an der Wandflaeche n 7,30 (M-6120-021), Glasfelder 7,11-7,20 (M-6120-022..024, zurueckgesetzt), Tuerblatt 6,8-7,2 (Nische). Alte Ebene 6,54 kam aus rohkoerper_v7 (Gitter +-0,3, nie gemessen) -> verworfen (bessere Datenlage: Wolke + 2-Foto-Triangulation einig)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6120-021",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 6, Hinweis muster_fit-Agent n 7,29): am Modell mit n1 6,54 muss die Pruefung fehlschlagen (+0,74)"
    ]
   }
  ],

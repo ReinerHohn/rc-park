@@ -1,0 +1,40 @@
+{
+ "foto": "nu3b",
+ "datei": "nu_3b29472b-image.jpg",
+ "typ": "kamera_bruecke_sfm",
+ "kamera": {
+  "rvec": [
+   0.7896139260291208,
+   1.3684350849865212,
+   -1.8530782761698195
+  ],
+  "t": [
+   1.295986939698988,
+   12.658790369610738,
+   33.12170990039088
+  ],
+  "f_px": 2759.885921414344,
+  "cx": 1500.0,
+  "cy": 2000.0,
+  "bild": [
+   3000,
+   4000
+  ],
+  "k1": 0.039842085342029473,
+  "modell": "SIMPLE_RADIAL",
+  "standort_xyz": [
+   29.41,
+   19.5,
+   3.71
+  ],
+  "brennweite_quelle": "SfM-Buendel /media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/kam_lot2.json",
+  "rms_px": null,
+  "rahmen_verschiebung": [
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ "quelle": "tools/kamera_bruecke.py: Pose/Brennweite/k1 aus /media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/kam_lot2.json (Rahmen der Kameradatei = Generatorrahmen); Anker = SfM-Buendel, KEINE amtlichen Anker; Massstab sfm_buendel",
+ "datum": "2026-11-09"
+}

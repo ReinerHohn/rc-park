@@ -26,7 +26,39 @@ def strahl_ebene(kam, uv, ebene):
 
 def main():
     a = sys.argv[1:]; obj = json.load(open(a[0])); nr = a[1]; root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(a[0]))))
-    if "--kamera" in a:                                                   # Modus 2: echte Meter ueber kalibrierte Kamera + bekannte Ebene
+    if "--tri" in a:                                                      # Modus 3 (2026-11-09): Triangulation desselben Punkts in 2+ Fotos -> Tiefe direkt, ohne angenommene Ebene
+        # foto_mass.py OBJ FOTO --tri K-A xa ya K-B xb yb [K-C xc yc ...] --name "..." [--achse_n nx ny]   (Pixel je Kamera, gleicher Objektpunkt)
+        od = os.path.join(root, os.path.dirname(obj["masstabelle"])); i = a.index("--tri") + 1; obs = []
+        while i + 2 < len(a) and a[i].startswith("K-"): obs.append((a[i], float(a[i + 1]), float(a[i + 2]))); i += 3
+        if len(obs) < 2: sys.exit("--tri braucht >= 2 Kameras")
+        name = a[a.index("--name") + 1] if "--name" in a else "Triangulation"; A_ = np.zeros((3, 3)); b_ = np.zeros(3); strahlen = []
+        for kid, x, y in obs:
+            K = json.load(open(os.path.join(od, "messprotokoll", kid + ".json")))["kamera"]; R, _ = cv2.Rodrigues(np.array(K["rvec"])); c = -R.T @ np.array(K["t"])
+            xn, yn = (x - K["cx"]) / K["f_px"], (y - K["cy"]) / K["f_px"]; k1 = float(K.get("k1") or 0.0); xu, yu = xn, yn
+            for _ in range(10): r2 = xu * xu + yu * yu; xu, yu = xn / (1 + k1 * r2), yn / (1 + k1 * r2)
+            d = R.T @ np.array([xu, yu, 1.0]); d /= np.linalg.norm(d); Pm = np.eye(3) - np.outer(d, d); A_ += Pm; b_ += Pm @ c; strahlen.append((kid, c, d, K))
+        X = np.linalg.solve(A_, b_); res = []; winkel = []
+        for kid, c, d, K in strahlen:
+            v = X - c; dist = float(np.linalg.norm(v)); res.append(round(float(np.linalg.norm(v - (v @ d) * d)), 3))
+        for j in range(len(strahlen)):
+            for l in range(j + 1, len(strahlen)): winkel.append(float(np.degrees(np.arccos(np.clip(strahlen[j][2] @ strahlen[l][2], -1, 1)))))
+        an = [float(v) for v in a[a.index("--achse_n") + 1:a.index("--achse_n") + 3]] if "--achse_n" in a else None
+        d = os.path.join(od, "messprotokoll"); n = len(glob.glob(os.path.join(d, f"M-{nr}-*.json"))) + 1; pid = f"M-{nr}-{n:03d}"
+        rec = dict(id=pid, typ="triangulation", foto=nr, name=name, beobachtungen=[dict(kamera=k_, px=[x_, y_]) for k_, x_, y_ in obs], P=X.round(3).tolist(),
+                   strahl_abstand_m=res, schnittwinkel_grad=[round(w, 1) for w in winkel], z=round(float(X[2]), 3),
+                   unsicherheit_m=round(float(max(res) + 3.0 * max(np.linalg.norm(X - s[1]) for s in strahlen) / min(s[3]["f_px"] for s in strahlen) / max(np.sin(np.radians(max(winkel))), 0.05)), 3),
+                   massstab_von="Kameras " + ", ".join(o_[0] for o_ in obs) + " aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme")
+        if an: nn = np.array(an) / np.linalg.norm(an); rec["n"] = round(float(X[:2] @ nn), 3); rec["u"] = round(float(X[:2] @ np.array([nn[1], -nn[0]])), 3)
+        json.dump(rec, open(os.path.join(d, pid + ".json"), "w"), indent=1, ensure_ascii=False)
+        bilder = []
+        for kid, x, y in obs:
+            fn = glob.glob(os.path.join(root, obj["fotos_dir"], kid[2:] + "_*"))
+            if fn:
+                im = cv2.imread(fn[0]); H, W = im.shape[:2]; cv2.circle(im, (int(x), int(y)), 14, (0, 255, 255), 3)
+                c_ = im[max(0, int(y) - 300):int(y) + 300, max(0, int(x) - 300):int(x) + 300].copy(); c_ = cv2.resize(c_, (600, 600)); cv2.putText(c_, kid, (8, 26), 0, 0.8, (0, 0, 255), 2); bilder.append(c_)
+        if bilder: b0 = np.hstack(bilder); cv2.putText(b0, f"{pid}: {name}", (8, 590), 0, 0.7, (0, 0, 255), 2); cv2.imwrite(os.path.join(d, pid + ".jpg"), b0)
+        print(f"{pid}: {name}: P {X.round(3).tolist()}" + (f" n {rec['n']} u {rec['u']}" if an else "") + f" | Strahlabstand {res} m | Schnittwinkel {rec['schnittwinkel_grad']} Grad | +-{rec['unsicherheit_m']} m"); return
+    if "--kamera" in a:                                                 # Modus 2: echte Meter ueber kalibrierte Kamera + bekannte Ebene
         od = os.path.join(root, os.path.dirname(obj["masstabelle"])); kid = a[a.index("--kamera") + 1]; K = json.load(open(os.path.join(od, "messprotokoll", kid + ".json")))["kamera"]
         ebene = a[a.index("--ebene") + 1]; pts = [float(x) for x in a[a.index("--mess") + 1:a.index("--mess") + 5]]; name = a[a.index("--name") + 1] if "--name" in a else "Messung"
         P1, d1 = strahl_ebene(K, pts[:2], ebene); P2, d2 = strahl_ebene(K, pts[2:], ebene)

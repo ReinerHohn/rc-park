@@ -94,6 +94,7 @@ TOR_K = g("--tor_k", 3.0)            # Signifikanz: Spitze - Median >= k * MAD d
 TOR_NPKT = g("--tor_npunkte", 30, int)   # Wolke: Mindestpunkte im Pruefkasten je Instanz
 TOR_NFOTO = g("--tor_nfoto", 3, int)     # Fotos: Mindestzahl sehender Fotos je Instanz
 TOR_WINKEL = g("--tor_winkel", 20.0)
+TOR_MINPX = g("--tor_minpx", 2 * PX + 3, int)   # Mindest-Pixelgroesse der kleinsten Struktur (Abstand der Pruefkanten, Teildurchmesser) in der Stabilitaetskarte; darunter verschmilzt sie mit der Kartenverdickung (+-PX) -> Fotoquelle blind -> UNGEPRUEFT
 TOR_EINIG = g("--tor_einigkeit", 0.5)   # (d): >= 50 % der Instanz-Optima im Toleranzband um das Quellenoptimum, sonst ist die Quelle fuer diesen Parameter nicht belastbar     # Fotos: Mindest-Winkelabstand der Blickrichtungen (Grad)
 
 
@@ -145,7 +146,7 @@ class Tor:
             out[i] = pick[:s.maxf]
         return out
 
-    def sweep(s, name, feat, werte, gesetzt, tol, zentren, r_wolke=None, kmax=4, modus="karte"):
+    def sweep(s, name, feat, werte, gesetzt, tol, zentren, r_wolke=None, kmax=4, modus="karte", mass_m=None):
         """Ein Parameter: Kurven fuer Wolke und Fotos, Datenlage, Optima, Plateaus, Urteil."""
         torch = s.F.torch; werte = np.asarray(werte, float); pts0 = feat(gesetzt); n_inst = len(zentren); Wt = torch.tensor(s.cloud[:, :3], device=s.F.dev, dtype=torch.float32) if False else None
         # ---- Wolke
@@ -157,7 +158,7 @@ class Tor:
         cb = s.ball(pts0["punkte"].astype(np.float32), s.cloud, 0.15, kmax=64); pro_inst = np.array([float(cb[pts0["inst"] == i].sum()) for i in range(n_inst)])
         # ---- Fotos
         Wt = torch.tensor(s.F_cloudW, device=s.F.dev, dtype=torch.float32); fw = s.fotos_waehlen(zentren, Wt); sc_f_i = np.zeros((len(werte), n_inst)); n_f_i = np.zeros(n_inst, int); winkel_i = np.zeros(n_inst); zaehl = np.zeros((len(werte), n_inst))
-        phot = {}
+        phot = {}; skal = []
         for i, lst in fw.items():
             for f, az in lst: phot.setdefault(f, []).append(i)
         ph_i = {i: [] for i in range(n_inst)}
@@ -169,7 +170,7 @@ class Tor:
                 uq = np.clip((u_ * sjq).astype(int), 0, zb.shape[1] - 1); vq = np.clip((v_ * sjq).astype(int), 0, zb.shape[0] - 1); vis = ok & (z_ <= zb[vq, uq] + 0.5)
                 hit = np.zeros(len(pi)); hit[ok] = M[vv[ok], uu[ok]]; hit = hit.reshape(len(werte), nper); vis = vis.reshape(len(werte), nper)
                 if vis[werte.searchsorted(gesetzt) if False else int(np.argmin(np.abs(werte - gesetzt)))].mean() < 0.5: continue     # Instanz im Foto zu mehr als der Haelfte verdeckt (am gesetzten Wert)
-                frac = (hit * vis * gwi).sum(1) / np.maximum((vis * np.abs(gwi)).sum(1), 1e-9); sc_f_i[:, i] += frac; zaehl[:, i] += 1; ph_i[i].append((f, float(np.degrees(np.arctan2(s.F.KAM[f]["C"][1] - pi[:, 1].mean(), s.F.KAM[f]["C"][0] - pi[:, 0].mean())))))
+                skal.append(k["f"] * sj / max(float(np.linalg.norm(np.array(k["C"]) - pi.mean(0))), 1.0)); frac = (hit * vis * gwi).sum(1) / np.maximum((vis * np.abs(gwi)).sum(1), 1e-9); sc_f_i[:, i] += frac; zaehl[:, i] += 1; ph_i[i].append((f, float(np.degrees(np.arctan2(s.F.KAM[f]["C"][1] - pi[:, 1].mean(), s.F.KAM[f]["C"][0] - pi[:, 0].mean())))))
         n_f_i = zaehl[0].astype(int); Mf = sc_f_i / np.maximum(zaehl, 1); sc_f = Mf[:, zaehl[0] > 0].mean(1) if (zaehl[0] > 0).any() else Mf.mean(1)
         for i in range(n_inst):
             az = np.array([a_ for _, a_ in ph_i[i]]); winkel_i[i] = float(np.max(np.abs(((az[:, None] - az[None]) + 180) % 360 - 180))) if len(az) > 1 else 0.0
@@ -177,6 +178,10 @@ class Tor:
         out["wolke"] = s.quelle(sc_w, werte, gesetzt, tol, Mw, ok_daten=bool((pro_inst >= TOR_NPKT).sum() >= min(3, n_inst)), info="Wolke: Punkte im Kasten je Instanz min %d / median %d / max %d; Instanzen mit >= %d Punkten: %d von %d" % (pro_inst.min(), np.median(pro_inst), pro_inst.max(), TOR_NPKT, (pro_inst >= TOR_NPKT).sum(), n_inst))
         okf = ((n_f_i >= TOR_NFOTO) & (winkel_i >= TOR_WINKEL)).sum() >= min(3, n_inst)
         out["foto"] = s.quelle(sc_f, werte, gesetzt, tol, Mf, ok_daten=bool(okf), info="Fotos: sehende Fotos je Instanz min %d / median %d / max %d; Blickwinkelspanne je Instanz min %.0f / median %.0f Grad; Instanzen mit >= %d Fotos und >= %.0f Grad: %d von %d" % (n_f_i.min(), np.median(n_f_i), n_f_i.max(), winkel_i.min(), np.median(winkel_i), TOR_NFOTO, TOR_WINKEL, ((n_f_i >= TOR_NFOTO) & (winkel_i >= TOR_WINKEL)).sum(), n_inst))
+        px_m = float(np.median(skal)) if skal else 0.0; out["foto"]["px_je_m"] = px_m
+        if mass_m is not None:
+            out["foto"]["struktur_px"] = float(mass_m * px_m)
+            if mass_m * px_m < TOR_MINPX: out["foto"]["daten_ok"] = False; out["foto"]["ungeprueft_px"] = True; out["foto"]["info"] += " | UNGEPRUEFT: kleinste Struktur %.3f m = %.1f px (Median %.0f px/m) < Mindestbreite %d px der Stabilitaetskarte" % (mass_m, mass_m * px_m, px_m, TOR_MINPX)
         out["urteil"] = s.urteil(out); return out
 
     def quelle(s, sc, werte, gesetzt, tol, M, ok_daten, info):
@@ -236,6 +241,8 @@ class Tor:
             return fertig(st, gew, x["optimum"], "%s %.3f: %s blind (%s) -> %s gewinnt. %s: %s." % (nmn, x["optimum"], ander, "; ".join(gr), gew, gew, kz(x)))
         if w["daten_ok"] and f["daten_ok"] and w["gewinn"] < TOR_K * w["mad"] and f["gewinn"] < TOR_K * f["mad"] and not w["auf_grenze"] and not f["auf_grenze"]:
             return fertig("BESTAETIGT", "Wolke+Fotos (schwach)", ist, "%s: Istwert %.3f von KEINER Quelle widerlegt (Gewinn gg. Istwert Wolke %.3f < %.3f, Fotos %.3f < %.3f = %.1f MAD), beide Quellen mit genug Daten, aber keine trennscharf (Kurven flach/uneinig) -> BESTAETIGT-SCHWACH, nicht GRUEN. Wolke: %s. Fotos: %s." % (nmn, ist, w["gewinn"], TOR_K * w["mad"], f["gewinn"], TOR_K * f["mad"], TOR_K, kz(w), kz(f)))
+        if f.get("ungeprueft_px") and not qual["Wolke"]:
+            return fertig("UNGEPRUEFT", None, ist, "%s: UNGEPRUEFT, Fotoquelle blind (%s), Wolke nicht qualifiziert (Optimum %+.3f, %.1f MAD, Einigkeit %.0f %%). Istwert bleibt ANNAHME." % (nmn, f["info"].split("|")[-1].strip(), w["optimum"] - ist, w["signif_mad"], 100 * w["einigkeit_anteil"]))
         return fertig("OFFEN", None, ist, "%s: OFFEN, keine Quelle qualifiziert. Wolke: %s. Fotos: %s." % (nmn, kz(w), kz(f)))
 
 

@@ -1,0 +1,40 @@
+{
+ "foto": "6206",
+ "datei": "ip_IMG_6206.jpg",
+ "typ": "kamera_bruecke_sfm",
+ "kamera": {
+  "rvec": [
+   1.042560623721252,
+   1.0490851663891292,
+   -1.3589056665830672
+  ],
+  "t": [
+   -4.221316071216611,
+   7.275035934099192,
+   14.077180517390143
+  ],
+  "f_px": 3084.7435955835676,
+  "cx": 1512.0,
+  "cy": 2016.0,
+  "bild": [
+   3024,
+   4032
+  ],
+  "k1": -0.00494363763076663,
+  "modell": "SIMPLE_RADIAL",
+  "standort_xyz": [
+   15.18,
+   4.94,
+   3.76
+  ],
+  "brennweite_quelle": "SfM-Buendel /media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/kam_lot2.json",
+  "rms_px": null,
+  "rahmen_verschiebung": [
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ "quelle": "tools/kamera_bruecke.py: Pose/Brennweite/k1 aus /media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/kam_lot2.json (Rahmen der Kameradatei = Generatorrahmen); Anker = SfM-Buendel, KEINE amtlichen Anker; Massstab sfm_buendel",
+ "datum": "2026-11-09"
+}

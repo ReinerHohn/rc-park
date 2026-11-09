@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-013",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=12.81",
+ "name": "OG-Fenster Seitenlicht rechts Kaempferriegel Oberkante, Ebene Rahmenfront 12,81",
+ "mess_px": [
+  1190.0,
+  772.0,
+  1330.0,
+  772.0
+ ],
+ "P1": [
+  10.602,
+  9.828,
+  11.69
+ ],
+ "P2": [
+  10.116,
+  10.001,
+  11.679
+ ],
+ "dz": -0.011,
+ "dy": 0.173,
+ "dx": -0.486,
+ "abstand": 0.516,
+ "z1": 11.69,
+ "z2": 11.679,
+ "unsicherheit_rel": 0.0242,
+ "unsicherheit_m": 0.029,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.81 (+-0.3 m)"
+}

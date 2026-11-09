@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-014",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=12.81",
+ "name": "OG-Fenster Mittellicht Oberkante Licht (Scheitel innen), Ebene Rahmenfront 12,81",
+ "mess_px": [
+  950.0,
+  182.0,
+  1100.0,
+  180.0
+ ],
+ "P1": [
+  11.57,
+  9.484,
+  14.557
+ ],
+ "P2": [
+  11.007,
+  9.684,
+  14.552
+ ],
+ "dz": -0.005,
+ "dy": 0.2,
+ "dx": -0.563,
+ "abstand": 0.597,
+ "z1": 14.557,
+ "z2": 14.552,
+ "unsicherheit_rel": 0.0206,
+ "unsicherheit_m": 0.032,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.81 (+-0.3 m)"
+}

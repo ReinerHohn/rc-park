@@ -285,8 +285,8 @@
   "quelle": "Wolke wolke_netzrahmen.npy, Schnitt z 2,5-3,5: Rueckwand der Laube als klare Linie bei n 9,45 (Punkte 9,3-9,6), Modell hatte sie bei n 6,0-6,5 (3 m zu weit hinten, Schnittvergleich 8.11.); Dicke 0,45 = ANNAHME | u1=4,2: 4. Bogen (u 4,1-8,5) ist laut Fotos 8.11. ein offener Durchgang, Wolke zeigt dort keine Rueckwand (Luecke u 5,5-8)",
   "u0": -9.339,
   "u1": 16.311,
-  "n0": 6.09,
-  "n1": 6.54,
+  "n0": 6.83,
+  "n1": 7.28,
   "z0": 1.5,
   "z1": 8.0,
   "seite_name": "alle"
@@ -298,7 +298,7 @@
   "u0": -8.82,
   "u1": 17.15,
   "n0": -6.564,
-  "n1": 6.54,
+  "n1": 7.28,
   "z0": 1.5,
   "z1": 8.0,
   "seite_name": "alle"
@@ -338,37 +338,37 @@
   "unterseite_z": 2.102,
   "kaempfer_z": 5.394,
   "scheitel_z": 5.494,
-  "wand_n": 6.54,
+  "wand_n": 7.28,
   "tiefe": 0.12,
   "seite_name": "alle"
  },
  {
   "seite": "alle",
   "element": "Fensterreihe 1 Kielbogenfenster",
-  "quelle": "Anzahl Z-6120-003, Z-6120-004 (Regel 9); foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-001/002: 2,03 oben / 1,89 unten, Mittel 1,96 (+-0,07) | Lage: foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-001/002: Aussenrahmen along 6,25..8,29 oben / 6,24..8,14 unten, Mitte 7,23",
+  "quelle": "Anzahl Z-6120-003, Z-6120-004 (Regel 9); Neuberechnung auf Ebene 7,28: M-6120-025 (oben 6,32, u 6,22..8,15), M-6120-026 (unten 3,21, u 6,20..8,01), M-6120-027 (Riegel 5,38); Kaempfer = Oberkante - rahmen_b |  | Lage: Neuberechnung auf Ebene 7,28: M-6120-025 (oben 6,32, u 6,22..8,15), M-6120-026 (unten 3,21, u 6,20..8,01), M-6120-027 (Riegel 5,38); Kaempfer = Oberkante - rahmen_b | ",
   "n_fenster": 1,
   "n_lichter": 2,
   "pitch": 3.518,
-  "breite": 1.96,
-  "unterseite_z": 3.2,
-  "kaempfer_z": 6.4,
-  "scheitel_z": 6.45,
-  "wand_n": 6.5,
+  "breite": 1.95,
+  "unterseite_z": 3.21,
+  "kaempfer_z": 6.26,
+  "scheitel_z": 6.31,
+  "wand_n": 7.24,
   "tiefe": 0.16,
   "seite_name": "alle"
  },
  {
   "seite": "alle",
   "element": "Fensterreihe 1 Kielbogenfenster (1 Lichter)",
-  "quelle": "Anzahl Z-6120-005, Z-6120-003 (Regel 9); Foto ip_IMG_6120: Tuer mit Goldportal rechts im Bogen 3 (Z-6120-005); Lichte M-6120-004/005; Rahmen 0,07 um die Lichte (ANNAHME), Rundbogen als flacher Spitzbogen (Form = muster_fit-Agent); foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-004: Lichte 1,46 + 2 x Rahmen 0,07 (ANNAHME) | Lage: foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-004: Lichte along 3,55..5,01, Mitte 4,28",
+  "quelle": "Anzahl Z-6120-005, Z-6120-003 (Regel 9); Foto ip_IMG_6120: Tuer mit Goldportal rechts im Bogen 3 (Z-6120-005); Lichte M-6120-004/005; Rahmen 0,07 um die Lichte (ANNAHME), Rundbogen als flacher Spitzbogen (Form = muster_fit-Agent); Neuberechnung auf Ebene 7,28: M-6120-028 (Lichte unten u 3,64..5,03 -> Mitte 4,33, Lichte 1,39 + 2 x rahmen_b), M-6120-029 (Kaempfer 3,90, Scheitel 4,18) |  | Lage: Neuberechnung auf Ebene 7,28: M-6120-028 (Lichte unten u 3,64..5,03 -> Mitte 4,33, Lichte 1,39 + 2 x rahmen_b), M-6120-029 (Kaempfer 3,90, Scheitel 4,18) | ",
   "n_fenster": 1,
   "n_lichter": 1,
   "pitch": 3.0,
-  "breite": 1.6,
+  "breite": 1.53,
   "unterseite_z": 1.77,
   "kaempfer_z": 3.92,
   "scheitel_z": 4.28,
-  "wand_n": 6.5,
+  "wand_n": 7.24,
   "tiefe": 0.16,
   "seite_name": "alle"
  },
@@ -376,10 +376,10 @@
   "seite": "alle",
   "element": "Quader (ausschnitt)",
   "quelle": "Fensternische Bogen 3 = Lichte des Kreuzstockfensters (M-6120-001..002 minus Rahmen 0,1); Tiefe 0,21 = ANNAHME (Glasebene; Foto zeigt Laibung)",
-  "u0": 6.335,
-  "u1": 8.115,
-  "n0": 6.33,
-  "n1": 6.56,
+  "u0": 6.29,
+  "u1": 8.07,
+  "n0": 7.07,
+  "n1": 7.3,
   "z0": 3.29,
   "z1": 6.36,
   "seite_name": "alle"
@@ -388,10 +388,10 @@
   "seite": "alle",
   "element": "Quader (ausschnitt)",
   "quelle": "Tuernische Bogen 3 = Lichte (M-6120-004/005) bis Kaempfer; Tiefe 0,30 = ANNAHME (Foto zeigt Laibung links)",
-  "u0": 3.54,
-  "u1": 5.02,
-  "n0": 6.24,
-  "n1": 6.56,
+  "u0": 3.59,
+  "u1": 5.07,
+  "n0": 6.98,
+  "n1": 7.3,
   "z0": 1.79,
   "z1": 3.9,
   "seite_name": "alle"
@@ -407,7 +407,7 @@
   "unterseite_z": 3.08,
   "kaempfer_z": 6.352,
   "scheitel_z": 7.959,
-  "wand_n": 6.54,
+  "wand_n": 7.28,
   "tiefe": 0.12,
   "seite_name": "alle"
  },
@@ -522,6 +522,17 @@
  },
  {
   "seite": "alle",
+  "element": "Fensterreihe: Kaempferriegel/Scheitel je Licht (gespiegelt, aussen->Mitte)",
+  "quelle": "kaempfer_sweep.json (kette_video_alle/koerper, Foto-Sweep 11,753 / 12,283, Wolke 11,753 / 12,293 einig; kanten_tor Mitte 12,269); Differenz Mitte-Seite 0,53 m am Foto bestaetigt (M-6120-011/012/013: 11,64/12,20/11,69). Scheitel je Licht nicht gesetzt: Seitenlichter folgen der Kontur, Mitte M-6120-016 13,06 innen = Kontur 13,31 - rahmen_b; Sweep-Seitenscheitel 14,334 (Wolke) liegt UEBER der Rahmenoberkante M-6120-017 13,30 -> verworfen",
+  "licht_riegel_z": [
+   11.753,
+   12.283
+  ],
+  "licht_scheitel_z": null,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Fensterreihe 5 Kielbogenfenster (3 Lichter)",
   "quelle": "Anzahl Z-004-002, Z-043-001, Z-6120-002, Z-6261-001, Z-hc12-001 (Regel 9); Foto-Zaehlung Z-6120-002 (2 Gruppen voll), Z-6261-001 (5 Gruppen), Z-hc12-001 (5 Gruppen): je 3 Lichter (Regel 9); Gitter fenster_erker_v9 n_licht 3 bestaetigt; kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json 3 Lichter x 0.912 + 4 Rahmen/Pfosten x 0.147 = 3.33 (Aussenkante Rahmen; Aussenpfosten nur 1 von 10 im Gitter -> abgeleitet) | Lage: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json fenster.gruppen mitte -4.45 (Mittellicht-Pfostenpaare, fotobelegt >= 82 Fotos je Gruppe)",
   "n_fenster": 5,
@@ -544,7 +555,7 @@
  {
   "seite": "alle",
   "element": "Druckreparatur Splitter",
-  "quelle": "baukasten_gen: Punkte < 1 um verschweisst, entartete Dreiecke entfernt, Loecher geschlossen (trimesh MIT), Volumen +-0,1 %",
+  "quelle": "baukasten_gen: Punkte < 1 um verschweisst, entartete Dreiecke entfernt, Loecher geschlossen (trimesh MIT), Volumen +-0,1 %, Vereinfachung 5.0 mm",
   "seite_name": "alle"
  }
 ]

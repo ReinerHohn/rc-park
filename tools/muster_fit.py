@@ -310,7 +310,16 @@ def umriss_gruppe(zelle, tc, u, n, of, schritt=0.03):
             b_ = bg[k]; xm = 0.5 * (b_["xa"] + b_["xb"]); xs_ = np.linspace(xb, xa, 25); bogen = [W_(x, float(np.polyval(b_["koef"], x - xm))) for x in xs_]
             lichter.append(dict(x=[tc + xa, tc + xb], umriss=poly_pts([W_(xa, zs), W_(xa, b_["z_links"])] + [W_(x, float(np.polyval(b_["koef"], x - xm))) for x in np.linspace(xa, xb, 25)] + [W_(xb, zs), W_(xa, zs)], schritt)))
         else: lichter.append(dict(x=[tc + xa, tc + xb], umriss=poly_pts([W_(xa, zs), W_(xa, za), W_(xb, zb), W_(xb, zs), W_(xa, zs)], schritt)))
-    return dict(gruppe=np.vstack([poly_pts(pl, schritt) for pl in polys]), lichter=lichter, polys=polys)
+    elem = []
+    for k in range(len(px) - 1):
+        xa, xb = px[k], px[k + 1]; e = dict(sohle=poly_pts([W_(xa, zs), W_(xb, zs)], schritt)); kz = zelle["kaempfer_je_licht"][k] if k < len(zelle.get("kaempfer_je_licht", [])) else None
+        if len(bg) == len(px) - 1:
+            b_ = bg[k]; xm = 0.5 * (b_["xa"] + b_["xb"]); e["pfosten_links"] = poly_pts([W_(xa, zs), W_(xa, b_["z_links"])], schritt); e["pfosten_rechts"] = poly_pts([W_(xb, zs), W_(xb, b_["z_rechts"])], schritt)
+            e["bogen"] = poly_pts([W_(x, float(np.polyval(b_["koef"], x - xm))) for x in np.linspace(xa, xb, 25)], schritt)
+        else: e["pfosten_links"] = poly_pts([W_(xa, zs), W_(xa, pfosten_top(k))], schritt); e["pfosten_rechts"] = poly_pts([W_(xb, zs), W_(xb, pfosten_top(k + 1))], schritt)
+        if kz is not None: e["kaempfer"] = poly_pts([W_(xa, kz), W_(xb, kz)], schritt)
+        elem.append(e)
+    return dict(gruppe=np.vstack([poly_pts(pl, schritt) for pl in polys]), lichter=lichter, polys=polys, elemente=elem)
 
 
 def fam_fenster(G, W, fotos, rah, z, out, audit=None):
@@ -341,6 +350,15 @@ def fam_fenster(G, W, fotos, rah, z, out, audit=None):
             b = ab_l[j]; j += 1; lt.append(dict(x=[float(x) for x in l["x"]], **{k_: b[k_] for k_ in ("fotos_gesehen", "fotos_kante", "bestanden", "kontrolle_kante", "kontrolle_gesehen", "kantenanteil_median")}))
         inst.append(dict(index=i, t=tc, mitte=[float(x) for x in mit(q)], lichter=lt, n_lichter_bestanden=sum(l["bestanden"] for l in lt), **{k_: a_[k_] for k_ in ("fotos_gesehen", "fotos_kante", "bestanden", "kontrolle_kante", "kontrolle_gesehen", "kantenanteil_median", "fotos")}))
     for q in inst: log("  Gruppe %3d t %7.2f  Fotos gesehen %3d Kante %3d (Kontrolle %3d/%3d) Median %.2f  Lichter bestanden %d/%d  %s" % (q["index"], q["t"], q["fotos_gesehen"], q["fotos_kante"], q["kontrolle_kante"], q["kontrolle_gesehen"], q["kantenanteil_median"] or 0, q["n_lichter_bestanden"], zelle["n_licht"], "OK" if q["bestanden"] else "--"))
+    # Fehlerliste je Licht und Element (Rahmen = Sohle, Pfosten links/rechts, Kaempfer, Bogen): jedes Element einzeln gegen die Fotos (gleiche Abnahme wie Gruppe/Licht)
+    keys = [(gi, k, nm) for gi, q in enumerate(U) for k, e in enumerate(q["elemente"]) for nm in e]
+    abe = fotos.abnahme([dict(pts=U[gi]["elemente"][k][nm], mitte=U[gi]["elemente"][k][nm].mean(0)) for gi, k, nm in keys], W, kontroll=[kontrolle_punkte(U[gi]["elemente"][k][nm], dt_k, u) for gi, k, nm in keys])
+    for (gi, k, nm), b in zip(keys, abe): inst[gi]["lichter"][k].setdefault("elemente", {})[nm] = dict(bestanden=b["bestanden"], fotos_gesehen=b["fotos_gesehen"], fotos_kante=b["fotos_kante"], kontrolle_kante=b["kontrolle_kante"])
+    fl = []
+    for q in inst:
+        for k, l in enumerate(q["lichter"]):
+            el = l.get("elemente", {}); fl.append(dict(gruppe=q["index"], licht=k, **{nm: ("ja" if e["bestanden"] else ("zu wenig Fotos (%d)" % e["fotos_gesehen"] if e["fotos_gesehen"] < NFOTO else "NEIN (%d/%d)" % (e["fotos_kante"], e["fotos_gesehen"]))) for nm, e in el.items()}))
+    res["fehlerliste"] = fl; log("Fehlerliste je Licht: %d Lichter, davon ohne Fehler %d" % (len(fl), sum(all(v == "ja" for kk, v in f_.items() if kk not in ("gruppe", "licht")) for f_ in fl)))
     res["instanzen"] = inst; res["anzahl_gruppen_fotogeprueft"] = sum(q["bestanden"] for q in inst); res["anzahl_lichter_fotogeprueft"] = sum(l["bestanden"] for q in inst if q["bestanden"] for l in q["lichter"])
     seg = []
     for q, qi in zip(U, inst):
@@ -543,20 +561,20 @@ def tor_params_rotation(Z):
             for off, w_ in spec: out.append((linie(np.r_[a_[:2] + u[:2] * (v + off), Z["zlo"]], np.r_[a_[:2] + u[:2] * (v + off), Z["zhi"]]), i, w_))
         return out
     zen = np.array([np.r_[a_[:2], 0.5 * (Z["zlo"] + Z["zhi"])] for a_ in ax])
-    return [dict(name="phase_%s" % Z.get("name", "rotation"), werte=np.arange(-p / 2, p / 2 + 1e-9, 0.01), gesetzt=0.0, tol=0.05, feat=lambda v: sammeln(lin(v, [(-r, 1.0), (r, 1.0), (-p / 2, -1.0), (p / 2, -1.0)])), feat_wolke=lambda v: sammeln(lin(v, [(0.0, 1.0), (-p / 2, -1.0), (p / 2, -1.0)])), modus="gradient", r_wolke=0.03, kmax=16)], zen
+    return [dict(name="phase_%s" % Z.get("name", "rotation"), werte=np.arange(-p / 2, p / 2 + 1e-9, 0.01), gesetzt=0.0, tol=0.05, mass_m=2 * r, feat=lambda v: sammeln(lin(v, [(-r, 1.0), (r, 1.0), (-p / 2, -1.0), (p / 2, -1.0)])), feat_wolke=lambda v: sammeln(lin(v, [(0.0, 1.0), (-p / 2, -1.0), (p / 2, -1.0)])), modus="gradient", r_wolke=0.03, kmax=16)], zen
 
 
 def tor_laufen(F, cloud, WK, par, zen):
     T = Tor(F, cloud); T.F_cloudW = WK; res = []
     for q in par:
         if "feat_wolke" in q: log("Parameter %s: Wolke gegen Flaechenraster, Fotos gegen Umriss" % q["name"])
-        o = T.sweep_zwei(q, zen) if "feat_wolke" in q else T.sweep(q["name"], q["feat"], q["werte"], q["gesetzt"], q["tol"], zen, r_wolke=q.get("r_wolke"), kmax=q.get("kmax", 4), modus=q.get("modus", "karte")); res.append(o)
+        o = T.sweep_zwei(q, zen) if "feat_wolke" in q else T.sweep(q["name"], q["feat"], q["werte"], q["gesetzt"], q["tol"], zen, r_wolke=q.get("r_wolke"), kmax=q.get("kmax", 4), modus=q.get("modus", "karte"), mass_m=q.get("mass_m")); res.append(o)
     return res
 
 
 def _sweep_zwei(s, q, zen):
     """Parameter mit getrennten Merkmalen fuer Wolke (Flaeche) und Fotos (Umriss): zwei Sweeps, Urteil kombiniert."""
-    o_f = s.sweep(q["name"], q["feat"], q["werte"], q["gesetzt"], q["tol"], zen, modus=q.get("modus", "karte")); o_w = s.sweep(q["name"], q["feat_wolke"], q["werte"], q["gesetzt"], q["tol"], zen, r_wolke=q.get("r_wolke"), kmax=q.get("kmax", 4))
+    o_f = s.sweep(q["name"], q["feat"], q["werte"], q["gesetzt"], q["tol"], zen, modus=q.get("modus", "karte"), mass_m=q.get("mass_m")); o_w = s.sweep(q["name"], q["feat_wolke"], q["werte"], q["gesetzt"], q["tol"], zen, r_wolke=q.get("r_wolke"), kmax=q.get("kmax", 4))
     o = dict(o_f); o["wolke"] = o_w["wolke"]; o["urteil"] = s.urteil(o); return o
 
 
@@ -576,7 +594,9 @@ def main_fenster():
         os.makedirs(g("--audit", "", str), exist_ok=True)
         for foto in g("--fotos", "ip_IMG_6120,ip_IMG_6261", str).split(","):
             gut = [pl for q, qi in zip(U, res["instanzen"]) if qi["bestanden"] for pl in q["polys"]]; schl = [pl for q, qi in zip(U, res["instanzen"]) if not qi["bestanden"] for pl in q["polys"]]
-            try: overlay(fotos, gut, schl, foto, os.path.join(g("--audit", "", str), "muster_fenster_%s_entwurf.jpg" % foto), crop_um=np.vstack([pl for q in U for pl in q["polys"]])[::3])
+            ok_g = {q["index"] for q in res["instanzen"] if q["bestanden"]}; n_fehler = sum(1 for f_ in res["fehlerliste"] if f_["gruppe"] in ok_g for kk, v in f_.items() if kk not in ("gruppe", "licht") and v != "ja")
+            json.dump([f_ for f_ in res["fehlerliste"] if f_["gruppe"] in ok_g], open(os.path.join(g("--audit", "", str), "muster_fenster_fehlerliste.json"), "w"), indent=0, ensure_ascii=False); log("Fehlerliste (abgenommene Gruppen): %d Elemente ohne Fotobeleg -> Overlay %s" % (n_fehler, "ENTWURF" if n_fehler else "NICHT Entwurf"))
+            try: overlay(fotos, gut, schl, foto, os.path.join(g("--audit", "", str), "muster_fenster_%s%s.jpg" % (foto, "_entwurf" if n_fehler else "")), crop_um=np.vstack([pl for q in U for pl in q["polys"]])[::3])
             except AssertionError as e: log("Foto fehlt", e)
 
 

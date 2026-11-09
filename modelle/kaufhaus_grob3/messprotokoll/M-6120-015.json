@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-015",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=12.81",
+ "name": "TEST Sill",
+ "mess_px": [
+  700.0,
+  1050.0,
+  1300.0,
+  1050.0
+ ],
+ "P1": [
+  12.225,
+  9.252,
+  10.52
+ ],
+ "P2": [
+  10.203,
+  9.97,
+  10.479
+ ],
+ "dz": -0.041,
+ "dy": 0.718,
+ "dx": -2.022,
+ "abstand": 2.146,
+ "z1": 10.52,
+ "z2": 10.479,
+ "unsicherheit_rel": 0.025,
+ "unsicherheit_m": 0.07,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.81 (+-0.3 m)"
+}

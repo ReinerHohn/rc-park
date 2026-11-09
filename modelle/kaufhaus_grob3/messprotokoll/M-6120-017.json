@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-017",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=12.81",
+ "name": "OG-Fenster Rahmen-Oberkante aussen (Kielspitze/Schulter), Ebene Rahmenfront 12,81",
+ "mess_px": [
+  900.0,
+  432.0,
+  1140.0,
+  432.0
+ ],
+ "P1": [
+  11.694,
+  9.441,
+  13.304
+ ],
+ "P2": [
+  10.821,
+  9.75,
+  13.282
+ ],
+ "dz": -0.022,
+ "dy": 0.31,
+ "dx": -0.872,
+ "abstand": 0.926,
+ "z1": 13.304,
+ "z2": 13.282,
+ "unsicherheit_rel": 0.0219,
+ "unsicherheit_m": 0.039,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.81 (+-0.3 m)"
+}

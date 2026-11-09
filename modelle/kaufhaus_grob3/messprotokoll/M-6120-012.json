@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-012",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=12.81",
+ "name": "OG-Fenster Mittellicht Kaempferriegel Oberkante, Ebene Rahmenfront 12,81",
+ "mess_px": [
+  950.0,
+  664.0,
+  1100.0,
+  664.0
+ ],
+ "P1": [
+  11.46,
+  9.523,
+  12.2
+ ],
+ "P2": [
+  10.931,
+  9.711,
+  12.188
+ ],
+ "dz": -0.012,
+ "dy": 0.188,
+ "dx": -0.53,
+ "abstand": 0.562,
+ "z1": 12.2,
+ "z2": 12.188,
+ "unsicherheit_rel": 0.0233,
+ "unsicherheit_m": 0.03,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.81 (+-0.3 m)"
+}

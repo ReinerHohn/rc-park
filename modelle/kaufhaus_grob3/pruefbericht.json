@@ -16,7 +16,7 @@
   "lichter_g2_anzahl": 3.0,
   "lichter_g2_breite_median": 0.92,
   "lichter_g2_breite_max": 0.92,
-  "lichter_g2_ebene_abstand": 1.9997724348657184,
+  "lichter_g2_ebene_abstand": 1.9997724345705832,
   "handlauf_z": 8.25699973297119,
   "helm_w_fussbreite_x": 1.8309022293090824,
   "helm_w_fussbreite_y": 1.6691916961669921,
@@ -27,9 +27,9 @@
   "giebel_o_rueck": 23.025050605773924,
   "giebel_o_vorn": 23.025050605773924,
   "tuer_b3_anzahl": 1.0,
-  "tuer_b3_breite_median": 1.46,
-  "tuer_b3_breite_max": 1.46,
-  "tuer_b3_ebene_abstand": 1.9953205801288985,
+  "tuer_b3_breite_median": 1.3900000000000001,
+  "tuer_b3_breite_max": 1.3900000000000001,
+  "tuer_b3_ebene_abstand": 1.2562016787665828,
   "bal_feld_anzahl": 10.0,
   "bal_feld_breite_median": 0.16,
   "bal_feld_breite_max": 0.17,
@@ -37,11 +37,11 @@
   "fenster_b3_anzahl": 2.0,
   "fenster_b3_breite_median": 0.8300000000000001,
   "fenster_b3_breite_max": 0.8300000000000001,
-  "fenster_b3_ebene_abstand": 1.8740168794981424,
+  "fenster_b3_ebene_abstand": 1.1340548637573273,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.13989824056625366,
-  "wand_anteil_unter": 0.0003,
+  "wand_pq": 0.13989810645580292,
+  "wand_anteil_unter": 0.0004,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,7 +50,16 @@
   "bogen3_licht_breite_median": 5.24,
   "bogen3_licht_breite_max": 5.24,
   "bogen3_licht_ebene_abstand": 1.991164567136624,
-  "teile_ueberhang": 0.00949
+  "teile_ueberhang": 0.00955,
+  "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
+  "lichter_g2_bei_kaempfer_seite_breite_median": 0.88,
+  "lichter_g2_bei_kaempfer_seite_breite_max": 0.88,
+  "lichter_g2_bei_kaempfer_seite_ebene_abstand": 1.9992692327252344,
+  "lichter_g2_bei_kaempfer_mitte_anzahl": 2.0,
+  "lichter_g2_bei_kaempfer_mitte_breite_median": 0.8,
+  "lichter_g2_bei_kaempfer_mitte_breite_max": 0.8,
+  "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 1.9991922203691888,
+  "laube_rueckwand_n728_z7": -0.003980470011784032
  },
  "pruefungen": [
   {
@@ -265,7 +274,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.13989824056625366,
+   "wert": 0.13989810645580292,
    "soll": [
     0.0348,
     100
@@ -295,10 +304,40 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00949,
+   "wert": 0.00955,
    "soll": [
     0,
     0.01
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 2 (1. OG): offene Lichter auf Hoehe Seiten-Kaempfer z 11,753 (Seitenlichter zu, Mittellicht offen)",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 2 (1. OG): offene Lichter auf Hoehe Mittel-Kaempfer z 12,283 (Mittellicht zu, Seitenlichter offen)",
+   "wert": 2.0,
+   "soll": [
+    2,
+    2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laubenrueckwand: Wandflaeche hinter der Ebene n 7,28 (z 7,0, alle Boegen; 0 = in der Ebene)",
+   "wert": -0.003980470011784032,
+   "soll": [
+    -0.08,
+    0.08
    ],
    "ok": true,
    "status": "ok"
