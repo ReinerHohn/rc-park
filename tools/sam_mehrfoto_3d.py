@@ -105,5 +105,5 @@ neg = -(torch.arange(J, device=dev, dtype=torch.int32) + 2)[None, :]; Cl = torch
 mode = torch.mode(Cl, dim=1).values; cnt = (Cl == mode[:, None]).sum(1); obj = torch.where((mode >= 0) & (cnt >= 2), mode, torch.full_like(mode, -1))
 ids, cts = torch.unique(obj[obj >= 0], return_counts=True); keep = ids[cts >= a.minpts]; ok = torch.isin(obj, keep); obj = torch.where(ok, obj, torch.full_like(obj, -1))
 ob = obj.cpu().numpy(); ids = np.unique(ob[ob >= 0]); rem = {int(o): i for i, o in enumerate(ids)}; ob2 = np.array([rem.get(int(o), -1) for o in ob], np.int32)
-np.savez_compressed(a.ausgabe, P=P, obj=ob2, rgb=RGB if RGB is not None else np.zeros((N, 3), np.uint8), cnt=cnt.cpu().numpy().astype(np.int16), fotos=np.array(fotos))
+np.savez_compressed(a.ausgabe, P=P, obj=ob2, rgb=RGB if RGB is not None else np.zeros((N, 3), np.uint8), cnt=cnt.cpu().numpy().astype(np.int16), fotos=np.array(fotos), lut=lut.cpu().numpy(), maxm=MAXM, cluster_ids=ids)
 print("FERTIG Objekte %d, Punkte mit Objekt %d von %d, %.0fs" % (len(ids), int((ob2 >= 0).sum()), N, time.time() - t0), flush=True)
