@@ -12,7 +12,7 @@ Keine Objektkonstanten; Band, Periodenbereich und Toleranzen sind Parameter."""
 import sys, os, json, numpy as np, torch, cv2
 a = sys.argv; g = lambda k, d, t=float: t(a[a.index(k) + 1]) if k in a else d
 ZMIN, ZMAX, DMIN, DMAX, QUER, PMIN, PMAX, KNOTEN, NFOTO = g("--zmin", 4.0), g("--zmax", 12.0), g("--dmin", 0.8), g("--dmax", 1.5), g("--quer", 0.3), g("--pmin", 0.15), g("--pmax", 0.5), g("--knoten", 10, int), g("--nfoto", 3, int)
-FANTEIL = g("--fanteil", 0.3); KANTE_ANTEIL = g("--kante_anteil", 0.5); PX = g("--px", 3, int)                     # bestanden: Kante in >= NFOTO Fotos UND in >= 30 % der Fotos, die die Instanz sehen (bei ~100 Sichtfotos reichen 3 Zufallstreffer sonst immer)
+FANTEIL = g("--fanteil", 0.3); KANTE_ANTEIL = g("--kante_anteil", 0.5); PX = g("--px", 3, int); SHIFT = g("--shift", 4, int)                     # bestanden: Kante in >= NFOTO Fotos UND in >= 30 % der Fotos, die die Instanz sehen (bei ~100 Sichtfotos reichen 3 Zufallstreffer sonst immer)
 dev = "cuda"; torch.cuda.set_per_process_memory_fraction(float(os.environ.get("RCPARK_GPU_ANTEIL", "0.18")))
 W = np.load(a[1]); W = (W["P"] if hasattr(W, "files") else W)[:, :3].astype(np.float32); SW = np.load(a[2])["P"].astype(np.float32); SEG = json.load(open(a[3]))["segmente"]
 
@@ -207,14 +207,114 @@ for n_, ((i, t), tr, ge) in enumerate(zip(kand, treffer, gesehen)):
     s = (U.abs() < periode / 2) & ((Bt[:, 0] - t).abs() < periode / 2)
     inst.append(dict(index=i, t=t, mitte=[float(x) for x in welt(t, 0, (zlo + zhi) / 2)], punkte=int(s.sum()), fotos_gesehen=int(ge), fotos_kante=int(tr), kantenanteil_median=float(np.median(anteile[n_])) if anteile[n_] else None,
                      kantenanteil_q90=float(np.quantile(anteile[n_], 0.9)) if anteile[n_] else None, bestanden=bool(tr >= NFOTO and tr >= FANTEIL * ge)))
+GATE = g("--gate", "gradient", str); BILDER = g("--bilder", os.path.join(os.path.dirname(os.path.abspath(a[2])), "bilder"), str); ta, tb = t0, t1
+if GATE == "gradient" and phase_foto is not None:
+    # Runde 2 (Koordinator 9.11.): Fotogate am ORIGINALFOTO statt Stabilitaetskarte (die Karten haben keine Balusterschaefte).
+    # (a) t-Bereich auf die Strecke mit periodischem Fotosignal begrenzen: Faltungskontrast in Fenstern von 6 Perioden, groesster zusammenhaengender Lauf >= 50 % des Maximums
+    win = 6 * periode; tcs = np.arange(tg.min() + win / 2, tg.max() - win / 2, periode); kontr = []
+    for tc in tcs:
+        m_ = np.abs(tg - tc) < win / 2; u = np.remainder(tg[m_] - phase + periode / 2, periode) - periode / 2; F = np.histogram(u, bins=12, range=(-periode / 2, periode / 2), weights=sig[m_])[0]
+        kontr.append((F.max() - F.min()) / max(F.mean(), 1e-9))
+    kontr = np.array(kontr); okk = kontr >= 0.5 * kontr.max(); lauf = (0, 0, 0); i = 0
+    while i < len(okk):
+        if okk[i]:
+            j = i
+            while j < len(okk) and okk[j]: j += 1
+            if j - i > lauf[0]: lauf = (j - i, i, j - 1)
+            i = j
+        else: i += 1
+    ta, tb = float(tcs[lauf[1]] - win / 2), float(tcs[lauf[2]] + win / 2)
+    print("Faltungskontrast je 6-Perioden-Fenster (nur Bericht, Lauf v13: nicht trennscharf, waehlte 4 m): staerkster Lauf t %.2f..%.2f; Kontraste %s" % (ta, tb, np.round(kontr, 2).tolist()), flush=True)
+    # Bereich = wo UNTER- und OBERKANTE des Gitters die Stelle abdecken (Erkerfronten haben an diesen Hoehen nur Einzelstuecke): Instanz liegt in einem Unter- UND einem Oberkanten-Segment (+-0,3 m)
+    def intervalle(mz):
+        tt_ = ((S[mz][:, :, :2] - c2) @ d); return np.stack([tt_.min(1) - 0.3, tt_.max(1) + 0.3], 1)
+    iv_lo = intervalle(hz & (np.abs(zm - zlo) < 0.15)); iv_hi = intervalle(hz & (np.abs(zm - zhi) < 0.15))
+    deck = lambda t: bool(((iv_lo[:, 0] <= t) & (t <= iv_lo[:, 1])).any() and ((iv_hi[:, 0] <= t) & (t <= iv_hi[:, 1])).any())
+    for x in inst: x["gitter_gedeckt"] = deck(x["t"])
+    gd = [x["t"] for x in inst if x["gitter_gedeckt"]]; ta, tb = (min(gd), max(gd)) if gd else (t0, t1)
+    print("Bereich mit Unter- UND Oberkante im Gitter: t %.2f..%.2f, %d von %d Instanzen gedeckt" % (ta, tb, len(gd), len(inst)), flush=True)
+    # (b) je Instanz die 10 naechsten sichtbaren Fotos (Z-Puffer aus der Wolke, 1/4 Aufloesung, wie gitter_pruefblatt --wolke)
+    Wt = torch.tensor(W, device=dev); zp_ = np.arange(knoten[0][1], knoten[-1][1] + 1e-6, 0.02); rp_ = np.interp(zp_, [z for _, z in knoten], [r for r, _ in knoten])
+    mitte = np.array([x["mitte"] for x in inst]); fotos = [f for f in sorted(KAM) if os.path.exists(os.path.join(BILDER, f))]; sicht_tab = {}
+    for f in fotos:
+        k = KAM[f]; R = np.array(k["Rn"]); t_ = np.array(k["tn"]); Cc = np.array(k["C"]); X = R @ mitte.T + t_[:, None]; z = X[2]
+        with np.errstate(divide="ignore", invalid="ignore"): x = X[0] / z; y = X[1] / z
+        ok_ = (z > 3) & (z < 40) & (np.abs(x) < 0.55) & (np.abs(y) < 0.55)
+        if not ok_.any(): continue
+        Rt = torch.tensor(R, device=dev, dtype=torch.float32); tt_ = torch.tensor(t_, device=dev, dtype=torch.float32); Xw = Wt @ Rt.T + tt_; zw = Xw[:, 2]; m = zw > 0.5
+        sjq = 1500.0 / k["W"] / 4; xw = Xw[m, 0] / zw[m]; yw = Xw[m, 1] / zw[m]; fw = 1 + k["params"][3] * (xw * xw + yw * yw)
+        Hq, Wq = int(k["H"] * 1500.0 / k["W"] / 4) + 1, int(1500 / 4) + 1; uw = ((k["f"] * xw * fw + k["cx"]) * sjq).long(); vw = ((k["f"] * yw * fw + k["cy"]) * sjq).long()
+        inb = (uw >= 0) & (uw < Wq) & (vw >= 0) & (vw < Hq); zb = torch.full((Hq * Wq,), 1e9, device=dev); zb.scatter_reduce_(0, vw[inb] * Wq + uw[inb], zw[m][inb], reduce="amin"); zb = zb.view(Hq, Wq)
+        zb = -torch.nn.functional.max_pool2d(-zb[None, None], 3, 1, 1)[0, 0]; leer = zb > 1e8; zb7 = -torch.nn.functional.max_pool2d(-zb[None, None], 9, 1, 4)[0, 0]; zb = torch.where(leer, zb7, zb).cpu().numpy()
+        f1 = 1 + k["params"][3] * (x * x + y * y); uq = np.clip(((k["f"] * x * f1 + k["cx"]) * sjq).astype(int), 0, Wq - 1); vq = np.clip(((k["f"] * y * f1 + k["cy"]) * sjq).astype(int), 0, Hq - 1)
+        sichtbar = ok_ & (z <= zb[vq, uq] + 0.5); dist = np.linalg.norm(mitte - Cc, axis=1)
+        for i in np.where(sichtbar)[0]: sicht_tab.setdefault(i, []).append((float(dist[i]), f))
+    zuordnung = {}
+    for i, lst in sicht_tab.items():
+        for _, f in sorted(lst)[:10]: zuordnung.setdefault(f, []).append(i)
+    print("Gradienten-Gate: %d Fotos zu laden, Instanzen mit >= 1 Sichtfoto: %d" % (len(zuordnung), len(sicht_tab)), flush=True)
+    # (c) Sobel-Betrag auf Grau (1500 px breit), je Foto einmal (uint8, /4 skaliert); je Instanz LAGESUCHE +-Periode/2 entlang der Fassade (gemeinsam fuer alle Fotos der Instanz,
+    #     Lauf v14: Phase driftet entlang der Bruestung bis ~Periode/2, Pixelsuche +-4 px reicht nicht), dann Silhouette +-2 px gegen Kontrollstreifen 4-6 px, Quotient >= 2
+    GRAD = {}
+    for f in zuordnung:
+        im = cv2.imread(os.path.join(BILDER, f), cv2.IMREAD_GRAYSCALE | cv2.IMREAD_IGNORE_ORIENTATION)
+        if im is None: continue
+        sj = 1500.0 / im.shape[1]; im = cv2.resize(im, (1500, int(im.shape[0] * sj))); gx = cv2.Sobel(im, cv2.CV_32F, 1, 0, ksize=3); gy = cv2.Sobel(im, cv2.CV_32F, 0, 1, ksize=3)
+        GRAD[f] = np.clip(np.sqrt(gx * gx + gy * gy) / 4, 0, 255).astype(np.uint8)
+    foto_je_inst = {}
+    for f, idxs in zuordnung.items():
+        for i in idxs: foto_je_inst.setdefault(i, []).append(f)
+    def quotient(f, t, dt3):
+        """Silhouetten-/Kontrollgradient einer Instanz bei t (um dt3 m entlang der Fassade verschoben) im Foto f; None wenn nicht im Bild."""
+        G = GRAD[f]; H, Wd = G.shape; k = KAM[f]; R = np.array(k["Rn"]); t_ = np.array(k["tn"]); Cc = np.array(k["C"]); sj = Wd / k["W"]
+        ax = np.stack([welt(t + dt3, 0, z) for z in zp_]); bl = ax.mean(0) - Cc; p = np.array([-bl[1], bl[0], 0.0]); p /= max(np.linalg.norm(p), 1e-9); sil_, ctl_ = [], []
+        for sgn in (1, -1):
+            S_ = ax + sgn * rp_[:, None] * p[None]; X = R @ S_.T + t_[:, None]
+            if (X[2] < 0.5).any(): return None
+            x = X[0] / X[2]; y = X[1] / X[2]; f1 = 1 + k["params"][3] * (x * x + y * y)
+            u = (k["f"] * x * f1 + k["cx"]) * sj; v = (k["f"] * y * f1 + k["cy"]) * sj; du = np.gradient(u); dv = np.gradient(v); ln = np.hypot(du, dv) + 1e-9; nu, nv = -dv / ln, du / ln
+            def probe(ks):
+                vals = []
+                for kk in ks:
+                    uu = np.round(u + kk * nu).astype(int); vv = np.round(v + kk * nv).astype(int); okp = (uu >= 0) & (uu < Wd) & (vv >= 0) & (vv < H)
+                    if okp.sum() < 0.8 * len(uu): return None
+                    vals.append(G[vv[okp], uu[okp]].mean())
+                return float(np.mean(vals))
+            best_q = None
+            for sh in range(-SHIFT, SHIFT + 1):
+                s_ = probe([sh - 2, sh - 1, sh, sh + 1, sh + 2]); c_ = probe([sh - 6, sh - 5, sh - 4, sh + 4, sh + 5, sh + 6])
+                if s_ is None or c_ is None: continue
+                if best_q is None or s_ / max(c_, 1e-6) > best_q[0]: best_q = (s_ / max(c_, 1e-6), s_, c_)
+            if best_q is None: return None
+            sil_.append(best_q[1]); ctl_.append(best_q[2])
+        return float(np.mean(sil_) / max(np.mean(ctl_), 1e-6)), float(np.mean(sil_))
+    grad_ok = np.zeros(len(inst), int); grad_fotos = np.zeros(len(inst), int); grad_werte = [[] for _ in inst]; dt_best = np.zeros(len(inst))
+    schritte = np.arange(-periode / 2, periode / 2 + 1e-6, 0.01)
+    for i, fl in foto_je_inst.items():
+        fl = [f for f in fl if f in GRAD]
+        if not fl: continue
+        best = (-1, 0.0, [])
+        for dt3 in schritte:                                                                        # Lage: Summe der Silhouettengradienten (Lauf v15: Quotient als Lagemass war Zufall, Verschiebungen gleichverteilt)
+            rr = [r for r in (quotient(f, inst[i]["t"], float(dt3)) for f in fl) if r is not None]
+            if not rr: continue
+            sc_ = float(np.mean([r[1] for r in rr])); qs = [r[0] for r in rr]
+            if sc_ > best[0]: best = (sc_, float(dt3), qs)
+        dt_best[i] = best[1]; grad_fotos[i] = len(best[2]); grad_werte[i] = [round(q, 2) for q in best[2]]; grad_ok[i] = int(sum(q >= 2.0 for q in best[2]))
+    print("Lagesuche je Instanz (m entlang Fassade): Median %.3f, Streuung %.3f; Werte %s" % (np.median(dt_best), np.std(dt_best), np.round(dt_best, 2).tolist()), flush=True)
+    for i, x in enumerate(inst):
+        x["im_bereich"] = bool(x.get("gitter_gedeckt", ta - 0.01 <= x["t"] <= tb + 0.01)); x["grad_fotos"] = int(grad_fotos[i]); x["dt_foto"] = float(dt_best[i]); x["t_foto"] = x["t"] + float(dt_best[i]); x["grad_fotos_bestanden"] = int(grad_ok[i]); x["grad_quotienten"] = grad_werte[i]
+        x["bestanden_stabil"] = x["bestanden"]; x["bestanden"] = bool(x["im_bereich"] and grad_ok[i] >= NFOTO); x["luecke"] = bool(x["im_bereich"] and not x["bestanden"])
+    n_ok = sum(x["bestanden"] for x in inst); n_l = sum(x["luecke"] for x in inst); n_aus = sum(not x["im_bereich"] for x in inst)
+    print("Gradienten-Gate: fotogeprueft bestanden %d, Luecken (Periode erwartet Instanz, kein Fotobeleg) %d, ausserhalb des periodischen Bereichs %d (von %d)" % (n_ok, n_l, n_aus, len(inst)), flush=True)
+    print("  Luecken bei t:", [round(x["t"], 2) for x in inst if x["luecke"]], flush=True)
 best_n = sum(1 for x in inst if x["bestanden"]); print("Instanzen im t-Bereich: %d, fotogeprueft bestanden: %d (Fotos mit Sicht auf die Bruestung: %d)" % (len(inst), best_n, nf), flush=True)
-for x in inst: print("  Baluster %3d t %6.2f  Punkte %4d  Fotos gesehen %3d  Kante %3d  Kantenanteil Median %.2f q90 %.2f  %s" % (x["index"], x["t"], x["punkte"], x["fotos_gesehen"], x["fotos_kante"], x["kantenanteil_median"] or 0, x["kantenanteil_q90"] or 0, "OK" if x["bestanden"] else "--"))
+for x in inst: print("  Baluster %3d t %6.2f  Punkte %4d  Fotos gesehen %3d  Kante %3d  Kantenanteil Median %.2f q90 %.2f  Grad %d/%d %s  %s" % (x["index"], x["t"], x["punkte"], x["fotos_gesehen"], x["fotos_kante"], x["kantenanteil_median"] or 0, x["kantenanteil_q90"] or 0, x.get("grad_fotos_bestanden", -1), x.get("grad_fotos", -1), x.get("grad_quotienten", ""), ("OK" if x["bestanden"] else "LUECKE" if x.get("luecke") else "--")))
 # Sichtkontrolle: ALLE Instanzen (auch nicht bestandene) als eigene Datei fuer das Overlay
 dbg = []
 for x in inst:
-    M = mantel(x["t"]); dbg.append([[float(v) for v in welt(x["t"], 0, knoten[0][1])], [float(v) for v in welt(x["t"], 0, knoten[-1][1])], 13 if x["bestanden"] else 14, 1.0])
+    M = mantel(x["t"]); dbg.append([[float(v) for v in welt(x["t"], 0, knoten[0][1])], [float(v) for v in welt(x["t"], 0, knoten[-1][1])], 13 if x["bestanden"] else (14 if x.get("im_bereich", True) else 15), 1.0])
     for j in range(0, NM, 2):
-        for k in range(len(knoten) - 1): dbg.append([[float(v) for v in M[j, k]], [float(v) for v in M[j, k + 1]], 13 if x["bestanden"] else 14, 1.0])
+        for k in range(len(knoten) - 1): dbg.append([[float(v) for v in M[j, k]], [float(v) for v in M[j, k + 1]], 13 if x["bestanden"] else (14 if x.get("im_bereich", True) else 15), 1.0])
 json.dump({"segmente": dbg}, open(a[4] + ".alle.json", "w"))
 
 # (7) Segmente quelle 13
@@ -225,5 +325,5 @@ for x in inst:
     for j in range(NM):
         for k in range(len(knoten) - 1): seg.append([[float(v) for v in M[j, k]], [float(v) for v in M[j, k + 1]], 13, 1.0])
 json.dump({"band": [zlo, zhi], "fassade": dict(mitte=[float(x) for x in c2], richtung=[float(x) for x in d], q0=q0, t0=t0, t1=t1), "periode": periode, "phase": phase,
-           "profil": knoten, "anzahl_fotogeprueft": best_n, "baluster": inst, "segmente": seg}, open(a[4], "w"), indent=1)
+           "profil": knoten, "anzahl_fotogeprueft": best_n, "luecken": [x["t"] for x in inst if x.get("luecke")], "periodischer_bereich": [ta, tb], "gate": GATE, "baluster": inst, "segmente": seg}, open(a[4], "w"), indent=1)
 print("fertig: %d Baluster, %d Segmente" % (best_n, len(seg)))

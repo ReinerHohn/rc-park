@@ -70,6 +70,47 @@ Ausgabe `formen/gitter_v7_formen.json`, Bilder `modelle/kaufhaus_grob3/audit/for
   SCHLECHTER als v5. SACKGASSE: Kehlen/First aus Sweep-Punkten in der Dachebene fitten (die Punkte in der Ebene sind Dachkanten aller Art, der Fit haengt sich an die falschen).
   ENDSTAND Gauben: nicht abgenommen. In `gitter_v7_formen_alle.json` liegen die v5-Kandidaten als quelle 14 (unverifiziert) zur Ansicht; Hauptdatei ohne Gauben.
 
+## Runde 2 (Koordinator, ab 19:50): Baluster-Fotogate am Originalfoto, Gauben mit Foto-Kantenabstand
+### Baluster
+- Zaehlprotokoll `modelle/kaufhaus_grob3/messprotokoll/Z-6120-001.json/.jpg` (foto_zaehlung.py ueber Hilfs-objekt.json im Scratch, Foto per Symlink; Gitterbild angesehen und
+  von Hand gezaehlt, y 1248 Schafthoehe): Feld Mitte zwischen den Pfosten VOLL sichtbar = 11 Baluster; links 9 ganz + 1 angeschnitten, rechts 7 ganz + 1 angeschnitten (teil).
+  Pixelabstand ~100 px bei 3024 px Breite. Gegenprobe zum Modell: Periode 0,287 m -> 11 Baluster im Mittelfeld entsprechen 11 x 0,287 = 3,16 m Feldbreite (plausibel).
+- v13 (`baluster13.log`): Gradienten-Gate gebaut (Z-Puffer aus kanten3d_k80 wie gitter_pruefblatt, 10 naechste sichtbare Fotos, Sobel auf Grau 1500 px, Silhouette +-2 px gegen
+  Kontrollstreifen 4-6 px, Quotient >= 2 in >= 3 Fotos). Ergebnis: 0 bestanden - Quotienten liegen bei 0,6-1,5 fast ueberall (auch an klar sichtbaren Balustern): Lagefehler der
+  Instanz (einige cm = 3-8 px bei 1500 px) > 2-px-Fenster, der Kontrollstreifen 4-6 px trifft dann die Kante selbst. Periodischer-Bereich per Faltungskontrast NICHT trennscharf
+  (waehlte 4 m bei t -8..-4). Aenderung v14: gemeinsame Verschiebung beider Silhouetten -4..+4 px zugelassen (--shift), Bereich = Instanzen, die im Gitter eine Unter- UND Oberkante
+  ueber sich haben (Erkerfronten haben dort nur Einzelstuecke).
+### Gauben
+- v8: Dachebene aus Gitter (lange waagerechte Segmente am Traufband 14,33 +-0,6 und im hoechsten Band, SVD-Ebene durch die Endpunkte, --gitter), Fit-Ziel = (Inlier - rho*L) *
+  (1 - Fotoverlust/20 px) mit Fotoverlust = mittlere Distanztransformation der Stabilitaetskarte (>= 0,3) an 5 Stuetzpunkten je Kante in den 6 naechsten Sichtfotos (--fotoverlust 1,
+  --kfotos 6, DT-Karten float16 im GPU-Cache), Gate = Kantenbelegung >= 0,5 in >= 3 Fotos (--fotomin 0.5 --nfoto 3), geneigter First (Tiefe) bleibt Parameter.
+  v8 OOM (Fotoverlust fuer 400k Kombinationen auf einmal) -> Bloecke zu 16384. v9 (`gauben9.log`): Dachebene aus Gitter n (0,27 0,76 0,59), 53,6 Grad, Traufe 14,33 (31 Seg.),
+  First 27,08 (24 Seg.) - stimmt mit der RANSAC-Ebene ueberein (kein Hebel). Fits weiterhin falsch: Breiten 0,17-1,8, Tiefen bis 3,5, Reihenmediane widerspruechlich.
+  Gate "bestanden" bei 19 von 23 Kandidaten - aber nur, weil 3 von ~38 Fotos >= 0,5 Belegung reichen (Zufallstreffer in Nahfotos); mittlere Belegung der 5 echten Gauben 0,14-0,25.
+  Overlays 6261 + nu_9e19 ANGESEHEN (`audit/formen/gauben_v9_alle_*`): lange schiefe Keile zwischen den Gauben, keine Deckung. Der Foto-Kantenabstand (DT der Stabilitaetskarte)
+  zieht die Primitive an irgendwelche Dachkanten (Gaubenkanten sind in den Karten duenn), der Inlier-Term an Sweep-Streupunkte. ENDSTAND Runde 2: Gauben NICHT abgenommen,
+  Koordinator-Gate "alle 5 Gauben >= 0,5 in >= 3 Fotos" als Familiengate NICHT erfuellt -> keine Gauben in gitter_v7_formen2.json.
+  Lehre: Das Fit-Ziel braucht die GAUBEN-Kanten explizit (Kehlen-Dreieck als Liniendetektion im Foto: zwei zum Scheitel laufende Kanten + waagerechte Fronttraufe), nicht eine
+  generische Distanz zu allen Kanten; und die Primitive sollten erst in 2D je Foto (Dreieck) gefunden und dann trianguliert werden (Regel 9d: Form aus dem Foto, Lage aus der Wolke).
+### Baluster v14-v16
+- v14 (Shift +-4 px, Bereich = Gitter-Deckung): 5 bestanden, 60 Luecken; Quotienten 1,0-2,5. Diagnosebild Gradient 6120 (`scratchpad/bal_grad_6120.jpg`): Sobel zeigt die
+  Balusterschaefte KLAR (anders als die Stabilitaetskarte), aber die projizierte Instanz liegt dort ~Periode/2 neben dem Schaft (Phasendrift) -> Pixelsuche reicht nicht.
+- v15: Lagesuche je Instanz +-Periode/2 (0,01 m) mit dem Quotienten als Mass -> 20 bestanden, 45 Luecken, aber Verschiebungen gleichverteilt -0,14..0,14 (Zufall, Quotient ist
+  kein Lagemass). v16: Lage nach Summe der Silhouettengradienten, Quotient nur als Gate.
+- v16 (`baluster16.log`, 20:00): 11 bestanden (t -8,34 -8,05 -4,33 1,99 3,13 3,42 4,28 6,58 7,44 7,72 10,02), 54 Luecken, 32 ausserhalb (Erker ohne Gitter-Deckung);
+  Verschiebungen wieder gleichverteilt (Median -0,02, Streuung 0,09) -> auch die Gradientensumme findet die Lage nicht (Fenstersprossen/Handlauf dahinter liefern ueberall Gradient).
+  ENDSTAND Runde 2 Baluster: fotogepruefte Anzahl 11 (Gate nach Koordinator-Vorgabe), Luecken 54 - die Luecken sind NICHT fehlende Baluster (Overlay 6120 zeigt an jeder
+  Lueckenposition einen Baluster), sondern Versagen des Gates: der Quotient Silhouette/Kontrollstreifen (+-2 px gegen 4-6 px bei 1500 px) liegt an echten Balustern bei 1,0-2,5,
+  weil der Schaft bei 10-25 m nur 8-20 px breit ist und der Kontrollstreifen die Nachbarkante bzw. die unscharfe JPEG-Kante selbst trifft. Zaehlprotokoll Z-6120-001 (Hand): 11 je
+  Feld zwischen den Pfosten, 27 ganz sichtbar; Modell im selben Feld: 11 Instanzen (Periode 0,287 m passt) - die Zahl stimmt am Foto, das automatische Gate bestaetigt sie nicht.
+  Naechster Schritt: Gate als 1D-Profil quer zur Bruestung je Foto (Gradient ueber t aufsummiert, Spitzenpaare im Abstand 2r suchen) statt Punktstichprobe; Kontrollstreifen
+  relativ zur Schaftbreite (0,5 r) statt fest 4-6 px.
+
+## Ergebnisdateien Runde 2 (20:00)
+- `formen/gitter_v7_formen2.json` = v7 + 2 Helme (quelle 4) + 11 fotogeprueft bestandene Baluster (quelle 13, 99 Segmente); keine Gauben (Familiengate nicht erfuellt). 3156 Segmente.
+- Overlays: `audit/formen/gitter_v7_formen2_ip_IMG_6120*.jpg`, `baluster_v16_alle_ip_IMG_6120*.jpg` (alle 97 Instanzen), `gauben_v9_alle_*` (6261 + nu), Diagnose `scratchpad/bal_grad_6120.jpg`.
+- Zaehlprotokoll `modelle/kaufhaus_grob3/messprotokoll/Z-6120-001.json/.jpg`.
+
 ## Ergebnisdateien (Stand 19:50)
 - `formen/gitter_v7_formen.json` = v7 + 2 Helme (quelle 4, 32 Segmente), 3057 Segmente. Overlay `audit/formen/gitter_v7_formen_ip_IMG_6261.jpg`.
 - `formen/gitter_v7_formen_alle.json` = zusaetzlich Gauben-Kandidaten v5 (quelle 14, 184 Segmente) + 97 Baluster-Instanzen (quelle 13, Score 0,5, 485 Segmente) - beides UNVERIFIZIERT.

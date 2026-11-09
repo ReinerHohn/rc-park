@@ -1,0 +1,206 @@
+{
+ "id": "Z-6120-001",
+ "typ": "zaehlung",
+ "foto": "6120",
+ "datei": "6120_ip_IMG_6120.jpg",
+ "was": "Kaufhaus Balkonbruestung: Baluster je Feld zwischen den Pfosten (ip_IMG_6120, Sichtzaehlung; Feld Mitte voll sichtbar, Felder links/rechts am Bildrand angeschnitten)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-09",
+ "punkte": [
+  {
+   "flaeche": "L",
+   "art": "teil",
+   "x": 55.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "L",
+   "art": "teil",
+   "x": 150.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "L",
+   "art": "teil",
+   "x": 245.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "L",
+   "art": "teil",
+   "x": 340.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "L",
+   "art": "teil",
+   "x": 440.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "L",
+   "art": "teil",
+   "x": 540.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "L",
+   "art": "teil",
+   "x": 640.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "L",
+   "art": "teil",
+   "x": 740.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "L",
+   "art": "teil",
+   "x": 840.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "L",
+   "art": "teil",
+   "x": 940.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "M",
+   "art": "voll",
+   "x": 1150.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "M",
+   "art": "voll",
+   "x": 1250.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "M",
+   "art": "voll",
+   "x": 1345.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "M",
+   "art": "voll",
+   "x": 1440.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "M",
+   "art": "voll",
+   "x": 1535.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "M",
+   "art": "voll",
+   "x": 1635.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "M",
+   "art": "voll",
+   "x": 1735.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "M",
+   "art": "voll",
+   "x": 1835.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "M",
+   "art": "voll",
+   "x": 1935.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "M",
+   "art": "voll",
+   "x": 2035.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "M",
+   "art": "voll",
+   "x": 2135.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "R",
+   "art": "teil",
+   "x": 2355.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "R",
+   "art": "teil",
+   "x": 2455.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "R",
+   "art": "teil",
+   "x": 2555.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "R",
+   "art": "teil",
+   "x": 2655.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "R",
+   "art": "teil",
+   "x": 2750.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "R",
+   "art": "teil",
+   "x": 2850.0,
+   "y": 1248.0
+  },
+  {
+   "flaeche": "R",
+   "art": "teil",
+   "x": 2950.0,
+   "y": 1248.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "L": {
+   "art": "teil",
+   "n": 10
+  },
+  "M": {
+   "art": "voll",
+   "n": 11
+  },
+  "R": {
+   "art": "teil",
+   "n": 7
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 11,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-6120-001.jpg",
+ "ausschnitt": [
+  0,
+  998,
+  3200,
+  1498
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Pixel in Originalaufloesung 3024x4032, y=1248 Schafthoehe; Zusatz: links 9 ganz + 1 angeschnitten, rechts 7 ganz + 1 angeschnitten -> 27 ganz sichtbare Baluster"
+}
