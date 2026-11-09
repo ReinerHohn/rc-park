@@ -9,8 +9,9 @@ def ransac_segmente(X, tol=0.015, minlen=0.15, minpts=25, seed=1, maxit=3000, lo
         Y = X[idx]; M = 3000; a = torch.randint(0, len(Y), (M,), device="cuda", generator=g)
         cand = torch.randint(0, len(Y), (M, 400), device="cuda", generator=g); dd = (Y[cand] - Y[a][:, None]).norm(dim=2); dd = torch.where((dd > 0.1) & (dd < 0.6), dd, torch.full_like(dd, 1e9)); j = dd.argmin(1); b = cand[torch.arange(M), j]; okp = dd[torch.arange(M), j] < 1e8
         A = Y[a]; Dv = Y[b] - A; Dv = Dv / Dv.norm(dim=1, keepdim=True).clamp(min=1e-9); sc = torch.zeros(M, device="cuda")
-        for c0 in range(0, M, 500):
-            w = Y[None] - A[c0:c0 + 500, None]; t = (w * Dv[c0:c0 + 500, None]).sum(2); sc[c0:c0 + 500] = ((w - t[..., None] * Dv[c0:c0 + 500, None]).norm(dim=2) < tol).sum(1)
+        CH = int(max(8, min(500, 3e7 // max(len(Y), 1))))                     # Blockgroesse nach Punktzahl (sonst GPU-OOM bei >100k Punkten)
+        for c0 in range(0, M, CH):
+            w = Y[None] - A[c0:c0 + CH, None]; t = (w * Dv[c0:c0 + CH, None]).sum(2); sc[c0:c0 + CH] = ((w - t[..., None] * Dv[c0:c0 + CH, None]).norm(dim=2) < tol).sum(1)
         sc = torch.where(okp, sc, torch.zeros_like(sc)); k = int(sc.argmax())
         if sc[k] < minpts: break
         w = Y - A[k]; t = (w * Dv[k]).sum(1); inl = (w - t[:, None] * Dv[k]).norm(dim=1) < tol; ti = t[inl]; ii = idx[inl]; o = ti.argsort(); ti = ti[o]; ii = ii[o]

@@ -104,8 +104,9 @@ for c0 in range(0, J, 16): blk = L[:, c0:c0 + 16]; cb = lut[blk.long().clamp(min
 def konsens_kanten(Cl, thr):
     """Cluster-Paare, deren Punkte in den Fotos, die BEIDE sehen, von derselben SAM-Maske (>=30 % je Cluster) erfasst werden: Unterstuetzung / Beobachter >= thr (Widerspruch = beide sichtbar, keine gemeinsame Maske)."""
     C = int(Cl.max()) + 1; sup = {}; vis = torch.zeros((C, J), dtype=torch.bool, device=dev); B = J * MAXM + 1
+    nz = -(torch.arange(J, device=dev, dtype=torch.int32) + 2)[None, :]; Cn = torch.where(Cl < 0, nz.expand_as(Cl), Cl); md = torch.mode(Cn, dim=1); ptc = torch.where(md.values >= 0, md.values, torch.full_like(md.values, -1)); del Cn      # Cluster je PUNKT (Mehrheit ueber Fotos), nicht je Foto
     for j in range(J):
-        c = Cl[:, j]; lb = L[:, j]; v = (c >= 0) & (lb >= 0)
+        c = ptc; lb = L[:, j]; v = (c >= 0) & (lb >= 0)
         if int(v.sum()) < 100: continue
         cc = c[v].long(); ll = lb[v].long(); Vc = torch.bincount(cc, minlength=C); vis[:, j] = Vc >= 50
         u, n = torch.unique(cc * B + ll, return_counts=True); uc = u // B; ul = u % B; k = (n.float() / Vc[uc].float() >= 0.3) & (Vc[uc] >= 50); uc = uc[k].cpu().numpy(); ul = ul[k].cpu().numpy()
