@@ -1,0 +1,74 @@
+{
+ "id": "Z-6164-001",
+ "typ": "zaehlung",
+ "foto": "6164",
+ "datei": "6164_ip_IMG_6164.jpg",
+ "was": "Erker 1 (u 15,56): Unterlichter je Erkerflaeche; Flaechen L (Pfosten 580-735 px), F (735-890), R (schmal, rechts)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-09",
+ "punkte": [
+  {
+   "flaeche": "L",
+   "art": "voll",
+   "x": 628.0,
+   "y": 2030.0
+  },
+  {
+   "flaeche": "L",
+   "art": "voll",
+   "x": 698.0,
+   "y": 2030.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 778.0,
+   "y": 2020.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 845.0,
+   "y": 2020.0
+  },
+  {
+   "flaeche": "R",
+   "art": "teil",
+   "x": 905.0,
+   "y": 2010.0
+  },
+  {
+   "flaeche": "R",
+   "art": "teil",
+   "x": 925.0,
+   "y": 2020.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "L": {
+   "art": "voll",
+   "n": 2
+  },
+  "F": {
+   "art": "voll",
+   "n": 2
+  },
+  "R": {
+   "art": "teil",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 2,
+  "voll_sichtbare_flaechen": 2
+ },
+ "bild": "Z-6164-001.jpg",
+ "ausschnitt": [
+  378,
+  1760,
+  1175,
+  2280
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Flaechenzuordnung aus Triangulation M-6161-001..005 (Paarung Index+2: Front n 13,78) - Strip links der Fl. L (2 schmale Lichter, 518-575 px) nicht zugeordnet"
+}

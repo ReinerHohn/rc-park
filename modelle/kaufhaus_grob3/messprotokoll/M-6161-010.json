@@ -1,0 +1,47 @@
+{
+ "id": "M-6161-010",
+ "typ": "triangulation_plan",
+ "foto": "6161",
+ "name": "E1 Mittelpfosten Front idx3 (6161,6164,nuaca)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6161",
+   "px": [
+    565.0,
+    1300.0
+   ]
+  },
+  {
+   "kamera": "K-6164",
+   "px": [
+    815.0,
+    1960.0
+   ]
+  },
+  {
+   "kamera": "K-nuaca",
+   "px": [
+    528.0,
+    1997.0
+   ]
+  }
+ ],
+ "P_xy": [
+  19.212,
+  7.762
+ ],
+ "strahl_abstand_m": [
+  0.013,
+  0.002,
+  0.012
+ ],
+ "schnittwinkel_grad": [
+  56.1,
+  8.9,
+  65.0
+ ],
+ "unsicherheit_m": 0.046,
+ "massstab_von": "Kameras K-6161, K-6164, K-nuaca aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme",
+ "n": 13.73,
+ "u": 15.519
+}

@@ -1,0 +1,37 @@
+{
+ "id": "M-6161-015",
+ "typ": "triangulation_plan",
+ "foto": "6161",
+ "name": "E1 Schraegflaeche (u+) Ende idx6 (6164,6161)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6164",
+   "px": [
+    580.0,
+    1960.0
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    432.0,
+    1300.0
+   ]
+  }
+ ],
+ "P_xy": [
+  20.528,
+  6.562
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.0
+ ],
+ "schnittwinkel_grad": [
+  53.9
+ ],
+ "unsicherheit_m": 0.036,
+ "massstab_von": "Kameras K-6164, K-6161 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme",
+ "n": 13.038,
+ "u": 17.16
+}

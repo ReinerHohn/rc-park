@@ -1,0 +1,37 @@
+{
+ "id": "M-6161-013",
+ "typ": "triangulation_plan",
+ "foto": "6161",
+ "name": "E1 Schraegflaeche (u-) Ende idx0 (6161,nuaca)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6161",
+   "px": [
+    775.0,
+    1300.0
+   ]
+  },
+  {
+   "kamera": "K-nuaca",
+   "px": [
+    778.0,
+    1997.0
+   ]
+  }
+ ],
+ "P_xy": [
+  17.689,
+  6.774
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.0
+ ],
+ "schnittwinkel_grad": [
+  7.3
+ ],
+ "unsicherheit_m": 0.244,
+ "massstab_von": "Kameras K-6161, K-nuaca aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme",
+ "n": 12.29,
+ "u": 14.413
+}

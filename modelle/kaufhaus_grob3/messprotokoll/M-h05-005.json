@@ -1,0 +1,32 @@
+{
+ "id": "M-h05-005",
+ "foto": "h05",
+ "kamera": "K-h05",
+ "ebene": "0.3338,0.9426,0=13.855",
+ "name": "E0 Front: Wappenband Unterkante -> Unterkante Gesims",
+ "mess_px": [
+  2905.0,
+  2130.0,
+  2905.0,
+  2160.0
+ ],
+ "P1": [
+  -2.988,
+  15.757,
+  8.506
+ ],
+ "P2": [
+  -2.965,
+  15.749,
+  8.264
+ ],
+ "dz": -0.242,
+ "dy": -0.008,
+ "dx": 0.023,
+ "abstand": 0.243,
+ "z1": 8.506,
+ "z2": 8.264,
+ "unsicherheit_rel": 0.0122,
+ "unsicherheit_m": 0.04,
+ "massstab_von": "Kamera K-h05 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=13.855 (+-0.3 m)"
+}

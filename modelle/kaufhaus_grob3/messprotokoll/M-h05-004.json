@@ -1,0 +1,32 @@
+{
+ "id": "M-h05-004",
+ "foto": "h05",
+ "kamera": "K-h05",
+ "ebene": "0.3338,0.9426,0=13.855",
+ "name": "E0 Front: Wappenband Oberkante -> Unterkante",
+ "mess_px": [
+  2905.0,
+  1992.0,
+  2905.0,
+  2130.0
+ ],
+ "P1": [
+  -3.095,
+  15.795,
+  9.648
+ ],
+ "P2": [
+  -2.988,
+  15.757,
+  8.506
+ ],
+ "dz": -1.141,
+ "dy": -0.038,
+ "dx": 0.107,
+ "abstand": 1.147,
+ "z1": 9.648,
+ "z2": 8.506,
+ "unsicherheit_rel": 0.0121,
+ "unsicherheit_m": 0.051,
+ "massstab_von": "Kamera K-h05 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=13.855 (+-0.3 m)"
+}

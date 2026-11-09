@@ -1,0 +1,32 @@
+{
+ "id": "M-h05-006",
+ "foto": "h05",
+ "kamera": "K-h05",
+ "ebene": "0.3338,0.9426,0=13.855",
+ "name": "E0 Front: Traufe Helmunterkante -> Oberkante Traufgesims-Band",
+ "mess_px": [
+  2905.0,
+  1598.0,
+  2905.0,
+  1612.0
+ ],
+ "P1": [
+  -3.424,
+  15.911,
+  13.18
+ ],
+ "P2": [
+  -3.411,
+  15.907,
+  13.047
+ ],
+ "dz": -0.133,
+ "dy": -0.004,
+ "dx": 0.012,
+ "abstand": 0.134,
+ "z1": 13.18,
+ "z2": 13.047,
+ "unsicherheit_rel": 0.0115,
+ "unsicherheit_m": 0.041,
+ "massstab_von": "Kamera K-h05 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=13.855 (+-0.3 m)"
+}

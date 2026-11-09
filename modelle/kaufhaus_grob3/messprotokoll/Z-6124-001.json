@@ -1,0 +1,74 @@
+{
+ "id": "Z-6124-001",
+ "typ": "zaehlung",
+ "foto": "6124",
+ "datei": "6124_ip_IMG_6124.jpg",
+ "was": "Erker 0 (u -8,35): Unterlichter (Reihe unter dem Kaempfer) je Erkerflaeche; 3 Flaechen: links-schraeg L, Front F, rechts-schraeg R",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-09",
+ "punkte": [
+  {
+   "flaeche": "L",
+   "art": "voll",
+   "x": 1359.0,
+   "y": 627.0
+  },
+  {
+   "flaeche": "L",
+   "art": "voll",
+   "x": 1521.0,
+   "y": 544.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1725.0,
+   "y": 502.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1918.0,
+   "y": 523.0
+  },
+  {
+   "flaeche": "R",
+   "art": "voll",
+   "x": 2117.0,
+   "y": 544.0
+  },
+  {
+   "flaeche": "R",
+   "art": "voll",
+   "x": 2206.0,
+   "y": 585.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "L": {
+   "art": "voll",
+   "n": 2
+  },
+  "F": {
+   "art": "voll",
+   "n": 2
+  },
+  "R": {
+   "art": "voll",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 2,
+  "voll_sichtbare_flaechen": 3
+ },
+ "bild": "Z-6124-001.jpg",
+ "ausschnitt": [
+  1109,
+  252,
+  2456,
+  877
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Flaechenzahl 3 (Front + 2 Schraegflaechen), Foto 6124 az ~ -51 Grad; zaehlt die Fensterflaechen, Mauerrueckkehr nicht sichtbar"
+}

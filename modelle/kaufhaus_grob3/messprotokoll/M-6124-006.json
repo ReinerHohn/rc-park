@@ -1,0 +1,37 @@
+{
+ "id": "M-6124-006",
+ "typ": "triangulation_plan",
+ "foto": "6124",
+ "name": "E0 Pfosten Ecke Front/Rechts, Gegenprobe 6225+6145",
+ "beobachtungen": [
+  {
+   "kamera": "K-6225",
+   "px": [
+    1060.0,
+    415.0
+   ]
+  },
+  {
+   "kamera": "K-6145",
+   "px": [
+    2768.0,
+    1300.0
+   ]
+  }
+ ],
+ "P_xy": [
+  -4.065,
+  14.284
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.0
+ ],
+ "schnittwinkel_grad": [
+  46.2
+ ],
+ "unsicherheit_m": 0.022,
+ "massstab_von": "Kameras K-6225, K-6145 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme",
+ "n": 12.107,
+ "u": -8.6
+}

@@ -1,0 +1,74 @@
+{
+ "id": "Z-6124-002",
+ "typ": "zaehlung",
+ "foto": "6124",
+ "datei": "6124_ip_IMG_6124.jpg",
+ "was": "Erker 0: Oberlichter (Reihe ueber dem Kaempfer) je Erkerflaeche",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-09",
+ "punkte": [
+  {
+   "flaeche": "L",
+   "art": "voll",
+   "x": 1330.0,
+   "y": 330.0
+  },
+  {
+   "flaeche": "L",
+   "art": "voll",
+   "x": 1500.0,
+   "y": 190.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1690.0,
+   "y": 160.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1880.0,
+   "y": 185.0
+  },
+  {
+   "flaeche": "R",
+   "art": "voll",
+   "x": 2080.0,
+   "y": 230.0
+  },
+  {
+   "flaeche": "R",
+   "art": "voll",
+   "x": 2170.0,
+   "y": 300.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "L": {
+   "art": "voll",
+   "n": 2
+  },
+  "F": {
+   "art": "voll",
+   "n": 2
+  },
+  "R": {
+   "art": "voll",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 2,
+  "voll_sichtbare_flaechen": 3
+ },
+ "bild": "Z-6124-002.jpg",
+ "ausschnitt": [
+  1080,
+  0,
+  2420,
+  580
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

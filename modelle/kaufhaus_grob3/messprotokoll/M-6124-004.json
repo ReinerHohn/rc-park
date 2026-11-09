@@ -1,0 +1,37 @@
+{
+ "id": "M-6124-004",
+ "typ": "triangulation_plan",
+ "foto": "6124",
+ "name": "E0 Mittelpfosten Front (Peilung)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6124",
+   "px": [
+    1819.0,
+    418.0
+   ]
+  },
+  {
+   "kamera": "K-6145",
+   "px": [
+    2638.0,
+    1300.0
+   ]
+  }
+ ],
+ "P_xy": [
+  -3.387,
+  15.835
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.0
+ ],
+ "schnittwinkel_grad": [
+  34.9
+ ],
+ "unsicherheit_m": 0.025,
+ "massstab_von": "Kameras K-6124, K-6145 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme",
+ "n": 13.796,
+ "u": -8.478
+}

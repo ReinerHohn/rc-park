@@ -1,0 +1,32 @@
+{
+ "id": "M-6124-019",
+ "foto": "6124",
+ "kamera": "K-6124",
+ "ebene": "0.3338,0.9426,0=13.855",
+ "name": "E0 Front (6124): Kaempfer -> Glasunterkante",
+ "mess_px": [
+  1819.0,
+  276.0,
+  1819.0,
+  678.0
+ ],
+ "P1": [
+  -3.378,
+  15.895,
+  11.396
+ ],
+ "P2": [
+  -3.302,
+  15.868,
+  9.897
+ ],
+ "dz": -1.498,
+ "dy": -0.027,
+ "dx": 0.077,
+ "abstand": 1.5,
+ "z1": 11.396,
+ "z2": 9.897,
+ "unsicherheit_rel": 0.0302,
+ "unsicherheit_m": 0.059,
+ "massstab_von": "Kamera K-6124 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=13.855 (+-0.3 m)"
+}

@@ -1,0 +1,47 @@
+{
+ "id": "M-6124-011",
+ "typ": "triangulation_plan",
+ "foto": "6124",
+ "name": "E0 Endpfosten Links (6124,6145,h05)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6124",
+   "px": [
+    1248.0,
+    418.0
+   ]
+  },
+  {
+   "kamera": "K-6145",
+   "px": [
+    2405.0,
+    1300.0
+   ]
+  },
+  {
+   "kamera": "K-h05",
+   "px": [
+    2748.0,
+    1890.0
+   ]
+  }
+ ],
+ "P_xy": [
+  -2.225,
+  14.513
+ ],
+ "strahl_abstand_m": [
+  0.009,
+  0.002,
+  0.012
+ ],
+ "schnittwinkel_grad": [
+  24.5,
+  5.0,
+  19.5
+ ],
+ "unsicherheit_m": 0.076,
+ "massstab_von": "Kameras K-6124, K-6145, K-h05 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme",
+ "n": 12.938,
+ "u": -6.942
+}

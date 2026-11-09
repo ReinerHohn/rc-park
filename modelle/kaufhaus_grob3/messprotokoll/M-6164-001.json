@@ -1,0 +1,32 @@
+{
+ "id": "M-6164-001",
+ "foto": "6164",
+ "kamera": "K-6164",
+ "ebene": "0.3338,0.9426,0=13.84",
+ "name": "E1 Front (6164): Peak Mittelpfosten -> Kaempfer-Oberkante",
+ "mess_px": [
+  815.0,
+  1808.0,
+  815.0,
+  1930.0
+ ],
+ "P1": [
+  19.294,
+  7.85,
+  12.37
+ ],
+ "P2": [
+  19.296,
+  7.85,
+  11.339
+ ],
+ "dz": -1.031,
+ "dy": -0.001,
+ "dx": 0.002,
+ "abstand": 1.031,
+ "z1": 12.37,
+ "z2": 11.339,
+ "unsicherheit_rel": 0.0118,
+ "unsicherheit_m": 0.047,
+ "massstab_von": "Kamera K-6164 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=13.84 (+-0.3 m)"
+}

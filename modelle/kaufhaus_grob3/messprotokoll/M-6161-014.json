@@ -1,0 +1,37 @@
+{
+ "id": "M-6161-014",
+ "typ": "triangulation_plan",
+ "foto": "6161",
+ "name": "E1 Schraegflaeche (u+) Mittelpfosten idx5 (6164,6161)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6164",
+   "px": [
+    660.0,
+    1960.0
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    453.0,
+    1300.0
+   ]
+  }
+ ],
+ "P_xy": [
+  20.233,
+  7.127
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.0
+ ],
+ "schnittwinkel_grad": [
+  55.0
+ ],
+ "unsicherheit_m": 0.035,
+ "massstab_von": "Kameras K-6164, K-6161 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme",
+ "n": 13.472,
+ "u": 16.693
+}

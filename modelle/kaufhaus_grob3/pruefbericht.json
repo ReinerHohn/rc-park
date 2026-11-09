@@ -12,15 +12,15 @@
   "pfeiler3_d": 0.8810006134404144,
   "arkade1_scheitel": 5.643319862365722,
   "fenster2_sohl": 8.856999847412109,
-  "erker_w_unterkante": 8.066999862670897,
+  "erker_w_unterkante": 8.18699988555908,
   "lichter_g2_anzahl": 3.0,
   "lichter_g2_breite_median": 0.92,
   "lichter_g2_breite_max": 0.92,
-  "lichter_g2_ebene_abstand": 1.9997724345705832,
+  "lichter_g2_ebene_abstand": 1.9997724347110009,
   "handlauf_z": 8.25699973297119,
   "helm_w_fussbreite_x": 2.5630182609558103,
-  "helm_w_fussbreite_y": 2.592074569702147,
-  "helm_w_fussbreite_punkte": 36.0,
+  "helm_w_fussbreite_y": 2.341466354370116,
+  "helm_w_fussbreite_punkte": 12.0,
   "rueck_z6": -0.005787998491273427,
   "rueck_z10": -0.005788051692975138,
   "rueck_z143": -0.005788051692975138,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548637573273,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.13989810645580292,
-  "wand_anteil_unter": 0.0002666666666666667,
+  "wand_pq": 0.13989727199077606,
+  "wand_anteil_unter": 0.0005,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,19 +50,19 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 1.9090876846058489,
-  "teile_ueberhang": 0.00782,
+  "teile_ueberhang": 0.00901,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.88,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.88,
-  "lichter_g2_bei_kaempfer_seite_ebene_abstand": 1.9992692327252344,
+  "lichter_g2_bei_kaempfer_seite_ebene_abstand": 1.9992692474486098,
   "lichter_g2_bei_kaempfer_mitte_anzahl": 2.0,
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.8,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.8,
-  "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 1.9991922203691888,
+  "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 1.999192222018205,
   "laube_rueckwand_n728_z7": -0.00332701019786219,
   "helm_o_r_14_64": 1.2110453487912292,
-  "helm_o_r_16_18": 0.5909803150327241,
-  "helm_o_r_17_76": 0.3508848000261934,
+  "helm_o_r_16_18": 0.5909801434450644,
+  "helm_o_r_17_76": 0.35088480017249024,
   "helm_w_r_16_25": 0.5645895467319909,
   "helm_w_r_17_75": 0.5068990264498032,
   "tor_b2_tiefe": 0.5493055786789243,
@@ -73,13 +73,31 @@
   "fenster_b4_anzahl": 2.0,
   "fenster_b4_breite_median": 0.8250000000000001,
   "fenster_b4_breite_max": 0.8300000000000001,
-  "fenster_b4_ebene_abstand": 1.8689588600095906,
+  "fenster_b4_ebene_abstand": 1.8689588604459109,
   "fenster_b1_anzahl": 2.0,
   "fenster_b1_breite_median": 0.77,
   "fenster_b1_breite_max": 0.77,
-  "fenster_b1_ebene_abstand": 1.8860301355502789,
-  "bandfront_z76": -0.0057697451080986895,
-  "bogen3_scheitel": 5.643319862365722
+  "fenster_b1_ebene_abstand": 1.8860301343965624,
+  "bandfront_z76": -0.00653820462883381,
+  "bogen3_scheitel": 5.643319862365722,
+  "erker_w_diag_l": 1.5456719685059321,
+  "erker_w_diag_r": 1.5461531261826713,
+  "erker_w_front": 1.5462474600282308,
+  "erker_w_ecke30": 1.6589141940883563,
+  "erker_w_unterbau76": 1.3312476902653172,
+  "erker_w_unterbau72": 0.9912471427743436,
+  "erker_w_gesims_u": 1.6962477790700574,
+  "erker_w_wappen": 1.546247595470103,
+  "erker_w_trauf": 1.8062477411043796,
+  "erker_o_diag_l": 1.549455670546903,
+  "erker_o_diag_r": 1.548883300240687,
+  "erker_o_front": 1.5408542955753348,
+  "erker_o_ecke30": 1.6596163232638645,
+  "erker_o_unterbau76": 1.3408539043858412,
+  "erker_o_unterbau72": 1.000854314934961,
+  "erker_o_gesims_u": 1.6908538424154558,
+  "erker_o_wappen": 1.5408539533872518,
+  "erker_o_trauf": 1.8008541151641504
  },
  "pruefungen": [
   {
@@ -183,10 +201,10 @@
    "status": "ok"
   },
   {
-   "name": "Erker West Unterkante z (m)",
-   "wert": 9.519999862670897,
+   "name": "Erker West: Unterkante Fensterband-Gesims (Oberkante Wappenband) z (m)",
+   "wert": 9.63999988555908,
    "soll": [
-    9.45,
+    9.55,
     9.8
    ],
    "ok": true,
@@ -294,7 +312,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.13989810645580292,
+   "wert": 0.13989727199077606,
    "soll": [
     0.0348,
     100
@@ -324,7 +342,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00782,
+   "wert": 0.00901,
    "soll": [
     0,
     0.01
@@ -374,7 +392,7 @@
   },
   {
    "name": "Erkerhelm Ost: Halbbreite vor der Achse bei z 16,18 (geschweiftes Profil)",
-   "wert": 0.5909803150327241,
+   "wert": 0.5909801434450644,
    "soll": [
     0.46,
     0.7
@@ -384,7 +402,7 @@
   },
   {
    "name": "Erkerhelm Ost: Halbbreite vor der Achse bei z 17,76 (geschweiftes Profil)",
-   "wert": 0.3508848000261934,
+   "wert": 0.35088480017249024,
    "soll": [
     0.22,
     0.46
@@ -454,7 +472,7 @@
   },
   {
    "name": "Bogenband (z 7,6) buendig mit der OG-Wand 12,66 - keine Stufe bei z 8,0 (0 = in der Ebene)",
-   "wert": -0.0057697451080986895,
+   "wert": -0.00653820462883381,
    "soll": [
     -0.03,
     0.03
@@ -468,6 +486,116 @@
    "soll": [
     7.03,
     7.18
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker West: Abstand der linken Schraegflaeche von der Achse bei z 11,0 (Normale 45 Grad)",
+   "wert": 1.5456719685059321,
+   "soll": [
+    1.45,
+    1.65
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker West: Abstand der rechten Schraegflaeche von der Achse bei z 11,0 (Normale 45 Grad)",
+   "wert": 1.5461531261826713,
+   "soll": [
+    1.45,
+    1.65
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker West: Reichweite unter 30 Grad zur Frontnormalen bei z 11,0 (Frontflaeche nur 1,28 m breit)",
+   "wert": 1.6589141940883563,
+   "soll": [
+    1.52,
+    1.7
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker West: Unterbau Reichweite vor der Achse bei z 7,6 (nach unten spitz zulaufende Auskragung)",
+   "wert": 1.3312476902653172,
+   "soll": [
+    1.15,
+    1.37
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker West: Unterbau Reichweite vor der Achse bei z 7,2",
+   "wert": 0.9912471427743436,
+   "soll": [
+    0.82,
+    1.04
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker West: Auskragung Gesims unter dem Wappenband (m, vor der Bruestungsflaeche)",
+   "wert": 0.15000018359995448,
+   "soll": [
+    0.09,
+    0.2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker West: Auskragung Traufgesims ueber dem Fensterband (m)",
+   "wert": 0.2600002810761488,
+   "soll": [
+    0.17,
+    0.34
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker Ost: Abstand der linken Schraegflaeche von der Achse bei z 11,0 (Normale 45 Grad)",
+   "wert": 1.549455670546903,
+   "soll": [
+    1.4,
+    1.7
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker Ost: Abstand der rechten Schraegflaeche von der Achse bei z 11,0 (Normale 45 Grad)",
+   "wert": 1.548883300240687,
+   "soll": [
+    1.4,
+    1.7
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 7,6",
+   "wert": 1.3408539043858412,
+   "soll": [
+    1.15,
+    1.4
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker Ost: Auskragung Traufgesims ueber dem Fensterband (m)",
+   "wert": 0.2599998195888156,
+   "soll": [
+    0.17,
+    0.34
    ],
    "ok": true,
    "status": "ok"

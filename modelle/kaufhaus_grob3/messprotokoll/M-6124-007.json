@@ -1,0 +1,37 @@
+{
+ "id": "M-6124-007",
+ "typ": "triangulation_plan",
+ "foto": "6124",
+ "name": "E0 Mittelpfosten Rechtsflaeche (6225+6145)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6225",
+   "px": [
+    765.0,
+    415.0
+   ]
+  },
+  {
+   "kamera": "K-6145",
+   "px": [
+    2898.0,
+    1300.0
+   ]
+  }
+ ],
+ "P_xy": [
+  -4.544,
+  15.738
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.0
+ ],
+ "schnittwinkel_grad": [
+  56.9
+ ],
+ "unsicherheit_m": 0.018,
+ "massstab_von": "Kameras K-6225, K-6145 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme",
+ "n": 13.319,
+ "u": -9.537
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-008",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=13.84",
+ "name": "E1 Front (6161): Glasunterkante -> Oberkante Wappenband",
+ "mess_px": [
+  565.0,
+  1455.0,
+  565.0,
+  1505.0
+ ],
+ "P1": [
+  19.044,
+  7.939,
+  10.139
+ ],
+ "P2": [
+  18.993,
+  7.957,
+  9.699
+ ],
+ "dz": -0.44,
+ "dy": 0.018,
+ "dx": -0.05,
+ "abstand": 0.443,
+ "z1": 10.139,
+ "z2": 9.699,
+ "unsicherheit_rel": 0.0104,
+ "unsicherheit_m": 0.044,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=13.84 (+-0.3 m)"
+}

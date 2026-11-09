@@ -1,0 +1,37 @@
+{
+ "id": "M-6124-003",
+ "typ": "triangulation_plan",
+ "foto": "6124",
+ "name": "E0 Pfosten Ecke Links/Front (Peilung)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6124",
+   "px": [
+    1594.0,
+    418.0
+   ]
+  },
+  {
+   "kamera": "K-6145",
+   "px": [
+    2500.0,
+    1300.0
+   ]
+  }
+ ],
+ "P_xy": [
+  -2.743,
+  15.701
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.0
+ ],
+ "schnittwinkel_grad": [
+  31.6
+ ],
+ "unsicherheit_m": 0.028,
+ "massstab_von": "Kameras K-6124, K-6145 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme",
+ "n": 13.885,
+ "u": -7.827
+}

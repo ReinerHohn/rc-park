@@ -1,0 +1,40 @@
+{
+ "foto": "nuaca",
+ "datei": "nu_aca3a5e5-image.jpg",
+ "typ": "kamera_bruecke_sfm",
+ "kamera": {
+  "rvec": [
+   0.009423308831643619,
+   1.7949595151388609,
+   -2.5746790736257474
+  ],
+  "t": [
+   12.239715787382167,
+   12.487765320579836,
+   23.78751410286992
+  ],
+  "f_px": 2788.346035776736,
+  "cx": 1500.0,
+  "cy": 2000.0,
+  "bild": [
+   3000,
+   4000
+  ],
+  "k1": 0.03147597530330465,
+  "modell": "SIMPLE_RADIAL",
+  "standort_xyz": [
+   12.38,
+   26.57,
+   3.53
+  ],
+  "brennweite_quelle": "SfM-Buendel /media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/kam_lot2.json",
+  "rms_px": null,
+  "rahmen_verschiebung": [
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ "quelle": "tools/kamera_bruecke.py: Pose/Brennweite/k1 aus /media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/kam_lot2.json (Rahmen der Kameradatei = Generatorrahmen); Anker = SfM-Buendel, KEINE amtlichen Anker; Massstab sfm_buendel",
+ "datum": "2026-11-09"
+}

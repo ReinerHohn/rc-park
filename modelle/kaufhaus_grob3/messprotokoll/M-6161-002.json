@@ -1,0 +1,37 @@
+{
+ "id": "M-6161-002",
+ "typ": "triangulation_plan",
+ "foto": "6161",
+ "name": "E1 Pfosten b (6161,6164)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6161",
+   "px": [
+    565.0,
+    1300.0
+   ]
+  },
+  {
+   "kamera": "K-6164",
+   "px": [
+    660.0,
+    1960.0
+   ]
+  }
+ ],
+ "P_xy": [
+  19.506,
+  6.326
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.0
+ ],
+ "schnittwinkel_grad": [
+  53.3
+ ],
+ "unsicherheit_m": 0.036,
+ "massstab_von": "Kameras K-6161, K-6164 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme",
+ "n": 12.475,
+ "u": 16.275
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-h05-002",
+ "foto": "h05",
+ "kamera": "K-h05",
+ "ebene": "0.3338,0.9426,0=13.855",
+ "name": "E0 Front: Kaempfer-Oberkante -> Fensterbank/Glasunterkante",
+ "mess_px": [
+  2905.0,
+  1795.0,
+  2905.0,
+  1965.0
+ ],
+ "P1": [
+  -3.255,
+  15.851,
+  11.361
+ ],
+ "P2": [
+  -3.117,
+  15.802,
+  9.876
+ ],
+ "dz": -1.484,
+ "dy": -0.049,
+ "dx": 0.139,
+ "abstand": 1.492,
+ "z1": 11.361,
+ "z2": 9.876,
+ "unsicherheit_rel": 0.0118,
+ "unsicherheit_m": 0.056,
+ "massstab_von": "Kamera K-h05 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=13.855 (+-0.3 m)"
+}
