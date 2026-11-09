@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+"""online_ansichten_holen.py - hochliegende Webfotos (Turm-/Dach-/Luftansichten) zu einem Objekt von Wikimedia Commons holen, mit Herkunft+Lizenz je Bild.
+Generisch: Ort/Objekt nur als Parameter. Ergebnis AUS/orig/od_NN.jpg + AUS/herkunft.json (datei, titel, url, page, lic, artist, date, w, h).
+Aufruf: python3 tools/online_ansichten_holen.py --aus DIR --suche "Historisches Kaufhaus Freiburg" "Blick vom Muensterturm Freiburg" --kategorien "Category:Muensterplatz (Freiburg im Breisgau)"
+          [--muster REGEX] [--max 30] [--nur-liste] [--min-breite 1000]
+Standard-Muster fuer Hochblick: Blick vom|Turm|Aussicht|Aerial|Luftbild|von oben|Dach|Drohne|drone|Panorama|view from|rooftop.
+Wikimedia-Etikette (Lehre 9.11.): 1 Datei je >= 25 s, KEIN Retry-Sturm (HTTP 429 = IP-Drosselung ~15 min, Retries verlaengern sie), Abbruch bei 429.
+Lizenz: nur freie Lizenzen (CC0/CC BY/CC BY-SA/PD) werden genommen; Urheber+Lizenz bleiben in herkunft.json (Verkauf: Namensnennung beilegen). Pruefung: Tool nimmt nur Treffer mit LicenseShortName.
+Registrierung danach: tools/online_dach_registrieren.py rein/reg (EXIF-Brennweite je Bild), Schwaechen: Turmblicke ohne Bodenueberlapp scheitern (siehe REZEPT Lehren-Register)."""
+import sys, os, re, json, time, argparse, urllib.request, urllib.parse
+UA = {"User-Agent": "RCParkResearchBot/1.0 (private non-commercial research)"}
+STD = r"Blick vom|Turm|Aussicht|Aerial|Luftbild|von oben|Dach|Drohne|drone|Panorama|view from|rooftop|Kreuzblume|Achteck"
+
+
+def api(**p):
+    p["format"] = "json"; u = "https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode(p)
+    r = urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=60); return json.load(r)
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--aus", required=True); ap.add_argument("--suche", nargs="*", default=[]); ap.add_argument("--kategorien", nargs="*", default=[])
+    ap.add_argument("--muster", default=STD); ap.add_argument("--max", type=int, default=30); ap.add_argument("--nur-liste", action="store_true"); ap.add_argument("--min-breite", type=int, default=1000)
+    a = ap.parse_args(); rx = re.compile(a.muster, re.I); titel = {}
+    for q in a.suche:
+        r = api(action="query", list="search", srsearch=q, srnamespace=6, srlimit=50)
+        for m in r["query"]["search"]: titel[m["title"]] = q
+        time.sleep(3)
+    for c in a.kategorien:
+        r = api(action="query", list="categorymembers", cmtitle=c, cmlimit=500)
+        for m in r["query"]["categorymembers"]:
+            if m["ns"] == 6: titel[m["title"]] = c
+        time.sleep(3)
+    sel = [t for t in titel if rx.search(t)][:a.max * 2]; info = []
+    for i in range(0, len(sel), 20):
+        r = api(action="query", titles="|".join(sel[i:i + 20]), prop="imageinfo", iiprop="url|size|extmetadata|mime")
+        for p in r["query"]["pages"].values():
+            ii = (p.get("imageinfo") or [{}])[0]; em = ii.get("extmetadata", {}); g = lambda k: re.sub("<[^>]+>", "", em.get(k, {}).get("value", ""))
+            if not ii.get("url") or ii.get("mime") != "image/jpeg" or (ii.get("width") or 0) < a.min_breite or not g("LicenseShortName"): continue
+            info.append(dict(titel=p["title"], url=ii["url"].split("?")[0], page=ii.get("descriptionurl"), lic=g("LicenseShortName"), artist=g("Artist")[:100], date=g("DateTimeOriginal")[:30], w=ii["width"], h=ii["height"]))
+        time.sleep(3)
+    info = info[:a.max]; os.makedirs(a.aus + "/orig", exist_ok=True)
+    for i, m in enumerate(info): m["datei"] = f"od_{i:02d}.jpg"
+    json.dump(info, open(a.aus + "/herkunft.json", "w"), ensure_ascii=False, indent=1); print(len(info), "Treffer")
+    if a.nur_liste: return
+    for m in info:
+        p = f"{a.aus}/orig/{m['datei']}"
+        if os.path.exists(p) and os.path.getsize(p) > 0: continue
+        try: open(p, "wb").write(urllib.request.urlopen(urllib.request.Request(m["url"], headers=UA), timeout=120).read())
+        except Exception as e:
+            print("Abbruch", m["datei"], e); break
+        time.sleep(25)
+
+
+if __name__ == "__main__":
+    main()
