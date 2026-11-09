@@ -3482,8 +3482,74 @@
      "neu": {
       "dn": -1.3
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": {
+      "aktiv": true
+     },
+     "neu": {
+      "aktiv": false
+     }
     }
-   ]
+   ],
+   "aktiv": false,
+   "ersetzt_durch": "quader:rumpf_eg + quader:rumpf_og (Rumpf aus dem Kantengitter, Runde 3); Traufzone (Balken/Gesims/Konsolen/Dachkante) weiter als stl_teil:traufzone_alt"
+  },
+  {
+   "typ": "stl_teil:traufzone_alt",
+   "gruppe": "Traufzone alt (Balken/Gesims/Konsolen/Dachkante)",
+   "dateien": [
+    "/media/oem/scan/rc-park_null/generator_alt/teile/g_balken.stl",
+    "/media/oem/scan/rc-park_null/generator_alt/teile/g_cornice.stl",
+    "/media/oem/scan/rc-park_null/generator_alt/teile/g_konsolen.stl",
+    "/media/oem/scan/rc-park_null/generator_alt/teile/g_dachkante_gold.stl"
+   ],
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Lage/Hoehe/Drehung/Massstab: T3d.json = GPU-Distanzfeld+Chamfer-Ausrichtung des alten Generators (kaufhaus_measured.glb) an die Fotowolke (BS51d, Skala 0.94, yaw 160 Grad); Teilform: alter Hand-Generator (ANNAHME: nach Fotos/Plan von Hand, nicht neu gemessen)",
+   "dn": -1.3,
+   "du": 3.879,
+   "dz": -0.169,
+   "sn": 1.0,
+   "su": 1.1634,
+   "sz": 1.3845,
+   "teil_quellen": {
+    "g_balken.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_balken.stl",
+    "g_cornice.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_cornice.stl",
+    "g_konsolen.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_konsolen.stl",
+    "g_dachkante_gold.stl": "T3d-ausgerichtete Einzelteil-STL generator_alt/teile/g_dachkante_gold.stl"
+   },
+   "werte_quellen": {
+    "su": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.879 m, dz -0.169 m), Kanten-Snap nein (Skalierung fu 1.163 fz 1.384)",
+    "sz": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.879 m, dz -0.169 m), Kanten-Snap nein (Skalierung fu 1.163 fz 1.384)",
+    "du": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.879 m, dz -0.169 m), Kanten-Snap nein (Skalierung fu 1.163 fz 1.384)",
+    "dz": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du 3.879 m, dz -0.169 m), Kanten-Snap nein (Skalierung fu 1.163 fz 1.384)",
+    "dn": "kantengitter rohkoerper_v7 off_front 12.66 = Wandoberflaeche: alte g_fassade-Vorderseite (p95 off 13,95) auf 12,65 gelegt (dn -1,3; Runde 1 -1,0 liess die Wand 0,25 m vor der Ebene, bündig mit der Rahmenfront -> Fensterlichter geschlossen); Rumpftiefe 8 m bleibt falsch",
+    "anker_m": "Huellmitte/Unterkante der ALTEN Gesamtgruppe stl_teil:fassade (6 Dateien), festgeschrieben, damit die Teile beim Abspalten bitgleich liegen bleiben"
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": {
+      "teil_von": "stl_teil:fassade"
+     },
+     "neu": {
+      "dateien": 4
+     }
+    }
+   ],
+   "anker_m": [
+    3.0563107566833496,
+    9.657358926773073,
+    1.5102628040313721
+   ],
+   "hinweis": "Runde 3: aus stl_teil:fassade abgespalten (Regel 9c b, nie ersatzlos abschalten); Konsolen gehoeren dem Koerper-Agenten (Foto-Sweep) - unveraendert. Traufzone liegt bei z 12,8-14,1, Gitter-Traufe 14,68 (offen)"
   },
   {
    "typ": "bogenreihe:laube",
@@ -3956,8 +4022,31 @@
     "z0": "Koordinator 9.11.: Platte 8,16-8,37 (Oberkante) - ANNAHME aus Balusterband 8,35",
     "z_handlauf_unten": "Koordinator 9.11.: Handlauf 9,48-9,71 - ANNAHME aus Balusterband 9,65",
     "z_handlauf_oben": "dito",
-    "handlauf_b": "ANNAHME 0,16"
-   }
+    "handlauf_b": "ANNAHME 0,16",
+    "pfosten_alle": "Foto-Zaehlung Z-6120-001: 11 Baluster je Feld + 1 Pfosten = 12 Rasterplaetze (Pfosten ersetzt einen Baluster: Luecke L->M = 2 Perioden, M-6120-007 0,64 m)",
+    "pfosten_erster": "M-6120-006: Pfostenmitte along 6,96 = Rasterplatz 45 ab u0 (-6,808 + 45 x 0,3062 = 6,97) -> erster Platz 45 mod 12 = 9",
+    "pfosten_b": "M-6120-006 (foto_mass, K-6120, Ebene 13,84): Vorderflaeche 0,26 m",
+    "pfosten_t": "ANNAHME 0,20 (Seitenflaeche im Foto schmal)"
+   },
+   "pfosten_alle": 12,
+   "pfosten_erster": 9,
+   "pfosten_b": 0.26,
+   "pfosten_t": 0.2,
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": {
+      "pfosten_alle": null
+     },
+     "neu": {
+      "pfosten_alle": 12,
+      "pfosten_erster": 9,
+      "pfosten_b": 0.26,
+      "pfosten_t": 0.2
+     }
+    }
+   ]
   },
   {
    "typ": "quader:laube_rueck",
@@ -3997,6 +4086,72 @@
       "n1": 6.54,
       "z1": 8.0
      }
+    }
+   ]
+  },
+  {
+   "typ": "quader:rumpf_eg",
+   "gruppe": "Rumpf EG (hinter der Laube)",
+   "u0": -8.82,
+   "u1": 17.15,
+   "n0": -6.564,
+   "n1": 6.54,
+   "z0": 1.5,
+   "z1": 8.0,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Rumpf aus dem Kantengitter (Runde 3, ersetzt g_fassade/g_waende): Enden/Rueckwand/Laubenrueckwand/Boden aus kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json; Fuellung massiv = ANNAHME",
+   "werte_quellen": {
+    "u0": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json along_w -8.82 (Endebene West, belegt 37 m)",
+    "u1": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json along_e 17.15 (Endebene Ost, belegt 43 m; Ende 'plus' UNSICHER)",
+    "n0": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json off_back -6.56 = 2*first.offset 3,05 - off_front 12,66: ANNAHME Firstspiegel (Gitter sieht die Rueckseite nicht; LoD2-Tiefe 12,54 widerspricht, offen)",
+    "z0": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json z_boden 1.5",
+    "n1": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json ebene laube_rueckwand offset 6.54 (belegt, 30 m)",
+    "z1": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json vorspruenge z_min_voll 8.0 (Balkonunterkante = Laubendecke, ANNAHME)"
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": null,
+     "neu": "angelegt"
+    }
+   ]
+  },
+  {
+   "typ": "quader:rumpf_og",
+   "gruppe": "Rumpf OG bis Traufe",
+   "u0": -8.82,
+   "u1": 17.15,
+   "n0": -6.564,
+   "n1": 12.66,
+   "z0": 7.9,
+   "z1": 14.68,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Rumpf aus dem Kantengitter (Runde 3, ersetzt g_fassade/g_waende): Frontebene/Traufe/Enden aus kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json; Rueckwand Firstspiegel-ANNAHME, Traufe hinten = Traufe vorn (satteldach symmetrisch, ANNAHME)",
+   "werte_quellen": {
+    "u0": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json along_w -8.82 (Endebene West, belegt 37 m)",
+    "u1": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json along_e 17.15 (Endebene Ost, belegt 43 m; Ende 'plus' UNSICHER)",
+    "n0": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json off_back -6.56 = 2*first.offset 3,05 - off_front 12,66: ANNAHME Firstspiegel (Gitter sieht die Rueckseite nicht; LoD2-Tiefe 12,54 widerspricht, offen)",
+    "z0": "0,1 m unter Laubendecke 8,0 (Ueberlappung mit rumpf_eg, ein Koerper)",
+    "n1": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json off_front 12.66 (Frontebene, Stuetzlaenge 392 m)",
+    "z1": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json traufe.kante.z 14.68 (waagerechte Kante 50,8 m); hinten = ANNAHME Firstspiegel"
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": null,
+     "neu": "angelegt"
     }
    ]
   },
@@ -4052,40 +4207,44 @@
   },
   {
    "typ": "fensterreihe:eg1",
-   "gruppe": "Fenster Laube EG 2",
+   "gruppe": "Fenster Laube EG Bogen 3 (Kreuzstock)",
    "n_fenster": 1,
-   "u_mitte": 6.0512,
+   "u_mitte": 7.225,
    "pitch": 3.5177,
-   "breite": 1.2623,
-   "unterseite_z": 2.2217,
-   "kaempfer_z": 6.8691,
-   "scheitel_z": 7.4217,
-   "wand_n": 6.54,
-   "tiefe": 0.12,
-   "rahmen_b": 0.07,
-   "pfosten_b": 0.05,
-   "riegel_z": 4.546,
-   "riegel_h": 0.07,
+   "breite": 1.96,
+   "unterseite_z": 3.2,
+   "kaempfer_z": 6.4,
+   "scheitel_z": 6.45,
+   "wand_n": 6.5,
+   "tiefe": 0.16,
+   "rahmen_b": 0.1,
+   "pfosten_b": 0.1,
+   "riegel_z": 5.47,
+   "riegel_h": 0.1,
    "kiel": 0.0,
    "achse_n": [
     0.3338,
     0.9426
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
-   "quelle": "ANNAHME: je 1 Fenster (2x2 Scheiben) im 1., 2. und 3. Bogen laut 5 Fassadenfotos 8.11. (Zaehlprotokoll Z-* steht aus, Regel 9); u: Bogen 1 aus Wolkenfragment u -7..-6,2, Bogen 2/3 aus Bogenmitte +-Foto, +-0,5 m unsicher; Wand n 9,45 aus Wolkenschnitt z 3",
-   "glas_d": 0.05,
-   "glas_n": 0.03,
+   "quelle": "Foto ip_IMG_6120: Bogen 3 (along 3,5..9,5) hat 1 Kreuzstockfenster + 1 Tuer (Z-6120-003), 2 Lichter je Zeile (Z-6120-004); Lage/Masse M-6120-001..003; Rechteckkontur (Foto), Rahmen/Pfosten 0,1 = ANNAHME nach Fotoeindruck",
+   "glas_d": 0.0,
+   "glas_n": 0.0,
    "bucht": 1.0,
    "werte_quellen": {
     "bucht": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | Bucht von rechts (0 = rechts), einmal aus alter Arkade bestimmt",
-    "u_mitte": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "unterseite_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "kaempfer_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "scheitel_z": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "riegel_z": "editor_modell.py: vom Nutzer im Foto ip_IMG_6161.jpg verschoben (du -5.058 m, dz -0.024 m), Kanten-Snap nein (Hoehe x1.060)",
+    "u_mitte": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-001/002: Aussenrahmen along 6,25..8,29 oben / 6,24..8,14 unten, Mitte 7,23",
+    "unterseite_z": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-002: 3,20",
+    "kaempfer_z": "Rechteckfenster: Kontur gibt die Form, kaempfer 0,05 unter Oberkante nur fuer die Plausibilitaet",
+    "scheitel_z": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-001: Oberkante 6,45",
+    "riegel_z": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-003: Kaempfer/Riegel 5,47",
     "pitch": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "breite": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "wand_n": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json ebene laube_rueckwand offset 6.54 (Fenster sitzen in der Rueckwand)"
+    "breite": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-001/002: 2,03 oben / 1,89 unten, Mittel 1,96 (+-0,07)",
+    "wand_n": "kantengitter rohkoerper_v7 laube_rueckwand 6,54 minus 0,04 Einbindung (Rahmen sonst nur flaechig beruehrend -> eigener Koerper -> Druck-Konsolenhuelle fuellte die Tuer, Runde 3 Befund)",
+    "n_lichter": "Foto-Zaehlung Z-6120-004 (2 Lichter je Zeile)",
+    "kontur": "Foto ip_IMG_6120: Rechteck (Kreuzstock), Hoehe 3,25 = 6,45-3,20",
+    "glas_d": "Glas = Nischenboden (quader:eg1_nische), keine Platte",
+    "tiefe": "Rahmenvorderkante 6,66 wie bisher (0,12 vor der Wand) + 0,04 Einbindung"
    },
    "historie": [
     {
@@ -4097,6 +4256,192 @@
      "neu": {
       "wand_n": 6.54
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": {
+      "u_mitte": 6.0512,
+      "breite": 1.2623,
+      "unterseite_z": 2.2217,
+      "kaempfer_z": 6.8691,
+      "scheitel_z": 7.4217,
+      "riegel_z": 4.546,
+      "rahmen_b": 0.07,
+      "pfosten_b": 0.05,
+      "glas_d": 0.05,
+      "glas_n": 0.03
+     },
+     "neu": {
+      "u_mitte": 7.225,
+      "breite": 1.96,
+      "unterseite_z": 3.2,
+      "kaempfer_z": 6.4,
+      "scheitel_z": 6.45,
+      "riegel_z": 5.47,
+      "rahmen_b": 0.1,
+      "pfosten_b": 0.1,
+      "glas_d": 0.0,
+      "glas_n": 0.0
+     }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": {
+      "wand_n": 6.54,
+      "tiefe": 0.12
+     },
+     "neu": {
+      "wand_n": 6.5,
+      "tiefe": 0.16
+     }
+    }
+   ],
+   "n_lichter": 2,
+   "kontur": [
+    [
+     -0.98,
+     0.0
+    ],
+    [
+     0.98,
+     0.0
+    ],
+    [
+     0.98,
+     3.25
+    ],
+    [
+     -0.98,
+     3.25
+    ]
+   ],
+   "zaehlung": [
+    "Z-6120-003",
+    "Z-6120-004"
+   ]
+  },
+  {
+   "typ": "fensterreihe:eg1_tuer",
+   "gruppe": "Tuer Laube EG Bogen 3",
+   "n_fenster": 1,
+   "n_lichter": 1,
+   "zaehlung": [
+    "Z-6120-005",
+    "Z-6120-003"
+   ],
+   "u_mitte": 4.28,
+   "pitch": 3.0,
+   "breite": 1.6,
+   "unterseite_z": 1.77,
+   "kaempfer_z": 3.92,
+   "scheitel_z": 4.28,
+   "wand_n": 6.5,
+   "tiefe": 0.16,
+   "rahmen_b": 0.07,
+   "pfosten_b": 0.05,
+   "riegel_z": 1.8,
+   "riegel_h": 0.03,
+   "kiel": 0.0,
+   "glas_d": 0.0,
+   "glas_n": 0.0,
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Foto ip_IMG_6120: Tuer mit Goldportal rechts im Bogen 3 (Z-6120-005); Lichte M-6120-004/005; Rahmen 0,07 um die Lichte (ANNAHME), Rundbogen als flacher Spitzbogen (Form = muster_fit-Agent)",
+   "werte_quellen": {
+    "u_mitte": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-004: Lichte along 3,55..5,01, Mitte 4,28",
+    "breite": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-004: Lichte 1,46 + 2 x Rahmen 0,07 (ANNAHME)",
+    "unterseite_z": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-004: Schwelle 1,77",
+    "kaempfer_z": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-005: Kaempfer 3,92",
+    "scheitel_z": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-005: Scheitel Lichte 4,21 + Rahmen 0,07",
+    "riegel_z": "ANNAHME: Tuer ohne Kaempferriegel - Pflichtriegel auf die Schwelle gelegt",
+    "pitch": "1 Tuer, pitch ohne Wirkung",
+    "wand_n": "kantengitter rohkoerper_v7 laube_rueckwand 6,54 minus 0,04 Einbindung (Rahmen sonst nur flaechig beruehrend -> eigener Koerper -> Druck-Konsolenhuelle fuellte die Tuer, Runde 3 Befund)",
+    "tiefe": "Rahmenvorderkante 6,66 wie bisher (0,12 vor der Wand) + 0,04 Einbindung"
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": null,
+     "neu": "angelegt (ersetzt die Spitzbogen-ANNAHME in eg1)"
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": {
+      "wand_n": 6.54,
+      "tiefe": 0.12
+     },
+     "neu": {
+      "wand_n": 6.5,
+      "tiefe": 0.16
+     }
+    }
+   ]
+  },
+  {
+   "typ": "quader:eg1_nische",
+   "gruppe": "quader:eg1_nische",
+   "u0": 6.345,
+   "u1": 8.105,
+   "n0": 6.33,
+   "n1": 6.56,
+   "z0": 3.3,
+   "z1": 6.35,
+   "modus": "ausschnitt",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Fensternische Bogen 3 = Lichte des Kreuzstockfensters (M-6120-001..002 minus Rahmen 0,1); Tiefe 0,21 = ANNAHME (Glasebene; Foto zeigt Laibung)",
+   "werte_quellen": {
+    "u0": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-001/002 Aussenrahmen minus rahmen_b",
+    "z0": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-002 + rahmen_b",
+    "n0": "ANNAHME Glas 0,21 hinter der Wand"
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": null,
+     "neu": "angelegt"
+    }
+   ]
+  },
+  {
+   "typ": "quader:eg1_tuer_nische",
+   "gruppe": "quader:eg1_tuer_nische",
+   "u0": 3.55,
+   "u1": 5.01,
+   "n0": 6.24,
+   "n1": 6.56,
+   "z0": 1.77,
+   "z1": 3.92,
+   "modus": "ausschnitt",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Tuernische Bogen 3 = Lichte (M-6120-004/005) bis Kaempfer; Tiefe 0,30 = ANNAHME (Foto zeigt Laibung links)",
+   "werte_quellen": {
+    "u0": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-004 Lichte links/rechts 3,55..5,01",
+    "z0": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-004 Schwelle 1,77",
+    "z1": "foto_mass (K-6120 Kamera-Bruecke SfM, Ebene Rueckwand 0.3347,0.9423,0=6.54) M-6120-005 Kaempfer 3,92 (Bogenfeld bleibt Wand)",
+    "n0": "ANNAHME Tuerblatt 0,30 hinter der Wand"
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": null,
+     "neu": "angelegt"
     }
    ]
   },
@@ -4620,7 +4965,8 @@
     "z_traufe": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json giebel.ende_minus unterste Stufe z_unten 16.45 (Westgiebel, Ost = ANNAHME Spiegel)",
     "z_spitze": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json Gitter-Maximum z am Ostende (along 15,5..18,5): 28.98 (Ende 'plus' UNSICHER); Stufen = ANNAHME Spiegel des Westgiebels (Nutzer 9.11.: Gleichheit)",
     "spitze_breite": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "kappe": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen"
+    "kappe": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "spiegel": "Foto ip_IMG_6261: Ostgiebel-Silhouette beidseitig gestuft, Spitze mittig ueber dem First (fehlteile_6261: 6 ERFUNDEN an der glatten Rueckkante)"
    },
    "historie": [
     {
@@ -4640,8 +4986,19 @@
       "n_vorn": 12.73,
       "z_traufe": 16.45
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": {
+      "spiegel": false
+     },
+     "neu": {
+      "spiegel": true
+     }
     }
-   ]
+   ],
+   "spiegel": true
   },
   {
    "typ": "staffelgiebel:west",
@@ -4674,7 +5031,8 @@
     "z_traufe": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json giebel.ende_minus unterste Stufe z_unten 16.45 (Westgiebel, Ost = ANNAHME Spiegel)",
     "z_spitze": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json Gitter-Maximum z am Westende (along -10,5..-7,5): 29.32; Steiger-Cluster bis 26,58 bei off 5,76, Giebellinie 52,8 Grad",
     "spitze_breite": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (staffelgiebel:ost,staffelgiebel:west), Median 0.299->0.154 m",
-    "kappe": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (staffelgiebel:ost,staffelgiebel:west), Median 0.299->0.154 m"
+    "kappe": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (staffelgiebel:ost,staffelgiebel:west), Median 0.299->0.154 m",
+    "spiegel": "ANNAHME: wie Ostgiebel (Foto 6261 zeigt den Ostgiebel; Westgiebel-Rueckflanke im Foto nicht geprueft)"
    },
    "historie": [
     {
@@ -4694,8 +5052,19 @@
       "n_vorn": 12.73,
       "z_traufe": 16.45
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 3",
+     "alt": {
+      "spiegel": false
+     },
+     "neu": {
+      "spiegel": true
+     }
     }
-   ]
+   ],
+   "spiegel": true
   },
   {
    "typ": "quader:ost",
@@ -5197,5 +5566,6 @@
   "quelle": "Fassadenachse aus Fotowolke (Netzrahmen), 8.11. Sitzung; n = Richtung senkrecht zur Strassenfassade"
  },
  "rahmen_hinweis_lot2": "Parametrische Bauteile (u/n/z) rechnen im lot2-Rahmen der gemeinsamen SfM (sfm/kam_lot2.json): u = n um -90 Grad, n = achse_n (0.3338, 0.9426), Ursprung 0/0, z wie Wolke (Boden ~1,5-2,5). Kantengitter-Dateien (segmente_gitter_v10, rohkoerper_v7: u (0.9423,-0.3347), n (0.3347,0.9423)) nutzen dieselbe Konvention -> Masse direkt uebertragbar (Beweis: Frontebene 12,66 = fensterreihe wand_n 12,666; Pfeiler-along -8,52..15,56 = bogenreihe u0..u0+4*pitch; Overlay audit/gitter_generator/). 'rahmen' (UTM/LoD2) gilt nur fuer rumpf_lod2.",
- "hinweis_runde2": "2026-11-09 Runde 2: Helme als Kegel (zylinder:helm_*), Nadel-STL-Gruppen inaktiv; bruestung:balkon (68 Baluster Z-6120-001); Gaubenlagen aus gauben_r3_lagen; Z-Protokolle Lichter; K-6120/K-6261 aus kam_lot2 (sfm_buendel, keine amtlichen Anker)"
+ "hinweis_runde2": "2026-11-09 Runde 2: Helme als Kegel (zylinder:helm_*), Nadel-STL-Gruppen inaktiv; bruestung:balkon (68 Baluster Z-6120-001); Gaubenlagen aus gauben_r3_lagen; Z-Protokolle Lichter; K-6120/K-6261 aus kam_lot2 (sfm_buendel, keine amtlichen Anker)",
+ "hinweis_runde3": "2026-11-09 Agent Runde 3: Rumpf aus dem Gitter (quader:rumpf_eg/og) statt Alt-Fassadengruppe (Traufzone abgespalten), Staffelgiebel spiegel, EG Bogen 3 Fenster+Tuer an der Fotolage (M-6120-001..005, Z-6120-003..005), Bruestungspfosten (Z-6120-001, M-6120-006/007)"
 }

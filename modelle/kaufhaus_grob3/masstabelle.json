@@ -1,7 +1,7 @@
 {
  "_doku": "Masstabelle Grobgenerator Kaufhaus (Foto-Diff-Fahrzeug aus 9 Teilgruppen, Rohdreiecke). Wasserdicht/1-Koerper-Zeilen sind HIER BEWUSST NICHT gefuehrt: das Modell besteht aus unverschweissten Teil-STL und ist nicht fuer den Druck bestimmt (Nutzerauftrag 7.11.: 'wasserdicht nicht noetig'); fuer den Druck gilt kaufhaus_null5 bzw. das Wolkennetz. Siehe modelle/METHODE_MASSTABELLE.md",
  "konstanten": {
-  "z_unterkante_lot2": 1.34
+  "z_unterkante_lot2": 1.453
  },
  "messungen": {
   "hoehe": {
@@ -123,6 +123,125 @@
    "y1": 15.746,
    "z0": "=14.6 - z_unterkante_lot2",
    "z1": "=14.9 - z_unterkante_lot2"
+  },
+  "rueck_z6": {
+   "typ": "ebene_abstand",
+   "o": [
+    1.728,
+    -7.579
+   ],
+   "n": [
+    -0.33471889311010433,
+    -0.9423180262497086
+   ],
+   "z": "=6.0 - z_unterkante_lot2",
+   "u0": -12.0,
+   "u1": 12.0,
+   "vor": 3.0
+  },
+  "rueck_z10": {
+   "typ": "ebene_abstand",
+   "o": [
+    1.728,
+    -7.579
+   ],
+   "n": [
+    -0.33471889311010433,
+    -0.9423180262497086
+   ],
+   "z": "=10.0 - z_unterkante_lot2",
+   "u0": -12.0,
+   "u1": 12.0,
+   "vor": 3.0
+  },
+  "rueck_z143": {
+   "typ": "ebene_abstand",
+   "o": [
+    1.728,
+    -7.579
+   ],
+   "n": [
+    -0.33471889311010433,
+    -0.9423180262497086
+   ],
+   "z": "=14.3 - z_unterkante_lot2",
+   "u0": -12.0,
+   "u1": 12.0,
+   "vor": 3.0
+  },
+  "giebel_o_rueck": {
+   "typ": "max_z_im_bereich",
+   "x0": 15.225999999999999,
+   "x1": 15.526,
+   "y0": -7.203,
+   "y1": -6.903
+  },
+  "giebel_o_vorn": {
+   "typ": "max_z_im_bereich",
+   "x0": 18.272000000000002,
+   "x1": 18.572,
+   "y0": 1.372,
+   "y1": 1.672
+  },
+  "tuer_b3": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    2.189,
+    6.163
+   ],
+   "n": [
+    0.33471889311010433,
+    0.9423180262497086
+   ],
+   "z": "=2.8 - z_unterkante_lot2",
+   "u0": -5.11,
+   "u1": -3.45,
+   "tiefe": 0.15,
+   "vor": 2.0,
+   "schritt": 0.01,
+   "min_b": 1.3,
+   "max_b": 1.6,
+   "rand": 0.0
+  },
+  "bal_feld": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    4.633,
+    13.042
+   ],
+   "n": [
+    0.33471889311010433,
+    0.9423180262497086
+   ],
+   "z": "=9.0 - z_unterkante_lot2",
+   "u0": -6.96,
+   "u1": -3.306,
+   "tiefe": 0.5,
+   "vor": 2.0,
+   "schritt": 0.01,
+   "min_b": 0.13,
+   "max_b": 0.2,
+   "rand": 0.0
+  },
+  "fenster_b3": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    2.1891,
+    6.1628
+   ],
+   "n": [
+    0.33471889311010433,
+    0.9423180262497086
+   ],
+   "z": "=4.0 - z_unterkante_lot2",
+   "u0": -8.5,
+   "u1": -6.0,
+   "tiefe": 0.15,
+   "vor": 2.0,
+   "schritt": 0.01,
+   "min_b": 0.6,
+   "max_b": 1.1,
+   "rand": 0.0
   }
  },
  "pruefungen": [
@@ -352,6 +471,102 @@
    "historie": [
     "2026-11-09 angelegt (Agent Runde 2)"
    ]
+  },
+  {
+   "name": "Rumpf traegt das Dach: hinterer Dachueberstand ueber der Rueckwand (m)",
+   "wert": "rueck_z10 - rueck_z143",
+   "soll": [
+    -0.1,
+    0.8
+   ],
+   "quelle": "Druckbarkeit/Konstruktion: Dachfuss muss auf dem Rumpf stehen, Ueberstand <= 0,8 m (Koordinator 9.11. nach Sichtblatt seiten.jpg: Dachhaelfte ragt weit ueber den Koerper). Messung: Strahlen von hinten (Ebene n -6,56) bei z 10,0 (Wand unter dem Dach) gegen z 14,3 (Dachfuss)",
+   "quelltyp": "modell",
+   "merkmal": "druck",
+   "massstab": "-",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 3); schlaegt am Modell Runde 2 fehl (Regel 2)",
+    "2026-11-09 Messart ebene_abstand (neu, Lage statt Struktur; ebene_oeffnungen ist Zaehlart und vom Lint fuer druck gesperrt)"
+   ]
+  },
+  {
+   "name": "Rumpf-Rueckwand Lage n (m), z 6,0",
+   "wert": "rueck_z6 - 6.564",
+   "soll": [
+    -6.9,
+    -6.2
+   ],
+   "quelle": "kantengitter: 3D-Kantengitter aus 440 Fotos + 336 Videoframes im lot2-Rahmen (gemeinsame SfM, Lot aus Foto-Vertikalen, Massstab Buendel); rohkoerper_v7 off_back -6,56 = 2*first.offset (3,05, Firstkante 35 m) - off_front (12,66, 392 m): ANNAHME Firstspiegel, Rueckseite vom Gitter nicht gesehen; Widerspruch LoD2-Tiefe 12,54 offen (beobachtungen_offen)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/koerper/rohkoerper_v7.json off_back",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 3); schlaegt am Modell Runde 2 fehl (Rueckwand bei n 4,5, Alt-Rumpf 8 m)"
+   ]
+  },
+  {
+   "name": "Ostgiebel Rueckflanke/Vorderflanke Hoehe (gespiegelte Lage n -1,5 / 7,6)",
+   "wert": "(giebel_o_rueck + z_unterkante_lot2) / (giebel_o_vorn + z_unterkante_lot2)",
+   "soll": [
+    0.97,
+    1.03
+   ],
+   "quelle": "Foto ip_IMG_6261: Ostgiebel-Silhouette beidseitig gestuft (Spitze mittig, links 2-3 Stufen sichtbar); fehlteile_6261: 6 ERFUNDEN-Zellen an der glatten Rueckkante (along 14,9-15,8, z 18,9-21,8)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "verhaeltnis",
+   "massstab": "foto_intern",
+   "protokoll": "audit/fehlteile_6261.json",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 3); schlaegt am Modell Runde 2 fehl (Rueckseite nur Dach)"
+   ]
+  },
+  {
+   "name": "Laubenrueckwand Bogen 3: Tuer an der Fotolage (along 3,55..5,01, z 2,8)",
+   "wert": "tuer_b3_anzahl",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Foto-Zaehlung Z-6120-005 (Bogen 3: 1 Tuer; Gesamtbild Z-6120-003: 1 Fenster + 1 Tuer); Lage/Breite M-6120-004 (foto_mass, K-6120 Kamera-Bruecke, Ebene Rueckwand 6,54): along 3,55..5,01, Lichte 1,46 m; Strahlen bei z 2,8 (lot2), offen = >= 0,15 hinter der Wand",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "foto_intern",
+   "protokoll": "Z-6120-005",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 3); schlaegt am Modell Runde 2 fehl (Spitzbogen-ANNAHME bei along 6,05)"
+   ]
+  },
+  {
+   "name": "Bruestung: Baluster je Feld zwischen zwei Pfosten (along 3,3..6,96)",
+   "wert": "bal_feld_anzahl + 1",
+   "soll": [
+    11,
+    11
+   ],
+   "quelle": "Foto-Zaehlung Z-6120-001 (Feld M voll sichtbar: 11 Baluster zwischen zwei Pfosten); Pfostenlage M-6120-006 (along 6,96, Breite 0,26)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "foto_intern",
+   "protokoll": "Z-6120-001",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 3); Messung zaehlt Luecken 0,13-0,2 m zwischen Balustern (Pfosten-Luecken 0,10 fallen heraus) + 1; schlaegt ohne Pfosten fehl (13)"
+   ]
+  },
+  {
+   "name": "Laubenrueckwand Bogen 3: Fensterlichter je Zeile an der Fotolage (along 6,0..8,5, z 4,0)",
+   "wert": "fenster_b3_anzahl",
+   "soll": [
+    2,
+    2
+   ],
+   "quelle": "Foto-Zaehlung Z-6120-004 (Kreuzstockfenster: 2 Lichter je Zeile, 2 Zeilen); Lage M-6120-001/002 (along 6,25..8,2, z 3,20..6,45), Kaempfer M-6120-003 (5,47)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "foto_intern",
+   "protokoll": "Z-6120-004",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 3); schlaegt am Modell Runde 2 fehl (Glas vor der Wand, Fenster bei along 6,05)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -483,7 +698,118 @@
    "text": "Kamera-Bruecke K-6120/K-6261 aus kam_lot2 (SfM-Buendel): keine amtlichen Anker, ankerzone_z = Gebaeude (1,5-29,5) gesetzt; foto_diff/fehlteile_finden laufen damit, Treffer gelten im lot2-Massstab (sfm_buendel), nicht amtlich.",
    "naechster_schritt": "Anker aus LoD2 in lot2 uebertragen und K-Protokolle damit pruefen (foto_pick_pruefen)",
    "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Koordinator (Pruefer am Sichtblatt audit/seiten.jpg)",
+   "quelle": "Sichtblatt seiten.jpg Ost/West/Sued/Draufsicht",
+   "text": "Rueckwaertige Dachhaelfte ragt als riesiges Dreieck/Rechteck weit ueber den Baukoerper: Rumpf (Alt-Fassadengruppe g_fassade/g_waende, 8 m tief, Oberkante 13,8) endet bei n 4,5, Dach (Firstspiegel) bei n -6,56; Suedansicht Koerper niedriger/schmaler als Dach. Nicht druckbar.",
+   "naechster_schritt": "Pruefungen Dachueberstand hinten + Rumpf-Rueckwand (Runde 3, schlagen am Modell fehl), dann Rumpf aus dem Gitter (quader:rumpf_eg/og), Alt-Gruppe inaktiv",
+   "status": "als Pruefung eingetragen (Runde 3: vorher FEHLER, nach Generatoraenderung OK)",
+   "pruefungen": [
+    "Rumpf traegt das Dach: hinterer Dachueberstand ueber der Rueckwand (m)",
+    "Rumpf-Rueckwand Lage n (m), z 6,0"
+   ]
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 2 / Koordinator",
+   "quelle": "fehlteile_6261 (6x ERFUNDEN along 14,9-15,8 z 18,9-21,8) + Foto ip_IMG_6261",
+   "text": "Ostgiebel: im Foto 6261 sind BEIDE Giebelflanken gestuft (Silhouette gegen den Himmel, links der Spitze 2-3 Stufen sichtbar), Modell hat hinter dem First eine senkrechte Rueckkante bei n 2,69.",
+   "naechster_schritt": "staffelgiebel Spiegeloption; Pruefung Rueck-/Vorderflanke Verhaeltnis",
+   "status": "als Pruefung eingetragen (Runde 3: vorher FEHLER, nach Generatoraenderung OK)",
+   "pruefungen": [
+    "Ostgiebel Rueckflanke/Vorderflanke Hoehe (gespiegelte Lage n -1,5 / 7,6)"
+   ]
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Koordinator (Pruefer)",
+   "quelle": "audit/gitter_generator/runde2_ip_IMG_6120.jpg",
+   "text": "EG-Laubenrueckwand Bogen 3: rote Spitzbogen-\"Tuer\" (fensterreihe:eg1, ANNAHME 8.11.) liegt neben der echten Tuer, das echte Fenster (Kreuzstock) ist breiter.",
+   "naechster_schritt": "Lage/Zahl am Foto: Z-6120-003/004, M-6120-001..005 (foto_mass auf Rueckwandebene 6,54 mit K-6120)",
+   "status": "als Pruefung eingetragen (Runde 3: vorher FEHLER, nach Generatoraenderung OK)",
+   "pruefungen": [
+    "Laubenrueckwand Bogen 3: Tuer an der Fotolage (along 3,55..5,01, z 2,8)",
+    "Laubenrueckwand Bogen 3: Fensterlichter je Zeile an der Fotolage (along 6,0..8,5, z 4,0)"
+   ]
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Koordinator (Pruefer)",
+   "quelle": "Z-6120-001 (Felder zu 11 Balustern) + Foto 6120",
+   "text": "Bruestung ohne Pfosten: im Foto stehen zwischen den Feldern zu 11 Balustern breite Pfosten (M-6120-006: Vorderflaeche 0,26 m, Lage along 6,96).",
+   "naechster_schritt": "bruestung um Pfosten erweitern, Zaehlpruefung 11 je Feld",
+   "status": "als Pruefung eingetragen (Runde 3: vorher FEHLER, nach Generatoraenderung OK)",
+   "pruefungen": [
+    "Bruestung: Baluster je Feld zwischen zwei Pfosten (along 3,3..6,96)"
+   ]
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 3",
+   "quelle": "fehlteile_6261 nach Runde 3 (audit/fehlteile_6261.jpg/.json)",
+   "text": "Die ERFUNDEN-Zellen (Runde 2: 6, Runde 3: 5) liegen im Bild auf der glatten Putzflaeche des Ostgiebels nahe der Vorderecke (Bild x 315-395, y 580-780 im Ausschnitt), NICHT an der Rueckflanke - die Runde-2-Deutung \"glatte Rueckflanke\" war falsch. Spiegel-Giebel hat sie nicht beseitigt. Gemeldete xyz (z. B. 14,89/-0,88/18,91 = along 14,3 off 4,2) liegen im Gebaeudeinneren - Rueckprojektion unklar.",
+   "naechster_schritt": "Modellkanten im Zellbereich einzeln projizieren (welches Bauteil); Kandidat: Ostende along 17,15 laut Rohkoerper UNSICHER (Ecke im Overlay ~0,5 m zu weit links)",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 3",
+   "quelle": "foto_diff 6261/6120 vor/nach Runde 3",
+   "text": "foto_diff 6261: Modellkanten ohne Foto 0,201 -> 0,164 (besser), Fotokanten ohne Modell 0,470 -> 0,526 (schlechter): der Gitter-Rumpf ist glatt, die Alt-Fassaden-STL hatte Detailkanten (Giebelfenster, Fassadengliederung). 6120: 0,147 -> 0,149 / 0,446 -> 0,439 (foto_diff wendet bei 6120 einen globalen Versatz 0,93 m an).",
+   "naechster_schritt": "Giebelfenster/Fassadengliederung als eigene Bauteile mit Fotobeleg (nicht die Alt-STL zurueckholen)",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 3",
+   "quelle": "Rumpf Runde 3 vs stl_teil:traufzone_alt",
+   "text": "Traufzone der Alt-Gruppe (Balken/Gesims/Konsolen/Dachkante, z 12,8-14,1) liegt unter der Gitter-Traufe 14,68: zwischen Gesimsoberkante 14,1 und Dachfuss bleibt 0,6 m glatte Wand. Konsolen gehoeren dem Koerper-Agenten; Gesims/Balken/Dachkante unveraendert (nicht ersatzlos abgeschaltet).",
+   "naechster_schritt": "Gesims/Traufkante am Foto (foto_mass K-6261 auf Ebene 12,66) messen und als parametrisches Gesims bauen",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 3",
+   "quelle": "Bau Runde 3 (Tuernische Bogen 3)",
+   "text": "Fensterrahmen (fensterreihe) beruehren die Wand nur flaechig (Rahmenrueckseite = wand_n = Wandebene) -> eigener Koerper -> Druck-Konsolenhuelle (baukasten_gen Anbauteile) fuellte die Tuernische. Fuer eg1/eg1_tuer mit 0,04 m Einbindung behoben; fensterreihe:og (wand_n 12,66 = Rumpffront 12,66) und eg0/eg2 haben dieselbe Lage (Lichter-Pruefung OG besteht trotzdem).",
+   "naechster_schritt": "fensterreihe generisch mit Einbindung (wie erker EIN) bauen, dann Regression",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 3",
+   "quelle": "Pruefstand-Messung helm_w_fussbreite nach Runde 3",
+   "text": "Beobachtungsmessung helm_w_fussbreite (Kasten z 14,6-14,9) trifft jetzt Rumpf-Oberkante/Traufe (1,99 x 2,06) statt nur den Helm (vorher 0,02/0,15, Konstante 1,34->1,453 verschiebt den Kasten) - Wert bedeutungslos.",
+   "naechster_schritt": "Helmfuss am Foto messen (foto_mass jetzt mit Ebene beliebiger Normale) und Kasten ueber die Erker-Oberkante legen",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 3",
+   "quelle": "EG Laubenrueckwand Boegen 1/2/4",
+   "text": "Nur Bogen 3 (along 3,5..9,5, Zaehlung der Boegen von West) ist am Foto 6120 abgenommen (1 Fenster + 1 Tuer). fensterreihe:eg0 (u 11,75, Bogen 4) und eg2 (u -4,90, Bogen 1) sind weiter ANNAHME 8.11.; im Overlay 6120 liegt eg0 hinter dem linken Pfeiler; Bild 6120 zeigt in Bogen 2 (rechts im Bild, along ~-2,5..3,5) eine grosse zweifluegelige Tuer, die das Modell nicht hat.",
+   "naechster_schritt": "Zaehl-/Messprotokolle fuer Boegen 1/2/4 an Fotos mit freier Sicht (6161/6233/hc12)",
+   "status": "offen"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "auto_id": "fehlteile-6261-237-1817",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.88,
+   "z_bis": 17.88,
+   "xyz": [
+    15.09,
+    -8.06,
+    17.88
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.88 m, y=-8.06 m (Zelle [237, 1817, 79], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
- "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31)."
+ "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
 }

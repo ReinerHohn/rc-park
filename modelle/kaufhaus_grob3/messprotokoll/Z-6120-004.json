@@ -1,0 +1,58 @@
+{
+ "id": "Z-6120-004",
+ "typ": "zaehlung",
+ "foto": "6120",
+ "datei": "6120_ip_IMG_6120.jpg",
+ "was": "Laubenrueckwand Bogen 3: Lichter je Fensterzeile (Kreuzstockfenster, 2 Zeilen)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-09",
+ "punkte": [
+  {
+   "flaeche": "oben",
+   "art": "voll",
+   "x": 1100.0,
+   "y": 2590.0
+  },
+  {
+   "flaeche": "oben",
+   "art": "voll",
+   "x": 1295.0,
+   "y": 2590.0
+  },
+  {
+   "flaeche": "unten",
+   "art": "voll",
+   "x": 1090.0,
+   "y": 2950.0
+  },
+  {
+   "flaeche": "unten",
+   "art": "voll",
+   "x": 1290.0,
+   "y": 2950.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "oben": {
+   "art": "voll",
+   "n": 2
+  },
+  "unten": {
+   "art": "voll",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 2,
+  "voll_sichtbare_flaechen": 2
+ },
+ "bild": "Z-6120-004.jpg",
+ "ausschnitt": [
+  840,
+  2340,
+  1545,
+  3200
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "2 Lichter je Zeile, Kaempfer bei y 2685 (M-6120-003)"
+}

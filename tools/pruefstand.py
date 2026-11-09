@@ -240,6 +240,16 @@ class Messer:
                 if run * schritt >= min_b: laeufe.append(run * schritt)
                 run = 0
         return {"anzahl": float(len(laeufe)), "breite_median": float(np.median(laeufe)) if laeufe else 0.0, "breite_max": float(max(laeufe)) if laeufe else 0.0}
+    def ebene_abstand(self, o, n, z, u0, u1, vor=3.0, schritt=0.04, quantil=10.0, **k):
+        """Lage der vordersten Flaeche hinter einer beliebigen Ebene (o = Punkt xy, n = Aussennormale xy, Modellkoordinaten; u entlang d = (-n_y, n_x); z ueber
+        Boden im Pruefstandrahmen): Strahlen ab `vor` m vor der Ebene entlang -n, Rueckgabe = Quantil (Standard p10) der Trefferabstaende minus `vor`
+        (0 = Flaeche in der Ebene, > 0 = dahinter, < 0 = davor; nan ohne Treffer). Reine Lage-/Abstandsmessung (z. B. Rueckwand, Dachueberstand), zaehlt nichts."""
+        o = np.array(o, float); n = np.array(n, float); n = n / np.linalg.norm(n); d = np.array([-n[1], n[0]])
+        us = np.arange(u0, u1 + 1e-6, schritt); org = np.zeros((len(us), 3)); org[:, :2] = o + vor * n + us[:, None] * d; org[:, 2] = z
+        dr = np.zeros_like(org); dr[:, :2] = -n
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
+        if not len(ir): return float("nan")
+        return float(np.percentile((loc[:, :2] - org[ir, :2]) @ (-n), quantil) - vor)
     def ebene_oeffnungen(self, o, n, z, u0, u1, tiefe=0.5, vor=3.0, schritt=0.04, min_b=0.3, max_b=8.0, rand=0.5, schief=0.1, **k):
         """Oeffnungen entlang einer beliebigen FASSADENEBENE (o = Punkt xy, n = Aussennormale xy, Modellkoordinaten; u = Strecke entlang d = (-n_y, n_x); z = Hoehe ueber
         Boden im Pruefstandrahmen). Strahlen starten `vor` m vor der Ebene entlang -n; Ebene = p10 der Trefferabstaende (vorderste haeufige Flaeche); offen = Treffer

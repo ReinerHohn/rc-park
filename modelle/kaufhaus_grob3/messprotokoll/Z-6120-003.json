@@ -1,0 +1,42 @@
+{
+ "id": "Z-6120-003",
+ "typ": "zaehlung",
+ "foto": "6120",
+ "datei": "6120_ip_IMG_6120.jpg",
+ "was": "Laubenrueckwand Bogen 3 (along 3,5..9,5): Oeffnungen in der Rueckwand (1 Fenster + 1 Tuer)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-09",
+ "punkte": [
+  {
+   "flaeche": "B3",
+   "art": "voll",
+   "x": 1100.0,
+   "y": 2950.0
+  },
+  {
+   "flaeche": "B3",
+   "art": "voll",
+   "x": 1823.0,
+   "y": 3250.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "B3": {
+   "art": "voll",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 2,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-6120-003.jpg",
+ "ausschnitt": [
+  850,
+  2700,
+  2073,
+  3500
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Fenster links (Kreuzstock, Punkt auf dem Glas), Tuer rechts mit Goldportal; Lage per M-6120-001..005"
+}

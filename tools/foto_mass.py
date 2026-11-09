@@ -12,12 +12,17 @@ Schreibt modelle/<objekt>/messprotokoll/M-<foto>-<nr>.json + .jpg. Senkrechte Ma
 import sys, os, json, glob, math, cv2, numpy as np
 
 def strahl_ebene(kam, uv, ebene):
-    """Pixel -> 3D-Punkt auf einer Ebene 'x=4.85' | 'y=-5.6' | 'z=31.5' (Modellrahmen), mit kalibrierter Kamera (foto_kalibrieren)."""
+    """Pixel -> 3D-Punkt auf einer Ebene 'x=4.85' | 'y=-5.6' | 'z=31.5' (Modellrahmen) oder beliebig 'nx,ny,nz=d' (Ebene n.X = d, z. B. gedrehte
+    Fassadenebene '0.3347,0.9423,0=6.54'), mit kalibrierter Kamera (foto_kalibrieren / Kamera-Bruecke). Radiale Verzeichnung k1 (falls im K-Protokoll)
+    wird vor dem Strahl entfernt (Fixpunkt-Iteration, SIMPLE_RADIAL)."""
     import cv2
     R, _ = cv2.Rodrigues(np.array(kam["rvec"])); t = np.array(kam["t"]); cam = -R.T @ t
-    d = R.T @ np.array([(uv[0] - kam["cx"]) / kam["f_px"], (uv[1] - kam["cy"]) / kam["f_px"], 1.0])
-    ax, val = ebene.split("="); i = "xyz".index(ax.strip()); val = float(val)
-    s = (val - cam[i]) / d[i]; return cam + s * d, float(np.linalg.norm(s * d))
+    x, y = (uv[0] - kam["cx"]) / kam["f_px"], (uv[1] - kam["cy"]) / kam["f_px"]; k1 = float(kam.get("k1") or 0.0); xu, yu = x, y
+    for _ in range(10): r2 = xu * xu + yu * yu; xu, yu = x / (1 + k1 * r2), y / (1 + k1 * r2)
+    d = R.T @ np.array([xu, yu, 1.0])
+    ax, val = ebene.split("="); val = float(val)
+    nv = np.array([float(v) for v in ax.split(",")]) if "," in ax else np.eye(3)["xyz".index(ax.strip())]
+    s = (val - nv @ cam) / (nv @ d); return cam + s * d, float(np.linalg.norm(s * d))
 
 def main():
     a = sys.argv[1:]; obj = json.load(open(a[0])); nr = a[1]; root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(a[0]))))
@@ -31,8 +36,15 @@ def main():
         rec = dict(id=pid, foto=nr, kamera=kid, ebene=ebene, name=name, mess_px=pts, P1=P1.round(3).tolist(), P2=P2.round(3).tolist(),
                    dz=round(float(P2[2] - P1[2]), 3), dy=round(float(P2[1] - P1[1]), 3), dx=round(float(P2[0] - P1[0]), 3), abstand=round(float(np.linalg.norm(P2 - P1)), 3),
                    z1=round(float(P1[2]), 3), z2=round(float(P2[2]), 3), unsicherheit_rel=round(rel, 4), unsicherheit_m=round(float(np.linalg.norm(P2 - P1)) * rel + pix_m * 1.4, 3),
-                   massstab_von=f"Kamera {kid} aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene {ebene} (+-{tiefe_sigma} m)")
+                   massstab_von=(f"Kamera {kid} aus SfM-Buendel ({kq.get('typ')}, KEINE amtlichen Anker)" if (kq := json.load(open(os.path.join(od, "messprotokoll", kid + ".json")))).get("typ", "").startswith("kamera_bruecke")
+                                 else f"Kamera {kid} aus amtlichen Ankern (LoD2/DOM1/Dokument)") + f", Ebene {ebene} (+-{tiefe_sigma} m)")
         json.dump(rec, open(os.path.join(d, pid + ".json"), "w"), indent=1, ensure_ascii=False)
+        fn = glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))                                 # markierter Ausschnitt zum Nachpruefen der Picks
+        if fn:
+            im = cv2.imread(fn[0]); H, W = im.shape[:2]; cv2.line(im, (int(pts[0]), int(pts[1])), (int(pts[2]), int(pts[3])), (0, 0, 255), 3)
+            for q_ in (pts[:2], pts[2:]): cv2.circle(im, (int(q_[0]), int(q_[1])), 12, (0, 255, 255), 3)
+            x0, x1 = int(max(0, min(pts[0], pts[2]) - 300)), int(min(W, max(pts[0], pts[2]) + 300)); y0, y1 = int(max(0, min(pts[1], pts[3]) - 300)), int(min(H, max(pts[1], pts[3]) + 300))
+            c = im[y0:y1, x0:x1].copy(); cv2.putText(c, f"{pid}: {name} = {rec['abstand']:.2f} m", (8, 30), 0, 0.9, (0, 0, 255), 2); cv2.imwrite(os.path.join(d, pid + ".jpg"), c)
         print(f"{pid}: {name}: P1 z={rec['z1']:.2f} y={P1[1]:.2f} | P2 z={rec['z2']:.2f} y={P2[1]:.2f} | dz {rec['dz']:.2f} dy {rec['dy']:.2f} Abstand {rec['abstand']:.2f} m +-{rec['unsicherheit_m']} m"); return
     def opt(k, n=1, d=None):
         if k not in a: return d

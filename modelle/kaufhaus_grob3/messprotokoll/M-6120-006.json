@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-006",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=13.84",
+ "name": "Bruestungspfosten Vorderflaeche Breite (zwischen Feld L und M)",
+ "mess_px": [
+  1003.0,
+  1250.0,
+  1087.0,
+  1250.0
+ ],
+ "P1": [
+  11.316,
+  10.668,
+  9.024
+ ],
+ "P2": [
+  11.07,
+  10.755,
+  9.019
+ ],
+ "dz": -0.005,
+ "dy": 0.087,
+ "dx": -0.246,
+ "abstand": 0.261,
+ "z1": 9.024,
+ "z2": 9.019,
+ "unsicherheit_rel": 0.0298,
+ "unsicherheit_m": 0.021,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=13.84 (+-0.3 m)"
+}

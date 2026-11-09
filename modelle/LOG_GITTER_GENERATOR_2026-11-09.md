@@ -92,3 +92,51 @@ Abgrenzung (Koordinator): Fenster-/Gaubenform macht der muster_fit-Agent; hier n
 - Dateien: objekt.json, masstabelle.json, tools/baukasten_gen.py (bruestung), messprotokoll/K-6120, K-6261, Z-6120-002, Z-6261-001, Z-hc12-001 (+jpg), STL/elemente/pruefbericht/MASSNACHWEIS neu. Kein Commit.
 - Offen: Bruestungspfosten (Felder) als Bauteil; Konsolen unter dem Balkon; Giebel-Rueckflanken gestuft; Helmfuss-Widerspruch; Gauben-/Fensterform (muster_fit-Agent); Alt-Fassadengruppe (Rumpf 8 m) durch Gitter-Rumpf ersetzen.
 - foto_diff finales STL (tol 0,35 m): 6120 Modellkanten ohne Fotokante 14,7 %, Fotokanten ohne Modell 44,6 %; 6261 20,1 % / 47,0 % (Masswerk/Figuren/Baluster-Detail fehlt dem H0-Modell). Hinweis: foto_diff/fehlteile beschriften die Kamera fest als "K-<nr> (amtliche Anker)" - fuer K-6120/K-6261 ist das SfM (kam_lot2), siehe K-Datei `quelle`.
+
+## Runde 3 (Pruefer-Befund am Sichtblatt; Agent, 2026-11-09)
+
+Ablauf nach Regel 2: zuerst 4 Beobachtungen + 6 Pruefungen eingetragen, am Runde-2-Modell gelaufen -> alle 6 FEHLER (Dachueberstand 11,13 m; Rueckwand n 4,57; Giebel-Verhaeltnis 0,89; Tuer 0; Baluster je Feld 13; Fensterlichter 0). Dann Werkzeug + Generator geaendert, gebaut: **alle Pruefungen bestanden (24 Zeilen), 1 Widerspruch (Alt-Gesamthoehe), 28 Beobachtungen**, test_regeln_cb OK.
+
+### Werkzeugaenderungen (generisch, Regression vor jeder Objektaenderung: "identisch - nichts verloren")
+- `tools/baukasten_gen.py`: `bruestung` optional Pfosten (`pfosten_alle`, `pfosten_erster`, `pfosten_b`, `pfosten_t`; Pfosten ersetzt den Baluster auf seinem Rasterplatz, eigener beleg); `staffelgiebel` optional `spiegel` (Rueckflanke = Spiegel der Vorderflanke an der Spitzenmitte, beleg nennt `werte_quellen.spiegel`).
+- `tools/foto_mass.py`: `--ebene` auch beliebige Ebene `nx,ny,nz=d` (gedrehte Fassade), k1-Entzerrung aus dem K-Protokoll, markierter Ausschnitt M-*.jpg auch im Kameramodus, `massstab_von` sagt bei Kamera-Bruecken ehrlich "SfM-Buendel, KEINE amtlichen Anker".
+- `tools/pruefstand.py`: neue Messart `ebene_abstand` (Lage der vordersten Flaeche hinter einer beliebigen Ebene, zaehlt nichts). Grund: `ebene_oeffnungen` ist Zaehlart, der CB-Lint sperrt sie zu Recht fuer Merkmal `druck`/`grundriss`.
+
+### A Rumpf aus dem Gitter (Dach ragte ueber den Koerper)
+- Neu `quader:rumpf_eg` (along -8,82..17,15, n -6,564..6,54, z 1,5..8,0) und `quader:rumpf_og` (n -6,564..12,66, z 7,9..14,68). Quellen: rohkoerper_v7 along_w/along_e, off_front 12,66, laube_rueckwand 6,54, traufe 14,68, z_boden 1,5; Rueckwand n -6,564 = **ANNAHME Firstspiegel** (2 x first.offset - off_front), Traufe hinten = Traufe vorn (ANNAHME).
+- `stl_teil:fassade` aktiv=false, `ersetzt_durch` gesetzt. Balken/Gesims/Konsolen/Dachkante als `stl_teil:traufzone_alt` abgespalten (fester `anker_m` der alten Gruppe -> bitgleiche Lage; Konsolen unberuehrt, gehoeren dem Koerper-Agenten).
+- Pruefungen: "Rumpf traegt das Dach: hinterer Dachueberstand" (modell/druck, Soll -0,1..0,8) 11,13 -> 0,00; "Rumpf-Rueckwand Lage n" (Soll -6,9..-6,2, Quelle Gitter + ANNAHME) 4,57 -> -6,57. Strahlprobe: Rueckwand bei along -8..17, z 3..14,4 durchgehend bei n -6,6.
+- Folge: tiefstes Bauteil jetzt bogenreihe 1,453 -> Konstante `z_unterkante_lot2` 1,34 -> 1,453 (STL-Unterkante nachgemessen; erster Bau ohne Nachzug: 3 Hoehenzeilen 0,11 m zu tief, rot).
+- **Offen**: Tiefe 19,2 m gegen LoD2 12,54 m bleibt Widerspruch - ist LoD2 richtig, ist die hintere Haelfte erfunden.
+
+### B Staffelgiebel gespiegelt
+- `spiegel: true` an Ost (Quelle Foto 6261) und West (ANNAHME wie Ost). Pruefung "Ostgiebel Rueck-/Vorderflanke Hoehe" (foto_vollbild/verhaeltnis, 0,97..1,03): 0,89 -> 1,00.
+- **Ehrlich**: fehlteile_6261 meldet weiter 5 ERFUNDEN-Zellen am selben Ort. Sie liegen auf der glatten Putzflaeche des Ostgiebels nahe der Vorderecke, NICHT an der Rueckflanke -> meine Runde-2-Deutung war falsch. Ursache offen (Kandidat: Ostende 17,15 "unsicher", Ecke im Overlay ~0,5 m zu weit links). Beobachtung eingetragen.
+
+### C EG-Laubenrueckwand Bogen 3 (along 3,5..9,5)
+- Zaehlung am Foto 6120: Z-6120-003 (1 Fenster + 1 Tuer), Z-6120-004 (Kreuzstock, 2 Lichter je Zeile), Z-6120-005 (1 Tuer). Bilder angesehen; erste Fassung von -003 lag auf dem Pfosten, neu auf das Glas gesetzt.
+- Lage mit foto_mass auf der Rueckwandebene 6,54 (K-6120): M-6120-001/002 Fenster along 6,25..8,29 / 6,24..8,14, z 3,20..6,45; M-6120-003 Kaempfer 5,47; M-6120-004 Tuer along 3,55..5,01, Schwelle 1,77; M-6120-005 Kaempfer 3,92 / Scheitel 4,21.
+- `fensterreihe:eg1`: Spitzbogen-ANNAHME (u 6,05, b 1,26, Scheitel 7,42) -> Rechteck-Kreuzstock u 7,225, b 1,96, z 3,20..6,45, Riegel 5,47, 2 Lichter. Neu `fensterreihe:eg1_tuer` (u 4,28, Lichte 1,46) und die Nischen `quader:eg1_nische` (Tiefe 0,21) und `quader:eg1_tuer_nische` (Tiefe 0,30). Beide Tiefen sind ANNAHMEN.
+- Falle: Rahmen beruehrten die Wand nur flaechig -> eigener Koerper -> Druck-Konsolenhuelle fuellte die Tuernische (Pruefung 0). Mit 0,04 m Einbindung (wand_n 6,50, tiefe 0,16) behoben; OG/eg0/eg2 haben dieselbe Lage (Beobachtung).
+- Pruefungen Tuer 0 -> 1, Fensterlichter 0 -> 2. Overlay 6120: Fenster und Tuer liegen auf dem Foto. Die Boegen 1, 2 und 4 sind nicht abgenommen: eg0 und eg2 bleiben ANNAHME, und die grosse Tuer in Bogen 2 fehlt im Modell.
+
+### D Bruestungspfosten
+- M-6120-006: Pfosten-Vorderflaeche 0,26 m, Mitte along 6,96 (Vorhersage aus u0 + 45 x pitch: 6,97). M-6120-007: Luecke ueber den Pfosten = 0,64 m = 2 Perioden.
+- Im Raster 12 (11 Baluster + 1 Pfosten), erster Platz 9. Damit stehen 5 Pfosten bei along -4,05 / -0,38 / 3,30 / 6,97 / 10,65; pfosten_t 0,20 ist ANNAHME.
+- Pruefung "Baluster je Feld" (Z-6120-001): 13 -> 11.
+
+### Sichtblatt seiten.jpg - Fehlerliste (angesehen nach dem Bau)
+1. Ost/West: Das Dach sitzt jetzt auf dem Rumpf (Rueckwand bis zur Traufe) und beide Giebelflanken sind gestuft. Der grobe Fehler aus Runde 2 ist behoben.
+2. Ost/West/Sued: Die Rueckhaelfte ist ein glatter Block ohne Fenster oder Gliederung. Die Rueckseite ist ungemessen (ANNAHME); bei LoD2 12,54 m Tiefe waere sie zu tief.
+3. Sued: Hinter der Rueckwand scheinen Arkaden und OG-Fenster durch. Das ist ein Renderer-Artefakt (Punkt-Splat, grosse Flaechen duenn besetzt), kein Loch: die Strahlprobe zeigt eine geschlossene Wand.
+4. Nord: Zwischen dem alten Gesims (bis 14,1) und der Traufe 14,68 liegt ein 0,6 m glattes Wandband. Die Traufzone der Alt-STL sitzt zu tief (offen).
+5. Ost: Die Laube ist an der Ostseite offen, ihre Seitenwand ungeprueft.
+6. Gauben, Helme und Erker sind unveraendert. Gaubenform bleibt beim muster_fit-Agenten.
+7. Das Modell ist weiter nicht druckbar: "Druckreparatur fehlgeschlagen", 3052 Rohdreiecke aus stl_teil (traufzone_alt, figuren), 545 Teilnetze.
+
+### Foto-Diagnosen (angesehen)
+- foto_diff 6261: Modellkanten ohne Foto 0,201 -> 0,164 (besser), Fotokanten ohne Modell 0,470 -> 0,526 (schlechter, glatter Rumpf statt Detail-STL). Rot: Westgiebel-Anschlusslinie Dach/Giebel (wie Runde 2), Baluster-/Konsolen-Unterkanten. Gelb: Masswerk, Figuren, Giebelfenster, Nachbarhaus.
+- foto_diff 6120: 0,147 -> 0,149 / 0,446 -> 0,439. Achtung: Das Werkzeug verschiebt global um 0,93 m.
+- fehlteile 6120: 1 Zelle in der Konsolenzone (wie zuvor). fehlteile 6261: 5 ERFUNDEN am Ostgiebel, 1 FEHLT am Nachbarhaus.
+- Overlays: `audit/gitter_generator/runde3_ip_IMG_6120.jpg`, `runde3_ip_IMG_6261.jpg`; Vorher/Nachher `vergleich_runde2_runde3_ip_IMG_6120.jpg`, `..._6261.jpg`. Das Runde-2-Bild enthielt zusaetzlich die gelbe Gitterebene, die Bilder sind also nicht stilgleich.
+- Regression: Der Schnappschuss ist NICHT erneuert (Ergebnis aendert sich beabsichtigt). Erneuern nur per Auftrag und mit Register-Eintrag.

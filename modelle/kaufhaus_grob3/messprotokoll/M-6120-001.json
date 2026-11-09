@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-001",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=6.54",
+ "name": "EG Bogen 3 Fenster Aussenrahmen oben (links->rechts)",
+ "mess_px": [
+  995.0,
+  2490.0,
+  1395.0,
+  2490.0
+ ],
+ "P1": [
+  9.998,
+  3.389,
+  6.449
+ ],
+ "P2": [
+  8.086,
+  4.068,
+  6.428
+ ],
+ "dz": -0.021,
+ "dy": 0.679,
+ "dx": -1.912,
+ "abstand": 2.029,
+ "z1": 6.449,
+ "z2": 6.428,
+ "unsicherheit_rel": 0.0186,
+ "unsicherheit_m": 0.059,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=6.54 (+-0.3 m)"
+}

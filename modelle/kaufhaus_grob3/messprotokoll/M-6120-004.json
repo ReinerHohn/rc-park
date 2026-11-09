@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-004",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=6.54",
+ "name": "EG Bogen 3 Tuer Lichte unten (links->rechts)",
+ "mess_px": [
+  1663.0,
+  3505.0,
+  1983.0,
+  3505.0
+ ],
+ "P1": [
+  6.909,
+  4.486,
+  1.768
+ ],
+ "P2": [
+  5.536,
+  4.974,
+  1.762
+ ],
+ "dz": -0.006,
+ "dy": 0.488,
+ "dx": -1.373,
+ "abstand": 1.457,
+ "z1": 1.768,
+ "z2": 1.762,
+ "unsicherheit_rel": 0.019,
+ "unsicherheit_m": 0.049,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=6.54 (+-0.3 m)"
+}

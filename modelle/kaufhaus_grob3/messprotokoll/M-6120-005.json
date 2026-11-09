@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-005",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=6.54",
+ "name": "EG Bogen 3 Tuer Kaempfer links -> Scheitel",
+ "mess_px": [
+  1663.0,
+  3010.0,
+  1823.0,
+  2945.0
+ ],
+ "P1": [
+  6.863,
+  4.502,
+  3.916
+ ],
+ "P2": [
+  6.131,
+  4.762,
+  4.209
+ ],
+ "dz": 0.292,
+ "dy": 0.26,
+ "dx": -0.732,
+ "abstand": 0.83,
+ "z1": 3.916,
+ "z2": 4.209,
+ "unsicherheit_rel": 0.0191,
+ "unsicherheit_m": 0.037,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=6.54 (+-0.3 m)"
+}

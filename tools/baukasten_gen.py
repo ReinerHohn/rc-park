@@ -755,14 +755,16 @@ def staffelgiebel(cfg, ctx):
     n2 = nb + sb
     if ns < 1 or dk < 0.1 or not (nb < n2 < nv) or not (zu < zt < zs): sys.exit(f"staffelgiebel: unplausible Masse (n={ns}, n={nb}/{n2}/{nv}, z={zu}/{zt}/{zs})")
     w = (nv - n2) / ns; lin = lambda n_: zs - (n_ - n2) * (zs - zt) / (nv - n2)                      # Giebellinie von der Spitzenecke (n2, zs) zur Traufe (nv, zt)
-    poly = [(nb, zu), (nb, zs), (n2, zs)]
+    oben = [(n2, zs)]
     for i in range(ns):
         zk = lin(n2 + i * w) + kp if i else zs; zk = min(zk, zs)
-        poly += [(n2 + i * w, zk), (n2 + (i + 1) * w, zk)]
-    poly += [(nv, zu)]
+        oben += [(n2 + i * w, zk), (n2 + (i + 1) * w, zk)]
+    if cfg.get("spiegel"):                                                                            # Stufen beidseitig: Rueckflanke = Spiegel der Vorderflanke an der Spitzenmitte (nb+n2)/2 (cfg['spiegel_quelle'] nennen)
+        nm = (nb + n2) / 2; poly = [(2 * nm - nv, zu)] + [(2 * nm - n_, z_) for n_, z_ in reversed(oben)] + oben + [(nv, zu)]
+    else: poly = [(nb, zu), (nb, zs)] + oben + [(nv, zu)]
     q = M.extrude(C([ccw(np.array(poly, float))]), dk).transform([[0, 0, 1, (ua - dk) if rd > 0 else ua], [1, 0, 0, 0], [0, 1, 0, 0]])
     k = q.transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; qq = lambda p_: (wq.get(p_) or cfg["quelle"])
-    beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')} ({ns} Stufen)", f"Stufenzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + qq("z_spitze"), n_stufen=ns, u_aussen=ua, dicke=dk, n_hinten=nb, n_vorn=nv, z_traufe=zt, z_spitze=zs, spitze_breite=sb, kappe=kp)
+    beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')} ({ns} Stufen)", f"Stufenzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + qq("z_spitze") + (" | Rueckflanke gespiegelt: " + qq("spiegel") if cfg.get("spiegel") else ""), n_stufen=ns, u_aussen=ua, dicke=dk, n_hinten=nb, n_vorn=nv, z_traufe=zt, z_spitze=zs, spitze_breite=sb, kappe=kp, **({"spiegel": True} if cfg.get("spiegel") else {}))
     return [k], []
 
 
@@ -846,11 +848,20 @@ def bruestung_bt(cfg, ctx):
         if cfg.get(k) in (None, ""): sys.exit(f"bruestung: '{k}' fehlt (Regel 3b)")
     nb = int(cfg["n_baluster"]); u0, pitch, n_, r, z0, zh0, zh1, hb = (float(cfg[k]) for k in ("u0", "pitch", "n", "r", "z0", "z_handlauf_unten", "z_handlauf_oben", "handlauf_b"))
     if nb < 1 or pitch <= 2 * r or r < 0.01 or not (z0 < zh0 < zh1): sys.exit(f"bruestung: unplausible Masse (n={nb}, pitch={pitch}, r={r}, z={z0}/{zh0}/{zh1})")
-    teile = [M.cylinder(zh0 - z0 + 0.04, r, r, 16).translate((u0 + i * pitch, n_, z0 - 0.02)) for i in range(nb)]   # 2 cm in Platte und Handlauf eingebunden (ein Koerper)
+    # Optional Pfosten (Felder): pfosten_alle = Rasterplaetze je Feld+Pfosten (z. B. 12 = 11 Baluster + 1 Pfosten, Zaehlung am Foto), pfosten_erster = Rasterplatz des
+    # ersten Pfostens (0-basiert ab u0), pfosten_b/pfosten_t = Breite (u) / Tiefe (n) des Pfostens. Der Pfosten ERSETZT den Baluster auf seinem Rasterplatz.
+    pa = int(cfg.get("pfosten_alle") or 0); pe = int(cfg.get("pfosten_erster") or 0); pb_, pt_ = float(cfg.get("pfosten_b") or 0.0), float(cfg.get("pfosten_t") or 0.0)
+    if pa and (pa < 2 or pb_ <= 2 * r or pb_ >= 2 * pitch or pt_ < 2 * r): sys.exit(f"bruestung: unplausible Pfosten (alle={pa}, b={pb_}, t={pt_})")
+    ist_pf = lambda i: pa > 0 and i >= pe and (i - pe) % pa == 0
+    teile = [M.cylinder(zh0 - z0 + 0.04, r, r, 16).translate((u0 + i * pitch, n_, z0 - 0.02)) for i in range(nb) if not ist_pf(i)]   # 2 cm in Platte und Handlauf eingebunden (ein Koerper)
+    pf_u = [u0 + i * pitch for i in range(nb) if ist_pf(i)]
+    teile += [quader(uc - pb_ / 2, uc + pb_ / 2, n_ - pt_ / 2, n_ + pt_ / 2, z0 - 0.02, zh0 + 0.02) for uc in pf_u]
     teile.append(quader(u0 - pitch / 2, u0 + (nb - 1) * pitch + pitch / 2, n_ - hb / 2, n_ + hb / 2, zh0, zh1))
     k = UNION(teile).transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; q = lambda p_: (wq.get(p_) or cfg["quelle"])
-    beleg("alle", f"Bruestung: {nb} Baluster (Zylinder r {r:.3f}) + Handlauf", f"Anzahl/Periode {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + q("pitch") + " | Lage: " + q("u0") + " | Handlauf: " + q("z_handlauf_oben"),
-          n_baluster=nb, u0=u0, pitch=pitch, n=n_, r=r, z0=z0, z_handlauf_unten=zh0, z_handlauf_oben=zh1)
+    beleg("alle", f"Bruestung: {nb - len(pf_u)} Baluster (Zylinder r {r:.3f}) + Handlauf", f"Anzahl/Periode {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + q("pitch") + " | Lage: " + q("u0") + " | Handlauf: " + q("z_handlauf_oben"),
+          n_baluster=nb - len(pf_u), u0=u0, pitch=pitch, n=n_, r=r, z0=z0, z_handlauf_unten=zh0, z_handlauf_oben=zh1)
+    if pf_u: beleg("alle", f"Bruestung: {len(pf_u)} Pfosten (je {pa - 1} Baluster je Feld)", f"Feldteilung {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); Lage: " + q("pfosten_erster") + " | Breite: " + q("pfosten_b") + " | Tiefe: " + q("pfosten_t"),
+                   n_pfosten=len(pf_u), pfosten_u=[round(v, 3) for v in pf_u], pfosten_b=pb_, pfosten_t=pt_)
     return [k], []
 
 @bauteil("pyramide")

@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-007",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=13.84",
+ "name": "Baluster L-letzter bis M-erster (2 Perioden um den Pfosten)",
+ "mess_px": [
+  942.0,
+  1250.0,
+  1149.0,
+  1250.0
+ ],
+ "P1": [
+  11.495,
+  10.604,
+  9.027
+ ],
+ "P2": [
+  10.889,
+  10.819,
+  9.015
+ ],
+ "dz": -0.011,
+ "dy": 0.215,
+ "dx": -0.606,
+ "abstand": 0.644,
+ "z1": 9.027,
+ "z2": 9.015,
+ "unsicherheit_rel": 0.0297,
+ "unsicherheit_m": 0.033,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=13.84 (+-0.3 m)"
+}

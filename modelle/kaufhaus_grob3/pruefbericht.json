@@ -1,31 +1,48 @@
 {
  "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
-  "z_unterkante_lot2": 1.34,
-  "hoehe": 27.978738141059875,
-  "first_z": 26.168738293647763,
-  "giebel_w_z": 27.978738141059875,
-  "giebel_o_z": 27.638737744331358,
-  "helm_w_z": 20.998737805366513,
-  "helm_o_z": 21.43873722553253,
-  "dach_z_off11": 15.873867505073548,
-  "pfeiler3_d": 0.8810006134404789,
-  "arkade1_scheitel": 5.83656708240509,
-  "fenster2_sohl": 8.96873700428009,
-  "erker_w_unterkante": 8.178737019538879,
+  "z_unterkante_lot2": 1.453,
+  "hoehe": 27.867000984191893,
+  "first_z": 26.057001136779782,
+  "giebel_w_z": 27.867000984191893,
+  "giebel_o_z": 27.527000587463377,
+  "helm_w_z": 20.88700064849853,
+  "helm_o_z": 21.32700006866455,
+  "dach_z_off11": 15.762130348205567,
+  "pfeiler3_d": 0.8810006134403175,
+  "arkade1_scheitel": 5.72482992553711,
+  "fenster2_sohl": 8.856999847412109,
+  "erker_w_unterkante": 8.066999862670897,
   "lichter_g2_anzahl": 3.0,
   "lichter_g2_breite_median": 0.92,
   "lichter_g2_breite_max": 0.92,
-  "lichter_g2_ebene_abstand": 1.9997724347110009,
-  "handlauf_z": 8.368736889839171,
+  "lichter_g2_ebene_abstand": 1.9997724348657184,
+  "handlauf_z": 8.25699973297119,
   "helm_w_fussbreite_x": 1.985299152374267,
-  "helm_w_fussbreite_y": 1.541156890869141,
-  "helm_w_fussbreite_punkte": 58.0
+  "helm_w_fussbreite_y": 2.0641060638427735,
+  "helm_w_fussbreite_punkte": 52.0,
+  "rueck_z6": -0.005787998491273427,
+  "rueck_z10": -0.005788051692975138,
+  "rueck_z143": -0.005788051692975138,
+  "giebel_o_rueck": 23.025050605773924,
+  "giebel_o_vorn": 23.025050605773924,
+  "tuer_b3_anzahl": 1.0,
+  "tuer_b3_breite_median": 1.46,
+  "tuer_b3_breite_max": 1.46,
+  "tuer_b3_ebene_abstand": 1.9953205801288985,
+  "bal_feld_anzahl": 10.0,
+  "bal_feld_breite_median": 0.16,
+  "bal_feld_breite_max": 0.17,
+  "bal_feld_ebene_abstand": 1.924544850106738,
+  "fenster_b3_anzahl": 2.0,
+  "fenster_b3_breite_median": 0.8300000000000001,
+  "fenster_b3_breite_max": 0.8300000000000001,
+  "fenster_b3_ebene_abstand": 1.8740168794981424
  },
  "pruefungen": [
   {
    "name": "Gesamthoehe Unterkante-Oberkante (m), gegen Wolkennetz im selben Rahmen",
-   "wert": 27.978738141059875,
+   "wert": 27.867000984191893,
    "soll": [
     18.8,
     19.8
@@ -35,7 +52,7 @@
   },
   {
    "name": "First Hauptdach z (m), Firstmitte along 0..7",
-   "wert": 27.508738293647763,
+   "wert": 27.51000113677978,
    "soll": [
     27.1,
     27.8
@@ -45,7 +62,7 @@
   },
   {
    "name": "Staffelgiebel West Spitze z (m), along -9,6..-8",
-   "wert": 29.318738141059875,
+   "wert": 29.320000984191893,
    "soll": [
     28.9,
     29.7
@@ -55,7 +72,7 @@
   },
   {
    "name": "Staffelgiebel Ost Spitze z (m), along 16,3..18",
-   "wert": 28.978737744331358,
+   "wert": 28.980000587463376,
    "soll": [
     28.5,
     29.5
@@ -65,7 +82,7 @@
   },
   {
    "name": "Helm West Spitze z (m)",
-   "wert": 22.338737805366513,
+   "wert": 22.34000064849853,
    "soll": [
     22.0,
     22.7
@@ -75,7 +92,7 @@
   },
   {
    "name": "Helm Ost Spitze z (m)",
-   "wert": 22.77873722553253,
+   "wert": 22.78000006866455,
    "soll": [
     22.4,
     23.1
@@ -85,7 +102,7 @@
   },
   {
    "name": "Vorderhang z bei off 11,0 (Traufe 14,68 + Neigung 53,3 Grad)",
-   "wert": 17.213867505073548,
+   "wert": 17.215130348205566,
    "soll": [
     16.5,
     17.3
@@ -95,7 +112,7 @@
   },
   {
    "name": "Pfeiler 3 Durchmesser (m), Schaftansatz z 2,1-2,35 (Ring ueber der Fase)",
-   "wert": 0.8810006134404789,
+   "wert": 0.8810006134403175,
    "soll": [
     0.81,
     0.94
@@ -105,7 +122,7 @@
   },
   {
    "name": "Arkade 1 Scheitel z (m) (tiefster Modellpunkt im Scheitelkasten)",
-   "wert": 7.17656708240509,
+   "wert": 7.17782992553711,
    "soll": [
     7.05,
     7.35
@@ -115,7 +132,7 @@
   },
   {
    "name": "Fenstergruppe 2 Sohlbank z (m)",
-   "wert": 10.30873700428009,
+   "wert": 10.309999847412108,
    "soll": [
     10.2,
     10.45
@@ -125,7 +142,7 @@
   },
   {
    "name": "Erker West Unterkante z (m)",
-   "wert": 9.518737019538879,
+   "wert": 9.519999862670897,
    "soll": [
     9.45,
     9.8
@@ -145,10 +162,70 @@
   },
   {
    "name": "Bruestung Handlauf Oberkante z (m), along 2,5..3,5",
-   "wert": 9.708736889839171,
+   "wert": 9.70999973297119,
    "soll": [
     9.6,
     9.8
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Rumpf traegt das Dach: hinterer Dachueberstand ueber der Rueckwand (m)",
+   "wert": 0.0,
+   "soll": [
+    -0.1,
+    0.8
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Rumpf-Rueckwand Lage n (m), z 6,0",
+   "wert": -6.5697879984912735,
+   "soll": [
+    -6.9,
+    -6.2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ostgiebel Rueckflanke/Vorderflanke Hoehe (gespiegelte Lage n -1,5 / 7,6)",
+   "wert": 1.0,
+   "soll": [
+    0.97,
+    1.03
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laubenrueckwand Bogen 3: Tuer an der Fotolage (along 3,55..5,01, z 2,8)",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Bruestung: Baluster je Feld zwischen zwei Pfosten (along 3,3..6,96)",
+   "wert": 11.0,
+   "soll": [
+    11,
+    11
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laubenrueckwand Bogen 3: Fensterlichter je Zeile an der Fotolage (along 6,0..8,5, z 4,0)",
+   "wert": 2.0,
+   "soll": [
+    2,
+    2
    ],
    "ok": true,
    "status": "ok"
