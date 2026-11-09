@@ -7,7 +7,7 @@ import sys, os, json, time, numpy as np, torch, cv2, torch.nn.functional as Fn
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from kanten_lib import ransac_segmente
 def opt(n, d, t=float): return t(sys.argv[sys.argv.index(n) + 1]) if n in sys.argv else d
 NIT = opt("--iter", 6, int); TOL = opt("--tol", 3.0); MIN = opt("--min", 0.3); dev = "cuda"
-KAM = json.load(open(sys.argv[1])); kz = np.load(sys.argv[2]); P = kz["P"]; vis_n = kz["vis"]; ratio = kz["kan"] / np.maximum(vis_n, 1); EP = torch.from_numpy(P[(vis_n >= 6) & (ratio >= 0.5)]).to(dev)
+KAM = json.load(open(sys.argv[1])); kz = np.load(sys.argv[2]); P = kz["P"]; vis_n = kz["vis"]; ratio = kz["kan"] / np.maximum(vis_n, 1); EP = torch.from_numpy(P[(vis_n >= opt('--sicht', 6, int)) & (ratio >= opt('--anteil', 0.5))]).to(dev); print('Kantenpunkte', len(EP), flush=True)
 fotos = list(np.load(sys.argv[3])["fotos"]); md = sys.argv[4]; bd = sys.argv[5]; Pt = torch.from_numpy(P).to(dev)
 DT = []; ZM = []; INF = []; t0 = time.time()
 for f in fotos:
@@ -35,8 +35,8 @@ def seg_score(A, B):
     return (ws * m).sum(1) / (vn * m).sum(1).clamp(min=1), vn.mean(1)
 def abstand_zu_segmenten(X, A, B):
     d = torch.full((len(X),), 9.0, device=dev)
-    for c in range(0, len(A), 100):
-        a = A[c:c + 100][None]; ab = (B[c:c + 100] - A[c:c + 100])[None]; w = X[:, None] - a; t = ((w * ab).sum(2) / (ab * ab).sum(2).clamp(min=1e-9)).clamp(0, 1); d = torch.minimum(d, (w - t[..., None] * ab).norm(dim=2).min(1).values)
+    for c in range(0, len(A), 20):
+        a = A[c:c + 20][None]; ab = (B[c:c + 20] - A[c:c + 20])[None]; w = X[:, None] - a; t = ((w * ab).sum(2) / (ab * ab).sum(2).clamp(min=1e-9)).clamp(0, 1); d = torch.minimum(d, (w - t[..., None] * ab).norm(dim=2).min(1).values)
     return d
 S = json.load(open(sys.argv[6]))["segmente"]; fix = json.load(open(opt("--fix", "/dev/null", str)))["segmente"] if "--fix" in sys.argv and os.path.exists(opt("--fix", "", str)) else []
 A = torch.tensor([s[0] for s in S], device=dev, dtype=torch.float32); B = torch.tensor([s[1] for s in S], device=dev, dtype=torch.float32); NF = torch.zeros(len(A), dtype=torch.bool, device=dev)
@@ -58,7 +58,7 @@ for it in range(1, NIT + 1):
         s_, v_ = seg_score(cA, cB); better = (s_ > best + 0.01) & (~NF) & (v_ >= 3); bA[better] = cA[better]; bB[better] = cB[better]; best = torch.where(better, s_, best)
     print("  verschoben:", int((best > sc0).sum()), flush=True); A, B = bA, bB
     # (4) neue Kandidaten aus unerklaerten Kantenpunkten
-    dEP = abstand_zu_segmenten(EP, A, B); R = EP[dEP > 0.04]; neu = ransac_segmente(R, tol=0.015, minlen=0.15, minpts=25, seed=it)
+    dEP = abstand_zu_segmenten(EP, A, B); R = EP[dEP > 0.04]; neu = ransac_segmente(R, tol=0.015, minlen=0.15, minpts=25, seed=it, maxit=500, log=True)
     if neu:
         nA = torch.tensor([s[0] for s in neu], device=dev, dtype=torch.float32); nB = torch.tensor([s[1] for s in neu], device=dev, dtype=torch.float32); s_, v_ = seg_score(nA, nB); keep = (s_ >= MIN) & (v_ >= 3)
         A = torch.cat([A, nA[keep]]); B = torch.cat([B, nB[keep]]); NF = torch.cat([NF, torch.zeros(int(keep.sum()), dtype=torch.bool, device=dev)]); print("  neu:", int(keep.sum()), "von", len(neu), flush=True)
