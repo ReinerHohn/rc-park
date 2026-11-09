@@ -10,14 +10,17 @@ NIT = opt("--iter", 6, int); TOL = opt("--tol", 3.0); MIN = opt("--min", 0.3); d
 KAM = json.load(open(sys.argv[1])); kz = np.load(sys.argv[2]); P = kz["P"]; vis_n = kz["vis"]; ratio = kz["kan"] / np.maximum(vis_n, 1); EP = torch.from_numpy(P[(vis_n >= opt('--sicht', 6, int)) & (ratio >= opt('--anteil', 0.5))]).to(dev); print('Kantenpunkte', len(EP), flush=True)
 fotos = list(np.load(sys.argv[3])["fotos"]); md = sys.argv[4]; bd = sys.argv[5]; Pt = torch.from_numpy(P).to(dev)
 DT = []; ZM = []; INF = []; t0 = time.time()
-for f in fotos:
-    cp = os.path.join(md, os.path.splitext(f)[0] + ".npz")
-    if not os.path.exists(cp): continue
-    K = KAM[f]; lab = np.load(cp)["lab"]; h, w = lab.shape; s = w / K["W"]; b = np.zeros((h, w), bool); b[:, :-1] |= lab[:, :-1] != lab[:, 1:]; b[:-1, :] |= lab[:-1, :] != lab[1:, :]
-    dt = cv2.distanceTransform((~b).astype(np.uint8), cv2.DIST_L2, 3); DT.append(torch.from_numpy(np.minimum(dt[::2, ::2], 255).astype(np.uint8)).to(dev)); INF.append((f, K, s, h, w))
-    lt = Pt @ torch.tensor(K["Rn"], device=dev, dtype=torch.float32).T + torch.tensor(K["tn"], device=dev, dtype=torch.float32); z = lt[:, 2]
-    uv = (K["f"] * lt[:, :2] / z.clamp(min=0.5)[:, None] + torch.tensor([K["cx"], K["cy"]], device=dev)) * s; u = uv[:, 0].round().long(); v = uv[:, 1].round().long(); ok = (z > 1) & (u >= 0) & (u < w) & (v >= 0) & (v < h)
-    q = 3; hz, wz = h // q + 1, w // q + 1; pz = (v.clamp(0, h - 1) // q) * wz + (u.clamp(0, w - 1) // q); zb = torch.full((hz * wz,), 1e9, device=dev); zb.scatter_reduce_(0, pz[ok], z[ok], "amin"); ZM.append(-Fn.max_pool2d(-zb.view(1, 1, hz, wz), 9, 1, 4).view(-1))
+import kanten_vote_quellen as KV                                                              # gleiche Kantenbilder wie die Abstimmung: Beleg im Foto = SAM ODER Canny ODER Farb-Sweep (Segment ist schon 3D-vorgeprueft)
+from concurrent.futures import ProcessPoolExecutor
+ok_f = [f for f in fotos if os.path.exists(os.path.join(md, os.path.splitext(f)[0] + ".npz"))]
+def dtbild(E): return np.minimum(cv2.distanceTransform((~E.any(0)).astype(np.uint8), cv2.DIST_L2, 3)[::2, ::2], 255).astype(np.uint8)
+with ProcessPoolExecutor(8) as ex:
+    for f, E in ex.map(KV.kantenbilder, ok_f, chunksize=1):
+        if E is None: continue
+        K = KAM[f]; h, w = E.shape[1:]; s = w / K["W"]; DT.append(torch.from_numpy(dtbild(E)).to(dev)); INF.append((f, K, s, h, w)); del E
+        lt = Pt @ torch.tensor(K["Rn"], device=dev, dtype=torch.float32).T + torch.tensor(K["tn"], device=dev, dtype=torch.float32); z = lt[:, 2]
+        uv = (K["f"] * lt[:, :2] / z.clamp(min=0.5)[:, None] + torch.tensor([K["cx"], K["cy"]], device=dev)) * s; u = uv[:, 0].round().long(); v = uv[:, 1].round().long(); ok = (z > 1) & (u >= 0) & (u < w) & (v >= 0) & (v < h)
+        q = 3; hz, wz = h // q + 1, w // q + 1; pz = (v.clamp(0, h - 1) // q) * wz + (u.clamp(0, w - 1) // q); zb = torch.full((hz * wz,), 1e9, device=dev); zb.scatter_reduce_(0, pz[ok], z[ok], "amin"); ZM.append(-Fn.max_pool2d(-zb.view(1, 1, hz, wz), 9, 1, 4).view(-1))
 print("Fotos", len(INF), "Vorbereitung %.0fs" % (time.time() - t0), flush=True)
 def stuetzung(Q):
     """Q (M,3) -> (weich_summe, Sichtzahl) ueber alle Fotos."""
