@@ -10,16 +10,17 @@
 #  8 zusammen   Zusammenfuehren (Doppelte raus: Kopien nur, wenn nicht schon im Gitter)
 #  9 messen     gitter_naehe gegen Wolkenkanten UND B-Konsens; Pruefblatt ueber alle Fotos mit Z-Puffer
 # 10 zeigen     Viewer-HTML bauen, Editor neu starten
-# Aufruf: tools/gitter_kette.sh NAME [--ab STUFE] [--kam KAM.json] [--bilder DIR] [--refs 220] [--vmin 0.6] [--maxpx 80000]
+# Aufruf: tools/gitter_kette.sh NAME [--ab STUFE] [--kam KAM.json] [--bilder DIR] [--refs 220] [--vmin 0.6] [--maxpx 80000] [--vorher GITTER.json]
+#   --vorher: bisher bestes Gitter; Regel "nie belegte Kanten verlieren" (Nutzer 9.11.): alte Segmente, die im neuen fehlen und im B-Konsens belegt sind, kommen zurueck (quelle 9)
 #   Ergebnis: <DATEN>/kette_<NAME>/ (alle Zwischendateien), Gitter = kette_<NAME>/gitter.json, Bericht kette_<NAME>/bericht.txt
 # Lange Laufzeit -> ueber tools/job_start.sh starten: JOB_GPU_MB=4500 tools/job_start.sh kette_NAME LOG tools/gitter_kette.sh NAME
 set -u
 cd "$(dirname "$0")/.."
 PY=/media/oem/scan/venv-seg/bin/python; D=/media/oem/scan/rc-park_daten/kaufhaus_alle
 NAME=${1:?NAME}; shift
-AB=sweep; KAM=$D/sfm/kam_lot2.json; BILDER=$D/bilder; REFS=220; VMIN=0.6; MAXPX=80000; REFPREFIX=""
+AB=sweep; KAM=$D/sfm/kam_lot2.json; BILDER=$D/bilder; REFS=220; VMIN=0.6; MAXPX=80000; REFPREFIX=""; VORHER=""
 while [ $# -gt 0 ]; do case "$1" in
-  --ab) AB=$2; shift 2;; --kam) KAM=$2; shift 2;; --bilder) BILDER=$2; shift 2;; --refs) REFS=$2; shift 2;; --vmin) VMIN=$2; shift 2;; --maxpx) MAXPX=$2; shift 2;; --ref_prefix) REFPREFIX=$2; shift 2;; *) echo "unbekannt $1"; exit 2;; esac; done
+  --ab) AB=$2; shift 2;; --kam) KAM=$2; shift 2;; --bilder) BILDER=$2; shift 2;; --refs) REFS=$2; shift 2;; --vmin) VMIN=$2; shift 2;; --maxpx) MAXPX=$2; shift 2;; --ref_prefix) REFPREFIX=$2; shift 2;; --vorher) VORHER=$2; shift 2;; *) echo "unbekannt $1"; exit 2;; esac; done
 K=$D/kette_$NAME; mkdir -p "$K" modelle/kaufhaus_grob3/audit/kette_$NAME; B=$K/bericht.txt; AUD=modelle/kaufhaus_grob3/audit/kette_$NAME
 STUFEN="sweep konsens aufbau schleife formen wiederh spiegel zusammen messen zeigen"; los=0
 log(){ echo "[$(date +%H:%M:%S)] $*" | tee -a "$B"; }
@@ -69,8 +70,8 @@ if stufe spiegel; then
   log "   $(grep '^neu' $K/spiegel.log | tail -1)"
 fi
 if stufe zusammen; then
-  log "8 zusammen (Doppelte raus)"; $PY -I - "$K" <<'EOF' >> $B 2>&1
-import json, sys, numpy as np; sys.path.insert(0, "tools"); from gpu_knn import min_abstand; K = sys.argv[1]
+  log "8 zusammen (Doppelte raus, belegte alte Kanten zurueck)"; $PY -I - "$K" "$VORHER" <<'EOF' >> $B 2>&1
+import json, sys, numpy as np, os; sys.path.insert(0, "tools"); from gpu_knn import min_abstand; K = sys.argv[1]; VORHER = sys.argv[2]
 f = lambda Q, X: (lambda d: np.asarray(d.cpu() if hasattr(d, "cpu") else d))(min_abstand(Q, X))
 S = json.load(open(K + "/g5_spiegel.json")); seg = S["segmente"]; basis = [s for s in seg if s[2] not in (5, 6)]; kop = [s for s in seg if s[2] in (5, 6)]
 def pts(s, st=0.05):
@@ -80,8 +81,12 @@ if kop:
     for s in kop:
         d = f(pts(s).astype(np.float32), BP); keep.append((d < 0.08).mean() < 0.6)
     kop = [s for s, k in zip(kop, keep) if k]
-S["segmente"] = basis + kop; json.dump(S, open(K + "/gitter.json", "w")); print("   Basis", len(basis), "Kopien behalten", len(kop), "Gitter", len(S["segmente"]))
+S["segmente"] = basis + kop
+json.dump(S, open(K + "/gitter.json", "w")); print("   Basis", len(basis), "Kopien behalten", len(kop), "Gitter", len(S["segmente"]))
 EOF
+  if [ -n "$VORHER" ] && [ -f "$VORHER" ]; then                                             # nie belegte Kanten verlieren: fehlende Vorgaenger-Kanten am FOTO pruefen
+    $PY -I tools/gitter_zurueck.py "$VORHER" $K/gitter.json "$KAM" $STAB $K/gitter_z.json >> $B 2>&1 && mv $K/gitter_z.json $K/gitter.json
+  fi
 fi
 if stufe messen; then
   log "9 messen"; { echo "== Wolkenkanten"; $PY -I tools/gitter_naehe.py $K/gitter.json $WOLKE | tail -3; echo "== B-Konsens (unabhaengig)"; $PY -I tools/gitter_naehe.py $K/gitter.json $K/konsens_B.npy | tail -3; } 2>&1 | tee -a $B
