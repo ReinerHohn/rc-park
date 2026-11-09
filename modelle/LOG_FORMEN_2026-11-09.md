@@ -140,6 +140,24 @@ Ausgabe `formen/gitter_v7_formen.json`, Bilder `modelle/kaufhaus_grob3/audit/for
 - Overlays der 5 Lagen auf 6261 + nu_9e19 ANGESEHEN (`audit/formen/r3/gauben_r3_lagen_*_dach.jpg`): jedes der 5 Dreiecke sitzt an einer echten Gaube (3 untere, 2 obere), die
   Dreiecksform (aus Fleckausdehnung) ist jedoch zu flach/zu breit - Lage ja, Form nein.
 
+## Runde 4 (Koordinator, ab 20:11): Gaubenform an den 5 Lagen per 2D-Linien + Triangulation (`tools/gauben_tri.py` neu)
+- Gebaut: je Gaube/Foto (12 naechste < 60 m + die 4 Dachfotos) Fenster um die projizierte Lage (3D-Box t +-1,3, s -0,6..3,6, h 0..1,8), HoughLinesP auf Karte >= 0,15,
+  Linienklassen nach projizierten 3D-Vorgaberichtungen (Front = Traufrichtung, Kehle L/R = Frontecke -> Firstende, Ortgang = Frontecke -> Scheitel), 2D-Schnitte Frontecken/Firstende/
+  Scheitel, Strahlenschnitt-Triangulation (kleinste Quadrate, Residuum) ueber >= 3 Fotos, Primitiv, Reihenregel, Gate Umrissbelegung >= 0,5 in >= 3 Fotos + Familiengate;
+  Debugbilder je Gaube/Foto (`audit/formen/r4*/gauben_tri_g<i>_<foto>.png`: Linien grau, Vorgabepunkte farbig, Suchpolygon gruen, winkelpassende Linien orange).
+- Laeufe 1-12 (`gauben_tri1-12.log`): 0 von 5 Gauben trianguliert. Verlauf: Hough-Ausgabeformat (OpenCV 5: [N,4]) -> Karte >= 0,3 zu streng (1-6 Linien) -> >= 0,15 (9-56 Linien)
+  -> Auswahl nach Laenge nahm First-/Traufkanten (Firstende 5-112 m daneben) -> Auswahl nach Mittelpunkt-Naehe zu streng -> Region (Dreieck +0,7/1,2 m) mit Endpunkten/Mittelpunkt.
+  Diagnose an nu + 6261 (`r4c/gauben_tri_g2_*.png` ANGESEHEN): Die Gauben sind in den Karten als lange duenne Spitzen (zwei fast parallele Kehlen, Firstende oben links) klar
+  sichtbar, die Vorgabepunkte (Frontmitte/-ecken aus den Ortho-Flecken) sitzen am Vorderende der richtigen Spitze - aber das vorgegebene Dreieck (Frontecken -> Firstende in der
+  Ebene, Tiefe 2,8-3,5 m) zeigt in beiden Fotos ~15 Grad steiler als die echte Spitze und trifft das Firstende der NAECHSTEN Gaube (obere Reihe). Die echten Kehlen laufen am
+  unteren Rand des Suchpolygons entlang bzw. knapp ausserhalb; die L-Kehle faellt immer durch (0 Linien in der Region, auch bei +1,2 m und 35 Grad) - entweder Seitenzuordnung
+  (quer-Vorzeichen) oder Lagevorgabe (Fleck-Front +0,4 m ueber Ebene) systematisch daneben. Nicht mehr geklaert.
+  ENDSTAND Runde 4: Gauben NICHT abgenommen; `formen/gauben_r4.json` enthaelt je Gaube Lage, Fotoliste, Linien-/Filterzahlen und Verwerfungsgruende, keine Form. Familiengate nein.
+  Lehren: (1) 3D-Vorgabe aus der Ebene reicht nicht als Suchfenster, wenn die Kehlenrichtung im Bild 15 Grad abweicht - die Spitzen muessen zuerst OHNE Richtungsvorgabe gefunden
+  werden (zwei lange, fast parallele Linien, die sich innerhalb 1-2 m schneiden, Spitze hangaufwaerts) und dann der Lage zugeordnet; (2) Seitenzuordnung L/R im Bild per
+  Vorzeichentest ist bei stark schraeger Sicht nicht verlaesslich - besser beide Kehlen als Paar suchen und erst danach benennen; (3) 20 min Debug je Hypothese sind zu wenig,
+  das gehoert in einen Lauf mit synthetischem Test (Regel: Beweistest zuerst).
+
 ## Ergebnisdateien Runde 3 (20:10)
 - `formen/gitter_v7_formen2.json` = v7 + 2 Helme (quelle 4, 32 Seg.) + 68 Baluster (quelle 13, Score 1,0, 612 Seg., abgenommen ueber Z-6120-001) = 3669 Segmente. Keine Gauben.
 - `formen/baluster_abgenommen.json` (= baluster_v18_abgenommen): Band 8,35-9,65, Periode 0,3062 m (aus Protokoll), Phase 0,256, t -11,16..9,43, Beleg-Block mit allen 28 Punkten.
