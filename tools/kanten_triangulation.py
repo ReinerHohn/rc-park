@@ -10,27 +10,28 @@ def opt(n, d, t=float): return t(sys.argv[sys.argv.index(n) + 1]) if n in sys.ar
 NREF = opt("--refs", 12, int); NPART = opt("--partner", 3, int); NCPU = opt("--cpu", 8, int); OUT = sys.argv[6]; dev = "cuda"; TOLPX = 3.0
 def arbeit(f):
     _, E = KV.kantenbilder(f)
-    if E is None: return f, None, None
+    if E is None: return f, None, None, 1.0
     h, w = E.shape[1:]; dt2 = np.minimum(cv2.distanceTransform((E.sum(0) < (1 if '--lax' in sys.argv else 2)).astype(np.uint8), cv2.DIST_L2, 3)[::2, ::2], 255).astype(np.uint8)
     im = cv2.imread(os.path.join(KV.BD, f), cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION); sc = 1500 / w; im = cv2.resize(im, (1500, int(h * sc)), interpolation=cv2.INTER_AREA); lab = cv2.cvtColor(im, cv2.COLOR_BGR2LAB); lsd = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD); L = []
     for ch in (cv2.cvtColor(im, cv2.COLOR_BGR2GRAY), lab[:, :, 1], lab[:, :, 2]):
         r = lsd.detect(ch)[0]
         if r is not None: L.append(r.reshape(-1, 4))
     L = np.vstack(L) / sc; ln = np.hypot(L[:, 2] - L[:, 0], L[:, 3] - L[:, 1]); L = L[ln > 0.02 * w]; ln = ln[ln > 0.02 * w]; L = L[np.argsort(-ln)[:1200]]
-    return f, dt2, L.astype(np.float32)
+    return f, dt2, L.astype(np.float32), float(w)
 if __name__ == "__main__":
     KAM = KV.KAM; P = np.load(sys.argv[2])[:, :3]; lo = np.percentile(P, 0.5, axis=0) - [3, 3, 0]; hi = np.percentile(P, 99.5, axis=0) + [3, 3, 8]; lo[2] = max(lo[2], 1.5); print("Suchkasten", lo.round(1), hi.round(1), flush=True)
-    F = []; DT = []; LN = []
+    F = []; DT = []; LN = []; SJ = []                                                       # SJ = Labelbild-Breite / Kamera-Breite je Foto (Massstab zwischen Kantenbild und Kameramodell)
     with ProcessPoolExecutor(NCPU) as ex:
-        for f, d2, L in ex.map(arbeit, KV.fotos, chunksize=1):
+        for f, d2, L, wl in ex.map(arbeit, KV.fotos, chunksize=1):
             if d2 is None: continue
-            F.append(f); DT.append(torch.from_numpy(d2).to(dev)); LN.append(torch.from_numpy(L).to(dev))
+            SJ.append(wl / KAM[f]["W"]); F.append(f); DT.append(torch.from_numpy(d2).to(dev)); LN.append(torch.from_numpy(L).to(dev))
     J = len(F); print("Fotos", J, "Linien je Foto im Mittel", float(np.mean([len(l) for l in LN])), flush=True)
     T = lambda x: torch.tensor(np.array(x), device=dev, dtype=torch.float32)
     R = T([KAM[f]["Rn"] for f in F]); tt = T([KAM[f]["tn"] for f in F]); C = T([KAM[f]["C"] for f in F]); FL = T([KAM[f]["f"] for f in F]); CX = T([KAM[f]["cx"] for f in F]); CY = T([KAM[f]["cy"] for f in F]); K1 = T([KAM[f]["params"][3] for f in F])
     WH = [DT[j].shape for j in range(J)]; WIM = T([[KAM[f]["W"], KAM[f]["H"]] for f in F]); LO = torch.tensor(lo, device=dev, dtype=torch.float32); HI = torch.tensor(hi, device=dev, dtype=torch.float32)
+    SJ = torch.tensor(SJ, device=dev, dtype=torch.float32)
     def rays(j, uv):                                                                           # Pixel (voller Massstab des Labelbilds = Originalpixel) -> Strahl im Kamerasystem (mit k1-Entzerrung)
-        x = (uv[:, 0] - CX[j]) / FL[j]; y = (uv[:, 1] - CY[j]) / FL[j]; xu, yu = x.clone(), y.clone()
+        uv = uv / SJ[j]; x = (uv[:, 0] - CX[j]) / FL[j]; y = (uv[:, 1] - CY[j]) / FL[j]; xu, yu = x.clone(), y.clone()
         for _ in range(6): r2 = xu * xu + yu * yu; xu = x / (1 + K1[j] * r2); yu = y / (1 + K1[j] * r2)
         return torch.stack([xu, yu, torch.ones_like(xu)], 1)
     def proj(Q, j):                                                                            # Q (...,3) -> u,v (Originalpixel), z
@@ -38,7 +39,7 @@ if __name__ == "__main__":
     def stuetz(Q, idx):                                                                        # Q (M,NS,3): Treffer und Sichtzahl ueber Fotos idx
         M, NS = Q.shape[:2]; hit = torch.zeros(M, device=dev); vis = torch.zeros(M, device=dev); Qf = Q.reshape(-1, 3)
         for j in idx:
-            u, v, z = proj(Qf, j); H_, W_ = WH[j]; ui = (u / 2).round().long(); vi = (v / 2).round().long(); ok = (z > 1) & (ui >= 0) & (ui < W_) & (vi >= 0) & (vi < H_); d = DT[j][vi.clamp(0, H_ - 1), ui.clamp(0, W_ - 1)].float()
+            u, v, z = proj(Qf, j); H_, W_ = WH[j]; ui = (u * SJ[j] / 2).round().long(); vi = (v * SJ[j] / 2).round().long(); ok = (z > 1) & (ui >= 0) & (ui < W_) & (vi >= 0) & (vi < H_); d = DT[j][vi.clamp(0, H_ - 1), ui.clamp(0, W_ - 1)].float()
             hit += ((d <= TOLPX) & ok).float().view(M, NS).sum(1); vis += ok.float().view(M, NS).sum(1)
         return hit, vis
     # Paare
@@ -46,7 +47,7 @@ if __name__ == "__main__":
     while len(sel) < min(NREF, J): j = int(np.argmax(dm)); sel.append(j); dm = np.minimum(dm, np.linalg.norm(feat - feat[j], axis=1))
     pairs = []
     for a in sel:
-        cand = [(abs(np.linalg.norm(Cn[b] - Cn[a]) - 6.0), b) for b in range(J) if b != a and 2.0 < np.linalg.norm(Cn[b] - Cn[a]) < 15.0 and float(Dn[a] @ Dn[b]) > 0.7]; cand.sort(); pairs += [(a, b) for _, b in cand[:NPART]]
+        BMIN = opt('--bmin', 2.0); BMAX = opt('--bmax', 15.0); BZ = opt('--bziel', 6.0); cand = [(abs(np.linalg.norm(Cn[b] - Cn[a]) - BZ), b) for b in range(J) if b != a and BMIN < np.linalg.norm(Cn[b] - Cn[a]) < BMAX and float(Dn[a] @ Dn[b]) > opt('--dotmin', 0.7)]; cand.sort(); pairs += [(a, b) for _, b in cand[:NPART]]
     DBG = [0, 0, 0, 0]; print("Paare", len(pairs), flush=True); rng = np.random.default_rng(0); allA = []; allB = []; allS = []; allV = []
     ts1 = torch.linspace(0.05, 0.95, 16, device=dev); ts2 = torch.linspace(0.02, 0.98, 48, device=dev)
     for (a, b) in pairs:
