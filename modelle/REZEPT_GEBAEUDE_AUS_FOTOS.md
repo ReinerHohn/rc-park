@@ -1,0 +1,63 @@
+# Rezept: Gebäude aus Fotos zum H0-Modell (Stand 9.11.2026 abends)
+
+Ziel: Jedes Gebäude der Miniaturwelt mit wenig Aufwand in einem unbeaufsichtigten Lauf. Fotos/Video rein, geprüftes, druckbares H0-Modell raus.
+Das hier ist die generalisierte Methode aus dem Kaufhaus Freiburg (9.11.). Objektspezifisches gehört nur in `modelle/<objekt>/objekt.json` und die Masstabelle, nie in den Code.
+Erst lesen: `modelle/NICHTS_GEBRACHT.md` (Sackgassen), `CLAUDE.md` (Abnahmeregeln).
+
+## Grundidee in einem Satz
+**Kanten finden, Wiederholungen falten, jede Kante gegen Fotos UND Wolke prüfen, Formen aus dem Generator, Maße aus den Kanten.**
+
+## Die fünf Säulen
+1. **Kantengitter** (rein aus Daten): Tiefen-Sweep auf Stabilitätskarten, RANSAC-Aufbau, Foto-Schleife, Vereinigung über Läufe (`gitter_zurueck.py`: nie eine fotobelegte Kante verlieren).
+2. **Wiederholung und Spiegelung** (Musterzelle): Zone aus dem Gitter, Periode per Autokorrelation (mehrstufig: Elementabstand, dann Teilung im Element), Instanzen falten, Phase per Symmetrie, Form aus der gemittelten Zelle, jede Kopie einzeln an den Fotos abnehmen. Vorbild: `baluster_fit.py` (68 Baluster, Periode 0,306, Zählung am Foto getroffen). Allgemein: `muster_fit.py --familie ...` (im Bau).
+3. **Kanten-Tor** (kantenneutral, `kanten_tor.py`, im Bau): Jede Kante, egal aus welchem Bauteil, wird quer verschoben und an den Enden variiert, getrennt gegen Wolke und Fotos.
+4. **Generator** (`baukasten_gen.py` + Masstabelle): Formfamilien (Satteldach, Staffelgiebel, Bogenreihe, Rundpfeiler, Brüstung, Fensterreihe, Helmkegel, Gaubenreihe) mit Maßen aus dem Gitter, Quelle "kantengitter", Prüfstand muss grün sein.
+5. **Abnahme am Foto**: foto_diff, fehlteile, Sichtblatt aller Seiten, Fehlerliste je kleinstem Teil.
+
+## Ablauf (eine Kette, `tools/gitter_kette.sh NAME --vorher BESTES.json`)
+| Stufe | Werkzeug | Ergebnis | Tor |
+|---|---|---|---|
+| Kameras | SfM gemeinsam, Video-Frames dazu, Rahmen loten | kam_*.json | Reproj < 1,5 px |
+| Karten | Stabilitätskarten je Foto (261 Läufe) | stabil/ | - |
+| sweep, konsens | Tiefen-Sweep A und B (unabhängige Referenzen, dz-Basis) | Kantenpunkte | B als Fremdprüfung |
+| aufbau, schleife | RANSAC zwei Bänder, Foto-Schleife | Gitter | Treffer/Abdeckung je Höhenband |
+| formen | helm_fit, saeulen_fit, arkaden_fit, baluster_fit, (muster_fit) | Formteile | Synth-Test + 3 Fotos |
+| wiederh, spiegel | Wiederholung/Spiegel | Kopien | jede Kopie >= 3 Fotos |
+| kurven | Ketten zu Linie/Bogen/Bezier | Kurven | Z-Puffer-Fotoprüfung |
+| verfeinern | DT-Verlust gegen Karten, Topologie | saubere Ecken | max 5 cm |
+| tor (neu) | kanten_tor.py | Status je Kante | Entscheidregel unten |
+| zusammen | Vereinigung mit Vorgänger | Gitter | Anteil alter Kanten je Band |
+| messen, zeigen | Wolke/B-Konsens, Pruefblatt, Viewer 450k Punkte | 3D-HTML | ansehen |
+| koerper | koerper_kette.sh (Durchsicht-Test, offene Lauben, runde Säulen) | STL wasserdicht | Gate + Overlay |
+| generator | Masstabelle aus Gitter, bauen_abnehmen | H0-STL | Prüfstand grün |
+
+## Entscheidregel (Nutzerentscheide 9.11.)
+- **Fotos UND Wolke**, getrennt geprüft, nie gemittelt.
+- **Nur mit genug Daten**: Wolke Mindestpunkte im Prüfschlauch und signifikante Spitze (>= 3 MAD); Fotos >= 3 sehende aus >= 2 Richtungen. Sonst ist die Quelle blind.
+- **GRÜN**: beide genug, beide Optima beim Wert.
+- **ENTSCHIEDEN(Quelle)**: Die Quelle mit den besseren Daten gewinnt (Menge, Signifikanz, Plateau, Einigkeit der Instanzen; Suchgrenze disqualifiziert). Ein Begründungssatz mit Zahlen gehört in Datei und Log.
+- **OFFEN**: keine Quelle ausreichend oder kein klarer Sieger. Der Wert bleibt `ANNAHME:`.
+- **Kopplung nur auf Probe**: Wiederholte/gespiegelte Kanten werden gemeinsam geprüft. Will eine Untergruppe signifikant woanders hin, wird sie automatisch abgetrennt (Beispiel: der Kämpfer des Mittellichts sitzt höher als bei den Seitenlichtern).
+
+## Prüfdisziplin (aus Fehlern des 9.11.)
+- Fehlerliste vor Lob: je kleinstem Teil (je Licht, je Konsole, je Pfosten) "trifft echte Kante ja/nein". Zwischenstände heißen `*_entwurf`.
+- Agentenmeldung "angesehen ok" nie ungeprüft übernehmen (Sichtblatt mit schwebendem Dach war "ok").
+- Nutzer-Sichtfund zuerst als Testfall, der am alten Stand fehlschlägt.
+- Grenzen größer als der erwartete Fehler; Fit auf Grenze = Grenze erweitern.
+- Jedes neue Rechenwerkzeug nutzt die GPU, mit gemessenem VRAM-Budget; n×n-Vergleiche immer blockweise.
+
+## Was die Methode heute nicht kann (ehrlich)
+- Blanke Wände: Eine Kantenwolke kann Wand und Öffnung nicht unterscheiden (Stirnwände blieben ANNAHME). Dafür braucht es eine dichte Wolke oder Fototextur.
+- Dach über 15 m: Abdeckung 0,20. Dafür braucht es Drohnen-/Hochframes und Dachebenen aus dem Generator.
+- Rückseiten ohne Fotos: nur ANNAHME (Spiegelung).
+- Figuren und Maßwerk: nur Silhouette bzw. Relief in H0.
+
+## Neues Gebäude in Schritten
+1. `tools/objekt_anlegen.py`, Fotos und Video nach `/media/oem/scan/rc-park_daten/<objekt>/`.
+2. SfM + Stabilitätskarten (Nachtlauf).
+3. `gitter_kette.sh <objekt>` (Nachtlauf), morgens Bericht + Viewer ansehen.
+4. Formfamilien wählen (Fotos aus 3 Richtungen), Generator-Masstabelle aus dem Gitter füllen, `bauen_abnehmen.sh`.
+5. Zählprotokolle am Foto, foto_diff, Sichtblatt mit Fehlerliste.
+6. H0-Teileteilung, Slicer-Vorcheck, Teil neben Foto (Regel 9b), Probedruck eines Ausschnitts.
+
+Ziel für die Miniaturwelt: Schritte 2 und 3 laufen unbeaufsichtigt, Schritt 4 wird zur Formfamilien-Erkennung automatisiert, und Handarbeit bleibt nur, wo ein Tor OFFEN meldet.
