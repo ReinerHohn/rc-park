@@ -16,16 +16,17 @@ def duenn(X, vox):                                                              
     out = np.zeros((len(u), 3)); np.add.at(out, inv, X); return out / np.bincount(inv)[:, None]
 U = duenn(U, opt("--vu", 0.03)); O = duenn(O, opt("--vo", 0.08))
 print("Punkte unten", len(U), "oben", len(O), flush=True)
+QE = opt("--qe", 0.02)   # Endquantil: 0.02 kuerzte jedes Segment um ~4 % (Bug, Eckenverlust)
 def ausgleich(X, S, tol):
     out = []
     for s in S:
         a = torch.tensor(s[0], device="cuda"); b = torch.tensor(s[1], device="cuda"); ab = b - a; L = ab.norm().clamp(min=1e-6); u = ab / L; w = X - a; t = (w @ u).clamp(0, float(L)); dd = (w - t[:, None] * u).norm(dim=1); m = dd < 1.5 * tol
         if int(m.sum()) < 6: out.append(s); continue
-        Y = X[m]; c = Y.mean(0); _, _, Vh = torch.linalg.svd(Y - c, full_matrices=False); d = Vh[0] * (1 if float(Vh[0] @ u) >= 0 else -1); tt = (Y - c) @ d; lo, hi = torch.quantile(tt, 0.02), torch.quantile(tt, 0.98)
+        Y = X[m]; c = Y.mean(0); _, _, Vh = torch.linalg.svd(Y - c, full_matrices=False); d = Vh[0] * (1 if float(Vh[0] @ u) >= 0 else -1); tt = (Y - c) @ d; lo, hi = torch.quantile(tt, QE), torch.quantile(tt, 1 - QE)
         out.append([(c + d * lo).tolist(), (c + d * hi).tolist(), s[2], s[3]] if float(hi - lo) > 0.3 else s)
     return out
 res = []
-for nm, X, tol, minpts, minlen, q in (("unten", U, TU, 25, 0.25, 1), ("oben", O, TO, 6, 1.0, 3)):
+for nm, X, tol, minpts, minlen, q in (("unten", U, TU, 25, 0.25, 1), ("oben", O, TO, int(opt("--minpts_o", 6)), opt("--minlen_o", 1.0), 3)):
     Xt = torch.from_numpy(X.astype(np.float32)).cuda(); S = ransac_segmente(Xt, tol=tol, minlen=minlen, minpts=minpts, maxit=int(opt('--maxit', 1500)), log=False)
     S = [[s[0], s[1], q, min(1.0, s[2] / 100)] for s in S]; S = ausgleich(Xt, S, tol); print(nm, "Segmente", len(S), flush=True); res += S
 json.dump({"segmente": res}, open(sys.argv[3], "w")); print("fertig", len(res))

@@ -11,7 +11,8 @@ for s in S:
 Q = np.vstack(pts).astype(np.float32); bands = [(-9, 12, "z<12"), (12, 15, "12-15"), (15, 99, ">15")]
 for rf in sys.argv[2].split(","):
     R = np.load(rf); R = R["P"] if hasattr(R, "files") else R; R = R[:, :3].astype(np.float32)
-    dq = np.asarray(min_abstand(Q, R).cpu() if hasattr(min_abstand(Q, R), 'cpu') else min_abstand(Q, R)); dr = np.asarray(min_abstand(R, Q).cpu() if hasattr(min_abstand(R, Q), 'cpu') else min_abstand(R, Q)); zq = Q[:, 2]; zr = R[:, 2]
+    f = lambda A, B: (lambda x: np.asarray(x.cpu() if hasattr(x, 'cpu') else x))(min_abstand(A, B)); dq = f(Q, R); dr = f(R, Q)   # je Richtung EIN Aufruf (vorher 3x)
+    zq = Q[:, 2]; zr = R[:, 2]
     print("Referenz", rf.split("/")[-1], "Punkte", len(R), "| Segmentpunkte", len(Q))
     for lo, hi, nm in bands:
         mq = (zq >= lo) & (zq < hi); mr = (zr >= lo) & (zr < hi)
