@@ -56,6 +56,19 @@ Erst lesen: `modelle/NICHTS_GEBRACHT.md` (Sackgassen), `CLAUDE.md` (Abnahmeregel
 Anwenden auf alle Elemente mit bekannter Ebene: Fenster, Türen, Giebelfenster, Gesimse, Gaubenfronten, Erkerflächen.
 Schritte 2 und 3 sind heute Sichtpicks des Sprachmodells, also Handarbeit mit Protokoll. Diese Handwerte sind der Prüfmaßstab, bis `kanten_tor`/`muster_fit` dieselben Werte automatisch aus Karten und Wolke treffen.
 
+## Lehren-Register (generalisiert; nach JEDER Runde ergänzen, 1 Zeile je Lehre)
+Format: Lehre (allgemein formuliert) | Anlass | wo im Werkzeug/Ablauf umgesetzt.
+- L1 Wiederholung: Abstände zuerst auf Konstanz prüfen. Starr falten nur bei konstantem Abstand, sonst jede Instanz einzeln ausrichten und nur die Form mitteln | Konsolen 1,45-1,93 statt Raster 2,006 | `konsolen_zelle.py`, `muster_fit instanzen_ungefaltet`
+- L2 Unterelemente einer Musterzelle haben eigene Parameter. Die Kopplung gilt nur auf Probe, das Tor trennt auf, wenn eine Untergruppe signifikant abweicht | Mittellicht-Kämpfer 12,28 statt 11,75 | `kanten_tor.py` Auto-Split
+- L3 Prüfen kantenneutral: Bauteile liefern Kanten plus Kopplungen, das Tor prüft je Kante gegen Fotos UND Wolke getrennt, mit Mindestdaten. Die bessere Datenlage gewinnt, mit Begründung | Nutzerentscheide | `kanten_tor.py`
+- L4 Zone gezielt aus dem Gitter suchen, nie blind in feste Höhenbänder schneiden | gitter_wiederholung verfehlte Pfeiler, Gauben, Fensterachsen | `baluster_fit`/`muster_fit`
+- L5 Altteile mit falscher Lage verfälschen globale Diff-Suchen (dichte Kanten ziehen den Versatz) | traufzone_alt, 0,93 m Versatz | Altteile ersetzen, Diff ohne globale Verschiebung gegenprüfen
+- L6 Druckbarkeit ist eine Prüfung mit Sollwert (1 Teilnetz, wasserdicht, Wandstärke), nicht ein Endschritt. Splitter entstehen durch deckungsgleiche Flächen und Spalte im mm-Bereich, deshalb einbetten | Runde 4 | `druck_vorcheck.py`, Generator-Option einbindung
+- L7 Overlays brauchen Verdeckung (Z-Puffer), sonst entstehen Scheinfehler durch Wände | schiefer „Pfeiler“ = Rückwandfenster | Overlay-Werkzeug (Runde 5)
+- L8 Kantenwolken können blanke Flächen nicht entscheiden (Wand oder Öffnung). Dafür braucht es dichte Wolke oder Textur | Stirnwände | offen
+- L9 Fehlerliste je kleinstem Unterelement, nie je durchgehender Linie. Agenten-„ok“ immer selbst nachprüfen | Kämpfer, Sichtblatt | Prüfdisziplin
+- L10 Webfotos von Aussichtspunkten (Kirchturm, Turmaussicht) sind die beste freie Dachquelle | Commons Münsterturm | Dach-Agent (läuft)
+
 ## Was die Methode heute nicht kann (ehrlich)
 - Blanke Wände: Eine Kantenwolke kann Wand und Öffnung nicht unterscheiden (Stirnwände blieben ANNAHME). Dafür braucht es eine dichte Wolke oder Fototextur.
 - Dach über 15 m: Abdeckung 0,20. Dafür braucht es Drohnen-/Hochframes und Dachebenen aus dem Generator.
