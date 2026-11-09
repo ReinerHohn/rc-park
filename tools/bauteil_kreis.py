@@ -60,6 +60,8 @@ PROT = os.path.join(LDIR, "kreis.jsonl")
 
 def sh(cmd, cwd, log=None, env=None, timeout=None):
     e = dict(os.environ); e.update(env or {})
+    e.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")   # mehrere Spuren teilen 8 GB VRAM (OOM 10.11. 00:25)
+    e.setdefault("RCPARK_SIFT_MAX", "1600")
     with open(log, "a") if log else open(os.devnull, "w") as f:
         r = subprocess.run(cmd, cwd=cwd, shell=isinstance(cmd, str), stdout=f if log else subprocess.PIPE,
                            stderr=subprocess.STDOUT, text=True, env=e, timeout=timeout)
