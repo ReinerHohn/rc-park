@@ -26,7 +26,7 @@ Konfiguration aus objekt.json "kreis" (alles optional): {"stl": ..., "skala": 0.
 Grenzen (ehrlich): Wolkenbeleg ist noch kein bewiesenes Gate (Hinweis-Kennzahl, L22); Bauteile ohne Wolkendaten (Rueckseiten, Dach > Wolke)
 waehlt der Kreis nie. Teile-Sichtpruefung fliesst ein, sobald ihre Ausgabe 'gate_bewiesen' traegt.
 """
-import sys, os, json, time, subprocess, shutil, re
+import glob, sys, os, json, time, subprocess, shutil, re
 sys.stdout.reconfigure(line_buffering=True)   # systemd-Log sofort lesbar
 
 a = sys.argv
@@ -121,6 +121,24 @@ def freigeben(teil):
     try: os.remove(os.path.join(BELEGT, teil))
     except FileNotFoundError: pass
 
+def vorversuche(teil):
+    """Alle frueheren Kreis-Runden (alle Laeufe/Spuren) zu diesem Teil: Ergebnis, Torgruende, Agentenbericht, Patch.
+    Damit wiederholt kein Agent einen verworfenen Weg blind (Kreis1 R2 10.11. startete Staffelgiebel ohne Wissen aus R1)."""
+    zeilen = []
+    for d in sorted(glob.glob(os.path.join(KREISDIR, OBJ, "*", "kreis.jsonl"))):
+        for l in open(d):
+            try: z = json.loads(l)
+            except Exception: continue
+            if (z.get("ziel") or {}).get("teil") != teil or "runde" not in z or z.get("angenommen") is None: continue
+            ld = os.path.dirname(d); r = z["runde"]
+            pa = os.path.join(ld, f"verworfen_r{r}.patch"); ag = os.path.join(ld, f"agent_r{r}.log")
+            zeilen.append(f"- {os.path.basename(ld)} R{r}: angenommen={z.get('angenommen')}, Gewinn {z.get('gewinn')}, Abnahme {z.get('tor_abnahme')}"
+                          f"{' (CUDA-OOM, kein Pruefungsfehler)' if z.get('infra_oom') else ''}, Pruefer {json.dumps((z.get('pruefer') or {}).get('fehlerliste'), ensure_ascii=False)[:600]}"
+                          f"; Agentenbericht (Ende der Datei): {ag if os.path.exists(ag) else '-'}; Patch: {pa if os.path.exists(pa) else '-'}")
+    if not zeilen: return ""
+    return ("\n\nVORVERSUCHE ZU DIESEM TEIL (zuerst lesen, nicht blind wiederholen; verworfenen Patch pruefen und gezielt verbessern, "
+            "offene Beobachtungen dazu in masstabelle.json beachten):\n" + "\n".join(zeilen))
+
 def auftrag(ziel, runde, wt):
     v = open(os.path.join(ROOT, "modelle", "VORLAGE_BAUTEIL_RUNDE.md")).read()
     m = re.search(r"## Auftragstext.*?\n(.*?)\n---\n", v, re.S)
@@ -134,6 +152,7 @@ def auftrag(ziel, runde, wt):
               .replace("`<TABU>`", ", ".join(TABU) or "-").replace("<TABU>", ", ".join(TABU) or "-")
               .replace("`<FOTOS>`", "-").replace("<FOTOS>", "-"))
     txt = txt.replace("/home/oem/git/rc-park", wt)
+    txt += vorversuche(ziel["teil"])
     txt += (f"\n\nUNBEAUFSICHTIGTER LAUF: Arbeitsverzeichnis ist der git-Worktree {wt} (nicht /home/oem/git/rc-park). "
             "Keine Rueckfragen moeglich - bei Unklarheit ANNAHME notieren und weiter. Am Ende den Bericht (Pflichtform der Vorlage) "
             f"zusaetzlich nach {wt}/modelle/{OBJ}/audit/kreis_bericht.md schreiben und die Overlay-Pfade dort auflisten.")
