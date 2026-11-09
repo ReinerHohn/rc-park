@@ -28,6 +28,7 @@ Ablauf (generisch, kein Objektname im Code; Pfade aus objekt.json["teile_sicht"]
   /media/oem/scan/venv-seg/bin/python -W ignore -I tools/teile_sichtpruefung.py <objekt> [--fotos 6] [--out modelle/<objekt>/audit/teile_sicht] [--pflicht a.jpg,b.jpg]
 Schwellen sind Parameter (Standardwerte an dem SYNTHETISCHEN Fall tools/test_teile_sichtpruefung.py kalibriert, nicht am Kaufhaus-Ergebnis).
 GPU: Raster (render_kern.dreiecke_rastern), Wolken-Z-Puffer und Verschiebe-Treffer auf der GPU; JOB_GPU_MB ~1500 reicht (gemessen im Log)."""
+import shutil
 import os, sys, json, argparse, subprocess, shlex, time, math, concurrent.futures as cf
 import numpy as np, cv2, trimesh
 TOOLS = os.path.dirname(os.path.abspath(__file__)); REPO = os.path.dirname(TOOLS); sys.path.insert(0, TOOLS)
@@ -328,7 +329,7 @@ def teile_bauen(obj, name, root, out, massstab, neu=False, parallel=4):
         e = dict(env, NUR_BAUTEIL=typ, STL_NAME=sn, ELEMENTE_AUS="/dev/null"); p = subprocess.run(cmd, cwd=root, env=e, capture_output=True, text=True)
         gen = os.path.join(root, "modelle", "stl", sn)
         if p.returncode != 0 or not os.path.exists(gen): return typ, gr, None
-        os.replace(gen, ziel); return typ, gr, ziel
+        shutil.move(gen, ziel); return typ, gr, ziel
     with cf.ThreadPoolExecutor(parallel) as ex: return list(ex.map(eins, enumerate(liste)))
 
 def stl_m(pfad, massstab):
