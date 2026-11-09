@@ -176,13 +176,23 @@ def pruefer_urteil(wt, ziel, runde):
 sperre, ohne_annahme = {}, 0
 basis = subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
 print(f"Kreis {OBJ} Lauf {LAUF} Basis {basis[:7]} -> {LDIR}")
+# Nachpruefen (10.11.): eine verworfene Runde, deren Tor an Infrastruktur scheiterte (OOM/Platz), ohne neuen Agenten erneut durch alle 3 Tore.
+# --nachpruefen <alter Laufordner>:<runde> ; Worktree der alten Runde wird weiterverwendet, Vorher-Wert = Wolkenbeleg aus deren Protokoll.
+NACH = opt("--nachpruefen", "")
+if NACH:
+    _ld, _r = NACH.rsplit(":", 1); RUNDEN = 1
+    NACH_Z = [json.loads(l) for l in open(os.path.join(_ld, "kreis.jsonl")) if l.strip() and json.loads(l).get("runde") == int(_r) and "angenommen" in json.loads(l)][-1]
 for runde in range(1, RUNDEN + 1):
     wt = os.path.join(LDIR, f"wt_r{runde}"); br = f"kreis/{OBJ}/{LAUF}-r{runde}"
-    if TROCKEN:
+    if NACH:
+        wt, br = NACH_Z["worktree"], NACH_Z["branch"]
+    elif TROCKEN:
         wt = ROOT
     else:
         subprocess.run(["git", "-C", ROOT, "worktree", "add", "-q", "-b", br, wt, basis], check=True)
-    if TROCKEN:
+    if NACH:
+        z0 = {"wolkenbeleg_teile": [NACH_Z["ziel"]], "kanten": {"gesamt": {"recall": (NACH_Z.get("recall_gesamt") or [None])[0]}}}
+    elif TROCKEN:
         # Trockenlauf baut nichts (main bleibt unberuehrt): letzte gespeicherte Konvergenz-Zeile
         kf = os.path.join(ROOT, "modelle", OBJ, "konvergenz.jsonl")
         z0 = json.loads([l for l in open(kf) if l.strip()][-1])
@@ -198,7 +208,7 @@ for runde in range(1, RUNDEN + 1):
                     z0 = zz; print(f"Runde {runde}: Messung vorher wiederverwendet (STL {sha})"); break
         if z0 is None:
             rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
-    ziel = waehlen(z0, sperre)
+    ziel = NACH_Z["ziel"] if NACH else waehlen(z0, sperre)
     if not ziel:
         print("kein Kandidat mehr - Ende"); protokoll({"runde": runde, "ende": "kein Kandidat"}); break
     txt = auftrag(ziel, runde, wt)
@@ -207,7 +217,7 @@ for runde in range(1, RUNDEN + 1):
     if TROCKEN:
         freigeben(ziel["teil"]); protokoll({"runde": runde, "trocken": True, "ziel": ziel}); print(txt[:1500]); break
     t0 = time.time()
-    rcA, _ = sh(["claude", "-p", txt, "--model", MODELL, "--permission-mode", RECHTE], wt,
+    rcA, _ = (None, "") if NACH else sh(["claude", "-p", txt, "--model", MODELL, "--permission-mode", RECHTE], wt,
                 log=os.path.join(LDIR, f"agent_r{runde}.log"), timeout=MAX_MIN * 60)
     rcB, outB = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"))
     tor_abnahme = rcB == 0 and "alle Pruefungen bestanden" in outB
@@ -241,7 +251,7 @@ for runde in range(1, RUNDEN + 1):
             subprocess.run(["git", "-C", wt, "diff"], stdout=f, check=False)
         sperre[ziel["teil"]] = sperre.get(ziel["teil"], 0) + 1; ohne_annahme += 1
     freigeben(ziel["teil"])
-    protokoll({"runde": runde, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
+    protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
                "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "gewinn": round(gewinn, 3),
                "tor_konvergenz": tor_konv, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
