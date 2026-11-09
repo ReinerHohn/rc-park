@@ -12,6 +12,7 @@
 #  8 zusammen   Zusammenfuehren (Doppelte raus: Kopien nur, wenn nicht schon im Gitter)
 #  9 messen     gitter_naehe gegen Wolkenkanten UND B-Konsens; Pruefblatt ueber alle Fotos mit Z-Puffer
 # 10 zeigen     Viewer-HTML bauen, Editor neu starten
+# 11 koerper    Gitter -> wasserdichter Koerper + H0-STL + Vergleichsbilder (tools/koerper_kette.sh; Laube per Durchsicht-Test, Formfamilien)
 # Aufruf: tools/gitter_kette.sh NAME [--ab STUFE] [--kam KAM.json] [--bilder DIR] [--refs 220] [--vmin 0.6] [--maxpx 80000] [--vorher GITTER.json]
 #   --vorher: bisher bestes Gitter; Regel "nie belegte Kanten verlieren" (Nutzer 9.11.): alte Segmente, die im neuen fehlen und im B-Konsens belegt sind, kommen zurueck (quelle 9)
 #   Ergebnis: <DATEN>/kette_<NAME>/ (alle Zwischendateien), Gitter = kette_<NAME>/gitter.json, Bericht kette_<NAME>/bericht.txt
@@ -24,7 +25,7 @@ AB=sweep; KAM=$D/sfm/kam_lot2.json; BILDER=$D/bilder; REFS=220; VMIN=0.6; MAXPX=
 while [ $# -gt 0 ]; do case "$1" in
   --ab) AB=$2; shift 2;; --kam) KAM=$2; shift 2;; --bilder) BILDER=$2; shift 2;; --refs) REFS=$2; shift 2;; --vmin) VMIN=$2; shift 2;; --maxpx) MAXPX=$2; shift 2;; --ref_prefix) REFPREFIX=$2; shift 2;; --vorher) VORHER=$2; shift 2;; *) echo "unbekannt $1"; exit 2;; esac; done
 K=$D/kette_$NAME; mkdir -p "$K" modelle/kaufhaus_grob3/audit/kette_$NAME; B=$K/bericht.txt; AUD=modelle/kaufhaus_grob3/audit/kette_$NAME
-STUFEN="sweep konsens aufbau schleife formen wiederh spiegel kurven verfeinern zusammen messen zeigen"; los=0
+STUFEN="sweep konsens aufbau schleife formen wiederh spiegel kurven verfeinern zusammen messen zeigen koerper"; los=0
 log(){ echo "[$(date +%H:%M:%S)] $*" | tee -a "$B"; }
 stufe(){ [ "$1" = "$AB" ] && los=1; [ $los -eq 1 ]; }
 WOLKE=$D/ref_wolke_kanten.npy; STAB=$D/stabil; FOTOS80=$D/sam3d_k80.npz; MASKEN=$D/sam3d_mf_kachel; KZ=$D/kanten3d_sweep.npz
@@ -113,5 +114,8 @@ if stufe zeigen; then
   log "10 zeigen"; $PY -I tools/viewer_kanten_bauen.py modelle/kaufhaus_grob3/viewer_kanten.html --seg $K/gitter.json --kp $K/konsens_B.npy --n 450000 >> $K/zeigen.log 2>&1 && log "   Viewer gebaut"
   systemctl --user stop rcpark-editordraht.service 2>/dev/null; sleep 1; rm -f modelle/kaufhaus_grob3/draht_kanten.json
   tools/job_start.sh editordraht /tmp/editordraht.log $PY -I tools/editor_draht.py "$KAM" $BILDER $D/kanten3d_k80.npz $K/gitter.json modelle/kaufhaus_grob3/draht_kanten.json >/dev/null 2>&1; log "   Editor neu gestartet mit $K/gitter.json"
+fi
+if stufe koerper; then
+  log "11 koerper"; bash tools/koerper_kette.sh $K/gitter.json $K/koerper $AUD/koerper >> $K/koerper.log 2>&1 && log "   $(grep -i 'wasserdicht\|watertight' $K/koerper.log | tail -1 | cut -c1-120)" || log "   koerper_kette fehlgeschlagen (siehe koerper.log)"
 fi
 log "Kette $NAME fertig"
