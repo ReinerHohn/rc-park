@@ -7,6 +7,7 @@
 #  5 formen     Helme (helm_fit) + Pfeiler (saeulen_fit) als Formfamilien
 #  6 wiederh    Wiederholungs-Prior (Periode/Musterzelle, Fotopruefung)
 #  7 spiegel    Spiegel-Prior (Gebaeudesymmetrie, Fotopruefung)
+#  7a kurven     Arkadenboegen als Formfamilie zwischen Pfeilern (arkaden_fit.py) + Kurven-Kettenbildung mit Fotopruefung/Z-Puffer (gitter_kurven.py), nur Boegen/Bezier (quelle 10/11/15)
 #  7b verfeinern Verfeinerung gegen Stabilitaetskarten (gitter_verfeinern.py: Endpunkte <= 5 cm auf Kanten, Doppelte vereinen, Unbelegtes loeschen; Formen eingefroren)
 #  8 zusammen   Zusammenfuehren (Doppelte raus: Kopien nur, wenn nicht schon im Gitter)
 #  9 messen     gitter_naehe gegen Wolkenkanten UND B-Konsens; Pruefblatt ueber alle Fotos mit Z-Puffer
@@ -23,7 +24,7 @@ AB=sweep; KAM=$D/sfm/kam_lot2.json; BILDER=$D/bilder; REFS=220; VMIN=0.6; MAXPX=
 while [ $# -gt 0 ]; do case "$1" in
   --ab) AB=$2; shift 2;; --kam) KAM=$2; shift 2;; --bilder) BILDER=$2; shift 2;; --refs) REFS=$2; shift 2;; --vmin) VMIN=$2; shift 2;; --maxpx) MAXPX=$2; shift 2;; --ref_prefix) REFPREFIX=$2; shift 2;; --vorher) VORHER=$2; shift 2;; *) echo "unbekannt $1"; exit 2;; esac; done
 K=$D/kette_$NAME; mkdir -p "$K" modelle/kaufhaus_grob3/audit/kette_$NAME; B=$K/bericht.txt; AUD=modelle/kaufhaus_grob3/audit/kette_$NAME
-STUFEN="sweep konsens aufbau schleife formen wiederh spiegel verfeinern zusammen messen zeigen"; los=0
+STUFEN="sweep konsens aufbau schleife formen wiederh spiegel kurven verfeinern zusammen messen zeigen"; los=0
 log(){ echo "[$(date +%H:%M:%S)] $*" | tee -a "$B"; }
 stufe(){ [ "$1" = "$AB" ] && los=1; [ $los -eq 1 ]; }
 WOLKE=$D/ref_wolke_kanten.npy; STAB=$D/stabil; FOTOS80=$D/sam3d_k80.npz; MASKEN=$D/sam3d_mf_kachel; KZ=$D/kanten3d_sweep.npz
@@ -70,8 +71,19 @@ if stufe spiegel; then
   log "7 spiegel"; $PY -I tools/gitter_spiegel.py $K/sweep_A.npz "$KAM" $STAB $K/g4_wiederh.json $K/g5_spiegel.json >> $K/spiegel.log 2>&1 || { log "   spiegel fehlgeschlagen, uebernehme g4"; cp $K/g4_wiederh.json $K/g5_spiegel.json; }
   log "   $(grep '^neu' $K/spiegel.log | tail -1)"
 fi
+if stufe kurven; then
+  log "7a kurven: Arkaden"; $PY -I tools/arkaden_fit.py $K/g5_spiegel.json $K/sweep_A.npz,$K/sweep_B.npz $K/arkaden.json --kam "$KAM" --stabil $STAB --wolke $D/kanten3d_k80.npz >> $K/kurven.log 2>&1 || log "   arkaden_fit ohne Ergebnis"
+  log "7a kurven: Ketten"; $PY -I tools/gitter_kurven.py $K/sweep_A.npz,$K/sweep_B.npz $K/g5_spiegel.json $K/kurven_voll.json --kam "$KAM" --stabil $STAB --wolke $D/kanten3d_k80.npz >> $K/kurven.log 2>&1 || log "   gitter_kurven ohne Ergebnis"
+  $PY -I - "$K" <<'PYEOF' >> $B 2>&1
+import json, sys, os; K = sys.argv[1]; S = json.load(open(K + "/g5_spiegel.json")); n_a = n_k = 0
+if os.path.exists(K + "/arkaden.json"): A = json.load(open(K + "/arkaden.json")); a = [s for s in A["segmente"] if s[2] == 15]; S["segmente"] += a; S["arkaden"] = A.get("arkaden"); n_a = len(a)
+if os.path.exists(K + "/kurven_voll.json"): Kv = json.load(open(K + "/kurven_voll.json")); k = [s for s in Kv["segmente"] if s[2] in (10, 11)]; S["segmente"] += k; S["kurven"] = Kv.get("kurven"); n_k = len(k)
+json.dump(S, open(K + "/g5b_kurven.json", "w")); print("   Arkaden-Segmente", n_a, "Kurven (Bogen/Bezier)", n_k, "Gitter", len(S["segmente"]))
+PYEOF
+  [ -f $K/g5b_kurven.json ] || cp $K/g5_spiegel.json $K/g5b_kurven.json
+fi
 if stufe verfeinern; then
-  log "7b verfeinern"; $PY -I tools/gitter_verfeinern.py $K/g5_spiegel.json "$KAM" $STAB $K/g6_verf.json --wolke $D/kanten3d_k80.npz --maxshift 0.05 >> $K/verfeinern.log 2>&1 || { log "   verfeinern fehlgeschlagen, uebernehme g5"; cp $K/g5_spiegel.json $K/g6_verf.json; }
+  log "7b verfeinern"; $PY -I tools/gitter_verfeinern.py $K/g5b_kurven.json "$KAM" $STAB $K/g6_verf.json --wolke $D/kanten3d_k80.npz --maxshift 0.05 >> $K/verfeinern.log 2>&1 || { log "   verfeinern fehlgeschlagen, uebernehme g5"; cp $K/g5b_kurven.json $K/g6_verf.json; }
   log "   $(grep -i 'verschmolzen\|geloescht' $K/verfeinern.log | tail -1 | cut -c1-140)"
 fi
 if stufe zusammen; then
