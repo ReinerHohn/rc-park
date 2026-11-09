@@ -760,13 +760,13 @@ def sam_flaechen(d, minfl=0.03, maxanteil=0.4, eps=2.5):
     os.environ.setdefault("HF_HOME", "/media/oem/scan/tools_src/hf_cache")
     if "g" not in SAMP:
         from transformers import pipeline
-        SAMP["g"] = pipeline("mask-generation", model="facebook/sam-vit-base", device=0)
+        SAMP["g"] = pipeline("mask-generation", model="facebook/sam-vit-large", device=0)
     fl = beste_fotos(d, 30); sh = []
     for f in fl[:8]:
         im, ok = foto_ortho(d, f, False); g_ = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY); okk = cv2.erode(ok.astype(np.uint8), np.ones((9, 9), np.uint8)) > 0
         sh.append((float(cv2.Laplacian(g_, cv2.CV_32F)[okk].var()) * okk.mean() if okk.sum() > 5000 else 0.0, f))
     sh.sort(reverse=True); im, ok = foto_ortho(d, sh[0][1], False); H, W = im.shape[:2]
-    r = SAMP["g"](Image.fromarray(im[:, :, ::-1]), points_per_batch=64, pred_iou_thresh=0.85, stability_score_thresh=0.9); torch.cuda.empty_cache()
+    r = SAMP["g"](Image.fromarray(im[:, :, ::-1]), points_per_batch=64, pred_iou_thresh=0.88, stability_score_thresh=0.92); torch.cuda.empty_cache()
     M = [np.asarray(m.cpu() if hasattr(m, "cpu") else m).astype(bool) & (cv2.erode(ok.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0) for m in r["masks"]]; M.sort(key=lambda m: -m.sum()); keep = []; out = []; dep = d["d8"].astype(np.float32) / 255 * (d["vor"] + d["hinter"]) - d["hinter"]; px = d["px"]
     for m in M:
         ar = int(m.sum()); m2 = ar * px * px
@@ -777,6 +777,10 @@ def sam_flaechen(d, minfl=0.03, maxanteil=0.4, eps=2.5):
         c = max(cs, key=cv2.contourArea); ap = cv2.approxPolyDP(c, eps, True)[:, 0, :].astype(float)
         if len(ap) < 3: continue
         rr = cv2.minAreaRect(c.astype(np.float32)); rect = float(cv2.contourArea(c) / max(rr[1][0] * rr[1][1], 1e-6)); tt = dep[m]
+        if rect > 0.88:                                                     # fast rechteckig und achsparallel -> exaktes Rechteck (Fensterscheiben, Konsolen, Geländerband): Kanten aus Zeilen-/Spaltenmedian
+            ang = rr[2] % 90; ang = min(ang, 90 - ang)
+            if ang < 4.0:
+                ys_, xs_ = np.where(m); x0_, x1_ = float(np.percentile(xs_, 1)), float(np.percentile(xs_, 99)); y0_, y1_ = float(np.percentile(ys_, 1)), float(np.percentile(ys_, 99)); ap = np.array([[x0_, y0_], [x1_, y0_], [x1_, y1_], [x0_, y1_]], float); rect = 1.0
         out.append(dict(poly=ap.round(1).tolist(), m2=round(float(m2), 2), t=round(float(np.median(tt)), 2), rect=round(rect, 2)))
     out.sort(key=lambda e: -e["m2"]); ORD["regs"] = out[:500]; return dict(flaechen=out[:500], referenz=sh[0][1])
 
