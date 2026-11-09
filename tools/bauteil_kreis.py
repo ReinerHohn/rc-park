@@ -67,9 +67,9 @@ def sh(cmd, cwd, log=None, env=None, timeout=None):
                            stderr=subprocess.STDOUT, text=True, env=e, timeout=timeout)
     return r.returncode, (r.stdout if not log else open(log).read()[-4000:])
 
-OOM_MUSTER = ("out of memory", "CUDA_ERROR_OUT_OF_MEMORY", "OutOfMemoryError")
+OOM_MUSTER = ("out of memory", "CUDA_ERROR_OUT_OF_MEMORY", "OutOfMemoryError", "PLATZ ZU KNAPP")   # Platzwaechter-Abbruch = Infrastruktur (s2 R1 10.11., Gewinn +0,224 verworfen)
 
-def sh_tor(cmd, cwd, log, env=None, versuche=4, pause=90):
+def sh_tor(cmd, cwd, log, env=None, versuche=6, pause=300):
     """Torschritt (Bau/Abnahme/Messung): Spuren-uebergreifend per flock serialisiert (deterministische Messung -> verlustfrei)
     und bei CUDA-OOM wiederholt. Ein OOM ist ein Infrastrukturfehler, kein rotes Tor (Kreis1 R1 10.11.: Abnahme 'rot' war OOM in wandstaerke)."""
     import fcntl
