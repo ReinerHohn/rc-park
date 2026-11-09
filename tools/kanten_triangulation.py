@@ -11,7 +11,7 @@ NREF = opt("--refs", 12, int); NPART = opt("--partner", 3, int); NCPU = opt("--c
 def arbeit(f):
     _, E = KV.kantenbilder(f)
     if E is None: return f, None, None
-    h, w = E.shape[1:]; dt2 = np.minimum(cv2.distanceTransform((E.sum(0) < 2).astype(np.uint8), cv2.DIST_L2, 3)[::2, ::2], 255).astype(np.uint8)
+    h, w = E.shape[1:]; dt2 = np.minimum(cv2.distanceTransform((E.sum(0) < (1 if '--lax' in sys.argv else 2)).astype(np.uint8), cv2.DIST_L2, 3)[::2, ::2], 255).astype(np.uint8)
     im = cv2.imread(os.path.join(KV.BD, f), cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION); sc = 1500 / w; im = cv2.resize(im, (1500, int(h * sc)), interpolation=cv2.INTER_AREA); lab = cv2.cvtColor(im, cv2.COLOR_BGR2LAB); lsd = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD); L = []
     for ch in (cv2.cvtColor(im, cv2.COLOR_BGR2GRAY), lab[:, :, 1], lab[:, :, 2]):
         r = lsd.detect(ch)[0]
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     pairs = []
     for a in sel:
         cand = [(abs(np.linalg.norm(Cn[b] - Cn[a]) - 6.0), b) for b in range(J) if b != a and 2.0 < np.linalg.norm(Cn[b] - Cn[a]) < 15.0 and float(Dn[a] @ Dn[b]) > 0.7]; cand.sort(); pairs += [(a, b) for _, b in cand[:NPART]]
-    print("Paare", len(pairs), flush=True); rng = np.random.default_rng(0); allA = []; allB = []; allS = []; allV = []
+    DBG = [0, 0, 0, 0]; print("Paare", len(pairs), flush=True); rng = np.random.default_rng(0); allA = []; allB = []; allS = []; allV = []
     ts1 = torch.linspace(0.05, 0.95, 16, device=dev); ts2 = torch.linspace(0.02, 0.98, 48, device=dev)
     for (a, b) in pairs:
         La, Lb = LN[a], LN[b]; na, nb = len(La), len(Lb)
@@ -64,15 +64,17 @@ if __name__ == "__main__":
         loA, hiA = trange(C[a], A0[ia], A1[ia]); loB, hiB = trange(C[b], B0[ib], B1[ib]); lo_t = torch.maximum(loA, loB); hi_t = torch.minimum(hiA, hiB); ok = (hi_t - lo_t > 0.15) & (hi_t - lo_t < 12.0)
         S0 = P0 + d * lo_t[:, None]; S1 = P0 + d * hi_t[:, None]; ok &= ((S0 > LO) & (S0 < HI)).all(1) & ((S1 > LO) & (S1 < HI)).all(1); S0, S1 = S0[ok], S1[ok]
         if len(S0) == 0: continue
+        hoch = (torch.maximum(S0[:, 2], S1[:, 2]) > 15); DBG[0] += int(hoch.sum()); DBG[1] += len(S0)
         others = [j for j in range(J) if j not in (a, b)]; st1 = rng.choice(others, min(24, len(others)), replace=False).tolist(); keepA = []; keepB = []; keepS = []; keepV = []
         for c0 in range(0, len(S0), 40000):
             s0, s1 = S0[c0:c0 + 40000], S1[c0:c0 + 40000]; Q = s0[:, None] * (1 - ts1)[None, :, None] + s1[:, None] * ts1[None, :, None]; h1, v1 = stuetz(Q, st1); k = (v1 >= 0.5 * 16 * 24 * 0.25) & (h1 >= 0.6 * v1)
             if int(k.sum()) == 0: continue
-            s0, s1 = s0[k], s1[k]; Q = s0[:, None] * (1 - ts2)[None, :, None] + s1[:, None] * ts2[None, :, None]; h2, v2 = stuetz(Q, others); sc = h2 / v2.clamp(min=1); k2 = (sc >= 0.62) & (v2 >= 48 * 4)
-            keepA.append(s0[k2]); keepB.append(s1[k2]); keepS.append(sc[k2]); keepV.append(v2[k2] / 48)
+            DBG[2] += int((torch.maximum(s0[k][:, 2], s1[k][:, 2]) > 15).sum()) if int(k.sum()) else 0; s0, s1 = s0[k], s1[k]; Q = s0[:, None] * (1 - ts2)[None, :, None] + s1[:, None] * ts2[None, :, None]; h2, v2 = stuetz(Q, others); sc = h2 / v2.clamp(min=1); k2 = (sc >= 0.62) & (v2 >= 48 * 4)
+            DBG[3] += int((torch.maximum(s0[k2][:, 2], s1[k2][:, 2]) > 15).sum()); keepA.append(s0[k2]); keepB.append(s1[k2]); keepS.append(sc[k2]); keepV.append(v2[k2] / 48)
         if keepA:
             allA.append(torch.cat(keepA)); allB.append(torch.cat(keepB)); allS.append(torch.cat(keepS)); allV.append(torch.cat(keepV))
         print("Paar", a, b, "Kandidaten", len(S0), "gestuetzt", int(sum(len(x) for x in keepA)), flush=True)
+    print("Diagnose z>15 m: Kandidaten %d von %d, nach Stufe 1: %d, nach Stufe 2: %d" % (DBG[0], DBG[1], DBG[2], DBG[3]), flush=True)
     if not allA: print("nichts gefunden"); sys.exit(0)
     A = torch.cat(allA); B = torch.cat(allB); S = torch.cat(allS); V = torch.cat(allV); L = (B - A).norm(dim=1); o = (S * L.clamp(max=3)).argsort(descending=True); A, B, S, V, L = A[o], B[o], S[o], V[o], L[o]; print("vor NMS", len(A), flush=True)
     kA = torch.zeros((0, 3), device=dev); kB = torch.zeros((0, 3), device=dev); kS = []; tq = torch.linspace(0, 1, 6, device=dev)
