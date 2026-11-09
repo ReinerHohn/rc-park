@@ -751,6 +751,35 @@ def synth_pruefstand(d, anz=14, pos_cm=3.0, rot_grad=0.15, breite=1500, seed=5, 
         mm = raster([list(q[:4]) for q in sg]); rec = hit(PM, mm); pre = hit(samp(sg), mM); res.append(dict(methode=nm, linien=len(sg), praez=round(pre, 3), recall=round(rec, 3), F=round(2 * rec * pre / max(rec + pre, 1e-9), 3)))
     return dict(tabelle=res, fotos=len(fl), pos_cm=pos_cm, rot_grad=rot_grad, wahrheit=int(len(M)))
 
+SAMP = {}
+def sam_flaechen(d, minfl=0.03, maxanteil=0.4, eps=2.5):
+    """Objekte statt Kontrastlinien: SAM (facebook/sam-vit-base via transformers, Gewichte /media/oem/scan/tools_src/hf_cache) auf der scharfen Ortho des Referenzfotos -> Masken -> Polygone im Format von regionen().
+    Wie ein Mensch: Fensterscheiben, Gelaenderband, Statuen, Konsolen, Bogenoeffnungen als eigene Flaechen. Lizenz: SAM Apache-2.0 (Gewichte, Meta)."""
+    import torch
+    from PIL import Image
+    os.environ.setdefault("HF_HOME", "/media/oem/scan/tools_src/hf_cache")
+    if "g" not in SAMP:
+        from transformers import pipeline
+        SAMP["g"] = pipeline("mask-generation", model="facebook/sam-vit-base", device=0)
+    fl = beste_fotos(d, 30); sh = []
+    for f in fl[:8]:
+        im, ok = foto_ortho(d, f, False); g_ = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY); okk = cv2.erode(ok.astype(np.uint8), np.ones((9, 9), np.uint8)) > 0
+        sh.append((float(cv2.Laplacian(g_, cv2.CV_32F)[okk].var()) * okk.mean() if okk.sum() > 5000 else 0.0, f))
+    sh.sort(reverse=True); im, ok = foto_ortho(d, sh[0][1], False); H, W = im.shape[:2]
+    r = SAMP["g"](Image.fromarray(im[:, :, ::-1]), points_per_batch=64, pred_iou_thresh=0.85, stability_score_thresh=0.9); torch.cuda.empty_cache()
+    M = [np.asarray(m.cpu() if hasattr(m, "cpu") else m).astype(bool) & (cv2.erode(ok.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0) for m in r["masks"]]; M.sort(key=lambda m: -m.sum()); keep = []; out = []; dep = d["d8"].astype(np.float32) / 255 * (d["vor"] + d["hinter"]) - d["hinter"]; px = d["px"]
+    for m in M:
+        ar = int(m.sum()); m2 = ar * px * px
+        if m2 < minfl or ar > maxanteil * H * W: continue
+        if any((m & k).sum() / max((m | k).sum(), 1) > 0.9 for k in keep): continue
+        keep.append(m); cs, _ = cv2.findContours(m.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if not cs: continue
+        c = max(cs, key=cv2.contourArea); ap = cv2.approxPolyDP(c, eps, True)[:, 0, :].astype(float)
+        if len(ap) < 3: continue
+        rr = cv2.minAreaRect(c.astype(np.float32)); rect = float(cv2.contourArea(c) / max(rr[1][0] * rr[1][1], 1e-6)); tt = dep[m]
+        out.append(dict(poly=ap.round(1).tolist(), m2=round(float(m2), 2), t=round(float(np.median(tt)), 2), rect=round(rect, 2)))
+    out.sort(key=lambda e: -e["m2"]); ORD["regs"] = out[:500]; return dict(flaechen=out[:500], referenz=sh[0][1])
+
 def kantenpunkte(foto, pts, r):
     """naechster Fotokantenpunkt (Canny, 1613 px) je Eingabepunkt innerhalb r px; sonst unveraendert. Rueckgabe Liste [x,y,bewegt]"""
     g = cv2.imread(os.path.join(a.bilder, foto), cv2.IMREAD_GRAYSCALE | cv2.IMREAD_IGNORE_ORIENTATION); g = cv2.resize(g, (SW, int(g.shape[0] * SW / g.shape[1])), interpolation=cv2.INTER_AREA)
@@ -1000,6 +1029,8 @@ class H(BaseHTTPRequestHandler):
             self._send(200, "application/json", json.dumps(gleiche(d["poly"], float(d.get("thr", 0.5)), bool(d.get("eigene_skala", False)))).encode())
         elif self.path == "/api/boegen":
             self._send(200, "application/json", json.dumps(dict(boegen=boegen(d["linien"], ORD["last"]["px"]))).encode())
+        elif self.path == "/api/sam_flaechen":
+            self._send(200, "application/json", json.dumps(sam_flaechen(ORD["last"], float(d.get("minfl", 0.03)))).encode())
         elif self.path == "/api/regionen":
             self._send(200, "application/json", json.dumps(dict(regionen=regionen(d["linien"], float(d.get("minfl", 0.05)), int(d.get("luecke", 12))))).encode())
         elif self.path == "/api/freiform":
