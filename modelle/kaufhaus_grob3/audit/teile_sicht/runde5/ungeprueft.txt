@@ -1,0 +1,4 @@
+quader:eg1_nische	Generator lieferte allein kein Netz (nur Schnitt, oder haengt von einem Vorgaenger-Bauteil ab, z. B. Gauben von Dach): nicht trennbar -> ungeprueft
+quader:eg1_tuer_nische	Generator lieferte allein kein Netz (nur Schnitt, oder haengt von einem Vorgaenger-Bauteil ab, z. B. Gauben von Dach): nicht trennbar -> ungeprueft
+gaubenreihe:unten	Generator lieferte allein kein Netz (nur Schnitt, oder haengt von einem Vorgaenger-Bauteil ab, z. B. Gauben von Dach): nicht trennbar -> ungeprueft
+gaubenreihe:oben	Generator lieferte allein kein Netz (nur Schnitt, oder haengt von einem Vorgaenger-Bauteil ab, z. B. Gauben von Dach): nicht trennbar -> ungeprueft

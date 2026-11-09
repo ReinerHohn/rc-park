@@ -33,8 +33,8 @@ import numpy as np, cv2, trimesh
 TOOLS = os.path.dirname(os.path.abspath(__file__)); REPO = os.path.dirname(TOOLS); sys.path.insert(0, TOOLS)
 import render_kern as RK
 
-SCHWELLEN = dict(tol_m=0.25, tol_min_px=2.5, thr_hit=0.50, thr_lift=0.15, thr_himmel=0.06, hart_himmel=0.20, thr_wolke=0.30, tol_wolke_m=1.0,
-                 versatz_m=1.2, thr_gewinn=0.15, recall_m=0.7, thr_recall=0.45, thr_sil=0.55, min_sil=25, min_px=500, min_px_er=120, min_kanten=40, rot_anteil=0.34, wolke_verdeckt=0, min_fotos=2, min_richtungen=2, richtung_grad=25.0, kos_min=0.3, decoy_m=1.0)
+SCHWELLEN = dict(tol_m=0.10, tol_min_px=2.5, thr_hit=0.50, thr_lift=-1.0, thr_himmel=0.06, hart_himmel=0.20, thr_wolke=0.30, tol_wolke_m=1.0,
+                 versatz_m=1.2, thr_gewinn=0.15, thr_rand=0.60, recall_m=0.7, recall_rel=0.0, thr_recall=0.45, thr_sil=0.55, min_sil=25, min_px=500, min_px_er=120, min_kanten=40, rot_anteil=0.34, wolke_verdeckt=0, min_fotos=2, min_richtungen=2, richtung_grad=25.0, kos_min=0.3, decoy_m=1.0)
 LANG = 1008                                                                                           # lange Bildseite der Arbeitsaufloesung (Pixel)
 FARBE = {"GRUEN": (60, 190, 60), "ROT": (50, 50, 230), "UNGEPRUEFT": (150, 150, 150)}
 
@@ -64,12 +64,15 @@ def raster(mesh, kc):
     return RK.dreiecke_rastern(mesh, kc["R"], kc["t"], kc["f"], kc["cx"], kc["cy"], kc["W"], kc["H"])
 
 def kantenpixel(D, fid, vis, mesh, winkel=25.0, sprung_rel=0.02, sprung_abs=0.12):
-    """Modellkanten aus dem Raster: Umriss der sichtbaren Flaeche, Normalenknick > winkel, Tiefensprung. Nur Pixel von vis."""
+    """Modellkanten aus dem Raster: Umriss der sichtbaren Flaeche, Normalenknick > winkel, Tiefensprung. Nur Pixel von vis.
+    Tiefensprung = ZWEITE Differenz (|D(x+1)-2D(x)+D(x-1)|): eine streifend gesehene ebene Flaeche hat steile, aber lineare Tiefe -> keine Kante
+    (die erste Differenz gab Strahlenbuendel aus Scheinkanten, Sichtblatt Runde 5 GANZ)."""
     n = np.zeros(D.shape + (3,), np.float32); g = fid >= 0; n[g] = mesh.face_normals[fid[g]]
-    E = np.zeros(D.shape, bool); c = np.cos(np.radians(winkel))
+    E = np.zeros(D.shape, bool); c = np.cos(np.radians(winkel)); Dz = np.where(np.isfinite(D), D, 0.0)
     for dy, dx in ((0, 1), (1, 0), (0, -1), (-1, 0)):
-        vn = np.roll(vis, (-dy, -dx), (0, 1)); nn = np.roll(n, (-dy, -dx), (0, 1)); dn = np.roll(np.where(np.isfinite(D), D, 0), (-dy, -dx), (0, 1))
-        E |= vis & (~vn | ((n * nn).sum(2) < c) | (np.abs(np.where(np.isfinite(D), D, 0) - dn) > sprung_abs + sprung_rel * np.where(np.isfinite(D), D, 0)))
+        vn = np.roll(vis, (-dy, -dx), (0, 1)); nn = np.roll(n, (-dy, -dx), (0, 1)); vm = np.roll(vis, (dy, dx), (0, 1))
+        d2 = np.abs(np.roll(Dz, (-dy, -dx), (0, 1)) - 2 * Dz + np.roll(Dz, (dy, dx), (0, 1)))
+        E |= vis & (~vn | ((n * nn).sum(2) < c) | (vn & vm & (d2 > sprung_abs + sprung_rel * Dz)))
     E[0, :] = E[-1, :] = False; E[:, 0] = E[:, -1] = False
     return E & vis
 
@@ -103,6 +106,13 @@ def teil_messen(teil, A, kc, sw=SCHWELLEN, mit_bild=False):
     E = kantenpixel(D, fid, vis, teil); r["n_kanten"] = int(E.sum())
     er = cv2.erode(vis.astype(np.uint8), cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))).astype(bool); ner = int(er.sum())
     ok_flaeche = r["flaeche_px"] >= sw["min_px"] and r["n_kanten"] >= sw["min_kanten"]
+    r["rand_hit"] = None                                                                                 # AUSSENKONTUR der Teilflaeche (bricht die Periodizitaet von Fensterreihen/Balustern: Reihenende hat keine Nachbarkante)
+    cn, _ = cv2.findContours(cv2.morphologyEx(vis.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8)), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    if cn:
+        ctr = np.zeros(vis.shape, np.uint8); cv2.drawContours(ctr, cn, -1, 1, 1); ctr = ctr.astype(bool) & (E | cv2.dilate(E.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool))
+        cy_, cx_ = np.nonzero(ctr)
+        if len(cy_) >= sw["min_kanten"] // 2:
+            tc = np.maximum(sw["tol_min_px"], sw["tol_m"] * kc["f"] / np.maximum(D[cy_, cx_], 1.0)); r["rand_hit"] = round(float((A.dF[cy_, cx_] <= tc).mean()), 3); r["n_rand"] = int(len(cy_))
     if r["n_kanten"] >= 5:
         ys, xs = np.nonzero(E); z = D[ys, xs]; tol = np.maximum(sw["tol_min_px"], sw["tol_m"] * kc["f"] / np.maximum(z, 1.0))
         H, W = A.dF.shape
@@ -128,7 +138,8 @@ def teil_messen(teil, A, kc, sw=SCHWELLEN, mit_bild=False):
                 tw = np.maximum(sw["tol_wolke_m"], 0.04 * D); r["wolke"] = round(float((kn & (A.cz > D + tw)).sum() / kn.sum()), 3); r["wolke_vorn"] = round(float((kn & (A.cz < D - tw)).sum() / kn.sum()), 3)
     r["recall"] = None; r["sil_recall"] = None
     if A.dEg is not None and ner >= sw["min_px_er"]:                                                   # Gegenrichtung: Fotokanten/-silhouette UM das Teil ohne Modellkante (zu kleines/falsch geformtes Teil)
-        rp = max(3, int(round(sw["recall_m"] * kc["f"] / max(r["z_med"], 1.0)))); reg = cv2.dilate(vis.astype(np.uint8), cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * rp + 1, 2 * rp + 1))).astype(bool)
+        ext = float(np.max(teil.bounds[1][:2] - teil.bounds[0][:2])); rm = max(0.2, sw["recall_rel"] * ext) if sw.get("recall_rel") else sw["recall_m"]     # Formfit-Modus: Umfeld ~ halbe Teilbreite (Saeule 0,44 m, Helm ~0,8 m), nicht die ganze Arkade
+        rp = max(3, int(round(rm * kc["f"] / max(r["z_med"], 1.0)))); reg = cv2.dilate(vis.astype(np.uint8), cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * rp + 1, 2 * rp + 1))).astype(bool)
         tolr = max(sw["tol_min_px"], sw["tol_m"] * kc["f"] / max(r["z_med"], 1.0)); fk = A.FK & reg
         if fk.sum() >= sw["min_kanten"]: r["recall"] = round(float((A.dEg[fk] <= tolr).mean()), 3)
         if A.sky is not None:
@@ -145,6 +156,7 @@ def foto_urteil(r, sw=SCHWELLEN):
     if r["himmel"] is not None and r["himmel"] > sw["thr_himmel"]: g.append(f"himmel {r['himmel']:.2f}>{sw['thr_himmel']}")
     if r["wolke"] is not None and r["wolke"] > sw["thr_wolke"]: g.append(f"wolke_hinten {r['wolke']:.2f}>{sw['thr_wolke']}")
     if r.get("gewinn") is not None and r["gewinn"] >= sw["thr_gewinn"] and r["versatz_m"] >= 0.3: g.append(f"versatz {r['versatz_m']} m gewinn {r['gewinn']:.2f}")
+    if r.get("rand_hit") is not None and r["rand_hit"] < sw["thr_rand"]: g.append(f"aussenkontur {r['rand_hit']:.2f}<{sw['thr_rand']}")
     if r.get("recall") is not None and r["recall"] < sw["thr_recall"]: g.append(f"recall {r['recall']:.2f}<{sw['thr_recall']}")
     if r.get("sil_recall") is not None and r["sil_recall"] < sw["thr_sil"]: g.append(f"silhouette {r['sil_recall']:.2f}<{sw['thr_sil']}")
     hart = r["himmel"] is not None and r["himmel"] > sw["hart_himmel"]
@@ -293,7 +305,7 @@ def nebeneinander(bilder, h=520):
 # ------------------------------------------------------------------ Hauptlauf
 def pruefen(ap_args):
     a = ap_args; t0 = time.time(); obj, name, root, od, cfg = cfg_laden(a); sw = dict(SCHWELLEN)
-    if a.formen: sw["wolke_verdeckt"] = 1; sw["min_fotos"] = 3
+    if a.formen: sw["wolke_verdeckt"] = 1; sw["min_fotos"] = 3; sw["recall_rel"] = 0.5
     for k in sw:
         v = getattr(a, k, None)
         if v is not None: sw[k] = v
@@ -307,7 +319,7 @@ def pruefen(ap_args):
     for typ, m in formteile: meshes[typ] = ("Formteil", m)
     for typ, gr, p in teile:
         m = stl_m(p, massstab) if p else None
-        if m is None or len(m.faces) < 4: ohne.append((typ, gr, "kein Koerper (Generator lieferte kein Netz; nur Schnitt/Rohdreiecke?)" if p else "Generatoraufruf fehlgeschlagen")); continue
+        if m is None or len(m.faces) < 4: ohne.append((typ, gr, "kein Koerper (Generator lieferte kein Netz; nur Schnitt/Rohdreiecke?)" if p else "Generator lieferte allein kein Netz (nur Schnitt, oder haengt von einem Vorgaenger-Bauteil ab, z. B. Gauben von Dach): nicht trennbar -> ungeprueft")); continue
         meshes[typ] = (gr, m)
     print(f"  {len(meshes)} Bauteile mit Koerper, {len(ohne)} ohne", flush=True)
     ganz = trimesh.util.concatenate([m for _, (_, m) in meshes.items()]) if a.formen else stl_m(cfg["stl"], massstab); kam = json.load(open(cfg["kameras"])); namen = [n for n in sorted(kam) if os.path.exists(os.path.join(cfg["stabil"], os.path.splitext(n)[0] + ".png")) and os.path.exists(os.path.join(cfg["bilder"], n))]
