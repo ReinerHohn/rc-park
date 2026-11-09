@@ -1,6 +1,6 @@
 """gitter_kurven.py - Kettenbildung von 3D-Kantenpunkten (Tiefen-Sweep) zu geordneten Zuegen mit Modellwahl Gerade / Kreisbogen / kubische Bezier
 (Idee: 3D Curvix / 3D Edge Sketch, Brown/Kimia; Eigenbau, modelle/RECHERCHE_KANTENGITTER_NEU_2026-11-09.md Eintrag 2).
-Aufruf: gitter_kurven.py SWEEP.npz[,SWEEP2.npz,...] GITTER_IN.json OUT.json [--kam kam_lot2.json --stabil STABILDIR] [--ohne_verbinden] [--vox 0.06] [--kmin 3] [--tol 0.03] [--minlen 0.3] [--minpkt 8] [--rlink 0.10] [--winkel 30]
+Aufruf: gitter_kurven.py SWEEP.npz[,SWEEP2.npz,...] GITTER_IN.json OUT.json [--kam kam_lot2.json --stabil STABILDIR [--wolke KANTEN.npz --ztol 0.5]] [--ohne_verbinden] [--vox 0.06] [--kmin 3] [--tol 0.03] [--minlen 0.3] [--minpkt 8] [--rlink 0.10] [--winkel 30]
         [--k 12] [--lin 0.5] [--maxabw 0.10] [--rand 2.0] [--abtast 0.10] [--kref 0]
 Schritte: (1) Konsens: Voxel `vox`, nur Voxel mit >= kmin verschiedenen Referenzfotos (`ref`), Mittelpunkt je Voxel (GPU).
           (2) Punkte, die ein Gitter-Segment schon erklaert (Abstand < vox), fallen weg -> Kurvenkandidaten.
@@ -239,10 +239,12 @@ def verschmelzen(modelle, tol, abtast, maxabw, b_norm=10.0, b_zen=0.08, b_rad=0.
     return modelle, verbunden
 
 
-def fotopruefung(stuecke, kam, stabildir, thr=0.3, dmax=45.0, tolm=0.12, stuetz=0.5):
+def fotopruefung(stuecke, kam, stabildir, thr=0.3, dmax=45.0, tolm=0.12, stuetz=0.5, wolke=None, ztol=0.5):
     """Jedes Kurvenstueck gegen die Stabilitaetskarten (Vorlage gitter_zurueck.stuetzung_alle, vektorisiert): Abtastpunkte (verdichtet auf 5 cm) in jedes
     Foto projizieren, das naeher als dmax ist und >= 90 % der Punkte im Bild hat; Kante = Karte >= thr, dilatiert um tolm Meter in Pixel (aus Kameraabstand).
-    Foto sagt JA, wenn >= stuetz der Punkte auf Kante liegen, sonst NEIN. Rueckgabe ja, nein je Stueck. Karten werden je Foto geladen und wieder verworfen (VRAM)."""
+    Foto sagt JA, wenn >= stuetz der Punkte auf Kante liegen, sonst NEIN. Rueckgabe ja, nein je Stueck. Karten werden je Foto geladen und wieder verworfen (VRAM).
+    wolke (N,3): Z-Puffer-Sichtbarkeit wie gitter_pruefblatt.proj --wolke (1/4 Aufloesung, 3x3-Min-Splat, Loecher aus 9x9, ztol): verdeckte Punkte zaehlen weder ja noch nein
+    (ein Foto zaehlt nur, wenn >= 90 % der Punkte des Stuecks sichtbar und im Bild sind)."""
     import cv2
     Qs, idx, mids = [], [], []
     for k, st in enumerate(stuecke):
@@ -251,6 +253,7 @@ def fotopruefung(stuecke, kam, stabildir, thr=0.3, dmax=45.0, tolm=0.12, stuetz=
     Q = torch.as_tensor(np.vstack(Qs), device=DEV); idx = torch.as_tensor(np.concatenate(idx), device=DEV); mids = np.array(mids); M = len(stuecke)
     cnt = torch.bincount(idx, minlength=M).float(); ja = torch.zeros(M, device=DEV, dtype=torch.int32); nein = torch.zeros(M, device=DEV, dtype=torch.int32)
     fs = [f for f in sorted(kam) if os.path.exists(os.path.join(stabildir, os.path.splitext(f)[0] + ".png"))]; benutzt = 0
+    Wt = torch.as_tensor(np.asarray(wolke, np.float32), device=DEV) if wolke is not None else None
     for f in fs:
         k = kam[f]; C = np.array(k["C"]); dC = np.linalg.norm(mids - C, axis=1); nah_np = dC < dmax
         if not nah_np.any(): continue
@@ -261,7 +264,15 @@ def fotopruefung(stuecke, kam, stabildir, thr=0.3, dmax=45.0, tolm=0.12, stuetz=
         R = torch.tensor(k["Rn"], device=DEV, dtype=torch.float32); t = torch.tensor(k["tn"], device=DEV, dtype=torch.float32); X = Q @ R.T + t; z = X[:, 2].clamp(min=0.3)
         x = X[:, 0] / z; y = X[:, 1] / z; f1 = 1 + k["params"][3] * (x * x + y * y)
         u = ((k["f"] * x * f1 + k["cx"]) * sj).round().long(); v = ((k["f"] * y * f1 + k["cy"]) * sj).round().long(); H, W = Vm.shape
-        ok = (X[:, 2] > 1) & (u >= 0) & (u < W) & (v >= 0) & (v < H); hit = torch.zeros(len(Q), device=DEV); hit[ok] = Vm[v[ok], u[ok]]
+        ok = (X[:, 2] > 1) & (u >= 0) & (u < W) & (v >= 0) & (v < H)
+        if Wt is not None:                                                                        # Z-Puffer der Wolke (Vorlage gitter_pruefblatt.proj)
+            Xw = Wt @ R.T + t; zw = Xw[:, 2]; mw = zw > 0.5; xw = Xw[mw, 0] / zw[mw]; yw = Xw[mw, 1] / zw[mw]; fw = 1 + k["params"][3] * (xw * xw + yw * yw)
+            uw = ((k["f"] * xw * fw + k["cx"]) * sj / 4).long(); vw = ((k["f"] * yw * fw + k["cy"]) * sj / 4).long(); Hq, Wq = H // 4 + 1, W // 4 + 1
+            inb = (uw >= 0) & (uw < Wq) & (vw >= 0) & (vw < Hq); zb = torch.full((Hq * Wq,), 1e9, device=DEV); zb.scatter_reduce_(0, vw[inb] * Wq + uw[inb], zw[mw][inb], reduce="amin"); zb = zb.view(Hq, Wq)
+            zb = -torch.nn.functional.max_pool2d(-zb[None, None], 3, 1, 1)[0, 0]
+            leer = zb > 1e8; zb9 = -torch.nn.functional.max_pool2d(-zb[None, None], 9, 1, 4)[0, 0]; zb = torch.where(leer, zb9, zb)
+            uq = (u / 4).long().clamp(0, Wq - 1); vq = (v / 4).long().clamp(0, Hq - 1); ok = ok & (X[:, 2] <= zb[vq, uq] + ztol)
+        hit = torch.zeros(len(Q), device=DEV); hit[ok] = Vm[v[ok], u[ok]]
         okm = torch.bincount(idx, ok.float(), minlength=M) / cnt; hm = torch.bincount(idx, hit, minlength=M) / torch.bincount(idx, ok.float(), minlength=M).clamp(min=1)
         g_ = torch.as_tensor(nah_np, device=DEV) & (okm >= 0.9); ja += (g_ & (hm >= stuetz)).int(); nein += (g_ & (hm < stuetz)).int()
         del Vm
@@ -276,7 +287,7 @@ def main():
     ap.add_argument("--maxabw", type=float, default=0.10); ap.add_argument("--rand", type=float, default=2.0); ap.add_argument("--abtast", type=float, default=0.10)
     ap.add_argument("--gpu_mb", type=int, default=2000); ap.add_argument("--kam", default=None, help="kam_lot2.json: Fotopruefung Pflichtfilter"); ap.add_argument("--stabil", default=None)
     ap.add_argument("--nmin", type=int, default=3); ap.add_argument("--stuetz", type=float, default=0.5); ap.add_argument("--thr", type=float, default=0.3); ap.add_argument("--dmax", type=float, default=45.0); ap.add_argument("--tolm", type=float, default=0.12)
-    ap.add_argument("--ohne_verbinden", action="store_true"); ap.add_argument("--kref", type=float, default=0, help="Kette nur, wenn Median der Ref-Anzahl je Voxel >= kref (0 = aus)"); a = ap.parse_args()
+    ap.add_argument("--ohne_verbinden", action="store_true"); ap.add_argument("--wolke", default=None, help="Kantenwolke .npz/.npy fuer Z-Puffer-Sichtbarkeit in der Fotopruefung"); ap.add_argument("--ztol", type=float, default=0.5); ap.add_argument("--kref", type=float, default=0, help="Kette nur, wenn Median der Ref-Anzahl je Voxel >= kref (0 = aus)"); a = ap.parse_args()
     t0 = time.time(); torch.cuda.set_per_process_memory_fraction(min(1.0, a.gpu_mb / (torch.cuda.get_device_properties(0).total_memory / 2 ** 20)))
     P, ref, s, off = [], [], [], 0
     for sw in a.sweep.split(","):                                                                  # mehrere Sweeps: ref-Indizes verschieben, damit Referenzfotos verschieden bleiben
@@ -319,7 +330,9 @@ def main():
     print("Modelle vor Verbinden %d %s -> nach Verbinden %d %s (Verbindungen %d, max. Teile %d)" % (n_vor, zaehl_vor, len(modelle), zaehl_verb, verbunden, max([m.get("teile", 1) for m in modelle] + [0])))
     t5 = time.time(); fotos_benutzt = 0; abgelehnt = []
     if a.kam:
-        kam = json.load(open(a.kam)); ja, nein, fotos_benutzt = fotopruefung(modelle, kam, a.stabil, a.thr, a.dmax, a.tolm, a.stuetz)
+        kam = json.load(open(a.kam)); wolke = None
+        if a.wolke: w_ = np.load(a.wolke); wolke = (w_["P"] if hasattr(w_, "files") else w_)[:, :3]
+        ja, nein, fotos_benutzt = fotopruefung(modelle, kam, a.stabil, a.thr, a.dmax, a.tolm, a.stuetz, wolke, a.ztol)
         beh = []
         for m, j, n_ in zip(modelle, ja, nein):
             m.update(fotos_ja=int(j), fotos_nein=int(n_)); (beh if (j >= a.nmin and j > n_) else abgelehnt).append(m)
