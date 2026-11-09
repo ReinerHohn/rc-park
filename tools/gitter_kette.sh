@@ -110,7 +110,7 @@ if stufe messen; then
   $PY -I tools/gitter_pruefblatt.py "$KAM" $STAB $BILDER $K/gitter.json $AUD/pruefblatt.jpg --k 12 --wolke $D/kanten3d_k80.npz 2>&1 | head -1 | tee -a $B
 fi
 if stufe zeigen; then
-  log "10 zeigen"; $PY -I tools/viewer_kanten_bauen.py modelle/kaufhaus_grob3/viewer_kanten.html --seg $K/gitter.json --kp $K/konsens_B.npy >> $K/zeigen.log 2>&1 && log "   Viewer gebaut"
+  log "10 zeigen"; $PY -I tools/viewer_kanten_bauen.py modelle/kaufhaus_grob3/viewer_kanten.html --seg $K/gitter.json --kp $K/konsens_B.npy --n 450000 >> $K/zeigen.log 2>&1 && log "   Viewer gebaut"
   systemctl --user stop rcpark-editordraht.service 2>/dev/null; sleep 1; rm -f modelle/kaufhaus_grob3/draht_kanten.json
   tools/job_start.sh editordraht /tmp/editordraht.log $PY -I tools/editor_draht.py "$KAM" $BILDER $D/kanten3d_k80.npz $K/gitter.json modelle/kaufhaus_grob3/draht_kanten.json >/dev/null 2>&1; log "   Editor neu gestartet mit $K/gitter.json"
 fi
