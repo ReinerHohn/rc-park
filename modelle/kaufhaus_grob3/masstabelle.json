@@ -1,9 +1,92 @@
 {
  "_doku": "Masstabelle Grobgenerator Kaufhaus (Foto-Diff-Fahrzeug aus 9 Teilgruppen, Rohdreiecke). Wasserdicht/1-Koerper-Zeilen sind HIER BEWUSST NICHT gefuehrt: das Modell besteht aus unverschweissten Teil-STL und ist nicht fuer den Druck bestimmt (Nutzerauftrag 7.11.: 'wasserdicht nicht noetig'); fuer den Druck gilt kaufhaus_null5 bzw. das Wolkennetz. Siehe modelle/METHODE_MASSTABELLE.md",
- "konstanten": {},
+ "konstanten": {
+  "z_unterkante_lot2": 1.34
+ },
  "messungen": {
   "hoehe": {
    "typ": "hoehe_max"
+  },
+  "first_z": {
+   "typ": "max_z_im_bereich",
+   "x0": 0.803,
+   "x1": 7.902,
+   "y0": -0.081,
+   "y1": 3.675
+  },
+  "giebel_w_z": {
+   "typ": "max_z_im_bereich",
+   "x0": -8.544,
+   "x1": -5.865,
+   "y0": 4.091,
+   "y1": 7.925
+  },
+  "giebel_o_z": {
+   "typ": "max_z_im_bereich",
+   "x0": 15.862,
+   "x1": 18.635,
+   "y0": -4.611,
+   "y1": -0.744
+  },
+  "helm_w_z": {
+   "typ": "max_z_im_bereich",
+   "x0": -4.787,
+   "x1": -3.126,
+   "y0": 13.575,
+   "y1": 15.235
+  },
+  "helm_o_z": {
+   "typ": "max_z_im_bereich",
+   "x0": 17.923,
+   "x1": 19.583,
+   "y0": 5.508,
+   "y1": 7.169
+  },
+  "dach_z_off11": {
+   "typ": "max_z_im_bereich",
+   "x0": 5.345,
+   "x1": 5.788,
+   "y0": 9.535,
+   "y1": 9.857
+  },
+  "pfeiler3_d": {
+   "typ": "kreis_durchmesser_im_bereich",
+   "x0": 6.959,
+   "x1": 7.537,
+   "y0": 9.598,
+   "y1": 10.297,
+   "z0": "=2.1 - z_unterkante_lot2",
+   "z1": "=2.35 - z_unterkante_lot2"
+  },
+  "arkade1_scheitel": {
+   "typ": "min_im_bereich",
+   "x0": -1.61,
+   "x1": -0.588,
+   "y0": 12.826,
+   "y1": 13.848,
+   "z0": "=6.7 - z_unterkante_lot2",
+   "z1": "=7.7 - z_unterkante_lot2",
+   "achse": "z"
+  },
+  "fenster2_sohl": {
+   "typ": "min_im_bereich",
+   "x0": 1.862,
+   "x1": 2.655,
+   "y0": 12.476,
+   "y1": 13.087,
+   "z0": "=10.1 - z_unterkante_lot2",
+   "z1": "=10.7 - z_unterkante_lot2",
+   "achse": "z"
+  },
+  "erker_w_unterkante": {
+   "typ": "min_im_bereich",
+   "x0": -5.214,
+   "x1": -4.707,
+   "y0": 16.24,
+   "y1": 16.626,
+   "z0": "=9.3 - z_unterkante_lot2",
+   "z1": "=10.0 - z_unterkante_lot2",
+   "achse": "z"
   }
  },
  "pruefungen": [
@@ -19,7 +102,185 @@
    "merkmal": "absolut_hoehe",
    "massstab": "sfm_buendel",
    "historie": [
-    "2026-11-07 angelegt; Ist 16.45 m (Teile z 1.48..17.93) = 2.9 m zu niedrig -> FEHLER ist der Befund, Soll nicht gelockert (Regel 5: Widerspruch Generator/Wolke, nicht mitteln)"
+    "2026-11-07 angelegt; Ist 16.45 m (Teile z 1.48..17.93) = 2.9 m zu niedrig -> FEHLER ist der Befund, Soll nicht gelockert (Regel 5: Widerspruch Generator/Wolke, nicht mitteln)",
+    "2026-11-09 status widerspruch: Quelle im gekippten Rahmen, Gitter (lot2) sagt ~27 m; Soll nicht geaendert"
+   ],
+   "status": "widerspruch",
+   "widerspruch": "Soll 18,8-19,8 stammt aus mvs_d03_fix im ALTEN Netzrahmen (25 Grad gekippt, BS150, STAND_2026-11-08_LOT_SWEEP_LOOP); Kantengitter lot2: First 27,51, Giebel 29,3, Boden 1,5-2,5 -> Gesamthoehe ~26,8-27,8. Nicht gemittelt (Regel 5); neue Hoehenzeilen (First, Giebel, Helme) kommen aus dem Gitter."
+  },
+  {
+   "name": "First Hauptdach z (m), Firstmitte along 0..7",
+   "wert": "first_z + z_unterkante_lot2",
+   "soll": [
+    27.1,
+    27.8
+   ],
+   "quelle": "kantengitter: 3D-Kantengitter aus 440 Fotos + 336 Videoframes im lot2-Rahmen (gemeinsame SfM, Lot aus Foto-Vertikalen, Massstab Buendel); rohkoerper_v7 first.z 27.51 (First-Kante 35 m, off 3.05); Rohsegmente waagerecht >1,5 m in z 26,5-28: 32 Stueck, 83 m, Median 27.29 bei off 3.38 -> Band 27,1-27,8",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/koerper/rohkoerper_v7.json first.z",
+   "historie": [
+    "2026-11-09 angelegt (Agent Gitter->Generator); Sollband = Gitterwert +- Streuung der Schaetzer",
+    "2026-11-09 wert + z_unterkante_lot2: Pruefstand misst z ueber Modellunterkante (1,34), Soll bleibt lot2"
+   ]
+  },
+  {
+   "name": "Staffelgiebel West Spitze z (m), along -9,6..-8",
+   "wert": "giebel_w_z + z_unterkante_lot2",
+   "soll": [
+    28.9,
+    29.7
+   ],
+   "quelle": "kantengitter: 3D-Kantengitter aus 440 Fotos + 336 Videoframes im lot2-Rahmen (gemeinsame SfM, Lot aus Foto-Vertikalen, Massstab Buendel); segmente_gitter_v10: hoechster Gitterpunkt am Westende (along -10,5..-7,5) 29.32, p95 29.03; 7 Steiger-Cluster bis 26,58 (rohkoerper giebel.ende_minus)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/segmente_gitter_v10.json segmente z-max along -10.5..-7.5",
+   "historie": [
+    "2026-11-09 angelegt (Agent Gitter->Generator); Sollband = Gitterwert +- Streuung der Schaetzer",
+    "2026-11-09 wert + z_unterkante_lot2: Pruefstand misst z ueber Modellunterkante (1,34), Soll bleibt lot2"
+   ]
+  },
+  {
+   "name": "Staffelgiebel Ost Spitze z (m), along 16,3..18",
+   "wert": "giebel_o_z + z_unterkante_lot2",
+   "soll": [
+    28.5,
+    29.5
+   ],
+   "quelle": "kantengitter: 3D-Kantengitter aus 440 Fotos + 336 Videoframes im lot2-Rahmen (gemeinsame SfM, Lot aus Foto-Vertikalen, Massstab Buendel); segmente_gitter_v10: hoechster Gitterpunkt am Ostende (along 15,5..18,5) 28.98, p95 28.82; Ende 'plus' laut rohkoerper UNSICHER -> Band +-0,5",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/segmente_gitter_v10.json segmente z-max along 15.5..18.5",
+   "historie": [
+    "2026-11-09 angelegt (Agent Gitter->Generator); Sollband = Gitterwert +- Streuung der Schaetzer",
+    "2026-11-09 wert + z_unterkante_lot2: Pruefstand misst z ueber Modellunterkante (1,34), Soll bleibt lot2"
+   ]
+  },
+  {
+   "name": "Helm West Spitze z (m)",
+   "wert": "helm_w_z + z_unterkante_lot2",
+   "soll": [
+    22.0,
+    22.7
+   ],
+   "quelle": "kantengitter: 3D-Kantengitter aus 440 Fotos + 336 Videoframes im lot2-Rahmen (gemeinsame SfM, Lot aus Foto-Vertikalen, Massstab Buendel); segmente_gitter_v10 helme[0] z_spitze 22.34 (Kegelfit 3512 Inlier, spitze_foto bestanden 19/202 Fotos auf Kante, spitze_foto_max 25,27 = Fahne?)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/segmente_gitter_v10.json helme[0].z_spitze",
+   "historie": [
+    "2026-11-09 angelegt (Agent Gitter->Generator); Sollband = Gitterwert +- Streuung der Schaetzer",
+    "2026-11-09 wert + z_unterkante_lot2: Pruefstand misst z ueber Modellunterkante (1,34), Soll bleibt lot2"
+   ]
+  },
+  {
+   "name": "Helm Ost Spitze z (m)",
+   "wert": "helm_o_z + z_unterkante_lot2",
+   "soll": [
+    22.4,
+    23.1
+   ],
+   "quelle": "kantengitter: 3D-Kantengitter aus 440 Fotos + 336 Videoframes im lot2-Rahmen (gemeinsame SfM, Lot aus Foto-Vertikalen, Massstab Buendel); segmente_gitter_v10 helme[1] z_spitze 22.78 (Kegelfit 2407 Inlier)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/segmente_gitter_v10.json helme[1].z_spitze",
+   "historie": [
+    "2026-11-09 angelegt (Agent Gitter->Generator); Sollband = Gitterwert +- Streuung der Schaetzer",
+    "2026-11-09 wert + z_unterkante_lot2: Pruefstand misst z ueber Modellunterkante (1,34), Soll bleibt lot2"
+   ]
+  },
+  {
+   "name": "Vorderhang z bei off 11,0 (Traufe 14,68 + Neigung 53,3 Grad)",
+   "wert": "dach_z_off11 + z_unterkante_lot2",
+   "soll": [
+    16.5,
+    17.3
+   ],
+   "quelle": "kantengitter: 3D-Kantengitter aus 440 Fotos + 336 Videoframes im lot2-Rahmen (gemeinsame SfM, Lot aus Foto-Vertikalen, Massstab Buendel); rohkoerper_v7 traufe.kante.z 14.68 an off 12.66 und dach.neigung_grad 53.3 -> z(11,0) = 14,68 + 1,66*1,342 = 16.91; Kasten 0,4 m -> +-0,3",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "hoehe_flaeche",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/koerper/rohkoerper_v7.json traufe.kante, dach.neigung_grad",
+   "historie": [
+    "2026-11-09 angelegt (Agent Gitter->Generator); Sollband = Gitterwert +- Streuung der Schaetzer",
+    "2026-11-09 wert + z_unterkante_lot2: Pruefstand misst z ueber Modellunterkante (1,34), Soll bleibt lot2"
+   ]
+  },
+  {
+   "name": "Pfeiler 3 Durchmesser (m), Schaftansatz z 2,1-2,35 (Ring ueber der Fase)",
+   "wert": "pfeiler3_d",
+   "soll": [
+    0.81,
+    0.94
+   ],
+   "quelle": "kantengitter: 3D-Kantengitter aus 440 Fotos + 336 Videoframes im lot2-Rahmen (gemeinsame SfM, Lot aus Foto-Vertikalen, Massstab Buendel); segmente_gitter_v10 saeulen gemeinsamer Radius 0.437-0.441 (saeulen_fit.py GPU-RANSAC, Gleichheitsregel, Abweichungen <= 8 cm) -> 2R 0,874-0,882",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/segmente_gitter_v10.json saeulen[].R",
+   "historie": [
+    "2026-11-09 angelegt (Agent Gitter->Generator); Sollband = Gitterwert +- Streuung der Schaetzer",
+    "2026-11-09 Kasten z 3,0-4,5 erfasste die Sockelfase (0,94) -> Schaft 3,6-4,8",
+    "2026-11-09 Kasten auf die Rueckhaelfte des Pfeilers (off 11,5-12,1, along 3,3-3,7) verengt: die um -1,0 verschobene Fassaden-STL-Wand (off 12,27) verfaelschte den Kreisfit (0,96)",
+    "2026-11-09 Zylinder hat nur Ring-Eckpunkte an den Enden (Schaft 3,6-4,8 = nan); Messring = Schaftansatz ueber der Sockelfase (z 2,2), Rueckhaelfte (Wand bei off 12,27 ausgeschlossen)"
+   ]
+  },
+  {
+   "name": "Arkade 1 Scheitel z (m) (tiefster Modellpunkt im Scheitelkasten)",
+   "wert": "arkade1_scheitel + z_unterkante_lot2",
+   "soll": [
+    7.05,
+    7.35
+   ],
+   "quelle": "kantengitter: 3D-Kantengitter aus 440 Fotos + 336 Videoframes im lot2-Rahmen (gemeinsame SfM, Lot aus Foto-Vertikalen, Massstab Buendel); kurven/arkaden.bericht.json / segmente_gitter_v10 arkaden: Rundbogen R 2.76, zc 4,42-4,47 -> Scheitel 7,18-7,23, fotogeprueft 25/29 Fotos",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/segmente_gitter_v10.json arkaden[0] zc+R",
+   "historie": [
+    "2026-11-09 angelegt (Agent Gitter->Generator); Sollband = Gitterwert +- Streuung der Schaetzer",
+    "2026-11-09 wert + z_unterkante_lot2: Pruefstand misst z ueber Modellunterkante (1,34), Soll bleibt lot2"
+   ]
+  },
+  {
+   "name": "Fenstergruppe 2 Sohlbank z (m)",
+   "wert": "fenster2_sohl + z_unterkante_lot2",
+   "soll": [
+    10.2,
+    10.45
+   ],
+   "quelle": "kantengitter: 3D-Kantengitter aus 440 Fotos + 336 Videoframes im lot2-Rahmen (gemeinsame SfM, Lot aus Foto-Vertikalen, Massstab Buendel); fenster_erker_v9 fenster.z_sohl 10.31 (Pfostenfuss, 12 Pfosten), Gruppe 1 Abweichung +0,05",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/koerper/fenster_erker_v9.json fenster.z_sohl",
+   "historie": [
+    "2026-11-09 angelegt (Agent Gitter->Generator); Sollband = Gitterwert +- Streuung der Schaetzer",
+    "2026-11-09 wert + z_unterkante_lot2: Pruefstand misst z ueber Modellunterkante (1,34), Soll bleibt lot2",
+    "2026-11-09 Kasten auf die linke Rahmen-Aussenkante (along -2,2) gelegt: min_im_bereich nutzt Eckpunkte, die Unterkante hat keine Zwischenpunkte"
+   ]
+  },
+  {
+   "name": "Erker West Unterkante z (m)",
+   "wert": "erker_w_unterkante + z_unterkante_lot2",
+   "soll": [
+    9.45,
+    9.8
+   ],
+   "quelle": "kantengitter: 3D-Kantengitter aus 440 Fotos + 336 Videoframes im lot2-Rahmen (gemeinsame SfM, Lot aus Foto-Vertikalen, Massstab Buendel); fenster_erker_v9 erker_gemeinsam z_unten 9.62 (waagerechte Erkerkante 14,6 m) | Messung an der Erker-Frontkante along -6,48 (Kasten des parametrischen Erkers, Unterkante = unterkante_z - 0,1 Einbindung); alte Helm-STL (Konsolentrichter) bewusst ausserhalb",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/koerper/fenster_erker_v9.json erker_gemeinsam.z_unten",
+   "historie": [
+    "2026-11-09 angelegt (Agent Gitter->Generator); Sollband = Gitterwert +- Streuung der Schaetzer",
+    "2026-11-09 wert + z_unterkante_lot2: Pruefstand misst z ueber Modellunterkante (1,34), Soll bleibt lot2",
+    "2026-11-09 Kasten von der Helm-STL (9,43) auf die Frontkante des parametrischen Erkers verlegt",
+    "2026-11-09 Kasten ans freie Westende des Erkers (along -10,4..-9,95): zwischen den Erkern liegt die Unterkante im Balkonband (Oberkante 10,0)"
    ]
   }
  ],
@@ -46,21 +307,81 @@
    "datum": "2026-11-08",
    "quelle": "Nutzer-Sicht + Overlay ov_lot_6161",
    "text": "Modell im Foto ~25 % zu schmal (links ~200 px), Dach wirkt zu niedrig (Firsttiefe), Arkadenabstand/Erkerlage falsch. Pruefung: Overlay Wolke+Modell auf kalibriertem Foto (tools/modell_foto_overlay.py), Sweep mit Foto-Kantenterm; Schrumpf-Falle BS145 beachten.",
-   "status": "offen"
+   "status": "offen",
+   "wer": "Nutzer-Sicht + Overlay ov_lot_6161"
   },
   {
    "datum": "2026-11-08",
    "quelle": "Nutzer-Sicht, Overlay schleife_lot2/schleife_1.jpg",
    "text": "Nach Lotkorrektur+Gesamt-Schleife (dz +2,73, nick -4,8, su 1,377) sitzen die Boegen ~60-80 px ZU HOCH, Modellunterkante y~860 vs Fotoboden ~1000: ganzes Modell zu hoch, Score 0,69 trotzdem besser. Verdacht: dz/Boden (boden_z 1,66 Festwert) oder Wolke-Dachterm zieht Modell hoch.",
    "naechster_schritt": "Hoehe messen: Bogenscheitel/Sockel Modell vs Foto (foto_mass), Pruefung die jetzt fehlschlaegt; dann dz-Grenze/Boden aus Ankern",
-   "status": "offen"
+   "status": "offen",
+   "wer": "Nutzer-Sicht, Overlay schleife_lot2/schleife_1.jpg"
   },
   {
    "datum": "2026-11-08",
    "quelle": "Overlay audit/dachfit_lot2_6161.jpg (Dach neu gefittet)",
    "text": "Dach ok in Hoehe (Median 0,16 m zur Wolke) aber Modell links ~250 px zu kurz: linker Erkerturm bei x~540 statt ~290, linker Bogen (x~410) fehlt, Modell zwischen Tuermen ~19 % zu schmal; Dach First noch ~60 px zu tief im Foto. Erker/Bogenreihe stammen aus altem gekippten Rahmen.",
    "naechster_schritt": "erker_0/erker_1/bogenreihe_laube im lot2-Rahmen neu fitten (weite Grenzen), Overlay ansehen",
+   "status": "offen",
+   "wer": "Overlay audit/dachfit_lot2_6161.jpg (Dach neu gefittet)"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Gitter->Generator",
+   "quelle": "Kantengitter lot2 vs Generator/LoD2",
+   "text": "Laubentiefe: Gitter-Rueckwandebene off 6,54 (belegt, 30 m) vs Wolkenmessung 8.11. n 9,45 (altes gekipptes Netz). Generator auf 6,54 gesetzt; die alte Fassadengruppe g_waende (Rumpf 8 m tief) bleibt widerspruechlich.",
+   "naechster_schritt": "Foto-Overlay unter der Laube (6161/6233) ansehen; stl_teil:fassade durch Rumpf aus Gitter (gitter_koerper) ersetzen",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Gitter->Generator",
+   "quelle": "Kantengitter lot2 vs Generator/LoD2",
+   "text": "Gebaeudetiefe/Rueckseite: Gitter sieht keine Rueckseite; off_back -6,56 = Firstspiegel-ANNAHME. LoD2-Grundrisskante 12,54 m und LoD2 First-Traufe 11,75 m (Gitter 12,8) nicht abgeglichen; lot2-z gegen DGM1 unbekannt.",
+   "naechster_schritt": "LoD2-Grundriss in lot2 legen (Umeyama ueber Pfeiler/Ecken) und Rueckwand pruefen",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Gitter->Generator",
+   "quelle": "Kantengitter lot2 vs Generator/LoD2",
+   "text": "Ostende 'plus' (along 17,15) laut Rohkoerper unsicher; Ost-Staffelgiebel-Stufen = Spiegel-ANNAHME, Spitze aus Gitter-Maximum 28,98.",
+   "naechster_schritt": "Steiger-Cluster am Ostende aus Fotos der Ostseite (video_alle) ableiten",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Gitter->Generator",
+   "quelle": "Kantengitter lot2 vs Generator/LoD2",
+   "text": "Fensterreihe OG: 3 Lichter je Gruppe stammen aus dem Gitter (Pfostenpaare, fotobelegt), nicht aus einem Z-Zaehlprotokoll (Regel 9); Vorhangbogen-Kontur = 75%-Quantil-Profil.",
+   "naechster_schritt": "tools/foto_zaehlung.py auf ip_IMG_6120: Lichter je Gruppe -> Z-6120-00x, dann Pruefzeile anzahl",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Gitter->Generator",
+   "quelle": "Kantengitter lot2 vs Generator/LoD2",
+   "text": "Helm-STL-Gruppe: alte Erker+Nadel-Form (Nadel 0,2-0,5 m dick) gegen Gitter-Kegel r_fuss 0,85; Gesims der STL landet bei ~13,7 statt 13,18 (eine Skala fuer Koerper+Nadel).",
+   "naechster_schritt": "Helm als parametrischer Kegel (zylinder/pyramide) aus dem Gitter-Fit, alte Gruppe dann ersetzen",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Gitter->Generator",
+   "quelle": "Kantengitter lot2 vs Generator/LoD2",
+   "text": "Gauben: t-Lage (0,07/0,33) wurde am alten halben Dach (First 21,65) gefittet; mit First 27,51 sitzen sie evtl. zu tief. Gitter liefert keine abgenommenen Gauben (LOG_FORMEN).",
+   "naechster_schritt": "Gauben am Foto 6261 messen (foto_mass), dann t neu",
+   "status": "offen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Gitter->Generator",
+   "quelle": "Kantengitter lot2 vs Generator/LoD2",
+   "text": "Boden: Gitter z_min 1,5 (p1 2,3), Pfeilerfuesse 1,5-2,7; Generator boden_z 1,45 (Altwert). Baluster-Band 8,35-9,65 / Periode 0,287 nur Hinweis (unverifiziert).",
+   "naechster_schritt": "Bodenlinie aus Fotos mit Bodenanker; Baluster-Zaehlung am Foto",
    "status": "offen"
   }
- ]
+ ],
+ "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31)."
 }

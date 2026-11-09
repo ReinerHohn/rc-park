@@ -771,10 +771,11 @@ def fensterreihe(cfg, ctx):
     """Reihe gotischer Kielbogenfenster in der Wandebene (u entlang, s Normale, z): je Fenster Rahmen (Aussenkontur Rechteck bis kaempfer_z, darueber Kielbogen bis scheitel_z; Rahmenbreite rahmen_b),
     ein Mittelpfosten (pfosten_b) und ein Kaempfer-Riegel (riegel_z, riegel_h). Frei: kiel (-1..1) = Schulterform (0 = Spitzgiebel, >0 Eselsruecken). Plexi/Glas fehlt bewusst (Wolke blind, spaeter).
     Pflicht: n_fenster, u_mitte (Mitte 1. Fenster), pitch, breite, unterseite_z, kaempfer_z, scheitel_z, wand_n, tiefe, rahmen_b, pfosten_b, riegel_z, riegel_h, achse_n, achse_quelle, quelle (+ zaehlung).
-    Anzahl n_fenster NUR aus Foto-Zaehlprotokoll (Regel 9); Lage/Masse per tools/param_wolke_fit.py gegen die Wolke."""
+    Anzahl n_fenster NUR aus Foto-Zaehlprotokoll (Regel 9); Lage/Masse per tools/param_wolke_fit.py gegen die Wolke.
+    Optional n_lichter (Standard 2 = ein Mittelpfosten, unveraendertes Altverhalten): Lichter je Fenster, n_lichter-1 gleich breite Pfosten (Kantengitter 2026-11-09: 3 Lichter je Gruppe); Zaehlart -> 'zaehlung'."""
     for k in ("n_fenster", "u_mitte", "pitch", "breite", "unterseite_z", "kaempfer_z", "scheitel_z", "wand_n", "tiefe", "rahmen_b", "pfosten_b", "riegel_z", "riegel_h", "achse_n", "achse_quelle", "quelle"):
         if cfg.get(k) in (None, ""): sys.exit(f"fensterreihe: '{k}' fehlt (Regel 3b: jedes Mass mit Quelle)")
-    nf = int(cfg["n_fenster"]); u0, pitch, b = float(cfg["u_mitte"]), float(cfg["pitch"]), float(cfg["breite"])
+    nf = int(cfg["n_fenster"]); u0, pitch, b = float(cfg["u_mitte"]), float(cfg["pitch"]), float(cfg["breite"]); nl = max(1, int(cfg.get("n_lichter", 2)))
     z0, zk, zs = float(cfg["unterseite_z"]), float(cfg["kaempfer_z"]), float(cfg["scheitel_z"]); wn, td = float(cfg["wand_n"]), float(cfg["tiefe"])
     rb, pf, rz, rh = float(cfg["rahmen_b"]), float(cfg["pfosten_b"]), float(cfg["riegel_z"]), float(cfg["riegel_h"]); kiel = float(cfg.get("kiel", 0.4)); gd, go = float(cfg.get("glas_d", 0.0)), float(cfg.get("glas_n", 0.1)); wq = cfg.get("werte_quellen") or {}
     if nf < 1 or b >= pitch or not (z0 < zk < zs) or rb * 2 >= b or td < 0.01: sys.exit(f"fensterreihe: unplausible Masse (n={nf}, b={b}, pitch={pitch}, z={z0}/{zk}/{zs})")
@@ -790,10 +791,12 @@ def fensterreihe(cfg, ctx):
         rahmen = M.extrude(outer - inner, td).transform([[1, 0, 0, 0], [0, 0, -1, wn + td], [0, 1, 0, 0]])
         teile.append(rahmen)
         if gd > 0: teile.append(M.extrude(inner, gd).transform([[1, 0, 0, 0], [0, 0, -1, wn + go + gd], [0, 1, 0, 0]]))   # Verglasung (Wolke sieht die Scheibe): duenne Platte in der Rahmenoeffnung
-        teile.append(quader(uc - pf / 2, uc + pf / 2, wn, wn + td, z0 + rb * 0.5, zs - rb * 1.5))
+        wl = (b - 2 * rb - (nl - 1) * pf) / nl                                                        # Lichtbreite; nl = 2 ergibt exakt den alten Mittelpfosten bei uc
+        for j in range(1, nl):
+            up = uc - b / 2 + rb + j * wl + (j - 0.5) * pf; teile.append(quader(up - pf / 2, up + pf / 2, wn, wn + td, z0 + rb * 0.5, zs - rb * 1.5))
         teile.append(quader(uc - b / 2 + rb * 0.5, uc + b / 2 - rb * 0.5, wn, wn + td, rz - rh / 2, rz + rh / 2))
     k = UNION(teile).transform(T); q = lambda p_: (wq.get(p_) or cfg["quelle"])
-    beleg("alle", f"Fensterreihe {nf} Kielbogenfenster", f"Anzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + q("breite") + " | Lage: " + q("u_mitte"), n_fenster=nf, pitch=pitch, breite=b, unterseite_z=z0, kaempfer_z=zk, scheitel_z=zs, wand_n=wn, tiefe=td)
+    beleg("alle", f"Fensterreihe {nf} Kielbogenfenster" + (f" ({nl} Lichter)" if nl != 2 else ""), f"Anzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + (q("n_lichter") + "; " if nl != 2 else "") + q("breite") + " | Lage: " + q("u_mitte"), n_fenster=nf, n_lichter=nl, pitch=pitch, breite=b, unterseite_z=z0, kaempfer_z=zk, scheitel_z=zs, wand_n=wn, tiefe=td)
     return [k], []
 
 @bauteil("quader")
