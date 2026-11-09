@@ -26,7 +26,8 @@ def md5(p):
 
 def name_aus_pfad(p):
     """eindeutiger Kurzname je Foto: z. B. .../handy_2026-11-06_c/handy_c_03.jpg -> h_c_03.jpg; .../handy_2026-11-06/handy_07.jpg -> h_a_07.jpg"""
-    b = os.path.splitext(os.path.basename(p))[0].split("_")
+    bn = os.path.splitext(os.path.basename(p))[0]; b = bn.split("_")
+    if not bn.startswith("handy"): return bn + ".jpg"            # Videoframes u. a. (vid_IMG_6114_001.jpg): Name behalten, sonst Kollisionen (2026-11-09)
     return ("h_" + b[1] + "_" + b[2] + ".jpg") if len(b) == 3 else ("h_a_" + b[-1] + ".jpg")
 
 
@@ -91,8 +92,9 @@ def vorbereiten(a):
     for f in liste:
         im = cv2.imread(f)
         if im is None: verworfen.append(dict(datei=f, grund="nicht lesbar")); continue
-        H, W = im.shape[:2]; h2 = int(round(H * (1 - a.unten))); im = im[:h2]; s = a.breite / W
-        im = cv2.resize(im, (a.breite, int(round(h2 * s))), interpolation=cv2.INTER_AREA); n = name_aus_pfad(f)
+        H, W = im.shape[:2]; h2 = int(round(H * (1 - a.unten))); im = im[:h2]; s = (a.breite / W) if a.breite > 0 else 1.0     # --breite 0 = keine Skalierung (gemischte Hoch/Quer-Frames, 2026-11-09)
+        if a.breite > 0: im = cv2.resize(im, (a.breite, int(round(h2 * s))), interpolation=cv2.INTER_AREA)
+        n = name_aus_pfad(f)
         cv2.imwrite(os.path.join(bd, n), im, [cv2.IMWRITE_JPEG_QUALITY, 95]); info[n] = dict(quelle=f, orig=[W, H], bild=[im.shape[1], im.shape[0]], skala=s)
     json.dump(dict(bilder=info, verworfen=verworfen, unten=a.unten, breite=a.breite), open(os.path.join(a.aus, "vorbereitet.json"), "w"), indent=1)
     print(f"vorbereitet: {len(info)} Bilder, verworfen {len(verworfen)}")
@@ -270,7 +272,7 @@ def luecken(a):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter); sp = ap.add_subparsers(dest="cmd", required=True)
-    p = sp.add_parser("vorbereiten"); p.add_argument("--fotos", nargs="+", required=True); p.add_argument("--aus", required=True); p.add_argument("--ausschluss"); p.add_argument("--unten", type=float, default=0.05, help="Anteil unten abschneiden (Wasserzeichen)"); p.add_argument("--breite", type=int, default=2000)
+    p = sp.add_parser("vorbereiten"); p.add_argument("--fotos", nargs="+", required=True); p.add_argument("--aus", required=True); p.add_argument("--ausschluss"); p.add_argument("--unten", type=float, default=0.05, help="Anteil unten abschneiden (Wasserzeichen)"); p.add_argument("--breite", type=int, default=2000, help="Zielbreite; 0 = keine Skalierung")
     p = sp.add_parser("merkmale"); p.add_argument("--ref-db", required=True); p.add_argument("--sparse", required=True); p.add_argument("--aus", required=True); p.add_argument("--f-px", type=float, default=1444.0, help="ANNAHME: ~25 mm KB-Aequivalent bei 2000 px Breite (EXIF f=5,25 mm, Sensorbreite unbekannt); nur Startwert")
     p = sp.add_parser("registrieren"); p.add_argument("--sparse", required=True); p.add_argument("--aus", required=True); p.add_argument("--kameras", help="JSON mit festen Kameras je Gruppe (Format x Zoom): f_orig, k1, cx_rel, cy_rel; ersetzt den Kalibrierlauf"); p.add_argument("--zoom", help="zoom_verdacht.json (Klasse gezoomt/normal je Bild)"); p.add_argument("--kalibrieren", action="store_true", help="f und k1 im Buendel der neuen Posen frei (gemeinsame Kamera)")
     p.add_argument("--max-fehler", type=float, default=4.0); p.add_argument("--runden", type=int, default=4, help="Registrierrunden; nach jeder Runde Triangulation der neuen Posen (neue 3D-Punkte fuer noch offene Bilder)"); p.add_argument("--min-inlier", type=int, default=30)

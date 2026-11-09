@@ -21,6 +21,7 @@ def proj(Q, j):
 Cn = C.cpu().numpy(); Dn = R[:, 2].cpu().numpy(); rng = np.random.default_rng(0); pool = np.arange(J)
 if "--exclude" in sys.argv: pool = np.setdiff1d(pool, np.unique(np.load(opt("--exclude", "", str))["ref"]))   # nur Referenzfotos, die der andere Lauf nicht benutzt hat (unabhaengige Pruefmenge)
 refs = rng.choice(pool, min(NREF, len(pool)), replace=False)
+if "--ref_prefix" in sys.argv: pool = np.array([i for i in pool if fs[i].startswith(opt("--ref_prefix", "", str))]); refs = rng.choice(pool, min(NREF, len(pool)), replace=False)   # z.B. nur Videoframes als Referenz
 if "--ref_namen" in sys.argv: refs = np.array([fs.index(n) for n in opt("--ref_namen", "", str).split(",")])   # gezielte Referenzfotos (Diagnose)
 DIAG = opt("--diag", "", str); ds = torch.exp(torch.linspace(np.log(DMIN), np.log(DMAX), 360, device=dev)); out = []
 ZENTRUM = np.median(np.load(opt("--box", "", str))[:, :3], 0) if "--box" in sys.argv else None   # Szenenmitte fuer relative Basis

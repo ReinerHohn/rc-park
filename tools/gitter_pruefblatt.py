@@ -29,6 +29,7 @@ def proj(k, V):
         uw = ((k["f"] * xw * fw + k["cx"]) * sj / 4).long(); vw = ((k["f"] * yw * fw + k["cy"]) * sj / 4).long(); Hq, Wq = H // 4 + 1, W // 4 + 1
         inb = (uw >= 0) & (uw < Wq) & (vw >= 0) & (vw < Hq); zb = torch.full((Hq * Wq,), 1e9, device=dev); zb.scatter_reduce_(0, (vw[inb] * Wq + uw[inb]), zw[m][inb], reduce="amin"); zb = zb.view(Hq, Wq)
         zb = -torch.nn.functional.max_pool2d(-zb[None, None], 3, 1, 1)[0, 0]
+        leer = zb > 1e8; zb7 = -torch.nn.functional.max_pool2d(-zb[None, None], 9, 1, 4)[0, 0]; zb = torch.where(leer, zb7, zb)   # Loecher (duenne Wolke, z.B. Gewoelbe) aus 9x9-Umgebung fuellen
         uq = (u / 4).long().clamp(0, Wq - 1); vq = (v / 4).long().clamp(0, Hq - 1); sichtbar = z <= zb[vq, uq] + ZTOL; ok = ok & sichtbar
     return u, v, ok
 for f in fs:
