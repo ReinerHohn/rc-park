@@ -149,3 +149,32 @@ Lehre: der Test funktioniert dort, wo Kameras in grosser Zahl frontal stehen (Fr
 
 ## Kette
 `tools/koerper_kette.sh GITTER.json AUSDIR [AUDITDIR]` = Stufe 11: gitter_koerper bauen -> koerper_fenster_erker analyse -> koerper_v10 bauen (Balkon/Bloecke als Testeingabe) -> flaeche_oder_oeffnung -> analyse_konsolen -> koerper_v11 bauen -> pruefen; Datenordner = Grossvater des Gitters oder RCPARK_DATEN, Zusatzdateien (Wolke, Kameras, stabil, formen/helme.json, formen/baluster_abgenommen.json, kurven/arkaden.json) per Umgebungsvariablen; Log AUSDIR/koerper_kette.log. Noch nicht als Ganzes durchgelaufen (Einzelstufen ja) - erster Komplettlauf steht aus.
+
+---
+# Runde 4 (Agent): Komplettlauf, Durchsicht mit Z-Puffer, Rueckwand, Gewoelbe, Konsolen-Nutzerbefund
+
+## (1) Komplettlauf `tools/koerper_kette.sh kette_video_alle/gitter.json kette_video_alle/koerper modelle/kaufhaus_grob3/audit/kette_video_alle/koerper`
+- Skript loggt jetzt die Formquellen: Gitter 4075 Segmente, Quellen [0,4,5,6,7,9]; helme 3 im Gitter, boegen 3 im Gitter, saeulen 7 im Gitter, baluster nicht im Gitter -> Standardpfad formen/baluster_abgenommen.json (Hinweis: der Auftrag nannte das Gitter ohne helme/boegen - es hat beide). Zwischenpfade alle relativ zum AUSDIR.
+- Alle 7 Stufen laufen durch (3,5 min), Vergleichsbilder + Bericht-JSONs entstehen (`kette_video_alle/koerper/koerper_v11_pruefung.json`, `_slicer_vorcheck.json`, Bilder `audit/kette_video_alle/koerper/`). Wolkennaehe < 20 cm gesamt 64,1 % (kette_video-Lauf 58,9 %).
+- **Gate NICHT bestanden** fuer dieses Gitter: 27 offene Kanten / 16 doppelte Positionen nach STL-Roundtrip (manifold-Netz selbst wasserdicht). Erste Ursache (Erkerkante -10,24 in der Stirnflaeche) behoben (Rumpf 2 cm ueber die Erker-Wandanschluesse hinaus), Rest noch nicht analysiert (anderes Gitter -> andere Koinzidenzen). Fuer kette_video/gitter.json besteht das Gate weiterhin (0/0, 1 Koerper).
+
+## (2) Durchsicht-Test mit echter Kamera-Zuordnung
+- `kanten_3d_vote.py` hat den Z-Puffer je Kamera (Bins 3 px, Umgebung 9, Toleranz 0,3 m) bereits intern (Zeile 29-31), schreibt aber nur Zaehler (vis/kan); Bild-IDs je Punkt waeren als gepackte Bitmatrix (1,8 Mio x 882 Bit = ~200 MB) machbar - nicht umgesetzt (Masken-Lauf noetig).
+- Stattdessen `flaeche_oder_oeffnung.py --zpuffer`: derselbe Z-Puffer ueber die GANZE Wolke je Kamera; ein Punkt stimmt nur fuer Kameras, aus denen er vorderster Punkt ist. `--innen`: Rueckwand nur mit Kameras in der Laube (52).
+  Ergebnis (`koerper/flaechen_eg_v11_zpuffer.json`): Front EG 57 % Oeffnung / 41 % Wand / 3 % unentschieden, 4 Boegen wie zuvor, Pfeiler schaerfer, Endjoche weiter Oeffnung (0,59/0,61); sichtbar aus >= 1 Kamera: 185k von 822k Hinterpunkten.
+  **Rueckwand (Laubenkameras): 89 % unentschieden, 11 % Wand, 1 % Oeffnung - die "Nische -8,9..-3,9" aus Runde 3 war ein Artefakt der Aussenkameras und ist weg** (Bau liest jetzt die Z-Puffer-Datei, wenn vorhanden).
+  **Stirnwaende: unveraendert 83 % / 76 % "Oeffnung" (nur 207 / 2479 Punkte auf der Flaeche)** - der Z-Puffer hilft nicht, weil die Kantenwolke auf glatten Waenden keine Punkte hat, die verdecken koennten; Stirn bleibt ANNAHME Seitenbogen. Lehre: Blankwaende sind mit einer Kantenwolke nicht entscheidbar; dafuer dichte Wolke (MVS) oder Fototextur.
+
+## (3) Rueckwand-Oeffnungen aus Gitterkanten
+Rueckwandebene 6,54 +-0,4 m, Band Boden..Decke: nur 17 Segmente; Pfosten-Cluster -12,2..-10,9 (ausserhalb des Gebaeudes, Hinterpfeiler) und -1,23..-0,41 z 1,5-6,1 mit Horizontaler 6,10 = der Rueckwand-Halbpfeiler (saeule along -0,8, R 0,44), keine Tuer/Fenster-Rechtecke. Tuer + Fenster der Rueckwand (Foto 6120) sind im Gitter nicht vorhanden -> nicht gebaut, offen (Gitterdichte in der Laube zu gering: wenige Innenkameras).
+
+## (4) Gewoelbe
+Weder kette_video noch kette_video_alle enthalten Kurven quelle 10/11; `kurven/` hat nur Arkaden-Kurven. -> Laubendecke bleibt flach (ANNAHME, Hinweis im Log), Kreuzgratgewoelbe-Familie nicht gebaut.
+
+## Nutzerbefund Konsolen (Overlay 6120)
+- Lagen jetzt NUR aus dem Periodenraster (Pfeilerabstand/3 = 2,005 m, Phase 1,79 aus den Inlier-Bloecken 1,79/5,95/7,80 und 7 fotobelegten Rasterlagen); die Gitterbloecke -1,17 und 0,63 (0,96 / 0,85 m neben dem Raster) sind VERWORFEN (`konsolen_v11.json` -> verworfen). Beobachtung offen: was diese zwei Kantencluster sind (Konsolenprofil-Kanten des Nachbarn? Figurenkonsolen darueber?).
+- Form: nach unten schmaler werdende Stuetze als Huelle (oben 0,45 x Platte-0,15, unten 0,2 x 0,15 m; ANNAHME Trapez - das Gitter liefert im Konsolenband keine Profilkanten).
+- Overlay 6120 (`audit/koerper_v11/vergleich_ip_IMG_6120.jpg`, Mitte/rechts): 5 Konsolen im Bild, Abstand stimmt mit den echten (Raster 2,0 m), aber alle ~0,2-0,3 m links der echten (Phase) - Phase aus den drei Gitterbloecken; Fotophase (Zaehlprotokoll an 6120) waere der naechste Schritt. Formen jetzt konisch statt Quader.
+
+## Stand v11 nach Runde 4 (kette_video)
+Gate bestanden (0 offene Kanten, 0 Doppelpunkte, 1 Koerper, Genus 69), 9216 Dreiecke, 9135 m^3, H0 377 x 326 x 299 mm; Wolkennaehe 58,9 % / Median 0,12; Rueckwand ohne Nische; Konsolen 10 im Raster (Trapez); Stirnbogen ANNAHME; Decke flach.

@@ -12,10 +12,20 @@ HELME="${HELME:-$DATEN/formen/helme.json}"; BAL="${BAL:-$DATEN/formen/baluster_a
 T="$(dirname "$(readlink -f "$0")")"; mkdir -p "$AUS" "$AUDIT"; LOG="$AUS/koerper_kette.log"; exec > >(tee -a "$LOG") 2>&1
 echo "[$(date +%T)] koerper_kette: Gitter $G -> $AUS (Daten $DATEN)"
 for f in "$WOLKE" "$KAM" "$HELME" "$BAL"; do [ -e "$f" ] || { echo "FEHLT: $f"; exit 2; }; done
+# Quellen der Formen: Schluessel im Gitter oder Standardpfade (im Log genannt)
+"$PY_S" -I - "$G" "$HELME" "$BAL" "$DATEN/kurven/arkaden.json" <<'PY'
+import json, sys, os
+d = json.load(open(sys.argv[1])); S = d.get("segmente", []); q = sorted(set(s[2] for s in S))
+print(f"Gitter: {len(S)} Segmente, Quellen {q}, Schluessel {sorted(k for k in d if k != 'segmente')}")
+for k, f in (("helme", sys.argv[2]), ("baluster", sys.argv[3]), ("arkaden/boegen", sys.argv[4])):
+    im = d.get(k.split('/')[0]) or d.get(k.split('/')[-1])
+    print(f"  Form {k}: " + (f"{len(im)} im Gitter" if im else f"nicht im Gitter -> Standardpfad {f} ({'vorhanden' if os.path.exists(f) else 'FEHLT'})"))
+print(f"  Form saeulen: {len(d.get('saeulen', []))} im Gitter" + ("" if d.get('saeulen') else " - FEHLT (Pfeiler/Arkaden koennen nicht gebaut werden)"))
+PY
 echo "[$(date +%T)] 1 Rohkoerper (gitter_koerper bauen)";            "$PY_M" "$T/gitter_koerper.py" bauen "$G" "$AUS" --name rohkoerper_v7 | tail -3
 echo "[$(date +%T)] 2 Fenster/Erker-Analyse (Fotobeleg)";           "$PY_S" -I "$T/koerper_fenster_erker.py" analyse "$G" "$AUS/rohkoerper_v7.json" "$KAM" "$STABIL" "$AUS/fenster_erker_v9.json" --helme "$HELME" | grep -v "^  Pfosten\|^  Horizontal" | tail -12
 echo "[$(date +%T)] 3 Koerper v10 (Balkon/Konsolen-Bloecke als Eingabe fuer Test und Wiederholung)"; "$PY_M" "$T/koerper_v10.py" bauen "$G" "$AUS/rohkoerper_v7.json" "$AUS/fenster_erker_v9.json" "$HELME" "$AUS" | grep "Export\|Konsolen\|Balkon:"
-echo "[$(date +%T)] 4 Flaeche vs. Oeffnung (Erdgeschoss)";          "$PY_S" -I "$T/flaeche_oder_oeffnung.py" "$WOLKE" "$KAM" "$AUS/rohkoerper_v7.json" "$AUS/koerper_v10.json" "$AUS/flaechen_eg_v11.json" | grep -v "^   z"
+echo "[$(date +%T)] 4 Flaeche vs. Oeffnung (Erdgeschoss)";          "$PY_S" -I "$T/flaeche_oder_oeffnung.py" "$WOLKE" "$KAM" "$AUS/rohkoerper_v7.json" "$AUS/koerper_v10.json" "$AUS/flaechen_eg_v11_zpuffer.json" --zpuffer --innen | grep -v "^   z"
 echo "[$(date +%T)] 5 Konsolen-Wiederholung (Fotobeleg)";           "$PY_S" -I "$T/koerper_v11.py" analyse_konsolen "$G" "$AUS/koerper_v10.json" "$KAM" "$STABIL" "$AUS" | tail -3
 echo "[$(date +%T)] 6 Koerper v11 bauen";                           "$PY_M" "$T/koerper_v11.py" bauen "$G" "$AUS/rohkoerper_v7.json" "$AUS/fenster_erker_v9.json" "$HELME" "$BAL" "$AUS" | grep -v "^  Ebene\|^  Saeule" | tail -14
 echo "[$(date +%T)] 7 Pruefung (Wolkennaehe, Vergleichsbilder, Slicer-Vorcheck)"; "$PY_S" -I "$T/koerper_v11.py" pruefen "$AUS" "$WOLKE" "$KAM" "$BILDER" "$AUDIT" | grep -v Warning | grep "wasserdicht\|naeher\|z  *[0-9]\|ueberhang_gt60_anteil\|unter_0"

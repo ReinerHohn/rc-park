@@ -156,13 +156,17 @@ log("(a) verschmolzen %d Endpunkte (%d Gruppen), %d entartete Segmente entfernt"
 # (b) kollineare Segmente vereinen
 with torch.no_grad():
     n = len(A_); L = (B_ - A_).norm(dim=1); U = (B_ - A_) / L.clamp(min=1e-6)[:, None]
-    cosw = (U @ U.T).abs().clamp(max=1); wink = torch.rad2deg(torch.acos(cosw)); parallel = wink < KOLLW
     def senk(Pt):   # Senkrechtabstand der Punkte Pt (n,3) zu allen Linien (A_,U): (n_punkte, n_linien)
         Dv = Pt[:, None, :] - A_[None, :, :]; proj = (Dv * U[None]).sum(2); return (Dv - proj[..., None] * U[None]).norm(dim=2), proj
-    sA, pA = senk(A_); sB, pB = senk(B_)                                                                               # [j, i]: Endpunkte von j gegen Linie i
-    nahe = torch.maximum(sA, sB) < KOLL; lo = torch.minimum(pA, pB); hi = torch.maximum(pA, pB)
-    luecke = torch.maximum(lo - L[None, :], -hi); beruehrt = luecke < KOLL
-    fest_b = torch.tensor(np.isin(qu, list(SCHUTZ)), device=dev); kand = parallel & nahe & beruehrt & ~fest_b[:, None] & ~fest_b[None, :]   # Formen nie vereinen
+    fest_b = torch.tensor(np.isin(qu, list(SCHUTZ)), device=dev)
+    kand = torch.zeros((n, n), dtype=torch.bool, device=dev); BL = 512                                                  # blockweise (OOM 9.11. bei 3135 Segmenten)
+    for j0 in range(0, n, BL):
+        j1 = min(n, j0 + BL); cosw = (U[j0:j1] @ U.T).abs().clamp(max=1); parallel = torch.rad2deg(torch.acos(cosw)) < KOLLW
+        sA, pA = senk(A_[j0:j1]); sB, pB = senk(B_[j0:j1])                                                             # [j, i]: Endpunkte von j gegen Linie i
+        nahe = torch.maximum(sA, sB) < KOLL; lo = torch.minimum(pA, pB); hi = torch.maximum(pA, pB)
+        beruehrt = torch.maximum(lo - L[None, :], -hi) < KOLL
+        kand[j0:j1] = parallel & nahe & beruehrt & ~fest_b[j0:j1, None] & ~fest_b[None, :]                          # Formen nie vereinen
+        del cosw, parallel, sA, pA, sB, pB, nahe, lo, hi, beruehrt
     kand = kand & kand.T; kand = torch.triu(kand, 1); ij = torch.nonzero(kand).cpu().numpy()
 lab = komponenten(n, ij); An = A_.cpu().numpy(); Bn = B_.cpu().numpy(); Ln = L.cpu().numpy(); Un = U.cpu().numpy(); vereint = 0; neuA, neuB, neuq, neus = [], [], [], []
 for l in np.unique(lab):

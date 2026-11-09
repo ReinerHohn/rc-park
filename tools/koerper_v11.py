@@ -40,17 +40,19 @@ def analyse_konsolen(seg_json, k10_json, kam_json, stabildir, ausdir):
     neu = [g for g in grid if np.min(np.abs(pos - g)) > 0.3]
     segs = [[welt(u, n, g, of + 1.0, zp0 - 1.0), welt(u, n, g, of + 1.0, zp0 - 0.1), 1, 1.0] for g in neu]
     ja, nein, fj = fotobeleg(segs, KAM, stabildir) if segs else (np.zeros(0), np.zeros(0), [])
+    verworfen = [{"along": float(p_), "grund": f"Gitterblock {min(np.abs(np.array(grid) - p_)):.2f} m neben dem Periodenraster (Nutzerbefund: sitzt nicht auf einer echten Konsole)"} for p_ in pos if np.min(np.abs(np.array(grid) - p_)) > 0.3]
     for g in grid:
         i = int(np.argmin(np.abs(pos - g)))
-        if abs(pos[i] - g) <= 0.3: aus.append({"along": float(pos[i]), "z0": kons[i]["z0"], "status": "gitter_block"}); continue
+        if abs(pos[i] - g) <= 0.3: aus.append({"along": float(g), "z0": kons[i]["z0"], "status": f"gitter_block (Rasterlage, Block {pos[i]:+.2f})"}); continue
         m = (np.abs(al - g) < 0.2) & (M[:, 2] > zp0 - 1.5) & (M[:, 2] < zp0) & (off > 0.1) & (off < 1.4); j = neu.index(g)
         if m.sum() >= 2: st = f"gitterkanten ({int(m.sum())} Segmente im Umfeld 20 cm)"; z0 = float(min(M[m, 2].min(), zp0 - 0.6))
         elif ja[j] >= 2: st = f"foto ({int(ja[j])} Fotos ja, {int(nein[j])} nein)"; z0 = zp0 - 0.9
         else: st = f"ANNAHME (Wiederholung; Gitter 0 Kanten, Fotos ja {int(ja[j])})"; z0 = zp0 - 0.9
         aus.append({"along": float(g), "z0": z0, "status": st})
-    log.append(f"Konsolen gesamt {len(aus)}: gitter_block {sum(1 for a in aus if a['status'] == 'gitter_block')}, gitterkanten {sum(1 for a in aus if a['status'].startswith('gitterkanten'))}, foto {sum(1 for a in aus if a['status'].startswith('foto'))}, ANNAHME {sum(1 for a in aus if a['status'].startswith('ANNAHME'))}")
+    log.append(f"Gitterbloecke VERWORFEN (ausserhalb Raster): {[round(v['along'], 2) for v in verworfen]}")
+    log.append(f"Konsolen gesamt {len(aus)}: gitter_block {sum(1 for a in aus if a['status'].startswith('gitter_block'))}, gitterkanten {sum(1 for a in aus if a['status'].startswith('gitterkanten'))}, foto {sum(1 for a in aus if a['status'].startswith('foto'))}, ANNAHME {sum(1 for a in aus if a['status'].startswith('ANNAHME'))}")
     for a in aus: log.append(f"  along {a['along']:6.2f} z0 {a['z0']:.2f} {a['status']}")
-    print("\n".join(log)); json.dump({"periode": P, "phase": phase, "pfeilerabstand": sp, "konsolen": aus, "log": log}, open(os.path.join(ausdir, "konsolen_v11.json"), "w"), indent=1)
+    print("\n".join(log)); json.dump({"periode": P, "phase": phase, "pfeilerabstand": sp, "konsolen": aus, "verworfen": verworfen, "log": log}, open(os.path.join(ausdir, "konsolen_v11.json"), "w"), indent=1)
 
 
 def bauen(seg_json, roh_json, fe_json, helme_json, bal_json, ausdir):
@@ -69,7 +71,7 @@ def bauen(seg_json, roh_json, fe_json, helme_json, bal_json, ausdir):
             sc = abs(0.5 * (w_["along"] + e_["along"]) - achse) + 0.3 * ((not w_["belegt"]) + (not e_["belegt"]))
             if best is None or sc < best[0]: best = (sc, w_, e_)
     aw, ae = (best[1]["along"], best[2]["along"]) if best else (A["along_w"], A["along_e"])
-    aw_u = min(aw, min(e["mitte"] for e in erk) - xw); ae_u = max(ae, max(e["mitte"] for e in erk) + xw)
+    aw_u = min(aw, min(e["mitte"] for e in erk) - xw - ABST); ae_u = max(ae, max(e["mitte"] for e in erk) + xw + ABST)   # 2 cm ueber den Erker-Wandanschluss hinaus: Erkerkante nicht in der Stirnflaeche (Doppelpunkte im kette_video_alle-Lauf)
     L_(f"Erkermitten {[round(e['mitte'], 2) for e in erk]}, Achse {achse:.2f}; Giebelebenen {aw:.2f}/{ae:.2f}; Rumpf unten {aw_u:.2f}..{ae_u:.2f}")
     annahmen.append(f"ANNAHME: Rumpf (Boden..Traufe) bis zu den Erker-Wandanschluessen {aw_u:.2f}..{ae_u:.2f}; Dach/Giebel nur {aw:.2f}..{ae:.2f}; Laubenendboegen nicht gebaut")
     giebel = {}
@@ -84,7 +86,8 @@ def bauen(seg_json, roh_json, fe_json, helme_json, bal_json, ausdir):
                              historie=A.get("historie", []) + [{"datum": "2026-11-09", "was": "v11: offene Laube (Flaeche-vs-Oeffnung-Test), Rumpf ueber volle Laenge, Giebelebenen aus symmetrischem Endebenen-Paar, Staffel beide Enden, Baluster Z-6120-001 (koerper_v11.py)"}])
     ann_gk = []; Mw = np.c_[u, n, [0, 0, 1], [0, 0, 0]]; Mi = np.linalg.inv(np.r_[Mw, [[0, 0, 0, 1]]])[:3]
     # ---------- Erdgeschoss aus dem Flaeche-vs-Oeffnung-Test (flaeche_oder_oeffnung.py): offene Laube statt Tunnel in einer Wand
-    FL = {f["name"]: f for f in json.load(open(os.path.join(ausdir, "flaechen_eg_v11.json")))["flaechen"]}
+    fl_p = os.path.join(ausdir, "flaechen_eg_v11_zpuffer.json") if os.path.exists(os.path.join(ausdir, "flaechen_eg_v11_zpuffer.json")) else os.path.join(ausdir, "flaechen_eg_v11.json")
+    FL = {f["name"]: f for f in json.load(open(fl_p))["flaechen"]}; L_(f"Flaeche-vs-Oeffnung aus {os.path.basename(fl_p)} (Z-Puffer-Sichtbarkeit: {json.load(open(fl_p)).get('zpuffer')})")
     mb = horiz & (off - of > 0.3) & (M[:, 2] > zb + 4) & (M[:, 2] < D9["z_balkon"] + 0.3); Xb, wb = GK.stuetzpunkte(P0[mb], P1[mb], L[mb], 0.1)
     zp0 = min(e["offset"] for e in GK.ransac_1d(Xb[:, 2], wb, 0.06, 2.0) if e["offset"] < D9["z_balkon_unten"] + 1.0)   # Plattenunterkante = Laubendecke
     ol = A["off_laube"]; sgn = np.sign(of - offi); zt_b = zt
@@ -193,9 +196,11 @@ def bauen(seg_json, roh_json, fe_json, helme_json, bal_json, ausdir):
             if kons and e["offset"] - kons[-1]["along"] < 0.6: kons[-1]["along"] = 0.5 * (kons[-1]["along"] + e["offset"]); kons[-1]["z0"] = min(kons[-1]["z0"], z0); continue
             kons.append({"along": float(e["offset"]), "z0": z0, "status": "gitter_block"})
         annahmen.append("OFFEN: konsolen_v11.json fehlt - nur Gitter-Bloecke, keine Wiederholung")
-    for k in kons: teile.append(m3.Manifold.cube([0.45, tp - 0.15 + 0.2, zp0 + ABST - k["z0"]]).translate([k["along"] - 0.225, of - 0.2, k["z0"]]))
+    for k in kons:   # nach unten schmaler werdende Stuetze (Huelle): oben 0,45 breit / Platte-0,15 tief, unten 0,2 breit / 0,15 tief (ANNAHME Trapez; Gitter liefert keine Konsolenprofile)
+        x_, zt_, zb_ = k["along"], zp0 + ABST, k["z0"]; d_ = tp - 0.15
+        teile.append(m3.Manifold.hull_points([[x_ - 0.225, of - 0.2, zt_], [x_ + 0.225, of - 0.2, zt_], [x_ - 0.225, of + d_, zt_], [x_ + 0.225, of + d_, zt_], [x_ - 0.1, of - 0.2, zb_], [x_ + 0.1, of - 0.2, zb_], [x_ - 0.1, of + 0.15, zb_], [x_ + 0.1, of + 0.15, zb_]]))
     balkon["konsolen"] = kons; n_ann = sum(1 for k in kons if k["status"].startswith("ANNAHME"))
-    L_(f"Konsolen: {len(kons)} ({n_ann} nur ANNAHME Wiederholung)"); annahmen.append("ANNAHME: Konsolen 0,45 m breit, Tiefe Platte - 0,15 m; ergaenzte Positionen aus der Wiederholungsregel (siehe konsolen_v11.json)")
+    L_(f"Konsolen: {len(kons)} ({n_ann} nur ANNAHME Wiederholung)"); annahmen.append("ANNAHME: Konsolenform Trapez (oben 0,45 x Platte-0,15, unten 0,2 x 0,15), Lagen nur aus dem Periodenraster (konsolen_v11.json, verworfene Gitterbloecke dort)")
     # ---------- Erker + Schaft + Helme (v10)
     erker_teile = []; helme_lok = []
     for h in HL:
@@ -207,7 +212,7 @@ def bauen(seg_json, roh_json, fe_json, helme_json, bal_json, ausdir):
         koerper = m3.Manifold.extrude(cs(poly), z_top - G["z_unten"]).translate([0, 0, G["z_unten"]])
         zu = D9["z_balkon_unten"] - 0.3; sx = (xw - ABST) / xw; pin = [[x * sx, y - ABST] for x, y in poly[1:5]]
         unters = m3.Manifold.hull_points([[x, y, G["z_unten"] + 0.05] for x, y in pin] + [[-xw * sx, -0.3 + ABST, G["z_unten"] + 0.05], [xw * sx, -0.3 + ABST, G["z_unten"] + 0.05], [-0.4, -0.3, zu], [0.4, -0.3, zu], [-0.4, -ABST, zu], [0.4, -ABST, zu]])
-        polyr = [[-xw - b, -0.3], [-xw - b, 0], [-xf - b * 0.5, t + b], [xf + b * 0.5, t + b], [xw + b, 0], [xw + b, -0.3]]
+        polyr = [[-xw - b, -0.3], [-xw - b, -ABST], [-xf - b * 0.5, t + b], [xf + b * 0.5, t + b], [xw + b, -ABST], [xw + b, -0.3]]   # Gesimsring: Wandanschluss 2 cm in der Wand (Doppelpunkte im kette_video_alle-Lauf)
         ring = m3.Manifold.extrude(cs(polyr), 0.25 + ABST).translate([0, 0, G["z_oben"] - 0.25]); tl = [koerper, unters, ring]
         if hm:
             k = min(hm["sektoren"], 16); hh = hm["z_spitze"] - hm["z_fuss"]
