@@ -1,0 +1,80 @@
+<!doctype html><meta charset="utf-8"><title>Draht-Editor</title>
+<style>
+html,body{margin:0;height:100%;background:#15181c;color:#dde;font:13px system-ui,sans-serif}
+#wrap{display:flex;height:100%}#v{flex:1;position:relative;min-width:0}canvas{display:block}
+#p{width:380px;overflow:auto;padding:8px;background:#1d2127;border-left:1px solid #333}
+button{background:#2d3640;color:#dde;border:1px solid #455;border-radius:4px;padding:5px 8px;margin:2px;cursor:pointer}button:hover{background:#3b4856}button.on{background:#7a4b00}
+#st{position:absolute;left:8px;top:8px;background:#000a;padding:6px 8px;border-radius:4px;white-space:pre}
+h4{margin:10px 0 4px;color:#9bd}img{width:100%;border:1px solid #333}.k{color:#fc6}
+</style>
+<div id="wrap"><div id="v"><div id="st"></div></div><div id="p">
+<h4>Auswahl</h4>
+<button id="bSel" class="on">Wählen (Klick, Shift = mehrere)</button><button id="bNeu">Neu (Wolkenpunkte klicken, Enter = fertig)</button>
+<h4>Bearbeiten</h4>
+<button id="bDel">Löschen (Entf)</button><button id="bMerge">Vereinigen (M)</button><button id="bSpl">Spline an/aus (S)</button><button id="bGl">Glätten (G)</button><button id="bIns">Punkt einfügen (I, Klick auf Kante)</button><button id="bFix">Als Korrektur sichern (F)</button><button id="bUndo">Rückgängig (Strg+Z)</button>
+<h4>Ansicht / Kontrolle</h4>
+<button id="bPt" class="on">Kantenpunkte</button><button id="bOff">Unerklärt (rot)</button><button id="bAb">Abdeckung neu</button><button id="bSave">Speichern (Strg+S)</button>
+<div id="ab" class="k"></div>
+<h4>Foto</h4><select id="sf" style="width:100%"></select><button id="bFo">Foto zeigen</button><button id="bBest">Bestes Foto zur Kante</button><img id="im">
+<p style="color:#99a">Bedienung: Drehen = linke Maus, Verschieben = rechte, Zoom = Rad. Bei genau einer gewählten Kante erscheinen Kontrollpunkte (gelb): ziehen zum Verschieben, Shift+Klick löscht einen Punkt. Orange = Nutzerkorrektur (fix), grün = automatisch, rot = gewählt.</p></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+let D,PK,OFF=null,sel=new Set(),mode="sel",undo=[],nextId=1,neu=[];
+const V=document.getElementById("v"),st=document.getElementById("st");
+const R=new THREE.WebGLRenderer({antialias:true});V.appendChild(R.domElement);const S=new THREE.Scene();S.background=new THREE.Color(0x15181c);
+const C=new THREE.PerspectiveCamera(45,1,.05,500);C.up.set(0,0,1);const O=new THREE.OrbitControls(C,R.domElement);
+const G={edges:new THREE.Group(),pts:null,off:null,hand:new THREE.Group()};S.add(G.edges,G.hand);
+function size(){const w=V.clientWidth,h=V.clientHeight;R.setSize(w,h);C.aspect=w/h;C.updateProjectionMatrix()}addEventListener("resize",size);size();
+function snap(){undo.push(JSON.stringify(D));if(undo.length>60)undo.shift()}
+function dense(k){const P=k.pts.map(p=>new THREE.Vector3(...p));if(k.kurve&&P.length>=3){const c=new THREE.CatmullRomCurve3(P,false,"catmullrom",.5);return c.getPoints(P.length*12)}return P}
+function build(){G.edges.clear();const pos=[],col=[];
+ for(const k of D.kanten){const P=dense(k),c=sel.has(k.id)?[1,.2,.2]:k.fix?[1,.65,0]:[.2,.85,.3];for(let i=0;i<P.length-1;i++){pos.push(P[i].x,P[i].y,P[i].z,P[i+1].x,P[i+1].y,P[i+1].z);col.push(...c,...c)}}
+ const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));g.setAttribute("color",new THREE.Float32BufferAttribute(col,3));G.edges.add(new THREE.LineSegments(g,new THREE.LineBasicMaterial({vertexColors:true})));
+ G.hand.clear();if(sel.size==1){const k=D.kanten.find(k=>sel.has(k.id));if(k)k.pts.forEach(p=>{const m=new THREE.Mesh(new THREE.SphereGeometry(.03),new THREE.MeshBasicMaterial({color:0xffee00}));m.position.set(...p);G.hand.add(m)})}
+ st.textContent="Kanten "+D.kanten.length+"  gewählt "+sel.size+"  Modus "+mode+(neu.length?"  neue Punkte "+neu.length:"")}
+function pts(arr,color,size){const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(arr,3));return new THREE.Points(g,new THREE.PointsMaterial({color,size,sizeAttenuation:false}))}
+async function init(){D=await (await fetch("/api/draht")).json();D.kanten.forEach(k=>nextId=Math.max(nextId,k.id+1));
+ PK=new Float32Array(await (await fetch("/api/punkte")).arrayBuffer());G.pts=pts(PK,0x667788,1.5);S.add(G.pts);
+ const m=[0,0,0];for(let i=0;i<PK.length;i+=3){m[0]+=PK[i];m[1]+=PK[i+1];m[2]+=PK[i+2]}const n=PK.length/3;O.target.set(m[0]/n,m[1]/n,m[2]/n);C.position.set(m[0]/n+12,m[1]/n-25,m[2]/n+6);O.update();
+ const f=await (await fetch("/api/fotos")).json();sf.innerHTML=f.map(x=>"<option>"+x+"</option>").join("");build();abd();loop()}
+function loop(){requestAnimationFrame(loop);R.render(S,C)}
+function proj(p){const v=new THREE.Vector3(...p).project(C);return[(v.x+1)/2*V.clientWidth,(1-v.y)/2*V.clientHeight,v.z]}
+function pickEdge(x,y){let best=[1e9,null];for(const k of D.kanten){const P=dense(k).map(p=>proj([p.x,p.y,p.z]));for(let i=0;i<P.length-1;i++){const d=dseg(x,y,P[i],P[i+1]);if(d<best[0])best=[d,k]}}return best[0]<10?best[1]:null}
+function dseg(x,y,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l=dx*dx+dy*dy;let t=l?((x-a[0])*dx+(y-a[1])*dy)/l:0;t=Math.max(0,Math.min(1,t));return Math.hypot(x-(a[0]+t*dx),y-(a[1]+t*dy))}
+function pickPoint(x,y){let best=[14,null,1e9];for(let i=0;i<PK.length;i+=3){const p=proj([PK[i],PK[i+1],PK[i+2]]);const d=Math.hypot(x-p[0],y-p[1]);if(d<best[0]||(d<14&&p[2]<best[2]&&d<best[0]+4))best=[d,[PK[i],PK[i+1],PK[i+2]],p[2]]}return best[1]}
+let drag=null;
+R.domElement.addEventListener("pointerdown",e=>{const b=R.domElement.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;
+ if(sel.size==1&&mode=="sel"){const k=D.kanten.find(k=>sel.has(k.id));if(k)for(let i=0;i<k.pts.length;i++){const p=proj(k.pts[i]);if(Math.hypot(x-p[0],y-p[1])<10){if(e.shiftKey){if(k.pts.length>2){snap();k.pts.splice(i,1);build()}return}snap();drag={k,i};O.enabled=false;return}}}
+ down={x,y,s:e.shiftKey}});let down=null;
+R.domElement.addEventListener("pointermove",e=>{if(!drag)return;const b=R.domElement.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;
+ const nd=new THREE.Vector3((x/V.clientWidth)*2-1,-(y/V.clientHeight)*2+1,.5).unproject(C),ray=nd.sub(C.position).normalize(),dir=new THREE.Vector3();C.getWorldDirection(dir);
+ const p=new THREE.Vector3(...drag.k.pts[drag.i]),t=p.clone().sub(C.position).dot(dir)/ray.dot(dir),q=C.position.clone().add(ray.multiplyScalar(t));drag.k.pts[drag.i]=[q.x,q.y,q.z];drag.k.quelle="hand";build()});
+addEventListener("pointerup",e=>{if(drag){drag.k.fix=true;drag=null;O.enabled=true;build();return}
+ if(!down)return;const b=R.domElement.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;if(Math.hypot(x-down.x,y-down.y)>4){down=null;return}
+ if(mode=="sel"){const k=pickEdge(x,y);if(!down.s)sel.clear();if(k){sel.has(k.id)&&down.s?sel.delete(k.id):sel.add(k.id)}build()}
+ else if(mode=="neu"){const p=pickPoint(x,y);if(p){neu.push(p);build()}}
+ else if(mode=="ins"&&sel.size==1){const k=D.kanten.find(k=>sel.has(k.id));let best=[1e9,0,null];for(let i=0;i<k.pts.length-1;i++){const a=proj(k.pts[i]),c=proj(k.pts[i+1]);const d=dseg(x,y,a,c);if(d<best[0]){const dx=c[0]-a[0],dy=c[1]-a[1];let t=((x-a[0])*dx+(y-a[1])*dy)/(dx*dx+dy*dy);t=Math.max(.05,Math.min(.95,t));best=[d,i,k.pts[i].map((v,j)=>v+(k.pts[i+1][j]-v)*t)]}}if(best[0]<14){snap();k.pts.splice(best[1]+1,0,best[2]);build()}}
+ down=null});
+function setMode(m){mode=m;bSel.classList.toggle("on",m=="sel");bNeu.classList.toggle("on",m=="neu");bIns.classList.toggle("on",m=="ins");neu=[];build()}
+bSel.onclick=()=>setMode("sel");bNeu.onclick=()=>setMode("neu");bIns.onclick=()=>setMode(mode=="ins"?"sel":"ins");
+function del(){if(!sel.size)return;snap();D.kanten=D.kanten.filter(k=>!sel.has(k.id));sel.clear();build()}bDel.onclick=del;
+function merge(){const ks=D.kanten.filter(k=>sel.has(k.id));if(ks.length<2)return;snap();let ch=ks[0].pts.slice(),rest=ks.slice(1);const d=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+ while(rest.length){let bi=0,bd=1e9,fl=0,end=0;rest.forEach((k,i)=>{const p=k.pts,h=ch[0],t=ch[ch.length-1];[[d(t,p[0]),0,1],[d(t,p[p.length-1]),1,1],[d(h,p[p.length-1]),0,0],[d(h,p[0]),1,0]].forEach(([dd,f,e])=>{if(dd<bd){bd=dd;bi=i;fl=f;end=e}})});
+  let p=rest[bi].pts.slice();if(end==1){if(fl)p.reverse();if(bd<.02)p.shift();ch=ch.concat(p)}else{if(!fl)p.reverse();if(bd<.02)p.pop();ch=p.concat(ch)}rest.splice(bi,1)}
+ D.kanten=D.kanten.filter(k=>!sel.has(k.id));const n={id:nextId++,pts:ch,quelle:"hand",fix:true,kurve:ks.some(k=>k.kurve)};D.kanten.push(n);sel.clear();sel.add(n.id);build()}bMerge.onclick=merge;
+function one(f){const k=D.kanten.filter(k=>sel.has(k.id));if(k.length){snap();k.forEach(f);build()}}
+bSpl.onclick=()=>one(k=>{k.kurve=!k.kurve;k.fix=true});
+bGl.onclick=()=>one(k=>{const P=k.pts;if(P.length<3){k.pts=[P[0],P[P.length-1]];return}const Q=P.map(p=>p.slice());for(let i=1;i<P.length-1;i++)for(let j=0;j<3;j++)Q[i][j]=.5*P[i][j]+.25*(P[i-1][j]+P[i+1][j]);k.pts=Q;k.fix=true});
+bFix.onclick=()=>one(k=>k.fix=true);bUndo.onclick=()=>{if(undo.length){D=JSON.parse(undo.pop());sel.clear();build()}};
+bPt.onclick=()=>{G.pts.visible=!G.pts.visible;bPt.classList.toggle("on",G.pts.visible)};
+async function abd(){const a=await (await fetch("/api/abdeckung")).json();OFF=new Float32Array(a.off);if(G.off)S.remove(G.off);G.off=pts(OFF,0xff3030,3);G.off.visible=bOff.classList.contains("on");S.add(G.off);ab.textContent="Abdeckung (Kantenpunkte < 3 cm von einer Kante): "+(a.recall*100).toFixed(1)+" %,  unerklärt "+a.offen+" Punkte"}
+bOff.onclick=()=>{bOff.classList.toggle("on");if(G.off)G.off.visible=bOff.classList.contains("on")};bAb.onclick=async()=>{await save();};
+async function save(){const r=await (await fetch("/api/draht",{method:"POST",body:JSON.stringify(D)})).json();await abd();ab.textContent="Gespeichert. "+ab.textContent}bSave.onclick=save;
+function foto(){const s=[...sel].join(",");im.src="/api/foto?name="+encodeURIComponent(sf.value)+"&sel="+s+"&t="+Date.now()}bFo.onclick=foto;
+bBest.onclick=async()=>{if(sel.size!=1)return;await save();const n=await (await fetch("/api/bestes_foto?id="+[...sel][0])).json();if(n){sf.value=n;foto()}};
+addEventListener("keydown",e=>{if(e.target.tagName=="SELECT")return;const k=e.key.toLowerCase();
+ if(e.ctrlKey&&k=="s"){e.preventDefault();save()}else if(e.ctrlKey&&k=="z"){e.preventDefault();bUndo.onclick()}else if(k=="delete")del();else if(k=="m")merge();else if(k=="s")bSpl.onclick();else if(k=="g")bGl.onclick();else if(k=="f")bFix.onclick();else if(k=="i")bIns.onclick();
+ else if(k=="enter"&&mode=="neu"&&neu.length>=2){snap();const n={id:nextId++,pts:neu.slice(),quelle:"hand",fix:true,kurve:false};D.kanten.push(n);sel.clear();sel.add(n.id);neu=[];setMode("sel")}else if(k=="escape"){neu=[];sel.clear();build()}});
+init();
+</script>
