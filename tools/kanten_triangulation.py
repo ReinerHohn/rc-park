@@ -7,8 +7,16 @@ import sys, os, json, math, numpy as np, cv2, torch
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import kanten_vote_quellen as KV
 from concurrent.futures import ProcessPoolExecutor
 def opt(n, d, t=float): return t(sys.argv[sys.argv.index(n) + 1]) if n in sys.argv else d
-NREF = opt("--refs", 12, int); NPART = opt("--partner", 3, int); NCPU = opt("--cpu", 8, int); OUT = sys.argv[6]; dev = "cuda"; TOLPX = 3.0
+NREF = opt("--refs", 12, int); NPART = opt("--partner", 3, int); NCPU = opt("--cpu", 8, int); OUT = sys.argv[6]; dev = "cuda"; TOLPX = opt("--tol", 3.0); ZMIN = opt("--zmin", -1e9); STAB = sys.argv[sys.argv.index("--stabil") + 1] if "--stabil" in sys.argv else None; STHR = opt("--sthr", 0.5); KAMW = {k: v["W"] for k, v in KV.KAM.items()}; R1 = opt("--r1", 0.6); R2 = opt("--r2", 0.62)
 def arbeit(f):
+    if STAB:                                                                                  # Stabilitaetskarte (kanten_stabil.py) statt Einzelquellen: Kante = Laufanteil >= STHR
+        sp = os.path.join(STAB, os.path.splitext(f)[0] + ".png"); V = cv2.imread(sp, cv2.IMREAD_GRAYSCALE)
+        if V is None: return f, None, None, 1.0
+        w = V.shape[1]; dt2 = np.minimum(cv2.distanceTransform((V < 255 * STHR).astype(np.uint8), cv2.DIST_L2, 3)[::2, ::2], 255).astype(np.uint8)
+        lsd = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD); r = lsd.detect(V)[0]
+        if r is None: return f, None, None, 1.0
+        L = r.reshape(-1, 4); ln = np.hypot(L[:, 2] - L[:, 0], L[:, 3] - L[:, 1]); L = L[ln > 0.02 * w]; ln = ln[ln > 0.02 * w]; L = L[np.argsort(-ln)[:1500]]
+        return f, dt2, L.astype(np.float32), float(w)
     _, E = KV.kantenbilder(f)
     if E is None: return f, None, None, 1.0
     h, w = E.shape[1:]; dt2 = np.minimum(cv2.distanceTransform((E.sum(0) < (1 if '--lax' in sys.argv else 2)).astype(np.uint8), cv2.DIST_L2, 3)[::2, ::2], 255).astype(np.uint8)
@@ -48,7 +56,7 @@ if __name__ == "__main__":
     pairs = []
     for a in sel:
         BMIN = opt('--bmin', 2.0); BMAX = opt('--bmax', 15.0); BZ = opt('--bziel', 6.0); cand = [(abs(np.linalg.norm(Cn[b] - Cn[a]) - BZ), b) for b in range(J) if b != a and BMIN < np.linalg.norm(Cn[b] - Cn[a]) < BMAX and float(Dn[a] @ Dn[b]) > opt('--dotmin', 0.7)]; cand.sort(); pairs += [(a, b) for _, b in cand[:NPART]]
-    DBG = [0, 0, 0, 0]; print("Paare", len(pairs), flush=True); rng = np.random.default_rng(0); allA = []; allB = []; allS = []; allV = []
+    DBG = [0, 0, 0, 0]; print("Paare", len(pairs), flush=True); rng = np.random.default_rng(0); allA = []; allB = []; allS = []; allV = []; allP = []
     ts1 = torch.linspace(0.05, 0.95, 16, device=dev); ts2 = torch.linspace(0.02, 0.98, 48, device=dev)
     for (a, b) in pairs:
         La, Lb = LN[a], LN[b]; na, nb = len(La), len(Lb)
@@ -64,20 +72,21 @@ if __name__ == "__main__":
             return torch.minimum(*res), torch.maximum(*res)
         loA, hiA = trange(C[a], A0[ia], A1[ia]); loB, hiB = trange(C[b], B0[ib], B1[ib]); lo_t = torch.maximum(loA, loB); hi_t = torch.minimum(hiA, hiB); ok = (hi_t - lo_t > 0.15) & (hi_t - lo_t < 12.0)
         S0 = P0 + d * lo_t[:, None]; S1 = P0 + d * hi_t[:, None]; ok &= ((S0 > LO) & (S0 < HI)).all(1) & ((S1 > LO) & (S1 < HI)).all(1); S0, S1 = S0[ok], S1[ok]
+        if ZMIN > -1e8: kz = torch.maximum(S0[:, 2], S1[:, 2]) >= ZMIN; S0, S1 = S0[kz], S1[kz]                 # nur Kandidaten ab Hoehe ZMIN (Hochlauf)
         if len(S0) == 0: continue
         hoch = (torch.maximum(S0[:, 2], S1[:, 2]) > 15); DBG[0] += int(hoch.sum()); DBG[1] += len(S0)
-        others = [j for j in range(J) if j not in (a, b)]; st1 = rng.choice(others, min(24, len(others)), replace=False).tolist(); keepA = []; keepB = []; keepS = []; keepV = []
+        others = [j for j in range(J) if j not in (a, b)]; st1 = rng.choice(others, min(24, len(others)), replace=False).tolist(); keepA = []; keepB = []; keepS = []; keepV = []; keepP = []
         for c0 in range(0, len(S0), 40000):
-            s0, s1 = S0[c0:c0 + 40000], S1[c0:c0 + 40000]; Q = s0[:, None] * (1 - ts1)[None, :, None] + s1[:, None] * ts1[None, :, None]; h1, v1 = stuetz(Q, st1); k = (v1 >= 0.5 * 16 * 24 * 0.25) & (h1 >= 0.6 * v1)
+            s0, s1 = S0[c0:c0 + 40000], S1[c0:c0 + 40000]; Q = s0[:, None] * (1 - ts1)[None, :, None] + s1[:, None] * ts1[None, :, None]; h1, v1 = stuetz(Q, st1); k = (v1 >= 0.5 * 16 * 24 * 0.25) & (h1 >= R1 * v1)
             if int(k.sum()) == 0: continue
-            DBG[2] += int((torch.maximum(s0[k][:, 2], s1[k][:, 2]) > 15).sum()) if int(k.sum()) else 0; s0, s1 = s0[k], s1[k]; Q = s0[:, None] * (1 - ts2)[None, :, None] + s1[:, None] * ts2[None, :, None]; h2, v2 = stuetz(Q, others); sc = h2 / v2.clamp(min=1); k2 = (sc >= 0.62) & (v2 >= 48 * 4)
-            DBG[3] += int((torch.maximum(s0[k2][:, 2], s1[k2][:, 2]) > 15).sum()); keepA.append(s0[k2]); keepB.append(s1[k2]); keepS.append(sc[k2]); keepV.append(v2[k2] / 48)
+            DBG[2] += int((torch.maximum(s0[k][:, 2], s1[k][:, 2]) > 15).sum()) if int(k.sum()) else 0; s0, s1 = s0[k], s1[k]; Q = s0[:, None] * (1 - ts2)[None, :, None] + s1[:, None] * ts2[None, :, None]; h2, v2 = stuetz(Q, others); sc = h2 / v2.clamp(min=1); k2 = (sc >= R2) & (v2 >= 48 * 4)
+            DBG[3] += int((torch.maximum(s0[k2][:, 2], s1[k2][:, 2]) > 15).sum()); keepA.append(s0[k2]); keepB.append(s1[k2]); keepS.append(sc[k2]); keepV.append(v2[k2] / 48); keepP.append(torch.full((int(k2.sum()),), len(allP), device=dev))
         if keepA:
-            allA.append(torch.cat(keepA)); allB.append(torch.cat(keepB)); allS.append(torch.cat(keepS)); allV.append(torch.cat(keepV))
+            allA.append(torch.cat(keepA)); allB.append(torch.cat(keepB)); allS.append(torch.cat(keepS)); allV.append(torch.cat(keepV)); allP.append(torch.cat(keepP))
         print("Paar", a, b, "Kandidaten", len(S0), "gestuetzt", int(sum(len(x) for x in keepA)), flush=True)
     print("Diagnose z>15 m: Kandidaten %d von %d, nach Stufe 1: %d, nach Stufe 2: %d" % (DBG[0], DBG[1], DBG[2], DBG[3]), flush=True)
     if not allA: print("nichts gefunden"); sys.exit(0)
-    A = torch.cat(allA); B = torch.cat(allB); S = torch.cat(allS); V = torch.cat(allV); L = (B - A).norm(dim=1); o = (S * L.clamp(max=3)).argsort(descending=True); A, B, S, V, L = A[o], B[o], S[o], V[o], L[o]; print("vor NMS", len(A), flush=True)
+    A = torch.cat(allA); B = torch.cat(allB); S = torch.cat(allS); V = torch.cat(allV); L = (B - A).norm(dim=1); o = (S * L.clamp(max=3)).argsort(descending=True); PP = torch.cat(allP)[o]; A, B, S, V, L = A[o], B[o], S[o], V[o], L[o]; print("vor NMS", len(A), flush=True)
     kA = torch.zeros((0, 3), device=dev); kB = torch.zeros((0, 3), device=dev); kS = []; tq = torch.linspace(0, 1, 6, device=dev)
     def dist_zu(Q, KA, KB):
         dmin = torch.full(Q.shape[:2], 9.0, device=dev)
@@ -93,4 +102,10 @@ if __name__ == "__main__":
                 if bool((dist_zu(q, kA[-64:], kB[-64:]) < 0.025).all()): continue
             kA = torch.cat([kA, a_[i:i + 1]]); kB = torch.cat([kB, b_[i:i + 1]]); kS.append(float(S[c0 + i]))
     print("nach NMS", len(kA), "Laenge", float((kB - kA).norm(dim=1).sum()), "m", flush=True)
-    json.dump({"segmente": [[a.tolist(), b.tolist(), 0, s] for a, b, s in zip(kA, kB, kS)], "quelle": "triangulation", "fotos": J, "paare": len(pairs)}, open(OUT, "w")); print("fertig", OUT)
+    # Konsens: wie viele UNABHAENGIGE Paare haben (vor NMS) dieselbe Linie gefunden (Mittelpunkt < KD, fast parallel)?
+    KD = opt("--kd", 0.2); Mk = (kA + kB) / 2; Dk = (kB - kA) / (kB - kA).norm(dim=1, keepdim=True).clamp(min=1e-9); Mc = (A + B) / 2; Dc = (B - A) / L.clamp(min=1e-9)[:, None]; kons = []
+    for c0 in range(0, len(kA), 256):
+        m = ((Mk[c0:c0 + 256, None] - Mc[None]).norm(dim=2) < KD) & ((Dk[c0:c0 + 256, None] * Dc[None]).sum(2).abs() > 0.95)
+        for r in m: kons.append(int(torch.unique(PP[r]).numel()))
+    print("Konsens (Paare je Segment): Median", float(np.median(kons)), ">=3:", int(sum(k >= 3 for k in kons)), ">=3 und z>15:", int(sum(1 for k, a_, b_ in zip(kons, kA, kB) if k >= 3 and max(float(a_[2]), float(b_[2])) > 15)), flush=True)
+    json.dump({"segmente": [[a.tolist(), b.tolist(), 0, s, k] for a, b, s, k in zip(kA, kB, kS, kons)], "quelle": "triangulation", "fotos": J, "paare": len(pairs)}, open(OUT, "w")); print("fertig", OUT)
