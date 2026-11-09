@@ -1,0 +1,8 @@
+# Log Kameraguete + Linien-Feinlage 2026-11-09 (Agent)
+- Quelle der Kameras: kam_lot2.json == exakte Aehnlichkeit (Massstab 3,6256 m/SfM-Einheit, Rest 1e-14) der COLMAP-sparse/0 (440 Bilder, 82009 Punkte) -> Punkte/Tracks aus sparse/0.
+- Teil 1 `tools/kamera_guete_lot2.py`: LOO (Neutriangulation ohne das Foto, Winkel >= 2 Grad, PnP-RANSAC+LM), Flaechenfehler in m. Ergebnis audit/kamera_guete_lot2.json: gut 406, grob 21, unbrauchbar 13 (1 ohne LOO). Fehler Median 2 mm, P90 9 mm, P99 77 mm, Max 0,47 m.
+- Synth (--synth, 30 Fotos x 7 Stufen): gemessener Flaechenfehler = eingespielter (0,3 m: 0,264 vs 0,265; 0,1 m: 0,085/0,086; 0,05 m: 0,043/0,045; 0,5 Grad: 0,060/0,059; 0 Stoerung: 0,001). Triviales Moment: die LOO-Pose haengt nicht von der gespeicherten Pose ab; getestet werden Rahmen/Massstab/Meterumrechnung und Klassengrenzen: 0,3 m -> 30/30 unbrauchbar, 0,1 m -> nie gut (24 grob, 6 unbrauchbar), 0,05 m -> 26 grob/4 gut.
+- Gegenprobe-Bilder audit/kamera_guete/*.jpg angesehen: gute Fotos decken sich mit Gitter und SfM-Punkten; unbrauchbare (i_12, h_14, n_16) zeigen zerfahrene Gitterprojektion bzw. SfM-Punkte nur im Fernbereich.
+- Teil 2: siehe NICHTS_GEBRACHT (BS3e): verworfen.
+- Z1 strace: 0 Zugriffe auf *.stl, modelle/, objekt.json, anker3d; gelesen werden nur sparse/0/{cameras,images,points3D}.bin und kam_lot2.json (Teil 1) bzw. + segmente_gitter_v12.json + Fotos (Teil 2).
+- Z4: Anker (anker3d.json, LoD2 sigma 0,3-0,5 m) nicht pruefbar: lot2-Rahmen hat Boden bei z~1,7 (Anker 0), Rahmen ist aus Foto-Lot/Wandgier/Boden-Modus definiert; Grundriss-Fit nicht aussagekraeftig. Offen.
