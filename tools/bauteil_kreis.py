@@ -27,6 +27,7 @@ Grenzen (ehrlich): Wolkenbeleg ist noch kein bewiesenes Gate (Hinweis-Kennzahl, 
 waehlt der Kreis nie. Teile-Sichtpruefung fliesst ein, sobald ihre Ausgabe 'gate_bewiesen' traegt.
 """
 import sys, os, json, time, subprocess, shutil, re
+sys.stdout.reconfigure(line_buffering=True)   # systemd-Log sofort lesbar
 
 a = sys.argv
 def opt(k, d=None, t=str):
