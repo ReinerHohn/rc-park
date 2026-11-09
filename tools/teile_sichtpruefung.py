@@ -34,7 +34,7 @@ TOOLS = os.path.dirname(os.path.abspath(__file__)); REPO = os.path.dirname(TOOLS
 import render_kern as RK
 
 SCHWELLEN = dict(tol_m=0.25, tol_min_px=2.5, thr_hit=0.50, thr_lift=0.15, thr_himmel=0.06, hart_himmel=0.20, thr_wolke=0.30, tol_wolke_m=1.0,
-                 versatz_m=1.2, thr_gewinn=0.15, recall_m=0.7, thr_recall=0.45, thr_sil=0.55, min_sil=25, min_px=500, min_px_er=120, min_kanten=40, rot_anteil=0.34, min_fotos=2, min_richtungen=2, richtung_grad=25.0, kos_min=0.3, decoy_m=1.0)
+                 versatz_m=1.2, thr_gewinn=0.15, recall_m=0.7, thr_recall=0.45, thr_sil=0.55, min_sil=25, min_px=500, min_px_er=120, min_kanten=40, rot_anteil=0.34, wolke_verdeckt=0, min_fotos=2, min_richtungen=2, richtung_grad=25.0, kos_min=0.3, decoy_m=1.0)
 LANG = 1008                                                                                           # lange Bildseite der Arbeitsaufloesung (Pixel)
 FARBE = {"GRUEN": (60, 190, 60), "ROT": (50, 50, 230), "UNGEPRUEFT": (150, 150, 150)}
 
@@ -92,6 +92,7 @@ def teil_messen(teil, A, kc, sw=SCHWELLEN, mit_bild=False):
     D, fid, pos = raster(teil, kc); fin = np.isfinite(D); Dg = A.Dg
     tolz = np.maximum(0.08, 0.01 * np.where(fin, D, 0))
     vis = fin & np.isfinite(Dg) & (np.abs(D - Dg) <= tolz)                                              # das Teil IST die vorderste Flaeche des ganzen Modells (verdeckt/ausgeschnitten -> nein)
+    if sw.get("wolke_verdeckt") and A.cz is not None: vis &= ~(np.isfinite(A.cz) & (A.cz < D - np.maximum(1.0, 0.04 * D)))       # Formfit-Modus: kein Modellkoerper als Verdecker -> Wolke verdeckt (Decke, Passanten)
     C = kc["C"]; ray = pos - C; cosw = np.zeros(D.shape, np.float32)
     g = fid >= 0
     if g.any(): rl = np.linalg.norm(ray[g], axis=1) + 1e-9; cosw[g] = np.abs((teil.face_normals[fid[g]] * ray[g]).sum(1)) / rl
@@ -292,6 +293,7 @@ def nebeneinander(bilder, h=520):
 # ------------------------------------------------------------------ Hauptlauf
 def pruefen(ap_args):
     a = ap_args; t0 = time.time(); obj, name, root, od, cfg = cfg_laden(a); sw = dict(SCHWELLEN)
+    if a.formen: sw["wolke_verdeckt"] = 1; sw["min_fotos"] = 3
     for k in sw:
         v = getattr(a, k, None)
         if v is not None: sw[k] = v

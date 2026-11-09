@@ -721,6 +721,7 @@ def erker(cfg, ctx):
     def rechteck(z, fn, fu): return [(um - fu * b / 2, wn - EIN, z), (um + fu * b / 2, wn - EIN, z), (um - fu * b / 2, wn + max(fn * au, 0.02), z), (um + fu * b / 2, wn + max(fn * au, 0.02), z)]
     stufen = [(0.0, 1.0, 1.0)] + [(float(d["t"]), float(d["fn"]), float(d["fu"])) for d in sorted(cfg["dachprofil"], key=lambda d: d["t"])] + [(1.0, 0.08, 0.06)]
     teile = [kasten]
+    if cfg.get("ohne_dach"): stufen = stufen[:1]                                                   # 2026-11-09 R6: Dach = eigenes Bauteil (helm_geschweift), Erker endet flach an oberkante_z
     for (t0, n0, u0_), (t1, n1, u1_) in zip(stufen, stufen[1:]):
         pts = rechteck(zo + t0 * (zs - zo), n0, u0_) + rechteck(zo + t1 * (zs - zo), n1, u1_)
         teile.append(M.hull_points([list(map(float, p_)) for p_ in pts]))
@@ -907,6 +908,31 @@ def zylinder_bt(cfg, ctx):
     k = M.cylinder(z1 - z0, r, ro, 40).translate((u_, n_, z0)).transform(_uszT(cfg)); modus = cfg.get("modus", "anbau")
     beleg("alle", f"Zylinder ({modus})", cfg["quelle"], u=u_, n=n_, z0=z0, z1=z1, radius=r)
     return ([k], []) if modus != "ausschnitt" else ([], [k])
+
+@bauteil("helm_geschweift")
+def helm_geschweift(cfg, ctx):
+    """Geschweifter (glockenfoermiger) Polygonhelm bei (u, n) (Nutzerbefund 2026-11-09: Erkerhelme sind konkav ausgeschweift, Fuss fast erkerbreit; ein gerader Kegel
+    aus dem Wolkenfit sah nur die Nadel). Grundriss = regelmaessiges n_seiten-Eck, drehung_grad (0 = eine Seite zeigt nach +n), Profil r(z) = Apothema (halbe Breite
+    ueber die Flaechen) als Liste [[z, r], ...] aufsteigend; zwischen zwei Ringen konvexe Huelle (Kegelstumpf je Abschnitt) -> konkave Gesamtkurve.
+    Optional: kranz {z0, z1, r} (Traufkranz/Unterbau unter der Traufe, gleiches Polygon), knauf {z, r} (Kugel als 12-Eck-Doppelpyramide), z_spitze/r_spitze (Nadel).
+    Pflicht: u, n, n_seiten, profil, z_spitze, achse_n, achse_quelle, quelle. Druck: Nadelradius >= r_spitze."""
+    for k in ("u", "n", "n_seiten", "profil", "z_spitze", "achse_n", "achse_quelle", "quelle"):
+        if cfg.get(k) in (None, ""): sys.exit(f"helm_geschweift: '{k}' fehlt (Regel 3b)")
+    u_, n_ = float(cfg["u"]), float(cfg["n"]); N = int(cfg["n_seiten"]); dr = np.radians(float(cfg.get("drehung_grad", 0.0))); zs = float(cfg["z_spitze"]); rs = float(cfg.get("r_spitze", 0.02))
+    prof = sorted([(float(z), float(r)) for z, r in cfg["profil"]]) + [(zs, rs)]
+    if N < 3 or any(b[0] <= a[0] for a, b in zip(prof, prof[1:])) or min(r for _, r in prof) <= 0: sys.exit(f"helm_geschweift: unplausibles Profil {prof}")
+    ph = dr + np.pi / 2 + np.pi / N                                                                  # Ecken so, dass eine Flaechenmitte bei Winkel dr+90 Grad (= +n) liegt
+    def ring(z, r): R = r / np.cos(np.pi / N); return [[u_ + R * np.cos(ph + 2 * np.pi * i / N), n_ + R * np.sin(ph + 2 * np.pi * i / N), z] for i in range(N)]
+    teile = [M.hull_points(ring(z0, r0) + ring(z1, r1)) for (z0, r0), (z1, r1) in zip(prof, prof[1:])]
+    kr = cfg.get("kranz")
+    if kr: teile.append(M.hull_points(ring(float(kr["z0"]), float(kr["r"])) + ring(float(kr["z1"]) + 0.01, float(kr["r"]))))
+    kn = cfg.get("knauf")
+    if kn:
+        zk, rk = float(kn["z"]), float(kn["r"]); kug = [[u_ + rk * np.cos(a) * np.cos(b), n_ + rk * np.sin(a) * np.cos(b), zk + rk * np.sin(b)] for a in np.linspace(0, 2 * np.pi, 12, endpoint=False) for b in (-1.2, -0.6, 0, 0.6, 1.2)]
+        teile.append(M.hull_points(kug + [[u_, n_, zk - rk], [u_, n_, zk + rk]]))
+    k = UNION(teile).transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; q = lambda p_: (wq.get(p_) or cfg["quelle"])
+    beleg("alle", f"Geschweifter Helm ({N}-Eck) u={u_:.2f}", q("profil") + " | Lage: " + q("u") + " | Grundriss: " + q("n_seiten"), u=u_, n=n_, n_seiten=N, profil=prof, kranz=kr, knauf=kn)
+    return [k], []
 
 @bauteil("bruestung")
 def bruestung_bt(cfg, ctx):

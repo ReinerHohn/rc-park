@@ -59,7 +59,12 @@
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.8,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.8,
   "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 1.9991922203691888,
-  "laube_rueckwand_n728_z7": -0.003980470011784032
+  "laube_rueckwand_n728_z7": -0.003980470011784032,
+  "helm_o_r_14_64": 1.3592913551091492,
+  "helm_o_r_16_18": 0.7332400984162366,
+  "helm_o_r_17_76": 0.5650099531841414,
+  "helm_w_r_16_25": 0.665109869201685,
+  "helm_w_r_17_75": 0.5068990264498032
  },
  "pruefungen": [
   {
@@ -341,7 +346,57 @@
    ],
    "ok": true,
    "status": "ok"
+  },
+  {
+   "name": "Erkerhelm Ost: Halbbreite vor der Achse bei z 14,64 (geschweiftes Profil)",
+   "wert": 1.3592913551091492,
+   "soll": [
+    1.08,
+    1.32
+   ],
+   "ok": false,
+   "status": "fehler"
+  },
+  {
+   "name": "Erkerhelm Ost: Halbbreite vor der Achse bei z 16,18 (geschweiftes Profil)",
+   "wert": 0.7332400984162366,
+   "soll": [
+    0.46,
+    0.7
+   ],
+   "ok": false,
+   "status": "fehler"
+  },
+  {
+   "name": "Erkerhelm Ost: Halbbreite vor der Achse bei z 17,76 (geschweiftes Profil)",
+   "wert": 0.5650099531841414,
+   "soll": [
+    0.22,
+    0.46
+   ],
+   "ok": false,
+   "status": "fehler"
+  },
+  {
+   "name": "Erkerhelm West: Halbbreite vor der Achse bei z 16,25 (Kopplung auf Probe)",
+   "wert": 0.665109869201685,
+   "soll": [
+    0.56,
+    0.8
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erkerhelm West: Halbbreite vor der Achse bei z 17,75 (Kopplung auf Probe)",
+   "wert": 0.5068990264498032,
+   "soll": [
+    0.32,
+    0.56
+   ],
+   "ok": true,
+   "status": "ok"
   }
  ],
- "bestanden": true
+ "bestanden": false
 }

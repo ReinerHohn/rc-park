@@ -3866,7 +3866,8 @@
     "oberkante_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json erker_gemeinsam z_oben 13.18 (Gesims)",
     "spitze_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json helme z_fuss 14.67 (Helmfuss; der Helm selbst ist stl_teil:helme, Erker-'Dach' = Schaft/Gesims bis zum Helmfuss)",
     "wand_n": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json off_front 12.66",
-    "dachprofil": "ANNAHME: Erkerschaft zwischen Gesims und Helmfuss = Huelle Erkerpolygon -> Helmkreis r_fuss (wie fenster_erker_v9); Werte aus r_fuss/auskragung/breite"
+    "dachprofil": "ANNAHME: Erkerschaft zwischen Gesims und Helmfuss = Huelle Erkerpolygon -> Helmkreis r_fuss (wie fenster_erker_v9); Werte aus r_fuss/auskragung/breite",
+    "ohne_dach": "Nutzerbefund 2026-11-09: das gestufte Erkerdach gibt es nicht; der geschweifte Helm (helm_geschweift) sitzt mit Traufkranz direkt auf dem Erkergesims"
    },
    "historie": [
     {
@@ -3939,8 +3940,19 @@
        }
       ]
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 6",
+     "alt": {
+      "ohne_dach": null
+     },
+     "neu": {
+      "ohne_dach": true
+     }
     }
-   ]
+   ],
+   "ohne_dach": true
   },
   {
    "typ": "erker:1",
@@ -3978,7 +3990,8 @@
     "oberkante_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json erker_gemeinsam z_oben 13.18 (Gesims)",
     "spitze_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json helme z_fuss 15.09 (Helmfuss; der Helm selbst ist stl_teil:helme, Erker-'Dach' = Schaft/Gesims bis zum Helmfuss)",
     "wand_n": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json off_front 12.66",
-    "dachprofil": "ANNAHME: Erkerschaft zwischen Gesims und Helmfuss = Huelle Erkerpolygon -> Helmkreis r_fuss (wie fenster_erker_v9); Werte aus r_fuss/auskragung/breite"
+    "dachprofil": "ANNAHME: Erkerschaft zwischen Gesims und Helmfuss = Huelle Erkerpolygon -> Helmkreis r_fuss (wie fenster_erker_v9); Werte aus r_fuss/auskragung/breite",
+    "ohne_dach": "Nutzerbefund 2026-11-09: das gestufte Erkerdach gibt es nicht; der geschweifte Helm (helm_geschweift) sitzt mit Traufkranz direkt auf dem Erkergesims"
    },
    "historie": [
     {
@@ -4041,8 +4054,19 @@
        }
       ]
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 6",
+     "alt": {
+      "ohne_dach": null
+     },
+     "neu": {
+      "ohne_dach": true
+     }
     }
-   ]
+   ],
+   "ohne_dach": true
   },
   {
    "typ": "balkonband:haupt",
@@ -5313,6 +5337,109 @@
       "z0": 14.6
      },
      "grund": "Druck: Einbindung 0,04 -> 0,07 m (Basis 4 cm unter Traufe 14,68 lag 1 cm unter der Erkerspitze und schnitt die Rumpf-Stirnflaeche fast deckungsgleich -> 3 nicht-manifold Kanten an der Westecke; mit 0,07 m 1 Koerper wasserdicht). Sichtbare Form unveraendert (Basis liegt im Rumpf/Erkerdach)."
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 6",
+     "alt": {
+      "aktiv": true
+     },
+     "neu": {
+      "aktiv": false,
+      "ersetzt_durch": "helm_geschweift:w"
+     }
+    }
+   ],
+   "aktiv": false
+  },
+  {
+   "typ": "helm_geschweift:w",
+   "gruppe": "Erkerhelm W (geschweift)",
+   "u": -8.56,
+   "n": 12.22,
+   "n_seiten": 8,
+   "drehung_grad": 0.0,
+   "profil": [
+    [
+     14.15,
+     1.54
+    ],
+    [
+     14.64,
+     1.2
+    ],
+    [
+     15.41,
+     0.83
+    ],
+    [
+     16.18,
+     0.58
+    ],
+    [
+     16.97,
+     0.44
+    ],
+    [
+     17.76,
+     0.34
+    ],
+    [
+     18.58,
+     0.27
+    ],
+    [
+     19.4,
+     0.19
+    ],
+    [
+     20.25,
+     0.13
+    ],
+    [
+     21.9,
+     0.08
+    ]
+   ],
+   "z_spitze": 22.34,
+   "r_spitze": 0.02,
+   "kranz": {
+    "z0": 13.1,
+    "z1": 14.15,
+    "r": 1.45
+   },
+   "knauf": {
+    "z": 22.0,
+    "r": 0.15
+   },
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Nutzerbefund 2026-11-09 (geschweifter Polygonhelm statt Kegel); Profil Kopplung auf Probe: Profil des Osthelms (nu3b), Wolke West einig (16,25 0,68 / 17,75 0,44)",
+   "werte_quellen": {
+    "u": "Helmachse aus formen/helme.json (Kegelfit der Nadel, Lage gut: Wolke-Profil zentriert) along -8.56",
+    "n": "formen/helme.json off 12.22",
+    "n_seiten": "ANNAHME: Achteck (Grate am Foto nu3b: 3-4 innere Grate sichtbar); Zaehlung per foto_zaehlung offen",
+    "drehung_grad": "ANNAHME: eine Flaeche zur Strasse (+n), wie die Erkerfront",
+    "profil": "Kopplung auf Probe: Profil des Osthelms (nu3b), Wolke West einig (16,25 0,68 / 17,75 0,44) | Foto nu_3b29472b (K-nu3b Kamera-Bruecke, 19 m, Blick -41 Grad) Silhouettenbreite/2 auf der Ebene durch die Helmachse: M-nu3b-001..008 (z 14,22 Traufspitzen 1,54 / 14,64 1,20 / 15,41 0,83 / 16,18 0,58 / 16,97 0,44 / 17,76 0,34 / 18,58 0,27 / 19,40 0,19); oben Wolke lot2 r p50 (20,25 0,13, Nadel 20,5-22 ~0,10); Form = Foto (Regel 9d), Wolke einig +-0,07 ab z 15 (unterhalb Erker/Dach im Schnitt)",
+    "z_spitze": "formen/helme.json z_spitze 22.34 (fotogeprueft)",
+    "r_spitze": "ANNAHME Druck 0,02",
+    "kranz": "ANNAHME: Unterbau/Traufkranz vom Erkergesims 13,18 (-0,08 Einbindung) bis zur Traufe 14,15 (nu3b Zeile 1155), r 1,45 knapp innerhalb der Traufspitzen 1,54",
+    "knauf": "Foto nu3b: Kugel Zeile ~185 (z ~22,0), Radius ~12 px = 0,15 m"
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 6",
+     "alt": {
+      "zylinder:helm_w": {
+       "radius": 0.844,
+       "z0": 14.6
+      }
+     },
+     "neu": "helm_geschweift (Profil r(z), 8-Eck, Kranz, Knauf)"
     }
    ]
   },
@@ -5359,6 +5486,109 @@
       "z0": 15.02
      },
      "grund": "Druck: Einbindung 0,04 -> 0,07 m (Basis 4 cm unter Traufe 14,68 lag 1 cm unter der Erkerspitze und schnitt die Rumpf-Stirnflaeche fast deckungsgleich -> 3 nicht-manifold Kanten an der Westecke; mit 0,07 m 1 Koerper wasserdicht). Sichtbare Form unveraendert (Basis liegt im Rumpf/Erkerdach)."
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 6",
+     "alt": {
+      "aktiv": true
+     },
+     "neu": {
+      "aktiv": false,
+      "ersetzt_durch": "helm_geschweift:o"
+     }
+    }
+   ],
+   "aktiv": false
+  },
+  {
+   "typ": "helm_geschweift:o",
+   "gruppe": "Erkerhelm O (geschweift)",
+   "u": 15.53,
+   "n": 12.23,
+   "n_seiten": 8,
+   "drehung_grad": 0.0,
+   "profil": [
+    [
+     14.15,
+     1.54
+    ],
+    [
+     14.64,
+     1.2
+    ],
+    [
+     15.41,
+     0.83
+    ],
+    [
+     16.18,
+     0.58
+    ],
+    [
+     16.97,
+     0.44
+    ],
+    [
+     17.76,
+     0.34
+    ],
+    [
+     18.58,
+     0.27
+    ],
+    [
+     19.4,
+     0.19
+    ],
+    [
+     20.25,
+     0.13
+    ],
+    [
+     21.9,
+     0.08
+    ]
+   ],
+   "z_spitze": 22.78,
+   "r_spitze": 0.02,
+   "kranz": {
+    "z0": 13.1,
+    "z1": 14.15,
+    "r": 1.45
+   },
+   "knauf": {
+    "z": 22.0,
+    "r": 0.15
+   },
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Nutzerbefund 2026-11-09 (geschweifter Polygonhelm statt Kegel); Profil Foto nu3b",
+   "werte_quellen": {
+    "u": "Helmachse aus formen/helme.json (Kegelfit der Nadel, Lage gut: Wolke-Profil zentriert) along 15.53",
+    "n": "formen/helme.json off 12.23",
+    "n_seiten": "ANNAHME: Achteck (Grate am Foto nu3b: 3-4 innere Grate sichtbar); Zaehlung per foto_zaehlung offen",
+    "drehung_grad": "ANNAHME: eine Flaeche zur Strasse (+n), wie die Erkerfront",
+    "profil": "Foto nu_3b29472b (K-nu3b Kamera-Bruecke, 19 m, Blick -41 Grad) Silhouettenbreite/2 auf der Ebene durch die Helmachse: M-nu3b-001..008 (z 14,22 Traufspitzen 1,54 / 14,64 1,20 / 15,41 0,83 / 16,18 0,58 / 16,97 0,44 / 17,76 0,34 / 18,58 0,27 / 19,40 0,19); oben Wolke lot2 r p50 (20,25 0,13, Nadel 20,5-22 ~0,10); Form = Foto (Regel 9d), Wolke einig +-0,07 ab z 15 (unterhalb Erker/Dach im Schnitt)",
+    "z_spitze": "formen/helme.json z_spitze 22.78 (fotogeprueft)",
+    "r_spitze": "ANNAHME Druck 0,02",
+    "kranz": "ANNAHME: Unterbau/Traufkranz vom Erkergesims 13,18 (-0,08 Einbindung) bis zur Traufe 14,15 (nu3b Zeile 1155), r 1,45 knapp innerhalb der Traufspitzen 1,54",
+    "knauf": "Foto nu3b: Kugel Zeile ~185 (z ~22,0), Radius ~12 px = 0,15 m"
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 6",
+     "alt": {
+      "zylinder:helm_o": {
+       "radius": 0.846,
+       "z0": 15.02
+      }
+     },
+     "neu": "helm_geschweift (Profil r(z), 8-Eck, Kranz, Knauf)"
     }
    ]
   },

@@ -26,7 +26,7 @@ def antwort(Gr, s, F, f, pts):
     u, v, z = F.proj(f, pts); u = u * s * (Gr.shape[1] / (F.KAM[f]["W"] * s)); v = v * s * (Gr.shape[1] / (F.KAM[f]["W"] * s))
     ok = (z > 1) & (u >= 0) & (u < Gr.shape[1] - 1) & (v >= 0) & (v < Gr.shape[0] - 1)
     if ok.mean() < 0.9: return None
-    uu = np.round(u).astype(int); vv = np.round(v).astype(int); return float(np.mean([Gr[max(vv_ - 1, 0):vv_ + 2, max(uu_ - 1, 0):uu_ + 2].max() for uu_, vv_ in zip(uu, vv)]))
+    uu = np.clip(np.round(u).astype(int), 1, Gr.shape[1] - 2); vv = np.clip(np.round(v).astype(int), 1, Gr.shape[0] - 2); return float(np.mean([Gr[max(vv_ - 1, 0):vv_ + 2, max(uu_ - 1, 0):uu_ + 2].max() for uu_, vv_ in zip(uu, vv)]))
 
 
 def kantenarten(par, fam, t0, o0, A, B, u, n, dx, dd):

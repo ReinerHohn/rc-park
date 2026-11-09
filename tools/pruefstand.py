@@ -122,6 +122,21 @@ class Messer:
         if sec is None: return float("nan")
         Q = np.asarray(sec.vertices); Q = Q[(Q[:, 0] >= x0) & (Q[:, 0] <= x1) & (Q[:, 1] >= y0) & (Q[:, 1] <= y1)]
         a = "xyz".index(achse); return float(Q[:, a].max() - Q[:, a].min()) if len(Q) >= 2 else float("nan")
+    def schnitt_reichweite(self, z, zentrum, richtung, quer_max=0.3, r_max=4.0, **k):
+        """Reichweite der SCHNITTKONTUR bei z ab einem Achspunkt (zentrum xy) in eine waagerechte Richtung, nur im Streifen |quer| <= quer_max um die
+        Richtungsgerade und innerhalb r_max (2026-11-09 R6, Helmprofil r(z) vor der Wand: der Dachschnitt hinter der Achse stoert nicht). Konturlinien werden
+        auf 1 cm abgetastet (Polygonflaechen haben im Streifen oft keine Ecke). nan ohne Treffer."""
+        sec = self.m.section(plane_origin=(0, 0, z), plane_normal=(0, 0, 1))
+        if sec is None: return float("nan")
+        c = np.array(zentrum, float); d = np.array(richtung, float); d /= np.linalg.norm(d); q = np.array([-d[1], d[0]]); best = float("nan")
+        for L in sec.discrete:
+            L = np.asarray(L)[:, :2]
+            if len(L) < 2: continue
+            seg = np.linalg.norm(np.diff(L, axis=0), axis=1); n_ = np.maximum(1, np.ceil(seg / 0.01)).astype(int)
+            P = np.vstack([L[i] + np.outer(np.linspace(0, 1, n_[i], endpoint=False), L[i + 1] - L[i]) for i in range(len(L) - 1)] + [L[-1:]]) - c
+            a_, b_ = P @ d, P @ q; s = (np.abs(b_) <= quer_max) & (a_ >= 0) & (a_ <= r_max)
+            if s.any(): best = float(np.nanmax([best, a_[s].max()])) if np.isfinite(best) else float(a_[s].max())
+        return best
     def schnitt_mitte(self, z, x0, x1, y0, y1, achse="x", **k):
         """Mitte (min+max)/2 der Schnittkontur bei z im xy-Fenster - Achse eines Bauteils, auch wenn das Netz dort keine Eckpunkte hat (Kegel)."""
         sec = self.m.section(plane_origin=(0, 0, z), plane_normal=(0, 0, 1))
