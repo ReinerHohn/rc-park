@@ -1922,6 +1922,14 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.51 m, y=-2.06 m (Zelle [474, 1106, 79], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Kreis1 Runde 1 (Agent staffelgiebel__west), Patch /media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261109_2335/verworfen_r1.patch",
+   "art": "widerspruch_foto_wolke",
+   "teil": "staffelgiebel__west",
+   "text": "Foto-Overlays zeigen 10 Stufen, die auf den Fotostufen liegen, aber der Wolkenbeleg sinkt 0,118->0,097 und der Gitter-Recall faellt (15-20 m 0,214->0,161). Agent: Jeder Pfeiler traegt ein nicht modelliertes Satteldaechlein (First ca. 0,6 m ueber der Ecke); die Wolken-Oberkante liegt im Mittel 0,9 m ueber dem Modell. Nicht gemittelt (Regel 5).",
+   "naechster_schritt": "Daechlein als eigenes Generator-Element (Formfamilie aus >=3 Fotos, Vorlage), dann verworfen_r1.patch erneut durch die Tore schicken. Die Abnahme in R1 war ein CUDA-OOM, kein Pruefungsfehler (c8ea1ee)."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
