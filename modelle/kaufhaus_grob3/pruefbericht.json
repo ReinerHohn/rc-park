@@ -10,7 +10,7 @@
   "helm_o_z": 21.32700006866455,
   "dach_z_off11": 15.762130348205567,
   "pfeiler3_d": 0.8810006134403175,
-  "arkade1_scheitel": 5.72482992553711,
+  "arkade1_scheitel": 5.762366729736328,
   "fenster2_sohl": 8.856999847412109,
   "erker_w_unterkante": 8.066999862670897,
   "lichter_g2_anzahl": 3.0,
@@ -41,8 +41,16 @@
   "teilnetze": 1.0,
   "dicht": 1.0,
   "wand_pq": 0.13989824056625366,
-  "wand_anteil_unter": 0.0002666666666666667,
-  "wand_ohne_treffer": 0.0
+  "wand_anteil_unter": 0.0003,
+  "wand_ohne_treffer": 0.0,
+  "kons_b3_anzahl": 3.0,
+  "kons_b3_breite_median": 0.34,
+  "kons_b3_grund_abstand": 0.07797270770619535,
+  "bogen3_licht_anzahl": 1.0,
+  "bogen3_licht_breite_median": 5.24,
+  "bogen3_licht_breite_max": 5.24,
+  "bogen3_licht_ebene_abstand": 1.991164567136624,
+  "teile_ueberhang": 0.00949
  },
  "pruefungen": [
   {
@@ -127,7 +135,7 @@
   },
   {
    "name": "Arkade 1 Scheitel z (m) (tiefster Modellpunkt im Scheitelkasten)",
-   "wert": 7.17782992553711,
+   "wert": 7.215366729736329,
    "soll": [
     7.05,
     7.35
@@ -261,6 +269,36 @@
    "soll": [
     0.0348,
     100
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Balkonkonsolen zwischen den Pfeilerachsen von Bogen 3 (u 3,52..9,55, z 7,75)",
+   "wert": 3.0,
+   "soll": [
+    3,
+    3
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Arkade Bogen 3: Lichte knapp ueber dem Kaempfer (z 5,40, Ebene Bandfront 12,578)",
+   "wert": 5.24,
+   "soll": [
+    5.17,
+    5.41
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
+   "wert": 0.00949,
+   "soll": [
+    0,
+    0.01
    ],
    "ok": true,
    "status": "ok"

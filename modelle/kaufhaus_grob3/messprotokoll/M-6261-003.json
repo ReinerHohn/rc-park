@@ -1,0 +1,32 @@
+{
+ "id": "M-6261-003",
+ "foto": "6261",
+ "kamera": "K-6261",
+ "ebene": "0.33471889,0.94231803,0=12.578",
+ "name": "Pfeiler u 3,52: Kaempfer Bogen 3 rechts -> Bogen 2 links, Ebene Bandfront 12,578",
+ "mess_px": [
+  1323.0,
+  2705.0,
+  1372.0,
+  2700.0
+ ],
+ "P1": [
+  13.664,
+  8.494,
+  5.29
+ ],
+ "P2": [
+  12.991,
+  8.734,
+  5.351
+ ],
+ "dz": 0.061,
+ "dy": 0.239,
+ "dx": -0.674,
+ "abstand": 0.717,
+ "z1": 5.29,
+ "z2": 5.351,
+ "unsicherheit_rel": 0.0085,
+ "unsicherheit_m": 0.055,
+ "massstab_von": "Kamera K-6261 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.578 (+-0.3 m)"
+}

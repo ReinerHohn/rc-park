@@ -103,7 +103,8 @@ def main():
             print(f"Versatztest {nr}: {vt['urteil']} -> {out_}/versatz_test_{nr}.json"); return
     stl = a[a.index("--stl") + 1] if "--stl" in a else os.path.join(root, obj["stl"])
     m = trimesh.load(stl); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0)
-    c = m.bounds.mean(0) if obj.get("zentrierung", "huelle") == "huelle" else np.zeros(3); m.apply_translation([-c[0], -c[1], -m.bounds[0, 2]])
+    c = m.bounds.mean(0) if obj.get("zentrierung", "huelle") == "huelle" else np.zeros(3)
+    m.apply_translation(kk["rahmen_verschiebung"] if "rahmen_verschiebung" in kk else [-c[0], -c[1], -m.bounds[0, 2]])   # wie foto_diff._netz: Buendel-/Brueckenkamera traegt ihren Rahmen (Runde 5: ohne das lag das Netz 1,45 m zu tief)
     depth, nrm, pos = render(m, R, t, f, W, H, cx, cy); sil = np.isfinite(depth)
     sil_f = cv2.morphologyEx(sil.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((7, 7), np.uint8))
     # Punktrender hat Loecher: Tiefe per Minimum-Filter (naechster Punkt gewinnt) fuellen, dann glaetten; Normalen aus der gefuellten Tiefe

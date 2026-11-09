@@ -3603,6 +3603,16 @@
      "neu": {
       "koerper": true
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 5",
+     "alt": {
+      "aktiv": true
+     },
+     "neu": {
+      "aktiv": false
+     }
     }
    ],
    "anker_m": [
@@ -3612,7 +3622,9 @@
    ],
    "hinweis": "Runde 4: aus traufzone_alt abgespalten, Form und Lage unveraendert (Koordinator: Konsolen nicht anfassen); koerper=true nur fuer die Vereinigung (26 wasserdichte Teile, exakt)",
    "koerper": true,
-   "koerper_dehnung": 0.003
+   "koerper_dehnung": 0.003,
+   "aktiv": false,
+   "ersetzt_durch": "konsolenreihe:balkon (Runde 5: konsolen_alt lag bei z 12,8-13,2 = Rest der Alt-Traufzone, keine Balkonkonsolen)"
   },
   {
    "typ": "bogenreihe:laube",
@@ -3629,9 +3641,9 @@
    "pfeiler_n": 12.19,
    "pfeiler_form": "rund",
    "boden_z": 1.453,
-   "kaempfer_z": 5.46,
-   "scheitel_z": 7.2,
-   "oeffnung_breite": 5.13,
+   "kaempfer_z": 5.33,
+   "scheitel_z": 7.24,
+   "oeffnung_breite": 5.29,
    "oberkante_z": 8.0,
    "laibung_tiefe": 0.776,
    "achse_n": [
@@ -3646,9 +3658,9 @@
     "pfeiler_breite": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json saeulen gemeinsamer Radius 0.441 m (Gleichheitsregel, 7 Pfeiler) -> 2R",
     "pfeiler_tiefe": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json saeulen: runder Pfeiler, 2R",
     "pfeiler_n": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json saeulen Achs-Offset Median 12.19 (Pfeilerfront = Frontebene 12,66)",
-    "kaempfer_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) kurven/arkaden.bericht.json (arkaden_fit.py Lauf 3) Rundbogen R 2.76, Kreismitte zc 4.44: Bogen trifft den Pfeilerrand bei zc+sqrt(R^2-(sw/2)^2) = 5.46 (abgeleitet; segmentbogen() reproduziert so genau den Gitterkreis)",
-    "scheitel_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) kurven/arkaden.bericht.json (arkaden_fit.py Lauf 3) Scheitel zc+R = 7.20 (gemessen 7,18-7,23)",
-    "oeffnung_breite": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) kurven/arkaden.bericht.json (arkaden_fit.py Lauf 3) spannweite_m Median 5.13 (Pfeilerrand zu Pfeilerrand)",
+    "kaempfer_z": "Fotomessung Bogen 3 (Ende der inneren Goldlinie am Pfeilerkopf, Ebene Bandfront 12,578): M-6120-008 z 5,25/5,30 (+-0,16), M-6261-001 z 5,35/5,35 (+-0,09); gewichtet 5,33. Boegen 1/2/4 nicht gemessen (ANNAHME gleiche Boegen)",
+    "scheitel_z": "Fotomessung Bogen 3 Scheitel innere Goldlinie: M-6120-009 7,11 (+-0,11), M-6261-002 7,31 (+-0,08); gewichtet 7,24 (Abweichung 1,5 sigma, offen)",
+    "oeffnung_breite": "Fotomessung Bogen 3 Lichte am Kaempfer: M-6120-008 5,17 (+-0,16), M-6261-001 5,33 (+-0,09); gewichtet 5,29; Bogensteg am Kaempfer M-6261-003 0,72 = pitch - Lichte (6,022-5,29 = 0,73)",
     "oberkante_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json vorspruenge z_min_voll 8.0 (Balkon-/Vorsprungsunterkante, 0,5-m-Band) = Oberkante des Bogenbands (ANNAHME: Wand bis Balkon)",
     "laibung_tiefe": "param_wolke_fit.py (CMA-ES, gesamt, z 2-4,9) gegen wolke_netzrahmen.npy; Pfeilerbreite ~1,1 m bestaetigt durch Wolkenhistogramm (5 Pfeiler bei u -9,0/-4,8/-0,4/4,0/8,4) und Nutzerfotos 8.11.; Gesamtmetrik p6->p11 neutral (Median 0,094->0,093)",
     "boden_z": "messungen_wolke.json boden_mitte (Wolke, Gegenproben bestaetigt)",
@@ -3696,6 +3708,21 @@
      "neu": {
       "druck_verbinder": true
      }
+    },
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 5",
+     "alt": {
+      "kaempfer_z": 5.46,
+      "scheitel_z": 7.2,
+      "oeffnung_breite": 5.13
+     },
+     "neu": {
+      "kaempfer_z": 5.33,
+      "scheitel_z": 7.24,
+      "oeffnung_breite": 5.29
+     },
+     "grund": "Koordinator Runde 5 Auftrag 4: Bogenprofil mit foto_mass gemessen (2 Fotos)"
     }
    ],
    "druck_verbinder": true
@@ -4070,6 +4097,46 @@
      "neu": {
       "oberseite_z": 8.37
      }
+    }
+   ]
+  },
+  {
+   "typ": "konsolenreihe:balkon",
+   "gruppe": "Balkonkonsolen",
+   "wand_n": 12.66,
+   "z_oben": 8.04,
+   "einbindung": 0.2,
+   "max_ausladung": 1.17,
+   "lagen_datei": "/media/oem/scan/rc-park_daten/kaufhaus_alle/kette_video_alle/koerper/konsolen_v11.json",
+   "lagen_schluessel": "konsolen",
+   "quell_rahmen": {
+    "u": [
+     0.9441130864443887,
+     -0.329621722591898
+    ],
+    "n": [
+     0.329621722591898,
+     0.9441130864443887
+    ],
+    "off_front": 12.64637132320508
+   },
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Koerper-Agent Runde 5 (c154bb7): konsolen_v11.json - 11 Lagen je Instanz aus der Wolke (Bloecke ueber Median+10 MAD, Abstaende 1,45-1,93, kein Raster), Breite 0,22-0,34 aus Foto-Vorderkanten (2 Randkonsolen Breite aus Wolke, GRENZE), Profil (Hoehe 0,55, Ausladung 0,54->1,22) aus der Wolke je z; Rahmen lot2 (koerper_v11.json u/n/off_front, hier auf achse_n umgerechnet)",
+   "werte_quellen": {
+    "wand_n": "kantengitter rohkoerper_v7 off_front 12.66 (wie balkonband)",
+    "z_oben": "balkonband unterseite_z 8,0 + 0,04 Einbindung (Druck)",
+    "einbindung": "koerper_v11.py: 0,2 m hinter die Wandflaeche (ANNAHME, unsichtbar)",
+    "max_ausladung": "ANNAHME: 3 cm hinter der Balkonfront (auskragung 1,2), sonst deckungsgleiche Flaechen"
+   },
+   "historie": [
+    {
+     "datum": "2026-11-09",
+     "wer": "Agent Runde 5",
+     "neu": "angelegt statt stl_teil:konsolen_alt"
     }
    ]
   },
@@ -5841,5 +5908,19 @@
  "rahmen_hinweis_lot2": "Parametrische Bauteile (u/n/z) rechnen im lot2-Rahmen der gemeinsamen SfM (sfm/kam_lot2.json): u = n um -90 Grad, n = achse_n (0.3338, 0.9426), Ursprung 0/0, z wie Wolke (Boden ~1,5-2,5). Kantengitter-Dateien (segmente_gitter_v10, rohkoerper_v7: u (0.9423,-0.3347), n (0.3347,0.9423)) nutzen dieselbe Konvention -> Masse direkt uebertragbar (Beweis: Frontebene 12,66 = fensterreihe wand_n 12,666; Pfeiler-along -8,52..15,56 = bogenreihe u0..u0+4*pitch; Overlay audit/gitter_generator/). 'rahmen' (UTM/LoD2) gilt nur fuer rumpf_lod2.",
  "hinweis_runde2": "2026-11-09 Runde 2: Helme als Kegel (zylinder:helm_*), Nadel-STL-Gruppen inaktiv; bruestung:balkon (68 Baluster Z-6120-001); Gaubenlagen aus gauben_r3_lagen; Z-Protokolle Lichter; K-6120/K-6261 aus kam_lot2 (sfm_buendel, keine amtlichen Anker)",
  "hinweis_runde3": "2026-11-09 Agent Runde 3: Rumpf aus dem Gitter (quader:rumpf_eg/og) statt Alt-Fassadengruppe (Traufzone abgespalten), Staffelgiebel spiegel, EG Bogen 3 Fenster+Tuer an der Fotolage (M-6120-001..005, Z-6120-003..005), Bruestungspfosten (Z-6120-001, M-6120-006/007)",
- "hinweis_runde4": "2026-11-09 Agent Runde 4: Druckstufe (stl_teil koerper=true, Einbindung 0,04), Traufgesims aus dem Gitter statt traufzone_alt"
+ "hinweis_runde4": "2026-11-09 Agent Runde 4: Druckstufe (stl_teil koerper=true, Einbindung 0,04), Traufgesims aus dem Gitter statt traufzone_alt",
+ "druck_teilung": {
+  "winkel": 60,
+  "ziel_anteil": 0.01,
+  "bett_mm": 256,
+  "bett_rand_mm": 6,
+  "max_schnitte": 6,
+  "bett_tol_m": 0.05,
+  "min_kandidat_m2": 2.0,
+  "stift_mm": 2.0,
+  "stift_laenge_mm": 6.0,
+  "toleranz_mm": 0.2,
+  "stift_rand_mm": 2.5,
+  "quelle": "Koordinator Runde 5: teilen statt Stuetzen, Passstifte Toleranz 0,2 mm H0; Bett Bambu P1S 256 mm (Memory bambu-p1s); Stift 2 x 6 mm und Randabstand 2,5 mm = ANNAHME"
+ }
 }

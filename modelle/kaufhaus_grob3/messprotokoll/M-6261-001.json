@@ -1,0 +1,32 @@
+{
+ "id": "M-6261-001",
+ "foto": "6261",
+ "kamera": "K-6261",
+ "ebene": "0.33471889,0.94231803,0=12.578",
+ "name": "Bogen 2 Leibung (innere Goldlinie) Kaempfer -> Kaempfer, Ebene Bandfront 12,578",
+ "mess_px": [
+  1372.0,
+  2700.0,
+  1700.0,
+  2705.0
+ ],
+ "P1": [
+  12.991,
+  8.734,
+  5.351
+ ],
+ "P2": [
+  7.967,
+  10.518,
+  5.348
+ ],
+ "dz": -0.003,
+ "dy": 1.784,
+ "dx": -5.024,
+ "abstand": 5.331,
+ "z1": 5.351,
+ "z2": 5.348,
+ "unsicherheit_rel": 0.0084,
+ "unsicherheit_m": 0.094,
+ "massstab_von": "Kamera K-6261 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.578 (+-0.3 m)"
+}

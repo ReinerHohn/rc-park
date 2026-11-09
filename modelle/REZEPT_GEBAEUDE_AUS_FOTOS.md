@@ -62,12 +62,15 @@ Format: Lehre (allgemein formuliert) | Anlass | wo im Werkzeug/Ablauf umgesetzt.
 - L2 Unterelemente einer Musterzelle haben eigene Parameter. Die Kopplung gilt nur auf Probe, das Tor trennt auf, wenn eine Untergruppe signifikant abweicht | Mittellicht-Kämpfer 12,28 statt 11,75 | `kanten_tor.py` Auto-Split
 - L3 Prüfen kantenneutral: Bauteile liefern Kanten plus Kopplungen, das Tor prüft je Kante gegen Fotos UND Wolke getrennt, mit Mindestdaten. Die bessere Datenlage gewinnt, mit Begründung | Nutzerentscheide | `kanten_tor.py`
 - L4 Zone gezielt aus dem Gitter suchen, nie blind in feste Höhenbänder schneiden | gitter_wiederholung verfehlte Pfeiler, Gauben, Fensterachsen | `baluster_fit`/`muster_fit`
-- L5 Altteile mit falscher Lage verfälschen globale Diff-Suchen (dichte Kanten ziehen den Versatz) | traufzone_alt, 0,93 m Versatz | Altteile ersetzen, Diff ohne globale Verschiebung gegenprüfen
+- L5 Altteile mit falscher Lage verfälschen globale Diff-Suchen (dichte Kanten ziehen den Versatz) | traufzone_alt, 0,93 m Versatz | Altteile ersetzen, Diff ohne globale Verschiebung gegenprüfen (KORREKTUR Runde 5: Hauptursache war der Rahmenversatz, siehe L11)
 - L6 Druckbarkeit ist eine Prüfung mit Sollwert (1 Teilnetz, wasserdicht, Wandstärke), nicht ein Endschritt. Splitter entstehen durch deckungsgleiche Flächen und Spalte im mm-Bereich, deshalb einbetten | Runde 4 | `druck_vorcheck.py`, Generator-Option einbindung
 - L7 Overlays brauchen Verdeckung (Z-Puffer), sonst entstehen Scheinfehler durch Wände | schiefer „Pfeiler“ = Rückwandfenster | Overlay-Werkzeug (Runde 5)
 - L8 Kantenwolken können blanke Flächen nicht entscheiden (Wand oder Öffnung). Dafür braucht es dichte Wolke oder Textur | Stirnwände | offen
 - L9 Fehlerliste je kleinstem Unterelement, nie je durchgehender Linie. Agenten-„ok“ immer selbst nachprüfen | Kämpfer, Sichtblatt | Prüfdisziplin
 - L10 Webfotos von Aussichtspunkten (Kirchturm, Turmaussicht) sind die beste freie Dachquelle | Commons Münsterturm | Dach-Agent (läuft)
+- L11 Jede Kamera nennt ihren Rahmen ausdrücklich (rahmen_verschiebung, auch [0,0,0]). Eine fehlende Angabe darf kein stilles „auf zmin schieben“ auslösen. Gegenprobe: Kamerazentrum K gegen SfM-Datei vergleichen | Diff-Werkzeuge schoben das Modell 1,45 m nach unten; ein Restversatz sah nach „Kamerafehler“ aus | K-Protokolle; `fehlteile_finden.py` liest rahmen_verschiebung wie `foto_diff.py`
+- L12 Druckteilung folgt aus der Geometrie: Schnitt genau in waagerechte Unterseiten (Decke wird Bettfläche), Lage = beste von 6 Achslagen mit tragfähiger Auflage, Bettschnitt an der kleinsten Schnittfläche, Stifte nur wo beide Seiten Material haben | Laubendecke 173 m² Überhang | `druck_teilung.py` + Prüfung `druck_teile_ueberhang`, Lauf in `bauen_abnehmen.sh` bei `druck_teilung` in objekt.json
+- L13 Wiederholte Anbauteile ohne Raster: Lagen je Instanz aus der Messdatei, im Quellrahmen umgerechnet. Zählprüfung nur am Foto, Modellzählung als Vorsprünge vor einer Ebene | Balkonkonsolen | Bauteiltyp `konsolenreihe` (lagen_datei + quell_rahmen), Messart `ebene_vorspruenge`
 
 ## Was die Methode heute nicht kann (ehrlich)
 - Blanke Wände: Eine Kantenwolke kann Wand und Öffnung nicht unterscheiden (Stirnwände blieben ANNAHME). Dafür braucht es eine dichte Wolke oder Fototextur.
@@ -84,3 +87,5 @@ Format: Lehre (allgemein formuliert) | Anlass | wo im Werkzeug/Ablauf umgesetzt.
 6. H0-Teileteilung, Slicer-Vorcheck, Teil neben Foto (Regel 9b), Probedruck eines Ausschnitts.
 
 Ziel für die Miniaturwelt: Schritte 2 und 3 laufen unbeaufsichtigt, Schritt 4 wird zur Formfamilien-Erkennung automatisiert, und Handarbeit bleibt nur, wo ein Tor OFFEN meldet.
+- L-OD1 Dachansichten: Turm-/Aussichtsfotos (Commons, Titel "Blick vom <Turm>", "Luftbild", "von oben", Staatsarchiv-Serien) holen, aber Registrierung gelingt nur, wenn Bodenueberlapp besteht (Telebrennweite mit Fassadendetail, Boden-Tele aufs Dach); Steilblicke von weit oben scheitern mit SIFT, ALIKED+LightGlue rettet einen Teil | Dachabdeckung >15 m 0,20 bei Bodenfotos | `tools/online_ansichten_holen.py --suche <Objekt Ort> ... --aus DIR`, `tools/online_dach_registrieren.py rein|reg` (EXIF-f je Bild, je Bild eigene Kameragruppe), `zusatzfotos_lightglue.py`
+- L-OD2 Wikimedia: 1 Datei je >=25 s, kein Retry-Sturm, bei 429 abbrechen (IP-Sperre ~15 min); YouTube-Drohnenclips haben Standardlizenz und zeigten das Dach nicht brauchbar | 429-Sperre nach 11 Bildern | `online_ansichten_holen.py` (Abbruch bei Fehler)

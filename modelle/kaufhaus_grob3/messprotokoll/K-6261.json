@@ -36,8 +36,16 @@
   ],
   "brennweite_quelle": "SfM (COLMAP, gemeinsames Buendel 440 Fotos + 336 Frames, lot2)",
   "rms_px": null,
-  "plausibel_strassenfoto": true
+  "plausibel_strassenfoto": true,
+  "rahmen_verschiebung": [
+   0.0,
+   0.0,
+   0.0
+  ]
  },
  "quelle": "Kamera-Bruecke 2026-11-09 (Agent): Pose/Brennweite/k1 aus /media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/kam_lot2.json (lot2-Rahmen = Generatorrahmen); Anker = SfM-Buendel, KEINE amtlichen Anker; Massstab sfm_buendel; ankerzone_z = Gebaeudehoehe (Buendelkamera gilt ueberall, nicht interpolationsbegrenzt)",
- "datum": "2026-11-09"
+ "datum": "2026-11-09",
+ "historie": [
+  "2026-11-09 Agent Runde 5 (Koordinator-Hinweis): rahmen_verschiebung [0,0,0] gesetzt - Kamera liegt im lot2-Rahmen (= Generator-STL, z 1,45..29,32); ohne den Eintrag schoben foto_diff/fehlteile/flaechen_gegen_netz das Netz um -zmin = -1,453 m (Handkamera-Regel)"
+ ]
 }

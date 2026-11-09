@@ -1,16 +1,6 @@
 [
  {
   "seite": "alle",
-  "element": "Konsolen alt (Koerper-Agent): 26 Teilkoerper manifold (26 exakt, 0 Huelle, 0 flach verworfen)",
-  "quelle": "Lage/Hoehe/Drehung/Massstab: T3d.json = GPU-Distanzfeld+Chamfer-Ausrichtung des alten Generators (kaufhaus_measured.glb) an die Fotowolke (BS51d, Skala 0.94, yaw 160 Grad); Teilform: alter Hand-Generator (ANNAHME: nach Fotos/Plan von Hand, nicht neu gemessen) | Druckstufe koerper=true: Teile als manifold-Koerper vereinigt (wasserdichte Teile exakt, sonst konvexe Huelle = ANNAHME; Teile < 1e-05 m3 = flache Restflaechen ohne Dicke verworfen)",
-  "n_teile": 26,
-  "exakt": 26,
-  "huelle": 0,
-  "flach": 0,
-  "seite_name": "alle"
- },
- {
-  "seite": "alle",
   "element": "Arkade Pfeiler 1/5 (rund)",
   "quelle": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json saeulen gemeinsamer Radius 0.441 m (Gleichheitsregel, 7 Pfeiler) -> 2R | Lage u0+i*pitch: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json saeulen: (along_5 - along_1)/4 = 6.022 (arkaden abstand_m 5,99-6,06)",
   "u_pfeiler": -8.52,
@@ -18,7 +8,7 @@
   "tiefe": 0.881,
   "n": 12.19,
   "z0": 1.453,
-  "z1": 5.46,
+  "z1": 5.33,
   "seite_name": "alle"
  },
  {
@@ -30,7 +20,7 @@
   "tiefe": 0.881,
   "n": 12.19,
   "z0": 1.453,
-  "z1": 5.46,
+  "z1": 5.33,
   "seite_name": "alle"
  },
  {
@@ -42,7 +32,7 @@
   "tiefe": 0.881,
   "n": 12.19,
   "z0": 1.453,
-  "z1": 5.46,
+  "z1": 5.33,
   "seite_name": "alle"
  },
  {
@@ -54,7 +44,7 @@
   "tiefe": 0.881,
   "n": 12.19,
   "z0": 1.453,
-  "z1": 5.46,
+  "z1": 5.33,
   "seite_name": "alle"
  },
  {
@@ -66,18 +56,18 @@
   "tiefe": 0.881,
   "n": 12.19,
   "z0": 1.453,
-  "z1": 5.46,
+  "z1": 5.33,
   "seite_name": "alle"
  },
  {
   "seite": "alle",
   "element": "Arkade 4 Boegen (Wandband)",
-  "quelle": "Anzahl Z-004-003, Z-004-001 (Regel 9); kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) kurven/arkaden.bericht.json (arkaden_fit.py Lauf 3) Rundbogen R 2.76, Kreismitte zc 4.44: Bogen trifft den Pfeilerrand bei zc+sqrt(R^2-(sw/2)^2) = 5.46 (abgeleitet; segmentbogen() reproduziert so genau den Gitterkreis)",
+  "quelle": "Anzahl Z-004-003, Z-004-001 (Regel 9); Fotomessung Bogen 3 (Ende der inneren Goldlinie am Pfeilerkopf, Ebene Bandfront 12,578): M-6120-008 z 5,25/5,30 (+-0,16), M-6261-001 z 5,35/5,35 (+-0,09); gewichtet 5,33. Boegen 1/2/4 nicht gemessen (ANNAHME gleiche Boegen)",
   "n_boegen": 4,
   "pitch": 6.022,
-  "oeffnung_breite": 5.13,
-  "kaempfer_z": 5.46,
-  "scheitel_z": 7.2,
+  "oeffnung_breite": 5.29,
+  "kaempfer_z": 5.33,
+  "scheitel_z": 7.24,
   "oberkante_z": 8.0,
   "laibung_tiefe": 0.776,
   "seite_name": "alle"
@@ -118,6 +108,145 @@
   "auskragung": 1.2,
   "unterseite_z": 8.0,
   "oberseite_z": 8.37,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Konsole u -5.21 (b 0.60)",
+  "quelle": "konsolen_v11.json: wolke_zelle, Breite wolke; wolke_instanz: Wolke qualifiziert (5314 Punkte, Block ueber Median+10 MAD); Foto: Mitte -5.15 (+0.00), Breite 0.10, 4.2 MAD, 193 Fotos aus 3 Richtungen, GRENZE | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
+  "u": -5.205,
+  "breite": 0.6,
+  "z_unten": 7.569,
+  "z_oben": 8.04,
+  "ausladung_max": 1.17,
+  "wand_n": 12.66,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Konsole u -3.76 (b 0.22)",
+  "quelle": "konsolen_v11.json: wolke_zelle, Breite foto; wolke_instanz: Wolke qualifiziert (2726 Punkte, Block ueber Median+10 MAD); Foto: Mitte -3.75 (-0.05), Breite 0.22, 7.3 MAD, 188 Fotos aus 3 Richtungen | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
+  "u": -3.755,
+  "breite": 0.22,
+  "z_unten": 7.569,
+  "z_oben": 8.04,
+  "ausladung_max": 1.17,
+  "wand_n": 12.66,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Konsole u -2.18 (b 0.28)",
+  "quelle": "konsolen_v11.json: wolke_zelle, Breite foto; wolke_instanz: Wolke qualifiziert (3005 Punkte, Block ueber Median+10 MAD); Foto: Mitte -2.15 (-0.03), Breite 0.28, 5.7 MAD, 136 Fotos aus 3 Richtungen | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
+  "u": -2.18,
+  "breite": 0.28,
+  "z_unten": 7.569,
+  "z_oben": 8.04,
+  "ausladung_max": 1.17,
+  "wand_n": 12.66,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Konsole u -0.41 (b 0.32)",
+  "quelle": "konsolen_v11.json: wolke_zelle, Breite foto; wolke_instanz: Wolke qualifiziert (2200 Punkte, Block ueber Median+10 MAD); Foto: Mitte -0.34 (+0.01), Breite 0.32, 6.0 MAD, 141 Fotos aus 3 Richtungen | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
+  "u": -0.405,
+  "breite": 0.32,
+  "z_unten": 7.569,
+  "z_oben": 8.04,
+  "ausladung_max": 1.17,
+  "wand_n": 12.66,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Konsole u 1.37 (b 0.32)",
+  "quelle": "konsolen_v11.json: wolke_zelle, Breite foto; wolke_instanz: Wolke qualifiziert (2248 Punkte, Block ueber Median+10 MAD); Foto: Mitte 1.44 (+0.01), Breite 0.32, 17.0 MAD, 145 Fotos aus 3 Richtungen | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
+  "u": 1.37,
+  "breite": 0.32,
+  "z_unten": 7.569,
+  "z_oben": 8.04,
+  "ausladung_max": 1.17,
+  "wand_n": 12.66,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Konsole u 3.24 (b 0.34)",
+  "quelle": "konsolen_v11.json: wolke_zelle, Breite foto; wolke_instanz: Wolke qualifiziert (2563 Punkte, Block ueber Median+10 MAD); Foto: Mitte 3.31 (+0.01), Breite 0.34, 5.8 MAD, 141 Fotos aus 3 Richtungen | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
+  "u": 3.245,
+  "breite": 0.34,
+  "z_unten": 7.569,
+  "z_oben": 8.04,
+  "ausladung_max": 1.17,
+  "wand_n": 12.66,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Konsole u 5.17 (b 0.34)",
+  "quelle": "konsolen_v11.json: wolke_zelle, Breite foto; wolke_instanz: Wolke qualifiziert (2887 Punkte, Block ueber Median+10 MAD); Foto: Mitte 5.24 (+0.01), Breite 0.34, 10.8 MAD, 143 Fotos aus 3 Richtungen | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
+  "u": 5.17,
+  "breite": 0.34,
+  "z_unten": 7.569,
+  "z_oben": 8.04,
+  "ausladung_max": 1.17,
+  "wand_n": 12.66,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Konsole u 6.97 (b 0.34)",
+  "quelle": "konsolen_v11.json: wolke_zelle, Breite foto; wolke_instanz: Wolke qualifiziert (2462 Punkte, Block ueber Median+10 MAD); Foto: Mitte 7.02 (-0.01), Breite 0.34, 9.8 MAD, 133 Fotos aus 3 Richtungen | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
+  "u": 6.97,
+  "breite": 0.34,
+  "z_unten": 7.569,
+  "z_oben": 8.04,
+  "ausladung_max": 1.17,
+  "wand_n": 12.66,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Konsole u 8.87 (b 0.32)",
+  "quelle": "konsolen_v11.json: wolke_zelle, Breite foto; wolke_instanz: Wolke qualifiziert (2399 Punkte, Block ueber Median+10 MAD); Foto: Mitte 8.94 (+0.01), Breite 0.32, 12.9 MAD, 126 Fotos aus 3 Richtungen | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
+  "u": 8.87,
+  "breite": 0.32,
+  "z_unten": 7.569,
+  "z_oben": 8.04,
+  "ausladung_max": 1.17,
+  "wand_n": 12.66,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Konsole u 10.72 (b 0.34)",
+  "quelle": "konsolen_v11.json: wolke_zelle, Breite foto; wolke_instanz: Wolke qualifiziert (1761 Punkte, Block ueber Median+10 MAD); Foto: Mitte 10.80 (+0.02), Breite 0.34, 5.2 MAD, 111 Fotos aus 3 Richtungen | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
+  "u": 10.72,
+  "breite": 0.34,
+  "z_unten": 7.569,
+  "z_oben": 8.04,
+  "ausladung_max": 1.17,
+  "wand_n": 12.66,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Konsole u 12.19 (b 0.50)",
+  "quelle": "konsolen_v11.json: wolke_zelle, Breite wolke; wolke_instanz: Wolke qualifiziert (1559 Punkte, Block ueber Median+10 MAD); Foto: Mitte 12.12 (-0.13), Breite 0.40, 2.9 MAD, 107 Fotos aus 3 Richtungen | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
+  "u": 12.195,
+  "breite": 0.5,
+  "z_unten": 7.569,
+  "z_oben": 8.04,
+  "ausladung_max": 1.17,
+  "wand_n": 12.66,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Konsolenreihe 11 Konsolen",
+  "quelle": "Koerper-Agent Runde 5 (c154bb7): konsolen_v11.json - 11 Lagen je Instanz aus der Wolke (Bloecke ueber Median+10 MAD, Abstaende 1,45-1,93, kein Raster), Breite 0,22-0,34 aus Foto-Vorderkanten (2 Randkonsolen Breite aus Wolke, GRENZE), Profil (Hoehe 0,55, Ausladung 0,54->1,22) aus der Wolke je z; Rahmen lot2 (koerper_v11.json u/n/off_front, hier auf achse_n umgerechnet)",
+  "n": 11,
   "seite_name": "alle"
  },
  {

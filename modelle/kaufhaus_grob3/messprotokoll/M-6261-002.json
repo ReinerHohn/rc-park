@@ -1,0 +1,32 @@
+{
+ "id": "M-6261-002",
+ "foto": "6261",
+ "kamera": "K-6261",
+ "ebene": "0.33471889,0.94231803,0=12.578",
+ "name": "Bogen 2 Kaempfer -> Scheitel (innere Goldlinie), Ebene Bandfront 12,578",
+ "mess_px": [
+  1372.0,
+  2700.0,
+  1560.0,
+  2537.0
+ ],
+ "P1": [
+  12.991,
+  8.734,
+  5.351
+ ],
+ "P2": [
+  10.145,
+  9.744,
+  7.313
+ ],
+ "dz": 1.962,
+ "dy": 1.011,
+ "dx": -2.846,
+ "abstand": 3.601,
+ "z1": 5.351,
+ "z2": 7.313,
+ "unsicherheit_rel": 0.0084,
+ "unsicherheit_m": 0.079,
+ "massstab_von": "Kamera K-6261 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.578 (+-0.3 m)"
+}

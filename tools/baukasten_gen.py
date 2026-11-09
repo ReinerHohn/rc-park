@@ -673,6 +673,39 @@ def _uszT(cfg):
     n_ = np.array(cfg["achse_n"], float); n_ /= np.linalg.norm(n_); u_ = np.array([n_[1], -n_[0]])
     return [[u_[0], n_[0], 0.0, 0.0], [u_[1], n_[1], 0.0, 0.0], [0.0, 0.0, 1.0, 0.0]]            # (u, s, z) -> (x, y, z), wie bogenreihe/stl_teil
 
+@bauteil("konsolenreihe")
+def konsolenreihe(cfg, ctx):
+    """Reihe von Konsolen (Kragsteine) unter einer Platte, Lage JE INSTANZ (kein Raster): je Lage u (Mitte), breite, profil [[z, ausladung], ...] (Ausladung vor der
+    Wandebene wand_n, aufsteigend in z); Koerper = konvexe Huelle der Profilpunkte (+-breite/2), hinten einbindung m in die Wand, oben bis z_oben (in die Platte),
+    vorn hoechstens max_ausladung (nicht buendig mit der Plattenfront: deckungsgleiche Flaechen = Splitter im Druck). Voluten/Schnitzwerk nicht modelliert (ANNAHME Huelle).
+    Lagen entweder inline (lagen: [{u, breite, profil?, quelle}], profil sonst cfg.profil) oder aus einer Messdatei: lagen_datei (JSON, Liste unter lagen_schluessel,
+    Felder along/breite/profil/breite_quelle/status) im Quellrahmen quell_rahmen {u: [ux, uy], n: [nx, ny], off_front} (along/off der Datei -> Welt -> eigener Rahmen achse_n;
+    Ausladung der Datei bezieht sich auf off_front). Pflicht: wand_n, z_oben, achse_n, achse_quelle, quelle, lagen|lagen_datei."""
+    for k in ("wand_n", "z_oben", "achse_n", "achse_quelle", "quelle"):
+        if cfg.get(k) in (None, ""): sys.exit(f"konsolenreihe: '{k}' fehlt (Regel 3b)")
+    n_ = np.array(cfg["achse_n"], float); n_ /= np.linalg.norm(n_); u_ = np.array([n_[1], -n_[0]])
+    wn, zo = float(cfg["wand_n"]), float(cfg["z_oben"]); ein = float(cfg.get("einbindung", 0.2)); amax = float(cfg.get("max_ausladung", 1e9))
+    lagen = []
+    if cfg.get("lagen_datei"):
+        pf = cfg["lagen_datei"]; pf = pf if os.path.isabs(pf) else os.path.join(OD, pf); Dd = json.load(open(pf))
+        qr = cfg.get("quell_rahmen") or {}; uq = np.array(qr.get("u", u_), float); nq = np.array(qr.get("n", n_), float); ofq = float(qr.get("off_front", wn))
+        for e in Dd[cfg.get("lagen_schluessel", "konsolen")]:
+            xy0 = uq * float(e["along"]) + nq * ofq                                                  # Wandpunkt der Instanz (Welt)
+            pr_ = [[float(z), float(d) + float((xy0 @ n_) - wn)] for z, d in e.get("profil") or cfg["profil"]]   # Ausladung auf die eigene Wandebene umgerechnet
+            lagen.append(dict(u=float(xy0 @ u_), breite=float(e["breite"]), profil=pr_, quelle=f"{os.path.basename(pf)}: {e.get('quelle', '')}, Breite {e.get('breite_quelle', '?')}; {str(e.get('status', ''))[:160]}"))
+    else:
+        lagen = [dict(l_, profil=l_.get("profil") or cfg["profil"]) for l_ in cfg["lagen"]]
+    teile = []
+    for l_ in lagen:
+        hw = float(l_["breite"]) / 2; pr_ = sorted(l_["profil"]); uc = float(l_["u"]); pts = []
+        for z, d in pr_ + [[zo, pr_[-1][1]]]:
+            d = min(d, amax); pts += [[uc - hw, wn - ein, z], [uc + hw, wn - ein, z], [uc - hw, wn + d, z], [uc + hw, wn + d, z]]
+        teile.append(M.hull_points(pts))
+        beleg("alle", f"Konsole u {uc:.2f} (b {2 * hw:.2f})", (l_.get("quelle") or cfg["quelle"]) + " | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
+              u=uc, breite=2 * hw, z_unten=pr_[0][0], z_oben=zo, ausladung_max=min(max(d for _, d in pr_), amax), wand_n=wn)
+    beleg("alle", f"Konsolenreihe {len(lagen)} Konsolen", cfg["quelle"] + (f" | Zaehlung {', '.join(cfg.get('zaehlung', []))}" if cfg.get("zaehlung") else ""), n=len(lagen))
+    return [UNION(teile).transform(_uszT(cfg))], []
+
 @bauteil("erker")
 def erker(cfg, ctx):
     """Erker: Kasten (u = mitte_u +- breite/2, s = wand_n .. wand_n+auskragung, z = unterkante_z .. oberkante_z) mit verjuengendem Dach (Helm/Zelt) bis spitze_z.

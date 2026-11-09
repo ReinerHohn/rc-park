@@ -174,3 +174,93 @@ Ablauf nach Regel 2: zuerst 4 Beobachtungen + 6 Pruefungen eingetragen, am Runde
 - fehlteile 6261: 3 FEHLT/3 ERFUNDEN am Ostgiebel z 15-18,5. fehlteile 6120: 4 ERFUNDEN? z 20-21,5 (Dach, durch die Fassade gesehen).
 - Regression `--pruefen`: "identisch - nichts verloren". Der Schnappschuss ist nicht erneuert. Kein Commit.
 - Testdateien in modelle/stl/: `_tmp_r4.stl`, `_tmp_alt.stl`, `_tmp_fig.stl`, `_tmp_eg0.stl`, `_tmp_eg2.stl`, `_tmp_laube.stl` (nicht geloescht, Regel "nichts loeschen").
+
+## Runde 5 (Agent, 9.11. nacht) - Druckteilung, Konsolen, Overlay mit Z-Puffer, Bogenprofil, Rahmenversatz foto_diff
+
+### Korrektur zu Runde 4 (Koordinator-Hinweis, bewiesen)
+- foto_diff/fehlteile verschoben das Generator-STL um -zmin = -1,453 m. Grund: K-6120/K-6261 (Kamera-Bruecke im lot2-Rahmen) hatten keine `rahmen_verschiebung`, deshalb griff die Handkamera-Regel [-c0, -c1, -zmin]. Kamerazentren K gegen kam_lot2 sind identisch (z. B. 6120 C = 12,52 / 19,12 / 3,69).
+- Behoben: `rahmen_verschiebung` [0, 0, 0] in beiden K-Protokollen (Eintrag in historie). `fehlteile_finden.py` liest sie jetzt wie foto_diff.
+- Beleg mit dem Runde-4-Modell, nur K geaendert:
+
+| Foto | Runde 4 | nur K geaendert | Versatz |
+|---|---|---|---|
+| 6120 | 0,118 / 0,318 | 0,038 / 0,214 | 0,34 m, nicht deutlich |
+| 6261 | 0,169 / 0,483 | 0,098 / 0,429 | 0,09 m |
+
+  Die Boegen liegen jetzt gruen auf dem Foto.
+- Runde-4-Aussage "0,93 m kam nur von traufzone_alt" ist damit unvollstaendig. Die Alt-Traufzone verstaerkte den Fehlgriff, die Hauptursache war der z-Versatz. Die Lehre L5 im Register ist korrigiert.
+
+### 3 Overlay mit Verdeckung
+- `tools/modell_foto_overlay.py`:
+  - Z-Puffer exakt auf der GPU (render_kern.dreiecke_rastern wie foto_diff --raster).
+  - Kanten in Stuecke von ca. 3 px; ein Stueck ist sichtbar, wenn seine Tiefe <= Z-Puffer + max(5 cm, 0,5 %) ist, geprueft 2 cm in beide Nachbarflaechen.
+  - Neu Umrisskanten (Zylinder zeigen ihre Silhouette).
+  - `--verdeckt aus|gestrichelt|alle`; Standard `aus`, `alle` = altes Verhalten.
+  - Laufzeit 7 s.
+- Ergebnis 6120: Der Ziegelteppich ist weg, die Pfeiler haben Umrisse, die Konsolen sind sichtbar.
+- foto_diff rastert schon exakt mit Z-Puffer. fehlteile hat einen Punkt-Z-Puffer mit Lochfuellung, also nicht dieselbe Ursache; dort ist nur der Rahmenversatz behoben.
+
+### 2 Konsolen
+- Neuer generischer Bauteiltyp `konsolenreihe`:
+  - Lagen je Instanz, inline oder aus `lagen_datei` mit `quell_rahmen` (along/off der Datei -> Welt -> eigener Rahmen).
+  - Profil [z, Ausladung] je Instanz; Koerper = konvexe Huelle (ANNAHME).
+  - `einbindung` 0,2 m, `max_ausladung` 1,17 (3 cm hinter der Balkonfront).
+  - Ein Beleg je Konsole.
+- `konsolenreihe:balkon` liest `konsolen_v11.json` (Koerper-Agent): 11 Konsolen, u -5,21 .. 12,19, Breite 0,22-0,60.
+- `stl_teil:konsolen_alt` ist aus: Es lag bei z 12,8-13,2, war ein Rest der Alt-Traufzone und enthielt keine Balkonkonsolen.
+- Zaehlung Z-6120-006: 3 Konsolen zwischen den Pfeilerachsen von Bogen 3.
+- Neue Messart `ebene_vorspruenge` in pruefstand.py, als STRUKTUR-Typ gefuehrt (Lint). Pruefung "Balkonkonsolen ... Bogen 3": Runde 4 = 0 (FEHLER), jetzt 3. Overlay 6120: Die 5 sichtbaren Konsolen decken sich mit dem Foto.
+
+### 4 Bogenprofil
+- foto_mass mit K-Kamera, Ebene Bandfront 12,578; gemessen wird die innere Goldlinie.
+
+| Bogen 3 | M-6120 | M-6261 | gewichtet | vorher |
+|---|---|---|---|---|
+| Kaempfer z | 5,25/5,30 (008) | 5,35 (001) | 5,33 | 5,46 |
+| Scheitel z | 7,11 (009) | 7,31 (002) | 7,24 | 7,20 |
+| Lichte | 5,17 (008) | 5,33 (001) | 5,29 | 5,13 |
+
+  Steg am Kaempfer M-6261-003 0,72 (= pitch - Lichte, passt).
+- Der Scheitel weicht 1,5 sigma ab (Widerspruchs-Beobachtung).
+- Die Boegen 1, 2 und 4 sind nicht gemessen; "gleiche Boegen" ist ANNAHME.
+- Pruefung "Bogen 3 Lichte bei z 5,40": Runde 4 = 5,14 (FEHLER), jetzt 5,24. Soll 5,17..5,41.
+
+### 1 Druckteilung (generisch)
+- `tools/druck_teilung.py <objekt>`, Parameter `objekt.json druck_teilung`, Lauf in `bauen_abnehmen.sh`, wenn der Schluessel gesetzt ist:
+  1. Schnittkandidaten = Hoehen mit waagerechter Unterseite (Histogramm 2 cm).
+  2. Gierig: die 5 groessten Kandidaten je Teil testen, nur Schnitte mit Ueberhang-Gewinn behalten.
+  3. Lage = beste von 6 Achslagen mit tragfaehiger Auflage (>= 25 % der groessten Auflage, kein Kegel auf der Spitze). Bevorzugt werden Lagen, die aufs Bett passen.
+  4. Bettschnitt auf der laengsten Rahmenachse an der kleinsten Schnittflaeche im mittleren Drittel, ohne Splitter < 2 %.
+  5. Danach noch einmal Ueberhang-Schnitte.
+  6. Passstifte 2 x 6 mm, Spiel 0,2 mm, Bohrung nur, wo beide Seiten Material haben. Stifte liegen als eigene STL bei (keine Zapfen).
+- Ergebnis: 6 Schnitte, darunter z 7,9 an der Laubendecke (175 m2 Gewinn) und z 14,1 an der Gesimsunterseite. 8 Teile, alle wasserdicht, alle passen auf das P1S-Bett (max 242 mm), 51 Stifte. Ueberhang je Teil max 0,95 %; die EG-Arkade liegt kopfueber.
+- Ausgabe:
+  - `modelle/stl/kaufhaus_grob3_teile/teil_01..08.stl` (Drucklage)
+  - `lage/` (Originallage)
+  - `stifte.stl`
+  - `teilung.json`
+- Neue Messart `druck_teile_ueberhang` (gilt nur bei passendem Modellvolumen, sonst ungeteiltes Modell). Pruefung "Ueberhang je Druckteil < 1 %": ungeteilt 0,056 (FEHLER), geteilt 0,0095.
+- Regel 9b: `audit/druckteile/teil_NN_6261.jpg` und `teile_neben_foto_6261.jpg` (jedes Teil mit Z-Puffer auf dem Foto) angesehen.
+  - Schnittlagen sind plausibel: EG und OG an der Laubendecke getrennt, Dach in 2 Hoehen.
+  - Der Rumpf ragt im Bild links ueber das Nachbarhaus; das ist die verdeckte hintere Ecke (Nachbarhaus im Foto davor), kein Fehler.
+  - Offen: Bettschnitt u 6,58 durch Bogen 3 (Arkade, nur 1 Stift im Bogensteg). Ein Probedruck fehlt.
+
+### bauen_abnehmen
+- Alle Pruefungen bestanden: 1 Teilnetz, wasserdicht, Wandstaerke 0,14 m, Konsolen 3, Bogen-Lichte 5,24, Ueberhang je Teil 0,0095.
+- Vorbestehend: `freiraum_audit` scheitert an der fehlenden Datei `messprotokoll/SFM-AUSRICHTUNG-buendel.json`. Das Kaufhaus hat keine Freiraum-Pruefung, nicht angefasst.
+
+### Sichtblatt seiten.jpg - Fehlerliste (angesehen)
+1. Nord: Boegen springen jetzt tiefer an (Kaempfer 5,33). Die Konsolen sind in der Gesamtansicht zu klein zum Beurteilen; im Overlay 6120 decken sie sich mit dem Foto.
+2. Sued: Die Vorderseite scheint durch (Renderer-Artefakt, Runde 4 per Strahltest belegt).
+3. Ost/West/Draufsicht: unveraendert zu Runde 4. Rueckhaelfte glatt (ungemessen), Ziegel nur auf einer Seite erkennbar.
+4. Neu aus dem Overlay mit Z-Puffer: Bei z 8,0 liegt ueber den Boegen eine waagerechte Modellkante (Stufe 8 cm zwischen Bandfront 12,578 und OG-Wand 12,66), im Foto ist dort glatter Putz. Beobachtung eingetragen.
+5. Waagerechte Linie in den Bogenoeffnungen: Oberkante der Laubenrueckwand. Das Gewoelbe ist nicht modelliert und bleibt ANNAHME/offen.
+
+### Overlays, Diff, fehlteile (angesehen)
+- `audit/gitter_generator/runde5_ip_IMG_6120.jpg`, `runde5_ip_IMG_6261.jpg`, `vergleich_runde4_runde5_ip_IMG_6120.jpg`, `..._6261.jpg`. Links altes Werkzeug ohne Verdeckung, rechts neues mit Z-Puffer; nicht stilgleich.
+- foto_diff (aktuelles Modell): 6120 0,042 / 0,217, Versatz 0,22 m nicht deutlich; 6261 0,091 / 0,422, Versatz 0,09 m. Gelb bleiben Rueckwandfenster/Tuer (flache Rahmen geben keine Normalenkante), Figuren und Masswerk.
+- fehlteile (jetzt im richtigen Rahmen): 6120 1 ERFUNDEN? am Dach z 22; 6261 6 ERFUNDEN? am Dach z 17,7-20,9. Die Wolke sieht das Dach nicht; das Foto zeigt dort Ziegel ohne Kanten.
+- Regression `--pruefen`: "identisch - nichts verloren". Schnappschuss nicht erneuert, kein Commit.
+
+### Testdateien in modelle/stl/ (nicht geloescht, Loeschen nur durch den Nutzer)
+- `_tmp_r4.stl`, `_tmp_alt.stl`, `_tmp_fig.stl`, `_tmp_eg0.stl`, `_tmp_eg2.stl`, `_tmp_laube.stl`, `_tmp_kons.stl`

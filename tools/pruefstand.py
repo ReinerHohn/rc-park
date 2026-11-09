@@ -13,7 +13,7 @@ import sys, os, re, json, numpy as np, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Messarten, die Struktur zaehlen/messen (Oeffnungen, Nischen, Elemente je Band): Merkmal nur anzahl|fassade + Foto-Zaehlprotokoll (Register CB)
-STRUKTUR_TYPEN = {"flaeche_oeffnungen", "ebene_oeffnungen", "nischen_anzahl", "anzahl_im_band"}
+STRUKTUR_TYPEN = {"flaeche_oeffnungen", "ebene_oeffnungen", "ebene_vorspruenge", "nischen_anzahl", "anzahl_im_band"}
 
 # Was eine Quelle beweisen kann (Erfahrung dieses Projekts; Begruendung in modelle/METHODE_MASSTABELLE.md)
 QUELLEN = {
@@ -151,6 +151,17 @@ class Messer:
         if not v or abs(vm / v - 1) > 0.005: return float("nan")
         return float(sum((e["u1"] - e["u0"]) * (e["z1"] - e["z0"]) for F in E["fassaden"].values() for e in F["elemente"] if e["klasse"] == klasse and "freiraum_oeffnungen" in e.get("quelle", "")))
     def wasserdicht(self, **k): return 1.0 if self.m.is_watertight else 0.0
+    def druck_teile_ueberhang(self, ordner, winkel=60.0, **k):
+        """Groesster Ueberhang-Anteil (Flaeche mit Normale steiler als winkel nach unten / Gesamtflaeche, ohne Bettflaeche) ueber alle Druckteile aus
+        tools/druck_teilung.py (<ordner>/teilung.json). Gilt nur fuer DIESES Modell (modell_volumen_m3 gleich auf 0,5 %); sonst (keine/alte Teilung)
+        der Anteil des UNGETEILTEN Modells aufrecht = Pruefung faellt durch, bis die Teilung zum Modell passt."""
+        d = ordner if os.path.isabs(ordner) else os.path.join(self.root, ordner)
+        try:
+            T = json.load(open(os.path.join(d, "teilung.json"))); v = T.get("modell_volumen_m3"); vm = abs(float(self.m.volume))
+            if v and abs(vm / v - 1) <= 0.005: return float(T["max_ueberhang_anteil"])
+        except (OSError, ValueError, KeyError): pass
+        N = self.m.face_normals; C = self.m.triangles_center; A = self.m.area_faces; zb = self.m.bounds[0, 2]
+        ov = (N[:, 2] < -np.cos(np.radians(90 - winkel))) & (C[:, 2] > zb + 0.05); return float(A[ov].sum() / A.sum())
     def wandstaerke(self, n=30000, quantil=1.0, grenze_m=0.0348, seed=0, **k):
         """Wandstaerke-Vorcheck (Druck): n Flaechenstichproben, Strahl entlang der Innennormalen bis zur naechsten Gegenflaeche (Moeller-Trumbore auf der GPU,
         torch; CPU-Rueckfall). Rueckgabe {pq = Quantil der Dicke (m), anteil_unter = Anteil Stichproben mit Dicke < grenze_m (Standard 0,4 mm in H0 1:87),
@@ -268,6 +279,27 @@ class Messer:
         loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
         if not len(ir): return float("nan")
         return float(np.percentile((loc[:, :2] - org[ir, :2]) @ (-n), quantil) - vor)
+    def ebene_vorspruenge(self, o, n, z, u0, u1, hoehe_min=0.3, vor=3.0, schritt=0.02, min_b=0.1, max_b=1.5, **k):
+        """Zaehlt VORSPRUENGE (Konsolen, Lisenen, Pfosten) vor einer beliebigen Fassadenebene (o = Punkt xy, n = Aussennormale xy, Modellkoordinaten; u entlang
+        d = (-n_y, n_x); z ueber Boden im Pruefstandrahmen): Strahlen ab `vor` m vor der Ebene entlang -n; Grund = p90 der Trefferabstaende (hinterste haeufige Flaeche);
+        Vorsprung = Treffer >= hoehe_min vor dem Grund; gezaehlt werden Laeufe min_b..max_b, die den Streckenrand NICHT beruehren (angeschnittene Teile zaehlen nicht,
+        wie 'teil' im Foto-Zaehlprotokoll). Gegenstueck zu ebene_oeffnungen (Runde 5, Balkonkonsolen). Rueckgabe {anzahl, breite_median, grund_abstand}."""
+        o = np.array(o, float); n = np.array(n, float); n = n / np.linalg.norm(n); d = np.array([-n[1], n[0]])
+        us = np.arange(u0, u1 + 1e-6, schritt); org = np.zeros((len(us), 3)); org[:, :2] = o + vor * n + us[:, None] * d; org[:, 2] = z
+        dr = np.zeros_like(org); dr[:, :2] = -n
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
+        t = np.full(len(us), np.nan); t[ir] = (loc[:, :2] - org[ir, :2]) @ (-n)
+        if not np.isfinite(t).any(): return {"anzahl": 0.0, "breite_median": 0.0, "grund_abstand": float("nan")}
+        grund = float(np.nanpercentile(t, 90)); vs = np.isfinite(t) & (t <= grund - hoehe_min)
+        laeufe = []; run = 0; i0 = 0
+        for i, v in enumerate(list(vs) + [False]):
+            if v:
+                if run == 0: i0 = i
+                run += 1
+            else:
+                if run and min_b <= run * schritt <= max_b and i0 > 0 and i < len(us): laeufe.append(run * schritt)
+                run = 0
+        return {"anzahl": float(len(laeufe)), "breite_median": float(np.median(laeufe)) if laeufe else 0.0, "grund_abstand": grund - vor}
     def ebene_oeffnungen(self, o, n, z, u0, u1, tiefe=0.5, vor=3.0, schritt=0.04, min_b=0.3, max_b=8.0, rand=0.5, schief=0.1, **k):
         """Oeffnungen entlang einer beliebigen FASSADENEBENE (o = Punkt xy, n = Aussennormale xy, Modellkoordinaten; u = Strecke entlang d = (-n_y, n_x); z = Hoehe ueber
         Boden im Pruefstandrahmen). Strahlen starten `vor` m vor der Ebene entlang -n; Ebene = p10 der Trefferabstaende (vorderste haeufige Flaeche); offen = Treffer

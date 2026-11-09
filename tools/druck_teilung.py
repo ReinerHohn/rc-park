@@ -1,0 +1,231 @@
+#!/usr/bin/env python3
+"""druck_teilung.py <objekt> [--stl PFAD] - generische Druckteilung eines wasserdichten Generator-STL (nichts Objektspezifisches).
+
+Ziel (Koordinator Runde 5, Nutzerregel: generisch): Teile so schneiden und hinlegen, dass Ueberhaenge > winkel minimal werden und jedes Teil auf das Druckbett passt.
+Ablauf (alles automatisch, Parameter in objekt.json 'druck_teilung', sonst Standard):
+  1. Schnittkandidaten = Hoehen mit viel NAHEZU WAAGERECHTER, NACH UNTEN zeigender Flaeche (Decken, Plattenunterseiten, Gesimsunterseiten; Histogramm 2 cm),
+     gleiche Groesse wie druck_vorcheck (Ueberhang > winkel). Ein Schnitt genau in dieser Ebene macht die Unterseite zur Bettflaeche des oberen Teils.
+  2. Gierig je Teil: besten Kandidaten waehlen (groesste Flaeche im Teil, nicht am Teilboden/-deckel), schneiden (manifold split_by_plane), nur behalten,
+     wenn die Summe der Ueberhangflaechen (je Teil in seiner besten Lage) sinkt; bis Anteil <= ziel_anteil oder max_schnitte.
+  3. Drucklage je Teil: 6 Achslagen (aufrecht, kopfueber, 4 Seitenlagen im Fassadenrahmen); Wahl = kleinste Ueberhangflaeche (Bettflaeche ausgenommen).
+  4. Bett: passt ein Teil in seiner Lage nicht auf bett_mm (Standard Bambu P1S 256 mm, Rand 6 mm), senkrechter Schnitt in der Mitte der laengsten waagerechten Achse.
+  5. Passstifte: je Schnitt 2-4 Bohrungen in beiden Haelften (Abstand zum Schnittrand >= stift_rand_mm), Durchmesser stift_mm + toleranz_mm, Tiefe je Seite
+     stift_laenge_mm/2 + toleranz_mm; Stifte (stift_mm x stift_laenge_mm) als eigene STL - KEINE Zapfen am Teil (Bambu-Lehre: nie Zapfen unter breiter Flaeche).
+Ausgabe: modelle/stl/<objekt>_teile/teil_NN.stl (mm, Drucklage, auf z=0), lage/teil_NN.stl (mm, Originallage fuer Overlay/Regel 9b), stifte.stl, teilung.json
+(je Teil Lage, Bettmass, Ueberhang m2/Anteil, Schnitte, Stifte). Die Pruefung 'Ueberhang je Teil' liest teilung.json (pruefstand druck_teile_ueberhang)."""
+import argparse, json, math, os, sys
+import numpy as np, trimesh, cv2
+from manifold3d import Manifold as M, Mesh as MM
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def zu_mf(tm):
+    tm = tm.copy(); tm.merge_vertices(); tm.fix_normals()
+    return M(MM(vert_properties=np.asarray(tm.vertices, np.float32), tri_verts=np.asarray(tm.faces, np.uint32)))
+
+
+def zu_tm(mf):
+    m = mf.to_mesh(); return trimesh.Trimesh(np.asarray(m.vert_properties)[:, :3].astype(float), np.asarray(m.tri_verts), process=True)
+
+
+def lagen(B):
+    """6 Achslagen: Rotationsmatrizen, die die Spalte 'oben' (Rahmenachse) auf +z drehen. B = Rahmen (u, n, z) als Spalten in Weltkoordinaten."""
+    u, n, z = B[:, 0], B[:, 1], B[:, 2]; out = []
+    for name, up, ax in (("aufrecht", z, u), ("kopfueber", -z, u), ("vorn_unten", -n, u), ("hinten_unten", n, u), ("seite_u+", u, n), ("seite_u-", -u, n)):
+        ex = ax - up * (ax @ up); ex /= np.linalg.norm(ex); ey = np.cross(up, ex); out.append((name, np.vstack([ex, ey, up])))   # Zeilen = neue Achsen
+    return out
+
+
+def ueberhang(tm, Rr, cosg, bett_tol):
+    N = tm.face_normals @ Rr.T; C = tm.triangles_center @ Rr.T; A = tm.area_faces; zb = C[:, 2].min() if len(C) else 0.0
+    zmin = (tm.vertices @ Rr.T)[:, 2].min()
+    ov = (N[:, 2] < -cosg) & (C[:, 2] > zmin + bett_tol)
+    return float(A[ov].sum()), float(A.sum())
+
+
+def kontakt(tm, Rr, bett_tol):
+    """Auflageflaeche (m2) in dieser Lage: nach unten zeigende Flaechen innerhalb bett_tol ueber dem tiefsten Punkt."""
+    N = tm.face_normals @ Rr.T; C = tm.triangles_center @ Rr.T; zmin = (tm.vertices @ Rr.T)[:, 2].min()
+    return float(tm.area_faces[(N[:, 2] < -0.9) & (C[:, 2] <= zmin + bett_tol)].sum())
+
+
+def beste_lage(tm, L, cosg, bett_tol, kontakt_min=0.25, bett_m=None):
+    """Lage mit kleinster Ueberhangflaeche unter denen mit tragfaehiger Auflage (>= kontakt_min x groesste Auflage aller Lagen):
+    sonst stuende z. B. ein Kegel auf der Spitze (Ueberhang 0, aber kein Stand)."""
+    werte = []
+    for name, Rr in L:
+        o, a = ueberhang(tm, Rr, cosg, bett_tol); V = tm.vertices @ Rr.T; werte.append((name, o, a, Rr, V.max(0) - V.min(0), kontakt(tm, Rr, bett_tol)))
+    kmax = max(w[5] for w in werte); ok = [w for w in werte if w[5] >= kontakt_min * kmax]
+    if bett_m is not None and any(w[4].max() <= bett_m for w in ok): ok = [w for w in ok if w[4].max() <= bett_m]   # Lagen, die aufs Bett passen, zuerst
+    return min(ok, key=lambda w: w[1])[:5]
+
+
+def kandidaten(tm, B, cosg, schritt=0.02):
+    """Hoehen (Rahmen-z) mit nahezu waagerechter Unterseite (|n_z| > 0,98, nach unten), Flaeche je 2-cm-Klasse, absteigend."""
+    N = tm.face_normals @ B; C = tm.triangles_center @ B; A = tm.area_faces
+    m = N[:, 2] < -0.98
+    if not m.any(): return []
+    k = np.round(C[m, 2] / schritt).astype(int); fl = {}
+    for kk, aa, zz in zip(k, A[m], C[m, 2]): f_ = fl.setdefault(kk, [0.0, []]); f_[0] += aa; f_[1].append(zz)
+    return sorted(((v[0], float(np.median(v[1]))) for v in fl.values()), reverse=True)
+
+
+def schneide(mf, B, achse, wert):
+    """Ebene (Rahmenachse 'achse' = wert): Rueckgabe (unten/hinten, oben/vorn) als Manifold."""
+    nvec = B[:, achse]; oben, unten = mf.split_by_plane(tuple(float(x) for x in nvec), float(wert))
+    return unten, oben
+
+
+def stiftpunkte(mf, B, achse, wert, d_rand, d_min, nmax=4, aufl=0.01):
+    """Punkte im Schnittquerschnitt mit Randabstand >= d_rand (Rasterung + Distanztransformation), gierig weit auseinander."""
+    tm = zu_tm(mf); sec = tm.section(plane_origin=B[:, achse] * wert, plane_normal=B[:, achse])
+    if sec is None: return []
+    P = sec.vertices; j = [k for k in range(3) if k != achse]; Q = (P @ B)[:, j]
+    lo = Q.min(0) - 0.1; hi = Q.max(0) + 0.1; W, H = (np.ceil((hi - lo) / aufl).astype(int) + 1)
+    if W * H > 4e7: aufl *= math.sqrt(W * H / 4e7); W, H = (np.ceil((hi - lo) / aufl).astype(int) + 1)
+    polys = []
+    for ent in sec.entities:
+        pts = (sec.vertices[ent.points] @ B)[:, j]; polys.append(np.round((pts - lo) / aufl).astype(np.int32))
+    msk = np.zeros((H, W), np.uint8)                                                                # gerade-ungerade (XOR): Innenringe = Loecher bleiben leer
+    for p_ in polys: t_ = np.zeros((H, W), np.uint8); cv2.fillPoly(t_, [p_], 1); msk ^= t_
+    img = (msk > 0).astype(np.uint8)
+    dt = cv2.distanceTransform(img, cv2.DIST_L2, 5) * aufl
+    yy, xx = np.nonzero(dt >= d_rand)
+    if not len(yy): return []
+    cand = np.c_[xx, yy] * aufl + lo; wahl = [cand[np.argmax(dt[yy, xx])]]
+    while len(wahl) < nmax:
+        dd = np.min(np.linalg.norm(cand[:, None, :] - np.array(wahl)[None], axis=2), axis=1)
+        if dd.max() < d_min: break
+        wahl.append(cand[np.argmax(dd)])
+    out = []
+    for w in wahl:
+        p = np.zeros(3); p[j[0]], p[j[1]], p[achse] = w[0], w[1], wert; out.append(B @ p)
+    return out
+
+
+def bohrung(p, nvec, r, h):
+    """Zylinder Radius r, Laenge h, Achse nvec, Mitte p (Welt)."""
+    c = M.cylinder(h, r, r, 32, True); z = np.array([0, 0, 1.0]); v = np.cross(z, nvec); s = np.linalg.norm(v); cth = z @ nvec
+    if s < 1e-9: Rm = np.eye(3) if cth > 0 else np.diag([1, -1, -1.0])
+    else:
+        vx = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]]) / s; ang = math.atan2(s, cth); Rm = np.eye(3) + math.sin(ang) * vx + (1 - math.cos(ang)) * vx @ vx
+    T = np.c_[Rm, p]; return c.transform(T.tolist())
+
+
+def main():
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--stl"); a = ap.parse_args()
+    od = os.path.join(ROOT, "modelle", a.objekt); O = json.load(open(os.path.join(od, "objekt.json"))); cfg = O.get("druck_teilung") or {}
+    sc = float(O.get("massstab") or os.environ.get("SCALE", 87)); K = 1000.0 / sc
+    stl = a.stl or os.path.join(ROOT, "modelle", "stl", f"{a.objekt}_1-{int(sc)}.stl")
+    winkel = float(cfg.get("winkel", 60)); cosg = math.cos(math.radians(90 - winkel)); ziel = float(cfg.get("ziel_anteil", 0.01)); bett = float(cfg.get("bett_mm", 256)) - 2 * float(cfg.get("bett_rand_mm", 6))
+    max_schnitte = int(cfg.get("max_schnitte", 6)); bett_tol = float(cfg.get("bett_tol_m", 0.05)); min_flaeche = float(cfg.get("min_kandidat_m2", 2.0))
+    sd, sl, tol = (float(cfg.get(k, d)) / K for k, d in (("stift_mm", 2.0), ("stift_laenge_mm", 6.0), ("toleranz_mm", 0.2)))
+    srand = float(cfg.get("stift_rand_mm", 2.5)) / K
+    an = next((b["achse_n"] for b in O.get("bauteile", []) if b.get("achse_n") and b.get("aktiv", True) is not False), [0.0, 1.0])
+    n_ = np.array(an + [0.0], float); n_ /= np.linalg.norm(n_); u_ = np.array([n_[1], -n_[0], 0.0]); B = np.c_[u_, n_, [0, 0, 1.0]]
+    tm0 = trimesh.load(stl, process=False); tm0.merge_vertices(); tm0.apply_scale(1.0 / K)
+    if not tm0.is_watertight: sys.exit("druck_teilung: STL nicht wasserdicht - erst Druckpruefungen gruen machen")
+    L = lagen(B); teile = [dict(mf=zu_mf(tm0), schnitte=[])]; schnitte = []; log = []
+    bm = bett / K
+    def bewerte(t): tm = zu_tm(t["mf"]); bl = beste_lage(tm, L, cosg, bett_tol, bett_m=bm); return tm, bl
+    def zerlegen(ts): return [dict(mf=d_, schnitte=t["schnitte"]) for t in ts for d_ in t["mf"].decompose() if d_.volume() > 1e-4]
+    def ueberhang_schnitte(teile, schnitte, log):
+      for _ in range(max_schnitte):
+          bestes = None
+          for i, t in enumerate(teile):
+              tm, bl = bewerte(t)
+              if bl[1] / bl[2] <= ziel: continue
+              V = tm.vertices @ B; zlo, zhi = V[:, 2].min(), V[:, 2].max()
+              nk = 0
+              for fl, zc in kandidaten(tm, B, cosg):
+                  if fl < min_flaeche: break
+                  if zc < zlo + 0.3 or zc > zhi - 0.3: continue
+                  un, ob = schneide(t["mf"], B, 2, zc)
+                  if un.is_empty() or ob.is_empty(): continue
+                  o2 = sum(beste_lage(zu_tm(x), L, cosg, bett_tol, bett_m=bm)[1] for x in (un, ob))
+                  gew = bl[1] - o2
+                  if gew > 0 and (bestes is None or gew > bestes[0]): bestes = (gew, i, zc, un, ob, fl)
+                  nk += 1
+                  if nk >= 5: break                                                                   # die 5 groessten Kandidaten je Teil (gierig, reproduzierbar)
+          if bestes is None: return teile
+          gew, i, zc, un, ob, fl = bestes; s_ = dict(achse="z", wert=round(zc, 4), grund=f"Unterseite {fl:.1f} m2 waagerecht nach unten -> Bettflaeche", gewinn_m2=round(gew, 2))
+          schnitte.append(s_); t = teile.pop(i); teile += [dict(mf=un, schnitte=t["schnitte"] + [len(schnitte) - 1]), dict(mf=ob, schnitte=t["schnitte"] + [len(schnitte) - 1])]
+          log.append(f"Schnitt z {zc:.3f}: Ueberhang -{gew:.2f} m2")
+      return teile
+    teile = ueberhang_schnitte(teile, schnitte, log)
+    # 4: Bettgroesse (vorher zerlegen: ein Ueberhang-Schnitt kann Teile trennen)
+    teile = zerlegen(teile)
+    for _ in range(12):
+        neu = []; geteilt = False
+        for t in teile:
+            tm, bl = bewerte(t); ext = bl[4] * K
+            if ext.max() <= bett: neu.append(t); continue
+            V = tm.vertices @ B; spann = V.max(0) - V.min(0); ax = int(np.argmax(spann))              # laengste Rahmenachse halbieren
+            lo_, hi_ = V[:, ax].min(), V[:, ax].max(); best_ = None
+            for w_ in np.linspace(lo_ + 0.35 * (hi_ - lo_), lo_ + 0.65 * (hi_ - lo_), 31):           # Schnittlage: kleinste Schnittflaeche im mittleren Drittel, keine Splitter (< 2 % Volumen)
+                un_, ob_ = schneide(t["mf"], B, ax, float(w_))
+                if un_.is_empty() or ob_.is_empty(): continue
+                vmin_ = min(d_.volume() for x_ in (un_, ob_) for d_ in x_.decompose())
+                if vmin_ < 0.02 * t["mf"].volume(): continue
+                sec_ = tm.section(plane_origin=B[:, ax] * w_, plane_normal=B[:, ax]); fl_ = 0.0
+                if sec_ is not None:
+                    try: fl_ = float(sec_.to_planar()[0].area)
+                    except Exception: fl_ = 0.0
+                if best_ is None or fl_ < best_[0]: best_ = (fl_, float(w_), un_, ob_)
+            if best_ is None: neu.append(t); continue
+            wert, un, ob = best_[1], best_[2], best_[3]
+            s_ = dict(achse="unz"[ax], wert=round(wert, 4), grund=f"Bett {bett:.0f} mm: Teil {ext.round(0).tolist()} mm, Mitte der laengsten Achse"); schnitte.append(s_)
+            neu += [dict(mf=un, schnitte=t["schnitte"] + [len(schnitte) - 1]), dict(mf=ob, schnitte=t["schnitte"] + [len(schnitte) - 1])]; geteilt = True
+            log.append(f"Bettschnitt {s_['achse']} {wert:.3f}")
+        teile = zerlegen(neu)
+        if not geteilt: break
+    teile = ueberhang_schnitte(teile, schnitte, log)                                                # Bettschnitte aendern die Lagen: Ueberhang-Schnitte noch einmal
+    # Zerfallene Teile (ein Schnitt trennt z. B. freistehende Helme) einzeln fuehren
+    t2 = []
+    for t in teile:
+        for d_ in t["mf"].decompose(): t2.append(dict(mf=d_, schnitte=t["schnitte"]))
+    teile = [t for t in t2 if t["mf"].volume() > 1e-4]
+    # 5: Passstifte je Schnitt (Bohrung durch beide Haelften)
+    stifte = []
+    for si, s_ in enumerate(schnitte):
+        ax = "unz".index(s_["achse"]); nvec = B[:, ax]; pts = []; beteiligt = [zu_tm(t["mf"]) for t in teile if si in t["schnitte"]]
+        def beidseitig(p):                                                                          # Bohrung muss auf BEIDEN Seiten ganz im Material liegen (Stiftlaenge/2 + Spiel, Ring mit Radius+Rand)
+            ring = [np.zeros(3)] + [r_ * (B[:, (ax + 1) % 3] * math.cos(w_) + B[:, (ax + 2) % 3] * math.sin(w_)) for r_ in (sd / 2 + srand * 0.5,) for w_ in np.linspace(0, 2 * math.pi, 8, endpoint=False)]
+            for sg in (1, -1):
+                P_ = np.array([p + sg * nvec * tt + o_ for tt in np.linspace(0.02 * sl, sl / 2 + tol, 4) for o_ in ring])
+                if not any(m_.contains(P_).all() for m_ in beteiligt): return False
+            return True
+        for t in teile:
+            if si not in t["schnitte"]: continue
+            pts += [p for p in stiftpunkte(t["mf"], B, ax, s_["wert"], srand + sd / 2, 6 * sd, nmax=8) if all(np.linalg.norm(p - q) > 2 * sd for q in pts) and beidseitig(p)]
+        s_["stifte"] = [np.round(p, 3).tolist() for p in pts]
+        for p in pts:
+            loch = bohrung(p, nvec, (sd + tol) / 2, sl + 2 * tol)
+            for t in teile:
+                if si in t["schnitte"]: t["mf"] = t["mf"] - loch
+            stifte.append(bohrung(np.zeros(3), np.array([0, 0, 1.0]), sd / 2, sl).translate((len(stifte) * 3 * sd, 0, sl / 2)))
+    # Ausgabe
+    ad = os.path.join(ROOT, "modelle", "stl", f"{a.objekt}_teile"); os.makedirs(os.path.join(ad, "lage"), exist_ok=True); bericht = []
+    for k_, t in enumerate(sorted(teile, key=lambda t: -t["mf"].volume())):
+        tm = zu_tm(t["mf"]); name, o, A, Rr, ext = beste_lage(tm, L, cosg, bett_tol, bett_m=bm)
+        (tm.copy().apply_scale(K)).export(os.path.join(ad, "lage", f"teil_{k_ + 1:02d}.stl"))
+        td = tm.copy(); td.apply_transform(np.r_[np.c_[Rr, np.zeros(3)], [[0, 0, 0, 1]]]); td.apply_translation(-np.r_[td.bounds[0, :2] + (td.bounds[1, :2] - td.bounds[0, :2]) / 2, td.bounds[0, 2]])
+        td.apply_scale(K); td.export(os.path.join(ad, f"teil_{k_ + 1:02d}.stl"))
+        V = tm.vertices @ B
+        bericht.append(dict(teil=f"teil_{k_ + 1:02d}", lage=name, bett_mm=np.round(ext * K, 1).tolist(), passt=bool(ext.max() * K <= bett), ueberhang_m2=round(o, 3), flaeche_m2=round(A, 2),
+                            ueberhang_anteil=round(o / A, 5), wasserdicht=bool(tm.is_watertight), volumen_m3=round(float(tm.volume), 2),
+                            rahmen_u=np.round([V[:, 0].min(), V[:, 0].max()], 2).tolist(), rahmen_n=np.round([V[:, 1].min(), V[:, 1].max()], 2).tolist(), rahmen_z=np.round([V[:, 2].min(), V[:, 2].max()], 2).tolist(),
+                            schnitte=t["schnitte"]))
+    if stifte:
+        st = zu_tm(M.batch_boolean(stifte, __import__("manifold3d").OpType.Add)); st.apply_scale(K); st.export(os.path.join(ad, "stifte.stl"))
+    erg = dict(stl=os.path.relpath(stl, ROOT), modell_volumen_m3=round(float(abs(tm0.volume)), 3), massstab=sc, winkel_grad=winkel, ziel_anteil=ziel, bett_mm_nutzbar=bett, stift=dict(d_mm=sd * K, laenge_mm=sl * K, toleranz_mm=tol * K, anzahl=len(stifte)),
+               schnitte=schnitte, teile=bericht, max_ueberhang_anteil=max(b["ueberhang_anteil"] for b in bericht), alle_passen=all(b["passt"] for b in bericht), log=log,
+               hinweis="Ueberhang = Flaechen mit Normale steiler als winkel nach unten, ohne Bettflaeche (bett_tol_m); Lage = beste von 6 Achslagen. ANNAHME Stift 2 x 6 mm, Spiel 0,2 mm")
+    json.dump(erg, open(os.path.join(ad, "teilung.json"), "w"), indent=1, ensure_ascii=False)
+    for b in bericht: print(f"{b['teil']}: {b['lage']:12s} {b['bett_mm']} mm passt={b['passt']} Ueberhang {b['ueberhang_m2']} m2 = {100 * b['ueberhang_anteil']:.2f} % dicht={b['wasserdicht']} z {b['rahmen_z']}")
+    print("Schnitte:", [(s['achse'], s['wert'], len(s.get('stifte', []))) for s in schnitte]); print("->", os.path.join(ad, "teilung.json"))
+
+
+if __name__ == "__main__":
+    main()

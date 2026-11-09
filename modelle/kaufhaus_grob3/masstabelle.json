@@ -254,6 +254,50 @@
    "n": 30000,
    "quantil": 1.0,
    "grenze_m": 0.0348
+  },
+  "kons_b3": {
+   "typ": "ebene_vorspruenge",
+   "o": [
+    4.2375,
+    11.9297
+   ],
+   "n": [
+    0.33471889311010433,
+    0.9423180262497086
+   ],
+   "z": "=7.75 - z_unterkante_lot2",
+   "u0": -9.546,
+   "u1": -3.524,
+   "hoehe_min": 0.3,
+   "vor": 2.5,
+   "schritt": 0.02,
+   "min_b": 0.1,
+   "max_b": 1.0
+  },
+  "bogen3_licht": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    4.2101,
+    11.8525
+   ],
+   "n": [
+    0.33471889311010433,
+    0.9423180262497086
+   ],
+   "z": "=5.40 - z_unterkante_lot2",
+   "u0": -10.0,
+   "u1": -3.0,
+   "tiefe": 1.0,
+   "vor": 2.0,
+   "schritt": 0.01,
+   "min_b": 3.0,
+   "max_b": 6.0,
+   "rand": 0.2
+  },
+  "teile_ueberhang": {
+   "typ": "druck_teile_ueberhang",
+   "ordner": "modelle/stl/kaufhaus_grob3_teile",
+   "winkel": 60.0
   }
  },
  "pruefungen": [
@@ -624,6 +668,53 @@
    "historie": [
     "2026-11-09 angelegt (Agent Runde 4)"
    ]
+  },
+  {
+   "name": "Balkonkonsolen zwischen den Pfeilerachsen von Bogen 3 (u 3,52..9,55, z 7,75)",
+   "wert": "kons_b3_anzahl",
+   "soll": [
+    3,
+    3
+   ],
+   "quelle": "Foto-Zaehlung Z-6120-006 (3 Konsolen zwischen den Pfeilerachsen von Bogen 3, Konsole knapp jenseits der Achse = teil); Strecke = Pfeilerachsen der bogenreihe (u0 -8,52 + 2/3 x pitch 6,022), Ebene Wandflaeche 12,66, z 7,75 (Konsolenmitte, unter der Balkonplatte 7,9); Vorsprung >= 0,3 m vor dem Grund",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "anzahl",
+   "massstab": "foto_intern",
+   "protokoll": "Z-6120-006",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 5); Modell Runde 4 (ohne Balkonkonsolen) muss fehlschlagen"
+   ]
+  },
+  {
+   "name": "Arkade Bogen 3: Lichte knapp ueber dem Kaempfer (z 5,40, Ebene Bandfront 12,578)",
+   "wert": "bogen3_licht_breite_max",
+   "soll": [
+    5.17,
+    5.41
+   ],
+   "quelle": "Fotomessung zweier Fotos, gleiche Stelle (innere Goldlinie = vordere Leibungskante, Kaempfer = Ende der Goldlinie am Pfeilerkopf): M-6120-008 Lichte 5,17 +-0,16 bei z 5,25/5,30; M-6261-001 Lichte 5,33 +-0,09 bei z 5,35 (beide K-Kamera-Bruecke, Ebene Bandfront 12,578); gewichtet 5,29 +-0,08, Soll +-1,5 sigma. Bogenstueck zwischen den Boegen am Kaempfer M-6261-003 0,72 m (= pitch - Lichte). Bei z 5,40 liegt der Messpunkt knapp ueber dem gemessenen Kaempfer 5,33 (im Modell Runde 4 darunter: dort sind es die Pfeiler, Lichte 5,14)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6261-001",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 5); Modell Runde 4 (Kaempfer 5,46, Lichte 5,13) muss fehlschlagen"
+   ]
+  },
+  {
+   "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
+   "wert": "teile_ueberhang",
+   "soll": [
+    0,
+    0.01
+   ],
+   "quelle": "Druckziel H0 (Koordinator 9.11. Runde 5): Modell geteilt drucken, ohne Stuetzen unter der Laubendecke; tools/druck_teilung.py (Schnitte an waagerechten Unterseiten, beste von 6 Lagen, Bett P1S) -> teilung.json; ohne passende Teilung zaehlt das ungeteilte Modell (5,6 %)",
+   "quelltyp": "modell",
+   "merkmal": "druck",
+   "massstab": "-",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 5); ungeteiltes Modell 0,056 = fehlschlagend"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -859,62 +950,12 @@
    "status": "Runde 4 Agent: Pruefungen Teilnetze=1, wasserdicht, Wandstaerke p1 eingetragen (vorher 545/0/0,03 fehlschlagend), jetzt 1/1/0,14 bestanden; Slicer-Vorcheck audit/druck_vorcheck.json (Ueberhaenge offen, s. eigene Beobachtung)"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
-   "auto_id": "fehlteile-6261-316-1738",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.49,
-   "z_bis": 18.49,
-   "xyz": [
-    15.76,
-    -5.88,
-    18.49
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.49 m, y=-5.88 m (Zelle [316, 1738, 79], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
-   "auto_id": "fehlteile-6261-237-1817",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.89,
-   "z_bis": 17.89,
-   "xyz": [
-    15.1,
-    -8.06,
-    17.89
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.89 m, y=-8.06 m (Zelle [237, 1817, 79], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
-   "auto_id": "fehlteile-6261-316-1817",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.35,
-   "z_bis": 17.35,
-   "xyz": [
-    15.65,
-    -5.85,
-    17.35
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.35 m, y=-5.85 m (Zelle [316, 1817, 79], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-09",
    "wer": "Agent Runde 4 (druck_vorcheck)",
    "art": "druck",
    "text": "Ueberhaenge > 60 Grad: 206,6 m2 (5,6 % der Flaeche), davon 173 m2 Laubendecke z 7-8 (Unterseite Balkon-/OG-Boden ueber der offenen Arkade, n 6,6-13,5), 11,4 m2 Erkerunterseiten z 9-10, 9,8 m2 Gesimsunterseite z 14-15 (Auskragung 0,42 m)",
-   "naechster_schritt": "Druckstrategie festlegen: Laubendecke nur mit Stuetzen oder Teilung (EG/OG getrennt drucken, Arkade kopfueber); Gesims ggf. 45-Grad-Fase unten (Foto pruefen, ob Hohlkehle) - Entscheidung Koordinator"
+   "naechster_schritt": "Druckstrategie festlegen: Laubendecke nur mit Stuetzen oder Teilung (EG/OG getrennt drucken, Arkade kopfueber); Gesims ggf. 45-Grad-Fase unten (Foto pruefen, ob Hohlkehle) - Entscheidung Koordinator",
+   "status": "Runde 5: Druckteilung tools/druck_teilung.py (8 Teile, Schnitt z 7,9 an der Laubendecke, EG kopfueber), Pruefung Ueberhang je Teil < 1 % bestanden (max 0,94 %)"
   },
   {
    "datum": "2026-11-09",
@@ -922,7 +963,8 @@
    "art": "form",
    "foto": "6120",
    "text": "Bogen 3 (und Bogen 4 linke Laibung): rote Modellkante innerhalb des Fotobogens rechts vom Scheitel (Treffer 2 und 6, ca. 1 m lang) - Bogenleibung im Modell zu tief/zu flach gegen die Foto-Laibung; Bandoberkante z 8,0 / Laubendecke als rote Doppellinie (Treffer 4/7)",
-   "naechster_schritt": "Bogenprofil (scheitel_z 7,2, Segmentbogen) am Foto 6120 per foto_mass messen (Kaempfer/Scheitel/Laibungsbreite), Pruefung eintragen, dann bogenreihe anpassen"
+   "naechster_schritt": "Bogenprofil (scheitel_z 7,2, Segmentbogen) am Foto 6120 per foto_mass messen (Kaempfer/Scheitel/Laibungsbreite), Pruefung eintragen, dann bogenreihe anpassen",
+   "status": "Runde 5: Bogenprofil gemessen (M-6120-008/009, M-6261-001/002/003), kaempfer 5,46->5,33, scheitel 7,20->7,24, Lichte 5,13->5,29; Pruefung Bogen 3 Lichte. Hauptursache der roten Boegen war aber der Rahmenversatz 1,45 m in foto_diff (K ohne rahmen_verschiebung)"
   },
   {
    "datum": "2026-11-09",
@@ -936,7 +978,30 @@
    "wer": "Agent Runde 4 (Overlay)",
    "art": "werkzeug",
    "text": "modell_foto_overlay zeichnet alle Kanten ohne Verdeckung: der 'Linienteppich' ueber OG/Balkon in 6120 sind ueberwiegend die Ziegelreihen des Daches (durch die Fassade projiziert), das 'schiefe Viereck' am linken Pfeiler ist fensterreihe:eg0 (Rueckwand u 11,75, hinter dem Pfeiler u 9,55; Einzelteil-Overlay bestaetigt); Zylinder zeigen nur Ringe, keine Silhouette",
-   "naechster_schritt": "Overlay mit Tiefenpuffer (verdeckte Kanten weglassen/blass) und Silhouettenkanten - Werkzeugaenderung"
+   "naechster_schritt": "Overlay mit Tiefenpuffer (verdeckte Kanten weglassen/blass) und Silhouettenkanten - Werkzeugaenderung",
+   "status": "Runde 5: modell_foto_overlay mit Z-Puffer (render_kern.dreiecke_rastern) und Umrisskanten"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 5 (Koordinator-Hinweis, bewiesen)",
+   "art": "werkzeug",
+   "text": "foto_diff/fehlteile schoben das Generator-STL um -zmin = -1,453 m, weil K-6120/K-6261 (Kamera-Bruecke im lot2-Rahmen) keine rahmen_verschiebung trugen. Mit [0,0,0]: foto_diff 6120 0,118/0,318 -> 0,042/0,217, 6261 0,169/0,483 -> 0,091/0,422, Versatz 6261 0,09 m. Die Runde-4-Erklaerung des 0,93-m-Versatzes (nur traufzone_alt) war unvollstaendig",
+   "naechster_schritt": "Jede neue Bruecken-/Buendelkamera bekommt rahmen_verschiebung beim Anlegen (Kamera-Bruecke ergaenzen); fehlteile liest sie jetzt auch"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 5 (Overlay 6120 mit Z-Puffer)",
+   "art": "form",
+   "foto": "6120",
+   "text": "Waagerechte Modellkante bei z 8,0 ueber den Boegen (Stufe 8 cm: Bandfront 12,578 gegen OG-Wand 12,66) - im Foto glatter Putz ohne Kante; zweite Linie knapp darueber (Balkonplatte-Unterseite 7,9 / Rumpf-OG 7,9)",
+   "naechster_schritt": "Bandfront und OG-Wand am Foto/Gitter vergleichen (ebene_abstand bei z 7,0 und 9,0 gegen Kantengitter), dann laibung_tiefe/pfeiler_n oder wand_n angleichen"
+  },
+  {
+   "datum": "2026-11-09",
+   "wer": "Agent Runde 5 (Bogen 3, zwei Fotos)",
+   "art": "widerspruch",
+   "text": "Scheitel Bogen 3: M-6120-009 7,11 +-0,11 gegen M-6261-002 7,31 +-0,08 (1,5 sigma); Modell gewichtet 7,24. Boegen 1/2/4 nicht gemessen (gleiche Boegen = ANNAHME)",
+   "naechster_schritt": "dritte Ansicht (frontal, z. B. 6161) fuer Scheitel; Boegen 1/2/4 an Fotos mit freier Sicht messen"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

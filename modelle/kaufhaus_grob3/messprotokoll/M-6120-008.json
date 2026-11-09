@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-008",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=12.578",
+ "name": "Bogen 3 Leibung (innere Goldlinie) Kaempfer links -> rechts, Ebene Bandfront 12,578",
+ "mess_px": [
+  380.0,
+  2540.0,
+  2047.0,
+  2507.0
+ ],
+ "P1": [
+  12.768,
+  8.813,
+  5.25
+ ],
+ "P2": [
+  7.895,
+  10.544,
+  5.299
+ ],
+ "dz": 0.049,
+ "dy": 1.731,
+ "dx": -4.873,
+ "abstand": 5.172,
+ "z1": 5.25,
+ "z2": 5.299,
+ "unsicherheit_rel": 0.0288,
+ "unsicherheit_m": 0.163,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.578 (+-0.3 m)"
+}

@@ -1,0 +1,64 @@
+{
+ "id": "Z-6120-006",
+ "typ": "zaehlung",
+ "foto": "6120",
+ "datei": "6120_ip_IMG_6120.jpg",
+ "was": "Balkonkonsolen zwischen den Pfeilerachsen von Bogen 3 (Pfeilerachsen x~288 und ~2162 bei Kaempferhoehe)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-09",
+ "punkte": [
+  {
+   "flaeche": "B3",
+   "art": "voll",
+   "x": 450.0,
+   "y": 1600.0
+  },
+  {
+   "flaeche": "B3",
+   "art": "voll",
+   "x": 1062.0,
+   "y": 1600.0
+  },
+  {
+   "flaeche": "B3",
+   "art": "voll",
+   "x": 1630.0,
+   "y": 1600.0
+  },
+  {
+   "flaeche": "B2",
+   "art": "teil",
+   "x": 2250.0,
+   "y": 1600.0
+  },
+  {
+   "flaeche": "B2",
+   "art": "teil",
+   "x": 2875.0,
+   "y": 1600.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "B3": {
+   "art": "voll",
+   "n": 3
+  },
+  "B2": {
+   "art": "teil",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 3,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-6120-006.jpg",
+ "ausschnitt": [
+  200,
+  1350,
+  3125,
+  1850
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Konsole bei x 2250 liegt knapp rechts der rechten Pfeilerachse (x~2162) und zaehlt zu Bogen 2/Pfeiler; Lage in u nicht aus dem Foto gemessen"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-009",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.33471889,0.94231803,0=12.578",
+ "name": "Bogen 3 Kaempfer links -> Scheitel (innere Goldlinie, Unterkante)",
+ "mess_px": [
+  380.0,
+  2540.0,
+  1250.0,
+  1965.0
+ ],
+ "P1": [
+  12.768,
+  8.813,
+  5.25
+ ],
+ "P2": [
+  10.253,
+  9.706,
+  7.109
+ ],
+ "dz": 1.859,
+ "dy": 0.893,
+ "dx": -2.515,
+ "abstand": 3.253,
+ "z1": 5.25,
+ "z2": 7.109,
+ "unsicherheit_rel": 0.0288,
+ "unsicherheit_m": 0.108,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=12.578 (+-0.3 m)"
+}
