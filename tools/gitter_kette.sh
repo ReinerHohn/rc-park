@@ -30,7 +30,9 @@ log "Kette $NAME ab Stufe $AB (KAM $KAM, Refs $REFS, vmin $VMIN)"
 if stufe sweep; then
   PREF=""; [ -n "$REFPREFIX" ] && PREF="--ref_prefix $REFPREFIX"
   log "1 sweep A"; $PY -I tools/kanten_tiefe_sweep.py "$KAM" $STAB $K/sweep_A.npz --refs $REFS --maxpx $MAXPX --nb 14 --dz 0.08 --box $WOLKE --dmax_ref 35 --vmin $VMIN $PREF >> $K/sweep_A.log 2>&1 || { log "FEHLER sweep A"; exit 1; }
-  log "1 sweep B"; $PY -I tools/kanten_tiefe_sweep.py "$KAM" $STAB $K/sweep_B.npz --refs $REFS --maxpx $MAXPX --nb 14 --dz 0.08 --box $WOLKE --dmax_ref 35 --vmin $VMIN $PREF --exclude $K/sweep_A.npz >> $K/sweep_B.log 2>&1 || { log "FEHLER sweep B"; exit 1; }
+  # B = unabhaengige Pruefmenge: andere Referenzfotos; bei Praefix-Lauf (z.B. nur Videoframes) sind die FOTOS die Pruefmenge
+  if [ -n "$REFPREFIX" ]; then BARGS="--refs 220 --exclude $K/sweep_A.npz"; else BARGS="--refs $REFS --exclude $K/sweep_A.npz"; fi
+  log "1 sweep B"; $PY -I tools/kanten_tiefe_sweep.py "$KAM" $STAB $K/sweep_B.npz $BARGS --maxpx $MAXPX --nb 14 --dz 0.08 --box $WOLKE --dmax_ref 35 --vmin $VMIN >> $K/sweep_B.log 2>&1 || { log "FEHLER sweep B"; exit 1; }
   log "   A: $(grep fertig $K/sweep_A.log | tail -1)  B: $(grep fertig $K/sweep_B.log | tail -1)"
 fi
 if stufe konsens; then
