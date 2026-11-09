@@ -341,7 +341,7 @@ def kanten_bewerten(tol=3.0):
         sg = np.array([l[:4] for l in d["lin"] if l[4] >= k], float).reshape(-1, 4); out.append(dict(verfahren="FUSION >= %d Stimmen" % k, recall=round(recall(sg), 3), segmente=int(len(sg)), dichte=round(dichte(sg), 3)))
     out.sort(key=lambda e: -e["recall"]); return dict(tabelle=out, wahrheit_laenge_m=round(tot * px, 1), n_linien=int(len(T)))
 
-def modellkanten_px(d, winkel=25.0, minlaenge_px=40):
+def modellkanten_px(d, winkel=25.0, minlaenge_px=40, kamera=None, slab=None):
     """Kanten des Modells (Knickkanten der Teilnetze, Winkel > winkel) in die Pixel der Ortho-Ansicht d projizieren; nur Kanten in der Ortho-Scheibe. Unabhaengig von den Kantenverfahren (Modell stammt aus Wolke+Fotos+Nutzer)."""
     U_ = uax(); n_ = np.array(obj()["fassade_n"]["wert"], float); n_ /= np.linalg.norm(n_); al = np.radians(d["neig"]); sn, cn = np.sin(al), np.cos(al); px = d["px"]; out = []
     for typ, b in MESH.items():
@@ -354,7 +354,17 @@ def modellkanten_px(d, winkel=25.0, minlaenge_px=40):
         if len(e) == 0: continue
         P = m.vertices[e]                                          # (n,2,3)
         u = P[..., :2] @ U_; sS = P[..., :2] @ n_; z = P[..., 2]; t = (sS - d["s0"]) * cn - (z - d["z0"]) * sn; v = (sS - d["s0"]) * sn + (z - d["z0"]) * cn
-        ok = np.all((t >= -d["hinter"]) & (t <= d["vor"]), 1)
+        ok = np.all((t >= -(slab or d["hinter"])) & (t <= (slab or d["vor"])), 1)
+        if kamera is not None:                                    # Kante durch die Kamera auf die Ebene (t=0) abbilden: so sieht sie das entzerrte Foto (Parallaxe!)
+            C_ = np.array(kamera["C"], float); nrm_ = np.array([n_[0] * cn, n_[1] * cn, -sn]); p0_ = np.r_[d["s0"] * n_, d["z0"]]
+            for i in np.where(ok)[0]:
+                Q = []
+                for X in P[i]:
+                    dv = X - C_; den = float(dv @ nrm_)
+                    if abs(den) < 1e-6: Q = None; break
+                    lam = float((p0_ - C_) @ nrm_) / den; Y = C_ + lam * dv; ux = Y[:2] @ U_; sS_ = Y[:2] @ n_; v_ = (sS_ - d["s0"]) * sn + (Y[2] - d["z0"]) * cn; Q.append(((d["u0"] - ux) / px, (d["v0"] - v_) / px))
+                if Q: out.append([Q[0][0], Q[0][1], Q[1][0], Q[1][1]])
+            continue
         for i in np.where(ok)[0]: out.append([(d["u0"] - u[i, 0]) / px, (d["v0"] - v[i, 0]) / px, (d["u0"] - u[i, 1]) / px, (d["v0"] - v[i, 1]) / px])
     out = np.array(out, float).reshape(-1, 4)
     return out[np.hypot(out[:, 2] - out[:, 0], out[:, 3] - out[:, 1]) >= minlaenge_px]
@@ -519,7 +529,7 @@ def fotokanten_voll(d, cmin=0.9, maxn=80, tiefe=False, anteil=0.3, minl_m=0.25):
     if len(fl) < 3 or float((V >= 3).sum()) < 1000: d["F"] = np.zeros((H, W), np.uint8); d["V"] = np.zeros((H, W), np.float32); return dict(linien=[], fotos=len(fl), score=0.0, cmin=cmin, tiefe=bool(tiefe))
     F = torch.where(V >= 3, E / V.clamp(min=1), torch.zeros_like(E)); Fn_ = F.cpu().numpy(); Vn = V.cpu().numpy()
     f8 = (np.clip(Fn_, 0, 1) * 255).astype(np.uint8); d["F"] = f8; d["V"] = Vn
-    G_ = cv2.GaussianBlur(np.clip(Fn_ / max(float(np.percentile(Fn_[Vn >= 3], 99.5)), 1e-3), 0, 1).astype(np.float32), (0, 0), 1.2); bin_ = (G_ * 255).astype(np.uint8)
+    G_ = cv2.GaussianBlur(np.clip(Fn_ / max(float(np.percentile(Fn_[Vn >= 3], 99.5)), 0.4), 0, 1).astype(np.float32), (0, 0), 1.2); bin_ = (G_ * 255).astype(np.uint8)
     lsd = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD); L = lsd.detect(bin_)[0]; out = []
     if L is not None:
         for q in np.asarray(L).reshape(-1, 4):
@@ -662,6 +672,53 @@ def vergleich_heldout(d, mengen, anz=14, tol=2.5):
         F_ = lambda p_, r_: 2 * p_ * r_ / max(p_ + r_, 1e-9); p, r, p0, r0 = [float(np.mean(v[q])) for q in ("p", "r", "p0", "r0")]
         res.append(dict(methode=k, linien=len(mengen[k]), praez=round(p, 3), recall=round(r, 3), F=round(F_(p, r), 3), F_zufall=round(F_(p0, r0), 3), gewinn=round(F_(p, r) - F_(p0, r0), 3)))
     res.sort(key=lambda e: -e["gewinn"]); return dict(tabelle=res, fotos=fl)
+
+def synth_pruefstand(d, anz=14, pos_cm=3.0, rot_grad=0.15, breite=1500, seed=5, tol=2.5):
+    """Synthetischer Rundlauf mit EXAKTER Wahrheit: Modell (MESH) mit den echten Kamerapositionen der frontalen Fotos rendern (Flaechenschattierung je Normale + Helligkeit je Bauteil, Unschaerfe, Rauschen),
+    Posen fuer die Auswertung um pos_cm/rot_grad stoeren, dann die Fotokanten-Methoden laufen lassen und mit den Modellkanten (Knickkanten, in der Ebene) vergleichen. Gleiche Ebene wie ORD['last']."""
+    import tempfile
+    rng = np.random.RandomState(seed); U_ = uax(); n_ = np.array(obj()["fassade_n"]["wert"], float); n_ = n_[:2] / np.linalg.norm(n_[:2]); al = np.radians(d["neig"]); sn, cn = np.sin(al), np.cos(al); px = d["px"]; H, W = d["gray"].shape
+    fl = beste_fotos(d, anz)
+    if len(fl) < 4: return dict(fehler="zu wenige Fotos")
+    tri = []; hel = []
+    for typ, b in MESH.items():
+        T = np.frombuffer(b, np.float32).reshape(-1, 3, 3).astype(np.float64); tri.append(T); hel.append(np.full(len(T), rng.uniform(0.35, 0.9)))
+    T = np.vstack(tri); hb = np.concatenate(hel); N = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]); N /= np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-9); Lg = np.array([0.4, -0.5, 0.75]); Lg /= np.linalg.norm(Lg)
+    tmp = tempfile.mkdtemp(prefix="synth_", dir="/media/oem/scan/rc-park_null"); KS = {}; K0 = {}
+    for i, f in enumerate(fl):
+        K = KAM[f]; sc = breite / K["W"]; Wi = breite; Hi = int(K["H"] * sc); Xc = T.reshape(-1, 3) @ np.array(K["Rn"]).T + np.array(K["tn"]); zc = Xc[:, 2].reshape(-1, 3)
+        uv = ((K["f"] * Xc[:, :2] / np.where(Xc[:, 2] > 0.3, Xc[:, 2], 0.3)[:, None] + [K["cx"], K["cy"]]) * sc).reshape(-1, 3, 2); fl_ = np.abs(N @ np.array(K["Rn"]).T[:, 2]) ; vis = (zc > 0.5).all(1)
+        sh = 0.45 + 0.55 * np.abs(N @ Lg); col = np.clip(sh * hb, 0, 1); order = np.argsort(-zc.mean(1)); img = np.full((Hi, Wi), 0.2, np.float32)
+        for k in order:
+            if not vis[k]: continue
+            q = uv[k]
+            if q[:, 0].max() < -50 or q[:, 0].min() > Wi + 50 or q[:, 1].max() < -50 or q[:, 1].min() > Hi + 50: continue
+            cv2.fillConvexPoly(img, q.round().astype(np.int32), float(col[k]), lineType=cv2.LINE_8)
+        g = cv2.GaussianBlur(img, (0, 0), 1.0) + rng.normal(0, 0.012, img.shape).astype(np.float32); g8 = (np.clip(g, 0, 1) * 255).astype(np.uint8); nm = "syn_%d.jpg" % i
+        cv2.imwrite(os.path.join(tmp, nm), cv2.merge([g8, g8, g8])); Kp = json.loads(json.dumps(K)); Kp["W"] = K["W"]; C = np.array(K["C"], float) + rng.normal(0, pos_cm / 100, 3)
+        ax = rng.normal(0, 1, 3); ax /= np.linalg.norm(ax); th = np.radians(rot_grad) * rng.normal(0, 1); Kr, _ = cv2.Rodrigues(ax * th); Rn = Kr @ np.array(K["Rn"]); Kp["Rn"] = Rn.tolist(); Kp["C"] = C.tolist(); Kp["tn"] = (-Rn @ C).tolist()
+        KS[nm] = Kp
+    alt = (a.bilder, dict(KAM), dict(DT)); a.bilder = tmp; KAM.clear(); KAM.update(KS); DT.clear()
+    try:
+        # Wahrheit: Modellkanten in der Ebene (lange, Knickkanten), ausserdem Silhouette
+        r = fotokanten_ref(d); ref = r.get("linien", []); roh = d.get("roh", []); K_ref = alt[1][fl[int(r["referenz"][0].split("_")[1].split(".")[0])]]; M = modellkanten_px(d, 25.0, 40, kamera=K_ref, slab=1.2)
+        Fm = fotokanten_voll(d, 0.7, 80, False); stap = Fm["linien"]; Fm2 = fotokanten_voll(d, 0.7, 80, True); stap_t = Fm2["linien"]
+    finally:
+        a.bilder = alt[0]; KAM.clear(); KAM.update(alt[1]); DT.clear(); DT.update(alt[2]); shutil.rmtree(tmp, ignore_errors=True)
+    if len(M) < 5: return dict(fehler="zu wenige Wahrheitskanten")
+    def raster(sg):
+        m = np.zeros((H, W), np.uint8)
+        for q in np.asarray(sg, float).reshape(-1, 7 if False else (len(sg[0]) if len(sg) else 4))[:, :4]: cv2.line(m, (int(round(q[0])), int(round(q[1]))), (int(round(q[2])), int(round(q[3]))), 255, 1)
+        return m
+    def samp(sg):
+        sg = np.asarray([l[:4] for l in sg], float).reshape(-1, 4); L = np.hypot(sg[:, 2] - sg[:, 0], sg[:, 3] - sg[:, 1]); n = np.maximum((L / 2).astype(int), 2); return np.vstack([np.c_[np.linspace(q[0], q[2], k), np.linspace(q[1], q[3], k)] for q, k in zip(sg, n)])
+    def hit(P, m):
+        dt = cv2.distanceTransform(255 - m, cv2.DIST_L2, 3); xi = P[:, 0].round().astype(int).clip(0, W - 1); yi = P[:, 1].round().astype(int).clip(0, H - 1); return float((dt[yi, xi] <= tol).mean())
+    PM = samp(M.tolist()); mM = raster([list(q) for q in M]); res = []
+    for nm, sg in (("Foto-Ref (verbunden, Bogen)", ref), ("Foto: LSD Referenzfoto roh", roh), ("Abstimmung alle Fotos flach", stap), ("Abstimmung alle Fotos mit Wolkentiefe", stap_t)):
+        if not len(sg): continue
+        mm = raster([list(q[:4]) for q in sg]); rec = hit(PM, mm); pre = hit(samp(sg), mM); res.append(dict(methode=nm, linien=len(sg), praez=round(pre, 3), recall=round(rec, 3), F=round(2 * rec * pre / max(rec + pre, 1e-9), 3)))
+    return dict(tabelle=res, fotos=len(fl), pos_cm=pos_cm, rot_grad=rot_grad, wahrheit=int(len(M)))
 
 def kantenpunkte(foto, pts, r):
     """naechster Fotokantenpunkt (Canny, 1613 px) je Eingabepunkt innerhalb r px; sonst unveraendert. Rueckgabe Liste [x,y,bewegt]"""
@@ -878,6 +935,8 @@ class H(BaseHTTPRequestHandler):
             self._send(200, "application/json", json.dumps(dict(ok=err is None, fehler=err)).encode())
         elif self.path == "/api/wahrheit":
             self._send(200, "application/json", json.dumps(dict(n=wahrheit_speichern(d))).encode())
+        elif self.path == "/api/synth":
+            self._send(200, "application/json", json.dumps(synth_pruefstand(ORD["last"], int(d.get("anz", 14)), float(d.get("pos_cm", 3.0)), float(d.get("rot_grad", 0.15)))).encode())
         elif self.path == "/api/heldout":
             dd = ORD["last"]; M = {"Wolken-Ortho Fusion >=8": [l[:4] for l in dd["lin"] if l[4] >= 8], "Wolken-Ortho Fusion >=20": [l[:4] for l in dd["lin"] if l[4] >= 20],
                  "Foto: LSD je Foto ohne Verbinden (ref roh)": [l[:4] for l in dd.get("roh", [])], "Foto-Ref (verbunden+eingerastet)": [l[:4] for l in dd.get("ref", [])]}
