@@ -752,7 +752,7 @@ def synth_pruefstand(d, anz=14, pos_cm=3.0, rot_grad=0.15, breite=1500, seed=5, 
     return dict(tabelle=res, fotos=len(fl), pos_cm=pos_cm, rot_grad=rot_grad, wahrheit=int(len(M)))
 
 SAMP = {}
-def sam_flaechen(d, minfl=0.03, maxanteil=0.4, eps=2.5):
+def sam_flaechen(d, minfl=0.02, maxanteil=0.6, eps=1.3):
     """Objekte statt Kontrastlinien: SAM (facebook/sam-vit-base via transformers, Gewichte /media/oem/scan/tools_src/hf_cache) auf der scharfen Ortho des Referenzfotos -> Masken -> Polygone im Format von regionen().
     Wie ein Mensch: Fensterscheiben, Gelaenderband, Statuen, Konsolen, Bogenoeffnungen als eigene Flaechen. Lizenz: SAM Apache-2.0 (Gewichte, Meta)."""
     import torch
@@ -766,22 +766,39 @@ def sam_flaechen(d, minfl=0.03, maxanteil=0.4, eps=2.5):
         im, ok = foto_ortho(d, f, False); g_ = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY); okk = cv2.erode(ok.astype(np.uint8), np.ones((9, 9), np.uint8)) > 0
         sh.append((float(cv2.Laplacian(g_, cv2.CV_32F)[okk].var()) * okk.mean() if okk.sum() > 5000 else 0.0, f))
     sh.sort(reverse=True); im, ok = foto_ortho(d, sh[0][1], False); H, W = im.shape[:2]
-    r = SAMP["g"](Image.fromarray(im[:, :, ::-1]), points_per_batch=64, pred_iou_thresh=0.88, stability_score_thresh=0.92); torch.cuda.empty_cache()
-    M = [np.asarray(m.cpu() if hasattr(m, "cpu") else m).astype(bool) & (cv2.erode(ok.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0) for m in r["masks"]]; M.sort(key=lambda m: -m.sum()); keep = []; out = []; dep = d["d8"].astype(np.float32) / 255 * (d["vor"] + d["hinter"]) - d["hinter"]; px = d["px"]
+    okE = cv2.erode(ok.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0; M = []; tw, th_ = int(min(W, 620)), int(min(H, 470)); sx_, sy_ = max(int(tw * 0.65), 1), max(int(th_ * 0.65), 1)     # Kacheln: SAM sieht jedes Objekt in ~2x Aufloesung
+    xs_t = list(range(0, max(W - tw, 0) + 1, sx_)); ys_t = list(range(0, max(H - th_, 0) + 1, sy_))
+    if xs_t[-1] != max(W - tw, 0): xs_t.append(max(W - tw, 0))
+    if ys_t[-1] != max(H - th_, 0): ys_t.append(max(H - th_, 0))
+    for y0 in ys_t:
+        for x0 in xs_t:
+            tile = im[y0:y0 + th_, x0:x0 + tw]
+            if (tile.sum(2) > 0).mean() < 0.3: continue
+            r = SAMP["g"](Image.fromarray(tile[:, :, ::-1]), points_per_batch=64, pred_iou_thresh=0.88, stability_score_thresh=0.92)
+            for m_ in r["masks"]:
+                mm = np.asarray(m_.cpu() if hasattr(m_, "cpu") else m_).astype(bool); ys2, xs2 = np.where(mm)
+                if len(ys2) < 30: continue
+                if (x0 > 0 and xs2.min() <= 1) or (y0 > 0 and ys2.min() <= 1) or (x0 + tw < W and xs2.max() >= tw - 2) or (y0 + th_ < H and ys2.max() >= th_ - 2): continue     # am Kachelrand abgeschnitten -> verwerfen
+                full = np.zeros((H, W), bool); full[y0:y0 + th_, x0:x0 + tw] = mm; M.append(full & okE)
+            torch.cuda.empty_cache()
+    M.sort(key=lambda m: -m.sum()); keep = []; out = []; dep = d["d8"].astype(np.float32) / 255 * (d["vor"] + d["hinter"]) - d["hinter"]; px = d["px"]
     for m in M:
         ar = int(m.sum()); m2 = ar * px * px
         if m2 < minfl or ar > maxanteil * H * W: continue
-        if any((m & k).sum() / max((m | k).sum(), 1) > 0.9 for k in keep): continue
-        keep.append(m); cs, _ = cv2.findContours(m.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if any((m & k).sum() / max((m | k).sum(), 1) > 0.8 for k in keep): continue
+        keep.append(m); cs, hi = cv2.findContours(m.astype(np.uint8), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)          # mit Loechern (Ringe: Bogenraender, Rahmen)
         if not cs: continue
-        c = max(cs, key=cv2.contourArea); ap = cv2.approxPolyDP(c, eps, True)[:, 0, :].astype(float)
+        hi = hi[0]; top = [i for i in range(len(cs)) if hi[i][3] < 0]
+        if not top: continue
+        i0 = max(top, key=lambda i: cv2.contourArea(cs[i])); c = cs[i0]; ap = cv2.approxPolyDP(c, eps, True)[:, 0, :].astype(float)
         if len(ap) < 3: continue
+        loecher = [cv2.approxPolyDP(cs[j], eps, True)[:, 0, :].astype(float).round(1).tolist() for j in range(len(cs)) if hi[j][3] == i0 and cv2.contourArea(cs[j]) > 30]; loecher = [l for l in loecher if len(l) >= 3]
         rr = cv2.minAreaRect(c.astype(np.float32)); rect = float(cv2.contourArea(c) / max(rr[1][0] * rr[1][1], 1e-6)); tt = dep[m]
-        if rect > 0.88:                                                     # fast rechteckig und achsparallel -> exaktes Rechteck (Fensterscheiben, Konsolen, Geländerband): Kanten aus Zeilen-/Spaltenmedian
+        if rect > 0.9 and not loecher:                                          # voll rechteckig und achsparallel -> exaktes Rechteck (nur ohne Loch)
             ang = rr[2] % 90; ang = min(ang, 90 - ang)
-            if ang < 4.0:
-                ys_, xs_ = np.where(m); x0_, x1_ = float(np.percentile(xs_, 1)), float(np.percentile(xs_, 99)); y0_, y1_ = float(np.percentile(ys_, 1)), float(np.percentile(ys_, 99)); ap = np.array([[x0_, y0_], [x1_, y0_], [x1_, y1_], [x0_, y1_]], float); rect = 1.0
-        out.append(dict(poly=ap.round(1).tolist(), m2=round(float(m2), 2), t=round(float(np.median(tt)), 2), rect=round(rect, 2)))
+            if ang < 3.0:
+                ys_, xs_ = np.where(m); x0_, x1_ = float(np.percentile(xs_, 0.5)), float(np.percentile(xs_, 99.5)); y0_, y1_ = float(np.percentile(ys_, 0.5)), float(np.percentile(ys_, 99.5)); ap = np.array([[x0_, y0_], [x1_, y0_], [x1_, y1_], [x0_, y1_]], float); rect = 1.0
+        out.append(dict(poly=ap.round(1).tolist(), loecher=loecher, m2=round(float(m2), 2), t=round(float(np.median(tt)), 2), rect=round(rect, 2)))
     out.sort(key=lambda e: -e["m2"]); ORD["regs"] = out[:500]; return dict(flaechen=out[:500], referenz=sh[0][1])
 
 def kantenpunkte(foto, pts, r):
