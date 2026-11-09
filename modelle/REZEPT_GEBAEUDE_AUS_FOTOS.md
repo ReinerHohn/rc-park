@@ -46,6 +46,16 @@ Erst lesen: `modelle/NICHTS_GEBRACHT.md` (Sackgassen), `CLAUDE.md` (Abnahmeregel
 - Grenzen größer als der erwartete Fehler; Fit auf Grenze = Grenze erweitern.
 - Jedes neue Rechenwerkzeug nutzt die GPU, mit gemessenem VRAM-Budget; n×n-Vergleiche immer blockweise.
 
+
+## Bewährter Messweg je Element (Laubenrückwand Kaufhaus, 9.11., Nutzer: "gigantischer Schritt")
+1. Ebene des Elements aus dem Kantengitter (Normale + Abstand, ±0,3 m).
+2. Anzahl und Teilung am Foto zählen (`foto_zaehlung.py`, Regel 9).
+3. Kanten messen: `foto_mass.py --kamera K-<foto> --ebene nx,ny,nz=d`. Pixel ergibt Sehstrahl, der Schnitt mit der Ebene ergibt Meter (±0,06 m).
+4. Generator-Bauteil mit Beleg, die Prüfung schlägt vorher fehl, Einbettung 0,04 m.
+5. Overlay plus Fehlerliste je Teil.
+Anwenden auf alle Elemente mit bekannter Ebene: Fenster, Türen, Giebelfenster, Gesimse, Gaubenfronten, Erkerflächen.
+Schritte 2 und 3 sind heute Sichtpicks des Sprachmodells, also Handarbeit mit Protokoll. Diese Handwerte sind der Prüfmaßstab, bis `kanten_tor`/`muster_fit` dieselben Werte automatisch aus Karten und Wolke treffen.
+
 ## Was die Methode heute nicht kann (ehrlich)
 - Blanke Wände: Eine Kantenwolke kann Wand und Öffnung nicht unterscheiden (Stirnwände blieben ANNAHME). Dafür braucht es eine dichte Wolke oder Fototextur.
 - Dach über 15 m: Abdeckung 0,20. Dafür braucht es Drohnen-/Hochframes und Dachebenen aus dem Generator.
