@@ -764,7 +764,7 @@ def sam_flaechen(d, minfl=0.02, maxanteil=0.6, eps=1.3, fein=False):
     ck = ("sam", round(d["s0"], 3), round(d["z0"], 3), round(d["neig"], 2), round(d["px"], 4), d["gray"].shape, round(minfl, 4), round(maxanteil, 2), eps, bool(fein))      # Ergebnis je Ebene merken (2 min Rechenzeit)
     cp = os.path.join(os.path.dirname(OJ), "sam_cache_%s.json" % abs(hash(ck[1:]) % 10**8))
     if os.path.exists(cp):
-        r0 = json.load(open(cp)); ORD["regs"] = r0["flaechen"][:500]; return r0
+        r0 = json.load(open(cp)); ORD["regs"] = r0["flaechen"][:1500]; return r0
     os.environ.setdefault("HF_HOME", "/media/oem/scan/tools_src/hf_cache")
     if "g" not in SAMP:
         from transformers import pipeline
@@ -786,6 +786,19 @@ def sam_flaechen(d, minfl=0.02, maxanteil=0.6, eps=1.3, fein=False):
             else: cr = mm_[by0:by1, bx0:bx1]
             cr = cr.astype(bool) & okE[by0:by1, bx0:bx1]
             if cr.sum() > 30 and (W <= 1500 or cr.sum() > 0.03 * H * W): M.append((bx0, by0, cr))
+        if W > 1500:                                                         # MITTLERE Stufe (Nutzer 9.11.: Statuen vorher als Ganzes besser): Halbbild-Kacheln ~0,9x -> Figuren, Wappen, Fensterfelder als Ganzes
+            tw2, th2 = int(W * 0.55), int(H * 0.55)
+            for y0 in sorted({0, (H - th2) // 2, H - th2}):
+                for x0 in sorted({0, (W - tw2) // 2, W - tw2}):
+                    tile = im[y0:y0 + th2, x0:x0 + tw2]
+                    if (tile.sum(2) > 0).mean() < 0.3: continue
+                    r = SAMP["g"](Image.fromarray(tile[:, :, ::-1]), points_per_batch=64, pred_iou_thresh=0.88, stability_score_thresh=0.92)
+                    for m_ in r["masks"]:
+                        mm = np.asarray(m_.cpu() if hasattr(m_, "cpu") else m_).astype(bool); ys2, xs2 = np.where(mm)
+                        if len(ys2) < 30 or len(ys2) * d["px"] ** 2 < 0.1: continue
+                        if (x0 > 0 and xs2.min() <= 1) or (y0 > 0 and ys2.min() <= 1) or (x0 + tw2 < W and xs2.max() >= tw2 - 2) or (y0 + th2 < H and ys2.max() >= th2 - 2): continue
+                        bx0, bx1, by0, by1 = xs2.min(), xs2.max() + 1, ys2.min(), ys2.max() + 1; M.append((x0 + bx0, y0 + by0, mm[by0:by1, bx0:bx1] & okE[y0 + by0:y0 + by1, x0 + bx0:x0 + bx1]))
+                    torch.cuda.empty_cache()
         torch.cuda.empty_cache(); tw, th_ = (int(min(W, W * 0.6)), int(min(H, H * 0.6))) if W <= 1500 else (700, 520); sx_, sy_ = max(int(tw * 0.7), 1), max(int(th_ * 0.7), 1)      # feine Ortho (>1500 px): SAM-Kacheln in 1:1 statt Verkleinerung
     else: tw, th_ = int(min(W, 620)), int(min(H, 470)); sx_, sy_ = max(int(tw * 0.65), 1), max(int(th_ * 0.65), 1)     # Kacheln: SAM sieht jedes Objekt in ~2x Aufloesung
     xs_t = list(range(0, max(W - tw, 0) + 1, sx_)); ys_t = list(range(0, max(H - th_, 0) + 1, sy_))
@@ -825,7 +838,7 @@ def sam_flaechen(d, minfl=0.02, maxanteil=0.6, eps=1.3, fein=False):
             if ang < 3.0:
                 ys_, xs_ = np.where(m); x0_, x1_ = float(np.percentile(xs_, 0.5)), float(np.percentile(xs_, 99.5)); y0_, y1_ = float(np.percentile(ys_, 0.5)), float(np.percentile(ys_, 99.5)); ap = np.array([[x0_, y0_], [x1_, y0_], [x1_, y1_], [x0_, y1_]], float); rect = 1.0
         out.append(dict(poly=ap.round(1).tolist(), loecher=loecher, m2=round(float(m2), 2), t=round(float(np.median(tt)), 2), rect=round(rect, 2)))
-    out.sort(key=lambda e: -e["m2"]); ORD["regs"] = out[:500]; res_ = dict(flaechen=out[:500], referenz=sh[0][1]); json.dump(res_, open(cp, "w")); return res_
+    out.sort(key=lambda e: -e["m2"]); ORD["regs"] = out[:1500]; res_ = dict(flaechen=out[:1500], referenz=sh[0][1]); json.dump(res_, open(cp, "w")); return res_
 
 def kantenpunkte(foto, pts, r):
     """naechster Fotokantenpunkt (Canny, 1613 px) je Eingabepunkt innerhalb r px; sonst unveraendert. Rueckgabe Liste [x,y,bewegt]"""
