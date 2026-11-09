@@ -127,9 +127,11 @@ class Tor:
         """Je Instanz bis max_fotos sichtbare Fotos (Zentrum im Bild, Z-Puffer, Abstand 8..45 m), auf Blickrichtungen verteilt (Azimut-Raster 20 Grad); Rueckgabe {inst: [(foto, azimut)]}."""
         F = s.F; res = {i: [] for i in range(len(zentren))}
         for f in F.liste:
-            k = F.KAM[f]; C = np.array(k["C"]); u_, v_, z_ = F.proj(f, zentren); dist = np.linalg.norm(zentren - C, axis=1)
+            k = F.KAM[f]; C = np.array(k["C"]); u_, v_, z_ = F.proj(f, zentren); dist = np.linalg.norm(zentren - C, axis=1); zb = None
             for i in range(len(zentren)):
                 if not (z_[i] > 2 and abs((u_[i] - k["cx"]) / k["f"]) < 0.7 and abs((v_[i] - k["cy"]) / k["f"]) < 0.7 and 6 < dist[i] < 45): continue
+                if zb is None: zb, sjq_ = s._zb(f, Wt)                       # Sichtbarkeit SCHON bei der Auswahl (sonst fuellen verdeckte Nahfotos die 30 Plaetze: Sohlbank hinter Konsolen sah 'min 1 / median 3')
+                if z_[i] > zb[int(np.clip(v_[i] * sjq_, 0, zb.shape[0] - 1)), int(np.clip(u_[i] * sjq_, 0, zb.shape[1] - 1))] + 0.5: continue
                 res[i].append((float(dist[i]), f, float(np.degrees(np.arctan2(C[1] - zentren[i][1], C[0] - zentren[i][0])))))
         out = {}
         for i, lst in res.items():
@@ -186,14 +188,14 @@ class Tor:
             while lo > 0 and ok[lo - 1]: lo -= 1
             while hi < len(ok) - 1 and ok[hi + 1]: hi += 1
             return lo, hi
-        lo, hi = plateau(0.9); lo95, hi95 = plateau(0.95); step = float(werte[1] - werte[0]); breite = float(werte[hi] - werte[lo]) if hi > lo else step; breite95 = float(werte[hi95] - werte[lo95]) if hi95 > lo95 else step
+        lo, hi = plateau(0.9); lo95, hi95 = plateau(0.95); lo50, hi50 = plateau(0.5); breite50 = float(werte[hi50] - werte[lo50]) if hi50 > lo50 else float(werte[1] - werte[0]); step = float(werte[1] - werte[0]); breite = float(werte[hi] - werte[lo]) if hi > lo else step; breite95 = float(werte[hi95] - werte[lo95]) if hi95 > lo95 else step
         suche = float(werte[-1] - werte[0]); sig_mad = (peak - med) / mad; signif = bool(sig_mad >= TOR_K and breite < 0.5 * suche); grenze = bool(j <= 0 or j >= len(werte) - 1)
         opts = []; optfull = np.full(M.shape[1], np.nan)
         for i_ in range(M.shape[1]):
             c_ = sm_(M[:, i_])
             if c_.max() - c_.min() > 1e-9: opts.append(float(werte[int(np.argmax(c_))])); optfull[i_] = opts[-1]
         opts = np.array(opts); e_mad = float(np.median(np.abs(opts - np.median(opts)))) if len(opts) else float("nan"); e_anteil = float((np.abs(opts - werte[j]) <= tol).mean()) if len(opts) else 0.0
-        ig = int(np.argmin(np.abs(werte - gesetzt))); return dict(daten_ok=bool(ok_daten), info=info, signifikant=signif, signif_mad=float(sig_mad), optimum=float(werte[j]), plateau=(float(werte[lo]), float(werte[hi])), plateau_breite=breite, plateau95_breite=breite95,
+        ig = int(np.argmin(np.abs(werte - gesetzt))); return dict(daten_ok=bool(ok_daten), info=info, signifikant=signif, signif_mad=float(sig_mad), optimum=float(werte[j]), plateau=(float(werte[lo]), float(werte[hi])), plateau_breite=breite, plateau95_breite=breite95, halbwertsbreite=breite50,
                                                                   spitze=peak, median=med, mad=mad, wert_am_istwert=float(sm[ig]), gewinn=float(peak - sm[ig]), einigkeit_mad=e_mad, einigkeit_anteil=e_anteil, n_inst_mit_optimum=int(len(opts)), auf_grenze=grenze, opt_je_kante=[float(x) for x in optfull], kurve=[round(float(x), 4) for x in sc])
 
     def urteil(s, o):
@@ -201,11 +203,12 @@ class Tor:
         Qualifiziert = (a) Daten ok UND nicht auf Suchgrenze (e) UND signifikant. Beide qualifiziert + beide innerhalb Toleranz -> GRUEN; beide, einig ausserhalb -> KORRIGIERT (Wert der in (b)(c)(d) besseren Quelle);
         beide, widerspruechlich -> Sieger nur bei besser in >= 2 von 3 Kennzahlen (b,c,d) und in keiner deutlich schlechter (Faktor 2), sonst OFFEN; genau eine qualifiziert -> sie entscheidet; keine -> OFFEN (Istwert bleibt ANNAHME)."""
         w, f = o["wolke"], o["foto"]; tol = o["tol"]; ist = o["gesetzt"]; q = {"Wolke": w, "Fotos": f}
-        def kz(x): return "Optimum %+.3f, Daten %s [%s], (b) %.1f MAD, (c) Plateau95 %.3f m, (d) Streuung %.3f / %.0f %% im Band, (e) Grenze %s" % (x["optimum"] - ist, "ja" if x["daten_ok"] else "NEIN", x["info"], x["signif_mad"], x["plateau95_breite"], x["einigkeit_mad"], 100 * x["einigkeit_anteil"], "JA" if x["auf_grenze"] else "nein")
+        def kz(x): return "Optimum %+.3f, Daten %s [%s], (b) %.1f MAD, (c) Halbwertsbreite %.3f m, (d) Streuung %.3f / %.0f %% im Band, (e) Grenze %s" % (x["optimum"] - ist, "ja" if x["daten_ok"] else "NEIN", x["info"], x["signif_mad"], x["halbwertsbreite"], x["einigkeit_mad"], 100 * x["einigkeit_anteil"], "JA" if x["auf_grenze"] else "nein")
         qual = {n: (x["daten_ok"] and not x["auf_grenze"] and x["signifikant"] and x["einigkeit_anteil"] >= TOR_EINIG) for n, x in q.items()}; nm = lambda n: n
         def besser(a_, b_):                                                           # Zahl der Kennzahlen (b,c,d), in denen a_ besser ist; None wenn a_ in einer deutlich schlechter (Faktor 2) ist
-            b1 = a_["signif_mad"] > b_["signif_mad"]; c1 = a_["plateau95_breite"] < b_["plateau95_breite"]; d1 = (a_["einigkeit_anteil"], -a_["einigkeit_mad"]) > (b_["einigkeit_anteil"], -b_["einigkeit_mad"])
-            schlecht = (a_["signif_mad"] * 2 < b_["signif_mad"]) or (a_["plateau95_breite"] > 2 * b_["plateau95_breite"] + 1e-9) or (a_["einigkeit_anteil"] * 2 < b_["einigkeit_anteil"])
+            sa, sb = min(a_["signif_mad"], 5 * TOR_K), min(b_["signif_mad"], 5 * TOR_K); b1 = sa > sb;   # Signifikanz saturiert ab 5 k MAD (MAD des flachen Untergrunds ist winzig, 100 vs 50 MAD sagt nichts)
+            c1 = a_["halbwertsbreite"] < b_["halbwertsbreite"]; d1 = (a_["einigkeit_anteil"], -a_["einigkeit_mad"]) > (b_["einigkeit_anteil"], -b_["einigkeit_mad"])
+            schlecht = (sa * 2 < sb) or (a_["halbwertsbreite"] > 2 * b_["halbwertsbreite"] + 1e-9) or (a_["einigkeit_anteil"] * 2 < b_["einigkeit_anteil"])
             return (int(b1) + int(c1) + int(d1)) if not schlecht else None
         def fertig(status, quelle, wert, satz): return dict(status=status, quelle_gewinner=quelle, wert=float(wert), grund=satz, quelle_wert=("beleg_tor (%s)" % quelle) if status in ("KORRIGIERT", "BESTAETIGT", "GRUEN") else "ANNAHME: gesetzter Wert bleibt (%s)" % satz)
         nmn = o["name"]
@@ -231,6 +234,8 @@ class Tor:
             else: gr.append("Einigkeit der Instanzen %.0f %% < %.0f %%" % (100 * q[ander]["einigkeit_anteil"], 100 * TOR_EINIG))
             st = "KORRIGIERT" if abs(x["optimum"] - ist) > tol else "BESTAETIGT"
             return fertig(st, gew, x["optimum"], "%s %.3f: %s blind (%s) -> %s gewinnt. %s: %s." % (nmn, x["optimum"], ander, "; ".join(gr), gew, gew, kz(x)))
+        if w["daten_ok"] and f["daten_ok"] and w["gewinn"] < TOR_K * w["mad"] and f["gewinn"] < TOR_K * f["mad"] and not w["auf_grenze"] and not f["auf_grenze"]:
+            return fertig("BESTAETIGT", "Wolke+Fotos (schwach)", ist, "%s: Istwert %.3f von KEINER Quelle widerlegt (Gewinn gg. Istwert Wolke %.3f < %.3f, Fotos %.3f < %.3f = %.1f MAD), beide Quellen mit genug Daten, aber keine trennscharf (Kurven flach/uneinig) -> BESTAETIGT-SCHWACH, nicht GRUEN. Wolke: %s. Fotos: %s." % (nmn, ist, w["gewinn"], TOR_K * w["mad"], f["gewinn"], TOR_K * f["mad"], TOR_K, kz(w), kz(f)))
         return fertig("OFFEN", None, ist, "%s: OFFEN, keine Quelle qualifiziert. Wolke: %s. Fotos: %s." % (nmn, kz(w), kz(f)))
 
 
@@ -364,20 +369,54 @@ def kantenliste_lesen(K):
     return dict(rahmen=K.get("rahmen", {}), kanten=[e for e in ed], gruppen=K.get("gruppen", {})), par
 
 
+def _licht_index(K):
+    """Licht-Index je Kante der Fenster-Klassengruppen 'fenster.<teil>.<seiteC|mitte>' (Layout von koerper_kantenliste.py export: je Instanz Licht i aufsteigend; in einer Klasse zuerst Licht c, dann nl-1-c).
+    Rueckgabe {kante_id: licht}; leer, wenn das Layout nicht erkannt wird."""
+    import re
+    cl = {}
+    for k_ in K["kanten"]:
+        m = re.match(r"fenster\.(kaempfer|sohlbank|scheitel)\.(seite(\d+)|mitte)$", str(k_["gruppe"]))
+        if m: cl.setdefault(k_["gruppe"], []).append(k_)
+    cs = [int(m.group(1)) for g_ in cl for m in [re.match(r".*\.seite(\d+)$", g_)] if m]
+    if not cl or not cs: return {}
+    hat_mitte = any(g_.endswith(".mitte") for g_ in cl); nl = 2 * (max(cs) + 1) + (1 if hat_mitte else 0); out = {}
+    for g_, ks in cl.items():
+        c = (nl - 1) // 2 if g_.endswith(".mitte") else int(g_.rsplit("seite", 1)[1]); je = {}
+        for k_ in sorted(ks, key=lambda x: int(x["id"]) if str(x["id"]).lstrip("-").isdigit() else str(x["id"])): je.setdefault(k_.get("instanz"), []).append(k_)
+        for inst, lst in je.items():
+            for q, k_ in enumerate(lst): out[k_["id"]] = c if (q == 0 or g_.endswith(".mitte")) else nl - 1 - c
+    return out
+
+
 def tor_json(K, par, ka, korr):
-    """TOR.json fuer koerper_kantenliste.py zuruecklesen: je Einzelpfad ein Wert (absolute Koordinate entlang der Achse 'z'); zusammengesetzte Pfade (a|b) werden nicht geschrieben, sondern als offen gemeldet."""
-    out = []; offen = []; kd = {c["id"]: c for c in korr}
+    """TOR.json fuer koerper_kantenliste.py zuruecklesen: je Einzelpfad ein Wert (absolute Koordinate entlang 'z'). Aufgetrennte Untergruppen (Tag 'name#k') bekommen einen EIGENEN Pfad
+    (fenster.z_x -> fenster.je_licht[L].z_x, wenn die Untergruppe genau ein Licht umfasst); zwei Korrekturen mit gleichem (Datei, Pfad) aber verschiedenem Wert sind ein Fehler -> beide nicht geschrieben, als offen gemeldet.
+    Zusammengesetzte Pfade (a|b) bleiben offen."""
+    out = []; offen = []; kd = {c["id"]: c for c in korr}; lic = _licht_index(K)
     for tag in sorted({d_["gruppe_tag"] for r in ka.values() for dn, d_ in r["dofs"].items() if dn == "versatz_ebene"}):
         mem = [k_ for k_ in K["kanten"] if ka[k_["id"]]["dofs"].get("versatz_ebene", {}).get("gruppe_tag") == tag]; st = ka[mem[0]["id"]]["dofs"]["versatz_ebene"]
         if st["status"] != "KORRIGIERT": continue
         pf = {}
         for k_ in mem:
-            p_ = par.get(k_["id"], {}); pf.setdefault((p_.get("datei"), p_.get("pfad"), p_.get("achse")), []).append(kd[k_["id"]])
-        for (dat, pfad, ach), cs in pf.items():
+            p_ = par.get(k_["id"], {}); pf.setdefault((p_.get("datei"), p_.get("pfad"), p_.get("achse")), []).append(k_)
+        for (dat, pfad, ach), ks in pf.items():
+            cs = [kd[k_["id"]] for k_ in ks]
             if not dat or not pfad: continue
-            if "|" in pfad or ach != "z": offen.append(dict(pfad=pfad, achse=ach, wert_ebene=st["wert"], grund="zusammengesetzter Parameter bzw. Achse != z: Tor liefert Kantenversatz, Einzelpfad fehlt")); continue
+            if "|" in pfad or ach != "z": offen.append(dict(pfad=pfad, achse=ach, wert_ebene=st["wert"], gruppe=tag, grund="zusammengesetzter Parameter bzw. Achse != z: Tor liefert Kantenversatz, Einzelpfad fehlt")); continue
+            if pfad.startswith("fenster.") and any(k_["id"] in lic for k_ in ks) and (pfad.split(".", 1)[1] in ("z_kaempfer", "z_sohl", "z_scheitel")):    # Fenster: IMMER eigener Pfad je Licht (je_licht[L]); sonst ueberschreibt die Korrektur einer Klasse das gemeinsame Mass aller Lichter
+                for L in sorted({lic[k_["id"]] for k_ in ks if k_["id"] in lic}):
+                    cl_ = [kd[k_["id"]] for k_ in ks if lic.get(k_["id"]) == L]; w_ = float(np.mean([0.5 * (c["A"][2] + c["B"][2]) for c in cl_]))
+                    out.append(dict(parameter=dict(datei=dat, pfad="fenster.je_licht[%d].%s" % (L, pfad.split(".", 1)[1])), wert=w_, quelle=st.get("quelle_wert"), begruendung=st["grund"], gruppe=tag))
+                continue
+            if "#" in tag: offen.append(dict(pfad=pfad, achse=ach, gruppe=tag, wert_ebene=st["wert"], grund="aufgetrennte Untergruppe ohne Lichtzuordnung: eigener Pfad (je_licht[k] / je_instanz[i]) fehlt im Format")); continue
             w_ = float(np.mean([0.5 * (c["A"][2] + c["B"][2]) for c in cs])); out.append(dict(parameter=dict(datei=dat, pfad=pfad), wert=w_, quelle=st.get("quelle_wert"), begruendung=st["grund"], gruppe=tag))
-    return dict(korrekturen=out, offen=offen, werkzeug="kanten_tor.py")
+    by = {}
+    for c in out: by.setdefault((c["parameter"]["datei"], c["parameter"]["pfad"]), []).append(c)
+    ok = []
+    for key, cs in by.items():
+        if len({round(c["wert"], 3) for c in cs}) > 1: offen.append(dict(pfad=key[1], grund="Konflikt: %d Korrekturen auf denselben Pfad mit Werten %s - nicht geschrieben" % (len(cs), sorted({round(c["wert"], 3) for c in cs})), gruppen=[c["gruppe"] for c in cs]))
+        else: ok.append(cs[0])
+    return dict(korrekturen=ok, offen=offen, werkzeug="kanten_tor.py")
 
 
 def main():

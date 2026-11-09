@@ -261,7 +261,26 @@ def zellen_lesen_fenster(G, rah, z, p, ph, kopf=0.8):
     for k in range(n_licht):
         xm = 0.5 * (px[k] + px[k + 1]); c_ = [h for h in horiz if h["x0"] - 0.05 <= xm <= h["x1"] + 0.05 and z_sohl + 0.3 < h["z"] < z_innen - 0.3]; kaem.append(float(max(c_, key=lambda h: h["gewicht"])["z"]) if c_ else None)
     log("Kaempferhoehe je Licht (staerkste Waagerechte, die die Lichtmitte ueberdeckt): %s" % kaem)
-    return dict(periode=p, phase=ph_neu, lichtbreite=wl, n_licht=n_licht, pfosten_x=px, kaempfer_je_licht=kaem, z_sohl=z_sohl, z_aussen=z_aussen, z_innen=z_innen, waagerechte=horiz, kopf=kopf_f, kopf_rest=kopf_rest, ausdehnung_waagerechte=ext, lichtbreite_acf=fk[:3]), ph_neu
+    # Vorhangbogen-Kopf je Licht: Spaltenmodi der obersten dichten Kantenlinie ueber dem Kaempfer (7 Spalten je Licht), robuste Parabel (Kreisbogen-Naeherung) -> Springer links/rechts, Scheitel, Pfeilhoehe
+    boegen = []
+    for k in range(n_licht):
+        xa_, xb_ = px[k], px[k + 1]; z0 = (kaem[k] if kaem[k] is not None else z_sohl) + 0.3; cx, cz = [], []
+        for c0 in np.linspace(xa_ + 0.06, xb_ - 0.06, 7):
+            s_ = (np.abs(X - c0) < 0.035) & (zz > z0) & (zz < zhi + kopf) & (cl <= 2)
+            if s_.sum() < 8: continue
+            hz = np.histogram(zz[s_], bins=np.arange(z0, zhi + kopf + 0.03, 0.03), weights=ww[s_]); h_, e_ = hz[0], hz[1]
+            if h_.max() <= 0: continue
+            top = np.where(h_ >= 0.5 * h_.max())[0].max(); cx.append(float(c0)); cz.append(float(0.5 * (e_[top] + e_[top + 1])))
+        if len(cx) >= 4:
+            cx_ = np.array(cx); cz_ = np.array(cz); co = np.polyfit(cx_ - 0.5 * (xa_ + xb_), cz_, 2)
+            for _ in range(3):
+                r_ = cz_ - np.polyval(co, cx_ - 0.5 * (xa_ + xb_)); m_ = np.abs(r_) < max(0.08, 2.5 * np.median(np.abs(r_)))
+                if m_.sum() >= 4: co = np.polyfit(cx_[m_] - 0.5 * (xa_ + xb_), cz_[m_], 2)
+            xm = 0.5 * (xa_ + xb_); zl_, zr_ = float(np.polyval(co, xa_ - xm)), float(np.polyval(co, xb_ - xm)); xs_ = np.linspace(xa_, xb_, 61); zs_ = np.polyval(co, xs_ - xm); ja = int(np.argmax(zs_))
+            sehne = 0.5 * (zl_ + zr_); boegen.append(dict(licht=k, xa=float(xa_), xb=float(xb_), z_links=zl_, z_rechts=zr_, scheitel_z=float(zs_[ja]), scheitel_x=float(xs_[ja]), pfeil=float(np.max(zs_ - (zl_ + (zr_ - zl_) * (xs_ - xa_) / (xb_ - xa_)))), krumm=float(co[0]), koef=[float(c) for c in co], spalten=len(cx), rest_median=float(np.median(np.abs(cz_ - np.polyval(co, cx_ - xm))))))
+        else: boegen.append(dict(licht=k, xa=float(xa_), xb=float(xb_), art="unklar", spalten=len(cx)))
+    log("Vorhangbogen-Kopf je Licht (Parabel durch Spaltenmodi): %s" % [{kk: (round(v_, 3) if isinstance(v_, float) else v_) for kk, v_ in b_.items() if kk != "koef"} for b_ in boegen])
+    return dict(periode=p, phase=ph_neu, lichtbreite=wl, n_licht=n_licht, pfosten_x=px, kaempfer_je_licht=kaem, z_sohl=z_sohl, z_aussen=z_aussen, z_innen=z_innen, waagerechte=horiz, kopf=kopf_f, kopf_rest=kopf_rest, boegen=boegen, ausdehnung_waagerechte=ext, lichtbreite_acf=fk[:3]), ph_neu
 
 
 def umriss_gruppe(zelle, tc, u, n, of, schritt=0.03):
@@ -271,7 +290,14 @@ def umriss_gruppe(zelle, tc, u, n, of, schritt=0.03):
     def pfosten_top(k): return (ks.get("z_aussen", zelle["z_aussen"]) if k in (0, len(px) - 1) and len(px) > 2 else zelle["z_innen"])
     polys = []
     for k, x in enumerate(px): polys.append(np.array([W_(x, zs), W_(x, pfosten_top(k))]))
-    if ks["art"] == "giebelkopf":
+    bg = [b_ for b_ in zelle.get("boegen", []) if "koef" in b_]
+    if len(bg) == len(px) - 1:                                                              # Vorhangbogen je Licht als Kurve (Parabel); Pfosten bis zum Springer
+        polys = [pl for pl in polys if not (len(pl) == 2 and abs(pl[0][2] - pl[1][2]) > 0.3)]
+        for k, x in enumerate(px):
+            zt = max([b_["z_links"] for b_ in bg if abs(b_["xa"] - x) < 1e-6] + [b_["z_rechts"] for b_ in bg if abs(b_["xb"] - x) < 1e-6]); polys.append(np.array([W_(x, zs), W_(x, zt)]))
+        for b_ in bg:
+            xm = 0.5 * (b_["xa"] + b_["xb"]); xs_ = np.linspace(b_["xa"], b_["xb"], 25); polys.append(np.array([W_(x, float(np.polyval(b_["koef"], x - xm))) for x in xs_]))
+    elif ks["art"] == "giebelkopf":
         zi_s = ks["z_innen_schraege"]; pk = [W_(px[0], ks["z_aussen"]), W_(px[1], zi_s), W_(px[1], zelle["z_innen"])] + [W_(x, zelle["z_innen"]) for x in px[2:-1]] + [W_(px[-2], zelle["z_innen"]), W_(px[-2], zi_s), W_(px[-1], ks["z_aussen"])]; polys.append(np.array(pk))
     else: polys.append(np.array([W_(px[0], zelle["z_innen"]), W_(px[-1], zelle["z_innen"])]))
     for h in zelle["waagerechte"]: polys.append(np.array([W_(max(h["x0"], px[0]), h["z"]), W_(min(h["x1"], px[-1]), h["z"])]))
@@ -279,7 +305,11 @@ def umriss_gruppe(zelle, tc, u, n, of, schritt=0.03):
     lichter = []
     for k in range(len(px) - 1):
         xa, xb = px[k], px[k + 1]; top = lambda x: np.interp(abs(x), [0, 1e9], [0, 1]) and 0
-        za = pfosten_top(k); zb = pfosten_top(k + 1); lichter.append(dict(x=[tc + xa, tc + xb], umriss=poly_pts([W_(xa, zs), W_(xa, za), W_(xb, zb), W_(xb, zs), W_(xa, zs)], schritt)))
+        za = pfosten_top(k); zb = pfosten_top(k + 1)
+        if len(bg) == len(px) - 1:
+            b_ = bg[k]; xm = 0.5 * (b_["xa"] + b_["xb"]); xs_ = np.linspace(xb, xa, 25); bogen = [W_(x, float(np.polyval(b_["koef"], x - xm))) for x in xs_]
+            lichter.append(dict(x=[tc + xa, tc + xb], umriss=poly_pts([W_(xa, zs), W_(xa, b_["z_links"])] + [W_(x, float(np.polyval(b_["koef"], x - xm))) for x in np.linspace(xa, xb, 25)] + [W_(xb, zs), W_(xa, zs)], schritt)))
+        else: lichter.append(dict(x=[tc + xa, tc + xb], umriss=poly_pts([W_(xa, zs), W_(xa, za), W_(xb, zb), W_(xb, zs), W_(xa, zs)], schritt)))
     return dict(gruppe=np.vstack([poly_pts(pl, schritt) for pl in polys]), lichter=lichter, polys=polys)
 
 
