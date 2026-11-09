@@ -71,3 +71,49 @@ Oeffnungstiefe 10 cm, Rahmentiefe 15 cm, Stege 2 cm hinter der Flaeche; 3 Lichte
 - Helm: Schaft als senkrechtes 16-Eck bis ueber die Traufe, Spitze neu messen (Foto-Silhouette), kein Pyramidenansatz direkt auf dem Erkergesims.
 - Figuren/Konsolen/Baldachine (4 Steiger zwischen den Gruppen im Gitter sichtbar, z 11,5-12,5), Balustrade, Dachgauben (3 + 2 im Foto), Fensterrahmen mit Vorsprung fuer den Druck (buendige Rahmen sind bei 1:87 unsichtbar).
 - Pruefstand-Sollwerte: Fenstergruppen 5 x 3 (Zaehlung am Foto `foto_zaehlung.py` noch nicht als Z-Protokoll), Periode 3,96, Kaempfer 11,72, Scheitel 13,31, Erker Tiefe 1,18 / Mitte -8,5 / 15,6.
+
+---
+# Abschnitt v10 (Runde 2, Agent, Werkzeug `tools/koerper_v10.py`; baut auf gitter_koerper.baue + koerper_fenster_erker auf)
+
+Aufrufe:
+```
+~/.venvs/rcpark/bin/python tools/koerper_v10.py bauen kette_video/gitter.json koerper/rohkoerper_v7.json koerper/fenster_erker_v9.json formen/helme.json koerper      # 3 s
+/media/oem/scan/venv-seg/bin/python -I tools/koerper_v10.py pruefen koerper kanten3d_k80.npz sfm/kam_lot2.json bilder modelle/kaufhaus_grob3/audit/koerper_v10          # 3 min
+```
+Ausgaben: `koerper/rohkoerper_v10.json` (Historie-Eintrag, Enden/Giebel korrigiert), `koerper/koerper_v10.json` (alle Teile + Annahmen + Log), `koerper_v10.stl/.ply/_h0.stl`, `koerper_v10_pruefung.json`, `koerper_v10_dicke.json`, Bilder `modelle/kaufhaus_grob3/audit/koerper_v10/`.
+
+## 1 Erkerlage und Enden
+- Erkermitte aus dem aeussersten Frontpfosten-Paar: links -8,35 -> **-8,52**, rechts 15,67 -> **15,59**; Erkerachse **3,53** (Fenstergruppenmitte 3,47). Die Arkadenpfeiler (saeulen, in along umgerechnet: -8,53 / -2,51 / 3,50 / 9,51 / 15,56, Abstand 6,0 m) stehen genau unter den Erkermitten und sind um 3,50 symmetrisch - drei unabhaengige Merkmale, eine Achse.
+- Giebelebenen = Paar der hohen Endebenen (z_max > Traufe + 3 m), dessen Mitte der Erkerachse am naechsten liegt: **-8,82 (37 m, belegt, z bis 26,7) / 15,85 (33 m, belegt, z bis 23,5)**, Mitte 3,52 (v7: -8,82 / 17,15; die v7-Ebene 17,15 reicht nur z 7,9-15,6 = Seitenflaeche des rechten Erkers, kein Giebel).
+- Widerspruch Erker-Wandanschluss (-10,39 / 17,46) vs Giebelebenen aufgeloest durch Ansehen von c_12 / 6261: die Erkertuerme stehen in der Gebaeudeecke, der Staffelgiebel sitzt dazwischen, der Turm steht halb vor der Giebelebene. Gebaut: Dach + Giebel along -8,82..15,85, **unterer Rumpf (Boden..Traufe, Front bis Laubenrueckwand) bis zu den Erker-Wandanschluessen verlaengert (ANNAHME)**; Endbogen der Laube in den Giebelwaenden nicht gebaut.
+
+## 2 Staffelgiebel beide Enden
+- ende_minus (-8,82): 10 Steiger, 7 als Treppe (Offset 12,76 -> 5,22, z 16,5 -> 27,4) -> Treppenpolygon.
+- ende_plus (15,85): 10 Steiger, aber nur 2 monoton - die vertikalen Kanten dort (along 15,3-15,5, Offset 12,0-12,3, z 16-22,9) sind der Erkerturm, keine Stufen -> **Treppe = Spiegel von ende_minus (ANNAHME)**. Fotopruefung 6261: die gespiegelten Stufen liegen im Overlay auf den echten Stufen des nahen Giebels (im Bild links); c_12: beide Giebel mit Zacken an den richtigen Stellen.
+
+## 3 Erkertuerme
+- Senkrechter Schaft = Erkerpolygon von 9,62 bis zum Helmfuss (links 14,67, rechts 15,09); Helme = Pyramiden aus `formen/helme.json` (klein along -8,56 / Offset 12,22, Fuss 14,67, Spitze 22,34, r 0,84; gross 15,53 / 12,23, Fuss 15,09, Spitze 22,78, r 0,85; Fototest dort bestanden). Der gespiegelte v7-Helm ist raus.
+- Helmachsen liegen 0,44 m HINTER der Front (Erkerpolygon-Schwerpunkt 0,5 m davor) -> Uebergang Schaftpolygon -> Helmquerschnitt 0,6 m ueber dem Fuss als Huelle (ANNAHME), sonst bliebe ein Absatz von 0,8 m.
+- Sichtbefund `vergleich_erker1_nu_9e1944dc-image.jpg`: Erker liegt jetzt deckungsgleich auf dem Foto (Kanten links/rechts, Gesims, Lichter 2+2+2, Kaempfer). Schaft ueber dem Gesims im Modell ~1,9 m hoch, im Foto beginnt der Helm ~1 m ueber dem Gesims und ist am Fuss so breit wie der Erker (~3 m) - der Wolkenfit-Radius 0,85 (1,7 m) ist etwa halb so breit; die Huelle kaschiert das. Offen: Helmfuss-Radius und -hoehe am Foto messen (foto_mass), Fit-Grenzen pruefen (Regel 9c a).
+
+## 4 Balkon, Konsolen, Figuren
+- Balkon-Horizontale vor der Front (Band 7-10,2): Platte 8,16 / **8,29 (24 m)** / 8,37, vor 1,22-1,40; Handlauf 9,48 / **9,55 (22 m, vor 0,95-1,06)** / 9,66 (14 m, vor 1,21-1,29).
+  Gebaut: Platte z 8,16-8,37, Tiefe 1,40, along zwischen den Erker-Wandanschluessen; Handlauf z 9,48-9,71, vor 0,95-1,29, bis 0,8 m an die Erkermitten (dort trifft er die Schraegflaechen, sonst schwebte er - erster Bau: 2 Koerper).
+- **Baluster NICHT gebaut (offen)**: `formen/baluster.json` (quelle 13, 97 Instanzen) traegt den eigenen Hinweis "UNVERIFIZIERT ... automatischer Kantentest nicht bestanden"; `gitter_v7_formen2.json` existiert nicht. Folge: Band 7-9 verschlechtert sich (v9 Kasten 0,58 -> v10 0,46 < 20 cm, Median 0,14 -> 0,25), weil der v7-Balkonkasten (z 8-10) weg ist und die Balusterpunkte der Wolke jetzt keine Flaeche haben. Handlauf haengt nur an den Erkern (Druck: Stuetze noetig).
+- Konsolen: Kantencluster unter der Platte (z 6,5-8,3, alle Quellen) -> **5 Bloecke** along -1,17 / 0,63 / 1,79 / 5,95 / 7,80 (0,45 breit, Tiefe Platte - 0,15). Foto 6120: 3 Konsolen je Joch (~15) - Gitter liefert nur 5, Rest offen (Regel 9: nicht erfinden).
+- Figurenkonsolen/Baldachine: 4 Kantencluster zwischen den Fenstergruppen (along **-2,28 / 1,55 / 5,48 / 9,52**, 12-35 m Kanten, z 10,6-14,4, Tiefe 0,5-0,56, Breite 0,4-0,53) -> Quader je Position (ANNAHME Form). Foto c_12: 4 Figuren zwischen den 5 Gruppen - Anzahl stimmt; Lage im Overlay 6120 auf den Figuren.
+
+## 5 Pruefung
+- **Wasserdicht**: manifold-Netz (.ply, indiziert) JA, 1 Koerper, Genus 1 (= der Ring Handlauf-Erker-Platte-Erker, erwartet). **STL-Roundtrip mit Positions-Merge: NEIN** - 6 offene Kanten, alle an den Giebelebenen (along -8,82 / 15,85, Front, z 1,5 und 7,73): Huellen-Eckkante der Rumpf-Extrusion liegt in der koplanaren Front-/Bodenflaeche des Verlaengerungskastens bzw. wird vom Erker-Trichter geschnitten -> doppelte Positionen (4). Versuch "Kasten 2 cm hinter die Front" machte es schlechter (13 Koerper) - zurueckgenommen. Offen: Rumpf und Verlaengerung als EIN Querschnitt extrudieren (wie v7-Lehre 3). Slicer (Bambu Studio) repariert solche Doppelpunkte i.d.R.; vor dem Druck pruefen.
+- Volumen 8953,7 m^3 (v9 9200,8: Balkonkasten weg, Ende plus 1,3 m kuerzer), 4418 Dreiecke, 2905 Netzkanten.
+- Wolkennaehe (< 20 cm / Median) v9 -> v10: gesamt 55,4 % -> 54,6 % (0,16 m); **11-13: 0,72 -> 0,83 (0,06)**, **13-15: 0,66 -> 0,75**, 15-17: 0,68 -> 0,72, 17-19: 0,59 -> 0,70, 19-23: 0,63-0,72 -> 0,73-0,81, 23-27: 0,85 -> 0,88-0,90 (Giebel beide Enden); **7-9: 0,58 -> 0,46** (Baluster fehlen); 9-11: 0,72 -> 0,67 (Kasten weg).
+- Mindestdicke H0 (`koerper_v10_dicke.json`, trimesh max_sphere an 4000 Oberflaechenpunkten): min 0,006 mm, 1 %-Quantil 0,32 mm, 5 %-Quantil 1,6 mm, 1,4 % der Punkte < 0,4 mm. Die duennen Punkte liegen an konvexen Kanten/Ecken (Erkerunterkante z 9,62, Handlauf-Vorderkante z 9,48, Bodenecken) = Artefakt der Kugelmethode an Kanten, keine duenne Wand. Entwurfsmasse: Stege/Rahmenbreite **1,69 mm**, Oeffnungstiefe 1,15 mm, Handlauf 2,7 mm hoch x 3,9 mm tief, Platte 2,5 mm, Konsolen 5,2 mm, Figurenbloecke 4,6-6 mm, Giebelwand 6,0 mm, Helmspitzen laufen spitz zu (Slicer rundet). Keine Entwurfsdicke unter 0,4 mm; schmalste Stege 1,7 mm > 0,4 mm P1S.
+- Sichtbefund (`vergleich_*.jpg`, Foto | Modell aus Fotokamera | Kanten-Overlay):
+  - c_12: beide Staffelgiebel, beide Tuerme, 5 x 3 Fenster, 4 Figurenbloecke, Balkonplatte/Handlauf an den richtigen Stellen; rechter Giebel jetzt am Foto-Giebel (v7/v9 1,3 m zu weit aussen).
+  - 6261: naher Staffelgiebel deckt die echten Stufen (gespiegelt!), ferner Turm/Giebel passen; Verlaengerungskasten unter dem nahen Turm deckt die Eckwand im Foto.
+  - 6120: Figurenbloecke auf den drei Figuren, Konsolen nur an 2 der ~6 sichtbaren Stellen, Handlauf ohne Baluster (sichtbare Luecke), Fenster wie v9.
+  - Erker nah: deckungsgleich, Helm s.o.
+  - Fehler/offen: Balustrade fehlt (groesster Wolkenverlust), Konsolenzahl, Helmfuss zu schmal/Schaft zu hoch, Laubenendboegen, Gauben (3 + 2 im Foto, gauben_v9.json vorhanden, nicht eingebaut), Rueckseite leer, STL-Roundtrip-Doppelpunkte an den Giebelebenen.
+
+## Annahmen v10 (zusaetzlich zu v9, in `koerper_v10.json` -> `annahmen`)
+Unterer Rumpf bis Erker-Wandanschluesse; Staffelgiebel ende_plus = Spiegel; Figur+Konsole+Baldachin = Quader; Konsolen 0,45 m / Tiefe Platte-0,15; Erkerschaft bis Helmfuss + Huelle 0,6 m; Plattendicke/Handlaufhoehe aus Kantenpaaren (hier belegt: 8,16/8,37 und 9,48/9,66).
