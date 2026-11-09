@@ -1,0 +1,6 @@
+# Nur-anhaengen-Dateien: parallele Eintraege (Kreis-Branch + main) beim Merge beide behalten (bauteil_kreis --nach_main, 10.11.)
+modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md merge=union
+modelle/NICHTS_GEBRACHT.md merge=union
+modelle/LOG_*.md merge=union
+modelle/LOGBUCH_*.md merge=union
+modelle/*/konvergenz.jsonl merge=union
