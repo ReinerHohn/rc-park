@@ -80,7 +80,7 @@ def sh_tor(cmd, cwd, log, env=None, versuche=6, pause=300):
             fcntl.flock(lk, fcntl.LOCK_EX)
             rc, _ = sh(cmd, cwd, log=log, env=env)
         with open(log, errors="replace") as f: f.seek(start); neu = f.read()
-        out = neu[-4000:]
+        out = neu   # ganzer neuer Logteil: "alle Pruefungen bestanden" steht mitten im Abnahme-Log (danach Sichtblatt, fehlteile, test_regeln_cb) - mit [-4000:] nie gefunden
         if not any(m in neu for m in OOM_MUSTER): return rc, out
         print(f"  OOM im Torschritt ({os.path.basename(log)}), Versuch {v + 1}/{versuche}, warte {pause} s", flush=True)
         time.sleep(pause)
