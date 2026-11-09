@@ -605,6 +605,21 @@ def fotokanten_ref(d, stuetz=0.25, minl_m=0.25, nref=1):
             if abs(ang - ziel) < 2.0:
                 r_ = np.radians(ziel); l[0], l[1], l[2], l[3] = mx_ - h * np.cos(r_), my_ - h * np.sin(r_), mx_ + h * np.cos(r_), my_ + h * np.sin(r_); break
     keep = [l for l in keep if np.hypot(l[2] - l[0], l[3] - l[1]) >= 0.3 / px]
+    try:                                                       # Bogenraender: Kreisbogen-RANSAC auf den nicht waagerechten/senkrechten Linien, Bogenstuecke durch die Kurve ersetzen
+        sch = [l for l in keep if min(abs(np.degrees(np.arctan2(l[3] - l[1], l[2] - l[0])) % 90), 90 - abs(np.degrees(np.arctan2(l[3] - l[1], l[2] - l[0])) % 90)) > 3]
+        B_ = boegen(sch, px) if len(sch) > 5 else []; bl = []
+        if B_:
+            occ_ = np.zeros((H, W), np.uint8)
+            for b in B_: cv2.polylines(occ_, [np.array(b["poly"], np.float32).round().astype(np.int32)], False, 1, 1)
+            near = cv2.dilate(occ_, np.ones((7, 7), np.uint8)); rest = []
+            for l in keep:
+                n = max(int(np.hypot(l[2] - l[0], l[3] - l[1])), 2); xs = np.linspace(l[0], l[2], n).round().astype(int).clip(0, W - 1); ys = np.linspace(l[1], l[3], n).round().astype(int).clip(0, H - 1)
+                if l in sch and near[ys, xs].mean() > 0.8: continue
+                rest.append(l)
+            for b in B_:
+                P_ = np.array(b["poly"], float); bl += [[float(P_[i, 0]), float(P_[i, 1]), float(P_[i + 1, 0]), float(P_[i + 1, 1]), 99, 9, "b"] for i in range(len(P_) - 1)]
+            keep = rest + bl; d["boegen"] = B_
+    except Exception as e_: print("Bogenfit uebersprungen:", e_)
     d["ref"] = keep; d["roh"] = [l for l in out]
     return dict(linien=keep, fotos=len(fl), referenz=ref, methode="ref")
 
