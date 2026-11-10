@@ -943,7 +943,8 @@ def staffelgiebel(cfg, ctx):
     oben = [(n2, zs)]
     for i in range(ns):
         zk = lin(n2 + i * w) + kp if i else zs; zk = min(zk, zs)
-        oben += [(n2 + i * w, zk), (n2 + (i + 1) * w, zk)]
+        dh_ = float(cfg.get("daechlein_h", 0.0)) if i else 0.0                                       # optional Pfeiler-Daechlein (Satteldach, First quer zur Wand, Mitte der Stufe): First dh_ ueber der Stufenoberkante; 0 = Altverhalten (erster Block = Spitzenblock, ohne)
+        oben += [(n2 + i * w, zk)] + ([(n2 + (i + 0.5) * w, zk + dh_)] if dh_ > 0 else []) + [(n2 + (i + 1) * w, zk)]
     if cfg.get("spiegel"):                                                                            # Stufen beidseitig: Rueckflanke = Spiegel der Vorderflanke an der Spitzenmitte (nb+n2)/2 (cfg['spiegel_quelle'] nennen)
         nm = (nb + n2) / 2; poly = [(2 * nm - nv, zu)] + [(2 * nm - n_, z_) for n_, z_ in reversed(oben)] + oben + [(nv, zu)]
     else: poly = [(nb, zu), (nb, zs)] + oben + [(nv, zu)]
@@ -951,7 +952,7 @@ def staffelgiebel(cfg, ctx):
     q = M.extrude(C([ccw(np.array(poly, float))]), dk).transform([[un, 0, 1, ((ua - dk) if rd > 0 else ua) - un * nr], [1, 0, 0, 0], [0, 1, 0, 0]])
     k = q.transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; qq = lambda p_: (wq.get(p_) or cfg["quelle"])
     if un != 0.0: beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')}: Wandneigung", qq("u_neigung"), u_neigung=un, n_ref=nr)
-    beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')} ({ns} Stufen)", f"Stufenzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + qq("z_spitze") + (" | Rueckflanke gespiegelt: " + qq("spiegel") if cfg.get("spiegel") else ""), n_stufen=ns, u_aussen=ua, dicke=dk, n_hinten=nb, n_vorn=nv, z_traufe=zt, z_spitze=zs, spitze_breite=sb, kappe=kp, **({"spiegel": True} if cfg.get("spiegel") else {}))
+    beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')} ({ns} Stufen)", f"Stufenzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + qq("z_spitze") + (" | Rueckflanke gespiegelt: " + qq("spiegel") if cfg.get("spiegel") else "") + (" | Daechlein: " + qq("daechlein_h") if cfg.get("daechlein_h") else ""), **({"daechlein_h": float(cfg["daechlein_h"])} if cfg.get("daechlein_h") else {}), n_stufen=ns, u_aussen=ua, dicke=dk, n_hinten=nb, n_vorn=nv, z_traufe=zt, z_spitze=zs, spitze_breite=sb, kappe=kp, **({"spiegel": True} if cfg.get("spiegel") else {}))
     return [k], []
 
 
