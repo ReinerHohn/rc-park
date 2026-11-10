@@ -23,6 +23,12 @@ if [ $RC -eq 0 ] && echo "$OUT" | grep -q "alle Pruefungen bestanden"; then
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01BMC5F7JqzthTsrTAV2gKLz" && git log --oneline -1
   echo "MAIN_ABNAHME GRUEN"
+  # Nutzerwunsch 10.11.: nach jedem neuen Ergebnis eine Prozentzahl "wie nah an der Realitaet" (Verlauf modelle/<obj>/realitaet_verlauf.jsonl)
+  REALITAET_MERGE_LOCK_GEHALTEN=1 python3 tools/realitaet_prozent.py "$OBJ" || echo "REALITAET nicht gemessen (Fehler oben)"
+  git add "modelle/$OBJ/realitaet_verlauf.jsonl" 2>/dev/null && git commit -q -m "Realitaetszahl nach: $TXT
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01BMC5F7JqzthTsrTAV2gKLz" 2>/dev/null
 else
   echo "MAIN_ABNAHME ROT (rc $RC) - Erzeugnisse NICHT committet, Arbeitsbaum bleibt fuer Ansicht"
   exit 1
