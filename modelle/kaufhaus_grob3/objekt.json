@@ -4570,6 +4570,58 @@
    ]
   },
   {
+   "typ": "quader:laube_sockel_w",
+   "gruppe": "Laubensockel (Steinbank mit Sockelband vor der Rueckwand)",
+   "u0": -7.2,
+   "u1": -1.5,
+   "n0": 7.2,
+   "n1": 7.73,
+   "z0": 1.5,
+   "z1": 2.2,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
+   "quelle": "Fotos 6117/6124/6130 (Stufe 0): durchgehender Sockel mit Gesimsband vor der Laubenrueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006); Front n 7,73 aus Wolke lot2 (z 1,75-2,10, Spitze 7,7-7,8); Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
+   "aktiv": true,
+   "werte_quellen": {
+    "u0": "Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
+    "u1": "Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
+    "n0": "ANNAHME: 0,08 m Einbindung in die Wand (Wandflaeche n 7,28) fuer wasserdichten Druckkoerper",
+    "n1": "Wolke lot2 j_voll_lot2.npy, z 1,75-2,10: Sockelfront n 7,7-7,8 (3541 Punkte, u -9..-1); Foto-Strahl auf z 2,2 Vorderkante n 7,5-8,0 (6130/6117) -> 7,73",
+    "z0": "wie quader:laube_rueck z0 1,5 (Boden)",
+    "z1": "Foto-Messung Sockeloberkante an der Wand: M-6117-006 (z 2,20/2,16), M-6130-006 (z 2,17/2,24), Ebene n 7,28"
+   }
+  },
+  {
+   "typ": "quader:laube_sockel_o",
+   "gruppe": "Laubensockel (Steinbank mit Sockelband vor der Rueckwand)",
+   "u0": 5.0,
+   "u1": 16.311,
+   "n0": 7.2,
+   "n1": 7.73,
+   "z0": 1.5,
+   "z1": 2.2,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
+   "quelle": "Fotos 6117/6124/6130 (Stufe 0): durchgehender Sockel mit Gesimsband vor der Laubenrueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006); Front n 7,73 aus Wolke lot2 (z 1,75-2,10, Spitze 7,7-7,8); Wolke lot2: Sockelfront u 5..16 belegt (213..976 Punkte je 1 m); Ostende = laube_rueck u1; u 5 ANNAHME",
+   "aktiv": true,
+   "werte_quellen": {
+    "u0": "Wolke lot2: Sockelfront u 5..16 belegt (213..976 Punkte je 1 m); Ostende = laube_rueck u1; u 5 ANNAHME",
+    "u1": "Wolke lot2: Sockelfront u 5..16 belegt (213..976 Punkte je 1 m); Ostende = laube_rueck u1; u 5 ANNAHME",
+    "n0": "ANNAHME: 0,08 m Einbindung in die Wand (Wandflaeche n 7,28) fuer wasserdichten Druckkoerper",
+    "n1": "Wolke lot2 j_voll_lot2.npy, z 1,75-2,10: Sockelfront n 7,7-7,8 (3541 Punkte, u -9..-1); Foto-Strahl auf z 2,2 Vorderkante n 7,5-8,0 (6130/6117) -> 7,73",
+    "z0": "wie quader:laube_rueck z0 1,5 (Boden)",
+    "z1": "Foto-Messung Sockeloberkante an der Wand: M-6117-006 (z 2,20/2,16), M-6130-006 (z 2,17/2,24), Ebene n 7,28"
+   }
+  },
+  {
    "typ": "quader:rumpf_eg",
    "gruppe": "Rumpf EG (hinter der Laube)",
    "u0": -8.82,

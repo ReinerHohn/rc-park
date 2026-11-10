@@ -1,0 +1,32 @@
+{
+ "id": "M-6130-006",
+ "foto": "6130",
+ "kamera": "K-6130",
+ "ebene": "0.3338,0.9426,0=7.28",
+ "name": "Laubensockel Oberkante an der Wand (z der Punkte)",
+ "mess_px": [
+  1100.0,
+  3100.0,
+  1300.0,
+  3098.0
+ ],
+ "P1": [
+  -0.516,
+  7.906,
+  2.175
+ ],
+ "P2": [
+  -1.308,
+  8.187,
+  2.239
+ ],
+ "dz": 0.063,
+ "dy": 0.28,
+ "dx": -0.792,
+ "abstand": 0.842,
+ "z1": 2.175,
+ "z2": 2.239,
+ "unsicherheit_rel": 0.0041,
+ "unsicherheit_m": 0.02,
+ "massstab_von": "Kamera K-6130 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.28 (+-0.05 m)"
+}

@@ -1,36 +1,22 @@
 {
  "foto": "6174",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_232557a232557/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6174 (amtliche Anker)",
  "zelle_px": 141,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    705,
-    2820,
+    2115,
+    987,
     141
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -1.23,
-    2.56,
-    1.56
-   ]
-  },
-  {
-   "zelle": [
-    2115,
-    1833,
-    141
-   ],
-   "score": -0.998,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    1.37,
-    12.11,
-    7.79
+    -0.64,
+    13.44,
+    14.97
    ]
   },
   {
@@ -39,40 +25,12 @@
     2820,
     141
    ],
-   "score": -0.998,
+   "score": -0.985,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -0.85,
-    3.5,
+    -0.56,
+    3.54,
     1.58
-   ]
-  },
-  {
-   "zelle": [
-    1974,
-    1833,
-    141
-   ],
-   "score": -0.988,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -0.73,
-    11.83,
-    8.13
-   ]
-  },
-  {
-   "zelle": [
-    564,
-    2820,
-    141
-   ],
-   "score": -0.988,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -1.6,
-    1.57,
-    1.56
    ]
   },
   {
@@ -81,12 +39,54 @@
     2820,
     141
    ],
-   "score": -0.955,
+   "score": -0.971,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -2.52,
-    -0.43,
+    -2.49,
+    -0.42,
     1.53
+   ]
+  },
+  {
+   "zelle": [
+    1692,
+    564,
+    141
+   ],
+   "score": -0.961,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -2.78,
+    10.69,
+    19.82
+   ]
+  },
+  {
+   "zelle": [
+    1269,
+    141,
+    141
+   ],
+   "score": -0.93,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -4.35,
+    7.2,
+    24.99
+   ]
+  },
+  {
+   "zelle": [
+    705,
+    2820,
+    141
+   ],
+   "score": -0.882,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.87,
+    2.59,
+    1.56
    ]
   }
  ],

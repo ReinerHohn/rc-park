@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_232557a232557/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,7 +40,7 @@
   "fenster_b3_ebene_abstand": 1.2521246230474818,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590150952339172,
+  "wand_pq": 0.10590077191591263,
   "wand_anteil_unter": 0.0005666666666666667,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
@@ -50,7 +50,7 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 2.128511469441953,
-  "teile_ueberhang": 0.0054,
+  "teile_ueberhang": 0.00682,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.72,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.72,
@@ -169,7 +169,7 @@
   "erker_o_unterbau70": 0.7097411209969617,
   "erker_o_unterbau80": 1.4208538864037292,
   "erker_o_trauf_unten": 1.5408542285036329,
-  "tuer_b3_rahmenfront": -0.04463392756998541,
+  "tuer_b3_rahmenfront": -0.04463395892203348,
   "fenster_eg0_rahmenfront": 0.0207220242320707,
   "fenster_eg0_oberkante_l": 0.02001516256124347,
   "fenster_eg0_oberkante_r": 0.021167838177144294,
@@ -207,7 +207,11 @@
   "bruestung_luecke_west": 0.005928783763525125,
   "bruestung_luecke_ost": -0.012354986959553393,
   "balkon_soffit_frei": -0.0050184289008181615,
-  "balkon_stirn_mitte": -1.2034247030692145
+  "balkon_stirn_mitte": -1.2034247030692145,
+  "laube_sockel_front_w": -0.44554548537133254,
+  "laube_sockel_front_o": -0.4612625516363389,
+  "laube_sockel_oben_21": -0.44554548537133254,
+  "laube_sockel_oben_23": 0.00445455381829829
  },
  "pruefungen": [
   {
@@ -412,7 +416,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590150952339172,
+   "wert": 0.10590077191591263,
    "soll": [
     0.0348,
     100
@@ -442,7 +446,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.0054,
+   "wert": 0.00682,
    "soll": [
     0,
     0.01
@@ -1332,7 +1336,7 @@
   },
   {
    "name": "Tuer Laube EG Bogen 3: Rahmenvorderkante gegen die Wandfront n 7,28 (m, - = davor, Strahl am rechten Rahmenpfosten, z 2,2)",
-   "wert": -0.04463392756998541,
+   "wert": -0.04463395892203348,
    "soll": [
     -0.096,
     0.0
@@ -1686,6 +1690,46 @@
    "soll": [
     -0.08,
     0.25
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laubensockel West: Vorderfront in z 1,9 vor der Wandebene n 7,28 (Tiefe ~0,45, negativ = davor)",
+   "wert": -0.44554548537133254,
+   "soll": [
+    -0.52,
+    -0.38
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laubensockel Ost: Vorderfront in z 1,9 vor der Wandebene n 7,28",
+   "wert": -0.4612625516363389,
+   "soll": [
+    -0.52,
+    -0.38
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laubensockel: Oberkante >= 2,1 (in z 2,1 noch vor der Wand)",
+   "wert": -0.44554548537133254,
+   "soll": [
+    -0.52,
+    -0.38
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laubensockel: Oberkante <= 2,35 (in z 2,35 wieder Wandebene)",
+   "wert": 0.00445455381829829,
+   "soll": [
+    -0.08,
+    0.08
    ],
    "ok": true,
    "status": "ok"
