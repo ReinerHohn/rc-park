@@ -1,5 +1,5 @@
 {
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_021633a021633/wt_r4/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548637573273,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.13989754021167755,
-  "wand_anteil_unter": 0.00023333333333333333,
+  "wand_pq": 0.13989689946174622,
+  "wand_anteil_unter": 0.0004,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,7 +50,7 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 1.9090876846058489,
-  "teile_ueberhang": 0.00867,
+  "teile_ueberhang": 0.00868,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.88,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.88,
@@ -59,7 +59,7 @@
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.8,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.8,
   "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.000076058674822,
-  "laube_rueckwand_n728_z7": -0.003327184352758028,
+  "laube_rueckwand_n728_z7": -0.00332701019786219,
   "helm_o_r_14_64": 1.11104438755423,
   "helm_o_r_16_18": 0.5909801434450644,
   "helm_o_r_17_76": 0.35088480017249024,
@@ -114,7 +114,16 @@
   "figur2_kopf_um": 0.13221535515072963,
   "figur2_bein_np": 0.1163365979686713,
   "figur2_bein_nm": 0.11366333671048046,
-  "laube_rueck_west_ende": 8.819999999999961,
+  "gaube_a_vordach_vor": 1.5221385427095424,
+  "gaube_a_vordach_up": 0.690012053487749,
+  "gaube_a_vordach_um": 0.7599881539197059,
+  "gaube_a_stirn_vor": 1.3071388566195385,
+  "gaube_a_dach_z": 20.46699999999998,
+  "gaube_b_vordach_vor": 1.5221473701353774,
+  "gaube_b_vordach_up": 0.7152417596097334,
+  "gaube_b_vordach_um": 0.7347579486846905,
+  "gaube_b_stirn_vor": 1.3071474824609604,
+  "gaube_b_dach_z": 20.46699999999998,
   "helm_o_r_13_45": 1.6432323428532347,
   "helm_o_r_14_12": 1.271050051226185,
   "helm_o_r_14_38": 1.1710493512396543,
@@ -335,7 +344,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.13989754021167755,
+   "wert": 0.13989689946174622,
    "soll": [
     0.0348,
     100
@@ -365,7 +374,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00867,
+   "wert": 0.00868,
    "soll": [
     0,
     0.01
@@ -395,7 +404,7 @@
   },
   {
    "name": "Laubenrueckwand: Wandflaeche hinter der Ebene n 7,28 (z 7,0, alle Boegen; 0 = in der Ebene)",
-   "wert": -0.003327184352758028,
+   "wert": -0.00332701019786219,
    "soll": [
     -0.08,
     0.08
@@ -754,11 +763,101 @@
    "status": "ok"
   },
   {
-   "name": "Laubenrueckwand: westliches Ende der Wandflaeche in der Ebene n 7,28 (u = -Abstand entlang der Fassade, z 3,5; darf nicht ueber das Gebaeudeende hinausragen)",
-   "wert": 8.819999999999961,
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach-Vorderkante bei z 21,33 (n-Reichweite ab n 7,0; Foto n 8,52)",
+   "wert": 1.5221385427095424,
    "soll": [
-    8.7,
-    9.0
+    1.42,
+    1.62
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach Halbbreite nach +u bei z 21,33 (Foto 0,71-0,74)",
+   "wert": 0.690012053487749,
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach Halbbreite nach -u bei z 21,33",
+   "wert": 0.7599881539197059,
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Stirn-/Fensterkasten-Front bei z 20,85 (n-Reichweite ab n 7,0; Foto n 8,31) - Wachposten, am Altmodell schon gruen",
+   "wert": 1.3071388566195385,
+   "soll": [
+    1.23,
+    1.39
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Hoehe der Dachoberflaeche bei n 7,7 (Vordach-Pultdach, Hang 21,6)",
+   "wert": 20.46699999999998,
+   "soll": [
+    20.337,
+    20.837
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Vordach-Vorderkante bei z 21,33 (n-Reichweite ab n 7,0; Foto n 8,52)",
+   "wert": 1.5221473701353774,
+   "soll": [
+    1.42,
+    1.62
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Vordach Halbbreite nach +u bei z 21,33 (Foto 0,71-0,74)",
+   "wert": 0.7152417596097334,
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Vordach Halbbreite nach -u bei z 21,33",
+   "wert": 0.7347579486846905,
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Stirn-/Fensterkasten-Front bei z 20,85 (n-Reichweite ab n 7,0; Foto n 8,31) - Wachposten, am Altmodell schon gruen",
+   "wert": 1.3071474824609604,
+   "soll": [
+    1.23,
+    1.39
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Hoehe der Dachoberflaeche bei n 7,7 (Vordach-Pultdach, Hang 21,6)",
+   "wert": 20.46699999999998,
+   "soll": [
+    20.337,
+    20.837
    ],
    "ok": true,
    "status": "ok"

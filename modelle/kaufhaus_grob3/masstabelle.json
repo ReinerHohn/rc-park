@@ -2802,57 +2802,6 @@
    "status": "offen"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
-   "auto_id": "fehlteile-6261-474-1106",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 26.51,
-   "z_bis": 26.51,
-   "xyz": [
-    17.13,
-    -2.06,
-    26.51
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.51 m, y=-2.06 m (Zelle [474, 1106, 79], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
-   "auto_id": "fehlteile-6261-237-1817",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.01,
-   "z_bis": 18.01,
-   "xyz": [
-    14.96,
-    -8.35,
-    18.01
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.01 m, y=-8.35 m (Zelle [237, 1817, 79], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
-   "auto_id": "fehlteile-6261-316-1817",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.48,
-   "z_bis": 17.48,
-   "xyz": [
-    15.39,
-    -6.15,
-    17.48
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.48 m, y=-6.15 m (Zelle [316, 1817, 79], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-10",
    "merkmal": "Ost-Staffelgiebel Lage",
    "text": "Kreis a031245 r1 (Zweig kreis/kaufhaus_grob3/20261110_031245a031245-r1): Ost-Staffelgiebel liegt ~1,4 m zu weit aussen (u 17,15 statt ~15,85); 8 Stufenspitzen trianguliert (M-6115-001..008, Strahlabstand <= 0,03 m), Overlays 6115/6145/6257 treffen die Stufen. Region-Recall 0,10 -> 0,36. WIDERSPRUCH: Kantengitter am Giebel nur 39 Segmente -> Teil-Praezision 0,025, Band-Praezision 10-15 m 0,372 -> 0,361 (Rueckschritt-Tor). Nicht gemittelt (Regel 5).",
@@ -2870,36 +2819,36 @@
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
-   "auto_id": "fehlteile-6261-237-1817",
+   "auto_id": "fehlteile-6261-395-1185",
    "art": "fehlteil",
    "foto": "6261",
-   "z_von": 18.01,
-   "z_bis": 18.01,
+   "z_von": 26.12,
+   "z_bis": 26.12,
    "xyz": [
-    14.96,
-    -8.36,
-    18.01
+    16.54,
+    -3.96,
+    26.12
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.01 m, y=-8.36 m (Zelle [237, 1817, 79], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.12 m, y=-3.96 m (Zelle [395, 1185, 79], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto nu3b, Treffer 6)",
-   "auto_id": "fehlteile-nu3b-0-1755",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
+   "auto_id": "fehlteile-6261-237-1817",
    "art": "fehlteil",
-   "foto": "nu3b",
-   "z_von": 14.04,
-   "z_bis": 14.04,
+   "foto": "6261",
+   "z_von": 18.02,
+   "z_bis": 18.02,
    "xyz": [
-    15.32,
-    -7.72,
-    14.04
+    14.95,
+    -8.36,
+    18.02
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=14.04 m, y=-7.72 m (Zelle [0, 1755, 117], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_nu3b.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.02 m, y=-8.36 m (Zelle [237, 1817, 79], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

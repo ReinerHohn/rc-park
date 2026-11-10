@@ -1,6 +1,6 @@
 {
  "foto": "6127",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_021633a021633/wt_r4/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6127 (amtliche Anker)",
  "zelle_px": 166,
  "schwelle": 0.35,
@@ -14,79 +14,79 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    15.19,
-    7.55,
-    14.1
+    15.08,
+    7.59,
+    14.06
+   ]
+  },
+  {
+   "zelle": [
+    830,
+    1494,
+    166
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    11.7,
+    8.42,
+    11.5
+   ]
+  },
+  {
+   "zelle": [
+    1826,
+    1826,
+    166
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    10.49,
+    -1.95,
+    11.56
+   ]
+  },
+  {
+   "zelle": [
+    1826,
+    1992,
+    166
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    11.09,
+    -2.51,
+    10.09
    ]
   },
   {
    "zelle": [
     996,
-    1328,
-    166
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    11.59,
-    6.97,
-    12.95
-   ]
-  },
-  {
-   "zelle": [
     1162,
-    2158,
     166
    ],
-   "score": -1.0,
+   "score": -0.995,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    12.57,
-    4.26,
-    8.0
-   ]
-  },
-  {
-   "zelle": [
-    1162,
-    1992,
-    166
-   ],
-   "score": -0.997,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    11.24,
-    5.53,
-    8.67
-   ]
-  },
-  {
-   "zelle": [
-    498,
-    1992,
-    166
-   ],
-   "score": -0.97,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    14.86,
-    8.53,
-    8.72
+    11.16,
+    7.55,
+    13.81
    ]
   },
   {
    "zelle": [
     664,
-    2158,
+    1826,
     166
    ],
-   "score": -0.95,
+   "score": -0.991,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    15.39,
-    6.5,
-    7.67
+    12.55,
+    8.95,
+    9.27
    ]
   }
  ],
