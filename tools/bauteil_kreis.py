@@ -193,7 +193,13 @@ for runde in range(1, RUNDEN + 1):
     else:
         subprocess.run(["git", "-C", ROOT, "worktree", "add", "-q", "-b", br, wt, basis], check=True)
     if NACH:
-        z0 = {"wolkenbeleg_teile": [NACH_Z["ziel"]], "kanten": {"gesamt": {"recall": (NACH_Z.get("recall_gesamt") or [None])[0]}}}
+        # volle Vorher-Messung der Originalrunde (alle Teile, sonst zaehlt jedes Teil als 'neu' - Nachpruefung s4 10.11. ergab falsch -0,320)
+        _kf = os.path.join(wt, "modelle", OBJ, "konvergenz.jsonl"); z0 = None
+        if os.path.exists(_kf):
+            for _l in reversed([x for x in open(_kf) if x.strip()]):
+                _z = json.loads(_l)
+                if str(_z.get("etikett", "")).endswith(f"r{_r}_vorher") and _z.get("wolkenbeleg_teile"): z0 = _z; break
+        if z0 is None: sys.exit("Nachpruefen: Vorher-Messung der Originalrunde nicht gefunden - ohne sie ist der Gewinn nicht messbar")
     elif TROCKEN:
         # Trockenlauf baut nichts (main bleibt unberuehrt): letzte gespeicherte Konvergenz-Zeile
         kf = os.path.join(ROOT, "modelle", OBJ, "konvergenz.jsonl")
