@@ -44,6 +44,7 @@ RUNDEN = opt("--runden", 3, int); MODELL = opt("--modell", "sonnet"); PRUEFER = 
 MIN_DATEN = opt("--min_daten", 0.3, float); MIN_GEWINN = opt("--min_gewinn", 0.05, float); MAX_FEHL = opt("--max_fehl", 2, int)
 KREISDIR = opt("--kreisdir", "/media/oem/scan/rc-park_kreis")
 MAX_MIN = opt("--max_minuten", 120, int)
+VORPRUEF = "--ohne_vorpruefung" not in a   # Form am Foto direkt nach dem Agenten, einmal Rueckgabe (10.11.)
 if not TROCKEN and not RECHTE:
     print("--rechte <MODUS> ist Pflicht fuer echte Laeufe (Nutzerentscheid). Ohne Start: --trocken."); sys.exit(1)
 
@@ -499,6 +500,36 @@ for runde in range(1, RUNDEN + 1):
     t0 = time.time()
     rcA, _ = (None, "") if NACH else sh(["claude", "-p", txt, "--model", MODELL, "--permission-mode", RECHTE], wt,
                 log=os.path.join(LDIR, f"agent_r{runde}.log"), timeout=MAX_MIN * 60)
+    # VORPRUEFUNG (Nutzer 10.11. 14:3x, 5 von 5 Runden erst im Tor nach 1-1,5 h verworfen, meist Foto-F1 gefallen oder Pflichtschritt
+    # uebersprungen): gleich nach dem Agenten Form am Foto messen (gleiche Fotos, gleiche Formel wie das Tor). Keine klare Besserung
+    # (< vorher + 0,02) -> EINMAL zurueck an denselben Agenten (claude --continue im Worktree, Kontext bleibt) mit Messwerten je Foto
+    # und Overlay-Pfaden. Das Tor bleibt unveraendert (gleiche Schwellen, misst danach selbst) - nur der Rueckweg ist frueher.
+    _tn = os.path.join(LDIR, f"teile_r{runde}_nachher"); _vorab_gebaut = False; ff_q = None
+    if ff_v is not None and not ist_fehlteil(ziel) and not NACH and VORPRUEF:
+        shutil.rmtree(_tn, ignore_errors=True)
+        _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
+        _rq, _ = sh_cpu(_gen, wt, log=os.path.join(LDIR, f"vorpruef_r{runde}.log"), env={"BAUTEILE_AUS": _tn})
+        ff_q = form_messen(wt, _tn, ziel["teil"], ff_fotos, f"r{runde}_vorpruef") if _rq == 0 else None
+        print(f"Runde {runde}: Vorpruefung Form am Foto {ziel['teil']}: F1 {ff_v} -> {ff_q}" + ("" if _rq == 0 else " (Generator rot)"), flush=True)
+        if _rq != 0 or ff_q is None or ff_q < ff_v + 0.02:
+            try: _je = (json.load(open(os.path.join(LDIR, f"fotoform_r{runde}_vorpruef.json")))["teile"].get(ziel["teil"]) or {})
+            except Exception: _je = {}
+            _zeilen = "\n".join(f"- Foto {f}: Praezision {_je[f].get('praez')} / Recall {_je[f].get('recall')}  Overlay {LDIR}/fotoform_bilder/{ziel['teil']}_{f}_r{runde}_vorpruef.jpg"
+                                f"  (vorher: {ziel['teil']}_{f}_r{runde}_vorher.jpg)" for f in ff_fotos if f in _je)
+            _rueck = (f"VORPRUEFUNG DES KREISES (automatisch, gleiche Messung wie das Tor): Dein Stand ist "
+                      + ("im Generator ROT (siehe " + os.path.join(LDIR, f"vorpruef_r{runde}.log") + ")" if _rq != 0 else
+                         f"am Foto NICHT besser: Form-F1 {ff_v} -> {ff_q} (Tor verlangt keinen Rueckschritt > 0,02 und Teilgewinn >= {MIN_GEWINN}).")
+                      + f"\nJe Foto (rot = Modellkante ohne Fotokante, gelb = Fotokante fehlt im Modell):\n{_zeilen}\n"
+                      "Sieh dir die Overlays an (mindestens 3), benenne je Foto, welche Kante falsch/fehlend ist, und korrigiere den Generator-Stand. "
+                      "Pflicht vor der Abgabe: Zaehlmerkmale (Anzahl Elemente je Flaeche) am Foto mit tools/foto_zaehlung.py belegen, wenn das Teil welche hat; "
+                      f"`bash tools/bauen_abnehmen.sh {OBJ}` gruen. Bringt eine Aenderung am Foto nichts, nimm sie zurueck (git checkout) statt sie abzugeben. "
+                      "Antworte am Ende mit derselben Berichtform wie vorher.")
+            open(os.path.join(LDIR, f"rueckgabe_r{runde}.md"), "w").write(_rueck)
+            print(f"Runde {runde}: Vorpruefung -> zurueck an den Agenten (einmal)", flush=True)
+            sh(["claude", "-p", _rueck, "--continue", "--model", MODELL, "--permission-mode", RECHTE], wt,
+               log=os.path.join(LDIR, f"agent_r{runde}_nachbesserung.log"), timeout=max(30, MAX_MIN // 2) * 60)
+        else:
+            _vorab_gebaut = True   # Stand unveraendert seit dem Export: Tor-Bau unten nicht wiederholen (deterministisch, gleiches Ergebnis)
     fbefund = None
     if ist_fehlteil(ziel):
         _al = os.path.join(LDIR, f"agent_r{runde}.log")
@@ -507,9 +538,12 @@ for runde in range(1, RUNDEN + 1):
         print(f"Runde {runde}: Fehlteil-Befund des Agenten: {fbefund}")
     # Bau (CPU) ausserhalb der GPU-Torsperre, Teile-Export im selben Lauf (vorher: bauen_abnehmen baute unter der Sperre, messen() baute danach
     # ein zweites Mal identisch); dann Pruefen unter der Sperre. Gleiche Schritte wie bauen_abnehmen.sh (Generator, dann --nur-pruefen).
-    _tn = os.path.join(LDIR, f"teile_r{runde}_nachher"); shutil.rmtree(_tn, ignore_errors=True)
-    _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
-    rcG, _ = sh_cpu(_gen, wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"), env={"BAUTEILE_AUS": _tn})
+    if _vorab_gebaut:
+        rcG = 0
+    else:
+        shutil.rmtree(_tn, ignore_errors=True)
+        _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
+        rcG, _ = sh_cpu(_gen, wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"), env={"BAUTEILE_AUS": _tn})
     rcB, outB = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ, "--nur-pruefen"], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log")) if rcG == 0 else (rcG, "Generator fehlgeschlagen")
     tor_abnahme = rcB == 0 and "alle Pruefungen bestanden" in outB
     reg = None
@@ -524,7 +558,7 @@ for runde in range(1, RUNDEN + 1):
         if neu_t: ersatz = min(neu_t, key=neu_t.get); nach[ziel["teil"]] = neu_t[ersatz]
     ff_n = None
     if ff_v is not None and not ersatz:
-        ff_n = form_messen(wt, os.path.join(LDIR, f"teile_r{runde}_nachher"), ziel["teil"], ff_fotos, f"r{runde}_nachher")
+        ff_n = ff_q if _vorab_gebaut else form_messen(wt, os.path.join(LDIR, f"teile_r{runde}_nachher"), ziel["teil"], ff_fotos, f"r{runde}_nachher")   # Vorpruefung = gleicher Stand, gleiche Messung
         if ff_n is not None:
             vor[ziel["teil"]] = guete_form(vor_t.get(ziel["teil"], {}), ff_v); nach[ziel["teil"]] = guete_form(nach_t.get(ziel["teil"], {}), ff_n)
         print(f"Runde {runde}: Form am Foto {ziel['teil']}: F1 {ff_v} -> {ff_n} ({len(ff_fotos)} Fotos)")
