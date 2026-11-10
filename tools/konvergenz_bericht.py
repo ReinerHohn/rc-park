@@ -183,9 +183,13 @@ inn = np.all((GP >= lo_m) & (GP <= hi_m), axis=1) & (GP[:, 2] >= m.bounds[0][2] 
 # Gitter-Anpassungen, die der Gitterbau selbst als 'abweichend' markiert (Zylinder cx/cy/R/z_fuss/z_kopf), sind keine Fehlteile:
 # Kreis 10.11. fk_-8_+10_+6 = Saeulen-Fit R 0,62 (62 % Inlier) frei vor dem Nachbarhaus, Agent pruefte 5 Fotos (L-KR8). Nur hier ausgenommen, Recall unveraendert.
 _GJ = json.load(open(GIT)); aus = np.zeros(len(GP), bool)
+# ausserdem schwache Zylinder-Fits (Inlier < 0,1 x Median der Liste): 716 und 983 Inlier gegen Median ~22000, beide am Foto als
+# Nicht-Saeule belegt (a030944, a032345 r2, a032646 r1: echte Pfeiler 5,6 m weiter vorn); 2497 bleibt drin.
 for _k, _v in _GJ.items():
-    for _e in (_v if isinstance(_v, list) else []):
-        if isinstance(_e, dict) and _e.get("abweichend") and all(k_ in _e for k_ in ("cx", "cy", "R", "z_fuss", "z_kopf")):
+    _zyl = [e for e in (_v if isinstance(_v, list) else []) if isinstance(e, dict) and all(k_ in e for k_ in ("cx", "cy", "R", "z_fuss", "z_kopf"))]
+    _med = float(np.median([e["inlier"] for e in _zyl if "inlier" in e])) if any("inlier" in e for e in _zyl) else 0.0
+    for _e in _zyl:
+        if _e.get("abweichend") or ("inlier" in _e and _e["inlier"] < 0.1 * _med):
             aus |= (np.hypot(GP[:, 0] - _e["cx"], GP[:, 1] - _e["cy"]) <= _e["R"] + 0.15) & (GP[:, 2] >= _e["z_fuss"] - 0.15) & (GP[:, 2] <= _e["z_kopf"] + 0.15)
 U = GP[inn & (d_rec >= FEHL_AB) & ~aus]; fehlkanten = []
 if len(U):

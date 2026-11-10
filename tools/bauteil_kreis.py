@@ -137,13 +137,25 @@ MIN_REGION = opt("--min_region", 0.25, float); MIN_PRAEZ_NEU = opt("--min_praez_
 
 def ist_fehlteil(ziel): return (ziel or {}).get("art") == "fehlteil"
 
+# Fehlteil-Befunde der Agenten (10.11.: dieselben Kaesten wurden 2-3x vergeben, obwohl der Agent 'kein Bauteil'/'Gitter zu duenn' belegt hatte)
+ERLEDIGT = os.path.join(KREISDIR, OBJ, "fehlteil_erledigt.json")
+def erledigt_laden():
+    try: return json.load(open(ERLEDIGT))
+    except Exception: return {}
+def ist_erledigt(f, erl):
+    """Kasten gilt als erledigt, wenn sein Zentrum in einem erledigten Kasten +-0,5 m liegt (Cluster-IDs wandern leicht zwischen Messungen)."""
+    c = f["zentrum"]
+    return any(all(e["lo"][i] - 0.5 <= c[i] <= e["hi"][i] + 0.5 for i in range(3)) for e in erl.values())
+BEFUND_RE = re.compile(r"FEHLTEIL-BEFUND:\s*(gebaut|kein Bauteil|Gitter zu duenn|vorhandenes Teil\s+\S+)", re.I)
+
 def waehlen(z, sperre):
     fg = fehlversuche_global()
     belegt_fam = {f.split("__")[0] for f in os.listdir(BELEGT)}
     # zuerst fehlende Elemente (groesster sichtbarer Fehler), groesster Cluster zuerst
     fk = [dict(f, teil=f["id"] + "__neu", art="fehlteil", beleg=None) for f in (z or {}).get("fehlkanten") or []
           if f["pkt"] >= FEHL_PKT and (f.get("recall_kasten") is not None and f["recall_kasten"] <= FEHL_RECALL_MAX)]
-    fk = [f for f in fk if sperre.get(f["teil"], 0) < MAX_FEHL and fg.get(f["teil"], 0) < MAX_GLOBAL and f["id"] not in belegt_fam]
+    erl = erledigt_laden()
+    fk = [f for f in fk if sperre.get(f["teil"], 0) < MAX_FEHL and fg.get(f["teil"], 0) < MAX_GLOBAL and f["id"] not in belegt_fam and not ist_erledigt(f, erl)]
     fk.sort(key=lambda f: -f["pkt"])
     for t in fk:
         try:
@@ -191,6 +203,10 @@ def vorversuche(teil):
                           f"{' (CUDA-OOM, kein Pruefungsfehler)' if z.get('infra_oom') else ''}, Pruefer {json.dumps((z.get('pruefer') or {}).get('fehlerliste'), ensure_ascii=False)[:600]}"
                           f"; Agentenbericht (Ende der Datei): {ag if os.path.exists(ag) else '-'}; Patch: {pa if os.path.exists(pa) else '-'}; Zweig (git show/diff): {z.get('branch') or '-'}"
                           + nicht_in_main(z, os.path.basename(ld), r))
+    for fid, e in erledigt_laden().items():   # Fehlteil-Agent verwies auf dieses vorhandene Teil
+        if e.get("befund", "").lower().startswith("vorhandenes teil") and teil.replace("__", ":") in e["befund"]:
+            zeilen.append(f"- Fehlteil-Befund {fid} ({e.get('lauf')}): Fotokanten-Kasten {e['lo']} .. {e['hi']} m gehoert zu DIESEM Teil "
+                          f"(Agentenbericht {e.get('agent_log')}) - dort liegt der sichtbare Fehler")
     if not zeilen: return ""
     return ("\n\nVORVERSUCHE ZU DIESEM TEIL (zuerst lesen, nicht blind wiederholen; verworfenen Patch pruefen und gezielt verbessern, "
             "offene Beobachtungen dazu in masstabelle.json beachten):\n" + "\n".join(zeilen))
@@ -209,7 +225,10 @@ def auftrag(ziel, runde, wt):
                   f"Formfamilie festlegen; dann als NEUES Bauteil mit beleg()/Quelle im Generator bauen (oder vorhandenes Teil dorthin korrigieren). "
                   f"Gate: Recall im Kasten muss um >= {MIN_REGION} steigen, jedes neue Teil Kanten-Praezision >= {MIN_PRAEZ_NEU} "
                   f"(keine erfundenen Kanten), kein vorhandenes Teil darf in der Guete um > 0,02 fallen, Gesamt-Recall darf nicht sinken. "
-                  f"Wenn die Fotos dort NICHTS zeigen (Gitterfehler, Hintergrund), das als Befund berichten und nichts bauen.")
+                  f"Wenn die Fotos dort NICHTS zeigen (Gitterfehler, Hintergrund), das als Befund berichten und nichts bauen. "
+                  f"PFLICHT: letzte Zeile deiner Antwort GENAU eine von 'FEHLTEIL-BEFUND: gebaut' | 'FEHLTEIL-BEFUND: kein Bauteil' | "
+                  f"'FEHLTEIL-BEFUND: Gitter zu duenn' | 'FEHLTEIL-BEFUND: vorhandenes Teil <typ:name>' (z. B. staffelgiebel:west, wenn ein vorhandenes Teil "
+                  f"falsch liegt/zu hoch ist und du es NICHT in dieser Runde korrigierst). Danach wird der Kasten nicht erneut vergeben.")
     else:
         befund = (f"Automatisch aus konvergenz_bericht (Wolkenbeleg je Bauteil): {typ} hat nur {ziel['beleg']:.2f} seiner datennahen "
               f"Flaeche auf der Wolke (Median-Abstand {ziel['median_m']:.2f} m, Anteil mit Daten {ziel['anteil_mit_daten']:.2f}). "
@@ -306,6 +325,12 @@ for runde in range(1, RUNDEN + 1):
     t0 = time.time()
     rcA, _ = (None, "") if NACH else sh(["claude", "-p", txt, "--model", MODELL, "--permission-mode", RECHTE], wt,
                 log=os.path.join(LDIR, f"agent_r{runde}.log"), timeout=MAX_MIN * 60)
+    fbefund = None
+    if ist_fehlteil(ziel):
+        _al = os.path.join(LDIR, f"agent_r{runde}.log")
+        _m = BEFUND_RE.findall(open(_al, errors="replace").read()) if os.path.exists(_al) else []
+        fbefund = _m[-1] if _m else None
+        print(f"Runde {runde}: Fehlteil-Befund des Agenten: {fbefund}")
     rcB, outB = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"))
     tor_abnahme = rcB == 0 and "alle Pruefungen bestanden" in outB
     reg = None
@@ -394,12 +419,18 @@ for runde in range(1, RUNDEN + 1):
         sperre[ziel["teil"]] = sperre.get(ziel["teil"], 0) + 1; ohne_annahme += 1
         subprocess.run(["git", "-C", wt, "add", "-A"], check=False)   # Stand verlustfrei auf dem Zweig sichern (fuer --nachpruefen), Worktree danach weg
         subprocess.run(["git", "-C", wt, "commit", "-q", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} VERWORFEN (Stand gesichert)"], check=False)
+    if ist_fehlteil(ziel) and not angenommen and fbefund and not fbefund.lower().startswith("gebaut"):
+        import fcntl as _f; _lk2 = open(ERLEDIGT + ".lock", "w"); _f.flock(_lk2, _f.LOCK_EX)
+        _e = erledigt_laden(); _e[ziel["id"]] = {"lo": ziel["lo"], "hi": ziel["hi"], "befund": fbefund, "lauf": f"{LAUF} r{runde}",
+                                                   "agent_log": os.path.join(LDIR, f"agent_r{runde}.log"), "zeit": time.strftime("%Y-%m-%d %H:%M")}
+        json.dump(_e, open(ERLEDIGT, "w"), ensure_ascii=False, indent=1); _f.flock(_lk2, _f.LOCK_UN); _lk2.close()
+        print(f"Runde {runde}: Fehlteil {ziel['id']} als erledigt gesperrt ({fbefund})")
     freigeben(ziel["teil"])
     if not TROCKEN and wt != ROOT:   # Platz (10.11.: 11 Worktrees x 430 MB fuellten die Datenplatte); Inhalt liegt als Commit auf dem Zweig br
         subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
                "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
-               "tor_konvergenz": tor_konv, "pruefer": urteil, "angenommen": angenommen,
+               "tor_konvergenz": tor_konv, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")
     if ohne_annahme >= 2:
