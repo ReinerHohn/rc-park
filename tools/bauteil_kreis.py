@@ -265,23 +265,22 @@ def waehlen(z, sperre):
             return t
         except FileExistsError:
             continue
-    for t in beob_ziele(z):   # danach offene Beobachtungen mit benanntem Teil (Reihenfolge der Masstabelle)
-        bk = beob_schluessel(t["beob"])   # Sperre je Beobachtung, nicht je Teil: ein 3x verworfenes Teil bleibt fuer eine NEUE Beobachtung waehlbar
-        if sperre.get(bk, 0) >= MAX_FEHL or fg.get(bk, 0) >= MAX_GLOBAL or t["teil"].split("__")[0] in belegt_fam or os.path.exists(os.path.join(BELEGT, t["teil"])): continue
-        try:
-            fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
-            return t
-        except FileExistsError:
-            continue
     fl = formliste()
     kand = [t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["beleg"] is not None and (t["anteil_mit_daten"] >= MIN_DATEN or form_g(fl, t["teil"]).get("f1") is not None)
             and sperre.get(t["teil"], 0) < MAX_FEHL and fg.get(t["teil"], 0) < MAX_GLOBAL and not os.path.exists(os.path.join(BELEGT, t["teil"]))
             and t["teil"].split("__")[0] not in belegt_fam]   # gleiche Formfamilie (gleicher Generatorcode) nie parallel
     kand.sort(key=lambda t: min(x for x in (guete(t), form_g(fl, t["teil"]).get("f1")) if x is not None))   # schwaechste Groesse zuerst: Form am Foto zaehlt mit
+    # Nutzerregel 10.11. 14:4x: IMMER das schwaechste Teil zuerst ("dann konvergieren wir"). Frueher gingen offene Beobachtungen vor -
+    # 7/7 Runden landeten auf Teilen mit 0,94-0,98 (kaum Spielraum, kleine Fehler = Rueckschritt). Offene Beobachtungen zu dem gewaehlten
+    # Teil reisen jetzt MIT in den Auftrag (Zielart beobachtung), bestimmen aber nicht mehr die Reihenfolge.
+    bz = {}
+    for b in beob_ziele(z):
+        bk = beob_schluessel(b["beob"])
+        if sperre.get(bk, 0) < MAX_FEHL and fg.get(bk, 0) < MAX_GLOBAL: bz.setdefault(b["teil"], b)
     for t in kand:   # atomar belegen (O_EXCL), damit zwei Spuren nie dasselbe Teil nehmen
         try:
             fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
-            return t
+            return bz.get(t["teil"], t)
         except FileExistsError:
             continue
     return None
