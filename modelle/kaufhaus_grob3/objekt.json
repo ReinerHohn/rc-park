@@ -4595,24 +4595,24 @@
   {
    "typ": "quader:gesims",
    "gruppe": "Traufgesims",
-   "u0": -8.82,
-   "u1": 17.15,
+   "u0": -7.8,
+   "u1": 14.8,
    "n0": 12.62,
    "n1": 12.94,
-   "z0": 14.32,
+   "z0": 14.35,
    "z1": 14.82,
    "profil": [
     [
      12.62,
-     14.32
-    ],
-    [
-     12.7,
      14.35
     ],
     [
-     12.82,
-     14.55
+     12.72,
+     14.38
+    ],
+    [
+     12.83,
+     14.56
     ],
     [
      12.94,
@@ -4631,13 +4631,13 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "Profil (Kreis r3, 10.11.): Wolke lot2 (j_voll_lot2.npy, u -7,5..14, 15 Scheiben je 1,5 m, Dichtegipfel n je 0,1-m-Hoehenband): Wand n 12,62 bis z 14,25, dann Schraege n 12,70/12,74/12,82/12,86/12,90/12,94 bei z 14,35..14,85; Foto 6161 (M-6161-017..021): Gesims = rote Schraege mit Goldleisten unter der Kupfer-Haengerinne, Lippe Oberkante z 14,79 (Strahl auf Wolkenprofil, n 12,92); Fotos handy_04/handy_18/handy_f_12 zeigen dieselbe Zonenfolge. u-Enden und Hoehe z0: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v12.json: waagerechte Kanten vor der Front, Laengenhistogramm z 14,1-14,8 (z 14,1: 31 m, Versatz Median 13,08; z 14,2-14,8: 25-39 m je 0,1 m, Versatz 12,8-13,1); Traufe 14,68 = rohkoerper_v7 traufe.kante",
    "werte_quellen": {
-    "z0": "Wolke lot2: Wand bis z 14,25, dann Schraege; Runde 1 (20261110_040948): Unterkante auf 14,32 angehoben, weil Pruefer die rote Unterkante bei 14,25 ~0,1 m unter der unteren Goldleiste sah (handy_18 ~25 px); Foto 6161 M-6161-020: untere Goldleiste = Schraegenfuss z 14,33 (auf dem Profil n 12,69). ALT 14,1 (Kantengitter-Kantenlage bei Versatz 13,08) war Sehstrahl-Mehrdeutigkeit: n +0,4 gibt z -0,2 bei ~25 Grad Blickhoehe",
+    "z0": "Wolke lot2: Wand bis z 14,25, dann Schraege; Runde 1 (20261110_040948): Unterkante auf 14,32 angehoben, weil Pruefer die rote Unterkante bei 14,25 ~0,1 m unter der unteren Goldleiste sah (handy_18 ~25 px); Foto 6161 M-6161-020: untere Goldleiste = Schraegenfuss z 14,33 (auf dem Profil n 12,69). ALT 14,1 (Kantengitter-Kantenlage bei Versatz 13,08) war Sehstrahl-Mehrdeutigkeit: n +0,4 gibt z -0,2 bei ~25 Grad Blickhoehe | Kreis a053353 r1: Fuss 14,35 (Wand) / 14,38 (n 12,72) als Kompromiss zwischen Foto-Messung M-6161-020 (Goldleiste 14,33-14,36) und Kantengitter v12 (14,40-14,45, n 12,77) + Prueferbefund 6145 (Unterkante zu tief); nicht gemittelt, Widerspruch in masstabelle.beobachtungen_offen",
     "z1": "Foto 6161 M-6161-017 Rinnenlippe Oberkante z 14,79 (Strahl auf Wolkenprofil) und Wolke Gipfel z 14,8-14,9 -> 14,82; ALT 14,7 (Traufe 14,68 + 0,02) lag 0,1 unter der Lippe",
     "n1": "Wolke lot2 Dichtegipfel Vorderflaeche oben n 12,94 (z 14,8-14,9), Foto 6161 M-6161-017 Lippe z 14,79 bei n 12,92; ALT 13,08 (Kantengitter-Versatz-Median) war Kasten-Vorderflaeche 0,14-0,4 m vor der Schraege",
     "n0": "Wandebene Wolke Gipfel n 12,62 (Bereich z 13,8-14,25); Profil-Rueckseite buendig mit der Wand (Runde 1 20261110_040948: Rueckkanten bei 12,58 hatten keinen Fotobeleg, Praezision 0,26 -> mit Rueckseite 12,62 0,40; Wand liegt dahinter, Teil bleibt am Rumpf haengend)",
     "profil": "Wolke lot2 Dichtegipfel je Hoehenband (Wand bis z 14,25, Schraege bis 14,85) + Foto 6161 M-6161-017..021; Rinnenrundung und Dachgitter (Wolkenpunkte z 15,0 n 13,1) nicht modelliert (ANNAHME: H0 < 0,3 mm)",
-    "u0": "ANNAHME Rumpfenden (Gitterkanten along -8,5..14,3, Enden von Erkern verdeckt)",
-    "u1": "ANNAHME Rumpfenden"
+    "u0": "ANNAHME (Kreis a053353 r1): -7,8 statt -8,82; der Bereich u -8,82..-7,8 liegt zu 100 % im Westhelm (trimesh.contains, 0,096 m3), Kappe bei -7,8 zu 98 % im Helm = Druckkoerper unveraendert; Foto 6161/6115: Gesims verschwindet am Helm",
+    "u1": "ANNAHME (Kreis a053353 r1): 14,8 statt 17,15; u 14,8..16,3 liegt zu 100 % im Osthelm (0,153 m3), Stummel u 16,3..17,15 (0,057 m3 ausserhalb) am Foto nicht belegt (6145/b_03: nur Helmschuerze) -> entfernt, ungeprueft von Osten"
    },
    "historie": [
     {
@@ -4672,6 +4672,64 @@
      },
      "neu": {
       "profil": "5 Punkte 12,62/14,32 -> 12,94/14,82, z0 14,32 (Goldleiste), Rueckseite 12,62"
+     }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Agent Kreis a053353 r1",
+     "alt": {
+      "u0": -8.82,
+      "u1": 17.15,
+      "z0": 14.32,
+      "profil": [
+       [
+        12.62,
+        14.32
+       ],
+       [
+        12.7,
+        14.35
+       ],
+       [
+        12.82,
+        14.55
+       ],
+       [
+        12.94,
+        14.82
+       ],
+       [
+        12.62,
+        14.82
+       ]
+      ]
+     },
+     "neu": {
+      "u0": -7.8,
+      "u1": 14.8,
+      "z0": 14.35,
+      "profil": [
+       [
+        12.62,
+        14.35
+       ],
+       [
+        12.72,
+        14.38
+       ],
+       [
+        12.83,
+        14.56
+       ],
+       [
+        12.94,
+        14.82
+       ],
+       [
+        12.62,
+        14.82
+       ]
+      ]
      }
     }
    ]
