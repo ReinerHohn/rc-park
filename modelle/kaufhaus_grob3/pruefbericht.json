@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_062358a062358/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548633210057,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590077191591263,
-  "wand_anteil_unter": 0.0007,
+  "wand_pq": 0.10590006411075592,
+  "wand_anteil_unter": 0.0009333333333333333,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -93,11 +93,11 @@
   "erker_o_diag_r": 1.548883300240687,
   "erker_o_front": 1.5408542955753348,
   "erker_o_ecke30": 1.6596163232638645,
-  "erker_o_unterbau76": 1.3408539043858412,
-  "erker_o_unterbau72": 1.000854314934961,
-  "erker_o_gesims_u": 1.6908538424154558,
+  "erker_o_unterbau76": 1.180854105857933,
+  "erker_o_unterbau72": 0.9030748604905047,
+  "erker_o_gesims_u": 1.6783536825855432,
   "erker_o_wappen": 1.5408539533872518,
-  "erker_o_trauf": 1.8008541152325008,
+  "erker_o_trauf": 1.8308542168055555,
   "figur1_scheitel": 11.906999999999993,
   "figur1_spitze": 9.20699999999999,
   "figur2_scheitel": 11.926999999999992,
@@ -164,7 +164,11 @@
   "fenster_og_g3_wand_aussen_r": -0.002103306968940899,
   "fenster_og_g3_stegscheitel_l": 11.946999999999992,
   "fenster_og_g3_stegscheitel_r": 11.946999999999992,
-  "fenster_og_g3_glas_tiefe": 0.19928416741884147
+  "fenster_og_g3_glas_tiefe": 0.19928416741884147,
+  "erker_o_unterbau66": 0.5605745307745054,
+  "erker_o_unterbau70": 0.7097411209969617,
+  "erker_o_unterbau80": 1.4208538864037292,
+  "erker_o_trauf_unten": 1.5408542285036329
  },
  "pruefungen": [
   {
@@ -369,7 +373,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590077191591263,
+   "wert": 0.10590006411075592,
    "soll": [
     0.0348,
     100
@@ -639,7 +643,7 @@
   },
   {
    "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 7,6",
-   "wert": 1.3408539043858412,
+   "wert": 1.180854105857933,
    "soll": [
     1.15,
     1.4
@@ -648,11 +652,51 @@
    "status": "ok"
   },
   {
+   "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 6,6 (Wolke-Median Scheibenmitte)",
+   "wert": 0.5605745307745054,
+   "soll": [
+    0.4,
+    0.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 7,0 (Wolke-Median Scheibenmitte)",
+   "wert": 0.7097411209969617,
+   "soll": [
+    0.52,
+    0.72
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 8,0 (Wolke-Median Scheibenmitte)",
+   "wert": 1.4208538864037292,
+   "soll": [
+    1.28,
+    1.48
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
    "name": "Erker Ost: Auskragung Traufgesims ueber dem Fensterband (m)",
-   "wert": 0.259999819657166,
+   "wert": 0.28999992123022067,
    "soll": [
     0.17,
     0.34
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker Ost: KEIN Vorsprung unter dem Traufwulst bei z 12,85 (Reichweite minus Front, m)",
+   "wert": -6.707170197017831e-08,
+   "soll": [
+    -0.06,
+    0.06
    ],
    "ok": true,
    "status": "ok"

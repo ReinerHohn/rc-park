@@ -776,7 +776,8 @@ def erker_polygon(cfg, ctx):
     Traufgesims. Dach = eigenes Bauteil (helm_geschweift). u = Achse quer zur Wand, s = Normale (wie alle Bauteile), achse_n dreht in x/y.
     Pflicht: u_mitte, n_front, seite_front, seite_schraeg, winkel_grad, wand_n, einbindung, zonen {z_unterbau_spitze, z_unterbau_oben, z_wappen_unten, z_wappen_oben, z_bank_oben, z_trauf_unten, z_trauf_oben},
     unterbau {profil, vorsprung_spitze}, gesims [{name, z0, z1, aus}], fenster {n_lichter, rahmen_b, pfosten_b, z_kaempfer, kaempfer_h, z_licht_unten, z_licht_oben_seite, z_licht_oben_mitte, tiefe},
-    wappen {rand_u, rand_z, tiefe, schild_b, schild_h}, achse_n, achse_quelle, quelle (+ werte_quellen, zaehlung)."""
+    wappen {rand_u, rand_z, tiefe, schild_b, schild_h}, achse_n, achse_quelle, quelle (+ werte_quellen, zaehlung).
+    Optional (Kreis a060555 r1): unterbau.rippen_mitte false (nur die 4 Grate), unterbau.rippen_skal true (Rippenrelief waechst mit dem Pyramidenradius: rippen_vor * p/pmax, min 0,06 (duennere Rippen erzeugen Splitter: Druckreparatur scheitert)); je Gesims-Eintrag 'profil' [[z, aus], ...] und cfg 'bank_profil' [[z, aus], ...] statt Rechteckprisma (Grat/Kamm; ohne Angabe unveraendertes Verhalten)."""
     for k in ("u_mitte", "n_front", "seite_front", "seite_schraeg", "winkel_grad", "wand_n", "einbindung", "zonen", "unterbau", "gesims", "fenster", "wappen", "achse_n", "achse_quelle", "quelle"):
         if cfg.get(k) in (None, ""): sys.exit(f"erker_polygon: '{k}' fehlt (Regel 3b: jedes Mass mit Quelle)")
     um, nf, s_f, s_d, wn, ein = (float(cfg[k]) for k in ("u_mitte", "n_front", "seite_front", "seite_schraeg", "wand_n", "einbindung")); al = math.radians(float(cfg["winkel_grad"])); Zn = {k: float(v) for k, v in cfg["zonen"].items()}
@@ -796,13 +797,21 @@ def erker_polygon(cfg, ctx):
         rb_, rv = float(ub["rippen_b"]), float(ub["rippen_vor"]); fl = [(base[1], base[2]), (base[2], base[3]), (base[3], base[4])]
         def nrm(a, b): d_ = np.array(b, float) - np.array(a, float); d_ /= np.linalg.norm(d_); return np.array([d_[1], -d_[0]]), d_             # (aussen, tangente) fuer Kante a->b (gegen den Uhrzeigersinn)
         anker = [(np.array(base[i], float), (nrm(base[i - 1], base[i])[0] + nrm(base[i], base[i + 1])[0]) / 2) for i in (1, 2, 3, 4)] + [((np.array(a, float) + np.array(b, float)) / 2, nrm(a, b)[0]) for a, b in fl]
+        if ub.get("rippen_mitte") is False: anker = anker[:4]                                                         # nur die 4 Grate (Ecken); die drei Flaechenmitten-Rippen weglassen (Kreis a060555 r1: Mittelrippen ohne Fotokante)
         for P_, nv in anker:
             nv = nv / np.linalg.norm(nv); tv = np.array([-nv[1], nv[0]]); pts_ = []
             for z, p in ringe[1:] + [(z_o + 0.05, pmax)]:                                                              # Rippe endet 5 cm im Gesims (Ueberlappung, keine Beruehrflaeche)
-                f = max(p, 0.02) / pmax; q = np.array([f * P_[0], wn + f * (P_[1] - wn)]) - nv * 0.05; q_o = q + nv * (rv + 0.05)   # 5 cm in die Pyramide eingebunden (Druck: sonst deckungsgleiche Flaechen -> Henkel/Splitter, Pruefung genus)
+                f = max(p, 0.02) / pmax; q = np.array([f * P_[0], wn + f * (P_[1] - wn)]) - nv * 0.05; q_o = q + nv * ((max(0.06, rv * f) if ub.get("rippen_skal") else rv) + 0.05)   # 5 cm in die Pyramide eingebunden (Druck: sonst deckungsgleiche Flaechen -> Henkel/Splitter, Pruefung genus)
                 pts_.append([[um + (q + s_ * tv * rb_ / 2)[0], (q + s_ * tv * rb_ / 2)[1], z] for s_ in (-1, 1)] + [[um + (q_o + s_ * tv * rb_ / 2)[0], (q_o + s_ * tv * rb_ / 2)[1], z] for s_ in (-1, 1)])
             for a_, b_ in zip(pts_, pts_[1:]): teile.append(M.hull_points(a_ + b_))
-    for g_ in cfg["gesims"]: teile.append(prisma(float(g_["z0"]), float(g_["z1"]), float(g_["aus"])))
+    def prisma_profil(pr):                                                                                            # Gesims/Bank mit Querschnittsprofil [[z, aus], ...] (aufsteigend): konvexe Huelle je Abschnitt, aus = Offset des Grundrisses wie prisma(); Kamm = Grat (gerundete Gesimse, Wolke zeigt Grat statt Rechteck)
+        pr = [(float(z), float(a_)) for z, a_ in pr]
+        if len(pr) < 2 or any(b[0] <= a[0] for a, b in zip(pr, pr[1:])) or any(a_ < 0 for _, a_ in pr): sys.exit(f"erker_polygon: unplausibles Gesims-Profil {pr}")
+        def rg(z, a_):
+            cs = C([ccw(np.array(base, float))]); cs = cs.offset(a_, JoinType.Miter) if a_ else cs
+            return [[um + float(x), float(y), z] for x, y in cs.to_polygons()[0]]
+        return UNION([M.hull_points(rg(*a) + rg(*b)) for a, b in zip(pr, pr[1:])])
+    for g_ in cfg["gesims"]: teile.append(prisma_profil(g_["profil"]) if g_.get("profil") else prisma(float(g_["z0"]), float(g_["z1"]), float(g_["aus"])))
     k0 = prisma(Zn["z_wappen_unten"] - 0.01, Zn["z_trauf_unten"] + 0.01)                                               # Koerper Bruestung + Fensterband (Frontebene n_front)
     fl3 = [(np.array(base[i], float), np.array(base[i + 1], float)) for i in (1, 2, 3)]
     fz, wz = cfg["fenster"], cfg["wappen"]; nl = int(fz["n_lichter"]); rb, pf, kh, td = float(fz["rahmen_b"]), float(fz["pfosten_b"]), float(fz["kaempfer_h"]), float(fz["tiefe"]); zk = float(fz["z_kaempfer"])
@@ -822,7 +831,7 @@ def erker_polygon(cfg, ctx):
         schild = C.circle(1.0, 40).scale((float(wz["schild_b"]) / 2, float(wz["schild_h"]) / 2)).translate((0.0, (z0w + z1w) / 2)); schnitte.append(M.extrude(feld - schild, dp2).transform(T2))
     k0 = k0 - UNION(schnitte)
     teile.append(k0)
-    teile.append(prisma(Zn["z_wappen_oben"] - 0.01, Zn["z_bank_oben"], float(cfg.get("bank_aus", 0.0))))                    # Fensterbank-Gesims
+    teile.append(prisma_profil(cfg["bank_profil"]) if cfg.get("bank_profil") else prisma(Zn["z_wappen_oben"] - 0.01, Zn["z_bank_oben"], float(cfg.get("bank_aus", 0.0))))                    # Fensterbank-Gesims (optional bank_profil [[z, aus], ...])
     k = UNION(teile).transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; q = lambda p_: (wq.get(p_) or cfg["quelle"]); zaehl = ", ".join(cfg.get("zaehlung", [])) or "Foto"
     beleg("alle", f"Erker-Polygon u={um:.2f}: Teil-Achteck 3 Flaechen (Front {s_f:.2f} m + 2 Schraegflaechen {s_d:.2f} m, {math.degrees(al):.0f} Grad)", q("grundriss") + f" | Flaechenzahl/Lichter/Wappen: Zaehlung {zaehl} (Regel 9)", u_mitte=um, n_front=nf, seite_front=s_f, seite_schraeg=s_d, winkel_grad=math.degrees(al), n_flaechen=3)
     beleg("alle", "Erker-Polygon: Unterbau (umgekehrte Pyramide, Spitze an der Wand" + (", 7 Rippen ANNAHME" if ub.get("rippen") else "") + ")", q("unterbau"), z_spitze=Zn["z_unterbau_spitze"], z_oben=z_o, profil=prof)

@@ -1,92 +1,92 @@
 {
  "foto": "d11",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_062358a062358/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-d11 (amtliche Anker)",
- "zelle_px": 144,
+ "zelle_px": 142,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    2592,
-    2304,
-    144
+    2414,
+    1988,
+    142
+   ],
+   "score": -0.999,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    6.95,
+    8.21,
+    18.03
+   ]
+  },
+  {
+   "zelle": [
+    2272,
+    1846,
+    142
+   ],
+   "score": -0.974,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    9.1,
+    7.78,
+    17.49
+   ]
+  },
+  {
+   "zelle": [
+    284,
+    1420,
+    142
    ],
    "score": -0.967,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -0.91,
-    8.18,
-    21.32
+    17.23,
+    0.13,
+    17.79
    ]
   },
   {
    "zelle": [
-    288,
-    1440,
-    144
+    994,
+    1136,
+    142
    ],
-   "score": -0.965,
+   "score": -0.938,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    17.17,
-    0.11,
-    17.64
+    14.63,
+    2.43,
+    21.94
    ]
   },
   {
    "zelle": [
-    864,
-    1152,
-    144
+    1704,
+    1704,
+    142
    ],
-   "score": -0.964,
+   "score": -0.909,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    14.71,
-    1.5,
-    22.99
+    7.27,
+    3.86,
+    23.33
    ]
   },
   {
    "zelle": [
-    1584,
-    1440,
-    144
+    852,
+    1136,
+    142
    ],
-   "score": -0.913,
+   "score": -0.875,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    13.96,
-    5.86,
-    17.1
-   ]
-  },
-  {
-   "zelle": [
-    2304,
-    2304,
-    144
-   ],
-   "score": -0.882,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -4.31,
-    5.0,
-    24.95
-   ]
-  },
-  {
-   "zelle": [
-    1008,
-    1152,
-    144
-   ],
-   "score": -0.867,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    14.51,
-    2.51,
-    21.91
+    14.84,
+    1.49,
+    22.96
    ]
   }
  ],

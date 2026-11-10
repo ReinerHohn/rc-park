@@ -764,7 +764,7 @@
   },
   "erker_o_trauf": {
    "typ": "schnitt_reichweite",
-   "z": "=12.95 - z_unterkante_lot2",
+   "z": "=13.14 - z_unterkante_lot2",
    "zentrum": [
     18.735,
     6.413
@@ -1569,6 +1569,62 @@
    "u1": 0.2,
    "vor": 3.0,
    "quantil": 10.0
+  },
+  "erker_o_unterbau66": {
+   "typ": "schnitt_reichweite",
+   "z": "=6.6 - z_unterkante_lot2",
+   "zentrum": [
+    18.735,
+    6.413
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.25,
+   "r_max": 2.2
+  },
+  "erker_o_unterbau70": {
+   "typ": "schnitt_reichweite",
+   "z": "=7.0 - z_unterkante_lot2",
+   "zentrum": [
+    18.735,
+    6.413
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.25,
+   "r_max": 2.2
+  },
+  "erker_o_unterbau80": {
+   "typ": "schnitt_reichweite",
+   "z": "=8.0 - z_unterkante_lot2",
+   "zentrum": [
+    18.735,
+    6.413
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.25,
+   "r_max": 2.2
+  },
+  "erker_o_trauf_unten": {
+   "typ": "schnitt_reichweite",
+   "z": "=12.85 - z_unterkante_lot2",
+   "zentrum": [
+    18.735,
+    6.413
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.25,
+   "r_max": 2.4
   }
  },
  "pruefungen": [
@@ -2358,19 +2414,84 @@
    ]
   },
   {
+   "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 6,6 (Wolke-Median Scheibenmitte)",
+   "wert": "erker_o_unterbau66",
+   "soll": [
+    0.4,
+    0.6
+   ],
+   "quelle": "Wolke lot2 j_voll_lot2.npy, Mittellinie Erker Ost |du|<0,15, n p50 je 0,2-m-Scheibe an der Scheibenmitte (E1): z 6,5 12,78 / 6,7 12,82 / 6,9 12,85 / 7,1 13,01 / 7,3 13,18 / 7,5 13,32 / 7,7 13,50 / 7,9 13,58 / 8,1 13,80 (E0 +-0,05); Reichweite = n - 12,31 (Achtecksmitte). Unterbau-Form am Foto 6161/6164 gesehen (Overlay audit/gitter_generator/rundekreis1_erker_polygon_1_*) | z 6,6: n 12,80 -> 0,49",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2.npy (Mittellinie Erker Ost, Kreis a060555 r1, Skript agent_scratch_kreis1/erker1/profil.py)",
+   "historie": [
+    "2026-11-10 Kreis a060555 r1 (erker_polygon:1, Befund Wolkenbeleg 0,66 / Kanten-P 0,40): am Stand 63ceb01 ROT; Soll = Wolke-MEDIAN je 0,2-m-Scheibe an der SCHEIBENMITTE (nicht p98 am Scheibenanfang wie die Runde-7-Zeilen 72/76: das lag ~0,1 m in z und p98 vs p50 ~0,1 m in n zu hoch, bei Steigung 2 m/m ~0,17 m Reichweite), Mitte |du|<0,15 inkl. Mittelrippe"
+   ]
+  },
+  {
+   "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 7,0 (Wolke-Median Scheibenmitte)",
+   "wert": "erker_o_unterbau70",
+   "soll": [
+    0.52,
+    0.72
+   ],
+   "quelle": "Wolke lot2 j_voll_lot2.npy, Mittellinie Erker Ost |du|<0,15, n p50 je 0,2-m-Scheibe an der Scheibenmitte (E1): z 6,5 12,78 / 6,7 12,82 / 6,9 12,85 / 7,1 13,01 / 7,3 13,18 / 7,5 13,32 / 7,7 13,50 / 7,9 13,58 / 8,1 13,80 (E0 +-0,05); Reichweite = n - 12,31 (Achtecksmitte). Unterbau-Form am Foto 6161/6164 gesehen (Overlay audit/gitter_generator/rundekreis1_erker_polygon_1_*) | z 7,0: n 12,93 -> 0,62",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2.npy (Mittellinie Erker Ost, Kreis a060555 r1, Skript agent_scratch_kreis1/erker1/profil.py)",
+   "historie": [
+    "2026-11-10 Kreis a060555 r1 (erker_polygon:1, Befund Wolkenbeleg 0,66 / Kanten-P 0,40): am Stand 63ceb01 ROT; Soll = Wolke-MEDIAN je 0,2-m-Scheibe an der SCHEIBENMITTE (nicht p98 am Scheibenanfang wie die Runde-7-Zeilen 72/76: das lag ~0,1 m in z und p98 vs p50 ~0,1 m in n zu hoch, bei Steigung 2 m/m ~0,17 m Reichweite), Mitte |du|<0,15 inkl. Mittelrippe"
+   ]
+  },
+  {
+   "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 8,0 (Wolke-Median Scheibenmitte)",
+   "wert": "erker_o_unterbau80",
+   "soll": [
+    1.28,
+    1.48
+   ],
+   "quelle": "Wolke lot2 j_voll_lot2.npy, Mittellinie Erker Ost |du|<0,15, n p50 je 0,2-m-Scheibe an der Scheibenmitte (E1): z 6,5 12,78 / 6,7 12,82 / 6,9 12,85 / 7,1 13,01 / 7,3 13,18 / 7,5 13,32 / 7,7 13,50 / 7,9 13,58 / 8,1 13,80 (E0 +-0,05); Reichweite = n - 12,31 (Achtecksmitte). Unterbau-Form am Foto 6161/6164 gesehen (Overlay audit/gitter_generator/rundekreis1_erker_polygon_1_*) | z 8,0: n 13,69 -> 1,38",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2.npy (Mittellinie Erker Ost, Kreis a060555 r1, Skript agent_scratch_kreis1/erker1/profil.py)",
+   "historie": [
+    "2026-11-10 Kreis a060555 r1 (erker_polygon:1, Befund Wolkenbeleg 0,66 / Kanten-P 0,40): am Stand 63ceb01 ROT; Soll = Wolke-MEDIAN je 0,2-m-Scheibe an der SCHEIBENMITTE (nicht p98 am Scheibenanfang wie die Runde-7-Zeilen 72/76: das lag ~0,1 m in z und p98 vs p50 ~0,1 m in n zu hoch, bei Steigung 2 m/m ~0,17 m Reichweite), Mitte |du|<0,15 inkl. Mittelrippe"
+   ]
+  },
+  {
    "name": "Erker Ost: Auskragung Traufgesims ueber dem Fensterband (m)",
    "wert": "erker_o_trauf - erker_o_front",
    "soll": [
     0.17,
     0.34
    ],
-   "quelle": "Wolke lot2 E1: z 12,75-13,2 n p98 14,11 gegen 13,83 = 0,26",
+   "quelle": "Wolke lot2 E1: z 12,75-13,2 n p98 14,11 gegen 13,83 = 0,26 | z 13,14 (Wulst-Kamm): Wolke 0,1-m-Scheibe n 14,06-14,12 (+0,25 gegen Front 13,82)",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "absolut_hoehe",
    "massstab": "sfm_buendel",
    "protokoll": "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2_crop.npy (Streifen Erkerfront, Log Runde 7)",
    "historie": [
-    "2026-11-09 angelegt (Agent Runde 7 Erker, Nutzerbefund 'Grundriss vieleckig, Fensterband, Wappenzone, Unterbau'): am Runde-6-Modell (Kasten) ROT, Soll aus Fotos/Wolke, nicht gelockert"
+    "2026-11-09 angelegt (Agent Runde 7 Erker, Nutzerbefund 'Grundriss vieleckig, Fensterband, Wappenzone, Unterbau'): am Runde-6-Modell (Kasten) ROT, Soll aus Fotos/Wolke, nicht gelockert",
+    "2026-11-10 Kreis a060555 r1: Messhoehe 12,95 -> 13,14. Neue Quelle: Wolke lot2 in 0,1-m-Scheiben (Mittelstreifen |du|<0,45, E1 und E0): bei z 12,45-12,95 n 13,79-13,83 = buendig mit der Front, Vorsprung n 14,06-14,12 erst z 13,05-13,3; Foto h05 M-h05-006 Wulst 13,047-13,18. Die Runde-7-Zeile (z 12,95, p98 der Scheibe 12,75-13,2) maass den Kamm des Wulsts. Soll [0,17;0,34] UNVERAENDERT."
+   ]
+  },
+  {
+   "name": "Erker Ost: KEIN Vorsprung unter dem Traufwulst bei z 12,85 (Reichweite minus Front, m)",
+   "wert": "erker_o_trauf_unten - erker_o_front",
+   "soll": [
+    -0.06,
+    0.06
+   ],
+   "quelle": "Wolke lot2 0,1-m-Scheiben z 12,45-12,95 (E1/E0): n p50 13,79-13,83 = Frontebene 13,82 (kein Vorsprung); Foto h05 M-h05-007 dunkles Schattenband 12,74-13,05 unter dem Wulst, am Foto 6164 (audit/gitter_generator/rundekreis1_erker_polygon_1_*) als flache Front gesehen",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2.npy (Mittelstreifen Erker Ost, agent_scratch_kreis1/erker1/profil.py)",
+   "historie": [
+    "2026-11-10 Kreis a060555 r1 angelegt: am Stand 63ceb01 ROT (Runde-7-Modell: Traufgesims z 12,74-13,18 springt 0,26 vor, Reichweite bei 12,85 = +0,26 gegen Soll +-0,06)"
    ]
   },
   {
@@ -3769,6 +3890,12 @@
    "naechster_schritt": "Schnitt quer durch die Laibung: Triangulation derselben Steg-/Glaskante in 3 Fotos mit >= 60 Grad Schnittwinkel (6117/6120/6145), Seitenansicht Laibung am Erker-Fenster-Nahfoto (Handyserie) holen"
   },
   {
+   "datum": "2026-11-10",
+   "wer": "Kreis a062358 r2 (erker_polygon:1)",
+   "text": "erker_polygon:1: Wolkenbeleg 0,92 aber Kanten-Praezision 0,465 (Recall 0,877). Vorversuch a060555 r1 (verworfen, Gewinn 0,031 auf damaligem Stand): (a) Unterbau-Profil 0,1-0,2 m zu weit vorn (p98 am Scheibenanfang statt Median Scheibenmitte), (b) Traufgesims springt unter z 13,05 vor, Wolke zeigt Front buendig, (c) Unterbau-Rippen gerade ohne Fotokante, Grate gekruemmt/gerundet. Patch r1 am aktuellen Stand erneut angewendet und gemessen.",
+   "naechster_schritt": "Mitte-Rippen (ANNAHME) und Gesimsprofile an weiteren Fotos pruefen; erker_polygon:0 hat denselben p98-Profilfehler (nicht angefasst)."
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
    "auto_id": "fehlteile-6261-234-1794",
@@ -3777,7 +3904,7 @@
    "z_von": 18.54,
    "z_bis": 18.54,
    "xyz": [
-    14.34,
+    14.33,
     -8.88,
     18.54
    ],
@@ -3795,11 +3922,11 @@
    "z_bis": 18.23,
    "xyz": [
     14.6,
-    -7.16,
+    -7.15,
     18.23
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
