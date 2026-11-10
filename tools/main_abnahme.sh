@@ -7,7 +7,14 @@ cd "$(dirname "$0")/.." || exit 1
 OBJ="$1"; TXT="${2:-Abnahme main}"
 LOCK=/media/oem/scan/rc-park_kreis/$OBJ/merge.lock
 exec 9>"$LOCK"; flock 9
-OUT=$(bash tools/bauen_abnehmen.sh "$OBJ" 2>&1); RC=$?
+# CUDA-Speicher voll (fremde GPU-Jobs) ist ein Infrastrukturfehler, kein rotes Modell (10.11. 13:2x: Pruefstand-OOM -> faelschlich ROT):
+# warten, bis >= 2,5 GB frei sind (hoechstens 10 min), und wiederholen - bis 6 Versuche, wie sh_tor im Kreis.
+for V in 1 2 3 4 5 6; do
+  OUT=$(bash tools/bauen_abnehmen.sh "$OBJ" 2>&1); RC=$?
+  echo "$OUT" | grep -qE "out of memory|OutOfMemoryError|CUDA_ERROR_OUT_OF_MEMORY" || break
+  echo "OOM in der Abnahme (Versuch $V/6) - warte auf freien GPU-Speicher"
+  for i in $(seq 40); do sleep 15; F=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits 2>/dev/null | head -1); [ "${F:-0}" -ge 2500 ] && [ $i -ge 2 ] && break; done
+done
 echo "$OUT"
 if [ $RC -eq 0 ] && echo "$OUT" | grep -q "alle Pruefungen bestanden"; then
   git add -u modelle/
