@@ -38,7 +38,18 @@ def foto_zahl(sha):
     t = {k: g for k, g in t.items() if g.get("f1") is not None}
     if not t: return None
     h = [g["f1_h"] for g in t.values() if g.get("f1_h") is not None]
-    return dict(metrik=met, prozent_foto=round(100 * sum(g["f1"] for g in t.values()) / len(t), 1), hoehe_prozent=round(100 * sum(h) / len(h), 1) if h else None,
+    # PIXELGEWICHTET (11.11.): das Teilmittel FAELLT, wenn ein neues Teil dazukommt (Laubensockel 0,50/0,55: 23 Teile 69,6 %, mit Sockeln 68,2 %),
+    # obwohl das Modell besser wurde -> Gewoelbe/Baldachine wuerden als Rueckschritt erscheinen. Zusatzzahl: Praezision/Recall ueber ALLE
+    # Teil-Foto-Paare nach Kantenpixeln gewichtet (kleine neue Teile wiegen wenig; Bereiche gleicher Teile zaehlen mehrfach - nur Verlauf vergleichen).
+    _T = json.load(open(f))["teile"]; mk = fk = pm = rf = 0.0
+    for k, v in _T.items():
+        if "__ausschnitt" in k: continue
+        for fo, e in v.items():
+            if fo == "_gesamt" or not isinstance(e, dict) or "mk_px" not in e: continue
+            mk += e["mk_px"]; fk += e["fk_px"]; pm += e["praez"] * e["mk_px"]; rf += e["recall"] * e["fk_px"]
+    _p, _r = (pm / mk if mk else 0.0), (rf / fk if fk else 0.0)
+    pix = dict(prozent_foto_pixel=round(200 * _p * _r / (_p + _r), 1) if _p + _r else None, praez_pixel=round(_p, 3), recall_pixel=round(_r, 3))
+    return dict(metrik=met, prozent_foto=round(100 * sum(g["f1"] for g in t.values()) / len(t), 1), hoehe_prozent=round(100 * sum(h) / len(h), 1) if h else None, **pix,
                 foto_teile={k: g["f1"] for k, g in t.items()}, foto_schwaechste=[[k, g["f1"]] for k, g in sorted(t.items(), key=lambda kv: kv[1]["f1"])[:4]])
 
 def zeile_ausgeben(z, vor):
@@ -47,6 +58,10 @@ def zeile_ausgeben(z, vor):
         d = "" if vf is None else f" ({'+' if z['prozent_foto'] >= vf['prozent_foto'] else ''}{z['prozent_foto'] - vf['prozent_foto']:.1f} Punkte gegen {vf['zeit'][11:16]})"
         print(f"REALITAET (Foto) {z['prozent_foto']:.1f} %{d} | Hoehe {z.get('hoehe_prozent')} % | schwaechste am Foto: "
               + ", ".join(f"{t} {b:.2f}" for t, b in z.get("foto_schwaechste") or []), flush=True)
+        if z.get("prozent_foto_pixel") is not None:
+            vp = vor.get("prozent_foto_pixel") if vor else None
+            print(f"  Foto pixelgewichtet {z['prozent_foto_pixel']:.1f} %" + (f" ({z['prozent_foto_pixel'] - vp:+.1f})" if vp is not None else "")
+                  + f" (Praezision {z['praez_pixel']}, Recall {z['recall_pixel']}; neue Teile senken diese Zahl nicht)", flush=True)
     else:
         print("REALITAET (Foto): folgt, sobald die Formliste zu diesem STL fertig ist (fotoform_auffrischen.sh ruft --nur_foto auf)", flush=True)
     if "prozent" not in z: return
