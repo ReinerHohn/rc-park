@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_093550a093550/wt_r3/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -35,13 +35,13 @@
   "bal_feld_breite_max": 0.17,
   "bal_feld_ebene_abstand": 1.924544850106738,
   "fenster_b3_anzahl": 2.0,
-  "fenster_b3_breite_median": 0.8300000000000001,
-  "fenster_b3_breite_max": 0.8300000000000001,
-  "fenster_b3_ebene_abstand": 1.1340548633210057,
+  "fenster_b3_breite_median": 0.8200000000000001,
+  "fenster_b3_breite_max": 0.8200000000000001,
+  "fenster_b3_ebene_abstand": 1.2521246230474818,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.12842519581317902,
-  "wand_anteil_unter": 0.0007,
+  "wand_pq": 0.1390039175748825,
+  "wand_anteil_unter": 0.0008666666666666666,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -59,7 +59,7 @@
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.68,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.68,
   "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.1002299324808607,
-  "laube_rueckwand_n728_z7": -0.00332701019786219,
+  "laube_rueckwand_n728_z7": -0.00332684888924506,
   "helm_o_r_14_64": 1.1110442019599438,
   "helm_o_r_16_18": 0.6410005316999677,
   "helm_o_r_17_76": 0.4009052145424984,
@@ -172,7 +172,11 @@
   "tuer_b3_rahmenfront": -0.04463392756998541,
   "fenster_eg0_rahmenfront": 0.0207220242320707,
   "fenster_eg0_oberkante_l": 0.02001516256124347,
-  "fenster_eg0_oberkante_r": 0.021167838177144294
+  "fenster_eg0_oberkante_r": 0.021167838177144294,
+  "fenster_eg1_rahmenfront": 0.016407608593362877,
+  "fenster_eg1_oberkante_l": 0.015700855543197,
+  "fenster_eg1_oberkante_r": 0.016853294678484954,
+  "fenster_eg1_ueber_oberkante": -0.007184007348401078
  },
  "pruefungen": [
   {
@@ -377,7 +381,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.12842519581317902,
+   "wert": 0.1390039175748825,
    "soll": [
     0.0348,
     100
@@ -437,7 +441,7 @@
   },
   {
    "name": "Laubenrueckwand: Wandflaeche hinter der Ebene n 7,28 (z 7,0, alle Boegen; 0 = in der Ebene)",
-   "wert": -0.00332701019786219,
+   "wert": -0.00332684888924506,
    "soll": [
     -0.08,
     0.08
@@ -1331,6 +1335,46 @@
    "soll": [
     0.02,
     0.06
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Laube EG Bogen 3 (eg1): Setzholz-/Kreuzstock-Vorderflaeche gegen die Wandfront n 7,28 (m, + = dahinter, Strahl am Setzholz u 7,18, z 4,4)",
+   "wert": 0.016407608593362877,
+   "soll": [
+    0.0,
+    0.06
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Laube EG Bogen 3 (eg1): Rahmenoberkante flach - Rahmenband bei z 6,28 vorhanden (links vom Setzholz)  (m hinter der Wandfront)",
+   "wert": 0.015700855543197,
+   "soll": [
+    0.0,
+    0.06
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Laube EG Bogen 3 (eg1): Rahmenoberkante flach - Rahmenband bei z 6,28 vorhanden (rechts vom Setzholz)  (m hinter der Wandfront)",
+   "wert": 0.016853294678484954,
+   "soll": [
+    0.0,
+    0.06
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Laube EG Bogen 3 (eg1): ueber der Rahmenoberkante (z 6,40) nur Wand, kein Rahmen (m hinter der Wandfront, 0 = Wandfront)",
+   "wert": -0.007184007348401078,
+   "soll": [
+    -0.02,
+    0.02
    ],
    "ok": true,
    "status": "ok"

@@ -1,36 +1,37 @@
-# Kreis r2: fensterreihe:eg0 (kaufhaus_grob3, 2026-11-10)
-Befund: Beleg 0,875 (Median 0,078), Kanten None (gitter_pkt 0) -> Guete = Beleg. Ergebnis: Beleg 0,996 (Median 0,027), Guete +0,121 (Gate +0,05). Gesamt-Recall 0,696 -> 0,696, Praezision 0,112 -> 0,112; kein Teil faellt > 0,004 (laube_rueck Recall 0,286 -> 0,282, eg1 0,945 -> 0,944).
+# Kreis r3: fensterreihe:eg1 (kaufhaus_grob3, 2026-11-10)
+Befund: Beleg 0,94 (Median 0,07), Kanten None -> Guete = Beleg. Ergebnis: Beleg 0,998 (Median 0,03), Guete +0,058 (Gate +0,05). Gesamt-Recall 0,6955 -> 0,6958, Praezision 0,1121 -> 0,1124; rueckschritt leer.
 
 ## 1. Formbeschreibung (Stufe 0)
-Fotos (angesehen): 6119 (frontal, Uebersicht/Nah), 6174 (Azimut +60, 6,9 m), 6213 (Azimut -54, 8,4 m), 6171 (Azimut +20), plus Overlay-Ansichten.
-- Zonen unten->oben: Sohle z 3,20 -> untere Reihe 2 Lichter -> Kaempferriegel (Kreuzstock, Mitte z 5,33) -> obere Reihe 2 Lichter -> gerade Oberkante z 6,28 (kein First).
-- Querschnitt: Rahmen/Setzholz/Kaempfer als flaches Putzrelief, Vorderflaeche etwas HINTER der Wandfront (7,25 gegen 7,28, die Wand bildet eine schmale Randleiste); Lichter tief in der Laibung (Glas in Wolke 7,02-7,06).
-- Wiederholung: 2 mal 2 Lichter (Z-6119-001, in 6174/6213 gegengeprueft).
-- Anschluss: sitzt in Laubenrueckwand (n 6,83-7,28), Sohle ueber Bank.
-- Am Altmodell anders: Rahmenfront 7,40 (0,12 VOR der Wand, ANNAHME 'wie eg1'); Ecken 6,18 + Giebel 6,28; Quader-Nische.
-Formfamilie: vorhandene fensterreihe + zwei generische Optionen (nische_front_n mit Rahmen-Ruecksprung, pfosten_oben_z).
+Fotos (angesehen): 6120 (frontal, Uebersicht ~15 m), 6119 (+10 Grad), 6243 (-49 Grad, 9 m, Nahfoto), 6206 (+66 Grad, 6 m, Nahfoto), d17 (verwackelt, nur Sicht). d20 vom Pfeiler verdeckt.
+- Zonen unten->oben: Sohle z 3,21 (Sohlbank-Relief, nicht modelliert) -> untere Reihe 2 Lichter -> Kaempferriegel (Kreuzstock, Mitte z 5,38) -> obere Reihe 2 Lichter -> gerade Oberkante z 6,32 (kein First, kein Bogen).
+- Querschnitt: flaches Putzrelief (Rahmen/Setzholz/Kaempfer) mit Vorderflaeche 0,02 HINTER der Wandfront 7,28; Lichter tief in der Laibung (Glas Wolke 7,11-7,20).
+- Wiederholung: 2x2 Lichter (Z-6120-004, in 6119/6243/6206 gegengesehen; keine neue Zaehlung noetig). Anschluss: sitzt in der Laubenrueckwand Bogen 3, Tuer daneben (eg1_tuer, nicht angefasst).
+- Am Altmodell anders: Front 7,40 (0,12 vor der Wand), kontur 0,14 zu hoch (Oberkante 6,46), Quader-Nische schnitt Setzholz.
+Formfamilie: vorhandene fensterreihe mit nische_front_n/pfosten_oben_z (aus r2); kein Codeaenderung.
 
 ## 2. Zaehlungen
-Z-6119-001 (2+2 Lichter, uebernommen); Gegenprobe visuell in 6174/6213/6171: 2 Spalten x 2 Reihen. Keine neue Zaehlung noetig (ANNAHME: Z-Protokoll nicht neu erzeugt).
+Z-6120-003/004 (bestehend, 2+2 Lichter), visuell in 6119/6243/6206 bestaetigt. Keine neue Z-Datei (ANNAHME: bestehende gilt).
 
-## 3. Pruefungen (Altstand -> neu)
+## 3. Pruefungen
 | Pruefung | vorher | nachher | Soll | Quelle |
 |---|---|---|---|---|
-| fenster_eg0_rahmenfront | -0,13 ROT | +0,02 | 0..0,06 | M-6174-001 n 7,249 +-0,016 (110 Grad), M-6119-008 (3 Kameras) 7,249 +-0,039 |
-| fenster_eg0_oberkante_l/r | -0,01 ROT | 0,02 | 0,02..0,06 | M-6119-001 (flach 6,28), Overlay 6119 |
-Weitere Messungen: M-6119-009 Setzholz-Vorderflaeche 0,10 m = pfosten_b (keine Aenderung). bauen_abnehmen: alle Pruefungen bestanden (freiraum_audit meldet schon vorher 'fehlgeschlagen', nicht Teil dieser Arbeit), 1 Teilnetz, wasserdicht, Wandstaerke 0,13. regression.py: identisch. teile_lage_pruefen eg0: Median 0,04 m, 0 % > 0,5 m.
+| fenster_eg1_rahmenfront | -0,13 ROT | 0,02 | 0..0,06 | M-6243-004 (n 7,264 +-0,011, Paar 6206/6243 110 Grad), M-6119-011 (3 Kameras 7,259 +-0,037) |
+| fenster_eg1_oberkante_l/r | 0,20 ROT | 0,02 | 0..0,06 | M-6120-025 (gerade 6,32) + Overlay |
+| fenster_eg1_ueber_oberkante | -0,13 ROT | -0,01 | -0,02..0,02 | M-6120-025 |
+bauen_abnehmen: alle Pruefungen bestanden (freiraum_audit schon vorher 'fehlgeschlagen', nicht Teil), 1 Teilnetz, wasserdicht, Wandstaerke 0,14. Keine Werkzeugaenderung -> regression.py nicht noetig. teile_lage_pruefen eg1: Median 0,04 m, 0 % > 0,5 m.
 
-## 4. Overlays (Cyan Vorher, Rot Nachher, ohne Z-Puffer)
-audit/gitter_generator/rundekreis2_fensterreihe_eg0_6119.jpg, _6174.jpg, _6213.jpg, _6171.jpg, _alle.jpg. Dazu audit/foto_diff_6119.jpg (Fensterumriss gelb, vor/nach identisch), audit/seiten.jpg (angesehen, unauffaellig).
+## 4. Overlays (cyan vorher, rot nachher, ohne Z-Puffer)
+modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis3_fensterreihe_eg1_6120.jpg, _6243.jpg, _6206.jpg, _6119.jpg, _alle.jpg. foto_diff 6119/6120/6161 rot 0,058/0,031/0,036 (Gate ok). audit/seiten.jpg angesehen: unauffaellig (eg1 dort nicht aufloesbar).
 
 ## 5. Fehlerliste
-- trifft: Aussenmasse/Lage in 6119, Rahmenfront (Triangulation + Wolke), flache Oberkante (6119), Setzholzbreite, 2x2 Lichter.
-- trifft nicht / offen: foto_diff-Treffer 1 (FEHLT 525 m bei u 13,15 z 5,2) ungeklaert, vor/nach gleich; Laibungstiefe 0,17 und Setzholz-Tiefe (einbindung 0,2) nur aus Wolke-Glas + Sichtbild (ANNAHME); Sohle/Sohlbank-Relief, Rahmenstufung, Sprossen unmodelliert.
-- ungeprueft: Rahmenbreite 0,10 seitlich/oben (nicht nachgemessen), teile_sichtpruefung nicht gelaufen, fehlteile_6119 hat keine Treffer bei eg0.
-- Nebenbefund: eg1 (Beleg 0,944) und eg2 (0,983) tragen dieselbe ANNAHME tiefe 0,16/Giebel-Ecken; nicht angefasst.
+- trifft (am Bild gesehen): Aussenmasse/Oberkante 6,32 in 6120/6119, Rahmenfront (Triangulation + Wolke), Riegelhoehe 5,38, 2x2 Lichter, Rahmenstufung in 6243 deckt sich mit rot.
+- trifft nicht / offen: Sohlbank-Relief und Fussverbreiterung des Rahmens (6120 unten), Sprossen unmodelliert; Laibungstiefe 0,17 nur aus Wolke-Glas; Rahmenbreite 0,10 seitlich nicht neu gemessen.
+- ungeprueft: teile_sichtpruefung nicht gelaufen; fehlteile_finden/foto_diff-Treffer nicht einzeln betrachtet; eg2 hat dieselbe ANNAHME (tiefe 0,16, Giebelecken) -> naechster Kandidat.
 
 ## 6. Geaenderte Dateien
-tools/baukasten_gen.py (nische_front_n, Ruecksprung, pfosten_oben_z); modelle/kaufhaus_grob3/objekt.json (eg0: tiefe, einbindung, nische_*, kontur, pfosten_oben_z; quader:eg0_nische aktiv false); masstabelle.json (Beobachtung, 3 Pruefungen, 3 Messungen); messprotokoll K-6171/6174/6213, M-6174-001, M-6119-008..010; NICHTS_GEBRACHT.md; REZEPT (L-KR28); Build-Artefakte (STL, seiten.jpg, pruefbericht, fehlteile_*). Nicht committet.
+modelle/kaufhaus_grob3/objekt.json (eg1: tiefe, einbindung, kaempfer/scheitel, kontur, pfosten_oben_z, nische_*; quader:eg1_nische aktiv false), masstabelle.json (Beobachtung, 4 Pruefungen), messprotokoll M-6243-004, M-6119-011, elemente.json/pruefbericht/MASSNACHWEIS/STL (Build), konvergenz.jsonl, NICHTS_GEBRACHT.md, REZEPT (L-KR29), LOGBUCH_FENSTER_EG1_R3.
 
 ## 7. Generalisierte Lehre
-Lehre | Anlass | Werkzeug: (a) Ausschnitt-Quader schneidet auch Teile darin -> Laibung im Fensterteil | eg0 | nische_front_n; (b) Rahmentiefe aus Kreuzung der Rahmenglieder triangulieren | eg0 Front 7,249 | foto_mass --tri; (c) Abstandskarte + Wolken-n-Histogramm vor Foto-Messung | Beleg 0,875 | agent_scratch_kreis2/diag_eg0.py; (d) Kaempfer = Oberkante - rahmen_b ist Rechenfehler bei flacher Oberkante | Giebel | kontur-Rechteck.
+Lehre | Anlass | Werkzeug
+Geschwisterteile derselben Annahme sofort einzeln nachmessen | eg0->eg1 gleicher Tiefenfehler | foto_mass --tri
+Hoehen per Wandebenen-Linien-Overlay pruefen, Gegenpruefung 'ueber Oberkante nur Wand' | kontur 0,14 zu hoch | Messung fenster_eg1_ueber_oberkante

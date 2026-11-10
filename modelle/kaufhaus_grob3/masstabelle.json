@@ -1697,6 +1697,78 @@
    "schritt": 0.01,
    "quantil": 10.0,
    "_hinweis": "Ebene = Wandfront n 7,28 bei u 12,47; Strahlen im Streifen u 12,47+(0.4..0.8) bei z 6,255 lot2: trifft der Strahl den Rahmen (Oberkante flach 6,28) -> +0,03 (Rahmenfront 0,03 hinter der Wand), trifft er nur die Wand (Rahmen hier niedriger, Giebel) -> 0,00"
+  },
+  "fenster_eg1_rahmenfront": {
+   "typ": "ebene_abstand",
+   "o": [
+    9.203,
+    4.457
+   ],
+   "n": [
+    0.33471889311010433,
+    0.9423180262497086
+   ],
+   "z": "=4.4 - z_unterkante_lot2",
+   "u0": -0.03,
+   "u1": 0.03,
+   "vor": 3.0,
+   "schritt": 0.01,
+   "quantil": 10.0,
+   "_hinweis": "Ebene = Wandfront n 7,28 bei u 7,18 (Setzholzmitte eg1); Strahlen auf dem Setzholz (0,10 breit), z 4,4 lot2; Wert = Lage der Vorderflaeche hinter (+) / vor (-) der Wandfront"
+  },
+  "fenster_eg1_oberkante_l": {
+   "typ": "ebene_abstand",
+   "o": [
+    9.203,
+    4.457
+   ],
+   "n": [
+    0.33471889311010433,
+    0.9423180262497086
+   ],
+   "z": "=6.28 - z_unterkante_lot2",
+   "u0": -0.8,
+   "u1": -0.4,
+   "vor": 3.0,
+   "schritt": 0.01,
+   "quantil": 10.0,
+   "_hinweis": "Ebene = Wandfront n 7,28 bei u 7,18 (Setzholzmitte eg1); Strahlen im Streifen u 7,18+(-0.8..-0.4) bei z 6,28 lot2 (im oberen Rahmenband 6,22..6,32): trifft der Strahl den Rahmen -> +0,02 (Front 0,02 hinter der Wand)"
+  },
+  "fenster_eg1_oberkante_r": {
+   "typ": "ebene_abstand",
+   "o": [
+    9.203,
+    4.457
+   ],
+   "n": [
+    0.33471889311010433,
+    0.9423180262497086
+   ],
+   "z": "=6.28 - z_unterkante_lot2",
+   "u0": 0.4,
+   "u1": 0.8,
+   "vor": 3.0,
+   "schritt": 0.01,
+   "quantil": 10.0,
+   "_hinweis": "Ebene = Wandfront n 7,28 bei u 7,18 (Setzholzmitte eg1); Strahlen im Streifen u 7,18+(0.4..0.8) bei z 6,28 lot2: Rahmen -> +0,02"
+  },
+  "fenster_eg1_ueber_oberkante": {
+   "typ": "ebene_abstand",
+   "o": [
+    9.203,
+    4.457
+   ],
+   "n": [
+    0.33471889311010433,
+    0.9423180262497086
+   ],
+   "z": "=6.4 - z_unterkante_lot2",
+   "u0": -0.8,
+   "u1": 0.8,
+   "vor": 3.0,
+   "schritt": 0.01,
+   "quantil": 10.0,
+   "_hinweis": "Ebene = Wandfront n 7,28 bei u 7,18 (Setzholzmitte eg1); Strahlen u 7,18 +-0.8 bei z 6,40 lot2 = ueber der Rahmenoberkante 6,32: im Foto nur Wand -> 0,00 (Altmodell: Kontur bis 6,46 steht 0,14 zu hoch -> Rahmenfront -0,12)"
   }
  },
  "pruefungen": [
@@ -3583,6 +3655,70 @@
    "historie": [
     "2026-11-10 angelegt (Kreis r2, fensterreihe:eg0): am Altstand (Giebelkontur, bei z 6,255 nur Wand = 0,00) ROT erwartet, Soll nicht gelockert"
    ]
+  },
+  {
+   "name": "Fenster Laube EG Bogen 3 (eg1): Setzholz-/Kreuzstock-Vorderflaeche gegen die Wandfront n 7,28 (m, + = dahinter, Strahl am Setzholz u 7,18, z 4,4)",
+   "wert": "fenster_eg1_rahmenfront",
+   "soll": [
+    0.0,
+    0.06
+   ],
+   "quelle": "Front 0,02 hinter der Wand, Soll 0..0,06 deckt +-0,03 | Foto 6120/6243/6119 (K-*): Rahmenoberkante gerade bei z 6,32 (M-6120-025, Overlay audit/gitter_generator/rundekreis3_fensterreihe_eg1_*.jpg), Rahmenband 0,10; Rahmenfront n 7,26 (Kreuzungspunkt Setzholz/Kaempfer, M-6243-004 Paar 6206/6243 110 Grad, Strahlabstand 0,002, +-0,011; M-6119-011 3 Kameras 7,259 +-0,037) = 0,02 hinter der Wandfront 7,28 (M-6120-021/M-6119-001..003)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6243-004",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r3, fensterreihe:eg1, Befund 'Wolkenbeleg 0,94, Median 0,07 m'): am Altstand (tiefe 0,16 -> Front 7,40 = 0,12 vor der Wand; Kontur bis 6,46) ROT erwartet, Soll nicht gelockert"
+   ]
+  },
+  {
+   "name": "Fenster Laube EG Bogen 3 (eg1): Rahmenoberkante flach - Rahmenband bei z 6,28 vorhanden (links vom Setzholz)  (m hinter der Wandfront)",
+   "wert": "fenster_eg1_oberkante_l",
+   "soll": [
+    0.0,
+    0.06
+   ],
+   "quelle": "Rahmenoberkante gerade 6,32 | Foto 6120/6243/6119 (K-*): Rahmenoberkante gerade bei z 6,32 (M-6120-025, Overlay audit/gitter_generator/rundekreis3_fensterreihe_eg1_*.jpg), Rahmenband 0,10; Rahmenfront n 7,26 (Kreuzungspunkt Setzholz/Kaempfer, M-6243-004 Paar 6206/6243 110 Grad, Strahlabstand 0,002, +-0,011; M-6119-011 3 Kameras 7,259 +-0,037) = 0,02 hinter der Wandfront 7,28 (M-6120-021/M-6119-001..003)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-025",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r3, fensterreihe:eg1, Befund 'Wolkenbeleg 0,94, Median 0,07 m'): am Altstand (tiefe 0,16 -> Front 7,40 = 0,12 vor der Wand; Kontur bis 6,46) ROT erwartet, Soll nicht gelockert"
+   ]
+  },
+  {
+   "name": "Fenster Laube EG Bogen 3 (eg1): Rahmenoberkante flach - Rahmenband bei z 6,28 vorhanden (rechts vom Setzholz)  (m hinter der Wandfront)",
+   "wert": "fenster_eg1_oberkante_r",
+   "soll": [
+    0.0,
+    0.06
+   ],
+   "quelle": "Rahmenoberkante gerade 6,32 | Foto 6120/6243/6119 (K-*): Rahmenoberkante gerade bei z 6,32 (M-6120-025, Overlay audit/gitter_generator/rundekreis3_fensterreihe_eg1_*.jpg), Rahmenband 0,10; Rahmenfront n 7,26 (Kreuzungspunkt Setzholz/Kaempfer, M-6243-004 Paar 6206/6243 110 Grad, Strahlabstand 0,002, +-0,011; M-6119-011 3 Kameras 7,259 +-0,037) = 0,02 hinter der Wandfront 7,28 (M-6120-021/M-6119-001..003)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-025",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r3, fensterreihe:eg1, Befund 'Wolkenbeleg 0,94, Median 0,07 m'): am Altstand (tiefe 0,16 -> Front 7,40 = 0,12 vor der Wand; Kontur bis 6,46) ROT erwartet, Soll nicht gelockert"
+   ]
+  },
+  {
+   "name": "Fenster Laube EG Bogen 3 (eg1): ueber der Rahmenoberkante (z 6,40) nur Wand, kein Rahmen (m hinter der Wandfront, 0 = Wandfront)",
+   "wert": "fenster_eg1_ueber_oberkante",
+   "soll": [
+    -0.02,
+    0.02
+   ],
+   "quelle": "Oberkante 6,32 (nicht 6,46) | Foto 6120/6243/6119 (K-*): Rahmenoberkante gerade bei z 6,32 (M-6120-025, Overlay audit/gitter_generator/rundekreis3_fensterreihe_eg1_*.jpg), Rahmenband 0,10; Rahmenfront n 7,26 (Kreuzungspunkt Setzholz/Kaempfer, M-6243-004 Paar 6206/6243 110 Grad, Strahlabstand 0,002, +-0,011; M-6119-011 3 Kameras 7,259 +-0,037) = 0,02 hinter der Wandfront 7,28 (M-6120-021/M-6119-001..003)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-025",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r3, fensterreihe:eg1, Befund 'Wolkenbeleg 0,94, Median 0,07 m'): am Altstand (tiefe 0,16 -> Front 7,40 = 0,12 vor der Wand; Kontur bis 6,46) ROT erwartet, Soll nicht gelockert"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -4073,38 +4209,46 @@
    "naechster_schritt": "tiefe 0,01 (Front 7,25), einbindung 0,20 (Pfosten bis zum Nischengrund, Laibung in 6174/6213 tief); Pruefung eg0_rahmenfront. Offen: eg1 (Beleg 0,945) und eg2 haben dieselbe ANNAHME tiefe 0,16 - je Teil nachmessen."
   },
   {
+   "datum": "2026-11-10",
+   "wer": "Kreis r3 (093550, fensterreihe:eg1)",
+   "art": "widerspruch",
+   "text": "Befund konvergenz_bericht: Wolkenbeleg 0,94 (Median 0,07 m), Kanten ohne Gitterpunkte -> Guete = Beleg. Ursache an Fotos 6120/6243/6206/6119: (a) Rahmenfront n 7,40 (wand_n 7,24 + tiefe 0,16) steht 0,14 vor der Kreuzstock-Vorderflaeche n 7,26 (M-6243-004, M-6119-011); Fenster liegt 0,02 HINTER der Wandfront 7,28 (gleicher Fehler wie eg0/eg1_tuer, ANNAHME 'tiefe 0,16'); (b) kontur-Rechteck 3,25 hoch (Oberkante 6,46) steht 0,14 ueber der echten Rahmenoberkante 6,32 (6120: gerade, Overlay); (c) quader:eg1_nische (n1 7,30) schnitte Setzholz/Kaempfer weg.",
+   "quelle": "M-6243-004, M-6119-011, M-6120-025, Overlay audit/gitter_generator/rundekreis3_fensterreihe_eg1_*.jpg",
+   "naechster_schritt": "tiefe 0,02, einbindung 0,20, nische_front_n 7,28/nische_tiefe 0,17 statt Quader, kontur 3,11 hoch, pfosten_oben_z 6,27; Pruefungen eg1_rahmenfront/oberkante_l/r/ueber_oberkante"
+  },
+  {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
    "auto_id": "fehlteile-6261-234-1794",
    "art": "fehlteil",
    "foto": "6261",
    "z_von": 18.54,
    "z_bis": 18.54,
    "xyz": [
-    14.34,
-    -8.87,
+    14.35,
+    -8.86,
     18.54
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.87 m (Zelle [234, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.86 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
    "auto_id": "fehlteile-6261-312-1794",
    "art": "fehlteil",
    "foto": "6261",
    "z_von": 18.23,
    "z_bis": 18.23,
    "xyz": [
-    14.61,
-    -7.15,
+    14.6,
+    -7.16,
     18.23
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
