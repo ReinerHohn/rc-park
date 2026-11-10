@@ -1,0 +1,49 @@
+{
+ "id": "M-6119-008",
+ "typ": "triangulation",
+ "foto": "6119",
+ "name": "eg0 Kreuzstock: Kreuzungspunkt Vorderflaeche, 3 Kameras 6119/6213/6174",
+ "beobachtungen": [
+  {
+   "kamera": "K-6119",
+   "px": [
+    650.0,
+    2765.0
+   ]
+  },
+  {
+   "kamera": "K-6213",
+   "px": [
+    366.0,
+    2582.0
+   ]
+  },
+  {
+   "kamera": "K-6174",
+   "px": [
+    363.0,
+    1850.0
+   ]
+  }
+ ],
+ "P": [
+  14.188,
+  2.666,
+  5.33
+ ],
+ "strahl_abstand_m": [
+  0.023,
+  0.005,
+  0.02
+ ],
+ "schnittwinkel_grad": [
+  43.8,
+  68.7,
+  109.9
+ ],
+ "z": 5.33,
+ "unsicherheit_m": 0.039,
+ "massstab_von": "Kameras K-6119, K-6213, K-6174 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.249,
+ "u": 12.484
+}

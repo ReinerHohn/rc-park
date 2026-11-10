@@ -1,6 +1,6 @@
 {
  "stl": "modelle/stl/kaufhaus_grob3_1-87.stl",
- "modell_volumen_m3": 8951.168,
+ "modell_volumen_m3": 8951.132,
  "massstab": 87.0,
  "winkel_grad": 60.0,
  "ziel_anteil": 0.01,
@@ -307,11 +307,11 @@
     160.5
    ],
    "passt": true,
-   "ueberhang_m2": 1.898,
-   "flaeche_m2": 860.56,
-   "ueberhang_anteil": 0.00221,
+   "ueberhang_m2": 1.098,
+   "flaeche_m2": 857.29,
+   "ueberhang_anteil": 0.00128,
    "wasserdicht": true,
-   "volumen_m3": 1446.89,
+   "volumen_m3": 1446.86,
    "rahmen_u": [
     0.73,
     17.15

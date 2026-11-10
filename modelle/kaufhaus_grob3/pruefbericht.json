@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_093550a093550/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548633210057,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590077191591263,
-  "wand_anteil_unter": 0.0008333333333333334,
+  "wand_pq": 0.12842519581317902,
+  "wand_anteil_unter": 0.0007,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -71,9 +71,9 @@
   "tor_b2_oeffnung_breite_max": 4.0,
   "tor_b2_oeffnung_ebene_abstand": 3.001464821295761,
   "fenster_b4_anzahl": 2.0,
-  "fenster_b4_breite_median": 0.8250000000000001,
-  "fenster_b4_breite_max": 0.8300000000000001,
-  "fenster_b4_ebene_abstand": 1.8689588600095906,
+  "fenster_b4_breite_median": 0.8150000000000001,
+  "fenster_b4_breite_max": 0.8200000000000001,
+  "fenster_b4_ebene_abstand": 1.9871140515298098,
   "fenster_b1_anzahl": 2.0,
   "fenster_b1_breite_median": 0.77,
   "fenster_b1_breite_max": 0.77,
@@ -169,7 +169,10 @@
   "erker_o_unterbau70": 0.7097411209969617,
   "erker_o_unterbau80": 1.4208538864037292,
   "erker_o_trauf_unten": 1.5408542285036329,
-  "tuer_b3_rahmenfront": -0.04463392756998541
+  "tuer_b3_rahmenfront": -0.04463392756998541,
+  "fenster_eg0_rahmenfront": 0.0207220242320707,
+  "fenster_eg0_oberkante_l": 0.02001516256124347,
+  "fenster_eg0_oberkante_r": 0.021167838177144294
  },
  "pruefungen": [
   {
@@ -374,7 +377,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590077191591263,
+   "wert": 0.12842519581317902,
    "soll": [
     0.0348,
     100
@@ -1298,6 +1301,36 @@
    "soll": [
     -0.096,
     0.0
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Laube EG Bogen 4 (eg0): Setzholz-/Kreuzstock-Vorderflaeche gegen die Wandfront n 7,28 (m, + = dahinter, Strahl am Setzholz u 12,47, z 4,4)",
+   "wert": 0.0207220242320707,
+   "soll": [
+    0.0,
+    0.06
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Laube EG Bogen 4 (eg0): Rahmenoberkante flach - Rahmen bei z 6,255 vorhanden (links vom Setzholz, u 12,47-0.8..-0.4)  (m hinter der Wandfront)",
+   "wert": 0.02001516256124347,
+   "soll": [
+    0.02,
+    0.06
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Laube EG Bogen 4 (eg0): Rahmenoberkante flach - Rahmen bei z 6,255 vorhanden (rechts vom Setzholz, u 12,47+0.4..+0.8)  (m hinter der Wandfront)",
+   "wert": 0.021167838177144294,
+   "soll": [
+    0.02,
+    0.06
    ],
    "ok": true,
    "status": "ok"

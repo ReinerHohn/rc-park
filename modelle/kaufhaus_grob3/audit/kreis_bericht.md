@@ -1,42 +1,36 @@
-# Kreis r3: fensterreihe:eg1_tuer (kaufhaus_grob3, 2026-11-10)
+# Kreis r2: fensterreihe:eg0 (kaufhaus_grob3, 2026-11-10)
+Befund: Beleg 0,875 (Median 0,078), Kanten None (gitter_pkt 0) -> Guete = Beleg. Ergebnis: Beleg 0,996 (Median 0,027), Guete +0,121 (Gate +0,05). Gesamt-Recall 0,696 -> 0,696, Praezision 0,112 -> 0,112; kein Teil faellt > 0,004 (laube_rueck Recall 0,286 -> 0,282, eg1 0,945 -> 0,944).
 
 ## 1. Formbeschreibung (Stufe 0)
-Fotos (angesehen): 6207 (4,7 m, Az +15, Nahfoto frontal), 6243 (7 m, Az -34), 6206 (8,7 m, Az +74, Streiflicht), 6120 (15 m, Uebersicht), d_17/d_20 (Gegenprobe). Modellpunkt vorher in alle Fotos projiziert.
-- Zonen: Schwelle z 1,77 -> Tuerblatt (ein Blatt, Plankenfuge, 2 Bandbeschlaege, Klopfer) tief in der Laibung -> Schulter z ~2,77 (S-gekruemmte Steinkante), ab hier Laibungsnische 2,05 m breit mit je 3 Goldschaeften -> flacher Spitzbogen (Kaempfer ~3,92, Scheitel ~4,28) -> darueber Goldportal (Wimperg, Goldschraegen).
-- Querschnitt: Wandfront n 7,28 (Tafel 7,291, Goldplaettchen 7,281); Tuerblatt n 6,772 (0,51 hinter der Wand); Goldrelief bis 7,376.
-- Wiederholung: 1 Tuer, 3 Schaefte je Seite (nicht modelliert).
-- Am Altmodell anders: Rechteckring (Breite 1,53) 0,12 vor der Wand, steht oberhalb der Schulter in der hohlen Nische; Nische nur 1,48 breit; Tuerblatt fehlt.
-- Formfamilie: vorhandene `fensterreihe` mit freier `kontur` (keine neue Familie). Unsicher: Bogenform (ANNAHME Sinusast), Wimperg/Schaefte fehlen.
+Fotos (angesehen): 6119 (frontal, Uebersicht/Nah), 6174 (Azimut +60, 6,9 m), 6213 (Azimut -54, 8,4 m), 6171 (Azimut +20), plus Overlay-Ansichten.
+- Zonen unten->oben: Sohle z 3,20 -> untere Reihe 2 Lichter -> Kaempferriegel (Kreuzstock, Mitte z 5,33) -> obere Reihe 2 Lichter -> gerade Oberkante z 6,28 (kein First).
+- Querschnitt: Rahmen/Setzholz/Kaempfer als flaches Putzrelief, Vorderflaeche etwas HINTER der Wandfront (7,25 gegen 7,28, die Wand bildet eine schmale Randleiste); Lichter tief in der Laibung (Glas in Wolke 7,02-7,06).
+- Wiederholung: 2 mal 2 Lichter (Z-6119-001, in 6174/6213 gegengeprueft).
+- Anschluss: sitzt in Laubenrueckwand (n 6,83-7,28), Sohle ueber Bank.
+- Am Altmodell anders: Rahmenfront 7,40 (0,12 VOR der Wand, ANNAHME 'wie eg1'); Ecken 6,18 + Giebel 6,28; Quader-Nische.
+Formfamilie: vorhandene fensterreihe + zwei generische Optionen (nische_front_n mit Rahmen-Ruecksprung, pfosten_oben_z).
 
 ## 2. Zaehlungen
-Z-6207-001, Z-6243-001 (je 1 Tuer, 2 Richtungen), bestehend Z-6120-005.
+Z-6119-001 (2+2 Lichter, uebernommen); Gegenprobe visuell in 6174/6213/6171: 2 Spalten x 2 Reihen. Keine neue Zaehlung noetig (ANNAHME: Z-Protokoll nicht neu erzeugt).
 
-## 3. Pruefungen
+## 3. Pruefungen (Altstand -> neu)
 | Pruefung | vorher | nachher | Soll | Quelle |
 |---|---|---|---|---|
-| tuer_b3_rahmenfront (neu) | -0,12 ROT | -0,04 OK | -0,096..0 | M-6243-001/002/003 |
-| Gesamt Pruefstand | 1 FEHLER (nur die neue) | alle bestanden, 1 Teilnetz, wasserdicht, Wandstaerke 0,13 | | |
-Gate (Kreis): Wolkenbeleg 0,713 -> 0,990 (+0,28), Median 0,098 -> 0,034 m; Fotokanten Recall None / Praezision 0,0 unveraendert (Gitter hat dort 0 Punkte, nicht bewertbar). Gesamt-Kanten-Recall 0,696 / Praezision 0,112 unveraendert, laube_rueck Beleg 0,561 unveraendert (kein Rueckschritt).
-Messungen: M-6207-001 Tuerblatt n 6,772 +-0,026 (Strahlabstand 0,016, 45 Grad; Rueckprojektion in d17, d20, 6120 trifft den Klopfer); erster Versuch Goldschaft-Fuss (Strahlabstand 0,19) verworfen und aus dem Ordner genommen; gueltig: M-6243-001 Tafelecke n 7,291, -002 Goldschraege n 7,376, -003 Goldplaettchen n 7,281; M-6207-002/003 Nischenbreite 2,05 (u 3,26..5,31), Schulter z 2,77.
+| fenster_eg0_rahmenfront | -0,13 ROT | +0,02 | 0..0,06 | M-6174-001 n 7,249 +-0,016 (110 Grad), M-6119-008 (3 Kameras) 7,249 +-0,039 |
+| fenster_eg0_oberkante_l/r | -0,01 ROT | 0,02 | 0,02..0,06 | M-6119-001 (flach 6,28), Overlay 6119 |
+Weitere Messungen: M-6119-009 Setzholz-Vorderflaeche 0,10 m = pfosten_b (keine Aenderung). bauen_abnehmen: alle Pruefungen bestanden (freiraum_audit meldet schon vorher 'fehlgeschlagen', nicht Teil dieser Arbeit), 1 Teilnetz, wasserdicht, Wandstaerke 0,13. regression.py: identisch. teile_lage_pruefen eg0: Median 0,04 m, 0 % > 0,5 m.
 
-## 4. Overlays (vorher | nachher)
-modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis3_fensterreihe_eg1_tuer_6207.jpg, ..._6243.jpg, ..._6120.jpg 
-(Selbst angesehen: 6207, 6243 = Nischenumriss und Bogen treffen gut; 6120 nur als Uebersicht erzeugt, nicht im Detail bewertet = ungeprueft.)
+## 4. Overlays (Cyan Vorher, Rot Nachher, ohne Z-Puffer)
+audit/gitter_generator/rundekreis2_fensterreihe_eg0_6119.jpg, _6174.jpg, _6213.jpg, _6171.jpg, _alle.jpg. Dazu audit/foto_diff_6119.jpg (Fensterumriss gelb, vor/nach identisch), audit/seiten.jpg (angesehen, unauffaellig).
 
 ## 5. Fehlerliste
-- Rahmenfront/Wandlage: trifft (Foto + Wolke).
-- Nischenbreite rechts (Photo-links): trifft (6207). Links (Pillar-Seite): trifft ungefaehr, Modell ~0,05-0,1 breiter als das Gold (Messunsicherheit +-0,14).
-- Bogen: Form nur ANNAHME (Sinusast); im 6207-Overlay liegt der Bogenscheitel etwas niedriger/flacher als der Steinbogen -> ungeprueft/teils trifft nicht.
-- Tuerblatt (6,77): fehlt im Modell (Nische 6,98), offen (Wandstaerke, laube_rueck endet 6,83).
-- Goldschaefte, Wimperg, Schwelle: nicht modelliert.
-- Nischenfluegel Tiefe 0,11: nur aus Wolke, ungeprueft am Foto.
+- trifft: Aussenmasse/Lage in 6119, Rahmenfront (Triangulation + Wolke), flache Oberkante (6119), Setzholzbreite, 2x2 Lichter.
+- trifft nicht / offen: foto_diff-Treffer 1 (FEHLT 525 m bei u 13,15 z 5,2) ungeklaert, vor/nach gleich; Laibungstiefe 0,17 und Setzholz-Tiefe (einbindung 0,2) nur aus Wolke-Glas + Sichtbild (ANNAHME); Sohle/Sohlbank-Relief, Rahmenstufung, Sprossen unmodelliert.
+- ungeprueft: Rahmenbreite 0,10 seitlich/oben (nicht nachgemessen), teile_sichtpruefung nicht gelaufen, fehlteile_6119 hat keine Treffer bei eg0.
+- Nebenbefund: eg1 (Beleg 0,944) und eg2 (0,983) tragen dieselbe ANNAHME tiefe 0,16/Giebel-Ecken; nicht angefasst.
 
 ## 6. Geaenderte Dateien
-modelle/kaufhaus_grob3/objekt.json (tiefe 0,08, kontur, neues quader:eg1_tuer_nische_fluegel), masstabelle.json (Messung, Pruefung, Beobachtung), messprotokoll M-6207-001..003, M-6243-001..003, K-6207/6243/d17/d20, Z-6207-001, Z-6243-001, Overlays, erzeugte STL/Audit-Dateien, NICHTS_GEBRACHT.md, REZEPT_GEBAEUDE_AUS_FOTOS.md.
+tools/baukasten_gen.py (nische_front_n, Ruecksprung, pfosten_oben_z); modelle/kaufhaus_grob3/objekt.json (eg0: tiefe, einbindung, nische_*, kontur, pfosten_oben_z; quader:eg0_nische aktiv false); masstabelle.json (Beobachtung, 3 Pruefungen, 3 Messungen); messprotokoll K-6171/6174/6213, M-6174-001, M-6119-008..010; NICHTS_GEBRACHT.md; REZEPT (L-KR28); Build-Artefakte (STL, seiten.jpg, pruefbericht, fehlteile_*). Nicht committet.
 
 ## 7. Generalisierte Lehre
-| Lehre | Anlass | Werkzeug |
-|---|---|---|
-| Beleg nach u/z/Normale zerlegen, bevor Tiefe verstellt wird (L-KR23) | Beleg 0,0 nur oben-links: Ring in hohler Nische | Diagnose-Skript (agent_scratch_kreis3/diag2.py), foto_mass |
-| Triangulationspunkte nur scharf + Rueckprojektion (L-KR24) | M-6243-001 verworfen | foto_mass --tri |
-| Altstand-Pruefung an gleicher Stelle messen (L-KR25) | Mess-Strahl z 3,0 -> 2,2 | pruefstand ebene_abstand |
+Lehre | Anlass | Werkzeug: (a) Ausschnitt-Quader schneidet auch Teile darin -> Laibung im Fensterteil | eg0 | nische_front_n; (b) Rahmentiefe aus Kreuzung der Rahmenglieder triangulieren | eg0 Front 7,249 | foto_mass --tri; (c) Abstandskarte + Wolken-n-Histogramm vor Foto-Messung | Beleg 0,875 | agent_scratch_kreis2/diag_eg0.py; (d) Kaempfer = Oberkante - rahmen_b ist Rechenfehler bei flacher Oberkante | Giebel | kontur-Rechteck.

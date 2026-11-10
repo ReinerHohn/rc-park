@@ -1,92 +1,92 @@
 {
  "foto": "h13",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_093550a093550/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-h13 (amtliche Anker)",
- "zelle_px": 176,
+ "zelle_px": 177,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    2288,
-    2112,
-    176
+    1947,
+    1239,
+    177
    ],
-   "score": -0.993,
+   "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -5.1,
-    10.43,
-    8.28
+    -8.05,
+    3.23,
+    19.66
    ]
   },
   {
    "zelle": [
-    1936,
-    1408,
-    176
+    1947,
+    1770,
+    177
    ],
-   "score": -0.988,
+   "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -8.25,
-    2.4,
-    18.23
+    -8.46,
+    1.51,
+    14.6
    ]
   },
   {
    "zelle": [
-    1936,
-    1760,
-    176
+    1947,
+    1416,
+    177
+   ],
+   "score": -0.996,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -8.12,
+    2.64,
+    17.84
+   ]
+  },
+  {
+   "zelle": [
+    1947,
+    1593,
+    177
+   ],
+   "score": -0.939,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -8.45,
+    1.79,
+    16.44
+   ]
+  },
+  {
+   "zelle": [
+    2124,
+    1593,
+    177
+   ],
+   "score": -0.937,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -6.38,
+    7.26,
+    13.42
+   ]
+  },
+  {
+   "zelle": [
+    1947,
+    1062,
+    177
    ],
    "score": -0.933,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -8.63,
-    1.05,
-    14.93
-   ]
-  },
-  {
-   "zelle": [
-    2112,
-    1056,
-    176
-   ],
-   "score": -0.909,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -6.08,
-    8.48,
-    17.76
-   ]
-  },
-  {
-   "zelle": [
-    1936,
-    1584,
-    176
-   ],
-   "score": -0.894,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -8.63,
-    1.4,
-    16.7
-   ]
-  },
-  {
-   "zelle": [
-    1936,
-    2112,
-    176
-   ],
-   "score": -0.868,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -7.62,
-    2.4,
-    10.78
+    -7.69,
+    4.24,
+    21.27
    ]
   }
  ],
