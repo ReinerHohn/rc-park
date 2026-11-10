@@ -220,7 +220,9 @@ for runde in range(1, RUNDEN + 1):
             z0 = None   # alte Messart (ohne Sichtpruefung) - nicht vergleichbar
         if z0 is None:   # Basis der Originalrunde (Zweig~1) neu messen, gleiche Messart wie nachher
             wt0 = os.path.join(LDIR, "wt_basis")
-            subprocess.run(["git", "-C", ROOT, "worktree", "add", "-q", "--detach", wt0, br + "~1"], check=True)
+            _msg = subprocess.run(["git", "-C", ROOT, "log", "-1", "--format=%s", br], capture_output=True, text=True).stdout
+            _basis = br + "~1" if ("VERWORFEN" in _msg or "gesichert" in _msg) else br   # alte Spuren: Aenderungen ungesichert im Worktree, Zweig = Basis
+            subprocess.run(["git", "-C", ROOT, "worktree", "add", "-q", "--detach", wt0, _basis], check=True)
             _rc0, z0, _o0 = messen(wt0, f"r{runde}_vorher_basis")
             subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt0], capture_output=True)
             if not z0: sys.exit("Nachpruefen: Basis-Messung fehlgeschlagen")
