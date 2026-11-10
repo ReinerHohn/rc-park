@@ -1,92 +1,92 @@
 {
  "foto": "nu3b",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_035748a035747/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-nu3b (amtliche Anker)",
  "zelle_px": 117,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    702,
     1053,
-    117
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    12.73,
-    -0.06,
-    20.32
-   ]
-  },
-  {
-   "zelle": [
-    702,
     1170,
     117
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    11.62,
-    -1.35,
-    20.2
-   ]
-  },
-  {
-   "zelle": [
-    1170,
-    1170,
-    117
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    9.65,
-    3.23,
-    19.16
-   ]
-  },
-  {
-   "zelle": [
-    819,
-    1287,
-    117
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    10.43,
-    -0.96,
-    18.69
+    8.54,
+    1.04,
+    20.22
    ]
   },
   {
    "zelle": [
     936,
-    1287,
+    1404,
     117
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    11.21,
-    1.5,
-    17.73
+    9.3,
+    -0.27,
+    17.85
    ]
   },
   {
    "zelle": [
-    1170,
-    1287,
+    819,
+    1521,
     117
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    6.56,
-    0.55,
-    19.87
+    9.72,
+    -1.62,
+    16.49
+   ]
+  },
+  {
+   "zelle": [
+    702,
+    1638,
+    117
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    9.31,
+    -4.28,
+    15.83
+   ]
+  },
+  {
+   "zelle": [
+    2691,
+    1638,
+    117
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -3.29,
+    14.55,
+    14.45
+   ]
+  },
+  {
+   "zelle": [
+    0,
+    1755,
+    117
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    15.33,
+    -7.7,
+    14.04
    ]
   }
  ],
