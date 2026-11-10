@@ -321,6 +321,8 @@ for runde in range(1, RUNDEN + 1):
             rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
     ziel = NACH_Z["ziel"] if NACH else waehlen(z0, sperre)
     if not ziel:
+        if not TROCKEN and not NACH and wt != ROOT:   # 10.11.: leere Spuren liessen je 500 MB Worktree liegen (Datenplatte auf 10,0 GB); unveraendert = Commit, verlustfrei
+            subprocess.run(["git", "-C", ROOT, "worktree", "remove", wt], capture_output=True)   # ohne --force: bricht ab, falls doch etwas geaendert ist
         print("kein Kandidat mehr - Ende"); protokoll({"runde": runde, "ende": "kein Kandidat"}); break
     txt = auftrag(ziel, runde, wt)
     open(os.path.join(LDIR, f"auftrag_r{runde}.md"), "w").write(txt)
