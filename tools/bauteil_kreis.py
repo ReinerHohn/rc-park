@@ -252,6 +252,23 @@ def _hoehe_faellt(runde, vk="vorher"):
     v, n = HOEHE.get(f"r{runde}_{vk}"), HOEHE.get(f"r{runde}_vorpruef")
     return v is not None and n is not None and n < v - 0.02
 HOEHE = {}   # Hoehen-Wert je Messung (f1_h, waagerechte Kanten; teil_fotoform.waagerecht), Schluessel = tag r<N>_vorher/_vorpruef/_nachher
+JE = {}      # Werte JE FOTO je Messung (praez/recall/mk_px/fk_px), gleiche Schluessel wie HOEHE (+ kontrolle_vorher)
+def f1_je(je, fotos):
+    """Gleiche Formel wie teil_fotoform/_gesamt und form_aus_liste: pixelgewichtete Praezision/Recall, dann F1."""
+    mk = sum(je[f]["mk_px"] for f in fotos); fk = sum(je[f]["fk_px"] for f in fotos)
+    if mk <= 0 or fk <= 0: return None
+    p = sum(je[f]["praez"] * je[f]["mk_px"] for f in fotos) / mk; r = sum(je[f]["recall"] * je[f]["fk_px"] for f in fotos) / fk
+    return round(2 * p * r / (p + r), 3) if p + r else 0.0
+def angleichen(tag_v, tag_n, fv, fn, wer=""):
+    """GEWINN NUR AUF GEMEINSAMEN FOTOS (11.11., EG2 a205314: nachher fielen 6130/e04 aus der Bewertung ('0 Teile beurteilt'), +0,11 nur durch
+    den kleineren Fotosatz, auf den gemeinsamen Fotos schlechter). Unterscheiden sich die beurteilten Fotos von vorher und nachher, werden beide
+    Werte auf der Schnittmenge neu gerechnet; ohne gemeinsames Foto ist nachher None (nicht messbar = kein Gewinn). Fehlen Je-Foto-Werte: unveraendert."""
+    a, b = JE.get(tag_v), JE.get(tag_n)
+    if fv is None or fn is None or not a or not b or set(a) == set(b): return fv, fn
+    g = [f for f in a if f in b]
+    va, na = (f1_je(a, g), f1_je(b, g)) if g else (fv, None)
+    print(f"  GEMEINSAME FOTOS {wer}: vorher {len(a)}, nachher {len(b)}, gemeinsam {len(g)} (nur vorher: {sorted(set(a) - set(b))}, nur nachher: {sorted(set(b) - set(a))}) -> F1 {fv} -> {fn} wird {va} -> {na}", flush=True)
+    return (va if va is not None else fv), na
 def formliste():
     fs = sorted([p for p in glob.glob(os.path.join(FORMDIR, "*.json")) if METRIK_SOLL in p], key=os.path.getmtime)
     try:
@@ -286,9 +303,10 @@ def form_messen(wt, tdir, teil, fotos, tag, bilder="fotoform_bilder", env=None, 
             sperre=not (env or {}).get("RCPARK_FOTO_SKALA"))   # Stufe halb (10.11. abends): nicht in die Tor-Schlange (mittl. 16 min Warten fuer ~1 min Lauf),
             # teil_fotoform belegt selbst einen gpu_slot (2 Plaetze, VRAM-Zulassung) - Ergebnis deterministisch, nur Reihenfolge anders
     try:
-        _g = ((json.load(open(aus))["teile"].get(teil) or {}).get("_gesamt") or {}); HOEHE[tag] = _g.get("f1_h"); return _g.get("f1")
+        _t = (json.load(open(aus))["teile"].get(teil) or {}); _g = _t.get("_gesamt") or {}; HOEHE[tag] = _g.get("f1_h")
+        JE[tag] = {k: v for k, v in _t.items() if k != "_gesamt" and isinstance(v, dict) and "mk_px" in v}; return _g.get("f1")
     except Exception: return None
-def form_aus_liste(fl, wt, teil, fotos, runde, nebenwirkung=True, hkey=None):
+def form_aus_liste(fl, wt, teil, fotos, runde, nebenwirkung=True, hkey=None, jtag=None):
     """Vorher-F1 aus der Formliste, wenn sie zum STL des Basisstands passt (10.11.: jede Spur mass sonst 35 min dasselbe - Generator-Export
     + 10 Fotos, bei 8 Spuren parallel). Gleiche Formel wie teil_fotoform (_gesamt, pixelgewichtet) auf den gewaehlten Fotos; Vorher-Bilder verlinkt."""
     import hashlib
@@ -299,6 +317,7 @@ def form_aus_liste(fl, wt, teil, fotos, runde, nebenwirkung=True, hkey=None):
     mk = sum(je[f]["mk_px"] for f in fotos); fk = sum(je[f]["fk_px"] for f in fotos)
     if mk <= 0 or fk <= 0: return None
     p = sum(je[f]["praez"] * je[f]["mk_px"] for f in fotos) / mk; r = sum(je[f]["recall"] * je[f]["fk_px"] for f in fotos) / fk
+    JE[jtag or hkey or f"r{runde}_vorher"] = {f: je[f] for f in fotos}
     if hkey:   # Hoehen-Wert unter eigenem Schluessel (halbe Formliste der Vorpruefung)
         hh = [je[f] for f in fotos if "mkh_px" in je[f]]; mh = sum(v["mkh_px"] for v in hh); fh = sum(v["fkh_px"] for v in hh)
         if mh and fh:
@@ -574,7 +593,7 @@ for runde in range(1, RUNDEN + 1):
     if not ist_fehlteil(ziel) and not TROCKEN and not NACH:   # Form am Foto VOR dem Agenten (Basisstand), gleiche Fotos nachher
         _fl = formliste(); ff_fotos = form_fotos(_fl, ziel["teil"])
         if KONTROLLE:
-            kf_fotos = kontroll_fotos(_fl, ziel["teil"]); kf_v = form_aus_liste(_fl, wt, ziel["teil"], kf_fotos, runde, nebenwirkung=False) if kf_fotos else None
+            kf_fotos = kontroll_fotos(_fl, ziel["teil"]); kf_v = form_aus_liste(_fl, wt, ziel["teil"], kf_fotos, runde, nebenwirkung=False, jtag="kontrolle_vorher") if kf_fotos else None
         _fv = form_aus_liste(_fl, wt, ziel["teil"], ff_fotos, runde) if ff_fotos else None
         if _fv is not None:
             ff_v = _fv; print(f"Runde {runde}: Form am Foto vorher {ziel['teil']}: F1 {ff_v} ({len(ff_fotos)} Fotos, aus Formliste {_fl.get('stl_sha')})")
@@ -629,7 +648,7 @@ for runde in range(1, RUNDEN + 1):
         if not _diff:   # Agent hat Generator/objekt.json nicht geaendert (z. B. begruendet 'nicht belegt', a144153 10.11.) -> Rueckgabe waere Leerlauf
             print(f"Runde {runde}: Vorpruefung - Agent hat am Generator nichts geaendert, keine Rueckgabe", flush=True)
             _vorab_gebaut = _rq == 0   # Stand unveraendert seit dem Export
-        elif _rq != 0 or ff_q is None or _vq is None or ff_q < _vq + MIN_GEWINN_FOTO or _hoehe_faellt(runde, _vk):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde
+        elif _rq != 0 or (_qa := angleichen(f"r{runde}_{_vk}", f"r{runde}_vorpruef", _vq, ff_q, "Vorpruefung"))[1] is None or _qa[0] is None or _qa[1] < _qa[0] + MIN_GEWINN_FOTO or _hoehe_faellt(runde, _vk):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde (gemeinsame Fotos)
             try: _je = (json.load(open(os.path.join(LDIR, f"fotoform_r{runde}_vorpruef.json")))["teile"].get(ziel["teil"]) or {})
             except Exception: _je = {}
             _zeilen = "\n".join(f"- Foto {f}: Praezision {_je[f].get('praez')} / Recall {_je[f].get('recall')}  Overlay {LDIR}/fotoform_bilder/{ziel['teil']}_{f}_r{runde}_vorpruef.jpg"
@@ -675,7 +694,8 @@ for runde in range(1, RUNDEN + 1):
                 _qh = ff_q; _hk = "vorpruef"
             _h2v, _h2n = HOEHE.get(f"r{runde}_vorher_halb"), HOEHE.get(f"r{runde}_{_hk}")
             print(f"Runde {runde}: Stufe halb {ziel['teil']}: F1 {_vq} -> {_qh}, Hoehe {_h2v} -> {_h2n}", flush=True)
-            if _qh is None or _qh <= _vq or (_h2v is not None and _h2n is not None and _h2n < _h2v - 0.02):
+            _va, _qh = angleichen(f"r{runde}_vorher_halb", f"r{runde}_{_hk}", _vq, _qh, "Stufe halb")
+            if _qh is None or _va is None or _qh <= _va or (_h2v is not None and _h2n is not None and _h2n < _h2v - 0.02):
                 _frueh = f"Stufe halb ohne Gewinn: F1 {_vq} -> {_qh}, Hoehe {_h2v} -> {_h2n}"
         if _frueh is None and ff_v is None and _ff_spaet:   # aufgeschobener voller Vorher-Wert, nur fuer Kandidaten
             ff_v = form_messen(wt, _ff_spaet[0], ziel["teil"], ff_fotos, f"r{runde}_vorher", stl=_ff_spaet[1])
@@ -685,6 +705,7 @@ for runde in range(1, RUNDEN + 1):
             ff_n = ff_q if (_vorab_gebaut and not _halb) else form_messen(wt, _tn, ziel["teil"], ff_fotos, f"r{runde}_nachher")
             _hv, _hn = HOEHE.get(f"r{runde}_vorher"), HOEHE.get(f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher")
             print(f"Runde {runde}: Form am Foto (voll, vor Abnahme) {ziel['teil']}: F1 {ff_v} -> {ff_n}, Hoehe {_hv} -> {_hn}", flush=True)
+            ff_v, ff_n = angleichen(f"r{runde}_vorher", f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher", ff_v, ff_n, "Tor voll")
             if ff_n is None or ff_n < ff_v + MIN_GEWINN_FOTO or (_hv is not None and _hn is not None and _hn < _hv - 0.02):
                 _frueh = f"Foto voll: F1 {ff_v} -> {ff_n}, Hoehe {_hv} -> {_hn}"
         if _frueh: print(f"Runde {runde}: FRUEH ABGELEHNT ({_frueh}) - Abnahme/Konvergenz/Pruefer uebersprungen", flush=True)
@@ -706,14 +727,16 @@ for runde in range(1, RUNDEN + 1):
     if ff_v is not None and not ersatz and ff_n is None and not _frueh:
         ff_n = ff_q if (_vorab_gebaut and not _halb) else form_messen(wt, os.path.join(LDIR, f"teile_r{runde}_nachher"), ziel["teil"], ff_fotos, f"r{runde}_nachher")   # Vorpruefung = gleicher Stand, gleiche Messung
         print(f"Runde {runde}: Form am Foto {ziel['teil']}: F1 {ff_v} -> {ff_n} ({len(ff_fotos)} Fotos)")
+        ff_v, ff_n = angleichen(f"r{runde}_vorher", f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher", ff_v, ff_n, "Tor")
     kf_n = None
     _flk = formliste_halb(wt) if (kf_fotos and not _frueh) else None   # Kontrollfotos auf halber Aufloesung (nur Protokoll, ~1 statt ~5 min)
     if _flk is not None:
-        kf_v = form_aus_liste(_flk, wt, ziel["teil"], kf_fotos, runde, nebenwirkung=False)
+        kf_v = form_aus_liste(_flk, wt, ziel["teil"], kf_fotos, runde, nebenwirkung=False, jtag="kontrolle_vorher")
     if kf_v is not None and ff_n is not None and not ersatz and not _frueh:   # Kontrollfotos erst hier (Agent kennt sie nicht), eigener Bilderordner
         kf_n = form_messen(wt, os.path.join(LDIR, f"teile_r{runde}_nachher"), ziel["teil"], kf_fotos, f"r{runde}_kontrolle", bilder="kontroll_bilder",
                            env={"RCPARK_FOTO_SKALA": str(SKALA_VOR)} if _flk is not None else None)
         print(f"Runde {runde}: KONTROLLFOTOS {ziel['teil']}: F1 {kf_v} -> {kf_n} ({len(kf_fotos)} Fotos, dem Agenten unbekannt)", flush=True)
+        kf_v, kf_n = angleichen("kontrolle_vorher", f"r{runde}_kontrolle", kf_v, kf_n, "Kontrolle")
     tv = vor_t.get(ziel["teil"], {}); tn = nach_t.get(ersatz or ziel["teil"], {})
     foto_tor = ff_v is not None and ff_n is not None
     if foto_tor:   # FOTO ZUERST (s. MIN_GEWINN_FOTO): Gewinn nur aus den Fotos
