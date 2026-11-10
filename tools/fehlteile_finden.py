@@ -210,6 +210,10 @@ def main():
     cs = max(8, int(round(1.0 * ppm))); gh, gw = H // cs, W // cs; treffer = []
     def zsum(x): return x[:gh * cs, :gw * cs].reshape(gh, cs, gw, cs).sum(dim=(1, 3), dtype=torch.int64).cpu().numpy()
     n_in = zsum(inner); s_fk = zsum(fk); s_mk = zsum(mk); gueltig = n_in >= 0.5 * cs * cs; del fk, mk
+    if not gueltig.any():   # Modell bedeckt im Foto keine ganze 1-m-Zelle (Nahaufnahme/anderer Bildausschnitt) - frueher IndexError, von der Abnahme verschluckt (10.11.)
+        od = os.path.join(root, obj.get("audit", os.path.dirname(obj["masstabelle"]) + "/audit")); os.makedirs(od, exist_ok=True); tg = ("_" + os.path.basename(stl)[:-4]) if "--stl" in a else ""
+        json.dump(dict(foto=nr, stl=stl, kamera=quelle, zelle_px=cs, treffer=[], hinweis="keine gueltige Zelle: Modellflaeche im Foto < 1 Zelle - nicht bewertbar"), open(os.path.join(od, f"fehlteile_{nr}{tg}.json"), "w"), indent=1, ensure_ascii=False)
+        print(f"Fehlteile {nr}: keine gueltige 1-m-Zelle (Zelle {cs} px, Raster {gh}x{gw}, Modell deckt keine Zelle zur Haelfte) - nicht bewertbar, uebersprungen"); return
     def dichte(s_): return max(1e-6, float(np.quantile(s_[gueltig] / np.maximum(1, n_in[gueltig]), 0.9)))
     qf, qm = dichte(s_fk), dichte(s_mk); print(f"  Kantendichte 90%-Quantil Foto {qf:.3f}, Modell {qm:.3f}")
     with np.errstate(all="ignore"):
