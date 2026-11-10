@@ -1,0 +1,54 @@
+{
+ "id": "Z-6161-001",
+ "typ": "zaehlung",
+ "foto": "6161",
+ "datei": "6161_ip_IMG_6161.jpg",
+ "was": "Hauptfassade 1. OG: Figuren (Ritter/Koenige) auf Konsolen zwischen den Fenstergruppen, Reihe ueber dem Balkon",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-10",
+ "punkte": [
+  {
+   "flaeche": "OG",
+   "art": "voll",
+   "x": 1330.0,
+   "y": 1202.0
+  },
+  {
+   "flaeche": "OG",
+   "art": "voll",
+   "x": 1760.0,
+   "y": 1192.0
+  },
+  {
+   "flaeche": "OG",
+   "art": "voll",
+   "x": 2195.0,
+   "y": 1181.0
+  },
+  {
+   "flaeche": "OG",
+   "art": "voll",
+   "x": 2640.0,
+   "y": 1170.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "OG": {
+   "art": "voll",
+   "n": 4
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 4,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-6161-001.jpg",
+ "ausschnitt": [
+  1080,
+  920,
+  2890,
+  1452
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

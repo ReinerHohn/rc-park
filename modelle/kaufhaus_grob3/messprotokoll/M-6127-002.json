@@ -1,0 +1,32 @@
+{
+ "id": "M-6127-002",
+ "foto": "6127",
+ "kamera": "K-6127",
+ "ebene": "0.795,-0.605,0=1.255",
+ "name": "Figur2 Silhouettenbreite Brust quer zur Blickrichtung (6127)",
+ "mess_px": [
+  853.0,
+  1156.0,
+  939.0,
+  1156.0
+ ],
+ "P1": [
+  9.571,
+  10.502,
+  12.571
+ ],
+ "P2": [
+  9.289,
+  10.132,
+  12.636
+ ],
+ "dz": 0.065,
+ "dy": -0.37,
+ "dx": -0.282,
+ "abstand": 0.47,
+ "z1": 12.571,
+ "z2": 12.636,
+ "unsicherheit_rel": 0.0083,
+ "unsicherheit_m": 0.029,
+ "massstab_von": "Kamera K-6127 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.795,-0.605,0=1.255 (+-0.15 m)"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-6127-003",
+ "foto": "6127",
+ "kamera": "K-6127",
+ "ebene": "0.795,-0.605,0=1.255",
+ "name": "Figur2 Silhouettenbreite Kopf quer zur Blickrichtung (6127)",
+ "mess_px": [
+  868.0,
+  1065.0,
+  921.0,
+  1065.0
+ ],
+ "P1": [
+  9.541,
+  10.463,
+  13.148
+ ],
+ "P2": [
+  9.366,
+  10.233,
+  13.19
+ ],
+ "dz": 0.043,
+ "dy": -0.23,
+ "dx": -0.175,
+ "abstand": 0.292,
+ "z1": 13.148,
+ "z2": 13.19,
+ "unsicherheit_rel": 0.0082,
+ "unsicherheit_m": 0.027,
+ "massstab_von": "Kamera K-6127 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.795,-0.605,0=1.255 (+-0.15 m)"
+}

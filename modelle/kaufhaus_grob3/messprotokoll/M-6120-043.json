@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-043",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=12.888",
+ "name": "Figur2 Konsole 2. Stufe Breite",
+ "mess_px": [
+  1485.0,
+  940.0,
+  1572.0,
+  940.0
+ ],
+ "P1": [
+  9.607,
+  10.271,
+  10.867
+ ],
+ "P2": [
+  9.315,
+  10.374,
+  10.86
+ ],
+ "dz": -0.006,
+ "dy": 0.104,
+ "dx": -0.293,
+ "abstand": 0.31,
+ "z1": 10.867,
+ "z2": 10.86,
+ "unsicherheit_rel": 0.0128,
+ "unsicherheit_m": 0.02,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.888 (+-0.15 m)"
+}

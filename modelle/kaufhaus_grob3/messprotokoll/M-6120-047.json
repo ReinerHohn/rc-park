@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-047",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=12.888",
+ "name": "Figur2 Breite Unterschenkel (Silhouette, Zeile 760)",
+ "mess_px": [
+  1489.0,
+  760.0,
+  1608.0,
+  760.0
+ ],
+ "P1": [
+  9.59,
+  10.277,
+  11.648
+ ],
+ "P2": [
+  9.182,
+  10.421,
+  11.638
+ ],
+ "dz": -0.01,
+ "dy": 0.145,
+ "dx": -0.409,
+ "abstand": 0.434,
+ "z1": 11.648,
+ "z2": 11.638,
+ "unsicherheit_rel": 0.0122,
+ "unsicherheit_m": 0.022,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.888 (+-0.15 m)"
+}

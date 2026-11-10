@@ -137,6 +137,18 @@ class Messer:
             a_, b_ = P @ d, P @ q; s = (np.abs(b_) <= quer_max) & (a_ >= 0) & (a_ <= r_max)
             if s.any(): best = float(np.nanmax([best, a_[s].max()])) if np.isfinite(best) else float(a_[s].max())
         return best
+    def z_am_punkt(self, punkt, z0, z1, dz=0.02, suche="oben", puffer=0.02, **k):
+        """Hoechster (suche='oben') bzw. tiefster ('unten') z in [z0, z1], bei dem der Achspunkt (x, y) eines FREISTEHENDEN Bauteils im Querschnitt liegt
+        (Puffer m): Scheitel einer Figur, Spitze einer Pendelkonsole - ohne dass die Wand dahinter (max_z_im_bereich nimmt Flaechenpunkte) oder
+        Fremdeckpunkte (min_im_bereich) das Mass bestimmen (2026-11-10 Kreis r2, Figuren: max_z_im_bereich lieferte die Wandhoehe). nan ohne Treffer."""
+        from shapely.geometry import Point
+        zs = np.arange(z0, z1 + 1e-9, dz); zs = zs[::-1] if suche == "oben" else zs
+        for z in zs:
+            s = self.m.section(plane_origin=[0, 0, z], plane_normal=[0, 0, 1])
+            if s is None: continue
+            p2, T = s.to_2D(); q = (np.linalg.inv(T) @ np.array([punkt[0], punkt[1], z, 1.0]))[:2]; pt = Point(q[0], q[1])
+            if any(g.buffer(puffer).contains(pt) for g in p2.polygons_full): return float(z)
+        return float("nan")
     def schnitt_mitte(self, z, x0, x1, y0, y1, achse="x", **k):
         """Mitte (min+max)/2 der Schnittkontur bei z im xy-Fenster - Achse eines Bauteils, auch wenn das Netz dort keine Eckpunkte hat (Kegel)."""
         sec = self.m.section(plane_origin=(0, 0, z), plane_normal=(0, 0, 1))

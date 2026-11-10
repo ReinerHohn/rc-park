@@ -584,12 +584,57 @@
  },
  {
   "seite": "alle",
-  "element": "Figuren/Nischen: 76 Teilkoerper manifold (76 exakt, 0 Huelle, 0 flach verworfen)",
-  "quelle": "Lage/Hoehe/Drehung/Massstab: T3d.json = GPU-Distanzfeld+Chamfer-Ausrichtung des alten Generators (kaufhaus_measured.glb) an die Fotowolke (BS51d, Skala 0.94, yaw 160 Grad); Teilform: alter Hand-Generator (ANNAHME: nach Fotos/Plan von Hand, nicht neu gemessen) | Druckstufe koerper=true: Teile als manifold-Koerper vereinigt (wasserdichte Teile exakt, sonst konvexe Huelle = ANNAHME; Teile < 1e-05 m3 = flache Restflaechen ohne Dicke verworfen)",
-  "n_teile": 76,
-  "exakt": 76,
-  "huelle": 0,
-  "flach": 0,
+  "element": "Figur u 9.42 (Konsole z 10.59-11.29, Figur z 11.27-13.37)",
+  "quelle": "Triangulation M-6120-037 (Scheitel) / M-6120-038 (Pendelspitze), Kamera-Bruecke (u aus Kronen-/Pendelachse gemittelt) | Form: Rotationskonsole + Ellipsen-Koerperprofil (ANNAHME Huelle, Arme/Schwert nicht modelliert)",
+  "u": 9.422,
+  "s": 12.89,
+  "z_unten": 10.59,
+  "z_scheitel": 13.369,
+  "konsole_r_max": 0.29,
+  "koerper_b_max": 0.62,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Figur u 5.47 (Konsole z 10.59-11.29, Figur z 11.27-13.39)",
+  "quelle": "Triangulation M-6120-030 / M-6120-031, Kamera-Bruecke (u aus Kronen-/Pendelachse gemittelt) | Form: Rotationskonsole + Ellipsen-Koerperprofil (ANNAHME Huelle, Arme/Schwert nicht modelliert)",
+  "u": 5.468,
+  "s": 12.89,
+  "z_unten": 10.59,
+  "z_scheitel": 13.39,
+  "konsole_r_max": 0.29,
+  "koerper_b_max": 0.62,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Figur u 1.48 (Konsole z 10.59-11.29, Figur z 11.27-13.32)",
+  "quelle": "Triangulation M-6120-039 / M-6120-040, Kamera-Bruecke (u aus Kronen-/Pendelachse gemittelt) | Form: Rotationskonsole + Ellipsen-Koerperprofil (ANNAHME Huelle, Arme/Schwert nicht modelliert)",
+  "u": 1.476,
+  "s": 12.89,
+  "z_unten": 10.59,
+  "z_scheitel": 13.325,
+  "konsole_r_max": 0.29,
+  "koerper_b_max": 0.62,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Figur u -2.46 (Konsole z 10.59-11.29, Figur z 11.27-13.36)",
+  "quelle": "Triangulation M-6161-016 (Hutscheitel, 2 Kameras; Konsole ANNAHME wie Figuren 1-3), Kamera-Bruecke (u aus Kronen-/Pendelachse gemittelt) | Form: Rotationskonsole + Ellipsen-Koerperprofil (ANNAHME Huelle, Arme/Schwert nicht modelliert)",
+  "u": -2.463,
+  "s": 12.89,
+  "z_unten": 10.59,
+  "z_scheitel": 13.359,
+  "konsole_r_max": 0.29,
+  "koerper_b_max": 0.62,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Figurenreihe 4 Figuren",
+  "quelle": "Fotos 6120/6119/6117/6127/6132/6161/6164 (Stufe 0 Formbeschreibung im Logbuch kreis_figuren_r2): 4 Figuren (Ritter/Koenige) auf Rundkonsolen (Glocken-/Stufenform mit Pendelknauf) vor den Fensterpfeilern der Hauptfassade 1. OG; Anzahl Z-6161-001 + Z-6145-001 (je 4) | Zaehlung Z-6161-001, Z-6145-001",
+  "n": 4,
   "seite_name": "alle"
  },
  {
@@ -821,12 +866,6 @@
   "scheitel_z": 13.31,
   "wand_n": 12.66,
   "tiefe": 0.15,
-  "seite_name": "alle"
- },
- {
-  "seite": "alle",
-  "element": "Anbauteile ohne Kontakt: 5 Konsolen, 0 Splitter verworfen",
-  "quelle": "baukasten_gen Druckregel (tools/anbau_verbinden.py-Prototyp 5.11.): Konsole = Huelle der unteren 20 % des Teils + 0,1 m in die naechste Modellflaeche; Form des Teils unveraendert",
   "seite_name": "alle"
  },
  {

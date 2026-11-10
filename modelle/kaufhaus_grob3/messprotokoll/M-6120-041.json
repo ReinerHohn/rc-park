@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-041",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=12.888",
+ "name": "Figur2 Konsole Kranz Breite (Silhouette Spitzen, Zeile 905)",
+ "mess_px": [
+  1442.0,
+  905.0,
+  1604.0,
+  905.0
+ ],
+ "P1": [
+  9.752,
+  10.219,
+  11.019
+ ],
+ "P2": [
+  9.205,
+  10.413,
+  11.007
+ ],
+ "dz": -0.012,
+ "dy": 0.194,
+ "dx": -0.547,
+ "abstand": 0.581,
+ "z1": 11.019,
+ "z2": 11.007,
+ "unsicherheit_rel": 0.0127,
+ "unsicherheit_m": 0.023,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.888 (+-0.15 m)"
+}

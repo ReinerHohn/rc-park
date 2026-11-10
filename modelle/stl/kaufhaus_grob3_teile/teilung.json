@@ -1,6 +1,6 @@
 {
  "stl": "modelle/stl/kaufhaus_grob3_1-87.stl",
- "modell_volumen_m3": 9086.967,
+ "modell_volumen_m3": 9087.279,
  "massstab": 87.0,
  "winkel_grad": 60.0,
  "ziel_anteil": 0.01,
@@ -207,7 +207,7 @@
    "achse": "z",
    "wert": 14.1,
    "grund": "Unterseite 5.1 m2 waagerecht nach unten -> Bettflaeche",
-   "gewinn_m2": 6.13,
+   "gewinn_m2": 5.66,
    "stifte": [
     [
      -1.736,
@@ -262,11 +262,11 @@
     242.3
    ],
    "passt": true,
-   "ueberhang_m2": 11.014,
-   "flaeche_m2": 1673.9,
-   "ueberhang_anteil": 0.00658,
+   "ueberhang_m2": 10.477,
+   "flaeche_m2": 1675.74,
+   "ueberhang_anteil": 0.00625,
    "wasserdicht": true,
-   "volumen_m3": 3181.62,
+   "volumen_m3": 3181.82,
    "rahmen_u": [
     4.92,
     17.35
@@ -286,18 +286,18 @@
   },
   {
    "teil": "teil_02",
-   "lage": "seite_u-",
+   "lage": "aufrecht",
    "bett_mm": [
+    174.6,
     238.5,
-    71.3,
-    174.6
+    71.3
    ],
    "passt": true,
-   "ueberhang_m2": 9.571,
-   "flaeche_m2": 1062.65,
-   "ueberhang_anteil": 0.00901,
+   "ueberhang_m2": 9.232,
+   "flaeche_m2": 1063.09,
+   "ueberhang_anteil": 0.00868,
    "wasserdicht": true,
-   "volumen_m3": 1669.01,
+   "volumen_m3": 1669.11,
    "rahmen_u": [
     -10.28,
     4.92
@@ -507,7 +507,7 @@
    ]
   }
  ],
- "max_ueberhang_anteil": 0.00901,
+ "max_ueberhang_anteil": 0.00868,
  "alle_passen": true,
  "log": [
   "Schnitt z 7.900: Ueberhang -154.56 m2",
@@ -515,7 +515,7 @@
   "Bettschnitt u 6.523",
   "Bettschnitt u 4.918",
   "Bettschnitt z 18.182",
-  "Schnitt z 14.100: Ueberhang -6.13 m2"
+  "Schnitt z 14.100: Ueberhang -5.66 m2"
  ],
  "hinweis": "Ueberhang = Flaechen mit Normale steiler als winkel nach unten, ohne Bettflaeche (bett_tol_m); Lage = beste von 6 Achslagen. ANNAHME Stift 2 x 6 mm, Spiel 0,2 mm"
 }

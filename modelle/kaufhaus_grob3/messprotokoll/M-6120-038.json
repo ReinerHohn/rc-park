@@ -1,0 +1,37 @@
+{
+ "id": "M-6120-038",
+ "typ": "triangulation",
+ "foto": "6120",
+ "name": "Figur 1 Konsole Pendelspitze",
+ "beobachtungen": [
+  {
+   "kamera": "K-6120",
+   "px": [
+    430.0,
+    1032.0
+   ]
+  },
+  {
+   "kamera": "K-6117",
+   "px": [
+    1937.0,
+    1700.0
+   ]
+  }
+ ],
+ "P": [
+  13.149,
+  8.899,
+  10.639
+ ],
+ "strahl_abstand_m": [
+  0.006,
+  0.006
+ ],
+ "schnittwinkel_grad": [
+  50.2
+ ],
+ "z": 10.639,
+ "unsicherheit_m": 0.026,
+ "massstab_von": "Kameras K-6120, K-6117 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

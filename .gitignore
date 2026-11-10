@@ -30,3 +30,4 @@ scan-setup/*.log
 daten/martinstor/commons_neu
 modelle/martinstor_null
 daten/martinstor/fotos_eingang
+modelle/*/masstabelle.json.lock

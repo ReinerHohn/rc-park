@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-036",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=12.888",
+ "name": "Figur2 Fusssohle->Kinn",
+ "mess_px": [
+  1527.0,
+  840.0,
+  1527.0,
+  465.0
+ ],
+ "P1": [
+  9.463,
+  10.322,
+  11.294
+ ],
+ "P2": [
+  9.449,
+  10.327,
+  13.001
+ ],
+ "dz": 1.708,
+ "dy": 0.005,
+ "dx": -0.014,
+ "abstand": 1.708,
+ "z1": 11.294,
+ "z2": 13.001,
+ "unsicherheit_rel": 0.0125,
+ "unsicherheit_m": 0.038,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.888 (+-0.15 m)"
+}
