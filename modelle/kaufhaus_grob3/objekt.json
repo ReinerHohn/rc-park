@@ -5062,7 +5062,7 @@
    "kaempfer_z": 3.92,
    "scheitel_z": 4.28,
    "wand_n": 7.24,
-   "tiefe": 0.16,
+   "tiefe": 0.08,
    "rahmen_b": 0.07,
    "pfosten_b": 0.05,
    "riegel_z": 1.8,
@@ -5075,7 +5075,7 @@
     0.9426
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
-   "quelle": "Foto ip_IMG_6120: Tuer mit Goldportal rechts im Bogen 3 (Z-6120-005); Lichte M-6120-004/005; Rahmen 0,07 um die Lichte (ANNAHME), Rundbogen als flacher Spitzbogen (Form = muster_fit-Agent)",
+   "quelle": "Foto ip_IMG_6120: Tuer mit Goldportal rechts im Bogen 3 (Z-6120-005); Lichte M-6120-004/005; Rahmen 0,07 um die Lichte (ANNAHME), Rundbogen als flacher Spitzbogen (Form = muster_fit-Agent) | Kreis r3 2026-11-10: Aussenkontur = Laibungsnische (Gewaende mit Goldschaeften) statt Rechteck: Breite 2,05 m ab Schulter z 2,77 (M-6207-002/003), Tuerblatt 6,77 (M-6207-001)",
    "werte_quellen": {
     "u_mitte": "Neuberechnung auf Ebene 7,28: M-6120-028 (Lichte unten u 3,64..5,03 -> Mitte 4,33, Lichte 1,39 + 2 x rahmen_b), M-6120-029 (Kaempfer 3,90, Scheitel 4,18) | ",
     "breite": "Neuberechnung auf Ebene 7,28: M-6120-028 (Lichte unten u 3,64..5,03 -> Mitte 4,33, Lichte 1,39 + 2 x rahmen_b), M-6120-029 (Kaempfer 3,90, Scheitel 4,18) | ",
@@ -5085,7 +5085,8 @@
     "riegel_z": "ANNAHME: Tuer ohne Kaempferriegel - Pflichtriegel auf die Schwelle gelegt",
     "pitch": "1 Tuer, pitch ohne Wirkung",
     "wand_n": "Laubenrueckwand-Ebene n 7,28 statt 6,54 (2026-11-09 R6): Wolke lot2 Histogrammspitze 7,275 (161 282 Punkte Laube) + 2-Foto-Triangulation 6120/6117 Goldquaste Wandflaeche 7,30 (M-6120-021), Glas 7,11-7,20 (M-6120-022..024); 6,54 aus rohkoerper_v7 nie gemessen -> verworfen",
-    "tiefe": "Rahmenvorderkante 6,66 wie bisher (0,12 vor der Wand) + 0,04 Einbindung"
+    "tiefe": "Rahmenfront = Wandfront 7,28 (Tafel 7,291 M-6243-001, Goldplaettchen 7,281 M-6243-003) + Relief 0,04 = ANNAHME zwischen 0 (Plaettchen) und 0,095 (staerkster Goldvorsprung 7,376, M-6243-002); wand_n 7,24 = 0,04 Einbindung -> tiefe 0,08 (alt 0,16 = Front 7,40, Relief 0,12 war ANNAHME der Runde 3, nie gemessen)",
+    "kontur": "Foto ip_IMG_6207 (K-6207 Kamera-Bruecke, Ebene 7,28): Laibungsnische Aussenkante u 3,26..5,31 (Breite 2,05 +-0,14, M-6207-002), Schulterhoehe z 2,77 (M-6207-003); unterhalb der Schulter nur die Lichte +-0,695 (M-6120-028); Kaempfer rel 2,15 / Scheitel rel 2,51 aus M-6120-005 (z 3,92/4,28); flacher Spitzbogen = ANNAHME (Sinusast); Aussenkontur = Oeffnung + rahmen_b 0,07"
    },
    "historie": [
     {
@@ -5119,7 +5120,113 @@
       "u_mitte": 4.33,
       "breite": 1.53
      }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis r3 (fensterreihe:eg1_tuer)",
+     "alt": {
+      "tiefe": 0.08,
+      "kontur": null
+     },
+     "neu": {
+      "tiefe": 0.08,
+      "kontur": "Laibungsnische 2,05 m ab Schulter z 2,77 (23 Punkte)"
+     }
     }
+   ],
+   "kontur": [
+    [
+     -0.765,
+     0.0
+    ],
+    [
+     0.765,
+     0.0
+    ],
+    [
+     0.765,
+     0.93
+    ],
+    [
+     1.05,
+     0.93
+    ],
+    [
+     1.05,
+     2.15
+    ],
+    [
+     0.913,
+     2.22
+    ],
+    [
+     0.776,
+     2.288
+    ],
+    [
+     0.639,
+     2.35
+    ],
+    [
+     0.502,
+     2.405
+    ],
+    [
+     0.366,
+     2.449
+    ],
+    [
+     0.229,
+     2.483
+    ],
+    [
+     0.092,
+     2.503
+    ],
+    [
+     -0.045,
+     2.51
+    ],
+    [
+     -0.182,
+     2.503
+    ],
+    [
+     -0.319,
+     2.483
+    ],
+    [
+     -0.456,
+     2.449
+    ],
+    [
+     -0.593,
+     2.405
+    ],
+    [
+     -0.729,
+     2.35
+    ],
+    [
+     -0.866,
+     2.288
+    ],
+    [
+     -1.003,
+     2.22
+    ],
+    [
+     -1.14,
+     2.15
+    ],
+    [
+     -1.14,
+     0.93
+    ],
+    [
+     -0.765,
+     0.93
+    ]
    ]
   },
   {
@@ -5250,6 +5357,32 @@
       "u0": 3.59,
       "u1": 5.07
      }
+    }
+   ]
+  },
+  {
+   "typ": "quader:eg1_tuer_nische_fluegel",
+   "gruppe": "quader:eg1_tuer_nische_fluegel",
+   "u0": 3.27,
+   "u1": 5.3,
+   "n0": 7.17,
+   "n1": 7.3,
+   "z0": 2.78,
+   "z1": 3.9,
+   "modus": "ausschnitt",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Laibungsnische (Gewaende mit Goldschaeften) neben dem Tuerblatt: Breite 2,05 m ab Schulter z 2,77 (Foto 6207, M-6207-002/003, 3 mm kleiner als die Rahmen-Oeffnung); Tiefe 0,11 (n 7,17) = Wolke lot2 u 3,2..3,6 z 2,8..4,0 Wandspitze 7,17-7,22 (Wolke = Lage), Foto 6207/6243 zeigt die Schaefte in der Laibung; Obergrenze z 3,9 = Kaempfer",
+   "werte_quellen": {},
+   "historie": [
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis r3 (fensterreihe:eg1_tuer)",
+     "alt": null,
+     "neu": "angelegt (Fluegel der Laibungsnische, passend zur Rahmenkontur)"
     }
    ]
   },

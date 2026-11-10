@@ -1,0 +1,39 @@
+{
+ "id": "M-6243-002",
+ "typ": "triangulation",
+ "foto": "6243",
+ "name": "EG Tuer Bogen 3: linkes unteres Ende der Goldschraege (Wimperg) links der Tuer, Paar 6243/6120",
+ "beobachtungen": [
+  {
+   "kamera": "K-6243",
+   "px": [
+    1032.0,
+    2934.0
+   ]
+  },
+  {
+   "kamera": "K-6120",
+   "px": [
+    1565.0,
+    2987.0
+   ]
+  }
+ ],
+ "P": [
+  7.584,
+  5.139,
+  4.01
+ ],
+ "strahl_abstand_m": [
+  0.003,
+  0.003
+ ],
+ "schnittwinkel_grad": [
+  41.1
+ ],
+ "z": 4.01,
+ "unsicherheit_m": 0.025,
+ "massstab_von": "Kameras K-6243, K-6120 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.376,
+ "u": 5.434
+}

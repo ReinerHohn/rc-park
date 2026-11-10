@@ -1,0 +1,39 @@
+{
+ "id": "M-6243-003",
+ "typ": "triangulation",
+ "foto": "6243",
+ "name": "EG Tuer Bogen 3: kleines Goldplaettchen links der Tuer (Reliefklotz auf der Wand), Paar 6243/6120",
+ "beobachtungen": [
+  {
+   "kamera": "K-6243",
+   "px": [
+    1065.0,
+    2797.0
+   ]
+  },
+  {
+   "kamera": "K-6120",
+   "px": [
+    1565.0,
+    2914.0
+   ]
+  }
+ ],
+ "P": [
+  7.549,
+  5.051,
+  4.33
+ ],
+ "strahl_abstand_m": [
+  0.001,
+  0.001
+ ],
+ "schnittwinkel_grad": [
+  40.6
+ ],
+ "z": 4.33,
+ "unsicherheit_m": 0.023,
+ "massstab_von": "Kameras K-6243, K-6120 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.281,
+ "u": 5.43
+}

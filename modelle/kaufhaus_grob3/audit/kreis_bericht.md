@@ -1,62 +1,42 @@
-# Kreis a062358 r2 - erker_polygon:1 (Ost-Erker, Teil-Achteck)
-
-**Status: Patch des verworfenen Vorversuchs a060555 r1 auf aktuellem Stand neu angewendet, gemessen, mit rippen_vor 0,12 abgestimmt. Nichts committed.**
+# Kreis r3: fensterreihe:eg1_tuer (kaufhaus_grob3, 2026-11-10)
 
 ## 1. Formbeschreibung (Stufe 0)
-Fotos (in den Overlays angesehen): 6164 (Nahfoto frontal), 6161, 6145 (schraeg von Westen/Seite), 6259 (Uebersicht); Vorarbeit Runde 7 (h05, 6124, nuaca).
-- Zonen von unten: Unterbau = umgekehrte Pyramide (Spitze z 6,3 in der Wand) mit gekruemmten Graten; Gesims unten (Kamm z ~8,4); Wappenzone z 8,5-9,65 (2 Schilde in der Front); Fensterbank (Kamm z 9,7); Fensterband (2 Lichter je Flaeche, Kaempfer z 11,38); Traufwulst z 13,05-13,18; darueber Helm (eigenes Bauteil).
-- Grundriss: Teil-Achteck, 3 sichtbare Flaechen (Front + 2 Schraegflaechen 45 Grad), Einbindung in die Wand.
-- Wiederholungen: Lichter, Wappen (gezaehlt Z-6164-001..003, nicht neu gezaehlt), Grate des Unterbaus.
-- Formfamilie: vorhandene `erker_polygon` in tools/baukasten_gen.py, generisch erweitert (Gesims-/Bankprofil, Rippen nur Grate, Rippenrelief skaliert).
-- Was am alten Modell anders war (Overlay vorher): Unterbau 0,1-0,2 m zu weit vorn, Traufgesims sprang schon ab z 12,74 vor (Wolke/Foto: erst ab 13,05), Rechteckgesimse statt Grat, gerade Mittelrippen ohne Fotokante.
-- ANNAHME: Rueckseite/Einbindung 0,3 m unveraendert; Rippenzahl/-relief (Grate) bleibt ANNAHME.
+Fotos (angesehen): 6207 (4,7 m, Az +15, Nahfoto frontal), 6243 (7 m, Az -34), 6206 (8,7 m, Az +74, Streiflicht), 6120 (15 m, Uebersicht), d_17/d_20 (Gegenprobe). Modellpunkt vorher in alle Fotos projiziert.
+- Zonen: Schwelle z 1,77 -> Tuerblatt (ein Blatt, Plankenfuge, 2 Bandbeschlaege, Klopfer) tief in der Laibung -> Schulter z ~2,77 (S-gekruemmte Steinkante), ab hier Laibungsnische 2,05 m breit mit je 3 Goldschaeften -> flacher Spitzbogen (Kaempfer ~3,92, Scheitel ~4,28) -> darueber Goldportal (Wimperg, Goldschraegen).
+- Querschnitt: Wandfront n 7,28 (Tafel 7,291, Goldplaettchen 7,281); Tuerblatt n 6,772 (0,51 hinter der Wand); Goldrelief bis 7,376.
+- Wiederholung: 1 Tuer, 3 Schaefte je Seite (nicht modelliert).
+- Am Altmodell anders: Rechteckring (Breite 1,53) 0,12 vor der Wand, steht oberhalb der Schulter in der hohlen Nische; Nische nur 1,48 breit; Tuerblatt fehlt.
+- Formfamilie: vorhandene `fensterreihe` mit freier `kontur` (keine neue Familie). Unsicher: Bogenform (ANNAHME Sinusast), Wimperg/Schaefte fehlen.
 
 ## 2. Zaehlungen
-Keine neue Zaehlung (Anzahl der Lichter/Wappen unveraendert: Z-6164-001..003). Mittelrippen am Unterbau sind keine gezaehlten Elemente: am Foto keine sichtbar -> entfernt.
+Z-6207-001, Z-6243-001 (je 1 Tuer, 2 Richtungen), bestehend Z-6120-005.
 
-## 3. Pruefungen (am alten Stand ROT: 0,71 / 0,89 / 1,60 / 0,26)
+## 3. Pruefungen
 | Pruefung | vorher | nachher | Soll | Quelle |
 |---|---|---|---|---|
-| erker_o_unterbau66 | 0,71 | 0,56 | 0,4..0,6 | Wolke lot2 Median Scheibenmitte, Foto 6161/6164 |
-| erker_o_unterbau70 | 0,89 | 0,71 | 0,52..0,72 | dito |
-| erker_o_unterbau80 | 1,60 | 1,42 | 1,28..1,48 | dito |
-| erker_o_trauf_unten - front | 0,26 | 0,00 | -0,06..0,06 | Wolke 0,1-m-Scheiben, Foto h05 M-h05-007 |
-| Auskragung Traufgesims (Messhoehe 12,95 -> 13,14, neue Quelle) | - | 0,29 | 0,17..0,34 | Wolke, M-h05-006 |
+| tuer_b3_rahmenfront (neu) | -0,12 ROT | -0,04 OK | -0,096..0 | M-6243-001/002/003 |
+| Gesamt Pruefstand | 1 FEHLER (nur die neue) | alle bestanden, 1 Teilnetz, wasserdicht, Wandstaerke 0,13 | | |
+Gate (Kreis): Wolkenbeleg 0,713 -> 0,990 (+0,28), Median 0,098 -> 0,034 m; Fotokanten Recall None / Praezision 0,0 unveraendert (Gitter hat dort 0 Punkte, nicht bewertbar). Gesamt-Kanten-Recall 0,696 / Praezision 0,112 unveraendert, laube_rueck Beleg 0,561 unveraendert (kein Rueckschritt).
+Messungen: M-6207-001 Tuerblatt n 6,772 +-0,026 (Strahlabstand 0,016, 45 Grad; Rueckprojektion in d17, d20, 6120 trifft den Klopfer); erster Versuch Goldschaft-Fuss (Strahlabstand 0,19) verworfen und aus dem Ordner genommen; gueltig: M-6243-001 Tafelecke n 7,291, -002 Goldschraege n 7,376, -003 Goldplaettchen n 7,281; M-6207-002/003 Nischenbreite 2,05 (u 3,26..5,31), Schulter z 2,77.
 
-Gate (Mittel aus Beleg und Kanten-F1, Messung konvergenz_bericht, gleiche Einstellungen wie der Kreis):
-| Groesse | vorher | nachher (rippen_vor 0,12) |
-|---|---|---|
-| Wolkenbeleg | 0,919 | 0,983 |
-| Kanten-Recall | 0,877 | 0,857 (-0,020, an der Grenze) |
-| Kanten-Praezision | 0,465 | 0,520 |
-| F1 | 0,608 | 0,647 |
-| Guete | 0,763 | 0,815 (**+0,052**) |
-Varianten rippen_vor: 0,16 -> Guete 0,814 / Recall 0,854 (-0,023, Verletzung); 0,22 -> 0,812 / 0,856; 0,12 -> 0,815 / 0,857. Recall schwankt zwischen Laeufen um ~0,003 (gitter_pkt 4292-4349): die Recall-Marge ist duenn und nicht robust belegt.
-bauen_abnehmen.sh: "alle Pruefungen bestanden" (rc 0). regression.py --pruefen: identisch. teile_lage_pruefen: erker_polygon:1 Median 0,08 m (nicht markiert).
-
-## 4. Overlays (selbst angesehen: 6164 vorher+nachher, 6145 nachher, seiten.jpg)
-modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis2_erker_polygon_1_IMG_{6161,6164,6145,6259}_{vorher,nachher}.jpg
-(6161/6259 erzeugt, nicht einzeln angesehen = ungeprueft.)
+## 4. Overlays (vorher | nachher)
+modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis3_fensterreihe_eg1_tuer_6207.jpg, ..._6243.jpg, ..._6120.jpg 
+(Selbst angesehen: 6207, 6243 = Nischenumriss und Bogen treffen gut; 6120 nur als Uebersicht erzeugt, nicht im Detail bewertet = ungeprueft.)
 
 ## 5. Fehlerliste
-- Unterbau-Grate/Pyramide: trifft besser (6164), Mittel-/Randbereich unten (Spitze) in 6145 weiter rot -> trifft teilweise nicht.
-- Gesims unten/Bank: Kamm trifft in 6164; in 6145 Gesims-Querkanten weiter rot (Schraegsicht).
-- Wappenzone/Fensterband: unveraendert, trifft (gruen), einzelne Rahmenkanten rot.
-- Traufwulst: Vorsprung erst ab 13,05 trifft; Oberkante lange Querlinie in 6164 rot (Verdeckung/Helmfuss) - ungeprueft.
-- Rueckflaechen/Einbindung: ANNAHME, ungeprueft.
-- Ost-Erker-Hoehen ohne eigene foto_mass-Messung (aus E0 uebernommen).
-- erker_polygon:0 hat denselben p98-Profilfehler, nicht angefasst.
-- Gate: Recall -0,020 genau an der Grenze; Pruefer sollte mit eigener Wiederholung gegenpruefen.
-- teile_sichtpruefung, foto_diff, fehlteile_finden nicht neu gefahren (nur konvergenz_bericht, Overlays); Sichtpruefung ungeprueft.
-- Freiraum-Audit scheitert im Worktree (fehlende messprotokoll/SFM-AUSRICHTUNG-buendel.json), unabhaengig von dieser Aenderung (auch am Altstand).
+- Rahmenfront/Wandlage: trifft (Foto + Wolke).
+- Nischenbreite rechts (Photo-links): trifft (6207). Links (Pillar-Seite): trifft ungefaehr, Modell ~0,05-0,1 breiter als das Gold (Messunsicherheit +-0,14).
+- Bogen: Form nur ANNAHME (Sinusast); im 6207-Overlay liegt der Bogenscheitel etwas niedriger/flacher als der Steinbogen -> ungeprueft/teils trifft nicht.
+- Tuerblatt (6,77): fehlt im Modell (Nische 6,98), offen (Wandstaerke, laube_rueck endet 6,83).
+- Goldschaefte, Wimperg, Schwelle: nicht modelliert.
+- Nischenfluegel Tiefe 0,11: nur aus Wolke, ungeprueft am Foto.
 
 ## 6. Geaenderte Dateien
-tools/baukasten_gen.py (optionale Parameter gesims[].profil, bank_profil, unterbau.rippen_mitte, rippen_skal); modelle/kaufhaus_grob3/objekt.json (nur erker_polygon:1); masstabelle.json (4 Messungen, 4 Pruefungen, Messhoehe erker_o_trauf, Beobachtung); modelle/NICHTS_GEBRACHT.md; modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md (L-KR21..24); Abnahme-Artefakte (STL, MASSNACHWEIS, pruefbericht, audit/*).
+modelle/kaufhaus_grob3/objekt.json (tiefe 0,08, kontur, neues quader:eg1_tuer_nische_fluegel), masstabelle.json (Messung, Pruefung, Beobachtung), messprotokoll M-6207-001..003, M-6243-001..003, K-6207/6243/d17/d20, Z-6207-001, Z-6243-001, Overlays, erzeugte STL/Audit-Dateien, NICHTS_GEBRACHT.md, REZEPT_GEBAEUDE_AUS_FOTOS.md.
 
 ## 7. Generalisierte Lehre
 | Lehre | Anlass | Werkzeug |
 |---|---|---|
-| Verworfene Patches gegen den aktuellen Vorher-Wert neu messen (Gate kann inzwischen erreichbar sein) | r1 +0,031 -> r2 +0,052 | git apply --include, konvergenz_bericht --teile_dir |
-| Median je Scheibenmitte statt p98 am Scheibenanfang | Unterbau 0,17 m falsch | profil.py, schnitt_reichweite |
-| Gesims als gerundeter Grat | Praezision | baukasten_gen gesims[].profil |
-| Messlauf-Rauschen ~0,003 im Recall: Gate-Grenzfaelle mehrfach messen, Varianten waehlen | Recall 0,854-0,858 | /tmp/messen.sh-Schleife |
+| Beleg nach u/z/Normale zerlegen, bevor Tiefe verstellt wird (L-KR23) | Beleg 0,0 nur oben-links: Ring in hohler Nische | Diagnose-Skript (agent_scratch_kreis3/diag2.py), foto_mass |
+| Triangulationspunkte nur scharf + Rueckprojektion (L-KR24) | M-6243-001 verworfen | foto_mass --tri |
+| Altstand-Pruefung an gleicher Stelle messen (L-KR25) | Mess-Strahl z 3,0 -> 2,2 | pruefstand ebene_abstand |

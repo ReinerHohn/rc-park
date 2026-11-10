@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/cp_test/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -27,9 +27,9 @@
   "giebel_o_rueck": 21.9469998550415,
   "giebel_o_vorn": 21.9469998550415,
   "tuer_b3_anzahl": 1.0,
-  "tuer_b3_breite_median": 1.3900000000000001,
-  "tuer_b3_breite_max": 1.3900000000000001,
-  "tuer_b3_ebene_abstand": 1.256201705899331,
+  "tuer_b3_breite_median": 1.48,
+  "tuer_b3_breite_max": 1.48,
+  "tuer_b3_ebene_abstand": 1.3668759020227925,
   "bal_feld_anzahl": 10.0,
   "bal_feld_breite_median": 0.16,
   "bal_feld_breite_max": 0.17,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548633210057,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590006411075592,
-  "wand_anteil_unter": 0.0009333333333333333,
+  "wand_pq": 0.10590077191591263,
+  "wand_anteil_unter": 0.0008333333333333334,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -168,7 +168,8 @@
   "erker_o_unterbau66": 0.5605745307745054,
   "erker_o_unterbau70": 0.7097411209969617,
   "erker_o_unterbau80": 1.4208538864037292,
-  "erker_o_trauf_unten": 1.5408542285036329
+  "erker_o_trauf_unten": 1.5408542285036329,
+  "tuer_b3_rahmenfront": -0.04463392756998541
  },
  "pruefungen": [
   {
@@ -373,7 +374,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590006411075592,
+   "wert": 0.10590077191591263,
    "soll": [
     0.0348,
     100
@@ -1287,6 +1288,16 @@
    "soll": [
     0.05,
     0.3
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Tuer Laube EG Bogen 3: Rahmenvorderkante gegen die Wandfront n 7,28 (m, - = davor, Strahl am rechten Rahmenpfosten, z 2,2)",
+   "wert": -0.04463392756998541,
+   "soll": [
+    -0.096,
+    0.0
    ],
    "ok": true,
    "status": "ok"

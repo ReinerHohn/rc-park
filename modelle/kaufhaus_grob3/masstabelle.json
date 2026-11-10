@@ -1625,6 +1625,24 @@
    ],
    "quer_max": 0.25,
    "r_max": 2.4
+  },
+  "tuer_b3_rahmenfront": {
+   "typ": "ebene_abstand",
+   "o": [
+    6.517,
+    5.411
+   ],
+   "n": [
+    0.33471889311010433,
+    0.9423180262497086
+   ],
+   "z": "=2.2 - z_unterkante_lot2",
+   "u0": -0.765,
+   "u1": -0.695,
+   "vor": 3.0,
+   "schritt": 0.01,
+   "quantil": 10.0,
+   "_hinweis": "Ebene = Wandfront n 7,28 bei u_fac 4,33 (Tuermitte); Strahlen am rechten Rahmenpfosten (u_fac 5,03..5,07, frei von der Saeule bei u 3,06..3,94); Wert = Lage der Rahmenvorderkante hinter (+) / vor (-) der Wandfront; z 2,2 (Pfosten steht in Alt- UND Neukontur; Altstand bei z 3,0 gemessen: -0,12, Tiefe ist ueber z konstant)"
   }
  },
  "pruefungen": [
@@ -3446,6 +3464,23 @@
     "2026-11-10 angelegt (Kreis r1, fensterreihe:og): am Altstand (Glas in der Wandebene, -0,03) ROT; Soll nicht gelockert; Rahmen-Aussenkanten-Pruefungen (Rahmenfront 12,81) entfernt: Tiefe der Rahmenfront ist widerspruechlich belegt (M-6120-057 12,805 gegen M-6132-002 12,646)",
     "2026-11-10 Rahmenfront-Tiefe 0,15 -> 0,05 (Foto M-6132-002/M-6120-056 + Wolke buendig); Soll unveraendert"
    ]
+  },
+  {
+   "name": "Tuer Laube EG Bogen 3: Rahmenvorderkante gegen die Wandfront n 7,28 (m, - = davor, Strahl am rechten Rahmenpfosten, z 2,2)",
+   "wert": "tuer_b3_rahmenfront",
+   "soll": [
+    -0.096,
+    0.0
+   ],
+   "quelle": "Foto: Infotafel-Ecke links der Tuer n 7,291 +-0,026 (M-6243-001) und Goldplaettchen auf der Wand n 7,281 +-0,023 (M-6243-003) = Wandfront 7,28; staerkster Vorsprung des Goldportals: Ende der Goldschraege n 7,376 +-0,025 (M-6243-002), Paar 6243/6120 41 Grad, Strahlabstand 0,003. Rahmenfront darf nicht weiter vorstehen als das am weitesten vorstehende Goldelement (0,096) und nicht hinter der Wand liegen. Wolke lot2: Wandspitze 7,27, am Tuerbogen z 3,6-4,4 Wand 7,17-7,27",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6243-002",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r3, fensterreihe:eg1_tuer, Befund 'Wolkenbeleg 0,71, Median 0,10 m'): am Altstand (tiefe 0,16 -> Front 7,40 = 0,12 vor der Wand) ROT erwartet, Soll nicht gelockert",
+    "2026-11-10 Messhoehe 3,0 -> 2,2 (Kontur wird ab z 2,77 zur Laibungsnische verbreitert; Pfosten bleibt bei z 2,2 an gleicher Stelle u 5,03..5,07); Soll unveraendert"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -3917,6 +3952,13 @@
    "naechster_schritt": "Profilbreite je Hoehe aus Silhouette 6161/6164 (foto_silhouette_profil) messen, Formfamilie Trichter (monoton steigende Zuwaechse) festlegen, dann fitten; Rippen als eigene Elemente."
   },
   {
+   "datum": "2026-11-10",
+   "wer": "Kreis r3 (fensterreihe:eg1_tuer)",
+   "art": "widerspruch",
+   "text": "Befund konvergenz_bericht: Wolkenbeleg 0,713 (Median 0,098 m, Anteil mit Daten 0,77). Ursache an Fotos/Wolke: Rahmenfront n 7,40 steht 0,12 vor der Wandfront 7,28 (Fotos 6243/6120: Tafel 7,29, Goldplaettchen 7,28, staerkster Goldvorsprung 7,376); Beleg nach Hoehe 1,00 (z<2,7) -> 0,44 (z 3,7-4,3). Zweiter Widerspruch (NICHT in diesem Teil loesbar): Tuerblatt liegt n 6,772 +-0,026 (M-6207-001, Klopfer-Drehpunkt, Gegenprobe d17/d20/6120 projiziert, Wolke 6,77) = 0,51 hinter der Wand; Modell-Nische endet bei 6,98 (quader:eg1_tuer_nische n0), Rueckwand quader:laube_rueck endet bei 6,83 -> tiefer Schnitt unterschreitet die Wandstaerke.",
+   "naechster_schritt": "tiefe von fensterreihe:eg1_tuer auf Foto-Vorsprung; Tuerblatt 6,77 erst nach Rueckwanddicke-Entscheidung (Druck) einbauen"
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
    "auto_id": "fehlteile-6261-234-1794",
@@ -3925,7 +3967,7 @@
    "z_von": 18.54,
    "z_bis": 18.54,
    "xyz": [
-    14.33,
+    14.34,
     -8.88,
     18.54
    ],
@@ -3943,11 +3985,11 @@
    "z_bis": 18.23,
    "xyz": [
     14.6,
-    -7.15,
+    -7.16,
     18.23
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
