@@ -3322,23 +3322,6 @@
    "status": "offen"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
-   "auto_id": "fehlteile-6261-546-1170",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 26.2,
-   "z_bis": 26.2,
-   "xyz": [
-    15.8,
-    -2.07,
-    26.2
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.2 m, y=-2.07 m (Zelle [546, 1170, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-10",
    "wer": "Kreis r3 helm_geschweift:o",
    "quelle": "konvergenz_bericht (Beleg 0,61, Kanten R 0,36 P 0,20) + Overlay audit/gitter_generator/rundekreis3_helm_geschweift_o_*; M-sil-helm_o-1; W-helm_o-fuss",
