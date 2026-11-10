@@ -5354,11 +5354,12 @@
   {
    "datum": "2026-11-10",
    "wer": "Koordinator (Sichtbarkeits-Befund, Overlays v2 6206/6213/d20)",
-   "teil": "NEU: laubengewoelbe",
+   "teil": "quader:laube_rueck",
    "art": "fehlteil",
    "merkmal": "Laubendecke/Kreuzrippengewoelbe fehlt im Modell",
    "text": "Die Laube hat Kreuzrippengewoelbe (Fotos 6206, 6213, d20, k_14, 6228). Im Modell fehlt die Decke; dadurch gelten Giebel/Rumpf/Laubenrueckwand in Fotos unter der Laube als sichtbar. Fotowolken-Verdeckung (Metrik v2) erfasst nur Rippen, nicht die weissen Kappen (keine Wolkenpunkte auf glattem Putz).",
-   "naechster_schritt": "Gewoelbe als Bauteil (Joche = Bogenreihe-Pitch, Kaempfer-/Scheitelhoehe per foto_mass an Rippen, Rippenzahl je Joch per foto_zaehlung); verdeckt dann ueber das Modell selbst."
+   "naechster_schritt": "Gewoelbe als Bauteil (Joche = Bogenreihe-Pitch, Kaempfer-/Scheitelhoehe per foto_mass an Rippen, Rippenzahl je Joch per foto_zaehlung); verdeckt dann ueber das Modell selbst.",
+   "teil_hinweis_2026-11-11": "Koordinator 00:50: Ziel auf quader:laube_rueck umgehaengt - 'NEU: ...' passte zu keinem Teil, der Kreis konnte den Befund nie waehlen. Beleg: rumpf_eg und laube_rueck haben in der v2-Formliste je Foto IDENTISCHE Werte (6174 0,916/0,586, d17 0,838/0,129, 6119 0,713/0,168) = gleicher Bildbereich in der Laube; Recall 0,13-0,3 = viele Fotokanten ohne jede Modellkante (Agentenberichte 211116/230756: Gewoelberippen, Gurtboegen, Kapitelle). Das fehlende Gewoelbe deckelt beide Teile. Auftrag: Kreuzrippengewoelbe (Joche je Laubenbogen: Kaempfer-/Scheitelhoehe, Rippen, Gurtboegen) als neue Formfamilie im Generator, Masse per foto_mass aus >=3 Fotos aus der Laube (6174, 6130, d17, 6207, e_14), Anzahl Joche per foto_zaehlung (Regel 9)."
   },
   {
    "datum": "2026-11-10",
@@ -5432,7 +5433,8 @@
    "merkmal": "Steinbank mit Sockelband vor der Laubenrueckwand fehlt",
    "text": "Agent: Rueckwandebene n 7,28 passt am Foto; im Teilbereich fehlt die Steinbank mit Sockelband vor der Wand (nicht im Modell). F1 des Teils sonst von fremden Kanten (Fenster, Tuer, Tafel, Gewoelberippen) bestimmt.",
    "naechster_schritt": "Bank an 6117/6124/6130 per foto_zaehlung (Abschnitte) und foto_mass --tri (Hoehe, Tiefe) messen, Pruefung eintragen (muss fehlschlagen), eigenes Anbauteil mit beleg().",
-   "gemessen_2026-11-10": "Kreis r1 a232557: Stufe 0 an 6117/6124/6130: durchgehender Sockel (Gesimsband oben, Fuellungsfelder darunter) vor der Rueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006), Front n ~7,73 (Tiefe ~0,45, Wolke). Pruefungen laube_sockel_* angelegt."
+   "gemessen_2026-11-10": "Kreis r1 a232557: Stufe 0 an 6117/6124/6130: durchgehender Sockel (Gesimsband oben, Fuellungsfelder darunter) vor der Rueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006), Front n ~7,73 (Tiefe ~0,45, Wolke). Pruefungen laube_sockel_* angelegt.",
+   "erledigt": "kreis 20261110_232557a232557 r1 (quader:laube_sockel_w u -7,2..-1,5, z 1,5..2,2; Foto-F1 0,444->0,481), Westende ANNAHME"
   },
   {
    "datum": "auto",
