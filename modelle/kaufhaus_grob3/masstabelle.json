@@ -4869,6 +4869,26 @@
    "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
   },
   {
+   "datum": "2026-11-10",
+   "wer": "Nutzer (Sichtfund, Markierung auf Overlay handy_03)",
+   "art": "sichtbeobachtung",
+   "merkmal": "Staffelgiebel Ost Lage/Groesse",
+   "teil": "staffelgiebel__ost",
+   "foto": "an_handy_2026-11-06_handy_03",
+   "text": "Nutzer markiert rechten Staffelgiebel + Helm: Modell-Stufenumriss liegt neben/ueber den Fotostufen (etwa eine Stufenbreite nach aussen versetzt, Oberkante zu hoch); Helm-Umriss rechts breiter als Foto. Nutzer bestaetigt 13:25 (Seitenansicht Viewer V40 neben Foto IMG_6232/nu_d238acfa): rechter Giebel gut sichtbar, aber FALSCH - Stufen stehen ueber/neben der Dachflaeche statt auf dem Dachende; Westgiebel nicht beanstandet.",
+   "naechster_schritt": "teil_fotoform staffelgiebel__ost + helm_geschweift__o an >=3 Fotos (handy_03, IMG_6162, 6138); Pruefung, die am Modell FEHLSCHLAEGT (Stufen-Aussenkante/Firsthoehe gegen Foto-Strahl), dann Generator"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Nutzer (Sichtfund, Markierung auf Overlay handy_03)",
+   "art": "sichtbeobachtung",
+   "merkmal": "Balkonbruestung Docken Anzahl/Form",
+   "teil": "bruestung__balkon",
+   "foto": "an_handy_2026-11-06_handy_03",
+   "text": "Nutzer markiert Balkon: Modell hat ~22 dicke, ovale Einzelstaebe in unregelmaessigen Abstaenden; Foto zeigt eine dichte Reihe schlanker Docken (Baluster) gleichmaessig zwischen den Erkern; Zahl NUR am Foto zaehlen (Regel 9, foto_zaehlung.py).",
+   "naechster_schritt": "Docken je Feld mit tools/foto_zaehlung.py an 2 Fotos zaehlen (Z-Protokoll), Teilung als Wiederholungsmuster falten (L-Wiederholungs-Prior), Pruefung Anzahl+Teilung, dann Generator"
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
    "auto_id": "fehlteile-6261-234-1794",
@@ -4901,26 +4921,6 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.24 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "2026-11-10",
-   "wer": "Nutzer (Sichtfund, Markierung auf Overlay handy_03)",
-   "art": "sichtbeobachtung",
-   "merkmal": "Staffelgiebel Ost Lage/Groesse",
-   "teil": "staffelgiebel__ost",
-   "foto": "an_handy_2026-11-06_handy_03",
-   "text": "Nutzer markiert rechten Staffelgiebel + Helm: Modell-Stufenumriss liegt neben/ueber den Fotostufen (etwa eine Stufenbreite nach aussen versetzt, Oberkante zu hoch); Helm-Umriss rechts breiter als Foto.",
-   "naechster_schritt": "teil_fotoform staffelgiebel__ost + helm_geschweift__o an >=3 Fotos (handy_03, IMG_6162, 6138); Pruefung, die am Modell FEHLSCHLAEGT (Stufen-Aussenkante/Firsthoehe gegen Foto-Strahl), dann Generator"
-  },
-  {
-   "datum": "2026-11-10",
-   "wer": "Nutzer (Sichtfund, Markierung auf Overlay handy_03)",
-   "art": "sichtbeobachtung",
-   "merkmal": "Balkonbruestung Docken Anzahl/Form",
-   "teil": "bruestung__balkon",
-   "foto": "an_handy_2026-11-06_handy_03",
-   "text": "Nutzer markiert Balkon: Modell hat ~22 dicke, ovale Einzelstaebe in unregelmaessigen Abstaenden; Foto zeigt eine dichte Reihe schlanker Docken (Baluster) gleichmaessig zwischen den Erkern; Zahl NUR am Foto zaehlen (Regel 9, foto_zaehlung.py).",
-   "naechster_schritt": "Docken je Feld mit tools/foto_zaehlung.py an 2 Fotos zaehlen (Z-Protokoll), Teilung als Wiederholungsmuster falten (L-Wiederholungs-Prior), Pruefung Anzahl+Teilung, dann Generator"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
