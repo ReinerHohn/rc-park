@@ -1027,6 +1027,15 @@ def quader_bt(cfg, ctx):
         if len(P) < 3 or abs(flaeche_xy(P)) < 1e-4: sys.exit("quader: profil braucht >= 3 Punkte mit Flaeche")
         if P[:, 0].min() < min(n0, n1) - 1e-6 or P[:, 0].max() > max(n0, n1) + 1e-6 or P[:, 1].min() < min(z0, z1) - 1e-6 or P[:, 1].max() > max(z0, z1) + 1e-6: sys.exit("quader: profil liegt ausserhalb n0..n1/z0..z1")
         k = M.extrude(C([ccw(P)]), abs(u1 - u0)).transform([[0, 0, 1, min(u0, u1)], [1, 0, 0, 0], [0, 1, 0, 0]]).transform(_uszT(cfg))    # x=n, y=z, Extrusion z=u -> (u, n, z)
+    elif modus == "ausschnitt" and cfg.get("stehen_u"):                                              # stehen_u [[ua, ub], ...]: Streifen, die beim Ausschnitt STEHEN BLEIBEN (Schaefte/Rippen in einer Laibung); Schnitt = die Luecken dazwischen
+        st = sorted((min(a_, b_), max(a_, b_)) for a_, b_ in cfg["stehen_u"]); lo, hi = min(u0, u1), max(u0, u1); luecken = []; x_ = lo
+        for a_, b_ in st:
+            if a_ - x_ > 0.005: luecken.append((x_, a_))
+            x_ = max(x_, b_)
+        if hi - x_ > 0.005: luecken.append((x_, hi))
+        if not luecken: sys.exit("quader: stehen_u fuellt die ganze Breite")
+        k = UNION([quader(a_, b_, min(n0, n1), max(n0, n1), min(z0, z1), max(z0, z1)) for a_, b_ in luecken]).transform(_uszT(cfg))
+        beleg("alle", f"Quader (ausschnitt) mit {len(st)} stehenden Streifen (Schaefte/Rippen)", cfg["quelle"], stehen_u=[[round(float(a_), 3), round(float(b_), 3)] for a_, b_ in st])
     else:
         k = quader(u0, u1, min(n0, n1), max(n0, n1), min(z0, z1), max(z0, z1)).transform(_uszT(cfg))
     beleg("alle", f"Quader ({modus})" + (f" mit Profil ({len(prof)} Punkte)" if prof else ""), cfg["quelle"], u0=u0, u1=u1, n0=n0, n1=n1, z0=z0, z1=z1, **({"profil": [list(map(float, q_)) for q_ in prof]} if prof else {}))
