@@ -214,6 +214,22 @@ def form_messen(wt, tdir, teil, fotos, tag):
             "--aus", aus, "--bilder", "--bilder_dir", os.path.join(LDIR, "fotoform_bilder"), "--etikett", tag], wt, log=os.path.join(LDIR, f"fotoform_{tag}.log"))
     try: return ((json.load(open(aus))["teile"].get(teil) or {}).get("_gesamt") or {}).get("f1")
     except Exception: return None
+def form_aus_liste(fl, wt, teil, fotos, runde):
+    """Vorher-F1 aus der Formliste, wenn sie zum STL des Basisstands passt (10.11.: jede Spur mass sonst 35 min dasselbe - Generator-Export
+    + 10 Fotos, bei 8 Spuren parallel). Gleiche Formel wie teil_fotoform (_gesamt, pixelgewichtet) auf den gewaehlten Fotos; Vorher-Bilder verlinkt."""
+    import hashlib
+    try: sha = hashlib.sha256(open(os.path.join(wt, STL), "rb").read()).hexdigest()[:16]
+    except OSError: return None
+    je = ((fl.get("teile") or {}).get(teil) or {})
+    if fl.get("stl_sha") != sha or any(f not in je for f in fotos): return None
+    mk = sum(je[f]["mk_px"] for f in fotos); fk = sum(je[f]["fk_px"] for f in fotos)
+    if mk <= 0 or fk <= 0: return None
+    p = sum(je[f]["praez"] * je[f]["mk_px"] for f in fotos) / mk; r = sum(je[f]["recall"] * je[f]["fk_px"] for f in fotos) / fk
+    bd = os.path.join(LDIR, "fotoform_bilder"); os.makedirs(bd, exist_ok=True)
+    for f in fotos:
+        q = os.path.join(fl.get("bilder_dir", ""), f"{teil}_{f}.jpg"); z = os.path.join(bd, f"{teil}_{f}_r{runde}_vorher.jpg")
+        if os.path.exists(q) and not os.path.exists(z): os.symlink(q, z)
+    return round(2 * p * r / (p + r), 3) if p + r else 0.0
 def guete_form(t, ff):
     """Teilguete mit Formpruefung am Foto: Mittel aus Wolkenbeleg, Gitter-Kanten-F1 (falls Gitter) und Foto-F1 (falls messbar)."""
     c = [x for x in (t.get("beleg"), f1(t), ff) if x is not None]
@@ -434,8 +450,11 @@ for runde in range(1, RUNDEN + 1):
         freigeben(ziel["teil"]); protokoll({"runde": runde, "trocken": True, "ziel": ziel}); print(txt[:1500]); break
     ff_v, ff_fotos = None, []
     if not ist_fehlteil(ziel) and not TROCKEN and not NACH:   # Form am Foto VOR dem Agenten (Basisstand), gleiche Fotos nachher
-        ff_fotos = form_fotos(formliste(), ziel["teil"])
-        if ff_fotos:
+        _fl = formliste(); ff_fotos = form_fotos(_fl, ziel["teil"])
+        _fv = form_aus_liste(_fl, wt, ziel["teil"], ff_fotos, runde) if ff_fotos else None
+        if _fv is not None:
+            ff_v = _fv; print(f"Runde {runde}: Form am Foto vorher {ziel['teil']}: F1 {ff_v} ({len(ff_fotos)} Fotos, aus Formliste {_fl.get('stl_sha')})")
+        elif ff_fotos:
             _tv = os.path.join(LDIR, f"teile_r{runde}_vorher_form")
             _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
             sh_tor(_gen, wt, log=os.path.join(LDIR, f"export_r{runde}_vorher_form.log"), env={"BAUTEILE_AUS": _tv})
