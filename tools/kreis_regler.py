@@ -55,7 +55,7 @@ def tote_sperren_freigeben():
         if len(inhalt) >= 2 and inhalt[1].isdigit() and not os.path.exists(f"/proc/{inhalt[1]}"):
             os.remove(os.path.join(bd, f)); print(time.strftime("%H:%M:%S"), "tote Sperre freigegeben:", f, inhalt)
 
-hist, letzter = [], 0.0
+hist, letzter, leer_sig = [], 0.0, None
 print(f"Kreis-Regler {OBJ}: max {MAX} Spuren, GPU-Ziel {GPU_ZIEL} %, VRAM < {VRAM_MAX} MiB, RAM > {RAM_MIN} GB, Takt {TAKT} s")
 while True:
     tote_sperren_freigeben()
@@ -64,7 +64,16 @@ while True:
     rf = shutil.disk_usage("/").free / 1e9; df = shutil.disk_usage("/media/oem/scan").free / 1e9
     kk = kein_kandidat_folge()
     grund = []
-    if kk >= 3: print(time.strftime("%H:%M:%S"), "3 Spuren ohne Kandidat in Folge - Regler Ende"); break
+    # 10.11.: frueher 'Regler Ende' nach 3 leeren Spuren -> nach dem naechsten Merge (Sperre frei, neue Fehlkanten) startete nichts mehr.
+    # Jetzt: nach einer leeren Spur erst wieder starten, wenn sich main-HEAD oder die Teilbelegung geaendert hat.
+    bd = os.path.join(KD, OBJ, "belegt")
+    sig = (subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip(),
+           tuple(sorted(os.listdir(bd))) if os.path.isdir(bd) else ())
+    if kk >= 1:
+        if leer_sig is None: leer_sig = sig
+        if sig == leer_sig: grund.append("kein Kandidat seit letzter Aenderung von main/Belegung")
+    else:
+        leer_sig = None
     if len(hist) < 3: grund.append("Anlauf")
     if ug >= GPU_ZIEL: grund.append(f"GPU {ug:.0f} %")
     if m >= VRAM_MAX: grund.append(f"VRAM {m:.0f} MiB")
@@ -82,4 +91,5 @@ while True:
                         "python3", "tools/bauteil_kreis.py", OBJ, "--rechte", "bypassPermissions", "--runden", str(RUNDEN), "--nach_main", "--spur", name],
                        cwd=ROOT, capture_output=True)
         letzter = time.time(); print(zeile, f"-> START Spur {name}")
+        if kk >= 1: leer_sig = sig   # Probestart nach Aenderung: endet auch er leer, auf die naechste Aenderung warten
     time.sleep(TAKT)
