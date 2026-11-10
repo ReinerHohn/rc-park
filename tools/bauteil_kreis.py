@@ -55,6 +55,7 @@ STL = K.get("stl", f"modelle/stl/{OBJ}_1-87.stl"); SK = K.get("skala", 0.087)
 GIT = K.get("gitter", D + "/segmente_gitter_v12.json")
 KAM = K.get("kameras", D + "/sfm/kam_lot2.json")   # L-KR4: Wolkenbeleg nur auf kamera-zugewandter Flaeche
 WOLKE = K.get("wolke", "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2.npy")
+NACHBARN = K.get("nachbarn", f"/media/oem/scan/rc-park_daten/{OBJ}/nachbarn_modellrahmen.ply")   # LoD2-Nachbarn im Modellrahmen (Brandwaende, tools/nachbarn_modellrahmen.py)
 TABU = K.get("tabu", [])
 LAUF = time.strftime("%Y%m%d_%H%M%S") + opt("--spur", "")
 LDIR = os.path.join(KREISDIR, OBJ, LAUF); os.makedirs(LDIR, exist_ok=True)
@@ -113,7 +114,7 @@ def messen(wt, tag, regionen=None, vorab=False):
     if not (vorab and glob.glob(os.path.join(tdir, "*.stl"))):   # vorab: Teile kamen schon aus dem Bau der Abnahme (gleicher Stand)
         rc, _ = sh_cpu(gen, wt, log=os.path.join(LDIR, f"export_{tag}.log"), env={"BAUTEILE_AUS": tdir})
     rc2, out = sh_tor([PY, "-W", "ignore", "-I", "tools/konvergenz_bericht.py", OBJ, "--stl", STL, "--skala", str(SK), "--gitter", GIT,
-                   "--wolke", WOLKE, "--teile_dir", tdir, "--kameras", KAM, "--etikett", f"kreis {LAUF} {tag}"] + (["--regionen", regionen] if regionen else []) + (["--trocken"] if TROCKEN else []),
+                   "--wolke", WOLKE, "--teile_dir", tdir, "--kameras", KAM, "--etikett", f"kreis {LAUF} {tag}"] + (["--nachbarn", NACHBARN] if os.path.exists(NACHBARN) else []) + (["--regionen", regionen] if regionen else []) + (["--trocken"] if TROCKEN else []),
                   wt, log=os.path.join(LDIR, f"konvergenz_{tag}.log"))
     kf = os.path.join(wt, "modelle", OBJ, "konvergenz.jsonl")
     z = json.loads([l for l in open(kf) if l.strip()][-1]) if (os.path.exists(kf) and not TROCKEN) else None
@@ -269,7 +270,13 @@ def waehlen(z, sperre):
     kand = [t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["beleg"] is not None and (t["anteil_mit_daten"] >= MIN_DATEN or form_g(fl, t["teil"]).get("f1") is not None)
             and sperre.get(t["teil"], 0) < MAX_FEHL and fg.get(t["teil"], 0) < MAX_GLOBAL and not os.path.exists(os.path.join(BELEGT, t["teil"]))
             and t["teil"].split("__")[0] not in belegt_fam]   # gleiche Formfamilie (gleicher Generatorcode) nie parallel
-    kand.sort(key=lambda t: min(x for x in (guete(t), form_g(fl, t["teil"]).get("f1")) if x is not None))   # schwaechste Groesse zuerst: Form am Foto zaehlt mit
+    # Rang (Nutzer 10.11.): nur was die Wolke sieht und keine Brandwand ist (rang_guete aus konvergenz_bericht --nachbarn); Teile ohne
+    # sichtbare freie Flaeche (rang None) ans Ende - dort hilft nur ein neues Foto (Fotoplan), kein Agent.
+    def _rang(t):
+        r = t.get("rang_guete") if "rang_guete" in t else guete(t)
+        w = [x for x in (r, form_g(fl, t["teil"]).get("f1")) if x is not None]
+        return (not w, min(w) if w else 9)
+    kand.sort(key=_rang)
     # Nutzerregel 10.11. 14:4x: IMMER das schwaechste Teil zuerst ("dann konvergieren wir"). Frueher gingen offene Beobachtungen vor -
     # 7/7 Runden landeten auf Teilen mit 0,94-0,98 (kaum Spielraum, kleine Fehler = Rueckschritt). Offene Beobachtungen zu dem gewaehlten
     # Teil reisen jetzt MIT in den Auftrag (Zielart beobachtung), bestimmen aber nicht mehr die Reihenfolge.

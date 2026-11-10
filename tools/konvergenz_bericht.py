@@ -154,6 +154,12 @@ if WOLKE and TDIR and os.path.isdir(TDIR):
             if len(ri): frei[ri] = np.linalg.norm(loc - o[ri], axis=1) >= d[ok][ri] - 0.15
             nv[idx[frei]] += 1
         return nv >= SMIN
+    # Rangwert fuer die Kreis-Zielwahl (Nutzer 10.11.): nur Flaeche, die die Wolke sieht und die keine Brandwand ist (LoD2-Nachbarn,
+    # tools/nachbarn_modellrahmen.py). Die Tor-Groessen (beleg, kanten_*) bleiben unveraendert - nur zusaetzliche Felder rang_*.
+    NBF = opt("--nachbarn"); NB = None
+    if NBF and os.path.exists(NBF):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from nachbarn_modellrahmen import brandwand as _brandwand
+        NB = trimesh.load(NBF, force="mesh")
     teile = []
     for f in sorted(os.listdir(TDIR)):
         if not f.endswith(".stl") or "ausschnitt" in f:
@@ -161,7 +167,9 @@ if WOLKE and TDIR and os.path.isdir(TDIR):
         tm = trimesh.load(os.path.join(TDIR, f), force="mesh"); tm.apply_scale(SK)
         Pt, fi = tm.sample(60000, return_index=True); Pt = Pt.astype(np.float32); dt = md(Pt, Wv)
         vis = sichtbar(Pt, tm.face_normals[fi]); nah = (dt < NAH) & vis
+        bw = _brandwand(Pt, tm.face_normals[fi], NB) if NB is not None else np.zeros(len(Pt), bool); nf = nah & ~bw
         teile.append({"teil": f[:-4], "anteil_mit_daten": round(float(nah.mean()), 3), "anteil_sichtbar": round(float(vis.mean()), 3),
+                      "anteil_brandwand": round(float(bw.mean()), 3), "rang_beleg": round(float((dt[nf] < BEL).mean()), 3) if nf.sum() >= 50 else None,
                       "beleg": round(float((dt[nah] < BEL).mean()), 3) if nah.any() else None,
                       "median_m": round(float(np.median(dt[nah])), 3) if nah.any() else None,
                       "ueber_wolke_z": round(float((Pt[:, 2] > zw).mean()), 3)})
@@ -170,7 +178,7 @@ if WOLKE and TDIR and os.path.isdir(TDIR):
     #    kanten_recall = Anteil dieser Gitterpunkte, die < --tol an der Teiloberflaeche liegen (Fotokante vom Teil erklaert).
     #    kanten_praez  = Anteil der Formkanten des Teils (> --winkel, kamera-zugewandt), die < --tol an einem Gitterpunkt liegen (Teilkante im Foto belegt).
     if True:
-        namen = [t["teil"] for t in teile]; dmin = np.full(len(GP), np.inf, np.float32); wer = np.full(len(GP), -1, np.int32); pr = {}
+        namen = [t["teil"] for t in teile]; dmin = np.full(len(GP), np.inf, np.float32); wer = np.full(len(GP), -1, np.int32); pr = {}; pr2 = {}
         for i, nm in enumerate(namen):
             tm = trimesh.load(os.path.join(TDIR, nm + ".stl"), force="mesh"); tm.apply_scale(SK)
             d = md(GP, tm.sample(80000).astype(np.float32)); b_ = d < dmin; dmin[b_] = d[b_]; wer[b_] = i
@@ -182,12 +190,23 @@ if WOLKE and TDIR and os.path.isdir(TDIR):
                 Et, nm2 = Et[vk], nm2[vk]
             if len(Et):
                 KP = entlang(Et[:, 0], Et[:, 1]); dk = md(KP, GP); pr[nm] = (round(float((dk < TOL).mean()), 3), int(len(KP)))
+                # Rang: nur Kantenpunkte mit Wolke in < NAH (die Fotos sehen die Stelle) und nicht auf einer Brandwand
+                kw = md(KP.astype(np.float32), Wv) < NAH
+                if NB is not None:
+                    _n = nm2 / np.maximum(1e-9, np.linalg.norm(nm2, axis=1))[:, None]
+                    _L = np.linalg.norm(Et[:, 1] - Et[:, 0], axis=1); _cnt = np.maximum(2, np.ceil(_L / 0.05).astype(int))   # wie entlang()
+                    _kn = np.repeat(_n, _cnt, 0)   # Kantenpunkt -> Normale seiner Kante
+                    kw &= ~_brandwand(KP, _kn, NB)
+                pr2[nm] = round(float((dk[kw] < TOL).mean()), 3) if kw.sum() >= 50 else None
             else:
-                pr[nm] = (None, 0)
+                pr[nm] = (None, 0); pr2[nm] = None
         for i, t in enumerate(teile):
             g = (wer == i) & (dmin < NAH)
             t["kanten_recall"] = round(float((dmin[g] < TOL).mean()), 3) if g.sum() >= 50 else None
             t["gitter_pkt"] = int(g.sum()); t["kanten_praez"], t["kanten_pkt"] = pr[t["teil"]]
+            _p, _r = pr2.get(t["teil"]), t["kanten_recall"]; _f = None if _p is None or _r is None else (2 * _p * _r / (_p + _r) if _p + _r > 0 else 0.0)
+            _w = [x for x in (t.get("rang_beleg"), _f) if x is not None]
+            t["rang_kanten_praez"] = _p; t["rang_guete"] = round(sum(_w) / len(_w), 3) if _w else None   # Zielwahl-Rang (Kreis), nicht Tor
     teile.sort(key=lambda t: (t["beleg"] is None, t["beleg"] if t["beleg"] is not None else 9))
 
 try:
