@@ -592,12 +592,14 @@ for runde in range(1, RUNDEN + 1):
         shutil.rmtree(_tn, ignore_errors=True)
         _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
         _rq, _ = sh_cpu(_gen, wt, log=os.path.join(LDIR, f"vorpruef_r{runde}.log"), env={"BAUTEILE_AUS": _tn})
+        _diff0 = subprocess.run(["git", "-C", wt, "status", "--porcelain", "--", "tools", "modelle/" + OBJ + "/objekt.json"], capture_output=True, text=True).stdout.strip()
         _flh = formliste_halb(wt) if SKALA_VOR != 1.0 else None
         _vh = form_aus_liste(_flh, wt, ziel["teil"], ff_fotos, runde, nebenwirkung=False, hkey=f"r{runde}_vorher_halb") if _flh else None
         _halb = _vh is not None; _vq = _vh if _halb else ff_v; _vk = "vorher_halb" if _halb else "vorher"
         if _vq is None and _ff_spaet:   # Teil/Fotos fehlen in der halben Liste: vollen Vorher-Wert doch jetzt messen (Basisstand gesichert)
             ff_v = _vq = form_messen(wt, _ff_spaet[0], ziel["teil"], ff_fotos, f"r{runde}_vorher", stl=_ff_spaet[1]); _ff_spaet = None
-        ff_q = form_messen(wt, _tn, ziel["teil"], ff_fotos, f"r{runde}_vorpruef", env={"RCPARK_FOTO_SKALA": str(SKALA_VOR)} if _halb else None) if _rq == 0 else None
+        ff_q = (_vq if not _diff0 else form_messen(wt, _tn, ziel["teil"], ff_fotos, f"r{runde}_vorpruef", env={"RCPARK_FOTO_SKALA": str(SKALA_VOR)} if _halb else None)) if _rq == 0 else None   # ohne Aenderung = vorher (a203713: 341 s fuer Delta 0)
+        if not _diff0 and _halb: HOEHE[f"r{runde}_vorpruef"] = HOEHE.get(f"r{runde}_vorher_halb")
         print(f"Runde {runde}: Vorpruefung Form am Foto {ziel['teil']}" + (f" (Stufe halbe Aufloesung {SKALA_VOR})" if _halb else "") + f": F1 {_vq} -> {ff_q}" + ("" if _rq == 0 else " (Generator rot)"), flush=True)
         _diff = subprocess.run(["git", "-C", wt, "status", "--porcelain", "--", "tools", "modelle/" + OBJ + "/objekt.json"], capture_output=True, text=True).stdout.strip()
         if not _diff:   # Agent hat Generator/objekt.json nicht geaendert (z. B. begruendet 'nicht belegt', a144153 10.11.) -> Rueckgabe waere Leerlauf
@@ -692,6 +694,8 @@ for runde in range(1, RUNDEN + 1):
     foto_tor = ff_v is not None and ff_n is not None
     if foto_tor:   # FOTO ZUERST (s. MIN_GEWINN_FOTO): Gewinn nur aus den Fotos
         gewinn = ff_n - ff_v; min_g = MIN_GEWINN_FOTO
+    elif _frueh:   # frueh abgelehnt (Stufe halb ohne Gewinn): kein Wolkenwert als Ersatz (a203713 meldete sonst -0,258)
+        gewinn = 0.0; min_g = MIN_GEWINN_FOTO
     else:          # Teil am Foto nicht messbar (keine Formliste/Ersatzteil): alte Guete aus Beleg + Gitter-F1
         gewinn = (nach.get(ziel["teil"]) or 0) - (vor.get(ziel["teil"]) or 0); min_g = MIN_GEWINN
     # Veto: kein Rueckschritt um mehr als 0,02 - Foto-F1, Gitter-F1, und Wolkenbeleg nur, wo die Wolke das Teil sieht
