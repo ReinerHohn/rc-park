@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-060",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=13.86",
+ "name": "Balkonplatte Stirn: Hoehe der Frontflaeche (Oberkante bis Unterkante) kreis1",
+ "mess_px": [
+  1952.0,
+  1407.0,
+  1952.0,
+  1439.0
+ ],
+ "P1": [
+  8.589,
+  11.662,
+  8.41
+ ],
+ "P2": [
+  8.595,
+  11.66,
+  8.302
+ ],
+ "dz": -0.108,
+ "dy": -0.002,
+ "dx": 0.005,
+ "abstand": 0.109,
+ "z1": 8.41,
+ "z2": 8.302,
+ "unsicherheit_rel": 0.0311,
+ "unsicherheit_m": 0.016,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=13.86 (+-0.3 m)"
+}

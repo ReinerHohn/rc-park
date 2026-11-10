@@ -274,13 +274,14 @@
  {
   "seite": "alle",
   "element": "Balkonband",
-  "quelle": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json vorspruenge offset 13.86 - Frontebene 12,66 (Parallelebene 119 m Kanten) | Lage: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json vorspruenge z_min_voll 8.0 (dicht belegt ab 8,0; 0,5-m-Band -> +-0,25)",
-  "u_von": -7.6,
-  "u_bis": 14.92,
+  "quelle": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json vorspruenge offset 13.86 - Frontebene 12,66 (Parallelebene 119 m Kanten) | Lage: Foto-Messung Stirnhoehe M-6120-058/059/060 (K-6120) + M-6132-003/004 (K-6132), Ebene n 13,86: Stirn 0,11-0,14 m hoch, Unterkante z 8,28-8,33; Kantengitter z_min_voll 8,0 war durch Konsolen belegt",
+  "u_von": -5.4,
+  "u_bis": 12.3,
   "wand_n": 12.66,
   "auskragung": 1.2,
-  "unterseite_z": 8.0,
+  "unterseite_z": 8.26,
   "oberseite_z": 8.37,
+  "unterkante_ueberstand": 0.0,
   "seite_name": "alle"
  },
  {
@@ -290,7 +291,7 @@
   "u": -5.205,
   "breite": 0.6,
   "z_unten": 7.569,
-  "z_oben": 8.04,
+  "z_oben": 8.3,
   "ausladung_max": 1.17,
   "wand_n": 12.66,
   "seite_name": "alle"
@@ -302,7 +303,7 @@
   "u": -3.755,
   "breite": 0.22,
   "z_unten": 7.569,
-  "z_oben": 8.04,
+  "z_oben": 8.3,
   "ausladung_max": 1.17,
   "wand_n": 12.66,
   "seite_name": "alle"
@@ -314,7 +315,7 @@
   "u": -2.18,
   "breite": 0.28,
   "z_unten": 7.569,
-  "z_oben": 8.04,
+  "z_oben": 8.3,
   "ausladung_max": 1.17,
   "wand_n": 12.66,
   "seite_name": "alle"
@@ -326,7 +327,7 @@
   "u": -0.405,
   "breite": 0.32,
   "z_unten": 7.569,
-  "z_oben": 8.04,
+  "z_oben": 8.3,
   "ausladung_max": 1.17,
   "wand_n": 12.66,
   "seite_name": "alle"
@@ -338,7 +339,7 @@
   "u": 1.37,
   "breite": 0.32,
   "z_unten": 7.569,
-  "z_oben": 8.04,
+  "z_oben": 8.3,
   "ausladung_max": 1.17,
   "wand_n": 12.66,
   "seite_name": "alle"
@@ -350,7 +351,7 @@
   "u": 3.245,
   "breite": 0.34,
   "z_unten": 7.569,
-  "z_oben": 8.04,
+  "z_oben": 8.3,
   "ausladung_max": 1.17,
   "wand_n": 12.66,
   "seite_name": "alle"
@@ -362,7 +363,7 @@
   "u": 5.17,
   "breite": 0.34,
   "z_unten": 7.569,
-  "z_oben": 8.04,
+  "z_oben": 8.3,
   "ausladung_max": 1.17,
   "wand_n": 12.66,
   "seite_name": "alle"
@@ -374,7 +375,7 @@
   "u": 6.97,
   "breite": 0.34,
   "z_unten": 7.569,
-  "z_oben": 8.04,
+  "z_oben": 8.3,
   "ausladung_max": 1.17,
   "wand_n": 12.66,
   "seite_name": "alle"
@@ -386,7 +387,7 @@
   "u": 8.87,
   "breite": 0.32,
   "z_unten": 7.569,
-  "z_oben": 8.04,
+  "z_oben": 8.3,
   "ausladung_max": 1.17,
   "wand_n": 12.66,
   "seite_name": "alle"
@@ -398,7 +399,7 @@
   "u": 10.72,
   "breite": 0.34,
   "z_unten": 7.569,
-  "z_oben": 8.04,
+  "z_oben": 8.3,
   "ausladung_max": 1.17,
   "wand_n": 12.66,
   "seite_name": "alle"
@@ -410,7 +411,7 @@
   "u": 12.195,
   "breite": 0.5,
   "z_unten": 7.569,
-  "z_oben": 8.04,
+  "z_oben": 8.3,
   "ausladung_max": 1.17,
   "wand_n": 12.66,
   "seite_name": "alle"
@@ -424,10 +425,10 @@
  },
  {
   "seite": "alle",
-  "element": "Bruestung: 63 Baluster (Zylinder r 0.072) + Handlauf",
+  "element": "Bruestung: 52 Baluster (Zylinder r 0.072) + Handlauf",
   "quelle": "Anzahl/Periode Z-6120-001 (Regel 9); baluster_abgenommen periode 0,3062 | Lage: baluster_abgenommen baluster[].mitte (Periode/Phase aus Fotosignal) | Handlauf: dito",
-  "n_baluster": 63,
-  "u0": -6.808,
+  "n_baluster": 52,
+  "u0": -4.971,
   "pitch": 0.306,
   "n": 13.84,
   "r": 0.072,

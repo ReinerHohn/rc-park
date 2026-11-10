@@ -4358,12 +4358,13 @@
   {
    "typ": "balkonband:haupt",
    "gruppe": "Balkon/Galerie Hauptfassade",
-   "u_von": -7.6,
-   "u_bis": 14.92,
+   "u_von": -5.4,
+   "u_bis": 12.3,
    "wand_n": 12.66,
    "auskragung": 1.2,
-   "unterseite_z": 8.0,
+   "unterseite_z": 8.26,
    "oberseite_z": 8.37,
+   "unterkante_ueberstand": 0.0,
    "achse_n": [
     0.3338,
     0.9426
@@ -4372,11 +4373,12 @@
    "quelle": "Wolke wolke_netzrahmen.npy per tools/wolke_balkon_messen.py -> modelle/kaufhaus_grob/balkon_messung.json; massiv = ANNAHME",
    "werte_quellen": {
     "auskragung": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json vorspruenge offset 13.86 - Frontebene 12,66 (Parallelebene 119 m Kanten)",
-    "unterseite_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json vorspruenge z_min_voll 8.0 (dicht belegt ab 8,0; 0,5-m-Band -> +-0,25)",
+    "unterseite_z": "Foto-Messung Stirnhoehe M-6120-058/059/060 (K-6120) + M-6132-003/004 (K-6132), Ebene n 13,86: Stirn 0,11-0,14 m hoch, Unterkante z 8,28-8,33; Kantengitter z_min_voll 8,0 war durch Konsolen belegt",
     "oberseite_z": "Balkonplatte-Oberkante 8,37 (Koordinator 9.11. aus Balusterband 8,35; vorher Vorsprung-Band bis 10,0 = Platte+Bruestung massiv); Bruestung jetzt eigenes Bauteil bruestung:balkon",
     "u_bis": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json Erker 1 Mitte - Frontfacette x_front 0,74",
     "u_von": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json Erker 0 Mitte + Frontfacette x_front 0,74 (Balkon endet an der Erkerfront)",
-    "wand_n": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json off_front 12.66"
+    "wand_n": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json off_front 12.66",
+    "unterkante_ueberstand": "0 = Kasten endet bei unterseite_z (Altverhalten 0,1 m war Druckhilfe; Stirn sonst 0,47 statt 0,11 m)"
    },
    "historie": [
     {
@@ -4408,6 +4410,13 @@
      "neu": {
       "oberseite_z": 8.37
      }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis1 213718 balkonband:haupt (+ bruestung:balkon n_baluster 68->57, u0 -6.808->-4.9708, pfosten_erster 9->3)",
+     "alt": {"u_von": -7.6, "u_bis": 14.92},
+     "neu": {"u_von": -5.4, "u_bis": 12.3},
+     "beleg": "Wolke Platte -5,4..12,3, Konsolen konsolen_v11 -5,15..12,25, Fotos 6171/d11/6132 freie Wand hinter den Enden, Peilung M-6145-001/002"
     }
    ]
   },
@@ -4415,7 +4424,7 @@
    "typ": "konsolenreihe:balkon",
    "gruppe": "Balkonkonsolen",
    "wand_n": 12.66,
-   "z_oben": 8.04,
+   "z_oben": 8.3,
    "einbindung": 0.2,
    "max_ausladung": 1.17,
    "lagen_datei": "/media/oem/scan/rc-park_daten/kaufhaus_alle/kette_video_alle/koerper/konsolen_v11.json",
@@ -4439,7 +4448,7 @@
    "quelle": "Koerper-Agent Runde 5 (c154bb7): konsolen_v11.json - 11 Lagen je Instanz aus der Wolke (Bloecke ueber Median+10 MAD, Abstaende 1,45-1,93, kein Raster), Breite 0,22-0,34 aus Foto-Vorderkanten (2 Randkonsolen Breite aus Wolke, GRENZE), Profil (Hoehe 0,55, Ausladung 0,54->1,22) aus der Wolke je z; Rahmen lot2 (koerper_v11.json u/n/off_front, hier auf achse_n umgerechnet)",
    "werte_quellen": {
     "wand_n": "kantengitter rohkoerper_v7 off_front 12.66 (wie balkonband)",
-    "z_oben": "balkonband unterseite_z 8,0 + 0,04 Einbindung (Druck)",
+    "z_oben": "balkonband unterseite_z 8,26 + 0,04 Einbindung (Druck)",
     "einbindung": "koerper_v11.py: 0,2 m hinter die Wandflaeche (ANNAHME, unsichtbar)",
     "max_ausladung": "ANNAHME: 3 cm hinter der Balkonfront (auskragung 1,2), sonst deckungsgleiche Flaechen"
    },
@@ -4454,8 +4463,8 @@
   {
    "typ": "bruestung:balkon",
    "gruppe": "Balkonbruestung",
-   "n_baluster": 68,
-   "u0": -6.808,
+   "n_baluster": 57,
+   "u0": -4.9708,
    "pitch": 0.3062,
    "n": 13.84,
    "r": 0.072,
@@ -4488,7 +4497,7 @@
     "pfosten_t": "ANNAHME 0,20 (Seitenflaeche im Foto schmal)"
    },
    "pfosten_alle": 12,
-   "pfosten_erster": 9,
+   "pfosten_erster": 3,
    "pfosten_b": 0.26,
    "pfosten_t": 0.2,
    "historie": [

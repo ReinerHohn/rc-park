@@ -1,0 +1,45 @@
+{
+ "id": "M-6145-002",
+ "typ": "triangulation_plan",
+ "foto": "6145",
+ "name": "Balkonplatte Ostende: Frontkante (senkrechte Kante)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6145",
+   "px": [
+    388.0,
+    2262.0
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    913.0,
+    1665.0
+   ]
+  },
+  {
+   "kamera": "K-6164",
+   "px": [
+    1200.0,
+    2330.0
+   ]
+  }
+ ],
+ "P_xy": [
+  15.836,
+  8.699
+ ],
+ "strahl_abstand_m": [
+  0.19,
+  0.226,
+  0.132
+ ],
+ "schnittwinkel_grad": [
+  35.5,
+  92.4,
+  56.9
+ ],
+ "unsicherheit_m": 0.255,
+ "massstab_von": "Kameras K-6145, K-6161, K-6164 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme"
+}
