@@ -111,13 +111,16 @@ def main(argv=None):
                 ov[mk_t & ~rot] = (0, 200, 0); ov[fk_t & ~gelb & ~mk_t] = (200, 120, 0); ov[rot] = (0, 0, 255); ov[gelb] = (0, 255, 255)
                 cv2.imwrite(os.path.join(bd, f"{name}_{nr}{('_' + a.etikett) if a.etikett else ''}.jpg"), ov[y0:y1, x0:x1], [cv2.IMWRITE_JPEG_QUALITY, 85])
         print(f"Foto {nr}: {sum(1 for v in erg['teile'].values() if nr in v)} Teile beurteilt", flush=True)
+        if a.aus: json.dump(erg, open(a.aus + ".teil", "w"), ensure_ascii=False)   # Zwischenstand je Foto (11:56 brach ein 38-min-Lauf am Ende ab, alles verloren)
     for name, je in erg["teile"].items():   # Mittel ueber Fotos, gewichtet mit Pixelzahl
+        je = {k: v for k, v in je.items() if isinstance(v, dict) and "mk_px" in v}; erg["teile"][name] = je
         mk = sum(v["mk_px"] for v in je.values()); fk = sum(v["fk_px"] for v in je.values())
+        if not mk or not fk: continue
         p = sum(v["praez"] * v["mk_px"] for v in je.values()) / mk; r = sum(v["recall"] * v["fk_px"] for v in je.values()) / fk
         je["_gesamt"] = {"praez": round(p, 3), "recall": round(r, 3), "f1": round(2 * p * r / (p + r), 3) if p + r else 0.0, "fotos": len(je)}
     if a.aus: json.dump(erg, open(a.aus, "w"), ensure_ascii=False, indent=1)
     print(f"{'Teil':30s} {'Fotos':>5s} {'Praez':>6s} {'Recall':>6s} {'F1':>6s}")
-    for name, je in sorted(erg["teile"].items(), key=lambda kv: kv[1]["_gesamt"]["f1"]):
+    for name, je in sorted(((k, v) for k, v in erg["teile"].items() if "_gesamt" in v), key=lambda kv: kv[1]["_gesamt"]["f1"]):
         g = je["_gesamt"]; print(f"{name:30s} {g['fotos']:5d} {g['praez']:6.3f} {g['recall']:6.3f} {g['f1']:6.3f}")
     return erg
 
