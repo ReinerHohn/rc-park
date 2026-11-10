@@ -320,7 +320,8 @@ for runde in range(1, RUNDEN + 1):
         rueck_teil = [f"praez {t}={nach_t[t].get('kanten_praez')}" for t in neu_t if (nach_t[t].get("kanten_praez") or 0) < MIN_PRAEZ_NEU]
         rueck_teil += [f"guete {t} {vor[t]:.3f}->{nach[t]:.3f}" for t in vor if vor.get(t) is not None and nach.get(t) is not None and nach[t] < vor[t] - 0.02]
         rg0 = z0["kanten"]["gesamt"]["recall"]; rg1 = (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")
-        if rg1 is None or rg1 < rg0: rueck_teil.append(f"recall_gesamt {rg0}->{rg1}")
+        # Toleranz 0,002 = Stichproben-Rauschen (a030944 r1: unveraendertes Modell 0,6483 -> 0,6481)
+        if rg1 is None or rg1 < rg0 - 0.002: rueck_teil.append(f"recall_gesamt {rg0}->{rg1}")
         tor_konv = rcK == 0 and r_n is not None and gewinn >= MIN_REGION and not rueck_teil
         vor[ziel["teil"]], nach[ziel["teil"]] = ziel["recall_kasten"], r_n
     if rueck_teil: print(f"Runde {runde}: Rueckschritt im Ziel-Teil: {rueck_teil}")
