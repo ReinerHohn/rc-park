@@ -423,7 +423,10 @@ def nicht_in_main(z, lauf, r):
         return " [angenommen, aber NICHT in main (baute auf verworfenem Stand auf) - brauchbare Teile gezielt uebernehmen]"
     return ""
 
-def vorversuche(teil):
+def _kasten_ueberlappt(z, lo, hi):
+    zl, zh = z.get("lo"), z.get("hi")
+    return bool(zl and zh and lo and hi and all(zl[i] <= hi[i] and lo[i] <= zh[i] for i in range(3)))
+def vorversuche(teil, kasten=None):
     """Alle frueheren Kreis-Runden (alle Laeufe/Spuren) zu diesem Teil: Ergebnis, Torgruende, Agentenbericht, Patch.
     Damit wiederholt kein Agent einen verworfenen Weg blind (Kreis1 R2 10.11. startete Staffelgiebel ohne Wissen aus R1)."""
     zeilen = []
@@ -431,13 +434,18 @@ def vorversuche(teil):
         for l in open(d):
             try: z = json.loads(l)
             except Exception: continue
-            if (z.get("ziel") or {}).get("teil") != teil or "runde" not in z or z.get("angenommen") is None: continue
+            _zz = z.get("ziel") or {}
+            if "runde" not in z or z.get("angenommen") is None: continue
+            # Fehlteil-Ziele: auch fruehere Fehlteil-Runden mit UEBERLAPPENDEM Kasten (Kantengitter-ID fk_* vs Fotokanten-ID ff_* - gleiche Stelle,
+            # 11.11.: Baldachine 234159 verwarf das alte Gitter-Tor, am Foto +0,25 - der Patch muss beim naechsten Agenten ankommen)
+            if _zz.get("teil") != teil and not (kasten and str(_zz.get("teil", "")).endswith("__neu") and _kasten_ueberlappt(_zz, *kasten)): continue
             ld = os.path.dirname(d); r = z["runde"]
             pa = os.path.join(ld, f"verworfen_r{r}.patch"); ag = os.path.join(ld, f"agent_r{r}.log")
             zeilen.append(f"- {os.path.basename(ld)} R{r}: angenommen={z.get('angenommen')}, Gewinn {z.get('gewinn')}, Abnahme {z.get('tor_abnahme')}"
                           f"{' (CUDA-OOM, kein Pruefungsfehler)' if z.get('infra_oom') else ''}, Pruefer {json.dumps((z.get('pruefer') or {}).get('fehlerliste'), ensure_ascii=False)[:600]}"
                           f"; Agentenbericht (Ende der Datei): {ag if os.path.exists(ag) else '-'}; Patch: {pa if os.path.exists(pa) else '-'}; Zweig (git show/diff): {z.get('branch') or '-'}"
-                          + nicht_in_main(z, os.path.basename(ld), r))
+                          + nicht_in_main(z, os.path.basename(ld), r)
+                          + (" [ALTES Fehlteil-Tor 'region' = nur Kantengitter, Foto nie gemessen - Patch kann am Foto trotzdem gut sein, pruefen!]" if (str(_zz.get("teil", "")).endswith("__neu") and z.get("tor") != "foto_neu") else ""))
     for fid, e in erledigt_laden().items():   # Fehlteil-Agent verwies auf dieses vorhandene Teil
         if e.get("befund", "").lower().startswith("vorhandenes teil") and teil.replace("__", ":") in e["befund"]:
             zeilen.append(f"- Fehlteil-Befund {fid} ({e.get('lauf')}): Fotokanten-Kasten {e['lo']} .. {e['hi']} m gehoert zu DIESEM Teil "
@@ -505,7 +513,7 @@ def auftrag(ziel, runde, wt):
               .replace("`<TABU>`", ", ".join(TABU) or "-").replace("<TABU>", ", ".join(TABU) or "-")
               .replace("`<FOTOS>`", "-").replace("<FOTOS>", "-"))
     txt = txt.replace("/home/oem/git/rc-park", wt)
-    txt += vorversuche(ziel["teil"])
+    txt += vorversuche(ziel["teil"], (ziel.get("lo"), ziel.get("hi")) if ist_fehlteil(ziel) else None)
     txt += (f"\n\nUNBEAUFSICHTIGTER LAUF: Arbeitsverzeichnis ist der git-Worktree {wt} (nicht /home/oem/git/rc-park). "
             "Keine Rueckfragen moeglich - bei Unklarheit ANNAHME notieren und weiter. Am Ende den Bericht (Pflichtform der Vorlage) "
             f"zusaetzlich nach {wt}/modelle/{OBJ}/audit/kreis_bericht.md schreiben und die Overlay-Pfade dort auflisten.")
