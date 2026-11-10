@@ -576,6 +576,8 @@ for runde in range(1, RUNDEN + 1):
     t0 = time.time()
     if PATCH:   # Agentenarbeit aus abgebrochener Runde uebernehmen statt neuen Agenten (gleiches Tor danach)
         rcA = subprocess.run(["git", "-C", wt, "apply", "--whitespace=nowarn", PATCH], capture_output=True, text=True).returncode
+        if rcA != 0:   # Patch aelter als main (masstabelle.json wuchs): 3-Wege-Anwendung
+            rcA = subprocess.run(["git", "-C", wt, "apply", "--3way", PATCH], capture_output=True, text=True).returncode
         print(f"Runde {runde}: Patch {PATCH} uebernommen rc={rcA}", flush=True)
         if rcA != 0: freigeben(ziel["teil"]); sys.exit("Patch passt nicht auf main")
     else:
@@ -706,7 +708,15 @@ for runde in range(1, RUNDEN + 1):
         print(f"Runde {runde}: Gitter widerspricht Foto ({gitter_widerspruch}) - Foto gilt, Beobachtung folgt")
     else:
         gitter_widerspruch = None
-    tor_konv = rcK == 0 and gewinn >= min_g and not rueck_teil
+    # QUELLENVORRANG AUCH FUER HOEHENBAENDER (10.11. abends, Balkonband a173902: Foto-F1 0,613 -> 0,824, verworfen nur wegen
+    # konvergenz_bericht 'RUECKSCHRITT: recall 5-10 m 0.795 -> 0.727' - Kantengitter dort mit ~130 Fehlsegmenten ueber freier Wand, s. kanten_f1-Vorrang oben).
+    # Nur wenn der EINZIGE Rueckschritt Gitter-Recall in Hoehenbaendern ist und das Foto-Tor (Gewinn + Hoehe + Foto-Veto) besteht -> Foto gilt, Beobachtung.
+    _rk = [x.strip() for l in (outK or "").splitlines() if l.startswith("RUECKSCHRITT:") for x in l[len("RUECKSCHRITT:"):].split(";") if x.strip()]
+    band_vorrang = (rcK == 3 and foto_tor and gewinn >= min_g and not rueck_teil and _rk and all(x.startswith("recall ") and " m:" in x for x in _rk))
+    if band_vorrang:
+        gitter_widerspruch = (gitter_widerspruch + "; " if gitter_widerspruch else "") + "Gitter-Baender " + ", ".join(_rk) + f", Foto-F1 {ff_v:.3f}->{ff_n:.3f}"
+        print(f"Runde {runde}: Gitter-Baender widersprechen Foto ({', '.join(_rk)}) - Foto gilt, Beobachtung folgt", flush=True)
+    tor_konv = (rcK == 0 or band_vorrang) and gewinn >= min_g and not rueck_teil
     if ist_fehlteil(ziel):   # eigenes Tor: Recall im Kasten, neue Teile praezise, kein anderes Teil schlechter, Gesamt-Recall nicht kleiner
         r_n = (((z1 or {}).get("regionen") or {}).get(ziel["id"]) or {}).get("recall")
         gewinn = (r_n if r_n is not None else 0) - (ziel["recall_kasten"] or 0)
