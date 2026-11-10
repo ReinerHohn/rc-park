@@ -960,6 +960,23 @@
    ],
    "quer_max": 0.1,
    "r_max": 0.18
+  },
+  "laube_rueck_west_ende": {
+   "typ": "ebene_ende",
+   "o": [
+    2.4368,
+    6.8601
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=3.5 - z_unterkante_lot2",
+   "u0": 7.0,
+   "u1": 11.0,
+   "ende": "max",
+   "vor": 0.8,
+   "tol": 0.1
   }
  },
  "pruefungen": [
@@ -1987,6 +2004,22 @@
    "historie": [
     "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
    ]
+  },
+  {
+   "name": "Laubenrueckwand: westliches Ende der Wandflaeche in der Ebene n 7,28 (u = -Abstand entlang der Fassade, z 3,5; darf nicht ueber das Gebaeudeende hinausragen)",
+   "wert": "laube_rueck_west_ende",
+   "soll": [
+    8.7,
+    9.0
+   ],
+   "quelle": "Fotomessung M-6124-021 (Foto 6124, Kamera K-6124 aus SfM-Buendel, Kante Wandflaeche/Eckpfeiler in 2 Hoehen, Strahl auf Ebene n 7,28 aus M-6120-021 + Wolke-Histogramm): u -8,86 und -8,83 (+-0,03 Messung, +-0,1 Ebene/Pick) -> Soll 8,7..9,0; Gegenprobe Overlay 6130: u -9,34 liegt in der freien Gasse. Prueft das GESAMTNETZ (rumpf_eg endet ebenfalls bei -8,82): trennt nur den entfernten Stummel von laube_rueck, nicht die Teile",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6124-021",
+   "historie": [
+    "2026-11-10 angelegt (Agent Kreis s6 r2): am Altstand u0 -9,339 muss 9,34 FEHLER sein"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -2314,38 +2347,26 @@
    "naechster_schritt": "Daechlein als eigenes Generator-Element (Formfamilie aus >=3 Fotos, Vorlage), dann verworfen_r1.patch erneut durch die Tore schicken. Die Abnahme in R1 war ein CUDA-OOM, kein Pruefungsfehler (c8ea1ee)."
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6164, Treffer 3)",
-   "auto_id": "fehlteile-6164-0-2037",
-   "art": "fehlteil",
-   "foto": "6164",
-   "z_von": 14.31,
-   "z_bis": 14.31,
-   "xyz": [
-    14.68,
-    -9.49,
-    14.31
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=14.31 m, y=-9.49 m (Zelle [0, 2037, 97], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6164.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+   "datum": "2026-11-10",
+   "wer": "Kreis s6 r2 (Agent)",
+   "text": "quader:laube_rueck: Wolkenbeleg 0,33. Fotobefund Stufe 0 (6120/6117/6175/6124/6130/6176/6206): Laubenrueckwand ist EINE ebene Wand (n 7,28) mit Fensterpaaren, Tuer, Sitzbank davor, endet im Westen an der Ecke/Eckpfeiler. Modell: Platte u0 -9,339 ragt 0,5 m ueber das Gebaeudeende (Overlay 6130: Linie liegt in der freien Gasse; 6124: Wandkante bei u -8,85 M-6124-021), Hinterflaeche n 6,83 ANNAHME verdeckt im Rumpf EG. Pruefung laube_rueck_west_ende (muss am Altstand rot sein). Offen: laube_rueck liegt danach komplett in rumpf_eg (Doppelung, Abschalten bricht Druck: 43 Teilnetze), Sockel/Sitzbank n 7,72 fehlt, Ostende nicht am Foto geprueft."
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
    "auto_id": "fehlteile-6261-237-1817",
    "art": "fehlteil",
    "foto": "6261",
    "z_von": 18.0,
    "z_bis": 18.0,
    "xyz": [
-    14.97,
-    -8.33,
+    14.95,
+    -8.35,
     18.0
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.0 m, y=-8.33 m (Zelle [237, 1817, 79], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.0 m, y=-8.35 m (Zelle [237, 1817, 79], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
