@@ -1,0 +1,56 @@
+{
+ "id": "Z-nu3b-001",
+ "typ": "zaehlung",
+ "foto": "nu3b",
+ "datei": "nu3b_nu_3b29472b-image.jpg",
+ "was": "Erkerhelm Ost: sichtbare Grate (Eckkanten, helle Ziegelreihen) in Bildzeile y 1000 - 3 Grate = 2 volle Flaechen + Silhouette; Achteck-Phasenprobe: Modellgrate (Achteck, Flaeche zur Strasse) fallen auf diese Grate (Overlay)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-10",
+ "punkte": [
+  {
+   "flaeche": "Grat_L",
+   "art": "voll",
+   "x": 553.0,
+   "y": 1000.0
+  },
+  {
+   "flaeche": "Grat_M",
+   "art": "voll",
+   "x": 681.0,
+   "y": 1000.0
+  },
+  {
+   "flaeche": "Grat_R",
+   "art": "voll",
+   "x": 829.0,
+   "y": 1000.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "Grat_L": {
+   "art": "voll",
+   "n": 1
+  },
+  "Grat_M": {
+   "art": "voll",
+   "n": 1
+  },
+  "Grat_R": {
+   "art": "voll",
+   "n": 1
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 1,
+  "voll_sichtbare_flaechen": 3
+ },
+ "bild": "Z-nu3b-001.jpg",
+ "ausschnitt": [
+  303,
+  750,
+  1079,
+  1250
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}
