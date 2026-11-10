@@ -2949,40 +2949,6 @@
    "status": "Kreis r1: eingetragen, Modell wird umgebaut"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
-   "auto_id": "fehlteile-6261-395-1185",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 26.12,
-   "z_bis": 26.12,
-   "xyz": [
-    16.54,
-    -3.96,
-    26.12
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.12 m, y=-3.96 m (Zelle [395, 1185, 79], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
-   "auto_id": "fehlteile-6261-237-1817",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.02,
-   "z_bis": 18.02,
-   "xyz": [
-    14.95,
-    -8.36,
-    18.02
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.02 m, y=-8.36 m (Zelle [237, 1817, 79], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-10",
    "wer": "Kreis1 Fehlteil fk_+16_+0_+26 (Agent)",
    "quelle": "konvergenz_bericht Abschnitt 8 (684 Gitterpunkte im Kasten, Recall 0,10) + Fotos 6115/6257/6145",
@@ -3010,11 +2976,11 @@
    "z_bis": 26.18,
    "xyz": [
     15.8,
-    -2.06,
+    -2.07,
     26.18
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.18 m, y=-2.06 m (Zelle [546, 1170, 78], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.18 m, y=-2.07 m (Zelle [546, 1170, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
