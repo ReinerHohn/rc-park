@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-028",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.66",
+ "name": "OG Fenster Gruppe 3 Konturpunkt aussen_oben (Referenz Sohle linker Steg)",
+ "mess_px": [
+  1910.0,
+  1444.0,
+  1814.0,
+  1208.0
+ ],
+ "P1": [
+  7.941,
+  10.619,
+  10.342
+ ],
+ "P2": [
+  8.767,
+  10.326,
+  12.537
+ ],
+ "dz": 2.195,
+ "dy": -0.292,
+ "dx": 0.825,
+ "abstand": 2.364,
+ "z1": 10.342,
+ "z2": 12.537,
+ "unsicherheit_rel": 0.0057,
+ "unsicherheit_m": 0.05,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.66 (+-0.15 m)"
+}

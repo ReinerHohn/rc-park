@@ -1,0 +1,39 @@
+{
+ "id": "M-6120-056",
+ "typ": "triangulation",
+ "foto": "6120",
+ "name": "OG Fenster Gruppe 3: Aussenkante Goldrahmen rechts am Kaempfer (Tiefe n)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6120",
+   "px": [
+    2428.0,
+    758.0
+   ]
+  },
+  {
+   "kamera": "K-6132",
+   "px": [
+    2013.0,
+    1692.0
+   ]
+  }
+ ],
+ "P": [
+  6.241,
+  11.232,
+  11.763
+ ],
+ "strahl_abstand_m": [
+  0.001,
+  0.001
+ ],
+ "schnittwinkel_grad": [
+  30.6
+ ],
+ "z": 11.763,
+ "unsicherheit_m": 0.032,
+ "massstab_von": "Kameras K-6120, K-6132 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 12.671,
+ "u": 2.133
+}

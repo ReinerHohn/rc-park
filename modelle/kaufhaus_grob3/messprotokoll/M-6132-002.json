@@ -1,0 +1,39 @@
+{
+ "id": "M-6132-002",
+ "typ": "triangulation",
+ "foto": "6132",
+ "name": "OG Fenster Gruppe 3: linker Goldsteg am Kaempfer (Tiefe n), Paar 6132/6117",
+ "beobachtungen": [
+  {
+   "kamera": "K-6132",
+   "px": [
+    1688.0,
+    1676.0
+   ]
+  },
+  {
+   "kamera": "K-6117",
+   "px": [
+    2680.0,
+    1638.0
+   ]
+  }
+ ],
+ "P": [
+  7.961,
+  10.597,
+  12.329
+ ],
+ "strahl_abstand_m": [
+  0.015,
+  0.015
+ ],
+ "schnittwinkel_grad": [
+  63.5
+ ],
+ "z": 12.329,
+ "unsicherheit_m": 0.037,
+ "massstab_von": "Kameras K-6132, K-6117 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 12.646,
+ "u": 3.967
+}

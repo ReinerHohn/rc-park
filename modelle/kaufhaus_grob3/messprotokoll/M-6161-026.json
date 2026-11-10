@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-026",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.66",
+ "name": "OG Fenster Gruppe 3: Sohle -> Kaempfer aussen links",
+ "mess_px": [
+  1805.0,
+  1444.0,
+  1805.0,
+  1289.0
+ ],
+ "P1": [
+  8.808,
+  10.312,
+  10.36
+ ],
+ "P2": [
+  8.831,
+  10.304,
+  11.781
+ ],
+ "dz": 1.421,
+ "dy": -0.008,
+ "dx": 0.023,
+ "abstand": 1.422,
+ "z1": 10.36,
+ "z2": 11.781,
+ "unsicherheit_rel": 0.0057,
+ "unsicherheit_m": 0.045,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.66 (+-0.15 m)"
+}

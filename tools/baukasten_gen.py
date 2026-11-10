@@ -952,12 +952,15 @@ def fensterreihe(cfg, ctx):
     ein Mittelpfosten (pfosten_b) und ein Kaempfer-Riegel (riegel_z, riegel_h). Frei: kiel (-1..1) = Schulterform (0 = Spitzgiebel, >0 Eselsruecken). Plexi/Glas fehlt bewusst (Wolke blind, spaeter).
     Pflicht: n_fenster, u_mitte (Mitte 1. Fenster), pitch, breite, unterseite_z, kaempfer_z, scheitel_z, wand_n, tiefe, rahmen_b, pfosten_b, riegel_z, riegel_h, achse_n, achse_quelle, quelle (+ zaehlung).
     Anzahl n_fenster NUR aus Foto-Zaehlprotokoll (Regel 9); Lage/Masse per tools/param_wolke_fit.py gegen die Wolke.
-    Optional n_lichter (Standard 2 = ein Mittelpfosten, unveraendertes Altverhalten): Lichter je Fenster, n_lichter-1 gleich breite Pfosten (Kantengitter 2026-11-09: 3 Lichter je Gruppe); Zaehlart -> 'zaehlung'."""
+    Optional n_lichter (Standard 2 = ein Mittelpfosten, unveraendertes Altverhalten): Lichter je Fenster, n_lichter-1 gleich breite Pfosten (Kantengitter 2026-11-09: 3 Lichter je Gruppe); Zaehlart -> 'zaehlung'.
+    Optional nische_tiefe (m, Standard 0 = Altverhalten): die Lichter sitzen in der Laibung, d. h. je Licht (Innenkontur ohne Pfosten und Riegelband) wird ein Schnitt nische_tiefe tief in die Wand
+    gesetzt; Pfosten/Riegel stehen bis auf den Nischengrund (Kreis r1 10.11.: Wolke Glas 0,25-0,27 m hinter der Wandebene, Fotos 6132/6117/6120 zeigen die Laibung). Dann glas_d = 0 (Wand = Glasebene)."""
     for k in ("n_fenster", "u_mitte", "pitch", "breite", "unterseite_z", "kaempfer_z", "scheitel_z", "wand_n", "tiefe", "rahmen_b", "pfosten_b", "riegel_z", "riegel_h", "achse_n", "achse_quelle", "quelle"):
         if cfg.get(k) in (None, ""): sys.exit(f"fensterreihe: '{k}' fehlt (Regel 3b: jedes Mass mit Quelle)")
     nf = int(cfg["n_fenster"]); u0, pitch, b = float(cfg["u_mitte"]), float(cfg["pitch"]), float(cfg["breite"]); nl = max(1, int(cfg.get("n_lichter", 2)))
     z0, zk, zs = float(cfg["unterseite_z"]), float(cfg["kaempfer_z"]), float(cfg["scheitel_z"]); wn, td = float(cfg["wand_n"]), float(cfg["tiefe"])
     rb, pf, rz, rh = float(cfg["rahmen_b"]), float(cfg["pfosten_b"]), float(cfg["riegel_z"]), float(cfg["riegel_h"]); kiel = float(cfg.get("kiel", 0.4)); gd, go = float(cfg.get("glas_d", 0.0)), float(cfg.get("glas_n", 0.1)); wq = cfg.get("werte_quellen") or {}; ein = float(cfg.get("einbindung", 0.0))   # optional Einbindung (m) von Rahmen/Pfosten/Riegel hinter wand_n
+    nd = float(cfg.get("nische_tiefe", 0.0)); rueck = wn - max(ein, nd); schnitte = []   # nische_tiefe: Lichter in der Laibung (Pfosten/Riegel reichen bis auf den Nischengrund)
     if nf < 1 or b >= pitch or not (z0 < zk < zs) or rb * 2 >= b or td < 0.01: sys.exit(f"fensterreihe: unplausible Masse (n={nf}, b={b}, pitch={pitch}, z={z0}/{zk}/{zs})")
     n_ = np.array(cfg["achse_n"], float); n_ /= np.linalg.norm(n_); u_ = np.array([n_[1], -n_[0]])
     T = [[u_[0], n_[0], 0.0, 0.0], [u_[1], n_[1], 0.0, 0.0], [0.0, 0.0, 1.0, 0.0]]
@@ -973,22 +976,28 @@ def fensterreihe(cfg, ctx):
         if gd > 0: teile.append(M.extrude(outer.offset(-rb + min(0.01, rb / 2), JoinType.Miter) if ein > 0 else inner, gd + ein / 2).transform([[1, 0, 0, 0], [0, 0, -1, wn + go + gd], [0, 1, 0, 0]]))   # mit Einbindung: Platte reicht ein/2 nach hinten (nicht ein: Rueckseite sonst koplanar mit Pfosten/Riegel -> Splitter) (Druck: Platte vor der Wand beruehrt sonst nur die Rahmenkanten)   # Verglasung (Wolke sieht die Scheibe): duenne Platte in der Rahmenoeffnung
         wl = (b - 2 * rb - (nl - 1) * pf) / nl                                                        # Lichtbreite; nl = 2 ergibt exakt den alten Mittelpfosten bei uc
         for j in range(1, nl):
-            up = uc - b / 2 + rb + j * wl + (j - 0.5) * pf; teile.append(quader(up - pf / 2, up + pf / 2, wn - ein, wn + td, z0 + rb * 0.5, zs - rb * 1.5))
+            up = uc - b / 2 + rb + j * wl + (j - 0.5) * pf; teile.append(quader(up - pf / 2, up + pf / 2, rueck, wn + td, z0 + rb * 0.5, zs - rb * 1.5))
         lk, ls = cfg.get("licht_riegel_z"), cfg.get("licht_scheitel_z")                              # optional je Licht (von aussen zur Mitte, gespiegelt): Riegelhoehe / Lichtoberkante
-        if not lk: teile.append(quader(uc - b / 2 + rb * 0.5, uc + b / 2 - rb * 0.5, wn - ein, wn + td, rz - rh / 2, rz + rh / 2))
+        if not lk: teile.append(quader(uc - b / 2 + rb * 0.5, uc + b / 2 - rb * 0.5, rueck, wn + td, rz - rh / 2, rz + rh / 2))
         for j in range(nl):
             a_ = uc - b / 2 + rb + j * (wl + pf); e_ = a_ + wl; sp = min(j, nl - 1 - j)                  # Licht j: a_..e_; sp = Spiegelindex (0 = aussen)
             a2, e2 = a_ - (rb * 0.5 if j == 0 else pf / 2), e_ + (rb * 0.5 if j == nl - 1 else pf / 2)   # bis in Rahmen/Pfosten (Ueberlappung, keine Splitter)
-            if lk: zr = float(lk[min(sp, len(lk) - 1)]); teile.append(quader(a2, e2, wn - ein, wn + td, zr - rh / 2, zr + rh / 2))
+            if lk: zr = float(lk[min(sp, len(lk) - 1)]); teile.append(quader(a2, e2, rueck, wn + td, zr - rh / 2, zr + rh / 2))
+            if nd > 0:                                                                                  # Laibung: Licht j = Innenkontur im u-Streifen a_..e_ ohne Riegelband, nd tief in die Wand (Pfosten/Riegel bleiben stehen)
+                zb = float(lk[min(sp, len(lk) - 1)]) if lk else rz
+                sp_ = 0.003                                                                                  # Schnitt 3 mm kleiner als das Licht: Pfosten/Riegel/Rahmen ueberlappen ihn (keine deckungsgleichen Flaechen = keine Splitter-Koerper)
+                licht = (C([ccw(np.array([(a_ + sp_, z0 - 1.0), (e_ - sp_, z0 - 1.0), (e_ - sp_, zs + 1.0), (a_ + sp_, zs + 1.0)]))]) ^ inner.offset(-sp_, JoinType.Miter)) - C([ccw(np.array([(a_ - 1.0, zb - rh / 2 - sp_), (e_ + 1.0, zb - rh / 2 - sp_), (e_ + 1.0, zb + rh / 2 + sp_), (a_ - 1.0, zb + rh / 2 + sp_)]))])
+                schnitte.append(M.extrude(licht, nd + 0.02).transform([[1, 0, 0, 0], [0, 0, -1, wn + 0.02], [0, 1, 0, 0]]))
             if ls and ls[min(sp, len(ls) - 1)] is not None:                                          # Lichtoberkante tiefer als die Kontur: Fuellung zwischen Scheitel und Rahmen
                 zt = float(ls[min(sp, len(ls) - 1)]); fuell = C([ccw(np.array([(a2, zt), (e2, zt), (e2, zs + 1.0), (a2, zs + 1.0)]))]) ^ outer
                 teile.append(M.extrude(fuell, td + ein).transform([[1, 0, 0, 0], [0, 0, -1, wn + td], [0, 1, 0, 0]]))
     k = UNION(teile).transform(T); q = lambda p_: (wq.get(p_) or cfg["quelle"])
+    if nd > 0: beleg("alle", f"Fensterreihe: Lichter {nd:.2f} m in der Laibung (Nische in der Wand, Pfosten/Riegel bis auf den Nischengrund)", q("nische_tiefe"), nische_tiefe=nd)
     if cfg.get("licht_riegel_z") or cfg.get("licht_scheitel_z"):
         beleg("alle", "Fensterreihe: Kaempferriegel/Scheitel je Licht (gespiegelt, aussen->Mitte)", q("licht_riegel_z") + (" | Scheitel: " + q("licht_scheitel_z") if cfg.get("licht_scheitel_z") else ""),
               licht_riegel_z=cfg.get("licht_riegel_z"), licht_scheitel_z=cfg.get("licht_scheitel_z"))
     beleg("alle", f"Fensterreihe {nf} Kielbogenfenster" + (f" ({nl} Lichter)" if nl != 2 else ""), f"Anzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + (q("n_lichter") + "; " if nl != 2 else "") + q("breite") + " | Lage: " + q("u_mitte"), n_fenster=nf, n_lichter=nl, pitch=pitch, breite=b, unterseite_z=z0, kaempfer_z=zk, scheitel_z=zs, wand_n=wn, tiefe=td)
-    return [k], []
+    return [k], [UNION(schnitte).transform(T)] if schnitte else []
 
 @bauteil("quader")
 def quader_bt(cfg, ctx):

@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-054",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=12.81",
+ "name": "OG Fenster Gruppe 3: Trennsteg-Achsabstand (Ebene 12.81)",
+ "mess_px": [
+  1935.0,
+  1000.0,
+  2185.0,
+  1000.0
+ ],
+ "P1": [
+  8.073,
+  10.731,
+  10.639
+ ],
+ "P2": [
+  7.238,
+  11.027,
+  10.62
+ ],
+ "dz": -0.019,
+ "dy": 0.296,
+ "dx": -0.835,
+ "abstand": 0.886,
+ "z1": 10.639,
+ "z2": 10.62,
+ "unsicherheit_rel": 0.0127,
+ "unsicherheit_m": 0.027,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.81 (+-0.15 m)"
+}

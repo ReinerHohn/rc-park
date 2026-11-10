@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-051",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=12.66",
+ "name": "OG Fenster Gruppe 3: Aussenbreite Goldrahmen (Ebene 12.66)",
+ "mess_px": [
+  1692.0,
+  1000.0,
+  2457.0,
+  1000.0
+ ],
+ "P1": [
+  8.829,
+  10.304,
+  10.768
+ ],
+ "P2": [
+  6.234,
+  11.223,
+  10.71
+ ],
+ "dz": -0.058,
+ "dy": 0.919,
+ "dx": -2.595,
+ "abstand": 2.754,
+ "z1": 10.768,
+ "z2": 10.71,
+ "unsicherheit_rel": 0.0126,
+ "unsicherheit_m": 0.051,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.66 (+-0.15 m)"
+}

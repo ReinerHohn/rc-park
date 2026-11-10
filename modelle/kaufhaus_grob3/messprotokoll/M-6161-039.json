@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-039",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.66",
+ "name": "OG Fenster Gruppe 3: Lichtweite unteres Mittellicht",
+ "mess_px": [
+  1922.0,
+  1400.0,
+  2003.0,
+  1400.0
+ ],
+ "P1": [
+  7.845,
+  10.653,
+  10.738
+ ],
+ "P2": [
+  7.178,
+  10.889,
+  10.723
+ ],
+ "dz": -0.015,
+ "dy": 0.236,
+ "dx": -0.668,
+ "abstand": 0.709,
+ "z1": 10.738,
+ "z2": 10.723,
+ "unsicherheit_rel": 0.0057,
+ "unsicherheit_m": 0.041,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.66 (+-0.15 m)"
+}

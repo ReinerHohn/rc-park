@@ -1,92 +1,92 @@
 {
  "foto": "6225",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_062358a062358/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6225 (amtliche Anker)",
- "zelle_px": 149,
+ "zelle_px": 150,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    1788,
-    447,
-    149
+    1950,
+    750,
+    150
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -5.98,
-    8.92,
-    23.82
+    -6.61,
+    6.7,
+    23.72
    ]
   },
   {
    "zelle": [
-    298,
-    2831,
-    149
+    300,
+    1800,
+    150
    ],
-   "score": -0.962,
+   "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    12.08,
-    -6.99,
-    14.8
+    14.0,
+    -3.54,
+    25.77
    ]
   },
   {
    "zelle": [
-    149,
-    2235,
-    149
+    1650,
+    750,
+    150
    ],
-   "score": -0.961,
+   "score": -0.921,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    13.51,
-    -4.31,
-    19.84
+    -4.53,
+    7.32,
+    23.9
    ]
   },
   {
    "zelle": [
-    1639,
-    596,
-    149
+    300,
+    1650,
+    150
    ],
-   "score": -0.932,
+   "score": -0.91,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -5.0,
-    8.87,
-    22.17
+    14.14,
+    -2.49,
+    26.98
    ]
   },
   {
    "zelle": [
-    298,
-    1490,
-    149
+    1950,
+    450,
+    150
    ],
-   "score": -0.915,
+   "score": -0.907,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    10.79,
-    1.15,
-    25.32
+    -6.52,
+    7.45,
+    26.53
    ]
   },
   {
    "zelle": [
-    149,
-    2831,
-    149
+    150,
+    1500,
+    150
    ],
-   "score": -0.913,
+   "score": -0.894,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    12.2,
-    -5.62,
-    14.23
+    12.45,
+    0.99,
+    25.07
    ]
   }
  ],

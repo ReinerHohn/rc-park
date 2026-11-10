@@ -7230,14 +7230,14 @@
    ],
    "u_mitte": -4.45,
    "pitch": 3.96,
-   "breite": 3.33,
+   "breite": 2.72,
    "unterseite_z": 10.31,
    "kaempfer_z": 11.72,
-   "scheitel_z": 13.31,
+   "scheitel_z": 13.41,
    "wand_n": 12.66,
-   "tiefe": 0.15,
-   "rahmen_b": 0.147,
-   "pfosten_b": 0.147,
+   "tiefe": 0.05,
+   "rahmen_b": 0.105,
+   "pfosten_b": 0.19,
    "riegel_z": 11.72,
    "riegel_h": 0.1,
    "kiel": -0.4309,
@@ -7246,162 +7246,99 @@
     0.9426
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
-   "quelle": "Fensteranzahl 5: Zaehlprotokolle Z-004-002 und Z-043-001 (Foto); Lage/Masse/Kontur 2026-11-09: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json (Pfosten-/Horizontalcluster, fotobelegt); 3 Lichter je Gruppe: Z-6120-002/Z-6261-001/Z-hc12-001 (Foto); Plexi fehlt",
+   "quelle": "Fensteranzahl 5: Zaehlprotokolle Z-004-002 und Z-043-001 (Foto); Lage/Masse/Kontur 2026-11-09: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json (Pfosten-/Horizontalcluster, fotobelegt); 3 Lichter je Gruppe: Z-6120-002/Z-6261-001/Z-hc12-001 (Foto); Plexi fehlt | Kreis r1 2026-11-10: Breite/Rahmen/Stege/Kontur aus Foto 6161 (M-6161-022..044), Lichter in Laibung (nische_tiefe)",
    "glas_d": 0.03,
-   "glas_n": 0.0,
+   "glas_n": -0.23,
    "werte_quellen": {
     "glas_d": "Plattendicke 0,03 = ANNAHME Druck (vorher 0,10)",
-    "glas_n": "Verglasung in der Wandebene 12,66 (Gitter-Frontebene), Rahmen/Masswerk 0,15 davor: kantengitter fenster_erker_v9 annahmen Oeffnungstiefe 0,1 / Rahmentiefe 0,15 (ANNAHME); vorher lag die Glasplatte VOR der Rahmenfront (12,80-12,90) und schloss die Lichter",
+    "glas_n": "Glasplatte hinter dem Nischengrund: Vorderseite bei wand_n - nische_tiefe (go = -(nische_tiefe + glas_d)); Nischengrund = Wand (Schnitt im Generator, fensterreihe nische_tiefe)",
     "u_mitte": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json fenster.gruppen mitte -4.45 (Mittellicht-Pfostenpaare, fotobelegt >= 82 Fotos je Gruppe)",
     "pitch": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json (mitte_5 - mitte_1)/4 = 3.960 (periode 3,959)",
-    "breite": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json 3 Lichter x 0.912 + 4 Rahmen/Pfosten x 0.147 = 3.33 (Aussenkante Rahmen; Aussenpfosten nur 1 von 10 im Gitter -> abgeleitet)",
+    "breite": "Foto ip_IMG_6161 (K-6161 Kamera-Bruecke lot2, Ebene n 12,66 +-0,15 m, Kreis r1 2026-11-10): Aussenbreite Goldrahmen 2,72 m = M-6161-022 (Gruppe 3), M-6161-036 (Gruppe 2: 2,71), Gegenprobe M-6120-051/053 (K-6120, Ebenen 12,66/12,81: 2,75/2,71); Lichtweite 3 x 0,71 (M-6161-038..040). Alter Wert 3,33 war aus 3 x 0,912 + 4 x 0,147 abgeleitet (Aussenpfosten im Gitter nur 1 von 10)",
     "unterseite_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json z_sohl 10.31 (Pfostenfuss)",
     "kaempfer_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json z_kaempfer 11.72 (Horizontale 69,9 m)",
-    "scheitel_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json z_scheitel 13.31 (Horizontale 29,1 m)",
+    "scheitel_z": "Foto ip_IMG_6161 (K-6161 Kamera-Bruecke lot2, Ebene n 12,66 +-0,15 m, Kreis r1 2026-11-10): Stegscheitel des Vorhangbogens z 13,425 / 13,397 (M-6161-033/035), Mittelsenke 13,34 (M-6161-034)",
     "wand_n": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json off_front 12.66",
-    "tiefe": "kantengitter fenster_erker_v9 annahmen: Rahmentiefe 0,15 m (ANNAHME); Rahmen steht 0,15 vor der Wandebene 12,66, Lichter = Oeffnungen bis zur Wand",
-    "rahmen_b": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json b_rahmen 0.147 (Doppelkanten-Median)",
-    "pfosten_b": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json b_rahmen 0.147 (Pfosten = Rahmenbreite, ANNAHME gleich)",
+    "tiefe": "Rahmen-/Stegfront 0,05 m vor der Wandebene 12,66 (Front 12,71): Goldsteg am Kaempfer n 12,646 +-0,04 (M-6132-002, Paar 63,5 Grad), Aussenkante 12,671 +-0,03 (M-6120-056), Wolke Steg p50 12,64-12,65 (p90 12,68) = Rahmen buendig mit der Wand; 0,05 = ANNAHME Relief (Druck: Mindesttiefe). Ausreisser M-6120-057 12,805 (Paar nur 30 Grad) und alter Wert 0,15 (Gitter-ANNAHME) verworfen: tiefe 0,15 -> 0,05 hob Wolkenbeleg 0,863 -> 0,979 und Fotokanten-Praezision 0,496 -> 0,683 (konvergenz_bericht)",
+    "rahmen_b": "Foto ip_IMG_6161 (K-6161 Kamera-Bruecke lot2, Ebene n 12,66 +-0,15 m, Kreis r1 2026-11-10): aeusserer Rahmen (Goldkante bis Lichtkante) links 0,12 / rechts 0,09 m = M-6161-041/044, Mittel 0,105",
+    "pfosten_b": "Foto ip_IMG_6161 (K-6161 Kamera-Bruecke lot2, Ebene n 12,66 +-0,15 m, Kreis r1 2026-11-10): Trennstege zwischen den Lichtern 0,19 m (links M-6161-042, rechts M-6161-043); Achsabstand der Stege 0,88-0,91 (M-6161-023/037, M-6120-052)",
     "riegel_z": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json z_kaempfer 11.72 (Kaempfer-Riegel = staerkste Horizontale)",
     "kiel": "param_wolke_fit.py (CMA-ES, gesamt, z 6,3-10,6) gegen wolke_netzrahmen.npy; Gesamtmetrik p14->p17 Median 0,094->0,093, P90 0,222->0,219; tiefe 0,3 = ANNAHME (Fit lief an Grenze 0,6)",
     "n_lichter": "Foto-Zaehlung Z-6120-002 (2 Gruppen voll), Z-6261-001 (5 Gruppen), Z-hc12-001 (5 Gruppen): je 3 Lichter (Regel 9); Gitter fenster_erker_v9 n_licht 3 bestaetigt",
-    "kontur": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json fenster.profil (Bekroenungsprofil |dx| -> z, 75%-Quantil schraeger Kanten, >= 40 Kanten je Bin) + z_schulter 12.25 am Rahmenrand; Vorhangbogen statt Kielbogen",
+    "kontur": "Foto ip_IMG_6161 (K-6161 Kamera-Bruecke lot2, Ebene n 12,66 +-0,15 m, Kreis r1 2026-11-10): Konturpunkte der linken Haelfte M-6161-028..035 (Aussenkante |u| 1,32 z 12,54 ... Stegscheitel |u| 0,49 z 13,43 ... Mittelsenke z 13,34), um u 3,501 (Mitte Gruppe 3, M-6161-022/023) gespiegelt, z relativ unterseite_z 10,31; Aussenkante senkrecht bis z 12,51 (M-6161-028). Ersetzt die Gitter-Kontur (Aussen +-1,663 / 1,94)",
     "einbindung": "Druck: Rahmen 0,04 m hinter die Wandebene (sonst nur flaechige Beruehrung = eigener Koerper), Ansicht unveraendert",
-    "licht_riegel_z": "kaempfer_sweep.json (kette_video_alle/koerper, Foto-Sweep 11,753 / 12,283, Wolke 11,753 / 12,293 einig; kanten_tor Mitte 12,269); Differenz Mitte-Seite 0,53 m am Foto bestaetigt (M-6120-011/012/013: 11,64/12,20/11,69). Scheitel je Licht nicht gesetzt: Seitenlichter folgen der Kontur, Mitte M-6120-016 13,06 innen = Kontur 13,31 - rahmen_b; Sweep-Seitenscheitel 14,334 (Wolke) liegt UEBER der Rahmenoberkante M-6120-017 13,30 -> verworfen"
+    "licht_riegel_z": "kaempfer_sweep.json (kette_video_alle/koerper, Foto-Sweep 11,753 / 12,283, Wolke 11,753 / 12,293 einig; kanten_tor Mitte 12,269); Differenz Mitte-Seite 0,53 m am Foto bestaetigt (M-6120-011/012/013: 11,64/12,20/11,69). Scheitel je Licht nicht gesetzt: Seitenlichter folgen der Kontur, Mitte M-6120-016 13,06 innen = Kontur 13,31 - rahmen_b; Sweep-Seitenscheitel 14,334 (Wolke) liegt UEBER der Rahmenoberkante M-6120-017 13,30 -> verworfen",
+    "nische_tiefe": "Lichter in der Laibung: Wolke lot2 j_voll_lot2.npy, Gruppe 3/4 (|u|<1,5, z 10,4-13,4): Glas-/Lichtpunkte n p50 12,38-12,41 (p10 12,31-12,38) gegen Wandebene/Aussenwand p50 12,67 = 0,26-0,29 hinter der Wand; Fotos: Laibung sichtbar in 6132/6117/6118/6120, Glasecke trianguliert n 12,56 (M-6120-055, +-0,08) / 12,60 (M-6132-001, +-0,06) = 0,06-0,10 hinter der Wand. Quellen weichen im Betrag ab (Foto 0,06-0,10 gegen Wolke 0,27) -> 0,2 m = ANNAHME analog EG-Nische (eg1_nische 0,21-0,23), Betrag offen (beobachtungen_offen)"
    },
    "n_lichter": 3,
    "kontur": [
     [
-     -1.663121990798432,
+     -1.36,
      0.0
     ],
     [
-     1.663121990798432,
+     1.36,
      0.0
     ],
     [
-     1.663121990798432,
-     1.94
+     1.36,
+     2.2
     ],
     [
-     1.35,
-     2.241
+     1.094,
+     2.382
     ],
     [
-     1.25,
-     2.283
+     0.873,
+     2.546
     ],
     [
-     1.15,
-     2.344
+     0.695,
+     2.74
     ],
     [
-     1.05,
-     2.4
+     0.581,
+     2.955
     ],
     [
-     0.95,
-     2.47
+     0.48,
+     3.1
     ],
     [
-     0.85,
-     2.56
-    ],
-    [
-     0.75,
-     2.651
-    ],
-    [
-     0.65,
-     2.759
-    ],
-    [
-     0.55,
-     2.848
-    ],
-    [
-     0.45,
-     2.953
-    ],
-    [
-     0.35,
-     2.992
-    ],
-    [
-     0.25,
-     3.02
-    ],
-    [
-     0.15,
-     3.018
-    ],
-    [
-     0.05,
-     2.973
+     0.3,
+     3.06
     ],
     [
      0.0,
-     2.995
+     3.03
     ],
     [
-     -0.05,
-     2.973
+     -0.3,
+     3.06
     ],
     [
-     -0.15,
-     3.018
+     -0.48,
+     3.1
     ],
     [
-     -0.25,
-     3.02
+     -0.581,
+     2.955
     ],
     [
-     -0.35,
-     2.992
+     -0.695,
+     2.74
     ],
     [
-     -0.45,
-     2.953
+     -0.873,
+     2.546
     ],
     [
-     -0.55,
-     2.848
+     -1.094,
+     2.382
     ],
     [
-     -0.65,
-     2.759
-    ],
-    [
-     -0.75,
-     2.651
-    ],
-    [
-     -0.85,
-     2.56
-    ],
-    [
-     -0.95,
-     2.47
-    ],
-    [
-     -1.05,
-     2.4
-    ],
-    [
-     -1.15,
-     2.344
-    ],
-    [
-     -1.25,
-     2.283
-    ],
-    [
-     -1.35,
-     2.241
-    ],
-    [
-     -1.663121990798432,
-     1.94
+     -1.36,
+     2.2
     ]
    ],
    "historie": [
@@ -7615,13 +7552,248 @@
        12.283
       ]
      }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis r1 (fensterreihe:og)",
+     "alt": {
+      "breite": 3.33,
+      "rahmen_b": 0.147,
+      "pfosten_b": 0.147,
+      "scheitel_z": 13.31,
+      "kontur": [
+       [
+        -1.663121990798432,
+        0.0
+       ],
+       [
+        1.663121990798432,
+        0.0
+       ],
+       [
+        1.663121990798432,
+        1.94
+       ],
+       [
+        1.35,
+        2.241
+       ],
+       [
+        1.25,
+        2.283
+       ],
+       [
+        1.15,
+        2.344
+       ],
+       [
+        1.05,
+        2.4
+       ],
+       [
+        0.95,
+        2.47
+       ],
+       [
+        0.85,
+        2.56
+       ],
+       [
+        0.75,
+        2.651
+       ],
+       [
+        0.65,
+        2.759
+       ],
+       [
+        0.55,
+        2.848
+       ],
+       [
+        0.45,
+        2.953
+       ],
+       [
+        0.35,
+        2.992
+       ],
+       [
+        0.25,
+        3.02
+       ],
+       [
+        0.15,
+        3.018
+       ],
+       [
+        0.05,
+        2.973
+       ],
+       [
+        0.0,
+        2.995
+       ],
+       [
+        -0.05,
+        2.973
+       ],
+       [
+        -0.15,
+        3.018
+       ],
+       [
+        -0.25,
+        3.02
+       ],
+       [
+        -0.35,
+        2.992
+       ],
+       [
+        -0.45,
+        2.953
+       ],
+       [
+        -0.55,
+        2.848
+       ],
+       [
+        -0.65,
+        2.759
+       ],
+       [
+        -0.75,
+        2.651
+       ],
+       [
+        -0.85,
+        2.56
+       ],
+       [
+        -0.95,
+        2.47
+       ],
+       [
+        -1.05,
+        2.4
+       ],
+       [
+        -1.15,
+        2.344
+       ],
+       [
+        -1.25,
+        2.283
+       ],
+       [
+        -1.35,
+        2.241
+       ],
+       [
+        -1.663121990798432,
+        1.94
+       ]
+      ]
+     },
+     "neu": {
+      "breite": 2.72,
+      "rahmen_b": 0.105,
+      "pfosten_b": 0.19,
+      "scheitel_z": 13.41,
+      "kontur": [
+       [
+        -1.36,
+        0.0
+       ],
+       [
+        1.36,
+        0.0
+       ],
+       [
+        1.36,
+        2.2
+       ],
+       [
+        1.094,
+        2.382
+       ],
+       [
+        0.873,
+        2.546
+       ],
+       [
+        0.695,
+        2.74
+       ],
+       [
+        0.581,
+        2.955
+       ],
+       [
+        0.48,
+        3.1
+       ],
+       [
+        0.3,
+        3.06
+       ],
+       [
+        0.0,
+        3.03
+       ],
+       [
+        -0.3,
+        3.06
+       ],
+       [
+        -0.48,
+        3.1
+       ],
+       [
+        -0.581,
+        2.955
+       ],
+       [
+        -0.695,
+        2.74
+       ],
+       [
+        -0.873,
+        2.546
+       ],
+       [
+        -1.094,
+        2.382
+       ],
+       [
+        -1.36,
+        2.2
+       ]
+      ]
+     }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis r1 (fensterreihe:og)",
+     "alt": {
+      "glas_n": 0.0,
+      "nische_tiefe": null,
+      "tiefe": 0.15
+     },
+     "neu": {
+      "nische_tiefe": 0.2,
+      "glas_n": -0.23,
+      "tiefe": 0.05
+     }
     }
    ],
    "einbindung": 0.04,
    "licht_riegel_z": [
     11.753,
     12.283
-   ]
+   ],
+   "nische_tiefe": 0.2
   }
  ],
  "hinweis_grob": "2026-11-07: Bauteile = 9 Gruppen aus dem an die Wolke ausgerichteten alten Generator (generator_alt/teile/g_*.stl, 41 Teile), Rohdreiecke (stl_teil), nicht wasserdicht, nicht druckbar. Schleife stellt je Gruppe dn/du/dz/sn/su/sz.",

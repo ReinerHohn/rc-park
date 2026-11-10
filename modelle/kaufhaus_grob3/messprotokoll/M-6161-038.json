@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-038",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.66",
+ "name": "OG Fenster Gruppe 3: Lichtweite unteres linkes Licht (innen Rahmen)",
+ "mess_px": [
+  1819.0,
+  1400.0,
+  1900.0,
+  1400.0
+ ],
+ "P1": [
+  8.698,
+  10.351,
+  10.757
+ ],
+ "P2": [
+  8.027,
+  10.588,
+  10.742
+ ],
+ "dz": -0.015,
+ "dy": 0.238,
+ "dx": -0.671,
+ "abstand": 0.712,
+ "z1": 10.757,
+ "z2": 10.742,
+ "unsicherheit_rel": 0.0056,
+ "unsicherheit_m": 0.041,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.66 (+-0.15 m)"
+}

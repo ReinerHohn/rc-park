@@ -934,6 +934,13 @@
  },
  {
   "seite": "alle",
+  "element": "Fensterreihe: Lichter 0.20 m in der Laibung (Nische in der Wand, Pfosten/Riegel bis auf den Nischengrund)",
+  "quelle": "Lichter in der Laibung: Wolke lot2 j_voll_lot2.npy, Gruppe 3/4 (|u|<1,5, z 10,4-13,4): Glas-/Lichtpunkte n p50 12,38-12,41 (p10 12,31-12,38) gegen Wandebene/Aussenwand p50 12,67 = 0,26-0,29 hinter der Wand; Fotos: Laibung sichtbar in 6132/6117/6118/6120, Glasecke trianguliert n 12,56 (M-6120-055, +-0,08) / 12,60 (M-6132-001, +-0,06) = 0,06-0,10 hinter der Wand. Quellen weichen im Betrag ab (Foto 0,06-0,10 gegen Wolke 0,27) -> 0,2 m = ANNAHME analog EG-Nische (eg1_nische 0,21-0,23), Betrag offen (beobachtungen_offen)",
+  "nische_tiefe": 0.2,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Fensterreihe: Kaempferriegel/Scheitel je Licht (gespiegelt, aussen->Mitte)",
   "quelle": "kaempfer_sweep.json (kette_video_alle/koerper, Foto-Sweep 11,753 / 12,283, Wolke 11,753 / 12,293 einig; kanten_tor Mitte 12,269); Differenz Mitte-Seite 0,53 m am Foto bestaetigt (M-6120-011/012/013: 11,64/12,20/11,69). Scheitel je Licht nicht gesetzt: Seitenlichter folgen der Kontur, Mitte M-6120-016 13,06 innen = Kontur 13,31 - rahmen_b; Sweep-Seitenscheitel 14,334 (Wolke) liegt UEBER der Rahmenoberkante M-6120-017 13,30 -> verworfen",
   "licht_riegel_z": [
@@ -946,16 +953,16 @@
  {
   "seite": "alle",
   "element": "Fensterreihe 5 Kielbogenfenster (3 Lichter)",
-  "quelle": "Anzahl Z-004-002, Z-043-001, Z-6120-002, Z-6261-001, Z-hc12-001 (Regel 9); Foto-Zaehlung Z-6120-002 (2 Gruppen voll), Z-6261-001 (5 Gruppen), Z-hc12-001 (5 Gruppen): je 3 Lichter (Regel 9); Gitter fenster_erker_v9 n_licht 3 bestaetigt; kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json 3 Lichter x 0.912 + 4 Rahmen/Pfosten x 0.147 = 3.33 (Aussenkante Rahmen; Aussenpfosten nur 1 von 10 im Gitter -> abgeleitet) | Lage: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json fenster.gruppen mitte -4.45 (Mittellicht-Pfostenpaare, fotobelegt >= 82 Fotos je Gruppe)",
+  "quelle": "Anzahl Z-004-002, Z-043-001, Z-6120-002, Z-6261-001, Z-hc12-001 (Regel 9); Foto-Zaehlung Z-6120-002 (2 Gruppen voll), Z-6261-001 (5 Gruppen), Z-hc12-001 (5 Gruppen): je 3 Lichter (Regel 9); Gitter fenster_erker_v9 n_licht 3 bestaetigt; Foto ip_IMG_6161 (K-6161 Kamera-Bruecke lot2, Ebene n 12,66 +-0,15 m, Kreis r1 2026-11-10): Aussenbreite Goldrahmen 2,72 m = M-6161-022 (Gruppe 3), M-6161-036 (Gruppe 2: 2,71), Gegenprobe M-6120-051/053 (K-6120, Ebenen 12,66/12,81: 2,75/2,71); Lichtweite 3 x 0,71 (M-6161-038..040). Alter Wert 3,33 war aus 3 x 0,912 + 4 x 0,147 abgeleitet (Aussenpfosten im Gitter nur 1 von 10) | Lage: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/fenster_erker_v9.json fenster.gruppen mitte -4.45 (Mittellicht-Pfostenpaare, fotobelegt >= 82 Fotos je Gruppe)",
   "n_fenster": 5,
   "n_lichter": 3,
   "pitch": 3.96,
-  "breite": 3.33,
+  "breite": 2.72,
   "unterseite_z": 10.31,
   "kaempfer_z": 11.72,
-  "scheitel_z": 13.31,
+  "scheitel_z": 13.41,
   "wand_n": 12.66,
-  "tiefe": 0.15,
+  "tiefe": 0.05,
   "seite_name": "alle"
  },
  {

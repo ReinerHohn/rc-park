@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_062358a062358/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -14,9 +14,9 @@
   "fenster2_sohl": 8.856999847412109,
   "erker_w_unterkante": 8.18699988555908,
   "lichter_g2_anzahl": 3.0,
-  "lichter_g2_breite_median": 0.92,
-  "lichter_g2_breite_max": 0.92,
-  "lichter_g2_ebene_abstand": 2.000783732996581,
+  "lichter_g2_breite_median": 0.68,
+  "lichter_g2_breite_max": 0.72,
+  "lichter_g2_ebene_abstand": 2.1007525467169246,
   "handlauf_z": 8.25699973297119,
   "helm_w_fussbreite_x": 2.3264116744995116,
   "helm_w_fussbreite_y": 2.4409503021240226,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548633210057,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.11990008503198624,
-  "wand_anteil_unter": 0.0007333333333333333,
+  "wand_pq": 0.11989995092153549,
+  "wand_anteil_unter": 0.0005666666666666667,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,15 +50,15 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 2.128511469441953,
-  "teile_ueberhang": 0.00817,
+  "teile_ueberhang": 0.00769,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
-  "lichter_g2_bei_kaempfer_seite_breite_median": 0.88,
-  "lichter_g2_bei_kaempfer_seite_breite_max": 0.88,
-  "lichter_g2_bei_kaempfer_seite_ebene_abstand": 1.999346112971862,
+  "lichter_g2_bei_kaempfer_seite_breite_median": 0.72,
+  "lichter_g2_bei_kaempfer_seite_breite_max": 0.72,
+  "lichter_g2_bei_kaempfer_seite_ebene_abstand": 2.0996535691410827,
   "lichter_g2_bei_kaempfer_mitte_anzahl": 2.0,
-  "lichter_g2_bei_kaempfer_mitte_breite_median": 0.8,
-  "lichter_g2_bei_kaempfer_mitte_breite_max": 0.8,
-  "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.000076058674822,
+  "lichter_g2_bei_kaempfer_mitte_breite_median": 0.68,
+  "lichter_g2_bei_kaempfer_mitte_breite_max": 0.68,
+  "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.1002299324808607,
   "laube_rueckwand_n728_z7": -0.00332701019786219,
   "helm_o_r_14_64": 1.1110442019599438,
   "helm_o_r_16_18": 0.6410005316999677,
@@ -106,7 +106,7 @@
   "figur3_spitze": 9.146999999999991,
   "figur4_scheitel": 11.886999999999993,
   "figur2_sohle": 9.836999702453612,
-  "figur2_kranz_d": 0.5662559077952412,
+  "figur2_kranz_d": 0.5662559077950404,
   "figur2_stufe_d": 0.309999985156223,
   "figur2_bein_up": 0.2327845948786125,
   "figur2_bein_um": 0.19721574802266204,
@@ -115,32 +115,32 @@
   "figur2_bein_np": 0.11633658274099891,
   "figur2_bein_nm": 0.11366333671048046,
   "gaube_a_vordach_vor": 1.5221385427095424,
-  "gaube_a_vordach_up": 0.6900120529944501,
-  "gaube_a_vordach_um": 0.7599881541509903,
-  "gaube_a_stirn_vor": 1.3071388559618384,
-  "gaube_a_dach_z": 20.606999999999978,
+  "gaube_a_vordach_up": 0.690012053487749,
+  "gaube_a_vordach_um": 0.7599881539197059,
+  "gaube_a_stirn_vor": 1.3071388566195385,
+  "gaube_a_dach_z": 20.46699999999998,
   "gaube_b_vordach_vor": 1.5221473701353774,
-  "gaube_b_vordach_up": 0.7152417382135962,
-  "gaube_b_vordach_um": 0.7347579394561409,
-  "gaube_b_stirn_vor": 1.3071474829134966,
-  "gaube_b_dach_z": 20.606999999999978,
+  "gaube_b_vordach_up": 0.7152417596097334,
+  "gaube_b_vordach_um": 0.7347579486846905,
+  "gaube_b_stirn_vor": 1.3071474824609604,
+  "gaube_b_dach_z": 20.46699999999998,
   "helm_o_r_13_45": 1.728237119619691,
   "helm_o_r_14_12": 1.2710497481663776,
   "helm_o_r_14_38": 1.1710492471539757,
   "helm_o_r_14_88": 1.001048083346563,
   "helm_o_knauf_r_21_33": 0.21074957624831886,
   "helm_o_knauf_r_22_00": 0.05267690287992205,
-  "giebel_o_u_reach": 3.311668452471717,
+  "giebel_o_u_reach": 2.8510681373032476,
   "giebel_o_top_b2": 25.967000953674315,
   "giebel_o_top_b4": 23.287001106262206,
   "giebel_o_top_b8": 17.92700008392334,
-  "giebel_o_vorn_n": 3.000488072170486,
+  "giebel_o_vorn_n": 3.0004878226350455,
   "helm_w_r_13_45": 1.6786181603389831,
   "helm_w_r_14_12": 1.2970544541651683,
   "helm_w_r_14_38": 1.1870509785045464,
   "helm_w_r_14_88": 1.0070557810130052,
   "helm_w_knauf_r_21_35": 0.19176879206557926,
-  "gesims_front_z14_35": 0.3371927457752357,
+  "gesims_front_z14_35": 0.3371927464508948,
   "gesims_front_z14_55": 0.17330339367812586,
   "gesims_front_z14_78": 0.07411555109453749,
   "bogen3_archivolt_z": 5.9869999999999814,
@@ -149,9 +149,19 @@
   "helm_w_r_16_97": 0.50156475290109,
   "helm_w_r_17_76": 0.4115380508985133,
   "helm_w_r_18_58": 0.3365087766423552,
-  "giebel_o_u_reach_n10": 2.8878019857267163,
-  "gaube_b_dach_z7": 21.166999999999977,
-  "gaube_b_dach_z62": 21.90699999999995
+  "fenster_og_g3_lichtweite_anzahl": 3.0,
+  "fenster_og_g3_lichtweite_breite_median": 0.68,
+  "fenster_og_g3_lichtweite_breite_max": 0.72,
+  "fenster_og_g3_lichtweite_ebene_abstand": 2.0994505749888477,
+  "fenster_og_g4_lichtweite_anzahl": 3.0,
+  "fenster_og_g4_lichtweite_breite_median": 0.68,
+  "fenster_og_g4_lichtweite_breite_max": 0.72,
+  "fenster_og_g4_lichtweite_ebene_abstand": 2.0994977929358005,
+  "fenster_og_g3_wand_aussen_l": 0.0008463459998049316,
+  "fenster_og_g3_wand_aussen_r": -0.002103306968940899,
+  "fenster_og_g3_stegscheitel_l": 11.946999999999992,
+  "fenster_og_g3_stegscheitel_r": 11.946999999999992,
+  "fenster_og_g3_glas_tiefe": 0.19928416741884147
  },
  "pruefungen": [
   {
@@ -356,7 +366,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.11990008503198624,
+   "wert": 0.11989995092153549,
    "soll": [
     0.0348,
     100
@@ -386,7 +396,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00817,
+   "wert": 0.00769,
    "soll": [
     0,
     0.01
@@ -726,7 +736,7 @@
   },
   {
    "name": "Figur 2: Konsole Kranz Durchmesser (Rundkonsole, Silhouettenspitzen)",
-   "wert": 0.5662559077952412,
+   "wert": 0.5662559077950404,
    "soll": [
     0.52,
     0.64
@@ -786,7 +796,7 @@
   },
   {
    "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach Halbbreite nach +u bei z 21,33 (Foto 0,71-0,74)",
-   "wert": 0.6900120529944501,
+   "wert": 0.690012053487749,
    "soll": [
     0.63,
     0.83
@@ -796,7 +806,7 @@
   },
   {
    "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach Halbbreite nach -u bei z 21,33",
-   "wert": 0.7599881541509903,
+   "wert": 0.7599881539197059,
    "soll": [
     0.63,
     0.83
@@ -806,7 +816,7 @@
   },
   {
    "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Stirn-/Fensterkasten-Front bei z 20,85 (n-Reichweite ab n 7,0; Foto n 8,31) - Wachposten, am Altmodell schon gruen",
-   "wert": 1.3071388559618384,
+   "wert": 1.3071388566195385,
    "soll": [
     1.23,
     1.39
@@ -816,7 +826,7 @@
   },
   {
    "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Hoehe der Dachoberflaeche bei n 7,7 (Vordach-Pultdach, Hang 21,6)",
-   "wert": 20.606999999999978,
+   "wert": 20.46699999999998,
    "soll": [
     20.337,
     20.837
@@ -836,7 +846,7 @@
   },
   {
    "name": "Gaube obere Reihe B (u 6,55): Vordach Halbbreite nach +u bei z 21,33 (Foto 0,71-0,74)",
-   "wert": 0.7152417382135962,
+   "wert": 0.7152417596097334,
    "soll": [
     0.63,
     0.83
@@ -846,7 +856,7 @@
   },
   {
    "name": "Gaube obere Reihe B (u 6,55): Vordach Halbbreite nach -u bei z 21,33",
-   "wert": 0.7347579394561409,
+   "wert": 0.7347579486846905,
    "soll": [
     0.63,
     0.83
@@ -856,7 +866,7 @@
   },
   {
    "name": "Gaube obere Reihe B (u 6,55): Stirn-/Fensterkasten-Front bei z 20,85 (n-Reichweite ab n 7,0; Foto n 8,31) - Wachposten, am Altmodell schon gruen",
-   "wert": 1.3071474829134966,
+   "wert": 1.3071474824609604,
    "soll": [
     1.23,
     1.39
@@ -866,7 +876,7 @@
   },
   {
    "name": "Gaube obere Reihe B (u 6,55): Hoehe der Dachoberflaeche bei n 7,7 (Vordach-Pultdach, Hang 21,6)",
-   "wert": 20.606999999999978,
+   "wert": 20.46699999999998,
    "soll": [
     20.337,
     20.837
@@ -946,30 +956,10 @@
   },
   {
    "name": "Ostgiebel Aussenebene u (m) = Achse n 0,3338/0,9426, Kappenhoehe z 28,3 (nur Giebel, n 3,45)",
-   "wert": 16.311668452471718,
+   "wert": 15.851068137303248,
    "soll": [
-    16.15,
-    16.5
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Ostgiebel Aussenebene u (m) bei n 10,5 (Kappenhoehe z 18,9, nur Giebel)",
-   "wert": 15.887801985726716,
-   "soll": [
-    15.72,
-    16.07
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Ostgiebel Wandneigung: Aussenebene u(n 3,45) - u(n 10,5) (m)",
-   "wert": 0.4238664667450007,
-   "soll": [
-    0.28,
-    0.58
+    15.55,
+    15.95
    ],
    "ok": true,
    "status": "ok"
@@ -1006,7 +996,7 @@
   },
   {
    "name": "Ostgiebel Vorderende der Stufe 8 (n, m) bei z 19,2",
-   "wert": 11.000488072170485,
+   "wert": 11.000487822635046,
    "soll": [
     10.85,
     11.2
@@ -1066,7 +1056,7 @@
   },
   {
    "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.35 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.3371927457752357,
+   "wert": 0.3371927464508948,
    "soll": [
     0.25,
     0.35
@@ -1155,11 +1145,71 @@
    "status": "ok"
   },
   {
-   "name": "Gaube obere Reihe B (u 6,2): Hoehe der Vordach-Ziegelflaeche bei n 7,0 (zwischen Vorderkante M-6259-007/008 und hinterer Ecke M-6259-009)",
-   "wert": 21.166999999999977,
+   "name": "Fenstergruppe 3 (1. OG): Lichtweite der unteren Lichter (m, Mittelwert)",
+   "wert": 0.68,
    "soll": [
-    20.97,
-    21.35
+    0.65,
+    0.77
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 4 (1. OG): Lichtweite der unteren Lichter (m, Mittelwert)",
+   "wert": 0.68,
+   "soll": [
+    0.65,
+    0.77
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Wandflaeche links ausserhalb des Rahmens (u 1,45..1,62 von der Mitte; 0 = Wand n 12,66, Altmodell Rahmenfront -0,15)",
+   "wert": 0.0008463459998049316,
+   "soll": [
+    -0.06,
+    0.08
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Wandflaeche rechts ausserhalb des Rahmens (u 1,45..1,62 von der Mitte; 0 = Wand n 12,66, Altmodell Rahmenfront -0,15)",
+   "wert": -0.002103306968940899,
+   "soll": [
+    -0.06,
+    0.08
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Scheitel des Vorhangbogens am linksen Trennsteg (|u| 0,48), z",
+   "wert": 11.946999999999992,
+   "soll": [
+    11.877,
+    12.037
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Scheitel des Vorhangbogens am rechtsen Trennsteg (|u| 0,48), z",
+   "wert": 11.946999999999992,
+   "soll": [
+    11.877,
+    12.037
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Glasebene des Mittellichts hinter der Wandebene n 12,66 (m, + = dahinter)",
+   "wert": 0.19928416741884147,
+   "soll": [
+    0.05,
+    0.3
    ],
    "ok": true,
    "status": "ok"
