@@ -4073,6 +4073,14 @@
    "naechster_schritt": "tiefe 0,01 (Front 7,25), einbindung 0,20 (Pfosten bis zum Nischengrund, Laibung in 6174/6213 tief); Pruefung eg0_rahmenfront. Offen: eg1 (Beleg 0,945) und eg2 haben dieselbe ANNAHME tiefe 0,16 - je Teil nachmessen."
   },
   {
+   "datum": "2026-11-10",
+   "wer": "Koordinator nach Pruefer a093550 r2 (fensterreihe:eg0)",
+   "teil": "fensterreihe:eg0",
+   "merkmal": "EG0-Fenster Sollbereich selbst gesetzt",
+   "text": "Pruefung fenster_eg0_oberkante_l/r (0,02) liegt genau auf der Untergrenze des in derselben Runde gesetzten Sollbereichs 0,02..0,06. Kontur-Diff 6119: Umriss beider EG0-Fenster fehlt im Modell (gelb), vor/nach gleich. werte_quellen in objekt.json (Kaempfer, Tiefe wie eg1 ANNAHME) veraltet.",
+   "naechster_schritt": "Sollbereich mit unabhaengiger Quelle (foto_mass an 6119/6120) belegen oder Pruefung als ANNAHME kennzeichnen; Ursache gelber Umriss in 6119 (Verdeckung/Kamera) klaeren; werte_quellen aktualisieren."
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
    "auto_id": "fehlteile-6261-234-1794",
