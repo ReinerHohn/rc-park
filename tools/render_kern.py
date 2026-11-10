@@ -99,7 +99,7 @@ def schattiert(P, N, R, t, f, cx, cy, W, H, licht=(0.35, -0.45, 0.82), hintergru
     img[tr] = (70 + 170 * (0.25 + 0.75 * lit[idx[tr]])).astype(np.uint8)
     return img, depth
 
-def dreiecke_rastern(mm, R, t, f, cx, cy, W, H, block=1 << 20, als_torch=False):
+def dreiecke_rastern(mm, R, t, f, cx, cy, W, H, block=None, als_torch=False):
     """Netz (trimesh, Weltrahmen) auf der GPU EXAKT rastern (Z-Puffer je Pixel, perspektivisch korrekte Tiefe), kein Punkt-Abtasten mehr.
     Warum (2026-11-04): Punkt-Abtastung liess Pixel ohne Punkt auf der Vorderflaeche -> dahinterliegende (dunkle) Flaeche schien durch = Pixel-Pfeffer und
     Scheinkanten im 'Foto'. Streuungsmessung Martinstor 014: T1 je Saat CPU 24,8/32,2/29,8/27,5 %, GPU-Punkte 26,4/25,0/25,6/23,8 % (Grenze 25 %) - der Beweis
@@ -117,6 +117,8 @@ def dreiecke_rastern(mm, R, t, f, cx, cy, W, H, block=1 << 20, als_torch=False):
     fl2 = (u[:, 1] - u[:, 0]) * (v[:, 2] - v[:, 0]) - (u[:, 2] - u[:, 0]) * (v[:, 1] - v[:, 0])
     gut = (z > 1).all(1) & (x1 >= x0) & (y1 >= y0) & (fl2.abs() > 1e-12)
     ids = torch.nonzero(gut, as_tuple=True)[0]; nx = (x1 - x0 + 1)[ids].long(); ny = (y1 - y0 + 1)[ids].long(); cnt = nx * ny
+    if block is None:   # 10.11.: feste 1<<20 Paare -> 2612 Python-Durchlaeufe je Foto (32 s von ~50). Block nach freiem VRAM (~200 Byte je Paar, 25 %), 1<<20..1<<24.
+        block = int(min(1 << 24, max(1 << 20, 0.25 * torch.cuda.mem_get_info()[0] / 200)))   # amin-Reduktion ist reihenfolgefrei -> Ergebnis bitgleich
     grenzen = [0]; summe = 0                                                                        # Dreiecks-Bloecke mit <= block Pixel-Paaren
     for i, c in enumerate(cnt.tolist()):
         if summe + c > block and i > grenzen[-1]: grenzen.append(i); summe = 0

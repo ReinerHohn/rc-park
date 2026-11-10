@@ -90,8 +90,14 @@ def sh_tor(cmd, cwd, log, env=None, versuche=6, pause=300):
         with open(log, errors="replace") as f: f.seek(start); neu = f.read()
         out = neu   # ganzer neuer Logteil: "alle Pruefungen bestanden" steht mitten im Abnahme-Log (danach Sichtblatt, fehlteile, test_regeln_cb) - mit [-4000:] nie gefunden
         if not any(m in neu for m in OOM_MUSTER): return rc, out
-        print(f"  OOM im Torschritt ({os.path.basename(log)}), Versuch {v + 1}/{versuche}, warte {pause} s", flush=True)
-        time.sleep(pause)
+        print(f"  OOM im Torschritt ({os.path.basename(log)}), Versuch {v + 1}/{versuche}, warte bis 2,5 GB VRAM frei (hoechstens {pause} s)", flush=True)
+        t_ = time.time()   # 10.11.: fest 300 s je OOM (7 OOM heute = 35 min Leerlauf); jetzt sobald Speicher frei ist, Ergebnis gleich
+        while time.time() - t_ < pause:
+            time.sleep(15)
+            try:
+                fr = float(subprocess.run(["nvidia-smi", "--query-gpu=memory.free", "--format=csv,noheader,nounits"], capture_output=True, text=True).stdout.split()[0])
+                if fr >= 2500 and time.time() - t_ >= 30: break
+            except Exception: pass
     return rc, out + "\nINFRA_OOM"
 
 def protokoll(z):
@@ -356,7 +362,9 @@ def auftrag(ziel, runde, wt):
             befund += (f" FORM AM FOTO (tools/teil_fotoform.py, Schwelle 0,14 m, je kalibriertem Foto, verdeckte Pixel ausgenommen): F1 {_g['f1']} "
                        f"(Praezision {_g['praez']} = Modellkanten mit Fotokante, Recall {_g['recall']} = Fotokanten mit Modellkante) ueber {_g['fotos']} Fotos. "
                        f"Schwaechste: {_fl}. Bilder: {formliste().get('bilder_dir', FORMDIR)}/{ziel['teil']}_<foto>.jpg ansehen (gruen passt, rot erfunden, gelb fehlt). "
-                       f"Gelb im Teil = Form fehlt (Fenster, Rippen, Pfeiler, Ueberstand); rot = Form falsch/zu viel. Der Foto-F1 geht ins Tor ein und darf nicht fallen.")
+                       f"Gelb im Teil = Form fehlt (Fenster, Rippen, Pfeiler, Ueberstand); rot = Form falsch/zu viel. Der Foto-F1 geht ins Tor ein und darf nicht fallen. "
+                       f"Eigene Zwischenmessung nur auf den Torfotos (das Tor misst genau diese; alle Fotos = ~20 min GPU fuer dieselbe Aussage): "
+                       f"tools/teil_fotoform.py {OBJ} --nur {ziel['teil']} --fotos {','.join(form_fotos(formliste(), ziel['teil']))} --aus {LDIR}/ff_eigen.json --bilder_dir {LDIR}/ff_eigen_bilder")
     txt = (txt.replace("`<OBJEKT>`", OBJ).replace("<OBJEKT>", OBJ).replace("`<BAUTEIL>`", typ).replace("<BAUTEIL>", typ)
               .replace("`<BEFUND>`", befund).replace("<BEFUND>", befund).replace("<RUNDE>", f"kreis{runde}")
               .replace("`<TABU>`", ", ".join(TABU) or "-").replace("<TABU>", ", ".join(TABU) or "-")
