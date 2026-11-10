@@ -31,5 +31,5 @@ def auto_ersetzen(tab, praefix):
     """Veraltete AUTOMATISCHE Beobachtungen (datum 'auto', auto_id beginnt mit praefix) entfernen, bevor ein Werkzeug seine aktuellen einfuegt.
     Sonst haeufen sich bei jedem Lauf neue Eintraege an (auto_id enthaelt die Position) und die wenigen echten Beobachtungen gehen unter
     (Martinstor: 186 von 207 automatisch). Nutzer-/Claude-Beobachtungen (datum != 'auto') bleiben immer. Rueckgabe: Zahl entfernter Eintraege."""
-    alt = tab.get("beobachtungen_offen", []); neu = [b for b in alt if not (b.get("datum") == "auto" and str(b.get("auto_id", "")).startswith(praefix))]
+    alt = tab.get("beobachtungen_offen", []); neu = [b for b in alt if not (isinstance(b, dict) and b.get("datum") == "auto" and str(b.get("auto_id", "")).startswith(praefix))]
     tab["beobachtungen_offen"] = neu; return len(alt) - len(neu)

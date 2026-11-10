@@ -259,7 +259,7 @@ def main():
     tp = os.path.join(root, obj["masstabelle"])
     def _eintragen(tab):
         if "--stl" not in a: ersetzt = auto_ersetzen(tab, f"fehlteile-{nr}-"); print(f"  -> {ersetzt} veraltete Auto-Beobachtung(en) dieses Fotos ersetzt")
-        vorhanden = {b.get("auto_id") for b in tab.get("beobachtungen_offen", [])}; neu = 0
+        vorhanden = {b.get("auto_id") for b in tab.get("beobachtungen_offen", []) if isinstance(b, dict)}; neu = 0
         for k, tr in enumerate(treffer, 1):
             if "--stl" in a: break                                                       # Testlaeufe an fremden STL erzeugen keine Beobachtungen
             if tr["art"].startswith("FEHLT") and tr["score"] >= sch:

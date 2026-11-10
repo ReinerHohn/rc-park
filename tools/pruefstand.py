@@ -537,7 +537,7 @@ def massnachweis(obj, tab, zeilen, root, el, seiten_foto):
     w = [p for ok, p, v in zeilen if ok == "widerspruch"]
     if w: L += ["", "## Offene Widersprueche", ""] + [f"- {p['name']}: {p.get('widerspruch', '')}" for p in w]
     b = tab.get("beobachtungen_offen", [])
-    if b: L += ["", "## Beobachtungen ohne Pruefung", ""] + [f"- {x['datum']} {x['wer']}: {x['text']} -> {x.get('naechster_schritt', '')}" for x in b]
+    if b: L += ["", "## Beobachtungen ohne Pruefung", ""] + [f"- {x.get('datum', '?')} {x.get('wer', '?')}: {x.get('text', '')} -> {x.get('naechster_schritt', '')}" if isinstance(x, dict) else f"- UNGUELTIG: {x}" for x in b]
     L += ["", "## Grenze", "", "Offene Daten (Laser 1 m, Fotos +-5-10 %, Dokumente mit unklarer Bezugshoehe) beweisen keine Masse auf den Zentimeter.",
           "Dieser Nachweis sagt je Mass, welche Quelle es stuetzt und wie belastbar der Massstab ist; mehr ist ehrlich nicht moeglich."]
     open(os.path.join(root, os.path.dirname(obj["masstabelle"]), "MASSNACHWEIS.md"), "w").write("\n".join(L) + "\n")
@@ -628,7 +628,10 @@ def main():
         if kn.get("bestanden"): print(f"  OK      Kanten-Nulltest ({kn['stand']}): Teilversatz {kn['versatz_m']} m in {kn['gefunden_anteil']:.0%} der Fotos gefunden, Wiederholbarkeit {kn['rausch_max_px']} px - Grenze: {kn['grenze_der_methode'][:60]}")
         else: print(f"  FEHLER  Kanten-Nulltest NICHT bestanden ({kn['stand']}): gefunden {kn['gefunden_anteil']:.0%}, wiederholbar {kn['wiederholbar']} - Schleife nicht als Beleg verwenden"); bad += 1
     else: print("  UNGEPRUEFT Kanten-Schleife: audit/kanten_nulltest.json fehlt (tools/kanten_nulltest.py laufen lassen)")
-    for b in tab.get("beobachtungen_offen", []):
+    for i_b, b in enumerate(tab.get("beobachtungen_offen", [])):
+        # Schema (10.11.: Agenten trugen Text-Eintraege bzw. Eintraege ohne 'wer' ein -> Traceback statt klarer Meldung, Abnahme rot ohne Grund)
+        if not isinstance(b, dict) or any(k not in b for k in ("datum", "wer", "text")):
+            print(f"  FEHLER  beobachtungen_offen[{i_b}] ungueltig: Pflicht ist ein Objekt mit 'datum', 'wer', 'text' (+ 'naechster_schritt') - gefunden: {json.dumps(b, ensure_ascii=False)[:120]}"); bad += 1; continue
         print(f"  OFFEN   {b['datum']} {b['wer']}: {b['text'][:90]}  -> {b.get('naechster_schritt', '')[:60]}")
     nw = sum(1 for ok, _, _ in zeilen if ok == "widerspruch")
     for ok, p, v in zeilen:

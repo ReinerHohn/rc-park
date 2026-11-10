@@ -192,7 +192,7 @@ def main():
             tp = os.path.join(root, obj["masstabelle"])
             def _eintragen(tab):
                 auto_ersetzen(tab, f"breite-{nr}-")
-                vorhanden = {b.get("auto_id") for b in tab.get("beobachtungen_offen", [])}; neu = 0
+                vorhanden = {b.get("auto_id") for b in tab.get("beobachtungen_offen", []) if isinstance(b, dict)}; neu = 0
                 for z in zonen:
                     aid = f"breite-{nr}-{z[0][0]:.0f}-{z[-1][0]:.0f}"
                     if aid in vorhanden: continue
