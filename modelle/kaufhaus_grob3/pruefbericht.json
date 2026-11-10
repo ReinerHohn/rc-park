@@ -1,5 +1,5 @@
 {
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_021633a021633/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_021633a021633/wt_r4/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548637573273,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.13989798724651337,
-  "wand_anteil_unter": 0.0002666666666666667,
+  "wand_pq": 0.13989754021167755,
+  "wand_anteil_unter": 0.00023333333333333333,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -60,7 +60,7 @@
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.8,
   "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.000076058674822,
   "laube_rueckwand_n728_z7": -0.003327184352758028,
-  "helm_o_r_14_64": 1.2110453487912292,
+  "helm_o_r_14_64": 1.11104438755423,
   "helm_o_r_16_18": 0.5909801434450644,
   "helm_o_r_17_76": 0.35088480017249024,
   "helm_w_r_16_25": 0.5645895467319909,
@@ -114,7 +114,13 @@
   "figur2_kopf_um": 0.13221535515072963,
   "figur2_bein_np": 0.1163365979686713,
   "figur2_bein_nm": 0.11366333671048046,
-  "laube_rueck_west_ende": 8.819999999999961
+  "laube_rueck_west_ende": 8.819999999999961,
+  "helm_o_r_13_45": 1.6432323428532347,
+  "helm_o_r_14_12": 1.271050051226185,
+  "helm_o_r_14_38": 1.1710493512396543,
+  "helm_o_r_14_88": 1.001048870369267,
+  "helm_o_knauf_r_21_33": 0.21074957624831886,
+  "helm_o_knauf_r_22_00": 0.05267690287992205
  },
  "pruefungen": [
   {
@@ -329,7 +335,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.13989798724651337,
+   "wert": 0.13989754021167755,
    "soll": [
     0.0348,
     100
@@ -399,7 +405,7 @@
   },
   {
    "name": "Erkerhelm Ost: Halbbreite vor der Achse bei z 14,64 (geschweiftes Profil)",
-   "wert": 1.2110453487912292,
+   "wert": 1.11104438755423,
    "soll": [
     1.08,
     1.32
@@ -753,6 +759,66 @@
    "soll": [
     8.7,
     9.0
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 13.45 (untere Schweifung, kein Kranzkasten)",
+   "wert": 1.6432323428532347,
+   "soll": [
+    1.5,
+    1.78
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.12 (untere Schweifung, kein Kranzkasten)",
+   "wert": 1.271050051226185,
+   "soll": [
+    1.15,
+    1.35
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.38 (untere Schweifung, kein Kranzkasten)",
+   "wert": 1.1710493512396543,
+   "soll": [
+    1.05,
+    1.25
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.88 (untere Schweifung, kein Kranzkasten)",
+   "wert": 1.001048870369267,
+   "soll": [
+    0.87,
+    1.07
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erkerhelm Ost: Kugel (Knauf) Reichweite in Kugelmitte z 21,33",
+   "wert": 0.21074957624831886,
+   "soll": [
+    0.17,
+    0.25
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erkerhelm Ost: ueber der Kugel (z 22,0) nur noch die duenne Fahnenstange",
+   "wert": 0.05267690287992205,
+   "soll": [
+    0.0,
+    0.07
    ],
    "ok": true,
    "status": "ok"

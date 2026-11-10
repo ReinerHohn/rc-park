@@ -1,92 +1,92 @@
 {
  "foto": "nuaca",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_021633a021633/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_021633a021633/wt_r4/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-nuaca (amtliche Anker)",
  "zelle_px": 134,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    2144,
-    938,
-    134
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    5.76,
-    5.68,
-    21.23
-   ]
-  },
-  {
-   "zelle": [
-    2412,
+    2546,
     1072,
     134
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    3.73,
-    6.08,
-    19.37
+    2.7,
+    6.48,
+    18.94
    ]
   },
   {
    "zelle": [
-    536,
     1340,
-    134
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    19.63,
-    5.87,
-    16.56
-   ]
-  },
-  {
-   "zelle": [
-    804,
     1474,
     134
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    17.82,
-    4.64,
-    16.26
+    13.24,
+    -1.23,
+    19.51
    ]
   },
   {
    "zelle": [
-    670,
     1608,
-    134
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    18.59,
-    4.89,
-    14.51
-   ]
-  },
-  {
-   "zelle": [
-    804,
     1742,
     134
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    17.81,
-    2.83,
-    14.29
+    10.16,
+    -3.74,
+    16.95
+   ]
+  },
+  {
+   "zelle": [
+    804,
+    1876,
+    134
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    17.69,
+    2.91,
+    12.73
+   ]
+  },
+  {
+   "zelle": [
+    2412,
+    2010,
+    134
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    2.42,
+    -0.07,
+    12.72
+   ]
+  },
+  {
+   "zelle": [
+    2144,
+    2144,
+    134
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    5.05,
+    -0.33,
+    11.35
    ]
   }
  ],
