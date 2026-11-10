@@ -207,4 +207,5 @@ def main():
               open(os.path.join(root, obj.get("audit", "audit"), f"breitenprofil_{nr}.json"), "w"), indent=1)
 
 if __name__ == "__main__":
+    import gpu_slot; gpu_slot.belegen("foto_breitenprofil")   # gemeinsame GPU-Schlange (10.11.: >2-3 gleichzeitige GPU-Pruefungen = Einbruch)
     main()

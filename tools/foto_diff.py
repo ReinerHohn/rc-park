@@ -589,4 +589,5 @@ def main(argv=None):
     return erg
 
 if __name__ == "__main__":
+    import gpu_slot; gpu_slot.belegen("foto_diff")   # gemeinsame GPU-Schlange (10.11.: >2-3 gleichzeitige GPU-Pruefungen = Einbruch)
     main()

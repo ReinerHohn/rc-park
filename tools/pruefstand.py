@@ -657,4 +657,5 @@ def main():
     sys.exit(1 if bad else 0)
 
 if __name__ == "__main__":
+    import gpu_slot; gpu_slot.belegen("pruefstand")   # gemeinsame GPU-Schlange (10.11.: >2-3 gleichzeitige GPU-Pruefungen = Einbruch)
     main()

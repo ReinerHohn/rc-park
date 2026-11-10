@@ -143,4 +143,5 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
+    import gpu_slot; gpu_slot.belegen("teil_fotoform")   # gemeinsame GPU-Schlange (10.11.: >2-3 gleichzeitige GPU-Pruefungen = Einbruch)
     main()

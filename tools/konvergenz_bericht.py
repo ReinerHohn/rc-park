@@ -43,6 +43,7 @@ if not STL or not GIT:
 
 import trimesh, torch
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import gpu_slot; gpu_slot.belegen("konvergenz_bericht")   # gemeinsame GPU-Schlange (10.11.)
 from gpu_knn import min_abstand
 assert torch.cuda.is_available(), "GPU erwartet (Nutzerregel: neue Rechenwerkzeuge auf der GPU)"
 

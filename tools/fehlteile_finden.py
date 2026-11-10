@@ -294,4 +294,5 @@ def main():
     if _PROF: print("  PROF " + "  ".join(f"{k} {v:.2f}" for k, v in _tab) + f"  | Summe {sum(v for _, v in _tab):.2f} s")
 
 if __name__ == "__main__":
+    import gpu_slot; gpu_slot.belegen("fehlteile_finden")   # gemeinsame GPU-Schlange (10.11.: >2-3 gleichzeitige GPU-Pruefungen = Einbruch)
     main()
