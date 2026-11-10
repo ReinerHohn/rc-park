@@ -15,7 +15,7 @@ Wangen nicht; Fehlteile kommen nur aus dem Gitter. Hier dagegen direkt am Foto, 
 Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/teil_fotoform.py <objekt> [--teile_dir D] [--fotos 6120,6161] [--aus bericht.json] [--bilder]
 Ohne --teile_dir werden die Teile mit dem Generator (BAUTEILE_AUS) in einen Zeitordner exportiert.
 """
-import sys, os, json, glob, argparse, tempfile, subprocess, numpy as np, cv2, trimesh
+import sys, os, json, glob, argparse, tempfile, subprocess, time, numpy as np, cv2, trimesh
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import foto_diff as FD, fehlteile_finden as FF, render_kern as RK
 
@@ -62,56 +62,73 @@ def main(argv=None):
     if a.nur: teile = [p for p in teile if os.path.basename(p)[:-4] in a.nur.split(",")]   # Kreis-Tor: nur das Ziel-Teil (Verdeckung trotzdem gegen das ganze Modell)
     fotos = a.fotos.split(",") if a.fotos else sorted(os.path.basename(p)[2:-5] for p in glob.glob(os.path.join(os.path.dirname(objp), "messprotokoll", "K-*.json")))
     bd = a.bilder_dir or os.path.join(os.path.dirname(objp), "audit", "teil_fotoform"); os.makedirs(bd, exist_ok=True)
-    import hashlib
+    import hashlib, time
     erg = {"objekt": a.objekt, "stl_sha": hashlib.sha256(open(stl, "rb").read()).hexdigest()[:16], "bilder_dir": bd, "schwelle_m": round(a.schwelle * 0.35, 3), "fotos": {}, "teile": {}}
     tmp = tempfile.mkdtemp(prefix="tff_k_")
     TM = {}
-    for nr in fotos:
-        kp = FF.k_datei(objp, obj, R0, nr)
-        if not kp: continue
-        K = json.load(open(kp)); kk = K["kamera"]
-        bild = glob.glob(os.path.join(R0, obj["fotos_dir"], nr + "_*"))
-        if not bild: continue
-        im0 = cv2.imread(bild[0]); H, W = im0.shape[:2]
-        voll = os.path.join(tmp, f"voll_{W}x{H}.png"); cv2.imwrite(voll, np.full((H, W), 255, np.uint8)) if not os.path.exists(voll) else None
-        npz = os.path.join(tmp, f"k_{nr}.npz")
+    def foto_bewerten(nr):
+            kp = FF.k_datei(objp, obj, R0, nr)
+            if not kp: return
+            K = json.load(open(kp)); kk = K["kamera"]
+            bild = glob.glob(os.path.join(R0, obj["fotos_dir"], nr + "_*"))
+            if not bild: return
+            im0 = cv2.imread(bild[0]); H, W = im0.shape[:2]
+            voll = os.path.join(tmp, f"voll_{W}x{H}.png"); cv2.imwrite(voll, np.full((H, W), 255, np.uint8)) if not os.path.exists(voll) else None
+            npz = os.path.join(tmp, f"k_{nr}.npz")
+            try:
+                FD.main([objp, nr, "--stl", stl, "--bewertung-maske", voll, "--kostenkarte", npz, "--aus", tmp])
+            except BaseException as ex:
+                if 'out of memory' in str(ex).lower(): raise
+                erg["fotos"][nr] = f"foto_diff fehlgeschlagen: {str(ex)[:120]}"; return
+            if not os.path.exists(npz): erg["fotos"][nr] = "keine Kostenkarte (zu wenig Kanten)"; return
+            Z = np.load(npz); mkp, fkp, dF, dM = Z["mkp"], Z["fkp"], Z["dF"].astype(np.float32), Z["dM"].astype(np.float32)
+            R, t, f, _, _ = FF.kamera_laden(K, obj, nr, R0, W, H); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2))
+            tr = rahmen(stl, obj, kk)
+            mv = trimesh.load(stl, force="mesh"); mv.apply_scale(obj.get("stl_massstab", 87) / 1000.0); mv.apply_translation(tr)
+            dv, _, pos = RK.dreiecke_rastern(mv, R, t, f, cx, cy, W, H)
+            erg["fotos"][nr] = {"mk_px": int(mkp.sum()), "fk_px": int(fkp.sum())}
+            for tp in teile:
+                name = os.path.basename(tp)[:-4]
+                if name not in TM:
+                    m = trimesh.load(tp, force="mesh")
+                    if not isinstance(m, trimesh.Trimesh) or len(m.faces) == 0: TM[name] = None; continue
+                    m.apply_scale(obj.get("stl_massstab", 87) / 1000.0); TM[name] = m
+                if TM[name] is None: continue
+                m = TM[name].copy(); m.apply_translation(tr)
+                dp, _, _ = RK.dreiecke_rastern(m, R, t, f, cx, cy, W, H)
+                vis = np.isfinite(dp) & (dp <= dv * 1.003 + 0.03)
+                if vis.sum() < 200: continue
+                ms = cv2.dilate(vis.astype(np.uint8), np.ones((7, 7), np.uint8)) > 0
+                mk_t, fk_t = mkp & ms, fkp & ms
+                if mk_t.sum() < a.min_px or fk_t.sum() < a.min_px: continue
+                ok_m, ok_f = dF[mk_t] < a.schwelle, dM[fk_t] < a.schwelle
+                rot = mk_t & (dF >= a.schwelle); gelb = fk_t & (dM >= a.schwelle)
+                e = {"praez": round(float(ok_m.mean()), 3), "recall": round(float(ok_f.mean()), 3), "mk_px": int(mk_t.sum()), "fk_px": int(fk_t.sum()),
+                     "rot": flecken(rot, pos), "gelb": flecken(gelb, pos)}
+                erg["teile"].setdefault(name, {})[nr] = e
+                if a.bilder:
+                    ys, xs = np.where(ms); y0, y1, x0, x1 = max(0, ys.min() - 40), min(H, ys.max() + 40), max(0, xs.min() - 40), min(W, xs.max() + 40)
+                    ov = (im0 // 2).copy(); ov[ms & ~(mk_t | fk_t)] = (ov[ms & ~(mk_t | fk_t)] * 1.6).clip(0, 255).astype(np.uint8)
+                    ov[mk_t & ~rot] = (0, 200, 0); ov[fk_t & ~gelb & ~mk_t] = (200, 120, 0); ov[rot] = (0, 0, 255); ov[gelb] = (0, 255, 255)
+                    cv2.imwrite(os.path.join(bd, f"{name}_{nr}{('_' + a.etikett) if a.etikett else ''}.jpg"), ov[y0:y1, x0:x1], [cv2.IMWRITE_JPEG_QUALITY, 85])
+    TEIL = (a.aus + ".teil") if a.aus else None
+    if TEIL and os.path.exists(TEIL):   # Wiederaufnahme: abgebrochener Lauf zum selben STL
         try:
-            FD.main([objp, nr, "--stl", stl, "--bewertung-maske", voll, "--kostenkarte", npz, "--aus", tmp])
-        except BaseException as ex:
-            erg["fotos"][nr] = f"foto_diff fehlgeschlagen: {str(ex)[:120]}"; continue
-        if not os.path.exists(npz): erg["fotos"][nr] = "keine Kostenkarte (zu wenig Kanten)"; continue
-        Z = np.load(npz); mkp, fkp, dF, dM = Z["mkp"], Z["fkp"], Z["dF"].astype(np.float32), Z["dM"].astype(np.float32)
-        R, t, f, _, _ = FF.kamera_laden(K, obj, nr, R0, W, H); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2))
-        tr = rahmen(stl, obj, kk)
-        mv = trimesh.load(stl, force="mesh"); mv.apply_scale(obj.get("stl_massstab", 87) / 1000.0); mv.apply_translation(tr)
-        dv, _, pos = RK.dreiecke_rastern(mv, R, t, f, cx, cy, W, H)
-        erg["fotos"][nr] = {"mk_px": int(mkp.sum()), "fk_px": int(fkp.sum())}
-        for tp in teile:
-            name = os.path.basename(tp)[:-4]
-            if name not in TM:
-                m = trimesh.load(tp, force="mesh")
-                if not isinstance(m, trimesh.Trimesh) or len(m.faces) == 0: TM[name] = None; continue
-                m.apply_scale(obj.get("stl_massstab", 87) / 1000.0); TM[name] = m
-            if TM[name] is None: continue
-            m = TM[name].copy(); m.apply_translation(tr)
-            dp, _, _ = RK.dreiecke_rastern(m, R, t, f, cx, cy, W, H)
-            vis = np.isfinite(dp) & (dp <= dv * 1.003 + 0.03)
-            if vis.sum() < 200: continue
-            ms = cv2.dilate(vis.astype(np.uint8), np.ones((7, 7), np.uint8)) > 0
-            mk_t, fk_t = mkp & ms, fkp & ms
-            if mk_t.sum() < a.min_px or fk_t.sum() < a.min_px: continue
-            ok_m, ok_f = dF[mk_t] < a.schwelle, dM[fk_t] < a.schwelle
-            rot = mk_t & (dF >= a.schwelle); gelb = fk_t & (dM >= a.schwelle)
-            e = {"praez": round(float(ok_m.mean()), 3), "recall": round(float(ok_f.mean()), 3), "mk_px": int(mk_t.sum()), "fk_px": int(fk_t.sum()),
-                 "rot": flecken(rot, pos), "gelb": flecken(gelb, pos)}
-            erg["teile"].setdefault(name, {})[nr] = e
-            if a.bilder:
-                ys, xs = np.where(ms); y0, y1, x0, x1 = max(0, ys.min() - 40), min(H, ys.max() + 40), max(0, xs.min() - 40), min(W, xs.max() + 40)
-                ov = (im0 // 2).copy(); ov[ms & ~(mk_t | fk_t)] = (ov[ms & ~(mk_t | fk_t)] * 1.6).clip(0, 255).astype(np.uint8)
-                ov[mk_t & ~rot] = (0, 200, 0); ov[fk_t & ~gelb & ~mk_t] = (200, 120, 0); ov[rot] = (0, 0, 255); ov[gelb] = (0, 255, 255)
-                cv2.imwrite(os.path.join(bd, f"{name}_{nr}{('_' + a.etikett) if a.etikett else ''}.jpg"), ov[y0:y1, x0:x1], [cv2.IMWRITE_JPEG_QUALITY, 85])
+            alt = json.load(open(TEIL))
+            if alt.get("stl_sha") == erg["stl_sha"]: erg["fotos"], erg["teile"] = alt["fotos"], alt["teile"]; print("Wiederaufnahme:", sum(isinstance(v, dict) for v in alt["fotos"].values()), "Fotos fertig", flush=True)
+        except Exception: pass
+    import torch
+    for nr in fotos:
+        if isinstance(erg["fotos"].get(nr), dict): continue
+        for versuch in range(12):   # 10.11.: GPU-Speicher voll durch 8 Kreis-Spuren -> Abbruch nach 38 min; jetzt warten und Foto wiederholen
+            try: foto_bewerten(nr); break
+            except (torch.OutOfMemoryError, RuntimeError) as ex:
+                if "out of memory" not in str(ex).lower(): raise
+                for v in erg["teile"].values(): v.pop(nr, None)
+                erg["fotos"].pop(nr, None); torch.cuda.empty_cache(); print(f"Foto {nr}: GPU-Speicher voll, Versuch {versuch + 1}, warte 60 s", flush=True); time.sleep(60)
+        else: erg["fotos"][nr] = "GPU-Speicher dauerhaft voll"
         print(f"Foto {nr}: {sum(1 for v in erg['teile'].values() if nr in v)} Teile beurteilt", flush=True)
-        if a.aus: json.dump(erg, open(a.aus + ".teil", "w"), ensure_ascii=False)   # Zwischenstand je Foto (11:56 brach ein 38-min-Lauf am Ende ab, alles verloren)
+        if TEIL: json.dump(erg, open(TEIL, "w"), ensure_ascii=False)   # Zwischenstand je Foto (11:56 brach ein 38-min-Lauf am Ende ab, alles verloren)
     for name, je in erg["teile"].items():   # Mittel ueber Fotos, gewichtet mit Pixelzahl
         je = {k: v for k, v in je.items() if isinstance(v, dict) and "mk_px" in v}; erg["teile"][name] = je
         mk = sum(v["mk_px"] for v in je.values()); fk = sum(v["fk_px"] for v in je.values())
