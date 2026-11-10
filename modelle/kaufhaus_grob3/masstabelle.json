@@ -3085,10 +3085,10 @@
   },
   {
    "datum": "2026-11-10",
-   "merkmal": "Ost-Staffelgiebel Lage",
-   "text": "Kreis a031245 r1 (Zweig kreis/kaufhaus_grob3/20261110_031245a031245-r1): Ost-Staffelgiebel liegt ~1,4 m zu weit aussen (u 17,15 statt ~15,85); 8 Stufenspitzen trianguliert (M-6115-001..008, Strahlabstand <= 0,03 m), Overlays 6115/6145/6257 treffen die Stufen. Region-Recall 0,10 -> 0,36. WIDERSPRUCH: Kantengitter am Giebel nur 39 Segmente -> Teil-Praezision 0,025, Band-Praezision 10-15 m 0,372 -> 0,361 (Rueckschritt-Tor). Nicht gemittelt (Regel 5).",
-   "naechster_schritt": "Kantengitter am Ostgiebel verdichten (mehr Fotos/Segmente 6115, 6145, 6257), dann Runde erneut; Rumpf/Gesims Ost endet ebenfalls bei u 17,15 (ungeprueft).",
-   "wer": "Kreis a031245 r1 (Fehlteil-Agent) / Koordinator"
+   "merkmal": "Ostwand/Gesims nach Giebel-Verschiebung",
+   "text": "Ost-Staffelgiebel seit Kreis a033946 r2 (e6ad75d) bei u 15,85 (8 Stufenspitzen trianguliert, M-6115-001..008). Rumpf EG/OG (quader:rumpf_eg, quader:rumpf_og) und quader:gesims enden noch bei u 17,15 -> sichtbarer Absatz 1,3 m; Foto 6115 zeigt Giebel buendig mit der Ostwand -> Ostwand/Gesims vermutlich 1,3 m zu lang (vorbestehender Fehler, vorher vom gleich falschen Giebel verdeckt).",
+   "naechster_schritt": "Ostende von rumpf_eg/rumpf_og/gesims an Fotos 6115/6145/6257 messen (foto_mass Strahl gegen Ostebene) und auf Giebel buendig setzen; Kantengitter am Ostgiebel verdichten (Giebel-Praezision 0,025).",
+   "wer": "Koordinator nach Pruefer a033946 r2"
   },
   {
    "datum": "2026-11-10",
