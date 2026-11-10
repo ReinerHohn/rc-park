@@ -1,5 +1,5 @@
 {
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_232557a232557/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -9,7 +9,7 @@
   "helm_w_z": 20.88700064849853,
   "helm_o_z": 21.32700006866455,
   "dach_z_off11": 15.762130348205567,
-  "pfeiler3_d": 0.8810006134404144,
+  "pfeiler3_d": 0.8810006134407047,
   "arkade1_scheitel": 5.620651222229004,
   "fenster2_sohl": 8.856999847412109,
   "erker_w_unterkante": 8.18699988555908,
@@ -19,11 +19,11 @@
   "lichter_g2_ebene_abstand": 2.1007525467169246,
   "handlauf_z": 8.25699973297119,
   "helm_w_fussbreite_x": 2.3264116744995116,
-  "helm_w_fussbreite_y": 2.213694396972656,
-  "helm_w_fussbreite_punkte": 29.0,
+  "helm_w_fussbreite_y": 2.13911196899414,
+  "helm_w_fussbreite_punkte": 24.0,
   "rueck_z6": -0.005787998491273427,
-  "rueck_z10": -0.005788278666543523,
-  "rueck_z143": -0.005788105379449071,
+  "rueck_z10": -0.004582697634774924,
+  "rueck_z143": -0.0020122868095460156,
   "giebel_o_rueck": 21.9469998550415,
   "giebel_o_vorn": 21.9469998550415,
   "tuer_b3_anzahl": 1.0,
@@ -33,15 +33,15 @@
   "bal_feld_anzahl": 10.0,
   "bal_feld_breite_median": 0.16,
   "bal_feld_breite_max": 0.17,
-  "bal_feld_ebene_abstand": 1.924544850106738,
+  "bal_feld_ebene_abstand": 1.9245448500612987,
   "fenster_b3_anzahl": 2.0,
   "fenster_b3_breite_median": 0.8200000000000001,
   "fenster_b3_breite_max": 0.8200000000000001,
   "fenster_b3_ebene_abstand": 1.2521246230474818,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590077191591263,
-  "wand_anteil_unter": 0.0005666666666666667,
+  "wand_pq": 0.1077876016497612,
+  "wand_anteil_unter": 0.0006666666666666666,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -64,7 +64,7 @@
   "helm_o_r_16_18": 0.6410005316999677,
   "helm_o_r_17_76": 0.4009052145424984,
   "helm_w_r_16_25": 0.6246130130669826,
-  "helm_w_r_17_75": 0.5068990264498032,
+  "helm_w_r_17_75": 0.4080723238584162,
   "tor_b2_tiefe": 0.5493055763493642,
   "tor_b2_oeffnung_anzahl": 1.0,
   "tor_b2_oeffnung_breite_median": 4.0,
@@ -112,7 +112,7 @@
   "figur2_bein_um": 0.19721574802266204,
   "figur2_kopf_up": 0.16778414907048042,
   "figur2_kopf_um": 0.13221535515072963,
-  "figur2_bein_np": 0.11633658274099891,
+  "figur2_bein_np": 0.1163365979686713,
   "figur2_bein_nm": 0.11366333671048046,
   "gaube_a_vordach_vor": 1.5221385427095424,
   "gaube_a_vordach_up": 0.6900120529944501,
@@ -136,7 +136,7 @@
   "giebel_o_top_b8": 17.92700008392334,
   "giebel_o_vorn_n": 3.000488072033674,
   "helm_w_r_13_45": 1.6786181603389831,
-  "helm_w_r_14_12": 1.2970544541651683,
+  "helm_w_r_14_12": 1.297054477070036,
   "helm_w_r_14_38": 1.1870509785045464,
   "helm_w_r_14_88": 1.0070557810130052,
   "helm_w_knauf_r_21_35": 0.19176879206557926,
@@ -286,7 +286,7 @@
   },
   {
    "name": "Pfeiler 3 Durchmesser (m), Schaftansatz z 2,1-2,35 (Ring ueber der Fase)",
-   "wert": 0.8810006134404144,
+   "wert": 0.8810006134407047,
    "soll": [
     0.81,
     0.94
@@ -346,7 +346,7 @@
   },
   {
    "name": "Rumpf traegt das Dach: hinterer Dachueberstand ueber der Rueckwand (m)",
-   "wert": -1.7328709445152413e-07,
+   "wert": -0.002570410825228908,
    "soll": [
     -0.1,
     0.8
@@ -416,7 +416,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590077191591263,
+   "wert": 0.1077876016497612,
    "soll": [
     0.0348,
     100
@@ -526,7 +526,7 @@
   },
   {
    "name": "Erkerhelm West: Halbbreite vor der Achse bei z 17,75 (Kopplung auf Probe)",
-   "wert": 0.5068990264498032,
+   "wert": 0.4080723238584162,
    "soll": [
     0.32,
     0.56
@@ -866,7 +866,7 @@
   },
   {
    "name": "Figur 2: Tiefe Unterschenkel (n-Richtung, z 11,65)",
-   "wert": 0.22999991945147935,
+   "wert": 0.22999993467915175,
    "soll": [
     0.17,
     0.29
@@ -1126,7 +1126,7 @@
   },
   {
    "name": "Erkerhelm West: Flaechenmitte (Apothem) vor der Achse bei z 14.12 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.2970544541651683,
+   "wert": 1.297054477070036,
    "soll": [
     1.2,
     1.4

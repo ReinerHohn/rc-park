@@ -1,92 +1,92 @@
 {
  "foto": "6174",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_232557a232557/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6174 (amtliche Anker)",
- "zelle_px": 141,
+ "zelle_px": 142,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    2115,
-    987,
-    141
+    1278,
+    2840,
+    142
    ],
-   "score": -1.0,
+   "score": -0.93,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -0.64,
-    13.44,
-    14.97
+    2.19,
+    5.96,
+    1.72
    ]
   },
   {
    "zelle": [
-    846,
-    2820,
-    141
+    284,
+    2840,
+    142
    ],
-   "score": -0.985,
+   "score": -0.929,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -0.56,
-    3.54,
-    1.58
-   ]
-  },
-  {
-   "zelle": [
-    282,
-    2820,
-    141
-   ],
-   "score": -0.971,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -2.49,
-    -0.42,
+    -2.33,
+    -0.39,
     1.53
    ]
   },
   {
    "zelle": [
-    1692,
-    564,
-    141
+    852,
+    2840,
+    142
    ],
-   "score": -0.961,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -2.78,
-    10.69,
-    19.82
-   ]
-  },
-  {
-   "zelle": [
-    1269,
-    141,
-    141
-   ],
-   "score": -0.93,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -4.35,
-    7.2,
-    24.99
-   ]
-  },
-  {
-   "zelle": [
-    705,
-    2820,
-    141
-   ],
-   "score": -0.882,
+   "score": -0.899,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
     -0.87,
-    2.59,
+    3.56,
+    1.58
+   ]
+  },
+  {
+   "zelle": [
+    426,
+    2840,
+    142
+   ],
+   "score": -0.889,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -1.63,
+    0.71,
+    1.55
+   ]
+  },
+  {
+   "zelle": [
+    568,
+    2840,
+    142
+   ],
+   "score": -0.87,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -1.08,
+    1.69,
     1.56
+   ]
+  },
+  {
+   "zelle": [
+    2272,
+    1420,
+    142
+   ],
+   "score": -0.868,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    2.36,
+    12.84,
+    10.45
    ]
   }
  ],

@@ -1,92 +1,92 @@
 {
  "foto": "6257",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_232557a232557/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6257 (amtliche Anker)",
  "zelle_px": 111,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
+    2664,
+    1221,
+    111
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -4.99,
+    8.94,
+    19.13
+   ]
+  },
+  {
+   "zelle": [
     2775,
+    1221,
+    111
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -5.87,
+    9.83,
+    18.46
+   ]
+  },
+  {
+   "zelle": [
+    2553,
+    1332,
+    111
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -4.11,
+    8.55,
+    18.51
+   ]
+  },
+  {
+   "zelle": [
+    2109,
     1443,
     111
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -5.86,
-    9.74,
-    16.4
+    -0.19,
+    6.96,
+    18.36
    ]
   },
   {
    "zelle": [
-    1998,
+    2331,
     1554,
     111
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    1.07,
-    1.92,
-    19.62
+    -2.56,
+    2.22,
+    19.15
    ]
   },
   {
    "zelle": [
-    2553,
+    2442,
     1554,
     111
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -4.64,
-    4.01,
-    17.99
-   ]
-  },
-  {
-   "zelle": [
-    2553,
-    1665,
-    111
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -4.57,
-    4.77,
-    16.64
-   ]
-  },
-  {
-   "zelle": [
-    444,
-    1776,
-    111
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    18.14,
-    6.28,
-    15.84
-   ]
-  },
-  {
-   "zelle": [
-    2220,
-    1776,
-    111
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -1.05,
-    3.36,
-    15.98
+    -3.25,
+    5.42,
+    17.49
    ]
   }
  ],
