@@ -104,9 +104,25 @@ def messen(wt, tag):
 
 BELEGT = os.path.join(KREISDIR, OBJ, "belegt"); os.makedirs(BELEGT, exist_ok=True)   # Spuren parallel: je Bauteil eine Sperrdatei
 
+def fehlversuche_global():
+    """Verworfene Runden je Teil ueber ALLE Laeufe/Spuren (ohne Infrastrukturfehler). Spuren-lokale 'sperre' reichte nicht:
+    jede neue Spur nahm wieder dieselben aussichtslosen Teile (10.11.: Erker/Dach/Boegen mehrfach mit Gewinn ~0)."""
+    n = {}
+    for d in sorted(glob.glob(os.path.join(KREISDIR, OBJ, "*", "kreis.jsonl")), key=os.path.getmtime):   # zeitlich, damit eine Annahme spaetere Zaehlung zuruecksetzt
+        for l in open(d):
+            try: z = json.loads(l)
+            except Exception: continue
+            t = (z.get("ziel") or {}).get("teil")
+            if t and z.get("angenommen") is False and not z.get("infra_oom"): n[t] = n.get(t, 0) + 1
+            if t and z.get("angenommen") is True: n[t] = 0
+    return n
+
+MAX_GLOBAL = int(opt("--max_global", 3))
+
 def waehlen(z, sperre):
+    fg = fehlversuche_global()
     kand = [t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["beleg"] is not None and t["anteil_mit_daten"] >= MIN_DATEN
-            and sperre.get(t["teil"], 0) < MAX_FEHL and not os.path.exists(os.path.join(BELEGT, t["teil"]))
+            and sperre.get(t["teil"], 0) < MAX_FEHL and fg.get(t["teil"], 0) < MAX_GLOBAL and not os.path.exists(os.path.join(BELEGT, t["teil"]))
             and t["teil"].split("__")[0] not in {f.split("__")[0] for f in os.listdir(BELEGT)}]   # gleiche Formfamilie (gleicher Generatorcode) nie parallel
     kand.sort(key=lambda t: t["beleg"])
     for t in kand:   # atomar belegen (O_EXCL), damit zwei Spuren nie dasselbe Teil nehmen
