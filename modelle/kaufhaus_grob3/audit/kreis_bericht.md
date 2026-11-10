@@ -1,43 +1,57 @@
-# Kreis-Bericht a021633 r4: helm_geschweift:o (kaufhaus_grob3, 2026-11-10)
-Stand: nichts committet. Branch kreis/kaufhaus_grob3/20261110_021633a021633-r4.
+# Kreis-Bericht 035447a035447 r2: bogenreihe:laube (kaufhaus_grob3, 2026-11-10)
+Stand: nichts committet. Branch kreis/kaufhaus_grob3/20261110_035447a035447-r2.
 
 ## 1. Formbeschreibung (Stufe 0)
-Fotos (alle angesehen): nu3b (Nahfoto ~17 m), nuaca (21 m), 6132 (22 m schraeg), 6161 (29 m Uebersicht), 6145 (33 m). Helmachse (18,72/6,34) vorher in jedes Foto projiziert (Z-Ticks je 1 m, Rohbilder `agent_scratch_kreis4/achse_*.jpg`).
-- Fuss/Traufe: Ziegelhaut laeuft stetig konkav bis auf das Erkergesims (z ~13,3); Traufspitzen links/rechts nahezu waagerecht, Gesims-Oberkante z ~13,2-13,3; kein senkrechter Kranz.
-- Schweifung z 13,3-16: stark konkav; Schaft z 16-20 mit Graten und hellen Ziegelstreifen; Kupfernadel z 20-21,1; Kugel (leicht abgeflachte Zwiebel, 0,40 m breit) Mitte z 21,33; darueber duenne Stange mit Fahne bis 22,78.
-- Grundriss regelmaessiges Achteck, eine Flaeche zur Strasse (3 Grate von vorn gezaehlt, Rueckseite ANNAHME Spiegelung). Sitzt auf dem Erkergesims, gleiche Achse (Kugel-Achse 15,51/12,24 = Helmachse +-0,02 m).
-- Altmodell anders: Profil unten (R1 behoben: Kranz 1,45 senkrecht, Traufring z 14,15) und Kugel 0,67 m zu hoch (z 22,0).
-- Formfamilie: bestehende `helm_geschweift` (N-Eck, Profil r(z), Kranz, Knauf) reicht -> keine neue Familie.
+Fotos (angesehen): 6117 (Nah, Bogen 2/3 schraeg), 6119 (Nah, Bogen 3 fast frontal), 6120 (Uebersicht-Nah, Bogen 3 frontal, Blick auf alle Konsolen darueber), handy_15 (Handy, Bogen 2/3 schraeg von unten). Bogenmitten vorher in jedes Foto projiziert.
+- Zone Pfeiler z 1,45-5,28: runder Schaft R 0,44 auf achteckigem Sockel mit Fase (Sockelmasse in Vorversuchen s8/a021332 nach Foto korrigiert, hier NICHT angefasst).
+- Zone Bogen z 5,28-7,5: Der Bogenrand ist GESTUFT: ein Steinring (~0,3 m breit, goldene Linie darin, schwarze Aussenlinie) liegt vorn buendig mit der Bandfront, die Laibung (innere Goldlinie) springt dahinter zurueck. Das Modell hatte nur EINE Frontkante (Laibung), ~0,3 m unterhalb der sichtbaren Aussenkante des Rings.
+- Zone Band z 7,5-8,0 bis Balkonkonsolen: glatter Putz, Band und OG-Wand eine Ebene (Koordinator R6); darueber Konsolen (anderes Bauteil).
+- Grundriss/Querschnitt: Rechteckband (Stirn s 12,66, Laibung 0,94 tief) mit 4 Segmentbogen-Oeffnungen auf 5 runden Pfeilern; 4 Bogen gezaehlt (Z-004-003, Z-004-001 gelten weiter, keine neue Zaehlung).
+- Wiederholung: 4 gleiche Boegen, Gitter v12 zeigt in allen vier den gleichen Ring (r-R = +0,31).
+- Anschluss: Bogenring setzt am Pfeilerkopf (Kaempfer 5,28) an; Aussenkreis hat dieselbe Mitte wie der Laibungskreis (R 2,72, Mitte z 4,40).
+- Formfamilie: bestehende `bogenreihe` (baukasten_gen), um zwei optionale Parameter erweitert (archivolt_breite, archivolt_tiefe) - generisch, kein Objektname im Code.
+- Ursache des Befunds (Zerlegung der Kanten-Praezision 0,109, `agent_scratch_kreis2/praez.py`): (a) Stirnbogenkante ohne Fotobeleg ~640 Punkte, (b) 25-m-Kante Bandoberkante z 8,0 (1038 Pkt, Gitter hat bei z 8,0 nichts), (c) Facetten-/Sockelringe z 1,5-2,2 (2400 Pkt). Die drei Vorversuche bewegten nur (c) und kamen auf Gewinn ~0,013.
+- Unsicherheit: Archivolt-Tiefe 0,22 und senkrechte Stufe = ANNAHME aus dem Gitter (s 12,4-12,5 gegen 12,66); Breite 0,31 aus Gitter (280 Segmente), nicht per foto_mass trianguliert, nur Overlay in 4 Fotos.
 
 ## 2. Zaehlungen
-Z-nu3b-001 (aus R1 uebernommen): 3 Grate in Bildzeile 1000, N=8 bleibt ANNAHME (Rueckseite nie sichtbar). Keine neue Zaehlung.
+Keine neue Zaehlung (Anzahl 4 Boegen / 5 Pfeiler bleibt Z-004-003/Z-004-001). Archivolt-Ring: 4 von 4 Boegen im Gitter, im Foto 6119/6120 Bogen 3 sichtbar (Ring pro Bogen = gleiche Familie, nur Bogen 2/3 am Foto angesehen).
 
-## 3. Pruefungen (vorher -> nachher, Quelle)
-| Pruefung | vorher | nachher | Soll | Quelle |
+## 3. Pruefungen
+| Pruefung | vorher (Altstand) | nachher | Soll | Quelle |
 |---|---|---|---|---|
-| helm_o_r_13_45/14_12/14_38/14_88 (aus R1) | rot am Runde-7-Stand | gruen | siehe masstabelle | Wolke lot2 + Foto-Gegenprobe (W-helm_o-profil) |
-| helm_o_knauf_r_21_33 | 0,11 ROT | 0,21 gruen | 0,17..0,25 | M-nu3b-009 (5 Fotos Strahlschnitt) |
-| helm_o_knauf_r_22_00 | 0,16 ROT | 0,05 gruen | 0..0,07 | M-nu3b-009 |
-Abnahme `tools/bauen_abnehmen.sh kaufhaus_grob3`: alle Pruefungen bestanden (1 vorbestehender Widerspruch). Wolkenbeleg Helm O 0,46 -> 0,605, Median 0,087 m; Kanten je Band unveraendert.
+| Arkade Bogen 3: Archivolt-Ring, tiefster Festkoerper z an der Stirn (bogen3_archivolt_z) | 7,12 ROT | 7,44 gruen | 7,33-7,53 | Kantengitter v12, r-R = +0,31, Scheitel 7,12+0,31 |
 
-## 4. Overlays (links Foto, rechts rot = Altstand, gruen = neu; nur Grate + Kugelkreis, ohne Sichtbarkeitstest)
-modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis4_helm_geschweift_o_{nu3b,nuaca,6132,6161,6145}.jpg
+Gate-Messung (Trockenlauf `konvergenz_bericht.py` auf dem Neubau, gleiche Parameter wie der Kreis):
+| Groesse bogenreihe__laube | vorher | nachher |
+|---|---|---|
+| Wolkenbeleg | 0,697 | 0,725 |
+| Kanten-Recall | 0,777 | 0,820 |
+| Kanten-Praezision | 0,109 | 0,295 |
+| F1 | 0,191 | 0,434 |
+| Gate-Mittel (Beleg, F1) | 0,444 | 0,580 (+0,135) |
+Gesamt-Recall 0,648 -> 0,655, Gesamt-Praezision 0,076 -> 0,082, kein Band-Rueckschritt.
+
+Abnahme `tools/bauen_abnehmen.sh kaufhaus_grob3`: "alle Pruefungen bestanden" (1 vorbestehender Widerspruch, 50 Beobachtungen ohne Pruefung), Gegenproben CB bestanden. audit/seiten.jpg angesehen: 4 Boegen Nordseite plausibel, keine neuen Artefakte. Die Gate-Messung ist ein Trockenlauf auf dem Neubau, nicht der Kreis-Lauf selbst.
+
+## 4. Overlays (cyan = Altstand, rot = Neustand; nur Stirnkanten der Bogen, ohne Verdeckungstest)
+modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis2_laube_archivolt_{6117,6119,6120,handy_15}.jpg
+Selbst angesehen: 6119, 6120, handy_15 - rote Aussenkante liegt auf dem Steinring, rote Innenkante auf der Goldlinie, cyan lag deutlich tiefer. 6117 nur schmaler Ausschnitt (schraeg), grob stimmig.
 
 ## 5. Fehlerliste
-- Traufe/Fuss (Vorderkante, Gesims): trifft (nu3b, nuaca, 6161 selbst angesehen); 6132/6145 nur teilweise.
-- Schaft/Grate z 15-20: trifft (nuaca, 6161, nu3b angesehen).
-- Kugel: trifft jetzt (nuaca, 6132 angesehen, Triangulation 5 Fotos). Radius 0,2 ANNAHME aus Bildbreite.
-- Fahnenstange/Fahne: nur als duenne Stange, Fahne nicht modelliert (ungeprueft/bewusst weggelassen).
-- Schweifung z 13,6-14,5: in 6132 evtl. 0,2-0,4 m zu schlank - NICHT belegt, ungeprueft.
-- Rueckseite/N=8: ANNAHME.
-- teile_lage_pruefen.py: stuerzt bei fensterreihe:og ab (nicht behoben) -> Pflichtschritt 9c(c) nicht mit dem Werkzeug erbracht; Lage ersatzweise: Kugelachse = Helmachse +-0,02 m, Wolkenbeleg.
-- foto_diff / fehlteile_finden / teile_sichtpruefung: nur in bauen_abnehmen enthaltenes gelaufen, Ergebnisbilder nicht einzeln angesehen -> ungeprueft. Helm West: nicht angefasst (gleicher Fehler, eigene Runde).
+- Bogenstirn Aussenring (Bogen 2, 3): trifft (6119, 6120, handy_15). Bogen 1, 4: ungeprueft am Foto (nur Gitter).
+- Laibungskante Stirn: trifft (6119, 6120), Abweichung ~1-3 px.
+- Stufentiefe 0,22: ANNAHME, am Foto nicht gemessen (ungeprueft).
+- Ringansatz am Pfeilerkopf: trifft grob (Linien enden am Kaempfer), Kapitellform nicht modelliert.
+- Bandoberkante z 8,0 / Naht: trifft NICHT (Kante ohne Fotobeleg, Gitter hat sie nicht) - nicht geaendert, naechster Hebel.
+- Sockel/Facettenringe z 1,5-2,2: Praezision 0,0-0,1, ungeprueft ob Gitter-Fehler (Gitter-Ring z 2,3 vs Foto 2,53, offene Beobachtung der Vorversuche).
+- Gewoelbe hinter dem Band: nicht modelliert.
+- Nicht gelaufen/ungesehen: `teile_lage_pruefen`, `teile_sichtpruefung`, `regression.py` (keine Werkzeugaenderung ausser baukasten_gen bogenreihe, nur mit neuem optionalem Parameter - fuer andere Objekte ohne Wirkung).
 
 ## 6. Geaenderte Dateien
-objekt.json (helm_geschweift:o: R1-Profil, Knauf z 21,33 r 0,2, letzter Ring z 21,0 r 0,07), masstabelle.json (+2 Messungen, +2 Pruefungen, R1-Zeilen), messprotokoll/M-nu3b-009, W-helm_o-profil, Z-nu3b-001, tools/helm_profil_wolke.py, LOGBUCH_HELM_O_R1, REZEPT (L-H1, L-H2), NICHTS_GEBRACHT, automatisch regenerierte STL/MASSNACHWEIS/pruefbericht/elemente.
+tools/baukasten_gen.py (bogenreihe: archivolt_breite/archivolt_tiefe, beleg), modelle/kaufhaus_grob3/objekt.json (bogenreihe:laube +2 Parameter, werte_quellen, historie), masstabelle.json (+Messung bogen3_archivolt_z, +Pruefung, +Beobachtung), REZEPT_GEBAEUDE_AUS_FOTOS.md (L-KR14), NICHTS_GEBRACHT.md, audit/gitter_generator/rundekreis2_laube_archivolt_*.jpg, STL/Pruefberichte (Neubau).
 
 ## 7. Generalisierte Lehre
 | Lehre | Anlass | Werkzeug |
 |---|---|---|
-| Punkte auf bekannter Achse per Mehrkamera-Strahlschnitt, Z-Ticks im Foto | Kugel 0,67 m zu hoch | foto_mass --tri |
-| Drahtgitter ohne Sichtbarkeit: Rueckhaelfte nicht fuer Fehler halten | Fehlurteil 'Ring 1 m zu tief' (nho) | Overlay mit Tiefenfarbe |
+| Niedrige Kanten-Praezision zuerst nach Kantengruppen zerlegen (je Modellkante Abstand zum Gitter, nach z/Laenge), dann Gitter um die Stelle als Polarhistogramm (r-R, s) ansehen: gestufte Raender sind dort sofort sichtbar | Laube: 3 Vorversuche am Sockel brachten +0,013, der fehlende Bogenrand +0,135 | agent_scratch_kreis2/praez.py (noch nicht in tools/) |
+| Overlay mit nur den Kanten der betroffenen Stelle (Zone, Schichtfilter) statt aller Dreieckskanten | bauteil_overlay.py unlesbar/Absturz | agent_scratch_kreis2/ov_bogen.py |

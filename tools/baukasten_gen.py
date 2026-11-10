@@ -649,15 +649,25 @@ def bogenreihe(cfg, ctx):
             fw = sw * np.cos(np.radians(22.5))
             if fh > 0.01: teile.append(M.extrude(C.circle(0.5, 48).scale((fw, fw)), fh, scale_top=(pb / fw, pt / fw)).translate((uc, pn, zb + shh)))
     ul, ur = u0 - pb / 2, u0 + nb * pitch + pb / 2
+    ab, at = float(cfg.get("archivolt_breite", 0.0)), float(cfg.get("archivolt_tiefe", 0.0))      # optional: gestufter Bogenrand (Steinring ab breit buendig mit der Bandfront, Laibung um at zurueckgesetzt; Foto 6117)
+    def archivolt_schnitt():
+        """Aussparung der Stirn: konzentrischer Bogen (Radius R+ab um denselben Mittelpunkt wie der Laibungsbogen) von der Bandfront at tief."""
+        R_ = ((ob / 2) ** 2 + (zs - zk) ** 2) / (2 * (zs - zk)); hw = math.sqrt((R_ + ab) ** 2 - (zk - (zs - R_)) ** 2); cut = None
+        for i in range(nb):
+            um = u0 + (i + 0.5) * pitch; p_ = prisma_uz(np.array(segmentbogen(um - hw, um + hw, zk, zs + ab, zk - 0.05, n=48), float), pn + lt / 2 - at, pn + lt / 2 + 0.05)
+            cut = p_ if cut is None else cut + p_
+        return cut
     band = M.cube((ur - ul, lt, zo - zk)).translate((ul, pn - lt / 2, zk))
     for i in range(nb):
         um = u0 + (i + 0.5) * pitch; poly = np.array(segmentbogen(um - ob / 2, um + ob / 2, zk, zs, zk - 0.05, n=48), float)
         band = band - prisma_uz(poly, pn - lt / 2 - 0.05, pn + lt / 2 + 0.05)
+    if ab > 0 and at > 0: band = band - archivolt_schnitt()
     teile.append(band)
     if cfg.get("druck_verbinder"):                                                                # Kaempferstueck: Schaft (zk-0,05..zk+0,15) geschnitten mit Band (unten 0,05 verlaengert, Boegen ausgeschnitten) -> nie ueber Bandflucht/Laibung, keine Beruehrflaechen
         bl = M.cube((ur - ul, lt, zo - zk + 0.05)).translate((ul, pn - lt / 2, zk - 0.05))
         for i in range(nb):
             um = u0 + (i + 0.5) * pitch; bl = bl - prisma_uz(np.array(segmentbogen(um - ob / 2, um + ob / 2, zk, zs, zk - 0.10, n=48), float), pn - lt / 2 - 0.05, pn + lt / 2 + 0.05)
+        if ab > 0 and at > 0: bl = bl - archivolt_schnitt()
         for i in range(nb + 1):
             uc = u0 + i * pitch; pe = quader(uc - pb / 2, uc + pb / 2, pn - pt / 2, pn + pt / 2, zk - 0.05, zk + 0.15) if form == "rechteck" else M.extrude(C.circle(0.5, 48).scale((pb, pt)).translate((uc, pn)), 0.2).translate((0, 0, zk - 0.05))
             teile.append(pe ^ bl)
@@ -665,6 +675,7 @@ def bogenreihe(cfg, ctx):
     q = lambda p_: (wq.get(p_) or cfg["quelle"])
     for i in range(nb + 1):
         beleg("alle", f"Arkade Pfeiler {i + 1}/{nb + 1} ({form})", q("pfeiler_breite") + " | Lage u0+i*pitch: " + q("pitch"), u_pfeiler=u0 + i * pitch, breite=pb, tiefe=pt, n=pn, z0=zb, z1=zk)
+    if ab > 0 and at > 0: beleg("alle", f"Arkade Archivolt-Absatz (Ring {ab:.2f} m breit, Laibung {at:.2f} m zurueck)", q("archivolt_breite") + " | Tiefe: " + q("archivolt_tiefe"), archivolt_breite=ab, archivolt_tiefe=at, scheitel_aussen_z=zs + ab)
     beleg("alle", f"Arkade {nb} Boegen (Wandband)", f"Anzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + q("kaempfer_z"), n_boegen=nb, pitch=pitch, oeffnung_breite=ob, kaempfer_z=zk, scheitel_z=zs, oberkante_z=zo, laibung_tiefe=lt)
     return [k], []
 

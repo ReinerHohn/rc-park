@@ -3667,7 +3667,9 @@
     "sockel_weite": "ANNAHME Startwert aus Nutzerfotos 8.11. (Oktogon ~1,4x Schaftdurchmesser); Feinwert per Wolkenfit",
     "sockel_hoehe": "ANNAHME Startwert Nutzerfotos",
     "fase_hoehe": "ANNAHME Startwert Nutzerfotos",
-    "druck_verbinder": "Druck: Pfeilerschaft endet an der Bandunterkante, innenliegender Verbinderblock (vorher 2-cm-Absatz ueber die Bandflucht hinaus -> Splitterkanten)"
+    "druck_verbinder": "Druck: Pfeilerschaft endet an der Bandunterkante, innenliegender Verbinderblock (vorher 2-cm-Absatz ueber die Bandflucht hinaus -> Splitterkanten)",
+    "archivolt_breite": "kantengitter segmente_gitter_v12.json (SfM lot2): aeussere Bogenkante der 4 Boegen bei r-R = +0,31 m (Median 280 Segmente, R 2,72 aus oeffnung_breite/scheitel/kaempfer), Foto 6117 zeigt den gestuften Rand; nicht per foto_mass trianguliert (ANNAHME Gitter = Foto-Triangulation, Overlay 3 Fotos geprueft)",
+    "archivolt_tiefe": "kantengitter segmente_gitter_v12.json: Laibungs-Vorderkante bei s 12,4-12,5 gegen Bandfront 12,66 -> 0,22; ANNAHME Stufe senkrecht"
    },
    "sockel_weite": 1.5,
    "sockel_hoehe": 0.55,
@@ -3747,9 +3749,24 @@
       "scheitel_z": 7.12,
       "oeffnung_breite": 5.15
      }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Agent Kreis2 r2",
+     "alt": {
+      "archivolt_breite": 0,
+      "archivolt_tiefe": 0
+     },
+     "neu": {
+      "archivolt_breite": 0.31,
+      "archivolt_tiefe": 0.22
+     },
+     "grund": "Kanten-Praezision 0,109: Modell hatte eine Bogenkante an der Front 0,3 m unter der Fotokante; Pruefung bogen3_archivolt_z"
     }
    ],
-   "druck_verbinder": true
+   "druck_verbinder": true,
+   "archivolt_breite": 0.31,
+   "archivolt_tiefe": 0.22
   },
   {
    "typ": "stl_teil:laube_alt",
