@@ -1697,6 +1697,240 @@
    "schritt": 0.01,
    "quantil": 10.0,
    "_hinweis": "Ebene = Wandfront n 7,28 bei u 12,47; Strahlen im Streifen u 12,47+(0.4..0.8) bei z 6,255 lot2: trifft der Strahl den Rahmen (Oberkante flach 6,28) -> +0,03 (Rahmenfront 0,03 hinter der Wand), trifft er nur die Wand (Rahmen hier niedriger, Giebel) -> 0,00"
+  },
+  "gaube_u_a_vordach_vor": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.70 - z_unterkante_lot2",
+   "zentrum": [
+    12.0886,
+    5.7972
+   ],
+   "richtung": [
+    0.333813820178239,
+    0.9426390260635353
+   ],
+   "quer_max": 0.05,
+   "r_max": 2.5
+  },
+  "gaube_u_a_stirn_vor": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.20 - z_unterkante_lot2",
+   "zentrum": [
+    12.0886,
+    5.7972
+   ],
+   "richtung": [
+    0.333813820178239,
+    0.9426390260635353
+   ],
+   "quer_max": 0.05,
+   "r_max": 2.5
+  },
+  "gaube_u_a_vordach_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.70 - z_unterkante_lot2",
+   "zentrum": [
+    12.616,
+    7.2866
+   ],
+   "richtung": [
+    0.9426390260635353,
+    -0.333813820178239
+   ],
+   "quer_max": 0.05,
+   "r_max": 1.2
+  },
+  "gaube_u_a_vordach_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.70 - z_unterkante_lot2",
+   "zentrum": [
+    12.616,
+    7.2866
+   ],
+   "richtung": [
+    -0.9426390260635353,
+    0.333813820178239
+   ],
+   "quer_max": 0.05,
+   "r_max": 1.2
+  },
+  "gaube_u_a_dach_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    12.5226,
+    7.0226
+   ],
+   "z0": "=17.50 - z_unterkante_lot2",
+   "z1": "=19.00 - z_unterkante_lot2",
+   "suche": "oben",
+   "puffer": 0.03
+  },
+  "gaube_u_a_vordach_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    12.616,
+    7.2866
+   ],
+   "z0": "=17.30 - z_unterkante_lot2",
+   "z1": "=18.00 - z_unterkante_lot2",
+   "suche": "unten",
+   "puffer": 0.03
+  },
+  "gaube_u_m_vordach_vor": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.70 - z_unterkante_lot2",
+   "zentrum": [
+    6.4705,
+    7.7867
+   ],
+   "richtung": [
+    0.333813820178239,
+    0.9426390260635353
+   ],
+   "quer_max": 0.05,
+   "r_max": 2.5
+  },
+  "gaube_u_m_stirn_vor": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.20 - z_unterkante_lot2",
+   "zentrum": [
+    6.4705,
+    7.7867
+   ],
+   "richtung": [
+    0.333813820178239,
+    0.9426390260635353
+   ],
+   "quer_max": 0.05,
+   "r_max": 2.5
+  },
+  "gaube_u_m_vordach_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.70 - z_unterkante_lot2",
+   "zentrum": [
+    6.9979,
+    9.2761
+   ],
+   "richtung": [
+    0.9426390260635353,
+    -0.333813820178239
+   ],
+   "quer_max": 0.05,
+   "r_max": 1.2
+  },
+  "gaube_u_m_vordach_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.70 - z_unterkante_lot2",
+   "zentrum": [
+    6.9979,
+    9.2761
+   ],
+   "richtung": [
+    -0.9426390260635353,
+    0.333813820178239
+   ],
+   "quer_max": 0.05,
+   "r_max": 1.2
+  },
+  "gaube_u_m_dach_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    6.9044,
+    9.0122
+   ],
+   "z0": "=17.50 - z_unterkante_lot2",
+   "z1": "=19.00 - z_unterkante_lot2",
+   "suche": "oben",
+   "puffer": 0.03
+  },
+  "gaube_u_m_vordach_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    6.9979,
+    9.2761
+   ],
+   "z0": "=17.30 - z_unterkante_lot2",
+   "z1": "=18.00 - z_unterkante_lot2",
+   "suche": "unten",
+   "puffer": 0.03
+  },
+  "gaube_u_c_vordach_vor": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.70 - z_unterkante_lot2",
+   "zentrum": [
+    0.8523,
+    9.7763
+   ],
+   "richtung": [
+    0.333813820178239,
+    0.9426390260635353
+   ],
+   "quer_max": 0.05,
+   "r_max": 2.5
+  },
+  "gaube_u_c_stirn_vor": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.20 - z_unterkante_lot2",
+   "zentrum": [
+    0.8523,
+    9.7763
+   ],
+   "richtung": [
+    0.333813820178239,
+    0.9426390260635353
+   ],
+   "quer_max": 0.05,
+   "r_max": 2.5
+  },
+  "gaube_u_c_vordach_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.70 - z_unterkante_lot2",
+   "zentrum": [
+    1.3798,
+    11.2656
+   ],
+   "richtung": [
+    0.9426390260635353,
+    -0.333813820178239
+   ],
+   "quer_max": 0.05,
+   "r_max": 1.2
+  },
+  "gaube_u_c_vordach_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.70 - z_unterkante_lot2",
+   "zentrum": [
+    1.3798,
+    11.2656
+   ],
+   "richtung": [
+    -0.9426390260635353,
+    0.333813820178239
+   ],
+   "quer_max": 0.05,
+   "r_max": 1.2
+  },
+  "gaube_u_c_dach_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    1.2863,
+    11.0017
+   ],
+   "z0": "=17.50 - z_unterkante_lot2",
+   "z1": "=19.00 - z_unterkante_lot2",
+   "suche": "oben",
+   "puffer": 0.03
+  },
+  "gaube_u_c_vordach_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    1.3798,
+    11.2656
+   ],
+   "z0": "=17.30 - z_unterkante_lot2",
+   "z1": "=18.00 - z_unterkante_lot2",
+   "suche": "unten",
+   "puffer": 0.03
   }
  },
  "pruefungen": [
@@ -3583,6 +3817,294 @@
    "historie": [
     "2026-11-10 angelegt (Kreis r2, fensterreihe:eg0): am Altstand (Giebelkontur, bei z 6,255 nur Wand = 0,00) ROT erwartet, Soll nicht gelockert"
    ]
+  },
+  {
+   "name": "Gaube untere Reihe A (u 9,46, im Foto links): Vordach-Vorderkante bei z 17,70 (n-Reichweite ab n 9,5; Foto n 11,17)",
+   "wert": "gaube_u_a_vordach_vor",
+   "soll": [
+    1.565,
+    1.765
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Vordach-Unterkante n 11,10-11,26 (M-6259-016/-017/-020/-021/-024/-025), Mittel 11,165",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-018"
+  },
+  {
+   "name": "Gaube untere Reihe A (u 9,46, im Foto links): Stirn-/Fensterkasten-Front bei z 17,20 (n-Reichweite ab n 9,5; Foto n 11,0)",
+   "wert": "gaube_u_a_stirn_vor",
+   "soll": [
+    1.41,
+    1.62
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Fensterbank-Vorderkante n 10,92-11,21 (M-6259-014/-015/-018/-019/-022/-023), Mittel 11,015",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-018"
+  },
+  {
+   "name": "Gaube untere Reihe A (u 9,46, im Foto links): Vordach Halbbreite nach +u bei z 17,70 (misst Breite UND Lage; Foto 0,68-0,74)",
+   "wert": "gaube_u_a_vordach_up",
+   "soll": [
+    0.62,
+    0.82
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Vordach-Ecken-Breite 1,36/1,48/1,44 (A/Mitte/C) -> Halbbreite 0,68-0,74 um die Gaubenmitte",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-018"
+  },
+  {
+   "name": "Gaube untere Reihe A (u 9,46, im Foto links): Vordach Halbbreite nach -u bei z 17,70",
+   "wert": "gaube_u_a_vordach_um",
+   "soll": [
+    0.62,
+    0.82
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Vordach-Ecken-Breite 1,36/1,48/1,44 -> Halbbreite 0,68-0,74",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-018"
+  },
+  {
+   "name": "Gaube untere Reihe A (u 9,46, im Foto links): Hoehe der Dachoberflaeche bei n 10,8 (Vordach-Pultdach, Hang ~17,2)",
+   "wert": "gaube_u_a_dach_z",
+   "soll": [
+    16.517,
+    16.817
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Gerade Vordach-Vorderkante (n 11,165, z 17,64+0,14 ANNAHME Dicke) -> hintere Ecke (n 9,19, z 19,6, M-6259-026, +-0,2, nur 1 Punkt) bei n 10,8: z 18,12",
+   "merkmal": "absolut_hoehe",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-018"
+  },
+  {
+   "name": "Gaube untere Reihe A (u 9,46, im Foto links): Hoehe der Vordach-Unterkante bei n 11,08",
+   "wert": "gaube_u_a_vordach_z",
+   "soll": [
+    16.067,
+    16.307
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Vordach-Unterkante z 17,53-17,77 (M-6259-016/-017/-020/-021/-024/-025), Mittel 17,64",
+   "merkmal": "absolut_hoehe",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-018"
+  },
+  {
+   "name": "Gaube untere Reihe Mitte (u 3,50): Vordach-Vorderkante bei z 17,70 (n-Reichweite ab n 9,5; Foto n 11,17)",
+   "wert": "gaube_u_m_vordach_vor",
+   "soll": [
+    1.565,
+    1.765
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Vordach-Unterkante n 11,10-11,26 (M-6259-016/-017/-020/-021/-024/-025), Mittel 11,165",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-014"
+  },
+  {
+   "name": "Gaube untere Reihe Mitte (u 3,50): Stirn-/Fensterkasten-Front bei z 17,20 (n-Reichweite ab n 9,5; Foto n 11,0)",
+   "wert": "gaube_u_m_stirn_vor",
+   "soll": [
+    1.41,
+    1.62
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Fensterbank-Vorderkante n 10,92-11,21 (M-6259-014/-015/-018/-019/-022/-023), Mittel 11,015",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-014"
+  },
+  {
+   "name": "Gaube untere Reihe Mitte (u 3,50): Vordach Halbbreite nach +u bei z 17,70 (misst Breite UND Lage; Foto 0,68-0,74)",
+   "wert": "gaube_u_m_vordach_up",
+   "soll": [
+    0.62,
+    0.82
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Vordach-Ecken-Breite 1,36/1,48/1,44 (A/Mitte/C) -> Halbbreite 0,68-0,74 um die Gaubenmitte",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-014"
+  },
+  {
+   "name": "Gaube untere Reihe Mitte (u 3,50): Vordach Halbbreite nach -u bei z 17,70",
+   "wert": "gaube_u_m_vordach_um",
+   "soll": [
+    0.62,
+    0.82
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Vordach-Ecken-Breite 1,36/1,48/1,44 -> Halbbreite 0,68-0,74",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-014"
+  },
+  {
+   "name": "Gaube untere Reihe Mitte (u 3,50): Hoehe der Dachoberflaeche bei n 10,8 (Vordach-Pultdach, Hang ~17,2)",
+   "wert": "gaube_u_m_dach_z",
+   "soll": [
+    16.517,
+    16.817
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Gerade Vordach-Vorderkante (n 11,165, z 17,64+0,14 ANNAHME Dicke) -> hintere Ecke (n 9,19, z 19,6, M-6259-026, +-0,2, nur 1 Punkt) bei n 10,8: z 18,12",
+   "merkmal": "absolut_hoehe",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-014"
+  },
+  {
+   "name": "Gaube untere Reihe Mitte (u 3,50): Hoehe der Vordach-Unterkante bei n 11,08",
+   "wert": "gaube_u_m_vordach_z",
+   "soll": [
+    16.067,
+    16.307
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Vordach-Unterkante z 17,53-17,77 (M-6259-016/-017/-020/-021/-024/-025), Mittel 17,64",
+   "merkmal": "absolut_hoehe",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-014"
+  },
+  {
+   "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Vordach-Vorderkante bei z 17,70 (n-Reichweite ab n 9,5; Foto n 11,17)",
+   "wert": "gaube_u_c_vordach_vor",
+   "soll": [
+    1.565,
+    1.765
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Vordach-Unterkante n 11,10-11,26 (M-6259-016/-017/-020/-021/-024/-025), Mittel 11,165",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-022"
+  },
+  {
+   "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Stirn-/Fensterkasten-Front bei z 17,20 (n-Reichweite ab n 9,5; Foto n 11,0)",
+   "wert": "gaube_u_c_stirn_vor",
+   "soll": [
+    1.41,
+    1.62
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Fensterbank-Vorderkante n 10,92-11,21 (M-6259-014/-015/-018/-019/-022/-023), Mittel 11,015",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-022"
+  },
+  {
+   "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Vordach Halbbreite nach +u bei z 17,70 (misst Breite UND Lage; Foto 0,68-0,74)",
+   "wert": "gaube_u_c_vordach_up",
+   "soll": [
+    0.62,
+    0.82
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Vordach-Ecken-Breite 1,36/1,48/1,44 (A/Mitte/C) -> Halbbreite 0,68-0,74 um die Gaubenmitte",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-022"
+  },
+  {
+   "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Vordach Halbbreite nach -u bei z 17,70",
+   "wert": "gaube_u_c_vordach_um",
+   "soll": [
+    0.62,
+    0.82
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Vordach-Ecken-Breite 1,36/1,48/1,44 -> Halbbreite 0,68-0,74",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-022"
+  },
+  {
+   "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Hoehe der Dachoberflaeche bei n 10,8 (Vordach-Pultdach, Hang ~17,2)",
+   "wert": "gaube_u_c_dach_z",
+   "soll": [
+    16.517,
+    16.817
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Gerade Vordach-Vorderkante (n 11,165, z 17,64+0,14 ANNAHME Dicke) -> hintere Ecke (n 9,19, z 19,6, M-6259-026, +-0,2, nur 1 Punkt) bei n 10,8: z 18,12",
+   "merkmal": "absolut_hoehe",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-022"
+  },
+  {
+   "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Hoehe der Vordach-Unterkante bei n 11,08",
+   "wert": "gaube_u_c_vordach_z",
+   "soll": [
+    16.067,
+    16.307
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12 + K-6259/K-6162 bzw. K-6162/K-6161 fuer C; Schnittwinkel 3-26 Grad, Strahlabstand <= 0,12 m, +-0,10..0,21 m); Zaehlung Z-018-005 (3 Gauben untere Reihe): Vordach-Unterkante z 17,53-17,77 (M-6259-016/-017/-020/-021/-024/-025), Mittel 17,64",
+   "merkmal": "absolut_hoehe",
+   "historie": [
+    "2026-11-10 angelegt (Kreis3 r3, gaubenreihe:unten, Befund Wolkenbeleg 0,52): Soll aus Fotos; am Altmodell (Stirn 1,17 m hoch bei n 10,50, kein Vordach, Lage u/z daneben) muss ROT sein, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-022"
   }
  ],
  "beobachtungen_offen": [
@@ -4073,8 +4595,17 @@
    "naechster_schritt": "tiefe 0,01 (Front 7,25), einbindung 0,20 (Pfosten bis zum Nischengrund, Laibung in 6174/6213 tief); Pruefung eg0_rahmenfront. Offen: eg1 (Beleg 0,945) und eg2 haben dieselbe ANNAHME tiefe 0,16 - je Teil nachmessen."
   },
   {
+   "datum": "2026-11-10",
+   "wer": "Kreis3 r3 Agent gaubenreihe:unten",
+   "auto_id": "kreis3-gauben-unten",
+   "quelle": "konvergenz_bericht Wolkenbeleg 0,52 + Sichtung Fotos c12/6259/6162/6161",
+   "text": "Untere Gaubenreihe (3 Gauben) im Modell: Stirn 1,17 m hoch (Foto: Fensterkasten ~0,76 m unter ziegelgedecktem Vordach), kein Vordach, Lage u/n/z daneben (Foto: Fensterbank-Front n ~11,0 statt 10,5; z Fensterbank ~16,8 statt 17,5; Mitte u 3,5 statt 3,0, Gauben A/C um 0,3/0,7 m versetzt). Gleicher Typ wie obere Reihe (Kreis2 r2).",
+   "naechster_schritt": "Pruefungen aus M-6259-014..026 anlegen (rot am Altmodell), Generator: vordach_* wie obere Reihe, Lage t/u_mitte/pitch",
+   "status": "offen"
+  },
+  {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
    "auto_id": "fehlteile-6261-234-1794",
    "art": "fehlteil",
    "foto": "6261",
@@ -4082,16 +4613,16 @@
    "z_bis": 18.54,
    "xyz": [
     14.34,
-    -8.87,
+    -8.88,
     18.54
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.87 m (Zelle [234, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.88 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
    "auto_id": "fehlteile-6261-312-1794",
    "art": "fehlteil",
    "foto": "6261",
@@ -4104,6 +4635,23 @@
    ],
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-234-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.42,
+   "z_bis": 17.42,
+   "xyz": [
+    14.28,
+    -8.91,
+    17.42
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.42 m, y=-8.91 m (Zelle [234, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
