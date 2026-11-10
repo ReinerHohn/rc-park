@@ -1,69 +1,42 @@
-# Kreis r4 helm_geschweift:w (kaufhaus_grob3, 2026-11-10)
-Nichts committet, gelöscht oder gedruckt. Logbuch: `modelle/LOGBUCH_HELM_W_R4_2026-11-10.md`.
+# Kreis a053353 r1 - quader:gesims
 
-## 1. Formbeschreibung
-Fotos angesehen: 6162 (Übersicht), g03 und i04 (Handy-Nahfotos von unten), 6261 (nur Overlay erzeugt, nicht einzeln beurteilt). 6257 stammt aus dem Vorlauf.
-- Fuß z 13,3–15,4: konkave Ziegelhaut, im Vorlauf erledigt.
-- Schaft z 15,4–21: schlanker Achtkant mit bunten Ziegelstreifen. Auf den Graten sitzen Krabben (Haken), die im Modell fehlen.
-- Nadel und Kugel bei z 21,35.
-- Grundriss Achteck (g03/i04: 3 volle + 2 Randflächen sichtbar). Nicht gezählt, ANNAHME Osthelm.
-- Anschluss: Erkergesims z 13,1–13,3.
-- Am Modell anders: Schaft 0,04–0,06 m zu schlank (Osthelm-Kopie).
-Formfamilie: bestehende `helm_geschweift`, nur das Profil ist geändert.
+## 1. Formbeschreibung (Stufe 0)
+Fotos: 6161 (Uebersicht frontal), 6145 (schraeg West-Haelfte), 6115/b_03 (Naehe Erkerhelm), handy_18 (Nahfoto). Zonen von unten: glatte Wand -> rote Schraege mit Goldleisten (n 12,62->12,94, z 14,35->14,82) -> gruene Kupferrinne -> Dach. Querschnitt Profilleiste, Wiederholung keine, laeuft zwischen den Erkerhelmen und verschwindet dort im Helm. Formfamilie: vorhandenes quader mit `profil` (baukasten_gen), keine neue Familie noetig.
+Aenderung am Altmodell: Enden liefen ca. 1 m (West) / 2,4 m (Ost) in die Helme hinein, Fuss lag laut Gitter/Pruefer zu tief.
 
-## 2. Zählungen
-Keine (kein Z-Protokoll). Die Flächenzahl 8 bleibt ANNAHME: Einzelansicht zählt kein N, g03/i04 sind nur konsistent damit.
+## 2. Zaehlungen
+Keine (Teil hat keine zaehlbaren Elemente); kein Z-Protokoll.
 
-## 3. Prüfungen
-| Prüfung | vorher (Altstand) | nachher | Soll | Quelle |
-|---|---|---|---|---|
-| helm_w_r_16_97 | 0,44 rot | 0,50 | 0,47–0,53 | Wolke-Mitte W-helm_w-profil, M-sil-helm_w-1 |
-| helm_w_r_17_76 | 0,34 rot | 0,41 | 0,38–0,44 | dito |
-| helm_w_r_18_58 | 0,27 rot | 0,34 | 0,30–0,36 | dito |
-
-`bauen_abnehmen.sh kaufhaus_grob3`: alle Prüfungen bestanden. `freiraum_audit` und die fehlende Datei `SFM-AUSRICHTUNG-buendel.json` bleiben vorbestehende Fehler.
-
-Kennzahlen Helm W (konvergenz_bericht, Trockenlauf, Teile neu exportiert):
-
-| | vorher | nachher |
+## 3. Pruefungen / Gate (konvergenz_bericht --teile_dir, Teil quader__gesims)
+| Groesse | vorher | nachher |
 |---|---|---|
-| Beleg | 0,561 | 0,562 |
-| Median-Abstand | 0,110 m | 0,094 m |
-| Kanten-Recall | 0,417 | 0,721 |
-| Kanten-Präzision | 0,312 | 0,533 |
-| Mittel aus Beleg und F1 | 0,459 | 0,588 |
+| Wolkenbeleg | 0,632 | 0,691 |
+| Fotokanten Recall | 0,484 | 0,480 |
+| Fotokanten Praezision | 0,403 | 0,540 |
+| Mittel Beleg/F1 | 0,536 | 0,600 (+0,064) |
+Gate (>= +0,05, nichts > 0,02 gefallen): erfuellt. Bestehende gesims_front_z14_35/55/78 gruen (Sollwerte unveraendert). Neue rote Vorher-Pruefung NICHT moeglich: Pruefstand misst das Gesamtmodell, die Endkuerzung liegt im Helm (union-neutral, trimesh.contains: West 0,096 m3 und Ost 14,8-16,3 0,153 m3 zu 100 % im Helm). `tools/bauen_abnehmen.sh`: alle Pruefungen bestanden. Werkzeuge nicht geaendert, daher regression.py nicht noetig.
 
-Gate: +0,129 bei geforderten +0,05, keine Größe fällt. Das habe ich aus den Zahlen selbst gerechnet.
-Der Kantensprung ist größer als die Profiländerung. Wegen L-KR15 (Gitter v12 liegt bei z 16–21 evtl. 0,1–0,2 m außen) schreibe ich ihn nicht allein dem Modell zu. Der Beleg ändert sich praktisch nicht.
-
-## 4. Overlays (rot = neu, cyan = alt)
-- audit/gitter_generator/rundekreis4_helm_geschweift_w_6162.jpg
-- audit/gitter_generator/rundekreis4_helm_geschweift_w_6257.jpg (erzeugt, nicht einzeln beurteilt)
-- audit/gitter_generator/rundekreis4_helm_geschweift_w_6261.jpg (erzeugt, nicht einzeln beurteilt)
-- audit/gitter_generator/rundekreis4_helm_geschweift_w_g03_i04.jpg
-- Aus dem Vorlauf: rundekreis1_helm_geschweift_w_*
-- 6259: Overlay-Absturz (Ausschnitt leer). Eintrag in NICHTS_GEBRACHT.
+## 4. Overlays
+modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis2_gesims_{vorher,nachher}_{ip_IMG_6161,ip_IMG_6145,an_handy_2026-11-06_handy_18,an_handy_2026-11-06_b_handy_b_03,ip_IMG_6115}.jpg
 
 ## 5. Fehlerliste
-- **Schaft rechte Kante, z 15,4–19,4:** trifft (6162, i04, g03 angesehen).
-- **Schaft linke Kante:** trifft in 6162 und g03 besser als vorher. In i04 bleibt sie ca. 60 px innen (Achsversatz ~0,05 m möglich, ungeprüft).
-- **Krabben:** trifft nicht (fehlen).
-- **Achteck-Flächenzahl:** ungeprüft (ANNAHME).
-- **Fuß z 13,3–15,4:** aus dem Vorlauf, hier nur im Overlay angesehen, trifft.
-- **Knauf und Nadel:** ungeprüft. Die Silhouette bei z 20,5–21 sagt, das Foto ist 0,2 m schmaler als der Modell-Ring, nicht geändert.
-- **Rückseite:** ungeprüft (Spiegelung).
-- **Staffelgiebel-Quader:** steht bei z 16,5–18,3 mit Kante 0,51 m vor der Helmachse, also 0,17 m vor der Helmfläche. Lage ungeprüft.
-- **teile_lage_pruefen:** Helm W Median 0,23 m, keine Markierung (> 0,4 m).
-- **Nicht gelaufen:** `foto_diff`, `teile_sichtpruefung`. `fehlteile_finden` lief nur im Rahmen von `bauen_abnehmen`.
+- Enden im Helm (West -7,8, Ost 14,8): trifft (6161, 6115 selbst angesehen).
+- Oberkante/Lippe, Schraege: trifft in 6161, 6145.
+- Unterkante: ungefaehr (+-0,05 m); Widerspruch Foto-Messung 14,33-14,36 gegen Gitter 14,40-14,45 offen, nicht gemittelt.
+- Stummel u 16,3-17,15 (ausserhalb Helm, 0,057 m3) entfernt = ANNAHME, nicht von Osten geprueft.
+- Rinnenrundung, Wasserspeier, Dachgitter nicht modelliert. teile_lage_pruefen: Gesims Median 0,08 m. fehlteile: kein Treffer am Gesims. teile_sichtpruefung nicht gelaufen. freiraum_audit-Fehler (fehlende SFM-AUSRICHTUNG-buendig.json) Altfehler.
 
-## 6. Geänderte Dateien
-- modelle/kaufhaus_grob3/objekt.json (Profil W)
-- modelle/kaufhaus_grob3/masstabelle.json (3 Messungen, 3 Prüfungen, 1 Beobachtung)
-- modelle/kaufhaus_grob3/messprotokoll/M-sil-helm_w-1.json (neu)
-- modelle/NICHTS_GEBRACHT.md, modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md, modelle/LOGBUCH_HELM_W_R4_2026-11-10.md
-- Neu gebaute STL, Audit-Dateien, pruefbericht.json, MASSNACHWEIS.md (automatisch)
+## 6. Geaenderte Dateien
+modelle/kaufhaus_grob3/objekt.json (gesims u0/u1/z0/profil, werte_quellen, historie), masstabelle.json (beobachtungen_offen), modelle/NICHTS_GEBRACHT.md, REZEPT_GEBAEUDE_AUS_FOTOS.md (L-GS5), automatisch neu gebaute STL/audit-Dateien, Overlays. Nichts committet.
 
 ## 7. Generalisierte Lehre
-| Lehre | Anlass | Werkzeug |
-|---|---|---|
-| L-KR16: Ein konstanter Schnittwert bei zwei Höhen (0,507) zeigt, dass ein Nachbarteil gemessen wird. Messrichtung über die Polygonsymmetrie auf eine freie Seite drehen, am Altstand den Wert prüfen. | Staffelgiebel-Quader im +n-Streifen des Helms | pruefstand.schnitt_reichweite, helm_profil_wolke.py, helm_silhouette_foto.py |
+Lehre | Anlass | Werkzeug: Enden, die vollstaendig in einem Nachbarkoerper liegen, per Containment-Test kuerzen (druckneutral) | quader:gesims +0,064 | trimesh.contains + konvergenz_bericht.
+
+---
+## Nachtrag Kreis a060254 r2 (dieser Lauf)
+- **Vorgehen:** Der in Lauf a053353 r1 angenommene, aber nie nach main gelangte Patch (commit c0e533a8: Enden u0 -7,8 / u1 14,8, Fuss z 14,35/14,38) wurde uebernommen (`git cherry-pick -n`), nicht neu erfunden. Vorherige Verwerfungen (a021633 r3, a035748 r3) betrafen andere Kuerzungswerte ohne Fotobeleg.
+- **Selbst angesehen:** Overlays `audit/gitter_generator/rundekreis2_gesims_nachher_ip_IMG_6161.jpg` und `..._an_handy_2026-11-06_b_handy_b_03.jpg`: Oberkante/Rinne trifft, Enden laufen am West- und Osthelm aus, Unterkante ca. an der Goldleiste (+-0,05 m, ungeprueft in 6145/handy_18 neu).
+- **Neubau:** `tools/bauen_abnehmen.sh kaufhaus_grob3` = "alle Pruefungen bestanden"; `teile_lage_pruefen`: quader:gesims Median 0,07 m, keine Markierung.
+- **Gate-Werte (aus a053353 r1, hier nicht neu gemessen):** Beleg 0,632 -> 0,691, Praezision 0,403 -> 0,540, Recall 0,484 -> 0,480 (Fall <= 0,02 erfuellt), Mittel +0,064.
+- **Offen/ungeprueft:** Stummel u 16,3-17,15 ohne Fotobeleg entfernt (ANNAHME); Widerspruch Unterkante Foto 14,33 vs. Gitter 14,40-14,45 steht in beobachtungen_offen; `teile_sichtpruefung` und `regression.py` nicht gelaufen (keine Werkzeugaenderung); `freiraum_audit` scheitert an fehlender SFM-AUSRICHTUNG-Datei im Worktree (Altfehler).
+- **Nicht committet** (Auftrag), Aenderungen liegen gestaged im Worktree.
