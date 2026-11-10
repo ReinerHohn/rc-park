@@ -410,6 +410,22 @@ for runde in range(1, RUNDEN + 1):
             else:
                 basis = subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
                 print(f"Runde {runde}: nach main gemergt ({basis[:7]})")
+                # Abnahme auf main noch unter dem Merge-Lock (10.11.: nach Merge-Neubau war die Druckteilung veraltet -> Pruefstand rot,
+                # bis jemand von Hand die Abnahme laufen liess). Gruen -> Erzeugnisse committen; rot -> Merge automatisch zuruecknehmen.
+                rcM, outM = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ], ROOT, log=os.path.join(LDIR, f"abnahme_main_r{runde}.log"))
+                if rcM == 0 and "alle Pruefungen bestanden" in outM:
+                    subprocess.run(["git", "-C", ROOT, "add", "-u", "modelle"], capture_output=True)
+                    subprocess.run(["git", "-C", ROOT, "commit", "-q", "-m", f"Abnahme main nach kreis {LAUF} r{runde} ({ziel['teil']}): alle Pruefungen bestanden (automatisch)"], capture_output=True)
+                    basis = subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+                    print(f"Runde {runde}: Abnahme main GRUEN ({basis[:7]})")
+                elif "INFRA_OOM" in outM:
+                    subprocess.run(["git", "-C", ROOT, "checkout", "--", "modelle"], capture_output=True)
+                    print(f"Runde {runde}: Abnahme main nicht moeglich (Infrastruktur) - Merge bleibt, Abnahme von Hand noetig")
+                else:
+                    subprocess.run(["git", "-C", ROOT, "checkout", "--", "modelle"], capture_output=True)
+                    rv = subprocess.run(["git", "-C", ROOT, "revert", "--no-edit", "-m", "1", "HEAD"], capture_output=True, text=True)
+                    basis = subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+                    print(f"Runde {runde}: Abnahme main ROT nach Merge -> Merge automatisch zurueckgenommen (rc {rv.returncode}, {basis[:7]})")
             fcntl.flock(_lk, fcntl.LOCK_UN); _lk.close()
     else:
         patch = os.path.join(LDIR, f"verworfen_r{runde}.patch")
