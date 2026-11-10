@@ -9,4 +9,6 @@ sha=$(sha256sum "$W/modelle/stl/${OBJ}_1-87.stl" | cut -c1-16)
 cd "$W" && /media/oem/scan/venv-seg/bin/python -W ignore -I tools/teil_fotoform.py "$OBJ" --aus "$FD/$sha.json.tmp" --bilder --bilder_dir "$FD/bilder_$sha"
 rc=$?; [ $rc -eq 0 ] && mv "$FD/$sha.json.tmp" "$FD/$sha.json"
 cd /home/oem/git/rc-park && git worktree remove --force "$W"
-echo "Formliste $sha rc=$rc"; exit $rc
+echo "Formliste $sha rc=$rc"
+[ $rc -eq 0 ] && python3 tools/realitaet_prozent.py "$OBJ" --nur_foto   # Realitaetszahl am Foto (Hauptzahl seit 10.11. abends) zu diesem main-Stand
+exit $rc

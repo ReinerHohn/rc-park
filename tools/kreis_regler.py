@@ -6,7 +6,7 @@ Startbedingung je Takt (alle muessen gelten):
   GPU-Auslastung Mittel der letzten 5 Takte < --gpu_ziel (60 %)   -> GPU nicht ausgelastet
   VRAM belegt < --vram_max (5000 MiB)    (Grenze 7000 MiB gesamt, CLAUDE.md; Agenten-Werkzeuge brauchen Spitzen bis ~2,5 GB)
   RAM verfuegbar > --ram_min (6 GB = gemessene Spitze einer Spur 5,7 GB; 10.11. zwei Spuren vom OOM-Killer beendet), Last1 < 1,5 x Kerne
-  Root frei > 6 GB, Daten frei > 10,5 GB (platz_pruefen-Grenzen 5/10 GB + Puffer; Worktrees werden nach jeder Runde entfernt)
+  Root frei > 6 GB, Daten frei > 5,5 GB (platz_pruefen-Grenzen 5/5 GB + Puffer, Nutzer 10.11. abends; Worktrees werden nach jeder Runde entfernt)
   laufende Spuren < --max, letzter Start > --abstand s her (Spuren nicht gleichzeitig in die Messphase)
 Ende: 3 Spuren in Folge melden 'kein Kandidat' -> nichts mehr zu tun. Jede Entscheidung wird geloggt.
 """
@@ -126,7 +126,8 @@ while True:
     if m >= VRAM_MAX: grund.append(f"VRAM {m:.0f} MiB")
     if r <= RAM_MIN: grund.append(f"RAM {r:.1f} GB")
     if last >= 1.5 * ker: grund.append(f"Last {last:.1f}")
-    if rf <= 6 or df <= 10.5: grund.append(f"Platz root {rf:.1f} daten {df:.1f} GB")
+    if rf <= 6 or df <= 5.5:   # Nutzer 10.11. abends: Datengrenze 5 GB (+0,5 Puffer)
+        grund.append(f"Platz root {rf:.1f} daten {df:.1f} GB")
     if len(sp) >= MAX: grund.append(f"{len(sp)} Spuren = max")
     if time.time() - letzter < ABSTAND: grund.append("Abstand")
     zeile = f"{time.strftime('%H:%M:%S')} Spuren {len(sp)} GPU {u:.0f}/{ug:.0f} % VRAM {m:.0f} RAM {r:.1f} Last {last:.1f} root {rf:.1f} daten {df:.1f}"
@@ -135,7 +136,7 @@ while True:
     else:
         name = "a" + time.strftime("%H%M%S")
         subprocess.run([os.path.join(ROOT, "tools", "job_start.sh"), f"kreis_{name}", os.path.join(KD, f"kreis_{name}.log"),
-                        "python3", "tools/bauteil_kreis.py", OBJ, "--rechte", "bypassPermissions", "--runden", str(RUNDEN), "--nach_main", "--spur", name],
+                        "python3", "tools/bauteil_kreis.py", OBJ, "--rechte", "bypassPermissions", "--runden", str(RUNDEN), "--nach_main", "--spur", name, "--max_minuten", "60"],   # Nutzer 10.11. abends: Agent hart 60 min (Annahmen brauchten Median 16 min, ab 11 Uhr 42 min ohne Ertrag)
                        cwd=ROOT, capture_output=True)
         letzter = time.time(); print(zeile, f"-> START Spur {name}")
         if kk >= 1: leer_sig = sig   # Probestart nach Aenderung: endet auch er leer, auf die naechste Aenderung warten

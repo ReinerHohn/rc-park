@@ -29,6 +29,18 @@ def rahmen(stl, obj, kk):
     return np.asarray(kk["rahmen_verschiebung"] if "rahmen_verschiebung" in kk else [-c[0], -c[1], -m.bounds[0, 2]], float)
 
 
+def waagerecht(maske, winkel=30.0):
+    """Kantenpixel, deren Kantenrichtung im Bild hoechstens `winkel` Grad von waagerecht abweicht (Strukturtensor der geglaetteten Kantenmaske).
+    HOEHEN-WERT (Nutzer 10.11. abends, Positivtest Helm O: 0,3 m nach oben -> Foto-F1 nur -0,010, seitlich -0,093): steile Kanten gleiten bei
+    Hoehenfehlern an sich selbst entlang und bleiben 'Treffer'; nur waagerechte Kanten verraten die Hoehe - getrennt zaehlen, sonst gehen sie unter.
+    ANNAHME: Bild-waagerecht ~ Welt-waagerecht (Fotos kaum gerollt, Rahmen lot2)."""
+    m = cv2.GaussianBlur(maske.astype(np.float32), (0, 0), 2)
+    gx = cv2.Sobel(m, cv2.CV_32F, 1, 0, ksize=3); gy = cv2.Sobel(m, cv2.CV_32F, 0, 1, ksize=3)
+    jxx = cv2.GaussianBlur(gx * gx, (0, 0), 3); jyy = cv2.GaussianBlur(gy * gy, (0, 0), 3); jxy = cv2.GaussianBlur(gx * gy, (0, 0), 3)
+    th = 0.5 * np.arctan2(2 * jxy, jxx - jyy)          # Gradientenrichtung; waagerechte Kante = senkrechter Gradient
+    return maske & (np.abs(np.cos(th)) < np.sin(np.radians(winkel)))
+
+
 def flecken(maske, pos, n=3, min_px=40):
     """Groesste zusammenhaengende Flecken (nach 5-px-Schliessen) mit Pixelzahl und Weltpunkt (Median der Rasterpositionen)."""
     if maske.sum() < min_px: return []
@@ -78,17 +90,38 @@ def main(argv=None):
             im0 = cv2.imread(bild[0]); H, W = im0.shape[:2]
             voll = os.path.join(tmp, f"voll_{W}x{H}.png"); cv2.imwrite(voll, np.full((H, W), 255, np.uint8)) if not os.path.exists(voll) else None
             npz = os.path.join(tmp, f"k_{nr}.npz")
+            # SCHNELLWEG (10.11. abends, bitgleich geprueft - TFF_LANGSAM=1 = alter Weg, TFF_PRUEF=1 = beide Wege vergleichen): foto_diff gibt Raster und
+            # Kostenkarte im Speicher zurueck und hoert nach der Kostenkarte auf (Bericht/Bilder/zweites Vollraster/npz entfallen).
+            schnell = os.environ.get("TFF_LANGSAM") != "1"
+            FD._RUECK = {"nur_kosten": os.environ.get("TFF_PRUEF") != "1"} if schnell else None
             try:
                 FD.main([objp, nr, "--stl", stl, "--bewertung-maske", voll, "--kostenkarte", npz, "--aus", tmp])
             except BaseException as ex:
                 if 'out of memory' in str(ex).lower(): raise
                 erg["fotos"][nr] = f"foto_diff fehlgeschlagen: {str(ex)[:120]}"; return
-            if not os.path.exists(npz): erg["fotos"][nr] = "keine Kostenkarte (zu wenig Kanten)"; return
-            Z = np.load(npz); mkp, fkp, dF, dM = Z["mkp"], Z["fkp"], Z["dF"].astype(np.float32), Z["dM"].astype(np.float32)
+            finally:
+                rueck, FD._RUECK = FD._RUECK, None
+            if schnell and rueck and "kosten" in rueck:
+                Z = rueck["kosten"]
+            elif os.path.exists(npz): Z = np.load(npz)
+            else: erg["fotos"][nr] = "keine Kostenkarte (zu wenig Kanten)"; return
+            mkp, fkp, dF, dM = Z["mkp"], Z["fkp"], Z["dF"].astype(np.float32), Z["dM"].astype(np.float32)
+            # Hoehen-Wert: Abstaende nur zwischen WAAGERECHTEN Kanten, gleiche Einheit wie dF (Kappe in Pixeln aus dF zurueckgerechnet)
+            _dtF = cv2.distanceTransform((~fkp).astype(np.uint8), cv2.DIST_L2, 5); _s = (dF > 0.05) & (dF < 0.95) & mkp
+            kap = float(np.median(_dtF[_s] / dF[_s])) if _s.sum() > 20 else None
+            if kap:
+                mkh, fkh = waagerecht(mkp), waagerecht(fkp)
+                dFh = np.minimum(cv2.distanceTransform((~fkh).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
+                dMh = np.minimum(cv2.distanceTransform((~mkh).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
             R, t, f, _, _ = FF.kamera_laden(K, obj, nr, R0, W, H); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2))
             tr = rahmen(stl, obj, kk)
-            mv = trimesh.load(stl, force="mesh"); mv.apply_scale(obj.get("stl_massstab", 87) / 1000.0); mv.apply_translation(tr)
-            dv, _, pos = RK.dreiecke_rastern(mv, R, t, f, cx, cy, W, H)
+            if schnell and rueck and "depth" in rueck and os.environ.get("TFF_PRUEF") != "1":
+                dv, pos = rueck["depth"], rueck["pos"].cpu().numpy()   # Vollraster aus foto_diff (gleiches Netz, gleiche Kamera) statt zweitem Raster
+            else:
+                mv = trimesh.load(stl, force="mesh"); mv.apply_scale(obj.get("stl_massstab", 87) / 1000.0); mv.apply_translation(tr)
+                dv, _, pos = RK.dreiecke_rastern(mv, R, t, f, cx, cy, W, H)
+                if schnell and rueck and "depth" in rueck:   # TFF_PRUEF: Schnellweg muss bitgleich sein
+                    print(f"PRUEF {nr}: depth gleich {np.array_equal(dv, rueck['depth'], equal_nan=True)}, pos gleich {np.array_equal(pos, rueck['pos'].cpu().numpy(), equal_nan=True)}", flush=True)
             erg["fotos"][nr] = {"mk_px": int(mkp.sum()), "fk_px": int(fkp.sum())}
             for tp in teile:
                 name = os.path.basename(tp)[:-4]
@@ -106,7 +139,12 @@ def main(argv=None):
                 if mk_t.sum() < a.min_px or fk_t.sum() < a.min_px: continue
                 ok_m, ok_f = dF[mk_t] < a.schwelle, dM[fk_t] < a.schwelle
                 rot = mk_t & (dF >= a.schwelle); gelb = fk_t & (dM >= a.schwelle)
-                e = {"praez": round(float(ok_m.mean()), 3), "recall": round(float(ok_f.mean()), 3), "mk_px": int(mk_t.sum()), "fk_px": int(fk_t.sum()),
+                if kap:
+                    mh_t, fh_t = mkh & ms, fkh & ms
+                    hw = {"praez_h": round(float((dFh[mh_t] < a.schwelle).mean()), 3), "recall_h": round(float((dMh[fh_t] < a.schwelle).mean()), 3),
+                          "mkh_px": int(mh_t.sum()), "fkh_px": int(fh_t.sum())} if (mh_t.sum() >= 50 and fh_t.sum() >= 50) else {}
+                else: hw = {}
+                e = {**hw, "praez": round(float(ok_m.mean()), 3), "recall": round(float(ok_f.mean()), 3), "mk_px": int(mk_t.sum()), "fk_px": int(fk_t.sum()),
                      "rot": flecken(rot, pos), "gelb": flecken(gelb, pos)}
                 erg["teile"].setdefault(name, {})[nr] = e
                 if a.bilder:
@@ -138,6 +176,11 @@ def main(argv=None):
         if not mk or not fk: continue
         p = sum(v["praez"] * v["mk_px"] for v in je.values()) / mk; r = sum(v["recall"] * v["fk_px"] for v in je.values()) / fk
         je["_gesamt"] = {"praez": round(p, 3), "recall": round(r, 3), "f1": round(2 * p * r / (p + r), 3) if p + r else 0.0, "fotos": len(je)}
+        hh = [v for v in je.values() if isinstance(v, dict) and "mkh_px" in v]   # Hoehen-Wert (waagerechte Kanten), gleiche Gewichtung
+        mh = sum(v["mkh_px"] for v in hh); fh = sum(v["fkh_px"] for v in hh)
+        if mh and fh:
+            ph = sum(v["praez_h"] * v["mkh_px"] for v in hh) / mh; rh = sum(v["recall_h"] * v["fkh_px"] for v in hh) / fh
+            je["_gesamt"].update({"praez_h": round(ph, 3), "recall_h": round(rh, 3), "f1_h": round(2 * ph * rh / (ph + rh), 3) if ph + rh else 0.0, "fotos_h": len(hh)})
     if a.aus: json.dump(erg, open(a.aus, "w"), ensure_ascii=False, indent=1)
     print(f"{'Teil':30s} {'Fotos':>5s} {'Praez':>6s} {'Recall':>6s} {'F1':>6s}")
     for name, je in sorted(((k, v) for k, v in erg["teile"].items() if "_gesamt" in v), key=lambda kv: kv[1]["_gesamt"]["f1"]):

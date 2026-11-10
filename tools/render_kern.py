@@ -117,6 +117,10 @@ def dreiecke_rastern(mm, R, t, f, cx, cy, W, H, block=None, als_torch=False):
     fl2 = (u[:, 1] - u[:, 0]) * (v[:, 2] - v[:, 0]) - (u[:, 2] - u[:, 0]) * (v[:, 1] - v[:, 0])
     gut = (z > 1).all(1) & (x1 >= x0) & (y1 >= y0) & (fl2.abs() > 1e-12)
     ids = torch.nonzero(gut, as_tuple=True)[0]; nx = (x1 - x0 + 1)[ids].long(); ny = (y1 - y0 + 1)[ids].long(); cnt = nx * ny
+    # RCPARK_RASTER_F32=1 (Versuch 10.11. abends, Profil: 40 von 50 s je Foto in paare()): Pixel-Schleife in float32 statt float64 - GeForce-Karten
+    # rechnen float64 mit ~1/64 der Rate. Je-Dreieck-Werte bleiben in float64 berechnet und werden nur gerundet. NICHT bitgleich -> Gegenprobe Pflicht.
+    if os.environ.get("RCPARK_RASTER_F32") == "1":
+        u, v, z, fl2, Nc, x0, y0 = (q.float() for q in (u, v, z, fl2, Nc, x0, y0))
     if block is None:   # 10.11.: feste 1<<20 Paare -> 2612 Python-Durchlaeufe je Foto (32 s von ~50). Block nach freiem VRAM (~200 Byte je Paar, 25 %), 1<<20..1<<24.
         block = int(min(1 << 24, max(1 << 20, 0.25 * torch.cuda.mem_get_info()[0] / 200)))   # amin-Reduktion ist reihenfolgefrei -> Ergebnis bitgleich
     grenzen = [0]; summe = 0                                                                        # Dreiecks-Bloecke mit <= block Pixel-Paaren
@@ -138,7 +142,7 @@ def dreiecke_rastern(mm, R, t, f, cx, cy, W, H, block=None, als_torch=False):
             f_, px, py, tief = f_[drin], px[drin].long(), py[drin].long(), tief[drin]
             Xp = torch.stack([(px - cx) / f * tief, (py - cy) / f * tief, tief], 1)
             yield f_, py * W + px, tief, ((Nc[f_] * Xp).sum(1) > 0).long()
-    d = torch.full((H * W,), float("inf"), dtype=torch.float64, device="cuda")
+    d = torch.full((H * W,), float("inf"), dtype=z.dtype, device="cuda")
     for _, fl, tief, _ in paare(): d.scatter_reduce_(0, fl, tief, reduce="amin")
     # Gleichstand nur fuer wirklich deckungsgleiche Flaechen: relative Toleranz 1e-6 der Tiefe (~30 um, float64 exakt gerastert). Erst 2 cm (aus der Punktfassung)
     # -> Kaufhaus-Gauben 1-2 cm vor der Dachflaeche verschwanden hinter dem Dach (kleinere Dreiecksnummer gewann), Sichtpruefung 2026-11-04.

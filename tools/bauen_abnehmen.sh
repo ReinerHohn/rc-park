@@ -30,6 +30,9 @@ fotodiag() {   # eine Kamera: Breitenprofil + Fehlteile (laeuft parallel je Foto
 export -f fotodiag
 # Alle Kameras parallel (so viele wie Kerne): verlustfrei schneller - die Werkzeuge schreiben je Foto eigene Audit-Dateien;
 # die Masstabelle schreiben sie ueber --eintragen nacheinander (Dateisperre in tools/masstabelle_io.py), daher nicht mehr als 4 gleichzeitig.
+# RCPARK_OHNE_FOTODIAG=1 (Kreis-Tor, 10.11. abends): Diagnosen aendern das Ergebnis nicht (RC = Pruefstand), kosteten im Tor bis 40 min unter der GPU-Sperre
+# (Erker 1: Abnahme Lauf 2417 s, Rumpf EG wartete 2906 s). main_abnahme laeuft weiter MIT Diagnosen.
+[ "${RCPARK_OHNE_FOTODIAG:-0}" = "1" ] && echo "Foto-Diagnosen uebersprungen (RCPARK_OHNE_FOTODIAG=1)" || \
 ls modelle/$1/messprotokoll/K-*.json 2>/dev/null | xargs -P 4 -I{} bash -c 'fotodiag "$@"' _ {} "$OBJ" "$PY"
 # Gegenbeweis Register CB: die Fehlerklasse 'Zaehlmerkmal aus Wolke / Etikettenumgehung / Selbstbezug' muss weiter abgelehnt werden (nur Objekte mit Zaehlprotokollen)
 if ls modelle/$1/messprotokoll/Z-*.json >/dev/null 2>&1; then

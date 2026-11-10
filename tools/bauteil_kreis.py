@@ -42,6 +42,12 @@ TROCKEN = "--trocken" in a
 RECHTE = opt("--rechte")
 RUNDEN = opt("--runden", 3, int); MODELL = opt("--modell", "sonnet"); PRUEFER = opt("--pruefer", "opus")
 MIN_DATEN = opt("--min_daten", 0.3, float); MIN_GEWINN = opt("--min_gewinn", 0.05, float); MAX_FEHL = opt("--max_fehl", 2, int)
+# FOTO ZUERST (Nutzer 10.11. abends, ersetzt Option A): "Du brauchst nur 3 Bilder, um die Kanten abzugleichen. Wir brauchen die Wolke doch gar nicht."
+# Befund: staffelgiebel__west wird von ~270 Fotos gesehen, Wolkenbeleg aber nur 0,18 (Wolke an steilen/schraeg gesehenen Flaechen duenn) -
+# das alte Tor (Gewinn aus Beleg + Gitter-F1) konnte dort nie gewinnen. Jetzt: Gewinn = Foto-F1 (teil_fotoform, ~10 Fotos, Verdeckung beachtet);
+# Wolke nur Veto fuer die LAGE (Regel 9d) und nur, wo das Teil genug Wolkendaten hat (anteil_mit_daten >= --min_daten).
+# ANNAHME: Schwelle 0,02 = Veto-Marge; Foto-F1 ist deterministisch (unveraendertes Modell 0,635 -> 0,635, 0,72 -> 0,72, Logs 10.11.).
+MIN_GEWINN_FOTO = opt("--min_gewinn_foto", 0.02, float)
 KREISDIR = opt("--kreisdir", "/media/oem/scan/rc-park_kreis")
 MAX_MIN = opt("--max_minuten", 120, int)
 VORPRUEF = "--ohne_vorpruefung" not in a   # Form am Foto direkt nach dem Agenten, einmal Rueckgabe (10.11.)
@@ -66,8 +72,13 @@ def sh(cmd, cwd, log=None, env=None, timeout=None):
     e.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")   # mehrere Spuren teilen 8 GB VRAM (OOM 10.11. 00:25)
     e.setdefault("RCPARK_SIFT_MAX", "1600")
     with open(log, "a") if log else open(os.devnull, "w") as f:
-        r = subprocess.run(cmd, cwd=cwd, shell=isinstance(cmd, str), stdout=f if log else subprocess.PIPE,
-                           stderr=subprocess.STDOUT, text=True, env=e, timeout=timeout)
+        try:
+            r = subprocess.run(cmd, cwd=cwd, shell=isinstance(cmd, str), stdout=f if log else subprocess.PIPE,
+                               stderr=subprocess.STDOUT, text=True, env=e, timeout=timeout)
+        except subprocess.TimeoutExpired:   # 10.11. abends: Agent > Zeitlimit warf die ganze Spur weg (Westgiebel, 2 h Arbeit) -> rc 124, Stand geht ins Tor
+            if log: f.write(f"\nZEITLIMIT {timeout} s erreicht - Abbruch, Stand wird trotzdem geprueft\n"); f.flush()
+            print(f"ZEITLIMIT {timeout} s: {str(cmd)[:60]} abgebrochen, weiter mit dem vorhandenen Stand", flush=True)
+            return 124, (open(log).read()[-4000:] if log else "")
     return r.returncode, (r.stdout if not log else open(log).read()[-4000:])
 
 OOM_MUSTER = ("out of memory", "CUDA_ERROR_OUT_OF_MEMORY", "OutOfMemoryError", "PLATZ ZU KNAPP")   # Platzwaechter-Abbruch = Infrastruktur (s2 R1 10.11., Gewinn +0,224 verworfen)
@@ -147,7 +158,7 @@ def fehlversuche_global():
     for _, lauf, z in ev:
         t = z["ziel"]["teil"]
         if z["ziel"].get("art") == "beobachtung": t = beob_schluessel(z["ziel"].get("beob") or {})   # eigene Zaehlung je Beobachtung (neue Information, z. B. Nutzer-Sichtfund)
-        if z.get("angenommen") is False and not z.get("infra_oom") and "guete_vor_nach" in z: n[t] = n.get(t, 0) + 1   # nur Runden mit dem heutigen Tor (Guete) zaehlen
+        if z.get("angenommen") is False and not z.get("infra_oom") and ("tor" in z or (t.endswith("__neu") and "guete_vor_nach" in z)): n[t] = n.get(t, 0) + 1   # nur Runden mit dem Foto-Tor (Feld 'tor', ab 10.11. abends) zaehlen - Verwerfungen unter dem Wolken-Tor sperren nicht
         if z.get("angenommen") is True:
             n[t] = 0
             # Nutzerentscheid 10.11.: gesperrte Teile werden wieder frei, wenn ein Nachbarteil (Box +-1 m) danach in main geaendert wurde (neue Lage)
@@ -214,6 +225,10 @@ BEFUND_RE = re.compile(r"FEHLTEIL-BEFUND:\s*(gebaut|kein Bauteil|Gitter zu duenn
 # Formpruefung am Foto je Teil (teil_fotoform, L-KR24/L-KR25): Gauben/Balkon/Erker-Rippen waren falsch bei Guete 0,8-0,98, weil Wolke und
 # Kantengitter (Toleranz 0,35 m, an Gauben 0 Punkte) Relief und Teilung nicht sehen. Formliste vom Regler (fotoform_auffrischen.sh) je main-STL.
 FORMDIR = os.path.join(KREISDIR, OBJ, "fotoform")
+def _hoehe_faellt(runde):
+    v, n = HOEHE.get(f"r{runde}_vorher"), HOEHE.get(f"r{runde}_vorpruef")
+    return v is not None and n is not None and n < v - 0.02
+HOEHE = {}   # Hoehen-Wert je Messung (f1_h, waagerechte Kanten; teil_fotoform.waagerecht), Schluessel = tag r<N>_vorher/_vorpruef/_nachher
 def formliste():
     fs = sorted(glob.glob(os.path.join(FORMDIR, "*.json")), key=os.path.getmtime)
     try: return json.load(open(fs[-1])) if fs else {}
@@ -228,7 +243,8 @@ def form_messen(wt, tdir, teil, fotos, tag):
     aus = os.path.join(LDIR, f"fotoform_{tag}.json")
     sh_tor([PY, "-W", "ignore", "-I", "tools/teil_fotoform.py", OBJ, "--teile_dir", tdir, "--stl", STL, "--nur", teil, "--fotos", ",".join(fotos),
             "--aus", aus, "--bilder", "--bilder_dir", os.path.join(LDIR, "fotoform_bilder"), "--etikett", tag], wt, log=os.path.join(LDIR, f"fotoform_{tag}.log"))
-    try: return ((json.load(open(aus))["teile"].get(teil) or {}).get("_gesamt") or {}).get("f1")
+    try:
+        _g = ((json.load(open(aus))["teile"].get(teil) or {}).get("_gesamt") or {}); HOEHE[tag] = _g.get("f1_h"); return _g.get("f1")
     except Exception: return None
 def form_aus_liste(fl, wt, teil, fotos, runde):
     """Vorher-F1 aus der Formliste, wenn sie zum STL des Basisstands passt (10.11.: jede Spur mass sonst 35 min dasselbe - Generator-Export
@@ -245,11 +261,24 @@ def form_aus_liste(fl, wt, teil, fotos, runde):
     for f in fotos:
         q = os.path.join(fl.get("bilder_dir", ""), f"{teil}_{f}.jpg"); z = os.path.join(bd, f"{teil}_{f}_r{runde}_vorher.jpg")
         if os.path.exists(q) and not os.path.exists(z): os.symlink(q, z)
+    hh = [je[f] for f in fotos if "mkh_px" in je[f]]; mh = sum(v["mkh_px"] for v in hh); fh = sum(v["fkh_px"] for v in hh)
+    if mh and fh:
+        ph = sum(v["praez_h"] * v["mkh_px"] for v in hh) / mh; rh = sum(v["recall_h"] * v["fkh_px"] for v in hh) / fh
+        HOEHE[f"r{runde}_vorher"] = round(2 * ph * rh / (ph + rh), 3) if ph + rh else 0.0
     return round(2 * p * r / (p + r), 3) if p + r else 0.0
 def guete_form(t, ff):
     """Teilguete mit Formpruefung am Foto: Mittel aus Wolkenbeleg, Gitter-Kanten-F1 (falls Gitter) und Foto-F1 (falls messbar)."""
     c = [x for x in (t.get("beleg"), f1(t), ff) if x is not None]
     return sum(c) / len(c) if c else None
+
+# --patch DATEI --ziel TEIL (10.11. abends, Westgiebel-Agent lief in die Zeitgrenze, Spur stuerzte ab, Arbeit lag ungeprueft im Worktree):
+# statt eines neuen Agenten den Patch auf den aktuellen main anwenden und durch dasselbe Tor (Vorher-Messung, Vorpruefung, Abnahme, Pruefer) schicken.
+PATCH = opt("--patch", ""); ZIEL = opt("--ziel", "")
+def ziel_fest(z):
+    t = next((t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["teil"] == ZIEL), None)
+    if t is None: sys.exit(f"--ziel {ZIEL} nicht in der Messung")
+    fd = os.open(os.path.join(BELEGT, ZIEL), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
+    return t
 
 def waehlen(z, sperre):
     fg = fehlversuche_global()
@@ -272,10 +301,11 @@ def waehlen(z, sperre):
             and t["teil"].split("__")[0] not in belegt_fam]   # gleiche Formfamilie (gleicher Generatorcode) nie parallel
     # Rang (Nutzer 10.11.): nur was die Wolke sieht und keine Brandwand ist (rang_guete aus konvergenz_bericht --nachbarn); Teile ohne
     # sichtbare freie Flaeche (rang None) ans Ende - dort hilft nur ein neues Foto (Fotoplan), kein Agent.
-    def _rang(t):
+    def _rang(t):   # Foto zuerst: kleinster Foto-F1; nur Teile ohne Fotomessung nach der alten Guete (dahinter)
+        ff = form_g(fl, t["teil"]).get("f1")
+        if ff is not None: return (0, ff)
         r = t.get("rang_guete") if "rang_guete" in t else guete(t)
-        w = [x for x in (r, form_g(fl, t["teil"]).get("f1")) if x is not None]
-        return (not w, min(w) if w else 9)
+        return (1 if r is not None else 2, r if r is not None else 9)
     kand.sort(key=_rang)
     # Nutzerregel 10.11. 14:4x: IMMER das schwaechste Teil zuerst ("dann konvergieren wir"). Frueher gingen offene Beobachtungen vor -
     # 7/7 Runden landeten auf Teilen mit 0,94-0,98 (kaum Spielraum, kleine Fehler = Rueckschritt). Offene Beobachtungen zu dem gewaehlten
@@ -350,8 +380,9 @@ def auftrag(ziel, runde, wt):
         befund = (f"Automatisch aus konvergenz_bericht (Wolkenbeleg je Bauteil): {typ} hat nur {ziel['beleg']:.2f} seiner datennahen "
               f"Flaeche auf der Wolke (Median-Abstand {ziel['median_m']:.2f} m, Anteil mit Daten {ziel['anteil_mit_daten']:.2f}). "
               f"Fotokanten (Kantengitter aus Fotos) je Teil: Recall {ziel.get('kanten_recall')} (Anteil der Fotokanten am Teil, die das Modell erklaert), "
-              f"Praezision {ziel.get('kanten_praez')} (Anteil der Teil-Formkanten, die ein Foto belegt). Gate: Mittel aus Beleg und Kanten-F1 muss um >= {MIN_GEWINN} steigen, "
-              f"keine der beiden Groessen darf um > 0,02 fallen. Verdeckte Flaechen zaehlen nicht (nur kamera-zugewandt). "
+              f"Praezision {ziel.get('kanten_praez')} (Anteil der Teil-Formkanten, die ein Foto belegt). GATE (Foto zuerst): die FORM AM FOTO (Foto-F1, unten) muss um >= {MIN_GEWINN_FOTO} steigen; "
+              f"Wolkenbeleg und Gitter-F1 duerfen nur nicht um > 0,02 fallen (Wolkenbeleg nur, wenn Anteil mit Daten >= {MIN_DATEN}). "
+              f"Arbeite an den Fotos: rote/gelbe Kanten im Teil beseitigen. Verdeckte Flaechen zaehlen nicht (nur kamera-zugewandt). "
               f"Form oder Lage passt nicht zu den Daten. Ursache unbekannt - in Stufe 0 an Fotos klaeren.")
         if ziel.get("art") == "beobachtung":
             b = ziel["beob"]
@@ -369,7 +400,7 @@ def auftrag(ziel, runde, wt):
             befund += (f" FORM AM FOTO (tools/teil_fotoform.py, Schwelle 0,14 m, je kalibriertem Foto, verdeckte Pixel ausgenommen): F1 {_g['f1']} "
                        f"(Praezision {_g['praez']} = Modellkanten mit Fotokante, Recall {_g['recall']} = Fotokanten mit Modellkante) ueber {_g['fotos']} Fotos. "
                        f"Schwaechste: {_fl}. Bilder: {formliste().get('bilder_dir', FORMDIR)}/{ziel['teil']}_<foto>.jpg ansehen (gruen passt, rot erfunden, gelb fehlt). "
-                       f"Gelb im Teil = Form fehlt (Fenster, Rippen, Pfeiler, Ueberstand); rot = Form falsch/zu viel. Der Foto-F1 geht ins Tor ein und darf nicht fallen. "
+                       f"Gelb im Teil = Form fehlt (Fenster, Rippen, Pfeiler, Ueberstand); rot = Form falsch/zu viel. Der Foto-F1 IST der Torwert (muss um >= {MIN_GEWINN_FOTO} steigen). Zusaetzlich Veto: Hoehen-Wert f1_h (nur waagerechte Kanten: Traufen, Gesimse, Stufen, Oberkanten; im Bericht _gesamt.f1_h) darf um hoechstens 0,02 fallen - Hoehenfehler sieht der Foto-F1 kaum. "
                        f"Eigene Zwischenmessung nur auf den Torfotos (das Tor misst genau diese; alle Fotos = ~20 min GPU fuer dieselbe Aussage): "
                        f"tools/teil_fotoform.py {OBJ} --nur {ziel['teil']} --fotos {','.join(form_fotos(formliste(), ziel['teil']))} --aus {LDIR}/ff_eigen.json --bilder_dir {LDIR}/ff_eigen_bilder")
     txt = (txt.replace("`<OBJEKT>`", OBJ).replace("<OBJEKT>", OBJ).replace("`<BAUTEIL>`", typ).replace("<BAUTEIL>", typ)
@@ -479,7 +510,7 @@ for runde in range(1, RUNDEN + 1):
                     rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
                     if rc0 in (0, 3) and z0 and len(_h) == 3 and z0.get("stl_sha") == hashlib.sha256(open(sp, "rb").read()).hexdigest()[:16]:
                         shutil.copytree(_td, os.path.join(_vd, _key), dirs_exist_ok=True); json.dump(z0, open(_zf + ".tmp", "w"), ensure_ascii=False); os.replace(_zf + ".tmp", _zf)
-    ziel = NACH_Z["ziel"] if NACH else waehlen(z0, sperre)
+    ziel = NACH_Z["ziel"] if NACH else (ziel_fest(z0) if ZIEL else waehlen(z0, sperre))
     if not ziel:
         if not TROCKEN and not NACH and wt != ROOT:   # 10.11.: leere Spuren liessen je 500 MB Worktree liegen (Datenplatte auf 10,0 GB); unveraendert = Commit, verlustfrei
             subprocess.run(["git", "-C", ROOT, "worktree", "remove", wt], capture_output=True)   # ohne --force: bricht ab, falls doch etwas geaendert ist
@@ -504,8 +535,13 @@ for runde in range(1, RUNDEN + 1):
             ff_v = form_messen(wt, _tv, ziel["teil"], ff_fotos, f"r{runde}_vorher")
             print(f"Runde {runde}: Form am Foto vorher {ziel['teil']}: F1 {ff_v} ({len(ff_fotos)} Fotos)")
     t0 = time.time()
-    rcA, _ = (None, "") if NACH else sh(["claude", "-p", txt, "--model", MODELL, "--permission-mode", RECHTE], wt,
-                log=os.path.join(LDIR, f"agent_r{runde}.log"), timeout=MAX_MIN * 60)
+    if PATCH:   # Agentenarbeit aus abgebrochener Runde uebernehmen statt neuen Agenten (gleiches Tor danach)
+        rcA = subprocess.run(["git", "-C", wt, "apply", "--whitespace=nowarn", PATCH], capture_output=True, text=True).returncode
+        print(f"Runde {runde}: Patch {PATCH} uebernommen rc={rcA}", flush=True)
+        if rcA != 0: freigeben(ziel["teil"]); sys.exit("Patch passt nicht auf main")
+    else:
+        rcA, _ = (None, "") if NACH else sh(["claude", "-p", txt, "--model", MODELL, "--permission-mode", RECHTE], wt,
+                    log=os.path.join(LDIR, f"agent_r{runde}.log"), timeout=MAX_MIN * 60)
     # VORPRUEFUNG (Nutzer 10.11. 14:3x, 5 von 5 Runden erst im Tor nach 1-1,5 h verworfen, meist Foto-F1 gefallen oder Pflichtschritt
     # uebersprungen): gleich nach dem Agenten Form am Foto messen (gleiche Fotos, gleiche Formel wie das Tor). Keine klare Besserung
     # (Foto-Veto wuerde greifen: < vorher - 0,02) -> EINMAL zurueck an denselben Agenten (claude --continue im Worktree, Kontext bleibt) mit Messwerten je Foto
@@ -521,14 +557,15 @@ for runde in range(1, RUNDEN + 1):
         if not _diff:   # Agent hat Generator/objekt.json nicht geaendert (z. B. begruendet 'nicht belegt', a144153 10.11.) -> Rueckgabe waere Leerlauf
             print(f"Runde {runde}: Vorpruefung - Agent hat am Generator nichts geaendert, keine Rueckgabe", flush=True)
             _vorab_gebaut = _rq == 0   # Stand unveraendert seit dem Export
-        elif _rq != 0 or ff_q is None or ff_q < ff_v - 0.02:   # Option A (Nutzer 10.11.): zurueck nur, wenn das Foto-Veto des Tors greifen wuerde
+        elif _rq != 0 or ff_q is None or ff_q < ff_v + MIN_GEWINN_FOTO or _hoehe_faellt(runde):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde
             try: _je = (json.load(open(os.path.join(LDIR, f"fotoform_r{runde}_vorpruef.json")))["teile"].get(ziel["teil"]) or {})
             except Exception: _je = {}
             _zeilen = "\n".join(f"- Foto {f}: Praezision {_je[f].get('praez')} / Recall {_je[f].get('recall')}  Overlay {LDIR}/fotoform_bilder/{ziel['teil']}_{f}_r{runde}_vorpruef.jpg"
                                 f"  (vorher: {ziel['teil']}_{f}_r{runde}_vorher.jpg)" for f in ff_fotos if f in _je)
             _rueck = (f"VORPRUEFUNG DES KREISES (automatisch, gleiche Messung wie das Tor): Dein Stand ist "
                       + ("im Generator ROT (siehe " + os.path.join(LDIR, f"vorpruef_r{runde}.log") + ")" if _rq != 0 else
-                         f"am Foto SCHLECHTER: Form-F1 {ff_v} -> {ff_q} (Tor-Veto: Foto-F1 darf um hoechstens 0,02 fallen; Gewinn >= {MIN_GEWINN} zaehlt aus Wolkenbeleg + Kanten-F1).")
+                         f"am Foto NICHT KLAR BESSER: Form-F1 {ff_v} -> {ff_q}, Hoehen-Wert (nur waagerechte Kanten) {HOEHE.get(f'r{runde}_vorher')} -> {HOEHE.get(f'r{runde}_vorpruef')} "
+                         f"(Tor: Foto-F1 muss um >= {MIN_GEWINN_FOTO} steigen, der Hoehen-Wert darf um hoechstens 0,02 fallen; die Wolke ist nur Veto fuer die Lage).")
                       + f"\nJe Foto (rot = Modellkante ohne Fotokante, gelb = Fotokante fehlt im Modell):\n{_zeilen}\n"
                       "Sieh dir die Overlays an (mindestens 3), benenne je Foto, welche Kante falsch/fehlend ist, und korrigiere den Generator-Stand. "
                       "Pflicht vor der Abgabe: Zaehlmerkmale (Anzahl Elemente je Flaeche) am Foto mit tools/foto_zaehlung.py belegen, wenn das Teil welche hat; "
@@ -554,7 +591,7 @@ for runde in range(1, RUNDEN + 1):
         shutil.rmtree(_tn, ignore_errors=True)
         _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
         rcG, _ = sh_cpu(_gen, wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"), env={"BAUTEILE_AUS": _tn})
-    rcB, outB = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ, "--nur-pruefen"], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log")) if rcG == 0 else (rcG, "Generator fehlgeschlagen")
+    rcB, outB = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ, "--nur-pruefen"], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"), env={"RCPARK_OHNE_FOTODIAG": "1"}) if rcG == 0 else (rcG, "Generator fehlgeschlagen")
     tor_abnahme = rcB == 0 and "alle Pruefungen bestanden" in outB
     reg = None
     if ist_fehlteil(ziel):
@@ -569,14 +606,19 @@ for runde in range(1, RUNDEN + 1):
     ff_n = None
     if ff_v is not None and not ersatz:
         ff_n = ff_q if _vorab_gebaut else form_messen(wt, os.path.join(LDIR, f"teile_r{runde}_nachher"), ziel["teil"], ff_fotos, f"r{runde}_nachher")   # Vorpruefung = gleicher Stand, gleiche Messung
-        if ff_n is not None:
-            pass   # Nutzerentscheid 10.11. (Option A): Gewinn wie vor 10:58 aus Beleg + Kanten-F1; Foto-F1 nur als Veto (Rueckschritt > 0,02, s. rueck_teil).
-            # Vorher ging Foto-F1 als dritter Wert ins Mittel (guete_form) bei unveraenderter Schwelle 0,05 -> gleicher Fortschritt zaehlte 2/3, 0 Annahmen 10:58-15:30.
         print(f"Runde {runde}: Form am Foto {ziel['teil']}: F1 {ff_v} -> {ff_n} ({len(ff_fotos)} Fotos)")
-    gewinn = (nach.get(ziel["teil"]) or 0) - (vor.get(ziel["teil"]) or 0)
-    # kein Rueckschritt in einer der beiden Groessen (Lage ODER Form) um mehr als 0,02
     tv = vor_t.get(ziel["teil"], {}); tn = nach_t.get(ersatz or ziel["teil"], {})
-    rueck_teil = [n for n, fv, fn in (("beleg", tv.get("beleg"), tn.get("beleg")), ("kanten_f1", f1(tv), f1(tn)), ("foto_f1", ff_v, ff_n)) if fv is not None and fn is not None and fn < fv - 0.02]
+    foto_tor = ff_v is not None and ff_n is not None
+    if foto_tor:   # FOTO ZUERST (s. MIN_GEWINN_FOTO): Gewinn nur aus den Fotos
+        gewinn = ff_n - ff_v; min_g = MIN_GEWINN_FOTO
+    else:          # Teil am Foto nicht messbar (keine Formliste/Ersatzteil): alte Guete aus Beleg + Gitter-F1
+        gewinn = (nach.get(ziel["teil"]) or 0) - (vor.get(ziel["teil"]) or 0); min_g = MIN_GEWINN
+    # Veto: kein Rueckschritt um mehr als 0,02 - Foto-F1, Gitter-F1, und Wolkenbeleg nur, wo die Wolke das Teil sieht
+    wolke_sieht = (tv.get("anteil_mit_daten") or 0) >= MIN_DATEN
+    # HOEHEN-VETO (Nutzer 10.11. abends, Positivtest Helm O 0,3 m hoch: Foto-F1 -0,010 blind, Hoehen-Wert f1_h -0,052): waagerechte Kanten duerfen nicht fallen
+    h_v = HOEHE.get(f"r{runde}_vorher"); h_n = HOEHE.get(f"r{runde}_vorpruef" if _vorab_gebaut else f"r{runde}_nachher")
+    rueck_teil = [n for n, fv, fn in (("hoehe_f1", h_v, h_n),) + ((("beleg", tv.get("beleg"), tn.get("beleg")),) if (wolke_sieht or not foto_tor) else ()) + (("kanten_f1", f1(tv), f1(tn)), ("foto_f1", ff_v, ff_n))
+                  if fv is not None and fn is not None and fn < fv - 0.02]
     if "kanten_f1" in rueck_teil and ff_v is not None and ff_n is not None and ff_n >= ff_v + 0.02:
         # Quellenvorrang (10.11., Balkon 3x verworfen): das Kantengitter ist aus den Fotos ABGELEITET und hatte ~130 Segmente ueber freier Wand;
         # die direkte Formpruefung am Foto zeigt Besserung -> kein Rueckschritt, Widerspruch als Beobachtung (Regel 5: nicht mitteln).
@@ -584,7 +626,7 @@ for runde in range(1, RUNDEN + 1):
         print(f"Runde {runde}: Gitter widerspricht Foto ({gitter_widerspruch}) - Foto gilt, Beobachtung folgt")
     else:
         gitter_widerspruch = None
-    tor_konv = rcK == 0 and gewinn >= MIN_GEWINN and not rueck_teil
+    tor_konv = rcK == 0 and gewinn >= min_g and not rueck_teil
     if ist_fehlteil(ziel):   # eigenes Tor: Recall im Kasten, neue Teile praezise, kein anderes Teil schlechter, Gesamt-Recall nicht kleiner
         r_n = (((z1 or {}).get("regionen") or {}).get(ziel["id"]) or {}).get("recall")
         gewinn = (r_n if r_n is not None else 0) - (ziel["recall_kasten"] or 0)
@@ -703,7 +745,7 @@ for runde in range(1, RUNDEN + 1):
     if not TROCKEN and wt != ROOT:   # Platz (10.11.: 11 Worktrees x 430 MB fuellten die Datenplatte); Inhalt liegt als Commit auf dem Zweig br
         subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
-               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
+               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else ("region" if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
                "tor_konvergenz": tor_konv, "foto_f1": [ff_v, ff_n], "foto_fotos": ff_fotos, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")

@@ -24,14 +24,46 @@ GIT = K.get("gitter", D + "/segmente_gitter_v12.json"); KAM = K.get("kameras", D
 WOLKE = K.get("wolke", "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2.npy")
 VF = f"modelle/{OBJ}/realitaet_verlauf.jsonl"
 
+FD = os.path.join(KD, OBJ, "fotoform")
+def foto_zahl(sha):
+    """HAUPTZAHL seit 10.11. abends (Nutzer: 'umstellen'): Mittel der Form am Foto (teil_fotoform-F1, alle kalibrierten Fotos, Verdeckung beachtet)
+    ueber alle Bauteile ohne Schnittkoerper, aus der Formliste des main-STL (fotoform_auffrischen.sh). Die Wolkenzahl war blind an steilen Flaechen
+    (Tuer EG1 Wolke 0,989, Foto 0,457). None, solange die Formliste zu diesem STL fehlt."""
+    f = os.path.join(FD, sha + ".json")
+    if not os.path.exists(f): return None
+    t = {k: (v.get("_gesamt") or {}) for k, v in json.load(open(f))["teile"].items() if "__ausschnitt" not in k}
+    t = {k: g for k, g in t.items() if g.get("f1") is not None}
+    if not t: return None
+    h = [g["f1_h"] for g in t.values() if g.get("f1_h") is not None]
+    return dict(prozent_foto=round(100 * sum(g["f1"] for g in t.values()) / len(t), 1), hoehe_prozent=round(100 * sum(h) / len(h), 1) if h else None,
+                foto_teile={k: g["f1"] for k, g in t.items()}, foto_schwaechste=[[k, g["f1"]] for k, g in sorted(t.items(), key=lambda kv: kv[1]["f1"])[:4]])
+
 def zeile_ausgeben(z, vor):
-    d = "" if vor is None else f" ({'+' if z['prozent'] >= vor['prozent'] else ''}{z['prozent'] - vor['prozent']:.1f} Punkte gegen {vor['zeit'][11:16]})"
-    print(f"REALITAET {z['prozent']:.1f} %{d} | Fotokanten im Modell {z['kanten_recall_prozent']:.1f} % | Teile >= 0,9: {z['teile_gut']}/{z['teile_n']}"
+    if z.get("prozent_foto") is not None:
+        vf = next((v for v in [vor] if v and v.get("prozent_foto") is not None), None)
+        d = "" if vf is None else f" ({'+' if z['prozent_foto'] >= vf['prozent_foto'] else ''}{z['prozent_foto'] - vf['prozent_foto']:.1f} Punkte gegen {vf['zeit'][11:16]})"
+        print(f"REALITAET (Foto) {z['prozent_foto']:.1f} %{d} | Hoehe {z.get('hoehe_prozent')} % | schwaechste am Foto: "
+              + ", ".join(f"{t} {b:.2f}" for t, b in z.get("foto_schwaechste") or []), flush=True)
+    else:
+        print("REALITAET (Foto): folgt, sobald die Formliste zu diesem STL fertig ist (fotoform_auffrischen.sh ruft --nur_foto auf)", flush=True)
+    if "prozent" not in z: return
+    d = "" if (vor is None or "prozent" not in vor) else f" ({'+' if z['prozent'] >= vor['prozent'] else ''}{z['prozent'] - vor['prozent']:.1f} Punkte gegen {vor['zeit'][11:16]})"
+    print(f"  Nebenzahl Wolke {z['prozent']:.1f} %{d} | Fotokanten im Modell {z['kanten_recall_prozent']:.1f} % | Teile >= 0,9: {z['teile_gut']}/{z['teile_n']}"
           f" | Pruefstand {z['pruefstand']} | schwaechste: " + ", ".join(f"{t} {b:.2f}" for t, b in z["schwaechste"]), flush=True)
 
 def main():
     sha = hashlib.sha256(open(STL, "rb").read()).hexdigest()[:16]
     alt = [json.loads(l) for l in open(VF) if l.strip()] if os.path.exists(VF) else []
+    if "--nur_foto" in a:   # nach der Formliste: Fotozahl zur letzten Zeile dieses STL nachtragen (neue Zeile, Wolkenwerte uebernommen)
+        fz = foto_zahl(sha)
+        if fz is None: print("keine Formliste zu", sha); return 1
+        basis = next((z for z in reversed(alt) if z["stl_sha"] == sha), None)
+        if basis and basis.get("prozent_foto") == fz["prozent_foto"]: zeile_ausgeben(basis, None); return 0
+        vor = next((z for z in reversed(alt) if z.get("prozent_foto") is not None), None)
+        z = dict(basis or dict(stl_sha=sha, git=subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip()))
+        z.update(fz); z["zeit"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        with open(VF, "a") as f: f.write(json.dumps(z, ensure_ascii=False) + "\n")
+        zeile_ausgeben(z, vor); return 0
     if alt and alt[-1]["stl_sha"] == sha and not NEU:
         zeile_ausgeben(alt[-1], alt[-2] if len(alt) > 1 else None); return 0
     tmp = tempfile.mkdtemp(prefix="realitaet_", dir="/media/oem/scan/rc-park_kreis")
@@ -63,9 +95,10 @@ def main():
              stl_sha=sha, prozent=round(100 * sum(t["beleg"] for t in tl) / len(tl), 1),
              kanten_recall_prozent=round(100 * k["kanten"]["gesamt"]["recall"], 1), teile_n=len(tl), teile_gut=sum(t["beleg"] >= 0.9 for t in tl),
              pruefstand=f"{ps.get('ok')}/{ps.get('n')}", schwaechste=[[t["teil"], t["beleg"]] for t in sorted(tl, key=lambda t: t["beleg"])[:4]],
-             teile={t["teil"]: t["beleg"] for t in tl}, masz="Mittel Wolkenbeleg je Bauteil (konvergenz_bericht, beleg 0,15 m, Sicht >= 3 Kameras)")
+             teile={t["teil"]: t["beleg"] for t in tl}, masz="prozent = Mittel Wolkenbeleg (Nebenzahl); prozent_foto = Mittel Foto-F1 (HAUPTZAHL seit 10.11. abends)")
+    z.update(foto_zahl(sha) or {})
     with open(VF, "a") as f: f.write(json.dumps(z, ensure_ascii=False) + "\n")
-    zeile_ausgeben(z, alt[-1] if alt else None); return 0
+    zeile_ausgeben(z, next((v for v in reversed(alt) if v.get("prozent_foto") is not None), alt[-1] if alt else None)); return 0
 
 if __name__ == "__main__":
     sys.exit(main())

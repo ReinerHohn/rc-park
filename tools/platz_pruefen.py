@@ -5,7 +5,7 @@ import argparse, shutil, sys
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--root-min-gb", type=float, default=5)
-    p.add_argument("--daten-min-gb", type=float, default=10)
+    p.add_argument("--daten-min-gb", type=float, default=5)   # Nutzer 10.11. abends: Grenze 5 GB (vorher 10)
     p.add_argument("--daten-pfad", default="/media/oem/scan")
     a = p.parse_args()
     ok = True

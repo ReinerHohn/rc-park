@@ -234,6 +234,8 @@ def _sonne_dreh(s, grad):
     c, s_ = np.cos(np.radians(grad)), np.sin(np.radians(grad)); return np.array([c * s[0] - s_ * s[1], s_ * s[0] + c * s[1], s[2]])
 
 
+_RUECK = None   # Schnellweg fuer teil_fotoform (Nutzer 10.11. abends "massiv beschleunigen"): dict -> Raster + Kostenkarte im Speicher zurueck statt
+                # zweitem Raster/npz; "nur_kosten" -> nach der Kostenkarte aufhoeren (Bericht/Bilder ungenutzt). None = altes Verhalten (alle anderen Aufrufer).
 def _netz_raster(pfad, obj, kk):
     """Netz fuer --raster: laden, skalieren, in den Kamerarahmen schieben (wie _netz), KEINE Abtastung. Einmal je Prozess und Netzstand."""
     s = os.stat(pfad); key = (os.path.abspath(pfad), s.st_mtime_ns, s.st_size, obj.get("stl_massstab", 87), obj.get("zentrierung", "huelle"), json.dumps(kk.get("rahmen_verschiebung")))
@@ -392,6 +394,7 @@ def main(argv=None):
     if raster:
         import torch
         m = _netz_raster(a.stl or os.path.join(root, obj["stl"]), obj, kk); depth, fid_, pos = RK.dreiecke_rastern(m, R, t, f, cx0, cy0, W, H, als_torch=True)
+        if _RUECK is not None: _RUECK["depth"] = depth.copy(); _RUECK["pos"] = pos.clone()
         Nf_ = torch.as_tensor(np.asarray(m.face_normals), dtype=torch.float32, device="cuda"); nrm = torch.zeros((H, W, 3), device="cuda"); ok_ = fid_ >= 0; nrm[ok_] = Nf_[fid_[ok_]]; del fid_, ok_
     else:
         m, P_, N_ = (_netz_gpu if gpu else _netz)(a.stl or os.path.join(root, obj["stl"]), obj, kk)
@@ -493,7 +496,9 @@ def main(argv=None):
             kp_lr, lr_sig, lr_w = lr_mischung(np.minimum(dFp_[mkp], dmax).astype(int), pz, dmax, float(fkp.sum()))
             kp_state = (mkp, fkp, M_, kap_, occ)                                                      # S2: fuer kosten_*_versatz (nach der Versatzschaetzung)
             if os.environ.get("FD_MASS") == "lr": kp_chamfer, kp_param = kp_param, kp_lr                # qualitaetsstufen Plan "mass": "lr" -> Entscheidungen auf dem fairen Mass
-            if a.kostenkarte: np.savez_compressed(a.kostenkarte, mkp=mkp, fkp=fkp, dF=(dFp_ / kap_).astype(np.float16), dM=(dMp_ / kap_).astype(np.float16))   # Diagnose: wo entstehen die Kosten
+            if a.kostenkarte and _RUECK is not None: _RUECK["kosten"] = dict(mkp=mkp.copy(), fkp=fkp.copy(), dF=(dFp_ / kap_).astype(np.float16), dM=(dMp_ / kap_).astype(np.float16))
+            elif a.kostenkarte: np.savez_compressed(a.kostenkarte, mkp=mkp, fkp=fkp, dF=(dFp_ / kap_).astype(np.float16), dM=(dMp_ / kap_).astype(np.float16))   # Diagnose: wo entstehen die Kosten
+    if _RUECK is not None and _RUECK.get("nur_kosten"): return None
     dF = cv2.distanceTransform((~fk).astype(np.uint8), cv2.DIST_L2, 5) * mpp
     if a.richtung > 0:                                                                             # richtungsgebunden: Modellkante nur durch Fotokante aehnlicher Richtung bestaetigt (dichte Fassade: sonst findet jede Kante IRGENDEINE in tol; Martinstor T2 0,6 m Versatz = T1)
         nb_ = int(round(180.0 / a.richtung)); rm_, rf_ = kantenrichtung(mk), kantenrichtung(fk); bm, bf = np.floor(rm_ / a.richtung).astype(int) % nb_, np.floor(rf_ / a.richtung).astype(int) % nb_
