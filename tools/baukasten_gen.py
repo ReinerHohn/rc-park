@@ -706,6 +706,34 @@ def konsolenreihe(cfg, ctx):
     beleg("alle", f"Konsolenreihe {len(lagen)} Konsolen", cfg["quelle"] + (f" | Zaehlung {', '.join(cfg.get('zaehlung', []))}" if cfg.get("zaehlung") else ""), n=len(lagen))
     return [UNION(teile).transform(_uszT(cfg))], []
 
+@bauteil("figurenreihe")
+def figurenreihe(cfg, ctx):
+    """Reihe freistehender Figuren auf Rundkonsolen vor einer Wand (Statuen auf Pendelkonsolen). Jede Figur = Konsole (Rotationsprofil konsole [[z, r], ...], Kreisringe)
+    + Koerper (Querschnittsprofil koerper [[z, breite_u, tiefe_n], ...], Ellipsenringe um die Achse); Teilkoerper = konvexe Huelle je zwei benachbarter Ringe, Vereinigung.
+    Lage JE FIGUR (kein Raster): figuren [{u, s, z_scheitel?, dz?, quelle}] (u entlang der Wand, s = Abstand auf der Wandnormalen, Achse senkrecht);
+    Koerperringe ueber kopf_ab werden so verschoben, dass der letzte Ring auf z_scheitel der Figur liegt (Kopf/Krone je Figur gemessen), dz verschiebt die ganze Figur.
+    Arme/Schwert/Reichsapfel/Gesicht nicht modelliert (ANNAHME: Huellkoerper, H0-Detailgrad). Pflicht: achse_n, achse_quelle, quelle, konsole, koerper, figuren."""
+    for k in ("achse_n", "achse_quelle", "quelle", "konsole", "koerper", "figuren"):
+        if cfg.get(k) in (None, ""): sys.exit(f"figurenreihe: '{k}' fehlt (Regel 3b)")
+    nseg = int(cfg.get("segmente", 16)); th = np.linspace(0, 2 * np.pi, nseg, endpoint=False); kab = float(cfg.get("kopf_ab", 1e9))
+    def ring(u, s, z, b, d): return [[u + 0.5 * b * math.cos(t), s + 0.5 * d * math.sin(t), z] for t in th]
+    def huellen(rs): return [M.hull_points(rs[i] + rs[i + 1]) for i in range(len(rs) - 1)]
+    teile = []; info = []
+    for f in cfg["figuren"]:
+        u, s = float(f["u"]), float(f["s"]); dz = float(f.get("dz", 0.0))
+        kon = sorted([[float(z) + dz, float(r)] for z, r in (f.get("konsole") or cfg["konsole"])])
+        kor = sorted([[float(z), float(b), float(d)] for z, b, d in (f.get("koerper") or cfg["koerper"])])
+        if f.get("z_scheitel") is not None:
+            ztop = kor[-1][0]; sh = float(f["z_scheitel"]) - ztop; kor = [[z + (sh if z >= kab else 0.0), b, d] for z, b, d in kor]
+        else: sh = 0.0
+        kor = [[z + dz, b, d] for z, b, d in kor]
+        teile += huellen([ring(u, s, z, 2 * r, 2 * r) for z, r in kon]) + huellen([ring(u, s, z, b, d) for z, b, d in kor])
+        beleg("alle", f"Figur u {u:.2f} (Konsole z {kon[0][0]:.2f}-{kon[-1][0]:.2f}, Figur z {kor[0][0]:.2f}-{kor[-1][0]:.2f})", (f.get("quelle") or cfg["quelle"]) + " | Form: Rotationskonsole + Ellipsen-Koerperprofil (ANNAHME Huelle, Arme/Schwert nicht modelliert)",
+              u=u, s=s, z_unten=kon[0][0], z_scheitel=kor[-1][0], konsole_r_max=max(r for _, r in kon), koerper_b_max=max(b for _, b, _ in kor))
+        info.append(u)
+    beleg("alle", f"Figurenreihe {len(info)} Figuren", cfg["quelle"] + (f" | Zaehlung {', '.join(cfg.get('zaehlung', []))}" if cfg.get("zaehlung") else ""), n=len(info))
+    return [UNION(teile).transform(_uszT(cfg))], []
+
 @bauteil("erker")
 def erker(cfg, ctx):
     """Erker: Kasten (u = mitte_u +- breite/2, s = wand_n .. wand_n+auskragung, z = unterkante_z .. oberkante_z) mit verjuengendem Dach (Helm/Zelt) bis spitze_z.

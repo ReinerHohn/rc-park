@@ -1,0 +1,32 @@
+{
+ "id": "M-6127-001",
+ "foto": "6127",
+ "kamera": "K-6127",
+ "ebene": "0.795,-0.605,0=1.255",
+ "name": "Figur2 Silhouettenbreite Beine quer zur Blickrichtung (Seitenansicht 6127, Ebene senkrecht Blickstrahl)",
+ "mess_px": [
+  836.0,
+  1311.0,
+  901.0,
+  1311.0
+ ],
+ "P1": [
+  9.592,
+  10.531,
+  11.618
+ ],
+ "P2": [
+  9.383,
+  10.255,
+  11.661
+ ],
+ "dz": 0.043,
+ "dy": -0.275,
+ "dx": -0.209,
+ "abstand": 0.348,
+ "z1": 11.618,
+ "z2": 11.661,
+ "unsicherheit_rel": 0.0085,
+ "unsicherheit_m": 0.027,
+ "massstab_von": "Kamera K-6127 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.795,-0.605,0=1.255 (+-0.15 m)"
+}

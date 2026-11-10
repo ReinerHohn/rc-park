@@ -1,0 +1,37 @@
+{
+ "id": "M-6120-040",
+ "typ": "triangulation",
+ "foto": "6120",
+ "name": "Figur 3 Konsole Pendelspitze",
+ "beobachtungen": [
+  {
+   "kamera": "K-6120",
+   "px": [
+    2658.0,
+    995.0
+   ]
+  },
+  {
+   "kamera": "K-6132",
+   "px": [
+    2140.0,
+    1851.0
+   ]
+  }
+ ],
+ "P": [
+  5.674,
+  11.592,
+  10.619
+ ],
+ "strahl_abstand_m": [
+  0.019,
+  0.019
+ ],
+ "schnittwinkel_grad": [
+  32.6
+ ],
+ "z": 10.619,
+ "unsicherheit_m": 0.046,
+ "massstab_von": "Kameras K-6120, K-6132 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

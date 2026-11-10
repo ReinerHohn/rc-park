@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-032",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=12.888",
+ "name": "Figur2 Konsolenspitze->Fusssohle (Ebene Figurachse)",
+ "mess_px": [
+  1525.0,
+  1004.0,
+  1527.0,
+  840.0
+ ],
+ "P1": [
+  9.475,
+  10.318,
+  10.594
+ ],
+ "P2": [
+  9.463,
+  10.322,
+  11.294
+ ],
+ "dz": 0.699,
+ "dy": 0.004,
+ "dx": -0.012,
+ "abstand": 0.7,
+ "z1": 10.594,
+ "z2": 11.294,
+ "unsicherheit_rel": 0.0129,
+ "unsicherheit_m": 0.025,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.888 (+-0.15 m)"
+}

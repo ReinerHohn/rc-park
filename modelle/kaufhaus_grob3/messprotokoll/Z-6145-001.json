@@ -1,0 +1,54 @@
+{
+ "id": "Z-6145-001",
+ "typ": "zaehlung",
+ "foto": "6145",
+ "datei": "6145_ip_IMG_6145.jpg",
+ "was": "Hauptfassade 1. OG: Figuren auf Konsolen (zweite Richtung, links vor der Fassade)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-10",
+ "punkte": [
+  {
+   "flaeche": "OG",
+   "art": "voll",
+   "x": 700.0,
+   "y": 1760.0
+  },
+  {
+   "flaeche": "OG",
+   "art": "voll",
+   "x": 990.0,
+   "y": 1690.0
+  },
+  {
+   "flaeche": "OG",
+   "art": "voll",
+   "x": 1340.0,
+   "y": 1590.0
+  },
+  {
+   "flaeche": "OG",
+   "art": "voll",
+   "x": 1735.0,
+   "y": 1470.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "OG": {
+   "art": "voll",
+   "n": 4
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 4,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-6145-001.jpg",
+ "ausschnitt": [
+  450,
+  1220,
+  1985,
+  2010
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

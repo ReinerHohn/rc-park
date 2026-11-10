@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-045",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=12.888",
+ "name": "Figur2 Konsole Knauf Oberkante->Spitze",
+ "mess_px": [
+  1527.0,
+  985.0,
+  1527.0,
+  1004.0
+ ],
+ "P1": [
+  9.467,
+  10.32,
+  10.674
+ ],
+ "P2": [
+  9.468,
+  10.32,
+  10.594
+ ],
+ "dz": -0.08,
+ "dy": -0.0,
+ "dx": 0.001,
+ "abstand": 0.08,
+ "z1": 10.674,
+ "z2": 10.594,
+ "unsicherheit_rel": 0.0129,
+ "unsicherheit_m": 0.017,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.888 (+-0.15 m)"
+}

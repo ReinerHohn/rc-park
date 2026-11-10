@@ -775,6 +775,191 @@
    ],
    "quer_max": 0.25,
    "r_max": 2.4
+  },
+  "figur1_scheitel": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    13.16,
+    8.94
+   ],
+   "z0": "=13.0 - z_unterkante_lot2",
+   "z1": "=13.8 - z_unterkante_lot2",
+   "suche": "oben"
+  },
+  "figur1_spitze": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    13.16,
+    8.94
+   ],
+   "z0": "=10.2 - z_unterkante_lot2",
+   "z1": "=11.0 - z_unterkante_lot2",
+   "suche": "unten",
+   "puffer": 0.03
+  },
+  "figur2_scheitel": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    9.44,
+    10.33
+   ],
+   "z0": "=13.0 - z_unterkante_lot2",
+   "z1": "=13.8 - z_unterkante_lot2",
+   "suche": "oben"
+  },
+  "figur2_spitze": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    9.44,
+    10.33
+   ],
+   "z0": "=10.2 - z_unterkante_lot2",
+   "z1": "=11.0 - z_unterkante_lot2",
+   "suche": "unten",
+   "puffer": 0.03
+  },
+  "figur3_scheitel": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    5.69,
+    11.65
+   ],
+   "z0": "=13.0 - z_unterkante_lot2",
+   "z1": "=13.8 - z_unterkante_lot2",
+   "suche": "oben"
+  },
+  "figur3_spitze": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    5.69,
+    11.65
+   ],
+   "z0": "=10.2 - z_unterkante_lot2",
+   "z1": "=11.0 - z_unterkante_lot2",
+   "suche": "unten",
+   "puffer": 0.03
+  },
+  "figur4_scheitel": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    2.007,
+    13.045
+   ],
+   "z0": "=13.0 - z_unterkante_lot2",
+   "z1": "=13.8 - z_unterkante_lot2",
+   "suche": "oben"
+  },
+  "figur2_sohle": {
+   "typ": "min_im_bereich",
+   "x0": 9.14,
+   "x1": 9.74,
+   "y0": 10.03,
+   "y1": 10.63,
+   "z0": "=11.25 - z_unterkante_lot2",
+   "z1": "=11.5 - z_unterkante_lot2",
+   "achse": "z"
+  },
+  "figur2_kranz_d": {
+   "typ": "kreis_durchmesser_im_bereich",
+   "x0": 8.99,
+   "x1": 9.89,
+   "y0": 9.88,
+   "y1": 10.78,
+   "z0": "=10.95 - z_unterkante_lot2",
+   "z1": "=11.07 - z_unterkante_lot2"
+  },
+  "figur2_stufe_d": {
+   "typ": "kreis_durchmesser_im_bereich",
+   "x0": 8.99,
+   "x1": 9.89,
+   "y0": 9.88,
+   "y1": 10.78,
+   "z0": "=10.82 - z_unterkante_lot2",
+   "z1": "=10.92 - z_unterkante_lot2"
+  },
+  "figur2_bein_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=11.65 - z_unterkante_lot2",
+   "zentrum": [
+    9.44,
+    10.33
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.3
+  },
+  "figur2_bein_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=11.65 - z_unterkante_lot2",
+   "zentrum": [
+    9.44,
+    10.33
+   ],
+   "richtung": [
+    -0.9426,
+    0.3338
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.3
+  },
+  "figur2_kopf_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=13.17 - z_unterkante_lot2",
+   "zentrum": [
+    9.44,
+    10.33
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.3
+  },
+  "figur2_kopf_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=13.17 - z_unterkante_lot2",
+   "zentrum": [
+    9.44,
+    10.33
+   ],
+   "richtung": [
+    -0.9426,
+    0.3338
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.3
+  },
+  "figur2_bein_np": {
+   "typ": "schnitt_reichweite",
+   "z": "=11.65 - z_unterkante_lot2",
+   "zentrum": [
+    9.44,
+    10.33
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.3
+  },
+  "figur2_bein_nm": {
+   "typ": "schnitt_reichweite",
+   "z": "=11.65 - z_unterkante_lot2",
+   "zentrum": [
+    9.44,
+    10.33
+   ],
+   "richtung": [
+    -0.3338,
+    -0.9426
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.18
   }
  },
  "pruefungen": [
@@ -1594,6 +1779,214 @@
    "historie": [
     "2026-11-09 angelegt (Agent Runde 7 Erker, Nutzerbefund 'Grundriss vieleckig, Fensterband, Wappenzone, Unterbau'): am Runde-6-Modell (Kasten) ROT, Soll aus Fotos/Wolke, nicht gelockert"
    ]
+  },
+  {
+   "name": "Figur 1 (Hauptfassade OG): Kronen-/Hutscheitel z",
+   "wert": "figur1_scheitel",
+   "soll": [
+    11.816,
+    12.016
+   ],
+   "quelle": "Triangulation M-6120-037 (Kronenscheitel, 2 Kameras der Kamera-Bruecke, Strahlabstand <0,03 m, +-0,06 m): lot2-z 13.369 minus z_unterkante 1,453",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-037",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 1: Konsolen-Pendelspitze (tiefster Punkt) z",
+   "wert": "figur1_spitze",
+   "soll": [
+    9.106,
+    9.266
+   ],
+   "quelle": "Triangulation M-6120-038 (Pendelspitze der Konsole, Strahlabstand <0,03 m, +-0,05 m): lot2-z 10.639 minus 1,453",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-038",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 2 (Hauptfassade OG): Kronen-/Hutscheitel z",
+   "wert": "figur2_scheitel",
+   "soll": [
+    11.837,
+    12.037
+   ],
+   "quelle": "Triangulation M-6120-030 (Kronenscheitel, 2 Kameras der Kamera-Bruecke, Strahlabstand <0,03 m, +-0,06 m): lot2-z 13.39 minus z_unterkante 1,453",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-030",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 2: Konsolen-Pendelspitze (tiefster Punkt) z",
+   "wert": "figur2_spitze",
+   "soll": [
+    9.109,
+    9.269
+   ],
+   "quelle": "Triangulation M-6120-031 (Pendelspitze der Konsole, Strahlabstand <0,03 m, +-0,05 m): lot2-z 10.642 minus 1,453",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-031",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 3 (Hauptfassade OG): Kronen-/Hutscheitel z",
+   "wert": "figur3_scheitel",
+   "soll": [
+    11.772,
+    11.972
+   ],
+   "quelle": "Triangulation M-6120-039 (Kronenscheitel, 2 Kameras der Kamera-Bruecke, Strahlabstand <0,03 m, +-0,06 m): lot2-z 13.325 minus z_unterkante 1,453",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-039",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 3: Konsolen-Pendelspitze (tiefster Punkt) z",
+   "wert": "figur3_spitze",
+   "soll": [
+    9.086,
+    9.246
+   ],
+   "quelle": "Triangulation M-6120-040 (Pendelspitze der Konsole, Strahlabstand <0,03 m, +-0,05 m): lot2-z 10.619 minus 1,453",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-040",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 4 (Hauptfassade OG): Kronen-/Hutscheitel z",
+   "wert": "figur4_scheitel",
+   "soll": [
+    11.806,
+    12.006
+   ],
+   "quelle": "Triangulation M-6161-016 (Kronenscheitel, 2 Kameras der Kamera-Bruecke, Strahlabstand <0,03 m, +-0,06 m): lot2-z 13.359 minus z_unterkante 1,453",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6161-016",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 2: Standflaeche (Oberkante Konsole, Fusssohle) z",
+   "wert": "figur2_sohle",
+   "soll": [
+    9.757,
+    9.917
+   ],
+   "quelle": "M-6120-032 (Konsolenspitze->Fusssohle 0,70 m auf Ebene durch die Figurachse, Ebene aus Triangulation M-6120-030/031) + Spitze 10,64: lot2-z 11,29 (+-0,05)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-032",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 2: Konsole Kranz Durchmesser (Rundkonsole, Silhouettenspitzen)",
+   "wert": "figur2_kranz_d",
+   "soll": [
+    0.52,
+    0.64
+   ],
+   "quelle": "M-6120-041: 0,58 m bei lot2-z 11,01, Ebene Figurachse (+-0,023 m); Konsole rotationssymmetrisch (Fotos 6120/6119/6117/6132 gleiche Glockenform)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-041",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 2: Konsole 2. Stufe Durchmesser",
+   "wert": "figur2_stufe_d",
+   "soll": [
+    0.26,
+    0.36
+   ],
+   "quelle": "M-6120-043: 0,31 m bei lot2-z 10,87 (+-0,02 m)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-043",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 2: Breite Unterschenkel (Silhouette quer, Zeile z 11,65)",
+   "wert": "figur2_bein_up + figur2_bein_um",
+   "soll": [
+    0.37,
+    0.49
+   ],
+   "quelle": "M-6120-047: 0,43 m (+-0,022), Frontalansicht 6120",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-047",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 2: Breite Kopf (Silhouette quer, z 13,17)",
+   "wert": "figur2_kopf_up + figur2_kopf_um",
+   "soll": [
+    0.25,
+    0.35
+   ],
+   "quelle": "M-6120-050: 0,30 m (+-0,021)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-050",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 2: Tiefe Unterschenkel (n-Richtung, z 11,65)",
+   "wert": "figur2_bein_np + figur2_bein_nm",
+   "soll": [
+    0.17,
+    0.29
+   ],
+   "quelle": "abgeleitet: M-6127-001 (Silhouettenbreite Seitenansicht 0,35 m) = 0,308*b + 0,95*d mit b 0,43 (M-6120-047) -> d 0,23; +-0,06 (Blickwinkelformel, Kante je +-1 px)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6127-001",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -1907,21 +2300,44 @@
    "status": "widerspruch"
   },
   {
+   "datum": "2026-11-10",
+   "wer": "Kreis r2 (Agent, stl_teil:figuren)",
+   "text": "Befund konvergenz_bericht: stl_teil:figuren Wolkenbeleg 0,43 (Median 0,17 m). Foto-Stufe 0: 4 Ritter-/Koenigsfiguren (Z-6161-001, Z-6145-001) stehen auf Rundkonsolen (Glocken-/Stufenform mit Pendelknauf) vor den Fensterpfeilern; Altmodell = Quader-Huellen mit Lagefehler: Kronenscheitel real lot2-z 13,33-13,39 (M-6120-030/037/039, M-6161-016) gegen 13,03 (alte Nischenbox)/12,81 (Kopfhuelle), Konsolenspitze real 10,62-10,64 (M-6120-031/038/040) gegen 10,38, Lage 0,2-0,3 m neben der echten Figur (Overlay p6120). Periode in u 3,95-3,98 m. Teil Baldachin (Wimperg/Fialen ueber jedem Kopf, Z-6161-001 sichtbar) nicht Teil dieser Runde.",
+   "naechster_schritt": "Neue Familie figurenreihe (Rotationskonsole + Koerperprofil aus Schnitten) mit Lagen je Figur aus Triangulation; Altteil auf aktiv false; Baldachine am Foto pruefen (eigene Runde)"
+  },
+  {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
-   "auto_id": "fehlteile-6261-474-1106",
+   "wer": "fehlteile_finden (Foto 6164, Treffer 3)",
+   "auto_id": "fehlteile-6164-0-2037",
    "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 26.51,
-   "z_bis": 26.51,
+   "foto": "6164",
+   "z_von": 14.31,
+   "z_bis": 14.31,
    "xyz": [
-    17.13,
-    -2.06,
-    26.51
+    14.68,
+    -9.49,
+    14.31
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.51 m, y=-2.06 m (Zelle [474, 1106, 79], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=14.31 m, y=-9.49 m (Zelle [0, 2037, 97], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6164.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
+   "auto_id": "fehlteile-6261-237-1817",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.0,
+   "z_bis": 18.0,
+   "xyz": [
+    14.97,
+    -8.33,
+    18.0
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.0 m, y=-8.33 m (Zelle [237, 1817, 79], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

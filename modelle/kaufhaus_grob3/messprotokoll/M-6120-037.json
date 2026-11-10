@@ -1,0 +1,37 @@
+{
+ "id": "M-6120-037",
+ "typ": "triangulation",
+ "foto": "6120",
+ "name": "Figur 1 Kronenscheitel",
+ "beobachtungen": [
+  {
+   "kamera": "K-6120",
+   "px": [
+    495.0,
+    410.0
+   ]
+  },
+  {
+   "kamera": "K-6117",
+   "px": [
+    1925.0,
+    1233.0
+   ]
+  }
+ ],
+ "P": [
+  13.175,
+  8.979,
+  13.369
+ ],
+ "strahl_abstand_m": [
+  0.011,
+  0.011
+ ],
+ "schnittwinkel_grad": [
+  45.4
+ ],
+ "z": 13.369,
+ "unsicherheit_m": 0.034,
+ "massstab_von": "Kameras K-6120, K-6117 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-042",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=12.888",
+ "name": "Figur2 Konsole Kranz->2. Stufe",
+ "mess_px": [
+  1527.0,
+  905.0,
+  1527.0,
+  940.0
+ ],
+ "P1": [
+  9.465,
+  10.321,
+  11.013
+ ],
+ "P2": [
+  9.466,
+  10.321,
+  10.864
+ ],
+ "dz": -0.149,
+ "dy": -0.0,
+ "dx": 0.001,
+ "abstand": 0.149,
+ "z1": 11.013,
+ "z2": 10.864,
+ "unsicherheit_rel": 0.0127,
+ "unsicherheit_m": 0.018,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.888 (+-0.15 m)"
+}

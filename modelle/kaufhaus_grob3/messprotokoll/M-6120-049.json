@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-049",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=12.888",
+ "name": "Figur2 Breite Brust+Arme (Huellkurve, Zeile 550)",
+ "mess_px": [
+  1419.0,
+  550.0,
+  1662.0,
+  550.0
+ ],
+ "P1": [
+  9.833,
+  10.191,
+  12.61
+ ],
+ "P2": [
+  8.976,
+  10.494,
+  12.588
+ ],
+ "dz": -0.022,
+ "dy": 0.303,
+ "dx": -0.857,
+ "abstand": 0.909,
+ "z1": 12.61,
+ "z2": 12.588,
+ "unsicherheit_rel": 0.0116,
+ "unsicherheit_m": 0.028,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.888 (+-0.15 m)"
+}
