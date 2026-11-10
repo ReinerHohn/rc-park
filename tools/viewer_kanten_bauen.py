@@ -33,6 +33,12 @@ if "--koerper" in sys.argv:
     MP, fi = trimesh.sample.sample_surface_even(m, opt("--n_flaeche", 400000, int), seed=0) if hasattr(trimesh.sample, "sample_surface_even") else trimesh.sample.sample_surface(m, opt("--n_flaeche", 400000, int))
     nrm = m.face_normals[fi]; L = np.array([0.35, -0.55, 0.76]); L /= np.linalg.norm(L)
     MC = np.clip(70 + 150 * np.abs(nrm @ L), 0, 255).astype(np.uint8); print("Modellflaeche Punkte", len(MP), flush=True)
+MRGB = None
+if "--modell_farbe" in sys.argv:   # tools/modell_fotofarbe.py: Oberflaechenpunkte mit Fotofarbe (Median ueber bis zu 6 Ansichten); ohne Ansicht -> schattiertes Grau
+    Z = np.load(opt("--modell_farbe", "")); MP = Z["P"]; Cf = Z["C"].astype(np.int16); nrm = Z["N"]; L = np.array([0.35, -0.55, 0.76]); L /= np.linalg.norm(L)
+    g = np.clip(70 + 150 * np.abs(nrm @ L), 0, 255).astype(np.int16); ohne = Cf[:, 0] < 0
+    Cf[ohne] = np.stack([g[ohne]] * 3, 1); MRGB = Cf.clip(0, 255).astype(np.uint8); MC = g.astype(np.uint8)
+    print("Modell-Fotofarbe", len(MP), "Punkte, gefaerbt", round(100 * (1 - ohne.mean()), 1), "%", flush=True)
 # Front-Ansicht = Hauptfassade VON AUSSEN (Blick entgegen der Fassadennormale achse_n aus objekt.json; --objekt NAME). Ohne Angabe Blick nach +y.
 fy = 0.0
 if "--objekt" in sys.argv:
@@ -68,5 +74,6 @@ if "--fotos" in sys.argv:
         FT.append({"n": nam[j], "d": [round(float(x), 4) for x in dirs[j]], "c": [round(float(x), 2) for x in Cs[j] - ctr], "u": int(j in set(gut.tolist())), "j": base64.b64encode(buf.tobytes()).decode()})
     print("Fotos eingebettet", len(FT), "von", len(nam), sum(len(f["j"]) for f in FT) // 1024, "KB", flush=True)
 data["ft"] = FT
+if MRGB is not None: data["mrgb"] = base64.b64encode(MRGB.tobytes()).decode(); data["m"] = q(MP); data["nm"] = len(MP)
 html = open(__file__.replace("viewer_kanten_bauen.py", "viewer_kanten_vorlage.html")).read().replace("/*DATA*/", "const DATA=" + json.dumps(data) + ";")
 open(sys.argv[1], "w").write(html); print("geschrieben", sys.argv[1], len(html) // 1024, "KB")

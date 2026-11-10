@@ -10,6 +10,7 @@ h1{font-size:1.1rem;margin:0 0 8px;font-weight:650}
 #cv{flex:1 1 560px;min-width:0;max-width:100%;height:min(74vh,760px);background:var(--bg);border:1px solid var(--ln);border-radius:6px;touch-action:none;display:block}
 #fbox{flex:1 1 300px;min-width:0;max-width:100%;background:var(--pnl);border:1px solid var(--ln);border-radius:6px;padding:8px;font-size:.85rem}
 #fimg{width:100%;height:auto;display:block;border-radius:4px;cursor:pointer}
+@media (max-width:760px){h1{font-size:.95rem;margin-bottom:4px}#cv{height:50vh;flex-basis:100%}#fbox{flex-basis:100%;padding:6px}#fimg{max-height:30vh;width:100%;object-fit:contain;background:#0001}}  /* Handy: Foto direkt unter dem Modell in einem Bildschirm (Nutzer 10.11.) */
 #pnl{flex:0 1 250px;min-width:0;background:var(--pnl);border:1px solid var(--ln);border-radius:6px;padding:10px 12px;font-size:.88rem;line-height:1.5}
 label{display:flex;gap:8px;align-items:center}
 .sw{width:11px;height:11px;border-radius:2px;display:inline-block}
@@ -17,13 +18,14 @@ label{display:flex;gap:8px;align-items:center}
 input[type=range]{width:100%}
 button{font:inherit;padding:4px 10px;border:1px solid var(--ln);background:var(--bg);color:var(--fg);border-radius:4px;cursor:pointer}
 </style>
-<h1>Kaufhaus: Wolke, Kantenpunkte und Drahtgitter</h1>
+<h1>Kaufhaus: Modell in Fotofarben, Wolke, Kanten</h1>
 <div id="wrap"><canvas id="cv"></canvas><div id="fbox" hidden><b>Passendes Foto</b> <span class="mut" id="finf"></span><img id="fimg" alt="Foto aus ähnlicher Blickrichtung" title="Klick: Modell in die Blickrichtung dieses Fotos drehen"><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button id="fv">◀ anderes</button><button id="fn">anderes ▶</button><button id="fa">Ansicht wie Foto</button></div></div><div id="pnl">
 <b>Ebenen</b>
 <label><input type="checkbox" id="lw" checked>Wolke (Fotofarben)</label>
 <label><input type="checkbox" id="lk" checked><span class="sw" style="background:#e08a1e"></span>Kantenpunkte (Tiefen-Sweep)</label>
 <label><input type="checkbox" id="ls" checked>Drahtgitter</label>
 <label id="lmw"><input type="checkbox" id="lm" checked><span class="sw" style="background:#9a9a9a"></span>Modell (Fläche, verdeckt)</label>
+<label id="lfw" hidden><input type="checkbox" id="lf" checked>Modell in Fotofarben (grau = nie fotografiert)</label>
 <label id="lkbw"><input type="checkbox" id="lkb" checked><span class="sw" style="background:#7a4fc9"></span>Modell (Formkanten)</label>
 <div class="mut" style="margin:2px 0 6px 24px"><span class="sw" style="background:#d94a3a"></span> Wolken-Vote &nbsp;<span class="sw" style="background:#3b7dd8"></span> Triangulation &nbsp;<span class="sw" style="background:#2f9e5b"></span> Tiefen-Sweep &nbsp;<span class="sw" style="background:#e08a1e"></span> Dach</div>
 <label>Wolke dunkler <input type="range" id="dk" min="0" max="90" value="45"></label>
@@ -38,6 +40,7 @@ button{font:inherit;padding:4px 10px;border:1px solid var(--ln);background:var(-
 function b64(s){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
 function i16(s){const u=b64(s);return new Int16Array(u.buffer,0,u.length>>1)}
 const KB=DATA.nkb?i16(DATA.kb):new Int16Array(0);const SE=DATA.nse?i16(DATA.se):new Int16Array(0),SNb=DATA.nse?b64(DATA.sn):new Uint8Array(0),SN=new Int8Array(SNb.buffer,SNb.byteOffset,SNb.length);const MP=DATA.nm?i16(DATA.m):new Int16Array(0),MC=DATA.nm?b64(DATA.mc):new Uint8Array(0);
+const MRGB=DATA.mrgb?b64(DATA.mrgb):null;if(MRGB){document.getElementById('lfw').hidden=false;for(const id of['lw','lk','ls','lkb'])document.getElementById(id).checked=false}   /* Start: nur Modell in Fotofarben, Rest zuschaltbar */
 const W=i16(DATA.w),K=i16(DATA.k),Sg=i16(DATA.s),Cc=b64(DATA.c),Sq=b64(DATA.sq),sc=1/DATA.sc;
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
 let yaw=-0.45,pit=0.18,zoom=1.15,px=0,py=0,cw=0,ch=0,dpr=1;
@@ -53,7 +56,8 @@ function draw(){
  const put=(u,v,zz,r,g,b)=>{for(let j=0;j<psz;j++)for(let i=0;i<psz;i++){const X=u+i,Y=v+j;if(X<0||Y<0||X>=cw||Y>=ch)continue;const o=Y*cw+X;if(zz<zb[o]){zb[o]=zz;d[o*4]=r;d[o*4+1]=g;d[o*4+2]=b;d[o*4+3]=255}}};
  if(q('lw').checked)for(let i=0;i<DATA.nw;i++){const p=proj(W[i*3]*sc,W[i*3+1]*sc,W[i*3+2]*sc,c,s);put(p[0]|0,p[1]|0,p[2],Cc[i*3]*dk,Cc[i*3+1]*dk,Cc[i*3+2]*dk)}
  if(q('lk').checked)for(let i=0;i<DATA.nk;i++){const p=proj(K[i*3]*sc,K[i*3+1]*sc,K[i*3+2]*sc,c,s);put(p[0]|0,p[1]|0,p[2]-0.5,240,150,20)}
- if(q('lm').checked)for(let i=0;i<DATA.nm;i++){const p=proj(MP[i*3]*sc,MP[i*3+1]*sc,MP[i*3+2]*sc,c,s),g=MC[i];put(p[0]|0,p[1]|0,p[2],g,g,g+12)}
+ const farbig=MRGB&&q('lf').checked;
+ if(q('lm').checked)for(let i=0;i<DATA.nm;i++){const p=proj(MP[i*3]*sc,MP[i*3+1]*sc,MP[i*3+2]*sc,c,s);if(farbig){const r=MRGB[i*3],g2=MRGB[i*3+1],b2=MRGB[i*3+2],u=p[0]|0,v=p[1]|0;put(u,v,p[2],r,g2,b2);put(u+psz,v,p[2],r,g2,b2);put(u,v+psz,p[2],r,g2,b2);put(u+psz,v+psz,p[2],r,g2,b2)}else{const g=MC[i];put(p[0]|0,p[1]|0,p[2],g,g,g+12)}}
  ctx.putImageData(img,0,0);
  const sichtbar=(a,b)=>{if(!q('lm').checked||!DATA.nm)return true;const X=((a[0]+b[0])/2)|0,Y=((a[1]+b[1])/2)|0;if(X<0||Y<0||X>=cw||Y>=ch)return true;return (a[2]+b[2])/2<=zb[Y*cw+X]+0.25};
  if(q('ls').checked){ctx.lineWidth=+q('lb').value*dpr;const byq={};for(let i=0;i<DATA.ns;i++)(byq[Sq[i]]=byq[Sq[i]]||[]).push(i);
@@ -81,7 +85,7 @@ cv.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const o=pt
  const dx=e.clientX-o[0],dy=e.clientY-o[1];if(drag&&drag.pan){px+=dx;py+=dy}else{yaw+=dx*0.006;pit=Math.max(-1.5,Math.min(1.5,pit+dy*0.006))}draw()});
 const up=e=>{ptr.delete(e.pointerId);cv._pd=0;drag=null};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 cv.addEventListener('wheel',e=>{e.preventDefault();zoom*=Math.exp(-e.deltaY*0.0012);draw()},{passive:false});cv.addEventListener('contextmenu',e=>e.preventDefault());
-for(const id of['lw','lk','ls','lm','lkb','dk','ps','lb'])q(id).addEventListener('input',draw);
+for(const id of['lw','lk','ls','lm','lkb','dk','ps','lb','lf'])q(id).addEventListener('input',draw);
 const V=(y,p)=>()=>{yaw=y;pit=p;zoom=1;px=0;py=0;draw()};q('bf').onclick=V(DATA.fy||0,0);q('bs').onclick=V((DATA.fy||0)-Math.PI/2,0);q('bo').onclick=V(0,1.5);q("b3").onclick=V((DATA.fy||0)-0.45,0.35);yaw=(DATA.fy||0)-0.45;
 new ResizeObserver(fit).observe(cv);fit();
 </script>
