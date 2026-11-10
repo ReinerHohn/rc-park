@@ -5591,7 +5591,7 @@
    "typ": "satteldach:haupt",
    "gruppe": "Dach Hauptbau",
    "u0": -8.82,
-   "u1": 17.15,
+   "u1": 15.85,
    "n_traufe_v": 12.66,
    "z_traufe_v": 14.68,
    "n_first": 3.05,
@@ -5611,7 +5611,7 @@
    "werte_quellen": {
     "ziegel_abstand": "ANNAHME Startwert; Foto-Kantenabstand und Foto-Diff stimmen ab",
     "u0": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json along_w -8.82 (Endebene West, belegt)",
-    "u1": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json along_e 17.15 (Endebene Ost, 'plus' UNSICHER laut Rohkoerper)",
+    "u1": "Dach endet an der Ost-Giebelwand: Giebel-Aussenebene u 15,85 (Foto-Triangulation M-6115-001..008, Gegenprobe Foto 6145; Overlay 6145/6115: Dach-Endkante bei u 17,15 lag auf keiner Fotokante, die Dachflaeche endet an den Giebelstufen); ersetzt rohkoerper along_e 17.15 'plus UNSICHER'; Kantengitter z 15-19 u 15,5-15,75",
     "n_traufe_v": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json off_front 12.66 (Frontebene, Stuetzlaenge 392 m)",
     "z_traufe_v": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json traufe.kante.z 14.68 (waagerechte Kante 50,8 m an der Frontebene; firstgebunden 14.61)",
     "n_first": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json first.offset 3.05 (Segment-Median 3,38; Unsicherheit +-0,35 m)",
@@ -5655,6 +5655,17 @@
      "neu": {
       "ziegel_einbindung": 0.01
      }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis1 Fehlteil fk_+16_+0_+26 (Agent)",
+     "alt": {
+      "u1": 17.15
+     },
+     "neu": {
+      "u1": 15.85
+     },
+     "grund": "Dach lag 1,4 m ueber den verschobenen Ostgiebel hinaus"
     }
    ],
    "symmetrisch_quelle": "ANNAHME Firstspiegel (Rohkoerper_v7 off_back -6.56 = 2*3.05-12.66); LoD2 First-Traufe 11,75 m passt zu 12,8 m Dachhoehe",
@@ -6281,14 +6292,14 @@
   {
    "typ": "staffelgiebel:ost",
    "gruppe": "Staffelgiebel ost",
-   "u_aussen": 17.15,
+   "u_aussen": 15.85,
    "richtung": 1,
-   "n_hinten": 2.69,
-   "n_vorn": 12.73,
+   "n_hinten": 2.9,
+   "n_vorn": 11.0,
    "z_unten": 9.0,
-   "z_traufe": 16.45,
-   "z_spitze": 28.98,
-   "spitze_breite": 0.7184,
+   "z_traufe": 18.04,
+   "z_spitze": 28.76,
+   "spitze_breite": 0.1,
    "quelle": "Stufenzahl 8: Foto-Sichtzaehlung Z-075-004 (kaufhaus_null5, Regel 9) und in Wolke u 7,5..10,5 etwa 8 Stufenboegen; Masse: ANNAHME Startwerte aus Wolkenprofil (Plot giebel_wolke.png), param_wolke_fit.py passt an | Lage/Spitze/Stufenlinie 2026-11-09: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json + kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json (Gitter fand 7 Steiger-Cluster, Zaehlung 8 bleibt Foto Z-075-004)",
    "achse_n": [
     0.3338,
@@ -6300,16 +6311,16 @@
     "Z-075-004"
    ],
    "dicke": 0.6277,
-   "kappe": 0.1968,
+   "kappe": 0.0,
    "werte_quellen": {
-    "u_aussen": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json enden giebel_perp along 17.15",
+    "u_aussen": "Foto-Triangulation M-6115-001..008 (K-6115 Ost + K-6257 West aus kam_lot2, Strahlabstand <= 0,03 m, Gegenprobe 6145): u der 8 Stufenspitzen 16,02/15,92/15,81/15,81/15,70/15,64/15,61/15,59 (Mittel 15,77, Trend -0,06 m je m n = Wand ~3 Grad gegen die Achse gedreht oder Pickfehler); Aussenebene 15,85 = obere Haelfte der Streuung (Stufen 1-4 nahe der Spitze, Mittel 15,89); Kantengitter v12 in-Ebenen-Segmente u 15,5-15,75; ersetzt rohkoerper 'plus UNSICHER' 17,15. 15,75/15,85 liegen beide im Messband (Region-Recall 0,351/0,360); gewaehlt 15,85",
     "dicke": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "n_hinten": "Spitze mittig ueber dem First: first.offset 3.05 - spitze_breite/2 (kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json)",
-    "n_vorn": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json giebel.ende_minus unterste Stufe off 12.73 (7 Steiger-Cluster; Westgiebel, Ost = ANNAHME Spiegel)",
-    "z_traufe": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json giebel.ende_minus unterste Stufe z_unten 16.45 (Westgiebel, Ost = ANNAHME Spiegel)",
-    "z_spitze": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json Gitter-Maximum z am Ostende (along 15,5..18,5): 28.98 (Ende 'plus' UNSICHER); Stufen = ANNAHME Spiegel des Westgiebels (Nutzer 9.11.: Gleichheit)",
-    "spitze_breite": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
-    "kappe": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
+    "n_hinten": "Foto-Triangulation M-6115-001..008 (K-6115 Ost + K-6257 West aus kam_lot2, Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m; Gegenprobe Foto 6145): Teilung 1,0 m in n (Spitzen n 4,01..11,02); Stufenlinie beginnt bei n2 = 3,0, Rueckseite = Spiegel (ANNAHME spiegel) um die Mitte (n_hinten+n2)/2 = 2,95 ~ Firstlage 3,05 (rohkoerper first.offset)",
+    "n_vorn": "Foto-Triangulation M-6115-001..008 (K-6115 Ost + K-6257 West aus kam_lot2, Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m; Gegenprobe Foto 6145): Vorderende der Stufe 8 n 11,02 (Spitze 8); Ost jetzt GEMESSEN, nicht mehr Spiegel des Westgiebels",
+    "z_traufe": "Foto-Triangulation M-6115-001..008 (K-6115 Ost + K-6257 West aus kam_lot2, Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m; Gegenprobe Foto 6145): Gerade durch die Kappenfirste (Neigung 1,34 m je 1,0 m Stufe = 53 Grad wie das Dach); Wert z_traufe = z_spitze - 8 Stufen * 1,34 = 18,04 (Stufe 8 Oberkante 19,38 = Spitze 8 z 19,37)",
+    "z_spitze": "Foto-Triangulation M-6115-001..008 (K-6115 Ost + K-6257 West aus kam_lot2, Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m; Gegenprobe Foto 6145): Kappenfirst Stufe 1 z 28,76 (+-0,07); Stufenoberkante = Kappenfirst (ANNAHME flache Oberkante in Firsthoehe, Satteldaechlein je Stufe nicht modelliert)",
+    "spitze_breite": "ANNAHME: Spitzenstufe = Teilung 1,0 + Spiegel -> Plateau n 1,9..4,0 (Breite 2,1 m); Foto 6115: Spitzenblock im Bild etwa doppelt so breit wie die uebrigen Stufen (ungeprueft in Metern)",
+    "kappe": "entfaellt (0): Stufenoberkante = Kappenfirst-Hoehe laut Triangulation (kein Aufschlag auf die Giebellinie)",
     "spiegel": "Foto ip_IMG_6261: Ostgiebel-Silhouette beidseitig gestuft, Spitze mittig ueber dem First (fehlteile_6261: 6 ERFUNDEN an der glatten Rueckkante)"
    },
    "historie": [
@@ -6340,6 +6351,29 @@
      "neu": {
       "spiegel": true
      }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis1 Fehlteil fk_+16_+0_+26 (Agent)",
+     "alt": {
+      "u_aussen": 17.15,
+      "n_hinten": 2.69,
+      "n_vorn": 12.73,
+      "z_traufe": 16.45,
+      "z_spitze": 28.98,
+      "spitze_breite": 0.7184,
+      "kappe": 0.1968
+     },
+     "neu": {
+      "u_aussen": 15.85,
+      "n_hinten": 2.9,
+      "spitze_breite": 0.1,
+      "n_vorn": 11.0,
+      "z_traufe": 18.04,
+      "z_spitze": 28.76,
+      "kappe": 0.0
+     },
+     "grund": "Foto-Triangulation M-6115-001..008; Scheibe lag 1,4 m zu weit aussen (u_aussen 17,15 = rohkoerper plus UNSICHER), Stufenteilung 1,165 statt 1,0 m, Vorderende 12,73 statt 11,0"
     }
    ],
    "spiegel": true

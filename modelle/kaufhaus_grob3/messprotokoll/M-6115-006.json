@@ -1,0 +1,39 @@
+{
+ "id": "M-6115-006",
+ "typ": "triangulation",
+ "foto": "6115",
+ "name": "Ostgiebel Stufenspitze 6 (Kappenfirst-Ecke)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6115",
+   "px": [
+    1500.0,
+    610.0
+   ]
+  },
+  {
+   "kamera": "K-6257",
+   "px": [
+    707.0,
+    1483.0
+   ]
+  }
+ ],
+ "P": [
+  17.737,
+  3.248,
+  22.02
+ ],
+ "strahl_abstand_m": [
+  0.009,
+  0.009
+ ],
+ "schnittwinkel_grad": [
+  65.9
+ ],
+ "z": 22.02,
+ "unsicherheit_m": 0.053,
+ "massstab_von": "Kameras K-6115, K-6257 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 8.983,
+ "u": 15.636
+}

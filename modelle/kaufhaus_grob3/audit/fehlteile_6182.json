@@ -1,9 +1,8 @@
 {
  "foto": "6182",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_033946a033946/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6182 (amtliche Anker)",
  "zelle_px": 180,
- "schwelle": 0.35,
  "treffer": [],
- "versatz_test": null
+ "hinweis": "keine gueltige Zelle: Modellflaeche im Foto < 1 Zelle - nicht bewertbar"
 }
