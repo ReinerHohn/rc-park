@@ -6856,7 +6856,7 @@
   {
    "typ": "staffelgiebel:ost",
    "gruppe": "Staffelgiebel ost",
-   "u_aussen": 15.85,
+   "u_aussen": 16.05,
    "richtung": 1,
    "n_hinten": 2.9,
    "n_vorn": 11.0,
@@ -6877,7 +6877,7 @@
    "dicke": 0.6277,
    "kappe": 0.0,
    "werte_quellen": {
-    "u_aussen": "Foto-Triangulation M-6115-001..008 (K-6115 Ost + K-6257 West aus kam_lot2, Strahlabstand <= 0,03 m, Gegenprobe 6145): u der 8 Stufenspitzen 16,02/15,92/15,81/15,81/15,70/15,64/15,61/15,59 (Mittel 15,77, Trend -0,06 m je m n = Wand ~3 Grad gegen die Achse gedreht oder Pickfehler); Aussenebene 15,85 = obere Haelfte der Streuung (Stufen 1-4 nahe der Spitze, Mittel 15,89); Kantengitter v12 in-Ebenen-Segmente u 15,5-15,75; ersetzt rohkoerper 'plus UNSICHER' 17,15. 15,75/15,85 liegen beide im Messband (Region-Recall 0,351/0,360); gewaehlt 15,85",
+    "u_aussen": "Kappenfirst-Linie der Stufenspitzen M-6115-001..008 (Regression u = 15,759 - 0,0609*(n-7,5), Streuung 0,032 m) + dicke/2 0,315 = 16,07 bei n 7,5 (ANNAHME: Kappenfirst in der Wandmitte der Scheibe); Gegenprobe unabhaengig: Wolke j_voll_lot2 Wandebene u(n 7,5) 16,06 (z 15..22), Fensterfaschen M-6115-009/010 u 16,23/16,41 bei n 4,85/4,01 (+-0,23; erwartet 16,24-16,29). Widerspruch zur alten Lesart 'Aussenebene = Kappenfirst' (15,85): Wand-Aussenflaeche liegt eine halbe Wanddicke ausserhalb der Kappenmitte",
     "dicke": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "n_hinten": "Foto-Triangulation M-6115-001..008 (K-6115 Ost + K-6257 West aus kam_lot2, Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m; Gegenprobe Foto 6145): Teilung 1,0 m in n (Spitzen n 4,01..11,02); Stufenlinie beginnt bei n2 = 3,0, Rueckseite = Spiegel (ANNAHME spiegel) um die Mitte (n_hinten+n2)/2 = 2,95 ~ Firstlage 3,05 (rohkoerper first.offset)",
     "n_vorn": "Foto-Triangulation M-6115-001..008 (K-6115 Ost + K-6257 West aus kam_lot2, Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m; Gegenprobe Foto 6145): Vorderende der Stufe 8 n 11,02 (Spitze 8); Ost jetzt GEMESSEN, nicht mehr Spiegel des Westgiebels",
@@ -6885,7 +6885,9 @@
     "z_spitze": "Foto-Triangulation M-6115-001..008 (K-6115 Ost + K-6257 West aus kam_lot2, Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m; Gegenprobe Foto 6145): Kappenfirst Stufe 1 z 28,76 (+-0,07); Stufenoberkante = Kappenfirst (ANNAHME flache Oberkante in Firsthoehe, Satteldaechlein je Stufe nicht modelliert)",
     "spitze_breite": "ANNAHME: Spitzenstufe = Teilung 1,0 + Spiegel -> Plateau n 1,9..4,0 (Breite 2,1 m); Foto 6115: Spitzenblock im Bild etwa doppelt so breit wie die uebrigen Stufen (ungeprueft in Metern)",
     "kappe": "entfaellt (0): Stufenoberkante = Kappenfirst-Hoehe laut Triangulation (kein Aufschlag auf die Giebellinie)",
-    "spiegel": "Foto ip_IMG_6261: Ostgiebel-Silhouette beidseitig gestuft, Spitze mittig ueber dem First (fehlteile_6261: 6 ERFUNDEN an der glatten Rueckkante)"
+    "spiegel": "Foto ip_IMG_6261: Ostgiebel-Silhouette beidseitig gestuft, Spitze mittig ueber dem First (fehlteile_6261: 6 ERFUNDEN an der glatten Rueckkante)",
+    "u_neigung": "Steigung der Kappenfirst-Linie M-6115-001..008: -0,0609 m je m n (Reststreuung 0,032 m, 8 Spitzen); Wolke j_voll_lot2 Wandebene -0,083 je m (z 15..22), gleiches Vorzeichen; gewaehlt die Foto-Triangulation (-0,06), nicht gemittelt. Ursache: Wand ~3,5 Grad gegen die Hauptfassadenachse gedreht (Altstadt, nicht rechtwinklig)",
+    "n_ref": "Bezug der Neigung = Mitte der Stufenspitzen M-6115-001..008 (n 4,0..11,0); u_aussen gilt dort"
    },
    "historie": [
     {
@@ -6938,9 +6940,25 @@
       "kappe": 0.0
      },
      "grund": "Foto-Triangulation M-6115-001..008; Scheibe lag 1,4 m zu weit aussen (u_aussen 17,15 = rohkoerper plus UNSICHER), Stufenteilung 1,165 statt 1,0 m, Vorderende 12,73 statt 11,0"
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis-Ost r1 (Agent)",
+     "alt": {
+      "u_aussen": 15.85,
+      "u_neigung": 0.0
+     },
+     "neu": {
+      "u_aussen": 16.05,
+      "u_neigung": -0.06,
+      "n_ref": 7.5
+     },
+     "grund": "Wandebene gegen Achse gedreht (Kappenfirst-Regression M-6115, Wolke), Aussenflaeche = Kappenfirst + dicke/2; Beleg 0,224 -> 0,376, Kanten-F1 0,047 -> 0,044"
     }
    ],
-   "spiegel": true
+   "spiegel": true,
+   "n_ref": 7.5,
+   "u_neigung": -0.06
   },
   {
    "typ": "staffelgiebel:west",

@@ -1,69 +1,66 @@
-# Kreis r4 helm_geschweift:w (kaufhaus_grob3, 2026-11-10)
-Nichts committet, gelöscht oder gedruckt. Logbuch: `modelle/LOGBUCH_HELM_W_R4_2026-11-10.md`.
+# Kreis-Ost r1 staffelgiebel:ost (kaufhaus_grob3, 2026-11-10)
+Nichts committet, gelöscht, geslict oder gedruckt. Logbuch: `modelle/LOGBUCH_GIEBEL_OST_R1_2026-11-10.md`.
 
 ## 1. Formbeschreibung
-Fotos angesehen: 6162 (Übersicht), g03 und i04 (Handy-Nahfotos von unten), 6261 (nur Overlay erzeugt, nicht einzeln beurteilt). 6257 stammt aus dem Vorlauf.
-- Fuß z 13,3–15,4: konkave Ziegelhaut, im Vorlauf erledigt.
-- Schaft z 15,4–21: schlanker Achtkant mit bunten Ziegelstreifen. Auf den Graten sitzen Krabben (Haken), die im Modell fehlen.
-- Nadel und Kugel bei z 21,35.
-- Grundriss Achteck (g03/i04: 3 volle + 2 Randflächen sichtbar). Nicht gezählt, ANNAHME Osthelm.
-- Anschluss: Erkergesims z 13,1–13,3.
-- Am Modell anders: Schaft 0,04–0,06 m zu schlank (Osthelm-Kopie).
-Formfamilie: bestehende `helm_geschweift`, nur das Profil ist geändert.
+Fotos angesehen: 6115 (Nah), 6261 (Übersicht), 6164 (Nah); 6259 nur Overlay erzeugt, nicht einzeln beurteilt.
+- Zonen: Giebelwand (roter Putz, zwei schmale Fenster in Faschen), darüber beidseitig gestufte Treppe, je Stufe Pfeilerblock mit Ziegelkäppchen.
+- Querschnitt: dünne Scheibe (~0,6 m), gegen die Hauptfassadenachse gedreht (u fällt 0,06 m je m n).
+- Stufen: 8 je Vorderflanke (Z-6261-002, Z-6164-004 aus Vorrunden, im Overlay 6115/6261/6164 nachgesehen). Rückflanke = Spiegel (ANNAHME).
+- Am Modell anders: Scheibe parallel zur Achse und 0,2–0,4 m innen (Kontur 30–50 px daneben).
+- Formfamilie: vorhandene `staffelgiebel`, neu nur optionaler generischer Parameter `u_neigung`/`n_ref` (Altverhalten bitgleich, `regression.py --pruefen`: identisch).
 
 ## 2. Zählungen
-Keine (kein Z-Protokoll). Die Flächenzahl 8 bleibt ANNAHME: Einzelansicht zählt kein N, g03/i04 sind nur konsistent damit.
+Keine neue Zählung (Stufenzahl 8 aus Z-6261-002/Z-6164-004 der Vorrunden; Z-Protokoll nicht neu erhoben).
 
 ## 3. Prüfungen
 | Prüfung | vorher (Altstand) | nachher | Soll | Quelle |
 |---|---|---|---|---|
-| helm_w_r_16_97 | 0,44 rot | 0,50 | 0,47–0,53 | Wolke-Mitte W-helm_w-profil, M-sil-helm_w-1 |
-| helm_w_r_17_76 | 0,34 rot | 0,41 | 0,38–0,44 | dito |
-| helm_w_r_18_58 | 0,27 rot | 0,34 | 0,30–0,36 | dito |
+| Aussenebene u bei n 3,45 | 15,851 rot | 16,312 | 16,15–16,50 | Kappenfirst-Regression M-6115-001..008 + dicke/2 (ANNAHME Kappe mittig); Gegenprobe Wolke 16,38–16,48, M-6115-009/010 16,23/16,41 (±0,23) |
+| Aussenebene u bei n 10,5 | 15,85 ok | 15,888 | 15,72–16,07 | dito, Wolke 15,83–15,88 |
+| Wandneigung u(3,45)−u(10,5) | 0,001 rot | 0,424 | 0,28–0,58 | Steigung −0,0609 (Streuung 0,032), Wolke −0,083 |
+| Stufen 2/4/8 Oberkante, Vorderende | ok | ok (27,42/24,74/19,38/11,0) | unverändert | M-6115-002/004/008 (Messorte mit der Scheibenmitte verschoben) |
+| Rückflanke/Vorderflanke Höhe | ok | 1,00 | 0,97–1,03 | Messorte verschoben |
+Sollwert „Aussenebene u (n 3,45)“ von 15,55–15,95 auf 16,15–16,50 geändert, mit neuer Quelle und `historie` (alte Lesart setzte Aussenfläche = Kappenmitte).
+`bauen_abnehmen.sh kaufhaus_grob3`: alle Prüfungen bestanden | 1 Widerspruch offen (Gesamthöhe, vorbestehend). `freiraum_audit` vorbestehend.
+Ein Lauf von test_regeln_cb T6 fiel mit Exit 1 durch (GPU von Parallelspuren belegt), Wiederholung grün.
 
-`bauen_abnehmen.sh kaufhaus_grob3`: alle Prüfungen bestanden. `freiraum_audit` und die fehlende Datei `SFM-AUSRICHTUNG-buendel.json` bleiben vorbestehende Fehler.
-
-Kennzahlen Helm W (konvergenz_bericht, Trockenlauf, Teile neu exportiert):
-
+Kennzahlen (konvergenz_bericht, Trockenlauf, Teile neu exportiert):
 | | vorher | nachher |
 |---|---|---|
-| Beleg | 0,561 | 0,562 |
-| Median-Abstand | 0,110 m | 0,094 m |
-| Kanten-Recall | 0,417 | 0,721 |
-| Kanten-Präzision | 0,312 | 0,533 |
-| Mittel aus Beleg und F1 | 0,459 | 0,588 |
+| Beleg | 0,224 | 0,377 |
+| Median-Abstand | 0,383 m | 0,304 m |
+| Kanten-Recall | 0,336 | 0,417 |
+| Kanten-Präzision | 0,025 | 0,023 |
+| Kanten-F1 | 0,047 | 0,044 |
+| Güte (Mittel Beleg, F1) | 0,135 | 0,210 |
+Gate +0,075 bei geforderten +0,05; keine Größe fällt > 0,02 (F1 −0,003). Aus den Zahlen selbst gerechnet. Die Kreis-Schleife kann anders messen (Rauschen ±0,01).
+Beleg-Gewinn kommt aus Verschiebung und Neigung zusammen (u 16,05 ohne Neigung nur 0,292; Neigung allein bei 15,85 senkt auf 0,12–0,16). Gewählt wurde nicht das Beleg-Maximum, sondern der aus der Kappenfirst-Messung abgeleitete Wert (Scan 15,95–16,15 liegt im Plateau).
 
-Gate: +0,129 bei geforderten +0,05, keine Größe fällt. Das habe ich aus den Zahlen selbst gerechnet.
-Der Kantensprung ist größer als die Profiländerung. Wegen L-KR15 (Gitter v12 liegt bei z 16–21 evtl. 0,1–0,2 m außen) schreibe ich ihn nicht allein dem Modell zu. Der Beleg ändert sich praktisch nicht.
-
-## 4. Overlays (rot = neu, cyan = alt)
-- audit/gitter_generator/rundekreis4_helm_geschweift_w_6162.jpg
-- audit/gitter_generator/rundekreis4_helm_geschweift_w_6257.jpg (erzeugt, nicht einzeln beurteilt)
-- audit/gitter_generator/rundekreis4_helm_geschweift_w_6261.jpg (erzeugt, nicht einzeln beurteilt)
-- audit/gitter_generator/rundekreis4_helm_geschweift_w_g03_i04.jpg
-- Aus dem Vorlauf: rundekreis1_helm_geschweift_w_*
-- 6259: Overlay-Absturz (Ausschnitt leer). Eintrag in NICHTS_GEBRACHT.
+## 4. Overlays (rot = neu, cyan = Altstand)
+- audit/gitter_generator/rundekreis_ost1_staffelgiebel_ost_6115.jpg
+- audit/gitter_generator/rundekreis_ost1_staffelgiebel_ost_6261.jpg
+- audit/gitter_generator/rundekreis_ost1_staffelgiebel_ost_6164.jpg
+- audit/gitter_generator/rundekreis_ost1_staffelgiebel_ost_6259.jpg (erzeugt, nicht beurteilt)
+- Messprotokolle M-6115-009/010 (Fensterfaschen), M-6115-011/012 (falsche Zuordnung, nicht verwenden)
 
 ## 5. Fehlerliste
-- **Schaft rechte Kante, z 15,4–19,4:** trifft (6162, i04, g03 angesehen).
-- **Schaft linke Kante:** trifft in 6162 und g03 besser als vorher. In i04 bleibt sie ca. 60 px innen (Achsversatz ~0,05 m möglich, ungeprüft).
-- **Krabben:** trifft nicht (fehlen).
-- **Achteck-Flächenzahl:** ungeprüft (ANNAHME).
-- **Fuß z 13,3–15,4:** aus dem Vorlauf, hier nur im Overlay angesehen, trifft.
-- **Knauf und Nadel:** ungeprüft. Die Silhouette bei z 20,5–21 sagt, das Foto ist 0,2 m schmaler als der Modell-Ring, nicht geändert.
-- **Rückseite:** ungeprüft (Spiegelung).
-- **Staffelgiebel-Quader:** steht bei z 16,5–18,3 mit Kante 0,51 m vor der Helmachse, also 0,17 m vor der Helmfläche. Lage ungeprüft.
-- **teile_lage_pruefen:** Helm W Median 0,23 m, keine Markierung (> 0,4 m).
-- **Nicht gelaufen:** `foto_diff`, `teile_sichtpruefung`. `fehlteile_finden` lief nur im Rahmen von `bauen_abnehmen`.
+- **Linke Flanke (Rückflanke) Stufenkontur 6261/6164:** trifft besser als vorher (Stufenecken ±10–20 px).
+- **Rechte Flanke (Vorderflanke) 6115:** trifft teilweise; Stufenecken ±25–30 px (0,2–0,3 m) neben den Fotokäppchen, Altstand lag rechts, neu liegt links daneben.
+- **Wandebene u(n):** trifft nach Wolke und Fensterfaschen; Fensterfaschen nur ±0,23 m.
+- **Kappe mittig auf der Mauerkrone:** ungeprüft (ANNAHME).
+- **Käppchen/Dächlein, Fenster in der Wand:** trifft nicht (fehlen).
+- **Rückflanke Spiegel, Hinterseite:** ungeprüft.
+- **Kanten-Präzision:** nicht gelöst (0,023), das Kantengitter hat an den Stufenecken keine Segmente.
+- **`teile_lage_pruefen`:** Median 1,95 m über die ganze Scheibe inklusive verdeckter Teile, nicht aussagekräftig. Ungeprüft.
+- **Nicht gelaufen:** `foto_diff`, `teile_sichtpruefung`; `fehlteile_finden` nur im Rahmen von `bauen_abnehmen`.
+- **Westgiebel:** vermutlich dieselbe Neigung, nicht angefasst.
 
 ## 6. Geänderte Dateien
-- modelle/kaufhaus_grob3/objekt.json (Profil W)
-- modelle/kaufhaus_grob3/masstabelle.json (3 Messungen, 3 Prüfungen, 1 Beobachtung)
-- modelle/kaufhaus_grob3/messprotokoll/M-sil-helm_w-1.json (neu)
-- modelle/NICHTS_GEBRACHT.md, modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md, modelle/LOGBUCH_HELM_W_R4_2026-11-10.md
-- Neu gebaute STL, Audit-Dateien, pruefbericht.json, MASSNACHWEIS.md (automatisch)
+tools/baukasten_gen.py (`staffelgiebel`: u_neigung/n_ref), modelle/kaufhaus_grob3/objekt.json, masstabelle.json (3 Prüfungen neu/geändert, Messorte, 1 Beobachtung), messprotokoll M-6115-009..012, audit/gitter_generator/rundekreis_ost1_*, modelle/LOGBUCH_GIEBEL_OST_R1_2026-11-10.md, REZEPT_GEBAEUDE_AUS_FOTOS.md (L-KR17..19), NICHTS_GEBRACHT.md; vom Bau neu erzeugt: STL, elemente.json, MASSNACHWEIS.md, Audit-Dateien.
 
 ## 7. Generalisierte Lehre
 | Lehre | Anlass | Werkzeug |
 |---|---|---|
-| L-KR16: Ein konstanter Schnittwert bei zwei Höhen (0,507) zeigt, dass ein Nachbarteil gemessen wird. Messrichtung über die Polygonsymmetrie auf eine freie Seite drehen, am Altstand den Wert prüfen. | Staffelgiebel-Quader im +n-Streifen des Helms | pruefstand.schnitt_reichweite, helm_profil_wolke.py, helm_silhouette_foto.py |
+| Wandebene als Gerade u(n) regressieren und gegen Wolke je n-Streifen legen, bevor die Form angefasst wird (L-KR17) | Ostgiebel Beleg 0,22, Neigung −0,06 m/m | baukasten_gen `u_neigung`, foto_mass |
+| Kappenfirst liegt mittig, Aussenfläche +dicke/2; zweite Quelle zur Gegenprobe (L-KR18) | u 15,85 → 16,05 | Regression + Wolke + Fensterfaschen |
+| Strahlabstand < 0,05 m beweist die Zuordnung, ~1 m = falsches Element (L-KR19) | M-6115-011/012 | foto_mass --tri |

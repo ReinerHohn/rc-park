@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_055354a055354/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548633210057,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.13989688456058502,
-  "wand_anteil_unter": 0.0004,
+  "wand_pq": 0.1398967057466507,
+  "wand_anteil_unter": 0.0006333333333333333,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -130,11 +130,11 @@
   "helm_o_r_14_88": 1.001048605304835,
   "helm_o_knauf_r_21_33": 0.21074957624831886,
   "helm_o_knauf_r_22_00": 0.05267690287992205,
-  "giebel_o_u_reach": 2.8510681373032476,
+  "giebel_o_u_reach": 3.311668452471717,
   "giebel_o_top_b2": 25.967000953674315,
   "giebel_o_top_b4": 23.287001106262206,
   "giebel_o_top_b8": 17.92700008392334,
-  "giebel_o_vorn_n": 3.0004878226350455,
+  "giebel_o_vorn_n": 3.000488072170486,
   "helm_w_r_13_45": 1.6786181603389831,
   "helm_w_r_14_12": 1.2970544735588454,
   "helm_w_r_14_38": 1.1870509785045464,
@@ -148,7 +148,8 @@
   "helm_o_r_19_40": 0.2808575058922347,
   "helm_w_r_16_97": 0.50156475290109,
   "helm_w_r_17_76": 0.4115380508985133,
-  "helm_w_r_18_58": 0.3365087766423552
+  "helm_w_r_18_58": 0.3365087766423552,
+  "giebel_o_u_reach_n10": 2.8878019857267163
  },
  "pruefungen": [
   {
@@ -353,7 +354,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.13989688456058502,
+   "wert": 0.1398967057466507,
    "soll": [
     0.0348,
     100
@@ -943,10 +944,30 @@
   },
   {
    "name": "Ostgiebel Aussenebene u (m) = Achse n 0,3338/0,9426, Kappenhoehe z 28,3 (nur Giebel, n 3,45)",
-   "wert": 15.851068137303248,
+   "wert": 16.311668452471718,
    "soll": [
-    15.55,
-    15.95
+    16.15,
+    16.5
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ostgiebel Aussenebene u (m) bei n 10,5 (Kappenhoehe z 18,9, nur Giebel)",
+   "wert": 15.887801985726716,
+   "soll": [
+    15.72,
+    16.07
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ostgiebel Wandneigung: Aussenebene u(n 3,45) - u(n 10,5) (m)",
+   "wert": 0.4238664667450007,
+   "soll": [
+    0.28,
+    0.58
    ],
    "ok": true,
    "status": "ok"
@@ -983,7 +1004,7 @@
   },
   {
    "name": "Ostgiebel Vorderende der Stufe 8 (n, m) bei z 19,2",
-   "wert": 11.000487822635046,
+   "wert": 11.000488072170485,
    "soll": [
     10.85,
     11.2

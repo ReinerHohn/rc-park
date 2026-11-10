@@ -1,22 +1,64 @@
 {
  "foto": "p03",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_055354a055354/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-p03 (amtliche Anker)",
- "zelle_px": 166,
+ "zelle_px": 164,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    830,
-    830,
-    166
+    984,
+    2132,
+    164
    ],
-   "score": -0.892,
+   "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    15.11,
-    3.39,
-    21.0
+    14.45,
+    -5.2,
+    15.06
+   ]
+  },
+  {
+   "zelle": [
+    1148,
+    2132,
+    164
+   ],
+   "score": -0.841,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    13.83,
+    -7.07,
+    15.9
+   ]
+  },
+  {
+   "zelle": [
+    1148,
+    1968,
+    164
+   ],
+   "score": -0.822,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    14.25,
+    -7.66,
+    18.04
+   ]
+  },
+  {
+   "zelle": [
+    1148,
+    2296,
+    164
+   ],
+   "score": -0.723,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    13.61,
+    -7.66,
+    14.55
    ]
   }
  ],

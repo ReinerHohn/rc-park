@@ -1,0 +1,49 @@
+{
+ "id": "M-6115-010",
+ "typ": "triangulation",
+ "foto": "6115",
+ "name": "Ostgiebel Fenster 1 Faschen-Ecke unten links",
+ "beobachtungen": [
+  {
+   "kamera": "K-6115",
+   "px": [
+    1120.0,
+    789.0
+   ]
+  },
+  {
+   "kamera": "K-6261",
+   "px": [
+    524.0,
+    1370.0
+   ]
+  },
+  {
+   "kamera": "K-6164",
+   "px": [
+    352.0,
+    1164.0
+   ]
+  }
+ ],
+ "P": [
+  16.81,
+  -1.696,
+  23.035
+ ],
+ "strahl_abstand_m": [
+  0.02,
+  0.008,
+  0.023
+ ],
+ "schnittwinkel_grad": [
+  12.4,
+  10.6,
+  7.4
+ ],
+ "z": 23.035,
+ "unsicherheit_m": 0.224,
+ "massstab_von": "Kameras K-6115, K-6261, K-6164 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 4.013,
+ "u": 16.412
+}

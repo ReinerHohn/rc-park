@@ -1,0 +1,49 @@
+{
+ "id": "M-6115-011",
+ "typ": "triangulation",
+ "foto": "6115",
+ "name": "Ostgiebel Fenster 3 Oeffnungsecke oben rechts",
+ "beobachtungen": [
+  {
+   "kamera": "K-6115",
+   "px": [
+    1393.0,
+    1059.0
+   ]
+  },
+  {
+   "kamera": "K-6261",
+   "px": [
+    701.0,
+    1630.0
+   ]
+  },
+  {
+   "kamera": "K-6164",
+   "px": [
+    421.0,
+    1229.0
+   ]
+  }
+ ],
+ "P": [
+  19.985,
+  4.243,
+  17.237
+ ],
+ "strahl_abstand_m": [
+  0.895,
+  0.337,
+  1.18
+ ],
+ "schnittwinkel_grad": [
+  13.3,
+  12.6,
+  11.1
+ ],
+ "z": 17.237,
+ "unsicherheit_m": 1.332,
+ "massstab_von": "Kameras K-6115, K-6261, K-6164 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 10.671,
+ "u": 17.422
+}
