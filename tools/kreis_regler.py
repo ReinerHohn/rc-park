@@ -55,6 +55,30 @@ def tote_sperren_freigeben():
         if len(inhalt) >= 2 and inhalt[1].isdigit() and not os.path.exists(f"/proc/{inhalt[1]}"):
             os.remove(os.path.join(bd, f)); print(time.strftime("%H:%M:%S"), "tote Sperre freigegeben:", f, inhalt)
 
+def tor_wartet():
+    """Grund-Text, wenn ein Tor (Bau/Abnahme/Messung einer Spur oder die main-Abnahme) laeuft, ansteht oder nach OOM wartet, sonst ''.
+    Nutzerregel 10.11.: Tore haben Vorrang - solange eines wartet, keine Nebenjobs (Formliste usw.); 13:3x verstopften sie 4 fertige Runden."""
+    import fcntl
+    try:
+        with open(os.path.join(KD, "gpu_tor.lock"), "a") as lk:
+            fcntl.flock(lk, fcntl.LOCK_EX | fcntl.LOCK_NB); fcntl.flock(lk, fcntl.LOCK_UN)
+    except BlockingIOError: return "Torschritt laeuft/ansteht (gpu_tor.lock)"
+    except OSError: pass
+    if subprocess.run(["systemctl", "--user", "is-active", "--quiet", "rcpark-abnahme_main"]).returncode == 0: return "main-Abnahme laeuft"
+    for s in spuren():
+        f = os.path.join(KD, s[len("rcpark-"):].replace(".service", "") + ".log")
+        try: z = [l for l in open(f, errors="replace").read().splitlines()[-3:] if l.strip()]
+        except OSError: continue
+        if z and "OOM im Torschritt" in z[-1]: return f"{s} wartet nach OOM im Torschritt"
+    return ""
+
+def nebenjob_anhalten(grund):
+    """Laufende Formliste-Auffrischung anhalten, wenn ein Tor nach OOM wartet (teil_fotoform setzt spaeter aus der .teil-Datei fort, Ergebnis gleich)."""
+    if "OOM" not in grund: return
+    if subprocess.run(["systemctl", "--user", "is-active", "--quiet", "rcpark-fotoform"]).returncode != 0: return
+    subprocess.run(["systemctl", "--user", "stop", "rcpark-fotoform"], capture_output=True)
+    print(time.strftime("%H:%M:%S"), f"Formliste-Auffrischung angehalten ({grund}), setzt spaeter fort", flush=True)
+
 hist, letzter, leer_sig = [], 0.0, None
 FORM = os.path.join(KD, OBJ, "fotoform"); form_start = 0.0
 def form_auffrischen():
@@ -67,12 +91,19 @@ def form_auffrischen():
     if os.path.exists(os.path.join(FORM, sha + ".json")) or time.time() - form_start < 2400: return
     if subprocess.run(["systemctl", "--user", "is-active", "--quiet", "rcpark-fotoform"]).returncode == 0: return
     if gpu()[1] > 3000: return   # 10.11. 13:3x: Auffrischung (40 min GPU) verstopfte mit Agentenpruefungen die Tore (4 fertige Runden im OOM); nur bei freier GPU
+    tw = tor_wartet()
+    if tw:   # Tore haben Vorrang (VRAM-Grenze allein reichte nicht: Auffrischung belegt danach selbst 2,3 GB)
+        if tw != getattr(form_auffrischen, "letzt", None): print(time.strftime("%H:%M:%S"), f"Formliste veraltet, Start zurueckgestellt: {tw}", flush=True)
+        form_auffrischen.letzt = tw; return
+    form_auffrischen.letzt = None
     subprocess.run([os.path.join(ROOT, "tools", "job_start.sh"), "fotoform", os.path.join(KD, "fotoform.log"), "bash", "tools/fotoform_auffrischen.sh", OBJ],
                    cwd=ROOT, capture_output=True, env=dict(os.environ, JOB_GPU_MB="2500"))
     form_start = time.time(); print(time.strftime("%H:%M:%S"), f"Formliste veraltet (main-STL {sha}) -> fotoform_auffrischen gestartet", flush=True)
 print(f"Kreis-Regler {OBJ}: max {MAX} Spuren, GPU-Ziel {GPU_ZIEL} %, VRAM < {VRAM_MAX} MiB, RAM > {RAM_MIN} GB, Takt {TAKT} s")
 while True:
     tote_sperren_freigeben()
+    try: nebenjob_anhalten(tor_wartet())
+    except Exception as ex: print("nebenjob_anhalten:", ex)
     try: form_auffrischen()
     except Exception as ex: print("form_auffrischen:", ex)
     u, m = gpu(); hist = (hist + [u])[-5:]; ug = sum(hist) / len(hist)
