@@ -140,6 +140,29 @@ if WOLKE and TDIR and os.path.isdir(TDIR):
                       "beleg": round(float((dt[nah] < BEL).mean()), 3) if nah.any() else None,
                       "median_m": round(float(np.median(dt[nah])), 3) if nah.any() else None,
                       "ueber_wolke_z": round(float((Pt[:, 2] > zw).mean()), 3)})
+    # 7. Fotokanten je Bauteil (10.11.: Wolkenbeleg ist bei ~0,6 ausgereizt - Bogen/Dach/Erker/Helm Gewinn ~0; Form steht in den Fotokanten).
+    #    Gitterpunkte (Kantengitter aus Fotos) werden dem naechsten Teil zugeordnet (< --nah m).
+    #    kanten_recall = Anteil dieser Gitterpunkte, die < --tol an der Teiloberflaeche liegen (Fotokante vom Teil erklaert).
+    #    kanten_praez  = Anteil der Formkanten des Teils (> --winkel, kamera-zugewandt), die < --tol an einem Gitterpunkt liegen (Teilkante im Foto belegt).
+    if True:
+        namen = [t["teil"] for t in teile]; dmin = np.full(len(GP), np.inf, np.float32); wer = np.full(len(GP), -1, np.int32); pr = {}
+        for i, nm in enumerate(namen):
+            tm = trimesh.load(os.path.join(TDIR, nm + ".stl"), force="mesh"); tm.apply_scale(SK)
+            d = md(GP, tm.sample(80000).astype(np.float32)); b_ = d < dmin; dmin[b_] = d[b_]; wer[b_] = i
+            sl = tm.face_adjacency_angles > np.radians(WINKEL); Et = tm.vertices[tm.face_adjacency_edges[sl]]
+            if len(Et):
+                fa = tm.face_adjacency[sl]; nm2 = tm.face_normals[fa[:, 0]] + tm.face_normals[fa[:, 1]]
+                ln = np.linalg.norm(Et[:, 1] - Et[:, 0], axis=1) >= MINK; Et, nm2 = Et[ln], nm2[ln]
+                mid = ((Et[:, 0] + Et[:, 1]) / 2).astype(np.float32); vk = sichtbar(mid, nm2 / np.maximum(1e-9, np.linalg.norm(nm2, axis=1))[:, None])
+                Et, nm2 = Et[vk], nm2[vk]
+            if len(Et):
+                KP = entlang(Et[:, 0], Et[:, 1]); dk = md(KP, GP); pr[nm] = (round(float((dk < TOL).mean()), 3), int(len(KP)))
+            else:
+                pr[nm] = (None, 0)
+        for i, t in enumerate(teile):
+            g = (wer == i) & (dmin < NAH)
+            t["kanten_recall"] = round(float((dmin[g] < TOL).mean()), 3) if g.sum() >= 50 else None
+            t["gitter_pkt"] = int(g.sum()); t["kanten_praez"], t["kanten_pkt"] = pr[t["teil"]]
     teile.sort(key=lambda t: (t["beleg"] is None, t["beleg"] if t["beleg"] is not None else 9))
 
 try:
@@ -199,7 +222,7 @@ if teile:
     print("Wolkenbeleg je Bauteil (schlechteste zuerst; Hinweis, kein Gate): Teil | Flaeche mit Daten | davon auf Wolke | Median m | ueber Wolken-zmax")
     for t in teile:
         flag = "  <- pruefen" if t["beleg"] is not None and t["beleg"] < 0.3 else ""
-        print(f"  {t['teil']:30s} {t['anteil_mit_daten']:.2f}  {t['beleg']}  {t['median_m']}  {t['ueber_wolke_z']}{flag}")
+        print(f"  {t['teil']:30s} {t['anteil_mit_daten']:.2f}  {t['beleg']}  {t['median_m']}  {t['ueber_wolke_z']}  kanten R {t.get('kanten_recall')} P {t.get('kanten_praez')} ({t.get('gitter_pkt')}/{t.get('kanten_pkt')}){flag}")
 if rueck:
     print("RUECKSCHRITT: " + "; ".join(rueck))
 if not TROCKEN:

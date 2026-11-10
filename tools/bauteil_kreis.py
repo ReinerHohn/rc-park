@@ -105,6 +105,16 @@ def messen(wt, tag):
 
 BELEGT = os.path.join(KREISDIR, OBJ, "belegt"); os.makedirs(BELEGT, exist_ok=True)   # Spuren parallel: je Bauteil eine Sperrdatei
 
+def f1(t):
+    p, r = t.get("kanten_praez"), t.get("kanten_recall")
+    return None if p is None or r is None else (2 * p * r / (p + r) if p + r > 0 else 0.0)
+
+def guete(t):
+    """Teilguete = Mittel aus Wolkenbeleg (Lage, nur kamera-zugewandte Flaeche) und Fotokanten-F1 (Form). 10.11.: Beleg allein war
+    bei ~0,6 ausgereizt und erschleichbar; Beweis Figuren +0,27 / Laube-Trick +0,01. Ohne Kantenwerte: Beleg allein (alte Messungen)."""
+    b, k = t.get("beleg"), f1(t)
+    return None if b is None else (b if k is None else (b + k) / 2)
+
 def fehlversuche_global():
     """Verworfene Runden je Teil ueber ALLE Laeufe/Spuren (ohne Infrastrukturfehler). Spuren-lokale 'sperre' reichte nicht:
     jede neue Spur nahm wieder dieselben aussichtslosen Teile (10.11.: Erker/Dach/Boegen mehrfach mit Gewinn ~0)."""
@@ -125,7 +135,7 @@ def waehlen(z, sperre):
     kand = [t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["beleg"] is not None and t["anteil_mit_daten"] >= MIN_DATEN
             and sperre.get(t["teil"], 0) < MAX_FEHL and fg.get(t["teil"], 0) < MAX_GLOBAL and not os.path.exists(os.path.join(BELEGT, t["teil"]))
             and t["teil"].split("__")[0] not in {f.split("__")[0] for f in os.listdir(BELEGT)}]   # gleiche Formfamilie (gleicher Generatorcode) nie parallel
-    kand.sort(key=lambda t: t["beleg"])
+    kand.sort(key=lambda t: guete(t))
     for t in kand:   # atomar belegen (O_EXCL), damit zwei Spuren nie dasselbe Teil nehmen
         try:
             fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
@@ -163,6 +173,9 @@ def auftrag(ziel, runde, wt):
     typ = ziel["teil"].replace("__", ":")
     befund = (f"Automatisch aus konvergenz_bericht (Wolkenbeleg je Bauteil): {typ} hat nur {ziel['beleg']:.2f} seiner datennahen "
               f"Flaeche auf der Wolke (Median-Abstand {ziel['median_m']:.2f} m, Anteil mit Daten {ziel['anteil_mit_daten']:.2f}). "
+              f"Fotokanten (Kantengitter aus Fotos) je Teil: Recall {ziel.get('kanten_recall')} (Anteil der Fotokanten am Teil, die das Modell erklaert), "
+              f"Praezision {ziel.get('kanten_praez')} (Anteil der Teil-Formkanten, die ein Foto belegt). Gate: Mittel aus Beleg und Kanten-F1 muss um >= {MIN_GEWINN} steigen, "
+              f"keine der beiden Groessen darf um > 0,02 fallen. Verdeckte Flaechen zaehlen nicht (nur kamera-zugewandt). "
               f"Form oder Lage passt nicht zu den Daten. Ursache unbekannt - in Stufe 0 an Fotos klaeren.")
     txt = (txt.replace("`<OBJEKT>`", OBJ).replace("<OBJEKT>", OBJ).replace("`<BAUTEIL>`", typ).replace("<BAUTEIL>", typ)
               .replace("`<BEFUND>`", befund).replace("<BEFUND>", befund).replace("<RUNDE>", f"kreis{runde}")
@@ -216,7 +229,7 @@ for runde in range(1, RUNDEN + 1):
             for _l in reversed([x for x in open(_kf) if x.strip()]):
                 _z = json.loads(_l)
                 if str(_z.get("etikett", "")).endswith(f"r{_r}_vorher") and _z.get("wolkenbeleg_teile"): z0 = _z; break
-        if z0 is not None and "anteil_sichtbar" not in (z0["wolkenbeleg_teile"][0] if z0["wolkenbeleg_teile"] else {}):
+        if z0 is not None and "kanten_recall" not in (z0["wolkenbeleg_teile"][0] if z0["wolkenbeleg_teile"] else {}):
             z0 = None   # alte Messart (ohne Sichtpruefung) - nicht vergleichbar
         if z0 is None:   # Basis der Originalrunde (Zweig~1) neu messen, gleiche Messart wie nachher
             wt0 = os.path.join(LDIR, "wt_basis")
@@ -238,7 +251,7 @@ for runde in range(1, RUNDEN + 1):
             sha = hashlib.sha256(open(sp, "rb").read()).hexdigest()[:16]
             for l in reversed([l for l in open(kf) if l.strip()]):
                 zz = json.loads(l)
-                if zz.get("stl_sha") == sha and zz.get("wolkenbeleg_teile") and "anteil_sichtbar" in zz["wolkenbeleg_teile"][0]:   # gleiche Messart (mit Sichtpruefung)
+                if zz.get("stl_sha") == sha and zz.get("wolkenbeleg_teile") and "kanten_recall" in zz["wolkenbeleg_teile"][0]:   # gleiche Messart (Sichtpruefung + Fotokanten je Teil)
                     z0 = zz; print(f"Runde {runde}: Messung vorher wiederverwendet (STL {sha})"); break
         if z0 is None:
             rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
@@ -256,14 +269,18 @@ for runde in range(1, RUNDEN + 1):
     rcB, outB = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"))
     tor_abnahme = rcB == 0 and "alle Pruefungen bestanden" in outB
     rcK, z1, outK = messen(wt, f"r{runde}_nachher")
-    vor = {t["teil"]: t["beleg"] for t in z0.get("wolkenbeleg_teile") or []}
-    nach = {t["teil"]: t["beleg"] for t in (z1 or {}).get("wolkenbeleg_teile") or []}
+    vor_t = {t["teil"]: t for t in z0.get("wolkenbeleg_teile") or []}; nach_t = {t["teil"]: t for t in (z1 or {}).get("wolkenbeleg_teile") or []}
+    vor = {k: guete(v) for k, v in vor_t.items()}; nach = {k: guete(v) for k, v in nach_t.items()}
     ersatz = None
     if ziel["teil"] not in nach:   # Teil durch neue Formfamilie ersetzt (z. B. stl_teil:figuren -> figurenreihe:figuren, s4 10.11.): neue Teile zaehlen, konservativ das schlechteste
         neu_t = {t: v for t, v in nach.items() if t not in vor and v is not None}
         if neu_t: ersatz = min(neu_t, key=neu_t.get); nach[ziel["teil"]] = neu_t[ersatz]
     gewinn = (nach.get(ziel["teil"]) or 0) - (vor.get(ziel["teil"]) or 0)
-    tor_konv = rcK == 0 and gewinn >= MIN_GEWINN
+    # kein Rueckschritt in einer der beiden Groessen (Lage ODER Form) um mehr als 0,02
+    tv = vor_t.get(ziel["teil"], {}); tn = nach_t.get(ersatz or ziel["teil"], {})
+    rueck_teil = [n for n, fv, fn in (("beleg", tv.get("beleg"), tn.get("beleg")), ("kanten_f1", f1(tv), f1(tn))) if fv is not None and fn is not None and fn < fv - 0.02]
+    tor_konv = rcK == 0 and gewinn >= MIN_GEWINN and not rueck_teil
+    if rueck_teil: print(f"Runde {runde}: Rueckschritt im Ziel-Teil: {rueck_teil}")
     urteil = pruefer_urteil(wt, ziel, runde) if (tor_abnahme and tor_konv) else {"annehmen": False, "fehlerliste": ["nicht geprueft: Vortor rot"]}
     angenommen = tor_abnahme and tor_konv and bool(urteil.get("annehmen"))
     if angenommen:
@@ -302,7 +319,7 @@ for runde in range(1, RUNDEN + 1):
     if not TROCKEN and wt != ROOT:   # Platz (10.11.: 11 Worktrees x 430 MB fuellten die Datenplatte); Inhalt liegt als Commit auf dem Zweig br
         subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
-               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "gewinn": round(gewinn, 3),
+               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
                "tor_konvergenz": tor_konv, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")
