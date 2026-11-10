@@ -5,7 +5,7 @@ Aufruf (einmal, als Dienst):  tools/job_start.sh kreis_regler LOG python3 tools/
 Startbedingung je Takt (alle muessen gelten):
   GPU-Auslastung Mittel der letzten 5 Takte < --gpu_ziel (60 %)   -> GPU nicht ausgelastet
   VRAM belegt < --vram_max (5000 MiB)    (Grenze 7000 MiB gesamt, CLAUDE.md; Agenten-Werkzeuge brauchen Spitzen bis ~2,5 GB)
-  RAM verfuegbar > --ram_min (3 GB), Last1 < 1,5 x Kerne
+  RAM verfuegbar > --ram_min (6 GB = gemessene Spitze einer Spur 5,7 GB; 10.11. zwei Spuren vom OOM-Killer beendet), Last1 < 1,5 x Kerne
   Root frei > 6 GB, Daten frei > 10,5 GB (platz_pruefen-Grenzen 5/10 GB + Puffer; Worktrees werden nach jeder Runde entfernt)
   laufende Spuren < --max, letzter Start > --abstand s her (Spuren nicht gleichzeitig in die Messphase)
 Ende: 3 Spuren in Folge melden 'kein Kandidat' -> nichts mehr zu tun. Jede Entscheidung wird geloggt.
@@ -15,8 +15,8 @@ import sys, os, time, subprocess, shutil, json, glob
 a = sys.argv
 def opt(n, d, t=str): return t(a[a.index(n) + 1]) if n in a else d
 OBJ = a[1]
-MAX = opt("--max", 8, int); TAKT = opt("--takt", 60, int); GPU_ZIEL = opt("--gpu_ziel", 60, float)
-VRAM_MAX = opt("--vram_max", 5000, int); RAM_MIN = opt("--ram_min", 3.0, float); ABSTAND = opt("--abstand", 180, int)
+MAX = opt("--max", 6, int); TAKT = opt("--takt", 60, int); GPU_ZIEL = opt("--gpu_ziel", 60, float)
+VRAM_MAX = opt("--vram_max", 5000, int); RAM_MIN = opt("--ram_min", 6.0, float); ABSTAND = opt("--abstand", 180, int)
 RUNDEN = opt("--runden", 4, int)
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); KD = "/media/oem/scan/rc-park_kreis"
 sys.stdout.reconfigure(line_buffering=True)
@@ -46,9 +46,19 @@ def kein_kandidat_folge():
         else: break
     return n
 
+def tote_sperren_freigeben():
+    """Sperrdatei je Bauteil enthaelt 'LAUF PID'; lebt die PID nicht mehr (OOM-Kill, Abbruch), Sperre loeschen - sonst bleibt das Teil fuer immer blockiert."""
+    bd = os.path.join(KD, OBJ, "belegt")
+    for f in os.listdir(bd) if os.path.isdir(bd) else []:
+        try: inhalt = open(os.path.join(bd, f)).read().split()
+        except OSError: continue
+        if len(inhalt) >= 2 and inhalt[1].isdigit() and not os.path.exists(f"/proc/{inhalt[1]}"):
+            os.remove(os.path.join(bd, f)); print(time.strftime("%H:%M:%S"), "tote Sperre freigegeben:", f, inhalt)
+
 hist, letzter = [], 0.0
 print(f"Kreis-Regler {OBJ}: max {MAX} Spuren, GPU-Ziel {GPU_ZIEL} %, VRAM < {VRAM_MAX} MiB, RAM > {RAM_MIN} GB, Takt {TAKT} s")
 while True:
+    tote_sperren_freigeben()
     u, m = gpu(); hist = (hist + [u])[-5:]; ug = sum(hist) / len(hist)
     sp = spuren(); r = ram_gb(); last = os.getloadavg()[0]; ker = os.cpu_count()
     rf = shutil.disk_usage("/").free / 1e9; df = shutil.disk_usage("/media/oem/scan").free / 1e9
