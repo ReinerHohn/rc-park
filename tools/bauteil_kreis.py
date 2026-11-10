@@ -96,15 +96,15 @@ def sh_cpu(cmd, cwd, log, env=None):
     t = time.time(); rc, out = sh(cmd, cwd, log=log, env=env)
     print(f"  CPU-Schritt {os.path.basename(log)}: {time.time() - t:.0f} s", flush=True); return rc, out
 
-def sh_tor(cmd, cwd, log, env=None, versuche=6, pause=300):
+def sh_tor(cmd, cwd, log, env=None, versuche=6, pause=300, sperre=True):
     """Torschritt (Bau/Abnahme/Messung): Spuren-uebergreifend per flock serialisiert (deterministische Messung -> verlustfrei)
     und bei CUDA-OOM wiederholt. Ein OOM ist ein Infrastrukturfehler, kein rotes Tor (Kreis1 R1 10.11.: Abnahme 'rot' war OOM in wandstaerke)."""
     import fcntl
     rc, out = 1, ""
     for v in range(versuche):
         start = os.path.getsize(log) if os.path.exists(log) else 0
-        with open(os.path.join(KREISDIR, "gpu_tor.lock"), "w") as lk:
-            tw = time.time(); fcntl.flock(lk, fcntl.LOCK_EX); tl = time.time()
+        with open(os.path.join(KREISDIR, "gpu_tor.lock" if sperre else "gpu_halb.lock"), "w") as lk:   # sperre=False: geteilte Sperre (blockiert nie), nur gpu_slot regelt
+            tw = time.time(); fcntl.flock(lk, fcntl.LOCK_EX if sperre else fcntl.LOCK_SH); tl = time.time()
             rc, _ = sh(cmd, cwd, log=log, env=env)
             print(f"  Torschritt {os.path.basename(log)}: Warten {tl - tw:.0f} s, Lauf {time.time() - tl:.0f} s", flush=True)
         with open(log, errors="replace") as f: f.seek(start); neu = f.read()
@@ -261,7 +261,9 @@ def form_messen(wt, tdir, teil, fotos, tag, bilder="fotoform_bilder", env=None, 
     if not fotos or not os.path.isdir(tdir): return None
     aus = os.path.join(LDIR, f"fotoform_{tag}.json")
     sh_tor([PY, "-W", "ignore", "-I", "tools/teil_fotoform.py", OBJ, "--teile_dir", tdir, "--stl", stl or STL, "--nur", teil, "--fotos", ",".join(fotos),
-            "--aus", aus, "--bilder", "--bilder_dir", os.path.join(LDIR, bilder), "--etikett", tag], wt, log=os.path.join(LDIR, f"fotoform_{tag}.log"), env=env)
+            "--aus", aus, "--bilder", "--bilder_dir", os.path.join(LDIR, bilder), "--etikett", tag], wt, log=os.path.join(LDIR, f"fotoform_{tag}.log"), env=env,
+            sperre=not (env or {}).get("RCPARK_FOTO_SKALA"))   # Stufe halb (10.11. abends): nicht in die Tor-Schlange (mittl. 16 min Warten fuer ~1 min Lauf),
+            # teil_fotoform belegt selbst einen gpu_slot (2 Plaetze, VRAM-Zulassung) - Ergebnis deterministisch, nur Reihenfolge anders
     try:
         _g = ((json.load(open(aus))["teile"].get(teil) or {}).get("_gesamt") or {}); HOEHE[tag] = _g.get("f1_h"); return _g.get("f1")
     except Exception: return None
