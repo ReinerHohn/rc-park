@@ -1,0 +1,32 @@
+{
+ "id": "M-6261-024",
+ "foto": "6261",
+ "kamera": "K-6261",
+ "ebene": "0.9426,-0.3338,0=-8.82",
+ "name": "Westgiebel Stufenkappen-Ecken (Strahl auf Wandebene u=-8,82), 6261",
+ "mess_px": [
+  1954.0,
+  1704.0,
+  1998.0,
+  1752.0
+ ],
+ "P1": [
+  -5.787,
+  10.08,
+  23.299
+ ],
+ "P2": [
+  -5.487,
+  10.929,
+  22.119
+ ],
+ "dz": -1.179,
+ "dy": 0.849,
+ "dx": 0.301,
+ "abstand": 1.484,
+ "z1": 23.299,
+ "z2": 22.119,
+ "unsicherheit_rel": 0.0054,
+ "unsicherheit_m": 0.085,
+ "massstab_von": "Kamera K-6261 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.9426,-0.3338,0=-8.82 (+-0.3 m)"
+}

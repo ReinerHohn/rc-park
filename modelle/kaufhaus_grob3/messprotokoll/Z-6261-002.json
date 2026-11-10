@@ -1,0 +1,84 @@
+{
+ "id": "Z-6261-002",
+ "typ": "zaehlung",
+ "foto": "6261",
+ "datei": "6261_ip_IMG_6261.jpg",
+ "was": "Westgiebel Vorderflanke: sichtbare Stufenpfeiler mit Daechlein (Spitzenblock + 8 Stufen), danach verdeckt vom Erkerhelm; ein weiterer Pfeiler am Wandende ist ANNAHME (Rhythmus)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-10",
+ "punkte": [
+  {
+   "flaeche": "VF",
+   "art": "voll",
+   "x": 1744.0,
+   "y": 1496.0
+  },
+  {
+   "flaeche": "VF",
+   "art": "voll",
+   "x": 1794.0,
+   "y": 1548.0
+  },
+  {
+   "flaeche": "VF",
+   "art": "voll",
+   "x": 1833.0,
+   "y": 1594.0
+  },
+  {
+   "flaeche": "VF",
+   "art": "voll",
+   "x": 1877.0,
+   "y": 1640.0
+  },
+  {
+   "flaeche": "VF",
+   "art": "voll",
+   "x": 1921.0,
+   "y": 1688.0
+  },
+  {
+   "flaeche": "VF",
+   "art": "voll",
+   "x": 1965.0,
+   "y": 1737.0
+  },
+  {
+   "flaeche": "VF",
+   "art": "voll",
+   "x": 2004.0,
+   "y": 1785.0
+  },
+  {
+   "flaeche": "VF",
+   "art": "voll",
+   "x": 2046.0,
+   "y": 1835.0
+  },
+  {
+   "flaeche": "VF",
+   "art": "voll",
+   "x": 2083.0,
+   "y": 1892.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "VF": {
+   "art": "voll",
+   "n": 9
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 9,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-6261-002.jpg",
+ "ausschnitt": [
+  1494,
+  1246,
+  2333,
+  2142
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "9 voll sichtbar; Foto 6225 (West) zeigt ebenfalls 9 Kappen bis zur Spitze; Gegenprobe Rhythmus 0,90 m"
+}
