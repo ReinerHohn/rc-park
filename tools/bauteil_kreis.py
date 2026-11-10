@@ -167,6 +167,15 @@ def freigeben(teil):
     try: os.remove(os.path.join(BELEGT, teil))
     except FileNotFoundError: pass
 
+def nicht_in_main(z, lauf, r):
+    """Hinweis fuer angenommene Runden, deren Stand main nicht hat (nie gemergt: baute auf Verworfenem auf; oder per Revert zurueckgenommen, 10.11. Helm O)."""
+    if not (z.get("angenommen") and z.get("branch")): return ""
+    if subprocess.run(["git", "-C", ROOT, "log", "--oneline", "-1", "--grep", f"kreis {lauf} r{r}", "--grep", "Revert", "--all-match"], capture_output=True, text=True).stdout.strip():
+        return " [angenommen, dann per Revert aus main ZURUECKGENOMMEN - Gruende in den Folge-Eintraegen/Commit-Text]"
+    if subprocess.run(["git", "-C", ROOT, "merge-base", "--is-ancestor", z["branch"] + "^{/automatisch}", "HEAD"], capture_output=True).returncode != 0:
+        return " [angenommen, aber NICHT in main (baute auf verworfenem Stand auf) - brauchbare Teile gezielt uebernehmen]"
+    return ""
+
 def vorversuche(teil):
     """Alle frueheren Kreis-Runden (alle Laeufe/Spuren) zu diesem Teil: Ergebnis, Torgruende, Agentenbericht, Patch.
     Damit wiederholt kein Agent einen verworfenen Weg blind (Kreis1 R2 10.11. startete Staffelgiebel ohne Wissen aus R1)."""
@@ -180,7 +189,8 @@ def vorversuche(teil):
             pa = os.path.join(ld, f"verworfen_r{r}.patch"); ag = os.path.join(ld, f"agent_r{r}.log")
             zeilen.append(f"- {os.path.basename(ld)} R{r}: angenommen={z.get('angenommen')}, Gewinn {z.get('gewinn')}, Abnahme {z.get('tor_abnahme')}"
                           f"{' (CUDA-OOM, kein Pruefungsfehler)' if z.get('infra_oom') else ''}, Pruefer {json.dumps((z.get('pruefer') or {}).get('fehlerliste'), ensure_ascii=False)[:600]}"
-                          f"; Agentenbericht (Ende der Datei): {ag if os.path.exists(ag) else '-'}; Patch: {pa if os.path.exists(pa) else '-'}")
+                          f"; Agentenbericht (Ende der Datei): {ag if os.path.exists(ag) else '-'}; Patch: {pa if os.path.exists(pa) else '-'}; Zweig (git show/diff): {z.get('branch') or '-'}"
+                          + nicht_in_main(z, os.path.basename(ld), r))
     if not zeilen: return ""
     return ("\n\nVORVERSUCHE ZU DIESEM TEIL (zuerst lesen, nicht blind wiederholen; verworfenen Patch pruefen und gezielt verbessern, "
             "offene Beobachtungen dazu in masstabelle.json beachten):\n" + "\n".join(zeilen))
