@@ -1,92 +1,92 @@
 {
  "foto": "p03",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_222554a222554/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-p03 (amtliche Anker)",
- "zelle_px": 165,
+ "zelle_px": 167,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    990,
-    1815,
-    165
+    1169,
+    2338,
+    167
+   ],
+   "score": -0.951,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    13.62,
+    -7.89,
+    14.35
+   ]
+  },
+  {
+   "zelle": [
+    835,
+    835,
+    167
+   ],
+   "score": -0.919,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    15.33,
+    2.89,
+    21.54
+   ]
+  },
+  {
+   "zelle": [
+    1169,
+    2004,
+    167
    ],
    "score": -0.915,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    14.84,
-    -5.55,
-    18.41
+    14.03,
+    -7.73,
+    17.58
    ]
   },
   {
    "zelle": [
-    825,
-    825,
-    165
+    1169,
+    2171,
+    167
    ],
-   "score": -0.899,
+   "score": -0.859,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    15.44,
-    2.71,
-    21.65
+    13.71,
+    -7.45,
+    15.71
    ]
   },
   {
    "zelle": [
-    990,
-    1980,
-    165
+    1002,
+    2004,
+    167
    ],
-   "score": -0.87,
+   "score": -0.856,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    14.71,
-    -6.03,
-    16.93
+    14.6,
+    -6.1,
+    16.69
    ]
   },
   {
    "zelle": [
-    1155,
-    1980,
-    165
+    1002,
+    2171,
+    167
    ],
-   "score": -0.86,
+   "score": -0.853,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    14.15,
-    -7.69,
-    17.92
-   ]
-  },
-  {
-   "zelle": [
-    1155,
-    2145,
-    165
-   ],
-   "score": -0.823,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    13.78,
-    -7.22,
-    15.83
-   ]
-  },
-  {
-   "zelle": [
-    990,
-    1650,
-    165
-   ],
-   "score": -0.813,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    14.79,
-    -4.22,
-    19.42
+    14.23,
+    -5.62,
+    14.77
    ]
   }
  ],
