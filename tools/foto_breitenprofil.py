@@ -94,7 +94,8 @@ def modell_maske(stl, obj, R, t, f, cx, cy, W, H, n=2500000):
     c = m.bounds.mean(0) if obj.get("zentrierung", "huelle") == "huelle" else np.zeros(3)
     m.apply_translation([-c[0], -c[1], -m.bounds[0, 2]])
     import render_kern as RK
-    P, _ = trimesh.sample.sample_surface(m, n, seed=0)
+    import gpu_sample                                                  # gleiche Zufallszahlen wie trimesh, Dreiecksrechnung auf der GPU (CPU-Rueckfall automatisch)
+    P = gpu_sample.sample_surface(m, n, seed=0)
     return RK.Szene(np.asarray(P)).maske_np(R, t, f, cx, cy, W, H)
 
 def main():

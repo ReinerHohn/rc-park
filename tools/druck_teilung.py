@@ -77,6 +77,41 @@ def schneide(mf, B, achse, wert):
     return unten, oben
 
 
+def weit_auseinander(dt, d_rand, lo, aufl, d_min, nmax):
+    """Stiftpositionen aus der Distanzkarte dt: Kandidaten = Zellen mit dt >= d_rand; erster Punkt = groesster Randabstand, danach gierig 'weitester Punkt'
+    (Kandidat mit dem groessten Mindestabstand zu den schon gewaehlten, solange dieser >= d_min).
+    Vorher wurde bei jedem Schritt der ganze (N,k,3)-Abstandstensor neu gebildet (2-3 Mio Kandidaten x 8 Punkte: 74 s von 86 s Laufzeit des Werkzeugs).
+    Jetzt Mindestabstand laufend fortgeschrieben (je Schritt nur die Abstaende zum NEUEN Punkt, O(N)) und Kandidatenliste + Suche auf der GPU
+    (float64; Reihenfolge und Gleichstand-Regel wie numpy: kleinster Index) - Ergebnis gleich dem alten. Ohne CUDA oder RENDER_CPU=1: dieselbe Rechnung in numpy."""
+    T = None
+    if not os.environ.get("RENDER_CPU"):
+        try:
+            import torch
+            if torch.cuda.is_available(): T = torch
+        except Exception: T = None
+    if T is not None:
+        D = T.as_tensor(np.ascontiguousarray(dt), device="cuda"); idx = (D >= d_rand).nonzero()                  # (N,2) = (y,x), zeilenweise wie np.nonzero
+        if not len(idx): return []
+        v = D[idx[:, 0], idx[:, 1]]; i0 = int((v == v.max()).nonzero()[0, 0]); del D, v
+        C = idx[:, [1, 0]].to(T.float64) * aufl; C = C + T.as_tensor(np.asarray(lo, np.float64), device="cuda"); del idx
+        wahl = [C[i0]]; dd = None
+        while len(wahl) < nmax:
+            d = ((C - wahl[-1]) ** 2).sum(1).sqrt(); dd = d if dd is None else T.minimum(dd, d)
+            m = dd.max()
+            if float(m) < d_min: break
+            wahl.append(C[int((dd == m).nonzero()[0, 0])])                                                    # kleinster Index unter Gleichstaenden (np.argmax)
+        out = [w.cpu().numpy() for w in wahl]; del C, dd
+        return out
+    yy, xx = np.nonzero(dt >= d_rand)
+    if not len(yy): return []
+    cand = np.c_[xx, yy] * aufl + lo; wahl = [cand[np.argmax(dt[yy, xx])]]; dd = None
+    while len(wahl) < nmax:
+        d = np.sqrt(((cand - wahl[-1]) ** 2).sum(1)); dd = d if dd is None else np.minimum(dd, d)
+        if dd.max() < d_min: break
+        wahl.append(cand[np.argmax(dd)])
+    return wahl
+
+
 def stiftpunkte(mf, B, achse, wert, d_rand, d_min, nmax=4, aufl=0.01):
     """Punkte im Schnittquerschnitt mit Randabstand >= d_rand (Rasterung + Distanztransformation), gierig weit auseinander."""
     tm = zu_tm(mf); sec = tm.section(plane_origin=B[:, achse] * wert, plane_normal=B[:, achse])
@@ -91,13 +126,8 @@ def stiftpunkte(mf, B, achse, wert, d_rand, d_min, nmax=4, aufl=0.01):
     for p_ in polys: t_ = np.zeros((H, W), np.uint8); cv2.fillPoly(t_, [p_], 1); msk ^= t_
     img = (msk > 0).astype(np.uint8)
     dt = cv2.distanceTransform(img, cv2.DIST_L2, 5) * aufl
-    yy, xx = np.nonzero(dt >= d_rand)
-    if not len(yy): return []
-    cand = np.c_[xx, yy] * aufl + lo; wahl = [cand[np.argmax(dt[yy, xx])]]
-    while len(wahl) < nmax:
-        dd = np.min(np.linalg.norm(cand[:, None, :] - np.array(wahl)[None], axis=2), axis=1)
-        if dd.max() < d_min: break
-        wahl.append(cand[np.argmax(dd)])
+    wahl = weit_auseinander(dt, d_rand, lo, aufl, d_min, nmax)
+    if not wahl: return []
     out = []
     for w in wahl:
         p = np.zeros(3); p[j[0]], p[j[1]], p[achse] = w[0], w[1], wert; out.append(B @ p)
