@@ -893,10 +893,18 @@
  },
  {
   "seite": "alle",
+  "element": "Staffelgiebel Staffelgiebel ost: Wandneigung",
+  "quelle": "Steigung der Kappenfirst-Linie M-6115-001..008: -0,0609 m je m n (Reststreuung 0,032 m, 8 Spitzen); Wolke j_voll_lot2 Wandebene -0,083 je m (z 15..22), gleiches Vorzeichen; gewaehlt die Foto-Triangulation (-0,06), nicht gemittelt. Ursache: Wand ~3,5 Grad gegen die Hauptfassadenachse gedreht (Altstadt, nicht rechtwinklig)",
+  "u_neigung": -0.06,
+  "n_ref": 7.5,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Staffelgiebel Staffelgiebel ost (8 Stufen)",
   "quelle": "Stufenzahl Z-075-004 (Regel 9); Foto-Triangulation M-6115-001..008 (K-6115 Ost + K-6257 West aus kam_lot2, Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m; Gegenprobe Foto 6145): Kappenfirst Stufe 1 z 28,76 (+-0,07); Stufenoberkante = Kappenfirst (ANNAHME flache Oberkante in Firsthoehe, Satteldaechlein je Stufe nicht modelliert) | Rueckflanke gespiegelt: Foto ip_IMG_6261: Ostgiebel-Silhouette beidseitig gestuft, Spitze mittig ueber dem First (fehlteile_6261: 6 ERFUNDEN an der glatten Rueckkante)",
   "n_stufen": 8,
-  "u_aussen": 15.85,
+  "u_aussen": 16.05,
   "dicke": 0.628,
   "n_hinten": 2.9,
   "n_vorn": 11.0,

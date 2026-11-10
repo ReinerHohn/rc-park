@@ -1,33 +1,66 @@
-# Kreis a053353 r1 - quader:gesims
+# Kreis-Ost r1 staffelgiebel:ost (kaufhaus_grob3, 2026-11-10)
+Nichts committet, gelöscht, geslict oder gedruckt. Logbuch: `modelle/LOGBUCH_GIEBEL_OST_R1_2026-11-10.md`.
 
-## 1. Formbeschreibung (Stufe 0)
-Fotos: 6161 (Uebersicht frontal), 6145 (schraeg West-Haelfte), 6115/b_03 (Naehe Erkerhelm), handy_18 (Nahfoto). Zonen von unten: glatte Wand -> rote Schraege mit Goldleisten (n 12,62->12,94, z 14,35->14,82) -> gruene Kupferrinne -> Dach. Querschnitt Profilleiste, Wiederholung keine, laeuft zwischen den Erkerhelmen und verschwindet dort im Helm. Formfamilie: vorhandenes quader mit `profil` (baukasten_gen), keine neue Familie noetig.
-Aenderung am Altmodell: Enden liefen ca. 1 m (West) / 2,4 m (Ost) in die Helme hinein, Fuss lag laut Gitter/Pruefer zu tief.
+## 1. Formbeschreibung
+Fotos angesehen: 6115 (Nah), 6261 (Übersicht), 6164 (Nah); 6259 nur Overlay erzeugt, nicht einzeln beurteilt.
+- Zonen: Giebelwand (roter Putz, zwei schmale Fenster in Faschen), darüber beidseitig gestufte Treppe, je Stufe Pfeilerblock mit Ziegelkäppchen.
+- Querschnitt: dünne Scheibe (~0,6 m), gegen die Hauptfassadenachse gedreht (u fällt 0,06 m je m n).
+- Stufen: 8 je Vorderflanke (Z-6261-002, Z-6164-004 aus Vorrunden, im Overlay 6115/6261/6164 nachgesehen). Rückflanke = Spiegel (ANNAHME).
+- Am Modell anders: Scheibe parallel zur Achse und 0,2–0,4 m innen (Kontur 30–50 px daneben).
+- Formfamilie: vorhandene `staffelgiebel`, neu nur optionaler generischer Parameter `u_neigung`/`n_ref` (Altverhalten bitgleich, `regression.py --pruefen`: identisch).
 
-## 2. Zaehlungen
-Keine (Teil hat keine zaehlbaren Elemente); kein Z-Protokoll.
+## 2. Zählungen
+Keine neue Zählung (Stufenzahl 8 aus Z-6261-002/Z-6164-004 der Vorrunden; Z-Protokoll nicht neu erhoben).
 
-## 3. Pruefungen / Gate (konvergenz_bericht --teile_dir, Teil quader__gesims)
-| Groesse | vorher | nachher |
+## 3. Prüfungen
+| Prüfung | vorher (Altstand) | nachher | Soll | Quelle |
+|---|---|---|---|---|
+| Aussenebene u bei n 3,45 | 15,851 rot | 16,312 | 16,15–16,50 | Kappenfirst-Regression M-6115-001..008 + dicke/2 (ANNAHME Kappe mittig); Gegenprobe Wolke 16,38–16,48, M-6115-009/010 16,23/16,41 (±0,23) |
+| Aussenebene u bei n 10,5 | 15,85 ok | 15,888 | 15,72–16,07 | dito, Wolke 15,83–15,88 |
+| Wandneigung u(3,45)−u(10,5) | 0,001 rot | 0,424 | 0,28–0,58 | Steigung −0,0609 (Streuung 0,032), Wolke −0,083 |
+| Stufen 2/4/8 Oberkante, Vorderende | ok | ok (27,42/24,74/19,38/11,0) | unverändert | M-6115-002/004/008 (Messorte mit der Scheibenmitte verschoben) |
+| Rückflanke/Vorderflanke Höhe | ok | 1,00 | 0,97–1,03 | Messorte verschoben |
+Sollwert „Aussenebene u (n 3,45)“ von 15,55–15,95 auf 16,15–16,50 geändert, mit neuer Quelle und `historie` (alte Lesart setzte Aussenfläche = Kappenmitte).
+`bauen_abnehmen.sh kaufhaus_grob3`: alle Prüfungen bestanden | 1 Widerspruch offen (Gesamthöhe, vorbestehend). `freiraum_audit` vorbestehend.
+Ein Lauf von test_regeln_cb T6 fiel mit Exit 1 durch (GPU von Parallelspuren belegt), Wiederholung grün.
+
+Kennzahlen (konvergenz_bericht, Trockenlauf, Teile neu exportiert):
+| | vorher | nachher |
 |---|---|---|
-| Wolkenbeleg | 0,632 | 0,691 |
-| Fotokanten Recall | 0,484 | 0,480 |
-| Fotokanten Praezision | 0,403 | 0,540 |
-| Mittel Beleg/F1 | 0,536 | 0,600 (+0,064) |
-Gate (>= +0,05, nichts > 0,02 gefallen): erfuellt. Bestehende gesims_front_z14_35/55/78 gruen (Sollwerte unveraendert). Neue rote Vorher-Pruefung NICHT moeglich: Pruefstand misst das Gesamtmodell, die Endkuerzung liegt im Helm (union-neutral, trimesh.contains: West 0,096 m3 und Ost 14,8-16,3 0,153 m3 zu 100 % im Helm). `tools/bauen_abnehmen.sh`: alle Pruefungen bestanden. Werkzeuge nicht geaendert, daher regression.py nicht noetig.
+| Beleg | 0,224 | 0,377 |
+| Median-Abstand | 0,383 m | 0,304 m |
+| Kanten-Recall | 0,336 | 0,417 |
+| Kanten-Präzision | 0,025 | 0,023 |
+| Kanten-F1 | 0,047 | 0,044 |
+| Güte (Mittel Beleg, F1) | 0,135 | 0,210 |
+Gate +0,075 bei geforderten +0,05; keine Größe fällt > 0,02 (F1 −0,003). Aus den Zahlen selbst gerechnet. Die Kreis-Schleife kann anders messen (Rauschen ±0,01).
+Beleg-Gewinn kommt aus Verschiebung und Neigung zusammen (u 16,05 ohne Neigung nur 0,292; Neigung allein bei 15,85 senkt auf 0,12–0,16). Gewählt wurde nicht das Beleg-Maximum, sondern der aus der Kappenfirst-Messung abgeleitete Wert (Scan 15,95–16,15 liegt im Plateau).
 
-## 4. Overlays
-modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis2_gesims_{vorher,nachher}_{ip_IMG_6161,ip_IMG_6145,an_handy_2026-11-06_handy_18,an_handy_2026-11-06_b_handy_b_03,ip_IMG_6115}.jpg
+## 4. Overlays (rot = neu, cyan = Altstand)
+- audit/gitter_generator/rundekreis_ost1_staffelgiebel_ost_6115.jpg
+- audit/gitter_generator/rundekreis_ost1_staffelgiebel_ost_6261.jpg
+- audit/gitter_generator/rundekreis_ost1_staffelgiebel_ost_6164.jpg
+- audit/gitter_generator/rundekreis_ost1_staffelgiebel_ost_6259.jpg (erzeugt, nicht beurteilt)
+- Messprotokolle M-6115-009/010 (Fensterfaschen), M-6115-011/012 (falsche Zuordnung, nicht verwenden)
 
 ## 5. Fehlerliste
-- Enden im Helm (West -7,8, Ost 14,8): trifft (6161, 6115 selbst angesehen).
-- Oberkante/Lippe, Schraege: trifft in 6161, 6145.
-- Unterkante: ungefaehr (+-0,05 m); Widerspruch Foto-Messung 14,33-14,36 gegen Gitter 14,40-14,45 offen, nicht gemittelt.
-- Stummel u 16,3-17,15 (ausserhalb Helm, 0,057 m3) entfernt = ANNAHME, nicht von Osten geprueft.
-- Rinnenrundung, Wasserspeier, Dachgitter nicht modelliert. teile_lage_pruefen: Gesims Median 0,08 m. fehlteile: kein Treffer am Gesims. teile_sichtpruefung nicht gelaufen. freiraum_audit-Fehler (fehlende SFM-AUSRICHTUNG-buendig.json) Altfehler.
+- **Linke Flanke (Rückflanke) Stufenkontur 6261/6164:** trifft besser als vorher (Stufenecken ±10–20 px).
+- **Rechte Flanke (Vorderflanke) 6115:** trifft teilweise; Stufenecken ±25–30 px (0,2–0,3 m) neben den Fotokäppchen, Altstand lag rechts, neu liegt links daneben.
+- **Wandebene u(n):** trifft nach Wolke und Fensterfaschen; Fensterfaschen nur ±0,23 m.
+- **Kappe mittig auf der Mauerkrone:** ungeprüft (ANNAHME).
+- **Käppchen/Dächlein, Fenster in der Wand:** trifft nicht (fehlen).
+- **Rückflanke Spiegel, Hinterseite:** ungeprüft.
+- **Kanten-Präzision:** nicht gelöst (0,023), das Kantengitter hat an den Stufenecken keine Segmente.
+- **`teile_lage_pruefen`:** Median 1,95 m über die ganze Scheibe inklusive verdeckter Teile, nicht aussagekräftig. Ungeprüft.
+- **Nicht gelaufen:** `foto_diff`, `teile_sichtpruefung`; `fehlteile_finden` nur im Rahmen von `bauen_abnehmen`.
+- **Westgiebel:** vermutlich dieselbe Neigung, nicht angefasst.
 
-## 6. Geaenderte Dateien
-modelle/kaufhaus_grob3/objekt.json (gesims u0/u1/z0/profil, werte_quellen, historie), masstabelle.json (beobachtungen_offen), modelle/NICHTS_GEBRACHT.md, REZEPT_GEBAEUDE_AUS_FOTOS.md (L-GS5), automatisch neu gebaute STL/audit-Dateien, Overlays. Nichts committet.
+## 6. Geänderte Dateien
+tools/baukasten_gen.py (`staffelgiebel`: u_neigung/n_ref), modelle/kaufhaus_grob3/objekt.json, masstabelle.json (3 Prüfungen neu/geändert, Messorte, 1 Beobachtung), messprotokoll M-6115-009..012, audit/gitter_generator/rundekreis_ost1_*, modelle/LOGBUCH_GIEBEL_OST_R1_2026-11-10.md, REZEPT_GEBAEUDE_AUS_FOTOS.md (L-KR17..19), NICHTS_GEBRACHT.md; vom Bau neu erzeugt: STL, elemente.json, MASSNACHWEIS.md, Audit-Dateien.
 
 ## 7. Generalisierte Lehre
-Lehre | Anlass | Werkzeug: Enden, die vollstaendig in einem Nachbarkoerper liegen, per Containment-Test kuerzen (druckneutral) | quader:gesims +0,064 | trimesh.contains + konvergenz_bericht.
+| Lehre | Anlass | Werkzeug |
+|---|---|---|
+| Wandebene als Gerade u(n) regressieren und gegen Wolke je n-Streifen legen, bevor die Form angefasst wird (L-KR17) | Ostgiebel Beleg 0,22, Neigung −0,06 m/m | baukasten_gen `u_neigung`, foto_mass |
+| Kappenfirst liegt mittig, Aussenfläche +dicke/2; zweite Quelle zur Gegenprobe (L-KR18) | u 15,85 → 16,05 | Regression + Wolke + Fensterfaschen |
+| Strahlabstand < 0,05 m beweist die Zuordnung, ~1 m = falsches Element (L-KR19) | M-6115-011/012 | foto_mass --tri |

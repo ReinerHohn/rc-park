@@ -171,17 +171,17 @@
   },
   "giebel_o_rueck": {
    "typ": "max_z_im_bereich",
-   "x0": 13.86,
-   "x1": 14.16,
-   "y0": -6.809,
-   "y1": -6.509
+   "x0": 14.662,
+   "x1": 14.962,
+   "y0": -7.093,
+   "y1": -6.793
   },
   "giebel_o_vorn": {
    "typ": "max_z_im_bereich",
-   "x0": 16.898,
-   "x1": 17.198,
-   "y0": 1.769,
-   "y1": 2.069
+   "x0": 17.185,
+   "x1": 17.485,
+   "y0": 1.667,
+   "y1": 1.967
   },
   "tuer_b3": {
    "typ": "ebene_oeffnungen",
@@ -1195,24 +1195,24 @@
   },
   "giebel_o_top_b2": {
    "typ": "max_z_im_bereich",
-   "x0": 15.926,
-   "x1": 16.166,
-   "y0": -1.029,
-   "y1": -0.789
+   "x0": 16.384,
+   "x1": 16.624,
+   "y0": -1.191,
+   "y1": -0.951
   },
   "giebel_o_top_b4": {
    "typ": "max_z_im_bereich",
-   "x0": 16.594,
-   "x1": 16.834,
-   "y0": 0.856,
-   "y1": 1.096
+   "x0": 16.938,
+   "x1": 17.178,
+   "y0": 0.735,
+   "y1": 0.975
   },
   "giebel_o_top_b8": {
    "typ": "max_z_im_bereich",
-   "x0": 17.929,
-   "x1": 18.169,
-   "y0": 4.627,
-   "y1": 4.867
+   "x0": 18.047,
+   "x1": 18.287,
+   "y0": 4.585,
+   "y1": 4.825
   },
   "giebel_o_vorn_n": {
    "typ": "schnitt_reichweite",
@@ -1425,6 +1425,20 @@
    ],
    "quer_max": 0.2,
    "r_max": 3.0
+  },
+  "giebel_o_u_reach_n10": {
+   "typ": "schnitt_reichweite",
+   "z": "=18.9 - z_unterkante_lot2",
+   "zentrum": [
+    15.759,
+    5.558
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.3,
+   "r_max": 6.0
   }
  },
  "pruefungen": [
@@ -2707,24 +2721,58 @@
    "protokoll": "audit/fehlteile_6261.json",
    "historie": [
     "2026-11-09 angelegt (Agent Runde 3); schlaegt am Modell Runde 2 fehl (Rueckseite nur Dach)",
-    "2026-11-10 Kreis1 fk_+16_+0_+26: Messorte giebel_o_rueck/vorn folgen der gemessenen Giebelebene (u 15,43 statt 16,85; n -1,6/7,5 spiegelsymmetrisch zur Mitte 2,95; alt {\"giebel_o_rueck\": {\"x0\": 15.225999999999999, \"x1\": 15.526, \"y0\": -7.203, \"y1\": -6.903}, \"giebel_o_vorn\": {\"x0\": 18.272000000000002, \"x1\": 18.572, \"y0\": 1.372, \"y1\": 1.672}}); Soll unveraendert 0,97-1.03"
+    "2026-11-10 Kreis1 fk_+16_+0_+26: Messorte giebel_o_rueck/vorn folgen der gemessenen Giebelebene (u 15,43 statt 16,85; n -1,6/7,5 spiegelsymmetrisch zur Mitte 2,95; alt {\"giebel_o_rueck\": {\"x0\": 15.225999999999999, \"x1\": 15.526, \"y0\": -7.203, \"y1\": -6.903}, \"giebel_o_vorn\": {\"x0\": 18.272000000000002, \"x1\": 18.572, \"y0\": 1.372, \"y1\": 1.672}}); Soll unveraendert 0,97-1.03",
+    "2026-11-10 Kreis-Ost r1 (staffelgiebel:ost): Messort folgt der Scheibenmitte bei Wandneigung (u_neigung -0,06 je m n, Bezug n 7,5); gleiche n, gleiche Soll-Hoehe, alt {\"giebel_o_top_b2\": {\"typ\": \"max_z_im_bereich\", \"x0\": 15.926, \"x1\": 16.166, \"y0\": -1.029, \"y1\": -0.789}, \"giebel_o_top_b4\": {\"typ\": \"max_z_im_bereich\", \"x0\": 16.594, \"x1\": 16.834, \"y0\": 0.856, \"y1\": 1.096}, \"giebel_o_top_b8\": {\"typ\": \"max_z_im_bereich\", \"x0\": 17.929, \"x1\": 18.169, \"y0\": 4.627, \"y1\": 4.867}, \"giebel_o_rueck\": {\"typ\": \"max_z_im_bereich\", \"x0\": 13.86, \"x1\": 14.16, \"y0\": -6.809, \"y1\": -6.509}, \"giebel_o_vorn\": {\"typ\": \"max_z_im_bereich\", \"x0\": 16.898, \"x1\": 17.198, \"y0\": 1.769, \"y1\": 2.069}}"
    ]
   },
   {
    "name": "Ostgiebel Aussenebene u (m) = Achse n 0,3338/0,9426, Kappenhoehe z 28,3 (nur Giebel, n 3,45)",
    "wert": "giebel_o_u_reach + 13.0",
    "soll": [
-    15.55,
-    15.95
+    16.15,
+    16.5
    ],
-   "quelle": "Triangulation der 8 Stufenspitzen M-6115-001..008: u 16,02/15,92/15,81/15,81/15,70/15,64/15,61/15,59 (Mittel 15,77, Strahlabstand <= 0,03 m); unabhaengig Kantengitter v12: Ebenenmaximum der in-Ebenen-Segmente u 15,5-15,75 (30 von 123 Segmenten z>14); Alt-Modell u_aussen 17,15 = rohkoerper 'plus UNSICHER'. Triangulation Foto-Paar K-6115 (Ost, u 26,7 n 25,7) + K-6257 (West, u -11,0 n 33,3), Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m, Gegenprobe in Foto 6145 (Projektion von M-6115-001..008 trifft die 8 Stufenspitzen, audit/gitter_generator/rundekreis1_giebel_ost_*)",
+   "quelle": "Kappenfirst-Linie aus M-6115-001..008: Regression u = 15,759 - 0,0609*(n-7,5) (Reststreuung 0,032 m, n 4..11), bei n 3,45 u 16,005; Aussenebene = Kappenfirst + dicke/2 (0,315) = 16,32 (ANNAHME: Kappenfirst liegt in der Wandmitte der Scheibe, Kappe sitzt mittig auf der Mauerkrone); unabhaengig bestaetigt: Wolke j_voll_lot2 Wandebene u(n 3,5..4,5, z 15..22) 16,38..16,48 und M-6115-009/010 (Fensterfaschen-Ecken, 3-Foto-Triangulation K-6115/K-6261/K-6164) u 16,23/16,41 bei n 4,85/4,01 (+-0,23). Soll 16,32 +-0,17 (Streuung+Annahme).",
    "quelltyp": "sfm_bodenanker",
    "merkmal": "grundriss",
    "massstab": "sfm_buendel",
    "protokoll": "M-6115-001",
    "historie": [
     "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen",
-    "2026-11-10 Modellwert u_aussen 15,85 (Soll 15,55-15,95 unveraendert)"
+    "2026-11-10 Modellwert u_aussen 15,85 (Soll 15,55-15,95 unveraendert)",
+    "2026-11-10 Kreis-Ost r1: Soll 15,55-15,95 -> 16,15-16,50 mit NEUER Quelle (Kappenfirst-Regression + dicke/2, Wolke, M-6115-009/010); alte Soll verglich die Aussenebene mit der Kappenfirst-Mitte ohne Wandhaelfte. Altstand (u_aussen 15,85) bleibt rot."
+   ]
+  },
+  {
+   "name": "Ostgiebel Aussenebene u (m) bei n 10,5 (Kappenhoehe z 18,9, nur Giebel)",
+   "wert": "giebel_o_u_reach_n10 + 13.0",
+   "soll": [
+    15.72,
+    16.07
+   ],
+   "quelle": "Kappenfirst-Regression M-6115-001..008: u(10,5) = 15,576 + dicke/2 0,315 = 15,89 (Streuung 0,03, ANNAHME Kappe mittig); Wolke j_voll_lot2 u(n 9..11, z 15..22) 15,83..15,88",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6115-001",
+   "historie": [
+    "2026-11-10 Kreis-Ost r1 angelegt (Gegenstueck zur Messung bei n 3,45)"
+   ]
+  },
+  {
+   "name": "Ostgiebel Wandneigung: Aussenebene u(n 3,45) - u(n 10,5) (m)",
+   "wert": "giebel_o_u_reach - giebel_o_u_reach_n10",
+   "soll": [
+    0.28,
+    0.58
+   ],
+   "quelle": "Steigung der Kappenfirst-Linie M-6115-001..008: -0,0609 m je m n (Reststreuung 0,032 m, 8 Spitzen, Strahlabstand <= 0,03 m) x 7,05 m = 0,43; Wolke-Wandebene Steigung -0,083 (z 15..22) gleiches Vorzeichen; Soll 0,43 +-0,15. Altstand (Scheibe parallel zur Achse) = 0",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6115-001",
+   "historie": [
+    "2026-11-10 Kreis-Ost r1 angelegt: am Altstand muss sie rot sein (Neigung 0)"
    ]
   },
   {
@@ -2740,7 +2788,8 @@
    "massstab": "sfm_buendel",
    "protokoll": "M-6115-002",
    "historie": [
-    "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen"
+    "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen",
+    "2026-11-10 Kreis-Ost r1 (staffelgiebel:ost): Messort folgt der Scheibenmitte bei Wandneigung (u_neigung -0,06 je m n, Bezug n 7,5); gleiche n, gleiche Soll-Hoehe, alt {\"giebel_o_top_b2\": {\"typ\": \"max_z_im_bereich\", \"x0\": 15.926, \"x1\": 16.166, \"y0\": -1.029, \"y1\": -0.789}, \"giebel_o_top_b4\": {\"typ\": \"max_z_im_bereich\", \"x0\": 16.594, \"x1\": 16.834, \"y0\": 0.856, \"y1\": 1.096}, \"giebel_o_top_b8\": {\"typ\": \"max_z_im_bereich\", \"x0\": 17.929, \"x1\": 18.169, \"y0\": 4.627, \"y1\": 4.867}, \"giebel_o_rueck\": {\"typ\": \"max_z_im_bereich\", \"x0\": 13.86, \"x1\": 14.16, \"y0\": -6.809, \"y1\": -6.509}, \"giebel_o_vorn\": {\"typ\": \"max_z_im_bereich\", \"x0\": 16.898, \"x1\": 17.198, \"y0\": 1.769, \"y1\": 2.069}}"
    ]
   },
   {
@@ -2756,7 +2805,8 @@
    "massstab": "sfm_buendel",
    "protokoll": "M-6115-004",
    "historie": [
-    "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen"
+    "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen",
+    "2026-11-10 Kreis-Ost r1 (staffelgiebel:ost): Messort folgt der Scheibenmitte bei Wandneigung (u_neigung -0,06 je m n, Bezug n 7,5); gleiche n, gleiche Soll-Hoehe, alt {\"giebel_o_top_b2\": {\"typ\": \"max_z_im_bereich\", \"x0\": 15.926, \"x1\": 16.166, \"y0\": -1.029, \"y1\": -0.789}, \"giebel_o_top_b4\": {\"typ\": \"max_z_im_bereich\", \"x0\": 16.594, \"x1\": 16.834, \"y0\": 0.856, \"y1\": 1.096}, \"giebel_o_top_b8\": {\"typ\": \"max_z_im_bereich\", \"x0\": 17.929, \"x1\": 18.169, \"y0\": 4.627, \"y1\": 4.867}, \"giebel_o_rueck\": {\"typ\": \"max_z_im_bereich\", \"x0\": 13.86, \"x1\": 14.16, \"y0\": -6.809, \"y1\": -6.509}, \"giebel_o_vorn\": {\"typ\": \"max_z_im_bereich\", \"x0\": 16.898, \"x1\": 17.198, \"y0\": 1.769, \"y1\": 2.069}}"
    ]
   },
   {
@@ -2772,7 +2822,8 @@
    "massstab": "sfm_buendel",
    "protokoll": "M-6115-008",
    "historie": [
-    "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen"
+    "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen",
+    "2026-11-10 Kreis-Ost r1 (staffelgiebel:ost): Messort folgt der Scheibenmitte bei Wandneigung (u_neigung -0,06 je m n, Bezug n 7,5); gleiche n, gleiche Soll-Hoehe, alt {\"giebel_o_top_b2\": {\"typ\": \"max_z_im_bereich\", \"x0\": 15.926, \"x1\": 16.166, \"y0\": -1.029, \"y1\": -0.789}, \"giebel_o_top_b4\": {\"typ\": \"max_z_im_bereich\", \"x0\": 16.594, \"x1\": 16.834, \"y0\": 0.856, \"y1\": 1.096}, \"giebel_o_top_b8\": {\"typ\": \"max_z_im_bereich\", \"x0\": 17.929, \"x1\": 18.169, \"y0\": 4.627, \"y1\": 4.867}, \"giebel_o_rueck\": {\"typ\": \"max_z_im_bereich\", \"x0\": 13.86, \"x1\": 14.16, \"y0\": -6.809, \"y1\": -6.509}, \"giebel_o_vorn\": {\"typ\": \"max_z_im_bereich\", \"x0\": 16.898, \"x1\": 17.198, \"y0\": 1.769, \"y1\": 2.069}}"
    ]
   },
   {
@@ -3448,6 +3499,64 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.18 m, y=-2.09 m (Zelle [546, 1170, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "text": "Ostgiebel staffelgiebel:ost: Wandebene gegen die Fassadenachse gedreht (u faellt um 0,06 m je m n, Kappenfirst-Regression M-6115-001..008, Wolke -0,083); Scheibe war parallel (u_neigung 0), Beleg 0,22, Wolkenebene bei n 3..5 0,4 m ausserhalb. Aussenebene = Kappenfirst + dicke/2 (ANNAHME Kappe mittig), Wolke u(7,5) 16,06 stuetzt. Pruefungen 'Ostgiebel Aussenebene u (n 3,45 / 10,5)' und 'Wandneigung'.",
+   "quelle": "M-6115-001..008, M-6115-009/010, Wolke j_voll_lot2",
+   "wer": "Kreis-Ost r1 (Agent)",
+   "naechster_schritt": "Pruefungen 'Ostgiebel Aussenebene u (n 3,45 / 10,5)' und 'Wandneigung' (angelegt, am Altstand rot); offen: Kappe mittig (ANNAHME) per Querschnittsfoto belegen, Hinterflanke (Spiegel) ungeprueft"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 2)",
+   "auto_id": "fehlteile-6261-234-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.56,
+   "z_bis": 18.56,
+   "xyz": [
+    14.33,
+    -8.89,
+    18.56
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.56 m, y=-8.89 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "auto_id": "fehlteile-6261-234-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.41,
+   "z_bis": 17.41,
+   "xyz": [
+    14.29,
+    -8.9,
+    17.41
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.41 m, y=-8.9 m (Zelle [234, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
+   "auto_id": "fehlteile-6261-312-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.08,
+   "z_bis": 17.08,
+   "xyz": [
+    14.54,
+    -7.16,
+    17.08
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
