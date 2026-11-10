@@ -306,6 +306,17 @@ class Messer:
         loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
         if not len(ir): return float("nan")
         return float(np.percentile((loc[:, :2] - org[ir, :2]) @ (-n), quantil) - vor)
+    def ebene_ende(self, o, n, z, u0, u1, vor=3.0, schritt=0.02, tol=0.10, ende="min", **k):
+        """Seitliches Ende einer Wandflaeche in einer Ebene (o, n, u wie ebene_abstand): Strahlen ab `vor` m vor der Ebene entlang -n; Treffer, die
+        hoechstens `tol` hinter/vor der Ebene liegen, gelten als Flaeche in der Ebene. Rueckgabe = kleinstes (ende='min') bzw. groesstes ('max') u
+        dieser Treffer (nan ohne Treffer). Prueft Ueberstaende eines Wandstuecks ueber das Gebaeudeende, ohne etwas zu zaehlen."""
+        o = np.array(o, float); n = np.array(n, float); n = n / np.linalg.norm(n); d = np.array([-n[1], n[0]])
+        us = np.arange(u0, u1 + 1e-6, schritt); org = np.zeros((len(us), 3)); org[:, :2] = o + vor * n + us[:, None] * d; org[:, 2] = z
+        dr = np.zeros_like(org); dr[:, :2] = -n
+        loc, ir, _ = self.m.ray.intersects_location(org, dr, multiple_hits=False)
+        if not len(ir): return float("nan")
+        ab = (loc[:, :2] - org[ir, :2]) @ (-n) - vor; ok = np.abs(ab) <= tol
+        return float(us[ir[ok]].min() if ende == "min" else us[ir[ok]].max()) if ok.any() else float("nan")
     def ebene_vorspruenge(self, o, n, z, u0, u1, hoehe_min=0.3, vor=3.0, schritt=0.02, min_b=0.1, max_b=1.5, **k):
         """Zaehlt VORSPRUENGE (Konsolen, Lisenen, Pfosten) vor einer beliebigen Fassadenebene (o = Punkt xy, n = Aussennormale xy, Modellkoordinaten; u entlang
         d = (-n_y, n_x); z ueber Boden im Pruefstandrahmen): Strahlen ab `vor` m vor der Ebene entlang -n; Grund = p90 der Trefferabstaende (hinterste haeufige Flaeche);

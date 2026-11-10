@@ -1,0 +1,32 @@
+{
+ "id": "M-6124-021",
+ "foto": "6124",
+ "kamera": "K-6124",
+ "ebene": "0.33472,0.94232,0=7.28",
+ "name": "Laubenrueckwand Westende: Kante Wandflaeche/Eckpfeiler (Stufe), 2 Hoehen",
+ "mess_px": [
+  1632.0,
+  3300.0,
+  1632.0,
+  3600.0
+ ],
+ "P1": [
+  -5.92,
+  9.829,
+  3.484
+ ],
+ "P2": [
+  -5.891,
+  9.818,
+  2.461
+ ],
+ "dz": -1.023,
+ "dy": -0.01,
+ "dx": 0.029,
+ "abstand": 1.024,
+ "z1": 3.484,
+ "z2": 2.461,
+ "unsicherheit_rel": 0.0079,
+ "unsicherheit_m": 0.025,
+ "massstab_von": "Kamera K-6124 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33472,0.94232,0=7.28 (+-0.1 m)"
+}
