@@ -3769,6 +3769,20 @@
    "naechster_schritt": "Schnitt quer durch die Laibung: Triangulation derselben Steg-/Glaskante in 3 Fotos mit >= 60 Grad Schnittwinkel (6117/6120/6145), Seitenansicht Laibung am Erker-Fenster-Nahfoto (Handyserie) holen"
   },
   {
+   "datum": "2026-11-10",
+   "wer": "Koordinator nach Pruefer a062358 r1 (fensterreihe:og)",
+   "merkmal": "OG-Fenster Unterkante",
+   "text": "unterseite_z 10,31 nicht fotokonsistent: in 6120/6132/6117 ragt das Modell 40-80 px unter die Sohle aufs Gesims, in 6161 endet es ~60 px ueber der Lichtunterkante (Widerspruch zwischen Fotos -> Kamera oder Sohlhoehe je Gruppe).",
+   "naechster_schritt": "Sohle je Fenstergruppe per foto_mass Strahl gegen Fassadenebene in 6120/6132/6161 messen; Gruppen 1/2/5 einzeln pruefen (bisher nur Pitch)."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Koordinator nach Pruefer a062358 r1 (fensterreihe:og)",
+   "merkmal": "OG-Fenster Glastiefe",
+   "text": "Glastiefe 0,20 m ist Mittel aus Foto 0,06-0,10 und Wolke 0,27 (Regel 5: nicht mitteln). Rahmentiefe 0,05 ANNAHME, M-6120-057 widerspricht.",
+   "naechster_schritt": "Wolkentiefe in der Laibung gegen Spiegelungen/Fehlpunkte pruefen (Glas = Wolke unzuverlaessig); Fototiefe aus Schraegsicht 6117 per Strahl-Schnitt; dann eine Quelle waehlen mit Begruendung."
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
    "auto_id": "fehlteile-6261-234-1794",
