@@ -91,13 +91,14 @@ def protokoll(z):
     z["zeit"] = time.strftime("%Y-%m-%d %H:%M:%S")
     with open(PROT, "a") as f: f.write(json.dumps(z, ensure_ascii=False) + "\n")
 
-def messen(wt, tag):
-    """Bauteile exportieren (baut neu) und Konvergenz messen; liefert (exitcode, letzte konvergenz-zeile)."""
+def messen(wt, tag, regionen=None):
+    """Bauteile exportieren (baut neu) und Konvergenz messen; liefert (exitcode, letzte konvergenz-zeile).
+    regionen: JSON-Datei [{id, lo, hi}] -> Recall der Fotokanten je Kasten (Zielart Fehlteil)."""
     tdir = os.path.join(LDIR, f"teile_{tag}"); os.makedirs(tdir, exist_ok=True)
     gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
     rc, _ = sh_tor(gen, wt, log=os.path.join(LDIR, f"export_{tag}.log"), env={"BAUTEILE_AUS": tdir})
     rc2, out = sh_tor([PY, "-W", "ignore", "-I", "tools/konvergenz_bericht.py", OBJ, "--stl", STL, "--skala", str(SK), "--gitter", GIT,
-                   "--wolke", WOLKE, "--teile_dir", tdir, "--kameras", KAM, "--etikett", f"kreis {LAUF} {tag}"] + (["--trocken"] if TROCKEN else []),
+                   "--wolke", WOLKE, "--teile_dir", tdir, "--kameras", KAM, "--etikett", f"kreis {LAUF} {tag}"] + (["--regionen", regionen] if regionen else []) + (["--trocken"] if TROCKEN else []),
                   wt, log=os.path.join(LDIR, f"konvergenz_{tag}.log"))
     kf = os.path.join(wt, "modelle", OBJ, "konvergenz.jsonl")
     z = json.loads([l for l in open(kf) if l.strip()][-1]) if (os.path.exists(kf) and not TROCKEN) else None
@@ -129,12 +130,30 @@ def fehlversuche_global():
     return n
 
 MAX_GLOBAL = int(opt("--max_global", 3))
+# Zielart Fehlteil (10.11.): Fotokanten-Cluster ohne Modellflaeche (konvergenz_bericht Abschnitt 8) = fehlendes Element
+# (Ost-Staffelgiebel, Dachgitter, Pfeiler-Daechlein wurden nie Ziel, weil der Kreis nur vorhandene Teile verbessert).
+FEHL_PKT = opt("--fehl_pkt", 300, int); FEHL_RECALL_MAX = opt("--fehl_recall_max", 0.5, float)
+MIN_REGION = opt("--min_region", 0.25, float); MIN_PRAEZ_NEU = opt("--min_praez_neu", 0.25, float)
+
+def ist_fehlteil(ziel): return (ziel or {}).get("art") == "fehlteil"
 
 def waehlen(z, sperre):
     fg = fehlversuche_global()
+    belegt_fam = {f.split("__")[0] for f in os.listdir(BELEGT)}
+    # zuerst fehlende Elemente (groesster sichtbarer Fehler), groesster Cluster zuerst
+    fk = [dict(f, teil=f["id"] + "__neu", art="fehlteil", beleg=None) for f in (z or {}).get("fehlkanten") or []
+          if f["pkt"] >= FEHL_PKT and (f.get("recall_kasten") is not None and f["recall_kasten"] <= FEHL_RECALL_MAX)]
+    fk = [f for f in fk if sperre.get(f["teil"], 0) < MAX_FEHL and fg.get(f["teil"], 0) < MAX_GLOBAL and f["id"] not in belegt_fam]
+    fk.sort(key=lambda f: -f["pkt"])
+    for t in fk:
+        try:
+            fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
+            return t
+        except FileExistsError:
+            continue
     kand = [t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["beleg"] is not None and t["anteil_mit_daten"] >= MIN_DATEN
             and sperre.get(t["teil"], 0) < MAX_FEHL and fg.get(t["teil"], 0) < MAX_GLOBAL and not os.path.exists(os.path.join(BELEGT, t["teil"]))
-            and t["teil"].split("__")[0] not in {f.split("__")[0] for f in os.listdir(BELEGT)}]   # gleiche Formfamilie (gleicher Generatorcode) nie parallel
+            and t["teil"].split("__")[0] not in belegt_fam]   # gleiche Formfamilie (gleicher Generatorcode) nie parallel
     kand.sort(key=lambda t: guete(t))
     for t in kand:   # atomar belegen (O_EXCL), damit zwei Spuren nie dasselbe Teil nehmen
         try:
@@ -171,7 +190,18 @@ def auftrag(ziel, runde, wt):
     m = re.search(r"## Auftragstext.*?\n(.*?)\n---\n", v, re.S)
     txt = m.group(1)
     typ = ziel["teil"].replace("__", ":")
-    befund = (f"Automatisch aus konvergenz_bericht (Wolkenbeleg je Bauteil): {typ} hat nur {ziel['beleg']:.2f} seiner datennahen "
+    if ist_fehlteil(ziel):
+        typ = f"FEHLENDES ELEMENT bei {ziel['id']} (Zentrum {ziel['zentrum']} m, Modellrahmen)"
+        befund = (f"Automatisch aus konvergenz_bericht (Abschnitt 8 Fehlkanten): Im Kasten {ziel['lo']} .. {ziel['hi']} (Modellrahmen, m) liegen "
+                  f"{ziel['pkt']} Punkte des Kantengitters (Fotokanten aus mehreren Fotos), die keine Modellflaeche naeher als 0,3 m haben; "
+                  f"Recall der Fotokanten im Kasten nur {ziel['recall_kasten']}. Dort fehlt sehr wahrscheinlich ein Bauteil (oder ein vorhandenes ist "
+                  f"an der falschen Stelle). Stufe 0: Stelle in >= 3 Fotos finden (Kasten in die kalibrierten Fotos projizieren), Element benennen und "
+                  f"Formfamilie festlegen; dann als NEUES Bauteil mit beleg()/Quelle im Generator bauen (oder vorhandenes Teil dorthin korrigieren). "
+                  f"Gate: Recall im Kasten muss um >= {MIN_REGION} steigen, jedes neue Teil Kanten-Praezision >= {MIN_PRAEZ_NEU} "
+                  f"(keine erfundenen Kanten), kein vorhandenes Teil darf in der Guete um > 0,02 fallen, Gesamt-Recall darf nicht sinken. "
+                  f"Wenn die Fotos dort NICHTS zeigen (Gitterfehler, Hintergrund), das als Befund berichten und nichts bauen.")
+    else:
+        befund = (f"Automatisch aus konvergenz_bericht (Wolkenbeleg je Bauteil): {typ} hat nur {ziel['beleg']:.2f} seiner datennahen "
               f"Flaeche auf der Wolke (Median-Abstand {ziel['median_m']:.2f} m, Anteil mit Daten {ziel['anteil_mit_daten']:.2f}). "
               f"Fotokanten (Kantengitter aus Fotos) je Teil: Recall {ziel.get('kanten_recall')} (Anteil der Fotokanten am Teil, die das Modell erklaert), "
               f"Praezision {ziel.get('kanten_praez')} (Anteil der Teil-Formkanten, die ein Foto belegt). Gate: Mittel aus Beleg und Kanten-F1 muss um >= {MIN_GEWINN} steigen, "
@@ -190,7 +220,7 @@ def auftrag(ziel, runde, wt):
 
 def pruefer_urteil(wt, ziel, runde):
     p = (f"Du bist der Pruefer nach modelle/VORLAGE_BAUTEIL_RUNDE.md (Abschnitt Pruefer-Checkliste) im Worktree {wt}, Objekt {OBJ}, "
-         f"Bauteil {ziel['teil'].replace('__', ':')}. Lies {wt}/modelle/{OBJ}/audit/kreis_bericht.md, sieh dir JEDES dort genannte Overlay "
+         f"Bauteil {ziel['teil'].replace('__', ':')}" + (f" (FEHLENDES ELEMENT im Kasten {ziel['lo']} .. {ziel['hi']} m: neues Teil muss dort echte Fotokanten treffen, nichts erfunden)" if ist_fehlteil(ziel) else "") + f". Lies {wt}/modelle/{OBJ}/audit/kreis_bericht.md, sieh dir JEDES dort genannte Overlay "
          f"und {wt}/modelle/{OBJ}/audit/seiten.jpg selbst an. Pruefe: Formbeschreibung vollstaendig und passend zu den Fotos? Trifft das Teil "
          "die Fotos besser als vorher? Neue Fehler an anderen Teilen? Nichts schoenreden, Agenten-'ok' nie uebernehmen. Aendere KEINE Dateien. "
          'Letzte Zeile deiner Antwort GENAU: URTEIL {"annehmen": true|false, "fehlerliste": ["..."]}')
@@ -241,7 +271,7 @@ for runde in range(1, RUNDEN + 1):
             if not z0: sys.exit("Nachpruefen: Basis-Messung fehlgeschlagen")
     elif TROCKEN:
         # Trockenlauf baut nichts (main bleibt unberuehrt): letzte gespeicherte Konvergenz-Zeile
-        kf = os.path.join(ROOT, "modelle", OBJ, "konvergenz.jsonl")
+        kf = opt("--z0", os.path.join(ROOT, "modelle", OBJ, "konvergenz.jsonl"))   # --z0: Zeile aus konvergenz_bericht --json_aus
         z0 = json.loads([l for l in open(kf) if l.strip()][-1])
     else:
         # Wiederverwendung (verlustfrei): letzte Konvergenz-Zeile gilt, wenn ihr STL-Hash dem STL dieses Stands gleicht und sie den Wolkenbeleg traegt
@@ -251,7 +281,7 @@ for runde in range(1, RUNDEN + 1):
             sha = hashlib.sha256(open(sp, "rb").read()).hexdigest()[:16]
             for l in reversed([l for l in open(kf) if l.strip()]):
                 zz = json.loads(l)
-                if zz.get("stl_sha") == sha and zz.get("wolkenbeleg_teile") and "kanten_recall" in zz["wolkenbeleg_teile"][0]:   # gleiche Messart (Sichtpruefung + Fotokanten je Teil)
+                if zz.get("stl_sha") == sha and zz.get("wolkenbeleg_teile") and "kanten_recall" in zz["wolkenbeleg_teile"][0] and "fehlkanten" in zz:   # gleiche Messart (Sichtpruefung + Fotokanten je Teil)
                     z0 = zz; print(f"Runde {runde}: Messung vorher wiederverwendet (STL {sha})"); break
         if z0 is None:
             rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
@@ -260,7 +290,7 @@ for runde in range(1, RUNDEN + 1):
         print("kein Kandidat mehr - Ende"); protokoll({"runde": runde, "ende": "kein Kandidat"}); break
     txt = auftrag(ziel, runde, wt)
     open(os.path.join(LDIR, f"auftrag_r{runde}.md"), "w").write(txt)
-    print(f"Runde {runde}: Ziel {ziel['teil']} (Wolkenbeleg {ziel['beleg']}) -> Auftrag {LDIR}/auftrag_r{runde}.md")
+    print(f"Runde {runde}: Ziel {ziel['teil']} ({'Fehlteil ' + str(ziel['pkt']) + ' Pkt, Recall Kasten ' + str(ziel['recall_kasten']) if ist_fehlteil(ziel) else 'Wolkenbeleg ' + str(ziel['beleg'])}) -> Auftrag {LDIR}/auftrag_r{runde}.md")
     if TROCKEN:
         freigeben(ziel["teil"]); protokoll({"runde": runde, "trocken": True, "ziel": ziel}); print(txt[:1500]); break
     t0 = time.time()
@@ -268,7 +298,10 @@ for runde in range(1, RUNDEN + 1):
                 log=os.path.join(LDIR, f"agent_r{runde}.log"), timeout=MAX_MIN * 60)
     rcB, outB = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"))
     tor_abnahme = rcB == 0 and "alle Pruefungen bestanden" in outB
-    rcK, z1, outK = messen(wt, f"r{runde}_nachher")
+    reg = None
+    if ist_fehlteil(ziel):
+        reg = os.path.join(LDIR, f"region_r{runde}.json"); json.dump([{"id": ziel["id"], "lo": ziel["lo"], "hi": ziel["hi"]}], open(reg, "w"))
+    rcK, z1, outK = messen(wt, f"r{runde}_nachher", regionen=reg)
     vor_t = {t["teil"]: t for t in z0.get("wolkenbeleg_teile") or []}; nach_t = {t["teil"]: t for t in (z1 or {}).get("wolkenbeleg_teile") or []}
     vor = {k: guete(v) for k, v in vor_t.items()}; nach = {k: guete(v) for k, v in nach_t.items()}
     ersatz = None
@@ -280,6 +313,16 @@ for runde in range(1, RUNDEN + 1):
     tv = vor_t.get(ziel["teil"], {}); tn = nach_t.get(ersatz or ziel["teil"], {})
     rueck_teil = [n for n, fv, fn in (("beleg", tv.get("beleg"), tn.get("beleg")), ("kanten_f1", f1(tv), f1(tn))) if fv is not None and fn is not None and fn < fv - 0.02]
     tor_konv = rcK == 0 and gewinn >= MIN_GEWINN and not rueck_teil
+    if ist_fehlteil(ziel):   # eigenes Tor: Recall im Kasten, neue Teile praezise, kein anderes Teil schlechter, Gesamt-Recall nicht kleiner
+        r_n = (((z1 or {}).get("regionen") or {}).get(ziel["id"]) or {}).get("recall")
+        gewinn = (r_n if r_n is not None else 0) - (ziel["recall_kasten"] or 0)
+        neu_t = [t for t in nach_t if t not in vor_t]
+        rueck_teil = [f"praez {t}={nach_t[t].get('kanten_praez')}" for t in neu_t if (nach_t[t].get("kanten_praez") or 0) < MIN_PRAEZ_NEU]
+        rueck_teil += [f"guete {t} {vor[t]:.3f}->{nach[t]:.3f}" for t in vor if vor.get(t) is not None and nach.get(t) is not None and nach[t] < vor[t] - 0.02]
+        rg0 = z0["kanten"]["gesamt"]["recall"]; rg1 = (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")
+        if rg1 is None or rg1 < rg0: rueck_teil.append(f"recall_gesamt {rg0}->{rg1}")
+        tor_konv = rcK == 0 and r_n is not None and gewinn >= MIN_REGION and not rueck_teil
+        vor[ziel["teil"]], nach[ziel["teil"]] = ziel["recall_kasten"], r_n
     if rueck_teil: print(f"Runde {runde}: Rueckschritt im Ziel-Teil: {rueck_teil}")
     urteil = pruefer_urteil(wt, ziel, runde) if (tor_abnahme and tor_konv) else {"annehmen": False, "fehlerliste": ["nicht geprueft: Vortor rot"]}
     angenommen = tor_abnahme and tor_konv and bool(urteil.get("annehmen"))

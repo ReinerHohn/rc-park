@@ -173,9 +173,35 @@ except Exception:
     git, dirty = "?", True
 import hashlib
 STL_SHA = hashlib.sha256(open(STL, "rb").read()).hexdigest()[:16]
+# 8. Fehlkanten (10.11.: fehlende Elemente - Ost-Staffelgiebel, Pfeiler-Daechlein, Dachgitter - wurden nie Ziel des Kreises):
+#    Gitterpunkte (Fotokanten) ohne Modellflaeche in < --fehl_ab m, innerhalb der Modellhuelle +1 m, zu 0,5-m-Voxel-Clustern (6er-Nachbarschaft) verbunden, Cluster >= --fehl_min Pkt;
+#    je Cluster recall_kasten = Recall aller Gitterpunkte im Kasten +-0,25 m (gleiche Definition wie --regionen, Vorher-Wert fuer den Kreis).
+#    Cluster-ID aus dem auf 2 m gerundeten Schwerpunkt (stabil ueber Laeufe). --regionen JSON [{id, lo, hi}]: Recall der Gitterpunkte je Kasten.
+from scipy import ndimage
+FEHL_AB = opt("--fehl_ab", 0.30, float); lo_m, hi_m = m.bounds[0] - 1.0, m.bounds[1] + 1.0
+inn = np.all((GP >= lo_m) & (GP <= hi_m), axis=1) & (GP[:, 2] >= m.bounds[0][2] + 0.3)
+U = GP[inn & (d_rec >= FEHL_AB)]; fehlkanten = []
+if len(U):
+    VX = opt("--fehl_voxel", 0.5, float); vi = np.floor((U - lo_m) / VX).astype(int); shp = vi.max(0) + 1; occ = np.zeros(shp, bool); occ[tuple(vi.T)] = True
+    lab, nl = ndimage.label(occ); li = lab[tuple(vi.T)]   # 6er-Nachbarschaft, 0,5-m-Voxel: trennt benachbarte Elemente (1 m/26er verband Fassade+Dach zu einem Cluster)
+    for k in range(1, nl + 1):
+        P_ = U[li == k]
+        if len(P_) < opt("--fehl_min", 200, int): continue
+        c = P_.mean(0); fid = "fk_" + "_".join(f"{v:+.0f}" for v in np.round(c / 2) * 2)
+        fehlkanten.append({"id": fid, "zentrum": [round(float(v), 2) for v in c], "lo": [round(float(v), 2) for v in P_.min(0)],
+                           "hi": [round(float(v), 2) for v in P_.max(0)], "pkt": int(len(P_))})
+    fehlkanten.sort(key=lambda f: -f["pkt"])
+def kasten_recall(lo, hi):
+    g = np.all((GP >= np.array(lo) - 0.25) & (GP <= np.array(hi) + 0.25), axis=1)
+    return {"pkt": int(g.sum()), "recall": round(float((d_rec[g] < TOL).mean()), 4) if g.sum() else None}
+for f_ in fehlkanten: f_["recall_kasten"] = kasten_recall(f_["lo"], f_["hi"])["recall"]
+regionen = {}
+if opt("--regionen") and os.path.exists(opt("--regionen")):
+    for r_ in json.load(open(opt("--regionen"))): regionen[r_["id"]] = kasten_recall(r_["lo"], r_["hi"])
+
 zeile = {"zeit": time.strftime("%Y-%m-%d %H:%M"), "git": git + ("+" if dirty else ""), "etikett": ETIKETT, "stl": STL, "stl_sha": STL_SHA, "skala": SK,
          "gitter": GIT, "tol_m": TOL, "min_kante_m": MINK, "kanten": {"gesamt": gesamt, "baender": baender},
-         "pruefstand": pb, "teile_sicht": ts, "foto_diff": fd, "wolkenbeleg_teile": teile, "rechenzeit_s": round(time.time() - t0, 1)}
+         "pruefstand": pb, "teile_sicht": ts, "foto_diff": fd, "wolkenbeleg_teile": teile, "fehlkanten": fehlkanten[:20], "regionen": regionen, "rechenzeit_s": round(time.time() - t0, 1)}
 
 # Vergleich mit Vorlauf
 KF = os.path.join(ODIR, "konvergenz.jsonl")
@@ -225,6 +251,11 @@ if teile:
         print(f"  {t['teil']:30s} {t['anteil_mit_daten']:.2f}  {t['beleg']}  {t['median_m']}  {t['ueber_wolke_z']}  kanten R {t.get('kanten_recall')} P {t.get('kanten_praez')} ({t.get('gitter_pkt')}/{t.get('kanten_pkt')}){flag}")
 if rueck:
     print("RUECKSCHRITT: " + "; ".join(rueck))
+if fehlkanten:
+    print(f"Fehlkanten (Fotokanten ohne Modellflaeche >= {FEHL_AB} m, Cluster >= {opt('--fehl_min', 200, int)} Pkt): {len(fehlkanten)}")
+    for f_ in fehlkanten[:10]: print(f"  {f_['id']:22s} {f_['pkt']:6d} Pkt  Zentrum {f_['zentrum']}  Kasten {f_['lo']} .. {f_['hi']}  Recall im Kasten {f_['recall_kasten']}")
+for k_, v_ in regionen.items(): print(f"Region {k_}: {v_}")
+if opt("--json_aus"): json.dump(zeile, open(opt("--json_aus"), "w"), ensure_ascii=False)   # Zeile auch im Trockenlauf greifbar (Kreis-Trockentest)
 if not TROCKEN:
     with open(KF, "a") as f: f.write(json.dumps(zeile, ensure_ascii=False) + "\n")
     print("angehaengt:", KF)
