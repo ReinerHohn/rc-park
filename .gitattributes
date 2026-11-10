@@ -4,3 +4,4 @@ modelle/NICHTS_GEBRACHT.md merge=union
 modelle/LOG_*.md merge=union
 modelle/LOGBUCH_*.md merge=union
 modelle/*/konvergenz.jsonl merge=union
+modelle/*/masstabelle.json merge=jsontabelle

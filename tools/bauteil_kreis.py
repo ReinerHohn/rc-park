@@ -249,6 +249,14 @@ for runde in range(1, RUNDEN + 1):
             import fcntl; _lk = open(os.path.join(KREISDIR, OBJ, "merge.lock"), "w"); fcntl.flock(_lk, fcntl.LOCK_EX)
             mr = subprocess.run(["git", "-C", ROOT, "merge", "--no-edit", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} nach main (automatisch)", br],
                                 capture_output=True, text=True)
+            if mr.returncode != 0 and ("untracked working tree files would be overwritten" in (mr.stderr + mr.stdout) or "unversionierten Dateien" in (mr.stderr + mr.stdout)):
+                # ungetrackte Erzeugnisse in main (Audit-Bilder, Caches) blockieren den Merge (Figuren 10.11.): verlustfrei wegsichern, erneut mergen
+                sich = os.path.join(KREISDIR, OBJ, "merge_sicherung", LAUF + f"_r{runde}")
+                for f in [l.strip() for l in (mr.stderr + mr.stdout).splitlines() if l.startswith(("\t", "    ")) and l.strip()]:
+                    src = os.path.join(ROOT, f)
+                    if os.path.isfile(src): os.makedirs(os.path.dirname(os.path.join(sich, f)), exist_ok=True); shutil.move(src, os.path.join(sich, f))
+                print(f"Runde {runde}: ungetrackte Dateien in main nach {sich} gesichert, Merge erneut")
+                mr = subprocess.run(["git", "-C", ROOT, "merge", "--no-edit", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} nach main (automatisch)", br], capture_output=True, text=True)
             if mr.returncode != 0:
                 subprocess.run(["git", "-C", ROOT, "merge", "--abort"], capture_output=True)
                 print(f"Runde {runde}: MERGE nach main fehlgeschlagen, bleibt auf {br}: {mr.stdout[-300:]}{mr.stderr[-300:]}")
