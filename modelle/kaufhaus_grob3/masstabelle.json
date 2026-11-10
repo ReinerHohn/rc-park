@@ -2155,6 +2155,70 @@
    "u1": 4.0,
    "vor": 3.0,
    "quantil": 50.0
+  },
+  "laube_sockel_front_w": {
+   "typ": "ebene_abstand",
+   "o": [
+    2.4368,
+    6.8601
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "vor": 3.0,
+   "quantil": 50.0,
+   "z": "=1.9 - z_unterkante_lot2",
+   "u0": 2.4,
+   "u1": 6.8
+  },
+  "laube_sockel_front_o": {
+   "typ": "ebene_abstand",
+   "o": [
+    2.4368,
+    6.8601
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "vor": 3.0,
+   "quantil": 50.0,
+   "z": "=1.9 - z_unterkante_lot2",
+   "u0": -14.5,
+   "u1": -9.0
+  },
+  "laube_sockel_oben_21": {
+   "typ": "ebene_abstand",
+   "o": [
+    2.4368,
+    6.8601
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "vor": 3.0,
+   "quantil": 50.0,
+   "z": "=2.1 - z_unterkante_lot2",
+   "u0": 2.4,
+   "u1": 6.8
+  },
+  "laube_sockel_oben_23": {
+   "typ": "ebene_abstand",
+   "o": [
+    2.4368,
+    6.8601
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "vor": 3.0,
+   "quantil": 50.0,
+   "z": "=2.35 - z_unterkante_lot2",
+   "u0": 2.4,
+   "u1": 6.8
   }
  },
  "pruefungen": [
@@ -4554,6 +4618,70 @@
    "historie": [
     "2026-11-10 angelegt (Kreis1 173902 Vorpruefung: Foto-F1 0,613 -> 0,59, Plattenstirn 0,47 m statt 0,12 m hoch); Modell mit Kasten bis z 7,9 muss fehlschlagen (-1,20 erwartet)"
    ]
+  },
+  {
+   "name": "Laubensockel West: Vorderfront in z 1,9 vor der Wandebene n 7,28 (Tiefe ~0,45, negativ = davor)",
+   "wert": "laube_sockel_front_w",
+   "soll": [
+    -0.52,
+    -0.38
+   ],
+   "quelle": "Foto: Sockelhoehe an der Wand z 2,20/2,16 (6117, M-6117-006) und 2,17/2,24 (6130, M-6130-006), Ebene n 7,28 aus M-6120-021; Sockeltiefe = Wolke lot2 (j_voll_lot2.npy, z 1,75-2,10): Frontebene n 7,5-7,95, Spitze 7,7-7,8 (3541 Punkte u -9..-1), Wand 7,28 -> Tiefe ~0,45; Fotostrahl auf z 2,2: Vorderkante n 7,5-8,0 (6130/6117, grob). ANNAHME: Sockel durchgehend ohne Fuge, Pfeilerbasen getrennt | Pruefstand-u ist gegen die Wolken-u gespiegelt (u_pruef = -u_wolke): West = u_pruef 2,4..6,8, Ost = -14,5..-9,0",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6117-006",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1 a232557, Steinbank/Sockelband vor Laubenrueckwand); am Modell ohne Sockel muss die Pruefung fehlschlagen (Wert 0 statt -0,45)"
+   ]
+  },
+  {
+   "name": "Laubensockel Ost: Vorderfront in z 1,9 vor der Wandebene n 7,28",
+   "wert": "laube_sockel_front_o",
+   "soll": [
+    -0.52,
+    -0.38
+   ],
+   "quelle": "Foto: Sockelhoehe an der Wand z 2,20/2,16 (6117, M-6117-006) und 2,17/2,24 (6130, M-6130-006), Ebene n 7,28 aus M-6120-021; Sockeltiefe = Wolke lot2 (j_voll_lot2.npy, z 1,75-2,10): Frontebene n 7,5-7,95, Spitze 7,7-7,8 (3541 Punkte u -9..-1), Wand 7,28 -> Tiefe ~0,45; Fotostrahl auf z 2,2: Vorderkante n 7,5-8,0 (6130/6117, grob). ANNAHME: Sockel durchgehend ohne Fuge, Pfeilerbasen getrennt | Pruefstand-u ist gegen die Wolken-u gespiegelt (u_pruef = -u_wolke): West = u_pruef 2,4..6,8, Ost = -14,5..-9,0",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6117-006",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1 a232557, Steinbank/Sockelband vor Laubenrueckwand); am Modell ohne Sockel muss die Pruefung fehlschlagen (Wert 0 statt -0,45)"
+   ]
+  },
+  {
+   "name": "Laubensockel: Oberkante >= 2,1 (in z 2,1 noch vor der Wand)",
+   "wert": "laube_sockel_oben_21",
+   "soll": [
+    -0.52,
+    -0.38
+   ],
+   "quelle": "Foto: Sockelhoehe an der Wand z 2,20/2,16 (6117, M-6117-006) und 2,17/2,24 (6130, M-6130-006), Ebene n 7,28 aus M-6120-021; Sockeltiefe = Wolke lot2 (j_voll_lot2.npy, z 1,75-2,10): Frontebene n 7,5-7,95, Spitze 7,7-7,8 (3541 Punkte u -9..-1), Wand 7,28 -> Tiefe ~0,45; Fotostrahl auf z 2,2: Vorderkante n 7,5-8,0 (6130/6117, grob). ANNAHME: Sockel durchgehend ohne Fuge, Pfeilerbasen getrennt | Pruefstand-u ist gegen die Wolken-u gespiegelt (u_pruef = -u_wolke): West = u_pruef 2,4..6,8, Ost = -14,5..-9,0",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6117-006",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1 a232557, Steinbank/Sockelband vor Laubenrueckwand); am Modell ohne Sockel muss die Pruefung fehlschlagen (Wert 0 statt -0,45)"
+   ]
+  },
+  {
+   "name": "Laubensockel: Oberkante <= 2,35 (in z 2,35 wieder Wandebene)",
+   "wert": "laube_sockel_oben_23",
+   "soll": [
+    -0.08,
+    0.08
+   ],
+   "quelle": "Foto: Sockelhoehe an der Wand z 2,20/2,16 (6117, M-6117-006) und 2,17/2,24 (6130, M-6130-006), Ebene n 7,28 aus M-6120-021; Sockeltiefe = Wolke lot2 (j_voll_lot2.npy, z 1,75-2,10): Frontebene n 7,5-7,95, Spitze 7,7-7,8 (3541 Punkte u -9..-1), Wand 7,28 -> Tiefe ~0,45; Fotostrahl auf z 2,2: Vorderkante n 7,5-8,0 (6130/6117, grob). ANNAHME: Sockel durchgehend ohne Fuge, Pfeilerbasen getrennt | Pruefstand-u ist gegen die Wolken-u gespiegelt (u_pruef = -u_wolke): West = u_pruef 2,4..6,8, Ost = -14,5..-9,0",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6117-006",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1 a232557, Steinbank/Sockelband vor Laubenrueckwand); am Modell ohne Sockel muss die Pruefung fehlschlagen (Wert 0 statt -0,45)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -5225,15 +5353,6 @@
   },
   {
    "datum": "2026-11-10",
-   "wer": "Kreis-Agent a211116 r1 (Overlays 6120, d17), Koordinator",
-   "teil": "quader:laube_rueck",
-   "art": "fehlteil",
-   "merkmal": "Steinbank mit Sockelband vor der Laubenrueckwand fehlt",
-   "text": "Agent: Rueckwandebene n 7,28 passt am Foto; im Teilbereich fehlt die Steinbank mit Sockelband vor der Wand (nicht im Modell). F1 des Teils sonst von fremden Kanten (Fenster, Tuer, Tafel, Gewoelberippen) bestimmt.",
-   "naechster_schritt": "Bank an 6117/6124/6130 per foto_zaehlung (Abschnitte) und foto_mass --tri (Hoehe, Tiefe) messen, Pruefung eintragen (muss fehlschlagen), eigenes Anbauteil mit beleg()."
-  },
-  {
-   "datum": "2026-11-10",
    "wer": "Koordinator (Sichtbarkeits-Befund, Overlays v2 6206/6213/d20)",
    "teil": "NEU: laubengewoelbe",
    "art": "fehlteil",
@@ -5304,6 +5423,92 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.89 m (Zelle [234, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Kreis-Agent a211116 r1 (Overlays 6120, d17), Koordinator",
+   "teil": "quader:laube_rueck",
+   "art": "fehlteil",
+   "merkmal": "Steinbank mit Sockelband vor der Laubenrueckwand fehlt",
+   "text": "Agent: Rueckwandebene n 7,28 passt am Foto; im Teilbereich fehlt die Steinbank mit Sockelband vor der Wand (nicht im Modell). F1 des Teils sonst von fremden Kanten (Fenster, Tuer, Tafel, Gewoelberippen) bestimmt.",
+   "naechster_schritt": "Bank an 6117/6124/6130 per foto_zaehlung (Abschnitte) und foto_mass --tri (Hoehe, Tiefe) messen, Pruefung eintragen (muss fehlschlagen), eigenes Anbauteil mit beleg().",
+   "gemessen_2026-11-10": "Kreis r1 a232557: Stufe 0 an 6117/6124/6130: durchgehender Sockel (Gesimsband oben, Fuellungsfelder darunter) vor der Rueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006), Front n ~7,73 (Tiefe ~0,45, Wolke). Pruefungen laube_sockel_* angelegt."
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
+   "auto_id": "fehlteile-6261-546-1170",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 25.81,
+   "z_bis": 25.81,
+   "xyz": [
+    16.28,
+    -1.5,
+    25.81
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=25.81 m, y=-1.5 m (Zelle [546, 1170, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
+   "auto_id": "fehlteile-6261-234-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.54,
+   "z_bis": 18.54,
+   "xyz": [
+    14.33,
+    -8.87,
+    18.54
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.87 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "auto_id": "fehlteile-6261-312-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.23,
+   "z_bis": 18.23,
+   "xyz": [
+    14.6,
+    -7.16,
+    18.23
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-234-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.42,
+   "z_bis": 17.42,
+   "xyz": [
+    14.3,
+    -8.89,
+    17.42
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.42 m, y=-8.89 m (Zelle [234, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261110_232557a232557 r1 (automatisch)",
+   "teil": "quader:laube_rueck",
+   "merkmal": "Pruefer-Rest quader:laube_rueck kreis 20261110_232557a232557 r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Sockel-Luecke u -1,5..5 ('Tuerbucht', nur aus leerer Wolke) widerspricht Foto 6124 und 6117: die Bank laeuft unter dem Fenster bis zum Pfeilerfuss weiter; 6124 F1 0,343->0,316, f1_h 0,269->0,213 | Gelb bleibt an der Bankoberkante in der Fensterbucht von 6117 und 6124 (Bank fehlt dort) | Sockel nur Vollquader: kein ueberstehendes Gesimsband oben, keine eingetieften Fuellungsfelder darunter (6124, 6130 deutlich) | Teil des F1-Gewinns kommt aus Verdeckung der Rueckwand durch das Fremdteil laube_sockel_* (Fotokantenpixel sinken in jedem Foto), Sockelkanten selbst nicht als eigenes Teil benotet | Kein Runden-Bericht: audit/kreis_bericht.md ist der alte Balkonband-Bericht, agent_r1.log endet mit 'Der Bau laeuft noch'; Stufe-0-Formbeschreibung nur als Kurzsatz | Beobachtung 'Steinbank mit Sockelband' nicht auf erledigt gesetzt | Westende u -7,2, Ostende und u 5,0 sind ANNAHME, nicht am Foto gemessen | rundekreis1-Overlays, foto_diff, fehlteile_finden, teile_lage_pruefen nicht gelaufen; keine _nachher-Formbilder, nur vorpruef | Gelbe Fremdkanten im Teilbereich unveraendert: Fenster, Tafel, Lampe, Gewoelberippen/Kaempfer, Tuerportal mit Goldrahmen (d17), Pilaster (6124)",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
