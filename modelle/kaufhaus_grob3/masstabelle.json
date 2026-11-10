@@ -1439,6 +1439,28 @@
    ],
    "quer_max": 0.3,
    "r_max": 6.0
+  },
+  "gaube_b_dach_z7": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    8.181,
+    4.529
+   ],
+   "z0": "=21.5 - z_unterkante_lot2",
+   "z1": "=24.0 - z_unterkante_lot2",
+   "suche": "oben",
+   "puffer": 0.03
+  },
+  "gaube_b_dach_z62": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    7.914,
+    3.775
+   ],
+   "z0": "=21.0 - z_unterkante_lot2",
+   "z1": "=25.0 - z_unterkante_lot2",
+   "suche": "oben",
+   "puffer": 0.03
   }
  },
  "pruefungen": [
@@ -3066,6 +3088,22 @@
    "historie": [
     "2026-11-10 angelegt (Kreis r4 helm_geschweift:w, Befund Beleg 0,56): am Stand mit Osthelm-Kopie-Schaft (0,44/0,34/0,27) muss jede Hoehe fehlschlagen"
    ]
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,2): Hoehe der Vordach-Ziegelflaeche bei n 7,0 (zwischen Vorderkante M-6259-007/008 und hinterer Ecke M-6259-009)",
+   "wert": "gaube_b_dach_z7",
+   "soll": [
+    20.97,
+    21.35
+   ],
+   "quelle": "Foto-Triangulation M-6259-009 (hintere Ecke n 6,82 z 22,75, +-0,25 m) und Vorderkante n 8,52 z 21,37 (M-6259-007/-008 + ANNAHME Dicke 0,14): Gerade -> n 7,0 abs. 22,60 (rel. 21,15), Toleranz +-0,2 (Messunsicherheit); KONSISTENZ der Ebene, kein unabhaengiger Beleg (Selbstbezug-Hinweis Pruefer r1); Sichtbefund c12: Ziegelflaeche ca. 0,4 m hoeher als Altmodell",
+   "merkmal": "absolut_hoehe",
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-009",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r2 20261110_053953, gaubenreihe:oben): Altstand 20,93 ROT erwartet"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -3523,6 +3561,30 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.24 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Kreis 20261110_053953 r2 gaubenreihe:oben",
+   "quelle": "Overlay audit/gitter_generator/rundekreis2_gaubenreihe_oben_neu_nah.jpg (c12, 6162, 6259): Ziegelflaeche des Vordachs reicht in c12 ca. 0,4 m hoeher/weiter hinten als das Modell; M-6259-009 = Anschluss Hang",
+   "text": "Rueckkante aus Hangneigung (22,35) statt Messung (22,75). r1 setzte nur die Kante hoeher -> Absatz/Keil am Hang (verworfen). r2: Oberflaeche als Ebene durch Vorderkante+gemessene Ecke bis zum Satteldach fortgesetzt (Schnitt n~6,3). OFFEN: Satteldach am Hang evtl. lokal 0,4 m zu tief (Wolke-Frame-Abgleich unklar); Gaube A ANNAHME gleich; nur 1 Messpunkt; Stirn c12 ~0,1 m zu breit; Fensterbank 0,1-0,2 m zu hoch; A/B-Hoehe 0,14 m.",
+   "status": "offen"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
+   "auto_id": "fehlteile-6261-546-1170",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 26.2,
+   "z_bis": 26.2,
+   "xyz": [
+    15.78,
+    -2.09,
+    26.2
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.2 m, y=-2.09 m (Zelle [546, 1170, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

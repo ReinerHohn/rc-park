@@ -5880,7 +5880,8 @@
     "vordach_vor": "Triangulation 3 Kameras K-c12/K-6259/K-6162 (Strahlabstand <=0,07 m, +-0,13 m), Gauben A+B: Vordach-Unterkante n 8,485-8,554 (M-6259-003/-007/-008/-012/-013) minus Fensterbank n 8,307 = 0,22",
     "vordach_breite": "Triangulation 3 Kameras K-c12/K-6259/K-6162 (Strahlabstand <=0,07 m, +-0,13 m), Gauben A+B: Vordach-Unterkante-Ecken u 7,263/5,838 (B, M-6259-007/-008) und 1,432/-0,043 (A, M-6259-012/-013): 1,43/1,48 -> 1,45",
     "dach_tiefe": "Foto-Triangulation M-6259-009 (hintere rechte Vordachecke Gaube B, 3 Kameras, Strahlabstand 0,10 m, +-0,25 m): n 6,82 -> 8,31-6,82 = 1,49; nur 1 Punkt",
-    "vordach_dicke": "ANNAHME: 0,14 m (Ziegelschicht + Randbohle, Foto 6162/6259 geschaetzt, nicht gemessen)"
+    "vordach_dicke": "ANNAHME: 0,14 m (Ziegelschicht + Randbohle, Foto 6162/6259 geschaetzt, nicht gemessen)",
+    "dach_hinten_z": "Foto-Triangulation M-6259-009 (Vordach hinten rechts = Anschluss Hang, 3 Kameras, Strahlabstand 0,10 m, +-0,25 m): z 22,747 bei n 6,82; nur 1 Punkt; Gaube A ANNAHME gleiche Hoehe; Oberflaeche wird als Ebene bis zum Satteldach fortgesetzt (Schnitt n~6,3), kein Absatz"
    },
    "form": "schlepp",
    "form_quelle": "Fotos 6162/6259/c12 (2026-11-10): Schleppgaube mit Fensterkasten (Rundbogenfenster, Fensterbank), ziegelgedecktes Vordach mit Wangen; vorher Nutzer 8.11. 'Sprungschanze'",
@@ -5920,12 +5921,23 @@
       "vor": 0.3,
       "tiefe": 1.49
      }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis 20261110_053953 r2 gaubenreihe:oben",
+     "alt": {
+      "dach_hinten_z": "aus Hangneigung (~22,35)"
+     },
+     "neu": {
+      "dach_hinten_z": 22.747
+     }
     }
    ],
    "vordach_vor": 0.215,
    "vordach_breite": 1.45,
    "vordach_dicke": 0.14,
-   "dach_tiefe": 1.49
+   "dach_tiefe": 1.49,
+   "dach_hinten_z": 22.747
   },
   {
    "typ": "stl_teil:staffelgiebel",
