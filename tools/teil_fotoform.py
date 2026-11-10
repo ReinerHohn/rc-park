@@ -64,7 +64,10 @@ def main(argv=None):
     bd = a.bilder_dir or os.path.join(os.path.dirname(objp), "audit", "teil_fotoform"); os.makedirs(bd, exist_ok=True)
     import hashlib, time
     erg = {"objekt": a.objekt, "stl_sha": hashlib.sha256(open(stl, "rb").read()).hexdigest()[:16], "bilder_dir": bd, "schwelle_m": round(a.schwelle * 0.35, 3), "fotos": {}, "teile": {}}
-    tmp = tempfile.mkdtemp(prefix="tff_k_")
+    _td = "/media/oem/scan/rc-park_tmp" if os.path.isdir("/media/oem/scan") else None   # nie Root-Platte (10.11.: 76 Reste = 4,1 GB in /tmp, Root 5 GB)
+    if _td: os.makedirs(_td, exist_ok=True)
+    tmp = tempfile.mkdtemp(prefix="tff_k_", dir=_td)
+    import atexit, shutil as _sh; atexit.register(_sh.rmtree, tmp, True)   # auch bei Abbruch per Ausnahme aufraeumen
     TM = {}
     def foto_bewerten(nr):
             kp = FF.k_datei(objp, obj, R0, nr)
