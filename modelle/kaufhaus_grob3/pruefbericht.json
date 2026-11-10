@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_040948a040948/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -18,9 +18,9 @@
   "lichter_g2_breite_max": 0.92,
   "lichter_g2_ebene_abstand": 2.000783732996581,
   "handlauf_z": 8.25699973297119,
-  "helm_w_fussbreite_x": 2.5630182609558103,
+  "helm_w_fussbreite_x": 2.5194759464263914,
   "helm_w_fussbreite_y": 2.341466354370116,
-  "helm_w_fussbreite_punkte": 12.0,
+  "helm_w_fussbreite_punkte": 13.0,
   "rueck_z6": -0.005787998491273427,
   "rueck_z10": -0.005788051692975138,
   "rueck_z143": -0.005788051692975138,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548637573273,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.13989689946174622,
-  "wand_anteil_unter": 0.0004,
+  "wand_pq": 0.13989584147930145,
+  "wand_anteil_unter": 0.00046666666666666666,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,7 +50,7 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 1.9090876846058489,
-  "teile_ueberhang": 0.00868,
+  "teile_ueberhang": 0.00778,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.88,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.88,
@@ -125,11 +125,14 @@
   "gaube_b_stirn_vor": 1.3071474824609604,
   "gaube_b_dach_z": 20.46699999999998,
   "helm_o_r_13_45": 1.6432323428532347,
-  "helm_o_r_14_12": 1.271050051226185,
+  "helm_o_r_14_12": 1.27104973232802,
   "helm_o_r_14_38": 1.1710493512396543,
-  "helm_o_r_14_88": 1.001048870369267,
+  "helm_o_r_14_88": 1.001048733620794,
   "helm_o_knauf_r_21_33": 0.21074957624831886,
-  "helm_o_knauf_r_22_00": 0.05267690287992205
+  "helm_o_knauf_r_22_00": 0.05267690287992205,
+  "gesims_front_z14_35": 0.29719355575788553,
+  "gesims_front_z14_55": 0.17719176256658375,
+  "gesims_front_z14_78": 0.07497000077857807
  },
  "pruefungen": [
   {
@@ -344,7 +347,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.13989689946174622,
+   "wert": 0.13989584147930145,
    "soll": [
     0.0348,
     100
@@ -374,7 +377,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00868,
+   "wert": 0.00778,
    "soll": [
     0,
     0.01
@@ -874,7 +877,7 @@
   },
   {
    "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.12 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.271050051226185,
+   "wert": 1.27104973232802,
    "soll": [
     1.15,
     1.35
@@ -894,7 +897,7 @@
   },
   {
    "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.88 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.001048870369267,
+   "wert": 1.001048733620794,
    "soll": [
     0.87,
     1.07
@@ -918,6 +921,36 @@
    "soll": [
     0.0,
     0.07
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.35 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
+   "wert": 0.29719355575788553,
+   "soll": [
+    0.25,
+    0.35
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.55 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
+   "wert": 0.17719176256658375,
+   "soll": [
+    0.13,
+    0.23
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.78 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
+   "wert": 0.07497000077857807,
+   "soll": [
+    0.03,
+    0.13
    ],
    "ok": true,
    "status": "ok"

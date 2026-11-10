@@ -453,14 +453,36 @@
  },
  {
   "seite": "alle",
-  "element": "Quader (anbau)",
-  "quelle": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v12.json: waagerechte Kanten vor der Front, Laengenhistogramm z 14,1-14,8 (z 14,1: 31 m, Versatz Median 13,08; z 14,2-14,8: 25-39 m je 0,1 m, Versatz 12,8-13,1); Traufe 14,68 = rohkoerper_v7 traufe.kante",
+  "element": "Quader (anbau) mit Profil (5 Punkte)",
+  "quelle": "Profil (Kreis r3, 10.11.): Wolke lot2 (j_voll_lot2.npy, u -7,5..14, 15 Scheiben je 1,5 m, Dichtegipfel n je 0,1-m-Hoehenband): Wand n 12,62 bis z 14,25, dann Schraege n 12,70/12,74/12,82/12,86/12,90/12,94 bei z 14,35..14,85; Foto 6161 (M-6161-017..021): Gesims = rote Schraege mit Goldleisten unter der Kupfer-Haengerinne, Lippe Oberkante z 14,79 (Strahl auf Wolkenprofil, n 12,92); Fotos handy_04/handy_18/handy_f_12 zeigen dieselbe Zonenfolge. u-Enden und Hoehe z0: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v12.json: waagerechte Kanten vor der Front, Laengenhistogramm z 14,1-14,8 (z 14,1: 31 m, Versatz Median 13,08; z 14,2-14,8: 25-39 m je 0,1 m, Versatz 12,8-13,1); Traufe 14,68 = rohkoerper_v7 traufe.kante",
   "u0": -8.82,
   "u1": 17.15,
   "n0": 12.62,
-  "n1": 13.08,
-  "z0": 14.1,
-  "z1": 14.7,
+  "n1": 12.94,
+  "z0": 14.32,
+  "z1": 14.82,
+  "profil": [
+   [
+    12.62,
+    14.32
+   ],
+   [
+    12.7,
+    14.35
+   ],
+   [
+    12.82,
+    14.55
+   ],
+   [
+    12.94,
+    14.82
+   ],
+   [
+    12.62,
+    14.82
+   ]
+  ],
   "seite_name": "alle"
  },
  {

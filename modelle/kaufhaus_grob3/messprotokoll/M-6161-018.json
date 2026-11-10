@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-018",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.75",
+ "name": "Gesims 6161: Rinnenunterkante (Rinne laedt ueber Brett, Ebene n=12,75)",
+ "mess_px": [
+  2267.0,
+  976.0,
+  2267.0,
+  977.0
+ ],
+ "P1": [
+  4.975,
+  11.765,
+  14.592
+ ],
+ "P2": [
+  4.975,
+  11.765,
+  14.582
+ ],
+ "dz": -0.01,
+ "dy": -0.0,
+ "dx": 0.0,
+ "abstand": 0.01,
+ "z1": 14.592,
+ "z2": 14.582,
+ "unsicherheit_rel": 0.0108,
+ "unsicherheit_m": 0.038,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.75 (+-0.3 m)"
+}

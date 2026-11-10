@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-021",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.62",
+ "name": "Gesims 6161: Gegenprobe Lippe auf Wandebene n=12,62",
+ "mess_px": [
+  2267.0,
+  948.0,
+  2267.0,
+  949.0
+ ],
+ "P1": [
+  4.924,
+  11.645,
+  14.922
+ ],
+ "P2": [
+  4.924,
+  11.645,
+  14.913
+ ],
+ "dz": -0.01,
+ "dy": -0.0,
+ "dx": 0.0,
+ "abstand": 0.01,
+ "z1": 14.922,
+ "z2": 14.913,
+ "unsicherheit_rel": 0.0107,
+ "unsicherheit_m": 0.039,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.62 (+-0.3 m)"
+}

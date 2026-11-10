@@ -1,43 +1,47 @@
-# Kreis-Bericht a021633 r4: helm_geschweift:o (kaufhaus_grob3, 2026-11-10)
-Stand: nichts committet. Branch kreis/kaufhaus_grob3/20261110_021633a021633-r4.
+# Kreis a040948 r1 – quader:gesims (Traufgesims)
 
 ## 1. Formbeschreibung (Stufe 0)
-Fotos (alle angesehen): nu3b (Nahfoto ~17 m), nuaca (21 m), 6132 (22 m schraeg), 6161 (29 m Uebersicht), 6145 (33 m). Helmachse (18,72/6,34) vorher in jedes Foto projiziert (Z-Ticks je 1 m, Rohbilder `agent_scratch_kreis4/achse_*.jpg`).
-- Fuss/Traufe: Ziegelhaut laeuft stetig konkav bis auf das Erkergesims (z ~13,3); Traufspitzen links/rechts nahezu waagerecht, Gesims-Oberkante z ~13,2-13,3; kein senkrechter Kranz.
-- Schweifung z 13,3-16: stark konkav; Schaft z 16-20 mit Graten und hellen Ziegelstreifen; Kupfernadel z 20-21,1; Kugel (leicht abgeflachte Zwiebel, 0,40 m breit) Mitte z 21,33; darueber duenne Stange mit Fahne bis 22,78.
-- Grundriss regelmaessiges Achteck, eine Flaeche zur Strasse (3 Grate von vorn gezaehlt, Rueckseite ANNAHME Spiegelung). Sitzt auf dem Erkergesims, gleiche Achse (Kugel-Achse 15,51/12,24 = Helmachse +-0,02 m).
-- Altmodell anders: Profil unten (R1 behoben: Kranz 1,45 senkrecht, Traufring z 14,15) und Kugel 0,67 m zu hoch (z 22,0).
-- Formfamilie: bestehende `helm_geschweift` (N-Eck, Profil r(z), Kranz, Knauf) reicht -> keine neue Familie.
+Fotos: ip_IMG_6161 (Nah/frontal), an_handy_04 (Uebersicht), an_handy_18 (schraeg), ip_IMG_6145, b_handy_b_17 (nur grob).
+Zonen von unten: glatte rote Wand → rote Schraege mit zwei Goldleisten (Fuss z ~14,33) → gruene Kupfer-Haengerinne (Lippe z ~14,8) → Dachschiefer.
+Querschnitt: Schraege, 0,32 m Ausladung ueber 0,5 m Hoehe, entlang u -8,8..17,15 gerade. Wiederholungen: keine (Konsolen/Wasserspeier sind eigene Teile). Das Gesims ist KEIN Quader (Altmodell n 12,62..13,08 x z 14,1..14,7; sein Unterrand lag in Overlay 6161/04/18 auf glatter Wand).
+Formfamilie: vorhandenes `quader` mit generischem `profil` (Querschnitt n,z entlang u extrudiert, baukasten_gen.py). Uebernommen aus verworfenem r3-Entwurf, gezielt verbessert (Pruefer-Kritik: Unterkante 0,1 m zu tief, Gate/8b).
 
 ## 2. Zaehlungen
-Z-nu3b-001 (aus R1 uebernommen): 3 Grate in Bildzeile 1000, N=8 bleibt ANNAHME (Rueckseite nie sichtbar). Keine neue Zaehlung.
+Keine Zaehlmerkmale (Z-Protokoll entfaellt). Messprotokolle M-6161-017..021 (aus r3 uebernommen, Wolkenprofil lot2).
 
-## 3. Pruefungen (vorher -> nachher, Quelle)
-| Pruefung | vorher | nachher | Soll | Quelle |
+## 3. Pruefungen (masstabelle.json, 3 neue gesims_front_z14_35/55/78)
+| Pruefung | Altstand | Neu | Soll | Quelle |
 |---|---|---|---|---|
-| helm_o_r_13_45/14_12/14_38/14_88 (aus R1) | rot am Runde-7-Stand | gruen | siehe masstabelle | Wolke lot2 + Foto-Gegenprobe (W-helm_o-profil) |
-| helm_o_knauf_r_21_33 | 0,11 ROT | 0,21 gruen | 0,17..0,25 | M-nu3b-009 (5 Fotos Strahlschnitt) |
-| helm_o_knauf_r_22_00 | 0,16 ROT | 0,05 gruen | 0..0,07 | M-nu3b-009 |
-Abnahme `tools/bauen_abnehmen.sh kaufhaus_grob3`: alle Pruefungen bestanden (1 vorbestehender Widerspruch). Wolkenbeleg Helm O 0,46 -> 0,605, Median 0,087 m; Kanten je Band unveraendert.
+| Vorderflaeche z 14,35 | -0,08 FEHLER | 0,30 | 0,25..0,35 | Wolke lot2, M-6161-020 |
+| z 14,55 | -0,08 FEHLER | 0,18 | 0,13..0,23 | Wolke, M-6161-018/019 |
+| z 14,78 | 0,41 FEHLER | 0,07 | 0,03..0,13 | Wolke, M-6161-017 |
+(z-14,15-Pruefung des r3 verworfen: Gesims beginnt jetzt bei 14,32.)
+Abnahme: `bauen_abnehmen.sh` „alle Pruefungen bestanden“ (1 Teilnetz, wasserdicht). `regression.py --pruefen`: identisch. 
+Gate (konvergenz_bericht, Teil quader__gesims): Beleg 0,465 → 0,637; Fotokanten Recall 0,507 → 0,485, Praezision 0,335 → 0,403, F1 0,403 → 0,441; Guete 0,434 → 0,536 (+0,10, Gate ≥0,05, keine Groesse faellt). Gesamt-Kanten 0,6471/0,0773 (vorher 0,6471/0,0765). 
+Varianten (Zwischenlaeufe, nur Fakten): r3-Profil exakt Guete 0,440; Rueckseite 12,58 + 14,29/14,32: 0,464–0,474; Rueckseite 12,62 (gewaehlt): 0,536.
+Hinweis: die Zeile „r1_vorher“ in konvergenz.jsonl ging durch ein versehentliches `git checkout` verloren; Vorher-Werte stammen aus dem ersten Messlauf dieser Sitzung (oben) und der Befundzeile.
 
-## 4. Overlays (links Foto, rechts rot = Altstand, gruen = neu; nur Grate + Kugelkreis, ohne Sichtbarkeitstest)
-modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis4_helm_geschweift_o_{nu3b,nuaca,6132,6161,6145}.jpg
+## 4. Overlays (rot neu, blau alt)
+modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis1_gesims_ip_IMG_6161.jpg
+.../rundekreis1_gesims_an_handy_2026-11-06_handy_04.jpg
+.../rundekreis1_gesims_an_handy_2026-11-06_handy_18.jpg
+.../rundekreis1_gesims_ip_IMG_6145.jpg
+.../rundekreis1_gesims_an_handy_2026-11-06_b_handy_b_17.jpg
+Selbst angesehen: 6161, handy_04, handy_18 (rote Linien auf Goldleiste/Schraege/Rinne, blauer Altkasten auf glatter Wand). 6145 und b_17 erzeugt, nicht einzeln angesehen.
 
 ## 5. Fehlerliste
-- Traufe/Fuss (Vorderkante, Gesims): trifft (nu3b, nuaca, 6161 selbst angesehen); 6132/6145 nur teilweise.
-- Schaft/Grate z 15-20: trifft (nuaca, 6161, nu3b angesehen).
-- Kugel: trifft jetzt (nuaca, 6132 angesehen, Triangulation 5 Fotos). Radius 0,2 ANNAHME aus Bildbreite.
-- Fahnenstange/Fahne: nur als duenne Stange, Fahne nicht modelliert (ungeprueft/bewusst weggelassen).
-- Schweifung z 13,6-14,5: in 6132 evtl. 0,2-0,4 m zu schlank - NICHT belegt, ungeprueft.
-- Rueckseite/N=8: ANNAHME.
-- teile_lage_pruefen.py: stuerzt bei fensterreihe:og ab (nicht behoben) -> Pflichtschritt 9c(c) nicht mit dem Werkzeug erbracht; Lage ersatzweise: Kugelachse = Helmachse +-0,02 m, Wolkenbeleg.
-- foto_diff / fehlteile_finden / teile_sichtpruefung: nur in bauen_abnehmen enthaltenes gelaufen, Ergebnisbilder nicht einzeln angesehen -> ungeprueft. Helm West: nicht angefasst (gleicher Fehler, eigene Runde).
+- Schraege u -7..14: trifft (3 Fotos angesehen); Wolke Median 0,078 m.
+- Unterkante z 14,32: trifft in 6161/04/18 optisch, Pixelgenauigkeit nicht gemessen.
+- Gutterlippe z 14,82 (Rinne z 14,56..14,82 als Teil des Profils): trifft grob; Rinnenrundung/Bauch, Wasserspeier, Dachgitter nicht modelliert.
+- Enden u < -8 und > 14,6: ungeprueft (ANNAHME Rumpfenden, Erker verdeckt).
+- Rueckseite buendig n 12,62 (eingebettet): nicht sichtbar, unpruefbar.
+- teile_lage_pruefen: quader:gesims Median 0,10 m, 3 % > 0,5 m (ok). foto_diff 6161: Treffer 1 (Fotokante ohne Modell, ganze Fassade/Fenster, 1389 m) liegt nicht spezifisch am Gesims; Treffer 2-10 ausserhalb. fehlteile_finden lief in der Abnahme, Treffer am Gesims keine. teile_sichtpruefung: nicht gelaufen. freiraum_audit meldet weiter FEHLER (vorbestehend, am Altstand identisch).
+- seiten.jpg angesehen: unauffaellig (Gesims in dieser Aufloesung nicht erkennbar).
 
 ## 6. Geaenderte Dateien
-objekt.json (helm_geschweift:o: R1-Profil, Knauf z 21,33 r 0,2, letzter Ring z 21,0 r 0,07), masstabelle.json (+2 Messungen, +2 Pruefungen, R1-Zeilen), messprotokoll/M-nu3b-009, W-helm_o-profil, Z-nu3b-001, tools/helm_profil_wolke.py, LOGBUCH_HELM_O_R1, REZEPT (L-H1, L-H2), NICHTS_GEBRACHT, automatisch regenerierte STL/MASSNACHWEIS/pruefbericht/elemente.
+tools/baukasten_gen.py (quader `profil`), tools/gesims_overlay.py (neu), modelle/kaufhaus_grob3/objekt.json, masstabelle.json (3 Pruefungen, 3 Messgroessen, Beobachtung), messprotokoll/M-6161-017..021, audit/gitter_generator/rundekreis1_gesims_*, konvergenz.jsonl, regenerierte STL/Audit-Dateien, NICHTS_GEBRACHT, REZEPT (L-GS4). Kein Commit.
 
 ## 7. Generalisierte Lehre
-| Lehre | Anlass | Werkzeug |
-|---|---|---|
-| Punkte auf bekannter Achse per Mehrkamera-Strahlschnitt, Z-Ticks im Foto | Kugel 0,67 m zu hoch | foto_mass --tri |
-| Drahtgitter ohne Sichtbarkeit: Rueckhaelfte nicht fuer Fehler halten | Fehlurteil 'Ring 1 m zu tief' (nho) | Overlay mit Tiefenfarbe |
+Lehre | Anlass | Werkzeug
+Rueckkanten eines Profilteils im Nachbarkoerper zaehlen als unbelegte Formkanten; Rueckseite buendig statt eingebettet | Guete 0,44 → 0,54 | baukasten_gen `profil`, konvergenz_bericht --trocken --json_aus (Varianten testen vor der Abnahme)
+Vorher-Zeilen in konvergenz.jsonl nie per git checkout zuruecksetzen | Verlust der Vorher-Zeile | –
