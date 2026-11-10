@@ -1,0 +1,249 @@
+<title>__TITEL__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Feldblatt fuer den Fototermin: Lageplan oben (nordorientiert), darunter je Standpunkt eine Karte; einspaltig fuers Handy, zweispaltig ab Tablet */
+:root{
+  --bg:#f3f5f7; --fl:#ffffff; --fg:#17212b; --mut:#5b6a78; --linie:#d5dce3; --akz:#1d5c96; --dach:#c9d1d9;
+  --gut:#2e9e44; --mittel:#d98a00; --fehlt:#d62828;
+  --f-text:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-zahl:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10161c; --fl:#18212a; --fg:#e6edf3; --mut:#93a3b2; --linie:#2b3742; --akz:#6fb0ee; --dach:#36424e;
+  --gut:#3fbf5a; --mittel:#f0a830; --fehlt:#f05252; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10161c; --fl:#18212a; --fg:#e6edf3; --mut:#93a3b2; --linie:#2b3742; --akz:#6fb0ee; --dach:#36424e;
+  --gut:#3fbf5a; --mittel:#f0a830; --fehlt:#f05252; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-text);font-size:16px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px}
+main{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1{font-size:1.45rem;margin:0;text-wrap:balance}
+h2{font-size:1.1rem;margin:0}
+.unter{color:var(--mut);font-size:.9rem;margin:2px 0 0}
+.zahl{font-family:var(--f-zahl);font-variant-numeric:tabular-nums}
+.bilanz{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--linie);background:var(--fl);border-radius:999px;padding:4px 10px;font-size:.88rem}
+.punkt{width:10px;height:10px;border-radius:50%;flex:none}
+.hinweis{font-size:.86rem;color:var(--mut);margin:0}
+.planbox{background:var(--fl);border:1px solid var(--linie);border-radius:10px;padding:8px}
+#plan{width:100%;height:auto;display:block;touch-action:manipulation}
+.planfuss{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:6px 4px 2px}
+button{font:inherit;font-size:.9rem;border:1px solid var(--akz);color:var(--akz);background:transparent;border-radius:8px;padding:6px 12px;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--akz);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--akz);color:var(--fl)}
+.leiste{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.karten{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:760px){.karten{grid-template-columns:1fr 1fr}}
+.karte{background:var(--fl);border:1px solid var(--linie);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.karte.markiert{border-color:var(--akz);box-shadow:0 0 0 2px var(--akz)}
+.karte.erledigt{opacity:.55}
+.kopf{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.nr{font-family:var(--f-zahl);font-weight:600;width:34px;height:34px;border-radius:50%;background:var(--akz);color:var(--fl);display:grid;place-items:center;flex:none}
+.kopf .titel{flex:1;min-width:0}
+.kopf .titel b{display:block}
+.kopf .titel span{color:var(--mut);font-size:.85rem}
+.bild{width:100%;display:block;background:var(--dach)}
+.werte{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--linie);border-block:1px solid var(--linie)}
+.werte div{background:var(--fl);padding:8px 10px;min-width:0}
+.werte small{display:block;color:var(--mut);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
+.werte .zahl{font-size:1.05rem}
+.fuss{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.teile{font-size:.86rem;color:var(--mut);margin:0}
+.aktion{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.aktion a{color:var(--akz);font-weight:700}
+label.haken{display:inline-flex;gap:8px;align-items:center;font-size:.95rem;cursor:pointer}
+label.haken input{width:22px;height:22px;accent-color:var(--gut)}
+.kompass{display:inline-block;transform-origin:50% 50%}
+#gpsinfo{font-size:.85rem;color:var(--mut)}
+@media (prefers-reduced-motion:no-preference){.karte{transition:opacity .2s, box-shadow .2s}}
+</style>
+
+<main>
+  <header>
+    <h1>__TITEL__</h1>
+    <p class="unter" id="stand"></p>
+  </header>
+
+  <section class="bilanz" id="bilanz" aria-label="Abdeckung der Fassaden"></section>
+  <p class="hinweis">Lage auf wenige Meter genau (Grundriss an LoD2 angepasst). Vor Ort am Gebaeude orientieren, nicht nur am GPS-Punkt.
+    Rot im Vorschaubild = Flaeche, die noch ins Foto muss.</p>
+
+  <section class="planbox" aria-label="Lageplan">
+    <svg id="plan" role="img" aria-label="Lageplan mit Fassadenabdeckung und Standpunkten, Norden oben"></svg>
+    <div class="planfuss">
+      <span class="hinweis">Norden oben. Wandstrich aussen an der Fassade: <span style="color:var(--gut)">gut</span> /
+        <span style="color:var(--mittel)">mittel</span> / <span style="color:var(--fehlt)">fehlt</span>. Kreis antippen = Karte.</span>
+      <span class="leiste"><button id="gps" type="button">Meine Lage zeigen</button><span id="gpsinfo"></span></span>
+    </div>
+  </section>
+
+  <section class="leiste" aria-label="Filter">
+    <h2 style="margin-right:auto">Standpunkte</h2>
+    <button id="f_offen" type="button" aria-pressed="false">nur offene</button>
+    <span class="hinweis zahl" id="zaehler"></span>
+  </section>
+  <section class="karten" id="karten"></section>
+</main>
+
+<script>
+/*DATA*/
+(function(){
+  "use strict";
+  var KEY = "fotoplan_erledigt_" + (DATA.erzeugt || "");
+  var erledigt = {};
+  try { erledigt = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { erledigt = {}; }
+  function speichern(){ try { localStorage.setItem(KEY, JSON.stringify(erledigt)); } catch (e) {} }
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, attr, eltern){ var e = document.createElementNS(NS, tag); for (var k in attr) e.setAttribute(k, attr[k]); if (eltern) eltern.appendChild(e); return e; }
+  function f1(x){ return (x === null || x === undefined) ? "-" : (Math.round(x * 10) / 10).toString().replace(".", ","); }
+  var RICHT = ["N","NO","O","SO","S","SW","W","NW"];
+  function himmel(g){ return RICHT[Math.round(((g % 360) + 360) % 360 / 45) % 8]; }
+
+  /* Kopf und Bilanz */
+  document.getElementById("stand").textContent = DATA.sp.length + " Standpunkte" + (DATA.erzeugt ? " · berechnet " + DATA.erzeugt : "");
+  var zs = DATA.zs, ges = (zs.gut || 0) + (zs.mittel || 0) + (zs.fehlt || 0);
+  var bil = document.getElementById("bilanz");
+  [["gut","--gut",zs.gut],["mittel","--mittel",zs.mittel],["fehlt","--fehlt",zs.fehlt]].forEach(function(r){
+    var c = document.createElement("span"); c.className = "chip";
+    c.innerHTML = '<span class="punkt" style="background:var(' + r[1] + ')"></span>' + r[0] + ' <span class="zahl">' + Math.round(r[2] || 0) + ' m²</span>' +
+      (ges ? ' <span class="zahl" style="color:var(--mut)">' + Math.round(100 * (r[2] || 0) / ges) + ' %</span>' : "");
+    bil.appendChild(c);
+  });
+  if (zs.erreichbar !== null && zs.erreichbar !== undefined) {
+    var c2 = document.createElement("span"); c2.className = "chip"; c2.style.display = "inline-block";
+    c2.innerHTML = 'vom Boden erreichbar <span class="zahl">' + Math.round(zs.erreichbar) + ' m²</span> · nur erhoeht <span class="zahl">' + Math.round(zs.erhoeht || 0) + ' m²</span>';
+    bil.appendChild(c2);
+  }
+
+  /* Lageplan: Meter Ost/Nord um die Gebaeudemitte; SVG-y = -Nord */
+  var svg = document.getElementById("plan");
+  var xs = [], ys = [];
+  DATA.seg.forEach(function(s){ xs.push(s[0], s[2]); ys.push(s[1], s[3]); });
+  DATA.sp.forEach(function(p){ xs.push(p.x); ys.push(p.y); });
+  var rand = 6, x0 = Math.min.apply(null, xs) - rand, x1 = Math.max.apply(null, xs) + rand, y0 = Math.min.apply(null, ys) - rand, y1 = Math.max.apply(null, ys) + rand;
+  svg.setAttribute("viewBox", x0 + " " + (-y1) + " " + (x1 - x0) + " " + (y1 - y0));
+  var gD = el("g", {}, svg), pfad = [];
+  DATA.dach.forEach(function(t){ pfad.push("M" + t[0] + " " + (-t[1]) + "L" + t[2] + " " + (-t[3]) + "L" + t[4] + " " + (-t[5]) + "Z"); });
+  el("path", {d: pfad.join(""), fill: "var(--dach)", stroke: "var(--dach)", "stroke-width": "0.15"}, gD);
+  var gW = el("g", {}, svg);
+  DATA.seg.forEach(function(s){
+    var k = s[4], farbe = k[2] >= 0.5 ? "var(--fehlt)" : (k[1] + k[2] >= 0.5 ? "var(--mittel)" : "var(--gut)");
+    var l = el("line", {x1: s[0], y1: -s[1], x2: s[2], y2: -s[3], stroke: farbe, "stroke-width": "0.9", "stroke-linecap": "round"}, gW);
+    el("title", {}, l).textContent = "Wand " + f1(s[5]) + " m², Hoehe " + f1(s[6]) + "-" + f1(s[7]) + " m: gut " + Math.round(100 * k[0]) + " %, mittel " + Math.round(100 * k[1]) + " %, fehlt " + Math.round(100 * k[2]) + " %";
+  });
+  /* Nordpfeil und 10-m-Massstab */
+  var gN = el("g", {transform: "translate(" + (x1 - 4) + "," + (-y1 + 5) + ")"}, svg);
+  el("path", {d: "M0 -3.2L1.6 1.6L0 0.6L-1.6 1.6Z", fill: "var(--fg)"}, gN);
+  var tN = el("text", {x: 0, y: 4.4, "text-anchor": "middle", "font-size": "2.2", fill: "var(--fg)", "font-family": "var(--f-text)"}, gN); tN.textContent = "N";
+  var gM = el("g", {transform: "translate(" + (x0 + 2) + "," + (-y0 - 2.5) + ")"}, svg);
+  el("rect", {x: 0, y: 0, width: 10, height: 0.6, fill: "var(--fg)"}, gM);
+  var tM = el("text", {x: 5, y: -0.8, "text-anchor": "middle", "font-size": "2", fill: "var(--mut)", "font-family": "var(--f-zahl)"}, gM); tM.textContent = "10 m";
+  /* Standpunkte mit Blickkeil */
+  /* Standpunkte am selben Ort (mehrere Blickrichtungen) zu einem Kreis zusammenfassen, Nummern daneben */
+  var gS = el("g", {}, svg), kreise = {}, orte = [];
+  DATA.sp.forEach(function(p){
+    var o = orte.filter(function(q){ return Math.hypot(q.x - p.x, q.y - p.y) < 2.0; })[0];
+    if (!o) { o = {x: p.x, y: p.y, ps: []}; orte.push(o); } o.ps.push(p);
+  });
+  orte.forEach(function(o){
+    var g = el("g", {tabindex: "0", role: "button", "aria-label": "Standpunkt " + o.ps.map(function(p){ return p.nr; }).join(", "), style: "cursor:pointer"}, gS);
+    o.ps.forEach(function(p){
+      if (p.kompass === null || p.kompass === undefined) return;
+      var a = p.kompass * Math.PI / 180, b = 28 * Math.PI / 180, L = Math.min(9, Math.max(5, (p.abstand || 8) * 0.6));
+      var ax = o.x + L * Math.sin(a - b), ay = o.y + L * Math.cos(a - b), bx = o.x + L * Math.sin(a + b), by = o.y + L * Math.cos(a + b);
+      el("path", {d: "M" + o.x + " " + (-o.y) + "L" + ax + " " + (-ay) + "L" + bx + " " + (-by) + "Z", fill: "var(--akz)", "fill-opacity": "0.14", stroke: "var(--akz)", "stroke-width": "0.2"}, g);
+    });
+    var k = el("circle", {cx: o.x, cy: -o.y, r: 1.7, fill: "var(--akz)", stroke: "var(--fl)", "stroke-width": "0.35"}, g);
+    var t = el("text", {x: o.x, y: -o.y + 0.75, "text-anchor": "middle", "font-size": "2", "font-weight": "600", fill: "var(--fl)", "font-family": "var(--f-zahl)"}, g);
+    t.textContent = o.ps[0].nr;
+    if (o.ps.length > 1) {
+      var t2 = el("text", {x: o.x + 2.2, y: -o.y - 1.4, "font-size": "1.9", "font-weight": "600", fill: "var(--akz)", stroke: "var(--fl)", "stroke-width": "0.5", "paint-order": "stroke", "font-family": "var(--f-zahl)"}, g);
+      t2.textContent = o.ps.slice(1).map(function(p){ return p.nr; }).join(",");
+    }
+    o.kreis = k; o.ps.forEach(function(p){ kreise[p.nr] = o; });
+    function geh(){ zeige(o.ps.filter(function(p){ return !erledigt[p.nr]; }).concat(o.ps)[0].nr); }
+    g.addEventListener("click", geh);
+    g.addEventListener("keydown", function(ev){ if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); geh(); } });
+  });
+  var ich = el("g", {}, svg); ich.setAttribute("visibility", "hidden");
+  el("circle", {cx: 0, cy: 0, r: 4, fill: "var(--akz)", "fill-opacity": "0.15"}, ich);
+  el("circle", {cx: 0, cy: 0, r: 1.1, fill: "var(--fehlt)", stroke: "var(--fl)", "stroke-width": "0.4"}, ich);
+
+  /* Karten */
+  var karten = document.getElementById("karten"), kn = {};
+  DATA.sp.forEach(function(p){
+    var d = document.createElement("article"); d.className = "karte"; d.id = "sp" + p.nr;
+    var kp = (p.kompass === null || p.kompass === undefined) ? "" : '<span class="kompass" style="transform:rotate(' + p.kompass + 'deg)">↑</span> ';
+    var teile = (p.teile || []).map(function(t){ return t[0] + " " + f1(t[1]) + " m²"; }).join(" · ");
+    var karte = (p.lat && p.lon) ? "https://www.google.com/maps?q=" + p.lat + "," + p.lon : "";
+    d.innerHTML =
+      '<div class="kopf"><span class="nr">' + p.nr + '</span><div class="titel"><b>' + (p.art || "Standpunkt") + '</b>' +
+        '<span class="zahl">' + f1(p.m2) + ' m² neu · Abstand ' + f1(p.abstand) + ' m</span></div></div>' +
+      (p.bild ? '<img class="bild" alt="Vorschau Standpunkt ' + p.nr + '" loading="lazy" src="data:image/jpeg;base64,' + p.bild + '">' : "") +
+      '<div class="werte">' +
+        '<div><small>Blick</small><span class="zahl">' + kp + (p.kompass === null || p.kompass === undefined ? "-" : Math.round(p.kompass) + "° " + himmel(p.kompass)) + '</span></div>' +
+        '<div><small>Neigung</small><span class="zahl">' + (p.neig === null || p.neig === undefined ? "-" : Math.round(p.neig) + "° hoch") + '</span></div>' +
+        '<div><small>Zoom</small><span class="zahl">' + (p.zoom || "-") + '</span></div>' +
+        '<div><small>Format</small><span class="zahl">' + (p.format || "-") + '</span></div>' +
+        '<div><small>Fotos</small><span class="zahl">' + (p.fotos || "-") + '</span></div>' +
+        '<div><small>seitlich</small><span class="zahl">' + (p.versatz === null || p.versatz === undefined ? "-" : "±" + f1(p.versatz) + " m") + '</span></div>' +
+      '</div>' +
+      '<div class="fuss">' + (teile ? '<p class="teile">' + teile + '</p>' : "") +
+        '<div class="aktion">' + (karte ? '<a href="' + karte + '" target="_blank" rel="noopener">in Karten-App oeffnen</a>' : "<span></span>") +
+          '<label class="haken"><input type="checkbox" id="ok' + p.nr + '"> erledigt</label></div></div>';
+    karten.appendChild(d); kn[p.nr] = d;
+    var cb = d.querySelector("input");
+    cb.checked = !!erledigt[p.nr]; d.classList.toggle("erledigt", cb.checked);
+    cb.addEventListener("change", function(){ erledigt[p.nr] = cb.checked; if (!cb.checked) delete erledigt[p.nr]; speichern(); aktualisieren(); });
+  });
+  var nurOffen = false, fb = document.getElementById("f_offen");
+  fb.addEventListener("click", function(){ nurOffen = !nurOffen; fb.setAttribute("aria-pressed", String(nurOffen)); aktualisieren(); });
+  function aktualisieren(){
+    var n = 0;
+    DATA.sp.forEach(function(p){
+      var ok = !!erledigt[p.nr]; if (ok) n++;
+      kn[p.nr].classList.toggle("erledigt", ok); kn[p.nr].hidden = nurOffen && ok;
+    });
+    orte.forEach(function(o){ var alle = o.ps.every(function(p){ return erledigt[p.nr]; }); o.kreis.setAttribute("fill", alle ? "var(--gut)" : "var(--akz)"); });
+    document.getElementById("zaehler").textContent = n + " von " + DATA.sp.length + " erledigt";
+  }
+  function zeige(nr){
+    Object.keys(kn).forEach(function(k){ kn[k].classList.remove("markiert"); });
+    var d = kn[nr]; if (!d) return; d.hidden = false; d.classList.add("markiert");
+    d.scrollIntoView({behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start"});
+  }
+  aktualisieren();
+
+  /* GPS: lat/lon -> Plan-Meter per Ausgleich ueber die Standpunkte (lineare Naeherung, auf Gebaeudegroesse genau genug) */
+  function lsq(){
+    var P = DATA.sp.filter(function(p){ return p.lat && p.lon; }); if (P.length < 3) return null;
+    var la0 = P[0].lat, lo0 = P[0].lon;
+    function loese(zi){
+      var A = [[0,0,0],[0,0,0],[0,0,0]], b = [0,0,0];
+      P.forEach(function(p){ var r = [1, p.lat - la0, p.lon - lo0], z = p[zi]; for (var i = 0; i < 3; i++) { b[i] += r[i] * z; for (var j = 0; j < 3; j++) A[i][j] += r[i] * r[j]; } });
+      for (var c = 0; c < 3; c++) { var m = c; for (var r2 = c + 1; r2 < 3; r2++) if (Math.abs(A[r2][c]) > Math.abs(A[m][c])) m = r2;
+        var t = A[c]; A[c] = A[m]; A[m] = t; var tb = b[c]; b[c] = b[m]; b[m] = tb;
+        for (var r3 = 0; r3 < 3; r3++) if (r3 !== c) { var f = A[r3][c] / A[c][c]; for (var j2 = c; j2 < 3; j2++) A[r3][j2] -= f * A[c][j2]; b[r3] -= f * b[c]; } }
+      return [b[0] / A[0][0], b[1] / A[1][1], b[2] / A[2][2]];
+    }
+    var cx = loese("x"), cy = loese("y");
+    return function(la, lo){ return [cx[0] + cx[1] * (la - la0) + cx[2] * (lo - lo0), cy[0] + cy[1] * (la - la0) + cy[2] * (lo - lo0)]; };
+  }
+  var nachPlan = lsq(), info = document.getElementById("gpsinfo");
+  document.getElementById("gps").addEventListener("click", function(){
+    if (!nachPlan) { info.textContent = "keine Bezugspunkte"; return; }
+    if (!navigator.geolocation) { info.textContent = "Standort hier nicht verfuegbar, bitte Karten-Link nutzen"; return; }
+    info.textContent = "suche ...";
+    try {
+      navigator.geolocation.getCurrentPosition(function(pos){
+        var q = nachPlan(pos.coords.latitude, pos.coords.longitude);
+        ich.setAttribute("transform", "translate(" + q[0] + "," + (-q[1]) + ")"); ich.setAttribute("visibility", "visible");
+        var best = null; DATA.sp.forEach(function(p){ var dd = Math.hypot(p.x - q[0], p.y - q[1]); if (!erledigt[p.nr] && (!best || dd < best[1])) best = [p.nr, dd]; });
+        info.textContent = "Genauigkeit ±" + Math.round(pos.coords.accuracy) + " m" + (best ? " · naechster offener Punkt " + best[0] + " (" + Math.round(best[1]) + " m)" : "");
+      }, function(){ info.textContent = "Standort hier nicht verfuegbar, bitte Karten-Link nutzen"; }, {enableHighAccuracy: true, timeout: 10000});
+    } catch (e) { info.textContent = "Standort hier nicht verfuegbar, bitte Karten-Link nutzen"; }
+  });
+})();
+</script>
