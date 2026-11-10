@@ -229,7 +229,7 @@ for runde in range(1, RUNDEN + 1):
             sha = hashlib.sha256(open(sp, "rb").read()).hexdigest()[:16]
             for l in reversed([l for l in open(kf) if l.strip()]):
                 zz = json.loads(l)
-                if zz.get("stl_sha") == sha and zz.get("wolkenbeleg_teile"):
+                if zz.get("stl_sha") == sha and zz.get("wolkenbeleg_teile") and "anteil_sichtbar" in zz["wolkenbeleg_teile"][0]:   # gleiche Messart (mit Sichtpruefung)
                     z0 = zz; print(f"Runde {runde}: Messung vorher wiederverwendet (STL {sha})"); break
         if z0 is None:
             rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
