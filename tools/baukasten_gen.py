@@ -897,6 +897,11 @@ def gaubenreihe(cfg, ctx):
             vv, bh, dh, xd = (float(cfg[k_]) for k_ in ("vordach_vor", "vordach_breite", "vordach_dicke", "dach_tiefe"))
             if bh <= b or vv <= 0 or dh <= 0.02 or xd <= 0.3: sys.exit(f"gaubenreihe: unplausibles Vordach (breite {b}, vordach_breite {bh}, vor {vv}, dicke {dh}, tiefe {xd})")
             nb_ = nfront - xd; zm = zfront + xd * sl; zlow = z1                                       # z1 = Unterkante des Vordachs (Stirnhoehe wandhoehe ueber dem Hang an der Stirn)
+            if cfg.get('dach_hinten_z') is not None:                                                  # gemessene hintere Vordach-Oberkante (n = nfront-dach_tiefe, z = dach_hinten_z): Oberflaeche = Ebene durch Vorderkante und diese Ecke, FORTGESETZT bis zum Schnitt mit dem Satteldach-Hang (kein Absatz, kein offener Keil)
+                zv, nv_ = zlow + dh, nfront + vv; sv = (float(cfg['dach_hinten_z']) - zv) / (nv_ - nb_)
+                if sl > sv > 0:
+                    nx = (zfront + nfront * sl - zv - nv_ * sv) / (sl - sv)                                  # Schnitt Ebene/Hang
+                    if nb_ - 1.0 <= nx <= nb_ + 0.2: nb_ = nx; zm = zv + (nv_ - nx) * sv
             stirn = [(u_, nfront, zfront - 0.05) for u_ in (uc - b / 2, uc + b / 2)] + [(u_, nfront, zlow + 0.2) for u_ in (uc - b / 2, uc + b / 2)] + [(u_, nb_, zm + e_) for u_ in (uc - b / 2, uc + b / 2) for e_ in (-0.05, -0.1)]
             dach = [(u_, nfront + vv, z_) for u_ in (uc - bh / 2, uc + bh / 2) for z_ in (zlow, zlow + dh)] + [(u_, nb_, zm + e_) for u_ in (uc - bh / 2, uc + bh / 2) for e_ in (0.0, -0.05)]
             teile.append(UNION([M.hull_points(stirn), M.hull_points(dach)]))
@@ -910,7 +915,7 @@ def gaubenreihe(cfg, ctx):
         gi = prisma_uz(np.array([(uc - b / 2, z1 - 0.01), (uc + b / 2, z1 - 0.01), (uc, z1 + hf)], float), n0, n1)                                  # Giebel zur Strasse: Dreieck (u, z), entlang n extrudiert
         teile.append(kasten + gi)
     k = UNION(teile).transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; qq = lambda p_: (wq.get(p_) or cfg["quelle"])
-    if cfg.get("vordach_vor") is not None: beleg("alle", f"Gauben {cfg.get('gruppe', '')}: Vordach", qq("vordach_vor") + " | Breite: " + qq("vordach_breite") + " | Tiefe: " + qq("dach_tiefe") + " | Dicke: " + qq("vordach_dicke"), vordach_vor=cfg["vordach_vor"], vordach_breite=cfg["vordach_breite"], vordach_dicke=cfg["vordach_dicke"], dach_tiefe=cfg["dach_tiefe"])
+    if cfg.get("vordach_vor") is not None: beleg("alle", f"Gauben {cfg.get('gruppe', '')}: Vordach", qq("vordach_vor") + " | Breite: " + qq("vordach_breite") + " | Tiefe: " + qq("dach_tiefe") + " | Dicke: " + qq("vordach_dicke"), vordach_vor=cfg["vordach_vor"], vordach_breite=cfg["vordach_breite"], vordach_dicke=cfg["vordach_dicke"], dach_tiefe=cfg["dach_tiefe"], dach_hinten_z=cfg.get("dach_hinten_z"))
     beleg("alle", f"Gauben {cfg.get('gruppe', '')} ({ng})", f"Anzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); Lage/Masse: " + qq("t"), n_gauben=ng, u_mitte=um, pitch=pitch, t=t, breite=b, wandhoehe=hw, vor=vor, tiefe=ti, firsthoehe=hf)
     return [k], []
 
