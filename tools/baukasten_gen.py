@@ -848,9 +848,10 @@ def balkonband(cfg, ctx):
         if cfg.get(k) in (None, ""): sys.exit(f"balkonband: '{k}' fehlt (Regel 3b: jedes Mass mit Quelle)")
     u0, u1, wn, au, z0, z1 = (float(cfg[k]) for k in ("u_von", "u_bis", "wand_n", "auskragung", "unterseite_z", "oberseite_z"))
     if u1 - u0 < 0.5 or au < 0.05 or z1 - z0 < 0.1: sys.exit(f"balkonband: unplausible Masse (u={u0}..{u1}, au={au}, z={z0}..{z1})")
-    k = quader(u0, u1, wn - 0.3, wn + au, z0 - 0.1, z1).transform(_uszT(cfg))     # 0,3 m in die Wand, 0,1 m nach unten: Beruehrung mit der Bogenreihe (Oberkante 4,85), sonst Konsolen-Huellkoerper
+    ue = float(cfg.get("unterkante_ueberstand", 0.1))                                  # Standard 0,1 m (Altverhalten); 0 = Stirn endet genau bei unterseite_z (Foto-Messung duenne Stirn, Kreis1 10.11.)
+    k = quader(u0, u1, wn - 0.3, wn + au, z0 - ue, z1).transform(_uszT(cfg))     # 0,3 m in die Wand, ue m nach unten: Beruehrung mit der Bogenreihe (Oberkante 4,85), sonst Konsolen-Huellkoerper
     wq = cfg.get("werte_quellen") or {}; q = lambda p_: (wq.get(p_) or cfg["quelle"])
-    beleg("alle", "Balkonband", q("auskragung") + " | Lage: " + q("unterseite_z"), u_von=u0, u_bis=u1, wand_n=wn, auskragung=au, unterseite_z=z0, oberseite_z=z1)
+    beleg("alle", "Balkonband", q("auskragung") + " | Lage: " + q("unterseite_z"), u_von=u0, u_bis=u1, wand_n=wn, auskragung=au, unterseite_z=z0, oberseite_z=z1, unterkante_ueberstand=ue)
     return [k], []
 
 

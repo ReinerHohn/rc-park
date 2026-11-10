@@ -1,0 +1,45 @@
+{
+ "id": "M-6145-001",
+ "typ": "triangulation_plan",
+ "foto": "6145",
+ "name": "Balkonplatte Westende: Frontkante (senkrechte Kante)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6145",
+   "px": [
+    2045.0,
+    1925.0
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    3003.0,
+    1630.0
+   ]
+  },
+  {
+   "kamera": "K-6164",
+   "px": [
+    2440.0,
+    2430.0
+   ]
+  }
+ ],
+ "P_xy": [
+  -0.161,
+  14.594
+ ],
+ "strahl_abstand_m": [
+  0.051,
+  0.077,
+  0.054
+ ],
+ "schnittwinkel_grad": [
+  43.8,
+  84.5,
+  40.7
+ ],
+ "unsicherheit_m": 0.115,
+ "massstab_von": "Kameras K-6145, K-6161, K-6164 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme"
+}
