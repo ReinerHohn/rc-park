@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_093550a093550/wt_r3/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -35,13 +35,13 @@
   "bal_feld_breite_max": 0.17,
   "bal_feld_ebene_abstand": 1.924544850106738,
   "fenster_b3_anzahl": 2.0,
-  "fenster_b3_breite_median": 0.8300000000000001,
-  "fenster_b3_breite_max": 0.8300000000000001,
-  "fenster_b3_ebene_abstand": 1.1340548633210057,
+  "fenster_b3_breite_median": 0.8200000000000001,
+  "fenster_b3_breite_max": 0.8200000000000001,
+  "fenster_b3_ebene_abstand": 1.2521246230474818,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590077191591263,
-  "wand_anteil_unter": 0.001,
+  "wand_pq": 0.1390039175748825,
+  "wand_anteil_unter": 0.0008666666666666666,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,7 +50,7 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 2.128511469441953,
-  "teile_ueberhang": 0.00767,
+  "teile_ueberhang": 0.00769,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.72,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.72,
@@ -59,7 +59,7 @@
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.68,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.68,
   "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.1002299324808607,
-  "laube_rueckwand_n728_z7": -0.00332701019786219,
+  "laube_rueckwand_n728_z7": -0.00332684888924506,
   "helm_o_r_14_64": 1.1110442019599438,
   "helm_o_r_16_18": 0.6410005316999677,
   "helm_o_r_17_76": 0.4009052145424984,
@@ -173,24 +173,10 @@
   "fenster_eg0_rahmenfront": 0.0207220242320707,
   "fenster_eg0_oberkante_l": 0.02001516256124347,
   "fenster_eg0_oberkante_r": 0.021167838177144294,
-  "gaube_u_a_vordach_vor": 1.6649270668863148,
-  "gaube_u_a_stirn_vor": 1.5149271977567722,
-  "gaube_u_a_vordach_up": 0.7150342387096038,
-  "gaube_u_a_vordach_um": 0.714966170112591,
-  "gaube_u_a_dach_z": 16.62699999999999,
-  "gaube_u_a_vordach_z": 16.246999999999993,
-  "gaube_u_m_vordach_vor": 1.6649466714089318,
-  "gaube_u_m_stirn_vor": 1.5149465806185198,
-  "gaube_u_m_vordach_up": 0.714996658809333,
-  "gaube_u_m_vordach_um": 0.7150031649453987,
-  "gaube_u_m_dach_z": 16.62699999999999,
-  "gaube_u_m_vordach_z": 16.246999999999993,
-  "gaube_u_c_vordach_vor": 1.6649044550157686,
-  "gaube_u_c_stirn_vor": 1.5149047018320354,
-  "gaube_u_c_vordach_up": 0.7149595818411174,
-  "gaube_u_c_vordach_um": 0.715040194041038,
-  "gaube_u_c_dach_z": 16.62699999999999,
-  "gaube_u_c_vordach_z": 16.246999999999993
+  "fenster_eg1_rahmenfront": 0.016407608593362877,
+  "fenster_eg1_oberkante_l": 0.015700855543197,
+  "fenster_eg1_oberkante_r": 0.016853294678484954,
+  "fenster_eg1_ueber_oberkante": -0.007184007348401078
  },
  "pruefungen": [
   {
@@ -395,7 +381,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590077191591263,
+   "wert": 0.1390039175748825,
    "soll": [
     0.0348,
     100
@@ -425,7 +411,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00767,
+   "wert": 0.00769,
    "soll": [
     0,
     0.01
@@ -455,7 +441,7 @@
   },
   {
    "name": "Laubenrueckwand: Wandflaeche hinter der Ebene n 7,28 (z 7,0, alle Boegen; 0 = in der Ebene)",
-   "wert": -0.00332701019786219,
+   "wert": -0.00332684888924506,
    "soll": [
     -0.08,
     0.08
@@ -1354,181 +1340,41 @@
    "status": "ok"
   },
   {
-   "name": "Gaube untere Reihe A (u 9,46, im Foto links): Vordach-Vorderkante bei z 17,70 (n-Reichweite ab n 9,5; Foto n 11,17)",
-   "wert": 1.6649270668863148,
+   "name": "Fenster Laube EG Bogen 3 (eg1): Setzholz-/Kreuzstock-Vorderflaeche gegen die Wandfront n 7,28 (m, + = dahinter, Strahl am Setzholz u 7,18, z 4,4)",
+   "wert": 0.016407608593362877,
    "soll": [
-    1.565,
-    1.765
+    0.0,
+    0.06
    ],
    "ok": true,
    "status": "ok"
   },
   {
-   "name": "Gaube untere Reihe A (u 9,46, im Foto links): Stirn-/Fensterkasten-Front bei z 17,20 (n-Reichweite ab n 9,5; Foto n 11,0)",
-   "wert": 1.5149271977567722,
+   "name": "Fenster Laube EG Bogen 3 (eg1): Rahmenoberkante flach - Rahmenband bei z 6,28 vorhanden (links vom Setzholz)  (m hinter der Wandfront)",
+   "wert": 0.015700855543197,
    "soll": [
-    1.41,
-    1.62
+    0.0,
+    0.06
    ],
    "ok": true,
    "status": "ok"
   },
   {
-   "name": "Gaube untere Reihe A (u 9,46, im Foto links): Vordach Halbbreite nach +u bei z 17,70 (misst Breite UND Lage; Foto 0,68-0,74)",
-   "wert": 0.7150342387096038,
+   "name": "Fenster Laube EG Bogen 3 (eg1): Rahmenoberkante flach - Rahmenband bei z 6,28 vorhanden (rechts vom Setzholz)  (m hinter der Wandfront)",
+   "wert": 0.016853294678484954,
    "soll": [
-    0.62,
-    0.82
+    0.0,
+    0.06
    ],
    "ok": true,
    "status": "ok"
   },
   {
-   "name": "Gaube untere Reihe A (u 9,46, im Foto links): Vordach Halbbreite nach -u bei z 17,70",
-   "wert": 0.714966170112591,
+   "name": "Fenster Laube EG Bogen 3 (eg1): ueber der Rahmenoberkante (z 6,40) nur Wand, kein Rahmen (m hinter der Wandfront, 0 = Wandfront)",
+   "wert": -0.007184007348401078,
    "soll": [
-    0.62,
-    0.82
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe A (u 9,46, im Foto links): Hoehe der Dachoberflaeche bei n 10,8 (Vordach-Pultdach, Hang ~17,2)",
-   "wert": 16.62699999999999,
-   "soll": [
-    16.517,
-    16.817
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe A (u 9,46, im Foto links): Hoehe der Vordach-Unterkante bei n 11,08",
-   "wert": 16.246999999999993,
-   "soll": [
-    16.067,
-    16.307
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe Mitte (u 3,50): Vordach-Vorderkante bei z 17,70 (n-Reichweite ab n 9,5; Foto n 11,17)",
-   "wert": 1.6649466714089318,
-   "soll": [
-    1.565,
-    1.765
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe Mitte (u 3,50): Stirn-/Fensterkasten-Front bei z 17,20 (n-Reichweite ab n 9,5; Foto n 11,0)",
-   "wert": 1.5149465806185198,
-   "soll": [
-    1.41,
-    1.62
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe Mitte (u 3,50): Vordach Halbbreite nach +u bei z 17,70 (misst Breite UND Lage; Foto 0,68-0,74)",
-   "wert": 0.714996658809333,
-   "soll": [
-    0.62,
-    0.82
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe Mitte (u 3,50): Vordach Halbbreite nach -u bei z 17,70",
-   "wert": 0.7150031649453987,
-   "soll": [
-    0.62,
-    0.82
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe Mitte (u 3,50): Hoehe der Dachoberflaeche bei n 10,8 (Vordach-Pultdach, Hang ~17,2)",
-   "wert": 16.62699999999999,
-   "soll": [
-    16.517,
-    16.817
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe Mitte (u 3,50): Hoehe der Vordach-Unterkante bei n 11,08",
-   "wert": 16.246999999999993,
-   "soll": [
-    16.067,
-    16.307
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Vordach-Vorderkante bei z 17,70 (n-Reichweite ab n 9,5; Foto n 11,17)",
-   "wert": 1.6649044550157686,
-   "soll": [
-    1.565,
-    1.765
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Stirn-/Fensterkasten-Front bei z 17,20 (n-Reichweite ab n 9,5; Foto n 11,0)",
-   "wert": 1.5149047018320354,
-   "soll": [
-    1.41,
-    1.62
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Vordach Halbbreite nach +u bei z 17,70 (misst Breite UND Lage; Foto 0,68-0,74)",
-   "wert": 0.7149595818411174,
-   "soll": [
-    0.62,
-    0.82
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Vordach Halbbreite nach -u bei z 17,70",
-   "wert": 0.715040194041038,
-   "soll": [
-    0.62,
-    0.82
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Hoehe der Dachoberflaeche bei n 10,8 (Vordach-Pultdach, Hang ~17,2)",
-   "wert": 16.62699999999999,
-   "soll": [
-    16.517,
-    16.817
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Hoehe der Vordach-Unterkante bei n 11,08",
-   "wert": 16.246999999999993,
-   "soll": [
-    16.067,
-    16.307
+    -0.02,
+    0.02
    ],
    "ok": true,
    "status": "ok"

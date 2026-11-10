@@ -1,0 +1,39 @@
+{
+ "id": "M-6243-004",
+ "typ": "triangulation",
+ "foto": "6243",
+ "name": "eg1 Kreuzstock: Kreuzungspunkt Setzholz/Kaempfer, Vorderflaeche (Tiefe n), Paar 6206/6243",
+ "beobachtungen": [
+  {
+   "kamera": "K-6206",
+   "px": [
+    1371.0,
+    1929.0
+   ]
+  },
+  {
+   "kamera": "K-6243",
+   "px": [
+    606.0,
+    2465.0
+   ]
+  }
+ ],
+ "P": [
+  9.178,
+  4.455,
+  5.353
+ ],
+ "strahl_abstand_m": [
+  0.002,
+  0.002
+ ],
+ "schnittwinkel_grad": [
+  110.5
+ ],
+ "z": 5.353,
+ "unsicherheit_m": 0.011,
+ "massstab_von": "Kameras K-6206, K-6243 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.264,
+ "u": 7.165
+}

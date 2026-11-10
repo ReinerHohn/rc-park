@@ -4976,10 +4976,10 @@
    "pitch": 3.5177,
    "breite": 1.95,
    "unterseite_z": 3.21,
-   "kaempfer_z": 6.26,
-   "scheitel_z": 6.31,
+   "kaempfer_z": 6.31,
+   "scheitel_z": 6.32,
    "wand_n": 7.24,
-   "tiefe": 0.16,
+   "tiefe": 0.02,
    "rahmen_b": 0.1,
    "pfosten_b": 0.1,
    "riegel_z": 5.38,
@@ -4998,16 +4998,20 @@
     "bucht": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | Bucht von rechts (0 = rechts), einmal aus alter Arkade bestimmt",
     "u_mitte": "Neuberechnung auf Ebene 7,28: M-6120-025 (oben 6,32, u 6,22..8,15), M-6120-026 (unten 3,21, u 6,20..8,01), M-6120-027 (Riegel 5,38); Kaempfer = Oberkante - rahmen_b | ",
     "unterseite_z": "Neuberechnung auf Ebene 7,28: M-6120-025 (oben 6,32, u 6,22..8,15), M-6120-026 (unten 3,21, u 6,20..8,01), M-6120-027 (Riegel 5,38); Kaempfer = Oberkante - rahmen_b | ",
-    "kaempfer_z": "Neuberechnung auf Ebene 7,28: M-6120-025 (oben 6,32, u 6,22..8,15), M-6120-026 (unten 3,21, u 6,20..8,01), M-6120-027 (Riegel 5,38); Kaempfer = Oberkante - rahmen_b | ",
-    "scheitel_z": "Neuberechnung auf Ebene 7,28: M-6120-025 (oben 6,32, u 6,22..8,15), M-6120-026 (unten 3,21, u 6,20..8,01), M-6120-027 (Riegel 5,38); Kaempfer = Oberkante - rahmen_b | ",
+    "kaempfer_z": "Foto 6120/6243/6119 (Overlay rundekreis3_fensterreihe_eg1_*.jpg): Rahmenoberkante gerade bei z 6,32 (M-6120-025), kein First; Rahmen u 6,205..8,155 (breite 1,95); Hoehe 3,11 = 6,32 - 3,21. Altmodell: kontur 3,25 hoch (Oberkante 6,46, 0,14 zu hoch), kaempfer 6,26/scheitel 6,31; pfosten_oben_z 6,27 = 0,05 im oberen Rahmenband (6,22..6,32), ANNAHME Ueberlappung gegen Splitter",
+    "scheitel_z": "Foto 6120/6243/6119 (Overlay rundekreis3_fensterreihe_eg1_*.jpg): Rahmenoberkante gerade bei z 6,32 (M-6120-025), kein First; Rahmen u 6,205..8,155 (breite 1,95); Hoehe 3,11 = 6,32 - 3,21. Altmodell: kontur 3,25 hoch (Oberkante 6,46, 0,14 zu hoch), kaempfer 6,26/scheitel 6,31; pfosten_oben_z 6,27 = 0,05 im oberen Rahmenband (6,22..6,32), ANNAHME Ueberlappung gegen Splitter",
     "riegel_z": "Neuberechnung auf Ebene 7,28: M-6120-025 (oben 6,32, u 6,22..8,15), M-6120-026 (unten 3,21, u 6,20..8,01), M-6120-027 (Riegel 5,38); Kaempfer = Oberkante - rahmen_b | ",
     "pitch": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "breite": "Neuberechnung auf Ebene 7,28: M-6120-025 (oben 6,32, u 6,22..8,15), M-6120-026 (unten 3,21, u 6,20..8,01), M-6120-027 (Riegel 5,38); Kaempfer = Oberkante - rahmen_b | ",
     "wand_n": "Laubenrueckwand-Ebene n 7,28 statt 6,54 (2026-11-09 R6): Wolke lot2 Histogrammspitze 7,275 (161 282 Punkte Laube) + 2-Foto-Triangulation 6120/6117 Goldquaste Wandflaeche 7,30 (M-6120-021), Glas 7,11-7,20 (M-6120-022..024); 6,54 aus rohkoerper_v7 nie gemessen -> verworfen",
     "n_lichter": "Foto-Zaehlung Z-6120-004 (2 Lichter je Zeile)",
-    "kontur": "Foto ip_IMG_6120: Rechteck (Kreuzstock), Hoehe 3,25 = 6,45-3,20",
-    "glas_d": "Glas = Nischenboden (quader:eg1_nische), keine Platte",
-    "tiefe": "Rahmenvorderkante 6,66 wie bisher (0,12 vor der Wand) + 0,04 Einbindung"
+    "kontur": "Foto 6120/6243/6119 (Overlay rundekreis3_fensterreihe_eg1_*.jpg): Rahmenoberkante gerade bei z 6,32 (M-6120-025), kein First; Rahmen u 6,205..8,155 (breite 1,95); Hoehe 3,11 = 6,32 - 3,21. Altmodell: kontur 3,25 hoch (Oberkante 6,46, 0,14 zu hoch), kaempfer 6,26/scheitel 6,31; pfosten_oben_z 6,27 = 0,05 im oberen Rahmenband (6,22..6,32), ANNAHME Ueberlappung gegen Splitter",
+    "glas_d": "Glas = Nischengrund (Fensterreihe nische_tiefe 0,17; quader:eg1_nische inaktiv), keine Platte",
+    "tiefe": "Foto-Triangulation Kreuzungspunkt Setzholz/Kaempfer n 7,26 (M-6243-004 Paar 6206/6243 110 Grad, Strahlabstand 0,002, +-0,011; M-6119-011 3 Kameras 7,259 +-0,037): Vorderflaeche 0,02 hinter der Wandfront 7,28 (M-6120-021) -> tiefe 0,02 (Front 7,26). einbindung 0,20: Setzholz/Kaempfer reichen bis in den Nischengrund (n 7,11 = Glasebene Wolke 7,11-7,20, M-6120-022..024); Laibung in 6206/6243 tief sichtbar",
+    "einbindung": "Foto-Triangulation Kreuzungspunkt Setzholz/Kaempfer n 7,26 (M-6243-004 Paar 6206/6243 110 Grad, Strahlabstand 0,002, +-0,011; M-6119-011 3 Kameras 7,259 +-0,037): Vorderflaeche 0,02 hinter der Wandfront 7,28 (M-6120-021) -> tiefe 0,02 (Front 7,26). einbindung 0,20: Setzholz/Kaempfer reichen bis in den Nischengrund (n 7,11 = Glasebene Wolke 7,11-7,20, M-6120-022..024); Laibung in 6206/6243 tief sichtbar",
+    "pfosten_oben_z": "Foto 6120/6243/6119 (Overlay rundekreis3_fensterreihe_eg1_*.jpg): Rahmenoberkante gerade bei z 6,32 (M-6120-025), kein First; Rahmen u 6,205..8,155 (breite 1,95); Hoehe 3,11 = 6,32 - 3,21. Altmodell: kontur 3,25 hoch (Oberkante 6,46, 0,14 zu hoch), kaempfer 6,26/scheitel 6,31; pfosten_oben_z 6,27 = 0,05 im oberen Rahmenband (6,22..6,32), ANNAHME Ueberlappung gegen Splitter",
+    "nische_tiefe": "Laibung (Nische) Grund n 7,11 = Wandfront 7,28 - 0,17 (Glas in der Wolke 7,11-7,20 = M-6120-022..024; Fotos 6206/6243/6120: Lichter tief in der Laibung); ersetzt quader:eg1_nische, damit Setzholz/Kaempfer (Front 7,26 hinter der Wand) nicht mitgeschnitten werden",
+    "nische_front_n": "Laibung (Nische) Grund n 7,11 = Wandfront 7,28 - 0,17 (Glas in der Wolke 7,11-7,20 = M-6120-022..024; Fotos 6206/6243/6120: Lichter tief in der Laibung); ersetzt quader:eg1_nische, damit Setzholz/Kaempfer (Front 7,26 hinter der Wand) nicht mitgeschnitten werden"
    },
    "historie": [
     {
@@ -5081,31 +5085,56 @@
       "scheitel_z": 6.31,
       "riegel_z": 5.38
      }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis r3 (093550, fensterreihe:eg1)",
+     "alt": {
+      "tiefe": 0.16,
+      "einbindung": null,
+      "kaempfer_z": 6.26,
+      "scheitel_z": 6.31,
+      "kontur": "Rechteck 1,95 x 3,25 (Oberkante 6,46)"
+     },
+     "neu": {
+      "tiefe": 0.02,
+      "einbindung": 0.2,
+      "kaempfer_z": 6.31,
+      "scheitel_z": 6.32,
+      "kontur": "Rechteck 1,95 x 3,11",
+      "pfosten_oben_z": 6.27,
+      "nische_tiefe": 0.17,
+      "nische_front_n": 7.28
+     }
     }
    ],
    "n_lichter": 2,
    "kontur": [
     [
-     -0.98,
+     -0.975,
      0.0
     ],
     [
-     0.98,
+     0.975,
      0.0
     ],
     [
-     0.98,
-     3.25
+     0.975,
+     3.11
     ],
     [
-     -0.98,
-     3.25
+     -0.975,
+     3.11
     ]
    ],
    "zaehlung": [
     "Z-6120-003",
     "Z-6120-004"
-   ]
+   ],
+   "einbindung": 0.2,
+   "nische_tiefe": 0.17,
+   "nische_front_n": 7.28,
+   "pfosten_oben_z": 6.27
   },
   {
    "typ": "fensterreihe:eg1_tuer",
@@ -5352,8 +5381,16 @@
       "u0": 6.29,
       "u1": 8.07
      }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis r3 (093550, fensterreihe:eg1)",
+     "alt": "aktiv",
+     "neu": "aktiv false (ersetzt durch nische_tiefe in fensterreihe:eg1)"
     }
-   ]
+   ],
+   "aktiv": false,
+   "hinweis": "ersetzt durch fensterreihe:eg1 nische_tiefe 0,17 / nische_front_n 7,28 (Kreis r3 10.11., wie eg0 r2): der Quader-Ausschnitt schnitt das Setzholz/den Kaempfer (Front 7,26) mit weg"
   },
   {
    "typ": "quader:eg1_tuer_nische",

@@ -1,0 +1,49 @@
+{
+ "id": "M-6119-011",
+ "typ": "triangulation",
+ "foto": "6119",
+ "name": "eg1 Kreuzstock: Kreuzungspunkt Setzholz/Kaempfer, 3 Kameras 6206/6243/6119",
+ "beobachtungen": [
+  {
+   "kamera": "K-6206",
+   "px": [
+    1371.0,
+    1929.0
+   ]
+  },
+  {
+   "kamera": "K-6243",
+   "px": [
+    606.0,
+    2465.0
+   ]
+  },
+  {
+   "kamera": "K-6119",
+   "px": [
+    1763.0,
+    2764.0
+   ]
+  }
+ ],
+ "P": [
+  9.205,
+  4.441,
+  5.347
+ ],
+ "strahl_abstand_m": [
+  0.017,
+  0.019,
+  0.021
+ ],
+ "schnittwinkel_grad": [
+  110.5,
+  55.7,
+  58.3
+ ],
+ "z": 5.347,
+ "unsicherheit_m": 0.037,
+ "massstab_von": "Kameras K-6206, K-6243, K-6119 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.259,
+ "u": 7.194
+}

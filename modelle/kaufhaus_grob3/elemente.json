@@ -547,6 +547,14 @@
  },
  {
   "seite": "alle",
+  "element": "Fensterreihe: Lichter in der Laibung (Nische von Wandfront 7.28 bis 7.07, Pfosten/Riegel bis auf den Nischengrund)",
+  "quelle": "Laibung (Nische) Grund n 7,11 = Wandfront 7,28 - 0,17 (Glas in der Wolke 7,11-7,20 = M-6120-022..024; Fotos 6206/6243/6120: Lichter tief in der Laibung); ersetzt quader:eg1_nische, damit Setzholz/Kaempfer (Front 7,26 hinter der Wand) nicht mitgeschnitten werden",
+  "nische_tiefe": 0.17,
+  "nische_front_n": 7.28,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Fensterreihe 1 Kielbogenfenster",
   "quelle": "Anzahl Z-6120-003, Z-6120-004 (Regel 9); Neuberechnung auf Ebene 7,28: M-6120-025 (oben 6,32, u 6,22..8,15), M-6120-026 (unten 3,21, u 6,20..8,01), M-6120-027 (Riegel 5,38); Kaempfer = Oberkante - rahmen_b |  | Lage: Neuberechnung auf Ebene 7,28: M-6120-025 (oben 6,32, u 6,22..8,15), M-6120-026 (unten 3,21, u 6,20..8,01), M-6120-027 (Riegel 5,38); Kaempfer = Oberkante - rahmen_b | ",
   "n_fenster": 1,
@@ -554,10 +562,10 @@
   "pitch": 3.518,
   "breite": 1.95,
   "unterseite_z": 3.21,
-  "kaempfer_z": 6.26,
-  "scheitel_z": 6.31,
+  "kaempfer_z": 6.31,
+  "scheitel_z": 6.32,
   "wand_n": 7.24,
-  "tiefe": 0.16,
+  "tiefe": 0.02,
   "seite_name": "alle"
  },
  {
@@ -573,18 +581,6 @@
   "scheitel_z": 4.28,
   "wand_n": 7.24,
   "tiefe": 0.08,
-  "seite_name": "alle"
- },
- {
-  "seite": "alle",
-  "element": "Quader (ausschnitt)",
-  "quelle": "Fensternische Bogen 3 = Lichte des Kreuzstockfensters (M-6120-001..002 minus Rahmen 0,1); Tiefe 0,21 = ANNAHME (Glasebene; Foto zeigt Laibung)",
-  "u0": 6.29,
-  "u1": 8.07,
-  "n0": 7.07,
-  "n1": 7.3,
-  "z0": 3.29,
-  "z1": 6.36,
   "seite_name": "alle"
  },
  {
