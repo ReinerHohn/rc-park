@@ -428,7 +428,7 @@ def auftrag(ziel, runde, wt):
                        f"Schwaechste: {_fl}. Bilder: {formliste().get('bilder_dir', FORMDIR)}/{ziel['teil']}_<foto>.jpg NUR fuer die Torfotos {sorted(_tf)} ansehen (gruen passt, rot erfunden, gelb fehlt). "
                        f"Gelb im Teil = Form fehlt (Fenster, Rippen, Pfeiler, Ueberstand); rot = Form falsch/zu viel. Der Foto-F1 IST der Torwert (muss um >= {MIN_GEWINN_FOTO} steigen). Zusaetzlich Veto: Hoehen-Wert f1_h (nur waagerechte Kanten: Traufen, Gesimse, Stufen, Oberkanten; im Bericht _gesamt.f1_h) darf um hoechstens 0,02 fallen - Hoehenfehler sieht der Foto-F1 kaum. "
                        f"Eigene Zwischenmessung IMMER auf ALLEN 10 Torfotos, nie auf einer Teilmenge (10.11.: Westgiebel 0,73-0,81 auf 6 selbst gewaehlten Fotos, auf allen 10 ein Rueckschritt 0,413->0,394). Das Tor prueft zusaetzlich auf weiteren Kontrollfotos, die du nicht kennst - nur echte Formverbesserungen bestehen. SCHNELL (Stufe halbe Aufloesung, ~1 min statt ~10, gleiche Richtung wie das Tor, Betrag kleiner; "
-                       f"so misst auch die Vorpruefung): Variante vorher und nachher je einmal mit RCPARK_FOTO_SKALA={SKALA_VOR} vor dem Befehl messen und nur diese beiden Werte vergleichen; Endtor misst voll: "
+                       f"so misst auch die Vorpruefung): Variante vorher und nachher je einmal mit RCPARK_FOTO_SKALA={SKALA_VOR} vor dem Befehl messen und nur diese beiden Werte vergleichen; Endtor misst voll. bauen_abnehmen.sh nur EINMAL ganz am Ende laufen lassen (10.11.: Agenten liessen es bis zu 3x laufen, je 10-20 min; das Tor prueft ohnehin selbst): "
                        f"RCPARK_FOTO_SKALA={SKALA_VOR} {PY} -W ignore -I tools/teil_fotoform.py {OBJ} --nur {ziel['teil']} --fotos {','.join(form_fotos(formliste(), ziel['teil']))} --aus {LDIR}/ff_eigen.json --bilder_dir {LDIR}/ff_eigen_bilder")
     txt = (txt.replace("`<OBJEKT>`", OBJ).replace("<OBJEKT>", OBJ).replace("`<BAUTEIL>`", typ).replace("<BAUTEIL>", typ)
               .replace("`<BEFUND>`", befund).replace("<BEFUND>", befund).replace("<RUNDE>", f"kreis{runde}")
@@ -623,25 +623,49 @@ for runde in range(1, RUNDEN + 1):
         shutil.rmtree(_tn, ignore_errors=True)
         _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
         rcG, _ = sh_cpu(_gen, wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"), env={"BAUTEILE_AUS": _tn})
-    rcB, outB = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ, "--nur-pruefen"], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"), env={"RCPARK_OHNE_FOTODIAG": "1"}) if rcG == 0 else (rcG, "Generator fehlgeschlagen")
+    # BILLIGSTE ENTSCHEIDENDE PRUEFUNG ZUERST (Nutzer 10.11. abends "was koennen wir noch beschleunigen"; Erker 1 a174202: Abnahme 40 min + Konvergenz,
+    # dann Foto-F1 Gewinn 0 -> 95 min Tor fuer eine Ablehnung, die die Fotomessung allein in 5 min gezeigt haette). Foto-F1 (+ Hoehe) entscheidet ohnehin
+    # zuerst; ohne Gewinn sofort ablehnen, Abnahme/Konvergenz/Pruefer nur fuer Kandidaten. Nach einer Rueckgabe misst zuerst die halbe Stufe (1 min).
+    ff_n = None; _frueh = None
+    if rcG == 0 and ff_v is not None and not ist_fehlteil(ziel) and os.path.exists(os.path.join(_tn, ziel["teil"] + ".stl")):
+        if _halb and not _vorab_gebaut:   # zweiter Versuch nach Rueckgabe: erst halbe Aufloesung
+            _q2 = form_messen(wt, _tn, ziel["teil"], ff_fotos, f"r{runde}_vorpruef2", env={"RCPARK_FOTO_SKALA": str(SKALA_VOR)})
+            _h2v, _h2n = HOEHE.get(f"r{runde}_vorher_halb"), HOEHE.get(f"r{runde}_vorpruef2")
+            print(f"Runde {runde}: Vorpruefung 2 (halbe Aufloesung) {ziel['teil']}: F1 {_vq} -> {_q2}, Hoehe {_h2v} -> {_h2n}", flush=True)
+            if _q2 is None or _q2 < _vq + MIN_GEWINN_FOTO or (_h2v is not None and _h2n is not None and _h2n < _h2v - 0.02):
+                _frueh = f"Vorpruefung 2 halb: F1 {_vq} -> {_q2}, Hoehe {_h2v} -> {_h2n}"
+        if _frueh is None:
+            ff_n = ff_q if (_vorab_gebaut and not _halb) else form_messen(wt, _tn, ziel["teil"], ff_fotos, f"r{runde}_nachher")
+            _hv, _hn = HOEHE.get(f"r{runde}_vorher"), HOEHE.get(f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher")
+            print(f"Runde {runde}: Form am Foto (voll, vor Abnahme) {ziel['teil']}: F1 {ff_v} -> {ff_n}, Hoehe {_hv} -> {_hn}", flush=True)
+            if ff_n is None or ff_n < ff_v + MIN_GEWINN_FOTO or (_hv is not None and _hn is not None and _hn < _hv - 0.02):
+                _frueh = f"Foto voll: F1 {ff_v} -> {ff_n}, Hoehe {_hv} -> {_hn}"
+        if _frueh: print(f"Runde {runde}: FRUEH ABGELEHNT ({_frueh}) - Abnahme/Konvergenz/Pruefer uebersprungen", flush=True)
+    if _frueh:
+        rcB, outB = 1, "uebersprungen: " + _frueh
+    else:
+        rcB, outB = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ, "--nur-pruefen"], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"), env={"RCPARK_OHNE_FOTODIAG": "1"}) if rcG == 0 else (rcG, "Generator fehlgeschlagen")
     tor_abnahme = rcB == 0 and "alle Pruefungen bestanden" in outB
     reg = None
     if ist_fehlteil(ziel):
         reg = os.path.join(LDIR, f"region_r{runde}.json"); json.dump([{"id": ziel["id"], "lo": ziel["lo"], "hi": ziel["hi"]}], open(reg, "w"))
-    rcK, z1, outK = messen(wt, f"r{runde}_nachher", regionen=reg, vorab=(rcG == 0))
+    rcK, z1, outK = (1, None, "uebersprungen: " + _frueh) if _frueh else messen(wt, f"r{runde}_nachher", regionen=reg, vorab=(rcG == 0))
     vor_t = {t["teil"]: t for t in z0.get("wolkenbeleg_teile") or []}; nach_t = {t["teil"]: t for t in (z1 or {}).get("wolkenbeleg_teile") or []}
     vor = {k: guete(v) for k, v in vor_t.items()}; nach = {k: guete(v) for k, v in nach_t.items()}
     ersatz = None
     if ziel["teil"] not in nach:   # Teil durch neue Formfamilie ersetzt (z. B. stl_teil:figuren -> figurenreihe:figuren, s4 10.11.): neue Teile zaehlen, konservativ das schlechteste
         neu_t = {t: v for t, v in nach.items() if t not in vor and v is not None}
         if neu_t: ersatz = min(neu_t, key=neu_t.get); nach[ziel["teil"]] = neu_t[ersatz]
-    ff_n = None
-    if ff_v is not None and not ersatz:
+    if ff_v is not None and not ersatz and ff_n is None and not _frueh:
         ff_n = ff_q if (_vorab_gebaut and not _halb) else form_messen(wt, os.path.join(LDIR, f"teile_r{runde}_nachher"), ziel["teil"], ff_fotos, f"r{runde}_nachher")   # Vorpruefung = gleicher Stand, gleiche Messung
         print(f"Runde {runde}: Form am Foto {ziel['teil']}: F1 {ff_v} -> {ff_n} ({len(ff_fotos)} Fotos)")
     kf_n = None
-    if kf_v is not None and ff_n is not None and not ersatz:   # Kontrollfotos erst hier (Agent kennt sie nicht), eigener Bilderordner
-        kf_n = form_messen(wt, os.path.join(LDIR, f"teile_r{runde}_nachher"), ziel["teil"], kf_fotos, f"r{runde}_kontrolle", bilder="kontroll_bilder")
+    _flk = formliste_halb(wt) if (kf_fotos and not _frueh) else None   # Kontrollfotos auf halber Aufloesung (nur Protokoll, ~1 statt ~5 min)
+    if _flk is not None:
+        kf_v = form_aus_liste(_flk, wt, ziel["teil"], kf_fotos, runde, nebenwirkung=False)
+    if kf_v is not None and ff_n is not None and not ersatz and not _frueh:   # Kontrollfotos erst hier (Agent kennt sie nicht), eigener Bilderordner
+        kf_n = form_messen(wt, os.path.join(LDIR, f"teile_r{runde}_nachher"), ziel["teil"], kf_fotos, f"r{runde}_kontrolle", bilder="kontroll_bilder",
+                           env={"RCPARK_FOTO_SKALA": str(SKALA_VOR)} if _flk is not None else None)
         print(f"Runde {runde}: KONTROLLFOTOS {ziel['teil']}: F1 {kf_v} -> {kf_n} ({len(kf_fotos)} Fotos, dem Agenten unbekannt)", flush=True)
     tv = vor_t.get(ziel["teil"], {}); tn = nach_t.get(ersatz or ziel["teil"], {})
     foto_tor = ff_v is not None and ff_n is not None
@@ -782,7 +806,7 @@ for runde in range(1, RUNDEN + 1):
     if not TROCKEN and wt != ROOT:   # Platz (10.11.: 11 Worktrees x 430 MB fuellten die Datenplatte); Inhalt liegt als Commit auf dem Zweig br
         subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
-               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else ("region" if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "kontroll_f1_vor_nach": [kf_v, kf_n], "kontroll_fotos": kf_fotos, "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
+               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else ("region" if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "kontroll_f1_vor_nach": [kf_v, kf_n], "kontroll_skala": SKALA_VOR if _flk is not None else 1.0, "frueh_abgelehnt": _frueh, "kontroll_fotos": kf_fotos, "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
                "tor_konvergenz": tor_konv, "foto_f1": [ff_v, ff_n], "foto_fotos": ff_fotos, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")
