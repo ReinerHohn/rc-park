@@ -82,6 +82,14 @@ def main(argv=None):
         subprocess.run(obj["generator"], shell=True, cwd=R0, env=dict(os.environ, BAUTEILE_AUS=td), check=True, capture_output=True)
     teile = sorted(glob.glob(os.path.join(td, "*.stl")))
     if a.nur: teile = [p for p in teile if os.path.basename(p)[:-4] in a.nur.split(",")]   # Kreis-Tor: nur das Ziel-Teil (Verdeckung trotzdem gegen das ganze Modell)
+    # PHANTOM (11.11., Foto-Tor fuer NEUE Teile): ein --nur-Teil, das es im Vorher-Stand nicht gibt, aber in --bereich_von (Nachher-Teile), wird im
+    # Bildbereich gemessen, den es NACHHER einnaehme (sichtbar vor dem Vorher-Modell); Modellkanten = Vorher-Modell. Bestehende Teile unveraendert.
+    phantom = []
+    if a.nur and a.bereich_von:
+        da = {os.path.basename(p)[:-4] for p in teile}
+        for nm in a.nur.split(","):
+            pb = os.path.join(a.bereich_von, nm + ".stl")
+            if nm not in da and os.path.exists(pb): teile.append(pb); phantom.append(nm)
     fotos = a.fotos.split(",") if a.fotos else sorted(os.path.basename(p)[2:-5] for p in glob.glob(os.path.join(os.path.dirname(objp), "messprotokoll", "K-*.json")))
     bd = a.bilder_dir or os.path.join(os.path.dirname(objp), "audit", "teil_fotoform"); os.makedirs(bd, exist_ok=True)
     import hashlib, time
@@ -94,6 +102,7 @@ def main(argv=None):
         if os.path.exists(wp): VERD = WV.Verdecker(np.load(wp, mmap_mode="r")); erg["wolke"] = wp
         else: print("WARNUNG: Wolke fehlt, Verdeckung aus:", wp, flush=True)
     erg["metrik"] = METRIK; erg["wolke_verdeckung"] = "an" if VERD is not None else "aus"   # aus = Vergleichslauf, nie mit "an"-Listen mischen
+    if phantom: erg["phantom"] = phantom   # nur Bereich des Nachher-Teils, Vorher-Modell ohne dieses Teil
     if a.bereich_von: erg["bereich_von"] = a.bereich_von   # F1 in Vereinigungsbereich: NICHT mit Listen ohne dieses Feld vergleichen/mischen (nur vorher/nachher-Paar eines Tors)
     _td = "/media/oem/scan/rc-park_tmp" if os.path.isdir("/media/oem/scan") else None   # nie Root-Platte (10.11.: 76 Reste = 4,1 GB in /tmp, Root 5 GB)
     if _td: os.makedirs(_td, exist_ok=True)

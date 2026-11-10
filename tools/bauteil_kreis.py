@@ -215,6 +215,7 @@ SICHT = "verdeckung_strahl"   # Messart der Sichtpruefung in konvergenz_bericht;
 # (Ost-Staffelgiebel, Dachgitter, Pfeiler-Daechlein wurden nie Ziel, weil der Kreis nur vorhandene Teile verbessert).
 FEHL_PKT = opt("--fehl_pkt", 300, int); FEHL_RECALL_MAX = opt("--fehl_recall_max", 0.5, float)
 MIN_REGION = opt("--min_region", 0.25, float); MIN_PRAEZ_NEU = opt("--min_praez_neu", 0.25, float)
+FOTO_FEHL = opt("--foto_fehl", 1, int); FOTO_FEHL_PX = opt("--foto_fehl_px", 2000, int); FOTO_FEHL_FOTOS = opt("--foto_fehl_fotos", 5, int); FOTO_FEHL_SUMME = opt("--foto_fehl_summe", 150000, int)   # Fehlteile aus Fotokanten (foto_fehlteile.py), 0 = aus
 
 def ist_fehlteil(ziel): return (ziel or {}).get("art") == "fehlteil"
 
@@ -259,6 +260,10 @@ def f1_je(je, fotos):
     if mk <= 0 or fk <= 0: return None
     p = sum(je[f]["praez"] * je[f]["mk_px"] for f in fotos) / mk; r = sum(je[f]["recall"] * je[f]["fk_px"] for f in fotos) / fk
     return round(2 * p * r / (p + r), 3) if p + r else 0.0
+def f1_je_p(je):
+    """Pixelgewichtete Praezision einer Je-Foto-Messung (Anteil Modellkanten mit Fotokante); None ohne Modellkanten."""
+    mk = sum(v["mk_px"] for v in je.values())
+    return round(sum(v["praez"] * v["mk_px"] for v in je.values()) / mk, 3) if mk > 0 else None
 def angleichen(tag_v, tag_n, fv, fn, wer=""):
     """GEWINN NUR AUF GEMEINSAMEN FOTOS (11.11., EG2 a205314: nachher fielen 6130/e04 aus der Bewertung ('0 Teile beurteilt'), +0,11 nur durch
     den kleineren Fotosatz, auf den gemeinsamen Fotos schlechter). Unterscheiden sich die beurteilten Fotos von vorher und nachher, werden beide
@@ -356,6 +361,22 @@ def waehlen(z, sperre):
     erl = erledigt_laden()
     fk = [f for f in fk if sperre.get(f["teil"], 0) < MAX_FEHL and fg.get(f["teil"], 0) < MAX_GLOBAL and f["id"] not in belegt_fam and not ist_erledigt(f, erl)]
     fk.sort(key=lambda f: -f["pkt"])
+    # FEHLTEILE AUS FOTOKANTEN (11.11., Regel 9e): gelbe Flecken der Formliste ueber alle Fotos geclustert (tools/foto_fehlteile.py). Das Kantengitter
+    # (oben) ist in der Laube fast leer - das Kreuzrippengewoelbe (gelb in ~20 Fotos) wurde nie Ziel. Direkte Fotobelege zuerst; nie, solange ein
+    # betroffenes Teil von einer anderen Spur belegt ist (gleicher Bildbereich, Doppelbau/Merge-Konflikt).
+    if FOTO_FEHL:
+        try:
+            _fs = sorted([p for p in glob.glob(os.path.join(FORMDIR, "*.json")) if METRIK_SOLL in p], key=os.path.getmtime); _bel = set(os.listdir(BELEGT)); _cl = []
+            if _fs:   # eigener Prozess in der GPU-Umgebung (Spuren laufen mit System-python3 ohne torch)
+                _ao = os.path.join(LDIR, "foto_fehlteile.json")
+                subprocess.run([PY, "-I", os.path.join(ROOT, "tools", "foto_fehlteile.py"), OBJ, "--formliste", _fs[-1], "--min_px", str(FOTO_FEHL_PX),
+                                "--min_fotos", str(FOTO_FEHL_FOTOS), "--aus", _ao], capture_output=True, text=True, timeout=300)
+                _cl = json.load(open(_ao))["cluster"] if os.path.exists(_ao) else []
+            ffk = [dict(c, teil=c["id"] + "__neu", art="fehlteil", beleg=None, pkt=c["px"], recall_kasten=None) for c in _cl
+                   if c["px"] >= FOTO_FEHL_SUMME and not (set(c["teile"]) & _bel)]
+            ffk = [f for f in ffk if sperre.get(f["teil"], 0) < MAX_FEHL and fg.get(f["teil"], 0) < MAX_GLOBAL and f["id"] not in belegt_fam and not ist_erledigt(f, erl)]
+            fk = ffk + fk
+        except Exception as _ex: print("foto_fehlteile:", _ex, flush=True)
     for t in fk:
         try:
             fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
@@ -432,13 +453,20 @@ def auftrag(ziel, runde, wt):
     typ = ziel["teil"].replace("__", ":")
     if ist_fehlteil(ziel):
         typ = f"FEHLENDES ELEMENT bei {ziel['id']} (Zentrum {ziel['zentrum']} m, Modellrahmen)"
-        befund = (f"Automatisch aus konvergenz_bericht (Abschnitt 8 Fehlkanten): Im Kasten {ziel['lo']} .. {ziel['hi']} (Modellrahmen, m) liegen "
-                  f"{ziel['pkt']} Punkte des Kantengitters (Fotokanten aus mehreren Fotos), die keine Modellflaeche naeher als 0,3 m haben; "
-                  f"Recall der Fotokanten im Kasten nur {ziel['recall_kasten']}. Dort fehlt sehr wahrscheinlich ein Bauteil (oder ein vorhandenes ist "
+        _quelle = (f"Automatisch aus den FOTOKANTEN (tools/foto_fehlteile.py, Regel 9e): in {ziel.get('n_fotos')} Fotos ({', '.join((ziel.get('fotos') or [])[:12])}) "
+                   f"liegen gelbe Flecken (Fotokante ohne Modellkante, zusammen {ziel['pkt']} px) auf der Modellflaeche im Kasten {ziel['lo']} .. {ziel['hi']} "
+                   f"(Modellrahmen, m; Weltpunkt = Treffer auf dem VORHANDENEN Modell, das fehlende Element liegt davor, z. B. Gewoelbe vor Wand/Decke). "
+                   f"Betroffene Teilbereiche: {', '.join(ziel.get('teile') or [])}. Overlays je Teil und Foto: Formliste bilder_dir. "
+                   if ziel.get("quelle") == "fotokanten" else
+                   f"Automatisch aus konvergenz_bericht (Abschnitt 8 Fehlkanten): Im Kasten {ziel['lo']} .. {ziel['hi']} (Modellrahmen, m) liegen "
+                   f"{ziel['pkt']} Punkte des Kantengitters (Fotokanten aus mehreren Fotos), die keine Modellflaeche naeher als 0,3 m haben; "
+                   f"Recall der Fotokanten im Kasten nur {ziel['recall_kasten']}. ")
+        befund = (_quelle + f"Dort fehlt sehr wahrscheinlich ein Bauteil (oder ein vorhandenes ist "
                   f"an der falschen Stelle). Stufe 0: Stelle in >= 3 Fotos finden (Kasten in die kalibrierten Fotos projizieren), Element benennen und "
                   f"Formfamilie festlegen; dann als NEUES Bauteil mit beleg()/Quelle im Generator bauen (oder vorhandenes Teil dorthin korrigieren). "
-                  f"Gate: Recall im Kasten muss um >= {MIN_REGION} steigen, jedes neue Teil Kanten-Praezision >= {MIN_PRAEZ_NEU} "
-                  f"(keine erfundenen Kanten), kein vorhandenes Teil darf in der Guete um > 0,02 fallen, Gesamt-Recall darf nicht sinken. "
+                  f"Gate (FOTO, Regel 9e): im Bildbereich des neuen Teils muss die Foto-F1 (teil_fotoform, vorher ohne / nachher mit dem Teil, gleiche 10 Fotos) "
+                  f"um >= {MIN_GEWINN_FOTO} steigen, Foto-Praezision des neuen Teils >= {MIN_PRAEZ_NEU} (keine erfundenen Kanten), kein vorhandenes Teil darf "
+                  f"in der Guete um > 0,02 fallen (Lage-Veto). Kantengitter-Werte sind nur Beobachtung. Leere Wolke ist KEIN Grund, nicht zu bauen. "
                   f"Wenn die Fotos dort NICHTS zeigen (Gitterfehler, Hintergrund), das als Befund berichten und nichts bauen. "
                   f"PFLICHT: letzte Zeile deiner Antwort GENAU eine von 'FEHLTEIL-BEFUND: gebaut' | 'FEHLTEIL-BEFUND: kein Bauteil' | "
                   f"'FEHLTEIL-BEFUND: Gitter zu duenn' | 'FEHLTEIL-BEFUND: vorhandenes Teil <typ:name>' (z. B. staffelgiebel:west, wenn ein vorhandenes Teil "
@@ -616,6 +644,14 @@ for runde in range(1, RUNDEN + 1):
                 sh_cpu(_gen, wt, log=os.path.join(LDIR, f"export_r{runde}_vorher_form.log"), env={"BAUTEILE_AUS": _tv})
             ff_v = form_messen(wt, _tv, ziel["teil"], ff_fotos, f"r{runde}_vorher")
             print(f"Runde {runde}: Form am Foto vorher {ziel['teil']}: F1 {ff_v} ({len(ff_fotos)} Fotos)")
+    _fehl_vor = None
+    if ist_fehlteil(ziel) and not TROCKEN and not NACH:   # Foto-Tor fuer neue Teile (11.11., Regel 9e): Basisstand sichern (Teile + Gesamt-STL, CPU)
+        _tvf = os.path.join(LDIR, f"teile_r{runde}_vorher_form"); _svf = os.path.join(LDIR, f"stl_r{runde}_vorher.stl")
+        try:
+            if not glob.glob(os.path.join(_tvf, "*.stl")):
+                sh_cpu(json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"], wt, log=os.path.join(LDIR, f"export_r{runde}_vorher_form.log"), env={"BAUTEILE_AUS": _tvf})
+            shutil.copy2(os.path.join(wt, STL), _svf); _fehl_vor = (_tvf, _svf, formliste())
+        except Exception as _ex: print(f"Runde {runde}: Basisstand fuer Fehlteil-Fototor nicht gesichert: {_ex}", flush=True)
     t0 = time.time()
     if PATCH:   # Agentenarbeit aus abgebrochener Runde uebernehmen statt neuen Agenten (gleiches Tor danach)
         rcA = subprocess.run(["git", "-C", wt, "apply", "--whitespace=nowarn", PATCH], capture_output=True, text=True).returncode
@@ -779,6 +815,38 @@ for runde in range(1, RUNDEN + 1):
         if rg1 is None or rg1 < rg0 - 0.002: rueck_teil.append(f"recall_gesamt {rg0}->{rg1}")
         tor_konv = rcK == 0 and r_n is not None and gewinn >= MIN_REGION and not rueck_teil
         vor[ziel["teil"]], nach[ziel["teil"]] = ziel["recall_kasten"], r_n
+        # FOTO-TOR FUER NEUE TEILE (11.11., Regel 9e "Fotokanten entscheiden"; vorher nur Kantengitter-Recall im Kasten, Schwelle +0,25,
+        # Foto-F1 nie gemessen - 234159 Baldachine). Je neuem Teil: Bildbereich, den es NACHHER einnimmt, vorher (Basismodell ohne Teil,
+        # teil_fotoform PHANTOM) und nachher am Foto messen, gleiche Fotos (Auswahl: 10 Fotos mit den meisten Kantenpixeln, halbe Aufloesung).
+        # Gilt, sobald messbar: Gewinn >= MIN_GEWINN_FOTO, Praezision des neuen Teils >= MIN_PRAEZ_NEU; Gitter-Werte (Recall Kasten/gesamt,
+        # Gitter-Praezision) nur noch Beobachtung, Lage-Veto bleibt (Guete anderer Teile).
+        if _fehl_vor and neu_t and rcG == 0 and not _frueh:
+            _best = None
+            for p_ in neu_t:
+                if not os.path.exists(os.path.join(_tn, p_ + ".stl")): continue
+                _alle = sorted((_fehl_vor[2].get("fotos") or {}).keys())
+                if not _alle: break
+                _w = form_messen(wt, _tn, p_, _alle, f"r{runde}_fehlwahl_{p_}", env={"RCPARK_FOTO_SKALA": str(SKALA_VOR)})
+                _je = JE.get(f"r{runde}_fehlwahl_{p_}") or {}
+                if not _je: continue
+                _px = sum(v["mk_px"] + v["fk_px"] for v in _je.values())
+                if _best is None or _px > _best[1]: _best = (p_, _px, sorted(_je, key=lambda k: -(_je[k]["mk_px"] + _je[k]["fk_px"]))[:10])
+            if _best:
+                p_, _, _ff = _best; ff_fotos = _ff
+                ff_n = form_messen(wt, _tn, p_, _ff, f"r{runde}_nachher")
+                ff_v = form_messen(wt, _fehl_vor[0], p_, _ff, f"r{runde}_vorher", stl=_fehl_vor[1])
+                ff_v, ff_n = angleichen(f"r{runde}_vorher", f"r{runde}_nachher", ff_v, ff_n, "Fehlteil")
+                _pn = f1_je_p(JE.get(f"r{runde}_nachher") or {})
+                print(f"Runde {runde}: FOTO-TOR NEUES TEIL {p_}: F1 im Teilbereich {ff_v} -> {ff_n} ({len(_ff)} Fotos), Praezision nachher {_pn}; "
+                      f"Gitter (nur Beobachtung): Recall Kasten {ziel['recall_kasten']} -> {r_n}, {rueck_teil}", flush=True)
+                if ff_v is not None and ff_n is not None:
+                    _gitter = [x for x in rueck_teil if x.startswith(("praez ", "recall_gesamt"))]
+                    rueck_teil = [x for x in rueck_teil if x not in _gitter]
+                    if _pn is not None and _pn < MIN_PRAEZ_NEU: rueck_teil.append(f"foto_praez {p_}={_pn}")
+                    if _gitter: gitter_widerspruch = (gitter_widerspruch + "; " if gitter_widerspruch else "") + "Gitter beim neuen Teil: " + ", ".join(_gitter)
+                    gewinn = ff_n - ff_v; foto_tor = True
+                    _rk_ok = rcK == 0 or (rcK == 3 and _rk and all(x.startswith("recall ") and " m:" in x for x in _rk))
+                    tor_konv = _rk_ok and gewinn >= MIN_GEWINN_FOTO and not rueck_teil
     if rueck_teil: print(f"Runde {runde}: Rueckschritt im Ziel-Teil: {rueck_teil}")
     urteil = pruefer_urteil(wt, ziel, runde) if (tor_abnahme and tor_konv) else {"annehmen": False, "fehlerliste": ["nicht geprueft: Vortor rot"]}
     angenommen = tor_abnahme and tor_konv and bool(urteil.get("annehmen"))
@@ -886,7 +954,7 @@ for runde in range(1, RUNDEN + 1):
     if not TROCKEN and wt != ROOT:   # Platz (10.11.: 11 Worktrees x 430 MB fuellten die Datenplatte); Inhalt liegt als Commit auf dem Zweig br
         subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
-               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "metrik": METRIK_SOLL, "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else ("region" if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "kontroll_f1_vor_nach": [kf_v, kf_n], "kontroll_skala": SKALA_VOR if _flk is not None else 1.0, "frueh_abgelehnt": _frueh, "kontroll_fotos": kf_fotos, "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
+               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "metrik": METRIK_SOLL, "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else (("foto_neu" if foto_tor else "region") if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "kontroll_f1_vor_nach": [kf_v, kf_n], "kontroll_skala": SKALA_VOR if _flk is not None else 1.0, "frueh_abgelehnt": _frueh, "kontroll_fotos": kf_fotos, "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
                "tor_konvergenz": tor_konv, "foto_f1": [ff_v, ff_n], "foto_fotos": ff_fotos, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")
