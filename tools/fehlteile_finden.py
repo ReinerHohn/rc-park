@@ -213,7 +213,7 @@ def main():
     if not gueltig.any():   # Modell bedeckt im Foto keine ganze 1-m-Zelle (Nahaufnahme/anderer Bildausschnitt) - frueher IndexError, von der Abnahme verschluckt (10.11.)
         od = os.path.join(root, obj.get("audit", os.path.dirname(obj["masstabelle"]) + "/audit")); os.makedirs(od, exist_ok=True); tg = ("_" + os.path.basename(stl)[:-4]) if "--stl" in a else ""
         json.dump(dict(foto=nr, stl=stl, kamera=quelle, zelle_px=cs, treffer=[], hinweis="keine gueltige Zelle: Modellflaeche im Foto < 1 Zelle - nicht bewertbar"), open(os.path.join(od, f"fehlteile_{nr}{tg}.json"), "w"), indent=1, ensure_ascii=False)
-        print(f"Fehlteile {nr}: keine gueltige 1-m-Zelle (Zelle {cs} px, Raster {gh}x{gw}, Modell deckt keine Zelle zur Haelfte) - nicht bewertbar, uebersprungen"); return
+        print(f"Fehlteile {nr}: keine gueltige 1-m-Zelle (Zelle {cs} px, Raster {gh}x{gw}, Modell deckt keine Zelle zur Haelfte; Modell-Median-Abstand {dmed:.1f} m, Silhouette innen {float(n_in.sum()) / (gh * gw * cs * cs):.3f} des Bildes, max Zellanteil {float(n_in.max()) / (cs * cs):.2f}) - nicht bewertbar, uebersprungen"); return
     def dichte(s_): return max(1e-6, float(np.quantile(s_[gueltig] / np.maximum(1, n_in[gueltig]), 0.9)))
     qf, qm = dichte(s_fk), dichte(s_mk); print(f"  Kantendichte 90%-Quantil Foto {qf:.3f}, Modell {qm:.3f}")
     with np.errstate(all="ignore"):

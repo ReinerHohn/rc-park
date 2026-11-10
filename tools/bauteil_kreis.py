@@ -264,7 +264,7 @@ for runde in range(1, RUNDEN + 1):
         if z0 is None:   # Basis der Originalrunde (Zweig~1) neu messen, gleiche Messart wie nachher
             wt0 = os.path.join(LDIR, "wt_basis")
             _msg = subprocess.run(["git", "-C", ROOT, "log", "-1", "--format=%s", br], capture_output=True, text=True).stdout
-            _basis = br + "~1" if ("VERWORFEN" in _msg or "gesichert" in _msg) else br   # alte Spuren: Aenderungen ungesichert im Worktree, Zweig = Basis
+            _basis = br + "~1" if ("VERWORFEN" in _msg or "gesichert" in _msg or "(automatisch" in _msg) else br   # alte Spuren: Aenderungen ungesichert im Worktree, Zweig = Basis; angenommene Runde (Commit 'automatisch') -> Basis = Zweig~1
             subprocess.run(["git", "-C", ROOT, "worktree", "add", "-q", "--detach", wt0, _basis], check=True)
             _rc0, z0, _o0 = messen(wt0, f"r{runde}_vorher_basis")
             subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt0], capture_output=True)
