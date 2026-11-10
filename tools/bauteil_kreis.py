@@ -369,7 +369,13 @@ NACH = opt("--nachpruefen", "")
 if NACH:
     _ld, _r = NACH.rsplit(":", 1); RUNDEN = 1
     NACH_Z = [json.loads(l) for l in open(os.path.join(_ld, "kreis.jsonl")) if l.strip() and json.loads(l).get("runde") == int(_r) and "angenommen" in json.loads(l)][-1]
+import hashlib as _hl
+_CODE = lambda: _hl.sha256(open(os.path.join(ROOT, "tools", "bauteil_kreis.py"), "rb").read()).hexdigest()
+_CODE0 = _CODE()
 for runde in range(1, RUNDEN + 1):
+    if runde > 1 and not NACH and not TROCKEN and _CODE() != _CODE0:
+        # 10.11.: alte Spuren liefen stundenlang mit altem Tor (ohne Formpruefung/Quellenvorrang) und scheiterten am behobenen Fehler -> neu starten lassen
+        print(f"Runde {runde}: Kreis-Code auf main geaendert - Spur endet, Regler startet frisch"); protokoll({"runde": runde, "ende": "code neu"}); break
     wt = os.path.join(LDIR, f"wt_r{runde}"); br = f"kreis/{OBJ}/{LAUF}-r{runde}"
     if NACH:
         wt, br = NACH_Z["worktree"], NACH_Z["branch"]
