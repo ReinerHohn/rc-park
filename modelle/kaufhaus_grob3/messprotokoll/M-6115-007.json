@@ -1,0 +1,39 @@
+{
+ "id": "M-6115-007",
+ "typ": "triangulation",
+ "foto": "6115",
+ "name": "Ostgiebel Stufenspitze 7 (Kappenfirst-Ecke)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6115",
+   "px": [
+    1568.0,
+    682.0
+   ]
+  },
+  {
+   "kamera": "K-6257",
+   "px": [
+    639.0,
+    1542.0
+   ]
+  }
+ ],
+ "P": [
+  18.037,
+  4.168,
+  20.716
+ ],
+ "strahl_abstand_m": [
+  0.032,
+  0.032
+ ],
+ "schnittwinkel_grad": [
+  69.0
+ ],
+ "z": 20.716,
+ "unsicherheit_m": 0.074,
+ "massstab_von": "Kameras K-6115, K-6257 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 9.95,
+ "u": 15.611
+}

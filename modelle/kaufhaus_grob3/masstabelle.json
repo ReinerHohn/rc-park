@@ -171,17 +171,17 @@
   },
   "giebel_o_rueck": {
    "typ": "max_z_im_bereich",
-   "x0": 15.225999999999999,
-   "x1": 15.526,
-   "y0": -7.203,
-   "y1": -6.903
+   "x0": 13.86,
+   "x1": 14.16,
+   "y0": -6.809,
+   "y1": -6.509
   },
   "giebel_o_vorn": {
    "typ": "max_z_im_bereich",
-   "x0": 18.272000000000002,
-   "x1": 18.572,
-   "y0": 1.372,
-   "y1": 1.672
+   "x0": 16.898,
+   "x1": 17.198,
+   "y0": 1.769,
+   "y1": 2.069
   },
   "tuer_b3": {
    "typ": "ebene_oeffnungen",
@@ -1178,6 +1178,55 @@
    ],
    "quer_max": 0.3,
    "r_max": 3.0
+  },
+  "giebel_o_u_reach": {
+   "typ": "schnitt_reichweite",
+   "z": "=28.3 - z_unterkante_lot2",
+   "zentrum": [
+    13.405,
+    -1.087
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.3,
+   "r_max": 6.0
+  },
+  "giebel_o_top_b2": {
+   "typ": "max_z_im_bereich",
+   "x0": 15.926,
+   "x1": 16.166,
+   "y0": -1.029,
+   "y1": -0.789
+  },
+  "giebel_o_top_b4": {
+   "typ": "max_z_im_bereich",
+   "x0": 16.594,
+   "x1": 16.834,
+   "y0": 0.856,
+   "y1": 1.096
+  },
+  "giebel_o_top_b8": {
+   "typ": "max_z_im_bereich",
+   "x0": 17.929,
+   "x1": 18.169,
+   "y0": 4.627,
+   "y1": 4.867
+  },
+  "giebel_o_vorn_n": {
+   "typ": "schnitt_reichweite",
+   "z": "=19.2 - z_unterkante_lot2",
+   "zentrum": [
+    17.215,
+    2.39
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.2,
+   "r_max": 3.6
   }
  },
  "pruefungen": [
@@ -1439,22 +1488,6 @@
    "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/koerper/rohkoerper_v7.json off_back",
    "historie": [
     "2026-11-09 angelegt (Agent Runde 3); schlaegt am Modell Runde 2 fehl (Rueckwand bei n 4,5, Alt-Rumpf 8 m)"
-   ]
-  },
-  {
-   "name": "Ostgiebel Rueckflanke/Vorderflanke Hoehe (gespiegelte Lage n -1,5 / 7,6)",
-   "wert": "(giebel_o_rueck + z_unterkante_lot2) / (giebel_o_vorn + z_unterkante_lot2)",
-   "soll": [
-    0.97,
-    1.03
-   ],
-   "quelle": "Foto ip_IMG_6261: Ostgiebel-Silhouette beidseitig gestuft (Spitze mittig, links 2-3 Stufen sichtbar); fehlteile_6261: 6 ERFUNDEN-Zellen an der glatten Rueckkante (along 14,9-15,8, z 18,9-21,8)",
-   "quelltyp": "foto_vollbild",
-   "merkmal": "verhaeltnis",
-   "massstab": "foto_intern",
-   "protokoll": "audit/fehlteile_6261.json",
-   "historie": [
-    "2026-11-09 angelegt (Agent Runde 3); schlaegt am Modell Runde 2 fehl (Rueckseite nur Dach)"
    ]
   },
   {
@@ -2461,6 +2494,105 @@
    "massstab": "sfm_buendel",
    "protokoll": "M-nu3b-009",
    "quelle": "Foto-Triangulation der Kugelmitte (Knauf, Kupferkugel auf der Nadel) in 5 kalibrierten Fotos nu3b/nuaca/6132/6161/6145 (foto_mass --tri, Strahlabstand 0,02-0,04 m, Schnittwinkel bis 64 Grad): P (18,705 / 6,361 / 21,329), Achse 15,51/12,24 = Helmachse +-0,02 m; Kugelbreite im Foto 0,40-0,42 m (px/m der Kamera an der Achse, nicht als Protokoll) -> Radius 0,2. Altstand: Kugel bei z 22,0 r 0,15 = 0,67 m zu hoch (Pruefer Kreis a024143/nho: ~70-80 px zu hoch in allen Overlays)"
+  },
+  {
+   "name": "Ostgiebel Rueckflanke/Vorderflanke Hoehe (gespiegelte Lage n -1,5 / 7,6)",
+   "wert": "(giebel_o_rueck + z_unterkante_lot2) / (giebel_o_vorn + z_unterkante_lot2)",
+   "soll": [
+    0.97,
+    1.03
+   ],
+   "quelle": "Foto ip_IMG_6261: Ostgiebel-Silhouette beidseitig gestuft (Spitze mittig, links 2-3 Stufen sichtbar); fehlteile_6261: 6 ERFUNDEN-Zellen an der glatten Rueckkante (along 14,9-15,8, z 18,9-21,8)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "verhaeltnis",
+   "massstab": "foto_intern",
+   "protokoll": "audit/fehlteile_6261.json",
+   "historie": [
+    "2026-11-09 angelegt (Agent Runde 3); schlaegt am Modell Runde 2 fehl (Rueckseite nur Dach)",
+    "2026-11-10 Kreis1 fk_+16_+0_+26: Messorte giebel_o_rueck/vorn folgen der gemessenen Giebelebene (u 15,43 statt 16,85; n -1,6/7,5 spiegelsymmetrisch zur Mitte 2,95; alt {\"giebel_o_rueck\": {\"x0\": 15.225999999999999, \"x1\": 15.526, \"y0\": -7.203, \"y1\": -6.903}, \"giebel_o_vorn\": {\"x0\": 18.272000000000002, \"x1\": 18.572, \"y0\": 1.372, \"y1\": 1.672}}); Soll unveraendert 0,97-1.03"
+   ]
+  },
+  {
+   "name": "Ostgiebel Aussenebene u (m) = Achse n 0,3338/0,9426, Kappenhoehe z 28,3 (nur Giebel, n 3,45)",
+   "wert": "giebel_o_u_reach + 13.0",
+   "soll": [
+    15.55,
+    15.95
+   ],
+   "quelle": "Triangulation der 8 Stufenspitzen M-6115-001..008: u 16,02/15,92/15,81/15,81/15,70/15,64/15,61/15,59 (Mittel 15,77, Strahlabstand <= 0,03 m); unabhaengig Kantengitter v12: Ebenenmaximum der in-Ebenen-Segmente u 15,5-15,75 (30 von 123 Segmenten z>14); Alt-Modell u_aussen 17,15 = rohkoerper 'plus UNSICHER'. Triangulation Foto-Paar K-6115 (Ost, u 26,7 n 25,7) + K-6257 (West, u -11,0 n 33,3), Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m, Gegenprobe in Foto 6145 (Projektion von M-6115-001..008 trifft die 8 Stufenspitzen, audit/gitter_generator/rundekreis1_giebel_ost_*)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6115-001",
+   "historie": [
+    "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen",
+    "2026-11-10 Modellwert u_aussen 15,85 (Soll 15,55-15,95 unveraendert)"
+   ]
+  },
+  {
+   "name": "Ostgiebel Stufe 2: Oberkante z (m) bei n 4.5 (Kappenfirst Foto-Triangulation, nur Giebel ueber dem Dach)",
+   "wert": "giebel_o_top_b2 + z_unterkante_lot2",
+   "soll": [
+    27.17,
+    27.77
+   ],
+   "quelle": "M-6115-002: Kappenfirst-Ecke der Stufe 2 z 27.466 (+-0,06 m); Stufenoberkante = Kappenfirst (ANNAHME flache Oberkante in Firsthoehe, Daechlein nicht modelliert; Band +-0,3). Triangulation Foto-Paar K-6115 (Ost, u 26,7 n 25,7) + K-6257 (West, u -11,0 n 33,3), Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m, Gegenprobe in Foto 6145 (Projektion von M-6115-001..008 trifft die 8 Stufenspitzen, audit/gitter_generator/rundekreis1_giebel_ost_*)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6115-002",
+   "historie": [
+    "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen"
+   ]
+  },
+  {
+   "name": "Ostgiebel Stufe 4: Oberkante z (m) bei n 6.5 (Kappenfirst Foto-Triangulation, nur Giebel ueber dem Dach)",
+   "wert": "giebel_o_top_b4 + z_unterkante_lot2",
+   "soll": [
+    24.51,
+    25.11
+   ],
+   "quelle": "M-6115-004: Kappenfirst-Ecke der Stufe 4 z 24.814 (+-0,06 m); Stufenoberkante = Kappenfirst (ANNAHME flache Oberkante in Firsthoehe, Daechlein nicht modelliert; Band +-0,3). Triangulation Foto-Paar K-6115 (Ost, u 26,7 n 25,7) + K-6257 (West, u -11,0 n 33,3), Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m, Gegenprobe in Foto 6145 (Projektion von M-6115-001..008 trifft die 8 Stufenspitzen, audit/gitter_generator/rundekreis1_giebel_ost_*)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6115-004",
+   "historie": [
+    "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen"
+   ]
+  },
+  {
+   "name": "Ostgiebel Stufe 8: Oberkante z (m) bei n 10.5 (Kappenfirst Foto-Triangulation, nur Giebel ueber dem Dach)",
+   "wert": "giebel_o_top_b8 + z_unterkante_lot2",
+   "soll": [
+    19.07,
+    19.67
+   ],
+   "quelle": "M-6115-008: Kappenfirst-Ecke der Stufe 8 z 19.37 (+-0,06 m); Stufenoberkante = Kappenfirst (ANNAHME flache Oberkante in Firsthoehe, Daechlein nicht modelliert; Band +-0,3). Triangulation Foto-Paar K-6115 (Ost, u 26,7 n 25,7) + K-6257 (West, u -11,0 n 33,3), Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m, Gegenprobe in Foto 6145 (Projektion von M-6115-001..008 trifft die 8 Stufenspitzen, audit/gitter_generator/rundekreis1_giebel_ost_*)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6115-008",
+   "historie": [
+    "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen"
+   ]
+  },
+  {
+   "name": "Ostgiebel Vorderende der Stufe 8 (n, m) bei z 19,2",
+   "wert": "giebel_o_vorn_n + 8.0",
+   "soll": [
+    10.85,
+    11.2
+   ],
+   "quelle": "M-6115-008: Kappenfirst Stufe 8 n 11,018 (+-0,05); Stufenbreite (Teilung n) 1,0 m = Mittel der Spitzenabstaende M-6115-001..008 (n 4,01 / 4,89 / 5,90 / 6,94 / 7,95 / 8,98 / 9,95 / 11,02). Triangulation Foto-Paar K-6115 (Ost, u 26,7 n 25,7) + K-6257 (West, u -11,0 n 33,3), Schnittwinkel 54-73 Grad, Strahlabstand <= 0,03 m, Gegenprobe in Foto 6145 (Projektion von M-6115-001..008 trifft die 8 Stufenspitzen, audit/gitter_generator/rundekreis1_giebel_ost_*)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6115-008",
+   "historie": [
+    "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen",
+    "2026-11-10 Messung r_max 5,0 -> 3,6: der Strahl traf sonst den Erkerhelm O (n 12,23, Reichweite 12,44) statt das Giebelende; Soll unveraendert; Alt-Modell auf r_max 3,6 ebenfalls FEHLER (Reichweite ~1,3 = Dach)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -2849,6 +2981,41 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.02 m, y=-8.36 m (Zelle [237, 1817, 79], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Kreis1 Fehlteil fk_+16_+0_+26 (Agent)",
+   "quelle": "konvergenz_bericht Abschnitt 8 (684 Gitterpunkte im Kasten, Recall 0,10) + Fotos 6115/6257/6145",
+   "art": "form_lage",
+   "text": "Der Ost-Staffelgiebel FEHLT nicht, liegt aber 1,3-1,4 m falsch: Modell-Scheibe u 16,52-17,15 (u_aussen 'plus UNSICHER' aus rohkoerper + ANNAHME Spiegel des Westgiebels), die 8 am Foto getriangulierten Stufenspitzen (M-6115-001..008, Gegenprobe Foto 6145) und das Kantengitter liegen bei u 15,6-16,0. Stufenteilung real 1,0 m in n (Modell 1,165), Spitze n 4,01 z 28,76 (Modell z 28,98), Vorderende n 11,0 (Modell 12,73), Spitze der untersten Stufe z 19,37 (Modell Traufe 16,45).",
+   "naechster_schritt": "Giebel-Parameter aus M-6115-001..008, Pruefungen 'Ostgiebel Aussenebene/Stufe 2,4,8/Vorderende' (vorher FEHLER)",
+   "status": "als Pruefung eingetragen (Kreis1: 5 Pruefungen 'Ostgiebel Aussenebene/Stufe 2,4,8/Vorderende' vorher FEHLER, nach Generatoraenderung OK)"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Kreis1 Fehlteil fk_+16_+0_+26 (Agent)",
+   "quelle": "Kantengitter v12 (Histogramm u der Segmente) + Foto 6115",
+   "art": "widerspruch_gitter_modell",
+   "text": "Ostende des Hauses uneinheitlich: Kantengitter z 15-19 u 15,5-15,75 (Giebelscheibe, 46 m Segmentlaenge), aber z 8-15 (n -6..12) u 17,0-17,5 (22 m) - Modell hat Rumpf OG/Gesims/Dach alle bei u1 17,15. Die Dach-Endkante (u 17,15) liegt im Overlay 6115 auf keiner Fotokante. Nicht gemittelt, nicht angefasst (ausserhalb dieses Auftrags).",
+   "naechster_schritt": "Dach-/Rumpfende Ost per Triangulation (6115 + dritte Ostansicht, z.B. nu_cb79e647) messen; dann satteldach:haupt u1 / quader:rumpf_og u1 pruefen",
+   "status": "offen"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
+   "auto_id": "fehlteile-6261-546-1170",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 26.18,
+   "z_bis": 26.18,
+   "xyz": [
+    15.8,
+    -2.06,
+    26.18
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.18 m, y=-2.06 m (Zelle [546, 1170, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
