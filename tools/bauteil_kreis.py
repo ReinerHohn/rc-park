@@ -335,6 +335,17 @@ for runde in range(1, RUNDEN + 1):
             import fcntl; _lk = open(os.path.join(KREISDIR, OBJ, "merge.lock"), "w"); fcntl.flock(_lk, fcntl.LOCK_EX)
             mr = subprocess.run(["git", "-C", ROOT, "merge", "--no-edit", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} nach main (automatisch)", br],
                                 capture_output=True, text=True)
+            if mr.returncode != 0 and ("local changes to the following files would be overwritten" in (mr.stderr + mr.stdout) or "lokalen Änderungen" in (mr.stderr + mr.stdout)):
+                # geaenderte Erzeugnisse in main (10.11.: Diagnoselauf schrieb audit/fehlteile_6124.json): Kopie sichern, auf HEAD zuruecksetzen, erneut mergen; Quelldateien nie anfassen
+                sich = os.path.join(KREISDIR, OBJ, "merge_sicherung", LAUF + f"_r{runde}_lokal")
+                fl = [l.strip() for l in (mr.stderr + mr.stdout).splitlines() if l.startswith(("\t", "    ")) and l.strip()]
+                erz = lambda f: f.startswith("modelle/stl/") or f.endswith(("pruefbericht.json", ".jpg", ".png")) or "/audit/" in f
+                if fl and all(erz(f) for f in fl):
+                    for f in fl:
+                        os.makedirs(os.path.dirname(os.path.join(sich, f)), exist_ok=True); shutil.copy2(os.path.join(ROOT, f), os.path.join(sich, f))
+                    subprocess.run(["git", "-C", ROOT, "checkout", "--"] + fl, capture_output=True)
+                    print(f"Runde {runde}: lokal geaenderte Erzeugnisse {fl} nach {sich} gesichert, Merge erneut")
+                    mr = subprocess.run(["git", "-C", ROOT, "merge", "--no-edit", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} nach main (automatisch)", br], capture_output=True, text=True)
             if mr.returncode != 0 and ("untracked working tree files would be overwritten" in (mr.stderr + mr.stdout) or "unversionierten Dateien" in (mr.stderr + mr.stdout)):
                 # ungetrackte Erzeugnisse in main (Audit-Bilder, Caches) blockieren den Merge (Figuren 10.11.): verlustfrei wegsichern, erneut mergen
                 sich = os.path.join(KREISDIR, OBJ, "merge_sicherung", LAUF + f"_r{runde}")
