@@ -52,6 +52,7 @@ K = ojs.get("kreis", {})
 D = "/media/oem/scan/rc-park_daten/kaufhaus_alle"
 STL = K.get("stl", f"modelle/stl/{OBJ}_1-87.stl"); SK = K.get("skala", 0.087)
 GIT = K.get("gitter", D + "/segmente_gitter_v12.json")
+KAM = K.get("kameras", D + "/sfm/kam_lot2.json")   # L-KR4: Wolkenbeleg nur auf kamera-zugewandter Flaeche
 WOLKE = K.get("wolke", "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2.npy")
 TABU = K.get("tabu", [])
 LAUF = time.strftime("%Y%m%d_%H%M%S") + opt("--spur", "")
@@ -96,7 +97,7 @@ def messen(wt, tag):
     gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
     rc, _ = sh_tor(gen, wt, log=os.path.join(LDIR, f"export_{tag}.log"), env={"BAUTEILE_AUS": tdir})
     rc2, out = sh_tor([PY, "-W", "ignore", "-I", "tools/konvergenz_bericht.py", OBJ, "--stl", STL, "--skala", str(SK), "--gitter", GIT,
-                   "--wolke", WOLKE, "--teile_dir", tdir, "--etikett", f"kreis {LAUF} {tag}"] + (["--trocken"] if TROCKEN else []),
+                   "--wolke", WOLKE, "--teile_dir", tdir, "--kameras", KAM, "--etikett", f"kreis {LAUF} {tag}"] + (["--trocken"] if TROCKEN else []),
                   wt, log=os.path.join(LDIR, f"konvergenz_{tag}.log"))
     kf = os.path.join(wt, "modelle", OBJ, "konvergenz.jsonl")
     z = json.loads([l for l in open(kf) if l.strip()][-1]) if (os.path.exists(kf) and not TROCKEN) else None

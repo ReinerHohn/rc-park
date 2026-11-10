@@ -16,7 +16,7 @@ Druckschwelle: Kanten feiner als --min_kante (Standard 0,035 m = 0,4-mm-Duese in
   Gittersegmente kuerzer als --min_kante werden verworfen.
 
 Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/konvergenz_bericht.py <objekt> --stl STL_IN_M_ODER_H0 [--skala 0.087]
-        --gitter SEGMENTE.json [--teile_sicht JSON] [--wolke VOLLE_WOLKE.npy --teile_dir BAUTEILE_STL_DIR [--nah 1.0 --beleg 0.15]] [--tol 0.10] [--winkel 25] [--baender 0,5,10,15,20,40] [--etikett TEXT] [--trocken]
+        --gitter SEGMENTE.json [--teile_sicht JSON] [--wolke VOLLE_WOLKE.npy --teile_dir BAUTEILE_STL_DIR [--nah 1.0 --beleg 0.15] [--kameras KAM.json --sicht_min 3 --sicht_max 100]] [--tol 0.10] [--winkel 25] [--baender 0,5,10,15,20,40] [--etikett TEXT] [--trocken]
   --stl: Modell; --skala multipliziert die Koordinaten (H0-STL in mm -> m: 0.087). Modell und Gitter muessen im selben Rahmen liegen
   (Kaufhaus: H0-STL * 0,087 = lot2-Rahmen, wie der Viewer). --trocken: nichts anhaengen.
 Rueckschritt = eine Kennzahl faellt um mehr als --rausch (Standard 0,01) gegen die letzte Zeile (Recall/Praezision je Band mit >= 200 Punkten,
@@ -111,13 +111,32 @@ if WOLKE and TDIR and os.path.isdir(TDIR):
     Wv = np.load(WOLKE, mmap_mode="r")[:, :3].astype(np.float32)
     zw = float(Wv[:, 2].max())
     NAH = opt("--nah", 1.0, float); BEL = opt("--beleg", 0.15, float)
+    # L-KR4 (10.11.): nur Flaeche zaehlen, die zu mindestens --sicht_min Kameras (Zentren C aus --kameras) hin zeigt und < --sicht_max m entfernt ist.
+    # Verdeckte Rueckseiten (Normale ins Gebaeude) konnten sonst auf die Wolke geschoben werden und hoben den Beleg ohne Formgewinn.
+    KAMF = opt("--kameras"); CC = None
+    if KAMF and os.path.exists(KAMF):
+        import torch
+        _k = json.load(open(KAMF)); _k = _k.get("kameras", _k) if isinstance(_k, dict) else _k
+        _vals = _k.values() if isinstance(_k, dict) else _k
+        CC = np.array([v["C"] for v in _vals if "C" in v], np.float32)
+        DEV = "cuda" if torch.cuda.is_available() else "cpu"; CCt = torch.from_numpy(CC).to(DEV)
+        SMIN = opt("--sicht_min", 3, int); SMAX = opt("--sicht_max", 100.0, float)
+    def sichtbar(P, N):
+        if CC is None: return np.ones(len(P), bool)
+        Pt_ = torch.from_numpy(P).to(DEV); Nt_ = torch.from_numpy(N.astype(np.float32)).to(DEV); n = torch.zeros(len(P), dtype=torch.int32, device=DEV)
+        for i in range(0, len(CC), 64):
+            V = CCt[i:i + 64][None, :, :] - Pt_[:, None, :]                       # Punkt -> Kamera
+            ok = ((V * Nt_[:, None, :]).sum(-1) > 0) & (V.norm(dim=-1) < SMAX)
+            n += ok.sum(1, dtype=torch.int32)
+        return (n >= SMIN).cpu().numpy()
     teile = []
     for f in sorted(os.listdir(TDIR)):
         if not f.endswith(".stl") or "ausschnitt" in f:
             continue
         tm = trimesh.load(os.path.join(TDIR, f), force="mesh"); tm.apply_scale(SK)
-        Pt = tm.sample(60000).astype(np.float32); dt = md(Pt, Wv); nah = dt < NAH
-        teile.append({"teil": f[:-4], "anteil_mit_daten": round(float(nah.mean()), 3),
+        Pt, fi = tm.sample(60000, return_index=True); Pt = Pt.astype(np.float32); dt = md(Pt, Wv)
+        vis = sichtbar(Pt, tm.face_normals[fi]); nah = (dt < NAH) & vis
+        teile.append({"teil": f[:-4], "anteil_mit_daten": round(float(nah.mean()), 3), "anteil_sichtbar": round(float(vis.mean()), 3),
                       "beleg": round(float((dt[nah] < BEL).mean()), 3) if nah.any() else None,
                       "median_m": round(float(np.median(dt[nah])), 3) if nah.any() else None,
                       "ueber_wolke_z": round(float((Pt[:, 2] > zw).mean()), 3)})
