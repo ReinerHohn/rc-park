@@ -1,78 +1,36 @@
 {
  "foto": "6117",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_035447a035447/wt_r3/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6117 (amtliche Anker)",
  "zelle_px": 165,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    2805,
+    2310,
     1155,
     165
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -2.72,
-    8.97,
-    21.53
-   ]
-  },
-  {
-   "zelle": [
-    1980,
-    2310,
-    165
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    2.4,
-    2.13,
-    9.84
-   ]
-  },
-  {
-   "zelle": [
-    2310,
-    2475,
-    165
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -1.77,
-    2.97,
-    9.19
-   ]
-  },
-  {
-   "zelle": [
-    2310,
-    2805,
-    165
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -4.5,
-    0.86,
-    6.36
+    1.98,
+    6.33,
+    20.27
    ]
   },
   {
    "zelle": [
     2475,
-    2145,
+    1815,
     165
    ],
-   "score": -0.995,
+   "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -0.04,
-    5.65,
-    11.63
+    -1.63,
+    5.25,
+    15.03
    ]
   },
   {
@@ -81,12 +39,54 @@
     2640,
     165
    ],
-   "score": -0.944,
+   "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -6.29,
-    0.2,
-    8.59
+    -6.18,
+    0.17,
+    8.36
+   ]
+  },
+  {
+   "zelle": [
+    2475,
+    2640,
+    165
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -4.02,
+    3.63,
+    7.97
+   ]
+  },
+  {
+   "zelle": [
+    330,
+    3465,
+    165
+   ],
+   "score": -0.998,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    13.94,
+    -2.99,
+    1.59
+   ]
+  },
+  {
+   "zelle": [
+    660,
+    330,
+    165
+   ],
+   "score": -0.947,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    17.19,
+    2.58,
+    20.99
    ]
   }
  ],

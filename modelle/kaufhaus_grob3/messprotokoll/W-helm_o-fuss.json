@@ -1,0 +1,11 @@
+{
+ "id": "W-helm_o-fuss",
+ "werkzeug": "inline (Kreis r3): Kantengitter segmente_gitter_v12.json (Fotokanten 3D), Punkte z 13,10-13,30, Radius 1,5-2,4 um Helmachse (u 15,53 n 12,23), je Punkt Apothem = r*cos(Winkel zur naechsten Flaechennormale, Achteck, Flaeche +n)",
+ "n_punkte": 162,
+ "apothem_median": 1.924,
+ "apothem_q10_q90": [
+  1.864,
+  1.945
+ ],
+ "hinweis": "Wolke Mitten-Profil (W-helm_o-profil) gibt bei z 13,125/13,375 1,755/1,721 (Gesims-Mitnahme moeglich); Kantengitter-Ring liegt hoeher -> Widerspruch notiert; Overlay Foto nuaca/6161/6132/nu3b zeigt den Fussring des Modells mit 1,74 sichtbar innerhalb der Traufkante, mit 1,88 auf ihr (audit/gitter_generator/rundekreis3_helm_geschweift_o_*.jpg)"
+}

@@ -1355,6 +1355,34 @@
    "z0": "=6.6 - z_unterkante_lot2",
    "z1": "=8.0 - z_unterkante_lot2",
    "suche": "unten"
+  },
+  "helm_o_r_13_25": {
+   "typ": "schnitt_reichweite",
+   "zentrum": [
+    18.73,
+    6.33
+   ],
+   "richtung": [
+    0.33472,
+    0.94232
+   ],
+   "quer_max": 0.3,
+   "r_max": 3.0,
+   "z": "=13.25 - z_unterkante_lot2"
+  },
+  "helm_o_r_19_40": {
+   "typ": "schnitt_reichweite",
+   "zentrum": [
+    18.73,
+    6.33
+   ],
+   "richtung": [
+    0.33472,
+    0.94232
+   ],
+   "quer_max": 0.3,
+   "r_max": 3.0,
+   "z": "=19.4 - z_unterkante_lot2"
   }
  },
  "pruefungen": [
@@ -2865,6 +2893,38 @@
    "historie": [
     "2026-11-10 angelegt (Kreis2 r2): am Altmodell (nur Laibungsbogen, Scheitel 7,12 auch an der Stirn) muss sie fehlschlagen"
    ]
+  },
+  {
+   "name": "Erkerhelm Ost: Fussring (Traufkante) Flaechenmitte vor der Achse bei z 13,25",
+   "wert": "helm_o_r_13_25",
+   "soll": [
+    1.82,
+    1.98
+   ],
+   "quelle": "Kantengitter v12 (Fotokanten 3D) Ring z 13,10-13,30: Apothem Median 1,92 (q10-q90 1,86-1,95, 162 Punkte, W-helm_o-fuss); Gegenprobe Overlay nuaca/6161/6132/nu3b: Fussring 1,74 liegt innerhalb der Traufkante, 1,90 auf ihr. Wolke-Mitte 1,72-1,76 widerspricht (Gesims-Mitnahme) - nicht gemittelt, Foto/Gitter gewinnen",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "W-helm_o-fuss.json",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r3 helm_geschweift:o, Befund Beleg 0,61 / Kanten-F1 0,26): am Modell Fussring 1,74 muss die Pruefung fehlschlagen"
+   ]
+  },
+  {
+   "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 19,4 (Foto-Silhouette gegen Himmel)",
+   "wert": "helm_o_r_19_40",
+   "soll": [
+    0.24,
+    0.31
+   ],
+   "quelle": "Silhouette gegen Himmel in 6 kalibrierten Fotos (nuaca, 6132, 6145, 6161, nu3b, 6162; tools/helm_silhouette_foto.py): bei z 19,0 Foto +0,10 und bei z 19,5 +0,07 m breiter als das Modell (Apothem 0,19-0,21, n 7-10 Seiten); Silhouette >= Apothem -> Apothem 0,26-0,29 bei Silhouette 0,28-0,31; Wolke-Mitte bei 19,4 ~0,22 (W-helm_o-profil)",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-sil-helm_o-1",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r3 helm_geschweift:o, Befund Beleg 0,61 / Kanten-F1 0,26): am Modell Apothem 0,19 bei z 19,4 muss die Pruefung fehlschlagen"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -3277,6 +3337,14 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.2 m, y=-2.07 m (Zelle [546, 1170, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Kreis r3 helm_geschweift:o",
+   "quelle": "konvergenz_bericht (Beleg 0,61, Kanten R 0,36 P 0,20) + Overlay audit/gitter_generator/rundekreis3_helm_geschweift_o_*; M-sil-helm_o-1; W-helm_o-fuss",
+   "text": "Osthelm (a) Fussring z 13,1-13,3: Modell Apothem 1,74 liegt in nuaca/6161/6132/nu3b sichtbar INNERHALB der Traufkante; Kantengitter-Ring z 13,18 hat Apothem 1,92 (q10-q90 1,86-1,95, W-helm_o-fuss) - Wolke-Mitte (1,72-1,76) widerspricht (Gesims-Mitnahme moeglich), Widerspruch Gitter/Foto-Overlay vs Wolke NICHT gemittelt gelassen: Foto-Overlay entscheidet (Regel 9d), gewaehlt 1,90. (b) Silhouette gegen Himmel (6 Fotos, Himmel auf beiden Seiten nur ab z 19): Foto bei z 19,0 +0,10 / 19,5 +0,07 breiter als Modell (M-sil-helm_o-1) -> Profil z 19,4 zu schlank (0,19), Wolke-Mitte liegt bei z 16-18,6 ebenfalls 0,04-0,06 ueber dem Profil. (c) Kantengitter v12 liegt bei z 16-21 0,1-0,2 m AUSSERHALB von Foto-Silhouette und Wolke (Gitterradius 0,55 bei z 17,5 gegen Foto/Wolke 0,35-0,42) - nicht modellierbar, Recall-Obergrenze. (d) Ecken der Fussspitzen (aufgebogene Traufschnaebel an den Erkerecken, Foto nuaca R-Spitze bei x 920 y 1667) sind kein Achteck-Eckpunkt - ungeprueft/offen. (e) Gratleisten/Kroeten, Fahne nicht modelliert.",
+   "naechster_schritt": "Traufschnaebel als eigenes Element (Erkerecke) messen; Gitter v12 Radius bei z 16-21 am Foto klaeren (Gitterbau); Silhouette z 16-19 mit Gegenhintergrund (Dach) nachmessen",
+   "status": "offen"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

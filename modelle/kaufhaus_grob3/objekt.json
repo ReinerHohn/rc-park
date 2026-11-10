@@ -6429,7 +6429,7 @@
    "profil": [
     [
      13.3,
-     1.74
+     1.9
     ],
     [
      13.62,
@@ -6457,31 +6457,31 @@
     ],
     [
      15.41,
-     0.83
+     0.85
     ],
     [
      16.18,
-     0.58
+     0.63
     ],
     [
      16.97,
-     0.44
+     0.49
     ],
     [
      17.76,
-     0.34
+     0.39
     ],
     [
      18.58,
-     0.27
+     0.33
     ],
     [
      19.4,
-     0.19
+     0.27
     ],
     [
      20.25,
-     0.13
+     0.15
     ],
     [
      21.0,
@@ -6493,7 +6493,7 @@
    "kranz": {
     "z0": 13.1,
     "z1": 13.3,
-    "r": 1.74
+    "r": 1.9
    },
    "knauf": {
     "z": 21.33,
@@ -6510,10 +6510,10 @@
     "n": "formen/helme.json off 12.23",
     "n_seiten": "ANNAHME: Achteck. Foto-Gegenprobe Z-nu3b-001 (3 Grate in Bildzeile 1000 = 2 volle Flaechen, Rueckseite nie sichtbar, N nicht direkt zaehlbar); die vom Achteck (Flaeche zur Strasse) vorhergesagten Grate fallen in nu3b/6132/nuaca auf die echten Grate (Overlays rundekreis1_helm_geschweift_o_*); Wolke-Phasenfit (nur Gegenprobe, keine Zaehlung): Achteck besser als Kreis, Phase -0,2..-1,6 Grad",
     "drehung_grad": "Wolke-Phasenfit (Gegenprobe) -0,2..-1,6 Grad, Foto-Grate Z-nu3b-001 + Overlays; 0 beibehalten (ehemals ANNAHME)",
-    "profil": "z >= 15,4: Foto nu_3b29472b Silhouettenbreite/2 (M-nu3b-004..008) + Wolke einig +-0,07 (unveraendert). z 13,30-15,12 (Kreis r1 2026-11-10): Wolke-Flaechenmitte (Apothem) entlang +n, messprotokoll/W-helm_o-profil.json (tools/helm_profil_wolke.py): 1,72 bei 13,4 / 1,50 bei 13,6 / 1,25 bei 14,1 / 1,15 bei 14,4 / 1,06 bei 14,6 (Profil 1,10: untere Grenze der Foto-Zeile M-nu3b-002) / 0,97 bei 14,9 / 0,90 bei 15,1; Form = Foto (Regel 9d): nu3b/6132/nuaca Overlays zeigen Ziegelhaut stetig konkav bis auf den Erkergesims, kein senkrechter Kranz, kein Traufring bei z 14,15. Die alte Traufhoehe 14,22 (M-nu3b-001) war Silhouettenparallaxe (Traufspitze ~1,4 m vor der Messebene, Kamera 10 m tiefer: +0,8 m) | 2026-11-10 r4: letzter Ring z 21,0 r 0,07 (Nadel unter der Kugel, Foto nu3b/nuaca: Nadelbreite ~0,14 m bei z 21,0), darueber duenne Fahnenstange bis z_spitze (ANNAHME r_spitze 0,02)",
+    "profil": "z >= 15,4: Foto nu_3b29472b Silhouettenbreite/2 (M-nu3b-004..008) + Wolke einig +-0,07 (unveraendert). z 13,30-15,12 (Kreis r1 2026-11-10): Wolke-Flaechenmitte (Apothem) entlang +n, messprotokoll/W-helm_o-profil.json (tools/helm_profil_wolke.py): 1,72 bei 13,4 / 1,50 bei 13,6 / 1,25 bei 14,1 / 1,15 bei 14,4 / 1,06 bei 14,6 (Profil 1,10: untere Grenze der Foto-Zeile M-nu3b-002) / 0,97 bei 14,9 / 0,90 bei 15,1; Form = Foto (Regel 9d): nu3b/6132/nuaca Overlays zeigen Ziegelhaut stetig konkav bis auf den Erkergesims, kein senkrechter Kranz, kein Traufring bei z 14,15. Die alte Traufhoehe 14,22 (M-nu3b-001) war Silhouettenparallaxe (Traufspitze ~1,4 m vor der Messebene, Kamera 10 m tiefer: +0,8 m) | 2026-11-10 r4: letzter Ring z 21,0 r 0,07 (Nadel unter der Kugel, Foto nu3b/nuaca: Nadelbreite ~0,14 m bei z 21,0), darueber duenne Fahnenstange bis z_spitze (ANNAHME r_spitze 0,02) | 2026-11-10 r3 (Kreis helm_geschweift:o): z 16,18-20,25 um +0,02..+0,08 verbreitert (Wolke-Mitte W-helm_o-profil liegt bei z 16-18,6 0,04-0,06 ueber dem alten Apothem; Silhouette gegen Himmel in 6 Fotos M-sil-helm_o-1: Foto bei z 19,0/19,5 +0,10/+0,07 breiter -> 19,4 von 0,19 auf 0,27); z 13,3 Fussring 1,74 -> 1,90 (Kantengitter-Ring Apothem 1,92, W-helm_o-fuss; Overlay nuaca/6161/6132/nu3b: 1,74 liegt innerhalb der Traufkante); z 13,62-15,12 unveraendert (Wolke-Mitte); Widerspruch Wolke-Mitte 1,72-1,76 am Fuss notiert (Gesims-Mitnahme), nicht gemittelt",
     "z_spitze": "formen/helme.json z_spitze 22.78 (fotogeprueft)",
     "r_spitze": "ANNAHME Druck 0,02",
-    "kranz": "Fuss-Wulst 13,1-13,30 nur zur Einbindung in den Erkergesims (13,18) und Anschluss an den untersten Profilring, r 1,74 = Flaechenmitte Wolke bei z 13,4 (1,72); der alte senkrechte Kranz z 13,1-14,15 r 1,45 (ANNAHME) ist durch die stetige Schweifung ersetzt",
+    "kranz": "Fuss-Wulst 13,1-13,30 zur Einbindung in den Erkergesims (13,18), r 1,90 = Kantengitter-Ring z 13,18 (Apothem 1,92 q10-q90 1,86-1,95, W-helm_o-fuss) und Overlay auf der Traufkante; ANNAHME Achteck-Ecken (die aufgebogenen Traufschnaebel an den Erkerecken sind nicht modelliert, Foto nuaca)",
     "knauf": "M-nu3b-009: Triangulation der Kugelmitte in nu3b/nuaca/6132/6161/6145 (Strahlabstand <= 0,044 m): z 21,329, Achse u 15,51 n 12,24 (= Helmachse +-0,02); Kugelbreite 0,40-0,42 m im Foto -> r 0,2 (Breite nicht als Protokoll, ANNAHME r)"
    },
    "historie": [
@@ -6637,6 +6637,149 @@
       ]
      },
      "neu": "knauf z 21,33 r 0,2 (M-nu3b-009), letzter Profilring z 21,0 r 0,07"
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis r3 (Agent Sonnet)",
+     "alt": {
+      "profil": [
+       [
+        13.3,
+        1.74
+       ],
+       [
+        13.62,
+        1.51
+       ],
+       [
+        14.12,
+        1.26
+       ],
+       [
+        14.38,
+        1.16
+       ],
+       [
+        14.64,
+        1.1
+       ],
+       [
+        14.88,
+        0.99
+       ],
+       [
+        15.12,
+        0.91
+       ],
+       [
+        15.41,
+        0.83
+       ],
+       [
+        16.18,
+        0.58
+       ],
+       [
+        16.97,
+        0.44
+       ],
+       [
+        17.76,
+        0.34
+       ],
+       [
+        18.58,
+        0.27
+       ],
+       [
+        19.4,
+        0.19
+       ],
+       [
+        20.25,
+        0.13
+       ],
+       [
+        21.0,
+        0.07
+       ]
+      ],
+      "kranz": {
+       "z0": 13.1,
+       "z1": 13.3,
+       "r": 1.74
+      }
+     },
+     "neu": {
+      "profil": [
+       [
+        13.3,
+        1.9
+       ],
+       [
+        13.62,
+        1.51
+       ],
+       [
+        14.12,
+        1.26
+       ],
+       [
+        14.38,
+        1.16
+       ],
+       [
+        14.64,
+        1.1
+       ],
+       [
+        14.88,
+        0.99
+       ],
+       [
+        15.12,
+        0.91
+       ],
+       [
+        15.41,
+        0.85
+       ],
+       [
+        16.18,
+        0.63
+       ],
+       [
+        16.97,
+        0.49
+       ],
+       [
+        17.76,
+        0.39
+       ],
+       [
+        18.58,
+        0.33
+       ],
+       [
+        19.4,
+        0.27
+       ],
+       [
+        20.25,
+        0.15
+       ],
+       [
+        21.0,
+        0.07
+       ]
+      ],
+      "kranz": {
+       "z0": 13.1,
+       "z1": 13.3,
+       "r": 1.9
+      }
+     },
+     "grund": "Befund Beleg 0,61 / Kanten R 0,36 P 0,20: Fussring zu schmal (Overlay), Profil z 16-20 0,02-0,08 zu schlank (Silhouette, Wolke)"
     }
    ]
   },

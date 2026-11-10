@@ -1,0 +1,356 @@
+{
+ "id": "M-sil-helm_o-1",
+ "werkzeug": "tools/helm_silhouette_foto.py",
+ "bauteil": "helm_geschweift:o",
+ "profil_modell": [
+  [
+   13.3,
+   1.74
+  ],
+  [
+   13.62,
+   1.51
+  ],
+  [
+   14.12,
+   1.26
+  ],
+  [
+   14.38,
+   1.16
+  ],
+  [
+   14.64,
+   1.1
+  ],
+  [
+   14.88,
+   0.99
+  ],
+  [
+   15.12,
+   0.91
+  ],
+  [
+   15.41,
+   0.83
+  ],
+  [
+   16.18,
+   0.58
+  ],
+  [
+   16.97,
+   0.44
+  ],
+  [
+   17.76,
+   0.34
+  ],
+  [
+   18.58,
+   0.27
+  ],
+  [
+   19.4,
+   0.19
+  ],
+  [
+   20.25,
+   0.13
+  ],
+  [
+   21.0,
+   0.07
+  ]
+ ],
+ "fotos": [
+  "nuaca",
+  "6132",
+  "6145",
+  "6161",
+  "nu3b",
+  "6162"
+ ],
+ "zeilen": [
+  {
+   "foto": "nuaca",
+   "z": 19.0,
+   "px_m": 0.00871,
+   "modell_px": [
+    719,
+    778
+   ],
+   "links": 0.07
+  },
+  {
+   "foto": "nuaca",
+   "z": 19.5,
+   "px_m": 0.00877,
+   "modell_px": [
+    730,
+    777
+   ],
+   "links": 0.044,
+   "rechts": 0.044
+  },
+  {
+   "foto": "nuaca",
+   "z": 20.0,
+   "px_m": 0.00883,
+   "modell_px": [
+    740,
+    777
+   ],
+   "links": -0.018,
+   "rechts": 0.0
+  },
+  {
+   "foto": "nuaca",
+   "z": 20.5,
+   "px_m": 0.00889,
+   "modell_px": [
+    749,
+    777
+   ],
+   "links": -0.053,
+   "rechts": -0.036
+  },
+  {
+   "foto": "6132",
+   "z": 19.0,
+   "px_m": 0.00806,
+   "modell_px": [
+    369,
+    429
+   ],
+   "links": 0.185,
+   "rechts": 0.081
+  },
+  {
+   "foto": "6132",
+   "z": 19.5,
+   "px_m": 0.00813,
+   "modell_px": [
+    387,
+    434
+   ],
+   "links": 0.171,
+   "rechts": 0.081
+  },
+  {
+   "foto": "6132",
+   "z": 20.0,
+   "px_m": 0.0082,
+   "modell_px": [
+    403,
+    440
+   ],
+   "links": 0.09,
+   "rechts": 0.033
+  },
+  {
+   "foto": "6132",
+   "z": 20.5,
+   "px_m": 0.00826,
+   "modell_px": [
+    419,
+    447
+   ],
+   "links": 0.05,
+   "rechts": -0.025
+  },
+  {
+   "foto": "6145",
+   "z": 19.0,
+   "px_m": 0.01088,
+   "modell_px": [
+    398,
+    447
+   ],
+   "links": 0.098,
+   "rechts": 0.098
+  },
+  {
+   "foto": "6145",
+   "z": 19.5,
+   "px_m": 0.01092,
+   "modell_px": [
+    409,
+    447
+   ],
+   "links": 0.098,
+   "rechts": 0.12
+  },
+  {
+   "foto": "6145",
+   "z": 20.0,
+   "px_m": 0.01096,
+   "modell_px": [
+    418,
+    449
+   ],
+   "links": -0.022,
+   "rechts": 0.066
+  },
+  {
+   "foto": "6145",
+   "z": 20.5,
+   "px_m": 0.011,
+   "modell_px": [
+    427,
+    450
+   ],
+   "links": -0.055,
+   "rechts": -0.231
+  },
+  {
+   "foto": "6161",
+   "z": 19.5,
+   "px_m": 0.00984,
+   "modell_px": [
+    718,
+    762
+   ],
+   "links": 0.049
+  },
+  {
+   "foto": "6161",
+   "z": 20.0,
+   "px_m": 0.00988,
+   "modell_px": [
+    728,
+    763
+   ],
+   "links": -0.02,
+   "rechts": 0.04
+  },
+  {
+   "foto": "6161",
+   "z": 20.5,
+   "px_m": 0.00992,
+   "modell_px": [
+    737,
+    763
+   ],
+   "links": -0.06,
+   "rechts": 0.01
+  },
+  {
+   "foto": "nu3b",
+   "z": 19.0,
+   "px_m": 0.00712,
+   "modell_px": [
+    660,
+    733
+   ],
+   "rechts": 0.064
+  },
+  {
+   "foto": "nu3b",
+   "z": 19.5,
+   "px_m": 0.00716,
+   "modell_px": [
+    667,
+    726
+   ],
+   "links": -0.15,
+   "rechts": 0.064
+  },
+  {
+   "foto": "nu3b",
+   "z": 20.0,
+   "px_m": 0.00721,
+   "modell_px": [
+    672,
+    719
+   ],
+   "links": -0.036,
+   "rechts": 0.014
+  },
+  {
+   "foto": "nu3b",
+   "z": 20.5,
+   "px_m": 0.00726,
+   "modell_px": [
+    678,
+    713
+   ],
+   "links": -0.058,
+   "rechts": -0.036
+  },
+  {
+   "foto": "6162",
+   "z": 19.0,
+   "px_m": 0.01084,
+   "modell_px": [
+    756,
+    802
+   ],
+   "links": 0.152
+  },
+  {
+   "foto": "6162",
+   "z": 19.5,
+   "px_m": 0.01089,
+   "modell_px": [
+    768,
+    804
+   ],
+   "links": 0.109
+  },
+  {
+   "foto": "6162",
+   "z": 20.0,
+   "px_m": 0.01094,
+   "modell_px": [
+    778,
+    808
+   ],
+   "links": 0.033
+  },
+  {
+   "foto": "6162",
+   "z": 20.5,
+   "px_m": 0.01098,
+   "modell_px": [
+    789,
+    811
+   ],
+   "links": -0.011,
+   "rechts": 0.011
+  }
+ ],
+ "je_hoehe": [
+  {
+   "z": 19.0,
+   "n": 7,
+   "median_foto_breiter_m": 0.098,
+   "min": 0.064,
+   "max": 0.185
+  },
+  {
+   "z": 19.5,
+   "n": 10,
+   "median_foto_breiter_m": 0.073,
+   "min": -0.15,
+   "max": 0.171
+  },
+  {
+   "z": 20.0,
+   "n": 11,
+   "median_foto_breiter_m": 0.014,
+   "min": -0.036,
+   "max": 0.09
+  },
+  {
+   "z": 20.5,
+   "n": 12,
+   "median_foto_breiter_m": -0.036,
+   "min": -0.231,
+   "max": 0.05
+  }
+ ],
+ "vorzeichen": "positiv = Foto-Silhouette breiter als Modell (Modell zu schlank); Pixelgroesse aus Kameratiefe/f der K-Protokolle (SfM-Buendel, keine amtlichen Anker)",
+ "grenze": "Silhouette gegen Himmel = Huelle inkl. Leisten/Kroeten; Flaechenmitte (Apothem) nicht direkt"
+}
