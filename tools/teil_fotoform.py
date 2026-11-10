@@ -87,7 +87,7 @@ def main(argv=None):
             K = json.load(open(kp)); kk = K["kamera"]
             bild = glob.glob(os.path.join(R0, obj["fotos_dir"], nr + "_*"))
             if not bild: return
-            im0 = cv2.imread(bild[0]); H, W = im0.shape[:2]
+            im0, K = FD.foto_skalieren(cv2.imread(bild[0]), K); kk = K["kamera"]; H, W = im0.shape[:2]   # RCPARK_FOTO_SKALA (Standard 1 = unveraendert)
             voll = os.path.join(tmp, f"voll_{W}x{H}.png"); cv2.imwrite(voll, np.full((H, W), 255, np.uint8)) if not os.path.exists(voll) else None
             npz = os.path.join(tmp, f"k_{nr}.npz")
             # SCHNELLWEG (10.11. abends, bitgleich geprueft - TFF_LANGSAM=1 = alter Weg, TFF_PRUEF=1 = beide Wege vergleichen): foto_diff gibt Raster und

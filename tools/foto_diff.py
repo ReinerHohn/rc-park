@@ -374,6 +374,18 @@ def _kosten_param_lr(mkp, fkp, M_, kap_):
     return kp, lr_mischung(np.minimum(dFp_[mkp], dmax).astype(int), pz, dmax, float(fkp.sum()))[0]
 
 
+def foto_skalieren(im, K):
+    """RCPARK_FOTO_SKALA=s (Versuch 10.11. abends, Nutzer 'massiv beschleunigen'): Foto um s verkleinern, Brennweite/Hauptpunkt mit (k1 ist normiert, bleibt).
+    NICHT bitgleich zur Vollaufloesung -> Gegenprobe (F1 Tuer/Helm O, Positivtest Verschiebung) Pflicht; Standard 1 = unveraendert."""
+    s = float(os.environ.get("RCPARK_FOTO_SKALA") or 1.0)
+    if s == 1.0 or im is None: return im, K
+    im = cv2.resize(im, None, fx=s, fy=s, interpolation=cv2.INTER_AREA)
+    K = json.loads(json.dumps(K)); k = K.get("kamera")
+    if k:
+        for q in ("f_px", "cx", "cy"):
+            if k.get(q) is not None: k[q] = float(k[q]) * s
+    return im, K
+
 def main(argv=None):
     """argv: Liste wie auf der Kommandozeile (Mehrfoto-Aufruf im selben Prozess, param_suche.py); Rueckgabe Ergebnis-dict."""
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("foto"); ap.add_argument("--tol", type=float, default=0.35)
@@ -382,7 +394,8 @@ def main(argv=None):
     ap.add_argument("--region-box", help="x0,y0,z0,x1,y1,z1 in Metern im Rahmen des geladenen Modells (nur --region quader); Foto ohne sichtbaren Quader = nicht beurteilbar"); ap.add_argument("--region-rand", type=float, default=2.0, help="Halbbreite des Himmelsbandes in m (ANNAHME 2 m)"); ap.add_argument("--richtung", type=float, default=0.0, help="0 = aus; >0: Klassenbreite in Grad fuer richtungsgebundenen Abgleich (Entwurf 45)"); ap.add_argument("--schatten-dreh", type=float, default=0.0, help="Gegenprobe: Sonne um so viele Grad um die Hochachse drehen"); ap.add_argument("--schatten", default="aus", choices=["aus", "sonne", "immer"], help="Schlagschatten des Modells + LoD2-Nachbarn als Modellkanten (sonne.json aus sonne_fotos.py): sonne = nur Fotos mit DWD-Sonnenschein; ANNAHME EXIF-Uhr richtig"); ap.add_argument("--glaett-px", type=float, default=2.0, help="Fotokanten auf der Arbeitsaufloesung, in der die Glaettung (--glaettung m) so viele px misst; vorher volle Aufloesung mit 10-28 px Glaettung -> Canny-Gradient unter der Schwelle, 97 Fotokantenpixel in der Silhouette (Beweis test_foto_diff 2026-11-04)"); ap.add_argument("--mehrstufig", action="store_true", help="Fotokanten aus mehreren Skalen (--glaettung bis --mehrstufig-min) x Belichtungen (Gamma/CLAHE) gemergt (Nutzer 5.11.; Entwurf, nicht Standard)"); ap.add_argument("--mehrstufig-min", type=float, default=0.01, help="feinste Glaettung in m (1 cm)"); ap.add_argument("--mehrstufig-stimmen", type=int, default=2, help="Mindestzahl bestaetigender Belichtungsvarianten je Skala"); ap.add_argument("--versatz-max", type=float, default=1.5, help="S2 (2026-11-05): Deckel in m fuer die versatzkompensierten Felder rot_versatz/gelb_versatz/kosten_*_versatz (nur wenn versatz.deutlich und |versatz_m| <= Deckel, sonst gleich rot/gelb/kosten); aendert KEIN bisheriges Feld"); a = ap.parse_args(argv); nr = a.foto
     obj = json.load(open(a.objekt)); root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(a.objekt)))); od = os.path.join(root, os.path.dirname(obj["masstabelle"]))
     kp = FF.k_datei(a.objekt, obj, root, nr); K = json.load(open(kp)) if os.path.exists(kp) else {}
-    im = cv2.imread(a.bild or glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]); H, W = im.shape[:2]
+    im = cv2.imread(a.bild or glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0])
+    im, K = foto_skalieren(im, K); H, W = im.shape[:2]
     k1_ent = 0.0
     if not a.keine_entzerrung: im, k1_ent = FF.foto_entzerren(im, K.get("kamera", {}))              # Renderer sind Lochkameras: Foto vorher entzerren (k1 aus K)
     R, t, f, quelle, (zlo, zhi) = FF.kamera_laden(K, obj, nr, root, W, H)

@@ -6,6 +6,13 @@ OBJ=${1:-kaufhaus_grob3}; cd "$(dirname "$0")/.." || exit 1
 FD=/media/oem/scan/rc-park_kreis/$OBJ/fotoform; mkdir -p "$FD"
 W=$FD/wt_$$; git worktree add -q --detach "$W" HEAD || exit 1
 sha=$(sha256sum "$W/modelle/stl/${OBJ}_1-87.stl" | cut -c1-16)
+# Aufloesungs-Treppe (10.11. abends): zuerst die HALBE Formliste (Vorpruefung des Kreises, ~10x schneller), dann die volle (Endtor)
+FH=/media/oem/scan/rc-park_kreis/$OBJ/fotoform_halb; mkdir -p "$FH"
+if [ ! -s "$FH/$sha.json" ]; then
+  (cd "$W" && RCPARK_FOTO_SKALA=0.5 /media/oem/scan/venv-seg/bin/python -W ignore -I tools/teil_fotoform.py "$OBJ" --aus "$FH/$sha.json.tmp") && mv "$FH/$sha.json.tmp" "$FH/$sha.json"
+  echo "Formliste halb $sha rc=$?"
+fi
+if [ -n "${NUR_HALB:-}" ]; then cd /home/oem/git/rc-park && git worktree remove --force "$W"; exit 0; fi
 cd "$W" && /media/oem/scan/venv-seg/bin/python -W ignore -I tools/teil_fotoform.py "$OBJ" --aus "$FD/$sha.json.tmp" --bilder --bilder_dir "$FD/bilder_$sha"
 rc=$?; [ $rc -eq 0 ] && mv "$FD/$sha.json.tmp" "$FD/$sha.json"
 cd /home/oem/git/rc-park && git worktree remove --force "$W"
