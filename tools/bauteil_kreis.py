@@ -124,7 +124,7 @@ def fehlversuche_global():
             try: z = json.loads(l)
             except Exception: continue
             t = (z.get("ziel") or {}).get("teil")
-            if t and z.get("angenommen") is False and not z.get("infra_oom"): n[t] = n.get(t, 0) + 1
+            if t and z.get("angenommen") is False and not z.get("infra_oom") and "guete_vor_nach" in z: n[t] = n.get(t, 0) + 1   # nur Runden mit dem heutigen Tor (Guete) zaehlen
             if t and z.get("angenommen") is True: n[t] = 0
     return n
 
