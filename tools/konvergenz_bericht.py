@@ -121,14 +121,38 @@ if WOLKE and TDIR and os.path.isdir(TDIR):
         CC = np.array([v["C"] for v in _vals if "C" in v], np.float32)
         DEV = "cuda" if torch.cuda.is_available() else "cpu"; CCt = torch.from_numpy(CC).to(DEV)
         SMIN = opt("--sicht_min", 3, int); SMAX = opt("--sicht_max", 100.0, float)
+        # Verdeckung (10.11. nachts, L-KR17): nur Normale-zur-Kamera liess Flaechen IM Nachbarteil zaehlen (Gesimsenden im Helm: Gewinn +0,064 'rein metrisch').
+        # Je Kamera Kugel-Tiefenkarte des GANZEN Modells (OBF-Stichprobe, --sicht_grad Winkelraster, Minimum je Zelle, GPU); Punkt sichtbar, wenn
+        # sein Abstand <= Tiefe + 0,15 m + 1 % Abstand. --ohne_verdeckung = alte Messart.
+        VERD = "--ohne_verdeckung" not in a
+        # Verdeckung (10.11. nachts, L-KR17): nur 'Normale zur Kamera' liess Flaechen IM Nachbarteil zaehlen (Gesimsenden im Helm: +0,064 'rein metrisch').
+        # Exakter Strahltest Punkt -> Kamera gegen das GANZE Modell (trimesh/Embree). Kugel-Tiefenkarten auf der GPU wurden verworfen:
+        # fein = Loecher (Innenwuerfel 42 % sichtbar), mehrstufig = zu konservativ (Satteldach 7 % statt exakt 34 %).
+        # Je Punkt Abbruch, sobald --sicht_min Kameras ihn sehen. Beweis: Innen-/Hinterwuerfel 0 %, Wuerfel vor der Fassade sichtbar.
+        RAY = m.ray if VERD else None
     def sichtbar(P, N):
         if CC is None: return np.ones(len(P), bool)
         Pt_ = torch.from_numpy(P).to(DEV); Nt_ = torch.from_numpy(N.astype(np.float32)).to(DEV); n = torch.zeros(len(P), dtype=torch.int32, device=DEV)
-        for i in range(0, len(CC), 64):
-            V = CCt[i:i + 64][None, :, :] - Pt_[:, None, :]                       # Punkt -> Kamera
-            ok = ((V * Nt_[:, None, :]).sum(-1) > 0) & (V.norm(dim=-1) < SMAX)
-            n += ok.sum(1, dtype=torch.int32)
-        return (n >= SMIN).cpu().numpy()
+        if RAY is None:
+            for i in range(0, len(CC), 64):
+                V = CCt[i:i + 64][None, :, :] - Pt_[:, None, :]                       # Punkt -> Kamera
+                ok = ((V * Nt_[:, None, :]).sum(-1) > 0) & (V.norm(dim=-1) < SMAX)
+                n += ok.sum(1, dtype=torch.int32)
+            return (n >= SMIN).cpu().numpy()
+        P64 = P.astype(np.float64); N64 = N.astype(np.float64); nv = np.zeros(len(P), np.int32)
+        for c in CC[np.random.default_rng(0).permutation(len(CC))]:
+            offen = np.nonzero(nv < SMIN)[0]
+            if len(offen) == 0: break
+            V = c.astype(np.float64) - P64[offen]; d = np.linalg.norm(V, axis=1)
+            ok = ((V * N64[offen]).sum(1) > 0) & (d < SMAX) & (d > 0.2)
+            idx = offen[ok]
+            if len(idx) == 0: continue
+            dv = V[ok] / d[ok, None]; o = P64[idx] + dv * 0.05
+            loc, ri, _ = RAY.intersects_location(o, dv, multiple_hits=False)
+            frei = np.ones(len(idx), bool)
+            if len(ri): frei[ri] = np.linalg.norm(loc - o[ri], axis=1) >= d[ok][ri] - 0.15
+            nv[idx[frei]] += 1
+        return nv >= SMIN
     teile = []
     for f in sorted(os.listdir(TDIR)):
         if not f.endswith(".stl") or "ausschnitt" in f:
@@ -212,7 +236,7 @@ if opt("--regionen") and os.path.exists(opt("--regionen")):
 
 zeile = {"zeit": time.strftime("%Y-%m-%d %H:%M"), "git": git + ("+" if dirty else ""), "etikett": ETIKETT, "stl": STL, "stl_sha": STL_SHA, "skala": SK,
          "gitter": GIT, "tol_m": TOL, "min_kante_m": MINK, "kanten": {"gesamt": gesamt, "baender": baender},
-         "pruefstand": pb, "teile_sicht": ts, "foto_diff": fd, "wolkenbeleg_teile": teile, "fehlkanten": fehlkanten[:20], "regionen": regionen, "rechenzeit_s": round(time.time() - t0, 1)}
+         "pruefstand": pb, "teile_sicht": ts, "foto_diff": fd, "wolkenbeleg_teile": teile, "fehlkanten": fehlkanten[:20], "regionen": regionen, "sicht": ("verdeckung_strahl" if (opt("--kameras") and "--ohne_verdeckung" not in a) else "normale"), "rechenzeit_s": round(time.time() - t0, 1)}
 
 # Vergleich mit Vorlauf
 KF = os.path.join(ODIR, "konvergenz.jsonl")

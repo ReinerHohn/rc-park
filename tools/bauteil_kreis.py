@@ -130,6 +130,7 @@ def fehlversuche_global():
     return n
 
 MAX_GLOBAL = int(opt("--max_global", 3))
+SICHT = "verdeckung_strahl"   # Messart der Sichtpruefung in konvergenz_bericht; Vorher-Zeilen anderer Messart nie wiederverwenden (L-KR17)
 # Zielart Fehlteil (10.11.): Fotokanten-Cluster ohne Modellflaeche (konvergenz_bericht Abschnitt 8) = fehlendes Element
 # (Ost-Staffelgiebel, Dachgitter, Pfeiler-Daechlein wurden nie Ziel, weil der Kreis nur vorhandene Teile verbessert).
 FEHL_PKT = opt("--fehl_pkt", 300, int); FEHL_RECALL_MAX = opt("--fehl_recall_max", 0.5, float)
@@ -288,7 +289,7 @@ for runde in range(1, RUNDEN + 1):
             for _l in reversed([x for x in open(_kf) if x.strip()]):
                 _z = json.loads(_l)
                 if str(_z.get("etikett", "")).endswith(f"r{_r}_vorher") and _z.get("wolkenbeleg_teile"): z0 = _z; break
-        if z0 is not None and "kanten_recall" not in (z0["wolkenbeleg_teile"][0] if z0["wolkenbeleg_teile"] else {}):
+        if z0 is not None and ("kanten_recall" not in (z0["wolkenbeleg_teile"][0] if z0["wolkenbeleg_teile"] else {}) or z0.get("sicht") != SICHT):
             z0 = None   # alte Messart (ohne Sichtpruefung) - nicht vergleichbar
         if z0 is None:   # Basis der Originalrunde (Zweig~1) neu messen, gleiche Messart wie nachher
             wt0 = os.path.join(LDIR, "wt_basis")
@@ -310,7 +311,7 @@ for runde in range(1, RUNDEN + 1):
             sha = hashlib.sha256(open(sp, "rb").read()).hexdigest()[:16]
             for l in reversed([l for l in open(kf) if l.strip()]):
                 zz = json.loads(l)
-                if zz.get("stl_sha") == sha and zz.get("wolkenbeleg_teile") and "kanten_recall" in zz["wolkenbeleg_teile"][0] and "fehlkanten" in zz:   # gleiche Messart (Sichtpruefung + Fotokanten je Teil)
+                if zz.get("stl_sha") == sha and zz.get("wolkenbeleg_teile") and "kanten_recall" in zz["wolkenbeleg_teile"][0] and "fehlkanten" in zz and zz.get("sicht") == SICHT:   # gleiche Messart (Sichtpruefung + Fotokanten je Teil)
                     z0 = zz; print(f"Runde {runde}: Messung vorher wiederverwendet (STL {sha})"); break
         if z0 is None:
             rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
