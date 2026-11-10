@@ -186,6 +186,8 @@ for runde in range(1, RUNDEN + 1):
     wt = os.path.join(LDIR, f"wt_r{runde}"); br = f"kreis/{OBJ}/{LAUF}-r{runde}"
     if NACH:
         wt, br = NACH_Z["worktree"], NACH_Z["branch"]
+        if not os.path.exists(wt):
+            subprocess.run(["git", "-C", ROOT, "worktree", "add", "-q", wt, br], check=True)
     elif TROCKEN:
         wt = ROOT
     else:
@@ -250,7 +252,11 @@ for runde in range(1, RUNDEN + 1):
             subprocess.run(["git", "-C", wt, "add", "-A", "-N", "."], check=False)
             subprocess.run(["git", "-C", wt, "diff"], stdout=f, check=False)
         sperre[ziel["teil"]] = sperre.get(ziel["teil"], 0) + 1; ohne_annahme += 1
+        subprocess.run(["git", "-C", wt, "add", "-A"], check=False)   # Stand verlustfrei auf dem Zweig sichern (fuer --nachpruefen), Worktree danach weg
+        subprocess.run(["git", "-C", wt, "commit", "-q", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} VERWORFEN (Stand gesichert)"], check=False)
     freigeben(ziel["teil"])
+    if not TROCKEN and wt != ROOT:   # Platz (10.11.: 11 Worktrees x 430 MB fuellten die Datenplatte); Inhalt liegt als Commit auf dem Zweig br
+        subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
                "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "gewinn": round(gewinn, 3),
                "tor_konvergenz": tor_konv, "pruefer": urteil, "angenommen": angenommen,

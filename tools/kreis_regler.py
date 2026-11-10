@@ -6,7 +6,7 @@ Startbedingung je Takt (alle muessen gelten):
   GPU-Auslastung Mittel der letzten 5 Takte < --gpu_ziel (60 %)   -> GPU nicht ausgelastet
   VRAM belegt < --vram_max (5000 MiB)    (Grenze 7000 MiB gesamt, CLAUDE.md; Agenten-Werkzeuge brauchen Spitzen bis ~2,5 GB)
   RAM verfuegbar > --ram_min (3 GB), Last1 < 1,5 x Kerne
-  Root frei > 6 GB, Daten frei > 11 GB   (platz_pruefen-Grenzen 5/10 GB + Puffer)
+  Root frei > 6 GB, Daten frei > 10,5 GB (platz_pruefen-Grenzen 5/10 GB + Puffer; Worktrees werden nach jeder Runde entfernt)
   laufende Spuren < --max, letzter Start > --abstand s her (Spuren nicht gleichzeitig in die Messphase)
 Ende: 3 Spuren in Folge melden 'kein Kandidat' -> nichts mehr zu tun. Jede Entscheidung wird geloggt.
 """
@@ -22,9 +22,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); KD = "/media
 sys.stdout.reconfigure(line_buffering=True)
 
 def spuren():
-    r = subprocess.run(["systemctl", "--user", "list-units", "--type=service", "--state=running", "--no-legend", "rcpark-kreis_*"],
+    r = subprocess.run(["systemctl", "--user", "list-units", "--type=service", "--state=running", "--no-legend", "--plain"],
                        capture_output=True, text=True).stdout
-    return [l.split()[0] for l in r.splitlines() if l.strip() and "regler" not in l and "nach_" not in l]
+    n = [l.split()[0] for l in r.splitlines() if l.strip()]
+    return [x for x in n if x.startswith("rcpark-kreis") and "regler" not in x and "nach_" not in x]
 
 def gpu():
     r = subprocess.run(["nvidia-smi", "--query-gpu=utilization.gpu,memory.used", "--format=csv,noheader,nounits"], capture_output=True, text=True).stdout
@@ -59,7 +60,7 @@ while True:
     if m >= VRAM_MAX: grund.append(f"VRAM {m:.0f} MiB")
     if r <= RAM_MIN: grund.append(f"RAM {r:.1f} GB")
     if last >= 1.5 * ker: grund.append(f"Last {last:.1f}")
-    if rf <= 6 or df <= 11: grund.append(f"Platz root {rf:.1f} daten {df:.1f} GB")
+    if rf <= 6 or df <= 10.5: grund.append(f"Platz root {rf:.1f} daten {df:.1f} GB")
     if len(sp) >= MAX: grund.append(f"{len(sp)} Spuren = max")
     if time.time() - letzter < ABSTAND: grund.append("Abstand")
     zeile = f"{time.strftime('%H:%M:%S')} Spuren {len(sp)} GPU {u:.0f}/{ug:.0f} % VRAM {m:.0f} RAM {r:.1f} Last {last:.1f} root {rf:.1f} daten {df:.1f}"
