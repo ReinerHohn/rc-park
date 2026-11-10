@@ -7,7 +7,7 @@ Warum (Messung 10.11. mittags, teil_fotoform 2 Fotos, 5 fremde GPU-Jobs im Hinte
 Nutzung am Anfang von main():  import gpu_slot; gpu_slot.belegen("teil_fotoform")
   - haelt einen Platz bis Prozessende (atexit + tote PIDs werden freigegeben)
   - Kindprozesse erben RCPARK_GPU_SLOT und belegen nichts zusaetzlich (kein Verklemmen Eltern/Kind)
-  - Plaetze: RCPARK_GPU_SLOTS (Vorgabe 3), Zulassung zusaetzlich nur bei >= RCPARK_GPU_FREI_MIB freiem VRAM (Vorgabe 1500)
+  - Plaetze: RCPARK_GPU_SLOTS (Vorgabe 2; 10.11. gemessen: 2 gleichzeitig = fast doppelter Durchsatz, 3 = halber Durchsatz, L-KR30), Zulassung zusaetzlich nur bei >= RCPARK_GPU_FREI_MIB freiem VRAM (Vorgabe 1500)
   - RCPARK_GPU_SLOT=aus schaltet die Schlange ab (z. B. fuer Tests)
 """
 import os, time, json, fcntl, atexit, subprocess
@@ -35,7 +35,7 @@ def _lebende():
 def belegen(name="", max_warten=7200):
     if os.environ.get("RCPARK_GPU_SLOT"): return   # Elternprozess haelt schon einen Platz / abgeschaltet
     os.makedirs(DIR, exist_ok=True)
-    plaetze = int(os.environ.get("RCPARK_GPU_SLOTS", "3")); frei_min = float(os.environ.get("RCPARK_GPU_FREI_MIB", "1500"))
+    plaetze = int(os.environ.get("RCPARK_GPU_SLOTS", "2")); frei_min = float(os.environ.get("RCPARK_GPU_FREI_MIB", "1500"))
     t0, gemeldet = time.time(), False
     while True:
         with open(os.path.join(DIR, "mutex.lock"), "w") as lk:
