@@ -119,15 +119,58 @@ def guete(t):
 def fehlversuche_global():
     """Verworfene Runden je Teil ueber ALLE Laeufe/Spuren (ohne Infrastrukturfehler). Spuren-lokale 'sperre' reichte nicht:
     jede neue Spur nahm wieder dieselben aussichtslosen Teile (10.11.: Erker/Dach/Boegen mehrfach mit Gewinn ~0)."""
-    n = {}
-    for d in sorted(glob.glob(os.path.join(KREISDIR, OBJ, "*", "kreis.jsonl")), key=os.path.getmtime):   # zeitlich, damit eine Annahme spaetere Zaehlung zuruecksetzt
+    ev = []
+    for d in glob.glob(os.path.join(KREISDIR, OBJ, "*", "kreis.jsonl")):
+        lauf = os.path.basename(os.path.dirname(d))
         for l in open(d):
             try: z = json.loads(l)
             except Exception: continue
-            t = (z.get("ziel") or {}).get("teil")
-            if t and z.get("angenommen") is False and not z.get("infra_oom") and "guete_vor_nach" in z: n[t] = n.get(t, 0) + 1   # nur Runden mit dem heutigen Tor (Guete) zaehlen
-            if t and z.get("angenommen") is True: n[t] = 0
+            if (z.get("ziel") or {}).get("teil"): ev.append((z.get("zeit", ""), lauf, z))
+    ev.sort(key=lambda e: e[0])   # zeitlich ueber alle Spuren, damit eine Annahme spaetere Zaehlung zuruecksetzt
+    boxen = teil_boxen(); n = {}
+    for _, lauf, z in ev:
+        t = z["ziel"]["teil"]
+        if z.get("angenommen") is False and not z.get("infra_oom") and "guete_vor_nach" in z: n[t] = n.get(t, 0) + 1   # nur Runden mit dem heutigen Tor (Guete) zaehlen
+        if z.get("angenommen") is True:
+            n[t] = 0
+            # Nutzerentscheid 10.11.: gesperrte Teile werden wieder frei, wenn ein Nachbarteil (Box +-1 m) danach in main geaendert wurde (neue Lage)
+            if not nicht_in_main(z, lauf, z.get("runde")):
+                for u in [u for u in n if n[u] and u != t and nah(boxen, u, t)]: n[u] = 0
     return n
+
+NACHBAR = 1000 / 87 * 1.0   # 1 m in Teil-STL-Einheiten (mm im Massstab 1:87)
+def stl_box(f):
+    import struct, numpy as np
+    d = open(f, "rb").read(); k = struct.unpack("<I", d[80:84])[0]
+    a = np.frombuffer(d[84:84 + 50 * k], dtype=np.dtype([("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")]))
+    v = a["v"].reshape(-1, 3); return v.min(0), v.max(0)
+def teil_boxen():
+    """Achsenbox je Teil aus den neuesten Teil-Exporten der Spuren (teile_*/<teil>.stl)."""
+    b = {}
+    for d in sorted(glob.glob(os.path.join(KREISDIR, OBJ, "*", "teile_*")), key=os.path.getmtime, reverse=True)[:12]:
+        for f in glob.glob(os.path.join(d, "*.stl")):
+            t = os.path.basename(f)[:-4]
+            if t not in b:
+                try: b[t] = stl_box(f)
+                except Exception: pass
+    return b
+def nah(boxen, a, c):
+    if a not in boxen or c not in boxen: return False
+    (alo, ahi), (clo, chi) = boxen[a], boxen[c]
+    return bool((alo - NACHBAR <= chi).all() and (clo - NACHBAR <= ahi).all())
+
+def beob_ziele(z):
+    """Zielart Beobachtung (Nutzerentscheid 10.11.): offene Beobachtung der Masstabelle (main) mit Feld 'teil' wird Kreisziel, auch wenn das Teil
+    unter MIN_DATEN liegt (Rumpf 0,17-0,20 nach Verdeckungspruefung -> 'Ostwand 1,3 m zu lang' war nie waehlbar). Tor unveraendert."""
+    try: B = json.load(open(os.path.join(ROOT, "modelle", OBJ, "masstabelle.json"))).get("beobachtungen_offen") or []
+    except Exception: return []
+    teile = {t["teil"]: t for t in (z or {}).get("wolkenbeleg_teile") or [] if t.get("beleg") is not None}
+    out = []
+    for b in B:
+        if not isinstance(b, dict) or not b.get("teil") or b.get("erledigt"): continue
+        tt = str(b["teil"]).replace(":", "__")
+        if tt in teile: out.append(dict(teile[tt], art="beobachtung", beob=b))
+    return out
 
 MAX_GLOBAL = int(opt("--max_global", 3))
 SICHT = "verdeckung_strahl"   # Messart der Sichtpruefung in konvergenz_bericht; Vorher-Zeilen anderer Messart nie wiederverwenden (L-KR17)
@@ -159,6 +202,13 @@ def waehlen(z, sperre):
     fk = [f for f in fk if sperre.get(f["teil"], 0) < MAX_FEHL and fg.get(f["teil"], 0) < MAX_GLOBAL and f["id"] not in belegt_fam and not ist_erledigt(f, erl)]
     fk.sort(key=lambda f: -f["pkt"])
     for t in fk:
+        try:
+            fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
+            return t
+        except FileExistsError:
+            continue
+    for t in beob_ziele(z):   # danach offene Beobachtungen mit benanntem Teil (Reihenfolge der Masstabelle)
+        if sperre.get(t["teil"], 0) >= MAX_FEHL or fg.get(t["teil"], 0) >= MAX_GLOBAL or t["teil"].split("__")[0] in belegt_fam: continue
         try:
             fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
             return t
@@ -237,6 +287,13 @@ def auftrag(ziel, runde, wt):
               f"Praezision {ziel.get('kanten_praez')} (Anteil der Teil-Formkanten, die ein Foto belegt). Gate: Mittel aus Beleg und Kanten-F1 muss um >= {MIN_GEWINN} steigen, "
               f"keine der beiden Groessen darf um > 0,02 fallen. Verdeckte Flaechen zaehlen nicht (nur kamera-zugewandt). "
               f"Form oder Lage passt nicht zu den Daten. Ursache unbekannt - in Stufe 0 an Fotos klaeren.")
+        if ziel.get("art") == "beobachtung":
+            b = ziel["beob"]
+            befund = (f"OFFENE BEOBACHTUNG aus modelle/{OBJ}/masstabelle.json (beobachtungen_offen, Merkmal '{b.get('merkmal', '?')}', von {b.get('wer', '?')}): "
+                      f"{b.get('text', '')} NAECHSTER SCHRITT laut Tabelle: {b.get('naechster_schritt', '-')} "
+                      f"Diese Beobachtung ist das Ziel der Runde (Ursache steht oben, in Stufe 0 an >= 3 Fotos bestaetigen, dann messen und beheben). "
+                      f"Wenn behoben: bei genau dieser Beobachtung in masstabelle.json das Feld \"erledigt\": \"kreis{runde} <Kurzbeleg>\" setzen. "
+                      f"Zusatzwerte des Teils: " + befund[len("Automatisch aus konvergenz_bericht (Wolkenbeleg je Bauteil): "):])
     txt = (txt.replace("`<OBJEKT>`", OBJ).replace("<OBJEKT>", OBJ).replace("`<BAUTEIL>`", typ).replace("<BAUTEIL>", typ)
               .replace("`<BEFUND>`", befund).replace("<BEFUND>", befund).replace("<RUNDE>", f"kreis{runde}")
               .replace("`<TABU>`", ", ".join(TABU) or "-").replace("<TABU>", ", ".join(TABU) or "-")
