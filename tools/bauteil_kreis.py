@@ -265,12 +265,24 @@ def form_fotos(fl, teil, n=10):
 def kontroll_fotos(fl, teil, n=None, ab=10):
     je = {k: v for k, v in ((fl.get("teile") or {}).get(teil) or {}).items() if k != "_gesamt"}
     return sorted(je, key=lambda k: -(je[k]["mk_px"] + je[k]["fk_px"]))[ab:ab + (KONTROLLE if n is None else n)]
+def bereich_dir(tdir, tag):
+    """FESTBEREICH (10.11. nachts, Schrumpf-Falle Balkonband 0,613->0,824 durch Kuerzen): nachher/vorpruef/kontrolle im Vereinigungsbereich mit dem
+    Vorher-Teil messen (teil_fotoform --bereich_von), vorher (spaete volle Messung) mit dem Nachher-Teil, falls schon gebaut. Vorher-Werte aus der
+    Formliste bleiben Bereich nur-vorher (konservativ: Wachsen wird eher unter- als ueberbewertet)."""
+    import re as _r
+    m = _r.match(r"r(\d+)_(\w+)", tag)
+    if not m: return None
+    n, art = m.group(1), m.group(2)
+    for d in ([f"teile_r{n}_nachher"] if art.startswith("vorher") else [f"teile_r{n}_vorher_form", f"teile_r{n}_vorher"]):
+        p_ = os.path.join(LDIR, d)
+        if os.path.abspath(p_) != os.path.abspath(tdir) and glob.glob(os.path.join(p_, "*.stl")): return p_
+    return None
 def form_messen(wt, tdir, teil, fotos, tag, bilder="fotoform_bilder", env=None, stl=None):
     """Foto-F1 eines Teils (nur dieses Teil, Verdeckung gegen das ganze Modell) auf den Fotos der Formliste; None = nicht messbar."""
     if not fotos or not os.path.isdir(tdir): return None
     aus = os.path.join(LDIR, f"fotoform_{tag}.json")
     sh_tor([PY, "-W", "ignore", "-I", "tools/teil_fotoform.py", OBJ, "--teile_dir", tdir, "--stl", stl or STL, "--nur", teil, "--fotos", ",".join(fotos),
-            "--aus", aus, "--bilder", "--bilder_dir", os.path.join(LDIR, bilder), "--etikett", tag], wt, log=os.path.join(LDIR, f"fotoform_{tag}.log"), env=env,
+            "--aus", aus, "--bilder", "--bilder_dir", os.path.join(LDIR, bilder), "--etikett", tag] + (["--bereich_von", _bd] if (_bd := bereich_dir(tdir, tag)) else []), wt, log=os.path.join(LDIR, f"fotoform_{tag}.log"), env=env,
             sperre=not (env or {}).get("RCPARK_FOTO_SKALA"))   # Stufe halb (10.11. abends): nicht in die Tor-Schlange (mittl. 16 min Warten fuer ~1 min Lauf),
             # teil_fotoform belegt selbst einen gpu_slot (2 Plaetze, VRAM-Zulassung) - Ergebnis deterministisch, nur Reihenfolge anders
     try:
@@ -566,6 +578,9 @@ for runde in range(1, RUNDEN + 1):
         _fv = form_aus_liste(_fl, wt, ziel["teil"], ff_fotos, runde) if ff_fotos else None
         if _fv is not None:
             ff_v = _fv; print(f"Runde {runde}: Form am Foto vorher {ziel['teil']}: F1 {ff_v} ({len(ff_fotos)} Fotos, aus Formliste {_fl.get('stl_sha')})")
+            _tvf = os.path.join(LDIR, f"teile_r{runde}_vorher_form")   # Vorher-Teile fuer den Festbereich der Nachher-Messung (CPU, ~1 s)
+            if not glob.glob(os.path.join(_tvf, "*.stl")):
+                sh_cpu(json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"], wt, log=os.path.join(LDIR, f"export_r{runde}_vorher_form.log"), env={"BAUTEILE_AUS": _tvf})
         elif ff_fotos and VORPRUEF and SKALA_VOR != 1.0 and formliste_halb(wt) is not None:
             # VOLLER VORHER-WERT AUFGESCHOBEN (10.11. abends): volle Formliste passt nicht zum main-STL (nach jedem Merge ~40 min GPU), die halbe schon.
             # Vorpruefung braucht nur halb; voll gemessen wird erst, wenn die halbe Stufe Gewinn zeigt. Teile + Gesamt-STL des Basisstands jetzt sichern (CPU).
