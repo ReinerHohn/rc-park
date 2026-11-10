@@ -130,6 +130,7 @@ def fehlversuche_global():
     boxen = teil_boxen(); n = {}
     for _, lauf, z in ev:
         t = z["ziel"]["teil"]
+        if z["ziel"].get("art") == "beobachtung": t = beob_schluessel(z["ziel"].get("beob") or {})   # eigene Zaehlung je Beobachtung (neue Information, z. B. Nutzer-Sichtfund)
         if z.get("angenommen") is False and not z.get("infra_oom") and "guete_vor_nach" in z: n[t] = n.get(t, 0) + 1   # nur Runden mit dem heutigen Tor (Guete) zaehlen
         if z.get("angenommen") is True:
             n[t] = 0
@@ -158,6 +159,8 @@ def nah(boxen, a, c):
     if a not in boxen or c not in boxen: return False
     (alo, ahi), (clo, chi) = boxen[a], boxen[c]
     return bool((alo - NACHBAR <= chi).all() and (clo - NACHBAR <= ahi).all())
+
+def beob_schluessel(b): return "beob:" + str(b.get("merkmal") or b.get("text", "")[:60])
 
 def beob_ziele(z):
     """Zielart Beobachtung (Nutzerentscheid 10.11.): offene Beobachtung der Masstabelle (main) mit Feld 'teil' wird Kreisziel, auch wenn das Teil
@@ -208,7 +211,8 @@ def waehlen(z, sperre):
         except FileExistsError:
             continue
     for t in beob_ziele(z):   # danach offene Beobachtungen mit benanntem Teil (Reihenfolge der Masstabelle)
-        if sperre.get(t["teil"], 0) >= MAX_FEHL or fg.get(t["teil"], 0) >= MAX_GLOBAL or t["teil"].split("__")[0] in belegt_fam: continue
+        bk = beob_schluessel(t["beob"])   # Sperre je Beobachtung, nicht je Teil: ein 3x verworfenes Teil bleibt fuer eine NEUE Beobachtung waehlbar
+        if sperre.get(bk, 0) >= MAX_FEHL or fg.get(bk, 0) >= MAX_GLOBAL or t["teil"].split("__")[0] in belegt_fam or os.path.exists(os.path.join(BELEGT, t["teil"])): continue
         try:
             fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
             return t
@@ -496,7 +500,7 @@ for runde in range(1, RUNDEN + 1):
         with open(patch, "w") as f:
             subprocess.run(["git", "-C", wt, "add", "-A", "-N", "."], check=False)
             subprocess.run(["git", "-C", wt, "diff"], stdout=f, check=False)
-        sperre[ziel["teil"]] = sperre.get(ziel["teil"], 0) + 1; ohne_annahme += 1
+        _sk = beob_schluessel(ziel["beob"]) if ziel.get("art") == "beobachtung" else ziel["teil"]; sperre[_sk] = sperre.get(_sk, 0) + 1; ohne_annahme += 1
         subprocess.run(["git", "-C", wt, "add", "-A"], check=False)   # Stand verlustfrei auf dem Zweig sichern (fuer --nachpruefen), Worktree danach weg
         subprocess.run(["git", "-C", wt, "commit", "-q", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} VERWORFEN (Stand gesichert)"], check=False)
     if ist_fehlteil(ziel) and not angenommen and fbefund and not fbefund.lower().startswith("gebaut"):
