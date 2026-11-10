@@ -1,50 +1,22 @@
 {
  "foto": "6225",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_055354a055354/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6225 (amtliche Anker)",
  "zelle_px": 149,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    149,
-    1639,
+    1788,
+    447,
     149
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    14.55,
-    -1.22,
-    26.58
-   ]
-  },
-  {
-   "zelle": [
-    149,
-    2235,
-    149
-   ],
-   "score": -0.983,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    13.57,
-    -4.34,
-    20.1
-   ]
-  },
-  {
-   "zelle": [
-    298,
-    2831,
-    149
-   ],
-   "score": -0.974,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    12.14,
-    -7.1,
-    14.81
+    -5.97,
+    8.94,
+    23.87
    ]
   },
   {
@@ -53,40 +25,68 @@
     1341,
     149
    ],
-   "score": -0.964,
+   "score": -0.967,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    7.44,
-    4.63,
-    22.44
+    7.26,
+    4.73,
+    22.38
    ]
   },
   {
    "zelle": [
-    1639,
-    745,
+    298,
+    2831,
     149
    ],
-   "score": -0.96,
+   "score": -0.942,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -4.49,
-    7.59,
-    23.46
+    12.14,
+    -7.1,
+    14.79
    ]
   },
   {
    "zelle": [
-    2086,
-    745,
+    149,
+    2235,
     149
    ],
-   "score": -0.939,
+   "score": -0.913,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -7.24,
-    5.47,
-    25.74
+    13.54,
+    -4.28,
+    19.87
+   ]
+  },
+  {
+   "zelle": [
+    447,
+    1490,
+    149
+   ],
+   "score": -0.904,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    9.99,
+    0.52,
+    26.41
+   ]
+  },
+  {
+   "zelle": [
+    596,
+    1341,
+    149
+   ],
+   "score": -0.902,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    6.3,
+    3.25,
+    24.43
    ]
   }
  ],
