@@ -70,6 +70,12 @@ def sh(cmd, cwd, log=None, env=None, timeout=None):
 
 OOM_MUSTER = ("out of memory", "CUDA_ERROR_OUT_OF_MEMORY", "OutOfMemoryError", "PLATZ ZU KNAPP")   # Platzwaechter-Abbruch = Infrastruktur (s2 R1 10.11., Gewinn +0,224 verworfen)
 
+def sh_cpu(cmd, cwd, log, env=None):
+    """Reiner CPU-Schritt (Generatorbau, manifold - kein torch/cuda): ohne GPU-Torsperre. 10.11.: unter der Sperre wartete jeder Export auf
+    alle Messungen der anderen Spuren (Export allein 4 min, in der Schlange bis 23 min). Ergebnis deterministisch -> verlustfrei."""
+    t = time.time(); rc, out = sh(cmd, cwd, log=log, env=env)
+    print(f"  CPU-Schritt {os.path.basename(log)}: {time.time() - t:.0f} s", flush=True); return rc, out
+
 def sh_tor(cmd, cwd, log, env=None, versuche=6, pause=300):
     """Torschritt (Bau/Abnahme/Messung): Spuren-uebergreifend per flock serialisiert (deterministische Messung -> verlustfrei)
     und bei CUDA-OOM wiederholt. Ein OOM ist ein Infrastrukturfehler, kein rotes Tor (Kreis1 R1 10.11.: Abnahme 'rot' war OOM in wandstaerke)."""
@@ -78,8 +84,9 @@ def sh_tor(cmd, cwd, log, env=None, versuche=6, pause=300):
     for v in range(versuche):
         start = os.path.getsize(log) if os.path.exists(log) else 0
         with open(os.path.join(KREISDIR, "gpu_tor.lock"), "w") as lk:
-            fcntl.flock(lk, fcntl.LOCK_EX)
+            tw = time.time(); fcntl.flock(lk, fcntl.LOCK_EX); tl = time.time()
             rc, _ = sh(cmd, cwd, log=log, env=env)
+            print(f"  Torschritt {os.path.basename(log)}: Warten {tl - tw:.0f} s, Lauf {time.time() - tl:.0f} s", flush=True)
         with open(log, errors="replace") as f: f.seek(start); neu = f.read()
         out = neu   # ganzer neuer Logteil: "alle Pruefungen bestanden" steht mitten im Abnahme-Log (danach Sichtblatt, fehlteile, test_regeln_cb) - mit [-4000:] nie gefunden
         if not any(m in neu for m in OOM_MUSTER): return rc, out
@@ -91,12 +98,13 @@ def protokoll(z):
     z["zeit"] = time.strftime("%Y-%m-%d %H:%M:%S")
     with open(PROT, "a") as f: f.write(json.dumps(z, ensure_ascii=False) + "\n")
 
-def messen(wt, tag, regionen=None):
+def messen(wt, tag, regionen=None, vorab=False):
     """Bauteile exportieren (baut neu) und Konvergenz messen; liefert (exitcode, letzte konvergenz-zeile).
     regionen: JSON-Datei [{id, lo, hi}] -> Recall der Fotokanten je Kasten (Zielart Fehlteil)."""
     tdir = os.path.join(LDIR, f"teile_{tag}"); os.makedirs(tdir, exist_ok=True)
     gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
-    rc, _ = sh_tor(gen, wt, log=os.path.join(LDIR, f"export_{tag}.log"), env={"BAUTEILE_AUS": tdir})
+    if not (vorab and glob.glob(os.path.join(tdir, "*.stl"))):   # vorab: Teile kamen schon aus dem Bau der Abnahme (gleicher Stand)
+        rc, _ = sh_cpu(gen, wt, log=os.path.join(LDIR, f"export_{tag}.log"), env={"BAUTEILE_AUS": tdir})
     rc2, out = sh_tor([PY, "-W", "ignore", "-I", "tools/konvergenz_bericht.py", OBJ, "--stl", STL, "--skala", str(SK), "--gitter", GIT,
                    "--wolke", WOLKE, "--teile_dir", tdir, "--kameras", KAM, "--etikett", f"kreis {LAUF} {tag}"] + (["--regionen", regionen] if regionen else []) + (["--trocken"] if TROCKEN else []),
                   wt, log=os.path.join(LDIR, f"konvergenz_{tag}.log"))
@@ -437,7 +445,25 @@ for runde in range(1, RUNDEN + 1):
                 if zz.get("stl_sha") == sha and zz.get("wolkenbeleg_teile") and "kanten_recall" in zz["wolkenbeleg_teile"][0] and "fehlkanten" in zz and zz.get("sicht") == SICHT:   # gleiche Messart (Sichtpruefung + Fotokanten je Teil)
                     z0 = zz; print(f"Runde {runde}: Messung vorher wiederverwendet (STL {sha})"); break
         if z0 is None:
-            rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
+            # Spurenuebergreifender Vorher-Speicher (10.11.: 8 Spuren auf demselben main massen je 5-25 min dasselbe; konvergenz.jsonl liegt nur im
+            # eigenen Worktree). Schluessel = STL + Werkzeuge + Objekt/Masstabelle -> gleiche Eingaben, gleiches Ergebnis (verlustfrei).
+            # Die erste Spur misst unter einer Sperre je Schluessel, die anderen warten und lesen.
+            import fcntl
+            _h = subprocess.run(["git", "-C", wt, "rev-parse", "HEAD:tools", f"HEAD:modelle/{OBJ}/objekt.json", f"HEAD:modelle/{OBJ}/masstabelle.json"],
+                                capture_output=True, text=True).stdout.split()
+            _key = hashlib.sha256((open(sp, "rb").read() if os.path.exists(sp) else b"") + " ".join(_h).encode()).hexdigest()[:20]
+            _vd = os.path.join(KREISDIR, OBJ, "vorher_speicher"); os.makedirs(_vd, exist_ok=True)
+            _zf, _td = os.path.join(_vd, _key + ".json"), os.path.join(LDIR, f"teile_r{runde}_vorher")
+            with open(os.path.join(_vd, _key + ".lock"), "w") as _lk:
+                fcntl.flock(_lk, fcntl.LOCK_EX)
+                if os.path.exists(_zf) and os.path.isdir(os.path.join(_vd, _key)):
+                    z0 = json.load(open(_zf)); shutil.copytree(os.path.join(_vd, _key), _td, dirs_exist_ok=True)
+                    with open(kf, "a") as f: f.write(json.dumps(dict(z0, etikett=f"kreis {LAUF} r{runde}_vorher"), ensure_ascii=False) + "\n")
+                    print(f"Runde {runde}: Messung vorher aus Spurenspeicher {_key} (gleicher STL, Werkzeuge, Masstabelle)")
+                else:
+                    rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
+                    if rc0 in (0, 3) and z0 and len(_h) == 3 and z0.get("stl_sha") == hashlib.sha256(open(sp, "rb").read()).hexdigest()[:16]:
+                        shutil.copytree(_td, os.path.join(_vd, _key), dirs_exist_ok=True); json.dump(z0, open(_zf + ".tmp", "w"), ensure_ascii=False); os.replace(_zf + ".tmp", _zf)
     ziel = NACH_Z["ziel"] if NACH else waehlen(z0, sperre)
     if not ziel:
         if not TROCKEN and not NACH and wt != ROOT:   # 10.11.: leere Spuren liessen je 500 MB Worktree liegen (Datenplatte auf 10,0 GB); unveraendert = Commit, verlustfrei
@@ -455,9 +481,11 @@ for runde in range(1, RUNDEN + 1):
         if _fv is not None:
             ff_v = _fv; print(f"Runde {runde}: Form am Foto vorher {ziel['teil']}: F1 {ff_v} ({len(ff_fotos)} Fotos, aus Formliste {_fl.get('stl_sha')})")
         elif ff_fotos:
-            _tv = os.path.join(LDIR, f"teile_r{runde}_vorher_form")
-            _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
-            sh_tor(_gen, wt, log=os.path.join(LDIR, f"export_r{runde}_vorher_form.log"), env={"BAUTEILE_AUS": _tv})
+            _tv = os.path.join(LDIR, f"teile_r{runde}_vorher")   # Export der Vorher-Messung (gleicher Stand, Agent lief noch nicht) - zweiter Export war doppelt
+            if not glob.glob(os.path.join(_tv, "*.stl")):
+                _tv = os.path.join(LDIR, f"teile_r{runde}_vorher_form")
+                _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
+                sh_cpu(_gen, wt, log=os.path.join(LDIR, f"export_r{runde}_vorher_form.log"), env={"BAUTEILE_AUS": _tv})
             ff_v = form_messen(wt, _tv, ziel["teil"], ff_fotos, f"r{runde}_vorher")
             print(f"Runde {runde}: Form am Foto vorher {ziel['teil']}: F1 {ff_v} ({len(ff_fotos)} Fotos)")
     t0 = time.time()
@@ -469,12 +497,17 @@ for runde in range(1, RUNDEN + 1):
         _m = BEFUND_RE.findall(open(_al, errors="replace").read()) if os.path.exists(_al) else []
         fbefund = _m[-1] if _m else None
         print(f"Runde {runde}: Fehlteil-Befund des Agenten: {fbefund}")
-    rcB, outB = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"))
+    # Bau (CPU) ausserhalb der GPU-Torsperre, Teile-Export im selben Lauf (vorher: bauen_abnehmen baute unter der Sperre, messen() baute danach
+    # ein zweites Mal identisch); dann Pruefen unter der Sperre. Gleiche Schritte wie bauen_abnehmen.sh (Generator, dann --nur-pruefen).
+    _tn = os.path.join(LDIR, f"teile_r{runde}_nachher"); shutil.rmtree(_tn, ignore_errors=True)
+    _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
+    rcG, _ = sh_cpu(_gen, wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log"), env={"BAUTEILE_AUS": _tn})
+    rcB, outB = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ, "--nur-pruefen"], wt, log=os.path.join(LDIR, f"abnahme_r{runde}.log")) if rcG == 0 else (rcG, "Generator fehlgeschlagen")
     tor_abnahme = rcB == 0 and "alle Pruefungen bestanden" in outB
     reg = None
     if ist_fehlteil(ziel):
         reg = os.path.join(LDIR, f"region_r{runde}.json"); json.dump([{"id": ziel["id"], "lo": ziel["lo"], "hi": ziel["hi"]}], open(reg, "w"))
-    rcK, z1, outK = messen(wt, f"r{runde}_nachher", regionen=reg)
+    rcK, z1, outK = messen(wt, f"r{runde}_nachher", regionen=reg, vorab=(rcG == 0))
     vor_t = {t["teil"]: t for t in z0.get("wolkenbeleg_teile") or []}; nach_t = {t["teil"]: t for t in (z1 or {}).get("wolkenbeleg_teile") or []}
     vor = {k: guete(v) for k, v in vor_t.items()}; nach = {k: guete(v) for k, v in nach_t.items()}
     ersatz = None
@@ -570,7 +603,7 @@ for runde in range(1, RUNDEN + 1):
                 if konf and all(erzeugt(f) for f in konf):
                     subprocess.run(["git", "-C", ROOT, "checkout", "--theirs", "--"] + konf, capture_output=True)
                     gen = json.load(open(os.path.join(ROOT, "modelle", OBJ, "objekt.json")))["generator"]
-                    rcg, _ = sh_tor(gen, ROOT, log=os.path.join(LDIR, f"merge_neubau_r{runde}.log"))
+                    rcg, _ = sh_cpu(gen, ROOT, log=os.path.join(LDIR, f"merge_neubau_r{runde}.log"))
                     if rcg == 0:
                         subprocess.run(["git", "-C", ROOT, "add", "--"] + konf, capture_output=True)
                         subprocess.run(["git", "-C", ROOT, "add", "-u", "modelle/stl"], capture_output=True)
