@@ -3757,40 +3757,6 @@
    "status": "offen"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
-   "auto_id": "fehlteile-6261-234-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.54,
-   "z_bis": 18.54,
-   "xyz": [
-    14.34,
-    -8.86,
-    18.54
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.86 m (Zelle [234, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
-   "auto_id": "fehlteile-6261-312-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.24,
-   "z_bis": 18.24,
-   "xyz": [
-    14.6,
-    -7.16,
-    18.24
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.24 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-10",
    "wer": "Kreis r1 (fensterreihe:og)",
    "text": "Befund (konvergenz_bericht): fensterreihe:og Wolkenbeleg 0,67, Kanten-Praezision 0,49. Sichtbefund Overlay 6120/6161: die Fenstergruppen des 1. OG sind im Modell ca. 0,6 m zu BREIT (3,33 statt 2,72 m Aussenbreite, Seitenlichter 0,91 statt 0,71 m); Mittelspalte, Lage (u), Pitch 3,96 stimmen. Ursache: Aussenpfosten waren im Kantengitter nur 1 von 10 belegt, Breite 3 x 0,912 + 4 x 0,147 'abgeleitet'.",
@@ -3801,6 +3767,40 @@
    "wer": "Kreis r1 (fensterreihe:og)",
    "text": "Tiefenlage OG-Fenster: (a) Rahmenfront: M-6132-002 (63,5 Grad) 12,646, M-6120-056 12,671, Wolke 12,64-12,65 sagen buendig; M-6120-057 12,805 (30 Grad) Ausreisser -> tiefe 0,05 (Relief ANNAHME), Beleg 0,863 -> 0,979 / Praezision 0,496 -> 0,683. (b) Glasebene 0,06-0,10 hinter der Wand (Foto, M-6120-055/M-6132-001) gegen 0,27 (Wolke): Modell 0,2 = ANNAHME, Betrag offen.",
    "naechster_schritt": "Schnitt quer durch die Laibung: Triangulation derselben Steg-/Glaskante in 3 Fotos mit >= 60 Grad Schnittwinkel (6117/6120/6145), Seitenansicht Laibung am Erker-Fenster-Nahfoto (Handyserie) holen"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "auto_id": "fehlteile-6261-234-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.54,
+   "z_bis": 18.54,
+   "xyz": [
+    14.34,
+    -8.88,
+    18.54
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.88 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
+   "auto_id": "fehlteile-6261-312-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.23,
+   "z_bis": 18.23,
+   "xyz": [
+    14.6,
+    -7.16,
+    18.23
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

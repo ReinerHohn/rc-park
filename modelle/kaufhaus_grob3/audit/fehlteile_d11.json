@@ -1,92 +1,92 @@
 {
  "foto": "d11",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_062358a062358/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-d11 (amtliche Anker)",
- "zelle_px": 148,
+ "zelle_px": 144,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    2368,
-    2072,
-    148
+    2592,
+    2304,
+    144
    ],
-   "score": -1.0,
+   "score": -0.967,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    1.28,
-    7.1,
-    22.17
+    -0.91,
+    8.18,
+    21.32
    ]
   },
   {
    "zelle": [
-    2220,
-    2368,
-    148
+    288,
+    1440,
+    144
    ],
-   "score": -1.0,
+   "score": -0.965,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -5.4,
-    4.17,
-    24.96
+    17.17,
+    0.11,
+    17.64
    ]
   },
   {
    "zelle": [
-    888,
-    1184,
-    148
+    864,
+    1152,
+    144
    ],
-   "score": -0.974,
+   "score": -0.964,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    14.31,
-    1.4,
-    23.36
+    14.71,
+    1.5,
+    22.99
    ]
   },
   {
    "zelle": [
-    2368,
-    2220,
-    148
+    1584,
+    1440,
+    144
    ],
-   "score": -0.955,
+   "score": -0.913,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -3.07,
-    6.13,
+    13.96,
+    5.86,
+    17.1
+   ]
+  },
+  {
+   "zelle": [
+    2304,
+    2304,
+    144
+   ],
+   "score": -0.882,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -4.31,
+    5.0,
     24.95
    ]
   },
   {
    "zelle": [
-    0,
-    1776,
-    148
+    1008,
+    1152,
+    144
    ],
-   "score": -0.919,
+   "score": -0.867,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    15.71,
-    -3.34,
-    18.4
-   ]
-  },
-  {
-   "zelle": [
-    296,
-    1480,
-    148
-   ],
-   "score": -0.802,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    16.49,
-    -0.77,
-    18.74
+    14.51,
+    2.51,
+    21.91
    ]
   }
  ],

@@ -1,5 +1,5 @@
 {
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_062358a062358/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548633210057,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.11989995092153549,
-  "wand_anteil_unter": 0.0005666666666666667,
+  "wand_pq": 0.10590077191591263,
+  "wand_anteil_unter": 0.0007,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -115,26 +115,26 @@
   "figur2_bein_np": 0.11633658274099891,
   "figur2_bein_nm": 0.11366333671048046,
   "gaube_a_vordach_vor": 1.5221385427095424,
-  "gaube_a_vordach_up": 0.690012053487749,
-  "gaube_a_vordach_um": 0.7599881539197059,
-  "gaube_a_stirn_vor": 1.3071388566195385,
-  "gaube_a_dach_z": 20.46699999999998,
+  "gaube_a_vordach_up": 0.6900120529944501,
+  "gaube_a_vordach_um": 0.7599881541509903,
+  "gaube_a_stirn_vor": 1.3071388559618384,
+  "gaube_a_dach_z": 20.606999999999978,
   "gaube_b_vordach_vor": 1.5221473701353774,
-  "gaube_b_vordach_up": 0.7152417596097334,
-  "gaube_b_vordach_um": 0.7347579486846905,
-  "gaube_b_stirn_vor": 1.3071474824609604,
-  "gaube_b_dach_z": 20.46699999999998,
+  "gaube_b_vordach_up": 0.7152417382135962,
+  "gaube_b_vordach_um": 0.7347579394561409,
+  "gaube_b_stirn_vor": 1.3071474829134966,
+  "gaube_b_dach_z": 20.606999999999978,
   "helm_o_r_13_45": 1.728237119619691,
   "helm_o_r_14_12": 1.2710497481663776,
   "helm_o_r_14_38": 1.1710492471539757,
   "helm_o_r_14_88": 1.001048083346563,
   "helm_o_knauf_r_21_33": 0.21074957624831886,
   "helm_o_knauf_r_22_00": 0.05267690287992205,
-  "giebel_o_u_reach": 2.8510681373032476,
+  "giebel_o_u_reach": 3.311668452471717,
   "giebel_o_top_b2": 25.967000953674315,
   "giebel_o_top_b4": 23.287001106262206,
   "giebel_o_top_b8": 17.92700008392334,
-  "giebel_o_vorn_n": 3.0004878226350455,
+  "giebel_o_vorn_n": 3.000488072170486,
   "helm_w_r_13_45": 1.6786181603389831,
   "helm_w_r_14_12": 1.2970544541651683,
   "helm_w_r_14_38": 1.1870509785045464,
@@ -149,6 +149,9 @@
   "helm_w_r_16_97": 0.50156475290109,
   "helm_w_r_17_76": 0.4115380508985133,
   "helm_w_r_18_58": 0.3365087766423552,
+  "giebel_o_u_reach_n10": 2.8878019857267163,
+  "gaube_b_dach_z7": 21.166999999999977,
+  "gaube_b_dach_z62": 21.90699999999995,
   "fenster_og_g3_lichtweite_anzahl": 3.0,
   "fenster_og_g3_lichtweite_breite_median": 0.68,
   "fenster_og_g3_lichtweite_breite_max": 0.72,
@@ -366,7 +369,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.11989995092153549,
+   "wert": 0.10590077191591263,
    "soll": [
     0.0348,
     100
@@ -796,7 +799,7 @@
   },
   {
    "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach Halbbreite nach +u bei z 21,33 (Foto 0,71-0,74)",
-   "wert": 0.690012053487749,
+   "wert": 0.6900120529944501,
    "soll": [
     0.63,
     0.83
@@ -806,7 +809,7 @@
   },
   {
    "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach Halbbreite nach -u bei z 21,33",
-   "wert": 0.7599881539197059,
+   "wert": 0.7599881541509903,
    "soll": [
     0.63,
     0.83
@@ -816,7 +819,7 @@
   },
   {
    "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Stirn-/Fensterkasten-Front bei z 20,85 (n-Reichweite ab n 7,0; Foto n 8,31) - Wachposten, am Altmodell schon gruen",
-   "wert": 1.3071388566195385,
+   "wert": 1.3071388559618384,
    "soll": [
     1.23,
     1.39
@@ -826,7 +829,7 @@
   },
   {
    "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Hoehe der Dachoberflaeche bei n 7,7 (Vordach-Pultdach, Hang 21,6)",
-   "wert": 20.46699999999998,
+   "wert": 20.606999999999978,
    "soll": [
     20.337,
     20.837
@@ -846,7 +849,7 @@
   },
   {
    "name": "Gaube obere Reihe B (u 6,55): Vordach Halbbreite nach +u bei z 21,33 (Foto 0,71-0,74)",
-   "wert": 0.7152417596097334,
+   "wert": 0.7152417382135962,
    "soll": [
     0.63,
     0.83
@@ -856,7 +859,7 @@
   },
   {
    "name": "Gaube obere Reihe B (u 6,55): Vordach Halbbreite nach -u bei z 21,33",
-   "wert": 0.7347579486846905,
+   "wert": 0.7347579394561409,
    "soll": [
     0.63,
     0.83
@@ -866,7 +869,7 @@
   },
   {
    "name": "Gaube obere Reihe B (u 6,55): Stirn-/Fensterkasten-Front bei z 20,85 (n-Reichweite ab n 7,0; Foto n 8,31) - Wachposten, am Altmodell schon gruen",
-   "wert": 1.3071474824609604,
+   "wert": 1.3071474829134966,
    "soll": [
     1.23,
     1.39
@@ -876,7 +879,7 @@
   },
   {
    "name": "Gaube obere Reihe B (u 6,55): Hoehe der Dachoberflaeche bei n 7,7 (Vordach-Pultdach, Hang 21,6)",
-   "wert": 20.46699999999998,
+   "wert": 20.606999999999978,
    "soll": [
     20.337,
     20.837
@@ -956,10 +959,30 @@
   },
   {
    "name": "Ostgiebel Aussenebene u (m) = Achse n 0,3338/0,9426, Kappenhoehe z 28,3 (nur Giebel, n 3,45)",
-   "wert": 15.851068137303248,
+   "wert": 16.311668452471718,
    "soll": [
-    15.55,
-    15.95
+    16.15,
+    16.5
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ostgiebel Aussenebene u (m) bei n 10,5 (Kappenhoehe z 18,9, nur Giebel)",
+   "wert": 15.887801985726716,
+   "soll": [
+    15.72,
+    16.07
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ostgiebel Wandneigung: Aussenebene u(n 3,45) - u(n 10,5) (m)",
+   "wert": 0.4238664667450007,
+   "soll": [
+    0.28,
+    0.58
    ],
    "ok": true,
    "status": "ok"
@@ -996,7 +1019,7 @@
   },
   {
    "name": "Ostgiebel Vorderende der Stufe 8 (n, m) bei z 19,2",
-   "wert": 11.000487822635046,
+   "wert": 11.000488072170485,
    "soll": [
     10.85,
     11.2
@@ -1140,6 +1163,16 @@
    "soll": [
     0.3,
     0.36
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,2): Hoehe der Vordach-Ziegelflaeche bei n 7,0 (zwischen Vorderkante M-6259-007/008 und hinterer Ecke M-6259-009)",
+   "wert": 21.166999999999977,
+   "soll": [
+    20.97,
+    21.35
    ],
    "ok": true,
    "status": "ok"
