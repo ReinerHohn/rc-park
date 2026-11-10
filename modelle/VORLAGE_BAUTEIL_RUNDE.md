@@ -9,7 +9,9 @@ Der Prüfer (starkes Modell oder Nutzer) prüft nur zwei Dinge:
 
 **Grundsatz:**
 - Die FORM kommt aus den Fotos: Zonen, Grundriss, Anzahl.
-- Die LAGE kommt aus Triangulation und Wolke.
+- Die LAGE kommt aus Triangulation (Fotostrahlen); die Wolke ist nur Gegenprobe/Veto fuer die Lage.
+- MASSSTAB DES ERFOLGS sind die FOTOKANTEN (Nutzerregel 10./11.11.): das Kreis-Tor nimmt nur an, wenn die Foto-Note (teil_fotoform, Foto-F1) steigt.
+  Leere Wolke (weisse Gewoelbekappen, steile Flaechen, Rueckseiten) ist KEIN Grund, nicht zu bauen - Kanten in >= 3 Fotos reichen.
 - Wer die Form nicht beschrieben hat, darf nicht messen. Sonst entsteht ein „besserer Kasten“ (Erker) oder eine „Sprungschanze“ (Gauben).
 
 Platzhalter: `<OBJEKT>` (z. B. kaufhaus_grob3), `<BAUTEIL>` (z. B. erker:0, erker:1), `<BEFUND>` (Nutzer- oder Prüferbefund wörtlich), `<FOTOS>` (Startfotos, falls bekannt), `<TABU>` (Dateien, an denen gerade andere Agenten arbeiten), `<RUNDE>`.

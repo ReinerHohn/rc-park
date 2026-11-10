@@ -32,6 +32,8 @@ Je Objekt `modelle/<objekt>/objekt.json` + `masstabelle.json` (Masse = Daten mit
 9d. **Fit-Ziel immer Wolke UND Fotos (Nutzer 8.11., Gauben 'Sprungschanze' nie bemerkt)**: Die Wolke legt nur LAGE/Hoehe fest, die FORM (Dachart, Bogen, Fensterteilung, Anzahl) kommt aus den Fotos. Vor und nach jedem Fit eines neuen/veraenderten Bauteils:
     (a) Teil gegen mindestens 3 Fotos aus verschiedenen Richtungen ansehen (Detailrender neben Fotoausschnitt, Regel 9b) und Formfamilie festlegen, DANN Maße fitten;
     (b) Zielfunktion = Wolkenabstand + Foto-Kantenabstand (Modellkanten in kalibrierte Fotos projiziert, `tools/foto_diff.py`-Logik) - Ziel: `param_wolke_fit.py --fotos`, Kameras aus dem gemeinsamen SfM (`kaufhaus_alle/sfm`, per ICP in den Netzrahmen gelegt). Status: noch NICHT gebaut.
+9e. **Fotokanten entscheiden (Nutzerregel 10./11.11.)**: Form, Masse und jedes Annahme-Tor (Kreis, auch neue Teile) richten sich nach den FOTOKANTEN (Foto-F1 `tools/teil_fotoform.py`);
+    Wolke/Kantengitter/LoD2 nur Lage-Veto bzw. Gegenprobe. Leere Wolke ist kein Datenmangel, solange das Merkmal in >= 3 Fotos zu sehen ist (vorher Fotos je Teil zaehlen).
 8. Commit-Sperre: `tools/git_hooks/pre-commit` prueft ueberwachte Dateien. Aktivierung nur durch den Nutzer: `git config core.hooksPath tools/git_hooks`.
 
 ## Vor neuen Versuchen lesen
