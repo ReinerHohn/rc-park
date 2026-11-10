@@ -66,7 +66,7 @@ function draw(){
 const FT=DATA.ft||[];let frang=[],fpos=0,flast='';
 if(FT.length)q('fbox').hidden=false;
 function fotoWahl(c){if(!FT.length)return;const fx=c.sy*c.cp,fy=c.cy*c.cp,fz=c.sp;
- const r=FT.map((f,i)=>[f.d[0]*fx+f.d[1]*fy+f.d[2]*fz,i]).sort((a,b)=>(b[0]+0.08*FT[b[1]].u)-(a[0]+0.08*FT[a[1]].u));   // Uebersichtsfotos (Abstand, Mitte im Bild) leicht bevorzugtconst key=r.slice(0,5).map(x=>x[1]).join(',');
+ const r=FT.map((f,i)=>[f.d[0]*fx+f.d[1]*fy+f.d[2]*fz,i]).sort((a,b)=>(b[0]+0.08*FT[b[1]].u)-(a[0]+0.08*FT[a[1]].u));  /* Uebersichtsfotos (Abstand, Mitte im Bild) leicht bevorzugt */const key=r.slice(0,5).map(x=>x[1]).join(',');
  if(key!==flast){frang=r.slice(0,8);fpos=0;flast=key;fotoZeigen()}}
 function fotoZeigen(){const [dot,i]=frang[fpos],f=FT[i];q('fimg').src='data:image/jpeg;base64,'+f.j;
  q('finf').textContent=`${fpos+1}/${frang.length} · ${Math.round(Math.acos(Math.max(-1,Math.min(1,dot)))*180/Math.PI)}° Abweichung · ${f.n.replace(/\.jpe?g$/i,'')}`}
