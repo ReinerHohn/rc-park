@@ -5258,6 +5258,21 @@
    "naechster_schritt": "Pfeilerzaehlung Foto 6132/6120 (foto_zaehlung), Pfeiler als Bruestung-Parameter, Oberkantenprofil"
   },
   {
+   "datum": "2026-11-10",
+   "wer": "kreis 20261110_213718a213718 r1 (automatisch)",
+   "merkmal": "Kantengitter widerspricht Foto (balkonband__haupt)",
+   "text": "Angenommen nach Quellenvorrang Foto: Gitter-Baender recall 5-10 m: 0.795 -> 0.733, Foto-F1 0.613->0.822. Kantengitter hat dort vermutlich Fehlsegmente.",
+   "naechster_schritt": "Gittersegmente im Teilbereich gegen Fotos pruefen (gitter_zurueck), Fehlsegmente markieren."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Pruefer opus kreis 20261110_213718a213718 r1 (automatisch)",
+   "teil": "balkonband:haupt",
+   "merkmal": "Pruefer-Rest balkonband:haupt kreis 20261110_213718a213718 r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Rot bleibt in allen Fotos (6120, 6132, p03, 6119, 6127, j05) zwischen den Konsolen an der Kante Wand/Unterseite: Modellkante ohne Fotokante, Unterseitenlage/-tiefe pruefen | Gelbe Reste: p03 an Konsole 3 von rechts, 6130 an der Konsolenecke, d11/j05 je ein Pixel am Ende | konsolenreihe:balkon z_oben 8,04->8,30 mitgeaendert ohne eigene Form-/Lagepruefung | bruestung:balkon n_baluster 57 nicht am Foto gezaehlt (ANNAHME, Regel 9), pfosten_erster 3 / Feldpfeiler-Phase nicht am Foto belegt | werte_quellen u_von/u_bis veraltet (nennen noch Erker 0/1 Mitte statt Wolke -5,4..12,3 + Fotos 6171/d11/6132 + M-6145-001/002) | Messprotokoll M-6145-001/002 ohne markiertes Bild (Regel 3c) | foto_diff, fehlteile_finden, teile_lage_pruefen nicht gelaufen; Nachher-Formbilder vom Agenten nicht angesehen | F1-Gewinn teils durch Verkleinern (Fotokanten-Pixel halbiert), d11 0,798->0,711 Rueckschritt, Konvergenz-Recall 5-10 m ungeprueft (Vorversuch 0,795->0,726) | Feldpfeiler der Bruestung fehlen, Baluster-Phase offen (Praezision 0,53)",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
    "auto_id": "fehlteile-6261-234-1872",
@@ -5290,21 +5305,6 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.09 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "2026-11-10",
-   "wer": "kreis 20261110_213718a213718 r1 (automatisch)",
-   "merkmal": "Kantengitter widerspricht Foto (balkonband__haupt)",
-   "text": "Angenommen nach Quellenvorrang Foto: Gitter-Baender recall 5-10 m: 0.795 -> 0.733, Foto-F1 0.613->0.822. Kantengitter hat dort vermutlich Fehlsegmente.",
-   "naechster_schritt": "Gittersegmente im Teilbereich gegen Fotos pruefen (gitter_zurueck), Fehlsegmente markieren."
-  },
-  {
-   "datum": "2026-11-10",
-   "wer": "Pruefer opus kreis 20261110_213718a213718 r1 (automatisch)",
-   "teil": "balkonband:haupt",
-   "merkmal": "Pruefer-Rest balkonband:haupt kreis 20261110_213718a213718 r1",
-   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Rot bleibt in allen Fotos (6120, 6132, p03, 6119, 6127, j05) zwischen den Konsolen an der Kante Wand/Unterseite: Modellkante ohne Fotokante, Unterseitenlage/-tiefe pruefen | Gelbe Reste: p03 an Konsole 3 von rechts, 6130 an der Konsolenecke, d11/j05 je ein Pixel am Ende | konsolenreihe:balkon z_oben 8,04->8,30 mitgeaendert ohne eigene Form-/Lagepruefung | bruestung:balkon n_baluster 57 nicht am Foto gezaehlt (ANNAHME, Regel 9), pfosten_erster 3 / Feldpfeiler-Phase nicht am Foto belegt | werte_quellen u_von/u_bis veraltet (nennen noch Erker 0/1 Mitte statt Wolke -5,4..12,3 + Fotos 6171/d11/6132 + M-6145-001/002) | Messprotokoll M-6145-001/002 ohne markiertes Bild (Regel 3c) | foto_diff, fehlteile_finden, teile_lage_pruefen nicht gelaufen; Nachher-Formbilder vom Agenten nicht angesehen | F1-Gewinn teils durch Verkleinern (Fotokanten-Pixel halbiert), d11 0,798->0,711 Rueckschritt, Konvergenz-Recall 5-10 m ungeprueft (Vorversuch 0,795->0,726) | Feldpfeiler der Bruestung fehlen, Baluster-Phase offen (Praezision 0,53)",
-   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
