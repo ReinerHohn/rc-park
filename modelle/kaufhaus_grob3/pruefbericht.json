@@ -1,5 +1,5 @@
 {
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_053953a053953/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -19,8 +19,8 @@
   "lichter_g2_ebene_abstand": 2.000783732996581,
   "handlauf_z": 8.25699973297119,
   "helm_w_fussbreite_x": 2.3264116744995116,
-  "helm_w_fussbreite_y": 2.3425469512939454,
-  "helm_w_fussbreite_punkte": 29.0,
+  "helm_w_fussbreite_y": 2.4409503021240226,
+  "helm_w_fussbreite_punkte": 28.0,
   "rueck_z6": -0.005787998491273427,
   "rueck_z10": -0.005788051692975138,
   "rueck_z143": -0.005788051692975138,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548633210057,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.13903449475765228,
-  "wand_anteil_unter": 0.0005333333333333334,
+  "wand_pq": 0.11990008503198624,
+  "wand_anteil_unter": 0.0007333333333333333,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,7 +50,7 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 2.128511469441953,
-  "teile_ueberhang": 0.00799,
+  "teile_ueberhang": 0.00817,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.88,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.88,
@@ -60,7 +60,7 @@
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.8,
   "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.000076058674822,
   "laube_rueckwand_n728_z7": -0.00332701019786219,
-  "helm_o_r_14_64": 1.111044218665693,
+  "helm_o_r_14_64": 1.1110442019599438,
   "helm_o_r_16_18": 0.6410005316999677,
   "helm_o_r_17_76": 0.4009052145424984,
   "helm_w_r_16_25": 0.6246130130669826,
@@ -106,7 +106,7 @@
   "figur3_spitze": 9.146999999999991,
   "figur4_scheitel": 11.886999999999993,
   "figur2_sohle": 9.836999702453612,
-  "figur2_kranz_d": 0.566255907794689,
+  "figur2_kranz_d": 0.5662559077952412,
   "figur2_stufe_d": 0.309999985156223,
   "figur2_bein_up": 0.2327845948786125,
   "figur2_bein_um": 0.19721574802266204,
@@ -125,30 +125,31 @@
   "gaube_b_stirn_vor": 1.3071474829134966,
   "gaube_b_dach_z": 20.606999999999978,
   "helm_o_r_13_45": 1.728237119619691,
-  "helm_o_r_14_12": 1.271049730658459,
-  "helm_o_r_14_38": 1.171049238415047,
-  "helm_o_r_14_88": 1.001048605304835,
+  "helm_o_r_14_12": 1.2710497481663776,
+  "helm_o_r_14_38": 1.1710492471539757,
+  "helm_o_r_14_88": 1.001048083346563,
   "helm_o_knauf_r_21_33": 0.21074957624831886,
   "helm_o_knauf_r_22_00": 0.05267690287992205,
-  "giebel_o_u_reach": 2.8510681373032476,
+  "giebel_o_u_reach": 3.311668452471717,
   "giebel_o_top_b2": 25.967000953674315,
   "giebel_o_top_b4": 23.287001106262206,
   "giebel_o_top_b8": 17.92700008392334,
-  "giebel_o_vorn_n": 3.0004878226350455,
+  "giebel_o_vorn_n": 3.000488072170486,
   "helm_w_r_13_45": 1.6786181603389831,
-  "helm_w_r_14_12": 1.2970544735588454,
+  "helm_w_r_14_12": 1.2970544541651683,
   "helm_w_r_14_38": 1.1870509785045464,
   "helm_w_r_14_88": 1.0070557810130052,
   "helm_w_knauf_r_21_35": 0.19176879206557926,
-  "gesims_front_z14_35": 0.2971941212130571,
-  "gesims_front_z14_55": 0.1771921340233229,
-  "gesims_front_z14_78": 0.07497008560100138,
+  "gesims_front_z14_35": 0.3371927457752357,
+  "gesims_front_z14_55": 0.17330339367812586,
+  "gesims_front_z14_78": 0.07411555109453749,
   "bogen3_archivolt_z": 5.9869999999999814,
   "helm_o_r_13_25": 1.9110466579891807,
   "helm_o_r_19_40": 0.2808575058922347,
   "helm_w_r_16_97": 0.50156475290109,
   "helm_w_r_17_76": 0.4115380508985133,
   "helm_w_r_18_58": 0.3365087766423552,
+  "giebel_o_u_reach_n10": 2.8878019857267163,
   "gaube_b_dach_z7": 21.166999999999977,
   "gaube_b_dach_z62": 21.90699999999995
  },
@@ -355,7 +356,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.13903449475765228,
+   "wert": 0.11990008503198624,
    "soll": [
     0.0348,
     100
@@ -385,7 +386,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00799,
+   "wert": 0.00817,
    "soll": [
     0,
     0.01
@@ -425,7 +426,7 @@
   },
   {
    "name": "Erkerhelm Ost: Halbbreite vor der Achse bei z 14,64 (geschweiftes Profil)",
-   "wert": 1.111044218665693,
+   "wert": 1.1110442019599438,
    "soll": [
     1.08,
     1.32
@@ -725,7 +726,7 @@
   },
   {
    "name": "Figur 2: Konsole Kranz Durchmesser (Rundkonsole, Silhouettenspitzen)",
-   "wert": 0.566255907794689,
+   "wert": 0.5662559077952412,
    "soll": [
     0.52,
     0.64
@@ -885,7 +886,7 @@
   },
   {
    "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.12 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.271049730658459,
+   "wert": 1.2710497481663776,
    "soll": [
     1.15,
     1.35
@@ -895,7 +896,7 @@
   },
   {
    "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.38 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.171049238415047,
+   "wert": 1.1710492471539757,
    "soll": [
     1.05,
     1.25
@@ -905,7 +906,7 @@
   },
   {
    "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.88 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.001048605304835,
+   "wert": 1.001048083346563,
    "soll": [
     0.87,
     1.07
@@ -945,10 +946,30 @@
   },
   {
    "name": "Ostgiebel Aussenebene u (m) = Achse n 0,3338/0,9426, Kappenhoehe z 28,3 (nur Giebel, n 3,45)",
-   "wert": 15.851068137303248,
+   "wert": 16.311668452471718,
    "soll": [
-    15.55,
-    15.95
+    16.15,
+    16.5
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ostgiebel Aussenebene u (m) bei n 10,5 (Kappenhoehe z 18,9, nur Giebel)",
+   "wert": 15.887801985726716,
+   "soll": [
+    15.72,
+    16.07
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ostgiebel Wandneigung: Aussenebene u(n 3,45) - u(n 10,5) (m)",
+   "wert": 0.4238664667450007,
+   "soll": [
+    0.28,
+    0.58
    ],
    "ok": true,
    "status": "ok"
@@ -985,7 +1006,7 @@
   },
   {
    "name": "Ostgiebel Vorderende der Stufe 8 (n, m) bei z 19,2",
-   "wert": 11.000487822635046,
+   "wert": 11.000488072170485,
    "soll": [
     10.85,
     11.2
@@ -1005,7 +1026,7 @@
   },
   {
    "name": "Erkerhelm West: Flaechenmitte (Apothem) vor der Achse bei z 14.12 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.2970544735588454,
+   "wert": 1.2970544541651683,
    "soll": [
     1.2,
     1.4
@@ -1045,7 +1066,7 @@
   },
   {
    "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.35 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.2971941212130571,
+   "wert": 0.3371927457752357,
    "soll": [
     0.25,
     0.35
@@ -1055,7 +1076,7 @@
   },
   {
    "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.55 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.1771921340233229,
+   "wert": 0.17330339367812586,
    "soll": [
     0.13,
     0.23
@@ -1065,7 +1086,7 @@
   },
   {
    "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.78 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.07497008560100138,
+   "wert": 0.07411555109453749,
    "soll": [
     0.03,
     0.13
