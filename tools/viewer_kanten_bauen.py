@@ -69,8 +69,8 @@ if "--fotos" in sys.argv:
     for j in wahl:
         im = cv2.imread(os.path.join(BD, nam[j]))
         if im is None: continue
-        h, w = im.shape[:2]; f_ = 420 / max(h, w); im = cv2.resize(im, (int(w * f_), int(h * f_)), interpolation=cv2.INTER_AREA)
-        ok, buf = cv2.imencode(".jpg", im, [cv2.IMWRITE_JPEG_QUALITY, 72])
+        h, w = im.shape[:2]; f_ = opt("--foto_px", 420, int) / max(h, w); im = cv2.resize(im, (int(w * f_), int(h * f_)), interpolation=cv2.INTER_AREA)
+        ok, buf = cv2.imencode(".jpg", im, [cv2.IMWRITE_JPEG_QUALITY, opt("--foto_q", 72, int)])
         FT.append({"n": nam[j], "d": [round(float(x), 4) for x in dirs[j]], "c": [round(float(x), 2) for x in Cs[j] - ctr], "u": int(j in set(gut.tolist())), "j": base64.b64encode(buf.tobytes()).decode()})
     print("Fotos eingebettet", len(FT), "von", len(nam), sum(len(f["j"]) for f in FT) // 1024, "KB", flush=True)
 data["ft"] = FT
