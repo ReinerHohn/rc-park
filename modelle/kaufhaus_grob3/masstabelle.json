@@ -4129,6 +4129,22 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Nutzer-Sichtfund 10.11. 10:24 (Viewer V35, Formkanten, Feld zwischen letzter Laubenbogen-Achse und Erker 2 rot markiert)",
+   "teil": "balkonband:haupt",
+   "merkmal": "Balkon-Ende vor Erker (balkonband:haupt)",
+   "text": "Nutzer: Der Balkon ist nicht durchgaengig - er stoppt vor Erker 2 (Ostseite, u ~13-15) und springt dann nach innen zurueck. Modell: balkonband:haupt laeuft u -7,6..14,92 in voller Auskragung 1,2 m und bruestung:balkon (68 Baluster ab u0 -6,81, Pitch 0,306 -> bis u ~14,0) bis an den Erker; das letzte Feld ist damit falsch. Unklar ob am Westende (Erker 1) dasselbe gilt - in Stufe 0 an beiden Enden pruefen.",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (6120, 6161, Schraegsichten Ost): wo endet die Balkonplatte, wie tief springt sie zurueck, wo endet die Bruestung (Baluster am Ende zaehlen, foto_zaehlung Regel 9); Pruefung anlegen, die am Modell FEHLSCHLAEGT; dann u_bis/Ruecksprung als Parameter (Generator), Bruestung an Plattenende koppeln."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Nutzer-Sichtfund 10.11. 10:24 (Viewer V35, Formkanten, Feld zwischen letzter Laubenbogen-Achse und Erker 2 rot markiert)",
+   "teil": "bruestung:balkon",
+   "merkmal": "Balkon-Ende vor Erker (bruestung:balkon)",
+   "text": "Nutzer: Der Balkon ist nicht durchgaengig - er stoppt vor Erker 2 (Ostseite, u ~13-15) und springt dann nach innen zurueck. Modell: balkonband:haupt laeuft u -7,6..14,92 in voller Auskragung 1,2 m und bruestung:balkon (68 Baluster ab u0 -6,81, Pitch 0,306 -> bis u ~14,0) bis an den Erker; das letzte Feld ist damit falsch. Unklar ob am Westende (Erker 1) dasselbe gilt - in Stufe 0 an beiden Enden pruefen.",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (6120, 6161, Schraegsichten Ost): wo endet die Balkonplatte, wie tief springt sie zurueck, wo endet die Bruestung (Baluster am Ende zaehlen, foto_zaehlung Regel 9); Pruefung anlegen, die am Modell FEHLSCHLAEGT; dann u_bis/Ruecksprung als Parameter (Generator), Bruestung an Plattenende koppeln."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
