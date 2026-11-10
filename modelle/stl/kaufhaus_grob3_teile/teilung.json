@@ -1,6 +1,6 @@
 {
  "stl": "modelle/stl/kaufhaus_grob3_1-87.stl",
- "modell_volumen_m3": 8905.789,
+ "modell_volumen_m3": 8906.417,
  "massstab": 87.0,
  "winkel_grad": 60.0,
  "ziel_anteil": 0.01,
@@ -222,23 +222,23 @@
    "grund": "Bett 244 mm: Teil [176.0, 239.0, 246.0] mm, Mitte der laengsten Achse",
    "stifte": [
     [
-     -0.85,
-     3.425,
+     -0.86,
+     3.418,
      18.182
     ],
     [
-     -3.992,
-     14.382,
+     -3.96,
+     14.466,
      18.182
     ],
     [
-     -6.284,
-     7.789,
+     -6.255,
+     7.864,
      18.182
     ],
     [
-     5.42,
-     1.417,
+     5.413,
+     1.419,
      18.182
     ]
    ]
@@ -286,10 +286,10 @@
    ],
    "passt": true,
    "ueberhang_m2": 10.709,
-   "flaeche_m2": 1340.28,
+   "flaeche_m2": 1340.73,
    "ueberhang_anteil": 0.00799,
    "wasserdicht": true,
-   "volumen_m3": 2636.82,
+   "volumen_m3": 2637.28,
    "rahmen_u": [
     -10.34,
     4.93
@@ -343,18 +343,18 @@
    "teil": "teil_04",
    "lage": "aufrecht",
    "bett_mm": [
-    158.6,
+    159.4,
     222.6,
     128.0
    ],
    "passt": true,
    "ueberhang_m2": 0.323,
-   "flaeche_m2": 883.25,
+   "flaeche_m2": 883.95,
    "ueberhang_anteil": 0.00037,
    "wasserdicht": true,
-   "volumen_m3": 926.67,
+   "volumen_m3": 926.84,
    "rahmen_u": [
-    -8.86,
+    -8.93,
     4.93
    ],
    "rahmen_n": [

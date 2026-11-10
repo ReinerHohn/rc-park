@@ -1,43 +1,69 @@
-# Kreis r3 - helm_geschweift:o (Erkerhelm Ost), 2026-11-10
+# Kreis r4 helm_geschweift:w (kaufhaus_grob3, 2026-11-10)
+Nichts committet, gelöscht oder gedruckt. Logbuch: `modelle/LOGBUCH_HELM_W_R4_2026-11-10.md`.
 
-## 1. Formbeschreibung (Stufe 0)
-Fotos (mit Modellpunkt projiziert, L18): nu3b (Nah, von der Strasse Ost), nuaca (Nah, Strasse West-Seite), 6132 (Nah, Himmel), 6161 (Uebersicht/Hof), 6145.
-- Zonen von unten: Erkergesims (z ~13,2) -> Fussring/Traufkante -> stetig konkave Ziegelhaut (farbige Schuppen) bis z ~19 -> duenne Nadel -> Kugel (z 21,33) -> Fahnenstange/Fahne.
-- Grundriss: regelmaessiges Achteck, Flaeche zur Strasse (Grate in Zeile 1000 nu3b), Rueckseite nie sichtbar (ANNAHME N=8). Helm sitzt auf dem Erkergesims, Achse = Erkermitte (u 15,53 / n 12,23).
-- Wiederholungen: 8 Grate mit Gratleisten und kleinen Kroeten (nur benannt, nicht modelliert), Ziegelreihen.
-- Anschluss: Fussring liegt auf dem Gesims; an den Erkerecken biegen die Traufschnaebel nach oben (nuaca), kein Achteck-Eckpunkt.
-- Am aktuellen Modell anders (Overlays vorher): Fussring 1,74 liegt in nuaca/6161/6132 INNERHALB der Traufkante; Profil z 16-20 an der Himmelssilhouette 0,07-0,1 zu schlank.
-- Formfamilie: vorhandene `helm_geschweift` (Profil r(z), N-Eck, Kranz, Knauf) - nur Parameter. Keine neue Familie.
+## 1. Formbeschreibung
+Fotos angesehen: 6162 (Übersicht), g03 und i04 (Handy-Nahfotos von unten), 6261 (nur Overlay erzeugt, nicht einzeln beurteilt). 6257 stammt aus dem Vorlauf.
+- Fuß z 13,3–15,4: konkave Ziegelhaut, im Vorlauf erledigt.
+- Schaft z 15,4–21: schlanker Achtkant mit bunten Ziegelstreifen. Auf den Graten sitzen Krabben (Haken), die im Modell fehlen.
+- Nadel und Kugel bei z 21,35.
+- Grundriss Achteck (g03/i04: 3 volle + 2 Randflächen sichtbar). Nicht gezählt, ANNAHME Osthelm.
+- Anschluss: Erkergesims z 13,1–13,3.
+- Am Modell anders: Schaft 0,04–0,06 m zu schlank (Osthelm-Kopie).
+Formfamilie: bestehende `helm_geschweift`, nur das Profil ist geändert.
 
-## 2. Zaehlungen
-Keine neue Zaehlung noetig (Grate/N bleiben ANNAHME wie in Z-nu3b-001: 3 Grate in Bildzeile sichtbar, Rueckseite nie). Kein Z-Protokoll neu.
+## 2. Zählungen
+Keine (kein Z-Protokoll). Die Flächenzahl 8 bleibt ANNAHME: Einzelansicht zählt kein N, g03/i04 sind nur konsistent damit.
 
-## 3. Pruefungen (vorher -> nachher)
-| Pruefung | vorher | nachher | Soll | Quelle |
+## 3. Prüfungen
+| Prüfung | vorher (Altstand) | nachher | Soll | Quelle |
 |---|---|---|---|---|
-| helm_o_r_13_25 Fussring Apothem z 13,25 | 1,75 FEHLER | 1,90 ok | 1,82-1,98 | Kantengitter-Ring 1,92 (W-helm_o-fuss) + Overlay; Wolke-Mitte 1,72-1,76 widerspricht, nicht gemittelt |
-| helm_o_r_19_40 Apothem z 19,4 | 0,20 FEHLER | 0,27 ok | 0,24-0,31 | Silhouette gegen Himmel, 6 Fotos (M-sil-helm_o-1) |
-| alle anderen 78 | ok | ok | - | unveraendert |
-Abnahme alter Stand: nur diese zwei rot; neuer Stand: "alle Pruefungen bestanden".
+| helm_w_r_16_97 | 0,44 rot | 0,50 | 0,47–0,53 | Wolke-Mitte W-helm_w-profil, M-sil-helm_w-1 |
+| helm_w_r_17_76 | 0,34 rot | 0,41 | 0,38–0,44 | dito |
+| helm_w_r_18_58 | 0,27 rot | 0,34 | 0,30–0,36 | dito |
 
-Konvergenz (konvergenz_bericht, gleiches Werkzeug/Daten, Messlauf --trocken): Beleg 0,607 -> 0,638, Kanten Recall 0,357 -> 0,504, Praezision 0,201 -> 0,276, F1 0,257 -> 0,357, Guete (Mittel) 0,432 -> 0,498 = +0,066 (Tor +0,05; keine Groesse faellt). Kein Rueckschritt gemeldet.
+`bauen_abnehmen.sh kaufhaus_grob3`: alle Prüfungen bestanden. `freiraum_audit` und die fehlende Datei `SFM-AUSRICHTUNG-buendel.json` bleiben vorbestehende Fehler.
 
-## 4. Overlays (Vorher links, Nachher rechts, kein Sichtbarkeitstest: Rueckkanten laufen durch)
-modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis3_helm_geschweift_o_{nu3b,nuaca,6132,6161,6145}.jpg
-Angesehen: nuaca, 6132, 6161 (Fussring und Silhouette z 16-20 sitzen nachher besser), nu3b und 6145 nur erzeugt, nicht einzeln durchgesehen.
+Kennzahlen Helm W (konvergenz_bericht, Trockenlauf, Teile neu exportiert):
+
+| | vorher | nachher |
+|---|---|---|
+| Beleg | 0,561 | 0,562 |
+| Median-Abstand | 0,110 m | 0,094 m |
+| Kanten-Recall | 0,417 | 0,721 |
+| Kanten-Präzision | 0,312 | 0,533 |
+| Mittel aus Beleg und F1 | 0,459 | 0,588 |
+
+Gate: +0,129 bei geforderten +0,05, keine Größe fällt. Das habe ich aus den Zahlen selbst gerechnet.
+Der Kantensprung ist größer als die Profiländerung. Wegen L-KR15 (Gitter v12 liegt bei z 16–21 evtl. 0,1–0,2 m außen) schreibe ich ihn nicht allein dem Modell zu. Der Beleg ändert sich praktisch nicht.
+
+## 4. Overlays (rot = neu, cyan = alt)
+- audit/gitter_generator/rundekreis4_helm_geschweift_w_6162.jpg
+- audit/gitter_generator/rundekreis4_helm_geschweift_w_6257.jpg (erzeugt, nicht einzeln beurteilt)
+- audit/gitter_generator/rundekreis4_helm_geschweift_w_6261.jpg (erzeugt, nicht einzeln beurteilt)
+- audit/gitter_generator/rundekreis4_helm_geschweift_w_g03_i04.jpg
+- Aus dem Vorlauf: rundekreis1_helm_geschweift_w_*
+- 6259: Overlay-Absturz (Ausschnitt leer). Eintrag in NICHTS_GEBRACHT.
 
 ## 5. Fehlerliste
-- Fussring vorn/Seiten (Traufkante): trifft (nuaca, 6161, 6132 angesehen); Ecken/Traufschnaebel: trifft NICHT (kein Achteck-Eckpunkt, ~78 px Versatz in nuaca), offen.
-- Schweifung z 13,6-15,1: unveraendert (Wolke-Mitte), im Overlay plausibel, nicht neu gemessen.
-- Profil z 16-18,6: Silhouette ungeprueft (Himmel fehlt beidseitig), Wolke-Mitte +0,04-0,06 gestuetzt; z 19-20: gemessen (M-sil-helm_o-1).
-- Nadel/Kugel: unveraendert; Fahne, Gratleisten, Kroeten: nicht modelliert. N=8 und Rueckseite ANNAHME.
-- Gitter v12 liegt bei z 16-21 0,1-0,2 m ausserhalb von Foto und Wolke: Recall-Obergrenze, nicht modelliert (Beobachtung in masstabelle).
-- Abstand zu fremden Teilen: teile_lage_pruefen helm_geschweift:o Median 0,12 m, nicht markiert. fehlteile_finden lief im Abnahmelauf, Bilder nicht einzeln angesehen. teile_sichtpruefung nicht gelaufen (Gate nicht bewiesen). tools/regression.py nicht noetig (nur neues Werkzeug, bestehende unveraendert).
+- **Schaft rechte Kante, z 15,4–19,4:** trifft (6162, i04, g03 angesehen).
+- **Schaft linke Kante:** trifft in 6162 und g03 besser als vorher. In i04 bleibt sie ca. 60 px innen (Achsversatz ~0,05 m möglich, ungeprüft).
+- **Krabben:** trifft nicht (fehlen).
+- **Achteck-Flächenzahl:** ungeprüft (ANNAHME).
+- **Fuß z 13,3–15,4:** aus dem Vorlauf, hier nur im Overlay angesehen, trifft.
+- **Knauf und Nadel:** ungeprüft. Die Silhouette bei z 20,5–21 sagt, das Foto ist 0,2 m schmaler als der Modell-Ring, nicht geändert.
+- **Rückseite:** ungeprüft (Spiegelung).
+- **Staffelgiebel-Quader:** steht bei z 16,5–18,3 mit Kante 0,51 m vor der Helmachse, also 0,17 m vor der Helmfläche. Lage ungeprüft.
+- **teile_lage_pruefen:** Helm W Median 0,23 m, keine Markierung (> 0,4 m).
+- **Nicht gelaufen:** `foto_diff`, `teile_sichtpruefung`. `fehlteile_finden` lief nur im Rahmen von `bauen_abnehmen`.
 
-## 6. Geaenderte Dateien
-modelle/kaufhaus_grob3/objekt.json (helm_geschweift:o profil, kranz, werte_quellen, historie), masstabelle.json (Beobachtung + 2 Pruefungen + 2 Messungen), messprotokoll/M-sil-helm_o-1.json, messprotokoll/W-helm_o-fuss.json, tools/helm_silhouette_foto.py (neu), NICHTS_GEBRACHT.md, REZEPT_GEBAEUDE_AUS_FOTOS.md, Abnahme-Erzeugnisse (STL, audit, pruefbericht).
+## 6. Geänderte Dateien
+- modelle/kaufhaus_grob3/objekt.json (Profil W)
+- modelle/kaufhaus_grob3/masstabelle.json (3 Messungen, 3 Prüfungen, 1 Beobachtung)
+- modelle/kaufhaus_grob3/messprotokoll/M-sil-helm_w-1.json (neu)
+- modelle/NICHTS_GEBRACHT.md, modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md, modelle/LOGBUCH_HELM_W_R4_2026-11-10.md
+- Neu gebaute STL, Audit-Dateien, pruefbericht.json, MASSNACHWEIS.md (automatisch)
 
 ## 7. Generalisierte Lehre
-Lehre | Anlass | Werkzeug
-Rotationsteil: Gitterpunkte als r(z)-Diagramm gegen Profil, Wolke und Foto-Silhouette lesen; Kantenpunkte mit Praezision ~0 in einem z-Band sind der Hebel (Helmfuss), Phasen-/N-Sweeps sind nur Metrik-Anpassung | Helm O Guete 0,432 -> 0,498 | tools/helm_silhouette_foto.py, agent_scratch_kreis3/ev.py (Einzelteil-Guete in ~10 s)
-(Eintrag L-KR15 in REZEPT_GEBAEUDE_AUS_FOTOS.md, Sackgassen in NICHTS_GEBRACHT.md.)
+| Lehre | Anlass | Werkzeug |
+|---|---|---|
+| L-KR16: Ein konstanter Schnittwert bei zwei Höhen (0,507) zeigt, dass ein Nachbarteil gemessen wird. Messrichtung über die Polygonsymmetrie auf eine freie Seite drehen, am Altstand den Wert prüfen. | Staffelgiebel-Quader im +n-Streifen des Helms | pruefstand.schnitt_reichweite, helm_profil_wolke.py, helm_silhouette_foto.py |

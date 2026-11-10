@@ -1383,6 +1383,48 @@
    "quer_max": 0.3,
    "r_max": 3.0,
    "z": "=19.4 - z_unterkante_lot2"
+  },
+  "helm_w_r_16_97": {
+   "typ": "schnitt_reichweite",
+   "z": "=16.97 - z_unterkante_lot2",
+   "zentrum": [
+    -3.99,
+    14.38
+   ],
+   "richtung": [
+    0.94232,
+    -0.33472
+   ],
+   "quer_max": 0.2,
+   "r_max": 3.0
+  },
+  "helm_w_r_17_76": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.76 - z_unterkante_lot2",
+   "zentrum": [
+    -3.99,
+    14.38
+   ],
+   "richtung": [
+    0.94232,
+    -0.33472
+   ],
+   "quer_max": 0.2,
+   "r_max": 3.0
+  },
+  "helm_w_r_18_58": {
+   "typ": "schnitt_reichweite",
+   "z": "=18.58 - z_unterkante_lot2",
+   "zentrum": [
+    -3.99,
+    14.38
+   ],
+   "richtung": [
+    0.94232,
+    -0.33472
+   ],
+   "quer_max": 0.2,
+   "r_max": 3.0
   }
  },
  "pruefungen": [
@@ -2925,6 +2967,54 @@
    "historie": [
     "2026-11-10 angelegt (Kreis r3 helm_geschweift:o, Befund Beleg 0,61 / Kanten-F1 0,26): am Modell Apothem 0,19 bei z 19,4 muss die Pruefung fehlschlagen"
    ]
+  },
+  {
+   "name": "Erkerhelm West: Flaechenmitte (Apothem) seitlich der Achse (-u, Achteck-Flaeche 90 Grad) bei z 16,97 (Schaft)",
+   "wert": "helm_w_r_16_97",
+   "soll": [
+    0.47,
+    0.53
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2.npy), Mitten-Profil Westhelm (W-helm_w-profil.json, tools/helm_profil_wolke.py, Median Abstand entlang +n, |quer|<0,5 m, 0,25-m-Baender): z 16,875 0,509 / 17,125 0,483 / 17,625 0,424 / 17,875 0,394 / 18,625 0,332; Silhouette gegen Himmel in 19 kalibrierten Fotos (M-sil-helm_w-1, tools/helm_silhouette_foto.py): Foto breiter als Modell z 16,5 +0,17 / 18,0 +0,08 / 18,5 +0,12 m (Huelle inkl. Grat-Zubehoer, daher obere Grenze; Wolke-Mitte gewinnt wie beim Helm O) | Messrichtung -u statt +n: bei z 16,5-18,3 steht der Staffelgiebel-Quader (Kante 0,51 m vor der Achse, b -0,14..0,26) im +n-Streifen und liefert 0,507 statt Helm (Schnitt STL 2026-11-10); Achteck hat Flaechen alle 45 Grad, Apothem gleich",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "W-helm_w-profil.json (tools/helm_profil_wolke.py); M-sil-helm_w-1",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r4 helm_geschweift:w, Befund Beleg 0,56): am Stand mit Osthelm-Kopie-Schaft (0,44/0,34/0,27) muss jede Hoehe fehlschlagen"
+   ]
+  },
+  {
+   "name": "Erkerhelm West: Flaechenmitte (Apothem) seitlich der Achse (-u, Achteck-Flaeche 90 Grad) bei z 17,76 (Schaft)",
+   "wert": "helm_w_r_17_76",
+   "soll": [
+    0.38,
+    0.44
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2.npy), Mitten-Profil Westhelm (W-helm_w-profil.json, tools/helm_profil_wolke.py, Median Abstand entlang +n, |quer|<0,5 m, 0,25-m-Baender): z 16,875 0,509 / 17,125 0,483 / 17,625 0,424 / 17,875 0,394 / 18,625 0,332; Silhouette gegen Himmel in 19 kalibrierten Fotos (M-sil-helm_w-1, tools/helm_silhouette_foto.py): Foto breiter als Modell z 16,5 +0,17 / 18,0 +0,08 / 18,5 +0,12 m (Huelle inkl. Grat-Zubehoer, daher obere Grenze; Wolke-Mitte gewinnt wie beim Helm O) | Messrichtung -u statt +n: bei z 16,5-18,3 steht der Staffelgiebel-Quader (Kante 0,51 m vor der Achse, b -0,14..0,26) im +n-Streifen und liefert 0,507 statt Helm (Schnitt STL 2026-11-10); Achteck hat Flaechen alle 45 Grad, Apothem gleich",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "W-helm_w-profil.json (tools/helm_profil_wolke.py); M-sil-helm_w-1",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r4 helm_geschweift:w, Befund Beleg 0,56): am Stand mit Osthelm-Kopie-Schaft (0,44/0,34/0,27) muss jede Hoehe fehlschlagen"
+   ]
+  },
+  {
+   "name": "Erkerhelm West: Flaechenmitte (Apothem) seitlich der Achse (-u, Achteck-Flaeche 90 Grad) bei z 18,58 (Schaft)",
+   "wert": "helm_w_r_18_58",
+   "soll": [
+    0.3,
+    0.36
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2.npy), Mitten-Profil Westhelm (W-helm_w-profil.json, tools/helm_profil_wolke.py, Median Abstand entlang +n, |quer|<0,5 m, 0,25-m-Baender): z 16,875 0,509 / 17,125 0,483 / 17,625 0,424 / 17,875 0,394 / 18,625 0,332; Silhouette gegen Himmel in 19 kalibrierten Fotos (M-sil-helm_w-1, tools/helm_silhouette_foto.py): Foto breiter als Modell z 16,5 +0,17 / 18,0 +0,08 / 18,5 +0,12 m (Huelle inkl. Grat-Zubehoer, daher obere Grenze; Wolke-Mitte gewinnt wie beim Helm O) | Messrichtung -u statt +n: bei z 16,5-18,3 steht der Staffelgiebel-Quader (Kante 0,51 m vor der Achse, b -0,14..0,26) im +n-Streifen und liefert 0,507 statt Helm (Schnitt STL 2026-11-10); Achteck hat Flaechen alle 45 Grad, Apothem gleich",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "W-helm_w-profil.json (tools/helm_profil_wolke.py); M-sil-helm_w-1",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r4 helm_geschweift:w, Befund Beleg 0,56): am Stand mit Osthelm-Kopie-Schaft (0,44/0,34/0,27) muss jede Hoehe fehlschlagen"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -3328,6 +3418,12 @@
    "text": "Osthelm (a) Fussring z 13,1-13,3: Modell Apothem 1,74 liegt in nuaca/6161/6132/nu3b sichtbar INNERHALB der Traufkante; Kantengitter-Ring z 13,18 hat Apothem 1,92 (q10-q90 1,86-1,95, W-helm_o-fuss) - Wolke-Mitte (1,72-1,76) widerspricht (Gesims-Mitnahme moeglich), Widerspruch Gitter/Foto-Overlay vs Wolke NICHT gemittelt gelassen: Foto-Overlay entscheidet (Regel 9d), gewaehlt 1,90. (b) Silhouette gegen Himmel (6 Fotos, Himmel auf beiden Seiten nur ab z 19): Foto bei z 19,0 +0,10 / 19,5 +0,07 breiter als Modell (M-sil-helm_o-1) -> Profil z 19,4 zu schlank (0,19), Wolke-Mitte liegt bei z 16-18,6 ebenfalls 0,04-0,06 ueber dem Profil. (c) Kantengitter v12 liegt bei z 16-21 0,1-0,2 m AUSSERHALB von Foto-Silhouette und Wolke (Gitterradius 0,55 bei z 17,5 gegen Foto/Wolke 0,35-0,42) - nicht modellierbar, Recall-Obergrenze. (d) Ecken der Fussspitzen (aufgebogene Traufschnaebel an den Erkerecken, Foto nuaca R-Spitze bei x 920 y 1667) sind kein Achteck-Eckpunkt - ungeprueft/offen. (e) Gratleisten/Kroeten, Fahne nicht modelliert.",
    "naechster_schritt": "Traufschnaebel als eigenes Element (Erkerecke) messen; Gitter v12 Radius bei z 16-21 am Foto klaeren (Gitterbau); Silhouette z 16-19 mit Gegenhintergrund (Dach) nachmessen",
    "status": "offen"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Kreis r4 helm_geschweift:w",
+   "quelle": "Overlay audit/gitter_generator/rundekreis4_helm_geschweift_w_*; M-sil-helm_w-1; konvergenz_bericht Trockenlauf",
+   "text": "Westhelm Schaft z 15,4-19,4 auf Wolke-Mitte (+0,04..0,06) verbreitert; OFFEN: (a) linke Kante in i04 noch ~60 px innerhalb der Fotokante (Achsversatz nach links ~0,05 m moeglich, nur 3 Fotos mit linker Himmelsseite, nicht belegt); (b) Grat-Krabben (Haken an den Graten, g03/i04 sichtbar) fehlen im Modell, Silhouette misst sie mit (+0,05..0,10); (c) Achteck am Westhelm nicht gezaehlt (ANNAHME Osthelm; g03/i04 zeigen 3 volle + 2 Randflaechen, konsistent aber keine Zaehlung); (d) schnitt_reichweite in +n bei z 16,5-18,3 trifft den Staffelgiebel-Quader (0,507 m) statt den Helm - die alten Kopplungspruefungen z 16,25/17,75 pruefen dort den Giebel mit (Staffelgiebel-Quader ragt 0,17 m vor die Helmflaeche: Lage/Form des Giebels pruefen); (e) Silhouette z 20,5-21: Foto 0,2 m SCHMALER als Modell-Ring (Nadel) - Silhouettenzeile dort unsicher, nicht geaendert."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

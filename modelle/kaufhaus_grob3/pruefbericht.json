@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_035447a035447/wt_r4/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548633210057,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.13831894099712372,
-  "wand_anteil_unter": 0.0004333333333333333,
+  "wand_pq": 0.13989688456058502,
+  "wand_anteil_unter": 0.0004,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -63,7 +63,7 @@
   "helm_o_r_14_64": 1.111044218665693,
   "helm_o_r_16_18": 0.6410005316999677,
   "helm_o_r_17_76": 0.4009052145424984,
-  "helm_w_r_16_25": 0.5645895467319909,
+  "helm_w_r_16_25": 0.6246130130669826,
   "helm_w_r_17_75": 0.5068990264498032,
   "tor_b2_tiefe": 0.5493055763493642,
   "tor_b2_oeffnung_anzahl": 1.0,
@@ -145,7 +145,10 @@
   "gesims_front_z14_78": 0.07497008560100138,
   "bogen3_archivolt_z": 5.9869999999999814,
   "helm_o_r_13_25": 1.9110466579891807,
-  "helm_o_r_19_40": 0.2808575058922347
+  "helm_o_r_19_40": 0.2808575058922347,
+  "helm_w_r_16_97": 0.50156475290109,
+  "helm_w_r_17_76": 0.4115380508985133,
+  "helm_w_r_18_58": 0.3365087766423552
  },
  "pruefungen": [
   {
@@ -350,7 +353,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.13831894099712372,
+   "wert": 0.13989688456058502,
    "soll": [
     0.0348,
     100
@@ -450,7 +453,7 @@
   },
   {
    "name": "Erkerhelm West: Halbbreite vor der Achse bei z 16,25 (Kopplung auf Probe)",
-   "wert": 0.5645895467319909,
+   "wert": 0.6246130130669826,
    "soll": [
     0.56,
     0.8
@@ -1094,6 +1097,36 @@
    "soll": [
     0.24,
     0.31
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erkerhelm West: Flaechenmitte (Apothem) seitlich der Achse (-u, Achteck-Flaeche 90 Grad) bei z 16,97 (Schaft)",
+   "wert": 0.50156475290109,
+   "soll": [
+    0.47,
+    0.53
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erkerhelm West: Flaechenmitte (Apothem) seitlich der Achse (-u, Achteck-Flaeche 90 Grad) bei z 17,76 (Schaft)",
+   "wert": 0.4115380508985133,
+   "soll": [
+    0.38,
+    0.44
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erkerhelm West: Flaechenmitte (Apothem) seitlich der Achse (-u, Achteck-Flaeche 90 Grad) bei z 18,58 (Schaft)",
+   "wert": 0.3365087766423552,
+   "soll": [
+    0.3,
+    0.36
    ],
    "ok": true,
    "status": "ok"
