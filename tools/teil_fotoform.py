@@ -20,6 +20,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import foto_diff as FD, fehlteile_finden as FF, render_kern as RK
 
 R0 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# METRIK-VERSION (Cache-Schluessel!): bei JEDER Aenderung der Bewertung hochzaehlen. bauteil_kreis.py liest die Zeile per Regex (^METRIK = "...").
+# v2 = Verdeckung zusaetzlich gegen die Fotowolke (wolke_verdeckung.py); "festbereich" = --bereich_von (ROI vorher/nachher gleich) moeglich.
+METRIK = "v2_wolkenverdeckung_festbereich"
 
 
 def rahmen(stl, obj, kk):
@@ -63,6 +66,13 @@ def main(argv=None):
     ap.add_argument("--aus"); ap.add_argument("--bilder", action="store_true", help="je Teil+Foto Ausschnitt mit gruen/rot/gelb nach audit/teil_fotoform/")
     ap.add_argument("--nur", help="nur diese Teile (Komma), z. B. das Kreis-Ziel"); ap.add_argument("--etikett", default="", help="Zusatz im Bildnamen (vorher/nachher)")
     ap.add_argument("--bilder_dir", help="Bilder hierhin statt modelle/<objekt>/audit/teil_fotoform (Kreis: Datenplatte, nicht ins Repo)")
+    ap.add_argument("--wolke_verdeckung", choices=["an", "aus"], default=os.environ.get("RCPARK_WOLKE_VERDECKUNG", "an"),
+                    help="Fotowolken-Verdeckung (tools/wolke_verdeckung.py, Metrik v2): Teilpixel hinter gestuetzter Wolke gelten als verdeckt. Auch RCPARK_WOLKE_VERDECKUNG=aus")
+    ap.add_argument("--wolke", help="Fotowolke (npy, Rahmen = Kamerarahmen); Standard objekt.json kreis.wolke, sonst lot2-Wolke")
+    ap.add_argument("--wolke_abs", type=float, default=0.5, help="Verdeckung ab Tiefenunterschied > max(abs, rel x Teiltiefe) [m]"); ap.add_argument("--wolke_rel", type=float, default=0.05)
+    ap.add_argument("--wolke_schliess", type=int, default=int(os.environ.get("RCPARK_WOLKE_SCHLIESS", "10")), help="Schliessradius in Zellen (Luecken zwischen verdeckenden Wolkenpunkten fuellen)")
+    ap.add_argument("--bereich_von", help="Teile-Verzeichnis VORHER (STLs gleichen Namens): Teilbereich (ROI) = Vereinigung aus vorher- und nachher-Teil, Recall zaehlt Fotokanten in der Vereinigung "
+                    "(Schrumpf-Falle: gekuerztes Teil -> weniger Fotokanten im Bereich -> F1 steigt trivial). Verdeckung des Vorher-Teils gegen das NACHHER-Modell (ANNAHME: Verdecker unveraendert)")
     a = ap.parse_args(argv)
     objp = os.path.join(R0, "modelle", a.objekt, "objekt.json"); obj = json.load(open(objp))
     stl = a.stl or os.path.join(R0, obj["stl"])
@@ -76,11 +86,20 @@ def main(argv=None):
     bd = a.bilder_dir or os.path.join(os.path.dirname(objp), "audit", "teil_fotoform"); os.makedirs(bd, exist_ok=True)
     import hashlib, time
     erg = {"objekt": a.objekt, "stl_sha": hashlib.sha256(open(stl, "rb").read()).hexdigest()[:16], "bilder_dir": bd, "schwelle_m": round(a.schwelle * 0.35, 3), "fotos": {}, "teile": {}}
+    # METRIK-VERSION (Cache-Schluessel!): Formlisten verschiedener Metrik duerfen NIE verglichen werden (bauteil_kreis/fotoform_auffrischen pruefen 'metrik').
+    VERD = None
+    if a.wolke_verdeckung == "an":
+        import wolke_verdeckung as WV
+        wp = a.wolke or obj.get("kreis", {}).get("wolke") or "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2.npy"
+        if os.path.exists(wp): VERD = WV.Verdecker(np.load(wp, mmap_mode="r")); erg["wolke"] = wp
+        else: print("WARNUNG: Wolke fehlt, Verdeckung aus:", wp, flush=True)
+    erg["metrik"] = METRIK; erg["wolke_verdeckung"] = "an" if VERD is not None else "aus"   # aus = Vergleichslauf, nie mit "an"-Listen mischen
+    if a.bereich_von: erg["bereich_von"] = a.bereich_von   # F1 in Vereinigungsbereich: NICHT mit Listen ohne dieses Feld vergleichen/mischen (nur vorher/nachher-Paar eines Tors)
     _td = "/media/oem/scan/rc-park_tmp" if os.path.isdir("/media/oem/scan") else None   # nie Root-Platte (10.11.: 76 Reste = 4,1 GB in /tmp, Root 5 GB)
     if _td: os.makedirs(_td, exist_ok=True)
     tmp = tempfile.mkdtemp(prefix="tff_k_", dir=_td)
     import atexit, shutil as _sh; atexit.register(_sh.rmtree, tmp, True)   # auch bei Abbruch per Ausnahme aufraeumen
-    TM = {}
+    TM = {}; TV = {}
     def foto_bewerten(nr):
             kp = FF.k_datei(objp, obj, R0, nr)
             if not kp: return
@@ -115,6 +134,9 @@ def main(argv=None):
                 dMh = np.minimum(cv2.distanceTransform((~mkh).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
             R, t, f, _, _ = FF.kamera_laden(K, obj, nr, R0, W, H); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2))
             tr = rahmen(stl, obj, kk)
+            zc = None
+            if VERD is not None and "rahmen_verschiebung" in kk:   # Wolke nur im Kamerarahmen (K-Datei traegt ihren Rahmen), sonst wie bisher
+                ZL = max(2, int(round(12 * float(os.environ.get("RCPARK_FOTO_SKALA") or 1.0)))); zc = VERD.zkarte(R, t, f, cx, cy, W, H, zelle=ZL)
             if schnell and rueck and "depth" in rueck and os.environ.get("TFF_PRUEF") != "1":
                 dv, pos = rueck["depth"], rueck["pos"].cpu().numpy()   # Vollraster aus foto_diff (gleiches Netz, gleiche Kamera) statt zweitem Raster
             else:
@@ -133,6 +155,20 @@ def main(argv=None):
                 m = TM[name].copy(); m.apply_translation(tr)
                 dp, _, _ = RK.dreiecke_rastern(m, R, t, f, cx, cy, W, H)
                 vis = np.isfinite(dp) & (dp <= dv * 1.003 + 0.03)
+                vw = 0
+                if zc is not None:
+                    vd = VERD.verdeckt(zc, dp, ZL, a.wolke_abs, a.wolke_rel, a.wolke_schliess) & vis; vw = int(vd.sum()); vis &= ~vd   # Fotowolke vor dem Teil = verdeckt
+                if a.bereich_von:   # Vereinigung mit dem sichtbaren Bereich des Vorher-Teils (gleicher Bildbereich vorher/nachher)
+                    if name not in TV:
+                        pv = os.path.join(a.bereich_von, name + ".stl"); mv_ = trimesh.load(pv, force="mesh") if os.path.exists(pv) else None
+                        if isinstance(mv_, trimesh.Trimesh) and len(mv_.faces): mv_.apply_scale(obj.get("stl_massstab", 87) / 1000.0)
+                        else: mv_ = None
+                        TV[name] = mv_
+                    if TV[name] is not None:
+                        mv2 = TV[name].copy(); mv2.apply_translation(tr); dpv, _, _ = RK.dreiecke_rastern(mv2, R, t, f, cx, cy, W, H)
+                        visv = np.isfinite(dpv) & (dpv <= dv * 1.003 + 0.03)
+                        if zc is not None: visv &= ~VERD.verdeckt(zc, dpv, ZL, a.wolke_abs, a.wolke_rel, a.wolke_schliess)
+                        vis = vis | visv
                 if vis.sum() < 200: continue
                 ms = cv2.dilate(vis.astype(np.uint8), np.ones((7, 7), np.uint8)) > 0
                 mk_t, fk_t = mkp & ms, fkp & ms
@@ -144,19 +180,23 @@ def main(argv=None):
                     hw = {"praez_h": round(float((dFh[mh_t] < a.schwelle).mean()), 3), "recall_h": round(float((dMh[fh_t] < a.schwelle).mean()), 3),
                           "mkh_px": int(mh_t.sum()), "fkh_px": int(fh_t.sum())} if (mh_t.sum() >= 50 and fh_t.sum() >= 50) else {}
                 else: hw = {}
-                e = {**hw, "praez": round(float(ok_m.mean()), 3), "recall": round(float(ok_f.mean()), 3), "mk_px": int(mk_t.sum()), "fk_px": int(fk_t.sum()),
+                e = {**hw, "praez": round(float(ok_m.mean()), 3), "recall": round(float(ok_f.mean()), 3), "mk_px": int(mk_t.sum()), "fk_px": int(fk_t.sum()), "sicht_px": int(vis.sum()), "wolke_verd_px": vw,
                      "rot": flecken(rot, pos), "gelb": flecken(gelb, pos)}
                 erg["teile"].setdefault(name, {})[nr] = e
                 if a.bilder:
                     ys, xs = np.where(ms); y0, y1, x0, x1 = max(0, ys.min() - 40), min(H, ys.max() + 40), max(0, xs.min() - 40), min(W, xs.max() + 40)
                     ov = (im0 // 2).copy(); ov[ms & ~(mk_t | fk_t)] = (ov[ms & ~(mk_t | fk_t)] * 1.6).clip(0, 255).astype(np.uint8)
                     ov[mk_t & ~rot] = (0, 200, 0); ov[fk_t & ~gelb & ~mk_t] = (200, 120, 0); ov[rot] = (0, 0, 255); ov[gelb] = (0, 255, 255)
+                    if zc is not None:
+                        vd2 = VERD.verdeckt(zc, dp, ZL, a.wolke_abs, a.wolke_rel, a.wolke_schliess) & np.isfinite(dp) & (dp <= dv * 1.003 + 0.03)   # violett = durch Fotowolke verdeckt (nicht bewertet)
+                        ov[vd2] = (0.5 * ov[vd2] + 0.5 * np.array((255, 0, 160))).astype(np.uint8)
+                        ys, xs = np.where(ms | vd2); y0, y1, x0, x1 = max(0, ys.min() - 40), min(H, ys.max() + 40), max(0, xs.min() - 40), min(W, xs.max() + 40)
                     cv2.imwrite(os.path.join(bd, f"{name}_{nr}{('_' + a.etikett) if a.etikett else ''}.jpg"), ov[y0:y1, x0:x1], [cv2.IMWRITE_JPEG_QUALITY, 85])
     TEIL = (a.aus + ".teil") if a.aus else None
     if TEIL and os.path.exists(TEIL):   # Wiederaufnahme: abgebrochener Lauf zum selben STL
         try:
             alt = json.load(open(TEIL))
-            if alt.get("stl_sha") == erg["stl_sha"]: erg["fotos"], erg["teile"] = alt["fotos"], alt["teile"]; print("Wiederaufnahme:", sum(isinstance(v, dict) for v in alt["fotos"].values()), "Fotos fertig", flush=True)
+            if alt.get("stl_sha") == erg["stl_sha"] and alt.get("metrik") == erg["metrik"]: erg["fotos"], erg["teile"] = alt["fotos"], alt["teile"]; print("Wiederaufnahme:", sum(isinstance(v, dict) for v in alt["fotos"].values()), "Fotos fertig", flush=True)
         except Exception: pass
     import torch
     for nr in fotos:

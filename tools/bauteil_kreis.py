@@ -165,7 +165,7 @@ def fehlversuche_global():
     for _, lauf, z in ev:
         t = z["ziel"]["teil"]
         if z["ziel"].get("art") == "beobachtung": t = beob_schluessel(z["ziel"].get("beob") or {})   # eigene Zaehlung je Beobachtung (neue Information, z. B. Nutzer-Sichtfund)
-        if z.get("angenommen") is False and not z.get("infra_oom") and ("tor" in z or (t.endswith("__neu") and "guete_vor_nach" in z)): n[t] = n.get(t, 0) + 1   # nur Runden mit dem Foto-Tor (Feld 'tor', ab 10.11. abends) zaehlen - Verwerfungen unter dem Wolken-Tor sperren nicht
+        if z.get("angenommen") is False and not z.get("infra_oom") and z.get("metrik", "v1") == METRIK_SOLL and ("tor" in z or (t.endswith("__neu") and "guete_vor_nach" in z)): n[t] = n.get(t, 0) + 1   # nur Runden mit dem Foto-Tor (Feld 'tor', ab 10.11. abends) zaehlen - Verwerfungen unter dem Wolken-Tor sperren nicht
         if z.get("angenommen") is True:
             n[t] = 0
             # Nutzerentscheid 10.11.: gesperrte Teile werden wieder frei, wenn ein Nachbarteil (Box +-1 m) danach in main geaendert wurde (neue Lage)
@@ -237,17 +237,26 @@ FORMDIR = os.path.join(KREISDIR, OBJ, "fotoform")
 # Helm O 0,3 m seitlich F1 -0,063 (voll -0,093), 0,3 m hoch Hoehen-Wert -0,048 (voll -0,052), Tuer +0,081 (voll +0,29); 33-58 s je 10 Fotos.
 # Vergleichswert vorher aus der halben Formliste (fotoform_auffrischen.sh, fotoform_halb/<stl_sha>.json); fehlt sie, Vorpruefung voll wie bisher.
 SKALA_VOR = opt("--vorpruef_skala", 0.5, float); HALBDIR = os.path.join(KREISDIR, OBJ, "fotoform_halb")
+# METRIK-VERSION der Formliste (teil_fotoform "metrik"; v1 = Verdeckung nur gegen das Modell, v2_wolkenverdeckung = zusaetzlich Fotowolke, tools/wolke_verdeckung.py).
+# Formlisten verschiedener Metrik duerfen NIE verglichen werden: Dateiname <stl_sha>_<metrik>.json (v1 unveraendert <stl_sha>.json) UND Pruefung des Feldes "metrik".
+import re as _re
+METRIK_SOLL = _re.search(r'^METRIK = "([^"]+)"', open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "teil_fotoform.py")).read(), _re.M).group(1)   # Quelle der Wahrheit: teil_fotoform.METRIK
+def metrik_suffix(): return "_" + METRIK_SOLL
 def formliste_halb(wt):
     import hashlib
-    try: sha = hashlib.sha256(open(os.path.join(wt, STL), "rb").read()).hexdigest()[:16]; return json.load(open(os.path.join(HALBDIR, sha + ".json")))
+    try:
+        sha = hashlib.sha256(open(os.path.join(wt, STL), "rb").read()).hexdigest()[:16]; fl = json.load(open(os.path.join(HALBDIR, sha + metrik_suffix() + ".json")))
+        return fl if fl.get("metrik", "v1") == METRIK_SOLL and fl.get("wolke_verdeckung", "an") == "an" else None
     except Exception: return None
 def _hoehe_faellt(runde, vk="vorher"):
     v, n = HOEHE.get(f"r{runde}_{vk}"), HOEHE.get(f"r{runde}_vorpruef")
     return v is not None and n is not None and n < v - 0.02
 HOEHE = {}   # Hoehen-Wert je Messung (f1_h, waagerechte Kanten; teil_fotoform.waagerecht), Schluessel = tag r<N>_vorher/_vorpruef/_nachher
 def formliste():
-    fs = sorted(glob.glob(os.path.join(FORMDIR, "*.json")), key=os.path.getmtime)
-    try: return json.load(open(fs[-1])) if fs else {}
+    fs = sorted([p for p in glob.glob(os.path.join(FORMDIR, "*.json")) if METRIK_SOLL in p], key=os.path.getmtime)
+    try:
+        fl = json.load(open(fs[-1])) if fs else {}
+        return fl if fl.get("metrik", "v1") == METRIK_SOLL and fl.get("wolke_verdeckung", "an") == "an" else {}
     except Exception: return {}
 def form_g(fl, teil): return (((fl.get("teile") or {}).get(teil) or {}).get("_gesamt") or {})
 def form_fotos(fl, teil, n=10):
@@ -274,7 +283,7 @@ def form_aus_liste(fl, wt, teil, fotos, runde, nebenwirkung=True, hkey=None):
     try: sha = hashlib.sha256(open(os.path.join(wt, STL), "rb").read()).hexdigest()[:16]
     except OSError: return None
     je = ((fl.get("teile") or {}).get(teil) or {})
-    if fl.get("stl_sha") != sha or any(f not in je for f in fotos): return None
+    if fl.get("stl_sha") != sha or fl.get("metrik", "v1") != METRIK_SOLL or fl.get("wolke_verdeckung", "an") != "an" or any(f not in je for f in fotos): return None
     mk = sum(je[f]["mk_px"] for f in fotos); fk = sum(je[f]["fk_px"] for f in fotos)
     if mk <= 0 or fk <= 0: return None
     p = sum(je[f]["praez"] * je[f]["mk_px"] for f in fotos) / mk; r = sum(je[f]["recall"] * je[f]["fk_px"] for f in fotos) / fk
@@ -839,7 +848,7 @@ for runde in range(1, RUNDEN + 1):
     if not TROCKEN and wt != ROOT:   # Platz (10.11.: 11 Worktrees x 430 MB fuellten die Datenplatte); Inhalt liegt als Commit auf dem Zweig br
         subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
-               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else ("region" if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "kontroll_f1_vor_nach": [kf_v, kf_n], "kontroll_skala": SKALA_VOR if _flk is not None else 1.0, "frueh_abgelehnt": _frueh, "kontroll_fotos": kf_fotos, "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
+               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "metrik": METRIK_SOLL, "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else ("region" if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "kontroll_f1_vor_nach": [kf_v, kf_n], "kontroll_skala": SKALA_VOR if _flk is not None else 1.0, "frueh_abgelehnt": _frueh, "kontroll_fotos": kf_fotos, "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
                "tor_konvergenz": tor_konv, "foto_f1": [ff_v, ff_n], "foto_fotos": ff_fotos, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")

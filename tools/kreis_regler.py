@@ -88,7 +88,7 @@ def form_auffrischen():
     stl = os.path.join(ROOT, json.load(open(os.path.join(ROOT, "modelle", OBJ, "objekt.json")))["stl"])
     try: sha = hashlib.sha256(open(stl, "rb").read()).hexdigest()[:16]
     except OSError: return
-    if os.path.exists(os.path.join(FORM, sha + ".json")) or time.time() - form_start < 2400: return
+    if os.path.exists(os.path.join(FORM, sha + "_" + __import__("re").search(r'^METRIK = "([^"]+)"', open(os.path.join(ROOT, "tools", "teil_fotoform.py")).read(), __import__("re").M).group(1) + ".json")) or time.time() - form_start < 2400: return
     if subprocess.run(["systemctl", "--user", "is-active", "--quiet", "rcpark-fotoform"]).returncode == 0: return
     if gpu()[1] > 3000: return   # 10.11. 13:3x: Auffrischung (40 min GPU) verstopfte mit Agentenpruefungen die Tore (4 fertige Runden im OOM); nur bei freier GPU
     tw = tor_wartet()

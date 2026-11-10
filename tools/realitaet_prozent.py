@@ -29,13 +29,16 @@ def foto_zahl(sha):
     """HAUPTZAHL seit 10.11. abends (Nutzer: 'umstellen'): Mittel der Form am Foto (teil_fotoform-F1, alle kalibrierten Fotos, Verdeckung beachtet)
     ueber alle Bauteile ohne Schnittkoerper, aus der Formliste des main-STL (fotoform_auffrischen.sh). Die Wolkenzahl war blind an steilen Flaechen
     (Tuer EG1 Wolke 0,989, Foto 0,457). None, solange die Formliste zu diesem STL fehlt."""
-    f = os.path.join(FD, sha + ".json")
+    import re as _re   # Metrik-Version (10.11. nachts): Formliste <sha>_<METRIK>.json bevorzugt, sonst v1 <sha>.json; Version steht in der Ausgabe (Zahlen verschiedener Metrik nicht vergleichen)
+    _m = _re.search(r'^METRIK = "([^"]+)"', open(os.path.join(ROOT, "tools", "teil_fotoform.py")).read(), _re.M); met = _m.group(1) if _m else "v1"
+    f = os.path.join(FD, f"{sha}_{met}.json")
+    if not os.path.exists(f): f, met = os.path.join(FD, sha + ".json"), "v1"
     if not os.path.exists(f): return None
     t = {k: (v.get("_gesamt") or {}) for k, v in json.load(open(f))["teile"].items() if "__ausschnitt" not in k}
     t = {k: g for k, g in t.items() if g.get("f1") is not None}
     if not t: return None
     h = [g["f1_h"] for g in t.values() if g.get("f1_h") is not None]
-    return dict(prozent_foto=round(100 * sum(g["f1"] for g in t.values()) / len(t), 1), hoehe_prozent=round(100 * sum(h) / len(h), 1) if h else None,
+    return dict(metrik=met, prozent_foto=round(100 * sum(g["f1"] for g in t.values()) / len(t), 1), hoehe_prozent=round(100 * sum(h) / len(h), 1) if h else None,
                 foto_teile={k: g["f1"] for k, g in t.items()}, foto_schwaechste=[[k, g["f1"]] for k, g in sorted(t.items(), key=lambda kv: kv[1]["f1"])[:4]])
 
 def zeile_ausgeben(z, vor):
