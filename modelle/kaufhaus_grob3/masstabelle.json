@@ -4780,57 +4780,6 @@
    "status": "offen"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
-   "auto_id": "fehlteile-6261-234-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.54,
-   "z_bis": 18.54,
-   "xyz": [
-    14.34,
-    -8.88,
-    18.54
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.88 m (Zelle [234, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
-   "auto_id": "fehlteile-6261-312-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.23,
-   "z_bis": 18.23,
-   "xyz": [
-    14.61,
-    -7.15,
-    18.23
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
-   "auto_id": "fehlteile-6261-234-1872",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.42,
-   "z_bis": 17.42,
-   "xyz": [
-    14.28,
-    -8.91,
-    17.42
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.42 m, y=-8.91 m (Zelle [234, 1872, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-10",
    "wer": "Kreis r3 (093550, fensterreihe:eg1)",
    "art": "widerspruch",
@@ -4847,12 +4796,12 @@
    "z_von": 18.54,
    "z_bis": 18.54,
    "xyz": [
-    14.35,
-    -8.86,
+    14.34,
+    -8.88,
     18.54
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.86 m (Zelle [234, 1794, 78], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.88 m (Zelle [234, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -4861,15 +4810,15 @@
    "auto_id": "fehlteile-6261-312-1794",
    "art": "fehlteil",
    "foto": "6261",
-   "z_von": 18.23,
-   "z_bis": 18.23,
+   "z_von": 18.24,
+   "z_bis": 18.24,
    "xyz": [
     14.6,
     -7.16,
-    18.23
+    18.24
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.24 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
