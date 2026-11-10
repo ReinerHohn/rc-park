@@ -61,6 +61,15 @@
  },
  {
   "seite": "alle",
+  "element": "Arkade Archivolt-Absatz (Ring 0.31 m breit, Laibung 0.22 m zurueck)",
+  "quelle": "kantengitter segmente_gitter_v12.json (SfM lot2): aeussere Bogenkante der 4 Boegen bei r-R = +0,31 m (Median 280 Segmente, R 2,72 aus oeffnung_breite/scheitel/kaempfer), Foto 6117 zeigt den gestuften Rand; nicht per foto_mass trianguliert (ANNAHME Gitter = Foto-Triangulation, Overlay 3 Fotos geprueft) | Tiefe: kantengitter segmente_gitter_v12.json: Laibungs-Vorderkante bei s 12,4-12,5 gegen Bandfront 12,66 -> 0,22; ANNAHME Stufe senkrecht",
+  "archivolt_breite": 0.31,
+  "archivolt_tiefe": 0.22,
+  "scheitel_aussen_z": 7.43,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Arkade 4 Boegen (Wandband)",
   "quelle": "Anzahl Z-004-003, Z-004-001 (Regel 9); Innere Goldlinie: 6119 Bogen 3 5,26/5,29 (M-6119-004), Bogen 4 5,27 (M-6119-006), 6120 5,25/5,30 (M-6120-008/009) -> 5,28; 6261 5,35 (schraeg, 34 m) verworfen",
   "n_boegen": 4,

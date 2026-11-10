@@ -1345,6 +1345,16 @@
    "u1": 7.0,
    "vor": 3.0,
    "quantil": 50.0
+  },
+  "bogen3_archivolt_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    10.35,
+    9.649
+   ],
+   "z0": "=6.6 - z_unterkante_lot2",
+   "z1": "=8.0 - z_unterkante_lot2",
+   "suche": "unten"
   }
  },
  "pruefungen": [
@@ -2839,6 +2849,22 @@
    "historie": [
     "2026-11-10 angelegt (Agent Kreis r3, quader:gesims), Runde 1 20261110_040948 uebernommen: am Altstand (Quader n 12,62..13,08, z 14,1..14,7) rot"
    ]
+  },
+  {
+   "name": "Arkade Bogen 3: Archivolt-Ring, tiefster Festkoerper z an der Stirn (s 12,55, 0,11 vor der Laibungsstufe)",
+   "wert": "bogen3_archivolt_z + z_unterkante_lot2",
+   "soll": [
+    7.33,
+    7.53
+   ],
+   "quelle": "kantengitter: 3D-Kantengitter aus 440 Fotos + 336 Videoframes im lot2-Rahmen (gemeinsame SfM), segmente_gitter_v12.json: aeussere Bogenkante der 4 Boegen im Frontstreifen s 12,4-12,9 bei r - R = +0,31 m (Median, 280 Segmente, R 2,72, Mitte z 4,40), Scheitel 7,12+0,31 = 7,43; Foto 6117 zeigt den gestuften Rand (Overlay)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "/media/oem/scan/rc-park_daten/kaufhaus_alle/segmente_gitter_v12.json segmente (Kreis2 r2 Auswertung agent_scratch_kreis2)",
+   "historie": [
+    "2026-11-10 angelegt (Kreis2 r2): am Altmodell (nur Laibungsbogen, Scheitel 7,12 auch an der Stirn) muss sie fehlschlagen"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -3293,6 +3319,49 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.01 m, y=-8.34 m (Zelle [237, 1817, 79], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Agent Kreis2 r2 (bogenreihe:laube, Kanten-Praezision 0,109)",
+   "art": "form",
+   "foto": "6117",
+   "text": "Foto 6117: Die Bogenfront ist ein gestufter Rand - ein Steinring (~0,3 m breit, goldene Linie darin) liegt vorn buendig mit der Wand, die Laibung springt dahinter zurueck. Das Modell hat nur EINE Bogenkante (Laibung) an der Frontflaeche, ~0,3 m unterhalb der Fotokante. Gitter v12 (Kantengitter, 4 Boegen, 280 Segmente): aeussere Ringkante bei R+0,31 m (R 2,72) in s 12,6-12,7 (=Bandfront 12,66), innere Laibungskante R bei s 12,4-12,5. Folge: ~640 Modellkanten-Punkte der Laube ohne Fotobeleg (Praezision 0,109), Fotokante ohne Modell.",
+   "naechster_schritt": "Archivolt-Absatz (archivolt_breite 0,31, archivolt_tiefe 0,22) in bogenreihe einbauen, Pruefung bogen3_archivolt_z (muss am Altstand rot sein); Overlay in 3 Fotos",
+   "status": "offen"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
+   "auto_id": "fehlteile-6261-474-1106",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 26.5,
+   "z_bis": 26.5,
+   "xyz": [
+    17.14,
+    -2.04,
+    26.5
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.5 m, y=-2.04 m (Zelle [474, 1106, 79], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-237-1817",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.02,
+   "z_bis": 18.02,
+   "xyz": [
+    14.93,
+    -8.38,
+    18.02
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.02 m, y=-8.38 m (Zelle [237, 1817, 79], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

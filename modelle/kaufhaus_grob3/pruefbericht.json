@@ -1,5 +1,5 @@
 {
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_040948a040948/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_035447a035447/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -9,8 +9,8 @@
   "helm_w_z": 20.88700064849853,
   "helm_o_z": 21.32700006866455,
   "dach_z_off11": 15.762130348205567,
-  "pfeiler3_d": 0.8810006134404144,
-  "arkade1_scheitel": 5.643319862365722,
+  "pfeiler3_d": 0.8810006134402852,
+  "arkade1_scheitel": 5.620651222229004,
   "fenster2_sohl": 8.856999847412109,
   "erker_w_unterkante": 8.18699988555908,
   "lichter_g2_anzahl": 3.0,
@@ -18,9 +18,9 @@
   "lichter_g2_breite_max": 0.92,
   "lichter_g2_ebene_abstand": 2.000783732996581,
   "handlauf_z": 8.25699973297119,
-  "helm_w_fussbreite_x": 2.5194759464263914,
+  "helm_w_fussbreite_x": 2.5630182609558103,
   "helm_w_fussbreite_y": 2.341466354370116,
-  "helm_w_fussbreite_punkte": 13.0,
+  "helm_w_fussbreite_punkte": 12.0,
   "rueck_z6": -0.005787998491273427,
   "rueck_z10": -0.005788051692975138,
   "rueck_z143": -0.005788051692975138,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548637573273,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.13989584147930145,
-  "wand_anteil_unter": 0.00046666666666666666,
+  "wand_pq": 0.13989689946174622,
+  "wand_anteil_unter": 0.00023333333333333333,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -49,8 +49,8 @@
   "bogen3_licht_anzahl": 1.0,
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
-  "bogen3_licht_ebene_abstand": 1.9090876846058489,
-  "teile_ueberhang": 0.00778,
+  "bogen3_licht_ebene_abstand": 2.1285114685741373,
+  "teile_ueberhang": 0.00868,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.88,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.88,
@@ -125,14 +125,12 @@
   "gaube_b_stirn_vor": 1.3071474824609604,
   "gaube_b_dach_z": 20.46699999999998,
   "helm_o_r_13_45": 1.6432323428532347,
-  "helm_o_r_14_12": 1.27104973232802,
+  "helm_o_r_14_12": 1.271050051226185,
   "helm_o_r_14_38": 1.1710493512396543,
-  "helm_o_r_14_88": 1.001048733620794,
+  "helm_o_r_14_88": 1.001048870369267,
   "helm_o_knauf_r_21_33": 0.21074957624831886,
   "helm_o_knauf_r_22_00": 0.05267690287992205,
-  "gesims_front_z14_35": 0.29719355575788553,
-  "gesims_front_z14_55": 0.17719176256658375,
-  "gesims_front_z14_78": 0.07497000077857807
+  "bogen3_archivolt_z": 5.9869999999999814
  },
  "pruefungen": [
   {
@@ -207,7 +205,7 @@
   },
   {
    "name": "Pfeiler 3 Durchmesser (m), Schaftansatz z 2,1-2,35 (Ring ueber der Fase)",
-   "wert": 0.8810006134404144,
+   "wert": 0.8810006134402852,
    "soll": [
     0.81,
     0.94
@@ -217,7 +215,7 @@
   },
   {
    "name": "Arkade 1 Scheitel z (m) (tiefster Modellpunkt im Scheitelkasten)",
-   "wert": 7.096319862365722,
+   "wert": 7.073651222229004,
    "soll": [
     7.05,
     7.35
@@ -347,7 +345,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.13989584147930145,
+   "wert": 0.13989689946174622,
    "soll": [
     0.0348,
     100
@@ -377,7 +375,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00778,
+   "wert": 0.00868,
    "soll": [
     0,
     0.01
@@ -877,7 +875,7 @@
   },
   {
    "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.12 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.27104973232802,
+   "wert": 1.271050051226185,
    "soll": [
     1.15,
     1.35
@@ -897,7 +895,7 @@
   },
   {
    "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.88 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.001048733620794,
+   "wert": 1.001048870369267,
    "soll": [
     0.87,
     1.07
@@ -926,31 +924,11 @@
    "status": "ok"
   },
   {
-   "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.35 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.29719355575788553,
+   "name": "Arkade Bogen 3: Archivolt-Ring, tiefster Festkoerper z an der Stirn (s 12,55, 0,11 vor der Laibungsstufe)",
+   "wert": 7.439999999999982,
    "soll": [
-    0.25,
-    0.35
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.55 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.17719176256658375,
-   "soll": [
-    0.13,
-    0.23
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.78 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.07497000077857807,
-   "soll": [
-    0.03,
-    0.13
+    7.33,
+    7.53
    ],
    "ok": true,
    "status": "ok"

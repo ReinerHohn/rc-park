@@ -1,47 +1,57 @@
-# Kreis a040948 r1 – quader:gesims (Traufgesims)
+# Kreis-Bericht 035447a035447 r2: bogenreihe:laube (kaufhaus_grob3, 2026-11-10)
+Stand: nichts committet. Branch kreis/kaufhaus_grob3/20261110_035447a035447-r2.
 
 ## 1. Formbeschreibung (Stufe 0)
-Fotos: ip_IMG_6161 (Nah/frontal), an_handy_04 (Uebersicht), an_handy_18 (schraeg), ip_IMG_6145, b_handy_b_17 (nur grob).
-Zonen von unten: glatte rote Wand → rote Schraege mit zwei Goldleisten (Fuss z ~14,33) → gruene Kupfer-Haengerinne (Lippe z ~14,8) → Dachschiefer.
-Querschnitt: Schraege, 0,32 m Ausladung ueber 0,5 m Hoehe, entlang u -8,8..17,15 gerade. Wiederholungen: keine (Konsolen/Wasserspeier sind eigene Teile). Das Gesims ist KEIN Quader (Altmodell n 12,62..13,08 x z 14,1..14,7; sein Unterrand lag in Overlay 6161/04/18 auf glatter Wand).
-Formfamilie: vorhandenes `quader` mit generischem `profil` (Querschnitt n,z entlang u extrudiert, baukasten_gen.py). Uebernommen aus verworfenem r3-Entwurf, gezielt verbessert (Pruefer-Kritik: Unterkante 0,1 m zu tief, Gate/8b).
+Fotos (angesehen): 6117 (Nah, Bogen 2/3 schraeg), 6119 (Nah, Bogen 3 fast frontal), 6120 (Uebersicht-Nah, Bogen 3 frontal, Blick auf alle Konsolen darueber), handy_15 (Handy, Bogen 2/3 schraeg von unten). Bogenmitten vorher in jedes Foto projiziert.
+- Zone Pfeiler z 1,45-5,28: runder Schaft R 0,44 auf achteckigem Sockel mit Fase (Sockelmasse in Vorversuchen s8/a021332 nach Foto korrigiert, hier NICHT angefasst).
+- Zone Bogen z 5,28-7,5: Der Bogenrand ist GESTUFT: ein Steinring (~0,3 m breit, goldene Linie darin, schwarze Aussenlinie) liegt vorn buendig mit der Bandfront, die Laibung (innere Goldlinie) springt dahinter zurueck. Das Modell hatte nur EINE Frontkante (Laibung), ~0,3 m unterhalb der sichtbaren Aussenkante des Rings.
+- Zone Band z 7,5-8,0 bis Balkonkonsolen: glatter Putz, Band und OG-Wand eine Ebene (Koordinator R6); darueber Konsolen (anderes Bauteil).
+- Grundriss/Querschnitt: Rechteckband (Stirn s 12,66, Laibung 0,94 tief) mit 4 Segmentbogen-Oeffnungen auf 5 runden Pfeilern; 4 Bogen gezaehlt (Z-004-003, Z-004-001 gelten weiter, keine neue Zaehlung).
+- Wiederholung: 4 gleiche Boegen, Gitter v12 zeigt in allen vier den gleichen Ring (r-R = +0,31).
+- Anschluss: Bogenring setzt am Pfeilerkopf (Kaempfer 5,28) an; Aussenkreis hat dieselbe Mitte wie der Laibungskreis (R 2,72, Mitte z 4,40).
+- Formfamilie: bestehende `bogenreihe` (baukasten_gen), um zwei optionale Parameter erweitert (archivolt_breite, archivolt_tiefe) - generisch, kein Objektname im Code.
+- Ursache des Befunds (Zerlegung der Kanten-Praezision 0,109, `agent_scratch_kreis2/praez.py`): (a) Stirnbogenkante ohne Fotobeleg ~640 Punkte, (b) 25-m-Kante Bandoberkante z 8,0 (1038 Pkt, Gitter hat bei z 8,0 nichts), (c) Facetten-/Sockelringe z 1,5-2,2 (2400 Pkt). Die drei Vorversuche bewegten nur (c) und kamen auf Gewinn ~0,013.
+- Unsicherheit: Archivolt-Tiefe 0,22 und senkrechte Stufe = ANNAHME aus dem Gitter (s 12,4-12,5 gegen 12,66); Breite 0,31 aus Gitter (280 Segmente), nicht per foto_mass trianguliert, nur Overlay in 4 Fotos.
 
 ## 2. Zaehlungen
-Keine Zaehlmerkmale (Z-Protokoll entfaellt). Messprotokolle M-6161-017..021 (aus r3 uebernommen, Wolkenprofil lot2).
+Keine neue Zaehlung (Anzahl 4 Boegen / 5 Pfeiler bleibt Z-004-003/Z-004-001). Archivolt-Ring: 4 von 4 Boegen im Gitter, im Foto 6119/6120 Bogen 3 sichtbar (Ring pro Bogen = gleiche Familie, nur Bogen 2/3 am Foto angesehen).
 
-## 3. Pruefungen (masstabelle.json, 3 neue gesims_front_z14_35/55/78)
-| Pruefung | Altstand | Neu | Soll | Quelle |
+## 3. Pruefungen
+| Pruefung | vorher (Altstand) | nachher | Soll | Quelle |
 |---|---|---|---|---|
-| Vorderflaeche z 14,35 | -0,08 FEHLER | 0,30 | 0,25..0,35 | Wolke lot2, M-6161-020 |
-| z 14,55 | -0,08 FEHLER | 0,18 | 0,13..0,23 | Wolke, M-6161-018/019 |
-| z 14,78 | 0,41 FEHLER | 0,07 | 0,03..0,13 | Wolke, M-6161-017 |
-(z-14,15-Pruefung des r3 verworfen: Gesims beginnt jetzt bei 14,32.)
-Abnahme: `bauen_abnehmen.sh` „alle Pruefungen bestanden“ (1 Teilnetz, wasserdicht). `regression.py --pruefen`: identisch. 
-Gate (konvergenz_bericht, Teil quader__gesims): Beleg 0,465 → 0,637; Fotokanten Recall 0,507 → 0,485, Praezision 0,335 → 0,403, F1 0,403 → 0,441; Guete 0,434 → 0,536 (+0,10, Gate ≥0,05, keine Groesse faellt). Gesamt-Kanten 0,6471/0,0773 (vorher 0,6471/0,0765). 
-Varianten (Zwischenlaeufe, nur Fakten): r3-Profil exakt Guete 0,440; Rueckseite 12,58 + 14,29/14,32: 0,464–0,474; Rueckseite 12,62 (gewaehlt): 0,536.
-Hinweis: die Zeile „r1_vorher“ in konvergenz.jsonl ging durch ein versehentliches `git checkout` verloren; Vorher-Werte stammen aus dem ersten Messlauf dieser Sitzung (oben) und der Befundzeile.
+| Arkade Bogen 3: Archivolt-Ring, tiefster Festkoerper z an der Stirn (bogen3_archivolt_z) | 7,12 ROT | 7,44 gruen | 7,33-7,53 | Kantengitter v12, r-R = +0,31, Scheitel 7,12+0,31 |
 
-## 4. Overlays (rot neu, blau alt)
-modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis1_gesims_ip_IMG_6161.jpg
-.../rundekreis1_gesims_an_handy_2026-11-06_handy_04.jpg
-.../rundekreis1_gesims_an_handy_2026-11-06_handy_18.jpg
-.../rundekreis1_gesims_ip_IMG_6145.jpg
-.../rundekreis1_gesims_an_handy_2026-11-06_b_handy_b_17.jpg
-Selbst angesehen: 6161, handy_04, handy_18 (rote Linien auf Goldleiste/Schraege/Rinne, blauer Altkasten auf glatter Wand). 6145 und b_17 erzeugt, nicht einzeln angesehen.
+Gate-Messung (Trockenlauf `konvergenz_bericht.py` auf dem Neubau, gleiche Parameter wie der Kreis):
+| Groesse bogenreihe__laube | vorher | nachher |
+|---|---|---|
+| Wolkenbeleg | 0,697 | 0,725 |
+| Kanten-Recall | 0,777 | 0,820 |
+| Kanten-Praezision | 0,109 | 0,295 |
+| F1 | 0,191 | 0,434 |
+| Gate-Mittel (Beleg, F1) | 0,444 | 0,580 (+0,135) |
+Gesamt-Recall 0,648 -> 0,655, Gesamt-Praezision 0,076 -> 0,082, kein Band-Rueckschritt.
+
+Abnahme `tools/bauen_abnehmen.sh kaufhaus_grob3`: "alle Pruefungen bestanden" (1 vorbestehender Widerspruch, 50 Beobachtungen ohne Pruefung), Gegenproben CB bestanden. audit/seiten.jpg angesehen: 4 Boegen Nordseite plausibel, keine neuen Artefakte. Die Gate-Messung ist ein Trockenlauf auf dem Neubau, nicht der Kreis-Lauf selbst.
+
+## 4. Overlays (cyan = Altstand, rot = Neustand; nur Stirnkanten der Bogen, ohne Verdeckungstest)
+modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis2_laube_archivolt_{6117,6119,6120,handy_15}.jpg
+Selbst angesehen: 6119, 6120, handy_15 - rote Aussenkante liegt auf dem Steinring, rote Innenkante auf der Goldlinie, cyan lag deutlich tiefer. 6117 nur schmaler Ausschnitt (schraeg), grob stimmig.
 
 ## 5. Fehlerliste
-- Schraege u -7..14: trifft (3 Fotos angesehen); Wolke Median 0,078 m.
-- Unterkante z 14,32: trifft in 6161/04/18 optisch, Pixelgenauigkeit nicht gemessen.
-- Gutterlippe z 14,82 (Rinne z 14,56..14,82 als Teil des Profils): trifft grob; Rinnenrundung/Bauch, Wasserspeier, Dachgitter nicht modelliert.
-- Enden u < -8 und > 14,6: ungeprueft (ANNAHME Rumpfenden, Erker verdeckt).
-- Rueckseite buendig n 12,62 (eingebettet): nicht sichtbar, unpruefbar.
-- teile_lage_pruefen: quader:gesims Median 0,10 m, 3 % > 0,5 m (ok). foto_diff 6161: Treffer 1 (Fotokante ohne Modell, ganze Fassade/Fenster, 1389 m) liegt nicht spezifisch am Gesims; Treffer 2-10 ausserhalb. fehlteile_finden lief in der Abnahme, Treffer am Gesims keine. teile_sichtpruefung: nicht gelaufen. freiraum_audit meldet weiter FEHLER (vorbestehend, am Altstand identisch).
-- seiten.jpg angesehen: unauffaellig (Gesims in dieser Aufloesung nicht erkennbar).
+- Bogenstirn Aussenring (Bogen 2, 3): trifft (6119, 6120, handy_15). Bogen 1, 4: ungeprueft am Foto (nur Gitter).
+- Laibungskante Stirn: trifft (6119, 6120), Abweichung ~1-3 px.
+- Stufentiefe 0,22: ANNAHME, am Foto nicht gemessen (ungeprueft).
+- Ringansatz am Pfeilerkopf: trifft grob (Linien enden am Kaempfer), Kapitellform nicht modelliert.
+- Bandoberkante z 8,0 / Naht: trifft NICHT (Kante ohne Fotobeleg, Gitter hat sie nicht) - nicht geaendert, naechster Hebel.
+- Sockel/Facettenringe z 1,5-2,2: Praezision 0,0-0,1, ungeprueft ob Gitter-Fehler (Gitter-Ring z 2,3 vs Foto 2,53, offene Beobachtung der Vorversuche).
+- Gewoelbe hinter dem Band: nicht modelliert.
+- Nicht gelaufen/ungesehen: `teile_lage_pruefen`, `teile_sichtpruefung`, `regression.py` (keine Werkzeugaenderung ausser baukasten_gen bogenreihe, nur mit neuem optionalem Parameter - fuer andere Objekte ohne Wirkung).
 
 ## 6. Geaenderte Dateien
-tools/baukasten_gen.py (quader `profil`), tools/gesims_overlay.py (neu), modelle/kaufhaus_grob3/objekt.json, masstabelle.json (3 Pruefungen, 3 Messgroessen, Beobachtung), messprotokoll/M-6161-017..021, audit/gitter_generator/rundekreis1_gesims_*, konvergenz.jsonl, regenerierte STL/Audit-Dateien, NICHTS_GEBRACHT, REZEPT (L-GS4). Kein Commit.
+tools/baukasten_gen.py (bogenreihe: archivolt_breite/archivolt_tiefe, beleg), modelle/kaufhaus_grob3/objekt.json (bogenreihe:laube +2 Parameter, werte_quellen, historie), masstabelle.json (+Messung bogen3_archivolt_z, +Pruefung, +Beobachtung), REZEPT_GEBAEUDE_AUS_FOTOS.md (L-KR14), NICHTS_GEBRACHT.md, audit/gitter_generator/rundekreis2_laube_archivolt_*.jpg, STL/Pruefberichte (Neubau).
 
 ## 7. Generalisierte Lehre
-Lehre | Anlass | Werkzeug
-Rueckkanten eines Profilteils im Nachbarkoerper zaehlen als unbelegte Formkanten; Rueckseite buendig statt eingebettet | Guete 0,44 → 0,54 | baukasten_gen `profil`, konvergenz_bericht --trocken --json_aus (Varianten testen vor der Abnahme)
-Vorher-Zeilen in konvergenz.jsonl nie per git checkout zuruecksetzen | Verlust der Vorher-Zeile | –
+| Lehre | Anlass | Werkzeug |
+|---|---|---|
+| Niedrige Kanten-Praezision zuerst nach Kantengruppen zerlegen (je Modellkante Abstand zum Gitter, nach z/Laenge), dann Gitter um die Stelle als Polarhistogramm (r-R, s) ansehen: gestufte Raender sind dort sofort sichtbar | Laube: 3 Vorversuche am Sockel brachten +0,013, der fehlende Bogenrand +0,135 | agent_scratch_kreis2/praez.py (noch nicht in tools/) |
+| Overlay mit nur den Kanten der betroffenen Stelle (Zone, Schichtfilter) statt aller Dreieckskanten | bauteil_overlay.py unlesbar/Absturz | agent_scratch_kreis2/ov_bogen.py |
