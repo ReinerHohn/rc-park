@@ -868,7 +868,8 @@ def satteldach(cfg, ctx):
 def gaubenreihe(cfg, ctx):
     """Reihe gleicher Dachgauben auf dem Vorderhang des vorher gebauten Satteldachs (ctx['dach']). Je Gaube: form 'schlepp' (Standard, Fotobefund 8.11.): senkrechte Stirn + flaches Pultdach (Huelle) bis zum Hang; form 'giebel': Wandkasten + Giebeldach (Prisma, First parallel zur Hangfallinie).
     Pflicht: n_gauben (ZAEHLUNG am Foto, Regel 9: 'zaehlung': [Z-Protokolle]), u_mitte (Mitte der Reihe), pitch, t (Lage am Hang: 0 Traufe .. 1 First), breite, wandhoehe, vor (Stirnwand vor dem Hang),
-    tiefe (Kasten hinter der Stirnwand in den Hang), firsthoehe (Giebel ueber der Wand), achse_n, achse_quelle, quelle. werte_quellen {param: quelle}."""
+    tiefe (Kasten hinter der Stirnwand in den Hang), firsthoehe (Giebel ueber der Wand), achse_n, achse_quelle, quelle. werte_quellen {param: quelle}.
+    Optional (form schlepp, Fensterkasten + Vordach, 2026-11-10): vordach_vor (Vordach steht so weit vor der Stirn), vordach_breite (> breite), vordach_dicke, dach_tiefe (Stirn bis Anschluss Hang); dann ist wandhoehe die Stirnhoehe bis zur Vordach-UNTERkante und breite die Stirnbreite."""
     for k in ("n_gauben", "u_mitte", "pitch", "t", "breite", "wandhoehe", "vor", "tiefe", "firsthoehe", "achse_n", "achse_quelle", "quelle"):
         if cfg.get(k) in (None, ""): sys.exit(f"gaubenreihe: '{k}' fehlt (Regel 3b)")
     D = ctx.get("dach") or sys.exit("gaubenreihe: braucht ein Satteldach davor in der Bauteilliste")
@@ -881,6 +882,14 @@ def gaubenreihe(cfg, ctx):
         uc = um + (i - (ng - 1) / 2.0) * pitch
         n0, n1 = nfront - ti - vor, nfront                                                           # Kasten von im Hang bis Stirnwand
         z0 = zfront - 0.05; z1 = zfront + hw
+        if cfg.get("form", "schlepp") == "schlepp" and cfg.get("vordach_vor") is not None:           # Schleppgaube MIT Fensterkasten + Vordach (Foto 2026-11-10): schmale Stirn (breite) mit Fensterbank, darueber ziegelgedecktes Vordach (vordach_breite) das vordach_vor vor der Stirn steht; Pultdach laeuft dach_tiefe hinter der Stirn in den Hang
+            vv, bh, dh, xd = (float(cfg[k_]) for k_ in ("vordach_vor", "vordach_breite", "vordach_dicke", "dach_tiefe"))
+            if bh <= b or vv <= 0 or dh <= 0.02 or xd <= 0.3: sys.exit(f"gaubenreihe: unplausibles Vordach (breite {b}, vordach_breite {bh}, vor {vv}, dicke {dh}, tiefe {xd})")
+            nb_ = nfront - xd; zm = zfront + xd * sl; zlow = z1                                       # z1 = Unterkante des Vordachs (Stirnhoehe wandhoehe ueber dem Hang an der Stirn)
+            stirn = [(u_, nfront, zfront - 0.05) for u_ in (uc - b / 2, uc + b / 2)] + [(u_, nfront, zlow + 0.2) for u_ in (uc - b / 2, uc + b / 2)] + [(u_, nb_, zm + e_) for u_ in (uc - b / 2, uc + b / 2) for e_ in (-0.05, -0.1)]
+            dach = [(u_, nfront + vv, z_) for u_ in (uc - bh / 2, uc + bh / 2) for z_ in (zlow, zlow + dh)] + [(u_, nb_, zm + e_) for u_ in (uc - bh / 2, uc + bh / 2) for e_ in (0.0, -0.05)]
+            teile.append(UNION([M.hull_points(stirn), M.hull_points(dach)]))
+            continue
         if cfg.get("form", "schlepp") == "schlepp":                                                  # Schleppgaube ('Sprungschanze', Nutzer 8.11. nach Fotos): senkrechte Stirn, flaches Pultdach steigt zum Hang
             x = max(ti, hw / max(sl - 0.12, 0.2)); nb_ = nfront - x; zm = zfront + x * sl                # Pultdach schneidet den Hang bei x hinter der Stirn
             pts = [(u_, nfront, zfront - 0.05) for u_ in (uc - b / 2, uc + b / 2)] + [(u_, nfront, z1) for u_ in (uc - b / 2, uc + b / 2)] + [(u_, nb_, zm + e_) for u_ in (uc - b / 2, uc + b / 2) for e_ in (0.0, -0.05)]
@@ -890,6 +899,7 @@ def gaubenreihe(cfg, ctx):
         gi = prisma_uz(np.array([(uc - b / 2, z1 - 0.01), (uc + b / 2, z1 - 0.01), (uc, z1 + hf)], float), n0, n1)                                  # Giebel zur Strasse: Dreieck (u, z), entlang n extrudiert
         teile.append(kasten + gi)
     k = UNION(teile).transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; qq = lambda p_: (wq.get(p_) or cfg["quelle"])
+    if cfg.get("vordach_vor") is not None: beleg("alle", f"Gauben {cfg.get('gruppe', '')}: Vordach", qq("vordach_vor") + " | Breite: " + qq("vordach_breite") + " | Tiefe: " + qq("dach_tiefe") + " | Dicke: " + qq("vordach_dicke"), vordach_vor=cfg["vordach_vor"], vordach_breite=cfg["vordach_breite"], vordach_dicke=cfg["vordach_dicke"], dach_tiefe=cfg["dach_tiefe"])
     beleg("alle", f"Gauben {cfg.get('gruppe', '')} ({ng})", f"Anzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); Lage/Masse: " + qq("t"), n_gauben=ng, u_mitte=um, pitch=pitch, t=t, breite=b, wandhoehe=hw, vor=vor, tiefe=ti, firsthoehe=hf)
     return [k], []
 

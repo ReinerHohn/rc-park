@@ -960,6 +960,140 @@
    ],
    "quer_max": 0.1,
    "r_max": 0.18
+  },
+  "gaube_a_vordach_vor": {
+   "typ": "schnitt_reichweite",
+   "z": "=21.33 - z_unterkante_lot2",
+   "zentrum": [
+    2.9917,
+    6.3662
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.05,
+   "r_max": 2.5
+  },
+  "gaube_a_vordach_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=21.33 - z_unterkante_lot2",
+   "zentrum": [
+    3.4824,
+    7.7518
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.05,
+   "r_max": 1.2
+  },
+  "gaube_a_vordach_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=21.33 - z_unterkante_lot2",
+   "zentrum": [
+    3.4824,
+    7.7518
+   ],
+   "richtung": [
+    -0.9426,
+    0.3338
+   ],
+   "quer_max": 0.05,
+   "r_max": 1.2
+  },
+  "gaube_a_stirn_vor": {
+   "typ": "schnitt_reichweite",
+   "z": "=20.85 - z_unterkante_lot2",
+   "zentrum": [
+    2.9917,
+    6.3662
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.05,
+   "r_max": 2.0
+  },
+  "gaube_a_dach_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    3.2254,
+    7.026
+   ],
+   "z0": "=21.0 - z_unterkante_lot2",
+   "z1": "=24.0 - z_unterkante_lot2",
+   "suche": "oben",
+   "puffer": 0.03
+  },
+  "gaube_b_vordach_vor": {
+   "typ": "schnitt_reichweite",
+   "z": "=21.33 - z_unterkante_lot2",
+   "zentrum": [
+    8.5106,
+    4.4118
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.05,
+   "r_max": 2.5
+  },
+  "gaube_b_vordach_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=21.33 - z_unterkante_lot2",
+   "zentrum": [
+    9.003,
+    5.8021
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.05,
+   "r_max": 1.2
+  },
+  "gaube_b_vordach_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=21.33 - z_unterkante_lot2",
+   "zentrum": [
+    9.003,
+    5.8021
+   ],
+   "richtung": [
+    -0.9426,
+    0.3338
+   ],
+   "quer_max": 0.05,
+   "r_max": 1.2
+  },
+  "gaube_b_stirn_vor": {
+   "typ": "schnitt_reichweite",
+   "z": "=20.85 - z_unterkante_lot2",
+   "zentrum": [
+    8.5106,
+    4.4118
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.05,
+   "r_max": 2.0
+  },
+  "gaube_b_dach_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    8.7443,
+    5.0716
+   ],
+   "z0": "=21.0 - z_unterkante_lot2",
+   "z1": "=24.0 - z_unterkante_lot2",
+   "suche": "oben",
+   "puffer": 0.03
   }
  },
  "pruefungen": [
@@ -1987,6 +2121,166 @@
    "historie": [
     "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
    ]
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach-Vorderkante bei z 21,33 (n-Reichweite ab n 7,0; Foto n 8,52)",
+   "wert": "gaube_a_vordach_vor",
+   "soll": [
+    1.42,
+    1.62
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12, K-6259, K-6162; Schnittwinkel 9-24 Grad, Strahlabstand <= 0,07 m, +-0,13 m), M-6259-010/-011 (Fensterbank), M-6259-012/-013 (Vordach-Unterkante); Gaube A (links im Bild 6162, u 0,7); Zaehlung Z-018-006 (2 Gauben obere Reihe): Vordach-Unterkante n 8,49-8,55, z 21,14-21,33; Stirn/Fensterbank n 8,30",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis2 r2, gaubenreihe:oben, Befund Wolkenbeleg 0,46): am Altmodell (Stirnwand bei n 8,26, kein Vordach) ROT, Soll aus Fotos, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-012"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach Halbbreite nach +u bei z 21,33 (Foto 0,71-0,74)",
+   "wert": "gaube_a_vordach_up",
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12, K-6259, K-6162; Schnittwinkel 9-24 Grad, Strahlabstand <= 0,07 m, +-0,13 m), M-6259-010/-011 (Fensterbank), M-6259-012/-013 (Vordach-Unterkante); Gaube A (links im Bild 6162, u 0,7); Zaehlung Z-018-006 (2 Gauben obere Reihe): Vordach-Unterkante-Ecken u 1,43 / -0,04 -> Halbbreite 0,71-0,74 um Mitte u 0.695 (misst Breite UND Lage)",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis2 r2): Altmodell ohne Vordach -> keine Kontur im Messstreifen (nan) = ROT"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-012"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach Halbbreite nach -u bei z 21,33",
+   "wert": "gaube_a_vordach_um",
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12, K-6259, K-6162; Schnittwinkel 9-24 Grad, Strahlabstand <= 0,07 m, +-0,13 m), M-6259-010/-011 (Fensterbank), M-6259-012/-013 (Vordach-Unterkante); Gaube A (links im Bild 6162, u 0,7); Zaehlung Z-018-006 (2 Gauben obere Reihe) (gleiche Ecken wie +u)",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis2 r2): Altmodell ohne Vordach -> ROT"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-012"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Stirn-/Fensterkasten-Front bei z 20,85 (n-Reichweite ab n 7,0; Foto n 8,31) - Wachposten, am Altmodell schon gruen",
+   "wert": "gaube_a_stirn_vor",
+   "soll": [
+    1.23,
+    1.39
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12, K-6259, K-6162; Schnittwinkel 9-24 Grad, Strahlabstand <= 0,07 m, +-0,13 m), M-6259-010/-011 (Fensterbank), M-6259-012/-013 (Vordach-Unterkante); Gaube A (links im Bild 6162, u 0,7); Zaehlung Z-018-006 (2 Gauben obere Reihe): Fensterbank-Vorderkante n 8,30-8,31 (4 Punkte)",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis2 r2): Altmodell n 8,26 liegt im Soll (schuetzt nur, trennt nicht)"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-012"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Hoehe der Dachoberflaeche bei n 7,7 (Vordach-Pultdach, Hang 21,6)",
+   "wert": "gaube_a_dach_z",
+   "soll": [
+    20.337,
+    20.837
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12, K-6259, K-6162; Schnittwinkel 9-24 Grad, Strahlabstand <= 0,07 m, +-0,13 m), M-6259-010/-011 (Fensterbank), M-6259-012/-013 (Vordach-Unterkante); Gaube A (links im Bild 6162, u 0,7); Zaehlung Z-018-006 (2 Gauben obere Reihe): Gerade Vordach-Vorderkante (n 8,52, z 21,23+0,14 ANNAHME Dicke) -> hintere Ecke (n 6,82, z 22,75, M-6259-009, +-0,25) bei n 7,7: z 22,04",
+   "merkmal": "absolut_hoehe",
+   "historie": [
+    "2026-11-10 angelegt (Kreis2 r2): Altmodell Pultdach bei n 7,7 deutlich hoeher (Wandhoehe 1,66 statt 0,83) -> ROT"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-012"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Vordach-Vorderkante bei z 21,33 (n-Reichweite ab n 7,0; Foto n 8,52)",
+   "wert": "gaube_b_vordach_vor",
+   "soll": [
+    1.42,
+    1.62
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12, K-6259, K-6162; Schnittwinkel 9-24 Grad, Strahlabstand <= 0,07 m, +-0,13 m), M-6259-001/-002/-005/-006 (Fensterbank), M-6259-003/-007/-008 (Vordach-Unterkante); Gaube B (u 6,55); Zaehlung Z-018-006 (2 Gauben obere Reihe): Vordach-Unterkante n 8,49-8,55, z 21,14-21,33; Stirn/Fensterbank n 8,30",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis2 r2, gaubenreihe:oben, Befund Wolkenbeleg 0,46): am Altmodell (Stirnwand bei n 8,26, kein Vordach) ROT, Soll aus Fotos, nicht gelockert"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-007"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Vordach Halbbreite nach +u bei z 21,33 (Foto 0,71-0,74)",
+   "wert": "gaube_b_vordach_up",
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12, K-6259, K-6162; Schnittwinkel 9-24 Grad, Strahlabstand <= 0,07 m, +-0,13 m), M-6259-001/-002/-005/-006 (Fensterbank), M-6259-003/-007/-008 (Vordach-Unterkante); Gaube B (u 6,55); Zaehlung Z-018-006 (2 Gauben obere Reihe): Vordach-Unterkante-Ecken u 7,26 / 5,84 -> Halbbreite 0,71-0,74 um Mitte u 6.55 (misst Breite UND Lage)",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis2 r2): Altmodell ohne Vordach -> keine Kontur im Messstreifen (nan) = ROT"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-007"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Vordach Halbbreite nach -u bei z 21,33",
+   "wert": "gaube_b_vordach_um",
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12, K-6259, K-6162; Schnittwinkel 9-24 Grad, Strahlabstand <= 0,07 m, +-0,13 m), M-6259-001/-002/-005/-006 (Fensterbank), M-6259-003/-007/-008 (Vordach-Unterkante); Gaube B (u 6,55); Zaehlung Z-018-006 (2 Gauben obere Reihe) (gleiche Ecken wie +u)",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis2 r2): Altmodell ohne Vordach -> ROT"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-007"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Stirn-/Fensterkasten-Front bei z 20,85 (n-Reichweite ab n 7,0; Foto n 8,31) - Wachposten, am Altmodell schon gruen",
+   "wert": "gaube_b_stirn_vor",
+   "soll": [
+    1.23,
+    1.39
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12, K-6259, K-6162; Schnittwinkel 9-24 Grad, Strahlabstand <= 0,07 m, +-0,13 m), M-6259-001/-002/-005/-006 (Fensterbank), M-6259-003/-007/-008 (Vordach-Unterkante); Gaube B (u 6,55); Zaehlung Z-018-006 (2 Gauben obere Reihe): Fensterbank-Vorderkante n 8,30-8,31 (4 Punkte)",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-10 angelegt (Kreis2 r2): Altmodell n 8,26 liegt im Soll (schuetzt nur, trennt nicht)"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-007"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Hoehe der Dachoberflaeche bei n 7,7 (Vordach-Pultdach, Hang 21,6)",
+   "wert": "gaube_b_dach_z",
+   "soll": [
+    20.337,
+    20.837
+   ],
+   "quelle": "Triangulation 3 Kameras (K-c12, K-6259, K-6162; Schnittwinkel 9-24 Grad, Strahlabstand <= 0,07 m, +-0,13 m), M-6259-001/-002/-005/-006 (Fensterbank), M-6259-003/-007/-008 (Vordach-Unterkante); Gaube B (u 6,55); Zaehlung Z-018-006 (2 Gauben obere Reihe): Gerade Vordach-Vorderkante (n 8,52, z 21,23+0,14 ANNAHME Dicke) -> hintere Ecke (n 6,82, z 22,75, M-6259-009, +-0,25) bei n 7,7: z 22,04",
+   "merkmal": "absolut_hoehe",
+   "historie": [
+    "2026-11-10 angelegt (Kreis2 r2): Altmodell Pultdach bei n 7,7 deutlich hoeher (Wandhoehe 1,66 statt 0,83) -> ROT"
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6259-007"
   }
  ],
  "beobachtungen_offen": [
@@ -2352,6 +2646,48 @@
    "wer": "Kreis r1 (Fehlteil fk_-8_+10_+6)",
    "quelle": "Kasten in 6124/6161/nu3b/6206/6176 projiziert (K-Protokolle) + Zylinder der Gitter-Saeule (-8,42/10,43, R 0,62) in 6124/6161/nu3b",
    "text": "GEKLAERT, KEIN Bauteil gebaut: Der Kasten liegt AUSSERHALB des Kaufhauses. In 6124 und 6161 steht der Zylinder (R 0,62, z 2,5-8,9) frei vor der Fassade des Nachbarhauses (Haus zum wilden Samson: Fallrohr, Laterne, Fenster mit Laeden); in nu3b/6206/6176 liegt er hinter Pfeiler 2 in der Durchgangsgasse neben dem Laubenende. Es gibt dort keinen runden Pfeiler. Die 2170 Gitterpunkte sind die Zehneck-Segmente einer Saeulen-Anpassung (segmente_gitter_v12.json saeulen[0], abweichend: True, 62 % Inlier) auf Nachbarhaus-Punkte. Gate 'Recall im Kasten +0,25' haette nur durch Erfinden eines Pfeilers erreicht werden koennen. Naechster Schritt (Werkzeug, nicht Generator): saeulen mit abweichend=True nicht als Fehlteil-Kandidat zulassen bzw. Gitter-Saeulen vor Aufnahme gegen die Hausflaeche (LoD2 Grundriss) pruefen."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Kreis2 r2 Agent gaubenreihe:oben",
+   "quelle": "Konvergenzbericht Wolkenbeleg 0,46 (Median 0,17 m) + Overlay audit/sichtliste/gaubenreihe__oben.jpg (j_05), 4 Fotos angesehen",
+   "text": "Obere Gauben: Modell hat Stirnwand 1,66 m hoch und Pultdach auf Hoehe 2,5 m (Kasten in den Hang), Foto zeigt Schleppgaube: Fensterkasten (Stirn 1,02 m breit, nur 0,83 m hoch, Rundbogenfenster, Fensterbank) darueber ziegelgedecktes Vordach 1,45 m breit, 0,22 m vor der Stirn, mit Wangen zum Hang. Lage u um 0,3-0,4 m daneben (Modell u 0,89/6,94, Foto 0,63/6,54).",
+   "naechster_schritt": "Familie schlepp um Vordach (vordach_vor/-breite/-dicke, dach_tiefe) erweitern, Pruefungen gaube_a/b_* (M-6259-001..013) vorher ROT, dann bauen",
+   "status": "offen"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 2)",
+   "auto_id": "fehlteile-6261-237-1817",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.01,
+   "z_bis": 18.01,
+   "xyz": [
+    14.95,
+    -8.36,
+    18.01
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.01 m, y=-8.36 m (Zelle [237, 1817, 79], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto nu3b, Treffer 3)",
+   "auto_id": "fehlteile-nu3b-0-1755",
+   "art": "fehlteil",
+   "foto": "nu3b",
+   "z_von": 14.04,
+   "z_bis": 14.04,
+   "xyz": [
+    15.32,
+    -7.71,
+    14.04
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=14.04 m, y=-7.71 m (Zelle [0, 1755, 117], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_nu3b.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
