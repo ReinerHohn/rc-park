@@ -8,6 +8,8 @@ body{background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif;paddi
 h1{font-size:1.1rem;margin:0 0 8px;font-weight:650}
 #wrap{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
 #cv{flex:1 1 560px;min-width:0;max-width:100%;height:min(74vh,760px);background:var(--bg);border:1px solid var(--ln);border-radius:6px;touch-action:none;display:block}
+#fbox{flex:1 1 300px;min-width:0;max-width:100%;background:var(--pnl);border:1px solid var(--ln);border-radius:6px;padding:8px;font-size:.85rem}
+#fimg{width:100%;height:auto;display:block;border-radius:4px;cursor:pointer}
 #pnl{flex:0 1 250px;min-width:0;background:var(--pnl);border:1px solid var(--ln);border-radius:6px;padding:10px 12px;font-size:.88rem;line-height:1.5}
 label{display:flex;gap:8px;align-items:center}
 .sw{width:11px;height:11px;border-radius:2px;display:inline-block}
@@ -16,7 +18,7 @@ input[type=range]{width:100%}
 button{font:inherit;padding:4px 10px;border:1px solid var(--ln);background:var(--bg);color:var(--fg);border-radius:4px;cursor:pointer}
 </style>
 <h1>Kaufhaus: Wolke, Kantenpunkte und Drahtgitter</h1>
-<div id="wrap"><canvas id="cv"></canvas><div id="pnl">
+<div id="wrap"><canvas id="cv"></canvas><div id="fbox" hidden><b>Passendes Foto</b> <span class="mut" id="finf"></span><img id="fimg" alt="Foto aus ähnlicher Blickrichtung" title="Klick: Modell in die Blickrichtung dieses Fotos drehen"><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button id="fv">◀ anderes</button><button id="fn">anderes ▶</button><button id="fa">Ansicht wie Foto</button></div></div><div id="pnl">
 <b>Ebenen</b>
 <label><input type="checkbox" id="lw" checked>Wolke (Fotofarben)</label>
 <label><input type="checkbox" id="lk" checked><span class="sw" style="background:#e08a1e"></span>Kantenpunkte (Tiefen-Sweep)</label>
@@ -58,7 +60,20 @@ function draw(){
   for(const k in byq){ctx.strokeStyle=COL[k]||'#888';ctx.beginPath();for(const i of byq[k]){const a=proj(Sg[i*6]*sc,Sg[i*6+1]*sc,Sg[i*6+2]*sc,c,s),b=proj(Sg[i*6+3]*sc,Sg[i*6+4]*sc,Sg[i*6+5]*sc,c,s);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}ctx.stroke()}}
  if(q('lkb').checked&&DATA.nkb){ctx.lineWidth=+q('lb').value*dpr;ctx.strokeStyle='#7a4fc9';ctx.beginPath();for(let i=0;i<DATA.nkb;i++){const a=proj(KB[i*6]*sc,KB[i*6+1]*sc,KB[i*6+2]*sc,c,s),b=proj(KB[i*6+3]*sc,KB[i*6+4]*sc,KB[i*6+5]*sc,c,s);if(!sichtbar(a,b))continue;ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}ctx.stroke()}
  if(q('lkb').checked&&DATA.nse){const fx=c.sy*c.cp,fyv=c.cy*c.cp,fz=c.sp;ctx.lineWidth=+q('lb').value*dpr;ctx.strokeStyle='#7a4fc9';ctx.beginPath();for(let i=0;i<DATA.nse;i++){const o=i*6,d1=SN[o]*fx+SN[o+1]*fyv+SN[o+2]*fz,d2=SN[o+3]*fx+SN[o+4]*fyv+SN[o+5]*fz;if(d1*d2>0)continue;const a=proj(SE[o]*sc,SE[o+1]*sc,SE[o+2]*sc,c,s),b=proj(SE[o+3]*sc,SE[o+4]*sc,SE[o+5]*sc,c,s);if(!sichtbar(a,b))continue;ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}ctx.stroke()}
+ fotoWahl(c);
  q('inf').textContent=DATA.nw.toLocaleString('de')+' Wolkenpunkte (Auswahl), '+DATA.nk.toLocaleString('de')+' Kantenpunkte, '+DATA.ns+' Linien'+(DATA.nkb?', '+DATA.nkb+' Körperkanten':'')}
+// Passendes Foto: Blickrichtung des Viewers f = (sy*cp, cy*cp, sp) gegen optische Achse jeder Kamera (Rn-Zeile 3), beste zuerst
+const FT=DATA.ft||[];let frang=[],fpos=0,flast='';
+if(FT.length)q('fbox').hidden=false;
+function fotoWahl(c){if(!FT.length)return;const fx=c.sy*c.cp,fy=c.cy*c.cp,fz=c.sp;
+ const r=FT.map((f,i)=>[f.d[0]*fx+f.d[1]*fy+f.d[2]*fz,i]).sort((a,b)=>(b[0]+0.08*FT[b[1]].u)-(a[0]+0.08*FT[a[1]].u));   // Uebersichtsfotos (Abstand, Mitte im Bild) leicht bevorzugtconst key=r.slice(0,5).map(x=>x[1]).join(',');
+ if(key!==flast){frang=r.slice(0,8);fpos=0;flast=key;fotoZeigen()}}
+function fotoZeigen(){const [dot,i]=frang[fpos],f=FT[i];q('fimg').src='data:image/jpeg;base64,'+f.j;
+ q('finf').textContent=`${fpos+1}/${frang.length} · ${Math.round(Math.acos(Math.max(-1,Math.min(1,dot)))*180/Math.PI)}° Abweichung · ${f.n.replace(/\.jpe?g$/i,'')}`}
+q('fv').onclick=()=>{if(frang.length){fpos=(fpos+frang.length-1)%frang.length;fotoZeigen()}};
+q('fn').onclick=()=>{if(frang.length){fpos=(fpos+1)%frang.length;fotoZeigen()}};
+const fotoAnsicht=()=>{if(!frang.length)return;const d=FT[frang[fpos][1]].d;const k=[...frang];yaw=Math.atan2(d[0],d[1]);pit=Math.asin(Math.max(-1,Math.min(1,d[2])));draw();frang=k;fotoZeigen()};
+q('fa').onclick=fotoAnsicht;q('fimg').onclick=fotoAnsicht;
 let drag=null;const ptr=new Map();
 cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY,pan:e.shiftKey||e.button==2}});
 cv.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const o=ptr.get(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY]);

@@ -1,5 +1,5 @@
 """3D-Viewer: Wolke (Fotofarben) + Kantenpunkte + Drahtgitter, Ebenen schaltbar, eigener Canvas-Renderer (kein WebGL noetig).
-Aufruf: viewer_kanten_bauen.py OUT.html [--seg SEGMENTE.json] [--kp KANTENPUNKTE.npy] [--n 120000] [--koerper KOERPER.stl] [--objekt NAME] (Formkanten > 25 Grad + schattierte Flaeche; Front = Fassade von aussen)"""
+Aufruf: viewer_kanten_bauen.py OUT.html [--seg SEGMENTE.json] [--kp KANTENPUNKTE.npy] [--n 120000] [--koerper KOERPER.stl] [--objekt NAME] [--fotos KAM.json --bilder DIR --n_fotos 90] (passendes Foto je Blickrichtung) (Formkanten > 25 Grad + schattierte Flaeche; Front = Fassade von aussen)"""
 import sys, json, base64, numpy as np
 if len(sys.argv) < 2 or sys.argv[1].startswith("-"): sys.exit(__doc__)
 def opt(n, d, t=str): return t(sys.argv[sys.argv.index(n) + 1]) if n in sys.argv else d
@@ -40,5 +40,33 @@ if "--objekt" in sys.argv:
     _n = next((b["achse_n"] for b in _o.get("bauteile", []) if b.get("achse_n") and b.get("aktiv", True)), None)
     if _n: fy = float(np.arctan2(-_n[0], -_n[1])); print("Front-Blick entgegen achse_n", _n, "yaw", round(fy, 3), flush=True)
 data = {"se": q(SE.reshape(-1, 3)) if len(SE) else "", "sn": base64.b64encode(SN.tobytes()).decode(), "nse": len(SE), "fy": fy, "m": q(MP) if len(MP) else "", "mc": base64.b64encode(MC.tobytes()).decode(), "nm": len(MP), "kb": q(KB.reshape(-1, 3)) if len(KB) else "", "nkb": len(KB), "ctr": ctr.tolist(), "sc": SC, "w": q(W), "c": base64.b64encode(C.tobytes()).decode(), "k": q(KP), "s": q(seg.reshape(-1, 3)), "sq": base64.b64encode(sq.tobytes()).decode(), "nw": len(W), "nk": len(KP), "ns": len(S)}
+# Passendes Foto je Blickrichtung (Nutzer 10.11.): kalibrierte Kameras (gleicher Rahmen wie die Wolke, z. B. sfm/kam_lot2.json), Auswahl
+# --n_fotos nach groesster Richtungsvielfalt (Fernpunkt-Auswahl auf Blickrichtung + Standort), Vorschaubilder klein eingebettet.
+FT = []
+if "--fotos" in sys.argv:
+    import cv2, os
+    KJ = json.load(open(opt("--fotos", ""))); BD = opt("--bilder", D + "/bilder"); NF = opt("--n_fotos", 90, int)
+    nam = [k for k in KJ if os.path.exists(os.path.join(BD, k))]
+    dirs = np.array([np.asarray(KJ[k]["Rn"])[2] for k in nam]); Cs = np.array([KJ[k]["C"] for k in nam])
+    # Uebersicht bevorzugt (Pruefung 10.11.: reine Richtungswahl lieferte Nahaufnahmen einer Saeule): Gebaeudemitte im Bild (Achse <= 30 Grad
+    # zur Mitte) und Abstand >= 10 m; Vielfalt per Fernpunkt-Auswahl erst unter diesen, Rest nur zum Auffuellen.
+    zm = ctr - Cs; dist = np.linalg.norm(zm, axis=1); zent = np.einsum("ij,ij->i", dirs, zm / dist[:, None])
+    gut = np.where((zent >= np.cos(np.radians(30))) & (dist >= 10))[0]; rest = np.setdiff1d(np.arange(len(nam)), gut)
+    mrk = np.concatenate([dirs * 10.0, (Cs - ctr) / 3.0], 1); wahl = []
+    for pool in (gut, rest):
+        if not len(pool) or len(wahl) >= NF: continue
+        dmin = np.full(len(pool), np.inf) if not wahl else np.min(np.linalg.norm(mrk[pool][:, None] - mrk[wahl][None], axis=2), 1)
+        if not wahl: wahl.append(int(pool[np.argmax(dist[pool])])); dmin = np.linalg.norm(mrk[pool] - mrk[wahl[0]], axis=1)
+        while len(wahl) < min(NF, len(nam)) and dmin.max() > 0:
+            j = int(np.argmax(dmin)); wahl.append(int(pool[j])); dmin = np.minimum(dmin, np.linalg.norm(mrk[pool] - mrk[pool[j]], axis=1))
+    print("Uebersichtsfotos", len(gut), "von", len(nam), flush=True)
+    for j in wahl:
+        im = cv2.imread(os.path.join(BD, nam[j]))
+        if im is None: continue
+        h, w = im.shape[:2]; f_ = 420 / max(h, w); im = cv2.resize(im, (int(w * f_), int(h * f_)), interpolation=cv2.INTER_AREA)
+        ok, buf = cv2.imencode(".jpg", im, [cv2.IMWRITE_JPEG_QUALITY, 72])
+        FT.append({"n": nam[j], "d": [round(float(x), 4) for x in dirs[j]], "c": [round(float(x), 2) for x in Cs[j] - ctr], "u": int(j in set(gut.tolist())), "j": base64.b64encode(buf.tobytes()).decode()})
+    print("Fotos eingebettet", len(FT), "von", len(nam), sum(len(f["j"]) for f in FT) // 1024, "KB", flush=True)
+data["ft"] = FT
 html = open(__file__.replace("viewer_kanten_bauen.py", "viewer_kanten_vorlage.html")).read().replace("/*DATA*/", "const DATA=" + json.dumps(data) + ";")
 open(sys.argv[1], "w").write(html); print("geschrieben", sys.argv[1], len(html) // 1024, "KB")
