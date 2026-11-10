@@ -980,8 +980,15 @@ def quader_bt(cfg, ctx):
         if cfg.get(k) in (None, ""): sys.exit(f"quader: '{k}' fehlt (Regel 3b: jedes Mass mit Quelle)")
     u0, u1, n0, n1, z0, z1 = (float(cfg[k]) for k in ("u0", "u1", "n0", "n1", "z0", "z1"))
     if abs(u1 - u0) < 0.02 or abs(n1 - n0) < 0.01 or abs(z1 - z0) < 0.02: sys.exit(f"quader: unplausible Masse ({u0}..{u1}, {n0}..{n1}, {z0}..{z1})")
-    k = quader(u0, u1, min(n0, n1), max(n0, n1), min(z0, z1), max(z0, z1)).transform(_uszT(cfg)); modus = cfg.get("modus", "anbau")
-    beleg("alle", f"Quader ({modus})", cfg["quelle"], u0=u0, u1=u1, n0=n0, n1=n1, z0=z0, z1=z1)
+    modus = cfg.get("modus", "anbau"); prof = cfg.get("profil")
+    if prof:                                                                                          # Profil-Leiste (Gesims/Schraege/Rinne): Querschnitt [[n, z], ...] entlang u von u0 bis u1 extrudiert; n0..z1 = Huellquader (Pflicht, wird gegen das Profil geprueft)
+        P = np.array(prof, float)
+        if len(P) < 3 or abs(flaeche_xy(P)) < 1e-4: sys.exit("quader: profil braucht >= 3 Punkte mit Flaeche")
+        if P[:, 0].min() < min(n0, n1) - 1e-6 or P[:, 0].max() > max(n0, n1) + 1e-6 or P[:, 1].min() < min(z0, z1) - 1e-6 or P[:, 1].max() > max(z0, z1) + 1e-6: sys.exit("quader: profil liegt ausserhalb n0..n1/z0..z1")
+        k = M.extrude(C([ccw(P)]), abs(u1 - u0)).transform([[0, 0, 1, min(u0, u1)], [1, 0, 0, 0], [0, 1, 0, 0]]).transform(_uszT(cfg))    # x=n, y=z, Extrusion z=u -> (u, n, z)
+    else:
+        k = quader(u0, u1, min(n0, n1), max(n0, n1), min(z0, z1), max(z0, z1)).transform(_uszT(cfg))
+    beleg("alle", f"Quader ({modus})" + (f" mit Profil ({len(prof)} Punkte)" if prof else ""), cfg["quelle"], u0=u0, u1=u1, n0=n0, n1=n1, z0=z0, z1=z1, **({"profil": [list(map(float, q_)) for q_ in prof]} if prof else {}))
     return ([k], []) if modus != "ausschnitt" else ([], [k])
 
 @bauteil("freiform")

@@ -4581,21 +4581,44 @@
    "u0": -8.82,
    "u1": 17.15,
    "n0": 12.62,
-   "n1": 13.08,
-   "z0": 14.1,
-   "z1": 14.7,
+   "n1": 12.94,
+   "z0": 14.32,
+   "z1": 14.82,
+   "profil": [
+    [
+     12.62,
+     14.32
+    ],
+    [
+     12.7,
+     14.35
+    ],
+    [
+     12.82,
+     14.55
+    ],
+    [
+     12.94,
+     14.82
+    ],
+    [
+     12.62,
+     14.82
+    ]
+   ],
    "modus": "anbau",
    "achse_n": [
     0.3338,
     0.9426
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
-   "quelle": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v12.json: waagerechte Kanten vor der Front, Laengenhistogramm z 14,1-14,8 (z 14,1: 31 m, Versatz Median 13,08; z 14,2-14,8: 25-39 m je 0,1 m, Versatz 12,8-13,1); Traufe 14,68 = rohkoerper_v7 traufe.kante",
+   "quelle": "Profil (Kreis r3, 10.11.): Wolke lot2 (j_voll_lot2.npy, u -7,5..14, 15 Scheiben je 1,5 m, Dichtegipfel n je 0,1-m-Hoehenband): Wand n 12,62 bis z 14,25, dann Schraege n 12,70/12,74/12,82/12,86/12,90/12,94 bei z 14,35..14,85; Foto 6161 (M-6161-017..021): Gesims = rote Schraege mit Goldleisten unter der Kupfer-Haengerinne, Lippe Oberkante z 14,79 (Strahl auf Wolkenprofil, n 12,92); Fotos handy_04/handy_18/handy_f_12 zeigen dieselbe Zonenfolge. u-Enden und Hoehe z0: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v12.json: waagerechte Kanten vor der Front, Laengenhistogramm z 14,1-14,8 (z 14,1: 31 m, Versatz Median 13,08; z 14,2-14,8: 25-39 m je 0,1 m, Versatz 12,8-13,1); Traufe 14,68 = rohkoerper_v7 traufe.kante",
    "werte_quellen": {
-    "z0": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v12.json unterste dichte waagerechte Kantenlage z 14,1 (31 m; darunter 13,5-14,0 nur 0,6-6 m)",
-    "z1": "kantengitter rohkoerper_v7 traufe.kante.z 14,68 (Dachfuss, kein Band dazwischen) + 0,02 m Einbindung in den Dachfuss (Druck: Traufkante sonst deckungsgleich mit der Gesimskante)",
-    "n1": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v12.json Versatz-Median der Kanten bei z 14,1: 13,08 (p90 13,19)",
-    "n0": "Wandebene 12,66 minus 0,04 Einbindung",
+    "z0": "Wolke lot2: Wand bis z 14,25, dann Schraege; Runde 1 (20261110_040948): Unterkante auf 14,32 angehoben, weil Pruefer die rote Unterkante bei 14,25 ~0,1 m unter der unteren Goldleiste sah (handy_18 ~25 px); Foto 6161 M-6161-020: untere Goldleiste = Schraegenfuss z 14,33 (auf dem Profil n 12,69). ALT 14,1 (Kantengitter-Kantenlage bei Versatz 13,08) war Sehstrahl-Mehrdeutigkeit: n +0,4 gibt z -0,2 bei ~25 Grad Blickhoehe",
+    "z1": "Foto 6161 M-6161-017 Rinnenlippe Oberkante z 14,79 (Strahl auf Wolkenprofil) und Wolke Gipfel z 14,8-14,9 -> 14,82; ALT 14,7 (Traufe 14,68 + 0,02) lag 0,1 unter der Lippe",
+    "n1": "Wolke lot2 Dichtegipfel Vorderflaeche oben n 12,94 (z 14,8-14,9), Foto 6161 M-6161-017 Lippe z 14,79 bei n 12,92; ALT 13,08 (Kantengitter-Versatz-Median) war Kasten-Vorderflaeche 0,14-0,4 m vor der Schraege",
+    "n0": "Wandebene Wolke Gipfel n 12,62 (Bereich z 13,8-14,25); Profil-Rueckseite buendig mit der Wand (Runde 1 20261110_040948: Rueckkanten bei 12,58 hatten keinen Fotobeleg, Praezision 0,26 -> mit Rueckseite 12,62 0,40; Wand liegt dahinter, Teil bleibt am Rumpf haengend)",
+    "profil": "Wolke lot2 Dichtegipfel je Hoehenband (Wand bis z 14,25, Schraege bis 14,85) + Foto 6161 M-6161-017..021; Rinnenrundung und Dachgitter (Wolkenpunkte z 15,0 n 13,1) nicht modelliert (ANNAHME: H0 < 0,3 mm)",
     "u0": "ANNAHME Rumpfenden (Gitterkanten along -8,5..14,3, Enden von Erkern verdeckt)",
     "u1": "ANNAHME Rumpfenden"
    },
@@ -4605,6 +4628,34 @@
      "wer": "Agent Runde 4",
      "alt": "traufzone_alt (Balken/Gesims/Dachkante z 12,8-14,1)",
      "neu": "Gesims 14,1-14,68"
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Agent Kreis r3",
+     "alt": {
+      "n0": 12.62,
+      "n1": 13.08,
+      "z0": 14.1,
+      "z1": 14.7,
+      "profil": null
+     },
+     "neu": {
+      "n0": 12.58,
+      "n1": 12.94,
+      "z0": 14.25,
+      "z1": 14.82,
+      "profil": "Schraege 12,62/14,25 -> 12,94/14,82"
+     }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Agent Kreis r1 (20261110_040948)",
+     "alt": {
+      "profil": "r3-Entwurf z0 14,25 / Rueckseite 12,58"
+     },
+     "neu": {
+      "profil": "5 Punkte 12,62/14,32 -> 12,94/14,82, z0 14,32 (Goldleiste), Rueckseite 12,62"
+     }
     }
    ]
   },

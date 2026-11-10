@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-019",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.62",
+ "name": "Gesims 6161: Goldleiste 1 Mitte (Wandebene n=12,62)",
+ "mess_px": [
+  2267.0,
+  984.0,
+  2267.0,
+  985.0
+ ],
+ "P1": [
+  4.931,
+  11.642,
+  14.573
+ ],
+ "P2": [
+  4.931,
+  11.642,
+  14.563
+ ],
+ "dz": -0.01,
+ "dy": -0.0,
+ "dx": 0.0,
+ "abstand": 0.01,
+ "z1": 14.573,
+ "z2": 14.563,
+ "unsicherheit_rel": 0.0108,
+ "unsicherheit_m": 0.039,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.62 (+-0.3 m)"
+}
