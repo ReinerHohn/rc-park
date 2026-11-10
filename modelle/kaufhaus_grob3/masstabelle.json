@@ -3910,6 +3910,13 @@
    "naechster_schritt": "Mitte-Rippen (ANNAHME) und Gesimsprofile an weiteren Fotos pruefen; erker_polygon:0 hat denselben p98-Profilfehler (nicht angefasst)."
   },
   {
+   "datum": "2026-11-10",
+   "wer": "Koordinator nach Pruefer a062358 r2 (erker_polygon:1)",
+   "merkmal": "Erker-Unterbau Profilform",
+   "text": "Unterbau-Profil wird oben konvex (Zuwaechse 0,29/0,36/0,24); Fotos 6161/6164 zeigen Trichter, der sich oben stark aufweitet; Modellflanke rechts in 6164 ausserhalb. Gewoelberippen in 6164/6161/6259 sichtbar (Agent behauptete unsichtbar), gerade Mittellinie ohne Fotokante. Gleicher Profilfehler an erker_polygon:0.",
+   "naechster_schritt": "Profilbreite je Hoehe aus Silhouette 6161/6164 (foto_silhouette_profil) messen, Formfamilie Trichter (monoton steigende Zuwaechse) festlegen, dann fitten; Rippen als eigene Elemente."
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
    "auto_id": "fehlteile-6261-234-1794",
