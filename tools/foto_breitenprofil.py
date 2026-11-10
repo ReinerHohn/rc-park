@@ -113,7 +113,7 @@ def main():
     MM = modell_maske(stl, obj, R, t, f, cx, cy, W, H)
     # KAMERA-GUETE: ohne passende Kamera ist jedes Mass Unsinn (Foto 041: RMS 530 px -> Modellbreiten 1,5 m statt 13 m).
     hoch = objekt & (np.arange(H)[:, None] < int(0.75 * H)); iou = (MM & hoch).sum() / max(1, (MM | (hoch & cv2.dilate(MM.astype(np.uint8), np.ones((9, 9), np.uint8)).astype(bool))).sum())
-    rms = K["kamera"].get("rms_px", float("nan"))
+    rms = K["kamera"].get("rms_px"); rms = float("nan") if rms is None else rms   # Buendelkameras haben rms_px=None -> war TypeError, Werkzeug lief fuer kaufhaus_grob3 nie (10.11.)
     print(f"  Kamera-Guete: Silhouetten-Ueberdeckung {iou:.2f}, Anker-RMS {rms:.0f} px ({100*rms/H:.1f} % der Bildhoehe)")
     if iou < 0.6:
         raise SystemExit(f"Kamera unbrauchbar fuer Metermessung (Ueberdeckung {iou:.2f} < 0,60). Erst Picks verbessern (tools/foto_pick.py) und neu kalibrieren.")

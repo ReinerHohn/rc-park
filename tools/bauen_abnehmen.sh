@@ -24,8 +24,8 @@ fotodiag() {   # eine Kamera: Breitenprofil + Fehlteile (laeuft parallel je Foto
   NR=$(basename "$KJ" .json); NR=${NR#K-}
   $PY -c "import json,sys; d=json.load(open('$KJ')); sys.exit(0 if 'kamera' in d else 1)" || return 0
   { echo "--- Foto $NR"
-    OBJEKT="$OBJ" $PY -W ignore -I tools/foto_breitenprofil.py "$OBJ" "$NR" --eintragen 2>&1 | grep -E "Kamera-Guete|unbrauchbar|messbar;|AUFFAELLIG|Beobachtung" || true
-    OBJEKT="$OBJ" $PY -W ignore -I tools/fehlteile_finden.py "$OBJ" "$NR" --top 6 2>&1 | grep -E "FEHLT|ERFUNDEN|Beobachtung" || true; } 
+    OBJEKT="$OBJ" $PY -W ignore -I tools/foto_breitenprofil.py "$OBJ" "$NR" --eintragen 2>&1 | grep -E "Kamera-Guete|unbrauchbar|messbar;|AUFFAELLIG|Beobachtung|Traceback|Error" | sed "s/^Traceback/WERKZEUG-ABSTURZ foto_breitenprofil: Traceback/" || true
+    OBJEKT="$OBJ" $PY -W ignore -I tools/fehlteile_finden.py "$OBJ" "$NR" --top 6 2>&1 | grep -E "FEHLT|ERFUNDEN|Beobachtung|Traceback|Error" | sed "s/^Traceback/WERKZEUG-ABSTURZ fehlteile_finden: Traceback/" || true; } 
 }
 export -f fotodiag
 # Alle Kameras parallel (so viele wie Kerne): verlustfrei schneller - die Werkzeuge schreiben je Foto eigene Audit-Dateien;
