@@ -1,0 +1,32 @@
+{
+ "id": "M-6259-031",
+ "foto": "6259",
+ "kamera": "K-6259",
+ "ebene": "z=8.0",
+ "name": "Erker Ost Unterbau: Silhouetten-Ecke Flanke u+ bei z 8.0 (3-Kamera-Konsens 6259/6161/6164, Pixel = Projektion des Konsenspunkts, <=3 px an der Silhouette)",
+ "mess_px": [
+  440.0,
+  2300.8,
+  440.0,
+  2300.8
+ ],
+ "P1": [
+  20.255,
+  5.972,
+  8.0
+ ],
+ "P2": [
+  20.255,
+  5.972,
+  8.0
+ ],
+ "dz": 0.0,
+ "dy": 0.0,
+ "dx": 0.0,
+ "abstand": 0.0,
+ "z1": 8.0,
+ "z2": 8.0,
+ "unsicherheit_rel": 0.0044,
+ "unsicherheit_m": 0.032,
+ "massstab_von": "Kamera K-6259 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene z=8.0 (+-0.1 m)"
+}

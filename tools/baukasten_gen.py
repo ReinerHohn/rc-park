@@ -777,6 +777,7 @@ def erker_polygon(cfg, ctx):
     Pflicht: u_mitte, n_front, seite_front, seite_schraeg, winkel_grad, wand_n, einbindung, zonen {z_unterbau_spitze, z_unterbau_oben, z_wappen_unten, z_wappen_oben, z_bank_oben, z_trauf_unten, z_trauf_oben},
     unterbau {profil, vorsprung_spitze}, gesims [{name, z0, z1, aus}], fenster {n_lichter, rahmen_b, pfosten_b, z_kaempfer, kaempfer_h, z_licht_unten, z_licht_oben_seite, z_licht_oben_mitte, tiefe},
     wappen {rand_u, rand_z, tiefe, schild_b, schild_h}, achse_n, achse_quelle, quelle (+ werte_quellen, zaehlung).
+    Optional (Kreis 225455 r1): unterbau.kegel_achse_n = n der Trichter-Achse (Skalierzentrum der Ringe statt Wandebene; Foto-Konsens: Pyramide laeuft zur Achtecksmitte, nicht zur Wand); unterbau.rippen_bogen {b, vor, kappa, n_seg, flaechen[, einbindung, ueberlapp, dv2, db2, bogen]} = Netzgewoelbe-Bogenrippen.
     Optional (Kreis a060555 r1): unterbau.rippen_mitte false (nur die 4 Grate), unterbau.rippen_skal true (Rippenrelief waechst mit dem Pyramidenradius: rippen_vor * p/pmax, min 0,06 (duennere Rippen erzeugen Splitter: Druckreparatur scheitert)); je Gesims-Eintrag 'profil' [[z, aus], ...] und cfg 'bank_profil' [[z, aus], ...] statt Rechteckprisma (Grat/Kamm; ohne Angabe unveraendertes Verhalten)."""
     for k in ("u_mitte", "n_front", "seite_front", "seite_schraeg", "winkel_grad", "wand_n", "einbindung", "zonen", "unterbau", "gesims", "fenster", "wappen", "achse_n", "achse_quelle", "quelle"):
         if cfg.get(k) in (None, ""): sys.exit(f"erker_polygon: '{k}' fehlt (Regel 3b: jedes Mass mit Quelle)")
@@ -789,9 +790,12 @@ def erker_polygon(cfg, ctx):
         return M.extrude(cs, z1 - z0).translate((um, 0.0, z0))
     teile = []; z_o = Zn["z_unterbau_oben"]; ub = cfg["unterbau"]; prof = [(float(z), float(p)) for z, p in ub["profil"]]; v0 = float(ub["vorsprung_spitze"]); pmax = nf - wn
     if not (prof and all(b[0] > a[0] for a, b in zip(prof, prof[1:])) and Zn["z_unterbau_spitze"] < prof[0][0] and prof[-1][0] < z_o): sys.exit("erker_polygon: unplausibles Unterbau-Profil")
+    cn = ub.get("kegel_achse_n"); cn = wn if cn in (None, "") else float(cn)                                         # Kreis 225455 r1: Skalierzentrum des Unterbau-Trichters (n der Achse); ohne Angabe = Wandebene (Spitze an der Wand, alt)
+    def fakt(p): return max((wn + p - cn) if cn != wn else p, 0.02) / ((nf - cn) if cn != wn else pmax)             # Skalierfaktor des Rings aus der Vorderflaechen-Reichweite p (Wolke/Foto: Front n = wn + p)
+    def nsk(n_, f): return (cn + f * (n_ - cn)) if cn != wn else ((wn + f * (n_ - wn)) if n_ > wn else n_)
     ringe = [(Zn["z_unterbau_spitze"], v0)] + prof + [(z_o, pmax)]
     def ring(z, p):                                                                                                  # Grundriss auf die Pyramide skaliert: Spitze liegt in der Wandebene (u=0, n=wand_n)
-        f = max(p, 0.02) / pmax; return [[um + f * u_, (wn + f * (n_ - wn)) if n_ > wn else n_, z] for u_, n_ in base]
+        f = fakt(p); return [[um + f * u_, nsk(n_, f), z] for u_, n_ in base]
     for (za, pa), (zb, pb) in zip(ringe, ringe[1:]): teile.append(M.hull_points(ring(za, pa) + ring(zb, pb)))
     if ub.get("rippen"):                                                                                              # ANNAHME: vereinfachte Rippen (4 Grate + 3 Mittelrippen); das echte Netzwerk (gekruemmte Rippen, Rosetten) ist nicht nachgebildet
         rb_, rv = float(ub["rippen_b"]), float(ub["rippen_vor"]); fl = [(base[1], base[2]), (base[2], base[3]), (base[3], base[4])]
@@ -801,9 +805,33 @@ def erker_polygon(cfg, ctx):
         for P_, nv in anker:
             nv = nv / np.linalg.norm(nv); tv = np.array([-nv[1], nv[0]]); pts_ = []
             for z, p in ringe[1:] + [(z_o + 0.05, pmax)]:                                                              # Rippe endet 5 cm im Gesims (Ueberlappung, keine Beruehrflaeche)
-                f = max(p, 0.02) / pmax; q = np.array([f * P_[0], wn + f * (P_[1] - wn)]) - nv * 0.05; q_o = q + nv * ((max(0.06, rv * f) if ub.get("rippen_skal") else rv) + 0.05)   # 5 cm in die Pyramide eingebunden (Druck: sonst deckungsgleiche Flaechen -> Henkel/Splitter, Pruefung genus)
+                f = fakt(p); q = np.array([f * P_[0], nsk(P_[1], f)]) - nv * 0.05; q_o = q + nv * ((max(0.06, rv * f) if ub.get("rippen_skal") else rv) + 0.05)   # 5 cm in die Pyramide eingebunden (Druck: sonst deckungsgleiche Flaechen -> Henkel/Splitter, Pruefung genus)
                 pts_.append([[um + (q + s_ * tv * rb_ / 2)[0], (q + s_ * tv * rb_ / 2)[1], z] for s_ in (-1, 1)] + [[um + (q_o + s_ * tv * rb_ / 2)[0], (q_o + s_ * tv * rb_ / 2)[1], z] for s_ in (-1, 1)])
             for a_, b_ in zip(pts_, pts_[1:]): teile.append(M.hull_points(a_ + b_))
+    EMB = float((ub.get("rippen_bogen") or {}).get("einbindung", 0.05))
+    rbg = ub.get("rippen_bogen")                                                                                       # Kreis 225455 r1: Gewoelberippen (Netzgewoelbe) als eigene Elemente: je Flaeche (Front + 2 Schraegflaechen) zwei Bogenrippen, jede von einer Ecke des oberen Rings zur GEGENUEBERLIEGENDEN Ecke des unteren Rings (Kreuzung in Flaechenmitte, Foto 6164/6161/6259); Bahn s(t) = t^kappa, t 0 oben .. 1 unten
+    if rbg:
+        bb, vv, kap, nseg = float(rbg.get("b", 0.10)), float(rbg.get("vor", 0.06)), float(rbg.get("kappa", 1.0)), int(rbg.get("n_seg", 12)); zb_ = float(rbg.get("z_unten", ringe[1][0] + 0.1))
+        zs_ = np.array([z_ for z_, _ in ringe]); ps_ = np.array([p_ for _, p_ in ringe])
+        p_von = lambda z: float(np.interp(z, zs_, ps_))
+        for fi in rbg.get("flaechen", [0, 1, 2]):
+            A_, B_ = np.array(base[fi + 1], float), np.array(base[fi + 2], float); nv, _tv = nrm(A_, B_)
+            for ri_, (P0_, P1_) in enumerate(((A_, B_), (B_, A_))):                                                  # 2. Bogen 4 mm hoeher: sich kreuzende Rippen mit deckungsgleicher Oberseite machen manifold3d-Splitter (Druckreparatur scheitert)
+                if ri_ not in rbg.get('bogen', [0, 1]): continue
+                vvr = vv + float(rbg.get('dv2', 0.004)) * ri_; bbr = bb * (1 + float(rbg.get('db2', 0.0)) * ri_)
+                st_ = []
+                for i in range(nseg + 1):
+                    t_ = i / nseg; z = z_o - (z_o - zb_) * t_; p = p_von(z); f = fakt(p); c_ = P0_ * (1 - t_ ** kap) + P1_ * t_ ** kap
+                    q = np.array([f * c_[0], nsk(c_[1], f)]); dpdz = (p_von(z + 0.05) - p_von(z - 0.05)) / 0.10
+                    n3 = np.array([nv[0], nv[1], -dpdz]); n3 /= np.linalg.norm(n3); st_.append((q, z, n3))
+                def querschnitt(i):                                                                                    # Breitenrichtung = senkrecht zur Bahn in der Flaeche; 5 cm in die Flaeche eingebunden (Druck)
+                    q, z, n3 = st_[i]; j0, j1 = max(i - 1, 0), min(i + 1, nseg)
+                    d3 = np.array([st_[j1][0][0] - st_[j0][0][0], st_[j1][0][1] - st_[j0][0][1], st_[j1][1] - st_[j0][1]]); d3 /= np.linalg.norm(d3)
+                    wd = np.cross(d3, n3); wd /= np.linalg.norm(wd); b3 = np.array([q[0], q[1], z]) - n3 * EMB; o3 = b3 + n3 * (vvr + EMB)
+                    return [[um + c3[0], c3[1], c3[2]] for c3 in (b3 - wd * bbr / 2, b3 + wd * bbr / 2, o3 - wd * bbr / 2, o3 + wd * bbr / 2)]
+                qs_ = [np.array(querschnitt(i)) for i in range(nseg + 1)]
+                def q_at(x): i0 = min(int(x), nseg - 1); fr = x - i0; return list(qs_[i0] * (1 - fr) + qs_[i0 + 1] * fr)
+                for i in range(nseg): teile.append(M.hull_points(q_at(i) + q_at(min(i + 1 + float(rbg.get('ueberlapp', 0.35)), nseg))))     # Segmente ueberlappen (deckungsgleiche Stossflaechen -> manifold3d-Splitter)
     def prisma_profil(pr):                                                                                            # Gesims/Bank mit Querschnittsprofil [[z, aus], ...] (aufsteigend): konvexe Huelle je Abschnitt, aus = Offset des Grundrisses wie prisma(); Kamm = Grat (gerundete Gesimse, Wolke zeigt Grat statt Rechteck)
         pr = [(float(z), float(a_)) for z, a_ in pr]
         if len(pr) < 2 or any(b[0] <= a[0] for a, b in zip(pr, pr[1:])) or any(a_ < 0 for _, a_ in pr): sys.exit(f"erker_polygon: unplausibles Gesims-Profil {pr}")
@@ -835,6 +863,8 @@ def erker_polygon(cfg, ctx):
     k = UNION(teile).transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; q = lambda p_: (wq.get(p_) or cfg["quelle"]); zaehl = ", ".join(cfg.get("zaehlung", [])) or "Foto"
     beleg("alle", f"Erker-Polygon u={um:.2f}: Teil-Achteck 3 Flaechen (Front {s_f:.2f} m + 2 Schraegflaechen {s_d:.2f} m, {math.degrees(al):.0f} Grad)", q("grundriss") + f" | Flaechenzahl/Lichter/Wappen: Zaehlung {zaehl} (Regel 9)", u_mitte=um, n_front=nf, seite_front=s_f, seite_schraeg=s_d, winkel_grad=math.degrees(al), n_flaechen=3)
     beleg("alle", "Erker-Polygon: Unterbau (umgekehrte Pyramide, Spitze an der Wand" + (", 7 Rippen ANNAHME" if ub.get("rippen") else "") + ")", q("unterbau"), z_spitze=Zn["z_unterbau_spitze"], z_oben=z_o, profil=prof)
+    if cn != wn: beleg("alle", f"Erker-Polygon: Unterbau-Trichter skaliert um die Achse n={cn:.2f} (nicht um die Wandebene {wn:.2f}): Ring-Faktor f=(Front-Reichweite p + wand_n - achse_n)/(n_front - achse_n), Flanken-Breite u = f x Halbbreite", q("unterbau") + " | Achse: 3-Kamera-Konsens der Silhouetten-Ecke u(z) (6259/6161/6164) und Wolke-Front n(z) (f 0,31/0,47/0,79 bei z 6,5/7,1/7,7), Messprotokolle M-6259-029..031, M-6164-004..006 (u(z) +-0,15 m, Tiefe +-0,3 m); Achsenlage n ist ein FLACHES Optimum der Foto-F1 (Achse 10,8-11,9: F1 0,632-0,638; 12,27: 0,615; Wand 12,66: 0,596)", kegel_achse_n=cn, z_unterbau_spitze=Zn["z_unterbau_spitze"])
+    if rbg: beleg("alle", f"Erker-Polygon: Gewoelberippen am Unterbau als eigene Elemente (je Flaeche 2 sich kreuzende Bogenrippen, Ecke oben -> gegenueberliegende Ecke unten, Relief {float(rbg.get('vor', 0.06)):.2f} m, Breite {float(rbg.get('b', 0.10)):.2f} m)", q("unterbau") + " | Bahn s=t^kappa ANNAHME (Fotoueberlagerung 6164/6161/6259: Bahn +-0,1 m), Relief 0,08 ANNAHME (aus dem Foto nicht messbar); Rippenzahl je Flaeche: Foto 6164 (2 Bogen je Flaeche + Grat)", kappa=float(rbg.get("kappa", 1.0)), flaechen=list(rbg.get("flaechen", [0, 1, 2])))
     beleg("alle", f"Erker-Polygon: Bruestung/Wappenband z {Zn['z_wappen_unten']:.2f}-{Zn['z_wappen_oben']:.2f} (je Flaeche 1 Wappenfeld)", q("zonen") + f" | Anzahl: Zaehlung {zaehl}", z_unten=Zn["z_wappen_unten"], z_oben=Zn["z_wappen_oben"], n_wappen=3)
     beleg("alle", f"Erker-Polygon: Fensterband z {zl0:.2f}-{zlm:.2f} ({nl} Lichter je Flaeche, Kaempfer {zk:.2f})", q("fenster") + f" | Anzahl: Zaehlung {zaehl}", z_kaempfer=zk, z_licht_unten=zl0, z_licht_oben_mitte=zlm, n_lichter=nl)
     beleg("alle", "Erker-Polygon: Gesimse " + ", ".join(f"{g_['name']} z {g_['z0']}-{g_['z1']} aus {g_['aus']}" for g_ in cfg["gesims"]), q("gesims"), gesims=cfg["gesims"])

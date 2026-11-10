@@ -4240,7 +4240,7 @@
      ],
      [
       6.9,
-      0.17
+      0.14
      ],
      [
       7.2,
@@ -4259,7 +4259,8 @@
     "rippen_b": 0.14,
     "rippen_vor": 0.12,
     "rippen_mitte": false,
-    "rippen_skal": true
+    "rippen_skal": true,
+    "kegel_achse_n": 11.9
    },
    "gesims": [
     {

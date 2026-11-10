@@ -2219,6 +2219,20 @@
    "z": "=2.35 - z_unterkante_lot2",
    "u0": 2.4,
    "u1": 6.8
+  },
+  "erker_o_flanke74": {
+   "typ": "schnitt_reichweite",
+   "z": "=7.4 - z_unterkante_lot2",
+   "zentrum": [
+    18.8692,
+    6.7907
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.04,
+   "r_max": 2.2
   }
  },
  "pruefungen": [
@@ -4682,6 +4696,22 @@
    "historie": [
     "2026-11-10 angelegt (Kreis r1 a232557, Steinbank/Sockelband vor Laubenrueckwand); am Modell ohne Sockel muss die Pruefung fehlschlagen (Wert 0 statt -0,45)"
    ]
+  },
+  {
+   "name": "Erker Ost: Unterbau-Flanke (Seitenbreite u) bei z 7,4, Schnitt in n=12,70 an der Wandebene (Trichter, Skalierzentrum Achse statt Wand)",
+   "wert": "erker_o_flanke74",
+   "soll": [
+    0.91,
+    1.26
+   ],
+   "quelle": "3-Kamera-Konsens (6259/6161/6164) der Silhouetten-Ecke der Unterbau-Seitenflaeche: u 1.06 m rechts der Erkerachse bei z 7.4; Tiefenlage des Konsenspunkts nur +-0,3 m (Kameras 30 Grad auseinander) -> u +-0,15 m; Silhouette enthaelt Rippenrelief ~0,08 m -> Soll u-0,15 .. u+0,20 (Obergrenze weiter: Modell-Flanke ohne Rippe, Silhouette mit Rippe, trotzdem liegt das neue Modell bei z 7,4 um ~0,16 ueber dem Konsens = innerhalb der Tiefenunsicherheit). WENIG TRENNEND (Alt-Modell 0,89/1,41 knapp ausserhalb); bei z 6,8 liegt auch das neue Modell unter der Silhouette (offen, beobachtungen_offen)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6259-030, M-6164-005 (foto_mass --kamera, Ebene z, Pixel = Konsenspunkt)",
+   "historie": [
+    "2026-11-10 Kreis 225455 r1 (erker_polygon:1, Beobachtung 'Erker-Unterbau Profilform'): angelegt am Stand f68ccb14 (Ringe um die Wandebene skaliert, Trichter nach unten zu schmal): Alt-Modell ausserhalb Soll"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -5150,14 +5180,6 @@
   },
   {
    "datum": "2026-11-10",
-   "wer": "Koordinator nach Pruefer a062358 r2 (erker_polygon:1)",
-   "merkmal": "Erker-Unterbau Profilform",
-   "text": "Unterbau-Profil wird oben konvex (Zuwaechse 0,29/0,36/0,24); Fotos 6161/6164 zeigen Trichter, der sich oben stark aufweitet; Modellflanke rechts in 6164 ausserhalb. Gewoelberippen in 6164/6161/6259 sichtbar (Agent behauptete unsichtbar), gerade Mittellinie ohne Fotokante. Gleicher Profilfehler an erker_polygon:0.",
-   "naechster_schritt": "Profilbreite je Hoehe aus Silhouette 6161/6164 (foto_silhouette_profil) messen, Formfamilie Trichter (monoton steigende Zuwaechse) festlegen, dann fitten; Rippen als eigene Elemente.",
-   "teil": "erker_polygon:1"
-  },
-  {
-   "datum": "2026-11-10",
    "wer": "Kreis r3 (fensterreihe:eg1_tuer)",
    "art": "widerspruch",
    "text": "Befund konvergenz_bericht: Wolkenbeleg 0,713 (Median 0,098 m, Anteil mit Daten 0,77). Ursache an Fotos/Wolke: Rahmenfront n 7,40 steht 0,12 vor der Wandfront 7,28 (Fotos 6243/6120: Tafel 7,29, Goldplaettchen 7,28, staerkster Goldvorsprung 7,376); Beleg nach Hoehe 1,00 (z<2,7) -> 0,44 (z 3,7-4,3). Zweiter Widerspruch (NICHT in diesem Teil loesbar): Tuerblatt liegt n 6,772 +-0,026 (M-6207-001, Klopfer-Drehpunkt, Gegenprobe d17/d20/6120 projiziert, Wolke 6,77) = 0,51 hinter der Wand; Modell-Nische endet bei 6,98 (quader:eg1_tuer_nische n0), Rueckwand quader:laube_rueck endet bei 6,83 -> tiefer Schnitt unterschreitet die Wandstaerke.",
@@ -5456,23 +5478,6 @@
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
-   "auto_id": "fehlteile-6261-312-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.23,
-   "z_bis": 18.23,
-   "xyz": [
-    14.61,
-    -7.15,
-    18.23
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
    "auto_id": "fehlteile-6261-312-1872",
    "art": "fehlteil",
@@ -5487,6 +5492,82 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Koordinator nach Pruefer a062358 r2 (erker_polygon:1)",
+   "merkmal": "Erker-Unterbau Profilform",
+   "text": "Unterbau-Profil wird oben konvex (Zuwaechse 0,29/0,36/0,24); Fotos 6161/6164 zeigen Trichter, der sich oben stark aufweitet; Modellflanke rechts in 6164 ausserhalb. Gewoelberippen in 6164/6161/6259 sichtbar (Agent behauptete unsichtbar), gerade Mittellinie ohne Fotokante. Gleicher Profilfehler an erker_polygon:0.",
+   "naechster_schritt": "Profilbreite je Hoehe aus Silhouette 6161/6164 (foto_silhouette_profil) messen, Formfamilie Trichter (monoton steigende Zuwaechse) festlegen, dann fitten; Rippen als eigene Elemente.",
+   "teil": "erker_polygon:1",
+   "erledigt": "kreis1 Ursache = Ringe um die Wandebene statt um die Achse skaliert (Flanken unten 0,3-0,4 m zu schmal); unterbau.kegel_achse_n 11,9 + Profil z6,9 0,14: Foto-F1 0,596 -> 0,633, f1_h 0,551 -> 0,563 (M-6259-029..031, M-6164-004..006). Gewoelberippen als Bogen-Elemente gebaut, aber Foto-F1 0,617 -> 0,575: im Objekt AUS"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
+   "auto_id": "fehlteile-6261-234-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.54,
+   "z_bis": 18.54,
+   "xyz": [
+    14.34,
+    -8.88,
+    18.54
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.88 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "auto_id": "fehlteile-6261-312-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.23,
+   "z_bis": 18.23,
+   "xyz": [
+    14.61,
+    -7.15,
+    18.23
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-234-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.42,
+   "z_bis": 17.42,
+   "xyz": [
+    14.27,
+    -8.91,
+    17.42
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.42 m, y=-8.91 m (Zelle [234, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Kreis 225455 r1 (erker_polygon:1)",
+   "merkmal": "Erker-Unterbau Gewoelberippen + untere Flanke",
+   "text": "Gewoelberippen (2 Bogen je Flaeche + Grat) sind am Foto 6164/6161/6259 sichtbar und im Foto-F1 als gelber Rhombus fehlend; rippen_bogen (Bahn s=t^kappa) passt auf ~0,1 m, senkt aber Foto-F1 (0,617->0,575) und hebt erker_o_unterbau70 ueber Soll. Zudem liegt die Flanke bei z 6,8 laut 3-Kamera-Konsens (u ~0,69) noch ~0,2 m ausserhalb des Modells. erker_polygon:0 hat denselben Fehler (kegel_achse_n nicht uebertragen, ungemessen).",
+   "naechster_schritt": "Rippenbahn aus Pixelpicks je Rippe (foto_mass, Oberflaeche per Strahl-Netz) statt s=t^kappa; kegel_achse_n an erker_polygon:0 mit Vollmodell-Foto-F1 testen; Flanke z 6,8 mit Foto aus >45 Grad Abstand klaeren",
+   "teil": "erker_polygon:1"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261110_225455a225455 r1 (automatisch)",
+   "teil": "erker_polygon:1",
+   "merkmal": "Pruefer-Rest erker_polygon:1 kreis 20261110_225455a225455 r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Netzgewoelbe-Rautenrippen fehlen weiter in allen Fotos (gelb, 6164/nu3b/d11/6259) | Flanke bei z 6,8 ca. 0,2 m zu schmal | neuer breiter Block mit senkrechter Kante unter dem Trichter bis Pfeilerschaft (6164/nu3b/6259) - rot/abweichend vom zulaufenden Fotoende | neue rote Ringkante quer im unteren Gewoelbe ohne Fotokante (6164 y~860, nu3b y~1130) | rechte Flanke unten in nu3b zu weit aussen (rot) | Zwickel/Kapitell am unteren Trichterende gelb (nu3b, 6164) | Brüstungsunterkante/Gesims rechts in d11 gelb | Unterbau-Oberrand in 6132 rot (unveraendert) | Wolke-Median unterbau70 0,71->0,61, unterbau72 0,8209 knapp am Soll 0,82 | Rippenzahl ohne Z-Protokoll (Regel 9), rippen_bogen gebaut aber AUS | erker_polygon:0 gleicher Fehler nicht uebertragen | Endlauf Skala 1,0, Gitter-F1 und Rueckseite ungeprueft | Pruefung erker_o_flanke74 nur schwach trennend (u +-0,15) | Masswerk/Fensterteilung/Wappen im Oberbau weiter gelb (nicht Rundeninhalt)",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
