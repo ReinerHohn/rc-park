@@ -510,7 +510,11 @@ for runde in range(1, RUNDEN + 1):
         _rq, _ = sh_cpu(_gen, wt, log=os.path.join(LDIR, f"vorpruef_r{runde}.log"), env={"BAUTEILE_AUS": _tn})
         ff_q = form_messen(wt, _tn, ziel["teil"], ff_fotos, f"r{runde}_vorpruef") if _rq == 0 else None
         print(f"Runde {runde}: Vorpruefung Form am Foto {ziel['teil']}: F1 {ff_v} -> {ff_q}" + ("" if _rq == 0 else " (Generator rot)"), flush=True)
-        if _rq != 0 or ff_q is None or ff_q < ff_v - 0.02:   # Option A (Nutzer 10.11.): zurueck nur, wenn das Foto-Veto des Tors greifen wuerde
+        _diff = subprocess.run(["git", "-C", wt, "status", "--porcelain", "--", "tools", "modelle/" + OBJ + "/objekt.json"], capture_output=True, text=True).stdout.strip()
+        if not _diff:   # Agent hat Generator/objekt.json nicht geaendert (z. B. begruendet 'nicht belegt', a144153 10.11.) -> Rueckgabe waere Leerlauf
+            print(f"Runde {runde}: Vorpruefung - Agent hat am Generator nichts geaendert, keine Rueckgabe", flush=True)
+            _vorab_gebaut = _rq == 0   # Stand unveraendert seit dem Export
+        elif _rq != 0 or ff_q is None or ff_q < ff_v - 0.02:   # Option A (Nutzer 10.11.): zurueck nur, wenn das Foto-Veto des Tors greifen wuerde
             try: _je = (json.load(open(os.path.join(LDIR, f"fotoform_r{runde}_vorpruef.json")))["teile"].get(ziel["teil"]) or {})
             except Exception: _je = {}
             _zeilen = "\n".join(f"- Foto {f}: Praezision {_je[f].get('praez')} / Recall {_je[f].get('recall')}  Overlay {LDIR}/fotoform_bilder/{ziel['teil']}_{f}_r{runde}_vorpruef.jpg"
