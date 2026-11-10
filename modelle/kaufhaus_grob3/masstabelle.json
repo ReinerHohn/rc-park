@@ -2346,6 +2346,12 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.0 m, y=-8.33 m (Zelle [237, 1817, 79], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Kreis r1 (Fehlteil fk_-8_+10_+6)",
+   "quelle": "Kasten in 6124/6161/nu3b/6206/6176 projiziert (K-Protokolle) + Zylinder der Gitter-Saeule (-8,42/10,43, R 0,62) in 6124/6161/nu3b",
+   "text": "GEKLAERT, KEIN Bauteil gebaut: Der Kasten liegt AUSSERHALB des Kaufhauses. In 6124 und 6161 steht der Zylinder (R 0,62, z 2,5-8,9) frei vor der Fassade des Nachbarhauses (Haus zum wilden Samson: Fallrohr, Laterne, Fenster mit Laeden); in nu3b/6206/6176 liegt er hinter Pfeiler 2 in der Durchgangsgasse neben dem Laubenende. Es gibt dort keinen runden Pfeiler. Die 2170 Gitterpunkte sind die Zehneck-Segmente einer Saeulen-Anpassung (segmente_gitter_v12.json saeulen[0], abweichend: True, 62 % Inlier) auf Nachbarhaus-Punkte. Gate 'Recall im Kasten +0,25' haette nur durch Erfinden eines Pfeilers erreicht werden koennen. Naechster Schritt (Werkzeug, nicht Generator): saeulen mit abweichend=True nicht als Fehlteil-Kandidat zulassen bzw. Gitter-Saeulen vor Aufnahme gegen die Hausflaeche (LoD2 Grundriss) pruefen."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

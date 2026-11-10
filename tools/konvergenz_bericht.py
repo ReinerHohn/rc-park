@@ -180,7 +180,14 @@ STL_SHA = hashlib.sha256(open(STL, "rb").read()).hexdigest()[:16]
 from scipy import ndimage
 FEHL_AB = opt("--fehl_ab", 0.30, float); lo_m, hi_m = m.bounds[0] - 1.0, m.bounds[1] + 1.0
 inn = np.all((GP >= lo_m) & (GP <= hi_m), axis=1) & (GP[:, 2] >= m.bounds[0][2] + 0.3)
-U = GP[inn & (d_rec >= FEHL_AB)]; fehlkanten = []
+# Gitter-Anpassungen, die der Gitterbau selbst als 'abweichend' markiert (Zylinder cx/cy/R/z_fuss/z_kopf), sind keine Fehlteile:
+# Kreis 10.11. fk_-8_+10_+6 = Saeulen-Fit R 0,62 (62 % Inlier) frei vor dem Nachbarhaus, Agent pruefte 5 Fotos (L-KR8). Nur hier ausgenommen, Recall unveraendert.
+_GJ = json.load(open(GIT)); aus = np.zeros(len(GP), bool)
+for _k, _v in _GJ.items():
+    for _e in (_v if isinstance(_v, list) else []):
+        if isinstance(_e, dict) and _e.get("abweichend") and all(k_ in _e for k_ in ("cx", "cy", "R", "z_fuss", "z_kopf")):
+            aus |= (np.hypot(GP[:, 0] - _e["cx"], GP[:, 1] - _e["cy"]) <= _e["R"] + 0.15) & (GP[:, 2] >= _e["z_fuss"] - 0.15) & (GP[:, 2] <= _e["z_kopf"] + 0.15)
+U = GP[inn & (d_rec >= FEHL_AB) & ~aus]; fehlkanten = []
 if len(U):
     VX = opt("--fehl_voxel", 0.5, float); vi = np.floor((U - lo_m) / VX).astype(int); shp = vi.max(0) + 1; occ = np.zeros(shp, bool); occ[tuple(vi.T)] = True
     lab, nl = ndimage.label(occ); li = lab[tuple(vi.T)]   # 6er-Nachbarschaft, 0,5-m-Voxel: trennt benachbarte Elemente (1 m/26er verband Fassade+Dach zu einem Cluster)
