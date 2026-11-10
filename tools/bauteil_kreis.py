@@ -501,7 +501,7 @@ for runde in range(1, RUNDEN + 1):
                 log=os.path.join(LDIR, f"agent_r{runde}.log"), timeout=MAX_MIN * 60)
     # VORPRUEFUNG (Nutzer 10.11. 14:3x, 5 von 5 Runden erst im Tor nach 1-1,5 h verworfen, meist Foto-F1 gefallen oder Pflichtschritt
     # uebersprungen): gleich nach dem Agenten Form am Foto messen (gleiche Fotos, gleiche Formel wie das Tor). Keine klare Besserung
-    # (< vorher + 0,02) -> EINMAL zurueck an denselben Agenten (claude --continue im Worktree, Kontext bleibt) mit Messwerten je Foto
+    # (Foto-Veto wuerde greifen: < vorher - 0,02) -> EINMAL zurueck an denselben Agenten (claude --continue im Worktree, Kontext bleibt) mit Messwerten je Foto
     # und Overlay-Pfaden. Das Tor bleibt unveraendert (gleiche Schwellen, misst danach selbst) - nur der Rueckweg ist frueher.
     _tn = os.path.join(LDIR, f"teile_r{runde}_nachher"); _vorab_gebaut = False; ff_q = None
     if ff_v is not None and not ist_fehlteil(ziel) and not NACH and VORPRUEF:
@@ -510,14 +510,14 @@ for runde in range(1, RUNDEN + 1):
         _rq, _ = sh_cpu(_gen, wt, log=os.path.join(LDIR, f"vorpruef_r{runde}.log"), env={"BAUTEILE_AUS": _tn})
         ff_q = form_messen(wt, _tn, ziel["teil"], ff_fotos, f"r{runde}_vorpruef") if _rq == 0 else None
         print(f"Runde {runde}: Vorpruefung Form am Foto {ziel['teil']}: F1 {ff_v} -> {ff_q}" + ("" if _rq == 0 else " (Generator rot)"), flush=True)
-        if _rq != 0 or ff_q is None or ff_q < ff_v + 0.02:
+        if _rq != 0 or ff_q is None or ff_q < ff_v - 0.02:   # Option A (Nutzer 10.11.): zurueck nur, wenn das Foto-Veto des Tors greifen wuerde
             try: _je = (json.load(open(os.path.join(LDIR, f"fotoform_r{runde}_vorpruef.json")))["teile"].get(ziel["teil"]) or {})
             except Exception: _je = {}
             _zeilen = "\n".join(f"- Foto {f}: Praezision {_je[f].get('praez')} / Recall {_je[f].get('recall')}  Overlay {LDIR}/fotoform_bilder/{ziel['teil']}_{f}_r{runde}_vorpruef.jpg"
                                 f"  (vorher: {ziel['teil']}_{f}_r{runde}_vorher.jpg)" for f in ff_fotos if f in _je)
             _rueck = (f"VORPRUEFUNG DES KREISES (automatisch, gleiche Messung wie das Tor): Dein Stand ist "
                       + ("im Generator ROT (siehe " + os.path.join(LDIR, f"vorpruef_r{runde}.log") + ")" if _rq != 0 else
-                         f"am Foto NICHT besser: Form-F1 {ff_v} -> {ff_q} (Tor verlangt keinen Rueckschritt > 0,02 und Teilgewinn >= {MIN_GEWINN}).")
+                         f"am Foto SCHLECHTER: Form-F1 {ff_v} -> {ff_q} (Tor-Veto: Foto-F1 darf um hoechstens 0,02 fallen; Gewinn >= {MIN_GEWINN} zaehlt aus Wolkenbeleg + Kanten-F1).")
                       + f"\nJe Foto (rot = Modellkante ohne Fotokante, gelb = Fotokante fehlt im Modell):\n{_zeilen}\n"
                       "Sieh dir die Overlays an (mindestens 3), benenne je Foto, welche Kante falsch/fehlend ist, und korrigiere den Generator-Stand. "
                       "Pflicht vor der Abgabe: Zaehlmerkmale (Anzahl Elemente je Flaeche) am Foto mit tools/foto_zaehlung.py belegen, wenn das Teil welche hat; "
@@ -559,7 +559,8 @@ for runde in range(1, RUNDEN + 1):
     if ff_v is not None and not ersatz:
         ff_n = ff_q if _vorab_gebaut else form_messen(wt, os.path.join(LDIR, f"teile_r{runde}_nachher"), ziel["teil"], ff_fotos, f"r{runde}_nachher")   # Vorpruefung = gleicher Stand, gleiche Messung
         if ff_n is not None:
-            vor[ziel["teil"]] = guete_form(vor_t.get(ziel["teil"], {}), ff_v); nach[ziel["teil"]] = guete_form(nach_t.get(ziel["teil"], {}), ff_n)
+            pass   # Nutzerentscheid 10.11. (Option A): Gewinn wie vor 10:58 aus Beleg + Kanten-F1; Foto-F1 nur als Veto (Rueckschritt > 0,02, s. rueck_teil).
+            # Vorher ging Foto-F1 als dritter Wert ins Mittel (guete_form) bei unveraenderter Schwelle 0,05 -> gleicher Fortschritt zaehlte 2/3, 0 Annahmen 10:58-15:30.
         print(f"Runde {runde}: Form am Foto {ziel['teil']}: F1 {ff_v} -> {ff_n} ({len(ff_fotos)} Fotos)")
     gewinn = (nach.get(ziel["teil"]) or 0) - (vor.get(ziel["teil"]) or 0)
     # kein Rueckschritt in einer der beiden Groessen (Lage ODER Form) um mehr als 0,02
