@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-036",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.66",
+ "name": "OG Fenster Gruppe 2: Aussenbreite Goldrahmen unten",
+ "mess_px": [
+  1362.0,
+  1446.0,
+  1667.0,
+  1446.0
+ ],
+ "P1": [
+  12.507,
+  9.002,
+  10.42
+ ],
+ "P2": [
+  9.953,
+  9.906,
+  10.366
+ ],
+ "dz": -0.054,
+ "dy": 0.904,
+ "dx": -2.554,
+ "abstand": 2.71,
+ "z1": 10.42,
+ "z2": 10.366,
+ "unsicherheit_rel": 0.0055,
+ "unsicherheit_m": 0.053,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.66 (+-0.15 m)"
+}

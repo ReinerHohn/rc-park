@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-033",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.66",
+ "name": "OG Fenster Gruppe 3 Konturpunkt scheitel_steg_links (Referenz Sohle linker Steg)",
+ "mess_px": [
+  1910.0,
+  1444.0,
+  1907.0,
+  1112.0
+ ],
+ "P1": [
+  7.941,
+  10.619,
+  10.342
+ ],
+ "P2": [
+  7.991,
+  10.601,
+  13.425
+ ],
+ "dz": 3.083,
+ "dy": -0.017,
+ "dx": 0.049,
+ "abstand": 3.084,
+ "z1": 10.342,
+ "z2": 13.425,
+ "unsicherheit_rel": 0.0057,
+ "unsicherheit_m": 0.054,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.66 (+-0.15 m)"
+}

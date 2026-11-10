@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-037",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.66",
+ "name": "OG Fenster Gruppe 2: Mittelspalte Achsabstand Trennstege",
+ "mess_px": [
+  1467.0,
+  1446.0,
+  1569.0,
+  1446.0
+ ],
+ "P1": [
+  11.624,
+  9.315,
+  10.402
+ ],
+ "P2": [
+  10.77,
+  9.617,
+  10.384
+ ],
+ "dz": -0.018,
+ "dy": 0.302,
+ "dx": -0.854,
+ "abstand": 0.906,
+ "z1": 10.402,
+ "z2": 10.384,
+ "unsicherheit_rel": 0.0055,
+ "unsicherheit_m": 0.043,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.66 (+-0.15 m)"
+}

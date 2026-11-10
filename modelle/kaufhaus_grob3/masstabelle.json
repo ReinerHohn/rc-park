@@ -1425,6 +1425,114 @@
    ],
    "quer_max": 0.2,
    "r_max": 3.0
+  },
+  "fenster_og_g3_lichtweite": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    7.5468,
+    10.9164
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=11.4 - z_unterkante_lot2",
+   "u0": -1.5,
+   "u1": 1.5,
+   "tiefe": 0.04,
+   "vor": 2.0,
+   "min_b": 0.5,
+   "max_b": 1.3,
+   "rand": 0.0
+  },
+  "fenster_og_g4_lichtweite": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    11.2795,
+    9.5946
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=11.4 - z_unterkante_lot2",
+   "u0": -1.5,
+   "u1": 1.5,
+   "tiefe": 0.04,
+   "vor": 2.0,
+   "min_b": 0.5,
+   "max_b": 1.3,
+   "rand": 0.0
+  },
+  "fenster_og_g3_wand_aussen_l": {
+   "typ": "ebene_abstand",
+   "o": [
+    7.4967,
+    10.775
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=11.4 - z_unterkante_lot2",
+   "u0": 1.45,
+   "u1": 1.62,
+   "vor": 3.0,
+   "quantil": 10.0
+  },
+  "fenster_og_g3_wand_aussen_r": {
+   "typ": "ebene_abstand",
+   "o": [
+    7.4967,
+    10.775
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=11.4 - z_unterkante_lot2",
+   "u0": -1.62,
+   "u1": -1.45,
+   "vor": 3.0,
+   "quantil": 10.0
+  },
+  "fenster_og_g3_stegscheitel_l": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    7.9592,
+    10.6431
+   ],
+   "z0": "=13.0 - z_unterkante_lot2",
+   "z1": "=13.8 - z_unterkante_lot2",
+   "suche": "oben",
+   "puffer": 0.01
+  },
+  "fenster_og_g3_stegscheitel_r": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    7.0543,
+    10.9635
+   ],
+   "z0": "=13.0 - z_unterkante_lot2",
+   "z1": "=13.8 - z_unterkante_lot2",
+   "suche": "oben",
+   "puffer": 0.01
+  },
+  "fenster_og_g3_glas_tiefe": {
+   "typ": "ebene_abstand",
+   "o": [
+    7.4967,
+    10.775
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "z": "=11.4 - z_unterkante_lot2",
+   "u0": -0.2,
+   "u1": 0.2,
+   "vor": 3.0,
+   "quantil": 10.0
   }
  },
  "pruefungen": [
@@ -3015,6 +3123,119 @@
    "historie": [
     "2026-11-10 angelegt (Kreis r4 helm_geschweift:w, Befund Beleg 0,56): am Stand mit Osthelm-Kopie-Schaft (0,44/0,34/0,27) muss jede Hoehe fehlschlagen"
    ]
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Lichtweite der unteren Lichter (m, Mittelwert)",
+   "wert": "fenster_og_g3_lichtweite_breite_median",
+   "soll": [
+    0.65,
+    0.77
+   ],
+   "quelle": "Foto ip_IMG_6161 (frontal 27 m, K-6161 Kamera-Bruecke, Ebene n 12,66 +-0,15 m): Lichtweite unten links/Mitte/rechts 0,71/0,71/0,71 m (M-6161-038..040), Gruppe 2 Achsabstand der Trennstege 0,91 (M-6161-037)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6161-038",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1, Bauteil fensterreihe:og, Befund 'Beleg 0,67 / Praezision 0,49'): am Altstand (breite 3,33, Lichter 0,91) ROT, Soll aus Foto 6161 (Kamera-Bruecke K-6161, Ebene 12,66), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Fenstergruppe 4 (1. OG): Lichtweite der unteren Lichter (m, Mittelwert)",
+   "wert": "fenster_og_g4_lichtweite_breite_median",
+   "soll": [
+    0.65,
+    0.77
+   ],
+   "quelle": "Foto ip_IMG_6161 (frontal 27 m, K-6161 Kamera-Bruecke, Ebene n 12,66 +-0,15 m): Wiederholung: gleiche Lichtweite 0,71 m in Gruppe 3 (M-6161-038..040) und Achsabstand 0,90-0,91 in Gruppe 2/3 (M-6161-023/037, M-6120-052)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6161-038",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1, Bauteil fensterreihe:og, Befund 'Beleg 0,67 / Praezision 0,49'): am Altstand (breite 3,33, Lichter 0,91) ROT, Soll aus Foto 6161 (Kamera-Bruecke K-6161, Ebene 12,66), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Wandflaeche links ausserhalb des Rahmens (u 1,45..1,62 von der Mitte; 0 = Wand n 12,66, Altmodell Rahmenfront -0,15)",
+   "wert": "fenster_og_g3_wand_aussen_l",
+   "soll": [
+    -0.06,
+    0.08
+   ],
+   "quelle": "Foto ip_IMG_6161 (frontal 27 m, K-6161 Kamera-Bruecke, Ebene n 12,66 +-0,15 m): Aussenbreite Goldrahmen 2,72 m (M-6161-022, M-6120-051/053 2,71-2,75; Gruppe 2: M-6161-036 2,71) -> ausserhalb |u| 1,36 nur Wand; Altmodell Rahmen bis 1,66",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6161-022",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1, Bauteil fensterreihe:og, Befund 'Beleg 0,67 / Praezision 0,49'): am Altstand (breite 3,33, Lichter 0,91) ROT, Soll aus Foto 6161 (Kamera-Bruecke K-6161, Ebene 12,66), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Wandflaeche rechts ausserhalb des Rahmens (u 1,45..1,62 von der Mitte; 0 = Wand n 12,66, Altmodell Rahmenfront -0,15)",
+   "wert": "fenster_og_g3_wand_aussen_r",
+   "soll": [
+    -0.06,
+    0.08
+   ],
+   "quelle": "Foto ip_IMG_6161 (frontal 27 m, K-6161 Kamera-Bruecke, Ebene n 12,66 +-0,15 m): Aussenbreite Goldrahmen 2,72 m (M-6161-022, M-6120-051/053 2,71-2,75; Gruppe 2: M-6161-036 2,71) -> ausserhalb |u| 1,36 nur Wand; Altmodell Rahmen bis 1,66",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6161-022",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1, Bauteil fensterreihe:og, Befund 'Beleg 0,67 / Praezision 0,49'): am Altstand (breite 3,33, Lichter 0,91) ROT, Soll aus Foto 6161 (Kamera-Bruecke K-6161, Ebene 12,66), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Scheitel des Vorhangbogens am linksen Trennsteg (|u| 0,48), z",
+   "wert": "fenster_og_g3_stegscheitel_l",
+   "soll": [
+    11.877,
+    12.037
+   ],
+   "quelle": "Foto ip_IMG_6161 (frontal 27 m, K-6161 Kamera-Bruecke, Ebene n 12,66 +-0,15 m): Stegscheitel z 13,425 links (M-6161-033) / 13,397 rechts (M-6161-035), +-0,055 m; Mittelsenke 13,34 (M-6161-034); lot2-z minus z_unterkante 1,453",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6161-033",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1, Bauteil fensterreihe:og, Befund 'Beleg 0,67 / Praezision 0,49'): am Altstand (breite 3,33, Lichter 0,91) ROT, Soll aus Foto 6161 (Kamera-Bruecke K-6161, Ebene 12,66), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Scheitel des Vorhangbogens am rechtsen Trennsteg (|u| 0,48), z",
+   "wert": "fenster_og_g3_stegscheitel_r",
+   "soll": [
+    11.877,
+    12.037
+   ],
+   "quelle": "Foto ip_IMG_6161 (frontal 27 m, K-6161 Kamera-Bruecke, Ebene n 12,66 +-0,15 m): Stegscheitel z 13,425 links (M-6161-033) / 13,397 rechts (M-6161-035), +-0,055 m; Mittelsenke 13,34 (M-6161-034); lot2-z minus z_unterkante 1,453",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6161-035",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1, Bauteil fensterreihe:og, Befund 'Beleg 0,67 / Praezision 0,49'): am Altstand (breite 3,33, Lichter 0,91) ROT, Soll aus Foto 6161 (Kamera-Bruecke K-6161, Ebene 12,66), nicht gelockert"
+   ]
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Glasebene des Mittellichts hinter der Wandebene n 12,66 (m, + = dahinter)",
+   "wert": "fenster_og_g3_glas_tiefe",
+   "soll": [
+    0.05,
+    0.3
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2.npy, Gruppe 3, |u|<0,35, z 10,4-13,4): Lichtpunkte n p50 12,38-12,47 gegen Wand p50 12,67 (0,2-0,29 dahinter); Fotos: Glasecke trianguliert n 12,56 (M-6120-055 +-0,08) / 12,60 (M-6132-001 +-0,06) = 0,06-0,10 dahinter, Laibung in 6132/6117/6118/6120 sichtbar. Quellen weichen im Betrag ab -> Soll deckt beide (0,05-0,30), nicht gemittelt",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6132-001",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1, fensterreihe:og): am Altstand (Glas in der Wandebene, -0,03) ROT; Soll nicht gelockert; Rahmen-Aussenkanten-Pruefungen (Rahmenfront 12,81) entfernt: Tiefe der Rahmenfront ist widerspruechlich belegt (M-6120-057 12,805 gegen M-6132-002 12,646)",
+    "2026-11-10 Rahmenfront-Tiefe 0,15 -> 0,05 (Foto M-6132-002/M-6120-056 + Wolke buendig); Soll unveraendert"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -3433,21 +3654,16 @@
    "status": "offen"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
-   "auto_id": "fehlteile-6261-546-1170",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 26.18,
-   "z_bis": 26.18,
-   "xyz": [
-    15.79,
-    -2.09,
-    26.18
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.18 m, y=-2.09 m (Zelle [546, 1170, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+   "datum": "2026-11-10",
+   "wer": "Kreis r1 (fensterreihe:og)",
+   "text": "Befund (konvergenz_bericht): fensterreihe:og Wolkenbeleg 0,67, Kanten-Praezision 0,49. Sichtbefund Overlay 6120/6161: die Fenstergruppen des 1. OG sind im Modell ca. 0,6 m zu BREIT (3,33 statt 2,72 m Aussenbreite, Seitenlichter 0,91 statt 0,71 m); Mittelspalte, Lage (u), Pitch 3,96 stimmen. Ursache: Aussenpfosten waren im Kantengitter nur 1 von 10 belegt, Breite 3 x 0,912 + 4 x 0,147 'abgeleitet'.",
+   "naechster_schritt": "breite 2,72 / rahmen_b 0,105 / pfosten_b 0,19, Vorhangbogenkontur neu aus M-6161-028..035; Pruefungen fenster_og_* (Lichtweite, Rahmen-Aussenkante, Stegscheitel) am Altstand rot, danach Generator"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Kreis r1 (fensterreihe:og)",
+   "text": "Tiefenlage OG-Fenster: (a) Rahmenfront: M-6132-002 (63,5 Grad) 12,646, M-6120-056 12,671, Wolke 12,64-12,65 sagen buendig; M-6120-057 12,805 (30 Grad) Ausreisser -> tiefe 0,05 (Relief ANNAHME), Beleg 0,863 -> 0,979 / Praezision 0,496 -> 0,683. (b) Glasebene 0,06-0,10 hinter der Wand (Foto, M-6120-055/M-6132-001) gegen 0,27 (Wolke): Modell 0,2 = ANNAHME, Betrag offen.",
+   "naechster_schritt": "Schnitt quer durch die Laibung: Triangulation derselben Steg-/Glaskante in 3 Fotos mit >= 60 Grad Schnittwinkel (6117/6120/6145), Seitenansicht Laibung am Erker-Fenster-Nahfoto (Handyserie) holen"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

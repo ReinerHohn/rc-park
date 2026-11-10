@@ -1,0 +1,39 @@
+{
+ "id": "M-6120-055",
+ "typ": "triangulation",
+ "foto": "6120",
+ "name": "OG Fenster Gruppe 3: Glasecke oben links des unteren rechten Lichts (Tiefe n)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6120",
+   "px": [
+    2210.0,
+    795.0
+   ]
+  },
+  {
+   "kamera": "K-6132",
+   "px": [
+    1881.0,
+    1758.0
+   ]
+  }
+ ],
+ "P": [
+  6.94,
+  10.867,
+  11.654
+ ],
+ "strahl_abstand_m": [
+  0.044,
+  0.044
+ ],
+ "schnittwinkel_grad": [
+  29.8
+ ],
+ "z": 11.654,
+ "unsicherheit_m": 0.076,
+ "massstab_von": "Kameras K-6120, K-6132 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 12.56,
+ "u": 2.914
+}

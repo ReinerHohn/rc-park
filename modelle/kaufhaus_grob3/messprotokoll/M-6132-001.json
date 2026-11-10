@@ -1,0 +1,39 @@
+{
+ "id": "M-6132-001",
+ "typ": "triangulation",
+ "foto": "6132",
+ "name": "OG Fenster Gruppe 3: Mittelscheibe Glasecke oben links (Tiefe n), Paar 6132/6117",
+ "beobachtungen": [
+  {
+   "kamera": "K-6132",
+   "px": [
+    1726.0,
+    1702.0
+   ]
+  },
+  {
+   "kamera": "K-6117",
+   "px": [
+    2704.0,
+    1695.0
+   ]
+  }
+ ],
+ "P": [
+  7.738,
+  10.628,
+  12.078
+ ],
+ "strahl_abstand_m": [
+  0.038,
+  0.038
+ ],
+ "schnittwinkel_grad": [
+  63.6
+ ],
+ "z": 12.078,
+ "unsicherheit_m": 0.06,
+ "massstab_von": "Kameras K-6132, K-6117 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 12.601,
+ "u": 3.747
+}

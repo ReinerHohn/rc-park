@@ -1,0 +1,74 @@
+{
+ "id": "Z-6161-003",
+ "typ": "zaehlung",
+ "foto": "6161",
+ "datei": "6161_ip_IMG_6161.jpg",
+ "was": "Kaufhaus 1. OG Hauptfassade, ip_IMG_6161: Lichtreihen uebereinander je Seitenlicht (untere Reihe + obere Reihe unter dem Vorhangbogen), G2,G3,G4 voll",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-10",
+ "punkte": [
+  {
+   "flaeche": "G2",
+   "art": "voll",
+   "x": 1417.0,
+   "y": 1385.0
+  },
+  {
+   "flaeche": "G2",
+   "art": "voll",
+   "x": 1417.0,
+   "y": 1245.0
+  },
+  {
+   "flaeche": "G3",
+   "art": "voll",
+   "x": 1860.0,
+   "y": 1385.0
+  },
+  {
+   "flaeche": "G3",
+   "art": "voll",
+   "x": 1860.0,
+   "y": 1250.0
+  },
+  {
+   "flaeche": "G4",
+   "art": "voll",
+   "x": 2311.0,
+   "y": 1385.0
+  },
+  {
+   "flaeche": "G4",
+   "art": "voll",
+   "x": 2311.0,
+   "y": 1250.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "G2": {
+   "art": "voll",
+   "n": 2
+  },
+  "G3": {
+   "art": "voll",
+   "n": 2
+  },
+  "G4": {
+   "art": "voll",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 2,
+  "voll_sichtbare_flaechen": 3
+ },
+ "bild": "Z-6161-003.jpg",
+ "ausschnitt": [
+  1167,
+  995,
+  2561,
+  1635
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

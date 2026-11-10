@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-044",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.66",
+ "name": "OG Fenster Gruppe 3: aeusserer Rahmen rechts",
+ "mess_px": [
+  2107.0,
+  1400.0,
+  2117.0,
+  1400.0
+ ],
+ "P1": [
+  6.324,
+  11.191,
+  10.704
+ ],
+ "P2": [
+  6.242,
+  11.22,
+  10.702
+ ],
+ "dz": -0.002,
+ "dy": 0.029,
+ "dx": -0.082,
+ "abstand": 0.087,
+ "z1": 10.704,
+ "z2": 10.702,
+ "unsicherheit_rel": 0.0057,
+ "unsicherheit_m": 0.037,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.66 (+-0.15 m)"
+}

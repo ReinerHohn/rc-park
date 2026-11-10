@@ -1,0 +1,39 @@
+{
+ "id": "M-6120-057",
+ "typ": "triangulation",
+ "foto": "6120",
+ "name": "OG Fenster Gruppe 3: Goldsteg rechts am Kaempfer (Tiefe n)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6120",
+   "px": [
+    2198.0,
+    760.0
+   ]
+  },
+  {
+   "kamera": "K-6132",
+   "px": [
+    1841.0,
+    1729.0
+   ]
+  }
+ ],
+ "P": [
+  7.118,
+  11.063,
+  11.67
+ ],
+ "strahl_abstand_m": [
+  0.007,
+  0.007
+ ],
+ "schnittwinkel_grad": [
+  30.1
+ ],
+ "z": 11.67,
+ "unsicherheit_m": 0.038,
+ "massstab_von": "Kameras K-6120, K-6132 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 12.805,
+ "u": 3.017
+}

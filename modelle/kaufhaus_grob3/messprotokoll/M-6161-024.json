@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-024",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.66",
+ "name": "OG Fenster Gruppe 3: Sohle -> Scheitel linker Steg",
+ "mess_px": [
+  1910.0,
+  1444.0,
+  1906.0,
+  1111.0
+ ],
+ "P1": [
+  7.941,
+  10.619,
+  10.342
+ ],
+ "P2": [
+  7.999,
+  10.598,
+  13.435
+ ],
+ "dz": 3.093,
+ "dy": -0.02,
+ "dx": 0.058,
+ "abstand": 3.093,
+ "z1": 10.342,
+ "z2": 13.435,
+ "unsicherheit_rel": 0.0057,
+ "unsicherheit_m": 0.054,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.66 (+-0.15 m)"
+}

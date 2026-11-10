@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_062358a062358/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -14,9 +14,9 @@
   "fenster2_sohl": 8.856999847412109,
   "erker_w_unterkante": 8.18699988555908,
   "lichter_g2_anzahl": 3.0,
-  "lichter_g2_breite_median": 0.92,
-  "lichter_g2_breite_max": 0.92,
-  "lichter_g2_ebene_abstand": 2.000783732996581,
+  "lichter_g2_breite_median": 0.68,
+  "lichter_g2_breite_max": 0.72,
+  "lichter_g2_ebene_abstand": 2.1007525467169246,
   "handlauf_z": 8.25699973297119,
   "helm_w_fussbreite_x": 2.3264116744995116,
   "helm_w_fussbreite_y": 2.4409503021240226,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548633210057,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.13983343541622162,
-  "wand_anteil_unter": 0.00036666666666666667,
+  "wand_pq": 0.11989995092153549,
+  "wand_anteil_unter": 0.0005666666666666667,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,15 +50,15 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 2.128511469441953,
-  "teile_ueberhang": 0.00817,
+  "teile_ueberhang": 0.00769,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
-  "lichter_g2_bei_kaempfer_seite_breite_median": 0.88,
-  "lichter_g2_bei_kaempfer_seite_breite_max": 0.88,
-  "lichter_g2_bei_kaempfer_seite_ebene_abstand": 1.999346112971862,
+  "lichter_g2_bei_kaempfer_seite_breite_median": 0.72,
+  "lichter_g2_bei_kaempfer_seite_breite_max": 0.72,
+  "lichter_g2_bei_kaempfer_seite_ebene_abstand": 2.0996535691410827,
   "lichter_g2_bei_kaempfer_mitte_anzahl": 2.0,
-  "lichter_g2_bei_kaempfer_mitte_breite_median": 0.8,
-  "lichter_g2_bei_kaempfer_mitte_breite_max": 0.8,
-  "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.000076058674822,
+  "lichter_g2_bei_kaempfer_mitte_breite_median": 0.68,
+  "lichter_g2_bei_kaempfer_mitte_breite_max": 0.68,
+  "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.1002299324808607,
   "laube_rueckwand_n728_z7": -0.00332701019786219,
   "helm_o_r_14_64": 1.1110442019599438,
   "helm_o_r_16_18": 0.6410005316999677,
@@ -106,7 +106,7 @@
   "figur3_spitze": 9.146999999999991,
   "figur4_scheitel": 11.886999999999993,
   "figur2_sohle": 9.836999702453612,
-  "figur2_kranz_d": 0.5662559077952412,
+  "figur2_kranz_d": 0.5662559077950404,
   "figur2_stufe_d": 0.309999985156223,
   "figur2_bein_up": 0.2327845948786125,
   "figur2_bein_um": 0.19721574802266204,
@@ -140,7 +140,7 @@
   "helm_w_r_14_38": 1.1870509785045464,
   "helm_w_r_14_88": 1.0070557810130052,
   "helm_w_knauf_r_21_35": 0.19176879206557926,
-  "gesims_front_z14_35": 0.3371927457752357,
+  "gesims_front_z14_35": 0.3371927464508948,
   "gesims_front_z14_55": 0.17330339367812586,
   "gesims_front_z14_78": 0.07411555109453749,
   "bogen3_archivolt_z": 5.9869999999999814,
@@ -148,7 +148,20 @@
   "helm_o_r_19_40": 0.2808575058922347,
   "helm_w_r_16_97": 0.50156475290109,
   "helm_w_r_17_76": 0.4115380508985133,
-  "helm_w_r_18_58": 0.3365087766423552
+  "helm_w_r_18_58": 0.3365087766423552,
+  "fenster_og_g3_lichtweite_anzahl": 3.0,
+  "fenster_og_g3_lichtweite_breite_median": 0.68,
+  "fenster_og_g3_lichtweite_breite_max": 0.72,
+  "fenster_og_g3_lichtweite_ebene_abstand": 2.0994505749888477,
+  "fenster_og_g4_lichtweite_anzahl": 3.0,
+  "fenster_og_g4_lichtweite_breite_median": 0.68,
+  "fenster_og_g4_lichtweite_breite_max": 0.72,
+  "fenster_og_g4_lichtweite_ebene_abstand": 2.0994977929358005,
+  "fenster_og_g3_wand_aussen_l": 0.0008463459998049316,
+  "fenster_og_g3_wand_aussen_r": -0.002103306968940899,
+  "fenster_og_g3_stegscheitel_l": 11.946999999999992,
+  "fenster_og_g3_stegscheitel_r": 11.946999999999992,
+  "fenster_og_g3_glas_tiefe": 0.19928416741884147
  },
  "pruefungen": [
   {
@@ -353,7 +366,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.13983343541622162,
+   "wert": 0.11989995092153549,
    "soll": [
     0.0348,
     100
@@ -383,7 +396,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00817,
+   "wert": 0.00769,
    "soll": [
     0,
     0.01
@@ -723,7 +736,7 @@
   },
   {
    "name": "Figur 2: Konsole Kranz Durchmesser (Rundkonsole, Silhouettenspitzen)",
-   "wert": 0.5662559077952412,
+   "wert": 0.5662559077950404,
    "soll": [
     0.52,
     0.64
@@ -1043,7 +1056,7 @@
   },
   {
    "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.35 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.3371927457752357,
+   "wert": 0.3371927464508948,
    "soll": [
     0.25,
     0.35
@@ -1127,6 +1140,76 @@
    "soll": [
     0.3,
     0.36
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Lichtweite der unteren Lichter (m, Mittelwert)",
+   "wert": 0.68,
+   "soll": [
+    0.65,
+    0.77
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 4 (1. OG): Lichtweite der unteren Lichter (m, Mittelwert)",
+   "wert": 0.68,
+   "soll": [
+    0.65,
+    0.77
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Wandflaeche links ausserhalb des Rahmens (u 1,45..1,62 von der Mitte; 0 = Wand n 12,66, Altmodell Rahmenfront -0,15)",
+   "wert": 0.0008463459998049316,
+   "soll": [
+    -0.06,
+    0.08
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Wandflaeche rechts ausserhalb des Rahmens (u 1,45..1,62 von der Mitte; 0 = Wand n 12,66, Altmodell Rahmenfront -0,15)",
+   "wert": -0.002103306968940899,
+   "soll": [
+    -0.06,
+    0.08
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Scheitel des Vorhangbogens am linksen Trennsteg (|u| 0,48), z",
+   "wert": 11.946999999999992,
+   "soll": [
+    11.877,
+    12.037
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Scheitel des Vorhangbogens am rechtsen Trennsteg (|u| 0,48), z",
+   "wert": 11.946999999999992,
+   "soll": [
+    11.877,
+    12.037
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenstergruppe 3 (1. OG): Glasebene des Mittellichts hinter der Wandebene n 12,66 (m, + = dahinter)",
+   "wert": 0.19928416741884147,
+   "soll": [
+    0.05,
+    0.3
    ],
    "ok": true,
    "status": "ok"

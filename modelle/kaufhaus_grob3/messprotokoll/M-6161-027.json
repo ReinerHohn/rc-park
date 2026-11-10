@@ -1,0 +1,32 @@
+{
+ "id": "M-6161-027",
+ "foto": "6161",
+ "kamera": "K-6161",
+ "ebene": "0.3338,0.9426,0=12.66",
+ "name": "OG Fenster Gruppe 3: Breite oberes Mittellicht (Rahmenaussen)",
+ "mess_px": [
+  1905.0,
+  1229.0,
+  2000.0,
+  1229.0
+ ],
+ "P1": [
+  7.999,
+  10.598,
+  12.319
+ ],
+ "P2": [
+  7.204,
+  10.88,
+  12.298
+ ],
+ "dz": -0.021,
+ "dy": 0.282,
+ "dx": -0.795,
+ "abstand": 0.844,
+ "z1": 12.319,
+ "z2": 12.298,
+ "unsicherheit_rel": 0.0056,
+ "unsicherheit_m": 0.042,
+ "massstab_von": "Kamera K-6161 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.66 (+-0.15 m)"
+}
