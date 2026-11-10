@@ -4786,10 +4786,10 @@
    "pitch": 4.9578,
    "breite": 1.95,
    "unterseite_z": 3.2,
-   "kaempfer_z": 6.18,
+   "kaempfer_z": 6.27,
    "scheitel_z": 6.28,
    "wand_n": 7.24,
-   "tiefe": 0.16,
+   "tiefe": 0.01,
    "rahmen_b": 0.1,
    "pfosten_b": 0.1,
    "riegel_z": 5.37,
@@ -4808,22 +4808,26 @@
     "bucht": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | Bucht von rechts (0 = rechts), einmal aus alter Arkade bestimmt",
     "u_mitte": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
     "unterseite_z": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
-    "kaempfer_z": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "kaempfer_z": "Foto 6119 (K-6119): Rahmenoberkante gerade/flach bei z 6,28 (M-6119-001 Pixelzeile 2556 von x 458 bis 875, Ausschnitt rundekreis2_fensterreihe_eg0_6119.jpg), kein First; Rahmen links/rechts 11,495..13,445 (breite 1,95); Hoehe 3,08 = 6,28 - 3,20 (M-6119-003). Altmodell: Ecken 6,18 + Giebel 6,28 (Kaempfer = Oberkante - rahmen_b: Rechenfehler)",
     "scheitel_z": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
     "riegel_z": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
     "pitch": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "breite": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
     "wand_n": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
-    "einbindung": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "einbindung": "Foto-Triangulation Kreuzungspunkt Setzholz/Kaempfer n 7,249 (M-6174-001 +-0,016, Paar 6174/6213 110 Grad; M-6119-008, 3 Kameras): Vorderflaeche 0,03 hinter der Wandfront 7,28 -> tiefe 0,01 (Front 7,25); Wolke Pfosten n 7,21-7,27 stuetzt. einbindung 0,20: Setzholz/Kaempfer reichen bis in den Nischengrund (n 7,05 = Glasebene Wolke 7,02-7,06), Laibung in 6174/6213 tief sichtbar (Dicke Foto nicht gemessen, ANNAHME bis Nischengrund)",
     "riegel_h": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
     "n_lichter": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
     "rahmen_b": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
     "pfosten_b": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
-    "tiefe": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "tiefe": "Foto-Triangulation Kreuzungspunkt Setzholz/Kaempfer n 7,249 (M-6174-001 +-0,016, Paar 6174/6213 110 Grad; M-6119-008, 3 Kameras): Vorderflaeche 0,03 hinter der Wandfront 7,28 -> tiefe 0,01 (Front 7,25); Wolke Pfosten n 7,21-7,27 stuetzt. einbindung 0,20: Setzholz/Kaempfer reichen bis in den Nischengrund (n 7,05 = Glasebene Wolke 7,02-7,06), Laibung in 6174/6213 tief sichtbar (Dicke Foto nicht gemessen, ANNAHME bis Nischengrund)",
     "kiel": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
     "glas_d": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
     "glas_n": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
-    "zaehlung": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)"
+    "zaehlung": "Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
+    "nische_tiefe": "Laibung (Nische) wie die bisherige quader:eg0_nische (n 7,07..7,30, Fotos 6174/6213/6119: Lichter tief in der Laibung; Glas in der Wolke 7,02-7,06 = 0,22-0,26 hinter der Wandfront 7,28); Wandfront 7,28 = M-6119-001..003; jetzt je Licht statt eines Quaders, damit Setzholz/Kaempfer (Front 7,25 hinter der Wand) nicht mitgeschnitten werden",
+    "nische_front_n": "Laibung (Nische) wie die bisherige quader:eg0_nische (n 7,07..7,30, Fotos 6174/6213/6119: Lichter tief in der Laibung; Glas in der Wolke 7,02-7,06 = 0,22-0,26 hinter der Wandfront 7,28); Wandfront 7,28 = M-6119-001..003; jetzt je Licht statt eines Quaders, damit Setzholz/Kaempfer (Front 7,25 hinter der Wand) nicht mitgeschnitten werden",
+    "kontur": "Foto 6119 (K-6119): Rahmenoberkante gerade/flach bei z 6,28 (M-6119-001 Pixelzeile 2556 von x 458 bis 875, Ausschnitt rundekreis2_fensterreihe_eg0_6119.jpg), kein First; Rahmen links/rechts 11,495..13,445 (breite 1,95); Hoehe 3,08 = 6,28 - 3,20 (M-6119-003). Altmodell: Ecken 6,18 + Giebel 6,28 (Kaempfer = Oberkante - rahmen_b: Rechenfehler)",
+    "pfosten_oben_z": "Foto 6119 (K-6119): Rahmenoberkante gerade/flach bei z 6,28 (M-6119-001 Pixelzeile 2556 von x 458 bis 875, Ausschnitt rundekreis2_fensterreihe_eg0_6119.jpg), kein First; Rahmen links/rechts 11,495..13,445 (breite 1,95); Hoehe 3,08 = 6,28 - 3,20 (M-6119-003). Altmodell: Ecken 6,18 + Giebel 6,28 (Kaempfer = Oberkante - rahmen_b: Rechenfehler); Kopf 6,23 = 0,05 im oberen Rahmenband (6,18..6,28), ANNAHME Ueberlappung gegen Splitter"
    },
    "historie": [
     {
@@ -4899,13 +4903,70 @@
        "Z-6119-001"
       ]
      }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis r2 (093550, fensterreihe:eg0)",
+     "alt": {
+      "tiefe": 0.16,
+      "einbindung": 0.04
+     },
+     "neu": {
+      "tiefe": 0.01,
+      "einbindung": 0.2
+     }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis r2 (093550, fensterreihe:eg0)",
+     "alt": {
+      "quader:eg0_nische": "u 11,56..13,38 n 7,07..7,30 z 3,28..6,2 (Quader-Ausschnitt)"
+     },
+     "neu": {
+      "nische_tiefe": 0.17,
+      "nische_front_n": 7.28
+     }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis r2 (093550, fensterreihe:eg0)",
+     "alt": {
+      "kaempfer_z": 6.18,
+      "kontur": null
+     },
+     "neu": {
+      "kaempfer_z": 6.27,
+      "kontur": "Rechteck 1,95 x 3,08",
+      "pfosten_oben_z": 6.23
+     }
     }
    ],
-   "einbindung": 0.04,
+   "einbindung": 0.2,
    "n_lichter": 2,
    "zaehlung": [
     "Z-6119-001"
-   ]
+   ],
+   "nische_tiefe": 0.17,
+   "nische_front_n": 7.28,
+   "kontur": [
+    [
+     -0.975,
+     0.0
+    ],
+    [
+     0.975,
+     0.0
+    ],
+    [
+     0.975,
+     3.08
+    ],
+    [
+     -0.975,
+     3.08
+    ]
+   ],
+   "pfosten_oben_z": 6.23
   },
   {
    "typ": "fensterreihe:eg1",
@@ -5401,7 +5462,9 @@
     0.9426
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
-   "quelle": "Glasnische hinter dem Rahmen von fensterreihe:eg0 (Rahmeninnenkante = Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebe...); Tiefe 0,23 wie eg1_nische (Glas trianguliert 7,11-7,20 = M-6120-022..024, ANNAHME gleicher Fenstertyp)"
+   "quelle": "Glasnische hinter dem Rahmen von fensterreihe:eg0 (Rahmeninnenkante = Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebe...); Tiefe 0,23 wie eg1_nische (Glas trianguliert 7,11-7,20 = M-6120-022..024, ANNAHME gleicher Fenstertyp)",
+   "aktiv": false,
+   "hinweis": "ersetzt durch fensterreihe:eg0 nische_tiefe 0,17 / nische_front_n 7,28 (Kreis r2 10.11.): der Quader-Ausschnitt schnitt das Setzholz/den Kaempfer (Front 7,25) mit weg"
   },
   {
    "typ": "quader:eg2_nische",

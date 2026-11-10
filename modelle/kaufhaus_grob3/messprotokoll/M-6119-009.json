@@ -1,0 +1,32 @@
+{
+ "id": "M-6119-009",
+ "foto": "6119",
+ "kamera": "K-6119",
+ "ebene": "0.3338,0.9426,0=7.25",
+ "name": "eg0 Setzholz Vorderflaeche Breite (Ebene 7,25)",
+ "mess_px": [
+  642.0,
+  2690.0,
+  664.0,
+  2690.0
+ ],
+ "P1": [
+  14.244,
+  2.647,
+  5.653
+ ],
+ "P2": [
+  14.148,
+  2.681,
+  5.653
+ ],
+ "dz": 0.001,
+ "dy": 0.034,
+ "dx": -0.096,
+ "abstand": 0.101,
+ "z1": 5.653,
+ "z2": 5.653,
+ "unsicherheit_rel": 0.0019,
+ "unsicherheit_m": 0.021,
+ "massstab_von": "Kamera K-6119 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.25 (+-0.03 m)"
+}

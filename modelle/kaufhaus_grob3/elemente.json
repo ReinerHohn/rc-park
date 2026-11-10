@@ -524,6 +524,14 @@
  },
  {
   "seite": "alle",
+  "element": "Fensterreihe: Lichter in der Laibung (Nische von Wandfront 7.28 bis 7.07, Pfosten/Riegel bis auf den Nischengrund)",
+  "quelle": "Laibung (Nische) wie die bisherige quader:eg0_nische (n 7,07..7,30, Fotos 6174/6213/6119: Lichter tief in der Laibung; Glas in der Wolke 7,02-7,06 = 0,22-0,26 hinter der Wandfront 7,28); Wandfront 7,28 = M-6119-001..003; jetzt je Licht statt eines Quaders, damit Setzholz/Kaempfer (Front 7,25 hinter der Wand) nicht mitgeschnitten werden",
+  "nische_tiefe": 0.17,
+  "nische_front_n": 7.28,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Fensterreihe 1 Kielbogenfenster",
   "quelle": "Anzahl Z-6119-001 (Regel 9); Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich) | Lage: Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebene 7,28: M-6119-001 (oben 6,28, along 11,49..13,44), M-6119-002 (Riegel 5,37), M-6119-003 (unten 3,20); Zaehlung Z-6119-001 (2+2 Lichter); Kaempfer = Oberkante - rahmen_b; Rahmen/Pfosten/Tiefe wie eg1 (ANNAHME gleicher Fenstertyp, am Foto gleich)",
   "n_fenster": 1,
@@ -531,10 +539,10 @@
   "pitch": 4.958,
   "breite": 1.95,
   "unterseite_z": 3.2,
-  "kaempfer_z": 6.18,
+  "kaempfer_z": 6.27,
   "scheitel_z": 6.28,
   "wand_n": 7.24,
-  "tiefe": 0.16,
+  "tiefe": 0.01,
   "seite_name": "alle"
  },
  {
@@ -601,18 +609,6 @@
   "n1": 7.3,
   "z0": 2.78,
   "z1": 3.9,
-  "seite_name": "alle"
- },
- {
-  "seite": "alle",
-  "element": "Quader (ausschnitt)",
-  "quelle": "Glasnische hinter dem Rahmen von fensterreihe:eg0 (Rahmeninnenkante = Foto 6119 (K-6119 Kamera-Bruecke) auf der gemessenen Wandebe...); Tiefe 0,23 wie eg1_nische (Glas trianguliert 7,11-7,20 = M-6120-022..024, ANNAHME gleicher Fenstertyp)",
-  "u0": 11.56,
-  "u1": 13.38,
-  "n0": 7.07,
-  "n1": 7.3,
-  "z0": 3.28,
-  "z1": 6.2,
   "seite_name": "alle"
  },
  {
@@ -974,9 +970,10 @@
  },
  {
   "seite": "alle",
-  "element": "Fensterreihe: Lichter 0.20 m in der Laibung (Nische in der Wand, Pfosten/Riegel bis auf den Nischengrund)",
+  "element": "Fensterreihe: Lichter in der Laibung (Nische von Wandfront 12.66 bis 12.46, Pfosten/Riegel bis auf den Nischengrund)",
   "quelle": "Lichter in der Laibung: Wolke lot2 j_voll_lot2.npy, Gruppe 3/4 (|u|<1,5, z 10,4-13,4): Glas-/Lichtpunkte n p50 12,38-12,41 (p10 12,31-12,38) gegen Wandebene/Aussenwand p50 12,67 = 0,26-0,29 hinter der Wand; Fotos: Laibung sichtbar in 6132/6117/6118/6120, Glasecke trianguliert n 12,56 (M-6120-055, +-0,08) / 12,60 (M-6132-001, +-0,06) = 0,06-0,10 hinter der Wand. Quellen weichen im Betrag ab (Foto 0,06-0,10 gegen Wolke 0,27) -> 0,2 m = ANNAHME analog EG-Nische (eg1_nische 0,21-0,23), Betrag offen (beobachtungen_offen)",
   "nische_tiefe": 0.2,
+  "nische_front_n": 12.66,
   "seite_name": "alle"
  },
  {
