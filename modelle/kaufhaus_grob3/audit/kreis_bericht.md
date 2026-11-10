@@ -1,43 +1,43 @@
-# Kreis-Bericht r3 – gaubenreihe:oben (kaufhaus_grob3), Lauf 20261110_024143a024143
+# Kreis-Bericht a021633 r4: helm_geschweift:o (kaufhaus_grob3, 2026-11-10)
+Stand: nichts committet. Branch kreis/kaufhaus_grob3/20261110_021633a021633-r4.
 
-**Kern:** Die in Runde R2 (Lauf a021332, Commit fa26647) angenommene und abgenommene Neubelegung der oberen Gaubenreihe war nie in main
-gelandet (Merge-Konflikt nur in Bau-Erzeugnissen). Diese Runde hat die QUELLEN (objekt.json, masstabelle.json, tools/baukasten_gen.py,
-Messprotokolle K-*/M-6259-001..013, Logbuch, Lehren) per Cherry-Pick uebernommen, Bau-Erzeugnisse per Neubau auf main erzeugt und neu nachgemessen.
-Keine neue Messung, kein neuer Generatoreingriff in dieser Runde (ehrlich: die Fachergebnisse sind die aus R2, hier selbst nachgeprueft).
-
-## 1. Formbeschreibung (aus R2-Logbuch `modelle/LOGBUCH_GAUBEN_OBEN_R2_2026-11-10.md`, Fotos 6259, c12, 6162, j05 selbst im Overlay angesehen)
-Schleppgauben: Holz-Fensterkasten 1,02 m breit, 0,83 m hoch mit Rundbogenfenster und Fensterbank; darueber ziegelgedecktes Vordach
-(1,45 m breit, 0,22 m vor der Stirn, dreieckige Wangen ca. 1,5 m zurueck in den Hang). Formfamilie `schlepp` (baukasten_gen.py) mit
-generischen Vordach-Parametern. Alte Fehlform: Stirn 1,66 m hoch, Pultdach 2,5 m, kein Vordach.
+## 1. Formbeschreibung (Stufe 0)
+Fotos (alle angesehen): nu3b (Nahfoto ~17 m), nuaca (21 m), 6132 (22 m schraeg), 6161 (29 m Uebersicht), 6145 (33 m). Helmachse (18,72/6,34) vorher in jedes Foto projiziert (Z-Ticks je 1 m, Rohbilder `agent_scratch_kreis4/achse_*.jpg`).
+- Fuss/Traufe: Ziegelhaut laeuft stetig konkav bis auf das Erkergesims (z ~13,3); Traufspitzen links/rechts nahezu waagerecht, Gesims-Oberkante z ~13,2-13,3; kein senkrechter Kranz.
+- Schweifung z 13,3-16: stark konkav; Schaft z 16-20 mit Graten und hellen Ziegelstreifen; Kupfernadel z 20-21,1; Kugel (leicht abgeflachte Zwiebel, 0,40 m breit) Mitte z 21,33; darueber duenne Stange mit Fahne bis 22,78.
+- Grundriss regelmaessiges Achteck, eine Flaeche zur Strasse (3 Grate von vorn gezaehlt, Rueckseite ANNAHME Spiegelung). Sitzt auf dem Erkergesims, gleiche Achse (Kugel-Achse 15,51/12,24 = Helmachse +-0,02 m).
+- Altmodell anders: Profil unten (R1 behoben: Kranz 1,45 senkrecht, Traufring z 14,15) und Kugel 0,67 m zu hoch (z 22,0).
+- Formfamilie: bestehende `helm_geschweift` (N-Eck, Profil r(z), Kranz, Knauf) reicht -> keine neue Familie.
 
 ## 2. Zaehlungen
-2 Gauben, Z-018-006 (Foto 018). Die Notiz "Giebelgauben" ist durch 6162/6259 widerlegt.
+Z-nu3b-001 (aus R1 uebernommen): 3 Grate in Bildzeile 1000, N=8 bleibt ANNAHME (Rueckseite nie sichtbar). Keine neue Zaehlung.
 
-## 3. Pruefungen
-Vorher (alter Stand, R2): 8 neue Pruefungen rot (Vordach-Vorderkante, Halbbreite beidseitig, Dachhoehe, je Gaube); nachher alle gruen,
-Sollwerte nicht gelockert. Quellen: M-6259-001..013 (K-c12, K-6259, K-6162, +-0,13 m).
-Diese Runde: `tools/bauen_abnehmen.sh kaufhaus_grob3` -> "alle Pruefungen bestanden" (1 Widerspruch offen, 45 Beobachtungen ohne Pruefung);
-`regression.py --pruefen` -> identisch. Wolkenbeleg gaubenreihe:oben 0,48 -> 0,592 (Median-Abstand 0,124 m).
+## 3. Pruefungen (vorher -> nachher, Quelle)
+| Pruefung | vorher | nachher | Soll | Quelle |
+|---|---|---|---|---|
+| helm_o_r_13_45/14_12/14_38/14_88 (aus R1) | rot am Runde-7-Stand | gruen | siehe masstabelle | Wolke lot2 + Foto-Gegenprobe (W-helm_o-profil) |
+| helm_o_knauf_r_21_33 | 0,11 ROT | 0,21 gruen | 0,17..0,25 | M-nu3b-009 (5 Fotos Strahlschnitt) |
+| helm_o_knauf_r_22_00 | 0,16 ROT | 0,05 gruen | 0..0,07 | M-nu3b-009 |
+Abnahme `tools/bauen_abnehmen.sh kaufhaus_grob3`: alle Pruefungen bestanden (1 vorbestehender Widerspruch). Wolkenbeleg Helm O 0,46 -> 0,605, Median 0,087 m; Kanten je Band unveraendert.
 
-## 4. Overlays (selbst angesehen)
-- modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis2_gaubenreihe_oben_alt.jpg / _neu.jpg / _alt_nah.jpg / _neu_nah.jpg
-  (Fotos 6259, c12, 6162, j05; Vorher/Nachher). Nachher: Kasten, Vordach, Wange sitzen auf den Fotokanten.
+## 4. Overlays (links Foto, rechts rot = Altstand, gruen = neu; nur Grate + Kugelkreis, ohne Sichtbarkeitstest)
+modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis4_helm_geschweift_o_{nu3b,nuaca,6132,6161,6145}.jpg
 
 ## 5. Fehlerliste
-- trifft: Fensterkasten-Breite/Hoehe, Vordach-Vorderkante und -Breite, Wange (6259, c12, 6162).
-- trifft nicht / offen: Vordachrueckseite (Ziegelflaeche) in c12 ca. 0,4 m hoeher als Modell (dach_tiefe aus 1 Punkt +-0,25 m, Widerspruch 6259 offen);
-  Stirn in c12 ca. 0,1 m zu breit; Gaube A/B real 0,14 m Hoehenunterschied, Modell gleich.
-- nicht modelliert: Rundbogenfenster, Konsolen unter dem Vordach, Fensterbankprofil. ANNAHME: vordach_dicke 0,14 m, vor.
-- ungeprueft: Gaube A nur trianguliert, nicht einzeln im Overlay. Lagecheck teile_lage_pruefen markiert die Gauben nicht.
-- Wolkenbeleg bleibt <1: Wolke liegt am Dach ca. 1 m zu tief (altes Ergebnis), Vordach fuer die Wolke unsichtbar.
+- Traufe/Fuss (Vorderkante, Gesims): trifft (nu3b, nuaca, 6161 selbst angesehen); 6132/6145 nur teilweise.
+- Schaft/Grate z 15-20: trifft (nuaca, 6161, nu3b angesehen).
+- Kugel: trifft jetzt (nuaca, 6132 angesehen, Triangulation 5 Fotos). Radius 0,2 ANNAHME aus Bildbreite.
+- Fahnenstange/Fahne: nur als duenne Stange, Fahne nicht modelliert (ungeprueft/bewusst weggelassen).
+- Schweifung z 13,6-14,5: in 6132 evtl. 0,2-0,4 m zu schlank - NICHT belegt, ungeprueft.
+- Rueckseite/N=8: ANNAHME.
+- teile_lage_pruefen.py: stuerzt bei fensterreihe:og ab (nicht behoben) -> Pflichtschritt 9c(c) nicht mit dem Werkzeug erbracht; Lage ersatzweise: Kugelachse = Helmachse +-0,02 m, Wolkenbeleg.
+- foto_diff / fehlteile_finden / teile_sichtpruefung: nur in bauen_abnehmen enthaltenes gelaufen, Ergebnisbilder nicht einzeln angesehen -> ungeprueft. Helm West: nicht angefasst (gleicher Fehler, eigene Runde).
 
-## 6. Geaenderte Dateien (Cherry-Pick fa26647, Quellen)
-tools/baukasten_gen.py, tools/bauteil_overlay.py, tools/gauben_crop.py, modelle/kaufhaus_grob3/{objekt,masstabelle}.json,
-messprotokoll/K-6162, K-c12, K-j05, K-p03, M-6259-001..013, himmelsmaske/{6162,c12,p03}.png, LOGBUCH_GAUBEN_OBEN_R2, Lehren L31-L33, NICHTS_GEBRACHT; Bau-Erzeugnisse neu gebaut.
-Konfliktdateien (STL, pruefbericht, fehlteile_*, seiten.jpg) = HEAD-Stand + Neubau.
+## 6. Geaenderte Dateien
+objekt.json (helm_geschweift:o: R1-Profil, Knauf z 21,33 r 0,2, letzter Ring z 21,0 r 0,07), masstabelle.json (+2 Messungen, +2 Pruefungen, R1-Zeilen), messprotokoll/M-nu3b-009, W-helm_o-profil, Z-nu3b-001, tools/helm_profil_wolke.py, LOGBUCH_HELM_O_R1, REZEPT (L-H1, L-H2), NICHTS_GEBRACHT, automatisch regenerierte STL/MASSNACHWEIS/pruefbericht/elemente.
 
 ## 7. Generalisierte Lehre
 | Lehre | Anlass | Werkzeug |
 |---|---|---|
-| Angenommene Runde ist erst fertig, wenn sie auf main liegt; bei Konflikt nur in Erzeugnissen Quellen cherry-picken und neu bauen | R2 scheiterte an teil_01.stl, R1-ngb verwarf danach ohne Vortor | Kreis-Merge (bereits seit 3de8d0a); hier manuell |
-Nicht ins Lehren-Register dupliziert (L31-L33 aus R2 gelten).
+| Punkte auf bekannter Achse per Mehrkamera-Strahlschnitt, Z-Ticks im Foto | Kugel 0,67 m zu hoch | foto_mass --tri |
+| Drahtgitter ohne Sichtbarkeit: Rueckhaelfte nicht fuer Fehler halten | Fehlurteil 'Ring 1 m zu tief' (nho) | Overlay mit Tiefenfarbe |

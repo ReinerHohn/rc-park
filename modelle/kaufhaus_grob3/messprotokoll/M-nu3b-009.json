@@ -1,0 +1,72 @@
+{
+ "id": "M-nu3b-009",
+ "typ": "triangulation",
+ "foto": "nu3b",
+ "name": "Erkerhelm Ost Kugelmitte (Knauf) aus 5 Fotos",
+ "beobachtungen": [
+  {
+   "kamera": "K-nu3b",
+   "px": [
+    696.3,
+    275.8
+   ]
+  },
+  {
+   "kamera": "K-nuaca",
+   "px": [
+    772.2,
+    907.8
+   ]
+  },
+  {
+   "kamera": "K-6132",
+   "px": [
+    447.9,
+    1048.9
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    762.0,
+    412.2
+   ]
+  },
+  {
+   "kamera": "K-6145",
+   "px": [
+    450.7,
+    1114.3
+   ]
+  }
+ ],
+ "P": [
+  18.705,
+  6.361,
+  21.329
+ ],
+ "strahl_abstand_m": [
+  0.019,
+  0.044,
+  0.042,
+  0.031,
+  0.038
+ ],
+ "schnittwinkel_grad": [
+  40.8,
+  51.7,
+  39.8,
+  63.7,
+  11.9,
+  10.7,
+  23.0,
+  20.2,
+  12.6,
+  27.9
+ ],
+ "z": 21.329,
+ "unsicherheit_m": 0.089,
+ "massstab_von": "Kameras K-nu3b, K-nuaca, K-6132, K-6161, K-6145 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 12.24,
+ "u": 15.509
+}

@@ -759,18 +759,38 @@
  {
   "seite": "alle",
   "element": "Geschweifter Helm (8-Eck) u=15.53",
-  "quelle": "Foto nu_3b29472b (K-nu3b Kamera-Bruecke, 19 m, Blick -41 Grad) Silhouettenbreite/2 auf der Ebene durch die Helmachse: M-nu3b-001..008 (z 14,22 Traufspitzen 1,54 / 14,64 1,20 / 15,41 0,83 / 16,18 0,58 / 16,97 0,44 / 17,76 0,34 / 18,58 0,27 / 19,40 0,19); oben Wolke lot2 r p50 (20,25 0,13, Nadel 20,5-22 ~0,10); Form = Foto (Regel 9d), Wolke einig +-0,07 ab z 15 (unterhalb Erker/Dach im Schnitt) | Lage: Helmachse aus formen/helme.json (Kegelfit der Nadel, Lage gut: Wolke-Profil zentriert) along 15.53 | Grundriss: ANNAHME: Achteck (Grate am Foto nu3b: 3-4 innere Grate sichtbar); Zaehlung per foto_zaehlung offen",
+  "quelle": "z >= 15,4: Foto nu_3b29472b Silhouettenbreite/2 (M-nu3b-004..008) + Wolke einig +-0,07 (unveraendert). z 13,30-15,12 (Kreis r1 2026-11-10): Wolke-Flaechenmitte (Apothem) entlang +n, messprotokoll/W-helm_o-profil.json (tools/helm_profil_wolke.py): 1,72 bei 13,4 / 1,50 bei 13,6 / 1,25 bei 14,1 / 1,15 bei 14,4 / 1,06 bei 14,6 (Profil 1,10: untere Grenze der Foto-Zeile M-nu3b-002) / 0,97 bei 14,9 / 0,90 bei 15,1; Form = Foto (Regel 9d): nu3b/6132/nuaca Overlays zeigen Ziegelhaut stetig konkav bis auf den Erkergesims, kein senkrechter Kranz, kein Traufring bei z 14,15. Die alte Traufhoehe 14,22 (M-nu3b-001) war Silhouettenparallaxe (Traufspitze ~1,4 m vor der Messebene, Kamera 10 m tiefer: +0,8 m) | 2026-11-10 r4: letzter Ring z 21,0 r 0,07 (Nadel unter der Kugel, Foto nu3b/nuaca: Nadelbreite ~0,14 m bei z 21,0), darueber duenne Fahnenstange bis z_spitze (ANNAHME r_spitze 0,02) | Lage: Helmachse aus formen/helme.json (Kegelfit der Nadel, Lage gut: Wolke-Profil zentriert) along 15.53 | Grundriss: ANNAHME: Achteck. Foto-Gegenprobe Z-nu3b-001 (3 Grate in Bildzeile 1000 = 2 volle Flaechen, Rueckseite nie sichtbar, N nicht direkt zaehlbar); die vom Achteck (Flaeche zur Strasse) vorhergesagten Grate fallen in nu3b/6132/nuaca auf die echten Grate (Overlays rundekreis1_helm_geschweift_o_*); Wolke-Phasenfit (nur Gegenprobe, keine Zaehlung): Achteck besser als Kreis, Phase -0,2..-1,6 Grad",
   "u": 15.53,
   "n": 12.23,
   "n_seiten": 8,
   "profil": [
    [
-    14.15,
-    1.54
+    13.3,
+    1.74
+   ],
+   [
+    13.62,
+    1.51
+   ],
+   [
+    14.12,
+    1.26
+   ],
+   [
+    14.38,
+    1.16
    ],
    [
     14.64,
-    1.2
+    1.1
+   ],
+   [
+    14.88,
+    0.99
+   ],
+   [
+    15.12,
+    0.91
    ],
    [
     15.41,
@@ -801,8 +821,8 @@
     0.13
    ],
    [
-    21.9,
-    0.08
+    21.0,
+    0.07
    ],
    [
     22.78,
@@ -811,12 +831,12 @@
   ],
   "kranz": {
    "z0": 13.1,
-   "z1": 14.15,
-   "r": 1.45
+   "z1": 13.3,
+   "r": 1.74
   },
   "knauf": {
-   "z": 22.0,
-   "r": 0.15
+   "z": 21.33,
+   "r": 0.2
   },
   "seite_name": "alle"
  },
