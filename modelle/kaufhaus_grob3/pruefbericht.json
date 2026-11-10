@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_225455a225455/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.2521246230474818,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590076446533203,
-  "wand_anteil_unter": 0.0008,
+  "wand_pq": 0.10590145736932755,
+  "wand_anteil_unter": 0.0007666666666666667,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -93,8 +93,8 @@
   "erker_o_diag_r": 1.548883300240687,
   "erker_o_front": 1.5408542955753348,
   "erker_o_ecke30": 1.6596163232638645,
-  "erker_o_unterbau76": 1.180854105857933,
-  "erker_o_unterbau72": 0.9030748604905047,
+  "erker_o_unterbau76": 1.1808537766000953,
+  "erker_o_unterbau72": 0.820854154092065,
   "erker_o_gesims_u": 1.6783536825855432,
   "erker_o_wappen": 1.5408539533872518,
   "erker_o_trauf": 1.8308542168055555,
@@ -165,9 +165,9 @@
   "fenster_og_g3_stegscheitel_l": 11.946999999999992,
   "fenster_og_g3_stegscheitel_r": 11.946999999999992,
   "fenster_og_g3_glas_tiefe": 0.19928416741884147,
-  "erker_o_unterbau66": 0.5605745307745054,
-  "erker_o_unterbau70": 0.7097411209969617,
-  "erker_o_unterbau80": 1.4208538864037292,
+  "erker_o_unterbau66": 0.5530748367422428,
+  "erker_o_unterbau70": 0.6075205761410944,
+  "erker_o_unterbau80": 1.4208538809684554,
   "erker_o_trauf_unten": 1.5408542285036329,
   "tuer_b3_rahmenfront": -0.04463392756998541,
   "fenster_eg0_rahmenfront": 0.0207220242320707,
@@ -201,7 +201,8 @@
   "tuer_b3_schaft_l_grund_abstand": 0.10696126914598159,
   "tuer_b3_schaft_r_anzahl": 3.0,
   "tuer_b3_schaft_r_breite_median": 0.05,
-  "tuer_b3_schaft_r_grund_abstand": 0.1053239090386251
+  "tuer_b3_schaft_r_grund_abstand": 0.1053239090386251,
+  "erker_o_flanke74": 1.2157798668032467
  },
  "pruefungen": [
   {
@@ -406,7 +407,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590076446533203,
+   "wert": 0.10590145736932755,
    "soll": [
     0.0348,
     100
@@ -676,7 +677,7 @@
   },
   {
    "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 7,6",
-   "wert": 1.180854105857933,
+   "wert": 1.1808537766000953,
    "soll": [
     1.15,
     1.4
@@ -686,7 +687,7 @@
   },
   {
    "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 6,6 (Wolke-Median Scheibenmitte)",
-   "wert": 0.5605745307745054,
+   "wert": 0.5530748367422428,
    "soll": [
     0.4,
     0.6
@@ -696,7 +697,7 @@
   },
   {
    "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 7,0 (Wolke-Median Scheibenmitte)",
-   "wert": 0.7097411209969617,
+   "wert": 0.6075205761410944,
    "soll": [
     0.52,
     0.72
@@ -706,7 +707,7 @@
   },
   {
    "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 8,0 (Wolke-Median Scheibenmitte)",
-   "wert": 1.4208538864037292,
+   "wert": 1.4208538809684554,
    "soll": [
     1.28,
     1.48
@@ -1620,6 +1621,16 @@
    "soll": [
     3,
     3
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker Ost: Unterbau-Flanke (Seitenbreite u) bei z 7,4, Schnitt in n=12,70 an der Wandebene (Trichter, Skalierzentrum Achse statt Wand)",
+   "wert": 1.2157798668032467,
+   "soll": [
+    0.91,
+    1.26
    ],
    "ok": true,
    "status": "ok"

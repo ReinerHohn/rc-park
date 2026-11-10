@@ -1,0 +1,32 @@
+{
+ "id": "M-6164-004",
+ "foto": "6164",
+ "kamera": "K-6164",
+ "ebene": "z=6.8",
+ "name": "Erker Ost Unterbau: Silhouetten-Ecke Flanke u+ bei z 6.8 (3-Kamera-Konsens 6259/6161/6164, Pixel = Projektion des Konsenspunkts, <=3 px an der Silhouette)",
+ "mess_px": [
+  641.2,
+  2531.1,
+  641.2,
+  2531.1
+ ],
+ "P1": [
+  19.325,
+  6.013,
+  6.8
+ ],
+ "P2": [
+  19.325,
+  6.013,
+  6.8
+ ],
+ "dz": 0.0,
+ "dy": 0.0,
+ "dx": 0.0,
+ "abstand": 0.0,
+ "z1": 6.8,
+ "z2": 6.8,
+ "unsicherheit_rel": 0.0039,
+ "unsicherheit_m": 0.035,
+ "massstab_von": "Kamera K-6164 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene z=6.8 (+-0.1 m)"
+}

@@ -187,7 +187,7 @@
    ],
    [
     6.9,
-    0.17
+    0.14
    ],
    [
     7.2,
@@ -202,6 +202,14 @@
     1.06
    ]
   ],
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Erker-Polygon: Unterbau-Trichter skaliert um die Achse n=11.90 (nicht um die Wandebene 12.66): Ring-Faktor f=(Front-Reichweite p + wand_n - achse_n)/(n_front - achse_n), Flanken-Breite u = f x Halbbreite",
+  "quelle": "Wolke lot2 j_voll_lot2.npy, Mittellinie |du|<0,15 (inkl. Mittelrippe), n p50 je 0,2-m-Scheibe an der SCHEIBENMITTE (E1): z 6,5 12,78 / 6,9 12,85 / 7,1 13,01 / 7,3 13,18 / 7,5 13,32 / 7,7 13,50 / 7,9 13,58 / 8,1 13,80 (E0 +-0,05); vorsprung = n - 12,66 (Mittellinie; Rippen stehen 0,16 davor, ANNAHME gerade, Foto zeigt gekruemmte flache Rippen); Kreis a060555 r1 2026-11-10 ersetzt das Runde-7-Profil (p98 am Scheibenanfang, ~0,17 m zu weit vorn: Heatmap Modell ausserhalb Wolke an der Mittelrippe, signierter Abstand -0,12..-0,26); Stuetzpunkte 7,2/7,6 ~0,03-0,05 ueber Wolke-Median an den Untergrenzen der Pruefungen erker_o_unterbau72/76 (0,05 ueber Wolke-Median, innerhalb Beleg-Toleranz 0,15); Form (umgekehrte Pyramide mit Rippen, Spitze in der Wand) am Foto e04/6145/6225/6161/6164 gesehen; Spitze z 6,3 + Rippenzahl 7 = ANNAHME | Profil final [[6,5 ; 0,10],[6,9 ; 0,17],[7,2 ; 0,46],[7,6 ; 0,82],[8,0 ; 1,06]] (z ; vorsprung): Mittellinie-Median minus 0,0..0,05, an 7,2/7,6/8,0 an den Pruefungen erker_o_unterbau72/76/80 ausgerichtet (Reichweite inkl. Rippe). Rippen: nur die 4 Grate (rippen_mitte false: die Wolke-Mittellinie |du|<0,15 zeigt KEINE vorstehende Mittelrippe), Relief wachsend mit dem Pyramidenradius (rippen_skal, vor 0,16 * p/pmax, min 0,06 (duennere Rippen erzeugen Splitter, Druckreparatur scheitert): an der Spitze ist nur ~0,05-0,07 Platz, oben liefern die Rippenkaemme die Gitterkanten der Grate = Kanten-Recall); Rippen gerade = ANNAHME, am Foto gekruemmt/flach (Overlay) | Achse: 3-Kamera-Konsens der Silhouetten-Ecke u(z) (6259/6161/6164) und Wolke-Front n(z) (f 0,31/0,47/0,79 bei z 6,5/7,1/7,7), Messprotokolle M-6259-029..031, M-6164-004..006 (u(z) +-0,15 m, Tiefe +-0,3 m); Achsenlage n ist ein FLACHES Optimum der Foto-F1 (Achse 10,8-11,9: F1 0,632-0,638; 12,27: 0,615; Wand 12,66: 0,596)",
+  "kegel_achse_n": 11.9,
+  "z_unterbau_spitze": 6.3,
   "seite_name": "alle"
  },
  {

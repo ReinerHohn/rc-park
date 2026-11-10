@@ -1,0 +1,32 @@
+{
+ "id": "M-6259-027",
+ "foto": "6259",
+ "kamera": "K-6259",
+ "ebene": "-0.17477841589691387,-0.9846077926446476,0=-9.944669661991226",
+ "name": "Erker Ost Unterbau Silhouette Grat (Ebene durch Grat u+, Ebenen-Methode, Silhouette inkl. Rippe)",
+ "mess_px": [
+  507.0,
+  2381.0,
+  552.0,
+  2481.0
+ ],
+ "P1": [
+  19.565,
+  6.627,
+  7.333
+ ],
+ "P2": [
+  19.168,
+  6.698,
+  6.658
+ ],
+ "dz": -0.675,
+ "dy": 0.07,
+ "dx": -0.397,
+ "abstand": 0.786,
+ "z1": 7.333,
+ "z2": 6.658,
+ "unsicherheit_rel": 0.0045,
+ "unsicherheit_m": 0.034,
+ "massstab_von": "Kamera K-6259 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene -0.17477841589691387,-0.9846077926446476,0=-9.944669661991226 (+-0.1 m)"
+}
