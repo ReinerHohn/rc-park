@@ -1,0 +1,49 @@
+{
+ "id": "M-6259-026",
+ "typ": "triangulation",
+ "foto": "6259",
+ "name": "Gaube unten C hintere Vordachecke (Ziegelrand oben, links im Foto-rechts) 3K",
+ "beobachtungen": [
+  {
+   "kamera": "K-c12",
+   "px": [
+    2399.0,
+    798.0
+   ]
+  },
+  {
+   "kamera": "K-6162",
+   "px": [
+    2560.0,
+    647.7
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    2628.7,
+    653.7
+   ]
+  }
+ ],
+ "P": [
+  0.103,
+  9.716,
+  19.597
+ ],
+ "strahl_abstand_m": [
+  0.066,
+  0.015,
+  0.08
+ ],
+ "schnittwinkel_grad": [
+  19.5,
+  3.2,
+  17.6
+ ],
+ "z": 19.597,
+ "unsicherheit_m": 0.198,
+ "massstab_von": "Kameras K-c12, K-6162, K-6161 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 9.193,
+ "u": -3.147
+}

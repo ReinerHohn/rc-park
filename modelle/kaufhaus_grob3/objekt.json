@@ -6041,35 +6041,39 @@
    "typ": "gaubenreihe:unten",
    "gruppe": "Gauben untere Reihe Vorderhang",
    "n_gauben": 3,
-   "u_mitte": 2.97,
-   "pitch": 6.153,
-   "t": 0.264,
-   "breite": 0.9391,
-   "wandhoehe": 1.1707,
-   "vor": 0.3751,
-   "tiefe": 1.9549,
+   "u_mitte": 3.5,
+   "pitch": 5.96,
+   "t": 0.2024,
+   "breite": 1.02,
+   "wandhoehe": 0.76,
+   "vor": 0.3,
+   "tiefe": 1.8,
    "firsthoehe": 0.9479,
    "zaehlung": [
     "Z-018-005"
    ],
-   "quelle": "Anzahl: Foto 018 Sichtzaehlung (Z-018-005/-006, Regel 9); Lage 2026-11-09: kantengitter formen/gauben_r3_lagen.json (Ortho-Flecken, parallaxe-verschmiert, nicht abgenommen); Form (Breite/Hoehe/Tiefe) = Altwert ANNAHME bis Formfit",
+   "quelle": "Anzahl: Foto 018 Sichtzaehlung (Z-018-005/-006, Regel 9); Lage+Form 2026-11-10: Kreis3 r3 Triangulation M-6259-014..026 (Fotos c12/6259/6162/6161); Typ wie obere Reihe (Kreis2 r2): Fensterkasten mit Rundbogenfenster unter ziegelgedecktem Vordach; Fenster (Rundbogen) nicht modelliert (ANNAHME: < 1 mm tief in H0)",
    "achse_n": [
     0.3338,
     0.9426
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "werte_quellen": {
-    "u_mitte": "kantengitter formen/gauben_r3_lagen.json: Basis-Mitten along -3.15, 2.90, 9.16 (Mittel-Ortho-Flecken Runde 3, fotobelegt, NICHT abgenommen)",
-    "pitch": "gauben_r3_lagen: mittlerer Abstand der Basis-Mitten",
-    "t": "gauben_r3_lagen: Basis-Off 10.49 (liegt auf der Dachflaeche: z 17.60) minus vor -> t auf dem Hang",
-    "breite": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (satteldach:haupt,gaubenreihe:unten,gaubenreihe:oben), Median 0.316->0.130 m",
-    "wandhoehe": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (satteldach:haupt,gaubenreihe:unten,gaubenreihe:oben), Median 0.316->0.130 m",
-    "vor": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (satteldach:haupt,gaubenreihe:unten,gaubenreihe:oben), Median 0.316->0.130 m",
-    "tiefe": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (satteldach:haupt,gaubenreihe:unten,gaubenreihe:oben), Median 0.316->0.130 m",
-    "firsthoehe": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (satteldach:haupt,gaubenreihe:unten,gaubenreihe:oben), Median 0.316->0.130 m"
+    "u_mitte": "Triangulation 3 Kameras (K-c12/K-6259/K-6162, C: K-c12/K-6162/K-6161; Strahlabstand <=0,12 m, +-0,10..0,21 m), Gauben A (u 9,4), Mitte (3,5), C (-2,5): Fensterbank-/Vordach-Mitten u 9,40/9,50 (A, M-6259-018..021), 3,52/3,54 (Mitte, M-6259-014..017), -2,47/-2,47 (C, M-6259-022..025): Mittel 3,50",
+    "pitch": "Triangulation 3 Kameras (K-c12/K-6259/K-6162, C: K-c12/K-6162/K-6161; Strahlabstand <=0,12 m, +-0,10..0,21 m), Gauben A (u 9,4), Mitte (3,5), C (-2,5): Abstand A-Mitte 5,88-5,96, Mitte-C 5,99 -> 5,96",
+    "t": "Triangulation 3 Kameras (K-c12/K-6259/K-6162, C: K-c12/K-6162/K-6161; Strahlabstand <=0,12 m, +-0,10..0,21 m), Gauben A (u 9,4), Mitte (3,5), C (-2,5): Fensterbank-Vorderkante n 10,92-11,21 (6 Punkte, Mittel 11,015); t so gewaehlt, dass n_front = n_traufe + t*(n_first-n_traufe) + vor = 11,015",
+    "breite": "Triangulation 3 Kameras (K-c12/K-6259/K-6162, C: K-c12/K-6162/K-6161; Strahlabstand <=0,12 m, +-0,10..0,21 m), Gauben A (u 9,4), Mitte (3,5), C (-2,5): Fensterbank-Breite 1,09/0,98/1,01 (M-6259-014/-015, -018/-019, -022/-023) -> 1,02 (wie obere Reihe)",
+    "wandhoehe": "Triangulation 3 Kameras (K-c12/K-6259/K-6162, C: K-c12/K-6162/K-6161; Strahlabstand <=0,12 m, +-0,10..0,21 m), Gauben A (u 9,4), Mitte (3,5), C (-2,5): Vordach-Unterkante z 17,53-17,77 (Mittel 17,64; M-6259-016/-017/-020/-021/-024/-025); Hang an der Stirn (n 11,015) 16,88 -> 0,76",
+    "vor": "ANNAHME: Festlegung zusammen mit t (nur die Summe n_front 11,015 ist gemessen)",
+    "tiefe": "gleich dach_tiefe (nur Plausibilitaetsgrenze, Familie schlepp mit Vordach nutzt dach_tiefe)",
+    "firsthoehe": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (satteldach:haupt,gaubenreihe:unten,gaubenreihe:oben), Median 0.316->0.130 m",
+    "vordach_vor": "Triangulation 3 Kameras (K-c12/K-6259/K-6162, C: K-c12/K-6162/K-6161; Strahlabstand <=0,12 m, +-0,10..0,21 m), Gauben A (u 9,4), Mitte (3,5), C (-2,5): Vordach-Unterkante n 11,10-11,26 (Mittel 11,165) minus Fensterbank n 11,015 = 0,15 (streut 0,1-0,25, 3 Gauben)",
+    "vordach_breite": "Triangulation 3 Kameras (K-c12/K-6259/K-6162, C: K-c12/K-6162/K-6161; Strahlabstand <=0,12 m, +-0,10..0,21 m), Gauben A (u 9,4), Mitte (3,5), C (-2,5): Vordach-Unterkante-Ecken Breite 1,36/1,48/1,44 (A/Mitte/C) -> 1,43",
+    "dach_tiefe": "Foto-Triangulation M-6259-026 (hintere Vordachecke Gaube C, Strahlabstand 0,07 m, +-0,20 m): n 9,19 -> 11,015-9,19 = 1,82; nur 1 Punkt",
+    "vordach_dicke": "ANNAHME: 0,14 m wie obere Reihe (Ziegelschicht + Randbohle, nicht gemessen)"
    },
    "form": "schlepp",
-   "form_quelle": "Nutzer 8.11. + Fotos (Schleppgauben 'Sprungschanze': Stirn mit Rundbogenfenster, flaches Pultdach, dreieckige Wangen), kein Giebeldach",
+   "form_quelle": "Fotos c12/6259/6162/6161 (2026-11-10): Schleppgaube mit Fensterkasten (Rundbogenfenster, Fensterbank), ziegelgedecktes Vordach mit Wangen; vorher Nutzer 8.11. 'Sprungschanze'",
    "historie": [
     {
      "datum": "2026-11-09",
@@ -6084,8 +6088,34 @@
       "pitch": 6.153,
       "t": 0.264
      }
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis3 r3 Agent gaubenreihe:unten",
+     "alt": {
+      "u_mitte": 2.97,
+      "pitch": 6.153,
+      "t": 0.264,
+      "breite": 0.9391,
+      "wandhoehe": 1.1707,
+      "vor": 0.3751,
+      "tiefe": 1.9549
+     },
+     "neu": {
+      "u_mitte": 3.5,
+      "pitch": 5.96,
+      "t": 0.2024,
+      "breite": 1.02,
+      "wandhoehe": 0.76,
+      "vor": 0.3,
+      "tiefe": 1.8
+     }
     }
-   ]
+   ],
+   "vordach_vor": 0.15,
+   "vordach_breite": 1.43,
+   "vordach_dicke": 0.14,
+   "dach_tiefe": 1.8
   },
   {
    "typ": "gaubenreihe:oben",

@@ -1,78 +1,50 @@
 {
  "foto": "6257",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_101552a101552/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6257 (amtliche Anker)",
  "zelle_px": 112,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    2688,
-    1120,
-    112
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -4.99,
-    11.43,
-    18.67
-   ]
-  },
-  {
-   "zelle": [
-    2016,
+    2576,
     1232,
     112
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    0.83,
-    7.58,
-    20.59
+    -4.13,
+    10.31,
+    18.36
    ]
   },
   {
    "zelle": [
-    2688,
-    1232,
-    112
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -5.17,
-    9.76,
-    18.77
-   ]
-  },
-  {
-   "zelle": [
-    2800,
-    1232,
-    112
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -6.08,
-    9.28,
-    18.71
-   ]
-  },
-  {
-   "zelle": [
-    2016,
+    2464,
     1344,
     112
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    0.9,
-    6.59,
-    19.61
+    -3.43,
+    8.19,
+    18.49
+   ]
+  },
+  {
+   "zelle": [
+    2576,
+    1344,
+    112
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -4.53,
+    7.31,
+    18.64
    ]
   },
   {
@@ -84,9 +56,37 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -6.22,
-    8.92,
-    17.74
+    -6.17,
+    9.05,
+    17.64
+   ]
+  },
+  {
+   "zelle": [
+    2128,
+    1568,
+    112
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.38,
+    1.85,
+    19.57
+   ]
+  },
+  {
+   "zelle": [
+    2464,
+    1568,
+    112
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -3.48,
+    6.31,
+    17.04
    ]
   }
  ],

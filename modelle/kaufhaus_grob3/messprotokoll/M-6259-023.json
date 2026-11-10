@@ -1,0 +1,49 @@
+{
+ "id": "M-6259-023",
+ "typ": "triangulation",
+ "foto": "6259",
+ "name": "Gaube unten C Fensterbank unten rechts 3K",
+ "beobachtungen": [
+  {
+   "kamera": "K-c12",
+   "px": [
+    2412.7,
+    935.7
+   ]
+  },
+  {
+   "kamera": "K-6162",
+   "px": [
+    2500.0,
+    807.0
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    2649.3,
+    816.3
+   ]
+  }
+ ],
+ "P": [
+  0.85,
+  11.313,
+  16.937
+ ],
+ "strahl_abstand_m": [
+  0.033,
+  0.036,
+  0.018
+ ],
+ "schnittwinkel_grad": [
+  21.2,
+  3.0,
+  19.4
+ ],
+ "z": 16.937,
+ "unsicherheit_m": 0.136,
+ "massstab_von": "Kameras K-c12, K-6162, K-6161 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 10.948,
+ "u": -2.975
+}

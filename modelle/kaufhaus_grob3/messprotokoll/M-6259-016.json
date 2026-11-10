@@ -1,0 +1,49 @@
+{
+ "id": "M-6259-016",
+ "typ": "triangulation",
+ "foto": "6259",
+ "name": "Gaube unten Mitte Vordach Unterkante vorn links 3K",
+ "beobachtungen": [
+  {
+   "kamera": "K-c12",
+   "px": [
+    1792.0,
+    867.5
+   ]
+  },
+  {
+   "kamera": "K-6259",
+   "px": [
+    2254.5,
+    1001.3
+   ]
+  },
+  {
+   "kamera": "K-6162",
+   "px": [
+    1754.5,
+    853.8
+   ]
+  }
+ ],
+ "P": [
+  7.745,
+  9.037,
+  17.654
+ ],
+ "strahl_abstand_m": [
+  0.008,
+  0.002,
+  0.009
+ ],
+ "schnittwinkel_grad": [
+  10.6,
+  22.2,
+  25.2
+ ],
+ "z": 17.654,
+ "unsicherheit_m": 0.094,
+ "massstab_von": "Kameras K-c12, K-6259, K-6162 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 11.104,
+ "u": 4.284
+}
