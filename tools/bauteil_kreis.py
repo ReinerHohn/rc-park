@@ -216,7 +216,14 @@ for runde in range(1, RUNDEN + 1):
             for _l in reversed([x for x in open(_kf) if x.strip()]):
                 _z = json.loads(_l)
                 if str(_z.get("etikett", "")).endswith(f"r{_r}_vorher") and _z.get("wolkenbeleg_teile"): z0 = _z; break
-        if z0 is None: sys.exit("Nachpruefen: Vorher-Messung der Originalrunde nicht gefunden - ohne sie ist der Gewinn nicht messbar")
+        if z0 is not None and "anteil_sichtbar" not in (z0["wolkenbeleg_teile"][0] if z0["wolkenbeleg_teile"] else {}):
+            z0 = None   # alte Messart (ohne Sichtpruefung) - nicht vergleichbar
+        if z0 is None:   # Basis der Originalrunde (Zweig~1) neu messen, gleiche Messart wie nachher
+            wt0 = os.path.join(LDIR, "wt_basis")
+            subprocess.run(["git", "-C", ROOT, "worktree", "add", "-q", "--detach", wt0, br + "~1"], check=True)
+            _rc0, z0, _o0 = messen(wt0, f"r{runde}_vorher_basis")
+            subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt0], capture_output=True)
+            if not z0: sys.exit("Nachpruefen: Basis-Messung fehlgeschlagen")
     elif TROCKEN:
         # Trockenlauf baut nichts (main bleibt unberuehrt): letzte gespeicherte Konvergenz-Zeile
         kf = os.path.join(ROOT, "modelle", OBJ, "konvergenz.jsonl")
