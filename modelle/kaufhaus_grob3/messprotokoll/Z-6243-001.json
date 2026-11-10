@@ -1,0 +1,36 @@
+{
+ "id": "Z-6243-001",
+ "typ": "zaehlung",
+ "foto": "6243",
+ "datei": "6243_ip_IMG_6243.jpg",
+ "was": "Laubenrueckwand Bogen 3: Tueren (Tuerblatt im Goldportal), Schraegfoto von links",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-10",
+ "punkte": [
+  {
+   "flaeche": "B3",
+   "art": "voll",
+   "x": 1650.0,
+   "y": 3300.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "B3": {
+   "art": "voll",
+   "n": 1
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 1,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-6243-001.jpg",
+ "ausschnitt": [
+  1400,
+  3050,
+  1900,
+  3550
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "1 Tuerblatt, 1 Tuer; zweite Richtung (Az -34)"
+}

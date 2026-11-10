@@ -1,0 +1,32 @@
+{
+ "id": "M-6207-003",
+ "foto": "6207",
+ "kamera": "K-6207",
+ "ebene": "0.33471889,0.94231803,0=7.28",
+ "name": "EG Bogen 3 Tuer: Schulterhoehe der Laibungsnische links (735,2201) / rechts (1985,2145), Wandebene",
+ "mess_px": [
+  735.0,
+  2201.0,
+  1985.0,
+  2145.0
+ ],
+ "P1": [
+  7.432,
+  5.086,
+  2.778
+ ],
+ "P2": [
+  5.509,
+  5.769,
+  2.756
+ ],
+ "dz": -0.023,
+ "dy": 0.683,
+ "dx": -1.923,
+ "abstand": 2.041,
+ "z1": 2.778,
+ "z2": 2.756,
+ "unsicherheit_rel": 0.065,
+ "unsicherheit_m": 0.139,
+ "massstab_von": "Kamera K-6207 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=7.28 (+-0.3 m)"
+}

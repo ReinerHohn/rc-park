@@ -1,0 +1,39 @@
+{
+ "id": "M-6207-001",
+ "typ": "triangulation",
+ "foto": "6207",
+ "name": "EG Tuer Bogen 3: Tuerklopfer-Drehpunkt auf dem Tuerblatt (Blatttiefe), Paar 6207/6243",
+ "beobachtungen": [
+  {
+   "kamera": "K-6207",
+   "px": [
+    1334.0,
+    2019.0
+   ]
+  },
+  {
+   "kamera": "K-6243",
+   "px": [
+    1605.0,
+    3407.0
+   ]
+  }
+ ],
+ "P": [
+  6.278,
+  4.961,
+  2.982
+ ],
+ "strahl_abstand_m": [
+  0.016,
+  0.016
+ ],
+ "schnittwinkel_grad": [
+  45.6
+ ],
+ "z": 2.982,
+ "unsicherheit_m": 0.026,
+ "massstab_von": "Kameras K-6207, K-6243 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 6.772,
+ "u": 4.262
+}

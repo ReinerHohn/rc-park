@@ -1,0 +1,32 @@
+{
+ "id": "M-6207-002",
+ "foto": "6207",
+ "kamera": "K-6207",
+ "ebene": "0.33471889,0.94231803,0=7.28",
+ "name": "EG Bogen 3 Tuer: Aussenbreite der Laibungsnische (Goldportal-Aussenkante links-rechts) in der Wandebene, z ~3,3",
+ "mess_px": [
+  727.0,
+  2000.0,
+  1990.0,
+  2000.0
+ ],
+ "P1": [
+  7.433,
+  5.085,
+  3.076
+ ],
+ "P2": [
+  5.5,
+  5.772,
+  3.0
+ ],
+ "dz": -0.076,
+ "dy": 0.687,
+ "dx": -1.933,
+ "abstand": 2.052,
+ "z1": 3.076,
+ "z2": 3.0,
+ "unsicherheit_rel": 0.0655,
+ "unsicherheit_m": 0.141,
+ "massstab_von": "Kamera K-6207 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.33471889,0.94231803,0=7.28 (+-0.3 m)"
+}

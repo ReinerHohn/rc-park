@@ -1,0 +1,39 @@
+{
+ "id": "M-6243-001",
+ "typ": "triangulation",
+ "foto": "6243",
+ "name": "EG Tuer Bogen 3: Infotafel links der Tuer, obere linke Ecke (Wandfront = Tafelvorderkante), Paar 6243/6120",
+ "beobachtungen": [
+  {
+   "kamera": "K-6243",
+   "px": [
+    895.0,
+    2918.0
+   ]
+  },
+  {
+   "kamera": "K-6120",
+   "px": [
+    1452.0,
+    2974.0
+   ]
+  }
+ ],
+ "P": [
+  8.043,
+  4.886,
+  4.073
+ ],
+ "strahl_abstand_m": [
+  0.004,
+  0.004
+ ],
+ "schnittwinkel_grad": [
+  41.5
+ ],
+ "z": 4.073,
+ "unsicherheit_m": 0.026,
+ "massstab_von": "Kameras K-6243, K-6120 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.291,
+ "u": 5.951
+}

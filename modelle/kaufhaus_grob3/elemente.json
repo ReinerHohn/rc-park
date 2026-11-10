@@ -555,7 +555,7 @@
  {
   "seite": "alle",
   "element": "Fensterreihe 1 Kielbogenfenster (1 Lichter)",
-  "quelle": "Anzahl Z-6120-005, Z-6120-003 (Regel 9); Foto ip_IMG_6120: Tuer mit Goldportal rechts im Bogen 3 (Z-6120-005); Lichte M-6120-004/005; Rahmen 0,07 um die Lichte (ANNAHME), Rundbogen als flacher Spitzbogen (Form = muster_fit-Agent); Neuberechnung auf Ebene 7,28: M-6120-028 (Lichte unten u 3,64..5,03 -> Mitte 4,33, Lichte 1,39 + 2 x rahmen_b), M-6120-029 (Kaempfer 3,90, Scheitel 4,18) |  | Lage: Neuberechnung auf Ebene 7,28: M-6120-028 (Lichte unten u 3,64..5,03 -> Mitte 4,33, Lichte 1,39 + 2 x rahmen_b), M-6120-029 (Kaempfer 3,90, Scheitel 4,18) | ",
+  "quelle": "Anzahl Z-6120-005, Z-6120-003 (Regel 9); Foto ip_IMG_6120: Tuer mit Goldportal rechts im Bogen 3 (Z-6120-005); Lichte M-6120-004/005; Rahmen 0,07 um die Lichte (ANNAHME), Rundbogen als flacher Spitzbogen (Form = muster_fit-Agent) | Kreis r3 2026-11-10: Aussenkontur = Laibungsnische (Gewaende mit Goldschaeften) statt Rechteck: Breite 2,05 m ab Schulter z 2,77 (M-6207-002/003), Tuerblatt 6,77 (M-6207-001); Neuberechnung auf Ebene 7,28: M-6120-028 (Lichte unten u 3,64..5,03 -> Mitte 4,33, Lichte 1,39 + 2 x rahmen_b), M-6120-029 (Kaempfer 3,90, Scheitel 4,18) |  | Lage: Neuberechnung auf Ebene 7,28: M-6120-028 (Lichte unten u 3,64..5,03 -> Mitte 4,33, Lichte 1,39 + 2 x rahmen_b), M-6120-029 (Kaempfer 3,90, Scheitel 4,18) | ",
   "n_fenster": 1,
   "n_lichter": 1,
   "pitch": 3.0,
@@ -564,7 +564,7 @@
   "kaempfer_z": 3.92,
   "scheitel_z": 4.28,
   "wand_n": 7.24,
-  "tiefe": 0.16,
+  "tiefe": 0.08,
   "seite_name": "alle"
  },
  {
@@ -588,6 +588,18 @@
   "n0": 6.98,
   "n1": 7.3,
   "z0": 1.79,
+  "z1": 3.9,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Quader (ausschnitt)",
+  "quelle": "Laibungsnische (Gewaende mit Goldschaeften) neben dem Tuerblatt: Breite 2,05 m ab Schulter z 2,77 (Foto 6207, M-6207-002/003, 3 mm kleiner als die Rahmen-Oeffnung); Tiefe 0,11 (n 7,17) = Wolke lot2 u 3,2..3,6 z 2,8..4,0 Wandspitze 7,17-7,22 (Wolke = Lage), Foto 6207/6243 zeigt die Schaefte in der Laibung; Obergrenze z 3,9 = Kaempfer",
+  "u0": 3.27,
+  "u1": 5.3,
+  "n0": 7.17,
+  "n1": 7.3,
+  "z0": 2.78,
   "z1": 3.9,
   "seite_name": "alle"
  },
