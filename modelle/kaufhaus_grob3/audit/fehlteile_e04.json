@@ -1,8 +1,8 @@
 {
  "foto": "e04",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_062358a062358/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-e04 (amtliche Anker)",
- "zelle_px": 196,
+ "zelle_px": 197,
  "schwelle": 0.35,
  "treffer": [],
  "versatz_test": null

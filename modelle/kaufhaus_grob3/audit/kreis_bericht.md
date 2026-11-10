@@ -1,50 +1,62 @@
-# Kreis 20261110_062358a062358 r1 - fensterreihe:og
+# Kreis a062358 r2 - erker_polygon:1 (Ost-Erker, Teil-Achteck)
+
+**Status: Patch des verworfenen Vorversuchs a060555 r1 auf aktuellem Stand neu angewendet, gemessen, mit rippen_vor 0,12 abgestimmt. Nichts committed.**
 
 ## 1. Formbeschreibung (Stufe 0)
-Fotos: 6161 (27 m, frontal), 6120 (11,6 m Nahfoto), 6132 (16 m, Azimut -22), 6117 (18,5 m, Azimut +50), 6118. Siehe `modelle/LOGBUCH_FENSTER_OG_R1_2026-11-10.md`.
-Zonen: Sohle z 10,34 -> untere Reihe (3 Lichter) -> Kaempfer (Seiten 11,77 / Mitte ~12,3) -> obere Reihe -> Vorhangbogen (aussen senkrecht bis 12,5, konkav zu Stegscheiteln 13,43, Mittelsenke 13,34). Steinrahmen buendig mit der Wand n 12,66, Lichter in der Laibung. 5 Gruppen, Pitch 3,96, je 3 Spalten x 2 Zeilen. Familie: vorhandene `fensterreihe`, neuer generischer Parameter `nische_tiefe`.
-Am Altmodell anders: 3,33 statt 2,72 m breit, Seitenlichter 0,91 statt 0,71, Rahmen 0,15 vorstehend, Glas in Wandebene, Stegscheitel 13,24 statt 13,43.
+Fotos (in den Overlays angesehen): 6164 (Nahfoto frontal), 6161, 6145 (schraeg von Westen/Seite), 6259 (Uebersicht); Vorarbeit Runde 7 (h05, 6124, nuaca).
+- Zonen von unten: Unterbau = umgekehrte Pyramide (Spitze z 6,3 in der Wand) mit gekruemmten Graten; Gesims unten (Kamm z ~8,4); Wappenzone z 8,5-9,65 (2 Schilde in der Front); Fensterbank (Kamm z 9,7); Fensterband (2 Lichter je Flaeche, Kaempfer z 11,38); Traufwulst z 13,05-13,18; darueber Helm (eigenes Bauteil).
+- Grundriss: Teil-Achteck, 3 sichtbare Flaechen (Front + 2 Schraegflaechen 45 Grad), Einbindung in die Wand.
+- Wiederholungen: Lichter, Wappen (gezaehlt Z-6164-001..003, nicht neu gezaehlt), Grate des Unterbaus.
+- Formfamilie: vorhandene `erker_polygon` in tools/baukasten_gen.py, generisch erweitert (Gesims-/Bankprofil, Rippen nur Grate, Rippenrelief skaliert).
+- Was am alten Modell anders war (Overlay vorher): Unterbau 0,1-0,2 m zu weit vorn, Traufgesims sprang schon ab z 12,74 vor (Wolke/Foto: erst ab 13,05), Rechteckgesimse statt Grat, gerade Mittelrippen ohne Fotokante.
+- ANNAHME: Rueckseite/Einbindung 0,3 m unveraendert; Rippenzahl/-relief (Grate) bleibt ANNAHME.
 
 ## 2. Zaehlungen
-Z-6161-002 (3 Lichter je Gruppe, G2-G4 voll), Z-6161-003 (2 Reihen je Seitenlicht); bestehend Z-6120-002, Z-6261-001, Z-hc12-001, Z-004-002, Z-043-001 (5 Gruppen). Zaehlung nur am Foto, Anzahlen unveraendert.
+Keine neue Zaehlung (Anzahl der Lichter/Wappen unveraendert: Z-6164-001..003). Mittelrippen am Unterbau sind keine gezaehlten Elemente: am Foto keine sichtbar -> entfernt.
 
-## 3. Pruefungen
+## 3. Pruefungen (am alten Stand ROT: 0,71 / 0,89 / 1,60 / 0,26)
 | Pruefung | vorher | nachher | Soll | Quelle |
 |---|---|---|---|---|
-| Lichtweite untere Lichter g3 / g4 | 0,92 / 0,92 | 0,68 / 0,68 | 0,65-0,77 | M-6161-038..040 |
-| Wand ausserhalb Rahmen links / rechts (u 1,45-1,62) | -0,15 / -0,15 | 0,00 / 0,00 | -0,06..0,08 | M-6161-022 (2,72 m), M-6161-036, M-6120-051/053 |
-| Stegscheitel z links / rechts | 11,79 / 11,79 | 11,95 / 11,95 | 11,877-12,037 | M-6161-033/035 |
-| Glasebene hinter Wand 12,66 | -0,03 | 0,20 | 0,05-0,30 | M-6132-001, M-6120-055 (Foto 0,06-0,10), Wolke 0,27 |
-Alle 7 am Altstand ROT (abn_vorher_final.log), jetzt gruen; Sollwerte nicht gelockert. Gate konvergenz_bericht (Teil fensterreihe__og):
-| Groesse | vorher | nachher |
-|---|---|---|
-| Wolkenbeleg | 0,670 | 0,979 |
-| Kanten-Recall | 0,792 | 0,840 |
-| Kanten-Praezision | 0,491 | 0,683 |
-| Mittel Beleg/F1 | 0,638 | 0,866 (+0,23) |
-Keine Groesse gefallen. bauen_abnehmen: alle Pruefungen bestanden (1 vorbestehender Widerspruch Gesamthoehe), 1 Teilnetz, wasserdicht. regression.py: identisch. teile_lage_pruefen og: Median 0,05 m, 0 % > 0,5 m. foto_diff 6161: Modellkanten ohne Foto 0,0465 -> 0,0358, Fotokanten ohne Modell 0,438 -> 0,353 (Gesamtmodell).
+| erker_o_unterbau66 | 0,71 | 0,56 | 0,4..0,6 | Wolke lot2 Median Scheibenmitte, Foto 6161/6164 |
+| erker_o_unterbau70 | 0,89 | 0,71 | 0,52..0,72 | dito |
+| erker_o_unterbau80 | 1,60 | 1,42 | 1,28..1,48 | dito |
+| erker_o_trauf_unten - front | 0,26 | 0,00 | -0,06..0,06 | Wolke 0,1-m-Scheiben, Foto h05 M-h05-007 |
+| Auskragung Traufgesims (Messhoehe 12,95 -> 13,14, neue Quelle) | - | 0,29 | 0,17..0,34 | Wolke, M-h05-006 |
 
-## 4. Overlays (links vorher, rechts nachher)
-- modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis1_fensterreihe_og_6120.jpg
-- .../rundekreis1_fensterreihe_og_6161.jpg
-- .../rundekreis1_fensterreihe_og_6132.jpg
-- .../rundekreis1_fensterreihe_og_6117.jpg
-Selbst angesehen: 6120, 6161, 6117 (Breite und Bogenform treffen); 6132 erzeugt, nicht einzeln begutachtet. seiten.jpg angesehen. fehlteile_finden: keine Treffer am Fensterband.
+Gate (Mittel aus Beleg und Kanten-F1, Messung konvergenz_bericht, gleiche Einstellungen wie der Kreis):
+| Groesse | vorher | nachher (rippen_vor 0,12) |
+|---|---|---|
+| Wolkenbeleg | 0,919 | 0,983 |
+| Kanten-Recall | 0,877 | 0,857 (-0,020, an der Grenze) |
+| Kanten-Praezision | 0,465 | 0,520 |
+| F1 | 0,608 | 0,647 |
+| Guete | 0,763 | 0,815 (**+0,052**) |
+Varianten rippen_vor: 0,16 -> Guete 0,814 / Recall 0,854 (-0,023, Verletzung); 0,22 -> 0,812 / 0,856; 0,12 -> 0,815 / 0,857. Recall schwankt zwischen Laeufen um ~0,003 (gitter_pkt 4292-4349): die Recall-Marge ist duenn und nicht robust belegt.
+bauen_abnehmen.sh: "alle Pruefungen bestanden" (rc 0). regression.py --pruefen: identisch. teile_lage_pruefen: erker_polygon:1 Median 0,08 m (nicht markiert).
+
+## 4. Overlays (selbst angesehen: 6164 vorher+nachher, 6145 nachher, seiten.jpg)
+modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis2_erker_polygon_1_IMG_{6161,6164,6145,6259}_{vorher,nachher}.jpg
+(6161/6259 erzeugt, nicht einzeln angesehen = ungeprueft.)
 
 ## 5. Fehlerliste
-- Breite, Lichtweite, Rahmen/Stege, Kaempferhoehen, Bogenkontur: trifft (Overlay 6161/6120/6117).
-- Rahmenfront buendig (tiefe 0,05 = Relief-ANNAHME): trifft laut 63-Grad-Triangulation + Wolke + Gate; M-6120-057 (12,805, 30 Grad) widerspricht, als Ausreisser verworfen.
-- Glastiefe 0,2: ungeprueft im Betrag (Foto 0,06-0,10 gegen Wolke 0,27), offen in beobachtungen_offen.
-- Sprossen/Bleiverglasung, Goldprofil (doppelte Linie), Sohlbank: fehlen (nicht modelliert).
-- Praezision 0,68: Rest sind Dreiecks-Diagonalen/Stegkanten ohne Fotokante, ungeprueft je Kante.
-- Gruppen 1, 2, 5: nur ueber Wiederholung (Pitch) uebernommen; Gruppe 2 Breite gemessen (M-6161-036), 5 ungeprueft.
+- Unterbau-Grate/Pyramide: trifft besser (6164), Mittel-/Randbereich unten (Spitze) in 6145 weiter rot -> trifft teilweise nicht.
+- Gesims unten/Bank: Kamm trifft in 6164; in 6145 Gesims-Querkanten weiter rot (Schraegsicht).
+- Wappenzone/Fensterband: unveraendert, trifft (gruen), einzelne Rahmenkanten rot.
+- Traufwulst: Vorsprung erst ab 13,05 trifft; Oberkante lange Querlinie in 6164 rot (Verdeckung/Helmfuss) - ungeprueft.
+- Rueckflaechen/Einbindung: ANNAHME, ungeprueft.
+- Ost-Erker-Hoehen ohne eigene foto_mass-Messung (aus E0 uebernommen).
+- erker_polygon:0 hat denselben p98-Profilfehler, nicht angefasst.
+- Gate: Recall -0,020 genau an der Grenze; Pruefer sollte mit eigener Wiederholung gegenpruefen.
+- teile_sichtpruefung, foto_diff, fehlteile_finden nicht neu gefahren (nur konvergenz_bericht, Overlays); Sichtpruefung ungeprueft.
+- Freiraum-Audit scheitert im Worktree (fehlende messprotokoll/SFM-AUSRICHTUNG-buendel.json), unabhaengig von dieser Aenderung (auch am Altstand).
 
 ## 6. Geaenderte Dateien
-tools/baukasten_gen.py (nische_tiefe), modelle/kaufhaus_grob3/objekt.json, masstabelle.json, messprotokoll (M-6161-022..044, M-6120-051..057, M-6132-001/002, Z-6161-002/003), konvergenz.jsonl, automatisch regenerierte audit-/STL-Dateien, modelle/LOGBUCH_FENSTER_OG_R1_2026-11-10.md, NICHTS_GEBRACHT.md, REZEPT_GEBAEUDE_AUS_FOTOS.md.
+tools/baukasten_gen.py (optionale Parameter gesims[].profil, bank_profil, unterbau.rippen_mitte, rippen_skal); modelle/kaufhaus_grob3/objekt.json (nur erker_polygon:1); masstabelle.json (4 Messungen, 4 Pruefungen, Messhoehe erker_o_trauf, Beobachtung); modelle/NICHTS_GEBRACHT.md; modelle/REZEPT_GEBAEUDE_AUS_FOTOS.md (L-KR21..24); Abnahme-Artefakte (STL, MASSNACHWEIS, pruefbericht, audit/*).
 
 ## 7. Generalisierte Lehre
 | Lehre | Anlass | Werkzeug |
 |---|---|---|
-| Beleg nach Flaeche/Tiefe aufschluesseln, bevor man ihn als Mass nimmt | Beleg 0,67 war durch ueberbreite Rahmen auf Wandpunkten aufgeblaeht | Stichprobe je Teil gegen Wolke (L-KR18) |
-| Tiefen-Triangulation nur >= 45 Grad Schnittwinkel | 30-Grad-Paar 12,805 vs 63-Grad-Paar 12,646 | foto_mass --tri (L-KR19) |
-| Schnitt im Generator 2-3 mm kleiner als das Element | 154 Splitter-Koerper | baukasten_gen nische_tiefe (L-KR20) |
+| Verworfene Patches gegen den aktuellen Vorher-Wert neu messen (Gate kann inzwischen erreichbar sein) | r1 +0,031 -> r2 +0,052 | git apply --include, konvergenz_bericht --teile_dir |
+| Median je Scheibenmitte statt p98 am Scheibenanfang | Unterbau 0,17 m falsch | profil.py, schnitt_reichweite |
+| Gesims als gerundeter Grat | Praezision | baukasten_gen gesims[].profil |
+| Messlauf-Rauschen ~0,003 im Recall: Gate-Grenzfaelle mehrfach messen, Varianten waehlen | Recall 0,854-0,858 | /tmp/messen.sh-Schleife |

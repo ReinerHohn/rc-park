@@ -177,29 +177,29 @@
  {
   "seite": "alle",
   "element": "Erker-Polygon: Unterbau (umgekehrte Pyramide, Spitze an der Wand, 7 Rippen ANNAHME)",
-  "quelle": "Wolke lot2 j_voll_lot2_crop.npy Front-Mitte |du|<0,45, p98 der n je 0,2 m z: 6,4 12,85 / 6,8 12,97 / 7,2 13,23 / 7,6 13,57 / 8,0 13,83 (E0; E1 gleich +-0,05); Form (umgekehrte Pyramide mit Rippen, Spitze in der Wand) am Foto e04/6145/6225 gesehen; Spitze z 6,3 + Rippenzahl 7 = ANNAHME",
+  "quelle": "Wolke lot2 j_voll_lot2.npy, Mittellinie |du|<0,15 (inkl. Mittelrippe), n p50 je 0,2-m-Scheibe an der SCHEIBENMITTE (E1): z 6,5 12,78 / 6,9 12,85 / 7,1 13,01 / 7,3 13,18 / 7,5 13,32 / 7,7 13,50 / 7,9 13,58 / 8,1 13,80 (E0 +-0,05); vorsprung = n - 12,66 (Mittellinie; Rippen stehen 0,16 davor, ANNAHME gerade, Foto zeigt gekruemmte flache Rippen); Kreis a060555 r1 2026-11-10 ersetzt das Runde-7-Profil (p98 am Scheibenanfang, ~0,17 m zu weit vorn: Heatmap Modell ausserhalb Wolke an der Mittelrippe, signierter Abstand -0,12..-0,26); Stuetzpunkte 7,2/7,6 ~0,03-0,05 ueber Wolke-Median an den Untergrenzen der Pruefungen erker_o_unterbau72/76 (0,05 ueber Wolke-Median, innerhalb Beleg-Toleranz 0,15); Form (umgekehrte Pyramide mit Rippen, Spitze in der Wand) am Foto e04/6145/6225/6161/6164 gesehen; Spitze z 6,3 + Rippenzahl 7 = ANNAHME | Profil final [[6,5 ; 0,10],[6,9 ; 0,17],[7,2 ; 0,46],[7,6 ; 0,82],[8,0 ; 1,06]] (z ; vorsprung): Mittellinie-Median minus 0,0..0,05, an 7,2/7,6/8,0 an den Pruefungen erker_o_unterbau72/76/80 ausgerichtet (Reichweite inkl. Rippe). Rippen: nur die 4 Grate (rippen_mitte false: die Wolke-Mittellinie |du|<0,15 zeigt KEINE vorstehende Mittelrippe), Relief wachsend mit dem Pyramidenradius (rippen_skal, vor 0,16 * p/pmax, min 0,06 (duennere Rippen erzeugen Splitter, Druckreparatur scheitert): an der Spitze ist nur ~0,05-0,07 Platz, oben liefern die Rippenkaemme die Gitterkanten der Grate = Kanten-Recall); Rippen gerade = ANNAHME, am Foto gekruemmt/flach (Overlay)",
   "z_spitze": 6.3,
   "z_oben": 8.26,
   "profil": [
    [
-    6.4,
-    0.2
+    6.5,
+    0.1
    ],
    [
-    6.8,
-    0.31
+    6.9,
+    0.17
    ],
    [
     7.2,
-    0.57
+    0.46
    ],
    [
     7.6,
-    0.91
+    0.82
    ],
    [
     8.0,
-    1.17
+    1.06
    ]
   ],
   "seite_name": "alle"
@@ -216,7 +216,7 @@
  {
   "seite": "alle",
   "element": "Erker-Polygon: Fensterband z 9.92-12.05 (2 Lichter je Flaeche, Kaempfer 11.38)",
-  "quelle": "Lichterzahl: Zaehlung Z-6164-001, Z-6164-002, Z-6164-003; z_kaempfer 11,38 (M-h05-001/002, M-6124-018/019: 11,36-11,40; E1 M-6161-006 11,42, M-6164-001 11,34), z_licht_unten 9,92 (Glasunterkante 9,88-9,90 M-h05-002, M-6124-019); Lichtkopf z 12,05/12,3 (Sack, Spitzen 12,5-12,6 nicht modelliert) = ANNAHME aus Foto h05; Rahmen-/Pfostenbreite 0,10/0,12 + Kaempferhoehe 0,14 + Tiefe 0,10 = ANNAHME (Foto h05/6124, nicht gemessen) | Anzahl: Zaehlung Z-6164-001, Z-6164-002, Z-6164-003",
+  "quelle": "Lichterzahl: Zaehlung Z-6164-001, Z-6164-002, Z-6164-003; z_kaempfer 11,38 (M-h05-001/002, M-6124-018/019: 11,36-11,40; E1 M-6161-006 11,42, M-6164-001 11,34), z_licht_unten 9,92 (Glasunterkante 9,88-9,90 M-h05-002, M-6124-019); Lichtkopf z 12,05/12,3 (Sack, Spitzen 12,5-12,6 nicht modelliert) = ANNAHME aus Foto h05; Rahmen-/Pfostenbreite 0,10/0,12 + Kaempferhoehe 0,14 + Tiefe 0,10 = ANNAHME (Foto h05/6124, nicht gemessen) | Kreis a060555 r1: Glasebene Wolke n 13,59-13,63 (Modus) = 0,21-0,25 hinter Front 13,84; Modell tiefe 0,10 BLEIBT (tiefe 0,16/0,22 gemessen: Beleg +0,01/+0,02, Kanten-P -0,03/-0,06 = schlechter) | Anzahl: Zaehlung Z-6164-001, Z-6164-002, Z-6164-003",
   "z_kaempfer": 11.38,
   "z_licht_unten": 9.92,
   "z_licht_oben_mitte": 12.05,
@@ -225,20 +225,48 @@
  },
  {
   "seite": "alle",
-  "element": "Erker-Polygon: Gesimse Gesims unten z 8.26-8.51 aus 0.15, Traufgesims z 12.74-13.18 aus 0.26",
-  "quelle": "Wolke lot2 n p98: z 8,2-8,5 14,00 (aus 0,15), z 9,7-9,9 13,92 (aus 0,07), z 12,75-13,2 14,11 (aus 0,26); Hoehen Foto M-h05-004/005/006/007",
+  "element": "Erker-Polygon: Gesimse Gesims unten z 8.16-8.62 aus 0.15, Traufgesims z 13.04-13.18 aus 0.26",
+  "quelle": "Wolke lot2 j_voll_lot2.npy, Mittelstreifen |du|<0,45, n-Profil je 0,1-m-Scheibe (Kreis a060555 r1, 2026-11-10, Skript agent_scratch_kreis1/erker1): Gesims unten ist ein gerundeter GRAT: n 13,82 (z 8,15) / 13,88 (8,25) / 13,98 (8,35) / 13,96 (8,45) / 13,88 (8,55) / 13,81 (8,65), Kamm z 8,40 = Gitterkante (3D-Kantengitter z 8,40); Profil [[8,16 ; 0],[8,40 ; 0,15],[8,62 ; 0]] (Paare z ; aus). Fensterbank: Kamm n +0,07..0,10 bei z 9,65-9,80 (n 13,84/13,88-13,91/13,81-13,85 bei 9,65/9,75/9,85), Gitterkante z 9,68; Profil [[9,60 ; 0],[9,70 ; 0,07],[9,88 ; 0]] (Flanke < 25 Grad: keine Kante an 9,88, Kamm 9,70 = Gitterkante 9,68). Traufgesims: Wolke zeigt bei z 12,45-12,95 NUR die buendige Front (n 13,79-13,83), der Vorsprung (n 14,06-14,12, +0,25) beginnt erst bei z 13,05 (Wulst 13,05-13,18; Foto h05 M-h05-006: Helmunterkante 13,18 / Wulst-Oberkante 13,047; die dunkle Zone 12,74-13,05 darunter = Schattenband der Unterseite, kein Vorsprung); Runde-7-Werte (z 12,74-13,18, aus 0,26) stammten aus p98 ueber die Scheibe 12,75-13,2 = Kamm des Wulsts. Wulst-Aussenkante n 14,1 = Helm-Traufkranz r 1,9 (helm_geschweift:o). E1; E0 gleich +-0,05 (nicht angefasst). Kamm-Profile statt Rechteck: ANNAHME gerade Flanken. | Traufwulst-Profil [[13,04 ; 0],[13,10 ; 0,25],[13,18 ; 0,26]], Koerper bis z_trauf_unten 13,04 buendig.",
   "gesims": [
    {
     "name": "Gesims unten",
-    "z0": 8.26,
-    "z1": 8.51,
-    "aus": 0.15
+    "z0": 8.16,
+    "z1": 8.62,
+    "aus": 0.15,
+    "profil": [
+     [
+      8.16,
+      0.0
+     ],
+     [
+      8.4,
+      0.15
+     ],
+     [
+      8.62,
+      0.0
+     ]
+    ]
    },
    {
     "name": "Traufgesims",
-    "z0": 12.74,
+    "z0": 13.04,
     "z1": 13.18,
-    "aus": 0.26
+    "aus": 0.26,
+    "profil": [
+     [
+      13.04,
+      0.0
+     ],
+     [
+      13.1,
+      0.25
+     ],
+     [
+      13.18,
+      0.26
+     ]
+    ]
    }
   ],
   "seite_name": "alle"
