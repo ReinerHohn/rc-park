@@ -53,3 +53,4 @@ Rcstick `/media/oem/rcstick/rc-park_auslagern/` (ca. 44 GB, UUID siehe `lsblk`),
 
 ## Neu erstellen
 `tools/toshiba_inventar.sh [MOUNT]` schreibt `modelle/TOSHIBA_INVENTAR_roh.txt` (nur Lesen; HDD langsam, im Hintergrund starten). Rohdatei enthält auch private Ordnernamen und gehört nicht ins Repo.
+- 2026-11-10: `/media/oem/scan/venv-limap` (6,3 GB, LIMAP-Umgebung der verworfenen Linienfeinlage BS3e) -> Platte B `rc-park_auslagern2/venv-limap`, Symlink. Hinweis: auslagern.sh erwartet AUSLAGERN_ZIEL relativ zum Mountpunkt (absoluter Pfad ergab verschachtelten Ordner, korrigiert).
