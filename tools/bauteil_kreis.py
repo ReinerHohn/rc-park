@@ -226,6 +226,10 @@ for runde in range(1, RUNDEN + 1):
     rcK, z1, outK = messen(wt, f"r{runde}_nachher")
     vor = {t["teil"]: t["beleg"] for t in z0.get("wolkenbeleg_teile") or []}
     nach = {t["teil"]: t["beleg"] for t in (z1 or {}).get("wolkenbeleg_teile") or []}
+    ersatz = None
+    if ziel["teil"] not in nach:   # Teil durch neue Formfamilie ersetzt (z. B. stl_teil:figuren -> figurenreihe:figuren, s4 10.11.): neue Teile zaehlen, konservativ das schlechteste
+        neu_t = {t: v for t, v in nach.items() if t not in vor and v is not None}
+        if neu_t: ersatz = min(neu_t, key=neu_t.get); nach[ziel["teil"]] = neu_t[ersatz]
     gewinn = (nach.get(ziel["teil"]) or 0) - (vor.get(ziel["teil"]) or 0)
     tor_konv = rcK == 0 and gewinn >= MIN_GEWINN
     urteil = pruefer_urteil(wt, ziel, runde) if (tor_abnahme and tor_konv) else {"annehmen": False, "fehlerliste": ["nicht geprueft: Vortor rot"]}
@@ -258,7 +262,7 @@ for runde in range(1, RUNDEN + 1):
     if not TROCKEN and wt != ROOT:   # Platz (10.11.: 11 Worktrees x 430 MB fuellten die Datenplatte); Inhalt liegt als Commit auf dem Zweig br
         subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
-               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "gewinn": round(gewinn, 3),
+               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "gewinn": round(gewinn, 3),
                "tor_konvergenz": tor_konv, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")
