@@ -466,6 +466,13 @@ for runde in range(1, RUNDEN + 1):
     # kein Rueckschritt in einer der beiden Groessen (Lage ODER Form) um mehr als 0,02
     tv = vor_t.get(ziel["teil"], {}); tn = nach_t.get(ersatz or ziel["teil"], {})
     rueck_teil = [n for n, fv, fn in (("beleg", tv.get("beleg"), tn.get("beleg")), ("kanten_f1", f1(tv), f1(tn)), ("foto_f1", ff_v, ff_n)) if fv is not None and fn is not None and fn < fv - 0.02]
+    if "kanten_f1" in rueck_teil and ff_v is not None and ff_n is not None and ff_n >= ff_v + 0.02:
+        # Quellenvorrang (10.11., Balkon 3x verworfen): das Kantengitter ist aus den Fotos ABGELEITET und hatte ~130 Segmente ueber freier Wand;
+        # die direkte Formpruefung am Foto zeigt Besserung -> kein Rueckschritt, Widerspruch als Beobachtung (Regel 5: nicht mitteln).
+        rueck_teil.remove("kanten_f1"); gitter_widerspruch = f"Gitter-F1 {f1(tv):.3f}->{f1(tn):.3f}, Foto-F1 {ff_v:.3f}->{ff_n:.3f}"
+        print(f"Runde {runde}: Gitter widerspricht Foto ({gitter_widerspruch}) - Foto gilt, Beobachtung folgt")
+    else:
+        gitter_widerspruch = None
     tor_konv = rcK == 0 and gewinn >= MIN_GEWINN and not rueck_teil
     if ist_fehlteil(ziel):   # eigenes Tor: Recall im Kasten, neue Teile praezise, kein anderes Teil schlechter, Gesamt-Recall nicht kleiner
         r_n = (((z1 or {}).get("regionen") or {}).get(ziel["id"]) or {}).get("recall")
@@ -481,6 +488,13 @@ for runde in range(1, RUNDEN + 1):
     if rueck_teil: print(f"Runde {runde}: Rueckschritt im Ziel-Teil: {rueck_teil}")
     urteil = pruefer_urteil(wt, ziel, runde) if (tor_abnahme and tor_konv) else {"annehmen": False, "fehlerliste": ["nicht geprueft: Vortor rot"]}
     angenommen = tor_abnahme and tor_konv and bool(urteil.get("annehmen"))
+    if angenommen and gitter_widerspruch:
+        try:
+            _mp = os.path.join(wt, "modelle", OBJ, "masstabelle.json"); _T = json.load(open(_mp))
+            _T.setdefault("beobachtungen_offen", []).append({"datum": time.strftime("%Y-%m-%d"), "wer": f"kreis {LAUF} r{runde} (automatisch)", "merkmal": f"Kantengitter widerspricht Foto ({ziel['teil']})",
+                "text": f"Angenommen nach Quellenvorrang Foto: {gitter_widerspruch}. Kantengitter hat dort vermutlich Fehlsegmente.", "naechster_schritt": "Gittersegmente im Teilbereich gegen Fotos pruefen (gitter_zurueck), Fehlsegmente markieren."})
+            json.dump(_T, open(_mp, "w"), ensure_ascii=False, indent=1)
+        except Exception as _ex: print(f"Runde {runde}: Gitter-Widerspruch nicht eingetragen: {_ex}")
     if angenommen and urteil.get("fehlerliste") and not ist_fehlteil(ziel):
         # Pruefer-Rest wird Kreisziel (Nutzer 10.11.: Erker-Rippen standen in der Fehlerliste, Teil hatte Guete 0,98 und kam nie wieder dran).
         # Eine Beobachtung je Teil: die neue ersetzt die alte Pruefer-Rest-Beobachtung desselben Teils (erledigt = ersetzt).
