@@ -1,0 +1,64 @@
+{
+ "id": "Z-6243-002",
+ "typ": "zaehlung",
+ "foto": "6243",
+ "datei": "6243_ip_IMG_6243.jpg",
+ "was": "Portal Bogen 3: Goldschaft-Pendants je Laibungsseite, Schraegfoto von links",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-10",
+ "punkte": [
+  {
+   "flaeche": "L",
+   "art": "voll",
+   "x": 1130.0,
+   "y": 3425.0
+  },
+  {
+   "flaeche": "L",
+   "art": "voll",
+   "x": 1212.0,
+   "y": 3375.0
+  },
+  {
+   "flaeche": "L",
+   "art": "voll",
+   "x": 1268.0,
+   "y": 3362.0
+  },
+  {
+   "flaeche": "R",
+   "art": "teil",
+   "x": 1862.0,
+   "y": 3475.0
+  },
+  {
+   "flaeche": "R",
+   "art": "teil",
+   "x": 1912.0,
+   "y": 3462.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "L": {
+   "art": "voll",
+   "n": 3
+  },
+  "R": {
+   "art": "teil",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 3,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-6243-002.jpg",
+ "ausschnitt": [
+  880,
+  3112,
+  2162,
+  3725
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "rechte Seite nur angeschnitten (2 von 3 sichtbar)"
+}

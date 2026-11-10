@@ -1,37 +1,48 @@
-# Kreis r3: fensterreihe:eg1 (kaufhaus_grob3, 2026-11-10)
-Befund: Beleg 0,94 (Median 0,07), Kanten None -> Guete = Beleg. Ergebnis: Beleg 0,998 (Median 0,03), Guete +0,058 (Gate +0,05). Gesamt-Recall 0,6955 -> 0,6958, Praezision 0,1121 -> 0,1124; rueckschritt leer.
+# Kreis r1 20261110_173101 - fensterreihe:eg1_tuer (Portal Tuerblatt/Gold)
 
 ## 1. Formbeschreibung (Stufe 0)
-Fotos (angesehen): 6120 (frontal, Uebersicht ~15 m), 6119 (+10 Grad), 6243 (-49 Grad, 9 m, Nahfoto), 6206 (+66 Grad, 6 m, Nahfoto), d17 (verwackelt, nur Sicht). d20 vom Pfeiler verdeckt.
-- Zonen unten->oben: Sohle z 3,21 (Sohlbank-Relief, nicht modelliert) -> untere Reihe 2 Lichter -> Kaempferriegel (Kreuzstock, Mitte z 5,38) -> obere Reihe 2 Lichter -> gerade Oberkante z 6,32 (kein First, kein Bogen).
-- Querschnitt: flaches Putzrelief (Rahmen/Setzholz/Kaempfer) mit Vorderflaeche 0,02 HINTER der Wandfront 7,28; Lichter tief in der Laibung (Glas Wolke 7,11-7,20).
-- Wiederholung: 2x2 Lichter (Z-6120-004, in 6119/6243/6206 gegengesehen; keine neue Zaehlung noetig). Anschluss: sitzt in der Laubenrueckwand Bogen 3, Tuer daneben (eg1_tuer, nicht angefasst).
-- Am Altmodell anders: Front 7,40 (0,12 vor der Wand), kontur 0,14 zu hoch (Oberkante 6,46), Quader-Nische schnitt Setzholz.
-Formfamilie: vorhandene fensterreihe mit nische_front_n/pfosten_oben_z (aus r2); kein Codeaenderung.
+Fotos angesehen: 6207 (Nahfoto frontal), 6243 (Schraegfoto links, Uebersicht Laube), 6120 (Uebersicht, nur im Overlay, nicht neu beschrieben), dazu Formbilder 6206/6174 aus dem Torsatz (nicht einzeln beschrieben).
+- Zonen unten->oben: Schwelle/Sockel; Tuerblatt (gruen, Segmentbogen oben, 2 Beschlaege, Klopfer, Briefschlitz) tief in der Nische; Laibung mit je 3 Goldschaft-Pendants (Schaft + Kapitell) auf einer Schulter z ~2,8; innerer Steinbogen (ca. 0,13 m roter Ring um den Tuerbogen); Goldbogen/Wimperg mit Goldschraegen oben.
+- Querschnitt: Tuernische (Lichte 1,39) bis Tuerblatt n 6,77; ab Schulter z 2,77 Laibungsfluegel breiter (2,05 m) bis n ~7,17; Rahmenring aussen.
+- Wiederholungen: 3 Goldschaefte je Seite (nur benannt; gezaehlt in Stufe 1).
+- Anschluss: Rumpf quader:rumpf_eg ist massiv bis n 7,28 -> tiefer Schnitt bis 6,77 ohne Wandstaerkenproblem (Vorversuche hatten das als Hindernis notiert).
+- Formfamilie: vorhandene (quader ausschnitt, freiform ausschnitt, fensterreihe kontur); NEU generisch nur `stehen_u` in quader (stehende Streifen im Ausschnitt).
+- Offene Frage: Schaftbreite/-lage aus Foto 6207 ohne Parallaxekorrektur (ANNAHME); Schaftfront n 7,24 ANNAHME.
 
 ## 2. Zaehlungen
-Z-6120-003/004 (bestehend, 2+2 Lichter), visuell in 6119/6243/6206 bestaetigt. Keine neue Z-Datei (ANNAHME: bestehende gilt).
+- Z-6207-002: 3 Goldschaefte links, 3 rechts (voll).
+- Z-6243-002: links 3 (voll), rechts 2 von 3 (angeschnitten = teil). Gegenprobe zu Z-6207-002.
 
-## 3. Pruefungen
+## 3. Pruefungen (Pruefstand, alter Stand ROT erwartet -> neu)
 | Pruefung | vorher | nachher | Soll | Quelle |
 |---|---|---|---|---|
-| fenster_eg1_rahmenfront | -0,13 ROT | 0,02 | 0..0,06 | M-6243-004 (n 7,264 +-0,011, Paar 6206/6243 110 Grad), M-6119-011 (3 Kameras 7,259 +-0,037) |
-| fenster_eg1_oberkante_l/r | 0,20 ROT | 0,02 | 0..0,06 | M-6120-025 (gerade 6,32) + Overlay |
-| fenster_eg1_ueber_oberkante | -0,13 ROT | -0,01 | -0,02..0,02 | M-6120-025 |
-bauen_abnehmen: alle Pruefungen bestanden (freiraum_audit schon vorher 'fehlgeschlagen', nicht Teil), 1 Teilnetz, wasserdicht, Wandstaerke 0,14. Keine Werkzeugaenderung -> regression.py nicht noetig. teile_lage_pruefen eg1: Median 0,04 m, 0 % > 0,5 m.
+| tuer_b3_blatt (Blatt hinter Wandfront) | 0,30 | 0,51 | 0,46..0,56 | M-6207-001 (n 6,772 +-0,026) |
+| tuer_b3_breite_median | 1,48 | 1,41 | 1,36..1,43 | M-6120-028 (Lichte 1,39) |
+| tuer_b3_schaft_l_anzahl | 0 | 3 | 3 | Z-6207-002 / Z-6243-002 |
+| tuer_b3_schaft_r_anzahl | 0 | 3 | 3 | Z-6207-002 / Z-6243-002 |
+| tuer_b3_rahmenfront (bestehend) | -0,04 | -0,04 | -0,096..0 | M-6243-002 |
+Sollwerte nicht gelockert. `tools/bauen_abnehmen.sh kaufhaus_grob3`: "alle Pruefungen bestanden" (1 Widerspruch offen, vorher schon). Regression `tools/regression.py ... --pruefen`: identisch.
 
-## 4. Overlays (cyan vorher, rot nachher, ohne Z-Puffer)
-modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis3_fensterreihe_eg1_6120.jpg, _6243.jpg, _6206.jpg, _6119.jpg, _alle.jpg. foto_diff 6119/6120/6161 rot 0,058/0,031/0,036 (Gate ok). audit/seiten.jpg angesehen: unauffaellig (eg1 dort nicht aufloesbar).
+Foto-F1 (teil_fotoform, 10 Torfotos): **0,452 -> 0,742** (Praezision 0,753 -> 0,839, Recall 0,323 -> 0,665). Gate (+0,02) erfuellt. Einzelfotos: 6207 Recall 0,19->0,84; 6243 Praez 0,164->0,338, Recall 0,0->0,124; **6117 Praezision 0,72 -> 0,54 (Rueckschritt, nicht untersucht)**.
+Wolkenbeleg/Gitter-F1 nicht separat neu gemessen (teile_lage_pruefen: Median 0,04 m, 0 % > 0,5 m; Bauteil nach Aenderung unveraendert in Lage).
+
+## 4. Overlays
+- modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis1_fensterreihe_eg1_tuer_{6207,6243,6120}_nachher.jpg
+- Vorher: /media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_173101a173101/fotoform_bilder/fensterreihe__eg1_tuer_{6207,6243,6120}_r1_vorher.jpg
+- Selbst angesehen: 6207 (Tuerbogen, Pfosten rechts, Schwelle gruen; Rest gelb: aeusserer Goldbogen links oben), 6243 (siehe Fehlerliste). 6120: Bild erzeugt, NICHT angesehen.
 
 ## 5. Fehlerliste
-- trifft (am Bild gesehen): Aussenmasse/Oberkante 6,32 in 6120/6119, Rahmenfront (Triangulation + Wolke), Riegelhoehe 5,38, 2x2 Lichter, Rahmenstufung in 6243 deckt sich mit rot.
-- trifft nicht / offen: Sohlbank-Relief und Fussverbreiterung des Rahmens (6120 unten), Sprossen unmodelliert; Laibungstiefe 0,17 nur aus Wolke-Glas; Rahmenbreite 0,10 seitlich nicht neu gemessen.
-- ungeprueft: teile_sichtpruefung nicht gelaufen; fehlteile_finden/foto_diff-Treffer nicht einzeln betrachtet; eg2 hat dieselbe ANNAHME (tiefe 0,16, Giebelecken) -> naechster Kandidat.
+trifft (am Bild geprueft): Tuerbogen + rechte Laibungskante + Schwelle in 6207; Tuerblatt-Tiefe/Breite per Pruefstand.
+trifft nicht: 6243 (schraeg): linke Kante rot (Modellkante ohne Foto, x 110-165) und rechte Kante gelb (Fotokante ohne Modell) = seitlicher Versatz der Nische in tiefer Ebene bzw. Tiefe der Laibung falsch; 6117 Praezision gesunken; aeusserer Goldbogen/Wimperg oben links in 6207 gelb (nicht modelliert).
+ungeprueft: Schaftbreite/-lage/-front (ANNAHME), Kreisbogen vs. Sinusast (nur 6207 sichtbar gruen), 6120-Overlay, Wimperg/Goldschraegen/Schwelle als Formen (Relief < H0-Druckgrenze 2,6 cm echt bzw. nicht gemessen), Fehlteile_finden/foto_diff nicht neu gelaufen, Freiraum-Audit schlaegt in dieser Umgebung fehl (SFM-AUSRICHTUNG-buendel.json fehlt, auch vor meiner Aenderung).
 
 ## 6. Geaenderte Dateien
-modelle/kaufhaus_grob3/objekt.json (eg1: tiefe, einbindung, kaempfer/scheitel, kontur, pfosten_oben_z, nische_*; quader:eg1_nische aktiv false), masstabelle.json (Beobachtung, 4 Pruefungen), messprotokoll M-6243-004, M-6119-011, elemente.json/pruefbericht/MASSNACHWEIS/STL (Build), konvergenz.jsonl, NICHTS_GEBRACHT.md, REZEPT (L-KR29), LOGBUCH_FENSTER_EG1_R3.
+tools/baukasten_gen.py (quader `stehen_u`), modelle/kaufhaus_grob3/objekt.json (kontur -1,00/+0,98 aus Vorgaenger-Zweig 084248-r1; nische n0 6,77, u 3,625..5,035; neu freiform:eg1_tuer_bogenfeld, quader:eg1_tuer_nische_fluegel stehen_u 3+3, quader:eg1_tuer_schaefte_kopf), masstabelle.json (4 Pruefungen + 3 Messungen, `erledigt` an der Beobachtung), messprotokoll/Z-6207-002, Z-6243-002, REZEPT_GEBAEUDE_AUS_FOTOS.md (L-KR29..32), NICHTS_GEBRACHT.md, erzeugte STL/Audit-Dateien. Nichts committet.
 
 ## 7. Generalisierte Lehre
-Lehre | Anlass | Werkzeug
-Geschwisterteile derselben Annahme sofort einzeln nachmessen | eg0->eg1 gleicher Tiefenfehler | foto_mass --tri
-Hoehen per Wandebenen-Linien-Overlay pruefen, Gegenpruefung 'ueber Oberkante nur Wand' | kontur 0,14 zu hoch | Messung fenster_eg1_ueber_oberkante
+| Lehre | Anlass | Werkzeug |
+|---|---|---|
+| Ausschnitte werden nach der Vereinigung aller Anbauten abgezogen: Elemente in einer Laibung als stehende Streifen modellieren | Schaefte zaehlten 0 | quader `stehen_u`, ebene_vorspruenge |
+| Schnittkanten nie deckungsgleich mit Nachbarflaechen (5 mm Versatz) | STL nicht wasserdicht nach 1. Bau | Druckreparatur-Meldung im Bau |
+| Hindernis "Wandstaerke" erst am Volumen pruefen (Rumpf massiv) | Vorversuche liessen Tuerblatt offen | Schnittprobe / Pruefstand |
+| Fotoform-Bilder nur mit --bilder | ff_eigen_bilder leer | teil_fotoform |

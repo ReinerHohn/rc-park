@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_173101a173101/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -27,9 +27,9 @@
   "giebel_o_rueck": 21.9469998550415,
   "giebel_o_vorn": 21.9469998550415,
   "tuer_b3_anzahl": 1.0,
-  "tuer_b3_breite_median": 1.48,
-  "tuer_b3_breite_max": 1.48,
-  "tuer_b3_ebene_abstand": 1.3668759020227925,
+  "tuer_b3_breite_median": 1.41,
+  "tuer_b3_breite_max": 1.41,
+  "tuer_b3_ebene_abstand": 1.2968758567997347,
   "bal_feld_anzahl": 10.0,
   "bal_feld_breite_median": 0.16,
   "bal_feld_breite_max": 0.17,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.2521246230474818,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10977088660001755,
-  "wand_anteil_unter": 0.0006666666666666666,
+  "wand_pq": 0.10590076446533203,
+  "wand_anteil_unter": 0.0008,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -194,7 +194,14 @@
   "fenster_eg1_rahmenfront": 0.016407608593362877,
   "fenster_eg1_oberkante_l": 0.015700855543197,
   "fenster_eg1_oberkante_r": 0.016853294678484954,
-  "fenster_eg1_ueber_oberkante": -0.007184007348401078
+  "fenster_eg1_ueber_oberkante": -0.007184007348401078,
+  "tuer_b3_blatt": 0.5060845958538565,
+  "tuer_b3_schaft_l_anzahl": 3.0,
+  "tuer_b3_schaft_l_breite_median": 0.05,
+  "tuer_b3_schaft_l_grund_abstand": 0.10696126914598159,
+  "tuer_b3_schaft_r_anzahl": 3.0,
+  "tuer_b3_schaft_r_breite_median": 0.05,
+  "tuer_b3_schaft_r_grund_abstand": 0.1053239090386251
  },
  "pruefungen": [
   {
@@ -399,7 +406,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10977088660001755,
+   "wert": 0.10590076446533203,
    "soll": [
     0.0348,
     100
@@ -1573,6 +1580,46 @@
    "soll": [
     -0.02,
     0.02
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Tuer Laube EG Bogen 3: Tuerblatt hinter der Wandfront n 7,28 (m, Strahlen Tuermitte z 2,2, Median)",
+   "wert": 0.5060845958538565,
+   "soll": [
+    0.46,
+    0.56
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Tuer Laube EG Bogen 3: Lichte Breite der Tuernische in z 2,8 (m)",
+   "wert": 1.41,
+   "soll": [
+    1.36,
+    1.43
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Tuer Laube EG Bogen 3: Goldschaefte der linksen Laibung (Anzahl, Strahlen z 3,3)",
+   "wert": 3.0,
+   "soll": [
+    3,
+    3
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Tuer Laube EG Bogen 3: Goldschaefte der rechtsen Laibung (Anzahl, Strahlen z 3,3)",
+   "wert": 3.0,
+   "soll": [
+    3,
+    3
    ],
    "ok": true,
    "status": "ok"
