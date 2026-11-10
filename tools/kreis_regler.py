@@ -56,9 +56,24 @@ def tote_sperren_freigeben():
             os.remove(os.path.join(bd, f)); print(time.strftime("%H:%M:%S"), "tote Sperre freigegeben:", f, inhalt)
 
 hist, letzter, leer_sig = [], 0.0, None
+FORM = os.path.join(KD, OBJ, "fotoform"); form_start = 0.0
+def form_auffrischen():
+    """Formliste je Teil (teil_fotoform, L-KR25) fuer den aktuellen main-STL: neu, wenn keine Liste zu diesem STL passt; hoechstens alle 40 min, nie doppelt."""
+    global form_start
+    import hashlib
+    stl = os.path.join(ROOT, json.load(open(os.path.join(ROOT, "modelle", OBJ, "objekt.json")))["stl"])
+    try: sha = hashlib.sha256(open(stl, "rb").read()).hexdigest()[:16]
+    except OSError: return
+    if os.path.exists(os.path.join(FORM, sha + ".json")) or time.time() - form_start < 2400: return
+    if subprocess.run(["systemctl", "--user", "is-active", "--quiet", "rcpark-fotoform"]).returncode == 0: return
+    subprocess.run([os.path.join(ROOT, "tools", "job_start.sh"), "fotoform", os.path.join(KD, "fotoform.log"), "bash", "tools/fotoform_auffrischen.sh", OBJ],
+                   cwd=ROOT, capture_output=True, env=dict(os.environ, JOB_GPU_MB="2500"))
+    form_start = time.time(); print(time.strftime("%H:%M:%S"), f"Formliste veraltet (main-STL {sha}) -> fotoform_auffrischen gestartet", flush=True)
 print(f"Kreis-Regler {OBJ}: max {MAX} Spuren, GPU-Ziel {GPU_ZIEL} %, VRAM < {VRAM_MAX} MiB, RAM > {RAM_MIN} GB, Takt {TAKT} s")
 while True:
     tote_sperren_freigeben()
+    try: form_auffrischen()
+    except Exception as ex: print("form_auffrischen:", ex)
     u, m = gpu(); hist = (hist + [u])[-5:]; ug = sum(hist) / len(hist)
     sp = spuren(); r = ram_gb(); last = os.getloadavg()[0]; ker = os.cpu_count()
     rf = shutil.disk_usage("/").free / 1e9; df = shutil.disk_usage("/media/oem/scan").free / 1e9

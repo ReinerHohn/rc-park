@@ -195,6 +195,30 @@ def ist_erledigt(f, erl):
     return any(all(e["lo"][i] - 0.5 <= c[i] <= e["hi"][i] + 0.5 for i in range(3)) for e in erl.values())
 BEFUND_RE = re.compile(r"FEHLTEIL-BEFUND:\s*(gebaut|kein Bauteil|Gitter zu duenn|vorhandenes Teil\s+\S+)", re.I)
 
+# Formpruefung am Foto je Teil (teil_fotoform, L-KR24/L-KR25): Gauben/Balkon/Erker-Rippen waren falsch bei Guete 0,8-0,98, weil Wolke und
+# Kantengitter (Toleranz 0,35 m, an Gauben 0 Punkte) Relief und Teilung nicht sehen. Formliste vom Regler (fotoform_auffrischen.sh) je main-STL.
+FORMDIR = os.path.join(KREISDIR, OBJ, "fotoform")
+def formliste():
+    fs = sorted(glob.glob(os.path.join(FORMDIR, "*.json")), key=os.path.getmtime)
+    try: return json.load(open(fs[-1])) if fs else {}
+    except Exception: return {}
+def form_g(fl, teil): return (((fl.get("teile") or {}).get(teil) or {}).get("_gesamt") or {})
+def form_fotos(fl, teil, n=10):
+    je = {k: v for k, v in ((fl.get("teile") or {}).get(teil) or {}).items() if k != "_gesamt"}
+    return sorted(je, key=lambda k: -(je[k]["mk_px"] + je[k]["fk_px"]))[:n]
+def form_messen(wt, tdir, teil, fotos, tag):
+    """Foto-F1 eines Teils (nur dieses Teil, Verdeckung gegen das ganze Modell) auf den Fotos der Formliste; None = nicht messbar."""
+    if not fotos or not os.path.isdir(tdir): return None
+    aus = os.path.join(LDIR, f"fotoform_{tag}.json")
+    sh_tor([PY, "-W", "ignore", "-I", "tools/teil_fotoform.py", OBJ, "--teile_dir", tdir, "--stl", STL, "--nur", teil, "--fotos", ",".join(fotos),
+            "--aus", aus, "--bilder", "--bilder_dir", os.path.join(LDIR, "fotoform_bilder"), "--etikett", tag], wt, log=os.path.join(LDIR, f"fotoform_{tag}.log"))
+    try: return ((json.load(open(aus))["teile"].get(teil) or {}).get("_gesamt") or {}).get("f1")
+    except Exception: return None
+def guete_form(t, ff):
+    """Teilguete mit Formpruefung am Foto: Mittel aus Wolkenbeleg, Gitter-Kanten-F1 (falls Gitter) und Foto-F1 (falls messbar)."""
+    c = [x for x in (t.get("beleg"), f1(t), ff) if x is not None]
+    return sum(c) / len(c) if c else None
+
 def waehlen(z, sperre):
     fg = fehlversuche_global()
     belegt_fam = {f.split("__")[0] for f in os.listdir(BELEGT)}
@@ -218,10 +242,11 @@ def waehlen(z, sperre):
             return t
         except FileExistsError:
             continue
-    kand = [t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["beleg"] is not None and t["anteil_mit_daten"] >= MIN_DATEN
+    fl = formliste()
+    kand = [t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["beleg"] is not None and (t["anteil_mit_daten"] >= MIN_DATEN or form_g(fl, t["teil"]).get("f1") is not None)
             and sperre.get(t["teil"], 0) < MAX_FEHL and fg.get(t["teil"], 0) < MAX_GLOBAL and not os.path.exists(os.path.join(BELEGT, t["teil"]))
             and t["teil"].split("__")[0] not in belegt_fam]   # gleiche Formfamilie (gleicher Generatorcode) nie parallel
-    kand.sort(key=lambda t: guete(t))
+    kand.sort(key=lambda t: min(x for x in (guete(t), form_g(fl, t["teil"]).get("f1")) if x is not None))   # schwaechste Groesse zuerst: Form am Foto zaehlt mit
     for t in kand:   # atomar belegen (O_EXCL), damit zwei Spuren nie dasselbe Teil nehmen
         try:
             fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
@@ -298,6 +323,16 @@ def auftrag(ziel, runde, wt):
                       f"Diese Beobachtung ist das Ziel der Runde (Ursache steht oben, in Stufe 0 an >= 3 Fotos bestaetigen, dann messen und beheben). "
                       f"Wenn behoben: bei genau dieser Beobachtung in masstabelle.json das Feld \"erledigt\": \"kreis{runde} <Kurzbeleg>\" setzen. "
                       f"Zusatzwerte des Teils: " + befund[len("Automatisch aus konvergenz_bericht (Wolkenbeleg je Bauteil): "):])
+    if not ist_fehlteil(ziel):
+        _g = form_g(formliste(), ziel["teil"]); _je = {k: v for k, v in ((formliste().get("teile") or {}).get(ziel["teil"]) or {}).items() if k != "_gesamt"}
+        if _g:
+            _schl = sorted(_je, key=lambda k: _je[k]["praez"] + _je[k]["recall"])[:3]
+            _fl = "; ".join(f"Foto {k}: Praez {_je[k]['praez']}, Recall {_je[k]['recall']}, gelbe Flecken (Fotokante OHNE Modell) bei {[f['xyz'] for f in _je[k]['gelb']]}, "
+                            f"rote (Modellkante OHNE Foto) bei {[f['xyz'] for f in _je[k]['rot']]}" for k in _schl)
+            befund += (f" FORM AM FOTO (tools/teil_fotoform.py, Schwelle 0,14 m, je kalibriertem Foto, verdeckte Pixel ausgenommen): F1 {_g['f1']} "
+                       f"(Praezision {_g['praez']} = Modellkanten mit Fotokante, Recall {_g['recall']} = Fotokanten mit Modellkante) ueber {_g['fotos']} Fotos. "
+                       f"Schwaechste: {_fl}. Bilder: {formliste().get('bilder_dir', FORMDIR)}/{ziel['teil']}_<foto>.jpg ansehen (gruen passt, rot erfunden, gelb fehlt). "
+                       f"Gelb im Teil = Form fehlt (Fenster, Rippen, Pfeiler, Ueberstand); rot = Form falsch/zu viel. Der Foto-F1 geht ins Tor ein und darf nicht fallen.")
     txt = (txt.replace("`<OBJEKT>`", OBJ).replace("<OBJEKT>", OBJ).replace("`<BAUTEIL>`", typ).replace("<BAUTEIL>", typ)
               .replace("`<BEFUND>`", befund).replace("<BEFUND>", befund).replace("<RUNDE>", f"kreis{runde}")
               .replace("`<TABU>`", ", ".join(TABU) or "-").replace("<TABU>", ", ".join(TABU) or "-")
@@ -312,7 +347,8 @@ def auftrag(ziel, runde, wt):
 def pruefer_urteil(wt, ziel, runde):
     p = (f"Du bist der Pruefer nach modelle/VORLAGE_BAUTEIL_RUNDE.md (Abschnitt Pruefer-Checkliste) im Worktree {wt}, Objekt {OBJ}, "
          f"Bauteil {ziel['teil'].replace('__', ':')}" + (f" (FEHLENDES ELEMENT im Kasten {ziel['lo']} .. {ziel['hi']} m: neues Teil muss dort echte Fotokanten treffen, nichts erfunden)" if ist_fehlteil(ziel) else "") + f". Lies {wt}/modelle/{OBJ}/audit/kreis_bericht.md, sieh dir JEDES dort genannte Overlay "
-         f"und {wt}/modelle/{OBJ}/audit/seiten.jpg selbst an. Pruefe: Formbeschreibung vollstaendig und passend zu den Fotos? Trifft das Teil "
+         f"und {wt}/modelle/{OBJ}/audit/seiten.jpg selbst an. Pruefe: Formbeschreibung vollstaendig und passend zu den Fotos? Formpruefung je Foto vorher/nachher: {LDIR}/fotoform_bilder/{ziel['teil']}_*_r{runde}_vorher.jpg und _nachher.jpg "
+         f"(gelb = Fotokante ohne Modell = fehlende Form, rot = erfundene Form) ansehen und gelbe Reste in die Fehlerliste. Trifft das Teil "
          "die Fotos besser als vorher? Neue Fehler an anderen Teilen? Nichts schoenreden, Agenten-'ok' nie uebernehmen. Aendere KEINE Dateien. "
          'Letzte Zeile deiner Antwort GENAU: URTEIL {"annehmen": true|false, "fehlerliste": ["..."]}')
     rc, out = sh(["claude", "-p", p, "--model", PRUEFER, "--permission-mode", "plan"], wt,
@@ -390,6 +426,15 @@ for runde in range(1, RUNDEN + 1):
     print(f"Runde {runde}: Ziel {ziel['teil']} ({'Fehlteil ' + str(ziel['pkt']) + ' Pkt, Recall Kasten ' + str(ziel['recall_kasten']) if ist_fehlteil(ziel) else 'Wolkenbeleg ' + str(ziel['beleg'])}) -> Auftrag {LDIR}/auftrag_r{runde}.md")
     if TROCKEN:
         freigeben(ziel["teil"]); protokoll({"runde": runde, "trocken": True, "ziel": ziel}); print(txt[:1500]); break
+    ff_v, ff_fotos = None, []
+    if not ist_fehlteil(ziel) and not TROCKEN and not NACH:   # Form am Foto VOR dem Agenten (Basisstand), gleiche Fotos nachher
+        ff_fotos = form_fotos(formliste(), ziel["teil"])
+        if ff_fotos:
+            _tv = os.path.join(LDIR, f"teile_r{runde}_vorher_form")
+            _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
+            sh_tor(_gen, wt, log=os.path.join(LDIR, f"export_r{runde}_vorher_form.log"), env={"BAUTEILE_AUS": _tv})
+            ff_v = form_messen(wt, _tv, ziel["teil"], ff_fotos, f"r{runde}_vorher")
+            print(f"Runde {runde}: Form am Foto vorher {ziel['teil']}: F1 {ff_v} ({len(ff_fotos)} Fotos)")
     t0 = time.time()
     rcA, _ = (None, "") if NACH else sh(["claude", "-p", txt, "--model", MODELL, "--permission-mode", RECHTE], wt,
                 log=os.path.join(LDIR, f"agent_r{runde}.log"), timeout=MAX_MIN * 60)
@@ -411,10 +456,16 @@ for runde in range(1, RUNDEN + 1):
     if ziel["teil"] not in nach:   # Teil durch neue Formfamilie ersetzt (z. B. stl_teil:figuren -> figurenreihe:figuren, s4 10.11.): neue Teile zaehlen, konservativ das schlechteste
         neu_t = {t: v for t, v in nach.items() if t not in vor and v is not None}
         if neu_t: ersatz = min(neu_t, key=neu_t.get); nach[ziel["teil"]] = neu_t[ersatz]
+    ff_n = None
+    if ff_v is not None and not ersatz:
+        ff_n = form_messen(wt, os.path.join(LDIR, f"teile_r{runde}_nachher"), ziel["teil"], ff_fotos, f"r{runde}_nachher")
+        if ff_n is not None:
+            vor[ziel["teil"]] = guete_form(vor_t.get(ziel["teil"], {}), ff_v); nach[ziel["teil"]] = guete_form(nach_t.get(ziel["teil"], {}), ff_n)
+        print(f"Runde {runde}: Form am Foto {ziel['teil']}: F1 {ff_v} -> {ff_n} ({len(ff_fotos)} Fotos)")
     gewinn = (nach.get(ziel["teil"]) or 0) - (vor.get(ziel["teil"]) or 0)
     # kein Rueckschritt in einer der beiden Groessen (Lage ODER Form) um mehr als 0,02
     tv = vor_t.get(ziel["teil"], {}); tn = nach_t.get(ersatz or ziel["teil"], {})
-    rueck_teil = [n for n, fv, fn in (("beleg", tv.get("beleg"), tn.get("beleg")), ("kanten_f1", f1(tv), f1(tn))) if fv is not None and fn is not None and fn < fv - 0.02]
+    rueck_teil = [n for n, fv, fn in (("beleg", tv.get("beleg"), tn.get("beleg")), ("kanten_f1", f1(tv), f1(tn)), ("foto_f1", ff_v, ff_n)) if fv is not None and fn is not None and fn < fv - 0.02]
     tor_konv = rcK == 0 and gewinn >= MIN_GEWINN and not rueck_teil
     if ist_fehlteil(ziel):   # eigenes Tor: Recall im Kasten, neue Teile praezise, kein anderes Teil schlechter, Gesamt-Recall nicht kleiner
         r_n = (((z1 or {}).get("regionen") or {}).get(ziel["id"]) or {}).get("recall")
@@ -514,7 +565,7 @@ for runde in range(1, RUNDEN + 1):
         subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
                "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
-               "tor_konvergenz": tor_konv, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
+               "tor_konvergenz": tor_konv, "foto_f1": [ff_v, ff_n], "foto_fotos": ff_fotos, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")
     if ohne_annahme >= 2:

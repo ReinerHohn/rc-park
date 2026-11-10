@@ -41,3 +41,13 @@ Zurückgenommen: Laube-Rückwand (alte Kennzahl, verdeckte Flächen) und Helm Os
 5. **Audit-Bilder und STLs in Git** wachsen ca. 1 GB/h. Nutzerentscheid nötig: nicht mehr versionieren oder regelmäßig auslagern.
 6. `/tmp/iph` (1,4 GB) liegt wieder auf Root (Nutzerdaten, nicht angefasst).
 7. Foto 6124: Das Modell bedeckt nur 2,5 % des Bildes; Kamera prüfen.
+
+## Nachtrag 10.11. 11:00 – Formpruefung am Foto (Nutzer-Sichtfunde Gauben/Balkon/Erker-Rippen)
+- Ursache aller drei Funde: Wolke/Kantengitter zu grob (Toleranz 0,35 m, Gauben gitter_pkt 0), Pruefer-Fehlerlisten fliessen nicht in die Zielwahl, keine Formpruefung je Teil am Foto.
+- Neu: `tools/teil_fotoform.py` (je Teil und kalibriertem Foto Praez/Recall der Kanten, Schwelle 0,14 m, Verdeckung per Raster, Flecken mit Weltpunkt).
+  Befunde am echten Modell: Bruestung Praez 0,53 (Pfeiler fehlen, Teilung falsch), Erker-Unterbau Rippennetz gelb (6164), Gauben aus Frontfoto 6120 unauffaellig (Wangen nicht sichtbar).
+- Eingebaut (UNGETESTET in echter Runde, nur kompiliert): Kreis-Zielwahl nach min(Guete, Foto-F1), Foto-F1 im Tor (vorher vor dem Agenten, darf nicht fallen), Auftrag+Pruefer mit Formbildern;
+  Regler startet `tools/fotoform_auffrischen.sh` je neuem main-STL. Regler noch NICHT neu gestartet -> ohne Formliste in rc-park_kreis/kaufhaus_grob3/fotoform/ ist alles inaktiv.
+- OFFEN Gegenprobe: Verschiebung/Huelle der OG-Fenster mit aus Teilen zusammengesetztem Ganzmodell war UNGUELTIG (Ausschnitt-Teile fuellen Oeffnungen, Basis-Recall 0,11).
+  Richtig: Variante per Generator bauen (objekt.json-Kopie mit u+0,3 m bzw. ohne Sprossen), dann teil_fotoform vorher/nachher; erst danach Regler neu starten.
+- Volllauf aller 37 Fotos: scratchpad tff_alle.json (Job rcpark-teil_fotoform) -> als Startliste nach fotoform/ kopieren, Gauben-Werte aus Schraegfotos pruefen.
