@@ -1,5 +1,5 @@
 {
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_024143a024143/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_024143a024143/wt_r3/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.1340548637573273,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.13989727199077606,
-  "wand_anteil_unter": 0.0002666666666666667,
+  "wand_pq": 0.13989689946174622,
+  "wand_anteil_unter": 0.0003,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -117,7 +117,17 @@
   "helm_o_r_13_45": 1.6432343163335377,
   "helm_o_r_14_12": 1.271050051226185,
   "helm_o_r_14_38": 1.1710493512396543,
-  "helm_o_r_14_88": 1.001048870369267
+  "helm_o_r_14_88": 1.001048870369267,
+  "gaube_a_vordach_vor": 1.5221385427095424,
+  "gaube_a_vordach_up": 0.690012053487749,
+  "gaube_a_vordach_um": 0.7599881539197059,
+  "gaube_a_stirn_vor": 1.3071388566195385,
+  "gaube_a_dach_z": 20.46699999999998,
+  "gaube_b_vordach_vor": 1.5221473701353774,
+  "gaube_b_vordach_up": 0.7152417596097334,
+  "gaube_b_vordach_um": 0.7347579486846905,
+  "gaube_b_stirn_vor": 1.3071474824609604,
+  "gaube_b_dach_z": 20.46699999999998
  },
  "pruefungen": [
   {
@@ -332,7 +342,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.13989727199077606,
+   "wert": 0.13989689946174622,
    "soll": [
     0.0348,
     100
@@ -786,6 +796,106 @@
    "soll": [
     0.87,
     1.07
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach-Vorderkante bei z 21,33 (n-Reichweite ab n 7,0; Foto n 8,52)",
+   "wert": 1.5221385427095424,
+   "soll": [
+    1.42,
+    1.62
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach Halbbreite nach +u bei z 21,33 (Foto 0,71-0,74)",
+   "wert": 0.690012053487749,
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach Halbbreite nach -u bei z 21,33",
+   "wert": 0.7599881539197059,
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Stirn-/Fensterkasten-Front bei z 20,85 (n-Reichweite ab n 7,0; Foto n 8,31) - Wachposten, am Altmodell schon gruen",
+   "wert": 1.3071388566195385,
+   "soll": [
+    1.23,
+    1.39
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Hoehe der Dachoberflaeche bei n 7,7 (Vordach-Pultdach, Hang 21,6)",
+   "wert": 20.46699999999998,
+   "soll": [
+    20.337,
+    20.837
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Vordach-Vorderkante bei z 21,33 (n-Reichweite ab n 7,0; Foto n 8,52)",
+   "wert": 1.5221473701353774,
+   "soll": [
+    1.42,
+    1.62
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Vordach Halbbreite nach +u bei z 21,33 (Foto 0,71-0,74)",
+   "wert": 0.7152417596097334,
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Vordach Halbbreite nach -u bei z 21,33",
+   "wert": 0.7347579486846905,
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Stirn-/Fensterkasten-Front bei z 20,85 (n-Reichweite ab n 7,0; Foto n 8,31) - Wachposten, am Altmodell schon gruen",
+   "wert": 1.3071474824609604,
+   "soll": [
+    1.23,
+    1.39
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube obere Reihe B (u 6,55): Hoehe der Dachoberflaeche bei n 7,7 (Vordach-Pultdach, Hang 21,6)",
+   "wert": 20.46699999999998,
+   "soll": [
+    20.337,
+    20.837
    ],
    "ok": true,
    "status": "ok"

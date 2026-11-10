@@ -1,6 +1,6 @@
 {
  "foto": "6120",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_024143a024143/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_024143a024143/wt_r3/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6120 (amtliche Anker)",
  "zelle_px": 179,
  "schwelle": 0.35,
@@ -11,12 +11,26 @@
     0,
     179
    ],
-   "score": -0.993,
+   "score": -0.93,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    1.09,
-    7.24,
-    22.0
+    1.08,
+    7.22,
+    22.03
+   ]
+  },
+  {
+   "zelle": [
+    2327,
+    0,
+    179
+   ],
+   "score": -0.91,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    2.16,
+    6.86,
+    22.02
    ]
   }
  ],

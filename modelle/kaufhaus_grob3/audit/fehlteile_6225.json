@@ -1,50 +1,64 @@
 {
  "foto": "6225",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_024143a024143/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_024143a024143/wt_r3/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6225 (amtliche Anker)",
  "zelle_px": 149,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
+    1639,
+    596,
+    149
+   ],
+   "score": -0.998,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -5.16,
+    9.08,
+    22.0
+   ]
+  },
+  {
+   "zelle": [
+    1639,
+    745,
+    149
+   ],
+   "score": -0.931,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -4.45,
+    7.44,
+    23.69
+   ]
+  },
+  {
+   "zelle": [
     298,
     1341,
     149
    ],
-   "score": -1.0,
+   "score": -0.926,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    7.32,
-    4.68,
-    22.42
+    7.38,
+    4.67,
+    22.4
    ]
   },
   {
    "zelle": [
-    298,
+    149,
     1490,
     149
    ],
-   "score": -0.929,
+   "score": -0.901,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    10.78,
-    1.11,
-    25.38
-   ]
-  },
-  {
-   "zelle": [
-    1788,
-    596,
-    149
-   ],
-   "score": -0.913,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -5.66,
-    8.01,
-    23.57
+    11.54,
+    1.85,
+    24.2
    ]
   },
   {
@@ -53,40 +67,26 @@
     745,
     149
    ],
-   "score": -0.907,
+   "score": -0.862,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
     -6.64,
-    6.67,
-    24.12
+    6.64,
+    24.3
    ]
   },
   {
    "zelle": [
-    2086,
-    745,
+    0,
+    1639,
     149
    ],
-   "score": -0.888,
+   "score": -0.838,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -7.24,
-    5.46,
-    25.74
-   ]
-  },
-  {
-   "zelle": [
-    298,
-    2086,
-    149
-   ],
-   "score": -0.85,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    13.69,
-    -4.84,
-    22.49
+    14.44,
+    0.74,
+    24.57
    ]
   }
  ],

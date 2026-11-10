@@ -1,78 +1,50 @@
 {
  "foto": "6176",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_024143a024143/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_024143a024143/wt_r3/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6176 (amtliche Anker)",
  "zelle_px": 163,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    1467,
-    2608,
-    163
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    1.51,
-    12.94,
-    7.47
-   ]
-  },
-  {
-   "zelle": [
-    652,
-    2445,
-    163
-   ],
-   "score": -0.934,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -0.6,
-    7.68,
-    8.12
-   ]
-  },
-  {
-   "zelle": [
     1630,
     2445,
     163
    ],
-   "score": -0.904,
+   "score": -0.992,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    3.58,
-    12.77,
-    8.17
+    3.54,
+    12.79,
+    8.19
    ]
   },
   {
    "zelle": [
     1467,
-    2445,
+    2608,
     163
    ],
-   "score": -0.874,
+   "score": -0.957,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    1.7,
-    13.01,
-    8.5
+    1.47,
+    12.91,
+    7.51
    ]
   },
   {
    "zelle": [
-    652,
-    2608,
+    1467,
+    2282,
     163
    ],
-   "score": -0.855,
+   "score": -0.924,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -1.76,
-    8.18,
-    7.4
+    1.97,
+    12.73,
+    9.48
    ]
   },
   {
@@ -81,12 +53,40 @@
     2445,
     163
    ],
-   "score": -0.84,
+   "score": -0.918,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -0.84,
+    -0.85,
     8.77,
     8.24
+   ]
+  },
+  {
+   "zelle": [
+    652,
+    2445,
+    163
+   ],
+   "score": -0.902,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.46,
+    7.59,
+    8.07
+   ]
+  },
+  {
+   "zelle": [
+    652,
+    2608,
+    163
+   ],
+   "score": -0.856,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -1.61,
+    8.11,
+    7.37
    ]
   }
  ],

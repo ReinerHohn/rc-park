@@ -1,0 +1,49 @@
+{
+ "id": "M-6259-009",
+ "typ": "triangulation",
+ "foto": "6259",
+ "name": "Gaube oben B Vordach hinten rechts (Anschluss Hang)",
+ "beobachtungen": [
+  {
+   "kamera": "K-c12",
+   "px": [
+    1700.0,
+    650.0
+   ]
+  },
+  {
+   "kamera": "K-6259",
+   "px": [
+    2072.0,
+    833.0
+   ]
+  },
+  {
+   "kamera": "K-6162",
+   "px": [
+    1827.0,
+    663.0
+   ]
+  }
+ ],
+ "P": [
+  7.794,
+  4.474,
+  22.747
+ ],
+ "strahl_abstand_m": [
+  0.103,
+  0.027,
+  0.123
+ ],
+ "schnittwinkel_grad": [
+  9.2,
+  18.4,
+  20.4
+ ],
+ "z": 22.747,
+ "unsicherheit_m": 0.246,
+ "massstab_von": "Kameras K-c12, K-6259, K-6162 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 6.819,
+ "u": 5.854
+}

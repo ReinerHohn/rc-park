@@ -1,0 +1,39 @@
+{
+ "id": "M-6259-004",
+ "typ": "triangulation",
+ "foto": "6259",
+ "name": "Gaube oben B Vordach Vorderkante unten rechts",
+ "beobachtungen": [
+  {
+   "kamera": "K-c12",
+   "px": [
+    1688.0,
+    699.0
+   ]
+  },
+  {
+   "kamera": "K-6259",
+   "px": [
+    2060.0,
+    867.0
+   ]
+  }
+ ],
+ "P": [
+  8.21,
+  5.592,
+  21.488
+ ],
+ "strahl_abstand_m": [
+  0.002,
+  0.002
+ ],
+ "schnittwinkel_grad": [
+  9.6
+ ],
+ "z": 21.488,
+ "unsicherheit_m": 0.248,
+ "massstab_von": "Kameras K-c12, K-6259 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 8.011,
+ "u": 5.872
+}
