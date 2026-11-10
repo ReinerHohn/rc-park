@@ -6166,12 +6166,32 @@
    "drehung_grad": 0.0,
    "profil": [
     [
-     14.15,
-     1.54
+     13.3,
+     1.74
+    ],
+    [
+     13.62,
+     1.51
+    ],
+    [
+     14.12,
+     1.26
+    ],
+    [
+     14.38,
+     1.16
     ],
     [
      14.64,
-     1.2
+     1.1
+    ],
+    [
+     14.88,
+     0.99
+    ],
+    [
+     15.12,
+     0.91
     ],
     [
      15.41,
@@ -6210,8 +6230,8 @@
    "r_spitze": 0.02,
    "kranz": {
     "z0": 13.1,
-    "z1": 14.15,
-    "r": 1.45
+    "z1": 13.3,
+    "r": 1.74
    },
    "knauf": {
     "z": 22.0,
@@ -6226,12 +6246,12 @@
    "werte_quellen": {
     "u": "Helmachse aus formen/helme.json (Kegelfit der Nadel, Lage gut: Wolke-Profil zentriert) along 15.53",
     "n": "formen/helme.json off 12.23",
-    "n_seiten": "ANNAHME: Achteck (Grate am Foto nu3b: 3-4 innere Grate sichtbar); Zaehlung per foto_zaehlung offen",
-    "drehung_grad": "ANNAHME: eine Flaeche zur Strasse (+n), wie die Erkerfront",
-    "profil": "Foto nu_3b29472b (K-nu3b Kamera-Bruecke, 19 m, Blick -41 Grad) Silhouettenbreite/2 auf der Ebene durch die Helmachse: M-nu3b-001..008 (z 14,22 Traufspitzen 1,54 / 14,64 1,20 / 15,41 0,83 / 16,18 0,58 / 16,97 0,44 / 17,76 0,34 / 18,58 0,27 / 19,40 0,19); oben Wolke lot2 r p50 (20,25 0,13, Nadel 20,5-22 ~0,10); Form = Foto (Regel 9d), Wolke einig +-0,07 ab z 15 (unterhalb Erker/Dach im Schnitt)",
+    "n_seiten": "ANNAHME: Achteck. Foto-Gegenprobe Z-nu3b-001 (3 Grate in Bildzeile 1000 = 2 volle Flaechen, Rueckseite nie sichtbar, N nicht direkt zaehlbar); die vom Achteck (Flaeche zur Strasse) vorhergesagten Grate fallen in nu3b/6132/nuaca auf die echten Grate (Overlays rundekreis1_helm_geschweift_o_*); Wolke-Phasenfit (nur Gegenprobe, keine Zaehlung): Achteck besser als Kreis, Phase -0,2..-1,6 Grad",
+    "drehung_grad": "Wolke-Phasenfit (Gegenprobe) -0,2..-1,6 Grad, Foto-Grate Z-nu3b-001 + Overlays; 0 beibehalten (ehemals ANNAHME)",
+    "profil": "z >= 15,4: Foto nu_3b29472b Silhouettenbreite/2 (M-nu3b-004..008) + Wolke einig +-0,07 (unveraendert). z 13,30-15,12 (Kreis r1 2026-11-10): Wolke-Flaechenmitte (Apothem) entlang +n, messprotokoll/W-helm_o-profil.json (tools/helm_profil_wolke.py): 1,72 bei 13,4 / 1,50 bei 13,6 / 1,25 bei 14,1 / 1,15 bei 14,4 / 1,06 bei 14,6 (Profil 1,10: untere Grenze der Foto-Zeile M-nu3b-002) / 0,97 bei 14,9 / 0,90 bei 15,1; Form = Foto (Regel 9d): nu3b/6132/nuaca Overlays zeigen Ziegelhaut stetig konkav bis auf den Erkergesims, kein senkrechter Kranz, kein Traufring bei z 14,15. Die alte Traufhoehe 14,22 (M-nu3b-001) war Silhouettenparallaxe (Traufspitze ~1,4 m vor der Messebene, Kamera 10 m tiefer: +0,8 m)",
     "z_spitze": "formen/helme.json z_spitze 22.78 (fotogeprueft)",
     "r_spitze": "ANNAHME Druck 0,02",
-    "kranz": "ANNAHME: Unterbau/Traufkranz vom Erkergesims 13,18 (-0,08 Einbindung) bis zur Traufe 14,15 (nu3b Zeile 1155), r 1,45 knapp innerhalb der Traufspitzen 1,54",
+    "kranz": "Fuss-Wulst 13,1-13,30 nur zur Einbindung in den Erkergesims (13,18) und Anschluss an den untersten Profilring, r 1,74 = Flaechenmitte Wolke bei z 13,4 (1,72); der alte senkrechte Kranz z 13,1-14,15 r 1,45 (ANNAHME) ist durch die stetige Schweifung ersetzt",
     "knauf": "Foto nu3b: Kugel Zeile ~185 (z ~22,0), Radius ~12 px = 0,15 m"
    },
    "historie": [
@@ -6245,6 +6265,101 @@
       }
      },
      "neu": "helm_geschweift (Profil r(z), 8-Eck, Kranz, Knauf)"
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis r1 (Agent Sonnet)",
+     "alt": {
+      "profil": [
+       [
+        14.15,
+        1.54
+       ],
+       [
+        14.64,
+        1.2
+       ],
+       [
+        15.41,
+        0.83
+       ],
+       [
+        16.18,
+        0.58
+       ],
+       [
+        16.97,
+        0.44
+       ],
+       [
+        17.76,
+        0.34
+       ],
+       [
+        18.58,
+        0.27
+       ],
+       [
+        19.4,
+        0.19
+       ],
+       [
+        20.25,
+        0.13
+       ],
+       [
+        21.9,
+        0.08
+       ]
+      ],
+      "kranz": {
+       "z0": 13.1,
+       "z1": 14.15,
+       "r": 1.45
+      }
+     },
+     "neu": {
+      "profil": [
+       [
+        13.3,
+        1.74
+       ],
+       [
+        13.62,
+        1.51
+       ],
+       [
+        14.12,
+        1.26
+       ],
+       [
+        14.38,
+        1.16
+       ],
+       [
+        14.64,
+        1.1
+       ],
+       [
+        14.88,
+        0.99
+       ],
+       [
+        15.12,
+        0.91
+       ],
+       [
+        15.41,
+        0.83
+       ]
+      ],
+      "kranz": {
+       "z0": 13.1,
+       "z1": 13.3,
+       "r": 1.74
+      }
+     },
+     "grund": "Wolkenbeleg 0,49: Helmzone z 13,1-15,1 passte nicht (senkrechter Kranz + Traufring 1,54 bei z 14,15 ~1 m zu hoch); Wolke-Flaechenmitte + Foto-Overlay"
     }
    ]
   },

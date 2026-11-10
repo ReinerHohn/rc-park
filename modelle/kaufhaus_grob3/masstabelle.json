@@ -960,6 +960,62 @@
    ],
    "quer_max": 0.1,
    "r_max": 0.18
+  },
+  "helm_o_r_13_45": {
+   "typ": "schnitt_reichweite",
+   "z": "=13.45 - z_unterkante_lot2",
+   "zentrum": [
+    18.73,
+    6.33
+   ],
+   "richtung": [
+    0.33472,
+    0.94232
+   ],
+   "quer_max": 0.3,
+   "r_max": 3.0
+  },
+  "helm_o_r_14_12": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.12 - z_unterkante_lot2",
+   "zentrum": [
+    18.73,
+    6.33
+   ],
+   "richtung": [
+    0.33472,
+    0.94232
+   ],
+   "quer_max": 0.3,
+   "r_max": 3.0
+  },
+  "helm_o_r_14_38": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.38 - z_unterkante_lot2",
+   "zentrum": [
+    18.73,
+    6.33
+   ],
+   "richtung": [
+    0.33472,
+    0.94232
+   ],
+   "quer_max": 0.3,
+   "r_max": 3.0
+  },
+  "helm_o_r_14_88": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.88 - z_unterkante_lot2",
+   "zentrum": [
+    18.73,
+    6.33
+   ],
+   "richtung": [
+    0.33472,
+    0.94232
+   ],
+   "quer_max": 0.3,
+   "r_max": 3.0
   }
  },
  "pruefungen": [
@@ -1987,6 +2043,70 @@
    "historie": [
     "2026-11-10 angelegt (Kreis r2, Bauteil stl_teil:figuren, Befund 'Wolkenbeleg 0,43'): am Altmodell (alter Hand-Generator, Statue 0,5-0,7 m zu niedrig, Quader-Huellen) ROT, Soll aus Fotos (Kamera-Bruecke), nicht gelockert"
    ]
+  },
+  {
+   "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 13.45 (untere Schweifung, kein Kranzkasten)",
+   "wert": "helm_o_r_13_45",
+   "soll": [
+    1.5,
+    1.78
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2.npy), Mitten-Profil des Helms: Median des Abstands entlang +n fuer |quer|<0,5 m, 0,25-m-Baender, Wert 1.64 (tools/helm_profil_wolke.py, Phasenfit Achteck Flaeche zur Strasse -0.7 Grad, Achse +-0,04 m); Gegenprobe Foto nu3b/6132/nuaca: Ziegelhaut laeuft stetig konkav bis auf den Erkergesims (z ~13,3), KEIN senkrechter Kranz und KEINE Stufe bei z 14,15 (Overlay audit/helm_o_runde8/)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "W-helm_o-profil.json (tools/helm_profil_wolke.py)",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1 helm_geschweift:o, Befund Wolkenbeleg 0,49): am Modell Runde 7 (Kranz r 1,45 senkrecht z 13,1-14,15, Traufring 1,54 bei z 14,15) muss mindestens eine Hoehe fehlschlagen"
+   ]
+  },
+  {
+   "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.12 (untere Schweifung, kein Kranzkasten)",
+   "wert": "helm_o_r_14_12",
+   "soll": [
+    1.15,
+    1.35
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2.npy), Mitten-Profil des Helms: Median des Abstands entlang +n fuer |quer|<0,5 m, 0,25-m-Baender, Wert 1.251 (tools/helm_profil_wolke.py, Phasenfit Achteck Flaeche zur Strasse -0.7 Grad, Achse +-0,04 m); Gegenprobe Foto nu3b/6132/nuaca: Ziegelhaut laeuft stetig konkav bis auf den Erkergesims (z ~13,3), KEIN senkrechter Kranz und KEINE Stufe bei z 14,15 (Overlay audit/helm_o_runde8/)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "W-helm_o-profil.json (tools/helm_profil_wolke.py)",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1 helm_geschweift:o, Befund Wolkenbeleg 0,49): am Modell Runde 7 (Kranz r 1,45 senkrecht z 13,1-14,15, Traufring 1,54 bei z 14,15) muss mindestens eine Hoehe fehlschlagen"
+   ]
+  },
+  {
+   "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.38 (untere Schweifung, kein Kranzkasten)",
+   "wert": "helm_o_r_14_38",
+   "soll": [
+    1.05,
+    1.25
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2.npy), Mitten-Profil des Helms: Median des Abstands entlang +n fuer |quer|<0,5 m, 0,25-m-Baender, Wert 1.145 (tools/helm_profil_wolke.py, Phasenfit Achteck Flaeche zur Strasse -0.7 Grad, Achse +-0,04 m); Gegenprobe Foto nu3b/6132/nuaca: Ziegelhaut laeuft stetig konkav bis auf den Erkergesims (z ~13,3), KEIN senkrechter Kranz und KEINE Stufe bei z 14,15 (Overlay audit/helm_o_runde8/)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "W-helm_o-profil.json (tools/helm_profil_wolke.py)",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1 helm_geschweift:o, Befund Wolkenbeleg 0,49): am Modell Runde 7 (Kranz r 1,45 senkrecht z 13,1-14,15, Traufring 1,54 bei z 14,15) muss mindestens eine Hoehe fehlschlagen"
+   ]
+  },
+  {
+   "name": "Erkerhelm Ost: Flaechenmitte (Apothem) vor der Achse bei z 14.88 (untere Schweifung, kein Kranzkasten)",
+   "wert": "helm_o_r_14_88",
+   "soll": [
+    0.87,
+    1.07
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2.npy), Mitten-Profil des Helms: Median des Abstands entlang +n fuer |quer|<0,5 m, 0,25-m-Baender, Wert 0.97 (tools/helm_profil_wolke.py, Phasenfit Achteck Flaeche zur Strasse -0.7 Grad, Achse +-0,04 m); Gegenprobe Foto nu3b/6132/nuaca: Ziegelhaut laeuft stetig konkav bis auf den Erkergesims (z ~13,3), KEIN senkrechter Kranz und KEINE Stufe bei z 14,15 (Overlay audit/helm_o_runde8/)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "W-helm_o-profil.json (tools/helm_profil_wolke.py)",
+   "historie": [
+    "2026-11-10 angelegt (Kreis r1 helm_geschweift:o, Befund Wolkenbeleg 0,49): am Modell Runde 7 (Kranz r 1,45 senkrecht z 13,1-14,15, Traufring 1,54 bei z 14,15) muss mindestens eine Hoehe fehlschlagen"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -2314,38 +2434,12 @@
    "naechster_schritt": "Daechlein als eigenes Generator-Element (Formfamilie aus >=3 Fotos, Vorlage), dann verworfen_r1.patch erneut durch die Tore schicken. Die Abnahme in R1 war ein CUDA-OOM, kein Pruefungsfehler (c8ea1ee)."
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6164, Treffer 3)",
-   "auto_id": "fehlteile-6164-0-2037",
-   "art": "fehlteil",
-   "foto": "6164",
-   "z_von": 14.31,
-   "z_bis": 14.31,
-   "xyz": [
-    14.68,
-    -9.49,
-    14.31
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=14.31 m, y=-9.49 m (Zelle [0, 2037, 97], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6164.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
-   "auto_id": "fehlteile-6261-237-1817",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.0,
-   "z_bis": 18.0,
-   "xyz": [
-    14.97,
-    -8.33,
-    18.0
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.0 m, y=-8.33 m (Zelle [237, 1817, 79], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+   "datum": "2026-11-10",
+   "wer": "Kreis r1 (helm_geschweift:o)",
+   "quelle": "konvergenz_bericht Wolkenbeleg 0,49 (Median 0,16 m)",
+   "text": "Der Helm trifft die Wolke ab z 15 (Median 0,03-0,08 m), aber die untere Zone z 13,1-15,1 (60 % der Teilflaeche) nicht (Median 0,24-0,49): Modell hat senkrechten Traufkranz r 1,45 (z 13,1-14,15) und einen Traufring r 1,54 bei z 14,15, die Wolke zeigt eine stetig konkave Schweifung bis auf den Erkergesims (Flaechenmitte 1,72 bei z 13,4 / 1,50 bei 13,6 / 1,25 bei 14,1 / 1,15 bei 14,4); Overlays nu3b/6132/nuaca bestaetigen: Ziegel laufen bis auf den Gesims, der Traufring des Modells haengt ~1 m zu hoch. Ursache der alten Traufhoehe 14,22: Silhouettenpick in der Ebene durch die Achse quer zum Blick, Traufspitze liegt ~1,4 m VOR dieser Ebene, Kamera 10 m unter ihr -> z um 0,8 m zu hoch (Parallaxe). Erklaert auch '6261 sieht die Traufe 0,7 m tiefer' (richtig war 6261). Rest-Widerspruch: Silhouettenspitzen in nu3b liegen lateral bei ~1,55-1,8 m (Eckradius), nicht zweifelsfrei zuordenbar; Zwei-Kamera-Triangulation der Traufspitzen scheiterte (Silhouettenspitzen sind keine Punkte, Strahlabstand 0,3-0,4 m).",
+   "naechster_schritt": "Profil unten aus Wolke-Mitte, Kranz auf Fuss 13,1-13,3 kuerzen, Erkerhelm West gleich behandeln (eigene Runde, Beleg 0,45)",
+   "status": "Kreis r1: eingetragen, Modell wird umgebaut"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
