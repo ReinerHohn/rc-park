@@ -1,5 +1,5 @@
 {
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_021633a021633/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -41,7 +41,7 @@
   "teilnetze": 1.0,
   "dicht": 1.0,
   "wand_pq": 0.13989798724651337,
-  "wand_anteil_unter": 0.0002666666666666667,
+  "wand_anteil_unter": 0.00036666666666666667,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,7 +50,7 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 1.9090876846058489,
-  "teile_ueberhang": 0.00867,
+  "teile_ueberhang": 0.00868,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.88,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.88,
@@ -59,7 +59,7 @@
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.8,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.8,
   "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.000076058674822,
-  "laube_rueckwand_n728_z7": -0.003327184352758028,
+  "laube_rueckwand_n728_z7": -0.00332701019786219,
   "helm_o_r_14_64": 1.2110453487912292,
   "helm_o_r_16_18": 0.5909801434450644,
   "helm_o_r_17_76": 0.35088480017249024,
@@ -113,8 +113,7 @@
   "figur2_kopf_up": 0.16778414907048042,
   "figur2_kopf_um": 0.13221535515072963,
   "figur2_bein_np": 0.1163365979686713,
-  "figur2_bein_nm": 0.11366333671048046,
-  "laube_rueck_west_ende": 8.819999999999961
+  "figur2_bein_nm": 0.11366333671048046
  },
  "pruefungen": [
   {
@@ -359,7 +358,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00867,
+   "wert": 0.00868,
    "soll": [
     0,
     0.01
@@ -389,7 +388,7 @@
   },
   {
    "name": "Laubenrueckwand: Wandflaeche hinter der Ebene n 7,28 (z 7,0, alle Boegen; 0 = in der Ebene)",
-   "wert": -0.003327184352758028,
+   "wert": -0.00332701019786219,
    "soll": [
     -0.08,
     0.08
@@ -743,16 +742,6 @@
    "soll": [
     0.17,
     0.29
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Laubenrueckwand: westliches Ende der Wandflaeche in der Ebene n 7,28 (u = -Abstand entlang der Fassade, z 3,5; darf nicht ueber das Gebaeudeende hinausragen)",
-   "wert": 8.819999999999961,
-   "soll": [
-    8.7,
-    9.0
    ],
    "ok": true,
    "status": "ok"

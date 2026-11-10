@@ -4449,9 +4449,9 @@
   {
    "typ": "quader:laube_rueck",
    "gruppe": "Laubenrueckwand",
-   "u0": -8.82,
+   "u0": -9.339,
    "u1": 16.311,
-   "n0": 7.18,
+   "n0": 6.83,
    "n1": 7.28,
    "z0": 1.5,
    "z1": 8.0,
@@ -4464,11 +4464,11 @@
    "quelle": "Wolke wolke_netzrahmen.npy, Schnitt z 2,5-3,5: Rueckwand der Laube als klare Linie bei n 9,45 (Punkte 9,3-9,6), Modell hatte sie bei n 6,0-6,5 (3 m zu weit hinten, Schnittvergleich 8.11.); Dicke 0,45 = ANNAHME | u1=4,2: 4. Bogen (u 4,1-8,5) ist laut Fotos 8.11. ein offener Durchgang, Wolke zeigt dort keine Rueckwand (Luecke u 5,5-8)",
    "aktiv": true,
    "werte_quellen": {
-    "n0": "ANNAHME (10.11.): n0 7,18 = 0,10 m Einbindung hinter der Wandebene 7,28, nur fuer wasserdichte Verschmelzung mit rumpf_eg beim Druck, NICHT beobachtet (Hinterflaeche verdeckt); Wandebene selbst: Laubenrueckwand-Ebene n 7,28 statt 6,54 (2026-11-09 R6): Wolke lot2 Histogrammspitze 7,275 (161 282 Punkte Laube) + 2-Foto-Triangulation 6120/6117 Goldquaste Wandflaeche 7,30 (M-6120-021), Glas 7,11-7,20 (M-6120-022..024); 6,54 aus rohkoerper_v7 nie gemessen -> verworfen",
+    "n0": "Laubenrueckwand-Ebene n 7,28 statt 6,54 (2026-11-09 R6): Wolke lot2 Histogrammspitze 7,275 (161 282 Punkte Laube) + 2-Foto-Triangulation 6120/6117 Goldquaste Wandflaeche 7,30 (M-6120-021), Glas 7,11-7,20 (M-6120-022..024); 6,54 aus rohkoerper_v7 nie gemessen -> verworfen",
     "n1": "Laubenrueckwand-Ebene n 7,28 statt 6,54 (2026-11-09 R6): Wolke lot2 Histogrammspitze 7,275 (161 282 Punkte Laube) + 2-Foto-Triangulation 6120/6117 Goldquaste Wandflaeche 7,30 (M-6120-021), Glas 7,11-7,20 (M-6120-022..024); 6,54 aus rohkoerper_v7 nie gemessen -> verworfen",
-    "u0": "Fotomessung M-6124-021 (Foto 6124, Wandkante/Eckpfeiler u -8,86/-8,83) + Rumpf-Endebene West -8,82 (kantengitter); frueher -9,339 ragte 0,5 m ueber das Gebaeudeende (Overlay 6130: Gasse)",
+    "u0": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | ANNAHME: Rueckwand spannt die Arkade (aus Bogenreihe u0/pitch)",
     "u1": "messungen_wolke.json  (Wolke, Gegenproben bestaetigt) | ANNAHME: Rueckwand spannt die Arkade",
-     "z1": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json vorspruenge z_min_voll 8.0 (Balkonunterkante; Wandhoehe bis dahin = ANNAHME)"
+    "z1": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json vorspruenge z_min_voll 8.0 (Balkonunterkante; Wandhoehe bis dahin = ANNAHME)"
    },
    "historie": [
     {
