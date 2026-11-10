@@ -1227,6 +1227,76 @@
    ],
    "quer_max": 0.2,
    "r_max": 3.6
+  },
+  "helm_w_r_13_45": {
+   "typ": "schnitt_reichweite",
+   "z": "=13.45 - z_unterkante_lot2",
+   "zentrum": [
+    -3.99,
+    14.38
+   ],
+   "richtung": [
+    0.33472,
+    0.94232
+   ],
+   "quer_max": 0.3,
+   "r_max": 3.0
+  },
+  "helm_w_r_14_12": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.12 - z_unterkante_lot2",
+   "zentrum": [
+    -3.99,
+    14.38
+   ],
+   "richtung": [
+    0.33472,
+    0.94232
+   ],
+   "quer_max": 0.3,
+   "r_max": 3.0
+  },
+  "helm_w_r_14_38": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.38 - z_unterkante_lot2",
+   "zentrum": [
+    -3.99,
+    14.38
+   ],
+   "richtung": [
+    0.33472,
+    0.94232
+   ],
+   "quer_max": 0.3,
+   "r_max": 3.0
+  },
+  "helm_w_r_14_88": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.88 - z_unterkante_lot2",
+   "zentrum": [
+    -3.99,
+    14.38
+   ],
+   "richtung": [
+    0.33472,
+    0.94232
+   ],
+   "quer_max": 0.3,
+   "r_max": 3.0
+  },
+  "helm_w_knauf_r_21_35": {
+   "typ": "schnitt_reichweite",
+   "z": "=21.35 - z_unterkante_lot2",
+   "zentrum": [
+    -3.99,
+    14.38
+   ],
+   "richtung": [
+    0.33472,
+    0.94232
+   ],
+   "quer_max": 0.3,
+   "r_max": 3.0
   }
  },
  "pruefungen": [
@@ -2593,6 +2663,86 @@
     "2026-11-10 angelegt (Kreis1 Fehlteil fk_+16_+0_+26, Agent); am Modell vorher (Ostgiebel u 16,52-17,15, Stufen n 2,69-12,73) muss die Pruefung fehlschlagen",
     "2026-11-10 Messung r_max 5,0 -> 3,6: der Strahl traf sonst den Erkerhelm O (n 12,23, Reichweite 12,44) statt das Giebelende; Soll unveraendert; Alt-Modell auf r_max 3,6 ebenfalls FEHLER (Reichweite ~1,3 = Dach)"
    ]
+  },
+  {
+   "name": "Erkerhelm West: Flaechenmitte (Apothem) vor der Achse bei z 13.45 (untere Schweifung, kein Kranzkasten)",
+   "wert": "helm_w_r_13_45",
+   "soll": [
+    1.55,
+    1.85
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2.npy), Mitten-Profil Westhelm: Median des Abstands entlang +n fuer |quer|<0,5 m, 0,25-m-Baender, Wert 1.76-1.78 (z 13,125/13,375) (tools/helm_profil_wolke.py, Achse -3,99/14,38, Achsversatz <=0,05 m, Achteck besser als Kreis); Formfamilie wie Helm O (Ziegelhaut stetig konkav bis aufs Erkergesims, Regel 9d: Foto-Overlay Westhelm 6162/g03/6257 prueft die Form)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "W-helm_w-profil.json (tools/helm_profil_wolke.py)",
+   "historie": [
+    "2026-11-10 angelegt (Kreis helm_geschweift:w, Befund Wolkenbeleg 0,45): am Altstand (Kranz r 1,45 senkrecht z 13,1-14,15, Traufring 1,54) muss mindestens eine Hoehe fehlschlagen"
+   ]
+  },
+  {
+   "name": "Erkerhelm West: Flaechenmitte (Apothem) vor der Achse bei z 14.12 (untere Schweifung, kein Kranzkasten)",
+   "wert": "helm_w_r_14_12",
+   "soll": [
+    1.2,
+    1.4
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2.npy), Mitten-Profil Westhelm: Median des Abstands entlang +n fuer |quer|<0,5 m, 0,25-m-Baender, Wert 1.30 (tools/helm_profil_wolke.py, Achse -3,99/14,38, Achsversatz <=0,05 m, Achteck besser als Kreis); Formfamilie wie Helm O (Ziegelhaut stetig konkav bis aufs Erkergesims, Regel 9d: Foto-Overlay Westhelm 6162/g03/6257 prueft die Form)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "W-helm_w-profil.json (tools/helm_profil_wolke.py)",
+   "historie": [
+    "2026-11-10 angelegt (Kreis helm_geschweift:w, Befund Wolkenbeleg 0,45): am Altstand (Kranz r 1,45 senkrecht z 13,1-14,15, Traufring 1,54) muss mindestens eine Hoehe fehlschlagen"
+   ]
+  },
+  {
+   "name": "Erkerhelm West: Flaechenmitte (Apothem) vor der Achse bei z 14.38 (untere Schweifung, kein Kranzkasten)",
+   "wert": "helm_w_r_14_38",
+   "soll": [
+    1.09,
+    1.29
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2.npy), Mitten-Profil Westhelm: Median des Abstands entlang +n fuer |quer|<0,5 m, 0,25-m-Baender, Wert 1.19 (tools/helm_profil_wolke.py, Achse -3,99/14,38, Achsversatz <=0,05 m, Achteck besser als Kreis); Formfamilie wie Helm O (Ziegelhaut stetig konkav bis aufs Erkergesims, Regel 9d: Foto-Overlay Westhelm 6162/g03/6257 prueft die Form)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "W-helm_w-profil.json (tools/helm_profil_wolke.py)",
+   "historie": [
+    "2026-11-10 angelegt (Kreis helm_geschweift:w, Befund Wolkenbeleg 0,45): am Altstand (Kranz r 1,45 senkrecht z 13,1-14,15, Traufring 1,54) muss mindestens eine Hoehe fehlschlagen"
+   ]
+  },
+  {
+   "name": "Erkerhelm West: Flaechenmitte (Apothem) vor der Achse bei z 14.88 (untere Schweifung, kein Kranzkasten)",
+   "wert": "helm_w_r_14_88",
+   "soll": [
+    0.91,
+    1.11
+   ],
+   "quelle": "Wolke lot2 (j_voll_lot2.npy), Mitten-Profil Westhelm: Median des Abstands entlang +n fuer |quer|<0,5 m, 0,25-m-Baender, Wert 1.01 (tools/helm_profil_wolke.py, Achse -3,99/14,38, Achsversatz <=0,05 m, Achteck besser als Kreis); Formfamilie wie Helm O (Ziegelhaut stetig konkav bis aufs Erkergesims, Regel 9d: Foto-Overlay Westhelm 6162/g03/6257 prueft die Form)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "W-helm_w-profil.json (tools/helm_profil_wolke.py)",
+   "historie": [
+    "2026-11-10 angelegt (Kreis helm_geschweift:w, Befund Wolkenbeleg 0,45): am Altstand (Kranz r 1,45 senkrecht z 13,1-14,15, Traufring 1,54) muss mindestens eine Hoehe fehlschlagen"
+   ]
+  },
+  {
+   "name": "Erkerhelm West: Knauf-Halbbreite bei z 21,35 (Kugelmitte)",
+   "wert": "helm_w_knauf_r_21_35",
+   "soll": [
+    0.15,
+    0.25
+   ],
+   "quelle": "Kugelmitte per Strahlschnitt aus 4 Fotos z 21,354 (Strahlabstand <= 3 cm, Vorversuch 20261110_001608s3 r1, Messung dort; hier NICHT neu trianguliert -> ANNAHME uebernommen) und Bildbreite 0,39 m; Gegenprobe Helm O: Kugel z 21,329 (M-nu3b-009)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "schlankheit",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-nu3b-009 (Analogmessung Helm O) + Vorversuch-Log",
+   "historie": [
+    "2026-11-10 angelegt (Kreis helm_geschweift:w): Altstand Knauf z 22,0 (0,65 m zu hoch), bei z 21,35 nur Nadel r ~0,08 -> rot"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -2982,6 +3132,31 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.18 m, y=-2.07 m (Zelle [546, 1170, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Kreis helm_geschweift:w",
+   "quelle": "konvergenz_bericht + Vorversuche 001608s3/021032a021032",
+   "text": "Westhelm: Altmodell hat senkrechten Kranz r 1,45 z 13,1-14,15 und Traufring 1,54 (Kopie Osthelm vor dessen Korrektur); Wolke-Mitte a(z) zeigt stetige Schweifung 1,78@13,4 .. 1,01@14,9 (wie Helm O). Vorversuch r2 mit Traufe-Apothem 2,3 (Triangulation Silhouettenspitze) verschlechterte den Beleg (0,437->0,374). Knauf z 22,0 vs 21,35.",
+   "naechster_schritt": "Profil unten aus Wolke (wie Helm O), Knauf 21,35; Overlay 3 Fotos",
+   "status": "offen"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto nu3b, Treffer 6)",
+   "auto_id": "fehlteile-nu3b-0-1755",
+   "art": "fehlteil",
+   "foto": "nu3b",
+   "z_von": 14.04,
+   "z_bis": 14.04,
+   "xyz": [
+    15.33,
+    -7.7,
+    14.04
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=14.04 m, y=-7.7 m (Zelle [0, 1755, 117], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_nu3b.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

@@ -6058,12 +6058,32 @@
    "drehung_grad": 0.0,
    "profil": [
     [
-     14.15,
-     1.54
+     13.3,
+     1.78
+    ],
+    [
+     13.62,
+     1.57
+    ],
+    [
+     14.12,
+     1.3
+    ],
+    [
+     14.38,
+     1.19
     ],
     [
      14.64,
-     1.2
+     1.1
+    ],
+    [
+     14.88,
+     1.01
+    ],
+    [
+     15.12,
+     0.945
     ],
     [
      15.41,
@@ -6094,20 +6114,20 @@
      0.13
     ],
     [
-     21.9,
-     0.08
+     21.0,
+     0.07
     ]
    ],
    "z_spitze": 22.34,
    "r_spitze": 0.02,
    "kranz": {
     "z0": 13.1,
-    "z1": 14.15,
-    "r": 1.45
+    "z1": 13.3,
+    "r": 1.78
    },
    "knauf": {
-    "z": 22.0,
-    "r": 0.15
+    "z": 21.35,
+    "r": 0.195
    },
    "achse_n": [
     0.3338,
@@ -6124,7 +6144,9 @@
     "z_spitze": "formen/helme.json z_spitze 22.34 (fotogeprueft)",
     "r_spitze": "ANNAHME Druck 0,02",
     "kranz": "ANNAHME: Unterbau/Traufkranz vom Erkergesims 13,18 (-0,08 Einbindung) bis zur Traufe 14,15 (nu3b Zeile 1155), r 1,45 knapp innerhalb der Traufspitzen 1,54",
-    "knauf": "Foto nu3b: Kugel Zeile ~185 (z ~22,0), Radius ~12 px = 0,15 m"
+    "knauf": "Foto nu3b: Kugel Zeile ~185 (z ~22,0), Radius ~12 px = 0,15 m",
+    "profil_unten_2026_11_10": "Wolke lot2 Mitten-Profil a(z) Westhelm (tools/helm_profil_wolke.py -> W-helm_w-profil.json): 1.78@13.4, 1.57@13.6, 1.30@14.1, 1.19@14.4, 1.10@14.6, 1.01@14.9, 0.945@15.1; Formfamilie wie Helm O (Foto nu3b/6132); Form am Westhelm per Overlay 6162/g03/6257 zu pruefen",
+    "knauf_2026_11_10": "ANNAHME aus Vorversuch 001608s3 r1: Kugelmitte z 21,354 (4 Fotos), Gegenprobe Helm O z 21,329 (M-nu3b-009)"
    },
    "historie": [
     {
@@ -6137,6 +6159,137 @@
       }
      },
      "neu": "helm_geschweift (Profil r(z), 8-Eck, Kranz, Knauf)"
+    },
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis helm_geschweift:w",
+     "alt": {
+      "profil": [
+       [
+        14.15,
+        1.54
+       ],
+       [
+        14.64,
+        1.2
+       ],
+       [
+        15.41,
+        0.83
+       ],
+       [
+        16.18,
+        0.58
+       ],
+       [
+        16.97,
+        0.44
+       ],
+       [
+        17.76,
+        0.34
+       ],
+       [
+        18.58,
+        0.27
+       ],
+       [
+        19.4,
+        0.19
+       ],
+       [
+        20.25,
+        0.13
+       ],
+       [
+        21.9,
+        0.08
+       ]
+      ],
+      "kranz": {
+       "z0": 13.1,
+       "z1": 14.15,
+       "r": 1.45
+      },
+      "knauf": {
+       "z": 22.0,
+       "r": 0.15
+      }
+     },
+     "neu": {
+      "profil": [
+       [
+        13.3,
+        1.78
+       ],
+       [
+        13.62,
+        1.57
+       ],
+       [
+        14.12,
+        1.3
+       ],
+       [
+        14.38,
+        1.19
+       ],
+       [
+        14.64,
+        1.1
+       ],
+       [
+        14.88,
+        1.01
+       ],
+       [
+        15.12,
+        0.945
+       ],
+       [
+        15.41,
+        0.83
+       ],
+       [
+        16.18,
+        0.58
+       ],
+       [
+        16.97,
+        0.44
+       ],
+       [
+        17.76,
+        0.34
+       ],
+       [
+        18.58,
+        0.27
+       ],
+       [
+        19.4,
+        0.19
+       ],
+       [
+        20.25,
+        0.13
+       ],
+       [
+        21.0,
+        0.07
+       ]
+      ],
+      "kranz": {
+       "z0": 13.1,
+       "z1": 13.3,
+       "r": 1.78
+      },
+      "knauf": {
+       "z": 21.35,
+       "r": 0.195
+      }
+     },
+     "grund": "Profil unten aus Wolke-Mitten-Profil a(z) (W-helm_w-profil.json, wie Helm O): Ziegelhaut laeuft stetig konkav bis aufs Gesims, kein senkrechter Kranz r 1,45 / Traufring 1,54; Knauf z 21,35 r 0,195 (Vorversuch-Triangulation 4 Fotos, uebernommen). Profil ab z 15,4 unveraendert (Osthelm-Profil; ANNAHME)."
     }
    ]
   },
