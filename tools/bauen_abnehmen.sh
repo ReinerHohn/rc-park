@@ -33,7 +33,7 @@ export -f fotodiag
 ls modelle/$1/messprotokoll/K-*.json 2>/dev/null | xargs -P 4 -I{} bash -c 'fotodiag "$@"' _ {} "$OBJ" "$PY"
 # Gegenbeweis Register CB: die Fehlerklasse 'Zaehlmerkmal aus Wolke / Etikettenumgehung / Selbstbezug' muss weiter abgelehnt werden (nur Objekte mit Zaehlprotokollen)
 if ls modelle/$1/messprotokoll/Z-*.json >/dev/null 2>&1; then
-  set +e; TOUT=$($PY -W ignore -I tools/test_regeln_cb.py "$OBJ" 2>&1); RT=$?; set -e; echo "$TOUT" | tail -8
+  set +e; TOUT=$($PY -W ignore -I tools/test_regeln_cb.py "$OBJ" 2>&1); RT=$?; set -e; echo "$TOUT" | grep -E "out of memory|OutOfMemory|CUDA_ERROR|Traceback" | head -3; echo "$TOUT" | tail -8
   if [ "$RT" != "0" ]; then echo "GEGENPROBEN CB FEHLGESCHLAGEN"; [ "$RC" = "0" ] && RC=3; fi
 fi
 exit $RC

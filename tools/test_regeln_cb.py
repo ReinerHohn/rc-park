@@ -69,6 +69,7 @@ def main():
         oj = bauen(tmp); rc, out = lauf([PY, "-W", "ignore", "-I", os.path.join(HIER, "foto_zaehlung.py"), oj, "043", "--was", "test", "--punkt", "A:voll:100,100", "--punkt", "A:voll:150,100", "--punkt", "B:voll:300,100"])
     erg.append(("T5 widerspruechliche Zaehlung abgelehnt", rc != 0 and "widerspruechlich" in out, rc))
     rc, out = pruefen(); erg.append(("T6 Gutfall besteht", rc == 0, rc))
+    if rc != 0: print("T6-Ausgabe (Ende):\n" + out[-1500:])   # 10.11.: T6 fiel unter Volllast ohne sichtbaren Grund (OOM?) - Ursache muss im Log stehen
     bad = 0
     for n, ok, rc in erg: print(f"  {'OK    ' if ok else 'FEHLER'}  {n}  (Exit {rc})"); bad += 0 if ok else 1
     print("test_regeln_cb:", "alle Gegenproben bestanden" if not bad else f"{bad} Gegenprobe(n) FEHLGESCHLAGEN"); sys.exit(1 if bad else 0)
