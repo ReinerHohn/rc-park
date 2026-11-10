@@ -281,6 +281,10 @@ for runde in range(1, RUNDEN + 1):
     elif TROCKEN:
         wt = ROOT
     else:
+        if "--nach_main" in a:
+            # 10.11.: Spur baute auf ihrem eigenen alten Stand weiter (a064559 r2 auf 527bc46), waehrend a062358 dasselbe Teil schon nach main
+            # gebracht hatte -> zwei angenommene Fassungen, Quellkonflikt objekt.json/elemente.json. Jede Runde startet auf dem aktuellen main.
+            basis = subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
         subprocess.run(["git", "-C", ROOT, "worktree", "add", "-q", "-b", br, wt, basis], check=True)
     if NACH:
         # volle Vorher-Messung der Originalrunde (alle Teile, sonst zaehlt jedes Teil als 'neu' - Nachpruefung s4 10.11. ergab falsch -0,320)
