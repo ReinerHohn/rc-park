@@ -256,11 +256,11 @@ def form_fotos(fl, teil, n=10):
 def kontroll_fotos(fl, teil, n=None, ab=10):
     je = {k: v for k, v in ((fl.get("teile") or {}).get(teil) or {}).items() if k != "_gesamt"}
     return sorted(je, key=lambda k: -(je[k]["mk_px"] + je[k]["fk_px"]))[ab:ab + (KONTROLLE if n is None else n)]
-def form_messen(wt, tdir, teil, fotos, tag, bilder="fotoform_bilder", env=None):
+def form_messen(wt, tdir, teil, fotos, tag, bilder="fotoform_bilder", env=None, stl=None):
     """Foto-F1 eines Teils (nur dieses Teil, Verdeckung gegen das ganze Modell) auf den Fotos der Formliste; None = nicht messbar."""
     if not fotos or not os.path.isdir(tdir): return None
     aus = os.path.join(LDIR, f"fotoform_{tag}.json")
-    sh_tor([PY, "-W", "ignore", "-I", "tools/teil_fotoform.py", OBJ, "--teile_dir", tdir, "--stl", STL, "--nur", teil, "--fotos", ",".join(fotos),
+    sh_tor([PY, "-W", "ignore", "-I", "tools/teil_fotoform.py", OBJ, "--teile_dir", tdir, "--stl", stl or STL, "--nur", teil, "--fotos", ",".join(fotos),
             "--aus", aus, "--bilder", "--bilder_dir", os.path.join(LDIR, bilder), "--etikett", tag], wt, log=os.path.join(LDIR, f"fotoform_{tag}.log"), env=env)
     try:
         _g = ((json.load(open(aus))["teile"].get(teil) or {}).get("_gesamt") or {}); HOEHE[tag] = _g.get("f1_h"); return _g.get("f1")
@@ -547,7 +547,7 @@ for runde in range(1, RUNDEN + 1):
     print(f"Runde {runde}: Ziel {ziel['teil']} ({'Fehlteil ' + str(ziel['pkt']) + ' Pkt, Recall Kasten ' + str(ziel['recall_kasten']) if ist_fehlteil(ziel) else 'Wolkenbeleg ' + str(ziel['beleg'])}) -> Auftrag {LDIR}/auftrag_r{runde}.md")
     if TROCKEN:
         freigeben(ziel["teil"]); protokoll({"runde": runde, "trocken": True, "ziel": ziel}); print(txt[:1500]); break
-    ff_v, ff_fotos, kf_fotos, kf_v = None, [], [], None
+    ff_v, ff_fotos, kf_fotos, kf_v = None, [], [], None; _ff_spaet = None
     if not ist_fehlteil(ziel) and not TROCKEN and not NACH:   # Form am Foto VOR dem Agenten (Basisstand), gleiche Fotos nachher
         _fl = formliste(); ff_fotos = form_fotos(_fl, ziel["teil"])
         if KONTROLLE:
@@ -555,6 +555,14 @@ for runde in range(1, RUNDEN + 1):
         _fv = form_aus_liste(_fl, wt, ziel["teil"], ff_fotos, runde) if ff_fotos else None
         if _fv is not None:
             ff_v = _fv; print(f"Runde {runde}: Form am Foto vorher {ziel['teil']}: F1 {ff_v} ({len(ff_fotos)} Fotos, aus Formliste {_fl.get('stl_sha')})")
+        elif ff_fotos and VORPRUEF and SKALA_VOR != 1.0 and formliste_halb(wt) is not None:
+            # VOLLER VORHER-WERT AUFGESCHOBEN (10.11. abends): volle Formliste passt nicht zum main-STL (nach jedem Merge ~40 min GPU), die halbe schon.
+            # Vorpruefung braucht nur halb; voll gemessen wird erst, wenn die halbe Stufe Gewinn zeigt. Teile + Gesamt-STL des Basisstands jetzt sichern (CPU).
+            _tv = os.path.join(LDIR, f"teile_r{runde}_vorher_form")
+            _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
+            sh_cpu(_gen, wt, log=os.path.join(LDIR, f"export_r{runde}_vorher_form.log"), env={"BAUTEILE_AUS": _tv})
+            _sv = os.path.join(LDIR, f"stl_r{runde}_vorher.stl"); shutil.copy2(os.path.join(wt, STL), _sv); _ff_spaet = (_tv, _sv)
+            print(f"Runde {runde}: Form am Foto vorher {ziel['teil']}: voller Wert aufgeschoben (nur Kandidaten), Vorpruefung auf halber Formliste", flush=True)
         elif ff_fotos:
             _tv = os.path.join(LDIR, f"teile_r{runde}_vorher")   # Export der Vorher-Messung (gleicher Stand, Agent lief noch nicht) - zweiter Export war doppelt
             if not glob.glob(os.path.join(_tv, "*.stl")):
@@ -576,20 +584,22 @@ for runde in range(1, RUNDEN + 1):
     # (Foto-Veto wuerde greifen: < vorher - 0,02) -> EINMAL zurueck an denselben Agenten (claude --continue im Worktree, Kontext bleibt) mit Messwerten je Foto
     # und Overlay-Pfaden. Das Tor bleibt unveraendert (gleiche Schwellen, misst danach selbst) - nur der Rueckweg ist frueher.
     _tn = os.path.join(LDIR, f"teile_r{runde}_nachher"); _vorab_gebaut = False; ff_q = None; _halb = False
-    if ff_v is not None and not ist_fehlteil(ziel) and not NACH and VORPRUEF:
+    if (ff_v is not None or _ff_spaet) and not ist_fehlteil(ziel) and not NACH and VORPRUEF:
         shutil.rmtree(_tn, ignore_errors=True)
         _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
         _rq, _ = sh_cpu(_gen, wt, log=os.path.join(LDIR, f"vorpruef_r{runde}.log"), env={"BAUTEILE_AUS": _tn})
         _flh = formliste_halb(wt) if SKALA_VOR != 1.0 else None
         _vh = form_aus_liste(_flh, wt, ziel["teil"], ff_fotos, runde, nebenwirkung=False, hkey=f"r{runde}_vorher_halb") if _flh else None
         _halb = _vh is not None; _vq = _vh if _halb else ff_v; _vk = "vorher_halb" if _halb else "vorher"
+        if _vq is None and _ff_spaet:   # Teil/Fotos fehlen in der halben Liste: vollen Vorher-Wert doch jetzt messen (Basisstand gesichert)
+            ff_v = _vq = form_messen(wt, _ff_spaet[0], ziel["teil"], ff_fotos, f"r{runde}_vorher", stl=_ff_spaet[1]); _ff_spaet = None
         ff_q = form_messen(wt, _tn, ziel["teil"], ff_fotos, f"r{runde}_vorpruef", env={"RCPARK_FOTO_SKALA": str(SKALA_VOR)} if _halb else None) if _rq == 0 else None
         print(f"Runde {runde}: Vorpruefung Form am Foto {ziel['teil']}" + (f" (Stufe halbe Aufloesung {SKALA_VOR})" if _halb else "") + f": F1 {_vq} -> {ff_q}" + ("" if _rq == 0 else " (Generator rot)"), flush=True)
         _diff = subprocess.run(["git", "-C", wt, "status", "--porcelain", "--", "tools", "modelle/" + OBJ + "/objekt.json"], capture_output=True, text=True).stdout.strip()
         if not _diff:   # Agent hat Generator/objekt.json nicht geaendert (z. B. begruendet 'nicht belegt', a144153 10.11.) -> Rueckgabe waere Leerlauf
             print(f"Runde {runde}: Vorpruefung - Agent hat am Generator nichts geaendert, keine Rueckgabe", flush=True)
             _vorab_gebaut = _rq == 0   # Stand unveraendert seit dem Export
-        elif _rq != 0 or ff_q is None or ff_q < _vq + MIN_GEWINN_FOTO or _hoehe_faellt(runde, _vk):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde
+        elif _rq != 0 or ff_q is None or _vq is None or ff_q < _vq + MIN_GEWINN_FOTO or _hoehe_faellt(runde, _vk):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde
             try: _je = (json.load(open(os.path.join(LDIR, f"fotoform_r{runde}_vorpruef.json")))["teile"].get(ziel["teil"]) or {})
             except Exception: _je = {}
             _zeilen = "\n".join(f"- Foto {f}: Praezision {_je[f].get('praez')} / Recall {_je[f].get('recall')}  Overlay {LDIR}/fotoform_bilder/{ziel['teil']}_{f}_r{runde}_vorpruef.jpg"
@@ -627,13 +637,20 @@ for runde in range(1, RUNDEN + 1):
     # dann Foto-F1 Gewinn 0 -> 95 min Tor fuer eine Ablehnung, die die Fotomessung allein in 5 min gezeigt haette). Foto-F1 (+ Hoehe) entscheidet ohnehin
     # zuerst; ohne Gewinn sofort ablehnen, Abnahme/Konvergenz/Pruefer nur fuer Kandidaten. Nach einer Rueckgabe misst zuerst die halbe Stufe (1 min).
     ff_n = None; _frueh = None
-    if rcG == 0 and ff_v is not None and not ist_fehlteil(ziel) and os.path.exists(os.path.join(_tn, ziel["teil"] + ".stl")):
-        if _halb and not _vorab_gebaut:   # zweiter Versuch nach Rueckgabe: erst halbe Aufloesung
-            _q2 = form_messen(wt, _tn, ziel["teil"], ff_fotos, f"r{runde}_vorpruef2", env={"RCPARK_FOTO_SKALA": str(SKALA_VOR)})
-            _h2v, _h2n = HOEHE.get(f"r{runde}_vorher_halb"), HOEHE.get(f"r{runde}_vorpruef2")
-            print(f"Runde {runde}: Vorpruefung 2 (halbe Aufloesung) {ziel['teil']}: F1 {_vq} -> {_q2}, Hoehe {_h2v} -> {_h2n}", flush=True)
-            if _q2 is None or _q2 < _vq + MIN_GEWINN_FOTO or (_h2v is not None and _h2n is not None and _h2n < _h2v - 0.02):
-                _frueh = f"Vorpruefung 2 halb: F1 {_vq} -> {_q2}, Hoehe {_h2v} -> {_h2n}"
+    if rcG == 0 and (ff_v is not None or _ff_spaet) and not ist_fehlteil(ziel) and os.path.exists(os.path.join(_tn, ziel["teil"] + ".stl")):
+        if _halb:   # halbe Stufe: endgueltig ablehnen nur ohne JEDEN Gewinn (halb unterschaetzt den Betrag: Tuer +0,081 statt +0,29)
+            if not _vorab_gebaut:   # zweiter Versuch nach Rueckgabe
+                _qh = form_messen(wt, _tn, ziel["teil"], ff_fotos, f"r{runde}_vorpruef2", env={"RCPARK_FOTO_SKALA": str(SKALA_VOR)}); _hk = "vorpruef2"
+            else:
+                _qh = ff_q; _hk = "vorpruef"
+            _h2v, _h2n = HOEHE.get(f"r{runde}_vorher_halb"), HOEHE.get(f"r{runde}_{_hk}")
+            print(f"Runde {runde}: Stufe halb {ziel['teil']}: F1 {_vq} -> {_qh}, Hoehe {_h2v} -> {_h2n}", flush=True)
+            if _qh is None or _qh <= _vq or (_h2v is not None and _h2n is not None and _h2n < _h2v - 0.02):
+                _frueh = f"Stufe halb ohne Gewinn: F1 {_vq} -> {_qh}, Hoehe {_h2v} -> {_h2n}"
+        if _frueh is None and ff_v is None and _ff_spaet:   # aufgeschobener voller Vorher-Wert, nur fuer Kandidaten
+            ff_v = form_messen(wt, _ff_spaet[0], ziel["teil"], ff_fotos, f"r{runde}_vorher", stl=_ff_spaet[1])
+            print(f"Runde {runde}: Form am Foto vorher (voll, nachgeholt) {ziel['teil']}: F1 {ff_v}", flush=True)
+            if ff_v is None: _frueh = "voller Vorher-Wert nicht messbar"
         if _frueh is None:
             ff_n = ff_q if (_vorab_gebaut and not _halb) else form_messen(wt, _tn, ziel["teil"], ff_fotos, f"r{runde}_nachher")
             _hv, _hn = HOEHE.get(f"r{runde}_vorher"), HOEHE.get(f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher")
