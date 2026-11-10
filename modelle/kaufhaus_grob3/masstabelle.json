@@ -4820,6 +4820,86 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.24 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
+   "teil": "erker_polygon:0",
+   "merkmal": "Erker 1 Ornamentik",
+   "text": "Unterbau als Netzgewoelbe aus geschwungenen, sich kreuzenden Rippen (Spitzbogen-/Blattform) mit Rosetten statt glattem Kegel; Kielbogen + Masswerk ueber den Fenstern; Fensterteilung; Wappen als Relief; Wasserspeier an den Traufecken.",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
+   "teil": "erker_polygon:1",
+   "merkmal": "Erker 2 Ornamentik",
+   "text": "wie Erker 1: Rippennetz-Unterbau mit Rosetten (Foto 6164 gelb), Kielbogen/Masswerk, Wappenrelief, Wasserspeier.",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
+   "teil": "figurenreihe:figuren",
+   "merkmal": "Figuren Baldachine/Attribute",
+   "text": "Kaiserfiguren nur Drehkoerper: Baldachine darueber, Sockel/Konsolen, Attribute (Krone, Schwert, Reichsapfel, Zepter), Gewandfalten als Relief.",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
+   "teil": "bogenreihe:laube",
+   "merkmal": "Laube Gewoelbe/Kapitelle",
+   "text": "Kreuzrippengewoelbe unter den Boegen, Kapitelle und Basen der runden Saeulen, gestufte Archivolten.",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
+   "teil": "fensterreihe:eg1_tuer",
+   "merkmal": "Portal Tuerblatt/Gold",
+   "text": "Tuerblatt fehlt (0,2 m Loch bis n 6,98, Tuerblatt bei n 6,77), innerer Steinbogen, Goldschaefte, Wimperg, Schwelle; Breite 1,48 vs Lichte 1,39 (M-6120-028).",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
+   "teil": "helm_geschweift:o",
+   "merkmal": "Helm Ost Details",
+   "text": "Grate, Krabben, Wetterfahne/Knauf, Traufschnaebel.",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
+   "teil": "helm_geschweift:w",
+   "merkmal": "Helm West Details",
+   "text": "Grate, Krabben, Wetterfahne/Knauf; Schaft z 15,4-19,4 zu schlank.",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
+   "teil": "satteldach:haupt",
+   "merkmal": "Dach Rinne/Gitter",
+   "text": "Dachrinne, Dachgitter/Schneefang, Wasserspeier an der Traufe, Ziegelrelief fein.",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
+   "teil": "staffelgiebel:ost",
+   "merkmal": "Ostgiebel Kaeppchen/Fenster",
+   "text": "Kaeppchen auf den Stufen, Giebelfenster.",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
+   "teil": "quader:rumpf_og",
+   "merkmal": "Gassenwand Fenster/Mauerkrone",
+   "text": "Seitenwand an der Gasse: kleine quadratische Fenster in mehreren Reihen und gestufte Mauerkrone (Nutzerfoto 10.11. Erker-Untersicht rechts) fehlen.",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

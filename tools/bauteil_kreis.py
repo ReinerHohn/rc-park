@@ -481,6 +481,20 @@ for runde in range(1, RUNDEN + 1):
     if rueck_teil: print(f"Runde {runde}: Rueckschritt im Ziel-Teil: {rueck_teil}")
     urteil = pruefer_urteil(wt, ziel, runde) if (tor_abnahme and tor_konv) else {"annehmen": False, "fehlerliste": ["nicht geprueft: Vortor rot"]}
     angenommen = tor_abnahme and tor_konv and bool(urteil.get("annehmen"))
+    if angenommen and urteil.get("fehlerliste") and not ist_fehlteil(ziel):
+        # Pruefer-Rest wird Kreisziel (Nutzer 10.11.: Erker-Rippen standen in der Fehlerliste, Teil hatte Guete 0,98 und kam nie wieder dran).
+        # Eine Beobachtung je Teil: die neue ersetzt die alte Pruefer-Rest-Beobachtung desselben Teils (erledigt = ersetzt).
+        try:
+            _mp = os.path.join(wt, "modelle", OBJ, "masstabelle.json"); _T = json.load(open(_mp)); _tt = ziel["teil"].replace("__", ":")
+            for _b in _T.get("beobachtungen_offen") or []:
+                if isinstance(_b, dict) and _b.get("teil") == _tt and str(_b.get("merkmal", "")).startswith("Pruefer-Rest") and not _b.get("erledigt"):
+                    _b["erledigt"] = f"ersetzt durch Pruefer-Rest kreis {LAUF} r{runde}"
+            _T.setdefault("beobachtungen_offen", []).append({"datum": time.strftime("%Y-%m-%d"), "wer": f"Pruefer {PRUEFER} kreis {LAUF} r{runde} (automatisch)", "teil": _tt,
+                "merkmal": f"Pruefer-Rest {_tt} kreis {LAUF} r{runde}", "text": "Offene Fehler laut Pruefer nach angenommener Runde: " + " | ".join(urteil["fehlerliste"]),
+                "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."})
+            json.dump(_T, open(_mp, "w"), ensure_ascii=False, indent=1)
+        except Exception as _ex:
+            print(f"Runde {runde}: Pruefer-Rest nicht eingetragen: {_ex}")
     if angenommen:
         subprocess.run(["git", "-C", wt, "add", "-A", "modelle", "tools"], check=False)
         subprocess.run(["git", "-C", wt, "commit", "-q", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} Wolkenbeleg {vor.get(ziel['teil'])} -> {nach.get(ziel['teil'])} (automatisch, Pruefer {PRUEFER})"], check=False)
