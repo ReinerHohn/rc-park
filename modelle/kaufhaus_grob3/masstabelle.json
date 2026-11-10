@@ -2676,7 +2676,8 @@
    "datum": "2026-11-10",
    "merkmal": "Ost-Staffelgiebel Lage",
    "text": "Kreis a031245 r1 (Zweig kreis/kaufhaus_grob3/20261110_031245a031245-r1): Ost-Staffelgiebel liegt ~1,4 m zu weit aussen (u 17,15 statt ~15,85); 8 Stufenspitzen trianguliert (M-6115-001..008, Strahlabstand <= 0,03 m), Overlays 6115/6145/6257 treffen die Stufen. Region-Recall 0,10 -> 0,36. WIDERSPRUCH: Kantengitter am Giebel nur 39 Segmente -> Teil-Praezision 0,025, Band-Praezision 10-15 m 0,372 -> 0,361 (Rueckschritt-Tor). Nicht gemittelt (Regel 5).",
-   "naechster_schritt": "Kantengitter am Ostgiebel verdichten (mehr Fotos/Segmente 6115, 6145, 6257), dann Runde erneut; Rumpf/Gesims Ost endet ebenfalls bei u 17,15 (ungeprueft)."
+   "naechster_schritt": "Kantengitter am Ostgiebel verdichten (mehr Fotos/Segmente 6115, 6145, 6257), dann Runde erneut; Rumpf/Gesims Ost endet ebenfalls bei u 17,15 (ungeprueft).",
+   "wer": "Kreis a031245 r1 (Fehlteil-Agent) / Koordinator"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
