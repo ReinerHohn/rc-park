@@ -344,6 +344,20 @@ for runde in range(1, RUNDEN + 1):
                 print(f"Runde {runde}: ungetrackte Dateien in main nach {sich} gesichert, Merge erneut")
                 mr = subprocess.run(["git", "-C", ROOT, "merge", "--no-edit", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} nach main (automatisch)", br], capture_output=True, text=True)
             if mr.returncode != 0:
+                # Konflikt nur in Bau-Erzeugnissen (STL/Pruefbericht; 10.11. Gauben vs. Laube-Runde: teil_01.stl beidseitig neu gebaut):
+                # Quellen sind sauber gemergt -> Erzeugnisse auf main neu bauen statt Annahme liegen lassen. Quellkonflikte bleiben Abbruch.
+                konf = subprocess.run(["git", "-C", ROOT, "diff", "--name-only", "--diff-filter=U"], capture_output=True, text=True).stdout.split()
+                erzeugt = lambda f: f.startswith("modelle/stl/") or f.endswith(("pruefbericht.json", ".jpg", ".png")) or "/audit/" in f
+                if konf and all(erzeugt(f) for f in konf):
+                    subprocess.run(["git", "-C", ROOT, "checkout", "--theirs", "--"] + konf, capture_output=True)
+                    gen = json.load(open(os.path.join(ROOT, "modelle", OBJ, "objekt.json")))["generator"]
+                    rcg, _ = sh_tor(gen, ROOT, log=os.path.join(LDIR, f"merge_neubau_r{runde}.log"))
+                    if rcg == 0:
+                        subprocess.run(["git", "-C", ROOT, "add", "--"] + konf, capture_output=True)
+                        subprocess.run(["git", "-C", ROOT, "add", "-u", "modelle/stl"], capture_output=True)
+                        mr = subprocess.run(["git", "-C", ROOT, "commit", "--no-edit", "-q"], capture_output=True, text=True)
+                        print(f"Runde {runde}: Erzeugnis-Konflikt {konf} durch Neubau auf main geloest (rc {mr.returncode})")
+            if mr.returncode != 0:
                 subprocess.run(["git", "-C", ROOT, "merge", "--abort"], capture_output=True)
                 print(f"Runde {runde}: MERGE nach main fehlgeschlagen, bleibt auf {br}: {mr.stdout[-300:]}{mr.stderr[-300:]}")
             else:
