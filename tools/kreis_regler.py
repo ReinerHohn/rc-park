@@ -66,6 +66,7 @@ def form_auffrischen():
     except OSError: return
     if os.path.exists(os.path.join(FORM, sha + ".json")) or time.time() - form_start < 2400: return
     if subprocess.run(["systemctl", "--user", "is-active", "--quiet", "rcpark-fotoform"]).returncode == 0: return
+    if gpu()[1] > 3000: return   # 10.11. 13:3x: Auffrischung (40 min GPU) verstopfte mit Agentenpruefungen die Tore (4 fertige Runden im OOM); nur bei freier GPU
     subprocess.run([os.path.join(ROOT, "tools", "job_start.sh"), "fotoform", os.path.join(KD, "fotoform.log"), "bash", "tools/fotoform_auffrischen.sh", OBJ],
                    cwd=ROOT, capture_output=True, env=dict(os.environ, JOB_GPU_MB="2500"))
     form_start = time.time(); print(time.strftime("%H:%M:%S"), f"Formliste veraltet (main-STL {sha}) -> fotoform_auffrischen gestartet", flush=True)
