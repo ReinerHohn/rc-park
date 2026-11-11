@@ -415,6 +415,19 @@ def waehlen(z, sperre):
             ffk = [f for f in ffk if f["id"] not in _wegv]
             fk = ffk + fk
         except Exception as _ex: print("foto_fehlteile:", _ex, flush=True)
+    # NUTZERENTSCHEID 11.11. ("Nutzerfunde zuerst", dann "Geht das nicht schneller"): offene Nutzer-Sichtfunde auch VOR Fehlteilen - heute 8 Fehlteil-
+    # Runden, fast alle 'kein Bauteil'/Gewinn 0, waehrend die Teile mit Nutzerfunden warteten. Fehlteile nur, wenn kein Nutzerfund-Teil frei ist.
+    _nf = set()
+    if opt("--nutzer_zuerst", 1, int):
+        try:
+            _bel0 = set(os.listdir(BELEGT))
+            for b in json.load(open(os.path.join(ROOT, "modelle", OBJ, "masstabelle.json"))).get("beobachtungen_offen") or []:
+                if not (isinstance(b, dict) and b.get("teil") and not b.get("erledigt") and "nutzer" in str(b.get("wer", "")).lower()): continue
+                tt = str(b["teil"]).replace(":", "__"); bk = beob_schluessel(b)
+                if (tt not in _bel0 and tt.split("__")[0] not in belegt_fam and sperre.get(tt, 0) < MAX_FEHL and fg.get(tt, 0) < MAX_GLOBAL
+                        and sperre.get(bk, 0) < MAX_FEHL and fg.get(bk, 0) < MAX_GLOBAL): _nf.add(tt)
+        except Exception as _ex: print("Nutzerfunde:", _ex, flush=True)
+    if _nf: print(f"Fehlteile zurueckgestellt, Nutzerfund-Teile frei: {sorted(_nf)}", flush=True); fk = []
     for t in fk:
         try:
             fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
