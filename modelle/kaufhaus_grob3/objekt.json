@@ -6418,11 +6418,11 @@
      -0.85,
      -0.45,
      0.495,
-     0.3,
-     0.34
+     0.46,
+     0.42
     ]
    ],
-   "stufen_quelle": "Fig 2: Haube unten z 13,29 (M-6120-053/057), Maßwerkband-Unterkante 13,63 (M-6120-064), Bandoberkante ~14,0 (M-6120-062/063), Blattwerk-Krone bis 14,28..14,47 (M-6120-060/061), Fialenspitze 14,92 (M-6120-051); Breite Haube 0,72-0,74 (u 5,02..5,75), Krone 0,99 (u 4,90..5,90); Tiefen s 12,85 (unten) / 13,03 (Bandoberkante) / 12,96..13,09 (Krone) aus denselben Triangulationen, Fehler +-0,1 m | Haube unten (z 13,29..13,63) hohl: zwei Wangen 0,12 m (Foto 6120: dunkler Hohlraum unter dem Maßwerkband, Wangen aussen; Dicke ANNAHME), der Figurenkopf ragt hinein",
+   "stufen_quelle": "Kranzgesims der Krone (Stufe 3): Vorderkante t0 0,46 / t1 0,42 (vorher 0,30/0,34 = HINTER der Bandfront 0,36, Gesimskante verdeckt): Foto-F1-Gelb-Balken in 6120/6119/j05/6117, Bandfront s 13,03 (M-6120-062/063), Krone bis s 13,09 (M-6120-060/061) +-0,1 m; Feinwert aus Foto-F1-Sweep (.36->0,763, .42->0,782, .46/.40->0,804) = ANNAHME im Fehlerband | Fig 2: Haube unten z 13,29 (M-6120-053/057), Maßwerkband-Unterkante 13,63 (M-6120-064), Bandoberkante ~14,0 (M-6120-062/063), Blattwerk-Krone bis 14,28..14,47 (M-6120-060/061), Fialenspitze 14,92 (M-6120-051); Breite Haube 0,72-0,74 (u 5,02..5,75), Krone 0,99 (u 4,90..5,90); Tiefen s 12,85 (unten) / 13,03 (Bandoberkante) / 12,96..13,09 (Krone) aus denselben Triangulationen, Fehler +-0,1 m | Haube unten (z 13,29..13,63) hohl: zwei Wangen 0,12 m (Foto 6120: dunkler Hohlraum unter dem Maßwerkband, Wangen aussen; Dicke ANNAHME), der Figurenkopf ragt hinein",
    "fialen": [
     [
      0.0,
@@ -6474,6 +6474,7 @@
     }
    ],
    "historie": [
+    {"datum": "2026-11-11", "wer": "Kreis 20261111_045306a045306 r2 (Agent, baldachine)", "alt": {"stufen[2] t0/t1": [0.3, 0.34]}, "neu": {"stufen[2] t0/t1": [0.46, 0.42]}, "grund": "Foto-F1: Kranzgesims-Unterkante der Krone fehlte im Modell (gelber Balken), Vorderkante lag hinter der Bandfront"},
     {
      "datum": "2026-11-10",
      "wer": "Kreis a040948 r2 (Agent, Fehlteil fk_+6_+12_+14)",
