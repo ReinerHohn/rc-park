@@ -6256,7 +6256,14 @@
    "text": "Nutzer 11.11. 08:38 (Viewer-Screenshot Formkanten): Stufen mit Daechlein (daechlein_h 0,8) wirken als Saegezahn; real waagerechte Treppenstufen. Ursache: daechlein_h am 10.11. (Kreis2 r2) per Foto-F1-Sweep gewaehlt (0,45/0,6/0,8 -> 0,407/0,417/0,423, Unterschied unter Unterscheidbarkeit L46), keine Formbeschreibung Stufe 0. Gilt fuer beide Giebel (west/ost, gemeinsamer Generator).",
    "naechster_schritt": "Pruefung 'Stufenoberkante waagerecht' (Neigung der Stufenkrone am Foto mit foto_mass, >=3 Fotos 6115/6261/6164), die am aktuellen Modell fehlschlaegt; dann daechlein_h nach Messung (vermutlich 0) fuer beide Giebel.",
    "datum": "2026-11-11",
-   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude"
+   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "pruef_stichworte": [
+    "treppe",
+    "saegezahn",
+    "zacke",
+    "stufe"
+   ],
+   "formfamilie_test": true
   },
   {
    "teil": "bruestung:balkon",
@@ -6264,7 +6271,15 @@
    "text": "Nutzer 11.11. (Screenshots Balkonenden West/Ost). Fotobeleg vorhanden: gelbe Fotokanten am Westende in 13 Fotos (131611 px), am Ostende in 10 Fotos (55645 px), Formliste 4723ee83. Nie Kreis-Ziel, weil Foto-Cluster-Schwelle 150000 px Summe (FOTO_FEHL_SUMME) nicht erreicht.",
    "naechster_schritt": "Gelaender-Stirn an beiden Enden: Zaehlung Pfosten/Docken am Foto (foto_zaehlung), Lage/Hoehe per foto_mass, als Fortsetzung der bruestung.",
    "datum": "2026-11-11",
-   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude"
+   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "pruef_stichworte": [
+    "ende",
+    "stirn",
+    "gelaender",
+    "knick",
+    "umknick"
+   ],
+   "formfamilie_test": true
   },
   {
    "teil": "baldachinreihe:baldachine",
@@ -6272,7 +6287,15 @@
    "text": "Nutzer 11.11. (Foto handy_f_12: Masswerkaufsatz ueber dem Baldachin der Figur). Fotobeleg: gelb ueber den Baldachinen in 11 Fotos, Cluster ff_+5_+12_+14 (81661 px, 12 Fotos), ff_+16_+8_+14 (73908 px, 13 Fotos), ff_+11_+10_+14 (62635 px, 9 Fotos) - jeder unter der Schwelle 150000 px, zusammen 218204 px; Wiederholungselement in Einzelcluster zerlegt.",
    "naechster_schritt": "Aufsatz als Wiederholungselement je Figur (Zaehlung am Foto), Form Stufe 0 aus >=3 Fotos, Masse per foto_mass.",
    "datum": "2026-11-11",
-   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude"
+   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "pruef_stichworte": [
+    "aufsatz",
+    "bekroenung",
+    "fiale",
+    "masswerk",
+    "krone"
+   ],
+   "formfamilie_test": true
   },
   {
    "datum": "auto",
@@ -6348,7 +6371,14 @@
    "text": "Nutzer 11.11. 08:46 (Viewer Seitenansicht vs Foto handy_e_14/h_04). Fotobeleg: Cluster ff_+16_+4_+8 (473730 px, 5 Fotos) am Ostende - nie Ziel, weil der 13,5-m-Kasten 'kein Bauteil' (ff_+11_+4_+4) ihn per Zentrum-im-Kasten sperrte (behoben e1ddbf17).",
    "naechster_schritt": "Stirnboegen beidseitig mit derselben Bogenfamilie wie die Front (Kaempfer/Scheitel per foto_mass an >=3 Fotos).",
    "datum": "2026-11-11",
-   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude"
+   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "pruef_stichworte": [
+    "stirn",
+    "seitenoeffnung",
+    "bogen",
+    "rechteck"
+   ],
+   "formfamilie_test": true
   },
   {
    "teil": "staffelgiebel:ost",
@@ -6356,7 +6386,13 @@
    "text": "Nutzer 11.11. 08:45 (Viewer Fotofarben+Wolke, Ostgiebel): Wolken-Stufen liegen seitlich/hoeher versetzt zu den Modellstufen.",
    "naechster_schritt": "Stufenlage (Anzahl, Stufenbreite, Stufenhoehe, Giebelebene) je Stufe gegen Wolke UND Fotos messen (foto_zaehlung + foto_mass), Versatzrichtung je Foto pruefen (Kamera vs Modell).",
    "datum": "2026-11-11",
-   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude"
+   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "pruef_stichworte": [
+    "versatz",
+    "lage",
+    "stufe"
+   ],
+   "formfamilie_test": false
   },
   {
    "teil": "bogenreihe:laube",
@@ -6364,7 +6400,13 @@
    "text": "Nutzer 11.11. 08:47 (Foto handy_d_09: Sockel ca. knie- bis hueft-hoch). Fotobeleg: gelbe Flecken z 0,8-2,4 in 25 Fotos; Teilnote bogenreihe 0,73 (Hoehe 0,635) mittelt den kleinen Sockel weg.",
    "naechster_schritt": "Sockelhoehe und Sockelbreite per foto_mass an >=3 Fotos messen, Pruefung 'Sockeloberkante z' die am aktuellen Modell fehlschlaegt.",
    "datum": "2026-11-11",
-   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude"
+   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "pruef_stichworte": [
+    "sockel",
+    "fuss",
+    "basis"
+   ],
+   "formfamilie_test": true
   },
   {
    "teil": "kreuzgewoelbe:laube",
@@ -6372,7 +6414,14 @@
    "text": "Nutzer 11.11. 08:48 + Klarstellung ~10:20: gemeint ist NICHT das Tor tor_b2 (in 6243 tatsaechlich spitz), sondern der Uebergang der Boegen/Kappen zur Wand: die Anschlusslinie Gewoelbe-Rueckwand ist im Foto ein Rundbogen, im Modell eine Spitze (Formkanten-Ansicht Mitte Rueckwand). Haengt mit 'Wandanschluss ueber Tuer' zusammen.",
    "naechster_schritt": "Schildbogenform (Rundbogen, Kaempfer/Scheitel) an >=3 Fotos messen; Kappengeometrie des kreuzgewoelbe so, dass die Wandschnittlinie rund ist.",
    "datum": "2026-11-11",
-   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude"
+   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "pruef_stichworte": [
+    "schildbogen",
+    "wandanschluss",
+    "rund",
+    "spitz"
+   ],
+   "formfamilie_test": true
   },
   {
    "teil": "kreuzgewoelbe:laube",
@@ -6380,7 +6429,15 @@
    "text": "Nutzer 11.11. ~10:15 (Bildpaar d20 der Formfamilien-Pruefung, rote Kaesten): Foto zeigt Gurt- und Diagonalrippen, die aus dem Pfeilerkopf aufsteigen, weisse Kappen dazwischen; Modell zeigt am Ansatz dunkle Keile und gezackte Grate (Tesselierungs-/Verschneidungsartefakt des Kreuzgewoelbes). Formfamilien-Pruefer meldete 'Saegezahn-Artefakt an den Graten' (mittel) und 'Rippen fehlen' (hoch).",
    "naechster_schritt": "Grat-Verschneidung im Generator glatt (Aufloesung/Booleschen Schnitt pruefen), Rippen als Element (Patch a090522 im Neutor a095328); Pruefung 'keine Zacken an Graten' am Render.",
    "datum": "2026-11-11",
-   "wer": "Nutzer (Sichtbeobachtung)"
+   "wer": "Nutzer (Sichtbeobachtung)",
+   "pruef_stichworte": [
+    "grat",
+    "zack",
+    "saegezahn",
+    "rippe",
+    "ansatz"
+   ],
+   "formfamilie_test": true
   },
   {
    "teil": "kreuzgewoelbe:laube",
@@ -6388,7 +6445,14 @@
    "text": "Nutzer 11.11. ~10:15 (d20, rechter Kasten ueber der Tuer mit Goldrahmen): im Foto endet die Rippe an der Wand (Anfaenger/Konsole, Wandbogen); im Modell trifft die Kappe als dunkler Keil auf die Wand.",
    "naechster_schritt": "Wandanschluss der Kappen (Schildbogen) und Rippenanfaenger an der Rueckwand aus >=3 Fotos beschreiben (Stufe 0), dann messen.",
    "datum": "2026-11-11",
-   "wer": "Nutzer (Sichtbeobachtung)"
+   "wer": "Nutzer (Sichtbeobachtung)",
+   "pruef_stichworte": [
+    "wand",
+    "anfaenger",
+    "schildbogen",
+    "keil"
+   ],
+   "formfamilie_test": true
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
