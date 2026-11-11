@@ -1031,7 +1031,9 @@ for runde in range(1, RUNDEN + 1):
         elif FEIN_WEG and fein_n >= fein_v + MIN_GEWINN_FOTO and gewinn >= -FORMFUND_TOL and gewinn < MIN_GEWINN_FOTO:
             fein_weg = True; min_g = min(min_g, gewinn)
             print(f"Runde {runde}: FEIN-WEG {ziel['teil']}: Feinform +{fein_n - fein_v:.3f} bei Grob-F1 {gewinn:+.3f} - Bildpruefer entscheidet", flush=True)
-    if "kanten_f1" in rueck_teil and ff_v is not None and ff_n is not None and ff_n >= ff_v + 0.02:
+    # 11.11. 18:0x Erker-Netzrippen (170946erker r1): Formfund mit Foto-F1 0,654 -> 0,664 nur an 'kanten_f1' (Kantengitter ohne Rippensegmente) verworfen.
+    # Formfund-/Fein-Runden: Gitter ist abgeleitet und fuer Feinform blind -> Gitter-Rueckschritt nur Beobachtung, wenn das Foto-Tor der Runde besteht (Regel 9e).
+    if "kanten_f1" in rueck_teil and ff_v is not None and ff_n is not None and (ff_n >= ff_v + 0.02 or ((_ffr or fein_weg) and ff_n >= ff_v - FORMFUND_TOL)):
         # Quellenvorrang (10.11., Balkon 3x verworfen): das Kantengitter ist aus den Fotos ABGELEITET und hatte ~130 Segmente ueber freier Wand;
         # die direkte Formpruefung am Foto zeigt Besserung -> kein Rueckschritt, Widerspruch als Beobachtung (Regel 5: nicht mitteln).
         rueck_teil.remove("kanten_f1"); gitter_widerspruch = f"Gitter-F1 {f1(tv):.3f}->{f1(tn):.3f}, Foto-F1 {ff_v:.3f}->{ff_n:.3f}"
