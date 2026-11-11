@@ -166,7 +166,7 @@ def fehlversuche_global():
             except Exception: continue
             if (z.get("ziel") or {}).get("teil"): ev.append((z.get("zeit", ""), lauf, z))
     ev.sort(key=lambda e: e[0])   # zeitlich ueber alle Spuren, damit eine Annahme spaetere Zaehlung zuruecksetzt
-    boxen = teil_boxen(); n = {}; leer = {}
+    boxen = teil_boxen(); n = {}; leer = {}; _lf = {}   # _lf: Zeit der letzten Verwerfung/leeren Runde je Teil (fuer die Freigabe durch neue Kameras)
     for _, lauf, z in ev:
         t = z["ziel"]["teil"]
         if z["ziel"].get("art") == "beobachtung": t = beob_schluessel(z["ziel"].get("beob") or {})   # eigene Zaehlung je Beobachtung (neue Information, z. B. Nutzer-Sichtfund)
@@ -175,6 +175,7 @@ def fehlversuche_global():
         _lr = z.get("agent_leer") if "agent_leer" in z else bool(z.get("frueh_abgelehnt") and _ff[0] is not None and _ff[0] == _ff[1])   # Altbestand vor 11.11. 02:5x
         _tt = z["ziel"]["teil"]   # leere Runden zaehlen am TEIL, nicht am Beobachtungsschluessel (gesperrte Beobachtung -> Teil kam als Teil wieder)
         if _lr and z.get("angenommen") is False and z.get("metrik", "v1") == METRIK_SOLL: leer[_tt] = leer.get(_tt, 0) + 1
+        if z.get("angenommen") is False: _lf[t] = _lf[_tt] = z.get("zeit", "")
         if z.get("angenommen") is True:
             n[t] = 0; leer[z["ziel"]["teil"]] = 0
             # Nutzerentscheid 10.11.: gesperrte Teile werden wieder frei, wenn ein Nachbarteil (Box +-1 m) danach in main geaendert wurde (neue Lage)
@@ -191,6 +192,13 @@ def fehlversuche_global():
     except Exception: _B = []
     _neu = {str(b["teil"]).replace(":", "__") for b in _B if isinstance(b, dict) and b.get("teil") and not b.get("erledigt")
             and "nutzer" in str(b.get("wer", "")).lower() and beob_schluessel(b) not in _gez}
+    # NEUE KAMERAS GEBEN FREI (11.11., tools/fotos_eingang.py): Teile, die durch Verwerfungen/leere Runden gesperrt sind, bekommen EINEN neuen Versuch,
+    # wenn nach ihrer letzten Verwerfung bestandene Kameras eingingen, die die Boxmitte des Teils im Bild haben (ANNAHME: ohne Verdeckung, <= 80 m).
+    for _e in eingang_ereignisse():
+        for t in set(n) | set(leer):
+            if _lf.get(t, "") < _e["zeit"] and (n.get(t, 0) >= MAX_GLOBAL or leer.get(t, 0) >= 2) and teil_in_kameras(boxen.get(t), _e["kamerafile"], _e.get("bilder") or []):
+                n[t] = min(n.get(t, 0), MAX_GLOBAL - 1); leer[t] = min(leer.get(t, 0), 1); _lf[t] = _e["zeit"]
+                print(f"Sperre {t} aufgehoben: neue Kameras {_e['kameras']} sehen das Teil (Eingang {_e['zeit']})", flush=True)
     for t, k in leer.items():
         if k >= 2 and t not in _neu: n[t] = max(n.get(t, 0), MAX_GLOBAL)
         elif k >= 2: print(f"Leer-Sperre {t} aufgehoben: offener Nutzerfund noch nie Ziel", flush=True)
@@ -212,6 +220,27 @@ def teil_boxen():
                 try: b[t] = stl_box(f)
                 except Exception: pass
     return b
+def eingang_ereignisse():
+    """Zeilen aus <kreisdir>/<objekt>/eingang_ereignisse.jsonl (fotos_eingang.py): {zeit, kamerafile, kameras}."""
+    p = os.path.join(KREISDIR, OBJ, "eingang_ereignisse.jsonl"); out = []
+    if os.path.exists(p):
+        for l in open(p):
+            try: out.append(json.loads(l))
+            except Exception: pass
+    return out
+def teil_in_kameras(box, kamerafile, nrs, max_m=80.0):
+    """Liegt die Boxmitte des Teils (Teil-STL in mm 1:87 -> m) im Bild mindestens einer der neuen Kameras (kamerafile = kam_lot2-Format)?"""
+    import numpy as np
+    if box is None: return False
+    try: K = json.load(open(kamerafile))
+    except Exception: return False
+    X = (np.asarray(box[0], float) + np.asarray(box[1], float)) / 2 / (1000 / 87)
+    for k in (K[n] for n in nrs if n in K):
+        x = np.array(k["Rn"]) @ X + np.array(k["tn"])
+        if x[2] <= 0.5 or x[2] > max_m: continue
+        u, v = k["f"] * x[0] / x[2] + k["cx"], k["f"] * x[1] / x[2] + k["cy"]
+        if 0 <= u < k["W"] and 0 <= v < k["H"]: return True
+    return False
 def nah(boxen, a, c):
     if a not in boxen or c not in boxen: return False
     (alo, ahi), (clo, chi) = boxen[a], boxen[c]

@@ -100,6 +100,18 @@ def nebenjob_anhalten(grund):
     subprocess.run(["systemctl", "--user", "stop", "rcpark-fotoform"], capture_output=True)
     print(time.strftime("%H:%M:%S"), f"Formliste-Auffrischung angehalten ({grund}), setzt spaeter fort", flush=True)
 
+def eingang_pruefen():
+    """Neue Fotoordner des Objekts (objekt.json fotos_eingang)? Dann tools/fotos_eingang.py als Dienst (JOB_GPU_MB, nie doppelt: job_start lehnt gleichen Namen ab,
+    zusaetzlich Sperrdatei im Werkzeug). Trockenlauf ist billig (nur Dateilisten)."""
+    cfg = json.load(open(os.path.join(ROOT, "modelle", OBJ, "objekt.json"))).get("fotos_eingang")
+    if not cfg: return
+    r = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "fotos_eingang.py"), OBJ, "--trocken"], capture_output=True, text=True, cwd=ROOT, timeout=120)
+    if r.returncode != 0 or " 0 mit neuen Fotos" in r.stdout or "mit neuen Fotos" not in r.stdout: return
+    if os.path.exists(os.path.join(cfg["zusatz_dir"], ".eingang.lock")): return
+    subprocess.run([os.path.join(ROOT, "tools", "job_start.sh"), "fotos_eingang", os.path.join(KD, "fotos_eingang.log"), sys.executable, "tools/fotos_eingang.py", OBJ],
+                   cwd=ROOT, capture_output=True, env=dict(os.environ, JOB_GPU_MB=str(cfg.get("gpu_mb", 2600))))
+    print(time.strftime("%H:%M:%S"), "Fotoeingang: neue Fotoordner -> fotos_eingang gestartet:", r.stdout.strip(), flush=True)
+
 hist, letzter, leer_sig = [], 0.0, None
 FORM = os.path.join(KD, OBJ, "fotoform"); form_start = 0.0
 def form_auffrischen():
@@ -160,6 +172,8 @@ while True:
     except Exception as ex: print("nebenjob_anhalten:", ex)
     try: form_auffrischen()
     except Exception as ex: print("form_auffrischen:", ex)
+    try: eingang_pruefen()
+    except Exception as ex: print("eingang_pruefen:", ex)
     try: platz_schaffen()
     except Exception as ex: print("platz_schaffen:", ex)
     u, m = gpu(); hist = (hist + [u])[-5:]; ug = sum(hist) / len(hist)

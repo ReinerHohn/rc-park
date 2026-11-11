@@ -1,0 +1,40 @@
+{
+ "foto": "n11_04",
+ "datei": "n11_04_3ad522f6.jpg",
+ "typ": "kamera_bruecke_sfm",
+ "kamera": {
+  "rvec": [
+   0.7217822199472961,
+   0.9186464229193906,
+   -1.5959954574224207
+  ],
+  "t": [
+   -1.9543712419721864,
+   17.623068173295675,
+   21.77590790700561
+  ],
+  "f_px": 2790.0,
+  "cx": 1500.0,
+  "cy": 2000.0,
+  "bild": [
+   3000,
+   3800
+  ],
+  "k1": 0.02,
+  "modell": "SIMPLE_RADIAL",
+  "standort_xyz": [
+   26.72,
+   7.68,
+   3.99
+  ],
+  "brennweite_quelle": "SfM-Buendel /media/oem/scan/rc-park_daten/kaufhaus_grob3/zusatz_n11/kam_lot2_n11.json",
+  "rms_px": null,
+  "rahmen_verschiebung": [
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ "quelle": "tools/kamera_bruecke.py: Pose/Brennweite/k1 aus /media/oem/scan/rc-park_daten/kaufhaus_grob3/zusatz_n11/kam_lot2_n11.json (Rahmen der Kameradatei = Generatorrahmen); Anker = SfM-Buendel, KEINE amtlichen Anker; Massstab sfm_buendel",
+ "datum": "2026-11-11"
+}

@@ -8892,5 +8892,19 @@
   "toleranz_mm": 0.2,
   "stift_rand_mm": 2.5,
   "quelle": "Koordinator Runde 5: teilen statt Stuetzen, Passstifte Toleranz 0,2 mm H0; Bett Bambu P1S 256 mm (Memory bambu-p1s); Stift 2 x 6 mm und Randabstand 2,5 mm = ANNAHME"
+ },
+ "fotos_eingang": {
+  "hinweis": "tools/fotos_eingang.py: neue Fotoordner automatisch registrieren (11.11.). Nur nutzerfotos_* (neue Nutzerfotos); alte handy_*-Serien sind schon im SfM, handy_phone_*/nicht_kaufhaus = privat, ausgeschlossen.",
+  "muster": [{"glob": "/media/oem/scan/rc-park_daten/kaufhaus_grob3/nutzerfotos_*", "kurz": "n11"}],
+  "ausschluss": ["nicht_kaufhaus", "handy_phone"],
+  "zusatz_dir": "/media/oem/scan/rc-park_daten/kaufhaus_grob3/zusatz_n11_eingang",
+  "bekannt_glob": ["/media/oem/scan/rc-park_daten/kaufhaus_grob3/zusatz_*/vorbereitet.json", "/media/oem/scan/rc-park_daten/kaufhaus_grob3/zusatz_n11_eingang/*/vorbereitet.json", "/media/oem/scan/rc-park_daten/kaufhaus_alle/zusatz_handy11/*/vorbereitet.json"],
+  "ref_db": "/media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/db.db",
+  "ref_sparse": "/media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/sparse/0",
+  "kam_alt": "/media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/kam_lot2.json",
+  "T": "/media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/T_gemeinsam_nach_netz.npz",
+  "rot": "/media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/kam_lot2.json.rot.json",
+  "kamera_profil": "modelle/kamera_profil/handy_nubia_gruppen.json",
+  "f_px": 2790, "max_reproj_px": 2.5, "zmin": 1.5, "zmax": 6.0, "max_rot": 0.25, "gpu_mb": 2600
  }
 }
