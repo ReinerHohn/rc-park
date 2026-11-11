@@ -129,6 +129,27 @@ def form_auffrischen():
     print(time.strftime("%H:%M:%S"), f"Formliste veraltet (main-STL {sha}) -> fotoform_auffrischen gestartet" + (f" (nach {(time.time() - seit) / 60:.0f} min Wartezeit trotz Torschritt: {tw})" if tw else ""), flush=True)
 print(f"Kreis-Regler {OBJ}: max {MAX} Spuren, GPU-Ziel {GPU_ZIEL} %, VRAM < {VRAM_MAX} MiB, RAM > {RAM_MIN} GB, Takt {TAKT} s")
 _takt_nr = 0
+# NIE WEGEN PLATZ STEHEN (Nutzer 11.11. 16:4x "du darfst niemals stoppen wegen zu wenig Platz"): 15:07-15:14 wartete der Regler auf Platz.
+# Jetzt lagert er selbst aus (verschieben + Symlink, nie loeschen): Daten < 8 GB -> fertige Kreis-Laufordner (> 90 min unveraendert) auf
+# Volume (sonst Toshiba); Root < 7,5 GB -> Git-Packs auf die Datenplatte (git_packs_auslagern.sh). Laeuft im Hintergrund, eine Instanz.
+_platz_proc = None
+def platz_schaffen():
+    global _platz_proc
+    if _platz_proc is not None and _platz_proc.poll() is None: return
+    rf = shutil.disk_usage("/").free / 1e9; df = shutil.disk_usage("/media/oem/scan").free / 1e9
+    cmd = None
+    if df < 8:
+        import glob as _g
+        alt = [d for d in sorted(_g.glob(os.path.join(KD, OBJ, "2026*"))) if os.path.isdir(d) and not os.path.islink(d) and time.time() - os.path.getmtime(d) > 5400]
+        ziel = "/media/oem/Volume" if os.path.ismount("/media/oem/Volume") and shutil.disk_usage("/media/oem/Volume").free / 1e9 > 20 else ""
+        if alt:
+            cmd = (["env"] + ([f"AUSLAGERN_MOUNT={ziel}"] if ziel else []) + ["bash", os.path.join(ROOT, "tools", "auslagern.sh")] + alt[:60])
+            print(f"{time.strftime('%H:%M:%S')} PLATZ daten {df:.1f} GB -> lagere {len(alt[:60])} Laufordner aus ({ziel or 'Toshiba'})", flush=True)
+    elif rf < 7.5:
+        cmd = ["bash", os.path.join(ROOT, "tools", "git_packs_auslagern.sh")]
+        print(f"{time.strftime('%H:%M:%S')} PLATZ root {rf:.1f} GB -> Git-Packs auf Datenplatte", flush=True)
+    if cmd: _platz_proc = subprocess.Popen(cmd, cwd=ROOT, stdout=open(os.path.join(KD, "platz_schaffen.log"), "a"), stderr=subprocess.STDOUT)
+
 while True:
     tote_sperren_freigeben()
     _takt_nr += 1
@@ -139,6 +160,8 @@ while True:
     except Exception as ex: print("nebenjob_anhalten:", ex)
     try: form_auffrischen()
     except Exception as ex: print("form_auffrischen:", ex)
+    try: platz_schaffen()
+    except Exception as ex: print("platz_schaffen:", ex)
     u, m = gpu(); hist = (hist + [u])[-5:]; ug = sum(hist) / len(hist)
     sp = spuren(); r = ram_gb(); last = os.getloadavg()[0]; ker = os.cpu_count()
     rf = shutil.disk_usage("/").free / 1e9; df = shutil.disk_usage("/media/oem/scan").free / 1e9
