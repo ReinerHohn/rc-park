@@ -1,0 +1,32 @@
+{
+ "id": "M-6213-001",
+ "foto": "6213",
+ "kamera": "K-6213",
+ "ebene": "0.3338,0.9426,0=7.5",
+ "name": "Rippe rechts (Gurtrippe?) Breite Untersicht inkl Flanke, y1900",
+ "mess_px": [
+  1295.0,
+  1900.0,
+  1420.0,
+  1900.0
+ ],
+ "P1": [
+  11.396,
+  3.921,
+  6.385
+ ],
+ "P2": [
+  11.094,
+  4.028,
+  6.307
+ ],
+ "dz": -0.077,
+ "dy": 0.107,
+ "dx": -0.303,
+ "abstand": 0.33,
+ "z1": 6.385,
+ "z2": 6.307,
+ "unsicherheit_rel": 0.0455,
+ "unsicherheit_m": 0.024,
+ "massstab_von": "Kamera K-6213 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.5 (+-0.3 m)"
+}

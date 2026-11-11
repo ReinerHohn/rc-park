@@ -1,0 +1,32 @@
+{
+ "id": "M-6213-002",
+ "foto": "6213",
+ "kamera": "K-6213",
+ "ebene": "0.3338,0.9426,0=7.5",
+ "name": "Rippe links Breite am Dienstansatz y2000",
+ "mess_px": [
+  1130.0,
+  2000.0,
+  1235.0,
+  2000.0
+ ],
+ "P1": [
+  11.807,
+  3.776,
+  6.254
+ ],
+ "P2": [
+  11.535,
+  3.872,
+  6.191
+ ],
+ "dz": -0.064,
+ "dy": 0.097,
+ "dx": -0.273,
+ "abstand": 0.296,
+ "z1": 6.254,
+ "z2": 6.191,
+ "unsicherheit_rel": 0.0442,
+ "unsicherheit_m": 0.022,
+ "massstab_von": "Kamera K-6213 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.5 (+-0.3 m)"
+}
