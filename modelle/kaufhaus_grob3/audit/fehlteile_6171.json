@@ -7,16 +7,44 @@
  "treffer": [
   {
    "zelle": [
-    2320,
+    2465,
     290,
     145
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    10.68,
-    1.98,
-    24.25
+    10.0,
+    2.35,
+    24.07
+   ]
+  },
+  {
+   "zelle": [
+    2320,
+    290,
+    145
+   ],
+   "score": -0.952,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    10.78,
+    2.01,
+    24.17
+   ]
+  },
+  {
+   "zelle": [
+    2610,
+    290,
+    145
+   ],
+   "score": -0.565,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    9.06,
+    2.82,
+    23.89
    ]
   }
  ],

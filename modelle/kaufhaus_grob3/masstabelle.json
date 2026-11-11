@@ -6758,57 +6758,6 @@
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
-   "auto_id": "fehlteile-6261-234-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.54,
-   "z_bis": 18.54,
-   "xyz": [
-    14.33,
-    -8.87,
-    18.54
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.87 m (Zelle [234, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
-   "auto_id": "fehlteile-6261-312-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.23,
-   "z_bis": 18.23,
-   "xyz": [
-    14.6,
-    -7.17,
-    18.23
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.17 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
-   "auto_id": "fehlteile-6261-234-1872",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.42,
-   "z_bis": 17.42,
-   "xyz": [
-    14.28,
-    -8.92,
-    17.42
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.42 m, y=-8.92 m (Zelle [234, 1872, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "teil": "staffelgiebel:west",
    "merkmal": "Oberster Pfeiler Westgiebel zu hoch (Spitzenblock statt Stufe)",
    "text": "Nutzer 11.11. (Screenshot q11|vorher|nachher, rote Rahmen): im Foto ist die oberste Stufe am First eine normale Stufe mit Kappe; im Modell steht ein Block 2,11 m ueber der naechsten Stufe (Regelsteigung 1,21 m), weil i=0 auf z_spitze gesetzt wird und die Stufen per kappe -0,9 tiefer liegen.",
@@ -6854,6 +6803,74 @@
    "merkmal": "Pruefer-Rest staffelgiebel:west kreis 20261111_153352a153352 r1",
    "text": "Offene Fehler laut Pruefer nach angenommener Runde: Dichte-Verdacht marge_min -0,035: Lage nur per Sichtpruefung q11/6261/6164 bestaetigt (roter Spitzenblock weg, Oberkante deckt sich mit oberster Fotostufe), Foto-F1 0,540->0,539 ohne Gewinn | nu3b: lange gelbe Linie am Dachanschluss unter den oberen Stufen (Dachkante fehlt im Modell) | Fuss am Turm/Erker gelb-rot in 6164/q11/nu3b | q11: gelbe Reste an Stufenstirnen untere Haelfte | 6225: viele gelbe Wand-/Fensterkanten (andere Teile) weiter offen | objekt.json werte_quellen.kappe nennt Variante 'oberster Pfeiler als Stufe' noch als verworfen - Widerspruch zur neuen Quelle spitze_als_stufe | Kappenhoehe -0,9 vs -0,45 Widerspruch offen, foto_mass in q11/6164 fehlt | Regression, teile_lage_pruefen, fehlteile_finden, foto_diff nicht gelaufen",
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
+   "auto_id": "fehlteile-6261-546-1170",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 25.8,
+   "z_bis": 25.8,
+   "xyz": [
+    16.28,
+    -1.5,
+    25.8
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=25.8 m, y=-1.5 m (Zelle [546, 1170, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
+   "auto_id": "fehlteile-6261-234-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.54,
+   "z_bis": 18.54,
+   "xyz": [
+    14.34,
+    -8.87,
+    18.54
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.87 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "auto_id": "fehlteile-6261-312-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.23,
+   "z_bis": 18.23,
+   "xyz": [
+    14.61,
+    -7.15,
+    18.23
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-234-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.42,
+   "z_bis": 17.42,
+   "xyz": [
+    14.29,
+    -8.91,
+    17.42
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.42 m, y=-8.91 m (Zelle [234, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

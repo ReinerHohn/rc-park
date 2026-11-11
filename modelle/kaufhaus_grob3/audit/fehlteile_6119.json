@@ -8,43 +8,15 @@
   {
    "zelle": [
     344,
-    860,
-    172
-   ],
-   "score": -0.967,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    15.96,
-    -3.53,
-    19.47
-   ]
-  },
-  {
-   "zelle": [
-    344,
     1204,
     172
    ],
-   "score": -0.809,
+   "score": -0.852,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    15.25,
-    -5.29,
-    17.68
-   ]
-  },
-  {
-   "zelle": [
-    344,
-    1032,
-    172
-   ],
-   "score": -0.765,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    15.53,
-    -4.53,
-    18.7
+    15.26,
+    -5.17,
+    17.61
    ]
   }
  ],
