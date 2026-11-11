@@ -1,0 +1,42 @@
+{
+ "id": "Z-6162-001",
+ "typ": "zaehlung",
+ "foto": "6162",
+ "datei": "6162_ip_IMG_6162.jpg",
+ "was": "Traufspeier Hauptdach (lange Drachen-Speier an der Haupttraufe), je Hauptfront",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-11",
+ "punkte": [
+  {
+   "flaeche": "S1",
+   "art": "voll",
+   "x": 940.0,
+   "y": 1170.0
+  },
+  {
+   "flaeche": "S1",
+   "art": "voll",
+   "x": 2610.0,
+   "y": 940.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "S1": {
+   "art": "voll",
+   "n": 2
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 2,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-6162-001.jpg",
+ "ausschnitt": [
+  690,
+  690,
+  2860,
+  1420
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

@@ -1,0 +1,39 @@
+{
+ "id": "M-6162-003",
+ "typ": "triangulation",
+ "foto": "6162",
+ "name": "Speierfuss links (6145)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6162",
+   "px": [
+    1005.0,
+    1197.0
+   ]
+  },
+  {
+   "kamera": "K-6145",
+   "px": [
+    566.0,
+    1611.0
+   ]
+  }
+ ],
+ "P": [
+  14.958,
+  8.157,
+  14.302
+ ],
+ "strahl_abstand_m": [
+  0.046,
+  0.046
+ ],
+ "schnittwinkel_grad": [
+  14.8
+ ],
+ "z": 14.302,
+ "unsicherheit_m": 0.167,
+ "massstab_von": "Kameras K-6162, K-6145 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 12.693,
+ "u": 11.365
+}

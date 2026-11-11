@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_164909a164909/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.667000282287596,
@@ -20,7 +20,7 @@
   "handlauf_z": 8.25699973297119,
   "helm_w_fussbreite_x": 2.3264116744995116,
   "helm_w_fussbreite_y": 2.13911196899414,
-  "helm_w_fussbreite_punkte": 24.0,
+  "helm_w_fussbreite_punkte": 23.0,
   "rueck_z6": -0.005787998491273427,
   "rueck_z10": -0.004582697634774924,
   "rueck_z143": -0.0020122868095460156,
@@ -41,7 +41,7 @@
   "teilnetze": 1.0,
   "dicht": 1.0,
   "wand_pq": 0.10590077191591263,
-  "wand_anteil_unter": 0.0007666666666666667,
+  "wand_anteil_unter": 0.0005,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -140,7 +140,7 @@
   "helm_w_r_14_38": 1.1870509785045464,
   "helm_w_r_14_88": 1.0070557810130052,
   "helm_w_knauf_r_21_35": 0.19176879206557926,
-  "gesims_front_z14_35": 0.33434823478472886,
+  "gesims_front_z14_35": 0.33415608783231443,
   "gesims_front_z14_55": 0.17257309118954867,
   "gesims_front_z14_78": 0.0737696991541128,
   "bogen3_archivolt_z": 5.9869999999999814,
@@ -245,7 +245,9 @@
   "stirnbogen_west_b_unterkante_z": 5.606999999999975,
   "giebel_w_stufe0": 27.667000282287596,
   "giebel_w_stufe1": 26.456999885559078,
-  "pfeiler3_sockelwand_d": 1.3858292070399545
+  "pfeiler3_sockelwand_d": 1.3858292070399545,
+  "speier_a_reichweite": 4.676271540414225,
+  "speier_b_reichweite": 4.606407351800311
  },
  "pruefungen": [
   {
@@ -1150,7 +1152,7 @@
   },
   {
    "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.35 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.33434823478472886,
+   "wert": 0.33415608783231443,
    "soll": [
     0.25,
     0.35
@@ -2044,6 +2046,26 @@
    "soll": [
     1.0,
     1.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Traufspeier A (Hauptdach, links, u 11,36): Reichweite ab n 10,0 bis Speierkopf bei z 13,95",
+   "wert": 4.676271540414225,
+   "soll": [
+    4.3,
+    5.0
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Traufspeier B (Hauptdach, rechts, u -4,47): Reichweite ab n 10,0 bis Speierkopf bei z 13,95",
+   "wert": 4.606407351800311,
+   "soll": [
+    4.3,
+    5.0
    ],
    "ok": true,
    "status": "ok"
