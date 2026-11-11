@@ -6398,7 +6398,7 @@
   {
    "teil": "bogenreihe:laube",
    "merkmal": "Seitliche Laubendurchgaenge (Stirnseiten) sind Boegen wie die Front, im Modell Rechteck",
-   "text": "Nutzer 11.11. 08:46 (Viewer Seitenansicht vs Foto handy_e_14/h_04). Fotobeleg: Cluster ff_+16_+4_+8 (473730 px, 5 Fotos) am Ostende - nie Ziel, weil der 13,5-m-Kasten 'kein Bauteil' (ff_+11_+4_+4) ihn per Zentrum-im-Kasten sperrte (behoben e1ddbf17).",
+   "text": "Nutzer 11.11. 08:46 (Viewer Seitenansicht vs Foto handy_e_14/h_04). Fotobeleg: Cluster ff_+16_+4_+8 (473730 px, 5 Fotos) am Ostende - nie Ziel, weil der 13,5-m-Kasten 'kein Bauteil' (ff_+11_+4_+4) ihn per Zentrum-im-Kasten sperrte (behoben e1ddbf17). | Nutzer 11.11. 12:52 (Viewer r12, Foto an_handy_2026-11-06_p_handy_11, rotes Rechteck): 'Bogen zwar drin aber noch Rechteckigen'. Geometrie geprueft (Kanten der Teile bei x<-3,5): am Westende ist die Seitenoeffnung ein RECHTECK y 9,8-14,0 / z 1,5-7,95 (Rand = rumpf_eg-Kante, Kaempferblock der Bogenreihe, Oberkante der Gewoelbe-Box z 7,95); der runde Schildbogen des Gewoelbes (z 5,8-7,9) liegt nur innen. Es fehlt die Stirnwand mit Bogenoeffnung (Zwickel ueber dem Bogen bis zum OG), wie an der Front. Teil: bogenreihe:laube (Stirnboegen) - per Geometrie, nicht geraten.",
    "naechster_schritt": "Stirnboegen beidseitig mit derselben Bogenfamilie wie die Front (Kaempfer/Scheitel per foto_mass an >=3 Fotos).",
    "datum": "2026-11-11",
    "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
@@ -6414,6 +6414,11 @@
     "seitenoeffnung",
     "durchgang",
     "stirn"
+   ],
+   "weltpunkt_m": [
+    -4.7,
+    12.0,
+    7.5
    ]
   },
   {
