@@ -142,3 +142,7 @@ NC-Modelle nur zur Forschung; was im Verkaufsprodukt steckt, muss aus lizenzfrei
 - BS124/BS125 (Wasserdicht-Ableitung hlo_pois_wd*.stl) nutzten pymeshfix (GPL; BS20 hatte es wegen geplantem Verkauf ausgeschlossen). Ergebnisse nur Testartefakte unter /media/oem/scan/rc-park_null (hlo_pois_wd*.stl), NICHT in Produkt/Druckpipeline uebernehmen; vor Verkauf Ersatz (z.B. eigener Randschleifen-Schluss, trimesh/manifold3d) oder Lizenz klaeren.
 - DexiNed (kornia, Gewichte DexiNed_BIPED_10.pth von huggingface.co/kornia/dexined): Code MIT/Apache, Gewichte-/BIPED-Lizenz unverifiziert; 9.11.2026 eingebaut (Kantenerkennung Foto-Ortho)
 - SAM (facebook/sam-vit-base, HF): Code/Gewichte Apache-2.0 laut Modellkarte (unverifiziert), 9.11.2026 eingebaut (Objektflaechen)
+
+## 2026-11-11 Relief aus Einzelbild (Beweistest, tools/relief_aus_foto.py)
+- Depth Anything V2 **SMALL** (`depth-anything/Depth-Anything-V2-Small-hf`, 95 MB, HF_HOME=/media/oem/scan/hf_depth): Apache-2.0 (HF-API-Metadaten + README am Primaerort 11.11. gelesen; Base/Large/Giant sind CC-BY-NC = NICHT nutzen). Trainingsdaten (595K synthetisch + 62M unbeschriftete Fotos) nicht geprueft. Code: transformers (Apache-2.0), kein neues Paket, venv-seg unveraendert.
+- Nicht eingesetzt: Apple Depth Pro (LICENSE nicht gelesen), Marigold.
