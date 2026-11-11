@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_112732a112732/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -9,7 +9,7 @@
   "helm_w_z": 20.88700064849853,
   "helm_o_z": 21.32700006866455,
   "dach_z_off11": 15.762130348205567,
-  "pfeiler3_d": 0.8810006134407047,
+  "pfeiler3_d": 0.8810006134406079,
   "arkade1_scheitel": 5.620651222229004,
   "fenster2_sohl": 8.856999847412109,
   "erker_w_unterkante": 8.18699988555908,
@@ -33,15 +33,15 @@
   "bal_feld_anzahl": 10.0,
   "bal_feld_breite_median": 0.16,
   "bal_feld_breite_max": 0.17,
-  "bal_feld_ebene_abstand": 1.9245448500612987,
+  "bal_feld_ebene_abstand": 1.924544850106738,
   "fenster_b3_anzahl": 2.0,
   "fenster_b3_breite_median": 0.8200000000000001,
   "fenster_b3_breite_max": 0.8200000000000001,
   "fenster_b3_ebene_abstand": 1.252124612687105,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590110719203949,
-  "wand_anteil_unter": 0.0007,
+  "wand_pq": 0.10989951342344284,
+  "wand_anteil_unter": 0.0006666666666666666,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -54,7 +54,7 @@
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.72,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.72,
-  "lichter_g2_bei_kaempfer_seite_ebene_abstand": 2.0996535691410827,
+  "lichter_g2_bei_kaempfer_seite_ebene_abstand": 2.099653560033513,
   "lichter_g2_bei_kaempfer_mitte_anzahl": 2.0,
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.68,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.68,
@@ -88,7 +88,7 @@
   "erker_w_unterbau72": 0.9912471427743436,
   "erker_w_gesims_u": 1.6962477790700574,
   "erker_w_wappen": 1.546247595470103,
-  "erker_w_trauf": 1.8062477411043796,
+  "erker_w_trauf": 1.806247741451134,
   "erker_o_diag_l": 1.549455670546903,
   "erker_o_diag_r": 1.548883300240687,
   "erker_o_front": 1.5408542955753348,
@@ -107,9 +107,9 @@
   "figur4_scheitel": 11.886999999999993,
   "figur2_sohle": 9.836999702453612,
   "figur2_kranz_d": 0.5662559077948899,
-  "figur2_stufe_d": 0.309999985156223,
+  "figur2_stufe_d": 0.30999998515723154,
   "figur2_bein_up": 0.2327845948786125,
-  "figur2_bein_um": 0.19721574802266204,
+  "figur2_bein_um": 0.1972157764912136,
   "figur2_kopf_up": 0.16778414907048042,
   "figur2_kopf_um": 0.13221535515072963,
   "figur2_bein_np": 0.1163365979686713,
@@ -135,8 +135,8 @@
   "giebel_o_top_b4": 23.287001106262206,
   "giebel_o_top_b8": 17.92700008392334,
   "giebel_o_vorn_n": 3.000488072033674,
-  "helm_w_r_13_45": 1.6786181603389831,
-  "helm_w_r_14_12": 1.297054477070036,
+  "helm_w_r_13_45": 1.7423634634583567,
+  "helm_w_r_14_12": 1.2970556884881361,
   "helm_w_r_14_38": 1.1870509785045464,
   "helm_w_r_14_88": 1.0070557810130052,
   "helm_w_knauf_r_21_35": 0.19176879206557926,
@@ -155,11 +155,11 @@
   "fenster_og_g3_lichtweite_anzahl": 3.0,
   "fenster_og_g3_lichtweite_breite_median": 0.68,
   "fenster_og_g3_lichtweite_breite_max": 0.72,
-  "fenster_og_g3_lichtweite_ebene_abstand": 2.0994505749888477,
+  "fenster_og_g3_lichtweite_ebene_abstand": 2.0994505751072197,
   "fenster_og_g4_lichtweite_anzahl": 3.0,
   "fenster_og_g4_lichtweite_breite_median": 0.68,
   "fenster_og_g4_lichtweite_breite_max": 0.72,
-  "fenster_og_g4_lichtweite_ebene_abstand": 2.0994977929358005,
+  "fenster_og_g4_lichtweite_ebene_abstand": 2.0994977942460293,
   "fenster_og_g3_wand_aussen_l": 0.0008463459998049316,
   "fenster_og_g3_wand_aussen_r": -0.0021035161808660163,
   "fenster_og_g3_stegscheitel_l": 11.946999999999992,
@@ -222,7 +222,7 @@
   "baldachin2_haube_um": 0.3599107940074807,
   "baldachin2_krone_up": 0.49468905056639995,
   "baldachin2_krone_um": 0.495310823893624,
-  "fenster_eg2_oberkante_l": -0.11524318878876638,
+  "fenster_eg2_oberkante_l": -0.11524319069201816,
   "fenster_eg2_oberkante_r": -0.11428274214072154,
   "laube_decke_u46": 5.807000000000002,
   "laube_decke_u363": 4.867000000000001,
@@ -235,7 +235,8 @@
   "giebel_o_fe3_f": 2.9082795046561043,
   "giebel_o_fe3_w": 3.028256883834843,
   "laube_sockel_fuss_ost_165": -0.011742787709893232,
-  "baldachin2_krone_vorn": 0.08662865006358089
+  "baldachin2_krone_vorn": 0.08662865006358089,
+  "helm_w_r_13_25": 1.8970563577813115
  },
  "pruefungen": [
   {
@@ -310,7 +311,7 @@
   },
   {
    "name": "Pfeiler 3 Durchmesser (m), Schaftansatz z 2,1-2,35 (Ring ueber der Fase)",
-   "wert": 0.8810006134407047,
+   "wert": 0.8810006134406079,
    "soll": [
     0.81,
     0.94
@@ -440,7 +441,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590110719203949,
+   "wert": 0.10989951342344284,
    "soll": [
     0.0348,
     100
@@ -680,7 +681,7 @@
   },
   {
    "name": "Erker West: Auskragung Traufgesims ueber dem Fensterband (m)",
-   "wert": 0.2600002810761488,
+   "wert": 0.2600002814229032,
    "soll": [
     0.17,
     0.34
@@ -820,7 +821,7 @@
   },
   {
    "name": "Figur 2: Konsole 2. Stufe Durchmesser",
-   "wert": 0.309999985156223,
+   "wert": 0.30999998515723154,
    "soll": [
     0.26,
     0.36
@@ -830,7 +831,7 @@
   },
   {
    "name": "Figur 2: Breite Unterschenkel (Silhouette quer, Zeile z 11,65)",
-   "wert": 0.43000034290127453,
+   "wert": 0.4300003713698261,
    "soll": [
     0.37,
     0.49
@@ -1100,7 +1101,7 @@
   },
   {
    "name": "Erkerhelm West: Flaechenmitte (Apothem) vor der Achse bei z 13.45 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.6786181603389831,
+   "wert": 1.7423634634583567,
    "soll": [
     1.55,
     1.85
@@ -1110,7 +1111,7 @@
   },
   {
    "name": "Erkerhelm West: Flaechenmitte (Apothem) vor der Achse bei z 14.12 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.297054477070036,
+   "wert": 1.2970556884881361,
    "soll": [
     1.2,
     1.4
@@ -1840,7 +1841,7 @@
   },
   {
    "name": "Fenster Laube EG Bogen 1 (eg2): Rahmenoberkante flach - Rahmen bei z 6,35 vorhanden (links vom Setzholz u -5,36) (m hinter der Wandfront)",
-   "wert": -0.11524318878876638,
+   "wert": -0.11524319069201816,
    "soll": [
     -0.16,
     -0.06
@@ -1944,6 +1945,16 @@
    "soll": [
     0.05,
     0.2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erkerhelm West: Fussring (Schindel-Unterkante) Flaechenmitte vor der Achse bei z 13,25",
+   "wert": 1.8970563577813115,
+   "soll": [
+    1.84,
+    1.98
    ],
    "ok": true,
    "status": "ok"
