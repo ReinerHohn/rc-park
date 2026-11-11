@@ -372,6 +372,8 @@ def waehlen(z, sperre):
                 subprocess.run([PY, "-I", os.path.join(ROOT, "tools", "foto_fehlteile.py"), OBJ, "--formliste", _fs[-1], "--min_px", str(FOTO_FEHL_PX),
                                 "--min_fotos", str(FOTO_FEHL_FOTOS), "--aus", _ao], capture_output=True, text=True, timeout=300)
                 _cl = json.load(open(_ao))["cluster"] if os.path.exists(_ao) else []
+            # 11.11.: auch Teile, die ein schon BELEGTER Foto-Cluster beruehrt, gelten als belegt (Erker 2: ff_+19_+7_+8 und ff_+19_+7_+11 parallel)
+            _bel |= {t_ for c in _cl if c["id"] + "__neu" in _bel for t_ in c["teile"]}
             ffk = [dict(c, teil=c["id"] + "__neu", art="fehlteil", beleg=None, pkt=c["px"], recall_kasten=None) for c in _cl
                    if c["px"] >= FOTO_FEHL_SUMME and not (set(c["teile"]) & _bel)]
             ffk = [f for f in ffk if sperre.get(f["teil"], 0) < MAX_FEHL and fg.get(f["teil"], 0) < MAX_GLOBAL and f["id"] not in belegt_fam and not ist_erledigt(f, erl)]
@@ -390,7 +392,12 @@ def waehlen(z, sperre):
         _m = max(fg.get(t_, 0) for t_ in _g)
         for t_ in _g: fg[t_] = _m
         if any(os.path.exists(os.path.join(BELEGT, t_)) for t_ in _g): belegt_fam |= {t_.split("__")[0] for t_ in _g}
-    kand = [t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["beleg"] is not None and (t["anteil_mit_daten"] >= MIN_DATEN or form_g(fl, t["teil"]).get("f1") is not None)
+    # Teile im Bereich belegter Foto-Cluster nicht parallel bearbeiten (11.11.: Erker-1-Cluster belegt, Verweis zog erker_polygon__0 vor)
+    try:
+        _ao = os.path.join(LDIR, "foto_fehlteile.json"); _b0 = set(os.listdir(BELEGT))
+        _clt = {t_ for c in (json.load(open(_ao))["cluster"] if os.path.exists(_ao) else []) if c["id"] + "__neu" in _b0 for t_ in c["teile"]}
+    except Exception: _clt = set()
+    kand = [t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["teil"] not in _clt and t["beleg"] is not None and (t["anteil_mit_daten"] >= MIN_DATEN or form_g(fl, t["teil"]).get("f1") is not None)
             and sperre.get(t["teil"], 0) < MAX_FEHL and fg.get(t["teil"], 0) < MAX_GLOBAL and not os.path.exists(os.path.join(BELEGT, t["teil"]))
             and t["teil"].split("__")[0] not in belegt_fam]   # gleiche Formfamilie (gleicher Generatorcode) nie parallel
     # Rang (Nutzer 10.11.): nur was die Wolke sieht und keine Brandwand ist (rang_guete aus konvergenz_bericht --nachbarn); Teile ohne
