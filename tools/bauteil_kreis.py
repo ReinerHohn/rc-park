@@ -401,6 +401,13 @@ def waehlen(z, sperre):
         r = t.get("rang_guete") if "rang_guete" in t else guete(t)
         return (1 if r is not None else 2, r if r is not None else 9)
     kand.sort(key=_rang)
+    # VERWEIS AUS FEHLTEIL-BEFUND (11.11., L36): 'FEHLTEIL-BEFUND: vorhandenes Teil erker_polygon:0' = groesster gelber Foto-Cluster gehoert zu einem
+    # VORHANDENEN Teil (Erker-Rippennetz). Dieses Teil einmal vor die Rangfolge (dort liegt der groesste sichtbare Fehler); 'weitergereicht' markiert es.
+    erl_v = {}
+    for fid, e in erl.items():
+        bf = str(e.get("befund", ""))
+        if bf.lower().startswith("vorhandenes teil") and not e.get("weitergereicht"): erl_v.setdefault(bf.split()[-1].replace(":", "__"), fid)
+    if erl_v: kand.sort(key=lambda t: 0 if t["teil"] in erl_v else 1)   # stabil: sonst Rang wie oben
     # Nutzerregel 10.11. 14:4x: IMMER das schwaechste Teil zuerst ("dann konvergieren wir"). Frueher gingen offene Beobachtungen vor -
     # 7/7 Runden landeten auf Teilen mit 0,94-0,98 (kaum Spielraum, kleine Fehler = Rueckschritt). Offene Beobachtungen zu dem gewaehlten
     # Teil reisen jetzt MIT in den Auftrag (Zielart beobachtung), bestimmen aber nicht mehr die Reihenfolge.
@@ -411,6 +418,11 @@ def waehlen(z, sperre):
     for t in kand:   # atomar belegen (O_EXCL), damit zwei Spuren nie dasselbe Teil nehmen
         try:
             fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
+            if t["teil"] in erl_v:
+                import fcntl as _f; _lk = open(ERLEDIGT + ".lock", "w"); _f.flock(_lk, _f.LOCK_EX)
+                _e = erledigt_laden(); _e.get(erl_v[t["teil"]], {})["weitergereicht"] = f"{LAUF} {time.strftime('%Y-%m-%d %H:%M')}"
+                json.dump(_e, open(ERLEDIGT, "w"), ensure_ascii=False, indent=1); _f.flock(_lk, _f.LOCK_UN); _lk.close()
+                print(f"Verweis aus Fehlteil-Befund {erl_v[t['teil']]} -> Ziel {t['teil']} vorgezogen", flush=True)
             return bz.get(t["teil"], t)
         except FileExistsError:
             continue
