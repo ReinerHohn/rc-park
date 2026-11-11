@@ -110,10 +110,10 @@ def form_auffrischen():
     try: sha = hashlib.sha256(open(stl, "rb").read()).hexdigest()[:16]
     except OSError: return
     if os.path.exists(os.path.join(FORM, sha + "_" + __import__("re").search(r'^METRIK = "([^"]+)"', open(os.path.join(ROOT, "tools", "teil_fotoform.py")).read(), __import__("re").M).group(1) + ".json")):
-        form_auffrischen.veraltet_seit = None; return
+        return
     if time.time() - form_start < 2400: return
     if subprocess.run(["systemctl", "--user", "is-active", "--quiet", "rcpark-fotoform"]).returncode == 0: return
-    seit = getattr(form_auffrischen, "veraltet_seit", None) or time.time(); form_auffrischen.veraltet_seit = seit
+    seit = max(os.path.getmtime(stl), form_start)   # 11.11.: aus Dateizeit (Merge) statt Speicher - Regler-Neustart setzte die Wartezeit sonst auf 0
     verhungert = time.time() - seit > 3600   # 11.11.: bei 6 Spuren ist gpu_tor.lock fast immer belegt -> Liste fuer main kam 2 h nie; nach 60 min trotzdem, wenn VRAM reicht (OOM-Tor haelt sie weiter an)
     if gpu()[1] > (4500 if verhungert else 3000): return   # 10.11. 13:3x: Auffrischung (40 min GPU) verstopfte mit Agentenpruefungen die Tore (4 fertige Runden im OOM); nur bei freier GPU
     tw = tor_wartet()
@@ -123,7 +123,7 @@ def form_auffrischen():
     form_auffrischen.letzt = None
     subprocess.run([os.path.join(ROOT, "tools", "job_start.sh"), "fotoform", os.path.join(KD, "fotoform.log"), "bash", "tools/fotoform_auffrischen.sh", OBJ],
                    cwd=ROOT, capture_output=True, env=dict(os.environ, JOB_GPU_MB="2500"))
-    form_start = time.time(); form_auffrischen.veraltet_seit = None
+    form_start = time.time()
     print(time.strftime("%H:%M:%S"), f"Formliste veraltet (main-STL {sha}) -> fotoform_auffrischen gestartet" + (f" (nach {(time.time() - seit) / 60:.0f} min Wartezeit trotz Torschritt: {tw})" if tw else ""), flush=True)
 print(f"Kreis-Regler {OBJ}: max {MAX} Spuren, GPU-Ziel {GPU_ZIEL} %, VRAM < {VRAM_MAX} MiB, RAM > {RAM_MIN} GB, Takt {TAKT} s")
 _takt_nr = 0
