@@ -1,6 +1,6 @@
 {
  "stl": "modelle/stl/kaufhaus_grob3_1-87.stl",
- "modell_volumen_m3": 8973.001,
+ "modell_volumen_m3": 8972.653,
  "massstab": 87.0,
  "winkel_grad": 60.0,
  "ziel_anteil": 0.01,
@@ -16,7 +16,7 @@
    "achse": "z",
    "wert": 8.26,
    "grund": "Unterseite 17.8 m2 waagerecht nach unten -> Bettflaeche",
-   "gewinn_m2": 55.46,
+   "gewinn_m2": 55.7,
    "stifte": [
     [
      -4.528,
@@ -221,11 +221,11 @@
     235.6
    ],
    "passt": true,
-   "ueberhang_m2": 5.299,
-   "flaeche_m2": 1401.16,
-   "ueberhang_anteil": 0.00378,
+   "ueberhang_m2": 5.551,
+   "flaeche_m2": 1402.65,
+   "ueberhang_anteil": 0.00396,
    "wasserdicht": true,
-   "volumen_m3": 2271.16,
+   "volumen_m3": 2270.81,
    "rahmen_u": [
     7.71,
     17.43
@@ -309,7 +309,7 @@
  "max_ueberhang_anteil": 0.00678,
  "alle_passen": true,
  "log": [
-  "Schnitt z 8.260: Ueberhang -55.46 m2",
+  "Schnitt z 8.260: Ueberhang -55.70 m2",
   "Bettschnitt u 0.553",
   "Bettschnitt u 7.711"
  ],

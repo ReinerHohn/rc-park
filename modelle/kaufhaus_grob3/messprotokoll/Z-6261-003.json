@@ -1,0 +1,48 @@
+{
+ "id": "Z-6261-003",
+ "typ": "zaehlung",
+ "foto": "6261",
+ "datei": "6261_ip_IMG_6261.jpg",
+ "was": "Ostgiebel: Fenster in der Wandflaeche (Oeffnungen)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-11",
+ "punkte": [
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 556.0,
+   "y": 1311.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 582.0,
+   "y": 1511.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 684.0,
+   "y": 1701.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F1": {
+   "art": "voll",
+   "n": 3
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 3,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-6261-003.jpg",
+ "ausschnitt": [
+  306,
+  1061,
+  934,
+  1951
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

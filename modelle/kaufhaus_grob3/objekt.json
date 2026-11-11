@@ -7661,7 +7661,8 @@
     "kappe": "entfaellt (0): Stufenoberkante = Kappenfirst-Hoehe laut Triangulation (kein Aufschlag auf die Giebellinie)",
     "spiegel": "Foto ip_IMG_6261: Ostgiebel-Silhouette beidseitig gestuft, Spitze mittig ueber dem First (fehlteile_6261: 6 ERFUNDEN an der glatten Rueckkante)",
     "u_neigung": "Steigung der Kappenfirst-Linie M-6115-001..008: -0,0609 m je m n (Reststreuung 0,032 m, 8 Spitzen); Wolke j_voll_lot2 Wandebene -0,083 je m (z 15..22), gleiches Vorzeichen; gewaehlt die Foto-Triangulation (-0,06), nicht gemittelt. Ursache: Wand ~3,5 Grad gegen die Hauptfassadenachse gedreht (Altstadt, nicht rechtwinklig)",
-    "n_ref": "Bezug der Neigung = Mitte der Stufenspitzen M-6115-001..008 (n 4,0..11,0); u_aussen gilt dort"
+    "n_ref": "Bezug der Neigung = Mitte der Stufenspitzen M-6115-001..008 (n 4,0..11,0); u_aussen gilt dort",
+    "fenster_tiefe": "Foto 6115: sichtbare Laibung 22 px bei 58 px Oeffnungsbreite (0,75 m), Strahl 68 Grad zur Wandnormalen -> 0,12 m (+-0,04, ANNAHME rechteckige Laibung); Faschenrahmen (~0,02 m Vorstand) unter Druckgrenze H0 (2,6 cm) nicht modelliert"
    },
    "historie": [
     {
@@ -7732,7 +7733,13 @@
    ],
    "spiegel": true,
    "n_ref": 7.5,
-   "u_neigung": -0.06
+   "u_neigung": -0.06,
+   "fenster_tiefe": 0.12,
+   "fenster": [
+    {"n0": 3.98, "n1": 4.73, "z0": 23.2, "z1": 24.67, "quelle": "Foto ip_IMG_6115 Faschen-/Laibungsecken oben rechts+unten links, Strahl-Ebenen-Schnitt K-6115 auf die Wandebene (u 16,05, Neigung -0,06), M-6115-013; Zaehlung 3 Fenster Z-6115-001 + Z-6261-003 (Regel 9); Gegenprobe ohne Neuberechnung: Reprojektion der Ecken in K-6261 trifft die Fensteroeffnungen (+-0,1 m, audit/ost_fenster_6261.jpg)"},
+    {"n0": 4.86, "n1": 5.59, "z0": 20.1, "z1": 21.47, "quelle": "Foto ip_IMG_6115 Faschen-/Laibungsecken oben rechts+unten links, Strahl-Ebenen-Schnitt K-6115 auf die Wandebene (u 16,05, Neigung -0,06), M-6115-014; Zaehlung 3 Fenster Z-6115-001 + Z-6261-003 (Regel 9); Gegenprobe ohne Neuberechnung: Reprojektion der Ecken in K-6261 trifft die Fensteroeffnungen (+-0,1 m, audit/ost_fenster_6261.jpg)"},
+    {"n0": 7.7, "n1": 8.32, "z0": 16.74, "z1": 18.02, "quelle": "Foto ip_IMG_6115 Faschen-/Laibungsecken oben rechts+unten links, Strahl-Ebenen-Schnitt K-6115 auf die Wandebene (u 16,05, Neigung -0,06), M-6115-015; Zaehlung 3 Fenster Z-6115-001 + Z-6261-003 (Regel 9); Gegenprobe ohne Neuberechnung: Reprojektion der Ecken in K-6261 trifft die Fensteroeffnungen (+-0,1 m, audit/ost_fenster_6261.jpg) | ANNAHME: Unterkante teils vom Daechlein-Nachbardach verdeckt, Hoehe nicht gesichert"}
+   ]
   },
   {
    "typ": "staffelgiebel:west",

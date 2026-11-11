@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_035601a035601/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.2521246230474818,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10599063336849213,
-  "wand_anteil_unter": 0.0006,
+  "wand_pq": 0.10799604654312134,
+  "wand_anteil_unter": 0.0005,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -225,7 +225,13 @@
   "fenster_eg2_oberkante_l": -0.11524318878876638,
   "fenster_eg2_oberkante_r": -0.11428274214072154,
   "laube_decke_u46": 5.807000000000002,
-  "laube_decke_u363": 4.867000000000001
+  "laube_decke_u363": 4.867000000000001,
+  "giebel_o_fe1_f": 3.127773782550481,
+  "giebel_o_fe1_w": 3.2472871437027426,
+  "giebel_o_fe2_f": 3.075931753831693,
+  "giebel_o_fe2_w": 3.1959629907465255,
+  "giebel_o_fe3_f": 2.9082795046561043,
+  "giebel_o_fe3_w": 3.028256883834843
  },
  "pruefungen": [
   {
@@ -430,7 +436,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10599063336849213,
+   "wert": 0.10799604654312134,
    "soll": [
     0.0348,
     100
@@ -1864,6 +1870,36 @@
    "soll": [
     4.857,
     5.157
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ostgiebel Fenster 1: Laibungstiefe (m) = Reichweite im Fenster minus Wandflaeche daneben (n 4.355)",
+   "wert": -0.11951336115226141,
+   "soll": [
+    -0.2,
+    -0.05
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ostgiebel Fenster 2: Laibungstiefe (m) = Reichweite im Fenster minus Wandflaeche daneben (n 5.225)",
+   "wert": -0.12003123691483264,
+   "soll": [
+    -0.2,
+    -0.05
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Ostgiebel Fenster 3: Laibungstiefe (m) = Reichweite im Fenster minus Wandflaeche daneben (n 8.01)",
+   "wert": -0.11997737917873863,
+   "soll": [
+    -0.2,
+    -0.05
    ],
    "ok": true,
    "status": "ok"

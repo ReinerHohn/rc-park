@@ -1094,6 +1094,39 @@
  },
  {
   "seite": "alle",
+  "element": "Staffelgiebel Staffelgiebel ost: Giebelfenster 1 (Nische)",
+  "quelle": "Foto ip_IMG_6115 Faschen-/Laibungsecken oben rechts+unten links, Strahl-Ebenen-Schnitt K-6115 auf die Wandebene (u 16,05, Neigung -0,06), M-6115-013; Zaehlung 3 Fenster Z-6115-001 + Z-6261-003 (Regel 9); Gegenprobe ohne Neuberechnung: Reprojektion der Ecken in K-6261 trifft die Fensteroeffnungen (+-0,1 m, audit/ost_fenster_6261.jpg)",
+  "n0": 3.98,
+  "n1": 4.73,
+  "z0": 23.2,
+  "z1": 24.67,
+  "tiefe": 0.12,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Staffelgiebel Staffelgiebel ost: Giebelfenster 2 (Nische)",
+  "quelle": "Foto ip_IMG_6115 Faschen-/Laibungsecken oben rechts+unten links, Strahl-Ebenen-Schnitt K-6115 auf die Wandebene (u 16,05, Neigung -0,06), M-6115-014; Zaehlung 3 Fenster Z-6115-001 + Z-6261-003 (Regel 9); Gegenprobe ohne Neuberechnung: Reprojektion der Ecken in K-6261 trifft die Fensteroeffnungen (+-0,1 m, audit/ost_fenster_6261.jpg)",
+  "n0": 4.86,
+  "n1": 5.59,
+  "z0": 20.1,
+  "z1": 21.47,
+  "tiefe": 0.12,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Staffelgiebel Staffelgiebel ost: Giebelfenster 3 (Nische)",
+  "quelle": "Foto ip_IMG_6115 Faschen-/Laibungsecken oben rechts+unten links, Strahl-Ebenen-Schnitt K-6115 auf die Wandebene (u 16,05, Neigung -0,06), M-6115-015; Zaehlung 3 Fenster Z-6115-001 + Z-6261-003 (Regel 9); Gegenprobe ohne Neuberechnung: Reprojektion der Ecken in K-6261 trifft die Fensteroeffnungen (+-0,1 m, audit/ost_fenster_6261.jpg) | ANNAHME: Unterkante teils vom Daechlein-Nachbardach verdeckt, Hoehe nicht gesichert",
+  "n0": 7.7,
+  "n1": 8.32,
+  "z0": 16.74,
+  "z1": 18.02,
+  "tiefe": 0.12,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Staffelgiebel Staffelgiebel ost: Wandneigung",
   "quelle": "Steigung der Kappenfirst-Linie M-6115-001..008: -0,0609 m je m n (Reststreuung 0,032 m, 8 Spitzen); Wolke j_voll_lot2 Wandebene -0,083 je m (z 15..22), gleiches Vorzeichen; gewaehlt die Foto-Triangulation (-0,06), nicht gemittelt. Ursache: Wand ~3,5 Grad gegen die Hauptfassadenachse gedreht (Altstadt, nicht rechtwinklig)",
   "u_neigung": -0.06,

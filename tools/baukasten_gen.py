@@ -1004,13 +1004,25 @@ def staffelgiebel(cfg, ctx):
     for i in range(ns):
         zk = lin(n2 + i * w) + kp if i else zs; zk = min(zk, zs)
         dh_ = float(cfg.get("daechlein_h", 0.0)) if i else 0.0                                       # optional Pfeiler-Daechlein (Satteldach, First quer zur Wand, Mitte der Stufe): First dh_ ueber der Stufenoberkante; 0 = Altverhalten (erster Block = Spitzenblock, ohne)
-        oben += [(n2 + i * w, zk)] + ([(n2 + (i + 0.5) * w, zk + dh_)] if dh_ > 0 else []) + [(n2 + (i + 1) * w, zk)]
+        ks_ = float(cfg.get("kappe_steigung", 0.0)) if i else 0.0                                    # optional Saegezahn-Kaeppchen (Foto 6115/6257/6261): Stufenoberkante steigt vom hinteren Stufenende (zk - ks_) zum vorderen (zk = Kappenfirst-Hoehe, Buckel); 0 = flach (Altverhalten)
+        oben += [(n2 + i * w, zk - ks_)] + ([(n2 + (i + 0.5) * w, zk + dh_)] if dh_ > 0 else []) + [(n2 + (i + 1) * w, zk)]
     if cfg.get("spiegel"):                                                                            # Stufen beidseitig: Rueckflanke = Spiegel der Vorderflanke an der Spitzenmitte (nb+n2)/2 (cfg['spiegel_quelle'] nennen)
         nm = (nb + n2) / 2; poly = [(2 * nm - nv, zu)] + [(2 * nm - n_, z_) for n_, z_ in reversed(oben)] + oben + [(nv, zu)]
     else: poly = [(nb, zu), (nb, zs)] + oben + [(nv, zu)]
     un = float(cfg.get("u_neigung", 0.0)); nr = float(cfg.get("n_ref", 0.0))                         # optional: Wandebene gegen die Fassadenachse gedreht (u wandert mit n: u = u_aussen + u_neigung*(n - n_ref)); 0 = Altverhalten
-    q = M.extrude(C([ccw(np.array(poly, float))]), dk).transform([[un, 0, 1, ((ua - dk) if rd > 0 else ua) - un * nr], [1, 0, 0, 0], [0, 1, 0, 0]])
+    q = M.extrude(C([ccw(np.array(poly, float))]), dk)
+    fe = cfg.get("fenster") or []                                                                     # optional Fensternischen in der Aussenflaeche: [{n0,n1,z0,z1}] (n = Fassadennormale-Koordinate, z), Tiefe fenster_tiefe in die Wand (Laibung); Quelle je Fenster Pflicht
+    if fe:
+        ft = float(cfg.get("fenster_tiefe", 0.0))
+        if not (0.02 <= ft < dk - 0.1): sys.exit(f"staffelgiebel: fenster_tiefe {ft} unplausibel (Wanddicke {dk})")
+        for f_ in fe:
+            if not (f_["n1"] > f_["n0"] and f_["z1"] > f_["z0"]) or not f_.get("quelle"): sys.exit(f"staffelgiebel: Fenster {f_} unplausibel/ohne quelle (Regel 3b)")
+            zl, zh = ((dk - ft), dk + 0.2) if rd > 0 else (-0.2, ft)                                  # lokale Extrusionstiefe: Aussenflaeche bei dk (Ostende) bzw. 0 (Westende)
+            q = q - M.cube((f_["n1"] - f_["n0"], f_["z1"] - f_["z0"], zh - zl)).translate((f_["n0"], f_["z0"], zl))
+    q = q.transform([[un, 0, 1, ((ua - dk) if rd > 0 else ua) - un * nr], [1, 0, 0, 0], [0, 1, 0, 0]])
     k = q.transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; qq = lambda p_: (wq.get(p_) or cfg["quelle"])
+    if cfg.get("kappe_steigung"): beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')}: Saegezahn-Kaeppchen je Stufe", qq("kappe_steigung"), kappe_steigung=float(cfg["kappe_steigung"]))
+    for i_, f_ in enumerate(fe): beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')}: Giebelfenster {i_ + 1} (Nische)", f_["quelle"], n0=f_["n0"], n1=f_["n1"], z0=f_["z0"], z1=f_["z1"], tiefe=float(cfg["fenster_tiefe"]))
     if un != 0.0: beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')}: Wandneigung", qq("u_neigung"), u_neigung=un, n_ref=nr)
     beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')} ({ns} Stufen)", f"Stufenzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + qq("z_spitze") + (" | Rueckflanke gespiegelt: " + qq("spiegel") if cfg.get("spiegel") else "") + (" | Daechlein: " + qq("daechlein_h") if cfg.get("daechlein_h") else ""), **({"daechlein_h": float(cfg["daechlein_h"])} if cfg.get("daechlein_h") else {}), n_stufen=ns, u_aussen=ua, dicke=dk, n_hinten=nb, n_vorn=nv, z_traufe=zt, z_spitze=zs, spitze_breite=sb, kappe=kp, **({"spiegel": True} if cfg.get("spiegel") else {}))
     return [k], []
