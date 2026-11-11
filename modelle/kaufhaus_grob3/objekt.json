@@ -4600,6 +4600,100 @@
    }
   },
   {
+   "typ": "zylinder:dienst_laube_u975_sockel",
+   "gruppe": "Dienst (Halbsaeule) Laubenrueckwand",
+   "u": 9.745,
+   "n": 7.336,
+   "z0": 2.21,
+   "z1": 2.97,
+   "radius": 0.215,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
+   "quelle": "Fotos 6120/6117/6130 (Stufe 0 kreis1 11.11.): runder Dienst mit gedrehtem Sockel an der Laubenrueckwand, Rippenansatz oben",
+   "werte_quellen": {
+    "u": "Achse Peilung M-6120-068 (6120+6117, u 9,745 n 7,336)",
+    "n": "M-6120-068 Peilung n 7,336",
+    "z0": "Sockelband-Oberkante z 2,21 (M-6120-066)",
+    "z1": "Sockelhoehe 0,76 (M-6120-066)",
+    "radius": "Sockelbreite 0,43 (M-6120-065)"
+   },
+   "aktiv": true
+  },
+  {
+   "typ": "zylinder:dienst_laube_u975_schaft",
+   "gruppe": "Dienst (Halbsaeule) Laubenrueckwand",
+   "u": 9.745,
+   "n": 7.336,
+   "z0": 2.9,
+   "z1": 5.6,
+   "radius": 0.185,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
+   "quelle": "Fotos 6120/6117/6130 (Stufe 0 kreis1 11.11.): runder Dienst mit gedrehtem Sockel an der Laubenrueckwand, Rippenansatz oben",
+   "werte_quellen": {
+    "u": "Achse Peilung M-6120-068 (6120+6117, u 9,745 n 7,336)",
+    "n": "M-6120-068 Peilung n 7,336",
+    "z1": "Anlauf der Rippen z 5,54 (M-6120-067), +0,06 in die Gewoelbekappe",
+    "radius": "Schaftbreite 0,37 (M-6120-064)"
+   },
+   "aktiv": true
+  },
+  {
+   "typ": "zylinder:dienst_laube_um230_sockel",
+   "gruppe": "Dienst (Halbsaeule) Laubenrueckwand",
+   "u": -2.3,
+   "n": 7.336,
+   "z0": 2.21,
+   "z1": 2.97,
+   "radius": 0.215,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
+   "quelle": "Fotos 6120/6117/6130 (Stufe 0 kreis1 11.11.): runder Dienst mit gedrehtem Sockel an der Laubenrueckwand, Rippenansatz oben",
+   "werte_quellen": {
+    "u": "ANNAHME: Pfeilerabstand 6,02 (u 9,745 - 2*6,022); in Foto 6130 liegt der Schaft bei u -2,3 +-0,2 (Projektion, nicht triangulier)",
+    "n": "M-6120-068 Peilung n 7,336",
+    "z0": "Sockelband-Oberkante z 2,21 (M-6120-066)",
+    "z1": "Sockelhoehe 0,76 (M-6120-066)",
+    "radius": "Sockelbreite 0,43 (M-6120-065)"
+   },
+   "aktiv": true
+  },
+  {
+   "typ": "zylinder:dienst_laube_um230_schaft",
+   "gruppe": "Dienst (Halbsaeule) Laubenrueckwand",
+   "u": -2.3,
+   "n": 7.336,
+   "z0": 2.9,
+   "z1": 5.6,
+   "radius": 0.185,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
+   "quelle": "Fotos 6120/6117/6130 (Stufe 0 kreis1 11.11.): runder Dienst mit gedrehtem Sockel an der Laubenrueckwand, Rippenansatz oben",
+   "werte_quellen": {
+    "u": "ANNAHME: Pfeilerabstand 6,02 (u 9,745 - 2*6,022); in Foto 6130 liegt der Schaft bei u -2,3 +-0,2 (Projektion, nicht triangulier)",
+    "n": "M-6120-068 Peilung n 7,336",
+    "z1": "Anlauf der Rippen z 5,54 (M-6120-067), +0,06 in die Gewoelbekappe",
+    "radius": "Schaftbreite 0,37 (M-6120-064)"
+   },
+   "aktiv": true
+  },
+  {
    "typ": "quader:laube_sockel_w",
    "gruppe": "Laubensockel (Steinbank mit Sockelband vor der Rueckwand)",
    "u0": -7.2,

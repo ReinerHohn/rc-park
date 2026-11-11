@@ -2404,6 +2404,34 @@
    "suche": "unten",
    "puffer": 0.02,
    "dz": 0.02
+  },
+  "dienst_laube_u975_reich_z44": {
+   "typ": "schnitt_reichweite",
+   "z": "=4.4 - z_unterkante_lot2",
+   "zentrum": [
+    11.4889,
+    3.2511
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.05,
+   "r_max": 1.2
+  },
+  "dienst_laube_u975_reich_z26": {
+   "typ": "schnitt_reichweite",
+   "z": "=2.6 - z_unterkante_lot2",
+   "zentrum": [
+    11.4889,
+    3.2511
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.05,
+   "r_max": 1.2
   }
  },
  "pruefungen": [
@@ -5064,6 +5092,38 @@
    "historie": [
     "2026-11-11 angelegt (Kreis1 laube_rueck, Beobachtung 'Laubendecke/Kreuzrippengewoelbe fehlt'): am Modell ohne Gewoelbe (Decke z 7,9) ROT"
    ]
+  },
+  {
+   "name": "Dienst (Halbsaeule) an der Laubenrueckwand bei u 9,75, z 4.4: Vorsprung der Schnittkontur ab n 6,9 (Schaftfront n 7.525)",
+   "wert": "dienst_laube_u975_reich_z44",
+   "soll": [
+    0.565,
+    0.685
+   ],
+   "quelle": "Foto 6120 + 6117 (Stufe 0 kreis1 11.11.): runder Dienst (Schaft + gedrehter Sockel) an der Laubenrueckwand, Achse Peilung M-6120-068 (u 9,745 n 7,336, Strahlabstand 0,0, Schnittwinkel 41 Grad); Schaftbreite 0,37 M-6120-064 (r 0,185 -> Front n 7,52), Sockelbreite 0,43 M-6120-065 (r 0,215 -> Front n 7,55); Soll = Front minus Startpunkt n 6,9 +-0,06. Wand ohne Dienst endet bei n 7,28 (Reichweite 0,38) -> ROT am Modell ohne Dienst",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-064",
+   "historie": [
+    "2026-11-11 angelegt (Kreis3 Fehlteil ff_+9_+5_+3, Dienst fehlt): am Modell ohne Dienst ROT (Wandfront 7,28)"
+   ]
+  },
+  {
+   "name": "Dienst (Halbsaeule) an der Laubenrueckwand bei u 9,75, z 2.6: Vorsprung der Schnittkontur ab n 6,9 (Schaftfront n 7.555)",
+   "wert": "dienst_laube_u975_reich_z26",
+   "soll": [
+    0.6,
+    0.72
+   ],
+   "quelle": "Foto 6120 + 6117 (Stufe 0 kreis1 11.11.): runder Dienst (Schaft + gedrehter Sockel) an der Laubenrueckwand, Achse Peilung M-6120-068 (u 9,745 n 7,336, Strahlabstand 0,0, Schnittwinkel 41 Grad); Schaftbreite 0,37 M-6120-064 (r 0,185 -> Front n 7,52), Sockelbreite 0,43 M-6120-065 (r 0,215 -> Front n 7,55); Soll = Front minus Startpunkt n 6,9 +-0,06. Wand ohne Dienst endet bei n 7,28 (Reichweite 0,38) -> ROT am Modell ohne Dienst",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-065",
+   "historie": [
+    "2026-11-11 angelegt (Kreis3 Fehlteil ff_+9_+5_+3, Dienst fehlt): am Modell ohne Dienst ROT (Wandfront 7,28)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -5863,57 +5923,6 @@
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
-   "auto_id": "fehlteile-6261-234-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.54,
-   "z_bis": 18.54,
-   "xyz": [
-    14.35,
-    -8.86,
-    18.54
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.86 m (Zelle [234, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
-   "auto_id": "fehlteile-6261-312-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.23,
-   "z_bis": 18.23,
-   "xyz": [
-    14.62,
-    -7.14,
-    18.23
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.14 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
-   "auto_id": "fehlteile-6261-312-1872",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.08,
-   "z_bis": 17.08,
-   "xyz": [
-    14.54,
-    -7.16,
-    17.08
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-11",
    "wer": "Pruefer opus kreis 20261110_232557a232557 r1 (automatisch)",
    "teil": "quader:laube_rueck",
@@ -5931,74 +5940,6 @@
    "text": "Die Laube hat Kreuzrippengewoelbe (Fotos 6206, 6213, d20, k_14, 6228). Im Modell fehlt die Decke; dadurch gelten Giebel/Rumpf/Laubenrueckwand in Fotos unter der Laube als sichtbar. Fotowolken-Verdeckung (Metrik v2) erfasst nur Rippen, nicht die weissen Kappen (keine Wolkenpunkte auf glattem Putz).",
    "naechster_schritt": "Gewoelbe als Bauteil (Joche = Bogenreihe-Pitch, Kaempfer-/Scheitelhoehe per foto_mass an Rippen, Rippenzahl je Joch per foto_zaehlung); verdeckt dann ueber das Modell selbst.",
    "erledigt": "kreis1 kreuzgewoelbe:laube (4 Joche, Decke max(hA,hB) Superellipse p 1,75, Kaempfer 5,91 / Scheitel 7,84 aus M-6119-012/015/016, M-6120-061/063; Z-6213-001 3 Rippen je Dienst); Pruefungen laube_decke_u46/u363 vorher rot (6,45), nachher gruen; Foto-F1 laube_rueck halb 0,478->0,518. OFFEN: Rippenvorsprung nicht modelliert, Gurtbogen quer = ANNAHME"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 2)",
-   "auto_id": "fehlteile-6261-234-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.55,
-   "z_bis": 18.55,
-   "xyz": [
-    14.32,
-    -8.89,
-    18.55
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.89 m (Zelle [234, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
-   "auto_id": "fehlteile-6261-312-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.22,
-   "z_bis": 18.22,
-   "xyz": [
-    14.61,
-    -7.15,
-    18.22
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.22 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
-   "auto_id": "fehlteile-6261-234-1872",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.42,
-   "z_bis": 17.42,
-   "xyz": [
-    14.28,
-    -8.91,
-    17.42
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.42 m, y=-8.91 m (Zelle [234, 1872, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
-   "auto_id": "fehlteile-6261-312-1872",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.08,
-   "z_bis": 17.08,
-   "xyz": [
-    14.53,
-    -7.16,
-    17.08
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "2026-11-11",
@@ -6022,6 +5963,55 @@
    "merkmal": "Pruefer-Rest quader:laube_rueck kreis 20261111_023109a023500 r1",
    "text": "Offene Fehler laut Pruefer nach angenommener Runde: kreis_bericht.md gehoert nicht zu dieser Runde (Baldachin ff_+14_+8_+12): fuer laube_rueck kein Agentenbericht, keine Formbeschreibung, keine Fehlerliste, keine generalisierte Lehre | Keine _nachher.jpg erzeugt, nur _vorpruef.jpg | Gelb: Fenster der Laubenrueckwand (Kreuzstock, 2 je Joch) fehlen in allen Fotos (6119/6120/p03) | Gelb: Tuer mit goldenem Portalrahmen und Spitzbogenportal rechts fehlen (6119/6120) | Gelb: Dienste/Halbsaeulen an der Rueckwand fehlen (6120 links, p03 Mitte) | Gelb: Diagonal- und Gurtrippen fehlen, Kappen glatt (6119 oben; Beobachtung offen, Z-6213-001) | Gelb: Sockel-/Bankkante und Kleinteile (Leuchten, Infotafel) fehlen (6119/6120 unten) | Rot: Laibungs-/Pfeilerkante neben den Boegen weiter versetzt (6119/6120/p03, unveraendert seit vorher) | Rot: in p03 liegt Joch 1 am Gewoelbeansatz links nach aussen versetzt (u0/Lage pruefen) | ANNAHME z_oben 7,95 und Gurtbogen = Schildbogenform ungeprueft | Andere Teile nicht nachgeprueft (Vorpruefung nur 1 Teil, v.a. bogenreihe:laube an der Einbindung); teile_lage_pruefen/foto_diff/fehlteile_finden/regression nach Aenderung von baukasten_gen.py nicht belegt",
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Kreis3 Fehlteil ff_+9_+5_+3 (Fotokanten)",
+   "teil": "zylinder:dienst_laube",
+   "merkmal": "Dienste (runde Halbsaeulen mit gedrehtem Sockel) an der Laubenrueckwand fehlen",
+   "text": "Fotos 6120, 6117, 6130 (und 6119 hinter dem Pfeiler): an der Laubenrueckwand steht je Pfeilerachse ein runder Dienst r~0,185 m (Sockel 0,215 m, Hoehe z 2,21-2,97), der oben in die Gewoelberippen uebergeht (Anlauf z~5,5). Im Modell nur glatte Wand. Offen: Dienste bei u 3,5-3,7 (Tuernische u0 3,625 kollidiert), u -8,3 und 15,8 ungeprueft; Rippen-Vorsprung; Fenster-Kreuzstock der Rueckwand (fensterreihe) flach.",
+   "naechster_schritt": "Dienst u -2,30 per Peilung in zweitem Foto messen, Dienst u 3,5 mit Nische abstimmen, Rippen als Familie."
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
+   "auto_id": "fehlteile-6261-234-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.55,
+   "z_bis": 18.55,
+   "xyz": [
+    14.33,
+    -8.88,
+    18.55
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.88 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-312-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.23,
+   "z_bis": 18.23,
+   "xyz": [
+    14.61,
+    -7.15,
+    18.23
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "kreis 20261111_030758a030758 r1 (automatisch)",
+   "merkmal": "Kantengitter widerspricht Foto (ff_+9_+5_+3__neu)",
+   "text": "Angenommen nach Quellenvorrang Foto: Gitter beim neuen Teil: praez zylinder__dienst_laube_u975_schaft=None, praez zylinder__dienst_laube_u975_sockel=None, praez zylinder__dienst_laube_um230_schaft=None, praez zylinder__dienst_laube_um230_sockel=None. Kantengitter hat dort vermutlich Fehlsegmente.",
+   "naechster_schritt": "Gittersegmente im Teilbereich gegen Fotos pruefen (gitter_zurueck), Fehlsegmente markieren."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
