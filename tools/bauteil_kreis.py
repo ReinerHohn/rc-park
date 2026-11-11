@@ -183,8 +183,16 @@ def fehlversuche_global():
                 for u in [u for u in n if n[u] and u != t and nah(boxen, u, t)]: n[u] = min(n[u], MAX_GLOBAL - 1)
     # LEERE RUNDEN (11.11., Westgiebel 4x in einer Nacht): Agent aenderte nichts (Daten fehlen, z. B. Rueckseite ohne Foto). Nachbar-Annahmen aendern daran
     # nichts -> nach 2 leeren Runden gesperrt bis zur direkten Annahme dieses Teils (neue Fotos: Eintrag in fehlteil/Fotoplan, dann Zaehler per Annahme).
+    # NEUER NUTZERFUND GIBT FREI (11.11. 15:2x, Nutzer 'Wann' zum Laubenstirnbogen): bogenreihe__laube war durch 2 leere Runden auf einem
+    # ANDEREN Befund (Gewoelbe/Kapitelle) gesperrt; der Stirnbogen-Fund (12:52) kam nie dran. Offener Nutzerfund, der noch nie Ziel war = neue Information.
+    _gez = {beob_schluessel(z["ziel"].get("beob") or {}) for _, _, z in ev if z["ziel"].get("art") == "beobachtung"}
+    try: _B = json.load(open(os.path.join(ROOT, "modelle", OBJ, "masstabelle.json"))).get("beobachtungen_offen") or []
+    except Exception: _B = []
+    _neu = {str(b["teil"]).replace(":", "__") for b in _B if isinstance(b, dict) and b.get("teil") and not b.get("erledigt")
+            and "nutzer" in str(b.get("wer", "")).lower() and beob_schluessel(b) not in _gez}
     for t, k in leer.items():
-        if k >= 2: n[t] = max(n.get(t, 0), MAX_GLOBAL)
+        if k >= 2 and t not in _neu: n[t] = max(n.get(t, 0), MAX_GLOBAL)
+        elif k >= 2: print(f"Leer-Sperre {t} aufgehoben: offener Nutzerfund noch nie Ziel", flush=True)
     return n
 
 NACHBAR = 1000 / 87 * 1.0   # 1 m in Teil-STL-Einheiten (mm im Massstab 1:87)
