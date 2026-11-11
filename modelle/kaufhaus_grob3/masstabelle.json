@@ -6864,7 +6864,7 @@
   {
    "teil": "erker_polygon:1",
    "merkmal": "Erker-Konsole unten (Ostkerker): Astwerk/Geaest statt glatter Trichter",
-   "text": "Nutzer 11.11. 16:18 (Viewer v52 Kanten, Foto ip_IMG_6162, rote Rahmen am rechten Erker unten): unter dem Erker sitzt eine Konsole aus verzweigtem Astwerk (Rippenbuendel, die sich nach unten zu einem Punkt sammeln, dazwischen offene Felder); Modell zeigt einen geschlossenen Trichter mit wenigen Graten. Nutzer: 'wuerde sehr viel mehr Wert bringen'. Westerker gegenpruefen (gleiche Form?). | Nutzerfotos 16:3x (3000x4000, EXIF) /media/oem/scan/rc-park_daten/kaufhaus_grob3/nutzerfotos_2026-11-11/n11_04/05/06: Konsole = umgekehrtes NETZ-/STERNRIPPENGEWOELBE unter dem achteckigen Erkerboden: je Achteckseite ein dreieckiges Feld, Rippen (rot mit Gold-/Schwarzbaendern, Rundstab) kreuzen sich und laufen nach unten in einem Buendel auf den runden Erkerpfeiler zusammen, in den Feldern Rosetten; Unterkante des Erkerbodens = Achteck-Gesims mit Profil.",
+   "text": "Nutzer 11.11. 16:18 (Viewer v52 Kanten, Foto ip_IMG_6162, rote Rahmen am rechten Erker unten): unter dem Erker sitzt eine Konsole aus verzweigtem Astwerk (Rippenbuendel, die sich nach unten zu einem Punkt sammeln, dazwischen offene Felder); Modell zeigt einen geschlossenen Trichter mit wenigen Graten. Nutzer: 'wuerde sehr viel mehr Wert bringen'. Westerker gegenpruefen (gleiche Form?). | Nutzerfotos 16:3x (3000x4000, EXIF) /media/oem/scan/rc-park_daten/kaufhaus_grob3/nutzerfotos_2026-11-11/n11_04/05/06: Konsole = umgekehrtes NETZ-/STERNRIPPENGEWOELBE unter dem achteckigen Erkerboden: je Achteckseite ein dreieckiges Feld, Rippen (rot mit Gold-/Schwarzbaendern, Rundstab) kreuzen sich und laufen nach unten in einem Buendel auf den runden Erkerpfeiler zusammen, in den Feldern Rosetten; Unterkante des Erkerbodens = Achteck-Gesims mit Profil. | Nutzer 11.11. 17:2x: Erker-Geaest = 'Aushaengeschild, das man zuerst sieht'; soll detailliert gedruckt werden, gern als Einzelteile (Rippen/Sprossen getrennt drucken und einclipsen) -> Druckteilung beachten.",
    "naechster_schritt": "Stufe 0 an n11_04/05/06 + 6162: Rippenzahl je Seite (foto_zaehlung), Formfamilie 'Netzrippen-Konsole' (Rippen als Rundstaebe auf Trichter, Kreuzungen, Rosetten optional), beide Erker pruefen.",
    "datum": "2026-11-11",
    "wer": "Nutzer (Sichtbeobachtung)",
@@ -6929,6 +6929,45 @@
     "2026-11-11 16:3x Nutzer: 'Seitenfenster fehlen noch ziemlich' + Fotos /media/oem/scan/rc-park_daten/kaufhaus_grob3/nutzerfotos_2026-11-11/n11_01/03/06: Ostseite (Gassenwand/Ostgiebel) mit Fensterreihen: unten 2-flg. Kreuzstock-Fenster (n11_01: 2 uebereinander + 1 oben), im Giebel kleine Rechteck-/Rautenfenster in Diagonalreihe (n11_06), oben kleine Spitzbogen-Oeffnungen -> neuester Fund"
    ],
    "formfamilie_test": true
+  },
+  {
+   "teil": "satteldach:haupt",
+   "merkmal": "Dachdeckung: Schindeln/Ziegel fehlen (Dachflaechen glatt)",
+   "text": "Nutzer 11.11. 17:2x: 'kannst du beim Dach diese Schindeln generieren, die sind sehr wichtig fuer einen echten Eindruck'. Foto 6162 (Sicht Claude): Hauptdach dunkle Flachziegel (Biberschwanz-Art, Reihen sichtbar, Moosflecken); Erkerhelme bunt glasierte Schuppenziegel (Fischschuppen, Gruen/Gelb/Rot im Muster). Modell: glatte Flaechen.",
+   "naechster_schritt": "Stufe 0 an >=3 Fotos (6162, 6164, Drohnen-/Dachfotos): Ziegelform, Reihenhoehe und Ziegelbreite per foto_mass (Reihen zaehlen per foto_zaehlung je Dachflaeche); Formfamilie 'Deckungsrelief' (Reihenstufen + Ziegelkanten als flaches Relief auf der Dachflaeche, Tiefe druckbar in H0 >= 0,15 mm mit 0,2-mm-Duese); Hauptdach und beide Helme; Metrik: Relief darf F1 (Glaettung 0,18 m) nicht senken.",
+   "datum": "2026-11-11",
+   "wer": "Nutzer (Sichtbeobachtung)",
+   "pruef_stichworte": [
+    "schindel",
+    "ziegel",
+    "deckung",
+    "relief",
+    "schuppen"
+   ],
+   "formfamilie_test": true,
+   "pruef_pflicht": [
+    "ziegelreihen",
+    "schuppen helm"
+   ]
+  },
+  {
+   "teil": "helm_geschweift:o",
+   "merkmal": "Zipfel an jeder Ecke (Erkerhelme/Dach) fehlen",
+   "text": "Nutzer 11.11. 17:2x: 'an jeder Ecke ist nochmal so ein Zipfelchen - das sind die wichtigen Details' (zusammen mit Erkern, Baldachinen, Wasserspeiern). Foto 6162 (Sicht Claude, zu bestaetigen): an den Ecken der Erkerhelm-Traufe sitzen kleine Aufsaetze/Drachenfiguren (rechter Erker rechte Ecke deutlich), Helmspitzen mit Knauf/Fahne. Welche Ecken genau: Stufe 0 an >=3 Fotos klaeren, beide Helme (o, w).",
+   "naechster_schritt": "Stufe 0: Ecken mit Aufsatz zaehlen (foto_zaehlung je Helm), Form beschreiben (Fiale/Knauf/Drache), Lage per foto_mass --tri; verwandt mit Fund 'Wasserspeier an der Traufe fehlen'.",
+   "datum": "2026-11-11",
+   "wer": "Nutzer (Sichtbeobachtung)",
+   "pruef_stichworte": [
+    "zipfel",
+    "ecke",
+    "aufsatz",
+    "fiale",
+    "drache"
+   ],
+   "formfamilie_test": true,
+   "pruef_pflicht": [
+    "eckaufsatz"
+   ]
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
