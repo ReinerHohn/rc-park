@@ -17,6 +17,7 @@ klar - und dass sie falsch verlaufen. Darum gewinnen Agenten bei Rippen, Sprosse
 3. Kreis (`bauteil_kreis.py`): NUR nach Beweis und mit Nutzer-Rueckmeldung: Formfund-Runden mit pruef_stichworte aus einer Ornamentliste
    (rippe, sprosse, masswerk, schuppe, ziegel, fiale, krabbe, zipfel) duerfen ueber `f1_fein` gewinnen (>= +0,02), wenn F1 hoechstens 0,005 faellt;
    Pruefer bekommt die Render-Bilder aus 1. Dieser Punkt 3 ist NICHT Teil des ersten Auftrags.
+   **Nutzerentscheid 11.11. 17:5x: "Feinmessungen muessen eigenes Teil werden, voll automatisiert"** -> nach bestandenem Beweis (1+2) Punkt 3 einbauen: Feinmass als eigene Kettenstufe (Kreis-Tor, Regler, konvergenz_bericht/realitaet_prozent Nebenzahl), ohne Handschritt.
 
 ## Beweis (Pflicht)
 - Synthetisch: Testflaeche mit aufgesetzten Rippen (bekannte Lage) in ein echtes Foto gerendert: f1_fein steigt mit richtiger Rippe, faellt bei
