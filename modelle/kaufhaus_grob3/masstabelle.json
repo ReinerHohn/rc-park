@@ -7489,6 +7489,14 @@
    "erledigt": "kreis1 Dienste je Pfeilerachse gebaut: u 9,745 (vorhanden), -2,433 (Peilung M-6130-008, 3 Fotos), -8,455 (M-6124-021, schmaler Winkel 9,6 Grad), u 3,59 als Konsol-Dienst ab Muschel z 5,03 (M-6119-018; Tuerportal darunter, kein Schaft); Pruefungen dienst_laube_um845/u359 vorher ROT, nachher gruen; OFFEN: Dienst u 15,77 in keinem Foto sichtbar (nicht gebaut), Rippenvorsprung, Fenster-Kreuzstock"
   },
   {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_184947dienste r1 (automatisch)",
+   "teil": "quader:laube_rueck",
+   "merkmal": "Pruefer-Rest quader:laube_rueck kreis 20261111_184947dienste r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: seiten.jpg und 9 von 12 Overlays (alle um230, u975, u359 6117/6120, um845 6130) vom Pruefer nicht angesehen - 'unauffaellig' ist Agentenaussage | Verschiebungskontrolle marge_min -0,004 (Dichte-Verdacht): Lage nur per Sichtpruefung bestaetigt (u3,59 Konsole 6119/d17, u9,745 6120 klar; um243 nur linke Kante 6130; um845 nur Ausschnitt 6124) | f1_fein faellt 0,031->0,030 (Agent 0,064->0,063), Agent meldet Tor 'nicht fallen' trotzdem als bestanden | Dienst u9,745: rechte Schaftflanke ca. 30-40 px links der Fotokante (6120 rot x~580 / gelb x~600-630), Radius oder Lage pruefen | Dienst u-2,43: Sockel/rechte Flanke rot in 6130 (x~770, y 1170-1270) und h11_112108 (x 1830-1860) - Sockelmass ANNAHME | Dienst u-8,455: Peilung nur 9,6 Grad (+-0,33 m), 6161 zu dunkel, Sockelmasse ANNAHME | Konsole u3,59: unterer Radius 0,12 ANNAHME, Uebergang Rippenbuendel->Konsole fehlt (gelb d17/6119) | gelb: Rippenbuendel/Gewoelbeanlaeufe ueber den Diensten nicht modelliert (d17, 6130, 6119) | gelb: Fenster-Kreuzstock/Rahmen und Portal-Laibung fehlen (alle Fotos), in h11_112108 rote Sprossen (x 600-670) | d17: neue gelbe Linie ueber Portal-Gesims nachher (x 1440-1810, y~770) | Steinbank an der Laubenrueckwand aus Nutzerfund 40efaf2d nicht bearbeitet | Anzahl 4 Dienste nur Sichtzaehlung ohne Z-Protokoll (Regel 9), u15,77 ungeprueft",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
    "auto_id": "fehlteile-6261-234-1794",
@@ -7521,14 +7529,6 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.24 m, y=-7.17 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "2026-11-11",
-   "wer": "Pruefer opus kreis 20261111_184947dienste r1 (automatisch)",
-   "teil": "quader:laube_rueck",
-   "merkmal": "Pruefer-Rest quader:laube_rueck kreis 20261111_184947dienste r1",
-   "text": "Offene Fehler laut Pruefer nach angenommener Runde: seiten.jpg und 9 von 12 Overlays (alle um230, u975, u359 6117/6120, um845 6130) vom Pruefer nicht angesehen - 'unauffaellig' ist Agentenaussage | Verschiebungskontrolle marge_min -0,004 (Dichte-Verdacht): Lage nur per Sichtpruefung bestaetigt (u3,59 Konsole 6119/d17, u9,745 6120 klar; um243 nur linke Kante 6130; um845 nur Ausschnitt 6124) | f1_fein faellt 0,031->0,030 (Agent 0,064->0,063), Agent meldet Tor 'nicht fallen' trotzdem als bestanden | Dienst u9,745: rechte Schaftflanke ca. 30-40 px links der Fotokante (6120 rot x~580 / gelb x~600-630), Radius oder Lage pruefen | Dienst u-2,43: Sockel/rechte Flanke rot in 6130 (x~770, y 1170-1270) und h11_112108 (x 1830-1860) - Sockelmass ANNAHME | Dienst u-8,455: Peilung nur 9,6 Grad (+-0,33 m), 6161 zu dunkel, Sockelmasse ANNAHME | Konsole u3,59: unterer Radius 0,12 ANNAHME, Uebergang Rippenbuendel->Konsole fehlt (gelb d17/6119) | gelb: Rippenbuendel/Gewoelbeanlaeufe ueber den Diensten nicht modelliert (d17, 6130, 6119) | gelb: Fenster-Kreuzstock/Rahmen und Portal-Laibung fehlen (alle Fotos), in h11_112108 rote Sprossen (x 600-670) | d17: neue gelbe Linie ueber Portal-Gesims nachher (x 1440-1810, y~770) | Steinbank an der Laubenrueckwand aus Nutzerfund 40efaf2d nicht bearbeitet | Anzahl 4 Dienste nur Sichtzaehlung ohne Z-Protokoll (Regel 9), u15,77 ungeprueft",
-   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
