@@ -2432,6 +2432,90 @@
    ],
    "quer_max": 0.05,
    "r_max": 1.2
+  },
+  "giebel_o_fe1_f": {
+   "typ": "schnitt_reichweite",
+   "z": "=23.935 - z_unterkante_lot2",
+   "zentrum": [
+    13.708,
+    -0.234
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.15,
+   "r_max": 6.0
+  },
+  "giebel_o_fe1_w": {
+   "typ": "schnitt_reichweite",
+   "z": "=22.3 - z_unterkante_lot2",
+   "zentrum": [
+    13.708,
+    -0.234
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.15,
+   "r_max": 6.0
+  },
+  "giebel_o_fe2_f": {
+   "typ": "schnitt_reichweite",
+   "z": "=20.785 - z_unterkante_lot2",
+   "zentrum": [
+    13.998,
+    0.586
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.15,
+   "r_max": 6.0
+  },
+  "giebel_o_fe2_w": {
+   "typ": "schnitt_reichweite",
+   "z": "=19.4 - z_unterkante_lot2",
+   "zentrum": [
+    13.998,
+    0.586
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.15,
+   "r_max": 6.0
+  },
+  "giebel_o_fe3_f": {
+   "typ": "schnitt_reichweite",
+   "z": "=17.38 - z_unterkante_lot2",
+   "zentrum": [
+    14.928,
+    3.211
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.15,
+   "r_max": 6.0
+  },
+  "giebel_o_fe3_w": {
+   "typ": "schnitt_reichweite",
+   "z": "=19.0 - z_unterkante_lot2",
+   "zentrum": [
+    14.928,
+    3.211
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.15,
+   "r_max": 6.0
   }
  },
  "pruefungen": [
@@ -5124,6 +5208,54 @@
    "historie": [
     "2026-11-11 angelegt (Kreis3 Fehlteil ff_+9_+5_+3, Dienst fehlt): am Modell ohne Dienst ROT (Wandfront 7,28)"
    ]
+  },
+  {
+   "name": "Ostgiebel Fenster 1: Laibungstiefe (m) = Reichweite im Fenster minus Wandflaeche daneben (n 4.355)",
+   "wert": "giebel_o_fe1_f - giebel_o_fe1_w",
+   "soll": [
+    -0.2,
+    -0.05
+   ],
+   "quelle": "Foto 6115 (Laibung 22 px bei 58 px Oeffnung, Strahl 68 Grad zur Wandnormalen -> 0,12 m +-0,04, ANNAHME rechteckige Laibung); Lage Fenster M-6115-013..015 (Strahl-Ebenen-Schnitt, Reprojektion in 6261 trifft); Zaehlung 3 Fenster Z-6115-001 + Z-6261-003. Am Altstand (Wand ohne Fensternische) = 0 -> rot",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade",
+   "massstab": "foto_intern",
+   "protokoll": "M-6115-013",
+   "historie": [
+    "2026-11-11 Kreis1 staffelgiebel:ost angelegt; Altstand 0 (keine Nische) muss fehlschlagen"
+   ]
+  },
+  {
+   "name": "Ostgiebel Fenster 2: Laibungstiefe (m) = Reichweite im Fenster minus Wandflaeche daneben (n 5.225)",
+   "wert": "giebel_o_fe2_f - giebel_o_fe2_w",
+   "soll": [
+    -0.2,
+    -0.05
+   ],
+   "quelle": "Foto 6115 (Laibung 22 px bei 58 px Oeffnung, Strahl 68 Grad zur Wandnormalen -> 0,12 m +-0,04, ANNAHME rechteckige Laibung); Lage Fenster M-6115-013..015 (Strahl-Ebenen-Schnitt, Reprojektion in 6261 trifft); Zaehlung 3 Fenster Z-6115-001 + Z-6261-003. Am Altstand (Wand ohne Fensternische) = 0 -> rot",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade",
+   "massstab": "foto_intern",
+   "protokoll": "M-6115-014",
+   "historie": [
+    "2026-11-11 Kreis1 staffelgiebel:ost angelegt; Altstand 0 (keine Nische) muss fehlschlagen"
+   ]
+  },
+  {
+   "name": "Ostgiebel Fenster 3: Laibungstiefe (m) = Reichweite im Fenster minus Wandflaeche daneben (n 8.01)",
+   "wert": "giebel_o_fe3_f - giebel_o_fe3_w",
+   "soll": [
+    -0.2,
+    -0.05
+   ],
+   "quelle": "Foto 6115 (Laibung 22 px bei 58 px Oeffnung, Strahl 68 Grad zur Wandnormalen -> 0,12 m +-0,04, ANNAHME rechteckige Laibung); Lage Fenster M-6115-013..015 (Strahl-Ebenen-Schnitt, Reprojektion in 6261 trifft); Zaehlung 3 Fenster Z-6115-001 + Z-6261-003. Am Altstand (Wand ohne Fensternische) = 0 -> rot",
+   "quelltyp": "foto_vollbild",
+   "merkmal": "fassade",
+   "massstab": "foto_intern",
+   "protokoll": "M-6115-015",
+   "historie": [
+    "2026-11-11 Kreis1 staffelgiebel:ost angelegt; Altstand 0 (keine Nische) muss fehlschlagen"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -5725,14 +5857,6 @@
   {
    "datum": "2026-11-10",
    "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
-   "teil": "staffelgiebel:ost",
-   "merkmal": "Ostgiebel Kaeppchen/Fenster",
-   "text": "Kaeppchen auf den Stufen, Giebelfenster.",
-   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
-  },
-  {
-   "datum": "2026-11-10",
-   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
    "teil": "quader:rumpf_og",
    "merkmal": "Gassenwand Fenster/Mauerkrone",
    "text": "Seitenwand an der Gasse: kleine quadratische Fenster in mehreren Reihen und gestufte Mauerkrone (Nutzerfoto 10.11. Erker-Untersicht rechts) fehlen.",
@@ -6037,6 +6161,98 @@
    "merkmal": "Kantengitter widerspricht Foto (ff_+9_+5_+3__neu)",
    "text": "Angenommen nach Quellenvorrang Foto: Gitter beim neuen Teil: praez zylinder__dienst_laube_u975_schaft=None, praez zylinder__dienst_laube_u975_sockel=None, praez zylinder__dienst_laube_um230_schaft=None, praez zylinder__dienst_laube_um230_sockel=None. Kantengitter hat dort vermutlich Fehlsegmente.",
    "naechster_schritt": "Gittersegmente im Teilbereich gegen Fotos pruefen (gitter_zurueck), Fehlsegmente markieren."
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
+   "teil": "staffelgiebel:ost",
+   "merkmal": "Ostgiebel Kaeppchen/Fenster",
+   "text": "Kaeppchen auf den Stufen, Giebelfenster.",
+   "naechster_schritt": "Kaeppchen: Profil (n,z) aus Seitenfoto 6257 mit 2-Kamera-Triangulation von Buckel + hinterem Stufenende (scharfe Einzelpunkte), dann kappe_steigung/Buckelform setzen und am Foto-F1 pruefen",
+   "teil_erledigt": "2026-11-11 Kreis1: Giebelfenster (3, Z-6115-001/Z-6261-003, M-6115-013..015) als Nischen gebaut, Foto-F1 halbe Aufl. 0,699 -> 0,742. Kaeppchen: Saegezahn-Parameter kappe_steigung (0,3/0,45) senkte F1 (0,729/0,726) -> nicht aktiv (0); Form (Buckel vorn, flache Rueckflanke) am Foto gesehen, Betrag ungemessen (u-Mehrdeutigkeit Einzelansicht)"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
+   "auto_id": "fehlteile-6261-546-1170",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 25.83,
+   "z_bis": 25.83,
+   "xyz": [
+    16.27,
+    -1.51,
+    25.83
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=25.83 m, y=-1.51 m (Zelle [546, 1170, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
+   "auto_id": "fehlteile-6261-234-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.55,
+   "z_bis": 18.55,
+   "xyz": [
+    14.33,
+    -8.89,
+    18.55
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.89 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "auto_id": "fehlteile-6261-312-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.23,
+   "z_bis": 18.23,
+   "xyz": [
+    14.61,
+    -7.15,
+    18.23
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-234-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.41,
+   "z_bis": 17.41,
+   "xyz": [
+    14.29,
+    -8.9,
+    17.41
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.41 m, y=-8.9 m (Zelle [234, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "kreis 20261111_035601a035601 r1 (automatisch)",
+   "merkmal": "Kantengitter widerspricht Foto (staffelgiebel__ost)",
+   "text": "Angenommen nach Quellenvorrang Foto: Gitter-F1 0.126->0.088, Foto-F1 0.709->0.761. Kantengitter hat dort vermutlich Fehlsegmente.",
+   "naechster_schritt": "Gittersegmente im Teilbereich gegen Fotos pruefen (gitter_zurueck), Fehlsegmente markieren."
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_035601a035601 r1 (automatisch)",
+   "teil": "staffelgiebel:ost",
+   "merkmal": "Pruefer-Rest staffelgiebel:ost kreis 20261111_035601a035601 r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: kreis_bericht.md ist veraltet (Baldachin-Runde); Agent brach bei 3600 s ab, kein Bericht, keine Formbeschreibung Stufe 0, keine Overlays rundekreis1_staffelgiebel_* | Kaeppchen nicht gebaut (kappe_steigung=0): gelbe Schattenlinien/Vorderkanten der Kaeppchen auf allen Stufen in 6115, nu3b, 6164, 6261; Beobachtung 'Ostgiebel Kaeppchen' bleibt offen | Rote Stufenbloecke ohne Fotokante entlang der rechten Stufensilhouette, massiv in nu3b, auch 6164/6261: Stufenkontur/Kaeppchenform falsch | Linke (gespiegelte) Rueckflanke in 6261: Stufenkanten gelb, Spiegelung deckt sich nicht mit dem Foto | Giebelfenster 1 und 3 in 6261 mit roten Innenpixeln (Nische leicht versetzt oder zu breit); Fenster 1 in 6115 linker Faschen-/Schattenkeil gelb | Fenster 3 Unterkante ist ANNAHME (vom Nachbardach verdeckt) | Fenstertiefe 0,12 m nur aus einem Foto (6115) geschaetzt, ANNAHME rechteckige Laibung; Rot-am-Altstand-Lauf fuer die 3 Laibungspruefungen nicht protokolliert | Roter Streifen am unteren Wandrand (Modellkante ohne Fotokante) in 6115/6261/6164 unveraendert | Endtor in voller Aufloesung und Kontrollfotos stehen aus (nur halbe Aufloesung 0,709->0,761 belegt)",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

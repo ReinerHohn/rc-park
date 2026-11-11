@@ -1,0 +1,32 @@
+{
+ "id": "M-6115-013",
+ "foto": "6115",
+ "kamera": "K-6115",
+ "ebene": "0.9626,-0.2772,0=16.5",
+ "name": "Ostgiebel Fenster 1 Oeffnung Ecke oben rechts -> unten links (Wandebene u 16,05 geneigt)",
+ "mess_px": [
+  1192.0,
+  610.0,
+  1135.0,
+  785.0
+ ],
+ "P1": [
+  16.865,
+  -0.958,
+  24.67
+ ],
+ "P2": [
+  16.657,
+  -1.68,
+  23.203
+ ],
+ "dz": -1.468,
+ "dy": -0.722,
+ "dx": -0.208,
+ "abstand": 1.649,
+ "z1": 24.67,
+ "z2": 23.203,
+ "unsicherheit_rel": 0.0048,
+ "unsicherheit_m": 0.051,
+ "massstab_von": "Kamera K-6115 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.9626,-0.2772,0=16.5 (+-0.15 m)"
+}
