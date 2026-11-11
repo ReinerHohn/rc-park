@@ -864,7 +864,9 @@ for runde in range(1, RUNDEN + 1):
     # konvergenz_bericht 'RUECKSCHRITT: recall 5-10 m 0.795 -> 0.727' - Kantengitter dort mit ~130 Fehlsegmenten ueber freier Wand, s. kanten_f1-Vorrang oben).
     # Nur wenn der EINZIGE Rueckschritt Gitter-Recall in Hoehenbaendern ist und das Foto-Tor (Gewinn + Hoehe + Foto-Veto) besteht -> Foto gilt, Beobachtung.
     _rk = [x.strip() for l in (outK or "").splitlines() if l.startswith("RUECKSCHRITT:") for x in l[len("RUECKSCHRITT:"):].split(";") if x.strip()]
-    band_vorrang = (rcK == 3 and foto_tor and gewinn >= min_g and not rueck_teil and _rk and all(x.startswith("recall ") and " m:" in x for x in _rk))
+    # 11.11. a002122 Kreuzgewoelbe: auch Gitter-PRAEZISION in Baendern (5-10 m 0,351 -> 0,312) - Gitter in der Laube fast leer, neue Kappenkanten
+    # finden dort kein Gittersegment; Praezision steckt im direkt gemessenen Foto-F1 (Regel 9e).
+    band_vorrang = (rcK == 3 and foto_tor and gewinn >= min_g and not rueck_teil and _rk and all(x.startswith(("recall ", "praezision ")) and " m:" in x for x in _rk))
     if band_vorrang:
         gitter_widerspruch = (gitter_widerspruch + "; " if gitter_widerspruch else "") + "Gitter-Baender " + ", ".join(_rk) + f", Foto-F1 {ff_v:.3f}->{ff_n:.3f}"
         print(f"Runde {runde}: Gitter-Baender widersprechen Foto ({', '.join(_rk)}) - Foto gilt, Beobachtung folgt", flush=True)
@@ -912,7 +914,7 @@ for runde in range(1, RUNDEN + 1):
                     if _pn is not None and _pn < MIN_PRAEZ_NEU: rueck_teil.append(f"foto_praez {p_}={_pn}")
                     if _gitter: gitter_widerspruch = (gitter_widerspruch + "; " if gitter_widerspruch else "") + "Gitter beim neuen Teil: " + ", ".join(_gitter)
                     gewinn = ff_n - ff_v; foto_tor = True
-                    _rk_ok = rcK == 0 or (rcK == 3 and _rk and all(x.startswith("recall ") and " m:" in x for x in _rk))
+                    _rk_ok = rcK == 0 or (rcK == 3 and _rk and all(x.startswith(("recall ", "praezision ")) and " m:" in x for x in _rk))
                     tor_konv = _rk_ok and gewinn >= MIN_GEWINN_FOTO and not rueck_teil
     if rueck_teil: print(f"Runde {runde}: Rueckschritt im Ziel-Teil: {rueck_teil}")
     urteil = pruefer_urteil(wt, ziel, runde) if (tor_abnahme and tor_konv) else {"annehmen": False, "fehlerliste": ["nicht geprueft: Vortor rot"]}
