@@ -49,8 +49,19 @@ def foto_zahl(sha):
             mk += e["mk_px"]; fk += e["fk_px"]; pm += e["praez"] * e["mk_px"]; rf += e["recall"] * e["fk_px"]
     _p, _r = (pm / mk if mk else 0.0), (rf / fk if fk else 0.0)
     pix = dict(prozent_foto_pixel=round(200 * _p * _r / (_p + _r), 1) if _p + _r else None, praez_pixel=round(_p, 3), recall_pixel=round(_r, 3))
-    return dict(metrik=met, prozent_foto=round(100 * sum(g["f1"] for g in t.values()) / len(t), 1), hoehe_prozent=round(100 * sum(h) / len(h), 1) if h else None, **pix,
+    pm = maskiert_zahl(sha, met); pm = dict(prozent_foto_maskiert=pm) if pm is not None else {}
+    return dict(metrik=met, **pm, prozent_foto=round(100 * sum(g["f1"] for g in t.values()) / len(t), 1), hoehe_prozent=round(100 * sum(h) / len(h), 1) if h else None, **pix,
                 foto_teile={k: g["f1"] for k, g in t.items()}, foto_schwaechste=[[k, g["f1"]] for k, g in sorted(t.items(), key=lambda kv: kv[1]["f1"])[:4]])
+
+def maskiert_zahl(sha, met):
+    """NEBENZAHL (SPEC_STOERMASKE, 11.11.): Mittel Foto-F1 derselben Teile mit Stoermaske (teil_fotoform --stoermaske an), aus
+    rc-park_kreis/<objekt>/fotoform_stoermaske/<sha>_<metrik>_stoermaske.json (Erzeugung: tools/stoermaske_auffrischen.sh). Hauptzahl bleibt unmaskiert.
+    None, solange die maskierte Liste zu diesem STL fehlt. Eigener Ordner, damit kreis-Formlisten-Suche (glob im fotoform-Ordner) sie nie findet."""
+    f = os.path.join(KD, OBJ, "fotoform_stoermaske", f"{sha}_{met}_stoermaske.json")
+    if not os.path.exists(f): return None
+    t = {k: (v.get("_gesamt") or {}) for k, v in json.load(open(f))["teile"].items() if "__ausschnitt" not in k}
+    t = {k: g for k, g in t.items() if g.get("f1") is not None}
+    return round(100 * sum(g["f1"] for g in t.values()) / len(t), 1) if t else None
 
 def zeile_ausgeben(z, vor):
     if z.get("prozent_foto") is not None:
@@ -58,6 +69,8 @@ def zeile_ausgeben(z, vor):
         d = "" if vf is None else f" ({'+' if z['prozent_foto'] >= vf['prozent_foto'] else ''}{z['prozent_foto'] - vf['prozent_foto']:.1f} Punkte gegen {vf['zeit'][11:16]})"
         print(f"REALITAET (Foto) {z['prozent_foto']:.1f} %{d} | Hoehe {z.get('hoehe_prozent')} % | schwaechste am Foto: "
               + ", ".join(f"{t} {b:.2f}" for t, b in z.get("foto_schwaechste") or []), flush=True)
+        if z.get("prozent_foto_maskiert") is not None:
+            print(f"  Nebenzahl Foto mit Stoermaske {z['prozent_foto_maskiert']:.1f} % (Menschen/Fahrzeuge/Schilder/Moebel/Pflanzen/Fahnen ausgenommen; Hauptzahl unveraendert)", flush=True)
         if z.get("prozent_foto_pixel") is not None:
             vp = vor.get("prozent_foto_pixel") if vor else None
             print(f"  Foto pixelgewichtet {z['prozent_foto_pixel']:.1f} %" + (f" ({z['prozent_foto_pixel'] - vp:+.1f})" if vp is not None else "")

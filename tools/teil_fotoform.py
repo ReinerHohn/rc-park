@@ -87,6 +87,9 @@ def main(argv=None):
     ap.add_argument("--min_px", type=int, default=150, help="Mindestzahl Kantenpixel je Teil und Foto, sonst nicht beurteilbar")
     ap.add_argument("--sigma_fest", choices=["an", "aus"], default=os.environ.get("RCPARK_SIGMA_FEST", "aus"), help="dmed/sigma je Foto aus Referenz-STL (Metrik v3, Standard) statt aus dem aktuellen Modell (v2)")
     ap.add_argument("--sigma_dir", default=os.environ.get("RCPARK_SIGMA_DIR"), help="Ordner mit ref.stl und dmed_*.json (Standard /media/oem/scan/rc-park_tmp/fotoform_cache/sigma_<objekt>)")
+    ap.add_argument("--stoermaske", choices=["an", "aus"], default=os.environ.get("RCPARK_STOERMASKE", "aus"),
+                    help="Stoermaske (tools/foto_stoermaske.py: Menschen/Fahrzeuge/Schilder/Moebel/Pflanzen/Fahnen): Foto- UND Modellkantenpixel in der Maske zaehlen nicht. Standard aus = bitgleich zum Ist. Auch RCPARK_STOERMASKE=an")
+    ap.add_argument("--stoermaske_dir", default=os.environ.get("RCPARK_STOERMASKE_DIR"), help="Maskenordner (Standard /media/oem/scan/rc-park_tmp/stoermaske); Dateien <dir>/<objekt>/<foto>.png")
     ap.add_argument("--aus"); ap.add_argument("--bilder", action="store_true", help="je Teil+Foto Ausschnitt mit gruen/rot/gelb nach audit/teil_fotoform/")
     ap.add_argument("--nur", help="nur diese Teile (Komma), z. B. das Kreis-Ziel"); ap.add_argument("--etikett", default="", help="Zusatz im Bildnamen (vorher/nachher)")
     ap.add_argument("--bilder_dir", help="Bilder hierhin statt modelle/<objekt>/audit/teil_fotoform (Kreis: Datenplatte, nicht ins Repo)")
@@ -137,6 +140,10 @@ def main(argv=None):
             os.remove(tp_)
         SIG = dict(dir=sd, ref=rp, ref_sha=hashlib.sha256(open(rp, "rb").read()).hexdigest()[:16]); erg["sigma_fest"] = SIG["ref_sha"]
     erg["metrik"] = METRIK_V3 if SIG else METRIK; erg["wolke_verdeckung"] = "an" if VERD is not None else "aus"   # aus = Vergleichslauf, nie mit "an"-Listen mischen
+    SM_ON = a.stoermaske == "an"
+    if SM_ON:
+        import foto_stoermaske as FS
+        erg["metrik"] += "_stoermaske"; erg["stoermaske"] = a.stoermaske_dir or FS.CACHE; erg["stoermaske_fehlt"] = []   # eigene Metrik-Version: nie mit Listen ohne Maske mischen
     if phantom: erg["phantom"] = phantom   # nur Bereich des Nachher-Teils, Vorher-Modell ohne dieses Teil
     if a.bereich_von: erg["bereich_von"] = a.bereich_von   # F1 in Vereinigungsbereich: NICHT mit Listen ohne dieses Feld vergleichen/mischen (nur vorher/nachher-Paar eines Tors)
     _td = "/media/oem/scan/rc-park_tmp" if os.path.isdir("/media/oem/scan") else None   # nie Root-Platte (10.11.: 76 Reste = 4,1 GB in /tmp, Root 5 GB)
@@ -222,6 +229,11 @@ def main(argv=None):
             pad = max(int((kap or 0) * 1.1) + 4, 60) + 30
             cy0, cy1, cx0, cx1 = max(0, ymin - pad), min(H, ymax + pad), max(0, xmin - pad), min(W, xmax + pad)
             C = (slice(cy0, cy1), slice(cx0, cx1))
+            SMC = None
+            if SM_ON:
+                _sm = FS.maske_laden(a.objekt, nr, W, H, a.stoermaske_dir or FS.CACHE)
+                if _sm is None: erg["stoermaske_fehlt"].append(nr); print(f"WARNUNG: keine Stoermaske fuer {nr} (Foto unmaskiert gemessen)", flush=True)
+                else: SMC = _sm[C]
             mkp, fkp = mkp[C], fkp[C]; dF, dM = dF16[C].astype(np.float32), dM16[C].astype(np.float32); im0 = im0[C]
             pos = pos[cy0:cy1, cx0:cx1]; pos = pos.cpu().numpy() if hasattr(pos, "cpu") else np.ascontiguousarray(pos)
             if kap:
@@ -234,6 +246,7 @@ def main(argv=None):
             for name, sv in sichtbar.items():
                 by0, by1, bx0, bx1 = sv["box"]; vis = np.zeros((Hc, Wc), bool); vis[by0 - cy0:by1 - cy0, bx0 - cx0:bx1 - cx0] = sv["vis"]; vw = sv["vw"]
                 ms = cv2.dilate(vis.astype(np.uint8), np.ones((7, 7), np.uint8)) > 0
+                if SMC is not None: ms &= ~SMC   # Stoermaske: Pixel in der Maske zaehlen weder als Foto- noch als Modellkante
                 mk_t, fk_t = mkp & ms, fkp & ms
                 # FEHLENDES TEIL IM FESTBEREICH (11.11., Dienste a030758: vorher nur 2 von 9 Fotos beurteilt, weil vor glatter Wand kaum Modellkanten):
                 # mit --bereich_von zaehlt ein Foto mit genug FOTOkanten auch ohne Modellkanten - Recall ~0 senkt F1, Praezision traegt mit Gewicht mk_px (0) nichts bei.
