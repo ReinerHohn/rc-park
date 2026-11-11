@@ -732,7 +732,15 @@ for runde in range(1, RUNDEN + 1):
             # eigenen Worktree). Schluessel = STL + Werkzeuge + Objekt/Masstabelle -> gleiche Eingaben, gleiches Ergebnis (verlustfrei).
             # Die erste Spur misst unter einer Sperre je Schluessel, die anderen warten und lesen.
             import fcntl
-            _h = subprocess.run(["git", "-C", wt, "rev-parse", "HEAD:tools", f"HEAD:modelle/{OBJ}/objekt.json", f"HEAD:modelle/{OBJ}/masstabelle.json"],
+            # 11.11. (Kreis wartete 15,5 h je 6 h auf die GPU): Schluessel nur aus dem, was Export + konvergenz_bericht wirklich lesen.
+            # masstabelle.json liest keiner von beiden (nur ueber pruefbericht.json, das eingecheckt ist) -> pruefbericht + audit statt masstabelle;
+            # Werkzeuge ohne Einfluss auf die Messung (Kreis-Steuerung, Viewer, Sichtpruefungen) aus dem tools-Hash nehmen. Jede ANDERE
+            # Werkzeugaenderung macht den Speicher weiter ungueltig (sicher statt schnell).
+            _ohne = {"bauteil_kreis.py", "kreis_regler.py", "formfamilie_pruefen.py", "test_formfamilie_nutzerfunde.py", "viewer_kanten_bauen.py",
+                     "viewer_kanten_vorlage.html", "beobachtung_aus_viewer.py", "teil_fotoform.py", "tor_verschiebung.py", "realitaet_prozent.py"}
+            _lt = subprocess.run(["git", "-C", wt, "ls-tree", "-r", "HEAD", "tools"], capture_output=True, text=True).stdout.splitlines()
+            _h = [hashlib.sha256("\n".join(l for l in _lt if l.split("\t")[-1].split("/")[-1] not in _ohne).encode()).hexdigest()] + \
+                 subprocess.run(["git", "-C", wt, "rev-parse", f"HEAD:modelle/{OBJ}/objekt.json", f"HEAD:modelle/{OBJ}/pruefbericht.json", f"HEAD:modelle/{OBJ}/audit"],
                                 capture_output=True, text=True).stdout.split()
             _key = hashlib.sha256((open(sp, "rb").read() if os.path.exists(sp) else b"") + " ".join(_h).encode()).hexdigest()[:20]
             _vd = os.path.join(KREISDIR, OBJ, "vorher_speicher"); os.makedirs(_vd, exist_ok=True)
@@ -742,7 +750,7 @@ for runde in range(1, RUNDEN + 1):
                 if os.path.exists(_zf) and os.path.isdir(os.path.join(_vd, _key)):
                     z0 = json.load(open(_zf)); shutil.copytree(os.path.join(_vd, _key), _td, dirs_exist_ok=True)
                     with open(kf, "a") as f: f.write(json.dumps(dict(z0, etikett=f"kreis {LAUF} r{runde}_vorher"), ensure_ascii=False) + "\n")
-                    print(f"Runde {runde}: Messung vorher aus Spurenspeicher {_key} (gleicher STL, Werkzeuge, Masstabelle)")
+                    print(f"Runde {runde}: Messung vorher aus Spurenspeicher {_key} (gleicher STL, Mess-Werkzeuge, Pruefbericht)")
                 else:
                     rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
                     if rc0 in (0, 3) and z0 and len(_h) == 3 and z0.get("stl_sha") == hashlib.sha256(open(sp, "rb").read()).hexdigest()[:16]:
