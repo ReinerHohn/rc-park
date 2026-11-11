@@ -722,9 +722,12 @@ for runde in range(1, RUNDEN + 1):
         except Exception as _ex: print(f"Runde {runde}: Basisstand fuer Fehlteil-Fototor nicht gesichert: {_ex}", flush=True)
     t0 = time.time()
     if PATCH:   # Agentenarbeit aus abgebrochener Runde uebernehmen statt neuen Agenten (gleiches Tor danach)
-        rcA = subprocess.run(["git", "-C", wt, "apply", "--whitespace=nowarn", PATCH], capture_output=True, text=True).returncode
+        # 11.11.: verworfen_rN.patch enthaelt erzeugte Dateien (STL, Teile, Audit, Pruefbericht) - nach jedem main-Merge passen die nie -> ausschliessen, werden neu gebaut
+        _ex = [f"--exclude={x}" for x in ("modelle/stl/*", "modelle/stl/*/*", "modelle/stl/*/*/*", f"modelle/{OBJ}/audit/*", f"modelle/{OBJ}/audit/*/*",
+                                          f"modelle/{OBJ}/pruefbericht.json", f"modelle/{OBJ}/MASSNACHWEIS.md", f"modelle/{OBJ}/konvergenz.jsonl")]
+        rcA = subprocess.run(["git", "-C", wt, "apply", "--whitespace=nowarn"] + _ex + [PATCH], capture_output=True, text=True).returncode
         if rcA != 0:   # Patch aelter als main (masstabelle.json wuchs): 3-Wege-Anwendung
-            rcA = subprocess.run(["git", "-C", wt, "apply", "--3way", PATCH], capture_output=True, text=True).returncode
+            rcA = subprocess.run(["git", "-C", wt, "apply", "--3way"] + _ex + [PATCH], capture_output=True, text=True).returncode
         print(f"Runde {runde}: Patch {PATCH} uebernommen rc={rcA}", flush=True)
         if rcA != 0: freigeben(ziel["teil"]); sys.exit("Patch passt nicht auf main")
     else:
@@ -1012,7 +1015,7 @@ for runde in range(1, RUNDEN + 1):
         patch = os.path.join(LDIR, f"verworfen_r{runde}.patch")
         with open(patch, "w") as f:
             subprocess.run(["git", "-C", wt, "add", "-A", "-N", "."], check=False)
-            subprocess.run(["git", "-C", wt, "diff"], stdout=f, check=False)
+            subprocess.run(["git", "-C", wt, "diff", "--binary"], stdout=f, check=False)   # 11.11.: ohne --binary fehlten Messprotokoll-Bilder, --patch scheiterte
         _sk = beob_schluessel(ziel["beob"]) if ziel.get("art") == "beobachtung" else ziel["teil"]; sperre[_sk] = sperre.get(_sk, 0) + 1; ohne_annahme += 1
         subprocess.run(["git", "-C", wt, "add", "-A"], check=False)   # Stand verlustfrei auf dem Zweig sichern (fuer --nachpruefen), Worktree danach weg
         subprocess.run(["git", "-C", wt, "commit", "-q", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} VERWORFEN (Stand gesichert)"], check=False)
