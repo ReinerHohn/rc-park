@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-062",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=7.28",
+ "name": "Gewoelbe: Schildbogen-Scheitel -> Schlussstein/Rosette (Wandebene angenommen)",
+ "mess_px": [
+  1350.0,
+  2172.0,
+  1275.0,
+  2050.0
+ ],
+ "P1": [
+  8.516,
+  4.707,
+  7.888
+ ],
+ "P2": [
+  8.88,
+  4.579,
+  8.532
+ ],
+ "dz": 0.643,
+ "dy": -0.129,
+ "dx": 0.363,
+ "abstand": 0.75,
+ "z1": 7.888,
+ "z2": 8.532,
+ "unsicherheit_rel": 0.0193,
+ "unsicherheit_m": 0.035,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.28 (+-0.3 m)"
+}

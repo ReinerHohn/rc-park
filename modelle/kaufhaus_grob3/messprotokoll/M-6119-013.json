@@ -1,0 +1,32 @@
+{
+ "id": "M-6119-013",
+ "foto": "6119",
+ "kamera": "K-6119",
+ "ebene": "0.3338,0.9426,0=7.28",
+ "name": "Gewoelbe: Dienstkapitell (Gold) -> Rippenansatz",
+ "mess_px": [
+  2500.0,
+  2850.0,
+  2490.0,
+  2650.0
+ ],
+ "P1": [
+  5.82,
+  5.662,
+  4.948
+ ],
+ "P2": [
+  5.763,
+  5.682,
+  5.913
+ ],
+ "dz": 0.966,
+ "dy": 0.02,
+ "dx": -0.057,
+ "abstand": 0.967,
+ "z1": 4.948,
+ "z2": 5.913,
+ "unsicherheit_rel": 0.0181,
+ "unsicherheit_m": 0.04,
+ "massstab_von": "Kamera K-6119 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.28 (+-0.3 m)"
+}

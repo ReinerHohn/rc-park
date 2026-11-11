@@ -1,0 +1,39 @@
+{
+ "id": "M-6120-063",
+ "typ": "triangulation",
+ "foto": "6120",
+ "name": "Gewoelbe: Schlussstein-Rosette Fensterbucht (Scheitel Mitte)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6120",
+   "px": [
+    1300.0,
+    2033.0
+   ]
+  },
+  {
+   "kamera": "K-6119",
+   "px": [
+    1988.0,
+    2131.0
+   ]
+  }
+ ],
+ "P": [
+  9.339,
+  6.85,
+  7.844
+ ],
+ "strahl_abstand_m": [
+  0.018,
+  0.018
+ ],
+ "schnittwinkel_grad": [
+  18.5
+ ],
+ "z": 7.844,
+ "unsicherheit_m": 0.061,
+ "massstab_von": "Kameras K-6120, K-6119 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 9.574,
+ "u": 6.517
+}
