@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_185943eckfig/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.667000282287596,
@@ -9,14 +9,14 @@
   "helm_w_z": 20.88700064849853,
   "helm_o_z": 21.32700006866455,
   "dach_z_off11": 15.762130348205567,
-  "pfeiler3_d": 0.8810006134406079,
+  "pfeiler3_d": 0.8810006134406724,
   "arkade1_scheitel": 5.620651222229004,
   "fenster2_sohl": 8.856999847412109,
   "erker_w_unterkante": 8.18699988555908,
   "lichter_g2_anzahl": 3.0,
   "lichter_g2_breite_median": 0.68,
   "lichter_g2_breite_max": 0.72,
-  "lichter_g2_ebene_abstand": 2.100998473544299,
+  "lichter_g2_ebene_abstand": 2.100998476674905,
   "handlauf_z": 8.25699973297119,
   "helm_w_fussbreite_x": 2.3264116744995116,
   "helm_w_fussbreite_y": 2.13911196899414,
@@ -29,19 +29,19 @@
   "tuer_b3_anzahl": 1.0,
   "tuer_b3_breite_median": 1.41,
   "tuer_b3_breite_max": 1.41,
-  "tuer_b3_ebene_abstand": 1.2968758567997347,
+  "tuer_b3_ebene_abstand": 1.2968758575641726,
   "bal_feld_anzahl": 10.0,
   "bal_feld_breite_median": 0.18,
   "bal_feld_breite_max": 0.19,
-  "bal_feld_ebene_abstand": 1.9335306727365738,
+  "bal_feld_ebene_abstand": 1.9336632412458683,
   "fenster_b3_anzahl": 2.0,
   "fenster_b3_breite_median": 0.8200000000000001,
   "fenster_b3_breite_max": 0.8200000000000001,
-  "fenster_b3_ebene_abstand": 1.252124612687105,
+  "fenster_b3_ebene_abstand": 1.2521246259134438,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590077191591263,
-  "wand_anteil_unter": 0.0005333333333333334,
+  "wand_pq": 0.10762223601341248,
+  "wand_anteil_unter": 0.0006333333333333333,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -58,14 +58,14 @@
   "lichter_g2_bei_kaempfer_mitte_anzahl": 2.0,
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.68,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.68,
-  "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.1003067676266207,
+  "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.100306776734191,
   "laube_rueckwand_n728_z7": -0.007131292494283237,
   "helm_o_r_14_64": 1.1110442019599438,
-  "helm_o_r_16_18": 0.6410005316999677,
+  "helm_o_r_16_18": 0.6410007227863713,
   "helm_o_r_17_76": 0.4009052145424984,
   "helm_w_r_16_25": 0.6246130130669826,
   "helm_w_r_17_75": 0.4080723238584162,
-  "tor_b2_tiefe": 0.5493055763493642,
+  "tor_b2_tiefe": 0.5493055786789243,
   "tor_b2_oeffnung_anzahl": 1.0,
   "tor_b2_oeffnung_breite_median": 4.0,
   "tor_b2_oeffnung_breite_max": 4.0,
@@ -73,7 +73,7 @@
   "fenster_b4_anzahl": 2.0,
   "fenster_b4_breite_median": 0.8150000000000001,
   "fenster_b4_breite_max": 0.8200000000000001,
-  "fenster_b4_ebene_abstand": 1.9871139877481634,
+  "fenster_b4_ebene_abstand": 1.9871140343728286,
   "fenster_b1_anzahl": 2.0,
   "fenster_b1_breite_median": 0.77,
   "fenster_b1_breite_max": 0.77,
@@ -88,7 +88,7 @@
   "erker_w_unterbau72": 0.9912471427743436,
   "erker_w_gesims_u": 1.6962477790700574,
   "erker_w_wappen": 1.546247595470103,
-  "erker_w_trauf": 1.806247741451134,
+  "erker_w_trauf": 1.806247569721237,
   "erker_o_diag_l": 1.549455670546903,
   "erker_o_diag_r": 1.548883300240687,
   "erker_o_front": 1.5408542955753348,
@@ -106,14 +106,14 @@
   "figur3_spitze": 9.146999999999991,
   "figur4_scheitel": 11.886999999999993,
   "figur2_sohle": 9.836999702453612,
-  "figur2_kranz_d": 0.566255956778647,
-  "figur2_stufe_d": 0.31000023932863624,
+  "figur2_kranz_d": 0.566255956778898,
+  "figur2_stufe_d": 0.3100002393300115,
   "figur2_bein_up": 0.14678417600896768,
   "figur2_bein_um": 0.2832155412087505,
   "figur2_kopf_up": 0.0817843558814918,
   "figur2_kopf_um": 0.21821577402037615,
   "figur2_bein_np": 0.1163362359404384,
-  "figur2_bein_nm": 0.11366390508160995,
+  "figur2_bein_nm": 0.11366392031008159,
   "gaube_a_vordach_vor": 1.5221385427095424,
   "gaube_a_vordach_up": 0.6900120529944501,
   "gaube_a_vordach_um": 0.7599881541509903,
@@ -136,9 +136,9 @@
   "giebel_o_top_b8": 17.92700008392334,
   "giebel_o_vorn_n": 3.000488072033674,
   "helm_w_r_13_45": 1.7423634634583567,
-  "helm_w_r_14_12": 1.2970556884881361,
-  "helm_w_r_14_38": 1.1870509785045464,
-  "helm_w_r_14_88": 1.0070557810130052,
+  "helm_w_r_14_12": 1.2970544770700363,
+  "helm_w_r_14_38": 1.1870505067490111,
+  "helm_w_r_14_88": 1.0070547316217768,
   "helm_w_knauf_r_21_35": 0.19176879206557926,
   "gesims_front_z14_35": 0.33415600931813394,
   "gesims_front_z14_55": 0.1725344788111114,
@@ -155,11 +155,11 @@
   "fenster_og_g3_lichtweite_anzahl": 3.0,
   "fenster_og_g3_lichtweite_breite_median": 0.68,
   "fenster_og_g3_lichtweite_breite_max": 0.72,
-  "fenster_og_g3_lichtweite_ebene_abstand": 2.0994505751072197,
+  "fenster_og_g3_lichtweite_ebene_abstand": 2.0994505762990765,
   "fenster_og_g4_lichtweite_anzahl": 3.0,
   "fenster_og_g4_lichtweite_breite_median": 0.68,
   "fenster_og_g4_lichtweite_breite_max": 0.72,
-  "fenster_og_g4_lichtweite_ebene_abstand": 2.0994977942460293,
+  "fenster_og_g4_lichtweite_ebene_abstand": 2.0994977929358005,
   "fenster_og_g3_wand_aussen_l": 0.0008463696506626484,
   "fenster_og_g3_wand_aussen_r": -0.002103412574150365,
   "fenster_og_g3_stegscheitel_l": 11.946999999999992,
@@ -169,10 +169,10 @@
   "erker_o_unterbau70": 0.6075205761410944,
   "erker_o_unterbau80": 1.4208538809684554,
   "erker_o_trauf_unten": 1.5408542285036329,
-  "tuer_b3_rahmenfront": -0.04463395892203348,
+  "tuer_b3_rahmenfront": -0.04463395938929304,
   "fenster_eg0_rahmenfront": 0.0207220242320707,
-  "fenster_eg0_oberkante_l": 0.02001516256124347,
-  "fenster_eg0_oberkante_r": 0.021167838177144294,
+  "fenster_eg0_oberkante_l": 0.020015157882883994,
+  "fenster_eg0_oberkante_r": 0.021167845710816646,
   "gaube_u_a_vordach_vor": 1.6649270668863148,
   "gaube_u_a_stirn_vor": 1.5149271998044584,
   "gaube_u_a_vordach_up": 0.7150342467963634,
@@ -204,8 +204,8 @@
   "tuer_b3_schaft_r_grund_abstand": 0.1053239090386251,
   "balkon_luecke_west": 0.005366135070099087,
   "balkon_luecke_ost": -0.012597067409629403,
-  "bruestung_luecke_west": 0.005928783763525125,
-  "bruestung_luecke_ost": -0.01235490722511301,
+  "bruestung_luecke_west": 0.005928792921551462,
+  "bruestung_luecke_ost": -0.01235490957997376,
   "balkon_soffit_frei": -0.0050184289008181615,
   "balkon_stirn_mitte": -1.2034247810476817,
   "laube_sockel_front_w": -0.44554548537133254,
@@ -222,7 +222,7 @@
   "baldachin2_haube_um": 0.39491125552113454,
   "baldachin2_krone_up": 0.4596893501129539,
   "baldachin2_krone_um": 0.5303109670185446,
-  "fenster_eg2_oberkante_l": -0.11524319069201816,
+  "fenster_eg2_oberkante_l": -0.11524319043340059,
   "fenster_eg2_oberkante_r": -0.11428274214072154,
   "laube_decke_u46": 5.807000000000002,
   "laube_decke_u363": 4.867000000000001,
@@ -259,7 +259,11 @@
   "baldachin4_mitte_up": 0.49451814894860446,
   "baldachin4_mitte_um": 0.4954819877893976,
   "figur4_kopfm_up": 0.14944814381581045,
-  "figur4_kopfm_um": 0.15055181745378998
+  "figur4_kopfm_um": 0.15055181745378998,
+  "eckfigur_zmin_erker1_ecke2": 11.217000297546386,
+  "eckfigur_zmin_erker1_ecke3": 11.217000297546386,
+  "eckfigur_zmin_erker1_ecke4": 11.217000297546386,
+  "eckfigur_zmin_erker1_ecke1": 11.287000144958496
  },
  "pruefungen": [
   {
@@ -454,7 +458,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590077191591263,
+   "wert": 0.10762223601341248,
    "soll": [
     0.0348,
     100
@@ -534,7 +538,7 @@
   },
   {
    "name": "Erkerhelm Ost: Halbbreite vor der Achse bei z 16,18 (geschweiftes Profil)",
-   "wert": 0.6410005316999677,
+   "wert": 0.6410007227863713,
    "soll": [
     0.46,
     0.7
@@ -574,7 +578,7 @@
   },
   {
    "name": "Laubenrueckwand Bogen 2: grosses Tor - Torblatt hinter der Wandflaeche 7,28 (z 3,5, along -0,5..2,0)",
-   "wert": 0.5493055763493642,
+   "wert": 0.5493055786789243,
    "soll": [
     0.45,
     0.7
@@ -694,7 +698,7 @@
   },
   {
    "name": "Erker West: Auskragung Traufgesims ueber dem Fensterband (m)",
-   "wert": 0.2600002814229032,
+   "wert": 0.26000010969300624,
    "soll": [
     0.17,
     0.34
@@ -824,7 +828,7 @@
   },
   {
    "name": "Figur 2: Konsole Kranz Durchmesser (Rundkonsole, Silhouettenspitzen)",
-   "wert": 0.566255956778647,
+   "wert": 0.566255956778898,
    "soll": [
     0.52,
     0.64
@@ -834,7 +838,7 @@
   },
   {
    "name": "Figur 2: Konsole 2. Stufe Durchmesser",
-   "wert": 0.31000023932863624,
+   "wert": 0.3100002393300115,
    "soll": [
     0.26,
     0.36
@@ -864,7 +868,7 @@
   },
   {
    "name": "Figur 2: Tiefe Unterschenkel (n-Richtung, z 11,65)",
-   "wert": 0.23000014102204835,
+   "wert": 0.23000015625052,
    "soll": [
     0.17,
     0.29
@@ -1124,7 +1128,7 @@
   },
   {
    "name": "Erkerhelm West: Flaechenmitte (Apothem) vor der Achse bei z 14.12 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.2970556884881361,
+   "wert": 1.2970544770700363,
    "soll": [
     1.2,
     1.4
@@ -1134,7 +1138,7 @@
   },
   {
    "name": "Erkerhelm West: Flaechenmitte (Apothem) vor der Achse bei z 14.38 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.1870509785045464,
+   "wert": 1.1870505067490111,
    "soll": [
     1.09,
     1.29
@@ -1144,7 +1148,7 @@
   },
   {
    "name": "Erkerhelm West: Flaechenmitte (Apothem) vor der Achse bei z 14.88 (untere Schweifung, kein Kranzkasten)",
-   "wert": 1.0070557810130052,
+   "wert": 1.0070547316217768,
    "soll": [
     0.91,
     1.11
@@ -1344,7 +1348,7 @@
   },
   {
    "name": "Fenster Laube EG Bogen 4 (eg0): Rahmenoberkante flach - Rahmen bei z 6,255 vorhanden (links vom Setzholz, u 12,47-0.8..-0.4)  (m hinter der Wandfront)",
-   "wert": 0.02001516256124347,
+   "wert": 0.020015157882883994,
    "soll": [
     0.02,
     0.06
@@ -1354,7 +1358,7 @@
   },
   {
    "name": "Fenster Laube EG Bogen 4 (eg0): Rahmenoberkante flach - Rahmen bei z 6,255 vorhanden (rechts vom Setzholz, u 12,47+0.4..+0.8)  (m hinter der Wandfront)",
-   "wert": 0.021167838177144294,
+   "wert": 0.021167845710816646,
    "soll": [
     0.02,
     0.06
@@ -1644,7 +1648,7 @@
   },
   {
    "name": "Balustrade endet mit der Platte im Westen: in u -5,7..-6,8 (z 9,6, Handlauf-Hoehe) steht die Wand n 12,66 frei",
-   "wert": 0.005928783763525125,
+   "wert": 0.005928792921551462,
    "soll": [
     -0.08,
     0.25
@@ -1654,7 +1658,7 @@
   },
   {
    "name": "Balustrade endet mit der Platte im Osten: in u 12,5..13,1 (z 9,6) steht die Wand n 12,66 frei",
-   "wert": -0.01235490722511301,
+   "wert": -0.01235490957997376,
    "soll": [
     -0.08,
     0.25
@@ -1844,7 +1848,7 @@
   },
   {
    "name": "Tuer Laube EG Bogen 3: Rahmenvorderkante gegen die Wandfront n 7,28 (m, - = davor, Strahl am rechten Rahmenpfosten, z 2,5)",
-   "wert": -0.04463395892203348,
+   "wert": -0.04463395938929304,
    "soll": [
     -0.096,
     0.0
@@ -1854,7 +1858,7 @@
   },
   {
    "name": "Fenster Laube EG Bogen 1 (eg2): Rahmenoberkante flach - Rahmen bei z 6,35 vorhanden (links vom Setzholz u -5,36) (m hinter der Wandfront)",
-   "wert": -0.11524319069201816,
+   "wert": -0.11524319043340059,
    "soll": [
     -0.16,
     -0.06
@@ -2044,7 +2048,7 @@
   },
   {
    "name": "Pfeiler 3 Durchmesser (m), Schaftansatz z 2,38-2,45 (Ring ueber der Fase)",
-   "wert": 0.8810006134406079,
+   "wert": 0.8810006134406724,
    "soll": [
     0.81,
     0.94
@@ -2108,6 +2112,46 @@
    "soll": [
     -0.1,
     0.1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Eckfigur Erker 1 ecke2: tiefster Punkt unter dem Traufgesims z 12,57-12,72 (Figur vorhanden; Gesimsunterkante allein = 12,74)",
+   "wert": 11.217000297546386,
+   "soll": [
+    11.117,
+    11.267000000000001
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Eckfigur Erker 1 ecke3: tiefster Punkt unter dem Traufgesims z 12,57-12,72 (Figur vorhanden; Gesimsunterkante allein = 12,74)",
+   "wert": 11.217000297546386,
+   "soll": [
+    11.117,
+    11.267000000000001
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Eckfigur Erker 1 ecke4: tiefster Punkt unter dem Traufgesims z 12,57-12,72 (Figur vorhanden; Gesimsunterkante allein = 12,74)",
+   "wert": 11.217000297546386,
+   "soll": [
+    11.117,
+    11.267000000000001
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Eckfigur Erker 1 Ecke 1: KEINE Figur (Fotos 6145/h13/i08 zeigen dort keine; tiefster Punkt = Gesimsunterkante 12,74)",
+   "wert": 11.287000144958496,
+   "soll": [
+    11.267000000000001,
+    11.307
    ],
    "ok": true,
    "status": "ok"
