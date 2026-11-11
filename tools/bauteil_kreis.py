@@ -518,6 +518,8 @@ def beob_zu_teilen(teile):
     try: B = json.load(open(os.path.join(ROOT, "modelle", OBJ, "masstabelle.json"))).get("beobachtungen_offen") or []
     except Exception: return ""
     tt = {t.replace("__", ":") for t in teile}; z = []
+    # 11.11.: neueste und Nutzer-Beobachtungen zuerst (z[:6] schnitt die frischen Nutzer-Sichtfunde ab, aelteste standen vorn)
+    B = sorted([b for b in B if isinstance(b, dict)], key=lambda b: str(b.get("datum", "")), reverse=True); B = sorted(B, key=lambda b: 0 if "nutzer" in str(b.get("wer", "")).lower() else 1)
     for b in B:
         if isinstance(b, dict) and not b.get("erledigt") and str(b.get("teil", "")).split(" ")[0] in tt:
             extra = " | ".join(str(v) for k, v in b.items() if k.startswith(("stufe0", "naechster_schritt", "teil_hinweis")))
@@ -585,7 +587,8 @@ def auftrag(ziel, runde, wt):
                  f"Flaeche auf der Wolke (Median-Abstand {ziel['median_m']:.2f} m, Anteil mit Daten {ziel['anteil_mit_daten']:.2f}). "
                  if ziel.get("beleg") is not None and ziel.get("median_m") is not None else
                  f"{typ} hat keinen Wolkenbeleg (Ausschnitt/Boolesche Differenz oder ausserhalb der Wolkenliste) - Ziel nach FOTONOTE (Regel 9e). ")
-        befund = (_wtxt +
+        befund = (_wtxt + beob_zu_teilen([ziel["teil"]]) +   # 11.11.: Bogenreihe-Agent sah die Nutzerbeobachtungen (Sockel, Stirnboegen) nicht - nur Fehlteil-Auftraege bekamen sie
+                  
               f"Fotokanten (Kantengitter aus Fotos) je Teil: Recall {ziel.get('kanten_recall')} (Anteil der Fotokanten am Teil, die das Modell erklaert), "
               f"Praezision {ziel.get('kanten_praez')} (Anteil der Teil-Formkanten, die ein Foto belegt). GATE (Foto zuerst): die FORM AM FOTO (Foto-F1, unten) muss um >= {MIN_GEWINN_FOTO} steigen; "
               f"Wolkenbeleg und Gitter-F1 duerfen nur nicht um > 0,02 fallen (Wolkenbeleg nur, wenn Anteil mit Daten >= {MIN_DATEN}). "
