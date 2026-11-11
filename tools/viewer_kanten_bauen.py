@@ -39,6 +39,26 @@ if "--modell_farbe" in sys.argv:   # tools/modell_fotofarbe.py: Oberflaechenpunk
     g = np.clip(70 + 150 * np.abs(nrm @ L), 0, 255).astype(np.int16); ohne = Cf[:, 0] < 0
     Cf[ohne] = np.stack([g[ohne]] * 3, 1); MRGB = Cf.clip(0, 255).astype(np.uint8); MC = g.astype(np.uint8)
     print("Modell-Fotofarbe", len(MP), "Punkte, gefaerbt", round(100 * (1 - ohne.mean()), 1), "%", flush=True)
+# --teile_dichte: Stichprobe je m2 Teilflaeche (eine 30 m breite Wand braucht mehr Punkte als ein Knauf; 30000 fest gab nur 86 % Zuordnung).
+# Klick -> Bauteil (Nutzer 11.11., Lehre L48b "Zuordnung per Geometrie"): --teile DIR mit Teil-STLs eines Kreislaufs (teile_r1_vorher, mm-Massstab
+# wie der Generator-STL); jeder Modellflaechenpunkt bekommt das Teil mit der naechsten Oberflaeche (GPU-knn). Massstab aus objekt.json (stl_massstab/1000),
+# Rahmen muss zum --koerper passen (Pruefung: Bounds der Teile-Vereinigung gegen den Koerper, Abbruch bei > 0,05 m).
+TID, TN = None, []
+if "--teile" in sys.argv and len(MP):
+    import glob, os, trimesh; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import gpu_knn as G
+    _ob = json.load(open(__file__.replace("tools/viewer_kanten_bauen.py", f"modelle/{opt('--objekt', '')}/objekt.json"))) if "--objekt" in sys.argv else {}
+    _ms = opt("--teile_massstab", _ob.get("stl_massstab", 87), float) / 1000.0; Sx, Ix, lo_, hi_ = [], [], [], []
+    for f in sorted(glob.glob(os.path.join(opt("--teile", ""), "*.stl"))):
+        t = trimesh.load(f, force="mesh"); t.apply_scale(_ms)
+        if not len(t.faces): continue
+        s_, _ = trimesh.sample.sample_surface(t, int(min(400000, max(2000, t.area * opt("--teile_dichte", 2500, float))))); Sx.append(s_); Ix.append(np.full(len(s_), len(TN))); TN.append(os.path.basename(f)[:-4]); lo_.append(t.bounds[0]); hi_.append(t.bounds[1])
+    if len(TN) > 65535: sys.exit("zu viele Teile fuer uint16")
+    if "--koerper" in sys.argv:
+        _kb = trimesh.load(opt("--koerper", "")).bounds; _d = max(np.abs(np.min(lo_, 0) - _kb[0]).max(), np.abs(np.max(hi_, 0) - _kb[1]).max())
+        if _d > 0.05: sys.exit(f"Teile-Rahmen passt nicht zum Koerper (Bounds-Abweichung {_d:.3f} m) - Massstab/Verschiebung pruefen")
+    dd, jj = G.naechster(np.asarray(MP, np.float32), np.vstack(Sx).astype(np.float32)); jj = np.asarray(jj).ravel(); dd = np.asarray(dd).ravel()
+    TID = np.concatenate(Ix)[jj].astype(np.uint16); TID[dd > opt("--teile_max", 0.15, float)] = 65535   # Flaeche ohne Teil in Reichweite = unbekannt
+    print("Teile", len(TN), "zugeordnet", round(100 * float((TID < 65535).mean()), 1), "% der Modellpunkte, Median-Abstand", round(float(np.median(dd)), 3), "m", flush=True)
 # Front-Ansicht = Hauptfassade VON AUSSEN (Blick entgegen der Fassadennormale achse_n aus objekt.json; --objekt NAME). Ohne Angabe Blick nach +y.
 fy = 0.0
 if "--objekt" in sys.argv:
@@ -75,5 +95,7 @@ if "--fotos" in sys.argv:
     print("Fotos eingebettet", len(FT), "von", len(nam), sum(len(f["j"]) for f in FT) // 1024, "KB", flush=True)
 data["ft"] = FT
 if MRGB is not None: data["mrgb"] = base64.b64encode(MRGB.tobytes()).decode(); data["m"] = q(MP); data["nm"] = len(MP)
+if TID is not None: data["tid"] = base64.b64encode(TID.astype("<u2").tobytes()).decode(); data["tn"] = TN
+if "--objekt" in sys.argv: data["obj"] = opt("--objekt", "")
 html = open(__file__.replace("viewer_kanten_bauen.py", "viewer_kanten_vorlage.html")).read().replace("/*DATA*/", "const DATA=" + json.dumps(data) + ";")
 open(sys.argv[1], "w").write(html); print("geschrieben", sys.argv[1], len(html) // 1024, "KB")

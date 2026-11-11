@@ -32,6 +32,13 @@ button{font:inherit;padding:4px 10px;border:1px solid var(--ln);background:var(-
 <label>Punktgröße <input type="range" id="ps" min="1" max="4" value="1"></label>
 <label>Linienbreite <input type="range" id="lb" min="1" max="4" value="1"></label>
 <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><button id="bf">Front</button><button id="bs">Seite</button><button id="bo">Oben</button><button id="b3">3D</button></div>
+<div id="tbox" hidden style="margin-top:10px;border-top:1px solid var(--ln);padding-top:8px"><b>Klick → Bauteil</b>
+<div class="mut">Kurz auf das Modell tippen: Teil, Weltpunkt und Foto werden erfasst.</div>
+<div id="tsel" style="margin:4px 0;word-break:break-all">–</div>
+<input id="tbef" placeholder="Befund, z. B. Stufen sind Treppen" style="width:100%;box-sizing:border-box;font:inherit;padding:3px 5px;border:1px solid var(--ln);background:var(--bg);color:var(--fg);border-radius:4px">
+<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button id="tadd">Merken</button><button id="tcp">Alle kopieren</button><button id="tclr">Leeren</button></div>
+<ol id="tlist" class="mut" style="padding-left:18px;margin:6px 0"></ol>
+<textarea id="tout" readonly rows="4" style="width:100%;box-sizing:border-box;font:.75rem ui-monospace,monospace;background:var(--bg);color:var(--fg);border:1px solid var(--ln);border-radius:4px" hidden></textarea></div>
 <p class="mut" id="inf"></p>
 <p class="mut">Ziehen = drehen, Shift/2 Finger = verschieben, Rad/Pinch = zoomen. Höhe z in Metern im Netzrahmen (Boden ca. 2–3 m).</p>
 </div></div>
@@ -40,7 +47,7 @@ button{font:inherit;padding:4px 10px;border:1px solid var(--ln);background:var(-
 function b64(s){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
 function i16(s){const u=b64(s);return new Int16Array(u.buffer,0,u.length>>1)}
 const KB=DATA.nkb?i16(DATA.kb):new Int16Array(0);const SE=DATA.nse?i16(DATA.se):new Int16Array(0),SNb=DATA.nse?b64(DATA.sn):new Uint8Array(0),SN=new Int8Array(SNb.buffer,SNb.byteOffset,SNb.length);const MP=DATA.nm?i16(DATA.m):new Int16Array(0),MC=DATA.nm?b64(DATA.mc):new Uint8Array(0);
-const MRGB=DATA.mrgb?b64(DATA.mrgb):null;if(MRGB){document.getElementById('lfw').hidden=false;for(const id of['lw','lk','ls','lkb'])document.getElementById(id).checked=false}   /* Start: nur Modell in Fotofarben, Rest zuschaltbar */
+const MRGB=DATA.mrgb?b64(DATA.mrgb):null;const TIDb=DATA.tid?b64(DATA.tid):null,TID=TIDb?new Uint16Array(TIDb.buffer,TIDb.byteOffset,TIDb.length>>1):null,TN=DATA.tn||[];let selT=-1,selP=null,zmG=null,imG=null,gcw=0;if(MRGB){document.getElementById('lfw').hidden=false;for(const id of['lw','lk','ls','lkb'])document.getElementById(id).checked=false}   /* Start: nur Modell in Fotofarben, Rest zuschaltbar */
 const W=i16(DATA.w),K=i16(DATA.k),Sg=i16(DATA.s),Cc=b64(DATA.c),Sq=b64(DATA.sq),sc=1/DATA.sc;
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
 let yaw=-0.45,pit=0.18,zoom=1.15,px=0,py=0,cw=0,ch=0,dpr=1;
@@ -53,12 +60,14 @@ const q=id=>document.getElementById(id);
 function draw(){
  const c=cam(),s=zoom*Math.min(cw,ch)/45;ctx.clearRect(0,0,cw,ch);
  const img=ctx.createImageData(cw,ch),d=img.data,zb=new Float32Array(cw*ch).fill(1e9),psz=+q('ps').value,dk=1-(+q('dk').value)/100;
- const put=(u,v,zz,r,g,b)=>{for(let j=0;j<psz;j++)for(let i=0;i<psz;i++){const X=u+i,Y=v+j;if(X<0||Y<0||X>=cw||Y>=ch)continue;const o=Y*cw+X;if(zz<zb[o]){zb[o]=zz;d[o*4]=r;d[o*4+1]=g;d[o*4+2]=b;d[o*4+3]=255}}};
+ const zm=TID?new Float32Array(cw*ch).fill(1e9):null,im=TID?new Int32Array(cw*ch).fill(-1):null;zmG=zm;imG=im;gcw=cw;
+ const put=(u,v,zz,r,g,b,id)=>{for(let j=0;j<psz;j++)for(let i=0;i<psz;i++){const X=u+i,Y=v+j;if(X<0||Y<0||X>=cw||Y>=ch)continue;const o=Y*cw+X;if(id!==undefined&&zm&&zz<zm[o]){zm[o]=zz;im[o]=id}if(zz<zb[o]){zb[o]=zz;d[o*4]=r;d[o*4+1]=g;d[o*4+2]=b;d[o*4+3]=255}}};
  if(q('lw').checked)for(let i=0;i<DATA.nw;i++){const p=proj(W[i*3]*sc,W[i*3+1]*sc,W[i*3+2]*sc,c,s);put(p[0]|0,p[1]|0,p[2],Cc[i*3]*dk,Cc[i*3+1]*dk,Cc[i*3+2]*dk)}
  if(q('lk').checked)for(let i=0;i<DATA.nk;i++){const p=proj(K[i*3]*sc,K[i*3+1]*sc,K[i*3+2]*sc,c,s);put(p[0]|0,p[1]|0,p[2]-0.5,240,150,20)}
  const farbig=MRGB&&q('lf').checked;
- if(q('lm').checked)for(let i=0;i<DATA.nm;i++){const p=proj(MP[i*3]*sc,MP[i*3+1]*sc,MP[i*3+2]*sc,c,s);if(farbig){const r=MRGB[i*3],g2=MRGB[i*3+1],b2=MRGB[i*3+2],u=p[0]|0,v=p[1]|0;put(u,v,p[2],r,g2,b2);put(u+psz,v,p[2],r,g2,b2);put(u,v+psz,p[2],r,g2,b2);put(u+psz,v+psz,p[2],r,g2,b2)}else{const g=MC[i];put(p[0]|0,p[1]|0,p[2],g,g,g+12)}}
+ if(q('lm').checked)for(let i=0;i<DATA.nm;i++){const p=proj(MP[i*3]*sc,MP[i*3+1]*sc,MP[i*3+2]*sc,c,s),hl=selT>=0&&TID[i]===selT;if(farbig){let r=MRGB[i*3],g2=MRGB[i*3+1],b2=MRGB[i*3+2];if(hl){r=(r+255*2)/3;g2=(g2+140*2)/3;b2=b2/3}const u=p[0]|0,v=p[1]|0;put(u,v,p[2],r,g2,b2,i);put(u+psz,v,p[2],r,g2,b2,i);put(u,v+psz,p[2],r,g2,b2,i);put(u+psz,v+psz,p[2],r,g2,b2,i)}else{const g=MC[i];if(hl)put(p[0]|0,p[1]|0,p[2],255,(140+g)/2,g/3,i);else put(p[0]|0,p[1]|0,p[2],g,g,g+12,i)}}
  ctx.putImageData(img,0,0);
+ if(selP){const p=proj(selP[0],selP[1],selP[2],c,s);ctx.lineWidth=2*dpr;ctx.strokeStyle='#ff2d55';ctx.beginPath();ctx.arc(p[0],p[1],7*dpr,0,7);ctx.moveTo(p[0]-11*dpr,p[1]);ctx.lineTo(p[0]+11*dpr,p[1]);ctx.moveTo(p[0],p[1]-11*dpr);ctx.lineTo(p[0],p[1]+11*dpr);ctx.stroke()}
  const sichtbar=(a,b)=>{if(!q('lm').checked||!DATA.nm)return true;const X=((a[0]+b[0])/2)|0,Y=((a[1]+b[1])/2)|0;if(X<0||Y<0||X>=cw||Y>=ch)return true;return (a[2]+b[2])/2<=zb[Y*cw+X]+0.25};
  if(q('ls').checked){ctx.lineWidth=+q('lb').value*dpr;const byq={};for(let i=0;i<DATA.ns;i++)(byq[Sq[i]]=byq[Sq[i]]||[]).push(i);
   for(const k in byq){ctx.strokeStyle=COL[k]||'#888';ctx.beginPath();for(const i of byq[k]){const a=proj(Sg[i*6]*sc,Sg[i*6+1]*sc,Sg[i*6+2]*sc,c,s),b=proj(Sg[i*6+3]*sc,Sg[i*6+4]*sc,Sg[i*6+5]*sc,c,s);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}ctx.stroke()}}
@@ -83,7 +92,19 @@ cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptr.set(
 cv.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const o=ptr.get(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY]);
  if(ptr.size==2){const [a,b]=[...ptr.values()];const nd=Math.hypot(a[0]-b[0],a[1]-b[1]);if(cv._pd){zoom*=nd/cv._pd;px+=(e.clientX-o[0])/2;py+=(e.clientY-o[1])/2}cv._pd=nd;draw();return}
  const dx=e.clientX-o[0],dy=e.clientY-o[1];if(drag&&drag.pan){px+=dx;py+=dy}else{yaw+=dx*0.006;pit=Math.max(-1.5,Math.min(1.5,pit+dy*0.006))}draw()});
-const up=e=>{ptr.delete(e.pointerId);cv._pd=0;drag=null};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+const up=e=>{const kl=drag&&ptr.size==1&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<6&&e.button!=2;ptr.delete(e.pointerId);cv._pd=0;drag=null;if(kl&&e.type=='pointerup')waehle(e)};
+/* Klick -> Bauteil: vorderster Modellpunkt im Umkreis 8 px (eigener Modell-Tiefenpuffer, Wolke verdeckt nicht) */
+const merk=[];function waehle(e){if(!TID||!imG)return;const r=cv.getBoundingClientRect(),X=Math.round((e.clientX-r.left)*dpr),Y=Math.round((e.clientY-r.top)*dpr),R=Math.round(8*dpr);let best=-1,bz=1e9,bd=1e9;
+ for(let y=Y-R;y<=Y+R;y++)for(let x=X-R;x<=X+R;x++){if(x<0||y<0||x>=gcw||y>=imG.length/gcw)continue;const o=y*gcw+x,i=imG[o];if(i<0)continue;const dd=(x-X)**2+(y-Y)**2;if(dd<bd-4||(dd<bd+4&&zmG[o]<bz)){bd=dd;bz=zmG[o];best=i}}
+ if(best<0){selT=-1;selP=null;q('tsel').textContent='kein Modellpunkt getroffen';draw();return}
+ selT=TID[best];selP=[MP[best*3]*sc,MP[best*3+1]*sc,MP[best*3+2]*sc];const w=selP.map((v,k)=>+(v+DATA.ctr[k]).toFixed(2)),f=frang.length?FT[frang[fpos][1]].n:null;
+ cv._sel={teil:selT<65535?TN[selT]:null,weltpunkt_m:w,foto:f,blick:{yaw:+yaw.toFixed(3),pit:+pit.toFixed(3)}};
+ q('tsel').innerHTML='';const b=document.createElement('b');b.textContent=cv._sel.teil||'(kein Teil in 15 cm)';q('tsel').append(b,document.createTextNode(` · x ${w[0]} y ${w[1]} z ${w[2]} m`+(f?' · Foto '+f:'')));draw()}
+function liste(){const L=q('tlist');L.innerHTML='';for(const m of merk){const li=document.createElement('li');li.textContent=`${m.teil||'?'}: ${m.beobachtung||'(ohne Text)'}`;L.append(li)}
+ const t=q('tout');t.hidden=!merk.length;t.value=JSON.stringify({objekt:DATA.obj||null,quelle:'Viewer-Klick',beobachtungen:merk},null,1)}
+if(TID){q('tbox').hidden=false;q('tadd').onclick=()=>{if(!cv._sel)return;merk.push({...cv._sel,beobachtung:q('tbef').value.trim(),wer:'Nutzer',zeit:new Date().toISOString()});q('tbef').value='';liste()};
+ q('tcp').onclick=()=>{liste();const t=q('tout');t.select();(navigator.clipboard?navigator.clipboard.writeText(t.value):Promise.reject()).then(()=>q('tcp').textContent='kopiert ✓',()=>{try{document.execCommand('copy');q('tcp').textContent='kopiert ✓'}catch(_){q('tcp').textContent='Text unten markiert'}});setTimeout(()=>q('tcp').textContent='Alle kopieren',1800)};
+ q('tclr').onclick=()=>{merk.length=0;selT=-1;selP=null;liste();draw()}}cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 cv.addEventListener('wheel',e=>{e.preventDefault();zoom*=Math.exp(-e.deltaY*0.0012);draw()},{passive:false});cv.addEventListener('contextmenu',e=>e.preventDefault());
 for(const id of['lw','lk','ls','lm','lkb','dk','ps','lb','lf'])q(id).addEventListener('input',draw);
 const V=(y,p)=>()=>{yaw=y;pit=p;zoom=1;px=0;py=0;draw()};q('bf').onclick=V(DATA.fy||0,0);q('bs').onclick=V((DATA.fy||0)-Math.PI/2,0);q('bo').onclick=V(0,1.5);q("b3").onclick=V((DATA.fy||0)-0.45,0.35);yaw=(DATA.fy||0)-0.45;
