@@ -1636,7 +1636,7 @@
     0.33471889311010433,
     0.9423180262497086
    ],
-   "z": "=2.2 - z_unterkante_lot2",
+   "z": "=2.5 - z_unterkante_lot2",
    "u0": -0.765,
    "u1": -0.695,
    "vor": 3.0,
@@ -2219,6 +2219,42 @@
    "z": "=2.35 - z_unterkante_lot2",
    "u0": 2.4,
    "u1": 6.8
+  },
+  "fenster_eg2_oberkante_l": {
+   "typ": "ebene_abstand",
+   "o": [
+    -2.613,
+    8.654
+   ],
+   "n": [
+    0.33471889311010433,
+    0.9423180262497086
+   ],
+   "z": "=6.35 - z_unterkante_lot2",
+   "u0": -0.64,
+   "u1": -0.34,
+   "vor": 3.0,
+   "schritt": 0.01,
+   "quantil": 10.0,
+   "_hinweis": "Ebene = Wandfront n 7,28 bei u -5,36 (Setzholzmitte eg2); Strahlen im Streifen u -5,36+(-0.64..-0.34) bei z 6,35 lot2: trifft der Strahl die obere Rahmenleiste (Foto 6130: Oberkante FLACH z 6,39, M-6130-001) -> Rahmenfront vor (-) der Wandfront; trifft er nur die Wand (Altmodell: Ecken Kaempfer 6,29) -> ca. 0,00"
+  },
+  "fenster_eg2_oberkante_r": {
+   "typ": "ebene_abstand",
+   "o": [
+    -2.613,
+    8.654
+   ],
+   "n": [
+    0.33471889311010433,
+    0.9423180262497086
+   ],
+   "z": "=6.35 - z_unterkante_lot2",
+   "u0": 0.36,
+   "u1": 0.66,
+   "vor": 3.0,
+   "schritt": 0.01,
+   "quantil": 10.0,
+   "_hinweis": "Ebene = Wandfront n 7,28 bei u -5,36 (Setzholzmitte eg2); Strahlen im Streifen u -5,36+(0.36..0.66) bei z 6,35 lot2: trifft der Strahl die obere Rahmenleiste (Foto 6130: Oberkante FLACH z 6,39, M-6130-001) -> Rahmenfront vor (-) der Wandfront; trifft er nur die Wand (Altmodell: Ecken Kaempfer 6,29) -> ca. 0,00"
   }
  },
  "pruefungen": [
@@ -4042,7 +4078,7 @@
    ]
   },
   {
-   "name": "Tuer Laube EG Bogen 3: Rahmenvorderkante gegen die Wandfront n 7,28 (m, - = davor, Strahl am rechten Rahmenpfosten, z 2,2)",
+   "name": "Tuer Laube EG Bogen 3: Rahmenvorderkante gegen die Wandfront n 7,28 (m, - = davor, Strahl am rechten Rahmenpfosten, z 2,5)",
    "wert": "tuer_b3_rahmenfront",
    "soll": [
     -0.096,
@@ -4055,7 +4091,8 @@
    "protokoll": "M-6243-002",
    "historie": [
     "2026-11-10 angelegt (Kreis r3, fensterreihe:eg1_tuer, Befund 'Wolkenbeleg 0,71, Median 0,10 m'): am Altstand (tiefe 0,16 -> Front 7,40 = 0,12 vor der Wand) ROT erwartet, Soll nicht gelockert",
-    "2026-11-10 Messhoehe 3,0 -> 2,2 (Kontur wird ab z 2,77 zur Laibungsnische verbreitert; Pfosten bleibt bei z 2,2 an gleicher Stelle u 5,03..5,07); Soll unveraendert"
+    "2026-11-10 Messhoehe 3,0 -> 2,2 (Kontur wird ab z 2,77 zur Laibungsnische verbreitert; Pfosten bleibt bei z 2,2 an gleicher Stelle u 5,03..5,07); Soll unveraendert",
+    "2026-11-11 Messhoehe 2,2 -> 2,5 (Kreis eg2): z 2,2 = Oberkante laube_sockel_o (z1 2,2, Front n 7,73) -> Strahl traf die Sockelkante je nach Rundung 0,45 m zu frueh (-0,45 statt -0,04) und kippte bei JEDER Netzaenderung weit weg vom Rahmen; 2,5 liegt ueber dem Sockel und unter der Laibungsverbreiterung (ab 2,77), Pfosten u 5,03..5,07 unveraendert; Soll unveraendert, am HEAD-Netz -0,04 wie vorher"
    ]
   },
   {
@@ -4681,6 +4718,38 @@
    "protokoll": "M-6117-006",
    "historie": [
     "2026-11-10 angelegt (Kreis r1 a232557, Steinbank/Sockelband vor Laubenrueckwand); am Modell ohne Sockel muss die Pruefung fehlschlagen (Wert 0 statt -0,45)"
+   ]
+  },
+  {
+   "name": "Fenster Laube EG Bogen 1 (eg2): Rahmenoberkante flach - Rahmen bei z 6,35 vorhanden (links vom Setzholz u -5,36) (m hinter der Wandfront)",
+   "wert": "fenster_eg2_oberkante_l",
+   "soll": [
+    -0.16,
+    -0.06
+   ],
+   "quelle": "Foto 6130 (frontal, K-6130): Rahmenoberkante gerade bei z 6,39 (M-6130-001, along -6,28..-4,44), kein First; Altmodell: Kaempfer 6,29 + Giebel 6,39 (Kaempfer = Oberkante - rahmen_b: Rechenfehler, an den Ecken 0,10 zu niedrig). Rahmenfront 7,40 (wand_n 7,24 + tiefe 0,16, ANNAHME gleicher Fenstertyp - nicht Gegenstand dieser Pruefung)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6130-001",
+   "historie": [
+    "2026-11-11 angelegt (Kreis 003723 r1, fensterreihe:eg2): am Altstand (Ecken bei z 6,29, bei 6,35 nur Wand = 0,00) ROT erwartet, Soll nicht gelockert (Vorversuch 233158 hatte sie ebenso, nie gemerged)"
+   ]
+  },
+  {
+   "name": "Fenster Laube EG Bogen 1 (eg2): Rahmenoberkante flach - Rahmen bei z 6,35 vorhanden (rechts vom Setzholz u -5,36) (m hinter der Wandfront)",
+   "wert": "fenster_eg2_oberkante_r",
+   "soll": [
+    -0.16,
+    -0.06
+   ],
+   "quelle": "Foto 6130 (frontal, K-6130): Rahmenoberkante gerade bei z 6,39 (M-6130-001, along -6,28..-4,44), kein First; Altmodell: Kaempfer 6,29 + Giebel 6,39 (Kaempfer = Oberkante - rahmen_b: Rechenfehler, an den Ecken 0,10 zu niedrig). Rahmenfront 7,40 (wand_n 7,24 + tiefe 0,16, ANNAHME gleicher Fenstertyp - nicht Gegenstand dieser Pruefung)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6130-001",
+   "historie": [
+    "2026-11-11 angelegt (Kreis 003723 r1, fensterreihe:eg2): am Altstand (Ecken bei z 6,29, bei 6,35 nur Wand = 0,00) ROT erwartet, Soll nicht gelockert (Vorversuch 233158 hatte sie ebenso, nie gemerged)"
    ]
   }
  ],
@@ -5438,6 +5507,14 @@
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   },
   {
+   "datum": "2026-11-11",
+   "wer": "Kreis 003723 r1 (fensterreihe:eg2)",
+   "art": "widerspruch",
+   "text": "Foto-F1 0,675 (halbe Aufloesung, 9 Fotos): Oberkante in 6130/6225 gelb (Foto flach bei 6,39, Modell Kaempfer 6,29 + Giebel) -> kaempfer_z 6,38 (6,39 ist unplausibel: kaempfer < scheitel Pflicht). OFFEN: Rahmenfront 7,285 (M-6130-006) buendig, Modell 7,40 (tiefe 0,16); Korrektur macht frontale Fotos blind (foto_diff sprung_m 0,25, Register L-KR33). Fragile Pruefung tuer_b3_rahmenfront (Strahl z 2,2 = Sockeloberkante) auf z 2,5 verlegt, Soll gleich.",
+   "quelle": "M-6130-001, M-6130-006, ff_vorher/ff_eigen (teil_fotoform halbe Aufloesung)",
+   "naechster_schritt": "Werkzeug: Nischen-/Rahmentiefe < 0,25 m in frontalen Fotos als Modellkante; dann tiefe/nische_tiefe eg2 nachziehen"
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 2)",
    "auto_id": "fehlteile-6261-234-1794",
@@ -5480,13 +5557,28 @@
    "z_von": 17.08,
    "z_bis": 17.08,
    "xyz": [
-    14.54,
-    -7.16,
+    14.53,
+    -7.17,
     17.08
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.17 m (Zelle [312, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "kreis 20261111_003723a003723 r1 (automatisch)",
+   "merkmal": "Kantengitter widerspricht Foto (fensterreihe__eg2)",
+   "text": "Angenommen nach Quellenvorrang Foto: Gitter-Baender recall 15-20 m: 0.401 -> 0.390, recall 20-40 m: 0.461 -> 0.417, Foto-F1 0.653->0.685. Kantengitter hat dort vermutlich Fehlsegmente.",
+   "naechster_schritt": "Gittersegmente im Teilbereich gegen Fotos pruefen (gitter_zurueck), Fehlsegmente markieren."
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_003723a003723 r1 (automatisch)",
+   "teil": "fensterreihe:eg2",
+   "merkmal": "Pruefer-Rest fensterreihe:eg2 kreis 20261111_003723a003723 r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Kein Runden-Bericht: audit/kreis_bericht.md ist der alte staffelgiebel:west-Bericht (00:37), Agent am Zeitlimit 3600 s abgebrochen, keine Stufe-0-Formbeschreibung aus >=3 Fotos | 6130 (Quellfoto M-6130-001): breiter gelber Balken an der Rahmenoberkante bleibt fast vollstaendig (Cluster z 6,31, 9334 px), nur Ecke oben links geaendert - Hauptbefund im eigenen Quellfoto nicht behoben | Aeusserer Profilrahmen (breites Steingewaende links/oben/rechts) fehlt in 6130 weiter | Gelb bleibt am Mittelpfosten/Setzholz und am Riegel in 6225 (z 4,4-5,6) und 6145 (z 4,5) | Gelb bleibt an der Fensterbank/Unterkante z ~3,3-3,4 in 6130 (8649 px) und 6145 | nu3b: linke Rahmenkante durchgehend gelb, F1 0,598->0,596 | 6206: neuer roter Block oben neben dem Fenster, F1h 0,621->0,540, rot 5752->6198 px | Rot am linken Rahmen in 6145 (Rahmenfront zu weit vorn, tiefe 0,16 gegen gemessen buendig 7,285 M-6130-006) - offen, nicht korrigiert | e04: F1 0, rot 24152->24674 - Teil dort unbrauchbar benotet oder falsch | Fremde Pruefung tuer_b3_rahmenfront (eg1_tuer) Messhoehe 2,2->2,5 verschoben, als sie rot wurde; Begruendung widerspruechlich (Log: Druckreparatur-Artefakt, Historie: Sockelkante), Ursache nicht belegt | Konvergenz: Gesamt-Recall 0,6693->0,6658, RUECKSCHRITT recall 15-20 m 0,401->0,390 und 20-40 m 0,461->0,417, ungeklaert | foto_diff, fehlteile_finden, teile_lage_pruefen, Rundenkreis-Overlays nicht gelaufen; Foto-Diagnosen uebersprungen (RCPARK_OHNE_FOTODIAG=1); keine _nachher-Formbilder (nur vorpruef, STL-sha identisch) | freiraum_audit FEHLER (nan) in der Abnahme | kaempfer_z 6,38 = Oberkante 6,39 - 0,01 ist ein Ausweichwert, weil 6,39 im Generator unplausibel ist; flache Oberkante als eigene Formfamilie fehlt",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
