@@ -11,7 +11,8 @@ merkmal/foto/modell-Text (Umlaute normalisiert) ein Stichwort aus `pruef_stichwo
 Gegenprobe-Teile (sollen keine groben Formfamilien-Abweichungen "hoch" melden): --gegenprobe a,b,c.
 
 Aufruf: /media/oem/scan/venv-seg/bin/python -W ignore -I tools/test_formfamilie_nutzerfunde.py <objekt> --teile_dir D [--formliste F] [--arbeit A] [--neu] [--gegenprobe ...]
-Exit 0 = alle Faelle erkannt (oder >= --min_quote, Standard 0.75) und hoechstens 1 Fehlalarm "hoch" in der Gegenprobe, sonst 1."""
+Streng (Hauptergebnis) = Pflichtwort aus `pruef_pflicht` (fehlt: erste zwei `pruef_stichworte`) im Feld `merkmal` einer Abweichung hoch/mittel des Teils; locker = beliebiges Stichwort in merkmal/foto/modell.
+Exit 0 = alle Faelle streng erkannt (oder >= --min_quote, Standard 0.75) und hoechstens 1 Fehlalarm "hoch" in der Gegenprobe, sonst 1."""
 import sys, os, re, json, glob, argparse, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import formfamilie_pruefen as FP
@@ -33,7 +34,8 @@ def faelle_lesen(objekt):
         if not isinstance(b, dict) or not b.get("formfamilie_test"): continue
         if "nutzer" not in str(b.get("wer", "")).lower(): continue
         if b.get("erledigt") or str(b.get("status", "")).lower() in ("erledigt", "geschlossen"): continue
-        out.append({"nr": i, "teil": str(b.get("teil", "")).replace(":", "__"), "merkmal": b.get("merkmal", ""), "stichworte": [norm(x) for x in b.get("pruef_stichworte", [])]})
+        out.append({"nr": i, "teil": str(b.get("teil", "")).replace(":", "__"), "merkmal": b.get("merkmal", ""), "stichworte": [norm(x) for x in b.get("pruef_stichworte", [])],
+                    "pflicht": [norm(x) for x in (b.get("pruef_pflicht") or b.get("pruef_stichworte", [])[:2])], "pflicht_aus_feld": bool(b.get("pruef_pflicht"))})
     return out
 
 
@@ -54,21 +56,24 @@ def main():
     t0 = time.time()
     erg = FP.main([a.objekt, "--teile_dir", a.teile_dir, "--formliste", fl, "--arbeit", a.arbeit, "--teile", ",".join(teile), "--parallel", str(len(teile))] + (["--neu"] if a.neu else []))
     print(f"\nLaufzeit {time.time() - t0:.0f} s, neue claude-Aufrufe {erg.get('claude_aufrufe')}\n")
-    ok_n = 0
+    ok_n = ok_l = 0
     for f in faelle:
-        gef, ungep = [], []
+        gef, gl, ungep = [], [], []
         for t in f["stls"]:
             r = erg["teile"].get(t, {})
             if r.get("status") != "ok": ungep.append(t); continue
             for ab in r.get("abweichungen", []):
+                if ab.get("sicher") not in ("hoch", "mittel"): continue
                 txt = norm(" ".join(str(ab.get(k, "")) for k in ("merkmal", "foto", "modell")))
-                if ab.get("sicher") in ("hoch", "mittel") and any(w in txt for w in f["stichworte"]): gef.append((t, ab))
-        ok = bool(gef); ok_n += ok
-        print(f"[{'JA ' if ok else 'NEIN'}] #{f['nr']} {f['teil']}: {f['merkmal'][:90]}")
-        for t, ab in gef[:3]: print(f"       {ab['sicher']} | {ab['merkmal']} | Foto: {str(ab['foto'])[:90]} | Modell: {str(ab['modell'])[:90]}")
+                if any(w in txt for w in f["stichworte"]): gl.append((t, ab))
+                # streng: Pflichtwort im Feld 'merkmal' selbst (= die Abweichung bezieht sich auf dieses Merkmal, nicht nur ein Nebensatz)
+                if any(w in norm(ab.get("merkmal", "")) for w in f["pflicht"]): gef.append((t, ab))
+        ok = bool(gef); ok_n += ok; ok_l += bool(gl)
+        print(f"[streng {'JA ' if ok else 'NEIN'} | locker {'JA ' if gl else 'NEIN'}] #{f['nr']} {f['teil']}: {f['merkmal'][:90]}  Pflicht{'' if f['pflicht_aus_feld'] else '(Ersatz aus Stichworten)'}: {f['pflicht']}")
+        for t, ab in (gef or gl)[:3]: print(f"       {ab['sicher']} | {ab['merkmal']} | Foto: {str(ab['foto'])[:90]} | Modell: {str(ab['modell'])[:90]}")
         if ungep: print("       ungeprueft:", ", ".join(ungep))
-        elif not ok: print("       (Pruefer meldete nichts Passendes)")
-    print(f"\nTrefferquote {ok_n} von {len(faelle)}")
+        elif not gl: print("       (Pruefer meldete nichts Passendes)")
+    print(f"\nTrefferquote streng {ok_n} von {len(faelle)} (Hauptergebnis), locker {ok_l} von {len(faelle)} (Vergleich)")
     print("Gegenprobe:"); hoch = 0
     for t in gegen:
         r = erg["teile"].get(t, {}); abw = r.get("abweichungen", []) if r.get("status") == "ok" else []

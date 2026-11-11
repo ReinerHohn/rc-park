@@ -6263,7 +6263,15 @@
     "zacke",
     "stufe"
    ],
-   "formfamilie_test": true
+   "formfamilie_test": true,
+   "pruef_pflicht": [
+    "treppe",
+    "saegezahn",
+    "zacke",
+    "stufenform",
+    "daechlein",
+    "abdeckung"
+   ]
   },
   {
    "teil": "bruestung:balkon",
@@ -6279,7 +6287,13 @@
     "knick",
     "umknick"
    ],
-   "formfamilie_test": true
+   "formfamilie_test": true,
+   "pruef_pflicht": [
+    "stirn",
+    "seitenteil",
+    "eckpfosten",
+    "gelaender"
+   ]
   },
   {
    "teil": "baldachinreihe:baldachine",
@@ -6295,7 +6309,13 @@
     "masswerk",
     "krone"
    ],
-   "formfamilie_test": true
+   "formfamilie_test": true,
+   "pruef_pflicht": [
+    "aufsatz",
+    "masswerk",
+    "bekroenung",
+    "fiale"
+   ]
   },
   {
    "datum": "auto",
@@ -6378,7 +6398,13 @@
     "bogen",
     "rechteck"
    ],
-   "formfamilie_test": true
+   "formfamilie_test": true,
+   "pruef_pflicht": [
+    "stirnbogen",
+    "seitenoeffnung",
+    "durchgang",
+    "stirn"
+   ]
   },
   {
    "teil": "staffelgiebel:ost",
@@ -6406,7 +6432,11 @@
     "fuss",
     "basis"
    ],
-   "formfamilie_test": true
+   "formfamilie_test": true,
+   "pruef_pflicht": [
+    "sockel",
+    "fuss"
+   ]
   },
   {
    "teil": "kreuzgewoelbe:laube",
@@ -6421,7 +6451,11 @@
     "rund",
     "spitz"
    ],
-   "formfamilie_test": true
+   "formfamilie_test": true,
+   "pruef_pflicht": [
+    "schildbogen",
+    "bogenart"
+   ]
   },
   {
    "teil": "kreuzgewoelbe:laube",
@@ -6437,7 +6471,12 @@
     "rippe",
     "ansatz"
    ],
-   "formfamilie_test": true
+   "formfamilie_test": true,
+   "pruef_pflicht": [
+    "grat",
+    "saegezahn",
+    "zacke"
+   ]
   },
   {
    "teil": "kreuzgewoelbe:laube",
@@ -6452,7 +6491,12 @@
     "schildbogen",
     "keil"
    ],
-   "formfamilie_test": true
+   "formfamilie_test": true,
+   "pruef_pflicht": [
+    "schildbogen",
+    "anfaenger",
+    "wandanschluss"
+   ]
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
