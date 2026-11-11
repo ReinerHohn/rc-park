@@ -1,0 +1,32 @@
+{
+ "id": "M-6119-017",
+ "foto": "6119",
+ "kamera": "K-6119",
+ "ebene": "0.3338,0.9426,0=7.73",
+ "name": "Laubensockel Ost Fussz (Pflasterkante an der Sockelfront n 7,73, Auge-Pick)",
+ "mess_px": [
+  1000.0,
+  3614.0,
+  2000.0,
+  3608.0
+ ],
+ "P1": [
+  12.62,
+  3.732,
+  1.78
+ ],
+ "P2": [
+  8.592,
+  5.158,
+  1.733
+ ],
+ "dz": -0.048,
+ "dy": 1.426,
+ "dx": -4.028,
+ "abstand": 4.273,
+ "z1": 1.78,
+ "z2": 1.733,
+ "unsicherheit_rel": 0.02,
+ "unsicherheit_m": 0.106,
+ "massstab_von": "Kamera K-6119 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.73 (+-0.3 m)"
+}

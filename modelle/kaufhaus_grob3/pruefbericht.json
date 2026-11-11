@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_044705a044705/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.252124612687105,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.1074872687458992,
-  "wand_anteil_unter": 0.0005666666666666667,
+  "wand_pq": 0.1059015691280365,
+  "wand_anteil_unter": 0.0004333333333333333,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,7 +50,7 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 2.128511469441953,
-  "teile_ueberhang": 0.00685,
+  "teile_ueberhang": 0.00751,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.72,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.72,
@@ -233,7 +233,8 @@
   "giebel_o_fe2_f": 3.075931753831693,
   "giebel_o_fe2_w": 3.1959629907465255,
   "giebel_o_fe3_f": 2.9082795046561043,
-  "giebel_o_fe3_w": 3.028256883834843
+  "giebel_o_fe3_w": 3.028256883834843,
+  "laube_sockel_fuss_ost_165": -0.011742787709893232
  },
  "pruefungen": [
   {
@@ -438,7 +439,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.1074872687458992,
+   "wert": 0.1059015691280365,
    "soll": [
     0.0348,
     100
@@ -468,7 +469,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00685,
+   "wert": 0.00751,
    "soll": [
     0,
     0.01
@@ -1922,6 +1923,16 @@
    "soll": [
     -0.2,
     -0.05
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laubensockel Ost: Fuss >= 1,65 (in z 1,65 noch Wandebene, kein Sockel)",
+   "wert": -0.011742787709893232,
+   "soll": [
+    -0.08,
+    0.08
    ],
    "ok": true,
    "status": "ok"
