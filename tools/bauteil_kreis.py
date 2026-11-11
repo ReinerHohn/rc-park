@@ -1011,7 +1011,7 @@ for runde in range(1, RUNDEN + 1):
                 # geaenderte Erzeugnisse in main (10.11.: Diagnoselauf schrieb audit/fehlteile_6124.json): Kopie sichern, auf HEAD zuruecksetzen, erneut mergen; Quelldateien nie anfassen
                 sich = os.path.join(KREISDIR, OBJ, "merge_sicherung", LAUF + f"_r{runde}_lokal")
                 fl = [l.strip() for l in (mr.stderr + mr.stdout).splitlines() if l.startswith(("\t", "    ")) and l.strip()]
-                erz = lambda f: f.startswith("modelle/stl/") or f.endswith(("pruefbericht.json", "MASSNACHWEIS.md", ".jpg", ".png")) or "/audit/" in f
+                erz = lambda f: f.startswith("modelle/stl/") or f.endswith(("pruefbericht.json", "MASSNACHWEIS.md", "elemente.json", ".jpg", ".png")) or "/audit/" in f
                 if fl and all(erz(f) for f in fl):
                     for f in fl:
                         os.makedirs(os.path.dirname(os.path.join(sich, f)), exist_ok=True); shutil.copy2(os.path.join(ROOT, f), os.path.join(sich, f))
@@ -1030,7 +1030,7 @@ for runde in range(1, RUNDEN + 1):
                 # Konflikt nur in Bau-Erzeugnissen (STL/Pruefbericht; 10.11. Gauben vs. Laube-Runde: teil_01.stl beidseitig neu gebaut):
                 # Quellen sind sauber gemergt -> Erzeugnisse auf main neu bauen statt Annahme liegen lassen. Quellkonflikte bleiben Abbruch.
                 konf = subprocess.run(["git", "-C", ROOT, "diff", "--name-only", "--diff-filter=U"], capture_output=True, text=True).stdout.split()
-                erzeugt = lambda f: f.startswith("modelle/stl/") or f.endswith(("pruefbericht.json", "MASSNACHWEIS.md", ".jpg", ".png")) or "/audit/" in f
+                erzeugt = lambda f: f.startswith("modelle/stl/") or f.endswith(("pruefbericht.json", "MASSNACHWEIS.md", "elemente.json", ".jpg", ".png")) or "/audit/" in f
                 if konf and all(erzeugt(f) for f in konf):
                     subprocess.run(["git", "-C", ROOT, "checkout", "--theirs", "--"] + konf, capture_output=True)
                     gen = json.load(open(os.path.join(ROOT, "modelle", OBJ, "objekt.json")))["generator"]
