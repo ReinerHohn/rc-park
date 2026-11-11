@@ -50,6 +50,8 @@ def foto_zahl(sha):
     _p, _r = (pm / mk if mk else 0.0), (rf / fk if fk else 0.0)
     pix = dict(prozent_foto_pixel=round(200 * _p * _r / (_p + _r), 1) if _p + _r else None, praez_pixel=round(_p, 3), recall_pixel=round(_r, 3))
     pm = maskiert_zahl(sha, met); pm = dict(prozent_foto_maskiert=pm) if pm is not None else {}
+    _fe = [g["f1_fein"] for g in t.values() if g.get("f1_fein") is not None]   # FEINMASS (SPEC_ORNAMENT_FEINMASS 3): Nebenzahl Feinform (volle Aufloesung, Rippen/Sprossen/Figuren), Hauptzahl unveraendert
+    if _fe: pm["prozent_fein"] = round(100 * sum(_fe) / len(_fe), 1); pm["fein_teile"] = {k: g["f1_fein"] for k, g in t.items() if g.get("f1_fein") is not None}
     return dict(metrik=met, **pm, prozent_foto=round(100 * sum(g["f1"] for g in t.values()) / len(t), 1), hoehe_prozent=round(100 * sum(h) / len(h), 1) if h else None, **pix,
                 foto_teile={k: g["f1"] for k, g in t.items()}, foto_schwaechste=[[k, g["f1"]] for k, g in sorted(t.items(), key=lambda kv: kv[1]["f1"])[:4]])
 
@@ -69,6 +71,8 @@ def zeile_ausgeben(z, vor):
         d = "" if vf is None else f" ({'+' if z['prozent_foto'] >= vf['prozent_foto'] else ''}{z['prozent_foto'] - vf['prozent_foto']:.1f} Punkte gegen {vf['zeit'][11:16]})"
         print(f"REALITAET (Foto) {z['prozent_foto']:.1f} %{d} | Hoehe {z.get('hoehe_prozent')} % | schwaechste am Foto: "
               + ", ".join(f"{t} {b:.2f}" for t, b in z.get("foto_schwaechste") or []), flush=True)
+        if z.get("prozent_fein") is not None:
+            print(f"  Nebenzahl FEINFORM {z['prozent_fein']:.1f} % (volle Aufloesung, sieht Rippen/Sprossen/Figuren/Schuppen; {len(z.get('fein_teile') or {})} Teile)", flush=True)
         if z.get("prozent_foto_maskiert") is not None:
             print(f"  Nebenzahl Foto mit Stoermaske {z['prozent_foto_maskiert']:.1f} % (Menschen/Fahrzeuge/Schilder/Moebel/Pflanzen/Fahnen ausgenommen; Hauptzahl unveraendert)", flush=True)
         if z.get("prozent_foto_pixel") is not None:
