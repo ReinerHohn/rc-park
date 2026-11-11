@@ -161,16 +161,24 @@ def fehlversuche_global():
             except Exception: continue
             if (z.get("ziel") or {}).get("teil"): ev.append((z.get("zeit", ""), lauf, z))
     ev.sort(key=lambda e: e[0])   # zeitlich ueber alle Spuren, damit eine Annahme spaetere Zaehlung zuruecksetzt
-    boxen = teil_boxen(); n = {}
+    boxen = teil_boxen(); n = {}; leer = {}
     for _, lauf, z in ev:
         t = z["ziel"]["teil"]
         if z["ziel"].get("art") == "beobachtung": t = beob_schluessel(z["ziel"].get("beob") or {})   # eigene Zaehlung je Beobachtung (neue Information, z. B. Nutzer-Sichtfund)
         if z.get("angenommen") is False and not z.get("infra_oom") and z.get("metrik", "v1") == METRIK_SOLL and ("tor" in z or (t.endswith("__neu") and "guete_vor_nach" in z)): n[t] = n.get(t, 0) + 1   # nur Runden mit dem Foto-Tor (Feld 'tor', ab 10.11. abends) zaehlen - Verwerfungen unter dem Wolken-Tor sperren nicht
+        _ff = z.get("foto_f1_vor_nach") or [None, None]
+        _lr = z.get("agent_leer") if "agent_leer" in z else bool(z.get("frueh_abgelehnt") and _ff[0] is not None and _ff[0] == _ff[1])   # Altbestand vor 11.11. 02:5x
+        _tt = z["ziel"]["teil"]   # leere Runden zaehlen am TEIL, nicht am Beobachtungsschluessel (gesperrte Beobachtung -> Teil kam als Teil wieder)
+        if _lr and z.get("angenommen") is False and z.get("metrik", "v1") == METRIK_SOLL: leer[_tt] = leer.get(_tt, 0) + 1
         if z.get("angenommen") is True:
-            n[t] = 0
+            n[t] = 0; leer[z["ziel"]["teil"]] = 0
             # Nutzerentscheid 10.11.: gesperrte Teile werden wieder frei, wenn ein Nachbarteil (Box +-1 m) danach in main geaendert wurde (neue Lage)
             if not nicht_in_main(z, lauf, z.get("runde")):
                 for u in [u for u in n if n[u] and u != t and nah(boxen, u, t)]: n[u] = 0
+    # LEERE RUNDEN (11.11., Westgiebel 4x in einer Nacht): Agent aenderte nichts (Daten fehlen, z. B. Rueckseite ohne Foto). Nachbar-Annahmen aendern daran
+    # nichts -> nach 2 leeren Runden gesperrt bis zur direkten Annahme dieses Teils (neue Fotos: Eintrag in fehlteil/Fotoplan, dann Zaehler per Annahme).
+    for t, k in leer.items():
+        if k >= 2: n[t] = max(n.get(t, 0), MAX_GLOBAL)
     return n
 
 NACHBAR = 1000 / 87 * 1.0   # 1 m in Teil-STL-Einheiten (mm im Massstab 1:87)
@@ -723,7 +731,7 @@ for runde in range(1, RUNDEN + 1):
                 sh_cpu(json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"], wt, log=os.path.join(LDIR, f"export_r{runde}_vorher_form.log"), env={"BAUTEILE_AUS": _tvf})
             shutil.copy2(os.path.join(wt, STL), _svf); _fehl_vor = (_tvf, _svf, formliste())
         except Exception as _ex: print(f"Runde {runde}: Basisstand fuer Fehlteil-Fototor nicht gesichert: {_ex}", flush=True)
-    t0 = time.time()
+    t0 = time.time(); _agent_leer = False
     if PATCH:   # Agentenarbeit aus abgebrochener Runde uebernehmen statt neuen Agenten (gleiches Tor danach)
         # 11.11.: verworfen_rN.patch enthaelt erzeugte Dateien (STL, Teile, Audit, Pruefbericht) - nach jedem main-Merge passen die nie -> ausschliessen, werden neu gebaut
         _ex = [f"--exclude={x}" for x in ("modelle/stl/*", "modelle/stl/*/*", "modelle/stl/*/*/*", f"modelle/{OBJ}/audit/*", f"modelle/{OBJ}/audit/*/*",
@@ -767,6 +775,7 @@ for runde in range(1, RUNDEN + 1):
         _diff = subprocess.run(["git", "-C", wt, "status", "--porcelain", "--", "tools", "modelle/" + OBJ + "/objekt.json"], capture_output=True, text=True).stdout.strip()
         if not _diff:   # Agent hat Generator/objekt.json nicht geaendert (z. B. begruendet 'nicht belegt', a144153 10.11.) -> Rueckgabe waere Leerlauf
             print(f"Runde {runde}: Vorpruefung - Agent hat am Generator nichts geaendert, keine Rueckgabe", flush=True)
+            _agent_leer = True
             _vorab_gebaut = _rq == 0   # Stand unveraendert seit dem Export
         elif _rq != 0 or (_qa := angleichen(f"r{runde}_{_vk}", f"r{runde}_vorpruef", _vq, ff_q, "Vorpruefung"))[1] is None or _qa[0] is None or _qa[1] < _qa[0] + MIN_GEWINN_FOTO or _hoehe_faellt(runde, _vk):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde (gemeinsame Fotos)
             try: _je = (json.load(open(os.path.join(LDIR, f"fotoform_r{runde}_vorpruef.json")))["teile"].get(ziel["teil"]) or {})
@@ -1042,7 +1051,7 @@ for runde in range(1, RUNDEN + 1):
     if not TROCKEN and wt != ROOT:   # Platz (10.11.: 11 Worktrees x 430 MB fuellten die Datenplatte); Inhalt liegt als Commit auf dem Zweig br
         subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
-               "agent_rc": rcA, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "metrik": METRIK_SOLL, "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else (("foto_neu" if foto_tor else "region") if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "kontroll_f1_vor_nach": [kf_v, kf_n], "kontroll_skala": SKALA_VOR if _flk is not None else 1.0, "frueh_abgelehnt": _frueh, "kontroll_fotos": kf_fotos, "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
+               "agent_rc": rcA, "agent_leer": _agent_leer, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "metrik": METRIK_SOLL, "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else (("foto_neu" if foto_tor else "region") if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "kontroll_f1_vor_nach": [kf_v, kf_n], "kontroll_skala": SKALA_VOR if _flk is not None else 1.0, "frueh_abgelehnt": _frueh, "kontroll_fotos": kf_fotos, "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
                "tor_konvergenz": tor_konv, "foto_f1": [ff_v, ff_n], "foto_fotos": ff_fotos, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")
