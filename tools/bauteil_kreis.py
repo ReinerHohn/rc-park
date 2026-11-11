@@ -597,13 +597,18 @@ def auftrag(ziel, runde, wt):
             f"zusaetzlich nach {wt}/modelle/{OBJ}/audit/kreis_bericht.md schreiben und die Overlay-Pfade dort auflisten.")
     return txt
 
-def pruefer_urteil(wt, ziel, runde):
+def pruefer_urteil(wt, ziel, runde, vs_info=None):
     p = (f"Du bist der Pruefer nach modelle/VORLAGE_BAUTEIL_RUNDE.md (Abschnitt Pruefer-Checkliste) im Worktree {wt}, Objekt {OBJ}, "
          f"Bauteil {ziel['teil'].replace('__', ':')}" + (f" (FEHLENDES ELEMENT im Kasten {ziel['lo']} .. {ziel['hi']} m: neues Teil muss dort echte Fotokanten treffen, nichts erfunden)" if ist_fehlteil(ziel) else "") + f". Lies {wt}/modelle/{OBJ}/audit/kreis_bericht.md, sieh dir JEDES dort genannte Overlay "
          f"und {wt}/modelle/{OBJ}/audit/seiten.jpg selbst an. Pruefe: Formbeschreibung vollstaendig und passend zu den Fotos? Formpruefung je Foto vorher/nachher: {LDIR}/fotoform_bilder/{ziel['teil']}_*_r{runde}_vorher.jpg und _nachher.jpg "
          f"(gelb = Fotokante ohne Modell = fehlende Form, rot = erfundene Form) ansehen und gelbe Reste in die Fehlerliste. Trifft das Teil "
          "die Fotos besser als vorher? Neue Fehler an anderen Teilen? Nichts schoenreden, Agenten-'ok' nie uebernehmen. Aendere KEINE Dateien. "
          'Letzte Zeile deiner Antwort GENAU: URTEIL {"annehmen": true|false, "fehlerliste": ["..."]}')
+    if vs_info:   # L46: Dichte-Verdacht sichtbar machen
+        p += (f" VERSCHIEBUNGSKONTROLLE (dasselbe Teil 0,3 m versetzt am Foto gemessen): {json.dumps(vs_info, ensure_ascii=False)}. "
+              "marge_min <= 0 = DICHTE-VERDACHT: versetzte Kopie trifft die Fotokanten genauso gut, der Foto-Gewinn belegt dann NICHT die Lage/Form - "
+              "annehmen nur, wenn du die Lage in den Vorher/Nachher-Bildern selbst klar bestaetigst, und das in der Begruendung nennen. "
+              "0 < marge_min < 0,03 = schwach belegt. konkat_gueltig false = Kontrolle fuer dieses (abgezogene) Teil nicht beurteilbar.")
     rc, out = sh(["claude", "-p", p, "--model", PRUEFER, "--permission-mode", "plan"], wt,
                  log=os.path.join(LDIR, f"pruefer_r{runde}.log"), timeout=MAX_MIN * 60)
     m = re.findall(r"URTEIL\s*(\{.*\})", out)
@@ -706,7 +711,7 @@ for runde in range(1, RUNDEN + 1):
     print(f"Runde {runde}: Ziel {ziel['teil']} ({'Fehlteil ' + str(ziel['pkt']) + ' Pkt, Recall Kasten ' + str(ziel['recall_kasten']) if ist_fehlteil(ziel) else 'Wolkenbeleg ' + str(ziel['beleg'])}) -> Auftrag {LDIR}/auftrag_r{runde}.md")
     if TROCKEN:
         freigeben(ziel["teil"]); protokoll({"runde": runde, "trocken": True, "ziel": ziel}); print(txt[:1500]); break
-    ff_v, ff_fotos, kf_fotos, kf_v = None, [], [], None; _ff_spaet = None
+    ff_v, ff_fotos, kf_fotos, kf_v = None, [], [], None; _ff_spaet = None; _vs_teil = None
     if not ist_fehlteil(ziel) and not TROCKEN and not NACH:   # Form am Foto VOR dem Agenten (Basisstand), gleiche Fotos nachher
         _fl = formliste(); ff_fotos = form_fotos(_fl, ziel["teil"])
         if KONTROLLE:
@@ -940,6 +945,7 @@ for runde in range(1, RUNDEN + 1):
                 if _best is None or _px > _best[1]: _best = (p_, _px, sorted(_je, key=lambda k: -(_je[k]["mk_px"] + _je[k]["fk_px"]))[:10])
             if _best:
                 p_, _, _ff = _best; ff_fotos = _ff
+                _vs_teil = p_
                 ff_n = form_messen(wt, _tn, p_, _ff, f"r{runde}_nachher")
                 ff_v = form_messen(wt, _fehl_vor[0], p_, _ff, f"r{runde}_vorher", stl=_fehl_vor[1])
                 ff_v, ff_n = angleichen(f"r{runde}_vorher", f"r{runde}_nachher", ff_v, ff_n, "Fehlteil")
@@ -955,7 +961,21 @@ for runde in range(1, RUNDEN + 1):
                     _rk_ok = rcK == 0 or (rcK == 3 and _rk and all(x.startswith(("recall ", "praezision ")) and " m:" in x for x in _rk))
                     tor_konv = _rk_ok and gewinn >= MIN_GEWINN_FOTO and not rueck_teil
     if rueck_teil: print(f"Runde {runde}: Rueckschritt im Ziel-Teil: {rueck_teil}")
-    urteil = pruefer_urteil(wt, ziel, runde) if (tor_abnahme and tor_konv) else {"annehmen": False, "fehlerliste": ["nicht geprueft: Vortor rot"]}
+    # VERSCHIEBUNGSKONTROLLE (11.11., L46): Foto-F1 misst auf Ornament Kantendichte (Erker-Rippen 90 Grad gedreht > korrekt). Vor dem Pruefer das Teil um
+    # 0,3 m versetzt messen (tools/tor_verschiebung.py, +t und +z, 5 Fotos, halbe Aufloesung); Ergebnis als WARNUNG an den Pruefer, kein hartes Tor
+    # (Schwelle 0,03 noch unkalibriert; subtraktive Teile nicht beurteilbar). RCPARK_VERSCHIEBUNG=0 schaltet ab.
+    vs_info = None
+    if tor_abnahme and tor_konv and os.environ.get("RCPARK_VERSCHIEBUNG", "1") != "0" and ff_fotos:
+        try:
+            _vt = _vs_teil if ist_fehlteil(ziel) else ziel["teil"]; _vo = os.path.join(LDIR, f"verschiebung_r{runde}.json")
+            if os.path.exists(os.path.join(_tn, _vt + ".stl")):
+                sh_tor([PY, "-W", "ignore", "-I", "tools/tor_verschiebung.py", OBJ, "--teile_dir", _tn, "--teil", _vt, "--fotos", ",".join(ff_fotos[:5]),
+                        "--versatz", "0.3", "--skala", "0.5", "--aus", _vo], wt, log=os.path.join(LDIR, f"verschiebung_r{runde}.log"))
+                if os.path.exists(_vo):
+                    _v = json.load(open(_vo)); vs_info = {k: _v.get(k) for k in ("f1_echt", "marge_min", "marge_achse", "lage_belegt", "konkat_gueltig")}
+                    print(f"Runde {runde}: Verschiebungskontrolle {_vt}: {vs_info}", flush=True)
+        except Exception as _ex: print(f"Runde {runde}: Verschiebungskontrolle fehlgeschlagen: {_ex}", flush=True)
+    urteil = pruefer_urteil(wt, ziel, runde, vs_info) if (tor_abnahme and tor_konv) else {"annehmen": False, "fehlerliste": ["nicht geprueft: Vortor rot"]}
     angenommen = tor_abnahme and tor_konv and bool(urteil.get("annehmen"))
     if angenommen and gitter_widerspruch:
         try:
