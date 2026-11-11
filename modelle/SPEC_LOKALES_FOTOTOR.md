@@ -49,3 +49,13 @@ Zusätzlich die Regression mit `tools/regression.py ... --pruefen`. Das Ergebnis
 - Kein Lockern bestehender Sollwerte. Neu ist nur ein zusätzlicher Weg mit eigener, strengerer Schwelle.
 - GPU-Regeln aus CLAUDE.md. Regel 8b gilt: Regression nach jeder Werkzeugänderung.
 - Datei-Reihenfolge: `teil_fotoform.py` wird gerade vom Tempo-Agenten umgebaut. Diese Spec wird ERST danach umgesetzt, auf seinem Stand.
+
+## Rückblick-Test an alten Läufen (Nutzer 11.11.: „alte Läufe nochmals mit lokal testen“)
+- Prüfsatz: 45 verworfene Runden mit Generatoränderung und gespeichertem Patch, bei denen der Foto-F1 gleich blieb oder nur knapp stieg (Liste per Skript aus `rc-park_kreis/kaufhaus_grob3/*/kreis.jsonl` + `verworfen_rN.patch`).
+- Je Runde nur messen, mit den Teile-Ordnern vorher/nachher aus dem Laufordner (fehlen sie, Patch in Worktree anwenden und `BAUTEILE_AUS` exportieren). Kein Agent.
+- Eingebaute Gegenprobe: Runden mit begründeter Prüfer-Ablehnung müssen auch lokal fallen. Beispiele:
+  - a091923 r2: Tor rund statt spitz
+  - a044705 r4: erfundene Facetten an der Rinne
+  Fällt eine davon lokal durch die Schwelle, ist die Regel zu weich: zuerst Ursache klären, dann erst einbauen.
+- Bericht: Tabelle Runde | Teil | ganz vor/nach | lokal vor/nach | Prüfer-Urteil damals | eigenes Urteil am Bild.
+- Lokale Gewinner gehen danach per `--ziel/--patch` erneut durch das volle Tor.
