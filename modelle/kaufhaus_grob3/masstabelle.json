@@ -6202,6 +6202,14 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.15 m (Zelle [312, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "kreis 20261111_055110a055110 r1 (Agent-Stufe0, Rohfotos 6162/6145/6132, uebernommen)",
+   "teil": "gaubenreihe:oben",
+   "merkmal": "Rundbogenfenster in der Gaubenstirn fehlt im Modell",
+   "text": "Agent sah in den Rohfotos ein Rundbogenfenster in der Stirn der oberen Gauben, das im Modell fehlt; erklaert gelbe Boegen (Fotokante ohne Modellkante) in 6259 und c12. Seitenfenster in der Ostwange NICHT bestaetigt (6162/6145: geschlossene Dreiecksplatte); Westwange in keinem Foto sichtbar. Dachueberstand bereits gebaut (Kreis2 r2 10.11.). Runde endete ohne Generatoraenderung, weil die Basismessung in der GPU-Warteschlange haengen blieb.",
+   "naechster_schritt": "Rundbogenfenster (Breite, Kaempfer-/Scheitelhoehe) per foto_mass auf >=3 Torfotos messen, als Nische in der Gaubenstirn bauen, Foto-F1 gaubenreihe__oben gegen 0,743."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
