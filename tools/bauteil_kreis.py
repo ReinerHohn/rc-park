@@ -728,6 +728,11 @@ for runde in range(1, RUNDEN + 1):
         # 11.11.: verworfen_rN.patch enthaelt erzeugte Dateien (STL, Teile, Audit, Pruefbericht) - nach jedem main-Merge passen die nie -> ausschliessen, werden neu gebaut
         _ex = [f"--exclude={x}" for x in ("modelle/stl/*", "modelle/stl/*/*", "modelle/stl/*/*/*", f"modelle/{OBJ}/audit/*", f"modelle/{OBJ}/audit/*/*",
                                           f"modelle/{OBJ}/pruefbericht.json", f"modelle/{OBJ}/MASSNACHWEIS.md", f"modelle/{OBJ}/konvergenz.jsonl")]
+        # 11.11. a020500: der Vorher-Export schreibt elemente.json neu -> '--3way: entspricht nicht der Version im Index'. Vom Patch beruehrte Dateien,
+        # die nur der Export veraendert hat, auf HEAD zuruecksetzen (der Bau danach erzeugt sie aus dem gepatchten Generator neu).
+        _pp = [l.split("\t", 2)[-1] for l in subprocess.run(["git", "-C", wt, "apply", "--numstat"] + _ex + [PATCH], capture_output=True, text=True).stdout.splitlines() if "\t" in l]
+        _mod = set(subprocess.run(["git", "-C", wt, "diff", "--name-only"], capture_output=True, text=True).stdout.split())
+        if set(_pp) & _mod: subprocess.run(["git", "-C", wt, "checkout", "--"] + sorted(set(_pp) & _mod), capture_output=True); print(f"Runde {runde}: vor Patch zurueckgesetzt (Export-Reste): {sorted(set(_pp) & _mod)}", flush=True)
         rcA = subprocess.run(["git", "-C", wt, "apply", "--whitespace=nowarn"] + _ex + [PATCH], capture_output=True, text=True).returncode
         if rcA != 0:   # Patch aelter als main (masstabelle.json wuchs): 3-Wege-Anwendung
             for _v in range(3):   # 11.11. a014000/a015000: rc=1 zur Laufzeit, von Hand sofort sauber -> vorruebergehend (paralleles Git der Spuren?), wiederholen
