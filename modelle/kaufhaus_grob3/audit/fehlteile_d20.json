@@ -2,51 +2,8 @@
  "foto": "d20",
  "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-d20 (amtliche Anker)",
- "zelle_px": 139,
+ "zelle_px": 141,
  "schwelle": 0.35,
- "treffer": [
-  {
-   "zelle": [
-    1251,
-    1112,
-    139
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    13.99,
-    -6.81,
-    14.83
-   ]
-  },
-  {
-   "zelle": [
-    1390,
-    2780,
-    139
-   ],
-   "score": -0.91,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    11.19,
-    -2.78,
-    1.56
-   ]
-  },
-  {
-   "zelle": [
-    1251,
-    556,
-    139
-   ],
-   "score": -0.836,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    14.46,
-    -6.61,
-    19.99
-   ]
-  }
- ],
+ "treffer": [],
  "versatz_test": null
 }
