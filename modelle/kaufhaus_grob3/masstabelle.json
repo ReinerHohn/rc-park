@@ -7036,6 +7036,14 @@
    "erledigt": "kreis 20261111_164909a164909 r2 2026-11-11 17:43: Formfund-Pruefer besteht (sicher mittel), Foto-F1 0.8 -> 0.801; Rest siehe Pruefer-Rest"
   },
   {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_164909a164909 r2 (automatisch)",
+   "teil": "satteldach:haupt",
+   "merkmal": "Pruefer-Rest satteldach:haupt kreis 20261111_164909a164909 r2",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Dichte-Verdacht: marge_min -0,008, F1 0,795->0,797 belegt Lage/Form NICHT; Lage nur durch Zwei-Paar-Triangulation und Augenschein 6145/j05 gestuetzt (ca. +-0,3 m) | 6132 linker Speier ueberwiegend rot: Modellkeil zum Kopf hin zu dick/fächert nach oben auf, Fotorohr flach bei y~985-1010 - Neigung oder Kopfblock falsch | j05 rechter Speier: Modellblock reicht ca. 70 px tiefer als das Fotorohr und ist zu klobig (Querschnitt 0,22 m und Kopf 0,5x0,4 m = ANNAHME, zu gross) | q11: Modell passt nicht (Kamera schwach), nicht als Beleg | Kopf nur Block statt Drachenkopf; Formfamilie unvollstaendig | Erker-Eckdrachen fehlen (erker_polygon/helm, offen) | Fotokanten der duennen Rohre kaum erkannt (kein Gelb vorher) - Foto-F1 hier fast blind fuer Speier | Gelbe Reste ungeloest: Schindel-/Kehlkanten auf der Dachflaeche, Gaubenraender, Erkerdach (vorher wie nachher) | Pflicht verletzt: regression.py --pruefen nach Aenderung an tools/baukasten_gen.py nicht gelaufen (Regel 8b) - vor Merge nachholen | foto_diff und fehlteile_finden nicht gelaufen (Regel 3e/3f) | teile_lage_pruefen: satteldach:haupt Median 2,38 m (Warnung aus Vorrunde, Dachflaeche) weiter offen",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
    "auto_id": "fehlteile-6261-234-1794",
@@ -7102,14 +7110,6 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.09 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "2026-11-11",
-   "wer": "Pruefer opus kreis 20261111_164909a164909 r2 (automatisch)",
-   "teil": "satteldach:haupt",
-   "merkmal": "Pruefer-Rest satteldach:haupt kreis 20261111_164909a164909 r2",
-   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Dichte-Verdacht: marge_min -0,008, F1 0,795->0,797 belegt Lage/Form NICHT; Lage nur durch Zwei-Paar-Triangulation und Augenschein 6145/j05 gestuetzt (ca. +-0,3 m) | 6132 linker Speier ueberwiegend rot: Modellkeil zum Kopf hin zu dick/fächert nach oben auf, Fotorohr flach bei y~985-1010 - Neigung oder Kopfblock falsch | j05 rechter Speier: Modellblock reicht ca. 70 px tiefer als das Fotorohr und ist zu klobig (Querschnitt 0,22 m und Kopf 0,5x0,4 m = ANNAHME, zu gross) | q11: Modell passt nicht (Kamera schwach), nicht als Beleg | Kopf nur Block statt Drachenkopf; Formfamilie unvollstaendig | Erker-Eckdrachen fehlen (erker_polygon/helm, offen) | Fotokanten der duennen Rohre kaum erkannt (kein Gelb vorher) - Foto-F1 hier fast blind fuer Speier | Gelbe Reste ungeloest: Schindel-/Kehlkanten auf der Dachflaeche, Gaubenraender, Erkerdach (vorher wie nachher) | Pflicht verletzt: regression.py --pruefen nach Aenderung an tools/baukasten_gen.py nicht gelaufen (Regel 8b) - vor Merge nachholen | foto_diff und fehlteile_finden nicht gelaufen (Regel 3e/3f) | teile_lage_pruefen: satteldach:haupt Median 2,38 m (Warnung aus Vorrunde, Dachflaeche) weiter offen",
-   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
