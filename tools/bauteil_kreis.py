@@ -50,6 +50,8 @@ MIN_DATEN = opt("--min_daten", 0.3, float); MIN_GEWINN = opt("--min_gewinn", 0.0
 MIN_GEWINN_FOTO = opt("--min_gewinn_foto", 0.02, float)
 FORMFUND = opt("--formfund", 1, int)          # Formfund-Weg (SPEC_FORMFUND_TOR.md); an seit 11.11. 14:2x (Beweis 7/7 gepruefte Faelle richtig, Rinne-Negativfall lief noch; --formfund 0 = aus)
 FORMFUND_TOL = opt("--formfund_tol", 0.005, float)   # erlaubter Foto-F1-Abfall in Formfund-Runden
+GRAUZONE = opt("--grauzone", 1, int)   # SPEC_GRAUZONE_TOR.md (11.11.): Foto-F1 in [-TOL; +MIN_GEWINN_FOTO) -> Bildpruefer ohne Befund (sicher hoch) + Verschiebungskontrolle HART
+GRAU_MARGE = opt("--grau_marge", 0.03, float)   # Verschiebungskontrolle: marge_min >= dies, konkat_gueltig, sonst Grauzone verworfen (schieb2 11.11.: 0,003 = Lage nicht belegt)
 # KONTROLLFOTOS (10.11. abends, Westgiebel-Agent mass auf selbst gewaehlten 6 Fotos 0,73-0,81, auf allen 10 Torfotos 0,413->0,394;
 # Recherche Goodhart): je Teil N Fotos aus Rang 11.. der Formliste, dem Agenten NIE genannt (eigener Bilderordner), erst am Endtor gemessen.
 # Veto, wenn Kontroll-F1 um mehr als MIN_KONTROLLE faellt. ANNAHME: 5 Fotos / 0,01 (noch kein Rauschboden gemessen).
@@ -853,7 +855,7 @@ for runde in range(1, RUNDEN + 1):
     # fallen (> FORMFUND_TOL), statt +MIN_GEWINN_FOTO; dafuer entscheidet zusaetzlich formfund_pruefen.py (Foto|vorher|nachher, opus) vor dem Pruefer.
     _bb = ziel.get("beob") or {}
     _ffr = bool(FORMFUND and ziel.get("art") == "beobachtung" and "nutzer" in str(_bb.get("wer", "")).lower() and _bb.get("formfamilie_test"))
-    _mg = -FORMFUND_TOL if _ffr else MIN_GEWINN_FOTO   # geforderter Mindestgewinn am Foto in dieser Runde
+    _mg = -FORMFUND_TOL if (_ffr or (GRAUZONE and not ist_fehlteil(ziel))) else MIN_GEWINN_FOTO   # Mindestgewinn fuer Vorpruefung/Fruehablehnung; Grauzone entscheidet unten
     if _ffr: print(f"Runde {runde}: FORMFUND-Runde ({_bb.get('merkmal', '')[:80]}): Foto-F1 darf um hoechstens {FORMFUND_TOL} fallen, Formfund-Pruefer entscheidet", flush=True)
     if (ff_v is not None or _ff_spaet) and not ist_fehlteil(ziel) and not NACH and VORPRUEF:
         shutil.rmtree(_tn, ignore_errors=True)
@@ -1076,16 +1078,23 @@ for runde in range(1, RUNDEN + 1):
                     print(f"Runde {runde}: Verschiebungskontrolle {_vt}: {vs_info}", flush=True)
         except Exception as _ex: print(f"Runde {runde}: Verschiebungskontrolle fehlgeschlagen: {_ex}", flush=True)
     formfund_urteil = None
-    if _ffr and tor_abnahme and tor_konv:   # FORMFUND-PRUEFER (Foto|vorher|nachher je geaendertem Teil, opus) vor dem normalen Pruefer; ungeprueft = nicht bestanden
+    _grau = bool(GRAUZONE and not _ffr and not ist_fehlteil(ziel) and foto_tor and gewinn < MIN_GEWINN_FOTO)
+    if _grau and tor_abnahme and tor_konv:   # GRAUZONE: zuerst die harten, billigen Bedingungen (Lage belegt, Kontrollfotos)
+        _gg = []
+        if not vs_info or vs_info.get("konkat_gueltig") is False or (vs_info.get("marge_min") is None) or vs_info["marge_min"] < GRAU_MARGE: _gg.append(f"Lage nicht belegt (Verschiebungskontrolle {vs_info and vs_info.get('marge_min')}, Soll >= {GRAU_MARGE})")
+        if kf_v is not None and kf_n is not None and kf_n < kf_v - FORMFUND_TOL: _gg.append(f"Kontrollfotos {kf_v} -> {kf_n}")
+        print(f"Runde {runde}: GRAUZONE {ziel['teil']}: Foto-F1 {ff_v} -> {ff_n}" + (f" - verworfen: {_gg}" if _gg else " - Lage/Kontrolle ok, Bildpruefer entscheidet"), flush=True)
+        if _gg: tor_konv = False; formfund_urteil = {"urteil": "grauzone_hart", "grund": "; ".join(_gg)}
+    if (_ffr or _grau) and tor_abnahme and tor_konv:   # FORMFUND-PRUEFER (Foto|vorher|nachher je geaendertem Teil, opus) vor dem normalen Pruefer; ungeprueft = nicht bestanden
         _tvd = next((d for d in (os.path.join(LDIR, f"teile_r{runde}_vorher_form"), os.path.join(LDIR, f"teile_r{runde}_vorher")) if os.path.isdir(d)), None)
         _ffj = os.path.join(LDIR, f"formfund_r{runde}.json")
         if _tvd:
             sh_tor([PY, "-W", "ignore", "-I", "tools/formfund_pruefen.py", OBJ, "--vorher", _tvd, "--nachher", _tn, "--befund", str(_bb.get("text") or _bb.get("merkmal") or ""),
-                    "--aus", _ffj, "--arbeit", os.path.join(LDIR, f"formfund_r{runde}")], wt, log=os.path.join(LDIR, f"formfund_r{runde}.log"), sperre=False)
+                    "--aus", _ffj, "--arbeit", os.path.join(LDIR, f"formfund_r{runde}")] + (["--ohne_befund"] if _grau else []), wt, log=os.path.join(LDIR, f"formfund_r{runde}.log"), sperre=False)
         try: formfund_urteil = json.load(open(_ffj))
         except Exception: formfund_urteil = {"urteil": "ungeprueft", "grund": "kein Ergebnis" if _tvd else "Vorher-Teile fehlen"}
         print(f"Runde {runde}: FORMFUND-PRUEFER {ziel['teil']}: {formfund_urteil.get('urteil')} (sicher {formfund_urteil.get('sicher')}): {str(formfund_urteil.get('begruendung', formfund_urteil.get('grund', '')))[:300]}", flush=True)
-        if formfund_urteil.get("urteil") != "besteht": tor_konv = False
+        if formfund_urteil.get("urteil") != "besteht" or (_grau and formfund_urteil.get("sicher") != "hoch"): tor_konv = False
     urteil = pruefer_urteil(wt, ziel, runde, vs_info) if (tor_abnahme and tor_konv) else {"annehmen": False, "fehlerliste": ["nicht geprueft: Vortor rot" if formfund_urteil is None else f"Formfund-Pruefer: {formfund_urteil.get('urteil')}"]}
     angenommen = tor_abnahme and tor_konv and bool(urteil.get("annehmen"))
     if angenommen and gitter_widerspruch:
