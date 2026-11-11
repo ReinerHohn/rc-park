@@ -1,0 +1,31 @@
+{
+ "id": "W-helm_w-fuss",
+ "werkzeug": "inline (Kreis ff_-4_+16_+14, 2026-11-11): Kantengitter segmente_gitter_v12.json (Fotokanten 3D), Segmentpunkte alle 5 cm, Radius 1,4-2,4 um Helmachse West (-3,99/14,38, Modellrahmen), je Punkt Apothem = r*cos(Winkel zur naechsten Achteck-Flaechennormale, Flaeche +n)",
+ "ergebnis": {
+  "z13,1-13,2": {
+   "n": 131,
+   "apothem_median": 1.942,
+   "q10_q90": [
+    1.888,
+    2.041
+   ]
+  },
+  "z13,2-13,3": {
+   "n": 116,
+   "apothem_median": 1.913,
+   "q10_q90": [
+    1.851,
+    1.961
+   ]
+  },
+  "z13,3-13,4": {
+   "n": 19,
+   "apothem_median": 1.895,
+   "q10_q90": [
+    1.821,
+    1.955
+   ]
+  }
+ },
+ "hinweis": "Gegenprobe Foto-Overlay (Fussring 1,78 / 1,90 bei z 13,3 / 13,18 in h13, 6145, i08, h05 projiziert, K-Dateien aus SfM-Buendel): Ring 1,90 z 13,18 liegt auf der Schindel-Unterkante, 1,78 z 13,3 deutlich innerhalb/oberhalb; zusaetzlich M-h05-006 Helmunterkante z 13,18. Triangulation der linken Fussecke (3 Fotos, Picks von Hand) streute 0,4-0,6 m -> verworfen, keine Messung. Gleiche Quelle/Wert wie Osthelm (W-helm_o-fuss 1,92)."
+}
