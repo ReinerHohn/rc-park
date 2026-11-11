@@ -2516,6 +2516,20 @@
    ],
    "quer_max": 0.15,
    "r_max": 6.0
+  },
+  "baldachin2_krone_vorn": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.2 - z_unterkante_lot2",
+   "zentrum": [
+    9.449,
+    10.445
+   ],
+   "richtung": [
+    0.3338,
+    0.9426
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.5
   }
  },
  "pruefungen": [
@@ -5256,6 +5270,22 @@
    "historie": [
     "2026-11-11 Kreis1 staffelgiebel:ost angelegt; Altstand 0 (keine Nische) muss fehlschlagen"
    ]
+  },
+  {
+   "name": "Baldachin 2: Kranzgesims der Krone ragt vor die Bandoberkante (Vorderkante s ueber Bandfront 13,03)",
+   "wert": "baldachin2_krone_vorn",
+   "soll": [
+    0.05,
+    0.2
+   ],
+   "quelltyp": "foto_kalibriert",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6120-062",
+   "quelle": "Bandoberkante-Front s 13,03 (M-6120-062/063, 6120+6132, +-0,1 m); Krone-Blattwerk bis s 13,09 (M-6120-060/061); in 6120/6119/j05/6117 ein heller Riegel (Kranzgesims) an der Kronenunterkante OHNE Modellkante (Foto-F1-Gelb): Gesims steht vor dem Band. Messung = Reichweite in Wandnormalenrichtung ab s 13,0 (Zentrum u 9,449) bei z 14,2; Soll = Vorderkante s 13,05..13,20. Feinwert .46/.42 aus Foto-F1-Sweep (Kreis 20261111_045306 r2), nur innerhalb der Triangulationsfehler +-0,1 m",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-11 angelegt (Kreis 20261111_045306a045306 r2, baldachine): am Altstand (Krone t0 0,30/t1 0,34, Vorderkante hinter der Bandfront) ROT, Soll aus Fotos, nicht gelockert"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -6097,63 +6127,12 @@
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
-   "auto_id": "fehlteile-6261-234-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.55,
-   "z_bis": 18.55,
-   "xyz": [
-    14.33,
-    -8.88,
-    18.55
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.88 m (Zelle [234, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
-   "auto_id": "fehlteile-6261-312-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.23,
-   "z_bis": 18.23,
-   "xyz": [
-    14.6,
-    -7.16,
-    18.23
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-11",
    "wer": "Kreis3 Fehlteil ff_+9_+5_+3 (Fotokanten)",
    "teil": "zylinder:dienst_laube",
    "merkmal": "Dienste (runde Halbsaeulen mit gedrehtem Sockel) an der Laubenrueckwand fehlen",
    "text": "Fotos 6120, 6117, 6130 (und 6119 hinter dem Pfeiler): an der Laubenrueckwand steht je Pfeilerachse ein runder Dienst r~0,185 m (Sockel 0,215 m, Hoehe z 2,21-2,97), der oben in die Gewoelberippen uebergeht (Anlauf z~5,5). Im Modell nur glatte Wand. Offen: Dienste bei u 3,5-3,7 (Tuernische u0 3,625 kollidiert), u -8,3 und 15,8 ungeprueft; Rippen-Vorsprung; Fenster-Kreuzstock der Rueckwand (fensterreihe) flach.",
    "naechster_schritt": "Dienst u -2,30 per Peilung in zweitem Foto messen, Dienst u 3,5 mit Nische abstimmen, Rippen als Familie."
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
-   "auto_id": "fehlteile-6261-312-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.23,
-   "z_bis": 18.23,
-   "xyz": [
-    14.61,
-    -7.15,
-    18.23
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "2026-11-11",
@@ -6172,74 +6151,6 @@
    "teil_erledigt": "2026-11-11 Kreis1: Giebelfenster (3, Z-6115-001/Z-6261-003, M-6115-013..015) als Nischen gebaut, Foto-F1 halbe Aufl. 0,699 -> 0,742. Kaeppchen: Saegezahn-Parameter kappe_steigung (0,3/0,45) senkte F1 (0,729/0,726) -> nicht aktiv (0); Form (Buckel vorn, flache Rueckflanke) am Foto gesehen, Betrag ungemessen (u-Mehrdeutigkeit Einzelansicht)"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
-   "auto_id": "fehlteile-6261-546-1170",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 25.83,
-   "z_bis": 25.83,
-   "xyz": [
-    16.27,
-    -1.51,
-    25.83
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=25.83 m, y=-1.51 m (Zelle [546, 1170, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
-   "auto_id": "fehlteile-6261-234-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.55,
-   "z_bis": 18.55,
-   "xyz": [
-    14.33,
-    -8.89,
-    18.55
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.89 m (Zelle [234, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
-   "auto_id": "fehlteile-6261-312-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.23,
-   "z_bis": 18.23,
-   "xyz": [
-    14.61,
-    -7.15,
-    18.23
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
-   "auto_id": "fehlteile-6261-234-1872",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.41,
-   "z_bis": 17.41,
-   "xyz": [
-    14.29,
-    -8.9,
-    17.41
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.41 m, y=-8.9 m (Zelle [234, 1872, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-11",
    "wer": "kreis 20261111_035601a035601 r1 (automatisch)",
    "merkmal": "Kantengitter widerspricht Foto (staffelgiebel__ost)",
@@ -6252,6 +6163,91 @@
    "teil": "staffelgiebel:ost",
    "merkmal": "Pruefer-Rest staffelgiebel:ost kreis 20261111_035601a035601 r1",
    "text": "Offene Fehler laut Pruefer nach angenommener Runde: kreis_bericht.md ist veraltet (Baldachin-Runde); Agent brach bei 3600 s ab, kein Bericht, keine Formbeschreibung Stufe 0, keine Overlays rundekreis1_staffelgiebel_* | Kaeppchen nicht gebaut (kappe_steigung=0): gelbe Schattenlinien/Vorderkanten der Kaeppchen auf allen Stufen in 6115, nu3b, 6164, 6261; Beobachtung 'Ostgiebel Kaeppchen' bleibt offen | Rote Stufenbloecke ohne Fotokante entlang der rechten Stufensilhouette, massiv in nu3b, auch 6164/6261: Stufenkontur/Kaeppchenform falsch | Linke (gespiegelte) Rueckflanke in 6261: Stufenkanten gelb, Spiegelung deckt sich nicht mit dem Foto | Giebelfenster 1 und 3 in 6261 mit roten Innenpixeln (Nische leicht versetzt oder zu breit); Fenster 1 in 6115 linker Faschen-/Schattenkeil gelb | Fenster 3 Unterkante ist ANNAHME (vom Nachbardach verdeckt) | Fenstertiefe 0,12 m nur aus einem Foto (6115) geschaetzt, ANNAHME rechteckige Laibung; Rot-am-Altstand-Lauf fuer die 3 Laibungspruefungen nicht protokolliert | Roter Streifen am unteren Wandrand (Modellkante ohne Fotokante) in 6115/6261/6164 unveraendert | Endtor in voller Aufloesung und Kontrollfotos stehen aus (nur halbe Aufloesung 0,709->0,761 belegt)",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Kreis 20261111_045306a045306 r2 (Agent, baldachine)",
+   "teil": "baldachinreihe:baldachine",
+   "merkmal": "Kranzgesims der Krone",
+   "quelle": "Foto-F1-Overlays 6120/6119/j05/6117 (gelber Balken an der Kronenunterkante)",
+   "text": "Foto-F1 0,709: gelber waagerechter Balken ueber die ganze Kronenbreite = Kranzgesims-Unterkante; im Modell lag die Kronen-Vorderkante (t 0,30) HINTER der Bandoberkante (t 0,36), die Gesimskante war verdeckt. Schnellsweep t0/t1 (halbe Aufl., 10 Torfotos): .36/.36 -> 0,763, .42/.42 -> 0,782, .46/.40 -> 0,804, .50/.50 -> 0,810 (Recall steigt, Praezision sinkt leicht). Offen: Masswerk-Rippen (Spitzbogenfelder) - Versuch maswerk_rippen verschlechterte Praezision (0,747 -> 0,729), nicht uebernommen; Fialen zu dick/zu hoch im Foto-F1 (Kuerzen auf -0,4 gibt +0,01, widerspricht aber M-6120-051, nicht uebernommen).",
+   "naechster_schritt": "Kranzgesims-Tiefe mit drittem frontalem Foto messen (foto_mass --tri an der Unterkante); Maßwerk als Relief nach Foto-Zaehlung der Felder"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 2)",
+   "auto_id": "fehlteile-6261-234-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.55,
+   "z_bis": 18.55,
+   "xyz": [
+    14.32,
+    -8.9,
+    18.55
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.9 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
+   "auto_id": "fehlteile-6261-312-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.22,
+   "z_bis": 18.22,
+   "xyz": [
+    14.61,
+    -7.15,
+    18.22
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.22 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
+   "auto_id": "fehlteile-6261-234-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.41,
+   "z_bis": 17.41,
+   "xyz": [
+    14.29,
+    -8.9,
+    17.41
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.41 m, y=-8.9 m (Zelle [234, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-312-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.08,
+   "z_bis": 17.08,
+   "xyz": [
+    14.54,
+    -7.15,
+    17.08
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.15 m (Zelle [312, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_045306a045306 r2 (automatisch)",
+   "teil": "baldachinreihe:baldachine",
+   "merkmal": "Pruefer-Rest baldachinreihe:baldachine kreis 20261111_045306a045306 r2",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Rot (erfundene Form) stark gestiegen: 6120 23581->35328 px, 6119 16048->25685, p03 9236->16649, 6127 8405->12357, 6132 12063->16681; Praezision 0,747->0,740, F1-Gewinn fast nur Recall | Baldachin 1 (links, 6120/6119): roter Kronenblock groesser als vorher, Form/Lage 'wie 2' ANNAHME trifft nicht | Baldachin 2 (6120): neue rote Streifen oberhalb des Kranzgesimses, Kronen-Oberteil zu weit vorn/zu breit | Baldachin 3 (6119 rechts): neuer roter Keil links an der Krone; p03 Mitte: roter T-Block an der Krone | Fialen rot/zu dick in 6119, 6120 rechts, i08, d11 (Schraegansicht) - offen | Masswerkband: gelbe Reste in j05 (beide Baldachine, waagerechte Balken), 6120 rechts (Bogenfeld) - Kanten fehlen | Gelbe Reste unten an der Haube: 6120 Mitte/rechts unten, j05 links unten, p03 rechts | Kronentiefe 0,46/0,42 = ANNAHME nur per F1 gewaehlt, Verschiebungsmarge 0,031 = knapp belegt | Pflichtpruefungen nicht gelaufen: teile_lage_pruefen, foto_diff, fehlteile_finden, Teile-Sichtpruefung; Pruefstand nur mit RCPARK_OHNE_FOTODIAG=1; f1_h volle Aufloesung nicht gemessen | Haube/Wangen und Rueckseite ungeprueft; Seitenfialen-Anzahl nicht am Foto gezaehlt (ANNAHME)",
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],

@@ -1,6 +1,6 @@
 {
  "stl": "modelle/stl/kaufhaus_grob3_1-87.stl",
- "modell_volumen_m3": 8972.653,
+ "modell_volumen_m3": 8973.432,
  "massstab": 87.0,
  "winkel_grad": 60.0,
  "ziel_anteil": 0.01,
@@ -16,7 +16,7 @@
    "achse": "z",
    "wert": 8.26,
    "grund": "Unterseite 17.8 m2 waagerecht nach unten -> Bettflaeche",
-   "gewinn_m2": 55.7,
+   "gewinn_m2": 54.7,
    "stifte": [
     [
      -4.528,
@@ -190,11 +190,11 @@
     242.1
    ],
    "passt": true,
-   "ueberhang_m2": 11.597,
-   "flaeche_m2": 2024.64,
-   "ueberhang_anteil": 0.00573,
+   "ueberhang_m2": 11.867,
+   "flaeche_m2": 2025.01,
+   "ueberhang_anteil": 0.00586,
    "wasserdicht": true,
-   "volumen_m3": 4141.12,
+   "volumen_m3": 4141.25,
    "rahmen_u": [
     -10.34,
     7.71
@@ -221,11 +221,11 @@
     235.6
    ],
    "passt": true,
-   "ueberhang_m2": 5.551,
-   "flaeche_m2": 1402.65,
-   "ueberhang_anteil": 0.00396,
+   "ueberhang_m2": 5.641,
+   "flaeche_m2": 1402.78,
+   "ueberhang_anteil": 0.00402,
    "wasserdicht": true,
-   "volumen_m3": 2270.81,
+   "volumen_m3": 2270.85,
    "rahmen_u": [
     7.71,
     17.43
@@ -252,11 +252,11 @@
     78.2
    ],
    "passt": true,
-   "ueberhang_m2": 8.049,
-   "flaeche_m2": 1187.62,
-   "ueberhang_anteil": 0.00678,
+   "ueberhang_m2": 8.145,
+   "flaeche_m2": 1188.99,
+   "ueberhang_anteil": 0.00685,
    "wasserdicht": true,
-   "volumen_m3": 1632.81,
+   "volumen_m3": 1633.07,
    "rahmen_u": [
     0.55,
     17.23
@@ -283,11 +283,11 @@
     78.2
    ],
    "passt": true,
-   "ueberhang_m2": 4.463,
-   "flaeche_m2": 775.27,
-   "ueberhang_anteil": 0.00576,
+   "ueberhang_m2": 4.958,
+   "flaeche_m2": 777.24,
+   "ueberhang_anteil": 0.00638,
    "wasserdicht": true,
-   "volumen_m3": 927.45,
+   "volumen_m3": 927.79,
    "rahmen_u": [
     -10.11,
     0.55
@@ -306,10 +306,10 @@
    ]
   }
  ],
- "max_ueberhang_anteil": 0.00678,
+ "max_ueberhang_anteil": 0.00685,
  "alle_passen": true,
  "log": [
-  "Schnitt z 8.260: Ueberhang -55.70 m2",
+  "Schnitt z 8.260: Ueberhang -54.70 m2",
   "Bettschnitt u 0.553",
   "Bettschnitt u 7.711"
  ],
