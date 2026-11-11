@@ -7,12 +7,12 @@
  {
   "z": 20.5,
   "foto": null,
-  "modell": 3.72
+  "modell": null
  },
  {
   "z": 21.0,
   "foto": null,
-  "modell": 0.46
+  "modell": 1.3599999999999999
  },
  {
   "z": 21.5,
@@ -32,7 +32,7 @@
  {
   "z": 23.0,
   "foto": null,
-  "modell": 10.66
+  "modell": 5.4399999999999995
  },
  {
   "z": 23.5,
@@ -67,27 +67,27 @@
  {
   "z": 26.5,
   "foto": null,
-  "modell": 14.16
+  "modell": 14.2
  },
  {
   "z": 27.0,
   "foto": null,
-  "modell": 9.44
+  "modell": 9.48
  },
  {
   "z": 27.5,
   "foto": null,
-  "modell": 6.92
+  "modell": 6.88
  },
  {
   "z": 28.0,
   "foto": null,
-  "modell": 4.32
+  "modell": 4.36
  },
  {
   "z": 28.5,
   "foto": null,
-  "modell": 1.72
+  "modell": 1.6
  },
  {
   "z": 29.0,

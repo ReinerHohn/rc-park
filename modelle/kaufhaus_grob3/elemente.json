@@ -790,6 +790,57 @@
  },
  {
   "seite": "alle",
+  "element": "Baldachin u 9.46 (Fialenspitze z 15.04)",
+  "quelle": "M-6161-022 (Fialenspitze u 9,462 s 13,127 z 15,045; 6161+6145); Form wie Baldachin 2 = ANNAHME | Form: Stufenhuellen + 3 Fialen (ANNAHME Huellkoerper, Maßwerk/Blattwerk nicht einzeln modelliert)",
+  "u": 9.462,
+  "z_spitze": 15.045,
+  "z_unten": 13.418,
+  "halbbreite_max": 0.495,
+  "wand_n": 12.666,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Baldachin u 5.42 (Fialenspitze z 14.92)",
+  "quelle": "M-6120-051 + M-6161-023 (u 5,443/5,401 s 13,04 z 14,92/14,913); Form gemessen | Form: Stufenhuellen + 3 Fialen (ANNAHME Huellkoerper, Maßwerk/Blattwerk nicht einzeln modelliert)",
+  "u": 5.42,
+  "z_spitze": 14.917,
+  "z_unten": 13.29,
+  "halbbreite_max": 0.495,
+  "wand_n": 12.666,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Baldachin u 1.61 (Fialenspitze z 14.94)",
+  "quelle": "M-6161-024 (u 1,614 s 13,007 z 14,935); Form wie Baldachin 2 = ANNAHME | Form: Stufenhuellen + 3 Fialen (ANNAHME Huellkoerper, Maßwerk/Blattwerk nicht einzeln modelliert)",
+  "u": 1.614,
+  "z_spitze": 14.935,
+  "z_unten": 13.308,
+  "halbbreite_max": 0.495,
+  "wand_n": 12.666,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Baldachin u -2.45 (Fialenspitze z 14.99)",
+  "quelle": "M-6161-025 (u -2,447 s 13,097 z 14,991); Form wie Baldachin 2 = ANNAHME (Foto 6161: Hut der Figur 4 breiter, Baldachin gleich) | Form: Stufenhuellen + 3 Fialen (ANNAHME Huellkoerper, Maßwerk/Blattwerk nicht einzeln modelliert)",
+  "u": -2.447,
+  "z_spitze": 14.991,
+  "z_unten": 13.364,
+  "halbbreite_max": 0.495,
+  "wand_n": 12.666,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Baldachinreihe 4 Baldachine",
+  "quelle": "Fotos 6120/6132/6127 (Fig 2: M-6120-051..064, Triangulation 3 Kameras) und 6161+6145 (alle 4: M-6161-022..025); Baldachin = rote Wimperg-Konsole (Haube mit Maßwerkband) + Fialenkrone ueber dem Figurenkopf, Stufe 0 im Logbuch LOGBUCH_BALDACHIN_FK14_R2_2026-11-10.md | Zaehlung Z-6161-002",
+  "n": 4,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Satteldach",
   "quelle": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json first.z 27.51 (First-Kante 35 m; Rohsegmente waagerecht z 26,5-28: Median 27,29 bei off 3,38 -> +-0,25 m) | Traufe: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json traufe.kante.z 14.68 (waagerechte Kante 50,8 m an der Frontebene; firstgebunden 14.61)",
   "u0": -8.82,

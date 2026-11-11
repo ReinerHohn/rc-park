@@ -745,6 +745,35 @@ def figurenreihe(cfg, ctx):
     beleg("alle", f"Figurenreihe {len(info)} Figuren", cfg["quelle"] + (f" | Zaehlung {', '.join(cfg.get('zaehlung', []))}" if cfg.get("zaehlung") else ""), n=len(info))
     return [UNION(teile).transform(_uszT(cfg))], []
 
+@bauteil("baldachinreihe")
+def baldachinreihe(cfg, ctx):
+    """Reihe wandgebundener Baldachine (Wimperg-Konsolen mit Fialenkrone) ueber Figuren: je Baldachin gestapelte Huellen-Stufen + Fialen, alles relativ zur Spitze der
+    Mittelfiale (z_spitze je Baldachin, Achse u je Baldachin), so dass EIN Satz Formmasse fuer die ganze Reihe gilt (Wiederholung, ANNAHME gleiche Form aller Stuecke,
+    Lage/Hoehe je Stueck gemessen).
+      wand_n: Wandebene (n); stufen [[z0_rel, z1_rel, halbbreite, tiefe0, tiefe1(, wangendicke)]]: Huelle (mit wangendicke: hohl, nur zwei Seitenwangen) (konvex) zwischen dem Rechteck unten (Tiefe tiefe0 vor der Wand, Breite 2*halbbreite)
+              und oben (tiefe1), z relativ zur Fialenspitze (negativ = darunter); einbindung: Tiefe, mit der jede Stufe in die Wand reicht.
+      fialen [[du, tiefe, radius, z_unten_rel, z_spitze_rel]]: Achteck-Schaft + Spitzkegel (letzte kegel_h m) bei u-Versatz du, Mitte tiefe vor der Wand.
+      baldachine [{u, z_spitze, ds (Tiefenversatz des ganzen Stuecks, optional), quelle}]. Pflicht: achse_n, achse_quelle, quelle, wand_n, stufen, fialen, baldachine."""
+    for k in ("achse_n", "achse_quelle", "quelle", "wand_n", "stufen", "fialen", "baldachine"):
+        if cfg.get(k) in (None, ""): sys.exit(f"baldachinreihe: '{k}' fehlt (Regel 3b)")
+    wn = float(cfg["wand_n"]); ein = float(cfg.get("einbindung", 0.1)); kh = float(cfg.get("kegel_h", 0.18)); teile = []; info = []
+    for b in cfg["baldachine"]:
+        u, zt, ds = float(b["u"]), float(b["z_spitze"]), float(b.get("ds", 0.0))
+        for st in cfg["stufen"]:
+            z0, z1, hb, t0, t1 = st[:5]; dk = float(st[5]) if len(st) > 5 else 0.0                # dk > 0: hohle Haube = nur zwei Wangen der Dicke dk (Kopf der Figur darunter bleibt frei)
+            for lo_, hi_ in ([(-hb, hb)] if dk <= 0 else [(-hb, -hb + dk), (hb - dk, hb)]):
+                pts = [[u + a, wn - ein if c == 0 else wn + ds + (t0 if zi == 0 else t1), (zt + (z0 if zi == 0 else z1))] for zi in (0, 1) for a in (lo_, hi_) for c in (0, 1)]
+                teile.append(M.hull_points(pts))
+        for du, t, r, zu, zs in cfg["fialen"]:
+            ztop = zt + zs; zb = zt + zu; zk = max(zb + 0.02, ztop - kh)
+            teile.append(M.cylinder(zk - zb, r, r, 8).translate((u + du, wn + ds + t, zb)))
+            teile.append(M.cylinder(ztop - zk, r, 0.012, 8).translate((u + du, wn + ds + t, zk)))
+        beleg("alle", f"Baldachin u {u:.2f} (Fialenspitze z {zt:.2f})", (b.get("quelle") or cfg["quelle"]) + " | Form: Stufenhuellen + 3 Fialen (ANNAHME Huellkoerper, Maßwerk/Blattwerk nicht einzeln modelliert)",
+              u=u, z_spitze=zt, z_unten=zt + min(s[0] for s in cfg["stufen"]), halbbreite_max=max(s[2] for s in cfg["stufen"]), wand_n=wn)
+        info.append(u)
+    beleg("alle", f"Baldachinreihe {len(info)} Baldachine", cfg["quelle"] + (f" | Zaehlung {', '.join(cfg.get('zaehlung', []))}" if cfg.get("zaehlung") else ""), n=len(info))
+    return [UNION(teile).transform(_uszT(cfg))], []
+
 @bauteil("erker")
 def erker(cfg, ctx):
     """Erker: Kasten (u = mitte_u +- breite/2, s = wand_n .. wand_n+auskragung, z = unterkante_z .. oberkante_z) mit verjuengendem Dach (Helm/Zelt) bis spitze_z.
