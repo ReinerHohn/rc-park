@@ -4727,8 +4727,8 @@
    "u0": 5.0,
    "u1": 16.311,
    "n0": 7.2,
-   "n1": 7.73,
-   "z0": 1.5,
+   "n1": 7.8,
+   "z0": 1.77,
    "z1": 2.2,
    "modus": "anbau",
    "achse_n": [
@@ -4737,13 +4737,15 @@
    ],
    "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
    "quelle": "Fotos 6117/6124/6130 (Stufe 0): durchgehender Sockel mit Gesimsband vor der Laubenrueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006); Front n 7,73 aus Wolke lot2 (z 1,75-2,10, Spitze 7,7-7,8); Wolke lot2: Sockelfront u 5..16 belegt (213..976 Punkte je 1 m); Ostende = laube_rueck u1; u 5 ANNAHME",
+   "profil": [[7.2, 1.77], [7.73, 1.77], [7.73, 1.98], [7.8, 2.04], [7.8, 2.2], [7.2, 2.2]],
    "aktiv": true,
    "werte_quellen": {
     "u0": "Wolke lot2: Sockelfront u 5..16 belegt (213..976 Punkte je 1 m); Ostende = laube_rueck u1; u 5 ANNAHME",
     "u1": "Wolke lot2: Sockelfront u 5..16 belegt (213..976 Punkte je 1 m); Ostende = laube_rueck u1; u 5 ANNAHME",
     "n0": "ANNAHME: 0,08 m Einbindung in die Wand (Wandflaeche n 7,28) fuer wasserdichten Druckkoerper",
-    "n1": "Wolke lot2 j_voll_lot2.npy, z 1,75-2,10: Sockelfront n 7,7-7,8 (3541 Punkte, u -9..-1); Foto-Strahl auf z 2,2 Vorderkante n 7,5-8,0 (6130/6117) -> 7,73",
-    "z0": "wie quader:laube_rueck z0 1,5 (Boden)",
+    "n1": "Wolke lot2 j_voll_lot2.npy, z 1,75-2,10: Sockelfront n 7,7-7,8 (3541 Punkte, u -9..-1); Foto-Strahl auf z 2,2 Vorderkante n 7,5-8,0 (6130/6117) -> Front 7,73 (Profil); n1 7,8 = Bandvorderkante (profil, ANNAHME Ueberstand 0,07 wie West)",
+    "z0": "Foto Kreis r2: Pflasterkante am Sockelfuss z 1,78/1,73/1,84 (M-6120-069, M-6119-017, M-6117-007, Ebene n 7,73, Auge-Pick +-0,05) -> 1,77; Pflaster vor dem Sockel liegt damit ~0,27 m ueber laube_rueck z0 1,5 (offen: Boden der Laube)",
+    "profil": "wie laube_sockel_w: Gesimsband oben ueberstehend (Foto 6120/6119 Kreis r2: Bandunterkante bei z ~2,04 springt zurueck, gelbe Kante im Overlay); Ueberstand 0,07 und Band z 2,04-2,2 ANNAHME aus West uebernommen, nicht triangulierbar",
     "z1": "Foto-Messung Sockeloberkante an der Wand: M-6117-006 (z 2,20/2,16), M-6130-006 (z 2,17/2,24), Ebene n 7,28"
    }
   },

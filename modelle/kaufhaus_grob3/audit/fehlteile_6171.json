@@ -1,50 +1,22 @@
 {
  "foto": "6171",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_044705a044705/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6171 (amtliche Anker)",
- "zelle_px": 144,
+ "zelle_px": 143,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    2304,
-    288,
-    144
+    2574,
+    286,
+    143
    ],
-   "score": -1.0,
+   "score": -0.78,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    10.74,
-    2.0,
-    24.23
-   ]
-  },
-  {
-   "zelle": [
-    2448,
-    288,
-    144
-   ],
-   "score": -0.802,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    10.06,
-    2.41,
-    24.0
-   ]
-  },
-  {
-   "zelle": [
-    2592,
-    288,
-    144
-   ],
-   "score": -0.745,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    9.27,
-    2.8,
-    23.83
+    9.35,
+    2.75,
+    23.88
    ]
   }
  ],

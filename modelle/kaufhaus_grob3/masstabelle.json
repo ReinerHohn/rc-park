@@ -2516,6 +2516,26 @@
    ],
    "quer_max": 0.15,
    "r_max": 6.0
+  },
+  "laube_sockel_fuss_ost_165": {
+   "typ": "ebene_abstand",
+   "o": [
+    2.4368,
+    6.8601
+   ],
+   "n": [
+    0.33472,
+    0.94232
+   ],
+   "vor": 3.0,
+   "quantil": 50.0,
+   "z": "=1.65 - z_unterkante_lot2",
+   "u0": -15.5,
+   "u1": -9.0,
+   "protokoll": "M-6120-069",
+   "historie": [
+    "2026-11-11 angelegt (Kreis r2 laube_sockel_o): in z 1,65 steht der Sockel nach Foto-Messung noch NICHT (Fuss z 1,78), am Modell mit z0 1,5 liefert die Messung -0,45"
+   ]
   }
  },
  "pruefungen": [
@@ -5256,6 +5276,22 @@
    "historie": [
     "2026-11-11 Kreis1 staffelgiebel:ost angelegt; Altstand 0 (keine Nische) muss fehlschlagen"
    ]
+  },
+  {
+   "name": "Laubensockel Ost: Fuss >= 1,65 (in z 1,65 noch Wandebene, kein Sockel)",
+   "wert": "laube_sockel_fuss_ost_165",
+   "soll": [
+    -0.08,
+    0.08
+   ],
+   "quelle": "Foto: Pflasterkante am Sockelfuss z 1,78/1,73/1,84 (M-6120-069, M-6119-017, M-6117-007, Ebene n 7,73 aus Wolke lot2, Auge-Pick +-0,05); Wand n 7,28 | Pruefstand-u gespiegelt: Ost = u_pruef -15,5..-9,0",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6120-069",
+   "historie": [
+    "2026-11-11 angelegt (Kreis r2 quader:laube_sockel_o); am Modell mit z0 1,5 muss die Pruefung fehlschlagen"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -6136,6 +6172,22 @@
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   },
   {
+   "datum": "2026-11-11",
+   "wer": "kreis 20261111_055110a055110 r1 (Agent-Stufe0, Rohfotos 6162/6145/6132, uebernommen)",
+   "teil": "gaubenreihe:oben",
+   "merkmal": "Rundbogenfenster in der Gaubenstirn fehlt im Modell",
+   "text": "Agent sah in den Rohfotos ein Rundbogenfenster in der Stirn der oberen Gauben, das im Modell fehlt; erklaert gelbe Boegen (Fotokante ohne Modellkante) in 6259 und c12. Seitenfenster in der Ostwange NICHT bestaetigt (6162/6145: geschlossene Dreiecksplatte); Westwange in keinem Foto sichtbar. Dachueberstand bereits gebaut (Kreis2 r2 10.11.). Runde endete ohne Generatoraenderung, weil die Basismessung in der GPU-Warteschlange haengen blieb.",
+   "naechster_schritt": "Rundbogenfenster (Breite, Kaempfer-/Scheitelhoehe) per foto_mass auf >=3 Torfotos messen, als Nische in der Gaubenstirn bauen, Foto-F1 gaubenreihe__oben gegen 0,743."
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "kreis 20261111_044705a044705 r2 (Agent, Stufe 0 an 6117/6119/6120)",
+   "teil": "quader:laube_sockel_o",
+   "merkmal": "Sockelfuss Ost steht 0,27 m zu tief im Pflaster; Gesimsband-Unterkante fehlt",
+   "text": "Projektion der Modellebene n 7,73 in 6120/6119/6117: Pflasterkante am Sockelfuss liegt bei z 1,73-1,84 (M-6120-069, M-6119-017, M-6117-007, Mittel 1,78), Modell z0 1,5 -> gelbe Fusskante in allen Torfotos, violette Modellflaeche 0,15-0,2 m im Pflaster. Oberkante 2,2 passt (blaue Linie auf Bandkante). Unter dem Band (z ~2,04) springt die Front zurueck (gelbe Bandunterkante in 6120/6119), Ost hat im Gegensatz zu West kein profil.",
+   "naechster_schritt": "z0 1,77 + Bandprofil wie West; Pflaster-Hoehe vor dem Sockel gegen laube_rueck z0 1,5 (Boden) klaeren; Fotos 6130/6124 zeigen West-Fussz nicht gemessen."
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
    "auto_id": "fehlteile-6261-234-1794",
@@ -6144,12 +6196,12 @@
    "z_von": 18.55,
    "z_bis": 18.55,
    "xyz": [
-    14.32,
-    -8.9,
+    14.33,
+    -8.89,
     18.55
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.9 m (Zelle [234, 1794, 78], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.89 m (Zelle [234, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -6161,17 +6213,17 @@
    "z_von": 18.23,
    "z_bis": 18.23,
    "xyz": [
-    14.6,
-    -7.16,
+    14.61,
+    -7.15,
     18.23
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
    "auto_id": "fehlteile-6261-234-1872",
    "art": "fehlteil",
    "foto": "6261",
@@ -6184,32 +6236,32 @@
    ],
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.41 m, y=-8.9 m (Zelle [234, 1872, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
    "auto_id": "fehlteile-6261-312-1872",
    "art": "fehlteil",
    "foto": "6261",
    "z_von": 17.08,
    "z_bis": 17.08,
    "xyz": [
-    14.55,
-    -7.15,
+    14.54,
+    -7.14,
     17.08
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.15 m (Zelle [312, 1872, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.14 m (Zelle [312, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "2026-11-11",
-   "wer": "kreis 20261111_055110a055110 r1 (Agent-Stufe0, Rohfotos 6162/6145/6132, uebernommen)",
-   "teil": "gaubenreihe:oben",
-   "merkmal": "Rundbogenfenster in der Gaubenstirn fehlt im Modell",
-   "text": "Agent sah in den Rohfotos ein Rundbogenfenster in der Stirn der oberen Gauben, das im Modell fehlt; erklaert gelbe Boegen (Fotokante ohne Modellkante) in 6259 und c12. Seitenfenster in der Ostwange NICHT bestaetigt (6162/6145: geschlossene Dreiecksplatte); Westwange in keinem Foto sichtbar. Dachueberstand bereits gebaut (Kreis2 r2 10.11.). Runde endete ohne Generatoraenderung, weil die Basismessung in der GPU-Warteschlange haengen blieb.",
-   "naechster_schritt": "Rundbogenfenster (Breite, Kaempfer-/Scheitelhoehe) per foto_mass auf >=3 Torfotos messen, als Nische in der Gaubenstirn bauen, Foto-F1 gaubenreihe__oben gegen 0,743."
+   "wer": "Pruefer opus kreis 20261111_044705a044705 r2 (automatisch)",
+   "teil": "quader:laube_sockel_o",
+   "merkmal": "Pruefer-Rest quader:laube_sockel_o kreis 20261111_044705a044705 r2",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Lage entlang t (Fassadenlaengs) nicht belegt: Verschiebungskontrolle marge_t -0,002 (Dichte-Verdacht); Annahme nur wegen z-Korrektur (marge_z 0,039, in 6120/6119/6117/6174/d20 sichtbar: violette Pflasterflaeche weg, blaue Fusskante auf Pflasterlinie), u0/u1 unveraendert und weiter unbelegt | 6119 links vom Pfeiler: Fusskante weiter gelb ohne blauen Treffer - Fuss dort nicht exakt | 6120: gelb an Band-Unterkante Mitte (u~8-12) und rechts oben, gelbe Treppe am Ostende; neu rot/gruen an Bandoberkante rechts | 6117: neuer roter Streifen an Bandoberkante Mitte (erfundene Kante); gelbes Band auf Hoehe Steinlagenfuge bleibt; gelb an Band-Oberkante rechts | 6174: grosse rote/gruene Flaechen im Bandbereich unveraendert, Ursache ungeklaert (Bandueberstand/Front-n?) | d20: neu rot/gruen an Oberkante links, gelbe Treppe im Bandbereich Mitte | Band z 2,04-2,2 und Ueberstand 0,07 ANNAHME von laube_sockel_w uebernommen, nicht gemessen | Ostende, Pfeilerbasen-Anschluss, Steinlagen/Fugen ungeprueft | Pflaster jetzt 0,27 m ueber laube_rueck z0 1,5 - Laubenboden offen, laube_sockel_w vermutlich gleicher z0-Fehler | teile_lage_pruefen/foto_diff/fehlteile_finden vom Agenten nicht angesehen",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

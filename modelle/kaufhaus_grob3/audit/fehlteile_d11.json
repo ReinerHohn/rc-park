@@ -1,6 +1,6 @@
 {
  "foto": "d11",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_044705a044705/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-d11 (amtliche Anker)",
  "zelle_px": 137,
  "schwelle": 0.35,
@@ -11,54 +11,12 @@
     1233,
     137
    ],
-   "score": -0.999,
+   "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    13.66,
-    1.42,
-    23.69
-   ]
-  },
-  {
-   "zelle": [
-    685,
-    1096,
-    137
-   ],
-   "score": -0.936,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    15.81,
-    0.74,
-    22.99
-   ]
-  },
-  {
-   "zelle": [
-    822,
-    1096,
-    137
-   ],
-   "score": -0.934,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    15.19,
-    1.42,
-    22.84
-   ]
-  },
-  {
-   "zelle": [
-    2329,
-    2329,
-    137
-   ],
-   "score": -0.929,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -5.45,
-    4.86,
-    25.6
+    13.7,
+    1.46,
+    23.61
    ]
   },
   {
@@ -67,12 +25,40 @@
     1096,
     137
    ],
-   "score": -0.872,
+   "score": -0.948,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    15.4,
-    2.82,
-    21.0
+    15.21,
+    2.62,
+    21.34
+   ]
+  },
+  {
+   "zelle": [
+    2329,
+    2329,
+    137
+   ],
+   "score": -0.946,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -5.42,
+    4.87,
+    25.6
+   ]
+  },
+  {
+   "zelle": [
+    2603,
+    2329,
+    137
+   ],
+   "score": -0.927,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -1.36,
+    8.08,
+    21.64
    ]
   },
   {
@@ -81,12 +67,26 @@
     1370,
     137
    ],
-   "score": -0.83,
+   "score": -0.845,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    12.42,
-    3.79,
-    21.18
+    12.51,
+    3.85,
+    21.05
+   ]
+  },
+  {
+   "zelle": [
+    0,
+    1781,
+    137
+   ],
+   "score": -0.829,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    16.04,
+    -3.33,
+    18.15
    ]
   }
  ],
