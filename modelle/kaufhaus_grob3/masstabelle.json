@@ -6404,7 +6404,8 @@
     "seitenteil",
     "eckpfosten",
     "gelaender"
-   ]
+   ],
+   "erledigt": "kreis a141718 r1 2026-11-11 14:40 (Formfund-Weg, Patch a105629 r2): Formfund-Pruefer besteht (sicher hoch), Foto-F1 0,754 -> 0,768, Hoehe 0,786 -> 0,805, Pruefer angenommen, main 93eca74"
   },
   {
    "teil": "baldachinreihe:baldachine",
