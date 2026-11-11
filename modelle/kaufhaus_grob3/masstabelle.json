@@ -6614,6 +6614,15 @@
     "oberste stufe",
     "spitzenblock",
     "spitze"
+   ],
+   "formfamilie_test": true,
+   "pruef_pflicht": [
+    "oberste stufe",
+    "spitzenblock",
+    "absatz"
+   ],
+   "historie": [
+    "2026-11-11 15:4x formfamilie_test nachgetragen (Runde a152051 lief deshalb als Grauzone: F1 0,598->0,595, Verschiebung -0,035 verworfen); Stand nach a151127: Absatz oben 1,66 m statt 1,21 m"
    ]
   },
   {
