@@ -6419,7 +6419,9 @@
    "merkmal": "Ostgiebel Kaeppchen/Fenster",
    "text": "Kaeppchen auf den Stufen, Giebelfenster.",
    "naechster_schritt": "Kaeppchen: Profil (n,z) aus Seitenfoto 6257 mit 2-Kamera-Triangulation von Buckel + hinterem Stufenende (scharfe Einzelpunkte), dann kappe_steigung/Buckelform setzen und am Foto-F1 pruefen",
-   "teil_erledigt": "2026-11-11 Kreis1: Giebelfenster (3, Z-6115-001/Z-6261-003, M-6115-013..015) als Nischen gebaut, Foto-F1 halbe Aufl. 0,699 -> 0,742. Kaeppchen: Saegezahn-Parameter kappe_steigung (0,3/0,45) senkte F1 (0,729/0,726) -> nicht aktiv (0); Form (Buckel vorn, flache Rueckflanke) am Foto gesehen, Betrag ungemessen (u-Mehrdeutigkeit Einzelansicht)"
+   "teil_erledigt": "2026-11-11 Kreis1: Giebelfenster (3, Z-6115-001/Z-6261-003, M-6115-013..015) als Nischen gebaut, Foto-F1 halbe Aufl. 0,699 -> 0,742. Kaeppchen: Saegezahn-Parameter kappe_steigung (0,3/0,45) senkte F1 (0,729/0,726) -> nicht aktiv (0); Form (Buckel vorn, flache Rueckflanke) am Foto gesehen, Betrag ungemessen (u-Mehrdeutigkeit Einzelansicht)",
+   "formfamilie_test": true,
+   "formfamilie_test_quelle": "Formtest: Satteldaechlein je Stufe sichtbar in 6115/6164/6145; Variante o_d25 11.11. abends"
   },
   {
    "datum": "2026-11-11",
@@ -6912,7 +6914,9 @@
     "aufsatz",
     "krone",
     "baldachin"
-   ]
+   ],
+   "formfamilie_test": true,
+   "formfamilie_test_quelle": "Lage-Test: Kronenachse u = Figurenachse (figurenreihe:figuren) in Fotos 6120/6117; Variante b_mitte 11.11. abends"
   },
   {
    "datum": "2026-11-10",
