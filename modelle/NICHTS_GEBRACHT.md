@@ -288,3 +288,4 @@ BS-Balkon-Enden (10.11. Kreis 213718): Kuerzung u -5,4..12,3 (+Bruestung 57 Rast
 
 - 11.11. 104829: teil_fotoform ohne --teile_dir exportiert Teile als teil_NN (Namen passen nicht zu --nur) -> Nachher-Lauf ohne --teile_dir nehmen; Wiederaufnahme-Datei <aus>.teil leert Ergebnis nicht automatisch.
 - 11.11. Viewer/Fehlerkarte r10-r11 zeigten das Modell von 10.11. 23:59: Exportzeile per 'sed -n 6,11p' abgeschnitten (m.export in Zeile 12), kein Fehler gemeldet -> nach jedem Viewerbau Datum von main_m.stl gegen den main-STL pruefen.
+- 11.11. 12:51 Kreis a125135: Treppen-Fund des Nutzers stand an staffelgiebel:ost (von mir zugeordnet), Saegezahn war nur West (daechlein_h 0,8) -> Agent baute West richtig um, Tor mass Ost (unveraendert, -0,002) und verwarf. Fund-Teil per Geometrie/Parameter pruefen (L48b); Patch-Nachpruefung mit --ziel staffelgiebel__west.
