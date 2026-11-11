@@ -5249,7 +5249,8 @@
    "teil": "erker_polygon:0",
    "merkmal": "Erker 1 Ornamentik",
    "text": "Unterbau als Netzgewoelbe aus geschwungenen, sich kreuzenden Rippen (Spitzbogen-/Blattform) mit Rosetten statt glattem Kegel; Kielbogen + Masswerk ueber den Fenstern; Fensterteilung; Wappen als Relief; Wasserspeier an den Traufecken.",
-   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt).",
+   "stufe0_2026-11-11": "Koordinator 11.11. 01:05 (Overlays v2 i08/6225 Erker 1, 6171/d11 Erker 2, Bild audit/erker_gelb_rippennetz_2026-11-11.jpg; Nutzer: 'Erker richtig geil hinbekommen = krasses Feature'): Aussenform gruen (passt), Foto-F1 0,62 je Erker. GELB in Reihenfolge der Pixelmenge: (1) RIPPENNETZ der Unterseite - geschwungene, sich kreuzende Rippen (Kielbogen-/Blattform, je Facette ein Herz-/Blattmotiv, Goldlinien an beiden Rippenkanten, Rosetten in den Zwickeln), Modell hat glatte Kegelflaeche; (2) Fensterteilung (Pfosten, Sprossen, Masswerk-Bogen oben); (3) Wappenrelief im Bruestungsfeld. Vorschlag Formfamilie 'rippennetz': Rippen als Linienzuege (Bezier je Facette) auf einer gegebenen Traegerflaeche (Erker-Unterseite ODER Kreuzgewoelbe der Laube, gleiches Werkzeug), Rippe = Halbrundprofil Breite/Vorsprung aus foto_mass; Muster je Facette gleich (Wiederholungs-Prior), Anzahl Facetten/Rippen per foto_zaehlung. Foto-Cluster ff_-4_+16_+11 (Erker 1, 13 Fotos) und ff_+19_+8_+11 / ff_+19_+7_+7 (Erker 2)."
   },
   {
    "datum": "2026-11-10",
@@ -5257,7 +5258,8 @@
    "teil": "erker_polygon:1",
    "merkmal": "Erker 2 Ornamentik",
    "text": "wie Erker 1: Rippennetz-Unterbau mit Rosetten (Foto 6164 gelb), Kielbogen/Masswerk, Wappenrelief, Wasserspeier.",
-   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt).",
+   "stufe0_2026-11-11": "Koordinator 11.11. 01:05 (Overlays v2 i08/6225 Erker 1, 6171/d11 Erker 2, Bild audit/erker_gelb_rippennetz_2026-11-11.jpg; Nutzer: 'Erker richtig geil hinbekommen = krasses Feature'): Aussenform gruen (passt), Foto-F1 0,62 je Erker. GELB in Reihenfolge der Pixelmenge: (1) RIPPENNETZ der Unterseite - geschwungene, sich kreuzende Rippen (Kielbogen-/Blattform, je Facette ein Herz-/Blattmotiv, Goldlinien an beiden Rippenkanten, Rosetten in den Zwickeln), Modell hat glatte Kegelflaeche; (2) Fensterteilung (Pfosten, Sprossen, Masswerk-Bogen oben); (3) Wappenrelief im Bruestungsfeld. Vorschlag Formfamilie 'rippennetz': Rippen als Linienzuege (Bezier je Facette) auf einer gegebenen Traegerflaeche (Erker-Unterseite ODER Kreuzgewoelbe der Laube, gleiches Werkzeug), Rippe = Halbrundprofil Breite/Vorsprung aus foto_mass; Muster je Facette gleich (Wiederholungs-Prior), Anzahl Facetten/Rippen per foto_zaehlung. Foto-Cluster ff_-4_+16_+11 (Erker 1, 13 Fotos) und ff_+19_+8_+11 / ff_+19_+7_+7 (Erker 2)."
   },
   {
    "datum": "2026-11-10",
@@ -5474,7 +5476,8 @@
    "merkmal": "Erker-Unterbau Gewoelberippen + untere Flanke",
    "text": "Gewoelberippen (2 Bogen je Flaeche + Grat) sind am Foto 6164/6161/6259 sichtbar und im Foto-F1 als gelber Rhombus fehlend; rippen_bogen (Bahn s=t^kappa) passt auf ~0,1 m, senkt aber Foto-F1 (0,617->0,575) und hebt erker_o_unterbau70 ueber Soll. Zudem liegt die Flanke bei z 6,8 laut 3-Kamera-Konsens (u ~0,69) noch ~0,2 m ausserhalb des Modells. erker_polygon:0 hat denselben Fehler (kegel_achse_n nicht uebertragen, ungemessen).",
    "naechster_schritt": "Rippenbahn aus Pixelpicks je Rippe (foto_mass, Oberflaeche per Strahl-Netz) statt s=t^kappa; kegel_achse_n an erker_polygon:0 mit Vollmodell-Foto-F1 testen; Flanke z 6,8 mit Foto aus >45 Grad Abstand klaeren",
-   "teil": "erker_polygon:1"
+   "teil": "erker_polygon:1",
+   "stufe0_2026-11-11": "Koordinator 11.11. 01:05 (Overlays v2 i08/6225 Erker 1, 6171/d11 Erker 2, Bild audit/erker_gelb_rippennetz_2026-11-11.jpg; Nutzer: 'Erker richtig geil hinbekommen = krasses Feature'): Aussenform gruen (passt), Foto-F1 0,62 je Erker. GELB in Reihenfolge der Pixelmenge: (1) RIPPENNETZ der Unterseite - geschwungene, sich kreuzende Rippen (Kielbogen-/Blattform, je Facette ein Herz-/Blattmotiv, Goldlinien an beiden Rippenkanten, Rosetten in den Zwickeln), Modell hat glatte Kegelflaeche; (2) Fensterteilung (Pfosten, Sprossen, Masswerk-Bogen oben); (3) Wappenrelief im Bruestungsfeld. Vorschlag Formfamilie 'rippennetz': Rippen als Linienzuege (Bezier je Facette) auf einer gegebenen Traegerflaeche (Erker-Unterseite ODER Kreuzgewoelbe der Laube, gleiches Werkzeug), Rippe = Halbrundprofil Breite/Vorsprung aus foto_mass; Muster je Facette gleich (Wiederholungs-Prior), Anzahl Facetten/Rippen per foto_zaehlung. Foto-Cluster ff_-4_+16_+11 (Erker 1, 13 Fotos) und ff_+19_+8_+11 / ff_+19_+7_+7 (Erker 2)."
   },
   {
    "datum": "2026-11-11",
