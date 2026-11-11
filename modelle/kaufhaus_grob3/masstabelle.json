@@ -6603,27 +6603,6 @@
   },
   {
    "teil": "kreuzgewoelbe:laube",
-   "merkmal": "Gewoelbeansatz am Pfeiler: Rippen entspringen aus dem Pfeiler, im Modell dunkle Saegezahn-Grate ohne Rippen",
-   "text": "Nutzer 11.11. ~10:15 (Bildpaar d20 der Formfamilien-Pruefung, rote Kaesten): Foto zeigt Gurt- und Diagonalrippen, die aus dem Pfeilerkopf aufsteigen, weisse Kappen dazwischen; Modell zeigt am Ansatz dunkle Keile und gezackte Grate (Tesselierungs-/Verschneidungsartefakt des Kreuzgewoelbes). Formfamilien-Pruefer meldete 'Saegezahn-Artefakt an den Graten' (mittel) und 'Rippen fehlen' (hoch).",
-   "naechster_schritt": "Grat-Verschneidung im Generator glatt (Aufloesung/Booleschen Schnitt pruefen), Rippen als Element (Patch a090522 im Neutor a095328); Pruefung 'keine Zacken an Graten' am Render.",
-   "datum": "2026-11-11",
-   "wer": "Nutzer (Sichtbeobachtung)",
-   "pruef_stichworte": [
-    "grat",
-    "zack",
-    "saegezahn",
-    "rippe",
-    "ansatz"
-   ],
-   "formfamilie_test": true,
-   "pruef_pflicht": [
-    "grat",
-    "saegezahn",
-    "zacke"
-   ]
-  },
-  {
-   "teil": "kreuzgewoelbe:laube",
    "merkmal": "Gewoelbeanschluss an der Rueckwand ueber der Tuer: Schildbogen/Rippenanfaenger an der Wand fehlt, Modell dunkler Keil",
    "text": "Nutzer 11.11. ~10:15 (d20, rechter Kasten ueber der Tuer mit Goldrahmen): im Foto endet die Rippe an der Wand (Anfaenger/Konsole, Wandbogen); im Modell trifft die Kappe als dunkler Keil auf die Wand.",
    "naechster_schritt": "Wandanschluss der Kappen (Schildbogen) und Rippenanfaenger an der Rueckwand aus >=3 Fotos beschreiben (Stufe 0), dann messen.",
@@ -6863,6 +6842,30 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.86 m (Zelle [234, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "teil": "kreuzgewoelbe:laube",
+   "merkmal": "Gewoelbeansatz am Pfeiler: Rippen entspringen aus dem Pfeiler, im Modell dunkle Saegezahn-Grate ohne Rippen",
+   "text": "Nutzer 11.11. ~10:15 (Bildpaar d20 der Formfamilien-Pruefung, rote Kaesten): Foto zeigt Gurt- und Diagonalrippen, die aus dem Pfeilerkopf aufsteigen, weisse Kappen dazwischen; Modell zeigt am Ansatz dunkle Keile und gezackte Grate (Tesselierungs-/Verschneidungsartefakt des Kreuzgewoelbes). Formfamilien-Pruefer meldete 'Saegezahn-Artefakt an den Graten' (mittel) und 'Rippen fehlen' (hoch).",
+   "naechster_schritt": "Grat-Verschneidung im Generator glatt (Aufloesung/Booleschen Schnitt pruefen), Rippen als Element (Patch a090522 im Neutor a095328); Pruefung 'keine Zacken an Graten' am Render.",
+   "datum": "2026-11-11",
+   "wer": "Nutzer (Sichtbeobachtung)",
+   "pruef_stichworte": [
+    "grat",
+    "zack",
+    "saegezahn",
+    "rippe",
+    "ansatz"
+   ],
+   "formfamilie_test": true,
+   "pruef_pflicht": [
+    "grat",
+    "saegezahn",
+    "zacke"
+   ],
+   "historie": [
+    "2026-11-11 16:4x Nutzer erneut (Screenshot Foto d20 | vorher, rote Rahmen am Saeulenkopf): im Foto entspringt die schmale Rippe direkt aus dem Pfeilerkopf, im Modell ein breiter Grat/Saegezahn ohne Rippe -> neuester Fund der Gewoelbe"
+   ]
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
