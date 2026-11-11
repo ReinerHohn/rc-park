@@ -730,8 +730,12 @@ for runde in range(1, RUNDEN + 1):
                                           f"modelle/{OBJ}/pruefbericht.json", f"modelle/{OBJ}/MASSNACHWEIS.md", f"modelle/{OBJ}/konvergenz.jsonl")]
         rcA = subprocess.run(["git", "-C", wt, "apply", "--whitespace=nowarn"] + _ex + [PATCH], capture_output=True, text=True).returncode
         if rcA != 0:   # Patch aelter als main (masstabelle.json wuchs): 3-Wege-Anwendung
-            _ra = subprocess.run(["git", "-C", wt, "apply", "--3way"] + _ex + [PATCH], capture_output=True, text=True); rcA = _ra.returncode
-            if rcA != 0: print("git apply --3way:", (_ra.stderr or "")[-800:], flush=True)   # 11.11. a014000: Fehler ohne Meldung, spaeter nicht reproduzierbar
+            for _v in range(3):   # 11.11. a014000/a015000: rc=1 zur Laufzeit, von Hand sofort sauber -> vorruebergehend (paralleles Git der Spuren?), wiederholen
+                _ra = subprocess.run(["git", "-C", wt, "apply", "--3way"] + _ex + [PATCH], capture_output=True, text=True); rcA = _ra.returncode
+                if rcA == 0: break
+                print(f"git apply --3way Versuch {_v + 1}:", "\n".join(l for l in (_ra.stderr or "").splitlines() if "Ausweichen" not in l and "sauber angewendet" not in l
+                                                                    and "Falling back" not in l and "Applied patch" not in l)[:1500], flush=True)
+                subprocess.run(["git", "-C", wt, "reset", "-q", "--merge"], capture_output=True); time.sleep(20)
         print(f"Runde {runde}: Patch {PATCH} uebernommen rc={rcA}", flush=True)
         if rcA != 0: freigeben(ziel["teil"]); sys.exit("Patch passt nicht auf main")
     else:
