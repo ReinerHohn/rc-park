@@ -54,6 +54,15 @@ def senkrecht(maske, winkel=30.0):
     return maske & (np.abs(np.sin(th)) < np.sin(np.radians(winkel)))
 
 
+def richtungen(maske, winkel=30.0):
+    """(waagerecht, senkrecht) in EINEM Durchgang: der Strukturtensor th ist fuer beide gleich (vorher zweimal gerechnet) -> Ergebnis bitgleich zu waagerecht()/senkrecht()."""
+    m = cv2.GaussianBlur(maske.astype(np.float32), (0, 0), 2)
+    gx = cv2.Sobel(m, cv2.CV_32F, 1, 0, ksize=3); gy = cv2.Sobel(m, cv2.CV_32F, 0, 1, ksize=3)
+    jxx = cv2.GaussianBlur(gx * gx, (0, 0), 3); jyy = cv2.GaussianBlur(gy * gy, (0, 0), 3); jxy = cv2.GaussianBlur(gx * gy, (0, 0), 3)
+    th = 0.5 * np.arctan2(2 * jxy, jxx - jyy); sw = np.sin(np.radians(winkel))
+    return maske & (np.abs(np.cos(th)) < sw), maske & (np.abs(np.sin(th)) < sw)
+
+
 def flecken(maske, pos, n=3, min_px=40):
     """Groesste zusammenhaengende Flecken (nach 5-px-Schliessen) mit Pixelzahl und Weltpunkt (Median der Rasterpositionen)."""
     if maske.sum() < min_px: return []
@@ -143,30 +152,26 @@ def main(argv=None):
                 Z = rueck["kosten"]
             elif os.path.exists(npz): Z = np.load(npz)
             else: erg["fotos"][nr] = "keine Kostenkarte (zu wenig Kanten)"; return
-            mkp, fkp, dF, dM = Z["mkp"], Z["fkp"], Z["dF"].astype(np.float32), Z["dM"].astype(np.float32)
-            # Hoehen-Wert: Abstaende nur zwischen WAAGERECHTEN Kanten, gleiche Einheit wie dF (Kappe in Pixeln aus dF zurueckgerechnet)
-            _dtF = cv2.distanceTransform((~fkp).astype(np.uint8), cv2.DIST_L2, 5); _s = (dF > 0.05) & (dF < 0.95) & mkp
-            kap = float(np.median(_dtF[_s] / dF[_s])) if _s.sum() > 20 else None
-            if kap:
-                mkh, fkh = waagerecht(mkp), waagerecht(fkp)
-                dFh = np.minimum(cv2.distanceTransform((~fkh).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
-                dMh = np.minimum(cv2.distanceTransform((~mkh).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
-                mkv, fkv = senkrecht(mkp), senkrecht(fkp)
-                dFv = np.minimum(cv2.distanceTransform((~fkv).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
-                dMv = np.minimum(cv2.distanceTransform((~mkv).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
+            mkp, fkp, dF16, dM16 = Z["mkp"], Z["fkp"], Z["dF"], Z["dM"]
+            # Hoehen-Wert: Abstaende nur zwischen WAAGERECHTEN Kanten, gleiche Einheit wie dF (Kappe in Pixeln aus dF zurueckgerechnet; Median ueber das GANZE Bild -> nicht beschneidbar)
+            _dtF = cv2.distanceTransform((~fkp).astype(np.uint8), cv2.DIST_L2, 5); _dF = dF16.astype(np.float32); _s = (_dF > 0.05) & (_dF < 0.95) & mkp
+            kap = float(np.median(_dtF[_s] / _dF[_s])) if _s.sum() > 20 else None
+            del _dtF, _dF, _s
             R, t, f, _, _ = FF.kamera_laden(K, obj, nr, R0, W, H); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2))
             tr = rahmen(stl, obj, kk)
             zc = None
             if VERD is not None and "rahmen_verschiebung" in kk:   # Wolke nur im Kamerarahmen (K-Datei traegt ihren Rahmen), sonst wie bisher
                 ZL = max(2, int(round(12 * float(os.environ.get("RCPARK_FOTO_SKALA") or 1.0)))); zc = VERD.zkarte(R, t, f, cx, cy, W, H, zelle=ZL)
             if schnell and rueck and "depth" in rueck and os.environ.get("TFF_PRUEF") != "1":
-                dv, pos = rueck["depth"], rueck["pos"].cpu().numpy()   # Vollraster aus foto_diff (gleiches Netz, gleiche Kamera) statt zweitem Raster
+                dv, pos = rueck["depth"], rueck["pos"]   # Vollraster aus foto_diff (gleiches Netz, gleiche Kamera) statt zweitem Raster; pos bleibt auf der GPU, nur der Ausschnitt geht zur CPU
             else:
                 mv = trimesh.load(stl, force="mesh"); mv.apply_scale(obj.get("stl_massstab", 87) / 1000.0); mv.apply_translation(tr)
                 dv, _, pos = RK.dreiecke_rastern(mv, R, t, f, cx, cy, W, H)
                 if schnell and rueck and "depth" in rueck:   # TFF_PRUEF: Schnellweg muss bitgleich sein
                     print(f"PRUEF {nr}: depth gleich {np.array_equal(dv, rueck['depth'], equal_nan=True)}, pos gleich {np.array_equal(pos, rueck['pos'].cpu().numpy(), equal_nan=True)}", flush=True)
             erg["fotos"][nr] = {"mk_px": int(mkp.sum()), "fk_px": int(fkp.sum())}
+            # ---- Durchlauf 1: sichtbare Pixel je Teil (nur im Rasterausschnitt des Teils gespeichert) ----
+            sichtbar = {}; ymin = xmin = 1 << 30; ymax = xmax = -1
             for tp in teile:
                 name = os.path.basename(tp)[:-4]
                 if name not in TM:
@@ -175,11 +180,12 @@ def main(argv=None):
                     m.apply_scale(obj.get("stl_massstab", 87) / 1000.0); TM[name] = m
                 if TM[name] is None: continue
                 m = TM[name].copy(); m.apply_translation(tr)
-                dp, _, _ = RK.dreiecke_rastern(m, R, t, f, cx, cy, W, H)
-                vis = np.isfinite(dp) & (dp <= dv * 1.003 + 0.03)
-                vw = 0
+                dp = RK.dreiecke_rastern(m, R, t, f, cx, cy, W, H, nur_tiefe=True)[0]
+                fin = np.isfinite(dp); vis = fin & (dp <= dv * 1.003 + 0.03)
+                vw = 0; vd = None
                 if zc is not None:
                     vd = VERD.verdeckt(zc, dp, ZL, a.wolke_abs, a.wolke_rel, a.wolke_schliess) & vis; vw = int(vd.sum()); vis &= ~vd   # Fotowolke vor dem Teil = verdeckt
+                finu = fin
                 if a.bereich_von:   # Vereinigung mit dem sichtbaren Bereich des Vorher-Teils (gleicher Bildbereich vorher/nachher)
                     if name not in TV:
                         pv = os.path.join(a.bereich_von, name + ".stl"); mv_ = trimesh.load(pv, force="mesh") if os.path.exists(pv) else None
@@ -187,11 +193,30 @@ def main(argv=None):
                         else: mv_ = None
                         TV[name] = mv_
                     if TV[name] is not None:
-                        mv2 = TV[name].copy(); mv2.apply_translation(tr); dpv, _, _ = RK.dreiecke_rastern(mv2, R, t, f, cx, cy, W, H)
-                        visv = np.isfinite(dpv) & (dpv <= dv * 1.003 + 0.03)
+                        mv2 = TV[name].copy(); mv2.apply_translation(tr); dpv = RK.dreiecke_rastern(mv2, R, t, f, cx, cy, W, H, nur_tiefe=True)[0]
+                        finv = np.isfinite(dpv); visv = finv & (dpv <= dv * 1.003 + 0.03)
                         if zc is not None: visv &= ~VERD.verdeckt(zc, dpv, ZL, a.wolke_abs, a.wolke_rel, a.wolke_schliess)
-                        vis = vis | visv
+                        vis = vis | visv; finu = fin | finv
                 if vis.sum() < 200: continue
+                ry, rx = np.flatnonzero(finu.any(1)), np.flatnonzero(finu.any(0)); by0, by1, bx0, bx1 = int(ry[0]), int(ry[-1]) + 1, int(rx[0]), int(rx[-1]) + 1   # Rasterausschnitt des Teils (vis liegt darin)
+                sichtbar[name] = dict(vis=vis[by0:by1, bx0:bx1].copy(), vd=vd[by0:by1, bx0:bx1].copy() if (a.bilder and zc is not None) else None, vw=vw, box=(by0, by1, bx0, bx1))
+                ymin, ymax, xmin, xmax = min(ymin, by0), max(ymax, by1), min(xmin, bx0), max(xmax, bx1)
+            if not sichtbar: return
+            # ---- gemeinsamer Ausschnitt C: alle Teile + Rand (Dilatation 3, Richtungsfilter ~22, Abstandskappe kap, Bildrand 40) ----
+            pad = max(int((kap or 0) * 1.1) + 4, 60) + 30
+            cy0, cy1, cx0, cx1 = max(0, ymin - pad), min(H, ymax + pad), max(0, xmin - pad), min(W, xmax + pad)
+            C = (slice(cy0, cy1), slice(cx0, cx1))
+            mkp, fkp = mkp[C], fkp[C]; dF, dM = dF16[C].astype(np.float32), dM16[C].astype(np.float32); im0 = im0[C]
+            pos = pos[cy0:cy1, cx0:cx1]; pos = pos.cpu().numpy() if hasattr(pos, "cpu") else np.ascontiguousarray(pos)
+            if kap:
+                mkh, mkv = richtungen(mkp); fkh, fkv = richtungen(fkp)
+                dFh = np.minimum(cv2.distanceTransform((~fkh).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
+                dMh = np.minimum(cv2.distanceTransform((~mkh).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
+                dFv = np.minimum(cv2.distanceTransform((~fkv).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
+                dMv = np.minimum(cv2.distanceTransform((~mkv).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
+            Hc, Wc = mkp.shape
+            for name, sv in sichtbar.items():
+                by0, by1, bx0, bx1 = sv["box"]; vis = np.zeros((Hc, Wc), bool); vis[by0 - cy0:by1 - cy0, bx0 - cx0:bx1 - cx0] = sv["vis"]; vw = sv["vw"]
                 ms = cv2.dilate(vis.astype(np.uint8), np.ones((7, 7), np.uint8)) > 0
                 mk_t, fk_t = mkp & ms, fkp & ms
                 # FEHLENDES TEIL IM FESTBEREICH (11.11., Dienste a030758: vorher nur 2 von 9 Fotos beurteilt, weil vor glatter Wand kaum Modellkanten):
@@ -208,17 +233,19 @@ def main(argv=None):
                         hw.update({"praez_v": round(float((dFv[mv_t] < a.schwelle).mean()), 3), "recall_v": round(float((dMv[fv_t] < a.schwelle).mean()), 3),
                                    "mkv_px": int(mv_t.sum()), "fkv_px": int(fv_t.sum())})
                 else: hw = {}
+                fl_r, fl_g = flecken(rot, pos), flecken(gelb, pos)
+                for fl_ in fl_r + fl_g: fl_["bbox_px"][0] += cx0; fl_["bbox_px"][1] += cy0   # zurueck in Bildkoordinaten des ganzen Fotos
                 e = {**hw, "praez": round(float(ok_m.mean()), 3) if ok_m.size else 0.0, "recall": round(float(ok_f.mean()), 3), "mk_px": int(mk_t.sum()), "fk_px": int(fk_t.sum()), "sicht_px": int(vis.sum()), "wolke_verd_px": vw,
-                     "rot": flecken(rot, pos), "gelb": flecken(gelb, pos)}
+                     "rot": fl_r, "gelb": fl_g}
                 erg["teile"].setdefault(name, {})[nr] = e
                 if a.bilder:
-                    ys, xs = np.where(ms); y0, y1, x0, x1 = max(0, ys.min() - 40), min(H, ys.max() + 40), max(0, xs.min() - 40), min(W, xs.max() + 40)
+                    ys, xs = np.where(ms); y0, y1, x0, x1 = max(0, ys.min() - 40), min(Hc, ys.max() + 40), max(0, xs.min() - 40), min(Wc, xs.max() + 40)
                     ov = (im0 // 2).copy(); ov[ms & ~(mk_t | fk_t)] = (ov[ms & ~(mk_t | fk_t)] * 1.6).clip(0, 255).astype(np.uint8)
                     ov[mk_t & ~rot] = (0, 200, 0); ov[fk_t & ~gelb & ~mk_t] = (200, 120, 0); ov[rot] = (0, 0, 255); ov[gelb] = (0, 255, 255)
                     if zc is not None:
-                        vd2 = VERD.verdeckt(zc, dp, ZL, a.wolke_abs, a.wolke_rel, a.wolke_schliess) & np.isfinite(dp) & (dp <= dv * 1.003 + 0.03)   # violett = durch Fotowolke verdeckt (nicht bewertet)
+                        vd2 = np.zeros((Hc, Wc), bool); vd2[by0 - cy0:by1 - cy0, bx0 - cx0:bx1 - cx0] = sv["vd"]   # violett = durch Fotowolke verdeckt (nicht bewertet); = vd aus Durchlauf 1 (gleiche Formel wie vorher vd2)
                         ov[vd2] = (0.5 * ov[vd2] + 0.5 * np.array((255, 0, 160))).astype(np.uint8)
-                        ys, xs = np.where(ms | vd2); y0, y1, x0, x1 = max(0, ys.min() - 40), min(H, ys.max() + 40), max(0, xs.min() - 40), min(W, xs.max() + 40)
+                        ys, xs = np.where(ms | vd2); y0, y1, x0, x1 = max(0, ys.min() - 40), min(Hc, ys.max() + 40), max(0, xs.min() - 40), min(Wc, xs.max() + 40)
                     cv2.imwrite(os.path.join(bd, f"{name}_{nr}{('_' + a.etikett) if a.etikett else ''}.jpg"), ov[y0:y1, x0:x1], [cv2.IMWRITE_JPEG_QUALITY, 85])
     TEIL = (a.aus + ".teil") if a.aus else None
     if TEIL and os.path.exists(TEIL):   # Wiederaufnahme: abgebrochener Lauf zum selben STL

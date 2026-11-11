@@ -99,7 +99,7 @@ def schattiert(P, N, R, t, f, cx, cy, W, H, licht=(0.35, -0.45, 0.82), hintergru
     img[tr] = (70 + 170 * (0.25 + 0.75 * lit[idx[tr]])).astype(np.uint8)
     return img, depth
 
-def dreiecke_rastern(mm, R, t, f, cx, cy, W, H, block=None, als_torch=False):
+def dreiecke_rastern_alt(mm, R, t, f, cx, cy, W, H, block=None, als_torch=False):
     """Netz (trimesh, Weltrahmen) auf der GPU EXAKT rastern (Z-Puffer je Pixel, perspektivisch korrekte Tiefe), kein Punkt-Abtasten mehr.
     Warum (2026-11-04): Punkt-Abtastung liess Pixel ohne Punkt auf der Vorderflaeche -> dahinterliegende (dunkle) Flaeche schien durch = Pixel-Pfeffer und
     Scheinkanten im 'Foto'. Streuungsmessung Martinstor 014: T1 je Saat CPU 24,8/32,2/29,8/27,5 %, GPU-Punkte 26,4/25,0/25,6/23,8 % (Grenze 25 %) - der Beweis
@@ -156,6 +156,109 @@ def dreiecke_rastern(mm, R, t, f, cx, cy, W, H, block=None, als_torch=False):
     for s in range(0, H * W, 1 << 22):
         pi = torch.arange(s, min(s + (1 << 22), H * W), device="cuda"); dd = d[s:s + len(pi)]; dd = torch.where(torch.isfinite(dd), dd, torch.zeros_like(dd))
         Xp = torch.stack([((pi % W) - cx) / f * dd, ((pi // W) - cy) / f * dd, dd], 1); pos[s:s + len(pi)] = ((Xp - tg) @ Rg).float()   # Welt = R^T (X - t)
+    pos[fid < 0] = 0; dn = d.float().reshape(H, W).cpu().numpy(); del d
+    if als_torch: return dn, fid.reshape(H, W), pos.reshape(H, W, 3)
+    out = (dn, fid.reshape(H, W).cpu().numpy(), pos.reshape(H, W, 3).cpu().numpy())
+    del Tw, X, Nc, fid, pos; torch.cuda.empty_cache(); return out
+
+
+def dreiecke_rastern(mm, R, t, f, cx, cy, W, H, block=None, als_torch=False, nur_tiefe=False):
+    """Standard seit 11.11.: schnelle Fassung (Zeilen-Spannen + Einzeldurchlauf), BITGLEICH zu dreiecke_rastern_alt (Gegenprobe 37 Fotos x 4 Netze, tools/regression).
+    RCPARK_RASTER_ALT=1 = alte Fassung. nur_tiefe=True: nur Tiefenbild (fid/pos = None), fuer Aufrufer, die nur depth brauchen."""
+    if os.environ.get("RCPARK_RASTER_ALT") == "1":
+        r = dreiecke_rastern_alt(mm, R, t, f, cx, cy, W, H, block, als_torch)
+        return (r[0], None, None) if nur_tiefe else r
+    return _raster_schnell(mm, R, t, f, cx, cy, W, H, block, als_torch, nur_tiefe)
+
+
+def _raster_schnell(mm, R, t, f, cx, cy, W, H, block=None, als_torch=False, nur_tiefe=False):
+    """Siehe dreiecke_rastern_alt (gleiche Rechnung, gleiches Ergebnis bitgleich). Beschleunigung (11.11., Nutzerauftrag teil_fotoform halbe Laufzeit):
+    (1) Zeilen-Spannen statt Bounding-Box: je Dreieck und Bildzeile wird das x-Intervall, in dem alle drei Randfunktionen >= 0 sein koennen, analytisch (float64)
+        bestimmt und um 1,5 px erweitert (konservativ: Obermenge der Pixel mit drin=True); der EXAKTE Innentest bleibt derselbe -> Ergebnis gleich, nur 5-6x weniger Paare.
+    (2) EIN Durchlauf statt zwei: nach jedem Block werden Paare behalten, die gegen die laufende Minimaltiefe noch gewinnen koennten (laufend >= endgueltig -> Obermenge),
+        am Ende gegen die endgueltige Tiefe gefiltert. Gleiche Rechnung je Paar, amin ist reihenfolgefrei."""
+    import torch
+    Rg = torch.as_tensor(np.asarray(R, float), dtype=torch.float64, device="cuda"); tg = torch.as_tensor(np.asarray(t, float).ravel(), dtype=torch.float64, device="cuda")
+    Tw = torch.as_tensor(np.array(mm.triangles), dtype=torch.float64, device="cuda"); X = Tw @ Rg.T + tg; z = X[..., 2]
+    Nc = torch.as_tensor(np.asarray(mm.face_normals), dtype=torch.float64, device="cuda") @ Rg.T
+    zs = z.clamp(min=1e-9); u = f * X[..., 0] / zs + cx; v = f * X[..., 1] / zs + cy
+    x0 = torch.ceil(u.min(1).values - 0.5).clamp(min=0); x1 = torch.floor(u.max(1).values + 0.5).clamp(max=W - 1)
+    y0 = torch.ceil(v.min(1).values - 0.5).clamp(min=0); y1 = torch.floor(v.max(1).values + 0.5).clamp(max=H - 1)
+    fl2 = (u[:, 1] - u[:, 0]) * (v[:, 2] - v[:, 0]) - (u[:, 2] - u[:, 0]) * (v[:, 1] - v[:, 0])
+    gut = (z > 1).all(1) & (x1 >= x0) & (y1 >= y0) & (fl2.abs() > 1e-12)
+    ids = torch.nonzero(gut, as_tuple=True)[0]; nrow = (y1 - y0 + 1)[ids].long()
+    # --- Zeilen-Spannen: (Dreieck, Zeile) -> [lo, lo+len) ---
+    RB = 1 << 22; tri_l, py_l, lo_l, len_l = [], [], [], []
+    cs = torch.cumsum(nrow, 0); tot = int(cs[-1]) if len(cs) else 0; s = 0
+    while s < tot:
+        a_ = int(torch.searchsorted(cs, s, right=True)); b_ = int(torch.searchsorted(cs, s + RB, right=True)); b_ = max(b_, a_ + 1); b_ = min(b_, len(ids))
+        fi = ids[a_:b_]; c = nrow[a_:b_]; k = torch.repeat_interleave(torch.arange(b_ - a_, device="cuda"), c)
+        off = torch.cumsum(c, 0) - c; lok = torch.arange(int(c.sum()), device="cuda") - off[k]; f_ = fi[k]; py = y0[f_] + lok
+        U, V = u[f_], v[f_]; lo = x0[f_].clone(); hi = x1[f_].clone(); A = fl2[f_]; sg = torch.sign(A)
+        # w1*A = a1*px + c1 mit a1 = (V2-V0), c1 = -U0*(V2-V0) - (U2-U0)*(py-V0); w2*A = a2*px + c2, a2 = -(V1-V0), c2 = (U1-U0)*(py-V0) + U0*(V1-V0); w0*A = A - w1*A - w2*A
+        a1 = V[:, 2] - V[:, 0]; c1 = -U[:, 0] * a1 - (U[:, 2] - U[:, 0]) * (py - V[:, 0])
+        a2 = -(V[:, 1] - V[:, 0]); c2 = (U[:, 1] - U[:, 0]) * (py - V[:, 0]) - U[:, 0] * a2
+        a0 = -a1 - a2; c0 = A - c1 - c2
+        for ai, ci in ((a1, c1), (a2, c2), (a0, c0)):
+            asg = ai * sg; fest = ai.abs() >= 1e-3; bound = -ci / torch.where(fest, ai, torch.ones_like(ai))
+            lo = torch.where(fest & (asg > 0), torch.maximum(lo, torch.ceil(bound - 1.5)), lo)
+            hi = torch.where(fest & (asg < 0), torch.minimum(hi, torch.floor(bound + 1.5)), hi)
+        ln = (hi - lo + 1).clamp(min=0).long(); ok = ln > 0
+        tri_l.append(f_[ok].int()); py_l.append(py[ok].int()); lo_l.append(lo[ok].int()); len_l.append(ln[ok].int())
+        s = int(cs[b_ - 1]); del fi, c, k, off, lok, f_, py, U, V, lo, hi, A, sg, a1, c1, a2, c2, a0, c0, ln, ok
+    if tri_l:
+        tri_a, py_a, lo_a, len_a = (torch.cat(q) for q in (tri_l, py_l, lo_l, len_l))
+    else:
+        tri_a = py_a = lo_a = len_a = torch.zeros(0, dtype=torch.int32, device="cuda")
+    del tri_l, py_l, lo_l, len_l
+    if os.environ.get("RCPARK_RASTER_F32") == "1":
+        u, v, z, fl2, Nc, x0, y0 = (q.float() for q in (u, v, z, fl2, Nc, x0, y0))
+    if block is None:
+        block = int(min(1 << 24, max(1 << 20, 0.25 * torch.cuda.mem_get_info()[0] / 200)))
+    cl = torch.cumsum(len_a.long(), 0); nz = len(len_a); grenzen = [0]
+    if nz:
+        tl = int(cl[-1]); g = block
+        while g < tl:
+            i = int(torch.searchsorted(cl, g, right=True))
+            if i > grenzen[-1] and i < nz: grenzen.append(i)
+            g = int(cl[min(i, nz - 1)]) + block if i < nz else tl
+        grenzen.append(nz)
+    GROSS = len(mm.faces) + 1; it = torch.int32 if 2 * GROSS < 2 ** 31 else torch.long
+    d = torch.full((H * W,), float("inf"), dtype=z.dtype, device="cuda"); EPS_REL = 1e-6
+    bw_fl, bw_t, bw_k = [], [], []; held = 0; limit = 1 << 24
+    def filt(lst_fl, lst_t, lst_k):
+        fl_, t_, k_ = torch.cat(lst_fl), torch.cat(lst_t), torch.cat(lst_k); w = t_ <= d[fl_] * (1 + EPS_REL) + 1e-9
+        return [fl_[w]], [t_[w]], [k_[w]]
+    for a_, b_ in zip(grenzen[:-1], grenzen[1:]):
+        if b_ <= a_: continue
+        c = len_a[a_:b_].long(); n = int(c.sum()); k = torch.repeat_interleave(torch.arange(b_ - a_, device="cuda"), c)
+        off = torch.cumsum(c, 0) - c; lok = torch.arange(n, device="cuda") - off[k]
+        f_ = tri_a[a_:b_][k].long(); px = (lo_a[a_:b_][k].long() + lok).to(z.dtype if z.dtype == torch.float64 else torch.float32); py = py_a[a_:b_][k].to(px.dtype)
+        U, V = u[f_], v[f_]; A = fl2[f_]
+        w1 = ((px - U[:, 0]) * (V[:, 2] - V[:, 0]) - (U[:, 2] - U[:, 0]) * (py - V[:, 0])) / A
+        w2 = ((U[:, 1] - U[:, 0]) * (py - V[:, 0]) - (px - U[:, 0]) * (V[:, 1] - V[:, 0])) / A; w0 = 1 - w1 - w2
+        drin = (w0 >= 0) & (w1 >= 0) & (w2 >= 0)
+        Z = z[f_]; tief = 1.0 / (w0 / Z[:, 0] + w1 / Z[:, 1] + w2 / Z[:, 2])
+        f_, px, py, tief = f_[drin], px[drin].long(), py[drin].long(), tief[drin]
+        Xp = torch.stack([(px - cx) / f * tief, (py - cy) / f * tief, tief], 1); ab = ((Nc[f_] * Xp).sum(1) > 0).long(); fl = py * W + px
+        d.scatter_reduce_(0, fl, tief, reduce="amin")
+        if nur_tiefe: del c, k, off, lok, f_, px, py, U, V, A, w1, w2, w0, drin, Z, tief, Xp, ab, fl; continue   # nur Tiefe (teil_fotoform Teilraster): keine Gewinnerzuordnung, kein pos
+        w = tief <= d[fl] * (1 + EPS_REL) + 1e-9
+        bw_fl.append(fl[w]); bw_t.append(tief[w]); bw_k.append((ab[w] * GROSS + f_[w]).to(it)); held += int(w.sum())
+        if held > limit:
+            bw_fl, bw_t, bw_k = filt(bw_fl, bw_t, bw_k); held = len(bw_fl[0]); limit = max(1 << 24, 2 * held)
+        del c, k, off, lok, f_, px, py, U, V, A, w1, w2, w0, drin, Z, tief, Xp, ab, fl, w
+    if nur_tiefe:
+        dn = d.float().reshape(H, W).cpu().numpy(); del d, Tw, X, Nc; return dn, None, None
+    fw = torch.full((H * W,), 2 * GROSS, dtype=it, device="cuda")
+    if bw_fl:
+        fl_, t_, k_ = torch.cat(bw_fl), torch.cat(bw_t), torch.cat(bw_k); w = t_ <= d[fl_] * (1 + EPS_REL) + 1e-9
+        fw.scatter_reduce_(0, fl_[w], k_[w], reduce="amin")
+    fid = torch.where(fw >= 2 * GROSS, torch.full_like(fw, -1), fw % GROSS).long(); del fw
+    pos = torch.zeros((H * W, 3), dtype=torch.float32, device="cuda")
+    for s in range(0, H * W, 1 << 22):
+        pi = torch.arange(s, min(s + (1 << 22), H * W), device="cuda"); dd = d[s:s + len(pi)]; dd = torch.where(torch.isfinite(dd), dd, torch.zeros_like(dd))
+        Xp = torch.stack([((pi % W) - cx) / f * dd, ((pi // W) - cy) / f * dd, dd], 1); pos[s:s + len(pi)] = ((Xp - tg) @ Rg).float()
     pos[fid < 0] = 0; dn = d.float().reshape(H, W).cpu().numpy(); del d
     if als_torch: return dn, fid.reshape(H, W), pos.reshape(H, W, 3)
     out = (dn, fid.reshape(H, W).cpu().numpy(), pos.reshape(H, W, 3).cpu().numpy())
