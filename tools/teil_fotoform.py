@@ -93,6 +93,12 @@ def fein_bewerten(mfm, ff, tolpx):
     return float((dtf[mfm] <= tolpx).mean()), float((dtm[ff] <= tolpx).mean())
 
 
+def fein_gelb(mfm, ff, tolpx):
+    """FEIN-GELB (SPEC_FEINSUCHE): Fotokantenpixel (voll aufgeloest) ohne Modell-Feinkante innerhalb tolpx. Nur Zusatzfeld, F1/f1_fein unberuehrt."""
+    dtm = cv2.distanceTransform((~mfm).astype(np.uint8), cv2.DIST_L2, 5)
+    return ff & (dtm > tolpx)
+
+
 def feinkanten_foto(gray, roi):
     """Fotokanten in VOLLER Aufloesung ohne 0,18-m-Glaettung: Canny auf leicht geglaettetem Grau (sigma 1), Schwellen adaptiv im ROI
     (hoch = 80. Perzentil des Gradientenbetrags im ROI, tief = 0,5 x hoch). roi = bool-Karte."""
@@ -322,6 +328,9 @@ def main(argv=None):
                         pf, rf = fein_bewerten(mfm, ff, tolpx)
                         e.update({"praez_f": round(pf, 3), "recall_f": round(rf, 3), "f1_f": round(2 * pf * rf / (pf + rf), 3) if pf + rf else 0.0,
                                   "mkf_px": int(mfm.sum()), "fkf_px": int(ff.sum()), "tol_px": round(tolpx, 2)})
+                        fl_fg = flecken(fein_gelb(mfm, ff, tolpx), pos, n=5, min_px=30)   # groesste Feinkanten-Fehlstellen mit Weltpunkt auf der Modellflaeche
+                        for fl_ in fl_fg: fl_["bbox_px"][0] += cx0; fl_["bbox_px"][1] += cy0
+                        e["flecken_fein"] = fl_fg
                         if a.bilder:
                             fo = (im0 // 2).copy(); fo[ff] = (255, 160, 0); fo[mfm] = (0, 220, 0); fo[mfm & ff] = (255, 255, 255)
                             ys, xs = np.where(ms); fy0, fy1, fx0, fx1 = max(0, ys.min() - 20), min(Hc, ys.max() + 20), max(0, xs.min() - 20), min(Wc, xs.max() + 20)
