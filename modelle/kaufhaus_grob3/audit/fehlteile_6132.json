@@ -1,77 +1,35 @@
 {
  "foto": "6132",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261110_225455a225455/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6132 (amtliche Anker)",
  "zelle_px": 155,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
+    1705,
     2480,
-    930,
     155
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    2.24,
-    7.68,
-    19.53
+    7.95,
+    0.78,
+    9.73
    ]
   },
   {
    "zelle": [
-    1550,
     2635,
-    155
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    9.23,
-    0.47,
-    9.05
-   ]
-  },
-  {
-   "zelle": [
-    620,
-    2790,
-    155
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    15.77,
-    2.86,
-    7.35
-   ]
-  },
-  {
-   "zelle": [
-    2170,
     3720,
     155
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    4.75,
-    0.34,
-    1.54
-   ]
-  },
-  {
-   "zelle": [
-    2325,
-    3720,
-    155
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    3.73,
-    0.23,
+    1.8,
+    0.62,
     1.53
    ]
   },
@@ -81,12 +39,54 @@
     3720,
     155
    ],
-   "score": -0.996,
+   "score": -0.98,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    2.76,
-    0.64,
+    2.77,
+    0.69,
     1.53
+   ]
+  },
+  {
+   "zelle": [
+    2635,
+    775,
+    155
+   ],
+   "score": -0.977,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    1.19,
+    7.66,
+    20.66
+   ]
+  },
+  {
+   "zelle": [
+    930,
+    1860,
+    155
+   ],
+   "score": -0.967,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    14.67,
+    0.79,
+    15.86
+   ]
+  },
+  {
+   "zelle": [
+    2635,
+    620,
+    155
+   ],
+   "score": -0.953,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    0.29,
+    6.35,
+    23.31
    ]
   }
  ],
