@@ -461,7 +461,10 @@ def waehlen(z, sperre):
     # Teil reisen jetzt MIT in den Auftrag (Zielart beobachtung), bestimmen aber nicht mehr die Reihenfolge.
     _istn = lambda b: "nutzer" in str(b.get("wer", "")).lower()
     bz = {}
-    for b in sorted(beob_ziele(z), key=lambda b: 0 if _istn(b["beob"]) else 1):   # Nutzerbefund vor eigenem Befund desselben Teils
+    # Nutzerbefund vor eigenem Befund desselben Teils, je Gruppe der NEUESTE zuerst (11.11. a105629: aeltere Kapitell-Beobachtung wurde Ziel,
+    # die Funde von heute (Sockel, Stirnboegen) blieben liegen; masstabelle haengt neue Beobachtungen hinten an)
+    _bzl = beob_ziele(z)
+    for b in sorted(_bzl, key=lambda b: (0 if _istn(b["beob"]) else 1, -_bzl.index(b))):
         bk = beob_schluessel(b["beob"])
         if sperre.get(bk, 0) < MAX_FEHL and fg.get(bk, 0) < MAX_GLOBAL: bz.setdefault(b["teil"], b)
     # NUTZERENTSCHEID 11.11. ("Nutzerfunde zuerst"): Teile mit offenem NUTZER-Sichtfund (masstabelle, wer enthaelt 'Nutzer', nicht erledigt,
