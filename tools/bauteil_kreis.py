@@ -923,6 +923,7 @@ for runde in range(1, RUNDEN + 1):
     # dann Foto-F1 Gewinn 0 -> 95 min Tor fuer eine Ablehnung, die die Fotomessung allein in 5 min gezeigt haette). Foto-F1 (+ Hoehe) entscheidet ohnehin
     # zuerst; ohne Gewinn sofort ablehnen, Abnahme/Konvergenz/Pruefer nur fuer Kandidaten. Nach einer Rueckgabe misst zuerst die halbe Stufe (1 min).
     ff_n = None; _frueh = None
+    if _agent_leer: _frueh = "Agent hat nichts geaendert"   # 11.11. 16:xx: seit Grauzone (F1-Toleranz -0,005) liefen leere Runden durch Abnahme/Konvergenz/Verschiebung (bruestung__balkon a153352 r2/r3, je mehrere Minuten)
     if rcG == 0 and (ff_v is not None or _ff_spaet) and not ist_fehlteil(ziel) and os.path.exists(os.path.join(_tn, ziel["teil"] + ".stl")):
         if _halb:   # halbe Stufe: endgueltig ablehnen nur ohne JEDEN Gewinn (halb unterschaetzt den Betrag: Tuer +0,081 statt +0,29)
             if not _vorab_gebaut:   # zweiter Versuch nach Rueckgabe
