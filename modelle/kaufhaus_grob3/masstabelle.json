@@ -6904,8 +6904,8 @@
   {
    "teil": "baldachinreihe:baldachine",
    "merkmal": "Baldachin-Aufsaetze (grosse Kronen) bei den mittleren Figuren nicht mittig",
-   "text": "Nutzer 11.11. 16:17 (Viewer v52 Kanten, Foto an_handy_2026-11-06_f_handy_f_04, rote Rahmen ueber den Figuren 2-4): die groben Aufsaetze ueber den Baldachinen sitzen bei den mittleren Figuren nicht mittig. Geometrie: Figuren-u 9,422/5,468/1,476/-2,463, Baldachin-u 9,462/5,420/1,614/-2,447 -> Versatz +0,04/-0,05/+0,14/+0,02 m (Figur 3 am groessten).",
-   "naechster_schritt": "Mitte je Krone und Figur per foto_mass in >=3 Fotos messen (Regel 3c), Baldachin-u auf Fotomitte setzen; Lagebefund -> Verschiebungskontrolle.",
+   "text": "Nutzer 11.11. 16:17 (Viewer v52 Kanten, Foto an_handy_2026-11-06_f_handy_f_04, rote Rahmen ueber den Figuren 2-4): die groben Aufsaetze ueber den Baldachinen sitzen bei den mittleren Figuren nicht mittig. Geometrie: Figuren-u 9,422/5,468/1,476/-2,463, Baldachin-u 9,462/5,420/1,614/-2,447 -> Versatz +0,04/-0,05/+0,14/+0,02 m (Figur 3 am groessten). | 11.11. 17:3x Patch b_mitte (Krone u = Figurenachse) VERWORFEN: Kontrollfotos F1 0,829->0,816 (5 unbekannte Fotos), Pruefstand rot (Baldachin 3 Mittelfiale nicht mehr am triangulierten Ort u 1,614, M-6161-024). WIDERSPRUCH (Regel 5, nicht mitteln): Kronen-Triangulation M-6161-022..024 vs Figurenachsen M-6120-030..050 weichen 0,04-0,14 m ab.",
+   "naechster_schritt": "Klaeren, WER falsch sitzt: Figur oder Krone. Je Figur 3 Fotos: Kopfmitte und Fialenspitze im selben Foto picken (foto_mass --tri), Differenz u messen; dann die falsch liegende Seite verschieben (evtl. Figuren statt Kronen).",
    "datum": "2026-11-11",
    "wer": "Nutzer (Sichtbeobachtung)",
    "pruef_stichworte": [
