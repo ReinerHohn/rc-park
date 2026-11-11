@@ -727,7 +727,8 @@ for runde in range(1, RUNDEN + 1):
                                           f"modelle/{OBJ}/pruefbericht.json", f"modelle/{OBJ}/MASSNACHWEIS.md", f"modelle/{OBJ}/konvergenz.jsonl")]
         rcA = subprocess.run(["git", "-C", wt, "apply", "--whitespace=nowarn"] + _ex + [PATCH], capture_output=True, text=True).returncode
         if rcA != 0:   # Patch aelter als main (masstabelle.json wuchs): 3-Wege-Anwendung
-            rcA = subprocess.run(["git", "-C", wt, "apply", "--3way"] + _ex + [PATCH], capture_output=True, text=True).returncode
+            _ra = subprocess.run(["git", "-C", wt, "apply", "--3way"] + _ex + [PATCH], capture_output=True, text=True); rcA = _ra.returncode
+            if rcA != 0: print("git apply --3way:", (_ra.stderr or "")[-800:], flush=True)   # 11.11. a014000: Fehler ohne Meldung, spaeter nicht reproduzierbar
         print(f"Runde {runde}: Patch {PATCH} uebernommen rc={rcA}", flush=True)
         if rcA != 0: freigeben(ziel["teil"]); sys.exit("Patch passt nicht auf main")
     else:
