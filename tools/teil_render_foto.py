@@ -20,7 +20,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("teil"); ap.add_argument("--fotos", required=True)
     ap.add_argument("--teile_dir", required=True); ap.add_argument("--stl", required=True); ap.add_argument("--name", default="Teil")
     ap.add_argument("--vergleich", action="append", default=[], help="NAME:TEILE_DIR:STL (mehrfach)"); ap.add_argument("--aus"); ap.add_argument("--pad", type=int, default=30)
-    ap.add_argument("--maxbreite", type=int, default=2400); ap.add_argument("--kontur", action="store_true", help="zusaetzlich Fotokanten (Canny, voll aufgeloest) orange ueber das Render")
+    ap.add_argument("--maxbreite", type=int, default=2400); ap.add_argument("--ausschnitt", help="x0,y0,x1,y1 in Bildpixeln (ersetzt den Teil-Kasten; Feinsuche-Kollage)"); ap.add_argument("--kontur", action="store_true", help="zusaetzlich Fotokanten (Canny, voll aufgeloest) orange ueber das Render")
     a = ap.parse_args(argv)
     objp = os.path.join(R0, "modelle", a.objekt, "objekt.json"); obj = json.load(open(objp)); aus = a.aus or os.path.join(R0, "modelle", a.objekt, "audit", "teil_render_foto"); os.makedirs(aus, exist_ok=True)
     var = [(a.name, a.teile_dir, a.stl)] + [tuple(v.split(":")) for v in a.vergleich]; ausg = []
@@ -39,8 +39,9 @@ def main(argv=None):
             ganz = m.copy(); ganz.apply_translation(tr); dv = _np(RK.dreiecke_rastern(ganz, R, t, f, cx, cy, W, H, nur_tiefe=True)[0])
             p = trimesh.load(os.path.join(td, a.teil + ".stl"), force="mesh"); p.apply_scale(obj.get("stl_massstab", 87) / 1000.0); p.apply_translation(tr)
             d = _np(RK.dreiecke_rastern(p, R, t, f, cx, cy, W, H, nur_tiefe=True)[0]); fin = np.isfinite(d)
-            if box is None:
+            if box is None and not a.ausschnitt:
                 ys, xs = np.nonzero(fin); box = (max(ys.min() - a.pad, 0), min(ys.max() + a.pad, H), max(xs.min() - a.pad, 0), min(xs.max() + a.pad, W))
+            if a.ausschnitt: x0_, y0_, x1_, y1_ = [int(v) for v in a.ausschnitt.split(",")]; box = (max(y0_, 0), min(y1_, H), max(x0_, 0), min(x1_, W))
             y0, y1, x0, x1 = box; sicht = fin & (d <= dv * 1.003 + 0.03); dd = np.where(fin, d, np.nan)[y0:y1, x0:x1]
             gy, gx = np.gradient(np.nan_to_num(dd, nan=np.nanmax(dd))); n = np.dstack([-gx, -gy, np.full_like(gx, 0.004)]); n /= np.linalg.norm(n, axis=2, keepdims=True)
             s = np.clip(n @ np.array([-0.4, -0.5, 0.77]), 0, 1); g = (40 + 215 * s).astype(np.uint8); g[~np.isfinite(dd)] = 255

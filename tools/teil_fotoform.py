@@ -99,6 +99,20 @@ def fein_gelb(mfm, ff, tolpx):
     return ff & (dtm > tolpx)
 
 
+_POS_NAHE = {}
+
+
+def pos_nahe(pos):
+    """Weltpunkt-Karte (H,W,3) mit Luecken (nan) aufgefuellt durch den naechsten Modelltreffer (cv2.distanceTransformWithLabels); je Foto einmal (Cache nach id)."""
+    k = id(pos)
+    if k in _POS_NAHE: return _POS_NAHE[k][1]
+    fin = np.isfinite(pos).all(2) & (np.abs(np.nan_to_num(pos)).sum(2) > 0)  # Raster ohne Treffer steht als 0,0,0
+    lab = cv2.distanceTransformWithLabels((~fin).astype(np.uint8), cv2.DIST_L2, 5, labelType=cv2.DIST_LABEL_PIXEL)[1]
+    ys, xs = np.nonzero(fin); lut = np.zeros((lab.max() + 1, 2), np.int64)
+    zl = lab[ys, xs]; lut[zl, 0] = ys; lut[zl, 1] = xs; out = pos[lut[lab, 0], lut[lab, 1]]
+    _POS_NAHE.clear(); _POS_NAHE[k] = (pos, out); return out
+
+
 def feinkanten_foto(gray, roi):
     """Fotokanten in VOLLER Aufloesung ohne 0,18-m-Glaettung: Canny auf leicht geglaettetem Grau (sigma 1), Schwellen adaptiv im ROI
     (hoch = 80. Perzentil des Gradientenbetrags im ROI, tief = 0,5 x hoch). roi = bool-Karte."""
@@ -135,6 +149,8 @@ def main(argv=None):
                     help="Stoermaske (tools/foto_stoermaske.py: Menschen/Fahrzeuge/Schilder/Moebel/Pflanzen/Fahnen): Foto- UND Modellkantenpixel in der Maske zaehlen nicht. Standard aus = bitgleich zum Ist. Auch RCPARK_STOERMASKE=an")
     ap.add_argument("--stoermaske_dir", default=os.environ.get("RCPARK_STOERMASKE_DIR"), help="Maskenordner (Standard /media/oem/scan/rc-park_tmp/stoermaske); Dateien <dir>/<objekt>/<foto>.png")
     ap.add_argument("--fein", choices=["an", "aus"], default=os.environ.get("RCPARK_FEIN", "an"), help="Nebenzahl f1_fein (voll aufgeloeste Kanten, Hauptzahl F1 unveraendert); auch RCPARK_FEIN=aus")
+    ap.add_argument("--fein_n", type=int, default=5, help="SPEC_FEINSUCHE: Zahl der groessten Fein-Fehlflecken je Teil und Foto (Standard 5 war an 32/36 Fotos ausgeschoepft: kleinste Fleck ~1000 px)"); ap.add_argument("--fein_min_px", type=int, default=30)
+    ap.add_argument("--fein_rand_m", type=float, default=0.0, help="SPEC_FEINSUCHE: > 0 = Zusatzfeld flecken_fein_rand (Feinkanten bis diesen Abstand in METERN ausserhalb der Modellsilhouette, z. B. Drachen vor Himmel; Weltpunkt = naechster Modelltreffer); 0 = aus, Hauptzahlen unberuehrt")
     ap.add_argument("--aus"); ap.add_argument("--bilder", action="store_true", help="je Teil+Foto Ausschnitt mit gruen/rot/gelb nach audit/teil_fotoform/")
     ap.add_argument("--nur", help="nur diese Teile (Komma), z. B. das Kreis-Ziel"); ap.add_argument("--etikett", default="", help="Zusatz im Bildnamen (vorher/nachher)")
     ap.add_argument("--bilder_dir", help="Bilder hierhin statt modelle/<objekt>/audit/teil_fotoform (Kreis: Datenplatte, nicht ins Repo)")
@@ -328,9 +344,18 @@ def main(argv=None):
                         pf, rf = fein_bewerten(mfm, ff, tolpx)
                         e.update({"praez_f": round(pf, 3), "recall_f": round(rf, 3), "f1_f": round(2 * pf * rf / (pf + rf), 3) if pf + rf else 0.0,
                                   "mkf_px": int(mfm.sum()), "fkf_px": int(ff.sum()), "tol_px": round(tolpx, 2)})
-                        fl_fg = flecken(fein_gelb(mfm, ff, tolpx), pos, n=5, min_px=30)   # groesste Feinkanten-Fehlstellen mit Weltpunkt auf der Modellflaeche
+                        fl_fg = flecken(fein_gelb(mfm, ff, tolpx), pos, n=a.fein_n, min_px=a.fein_min_px)   # groesste Feinkanten-Fehlstellen mit Weltpunkt auf der Modellflaeche
                         for fl_ in fl_fg: fl_["bbox_px"][0] += cx0; fl_["bbox_px"][1] += cy0
                         e["flecken_fein"] = fl_fg
+                        if a.fein_rand_m > 0:   # Randfleck: Feinkanten auch ausserhalb der 3-px-Silhouettenzone (Metergroesse aus Kamera: Rand = fein_rand_m * f / Teiltiefe)
+                            rpx = max(3, int(round(a.fein_rand_m * tolpx / FEIN_TOL_M))); ms2 = cv2.dilate(vis.astype(np.uint8), np.ones((2 * rpx + 1, 2 * rpx + 1), np.uint8)) > 0
+                            if SMC is not None: ms2 &= ~SMC
+                            ff2 = feinkanten_foto(gray_c, ms2) & ms2
+                            if SMC is not None: ff2 &= ~SMC
+                            g2 = fein_gelb(mfm, ff2, tolpx) & ~ms   # nur der NEUE Randstreifen ausserhalb von ms (innen gilt flecken_fein)
+                            fl2 = flecken(g2, pos_nahe(pos), n=max(8, a.fein_n // 2), min_px=a.fein_min_px)
+                            for fl_ in fl2: fl_["bbox_px"][0] += cx0; fl_["bbox_px"][1] += cy0
+                            e["flecken_fein_rand"] = fl2
                         if a.bilder:
                             fo = (im0 // 2).copy(); fo[ff] = (255, 160, 0); fo[mfm] = (0, 220, 0); fo[mfm & ff] = (255, 255, 255)
                             ys, xs = np.where(ms); fy0, fy1, fx0, fx1 = max(0, ys.min() - 20), min(Hc, ys.max() + 20), max(0, xs.min() - 20), min(Wc, xs.max() + 20)
