@@ -1,0 +1,39 @@
+{
+ "id": "M-6124-021",
+ "typ": "triangulation",
+ "foto": "6124",
+ "name": "Dienst u-8,3 Schaftmitte (6124+6161, Silhouettenmitte)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6124",
+   "px": [
+    1525.0,
+    3319.0
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    3264.0,
+    2302.0
+   ]
+  }
+ ],
+ "P": [
+  -5.589,
+  9.602,
+  3.287
+ ],
+ "strahl_abstand_m": [
+  0.137,
+  0.137
+ ],
+ "schnittwinkel_grad": [
+  9.6
+ ],
+ "z": 3.287,
+ "unsicherheit_m": 0.329,
+ "massstab_von": "Kameras K-6124, K-6161 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.186,
+ "u": -8.474
+}

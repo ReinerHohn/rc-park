@@ -4747,7 +4747,7 @@
   {
    "typ": "zylinder:dienst_laube_um230_sockel",
    "gruppe": "Dienst (Halbsaeule) Laubenrueckwand",
-   "u": -2.3,
+   "u": -2.433,
    "n": 7.336,
    "z0": 2.21,
    "z1": 2.97,
@@ -4760,7 +4760,7 @@
    "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
    "quelle": "Fotos 6120/6117/6130 (Stufe 0 kreis1 11.11.): runder Dienst mit gedrehtem Sockel an der Laubenrueckwand, Rippenansatz oben",
    "werte_quellen": {
-    "u": "ANNAHME: Pfeilerabstand 6,02 (u 9,745 - 2*6,022); in Foto 6130 liegt der Schaft bei u -2,3 +-0,2 (Projektion, nicht triangulier)",
+    "u": "Dreifach-Peilung 6130+6174+h11_111518 M-6130-008: u -2,433 +-0,15 (Schnittwinkel 57-115 Grad, Strahlabstand <=0,12); vorher ANNAHME -2,30 (Pitch)",
     "n": "M-6120-068 Peilung n 7,336",
     "z0": "Sockelband-Oberkante z 2,21 (M-6120-066)",
     "z1": "Sockelhoehe 0,76 (M-6120-066)",
@@ -4771,7 +4771,7 @@
   {
    "typ": "zylinder:dienst_laube_um230_schaft",
    "gruppe": "Dienst (Halbsaeule) Laubenrueckwand",
-   "u": -2.3,
+   "u": -2.433,
    "n": 7.336,
    "z0": 2.9,
    "z1": 5.6,
@@ -4784,10 +4784,82 @@
    "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
    "quelle": "Fotos 6120/6117/6130 (Stufe 0 kreis1 11.11.): runder Dienst mit gedrehtem Sockel an der Laubenrueckwand, Rippenansatz oben",
    "werte_quellen": {
-    "u": "ANNAHME: Pfeilerabstand 6,02 (u 9,745 - 2*6,022); in Foto 6130 liegt der Schaft bei u -2,3 +-0,2 (Projektion, nicht triangulier)",
+    "u": "Dreifach-Peilung 6130+6174+h11_111518 M-6130-008: u -2,433 +-0,15 (Schnittwinkel 57-115 Grad, Strahlabstand <=0,12); vorher ANNAHME -2,30 (Pitch)",
     "n": "M-6120-068 Peilung n 7,336",
     "z1": "Anlauf der Rippen z 5,54 (M-6120-067), +0,06 in die Gewoelbekappe",
     "radius": "Schaftbreite 0,37 (M-6120-064)"
+   },
+   "aktiv": true
+  },
+  {
+   "typ": "zylinder:dienst_laube_um845_sockel",
+   "gruppe": "Dienst (Halbsaeule) Laubenrueckwand",
+   "u": -8.455,
+   "n": 7.336,
+   "z0": 2.21,
+   "z1": 2.97,
+   "radius": 0.215,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
+   "quelle": "Fotos 6119/6120/6117/6124/6130/6161 (Stufe 0 kreis1 11.11., Nutzerfund Viewer v53 h_handy_h_04): runder Dienst vor jedem Gewoelbejoch an der Laubenrueckwand, Rippenansatz oben; Sockel mit Kannelur (6124/6161)",
+   "werte_quellen": {
+    "u": "Peilung M-6124-021 (6124+6161): u -8,47 +-0,33 (Schnittwinkel 9,6 Grad); Teilung -2,433-6,022 = -8,455; Achsprojektion trifft den Schaft in 6124/6130",
+    "n": "wie die anderen Dienste (M-6120-068 n 7,336); M-6124-021 n 7,19 +-0,33 nicht genauer",
+    "z0": "wie Dienst u 9,745: Sockelband-Oberkante z 2,21 (M-6120-066); in 6124 Sockelfuss ANNAHME gleich",
+    "z1": "Sockelhoehe 0,76 (M-6120-066) ANNAHME gleich",
+    "radius": "Sockelbreite 0,43 (M-6120-065) ANNAHME gleich"
+   },
+   "aktiv": true
+  },
+  {
+   "typ": "zylinder:dienst_laube_um845_schaft",
+   "gruppe": "Dienst (Halbsaeule) Laubenrueckwand",
+   "u": -8.455,
+   "n": 7.336,
+   "z0": 2.9,
+   "z1": 5.6,
+   "radius": 0.185,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
+   "quelle": "Fotos 6119/6120/6117/6124/6130/6161 (Stufe 0 kreis1 11.11., Nutzerfund Viewer v53 h_handy_h_04): runder Dienst vor jedem Gewoelbejoch an der Laubenrueckwand, Rippenansatz oben",
+   "werte_quellen": {
+    "u": "Peilung M-6124-021 u -8,47 +-0,33; Teilung -8,455",
+    "n": "wie die anderen Dienste (M-6120-068)",
+    "z1": "Rippenanlauf z 5,54 (M-6120-067) ANNAHME gleich",
+    "radius": "Schaftbreite 0,37 (M-6120-064) ANNAHME gleich"
+   },
+   "aktiv": true
+  },
+  {
+   "typ": "zylinder:dienst_laube_u359_konsole",
+   "gruppe": "Dienst (Halbsaeule) Laubenrueckwand",
+   "u": 3.587,
+   "n": 7.336,
+   "z0": 5.03,
+   "z1": 5.6,
+   "radius": 0.12,
+   "radius_oben": 0.185,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
+   "quelle": "Fotos 6119/6120/6117/6124/6130/6161 (Stufe 0 kreis1 11.11., Nutzerfund Viewer v53 h_handy_h_04): runder Dienst vor jedem Gewoelbejoch an der Laubenrueckwand, Rippenansatz oben; Konsol-Dienst: unter der Muschel (z 5,03) ist die Wand glatt (Tuerportal darunter), der Dienst reicht NICHT bis zum Boden",
+   "werte_quellen": {
+    "u": "Muschel am Dienstfuss, Dreifach-Triangulation M-6119-018 (6119+6117+6120): u 3,587 +-0,12; Gewoelbe M-6119-012 u 3,54",
+    "n": "wie die anderen Dienste (M-6120-068); M-6119-018 n 7,43 +-0,12",
+    "z0": "Muschel-Mitte z 5,03 (M-6119-018, +-0,12): Dienstfuss",
+    "z1": "wie die anderen Dienste: Rippenanlauf z 5,54 (M-6120-067), Anlauf z 5,6 ANNAHME gleich",
+    "radius": "ANNAHME: oben 0,185 wie die anderen Dienste (M-6120-064), unten 0,12 (Buendel verjuengt sich zur Muschel, Foto 6119 Ausschnitt; nicht gemessen)"
    },
    "aktiv": true
   },

@@ -1,0 +1,39 @@
+{
+ "id": "M-6130-007",
+ "typ": "triangulation",
+ "foto": "6130",
+ "name": "Dienst u-2,30 Schaftachse Mitte der Silhouette (6130+6145)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6130",
+   "px": [
+    979.0,
+    2498.0
+   ]
+  },
+  {
+   "kamera": "K-6145",
+   "px": [
+    2176.0,
+    2737.0
+   ]
+  }
+ ],
+ "P": [
+  0.075,
+  8.055,
+  4.31
+ ],
+ "strahl_abstand_m": [
+  0.07,
+  0.07
+ ],
+ "schnittwinkel_grad": [
+  7.0
+ ],
+ "z": 4.31,
+ "unsicherheit_m": 0.253,
+ "massstab_von": "Kameras K-6130, K-6145 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.618,
+ "u": -2.618
+}
