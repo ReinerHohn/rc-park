@@ -8,6 +8,8 @@ Startbedingung je Takt (alle muessen gelten):
   RAM verfuegbar > --ram_min (6 GB = gemessene Spitze einer Spur 5,7 GB; 10.11. zwei Spuren vom OOM-Killer beendet), Last1 < 1,5 x Kerne
   Root frei > 6 GB, Daten frei > 5,5 GB (platz_pruefen-Grenzen 5/5 GB + Puffer, Nutzer 10.11. abends; Worktrees werden nach jeder Runde entfernt)
   laufende Spuren < --max, letzter Start > --abstand s her (Spuren nicht gleichzeitig in die Messphase)
+  main fuer den aktuellen HEAD nicht rot (main_status.json von bauteil_kreis.py, Start-Abnahme 12.11.)
+Spuren laufen mit den Kreis-Standards (Rauschtor an, Rueckgabe aus, Messbarkeits-Filter an; 12.11.).
 Ende: 3 Spuren in Folge melden 'kein Kandidat' -> nichts mehr zu tun. Jede Entscheidung wird geloggt.
 """
 import sys, os, time, subprocess, shutil, json, glob
@@ -199,6 +201,12 @@ while True:
     if rf <= 6 or df <= 5.5:   # Nutzer 10.11. abends: Datengrenze 5 GB (+0,5 Puffer)
         grund.append(f"Platz root {rf:.1f} daten {df:.1f} GB")
     if len(sp) >= MAX: grund.append(f"{len(sp)} Spuren = max")
+    # INFRA-TOR (12.11.): bauteil_kreis prueft beim Start die Abnahme auf main (main_status.json je HEAD). Ist main fuer diesen HEAD rot, keine Spur
+    # starten (sie endete sofort mit 'KREIS STARTET NICHT'); neuer HEAD (Reparatur/Merge) -> naechster Start prueft neu.
+    try:
+        _ms = json.load(open(os.path.join(KD, OBJ, "main_status.json")))
+        if _ms.get("head") == sig[0] and _ms.get("gruen") is False: grund.append(f"main rot (Abnahme {_ms.get('zeit')}, {_ms.get('log')})")
+    except (OSError, ValueError): pass
     if time.time() - letzter < ABSTAND: grund.append("Abstand")
     zeile = f"{time.strftime('%H:%M:%S')} Spuren {len(sp)} GPU {u:.0f}/{ug:.0f} % VRAM {m:.0f} RAM {r:.1f} Last {last:.1f} root {rf:.1f} daten {df:.1f}"
     if grund:

@@ -21,6 +21,11 @@ Aufruf:
        --nach_main: angenommene Runde sofort nach main mergen (Nutzerentscheid 9.11., revertierbar); Konflikt -> bleibt auf dem Kreis-Branch
        --rechte: Rechte-Modus fuer die unbeaufsichtigten Sitzungen (z.B. acceptEdits oder bypassPermissions). Pflicht, kein Standard:
                  die Wahl trifft der Nutzer (unbeaufsichtigtes Schreiben + Bash im Worktree).
+  python3 tools/bauteil_kreis.py <objekt> --nur_wahl [--teile_dir D]   # Probe der Zielwahl: alle Kandidaten mit Messbarkeit/Grund, nichts belegen
+  Tor (12.11.): --rauschtor 1 (Standard; teil-lokales Rauschtor, tools/kreis_rauschtor.py; 0 = alte Schwellen), --rausch_faktor 0.5, --rausch_min 0.01,
+       --rausch_grob 0.05, --rausch_klein 0.36, --rueckgabe 0 (Standard, keine Rueckgabe an den Agenten), --grauzone 0 (Standard),
+       --messbar 1 --sicht_fotos 3 --sicht_px 2000 (Messbarkeits-Filter der Zielwahl, Fotowunschliste <kreisdir>/<objekt>/fotowunsch.jsonl).
+       Start-Abnahme auf main (bauen_abnehmen.sh --nur-pruefen, Status je HEAD <= 30 min in main_status.json): rot -> Exit 4, kein Kreis.
   Lange Laeufe ueber tools/job_start.sh starten (Nachtlauf).
 Konfiguration aus objekt.json "kreis" (alles optional): {"stl": ..., "skala": 0.087, "gitter": ..., "wolke": ..., "tabu": [...]}
 Grenzen (ehrlich): Wolkenbeleg ist noch kein bewiesenes Gate (Hinweis-Kennzahl, L22); Bauteile ohne Wolkendaten (Rueckseiten, Dach > Wolke)
@@ -57,7 +62,7 @@ FORMFUND_TOL = opt("--formfund_tol", 0.005, float)   # erlaubter Foto-F1-Abfall 
 ORN_FEIN = opt("--orn_fein", 0.03, float); ORN_GROB = opt("--orn_grob", 0.05, float)
 ORN_WORTE = ("rippe", "sprosse", "masswerk", "schuppe", "ziegel", "schindel", "fiale", "krabbe", "zipfel", "figur", "speier", "rosette", "astwerk", "geaest", "ornament", "dienst", "wappen", "netz", "butzen", "baldachin", "kaeppchen")
 FEIN_WEG = opt("--fein_weg", 1, int)   # SPEC_ORNAMENT_FEINMASS Punkt 3 (Nutzer 11.11. "voll automatisiert"): f1_fein (volle Aufloesung) +MIN_GEWINN_FOTO bei Grob-F1 >= -FORMFUND_TOL = Gewinn; f1_fein -0,02 = Veto
-GRAUZONE = opt("--grauzone", 1, int)   # SPEC_GRAUZONE_TOR.md (11.11.): Foto-F1 in [-TOL; +MIN_GEWINN_FOTO) -> Bildpruefer ohne Befund (sicher hoch) + Verschiebungskontrolle HART
+GRAUZONE = opt("--grauzone", 0, int)   # SPEC_GRAUZONE_TOR.md (11.11.): Foto-F1 in [-TOL; +MIN_GEWINN_FOTO) -> Bildpruefer ohne Befund (sicher hoch) + Verschiebungskontrolle HART; seit 12.11. aus (Rauschtor), nur mit --rauschtor 0 sinnvoll
 GRAU_MARGE = opt("--grau_marge", 0.03, float)   # Verschiebungskontrolle: marge_min >= dies, konkat_gueltig, sonst Grauzone verworfen (schieb2 11.11.: 0,003 = Lage nicht belegt)
 # KONTROLLFOTOS (10.11. abends, Westgiebel-Agent mass auf selbst gewaehlten 6 Fotos 0,73-0,81, auf allen 10 Torfotos 0,413->0,394;
 # Recherche Goodhart): je Teil N Fotos aus Rang 11.. der Formliste, dem Agenten NIE genannt (eigener Bilderordner), erst am Endtor gemessen.
@@ -69,6 +74,27 @@ KONTROLLE = opt("--kontrolle", 5, int); MIN_KONTROLLE = opt("--min_kontrolle", 0
 KREISDIR = opt("--kreisdir", "/media/oem/scan/rc-park_kreis")
 MAX_MIN = opt("--max_minuten", 120, int)
 VORPRUEF = "--ohne_vorpruefung" not in a   # Form am Foto direkt nach dem Agenten, einmal Rueckgabe (10.11.)
+# TEIL-LOKALES RAUSCHTOR (Analyse 12.11. 00:05: Kreis stagniert seit 11.11. 12:30, Annahmen seit 14:30 im Rauschen +0,006 bei Rauschen ~0,03, 34 % Leerrunden,
+# 4,8 Agent-h je Annahme). Ersetzt MIN_GEWINN_FOTO / Grauzone / FORMFUND_TOL / FEIN-WEG / ORNAMENT-WEG als Gewinnkriterium fuer vorhandene Teile:
+# je Teil + Vorher-Teil-STL + Fotoliste einmal drei Nullkontrollen (0,3 m verschoben / angehoben, 90 Grad gedreht; tools/teil_varianten_tor.py) messen,
+# R_m = Wert_vorher - max(Nullkontrollen); Mass f1_fein (Ornament-/Feinfund oder kleinste Kastenkante < RAUSCH_KLEIN) sonst f1, nur mit R_m > 0;
+# Annahme: Gewinn >= max(RAUSCH_FAKTOR * R, RAUSCH_MIN), kein anderes trennendes Mass faellt um > RAUSCH_FAKTOR * R_k (tools/kreis_rauschtor.py).
+# Kein trennendes Mass -> kein Agent (Fotowunsch). --rauschtor 0 = alte Logik (dann ggf. --grauzone 1 --rueckgabe 1 fuer den Stand 11.11.).
+RAUSCHTOR = opt("--rauschtor", 1, int)
+RAUSCH_FAKTOR = opt("--rausch_faktor", 0.5, float); RAUSCH_MIN = opt("--rausch_min", 0.01, float)
+RAUSCH_GROB = opt("--rausch_grob", 0.05, float)   # Grobschranke fuer NICHT trennende Masse (wie ORN_GROB; 0 = aus)
+RAUSCH_KLEIN = opt("--rausch_klein", 0.36, float)   # kleinste Kastenkante (m) unter der f1_fein entscheidet
+if RAUSCHTOR and GRAUZONE: print("--grauzone 1 wirkt nur mit --rauschtor 0 - Grauzone aus", flush=True); GRAUZONE = 0
+# RUECKGABE (Vorpruefung -> claude --continue): Analyse 12.11.: 40 Rueckgaben -> 2 Annahmen. Standard aus.
+RUECKGABE = opt("--rueckgabe", 0, int)
+# MESSBARKEITS-FILTER in waehlen(): Ziel nur, wenn das Teil in >= SICHT_FOTOS Fotos der Formliste sichtbar ist (sicht_px >= SICHT_PX, Kantenpixel > 0)
+# und (mit Rauschtor) ein trennendes Mass hat; sonst Eintrag in <kreisdir>/<objekt>/fotowunsch.jsonl und ueberspringen.
+MESSBAR = opt("--messbar", 1, int); SICHT_FOTOS = opt("--sicht_fotos", 3, int); SICHT_PX = opt("--sicht_px", 2000, int)
+NUR_WAHL = "--nur_wahl" in a   # Probe der Zielwahl: alle Kandidaten mit Messbarkeit/Grund auflisten, nichts belegen, nichts starten
+if NUR_WAHL: TROCKEN = True
+RAUSCHDIR = os.path.join(KREISDIR, OBJ, "rauschen"); FOTOWUNSCH = os.path.join(KREISDIR, OBJ, "fotowunsch.jsonl")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import kreis_rauschtor as RT
 if not TROCKEN and not RECHTE:
     print("--rechte <MODUS> ist Pflicht fuer echte Laeufe (Nutzerentscheid). Ohne Start: --trocken."); sys.exit(1)
 
@@ -105,7 +131,9 @@ def sh_cpu(cmd, cwd, log, env=None):
     """Reiner CPU-Schritt (Generatorbau, manifold - kein torch/cuda): ohne GPU-Torsperre. 10.11.: unter der Sperre wartete jeder Export auf
     alle Messungen der anderen Spuren (Export allein 4 min, in der Schlange bis 23 min). Ergebnis deterministisch -> verlustfrei."""
     t = time.time(); rc, out = sh(cmd, cwd, log=log, env=env)
+    if rc != 0 and any(m in (out or "") for m in OOM_MUSTER): INFRA["runde"] = True   # Platzwaechter/OOM im Generatorbau = Infrastruktur
     print(f"  CPU-Schritt {os.path.basename(log)}: {time.time() - t:.0f} s", flush=True); return rc, out
+INFRA = {"runde": False}   # je Runde zurueckgesetzt; True = ein Schritt scheiterte an OOM/Platz (nicht als Verwerfung zaehlen, Ziel sofort wieder waehlbar)
 
 def sh_tor(cmd, cwd, log, env=None, versuche=6, pause=300, sperre=True):
     """Torschritt (Bau/Abnahme/Messung): Spuren-uebergreifend per flock serialisiert (deterministische Messung -> verlustfrei)
@@ -129,6 +157,7 @@ def sh_tor(cmd, cwd, log, env=None, versuche=6, pause=300, sperre=True):
                 fr = float(subprocess.run(["nvidia-smi", "--query-gpu=memory.free", "--format=csv,noheader,nounits"], capture_output=True, text=True).stdout.split()[0])
                 if fr >= 2500 and time.time() - t_ >= 30: break
             except Exception: pass
+    INFRA["runde"] = True   # 12.11.: auch Fotomessungen (form_messen) mit OOM machen die Runde zur Infrastruktur-Runde (zaehlt nicht als Fehlversuch)
     return rc, out + "\nINFRA_OOM"
 
 def protokoll(z):
@@ -180,8 +209,8 @@ def fehlversuche_global():
         _ff = z.get("foto_f1_vor_nach") or [None, None]
         _lr = z.get("agent_leer") if "agent_leer" in z else bool(z.get("frueh_abgelehnt") and _ff[0] is not None and _ff[0] == _ff[1])   # Altbestand vor 11.11. 02:5x
         _tt = z["ziel"]["teil"]   # leere Runden zaehlen am TEIL, nicht am Beobachtungsschluessel (gesperrte Beobachtung -> Teil kam als Teil wieder)
-        if _lr and z.get("angenommen") is False and z.get("metrik", "v1") == METRIK_SOLL: leer[_tt] = leer.get(_tt, 0) + 1
-        if z.get("angenommen") is False: _lf[t] = _lf[_tt] = z.get("zeit", "")
+        if _lr and z.get("angenommen") is False and not z.get("infra_oom") and z.get("metrik", "v1") == METRIK_SOLL: leer[_tt] = leer.get(_tt, 0) + 1   # 12.11.: Infra-Runden nie als leer zaehlen
+        if z.get("angenommen") is False and not z.get("infra_oom"): _lf[t] = _lf[_tt] = z.get("zeit", "")
         if z.get("angenommen") is True:
             n[t] = 0; leer[z["ziel"]["teil"]] = 0
             # Nutzerentscheid 10.11.: gesperrte Teile werden wieder frei, wenn ein Nachbarteil (Box +-1 m) danach in main geaendert wurde (neue Lage)
@@ -448,6 +477,36 @@ def ziel_fest(z):
         return dict(t, art="beobachtung", beob=_b[0])
     return t
 
+TW = None   # Teile-Export des Basisstands dieser Runde (fuer den Rauschcache-Schluessel in waehlen), vor waehlen() gesetzt
+def fein_bevorzugt(ziel_oder_teil, beob=None, tdir=None):
+    """f1_fein entscheidet bei Ornament-/Feinfund (ORN_WORTE in Beobachtungstext/Stichworten/Teilname) oder kleinem Teil (kleinste Kastenkante < RAUSCH_KLEIN)."""
+    teil = ziel_oder_teil if isinstance(ziel_oder_teil, str) else ziel_oder_teil["teil"]
+    b = beob if beob is not None else ((ziel_oder_teil.get("beob") if isinstance(ziel_oder_teil, dict) else None) or {})
+    txt = " ".join([teil, str(b.get("merkmal", "")), str(b.get("text", ""))[:400]] + [str(x) for x in (b.get("pruef_stichworte") or []) + (b.get("pruef_pflicht") or [])])
+    ts = os.path.join(tdir or "", teil + ".stl")
+    return RT.fein_bevorzugt(txt, ORN_WORTE, RT.kleinste_kante_m(ts) if (tdir and os.path.exists(ts)) else None, RAUSCH_KLEIN)
+def fotowunsch(teil, grund, **extra):
+    """Teil nicht messbar -> Fotowunschliste (eine Zeile je Teil+Grund, keine Dubletten)."""
+    try:
+        alt = [json.loads(l) for l in open(FOTOWUNSCH) if l.strip()] if os.path.exists(FOTOWUNSCH) else []
+        if any(e.get("teil") == teil and e.get("grund") == grund for e in alt): return
+        with open(FOTOWUNSCH, "a") as f: f.write(json.dumps(dict({"zeit": time.strftime("%Y-%m-%d %H:%M:%S"), "lauf": LAUF, "teil": teil, "grund": grund}, **extra), ensure_ascii=False) + "\n")
+    except Exception as _ex: print("fotowunsch:", _ex, flush=True)
+def messbar(teil, fl, beob=None):
+    """(ok, grund, info) fuer den Messbarkeits-Filter. (a) >= SICHT_FOTOS Fotos der Formliste mit sicht_px >= SICHT_PX und Kantenpixeln;
+    (b) mit Rauschtor: Rauschcache (Teil + Teil-STL aus TW + Torfotos) hat ein trennendes Mass; fehlt der Cache, ok (Runde berechnet ihn vor dem Agenten)."""
+    if not MESSBAR: return True, "Filter aus", {}
+    je = {k: v for k, v in (((fl or {}).get("teile") or {}).get(teil) or {}).items() if k != "_gesamt" and isinstance(v, dict)}
+    n = sum(1 for v in je.values() if (v.get("sicht_px") or 0) >= SICHT_PX and (v.get("mk_px", 0) + v.get("fk_px", 0)) > 0)
+    if n < SICHT_FOTOS: return False, f"nur {n} kalibrierte Fotos mit Sicht >= {SICHT_PX} px (Soll {SICHT_FOTOS})", {"fotos_sichtbar": n}
+    if not RAUSCHTOR: return True, f"{n} Fotos sichtbar", {"fotos_sichtbar": n}
+    fotos = form_fotos(fl, teil); e = RT.laden(RAUSCHDIR, teil, TW, fotos)
+    if e is None: return True, f"{n} Fotos sichtbar, Rauschen noch unbekannt (Runde misst es vor dem Agenten)", {"fotos_sichtbar": n}
+    fein = fein_bevorzugt(teil, beob or {}, TW); m = RT.mass_waehlen(e.get("R"), fein)
+    info = {"fotos_sichtbar": n, "R": e.get("R"), "fein_bevorzugt": fein, "mass": m, "rausch_schluessel": e.get("schluessel")}
+    if m is None: return False, f"kein trennendes Mass (R {e.get('R')})", info
+    return True, f"{n} Fotos sichtbar, mass={m} R={e['R'][m]}", info
+
 def waehlen(z, sperre):
     fg = fehlversuche_global()
     belegt_fam = {f.split("__")[0] for f in os.listdir(BELEGT)}
@@ -490,14 +549,17 @@ def waehlen(z, sperre):
     _nf = set()
     if opt("--nutzer_zuerst", 1, int):
         try:
-            _bel0 = set(os.listdir(BELEGT))
+            _bel0 = set(os.listdir(BELEGT)); _flm = formliste()
             for b in json.load(open(os.path.join(ROOT, "modelle", OBJ, "masstabelle.json"))).get("beobachtungen_offen") or []:
                 if not (isinstance(b, dict) and b.get("teil") and not b.get("erledigt") and "nutzer" in str(b.get("wer", "")).lower()): continue
                 tt = str(b["teil"]).replace(":", "__"); bk = beob_schluessel(b)
                 if (tt not in _bel0 and tt.split("__")[0] not in belegt_fam and sperre.get(tt, 0) < MAX_FEHL and fg.get(tt, 0) < MAX_GLOBAL
-                        and sperre.get(bk, 0) < MAX_FEHL and fg.get(bk, 0) < MAX_GLOBAL): _nf.add(tt)
+                        and sperre.get(bk, 0) < MAX_FEHL and fg.get(bk, 0) < MAX_GLOBAL and messbar(tt, _flm, b)[0]): _nf.add(tt)   # 12.11.: Nutzerfund nur bevorzugt, wenn messbar
         except Exception as _ex: print("Nutzerfunde:", _ex, flush=True)
     if _nf: print(f"Fehlteile zurueckgestellt, Nutzerfund-Teile frei: {sorted(_nf)}", flush=True); fk = []
+    if NUR_WAHL and fk:
+        print(f"ZIELWAHL-PROBE: {len(fk)} Fehlteil-Ziele kaemen zuerst (Messbarkeits-Filter gilt nur fuer vorhandene Teile): " + ", ".join(f"{f['teil']} ({f.get('n_fotos')} Fotos)" for f in fk[:8]), flush=True)
+        fk = []
     for t in fk:
         try:
             fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
@@ -561,7 +623,24 @@ def waehlen(z, sperre):
         if nutz & {t["teil"] for t in kand}:
             kand.sort(key=lambda t: 0 if t["teil"] in nutz else 1)
             print("Nutzerfunde zuerst:", [t["teil"] for t in kand if t["teil"] in nutz], flush=True)
+    if NUR_WAHL:   # Probe: Reihenfolge + Messbarkeit aller Kandidaten, nichts belegen
+        print(f"ZIELWAHL-PROBE ({len(kand)} Kandidaten, Teile-Export {TW}):", flush=True)
+        for i, t in enumerate(kand):
+            ok, gr, inf = messbar(t["teil"], fl, (bz.get(t["teil"]) or {}).get("beob"))
+            print(f"  {i + 1:2d}. {t['teil']:45s} {'WAEHLBAR ' if ok else 'UEBERSPR.'} {gr}" + (f"  [Beobachtung: {str(bz[t['teil']]['beob'].get('merkmal', ''))[:60]}]" if t["teil"] in bz else ""), flush=True)
+        _kt = {t["teil"] for t in kand}
+        print("ZIELWAHL-PROBE: nicht in der Kandidatenliste (gesperrt/belegt/Foto-Cluster) - Messbarkeit zur Info:", flush=True)
+        for t_ in sorted(((fl or {}).get("teile") or {})):
+            if t_ in _kt: continue
+            ok, gr, inf = messbar(t_, fl)
+            print(f"      {t_:45s} {'messbar  ' if ok else 'NICHT    '} {gr}  (Fehlversuche global {fg.get(t_, 0)}, belegt {os.path.exists(os.path.join(BELEGT, t_))})", flush=True)
+        return None
     for t in kand:   # atomar belegen (O_EXCL), damit zwei Spuren nie dasselbe Teil nehmen
+        ok, gr, inf = messbar(t["teil"], fl, (bz.get(t["teil"]) or {}).get("beob"))
+        if not ok:   # MESSBARKEITS-FILTER (12.11.): kein Agent fuer Teile, an denen das Tor nichts entscheiden kann -> Fotowunsch
+            print(f"MESSBAR-FILTER: {t['teil']} uebersprungen: {gr}", flush=True)
+            fotowunsch(t["teil"], gr, nutzerfund=t["teil"] in bz and "nutzer" in str(bz[t["teil"]]["beob"].get("wer", "")).lower(), **{k: v for k, v in inf.items() if k in ("R", "rausch_schluessel", "fotos_sichtbar")})
+            continue
         try:
             fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
             if t["teil"] in erl_v:
@@ -764,8 +843,39 @@ if NACH:
     print("HINWEIS nachpruefen: ohne Foto-Tor (Wolkenguete) - fuer Torfragen --ziel/--patch benutzen", flush=True)
     NACH_Z = [json.loads(l) for l in open(os.path.join(_ld, "kreis.jsonl")) if l.strip() and json.loads(l).get("runde") == int(_r) and "angenommen" in json.loads(l)][-1]
 import hashlib as _hl
-_CODE = lambda: _hl.sha256(open(os.path.join(ROOT, "tools", "bauteil_kreis.py"), "rb").read()).hexdigest()
+_CODE = lambda: _hl.sha256(b"".join(open(os.path.join(ROOT, "tools", f_), "rb").read() for f_ in ("bauteil_kreis.py", "kreis_rauschtor.py"))).hexdigest()
 _CODE0 = _CODE()
+# INFRA-TOR BEIM START (12.11.): main muss die Abnahme bestehen (seit 11.11. 21:00 waren alle Abnahmen rot wegen eines Masstabellen-Pflichtfelds -
+# jede Runde lief bis zum Tor und wurde verworfen). Status je main-HEAD in <kreisdir>/<objekt>/main_status.json, hoechstens 30 min alt wiederverwendet.
+MAIN_STATUS = os.path.join(KREISDIR, OBJ, "main_status.json")
+def main_status_pruefen():
+    import fcntl
+    head = subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+    def _frisch():
+        try: s_ = json.load(open(MAIN_STATUS))
+        except Exception: return None
+        return s_ if (s_.get("head") == head and time.time() - s_.get("zeit_ts", 0) <= 1800) else None
+    s_ = _frisch()
+    if s_ is None and not TROCKEN:
+        with open(os.path.join(KREISDIR, OBJ, "merge.lock"), "w") as _lk:   # gleiche Reihenfolge wie der Merge (merge.lock, dann gpu_tor.lock): keine Verklemmung
+            fcntl.flock(_lk, fcntl.LOCK_EX)
+            head = subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip(); s_ = _frisch()
+            if s_ is None:
+                _lg = os.path.join(LDIR, "abnahme_main_start.log")
+                rc_, out_ = sh_tor(["bash", "tools/bauen_abnehmen.sh", OBJ, "--nur-pruefen"], ROOT, log=_lg, env={"RCPARK_OHNE_FOTODIAG": "1"})
+                if "INFRA_OOM" in out_: return {"head": head, "gruen": None, "grund": "Infrastruktur (OOM/Platz) bei der Start-Abnahme", "log": _lg}
+                s_ = {"head": head, "zeit": time.strftime("%Y-%m-%d %H:%M:%S"), "zeit_ts": time.time(), "gruen": rc_ == 0 and "alle Pruefungen bestanden" in out_, "rc": rc_, "log": _lg, "lauf": LAUF}
+                json.dump(s_, open(MAIN_STATUS + ".tmp", "w"), ensure_ascii=False); os.replace(MAIN_STATUS + ".tmp", MAIN_STATUS)
+    return s_
+if not NACH and not PATCH:
+    _ms = main_status_pruefen()
+    if _ms is None: print("Start-Abnahme: Trockenlauf, kein frischer main-Status (nicht geprueft)", flush=True)
+    elif _ms.get("gruen") is not True and TROCKEN: print(f"Start-Abnahme main NICHT gruen ({_ms}) - Trockenlauf/Probe laeuft trotzdem", flush=True)
+    elif _ms.get("gruen") is not True:
+        print(f"KREIS STARTET NICHT: Abnahme auf main {'ROT' if _ms.get('gruen') is False else 'nicht moeglich'} (HEAD {str(_ms.get('head'))[:7]}, {_ms.get('grund') or 'rc ' + str(_ms.get('rc'))}, Log {_ms.get('log')}). "
+              "Erst main reparieren (tools/bauen_abnehmen.sh), dann startet der Regler neu.", flush=True)
+        protokoll({"ende": "main rot" if _ms.get("gruen") is False else "infra start", "main_status": _ms}); sys.exit(4)
+    else: print(f"Start-Abnahme main gruen (HEAD {_ms['head'][:7]}, {_ms.get('zeit')})", flush=True)
 for runde in range(1, RUNDEN + 1):
     if runde > 1 and not NACH and not TROCKEN and _CODE() != _CODE0:
         # 10.11.: alte Spuren liefen stundenlang mit altem Tor (ohne Formpruefung/Quellenvorrang) und scheiterten am behobenen Fehler -> neu starten lassen
@@ -823,7 +933,7 @@ for runde in range(1, RUNDEN + 1):
             # masstabelle.json liest keiner von beiden (nur ueber pruefbericht.json, das eingecheckt ist) -> pruefbericht + audit statt masstabelle;
             # Werkzeuge ohne Einfluss auf die Messung (Kreis-Steuerung, Viewer, Sichtpruefungen) aus dem tools-Hash nehmen. Jede ANDERE
             # Werkzeugaenderung macht den Speicher weiter ungueltig (sicher statt schnell).
-            _ohne = {"bauteil_kreis.py", "kreis_regler.py", "formfamilie_pruefen.py", "test_formfamilie_nutzerfunde.py", "viewer_kanten_bauen.py",
+            _ohne = {"bauteil_kreis.py", "kreis_regler.py", "kreis_rauschtor.py", "teil_varianten_tor.py", "formfamilie_pruefen.py", "test_formfamilie_nutzerfunde.py", "viewer_kanten_bauen.py",
                      "viewer_kanten_vorlage.html", "beobachtung_aus_viewer.py", "teil_fotoform.py", "tor_verschiebung.py", "realitaet_prozent.py"}
             _lt = subprocess.run(["git", "-C", wt, "ls-tree", "-r", "HEAD", "tools"], capture_output=True, text=True).stdout.splitlines()
             _h = [hashlib.sha256("\n".join(l for l in _lt if l.split("\t")[-1].split("/")[-1] not in _ohne).encode()).hexdigest()] + \
@@ -842,7 +952,16 @@ for runde in range(1, RUNDEN + 1):
                     rc0, z0, out0 = messen(wt, f"r{runde}_vorher")
                     if rc0 in (0, 3) and z0 and len(_h) == 3 and z0.get("stl_sha") == hashlib.sha256(open(sp, "rb").read()).hexdigest()[:16]:
                         shutil.copytree(_td, os.path.join(_vd, _key), dirs_exist_ok=True); json.dump(z0, open(_zf + ".tmp", "w"), ensure_ascii=False); os.replace(_zf + ".tmp", _zf)
+    INFRA["runde"] = False
+    # Basisstand-Teile fuer den Rauschcache-Schluessel der Zielwahl (CPU, 1-3 s; die Runde braucht den Export ohnehin). Trockenlauf: --teile_dir oder neuester Kreis-Export.
+    TW = next((d_ for d_ in (os.path.join(LDIR, f"teile_r{runde}_vorher"), os.path.join(LDIR, f"teile_r{runde}_vorher_form")) if glob.glob(os.path.join(d_, "*.stl"))), None)
+    if TW is None and not TROCKEN and not NACH:
+        TW = os.path.join(LDIR, f"teile_r{runde}_vorher_form")
+        sh_cpu(json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"], wt, log=os.path.join(LDIR, f"export_r{runde}_vorher_form.log"), env={"BAUTEILE_AUS": TW})
+    elif TW is None and TROCKEN:
+        TW = opt("--teile_dir") or next(iter(sorted(glob.glob(os.path.join(KREISDIR, OBJ, "*", "teile_r*_vorher_form")), key=os.path.getmtime, reverse=True)), None)
     ziel = NACH_Z["ziel"] if NACH else (ziel_fest(z0) if ZIEL else waehlen(z0, sperre))
+    if NUR_WAHL: print("Probe der Zielwahl beendet (--nur_wahl)"); break
     if not ziel:
         if not TROCKEN and not NACH and wt != ROOT:   # 10.11.: leere Spuren liessen je 500 MB Worktree liegen (Datenplatte auf 10,0 GB); unveraendert = Commit, verlustfrei
             subprocess.run(["git", "-C", ROOT, "worktree", "remove", wt], capture_output=True)   # ohne --force: bricht ab, falls doch etwas geaendert ist
@@ -879,6 +998,36 @@ for runde in range(1, RUNDEN + 1):
                 sh_cpu(_gen, wt, log=os.path.join(LDIR, f"export_r{runde}_vorher_form.log"), env={"BAUTEILE_AUS": _tv})
             ff_v = form_messen(wt, _tv, ziel["teil"], ff_fotos, f"r{runde}_vorher")
             print(f"Runde {runde}: Form am Foto vorher {ziel['teil']}: F1 {ff_v} ({len(ff_fotos)} Fotos)")
+    # RAUSCHTOR: Rauschen des Teils (Nullkontrollen) VOR dem Agenten - Cache je Teil-STL + Torfotos, sonst einmal messen (volle Aufloesung,
+    # geteilte Sperre wie die halbe Stufe, teil_fotoform belegt selbst gpu_slot). Kein trennendes Mass -> kein Agent (Fotowunsch), Runde zaehlt nicht.
+    _RZ, _rmass = None, None
+    if RAUSCHTOR and not ist_fehlteil(ziel) and not TROCKEN and not NACH and ff_fotos and (ff_v is not None or _ff_spaet):
+        _rtd = next((d_ for d_ in (os.path.join(LDIR, f"teile_r{runde}_vorher_form"), os.path.join(LDIR, f"teile_r{runde}_vorher")) if os.path.exists(os.path.join(d_, ziel["teil"] + ".stl"))), None)
+        _rsv = os.path.join(LDIR, f"stl_r{runde}_vorher.stl")
+        if not os.path.exists(_rsv): shutil.copy2(os.path.join(wt, STL), _rsv)
+        if _rtd:
+            _RZ = RT.laden(RAUSCHDIR, ziel["teil"], _rtd, ff_fotos)
+            if _RZ is None:
+                print(f"Runde {runde}: RAUSCHEN {ziel['teil']}: kein Cache - Nullkontrollen werden gemessen ({len(ff_fotos)} Fotos, volle Aufloesung)", flush=True)
+                _RZ = RT.berechnen(RAUSCHDIR, OBJ, ziel["teil"], _rtd, _rsv, ff_fotos, wt, lauf=lambda c_, w_, l_: sh_tor(c_, w_, l_, env={"RCPARK_FOTO_SKALA": "1"}, sperre=False))
+        _fein = fein_bevorzugt(ziel, None, _rtd)
+        _rmass = RT.mass_waehlen((_RZ or {}).get("R"), _fein) if _RZ and not _RZ.get("infra") else None
+        print(f"Runde {runde}: RAUSCHEN {ziel['teil']}: R {(_RZ or {}).get('R')}, trennend {(_RZ or {}).get('trennend')}, f1_fein bevorzugt {_fein} -> Mass {_rmass}", flush=True)
+        if _RZ is None or _RZ.get("infra") or _rmass is None:
+            _grund = ("Infrastruktur in der Rauschmessung" if (_RZ or {}).get("infra") else ("Rauschmessung nicht moeglich (Teil-Export fehlt)" if _RZ is None else f"kein trennendes Mass (R {_RZ.get('R')})"))
+            if _RZ is not None and not _RZ.get("infra"): fotowunsch(ziel["teil"], _grund, R=_RZ.get("R"), rausch_schluessel=_RZ.get("schluessel"), nutzerfund="nutzer" in str((ziel.get("beob") or {}).get("wer", "")).lower())
+            print(f"Runde {runde}: NICHT MESSBAR {ziel['teil']}: {_grund} - kein Agent, Ziel zaehlt nicht als Fehlversuch", flush=True)
+            freigeben(ziel["teil"]); subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
+            protokoll({"runde": runde, "ziel": ziel, "ende": "nicht messbar", "grund": _grund, "rauschen": _RZ, "infra_oom": bool((_RZ or {}).get("infra"))})
+            continue
+        _R = _RZ["R"]; _andere = [m_ for m_ in RT.MASSE if m_ != _rmass and (_R.get(m_) or 0) > 0]
+        txt += (f"\n\nTOR DIESER RUNDE = TEIL-LOKALES RAUSCHTOR (ersetzt alle festen Schwellen oben: 0,02 / Grauzone / Formfund-Toleranz / Ornament-Weg): "
+                f"an {ziel['teil']} trennen die Nullkontrollen (Teil 0,3 m verschoben / angehoben / 90 Grad gedreht) nur {_RZ.get('trennend') or []}. "
+                f"Entscheidend ist {_rmass} (teil_fotoform _gesamt.{_rmass}, volle Aufloesung, die 10 Torfotos): muss um >= {max(RAUSCH_FAKTOR * _R[_rmass], RAUSCH_MIN):.3f} steigen "
+                f"(Rauschen R = {_R[_rmass]:.3f})" + (f"; {', '.join(f'{m_} darf um hoechstens {RAUSCH_FAKTOR * _R[m_]:.3f} fallen' for m_ in _andere)}" if _andere else "")
+                + (f"; nicht trennende Masse duerfen um hoechstens {RAUSCH_GROB} fallen (Grobschranke)" if RAUSCH_GROB else "")
+                + ". Wolkenbeleg und Kantengitter bleiben Lage-Veto; Pruefer entscheidet die Form am Foto. Es gibt KEINE Rueckgabe nach der Vorpruefung: gib nur ab, was du selbst gemessen hast.")
+        open(os.path.join(LDIR, f"auftrag_r{runde}.md"), "w").write(txt)
     _fehl_vor = None
     if ist_fehlteil(ziel) and not TROCKEN and not NACH:   # Foto-Tor fuer neue Teile (11.11., Regel 9e): Basisstand sichern (Teile + Gesamt-STL, CPU)
         _tvf = os.path.join(LDIR, f"teile_r{runde}_vorher_form"); _svf = os.path.join(LDIR, f"stl_r{runde}_vorher.stl")
@@ -925,7 +1074,7 @@ for runde in range(1, RUNDEN + 1):
     if _ffr: print(f"Runde {runde}: FORMFUND-Runde ({_bb.get('merkmal', '')[:80]}): Foto-F1 darf um hoechstens {FORMFUND_TOL} fallen, Formfund-Pruefer entscheidet", flush=True)
     _orn_txt = " ".join([str(_bb.get("merkmal", "")), str(_bb.get("text", ""))[:400]] + [str(x) for x in (_bb.get("pruef_stichworte") or []) + (_bb.get("pruef_pflicht") or [])]).lower()
     _orn = bool(_ffr and any(w in _orn_txt for w in ORN_WORTE))
-    if _orn: print(f"Runde {runde}: ORNAMENT-WEG aktiv: f1_fein >= +{ORN_FEIN} entscheidet, Grob-F1/Hoehe duerfen bis {ORN_GROB} fallen", flush=True)
+    if _orn and not (RAUSCHTOR and _rmass): print(f"Runde {runde}: ORNAMENT-WEG aktiv: f1_fein >= +{ORN_FEIN} entscheidet, Grob-F1/Hoehe duerfen bis {ORN_GROB} fallen", flush=True)
     def _orn_ok(kv, kn, fv, fn, hv, hn, wo):
         if not _orn: return False
         a, b = FEIN.get(f"r{runde}_{kv}"), FEIN.get(f"r{runde}_{kn}")
@@ -934,6 +1083,17 @@ for runde in range(1, RUNDEN + 1):
         if hv is not None and hn is not None and hn < hv - ORN_GROB: return False
         print(f"Runde {runde}: ORNAMENT-WEG {wo}: f1_fein {a} -> {b}, Grob-F1 {fv} -> {fn}, Hoehe {hv} -> {hn} - Feinform gilt", flush=True)
         return True
+    _RT = bool(RAUSCHTOR and _rmass and not ist_fehlteil(ziel)); RTLOG = []
+    if _RT: _orn = False   # ORNAMENT-WEG / FEIN-WEG / Grauzone / FORMFUND_TOL als Gewinnkriterium ersetzt (Formfund-Pruefer bleibt fuer Nutzer-Formfunde)
+    def _rt_ok(kv, kn, fv, fn, wo, halb=False):
+        """RAUSCHTOR-Urteil auf den Werten vorher (Schluessel r<N>_<kv>) / nachher (r<N>_<kn>); Grob-F1 kommt angeglichen (gemeinsame Fotos) herein.
+        halb: halbe Vorstufe - gleiches Kriterium, gelockert (Gewinn > 0, Veto 1,0 x R, Grobschranke doppelt): halbe Aufloesung unterschaetzt Betraege."""
+        v = {"f1": fv, "f1_fein": FEIN.get(f"r{runde}_{kv}"), "f1_h": HOEHE.get(f"r{runde}_{kv}")}
+        n = {"f1": fn, "f1_fein": FEIN.get(f"r{runde}_{kn}"), "f1_h": HOEHE.get(f"r{runde}_{kn}")}
+        ok, txt = (RT.urteil(_RZ["R"], _rmass, v, n, faktor=0.0, mindest=0.001, grob=2 * RAUSCH_GROB, veto_faktor=1.0) if halb else
+                   RT.urteil(_RZ["R"], _rmass, v, n, faktor=RAUSCH_FAKTOR, mindest=RAUSCH_MIN, grob=RAUSCH_GROB))
+        print(f"RAUSCHTOR {ziel['teil']}: {txt} [{wo}{', halbe Stufe gelockert' if halb else ''}]", flush=True)
+        RTLOG.append({"wo": wo, "besteht": ok, "text": txt, "vorher": v, "nachher": n, "halb": halb}); return ok
     if (ff_v is not None or _ff_spaet) and not ist_fehlteil(ziel) and not NACH and VORPRUEF:
         shutil.rmtree(_tn, ignore_errors=True)
         _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
@@ -952,30 +1112,38 @@ for runde in range(1, RUNDEN + 1):
             print(f"Runde {runde}: Vorpruefung - Agent hat am Generator nichts geaendert, keine Rueckgabe", flush=True)
             _agent_leer = True
             _vorab_gebaut = _rq == 0   # Stand unveraendert seit dem Export
-        elif _rq != 0 or (_qa := angleichen(f"r{runde}_{_vk}", f"r{runde}_vorpruef", _vq, ff_q, "Vorpruefung"))[1] is None or _qa[0] is None or ((_qa[1] < _qa[0] + _mg or (_hoehe_faellt(runde, _vk) and not _frei_h))
-                and not _orn_ok(_vk, "vorpruef", _qa[0], _qa[1], HOEHE.get(f"r{runde}_{_vk}"), HOEHE.get(f"r{runde}_vorpruef"), "Vorpruefung")):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde (gemeinsame Fotos)
-            try: _je = (json.load(open(os.path.join(LDIR, f"fotoform_r{runde}_vorpruef.json")))["teile"].get(ziel["teil"]) or {})
-            except Exception: _je = {}
-            _zeilen = "\n".join(f"- Foto {f}: Praezision {_je[f].get('praez')} / Recall {_je[f].get('recall')}  Overlay {LDIR}/fotoform_bilder/{ziel['teil']}_{f}_r{runde}_vorpruef.jpg"
-                                f"  (vorher: {ziel['teil']}_{f}_r{runde}_vorher.jpg)" for f in ff_fotos if f in _je)
-            _rueck = (f"VORPRUEFUNG DES KREISES (automatisch, gleiche Messung wie das Tor): Dein Stand ist "
-                      + ("im Generator ROT (siehe " + os.path.join(LDIR, f"vorpruef_r{runde}.log") + ")" if _rq != 0 else
-                         f"am Foto NICHT KLAR BESSER" + (f" (Vorstufe halbe Aufloesung, RCPARK_FOTO_SKALA={SKALA_VOR})" if _halb else "") + f": Form-F1 {_vq} -> {ff_q}, Hoehen-Wert (nur waagerechte Kanten) {HOEHE.get(f'r{runde}_{_vk}')} -> {HOEHE.get(f'r{runde}_vorpruef')} , Feinmass f1_fein (volle Aufloesung, sieht Rippen/Sprossen/Figuren) {FEIN.get(f'r{runde}_{_vk}')} -> {FEIN.get(f'r{runde}_vorpruef')} "
-                         + (f"(FORMFUND-Runde: Foto-F1 darf um hoechstens {FORMFUND_TOL} fallen, die FORM entscheidet ein Pruefer an Foto|vorher|nachher - erfinde nichts, was die Fotos nicht zeigen; " if _ffr else f"(Tor: Foto-F1 muss um >= {MIN_GEWINN_FOTO} steigen, ") + f"der Hoehen-Wert darf um hoechstens 0,02 fallen; die Wolke ist nur Veto fuer die Lage).")
-                      + (f"\nORNAMENT-WEG: fuer diesen Fund entscheidet das FEINMASS f1_fein (muss um >= {ORN_FEIN} steigen); Grob-F1 und Hoehen-Wert duerfen bis {ORN_GROB} fallen "
-                         "(Grob-F1 ist fuer Rippen/Figuren blind, bewertet sogar verdrehte Teile besser). Nimm Ornament NICHT zurueck, nur weil Grob-F1 faellt - "
-                         "pruefe es am Render-Pruefbild (tools/teil_render_foto.py) gegen >= 3 Fotos und verbessere die Lage." if _orn else "")
-                      + f"\nJe Foto (rot = Modellkante ohne Fotokante, gelb = Fotokante fehlt im Modell):\n{_zeilen}\n"
-                      "Sieh dir die Overlays an (mindestens 3), benenne je Foto, welche Kante falsch/fehlend ist, und korrigiere den Generator-Stand. "
-                      "Pflicht vor der Abgabe: Zaehlmerkmale (Anzahl Elemente je Flaeche) am Foto mit tools/foto_zaehlung.py belegen, wenn das Teil welche hat; "
-                      f"`bash tools/bauen_abnehmen.sh {OBJ}` gruen. Bringt eine Aenderung am Foto nichts, nimm sie zurueck (git checkout) statt sie abzugeben. "
-                      "Antworte am Ende mit derselben Berichtform wie vorher.")
-            open(os.path.join(LDIR, f"rueckgabe_r{runde}.md"), "w").write(_rueck)
-            print(f"Runde {runde}: Vorpruefung -> zurueck an den Agenten (einmal)", flush=True)
-            sh(["claude", "-p", _rueck, "--continue", "--model", MODELL, "--permission-mode", RECHTE], wt,
-               log=os.path.join(LDIR, f"agent_r{runde}_nachbesserung.log"), timeout=max(30, MAX_MIN // 2) * 60)
         else:
-            _vorab_gebaut = True   # Stand unveraendert seit dem Export: Tor-Bau unten nicht wiederholen (deterministisch, gleiches Ergebnis)
+            _qa = angleichen(f"r{runde}_{_vk}", f"r{runde}_vorpruef", _vq, ff_q, "Vorpruefung") if _rq == 0 else (None, None)
+            _vp_schlecht = (_rq != 0 or _qa[1] is None or _qa[0] is None or
+                            (not _rt_ok(_vk, "vorpruef", _qa[0], _qa[1], "Vorpruefung", halb=_halb) if _RT else
+                             ((_qa[1] < _qa[0] + _mg or (_hoehe_faellt(runde, _vk) and not _frei_h))
+                              and not _orn_ok(_vk, "vorpruef", _qa[0], _qa[1], HOEHE.get(f"r{runde}_{_vk}"), HOEHE.get(f"r{runde}_vorpruef"), "Vorpruefung"))))   # Foto zuerst: wuerde das Foto-Tor nicht bestehen (gemeinsame Fotos)
+            if not _vp_schlecht:
+                _vorab_gebaut = True   # Stand unveraendert seit dem Export: Tor-Bau unten nicht wiederholen (deterministisch, gleiches Ergebnis)
+            elif not RUECKGABE:   # RUECKGABE AUS (12.11., --rueckgabe 0 Standard; Analyse: 40 Rueckgaben -> 2 Annahmen): kein zweiter Agentenlauf, Stand geht ins Tor
+                print(f"Runde {runde}: Vorpruefung nicht bestanden - keine Rueckgabe an den Agenten (--rueckgabe 0), Stand geht ins Tor", flush=True)
+                _vorab_gebaut = _rq == 0   # Stand unveraendert seit dem Export
+            else:
+                try: _je = (json.load(open(os.path.join(LDIR, f"fotoform_r{runde}_vorpruef.json")))["teile"].get(ziel["teil"]) or {})
+                except Exception: _je = {}
+                _zeilen = "\n".join(f"- Foto {f}: Praezision {_je[f].get('praez')} / Recall {_je[f].get('recall')}  Overlay {LDIR}/fotoform_bilder/{ziel['teil']}_{f}_r{runde}_vorpruef.jpg"
+                                    f"  (vorher: {ziel['teil']}_{f}_r{runde}_vorher.jpg)" for f in ff_fotos if f in _je)
+                _rueck = (f"VORPRUEFUNG DES KREISES (automatisch, gleiche Messung wie das Tor): Dein Stand ist "
+                          + ("im Generator ROT (siehe " + os.path.join(LDIR, f"vorpruef_r{runde}.log") + ")" if _rq != 0 else
+                             f"am Foto NICHT KLAR BESSER" + (f" (Vorstufe halbe Aufloesung, RCPARK_FOTO_SKALA={SKALA_VOR})" if _halb else "") + f": Form-F1 {_vq} -> {ff_q}, Hoehen-Wert (nur waagerechte Kanten) {HOEHE.get(f'r{runde}_{_vk}')} -> {HOEHE.get(f'r{runde}_vorpruef')} , Feinmass f1_fein (volle Aufloesung, sieht Rippen/Sprossen/Figuren) {FEIN.get(f'r{runde}_{_vk}')} -> {FEIN.get(f'r{runde}_vorpruef')} "
+                             + (f"(FORMFUND-Runde: Foto-F1 darf um hoechstens {FORMFUND_TOL} fallen, die FORM entscheidet ein Pruefer an Foto|vorher|nachher - erfinde nichts, was die Fotos nicht zeigen; " if _ffr else f"(Tor: Foto-F1 muss um >= {MIN_GEWINN_FOTO} steigen, ") + f"der Hoehen-Wert darf um hoechstens 0,02 fallen; die Wolke ist nur Veto fuer die Lage).")
+                          + (f"\nORNAMENT-WEG: fuer diesen Fund entscheidet das FEINMASS f1_fein (muss um >= {ORN_FEIN} steigen); Grob-F1 und Hoehen-Wert duerfen bis {ORN_GROB} fallen "
+                             "(Grob-F1 ist fuer Rippen/Figuren blind, bewertet sogar verdrehte Teile besser). Nimm Ornament NICHT zurueck, nur weil Grob-F1 faellt - "
+                             "pruefe es am Render-Pruefbild (tools/teil_render_foto.py) gegen >= 3 Fotos und verbessere die Lage." if _orn else "")
+                          + f"\nJe Foto (rot = Modellkante ohne Fotokante, gelb = Fotokante fehlt im Modell):\n{_zeilen}\n"
+                          "Sieh dir die Overlays an (mindestens 3), benenne je Foto, welche Kante falsch/fehlend ist, und korrigiere den Generator-Stand. "
+                          "Pflicht vor der Abgabe: Zaehlmerkmale (Anzahl Elemente je Flaeche) am Foto mit tools/foto_zaehlung.py belegen, wenn das Teil welche hat; "
+                          f"`bash tools/bauen_abnehmen.sh {OBJ}` gruen. Bringt eine Aenderung am Foto nichts, nimm sie zurueck (git checkout) statt sie abzugeben. "
+                          "Antworte am Ende mit derselben Berichtform wie vorher.")
+                open(os.path.join(LDIR, f"rueckgabe_r{runde}.md"), "w").write(_rueck)
+                print(f"Runde {runde}: Vorpruefung -> zurueck an den Agenten (einmal)", flush=True)
+                sh(["claude", "-p", _rueck, "--continue", "--model", MODELL, "--permission-mode", RECHTE], wt,
+                   log=os.path.join(LDIR, f"agent_r{runde}_nachbesserung.log"), timeout=max(30, MAX_MIN // 2) * 60)
     fbefund = None
     if ist_fehlteil(ziel):
         _al = os.path.join(LDIR, f"agent_r{runde}.log")
@@ -1014,8 +1182,9 @@ for runde in range(1, RUNDEN + 1):
             _h2v, _h2n = HOEHE.get(f"r{runde}_vorher_halb"), HOEHE.get(f"r{runde}_{_hk}")
             print(f"Runde {runde}: Stufe halb {ziel['teil']}: F1 {_vq} -> {_qh}, Hoehe {_h2v} -> {_h2n}", flush=True)
             _va, _qh = angleichen(f"r{runde}_vorher_halb", f"r{runde}_{_hk}", _vq, _qh, "Stufe halb")
-            if (_qh is None or _va is None or (_qh < _va + _mg if _ffr else _qh <= _va) or (not _frei_h and _h2v is not None and _h2n is not None and _h2n < _h2v - 0.02)) \
-                    and not _orn_ok("vorher_halb", _hk, _va, _qh, _h2v, _h2n, "Stufe halb"):
+            if (_qh is None or _va is None or not _rt_ok("vorher_halb", _hk, _va, _qh, "Stufe halb", halb=True)) if _RT else \
+                    ((_qh is None or _va is None or (_qh < _va + _mg if _ffr else _qh <= _va) or (not _frei_h and _h2v is not None and _h2n is not None and _h2n < _h2v - 0.02))
+                     and not _orn_ok("vorher_halb", _hk, _va, _qh, _h2v, _h2n, "Stufe halb")):
                 _frueh = f"Stufe halb ohne Gewinn: F1 {_vq} -> {_qh}, Hoehe {_h2v} -> {_h2n}"
         if _frueh is None and ff_v is None and _ff_spaet:   # aufgeschobener voller Vorher-Wert, nur fuer Kandidaten
             ff_v = form_messen(wt, _ff_spaet[0], ziel["teil"], ff_fotos, f"r{runde}_vorher", stl=_ff_spaet[1])
@@ -1026,8 +1195,9 @@ for runde in range(1, RUNDEN + 1):
             _hv, _hn = HOEHE.get(f"r{runde}_vorher"), HOEHE.get(f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher")
             print(f"Runde {runde}: Form am Foto (voll, vor Abnahme) {ziel['teil']}: F1 {ff_v} -> {ff_n}, Hoehe {_hv} -> {_hn}", flush=True)
             ff_v, ff_n = angleichen(f"r{runde}_vorher", f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher", ff_v, ff_n, "Tor voll")
-            if (ff_n is None or ff_n < ff_v + _mg or (not _frei_h and _hv is not None and _hn is not None and _hn < _hv - 0.02)) \
-                    and not _orn_ok("vorher", "vorpruef" if (_vorab_gebaut and not _halb) else "nachher", ff_v, ff_n, _hv, _hn, "Tor voll"):
+            if (ff_n is None or ff_v is None or not _rt_ok("vorher", "vorpruef" if (_vorab_gebaut and not _halb) else "nachher", ff_v, ff_n, "Tor voll (Fruehablehnung)")) if _RT else \
+                    ((ff_n is None or ff_n < ff_v + _mg or (not _frei_h and _hv is not None and _hn is not None and _hn < _hv - 0.02))
+                     and not _orn_ok("vorher", "vorpruef" if (_vorab_gebaut and not _halb) else "nachher", ff_v, ff_n, _hv, _hn, "Tor voll")):
                 _frueh = f"Foto voll: F1 {ff_v} -> {ff_n}, Hoehe {_hv} -> {_hn}"
         if _frueh: print(f"Runde {runde}: FRUEH ABGELEHNT ({_frueh}) - Abnahme/Konvergenz/Pruefer uebersprungen", flush=True)
     if _frueh:
@@ -1074,10 +1244,19 @@ for runde in range(1, RUNDEN + 1):
                   if fv is not None and fn is not None and fn < fv - 0.02]
     if _frei_h and "hoehe_f1" in rueck_teil: rueck_teil.remove("hoehe_f1"); print(f"Runde {runde}: Hoehen-Veto per Nutzerfreigabe uebergangen ({h_v} -> {h_n})", flush=True)
     if KONTROLL_VETO and kf_v is not None and kf_n is not None and kf_n < kf_v - MIN_KONTROLLE: rueck_teil.append("kontroll_f1")
+    # RAUSCHTOR (12.11.): Gewinn im gewaehlten Mass gegen das Teil-Rauschen; die festen 0,02-Vetos auf Foto-F1 / Hoehe / f1_fein ersetzt das Rauschtor-Veto
+    # (anderes trennendes Mass faellt <= RAUSCH_FAKTOR x R, nicht trennendes <= RAUSCH_GROB). Wolkenbeleg-, Gitter- und Kontroll-Veto bleiben.
+    rt_ok = None
+    if _RT and foto_tor and not _frueh:
+        _nk = "vorpruef" if (_vorab_gebaut and not _halb) else "nachher"
+        rt_ok = _rt_ok("vorher", _nk, ff_v, ff_n, "Tor")
+        rueck_teil = [x for x in rueck_teil if x not in ("foto_f1", "hoehe_f1")]
+        _gm = ((ff_n - ff_v) if _rmass == "f1" else ((FEIN.get(f"r{runde}_{_nk}") or 0) - (FEIN.get(f"r{runde}_vorher") or 0)))
+        gewinn = _gm; min_g = _gm if rt_ok else _gm + 1.0   # gewinn >= min_g  <=>  Rauschtor besteht (fuer band_vorrang/tor_konv unten)
     # FEINMASS-TOR (SPEC_ORNAMENT_FEINMASS 3, Nutzer 11.11. 17:5x): Grob-F1 (0,18 m) ist blind fuer Rippen/Sprossen/Figuren (Erker-Varianten F1 0,570-0,576,
     # f1_fein 0,496-0,535). Feinform-Gewinn >= MIN_GEWINN_FOTO zaehlt als Gewinn, wenn der Grob-F1 hoechstens FORMFUND_TOL faellt; Bildpruefer entscheidet die Form.
     fein_v = FEIN.get(f"r{runde}_vorher"); fein_n = FEIN.get(f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher"); fein_weg = False
-    if fein_v is not None and fein_n is not None and foto_tor and not ist_fehlteil(ziel) and not _frueh:
+    if fein_v is not None and fein_n is not None and foto_tor and not ist_fehlteil(ziel) and not _frueh and not _RT:
         print(f"Runde {runde}: FEINMASS {ziel['teil']}: f1_fein {fein_v} -> {fein_n} (volle Aufloesung)", flush=True)
         if fein_n < fein_v - 0.02: rueck_teil.append("fein_f1")
         elif FEIN_WEG and fein_n >= fein_v + MIN_GEWINN_FOTO and gewinn < MIN_GEWINN_FOTO and (gewinn >= -FORMFUND_TOL or
@@ -1088,7 +1267,7 @@ for runde in range(1, RUNDEN + 1):
             print(f"Runde {runde}: FEIN-WEG {ziel['teil']}: Feinform +{fein_n - fein_v:.3f} bei Grob-F1 {gewinn:+.3f} - Bildpruefer entscheidet", flush=True)
     # 11.11. 18:0x Erker-Netzrippen (170946erker r1): Formfund mit Foto-F1 0,654 -> 0,664 nur an 'kanten_f1' (Kantengitter ohne Rippensegmente) verworfen.
     # Formfund-/Fein-Runden: Gitter ist abgeleitet und fuer Feinform blind -> Gitter-Rueckschritt nur Beobachtung, wenn das Foto-Tor der Runde besteht (Regel 9e).
-    if "kanten_f1" in rueck_teil and ff_v is not None and ff_n is not None and (ff_n >= ff_v + 0.02 or ((_ffr or fein_weg) and ff_n >= ff_v - (ORN_GROB if (_orn and fein_weg) else FORMFUND_TOL))):
+    if "kanten_f1" in rueck_teil and ff_v is not None and ff_n is not None and (rt_ok is True or (not _RT and (ff_n >= ff_v + 0.02 or ((_ffr or fein_weg) and ff_n >= ff_v - (ORN_GROB if (_orn and fein_weg) else FORMFUND_TOL))))):
         # Quellenvorrang (10.11., Balkon 3x verworfen): das Kantengitter ist aus den Fotos ABGELEITET und hatte ~130 Segmente ueber freier Wand;
         # die direkte Formpruefung am Foto zeigt Besserung -> kein Rueckschritt, Widerspruch als Beobachtung (Regel 5: nicht mitteln).
         rueck_teil.remove("kanten_f1"); gitter_widerspruch = f"Gitter-F1 {f1(tv):.3f}->{f1(tn):.3f}, Foto-F1 {ff_v:.3f}->{ff_n:.3f}"
@@ -1314,7 +1493,11 @@ for runde in range(1, RUNDEN + 1):
         with open(patch, "w") as f:
             subprocess.run(["git", "-C", wt, "add", "-A", "-N", "."], check=False)
             subprocess.run(["git", "-C", wt, "diff", "--binary"], stdout=f, check=False)   # 11.11.: ohne --binary fehlten Messprotokoll-Bilder, --patch scheiterte
-        _sk = beob_schluessel(ziel["beob"]) if ziel.get("art") == "beobachtung" else ziel["teil"]; sperre[_sk] = sperre.get(_sk, 0) + 1; ohne_annahme += 1
+        _sk = beob_schluessel(ziel["beob"]) if ziel.get("art") == "beobachtung" else ziel["teil"]
+        if INFRA["runde"] or "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""):   # 12.11.: OOM/Platz = Infrastruktur - keine Sperre, Ziel sofort wieder waehlbar
+            print(f"Runde {runde}: Infrastruktur-Abbruch (OOM/Platz) - zaehlt nicht als Fehlversuch, {ziel['teil']} bleibt waehlbar", flush=True)
+        else:
+            sperre[_sk] = sperre.get(_sk, 0) + 1; ohne_annahme += 1
         subprocess.run(["git", "-C", wt, "add", "-A"], check=False)   # Stand verlustfrei auf dem Zweig sichern (fuer --nachpruefen), Worktree danach weg
         subprocess.run(["git", "-C", wt, "commit", "-q", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} VERWORFEN (Stand gesichert)"], check=False)
     if ist_fehlteil(ziel) and angenommen and ziel.get("lo"):   # angenommenes Fehlteil: Kasten als gebaut merken (Foto-Cluster aus alter Formliste nicht erneut)
@@ -1332,8 +1515,8 @@ for runde in range(1, RUNDEN + 1):
     if not TROCKEN and wt != ROOT:   # Platz (10.11.: 11 Worktrees x 430 MB fuellten die Datenplatte); Inhalt liegt als Commit auf dem Zweig br
         subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
-               "agent_rc": rcA, "agent_leer": _agent_leer, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or ""), "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "metrik": METRIK_SOLL, "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else (("foto_neu" if foto_tor else "region") if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "kontroll_f1_vor_nach": [kf_v, kf_n], "kontroll_skala": SKALA_VOR if _flk is not None else 1.0, "frueh_abgelehnt": _frueh, "kontroll_fotos": kf_fotos, "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
-               "tor_konvergenz": tor_konv, "foto_f1": [ff_v, ff_n], "foto_fotos": ff_fotos, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
+               "agent_rc": rcA, "agent_leer": _agent_leer, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or "") or INFRA["runde"], "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "metrik": METRIK_SOLL, "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else (("foto_neu" if foto_tor else "region") if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "kontroll_f1_vor_nach": [kf_v, kf_n], "kontroll_skala": SKALA_VOR if _flk is not None else 1.0, "frueh_abgelehnt": _frueh, "kontroll_fotos": kf_fotos, "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
+               "tor_konvergenz": tor_konv, "rauschtor": ({"mass": _rmass, "R": (_RZ or {}).get("R"), "schluessel": (_RZ or {}).get("schluessel"), "besteht": rt_ok, "urteile": RTLOG} if _RT else None), "rueckgabe": RUECKGABE, "foto_f1": [ff_v, ff_n], "foto_fotos": ff_fotos, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")
     if ohne_annahme >= 2:
