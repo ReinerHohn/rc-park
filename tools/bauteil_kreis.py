@@ -989,6 +989,25 @@ for runde in range(1, RUNDEN + 1):
                     gewinn = ff_n - ff_v; foto_tor = True
                     _rk_ok = rcK == 0 or (rcK == 3 and _rk and all(x.startswith(("recall ", "praezision ")) and " m:" in x for x in _rk))
                     tor_konv = _rk_ok and gewinn >= MIN_GEWINN_FOTO and not rueck_teil
+        # FEHLTEIL IN VORHANDENES TEIL GEBAUT (11.11. a090522: Gewoelberippen als Parameter von kreuzgewoelbe:laube, kein neues Teil -> Gewinn 0
+        # erzwungen, Arbeit verworfen; L34 'jeden Pfad belegen'): dann wie ein normales Teil messen - geaendertes Clusterteil, gleiche Fotos vorher/nachher.
+        if _fehl_vor and not neu_t and rcG == 0 and not _frueh and ziel.get("recall_kasten") is None:
+            import filecmp
+            _gt = [t_ for t_ in (ziel.get("teile") or []) if os.path.exists(os.path.join(_tn, t_ + ".stl")) and os.path.exists(os.path.join(_fehl_vor[0], t_ + ".stl"))
+                   and not filecmp.cmp(os.path.join(_tn, t_ + ".stl"), os.path.join(_fehl_vor[0], t_ + ".stl"), shallow=False)]
+            if _gt:
+                p_ = max(_gt, key=lambda t_: (ziel.get("teile_anteil") or {}).get(t_, 0)); _ff = form_fotos(_fehl_vor[2] or {}, p_)
+                if _ff:
+                    ff_fotos = _ff; _vs_teil = p_
+                    ff_n = form_messen(wt, _tn, p_, _ff, f"r{runde}_nachher")
+                    ff_v = form_messen(wt, _fehl_vor[0], p_, _ff, f"r{runde}_vorher", stl=_fehl_vor[1])
+                    ff_v, ff_n = angleichen(f"r{runde}_vorher", f"r{runde}_nachher", ff_v, ff_n, "Fehlteil im vorhandenen Teil")
+                    print(f"Runde {runde}: FOTO-TOR VORHANDENES TEIL {p_} (Fehlteil eingebaut): F1 {ff_v} -> {ff_n} ({len(_ff)} Fotos)", flush=True)
+                    if ff_v is not None and ff_n is not None:
+                        rueck_teil = [x for x in rueck_teil if not x.startswith(("praez ", "recall_gesamt"))]
+                        gewinn = ff_n - ff_v; foto_tor = True
+                        _rk_ok = rcK == 0 or (rcK == 3 and _rk and all(x.startswith(("recall ", "praezision ")) and " m:" in x for x in _rk))
+                        tor_konv = _rk_ok and gewinn >= MIN_GEWINN_FOTO and not rueck_teil
     if rueck_teil: print(f"Runde {runde}: Rueckschritt im Ziel-Teil: {rueck_teil}")
     # VERSCHIEBUNGSKONTROLLE (11.11., L46): Foto-F1 misst auf Ornament Kantendichte (Erker-Rippen 90 Grad gedreht > korrekt). Vor dem Pruefer das Teil um
     # 0,3 m versetzt messen (tools/tor_verschiebung.py, +t und +z, 5 Fotos, halbe Aufloesung); Ergebnis als WARNUNG an den Pruefer, kein hartes Tor
