@@ -1109,6 +1109,15 @@ for runde in range(1, RUNDEN + 1):
             json.dump(_T, open(_mp, "w"), ensure_ascii=False, indent=1)
         except Exception as _ex:
             print(f"Runde {runde}: Pruefer-Rest nicht eingetragen: {_ex}")
+    if angenommen and _ffr:   # Formfund umgesetzt -> Nutzerbefund erledigt, sonst nimmt der Kreis denselben Fund immer wieder (Konvergenz, 11.11.)
+        try:
+            _mp = os.path.join(wt, "modelle", OBJ, "masstabelle.json"); _T = json.load(open(_mp))
+            for _b in _T.get("beobachtungen_offen") or []:
+                if isinstance(_b, dict) and _b.get("merkmal") == _bb.get("merkmal") and not _b.get("erledigt"):
+                    _b["erledigt"] = (f"kreis {LAUF} r{runde} {time.strftime('%Y-%m-%d %H:%M')}: Formfund-Pruefer {(formfund_urteil or {}).get('urteil')} "
+                                      f"(sicher {(formfund_urteil or {}).get('sicher')}), Foto-F1 {ff_v} -> {ff_n}; Rest siehe Pruefer-Rest")
+            json.dump(_T, open(_mp, "w"), ensure_ascii=False, indent=1); open(_mp, "a").write("\n")
+        except Exception as _ex: print(f"Runde {runde}: Formfund nicht als erledigt markiert: {_ex}")
     if angenommen:
         subprocess.run(["git", "-C", wt, "add", "-A", "modelle", "tools"], check=False)
         subprocess.run(["git", "-C", wt, "commit", "-q", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} Wolkenbeleg {vor.get(ziel['teil'])} -> {nach.get(ziel['teil'])} (automatisch, Pruefer {PRUEFER})"], check=False)
