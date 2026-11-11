@@ -431,7 +431,12 @@ def waehlen(z, sperre):
         _ao = os.path.join(LDIR, "foto_fehlteile.json"); _b0 = set(os.listdir(BELEGT))
         _clt = {t_ for c in (json.load(open(_ao))["cluster"] if os.path.exists(_ao) else []) if c["id"] + "__neu" in _b0 for t_ in c["teile"]}
     except Exception: _clt = set()
-    kand = [t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["teil"] not in _clt and t["beleg"] is not None and (t["anteil_mit_daten"] >= MIN_DATEN or form_g(fl, t["teil"]).get("f1") is not None)
+    # TEILE NUR MIT FOTONOTE (11.11., Nutzer 'Tor ist rund, nicht spitz'): Ausschnitt-Teile (Tor/Nischen, Boolesche Differenz) fehlen in der Wolkenliste -
+    # freiform__tor_b2 war schwaechstes Teil am Foto (0,49) und nie Ziel. Regel 9e: Fotonote reicht als Beleg.
+    _wl = list((z or {}).get("wolkenbeleg_teile") or []); _wn = {t["teil"] for t in _wl}
+    _wl += [{"teil": t_, "beleg": None, "anteil_mit_daten": 0.0, "rang_guete": None} for t_ in ((fl or {}).get("teile") or {})
+            if t_ not in _wn and form_g(fl, t_).get("f1") is not None]
+    kand = [t for t in _wl if t["teil"] not in _clt and (t["beleg"] is not None or form_g(fl, t["teil"]).get("f1") is not None) and (t["anteil_mit_daten"] >= MIN_DATEN or form_g(fl, t["teil"]).get("f1") is not None)
             and sperre.get(t["teil"], 0) < MAX_FEHL and fg.get(t["teil"], 0) < MAX_GLOBAL and not os.path.exists(os.path.join(BELEGT, t["teil"]))
             and t["teil"].split("__")[0] not in belegt_fam]   # gleiche Formfamilie (gleicher Generatorcode) nie parallel
     # Rang (Nutzer 10.11.): nur was die Wolke sieht und keine Brandwand ist (rang_guete aus konvergenz_bericht --nachbarn); Teile ohne
