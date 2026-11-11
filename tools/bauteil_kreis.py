@@ -48,6 +48,8 @@ MIN_DATEN = opt("--min_daten", 0.3, float); MIN_GEWINN = opt("--min_gewinn", 0.0
 # Wolke nur Veto fuer die LAGE (Regel 9d) und nur, wo das Teil genug Wolkendaten hat (anteil_mit_daten >= --min_daten).
 # ANNAHME: Schwelle 0,02 = Veto-Marge; Foto-F1 ist deterministisch (unveraendertes Modell 0,635 -> 0,635, 0,72 -> 0,72, Logs 10.11.).
 MIN_GEWINN_FOTO = opt("--min_gewinn_foto", 0.02, float)
+FORMFUND = opt("--formfund", 0, int)          # Formfund-Weg (SPEC_FORMFUND_TOR.md); 0 bis Beweis test_formfund_tor.py bestanden
+FORMFUND_TOL = opt("--formfund_tol", 0.005, float)   # erlaubter Foto-F1-Abfall in Formfund-Runden
 # KONTROLLFOTOS (10.11. abends, Westgiebel-Agent mass auf selbst gewaehlten 6 Fotos 0,73-0,81, auf allen 10 Torfotos 0,413->0,394;
 # Recherche Goodhart): je Teil N Fotos aus Rang 11.. der Formliste, dem Agenten NIE genannt (eigener Bilderordner), erst am Endtor gemessen.
 # Veto, wenn Kontroll-F1 um mehr als MIN_KONTROLLE faellt. ANNAHME: 5 Fotos / 0,01 (noch kein Rauschboden gemessen).
@@ -841,6 +843,12 @@ for runde in range(1, RUNDEN + 1):
     # (Foto-Veto wuerde greifen: < vorher - 0,02) -> EINMAL zurueck an denselben Agenten (claude --continue im Worktree, Kontext bleibt) mit Messwerten je Foto
     # und Overlay-Pfaden. Das Tor bleibt unveraendert (gleiche Schwellen, misst danach selbst) - nur der Rueckweg ist frueher.
     _tn = os.path.join(LDIR, f"teile_r{runde}_nachher"); _vorab_gebaut = False; ff_q = None; _halb = False
+    # FORMFUND-WEG (SPEC_FORMFUND_TOR.md, Nutzer 11.11. "Ja"): Ziel = offener NUTZER-Formfund (formfamilie_test) -> Kantennote darf nur nicht
+    # fallen (> FORMFUND_TOL), statt +MIN_GEWINN_FOTO; dafuer entscheidet zusaetzlich formfund_pruefen.py (Foto|vorher|nachher, opus) vor dem Pruefer.
+    _bb = ziel.get("beob") or {}
+    _ffr = bool(FORMFUND and ziel.get("art") == "beobachtung" and "nutzer" in str(_bb.get("wer", "")).lower() and _bb.get("formfamilie_test"))
+    _mg = -FORMFUND_TOL if _ffr else MIN_GEWINN_FOTO   # geforderter Mindestgewinn am Foto in dieser Runde
+    if _ffr: print(f"Runde {runde}: FORMFUND-Runde ({_bb.get('merkmal', '')[:80]}): Foto-F1 darf um hoechstens {FORMFUND_TOL} fallen, Formfund-Pruefer entscheidet", flush=True)
     if (ff_v is not None or _ff_spaet) and not ist_fehlteil(ziel) and not NACH and VORPRUEF:
         shutil.rmtree(_tn, ignore_errors=True)
         _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
@@ -859,7 +867,7 @@ for runde in range(1, RUNDEN + 1):
             print(f"Runde {runde}: Vorpruefung - Agent hat am Generator nichts geaendert, keine Rueckgabe", flush=True)
             _agent_leer = True
             _vorab_gebaut = _rq == 0   # Stand unveraendert seit dem Export
-        elif _rq != 0 or (_qa := angleichen(f"r{runde}_{_vk}", f"r{runde}_vorpruef", _vq, ff_q, "Vorpruefung"))[1] is None or _qa[0] is None or _qa[1] < _qa[0] + MIN_GEWINN_FOTO or _hoehe_faellt(runde, _vk):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde (gemeinsame Fotos)
+        elif _rq != 0 or (_qa := angleichen(f"r{runde}_{_vk}", f"r{runde}_vorpruef", _vq, ff_q, "Vorpruefung"))[1] is None or _qa[0] is None or _qa[1] < _qa[0] + _mg or _hoehe_faellt(runde, _vk):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde (gemeinsame Fotos)
             try: _je = (json.load(open(os.path.join(LDIR, f"fotoform_r{runde}_vorpruef.json")))["teile"].get(ziel["teil"]) or {})
             except Exception: _je = {}
             _zeilen = "\n".join(f"- Foto {f}: Praezision {_je[f].get('praez')} / Recall {_je[f].get('recall')}  Overlay {LDIR}/fotoform_bilder/{ziel['teil']}_{f}_r{runde}_vorpruef.jpg"
@@ -867,7 +875,7 @@ for runde in range(1, RUNDEN + 1):
             _rueck = (f"VORPRUEFUNG DES KREISES (automatisch, gleiche Messung wie das Tor): Dein Stand ist "
                       + ("im Generator ROT (siehe " + os.path.join(LDIR, f"vorpruef_r{runde}.log") + ")" if _rq != 0 else
                          f"am Foto NICHT KLAR BESSER" + (f" (Vorstufe halbe Aufloesung, RCPARK_FOTO_SKALA={SKALA_VOR})" if _halb else "") + f": Form-F1 {_vq} -> {ff_q}, Hoehen-Wert (nur waagerechte Kanten) {HOEHE.get(f'r{runde}_{_vk}')} -> {HOEHE.get(f'r{runde}_vorpruef')} "
-                         f"(Tor: Foto-F1 muss um >= {MIN_GEWINN_FOTO} steigen, der Hoehen-Wert darf um hoechstens 0,02 fallen; die Wolke ist nur Veto fuer die Lage).")
+                         + (f"(FORMFUND-Runde: Foto-F1 darf um hoechstens {FORMFUND_TOL} fallen, die FORM entscheidet ein Pruefer an Foto|vorher|nachher - erfinde nichts, was die Fotos nicht zeigen; " if _ffr else f"(Tor: Foto-F1 muss um >= {MIN_GEWINN_FOTO} steigen, ") + f"der Hoehen-Wert darf um hoechstens 0,02 fallen; die Wolke ist nur Veto fuer die Lage).")
                       + f"\nJe Foto (rot = Modellkante ohne Fotokante, gelb = Fotokante fehlt im Modell):\n{_zeilen}\n"
                       "Sieh dir die Overlays an (mindestens 3), benenne je Foto, welche Kante falsch/fehlend ist, und korrigiere den Generator-Stand. "
                       "Pflicht vor der Abgabe: Zaehlmerkmale (Anzahl Elemente je Flaeche) am Foto mit tools/foto_zaehlung.py belegen, wenn das Teil welche hat; "
@@ -906,7 +914,7 @@ for runde in range(1, RUNDEN + 1):
             _h2v, _h2n = HOEHE.get(f"r{runde}_vorher_halb"), HOEHE.get(f"r{runde}_{_hk}")
             print(f"Runde {runde}: Stufe halb {ziel['teil']}: F1 {_vq} -> {_qh}, Hoehe {_h2v} -> {_h2n}", flush=True)
             _va, _qh = angleichen(f"r{runde}_vorher_halb", f"r{runde}_{_hk}", _vq, _qh, "Stufe halb")
-            if _qh is None or _va is None or _qh <= _va or (_h2v is not None and _h2n is not None and _h2n < _h2v - 0.02):
+            if _qh is None or _va is None or (_qh < _va + _mg if _ffr else _qh <= _va) or (_h2v is not None and _h2n is not None and _h2n < _h2v - 0.02):
                 _frueh = f"Stufe halb ohne Gewinn: F1 {_vq} -> {_qh}, Hoehe {_h2v} -> {_h2n}"
         if _frueh is None and ff_v is None and _ff_spaet:   # aufgeschobener voller Vorher-Wert, nur fuer Kandidaten
             ff_v = form_messen(wt, _ff_spaet[0], ziel["teil"], ff_fotos, f"r{runde}_vorher", stl=_ff_spaet[1])
@@ -917,7 +925,7 @@ for runde in range(1, RUNDEN + 1):
             _hv, _hn = HOEHE.get(f"r{runde}_vorher"), HOEHE.get(f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher")
             print(f"Runde {runde}: Form am Foto (voll, vor Abnahme) {ziel['teil']}: F1 {ff_v} -> {ff_n}, Hoehe {_hv} -> {_hn}", flush=True)
             ff_v, ff_n = angleichen(f"r{runde}_vorher", f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher", ff_v, ff_n, "Tor voll")
-            if ff_n is None or ff_n < ff_v + MIN_GEWINN_FOTO or (_hv is not None and _hn is not None and _hn < _hv - 0.02):
+            if ff_n is None or ff_n < ff_v + _mg or (_hv is not None and _hn is not None and _hn < _hv - 0.02):
                 _frueh = f"Foto voll: F1 {ff_v} -> {ff_n}, Hoehe {_hv} -> {_hn}"
         if _frueh: print(f"Runde {runde}: FRUEH ABGELEHNT ({_frueh}) - Abnahme/Konvergenz/Pruefer uebersprungen", flush=True)
     if _frueh:
@@ -951,7 +959,7 @@ for runde in range(1, RUNDEN + 1):
     tv = vor_t.get(ziel["teil"], {}); tn = nach_t.get(ersatz or ziel["teil"], {})
     foto_tor = ff_v is not None and ff_n is not None
     if foto_tor:   # FOTO ZUERST (s. MIN_GEWINN_FOTO): Gewinn nur aus den Fotos
-        gewinn = ff_n - ff_v; min_g = MIN_GEWINN_FOTO
+        gewinn = ff_n - ff_v; min_g = _mg
     elif _frueh:   # frueh abgelehnt (Stufe halb ohne Gewinn): kein Wolkenwert als Ersatz (a203713 meldete sonst -0,258)
         gewinn = 0.0; min_g = MIN_GEWINN_FOTO
     else:          # Teil am Foto nicht messbar (keine Formliste/Ersatzteil): alte Guete aus Beleg + Gitter-F1
@@ -1061,7 +1069,18 @@ for runde in range(1, RUNDEN + 1):
                     _v = json.load(open(_vo)); vs_info = {k: _v.get(k) for k in ("f1_echt", "marge_min", "marge_achse", "lage_belegt", "konkat_gueltig")}
                     print(f"Runde {runde}: Verschiebungskontrolle {_vt}: {vs_info}", flush=True)
         except Exception as _ex: print(f"Runde {runde}: Verschiebungskontrolle fehlgeschlagen: {_ex}", flush=True)
-    urteil = pruefer_urteil(wt, ziel, runde, vs_info) if (tor_abnahme and tor_konv) else {"annehmen": False, "fehlerliste": ["nicht geprueft: Vortor rot"]}
+    formfund_urteil = None
+    if _ffr and tor_abnahme and tor_konv:   # FORMFUND-PRUEFER (Foto|vorher|nachher je geaendertem Teil, opus) vor dem normalen Pruefer; ungeprueft = nicht bestanden
+        _tvd = next((d for d in (os.path.join(LDIR, f"teile_r{runde}_vorher_form"), os.path.join(LDIR, f"teile_r{runde}_vorher")) if os.path.isdir(d)), None)
+        _ffj = os.path.join(LDIR, f"formfund_r{runde}.json")
+        if _tvd:
+            sh_tor([PY, "-W", "ignore", "-I", "tools/formfund_pruefen.py", OBJ, "--vorher", _tvd, "--nachher", _tn, "--befund", str(_bb.get("text") or _bb.get("merkmal") or ""),
+                    "--aus", _ffj, "--arbeit", os.path.join(LDIR, f"formfund_r{runde}")], wt, log=os.path.join(LDIR, f"formfund_r{runde}.log"), sperre=False)
+        try: formfund_urteil = json.load(open(_ffj))
+        except Exception: formfund_urteil = {"urteil": "ungeprueft", "grund": "kein Ergebnis" if _tvd else "Vorher-Teile fehlen"}
+        print(f"Runde {runde}: FORMFUND-PRUEFER {ziel['teil']}: {formfund_urteil.get('urteil')} (sicher {formfund_urteil.get('sicher')}): {str(formfund_urteil.get('begruendung', formfund_urteil.get('grund', '')))[:300]}", flush=True)
+        if formfund_urteil.get("urteil") != "besteht": tor_konv = False
+    urteil = pruefer_urteil(wt, ziel, runde, vs_info) if (tor_abnahme and tor_konv) else {"annehmen": False, "fehlerliste": ["nicht geprueft: Vortor rot" if formfund_urteil is None else f"Formfund-Pruefer: {formfund_urteil.get('urteil')}"]}
     angenommen = tor_abnahme and tor_konv and bool(urteil.get("annehmen"))
     if angenommen and gitter_widerspruch:
         try:
