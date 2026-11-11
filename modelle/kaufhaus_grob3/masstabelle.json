@@ -6632,6 +6632,21 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.09 m, y=-7.17 m (Zelle [312, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Flaechenmass-Agent (SAM) + Koordinator-Sichtpruefung IMG_6164",
+   "teil": "staffelgiebel:west",
+   "merkmal": "Stufenkappen: niedriges Satteldaechlein auf waagerechter Stufe",
+   "text": "SAM trennt in 6164/nu3b neun Stufenbloecke mit Daechlein; Original IMG_6164: Stufen waagerecht mit senkrechter Stirn (Nutzerfund Treppe bestaetigt), darauf niedrige Steinkappe mit flachem Satteldach, geschaetzt 0,2-0,3 m (Sichtschaetzung, nicht gemessen). Altstand daechlein_h 0,8 zu hoch (wirkt als Saegezahn), Patch a125135 mit 0 zu glatt: Flaechenmass iou_flaechen 6164 0,671 (0,8) -> 0,616 (0), nu3b 0,639 -> 0,596.",
+   "naechster_schritt": "Kappenhoehe per foto_mass (2 Kameras) messen, Flaechenmass-Variantenvergleich 0/0,25/0,4/0,8 (Agent), dann Re-Gate mit gemessenem daechlein_h",
+   "formfamilie_test": true,
+   "pruef_stichworte": [
+    "staffelgiebel",
+    "daechlein",
+    "kappe",
+    "stufe"
+   ]
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
