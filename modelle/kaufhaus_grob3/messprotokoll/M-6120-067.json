@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-067",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=7.5",
+ "name": "Dienst: Sockelband-Oberkante bis Anlauf der Rippen",
+ "mess_px": [
+  610.0,
+  3430.0,
+  640.0,
+  2650.0
+ ],
+ "P1": [
+  11.55,
+  3.866,
+  2.207
+ ],
+ "P2": [
+  11.692,
+  3.816,
+  5.544
+ ],
+ "dz": 3.337,
+ "dy": -0.05,
+ "dx": 0.142,
+ "abstand": 3.34,
+ "z1": 2.207,
+ "z2": 5.544,
+ "unsicherheit_rel": 0.0098,
+ "unsicherheit_m": 0.053,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.5 (+-0.15 m)"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-066",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=7.5",
+ "name": "Dienst: Basis Hoehe (Unterkante Schaft bis Sockelband)",
+ "mess_px": [
+  610.0,
+  3240.0,
+  610.0,
+  3430.0
+ ],
+ "P1": [
+  11.614,
+  3.844,
+  2.973
+ ],
+ "P2": [
+  11.55,
+  3.866,
+  2.207
+ ],
+ "dz": -0.766,
+ "dy": 0.022,
+ "dx": -0.063,
+ "abstand": 0.769,
+ "z1": 2.973,
+ "z2": 2.207,
+ "unsicherheit_rel": 0.0098,
+ "unsicherheit_m": 0.028,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.5 (+-0.15 m)"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-065",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=7.5",
+ "name": "Dienst: Sockel/Basis Breite (gedrehtes Profil)",
+ "mess_px": [
+  563.0,
+  3280.0,
+  660.0,
+  3280.0
+ ],
+ "P1": [
+  11.796,
+  3.78,
+  2.811
+ ],
+ "P2": [
+  11.392,
+  3.922,
+  2.808
+ ],
+ "dz": -0.003,
+ "dy": 0.143,
+ "dx": -0.404,
+ "abstand": 0.428,
+ "z1": 2.811,
+ "z2": 2.808,
+ "unsicherheit_rel": 0.0098,
+ "unsicherheit_m": 0.025,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.5 (+-0.15 m)"
+}

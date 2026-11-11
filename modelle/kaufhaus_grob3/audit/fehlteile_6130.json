@@ -2,91 +2,91 @@
  "foto": "6130",
  "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6130 (amtliche Anker)",
- "zelle_px": 130,
+ "zelle_px": 131,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    1170,
-    2990,
-    130
+    1179,
+    3013,
+    131
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    0.44,
-    -0.71,
+    0.38,
+    -0.78,
     1.54
    ]
   },
   {
    "zelle": [
-    1430,
-    2990,
-    130
+    1572,
+    3013,
+    131
    ],
-   "score": -0.998,
+   "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -1.24,
-    -0.57,
+    -2.17,
+    -0.14,
     1.53
    ]
   },
   {
    "zelle": [
-    130,
-    2990,
-    130
+    1048,
+    3013,
+    131
    ],
-   "score": -0.992,
+   "score": -0.999,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    7.41,
-    -0.72,
-    1.54
-   ]
-  },
-  {
-   "zelle": [
-    1040,
-    2990,
-    130
-   ],
-   "score": -0.962,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    1.25,
-    -0.52,
-    1.55
-   ]
-  },
-  {
-   "zelle": [
-    910,
-    2990,
-    130
-   ],
-   "score": -0.961,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    2.12,
-    -0.71,
-    1.55
-   ]
-  },
-  {
-   "zelle": [
-    1300,
-    2990,
-    130
-   ],
-   "score": -0.907,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -0.44,
-    -0.36,
+    1.37,
+    -1.45,
     1.53
+   ]
+  },
+  {
+   "zelle": [
+    1441,
+    3013,
+    131
+   ],
+   "score": -0.953,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -1.35,
+    0.02,
+    1.55
+   ]
+  },
+  {
+   "zelle": [
+    1310,
+    3013,
+    131
+   ],
+   "score": -0.938,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.58,
+    0.13,
+    1.56
+   ]
+  },
+  {
+   "zelle": [
+    786,
+    3013,
+    131
+   ],
+   "score": -0.841,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    2.56,
+    0.58,
+    1.59
    ]
   }
  ],

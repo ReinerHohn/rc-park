@@ -7,76 +7,6 @@
  "treffer": [
   {
    "zelle": [
-    576,
-    1056,
-    96
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    15.64,
-    1.23,
-    23.3
-   ]
-  },
-  {
-   "zelle": [
-    480,
-    1152,
-    96
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    16.15,
-    0.36,
-    22.22
-   ]
-  },
-  {
-   "zelle": [
-    480,
-    1248,
-    96
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    15.68,
-    -0.2,
-    21.42
-   ]
-  },
-  {
-   "zelle": [
-    480,
-    1344,
-    96
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    15.37,
-    -0.53,
-    20.47
-   ]
-  },
-  {
-   "zelle": [
-    864,
-    1344,
-    96
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    12.38,
-    2.49,
-    20.68
-   ]
-  },
-  {
-   "zelle": [
     960,
     1344,
     96
@@ -84,9 +14,79 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    10.96,
-    2.7,
-    21.17
+    10.94,
+    2.72,
+    21.22
+   ]
+  },
+  {
+   "zelle": [
+    864,
+    1440,
+    96
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    12.24,
+    2.29,
+    19.56
+   ]
+  },
+  {
+   "zelle": [
+    960,
+    1440,
+    96
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    11.06,
+    2.87,
+    19.73
+   ]
+  },
+  {
+   "zelle": [
+    768,
+    1728,
+    96
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    9.07,
+    -2.25,
+    17.87
+   ]
+  },
+  {
+   "zelle": [
+    960,
+    1824,
+    96
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    6.29,
+    -1.63,
+    17.29
+   ]
+  },
+  {
+   "zelle": [
+    1056,
+    1824,
+    96
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    7.06,
+    0.9,
+    16.43
    ]
   }
  ],

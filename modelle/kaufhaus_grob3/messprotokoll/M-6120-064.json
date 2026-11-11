@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-064",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=7.5",
+ "name": "Dienst Laubenrueckwand: Schaftbreite bei z~4 (Joch-Pfeilerachse u~9,5)",
+ "mess_px": [
+  590.0,
+  2900.0,
+  670.0,
+  2900.0
+ ],
+ "P1": [
+  11.819,
+  3.771,
+  4.419
+ ],
+ "P2": [
+  11.473,
+  3.894,
+  4.415
+ ],
+ "dz": -0.003,
+ "dy": 0.122,
+ "dx": -0.346,
+ "abstand": 0.367,
+ "z1": 4.419,
+ "z2": 4.415,
+ "unsicherheit_rel": 0.0098,
+ "unsicherheit_m": 0.024,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.5 (+-0.15 m)"
+}

@@ -493,6 +493,50 @@
  },
  {
   "seite": "alle",
+  "element": "Zylinder (anbau)",
+  "quelle": "Fotos 6120/6117/6130 (Stufe 0 kreis1 11.11.): runder Dienst mit gedrehtem Sockel an der Laubenrueckwand, Rippenansatz oben",
+  "u": 9.745,
+  "n": 7.336,
+  "z0": 2.21,
+  "z1": 2.97,
+  "radius": 0.215,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Zylinder (anbau)",
+  "quelle": "Fotos 6120/6117/6130 (Stufe 0 kreis1 11.11.): runder Dienst mit gedrehtem Sockel an der Laubenrueckwand, Rippenansatz oben",
+  "u": 9.745,
+  "n": 7.336,
+  "z0": 2.9,
+  "z1": 5.6,
+  "radius": 0.185,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Zylinder (anbau)",
+  "quelle": "Fotos 6120/6117/6130 (Stufe 0 kreis1 11.11.): runder Dienst mit gedrehtem Sockel an der Laubenrueckwand, Rippenansatz oben",
+  "u": -2.3,
+  "n": 7.336,
+  "z0": 2.21,
+  "z1": 2.97,
+  "radius": 0.215,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Zylinder (anbau)",
+  "quelle": "Fotos 6120/6117/6130 (Stufe 0 kreis1 11.11.): runder Dienst mit gedrehtem Sockel an der Laubenrueckwand, Rippenansatz oben",
+  "u": -2.3,
+  "n": 7.336,
+  "z0": 2.9,
+  "z1": 5.6,
+  "radius": 0.185,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Quader (anbau) mit Profil (6 Punkte)",
   "quelle": "Fotos 6117/6124/6130 (Stufe 0): durchgehender Sockel mit Gesimsband vor der Laubenrueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006); Front n 7,73 aus Wolke lot2 (z 1,75-2,10, Spitze 7,7-7,8); Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
   "u0": -7.2,

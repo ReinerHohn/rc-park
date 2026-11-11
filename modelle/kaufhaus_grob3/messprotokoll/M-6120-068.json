@@ -1,0 +1,35 @@
+{
+ "id": "M-6120-068",
+ "typ": "triangulation_plan",
+ "foto": "6120",
+ "name": "Dienst Laubenrueckwand Joch 3/4 Schaftachse (Peilung 6120+6117)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6120",
+   "px": [
+    630.0,
+    2900.0
+   ]
+  },
+  {
+   "kamera": "K-6117",
+   "px": [
+    1400.0,
+    3150.0
+   ]
+  }
+ ],
+ "P_xy": [
+  11.636,
+  3.662
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.0
+ ],
+ "schnittwinkel_grad": [
+  40.8
+ ],
+ "unsicherheit_m": 0.028,
+ "massstab_von": "Kameras K-6120, K-6117 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme"
+}
