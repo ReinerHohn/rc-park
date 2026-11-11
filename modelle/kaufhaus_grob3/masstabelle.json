@@ -2602,6 +2602,20 @@
    "quer_max": 0.3,
    "r_max": 3.0,
    "z": "=13.25 - z_unterkante_lot2"
+  },
+  "giebel_w_stufe0": {
+   "typ": "max_z_im_bereich",
+   "x0": -7.084,
+   "x1": -6.844,
+   "y0": 6.038,
+   "y1": 6.278
+  },
+  "giebel_w_stufe1": {
+   "typ": "max_z_im_bereich",
+   "x0": -6.781,
+   "x1": -6.541,
+   "y0": 6.893,
+   "y1": 7.133
   }
  },
  "pruefungen": [
@@ -5438,6 +5452,22 @@
    "historie": [
     "2026-11-11 angelegt (Kreis Fehlteil ff_-4_+16_+14, 6 Fotos gelb am Helmfuss): am Modell Fussring 1,78 muss die Pruefung fehlschlagen"
    ]
+  },
+  {
+   "name": "Westgiebel: oberster Pfeiler hoechstens eine Regelsteigung ueber der naechsten Stufe (Oberkante Stufe 0 minus Stufe 1, Dachfirst, m)",
+   "wert": "giebel_w_stufe0 - giebel_w_stufe1",
+   "soll": [
+    1.06,
+    1.36
+   ],
+   "quelle": "Foto 6261 Kappenecken M-6261-022..026 (Kamera K-6261, Strahl auf Wandebene u -8,82): Stufenpaare fallen 2,4 m je 2 Stufen = 1,2 m je Stufe, Giebellinie 52,8 Grad, Rhythmus 0,907 m x 1,21 m; Nutzerfund 11.11. (q11/6164/6261): oberste Stufe am First ist eine normale Stufe mit Kappe, Modell hatte 2,11 m (Spitzenblock auf z_spitze, Stufen kappe -0,9 tiefer); Soll 1,21 +-0,15 (ANNAHME Band: Messunsicherheit der Kappenecken 0,09 m x 1,6)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6261-022",
+   "historie": [
+    "2026-11-11 Kreis1 angelegt (Nutzerfund oberster Pfeiler); am committeten Stand (kappe -0,45, Spitzenblock auf z_spitze, Daechlein nur ab Stufe 1) muss sie fehlschlagen (1,41 m)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -6623,7 +6653,8 @@
    ],
    "historie": [
     "2026-11-11 15:4x formfamilie_test nachgetragen (Runde a152051 lief deshalb als Grauzone: F1 0,598->0,595, Verschiebung -0,035 verworfen); Stand nach a151127: Absatz oben 1,66 m statt 1,21 m"
-   ]
+   ],
+   "erledigt": "kreis1 spitze_als_stufe: oberste Stufe = Giebellinie+kappe mit Daechlein, Steigung 1,21 m (Pruefung giebel_w_stufe0-1 rot 1,41 -> gruen 1,21); Foto-F1 halb 0,540->0,539, f1_h 0,474->0,491; roter Block in 6164/q11/6261 weg (selbst angesehen)"
   },
   {
    "datum": "2026-11-11",
@@ -6631,7 +6662,8 @@
    "teil": "staffelgiebel:west",
    "merkmal": "Pruefer-Rest staffelgiebel:west kreis 20261111_151128a151127 r1",
    "text": "Offene Fehler laut Pruefer nach angenommener Runde: kreis_bericht.md beschreibt eine fremde Runde (kreuzgewoelbe:laube) statt staffelgiebel:west - Bericht fehlt | keine _nachher.jpg-Overlays vorhanden, nur _vorpruef | oberster Pfeiler (Nutzerfund) weiter zu hoch: roter Block oben links in q11/6164/6261 unveraendert | kappe -0,9->-0,45 nicht belegt: Gesamt-F1 +0,001, widerspricht Kappenecken M-6261-022..026, foto_mass in q11/6164 offen | gelb: Kappe/Daechlein oberster Pfeiler 6261 oben links, Fuss am Turm unten rechts in 6164/6261/q11/c12 | rot: Westgiebelflanke am Erker in 6225 unveraendert | Dichte-Verdacht marge_min -0,039: Foto-Gewinn belegt Lage nicht; Lage nur per Sicht in 6164/6261 bestaetigt (Stufen auf Fotopfeilern) | Daechlein 0,25 m nur per F1-Sweep, nicht per foto_mass gemessen | kein Pruefstand-Lauf (bauen_abnehmen.sh) in den Logs gesehen (Regel 1 offen) | foto_diff und fehlteile_finden nicht gelaufen",
-   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern.",
+   "erledigt": "ersetzt durch Pruefer-Rest kreis 20261111_153352a153352 r1"
   },
   {
    "datum": "auto",
@@ -6678,6 +6710,21 @@
    "historie": [
     "2026-11-11 15:22 Nutzer erneut (Viewer v50 Modell+Wolke+Kanten, rotes Rechteck Westende Laube, Passendes Foto ns_9812e9cb): Seitenoeffnung weiter Rechteck mit Halbbogen; Teil war durch 2 leere Gewoelbe-Runden gesperrt (behoben 01a0cafb) -> als neuester Nutzerfund ans Ende (Kreis nimmt je Teil den neuesten)"
    ]
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "kreis 20261111_153352a153352 r1 (automatisch)",
+   "merkmal": "Kantengitter widerspricht Foto (staffelgiebel__west)",
+   "text": "Angenommen nach Quellenvorrang Foto: Gitter-Baender praezision 5-10 m: 0.463 -> 0.250, Foto-F1 0.598->0.595. Kantengitter hat dort vermutlich Fehlsegmente.",
+   "naechster_schritt": "Gittersegmente im Teilbereich gegen Fotos pruefen (gitter_zurueck), Fehlsegmente markieren."
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_153352a153352 r1 (automatisch)",
+   "teil": "staffelgiebel:west",
+   "merkmal": "Pruefer-Rest staffelgiebel:west kreis 20261111_153352a153352 r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Dichte-Verdacht marge_min -0,035: Lage nur per Sichtpruefung q11/6261/6164 bestaetigt (roter Spitzenblock weg, Oberkante deckt sich mit oberster Fotostufe), Foto-F1 0,540->0,539 ohne Gewinn | nu3b: lange gelbe Linie am Dachanschluss unter den oberen Stufen (Dachkante fehlt im Modell) | Fuss am Turm/Erker gelb-rot in 6164/q11/nu3b | q11: gelbe Reste an Stufenstirnen untere Haelfte | 6225: viele gelbe Wand-/Fensterkanten (andere Teile) weiter offen | objekt.json werte_quellen.kappe nennt Variante 'oberster Pfeiler als Stufe' noch als verworfen - Widerspruch zur neuen Quelle spitze_als_stufe | Kappenhoehe -0,9 vs -0,45 Widerspruch offen, foto_mass in q11/6164 fehlt | Regression, teile_lage_pruefen, fehlteile_finden, foto_diff nicht gelaufen",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

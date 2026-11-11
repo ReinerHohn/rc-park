@@ -1264,6 +1264,7 @@
   "spitze_breite": 0.2,
   "kappe": -0.45,
   "spiegel": true,
+  "spitze_als_stufe": true,
   "seite_name": "alle"
  },
  {
@@ -1303,7 +1304,7 @@
  {
   "seite": "alle",
   "element": "Druckreparatur Splitter",
-  "quelle": "baukasten_gen: Punkte < 1 um verschweisst, entartete Dreiecke entfernt, Loecher geschlossen (trimesh MIT), Volumen +-0,1 %, Vereinfachung 6.0 mm",
+  "quelle": "baukasten_gen: Punkte < 1 um verschweisst, entartete Dreiecke entfernt, Loecher geschlossen (trimesh MIT), Volumen +-0,1 %, Vereinfachung 3.0 mm",
   "seite_name": "alle"
  }
 ]

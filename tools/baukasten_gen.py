@@ -1000,15 +1000,16 @@ def staffelgiebel(cfg, ctx):
     n2 = nb + sb
     if ns < 1 or dk < 0.1 or not (nb < n2 < nv) or not (zu < zt < zs): sys.exit(f"staffelgiebel: unplausible Masse (n={ns}, n={nb}/{n2}/{nv}, z={zu}/{zt}/{zs})")
     w = (nv - n2) / ns; lin = lambda n_: zs - (n_ - n2) * (zs - zt) / (nv - n2)                      # Giebellinie von der Spitzenecke (n2, zs) zur Traufe (nv, zt)
-    oben = [(n2, zs)]
+    sas = bool(cfg.get("spitze_als_stufe"))                                                          # optional: oberster Pfeiler = regulaere Stufe (Giebellinie + kappe, gleiche Steigung wie die uebrigen Stufen, mit Daechlein) statt Spitzenblock auf z_spitze (Nutzerfund 11.11.: Block 2,11 m ueber der naechsten Stufe statt 1,21 m); 0 = Altverhalten
+    zsa = zs + kp if sas else zs; oben = [(n2, zsa)]
     for i in range(ns):
-        zk = lin(n2 + i * w) + kp if i else zs; zk = min(zk, zs)
-        dh_ = float(cfg.get("daechlein_h", 0.0)) if i else 0.0                                       # optional Pfeiler-Daechlein (Satteldach, First quer zur Wand, Mitte der Stufe): First dh_ ueber der Stufenoberkante; 0 = Altverhalten (erster Block = Spitzenblock, ohne)
+        zk = lin(n2 + i * w) + kp if i else zsa; zk = min(zk, zs)
+        dh_ = float(cfg.get("daechlein_h", 0.0)) if (i or sas) else 0.0                                       # optional Pfeiler-Daechlein (Satteldach, First quer zur Wand, Mitte der Stufe): First dh_ ueber der Stufenoberkante; 0 = Altverhalten (erster Block = Spitzenblock, ohne)
         ks_ = float(cfg.get("kappe_steigung", 0.0)) if i else 0.0                                    # optional Saegezahn-Kaeppchen (Foto 6115/6257/6261): Stufenoberkante steigt vom hinteren Stufenende (zk - ks_) zum vorderen (zk = Kappenfirst-Hoehe, Buckel); 0 = flach (Altverhalten)
         oben += [(n2 + i * w, zk - ks_)] + ([(n2 + (i + 0.5) * w, zk + dh_)] if dh_ > 0 else []) + [(n2 + (i + 1) * w, zk)]
     if cfg.get("spiegel"):                                                                            # Stufen beidseitig: Rueckflanke = Spiegel der Vorderflanke an der Spitzenmitte (nb+n2)/2 (cfg['spiegel_quelle'] nennen)
         nm = (nb + n2) / 2; poly = [(2 * nm - nv, zu)] + [(2 * nm - n_, z_) for n_, z_ in reversed(oben)] + oben + [(nv, zu)]
-    else: poly = [(nb, zu), (nb, zs)] + oben + [(nv, zu)]
+    else: poly = [(nb, zu), (nb, zsa)] + oben + [(nv, zu)]
     un = float(cfg.get("u_neigung", 0.0)); nr = float(cfg.get("n_ref", 0.0))                         # optional: Wandebene gegen die Fassadenachse gedreht (u wandert mit n: u = u_aussen + u_neigung*(n - n_ref)); 0 = Altverhalten
     q = M.extrude(C([ccw(np.array(poly, float))]), dk)
     fe = cfg.get("fenster") or []                                                                     # optional Fensternischen in der Aussenflaeche: [{n0,n1,z0,z1}] (n = Fassadennormale-Koordinate, z), Tiefe fenster_tiefe in die Wand (Laibung); Quelle je Fenster Pflicht
@@ -1024,7 +1025,7 @@ def staffelgiebel(cfg, ctx):
     if cfg.get("kappe_steigung"): beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')}: Saegezahn-Kaeppchen je Stufe", qq("kappe_steigung"), kappe_steigung=float(cfg["kappe_steigung"]))
     for i_, f_ in enumerate(fe): beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')}: Giebelfenster {i_ + 1} (Nische)", f_["quelle"], n0=f_["n0"], n1=f_["n1"], z0=f_["z0"], z1=f_["z1"], tiefe=float(cfg["fenster_tiefe"]))
     if un != 0.0: beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')}: Wandneigung", qq("u_neigung"), u_neigung=un, n_ref=nr)
-    beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')} ({ns} Stufen)", f"Stufenzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + qq("z_spitze") + (" | Rueckflanke gespiegelt: " + qq("spiegel") if cfg.get("spiegel") else "") + (" | Daechlein: " + qq("daechlein_h") if cfg.get("daechlein_h") else ""), **({"daechlein_h": float(cfg["daechlein_h"])} if cfg.get("daechlein_h") else {}), n_stufen=ns, u_aussen=ua, dicke=dk, n_hinten=nb, n_vorn=nv, z_traufe=zt, z_spitze=zs, spitze_breite=sb, kappe=kp, **({"spiegel": True} if cfg.get("spiegel") else {}))
+    beleg("alle", f"Staffelgiebel {cfg.get('gruppe', '')} ({ns} Stufen)", f"Stufenzahl {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + qq("z_spitze") + (" | Rueckflanke gespiegelt: " + qq("spiegel") if cfg.get("spiegel") else "") + (" | Daechlein: " + qq("daechlein_h") if cfg.get("daechlein_h") else ""), **({"daechlein_h": float(cfg["daechlein_h"])} if cfg.get("daechlein_h") else {}), n_stufen=ns, u_aussen=ua, dicke=dk, n_hinten=nb, n_vorn=nv, z_traufe=zt, z_spitze=zs, spitze_breite=sb, kappe=kp, **({"spiegel": True} if cfg.get("spiegel") else {}), **({"spitze_als_stufe": True} if sas else {}))
     return [k], []
 
 

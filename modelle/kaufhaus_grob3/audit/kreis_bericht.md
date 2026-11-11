@@ -1,10 +1,32 @@
-# Kreis-Bericht Fehlteil ff_+11_+6_+8 (kreuzgewoelbe:laube) - Rippen
+# Kreis 153352 r1 – staffelgiebel:west, oberster Pfeiler
 
-1. **Formbeschreibung** (Fotos 6213 Nah, d20 schraeg, 6119 Uebersicht; Stufe 0 der Vorrunde 090522 uebernommen und an 6213/d20 gegengesehen): rote Diagonal-/Gurtrippen stehen ca. 0,15 m vor den weissen Kappen der Laubendecke vor, 3 Rippen je Dienst. Formfamilie: vorhandenes generisches kreuzgewoelbe mit optionalen rippen_*-Parametern (baukasten_gen.py).
-2. **Zaehlung**: Z-6213-001 (2 Diagonalen + 1 Gurtrippe je Dienst); Wiederholung in den 4 Jochen = ANNAHME.
-3. **Pruefungen** (Patch der verworfenen Runde 090522 wieder eingespielt, Pruefstand: alle Pruefungen bestanden): Unterseite Diagonalrippe 6,03 -> 5,87 (Soll 5,835..5,935), Gurtrippe 6,07 -> 5,92 (5,877..5,977), halbe Rippenbreite nan -> 0,15 (0,13..0,18); Quelle M-6213-001/-002.
-   Foto-Tor (teil_fotoform, 10 Fotos, --bereich_von Vorher): F1 0,725 -> 0,753 (+0,028 >= 0,02), Praezision 0,890 (>= 0,25), Recall 0,613 -> 0,653. Lage-Veto: teile_lage_pruefen unauffaellig (Gewoelbe Median 0,25 m, Wolke leer; Dienste 0,04-0,06 m). Vorher-Teile stammen aus Lauf 090522 (nicht neu gebaut).
-4. **Overlays**: /media/oem/scan/rc-park_daten/kaufhaus_grob3/agent_scratch_kreis1/r104829/bilder_nachher/kreuzgewoelbe__laube_<foto>_nachher.jpg (10 Fotos; 6213 und d20 angesehen), Vorher: /media/oem/scan/rc-park_daten/kaufhaus_grob3/agent_scratch_kreis1/r104829/bilder_vorher/ (Teil-Name im Vorher-Lauf leer, nur F1-Zahl aus ff_vorher.log).
-5. **Fehlerliste**: trifft: Diagonalen links in 6213, Rippen rechtes Joch d20 (gruen). Trifft nicht: mittlere/rechte Rippe in 6213 ca. 0,1 m neben der Fotorippe (gelbe Randlinien); Schildbogen rund vs. spitz (nicht angefasst); Rippenanfaenger an der Rueckwand ueber Tuer fehlt; Saegezahn-Grate nicht neu geprueft. Ungeprueft: Vorsprung 0,15 m (ANNAHME), Auslauf 1,0 m (ANNAHME), Gurtrippen an Laubenenden, Luecke Dienst z 5,6 -> Rippe 5,76, Rechteckquerschnitt statt Stufenprofil. Nicht gelaufen: regression.py (baukasten_gen.py geaendert), foto_diff, fehlteile_finden; freiraum_audit scheitert im Worktree (SFM-AUSRICHTUNG fehlt).
-6. **Geaenderte Dateien**: tools/baukasten_gen.py, modelle/kaufhaus_grob3/objekt.json, masstabelle.json, elemente.json, messprotokoll/M-6213-001/002.
-7. **Lehre**: Lehre | Anlass | Werkzeug: Ein vom alten Region-Tor verworfener Patch kann am Foto-Tor bestehen -> verworfene Patches mit Foto-F1 nachpruefen | Runde 090522 verworfen, hier F1 +0,028 | teil_fotoform --bereich_von. Falle: teil_fotoform Wiederaufnahme liest <aus>.teil, nicht <aus>.
+## 1 Formbeschreibung (Stufe 0)
+Fotos (Torfotos, Overlays angesehen): 6164 (Nah, schraeg), q11 (Nutzerfoto), 6261 (Uebersicht, Ostgiebel-Blick), vgl. Kappenecken M-6261-022..026.
+Zone Treppe: 10 Stufenpfeiler, Rhythmus 0,907 m x 1,21 m, jede Stufe waagerecht mit senkrechter Stirn und niedrigem Satteldaechlein. Der oberste Pfeiler am First ist im Foto eine normale Stufe mit Daechlein (kein hoeherer Block). Im Modell war er ein Block auf z_spitze, 1,41 m (urspruenglich 2,11 m) ueber Stufe 1 (rot oben links).
+Familie: vorhandene `staffelgiebel` in tools/baukasten_gen.py, neue Option `spitze_als_stufe` (generisch, Parameter in objekt.json).
+Unsicherheit: kappe -0,9 (Kappenecken) gegen -0,45 (Fotokanten) bleibt Widerspruch (Regel 5).
+
+## 2 Zaehlungen
+Z-6261-002 (10 Stufen) unveraendert, keine neue Zaehlung.
+
+## 3 Pruefungen
+| Pruefung | vorher | nachher | Soll | Quelle |
+|---|---|---|---|---|
+| Oberkante Stufe 0 - Stufe 1 | 1,41 (rot, Vorgaengerlauf 152051) | 1,21 | 1,06..1,36 (Band ANNAHME) | M-6261-022..026 |
+| Foto-F1 (halbe Aufl., 10 Torfotos) | 0,540 | 0,539 | Gate +0,02 NICHT erreicht | teil_fotoform |
+| f1_h | 0,474 | 0,491 | Veto -0,02 ok | |
+bauen_abnehmen (RCPARK_OHNE_FOTODIAG=1): alle Pruefungen bestanden.
+
+## 4 Overlays
+/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_153352a153352/ff_eigen_bilder/staffelgiebel__west_{q11,6164,6261,6225,nu3b,...}.jpg (nachher); vorher /media/oem/scan/rc-park_kreis/kaufhaus_grob3/fotoform/bilder_a13c00b138556846_v2_wolkenverdeckung_festbereich/
+
+## 5 Fehlerliste
+- trifft (selbst gesehen): oberster Pfeiler in q11, 6261 (6164 Vorher-Bild gesehen, Nachher nicht einzeln beurteilt): roter Block weg.
+- trifft nicht: lange gelbe Linie unter den Stufen (Dachanschluss) in 6261/q11; Fuss am Erker/Turm gelb-rot.
+- ungeprueft: Kappenhoehe per foto_mass, Regression, teile_lage_pruefen, fehlteile_finden, foto_diff nicht gelaufen.
+
+## 6 Geaenderte Dateien
+tools/baukasten_gen.py, modelle/kaufhaus_grob3/objekt.json, masstabelle.json (Pruefung + Messungen + erledigt), NICHTS_GEBRACHT.md, REZEPT_GEBAEUDE_AUS_FOTOS.md (L55).
+
+## 7 Generalisierte Lehre
+L55: Formkorrektur an kleinem Anteil bewegt F1 < 0,01 – Beleg per Massprufung auf Regelsteigung + Overlay | Anlass Westgiebel oberster Pfeiler | masstabelle giebel_w_stufe0/1.
