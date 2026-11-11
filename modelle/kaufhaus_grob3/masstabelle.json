@@ -6385,6 +6385,30 @@
    "merkmal": "Pruefer-Rest baldachinreihe:baldachine kreis 20261111_045306a045306 r2",
    "text": "Offene Fehler laut Pruefer nach angenommener Runde: Rot (erfundene Form) stark gestiegen: 6120 23581->35328 px, 6119 16048->25685, p03 9236->16649, 6127 8405->12357, 6132 12063->16681; Praezision 0,747->0,740, F1-Gewinn fast nur Recall | Baldachin 1 (links, 6120/6119): roter Kronenblock groesser als vorher, Form/Lage 'wie 2' ANNAHME trifft nicht | Baldachin 2 (6120): neue rote Streifen oberhalb des Kranzgesimses, Kronen-Oberteil zu weit vorn/zu breit | Baldachin 3 (6119 rechts): neuer roter Keil links an der Krone; p03 Mitte: roter T-Block an der Krone | Fialen rot/zu dick in 6119, 6120 rechts, i08, d11 (Schraegansicht) - offen | Masswerkband: gelbe Reste in j05 (beide Baldachine, waagerechte Balken), 6120 rechts (Bogenfeld) - Kanten fehlen | Gelbe Reste unten an der Haube: 6120 Mitte/rechts unten, j05 links unten, p03 rechts | Kronentiefe 0,46/0,42 = ANNAHME nur per F1 gewaehlt, Verschiebungsmarge 0,031 = knapp belegt | Pflichtpruefungen nicht gelaufen: teile_lage_pruefen, foto_diff, fehlteile_finden, Teile-Sichtpruefung; Pruefstand nur mit RCPARK_OHNE_FOTODIAG=1; f1_h volle Aufloesung nicht gemessen | Haube/Wangen und Rueckseite ungeprueft; Seitenfialen-Anzahl nicht am Foto gezaehlt (ANNAHME)",
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+  },
+  {
+   "teil": "staffelgiebel:ost",
+   "merkmal": "Staffelgiebel sind Treppen (waagerechte Stufen), keine Saegezacken",
+   "text": "Nutzer 11.11. 08:38 (Viewer-Screenshot Formkanten): Stufen mit Daechlein (daechlein_h 0,8) wirken als Saegezahn; real waagerechte Treppenstufen. Ursache: daechlein_h am 10.11. (Kreis2 r2) per Foto-F1-Sweep gewaehlt (0,45/0,6/0,8 -> 0,407/0,417/0,423, Unterschied unter Unterscheidbarkeit L46), keine Formbeschreibung Stufe 0. Gilt fuer beide Giebel (west/ost, gemeinsamer Generator).",
+   "naechster_schritt": "Pruefung 'Stufenoberkante waagerecht' (Neigung der Stufenkrone am Foto mit foto_mass, >=3 Fotos 6115/6261/6164), die am aktuellen Modell fehlschlaegt; dann daechlein_h nach Messung (vermutlich 0) fuer beide Giebel.",
+   "datum": "2026-11-11",
+   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude"
+  },
+  {
+   "teil": "bruestung:balkon",
+   "merkmal": "Seitliche Balkongelaender (Rueckseiten/Stirnen an beiden Balkonenden) fehlen",
+   "text": "Nutzer 11.11. (Screenshots Balkonenden West/Ost). Fotobeleg vorhanden: gelbe Fotokanten am Westende in 13 Fotos (131611 px), am Ostende in 10 Fotos (55645 px), Formliste 4723ee83. Nie Kreis-Ziel, weil Foto-Cluster-Schwelle 150000 px Summe (FOTO_FEHL_SUMME) nicht erreicht.",
+   "naechster_schritt": "Gelaender-Stirn an beiden Enden: Zaehlung Pfosten/Docken am Foto (foto_zaehlung), Lage/Hoehe per foto_mass, als Fortsetzung der bruestung.",
+   "datum": "2026-11-11",
+   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude"
+  },
+  {
+   "teil": "baldachinreihe:baldachine",
+   "merkmal": "Aufsatz ueber den Baldachinen (Masswerk-Wimperg/Krone ueber jeder Figur) fehlt",
+   "text": "Nutzer 11.11. (Foto handy_f_12: Masswerkaufsatz ueber dem Baldachin der Figur). Fotobeleg: gelb ueber den Baldachinen in 11 Fotos, Cluster ff_+5_+12_+14 (81661 px, 12 Fotos), ff_+16_+8_+14 (73908 px, 13 Fotos), ff_+11_+10_+14 (62635 px, 9 Fotos) - jeder unter der Schwelle 150000 px, zusammen 218204 px; Wiederholungselement in Einzelcluster zerlegt.",
+   "naechster_schritt": "Aufsatz als Wiederholungselement je Figur (Zaehlung am Foto), Form Stufe 0 aus >=3 Fotos, Masse per foto_mass.",
+   "datum": "2026-11-11",
+   "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
