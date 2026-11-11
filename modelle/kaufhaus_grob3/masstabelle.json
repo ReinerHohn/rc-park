@@ -6378,10 +6378,13 @@
     "zacke",
     "stufenform",
     "daechlein",
-    "abdeckung"
+    "abdeckung",
+    "oberste stufe",
+    "spitzenblock"
    ],
    "historie": [
-    "2026-11-11 14:25 teil ost->west (Geometrie L48b: Saegezahn daechlein_h 0,8 nur West, NICHTS_GEBRACHT 12:51); Zusatz: Stufen tragen niedrige Satteldachkappen ~0,2-0,4 m (IMG_6164, Flaechenmass D 0,4) - Kappenhoehe per foto_mass messen, nicht 0 und nicht 0,8"
+    "2026-11-11 14:25 teil ost->west (Geometrie L48b: Saegezahn daechlein_h 0,8 nur West, NICHTS_GEBRACHT 12:51); Zusatz: Stufen tragen niedrige Satteldachkappen ~0,2-0,4 m (IMG_6164, Flaechenmass D 0,4) - Kappenhoehe per foto_mass messen, nicht 0 und nicht 0,8",
+    "2026-11-11 Nutzer (Screenshot Foto q11 | vorher | nachher, rote Rahmen): oberster Pfeiler im Modell ein hoher Block (Steigung 2,11 m statt 1,21 m Regelstufe: z_spitze 29,32 gegen Giebellinie+kappe -0,9), im Foto gleich hoch wie die anderen Stufen mit Kappe -> Spitzenblock muss wie Stufe gebaut werden (Option spitze_als_stufe)"
    ]
   },
   {
@@ -6674,6 +6677,19 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.09 m, y=-7.18 m (Zelle [312, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "teil": "staffelgiebel:west",
+   "merkmal": "Oberster Pfeiler Westgiebel zu hoch (Spitzenblock statt Stufe)",
+   "text": "Nutzer 11.11. (Screenshot q11|vorher|nachher, rote Rahmen): im Foto ist die oberste Stufe am First eine normale Stufe mit Kappe; im Modell steht ein Block 2,11 m ueber der naechsten Stufe (Regelsteigung 1,21 m), weil i=0 auf z_spitze gesetzt wird und die Stufen per kappe -0,9 tiefer liegen.",
+   "naechster_schritt": "Sweep (je Variante Voll-STL, 10 Torfotos): Option 'oberster Pfeiler als Stufe' F1 0,553 verworfen (Foto zeigt Pfeiler bis zur Spitze); Ursache sind 0,9 m zu tiefe Stufen: kappe -0,45 -> Steigung oben 1,66 m, F1 0,599/f1_h 0,598 (bestes). Im Treppen-Patch staffelgiebel_treppe_k025_p045 mit Formfund-Pruefer.",
+   "datum": "2026-11-11",
+   "wer": "Nutzer (Sichtbeobachtung)",
+   "pruef_stichworte": [
+    "oberste stufe",
+    "spitzenblock",
+    "spitze"
+   ]
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

@@ -856,6 +856,8 @@ for runde in range(1, RUNDEN + 1):
     _bb = ziel.get("beob") or {}
     _ffr = bool(FORMFUND and ziel.get("art") == "beobachtung" and "nutzer" in str(_bb.get("wer", "")).lower() and _bb.get("formfamilie_test"))
     _mg = -FORMFUND_TOL if (_ffr or (GRAUZONE and not ist_fehlteil(ziel))) else MIN_GEWINN_FOTO   # Mindestgewinn fuer Vorpruefung/Fruehablehnung; Grauzone entscheidet unten
+    _frei_h = bool(_ffr and opt("--nutzer_freigabe_hoehe", 0, int))   # Nutzerfreigabe je Fund (11.11. Westgiebel): Hoehen-Veto aus, alle anderen Tore bleiben
+    if _frei_h: print(f"Runde {runde}: NUTZERFREIGABE Hoehen-Veto fuer diesen Formfund (Formfund-Pruefer/Abnahme/Pruefer bleiben Pflicht)", flush=True)
     if _ffr: print(f"Runde {runde}: FORMFUND-Runde ({_bb.get('merkmal', '')[:80]}): Foto-F1 darf um hoechstens {FORMFUND_TOL} fallen, Formfund-Pruefer entscheidet", flush=True)
     if (ff_v is not None or _ff_spaet) and not ist_fehlteil(ziel) and not NACH and VORPRUEF:
         shutil.rmtree(_tn, ignore_errors=True)
@@ -875,7 +877,7 @@ for runde in range(1, RUNDEN + 1):
             print(f"Runde {runde}: Vorpruefung - Agent hat am Generator nichts geaendert, keine Rueckgabe", flush=True)
             _agent_leer = True
             _vorab_gebaut = _rq == 0   # Stand unveraendert seit dem Export
-        elif _rq != 0 or (_qa := angleichen(f"r{runde}_{_vk}", f"r{runde}_vorpruef", _vq, ff_q, "Vorpruefung"))[1] is None or _qa[0] is None or _qa[1] < _qa[0] + _mg or _hoehe_faellt(runde, _vk):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde (gemeinsame Fotos)
+        elif _rq != 0 or (_qa := angleichen(f"r{runde}_{_vk}", f"r{runde}_vorpruef", _vq, ff_q, "Vorpruefung"))[1] is None or _qa[0] is None or _qa[1] < _qa[0] + _mg or (_hoehe_faellt(runde, _vk) and not _frei_h):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde (gemeinsame Fotos)
             try: _je = (json.load(open(os.path.join(LDIR, f"fotoform_r{runde}_vorpruef.json")))["teile"].get(ziel["teil"]) or {})
             except Exception: _je = {}
             _zeilen = "\n".join(f"- Foto {f}: Praezision {_je[f].get('praez')} / Recall {_je[f].get('recall')}  Overlay {LDIR}/fotoform_bilder/{ziel['teil']}_{f}_r{runde}_vorpruef.jpg"
@@ -922,7 +924,7 @@ for runde in range(1, RUNDEN + 1):
             _h2v, _h2n = HOEHE.get(f"r{runde}_vorher_halb"), HOEHE.get(f"r{runde}_{_hk}")
             print(f"Runde {runde}: Stufe halb {ziel['teil']}: F1 {_vq} -> {_qh}, Hoehe {_h2v} -> {_h2n}", flush=True)
             _va, _qh = angleichen(f"r{runde}_vorher_halb", f"r{runde}_{_hk}", _vq, _qh, "Stufe halb")
-            if _qh is None or _va is None or (_qh < _va + _mg if _ffr else _qh <= _va) or (_h2v is not None and _h2n is not None and _h2n < _h2v - 0.02):
+            if _qh is None or _va is None or (_qh < _va + _mg if _ffr else _qh <= _va) or (not _frei_h and _h2v is not None and _h2n is not None and _h2n < _h2v - 0.02):
                 _frueh = f"Stufe halb ohne Gewinn: F1 {_vq} -> {_qh}, Hoehe {_h2v} -> {_h2n}"
         if _frueh is None and ff_v is None and _ff_spaet:   # aufgeschobener voller Vorher-Wert, nur fuer Kandidaten
             ff_v = form_messen(wt, _ff_spaet[0], ziel["teil"], ff_fotos, f"r{runde}_vorher", stl=_ff_spaet[1])
@@ -933,7 +935,7 @@ for runde in range(1, RUNDEN + 1):
             _hv, _hn = HOEHE.get(f"r{runde}_vorher"), HOEHE.get(f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher")
             print(f"Runde {runde}: Form am Foto (voll, vor Abnahme) {ziel['teil']}: F1 {ff_v} -> {ff_n}, Hoehe {_hv} -> {_hn}", flush=True)
             ff_v, ff_n = angleichen(f"r{runde}_vorher", f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher", ff_v, ff_n, "Tor voll")
-            if ff_n is None or ff_n < ff_v + _mg or (_hv is not None and _hn is not None and _hn < _hv - 0.02):
+            if ff_n is None or ff_n < ff_v + _mg or (not _frei_h and _hv is not None and _hn is not None and _hn < _hv - 0.02):
                 _frueh = f"Foto voll: F1 {ff_v} -> {ff_n}, Hoehe {_hv} -> {_hn}"
         if _frueh: print(f"Runde {runde}: FRUEH ABGELEHNT ({_frueh}) - Abnahme/Konvergenz/Pruefer uebersprungen", flush=True)
     if _frueh:
@@ -978,6 +980,7 @@ for runde in range(1, RUNDEN + 1):
     h_v = HOEHE.get(f"r{runde}_vorher"); h_n = HOEHE.get(f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher")
     rueck_teil = [n for n, fv, fn in (("hoehe_f1", h_v, h_n),) + ((("beleg", tv.get("beleg"), tn.get("beleg")),) if (wolke_sieht or not foto_tor) else ()) + (("kanten_f1", f1(tv), f1(tn)), ("foto_f1", ff_v, ff_n))
                   if fv is not None and fn is not None and fn < fv - 0.02]
+    if _frei_h and "hoehe_f1" in rueck_teil: rueck_teil.remove("hoehe_f1"); print(f"Runde {runde}: Hoehen-Veto per Nutzerfreigabe uebergangen ({h_v} -> {h_n})", flush=True)
     if KONTROLL_VETO and kf_v is not None and kf_n is not None and kf_n < kf_v - MIN_KONTROLLE: rueck_teil.append("kontroll_f1")
     if "kanten_f1" in rueck_teil and ff_v is not None and ff_n is not None and ff_n >= ff_v + 0.02:
         # Quellenvorrang (10.11., Balkon 3x verworfen): das Kantengitter ist aus den Fotos ABGELEITET und hatte ~130 Segmente ueber freier Wand;
