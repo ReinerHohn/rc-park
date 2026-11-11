@@ -238,7 +238,20 @@ def erledigt_laden():
 def ist_erledigt(f, erl):
     """Kasten gilt als erledigt, wenn sein Zentrum in einem erledigten Kasten +-0,5 m liegt (Cluster-IDs wandern leicht zwischen Messungen)."""
     c = f["zentrum"]
-    return any(all(e["lo"][i] - 0.5 <= c[i] <= e["hi"][i] + 0.5 for i in range(3)) for e in erl.values())
+    # 11.11. (Nutzer: Laube-Seitenbogen fehlt): ein 13,5-m-Kasten 'kein Bauteil' (ff_+11_+4_+4) sperrte jeden Cluster darin, u. a. den Seitenbogen
+    # ff_+16_+4_+8 (474k px). Mit Kasten des Clusters: nur sperren, wenn die Kaesten sich wirklich decken (IoU >= ERL_IOU) - Zentrum-im-Kasten allein
+    # nur noch, wenn der erledigte Kasten nicht viel groesser ist (Volumen <= ERL_VOL_FAKTOR x Cluster). Ohne Kasten (alte Ziele) wie bisher.
+    lo, hi = f.get("lo"), f.get("hi")
+    def _vol(a, b): return max(0.0, b[0] - a[0]) * max(0.0, b[1] - a[1]) * max(0.0, b[2] - a[2])
+    for e in erl.values():
+        if not all(e["lo"][i] - 0.5 <= c[i] <= e["hi"][i] + 0.5 for i in range(3)): continue
+        if lo is None or hi is None: return True
+        vc, ve = _vol(lo, hi), _vol(e["lo"], e["hi"])
+        vi = _vol([max(lo[i], e["lo"][i]) for i in range(3)], [min(hi[i], e["hi"][i]) for i in range(3)])
+        if (vc + ve - vi) > 0 and vi / (vc + ve - vi) >= ERL_IOU: return True
+        if vc > 0 and ve <= ERL_VOL_FAKTOR * vc: return True
+    return False
+ERL_IOU, ERL_VOL_FAKTOR = 0.25, 4.0
 BEFUND_RE = re.compile(r"FEHLTEIL-BEFUND:\s*(gebaut|kein Bauteil|Gitter zu duenn|vorhandenes Teil\s+\S+)", re.I)
 
 # Formpruefung am Foto je Teil (teil_fotoform, L-KR24/L-KR25): Gauben/Balkon/Erker-Rippen waren falsch bei Guete 0,8-0,98, weil Wolke und
