@@ -1,0 +1,32 @@
+{
+ "id": "M-6117-011",
+ "foto": "6117",
+ "kamera": "K-6117",
+ "ebene": "0.3338,0.9426,0=12.19",
+ "name": "Laubensaeule Schaftbreite (Silhouette, Achsebene)",
+ "mess_px": [
+  1812.0,
+  3330.0,
+  2017.0,
+  3330.0
+ ],
+ "P1": [
+  13.524,
+  8.143,
+  3.087
+ ],
+ "P2": [
+  12.534,
+  8.494,
+  3.076
+ ],
+ "dz": -0.011,
+ "dy": 0.35,
+ "dx": -0.99,
+ "abstand": 1.05,
+ "z1": 3.087,
+ "z2": 3.076,
+ "unsicherheit_rel": 0.0279,
+ "unsicherheit_m": 0.049,
+ "massstab_von": "Kamera K-6117 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.19 (+-0.4 m)"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-d20-002",
+ "foto": "d20",
+ "kamera": "K-d20",
+ "ebene": "0.3338,0.9426,0=12.19",
+ "name": "Laubensaeule Sockelbreite quer (Silhouette links-rechts, Achsebene)",
+ "mess_px": [
+  975.0,
+  3560.0,
+  1860.0,
+  3560.0
+ ],
+ "P1": [
+  8.073,
+  10.073,
+  1.939
+ ],
+ "P2": [
+  6.682,
+  10.566,
+  2.272
+ ],
+ "dz": 0.333,
+ "dy": 0.493,
+ "dx": -1.391,
+ "abstand": 1.513,
+ "z1": 1.939,
+ "z2": 2.272,
+ "unsicherheit_rel": 0.0829,
+ "unsicherheit_m": 0.133,
+ "massstab_von": "Kamera K-d20 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.19 (+-0.4 m)"
+}

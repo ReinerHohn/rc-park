@@ -1,0 +1,32 @@
+{
+ "id": "M-6117-009",
+ "foto": "6117",
+ "kamera": "K-6117",
+ "ebene": "0.3338,0.9426,0=11.50",
+ "name": "Laubensaeule Sockel+Fase: Schaftansatz bis Pflaster (linke Kante)",
+ "mess_px": [
+  1772.0,
+  3495.0,
+  1776.0,
+  3711.0
+ ],
+ "P1": [
+  13.106,
+  7.559,
+  2.396
+ ],
+ "P2": [
+  13.109,
+  7.558,
+  1.573
+ ],
+ "dz": -0.824,
+ "dy": -0.001,
+ "dx": 0.003,
+ "abstand": 0.824,
+ "z1": 2.396,
+ "z2": 1.573,
+ "unsicherheit_rel": 0.0265,
+ "unsicherheit_m": 0.042,
+ "massstab_von": "Kamera K-6117 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=11.50 (+-0.4 m)"
+}

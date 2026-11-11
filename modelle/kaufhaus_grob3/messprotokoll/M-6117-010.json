@@ -1,0 +1,32 @@
+{
+ "id": "M-6117-010",
+ "foto": "6117",
+ "kamera": "K-6117",
+ "ebene": "0.3338,0.9426,0=12.19",
+ "name": "Laubensaeule Sockelbreite quer (Silhouette, Achsebene)",
+ "mess_px": [
+  1772.0,
+  3560.0,
+  2064.0,
+  3560.0
+ ],
+ "P1": [
+  13.732,
+  8.069,
+  2.229
+ ],
+ "P2": [
+  12.359,
+  8.556,
+  2.175
+ ],
+ "dz": -0.054,
+ "dy": 0.486,
+ "dx": -1.373,
+ "abstand": 1.457,
+ "z1": 2.229,
+ "z2": 2.175,
+ "unsicherheit_rel": 0.028,
+ "unsicherheit_m": 0.06,
+ "massstab_von": "Kamera K-6117 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.19 (+-0.4 m)"
+}

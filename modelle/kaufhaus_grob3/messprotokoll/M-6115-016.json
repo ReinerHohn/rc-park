@@ -1,0 +1,32 @@
+{
+ "id": "M-6115-016",
+ "foto": "6115",
+ "kamera": "K-6115",
+ "ebene": "0.3338,0.9426,0=11.50",
+ "name": "Laubensaeule Sockelwand Pfeiler 3: Oberkante bis Pflaster (linke Kante)",
+ "mess_px": [
+  2337.0,
+  3293.0,
+  2340.0,
+  3412.0
+ ],
+ "P1": [
+  12.898,
+  7.633,
+  2.268
+ ],
+ "P2": [
+  12.914,
+  7.627,
+  1.568
+ ],
+ "dz": -0.7,
+ "dy": -0.006,
+ "dx": 0.016,
+ "abstand": 0.7,
+ "z1": 2.268,
+ "z2": 1.568,
+ "unsicherheit_rel": 0.0179,
+ "unsicherheit_m": 0.043,
+ "massstab_von": "Kamera K-6115 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=11.50 (+-0.4 m)"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-6176-001",
+ "foto": "6176",
+ "kamera": "K-6176",
+ "ebene": "0.3338,0.9426,0=11.50",
+ "name": "Laubensaeule Sockel Pfeiler1: Sockelwand-Oberkante bis Pflaster",
+ "mess_px": [
+  560.0,
+  3640.0,
+  557.0,
+  3860.0
+ ],
+ "P1": [
+  25.387,
+  3.21,
+  4.384
+ ],
+ "P2": [
+  25.537,
+  3.157,
+  4.643
+ ],
+ "dz": 0.259,
+ "dy": -0.053,
+ "dx": 0.15,
+ "abstand": 0.304,
+ "z1": 4.384,
+ "z2": 4.643,
+ "unsicherheit_rel": 0.0899,
+ "unsicherheit_m": 0.033,
+ "massstab_von": "Kamera K-6176 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=11.50 (+-0.4 m)"
+}
