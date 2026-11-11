@@ -600,6 +600,9 @@ print(f"Kreis {OBJ} Lauf {LAUF} Basis {basis[:7]} -> {LDIR}")
 NACH = opt("--nachpruefen", "")
 if NACH:
     _ld, _r = NACH.rsplit(":", 1); RUNDEN = 1
+    # 11.11. (L34-Pfadluecke): Nachpruefen misst KEIN Foto-Tor (vorher-Formwert fehlt) und entscheidet nach Wolkenguete. Nur fuer Infra-Abbrueche
+    # (OOM/Platz) gedacht; nach Tor-Codeaenderungen statt dessen --ziel <teil> --patch <verworfen_rN.patch> (voller Foto-Tor-Weg auf aktuellem main).
+    print("HINWEIS nachpruefen: ohne Foto-Tor (Wolkenguete) - fuer Torfragen --ziel/--patch benutzen", flush=True)
     NACH_Z = [json.loads(l) for l in open(os.path.join(_ld, "kreis.jsonl")) if l.strip() and json.loads(l).get("runde") == int(_r) and "angenommen" in json.loads(l)][-1]
 import hashlib as _hl
 _CODE = lambda: _hl.sha256(open(os.path.join(ROOT, "tools", "bauteil_kreis.py"), "rb").read()).hexdigest()
