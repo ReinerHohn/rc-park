@@ -1,0 +1,32 @@
+{
+ "id": "M-6120-061",
+ "foto": "6120",
+ "kamera": "K-6120",
+ "ebene": "0.3338,0.9426,0=7.28",
+ "name": "Gewoelbe: Schildbogen-Scheitel Fensterbucht (Wandebene 7.28)",
+ "mess_px": [
+  1350.0,
+  2172.0,
+  1350.0,
+  2172.0
+ ],
+ "P1": [
+  8.516,
+  4.707,
+  7.888
+ ],
+ "P2": [
+  8.516,
+  4.707,
+  7.888
+ ],
+ "dz": 0.0,
+ "dy": 0.0,
+ "dx": 0.0,
+ "abstand": 0.0,
+ "z1": 7.888,
+ "z2": 7.888,
+ "unsicherheit_rel": 0.0193,
+ "unsicherheit_m": 0.021,
+ "massstab_von": "Kamera K-6120 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.28 (+-0.3 m)"
+}

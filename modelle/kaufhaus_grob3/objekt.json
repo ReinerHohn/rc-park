@@ -4571,6 +4571,35 @@
    ]
   },
   {
+   "typ": "kreuzgewoelbe:laube",
+   "gruppe": "Laubendecke (Kreuzrippengewoelbe)",
+   "n_joche": 4,
+   "u0": -8.52,
+   "pitch": 6.022,
+   "n_wand": 7.28,
+   "n_front": 11.86,
+   "z_kaempfer": 5.91,
+   "z_scheitel": 7.84,
+   "z_oben": 7.95,
+   "bogen_exponent": 1.75,
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
+   "quelle": "Fotos 6119/6120/6213/d20/6117/6207 (Stufe 0 kreis1 11.11.): spitzbogige Kreuzrippengewoelbe, Joche = Bogenreihe-Pitch, Dienste an der Rueckwand in den Pfeilerachsen (u 3,54 ~ Pfeiler 3,50); Kaempfer/Schildbogenscheitel/Schlussstein per foto_mass; Decke = Deckflaeche zweier gekreuzter Spitzbogentonnen (Grate); Rippenvorsprung nicht modelliert",
+   "werte_quellen": {
+    "u0": "wie bogenreihe:laube u0 (Pfeilerachse); Dienst am Foto 6119 u 3,54 (M-6119-012 P1) = Pfeilerachse 3,50",
+    "pitch": "wie bogenreihe:laube pitch 6,022; Schildbogenscheitel Fensterbucht u 6,43-6,46 (M-6119-012, M-6120-061) und Schlussstein u 6,52 (M-6120-063) = Jochmitte 6,51",
+    "n_wand": "Laubenrueckwand-Ebene n 7,28 (quader:laube_rueck n1, Wolke lot2 + M-6120-021); Messebene der Gewoelbepunkte M-6119-012/M-6120-061",
+    "n_front": "Schlussstein n 9,574 (M-6120-063, 2-Foto-Triangulation, Strahlabstand 0,018 m) liegt in der Jochmitte -> Front = 2*9,574-7,28 = 11,87; Bandrueckseite 11,72 (bogenreihe pfeiler_n 12,19 - laibung_tiefe/2) ueberlappt",
+    "z_kaempfer": "Rippenansatz am Dienst, Foto 6119: M-6119-012 P1 z 5,913 (Dienstkapitell Gold z 4,95, M-6119-013)",
+    "z_scheitel": "Schildbogenscheitel Wandebene 7,744 (M-6119-012) / 7,888 (M-6120-061), Schlussstein z 7,844 (M-6120-063): Mittel 7,84; zwei Fotos, 0,14 m Spreizung nicht gemittelt aus Widerspruch sondern innerhalb +-0,1 Messunsicherheit",
+    "bogen_exponent": "Schildbogenkante (Kappe/Wand) am Foto 6119, 7 Punkte auf der Wandebene n 7,28 (M-6119-014..016, 6119 Pixel per Spalten-Saettigung): Superellipse (1-(x/w)^p)^(1/p) mit Kaempfer 5,91, Scheitel 7,84, w 3,01: p 1,75 (RMS 0,08 m; p 2 = Ellipse RMS 0,14); Gurtbogen quer = ANNAHME gleiche Form",
+    "z_oben": "ANNAHME: Oberkante Gewoelbekoerper 7,95, 0,05 m in rumpf_og (z0 7,9) eingebunden fuer wasserdichten Druckkoerper; Laubendecke z 7-8 (Ueberhang-Bericht)"
+   }
+  },
+  {
    "typ": "quader:laube_sockel_w",
    "gruppe": "Laubensockel (Steinbank mit Sockelband vor der Rueckwand)",
    "u0": -7.2,

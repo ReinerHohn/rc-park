@@ -1,0 +1,32 @@
+{
+ "id": "M-6119-014",
+ "foto": "6119",
+ "kamera": "K-6119",
+ "ebene": "0.3338,0.9426,0=7.28",
+ "name": "Gewoelbe Schildbogen-Kante (Kappe/Wand) Punktpaar 2060 2282 2160 2330",
+ "mess_px": [
+  2060.0,
+  2282.0,
+  2160.0,
+  2330.0
+ ],
+ "P1": [
+  7.708,
+  4.994,
+  7.761
+ ],
+ "P2": [
+  7.232,
+  5.162,
+  7.518
+ ],
+ "dz": -0.243,
+ "dy": 0.169,
+ "dx": -0.477,
+ "abstand": 0.561,
+ "z1": 7.761,
+ "z2": 7.518,
+ "unsicherheit_rel": 0.0183,
+ "unsicherheit_m": 0.032,
+ "massstab_von": "Kamera K-6119 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.28 (+-0.3 m)"
+}

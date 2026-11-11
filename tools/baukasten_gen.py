@@ -1116,6 +1116,52 @@ def freiform_bt(cfg, ctx):
     beleg("alle", f"Freiform {cfg.get('typ', '')} ({modus})", cfg["quelle"], punkte=len(P), ebene_s=s0, ebene_z=z0, neigung_grad=float(cfg["neigung_grad"]), tiefe=td)
     return ([solid], []) if modus != "ausschnitt" else ([], [solid])
 
+def _bogen_z(x, w, zk, zs, p=2.0):
+    """Hoehe eines Bogens bei Abstand x von der Mitte (|x| <= w): Kaempfer (+-w, zk), Scheitel (0, zs). Anstieg h > w: Spitzbogen aus zwei Kreisboegen (Mittelpunkte auf der
+    Kaempferlinie, c = (h^2-w^2)/(2w)); h <= w: Superellipse (1-(x/w)^p)^(1/p), p=2 Halbellipse (zwei Kreisboegen waeren dort ein Doppelbuckel mit Delle im Scheitel)."""
+    x = np.minimum(np.abs(np.asarray(x, float)), w); h = zs - zk
+    if h > w: c = (h * h - w * w) / (2 * w); return zk + np.sqrt(np.maximum((w + c) ** 2 - (x + c) ** 2, 0.0))
+    return zk + h * np.maximum(1.0 - (x / w) ** p, 0.0) ** (1.0 / p)
+
+def _hoehenfeld_koerper(U, N, Zb, zo):
+    """Wasserdichter Koerper aus Hoehenfeld: Unterseite z = Zb[i, j] ueber dem Raster (U[i], N[j]), Oberseite eben bei zo, senkrechte Seiten. Dreiecke per Konstruktion geschlossen und
+    orientiert (kein Boolean -> keine Splitter an den Graten tangierender Tonnen)."""
+    from manifold3d import Mesh
+    ni, nj = len(U), len(N); G = np.array([[(U[i], N[j]) for j in range(nj)] for i in range(ni)]).reshape(-1, 2)
+    V = np.vstack([np.c_[G, Zb.reshape(-1)], np.c_[G, np.full(ni * nj, float(zo))]]); off = ni * nj
+    b = lambda i, j: i * nj + j; t = lambda i, j: off + i * nj + j; T = []
+    for i in range(ni - 1):
+        for j in range(nj - 1):
+            T += [(t(i, j), t(i + 1, j), t(i + 1, j + 1)), (t(i, j), t(i + 1, j + 1), t(i, j + 1)), (b(i, j), b(i + 1, j + 1), b(i + 1, j)), (b(i, j), b(i, j + 1), b(i + 1, j + 1))]
+    for i in range(ni - 1):
+        T += [(b(i, 0), b(i + 1, 0), t(i + 1, 0)), (b(i, 0), t(i + 1, 0), t(i, 0)), (b(i, nj - 1), t(i + 1, nj - 1), b(i + 1, nj - 1)), (b(i, nj - 1), t(i, nj - 1), t(i + 1, nj - 1))]
+    for j in range(nj - 1):
+        T += [(b(0, j), t(0, j + 1), b(0, j + 1)), (b(0, j), t(0, j), t(0, j + 1)), (b(ni - 1, j), b(ni - 1, j + 1), t(ni - 1, j + 1)), (b(ni - 1, j), t(ni - 1, j + 1), t(ni - 1, j))]
+    return M(Mesh(vert_properties=V.astype(np.float32), tri_verts=np.array(T, np.uint32)))
+
+@bauteil("kreuzgewoelbe")
+def kreuzgewoelbe(cfg, ctx):
+    """Kreuzgewoelbe-Reihe (Laubendecke): n_joche Joche mit Grundriss pitch x (n_front-n_wand); Decke z = max(hA(u), hB(n)) = Deckflaeche des Hohlraums zweier gekreuzter Bogentonnen
+    (Schildbogen quer zu u an der Wand mit Scheitel z_scheitel, Gurtbogen quer zu n mit Scheitel z_scheitel_quer; Grat = Schnitt), als Hoehenfeld-Koerper bis z_oben (Boolean der
+    tangierenden Tonnen gab Zero-Volumen-Splitter, 11.11.). u0 = Achse des 1. Dienstes/Pfeilers, Joch k mittig u0 + (k+0.5)*pitch.
+    Pflicht: n_joche, u0, pitch, n_wand, n_front, z_kaempfer, z_scheitel, z_oben, achse_n, achse_quelle, quelle. Optional: z_scheitel_quer (Standard z_scheitel), einbindung (m, Standard 0,08: Koerper
+    reicht so weit in die Wand n_wand), raster (m, Standard 0,1), bogen_exponent (Standard 2 = Halbellipse), werte_quellen, aktiv. Rippen (Rippenvorsprung) sind NICHT enthalten (Kappen glatt)."""
+    for k in ("n_joche", "u0", "pitch", "n_wand", "n_front", "z_kaempfer", "z_scheitel", "z_oben", "achse_n", "achse_quelle", "quelle"):
+        if cfg.get(k) in (None, ""): sys.exit(f"kreuzgewoelbe: '{k}' fehlt (Regel 3b: jedes Mass mit Quelle)")
+    nj, u0, pitch = int(cfg["n_joche"]), float(cfg["u0"]), float(cfg["pitch"]); nw, nf = float(cfg["n_wand"]), float(cfg["n_front"])
+    zk, zs, zo = float(cfg["z_kaempfer"]), float(cfg["z_scheitel"]), float(cfg["z_oben"]); zsq = float(cfg.get("z_scheitel_quer") or zs)
+    ein, rs = float(cfg.get("einbindung", 0.08)), float(cfg.get("raster", 0.1)); pe = float(cfg.get("bogen_exponent", 2.0))
+    if nj < 1 or pitch < 0.5 or nf - nw < 0.5 or not (zk < zs < zo) or not (zk < zsq < zo): sys.exit(f"kreuzgewoelbe: unplausible Masse (n={nj}, pitch={pitch}, n {nw}..{nf}, z {zk}/{zs}/{zsq}/{zo})")
+    T = _uszT(cfg); adds = []; nc = 0.5 * (nw + nf)
+    for k in range(nj):
+        ua, ub = u0 + k * pitch, u0 + (k + 1) * pitch; uc = 0.5 * (ua + ub)
+        U = np.linspace(ua, ub, max(int(round(pitch / rs)), 8) + 1); N = np.linspace(nw - ein, nf, max(int(round((nf - nw + ein) / rs)), 8) + 1)
+        hA = _bogen_z(U - uc, 0.5 * pitch, zk, zs, pe); hB = _bogen_z(np.clip(N, nw, nf) - nc, 0.5 * (nf - nw), zk, zsq, pe)
+        Zb = np.maximum(hA[:, None], hB[None, :]); adds.append(_hoehenfeld_koerper(U, N, Zb, zo).transform(T))
+    beleg("alle", f"Kreuzgewoelbe {nj} Joche (Laubendecke)", cfg["quelle"], u0=u0, pitch=pitch, n_wand=nw, n_front=nf, z_kaempfer=zk, z_scheitel=zs, z_scheitel_quer=zsq, z_oben=zo,
+          zaehlung=cfg.get("zaehlung"), rippen="ANNAHME: Kappen glatt, Rippenvorsprung nicht modelliert", bogen_exponent=pe, bogenform="Superellipse (Anstieg <= halbe Spannweite), sonst Spitzbogen; Exponent am Schildbogen gemessen, Gurtbogen quer = ANNAHME gleiche Form")
+    return adds, []
+
 @bauteil("zylinder")
 def zylinder_bt(cfg, ctx):
     """Senkrechter Zylinder/Kegelstumpf (Saeule, Pfeiler, Rundturm) bei (u, n): radius unten, radius_oben (Standard = radius), z0..z1. modus 'anbau'|'ausschnitt'.

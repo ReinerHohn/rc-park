@@ -1,0 +1,32 @@
+{
+ "id": "M-6119-012",
+ "foto": "6119",
+ "kamera": "K-6119",
+ "ebene": "0.3338,0.9426,0=7.28",
+ "name": "Gewoelbe: Rippenansatz am Dienst (Ruecksprung Wandebene) -> Schildbogen-Scheitel Bucht 2",
+ "mess_px": [
+  2490.0,
+  2650.0,
+  1900.0,
+  2282.0
+ ],
+ "P1": [
+  5.763,
+  5.682,
+  5.913
+ ],
+ "P2": [
+  8.494,
+  4.715,
+  7.744
+ ],
+ "dz": 1.831,
+ "dy": -0.967,
+ "dx": 2.73,
+ "abstand": 3.427,
+ "z1": 5.913,
+ "z2": 7.744,
+ "unsicherheit_rel": 0.018,
+ "unsicherheit_m": 0.084,
+ "massstab_von": "Kamera K-6119 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=7.28 (+-0.3 m)"
+}

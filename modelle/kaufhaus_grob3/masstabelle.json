@@ -2380,6 +2380,30 @@
    "schritt": 0.01,
    "quantil": 10.0,
    "_hinweis": "Ebene = Wandfront n 7,28 bei u -5,36 (Setzholzmitte eg2); Strahlen im Streifen u -5,36+(0.36..0.66) bei z 6,35 lot2: trifft der Strahl die obere Rahmenleiste (Foto 6130: Oberkante FLACH z 6,39, M-6130-001) -> Rahmenfront vor (-) der Wandfront; trifft er nur die Wand (Altmodell: Ecken Kaempfer 6,29) -> ca. 0,00"
+  },
+  "laube_decke_u46": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    6.793,
+    5.402
+   ],
+   "z0": "=5.2 - z_unterkante_lot2",
+   "z1": "=8.3 - z_unterkante_lot2",
+   "suche": "unten",
+   "puffer": 0.02,
+   "dz": 0.02
+  },
+  "laube_decke_u363": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    5.878,
+    5.726
+   ],
+   "z0": "=5.2 - z_unterkante_lot2",
+   "z1": "=8.3 - z_unterkante_lot2",
+   "suche": "unten",
+   "puffer": 0.02,
+   "dz": 0.02
   }
  },
  "pruefungen": [
@@ -5008,6 +5032,38 @@
    "historie": [
     "2026-11-11 angelegt (Kreis 003723 r1, fensterreihe:eg2): am Altstand (Ecken bei z 6,29, bei 6,35 nur Wand = 0,00) ROT erwartet, Soll nicht gelockert (Vorversuch 233158 hatte sie ebenso, nie gemerged)"
    ]
+  },
+  {
+   "name": "Laubendecke (Kreuzgewoelbe): Unterseite an der Rueckwand bei u 4,6 (Schildbogenflanke, z lot2 7,21)",
+   "wert": "laube_decke_u46",
+   "soll": [
+    5.607,
+    5.907
+   ],
+   "quelle": "Fotos 6119 (Stufe 0 kreis1 11.11.): Schildbogenkante der Laubendecke (Kappe/Wand) auf der Wandebene n 7,28 (M-6119-012..016, Kamera-Bruecke K-6119, 7 Punkte per Spalten-Saettigung) M-6119-015 P1: u 4,60 z 7,21 (+-0,03 m); Soll = lot2-z minus 1,453 (z_unterkante) +-0,15 (Pixel-/Kantenunsicherheit); Messpunkt n 7,36 (0,08 vor der Wand). Flache Decke z 7,9 (Modell ohne Gewoelbe) liegt 0,69 darueber",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6119-015",
+   "historie": [
+    "2026-11-11 angelegt (Kreis1 laube_rueck, Beobachtung 'Laubendecke/Kreuzrippengewoelbe fehlt'): am Modell ohne Gewoelbe (Decke z 7,9 = rumpf_og) ROT"
+   ]
+  },
+  {
+   "name": "Laubendecke (Kreuzgewoelbe): Unterseite an der Rueckwand bei u 3,63 (nahe Dienst, z lot2 6,46)",
+   "wert": "laube_decke_u363",
+   "soll": [
+    4.857,
+    5.157
+   ],
+   "quelle": "Fotos 6119 (Stufe 0 kreis1 11.11.): Schildbogenkante der Laubendecke (Kappe/Wand) auf der Wandebene n 7,28 (M-6119-012..016, Kamera-Bruecke K-6119, 7 Punkte per Spalten-Saettigung) M-6119-016 P1: u 3,63 z 6,46 (+-0,09 m); Soll = lot2-z minus 1,453 +-0,15; Messpunkt n 7,36. Dienst/Rippenansatz bei u 3,54 z 5,91 (M-6119-012)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6119-016",
+   "historie": [
+    "2026-11-11 angelegt (Kreis1 laube_rueck, Beobachtung 'Laubendecke/Kreuzrippengewoelbe fehlt'): am Modell ohne Gewoelbe (Decke z 7,9) ROT"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -5750,14 +5806,6 @@
    "erledigt": "kreis 20261110_232557a232557 r1 (quader:laube_sockel_w u -7,2..-1,5, z 1,5..2,2; Foto-F1 0,444->0,481), Westende ANNAHME"
   },
   {
-   "datum": "2026-11-11",
-   "wer": "Pruefer opus kreis 20261110_232557a232557 r1 (automatisch)",
-   "teil": "quader:laube_rueck",
-   "merkmal": "Pruefer-Rest quader:laube_rueck kreis 20261110_232557a232557 r1",
-   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Sockel-Luecke u -1,5..5 ('Tuerbucht', nur aus leerer Wolke) widerspricht Foto 6124 und 6117: die Bank laeuft unter dem Fenster bis zum Pfeilerfuss weiter; 6124 F1 0,343->0,316, f1_h 0,269->0,213 | Gelb bleibt an der Bankoberkante in der Fensterbucht von 6117 und 6124 (Bank fehlt dort) | Sockel nur Vollquader: kein ueberstehendes Gesimsband oben, keine eingetieften Fuellungsfelder darunter (6124, 6130 deutlich) | Teil des F1-Gewinns kommt aus Verdeckung der Rueckwand durch das Fremdteil laube_sockel_* (Fotokantenpixel sinken in jedem Foto), Sockelkanten selbst nicht als eigenes Teil benotet | Kein Runden-Bericht: audit/kreis_bericht.md ist der alte Balkonband-Bericht, agent_r1.log endet mit 'Der Bau laeuft noch'; Stufe-0-Formbeschreibung nur als Kurzsatz | Beobachtung 'Steinbank mit Sockelband' nicht auf erledigt gesetzt | Westende u -7,2, Ostende und u 5,0 sind ANNAHME, nicht am Foto gemessen | rundekreis1-Overlays, foto_diff, fehlteile_finden, teile_lage_pruefen nicht gelaufen; keine _nachher-Formbilder, nur vorpruef | Gelbe Fremdkanten im Teilbereich unveraendert: Fenster, Tafel, Lampe, Gewoelberippen/Kaempfer, Tuerportal mit Goldrahmen (d17), Pilaster (6124)",
-   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
-  },
-  {
    "datum": "2026-11-10",
    "wer": "Koordinator nach Pruefer a062358 r2 (erker_polygon:1)",
    "merkmal": "Erker-Unterbau Profilform",
@@ -5864,6 +5912,116 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261110_232557a232557 r1 (automatisch)",
+   "teil": "quader:laube_rueck",
+   "merkmal": "Pruefer-Rest quader:laube_rueck kreis 20261110_232557a232557 r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Sockel-Luecke u -1,5..5 ('Tuerbucht', nur aus leerer Wolke) widerspricht Foto 6124 und 6117: die Bank laeuft unter dem Fenster bis zum Pfeilerfuss weiter; 6124 F1 0,343->0,316, f1_h 0,269->0,213 | Gelb bleibt an der Bankoberkante in der Fensterbucht von 6117 und 6124 (Bank fehlt dort) | Sockel nur Vollquader: kein ueberstehendes Gesimsband oben, keine eingetieften Fuellungsfelder darunter (6124, 6130 deutlich) | Teil des F1-Gewinns kommt aus Verdeckung der Rueckwand durch das Fremdteil laube_sockel_* (Fotokantenpixel sinken in jedem Foto), Sockelkanten selbst nicht als eigenes Teil benotet | Kein Runden-Bericht: audit/kreis_bericht.md ist der alte Balkonband-Bericht, agent_r1.log endet mit 'Der Bau laeuft noch'; Stufe-0-Formbeschreibung nur als Kurzsatz | Beobachtung 'Steinbank mit Sockelband' nicht auf erledigt gesetzt | Westende u -7,2, Ostende und u 5,0 sind ANNAHME, nicht am Foto gemessen | rundekreis1-Overlays, foto_diff, fehlteile_finden, teile_lage_pruefen nicht gelaufen; keine _nachher-Formbilder, nur vorpruef | Gelbe Fremdkanten im Teilbereich unveraendert: Fenster, Tafel, Lampe, Gewoelberippen/Kaempfer, Tuerportal mit Goldrahmen (d17), Pilaster (6124)",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern.",
+   "erledigt": "ersetzt durch Pruefer-Rest kreis 20261111_023109a023500 r1"
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Koordinator (Sichtbarkeits-Befund, Overlays v2 6206/6213/d20)",
+   "teil": "NEU: laubengewoelbe",
+   "art": "fehlteil",
+   "merkmal": "Laubendecke/Kreuzrippengewoelbe fehlt im Modell",
+   "text": "Die Laube hat Kreuzrippengewoelbe (Fotos 6206, 6213, d20, k_14, 6228). Im Modell fehlt die Decke; dadurch gelten Giebel/Rumpf/Laubenrueckwand in Fotos unter der Laube als sichtbar. Fotowolken-Verdeckung (Metrik v2) erfasst nur Rippen, nicht die weissen Kappen (keine Wolkenpunkte auf glattem Putz).",
+   "naechster_schritt": "Gewoelbe als Bauteil (Joche = Bogenreihe-Pitch, Kaempfer-/Scheitelhoehe per foto_mass an Rippen, Rippenzahl je Joch per foto_zaehlung); verdeckt dann ueber das Modell selbst.",
+   "erledigt": "kreis1 kreuzgewoelbe:laube (4 Joche, Decke max(hA,hB) Superellipse p 1,75, Kaempfer 5,91 / Scheitel 7,84 aus M-6119-012/015/016, M-6120-061/063; Z-6213-001 3 Rippen je Dienst); Pruefungen laube_decke_u46/u363 vorher rot (6,45), nachher gruen; Foto-F1 laube_rueck halb 0,478->0,518. OFFEN: Rippenvorsprung nicht modelliert, Gurtbogen quer = ANNAHME"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 2)",
+   "auto_id": "fehlteile-6261-234-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.55,
+   "z_bis": 18.55,
+   "xyz": [
+    14.32,
+    -8.89,
+    18.55
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.89 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
+   "auto_id": "fehlteile-6261-312-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.22,
+   "z_bis": 18.22,
+   "xyz": [
+    14.61,
+    -7.15,
+    18.22
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.22 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
+   "auto_id": "fehlteile-6261-234-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.42,
+   "z_bis": 17.42,
+   "xyz": [
+    14.28,
+    -8.91,
+    17.42
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.42 m, y=-8.91 m (Zelle [234, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-312-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.08,
+   "z_bis": 17.08,
+   "xyz": [
+    14.53,
+    -7.16,
+    17.08
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Kreis1 laube_rueck (Agent)",
+   "teil": "kreuzgewoelbe:laube",
+   "merkmal": "Gewoelberippen (Diagonal-/Gurtrippen) fehlen im Gewoelbekoerper",
+   "text": "Kappen glatt modelliert; 3 Rippen je Dienst (Z-6213-001: 2 Diagonalen + 1 Gurtrippe) stehen im Foto ca. 0,1-0,2 m vor der Kappe vor. Gurtbogen quer zur Laube hat dieselbe Form wie der Schildbogen (ANNAHME, nicht gemessen).",
+   "naechster_schritt": "Rippenquerschnitt per foto_mass am Rippenansatz (Foto 6213/d20), Gurtbogenprofil an Foto aus der Laube trianguliert messen, Rippen als Streifen auf der Decke; Kappenhoehe Mitte gegen zweites Foto pruefen (Schildbogenscheitel 7,74 vs 7,89)."
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "kreis 20261111_023109a023500 r1 (automatisch)",
+   "merkmal": "Kantengitter widerspricht Foto (quader__laube_rueck)",
+   "text": "Angenommen nach Quellenvorrang Foto: Gitter-Baender praezision 5-10 m: 0.354 -> 0.311, Foto-F1 0.478->0.519. Kantengitter hat dort vermutlich Fehlsegmente.",
+   "naechster_schritt": "Gittersegmente im Teilbereich gegen Fotos pruefen (gitter_zurueck), Fehlsegmente markieren."
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_023109a023500 r1 (automatisch)",
+   "teil": "quader:laube_rueck",
+   "merkmal": "Pruefer-Rest quader:laube_rueck kreis 20261111_023109a023500 r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: kreis_bericht.md gehoert nicht zu dieser Runde (Baldachin ff_+14_+8_+12): fuer laube_rueck kein Agentenbericht, keine Formbeschreibung, keine Fehlerliste, keine generalisierte Lehre | Keine _nachher.jpg erzeugt, nur _vorpruef.jpg | Gelb: Fenster der Laubenrueckwand (Kreuzstock, 2 je Joch) fehlen in allen Fotos (6119/6120/p03) | Gelb: Tuer mit goldenem Portalrahmen und Spitzbogenportal rechts fehlen (6119/6120) | Gelb: Dienste/Halbsaeulen an der Rueckwand fehlen (6120 links, p03 Mitte) | Gelb: Diagonal- und Gurtrippen fehlen, Kappen glatt (6119 oben; Beobachtung offen, Z-6213-001) | Gelb: Sockel-/Bankkante und Kleinteile (Leuchten, Infotafel) fehlen (6119/6120 unten) | Rot: Laibungs-/Pfeilerkante neben den Boegen weiter versetzt (6119/6120/p03, unveraendert seit vorher) | Rot: in p03 liegt Joch 1 am Gewoelbeansatz links nach aussen versetzt (u0/Lage pruefen) | ANNAHME z_oben 7,95 und Gurtbogen = Schildbogenform ungeprueft | Andere Teile nicht nachgeprueft (Vorpruefung nur 1 Teil, v.a. bogenreihe:laube an der Einbindung); teile_lage_pruefen/foto_diff/fehlteile_finden/regression nach Aenderung von baukasten_gen.py nicht belegt",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

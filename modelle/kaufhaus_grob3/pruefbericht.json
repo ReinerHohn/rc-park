@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_023109a023500/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,17 +40,17 @@
   "fenster_b3_ebene_abstand": 1.2521246230474818,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10611763596534729,
-  "wand_anteil_unter": 0.0006000200006666889,
-  "wand_ohne_treffer": 3.333333333332966e-05,
+  "wand_pq": 0.1059010699391365,
+  "wand_anteil_unter": 0.0006333333333333333,
+  "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
-  "kons_b3_grund_abstand": -0.004027439078454709,
+  "kons_b3_grund_abstand": -0.004027325177424768,
   "bogen3_licht_anzahl": 1.0,
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 2.128511469441953,
-  "teile_ueberhang": 0.00682,
+  "teile_ueberhang": 0.00678,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.72,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.72,
@@ -59,7 +59,7 @@
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.68,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.68,
   "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.1002299324808607,
-  "laube_rueckwand_n728_z7": -0.0033270288535698356,
+  "laube_rueckwand_n728_z7": -0.005978526609807577,
   "helm_o_r_14_64": 1.1110442019599438,
   "helm_o_r_16_18": 0.6410005316999677,
   "helm_o_r_17_76": 0.4009052145424984,
@@ -73,11 +73,11 @@
   "fenster_b4_anzahl": 2.0,
   "fenster_b4_breite_median": 0.8150000000000001,
   "fenster_b4_breite_max": 0.8200000000000001,
-  "fenster_b4_ebene_abstand": 1.9871140515298098,
+  "fenster_b4_ebene_abstand": 1.9871139883175164,
   "fenster_b1_anzahl": 2.0,
   "fenster_b1_breite_median": 0.77,
   "fenster_b1_breite_max": 0.77,
-  "fenster_b1_ebene_abstand": 1.886030256196551,
+  "fenster_b1_ebene_abstand": 1.8860301355502789,
   "bandfront_z76": -0.00653820462883381,
   "bogen3_scheitel": 5.643319862365722,
   "erker_w_diag_l": 1.5456719685059321,
@@ -194,7 +194,7 @@
   "fenster_eg1_rahmenfront": 0.016407608593362877,
   "fenster_eg1_oberkante_l": 0.015700855543197,
   "fenster_eg1_oberkante_r": 0.016853294678484954,
-  "fenster_eg1_ueber_oberkante": -0.007184007348401078,
+  "fenster_eg1_ueber_oberkante": -0.007183896257271449,
   "tuer_b3_blatt": 0.5060845958538565,
   "tuer_b3_schaft_l_anzahl": 3.0,
   "tuer_b3_schaft_l_breite_median": 0.05,
@@ -202,16 +202,16 @@
   "tuer_b3_schaft_r_anzahl": 3.0,
   "tuer_b3_schaft_r_breite_median": 0.05,
   "tuer_b3_schaft_r_grund_abstand": 0.1053239090386251,
-  "balkon_luecke_west": 0.005366148661996917,
+  "balkon_luecke_west": 0.005366135070099087,
   "balkon_luecke_ost": -0.012597067409629403,
   "bruestung_luecke_west": 0.005928783763525125,
-  "bruestung_luecke_ost": -0.012354986959553393,
+  "bruestung_luecke_ost": -0.012354952565392985,
   "balkon_soffit_frei": -0.0050184289008181615,
   "balkon_stirn_mitte": -1.2034247030692145,
   "laube_sockel_front_w": -0.44554548537133254,
   "laube_sockel_front_o": -0.4612625516363389,
   "laube_sockel_oben_21": -0.44554548537133254,
-  "laube_sockel_oben_23": 0.00445455381829829,
+  "laube_sockel_oben_23": 0.0044548243843940405,
   "erker_o_flanke74": 1.2157798668032467,
   "baldachin1_fiale": 13.586999999999986,
   "baldachin2_fiale": 13.446999999999989,
@@ -222,8 +222,8 @@
   "baldachin2_haube_um": 0.3599108512001097,
   "baldachin2_krone_up": 0.49468932344266975,
   "baldachin2_krone_um": 0.4953106968185508,
-  "fenster_eg2_oberkante_l": -0.11524318878876638,
-  "fenster_eg2_oberkante_r": -0.11428265330653042
+  "laube_decke_u46": 5.807000000000002,
+  "laube_decke_u363": 4.867000000000001
  },
  "pruefungen": [
   {
@@ -428,7 +428,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10611763596534729,
+   "wert": 0.1059010699391365,
    "soll": [
     0.0348,
     100
@@ -458,7 +458,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00682,
+   "wert": 0.00678,
    "soll": [
     0,
     0.01
@@ -488,7 +488,7 @@
   },
   {
    "name": "Laubenrueckwand: Wandflaeche hinter der Ebene n 7,28 (z 7,0, alle Boegen; 0 = in der Ebene)",
-   "wert": -0.0033270288535698356,
+   "wert": -0.005978526609807577,
    "soll": [
     -0.08,
     0.08
@@ -1307,6 +1307,16 @@
    "status": "ok"
   },
   {
+   "name": "Tuer Laube EG Bogen 3: Rahmenvorderkante gegen die Wandfront n 7,28 (m, - = davor, Strahl am rechten Rahmenpfosten, z 2,2)",
+   "wert": -0.04463395892203348,
+   "soll": [
+    -0.096,
+    0.0
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
    "name": "Fenster Laube EG Bogen 4 (eg0): Setzholz-/Kreuzstock-Vorderflaeche gegen die Wandfront n 7,28 (m, + = dahinter, Strahl am Setzholz u 12,47, z 4,4)",
    "wert": 0.0207220242320707,
    "soll": [
@@ -1548,7 +1558,7 @@
   },
   {
    "name": "Fenster Laube EG Bogen 3 (eg1): ueber der Rahmenoberkante (z 6,40) nur Wand, kein Rahmen (m hinter der Wandfront, 0 = Wandfront)",
-   "wert": -0.007184007348401078,
+   "wert": -0.007183896257271449,
    "soll": [
     -0.02,
     0.02
@@ -1598,7 +1608,7 @@
   },
   {
    "name": "Balkonplatte endet vor dem West-Erker: in u -5,55..-6,6 (z 8,15) steht die Wand n 12,66 frei (0 = Wandebene, < 0 = Platte davor)",
-   "wert": 0.005366148661996917,
+   "wert": 0.005366135070099087,
    "soll": [
     -0.08,
     0.25
@@ -1628,7 +1638,7 @@
   },
   {
    "name": "Balustrade endet mit der Platte im Osten: in u 12,5..13,1 (z 9,6) steht die Wand n 12,66 frei",
-   "wert": -0.012354986959553393,
+   "wert": -0.012354952565392985,
    "soll": [
     -0.08,
     0.25
@@ -1688,7 +1698,7 @@
   },
   {
    "name": "Laubensockel: Oberkante <= 2,35 (in z 2,35 wieder Wandebene)",
-   "wert": 0.00445455381829829,
+   "wert": 0.0044548243843940405,
    "soll": [
     -0.08,
     0.08
@@ -1817,31 +1827,21 @@
    "status": "ok"
   },
   {
-   "name": "Tuer Laube EG Bogen 3: Rahmenvorderkante gegen die Wandfront n 7,28 (m, - = davor, Strahl am rechten Rahmenpfosten, z 2,5)",
-   "wert": -0.04463395892203348,
+   "name": "Laubendecke (Kreuzgewoelbe): Unterseite an der Rueckwand bei u 4,6 (Schildbogenflanke, z lot2 7,21)",
+   "wert": 5.807000000000002,
    "soll": [
-    -0.096,
-    0.0
+    5.607,
+    5.907
    ],
    "ok": true,
    "status": "ok"
   },
   {
-   "name": "Fenster Laube EG Bogen 1 (eg2): Rahmenoberkante flach - Rahmen bei z 6,35 vorhanden (links vom Setzholz u -5,36) (m hinter der Wandfront)",
-   "wert": -0.11524318878876638,
+   "name": "Laubendecke (Kreuzgewoelbe): Unterseite an der Rueckwand bei u 3,63 (nahe Dienst, z lot2 6,46)",
+   "wert": 4.867000000000001,
    "soll": [
-    -0.16,
-    -0.06
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Fenster Laube EG Bogen 1 (eg2): Rahmenoberkante flach - Rahmen bei z 6,35 vorhanden (rechts vom Setzholz u -5,36) (m hinter der Wandfront)",
-   "wert": -0.11428265330653042,
-   "soll": [
-    -0.16,
-    -0.06
+    4.857,
+    5.157
    ],
    "ok": true,
    "status": "ok"
