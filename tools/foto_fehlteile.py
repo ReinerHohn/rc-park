@@ -55,6 +55,13 @@ def clustern(X, radius):
     return np.array([f(i) for i in range(len(X))])
 
 
+def _anteile(oo):
+    a = {}
+    for o in oo:
+        for t in o["teile"]: a[t] = a.get(t, 0.0) + o["px"] / len(o["teile"])
+    return a
+
+
 def cluster_bilden(obs, radius, min_fotos):
     if not obs: return []
     X = np.array([o["xyz"] for o in obs]); lab = clustern(X, radius); out = []
@@ -64,7 +71,10 @@ def cluster_bilden(obs, radius, min_fotos):
         P = np.array([o["xyz"] for o in oo]); w = np.array([o["px"] for o in oo], float)
         z = np.round(np.average(P, 0, w), 2); lo = np.round(P.min(0) - 0.5, 2); hi = np.round(P.max(0) + 0.5, 2)
         out.append({"id": "ff_%+d_%+d_%+d" % tuple(np.round(z).astype(int)), "quelle": "fotokanten", "zentrum": z.tolist(), "lo": lo.tolist(), "hi": hi.tolist(),
-                    "n_fotos": len(fotos), "fotos": fotos, "px": int(w.sum()), "n_flecken": len(oo), "teile": sorted({t for o in oo for t in o["teile"]})})
+                    "n_fotos": len(fotos), "fotos": fotos, "px": int(w.sum()), "n_flecken": len(oo), "teile": sorted({t for o in oo for t in o["teile"]}),
+                    # Anteil je Teil (11.11.): px eines Flecks gleich auf seine Teile verteilt - Kreis leitet Cluster, die ueberwiegend auf einem schon
+                    # als 'vorhandenes Teil' befundenen Teil liegen, direkt an dieses Teil (3 Fehlteil-Runden am OG endeten alle bei fensterreihe:og)
+                    "teile_anteil": {t: round(v / max(w.sum(), 1), 3) for t, v in sorted(_anteile(oo).items(), key=lambda kv: -kv[1])}})
     return sorted(out, key=lambda c: -c["px"])
 
 

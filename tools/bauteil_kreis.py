@@ -389,6 +389,12 @@ def waehlen(z, sperre):
             _fm = os.path.getmtime(_fs[-1]) if _fs else 0
             _erl_f = {k: e for k, e in erl.items() if not (str(e.get("befund", "")).startswith("gebaut") and e.get("zeit_ts", 0) and _fm > e["zeit_ts"])}
             ffk = [f for f in ffk if sperre.get(f["teil"], 0) < MAX_FEHL and fg.get(f["teil"], 0) < MAX_GLOBAL and f["id"] not in belegt_fam and not ist_erledigt(f, _erl_f)]
+            # VERWIESENE TEILE (11.11.: drei Fehlteil-Runden am OG endeten alle mit 'vorhandenes Teil fensterreihe:og'): Cluster, die zu >= 25 % auf einem Teil
+            # liegen, auf das schon ein Fehlteil-Befund verweist, bekommen keinen Fehlteil-Agenten mehr - der Fehler gehoert zu diesem Teil (Verweis-Vorrang unten).
+            _vw = {str(e.get("befund", "")).split()[-1].replace(":", "__") for e in erl.values() if str(e.get("befund", "")).lower().startswith("vorhandenes teil")}
+            _wegv = [f["id"] for f in ffk if any(f.get("teile_anteil", {}).get(t_, 0) >= 0.25 for t_ in _vw)]
+            if _wegv: print(f"Foto-Cluster an verwiesene Teile ({sorted(_vw)}), kein Fehlteil-Agent: {_wegv}", flush=True)
+            ffk = [f for f in ffk if f["id"] not in _wegv]
             fk = ffk + fk
         except Exception as _ex: print("foto_fehlteile:", _ex, flush=True)
     for t in fk:
