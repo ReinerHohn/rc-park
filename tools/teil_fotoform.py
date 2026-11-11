@@ -181,7 +181,9 @@ def main(argv=None):
                 if vis.sum() < 200: continue
                 ms = cv2.dilate(vis.astype(np.uint8), np.ones((7, 7), np.uint8)) > 0
                 mk_t, fk_t = mkp & ms, fkp & ms
-                if mk_t.sum() < a.min_px or fk_t.sum() < a.min_px: continue
+                # FEHLENDES TEIL IM FESTBEREICH (11.11., Dienste a030758: vorher nur 2 von 9 Fotos beurteilt, weil vor glatter Wand kaum Modellkanten):
+                # mit --bereich_von zaehlt ein Foto mit genug FOTOkanten auch ohne Modellkanten - Recall ~0 senkt F1, Praezision traegt mit Gewicht mk_px (0) nichts bei.
+                if fk_t.sum() < a.min_px or (mk_t.sum() < a.min_px and not a.bereich_von): continue
                 ok_m, ok_f = dF[mk_t] < a.schwelle, dM[fk_t] < a.schwelle
                 rot = mk_t & (dF >= a.schwelle); gelb = fk_t & (dM >= a.schwelle)
                 if kap:
@@ -189,7 +191,7 @@ def main(argv=None):
                     hw = {"praez_h": round(float((dFh[mh_t] < a.schwelle).mean()), 3), "recall_h": round(float((dMh[fh_t] < a.schwelle).mean()), 3),
                           "mkh_px": int(mh_t.sum()), "fkh_px": int(fh_t.sum())} if (mh_t.sum() >= 50 and fh_t.sum() >= 50) else {}
                 else: hw = {}
-                e = {**hw, "praez": round(float(ok_m.mean()), 3), "recall": round(float(ok_f.mean()), 3), "mk_px": int(mk_t.sum()), "fk_px": int(fk_t.sum()), "sicht_px": int(vis.sum()), "wolke_verd_px": vw,
+                e = {**hw, "praez": round(float(ok_m.mean()), 3) if ok_m.size else 0.0, "recall": round(float(ok_f.mean()), 3), "mk_px": int(mk_t.sum()), "fk_px": int(fk_t.sum()), "sicht_px": int(vis.sum()), "wolke_verd_px": vw,
                      "rot": flecken(rot, pos), "gelb": flecken(gelb, pos)}
                 erg["teile"].setdefault(name, {})[nr] = e
                 if a.bilder:
