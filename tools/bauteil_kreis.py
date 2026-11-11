@@ -243,6 +243,15 @@ FOTO_FEHL = opt("--foto_fehl", 1, int); FOTO_FEHL_PX = opt("--foto_fehl_px", 200
 FOTO_FEHL_BELEG = opt("--foto_fehl_beleg", 6, int)
 
 def ist_fehlteil(ziel): return (ziel or {}).get("art") == "fehlteil"
+def ist_formfund(ziel):   # Nutzer-Formfund (masstabelle formfamilie_test): Foto-F1 darf um FORMFUND_TOL fallen, Formfund-Pruefer entscheidet die Form
+    b = (ziel or {}).get("beob") or {}
+    return bool(FORMFUND and (ziel or {}).get("art") == "beobachtung" and "nutzer" in str(b.get("wer", "")).lower() and b.get("formfamilie_test"))
+# 11.11. 16:5x (Erker-Konsole a162025): der Auftrag nannte auch in Formfund-Runden "Foto-F1 muss um >= 0,02 steigen" -> Agent schaltete seine
+# Netzrippen (F1 0,656 -> 0,661) wieder aus. Torwort je Zielart aus EINER Stelle.
+def torwort(ziel):
+    if ist_formfund(ziel): return (f"FORMFUND-RUNDE (Nutzer-Sichtfund): die FORM entscheidet ein Pruefer an Foto|vorher|nachher; Foto-F1 darf um hoechstens "
+                                   f"{FORMFUND_TOL} FALLEN (muss NICHT steigen) - baue die im Foto sichtbare Form ein und lass sie EINGESCHALTET, auch wenn F1 kaum steigt; erfinde nichts, was die Fotos nicht zeigen")
+    return f"die FORM AM FOTO (Foto-F1) muss um >= {MIN_GEWINN_FOTO} steigen"
 
 # Fehlteil-Befunde der Agenten (10.11.: dieselben Kaesten wurden 2-3x vergeben, obwohl der Agent 'kein Bauteil'/'Gitter zu duenn' belegt hatte)
 ERLEDIGT = os.path.join(KREISDIR, OBJ, "fehlteil_erledigt.json")
@@ -636,7 +645,7 @@ def auftrag(ziel, runde, wt):
         befund = (_wtxt + beob_zu_teilen([ziel["teil"]]) +   # 11.11.: Bogenreihe-Agent sah die Nutzerbeobachtungen (Sockel, Stirnboegen) nicht - nur Fehlteil-Auftraege bekamen sie
                   
               f"Fotokanten (Kantengitter aus Fotos) je Teil: Recall {ziel.get('kanten_recall')} (Anteil der Fotokanten am Teil, die das Modell erklaert), "
-              f"Praezision {ziel.get('kanten_praez')} (Anteil der Teil-Formkanten, die ein Foto belegt). GATE (Foto zuerst): die FORM AM FOTO (Foto-F1, unten) muss um >= {MIN_GEWINN_FOTO} steigen; "
+              f"Praezision {ziel.get('kanten_praez')} (Anteil der Teil-Formkanten, die ein Foto belegt). GATE (Foto zuerst): {torwort(ziel)}; "
               f"Wolkenbeleg und Gitter-F1 duerfen nur nicht um > 0,02 fallen (Wolkenbeleg nur, wenn Anteil mit Daten >= {MIN_DATEN}). "
               f"Arbeite an den Fotos: rote/gelbe Kanten im Teil beseitigen. Verdeckte Flaechen zaehlen nicht (nur kamera-zugewandt). "
               f"Form oder Lage passt nicht zu den Daten. Ursache unbekannt - in Stufe 0 an Fotos klaeren.")
@@ -657,7 +666,7 @@ def auftrag(ziel, runde, wt):
             befund += (f" FORM AM FOTO (tools/teil_fotoform.py, Schwelle 0,14 m, je kalibriertem Foto, verdeckte Pixel ausgenommen): F1 {_g['f1']} "
                        f"(Praezision {_g['praez']} = Modellkanten mit Fotokante, Recall {_g['recall']} = Fotokanten mit Modellkante) ueber {_g['fotos']} Fotos. "
                        f"Schwaechste: {_fl}. Bilder: {formliste().get('bilder_dir', FORMDIR)}/{ziel['teil']}_<foto>.jpg NUR fuer die Torfotos {sorted(_tf)} ansehen (gruen passt, rot erfunden, gelb fehlt). "
-                       f"Gelb im Teil = Form fehlt (Fenster, Rippen, Pfeiler, Ueberstand); rot = Form falsch/zu viel. Der Foto-F1 IST der Torwert (muss um >= {MIN_GEWINN_FOTO} steigen). Zusaetzlich Veto: Hoehen-Wert f1_h (nur waagerechte Kanten: Traufen, Gesimse, Stufen, Oberkanten; im Bericht _gesamt.f1_h) darf um hoechstens 0,02 fallen - Hoehenfehler sieht der Foto-F1 kaum. "
+                       f"Gelb im Teil = Form fehlt (Fenster, Rippen, Pfeiler, Ueberstand); rot = Form falsch/zu viel. Der Foto-F1 IST der Torwert ({torwort(ziel)}). Zusaetzlich Veto: Hoehen-Wert f1_h (nur waagerechte Kanten: Traufen, Gesimse, Stufen, Oberkanten; im Bericht _gesamt.f1_h) darf um hoechstens 0,02 fallen - Hoehenfehler sieht der Foto-F1 kaum. "
                        f"Eigene Zwischenmessung IMMER auf ALLEN 10 Torfotos, nie auf einer Teilmenge (10.11.: Westgiebel 0,73-0,81 auf 6 selbst gewaehlten Fotos, auf allen 10 ein Rueckschritt 0,413->0,394). Das Tor prueft zusaetzlich auf weiteren Kontrollfotos, die du nicht kennst - nur echte Formverbesserungen bestehen. SCHNELL (Stufe halbe Aufloesung, ~1 min statt ~10, gleiche Richtung wie das Tor, Betrag kleiner; "
                        f"so misst auch die Vorpruefung): Variante vorher und nachher je einmal mit RCPARK_FOTO_SKALA={SKALA_VOR} vor dem Befehl messen und nur diese beiden Werte vergleichen; Endtor misst voll. bauen_abnehmen.sh nur EINMAL ganz am Ende laufen lassen (10.11.: Agenten liessen es bis zu 3x laufen, je 10-20 min; das Tor prueft ohnehin selbst): "
                        f"RCPARK_FOTO_SKALA={SKALA_VOR} {PY} -W ignore -I tools/teil_fotoform.py {OBJ} --nur {ziel['teil']} --fotos {','.join(form_fotos(formliste(), ziel['teil']))} --aus {LDIR}/ff_eigen.json --bilder_dir {LDIR}/ff_eigen_bilder")
@@ -924,6 +933,16 @@ for runde in range(1, RUNDEN + 1):
     # zuerst; ohne Gewinn sofort ablehnen, Abnahme/Konvergenz/Pruefer nur fuer Kandidaten. Nach einer Rueckgabe misst zuerst die halbe Stufe (1 min).
     ff_n = None; _frueh = None
     if _agent_leer: _frueh = "Agent hat nichts geaendert"   # 11.11. 16:xx: seit Grauzone (F1-Toleranz -0,005) liefen leere Runden durch Abnahme/Konvergenz/Verschiebung (bruestung__balkon a153352 r2/r3, je mehrere Minuten)
+    if not _frueh and not ist_fehlteil(ziel):   # 11.11. a162025: Agent aenderte nur Werkzeugcode (Standard aus) -> Zielteil bitgleich, lief trotzdem durch Abnahme + Formfund-Pruefer ("keine Bilder")
+        try:
+            for _vd_ in (f"teile_r{runde}_vorher", f"teile_r{runde}_vorher_form"):   # ALLE Teile vergleichen (Ersatzteil-Runden aendern ein anderes Teil)
+                _vdir = os.path.join(LDIR, _vd_)
+                if os.path.isdir(_vdir) and os.path.isdir(_tn) and os.path.exists(os.path.join(_vdir, ziel["teil"] + ".stl")):
+                    _nv = sorted(f for f in os.listdir(_vdir) if f.endswith(".stl")); _nn = sorted(f for f in os.listdir(_tn) if f.endswith(".stl"))
+                    if _nv == _nn and all(open(os.path.join(_vdir, f), "rb").read() == open(os.path.join(_tn, f), "rb").read() for f in _nv):
+                        _frueh = "kein Teil veraendert (alle Teil-STL bitgleich)"
+                    break
+        except Exception as _ex: print("Teilvergleich:", _ex, flush=True)
     if rcG == 0 and (ff_v is not None or _ff_spaet) and not ist_fehlteil(ziel) and os.path.exists(os.path.join(_tn, ziel["teil"] + ".stl")):
         if _halb:   # halbe Stufe: endgueltig ablehnen nur ohne JEDEN Gewinn (halb unterschaetzt den Betrag: Tuer +0,081 statt +0,29)
             if not _vorab_gebaut:   # zweiter Versuch nach Rueckgabe
