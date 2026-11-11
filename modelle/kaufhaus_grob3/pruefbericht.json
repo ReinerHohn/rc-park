@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_032659a032659/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,7 +40,7 @@
   "fenster_b3_ebene_abstand": 1.2521246230474818,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10599063336849213,
+  "wand_pq": 0.10693924129009247,
   "wand_anteil_unter": 0.0006,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
@@ -210,7 +210,7 @@
   "balkon_stirn_mitte": -1.2034247030692145,
   "laube_sockel_front_w": -0.44554548537133254,
   "laube_sockel_front_o": -0.4612625516363389,
-  "laube_sockel_oben_21": -0.44554548537133254,
+  "laube_sockel_oben_21": -0.5155455442652941,
   "laube_sockel_oben_23": 0.0044548243843940405,
   "erker_o_flanke74": 1.2157798668032467,
   "baldachin1_fiale": 13.586999999999986,
@@ -430,7 +430,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10599063336849213,
+   "wert": 0.10693924129009247,
    "soll": [
     0.0348,
     100
@@ -1680,7 +1680,7 @@
   },
   {
    "name": "Laubensockel: Oberkante >= 2,1 (in z 2,1 noch vor der Wand)",
-   "wert": -0.44554548537133254,
+   "wert": -0.5155455442652941,
    "soll": [
     -0.52,
     -0.38
