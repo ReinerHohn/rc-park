@@ -378,6 +378,12 @@ def ziel_fest(z):
     t = next((t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["teil"] == ZIEL), None)
     if t is None: sys.exit(f"--ziel {ZIEL} nicht in der Messung")
     fd = os.open(os.path.join(BELEGT, ZIEL), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
+    _bm = opt("--beob", "")   # 11.11.: Nachpruefung eines Patches als Beobachtungs-Runde (Formfund-Weg), Beobachtung per Merkmal-Anfang
+    if _bm:
+        _B = json.load(open(os.path.join(ROOT, "modelle", OBJ, "masstabelle.json"))).get("beobachtungen_offen") or []
+        _b = [b for b in _B if isinstance(b, dict) and str(b.get("merkmal", "")).startswith(_bm)]
+        if len(_b) != 1: sys.exit(f"--beob '{_bm}': {len(_b)} Treffer in masstabelle (genau 1 noetig)")
+        return dict(t, art="beobachtung", beob=_b[0])
     return t
 
 def waehlen(z, sperre):
