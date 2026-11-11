@@ -663,6 +663,24 @@ def bogenreihe(cfg, ctx):
         band = band - prisma_uz(poly, pn - lt / 2 - 0.05, pn + lt / 2 + 0.05)
     if ab > 0 and at > 0: band = band - archivolt_schnitt()
     teile.append(band)
+    for sb in (cfg.get("stirnboegen") or []):                                                      # Stirnwand mit Bogenoeffnung an den Laubenenden (Nutzer 11.11.: Seitendurchgang ist Bogen wie die Front, nicht Rechteck)
+        for k_ in ("seite", "u_aussen", "dicke", "s_von", "s_bis", "bogen_s0", "bogen_s1", "kaempfer_z", "scheitel_z", "oberkante_z", "quelle"):
+            if sb.get(k_) in (None, ""): sys.exit(f"bogenreihe stirnboegen: '{k_}' fehlt (Regel 3b)")
+        ua, dk, sg = float(sb["u_aussen"]), float(sb["dicke"]), (1.0 if sb["seite"] == "west" else -1.0)   # west: Wand von u_aussen nach +u; ost: nach -u
+        u_lo, u_hi = (ua, ua + dk) if sg > 0 else (ua - dk, ua)
+        skz, ssz, soz = float(sb["kaempfer_z"]), float(sb["scheitel_z"]), float(sb["oberkante_z"]); b0, b1 = float(sb["bogen_s0"]), float(sb["bogen_s1"])
+        if not (skz < ssz < soz) or b1 <= b0 or dk < 0.05: sys.exit(f"bogenreihe stirnboegen: unplausible Masse ({sb})")
+        platte = quader(u_lo, u_hi, float(sb["s_von"]), float(sb["s_bis"]), skz, soz)
+        pol = np.array(segmentbogen(b0, b1, skz, ssz, skz - 0.05, n=48), float)                    # Polygon in (s, z)
+        schnitt = prisma_uz(pol, -(u_hi + 0.05), -(u_lo - 0.05)).rotate((0, 0, 90))                   # Extrusion entlang u; Drehung +90 Grad um z: (x, y) -> (-y, x)
+        sab, sat = float(sb.get("archivolt_breite", 0.0)), float(sb.get("archivolt_tiefe", 0.0))   # optional: Aussenring (Goldrand) wie an der Front: Laibung um sat gegenueber der Aussenflaeche zurueckgesetzt, Ring sab breit
+        if sab > 0 and sat > 0:
+            R_ = ((b1 - b0) ** 2 / 4 + (ssz - skz) ** 2) / (2 * (ssz - skz)); hw_ = math.sqrt((R_ + sab) ** 2 - (skz - (ssz - R_)) ** 2); sm_ = (b0 + b1) / 2
+            po_ = np.array(segmentbogen(sm_ - hw_, sm_ + hw_, skz, ssz + sab, skz - 0.05, n=48), float)
+            a_lo, a_hi = (u_lo - 0.05, u_lo + sat) if sg > 0 else (u_hi - sat, u_hi + 0.05)
+            schnitt = schnitt + prisma_uz(po_, -a_hi, -a_lo).rotate((0, 0, 90))
+        teile.append(platte - schnitt)
+        beleg("alle", f"Stirnbogen {sb['seite']} (Wand u {u_lo:.2f}..{u_hi:.2f}, Bogen s {b0:.2f}..{b1:.2f}, Kaempfer {skz:.2f}, Scheitel {ssz:.2f})", sb["quelle"], u_aussen=ua, dicke=dk, kaempfer_z=skz, scheitel_z=ssz, bogen_s0=b0, bogen_s1=b1)
     if cfg.get("druck_verbinder"):                                                                # Kaempferstueck: Schaft (zk-0,05..zk+0,15) geschnitten mit Band (unten 0,05 verlaengert, Boegen ausgeschnitten) -> nie ueber Bandflucht/Laibung, keine Beruehrflaechen
         bl = M.cube((ur - ul, lt, zo - zk + 0.05)).translate((ul, pn - lt / 2, zk - 0.05))
         for i in range(nb):

@@ -1,6 +1,30 @@
 [
  {
   "seite": "alle",
+  "element": "Stirnbogen west (Wand u -8.82..-8.32, Bogen s 7.28..11.87, Kaempfer 5.28, Scheitel 7.15)",
+  "quelle": "Foto 6225 (kalibriert, Strahlschnitt auf Stirnebene u -8,82): goldgesaeumter Westbogen, Innenkante Scheitel z 7,17-7,21 bei s 9,55-10,23, z 6,88 bei s 8,60; Spannweite s 7,28 (Rueckwand) bis 11,87 (Endsaeule); Kaempfer 5,28 wie Frontbogen (Foto 6130/6124: gleiche Bogenfamilie); Wanddicke 0,5 ANNAHME (Laibungstiefe nicht sichtbar); Wandoberkante 8,0 = Oberkante Bogenband; Pruefungen stirnbogen_west_*; Aussenring: Goldrand in 6225 ausserhalb der Innenkante sichtbar (Scheitel aussen z 7,4-7,8), Breite 0,31/Tiefe 0,22 von der Frontarkade uebernommen = ANNAHME (nicht an 6225 trianguliert)",
+  "u_aussen": -8.82,
+  "dicke": 0.5,
+  "kaempfer_z": 5.28,
+  "scheitel_z": 7.15,
+  "bogen_s0": 7.28,
+  "bogen_s1": 11.87,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Stirnbogen ost (Wand u 15.36..15.86, Bogen s 7.28..11.87, Kaempfer 5.28, Scheitel 7.15)",
+  "quelle": "ANNAHME: Ostende gespiegelt zum Westende (Foto 6117 zeigt links der Endsaeule die Randkurve eines Bogens, Spannweite/Hoehe nicht kalibriert messbar; 6174/6176/6119 sehen die Ostoeffnung nicht); Ebene u 15,86 = Spiegel von -8,82 an der Endsaeulenmitte 15,56 ungeprueft",
+  "u_aussen": 15.86,
+  "dicke": 0.5,
+  "kaempfer_z": 5.28,
+  "scheitel_z": 7.15,
+  "bogen_s0": 7.28,
+  "bogen_s1": 11.87,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Arkade Pfeiler 1/5 (rund)",
   "quelle": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json saeulen gemeinsamer Radius 0.441 m (Gleichheitsregel, 7 Pfeiler) -> 2R | Lage u0+i*pitch: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json saeulen: (along_5 - along_1)/4 = 6.022 (arkaden abstand_m 5,99-6,06)",
   "u_pfeiler": -8.52,
@@ -1303,7 +1327,7 @@
  {
   "seite": "alle",
   "element": "Druckreparatur Splitter",
-  "quelle": "baukasten_gen: Punkte < 1 um verschweisst, entartete Dreiecke entfernt, Loecher geschlossen (trimesh MIT), Volumen +-0,1 %, Vereinfachung 6.0 mm",
+  "quelle": "baukasten_gen: Punkte < 1 um verschweisst, entartete Dreiecke entfernt, Loecher geschlossen (trimesh MIT), Volumen +-0,1 %, Vereinfachung 5.0 mm",
   "seite_name": "alle"
  }
 ]

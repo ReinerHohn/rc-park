@@ -1,10 +1,29 @@
-# Kreis-Bericht Fehlteil ff_+11_+6_+8 (kreuzgewoelbe:laube) - Rippen
+# Kreis1 – bogenreihe:laube Stirnboegen (11.11., 152551)
 
-1. **Formbeschreibung** (Fotos 6213 Nah, d20 schraeg, 6119 Uebersicht; Stufe 0 der Vorrunde 090522 uebernommen und an 6213/d20 gegengesehen): rote Diagonal-/Gurtrippen stehen ca. 0,15 m vor den weissen Kappen der Laubendecke vor, 3 Rippen je Dienst. Formfamilie: vorhandenes generisches kreuzgewoelbe mit optionalen rippen_*-Parametern (baukasten_gen.py).
-2. **Zaehlung**: Z-6213-001 (2 Diagonalen + 1 Gurtrippe je Dienst); Wiederholung in den 4 Jochen = ANNAHME.
-3. **Pruefungen** (Patch der verworfenen Runde 090522 wieder eingespielt, Pruefstand: alle Pruefungen bestanden): Unterseite Diagonalrippe 6,03 -> 5,87 (Soll 5,835..5,935), Gurtrippe 6,07 -> 5,92 (5,877..5,977), halbe Rippenbreite nan -> 0,15 (0,13..0,18); Quelle M-6213-001/-002.
-   Foto-Tor (teil_fotoform, 10 Fotos, --bereich_von Vorher): F1 0,725 -> 0,753 (+0,028 >= 0,02), Praezision 0,890 (>= 0,25), Recall 0,613 -> 0,653. Lage-Veto: teile_lage_pruefen unauffaellig (Gewoelbe Median 0,25 m, Wolke leer; Dienste 0,04-0,06 m). Vorher-Teile stammen aus Lauf 090522 (nicht neu gebaut).
-4. **Overlays**: /media/oem/scan/rc-park_daten/kaufhaus_grob3/agent_scratch_kreis1/r104829/bilder_nachher/kreuzgewoelbe__laube_<foto>_nachher.jpg (10 Fotos; 6213 und d20 angesehen), Vorher: /media/oem/scan/rc-park_daten/kaufhaus_grob3/agent_scratch_kreis1/r104829/bilder_vorher/ (Teil-Name im Vorher-Lauf leer, nur F1-Zahl aus ff_vorher.log).
-5. **Fehlerliste**: trifft: Diagonalen links in 6213, Rippen rechtes Joch d20 (gruen). Trifft nicht: mittlere/rechte Rippe in 6213 ca. 0,1 m neben der Fotorippe (gelbe Randlinien); Schildbogen rund vs. spitz (nicht angefasst); Rippenanfaenger an der Rueckwand ueber Tuer fehlt; Saegezahn-Grate nicht neu geprueft. Ungeprueft: Vorsprung 0,15 m (ANNAHME), Auslauf 1,0 m (ANNAHME), Gurtrippen an Laubenenden, Luecke Dienst z 5,6 -> Rippe 5,76, Rechteckquerschnitt statt Stufenprofil. Nicht gelaufen: regression.py (baukasten_gen.py geaendert), foto_diff, fehlteile_finden; freiraum_audit scheitert im Worktree (SFM-AUSRICHTUNG fehlt).
-6. **Geaenderte Dateien**: tools/baukasten_gen.py, modelle/kaufhaus_grob3/objekt.json, masstabelle.json, elemente.json, messprotokoll/M-6213-001/002.
-7. **Lehre**: Lehre | Anlass | Werkzeug: Ein vom alten Region-Tor verworfener Patch kann am Foto-Tor bestehen -> verworfene Patches mit Foto-F1 nachpruefen | Runde 090522 verworfen, hier F1 +0,028 | teil_fotoform --bereich_von. Falle: teil_fotoform Wiederaufnahme liest <aus>.teil, nicht <aus>.
+## 1 Formbeschreibung (Stufe 0)
+Fotos: 6225 (Nah, Westende, Standort -7,9/18,4/3,6), 6117 (Ostende, Randkurve links der Endsaeule), 6130/6124 (Frontbogen, gleiche Familie).
+- Zone Laubenende: Stirnwand mit goldgesaeumtem Segmentbogen (Innenkante, darum Aussenring/Goldrand), dahinter das Kreuzgewoelbe. Oben bis z~8 (Bogenband).
+- Grundriss: Oeffnung zwischen Laubenrueckwand (s 7,28) und Endsaeule (s~11,87). Wiederholung: je ein Bogen West/Ost.
+- Aktuelles Modell war Rechteck bis z 7,9. Formfamilie: vorhandene Bogenreihe-Geometrie (segmentbogen) als neue Option stirnboegen in tools/baukasten_gen.py.
+## 2 Zaehlungen
+Keine neue (je ein Bogen am Foto 6225 sichtbar; Ost nur 6117 angedeutet) – kein Z-Protokoll.
+## 3 Pruefungen (Quelle Foto 6225 Strahlschnitt, Stirnebene u -8,82, Ebenenfehler ~0,1 m)
+| Pruefung | vorher | nachher | Soll |
+|---|---|---|---|
+| Bogenunterkante s 9,575 | 7,90 | 7,16 | 7,0..7,3 |
+| s 8,6 | 7,90 | 6,94 | 6,73..7,03 |
+| s 10,23 | 7,90 | 7,06 | 7,02..7,32 |
+bauen_abnehmen (RCPARK_OHNE_FOTODIAG=1): alle Pruefungen bestanden. Foto-F1 halb, 10 Torfotos: 0,741 -> 0,756 (+0,015, Tor +0,02 NICHT erreicht); Foto 6225: 0,656 -> 0,731.
+## 4 Overlays
+- modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis1_stirnbogen_6225_vorher.jpg / _nachher.jpg
+- /media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_152551a152551/ff_nachher_bilder/bogenreihe__laube_<foto>.jpg
+## 5 Fehlerliste
+- Westbogen Innenkante 6225: trifft (am Bild geprueft).
+- Aussenring West: trifft rechts, oben/links ~10-15 px (halbe Aufl.) zu tief; Breite/Tiefe ANNAHME von Front.
+- Ostbogen: ungeprueft (gespiegelte ANNAHME, Ebene u 15,86).
+- Wanddicke 0,5: ANNAHME. Kaempfer 5,28 von Front uebernommen; 6225 gibt 5,5-5,9 (Ebenenfehler) – offen. Asymmetrie bei s 11,21 (gemessen 6,77 vs Modell 6,46) ungeklaert, nicht gemittelt.
+- Nur EIN kalibriertes Foto fuer die Messung (Regel >=3 nicht erfuellt).
+## 6 Geaenderte Dateien
+tools/baukasten_gen.py, modelle/kaufhaus_grob3/objekt.json, masstabelle.json, NICHTS_GEBRACHT.md, REZEPT_GEBAEUDE_AUS_FOTOS.md, audit/*, STL/Pruefbericht (Bauausgabe).
+## 7 Generalisierte Lehre
+Lehre | Anlass | Werkzeug: Endteile erst ueber Kameraprojektion den Fotos zuordnen, die sie zeigen | Torfotos sahen Stirn nicht | foto_mass.strahl_ebene.

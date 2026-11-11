@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_152551a152551/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.252124612687105,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590076446533203,
-  "wand_anteil_unter": 0.0005,
+  "wand_pq": 0.10590148717164993,
+  "wand_anteil_unter": 0.0007,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,7 +50,7 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 2.128511469441953,
-  "teile_ueberhang": 0.00739,
+  "teile_ueberhang": 0.0074,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.72,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.72,
@@ -59,7 +59,7 @@
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.68,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.68,
   "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.1002299324808607,
-  "laube_rueckwand_n728_z7": -0.007131261322534499,
+  "laube_rueckwand_n728_z7": -0.007131292494283237,
   "helm_o_r_14_64": 1.1110442019599438,
   "helm_o_r_16_18": 0.6410005316999677,
   "helm_o_r_17_76": 0.4009052145424984,
@@ -69,11 +69,11 @@
   "tor_b2_oeffnung_anzahl": 1.0,
   "tor_b2_oeffnung_breite_median": 4.0,
   "tor_b2_oeffnung_breite_max": 4.0,
-  "tor_b2_oeffnung_ebene_abstand": 3.001464860633913,
+  "tor_b2_oeffnung_ebene_abstand": 3.001464949798189,
   "fenster_b4_anzahl": 2.0,
   "fenster_b4_breite_median": 0.8150000000000001,
   "fenster_b4_breite_max": 0.8200000000000001,
-  "fenster_b4_ebene_abstand": 1.9871140282045499,
+  "fenster_b4_ebene_abstand": 1.9871139877481634,
   "fenster_b1_anzahl": 2.0,
   "fenster_b1_breite_median": 0.77,
   "fenster_b1_breite_max": 0.77,
@@ -207,11 +207,11 @@
   "bruestung_luecke_west": 0.005928783763525125,
   "bruestung_luecke_ost": -0.01235490722511301,
   "balkon_soffit_frei": -0.0050184289008181615,
-  "balkon_stirn_mitte": -1.2034246494479683,
+  "balkon_stirn_mitte": -1.2034247810476817,
   "laube_sockel_front_w": -0.44554548537133254,
   "laube_sockel_front_o": -0.4612625516363389,
   "laube_sockel_oben_21": -0.5155455442652941,
-  "laube_sockel_oben_23": 0.004454739158836318,
+  "laube_sockel_oben_23": 0.004454771277012881,
   "erker_o_flanke74": 1.2157798668032467,
   "baldachin1_fiale": 13.586999999999986,
   "baldachin2_fiale": 13.446999999999989,
@@ -222,12 +222,12 @@
   "baldachin2_haube_um": 0.3599107940074807,
   "baldachin2_krone_up": 0.49468905056639995,
   "baldachin2_krone_um": 0.495310823893624,
-  "fenster_eg2_oberkante_l": -0.11524307306057224,
-  "fenster_eg2_oberkante_r": -0.11428268295985289,
+  "fenster_eg2_oberkante_l": -0.11524319069201816,
+  "fenster_eg2_oberkante_r": -0.11428274214072154,
   "laube_decke_u46": 5.807000000000002,
   "laube_decke_u363": 4.867000000000001,
   "dienst_laube_u975_reich_z44": 0.6189552048966034,
-  "dienst_laube_u975_reich_z26": 0.6485859077057866,
+  "dienst_laube_u975_reich_z26": 0.651232531829837,
   "giebel_o_fe1_f": 3.127773782550481,
   "giebel_o_fe1_w": 3.247287143702742,
   "giebel_o_fe2_f": 3.075931753831693,
@@ -238,8 +238,11 @@
   "baldachin2_krone_vorn": 0.08662865006358089,
   "rippe_diag_j2_q": 5.8669999999999884,
   "rippe_gurt_u954_z": 5.916999999999987,
-  "rippe_gurt_u954_halbbreite": 0.15003228809324154,
-  "helm_w_r_13_25": 1.8970544438234196
+  "rippe_gurt_u954_halbbreite": 0.15003200621385213,
+  "helm_w_r_13_25": 1.8970563577813115,
+  "stirnbogen_west_m_unterkante_z": 5.706999999999973,
+  "stirnbogen_west_a_unterkante_z": 5.486999999999978,
+  "stirnbogen_west_b_unterkante_z": 5.606999999999975
  },
  "pruefungen": [
   {
@@ -444,7 +447,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590076446533203,
+   "wert": 0.10590148717164993,
    "soll": [
     0.0348,
     100
@@ -474,7 +477,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00739,
+   "wert": 0.0074,
    "soll": [
     0,
     0.01
@@ -504,7 +507,7 @@
   },
   {
    "name": "Laubenrueckwand: Wandflaeche hinter der Ebene n 7,28 (z 7,0, alle Boegen; 0 = in der Ebene)",
-   "wert": -0.007131261322534499,
+   "wert": -0.007131292494283237,
    "soll": [
     -0.08,
     0.08
@@ -1654,7 +1657,7 @@
   },
   {
    "name": "Balkonplatte vorn mittig: Stirn n 13,86 (Auskragung 1,2 m) in z 8,32 (innerhalb der Stirn 8,27..8,37) bleibt erhalten (Kontrolle, nicht rot)",
-   "wert": -1.2034246494479683,
+   "wert": -1.2034247810476817,
    "soll": [
     -1.3,
     -1.08
@@ -1704,7 +1707,7 @@
   },
   {
    "name": "Laubensockel: Oberkante <= 2,35 (in z 2,35 wieder Wandebene)",
-   "wert": 0.004454739158836318,
+   "wert": 0.004454771277012881,
    "soll": [
     -0.08,
     0.08
@@ -1844,7 +1847,7 @@
   },
   {
    "name": "Fenster Laube EG Bogen 1 (eg2): Rahmenoberkante flach - Rahmen bei z 6,35 vorhanden (links vom Setzholz u -5,36) (m hinter der Wandfront)",
-   "wert": -0.11524307306057224,
+   "wert": -0.11524319069201816,
    "soll": [
     -0.16,
     -0.06
@@ -1854,7 +1857,7 @@
   },
   {
    "name": "Fenster Laube EG Bogen 1 (eg2): Rahmenoberkante flach - Rahmen bei z 6,35 vorhanden (rechts vom Setzholz u -5,36) (m hinter der Wandfront)",
-   "wert": -0.11428268295985289,
+   "wert": -0.11428274214072154,
    "soll": [
     -0.16,
     -0.06
@@ -1894,7 +1897,7 @@
   },
   {
    "name": "Dienst (Halbsaeule) an der Laubenrueckwand bei u 9,75, z 2.6: Vorsprung der Schnittkontur ab n 6,9 (Schaftfront n 7.555)",
-   "wert": 0.6485859077057866,
+   "wert": 0.651232531829837,
    "soll": [
     0.6,
     0.72
@@ -1974,7 +1977,7 @@
   },
   {
    "name": "Laubengewoelbe: halbe Rippenbreite der Gurtrippe u 9,55 (Schnitt 0,05 m unter der Kappe)",
-   "wert": 0.15003228809324154,
+   "wert": 0.15003200621385213,
    "soll": [
     0.13,
     0.18
@@ -1984,10 +1987,40 @@
   },
   {
    "name": "Erkerhelm West: Fussring (Schindel-Unterkante) Flaechenmitte vor der Achse bei z 13,25",
-   "wert": 1.8970544438234196,
+   "wert": 1.8970563577813115,
    "soll": [
     1.84,
     1.98
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Stirnbogen West (Laubenende): Bogenunterkante bei s 9.575 (Schildbogen-Oeffnung statt Rechteck)",
+   "wert": 7.1599999999999735,
+   "soll": [
+    7.0,
+    7.3
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Stirnbogen West (Laubenende): Bogenunterkante bei s 8.6 (Schildbogen-Oeffnung statt Rechteck)",
+   "wert": 6.939999999999978,
+   "soll": [
+    6.73,
+    7.03
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Stirnbogen West (Laubenende): Bogenunterkante bei s 10.23 (Schildbogen-Oeffnung statt Rechteck)",
+   "wert": 7.059999999999976,
+   "soll": [
+    7.02,
+    7.32
    ],
    "ok": true,
    "status": "ok"
