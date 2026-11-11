@@ -6172,14 +6172,6 @@
   },
   {
    "datum": "2026-11-10",
-   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
-   "teil": "quader:rumpf_og",
-   "merkmal": "Gassenwand Fenster/Mauerkrone",
-   "text": "Seitenwand an der Gasse: kleine quadratische Fenster in mehreren Reihen und gestufte Mauerkrone (Nutzerfoto 10.11. Erker-Untersicht rechts) fehlen.",
-   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt)."
-  },
-  {
-   "datum": "2026-11-10",
    "wer": "Nutzer (Sichtfund, Markierung auf Overlay handy_03)",
    "art": "sichtbeobachtung",
    "merkmal": "Staffelgiebel Ost Lage/Groesse",
@@ -6870,8 +6862,8 @@
   {
    "teil": "erker_polygon:1",
    "merkmal": "Erker-Konsole unten (Ostkerker): Astwerk/Geaest statt glatter Trichter",
-   "text": "Nutzer 11.11. 16:18 (Viewer v52 Kanten, Foto ip_IMG_6162, rote Rahmen am rechten Erker unten): unter dem Erker sitzt eine Konsole aus verzweigtem Astwerk (Rippenbuendel, die sich nach unten zu einem Punkt sammeln, dazwischen offene Felder); Modell zeigt einen geschlossenen Trichter mit wenigen Graten. Nutzer: 'wuerde sehr viel mehr Wert bringen'. Westerker gegenpruefen (gleiche Form?).",
-   "naechster_schritt": "Stufe 0: Formbeschreibung an >=3 Fotos (6162, 6261, 6145), Rippenzahl je Seite zaehlen (foto_zaehlung), dann Formfamilie Astwerk-Konsole (Rippen als Rohre auf Trichterflaeche, Zwischenfelder vertieft).",
+   "text": "Nutzer 11.11. 16:18 (Viewer v52 Kanten, Foto ip_IMG_6162, rote Rahmen am rechten Erker unten): unter dem Erker sitzt eine Konsole aus verzweigtem Astwerk (Rippenbuendel, die sich nach unten zu einem Punkt sammeln, dazwischen offene Felder); Modell zeigt einen geschlossenen Trichter mit wenigen Graten. Nutzer: 'wuerde sehr viel mehr Wert bringen'. Westerker gegenpruefen (gleiche Form?). | Nutzerfotos 16:3x (3000x4000, EXIF) /media/oem/scan/rc-park_daten/kaufhaus_grob3/nutzerfotos_2026-11-11/n11_04/05/06: Konsole = umgekehrtes NETZ-/STERNRIPPENGEWOELBE unter dem achteckigen Erkerboden: je Achteckseite ein dreieckiges Feld, Rippen (rot mit Gold-/Schwarzbaendern, Rundstab) kreuzen sich und laufen nach unten in einem Buendel auf den runden Erkerpfeiler zusammen, in den Feldern Rosetten; Unterkante des Erkerbodens = Achteck-Gesims mit Profil.",
+   "naechster_schritt": "Stufe 0 an n11_04/05/06 + 6162: Rippenzahl je Seite (foto_zaehlung), Formfamilie 'Netzrippen-Konsole' (Rippen als Rundstaebe auf Trichter, Kreuzungen, Rosetten optional), beide Erker pruefen.",
    "datum": "2026-11-11",
    "wer": "Nutzer (Sichtbeobachtung)",
    "pruef_stichworte": [
@@ -6891,8 +6883,8 @@
   {
    "teil": "satteldach:haupt",
    "merkmal": "Wasserspeier an der Traufe fehlen",
-   "text": "Nutzer 11.11. 16:19 (Foto ip_IMG_6162, roter Rahmen an der Traufe ueber den OG-Fenstern zwischen Mitte und Osterker): Wasserspeier ragt an der Traufe/Rinne aus der Fassade; im Modell fehlt er. Zuordnung satteldach:haupt (Traufe/Rinne, gleiche Stelle wie Befund 'Dach Rinne/Gitter') - ANNAHME, per Geometrie pruefen.",
-   "naechster_schritt": "Wasserspeier je Foto zaehlen (foto_zaehlung, >=3 Fotos), Lage per foto_mass (Strahl auf Traufebene), Formfamilie Speier (Kragstein + Rinne + Kopf).",
+   "text": "Nutzer 11.11. 16:19 (Foto ip_IMG_6162, roter Rahmen an der Traufe ueber den OG-Fenstern zwischen Mitte und Osterker): Wasserspeier ragt an der Traufe/Rinne aus der Fassade; im Modell fehlt er. Zuordnung satteldach:haupt (Traufe/Rinne, gleiche Stelle wie Befund 'Dach Rinne/Gitter') - ANNAHME, per Geometrie pruefen. | Nutzerfotos /media/oem/scan/rc-park_daten/kaufhaus_grob3/nutzerfotos_2026-11-11/n11_04/05/06: (a) kleine Drachen-Wasserspeier an den Ecken des Erkerdachs (Traufe des Erkerhelms, je Achteckecke einer), (b) lange waagerechte Speier aus der Haupttraufe (n11_04 rechts oben, neben den Figuren; n11_01 ebenso). Zuordnung: (a) erker_polygon/helm, (b) satteldach:haupt.",
+   "naechster_schritt": "Je Art zaehlen (foto_zaehlung an n11_01/04/06 + 6162): Erker-Eckspeier je Erker, Traufspeier Hauptdach; Lage per foto_mass; Formfamilie Speier (Kragarm + Kopf), Erkerspeier als eigenes Unterteil.",
    "datum": "2026-11-11",
    "wer": "Nutzer (Sichtbeobachtung)",
    "pruef_stichworte": [
@@ -6921,6 +6913,18 @@
     "krone",
     "baldachin"
    ]
+  },
+  {
+   "datum": "2026-11-10",
+   "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch') + Nutzer 11.11. 16:3x",
+   "teil": "quader:rumpf_og",
+   "merkmal": "Gassenwand Fenster/Mauerkrone",
+   "text": "Seitenwand an der Gasse: kleine quadratische Fenster in mehreren Reihen und gestufte Mauerkrone (Nutzerfoto 10.11. Erker-Untersicht rechts) fehlen.",
+   "naechster_schritt": "Stufe 0 an >= 3 Fotos (Formbilder teil_fotoform), Formfamilie mit Parametern festlegen (Ornament = neue Formfamilie im Generator, nicht Handnetz), je Merkmal Pruefung die am Modell FEHLSCHLAEGT, Anzahl nur per foto_zaehlung; Druckgrenze H0: Relief >= 0,3 mm (2,6 cm echt).",
+   "historie": [
+    "2026-11-11 16:3x Nutzer: 'Seitenfenster fehlen noch ziemlich' + Fotos /media/oem/scan/rc-park_daten/kaufhaus_grob3/nutzerfotos_2026-11-11/n11_01/03/06: Ostseite (Gassenwand/Ostgiebel) mit Fensterreihen: unten 2-flg. Kreuzstock-Fenster (n11_01: 2 uebereinander + 1 oben), im Giebel kleine Rechteck-/Rautenfenster in Diagonalreihe (n11_06), oben kleine Spitzbogen-Oeffnungen -> neuester Fund"
+   ],
+   "formfamilie_test": true
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
