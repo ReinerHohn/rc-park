@@ -485,8 +485,10 @@
   "z_scheitel": 7.84,
   "z_scheitel_quer": 7.84,
   "z_oben": 7.95,
-  "zaehlung": null,
-  "rippen": "ANNAHME: Kappen glatt, Rippenvorsprung nicht modelliert",
+  "zaehlung": [
+   "Z-6213-001"
+  ],
+  "rippen": "Rippen b 0.3 vor 0.15: Rippenbreite 0,30-0,33 m in Untersicht inkl. Flanke (M-6213-001/-002, K-6213, Ebene n 7,5); 3 Rippen je Dienst = 2 Diagonalen + 1 Gurtrippe (Z-6213-001); Vorsprung 0,15 m = Mitte der Sichtschaetzung 0,1-0,2 m (Beobachtung Z-6213-001, ANNAHME: nicht triangulierbar); ANNAHME: Vorsprung laeuft ueber 1,0 m zum Schlussstein auf 0 aus (Schlussstein-Unterseite 7,844 gemessen M-6120-063 = Kappenhoehe in Jochmitte); ANNAHME: Rippen entspringen 0,10 m vor der Wand (Dienstkopf, Foto 6213) und wachsen ueber 0,4 m auf vollen Vorsprung (haelt die Kappenkante an der Wand u 3,63 z 6,46 M-6119-016 ein); ANNAHME: Diagonalrippen in allen 4 Jochen (Wiederholung, nur 2 Joche am Foto gesehen), Gurtrippen nur zwischen den Jochen (3), nicht an den Laubenenden (ungeprueft); ANNAHME: Rechteckquerschnitt statt gestuftem Profil (Foto 6213: mehrfach gestuft)",
   "bogen_exponent": 1.75,
   "bogenform": "Superellipse (Anstieg <= halbe Spannweite), sonst Spitzbogen; Exponent am Schildbogen gemessen, Gurtbogen quer = ANNAHME gleiche Form",
   "seite_name": "alle"
@@ -1299,7 +1301,7 @@
  {
   "seite": "alle",
   "element": "Druckreparatur Splitter",
-  "quelle": "baukasten_gen: Punkte < 1 um verschweisst, entartete Dreiecke entfernt, Loecher geschlossen (trimesh MIT), Volumen +-0,1 %, Vereinfachung 5.0 mm",
+  "quelle": "baukasten_gen: Punkte < 1 um verschweisst, entartete Dreiecke entfernt, Loecher geschlossen (trimesh MIT), Volumen +-0,1 %, Vereinfachung 6.0 mm",
   "seite_name": "alle"
  }
 ]

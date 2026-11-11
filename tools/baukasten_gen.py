@@ -1157,7 +1157,7 @@ def kreuzgewoelbe(cfg, ctx):
     (Schildbogen quer zu u an der Wand mit Scheitel z_scheitel, Gurtbogen quer zu n mit Scheitel z_scheitel_quer; Grat = Schnitt), als Hoehenfeld-Koerper bis z_oben (Boolean der
     tangierenden Tonnen gab Zero-Volumen-Splitter, 11.11.). u0 = Achse des 1. Dienstes/Pfeilers, Joch k mittig u0 + (k+0.5)*pitch.
     Pflicht: n_joche, u0, pitch, n_wand, n_front, z_kaempfer, z_scheitel, z_oben, achse_n, achse_quelle, quelle. Optional: z_scheitel_quer (Standard z_scheitel), einbindung (m, Standard 0,08: Koerper
-    reicht so weit in die Wand n_wand), raster (m, Standard 0,1), bogen_exponent (Standard 2 = Halbellipse), werte_quellen, aktiv. Rippen (Rippenvorsprung) sind NICHT enthalten (Kappen glatt)."""
+    reicht so weit in die Wand n_wand), raster (m, Standard 0,1), bogen_exponent (Standard 2 = Halbellipse), werte_quellen, aktiv. Rippen optional: rippen_b (Breite m), rippen_vor (Vorsprung unter der Kappe m), rippen_quelle (Pflicht), rippen_auslauf (m, Vorsprung laeuft zum Schlussstein auf 0), rippen_diagonal (Standard an), rippen_gurt_aussen (Standard aus: nur Gurtrippen zwischen den Jochen), rippen_einbindung (Standard 0,25 m in die Kappe), rippen_start (m vor der Wand, Standard 0 = in die Wand) und rippen_anlauf (m, Vorsprung waechst von 0 auf voll)."""
     for k in ("n_joche", "u0", "pitch", "n_wand", "n_front", "z_kaempfer", "z_scheitel", "z_oben", "achse_n", "achse_quelle", "quelle"):
         if cfg.get(k) in (None, ""): sys.exit(f"kreuzgewoelbe: '{k}' fehlt (Regel 3b: jedes Mass mit Quelle)")
     nj, u0, pitch = int(cfg["n_joche"]), float(cfg["u0"]), float(cfg["pitch"]); nw, nf = float(cfg["n_wand"]), float(cfg["n_front"])
@@ -1170,8 +1170,31 @@ def kreuzgewoelbe(cfg, ctx):
         U = np.linspace(ua, ub, max(int(round(pitch / rs)), 8) + 1); N = np.linspace(nw - ein, nf, max(int(round((nf - nw + ein) / rs)), 8) + 1)
         hA = _bogen_z(U - uc, 0.5 * pitch, zk, zs, pe); hB = _bogen_z(np.clip(N, nw, nf) - nc, 0.5 * (nf - nw), zk, zsq, pe)
         Zb = np.maximum(hA[:, None], hB[None, :]); adds.append(_hoehenfeld_koerper(U, N, Zb, zo).transform(T))
+    rb = float(cfg.get("rippen_b") or 0.0)
+    if rb > 0:                                                                                        # Rippen (Diagonal- + Gurtrippen) als Streifen UNTER der Decke
+        for k_ in ("rippen_vor", "rippen_quelle"):
+            if cfg.get(k_) in (None, ""): sys.exit(f"kreuzgewoelbe: '{k_}' fehlt (Regel 3b: Rippenmasse mit Quelle)")
+        rv, ra = float(cfg["rippen_vor"]), float(cfg.get("rippen_auslauf", 1.0)); rtop = float(cfg.get("rippen_einbindung", 0.25)); rs2 = float(cfg.get("rippen_raster", 0.2)); rst, ran = float(cfg.get("rippen_start", 0.0)), float(cfg.get("rippen_anlauf", 0.0))
+        fz = lambda u_, n_, uc_: np.maximum(_bogen_z(u_ - uc_, 0.5 * pitch, zk, zs, pe), _bogen_z(np.clip(n_, nw, nf) - nc, 0.5 * (nf - nw), zk, zsq, pe))
+        def rippe(P_u, P_n, uc_=None, gurt=False):
+            """Rippe entlang der Grundrisslinie (P_u, P_n): Unterseite = Deckenhoehe - Vorsprung (Vorsprung laeuft zum Schlussstein auf 0 aus), Oberseite eingebunden."""
+            L = float(np.hypot(P_u[-1] - P_u[0], P_n[-1] - P_n[0])); m_ = max(int(round(L / rs2)), 4); t_ = np.linspace(0, 1, m_ + 1)
+            u_, n_ = P_u[0] + t_ * (P_u[-1] - P_u[0]), P_n[0] + t_ * (P_n[-1] - P_n[0]); d_ = np.array([P_u[-1] - P_u[0], P_n[-1] - P_n[0]]) / L; q_ = np.array([-d_[1], d_[0]])
+            zc = np.array([float(fz(a_, b_, uc_)) for a_, b_ in zip(u_, n_)]) if not gurt else np.array([float(_bogen_z(np.clip(b_, nw, nf) - nc, 0.5 * (nf - nw), zk, zsq, pe)) for b_ in n_])
+            dm = np.hypot(u_ - (uc_ if uc_ is not None else u_), n_ - nc) if not gurt else np.full_like(u_, 1e9); vv = rv * np.clip(dm / max(ra, 1e-6), 0.0, 1.0) * (np.clip((n_ - (nw + rst)) / ran, 0.0, 1.0) if ran > 0 else 1.0)
+            secs = [np.array([[u_[i] + s_ * q_[0] * rb / 2, n_[i] + s_ * q_[1] * rb / 2, z_] for s_ in (-1, 1) for z_ in (zc[i] - vv[i], min(zc[i] + rtop, zo))]) for i in range(len(t_))]
+            return [M.hull_points(np.vstack([secs[i], secs[i + 1]])) for i in range(len(t_) - 1)]
+        R = []
+        for k in range(nj):
+            ua, ub = u0 + k * pitch, u0 + (k + 1) * pitch; uc = 0.5 * (ua + ub)
+            if cfg.get("rippen_diagonal", True):
+                f0 = rst / (nf - nw); ns = nw + rst if rst > 0 else nw - ein
+                R += rippe(np.array([ua + f0 * pitch, ub]), np.array([ns, nf]), uc); R += rippe(np.array([ub - f0 * pitch, ua]), np.array([ns, nf]), uc)
+        for g in range(0 if cfg.get("rippen_gurt_aussen") else 1, nj + 1 if cfg.get("rippen_gurt_aussen") else nj):
+            R += rippe(np.array([u0 + g * pitch] * 2), np.array([nw + rst if rst > 0 else nw - ein, nf]), None, gurt=True)
+        if R: adds.append(UNION(R).transform(T))
     beleg("alle", f"Kreuzgewoelbe {nj} Joche (Laubendecke)", cfg["quelle"], u0=u0, pitch=pitch, n_wand=nw, n_front=nf, z_kaempfer=zk, z_scheitel=zs, z_scheitel_quer=zsq, z_oben=zo,
-          zaehlung=cfg.get("zaehlung"), rippen="ANNAHME: Kappen glatt, Rippenvorsprung nicht modelliert", bogen_exponent=pe, bogenform="Superellipse (Anstieg <= halbe Spannweite), sonst Spitzbogen; Exponent am Schildbogen gemessen, Gurtbogen quer = ANNAHME gleiche Form")
+          zaehlung=cfg.get("zaehlung"), rippen=(f"Rippen b {rb} vor {cfg.get('rippen_vor')}: " + cfg["rippen_quelle"]) if rb > 0 else "ANNAHME: Kappen glatt, Rippenvorsprung nicht modelliert", bogen_exponent=pe, bogenform="Superellipse (Anstieg <= halbe Spannweite), sonst Spitzbogen; Exponent am Schildbogen gemessen, Gurtbogen quer = ANNAHME gleiche Form")
     return adds, []
 
 @bauteil("zylinder")

@@ -2550,6 +2550,44 @@
    ],
    "quer_max": 0.1,
    "r_max": 0.5
+  },
+  "rippe_diag_j2_q": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    7.5334,
+    6.2063
+   ],
+   "z0": "=6.8 - z_unterkante_lot2",
+   "z1": "=7.8 - z_unterkante_lot2",
+   "suche": "unten",
+   "puffer": 0.02,
+   "dz": 0.01
+  },
+  "rippe_gurt_u954_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    11.8358,
+    4.8258
+   ],
+   "z0": "=6.8 - z_unterkante_lot2",
+   "z1": "=7.8 - z_unterkante_lot2",
+   "suche": "unten",
+   "puffer": 0.02,
+   "dz": 0.01
+  },
+  "rippe_gurt_u954_halbbreite": {
+   "typ": "schnitt_reichweite",
+   "z": "=7.4798 - z_unterkante_lot2",
+   "zentrum": [
+    11.8358,
+    4.8258
+   ],
+   "richtung": [
+    0.9426,
+    -0.3338
+   ],
+   "quer_max": 0.05,
+   "r_max": 0.8
   }
  },
  "pruefungen": [
@@ -5322,6 +5360,54 @@
    "historie": [
     "2026-11-11 angelegt (Kreis 20261111_045306a045306 r2, baldachine): am Altstand (Krone t0 0,30/t1 0,34, Vorderkante hinter der Bandfront) ROT, Soll aus Fotos, nicht gelockert"
    ]
+  },
+  {
+   "name": "Laubengewoelbe Joch u 3,5-9,5: Unterseite der Diagonalrippe 1/4 vom Dienst (u 5,03 n 8,37)",
+   "wert": "rippe_diag_j2_q",
+   "soll": [
+    5.835,
+    5.935
+   ],
+   "quelle": "Foto 6213 (Stufe 0 kreis r1 11.11.): Kreuzrippen stehen vor den weissen Kappen vor, 3 Rippen je Dienst (Z-6213-001: 2 Diagonalen + 1 Gurtrippe); Vorsprung 0,1-0,2 m = Sichtschaetzung der Beobachtung (nicht triangulierbar, Rippenunterkante in 2 Fotos nicht eindeutig zuordenbar), Mitte 0,15 -> Soll = Kappenhoehe (Generator-Deckenhoehe lot2 7,488) minus 0,20..0,10 minus z_unterkante_lot2 1,453. Am Modell mit glatter Kappe liegt die Unterseite bei 6,035 (Kappe) -> ROT",
+   "protokoll": "M-6213-002",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "historie": [
+    "2026-11-11 angelegt (Kreis r1 ff_+11_+6_+8, Beobachtung 'Gewoelberippen fehlen im Gewoelbekoerper'): am Modell mit glatter Kappe ROT"
+   ]
+  },
+  {
+   "name": "Laubengewoelbe: Unterseite der Gurtrippe quer an u 9,55 bei n 8,5",
+   "wert": "rippe_gurt_u954_z",
+   "soll": [
+    5.877,
+    5.977
+   ],
+   "quelle": "Foto 6213 (Stufe 0 kreis r1 11.11.): Kreuzrippen stehen vor den weissen Kappen vor, 3 Rippen je Dienst (Z-6213-001: 2 Diagonalen + 1 Gurtrippe); Vorsprung 0,1-0,2 m = Sichtschaetzung der Beobachtung (nicht triangulierbar, Rippenunterkante in 2 Fotos nicht eindeutig zuordenbar), Mitte 0,15 -> Soll = Kappenhoehe (Generator-Deckenhoehe lot2 7,530) minus 0,20..0,10 minus z_unterkante_lot2 1,453. Am Modell mit glatter Kappe liegt die Unterseite bei 6,077 (Kappe) -> ROT",
+   "protokoll": "M-6213-002",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "kamera_bruecke",
+   "historie": [
+    "2026-11-11 angelegt (Kreis r1 ff_+11_+6_+8, Beobachtung 'Gewoelberippen fehlen im Gewoelbekoerper'): am Modell mit glatter Kappe ROT"
+   ]
+  },
+  {
+   "name": "Laubengewoelbe: halbe Rippenbreite der Gurtrippe u 9,55 (Schnitt 0,05 m unter der Kappe)",
+   "wert": "rippe_gurt_u954_halbbreite",
+   "soll": [
+    0.13,
+    0.18
+   ],
+   "quelle": "Foto 6213 (Stufe 2 kreis r1 11.11.): Rippenbreite in Untersicht inkl. Flanke 0,33 m (M-6213-001, rechte Rippe) und 0,30 m (M-6213-002, linke Rippe), Kamera-Bruecke K-6213, Ebene n 7,5 (+-0,3 m: Rippe nicht in der Wandebene, Massstabsfehler ~4 %); Soll Halbbreite 0,13-0,18 = 0,26-0,36 breit. Modell mit glatter Kappe: Schnitt unter der Decke leer -> ROT",
+   "protokoll": "M-6213-001",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "historie": [
+    "2026-11-11 angelegt (Kreis r1 ff_+11_+6_+8, Beobachtung 'Gewoelberippen fehlen im Gewoelbekoerper'): am Modell mit glatter Kappe ROT"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -6137,7 +6223,8 @@
    "teil": "kreuzgewoelbe:laube",
    "merkmal": "Gewoelberippen (Diagonal-/Gurtrippen) fehlen im Gewoelbekoerper",
    "text": "Kappen glatt modelliert; 3 Rippen je Dienst (Z-6213-001: 2 Diagonalen + 1 Gurtrippe) stehen im Foto ca. 0,1-0,2 m vor der Kappe vor. Gurtbogen quer zur Laube hat dieselbe Form wie der Schildbogen (ANNAHME, nicht gemessen).",
-   "naechster_schritt": "Rippenquerschnitt per foto_mass am Rippenansatz (Foto 6213/d20), Gurtbogenprofil an Foto aus der Laube trianguliert messen, Rippen als Streifen auf der Decke; Kappenhoehe Mitte gegen zweites Foto pruefen (Schildbogenscheitel 7,74 vs 7,89)."
+   "naechster_schritt": "Rippenquerschnitt per foto_mass am Rippenansatz (Foto 6213/d20), Gurtbogenprofil an Foto aus der Laube trianguliert messen, Rippen als Streifen auf der Decke; Kappenhoehe Mitte gegen zweites Foto pruefen (Schildbogenscheitel 7,74 vs 7,89).",
+   "teilweise_erledigt": "kreis r1 20261111_090522 (ff_+11_+6_+8): Rippen gebaut (rippen_b 0,30, Vorsprung 0,15 ANNAHME, Auslauf zum Schlussstein, 4 Diagonalpaare + 3 Gurtrippen); Foto-F1 des Teils 0,730 -> 0,756 (10 Fotos, Praezision 0,892 -> 0,896). OFFEN: Rippenvorsprung nicht gemessen (Sichtschaetzung), Stufenprofil, Gurtbogen-Form quer, Rippenlage in 6213 mittlere/rechte Rippe ~0,1 m neben der Fotorippe (gelbe Randlinien), Gurtrippen an den Laubenenden, Uebergang Dienst-Rippe (Dienst endet z 5,6, Rippe beginnt 5,76)."
   },
   {
    "datum": "2026-11-11",
@@ -6318,74 +6405,6 @@
    ]
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
-   "auto_id": "fehlteile-6261-234-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.54,
-   "z_bis": 18.54,
-   "xyz": [
-    14.33,
-    -8.89,
-    18.54
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.89 m (Zelle [234, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 2)",
-   "auto_id": "fehlteile-6261-312-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.23,
-   "z_bis": 18.23,
-   "xyz": [
-    14.61,
-    -7.14,
-    18.23
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.14 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
-   "auto_id": "fehlteile-6261-234-1872",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.41,
-   "z_bis": 17.41,
-   "xyz": [
-    14.28,
-    -8.91,
-    17.41
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.41 m, y=-8.91 m (Zelle [234, 1872, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
-   "auto_id": "fehlteile-6261-312-1872",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.08,
-   "z_bis": 17.08,
-   "xyz": [
-    14.54,
-    -7.16,
-    17.08
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "teil": "bogenreihe:laube",
    "merkmal": "Seitliche Laubendurchgaenge (Stirnseiten) sind Boegen wie die Front, im Modell Rechteck",
    "text": "Nutzer 11.11. 08:46 (Viewer Seitenansicht vs Foto handy_e_14/h_04). Fotobeleg: Cluster ff_+16_+4_+8 (473730 px, 5 Fotos) am Ostende - nie Ziel, weil der 13,5-m-Kasten 'kein Bauteil' (ff_+11_+4_+4) ihn per Zentrum-im-Kasten sperrte (behoben e1ddbf17).",
@@ -6497,6 +6516,57 @@
     "anfaenger",
     "wandanschluss"
    ]
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
+   "auto_id": "fehlteile-6261-234-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.54,
+   "z_bis": 18.54,
+   "xyz": [
+    14.34,
+    -8.87,
+    18.54
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.87 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "auto_id": "fehlteile-6261-312-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.23,
+   "z_bis": 18.23,
+   "xyz": [
+    14.62,
+    -7.14,
+    18.23
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.14 m (Zelle [312, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
+   "auto_id": "fehlteile-6261-312-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.09,
+   "z_bis": 17.09,
+   "xyz": [
+    14.53,
+    -7.17,
+    17.09
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.09 m, y=-7.17 m (Zelle [312, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
