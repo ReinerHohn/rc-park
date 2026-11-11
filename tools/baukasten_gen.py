@@ -956,6 +956,15 @@ def satteldach(cfg, ctx):
                 poly = [tuple(p0), tuple(p1), tuple(p1 + n_out * (tf + ze)), tuple(p0 + n_out * (tf + ze))]
                 e = M.extrude(C([ccw(np.array(poly, float))]), u1 - u0).transform([[0, 0, 1, u0], [1, 0, 0, 0], [0, 1, 0, 0]]); streifen.append(e)
         if streifen: q = UNION([q] + streifen)
+    for sp in (cfg.get("speier") or []):                                                              # Traufspeier (Wasserspeier): geneigter Kragarm aus der Traufe + Kopf (Drache) am Ende; je Speier {u, z, laenge, breite, hoehe, kopf_laenge, kopf_hoehe, z_ende (optional: Hoehe des Kopfendes, sonst waagerecht), quelle}
+        if not sp.get("quelle"): sys.exit(f"satteldach: Speier {sp} ohne quelle (Regel 3b)")
+        su, sz, sl_, sb_, sh_ = (float(sp[k_]) for k_ in ("u", "z", "laenge", "breite", "hoehe")); kl, kh = float(sp.get("kopf_laenge", 0.0)), float(sp.get("kopf_hoehe", 0.0)); ein = float(sp.get("einbindung", 0.15)); sze = float(sp.get("z_ende", sz))
+        if not (u0 < su < u1 and sl_ > 0.2 and sb_ > 0.03 and sh_ > 0.03 and zu < sz < zf and zu < sze < zf): sys.exit(f"satteldach: unplausibler Speier {sp}")
+        def _ring(n_, z_, bw, bh): return [(su + a_ * bw / 2, n_, z_ + b_ * bh / 2) for a_ in (-1, 1) for b_ in (-1, 1)]
+        te_ = [M.hull_points(_ring(ntv - ein, sz, sb_, sh_) + _ring(ntv + sl_, sze, sb_, sh_))]                  # Arm: Huelle Fuss -> Ende (geneigt)
+        if kl > 0 and kh > 0: te_.append(M.hull_points(_ring(ntv + sl_ - kl, sze + (sz - sze) * kl / sl_, sb_ * 1.8, kh) + _ring(ntv + sl_, sze, sb_ * 1.8, kh)))   # Drachenkopf: dickerer Block am Ende
+        q = UNION([q] + te_)
+        beleg("alle", "Traufspeier", sp["quelle"], u=su, z=sz, z_ende=sze, laenge=sl_, breite=sb_, hoehe=sh_)
     ctx["dach"] = dict(ntv=ntv, ztv=ztv, nf=nf, zf=zf, u0=u0, u1=u1)                              # fuer gaubenreihe (sitzt auf dem Vorderhang)
     k = q.transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; qq = lambda p_: (wq.get(p_) or cfg["quelle"])
     beleg("alle", "Satteldach", qq("z_first") + " | Traufe: " + qq("z_traufe_v"), u0=u0, u1=u1, n_traufe_v=ntv, z_traufe_v=ztv, n_first=nf, z_first=zf, n_traufe_h=nth, z_traufe_h=zth, z_unten=zu)

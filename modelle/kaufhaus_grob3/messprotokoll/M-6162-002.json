@@ -1,0 +1,39 @@
+{
+ "id": "M-6162-002",
+ "typ": "triangulation",
+ "foto": "6162",
+ "name": "Speierkopf links",
+ "beobachtungen": [
+  {
+   "kamera": "K-6162",
+   "px": [
+    832.0,
+    1163.0
+   ]
+  },
+  {
+   "kamera": "K-6132",
+   "px": [
+    412.0,
+    1566.0
+   ]
+  }
+ ],
+ "P": [
+  15.867,
+  9.96,
+  13.81
+ ],
+ "strahl_abstand_m": [
+  0.027,
+  0.027
+ ],
+ "schnittwinkel_grad": [
+  10.8
+ ],
+ "z": 13.81,
+ "unsicherheit_m": 0.186,
+ "massstab_von": "Kameras K-6162, K-6132 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 14.696,
+ "u": 11.618
+}

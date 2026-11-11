@@ -983,6 +983,30 @@
  },
  {
   "seite": "alle",
+  "element": "Traufspeier",
+  "quelle": "Anzahl 2: Z-6162-001 (Foto 6162, n11_04, n11_01). Lage/Neigung/Laenge TRIANGULIERT (foto_mass --tri): Fuss M-6162-001/003 (6162+6132, 6162+6145: u 11,36 n 12,68 z 14,3), Kopf M-6162-002/004 (u 11,5-11,6 n 14,7 z 13,8); Kopfblock 0,5x0,4 und Querschnitt 0,22 = ANNAHME Sichtschaetzung (Drachenkopf als Block)",
+  "u": 11.36,
+  "z": 14.35,
+  "z_ende": 13.85,
+  "laenge": 2.0,
+  "breite": 0.22,
+  "hoehe": 0.22,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Traufspeier",
+  "quelle": "Anzahl 2: Z-6162-001 (Foto 6162, n11_04, n11_01). Lage/Neigung/Laenge TRIANGULIERT (foto_mass --tri 6162+6145): Fuss M-6162-005 (u -4,47 n 12,55 z 14,5), Kopf M-6162-006 (u -4,40 n 14,55 z 13,86); Kopfblock 0,5x0,4 und Querschnitt 0,22 = ANNAHME Sichtschaetzung (Drachenkopf als Block)",
+  "u": -4.47,
+  "z": 14.5,
+  "z_ende": 13.85,
+  "laenge": 1.95,
+  "breite": 0.22,
+  "hoehe": 0.22,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Satteldach",
   "quelle": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json first.z 27.51 (First-Kante 35 m; Rohsegmente waagerecht z 26,5-28: Median 27,29 bei off 3,38 -> +-0,25 m) | Traufe: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json traufe.kante.z 14.68 (waagerechte Kante 50,8 m an der Frontebene; firstgebunden 14.61)",
   "u0": -8.82,

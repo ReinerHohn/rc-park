@@ -6668,6 +6668,10 @@
    ],
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "First/Traufe/Frontebene/Enden: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json; Dachneigung 53,3 Grad folgt aus First-Traufe; Rueckhang ANNAHME Firstspiegel; Ziegel ANNAHME",
+   "speier": [
+    {"u": 11.36, "z": 14.35, "z_ende": 13.85, "laenge": 2.0, "breite": 0.22, "hoehe": 0.22, "kopf_laenge": 0.5, "kopf_hoehe": 0.4, "quelle": "Anzahl 2: Z-6162-001 (Foto 6162, n11_04, n11_01). Lage/Neigung/Laenge TRIANGULIERT (foto_mass --tri): Fuss M-6162-001/003 (6162+6132, 6162+6145: u 11,36 n 12,68 z 14,3), Kopf M-6162-002/004 (u 11,5-11,6 n 14,7 z 13,8); Kopfblock 0,5x0,4 und Querschnitt 0,22 = ANNAHME Sichtschaetzung (Drachenkopf als Block)"},
+    {"u": -4.47, "z": 14.5, "z_ende": 13.85, "laenge": 1.95, "breite": 0.22, "hoehe": 0.22, "kopf_laenge": 0.5, "kopf_hoehe": 0.4, "quelle": "Anzahl 2: Z-6162-001 (Foto 6162, n11_04, n11_01). Lage/Neigung/Laenge TRIANGULIERT (foto_mass --tri 6162+6145): Fuss M-6162-005 (u -4,47 n 12,55 z 14,5), Kopf M-6162-006 (u -4,40 n 14,55 z 13,86); Kopfblock 0,5x0,4 und Querschnitt 0,22 = ANNAHME Sichtschaetzung (Drachenkopf als Block)"}
+   ],
    "ziegel_abstand": 0.35,
    "ziegel_tiefe": 0.07,
    "ziegel_anteil": 0.4,
