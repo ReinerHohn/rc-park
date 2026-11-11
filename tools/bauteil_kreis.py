@@ -384,7 +384,11 @@ def waehlen(z, sperre):
             _bel |= {t_ for c in _cl if c["id"] + "__neu" in _bel for t_ in c["teile"]}
             ffk = [dict(c, teil=c["id"] + "__neu", art="fehlteil", beleg=None, pkt=c["px"], recall_kasten=None) for c in _cl
                    if c["px"] >= FOTO_FEHL_SUMME and not (set(c["teile"]) & _bel)]
-            ffk = [f for f in ffk if sperre.get(f["teil"], 0) < MAX_FEHL and fg.get(f["teil"], 0) < MAX_GLOBAL and f["id"] not in belegt_fam and not ist_erledigt(f, erl)]
+            # 'gebaut'-Eintraege (angenommene Fehlteile) sperren Foto-Cluster nur, solange die Formliste AELTER als die Annahme ist (11.11.: Baldachin-Cluster
+            # nach Annahme erneut Ziel, Agent 'kein Bauteil'); danach entscheidet die frische Liste, ob dort noch Gelb ist.
+            _fm = os.path.getmtime(_fs[-1]) if _fs else 0
+            _erl_f = {k: e for k, e in erl.items() if not (str(e.get("befund", "")).startswith("gebaut") and e.get("zeit_ts", 0) and _fm > e["zeit_ts"])}
+            ffk = [f for f in ffk if sperre.get(f["teil"], 0) < MAX_FEHL and fg.get(f["teil"], 0) < MAX_GLOBAL and f["id"] not in belegt_fam and not ist_erledigt(f, _erl_f)]
             fk = ffk + fk
         except Exception as _ex: print("foto_fehlteile:", _ex, flush=True)
     for t in fk:
@@ -1041,6 +1045,11 @@ for runde in range(1, RUNDEN + 1):
         _sk = beob_schluessel(ziel["beob"]) if ziel.get("art") == "beobachtung" else ziel["teil"]; sperre[_sk] = sperre.get(_sk, 0) + 1; ohne_annahme += 1
         subprocess.run(["git", "-C", wt, "add", "-A"], check=False)   # Stand verlustfrei auf dem Zweig sichern (fuer --nachpruefen), Worktree danach weg
         subprocess.run(["git", "-C", wt, "commit", "-q", "-m", f"kreis {LAUF} r{runde}: {ziel['teil']} VERWORFEN (Stand gesichert)"], check=False)
+    if ist_fehlteil(ziel) and angenommen and ziel.get("lo"):   # angenommenes Fehlteil: Kasten als gebaut merken (Foto-Cluster aus alter Formliste nicht erneut)
+        import fcntl as _f; _lk3 = open(ERLEDIGT + ".lock", "w"); _f.flock(_lk3, _f.LOCK_EX)
+        _e = erledigt_laden(); _e[ziel["id"]] = {"lo": ziel["lo"], "hi": ziel["hi"], "befund": f"gebaut (angenommen {LAUF} r{runde})", "lauf": f"{LAUF} r{runde}",
+                                                   "zeit": time.strftime("%Y-%m-%d %H:%M"), "zeit_ts": time.time()}
+        json.dump(_e, open(ERLEDIGT, "w"), ensure_ascii=False, indent=1); _f.flock(_lk3, _f.LOCK_UN); _lk3.close()
     if ist_fehlteil(ziel) and not angenommen and fbefund and not fbefund.lower().startswith("gebaut"):
         import fcntl as _f; _lk2 = open(ERLEDIGT + ".lock", "w"); _f.flock(_lk2, _f.LOCK_EX)
         _e = erledigt_laden(); _e[ziel["id"]] = {"lo": ziel["lo"], "hi": ziel["hi"], "befund": fbefund, "lauf": f"{LAUF} r{runde}",
