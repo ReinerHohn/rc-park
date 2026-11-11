@@ -1,24 +1,10 @@
 {
  "foto": "6162",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_003723a003723/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6162 (amtliche Anker)",
  "zelle_px": 111,
  "schwelle": 0.35,
  "treffer": [
-  {
-   "zelle": [
-    2997,
-    444,
-    111
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -5.26,
-    8.18,
-    22.41
-   ]
-  },
   {
    "zelle": [
     3108,
@@ -28,65 +14,79 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -5.14,
-    10.55,
-    20.77
+    -5.17,
+    10.57,
+    20.76
    ]
   },
   {
    "zelle": [
     2553,
+    666,
+    111
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.9,
+    7.12,
+    20.29
+   ]
+  },
+  {
+   "zelle": [
+    3108,
+    666,
+    111
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -5.62,
+    9.01,
+    19.44
+   ]
+  },
+  {
+   "zelle": [
+    2886,
+    777,
+    111
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -3.84,
+    8.15,
+    18.64
+   ]
+  },
+  {
+   "zelle": [
+    2664,
     888,
     111
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -0.69,
-    6.83,
-    18.21
+    -2.12,
+    6.04,
+    18.64
    ]
   },
   {
    "zelle": [
-    1887,
+    2442,
     999,
     111
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    6.37,
-    1.95,
-    18.73
-   ]
-  },
-  {
-   "zelle": [
-    2553,
-    1110,
-    111
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -1.19,
-    3.36,
-    17.15
-   ]
-  },
-  {
-   "zelle": [
-    2775,
-    1221,
-    111
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -3.88,
-    2.24,
-    16.37
+    -0.15,
+    1.89,
+    18.99
    ]
   }
  ],
