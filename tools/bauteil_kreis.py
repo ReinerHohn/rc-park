@@ -860,6 +860,8 @@ for runde in range(1, RUNDEN + 1):
         # Toleranz 0,002 = Stichproben-Rauschen (a030944 r1: unveraendertes Modell 0,6483 -> 0,6481)
         if rg1 is None or rg1 < rg0 - 0.002: rueck_teil.append(f"recall_gesamt {rg0}->{rg1}")
         tor_konv = rcK == 0 and r_n is not None and gewinn >= MIN_REGION and not rueck_teil
+        if ziel.get("recall_kasten") is None:   # Foto-Cluster (11.11. a004523: nichts gebaut, 'Gewinn' = absoluter Gitter-Recall 0,659 - 0 -> Tor gruen,
+            gewinn = 0.0; tor_konv = False       # nur der Pruefer hielt es auf). Ohne Vorher-Wert gilt allein das Foto-Tor unten (braucht ein neues Teil).
         vor[ziel["teil"]], nach[ziel["teil"]] = ziel["recall_kasten"], r_n
         # FOTO-TOR FUER NEUE TEILE (11.11., Regel 9e "Fotokanten entscheiden"; vorher nur Kantengitter-Recall im Kasten, Schwelle +0,25,
         # Foto-F1 nie gemessen - 234159 Baldachine). Je neuem Teil: Bildbereich, den es NACHHER einnimmt, vorher (Basismodell ohne Teil,
