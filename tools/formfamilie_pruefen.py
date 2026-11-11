@@ -25,12 +25,13 @@ ARBEIT_STD = "/media/oem/scan/rc-park_tmp/formfamilie"
 PANEL = 880           # lange Seite je Bildhaelfte (Paar <= ~1800 px breit)
 RAND = 0.30           # Rand um die projizierte Teilbox
 MIN_WINKEL = 25.0     # Grad Unterschied der Blickrichtungen
+KACHEL_MIN_PX = 1500   # Mindestzahl sichtbarer Teilpixel je Detailkachel
 MIN_SICHT = 2500      # sichtbare Teilpixel, darunter kein Kandidat
 
 PROMPT = """Du bist Bildpruefer fuer ein 3D-Modell (H0 1:87, 3D-Druck) des Gebaeudes "{objekt}". Pruefe das Bauteil "{teil}".
 Jede der folgenden Bilddateien ist ein Paar: LINKS ein Foto (Ausschnitt um das Bauteil), RECHTS ein schattierter Render des Modells aus DERSELBEN Kamera mit
 demselben Ausschnitt. Im Render ist das zu pruefende Bauteil ORANGE, alle anderen Bauteile grau; dunkle Linien = Kanten/Sprunge. Nur das orange Bauteil beurteilen.
-Oben im Bild steht das Foto-Kuerzel. Sieh dir jede Datei mit dem Read-Werkzeug an (Bilder werden angezeigt):
+Oben im Bild steht das Foto-Kuerzel; Dateien mit Zusatz in eckigen Klammern (Fuss, Kopf, Ende A, Ende B) sind DETAILKACHELN (unteres Drittel, oberes Drittel, aeussere Fuenftel an den beiden Enden der Hauptachse) - pruefe dort gezielt die Stationen Fuss, Abschluss und Enden. Die Dateinamen tragen das Etikett. Sieh dir jede Datei mit dem Read-Werkzeug an (Bilder werden angezeigt):
 {pfade}
 
 Vorgehen: Beschreibe ERST die Form des Bauteils im Foto, DANN die Form im Modell (Mehrzahl der Bilder beachten, ein Foto allein kann verdeckt oder schief sein).
@@ -82,6 +83,13 @@ def fotowahl(teil, je_foto, kam, mesh_w, n=4, nur_fotos=None):
         for s, f in kand:
             if f not in wahl and schraeg(f) and all(winkel_diff(az[f], az[g]) >= MIN_WINKEL for g in wahl[:-1]):
                 wahl = wahl[:-1] + [f] if len(wahl) >= n else wahl + [f]; break
+    # STIRN (Runde 2): mindestens ein Foto mit Blickrichtung eher ENTLANG der Hauptachse (Stirnseite), falls sicht_px >= 5 % des Maximums
+    def stirn(f):
+        d = min(winkel_diff(az[f], naz + 90), winkel_diff(az[f], naz - 90)); return d <= 35.0
+    if not any(stirn(f) for f in wahl):
+        smax = kand[0][0]
+        for s_, f in kand:
+            if stirn(f) and s_ >= 0.05 * smax: wahl.append(f); break
     return wahl
 
 
@@ -103,12 +111,12 @@ def schattieren(Mw, fid, dv, R, hell=None):
     return img, kante
 
 
-def box_aus_maske(m, W, H):
+def box_aus_maske(m, W, H, rand=RAND):
     ys, xs = np.where(m)
     if len(xs) == 0: return None
     x0, x1, y0, y1 = xs.min(), xs.max(), ys.min(), ys.max()
     bw, bh = x1 - x0 + 1, y1 - y0 + 1; s = max(bw, bh)
-    bw2, bh2 = max(bw, 0.25 * s) * (1 + 2 * RAND), max(bh, 0.25 * s) * (1 + 2 * RAND)
+    bw2, bh2 = max(bw, 0.25 * s) * (1 + 2 * rand), max(bh, 0.25 * s) * (1 + 2 * rand)
     cx_, cy_ = (x0 + x1) / 2, (y0 + y1) / 2
     return (int(max(0, cx_ - bw2 / 2)), int(max(0, cy_ - bh2 / 2)), int(min(W, cx_ + bw2 / 2)), int(min(H, cy_ + bh2 / 2)))
 
@@ -145,7 +153,8 @@ def bilder_erzeugen(a, obj, objp, teile_pfade, wahl, formliste_teile, bilder_dir
     je_foto = {}
     for t, fl in wahl.items():
         for f in fl: je_foto.setdefault(f, []).append(t)
-    out = {t: {} for t in wahl}
+    out = {t: {} for t in wahl}; kand_k = {}
+    sc = os.path.join(bilder_dir, "_kacheln.json")
     for nr, ts in je_foto.items():
         vorh = {tn: os.path.join(bilder_dir, f"{tn}_{nr}.jpg") for tn in ts}
         if not a.bilder_neu and all(os.path.exists(v) for v in vorh.values()):   # Bilder dieses Fotos schon da (Wiederaufnahme)
@@ -163,13 +172,44 @@ def bilder_erzeugen(a, obj, objp, teile_pfade, wahl, formliste_teile, bilder_dir
         img, kante = schattieren(Mw, fid, dv, R)
         for tn in ts:
             m = teilnetz(tn).copy(); m.apply_translation(tr)
-            dp, _, _ = RK.dreiecke_rastern(m, R, t, f, cx, cy, W, H)
+            dp, _, pos = RK.dreiecke_rastern(m, R, t, f, cx, cy, W, H)
             ziel = np.isfinite(dp) & (dp <= dv * 1.003 + 0.03)
             if ziel.sum() < 200: continue
             box = box_aus_maske(ziel, W, H)
             pf = os.path.join(bilder_dir, f"{tn}_{nr}.jpg")
             out[tn][nr] = bildpaar(im0, img, kante, ziel, box, nr, pf)
+            # DETAILKACHELN: Fuss/Kopf = unteres/oberes Drittel der Teilbox (Hoehe), Enden = aeussere Fuenftel entlang der waagerechten Hauptachse
+            b = m.bounds; z0, z1 = b[0, 2], b[1, 2]; v2 = m.vertices[:, :2] - m.vertices[:, :2].mean(0)
+            ax = np.linalg.eigh(np.cov(v2.T) + 1e-9 * np.eye(2))[1][:, 1]; u = (pos[..., :2] - m.vertices[:, :2].mean(0)) @ ax
+            uv = v2 @ ax; u0, u1 = uv.min(), uv.max(); zz = pos[..., 2]
+            regionen = {"Fuss": zz <= z0 + (z1 - z0) / 3, "Kopf": zz >= z1 - (z1 - z0) / 3,
+                        "Ende A": u <= u0 + (u1 - u0) / 5, "Ende B": u >= u1 - (u1 - u0) / 5}
+            for lab, reg in regionen.items():
+                zk = ziel & reg
+                if zk.sum() < KACHEL_MIN_PX: continue
+                kb = box_aus_maske(zk, W, H, rand=0.5)
+                kp = os.path.join(bilder_dir, f"{tn}_{lab.replace(' ', '')}_{nr}.jpg")
+                bildpaar(im0, img, kante, ziel, kb, f"{nr} [{lab}]", kp)
+                kand_k.setdefault(tn, {}).setdefault(lab, []).append((int(zk.sum()), nr, kp))
         print(f"Foto {nr}: {len(ts)} Teile gerendert", flush=True)
+    # je Kachel das Foto mit den meisten sichtbaren Kachelpixeln behalten, die Etikette stehen als Schluessel '@Fuss' usw. im Paare-Dict
+    if kand_k:
+        bestk = {tn: {lab: max(c) for lab, c in d.items()} for tn, d in kand_k.items()}
+        try: alt = json.load(open(sc))
+        except Exception: alt = {}
+        alt.update(bestk); json.dump(alt, open(sc, "w"))
+        for tn, d in bestk.items():
+            for lab, (px, nr, kp) in d.items(): out[tn]["@" + lab + " (" + nr + ")"] = kp
+            for lab, c in kand_k[tn].items():
+                for px, nr, kp in c:
+                    if kp != d[lab][2]:
+                        try: os.remove(kp)
+                        except OSError: pass
+    if os.path.exists(sc):
+        for tn, d in json.load(open(sc)).items():
+            if tn in out and not any(k.startswith("@") for k in out[tn]):
+                for lab, (px, nr, kp) in d.items():
+                    if os.path.exists(kp): out[tn]["@" + lab + " (" + nr + ")"] = kp
     return out
 
 
