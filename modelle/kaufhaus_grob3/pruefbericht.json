@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_151128a151127/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.252124612687105,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590077191591263,
-  "wand_anteil_unter": 0.0007666666666666667,
+  "wand_pq": 0.10590076446533203,
+  "wand_anteil_unter": 0.0005,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -229,7 +229,7 @@
   "dienst_laube_u975_reich_z44": 0.6189552048966034,
   "dienst_laube_u975_reich_z26": 0.6485859077057866,
   "giebel_o_fe1_f": 3.127773782550481,
-  "giebel_o_fe1_w": 3.2472871437027426,
+  "giebel_o_fe1_w": 3.247287143702742,
   "giebel_o_fe2_f": 3.075931753831693,
   "giebel_o_fe2_w": 3.1959629907465255,
   "giebel_o_fe3_f": 2.9082795046561043,
@@ -444,7 +444,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590077191591263,
+   "wert": 0.10590076446533203,
    "soll": [
     0.0348,
     100
@@ -1904,7 +1904,7 @@
   },
   {
    "name": "Ostgiebel Fenster 1: Laibungstiefe (m) = Reichweite im Fenster minus Wandflaeche daneben (n 4.355)",
-   "wert": -0.11951336115226141,
+   "wert": -0.11951336115226097,
    "soll": [
     -0.2,
     -0.05

@@ -4668,7 +4668,9 @@
    "rippen_auslauf": 1.0,
    "rippen_start": 0.1,
    "rippen_anlauf": 0.4,
-   "zaehlung": ["Z-6213-001"],
+   "zaehlung": [
+    "Z-6213-001"
+   ],
    "rippen_quelle": "Rippenbreite 0,30-0,33 m in Untersicht inkl. Flanke (M-6213-001/-002, K-6213, Ebene n 7,5); 3 Rippen je Dienst = 2 Diagonalen + 1 Gurtrippe (Z-6213-001); Vorsprung 0,15 m = Mitte der Sichtschaetzung 0,1-0,2 m (Beobachtung Z-6213-001, ANNAHME: nicht triangulierbar); ANNAHME: Vorsprung laeuft ueber 1,0 m zum Schlussstein auf 0 aus (Schlussstein-Unterseite 7,844 gemessen M-6120-063 = Kappenhoehe in Jochmitte); ANNAHME: Rippen entspringen 0,10 m vor der Wand (Dienstkopf, Foto 6213) und wachsen ueber 0,4 m auf vollen Vorsprung (haelt die Kappenkante an der Wand u 3,63 z 6,46 M-6119-016 ein); ANNAHME: Diagonalrippen in allen 4 Jochen (Wiederholung, nur 2 Joche am Foto gesehen), Gurtrippen nur zwischen den Jochen (3), nicht an den Laubenenden (ungeprueft); ANNAHME: Rechteckquerschnitt statt gestuftem Profil (Foto 6213: mehrfach gestuft)",
    "bogen_exponent": 1.75,
    "achse_n": [
@@ -7250,8 +7252,20 @@
     {
      "datum": "2026-11-11",
      "wer": "Kreis Fehlteil ff_-4_+16_+14",
-     "alt": {"profil[0]": [13.3, 1.78], "kranz.r": 1.78},
-     "neu": {"profil[0]": [13.3, 1.9], "kranz.r": 1.9}
+     "alt": {
+      "profil[0]": [
+       13.3,
+       1.78
+      ],
+      "kranz.r": 1.78
+     },
+     "neu": {
+      "profil[0]": [
+       13.3,
+       1.9
+      ],
+      "kranz.r": 1.9
+     }
     },
     {
      "datum": "2026-11-09",
@@ -8042,7 +8056,7 @@
     "Z-6261-002"
    ],
    "dicke": 0.3956,
-   "kappe": -0.9,
+   "kappe": -0.45,
    "werte_quellen": {
     "u_aussen": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json enden giebel_perp along -8.82",
     "dicke": "param_wolke_fit.py (CMA-ES) gegen wolke_netzrahmen.npy, Abstand Wolke->Bauteil (staffelgiebel:ost,staffelgiebel:west), Median 0.299->0.154 m",
@@ -8051,10 +8065,10 @@
     "z_traufe": "Kreis r1: Kappenecken Foto 6261 (M-6261-022..026), Gegenprobe 6225 (M-6225-001..005), Zaehlung Z-6261-002; vorher 16.45",
     "z_spitze": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) segmente_gitter_v10.json Gitter-Maximum z am Westende (along -10,5..-7,5): 29.32; Steiger-Cluster bis 26,58 bei off 5,76, Giebellinie 52,8 Grad",
     "spitze_breite": "Kreis r1: Kappenecken Foto 6261 (M-6261-022..026), Gegenprobe 6225 (M-6225-001..005), Zaehlung Z-6261-002; vorher 0.4346",
-    "kappe": "Kreis r1: Kappenecken Foto 6261 (M-6261-022..026), Gegenprobe 6225 (M-6225-001..005), Zaehlung Z-6261-002; vorher 0.2081",
+    "kappe": "Nutzerfund 11.11. oberster Pfeiler zu hoch (q11 vorher/nachher): Steigung oben 2,11 m gegen Regel 1,21 m; Sweep bei daechlein 0,25: kappe -0,9: F1 0,598/f1_h 0,567; -0,45: 0,599/0,598; 0: 0,556/0,541; Variante oberster Pfeiler als Stufe 0,553/0,542 verworfen. WIDERSPRUCH (Regel 5, nicht gemittelt): Kappenecken M-6261-022..026 ergaben -0,9; Fotokanten 10 Fotos bevorzugen -0,45 -> naechster Schritt Kappenecken neu per foto_mass in q11/6164 | vorher: Kreis r1: Kappenecken Foto 6261 (M-6261-022..026), Gegenprobe 6225 (M-6225-001..005), Zaehlung Z-6261-002; vorher 0.2081",
     "spiegel": "ANNAHME: wie Ostgiebel (Foto 6261 zeigt den Ostgiebel; Westgiebel-Rueckflanke im Foto nicht geprueft)",
     "n_stufen": "Kreis r1: Kappenecken Foto 6261 (M-6261-022..026), Gegenprobe 6225 (M-6225-001..005), Zaehlung Z-6261-002; vorher 8",
-    "daechlein_h": "Kreis2 r2: Foto-F1-Sweep 0,45/0,6/0,8 -> 0,407/0,417/0,423 (alt 0,399, halbe Aufloesung, 10 Torfotos); Agent r1 Foto 6261: First ca. 0,6 m, Wolke-Oberkante 0,9 m ueber altem Modell (Widerspruch nicht gemittelt, 0,8 = Foto-F1-Optimum im Sweep) | ANNAHME: Satteldach, First quer zur Wand mittig auf der Stufe; Dachform aus 6261/6225/6161 gesehen, nicht vermessen"
+    "daechlein_h": "Nutzerfund 11.11. Treppe statt Saegezahn (Foto q11/6164, Flaechenmass D 0,4): Varianten je mit eigenem Voll-STL, 10 Torfotos, Foto-F1/f1_h: Kappe 0,8: 0,592/0,615; 0: 0,575/0,539; 0,25: 0,598/0,567; 0,4: 0,547/0,545; 0,25 mit Stufen kappe -0,45: 0,599/0,598 (gewaehlt) | vorher: Kreis2 r2: Foto-F1-Sweep 0,45/0,6/0,8 -> 0,407/0,417/0,423 (alt 0,399, halbe Aufloesung, 10 Torfotos); Agent r1 Foto 6261: First ca. 0,6 m, Wolke-Oberkante 0,9 m ueber altem Modell (Widerspruch nicht gemittelt, 0,8 = Foto-F1-Optimum im Sweep) | ANNAHME: Satteldach, First quer zur Wand mittig auf der Stufe; Dachform aus 6261/6225/6161 gesehen, nicht vermessen"
    },
    "historie": [
     {
@@ -8111,10 +8125,11 @@
       "daechlein_h": 0.8
      },
      "grund": "Pfeiler-Daechlein (verworfen_r1 + neues Element)"
-    }
+    },
+    "2026-11-11 daechlein_h 0,8->0,25, kappe -0,9->-0,45 (Nutzerfunde Treppe + oberster Pfeiler, Formfund-Weg, Nutzerfreigabe Hoehen-Veto 11.11.)"
    ],
    "spiegel": true,
-   "daechlein_h": 0.8
+   "daechlein_h": 0.25
   },
   {
    "typ": "quader:ost",

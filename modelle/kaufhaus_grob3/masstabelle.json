@@ -6158,7 +6158,8 @@
    "teil": "staffelgiebel:west",
    "merkmal": "Pruefer-Rest staffelgiebel:west kreis 20261110_222554a222554 r2",
    "text": "Offene Fehler laut Pruefer nach angenommener Runde: gelb 6261/6164: Spitzenblock oben links und letzter Pfeiler am Erkerhelm nicht deckend | gelb nu3b: Schnittlinie Giebel/Dachflaeche am linken (unteren) Ende fehlt, ausserdem gelb am Helmende unten rechts | gelb q11: Unterkanten der Daechlein/Pfeilerfugen in der unteren Stufenhaelfte fehlen | gelb 6225: Linie parallel unter der Stufenoberkante (Pfeilerfuss/Gesimsband) nicht modelliert, Recall nur 0,35 | 6145 schlechter (P 0,61->0,55): neues rotes Diagonalband bei xyz ~[-5,2;11,6;21,4], deckt sich mit Fehlkanten-Cluster fk_-4_+10_+24 -> Lagefehler Stufenreihe/Rueckflanke am Nordende | Fehlkanten-Cluster fk_-6_+6_+28 an der Giebelspitze (Kanten-Recall im Kasten 0,15) | Konvergenz RUECKSCHRITT: Kanten-Recall 15-20 m 0,404->0,391, 20-40 m 0,458->0,418; staffelgiebel_west Kanten-R 0,326->0,207, Wolkenabstand 0,354->0,382 | Rueckflanke = Spiegel nur ANNAHME, in keinem Foto geprueft | Quellenwiderspruch: 6261 als Westgiebel vermessen, Spiegel-Quelle sagt 6261 zeigt Ostgiebel | daechlein_h 0,8 = Sweep-Optimum ohne Messprotokoll (Foto ca. 0,6, Wolke 0,9 offen) | Z-6261-002 ohne markiertes Zaehlbild, 10. Pfeiler ANNAHME | Werkzeugaenderung baukasten_gen.py ohne regression.py --pruefen (Regel 8b); teile_lage_pruefen/foto_diff/fehlteile_finden nicht gelaufen | Kontrollfotos ohne Vorher-Wert (kein Vergleich moeglich), 6257 nur 0,49/0,48 | objekt.json komplett mit ensure_ascii=False neu geschrieben: ueber 180 Zeilen Diff-Rauschen",
-   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern.",
+   "erledigt": "ersetzt durch Pruefer-Rest kreis 20261111_151128a151127 r1"
   },
   {
    "datum": "2026-11-10",
@@ -6385,7 +6386,8 @@
    "historie": [
     "2026-11-11 14:25 teil ost->west (Geometrie L48b: Saegezahn daechlein_h 0,8 nur West, NICHTS_GEBRACHT 12:51); Zusatz: Stufen tragen niedrige Satteldachkappen ~0,2-0,4 m (IMG_6164, Flaechenmass D 0,4) - Kappenhoehe per foto_mass messen, nicht 0 und nicht 0,8",
     "2026-11-11 Nutzer (Screenshot Foto q11 | vorher | nachher, rote Rahmen): oberster Pfeiler im Modell ein hoher Block (Steigung 2,11 m statt 1,21 m Regelstufe: z_spitze 29,32 gegen Giebellinie+kappe -0,9), im Foto gleich hoch wie die anderen Stufen mit Kappe -> Spitzenblock muss wie Stufe gebaut werden (Option spitze_als_stufe)"
-   ]
+   ],
+   "erledigt": "kreis 20261111_151128a151127 r1 2026-11-11 15:16: Formfund-Pruefer besteht (sicher hoch), Foto-F1 0.592 -> 0.599; Rest siehe Pruefer-Rest"
   },
   {
    "teil": "bruestung:balkon",
@@ -6690,6 +6692,14 @@
     "spitzenblock",
     "spitze"
    ]
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_151128a151127 r1 (automatisch)",
+   "teil": "staffelgiebel:west",
+   "merkmal": "Pruefer-Rest staffelgiebel:west kreis 20261111_151128a151127 r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: kreis_bericht.md beschreibt eine fremde Runde (kreuzgewoelbe:laube) statt staffelgiebel:west - Bericht fehlt | keine _nachher.jpg-Overlays vorhanden, nur _vorpruef | oberster Pfeiler (Nutzerfund) weiter zu hoch: roter Block oben links in q11/6164/6261 unveraendert | kappe -0,9->-0,45 nicht belegt: Gesamt-F1 +0,001, widerspricht Kappenecken M-6261-022..026, foto_mass in q11/6164 offen | gelb: Kappe/Daechlein oberster Pfeiler 6261 oben links, Fuss am Turm unten rechts in 6164/6261/q11/c12 | rot: Westgiebelflanke am Erker in 6225 unveraendert | Dichte-Verdacht marge_min -0,039: Foto-Gewinn belegt Lage nicht; Lage nur per Sicht in 6164/6261 bestaetigt (Stufen auf Fotopfeilern) | Daechlein 0,25 m nur per F1-Sweep, nicht per foto_mass gemessen | kein Pruefstand-Lauf (bauen_abnehmen.sh) in den Logs gesehen (Regel 1 offen) | foto_diff und fehlteile_finden nicht gelaufen",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
