@@ -6367,10 +6367,10 @@
    "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude"
   },
   {
-   "teil": "freiform:tor_b2",
-   "merkmal": "Tor in der Laubenrueckwand ist rund (Rundbogen), im Modell spitz",
-   "text": "Nutzer 11.11. 08:48 (Formkanten-Ansicht). Schwaechstes Teil am Foto (0,49) - war trotzdem nie Kreisziel (0 Runden).",
-   "naechster_schritt": "Bogenform Stufe 0 aus >=3 Fotos (rund), Kaempfer/Scheitel per foto_mass; klaeren, warum tor_b2 nie gewaehlt wurde.",
+   "teil": "kreuzgewoelbe:laube",
+   "merkmal": "Schildbogen (Uebergang Gewoelbekappe zur Rueckwand) ist rund, im Modell spitz",
+   "text": "Nutzer 11.11. 08:48 + Klarstellung ~10:20: gemeint ist NICHT das Tor tor_b2 (in 6243 tatsaechlich spitz), sondern der Uebergang der Boegen/Kappen zur Wand: die Anschlusslinie Gewoelbe-Rueckwand ist im Foto ein Rundbogen, im Modell eine Spitze (Formkanten-Ansicht Mitte Rueckwand). Haengt mit 'Wandanschluss ueber Tuer' zusammen.",
+   "naechster_schritt": "Schildbogenform (Rundbogen, Kaempfer/Scheitel) an >=3 Fotos messen; Kappengeometrie des kreuzgewoelbe so, dass die Wandschnittlinie rund ist.",
    "datum": "2026-11-11",
    "wer": "Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude"
   },
