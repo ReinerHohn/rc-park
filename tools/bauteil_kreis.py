@@ -459,10 +459,22 @@ def waehlen(z, sperre):
     # Nutzerregel 10.11. 14:4x: IMMER das schwaechste Teil zuerst ("dann konvergieren wir"). Frueher gingen offene Beobachtungen vor -
     # 7/7 Runden landeten auf Teilen mit 0,94-0,98 (kaum Spielraum, kleine Fehler = Rueckschritt). Offene Beobachtungen zu dem gewaehlten
     # Teil reisen jetzt MIT in den Auftrag (Zielart beobachtung), bestimmen aber nicht mehr die Reihenfolge.
+    _istn = lambda b: "nutzer" in str(b.get("wer", "")).lower()
     bz = {}
-    for b in beob_ziele(z):
+    for b in sorted(beob_ziele(z), key=lambda b: 0 if _istn(b["beob"]) else 1):   # Nutzerbefund vor eigenem Befund desselben Teils
         bk = beob_schluessel(b["beob"])
         if sperre.get(bk, 0) < MAX_FEHL and fg.get(bk, 0) < MAX_GLOBAL: bz.setdefault(b["teil"], b)
+    # NUTZERENTSCHEID 11.11. ("Nutzerfunde zuerst"): Teile mit offenem NUTZER-Sichtfund (masstabelle, wer enthaelt 'Nutzer', nicht erledigt,
+    # Befund nicht gesperrt) vor die Rangfolge "schwaechstes Teil zuerst" (10.11.); deren Teile lagen oft im Mittelfeld und kamen nie dran.
+    # Tor/Pruefer unveraendert. Abschalten: --nutzer_zuerst 0.
+    if opt("--nutzer_zuerst", 1, int):
+        try: _B = json.load(open(os.path.join(ROOT, "modelle", OBJ, "masstabelle.json"))).get("beobachtungen_offen") or []
+        except Exception: _B = []
+        nutz = {str(b["teil"]).replace(":", "__") for b in _B if isinstance(b, dict) and b.get("teil") and not b.get("erledigt") and _istn(b)
+                and sperre.get(beob_schluessel(b), 0) < MAX_FEHL and fg.get(beob_schluessel(b), 0) < MAX_GLOBAL}
+        if nutz & {t["teil"] for t in kand}:
+            kand.sort(key=lambda t: 0 if t["teil"] in nutz else 1)
+            print("Nutzerfunde zuerst:", [t["teil"] for t in kand if t["teil"] in nutz], flush=True)
     for t in kand:   # atomar belegen (O_EXCL), damit zwei Spuren nie dasselbe Teil nehmen
         try:
             fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
