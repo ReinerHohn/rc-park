@@ -427,7 +427,10 @@ def waehlen(z, sperre):
             fd = os.open(os.path.join(BELEGT, t["teil"]), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{LAUF} {os.getpid()}".encode()); os.close(fd)
             if t["teil"] in erl_v:
                 import fcntl as _f; _lk = open(ERLEDIGT + ".lock", "w"); _f.flock(_lk, _f.LOCK_EX)
-                _e = erledigt_laden(); _e.get(erl_v[t["teil"]], {})["weitergereicht"] = f"{LAUF} {time.strftime('%Y-%m-%d %H:%M')}"
+                _e = erledigt_laden()
+                for _fid, _ee in _e.items():   # alle Verweise auf dieses Teil (11.11.: zwei Befunde -> Erker 2 zweimal vorgezogen)
+                    if str(_ee.get("befund", "")).lower().startswith("vorhandenes teil") and str(_ee["befund"]).split()[-1].replace(":", "__") == t["teil"] and not _ee.get("weitergereicht"):
+                        _ee["weitergereicht"] = f"{LAUF} {time.strftime('%Y-%m-%d %H:%M')}"
                 json.dump(_e, open(ERLEDIGT, "w"), ensure_ascii=False, indent=1); _f.flock(_lk, _f.LOCK_UN); _lk.close()
                 print(f"Verweis aus Fehlteil-Befund {erl_v[t['teil']]} -> Ziel {t['teil']} vorgezogen", flush=True)
             return bz.get(t["teil"], t)
