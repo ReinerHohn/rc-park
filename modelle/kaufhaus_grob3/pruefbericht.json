@@ -1,5 +1,5 @@
 {
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_023109a023500/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.2521246230474818,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.1059010699391365,
-  "wand_anteil_unter": 0.0006333333333333333,
+  "wand_pq": 0.10599063336849213,
+  "wand_anteil_unter": 0.0006,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -77,7 +77,7 @@
   "fenster_b1_anzahl": 2.0,
   "fenster_b1_breite_median": 0.77,
   "fenster_b1_breite_max": 0.77,
-  "fenster_b1_ebene_abstand": 1.8860301355502789,
+  "fenster_b1_ebene_abstand": 1.886030256196551,
   "bandfront_z76": -0.00653820462883381,
   "bogen3_scheitel": 5.643319862365722,
   "erker_w_diag_l": 1.5456719685059321,
@@ -222,6 +222,8 @@
   "baldachin2_haube_um": 0.3599108512001097,
   "baldachin2_krone_up": 0.49468932344266975,
   "baldachin2_krone_um": 0.4953106968185508,
+  "fenster_eg2_oberkante_l": -0.11524318878876638,
+  "fenster_eg2_oberkante_r": -0.11428274214072154,
   "laube_decke_u46": 5.807000000000002,
   "laube_decke_u363": 4.867000000000001
  },
@@ -428,7 +430,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.1059010699391365,
+   "wert": 0.10599063336849213,
    "soll": [
     0.0348,
     100
@@ -1307,16 +1309,6 @@
    "status": "ok"
   },
   {
-   "name": "Tuer Laube EG Bogen 3: Rahmenvorderkante gegen die Wandfront n 7,28 (m, - = davor, Strahl am rechten Rahmenpfosten, z 2,2)",
-   "wert": -0.04463395892203348,
-   "soll": [
-    -0.096,
-    0.0
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
    "name": "Fenster Laube EG Bogen 4 (eg0): Setzholz-/Kreuzstock-Vorderflaeche gegen die Wandfront n 7,28 (m, + = dahinter, Strahl am Setzholz u 12,47, z 4,4)",
    "wert": 0.0207220242320707,
    "soll": [
@@ -1822,6 +1814,36 @@
    "soll": [
     0.85,
     1.13
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Tuer Laube EG Bogen 3: Rahmenvorderkante gegen die Wandfront n 7,28 (m, - = davor, Strahl am rechten Rahmenpfosten, z 2,5)",
+   "wert": -0.04463395892203348,
+   "soll": [
+    -0.096,
+    0.0
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Laube EG Bogen 1 (eg2): Rahmenoberkante flach - Rahmen bei z 6,35 vorhanden (links vom Setzholz u -5,36) (m hinter der Wandfront)",
+   "wert": -0.11524318878876638,
+   "soll": [
+    -0.16,
+    -0.06
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Laube EG Bogen 1 (eg2): Rahmenoberkante flach - Rahmen bei z 6,35 vorhanden (rechts vom Setzholz u -5,36) (m hinter der Wandfront)",
+   "wert": -0.11428274214072154,
+   "soll": [
+    -0.16,
+    -0.06
    ],
    "ok": true,
    "status": "ok"
