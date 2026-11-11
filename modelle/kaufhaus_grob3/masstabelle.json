@@ -2602,6 +2602,36 @@
    "quer_max": 0.3,
    "r_max": 3.0,
    "z": "=13.25 - z_unterkante_lot2"
+  },
+  "stirnbogen_west_m_unterkante_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    -4.882,
+    11.886
+   ],
+   "z0": "=5.9 - z_unterkante_lot2",
+   "z1": "=8.0 - z_unterkante_lot2",
+   "suche": "unten"
+  },
+  "stirnbogen_west_a_unterkante_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    -5.207,
+    10.967
+   ],
+   "z0": "=5.9 - z_unterkante_lot2",
+   "z1": "=8.0 - z_unterkante_lot2",
+   "suche": "unten"
+  },
+  "stirnbogen_west_b_unterkante_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    -4.663,
+    12.503
+   ],
+   "z0": "=5.9 - z_unterkante_lot2",
+   "z1": "=8.0 - z_unterkante_lot2",
+   "suche": "unten"
   }
  },
  "pruefungen": [
@@ -5438,6 +5468,54 @@
    "historie": [
     "2026-11-11 angelegt (Kreis Fehlteil ff_-4_+16_+14, 6 Fotos gelb am Helmfuss): am Modell Fussring 1,78 muss die Pruefung fehlschlagen"
    ]
+  },
+  {
+   "name": "Stirnbogen West (Laubenende): Bogenunterkante bei s 9.575 (Schildbogen-Oeffnung statt Rechteck)",
+   "wert": "stirnbogen_west_m_unterkante_z + z_unterkante_lot2",
+   "soll": [
+    7.0,
+    7.3
+   ],
+   "quelle": "Foto 6225 (kalibriert K-6225, SfM-Buendel, Stirnebene u=-8,82): Innenkante des goldgesaeumten Westbogens per Strahlschnitt, Sichtpunkte Bogenkante (Pixel 6225: (480,1110)/0,45 -> s 10,23 z 7,17; (560,1160) -> s 9,55 z 7,21; (650,1280) -> s 8,60 z 6,88; Ebenenfehler u -8,82 gegen -8,96 = 0,1 m); nur EIN kalibriertes Foto, 6117 zeigt am Ostende den Bogen nur als Randkurve; ANNAHME Kaempfer/Form wie Front",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "Strahlschnitt K-6225 aus Kreis1-Lauf 20261111_152551 (Stirnbogen-Runde; Rechnung im Bericht audit/kreis_bericht.md)",
+   "historie": [
+    "2026-11-11 angelegt (Kreis1 Stirnboegen): am Altmodell (Rechteckoeffnung bis z 7,9) muss sie fehlschlagen"
+   ]
+  },
+  {
+   "name": "Stirnbogen West (Laubenende): Bogenunterkante bei s 8.6 (Schildbogen-Oeffnung statt Rechteck)",
+   "wert": "stirnbogen_west_a_unterkante_z + z_unterkante_lot2",
+   "soll": [
+    6.73,
+    7.03
+   ],
+   "quelle": "Foto 6225 (kalibriert K-6225, SfM-Buendel, Stirnebene u=-8,82): Innenkante des goldgesaeumten Westbogens per Strahlschnitt, Sichtpunkte Bogenkante (Pixel 6225: (480,1110)/0,45 -> s 10,23 z 7,17; (560,1160) -> s 9,55 z 7,21; (650,1280) -> s 8,60 z 6,88; Ebenenfehler u -8,82 gegen -8,96 = 0,1 m); nur EIN kalibriertes Foto, 6117 zeigt am Ostende den Bogen nur als Randkurve; ANNAHME Kaempfer/Form wie Front",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "Strahlschnitt K-6225 aus Kreis1-Lauf 20261111_152551 (Stirnbogen-Runde; Rechnung im Bericht audit/kreis_bericht.md)",
+   "historie": [
+    "2026-11-11 angelegt (Kreis1 Stirnboegen): am Altmodell (Rechteckoeffnung bis z 7,9) muss sie fehlschlagen"
+   ]
+  },
+  {
+   "name": "Stirnbogen West (Laubenende): Bogenunterkante bei s 10.23 (Schildbogen-Oeffnung statt Rechteck)",
+   "wert": "stirnbogen_west_b_unterkante_z + z_unterkante_lot2",
+   "soll": [
+    7.02,
+    7.32
+   ],
+   "quelle": "Foto 6225 (kalibriert K-6225, SfM-Buendel, Stirnebene u=-8,82): Innenkante des goldgesaeumten Westbogens per Strahlschnitt, Sichtpunkte Bogenkante (Pixel 6225: (480,1110)/0,45 -> s 10,23 z 7,17; (560,1160) -> s 9,55 z 7,21; (650,1280) -> s 8,60 z 6,88; Ebenenfehler u -8,82 gegen -8,96 = 0,1 m); nur EIN kalibriertes Foto, 6117 zeigt am Ostende den Bogen nur als Randkurve; ANNAHME Kaempfer/Form wie Front",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "Strahlschnitt K-6225 aus Kreis1-Lauf 20261111_152551 (Stirnbogen-Runde; Rechnung im Bericht audit/kreis_bericht.md)",
+   "historie": [
+    "2026-11-11 angelegt (Kreis1 Stirnboegen): am Altmodell (Rechteckoeffnung bis z 7,9) muss sie fehlschlagen"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -6667,8 +6745,25 @@
     7.5
    ],
    "historie": [
-    "2026-11-11 15:22 Nutzer erneut (Viewer v50 Modell+Wolke+Kanten, rotes Rechteck Westende Laube, Passendes Foto ns_9812e9cb): Seitenoeffnung weiter Rechteck mit Halbbogen; Teil war durch 2 leere Gewoelbe-Runden gesperrt (behoben 01a0cafb) -> als neuester Nutzerfund ans Ende (Kreis nimmt je Teil den neuesten)"
-   ]
+    "2026-11-11 15:22 Nutzer erneut (Viewer v50 Modell+Wolke+Kanten, rotes Rechteck Westende Laube, Passendes Foto ns_9812e9cb): Seitenoeffnung weiter Rechteck mit Halbbogen; Teil war durch 2 leere Gewoelbe-Runden gesperrt (behoben 01a0cafb) -> als neuester Nutzerfund ans Ende (Kreis nimmt je Teil den neuesten)",
+    "2026-11-11 Kreis1 (152551): Stufe 0 an 6225 (Westbogen klar sichtbar, goldgesaeumt, Gewoelbe dahinter), 6117 (Ostende: Bogenkurve links der Endsaeule), 6130/6124 (Frontbogen gleiche Familie); Pruefungen stirnbogen_west_* angelegt"
+   ],
+   "erledigt": "kreis1 Stirnboegen West+Ost gebaut (bogenreihe stirnboegen): West an Foto 6225 gemessen (Scheitel 7,15, Spannweite s 7,28-11,87, Pruefungen stirnbogen_west_* rot->gruen); OST nur gespiegelte ANNAHME, ungemessen; Aussenring 0,31/0,22 ANNAHME; Foto-F1 10 Torfotos halb 0,741->0,756, 6225 0,656->0,731"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "kreis 20261111_152551a152551 r1 (automatisch)",
+   "merkmal": "Kantengitter widerspricht Foto (bogenreihe__laube)",
+   "text": "Angenommen nach Quellenvorrang Foto: Gitter-F1 0.438->0.382, Foto-F1 0.732->0.752; Gitter-Baender praezision 5-10 m: 0.463 -> 0.376, Foto-F1 0.732->0.752. Kantengitter hat dort vermutlich Fehlsegmente.",
+   "naechster_schritt": "Gittersegmente im Teilbereich gegen Fotos pruefen (gitter_zurueck), Fehlsegmente markieren."
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_152551a152551 r1 (automatisch)",
+   "teil": "bogenreihe:laube",
+   "merkmal": "Pruefer-Rest bogenreihe:laube kreis 20261111_152551a152551 r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: 6225: Aussenring/Goldrand oben gelb (y~315-330), Ring-Oberkante zu tief bzw. fehlt; Breite 0,31/Tiefe 0,22 nur von der Front uebernommen (ANNAHME) | 6225: rote Modellkante rechts an der Endsaeule (x~840), Stirnwand-Ende s_bis 11,95 ohne Fotokante | 6176: neue rote Ringkanten-Baender oben links am nahen Stirnbogen (erfundene Ringkanten bzw. Versatz) | Ostbogen ungeprueft: gespiegelte ANNAHME, Ebene u 15,86 nicht gemessen, nur 6117 angedeutet | Masse aus nur EINEM kalibrierten Foto (6225) - Regel >=3 Fotos nicht erfuellt | Kaempfer 5,28 von der Front uebernommen, 6225 deutet auf 5,5-5,9 - offen; Asymmetrie bei s 11,21 (6,77 gemessen vs 6,46 Modell) ungeklaert | Wanddicke 0,5 ANNAHME (Laibungstiefe nicht sichtbar) | Foto-F1 gesamt 0,741 -> 0,743 (ff-JSON), Tor +0,02 nicht erreicht; d20 0,785->0,778 und 6182 0,836->0,833 leicht gefallen, Ursache nicht sichtbar | Pfeiler-Rot (6176 unten, 6130 rechts) besteht weiter (nicht diese Runde)",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
