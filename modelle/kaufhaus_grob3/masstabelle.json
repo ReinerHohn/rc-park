@@ -7617,6 +7617,45 @@
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   },
   {
+   "teil": "erker_polygon:1",
+   "merkmal": "Erker Ost: aeusseres Segment fehlt (Gassenseite)",
+   "wer": "Nutzer (Sichtbeobachtung)",
+   "formfamilie_test": true,
+   "text": "Nutzer 11.11. 20:59 (Viewer v55 Kanten, Foto an_handy_2026-11-06_i_handy_i_09, rote Rahmen audit/nutzer_2026-11-11_2059_erker_segment.jpg): am Ost-Erker fehlt ganz aussen (zur Gasse) ein Segment; Foto 6259 zeigt links eine schmale weitere Fensterflaeche. Modell: Teil-Achteck mit 3 Flaechen - Flaechenzahl am Foto neu zaehlen (foto_zaehlung, >=3 Fotos: 6259, i_09, n11_05/06).",
+   "naechster_schritt": "Flaechenzahl des Ost-Erkers am Foto zaehlen (Regel 9), dann n_flaechen/Grundriss im Generator erweitern; Gegenprobe West-Erker (Symmetrie?).",
+   "pruef_stichworte": [
+    "segment",
+    "flaeche",
+    "erker seite"
+   ],
+   "fotos": [
+    "6259",
+    "an_handy_2026-11-06_i_handy_i_09",
+    "n11_05",
+    "n11_06"
+   ],
+   "datum": "2026-11-11"
+  },
+  {
+   "teil": "quader:rumpf_og",
+   "merkmal": "Gassenwand/Ostgiebel: Fenster an der Seite fehlen (Nutzer erneut)",
+   "wer": "Nutzer (Sichtbeobachtung)",
+   "formfamilie_test": true,
+   "text": "Nutzer 11.11. 20:59 (zweiter roter Rahmen, Seitenwand unter dem Ostdach): fehlende Fenster an der Seite; dritte Meldung des Nutzers. Messkameras n11_05/n11_06 seit 9b48d166 vorhanden (vorher 9 leere Runden mangels Kameras).",
+   "naechster_schritt": "Fenster je Geschoss an n11_05/n11_06 zaehlen (foto_zaehlung), foto_mass --kamera, Generator Fensterreihe Ostwand.",
+   "pruef_stichworte": [
+    "fenster",
+    "seite",
+    "gassenwand"
+   ],
+   "fotos": [
+    "n11_05",
+    "n11_06",
+    "an_handy_2026-11-06_i_handy_i_09"
+   ],
+   "datum": "2026-11-11"
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 2)",
    "auto_id": "fehlteile-6261-234-1794",
@@ -7649,43 +7688,6 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "teil": "erker_polygon:1",
-   "merkmal": "Erker Ost: aeusseres Segment fehlt (Gassenseite)",
-   "wer": "Nutzer (Sichtbeobachtung)",
-   "formfamilie_test": true,
-   "text": "Nutzer 11.11. 20:59 (Viewer v55 Kanten, Foto an_handy_2026-11-06_i_handy_i_09, rote Rahmen audit/nutzer_2026-11-11_2059_erker_segment.jpg): am Ost-Erker fehlt ganz aussen (zur Gasse) ein Segment; Foto 6259 zeigt links eine schmale weitere Fensterflaeche. Modell: Teil-Achteck mit 3 Flaechen - Flaechenzahl am Foto neu zaehlen (foto_zaehlung, >=3 Fotos: 6259, i_09, n11_05/06).",
-   "naechster_schritt": "Flaechenzahl des Ost-Erkers am Foto zaehlen (Regel 9), dann n_flaechen/Grundriss im Generator erweitern; Gegenprobe West-Erker (Symmetrie?).",
-   "pruef_stichworte": [
-    "segment",
-    "flaeche",
-    "erker seite"
-   ],
-   "fotos": [
-    "6259",
-    "an_handy_2026-11-06_i_handy_i_09",
-    "n11_05",
-    "n11_06"
-   ]
-  },
-  {
-   "teil": "quader:rumpf_og",
-   "merkmal": "Gassenwand/Ostgiebel: Fenster an der Seite fehlen (Nutzer erneut)",
-   "wer": "Nutzer (Sichtbeobachtung)",
-   "formfamilie_test": true,
-   "text": "Nutzer 11.11. 20:59 (zweiter roter Rahmen, Seitenwand unter dem Ostdach): fehlende Fenster an der Seite; dritte Meldung des Nutzers. Messkameras n11_05/n11_06 seit 9b48d166 vorhanden (vorher 9 leere Runden mangels Kameras).",
-   "naechster_schritt": "Fenster je Geschoss an n11_05/n11_06 zaehlen (foto_zaehlung), foto_mass --kamera, Generator Fensterreihe Ostwand.",
-   "pruef_stichworte": [
-    "fenster",
-    "seite",
-    "gassenwand"
-   ],
-   "fotos": [
-    "n11_05",
-    "n11_06",
-    "an_handy_2026-11-06_i_handy_i_09"
-   ]
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
