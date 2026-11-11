@@ -464,7 +464,7 @@ def waehlen(z, sperre):
     # Nutzerbefund vor eigenem Befund desselben Teils, je Gruppe der NEUESTE zuerst (11.11. a105629: aeltere Kapitell-Beobachtung wurde Ziel,
     # die Funde von heute (Sockel, Stirnboegen) blieben liegen; masstabelle haengt neue Beobachtungen hinten an)
     _bzl = beob_ziele(z)
-    for b in sorted(_bzl, key=lambda b: (0 if _istn(b["beob"]) else 1, -_bzl.index(b))):
+    for b in sorted(_bzl, key=lambda b: (0 if _istn(b["beob"]) else 1, 0 if b["beob"].get("formfamilie_test") else 1, -_bzl.index(b))):   # Formfund (formfamilie_test) vor Lagebefund (a112731 nahm Giebel-Versatz statt Treppe)
         bk = beob_schluessel(b["beob"])
         if sperre.get(bk, 0) < MAX_FEHL and fg.get(bk, 0) < MAX_GLOBAL: bz.setdefault(b["teil"], b)
     # NUTZERENTSCHEID 11.11. ("Nutzerfunde zuerst"): Teile mit offenem NUTZER-Sichtfund (masstabelle, wer enthaelt 'Nutzer', nicht erledigt,
