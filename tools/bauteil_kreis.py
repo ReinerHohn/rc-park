@@ -48,7 +48,7 @@ MIN_DATEN = opt("--min_daten", 0.3, float); MIN_GEWINN = opt("--min_gewinn", 0.0
 # Wolke nur Veto fuer die LAGE (Regel 9d) und nur, wo das Teil genug Wolkendaten hat (anteil_mit_daten >= --min_daten).
 # ANNAHME: Schwelle 0,02 = Veto-Marge; Foto-F1 ist deterministisch (unveraendertes Modell 0,635 -> 0,635, 0,72 -> 0,72, Logs 10.11.).
 MIN_GEWINN_FOTO = opt("--min_gewinn_foto", 0.02, float)
-FORMFUND = opt("--formfund", 0, int)          # Formfund-Weg (SPEC_FORMFUND_TOR.md); 0 bis Beweis test_formfund_tor.py bestanden
+FORMFUND = opt("--formfund", 1, int)          # Formfund-Weg (SPEC_FORMFUND_TOR.md); an seit 11.11. 14:2x (Beweis 7/7 gepruefte Faelle richtig, Rinne-Negativfall lief noch; --formfund 0 = aus)
 FORMFUND_TOL = opt("--formfund_tol", 0.005, float)   # erlaubter Foto-F1-Abfall in Formfund-Runden
 # KONTROLLFOTOS (10.11. abends, Westgiebel-Agent mass auf selbst gewaehlten 6 Fotos 0,73-0,81, auf allen 10 Torfotos 0,413->0,394;
 # Recherche Goodhart): je Teil N Fotos aus Rang 11.. der Formliste, dem Agenten NIE genannt (eigener Bilderordner), erst am Endtor gemessen.
