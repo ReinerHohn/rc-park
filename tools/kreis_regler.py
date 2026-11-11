@@ -55,6 +55,27 @@ def tote_sperren_freigeben():
         if len(inhalt) >= 2 and inhalt[1].isdigit() and not os.path.exists(f"/proc/{inhalt[1]}"):
             os.remove(os.path.join(bd, f)); print(time.strftime("%H:%M:%S"), "tote Sperre freigegeben:", f, inhalt)
 
+def tote_worktrees_aufraeumen(min_alter_s=1800):
+    """Worktrees abgebrochener Spuren (OOM/Zeitlimit/Code-neu-Ende vor dem Entfernen) blieben liegen: 11.11. 22 x ~520 MB = 11,5 GB, Daten 8 GB frei.
+    Verlustfrei wie die Spur selbst: Reststand auf den Zweig committen, dann 'worktree remove' OHNE --force (bricht bei Unklarem ab).
+    Nie bei laufendem Prozess mit Laufnamen/Spur in der Kommandozeile (auch --nachpruefen), nie juenger als min_alter_s."""
+    wl = subprocess.run(["git", "-C", ROOT, "worktree", "list", "--porcelain"], capture_output=True, text=True).stdout
+    wts = [l[9:] for l in wl.splitlines() if l.startswith("worktree ") and l[9:].startswith(os.path.join(KD, OBJ) + "/")]
+    if not wts: return
+    ps = subprocess.run(["ps", "-eo", "args"], capture_output=True, text=True).stdout
+    for w in wts:
+        lauf = os.path.basename(os.path.dirname(w)); spur = lauf.split("_", 2)[-1].lstrip("0123456789")
+        if not lauf[:8].isdigit() or lauf in ps or (spur and f"--spur {spur} " in ps + " "): continue
+        try:
+            if time.time() - os.path.getmtime(w) < min_alter_s: continue
+        except OSError: continue
+        if subprocess.run(["git", "-C", w, "symbolic-ref", "-q", "HEAD"], capture_output=True).returncode == 0:
+            subprocess.run(["git", "-C", w, "add", "-A"], capture_output=True)
+            if subprocess.run(["git", "-C", w, "diff", "--cached", "--quiet"]).returncode != 0:
+                subprocess.run(["git", "-C", w, "commit", "-q", "--no-verify", "-m", f"kreis {lauf}: Reststand gesichert (Regler raeumt toten Worktree)"], capture_output=True)
+        r = subprocess.run(["git", "-C", ROOT, "worktree", "remove", w], capture_output=True, text=True)
+        print(time.strftime("%H:%M:%S"), "toter Worktree", "entfernt:" if r.returncode == 0 else "bleibt (" + r.stderr.strip()[:80] + "):", w)
+
 def tor_wartet():
     """Grund-Text, wenn ein Tor (Bau/Abnahme/Messung einer Spur oder die main-Abnahme) laeuft, ansteht oder nach OOM wartet, sonst ''.
     Nutzerregel 10.11.: Tore haben Vorrang - solange eines wartet, keine Nebenjobs (Formliste usw.); 13:3x verstopften sie 4 fertige Runden."""
@@ -105,8 +126,13 @@ def form_auffrischen():
     form_start = time.time(); form_auffrischen.veraltet_seit = None
     print(time.strftime("%H:%M:%S"), f"Formliste veraltet (main-STL {sha}) -> fotoform_auffrischen gestartet" + (f" (nach {(time.time() - seit) / 60:.0f} min Wartezeit trotz Torschritt: {tw})" if tw else ""), flush=True)
 print(f"Kreis-Regler {OBJ}: max {MAX} Spuren, GPU-Ziel {GPU_ZIEL} %, VRAM < {VRAM_MAX} MiB, RAM > {RAM_MIN} GB, Takt {TAKT} s")
+_takt_nr = 0
 while True:
     tote_sperren_freigeben()
+    _takt_nr += 1
+    if _takt_nr % 10 == 1:
+        try: tote_worktrees_aufraeumen()
+        except Exception as ex: print("tote_worktrees_aufraeumen:", ex)
     try: nebenjob_anhalten(tor_wartet())
     except Exception as ex: print("nebenjob_anhalten:", ex)
     try: form_auffrischen()
