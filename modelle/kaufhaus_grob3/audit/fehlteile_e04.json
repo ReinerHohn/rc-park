@@ -4,21 +4,6 @@
  "kamera": "K-e04 (amtliche Anker)",
  "zelle_px": 196,
  "schwelle": 0.35,
- "treffer": [
-  {
-   "zelle": [
-    784,
-    784,
-    196
-   ],
-   "score": -0.84,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -5.62,
-    8.09,
-    24.12
-   ]
-  }
- ],
+ "treffer": [],
  "versatz_test": null
 }
