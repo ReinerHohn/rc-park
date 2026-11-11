@@ -113,7 +113,9 @@ def form_auffrischen():
         return
     if time.time() - form_start < 2400: return
     if subprocess.run(["systemctl", "--user", "is-active", "--quiet", "rcpark-fotoform"]).returncode == 0: return
-    seit = max(os.path.getmtime(stl), form_start)   # 11.11.: aus Dateizeit (Merge) statt Speicher - Regler-Neustart setzte die Wartezeit sonst auf 0
+    # Wartezeit seit der LETZTEN FERTIGEN Liste (Dateizeit, ueberlebt Neustart). 11.11.: STL-Zeit setzte bei jedem Merge zurueck -> bei haeufigen
+    # Annahmen nie 'verhungert', 1 h 20 min ohne Liste.
+    _fl = glob.glob(os.path.join(FORM, "*.json")); seit = max(max((os.path.getmtime(f) for f in _fl), default=0), form_start)
     verhungert = time.time() - seit > 3600   # 11.11.: bei 6 Spuren ist gpu_tor.lock fast immer belegt -> Liste fuer main kam 2 h nie; nach 60 min trotzdem, wenn VRAM reicht (OOM-Tor haelt sie weiter an)
     if gpu()[1] > (4500 if verhungert else 3000): return   # 10.11. 13:3x: Auffrischung (40 min GPU) verstopfte mit Agentenpruefungen die Tore (4 fertige Runden im OOM); nur bei freier GPU
     tw = tor_wartet()
