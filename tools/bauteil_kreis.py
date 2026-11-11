@@ -581,8 +581,11 @@ def auftrag(ziel, runde, wt):
                   f"'FEHLTEIL-BEFUND: Gitter zu duenn' | 'FEHLTEIL-BEFUND: vorhandenes Teil <typ:name>' (z. B. staffelgiebel:west, wenn ein vorhandenes Teil "
                   f"falsch liegt/zu hoch ist und du es NICHT in dieser Runde korrigierst). Danach wird der Kasten nicht erneut vergeben.")
     else:
-        befund = (f"Automatisch aus konvergenz_bericht (Wolkenbeleg je Bauteil): {typ} hat nur {ziel['beleg']:.2f} seiner datennahen "
-              f"Flaeche auf der Wolke (Median-Abstand {ziel['median_m']:.2f} m, Anteil mit Daten {ziel['anteil_mit_daten']:.2f}). "
+        _wtxt = (f"Automatisch aus konvergenz_bericht (Wolkenbeleg je Bauteil): {typ} hat nur {ziel['beleg']:.2f} seiner datennahen "
+                 f"Flaeche auf der Wolke (Median-Abstand {ziel['median_m']:.2f} m, Anteil mit Daten {ziel['anteil_mit_daten']:.2f}). "
+                 if ziel.get("beleg") is not None and ziel.get("median_m") is not None else
+                 f"{typ} hat keinen Wolkenbeleg (Ausschnitt/Boolesche Differenz oder ausserhalb der Wolkenliste) - Ziel nach FOTONOTE (Regel 9e). ")
+        befund = (_wtxt +
               f"Fotokanten (Kantengitter aus Fotos) je Teil: Recall {ziel.get('kanten_recall')} (Anteil der Fotokanten am Teil, die das Modell erklaert), "
               f"Praezision {ziel.get('kanten_praez')} (Anteil der Teil-Formkanten, die ein Foto belegt). GATE (Foto zuerst): die FORM AM FOTO (Foto-F1, unten) muss um >= {MIN_GEWINN_FOTO} steigen; "
               f"Wolkenbeleg und Gitter-F1 duerfen nur nicht um > 0,02 fallen (Wolkenbeleg nur, wenn Anteil mit Daten >= {MIN_DATEN}). "
