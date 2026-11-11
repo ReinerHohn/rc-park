@@ -6359,7 +6359,7 @@
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   },
   {
-   "teil": "staffelgiebel:ost",
+   "teil": "staffelgiebel:west",
    "merkmal": "Staffelgiebel sind Treppen (waagerechte Stufen), keine Saegezacken",
    "text": "Nutzer 11.11. 08:38 (Viewer-Screenshot Formkanten): Stufen mit Daechlein (daechlein_h 0,8) wirken als Saegezahn; real waagerechte Treppenstufen. Ursache: daechlein_h am 10.11. (Kreis2 r2) per Foto-F1-Sweep gewaehlt (0,45/0,6/0,8 -> 0,407/0,417/0,423, Unterschied unter Unterscheidbarkeit L46), keine Formbeschreibung Stufe 0. Gilt fuer beide Giebel (west/ost, gemeinsamer Generator).",
    "naechster_schritt": "Pruefung 'Stufenoberkante waagerecht' (Neigung der Stufenkrone am Foto mit foto_mass, >=3 Fotos 6115/6261/6164), die am aktuellen Modell fehlschlaegt; dann daechlein_h nach Messung (vermutlich 0) fuer beide Giebel.",
@@ -6379,6 +6379,9 @@
     "stufenform",
     "daechlein",
     "abdeckung"
+   ],
+   "historie": [
+    "2026-11-11 14:25 teil ost->west (Geometrie L48b: Saegezahn daechlein_h 0,8 nur West, NICHTS_GEBRACHT 12:51); Zusatz: Stufen tragen niedrige Satteldachkappen ~0,2-0,4 m (IMG_6164, Flaechenmass D 0,4) - Kappenhoehe per foto_mass messen, nicht 0 und nicht 0,8"
    ]
   },
   {
