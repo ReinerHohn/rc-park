@@ -1288,6 +1288,7 @@
   "spitze_breite": 0.2,
   "kappe": -0.45,
   "spiegel": true,
+  "spitze_als_stufe": true,
   "seite_name": "alle"
  },
  {
