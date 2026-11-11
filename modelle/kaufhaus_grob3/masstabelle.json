@@ -6972,8 +6972,8 @@
   {
    "teil": "erker_polygon:1",
    "merkmal": "Erker-Fenster: Masswerk oben und Sprossen fehlen (beide Erker)",
-   "text": "Claude 11.11. 17:3x (Sichtbeobachtung am Overlay erker_polygon__1 Foto 6164, Basis F1 0,574): in den Erkerfenstern zeigt das Foto Masswerk-Spitzbogen oben und senkrechte/waagrechte Sprossen (gelb = Fotokante ohne Modellkante); Modell hat glatte Fensterflaechen. Nutzer nennt Erker 'Aushaengeschild'.",
-   "naechster_schritt": "Stufe 0 an 6162/6164/6145/n11: Fensterfelder je Erkerseite, Sprossen je Feld zaehlen (foto_zaehlung), Masswerkform (Spitzbogen/Nasen) beschreiben, Lage per foto_mass; beide Erker; Formfamilie Fenster mit Sprossen + Masswerkbogen als Rahmenrelief.",
+   "text": "Claude 11.11. 17:3x (Sichtbeobachtung am Overlay erker_polygon__1 Foto 6164, Basis F1 0,574): in den Erkerfenstern zeigt das Foto Masswerk-Spitzbogen oben und senkrechte/waagrechte Sprossen (gelb = Fotokante ohne Modellkante); Modell hat glatte Fensterflaechen. Nutzer nennt Erker 'Aushaengeschild'. | Nutzer 11.11. 17:5x: Fenster-Rahmenwerk (goldene Sprossen + Masswerk-Spitzen) und die Butzen-/Waben-Verglasung ('sechseckige Dinger') schon im Modell als EIGENES Teil fuehren, spaeter separat drucken; Verglasung als ausgeschnittene Plexiglasscheibe mit Bleiglas-Muster davor. -> Fenster als eigenes Bauteil (Rahmen) + Glasebene (Muster-Parameter: Butzen rund/Waben, Durchmesser aus Foto zaehlen) getrennt exportieren.",
+   "naechster_schritt": "Stufe 0 an 6162/6164/6145/n11: Fensterfelder je Erkerseite, Sprossen je Feld zaehlen (foto_zaehlung), Masswerkform (Spitzbogen/Nasen) beschreiben, Lage per foto_mass; beide Erker; Formfamilie Fenster mit Sprossen + Masswerkbogen als Rahmenrelief. Zusaetzlich: Verglasungsmuster je Feld am Foto zaehlen (Butzen je Reihe/Spalte, foto_zaehlung), Rahmen und Glas als getrennte Teil-STL (Druck/Plexi).",
    "datum": "2026-11-11",
    "wer": "Claude (Sichtbeobachtung, Erker als Nutzer-Prioritaet)",
    "pruef_stichworte": [
