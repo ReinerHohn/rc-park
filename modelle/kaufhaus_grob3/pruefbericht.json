@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_141719a141718/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -31,9 +31,9 @@
   "tuer_b3_breite_max": 1.41,
   "tuer_b3_ebene_abstand": 1.2968758567997347,
   "bal_feld_anzahl": 10.0,
-  "bal_feld_breite_median": 0.16,
-  "bal_feld_breite_max": 0.17,
-  "bal_feld_ebene_abstand": 1.924544850106738,
+  "bal_feld_breite_median": 0.18,
+  "bal_feld_breite_max": 0.19,
+  "bal_feld_ebene_abstand": 1.9335306727365738,
   "fenster_b3_anzahl": 2.0,
   "fenster_b3_breite_median": 0.8200000000000001,
   "fenster_b3_breite_max": 0.8200000000000001,
@@ -41,7 +41,7 @@
   "teilnetze": 1.0,
   "dicht": 1.0,
   "wand_pq": 0.10590077191591263,
-  "wand_anteil_unter": 0.0006666666666666666,
+  "wand_anteil_unter": 0.0007666666666666667,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -207,7 +207,7 @@
   "bruestung_luecke_west": 0.005928783763525125,
   "bruestung_luecke_ost": -0.01235490722511301,
   "balkon_soffit_frei": -0.0050184289008181615,
-  "balkon_stirn_mitte": -1.2034250248083342,
+  "balkon_stirn_mitte": -1.2034246494479683,
   "laube_sockel_front_w": -0.44554548537133254,
   "laube_sockel_front_o": -0.4612625516363389,
   "laube_sockel_oben_21": -0.5155455442652941,
@@ -1654,7 +1654,7 @@
   },
   {
    "name": "Balkonplatte vorn mittig: Stirn n 13,86 (Auskragung 1,2 m) in z 8,32 (innerhalb der Stirn 8,27..8,37) bleibt erhalten (Kontrolle, nicht rot)",
-   "wert": -1.2034250248083342,
+   "wert": -1.2034246494479683,
    "soll": [
     -1.3,
     -1.08

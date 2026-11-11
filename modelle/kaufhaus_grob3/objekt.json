@@ -4415,8 +4415,14 @@
     {
      "datum": "2026-11-10",
      "wer": "Kreis1 213718 balkonband:haupt (+ bruestung:balkon n_baluster 68->57, u0 -6.808->-4.9708, pfosten_erster 9->3)",
-     "alt": {"u_von": -7.6, "u_bis": 14.92},
-     "neu": {"u_von": -5.4, "u_bis": 12.3},
+     "alt": {
+      "u_von": -7.6,
+      "u_bis": 14.92
+     },
+     "neu": {
+      "u_von": -5.4,
+      "u_bis": 12.3
+     },
      "beleg": "Wolke Platte -5,4..12,3, Konsolen konsolen_v11 -5,15..12,25, Fotos 6171/d11/6132 freie Wand hinter den Enden, Peilung M-6145-001/002"
     }
    ]
@@ -4495,7 +4501,10 @@
     "pfosten_alle": "Foto-Zaehlung Z-6120-001: 11 Baluster je Feld + 1 Pfosten = 12 Rasterplaetze (Pfosten ersetzt einen Baluster: Luecke L->M = 2 Perioden, M-6120-007 0,64 m)",
     "pfosten_erster": "M-6120-006: Pfostenmitte along 6,96 = Rasterplatz 45 ab u0 (-6,808 + 45 x 0,3062 = 6,97) -> erster Platz 45 mod 12 = 9",
     "pfosten_b": "M-6120-006 (foto_mass, K-6120, Ebene 13,84): Vorderflaeche 0,26 m",
-    "pfosten_t": "ANNAHME 0,20 (Seitenflaeche im Foto schmal)"
+    "pfosten_t": "ANNAHME 0,20 (Seitenflaeche im Foto schmal)",
+    "profil": "Foto ip_IMG_6120 (K-6120, Ebene Balusterachse 13,84): Silhouettendurchmesser Kappe 0,078, Hals 0,058-0,065, Bauch 0,074, Wulst 0,081, Fuss 0,076 (aus Vorversuch a053953 r3, M-6120-051..056, +-0,009); Zwischenform = ANNAHME aus Fotoausschnitt",
+    "pfosten_zusatz": "Endpfosten Rasterplatz 0 und 56 (Ost M-6161-023 u -4,976; West M-6161-025 12,09+-0,22 vs Raster 12,17); Breite wie Zwischenpfosten = ANNAHME",
+    "stirn": "VERWORFEN 11.11. (Kreis2 r2): Foto-F1 halbe Aufl. mit Stirn 0,761, ohne 0,783 (-0,022): Lage/Anzahl nur ANNAHME, am Foto nicht gemessen; erst Pfosten/Docken am Ende zaehlen + foto_mass"
    },
    "pfosten_alle": 12,
    "pfosten_erster": 3,
@@ -4514,8 +4523,81 @@
       "pfosten_b": 0.26,
       "pfosten_t": 0.2
      }
+    },
+    {
+     "datum": "2026-11-11",
+     "wer": "Kreis2 105629 r2",
+     "alt": {
+      "profil": null,
+      "stirn": null
+     },
+     "neu": {
+      "profil": "Drehprofil 11 Pkt",
+      "pfosten_zusatz": [
+       0,
+       56
+      ],
+      "stirn": {
+       "n_wand": 12.66,
+       "n_baluster": 3
+      }
+     }
     }
-   ]
+   ],
+   "profil": [
+    [
+     8.35,
+     0.076
+    ],
+    [
+     8.5,
+     0.076
+    ],
+    [
+     8.52,
+     0.081
+    ],
+    [
+     8.62,
+     0.081
+    ],
+    [
+     8.65,
+     0.068
+    ],
+    [
+     8.68,
+     0.074
+    ],
+    [
+     8.89,
+     0.074
+    ],
+    [
+     8.93,
+     0.065
+    ],
+    [
+     9.39,
+     0.058
+    ],
+    [
+     9.42,
+     0.078
+    ],
+    [
+     9.5,
+     0.078
+    ]
+   ],
+   "pfosten_zusatz": [
+    0,
+    56
+   ],
+   "stirn_verworfen": {
+    "n_wand": 12.66,
+    "n_baluster": 3
+   }
   },
   {
    "typ": "quader:laube_rueck",
@@ -4716,7 +4798,32 @@
    ],
    "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
    "quelle": "Fotos 6117/6124/6130 (Stufe 0): durchgehender Sockel mit Gesimsband vor der Laubenrueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006); Front n 7,73 aus Wolke lot2 (z 1,75-2,10, Spitze 7,7-7,8); Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
-   "profil": [[7.2, 1.5], [7.73, 1.5], [7.73, 1.98], [7.8, 2.04], [7.8, 2.2], [7.2, 2.2]],
+   "profil": [
+    [
+     7.2,
+     1.5
+    ],
+    [
+     7.73,
+     1.5
+    ],
+    [
+     7.73,
+     1.98
+    ],
+    [
+     7.8,
+     2.04
+    ],
+    [
+     7.8,
+     2.2
+    ],
+    [
+     7.2,
+     2.2
+    ]
+   ],
    "aktiv": true,
    "werte_quellen": {
     "u0": "Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
@@ -4744,7 +4851,32 @@
    ],
    "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
    "quelle": "Fotos 6117/6124/6130 (Stufe 0): durchgehender Sockel mit Gesimsband vor der Laubenrueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006); Front n 7,73 aus Wolke lot2 (z 1,75-2,10, Spitze 7,7-7,8); Wolke lot2: Sockelfront u 5..16 belegt (213..976 Punkte je 1 m); Ostende = laube_rueck u1; u 5 ANNAHME",
-   "profil": [[7.2, 1.77], [7.73, 1.77], [7.73, 1.98], [7.8, 2.04], [7.8, 2.2], [7.2, 2.2]],
+   "profil": [
+    [
+     7.2,
+     1.77
+    ],
+    [
+     7.73,
+     1.77
+    ],
+    [
+     7.73,
+     1.98
+    ],
+    [
+     7.8,
+     2.04
+    ],
+    [
+     7.8,
+     2.2
+    ],
+    [
+     7.2,
+     2.2
+    ]
+   ],
    "aktiv": true,
    "werte_quellen": {
     "u0": "Wolke lot2: Sockelfront u 5..16 belegt (213..976 Punkte je 1 m); Ostende = laube_rueck u1; u 5 ANNAHME",
@@ -6481,7 +6613,23 @@
     }
    ],
    "historie": [
-    {"datum": "2026-11-11", "wer": "Kreis 20261111_045306a045306 r2 (Agent, baldachine)", "alt": {"stufen[2] t0/t1": [0.3, 0.34]}, "neu": {"stufen[2] t0/t1": [0.46, 0.42]}, "grund": "Foto-F1: Kranzgesims-Unterkante der Krone fehlte im Modell (gelber Balken), Vorderkante lag hinter der Bandfront"},
+    {
+     "datum": "2026-11-11",
+     "wer": "Kreis 20261111_045306a045306 r2 (Agent, baldachine)",
+     "alt": {
+      "stufen[2] t0/t1": [
+       0.3,
+       0.34
+      ]
+     },
+     "neu": {
+      "stufen[2] t0/t1": [
+       0.46,
+       0.42
+      ]
+     },
+     "grund": "Foto-F1: Kranzgesims-Unterkante der Krone fehlte im Modell (gelber Balken), Vorderkante lag hinter der Bandfront"
+    },
     {
      "datum": "2026-11-10",
      "wer": "Kreis a040948 r2 (Agent, Fehlteil fk_+6_+12_+14)",
@@ -7849,9 +7997,27 @@
    "u_neigung": -0.06,
    "fenster_tiefe": 0.12,
    "fenster": [
-    {"n0": 3.98, "n1": 4.73, "z0": 23.2, "z1": 24.67, "quelle": "Foto ip_IMG_6115 Faschen-/Laibungsecken oben rechts+unten links, Strahl-Ebenen-Schnitt K-6115 auf die Wandebene (u 16,05, Neigung -0,06), M-6115-013; Zaehlung 3 Fenster Z-6115-001 + Z-6261-003 (Regel 9); Gegenprobe ohne Neuberechnung: Reprojektion der Ecken in K-6261 trifft die Fensteroeffnungen (+-0,1 m, audit/ost_fenster_6261.jpg)"},
-    {"n0": 4.86, "n1": 5.59, "z0": 20.1, "z1": 21.47, "quelle": "Foto ip_IMG_6115 Faschen-/Laibungsecken oben rechts+unten links, Strahl-Ebenen-Schnitt K-6115 auf die Wandebene (u 16,05, Neigung -0,06), M-6115-014; Zaehlung 3 Fenster Z-6115-001 + Z-6261-003 (Regel 9); Gegenprobe ohne Neuberechnung: Reprojektion der Ecken in K-6261 trifft die Fensteroeffnungen (+-0,1 m, audit/ost_fenster_6261.jpg)"},
-    {"n0": 7.7, "n1": 8.32, "z0": 16.74, "z1": 18.02, "quelle": "Foto ip_IMG_6115 Faschen-/Laibungsecken oben rechts+unten links, Strahl-Ebenen-Schnitt K-6115 auf die Wandebene (u 16,05, Neigung -0,06), M-6115-015; Zaehlung 3 Fenster Z-6115-001 + Z-6261-003 (Regel 9); Gegenprobe ohne Neuberechnung: Reprojektion der Ecken in K-6261 trifft die Fensteroeffnungen (+-0,1 m, audit/ost_fenster_6261.jpg) | ANNAHME: Unterkante teils vom Daechlein-Nachbardach verdeckt, Hoehe nicht gesichert"}
+    {
+     "n0": 3.98,
+     "n1": 4.73,
+     "z0": 23.2,
+     "z1": 24.67,
+     "quelle": "Foto ip_IMG_6115 Faschen-/Laibungsecken oben rechts+unten links, Strahl-Ebenen-Schnitt K-6115 auf die Wandebene (u 16,05, Neigung -0,06), M-6115-013; Zaehlung 3 Fenster Z-6115-001 + Z-6261-003 (Regel 9); Gegenprobe ohne Neuberechnung: Reprojektion der Ecken in K-6261 trifft die Fensteroeffnungen (+-0,1 m, audit/ost_fenster_6261.jpg)"
+    },
+    {
+     "n0": 4.86,
+     "n1": 5.59,
+     "z0": 20.1,
+     "z1": 21.47,
+     "quelle": "Foto ip_IMG_6115 Faschen-/Laibungsecken oben rechts+unten links, Strahl-Ebenen-Schnitt K-6115 auf die Wandebene (u 16,05, Neigung -0,06), M-6115-014; Zaehlung 3 Fenster Z-6115-001 + Z-6261-003 (Regel 9); Gegenprobe ohne Neuberechnung: Reprojektion der Ecken in K-6261 trifft die Fensteroeffnungen (+-0,1 m, audit/ost_fenster_6261.jpg)"
+    },
+    {
+     "n0": 7.7,
+     "n1": 8.32,
+     "z0": 16.74,
+     "z1": 18.02,
+     "quelle": "Foto ip_IMG_6115 Faschen-/Laibungsecken oben rechts+unten links, Strahl-Ebenen-Schnitt K-6115 auf die Wandebene (u 16,05, Neigung -0,06), M-6115-015; Zaehlung 3 Fenster Z-6115-001 + Z-6261-003 (Regel 9); Gegenprobe ohne Neuberechnung: Reprojektion der Ecken in K-6261 trifft die Fensteroeffnungen (+-0,1 m, audit/ost_fenster_6261.jpg) | ANNAHME: Unterkante teils vom Daechlein-Nachbardach verdeckt, Hoehe nicht gesichert"
+    }
    ]
   },
   {

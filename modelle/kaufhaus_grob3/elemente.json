@@ -433,9 +433,9 @@
  },
  {
   "seite": "alle",
-  "element": "Bruestung: 52 Baluster (Zylinder r 0.072) + Handlauf",
+  "element": "Bruestung: 50 Baluster (Zylinder r 0.072) + Handlauf",
   "quelle": "Anzahl/Periode Z-6120-001 (Regel 9); baluster_abgenommen periode 0,3062 | Lage: baluster_abgenommen baluster[].mitte (Periode/Phase aus Fotosignal) | Handlauf: dito",
-  "n_baluster": 52,
+  "n_baluster": 50,
   "u0": -4.971,
   "pitch": 0.306,
   "n": 13.84,
@@ -447,15 +447,17 @@
  },
  {
   "seite": "alle",
-  "element": "Bruestung: 5 Pfosten (je 11 Baluster je Feld)",
+  "element": "Bruestung: 7 Pfosten (je 11 Baluster je Feld)",
   "quelle": "Feldteilung Z-6120-001 (Regel 9); Lage: M-6120-006: Pfostenmitte along 6,96 = Rasterplatz 45 ab u0 (-6,808 + 45 x 0,3062 = 6,97) -> erster Platz 45 mod 12 = 9 | Breite: M-6120-006 (foto_mass, K-6120, Ebene 13,84): Vorderflaeche 0,26 m | Tiefe: ANNAHME 0,20 (Seitenflaeche im Foto schmal)",
-  "n_pfosten": 5,
+  "n_pfosten": 7,
   "pfosten_u": [
+   -4.971,
    -4.052,
    -0.378,
    3.297,
    6.971,
-   10.645
+   10.645,
+   12.176
   ],
   "pfosten_b": 0.26,
   "pfosten_t": 0.2,

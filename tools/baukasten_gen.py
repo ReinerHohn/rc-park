@@ -1247,14 +1247,37 @@ def bruestung_bt(cfg, ctx):
     # ersten Pfostens (0-basiert ab u0), pfosten_b/pfosten_t = Breite (u) / Tiefe (n) des Pfostens. Der Pfosten ERSETZT den Baluster auf seinem Rasterplatz.
     pa = int(cfg.get("pfosten_alle") or 0); pe = int(cfg.get("pfosten_erster") or 0); pb_, pt_ = float(cfg.get("pfosten_b") or 0.0), float(cfg.get("pfosten_t") or 0.0)
     if pa and (pa < 2 or pb_ <= 2 * r or pb_ >= 2 * pitch or pt_ < 2 * r): sys.exit(f"bruestung: unplausible Pfosten (alle={pa}, b={pb_}, t={pt_})")
-    ist_pf = lambda i: pa > 0 and i >= pe and (i - pe) % pa == 0
-    teile = [M.cylinder(zh0 - z0 + 0.04, r, r, 16).translate((u0 + i * pitch, n_, z0 - 0.02)) for i in range(nb) if not ist_pf(i)]   # 2 cm in Platte und Handlauf eingebunden (ein Koerper)
+    zus = {int(v) for v in (cfg.get("pfosten_zusatz") or [])}   # Zusatzpfosten (Endpfosten) auf Rasterplaetzen ausserhalb des Feldrasters (0-basiert ab u0)
+    if any(v < 0 or v >= nb for v in zus): sys.exit(f"bruestung: pfosten_zusatz ausserhalb 0..{nb - 1}: {sorted(zus)}")
+    if zus and (pb_ <= 2 * r or pt_ < 2 * r): sys.exit("bruestung: pfosten_zusatz braucht pfosten_b/pfosten_t")
+    ist_pf = lambda i: i in zus or (pa > 0 and i >= pe and (i - pe) % pa == 0)
+    # Optional 'profil' = [[z, r], ...] (absolute z, aufsteigend): gedrechselter Baluster als Drehkoerper (Foto-Silhouette), Enden in Platte/Handlauf eingebunden. Ohne: Zylinder r.
+    prof = cfg.get("profil")
+    if prof:
+        pz = [(float(p_[0]), float(p_[1])) for p_ in prof]
+        if len(pz) < 3 or any(b_[0] <= a_[0] for a_, b_ in zip(pz, pz[1:])) or max(p_[1] for p_ in pz) >= pitch / 2 or min(p_[1] for p_ in pz) < 0.02 or pz[0][0] > z0 or pz[-1][0] < zh0:
+            sys.exit(f"bruestung: unplausibles Profil (z aufsteigend, r < pitch/2, Enden in Platte/Handlauf): {pz}")
+        rev = M.revolve(C([[(0.0, pz[0][0])] + [(rr, zz) for zz, rr in pz] + [(0.0, pz[-1][0])]]), 24)
+        mk = lambda uu, nn: rev.translate((uu, nn, 0.0))
+    else:
+        mk = lambda uu, nn: M.cylinder(zh0 - z0 + 0.04, r, r, 16).translate((uu, nn, z0 - 0.02))   # 2 cm in Platte und Handlauf eingebunden (ein Koerper)
+    teile = [mk(u0 + i * pitch, n_) for i in range(nb) if not ist_pf(i)]
     pf_u = [u0 + i * pitch for i in range(nb) if ist_pf(i)]
     teile += [quader(uc - pb_ / 2, uc + pb_ / 2, n_ - pt_ / 2, n_ + pt_ / 2, z0 - 0.02, zh0 + 0.02) for uc in pf_u]
     teile.append(quader(u0 - pitch / 2, u0 + (nb - 1) * pitch + pitch / 2, n_ - hb / 2, n_ + hb / 2, zh0, zh1))
+    # Optional 'stirn' = {"n_wand": n der Wandebene, "n_baluster": Anzahl je Ende}: Seitengelaender (Ruecklauf zur Wand) an beiden Enden, Baluster im Raster pitch ab Endpfosten, Handlauf bis Wand.
+    st = cfg.get("stirn"); n_st = 0
+    if st:
+        nw = float(st["n_wand"]); n_st = int(st["n_baluster"]); lst = n_ - nw
+        if n_st < 1 or lst <= 0 or n_st * pitch > lst: sys.exit(f"bruestung: unplausible stirn (n_wand {nw}, n_baluster {n_st}, pitch {pitch}, Laenge {lst:.2f})")
+        for ue, sg in ((u0, -1.0), (u0 + (nb - 1) * pitch, 1.0)):
+            for j in range(1, n_st + 1): teile.append(mk(ue, n_ - j * (lst / (n_st + 1))))
+            teile.append(quader(ue - hb / 2, ue + hb / 2, nw - 0.02, n_, zh0, zh1))
+            teile.append(quader(ue - pb_ / 2, ue + pb_ / 2, nw - 0.02, nw + pt_, z0 - 0.02, zh0 + 0.02))   # Wandpfosten
     k = UNION(teile).transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; q = lambda p_: (wq.get(p_) or cfg["quelle"])
     beleg("alle", f"Bruestung: {nb - len(pf_u)} Baluster (Zylinder r {r:.3f}) + Handlauf", f"Anzahl/Periode {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); " + q("pitch") + " | Lage: " + q("u0") + " | Handlauf: " + q("z_handlauf_oben"),
           n_baluster=nb - len(pf_u), u0=u0, pitch=pitch, n=n_, r=r, z0=z0, z_handlauf_unten=zh0, z_handlauf_oben=zh1)
+    if st: beleg("alle", f"Bruestung: Stirn-Gelaender an beiden Enden ({n_st} Baluster je Ende, Handlauf bis Wand n {float(st['n_wand']):.2f})", q("stirn"), stirn_n_baluster=n_st, n_wand=float(st["n_wand"]))
     if pf_u: beleg("alle", f"Bruestung: {len(pf_u)} Pfosten (je {pa - 1} Baluster je Feld)", f"Feldteilung {', '.join(cfg.get('zaehlung', [])) or 'Foto'} (Regel 9); Lage: " + q("pfosten_erster") + " | Breite: " + q("pfosten_b") + " | Tiefe: " + q("pfosten_t"),
                    n_pfosten=len(pf_u), pfosten_u=[round(v, 3) for v in pf_u], pfosten_b=pb_, pfosten_t=pt_)
     return [k], []
