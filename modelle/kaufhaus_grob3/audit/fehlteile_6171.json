@@ -4,6 +4,35 @@
  "kamera": "K-6171 (amtliche Anker)",
  "zelle_px": 144,
  "schwelle": 0.35,
- "treffer": [],
+ "treffer": [
+  {
+   "zelle": [
+    2304,
+    288,
+    144
+   ],
+   "score": -0.921,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    10.91,
+    2.02,
+    24.1
+   ]
+  },
+  {
+   "zelle": [
+    1728,
+    288,
+    144
+   ],
+   "score": -0.876,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    14.44,
+    0.66,
+    24.29
+   ]
+  }
+ ],
  "versatz_test": null
 }

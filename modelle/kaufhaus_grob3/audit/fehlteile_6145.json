@@ -7,44 +7,30 @@
  "treffer": [
   {
    "zelle": [
+    2709,
+    516,
+    129
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -4.76,
+    11.09,
+    18.76
+   ]
+  },
+  {
+   "zelle": [
     1935,
-    774,
+    903,
     129
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    1.43,
-    7.35,
-    20.45
-   ]
-  },
-  {
-   "zelle": [
-    2064,
-    774,
-    129
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    0.17,
-    7.9,
-    19.76
-   ]
-  },
-  {
-   "zelle": [
-    2322,
-    774,
-    129
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -1.93,
-    8.72,
-    19.08
+    1.26,
+    7.99,
+    18.86
    ]
   },
   {
@@ -56,9 +42,9 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    2.89,
-    5.9,
-    19.29
+    2.96,
+    4.9,
+    19.76
    ]
   },
   {
@@ -70,23 +56,37 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    4.85,
-    2.79,
-    19.52
+    4.81,
+    2.69,
+    19.57
    ]
   },
   {
    "zelle": [
-    1935,
-    1548,
+    258,
+    1677,
     129
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    2.91,
-    0.54,
-    15.97
+    18.97,
+    6.79,
+    13.81
+   ]
+  },
+  {
+   "zelle": [
+    1677,
+    1806,
+    129
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    6.44,
+    -2.03,
+    14.33
    ]
   }
  ],
