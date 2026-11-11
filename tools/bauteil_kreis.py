@@ -174,7 +174,9 @@ def fehlversuche_global():
             n[t] = 0; leer[z["ziel"]["teil"]] = 0
             # Nutzerentscheid 10.11.: gesperrte Teile werden wieder frei, wenn ein Nachbarteil (Box +-1 m) danach in main geaendert wurde (neue Lage)
             if not nicht_in_main(z, lauf, z.get("runde")):
-                for u in [u for u in n if n[u] and u != t and nah(boxen, u, t)]: n[u] = 0
+                # 11.11.: volle Ruecksetzung auf 0 gab Erker 1 nach JEDER Nachbarannahme (Balkon, Baldachine, Sockel) wieder 3 Versuche -> 8 Laeufe/14
+                # Ablehnungen mit gleichem Pruefergrund. Nachbaraenderung = EIN neuer Versuch (Zaehler auf MAX_GLOBAL - 1), nicht drei.
+                for u in [u for u in n if n[u] and u != t and nah(boxen, u, t)]: n[u] = min(n[u], MAX_GLOBAL - 1)
     # LEERE RUNDEN (11.11., Westgiebel 4x in einer Nacht): Agent aenderte nichts (Daten fehlen, z. B. Rueckseite ohne Foto). Nachbar-Annahmen aendern daran
     # nichts -> nach 2 leeren Runden gesperrt bis zur direkten Annahme dieses Teils (neue Fotos: Eintrag in fehlteil/Fotoplan, dann Zaehler per Annahme).
     for t, k in leer.items():
