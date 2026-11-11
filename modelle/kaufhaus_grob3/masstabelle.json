@@ -6951,18 +6951,21 @@
    ]
   },
   {
-   "teil": "helm_geschweift:o",
+   "teil": "erker_polygon:1",
    "merkmal": "Zipfel an jeder Ecke (Erkerhelme/Dach) fehlen",
-   "text": "Nutzer 11.11. 17:2x: 'an jeder Ecke ist nochmal so ein Zipfelchen - das sind die wichtigen Details' (zusammen mit Erkern, Baldachinen, Wasserspeiern). Foto 6162 (Sicht Claude, zu bestaetigen): an den Ecken der Erkerhelm-Traufe sitzen kleine Aufsaetze/Drachenfiguren (rechter Erker rechte Ecke deutlich), Helmspitzen mit Knauf/Fahne. Welche Ecken genau: Stufe 0 an >=3 Fotos klaeren, beide Helme (o, w).",
+   "text": "Nutzer 11.11. 17:2x: 'an jeder Ecke ist nochmal so ein Zipfelchen - das sind die wichtigen Details' (zusammen mit Erkern, Baldachinen, Wasserspeiern). Foto 6162 (Sicht Claude, zu bestaetigen): an den Ecken der Erkerhelm-Traufe sitzen kleine Aufsaetze/Drachenfiguren (rechter Erker rechte Ecke deutlich), Helmspitzen mit Knauf/Fahne. Welche Ecken genau: Stufe 0 an >=3 Fotos klaeren, beide Helme (o, w). | Nutzer 11.11. 18:0x (rot markiert im Render-Vergleich 6164, Mitte oben am Erker) + Ausschnitt Claude 6164 voll aufgeloest (x 450-1000, y 1620-1900): an JEDER Ecke des Erker-Traufgesimses unter dem Helm sitzt eine geschnitzte Konsolfigur/Drachen-Wasserspeier (rotbraun, ragt ca. 0,3-0,5 m schraeg nach aussen/unten, Kopf vorn), auch auf der Mittelachse der Frontflaeche eine kleinere Figur; Helmgrate mit hellen Gratziegeln. Echtes 3D-Teil (nicht Relief): eigene Formfamilie 'Eckfigur/Speier' (Koerper-Keil + Kopf, Lage je Ecke per foto_mass --tri), sichtbar in der Feinmessung als Silhouette.",
    "naechster_schritt": "Stufe 0: Ecken mit Aufsatz zaehlen (foto_zaehlung je Helm), Form beschreiben (Fiale/Knauf/Drache), Lage per foto_mass --tri; verwandt mit Fund 'Wasserspeier an der Traufe fehlen'.",
    "datum": "2026-11-11",
    "wer": "Nutzer (Sichtbeobachtung)",
    "pruef_stichworte": [
-    "zipfel",
-    "ecke",
     "aufsatz",
+    "drache",
+    "ecke",
     "fiale",
-    "drache"
+    "konsolfigur",
+    "speier",
+    "traufe erker",
+    "zipfel"
    ],
    "formfamilie_test": true,
    "pruef_pflicht": [
