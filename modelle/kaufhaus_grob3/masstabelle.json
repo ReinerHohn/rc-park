@@ -6565,14 +6565,15 @@
   },
   {
    "datum": "2026-11-10",
-   "wer": "Kreis-Agent a211116 r1 (Overlays 6120, d17), Koordinator",
+   "wer": "Kreis-Agent a211116 r1 (Overlays 6120, d17), Koordinator + Nutzer (Sichtbeobachtung 11.11.)",
    "teil": "quader:laube_rueck",
    "art": "fehlteil",
    "merkmal": "Steinbank mit Sockelband vor der Laubenrueckwand fehlt",
-   "text": "Agent: Rueckwandebene n 7,28 passt am Foto; im Teilbereich fehlt die Steinbank mit Sockelband vor der Wand (nicht im Modell). F1 des Teils sonst von fremden Kanten (Fenster, Tuer, Tafel, Gewoelberippen) bestimmt.",
+   "text": "Agent: Rueckwandebene n 7,28 passt am Foto; im Teilbereich fehlt die Steinbank mit Sockelband vor der Wand (nicht im Modell). F1 des Teils sonst von fremden Kanten (Fenster, Tuer, Tafel, Gewoelberippen) bestimmt. | Nutzer 11.11. 18:48: Foto h_handy_h_04 zeigt die durchgehende Steinbank mit Sockel vor der Laubenrueckwand deutlich (Nutzer-Markierung im Viewer v53).",
    "naechster_schritt": "Bank an 6117/6124/6130 per foto_zaehlung (Abschnitte) und foto_mass --tri (Hoehe, Tiefe) messen, Pruefung eintragen (muss fehlschlagen), eigenes Anbauteil mit beleg().",
    "gemessen_2026-11-10": "Kreis r1 a232557: Stufe 0 an 6117/6124/6130: durchgehender Sockel (Gesimsband oben, Fuellungsfelder darunter) vor der Rueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006), Front n ~7,73 (Tiefe ~0,45, Wolke). Pruefungen laube_sockel_* angelegt.",
-   "erledigt": "kreis 20261110_232557a232557 r1 (quader:laube_sockel_w u -7,2..-1,5, z 1,5..2,2; Foto-F1 0,444->0,481), Westende ANNAHME"
+   "erledigt": "kreis 20261110_232557a232557 r1 (quader:laube_sockel_w u -7,2..-1,5, z 1,5..2,2; Foto-F1 0,444->0,481), Westende ANNAHME",
+   "formfamilie_test": true
   },
   {
    "datum": "2026-11-10",
@@ -6675,11 +6676,12 @@
   },
   {
    "datum": "2026-11-11",
-   "wer": "Kreis3 Fehlteil ff_+9_+5_+3 (Fotokanten)",
+   "wer": "Kreis3 Fehlteil ff_+9_+5_+3 (Fotokanten) + Nutzer (Sichtbeobachtung 11.11.)",
    "teil": "zylinder:dienst_laube",
    "merkmal": "Dienste (runde Halbsaeulen mit gedrehtem Sockel) an der Laubenrueckwand fehlen",
-   "text": "Fotos 6120, 6117, 6130 (und 6119 hinter dem Pfeiler): an der Laubenrueckwand steht je Pfeilerachse ein runder Dienst r~0,185 m (Sockel 0,215 m, Hoehe z 2,21-2,97), der oben in die Gewoelberippen uebergeht (Anlauf z~5,5). Im Modell nur glatte Wand. Offen: Dienste bei u 3,5-3,7 (Tuernische u0 3,625 kollidiert), u -8,3 und 15,8 ungeprueft; Rippen-Vorsprung; Fenster-Kreuzstock der Rueckwand (fensterreihe) flach.",
-   "naechster_schritt": "Dienst u -2,30 per Peilung in zweitem Foto messen, Dienst u 3,5 mit Nische abstimmen, Rippen als Familie."
+   "text": "Fotos 6120, 6117, 6130 (und 6119 hinter dem Pfeiler): an der Laubenrueckwand steht je Pfeilerachse ein runder Dienst r~0,185 m (Sockel 0,215 m, Hoehe z 2,21-2,97), der oben in die Gewoelberippen uebergeht (Anlauf z~5,5). Im Modell nur glatte Wand. Offen: Dienste bei u 3,5-3,7 (Tuernische u0 3,625 kollidiert), u -8,3 und 15,8 ungeprueft; Rippen-Vorsprung; Fenster-Kreuzstock der Rueckwand (fensterreihe) flach. | Nutzer 11.11. 18:48 (Viewer v53 Kantenansicht, rot markiert rechts unter der Traufe, passendes Foto an_handy_2026-11-06_h_handy_h_04): an der Laubenrueckwand fehlen die Dienste - im Foto steht vor JEDEM Gewoelbejoch eine runde Halbsaeule mit Sockel an der Wand (Rippen springen dort an), Modell hat nur 2 (u 9,75 / -2,30). Anzahl je Wand am Foto zaehlen (foto_zaehlung), Lage je Dienst per foto_mass --tri gegenueber den Freipfeilern.",
+   "naechster_schritt": "Dienst u -2,30 per Peilung in zweitem Foto messen, Dienst u 3,5 mit Nische abstimmen, Rippen als Familie.",
+   "formfamilie_test": true
   },
   {
    "datum": "2026-11-11",
