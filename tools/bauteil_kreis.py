@@ -652,9 +652,11 @@ def pruefer_urteil(wt, ziel, runde, vs_info=None):
               "0 < marge_min < 0,03 = schwach belegt. konkat_gueltig false = Kontrolle fuer dieses (abgezogene) Teil nicht beurteilbar.")
     rc, out = sh(["claude", "-p", p, "--model", PRUEFER, "--permission-mode", "plan"], wt,
                  log=os.path.join(LDIR, f"pruefer_r{runde}.log"), timeout=MAX_MIN * 60)
-    m = re.findall(r"URTEIL\s*(\{.*\})", out)
+    # 11.11.: Urteil per raw_decode ab der Klammer lesen - gieriges '\{.*\}' nahm Folgetext derselben Zeile mit ("Extra data"),
+    # ein ANGENOMMENES Gewoelbe (+0,301, Kontrollfotos 0,689 -> 0,834) wurde so als "nicht lesbar" verworfen.
     try:
-        return json.loads(m[-1])
+        _i = [mm.end() for mm in re.finditer(r"URTEIL\s*(?=\{)", out)][-1]
+        return json.JSONDecoder().raw_decode(out[_i:])[0]
     except Exception:
         return {"annehmen": False, "fehlerliste": ["Pruefer-Urteil nicht lesbar"], "rc": rc}
 
