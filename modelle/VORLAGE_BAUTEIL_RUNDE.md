@@ -75,6 +75,9 @@ ZUERST LESEN: `CLAUDE.md` (Regeln 2, 3b, 3c, 8b, 9, 9b, 9c, 9d), `modelle/REZEPT
 - Kein Commit, kein Löschen, kein Slicen oder Drucken ohne Nutzerwort.
 - Große Zwischendateien gehören nach `/media/oem/scan/rc-park_daten/<objekt>/agent_scratch_<RUNDE>/`, nicht auf die Root-Platte.
 - GPU-Jobs laufen über `JOB_GPU_MB=<MiB> tools/job_start.sh …`. Neue Rechenwerkzeuge nutzen die GPU.
+- **Form nie per Kennzahl-Sweep wählen.** Formparameter, die die Formfamilie ändern (Dächlein ja/nein, Käppchen, Nischentiefe, Rippen an/aus), kommen aus der Formbeschreibung in Stufe 0 und aus Messungen am Foto, nie aus einem Foto-F1-Sweep.
+  F1-Unterschiede unter 0,03 zwischen Varianten gelten als nicht unterscheidbar (Lehre L46: Kantendichte).
+  Ein Beispiel vom 11.11.: `daechlein_h` 0,8 wurde per Sweep gewählt (0,407 → 0,423), daraus wurden Sägezacken statt Treppenstufen.
 - **Nicht im Hintergrund warten.** Du läufst als `claude -p`, also ohne Sitzung, die dich später weckt. Wenn du deinen Zug mit „ich warte auf den Monitor/Job“ beendest, ist die Runde vorbei: Das Ergebnis ist leer, die Runde wird verworfen. 11.11. traf das 4 Runden (Laufzeit bis Zeitlimit, Log leer).
   Bau, Abnahme und Messung startest du deshalb im Vordergrund (Bash-Timeout bis 600000 ms).
   Bei Jobs über `job_start.sh` wartest du im selben Zug mit `until grep -q JOB_ENDE <log>; do sleep 20; done` im Vordergrund. Endet das nach 10 min nicht, rufst du dieselbe Warteschleife erneut auf.

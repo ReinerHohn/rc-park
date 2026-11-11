@@ -224,6 +224,9 @@ SICHT = "verdeckung_strahl"   # Messart der Sichtpruefung in konvergenz_bericht;
 FEHL_PKT = opt("--fehl_pkt", 300, int); FEHL_RECALL_MAX = opt("--fehl_recall_max", 0.5, float)
 MIN_REGION = opt("--min_region", 0.25, float); MIN_PRAEZ_NEU = opt("--min_praez_neu", 0.25, float)
 FOTO_FEHL = opt("--foto_fehl", 1, int); FOTO_FEHL_PX = opt("--foto_fehl_px", 2000, int); FOTO_FEHL_FOTOS = opt("--foto_fehl_fotos", 5, int); FOTO_FEHL_SUMME = opt("--foto_fehl_summe", 150000, int)   # Fehlteile aus Fotokanten (foto_fehlteile.py), 0 = aus
+# BELEG STATT PIXELSUMME (Nutzer 11.11. 08:38: Balkon-Seitengelaender, Baldachin-Aufsatz, nie Ziel): kleine/hohe Teile erreichen die Pixelsumme nie
+# (Aufsatz ueber den Baldachinen 3 Cluster je 63-82k px in 9-13 Fotos, Balkonende 6-13 Fotos). Ein Cluster in >= FOTO_FEHL_BELEG Fotos ist auch ohne Summe Ziel.
+FOTO_FEHL_BELEG = opt("--foto_fehl_beleg", 6, int)
 
 def ist_fehlteil(ziel): return (ziel or {}).get("art") == "fehlteil"
 
@@ -383,7 +386,7 @@ def waehlen(z, sperre):
             # 11.11.: auch Teile, die ein schon BELEGTER Foto-Cluster beruehrt, gelten als belegt (Erker 2: ff_+19_+7_+8 und ff_+19_+7_+11 parallel)
             _bel |= {t_ for c in _cl if c["id"] + "__neu" in _bel for t_ in c["teile"]}
             ffk = [dict(c, teil=c["id"] + "__neu", art="fehlteil", beleg=None, pkt=c["px"], recall_kasten=None) for c in _cl
-                   if c["px"] >= FOTO_FEHL_SUMME and not (set(c["teile"]) & _bel)]
+                   if (c["px"] >= FOTO_FEHL_SUMME or (c.get("n_fotos") or 0) >= FOTO_FEHL_BELEG) and not (set(c["teile"]) & _bel)]
             # 'gebaut'-Eintraege (angenommene Fehlteile) sperren Foto-Cluster nur, solange die Formliste AELTER als die Annahme ist (11.11.: Baldachin-Cluster
             # nach Annahme erneut Ziel, Agent 'kein Bauteil'); danach entscheidet die frische Liste, ob dort noch Gelb ist.
             _fm = os.path.getmtime(_fs[-1]) if _fs else 0
