@@ -907,6 +907,21 @@ def erker_polygon(cfg, ctx):
     k0 = k0 - UNION(schnitte)
     teile.append(k0)
     teile.append(prisma_profil(cfg["bank_profil"]) if cfg.get("bank_profil") else prisma(Zn["z_wappen_oben"] - 0.01, Zn["z_bank_oben"], float(cfg.get("bank_aus", 0.0))))                    # Fensterbank-Gesims (optional bank_profil [[z, aus], ...])
+    ef = cfg.get("eckfiguren")                                                                                         # Kreis eckfig r1: geschnitzte Konsolfiguren/Drachen-Wasserspeier unter dem Traufgesims an den Achteckecken: {ecken [Index in base 1..4], z_oben, z_ende, breite, hoehe_koerper, vorsprung, kopf_laenge, kopf_hoehe, aus (Traufgesims-Auskragung), einbindung, quelle}
+    if ef:
+        def nrm_(a, b): d_ = np.array(b, float) - np.array(a, float); d_ /= np.linalg.norm(d_); return np.array([d_[1], -d_[0]])
+        if not ef.get("quelle"): sys.exit("erker_polygon: eckfiguren ohne quelle (Regel 3b)")
+        eb, eh, ev, ekl, ekh, ein_, aus_ = (float(ef[k_]) for k_ in ("breite", "hoehe_koerper", "vorsprung", "kopf_laenge", "kopf_hoehe", "einbindung", "aus")); zo_, ze_ = float(ef["z_oben"]), float(ef["z_ende"])
+        if not (eb > 0.05 and abs(eh - (float(ef['z_oben']) - float(ef['z_ende']))) < 0.02 and ev > 0.1 and 0 < ekl < ev and ekh > 0.05 and ze_ < zo_ - 0.1 and Zn["z_trauf_unten"] - 0.1 < zo_ <= Zn["z_trauf_oben"]): sys.exit(f"erker_polygon: unplausible eckfiguren {ef}")
+        for ci in ef["ecken"]:
+            if not 1 <= int(ci) <= len(base) - 2: sys.exit(f"erker_polygon: eckfiguren Ecke {ci} ausserhalb 1..{len(base) - 2}")
+            C_ = np.array(base[int(ci)], float); nvv = nrm_(base[int(ci) - 1], base[int(ci)]) + nrm_(base[int(ci)], base[int(ci) + 1]); nvv /= np.linalg.norm(nvv); tvv = np.array([-nvv[1], nvv[0]])
+            A_ = C_ + nvv * aus_ / max(abs(float(np.dot(nvv, nrm_(base[int(ci) - 1], base[int(ci)])))), 0.3)                       # Anker = Ecke der Gesims-Aussenkante (Gehrung)
+            def blk(d0, d1, w_, z0_, z1_): return [[um + (A_ + nvv * d_ + tvv * s_ * w_ / 2)[0], (A_ + nvv * d_ + tvv * s_ * w_ / 2)[1], zz_] for d_ in (d0, d1) for s_ in (-1, 1) for zz_ in (z0_, z1_)]
+            dk = ev - ekl                                                                                                   # Rumpf haengt an der Gesimsecke bis z_ende (tiefster Punkt, triangulierbar), Kopf kragt waagerecht nach aussen aus (Foto 6225: Figur ragt seitlich, Beine/Rumpf unten am Gesims)
+            teile.append(M.hull_points(blk(-ein_, dk, eb, ze_, zo_)))
+            teile.append(M.hull_points(blk(dk - 0.02, ev, eb * 0.75, zo_ - 0.05 - ekh, zo_ - 0.05)))
+    beleg("alle", f"Erker-Polygon: {len(ef['ecken'])} Eckfiguren (Konsolfigur/Drachen-Speier) unter dem Traufgesims, Ecken {ef['ecken']}", ef["quelle"], n_figuren=len(ef["ecken"]), z_oben=float(ef["z_oben"]), z_ende=float(ef["z_ende"]), vorsprung=float(ef["vorsprung"])) if ef else None
     k = UNION(teile).transform(_uszT(cfg)); wq = cfg.get("werte_quellen") or {}; q = lambda p_: (wq.get(p_) or cfg["quelle"]); zaehl = ", ".join(cfg.get("zaehlung", [])) or "Foto"
     beleg("alle", f"Erker-Polygon u={um:.2f}: Teil-Achteck 3 Flaechen (Front {s_f:.2f} m + 2 Schraegflaechen {s_d:.2f} m, {math.degrees(al):.0f} Grad)", q("grundriss") + f" | Flaechenzahl/Lichter/Wappen: Zaehlung {zaehl} (Regel 9)", u_mitte=um, n_front=nf, seite_front=s_f, seite_schraeg=s_d, winkel_grad=math.degrees(al), n_flaechen=3)
     beleg("alle", "Erker-Polygon: Unterbau (umgekehrte Pyramide, Spitze an der Wand" + (", 7 Rippen ANNAHME" if ub.get("rippen") else "") + ")", q("unterbau"), z_spitze=Zn["z_unterbau_spitze"], z_oben=z_o, profil=prof)

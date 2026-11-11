@@ -1,0 +1,48 @@
+{
+ "id": "Z-h13-001",
+ "typ": "zaehlung",
+ "foto": "h13",
+ "datei": "h13_an_handy_2026-11-06_handy_13.jpg",
+ "was": "Eckfiguren (Drachen-Speier) unter dem Traufgesims Erker 1, je Erker",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-11",
+ "punkte": [
+  {
+   "flaeche": "E1",
+   "art": "voll",
+   "x": 2374.0,
+   "y": 907.0
+  },
+  {
+   "flaeche": "E1",
+   "art": "voll",
+   "x": 2669.0,
+   "y": 912.0
+  },
+  {
+   "flaeche": "E1",
+   "art": "voll",
+   "x": 2789.0,
+   "y": 1062.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "E1": {
+   "art": "voll",
+   "n": 3
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 3,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-h13-001.jpg",
+ "ausschnitt": [
+  2124,
+  657,
+  3039,
+  1312
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

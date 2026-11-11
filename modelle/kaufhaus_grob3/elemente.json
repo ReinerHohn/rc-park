@@ -107,6 +107,16 @@
  },
  {
   "seite": "alle",
+  "element": "Erker-Polygon: 3 Eckfiguren (Konsolfigur/Drachen-Speier) unter dem Traufgesims, Ecken [2, 3, 4]",
+  "quelle": "Anzahl 3 (Ecken 2,3,4; Ecke 1 zur Hausmitte ohne Figur): Z-6145-eckfig (Fotos 6145, h13, i08, 6225; Modell-Eckpunkte in die kalibrierten Fotos projiziert, Figuren liegen an Ecke 2/3/4). Spitze (tiefster Punkt Figur Ecke 3) TRIANGULIERT M-6145-003 (6145+h13): P (-3,94 / 16,35 / z 12,67) -> z_ende 12,67; Breite 0,28, Rumpfhoehe 0,33, Vorsprung 0,35, Kopf 0,22x0,2, z_oben 13,0 (Figurkopf ~0,25 m ueber der Gesimsunterkante in 6145) = ANNAHME Sichtschaetzung (Pixelmass h13: Figur ~55x85 px bei 0,0052 m/px); Form Keil/Drache vereinfacht, keine Einzelheiten der Schnitzerei",
+  "n_figuren": 3,
+  "z_oben": 13.0,
+  "z_ende": 12.67,
+  "vorsprung": 0.35,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Erker-Polygon u=-8.47: Teil-Achteck 3 Flaechen (Front 1.28 m + 2 Schraegflaechen 1.28 m, 45 Grad)",
   "quelle": "M-6124-011..017 (6124, 6145, h05) | Lage u: Pfosten-Mitte M-6124-014 u -8,478 (3 Kameras); Wolke Fensterband u -10,05..-6,76 (Mitte -8,40); Helm u -8,56 | Frontebene n: Frontpfosten M-6124-013/014/015 n 13,887/13,796/13,883 + Wolke Bruestung p90 13,83-13,86 | Seite Schraegflaeche = Seite Front und 45 Grad: ANNAHME regelmaessiges Achteck (E0: Ecke->Ende 1,26 m/47 Grad am Foto, Projektion auf 6124/6145/h05 +-13 px) | Flaechenzahl/Lichter/Wappen: Zaehlung Z-6124-001, Z-6124-002, Z-6124-003 (Regel 9)",
   "u_mitte": -8.47,
@@ -184,6 +194,16 @@
     "aus": 0.26
    }
   ],
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Erker-Polygon: 3 Eckfiguren (Konsolfigur/Drachen-Speier) unter dem Traufgesims, Ecken [1, 2, 3]",
+  "quelle": "ANNAHME Spiegelbild zu Erker 1 (Ecken 1,2,3; Ecke 4 zur Hausmitte ohne Figur): am Foto 6164 + Uebersicht 6162 (Modell-Eckpunkte projiziert, Figuren an Ecke 1/2/3 gesehen); Masse = Erker 1 (M-6145-003, Sichtschaetzung), nicht eigens trianguliert",
+  "n_figuren": 3,
+  "z_oben": 13.0,
+  "z_ende": 12.67,
+  "vorsprung": 0.35,
   "seite_name": "alle"
  },
  {
@@ -1380,6 +1400,12 @@
   "scheitel_z": 13.41,
   "wand_n": 12.66,
   "tiefe": 0.05,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Anbauteile ohne Kontakt: 3 Konsolen, 0 Splitter verworfen",
+  "quelle": "baukasten_gen Druckregel (tools/anbau_verbinden.py-Prototyp 5.11.): Konsole = Huelle der unteren 20 % des Teils + 0,1 m in die naechste Modellflaeche; Form des Teils unveraendert",
   "seite_name": "alle"
  },
  {

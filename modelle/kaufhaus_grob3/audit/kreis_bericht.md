@@ -1,25 +1,38 @@
-# Kreis1 Dienste Laubenrueckwand (quader:laube_rueck) 11.11.
-## 1 Formbeschreibung (Stufe 0)
-Fotos: 6120, 6117, 6119 (Uebersicht/Nah u 3,59 und 9,745), 6130, 6145, 6174, h11_111518 (u -2,43), 6124, 6161 (u -8,45). Projektion der Achsen (u 9,745/3,72/-2,30/-8,32, n 7,336) in alle Fotos: Achsen treffen die Dienste.
-Zonen: Sockel (r 0,215, z 2,21-2,97, gedreht/kanneliert) - Schaft r 0,185 bis z 5,6 - Rippenbuendel darueber. Querschnitt: Halbrund an der Wand n 7,28. Familie: vorhandenes zylinder (anbau, radius/radius_oben), keine neue.
-Abweichung: Dienst u 3,59 hat keinen Schaft bis zum Boden: Rippenbuendel verjuengt sich zu einer goldenen Muschel (z 5,03), darunter glatte Wand/Portalrahmen (6119, 6117, 6120). Modell hatte nur 2 Dienste (9,745/-2,30).
-## 2 Zaehlungen
-Sichtzaehlung an Fotos (kein neues Z-Protokoll, ANNAHME/ehrlich: nicht per foto_zaehlung): 4 Dienste sichtbar (3,59 / 9,745 / -2,43 / -8,455); u 15,77 hinter Endpfeiler in allen Fotos verdeckt -> nicht gebaut.
-## 3 Pruefungen (vorher -> nachher)
-- dienst_laube_um845_reich_z44/z26 (M-6124-021): 0,38 ROT -> 0,62/0,65 (Soll 0,565-0,685 / 0,6-0,72)
-- dienst_laube_u359_reich_z53 (M-6119-018): 0,38 ROT -> 0,59 (Soll 0,565-0,685)
-- dienst_laube_u359_reich_z35 Sperre (kein Schaft): 0,34 -> 0,34 (Soll 0,3-0,45)
-- dienst_laube_um243_reich_z44/z26 (M-6130-008): gruen/gruen (0,62/0,65)
-- laube_decke_u363: Suchstart 5,2->5,7 (Konsole im Strahl), Soll unveraendert 4,857-5,157, 4,87 gruen
-bauen_abnehmen: alle Pruefungen bestanden.
-Foto-F1 (halbe Aufl., 10 Torfotos, quader__laube_rueck): 0,619 -> 0,623; f1_h 0,531 -> 0,540; f1_fein 0,064 -> 0,063 (Tor: nicht fallen).
-## 4 Overlays
-/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_184947dienste/overlays/zylinder__dienst_laube_um845_schaft_{6124,6161,6130}.jpg, ..._u359_konsole_{6119,6120,6117}.jpg, ..._um230_schaft_{6130,6145,6174,6124}.jpg, ..._u975_schaft_{6120,6117}.jpg; Torbilder /media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_184947dienste/ff_eigen_bilder, Vorher /media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_184947dienste/ff_vorher_bilder; Projektionen /media/oem/scan/rc-park_daten/kaufhaus_grob3/agent_scratch_dienste/p_*.jpg; audit/seiten.jpg angesehen (unauffaellig).
-## 5 Fehlerliste
-trifft: Dienst u 9,745, -2,43 (3 Fotos), Konsole 3,59 (Muschelhoehe 3 Fotos), Schaftlage -8,455 in 6124 (Overlay).
-trifft nicht/offen: Konsolen-Radius unten 0,12 (ANNAHME), Sockel u -8,455 Masse = ANNAHME gleich wie 9,745, u -8,455 nur 9,6 Grad Peilung (+-0,33), Rippenvorsprung, Fenster-Kreuzstock, Portal, Rippen-Uebergang.
-ungeprueft: Dienst u 15,77; foto_diff, fehlteile_finden, regression.py (keine Werkzeugaenderung); teile_lage_pruefen: Dienste Median 0,04-0,07 m (ok), neue Teile nicht in der Ausgabe gesichtet.
-## 6 Geaenderte Dateien
-modelle/kaufhaus_grob3/objekt.json (um230 u -2,433; +3 Bauteile), masstabelle.json (6 Messungen/Pruefungen, Suchstart laube_decke_u363, Beobachtung erledigt), messprotokoll M-6119-018, M-6130-007 (unbrauchbar, 7 Grad), M-6130-008, M-6124-021, NICHTS_GEBRACHT.md, REZEPT (L-KR34), audit/kreis_bericht.md.
-## 7 Generalisierte Lehre
-L-KR34 | Gleichartige Elemente einzeln pruefen, Schnittwinkel angeben | foto_mass --tri; Baseline mit --teile_dir/--stl.
+# Kreis eckfig r1 – erker_polygon:0 Eckfiguren (Zipfel/Drachen-Speier an den Traufecken)
+
+## 1. Formbeschreibung (Stufe 0)
+Fotos: 6145 (Nahfoto, links-frontal), h13 (frontal schräg), i08 (Nahfoto), 6225 (von unten, Nahfoto), 6164/6162 (Erker 2 bzw. Übersicht). Modell-Eckpunkte des Traufgesimses (z 12,74) in die kalibrierten Fotos projiziert.
+- Zone Traufe: unter dem Helm läuft das Traufgesims (Kehle, aus 0,26) um das Teil-Achteck. An den Außenecken sitzen geschnitzte, rotbraune Konsolfiguren (Drachen/Wasserspeier): Rumpf hängt an der Gesimsecke, Kopf/Arm kragt nach außen. Größe ~0,3 m breit, ~0,45 m hoch.
+- Erker 1 (u -8,47): Figuren an den Achteck-Ecken 2, 3, 4 (zwei Front-Ecken + Ecke zur Außenseite); Ecke 1 (Hausmitte-Seite) in 6145/h13/i08 ohne Figur. Erker 2 gespiegelt (Ecken 1,2,3) – an 6164 gesehen (ANNAHME Spiegel, nicht gezählt).
+- Mittelfigur der Frontfläche (Nutzerhinweis 6164): an Erker 1 in keinem Foto gefunden – nicht gebaut.
+- Formfamilie: neue generische Option `eckfiguren` in `erker_polygon` (tools/baukasten_gen.py): Rumpfblock bis z_ende + auskragender Kopfblock (vereinfachte Keilform, keine Schnitzdetails).
+- Offen: Rückseite/Detailform (Drachenkopf) = ANNAHME.
+
+## 2. Zählungen
+Z-h13-001 (3 Figuren), Z-6145-002 (3 Figuren), beide Erker 1.  Triangulation M-6145-003 (6145+h13): Unterspitze Figur Ecke 3 (-3,94 / 16,35 / z 12,67 ±0,06).
+
+## 3. Prüfungen (masstabelle.json, messungen eckfigur_zmin_*)
+| Prüfung | vorher | nachher | Soll | Quelle |
+|---|---|---|---|---|
+| Ecke 2 tiefster Punkt (z−z0) | 11,29 ROT | 11,22 OK | 11,117–11,267 | Z-h13-001 |
+| Ecke 3 | 11,29 ROT | 11,22 OK | 11,117–11,267 | M-6145-003 |
+| Ecke 4 | 11,29 ROT | 11,22 OK | 11,117–11,267 | Z-6145-002 |
+| Ecke 1 (keine Figur) | 11,29 OK | 11,29 OK | 11,267–11,307 | Z-h13-001/6145 |
+bauen_abnehmen.sh kaufhaus_grob3: „alle Pruefungen bestanden“ (nach Änderung zweimal gebaut, einmal Werte nachjustiert); regression.py --pruefen: identisch.
+Foto-F1 (10 Torfotos, RCPARK_FOTO_SKALA=0.5): 0,614 → 0,619 (Praez 0,769→0,762, Recall 0,511→0,522); f1_fein 0,574→0,573; f1_h 0,569→0,579. Gewinn klein (<0,03 = nicht unterscheidbar, L46) – Gate-Bedingung (≥ −0,005) erfüllt, Form aus Foto, nicht aus Sweep.
+
+## 4. Overlays
+- modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis1_erker_polygon0_h13.jpg, …_6145.jpg, …_i08.jpg (Foto | nachher | vorher, mit Fotokanten); auch erker_polygon__0_6225.jpg (Erstvariante, größer).
+- Fotoform-Overlays: …/20261111_185943eckfig/ff_nachher_bilder/
+
+## 5. Fehlerliste
+- Trifft: Ort der Figuren an Ecke 2/3/4 in 6145, h13, 6225 (Overlay angesehen); tiefster Punkt (M-6145-003).
+- Trifft nicht / vereinfacht: Figuren sind Blöcke, keine Drachen; Größe Sichtschätzung (ANNAHME); Auskragung in Fotos nicht trianguliert.
+- Ungeprüft: Erker 2 (nur Projektion an 6164, Maße übernommen); i08 nur grob; foto_diff/fehlteile_finden nicht separat ausgewertet (lief im Bau-Skript, keine Treffer an den Ecken geprüft); teile_lage_pruefen erker_polygon:0 Median 0,11 m, 24 % > 0,5 m (Vorbestand).
+- Mittelfigur Frontfläche: nicht gefunden → nicht gebaut.
+
+## 6. Geänderte Dateien
+tools/baukasten_gen.py (eckfiguren), modelle/kaufhaus_grob3/objekt.json (eckfiguren Erker 0/1), masstabelle.json (4 Prüfungen, Beobachtung erledigt), messprotokoll Z-h13-001, Z-6145-002, M-6145-003, NICHTS_GEBRACHT.md, REZEPT (L58), audit/*, MASSNACHWEIS.md u. a. automatisch.
+
+## 7. Generalisierte Lehre
+Eckpunkt-Projektion in kalibrierte Fotos entscheidet, welche Ecken ein Detail tragen | Anlass: 'Zipfel an jeder Ecke' | Werkzeug: Projektionsskript + pruefstand min_im_bereich (Anzahl über Lagepruefungen mit Negativprobe). Erste Formannahme (Spitze außen) widersprach der Triangulation – tiefsten Punkt immer messen, bevor die Form gesetzt wird.
