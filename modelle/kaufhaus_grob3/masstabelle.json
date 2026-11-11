@@ -5792,63 +5792,12 @@
    "naechster_schritt": "neue generische Formfamilie baldachinreihe in baukasten_gen.py, Masse M-6120-051..064 / M-6161-022..025, Pruefungen baldachin*"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 2)",
-   "auto_id": "fehlteile-6261-234-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.54,
-   "z_bis": 18.54,
-   "xyz": [
-    14.34,
-    -8.86,
-    18.54
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.86 m (Zelle [234, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
-   "auto_id": "fehlteile-6261-312-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.23,
-   "z_bis": 18.23,
-   "xyz": [
-    14.62,
-    -7.14,
-    18.23
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.14 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-11",
    "wer": "Kreis 003723 r1 (fensterreihe:eg2)",
    "art": "widerspruch",
    "text": "Foto-F1 0,675 (halbe Aufloesung, 9 Fotos): Oberkante in 6130/6225 gelb (Foto flach bei 6,39, Modell Kaempfer 6,29 + Giebel) -> kaempfer_z 6,38 (6,39 ist unplausibel: kaempfer < scheitel Pflicht). OFFEN: Rahmenfront 7,285 (M-6130-006) buendig, Modell 7,40 (tiefe 0,16); Korrektur macht frontale Fotos blind (foto_diff sprung_m 0,25, Register L-KR33). Fragile Pruefung tuer_b3_rahmenfront (Strahl z 2,2 = Sockeloberkante) auf z 2,5 verlegt, Soll gleich.",
    "quelle": "M-6130-001, M-6130-006, ff_vorher/ff_eigen (teil_fotoform halbe Aufloesung)",
    "naechster_schritt": "Werkzeug: Nischen-/Rahmentiefe < 0,25 m in frontalen Fotos als Modellkante; dann tiefe/nische_tiefe eg2 nachziehen"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
-   "auto_id": "fehlteile-6261-312-1872",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.08,
-   "z_bis": 17.08,
-   "xyz": [
-    14.53,
-    -7.17,
-    17.08
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.17 m (Zelle [312, 1872, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "2026-11-11",
@@ -5864,6 +5813,57 @@
    "merkmal": "Pruefer-Rest fensterreihe:eg2 kreis 20261111_003723a003723 r1",
    "text": "Offene Fehler laut Pruefer nach angenommener Runde: Kein Runden-Bericht: audit/kreis_bericht.md ist der alte staffelgiebel:west-Bericht (00:37), Agent am Zeitlimit 3600 s abgebrochen, keine Stufe-0-Formbeschreibung aus >=3 Fotos | 6130 (Quellfoto M-6130-001): breiter gelber Balken an der Rahmenoberkante bleibt fast vollstaendig (Cluster z 6,31, 9334 px), nur Ecke oben links geaendert - Hauptbefund im eigenen Quellfoto nicht behoben | Aeusserer Profilrahmen (breites Steingewaende links/oben/rechts) fehlt in 6130 weiter | Gelb bleibt am Mittelpfosten/Setzholz und am Riegel in 6225 (z 4,4-5,6) und 6145 (z 4,5) | Gelb bleibt an der Fensterbank/Unterkante z ~3,3-3,4 in 6130 (8649 px) und 6145 | nu3b: linke Rahmenkante durchgehend gelb, F1 0,598->0,596 | 6206: neuer roter Block oben neben dem Fenster, F1h 0,621->0,540, rot 5752->6198 px | Rot am linken Rahmen in 6145 (Rahmenfront zu weit vorn, tiefe 0,16 gegen gemessen buendig 7,285 M-6130-006) - offen, nicht korrigiert | e04: F1 0, rot 24152->24674 - Teil dort unbrauchbar benotet oder falsch | Fremde Pruefung tuer_b3_rahmenfront (eg1_tuer) Messhoehe 2,2->2,5 verschoben, als sie rot wurde; Begruendung widerspruechlich (Log: Druckreparatur-Artefakt, Historie: Sockelkante), Ursache nicht belegt | Konvergenz: Gesamt-Recall 0,6693->0,6658, RUECKSCHRITT recall 15-20 m 0,401->0,390 und 20-40 m 0,461->0,417, ungeklaert | foto_diff, fehlteile_finden, teile_lage_pruefen, Rundenkreis-Overlays nicht gelaufen; Foto-Diagnosen uebersprungen (RCPARK_OHNE_FOTODIAG=1); keine _nachher-Formbilder (nur vorpruef, STL-sha identisch) | freiraum_audit FEHLER (nan) in der Abnahme | kaempfer_z 6,38 = Oberkante 6,39 - 0,01 ist ein Ausweichwert, weil 6,39 im Generator unplausibel ist; flache Oberkante als eigene Formfamilie fehlt",
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
+   "auto_id": "fehlteile-6261-234-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.54,
+   "z_bis": 18.54,
+   "xyz": [
+    14.35,
+    -8.86,
+    18.54
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.86 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "auto_id": "fehlteile-6261-312-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.23,
+   "z_bis": 18.23,
+   "xyz": [
+    14.62,
+    -7.14,
+    18.23
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.14 m (Zelle [312, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-312-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.08,
+   "z_bis": 17.08,
+   "xyz": [
+    14.54,
+    -7.16,
+    17.08
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

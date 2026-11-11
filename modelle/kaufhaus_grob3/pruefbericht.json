@@ -1,5 +1,5 @@
 {
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_003723a003723/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,9 +40,9 @@
   "fenster_b3_ebene_abstand": 1.2521246230474818,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.1086372509598732,
-  "wand_anteil_unter": 0.0006666666666666666,
-  "wand_ohne_treffer": 0.0,
+  "wand_pq": 0.10611763596534729,
+  "wand_anteil_unter": 0.0006000200006666889,
+  "wand_ohne_treffer": 3.333333333332966e-05,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
   "kons_b3_grund_abstand": -0.004027439078454709,
@@ -93,8 +93,8 @@
   "erker_o_diag_r": 1.548883300240687,
   "erker_o_front": 1.5408542955753348,
   "erker_o_ecke30": 1.6596163232638645,
-  "erker_o_unterbau76": 1.180854105857933,
-  "erker_o_unterbau72": 0.9030748604905047,
+  "erker_o_unterbau76": 1.1808537766000953,
+  "erker_o_unterbau72": 0.820854154092065,
   "erker_o_gesims_u": 1.6783536825855432,
   "erker_o_wappen": 1.5408539533872518,
   "erker_o_trauf": 1.8308542168055555,
@@ -140,9 +140,9 @@
   "helm_w_r_14_38": 1.1870509785045464,
   "helm_w_r_14_88": 1.0070557810130052,
   "helm_w_knauf_r_21_35": 0.19176879206557926,
-  "gesims_front_z14_35": 0.3371921881297877,
-  "gesims_front_z14_55": 0.17330339367812586,
-  "gesims_front_z14_78": 0.07411555109453749,
+  "gesims_front_z14_35": 0.33434823478472886,
+  "gesims_front_z14_55": 0.17257288015245997,
+  "gesims_front_z14_78": 0.0737696991541128,
   "bogen3_archivolt_z": 5.9869999999999814,
   "helm_o_r_13_25": 1.9110466579891807,
   "helm_o_r_19_40": 0.2808575058922347,
@@ -165,9 +165,9 @@
   "fenster_og_g3_stegscheitel_l": 11.946999999999992,
   "fenster_og_g3_stegscheitel_r": 11.946999999999992,
   "fenster_og_g3_glas_tiefe": 0.19928416741884147,
-  "erker_o_unterbau66": 0.5605745307745054,
-  "erker_o_unterbau70": 0.7097411209969617,
-  "erker_o_unterbau80": 1.4208538864037292,
+  "erker_o_unterbau66": 0.5530748367422428,
+  "erker_o_unterbau70": 0.6075205761410944,
+  "erker_o_unterbau80": 1.4208538809684554,
   "erker_o_trauf_unten": 1.5408542285036329,
   "tuer_b3_rahmenfront": -0.04463395892203348,
   "fenster_eg0_rahmenfront": 0.0207220242320707,
@@ -212,6 +212,16 @@
   "laube_sockel_front_o": -0.4612625516363389,
   "laube_sockel_oben_21": -0.44554548537133254,
   "laube_sockel_oben_23": 0.00445455381829829,
+  "erker_o_flanke74": 1.2157798668032467,
+  "baldachin1_fiale": 13.586999999999986,
+  "baldachin2_fiale": 13.446999999999989,
+  "baldachin3_fiale": 13.466999999999988,
+  "baldachin4_fiale": 13.526999999999987,
+  "baldachin2_haube_unten": 11.846999999999994,
+  "baldachin2_haube_up": 0.3600889274949848,
+  "baldachin2_haube_um": 0.3599108512001097,
+  "baldachin2_krone_up": 0.49468932344266975,
+  "baldachin2_krone_um": 0.4953106968185508,
   "fenster_eg2_oberkante_l": -0.11524318878876638,
   "fenster_eg2_oberkante_r": -0.11428265330653042
  },
@@ -418,7 +428,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.1086372509598732,
+   "wert": 0.10611763596534729,
    "soll": [
     0.0348,
     100
@@ -688,7 +698,7 @@
   },
   {
    "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 7,6",
-   "wert": 1.180854105857933,
+   "wert": 1.1808537766000953,
    "soll": [
     1.15,
     1.4
@@ -698,7 +708,7 @@
   },
   {
    "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 6,6 (Wolke-Median Scheibenmitte)",
-   "wert": 0.5605745307745054,
+   "wert": 0.5530748367422428,
    "soll": [
     0.4,
     0.6
@@ -708,7 +718,7 @@
   },
   {
    "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 7,0 (Wolke-Median Scheibenmitte)",
-   "wert": 0.7097411209969617,
+   "wert": 0.6075205761410944,
    "soll": [
     0.52,
     0.72
@@ -718,7 +728,7 @@
   },
   {
    "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 8,0 (Wolke-Median Scheibenmitte)",
-   "wert": 1.4208538864037292,
+   "wert": 1.4208538809684554,
    "soll": [
     1.28,
     1.48
@@ -747,31 +757,11 @@
    "status": "ok"
   },
   {
-   "name": "Figur 1 (Hauptfassade OG): Kronen-/Hutscheitel z",
-   "wert": 11.906999999999993,
-   "soll": [
-    11.816,
-    12.016
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
    "name": "Figur 1: Konsolen-Pendelspitze (tiefster Punkt) z",
    "wert": 9.20699999999999,
    "soll": [
     9.106,
     9.266
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Figur 2 (Hauptfassade OG): Kronen-/Hutscheitel z",
-   "wert": 11.926999999999992,
-   "soll": [
-    11.837,
-    12.037
    ],
    "ok": true,
    "status": "ok"
@@ -787,31 +777,11 @@
    "status": "ok"
   },
   {
-   "name": "Figur 3 (Hauptfassade OG): Kronen-/Hutscheitel z",
-   "wert": 11.866999999999994,
-   "soll": [
-    11.772,
-    11.972
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
    "name": "Figur 3: Konsolen-Pendelspitze (tiefster Punkt) z",
    "wert": 9.146999999999991,
    "soll": [
     9.086,
     9.246
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Figur 4 (Hauptfassade OG): Kronen-/Hutscheitel z",
-   "wert": 11.886999999999993,
-   "soll": [
-    11.806,
-    12.006
    ],
    "ok": true,
    "status": "ok"
@@ -1168,7 +1138,7 @@
   },
   {
    "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.35 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.3371921881297877,
+   "wert": 0.33434823478472886,
    "soll": [
     0.25,
     0.35
@@ -1178,7 +1148,7 @@
   },
   {
    "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.55 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.17330339367812586,
+   "wert": 0.17257288015245997,
    "soll": [
     0.13,
     0.23
@@ -1188,7 +1158,7 @@
   },
   {
    "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.78 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.07411555109453749,
+   "wert": 0.0737696991541128,
    "soll": [
     0.03,
     0.13
@@ -1332,16 +1302,6 @@
    "soll": [
     0.05,
     0.3
-   ],
-   "ok": true,
-   "status": "ok"
-  },
-  {
-   "name": "Tuer Laube EG Bogen 3: Rahmenvorderkante gegen die Wandfront n 7,28 (m, - = davor, Strahl am rechten Rahmenpfosten, z 2,5)",
-   "wert": -0.04463395892203348,
-   "soll": [
-    -0.096,
-    0.0
    ],
    "ok": true,
    "status": "ok"
@@ -1732,6 +1692,136 @@
    "soll": [
     -0.08,
     0.08
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker Ost: Unterbau-Flanke (Seitenbreite u) bei z 7,4, Schnitt in n=12,70 an der Wandebene (Trichter, Skalierzentrum Achse statt Wand)",
+   "wert": 1.2157798668032467,
+   "soll": [
+    0.91,
+    1.26
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Figur 1 (Hauptfassade OG): Kronen-/Hutscheitel z",
+   "wert": 11.906999999999993,
+   "soll": [
+    11.816,
+    12.016
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Figur 2 (Hauptfassade OG): Kronen-/Hutscheitel z",
+   "wert": 11.926999999999992,
+   "soll": [
+    11.837,
+    12.037
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Figur 3 (Hauptfassade OG): Kronen-/Hutscheitel z",
+   "wert": 11.866999999999994,
+   "soll": [
+    11.772,
+    11.972
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Figur 4 (Hauptfassade OG): Kronen-/Hutscheitel z",
+   "wert": 11.886999999999993,
+   "soll": [
+    11.806,
+    12.006
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Baldachin 1 (Hauptfassade OG): Spitze der Mittelfiale z",
+   "wert": 13.586999999999986,
+   "soll": [
+    13.492,
+    13.692
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Baldachin 2 (Hauptfassade OG): Spitze der Mittelfiale z",
+   "wert": 13.446999999999989,
+   "soll": [
+    13.36,
+    13.56
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Baldachin 3 (Hauptfassade OG): Spitze der Mittelfiale z",
+   "wert": 13.466999999999988,
+   "soll": [
+    13.382,
+    13.582
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Baldachin 4 (Hauptfassade OG): Spitze der Mittelfiale z",
+   "wert": 13.526999999999987,
+   "soll": [
+    13.438,
+    13.638
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Baldachin 2: Unterkante der Haube (vorn) z",
+   "wert": 11.846999999999994,
+   "soll": [
+    11.717,
+    11.957
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Baldachin 2: Breite der Haube (Ma\u00dfwerkband, z 13,8)",
+   "wert": 0.7199997786950945,
+   "soll": [
+    0.63,
+    0.83
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Baldachin 2: Breite der Fialenkrone (Blattwerk, z 14,35)",
+   "wert": 0.9900000202612205,
+   "soll": [
+    0.85,
+    1.13
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Tuer Laube EG Bogen 3: Rahmenvorderkante gegen die Wandfront n 7,28 (m, - = davor, Strahl am rechten Rahmenpfosten, z 2,5)",
+   "wert": -0.04463395892203348,
+   "soll": [
+    -0.096,
+    0.0
    ],
    "ok": true,
    "status": "ok"
