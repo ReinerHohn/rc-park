@@ -6417,8 +6417,8 @@
    "wer": "Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetreu, alles vollautomatisch')",
    "teil": "staffelgiebel:ost",
    "merkmal": "Ostgiebel Kaeppchen/Fenster",
-   "text": "Kaeppchen auf den Stufen, Giebelfenster.",
-   "naechster_schritt": "Kaeppchen: Profil (n,z) aus Seitenfoto 6257 mit 2-Kamera-Triangulation von Buckel + hinterem Stufenende (scharfe Einzelpunkte), dann kappe_steigung/Buckelform setzen und am Foto-F1 pruefen",
+   "text": "Kaeppchen auf den Stufen, Giebelfenster. | 11.11. 18:0x Patch daechlein_h 0,25 VERWORFEN vom Pruefer trotz Abnahme+Konvergenz (+0,006, Kontrollfotos 0,789->0,800): Kaeppchen sitzt AUF der schon gemessenen Kappenfirsthoehe (M-6115-001..008) -> First 0,25 zu hoch. WIDERSPRUCH (Regel 5): Variante mit abgesenkter Stufe (kappe -0,25 + daechlein 0,25, o_d25k25) war am Foto schlechter (F1 0,761 statt 0,775 Basis).",
+   "naechster_schritt": "Kaeppchenhoehe und Kappenfirst je Stufe per foto_mass --tri in 6145/i08/6115 messen (Unterkante Abdeckung und First getrennt), Pruefung je Stufe eintragen, dann Stufe so bauen, dass First = Messung; Spitzenblock auch mit Abdeckung (6145).",
    "teil_erledigt": "2026-11-11 Kreis1: Giebelfenster (3, Z-6115-001/Z-6261-003, M-6115-013..015) als Nischen gebaut, Foto-F1 halbe Aufl. 0,699 -> 0,742. Kaeppchen: Saegezahn-Parameter kappe_steigung (0,3/0,45) senkte F1 (0,729/0,726) -> nicht aktiv (0); Form (Buckel vorn, flache Rueckflanke) am Foto gesehen, Betrag ungemessen (u-Mehrdeutigkeit Einzelansicht)",
    "formfamilie_test": true,
    "formfamilie_test_quelle": "Formtest: Satteldaechlein je Stufe sichtbar in 6115/6164/6145; Variante o_d25 11.11. abends"
