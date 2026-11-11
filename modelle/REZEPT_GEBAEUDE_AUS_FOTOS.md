@@ -222,3 +222,4 @@ Ziel für die Miniaturwelt: Schritte 2 und 3 laufen unbeaufsichtigt, Schritt 4 w
 
 
 - L-KR42 | Rippen/Profile, die UNTER einer vermessenen Flaeche vorstehen: erst klaeren, ob die gemessene Hoehe (Schlussstein/Kante) die Flaeche oder die Rippenunterseite ist, sonst haengt die Rippe zu tief; Vorsprung zum Messpunkt auslaufen lassen und Anlauf an die Wand so legen, dass bestehende Wand-Pruefungen gruen bleiben (laube_decke_u363 fiel von 4,87 auf 4,67). Anlass: Kreis r1 ff_+11_+6_+8. Werkzeug: baukasten_gen kreuzgewoelbe rippen_*; Pruefungen z_am_punkt + schnitt_reichweite (rippe_*).
+- L-KR43 (11.11.): verworfener Rippen-Patch (090522, altes Region-Tor) am Foto-Tor erneut geprueft: F1 0,725->0,753, Praez 0,89; teil_fotoform --aus: Zwischenstand liegt in <aus>.teil (vor Neulauf loeschen). Siehe kreis_bericht.md.
