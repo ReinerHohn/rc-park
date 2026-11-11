@@ -384,6 +384,12 @@ def waehlen(z, sperre):
         except FileExistsError:
             continue
     fl = formliste()
+    # GLEICHER BILDBEREICH (11.11., Lehre L37): Teile mit identischen Je-Foto-Werten (rumpf_eg/laube_rueck) werden vom selben fehlenden Element
+    # gedeckelt - Fehlversuche zaehlen gemeinsam, belegt einer, ist der andere gesperrt (sonst abwechselnd Leerrunden).
+    for _g in gleiche_bereiche(fl):
+        _m = max(fg.get(t_, 0) for t_ in _g)
+        for t_ in _g: fg[t_] = _m
+        if any(os.path.exists(os.path.join(BELEGT, t_)) for t_ in _g): belegt_fam |= {t_.split("__")[0] for t_ in _g}
     kand = [t for t in (z or {}).get("wolkenbeleg_teile") or [] if t["beleg"] is not None and (t["anteil_mit_daten"] >= MIN_DATEN or form_g(fl, t["teil"]).get("f1") is not None)
             and sperre.get(t["teil"], 0) < MAX_FEHL and fg.get(t["teil"], 0) < MAX_GLOBAL and not os.path.exists(os.path.join(BELEGT, t["teil"]))
             and t["teil"].split("__")[0] not in belegt_fam]   # gleiche Formfamilie (gleicher Generatorcode) nie parallel
@@ -423,6 +429,26 @@ def nicht_in_main(z, lauf, r):
         return " [angenommen, aber NICHT in main (baute auf verworfenem Stand auf) - brauchbare Teile gezielt uebernehmen]"
     return ""
 
+def gleiche_bereiche(fl, n=6, tol=0.02, min_gleich=3):
+    """Gruppen von Teilen mit (fast) GLEICHEM Bildbereich (L37): auf >= min_gleich ihrer n staerksten Fotos weichen sichtbare Pixel und
+    Kantenpixel um < tol (relativ) ab (rumpf_eg/laube_rueck: 6174 862304 vs 862370 px). Einzelverkettung ueber Paare."""
+    E = {}
+    for t, je in ((fl or {}).get("teile") or {}).items():
+        if "__ausschnitt" in t: continue
+        e = {k: v for k, v in je.items() if k != "_gesamt" and isinstance(v, dict) and "mk_px" in v and v.get("sicht_px")}
+        E[t] = {k: e[k] for k in sorted(e, key=lambda k: -(e[k]["mk_px"] + e[k]["fk_px"]))[:n]}
+    T = sorted(E); par = {t: t for t in T}
+    def f(x):
+        while par[x] != x: x = par[x]
+        return x
+    nah = lambda a, b: abs(a - b) <= tol * max(a, b, 1)
+    for i, a in enumerate(T):
+        for b in T[i + 1:]:
+            g = [k for k in E[a] if k in E[b] and nah(E[a][k]["sicht_px"], E[b][k]["sicht_px"]) and nah(E[a][k]["mk_px"], E[b][k]["mk_px"])]
+            if len(g) >= min_gleich: par[f(a)] = f(b)
+    gr = {}
+    for t in T: gr.setdefault(f(t), []).append(t)
+    return [g for g in gr.values() if len(g) > 1]
 def beob_zu_teilen(teile):
     """Offene Beobachtungen (masstabelle) der betroffenen Teile als Text fuer Fehlteil-Auftraege aus Fotokanten (11.11.: Erker-Rippennetz-
     Formbeschreibung haengt am Teil erker_polygon:0, der Fehlteil-Agent fuer den Cluster an der Erker-Unterseite sah sie sonst nicht)."""
