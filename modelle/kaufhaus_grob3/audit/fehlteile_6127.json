@@ -1,64 +1,64 @@
 {
  "foto": "6127",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_045306a045306/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6127 (amtliche Anker)",
  "zelle_px": 162,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    1782,
-    0,
-    162
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    6.2,
-    5.14,
-    22.27
-   ]
-  },
-  {
-   "zelle": [
-    1296,
-    648,
-    162
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    13.48,
-    2.19,
-    22.73
-   ]
-  },
-  {
-   "zelle": [
-    810,
-    1296,
-    162
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    11.17,
-    8.99,
-    12.44
-   ]
-  },
-  {
-   "zelle": [
+    1620,
     972,
-    1296,
     162
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    10.58,
-    8.18,
-    12.66
+    13.17,
+    -2.95,
+    21.42
+   ]
+  },
+  {
+   "zelle": [
+    1782,
+    1782,
+    162
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    11.57,
+    -2.39,
+    12.49
+   ]
+  },
+  {
+   "zelle": [
+    1458,
+    810,
+    162
+   ],
+   "score": -0.993,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    11.36,
+    2.72,
+    19.37
+   ]
+  },
+  {
+   "zelle": [
+    1944,
+    1458,
+    162
+   ],
+   "score": -0.972,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    13.57,
+    -8.64,
+    17.96
    ]
   },
   {
@@ -67,26 +67,26 @@
     486,
     162
    ],
-   "score": -0.981,
+   "score": -0.964,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    8.1,
-    9.06,
-    16.42
+    8.05,
+    9.11,
+    16.37
    ]
   },
   {
    "zelle": [
-    1944,
-    1944,
+    648,
+    1458,
     162
    ],
-   "score": -0.978,
+   "score": -0.924,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    11.15,
-    -4.85,
-    10.82
+    13.6,
+    8.37,
+    11.94
    ]
   }
  ],

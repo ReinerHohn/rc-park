@@ -1,92 +1,92 @@
 {
  "foto": "d11",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_045306a045306/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-d11 (amtliche Anker)",
  "zelle_px": 137,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    822,
-    1096,
-    137
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    15.09,
-    1.28,
-    23.06
-   ]
-  },
-  {
-   "zelle": [
     959,
     1233,
     137
    ],
-   "score": -0.997,
+   "score": -0.994,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    13.68,
-    1.46,
-    23.63
+    13.66,
+    1.43,
+    23.68
    ]
   },
   {
    "zelle": [
-    2466,
+    2329,
+    2329,
+    137
+   ],
+   "score": -0.886,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -5.42,
+    4.89,
+    25.54
+   ]
+  },
+  {
+   "zelle": [
+    2329,
     1918,
     137
    ],
-   "score": -0.978,
+   "score": -0.877,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    9.23,
-    8.7,
-    16.26
+    7.24,
+    7.81,
+    18.51
    ]
   },
   {
    "zelle": [
-    1096,
-    1233,
+    1370,
+    1370,
     137
    ],
-   "score": -0.973,
+   "score": -0.836,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    13.41,
-    2.19,
-    22.82
+    12.44,
+    3.79,
+    21.14
+   ]
+  },
+  {
+   "zelle": [
+    0,
+    1781,
+    137
+   ],
+   "score": -0.832,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    16.04,
+    -3.33,
+    18.15
    ]
   },
   {
    "zelle": [
     2329,
-    2329,
+    2192,
     137
    ],
-   "score": -0.973,
+   "score": -0.826,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -5.35,
-    4.9,
-    25.59
-   ]
-  },
-  {
-   "zelle": [
-    959,
-    1096,
-    137
-   ],
-   "score": -0.807,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    15.41,
-    2.77,
-    21.07
+    -3.68,
+    5.9,
+    25.69
    ]
   }
  ],
