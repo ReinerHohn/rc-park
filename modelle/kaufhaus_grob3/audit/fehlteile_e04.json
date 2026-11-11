@@ -4,6 +4,49 @@
  "kamera": "K-e04 (amtliche Anker)",
  "zelle_px": 197,
  "schwelle": 0.35,
- "treffer": [],
+ "treffer": [
+  {
+   "zelle": [
+    788,
+    985,
+    197
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -6.21,
+    7.55,
+    22.54
+   ]
+  },
+  {
+   "zelle": [
+    985,
+    788,
+    197
+   ],
+   "score": -0.772,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -4.91,
+    10.32,
+    20.91
+   ]
+  },
+  {
+   "zelle": [
+    788,
+    788,
+    197
+   ],
+   "score": -0.754,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -5.48,
+    8.42,
+    23.66
+   ]
+  }
+ ],
  "versatz_test": null
 }

@@ -6805,74 +6805,6 @@
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 1)",
-   "auto_id": "fehlteile-6261-546-1170",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 25.8,
-   "z_bis": 25.8,
-   "xyz": [
-    16.28,
-    -1.5,
-    25.8
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=25.8 m, y=-1.5 m (Zelle [546, 1170, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 3)",
-   "auto_id": "fehlteile-6261-234-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.54,
-   "z_bis": 18.54,
-   "xyz": [
-    14.34,
-    -8.87,
-    18.54
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.54 m, y=-8.87 m (Zelle [234, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
-   "auto_id": "fehlteile-6261-312-1794",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 18.23,
-   "z_bis": 18.23,
-   "xyz": [
-    14.61,
-    -7.15,
-    18.23
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
-   "auto_id": "fehlteile-6261-234-1872",
-   "art": "fehlteil",
-   "foto": "6261",
-   "z_von": 17.42,
-   "z_bis": 17.42,
-   "xyz": [
-    14.29,
-    -8.91,
-    17.42
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.42 m, y=-8.91 m (Zelle [234, 1872, 78], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "teil": "bogenreihe:laube",
    "merkmal": "Saeulensockel (achteckiger Fuss) in Wirklichkeit viel hoeher",
    "text": "Nutzer 11.11. 08:47 (Foto handy_d_09: Sockel ca. knie- bis hueft-hoch). Fotobeleg: gelbe Flecken z 0,8-2,4 in 25 Fotos; Teilnote bogenreihe 0,73 (Hoehe 0,635) mittelt den kleinen Sockel weg.",
@@ -6914,6 +6846,23 @@
    "merkmal": "Pruefer-Rest bogenreihe:laube kreis 20261111_152551a152551 r2",
    "text": "Offene Fehler laut Pruefer nach angenommener Runde: Foto-F1 nur 0,756->0,757 (Rauschen), Gate +0,02 nicht erreicht; Beleg nur foto_mass an Pfeiler 3 (2 Fotos) | d20 nachher: neue rote Kanten in der Sockelflaeche (waagerecht ~y2040, senkrechte Achteckkanten x~650/930) = Modellkanten ohne Fotokante | d20 nachher: Fotokante unten am Sockel (~y2205, vorher von alter Wandoberkante getroffen) jetzt gelb; rechte Sockelkante gelb | sockel_weite 1,5 weiter ANNAHME, Fotos widerspruechlich (1,16/1,39/1,45) | Pflaster 1,57 (Foto) gegen boden_z 1,453: 0,12 m Widerspruch offen; Pfeiler 4 Wandoberkante 2,20 gegen 2,27-2,30 bei Pfeiler 3, Pfeiler 0/1/2/4 nicht einzeln geprueft | 6176: vorderer Laubenpfeiler grossflaechig rot (Lage/Breite falsch), Vordergrundpfeiler rechts komplett gelb (fehlt) - unveraendert offen | Regel 3e/3f verletzt: foto_diff, fehlteile_finden, teile_lage_pruefen nicht gelaufen | Verwaiste teil_05/teil_06.stl (+lage/) im Diff, nicht in teilung.json (4 Teile) - nicht mit nach main | Formbilder 6120/6130/6171/6174/6182/d11/p03 nicht angesehen (Pruefer) | Stirnbogen-Reste aus r1 unbearbeitet",
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 4)",
+   "auto_id": "fehlteile-6261-234-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.55,
+   "z_bis": 18.55,
+   "xyz": [
+    14.34,
+    -8.86,
+    18.55
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.86 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

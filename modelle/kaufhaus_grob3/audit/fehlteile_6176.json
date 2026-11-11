@@ -8,15 +8,29 @@
   {
    "zelle": [
     1610,
+    2254,
+    161
+   ],
+   "score": -0.886,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    5.46,
+    11.9,
+    8.59
+   ]
+  },
+  {
+   "zelle": [
+    1610,
     2415,
     161
    ],
-   "score": -0.872,
+   "score": -0.856,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    3.98,
-    12.46,
-    8.23
+    4.06,
+    12.43,
+    8.2
    ]
   }
  ],
