@@ -66,6 +66,44 @@ def richtungen(maske, winkel=30.0):
     return maske & (np.abs(np.cos(th)) < sw), maske & (np.abs(np.sin(th)) < sw)
 
 
+# FEINMASS (11.11., modelle/SPEC_ORNAMENT_FEINMASS.md): Nebenzahl f1_fein, Hauptzahl F1 unveraendert (eigenes Etikett METRIK_FEIN, METRIK bleibt -> Kreis-Caches bleiben gueltig).
+# Grund: die Hauptzahl glaettet Kanten auf 0,18 m und ist blind fuer Rippen/Sprossen/Masswerk (Erker-Varianten: F1 0,574/0,570/0,574 bei klar verschiedenen Renderbildern).
+METRIK_FEIN = "fein_v1"
+FEIN_TOL_M = 0.03      # Toleranz in Metern (Kamera -> Pixel ueber die Teiltiefe)
+FEIN_TIEFE_M = 0.025   # Modellkante: Tiefensprung zwischen Nachbarpixeln > max(FEIN_TIEFE_M, 1 % der Tiefe)
+FEIN_NORMAL_GRAD = 25.0  # Modellkante: Normalensprung > 25 Grad (Rippe/Sprosse auf einer Flaeche)
+
+
+def feinkanten_modell(d, fid, fnorm):
+    """Modellkanten des Teilrasters in voller Aufloesung: Tiefensprung (inkl. Silhouette zum Hintergrund) ODER Normalensprung zwischen 4-Nachbarn.
+    d: Tiefe (inf = leer), fid: Dreiecksnummer (-1 leer), fnorm: Flaechennormalen. Gibt bool-Karte (1 px breit) zurueck."""
+    fin = np.isfinite(d); dd = np.where(fin, d, 0.0).astype(np.float32); K = np.zeros(d.shape, bool)
+    nz = fnorm[np.clip(fid, 0, None)]   # (H,W,3)
+    for sl_a, sl_b in (((slice(None), slice(0, -1)), (slice(None), slice(1, None))), ((slice(0, -1), slice(None)), (slice(1, None), slice(None)))):
+        fa, fb = fin[sl_a], fin[sl_b]; da, db = dd[sl_a], dd[sl_b]
+        sprung = (fa != fb) | (fa & fb & (np.abs(da - db) > np.maximum(FEIN_TIEFE_M, 0.01 * np.maximum(da, db))))
+        cosw = (nz[sl_a] * nz[sl_b]).sum(-1); knick = fa & fb & (fid[sl_a] != fid[sl_b]) & (cosw < np.cos(np.radians(FEIN_NORMAL_GRAD)))
+        e = sprung | knick; K[sl_a] |= e; K[sl_b] |= e
+    return K
+
+
+def fein_bewerten(mfm, ff, tolpx):
+    """(Praezision, Recall): Anteil Modellkantenpixel mit Fotokante und Anteil Fotokantenpixel mit Modellkante innerhalb tolpx (Pixel)."""
+    dtf = cv2.distanceTransform((~ff).astype(np.uint8), cv2.DIST_L2, 5); dtm = cv2.distanceTransform((~mfm).astype(np.uint8), cv2.DIST_L2, 5)
+    return float((dtf[mfm] <= tolpx).mean()), float((dtm[ff] <= tolpx).mean())
+
+
+def feinkanten_foto(gray, roi):
+    """Fotokanten in VOLLER Aufloesung ohne 0,18-m-Glaettung: Canny auf leicht geglaettetem Grau (sigma 1), Schwellen adaptiv im ROI
+    (hoch = 80. Perzentil des Gradientenbetrags im ROI, tief = 0,5 x hoch). roi = bool-Karte."""
+    g = cv2.GaussianBlur(gray, (0, 0), 1.0); gx = cv2.Sobel(g, cv2.CV_32F, 1, 0, ksize=3); gy = cv2.Sobel(g, cv2.CV_32F, 0, 1, ksize=3)
+    mag = np.hypot(gx, gy)[roi]
+    if mag.size < 100: return np.zeros(gray.shape, bool)
+    hi = float(np.percentile(mag, 80)); hi = max(hi, 8.0)
+    # Schwellen in Sobel-3x3-Einheiten (L2), dieselbe Skala wie mag
+    return cv2.Canny(cv2.convertScaleAbs(g), 0.5 * hi, hi, L2gradient=True) > 0
+
+
 def flecken(maske, pos, n=3, min_px=40):
     """Groesste zusammenhaengende Flecken (nach 5-px-Schliessen) mit Pixelzahl und Weltpunkt (Median der Rasterpositionen)."""
     if maske.sum() < min_px: return []
@@ -90,6 +128,7 @@ def main(argv=None):
     ap.add_argument("--stoermaske", choices=["an", "aus"], default=os.environ.get("RCPARK_STOERMASKE", "aus"),
                     help="Stoermaske (tools/foto_stoermaske.py: Menschen/Fahrzeuge/Schilder/Moebel/Pflanzen/Fahnen): Foto- UND Modellkantenpixel in der Maske zaehlen nicht. Standard aus = bitgleich zum Ist. Auch RCPARK_STOERMASKE=an")
     ap.add_argument("--stoermaske_dir", default=os.environ.get("RCPARK_STOERMASKE_DIR"), help="Maskenordner (Standard /media/oem/scan/rc-park_tmp/stoermaske); Dateien <dir>/<objekt>/<foto>.png")
+    ap.add_argument("--fein", choices=["an", "aus"], default=os.environ.get("RCPARK_FEIN", "an"), help="Nebenzahl f1_fein (voll aufgeloeste Kanten, Hauptzahl F1 unveraendert); auch RCPARK_FEIN=aus")
     ap.add_argument("--aus"); ap.add_argument("--bilder", action="store_true", help="je Teil+Foto Ausschnitt mit gruen/rot/gelb nach audit/teil_fotoform/")
     ap.add_argument("--nur", help="nur diese Teile (Komma), z. B. das Kreis-Ziel"); ap.add_argument("--etikett", default="", help="Zusatz im Bildnamen (vorher/nachher)")
     ap.add_argument("--bilder_dir", help="Bilder hierhin statt modelle/<objekt>/audit/teil_fotoform (Kreis: Datenplatte, nicht ins Repo)")
@@ -140,6 +179,8 @@ def main(argv=None):
             os.remove(tp_)
         SIG = dict(dir=sd, ref=rp, ref_sha=hashlib.sha256(open(rp, "rb").read()).hexdigest()[:16]); erg["sigma_fest"] = SIG["ref_sha"]
     erg["metrik"] = METRIK_V3 if SIG else METRIK; erg["wolke_verdeckung"] = "an" if VERD is not None else "aus"   # aus = Vergleichslauf, nie mit "an"-Listen mischen
+    FEIN = a.fein == "an"
+    if FEIN: erg["metrik_fein"] = METRIK_FEIN
     SM_ON = a.stoermaske == "an"
     if SM_ON:
         import foto_stoermaske as FS
@@ -157,7 +198,7 @@ def main(argv=None):
             K = json.load(open(kp)); kk = K["kamera"]
             bild = glob.glob(os.path.join(R0, obj["fotos_dir"], nr + "_*"))
             if not bild: return
-            im0, K = FD.foto_skalieren(cv2.imread(bild[0]), K); kk = K["kamera"]; H, W = im0.shape[:2]   # RCPARK_FOTO_SKALA (Standard 1 = unveraendert)
+            im0, K = FD.foto_skalieren(cv2.imread(bild[0]), K); kk = K["kamera"]; H, W = im0.shape[:2]; im0_voll = im0   # RCPARK_FOTO_SKALA (Standard 1 = unveraendert)
             voll = os.path.join(tmp, f"voll_{W}x{H}.png"); cv2.imwrite(voll, np.full((H, W), 255, np.uint8)) if not os.path.exists(voll) else None
             npz = os.path.join(tmp, f"k_{nr}.npz")
             # SCHNELLWEG (10.11. abends, bitgleich geprueft - TFF_LANGSAM=1 = alter Weg, TFF_PRUEF=1 = beide Wege vergleichen): foto_diff gibt Raster und
@@ -222,7 +263,13 @@ def main(argv=None):
                         vis = vis | visv; finu = fin | finv
                 if vis.sum() < 200: continue
                 ry, rx = np.flatnonzero(finu.any(1)), np.flatnonzero(finu.any(0)); by0, by1, bx0, bx1 = int(ry[0]), int(ry[-1]) + 1, int(rx[0]), int(rx[-1]) + 1   # Rasterausschnitt des Teils (vis liegt darin)
-                sichtbar[name] = dict(vis=vis[by0:by1, bx0:bx1].copy(), vd=vd[by0:by1, bx0:bx1].copy() if (a.bilder and zc is not None) else None, vw=vw, box=(by0, by1, bx0, bx1))
+                mf = None
+                if FEIN:   # Feinkanten des Teils (eigener Voll-Raster mit Dreiecksnummern; Tiefe bitgleich zum nur_tiefe-Raster)
+                    d2, fid2, _ = RK.dreiecke_rastern(m, R, t, f, cx, cy, W, H)
+                    fn = np.asarray(TM[name].face_normals, np.float32)
+                    mf = feinkanten_modell(d2[by0:by1, bx0:bx1], fid2[by0:by1, bx0:bx1], fn); del d2, fid2
+                    zt = float(np.median(dp[by0:by1, bx0:bx1][vis[by0:by1, bx0:bx1]])); mf = (mf, FEIN_TOL_M * f / max(zt, 1e-3))
+                sichtbar[name] = dict(mf=mf, vis=vis[by0:by1, bx0:bx1].copy(), vd=vd[by0:by1, bx0:bx1].copy() if (a.bilder and zc is not None) else None, vw=vw, box=(by0, by1, bx0, bx1))
                 ymin, ymax, xmin, xmax = min(ymin, by0), max(ymax, by1), min(xmin, bx0), max(xmax, bx1)
             if not sichtbar: return
             # ---- gemeinsamer Ausschnitt C: alle Teile + Rand (Dilatation 3, Richtungsfilter ~22, Abstandskappe kap, Bildrand 40) ----
@@ -234,6 +281,7 @@ def main(argv=None):
                 _sm = FS.maske_laden(a.objekt, nr, W, H, a.stoermaske_dir or FS.CACHE)
                 if _sm is None: erg["stoermaske_fehlt"].append(nr); print(f"WARNUNG: keine Stoermaske fuer {nr} (Foto unmaskiert gemessen)", flush=True)
                 else: SMC = _sm[C]
+            gray_c = cv2.cvtColor(FF.foto_entzerren(im0_voll, kk)[0][C], cv2.COLOR_BGR2GRAY) if FEIN else None   # Fotokanten wie foto_diff aus dem ENTZERRTEN Foto (Renderer = Lochkamera)
             mkp, fkp = mkp[C], fkp[C]; dF, dM = dF16[C].astype(np.float32), dM16[C].astype(np.float32); im0 = im0[C]
             pos = pos[cy0:cy1, cx0:cx1]; pos = pos.cpu().numpy() if hasattr(pos, "cpu") else np.ascontiguousarray(pos)
             if kap:
@@ -266,6 +314,18 @@ def main(argv=None):
                 for fl_ in fl_r + fl_g: fl_["bbox_px"][0] += cx0; fl_["bbox_px"][1] += cy0   # zurueck in Bildkoordinaten des ganzen Fotos
                 e = {**hw, "praez": round(float(ok_m.mean()), 3) if ok_m.size else 0.0, "recall": round(float(ok_f.mean()), 3), "mk_px": int(mk_t.sum()), "fk_px": int(fk_t.sum()), "sicht_px": int(vis.sum()), "wolke_verd_px": vw,
                      "rot": fl_r, "gelb": fl_g}
+                if FEIN and sv["mf"] is not None:
+                    mfb, tolpx = sv["mf"]; mfm = np.zeros((Hc, Wc), bool); mfm[by0 - cy0:by1 - cy0, bx0 - cx0:bx1 - cx0] = mfb
+                    mfm &= ms; ff = feinkanten_foto(gray_c, ms) & ms
+                    if SMC is not None: mfm &= ~SMC; ff &= ~SMC
+                    if mfm.sum() >= 50 and ff.sum() >= 50:
+                        pf, rf = fein_bewerten(mfm, ff, tolpx)
+                        e.update({"praez_f": round(pf, 3), "recall_f": round(rf, 3), "f1_f": round(2 * pf * rf / (pf + rf), 3) if pf + rf else 0.0,
+                                  "mkf_px": int(mfm.sum()), "fkf_px": int(ff.sum()), "tol_px": round(tolpx, 2)})
+                        if a.bilder:
+                            fo = (im0 // 2).copy(); fo[ff] = (255, 160, 0); fo[mfm] = (0, 220, 0); fo[mfm & ff] = (255, 255, 255)
+                            ys, xs = np.where(ms); fy0, fy1, fx0, fx1 = max(0, ys.min() - 20), min(Hc, ys.max() + 20), max(0, xs.min() - 20), min(Wc, xs.max() + 20)
+                            cv2.imwrite(os.path.join(bd, f"{name}_{nr}{('_' + a.etikett) if a.etikett else ''}_fein.jpg"), fo[fy0:fy1, fx0:fx1], [cv2.IMWRITE_JPEG_QUALITY, 85])
                 erg["teile"].setdefault(name, {})[nr] = e
                 if a.bilder:
                     ys, xs = np.where(ms); y0, y1, x0, x1 = max(0, ys.min() - 40), min(Hc, ys.max() + 40), max(0, xs.min() - 40), min(Wc, xs.max() + 40)
@@ -280,7 +340,7 @@ def main(argv=None):
     if TEIL and os.path.exists(TEIL):   # Wiederaufnahme: abgebrochener Lauf zum selben STL
         try:
             alt = json.load(open(TEIL))
-            if alt.get("stl_sha") == erg["stl_sha"] and alt.get("metrik") == erg["metrik"]: erg["fotos"], erg["teile"] = alt["fotos"], alt["teile"]; print("Wiederaufnahme:", sum(isinstance(v, dict) for v in alt["fotos"].values()), "Fotos fertig", flush=True)
+            if alt.get("stl_sha") == erg["stl_sha"] and alt.get("metrik") == erg["metrik"] and alt.get("metrik_fein") == erg.get("metrik_fein"): erg["fotos"], erg["teile"] = alt["fotos"], alt["teile"]; print("Wiederaufnahme:", sum(isinstance(v, dict) for v in alt["fotos"].values()), "Fotos fertig", flush=True)
         except Exception: pass
     import torch
     for nr in fotos:
@@ -300,6 +360,11 @@ def main(argv=None):
         if not mk or not fk: continue
         p = sum(v["praez"] * v["mk_px"] for v in je.values()) / mk; r = sum(v["recall"] * v["fk_px"] for v in je.values()) / fk
         je["_gesamt"] = {"praez": round(p, 3), "recall": round(r, 3), "f1": round(2 * p * r / (p + r), 3) if p + r else 0.0, "fotos": len(je)}
+        ff_ = [v for v in je.values() if isinstance(v, dict) and "mkf_px" in v]   # Feinmass (Nebenzahl), gleiche Gewichtung
+        mfp = sum(v["mkf_px"] for v in ff_); ffp = sum(v["fkf_px"] for v in ff_)
+        if mfp and ffp:
+            pfe = sum(v["praez_f"] * v["mkf_px"] for v in ff_) / mfp; rfe = sum(v["recall_f"] * v["fkf_px"] for v in ff_) / ffp
+            je["_gesamt"].update({"praez_f": round(pfe, 3), "recall_f": round(rfe, 3), "f1_fein": round(2 * pfe * rfe / (pfe + rfe), 3) if pfe + rfe else 0.0, "fotos_fein": len(ff_)})
         hh = [v for v in je.values() if isinstance(v, dict) and "mkh_px" in v]   # Hoehen-Wert (waagerechte Kanten), gleiche Gewichtung
         mh = sum(v["mkh_px"] for v in hh); fh = sum(v["fkh_px"] for v in hh)
         if mh and fh:
