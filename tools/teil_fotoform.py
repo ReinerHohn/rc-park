@@ -23,6 +23,9 @@ R0 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # METRIK-VERSION (Cache-Schluessel!): bei JEDER Aenderung der Bewertung hochzaehlen. bauteil_kreis.py liest die Zeile per Regex (^METRIK = "...").
 # v2 = Verdeckung zusaetzlich gegen die Fotowolke (wolke_verdeckung.py); "festbereich" = --bereich_von (ROI vorher/nachher gleich) moeglich.
 METRIK = "v2_wolkenverdeckung_festbereich"
+# v3 (11.11., fertig gebaut, noch NICHT eingeschaltet): dmed/sigma/Kappe je Foto aus einem FESTEN Referenz-STL (foto_diff._dmed_fest) - vorher aenderte ein Umbau am Westhelm die Fotokanten
+# und damit fk_px/praez UNVERAENDERTER Teile (Baldachine 0,614 -> 0,499). EINSCHALTEN (Kreis-Umstellung, durch main): Standard --sigma_fest/RCPARK_SIGMA_FEST auf "an" und METRIK = METRIK_V3 setzen.
+METRIK_V3 = "v3_sigma_fest_wolkenverdeckung_festbereich"
 
 
 def rahmen(stl, obj, kk):
@@ -82,6 +85,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--teile_dir"); ap.add_argument("--fotos")
     ap.add_argument("--stl"); ap.add_argument("--schwelle", type=float, default=0.4, help="Anteil der Kappe (0,35 m): 0,4 = 0,14 m")
     ap.add_argument("--min_px", type=int, default=150, help="Mindestzahl Kantenpixel je Teil und Foto, sonst nicht beurteilbar")
+    ap.add_argument("--sigma_fest", choices=["an", "aus"], default=os.environ.get("RCPARK_SIGMA_FEST", "aus"), help="dmed/sigma je Foto aus Referenz-STL (Metrik v3, Standard) statt aus dem aktuellen Modell (v2)")
+    ap.add_argument("--sigma_dir", default=os.environ.get("RCPARK_SIGMA_DIR"), help="Ordner mit ref.stl und dmed_*.json (Standard /media/oem/scan/rc-park_tmp/fotoform_cache/sigma_<objekt>)")
     ap.add_argument("--aus"); ap.add_argument("--bilder", action="store_true", help="je Teil+Foto Ausschnitt mit gruen/rot/gelb nach audit/teil_fotoform/")
     ap.add_argument("--nur", help="nur diese Teile (Komma), z. B. das Kreis-Ziel"); ap.add_argument("--etikett", default="", help="Zusatz im Bildnamen (vorher/nachher)")
     ap.add_argument("--bilder_dir", help="Bilder hierhin statt modelle/<objekt>/audit/teil_fotoform (Kreis: Datenplatte, nicht ins Repo)")
@@ -120,7 +125,18 @@ def main(argv=None):
         wp = a.wolke or obj.get("kreis", {}).get("wolke") or "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2.npy"
         if os.path.exists(wp): VERD = WV.Verdecker(np.load(wp, mmap_mode="r")); erg["wolke"] = wp
         else: print("WARNUNG: Wolke fehlt, Verdeckung aus:", wp, flush=True)
-    erg["metrik"] = METRIK; erg["wolke_verdeckung"] = "an" if VERD is not None else "aus"   # aus = Vergleichslauf, nie mit "an"-Listen mischen
+    SIG = None
+    if a.sigma_fest == "an":
+        if os.environ.get("TFF_LANGSAM") == "1": raise SystemExit("TFF_LANGSAM=1 geht nur mit --sigma_fest aus")
+        sd = a.sigma_dir or os.path.join("/media/oem/scan/rc-park_tmp/fotoform_cache" if os.path.isdir("/media/oem/scan") else tempfile.gettempdir(), "sigma_" + a.objekt); os.makedirs(sd, exist_ok=True)
+        rp = os.path.join(sd, "ref.stl")
+        if not os.path.exists(rp):   # erster Lauf friert das aktuelle Haupt-STL ein (atomar; wer zuerst kommt, gewinnt - danach nie wieder aendern)
+            tp_ = rp + f".{os.getpid()}.tmp"; _sh0 = __import__("shutil"); _sh0.copyfile(stl, tp_)
+            try: os.link(tp_, rp)
+            except FileExistsError: pass
+            os.remove(tp_)
+        SIG = dict(dir=sd, ref=rp, ref_sha=hashlib.sha256(open(rp, "rb").read()).hexdigest()[:16]); erg["sigma_fest"] = SIG["ref_sha"]
+    erg["metrik"] = METRIK_V3 if SIG else METRIK; erg["wolke_verdeckung"] = "an" if VERD is not None else "aus"   # aus = Vergleichslauf, nie mit "an"-Listen mischen
     if phantom: erg["phantom"] = phantom   # nur Bereich des Nachher-Teils, Vorher-Modell ohne dieses Teil
     if a.bereich_von: erg["bereich_von"] = a.bereich_von   # F1 in Vereinigungsbereich: NICHT mit Listen ohne dieses Feld vergleichen/mischen (nur vorher/nachher-Paar eines Tors)
     _td = "/media/oem/scan/rc-park_tmp" if os.path.isdir("/media/oem/scan") else None   # nie Root-Platte (10.11.: 76 Reste = 4,1 GB in /tmp, Root 5 GB)
@@ -140,7 +156,7 @@ def main(argv=None):
             # SCHNELLWEG (10.11. abends, bitgleich geprueft - TFF_LANGSAM=1 = alter Weg, TFF_PRUEF=1 = beide Wege vergleichen): foto_diff gibt Raster und
             # Kostenkarte im Speicher zurueck und hoert nach der Kostenkarte auf (Bericht/Bilder/zweites Vollraster/npz entfallen).
             schnell = os.environ.get("TFF_LANGSAM") != "1"
-            FD._RUECK = {"nur_kosten": os.environ.get("TFF_PRUEF") != "1"} if schnell else None
+            FD._RUECK = ({"nur_kosten": os.environ.get("TFF_PRUEF") != "1", **({"sigma_fest": SIG} if SIG else {})}) if schnell else None
             try:
                 FD.main([objp, nr, "--stl", stl, "--bewertung-maske", voll, "--kostenkarte", npz, "--aus", tmp])
             except BaseException as ex:
@@ -154,7 +170,7 @@ def main(argv=None):
             else: erg["fotos"][nr] = "keine Kostenkarte (zu wenig Kanten)"; return
             mkp, fkp, dF16, dM16 = Z["mkp"], Z["fkp"], Z["dF"], Z["dM"]
             # Hoehen-Wert: Abstaende nur zwischen WAAGERECHTEN Kanten, gleiche Einheit wie dF (Kappe in Pixeln aus dF zurueckgerechnet; Median ueber das GANZE Bild -> nicht beschneidbar)
-            _dtF = cv2.distanceTransform((~fkp).astype(np.uint8), cv2.DIST_L2, 5); _dF = dF16.astype(np.float32); _s = (_dF > 0.05) & (_dF < 0.95) & mkp
+            _dtF = Z["dFp"] if (hasattr(Z, "keys") and "dFp" in Z) else cv2.distanceTransform((~fkp).astype(np.uint8), cv2.DIST_L2, 5); _dF = dF16.astype(np.float32); _s = (_dF > 0.05) & (_dF < 0.95) & mkp
             kap = float(np.median(_dtF[_s] / _dF[_s])) if _s.sum() > 20 else None
             del _dtF, _dF, _s
             R, t, f, _, _ = FF.kamera_laden(K, obj, nr, R0, W, H); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2))
@@ -169,7 +185,7 @@ def main(argv=None):
                 dv, _, pos = RK.dreiecke_rastern(mv, R, t, f, cx, cy, W, H)
                 if schnell and rueck and "depth" in rueck:   # TFF_PRUEF: Schnellweg muss bitgleich sein
                     print(f"PRUEF {nr}: depth gleich {np.array_equal(dv, rueck['depth'], equal_nan=True)}, pos gleich {np.array_equal(pos, rueck['pos'].cpu().numpy(), equal_nan=True)}", flush=True)
-            erg["fotos"][nr] = {"mk_px": int(mkp.sum()), "fk_px": int(fkp.sum())}
+            erg["fotos"][nr] = {"mk_px": int(mkp.sum()), "fk_px": int(fkp.sum()), **({k: round(v, 9) for k, v in rueck["dmed_info"].items()} if (rueck and rueck.get("dmed_info")) else {})}
             # ---- Durchlauf 1: sichtbare Pixel je Teil (nur im Rasterausschnitt des Teils gespeichert) ----
             sichtbar = {}; ymin = xmin = 1 << 30; ymax = xmax = -1
             for tp in teile:

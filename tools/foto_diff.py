@@ -228,6 +228,19 @@ def _cuda():
     except Exception: return False
 
 
+def _nanmedian(x, f64=False):
+    """np.nanmedian auf der GPU (sort; gerade Anzahl: Mittel der zwei Mittelelemente in der Dtype des Eingangs) - bitgleich, 12-MP-Bild 0,2 s -> 0,03 s (11.11.)."""
+    try:
+        import torch
+        if not (_cuda() and x.dtype in (np.float32, np.float64)): return np.nanmedian(x)
+        g = torch.as_tensor(np.ascontiguousarray(x), device="cuda").reshape(-1); g = g[~torch.isnan(g)]; n = g.numel(); g = g.double() if f64 else g
+        if n == 0: return np.nanmedian(x.astype(np.float64) if f64 else x)
+        g, _ = torch.sort(g); k = (n - 1) // 2                                                      # Sortieren auf der GPU ist 10x schneller als kthvalue (gemessen 14/26 ms gegen 127/226 ms)
+        r = g[k] if n % 2 else (g[k] + g[k + 1]) / 2
+        return r.cpu().numpy()[()]
+    except (RuntimeError, ImportError): return np.nanmedian(x.astype(np.float64) if f64 else x)
+
+
 _NETZ_R = {}
 def _sonne_dreh(s, grad):
     """Gegenprobe: Sonnenvektor um die Hochachse drehen (falsche Sonne muss schlechter abschneiden als die richtige)."""
@@ -386,6 +399,46 @@ def foto_skalieren(im, K):
             if k.get(q) is not None: k[q] = float(k[q]) * s
     return im, K
 
+def _tiefe_vorbereiten(depth, gpu):
+    """Silhouette, aufgefuellte Tiefe und Medianabstand dmed aus dem Tiefenbild (frueher inline in main; gleiche Rechnung, bitgleich)."""
+    sil = np.isfinite(depth)
+    sil_f = cv2.morphologyEx(sil.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
+    dfill = depth.copy(); dfill[~sil] = 1e6; dfill = cv2.erode(dfill, np.ones((9, 9), np.uint8))               # Punktrender hat Loecher: naechster Punkt gewinnt
+    dfill[(sil_f == 0) | (dfill >= 1e6)] = np.nan
+    dm = float(_nanmedian(dfill))
+    if gpu and dfill.dtype == np.float32 and _cuda():                                                 # Schnellfassung (11.11., bitgleich): float32 bleibt float32 (float64-Umweg war ein verlustfreier Rundweg), Median auf der GPU in float64
+        x_ = dfill.copy(); np.copyto(x_, np.float32(dm), where=np.isnan(x_)); dfill = cv2.medianBlur(x_, 5); dfill[sil_f == 0] = np.nan   # Ausreisser (Restloecher) weg
+        dmed = float(_nanmedian(dfill, f64=True))
+    else:
+        dfill = cv2.medianBlur(np.nan_to_num(dfill, nan=dm).astype(np.float32), 5).astype(np.float64); dfill[sil_f == 0] = np.nan   # Ausreisser (Restloecher) weg
+        dmed = float(_nanmedian(dfill))
+        if gpu: dfill = dfill.astype(np.float32)                                                     # GPU-Fassung: Tiefe/Meter-je-Pixel/Abstaende in 32 Bit (RAM; Fehler << 1 mm)
+    return sil, sil_f, dfill, dmed
+
+
+def _dmed_fest(cfg, nr, K, W, H, obj, kk, R, t, f, cx0, cy0, gpu, dmed_aktuell):
+    """Fester dmed je Foto (Metrik v3_sigma_fest, 11.11.). Ursache (Befund Kreis 11.11.): sigma = glaettung*ppm, ppm = f/dmed, dmed = Median der Modelltiefe in der Silhouette des GANZEN Modells
+    -> eine Aenderung am Westhelm veraenderte die Fotokanten (Canny-Glaettung) und damit fk_px/praez eines unveraenderten Teils (Baldachine 0,614 -> 0,499).
+    Jetzt: dmed aus dem Referenz-STL cfg['ref'] (eingefroren, bleibt fuer alle Messungen gleich), je Foto einmal berechnet und in cfg['dir'] gespeichert.
+    Schluessel = Kamera + Aufloesung + Referenz-STL-Hash + Massstab/Zentrierung/Rahmen + Version. Gleiche Rechnung wie fuer das aktuelle Modell (_tiefe_vorbereiten)."""
+    import hashlib
+    refp = cfg["ref"]; sha = cfg.get("ref_sha") or hashlib.sha256(open(refp, "rb").read()).hexdigest()[:16]
+    key = hashlib.sha1(json.dumps(["v1", sha, nr, W, H, float(f), cx0, cy0, np.asarray(R, float).round(9).tolist(), np.asarray(t, float).round(9).tolist(), obj.get("stl_massstab", 87), obj.get("zentrierung", "huelle"),
+                                   kk.get("rahmen_verschiebung"), bool(gpu), os.environ.get("RCPARK_FOTO_SKALA") or "1"], sort_keys=True).encode()).hexdigest()[:24]
+    fp = os.path.join(cfg["dir"], f"dmed_{nr}_{key}.json")
+    if os.path.exists(fp):
+        try: return float(json.load(open(fp))["dmed"])
+        except Exception: pass
+    m = trimesh.load(refp); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0)
+    c = m.bounds.mean(0) if obj.get("zentrierung", "huelle") == "huelle" else np.zeros(3)
+    m.apply_translation(np.asarray(kk["rahmen_verschiebung"] if "rahmen_verschiebung" in kk else [-c[0], -c[1], -m.bounds[0, 2]], float))
+    depth = RK.dreiecke_rastern(m, R, t, f, cx0, cy0, W, H, nur_tiefe=True)[0]
+    dmed = float(_tiefe_vorbereiten(depth, gpu)[3]); del depth
+    os.makedirs(cfg["dir"], exist_ok=True); tmpf = fp + f".{os.getpid()}.tmp"
+    json.dump({"dmed": dmed, "foto": nr, "ref_sha": sha, "version": "v1", "dmed_aktuell_bei_anlage": dmed_aktuell}, open(tmpf, "w")); os.replace(tmpf, fp)
+    return dmed
+
+
 def main(argv=None):
     """argv: Liste wie auf der Kommandozeile (Mehrfoto-Aufruf im selben Prozess, param_suche.py); Rueckgabe Ergebnis-dict."""
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("foto"); ap.add_argument("--tol", type=float, default=0.35)
@@ -412,13 +465,11 @@ def main(argv=None):
     else:
         m, P_, N_ = (_netz_gpu if gpu else _netz)(a.stl or os.path.join(root, obj["stl"]), obj, kk)
         depth, nrm, pos = (_render_gpu if gpu else _render)(P_, N_, R, t, f, W, H, cx0, cy0)
-    sil = np.isfinite(depth)
-    sil_f = cv2.morphologyEx(sil.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
-    dfill = depth.copy(); dfill[~sil] = 1e6; dfill = cv2.erode(dfill, np.ones((9, 9), np.uint8))               # Punktrender hat Loecher: naechster Punkt gewinnt
-    dfill[(sil_f == 0) | (dfill >= 1e6)] = np.nan
-    dm = float(np.nanmedian(dfill)); dfill = cv2.medianBlur(np.nan_to_num(dfill, nan=dm).astype(np.float32), 5).astype(np.float64); dfill[sil_f == 0] = np.nan   # Ausreisser (Restloecher) weg
-    dmed = float(np.nanmedian(dfill)); ppm = f / dmed
-    if gpu: dfill = dfill.astype(np.float32)                                                         # GPU-Fassung: Tiefe/Meter-je-Pixel/Abstaende in 32 Bit (RAM; Fehler << 1 mm)
+    sil, sil_f, dfill, dmed = _tiefe_vorbereiten(depth, gpu)
+    dmed_aktuell = dmed
+    if _RUECK is not None and _RUECK.get("sigma_fest"):                                           # Metrik v3 (11.11.): dmed (damit sigma, Kappe, Randabstand) je Foto aus dem FESTEN Referenz-STL, nicht aus dem aktuellen Gesamtmodell
+        dmed = _dmed_fest(_RUECK["sigma_fest"], nr, K, W, H, obj, kk, R, t, f, cx0, cy0, gpu, dmed_aktuell); _RUECK["dmed_info"] = dict(dmed_fest=dmed, dmed_aktuell=dmed_aktuell)
+    ppm = f / dmed
     if a.kanten == "tiefenbild":                                                                 # alte Tiefenbild-Kanten (Gradienten auf voller Aufloesung, ~0,6 GB): in normalen/netz ungenutzt und gleich ueberschrieben -> nur hier rechnen (2026-11-04, bitgleich)
         dsm = cv2.GaussianBlur(np.nan_to_num(dfill, nan=0.0), (0, 0), 3.0)
         gx = cv2.Sobel(dsm, cv2.CV_64F, 1, 0, ksize=3) / 8.0; gy = cv2.Sobel(dsm, cv2.CV_64F, 0, 1, ksize=3) / 8.0
@@ -438,7 +489,8 @@ def main(argv=None):
         g = cv2.GaussianBlur(gray, (0, 0), sigma); fk = cv2.Canny(g, 12, 36) > 0
     if a.mehrstufig:                                                                                # Nutzer 5.11.: Aufloesung bis 1 cm, Helligkeit/Kontrast durchvariieren, alle Strukturen mergen
         fk = fotokanten_mehrstufig(gray, ppm, a.glaettung, a.mehrstufig_min, W, H, a.mehrstufig_stimmen, os.environ.get("FD_MS_DEBUG"))
-    sm = np.clip(np.nan_to_num(dfill, nan=dmed), 0.5, 500.0); mpp = sm / f                                   # Meter je Pixel am jeweiligen Punkt
+    nur_k = _RUECK is not None and bool(_RUECK.get("nur_kosten"))                                  # teil_fotoform-Schnellweg: nach der Kostenkarte Schluss -> mpp/lr-Kosten werden nie gelesen (11.11., bitgleich)
+    if not nur_k: sm = np.clip(np.nan_to_num(dfill, nan=dmed), 0.5, 500.0); mpp = sm / f                                   # Meter je Pixel am jeweiligen Punkt
     if a.schatten != "aus" and raster:                                                              # Schlagschatten-Kanten als MODELLkanten (2026-11-05, Nutzerfund Gaubenschatten Foto 018; tools/schatten.py)
         sj = os.path.join(od, "sonne.json"); Sd = (json.load(open(sj))["fotos"].get(nr) if os.path.exists(sj) else None)
         if Sd and (Sd["urteil"] == "Sonne" or a.schatten == "immer") and Sd["hoehe"] > 3:
@@ -492,7 +544,12 @@ def main(argv=None):
                 print(f"  Region quader: {str(ex_)[:80]} -> Foto nicht beurteilbar"); M_ = np.zeros_like(M_)
         rand_ = (sil_f > 0) & ~(cv2.erode(sil_f, np.ones((3, 3), np.uint8)) > 0)
         mkp = (mk_roh | rand_) & ~occ & M_; fkp = fk & M_; kap_ = max(1.0, a.tol * ppm)
-        if mkp.sum() >= 50 and fkp.sum() >= 50:
+        if mkp.sum() >= 50 and fkp.sum() >= 50 and nur_k and a.kostenkarte:                        # Schnellweg (11.11.): beide Abstandstransformationen in 2 Threads (cv2 gibt die GIL frei), keine kosten_param/lr-Rechnung, keine Kopien; Karten bitgleich
+            from concurrent.futures import ThreadPoolExecutor
+            def _dt_(x): d_ = np.minimum(cv2.distanceTransform((~x).astype(np.uint8), cv2.DIST_L2, 5), kap_); return d_, (d_ / kap_).astype(np.float16)
+            with ThreadPoolExecutor(2) as ex_: fa_, fb_ = ex_.submit(_dt_, fkp), ex_.submit(_dt_, mkp); (dFp_, dF16_), (dMp_, dM16_) = fa_.result(), fb_.result()
+            _RUECK["kosten"] = dict(mkp=mkp, fkp=fkp, dF=dF16_, dM=dM16_, dFp=dFp_)   # dFp = Abstand zur Fotokante, auf kap_ gekappt (teil_fotoform: Kappe ohne zweite Transformation)
+        elif mkp.sum() >= 50 and fkp.sum() >= 50:
             dFp_ = np.minimum(cv2.distanceTransform((~fkp).astype(np.uint8), cv2.DIST_L2, 5), kap_); dMp_ = np.minimum(cv2.distanceTransform((~mkp).astype(np.uint8), cv2.DIST_L2, 5), kap_)
             kp_param = round(float((dFp_[mkp].mean() + dMp_[fkp].mean()) / kap_), 5)
             # kosten_lr (2026-11-05, 'a contrario'): Gegenprobe zeigte, dass kosten_param ZUFALLSKANTEN belohnt (+10 % Zufallslinien: -0,3..-0,57; Schatten mit
