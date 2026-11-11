@@ -61,7 +61,8 @@ def f1_messen(objekt, tdir, stl, teil, fotos, aus, bereich_von, skala, wolke="an
     """teil_fotoform als Unterprozess (wie bauteil_kreis.form_messen). Rueckgabe dict mit f1/praez/recall oder None."""
     env = dict(os.environ, RCPARK_FOTO_SKALA=str(skala))
     cmd = [PY, "-W", "ignore", "-I", MESSER_SKRIPT, objekt, "--teile_dir", tdir, "--stl", stl, "--nur", teil, "--fotos", ",".join(fotos),
-           "--aus", aus, "--wolke_verdeckung", wolke] + (["--bereich_von", bereich_von] if bereich_von else [])
+           "--aus", aus, "--wolke_verdeckung", wolke] + (["--bereich_von", bereich_von] if bereich_von else []) \
+          + (["--schwelle", os.environ["TV_SCHWELLE"]] if os.environ.get("TV_SCHWELLE") else [])   # Diagnose: feinere Kantentoleranz (Anteil der Kappe 0,35 m)
     if os.path.exists(aus): os.remove(aus)
     if os.path.exists(aus + ".teil"): os.remove(aus + ".teil")
     r = subprocess.run(cmd, cwd=R0, env=env, capture_output=True, text=True)
