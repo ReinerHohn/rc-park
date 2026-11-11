@@ -1,0 +1,49 @@
+{
+ "id": "M-6130-008",
+ "typ": "triangulation",
+ "foto": "6130",
+ "name": "Dienst u-2,30 Schaftmitte (6130+6174+h11_111518, Winkelbasis gross)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6130",
+   "px": [
+    979.0,
+    2498.0
+   ]
+  },
+  {
+   "kamera": "K-6174",
+   "px": [
+    1550.0,
+    2455.0
+   ]
+  },
+  {
+   "kamera": "K-h11_111518",
+   "px": [
+    1629.0,
+    2746.0
+   ]
+  }
+ ],
+ "P": [
+  0.166,
+  7.758,
+  4.286
+ ],
+ "strahl_abstand_m": [
+  0.118,
+  0.038,
+  0.104
+ ],
+ "schnittwinkel_grad": [
+  114.9,
+  57.4,
+  57.7
+ ],
+ "z": 4.286,
+ "unsicherheit_m": 0.147,
+ "massstab_von": "Kameras K-6130, K-6174, K-h11_111518 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.368,
+ "u": -2.433
+}

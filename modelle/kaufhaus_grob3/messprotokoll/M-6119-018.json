@@ -1,0 +1,49 @@
+{
+ "id": "M-6119-018",
+ "typ": "triangulation",
+ "foto": "6119",
+ "name": "Dienst u3,72 Kopf-Muschel (Schmuck am Dienstende) 6119+6117+6120",
+ "beobachtungen": [
+  {
+   "kamera": "K-6119",
+   "px": [
+    2515.0,
+    2840.0
+   ]
+  },
+  {
+   "kamera": "K-6117",
+   "px": [
+    2255.0,
+    2968.0
+   ]
+  },
+  {
+   "kamera": "K-6120",
+   "px": [
+    1960.0,
+    2735.0
+   ]
+  }
+ ],
+ "P": [
+  5.861,
+  5.806,
+  5.027
+ ],
+ "strahl_abstand_m": [
+  0.046,
+  0.034,
+  0.078
+ ],
+ "schnittwinkel_grad": [
+  16.9,
+  15.4,
+  32.3
+ ],
+ "z": 5.027,
+ "unsicherheit_m": 0.118,
+ "massstab_von": "Kameras K-6119, K-6117, K-6120 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 7.429,
+ "u": 3.587
+}
