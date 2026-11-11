@@ -6257,6 +6257,108 @@
    ]
   },
   {
+   "typ": "baldachinreihe:baldachine",
+   "gruppe": "Baldachine ueber den Figuren (Fehlteil fk_+6_+12_+14)",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
+   "quelle": "Fotos 6120/6132/6127 (Fig 2: M-6120-051..064, Triangulation 3 Kameras) und 6161+6145 (alle 4: M-6161-022..025); Baldachin = rote Wimperg-Konsole (Haube mit Maßwerkband) + Fialenkrone ueber dem Figurenkopf, Stufe 0 im Logbuch LOGBUCH_BALDACHIN_FK14_R2_2026-11-10.md",
+   "zaehlung": [
+    "Z-6161-002"
+   ],
+   "wand_n": 12.666,
+   "einbindung": 0.1,
+   "kegel_h": 0.18,
+   "stufen": [
+    [
+     -1.627,
+     -1.287,
+     0.37,
+     0.19,
+     0.22,
+     0.12
+    ],
+    [
+     -1.287,
+     -0.85,
+     0.36,
+     0.22,
+     0.36
+    ],
+    [
+     -0.85,
+     -0.45,
+     0.495,
+     0.3,
+     0.34
+    ]
+   ],
+   "stufen_quelle": "Fig 2: Haube unten z 13,29 (M-6120-053/057), Maßwerkband-Unterkante 13,63 (M-6120-064), Bandoberkante ~14,0 (M-6120-062/063), Blattwerk-Krone bis 14,28..14,47 (M-6120-060/061), Fialenspitze 14,92 (M-6120-051); Breite Haube 0,72-0,74 (u 5,02..5,75), Krone 0,99 (u 4,90..5,90); Tiefen s 12,85 (unten) / 13,03 (Bandoberkante) / 12,96..13,09 (Krone) aus denselben Triangulationen, Fehler +-0,1 m | Haube unten (z 13,29..13,63) hohl: zwei Wangen 0,12 m (Foto 6120: dunkler Hohlraum unter dem Maßwerkband, Wangen aussen; Dicke ANNAHME), der Figurenkopf ragt hinein",
+   "fialen": [
+    [
+     0.0,
+     0.4,
+     0.07,
+     -0.6,
+     0.0
+    ],
+    [
+     -0.27,
+     0.34,
+     0.06,
+     -0.6,
+     -0.16
+    ],
+    [
+     0.27,
+     0.34,
+     0.06,
+     -0.6,
+     -0.16
+    ]
+   ],
+   "fialen_quelle": "Mittelfiale gemessen (M-6120-051, M-6161-022..025); Seitenfialen: ANNAHME symmetrisch du +-0,27 m (6120 Pixelabstand 0,24-0,31 m), Spitze 0,16 m tiefer (6120 y~75 vs 40 bei 228 px/m), Radius 0,06-0,07 = ANNAHME (Druckmindestmass 0,07 m)",
+   "baldachine": [
+    {
+     "u": 9.462,
+     "z_spitze": 15.045,
+     "ds": 0.061,
+     "quelle": "M-6161-022 (Fialenspitze u 9,462 s 13,127 z 15,045; 6161+6145); Form wie Baldachin 2 = ANNAHME"
+    },
+    {
+     "u": 5.42,
+     "z_spitze": 14.917,
+     "ds": -0.026,
+     "quelle": "M-6120-051 + M-6161-023 (u 5,443/5,401 s 13,04 z 14,92/14,913); Form gemessen"
+    },
+    {
+     "u": 1.614,
+     "z_spitze": 14.935,
+     "ds": -0.059,
+     "quelle": "M-6161-024 (u 1,614 s 13,007 z 14,935); Form wie Baldachin 2 = ANNAHME"
+    },
+    {
+     "u": -2.447,
+     "z_spitze": 14.991,
+     "ds": 0.031,
+     "quelle": "M-6161-025 (u -2,447 s 13,097 z 14,991); Form wie Baldachin 2 = ANNAHME (Foto 6161: Hut der Figur 4 breiter, Baldachin gleich)"
+    }
+   ],
+   "historie": [
+    {
+     "datum": "2026-11-10",
+     "wer": "Kreis a040948 r2 (Agent, Fehlteil fk_+6_+12_+14)",
+     "alt": {},
+     "neu": {
+      "angelegt": true
+     },
+     "grund": "Fehlteil: Baldachine ueber den Figuren fehlten im Modell (Fehlkanten-Cluster 2231 Pkt)"
+    }
+   ]
+  },
+  {
    "typ": "satteldach:haupt",
    "gruppe": "Dach Hauptbau",
    "u0": -8.82,
