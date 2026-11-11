@@ -1,64 +1,22 @@
 {
  "foto": "nu3b",
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_035601a035601/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-nu3b (amtliche Anker)",
  "zelle_px": 116,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    2320,
-    1276,
-    116
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -4.86,
-    10.71,
-    20.62
-   ]
-  },
-  {
-   "zelle": [
     1160,
-    1392,
+    1160,
     116
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    6.14,
-    0.32,
-    18.57
-   ]
-  },
-  {
-   "zelle": [
-    696,
-    1508,
-    116
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    10.4,
-    -3.05,
-    17.1
-   ]
-  },
-  {
-   "zelle": [
-    928,
-    1508,
-    116
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    9.52,
-    -0.5,
-    16.31
+    10.04,
+    3.59,
+    19.04
    ]
   },
   {
@@ -70,23 +28,65 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    11.97,
-    -4.84,
-    15.69
+    12.14,
+    -4.69,
+    15.33
    ]
   },
   {
    "zelle": [
-    348,
+    696,
+    1624,
+    116
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    9.19,
+    -4.29,
+    16.24
+   ]
+  },
+  {
+   "zelle": [
+    580,
     1740,
     116
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    14.97,
-    -2.87,
-    13.03
+    9.81,
+    -5.45,
+    15.01
+   ]
+  },
+  {
+   "zelle": [
+    696,
+    1740,
+    116
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    9.0,
+    -4.92,
+    15.15
+   ]
+  },
+  {
+   "zelle": [
+    812,
+    1740,
+    116
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    8.05,
+    -3.62,
+    14.95
    ]
   }
  ],

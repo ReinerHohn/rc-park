@@ -1,5 +1,5 @@
 {
- "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_035601a035601/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -37,11 +37,11 @@
   "fenster_b3_anzahl": 2.0,
   "fenster_b3_breite_median": 0.8200000000000001,
   "fenster_b3_breite_max": 0.8200000000000001,
-  "fenster_b3_ebene_abstand": 1.2521246230474818,
+  "fenster_b3_ebene_abstand": 1.252124612687105,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10799604654312134,
-  "wand_anteil_unter": 0.0005,
+  "wand_pq": 0.1074872687458992,
+  "wand_anteil_unter": 0.0005666666666666667,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,7 +50,7 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 2.128511469441953,
-  "teile_ueberhang": 0.00678,
+  "teile_ueberhang": 0.00685,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.72,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.72,
@@ -59,7 +59,7 @@
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.68,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.68,
   "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.1002299324808607,
-  "laube_rueckwand_n728_z7": -0.005978526609807577,
+  "laube_rueckwand_n728_z7": -0.005978653401375489,
   "helm_o_r_14_64": 1.1110442019599438,
   "helm_o_r_16_18": 0.6410005316999677,
   "helm_o_r_17_76": 0.4009052145424984,
@@ -69,11 +69,11 @@
   "tor_b2_oeffnung_anzahl": 1.0,
   "tor_b2_oeffnung_breite_median": 4.0,
   "tor_b2_oeffnung_breite_max": 4.0,
-  "tor_b2_oeffnung_ebene_abstand": 3.001464821295761,
+  "tor_b2_oeffnung_ebene_abstand": 3.001464949798189,
   "fenster_b4_anzahl": 2.0,
   "fenster_b4_breite_median": 0.8150000000000001,
   "fenster_b4_breite_max": 0.8200000000000001,
-  "fenster_b4_ebene_abstand": 1.9871139883175164,
+  "fenster_b4_ebene_abstand": 1.9871140515298098,
   "fenster_b1_anzahl": 2.0,
   "fenster_b1_breite_median": 0.77,
   "fenster_b1_breite_max": 0.77,
@@ -210,8 +210,8 @@
   "balkon_stirn_mitte": -1.2034247030692145,
   "laube_sockel_front_w": -0.44554548537133254,
   "laube_sockel_front_o": -0.4612625516363389,
-  "laube_sockel_oben_21": -0.44554548537133254,
-  "laube_sockel_oben_23": 0.0044548243843940405,
+  "laube_sockel_oben_21": -0.5155455442652941,
+  "laube_sockel_oben_23": 0.004454771277012881,
   "erker_o_flanke74": 1.2157798668032467,
   "baldachin1_fiale": 13.586999999999986,
   "baldachin2_fiale": 13.446999999999989,
@@ -226,6 +226,8 @@
   "fenster_eg2_oberkante_r": -0.11428274214072154,
   "laube_decke_u46": 5.807000000000002,
   "laube_decke_u363": 4.867000000000001,
+  "dienst_laube_u975_reich_z44": 0.6189552048966034,
+  "dienst_laube_u975_reich_z26": 0.651232531829837,
   "giebel_o_fe1_f": 3.127773782550481,
   "giebel_o_fe1_w": 3.2472871437027426,
   "giebel_o_fe2_f": 3.075931753831693,
@@ -436,7 +438,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10799604654312134,
+   "wert": 0.1074872687458992,
    "soll": [
     0.0348,
     100
@@ -466,7 +468,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00678,
+   "wert": 0.00685,
    "soll": [
     0,
     0.01
@@ -496,7 +498,7 @@
   },
   {
    "name": "Laubenrueckwand: Wandflaeche hinter der Ebene n 7,28 (z 7,0, alle Boegen; 0 = in der Ebene)",
-   "wert": -0.005978526609807577,
+   "wert": -0.005978653401375489,
    "soll": [
     -0.08,
     0.08
@@ -1686,7 +1688,7 @@
   },
   {
    "name": "Laubensockel: Oberkante >= 2,1 (in z 2,1 noch vor der Wand)",
-   "wert": -0.44554548537133254,
+   "wert": -0.5155455442652941,
    "soll": [
     -0.52,
     -0.38
@@ -1696,7 +1698,7 @@
   },
   {
    "name": "Laubensockel: Oberkante <= 2,35 (in z 2,35 wieder Wandebene)",
-   "wert": 0.0044548243843940405,
+   "wert": 0.004454771277012881,
    "soll": [
     -0.08,
     0.08
@@ -1870,6 +1872,26 @@
    "soll": [
     4.857,
     5.157
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Dienst (Halbsaeule) an der Laubenrueckwand bei u 9,75, z 4.4: Vorsprung der Schnittkontur ab n 6,9 (Schaftfront n 7.525)",
+   "wert": 0.6189552048966034,
+   "soll": [
+    0.565,
+    0.685
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Dienst (Halbsaeule) an der Laubenrueckwand bei u 9,75, z 2.6: Vorsprung der Schnittkontur ab n 6,9 (Schaftfront n 7.555)",
+   "wert": 0.651232531829837,
+   "soll": [
+    0.6,
+    0.72
    ],
    "ok": true,
    "status": "ok"
