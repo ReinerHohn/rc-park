@@ -5906,7 +5906,7 @@
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 5)",
    "auto_id": "fehlteile-6261-234-1794",
    "art": "fehlteil",
    "foto": "6261",
@@ -5914,12 +5914,37 @@
    "z_bis": 18.55,
    "xyz": [
     14.33,
-    -8.89,
+    -8.88,
     18.55
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.89 m (Zelle [234, 1794, 78], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.88 m (Zelle [234, 1794, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-312-1794",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 18.23,
+   "z_bis": 18.23,
+   "xyz": [
+    14.6,
+    -7.16,
+    18.23
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_032659a032659 r1 (automatisch)",
+   "teil": "quader:laube_sockel_w",
+   "merkmal": "Pruefer-Rest quader:laube_sockel_w kreis 20261111_032659a032659 r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: 6145: Präzision 0,684->0,526, neue rote Ecke am Ostende u -1,5 durch Überstand 0,07 m (Profil an der Stirnseite nicht zurückgesetzt) | 6124: neuer roter Streifen links am Band (x 0-140); gelb bleiben Bandmitte x 730-860, Feldrahmen und Feldfuß rechts | 6130: Unterkante des Gesimsbands über den Türchen weiter gelb (20226 px, z ~2,03), linkes Bandende gelb, rot unten rechts am Ostende | Füllungsfelder/Türchen (in 6130 mindestens 5 Felder, 2 Türchen) nicht gezählt und nicht modelliert, Rahmenkanten gelb in 6124/6130/6145 | zweistufige Kante unter dem Band (Wulst + Schattenfuge) fehlt, Bandhöhe z 2,04-2,2 und Überstand 0,07 nur ANNAHME aus Bildproportion | 6127: gelbe Fußkante links, kleiner neuer roter Fleck | q11 unverändert schlecht (P 0,175), 6162 Recall 0,217 unverändert | Bericht fehlerhaft: 6127 war vorher beurteilt (0,518/0,156), Gesamt-F1 vorher laut JSON 0,598 statt 0,616; Overlays vom Agenten nicht angesehen | Westende u -7,2 weiter ANNAHME, ungeprüft",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

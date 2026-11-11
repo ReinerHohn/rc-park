@@ -493,14 +493,40 @@
  },
  {
   "seite": "alle",
-  "element": "Quader (anbau)",
+  "element": "Quader (anbau) mit Profil (6 Punkte)",
   "quelle": "Fotos 6117/6124/6130 (Stufe 0): durchgehender Sockel mit Gesimsband vor der Laubenrueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006); Front n 7,73 aus Wolke lot2 (z 1,75-2,10, Spitze 7,7-7,8); Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
   "u0": -7.2,
   "u1": -1.5,
   "n0": 7.2,
-  "n1": 7.73,
+  "n1": 7.8,
   "z0": 1.5,
   "z1": 2.2,
+  "profil": [
+   [
+    7.2,
+    1.5
+   ],
+   [
+    7.73,
+    1.5
+   ],
+   [
+    7.73,
+    1.98
+   ],
+   [
+    7.8,
+    2.04
+   ],
+   [
+    7.8,
+    2.2
+   ],
+   [
+    7.2,
+    2.2
+   ]
+  ],
   "seite_name": "alle"
  },
  {

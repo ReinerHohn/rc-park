@@ -4605,7 +4605,7 @@
    "u0": -7.2,
    "u1": -1.5,
    "n0": 7.2,
-   "n1": 7.73,
+   "n1": 7.8,
    "z0": 1.5,
    "z1": 2.2,
    "modus": "anbau",
@@ -4615,11 +4615,13 @@
    ],
    "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
    "quelle": "Fotos 6117/6124/6130 (Stufe 0): durchgehender Sockel mit Gesimsband vor der Laubenrueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006); Front n 7,73 aus Wolke lot2 (z 1,75-2,10, Spitze 7,7-7,8); Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
+   "profil": [[7.2, 1.5], [7.73, 1.5], [7.73, 1.98], [7.8, 2.04], [7.8, 2.2], [7.2, 2.2]],
    "aktiv": true,
    "werte_quellen": {
     "u0": "Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
     "u1": "Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
     "n0": "ANNAHME: 0,08 m Einbindung in die Wand (Wandflaeche n 7,28) fuer wasserdichten Druckkoerper",
+    "profil": "Gesimsband oben ueberstehend (Fotos 6130/6124 Stufe 0: Band ueber eingetieften Fuellungsfeldern, Schattenkante unter dem Band); Sockelfront n 7,73 Wolke lot2; Band z 2,04-2,2 und Ueberstand 0,07 = ANNAHME aus Bildproportion (Band ~ 0,16 m von 0,7 m Sockelhoehe), nicht triangulierbar",
     "n1": "Wolke lot2 j_voll_lot2.npy, z 1,75-2,10: Sockelfront n 7,7-7,8 (3541 Punkte, u -9..-1); Foto-Strahl auf z 2,2 Vorderkante n 7,5-8,0 (6130/6117) -> 7,73",
     "z0": "wie quader:laube_rueck z0 1,5 (Boden)",
     "z1": "Foto-Messung Sockeloberkante an der Wand: M-6117-006 (z 2,20/2,16), M-6130-006 (z 2,17/2,24), Ebene n 7,28"

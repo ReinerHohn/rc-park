@@ -1,6 +1,6 @@
 {
  "foto": "6132",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_032659a032659/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6132 (amtliche Anker)",
  "zelle_px": 155,
  "schwelle": 0.35,
@@ -14,23 +14,65 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    15.56,
-    -0.08,
-    19.54
+    15.5,
+    -0.02,
+    19.47
    ]
   },
   {
    "zelle": [
-    1240,
-    1705,
+    620,
+    2790,
     155
    ],
-   "score": -0.997,
+   "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    13.79,
-    -4.8,
-    20.39
+    15.74,
+    3.03,
+    7.21
+   ]
+  },
+  {
+   "zelle": [
+    1550,
+    2635,
+    155
+   ],
+   "score": -0.989,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    9.44,
+    -0.41,
+    8.97
+   ]
+  },
+  {
+   "zelle": [
+    1085,
+    2790,
+    155
+   ],
+   "score": -0.981,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    14.21,
+    -4.39,
+    8.55
+   ]
+  },
+  {
+   "zelle": [
+    1395,
+    2325,
+    155
+   ],
+   "score": -0.979,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    10.95,
+    -1.55,
+    12.39
    ]
   },
   {
@@ -39,54 +81,12 @@
     775,
     155
    ],
-   "score": -0.991,
+   "score": -0.973,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
     1.21,
     7.79,
-    20.58
-   ]
-  },
-  {
-   "zelle": [
-    1240,
-    2790,
-    155
-   ],
-   "score": -0.988,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    13.59,
-    -7.74,
-    8.89
-   ]
-  },
-  {
-   "zelle": [
-    1085,
-    1550,
-    155
-   ],
-   "score": -0.96,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    14.74,
-    -3.42,
-    21.68
-   ]
-  },
-  {
-   "zelle": [
-    2015,
-    1085,
-    155
-   ],
-   "score": -0.937,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    5.38,
-    7.16,
-    18.84
+    20.59
    ]
   }
  ],
