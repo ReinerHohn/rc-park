@@ -2,22 +2,22 @@
  {
   "z": 20.0,
   "foto": null,
-  "modell": 7.9
+  "modell": 3.12
  },
  {
   "z": 20.5,
   "foto": null,
-  "modell": 12.96
+  "modell": null
  },
  {
   "z": 21.0,
   "foto": null,
-  "modell": 13.9
+  "modell": 14.0
  },
  {
   "z": 21.5,
   "foto": null,
-  "modell": 10.06
+  "modell": 10.0
  },
  {
   "z": 22.0,
@@ -32,12 +32,12 @@
  {
   "z": 23.0,
   "foto": null,
-  "modell": 13.239999999999998
+  "modell": 15.44
  },
  {
   "z": 23.5,
   "foto": null,
-  "modell": 12.0
+  "modell": null
  },
  {
   "z": 24.0,

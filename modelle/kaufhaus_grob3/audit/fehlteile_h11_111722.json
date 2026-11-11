@@ -1,36 +1,78 @@
 {
  "foto": "h11_111722",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_165210a165209/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-h11_111722 (amtliche Anker)",
  "zelle_px": 111,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    2220,
+    2331,
+    444,
+    111
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -5.58,
+    8.95,
+    23.62
+   ]
+  },
+  {
+   "zelle": [
+    2331,
     999,
     111
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -4.04,
-    6.6,
-    19.55
+    -4.96,
+    9.67,
+    17.57
    ]
   },
   {
    "zelle": [
-    1665,
+    1776,
     1221,
     111
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    1.71,
-    6.46,
-    18.42
+    1.25,
+    2.01,
+    20.55
+   ]
+  },
+  {
+   "zelle": [
+    1332,
+    1332,
+    111
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    6.67,
+    2.75,
+    19.53
+   ]
+  },
+  {
+   "zelle": [
+    1776,
+    1332,
+    111
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    1.15,
+    2.71,
+    18.41
    ]
   },
   {
@@ -42,51 +84,9 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -1.41,
-    3.89,
-    17.86
-   ]
-  },
-  {
-   "zelle": [
-    1776,
-    1443,
-    111
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    1.18,
-    2.05,
-    17.39
-   ]
-  },
-  {
-   "zelle": [
-    2220,
-    1443,
-    111
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -3.85,
-    1.56,
-    16.99
-   ]
-  },
-  {
-   "zelle": [
-    2331,
-    1443,
-    111
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -4.75,
-    4.68,
-    15.68
+    -1.22,
+    2.74,
+    18.33
    ]
   }
  ],

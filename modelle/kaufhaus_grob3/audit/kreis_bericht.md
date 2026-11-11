@@ -1,16 +1,35 @@
-# Kreis2 164909 r2 – satteldach:haupt, Wasserspeier an der Traufe
+# Kreis2 baldachinreihe:baldachine – Krone nicht mittig (Nutzer 11.11. 16:17)
 
-1. **Formbeschreibung (Stufe 0)** – Fotos 6162 (frontal, Übersicht), 6132 und 6145 (schräg, Nahausschnitt), n11_04 (Nutzerfoto, Nahaufnahme von unten), j05 (Kontrolle). Zone Traufe/Rinne: zwei lange, patinierte Rohr-Speier mit Drachenkopf (Maul offen) ragen etwa 2 m aus der Haupttraufe unter der Rinne, ~0,5 m nach unten geneigt. Sie sitzen über den Konsolen-Schmiedearmen der Figuren. Die kleinen Erker-Eckdrachen (Teil a) gehören zu `erker_polygon`/`helm` und sind NICHT gebaut. Formfamilie: `satteldach.speier` (geneigter Kragarm als Hülle Fuß→Ende plus Kopfblock) in `tools/baukasten_gen.py`, aus dem Vorversuch 161725 übernommen und um `z_ende` (Neigung) erweitert.
-2. **Zählung**: 2 Traufspeier am Hauptdach, Z-6162-001. Sichtkontrolle in 6145 (beide), 6132 (links), j05 (rechts), n11_04 (beide).
-3. **Prüfungen**:
+## 1. Formbeschreibung (Stufe 0)
+Fotos: 6161 (Uebersicht frontal, alle 4), 6145 (Schraeg, Nah), 6132, 6117, 6120, 6127 angesehen (audit/rundekreis2_baldachine/p_6161, r_6161_3, h_6161_3, h_6145_3).
+Zonen: Haube mit Masswerkband (rot/gold), Kranzgesims, Fialenkrone: Mittelfiale + 2 Seitenfialen mit Blattwerk, symmetrisch um die Mittelfiale (6161 Fig 3: Seitenspitzen 2142/2203, Mitte 2172 px -> Krone symmetrisch). Formfamilie unveraendert: baldachinreihe (vorhanden). Nur die Lage ist falsch, nicht die Form.
+Befund: Fig 3 im Foto sichtbar ~0,1 m neben der Kronenachse (6161 und 6120).
 
-| Prüfung | vorher (ohne Speier) | nachher | Soll | Quelle |
-|---|---|---|---|---|
-| Traufspeier A (links, u 11,36), Reichweite ab n 10 bei z 13,95 | 2,68 rot | 4,68 | 4,3–5,0 | M-6162-001..004 |
-| Traufspeier B (rechts, u −4,47) | 2,66 rot | 4,61 | 4,3–5,0 | M-6162-005/006 |
+## 2. Zaehlungen
+Keine neue Zaehlung noetig (4 Baldachine, Z-6161-002 bestehend).
 
-   Messungen (foto_mass --tri): links Fuß u 11,36 n 12,68 z 14,3 (zwei Paare 6162+6132 und 6162+6145, Strahlabstand ≤0,05 m); Kopf u 11,5–11,6 n 14,7 z 13,8; rechts Fuß u −4,47 n 12,55 z 14,5, Kopf u −4,40 n 14,55 z 13,86 (±0,07–0,1 m). Querschnitt 0,22 m und Kopfblock 0,5×0,4 m = ANNAHME. Foto-F1 `satteldach__haupt` (10 Torfotos, halbe Auflösung): 0,795 (Vorrunde) → 0,797, kein Fall. `bauen_abnehmen.sh`: „alle Pruefungen bestanden“.
-4. **Overlays**: `modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis2_speier_neu.jpg` (Modell-Speier grün in 6162, j05, q11, 6132, 6145; selbst angesehen). Es zeichnet die Generatorparameter, nicht die STL-Kanten.
-5. **Fehlerliste**: trifft – linker Speier (6162, 6132, 6145), rechter Speier (6162, 6145, j05 unabhängig). Trifft nicht/ungeprüft – q11 (unscharf, Kamera schwach): Modell dort nicht passend, nicht als Beleg gewertet; Kopf nur Block statt Drache; Querschnitt ANNAHME; Erker-Eckspeier fehlen; `foto_diff`, `fehlteile_finden`, `regression.py`, `teile_sichtpruefung` NICHT gelaufen. `teile_lage_pruefen`: satteldach:haupt Median 2,38 m (Warnung bestand schon vorher, betrifft Dachfläche, nicht die Speier). `freiraum_audit` schlug schon im Altlauf fehl.
-6. **Geänderte Dateien**: `tools/baukasten_gen.py`, `modelle/kaufhaus_grob3/objekt.json`, `masstabelle.json` (Messungen, 2 Prüfungen, `teilstand`; `erledigt` NICHT gesetzt, da (a) offen), `messprotokoll/Z-6162-001.*`, `M-6162-001..006.*`, `NICHTS_GEBRACHT.md`, `REZEPT_GEBAEUDE_AUS_FOTOS.md`, Bauartefakte unter `audit/`.
-7. **Generalisierte Lehre**: L-KR33: Kleinteile abseits bekannter Ebenen nur per Zwei-Paar-Triangulation setzen, nicht per Strahl auf Ebene | Vorversuch 161725 lag 0,9 m daneben | `foto_mass.py --tri`, `schnitt_reichweite`.
+## 3. Pruefungen (vorher -> nachher, Soll -0,1..0,1)
+| Pruefung | vorher | nachher | Quelle |
+|---|---|---|---|
+| Figur 2 + Baldachin 2 Versatz Krone gegen Figurenachse | -0,10 ROT | 0,00 | M-6161-049/050 (4 Kameras) |
+| Figur 3 + Baldachin 3 | 0,12 ROT | 0,00 | M-6161-047/048 (3 Kameras) |
+| Figur 4 + Baldachin 4 | -0,12 ROT | 0,00 | M-6161-051/052 (2 Kameras) |
+Messung im selben Kamerasatz: Fotoversatz Krone-Figur Fig2 0,00 / Fig3 +0,076 / Fig4 +0,077 m (Unsicherheit je Peilung 0,03-0,06 m).
+Ursache: Altwerte der Figuren (Kamerasatz 6120) und Baldachine (6161+6145) aus verschiedenen Kamerasaetzen; Figur 2 war 0,09 m falsch, Krone selbst nur <= 0,04 m.
+Aenderung: Baldachin-u 5,42/1,614/-2,447 -> 5,385/1,583/-2,410; Figuren-u 5,468/1,476/-2,463 -> 5,382/1,507/-2,487. Figur 1 / Baldachin 1 nicht gemessen, unveraendert.
+bauen_abnehmen: alle Pruefungen bestanden (rc=0). Foto-F1 (halbe Aufl., 10 Torfotos): baldachine 0,815 (unveraendert, Prec 0,764/Recall 0,873), figuren 0,897 (Vorher nicht gemessen = ungeprueft).
+
+## 4. Overlays
+audit/rundekreis2_baldachine/p_6161.jpg (vorher), pn_6161.jpg (nachher), r_6161_3.jpg, h_6161_3.jpg, h_6145_3.jpg (Lineale/Messausschnitte).
+
+## 5. Fehlerliste
+- trifft: Fig 2 Krone und Figur koaxial (pn_6161 angesehen); Fig 3/4 zeigen den realen Restversatz ~0,08 m.
+- ungeprueft: Figur 1/Baldachin 1 (nicht gemessen, Versatz im alten Modell +0,04); Foto-F1 der Figuren vorher; Fialen/Masswerk-Formfehler aus Vorrunde (nicht Ziel).
+- Restunsicherheit: Peilung +-0,03..0,06 m; 2 Kameras bei Fig 4.
+
+## 6. Geaenderte Dateien
+modelle/kaufhaus_grob3/objekt.json, masstabelle.json (Messungen, 3 Pruefungen, erledigt-Feld), messprotokoll/M-6161-047..052, NICHTS_GEBRACHT.md, REZEPT (L55), audit/*.
+
+## 7. Generalisierte Lehre
+Lehre | Anlass | Werkzeug
+Relative Lage zweier Teile nur im gleichen Kamerasatz messen, Pruefung als Differenz | Scheinversatz 0,09 m durch gemischte Kamerasaetze | foto_mass --tri2d + schnitt_reichweite up-um

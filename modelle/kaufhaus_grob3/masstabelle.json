@@ -2683,6 +2683,174 @@
    ],
    "quer_max": 0.15,
    "r_max": 6.0
+  },
+  "baldachin2_mitte_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.35 - z_unterkante_lot2",
+   "zentrum": [
+    9.438,
+    10.518
+   ],
+   "richtung": [
+    0.9426390260635353,
+    -0.333813820178239
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.8
+  },
+  "baldachin2_mitte_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.35 - z_unterkante_lot2",
+   "zentrum": [
+    9.438,
+    10.518
+   ],
+   "richtung": [
+    -0.9426390260635353,
+    0.333813820178239
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.8
+  },
+  "figur2_kopfm_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=13.17 - z_unterkante_lot2",
+   "zentrum": [
+    9.397,
+    10.409
+   ],
+   "richtung": [
+    0.9426390260635353,
+    -0.333813820178239
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.3
+  },
+  "figur2_kopfm_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=13.17 - z_unterkante_lot2",
+   "zentrum": [
+    9.397,
+    10.409
+   ],
+   "richtung": [
+    -0.9426390260635353,
+    0.333813820178239
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.3
+  },
+  "baldachin3_mitte_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.35 - z_unterkante_lot2",
+   "zentrum": [
+    5.857,
+    11.798
+   ],
+   "richtung": [
+    0.9426390260635353,
+    -0.333813820178239
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.8
+  },
+  "baldachin3_mitte_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.35 - z_unterkante_lot2",
+   "zentrum": [
+    5.857,
+    11.798
+   ],
+   "richtung": [
+    -0.9426390260635353,
+    0.333813820178239
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.8
+  },
+  "figur3_kopfm_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=13.17 - z_unterkante_lot2",
+   "zentrum": [
+    5.712,
+    11.616
+   ],
+   "richtung": [
+    0.9426390260635353,
+    -0.333813820178239
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.3
+  },
+  "figur3_kopfm_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=13.17 - z_unterkante_lot2",
+   "zentrum": [
+    5.712,
+    11.616
+   ],
+   "richtung": [
+    -0.9426390260635353,
+    0.333813820178239
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.3
+  },
+  "baldachin4_mitte_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.35 - z_unterkante_lot2",
+   "zentrum": [
+    2.124,
+    13.216
+   ],
+   "richtung": [
+    0.9426390260635353,
+    -0.333813820178239
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.8
+  },
+  "baldachin4_mitte_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=14.35 - z_unterkante_lot2",
+   "zentrum": [
+    2.124,
+    13.216
+   ],
+   "richtung": [
+    -0.9426390260635353,
+    0.333813820178239
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.8
+  },
+  "figur4_kopfm_up": {
+   "typ": "schnitt_reichweite",
+   "z": "=13.17 - z_unterkante_lot2",
+   "zentrum": [
+    1.979,
+    13.037
+   ],
+   "richtung": [
+    0.9426390260635353,
+    -0.333813820178239
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.3
+  },
+  "figur4_kopfm_um": {
+   "typ": "schnitt_reichweite",
+   "z": "=13.17 - z_unterkante_lot2",
+   "zentrum": [
+    1.979,
+    13.037
+   ],
+   "richtung": [
+    -0.9426390260635353,
+    0.333813820178239
+   ],
+   "quer_max": 0.1,
+   "r_max": 0.3
   }
  },
  "pruefungen": [
@@ -5632,6 +5800,54 @@
    "historie": [
     "2026-11-11 angelegt (Kreis2 164909 r2, Befund 'Wasserspeier an der Traufe fehlen'); am alten Stand ohne Speier ROT erwartet (Wand 12,66 -> Reichweite ~2,7)"
    ]
+  },
+  {
+   "name": "Figur 2 + Baldachin 2: Versatz Krone gegen Figurenachse (Differenz der Abweichungen von den Peilungen, doppelt)",
+   "wert": "(baldachin2_mitte_up - baldachin2_mitte_um) - (figur2_kopfm_up - figur2_kopfm_um)",
+   "soll": [
+    -0.1,
+    0.1
+   ],
+   "quelle": "Nutzer 11.11. 16:17 (Aufsaetze nicht mittig): Mittelfiale (Baldachin) und Statuenkopf (Figur) je in DENSELBEN Kameras 6161/6145/6132(/6117) per foto_mass --tri2d gepeilt (gleicher Kamerasatz -> Kameraversatz faellt aus dem Differenzwert heraus), Strahlabstand <0,03 m: M-6161-049 (Mittelfiale) / M-6161-050 (Kopfachse); Fotoversatz Krone-Figur u(Peilung) +0.002 m; Wert = 2*[(Modell-Versatz) - (Foto-Versatz)], Toleranz +-0,05 m je Seite",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6161-050",
+   "historie": [
+    "2026-11-11 angelegt (Kreis2 r2, Baldachin-Mitte): am Altstand ROT, Soll nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 3 + Baldachin 3: Versatz Krone gegen Figurenachse (Differenz der Abweichungen von den Peilungen, doppelt)",
+   "wert": "(baldachin3_mitte_up - baldachin3_mitte_um) - (figur3_kopfm_up - figur3_kopfm_um)",
+   "soll": [
+    -0.1,
+    0.1
+   ],
+   "quelle": "Nutzer 11.11. 16:17 (Aufsaetze nicht mittig): Mittelfiale (Baldachin) und Statuenkopf (Figur) je in DENSELBEN Kameras 6161/6145/6132(/6117) per foto_mass --tri2d gepeilt (gleicher Kamerasatz -> Kameraversatz faellt aus dem Differenzwert heraus), Strahlabstand <0,03 m: M-6161-047 (Mittelfiale) / M-6161-048 (Kopfachse); Fotoversatz Krone-Figur u(Peilung) +0.076 m; Wert = 2*[(Modell-Versatz) - (Foto-Versatz)], Toleranz +-0,05 m je Seite",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6161-048",
+   "historie": [
+    "2026-11-11 angelegt (Kreis2 r2, Baldachin-Mitte): am Altstand ROT, Soll nicht gelockert"
+   ]
+  },
+  {
+   "name": "Figur 4 + Baldachin 4: Versatz Krone gegen Figurenachse (Differenz der Abweichungen von den Peilungen, doppelt)",
+   "wert": "(baldachin4_mitte_up - baldachin4_mitte_um) - (figur4_kopfm_up - figur4_kopfm_um)",
+   "soll": [
+    -0.1,
+    0.1
+   ],
+   "quelle": "Nutzer 11.11. 16:17 (Aufsaetze nicht mittig): Mittelfiale (Baldachin) und Statuenkopf (Figur) je in DENSELBEN Kameras 6161/6145/6132(/6117) per foto_mass --tri2d gepeilt (gleicher Kamerasatz -> Kameraversatz faellt aus dem Differenzwert heraus), Strahlabstand <0,03 m: M-6161-051 (Mittelfiale) / M-6161-052 (Kopfachse); Fotoversatz Krone-Figur u(Peilung) +0.077 m; Wert = 2*[(Modell-Versatz) - (Foto-Versatz)], Toleranz +-0,05 m je Seite",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "massstab": "kamera_bruecke",
+   "protokoll": "M-6161-052",
+   "historie": [
+    "2026-11-11 angelegt (Kreis2 r2, Baldachin-Mitte): am Altstand ROT, Soll nicht gelockert"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -6540,14 +6756,6 @@
    "naechster_schritt": "Kranzgesims-Tiefe mit drittem frontalem Foto messen (foto_mass --tri an der Unterkante); Maßwerk als Relief nach Foto-Zaehlung der Felder"
   },
   {
-   "datum": "2026-11-11",
-   "wer": "Pruefer opus kreis 20261111_045306a045306 r2 (automatisch)",
-   "teil": "baldachinreihe:baldachine",
-   "merkmal": "Pruefer-Rest baldachinreihe:baldachine kreis 20261111_045306a045306 r2",
-   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Rot (erfundene Form) stark gestiegen: 6120 23581->35328 px, 6119 16048->25685, p03 9236->16649, 6127 8405->12357, 6132 12063->16681; Praezision 0,747->0,740, F1-Gewinn fast nur Recall | Baldachin 1 (links, 6120/6119): roter Kronenblock groesser als vorher, Form/Lage 'wie 2' ANNAHME trifft nicht | Baldachin 2 (6120): neue rote Streifen oberhalb des Kranzgesimses, Kronen-Oberteil zu weit vorn/zu breit | Baldachin 3 (6119 rechts): neuer roter Keil links an der Krone; p03 Mitte: roter T-Block an der Krone | Fialen rot/zu dick in 6119, 6120 rechts, i08, d11 (Schraegansicht) - offen | Masswerkband: gelbe Reste in j05 (beide Baldachine, waagerechte Balken), 6120 rechts (Bogenfeld) - Kanten fehlen | Gelbe Reste unten an der Haube: 6120 Mitte/rechts unten, j05 links unten, p03 rechts | Kronentiefe 0,46/0,42 = ANNAHME nur per F1 gewaehlt, Verschiebungsmarge 0,031 = knapp belegt | Pflichtpruefungen nicht gelaufen: teile_lage_pruefen, foto_diff, fehlteile_finden, Teile-Sichtpruefung; Pruefstand nur mit RCPARK_OHNE_FOTODIAG=1; f1_h volle Aufloesung nicht gemessen | Haube/Wangen und Rueckseite ungeprueft; Seitenfialen-Anzahl nicht am Foto gezaehlt (ANNAHME)",
-   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
-  },
-  {
    "teil": "staffelgiebel:west",
    "merkmal": "Staffelgiebel sind Treppen (waagerechte Stufen), keine Saegezacken",
    "text": "Nutzer 11.11. 08:38 (Viewer-Screenshot Formkanten): Stufen mit Daechlein (daechlein_h 0,8) wirken als Saegezahn; real waagerechte Treppenstufen. Ursache: daechlein_h am 10.11. (Kreis2 r2) per Foto-F1-Sweep gewaehlt (0,45/0,6/0,8 -> 0,407/0,417/0,423, Unterschied unter Unterscheidbarkeit L46), keine Formbeschreibung Stufe 0. Gilt fuer beide Giebel (west/ost, gemeinsamer Generator).",
@@ -7110,6 +7318,41 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.09 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_045306a045306 r2 (automatisch)",
+   "teil": "baldachinreihe:baldachine",
+   "merkmal": "Pruefer-Rest baldachinreihe:baldachine kreis 20261111_045306a045306 r2",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Rot (erfundene Form) stark gestiegen: 6120 23581->35328 px, 6119 16048->25685, p03 9236->16649, 6127 8405->12357, 6132 12063->16681; Praezision 0,747->0,740, F1-Gewinn fast nur Recall | Baldachin 1 (links, 6120/6119): roter Kronenblock groesser als vorher, Form/Lage 'wie 2' ANNAHME trifft nicht | Baldachin 2 (6120): neue rote Streifen oberhalb des Kranzgesimses, Kronen-Oberteil zu weit vorn/zu breit | Baldachin 3 (6119 rechts): neuer roter Keil links an der Krone; p03 Mitte: roter T-Block an der Krone | Fialen rot/zu dick in 6119, 6120 rechts, i08, d11 (Schraegansicht) - offen | Masswerkband: gelbe Reste in j05 (beide Baldachine, waagerechte Balken), 6120 rechts (Bogenfeld) - Kanten fehlen | Gelbe Reste unten an der Haube: 6120 Mitte/rechts unten, j05 links unten, p03 rechts | Kronentiefe 0,46/0,42 = ANNAHME nur per F1 gewaehlt, Verschiebungsmarge 0,031 = knapp belegt | Pflichtpruefungen nicht gelaufen: teile_lage_pruefen, foto_diff, fehlteile_finden, Teile-Sichtpruefung; Pruefstand nur mit RCPARK_OHNE_FOTODIAG=1; f1_h volle Aufloesung nicht gemessen | Haube/Wangen und Rueckseite ungeprueft; Seitenfialen-Anzahl nicht am Foto gezaehlt (ANNAHME)",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern.",
+   "erledigt": "ersetzt durch Pruefer-Rest kreis 20261111_165210a165209 r2"
+  },
+  {
+   "teil": "baldachinreihe:baldachine",
+   "merkmal": "Baldachin-Aufsaetze (grosse Kronen) bei den mittleren Figuren nicht mittig",
+   "text": "Nutzer 11.11. 16:17 (Viewer v52 Kanten, Foto an_handy_2026-11-06_f_handy_f_04, rote Rahmen ueber den Figuren 2-4): die groben Aufsaetze ueber den Baldachinen sitzen bei den mittleren Figuren nicht mittig. Geometrie: Figuren-u 9,422/5,468/1,476/-2,463, Baldachin-u 9,462/5,420/1,614/-2,447 -> Versatz +0,04/-0,05/+0,14/+0,02 m (Figur 3 am groessten).",
+   "naechster_schritt": "Mitte je Krone und Figur per foto_mass in >=3 Fotos messen (Regel 3c), Baldachin-u auf Fotomitte setzen; Lagebefund -> Verschiebungskontrolle.",
+   "datum": "2026-11-11",
+   "wer": "Nutzer (Sichtbeobachtung)",
+   "pruef_stichworte": [
+    "mittig",
+    "versatz",
+    "aufsatz",
+    "krone",
+    "baldachin"
+   ],
+   "formfamilie_test": true,
+   "formfamilie_test_quelle": "Lage-Test: Kronenachse u = Figurenachse (figurenreihe:figuren) in Fotos 6120/6117; Variante b_mitte 11.11. abends",
+   "erledigt": "kreis2 Mittelfiale+Statuenkopf in denselben 4/3/2 Kameras gepeilt (M-6161-047..052): Krone-Figur-Versatz im Foto 0,00/+0,076/+0,077 m (Fig 2/3/4); Altmodell mischte Kamerasaetze (Figur 2 um 0,09 m falsch); Baldachin-u 5,385/1,583/-2,410, Figur-u 5,382/1,507/-2,487; 3 Pruefungen 'Versatz Krone gegen Figurenachse' vorher ROT (-0,10/0,12/-0,12), nachher 0,00; Rest-Versatz der Figuren 3/4 (0,08 m) ist im Foto real"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_165210a165209 r2 (automatisch)",
+   "teil": "baldachinreihe:baldachine",
+   "merkmal": "Pruefer-Rest baldachinreihe:baldachine kreis 20261111_165210a165209 r2",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: DICHTE-VERDACHT marge_min -0,013 (Achse t nicht belegt): Lage nur im Achsen-Overlay pn_6161 bestaetigt (Fig 2 koaxial, Fig 3/4 Restversatz ~0,08 m real im Foto), Foto-F1 unveraendert 0,815, in den Formbildern 6120/6145/6117 kein sichtbarer Lagegewinn | Hauptfehler offen: Tiefenlage aller 4 Baldachine falsch - Modell in 6145 ca. halbe Baldachinbreite rechts, in 6117 links neben dem Foto (Vorzeichen wechselt mit Blickrichtung = Tiefe falsch), in dieser Runde nicht bearbeitet | gelb 6120: Rippen/Unterseite rechter Baldachin, Unterkante mittlerer Baldachin neben Figur, Streifen am linken Kranz | gelb 6145: Kronenspitzen Baldachin 3 und 4, Unterkante Baldachin 3 | gelb 6117: Masswerk rechts an Baldachin 1 und 3 | rot: grosse erfundene Flaechen an Kranz/Haube (6120 links oben, Fialengruppe rechts in 6120), rote Flaeche am oberen Kranz des mittleren Baldachins in 6120 nachher leicht groesser | Figurenreihe mitgeaendert (bis 0,09 m) ohne Foto-F1 vorher = ungeprueft | Figur 1/Baldachin 1 nicht gemessen | Fig 4 nur 2 Kameras, Peilung +-0,03..0,06 m bei Aenderungen von 0,02..0,04 m am Baldachin",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

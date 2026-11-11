@@ -1,0 +1,45 @@
+{
+ "id": "M-6161-048",
+ "typ": "triangulation_plan",
+ "foto": "6161",
+ "name": "Figur 3 Kopfachse (Statuenkrone) Peilung 3 Kameras Mitte-Test",
+ "beobachtungen": [
+  {
+   "kamera": "K-6161",
+   "px": [
+    2184.0,
+    1106.0
+   ]
+  },
+  {
+   "kamera": "K-6145",
+   "px": [
+    1311.0,
+    1437.0
+   ]
+  },
+  {
+   "kamera": "K-6132",
+   "px": [
+    2110.0,
+    1374.0
+   ]
+  }
+ ],
+ "P_xy": [
+  5.712,
+  11.616
+ ],
+ "strahl_abstand_m": [
+  0.011,
+  0.006,
+  0.016
+ ],
+ "schnittwinkel_grad": [
+  43.6,
+  14.1,
+  29.5
+ ],
+ "unsicherheit_m": 0.052,
+ "massstab_von": "Kameras K-6161, K-6145, K-6132 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme"
+}
