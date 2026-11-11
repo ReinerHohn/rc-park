@@ -28,7 +28,13 @@ def paare(a):
     namen = sorted(pfad); ext = ALIKED(max_num_keypoints=a.max_kp).eval().to(dev); mt = LightGlue(features="aliked").eval().to(dev)
     F = {}; t0 = time.time()
     for n in namen:
-        with torch.no_grad(): F[n] = {k: v.cpu() for k, v in ext.extract(load_image(pfad[n]).to(dev), resize=2048).items()}
+        for _v in range(int(os.environ.get("RCPARK_LG_OOM_RETRY", "0")) + 1):   # geteilte GPU: bei VRAM-Knappheit dieses Bild nach Pause nochmal (Standard 0 = wie bisher)
+            try:
+                with torch.no_grad(): F[n] = {k: v.cpu() for k, v in ext.extract(load_image(pfad[n]).to(dev), resize=int(os.environ.get("RCPARK_LG_RESIZE", "2048"))).items()}
+                break
+            except torch.OutOfMemoryError:
+                if _v >= int(os.environ.get("RCPARK_LG_OOM_RETRY", "0")): raise
+                torch.cuda.empty_cache(); time.sleep(20)
         torch.cuda.empty_cache()
     print(f"Merkmale {len(namen)} Bilder {time.time() - t0:.0f} s", flush=True)
     def gross(f, k): return {"keypoints": f["keypoints"][:, :k], "descriptors": f["descriptors"][:, :k], "keypoint_scores": f["keypoint_scores"][:, :k], "image_size": f["image_size"]}
