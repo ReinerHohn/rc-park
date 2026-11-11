@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_165210a165209/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.667000282287596,
@@ -16,7 +16,7 @@
   "lichter_g2_anzahl": 3.0,
   "lichter_g2_breite_median": 0.68,
   "lichter_g2_breite_max": 0.72,
-  "lichter_g2_ebene_abstand": 2.1007525467169246,
+  "lichter_g2_ebene_abstand": 2.100998473544299,
   "handlauf_z": 8.25699973297119,
   "helm_w_fussbreite_x": 2.3264116744995116,
   "helm_w_fussbreite_y": 2.13911196899414,
@@ -58,7 +58,7 @@
   "lichter_g2_bei_kaempfer_mitte_anzahl": 2.0,
   "lichter_g2_bei_kaempfer_mitte_breite_median": 0.68,
   "lichter_g2_bei_kaempfer_mitte_breite_max": 0.68,
-  "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.1002299324808607,
+  "lichter_g2_bei_kaempfer_mitte_ebene_abstand": 2.1003067676266207,
   "laube_rueckwand_n728_z7": -0.007131292494283237,
   "helm_o_r_14_64": 1.1110442019599438,
   "helm_o_r_16_18": 0.6410005316999677,
@@ -101,19 +101,19 @@
   "figur1_scheitel": 11.906999999999993,
   "figur1_spitze": 9.20699999999999,
   "figur2_scheitel": 11.926999999999992,
-  "figur2_spitze": 9.146999999999991,
+  "figur2_spitze": 9.20699999999999,
   "figur3_scheitel": 11.866999999999994,
   "figur3_spitze": 9.146999999999991,
   "figur4_scheitel": 11.886999999999993,
   "figur2_sohle": 9.836999702453612,
-  "figur2_kranz_d": 0.5662559077952412,
-  "figur2_stufe_d": 0.3099999851556729,
-  "figur2_bein_up": 0.2327845948786125,
-  "figur2_bein_um": 0.19721574802266204,
-  "figur2_kopf_up": 0.16778414907048042,
-  "figur2_kopf_um": 0.13221535515072963,
-  "figur2_bein_np": 0.1163365979686713,
-  "figur2_bein_nm": 0.11366333671048046,
+  "figur2_kranz_d": 0.566255956778647,
+  "figur2_stufe_d": 0.31000023932863624,
+  "figur2_bein_up": 0.14678417600896768,
+  "figur2_bein_um": 0.2832155412087505,
+  "figur2_kopf_up": 0.0817843558814918,
+  "figur2_kopf_um": 0.21821577402037615,
+  "figur2_bein_np": 0.1163362359404384,
+  "figur2_bein_nm": 0.11366390508160995,
   "gaube_a_vordach_vor": 1.5221385427095424,
   "gaube_a_vordach_up": 0.6900120529944501,
   "gaube_a_vordach_um": 0.7599881541509903,
@@ -140,8 +140,8 @@
   "helm_w_r_14_38": 1.1870509785045464,
   "helm_w_r_14_88": 1.0070557810130052,
   "helm_w_knauf_r_21_35": 0.19176879206557926,
-  "gesims_front_z14_35": 0.33434823478472886,
-  "gesims_front_z14_55": 0.17257309118954867,
+  "gesims_front_z14_35": 0.3343481506519783,
+  "gesims_front_z14_55": 0.1725344788111114,
   "gesims_front_z14_78": 0.0737696991541128,
   "bogen3_archivolt_z": 5.9869999999999814,
   "helm_o_r_13_25": 1.9110466579891807,
@@ -160,8 +160,8 @@
   "fenster_og_g4_lichtweite_breite_median": 0.68,
   "fenster_og_g4_lichtweite_breite_max": 0.72,
   "fenster_og_g4_lichtweite_ebene_abstand": 2.0994977942460293,
-  "fenster_og_g3_wand_aussen_l": 0.0008463807182583771,
-  "fenster_og_g3_wand_aussen_r": -0.0021035161808660163,
+  "fenster_og_g3_wand_aussen_l": 0.0008463696506626484,
+  "fenster_og_g3_wand_aussen_r": -0.002103412574150365,
   "fenster_og_g3_stegscheitel_l": 11.946999999999992,
   "fenster_og_g3_stegscheitel_r": 11.946999999999992,
   "fenster_og_g3_glas_tiefe": 0.19928416741884147,
@@ -218,10 +218,10 @@
   "baldachin3_fiale": 13.466999999999988,
   "baldachin4_fiale": 13.526999999999987,
   "baldachin2_haube_unten": 11.846999999999994,
-  "baldachin2_haube_up": 0.3600889552924844,
-  "baldachin2_haube_um": 0.3599107940074807,
-  "baldachin2_krone_up": 0.49468905056639995,
-  "baldachin2_krone_um": 0.495310823893624,
+  "baldachin2_haube_up": 0.3250892548390384,
+  "baldachin2_haube_um": 0.39491125552113454,
+  "baldachin2_krone_up": 0.4596893501129539,
+  "baldachin2_krone_um": 0.5303109670185446,
   "fenster_eg2_oberkante_l": -0.11524319069201816,
   "fenster_eg2_oberkante_r": -0.11428274214072154,
   "laube_decke_u46": 5.807000000000002,
@@ -235,7 +235,7 @@
   "giebel_o_fe3_f": 2.9082795046561043,
   "giebel_o_fe3_w": 3.028256883834843,
   "laube_sockel_fuss_ost_165": -0.011742787709893232,
-  "baldachin2_krone_vorn": 0.08662865006358089,
+  "baldachin2_krone_vorn": 0.08662871377877172,
   "rippe_diag_j2_q": 5.8669999999999884,
   "rippe_gurt_u954_z": 5.916999999999987,
   "rippe_gurt_u954_halbbreite": 0.15003200621385213,
@@ -245,7 +245,19 @@
   "stirnbogen_west_b_unterkante_z": 5.606999999999975,
   "giebel_w_stufe0": 27.667000282287596,
   "giebel_w_stufe1": 26.456999885559078,
-  "pfeiler3_sockelwand_d": 1.3858292070399545
+  "pfeiler3_sockelwand_d": 1.3858292070399545,
+  "baldachin2_mitte_up": 0.4944267882726637,
+  "baldachin2_mitte_um": 0.4955735133745244,
+  "figur2_kopfm_up": 0.14868912579630422,
+  "figur2_kopfm_um": 0.15131100410556372,
+  "baldachin3_mitte_up": 0.4952985777625514,
+  "baldachin3_mitte_um": 0.49470142342919793,
+  "figur3_kopfm_up": 0.1502271172959903,
+  "figur3_kopfm_um": 0.1497728439736101,
+  "baldachin4_mitte_up": 0.49451814894860446,
+  "baldachin4_mitte_um": 0.4954819877893976,
+  "figur4_kopfm_up": 0.14944814381581045,
+  "figur4_kopfm_um": 0.15055181745378998
  },
  "pruefungen": [
   {
@@ -780,7 +792,7 @@
   },
   {
    "name": "Figur 2: Konsolen-Pendelspitze (tiefster Punkt) z",
-   "wert": 9.146999999999991,
+   "wert": 9.20699999999999,
    "soll": [
     9.109,
     9.269
@@ -810,7 +822,7 @@
   },
   {
    "name": "Figur 2: Konsole Kranz Durchmesser (Rundkonsole, Silhouettenspitzen)",
-   "wert": 0.5662559077952412,
+   "wert": 0.566255956778647,
    "soll": [
     0.52,
     0.64
@@ -820,7 +832,7 @@
   },
   {
    "name": "Figur 2: Konsole 2. Stufe Durchmesser",
-   "wert": 0.3099999851556729,
+   "wert": 0.31000023932863624,
    "soll": [
     0.26,
     0.36
@@ -830,7 +842,7 @@
   },
   {
    "name": "Figur 2: Breite Unterschenkel (Silhouette quer, Zeile z 11,65)",
-   "wert": 0.43000034290127453,
+   "wert": 0.4299997172177181,
    "soll": [
     0.37,
     0.49
@@ -840,7 +852,7 @@
   },
   {
    "name": "Figur 2: Breite Kopf (Silhouette quer, z 13,17)",
-   "wert": 0.29999950422121,
+   "wert": 0.300000129901868,
    "soll": [
     0.25,
     0.35
@@ -850,7 +862,7 @@
   },
   {
    "name": "Figur 2: Tiefe Unterschenkel (n-Richtung, z 11,65)",
-   "wert": 0.22999993467915175,
+   "wert": 0.23000014102204835,
    "soll": [
     0.17,
     0.29
@@ -1150,7 +1162,7 @@
   },
   {
    "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.35 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.33434823478472886,
+   "wert": 0.3343481506519783,
    "soll": [
     0.25,
     0.35
@@ -1160,7 +1172,7 @@
   },
   {
    "name": "Traufgesims/Dachrinnenkehle: Vorderflaeche bei z 14.55 liegt hinter der Ebene n 13,0 (m; 13,0 minus n der Vorderflaeche)",
-   "wert": 0.17257309118954867,
+   "wert": 0.1725344788111114,
    "soll": [
     0.13,
     0.23
@@ -1270,7 +1282,7 @@
   },
   {
    "name": "Fenstergruppe 3 (1. OG): Wandflaeche links ausserhalb des Rahmens (u 1,45..1,62 von der Mitte; 0 = Wand n 12,66, Altmodell Rahmenfront -0,15)",
-   "wert": 0.0008463807182583771,
+   "wert": 0.0008463696506626484,
    "soll": [
     -0.06,
     0.08
@@ -1280,7 +1292,7 @@
   },
   {
    "name": "Fenstergruppe 3 (1. OG): Wandflaeche rechts ausserhalb des Rahmens (u 1,45..1,62 von der Mitte; 0 = Wand n 12,66, Altmodell Rahmenfront -0,15)",
-   "wert": -0.0021035161808660163,
+   "wert": -0.002103412574150365,
    "soll": [
     -0.06,
     0.08
@@ -1810,7 +1822,7 @@
   },
   {
    "name": "Baldachin 2: Breite der Haube (Ma\u00dfwerkband, z 13,8)",
-   "wert": 0.7199997492999651,
+   "wert": 0.720000510360173,
    "soll": [
     0.63,
     0.83
@@ -1820,7 +1832,7 @@
   },
   {
    "name": "Baldachin 2: Breite der Fialenkrone (Blattwerk, z 14,35)",
-   "wert": 0.989999874460024,
+   "wert": 0.9900003171314986,
    "soll": [
     0.85,
     1.13
@@ -1940,7 +1952,7 @@
   },
   {
    "name": "Baldachin 2: Kranzgesims der Krone ragt vor die Bandoberkante (Vorderkante s ueber Bandfront 13,03)",
-   "wert": 0.08662865006358089,
+   "wert": 0.08662871377877172,
    "soll": [
     0.05,
     0.2
@@ -2044,6 +2056,36 @@
    "soll": [
     1.0,
     1.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Figur 2 + Baldachin 2: Versatz Krone gegen Figurenachse (Differenz der Abweichungen von den Peilungen, doppelt)",
+   "wert": 0.0014751532073987994,
+   "soll": [
+    -0.1,
+    0.1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Figur 3 + Baldachin 3: Versatz Krone gegen Figurenachse (Differenz der Abweichungen von den Peilungen, doppelt)",
+   "wert": 0.0001428810109732337,
+   "soll": [
+    -0.1,
+    0.1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Figur 4 + Baldachin 4: Versatz Krone gegen Figurenachse (Differenz der Abweichungen von den Peilungen, doppelt)",
+   "wert": 0.0001398347971863778,
+   "soll": [
+    -0.1,
+    0.1
    ],
    "ok": true,
    "status": "ok"

@@ -1,0 +1,35 @@
+{
+ "id": "M-6161-052",
+ "typ": "triangulation_plan",
+ "foto": "6161",
+ "name": "Figur 4 Kopfachse Peilung 2 Kameras Mitte-Test",
+ "beobachtungen": [
+  {
+   "kamera": "K-6161",
+   "px": [
+    2645.5,
+    1086.0
+   ]
+  },
+  {
+   "kamera": "K-6145",
+   "px": [
+    1747.0,
+    1278.0
+   ]
+  }
+ ],
+ "P_xy": [
+  1.979,
+  13.037
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.0
+ ],
+ "schnittwinkel_grad": [
+  43.9
+ ],
+ "unsicherheit_m": 0.036,
+ "massstab_von": "Kameras K-6161, K-6145 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme"
+}

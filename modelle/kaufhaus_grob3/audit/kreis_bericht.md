@@ -1,39 +1,35 @@
-# Kreis 20261111_152551a152551 r2 – bogenreihe:laube Säulensockel zu niedrig
+# Kreis2 baldachinreihe:baldachine – Krone nicht mittig (Nutzer 11.11. 16:17)
 
 ## 1. Formbeschreibung (Stufe 0)
-Fotos: 6117 (Nahfoto Pfeiler 3, sauber, Boden sichtbar), 6115 (Pfeiler 3+4 von Nordost), d20 (Nahfoto Pfeiler 2, Boden abgeschnitten), 6127 (Übersicht, Fuß vom Schild verdeckt), 6176 (Schrägblick Gasse).
-Zonen von unten: Achtkant-Sockel (senkrechte Wand, Flächen zur Fassade), darüber Schrägfase (Oktogon → runder Schaft), Rundschaft 0,88 m, Kämpfer.
-Grundriss: Oktogon, Schaft rund. Wiederholung: 5 Säulen (Zählung unverändert Z-004-003/-001), alle gleich.
-Formfamilie: vorhandene `bogenreihe` mit `sockel_weite/sockel_hoehe/fase_hoehe` (baukasten_gen.py) – nur Maße geändert.
-Am Modell anders: Sockelwand-Oberkante lag bei z 2,00 statt 2,25–2,30, Fase endete 2,20 statt 2,41.
+Fotos: 6161 (Uebersicht frontal, alle 4), 6145 (Schraeg, Nah), 6132, 6117, 6120, 6127 angesehen (audit/rundekreis2_baldachine/p_6161, r_6161_3, h_6161_3, h_6145_3).
+Zonen: Haube mit Masswerkband (rot/gold), Kranzgesims, Fialenkrone: Mittelfiale + 2 Seitenfialen mit Blattwerk, symmetrisch um die Mittelfiale (6161 Fig 3: Seitenspitzen 2142/2203, Mitte 2172 px -> Krone symmetrisch). Formfamilie unveraendert: baldachinreihe (vorhanden). Nur die Lage ist falsch, nicht die Form.
+Befund: Fig 3 im Foto sichtbar ~0,1 m neben der Kronenachse (6161 und 6120).
 
-## 2. Zählungen
-Keine neuen (Anzahl 5 Säulen unverändert).
+## 2. Zaehlungen
+Keine neue Zaehlung noetig (4 Baldachine, Z-6161-002 bestehend).
 
-## 3. Prüfungen
-| Prüfung | vorher | nachher | Soll | Quelle |
-|---|---|---|---|---|
-| pfeiler3_sockelwand_d (z 2,24–2,32) | nan (ROT) | grün | 1,0–1,6 | M-6117-008/009, M-6115-016/017 |
-| pfeiler3_d (Messring auf 2,38–2,45 verlegt, Soll gleich 0,81–0,94, Historie) | – | grün | 0,81–0,94 | kantengitter + M-6117-009 |
-Messungen: Wandoberkante z 2,30 (M-6117-008) / 2,27 (M-6115-016); Fase-Oberkante 2,40 (M-6117-009) / 2,42 (M-6115-017); Pflaster 1,57 beide. Pfeiler 4 (M-6115-018): Wand 2,20/Pflaster 1,54, nicht verwendet.
-Generator: sockel_hoehe 0,55→0,80, fase_hoehe 0,2→0,16 (0,83/0,13 trieb teile_ueberhang auf 0,0101 > 0,01).
-Abnahme `bauen_abnehmen.sh` (mit RCPARK_OHNE_FOTODIAG=1): alle Prüfungen bestanden.
-Foto-F1 (halbe Auflösung, 10 Torfotos): vorher 0,756 (Präz 0,726/Recall 0,788) → nachher 0,757 (0,721/0,796). **Gate +0,02 NICHT erreicht** (Sockel ist kleiner Kantenanteil). f1_h nicht gesondert gemessen.
+## 3. Pruefungen (vorher -> nachher, Soll -0,1..0,1)
+| Pruefung | vorher | nachher | Quelle |
+|---|---|---|---|
+| Figur 2 + Baldachin 2 Versatz Krone gegen Figurenachse | -0,10 ROT | 0,00 | M-6161-049/050 (4 Kameras) |
+| Figur 3 + Baldachin 3 | 0,12 ROT | 0,00 | M-6161-047/048 (3 Kameras) |
+| Figur 4 + Baldachin 4 | -0,12 ROT | 0,00 | M-6161-051/052 (2 Kameras) |
+Messung im selben Kamerasatz: Fotoversatz Krone-Figur Fig2 0,00 / Fig3 +0,076 / Fig4 +0,077 m (Unsicherheit je Peilung 0,03-0,06 m).
+Ursache: Altwerte der Figuren (Kamerasatz 6120) und Baldachine (6161+6145) aus verschiedenen Kamerasaetzen; Figur 2 war 0,09 m falsch, Krone selbst nur <= 0,04 m.
+Aenderung: Baldachin-u 5,42/1,614/-2,447 -> 5,385/1,583/-2,410; Figuren-u 5,468/1,476/-2,463 -> 5,382/1,507/-2,487. Figur 1 / Baldachin 1 nicht gemessen, unveraendert.
+bauen_abnehmen: alle Pruefungen bestanden (rc=0). Foto-F1 (halbe Aufl., 10 Torfotos): baldachine 0,815 (unveraendert, Prec 0,764/Recall 0,873), figuren 0,897 (Vorher nicht gemessen = ungeprueft).
 
-## 4. Overlays (Vorher | Nachher)
-modelle/kaufhaus_grob3/audit/gitter_generator/rundekreis2_laube_sockel_vorher_nachher_{d20,6127,6176}.jpg
-(Selbst angesehen: d20 – Wandoberkante und Fase liegen nachher auf den Fotokanten; 6127 – Fuß verdeckt, nicht beurteilbar.)
+## 4. Overlays
+audit/rundekreis2_baldachine/p_6161.jpg (vorher), pn_6161.jpg (nachher), r_6161_3.jpg, h_6161_3.jpg, h_6145_3.jpg (Lineale/Messausschnitte).
 
 ## 5. Fehlerliste
-- Sockelhöhe (Pfeiler 3, 2 Fotos): trifft.
-- Sockelbreite/sockel_weite 1,5: ungeprüft/widersprüchlich (Verhältnis Sockel/Schaft 1,39 in 6117, 1,16 in 6115, 1,45 in d20) – nicht geändert, ANNAHME bleibt.
-- Pflasterhöhe 1,57 vs boden_z 1,453: Sockel reicht 0,12 m unter das Pflaster (nicht sichtbar); nicht geändert.
-- Andere Pfeiler (0,1,2,4): Höhe nur aus Pfeiler 3 (und Pfeiler 4 grob 2,20) übernommen – ungeprüft einzeln; Pflaster fällt ggf. ab.
-- Nicht gelaufen: foto_diff, fehlteile_finden, teile_lage_pruefen, regression (kein Werkzeug geändert).
-- Pruefer-Reste der Stirnbögen (r1) nicht bearbeitet.
+- trifft: Fig 2 Krone und Figur koaxial (pn_6161 angesehen); Fig 3/4 zeigen den realen Restversatz ~0,08 m.
+- ungeprueft: Figur 1/Baldachin 1 (nicht gemessen, Versatz im alten Modell +0,04); Foto-F1 der Figuren vorher; Fialen/Masswerk-Formfehler aus Vorrunde (nicht Ziel).
+- Restunsicherheit: Peilung +-0,03..0,06 m; 2 Kameras bei Fig 4.
 
-## 6. Geänderte Dateien
-objekt.json, masstabelle.json (2 Prüfungen/Messungen, Beobachtung erledigt), STLs/pruefbericht/MASSNACHWEIS (Bau), NICHTS_GEBRACHT.md, REZEPT_GEBAEUDE_AUS_FOTOS.md, Messprotokolle M-6117-008..011, M-6115-016..020, M-6176-001, M-6127-004, M-d20-001/002 (Letztere vier unbrauchbar/ungenutzt).
+## 6. Geaenderte Dateien
+modelle/kaufhaus_grob3/objekt.json, masstabelle.json (Messungen, 3 Pruefungen, erledigt-Feld), messprotokoll/M-6161-047..052, NICHTS_GEBRACHT.md, REZEPT (L55), audit/*.
 
 ## 7. Generalisierte Lehre
-L-KR32 | Anlass: Sockel zu niedrig | Werkzeug: foto_mass --kamera, teil_fotoform (Vorher = objekt.json zurücksetzen, nicht STL).
+Lehre | Anlass | Werkzeug
+Relative Lage zweier Teile nur im gleichen Kamerasatz messen, Pruefung als Differenz | Scheinversatz 0,09 m durch gemischte Kamerasaetze | foto_mass --tri2d + schnitt_reichweite up-um

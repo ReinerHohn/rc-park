@@ -1,0 +1,45 @@
+{
+ "id": "M-6161-047",
+ "typ": "triangulation_plan",
+ "foto": "6161",
+ "name": "Baldachin 3 Mittelfiale (Krone) Peilung 3 Kameras Mitte-Test",
+ "beobachtungen": [
+  {
+   "kamera": "K-6161",
+   "px": [
+    2171.5,
+    926.0
+   ]
+  },
+  {
+   "kamera": "K-6145",
+   "px": [
+    1293.5,
+    1230.0
+   ]
+  },
+  {
+   "kamera": "K-6132",
+   "px": [
+    2073.0,
+    1109.0
+   ]
+  }
+ ],
+ "P_xy": [
+  5.857,
+  11.798
+ ],
+ "strahl_abstand_m": [
+  0.021,
+  0.01,
+  0.029
+ ],
+ "schnittwinkel_grad": [
+  44.0,
+  14.4,
+  29.6
+ ],
+ "unsicherheit_m": 0.064,
+ "massstab_von": "Kameras K-6161, K-6145, K-6132 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme"
+}

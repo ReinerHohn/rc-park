@@ -1,0 +1,56 @@
+{
+ "id": "M-6161-049",
+ "typ": "triangulation_plan",
+ "foto": "6161",
+ "name": "Baldachin 2 Mittelfiale Peilung 4 Kameras Mitte-Test",
+ "beobachtungen": [
+  {
+   "kamera": "K-6161",
+   "px": [
+    1749.5,
+    947.5
+   ]
+  },
+  {
+   "kamera": "K-6145",
+   "px": [
+    959.0,
+    1376.0
+   ]
+  },
+  {
+   "kamera": "K-6132",
+   "px": [
+    1441.5,
+    1311.0
+   ]
+  },
+  {
+   "kamera": "K-6117",
+   "px": [
+    2504.5,
+    1174.0
+   ]
+  }
+ ],
+ "P_xy": [
+  9.438,
+  10.518
+ ],
+ "strahl_abstand_m": [
+  0.005,
+  0.001,
+  0.005,
+  0.002
+ ],
+ "schnittwinkel_grad": [
+  41.8,
+  20.4,
+  56.5,
+  21.5,
+  98.3,
+  76.8
+ ],
+ "unsicherheit_m": 0.03,
+ "massstab_von": "Kameras K-6161, K-6145, K-6132, K-6117 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme"
+}
