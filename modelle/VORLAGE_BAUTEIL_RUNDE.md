@@ -75,6 +75,10 @@ ZUERST LESEN: `CLAUDE.md` (Regeln 2, 3b, 3c, 8b, 9, 9b, 9c, 9d), `modelle/REZEPT
 - Kein Commit, kein Löschen, kein Slicen oder Drucken ohne Nutzerwort.
 - Große Zwischendateien gehören nach `/media/oem/scan/rc-park_daten/<objekt>/agent_scratch_<RUNDE>/`, nicht auf die Root-Platte.
 - GPU-Jobs laufen über `JOB_GPU_MB=<MiB> tools/job_start.sh …`. Neue Rechenwerkzeuge nutzen die GPU.
+- **Nicht im Hintergrund warten.** Du läufst als `claude -p`, also ohne Sitzung, die dich später weckt. Wenn du deinen Zug mit „ich warte auf den Monitor/Job“ beendest, ist die Runde vorbei: Das Ergebnis ist leer, die Runde wird verworfen. 11.11. traf das 4 Runden (Laufzeit bis Zeitlimit, Log leer).
+  Bau, Abnahme und Messung startest du deshalb im Vordergrund (Bash-Timeout bis 600000 ms).
+  Bei Jobs über `job_start.sh` wartest du im selben Zug mit `until grep -q JOB_ENDE <log>; do sleep 20; done` im Vordergrund. Endet das nach 10 min nicht, rufst du dieselbe Warteschleife erneut auf.
+  Keine `run_in_background`-Befehle und kein Monitor. Der Kreis selbst läuft schon unter systemd.
 - NICHT anfassen: `<TABU>`.
 - Ehrlich bleiben: Nur selbst am Bild Geprüftes heißt „trifft“, sonst „ungeprüft“.
 
