@@ -1,0 +1,2107 @@
+{
+ "objekt": "kaufhaus_grob3",
+ "formliste": "0b219905b33a1161_v2_wolkenverdeckung_festbereich.json",
+ "feinsuche": null,
+ "schwellen_m": {
+  "besucher": 0.25,
+  "experte": 0.08
+ },
+ "annahmen": [
+  "Sichtschwellen Besucher 0,25 m / Experte 0,08 m (ANNAHME Sehschaerfe)",
+  "FUND_FAKTOR 0.3: Fund-Gewicht = Teil-Gewicht x Faktor (ANNAHME)",
+  "Merkmal ohne groesse_m zaehlt in beiden Stufen (ANNAHME)",
+  "Teil ohne offenen Fund und ohne Pruefer-annehmen-Beleg = 0,5 'kein Beleg' (Regel, keine Messung)"
+ ],
+ "bauteile_ohne_formliste": [
+  "erker__0",
+  "erker__1",
+  "quader__eg0_nische",
+  "quader__eg1_nische",
+  "quader__hinten",
+  "quader__og",
+  "quader__ost",
+  "quader__ost_w",
+  "quader__west_w",
+  "stl_teil__erker",
+  "stl_teil__fassade",
+  "stl_teil__fenster",
+  "stl_teil__figuren",
+  "stl_teil__gauben",
+  "stl_teil__helme_o",
+  "stl_teil__helme_w",
+  "stl_teil__konsolen_alt",
+  "stl_teil__laube_alt",
+  "stl_teil__staffelgiebel",
+  "stl_teil__traufzone_alt",
+  "zylinder__helm_o",
+  "zylinder__helm_w"
+ ],
+ "funde_ohne_teilgewicht": [
+  "Kantengitter widerspricht Foto (balkonband__haupt)",
+  "Kantengitter widerspricht Foto (staffelgiebel__west)",
+  "Kantengitter widerspricht Foto (fensterreihe__eg2)",
+  "Laubendecke/Kreuzrippengewoelbe fehlt im Modell",
+  "Kantengitter widerspricht Foto (quader__laube_rueck)",
+  "Kantengitter widerspricht Foto (ff_+9_+5_+3__neu)",
+  "Kantengitter widerspricht Foto (staffelgiebel__ost)",
+  "Kantengitter widerspricht Foto (kreuzgewoelbe__laube)",
+  "Kantengitter widerspricht Foto (bogenreihe__laube)",
+  "Kantengitter widerspricht Foto (staffelgiebel__west)",
+  "Kantengitter widerspricht Foto (bogenreihe__laube)"
+ ],
+ "merkmale": [
+  {
+   "id": "teil:baldachinreihe__baldachine",
+   "art": "teil",
+   "teil": "baldachinreihe__baldachine",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 224.4,
+   "sicht_px_mittel": 50354,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Kranzgesims der Krone; Aufsatz ueber den Baldachinen (Masswerk-Wimperg/Krone ueber jeder Figu; Baldachin-Aufsaetze (grosse Kronen) bei den mittleren Figuren nicht mi",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:balkonband__haupt",
+   "art": "teil",
+   "teil": "balkonband__haupt",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.705,
+   "gewicht": 295.5,
+   "sicht_px_mittel": 87318,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Balkonplatte Stirnhoehe/gestufte Oberkante; Pruefer-Rest balkonband:haupt kreis 20261110_213718a213718 r1",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:bogenreihe__laube",
+   "art": "teil",
+   "teil": "bogenreihe__laube",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.967,
+   "gewicht": 1299.16,
+   "sicht_px_mittel": 1687817,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Laube Gewoelbe/Kapitelle; Pruefer-Rest bogenreihe:laube kreis 20261111_152551a152551 r2",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:bruestung__balkon",
+   "art": "teil",
+   "teil": "bruestung__balkon",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.672,
+   "gewicht": 442.86,
+   "sicht_px_mittel": 196126,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Balkonbruestung Docken Anzahl/Form; Pruefer-Rest bruestung:balkon kreis 20261111_141719a141718 r1",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:erker_polygon__0",
+   "art": "teil",
+   "teil": "erker_polygon__0",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.459,
+   "gewicht": 528.46,
+   "sicht_px_mittel": 279268,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Erker 1 Ornamentik",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:erker_polygon__1",
+   "art": "teil",
+   "teil": "erker_polygon__1",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 511.05,
+   "sicht_px_mittel": 261175,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Erker 2 Ornamentik; Erker-Unterbau Gewoelberippen + untere Flanke; Pruefer-Rest erker_polygon:1 kreis 20261110_225455a225455 r1",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:fensterreihe__eg0",
+   "art": "teil",
+   "teil": "fensterreihe__eg0",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.426,
+   "gewicht": 167.41,
+   "sicht_px_mittel": 28025,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: EG0-Fenster Sollbereich selbst gesetzt",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:fensterreihe__eg1",
+   "art": "teil",
+   "teil": "fensterreihe__eg1",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.426,
+   "gewicht": 196.49,
+   "sicht_px_mittel": 38610,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: EG1-Fenster: Seitenversatz widerspruechlich zwischen Fotos (6117 Model",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:fensterreihe__eg1_tuer",
+   "art": "teil",
+   "teil": "fensterreihe__eg1_tuer",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.656,
+   "gewicht": 129.84,
+   "sicht_px_mittel": 16860,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Pruefer-Rest fensterreihe:eg1_tuer kreis 20261110_173101a173101 r1",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:fensterreihe__eg2",
+   "art": "teil",
+   "teil": "fensterreihe__eg2",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.426,
+   "gewicht": 114.29,
+   "sicht_px_mittel": 13063,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Pruefer-Rest fensterreihe:eg2 kreis 20261111_003723a003723 r1",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:fensterreihe__og",
+   "art": "teil",
+   "teil": "fensterreihe__og",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.656,
+   "gewicht": 548.01,
+   "sicht_px_mittel": 300310,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: OG-Fenster Unterkante; OG-Fenster Glastiefe",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:figurenreihe__figuren",
+   "art": "teil",
+   "teil": "figurenreihe__figuren",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.607,
+   "gewicht": 225.04,
+   "sicht_px_mittel": 50641,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Figuren Baldachine/Attribute",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:gaubenreihe__oben",
+   "art": "teil",
+   "teil": "gaubenreihe__oben",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.541,
+   "gewicht": 128.91,
+   "sicht_px_mittel": 16617,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Gauben obere Reihe: Dachueberstand und Seitenfenster; Rundbogenfenster in der Gaubenstirn fehlt im Modell",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:gaubenreihe__unten",
+   "art": "teil",
+   "teil": "gaubenreihe__unten",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.541,
+   "gewicht": 162.92,
+   "sicht_px_mittel": 26543,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Gauben untere Reihe: Dachueberstand und Seitenfenster",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:helm_geschweift__o",
+   "art": "teil",
+   "teil": "helm_geschweift__o",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.492,
+   "gewicht": 236.29,
+   "sicht_px_mittel": 55831,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Helm Ost Details",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:helm_geschweift__w",
+   "art": "teil",
+   "teil": "helm_geschweift__w",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.426,
+   "gewicht": 217.82,
+   "sicht_px_mittel": 47446,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Helm West Details; Pruefer-Rest helm_geschweift:w kreis 20261111_112732a112732 r1; Helm West: Fuss kragt ueber das Erkergesims aus (geschweifter Traufkra",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:konsolenreihe__balkon",
+   "art": "teil",
+   "teil": "konsolenreihe__balkon",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.803,
+   "gewicht": 369.49,
+   "sicht_px_mittel": 136519,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "kein Beleg (kein angenommener Kreis-Commit mit Pruefer-Urteil fuer dieses Teil)",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:kreuzgewoelbe__laube",
+   "art": "teil",
+   "teil": "kreuzgewoelbe__laube",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.934,
+   "gewicht": 973.13,
+   "sicht_px_mittel": 946987,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Schildbogen (Uebergang Gewoelbekappe zur Rueckwand) ist rund, im Model; Gewoelbeanschluss an der Rueckwand ueber der Tuer: Schildbogen/Rippena; Gewoelberippen (Diagonal-/Gurtrippen) fehlen im Gewoelbekoerper",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:quader__gesims",
+   "art": "teil",
+   "teil": "quader__gesims",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 297.11,
+   "sicht_px_mittel": 88273,
+   "status": 1.0,
+   "beleg": "Kreis angenommen+Pruefer annehmen: 20261110_040948a040948 r1 (main 8ab2e368), 20261110_053353a053353 r1, 20261110_060254a060254 r2 (main a04a4e13)",
+   "grund": null,
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:quader__laube_rueck",
+   "art": "teil",
+   "teil": "quader__laube_rueck",
+   "groesse_m": null,
+   "anzahl": null,
+   "sichtbarkeit": 0.836,
+   "gewicht": 1033.04,
+   "sicht_px_mittel": 1067165,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Laubendecke/Kreuzrippengewoelbe fehlt im Modell; Pruefer-Rest quader:laube_rueck kreis 20261111_023109a023500 r1",
+   "in_objekt": true,
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:quader__laube_sockel_o",
+   "art": "teil",
+   "teil": "quader__laube_sockel_o",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.689,
+   "gewicht": 268.73,
+   "sicht_px_mittel": 72214,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Sockelfuss Ost steht 0,27 m zu tief im Pflaster; Gesimsband-Unterkante; Pruefer-Rest quader:laube_sockel_o kreis 20261111_044705a044705 r2",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:quader__laube_sockel_w",
+   "art": "teil",
+   "teil": "quader__laube_sockel_w",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.492,
+   "gewicht": 156.19,
+   "sicht_px_mittel": 24397,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Pruefer-Rest quader:laube_sockel_w kreis 20261111_032659a032659 r1",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:quader__rumpf_eg",
+   "art": "teil",
+   "teil": "quader__rumpf_eg",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.787,
+   "gewicht": 1018.56,
+   "sicht_px_mittel": 1037468,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Laubendecke/Kreuzrippengewoelbe fehlt im Modell (ueber rumpf_eg)",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:quader__rumpf_og",
+   "art": "teil",
+   "teil": "quader__rumpf_og",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.689,
+   "gewicht": 902.02,
+   "sicht_px_mittel": 813637,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Ostwand/Gesims nach Giebel-Verschiebung; Westseite: Modell vs LoD2-Nachbar; Gassenwand Fenster/Mauerkrone",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:satteldach__haupt",
+   "art": "teil",
+   "teil": "satteldach__haupt",
+   "groesse_m": null,
+   "anzahl": null,
+   "sichtbarkeit": 0.705,
+   "gewicht": 1005.77,
+   "sicht_px_mittel": 1011582,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Dach Rinne/Gitter; Dachdeckung: Schindeln/Ziegel fehlen (Dachflaechen glatt); Pruefer-Rest satteldach:haupt kreis 20261111_164909a164909 r2",
+   "in_objekt": true,
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:staffelgiebel__ost",
+   "art": "teil",
+   "teil": "staffelgiebel__ost",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.508,
+   "gewicht": 249.15,
+   "sicht_px_mittel": 62077,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Staffelgiebel Ost Lage/Groesse; Staffelgiebel, hintere Haelfte (Richtung n_hinten): Stufenhoehen/Stufe; Ostgiebel Kaeppchen/Fenster",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:staffelgiebel__west",
+   "art": "teil",
+   "teil": "staffelgiebel__west",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.443,
+   "gewicht": 258.89,
+   "sicht_px_mittel": 67023,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "offener Fund: Stufenkappen: niedriges Satteldaechlein auf waagerechter Stufe; Pruefer-Rest staffelgiebel:west kreis 20261111_153352a153352 r1",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:zylinder__dienst_laube_u975_schaft",
+   "art": "teil",
+   "teil": "zylinder__dienst_laube_u975_schaft",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.311,
+   "gewicht": 192.42,
+   "sicht_px_mittel": 37025,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "kein Beleg (kein angenommener Kreis-Commit mit Pruefer-Urteil fuer dieses Teil)",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:zylinder__dienst_laube_u975_sockel",
+   "art": "teil",
+   "teil": "zylinder__dienst_laube_u975_sockel",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.262,
+   "gewicht": 87.58,
+   "sicht_px_mittel": 7670,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "kein Beleg (kein angenommener Kreis-Commit mit Pruefer-Urteil fuer dieses Teil)",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:zylinder__dienst_laube_um230_schaft",
+   "art": "teil",
+   "teil": "zylinder__dienst_laube_um230_schaft",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.295,
+   "gewicht": 83.02,
+   "sicht_px_mittel": 6892,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "kein Beleg (kein angenommener Kreis-Commit mit Pruefer-Urteil fuer dieses Teil)",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "teil:zylinder__dienst_laube_um230_sockel",
+   "art": "teil",
+   "teil": "zylinder__dienst_laube_um230_sockel",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.295,
+   "gewicht": 42.08,
+   "sicht_px_mittel": 1771,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "kein Beleg (kein angenommener Kreis-Commit mit Pruefer-Urteil fuer dieses Teil)",
+   "in_objekt": true,
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:ostwand_gesims_nach_giebel_verschiebung",
+   "art": "fund",
+   "teil": "quader__rumpf_og",
+   "quelle": "masstabelle:Koordinator nach Pruefer a033946 r2",
+   "text": "Ostwand/Gesims nach Giebel-Verschiebung",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.689,
+   "gewicht": 270.61,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:og_fenster_unterkante",
+   "art": "fund",
+   "teil": "fensterreihe__og",
+   "quelle": "masstabelle:Koordinator nach Pruefer a062358 r1 (fensterreihe:og)",
+   "text": "OG-Fenster Unterkante",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.656,
+   "gewicht": 164.4,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:og_fenster_glastiefe",
+   "art": "fund",
+   "teil": "fensterreihe__og",
+   "quelle": "masstabelle:Koordinator nach Pruefer a062358 r1 (fensterreihe:og)",
+   "text": "OG-Fenster Glastiefe",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.656,
+   "gewicht": 164.4,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:eg0_fenster_sollbereich_selbst_gesetzt",
+   "art": "fund",
+   "teil": "fensterreihe__eg0",
+   "quelle": "masstabelle:Koordinator nach Pruefer a093550 r2 (fensterreihe:eg0)",
+   "text": "EG0-Fenster Sollbereich selbst gesetzt",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.426,
+   "gewicht": 50.22,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:gauben_obere_reihe_dachueberstand_und_seitenfens",
+   "art": "fund",
+   "teil": "gaubenreihe__oben",
+   "quelle": "masstabelle:Nutzer-Sichtfund 10.11. 10:21 (Viewer V35, Screenshots Wolke",
+   "text": "Gauben obere Reihe: Dachueberstand und Seitenfenster",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.541,
+   "gewicht": 38.67,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:gauben_untere_reihe_dachueberstand_und_seitenfen",
+   "art": "fund",
+   "teil": "gaubenreihe__unten",
+   "quelle": "masstabelle:Nutzer-Sichtfund 10.11. 10:21 (Viewer V35, Screenshots Wolke",
+   "text": "Gauben untere Reihe: Dachueberstand und Seitenfenster",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.541,
+   "gewicht": 48.88,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:erker_1_ornamentik",
+   "art": "fund",
+   "teil": "erker_polygon__0",
+   "quelle": "masstabelle:Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetr",
+   "text": "Erker 1 Ornamentik",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.459,
+   "gewicht": 158.54,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:erker_2_ornamentik",
+   "art": "fund",
+   "teil": "erker_polygon__1",
+   "quelle": "masstabelle:Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetr",
+   "text": "Erker 2 Ornamentik",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 153.32,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:figuren_baldachine_attribute",
+   "art": "fund",
+   "teil": "figurenreihe__figuren",
+   "quelle": "masstabelle:Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetr",
+   "text": "Figuren Baldachine/Attribute",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.607,
+   "gewicht": 67.51,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:laube_gewoelbe_kapitelle",
+   "art": "fund",
+   "teil": "bogenreihe__laube",
+   "quelle": "masstabelle:Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetr",
+   "text": "Laube Gewoelbe/Kapitelle",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.967,
+   "gewicht": 389.75,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:portal_tuerblatt_gold",
+   "art": "fund",
+   "teil": "fensterreihe__eg1_tuer",
+   "quelle": "masstabelle:Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetr",
+   "text": "Portal Tuerblatt/Gold",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.656,
+   "gewicht": 38.95,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "als erledigt eingetragen, aber kein Beleg im Protokoll",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:helm_ost_details",
+   "art": "fund",
+   "teil": "helm_geschweift__o",
+   "quelle": "masstabelle:Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetr",
+   "text": "Helm Ost Details",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.492,
+   "gewicht": 70.89,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:helm_west_details",
+   "art": "fund",
+   "teil": "helm_geschweift__w",
+   "quelle": "masstabelle:Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetr",
+   "text": "Helm West Details",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.426,
+   "gewicht": 65.35,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:dach_rinne_gitter",
+   "art": "fund",
+   "teil": "satteldach__haupt",
+   "quelle": "masstabelle:Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetr",
+   "text": "Dach Rinne/Gitter",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.705,
+   "gewicht": 301.73,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:staffelgiebel_ost_lage_groesse",
+   "art": "fund",
+   "teil": "staffelgiebel__ost",
+   "quelle": "masstabelle:Nutzer (Sichtfund, Markierung auf Overlay handy_03)",
+   "text": "Staffelgiebel Ost Lage/Groesse",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.508,
+   "gewicht": 74.75,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:balkonbruestung_docken_anzahl_form",
+   "art": "fund",
+   "teil": "bruestung__balkon",
+   "quelle": "masstabelle:Nutzer (Sichtfund, Markierung auf Overlay handy_03)",
+   "text": "Balkonbruestung Docken Anzahl/Form",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.672,
+   "gewicht": 132.86,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:westseite_modell_vs_lod2_nachbar",
+   "art": "fund",
+   "teil": "quader__rumpf_og",
+   "quelle": "masstabelle:Koordinator (Schnittbild Wolke/Modell/LoD2-Nachbarn, Nutzerh",
+   "text": "Westseite: Modell vs LoD2-Nachbar",
+   "groesse_m": null,
+   "anzahl": null,
+   "sichtbarkeit": 0.689,
+   "gewicht": 270.61,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:pruefer_rest_fensterreihe_eg1_tuer_kreis_2026111",
+   "art": "fund",
+   "teil": "fensterreihe__eg1_tuer",
+   "quelle": "masstabelle:Pruefer opus kreis 20261110_173101a173101 r1 (automatisch)",
+   "text": "Pruefer-Rest fensterreihe:eg1_tuer kreis 20261110_173101a173101 r1",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.656,
+   "gewicht": 38.95,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:staffelgiebel_hintere_haelfte_richtung_n_hinten_",
+   "art": "fund",
+   "teil": "staffelgiebel__ost",
+   "quelle": "masstabelle:Nutzer (Handy-Screenshot 21:00, Viewer 9mpG..., rot markiert",
+   "text": "Staffelgiebel, hintere Haelfte (Richtung n_hinten): Stufenhoehen/Stufenlage",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.508,
+   "gewicht": 74.75,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:laubendecke_kreuzrippengewoelbe_fehlt_im_modell",
+   "art": "fund",
+   "teil": "quader__laube_rueck",
+   "quelle": "masstabelle:Koordinator (Sichtbarkeits-Befund, Overlays v2 6206/6213/d20",
+   "text": "Laubendecke/Kreuzrippengewoelbe fehlt im Modell",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.836,
+   "gewicht": 309.91,
+   "status": 0.0,
+   "beleg": null,
+   "grund": "Fund 'fehlt', offen",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:laubendecke_kreuzrippengewoelbe_fehlt_im_modell_",
+   "art": "fund",
+   "teil": "quader__rumpf_eg",
+   "quelle": "masstabelle:Koordinator (Sichtbarkeits-Befund, Overlays v2 6206/6213/d20",
+   "text": "Laubendecke/Kreuzrippengewoelbe fehlt im Modell (ueber rumpf_eg)",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.787,
+   "gewicht": 305.57,
+   "status": 0.0,
+   "beleg": null,
+   "grund": "Fund 'fehlt', offen",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:balkon_ende_vor_erker_balkonband_haupt_",
+   "art": "fund",
+   "teil": "balkonband__haupt",
+   "quelle": "masstabelle:Nutzer-Sichtfund 10.11. 10:24 (Viewer V35, Formkanten, Feld ",
+   "text": "Balkon-Ende vor Erker (balkonband:haupt)",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.705,
+   "gewicht": 88.65,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "als erledigt eingetragen, aber kein Beleg im Protokoll",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:balkonplatte_stirnhoehe_gestufte_oberkante",
+   "art": "fund",
+   "teil": "balkonband__haupt",
+   "quelle": "masstabelle:Kreis1 213718 balkonband:haupt",
+   "text": "Balkonplatte Stirnhoehe/gestufte Oberkante",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.705,
+   "gewicht": 88.65,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:pruefer_rest_balkonband_haupt_kreis_20261110_213",
+   "art": "fund",
+   "teil": "balkonband__haupt",
+   "quelle": "masstabelle:Pruefer opus kreis 20261110_213718a213718 r1 (automatisch)",
+   "text": "Pruefer-Rest balkonband:haupt kreis 20261110_213718a213718 r1",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.705,
+   "gewicht": 88.65,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:steinbank_mit_sockelband_vor_der_laubenrueckwand",
+   "art": "fund",
+   "teil": "quader__laube_rueck",
+   "quelle": "masstabelle:Kreis-Agent a211116 r1 (Overlays 6120, d17), Koordinator + N",
+   "text": "Steinbank mit Sockelband vor der Laubenrueckwand fehlt",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.836,
+   "gewicht": 309.91,
+   "status": 1.0,
+   "beleg": "Kreis angenommen+Pruefer annehmen: 20261110_232557a232557 r1",
+   "grund": null,
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:erker_unterbau_profilform",
+   "art": "fund",
+   "teil": "erker_polygon__1",
+   "quelle": "masstabelle:Koordinator nach Pruefer a062358 r2 (erker_polygon:1)",
+   "text": "Erker-Unterbau Profilform",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 153.32,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "als erledigt eingetragen, aber kein Beleg im Protokoll",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:erker_unterbau_gewoelberippen_untere_flanke",
+   "art": "fund",
+   "teil": "erker_polygon__1",
+   "quelle": "masstabelle:Kreis 225455 r1 (erker_polygon:1)",
+   "text": "Erker-Unterbau Gewoelberippen + untere Flanke",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 153.32,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_erker_polygon_1_kreis_20261110_2254",
+   "art": "fund",
+   "teil": "erker_polygon__1",
+   "quelle": "masstabelle:Pruefer opus kreis 20261110_225455a225455 r1 (automatisch)",
+   "text": "Pruefer-Rest erker_polygon:1 kreis 20261110_225455a225455 r1",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 153.32,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_fensterreihe_eg2_kreis_20261111_003",
+   "art": "fund",
+   "teil": "fensterreihe__eg2",
+   "quelle": "masstabelle:Pruefer opus kreis 20261111_003723a003723 r1 (automatisch)",
+   "text": "Pruefer-Rest fensterreihe:eg2 kreis 20261111_003723a003723 r1",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.426,
+   "gewicht": 34.29,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_quader_laube_rueck_kreis_20261111_0",
+   "art": "fund",
+   "teil": "quader__laube_rueck",
+   "quelle": "masstabelle:Pruefer opus kreis 20261111_023109a023500 r1 (automatisch)",
+   "text": "Pruefer-Rest quader:laube_rueck kreis 20261111_023109a023500 r1",
+   "groesse_m": null,
+   "anzahl": null,
+   "sichtbarkeit": 0.836,
+   "gewicht": 309.91,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_quader_laube_sockel_w_kreis_2026111",
+   "art": "fund",
+   "teil": "quader__laube_sockel_w",
+   "quelle": "masstabelle:Pruefer opus kreis 20261111_032659a032659 r1 (automatisch)",
+   "text": "Pruefer-Rest quader:laube_sockel_w kreis 20261111_032659a032659 r1",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.492,
+   "gewicht": 46.86,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:dienste_runde_halbsaeulen_mit_gedrehtem_sockel_a",
+   "art": "fund",
+   "teil": "zylinder__dienst_laube_um230_schaft",
+   "quelle": "masstabelle:Kreis3 Fehlteil ff_+9_+5_+3 (Fotokanten) + Nutzer (Sichtbeob",
+   "text": "Dienste (runde Halbsaeulen mit gedrehtem Sockel) an der Laubenrueckwand fehlen",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.295,
+   "gewicht": 24.91,
+   "status": 0.0,
+   "beleg": null,
+   "grund": "Fund 'fehlt', offen",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:ostgiebel_kaeppchen_fenster",
+   "art": "fund",
+   "teil": "staffelgiebel__ost",
+   "quelle": "masstabelle:Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetr",
+   "text": "Ostgiebel Kaeppchen/Fenster",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.508,
+   "gewicht": 74.75,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_staffelgiebel_ost_kreis_20261111_03",
+   "art": "fund",
+   "teil": "staffelgiebel__ost",
+   "quelle": "masstabelle:Pruefer opus kreis 20261111_035601a035601 r1 (automatisch)",
+   "text": "Pruefer-Rest staffelgiebel:ost kreis 20261111_035601a035601 r1",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.508,
+   "gewicht": 74.75,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:rundbogenfenster_in_der_gaubenstirn_fehlt_im_mod",
+   "art": "fund",
+   "teil": "gaubenreihe__oben",
+   "quelle": "masstabelle:kreis 20261111_055110a055110 r1 (Agent-Stufe0, Rohfotos 6162",
+   "text": "Rundbogenfenster in der Gaubenstirn fehlt im Modell",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.541,
+   "gewicht": 38.67,
+   "status": 0.0,
+   "beleg": null,
+   "grund": "Fund 'fehlt', offen",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:eg1_fenster_seitenversatz_widerspruechlich_zwisc",
+   "art": "fund",
+   "teil": "fensterreihe__eg1",
+   "quelle": "masstabelle:Pruefer kreis a053909 r2 + Verschiebungskontrolle (uebernomm",
+   "text": "EG1-Fenster: Seitenversatz widerspruechlich zwischen Fotos (6117 Modell ~1 Lichtbreite rechts, 6145 nach links)",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.426,
+   "gewicht": 58.95,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:sockelfuss_ost_steht_0_27_m_zu_tief_im_pflaster_",
+   "art": "fund",
+   "teil": "quader__laube_sockel_o",
+   "quelle": "masstabelle:kreis 20261111_044705a044705 r2 (Agent, Stufe 0 an 6117/6119",
+   "text": "Sockelfuss Ost steht 0,27 m zu tief im Pflaster; Gesimsband-Unterkante fehlt",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.689,
+   "gewicht": 80.62,
+   "status": 0.0,
+   "beleg": null,
+   "grund": "Fund 'fehlt', offen",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_quader_laube_sockel_o_kreis_2026111",
+   "art": "fund",
+   "teil": "quader__laube_sockel_o",
+   "quelle": "masstabelle:Pruefer opus kreis 20261111_044705a044705 r2 (automatisch)",
+   "text": "Pruefer-Rest quader:laube_sockel_o kreis 20261111_044705a044705 r2",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.689,
+   "gewicht": 80.62,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:kranzgesims_der_krone",
+   "art": "fund",
+   "teil": "baldachinreihe__baldachine",
+   "quelle": "masstabelle:Kreis 20261111_045306a045306 r2 (Agent, baldachine)",
+   "text": "Kranzgesims der Krone",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 67.32,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:staffelgiebel_sind_treppen_waagerechte_stufen_ke",
+   "art": "fund",
+   "teil": "staffelgiebel__west",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "text": "Staffelgiebel sind Treppen (waagerechte Stufen), keine Saegezacken",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.443,
+   "gewicht": 77.67,
+   "status": 1.0,
+   "beleg": "Kreis angenommen+Pruefer annehmen: 20261111_151128a151127 r1",
+   "grund": null,
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:seitliche_balkongelaender_rueckseiten_stirnen_an",
+   "art": "fund",
+   "teil": "bruestung__balkon",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "text": "Seitliche Balkongelaender (Rueckseiten/Stirnen an beiden Balkonenden) fehlen",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.672,
+   "gewicht": 132.86,
+   "status": 1.0,
+   "beleg": "Kreis angenommen+Pruefer annehmen: 20261111_141719a141718 r1",
+   "grund": null,
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:aufsatz_ueber_den_baldachinen_masswerk_wimperg_k",
+   "art": "fund",
+   "teil": "baldachinreihe__baldachine",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "text": "Aufsatz ueber den Baldachinen (Masswerk-Wimperg/Krone ueber jeder Figur) fehlt",
+   "groesse_m": 0.12,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 67.32,
+   "status": 0.0,
+   "beleg": null,
+   "grund": "Fund 'fehlt', offen",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:staffelgiebel_stufen_von_modell_und_fotowolke_de",
+   "art": "fund",
+   "teil": "staffelgiebel__ost",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "text": "Staffelgiebel: Stufen von Modell und Fotowolke decken sich nicht (Versatz)",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.508,
+   "gewicht": 74.75,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:schildbogen_uebergang_gewoelbekappe_zur_rueckwan",
+   "art": "fund",
+   "teil": "kreuzgewoelbe__laube",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "text": "Schildbogen (Uebergang Gewoelbekappe zur Rueckwand) ist rund, im Modell spitz",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.934,
+   "gewicht": 291.94,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:gewoelbeanschluss_an_der_rueckwand_ueber_der_tue",
+   "art": "fund",
+   "teil": "kreuzgewoelbe__laube",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung)",
+   "text": "Gewoelbeanschluss an der Rueckwand ueber der Tuer: Schildbogen/Rippenanfaenger an der Wand fehlt, Modell dunkler Keil",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.934,
+   "gewicht": 291.94,
+   "status": 0.0,
+   "beleg": null,
+   "grund": "Fund 'fehlt', offen",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:gewoelberippen_diagonal_gurtrippen_fehlen_im_gew",
+   "art": "fund",
+   "teil": "kreuzgewoelbe__laube",
+   "quelle": "masstabelle:Kreis1 laube_rueck (Agent)",
+   "text": "Gewoelberippen (Diagonal-/Gurtrippen) fehlen im Gewoelbekoerper",
+   "groesse_m": 0.12,
+   "anzahl": null,
+   "sichtbarkeit": 0.934,
+   "gewicht": 291.94,
+   "status": 0.0,
+   "beleg": null,
+   "grund": "Fund 'fehlt', offen",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_kreuzgewoelbe_laube_kreis_20261111_",
+   "art": "fund",
+   "teil": "kreuzgewoelbe__laube",
+   "quelle": "masstabelle:Pruefer opus kreis 20261111_104922a104922 r1 (automatisch)",
+   "text": "Pruefer-Rest kreuzgewoelbe:laube kreis 20261111_104922a104922 r1",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.934,
+   "gewicht": 291.94,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_helm_geschweift_w_kreis_20261111_11",
+   "art": "fund",
+   "teil": "helm_geschweift__w",
+   "quelle": "masstabelle:Pruefer opus kreis 20261111_112732a112732 r1 (automatisch)",
+   "text": "Pruefer-Rest helm_geschweift:w kreis 20261111_112732a112732 r1",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.426,
+   "gewicht": 65.35,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:stufenkappen_niedriges_satteldaechlein_auf_waage",
+   "art": "fund",
+   "teil": "staffelgiebel__west",
+   "quelle": "masstabelle:Flaechenmass-Agent (SAM) + Koordinator-Sichtpruefung IMG_616",
+   "text": "Stufenkappen: niedriges Satteldaechlein auf waagerechter Stufe",
+   "groesse_m": null,
+   "anzahl": null,
+   "sichtbarkeit": 0.443,
+   "gewicht": 77.67,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-11",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:helm_west_fuss_kragt_ueber_das_erkergesims_aus_g",
+   "art": "fund",
+   "teil": "helm_geschweift__w",
+   "quelle": "masstabelle:Koordinator-Sichtpruefung (Grauzonen-Falle skala1, Foto 6145",
+   "text": "Helm West: Fuss kragt ueber das Erkergesims aus (geschweifter Traufkranz)",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.426,
+   "gewicht": 65.35,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_bruestung_balkon_kreis_20261111_141",
+   "art": "fund",
+   "teil": "bruestung__balkon",
+   "quelle": "masstabelle:Pruefer opus kreis 20261111_141719a141718 r1 (automatisch)",
+   "text": "Pruefer-Rest bruestung:balkon kreis 20261111_141719a141718 r1",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.672,
+   "gewicht": 132.86,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:seitliche_laubendurchgaenge_stirnseiten_sind_boe",
+   "art": "fund",
+   "teil": "bogenreihe__laube",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "text": "Seitliche Laubendurchgaenge (Stirnseiten) sind Boegen wie die Front, im Modell Rechteck",
+   "groesse_m": null,
+   "anzahl": null,
+   "sichtbarkeit": 0.967,
+   "gewicht": 389.75,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "als erledigt eingetragen, aber kein Beleg im Protokoll",
+   "datum": "2026-11-11",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:oberster_pfeiler_westgiebel_zu_hoch_spitzenblock",
+   "art": "fund",
+   "teil": "staffelgiebel__west",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung)",
+   "text": "Oberster Pfeiler Westgiebel zu hoch (Spitzenblock statt Stufe)",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.443,
+   "gewicht": 77.67,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "als erledigt eingetragen, aber kein Beleg im Protokoll",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_staffelgiebel_west_kreis_20261111_1",
+   "art": "fund",
+   "teil": "staffelgiebel__west",
+   "quelle": "masstabelle:Pruefer opus kreis 20261111_153352a153352 r1 (automatisch)",
+   "text": "Pruefer-Rest staffelgiebel:west kreis 20261111_153352a153352 r1",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.443,
+   "gewicht": 77.67,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:saeulensockel_achteckiger_fuss_in_wirklichkeit_v",
+   "art": "fund",
+   "teil": "bogenreihe__laube",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung) + Ursachenanalyse Claude",
+   "text": "Saeulensockel (achteckiger Fuss) in Wirklichkeit viel hoeher",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.967,
+   "gewicht": 389.75,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "als erledigt eingetragen, aber kein Beleg im Protokoll",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_bogenreihe_laube_kreis_20261111_152",
+   "art": "fund",
+   "teil": "bogenreihe__laube",
+   "quelle": "masstabelle:Pruefer opus kreis 20261111_152551a152551 r2 (automatisch)",
+   "text": "Pruefer-Rest bogenreihe:laube kreis 20261111_152551a152551 r2",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.967,
+   "gewicht": 389.75,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:gewoelbeansatz_am_pfeiler_rippen_entspringen_aus",
+   "art": "fund",
+   "teil": "kreuzgewoelbe__laube",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung)",
+   "text": "Gewoelbeansatz am Pfeiler: Rippen entspringen aus dem Pfeiler, im Modell dunkle Saegezahn-Grate ohne Rippen",
+   "groesse_m": 0.12,
+   "anzahl": null,
+   "sichtbarkeit": 0.934,
+   "gewicht": 291.94,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:erker_konsole_unten_ostkerker_astwerk_geaest_sta",
+   "art": "fund",
+   "teil": "erker_polygon__1",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung)",
+   "text": "Erker-Konsole unten (Ostkerker): Astwerk/Geaest statt glatter Trichter",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 153.32,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:baldachin_aufsaetze_grosse_kronen_bei_den_mittle",
+   "art": "fund",
+   "teil": "baldachinreihe__baldachine",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung)",
+   "text": "Baldachin-Aufsaetze (grosse Kronen) bei den mittleren Figuren nicht mittig",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 67.32,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-10:gassenwand_fenster_mauerkrone",
+   "art": "fund",
+   "teil": "quader__rumpf_og",
+   "quelle": "masstabelle:Detail-Liste 10.11. (Nutzerauftrag 'beeindruckend detailgetr",
+   "text": "Gassenwand Fenster/Mauerkrone",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.689,
+   "gewicht": 270.61,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Fund offen (Form/Lage nicht stimmig)",
+   "datum": "2026-11-10",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:dachdeckung_schindeln_ziegel_fehlen_dachflaechen",
+   "art": "fund",
+   "teil": "satteldach__haupt",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung)",
+   "text": "Dachdeckung: Schindeln/Ziegel fehlen (Dachflaechen glatt)",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.705,
+   "gewicht": 301.73,
+   "status": 0.0,
+   "beleg": null,
+   "grund": "Fund 'fehlt', offen",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:zipfel_an_jeder_ecke_erkerhelme_dach_fehlen",
+   "art": "fund",
+   "teil": "erker_polygon__1",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung)",
+   "text": "Zipfel an jeder Ecke (Erkerhelme/Dach) fehlen",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 153.32,
+   "status": 0.0,
+   "beleg": null,
+   "grund": "Fund 'fehlt', offen",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:erker_fenster_masswerk_oben_und_sprossen_fehlen_",
+   "art": "fund",
+   "teil": "erker_polygon__1",
+   "quelle": "masstabelle:Claude (Sichtbeobachtung, Erker als Nutzer-Prioritaet)",
+   "text": "Erker-Fenster: Masswerk oben und Sprossen fehlen (beide Erker)",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 153.32,
+   "status": 0.0,
+   "beleg": null,
+   "grund": "Fund 'fehlt', offen",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:wasserspeier_an_der_traufe_fehlen",
+   "art": "fund",
+   "teil": "satteldach__haupt",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung)",
+   "text": "Wasserspeier an der Traufe fehlen",
+   "groesse_m": null,
+   "anzahl": null,
+   "sichtbarkeit": 0.705,
+   "gewicht": 301.73,
+   "status": 1.0,
+   "beleg": "Kreis angenommen+Pruefer annehmen: 20261111_164909a164909 r2",
+   "grund": null,
+   "datum": "2026-11-11",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_satteldach_haupt_kreis_20261111_164",
+   "art": "fund",
+   "teil": "satteldach__haupt",
+   "quelle": "masstabelle:Pruefer opus kreis 20261111_164909a164909 r2 (automatisch)",
+   "text": "Pruefer-Rest satteldach:haupt kreis 20261111_164909a164909 r2",
+   "groesse_m": 1.0,
+   "anzahl": null,
+   "sichtbarkeit": 0.705,
+   "gewicht": 301.73,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:baldachin_aufsaetze_grosse_kronen_bei_den_mittle",
+   "art": "fund",
+   "teil": "baldachinreihe__baldachine",
+   "quelle": "masstabelle:Nutzer (Sichtbeobachtung)",
+   "text": "Baldachin-Aufsaetze (grosse Kronen) bei den mittleren Figuren nicht mittig",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 67.32,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "als erledigt eingetragen, aber kein Beleg im Protokoll",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  },
+  {
+   "id": "fund:2026-11-11:pruefer_rest_baldachinreihe_baldachine_kreis_202",
+   "art": "fund",
+   "teil": "baldachinreihe__baldachine",
+   "quelle": "masstabelle:Pruefer opus kreis 20261111_165210a165209 r2 (automatisch)",
+   "text": "Pruefer-Rest baldachinreihe:baldachine kreis 20261111_165210a165209 r2",
+   "groesse_m": 0.4,
+   "anzahl": null,
+   "sichtbarkeit": 0.59,
+   "gewicht": 67.32,
+   "status": 0.5,
+   "beleg": null,
+   "grund": "Pruefer-Rest einer angenommenen Runde (offen)",
+   "datum": "2026-11-11",
+   "groesse_quelle": "Hand",
+   "erstmals": "2026-11-11",
+   "stufen": [
+    "besucher",
+    "experte"
+   ]
+  }
+ ],
+ "verlauf": [
+  {
+   "zeit": "2026-11-11 19:05:26",
+   "besucher": 48.8,
+   "experte": 48.0,
+   "n": 98,
+   "neu_entdeckt": 0
+  },
+  {
+   "zeit": "2026-11-11 19:07:40",
+   "besucher": 48.8,
+   "experte": 48.0,
+   "n": 98,
+   "neu_entdeckt": 0
+  }
+ ],
+ "noten": {
+  "besucher": {
+   "note": 48.8,
+   "n": 95,
+   "status": {
+    "1.0": 5,
+    "0.5": 81,
+    "0.0": 9
+   }
+  },
+  "experte": {
+   "note": 48.0,
+   "n": 98,
+   "status": {
+    "1.0": 5,
+    "0.5": 82,
+    "0.0": 11
+   }
+  }
+ }
+}

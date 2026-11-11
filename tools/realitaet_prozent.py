@@ -71,6 +71,11 @@ def zeile_ausgeben(z, vor):
         d = "" if vf is None else f" ({'+' if z['prozent_foto'] >= vf['prozent_foto'] else ''}{z['prozent_foto'] - vf['prozent_foto']:.1f} Punkte gegen {vf['zeit'][11:16]})"
         print(f"REALITAET (Foto) {z['prozent_foto']:.1f} %{d} | Hoehe {z.get('hoehe_prozent')} % | schwaechste am Foto: "
               + ", ".join(f"{t} {b:.2f}" for t, b in z.get("foto_schwaechste") or []), flush=True)
+        try:   # Betrachter-Note (SPEC_BETRACHTER_NOTE): Anzeige, nicht in die Hauptzahl eingerechnet, schreibt nichts
+            sys.path.insert(0, os.path.join(ROOT, "tools")); import betrachter_note as _bn; _l = _bn.kurzzeile(OBJ)
+            if _l: print("  " + _l, flush=True)
+        except Exception as _e:
+            print("  Betrachter-Note nicht berechenbar:", _e, flush=True)
         if z.get("prozent_fein") is not None:
             print(f"  Nebenzahl FEINFORM {z['prozent_fein']:.1f} % (volle Aufloesung, sieht Rippen/Sprossen/Figuren/Schuppen; {len(z.get('fein_teile') or {})} Teile)", flush=True)
         if z.get("prozent_foto_maskiert") is not None:
