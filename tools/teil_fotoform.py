@@ -44,6 +44,16 @@ def waagerecht(maske, winkel=30.0):
     return maske & (np.abs(np.cos(th)) < np.sin(np.radians(winkel)))
 
 
+def senkrecht(maske, winkel=30.0):
+    """Gegenstueck zu waagerecht(): Kantenpixel hoechstens `winkel` Grad von senkrecht. SEITEN-WERT (11.11., Verschiebungskontrolle Laubensockel O /
+    Gauben: Seitenversatz 0,3 m aendert F1 um <= 0,002, weil waagerechte Kanten langer Teile an sich selbst entlanggleiten); nur senkrechte Kanten verraten die Seitenlage."""
+    m = cv2.GaussianBlur(maske.astype(np.float32), (0, 0), 2)
+    gx = cv2.Sobel(m, cv2.CV_32F, 1, 0, ksize=3); gy = cv2.Sobel(m, cv2.CV_32F, 0, 1, ksize=3)
+    jxx = cv2.GaussianBlur(gx * gx, (0, 0), 3); jyy = cv2.GaussianBlur(gy * gy, (0, 0), 3); jxy = cv2.GaussianBlur(gx * gy, (0, 0), 3)
+    th = 0.5 * np.arctan2(2 * jxy, jxx - jyy)          # senkrechte Kante = waagerechter Gradient
+    return maske & (np.abs(np.sin(th)) < np.sin(np.radians(winkel)))
+
+
 def flecken(maske, pos, n=3, min_px=40):
     """Groesste zusammenhaengende Flecken (nach 5-px-Schliessen) mit Pixelzahl und Weltpunkt (Median der Rasterpositionen)."""
     if maske.sum() < min_px: return []
@@ -141,6 +151,9 @@ def main(argv=None):
                 mkh, fkh = waagerecht(mkp), waagerecht(fkp)
                 dFh = np.minimum(cv2.distanceTransform((~fkh).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
                 dMh = np.minimum(cv2.distanceTransform((~mkh).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
+                mkv, fkv = senkrecht(mkp), senkrecht(fkp)
+                dFv = np.minimum(cv2.distanceTransform((~fkv).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
+                dMv = np.minimum(cv2.distanceTransform((~mkv).astype(np.uint8), cv2.DIST_L2, 5), kap) / kap
             R, t, f, _, _ = FF.kamera_laden(K, obj, nr, R0, W, H); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2))
             tr = rahmen(stl, obj, kk)
             zc = None
@@ -190,6 +203,10 @@ def main(argv=None):
                     mh_t, fh_t = mkh & ms, fkh & ms
                     hw = {"praez_h": round(float((dFh[mh_t] < a.schwelle).mean()), 3), "recall_h": round(float((dMh[fh_t] < a.schwelle).mean()), 3),
                           "mkh_px": int(mh_t.sum()), "fkh_px": int(fh_t.sum())} if (mh_t.sum() >= 50 and fh_t.sum() >= 50) else {}
+                    mv_t, fv_t = mkv & ms, fkv & ms
+                    if mv_t.sum() >= 50 and fv_t.sum() >= 50:
+                        hw.update({"praez_v": round(float((dFv[mv_t] < a.schwelle).mean()), 3), "recall_v": round(float((dMv[fv_t] < a.schwelle).mean()), 3),
+                                   "mkv_px": int(mv_t.sum()), "fkv_px": int(fv_t.sum())})
                 else: hw = {}
                 e = {**hw, "praez": round(float(ok_m.mean()), 3) if ok_m.size else 0.0, "recall": round(float(ok_f.mean()), 3), "mk_px": int(mk_t.sum()), "fk_px": int(fk_t.sum()), "sicht_px": int(vis.sum()), "wolke_verd_px": vw,
                      "rot": flecken(rot, pos), "gelb": flecken(gelb, pos)}
@@ -232,6 +249,11 @@ def main(argv=None):
         if mh and fh:
             ph = sum(v["praez_h"] * v["mkh_px"] for v in hh) / mh; rh = sum(v["recall_h"] * v["fkh_px"] for v in hh) / fh
             je["_gesamt"].update({"praez_h": round(ph, 3), "recall_h": round(rh, 3), "f1_h": round(2 * ph * rh / (ph + rh), 3) if ph + rh else 0.0, "fotos_h": len(hh)})
+        vv = [v for v in je.values() if isinstance(v, dict) and "mkv_px" in v]   # Seiten-Wert (senkrechte Kanten), gleiche Gewichtung
+        mv_ = sum(v["mkv_px"] for v in vv); fv_ = sum(v["fkv_px"] for v in vv)
+        if mv_ and fv_:
+            pv = sum(v["praez_v"] * v["mkv_px"] for v in vv) / mv_; rv = sum(v["recall_v"] * v["fkv_px"] for v in vv) / fv_
+            je["_gesamt"].update({"praez_v": round(pv, 3), "recall_v": round(rv, 3), "f1_v": round(2 * pv * rv / (pv + rv), 3) if pv + rv else 0.0, "fotos_v": len(vv)})
     if a.aus: json.dump(erg, open(a.aus, "w"), ensure_ascii=False, indent=1)
     print(f"{'Teil':30s} {'Fotos':>5s} {'Praez':>6s} {'Recall':>6s} {'F1':>6s}")
     for name, je in sorted(((k, v) for k, v in erg["teile"].items() if "_gesamt" in v), key=lambda kv: kv[1]["_gesamt"]["f1"]):

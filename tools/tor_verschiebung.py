@@ -9,7 +9,7 @@ Kontrolle: das Ziel-Teil wird um +-VERSATZ (Standard 0,3 m, > 2 x Toleranz 0,14 
 gleicher Skalenfaktor, GLEICHER Bildbereich) bewertet. Ist die echte Lage nicht besser als die verschobenen, misst die F1 Dichte, nicht Lage.
 
   marge = f1_echt - max(f1_versatz)  (Kennzahl wie gefordert); lage_belegt = marge_min >= --schwelle (Standard 0,03; Begruendung unten), wobei marge_min der
-  schlechteste Wert ueber die Achsen ist (t: f1, z: f1_h der waagerechten Kanten, s. u.)
+  schlechteste Wert ueber die Achsen ist (t: f1_v der senkrechten, z: f1_h der waagerechten Kanten, s. u.)
 
 Wahl der Verschiebungsachsen: in der Fassadenebene (t = waagerecht entlang der dominanten Teil-Normalen, z), weil die Foto-F1 senkrecht zur Bildebene
 blind ist (Tiefe aendert Bildkanten kaum) - die Lage-Aussage der F1 lebt nur in der Bildebene. Alternativ --achsen x,y,z (Modellrahmen, +-).
@@ -67,7 +67,7 @@ def f1_messen(objekt, tdir, stl, teil, fotos, aus, bereich_von, skala, wolke="an
     r = subprocess.run(cmd, cwd=R0, env=env, capture_output=True, text=True)
     if log: open(log, "w").write((r.stdout or "") + (r.stderr or ""))
     try:
-        g = json.load(open(aus))["teile"][teil]["_gesamt"]; return {"f1": g["f1"], "praez": g["praez"], "recall": g["recall"], "fotos": g["fotos"], "f1_h": g.get("f1_h")}
+        g = json.load(open(aus))["teile"][teil]["_gesamt"]; return {"f1": g["f1"], "praez": g["praez"], "recall": g["recall"], "fotos": g["fotos"], "f1_h": g.get("f1_h"), "f1_v": g.get("f1_v")}
     except Exception: return None
 
 
@@ -120,9 +120,12 @@ def kontrolle(objekt, teile_dir, teil, fotos, versatz=0.3, stl_basis=None, skala
             if v: ge.setdefault(nm[1:], []).append(v)
         ma = {}
         for ax, vs in ge.items():
-            hh = ax == "z" and (erg["echt"] or {}).get("f1_h") is not None and all(v.get("f1_h") is not None for v in vs)
-            e0 = erg["echt"]["f1_h" if hh else "f1"]; ma[ax] = {"mass": "f1_h" if hh else "f1", "echt": e0, "versatz_max": max(v["f1_h" if hh else "f1"] for v in vs),
-                                                                 "marge": round(e0 - max(v["f1_h" if hh else "f1"] for v in vs), 3)}
+            # Seitenachse t symmetrisch dazu mit f1_v (nur senkrechte Kanten): waagerechte Kanten langer Teile gleiten bei Seitenversatz an sich selbst entlang
+            # (11.11. Laubensockel O marge t -0,002, Gauben -0,001). Fehlt f1_v (alte Messung), bleibt f1.
+            km = "f1_h" if ax == "z" else "f1_v" if ax == "t" else None
+            hh = km is not None and (erg["echt"] or {}).get(km) is not None and all(v.get(km) is not None for v in vs)
+            mm = km if hh else "f1"
+            e0 = erg["echt"][mm]; ma[ax] = {"mass": mm, "echt": e0, "versatz_max": max(v[mm] for v in vs), "marge": round(e0 - max(v[mm] for v in vs), 3)}
         for m_ in ma.values(): m_["belegt"] = bool(m_["marge"] >= schwelle)
         erg["marge_achse"] = ma; erg["marge_min"] = round(min(m["marge"] for m in ma.values()), 3)
         erg["lage_belegt"] = bool(erg["marge_min"] >= schwelle)
