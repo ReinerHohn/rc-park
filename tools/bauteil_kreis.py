@@ -423,6 +423,17 @@ def nicht_in_main(z, lauf, r):
         return " [angenommen, aber NICHT in main (baute auf verworfenem Stand auf) - brauchbare Teile gezielt uebernehmen]"
     return ""
 
+def beob_zu_teilen(teile):
+    """Offene Beobachtungen (masstabelle) der betroffenen Teile als Text fuer Fehlteil-Auftraege aus Fotokanten (11.11.: Erker-Rippennetz-
+    Formbeschreibung haengt am Teil erker_polygon:0, der Fehlteil-Agent fuer den Cluster an der Erker-Unterseite sah sie sonst nicht)."""
+    try: B = json.load(open(os.path.join(ROOT, "modelle", OBJ, "masstabelle.json"))).get("beobachtungen_offen") or []
+    except Exception: return ""
+    tt = {t.replace("__", ":") for t in teile}; z = []
+    for b in B:
+        if isinstance(b, dict) and not b.get("erledigt") and str(b.get("teil", "")).split(" ")[0] in tt:
+            extra = " | ".join(str(v) for k, v in b.items() if k.startswith(("stufe0", "naechster_schritt", "teil_hinweis")))
+            z.append(f"[{b.get('teil')}] {b.get('merkmal')}: {str(b.get('text', ''))[:500]}" + (f" || {extra[:1500]}" if extra else ""))
+    return ("OFFENE BEOBACHTUNGEN der betroffenen Teile (masstabelle.json, zuerst lesen): " + " ### ".join(z[:6]) + " ") if z else ""
 def _kasten_ueberlappt(z, lo, hi):
     zl, zh = z.get("lo"), z.get("hi")
     return bool(zl and zh and lo and hi and all(zl[i] <= hi[i] and lo[i] <= zh[i] for i in range(3)))
@@ -465,6 +476,7 @@ def auftrag(ziel, runde, wt):
                    f"liegen gelbe Flecken (Fotokante ohne Modellkante, zusammen {ziel['pkt']} px) auf der Modellflaeche im Kasten {ziel['lo']} .. {ziel['hi']} "
                    f"(Modellrahmen, m; Weltpunkt = Treffer auf dem VORHANDENEN Modell, das fehlende Element liegt davor, z. B. Gewoelbe vor Wand/Decke). "
                    f"Betroffene Teilbereiche: {', '.join(ziel.get('teile') or [])}. Overlays je Teil und Foto: Formliste bilder_dir. "
+                   + beob_zu_teilen(ziel.get("teile") or [])
                    if ziel.get("quelle") == "fotokanten" else
                    f"Automatisch aus konvergenz_bericht (Abschnitt 8 Fehlkanten): Im Kasten {ziel['lo']} .. {ziel['hi']} (Modellrahmen, m) liegen "
                    f"{ziel['pkt']} Punkte des Kantengitters (Fotokanten aus mehreren Fotos), die keine Modellflaeche naeher als 0,3 m haben; "
