@@ -50,6 +50,12 @@ MIN_DATEN = opt("--min_daten", 0.3, float); MIN_GEWINN = opt("--min_gewinn", 0.0
 MIN_GEWINN_FOTO = opt("--min_gewinn_foto", 0.02, float)
 FORMFUND = opt("--formfund", 1, int)          # Formfund-Weg (SPEC_FORMFUND_TOR.md); an seit 11.11. 14:2x (Beweis 7/7 gepruefte Faelle richtig, Rinne-Negativfall lief noch; --formfund 0 = aus)
 FORMFUND_TOL = opt("--formfund_tol", 0.005, float)   # erlaubter Foto-F1-Abfall in Formfund-Runden
+# ORNAMENT-WEG (11.11. 21:2x, Beweis teil_varianten_tor.py e87095b2 / NICHTS_GEBRACHT): am Erker bewertet Grob-F1 die um 90 Grad GEDREHTE Nullkontrolle
+# besser (0,80) als die richtige Form (0,71); nur f1_fein trennt alle Nullkontrollen (Rauschen ~0,03). erker5 r1: f1_fein 0,577 -> 0,633, Grob-F1 0,671 -> 0,642
+# -> Agent nahm alles zurueck. Fuer NUTZER-Formfunde mit Ornament-Stichwort entscheidet daher f1_fein (>= +ORN_FEIN); Grob-F1/Hoehe sind nur noch
+# Grobschranke (Fall hoechstens ORN_GROB, faengt groben Lagefehler). Formfund-Pruefer, Hauptpruefer, Abnahme, Kontrollfotos bleiben Pflicht.
+ORN_FEIN = opt("--orn_fein", 0.03, float); ORN_GROB = opt("--orn_grob", 0.05, float)
+ORN_WORTE = ("rippe", "sprosse", "masswerk", "schuppe", "ziegel", "schindel", "fiale", "krabbe", "zipfel", "figur", "speier", "rosette", "astwerk", "geaest", "ornament", "dienst", "wappen", "netz", "butzen", "baldachin", "kaeppchen")
 FEIN_WEG = opt("--fein_weg", 1, int)   # SPEC_ORNAMENT_FEINMASS Punkt 3 (Nutzer 11.11. "voll automatisiert"): f1_fein (volle Aufloesung) +MIN_GEWINN_FOTO bei Grob-F1 >= -FORMFUND_TOL = Gewinn; f1_fein -0,02 = Veto
 GRAUZONE = opt("--grauzone", 1, int)   # SPEC_GRAUZONE_TOR.md (11.11.): Foto-F1 in [-TOL; +MIN_GEWINN_FOTO) -> Bildpruefer ohne Befund (sicher hoch) + Verschiebungskontrolle HART
 GRAU_MARGE = opt("--grau_marge", 0.03, float)   # Verschiebungskontrolle: marge_min >= dies, konkat_gueltig, sonst Grauzone verworfen (schieb2 11.11.: 0,003 = Lage nicht belegt)
@@ -917,6 +923,17 @@ for runde in range(1, RUNDEN + 1):
     _frei_h = bool(_ffr and opt("--nutzer_freigabe_hoehe", 0, int))   # Nutzerfreigabe je Fund (11.11. Westgiebel): Hoehen-Veto aus, alle anderen Tore bleiben
     if _frei_h: print(f"Runde {runde}: NUTZERFREIGABE Hoehen-Veto fuer diesen Formfund (Formfund-Pruefer/Abnahme/Pruefer bleiben Pflicht)", flush=True)
     if _ffr: print(f"Runde {runde}: FORMFUND-Runde ({_bb.get('merkmal', '')[:80]}): Foto-F1 darf um hoechstens {FORMFUND_TOL} fallen, Formfund-Pruefer entscheidet", flush=True)
+    _orn_txt = " ".join([str(_bb.get("merkmal", "")), str(_bb.get("text", ""))[:400]] + [str(x) for x in (_bb.get("pruef_stichworte") or []) + (_bb.get("pruef_pflicht") or [])]).lower()
+    _orn = bool(_ffr and any(w in _orn_txt for w in ORN_WORTE))
+    if _orn: print(f"Runde {runde}: ORNAMENT-WEG aktiv: f1_fein >= +{ORN_FEIN} entscheidet, Grob-F1/Hoehe duerfen bis {ORN_GROB} fallen", flush=True)
+    def _orn_ok(kv, kn, fv, fn, hv, hn, wo):
+        if not _orn: return False
+        a, b = FEIN.get(f"r{runde}_{kv}"), FEIN.get(f"r{runde}_{kn}")
+        if a is None or b is None or b < a + ORN_FEIN: return False
+        if fv is None or fn is None or fn < fv - ORN_GROB: return False
+        if hv is not None and hn is not None and hn < hv - ORN_GROB: return False
+        print(f"Runde {runde}: ORNAMENT-WEG {wo}: f1_fein {a} -> {b}, Grob-F1 {fv} -> {fn}, Hoehe {hv} -> {hn} - Feinform gilt", flush=True)
+        return True
     if (ff_v is not None or _ff_spaet) and not ist_fehlteil(ziel) and not NACH and VORPRUEF:
         shutil.rmtree(_tn, ignore_errors=True)
         _gen = json.load(open(os.path.join(wt, "modelle", OBJ, "objekt.json")))["generator"]
@@ -935,7 +952,8 @@ for runde in range(1, RUNDEN + 1):
             print(f"Runde {runde}: Vorpruefung - Agent hat am Generator nichts geaendert, keine Rueckgabe", flush=True)
             _agent_leer = True
             _vorab_gebaut = _rq == 0   # Stand unveraendert seit dem Export
-        elif _rq != 0 or (_qa := angleichen(f"r{runde}_{_vk}", f"r{runde}_vorpruef", _vq, ff_q, "Vorpruefung"))[1] is None or _qa[0] is None or _qa[1] < _qa[0] + _mg or (_hoehe_faellt(runde, _vk) and not _frei_h):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde (gemeinsame Fotos)
+        elif _rq != 0 or (_qa := angleichen(f"r{runde}_{_vk}", f"r{runde}_vorpruef", _vq, ff_q, "Vorpruefung"))[1] is None or _qa[0] is None or ((_qa[1] < _qa[0] + _mg or (_hoehe_faellt(runde, _vk) and not _frei_h))
+                and not _orn_ok(_vk, "vorpruef", _qa[0], _qa[1], HOEHE.get(f"r{runde}_{_vk}"), HOEHE.get(f"r{runde}_vorpruef"), "Vorpruefung")):   # Foto zuerst: zurueck, wenn das Foto-Tor nicht bestehen wuerde (gemeinsame Fotos)
             try: _je = (json.load(open(os.path.join(LDIR, f"fotoform_r{runde}_vorpruef.json")))["teile"].get(ziel["teil"]) or {})
             except Exception: _je = {}
             _zeilen = "\n".join(f"- Foto {f}: Praezision {_je[f].get('praez')} / Recall {_je[f].get('recall')}  Overlay {LDIR}/fotoform_bilder/{ziel['teil']}_{f}_r{runde}_vorpruef.jpg"
@@ -944,6 +962,9 @@ for runde in range(1, RUNDEN + 1):
                       + ("im Generator ROT (siehe " + os.path.join(LDIR, f"vorpruef_r{runde}.log") + ")" if _rq != 0 else
                          f"am Foto NICHT KLAR BESSER" + (f" (Vorstufe halbe Aufloesung, RCPARK_FOTO_SKALA={SKALA_VOR})" if _halb else "") + f": Form-F1 {_vq} -> {ff_q}, Hoehen-Wert (nur waagerechte Kanten) {HOEHE.get(f'r{runde}_{_vk}')} -> {HOEHE.get(f'r{runde}_vorpruef')} , Feinmass f1_fein (volle Aufloesung, sieht Rippen/Sprossen/Figuren) {FEIN.get(f'r{runde}_{_vk}')} -> {FEIN.get(f'r{runde}_vorpruef')} "
                          + (f"(FORMFUND-Runde: Foto-F1 darf um hoechstens {FORMFUND_TOL} fallen, die FORM entscheidet ein Pruefer an Foto|vorher|nachher - erfinde nichts, was die Fotos nicht zeigen; " if _ffr else f"(Tor: Foto-F1 muss um >= {MIN_GEWINN_FOTO} steigen, ") + f"der Hoehen-Wert darf um hoechstens 0,02 fallen; die Wolke ist nur Veto fuer die Lage).")
+                      + (f"\nORNAMENT-WEG: fuer diesen Fund entscheidet das FEINMASS f1_fein (muss um >= {ORN_FEIN} steigen); Grob-F1 und Hoehen-Wert duerfen bis {ORN_GROB} fallen "
+                         "(Grob-F1 ist fuer Rippen/Figuren blind, bewertet sogar verdrehte Teile besser). Nimm Ornament NICHT zurueck, nur weil Grob-F1 faellt - "
+                         "pruefe es am Render-Pruefbild (tools/teil_render_foto.py) gegen >= 3 Fotos und verbessere die Lage." if _orn else "")
                       + f"\nJe Foto (rot = Modellkante ohne Fotokante, gelb = Fotokante fehlt im Modell):\n{_zeilen}\n"
                       "Sieh dir die Overlays an (mindestens 3), benenne je Foto, welche Kante falsch/fehlend ist, und korrigiere den Generator-Stand. "
                       "Pflicht vor der Abgabe: Zaehlmerkmale (Anzahl Elemente je Flaeche) am Foto mit tools/foto_zaehlung.py belegen, wenn das Teil welche hat; "
@@ -993,7 +1014,8 @@ for runde in range(1, RUNDEN + 1):
             _h2v, _h2n = HOEHE.get(f"r{runde}_vorher_halb"), HOEHE.get(f"r{runde}_{_hk}")
             print(f"Runde {runde}: Stufe halb {ziel['teil']}: F1 {_vq} -> {_qh}, Hoehe {_h2v} -> {_h2n}", flush=True)
             _va, _qh = angleichen(f"r{runde}_vorher_halb", f"r{runde}_{_hk}", _vq, _qh, "Stufe halb")
-            if _qh is None or _va is None or (_qh < _va + _mg if _ffr else _qh <= _va) or (not _frei_h and _h2v is not None and _h2n is not None and _h2n < _h2v - 0.02):
+            if (_qh is None or _va is None or (_qh < _va + _mg if _ffr else _qh <= _va) or (not _frei_h and _h2v is not None and _h2n is not None and _h2n < _h2v - 0.02)) \
+                    and not _orn_ok("vorher_halb", _hk, _va, _qh, _h2v, _h2n, "Stufe halb"):
                 _frueh = f"Stufe halb ohne Gewinn: F1 {_vq} -> {_qh}, Hoehe {_h2v} -> {_h2n}"
         if _frueh is None and ff_v is None and _ff_spaet:   # aufgeschobener voller Vorher-Wert, nur fuer Kandidaten
             ff_v = form_messen(wt, _ff_spaet[0], ziel["teil"], ff_fotos, f"r{runde}_vorher", stl=_ff_spaet[1])
@@ -1004,7 +1026,8 @@ for runde in range(1, RUNDEN + 1):
             _hv, _hn = HOEHE.get(f"r{runde}_vorher"), HOEHE.get(f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher")
             print(f"Runde {runde}: Form am Foto (voll, vor Abnahme) {ziel['teil']}: F1 {ff_v} -> {ff_n}, Hoehe {_hv} -> {_hn}", flush=True)
             ff_v, ff_n = angleichen(f"r{runde}_vorher", f"r{runde}_vorpruef" if (_vorab_gebaut and not _halb) else f"r{runde}_nachher", ff_v, ff_n, "Tor voll")
-            if ff_n is None or ff_n < ff_v + _mg or (not _frei_h and _hv is not None and _hn is not None and _hn < _hv - 0.02):
+            if (ff_n is None or ff_n < ff_v + _mg or (not _frei_h and _hv is not None and _hn is not None and _hn < _hv - 0.02)) \
+                    and not _orn_ok("vorher", "vorpruef" if (_vorab_gebaut and not _halb) else "nachher", ff_v, ff_n, _hv, _hn, "Tor voll"):
                 _frueh = f"Foto voll: F1 {ff_v} -> {ff_n}, Hoehe {_hv} -> {_hn}"
         if _frueh: print(f"Runde {runde}: FRUEH ABGELEHNT ({_frueh}) - Abnahme/Konvergenz/Pruefer uebersprungen", flush=True)
     if _frueh:
@@ -1057,12 +1080,15 @@ for runde in range(1, RUNDEN + 1):
     if fein_v is not None and fein_n is not None and foto_tor and not ist_fehlteil(ziel) and not _frueh:
         print(f"Runde {runde}: FEINMASS {ziel['teil']}: f1_fein {fein_v} -> {fein_n} (volle Aufloesung)", flush=True)
         if fein_n < fein_v - 0.02: rueck_teil.append("fein_f1")
-        elif FEIN_WEG and fein_n >= fein_v + MIN_GEWINN_FOTO and gewinn >= -FORMFUND_TOL and gewinn < MIN_GEWINN_FOTO:
+        elif FEIN_WEG and fein_n >= fein_v + MIN_GEWINN_FOTO and gewinn < MIN_GEWINN_FOTO and (gewinn >= -FORMFUND_TOL or
+                _orn_ok("vorher", "vorpruef" if (_vorab_gebaut and not _halb) else "nachher", ff_v, ff_n, h_v, h_n, "Tor")):
             fein_weg = True; min_g = min(min_g, gewinn)
+            if _orn and "hoehe_f1" in rueck_teil and h_n >= h_v - ORN_GROB: rueck_teil.remove("hoehe_f1")
+            if _orn and "foto_f1" in rueck_teil and ff_n >= ff_v - ORN_GROB: rueck_teil.remove("foto_f1")
             print(f"Runde {runde}: FEIN-WEG {ziel['teil']}: Feinform +{fein_n - fein_v:.3f} bei Grob-F1 {gewinn:+.3f} - Bildpruefer entscheidet", flush=True)
     # 11.11. 18:0x Erker-Netzrippen (170946erker r1): Formfund mit Foto-F1 0,654 -> 0,664 nur an 'kanten_f1' (Kantengitter ohne Rippensegmente) verworfen.
     # Formfund-/Fein-Runden: Gitter ist abgeleitet und fuer Feinform blind -> Gitter-Rueckschritt nur Beobachtung, wenn das Foto-Tor der Runde besteht (Regel 9e).
-    if "kanten_f1" in rueck_teil and ff_v is not None and ff_n is not None and (ff_n >= ff_v + 0.02 or ((_ffr or fein_weg) and ff_n >= ff_v - FORMFUND_TOL)):
+    if "kanten_f1" in rueck_teil and ff_v is not None and ff_n is not None and (ff_n >= ff_v + 0.02 or ((_ffr or fein_weg) and ff_n >= ff_v - (ORN_GROB if (_orn and fein_weg) else FORMFUND_TOL))):
         # Quellenvorrang (10.11., Balkon 3x verworfen): das Kantengitter ist aus den Fotos ABGELEITET und hatte ~130 Segmente ueber freier Wand;
         # die direkte Formpruefung am Foto zeigt Besserung -> kein Rueckschritt, Widerspruch als Beobachtung (Regel 5: nicht mitteln).
         rueck_teil.remove("kanten_f1"); gitter_widerspruch = f"Gitter-F1 {f1(tv):.3f}->{f1(tn):.3f}, Foto-F1 {ff_v:.3f}->{ff_n:.3f}"
