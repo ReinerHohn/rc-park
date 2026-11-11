@@ -1,0 +1,32 @@
+{
+ "id": "M-6115-020",
+ "foto": "6115",
+ "kamera": "K-6115",
+ "ebene": "0.3338,0.9426,0=12.19",
+ "name": "Laubensaeule Schaftbreite quer",
+ "mess_px": [
+  2350.0,
+  3120.0,
+  2510.0,
+  3120.0
+ ],
+ "P1": [
+  13.734,
+  8.069,
+  3.35
+ ],
+ "P2": [
+  12.222,
+  8.604,
+  3.378
+ ],
+ "dz": 0.029,
+ "dy": 0.536,
+ "dx": -1.512,
+ "abstand": 1.605,
+ "z1": 3.35,
+ "z2": 3.378,
+ "unsicherheit_rel": 0.0188,
+ "unsicherheit_m": 0.059,
+ "massstab_von": "Kamera K-6115 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=12.19 (+-0.4 m)"
+}

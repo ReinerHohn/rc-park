@@ -1,0 +1,32 @@
+{
+ "id": "M-d20-001",
+ "foto": "d20",
+ "kamera": "K-d20",
+ "ebene": "0.3338,0.9426,0=11.50",
+ "name": "Laubensaeule Sockel Pfeiler2: Sockelwand-Oberkante (Fuge y3500) bis Schaftansatz/Fase oben",
+ "mess_px": [
+  1100.0,
+  3490.0,
+  1100.0,
+  3265.0
+ ],
+ "P1": [
+  8.211,
+  9.292,
+  1.782
+ ],
+ "P2": [
+  8.241,
+  9.282,
+  2.141
+ ],
+ "dz": 0.359,
+ "dy": -0.011,
+ "dx": 0.03,
+ "abstand": 0.361,
+ "z1": 1.782,
+ "z2": 2.141,
+ "unsicherheit_rel": 0.0713,
+ "unsicherheit_m": 0.034,
+ "massstab_von": "Kamera K-d20 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=11.50 (+-0.4 m)"
+}

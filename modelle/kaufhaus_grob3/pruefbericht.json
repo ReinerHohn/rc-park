@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261111_152551a152551/wt_r2/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.867000984191893,
@@ -40,7 +40,7 @@
   "fenster_b3_ebene_abstand": 1.252124612687105,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590148717164993,
+  "wand_pq": 0.10590077191591263,
   "wand_anteil_unter": 0.0007,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
@@ -50,7 +50,7 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 2.128511469441953,
-  "teile_ueberhang": 0.0074,
+  "teile_ueberhang": 0.00739,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.72,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.72,
@@ -242,7 +242,8 @@
   "helm_w_r_13_25": 1.8970563577813115,
   "stirnbogen_west_m_unterkante_z": 5.706999999999973,
   "stirnbogen_west_a_unterkante_z": 5.486999999999978,
-  "stirnbogen_west_b_unterkante_z": 5.606999999999975
+  "stirnbogen_west_b_unterkante_z": 5.606999999999975,
+  "pfeiler3_sockelwand_d": 1.3858292070399545
  },
  "pruefungen": [
   {
@@ -316,7 +317,7 @@
    "status": "ok"
   },
   {
-   "name": "Pfeiler 3 Durchmesser (m), Schaftansatz z 2,1-2,35 (Ring ueber der Fase)",
+   "name": "Pfeiler 3 Durchmesser (m), Schaftansatz z 2,38-2,45 (Ring ueber der Fase)",
    "wert": 0.8810006134406079,
    "soll": [
     0.81,
@@ -447,7 +448,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590148717164993,
+   "wert": 0.10590077191591263,
    "soll": [
     0.0348,
     100
@@ -477,7 +478,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.0074,
+   "wert": 0.00739,
    "soll": [
     0,
     0.01
@@ -2021,6 +2022,16 @@
    "soll": [
     7.02,
     7.32
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Pfeiler 3 Sockelwand-Durchmesser (m) in z 2,24-2,32 (Wandoberkante Foto z 2,27-2,30): Sockel noch breit",
+   "wert": 1.3858292070399545,
+   "soll": [
+    1.0,
+    1.6
    ],
    "ok": true,
    "status": "ok"

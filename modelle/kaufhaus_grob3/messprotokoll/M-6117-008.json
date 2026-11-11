@@ -1,0 +1,32 @@
+{
+ "id": "M-6117-008",
+ "foto": "6117",
+ "kamera": "K-6117",
+ "ebene": "0.3338,0.9426,0=11.50",
+ "name": "Laubensaeule Sockel: Oberkante Sockelwand bis Pflaster (linke Kante)",
+ "mess_px": [
+  1773.0,
+  3519.0,
+  1776.0,
+  3711.0
+ ],
+ "P1": [
+  13.104,
+  7.56,
+  2.303
+ ],
+ "P2": [
+  13.109,
+  7.558,
+  1.573
+ ],
+ "dz": -0.73,
+ "dy": -0.002,
+ "dx": 0.005,
+ "abstand": 0.73,
+ "z1": 2.303,
+ "z2": 1.573,
+ "unsicherheit_rel": 0.0265,
+ "unsicherheit_m": 0.04,
+ "massstab_von": "Kamera K-6117 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=11.50 (+-0.4 m)"
+}

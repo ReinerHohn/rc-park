@@ -1,0 +1,32 @@
+{
+ "id": "M-6115-017",
+ "foto": "6115",
+ "kamera": "K-6115",
+ "ebene": "0.3338,0.9426,0=11.50",
+ "name": "Laubensaeule Sockel+Fase Pfeiler 3: Schaftansatz bis Pflaster",
+ "mess_px": [
+  2337.0,
+  3268.0,
+  2340.0,
+  3412.0
+ ],
+ "P1": [
+  12.889,
+  7.636,
+  2.417
+ ],
+ "P2": [
+  12.914,
+  7.627,
+  1.568
+ ],
+ "dz": -0.85,
+ "dy": -0.009,
+ "dx": 0.026,
+ "abstand": 0.85,
+ "z1": 2.417,
+ "z2": 1.568,
+ "unsicherheit_rel": 0.018,
+ "unsicherheit_m": 0.046,
+ "massstab_von": "Kamera K-6115 aus SfM-Buendel (kamera_bruecke_sfm, KEINE amtlichen Anker), Ebene 0.3338,0.9426,0=11.50 (+-0.4 m)"
+}

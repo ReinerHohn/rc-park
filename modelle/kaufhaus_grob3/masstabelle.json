@@ -55,8 +55,8 @@
    "x1": 7.537,
    "y0": 9.598,
    "y1": 10.297,
-   "z0": "=2.1 - z_unterkante_lot2",
-   "z1": "=2.35 - z_unterkante_lot2"
+   "z0": "=2.38 - z_unterkante_lot2",
+   "z1": "=2.45 - z_unterkante_lot2"
   },
   "arkade1_scheitel": {
    "typ": "min_im_bereich",
@@ -2632,6 +2632,15 @@
    "z0": "=5.9 - z_unterkante_lot2",
    "z1": "=8.0 - z_unterkante_lot2",
    "suche": "unten"
+  },
+  "pfeiler3_sockelwand_d": {
+   "typ": "kreis_durchmesser_im_bereich",
+   "x0": 6.959,
+   "x1": 7.537,
+   "y0": 9.598,
+   "y1": 10.297,
+   "z0": "=2.24 - z_unterkante_lot2",
+   "z1": "=2.32 - z_unterkante_lot2"
   }
  },
  "pruefungen": [
@@ -2756,7 +2765,7 @@
    ]
   },
   {
-   "name": "Pfeiler 3 Durchmesser (m), Schaftansatz z 2,1-2,35 (Ring ueber der Fase)",
+   "name": "Pfeiler 3 Durchmesser (m), Schaftansatz z 2,38-2,45 (Ring ueber der Fase)",
    "wert": "pfeiler3_d",
    "soll": [
     0.81,
@@ -2771,7 +2780,8 @@
     "2026-11-09 angelegt (Agent Gitter->Generator); Sollband = Gitterwert +- Streuung der Schaetzer",
     "2026-11-09 Kasten z 3,0-4,5 erfasste die Sockelfase (0,94) -> Schaft 3,6-4,8",
     "2026-11-09 Kasten auf die Rueckhaelfte des Pfeilers (off 11,5-12,1, along 3,3-3,7) verengt: die um -1,0 verschobene Fassaden-STL-Wand (off 12,27) verfaelschte den Kreisfit (0,96)",
-    "2026-11-09 Zylinder hat nur Ring-Eckpunkte an den Enden (Schaft 3,6-4,8 = nan); Messring = Schaftansatz ueber der Sockelfase (z 2,2), Rueckhaelfte (Wand bei off 12,27 ausgeschlossen)"
+    "2026-11-09 Zylinder hat nur Ring-Eckpunkte an den Enden (Schaft 3,6-4,8 = nan); Messring = Schaftansatz ueber der Sockelfase (z 2,2), Rueckhaelfte (Wand bei off 12,27 ausgeschlossen)",
+    "2026-11-11 Messhoehe z 2,1-2,35 -> 2,38-2,45 (Kreis2 r2): Foto zeigt Faseoberkante = Schaftansatz z 2,40-2,42 (M-6117-009, M-6115-017); der Messring muss am Schaftansatz liegen (Zylinder hat nur Endringe). Soll unveraendert 0,81-0,94"
    ]
   },
   {
@@ -5516,6 +5526,22 @@
    "historie": [
     "2026-11-11 angelegt (Kreis1 Stirnboegen): am Altmodell (Rechteckoeffnung bis z 7,9) muss sie fehlschlagen"
    ]
+  },
+  {
+   "name": "Pfeiler 3 Sockelwand-Durchmesser (m) in z 2,24-2,32 (Wandoberkante Foto z 2,27-2,30): Sockel noch breit",
+   "wert": "pfeiler3_sockelwand_d",
+   "soll": [
+    1.0,
+    1.6
+   ],
+   "quelle": "Foto, 2 unabhaengige Aufnahmen, Pfeiler 3 (u 9,54): Oberkante Sockelwand z 2,30 (M-6117-008) / 2,27 (M-6115-016), Oberkante Fase = Schaftansatz z 2,40 (M-6117-009) / 2,42 (M-6115-017), Pflaster z 1,57 (beide); Ebene n 11,50 (Sockelvorderkante), Strahlen fast waagerecht (Tiefenfehler +-0,4 m wirkt <0,05 m); Sockelwand 0,70-0,73 m + Fase 0,12 m ueber Pflaster. Modell vorher: Wandoberkante 2,00, Faseoberkante 2,20 (ANNAHME Startwert). Sockelbreite: Verhaeltnis Sockel/Schaft 1,39 (M-6117-010/-011) vs 1,16 (M-6115-019/-020) widerspruechlich -> NICHT geaendert (offen)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-6117-008",
+   "historie": [
+    "2026-11-11 angelegt (Kreis2 r2 bogenreihe:laube Saeulensockel zu niedrig); am Modell mit Wandoberkante 2,00 muss die Pruefung fehlschlagen (Schaft 0,88 in z 2,2)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -6542,7 +6568,8 @@
    "pruef_pflicht": [
     "sockel",
     "fuss"
-   ]
+   ],
+   "erledigt": "kreis2 r2 Hoehe: Foto 6117+6115 Pfeiler 3 Sockelwand-Oberkante z 2,27-2,30, Fase-Oberkante z 2,40-2,42, Pflaster 1,57 (M-6117-008/009, M-6115-016/017) -> Modell sockel_hoehe 0,55->0,80, fase 0,2->0,16 (Oberkante 2,41). Pruefungen pfeiler3_sockelwand_d (vorher rot, nan) + pfeiler3_d (Ring auf 2,38-2,45). OFFEN: Sockelbreite (Verhaeltnis Sockel/Schaft 1,39 vs 1,16 widerspruechlich, nicht geaendert); Foto-F1 0,756->0,757 (kein Gate-Gewinn)"
   },
   {
    "teil": "kreuzgewoelbe:laube",
@@ -6755,7 +6782,8 @@
    "teil": "bogenreihe:laube",
    "merkmal": "Pruefer-Rest bogenreihe:laube kreis 20261111_152551a152551 r1",
    "text": "Offene Fehler laut Pruefer nach angenommener Runde: 6225: Aussenring/Goldrand oben gelb (y~315-330), Ring-Oberkante zu tief bzw. fehlt; Breite 0,31/Tiefe 0,22 nur von der Front uebernommen (ANNAHME) | 6225: rote Modellkante rechts an der Endsaeule (x~840), Stirnwand-Ende s_bis 11,95 ohne Fotokante | 6176: neue rote Ringkanten-Baender oben links am nahen Stirnbogen (erfundene Ringkanten bzw. Versatz) | Ostbogen ungeprueft: gespiegelte ANNAHME, Ebene u 15,86 nicht gemessen, nur 6117 angedeutet | Masse aus nur EINEM kalibrierten Foto (6225) - Regel >=3 Fotos nicht erfuellt | Kaempfer 5,28 von der Front uebernommen, 6225 deutet auf 5,5-5,9 - offen; Asymmetrie bei s 11,21 (6,77 gemessen vs 6,46 Modell) ungeklaert | Wanddicke 0,5 ANNAHME (Laibungstiefe nicht sichtbar) | Foto-F1 gesamt 0,741 -> 0,743 (ff-JSON), Tor +0,02 nicht erreicht; d20 0,785->0,778 und 6182 0,836->0,833 leicht gefallen, Ursache nicht sichtbar | Pfeiler-Rot (6176 unten, 6130 rechts) besteht weiter (nicht diese Runde)",
-   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern.",
+   "erledigt": "ersetzt durch Pruefer-Rest kreis 20261111_152551a152551 r2"
   },
   {
    "datum": "auto",
@@ -6807,6 +6835,21 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.42 m, y=-8.92 m (Zelle [234, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "kreis 20261111_152551a152551 r2 (automatisch)",
+   "merkmal": "Kantengitter widerspricht Foto (bogenreihe__laube)",
+   "text": "Angenommen nach Quellenvorrang Foto: Gitter-Baender recall 0-5 m: 0.630 -> 0.591, Foto-F1 0.752->0.758. Kantengitter hat dort vermutlich Fehlsegmente.",
+   "naechster_schritt": "Gittersegmente im Teilbereich gegen Fotos pruefen (gitter_zurueck), Fehlsegmente markieren."
+  },
+  {
+   "datum": "2026-11-11",
+   "wer": "Pruefer opus kreis 20261111_152551a152551 r2 (automatisch)",
+   "teil": "bogenreihe:laube",
+   "merkmal": "Pruefer-Rest bogenreihe:laube kreis 20261111_152551a152551 r2",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Foto-F1 nur 0,756->0,757 (Rauschen), Gate +0,02 nicht erreicht; Beleg nur foto_mass an Pfeiler 3 (2 Fotos) | d20 nachher: neue rote Kanten in der Sockelflaeche (waagerecht ~y2040, senkrechte Achteckkanten x~650/930) = Modellkanten ohne Fotokante | d20 nachher: Fotokante unten am Sockel (~y2205, vorher von alter Wandoberkante getroffen) jetzt gelb; rechte Sockelkante gelb | sockel_weite 1,5 weiter ANNAHME, Fotos widerspruechlich (1,16/1,39/1,45) | Pflaster 1,57 (Foto) gegen boden_z 1,453: 0,12 m Widerspruch offen; Pfeiler 4 Wandoberkante 2,20 gegen 2,27-2,30 bei Pfeiler 3, Pfeiler 0/1/2/4 nicht einzeln geprueft | 6176: vorderer Laubenpfeiler grossflaechig rot (Lage/Breite falsch), Vordergrundpfeiler rechts komplett gelb (fehlt) - unveraendert offen | Regel 3e/3f verletzt: foto_diff, fehlteile_finden, teile_lage_pruefen nicht gelaufen | Verwaiste teil_05/teil_06.stl (+lage/) im Diff, nicht in teilung.json (4 Teile) - nicht mit nach main | Formbilder 6120/6130/6171/6174/6182/d11/p03 nicht angesehen (Pruefer) | Stirnbogen-Reste aus r1 unbearbeitet",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

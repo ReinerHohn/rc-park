@@ -3665,16 +3665,17 @@
     "laibung_tiefe": "Bandfront = OG-Wand 12,66 (pfeiler_n 12,19 + 0,94/2): Wolke lot2 Band z 7,35-7,9 und OG-Wand z 10,4-14,4 beide Spitze n 12,63 (eine Ebene), Foto glatter Putz (Koordinator R6); vorher 0,776 aus param_wolke_fit (Bandfront 12,578 -> 8-cm-Stufe bei z 8,0)",
     "boden_z": "messungen_wolke.json boden_mitte (Wolke, Gegenproben bestaetigt)",
     "sockel_weite": "ANNAHME Startwert aus Nutzerfotos 8.11. (Oktogon ~1,4x Schaftdurchmesser); Feinwert per Wolkenfit",
-    "sockel_hoehe": "ANNAHME Startwert Nutzerfotos",
-    "fase_hoehe": "ANNAHME Startwert Nutzerfotos",
+    "sockel_hoehe": "Foto: Oberkante Sockelwand z 2,30/2,27 und Faseoberkante z 2,40/2,42 ueber Pflaster z 1,57 (M-6117-008/-009, M-6115-016/-017, Ebene n 11,50, Pfeiler 3); Modell-Boden 1,453 -> Wand 0,80 (Oberkante 2,25), Fase 0,16 (Oberkante 2,41; Fase 0,13 + Wand 0,83 liess teile_ueberhang auf 0,0101 > 0,01 steigen -> flachere Fase); vorher 0,55/0,20 ANNAHME",
+    "fase_hoehe": "Foto: Oberkante Sockelwand z 2,30/2,27 und Faseoberkante z 2,40/2,42 ueber Pflaster z 1,57 (M-6117-008/-009, M-6115-016/-017, Ebene n 11,50, Pfeiler 3); Modell-Boden 1,453 -> Wand 0,80 (Oberkante 2,25), Fase 0,16 (Oberkante 2,41; Fase 0,13 + Wand 0,83 liess teile_ueberhang auf 0,0101 > 0,01 steigen -> flachere Fase); vorher 0,55/0,20 ANNAHME",
     "druck_verbinder": "Druck: Pfeilerschaft endet an der Bandunterkante, innenliegender Verbinderblock (vorher 2-cm-Absatz ueber die Bandflucht hinaus -> Splitterkanten)",
     "archivolt_breite": "kantengitter segmente_gitter_v12.json (SfM lot2): aeussere Bogenkante der 4 Boegen bei r-R = +0,31 m (Median 280 Segmente, R 2,72 aus oeffnung_breite/scheitel/kaempfer), Foto 6117 zeigt den gestuften Rand; nicht per foto_mass trianguliert (ANNAHME Gitter = Foto-Triangulation, Overlay 3 Fotos geprueft)",
     "archivolt_tiefe": "kantengitter segmente_gitter_v12.json: Laibungs-Vorderkante bei s 12,4-12,5 gegen Bandfront 12,66 -> 0,22; ANNAHME Stufe senkrecht"
    },
    "sockel_weite": 1.5,
-   "sockel_hoehe": 0.55,
-   "fase_hoehe": 0.2,
+   "sockel_hoehe": 0.80,
+   "fase_hoehe": 0.16,
    "historie": [
+    {"datum": "2026-11-11", "wer": "Agent Kreis2 r2", "alt": {"sockel_hoehe": 0.55, "fase_hoehe": 0.2}, "neu": {"sockel_hoehe": 0.8, "fase_hoehe": 0.16}, "grund": "Nutzerfund Saeulensockel zu niedrig; Foto 6117+6115 Pfeiler 3: Wandoberkante z 2,27-2,30, Faseoberkante z 2,40-2,42 (M-6117-008/009, M-6115-016/017); 0,83/0,13 verletzte Ueberhangtor"},
     {
      "datum": "2026-11-09",
      "wer": "Agent Gitter->Generator",
