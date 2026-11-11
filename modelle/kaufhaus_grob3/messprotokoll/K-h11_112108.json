@@ -1,0 +1,40 @@
+{
+ "foto": "h11_112108",
+ "datei": "IMG_20261108_112108.jpg",
+ "typ": "kamera_bruecke_sfm",
+ "kamera": {
+  "rvec": [
+   0.9347268827076975,
+   1.3696046229085737,
+   -1.6059253860717089
+  ],
+  "t": [
+   -2.5077213982005144,
+   6.247318085540341,
+   18.701412426634754
+  ],
+  "f_px": 2790.0,
+  "cx": 1500.0,
+  "cy": 2000.0,
+  "bild": [
+   3000,
+   3800
+  ],
+  "k1": 0.02,
+  "modell": "SIMPLE_RADIAL",
+  "standort_xyz": [
+   16.73,
+   10.13,
+   3.54
+  ],
+  "brennweite_quelle": "SfM-Buendel /media/oem/scan/rc-park_daten/kaufhaus_alle/zusatz_handy11/kam_lot2_handy11_fassade.json",
+  "rms_px": null,
+  "rahmen_verschiebung": [
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ "quelle": "tools/kamera_bruecke.py: Pose/Brennweite/k1 aus /media/oem/scan/rc-park_daten/kaufhaus_alle/zusatz_handy11/kam_lot2_handy11_fassade.json (Rahmen der Kameradatei = Generatorrahmen); Anker = SfM-Buendel, KEINE amtlichen Anker; Massstab sfm_buendel",
+ "datum": "2026-11-11"
+}
