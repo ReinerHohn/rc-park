@@ -1,0 +1,47 @@
+{
+ "id": "M-6171-005",
+ "typ": "triangulation",
+ "foto": "6171",
+ "name": "Erker 1 Unterbau Front: unteres Ende Bogen A am Pfeilerkopf, 3 Kameras 6171/6259/6161 (Picks nach Augenmass auf der Linie)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6171",
+   "px": [
+    1790.0,
+    1700.0
+   ]
+  },
+  {
+   "kamera": "K-6259",
+   "px": [
+    600.0,
+    2507.0
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    585.0,
+    1895.0
+   ]
+  }
+ ],
+ "P": [
+  18.679,
+  7.157,
+  6.471
+ ],
+ "strahl_abstand_m": [
+  0.003,
+  0.069,
+  0.071
+ ],
+ "schnittwinkel_grad": [
+  47.3,
+  46.8,
+  2.6
+ ],
+ "z": 6.471,
+ "unsicherheit_m": 0.11,
+ "massstab_von": "Kameras K-6171, K-6259, K-6161 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

@@ -47,6 +47,7 @@ ZUERST LESEN: `CLAUDE.md` (Regeln 2, 3b, 3c, 8b, 9, 9b, 9c, 9d), `modelle/REZEPT
 - Nie aus Wolke, LoD2 oder Generatordateien zählen (Regel 9, Register CB).
 
 ### Stufe 2: Messen
+- Bei Details mit Kantenverlauf (Rippen, Boegen, Masswerk, Fialen): zusaetzlich `modelle/METHODE_MESSEN_DANN_BAUEN.md` (Punkte je Element triangulieren, Kurvenfamilie anpassen, nie Formel raten).
 - Zonengrenzen (Höhen), Auskragung, Flächenbreiten und Achslage per `tools/foto_mass.py --tri` über mehrere Kameras messen, ergibt Messprotokolle M-*.
 - Messebene nie aus dem Grobkörper übernehmen (L16).
 - Steile oder schlanke Teile: Profil r(z) aus Fotosilhouetten durch die Bauteilachse (L17).

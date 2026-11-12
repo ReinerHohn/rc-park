@@ -1,0 +1,47 @@
+{
+ "id": "M-6171-007",
+ "typ": "triangulation",
+ "foto": "6171",
+ "name": "Erker 1 Unterbau Front: steile Rippe D, Mittelpunkt (y=800 in 6171), Picks 6259/6161 auf Epipolarlinie bei ~5 m",
+ "beobachtungen": [
+  {
+   "kamera": "K-6171",
+   "px": [
+    1870.0,
+    800.0
+   ]
+  },
+  {
+   "kamera": "K-6259",
+   "px": [
+    600.0,
+    2290.0
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    558.0,
+    1742.0
+   ]
+  }
+ ],
+ "P": [
+  18.796,
+  7.759,
+  7.715
+ ],
+ "strahl_abstand_m": [
+  0.054,
+  0.038,
+  0.065
+ ],
+ "schnittwinkel_grad": [
+  55.2,
+  56.5,
+  3.2
+ ],
+ "z": 7.715,
+ "unsicherheit_m": 0.099,
+ "massstab_von": "Kameras K-6171, K-6259, K-6161 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

@@ -1,0 +1,47 @@
+# Methode: Detail messen, Kurve anpassen, dann bauen (Ergaenzung zu VORLAGE_BAUTEIL_RUNDE.md)
+
+Stand 12.11.2026. NOCH NICHT ERPROBT: Die Methode ist aus dem Scheitern der Erker-Bogenrippen (Kreis 225455 r1, 10.11.) abgeleitet und wird am Erker-Netzrippen-Auftrag zum ersten Mal angewandt. Ergebnis dort nachtragen (Abschnitt Verlauf).
+
+Gilt fuer alle Details mit Kanten und wiederholter Geometrie (Rippen, Fensterboegen, Masswerk, Fialen, Baldachine, Gesimsprofile, Konsolen, Dachkanten). Ergaenzt Stufe 1 (Zaehlen), Stufe 2 (Messen) und Stufe 4 (Generator) der Vorlage; Stufen 0, 3, 5 bleiben unveraendert.
+
+## Grundsatz
+Erst messen, dann eine Kurvenfamilie anpassen, dann am Foto pruefen. Nie eine Formel waehlen und hoffen, dass sie passt. Lehre Rippen: die geratene Bahn (`s=t^kappa`) passte nur auf ~0,1 m, senkte Foto-F1 0,617 -> 0,575 und riss das Soll von erker_o_unterbau70; ausserdem war die Topologie falsch (1 Rippenpaar je Flaeche statt Rautennetz mit mehreren Kreuzungsebenen).
+
+## Ablauf
+1. **Topologie am Foto lesen** (Vorlage Stufe 1, nur am Foto): Welche Elemente gibt es, wie viele, wie verbunden (Kreuzungen, Buendel, Enden)? Zeichnung/Notiz vor jeder Messung. Falsche Topologie ist der haeufigste Fehler, nicht falsche Masse.
+2. **Charakteristische Punkte je Element**: Anfang, Ende, 2-3 Zwischenpunkte auf dem Kantenverlauf, dazu Kreuzungen. Pixelpicks in Bildausschnitten (Ausschnitt vergroessern, Kante treffen, nicht die Wolke).
+3. **Triangulieren** mit `tools/foto_mass.py --tri` (je Punkt >= 2 kalibrierte Kameras, Schnittwinkel beachten). Jeder Punkt hat eine Unsicherheit aus dem Protokoll. **Der kleine Strahlabstand beweist nichts**, wenn der Pick auf der Epipolarlinie gesetzt wurde (trifft zwangslaeufig); Pflicht ist eine dritte Kamera als Gegenprobe: P in sie projizieren (Marker auf Ausschnitt) und pruefen, ob dort dasselbe Element liegt. Zweitkamera mit aehnlichem Massstab und Blickwinkel waehlen (Erker: 6161/6162/6259, nicht 6164: Rippe nur ~6 px). Ohne zweite Sicht, bei Verdeckung oder Spiegelung bleibt der Wert `ANNAHME: ...`. Widerspruechliche Quellen nicht mitteln (Regel 5).
+4. **Kurvenfamilie anpassen**: einfachste Familie waehlen, die die Punkte innerhalb ihrer Unsicherheit trifft (Gerade, Kreisbogen, Spitzbogen, Spline). Die Wahl begruenden (Restfehler je Punkt notieren), nicht nach vorhandenem Generatorcode waehlen.
+5. **Parametrisch bauen** (Vorlage Stufe 4): Messwerte als Konfiguration in `objekt.json` mit Quelle je Wert, `beleg(seite, element, quelle)`. Wiederkehrendes wird ein Bauteiltyp, der nur Messpunkte frisst. Alte Teile `aktiv: false`, nicht loeschen.
+6. **Foto-Tor entscheidet**: `tools/bauen_abnehmen.sh <objekt>`, `tools/foto_diff.py` mit Foto-F1 fein, Teil neben dem Referenzfoto ansehen (Zahlen allein gelten nicht). Behalten nur, wenn Abnahme besteht und Foto-F1 fein nicht faellt; sonst zurueck und ins Register `NICHTS_GEBRACHT.md`.
+
+## Grenzen
+- Organische Formen (Figuren, Drachen, Wasserspeier) tragen die Kurvenanpassung nicht: dort Bild-zu-3D (SPAR3D/Hi3DGen, Hunyuan3D wegen EU-Lizenz ausgeschlossen), aber mit demselben Foto-Tor am Ende.
+- Das Foto-F1 grob (0,18 m) ist fuer Ornament blind/invertiert; Ornament entscheidet f1_fein (Rauschtor, siehe STAND).
+- Ohne zweite kalibrierte Sicht keine Messung, nur Annahme.
+
+## Werkzeugkette (Stand 12.11.2026)
+Reine Geometrie bzw. Anpassung, ohne Objektnamen im Code; geeignet fuer jedes Bauteil mit Kanten.
+
+| Glied | Aufgabe | Stand |
+|---|---|---|
+| 1. Epipolarlinie | Suchlinie eines Picks in weiteren Kameras (`tools/epilinie.py`, mit `--fenster` Ausschnitt mit Pixelraster) | gebaut 12.11.; Linie auf Erker-Unterbau in 6164 sichtbar bestaetigt, Pickgenauigkeit noch nicht geprueft; ungetestet an anderen Bauteilen |
+| 2. Gegenstueck finden | Kante als Pixelpfad verfolgen (Minimalkosten, Wegpunkte halten die Kante) und Tiefe je Pixel aus Foto B | `tools/kante_3d.py` gebaut 12.11.; erprobt NUR an Erker-Bogen A (6171+6259); der NCC-Abgleich (epilinie --ncc) war nutzlos |
+| 3. Triangulieren | 3D-Punkt mit Unsicherheit | vorhanden (`foto_mass.py --tri`) |
+| 4. Kurve anpassen | ausreisserfeste Spline (Medianfilter, Endhaken weg, Endpunkte verankert) | in `tools/kante_3d.py`; Familien (Kreisbogen/Spitzbogen) noch nicht |
+| 5. Konfiguration ausgeben | Messwerte mit Quelle je Wert in `objekt.json` | fehlt; je Bauteiltyp verschieden |
+
+Reihenfolge: erst Rippen der Erker-Frontflaeche von Hand durch die Kette ziehen und pruefen, ob der Weg traegt; dann Glied 4 (kleinster Schritt, groesster Nutzen fuer andere Teile); Glied 2 zuletzt (aufwendigster Teil, erst bei sehr vielen Punkten). Grenzen: Topologie (welche Rippe, wie gekreuzt) bleibt Sichtarbeit; Linie laengs einer Kante ist mehrdeutig (zweite Kamera nehmen); kein Foto-rein-Bauteil-raus.
+
+## Verlauf
+- 2026-11-12 kante_3d: Zwischenwegpunkt auf der SEHNE zwischen Anfang und Ende (steile Rippen C/D) zieht den Pfad weg (D2: 0,81 m Abstand am Start, Pfad springt ueber das Feld). Wegpunkte muessen auf der Rippe GEMESSEN sein (Epipolarlinie + 3 Kameras), nicht interpoliert. Nur Anfang/Ende ohne Mitte funktioniert bei C (0,04 m), nicht bei D (0,81 m).
+- 2026-11-12 `rippen_pfade` (gemessene Bogen A+B, B gespiegelt) im Generator, Abnahme bestanden (vor=-0,03). Render aus 6259: Silhouette stimmt, Rippen im Trichterkoerper meist vergraben -> Sichtbarkeit braucht `kappe_rueck` (Kappen hinter Rippenfront); mit 0,07 reisst aber Abnahme z 7,6 (1,14 < 1,15) und z 6,6 (0,62 > 0,60). Zielkonflikt Wolke-Soll gegen Foto-Messung, Nutzerentscheid noetig.
+- 2026-11-12 Erster Versuch Erker-Rippenkreuzung A/B: Pick 6171 + 6164 (M-6171-001) fiel durch die Gegenprobe (K-6161/6162/6259 zeigen eine andere Rippenverbindung); als UNBESTAETIGT markiert. NCC-Tiefenscan brachte keinen Gipfel (siehe NICHTS_GEBRACHT.md). Naechster Versuch: Paar aus 6161/6162/6259, 6171 als Gegenprobe.
+- 2026-11-12 Erster tragender Punkt: linker Eckknoten am Gesims (Erker 1), M-6171-002, Pick 6171 + Epipolarlinie in 6259 und 6161 (aehnlicher Massstab) trifft in BEIDEN den Eckknoten bei ~5 m; 3-Kamera-Triangulation P (19,919/7,639/7,971), Strahlabstand <= 0,04 m, +-0,076 m; z 7,97 passt zum Gesimsprofil (z 8,0). Einschraenkung: Picks in 6259/6161 wurden auf der Linie gesetzt (Strahlabstand nicht unabhaengig); Beleg ist die sichtbare Knotenidentitaet in beiden Bildern. Merkmal: Eckknoten (eindeutig) statt Streifenflaechen/Kreuzungen.
+- 2026-11-12: angelegt. Erster Einsatz: Erker-Netzrippen (erker_polygon:1, Fotos 6171/6164/6161, Kameras K-6161/6162/6164/6171/6259 vorhanden, noch keine M-6171-*).
+- 2026-11-12 linke Schraegflaeche (6259+6161): Knoten (19,919/7,639/7,971) in 6161 und 6259 bestaetigt (Projektion trifft Faecherursprung; mein Handpick in 6259 lag 17 px daneben). Fuss (18,985/6,745/6,471) per Strahl-Ebene z 6,471 in 6161 und 6162 auf demselben Rippenfuss bestaetigt. `kante_3d` Knoten->Fuss: nur 2 Wegpunkte springt waagerecht (Pfad folgt nicht der Rippe); mit 3 geschaetzten Zwischenpunkten (Tiefe linear geraten) verwirft die Tiefenmedianpruefung alle Punkte (Abbruch). Zwischenpunkte muessen gemessen sein; offen.
+- 2026-11-12 Zwischenpunkt-Tiefe per Goldwert in 6161+6162 (Tiefenscan 20,5-22,5 m, Pick in 6259 auf lokales Goldmaximum): Summenkurve flach (Plateau, Gold ~37/46/51), Tiefe nicht eindeutig -> Farbabgleich taugt nicht (wie NCC). Zwischenpunkte nur von Hand mit Epipolarlinie + Sichtpruefung in 3 Kameras.
+- 2026-11-12 Tiefe je Punkt aus Goldwert in 6171+6162+6161 (Minimum der drei, Strahl aus 6259, 19,5-23,5 m): Gipfel schwach (Gold 11-16 von ~60) und je Punkt bei anderer Tiefe (21,8-22,9) -> nicht belastbar. Dritter Fehlversuch der automatischen Tiefenfindung (NCC, Gold 2 Kameras, Gold 3 Kameras). Zwischenpunkte der Schraegflaechen bleiben Handmessung (Pick in 2 Fotos mit Epipolarlinie, Gegenprobe 3. Foto) oder ein anderes Verfahren (z. B. Flaechenmodell der Trichterflaeche + Rippe als Schnitt Strahl x Flaeche).
+- 2026-11-12 `tools/kante_auf_flaeche.py` (neu): Kante aus EINEM Foto (Pixelpfad, Minimalkosten) auf STL-Teilnetz (Box) projiziert, keine Bildzuordnung. Erster Test linke Schraegflaeche Knoten->Fuss aus 6171: Pfad folgt in 6171 der Rippe, Projektion in 6162 liegt am linken Silhouettenrand (dort liegt auch die aeusserste Rippe, nicht eindeutig); 6259-Ausschnitt zu knapp. NOCH NICHT bestaetigt, nicht in objekt.json. Grenze: nur so genau wie die Flaeche im Modell (Wolke-Flaeche).
+- 2026-11-12 Pruefung kante_auf_flaeche an BEKANNTER Rippe: Bogen A (unabhaengig aus 6171+6259 trianguliert) mit 5 Pixelpunkten aus 6171 auf die Modellflaeche projiziert -> Abstand zur gemessenen Kurve Median 0,021 m, max 0,036 m (Frontflaeche). Das Verfahren tragt dort; fuer die Schraegflaechen gilt es nur so weit, wie die Flaeche dort stimmt (offen).
+- 2026-11-12 Rechte Schraegflaeche, vom Nutzer markierter Bogen (6259: Mittelknoten -> rechts unten, 5 Pixelpunkte) mit kante_auf_flaeche aus 6259: Projektion in 6162 plausibel (folgt dem Bogen), in 6171 aber laeuft sie senkrecht an der steilen Rippe statt am Bogen -> Widerspruch, NICHT eingebaut. Vermutung: Trichterflaeche des Modells an der rechten Schraegflaeche weicht von der echten ab (Wolke/Spiegelung), die Kurve haengt an der Flaeche. Gegenmittel: Fotos beidseitig (6171 rechts) zur Flaechenkorrektur, oder 2-Foto-Triangulation an dieser Stelle.

@@ -3782,7 +3782,7 @@
    "name": "Erker Ost: Unterbau Reichweite vor der Achse bei z 7,6",
    "wert": "erker_o_unterbau76",
    "soll": [
-    1.15,
+    1.1,
     1.4
    ],
    "quelle": "Wolke lot2 Front-Mitte z 7,6-7,8: n p98 13,61 / p50 13,51 (E1)",
@@ -3791,6 +3791,7 @@
    "massstab": "sfm_buendel",
    "protokoll": "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2_crop.npy (Streifen Erkerfront, Log Runde 7)",
    "historie": [
+    "2026-11-12 Nutzerfreigabe 'Du darfst die Sollwerte anpassen' (Wolke kann Ornament/Rippenrelief ~0,07 m nicht aufloesen, Quellen-Blindheit): Grenze um 0,05 m geaendert, weil die Rippenfront (gemessene Goldlinie, Fotos 6171/6259 M-6171-002..005) ueber dem Rippengrund liegt; Wolke bleibt Lage-Veto fuer den Unterbau-Grund, nicht fuer Rippen. Alt: 1,15..1,4",
     "2026-11-09 angelegt (Agent Runde 7 Erker, Nutzerbefund 'Grundriss vieleckig, Fensterband, Wappenzone, Unterbau'): am Runde-6-Modell (Kasten) ROT, Soll aus Fotos/Wolke, nicht gelockert"
    ]
   },
@@ -3799,7 +3800,7 @@
    "wert": "erker_o_unterbau66",
    "soll": [
     0.4,
-    0.6
+    0.65
    ],
    "quelle": "Wolke lot2 j_voll_lot2.npy, Mittellinie Erker Ost |du|<0,15, n p50 je 0,2-m-Scheibe an der Scheibenmitte (E1): z 6,5 12,78 / 6,7 12,82 / 6,9 12,85 / 7,1 13,01 / 7,3 13,18 / 7,5 13,32 / 7,7 13,50 / 7,9 13,58 / 8,1 13,80 (E0 +-0,05); Reichweite = n - 12,31 (Achtecksmitte). Unterbau-Form am Foto 6161/6164 gesehen (Overlay audit/gitter_generator/rundekreis1_erker_polygon_1_*) | z 6,6: n 12,80 -> 0,49",
    "quelltyp": "sfm_bodenanker",
@@ -3807,6 +3808,7 @@
    "massstab": "sfm_buendel",
    "protokoll": "/media/oem/scan/rc-park_null/wolke_gemeinsam/lot2/j_voll_lot2.npy (Mittellinie Erker Ost, Kreis a060555 r1, Skript agent_scratch_kreis1/erker1/profil.py)",
    "historie": [
+    "2026-11-12 Nutzerfreigabe 'Du darfst die Sollwerte anpassen' (Wolke kann Ornament/Rippenrelief ~0,07 m nicht aufloesen, Quellen-Blindheit): Grenze um 0,05 m geaendert, weil die Rippenfront (gemessene Goldlinie, Fotos 6171/6259 M-6171-002..005) ueber dem Rippengrund liegt; Wolke bleibt Lage-Veto fuer den Unterbau-Grund, nicht fuer Rippen. Alt: 0,4..0,6",
     "2026-11-10 Kreis a060555 r1 (erker_polygon:1, Befund Wolkenbeleg 0,66 / Kanten-P 0,40): am Stand 63ceb01 ROT; Soll = Wolke-MEDIAN je 0,2-m-Scheibe an der SCHEIBENMITTE (nicht p98 am Scheibenanfang wie die Runde-7-Zeilen 72/76: das lag ~0,1 m in z und p98 vs p50 ~0,1 m in n zu hoch, bei Steigung 2 m/m ~0,17 m Reichweite), Mitte |du|<0,15 inkl. Mittelrippe"
    ]
   },
@@ -7791,6 +7793,38 @@
    "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   },
   {
+   "teil": "balkonbruestung__balkon",
+   "merkmal": "Balkon: seitliche Gelaender fehlen (Nutzer erneut)",
+   "wer": "Nutzer (Sichtbeobachtung)",
+   "text": "Nutzer 12.11. 08:54 (roter Rahmen links neben dem Erker, Viewer v56): die seitlichen Balkongelaender fehlen weiterhin.",
+   "naechster_schritt": "Fotos 6254/6261 mit Balkonseiten ansehen, Gelaender-Staebe je Seite mit foto_zaehlung zaehlen, foto_mass, dann Generator Balkon-Seitengelaender; Pruefer braucht Foto mit Seitenansicht.",
+   "pruef_stichworte": [
+    "balkon",
+    "gelaender",
+    "seite"
+   ],
+   "datum": "2026-11-12"
+  },
+  {
+   "teil": "erker_polygon__1",
+   "merkmal": "Erker: Fenster in den Mehreck-Segmenten fehlen (Nutzer erneut)",
+   "wer": "Nutzer (Sichtbeobachtung)",
+   "text": "Nutzer 12.11. 08:54 (roter Rahmen am Erker, Viewer v56): im Erker fehlen immer noch die Fenster in den Mehreck-Segmenten; Erker-Fenster sind Butzen, nicht Sprossen.",
+   "naechster_schritt": "Fenster je Segment (Mitte/Seiten) am Foto zaehlen (foto_zaehlung), Lage mit foto_mass, dann Generator Erkerfenster je Segment; Foto 6259/6171 als Pflichtfoto.",
+   "pruef_stichworte": [
+    "erker",
+    "fenster",
+    "segment"
+   ],
+   "datum": "2026-11-12"
+  },
+  {
+   "datum": "2026-11-12",
+   "wer": "Sitzung nach /clear (Nutzer: Erker Netzrippen haben Vorrang)",
+   "text": "Erker-Unterbau (erker_polygon:1, danach :0): Foto 6171 zeigt dreistraengige Spitzbogenrippen als Rautennetz auf den Schraeg- und Frontflaechen; Modell hat nur 4 Grate. fehlteile-Overlay audit/erker_gelb_rippennetz_2026-11-11.jpg: gelb = Netz fehlt. ANNAHME: Bogenrippen (rippen_bogen, b 0,10, vor 0,06) sind eine Naeherung des Netzes, Rosetten und Buendel fehlen weiter.",
+   "naechster_schritt": "rippen_bogen mit Standardwerten (b 0,10 / vor 0,06 / kappa 1) ist der am 10.11. verworfene Ansatz (Foto-F1 0,617->0,575, Soll erker_o_unterbau70 gerissen; Kreis 225455 r1) und wurde 12.11. nur kurz getestet und zurueckgenommen. Richtig: Rippenbahnen aus Pixelpicks je Rippe (tools/foto_mass.py --tri, Fotos 6171/6164/6161, je Rippe >= 2 Kameras), daraus Raute/Netz bauen, dreistraengig, Buendel an der Saeule; dann bauen_abnehmen + Teil neben 6171."
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 2)",
    "auto_id": "fehlteile-6261-234-1794",
@@ -7800,11 +7834,11 @@
    "z_bis": 18.55,
    "xyz": [
     14.33,
-    -8.89,
+    -8.88,
     18.55
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.89 m (Zelle [234, 1794, 78], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.55 m, y=-8.88 m (Zelle [234, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {

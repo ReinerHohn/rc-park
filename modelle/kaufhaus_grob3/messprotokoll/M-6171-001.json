@@ -1,0 +1,37 @@
+{
+ "id": "M-6171-001",
+ "typ": "triangulation",
+ "foto": "6171",
+ "name": "UNBESTAETIGT, NICHT VERWENDEN: Erker 1 Unterbau Front: Rippenkreuzung A/B (Mitte), Pick 6171 + 6164 | Gegenprobe 12.11.: Projektion in K-6161/6162/6259 trifft eine andere Rippenverbindung (links oben), nicht die Hauptkreuzung A/B; Pick in 6164 vermutlich falsche Kreuzung (6164 zu klein, Rippe ~6 px)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6171",
+   "px": [
+    1560.0,
+    1000.0
+   ]
+  },
+  {
+   "kamera": "K-6164",
+   "px": [
+    770.0,
+    2400.0
+   ]
+  }
+ ],
+ "P": [
+  19.069,
+  7.205,
+  7.707
+ ],
+ "strahl_abstand_m": [
+  0.048,
+  0.048
+ ],
+ "schnittwinkel_grad": [
+  45.9
+ ],
+ "z": 7.707,
+ "unsicherheit_m": 0.082,
+ "massstab_von": "Kameras K-6171, K-6164 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

@@ -1,0 +1,47 @@
+{
+ "id": "M-6171-003",
+ "typ": "triangulation",
+ "foto": "6171",
+ "name": "Erker 1 Unterbau: rechter Eckknoten der Frontflaeche (= mittlerer Knoten in 6259/6161) am Gesims, 3 Kameras 6171/6259/6161",
+ "beobachtungen": [
+  {
+   "kamera": "K-6171",
+   "px": [
+    1960.0,
+    480.0
+   ]
+  },
+  {
+   "kamera": "K-6259",
+   "px": [
+    613.0,
+    2236.0
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    583.0,
+    1690.0
+   ]
+  }
+ ],
+ "P": [
+  18.689,
+  8.015,
+  8.088
+ ],
+ "strahl_abstand_m": [
+  0.022,
+  0.034,
+  0.028
+ ],
+ "schnittwinkel_grad": [
+  58.6,
+  60.0,
+  3.4
+ ],
+ "z": 8.088,
+ "unsicherheit_m": 0.066,
+ "massstab_von": "Kameras K-6171, K-6259, K-6161 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

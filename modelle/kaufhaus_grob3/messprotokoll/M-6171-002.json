@@ -1,0 +1,47 @@
+{
+ "id": "M-6171-002",
+ "typ": "triangulation",
+ "foto": "6171",
+ "name": "Erker 1 Unterbau: linker Eckknoten am Gesims (Rippenkreuz), 3 Kameras 6171/6259/6161",
+ "beobachtungen": [
+  {
+   "kamera": "K-6171",
+   "px": [
+    1100.0,
+    500.0
+   ]
+  },
+  {
+   "kamera": "K-6259",
+   "px": [
+    430.0,
+    2255.0
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    420.0,
+    1705.0
+   ]
+  }
+ ],
+ "P": [
+  19.919,
+  7.639,
+  7.971
+ ],
+ "strahl_abstand_m": [
+  0.028,
+  0.015,
+  0.04
+ ],
+ "schnittwinkel_grad": [
+  50.3,
+  52.0,
+  3.7
+ ],
+ "z": 7.971,
+ "unsicherheit_m": 0.076,
+ "massstab_von": "Kameras K-6171, K-6259, K-6161 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

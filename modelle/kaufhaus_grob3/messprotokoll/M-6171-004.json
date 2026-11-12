@@ -1,0 +1,47 @@
+{
+ "id": "M-6171-004",
+ "typ": "triangulation",
+ "foto": "6171",
+ "name": "Erker 1 Unterbau Front: Hauptkreuzung der Bogen A/B, 3 Kameras 6171/6259/6161 (Picks in 6259/6161 nach Augenmass auf der Linie)",
+ "beobachtungen": [
+  {
+   "kamera": "K-6171",
+   "px": [
+    1560.0,
+    1000.0
+   ]
+  },
+  {
+   "kamera": "K-6259",
+   "px": [
+    562.0,
+    2328.0
+   ]
+  },
+  {
+   "kamera": "K-6161",
+   "px": [
+    538.0,
+    1762.0
+   ]
+  }
+ ],
+ "P": [
+  19.079,
+  7.337,
+  7.586
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.015,
+  0.015
+ ],
+ "schnittwinkel_grad": [
+  50.0,
+  50.9,
+  3.2
+ ],
+ "z": 7.586,
+ "unsicherheit_m": 0.052,
+ "massstab_von": "Kameras K-6171, K-6259, K-6161 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

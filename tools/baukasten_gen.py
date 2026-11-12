@@ -839,7 +839,7 @@ def erker_polygon(cfg, ctx):
     def prisma(z0, z1, aus=0.0):
         cs = C([ccw(np.array(base, float))]); cs = cs.offset(aus, JoinType.Miter) if aus else cs
         return M.extrude(cs, z1 - z0).translate((um, 0.0, z0))
-    teile = []; z_o = Zn["z_unterbau_oben"]; ub = cfg["unterbau"]; prof = [(float(z), float(p)) for z, p in ub["profil"]]; v0 = float(ub["vorsprung_spitze"]); pmax = nf - wn
+    teile = []; z_o = Zn["z_unterbau_oben"]; ub = cfg["unterbau"]; kr_ = float(ub.get("kappe_rueck", 0.0)); prof = [(float(z), max(float(p) - kr_, 0.02)) for z, p in ub["profil"]]; v0 = float(ub["vorsprung_spitze"]); pmax = nf - wn   # kappe_rueck: Kappenflaeche liegt um diesen Betrag HINTER der Rippenvorderkante (Rippen stellen die Silhouette wieder her)
     if not (prof and all(b[0] > a[0] for a, b in zip(prof, prof[1:])) and Zn["z_unterbau_spitze"] < prof[0][0] and prof[-1][0] < z_o): sys.exit("erker_polygon: unplausibles Unterbau-Profil")
     cn = ub.get("kegel_achse_n"); cn = wn if cn in (None, "") else float(cn)                                         # Kreis 225455 r1: Skalierzentrum des Unterbau-Trichters (n der Achse); ohne Angabe = Wandebene (Spitze an der Wand, alt)
     def fakt(p): return max((wn + p - cn) if cn != wn else p, 0.02) / ((nf - cn) if cn != wn else pmax)             # Skalierfaktor des Rings aus der Vorderflaechen-Reichweite p (Wolke/Foto: Front n = wn + p)
@@ -883,6 +883,30 @@ def erker_polygon(cfg, ctx):
                 qs_ = [np.array(querschnitt(i)) for i in range(nseg + 1)]
                 def q_at(x): i0 = min(int(x), nseg - 1); fr = x - i0; return list(qs_[i0] * (1 - fr) + qs_[i0 + 1] * fr)
                 for i in range(nseg): teile.append(M.hull_points(q_at(i) + q_at(min(i + 1 + float(rbg.get('ueberlapp', 0.35)), nseg))))     # Segmente ueberlappen (deckungsgleiche Stossflaechen -> manifold3d-Splitter)
+    rpf = ub.get("rippen_pfade")                                                                                       # 2026-11-12: GEMESSENE Rippenbahnen (Pixelkurven in >= 2 Fotos, je Punkt trianguliert, Spline) statt Formel; Punkte (u, n, z) im Weltrahmen von um/n, quelle Pflicht
+    if rpf:
+        if not rpf.get("quelle") or not rpf.get("pfade") or not rpf.get("normale"): sys.exit("erker_polygon: rippen_pfade braucht quelle, pfade, normale (Regel 3b)")
+        bb_, vor_, emb_ = float(rpf.get("b", 0.12)), float(rpf.get("vor", 0.07)), float(rpf.get("einbindung", 0.25)); nrm_ = np.array(rpf["normale"], float); nrm_ /= np.linalg.norm(nrm_)
+        pfade_ = [(np.array(p_, float), nrm_.copy()) for p_ in rpf["pfade"]]
+        if rpf.get("spiegel_u") is not None:                                                                           # ANNAHME (siehe quelle): zweiter Bogen = Spiegelbild an u = spiegel_u (Normale u-Anteil gespiegelt)
+            uc_ = float(rpf["spiegel_u"]); pfade_ += [(np.column_stack([2 * uc_ - q_[:, 0], q_[:, 1], q_[:, 2]]), np.array([-n0_[0], n0_[1], n0_[2]])) for q_, n0_ in pfade_]
+        if rpf.get("drehungen"):                                                                                       # ANNAHME: Schraegflaechen = Frontnetz um die Erkerachse gedreht (regelmaessiges Teil-Achteck, seite_schraeg = seite_front, 45 Grad); Normale dreht mit
+            cu_, cn_ = [float(v) for v in rpf["drehung_zentrum"]]; neu_ = []
+            for ang_ in rpf["drehungen"]:
+                c_, s_ = math.cos(math.radians(float(ang_))), math.sin(math.radians(float(ang_)))
+                rot_ = lambda u_, n_: (cu_ + c_ * (u_ - cu_) - s_ * (n_ - cn_), cn_ + s_ * (u_ - cu_) + c_ * (n_ - cn_))
+                for q_, n0_ in pfade_:
+                    ru_, rn_ = rot_(q_[:, 0], q_[:, 1]); nu_, nn2_ = c_ * n0_[0] - s_ * n0_[1], s_ * n0_[0] + c_ * n0_[1]
+                    neu_.append((np.column_stack([ru_, rn_, q_[:, 2]]), np.array([nu_, nn2_, n0_[2]])))
+            pfade_ += neu_
+        for k_, (p_, nrm_) in enumerate(pfade_):
+            bw_ = bb_ * (1 + 0.013 * (k_ % 7)); nn_ = len(p_) - 1; qs_ = []   # bw_: Breite je Rippe um <= 8 % verschieden (Breitenstreuung ~ Messunsicherheit), sonst deckungsgleiche Flaechen sich kreuzender Rippen -> manifold3d-Splitter
+            for i in range(nn_ + 1):
+                d_ = p_[min(i + 1, nn_)] - p_[max(i - 1, 0)]; d_ /= np.linalg.norm(d_); wd_ = np.cross(d_, nrm_); wd_ /= np.linalg.norm(wd_)
+                t_, b_ = p_[i] + nrm_ * vor_, p_[i] - nrm_ * emb_                                                      # Oberseite 'vor' ueber der gemessenen Linie (Goldlinie = Vorderkante), Fuss 'emb' im Koerper
+                qs_.append(np.array([b_ - wd_ * bw_ / 2, b_ + wd_ * bw_ / 2, t_ - wd_ * bw_ / 2, t_ + wd_ * bw_ / 2]))
+            def qat_(x_): i0_ = min(int(x_), nn_ - 1); fr_ = x_ - i0_; return list(qs_[i0_] * (1 - fr_) + qs_[i0_ + 1] * fr_)
+            for i in range(nn_): teile.append(M.hull_points(qat_(i) + qat_(min(i + 1 + float(rpf.get("ueberlapp", 0.35)), nn_))))   # Segmente ueberlappen (deckungsgleiche Stossflaechen -> manifold3d-Splitter, wie bei rippen_bogen)
     def prisma_profil(pr):                                                                                            # Gesims/Bank mit Querschnittsprofil [[z, aus], ...] (aufsteigend): konvexe Huelle je Abschnitt, aus = Offset des Grundrisses wie prisma(); Kamm = Grat (gerundete Gesimse, Wolke zeigt Grat statt Rechteck)
         pr = [(float(z), float(a_)) for z, a_ in pr]
         if len(pr) < 2 or any(b[0] <= a[0] for a, b in zip(pr, pr[1:])) or any(a_ < 0 for _, a_ in pr): sys.exit(f"erker_polygon: unplausibles Gesims-Profil {pr}")

@@ -50,3 +50,33 @@ Offener Nutzerfund 20:59: "Erker Ost: aeusseres Segment fehlt (Gassenseite)" (Fo
 - Grob-Foto-F1 (0,18 m Glaettung) ist fuer Ornament blind/invertiert; f1_fein (0,03 m) trennt Nullkontrollen. Rauschen je Teil: erker_polygon__1 f1 -0,070 / f1_fein +0,031 (nur f1_fein trennt); gaubenreihe__oben f1 +0,042; baldachine: kein Mass.
 - Cache der Nullkontrollen: /media/oem/scan/rc-park_kreis/kaufhaus_grob3/rauschen/ (131 Eintraege).
 - Probe der Zielwahl jederzeit: `python3 tools/bauteil_kreis.py kaufhaus_grob3 --nur_wahl`.
+
+## Nachtrag 12.11. ~08:45 (Kontext-Verschlankung + Alarm)
+- CLAUDE.md/MEMORY.md verkleinert (Volltexte: modelle/REGELN_AUSFUEHRLICH.md, memory/archiv_index.md); nicht committet.
+- Alarm "ueber 80 % Takte ohne Kandidat" vermutlich Fehlalarm: Zielwahl-Probe 08:41 zeigt 21 Kandidaten (waehlbar u.a. bruestung__balkon, kreuzgewoelbe__laube, figurenreihe__figuren, konsolenreihe__balkon). kreis_regler.py Z.293 zaehlt "kein Kandidat" je Takt; Z.243 Alarm bei >80 %. Noch zu pruefen: ob "warten: 4 Spuren = max" als leerer Takt zaehlt (dann Zaehler nur bei freier Spur werten).
+- Konsolen-Patch ist gemergt (cc641e83), Viewer noch NICHT neu gebaut/publiziert (neu_html.sh, dann Artifact 9mpGqmnVR3bBqUYnh6jXyQ).
+- Offene Frage an Nutzer: Erker-Fund "aeusseres Segment fehlt" - Ost- oder Westwand?
+
+## Nachtrag (Sitzung nach /clear): Element-Messregion
+- Agent-Bericht (Commit aed31a15): Element-Region nur synthetisch bewiesen; am echten Vorher-Stand ist bei Baldachine und Erker 0 kein Element messbar (alle R negativ). Nullkontrolle "hoch +0,3 m" schlaegt bei allen 4 Baldachinen den Vorher-Stand = Verdacht Hoehe zu tief (NICHT am Foto geprueft).
+- `--element_region 1` bleibt AUS (kostet einmalig Baldachine ca. 25 min, Erker ca. 60 min GPU; Anbindung nur im Trockenlauf getestet).
+- Nutzer hat "mache alles, was generell geht" gesagt. Naechste Schritte: (1) beobachtungen_offen-Eintrag Baldachinhoehe in masstabelle.json, dann am Foto messen (tools/foto_mass.py), dann Generator + tools/bauen_abnehmen.sh kaufhaus_grob3; (2) Erker-Elemente aus dem Generator statt Raster. Noch nichts davon begonnen.
+
+## Nachtrag 12.11. ~10:45: Kreis-Regler gedrosselt (Nutzer: ja)
+- `rcpark-kreis_regler` gestoppt (Quota ~70 % der Woche, Reset 15.11. 9:00; Kreis brachte kaum sichtbaren Gewinn). Laufende Runden (kreis_a*) laufen zu Ende, es startet keine neue.
+- Wieder einschalten: `JOB_GPU_MB=0 tools/job_start.sh kreis_regler /media/oem/scan/rc-park_kreis/kreis_regler.log python3 tools/kreis_regler.py kaufhaus_grob3 --gpu_ziel 101 --max 4` (Originalbefehl; JOB_GPU_MB vorher gegen den alten Dienst pruefen).
+- Erker-Netzrippen: neuer Weg `modelle/METHODE_MESSEN_DANN_BAUEN.md` (Pixelpicks je Rippe, Fotos 6171/6164/6161, Kurve anpassen, dann bauen). rippen_bogen mit Standardwerten ist der am 10.11. verworfene Ansatz und aus objekt.json wieder entfernt. Beobachtungseintrag in masstabelle.json (2026-11-12) vorhanden.
+
+## Nachtrag 12.11. ~13:30: Erker-Rippen (Ziel: in H0 gut erkennbar)
+- Neu: `tools/epilinie.py` (Epipolarlinie), `tools/kante_3d.py` (Kante aus 2 Fotos als 3D-Spline), `modelle/METHODE_MESSEN_DANN_BAUEN.md`, Generator `rippen_pfade` + `kappe_rueck` in `tools/baukasten_gen.py`. Messpunkte `M-6171-002..005` (L/R Eckknoten, Kreuzung X, Fuss E); `M-6171-001` UNBESTAETIGT. Nichts committet.
+- Zwei Konfigurationen in `objekt.json` (erker_polygon:1.unterbau): (a) BESTANDEN-Stand: `rippen_pfade` mit `vor` -0,03, b 0,12, KEIN `kappe_rueck` -> alle Pruefungen bestanden, Rippen im Render kaum sichtbar; (b) SICHT-Stand (aktuell in der Datei): `kappe_rueck` 0,07, `vor` 0, b 0,16 -> Rippen klar sichtbar (Render 6171/6259), aber 2 Pruefungen rot: Unterbau-Reichweite z 7,6 (1,14 < 1,15) und z 6,6 (0,62 > 0,60); beide Soll aus der Wolke (Quellen-Blindheit fuer Rippen).
+- OFFEN, Nutzerentscheid: diese zwei Sollwerte mit der Fotomessung (M-6171-002..005) als neuer Quelle anpassen (+ `historie`)? Bis dahin Modell "NICHT freigeben".
+- Bekannte Maengel Sicht-Stand: Rippen einstraengig (Foto dreistraengig), B als Spiegel von A (R-Knoten ~0,1 m daneben), Kappen nicht konkav, Schraegflaechen und steile Rippen C/D fehlen, Rippenbreite 0,16 m ueberhoeht (ANNAHME fuer H0).
+- Regression (tools/baukasten_gen.py geaendert): identisch (vor `kappe_rueck`, Standard 0 aendert nichts).
+
+## Nachtrag Erker-Rippen (12.11. mittags, nicht committet)
+- Sollwerte z 7,6 (1,10..1,4) und z 6,6 (0,4..0,65) mit Nutzerfreigabe angepasst (historie), Abnahme besteht komplett. Nutzer: Ornament nie an der Wolke pruefen; es geht um Strukturgenauigkeit, nicht um Druckbarkeit/Verbreitern.
+- Neu: `tools/kante_auf_flaeche.py` (Pixelpfad EINES Fotos -> Modellflaeche, an Bogen A geprueft: Median 2,1 cm). Rippen R2/R4 (linke Flaeche) in objekt.json (rippen_pfade, ANNAHME, nicht am 3. Foto geprueft); R1 war Duplikat von C (entfernt); R3b bricht die Druckpruefung (93 Koerper).
+- Generator: Breite je Rippe streut +-8 % (bw_), sonst Splitter. b 0,07 (am Foto gemessen 0,05-0,08) bricht noch die Druckpruefung -> b 0,10.
+- Knoten: 6171-links = 6259-aussen-links (3 Kameras); 6259-Mitte = 6171-rechts. Der vom Nutzer markierte Bogen (6259 Mitte -> rechts unten) gehoert zur RECHTEN Schraegflaeche (nur gespiegelt). Es fehlen: rechte Flaeche gemessen, lange untere Boegen, Buendel am Fuss, ~14 weitere Rippen der Front. Foto-F1/Realitaets-% nicht neu gemessen.
+- Renders: Scratchpad render4.py (Tiefenkanten), Vergleich Foto|Modell vor jeder Aussage ansehen.
