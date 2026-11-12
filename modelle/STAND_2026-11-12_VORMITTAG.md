@@ -85,3 +85,8 @@ Offener Nutzerfund 20:59: "Erker Ost: aeusseres Segment fehlt (Gassenseite)" (Fo
 - Methode umgestellt: KEINE Tiefenmessung je Rippe mehr; Lage im Foto (Rippenmaske = schwarz neutral + Gold, Putz faellt weg -> Skelett) + Projektion auf die Flaeche. Werkzeuge: `kanten_ketten.py --farbe band`, `luecken_rippen.py` (ungedeckte Rippen, `--maske gold` fuer Buendel), `pfade_nachfuehren.py [--breite]` (Pfade auf Rippenmitte, Breite je Pfad = 0,72 x Maskenbreite).
 - Ergebnis: Pfade sitzen auf Rippenmitte (Verschiebungen 0,3-24 px, max 5 cm), o10 ohne Haken, 4 Fussrippen + 3 Zwillingsrippen, Abnahme gruen (Commit 1dd8367e). rippen_f1 0,280 / Recall 0,572 unveraendert: Mass zaehlt Goldkanten (3-4 je Rippe), nicht Rippenmitten.
 - Offen: Profilierung (Goldkanten), dichte Fussbuendel (Maske verschmilzt; Rippen dort ~2-3 cm breit), untere Randleiste (Wolke-Veto). Ziel "extrem gut in H0 erkennbar" NICHT als erreicht erklaert; Urteil Nutzer am Bild.
+
+## Nachtrag 12.11. spaet: Erker-Seitenfenster, Balkonende
+- Commit 9e8570da: erker_polygon `fenster.end_flaechen: [0,4]` (je 1 Licht an den aeusseren Rueckkehrflaechen, end_rahmen_b 0,05); Viewer v58.
+- Balkonbruestung gegen Foto 6164 gelegt (Kamera K-6164 auf teile_9e8570d/bruestung__balkon.stl): endet am Foto-Ende, kein fehlendes Stueck messbar.
+- Offen: Randleiste ca. 5 cm zu hoch (Absenken 0,03-0,05 bricht die Abnahme: Teilnetze/wasserdicht); Rippentiefe aus anderen Winkeln; Nutzer-Screenshot (2 Kaesten: rechts vom Ost-Erker, Balkonende) nicht eindeutig zugeordnet - Screenshot von v58 abwarten.
