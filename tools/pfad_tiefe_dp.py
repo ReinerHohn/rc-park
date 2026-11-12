@@ -21,12 +21,17 @@ for f in alle:
     sm = cv2.imread(f"{D}/stabil/{f[:-4]}.png", 0); DT[f] = (cv2.distanceTransform((sm < 255 * 0.4).astype(np.uint8), cv2.DIST_L2, 3).astype(np.float32), sm.shape[1] / KAM[f]["W"])
 def proj(c, P):
     R = np.array(c["Rn"]); q = P @ R.T + np.array(c["tn"]); x = q[:, 0] / q[:, 2]; y = q[:, 1] / q[:, 2]; s = 1 + c["params"][3] * (x * x + y * y); return np.c_[c["f"] * x * s + c["cx"], c["f"] * y * s + c["cy"]], q[:, 2]
-def kosten(P, fl):                                                  # P (n,3) -> mittlere Kantenentfernung (px, <= 10) ueber Fotos
-    tot = np.zeros(len(P)); n = np.zeros(len(P))
+import torch
+dev = "cuda" if torch.cuda.is_available() else "cpu"
+DTT = {f: torch.from_numpy(v[0]).to(dev) for f, v in DT.items()}
+KT = {f: dict(R=torch.tensor(KAM[f]["Rn"], dtype=torch.float32, device=dev), t=torch.tensor(KAM[f]["tn"], dtype=torch.float32, device=dev), f=KAM[f]["f"], cx=KAM[f]["cx"], cy=KAM[f]["cy"], k1=KAM[f]["params"][3]) for f in alle}
+def kosten(P, fl):                                                  # GPU: P (n,3) -> mittlere Kantenentfernung (px, <= 10) ueber Fotos
+    Pt = torch.as_tensor(np.asarray(P), dtype=torch.float32, device=dev); tot = torch.zeros(len(Pt), device=dev)
     for f in fl:
-        p, z = proj(KAM[f], P); dt, sc = DT[f]; p = (p * sc).round().astype(int); ok = (z > 0.5) & (p[:, 0] >= 0) & (p[:, 0] < dt.shape[1]) & (p[:, 1] >= 0) & (p[:, 1] < dt.shape[0])
-        v = np.full(len(P), 10.0); v[ok] = np.minimum(dt[p[ok, 1], p[ok, 0]], 10.0); tot += v; n += 1
-    return tot / np.maximum(n, 1)
+        c = KT[f]; q = Pt @ c["R"].T + c["t"]; x = q[:, 0] / q[:, 2]; y = q[:, 1] / q[:, 2]; sk = 1 + c["k1"] * (x * x + y * y); sc = DT[f][1]
+        px = ((c["f"] * x * sk + c["cx"]) * sc).round().long(); py = ((c["f"] * y * sk + c["cy"]) * sc).round().long(); dt = DTT[f]; ok = (q[:, 2] > 0.5) & (px >= 0) & (px < dt.shape[1]) & (py >= 0) & (py < dt.shape[0])
+        v = torch.full((len(Pt),), 10.0, device=dev); v[ok] = torch.clamp(dt[py[ok], px[ok]], max=10.0); tot += v
+    return (tot / len(fl)).cpu().numpy()
 K = EPI.kam(od, kam); kk = json.load(open(os.path.join(od, "messprotokoll", kam + ".json")))["kamera"]
 m = trimesh.load(os.path.join(root, obj["stl"])); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0); m.apply_translation(np.asarray(kk.get("rahmen_verschiebung", [0, 0, 0]), float))
 ct = m.triangles_center; sel = np.all((ct >= bx[:3]) & (ct <= bx[3:]), axis=1); sub = trimesh.Trimesh(m.vertices, m.faces[sel], process=False); fn = np.asarray(sub.face_normals)
@@ -40,7 +45,7 @@ for ci, f in enumerate(F):
     px, o, d = px[ir], o[ir], d[ir]; t0 = np.linalg.norm(loc - o, axis=1); t0 = np.interp(np.arange(len(t0)), np.arange(len(t0)), np.convolve(np.pad(t0, 2, mode="edge"), np.ones(5) / 5, mode="valid"))
     Pv = o + d * t0[:, None]; kv = float(kosten(Pv, [x for x in pruef]).mean())
     M = len(px); C = np.zeros((M, len(ts)))
-    for k_, dt_ in enumerate(ts): C[:, k_] = kosten(o + d * (t0 + dt_)[:, None], optf)
+    PP = (o[:, None, :] + d[:, None, :] * (t0[:, None] + ts[None, :])[:, :, None]).reshape(-1, 3); C = kosten(PP, optf).reshape(M, len(ts))                     # alle Kandidaten auf einmal (GPU)
     pen = LAM * ((ts[:, None] - ts[None, :]) / 0.03) ** 2; acc = C[0].copy(); bp = np.zeros((M, len(ts)), int)
     for i in range(1, M):
         tot = acc[:, None] + pen; bp[i] = tot.argmin(0); acc = tot.min(0) + C[i]
