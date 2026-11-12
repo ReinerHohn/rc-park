@@ -1155,6 +1155,13 @@ def quader_bt(cfg, ctx):
         beleg("alle", f"Quader (ausschnitt) mit {len(st)} stehenden Streifen (Schaefte/Rippen)", cfg["quelle"], stehen_u=[[round(float(a_), 3), round(float(b_), 3)] for a_, b_ in st])
     else:
         k = quader(u0, u1, min(n0, n1), max(n0, n1), min(z0, z1), max(z0, z1)).transform(_uszT(cfg))
+    for i_, a_ in enumerate(cfg.get("aussparungen") or []):                                           # Fuellungsfelder/Tuerchen: Vertiefungen IN DER EIGENEN Vorderflaeche des Teils (Teil bleibt 1 Koerper; Stufen = mehrere Eintraege geschachtelt). Pflicht je Eintrag: u0,u1,z0,z1,tiefe,quelle
+        for k_ in ("u0", "u1", "z0", "z1", "tiefe", "quelle"):
+            if a_.get(k_) in (None, ""): sys.exit(f"quader: aussparungen[{i_}].{k_} fehlt (Regel 3b)")
+        au0, au1, az0, az1, at = (float(a_[k_]) for k_ in ("u0", "u1", "z0", "z1", "tiefe")); nf_ = float(a_.get("n_front", max(n0, n1)))   # n_front = Lage der Vorderflaeche an dieser Stelle (Standard Huellmaximum)
+        if not (min(u0, u1) <= au0 < au1 <= max(u0, u1)) or not (min(z0, z1) < az0 < az1 < max(z0, z1)) or at <= 0: sys.exit(f"quader: aussparungen[{i_}] liegt ausserhalb des Teils")
+        k = k - quader(au0, au1, nf_ - at, nf_ + 0.5, az0, az1).transform(_uszT(cfg))
+        beleg("alle", f"Quader-Aussparung {a_.get('name', i_ + 1)} (Tiefe {at:.3f})", a_["quelle"], u0=au0, u1=au1, z0=az0, z1=az1, tiefe=at, n_front=nf_)
     beleg("alle", f"Quader ({modus})" + (f" mit Profil ({len(prof)} Punkte)" if prof else ""), cfg["quelle"], u0=u0, u1=u1, n0=n0, n1=n1, z0=z0, z1=z1, **({"profil": [list(map(float, q_)) for q_ in prof]} if prof else {}))
     return ([k], []) if modus != "ausschnitt" else ([], [k])
 

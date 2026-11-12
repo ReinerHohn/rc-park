@@ -1,36 +1,78 @@
 {
  "foto": "h11_111516",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261112_055730a055730/wt_r3/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-h11_111516 (amtliche Anker)",
  "zelle_px": 131,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    1310,
+    2358,
+    1048,
+    131
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    1.34,
+    4.83,
+    19.38
+   ]
+  },
+  {
+   "zelle": [
+    917,
     1179,
     131
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    10.85,
-    -0.86,
-    20.57
+    14.96,
+    -3.29,
+    21.18
    ]
   },
   {
    "zelle": [
-    1048,
+    1179,
+    1179,
+    131
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    12.34,
+    0.13,
+    19.81
+   ]
+  },
+  {
+   "zelle": [
+    1703,
+    1179,
+    131
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    6.2,
+    0.02,
+    20.19
+   ]
+  },
+  {
+   "zelle": [
+    2096,
     1310,
     131
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    13.25,
-    -2.34,
-    19.47
+    2.83,
+    1.49,
+    18.15
    ]
   },
   {
@@ -42,51 +84,9 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    1.51,
-    2.63,
-    17.58
-   ]
-  },
-  {
-   "zelle": [
-    1834,
-    1441,
-    131
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    5.38,
-    0.22,
-    17.31
-   ]
-  },
-  {
-   "zelle": [
-    1703,
-    1572,
-    131
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    5.43,
-    -2.88,
-    16.84
-   ]
-  },
-  {
-   "zelle": [
-    1965,
-    1572,
-    131
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    3.1,
-    -1.01,
-    16.03
+    1.36,
+    2.45,
+    17.65
    ]
   }
  ],

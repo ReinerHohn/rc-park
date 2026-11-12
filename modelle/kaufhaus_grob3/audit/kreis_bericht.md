@@ -1,24 +1,21 @@
-# Kreis-Bericht 040618 r1 – satteldach:haupt (Ziegelreihen)
-
-## 1 Formbeschreibung (Stufe 0)
-Fotos 6162 (Nahausschnitt Dach), 6132, 6145, j05 (verschiedene Richtungen/Abstaende). Hauptdach: dunkle Biberschwanz-Reihen mit Moos, Dachgitter (Pfosten + Stäbe) über der grünen Rinne, Gauben, Erkerhelme mit bunten Schuppen. Formfamilie: vorhandene satteldach-Ziegelleisten (Relief quer zum Hang); neue optionale Parameter ziegel_fase, ziegel_rand. Dachgitter = noch keine Familie (offen).
-## 2 Zaehlungen/Messungen
-Reihenabstand: tools/foto_dachreihen.py -> messprotokoll/ZR-dachreihen.json (Hang entzerrt, Autokorrelation): 0,18 m in 6162/6132/6145/j05 (Peaks 0,18/0,36/0,54/0,72). Keine Anzahl-Zaehlung (Reihen werden per Periode gemessen, keine Z-Datei).
-## 3 Pruefungen
-| Pruefung | vorher | nachher | Soll | Quelle |
-|---|---|---|---|---|
-| ziegel_reihenabstand_haupt | 0,35 (ROT) | 0,18 | 0,16-0,20 | Foto-Entzerrung 4 Fotos |
-| Gesamt | – | alle bestanden (bau4.log) | – | |
-Tor (voll, 10 Torfotos): f1_fein 0,663 -> 0,683 (+0,020; Soll >= +0,010), f1 0,805 -> 0,804, f1_h 0,774 -> 0,773. Halbe Aufloesung: f1_fein 0,539 -> 0,575 (ohne Rand/Huellregel).
-Zusatz: ziegel_tiefe 0,07 -> 0,04 (ANNAHME, Vorderhang-z-Pruefung und Druckreparatur), ziegel_rand 0,05 (ANNAHME), ziegel_fase 0 (Fase brachte keinen Gewinn). regression.py --pruefen: identisch.
+# Kreis3 quader:laube_sockel_w (12.11.)
+## 1 Formbeschreibung (Fotos 6130 Nahfoto, 6124 Nah, 6145 Uebersicht; Raster Ebene n 7,73 aus K-Kameras, Skript agent_scratch_kreis3/gitter.py)
+Zonen unten->oben: Steinbank u -7..-1,5 (Rechteckquerschnitt, Sockelfront n 7,73); Fuellungsfelder mit senkrechten Fugen; Gesimsband z 2,04-2,2 (schon im Profil). Zwei gerahmte Tuerchen mit eingelassener Fuellung (u -5,05..-5,62 und -5,75..-6,30, z 1,57..1,97) sind in 6130, 6124, 6145 gleich zu sehen. Ostende u -1,5 am Raster in 6130 bestaetigt (Ueberstand-Rot dort nicht als Fehler bestaetigt, nicht weiter bearbeitet).
+Formfamilie: vorhandenes quader mit neuer generischer Option `aussparungen` (Vertiefungen in der eigenen Vorderflaeche, geschachtelt = Rahmen + Fuellung; baukasten_gen.quader_bt). Tiefen 0,03/0,06 = ANNAHME.
+## 2 Zaehlungen
+Tuerchen: 2 (in 3 Fotos per Raster/Sicht gezaehlt; KEIN Z-Protokoll via foto_zaehlung.py - nicht gelaufen). Fuellungsfelder und Fugen: NICHT gezaehlt (Fugen u -4,55 und -6,43 nur in 2 Fotos sicher) -> offen.
+## 3 Pruefungen (teil_fotoform, volle Aufloesung, 10 Torfotos)
+| Mass | vorher | nachher |
+|---|---|---|
+| f1_fein (Tor, >= +0,010) | 0,554 | 0,618 |
+| F1 | 0,815 | 0,815 |
+| f1_h | 0,786 | 0,786 |
+f1_fein steigt in allen 10 Fotos. Keine neue masstabelle-Pruefung angelegt (Stufe 3 nicht erfuellt). bauen_abnehmen: alle Pruefungen bestanden.
 ## 4 Overlays
-Keine rundekreis-Overlays erzeugt. Fotoform-Bilder: /media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261112_040618a040618/ff_voll_bilder/ (nach), /media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261112_040618a040618/ff_voll_alt_bilder/ (vorher); Sichtblatt modelle/kaufhaus_grob3/audit/seiten.jpg angesehen (Dach feine gleichmaessige Reihen).
+/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261112_055730a055730/ff_eigen_bilder/quader__laube_sockel_w_{6130,6124,6145}{,_fein}.jpg (angesehen: 6130_fein, 6124_fein, Rahmen decken sich mit Fotokanten); Raster: /media/oem/scan/rc-park_daten/kaufhaus_grob3/agent_scratch_kreis3/g{6130,6124,6145,6176}.jpg
 ## 5 Fehlerliste
-- Dachflaeche Reihenabstand: trifft (4 Fotos). Phase der Reihen (Lage der Kanten): ungeprueft, ANNAHME Start 0,5*Abstand.
-- Ziegeltiefe/-anteil: ANNAHME, ungeprueft.
-- Dachgitter, Rinne: nicht modelliert. Speier-Kopf (Drachenkopf), Erker-Eckdrachen, Pruefer-Rest 6132/j05: nicht bearbeitet, offen.
-- foto_diff, teile_lage_pruefen, teile_sichtpruefung: nicht gelaufen (ungeprueft); fehlteile_finden lief in bauen_abnehmen.
+trifft: Tuerchen-Rahmen/-Fuellung Lage in 6130, 6124. ungeprueft: 6145 Overlay, teile_lage_pruefen, foto_diff, fehlteile_finden, Sichtblatt seiten.jpg. trifft nicht/offen: Fuellungsfelder-Rahmen, Fugen, Wulst unter dem Band, Bandunterkante gelb, Westende u -7,2 ANNAHME, Beobachtung bewusst NICHT als erledigt markiert (nur Tuerchen behoben).
 ## 6 Geaenderte Dateien
-tools/baukasten_gen.py, tools/pruefstand.py, tools/foto_dachreihen.py (neu), modelle/kaufhaus_grob3/objekt.json, masstabelle.json, messprotokoll/ZR-dachreihen.json, NICHTS_GEBRACHT.md, REZEPT_GEBAEUDE_AUS_FOTOS.md, erzeugte Audit-Dateien des Baus.
+tools/baukasten_gen.py (aussparungen), modelle/kaufhaus_grob3/objekt.json (4 Aussparungen am Teil), diese Datei; automatische Abnahmeartefakte.
 ## 7 Generalisierte Lehre
-Periodische Deckung messen statt annehmen | ANNAHME 0,35 war doppelt | foto_dachreihen.py. Reliefteile nie ueber Huelle/Dachenden (Druckbett, Reparatur) | Extra-Schnitt, Ueberhang 1,1 % | ziegel_rand + Huellregel.
+Lehre: Aussparung muss auf die lokale Vorderflaeche (n_front) bezogen sein, nicht auf das Huellmaximum des Profils (Band) - sonst Schnitt ohne Wirkung und identische Kennzahl | Anlass: erster Lauf f1_fein unveraendert 0,554 | Werkzeug: baukasten_gen quader aussparungen.n_front; Kontrolle Volumen vorher/nachher.

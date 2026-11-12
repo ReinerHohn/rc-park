@@ -1,92 +1,92 @@
 {
  "foto": "h11_111518",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261112_055730a055730/wt_r3/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-h11_111518 (amtliche Anker)",
  "zelle_px": 129,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    0,
+    516,
+    774,
+    129
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    8.4,
+    3.85,
+    21.7
+   ]
+  },
+  {
+   "zelle": [
+    258,
     903,
     129
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    12.33,
-    3.58,
-    18.9
-   ]
-  },
-  {
-   "zelle": [
-    774,
-    1419,
-    129
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    4.29,
-    1.23,
-    17.36
-   ]
-  },
-  {
-   "zelle": [
-    1032,
-    1419,
-    129
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    1.63,
-    2.25,
-    17.63
-   ]
-  },
-  {
-   "zelle": [
-    2064,
-    1548,
-    129
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -3.72,
-    11.67,
-    13.95
+    10.5,
+    3.65,
+    19.89
    ]
   },
   {
    "zelle": [
     387,
-    1677,
+    1032,
     129
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    7.08,
-    -1.62,
-    14.87
+    9.23,
+    3.53,
+    19.08
    ]
   },
   {
    "zelle": [
-    774,
-    1677,
+    2193,
+    1290,
     129
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    3.28,
-    -0.39,
-    15.32
+    -3.35,
+    13.47,
+    15.88
+   ]
+  },
+  {
+   "zelle": [
+    1419,
+    1419,
+    129
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -2.54,
+    3.74,
+    18.19
+   ]
+  },
+  {
+   "zelle": [
+    1935,
+    1419,
+    129
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -4.65,
+    9.29,
+    16.77
    ]
   }
  ],

@@ -4931,8 +4931,51 @@
      2.2
     ]
    ],
+   "aussparungen": [
+    {
+     "name": "Tuerchen 1 Rahmen",
+     "u0": -5.62,
+     "u1": -5.05,
+     "z0": 1.57,
+     "z1": 1.97,
+     "n_front": 7.73,
+     "tiefe": 0.03,
+     "quelle": "Fotos 6130/6124/6145 (je Raster Ebene n 7,73 aus K-Kamera-Bruecke, Stufe 0 kreis3 12.11.): zwei gerahmte Tuerchen mit eingelassener Fuellung in der Sockelfront unter dem Band; u/z aus Raster-Ablesung (+-0,05 m), Tiefe 0,03 ANNAHME"
+    },
+    {
+     "name": "Tuerchen 1 Fuellung",
+     "u0": -5.55,
+     "u1": -5.12,
+     "z0": 1.63,
+     "z1": 1.91,
+     "n_front": 7.73,
+     "tiefe": 0.06,
+     "quelle": "Fotos 6130/6124/6145 (je Raster Ebene n 7,73 aus K-Kamera-Bruecke, Stufe 0 kreis3 12.11.): zwei gerahmte Tuerchen mit eingelassener Fuellung in der Sockelfront unter dem Band; Innenfeld = Rahmen minus ~0,07 m Rand (Foto), Tiefe ANNAHME"
+    },
+    {
+     "name": "Tuerchen 2 Rahmen",
+     "u0": -6.3,
+     "u1": -5.75,
+     "z0": 1.57,
+     "z1": 1.97,
+     "n_front": 7.73,
+     "tiefe": 0.03,
+     "quelle": "Fotos 6130/6124/6145 (je Raster Ebene n 7,73 aus K-Kamera-Bruecke, Stufe 0 kreis3 12.11.): zwei gerahmte Tuerchen mit eingelassener Fuellung in der Sockelfront unter dem Band; u/z aus Raster-Ablesung (+-0,05 m), Tiefe 0,03 ANNAHME"
+    },
+    {
+     "name": "Tuerchen 2 Fuellung",
+     "u0": -6.23,
+     "u1": -5.82,
+     "z0": 1.63,
+     "z1": 1.91,
+     "n_front": 7.73,
+     "tiefe": 0.06,
+     "quelle": "Fotos 6130/6124/6145 (je Raster Ebene n 7,73 aus K-Kamera-Bruecke, Stufe 0 kreis3 12.11.): zwei gerahmte Tuerchen mit eingelassener Fuellung in der Sockelfront unter dem Band; Innenfeld = Rahmen minus ~0,07 m Rand (Foto), Tiefe ANNAHME"
+    }
+   ],
    "aktiv": true,
    "werte_quellen": {
+    "aussparungen": "Raster-Ablesung in 6130/6124/6145 (Ebene n 7,73): Tuerchen 1 u -5,05..-5,62, Tuerchen 2 u -5,75..-6,30, z 1,57..1,97; Tiefen ANNAHME",
     "u0": "Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
     "u1": "Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
     "n0": "ANNAHME: 0,08 m Einbindung in die Wand (Wandflaeche n 7,28) fuer wasserdichten Druckkoerper",

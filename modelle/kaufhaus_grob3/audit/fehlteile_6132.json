@@ -1,64 +1,78 @@
 {
  "foto": "6132",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261112_055730a055730/wt_r3/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6132 (amtliche Anker)",
  "zelle_px": 154,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    1386,
-    1386,
-    154
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    10.91,
-    1.19,
-    20.72
-   ]
-  },
-  {
-   "zelle": [
-    1386,
-    1848,
-    154
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    11.3,
-    -1.68,
-    17.2
-   ]
-  },
-  {
-   "zelle": [
     924,
+    1540,
+    154
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    15.58,
+    0.33,
+    19.51
+   ]
+  },
+  {
+   "zelle": [
+    1078,
+    1540,
+    154
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    14.68,
+    -3.15,
+    21.33
+   ]
+  },
+  {
+   "zelle": [
+    1386,
+    1694,
+    154
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    11.16,
+    -0.62,
+    18.05
+   ]
+  },
+  {
+   "zelle": [
+    1386,
     2002,
     154
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    14.49,
-    1.15,
-    14.03
+    11.58,
+    -3.18,
+    16.02
    ]
   },
   {
    "zelle": [
-    924,
-    2156,
+    1540,
+    2002,
     154
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    14.46,
-    0.82,
-    12.92
+    9.46,
+    -2.21,
+    15.31
    ]
   },
   {
@@ -70,23 +84,9 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    13.85,
-    2.16,
-    11.0
-   ]
-  },
-  {
-   "zelle": [
-    1848,
-    3696,
-    154
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    6.96,
-    0.97,
-    1.63
+    13.8,
+    2.38,
+    10.86
    ]
   }
  ],
