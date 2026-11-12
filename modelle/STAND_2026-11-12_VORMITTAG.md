@@ -2,7 +2,7 @@
 
 Anrede: "mein grosser Meister", Deutsch, ehrliche Fehlerliste und Realitaet %, keine Schoenfaerberei.
 Ziel: ueberzeugendes H0-Modell kaufhaus_grob3 (Historisches Kaufhaus Freiburg) fuer Miniatur-Wunderland, ueber den Konvergenz-Kreis. Drucken ist NICHT das Ziel.
-Viewer: https://claude.ai/artifact/9mpGqmnVR3bBqUYnh6jXyQ (Neubau: `bash /media/oem/scan/rc-park_tmp/viewer/neu_html.sh`, dann mit dem Artifact-Tool auf diese URL publizieren; Stand zuletzt v55).
+Viewer: https://claude.ai/artifact/9mpGqmnVR3bBqUYnh6jXyQ (Neubau: `bash /media/oem/scan/rc-park_tmp/viewer/neu_html.sh`, dann mit dem Artifact-Tool auf diese URL publizieren; Stand zuletzt v57 (12.11. abends, Commit 2644aa57: Erker-Rippen nachgefuehrt)).
 
 ## Prioritaeten des Nutzers
 1. Erker Netzrippen (Gedaest, Rosetten, Rippenbuendel in die runde Saeule, Eckfiguren/Drachen). Schluesselfoto 6171 (dreisträngige Spitzbogenrippen, Rautennetz, Buendel); Rosetten am West-Erker in 6162 sichtbar.
