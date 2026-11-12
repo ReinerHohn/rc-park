@@ -39,4 +39,13 @@ if ls modelle/$1/messprotokoll/Z-*.json >/dev/null 2>&1; then
   set +e; TOUT=$($PY -W ignore -I tools/test_regeln_cb.py "$OBJ" 2>&1); RT=$?; set -e; echo "$TOUT" | grep -E "out of memory|OutOfMemory|CUDA_ERROR|Traceback" | head -3; echo "$TOUT" | tail -8
   if [ "$RT" != "0" ]; then echo "GEGENPROBEN CB FEHLGESCHLAGEN"; [ "$RC" = "0" ] && RC=3; fi
 fi
+# 13.11.: Rundum-Kantenbilder (7 Blickrichtungen) fuer jeden Erker nach dem Bau -> modelle/<objekt>/audit/rundum_<teil>.jpg (fehlende Seiten/Fenster fallen sofort auf; NUR Anzeige, aendert das Ergebnis nicht)
+$PY -I - "$OBJ" <<'PYE' 2>&1 | tail -4 || true
+import json, subprocess, sys, os
+o = json.load(open(sys.argv[1])); aud = os.path.join(os.path.dirname(sys.argv[1]), "audit"); os.makedirs(aud, exist_ok=True)
+for i, b in enumerate(o.get("bauteile", [])):
+    if str(b.get("typ", "")).startswith("erker_polygon"):
+        z = b["zonen"]; zm = (float(z["z_wappen_unten"]) + float(z["z_trauf_unten"])) / 2; n = (float(b["wand_n"]) + float(b["n_front"])) / 2
+        subprocess.run([sys.executable, "-W", "ignore", "-I", "tools/rundum_kanten.py", sys.argv[1], "--u", str(b["u_mitte"]), "--n", str(n), "--z", f"{zm:.2f}", "--abstand", "7", "--hoehe", "9", "--aus", os.path.join(aud, f"rundum_{b['typ'].replace(':', '_')}.jpg")], check=False)
+PYE
 exit $RC
