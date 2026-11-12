@@ -928,13 +928,15 @@ def erker_polygon(cfg, ctx):
     def flaechen_matrix(a, b, tief):                                                                                 # lokal (x entlang -t, y = z, z = nach innen) -> (u, n, z); Rechtssystem
         w = float(np.linalg.norm(b - a)); t = (b - a) / w; nu = np.array([t[1], -t[0]]); c = (a + b) / 2 + nu * 0.05
         return w, [[-t[0], 0, -nu[0], um + c[0]], [-t[1], 0, -nu[1], c[1]], [0, 1, 0, 0]], tief + 0.05
-    for a, b in fl3:
-        w, T_, dep = flaechen_matrix(a, b, td); wl = (w - 2 * rb - (nl - 1) * pf) / nl
-        for j in range(nl):
-            x0 = -w / 2 + rb + j * (wl + pf); x1 = x0 + wl; xm = (x0 + x1) / 2; hw = wl / 2
+    fl_ = [(a_, b_, nl, rb) for a_, b_ in fl3] + [(np.array(base[i_], float), np.array(base[i_ + 1], float), 1, float(fz.get("end_rahmen_b", 0.05))) for i_ in (fz.get("end_flaechen") or [])]   # 12.11.: Seitenfenster der aeusseren Rueckkehrflaechen (base 0->1 und 4->5), je 1 Licht
+    for fi_, (a, b, nlf, rbf) in enumerate(fl_):
+        w, T_, dep = flaechen_matrix(a, b, td); wl = (w - 2 * rbf - (nlf - 1) * pf) / nlf
+        for j in range(nlf):
+            x0 = -w / 2 + rbf + j * (wl + pf); x1 = x0 + wl; xm = (x0 + x1) / 2; hw = wl / 2
             unten = [(x0, zl0), (x1, zl0), (x1, zk - kh / 2), (x0, zk - kh / 2)]
             ob = [(x0, zk + kh / 2), (x1, zk + kh / 2)] + [(xm + (x1 - xm) * s_, zlm + (zls - zlm) * s_ ** 2) for s_ in np.linspace(1, -1, 13)]
             for poly in (unten, ob): schnitte.append(M.extrude(C([ccw(np.array(poly, float))]), dep).transform(T_))
+        if fi_ >= 3: continue                                                                                          # Rueckkehrflaechen: nur Fenster, kein Wappenfeld
         wa, T2, dp2 = flaechen_matrix(a, b, float(wz["tiefe"])); z0w, z1w = Zn["z_wappen_unten"] + float(wz["rand_z"]), Zn["z_wappen_oben"] - float(wz["rand_z"])
         feld = C([ccw(np.array([(-wa / 2 + float(wz["rand_u"]), z0w), (wa / 2 - float(wz["rand_u"]), z0w), (wa / 2 - float(wz["rand_u"]), z1w), (-wa / 2 + float(wz["rand_u"]), z1w)], float))])
         schild = C.circle(1.0, 40).scale((float(wz["schild_b"]) / 2, float(wz["schild_h"]) / 2)).translate((0.0, (z0w + z1w) / 2)); schnitte.append(M.extrude(feld - schild, dp2).transform(T2))

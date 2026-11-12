@@ -4246,7 +4246,11 @@
     "z_licht_unten": 9.92,
     "z_licht_oben_seite": 12.3,
     "z_licht_oben_mitte": 12.05,
-    "tiefe": 0.1
+    "tiefe": 0.1,
+    "end_flaechen": [
+     0,
+     4
+    ]
    },
    "wappen": {
     "rand_u": 0.12,
@@ -7531,7 +7535,11 @@
     "z_licht_unten": 9.92,
     "z_licht_oben_seite": 12.3,
     "z_licht_oben_mitte": 12.05,
-    "tiefe": 0.1
+    "tiefe": 0.1,
+    "end_flaechen": [
+     0,
+     4
+    ]
    },
    "wappen": {
     "rand_u": 0.12,
