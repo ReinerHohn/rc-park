@@ -25,7 +25,7 @@ def main():
     fw = [int(v) for v in a[a.index("--fenster") + 1:a.index("--fenster") + 5]]; bx = [float(v) for v in a[a.index("--box") + 1].split(",")]
     tol = float(a[a.index("--tol") + 1]) if "--tol" in a else 0.04; aus = a[a.index("--aus") + 1] if "--aus" in a else "."; os.makedirs(aus, exist_ok=True)
     img = lambda k: cv2.imread(glob.glob(os.path.join(root, obj["fotos_dir"], k[2:] + "_*"))[0])
-    K = EPI.kam(od, kam); im = img(kam); G = gold(im, 95); Kp = [(EPI.kam(od, k), cv2.dilate(gold(img(k), 25).astype(np.uint8), np.ones((9, 9), np.uint8)) > 0) for k in pr]
+    K = EPI.kam(od, kam); im = img(kam); G = gold(im, float(os.environ.get("GOLD_TH", 95))); Kp = [(EPI.kam(od, k), cv2.dilate(gold(img(k), 25).astype(np.uint8), np.ones((9, 9), np.uint8)) > 0) for k in pr]
     x0, y0, x1, y1 = fw; sk = skeletonize(G[y0:y1, x0:x1]); ys, xs = np.nonzero(sk); pts = np.c_[xs + x0, ys + y0][::3]
     m = trimesh.load(os.path.join(root, obj["stl"])); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0)
     kk = json.load(open(os.path.join(od, "messprotokoll", kam + ".json")))["kamera"]; m.apply_translation(np.asarray(kk.get("rahmen_verschiebung", [0, 0, 0]), float))

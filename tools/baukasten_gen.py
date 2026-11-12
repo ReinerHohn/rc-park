@@ -890,6 +890,7 @@ def erker_polygon(cfg, ctx):
         pfade_ = [(np.array(p_, float), nrm_.copy()) for p_ in rpf["pfade"]]
         if rpf.get("spiegel_u") is not None:                                                                           # ANNAHME (siehe quelle): zweiter Bogen = Spiegelbild an u = spiegel_u (Normale u-Anteil gespiegelt)
             uc_ = float(rpf["spiegel_u"]); pfade_ += [(np.column_stack([2 * uc_ - q_[:, 0], q_[:, 1], q_[:, 2]]), np.array([-n0_[0], n0_[1], n0_[2]])) for q_, n0_ in pfade_]
+        pfade_ += [(np.array(q_, float), nrm_.copy()) for q_ in rpf.get("pfade_ohne_spiegel", [])]                         # 12.11.: Rippen aus dem Gold-Skelett des Fotos, beidseitig gemessen -> nicht spiegeln
         if rpf.get("drehungen"):                                                                                       # ANNAHME: Schraegflaechen = Frontnetz um die Erkerachse gedreht (regelmaessiges Teil-Achteck, seite_schraeg = seite_front, 45 Grad); Normale dreht mit
             cu_, cn_ = [float(v) for v in rpf["drehung_zentrum"]]; neu_ = []
             for ang_ in rpf["drehungen"]:
