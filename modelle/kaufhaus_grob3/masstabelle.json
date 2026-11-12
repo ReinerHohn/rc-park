@@ -7775,6 +7775,14 @@
    "erledigt": "ersetzt durch Pruefer-Rest kreis 20261112_070036a070036 r2"
   },
   {
+   "datum": "2026-11-12",
+   "wer": "Pruefer opus kreis 20261112_070036a070036 r2 (automatisch)",
+   "teil": "quader:laube_sockel_w",
+   "merkmal": "Pruefer-Rest quader:laube_sockel_w kreis 20261112_070036a070036 r2",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Dichte-Verdacht t (marge -0,003): Fugenlage nur per Sichtpruefung 6130/6145/112108 fein bestaetigt, nicht per Kennzahl | Foto-F1 grob unveraendert 0,816: gelbe Flaechen identisch vorher/nachher | gelb 6130/6145: Gesimsband-Unterkante und Absatz im Westteil fehlen (x 230-370 bzw. 360-660) | gelb 6130: Bandunterkante ueber Tuerchen 1 fehlt | gelb 6130: Schild an Tuerchen 2 fehlt | 6206/112108: Wulst und Deckplatte (gerundeter Ueberstand) fehlen, Modell glatter Block | rot 112108: Westende ANNAHME und Kontur der Ostecke falsch | vertiefte Fuellungsfelder fehlen | Fugen westlich -6,43 und Fuge -2,50 offen (Fotos widersprechen sich) | Fugenbreite 0,04 und Tiefe 0,02 ANNAHME ungemessen | foto_diff und fehlteile_finden nicht gelaufen",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto 6261, Treffer 2)",
    "auto_id": "fehlteile-6261-234-1794",
@@ -7841,14 +7849,6 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "2026-11-12",
-   "wer": "Pruefer opus kreis 20261112_070036a070036 r2 (automatisch)",
-   "teil": "quader:laube_sockel_w",
-   "merkmal": "Pruefer-Rest quader:laube_sockel_w kreis 20261112_070036a070036 r2",
-   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Dichte-Verdacht t (marge -0,003): Fugenlage nur per Sichtpruefung 6130/6145/112108 fein bestaetigt, nicht per Kennzahl | Foto-F1 grob unveraendert 0,816: gelbe Flaechen identisch vorher/nachher | gelb 6130/6145: Gesimsband-Unterkante und Absatz im Westteil fehlen (x 230-370 bzw. 360-660) | gelb 6130: Bandunterkante ueber Tuerchen 1 fehlt | gelb 6130: Schild an Tuerchen 2 fehlt | 6206/112108: Wulst und Deckplatte (gerundeter Ueberstand) fehlen, Modell glatter Block | rot 112108: Westende ANNAHME und Kontur der Ostecke falsch | vertiefte Fuellungsfelder fehlen | Fugen westlich -6,43 und Fuge -2,50 offen (Fotos widersprechen sich) | Fugenbreite 0,04 und Tiefe 0,02 ANNAHME ungemessen | foto_diff und fehlteile_finden nicht gelaufen",
-   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
