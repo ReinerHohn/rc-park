@@ -1,92 +1,92 @@
 {
  "foto": "6127",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261112_040618a040618/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6127 (amtliche Anker)",
- "zelle_px": 162,
+ "zelle_px": 161,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    1458,
-    810,
-    162
+    644,
+    1449,
+    161
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    12.03,
-    1.28,
-    20.47
+    13.74,
+    8.31,
+    12.12
    ]
   },
   {
    "zelle": [
-    648,
-    1458,
-    162
+    805,
+    1449,
+    161
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    13.58,
-    8.37,
-    11.87
+    11.37,
+    8.66,
+    11.49
    ]
   },
   {
    "zelle": [
-    972,
-    1620,
-    162
+    2093,
+    1610,
+    161
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    8.6,
+    -2.66,
+    12.98
+   ]
+  },
+  {
+   "zelle": [
+    2093,
+    1771,
+    161
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    9.78,
+    -4.68,
+    12.32
+   ]
+  },
+  {
+   "zelle": [
+    966,
+    2254,
+    161
    ],
    "score": -0.997,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    11.65,
-    7.31,
-    11.0
+    14.48,
+    4.43,
+    7.45
    ]
   },
   {
    "zelle": [
-    648,
-    1620,
-    162
+    1932,
+    1771,
+    161
    ],
-   "score": -0.98,
+   "score": -0.982,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    12.5,
-    8.97,
-    10.44
-   ]
-  },
-  {
-   "zelle": [
-    324,
-    1944,
-    162
-   ],
-   "score": -0.98,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    16.15,
-    8.64,
-    9.08
-   ]
-  },
-  {
-   "zelle": [
-    1134,
-    2106,
-    162
-   ],
-   "score": -0.97,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    11.4,
-    5.93,
-    7.85
+    10.32,
+    -3.1,
+    12.53
    ]
   }
  ],

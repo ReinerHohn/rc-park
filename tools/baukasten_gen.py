@@ -960,7 +960,7 @@ def satteldach(cfg, ctx):
     poly = [(ntv, zu), (ntv, ztv), (nf, zf), (nth, zth), (nth, zu)]
     q = M.extrude(C([ccw(np.array(poly, float))]), u1 - u0)                                          # x=n, y=z, Extrusion z=u
     q = q.transform([[0, 0, 1, u0], [1, 0, 0, 0], [0, 1, 0, 0]])                                    # (n,z,u) -> (u,n,z): x=u0+extr, y=n, z=z
-    ab, tf, an = float(cfg.get("ziegel_abstand") or 0), float(cfg.get("ziegel_tiefe") or 0), float(cfg.get("ziegel_anteil") or 0.4); ze = float(cfg.get("ziegel_einbindung") or 0.0)                    # Ziegelreihen: Leisten quer zum Hang (Kanten fuer den Foto-Diff); 0 = glatt
+    ab, tf, an = float(cfg.get("ziegel_abstand") or 0), float(cfg.get("ziegel_tiefe") or 0), float(cfg.get("ziegel_anteil") or 0.4); ze = float(cfg.get("ziegel_einbindung") or 0.0); fase = float(cfg.get("ziegel_fase") or 0.0); rand = float(cfg.get("ziegel_rand") or 0.0)                    # Ziegelreihen: Leisten quer zum Hang (Kanten fuer den Foto-Diff); 0 = glatt
     if ab > 0.05 and tf > 0.005:
         streifen = []
         for (na, za, nb_, zb_) in ((ntv, ztv, nf, zf), (nf, zf, nth, zth)):                                                                        # Vorder- und Hinterhang
@@ -968,8 +968,9 @@ def satteldach(cfg, ctx):
             if (n_out[1] < 0): n_out = -n_out                                                                                                          # Aussenseite zeigt nach oben
             for i in range(int(L / ab)):
                 s0 = (i + 0.5) * ab; p0 = np.array([na, za]) + t_ * s0 - n_out * ze; p1 = p0 + t_ * ab * an                                       # ze = ziegel_einbindung (m) in die Dachflaeche (Druck: sonst Beruehrflaeche -> Splitterkanten im STL)
-                poly = [tuple(p0), tuple(p1), tuple(p1 + n_out * (tf + ze)), tuple(p0 + n_out * (tf + ze))]
-                e = M.extrude(C([ccw(np.array(poly, float))]), u1 - u0).transform([[0, 0, 1, u0], [1, 0, 0, 0], [0, 1, 0, 0]]); streifen.append(e)
+                poly = [tuple(p0), tuple(p1), tuple(p1 + n_out * (tf + ze)), tuple(p0 + t_ * min(fase, ab * an * 0.9) + n_out * (tf + ze))]   # ziegel_fase (m): untere Flanke der Leiste laeuft rampenfoermig hangaufwaerts aus (kein Ueberhang beim Druck; Biberschwanz-Reihen), 0 = senkrechte Stufe
+                if min(q_[0] for q_ in poly) < min(ntv, nth) or max(q_[0] for q_ in poly) > max(ntv, nth): continue                                    # Leiste darf nicht ueber den Dach-Grundriss (n der Traufen) hinausragen: sonst wachsen Teilmasse (Druckbett) und die Teilung schneidet zusaetzlich
+                e = M.extrude(C([ccw(np.array(poly, float))]), u1 - u0 - 2 * rand).transform([[0, 0, 1, u0 + rand], [1, 0, 0, 0], [0, 1, 0, 0]]); streifen.append(e)   # ziegel_rand: Leisten enden rand m vor den Dachenden (Stirnflaechen nicht deckungsgleich mit u0/u1: Druckreparatur-Splitter)
         if streifen: q = UNION([q] + streifen)
     for sp in (cfg.get("speier") or []):                                                              # Traufspeier (Wasserspeier): geneigter Kragarm aus der Traufe + Kopf (Drache) am Ende; je Speier {u, z, laenge, breite, hoehe, kopf_laenge, kopf_hoehe, z_ende (optional: Hoehe des Kopfendes, sonst waagerecht), quelle}
         if not sp.get("quelle"): sys.exit(f"satteldach: Speier {sp} ohne quelle (Regel 3b)")

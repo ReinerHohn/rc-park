@@ -1,0 +1,123 @@
+{
+ "id": "ZR-dachreihen",
+ "typ": "dachreihen_autokorrelation",
+ "bauteil": "satteldach:haupt",
+ "fotos": [
+  "6162",
+  "6132",
+  "6145",
+  "j05"
+ ],
+ "u_bereich": [
+  5.0,
+  8.0
+ ],
+ "s_bereich": [
+  3.5,
+  9.5
+ ],
+ "je_foto": {
+  "6162": {
+   "peaks_m_korr": [
+    [
+     0.18,
+     0.88
+    ],
+    [
+     0.36,
+     0.8
+    ],
+    [
+     0.54,
+     0.72
+    ],
+    [
+     0.72,
+     0.65
+    ],
+    [
+     0.91,
+     0.55
+    ]
+   ],
+   "erste_periode_m": 0.18
+  },
+  "6132": {
+   "peaks_m_korr": [
+    [
+     0.18,
+     0.81
+    ],
+    [
+     0.37,
+     0.72
+    ],
+    [
+     0.55,
+     0.64
+    ],
+    [
+     0.73,
+     0.56
+    ],
+    [
+     0.91,
+     0.39
+    ]
+   ],
+   "erste_periode_m": 0.18
+  },
+  "6145": {
+   "peaks_m_korr": [
+    [
+     0.18,
+     0.71
+    ],
+    [
+     0.35,
+     0.56
+    ],
+    [
+     0.53,
+     0.44
+    ],
+    [
+     0.71,
+     0.37
+    ],
+    [
+     0.89,
+     0.28
+    ]
+   ],
+   "erste_periode_m": 0.18
+  },
+  "j05": {
+   "peaks_m_korr": [
+    [
+     0.18,
+     0.87
+    ],
+    [
+     0.36,
+     0.8
+    ],
+    [
+     0.54,
+     0.76
+    ],
+    [
+     0.72,
+     0.71
+    ],
+    [
+     0.9,
+     0.63
+    ]
+   ],
+   "erste_periode_m": 0.18
+  }
+ },
+ "reihenabstand_m": 0.18,
+ "massstab_von": "Kameras aus SfM-Buendel (K-*.json), Hangebene aus Traufe/First des Bauteils; Reihenabstand intern (nur relativ zur Hangebene, Fehler = Hangneigungsfehler)"
+}

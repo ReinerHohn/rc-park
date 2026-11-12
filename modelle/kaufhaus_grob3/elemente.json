@@ -1416,7 +1416,7 @@
  },
  {
   "seite": "alle",
-  "element": "Anbauteile ohne Kontakt: 3 Konsolen, 0 Splitter verworfen",
+  "element": "Anbauteile ohne Kontakt: 3 Konsolen, 1 Splitter verworfen",
   "quelle": "baukasten_gen Druckregel (tools/anbau_verbinden.py-Prototyp 5.11.): Konsole = Huelle der unteren 20 % des Teils + 0,1 m in die naechste Modellflaeche; Form des Teils unveraendert",
   "seite_name": "alle"
  },

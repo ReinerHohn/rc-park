@@ -1,14 +1,14 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261112_040618a040618/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.667000282287596,
-  "first_z": 26.057001136779782,
+  "first_z": 26.05856760406494,
   "giebel_w_z": 27.667000282287596,
   "giebel_o_z": 27.306999549865722,
   "helm_w_z": 20.88700064849853,
   "helm_o_z": 21.32700006866455,
-  "dach_z_off11": 15.762130348205567,
+  "dach_z_off11": 15.81177723884582,
   "pfeiler3_d": 0.8810006134406724,
   "arkade1_scheitel": 5.620651222229004,
   "fenster2_sohl": 8.856999847412109,
@@ -18,9 +18,9 @@
   "lichter_g2_breite_max": 0.72,
   "lichter_g2_ebene_abstand": 2.100998476674905,
   "handlauf_z": 8.25699973297119,
-  "helm_w_fussbreite_x": 2.3264116744995116,
+  "helm_w_fussbreite_x": 2.30503902053833,
   "helm_w_fussbreite_y": 2.13911196899414,
-  "helm_w_fussbreite_punkte": 23.0,
+  "helm_w_fussbreite_punkte": 25.0,
   "rueck_z6": -0.005787998491273427,
   "rueck_z10": -0.004582697634774924,
   "rueck_z143": -0.0020122868095460156,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.2521246259134438,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10590148717164993,
-  "wand_anteil_unter": 0.0007333333333333333,
+  "wand_pq": 0.07189840823411942,
+  "wand_anteil_unter": 0.0006,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -115,14 +115,14 @@
   "figur2_bein_np": 0.1163362359404384,
   "figur2_bein_nm": 0.11366392031008159,
   "gaube_a_vordach_vor": 1.5221385427095424,
-  "gaube_a_vordach_up": 0.6900120529944501,
-  "gaube_a_vordach_um": 0.7599881541509903,
-  "gaube_a_stirn_vor": 1.3071388564463446,
+  "gaube_a_vordach_up": 0.6900120524714872,
+  "gaube_a_vordach_um": 0.7599881542172172,
+  "gaube_a_stirn_vor": 1.3071388564639002,
   "gaube_a_dach_z": 20.606999999999978,
   "gaube_b_vordach_vor": 1.5221473701353774,
-  "gaube_b_vordach_up": 0.7152417382135962,
-  "gaube_b_vordach_um": 0.7347579394561409,
-  "gaube_b_stirn_vor": 1.307147482084068,
+  "gaube_b_vordach_up": 0.7152417438911938,
+  "gaube_b_vordach_um": 0.7347579449777877,
+  "gaube_b_stirn_vor": 1.307147482122345,
   "gaube_b_dach_z": 20.606999999999978,
   "helm_o_r_13_45": 1.728237119619691,
   "helm_o_r_14_12": 1.2710497481663776,
@@ -134,7 +134,7 @@
   "giebel_o_top_b2": 25.967000953674315,
   "giebel_o_top_b4": 23.287001106262206,
   "giebel_o_top_b8": 17.92700008392334,
-  "giebel_o_vorn_n": 3.000488072033674,
+  "giebel_o_vorn_n": 3.000488044316985,
   "helm_w_r_13_45": 1.7423634634583567,
   "helm_w_r_14_12": 1.2970544770700363,
   "helm_w_r_14_38": 1.1870505067490111,
@@ -149,9 +149,9 @@
   "helm_w_r_16_97": 0.50156475290109,
   "helm_w_r_17_76": 0.4115380508985133,
   "helm_w_r_18_58": 0.3365087766423552,
-  "giebel_o_u_reach_n10": 2.8878019857267163,
+  "giebel_o_u_reach_n10": 2.88788015847348,
   "gaube_b_dach_z7": 21.166999999999977,
-  "gaube_b_dach_z62": 21.90699999999995,
+  "gaube_b_dach_z62": 21.88699999999995,
   "fenster_og_g3_lichtweite_anzahl": 3.0,
   "fenster_og_g3_lichtweite_breite_median": 0.68,
   "fenster_og_g3_lichtweite_breite_max": 0.72,
@@ -174,21 +174,21 @@
   "fenster_eg0_oberkante_l": 0.020015157882883994,
   "fenster_eg0_oberkante_r": 0.021167845710816646,
   "gaube_u_a_vordach_vor": 1.6649270668863148,
-  "gaube_u_a_stirn_vor": 1.5149271998044584,
-  "gaube_u_a_vordach_up": 0.7150342467963634,
-  "gaube_u_a_vordach_um": 0.714966170112591,
+  "gaube_u_a_stirn_vor": 1.5149272014766704,
+  "gaube_u_a_vordach_up": 0.7150342531916253,
+  "gaube_u_a_vordach_um": 0.7149661915269077,
   "gaube_u_a_dach_z": 16.62699999999999,
   "gaube_u_a_vordach_z": 16.246999999999993,
   "gaube_u_m_vordach_vor": 1.6649466714089318,
-  "gaube_u_m_stirn_vor": 1.5149465806930429,
-  "gaube_u_m_vordach_up": 0.714996658809333,
-  "gaube_u_m_vordach_um": 0.7150031649453987,
+  "gaube_u_m_stirn_vor": 1.5149465807539,
+  "gaube_u_m_vordach_up": 0.714996651288376,
+  "gaube_u_m_vordach_um": 0.7150031687058777,
   "gaube_u_m_dach_z": 16.62699999999999,
   "gaube_u_m_vordach_z": 16.246999999999993,
   "gaube_u_c_vordach_vor": 1.6649044550157686,
-  "gaube_u_c_stirn_vor": 1.514904701469838,
-  "gaube_u_c_vordach_up": 0.7149595818411174,
-  "gaube_u_c_vordach_um": 0.715040194041038,
+  "gaube_u_c_stirn_vor": 1.5149047012215924,
+  "gaube_u_c_vordach_up": 0.7149595811856293,
+  "gaube_u_c_vordach_um": 0.7150401847515301,
   "gaube_u_c_dach_z": 16.62699999999999,
   "gaube_u_c_vordach_z": 16.246999999999993,
   "fenster_eg1_rahmenfront": 0.016407608593362877,
@@ -269,7 +269,8 @@
   "eckfigur_zmin_erker1_ecke2": 11.217000297546386,
   "eckfigur_zmin_erker1_ecke3": 11.217000297546386,
   "eckfigur_zmin_erker1_ecke4": 11.217000297546386,
-  "eckfigur_zmin_erker1_ecke1": 11.287000144958496
+  "eckfigur_zmin_erker1_ecke1": 11.287000144958496,
+  "ziegel_reihenabstand_haupt": 0.17999994083697768
  },
  "pruefungen": [
   {
@@ -284,7 +285,7 @@
   },
   {
    "name": "First Hauptdach z (m), Firstmitte along 0..7",
-   "wert": 27.51000113677978,
+   "wert": 27.51156760406494,
    "soll": [
     27.1,
     27.8
@@ -334,7 +335,7 @@
   },
   {
    "name": "Vorderhang z bei off 11,0 (Traufe 14,68 + Neigung 53,3 Grad)",
-   "wert": 17.215130348205566,
+   "wert": 17.26477723884582,
    "soll": [
     16.5,
     17.3
@@ -464,7 +465,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10590148717164993,
+   "wert": 0.07189840823411942,
    "soll": [
     0.0348,
     100
@@ -894,7 +895,7 @@
   },
   {
    "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach Halbbreite nach +u bei z 21,33 (Foto 0,71-0,74)",
-   "wert": 0.6900120529944501,
+   "wert": 0.6900120524714872,
    "soll": [
     0.63,
     0.83
@@ -904,7 +905,7 @@
   },
   {
    "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Vordach Halbbreite nach -u bei z 21,33",
-   "wert": 0.7599881541509903,
+   "wert": 0.7599881542172172,
    "soll": [
     0.63,
     0.83
@@ -914,7 +915,7 @@
   },
   {
    "name": "Gaube obere Reihe A (links im Bild 6162, u 0,7): Stirn-/Fensterkasten-Front bei z 20,85 (n-Reichweite ab n 7,0; Foto n 8,31) - Wachposten, am Altmodell schon gruen",
-   "wert": 1.3071388564463446,
+   "wert": 1.3071388564639002,
    "soll": [
     1.23,
     1.39
@@ -944,7 +945,7 @@
   },
   {
    "name": "Gaube obere Reihe B (u 6,55): Vordach Halbbreite nach +u bei z 21,33 (Foto 0,71-0,74)",
-   "wert": 0.7152417382135962,
+   "wert": 0.7152417438911938,
    "soll": [
     0.63,
     0.83
@@ -954,7 +955,7 @@
   },
   {
    "name": "Gaube obere Reihe B (u 6,55): Vordach Halbbreite nach -u bei z 21,33",
-   "wert": 0.7347579394561409,
+   "wert": 0.7347579449777877,
    "soll": [
     0.63,
     0.83
@@ -964,7 +965,7 @@
   },
   {
    "name": "Gaube obere Reihe B (u 6,55): Stirn-/Fensterkasten-Front bei z 20,85 (n-Reichweite ab n 7,0; Foto n 8,31) - Wachposten, am Altmodell schon gruen",
-   "wert": 1.307147482084068,
+   "wert": 1.307147482122345,
    "soll": [
     1.23,
     1.39
@@ -1064,7 +1065,7 @@
   },
   {
    "name": "Ostgiebel Aussenebene u (m) bei n 10,5 (Kappenhoehe z 18,9, nur Giebel)",
-   "wert": 15.887801985726716,
+   "wert": 15.88788015847348,
    "soll": [
     15.72,
     16.07
@@ -1074,7 +1075,7 @@
   },
   {
    "name": "Ostgiebel Wandneigung: Aussenebene u(n 3,45) - u(n 10,5) (m)",
-   "wert": 0.4238664667450007,
+   "wert": 0.4237882939982369,
    "soll": [
     0.28,
     0.58
@@ -1114,7 +1115,7 @@
   },
   {
    "name": "Ostgiebel Vorderende der Stufe 8 (n, m) bei z 19,2",
-   "wert": 11.000488072033674,
+   "wert": 11.000488044316985,
    "soll": [
     10.85,
     11.2
@@ -1384,7 +1385,7 @@
   },
   {
    "name": "Gaube untere Reihe A (u 9,46, im Foto links): Stirn-/Fensterkasten-Front bei z 17,20 (n-Reichweite ab n 9,5; Foto n 11,0)",
-   "wert": 1.5149271998044584,
+   "wert": 1.5149272014766704,
    "soll": [
     1.41,
     1.62
@@ -1394,7 +1395,7 @@
   },
   {
    "name": "Gaube untere Reihe A (u 9,46, im Foto links): Vordach Halbbreite nach +u bei z 17,70 (misst Breite UND Lage; Foto 0,68-0,74)",
-   "wert": 0.7150342467963634,
+   "wert": 0.7150342531916253,
    "soll": [
     0.62,
     0.82
@@ -1404,7 +1405,7 @@
   },
   {
    "name": "Gaube untere Reihe A (u 9,46, im Foto links): Vordach Halbbreite nach -u bei z 17,70",
-   "wert": 0.714966170112591,
+   "wert": 0.7149661915269077,
    "soll": [
     0.62,
     0.82
@@ -1444,7 +1445,7 @@
   },
   {
    "name": "Gaube untere Reihe Mitte (u 3,50): Stirn-/Fensterkasten-Front bei z 17,20 (n-Reichweite ab n 9,5; Foto n 11,0)",
-   "wert": 1.5149465806930429,
+   "wert": 1.5149465807539,
    "soll": [
     1.41,
     1.62
@@ -1454,7 +1455,7 @@
   },
   {
    "name": "Gaube untere Reihe Mitte (u 3,50): Vordach Halbbreite nach +u bei z 17,70 (misst Breite UND Lage; Foto 0,68-0,74)",
-   "wert": 0.714996658809333,
+   "wert": 0.714996651288376,
    "soll": [
     0.62,
     0.82
@@ -1464,7 +1465,7 @@
   },
   {
    "name": "Gaube untere Reihe Mitte (u 3,50): Vordach Halbbreite nach -u bei z 17,70",
-   "wert": 0.7150031649453987,
+   "wert": 0.7150031687058777,
    "soll": [
     0.62,
     0.82
@@ -1504,7 +1505,7 @@
   },
   {
    "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Stirn-/Fensterkasten-Front bei z 17,20 (n-Reichweite ab n 9,5; Foto n 11,0)",
-   "wert": 1.514904701469838,
+   "wert": 1.5149047012215924,
    "soll": [
     1.41,
     1.62
@@ -1514,7 +1515,7 @@
   },
   {
    "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Vordach Halbbreite nach +u bei z 17,70 (misst Breite UND Lage; Foto 0,68-0,74)",
-   "wert": 0.7149595818411174,
+   "wert": 0.7149595811856293,
    "soll": [
     0.62,
     0.82
@@ -1524,7 +1525,7 @@
   },
   {
    "name": "Gaube untere Reihe C (u -2,46, im Foto rechts): Vordach Halbbreite nach -u bei z 17,70",
-   "wert": 0.715040194041038,
+   "wert": 0.7150401847515301,
    "soll": [
     0.62,
     0.82
@@ -2218,6 +2219,16 @@
    "soll": [
     11.267000000000001,
     11.307
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Hauptdach Ziegel: Reihenabstand entlang des Hangs (m), Senkrechtschnitt u 6,5",
+   "wert": 0.17999994083697768,
+   "soll": [
+    0.16,
+    0.2
    ],
    "ok": true,
    "status": "ok"

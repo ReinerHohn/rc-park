@@ -1,92 +1,92 @@
 {
  "foto": "h11_112108",
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261112_040618a040618/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-h11_112108 (amtliche Anker)",
- "zelle_px": 138,
+ "zelle_px": 137,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    1380,
-    2622,
-    138
+    1233,
+    2740,
+    137
    ],
-   "score": -0.839,
+   "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -2.08,
-    1.46,
+    4.36,
+    3.66,
+    1.71
+   ]
+  },
+  {
+   "zelle": [
+    2740,
+    0,
+    137
+   ],
+   "score": -0.973,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    0.09,
+    11.65,
+    16.57
+   ]
+  },
+  {
+   "zelle": [
+    1096,
+    2603,
+    137
+   ],
+   "score": -0.927,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -1.09,
+    -0.32,
     1.57
    ]
   },
   {
    "zelle": [
-    966,
-    2622,
-    138
+    1781,
+    2603,
+    137
    ],
-   "score": -0.825,
+   "score": -0.919,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    0.26,
-    -0.5,
+    -1.58,
+    4.6,
     1.56
    ]
   },
   {
    "zelle": [
-    1656,
-    2622,
-    138
+    1370,
+    2603,
+    137
    ],
-   "score": -0.818,
+   "score": -0.903,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -1.29,
-    3.84,
-    1.59
+    -2.15,
+    1.31,
+    1.56
    ]
   },
   {
    "zelle": [
-    1242,
-    2622,
-    138
+    1507,
+    2603,
+    137
    ],
-   "score": -0.749,
+   "score": -0.891,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -0.82,
-    1.0,
+    -1.27,
+    2.81,
     1.6
-   ]
-  },
-  {
-   "zelle": [
-    1104,
-    2622,
-    138
-   ],
-   "score": -0.747,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -0.6,
-    0.03,
-    1.57
-   ]
-  },
-  {
-   "zelle": [
-    1518,
-    2622,
-    138
-   ],
-   "score": -0.695,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -0.89,
-    3.05,
-    1.61
    ]
   }
  ],

@@ -137,6 +137,28 @@ class Messer:
             a_, b_ = P @ d, P @ q; s = (np.abs(b_) <= quer_max) & (a_ >= 0) & (a_ <= r_max)
             if s.any(): best = float(np.nanmax([best, a_[s].max()])) if np.isfinite(best) else float(a_[s].max())
         return best
+    def ziegel_reihenabstand(self, u, achse_n, n_traufe, z_traufe, n_first, z_first, s0=3.5, s1=6.5, **k):
+        """Reihenabstand (m, ENTLANG des Hangs) der Ziegelleisten auf dem Vorderhang eines Satteldachs (2026-11-12): Senkrechtschnitt quer zur Achse bei Lage u,
+        Hoehe jedes Schnittpunkts ueber der Hangebene; Leisten-Oberkanten (Hoehe > Haelfte der Maximalhoehe) zu Gruppen (Luecke > 2 cm) -> Anfang je Gruppe -> Median der Abstaende. nan bei < 3 Leisten."""
+        nn = np.array(achse_n, float); nn /= np.linalg.norm(nn); uu = np.array([nn[1], -nn[0]]); o = uu * float(u)
+        sec = self.m.section(plane_origin=[o[0], o[1], 0.0], plane_normal=[uu[0], uu[1], 0.0])
+        if sec is None: return float("nan")
+        L_ = float(np.hypot(n_traufe - n_first, z_first - z_traufe)); t = np.array([(n_first - n_traufe) / L_, (z_first - z_traufe) / L_]); nrm = np.array([-t[1], t[0]])
+        if nrm[1] < 0: nrm = -nrm
+        def sh(Q): d = np.c_[(Q[:, :2] - o) @ nn - n_traufe, Q[:, 2] - z_traufe]; return d @ t, d @ nrm
+        hmax = max([(lambda sl, hl: hl[(sl >= s0) & (sl <= s1) & (hl < 0.5)].max(initial=0.0))(*sh(np.asarray(L))) for L in sec.discrete] + [0.0])   # nur Leisten (Gauben/Aufbauten ueber 0,5 m zaehlen nicht)
+        if hmax < 0.01: return float("nan")
+        anf = []                                                                        # Oberkanten-Segmente der Leisten (beide Enden hoch, Segment entlang des Hangs): Startpunkt je Leiste
+        for L in sec.discrete:
+            s_, h_ = sh(np.asarray(L))
+            for i in range(len(s_) - 1):
+                if 0.5 * hmax < h_[i] < 0.5 and 0.5 * hmax < h_[i + 1] < 0.5 and abs(s_[i + 1] - s_[i]) > 0.01 and min(s_[i], s_[i + 1]) >= s0 and max(s_[i], s_[i + 1]) <= s1: anf.append((s_[i], s_[i + 1]))
+        iv = sorted((min(a_, b_), max(a_, b_)) for a_, b_ in anf); anf = []                                    # Teilsegmente einer Leiste zu EINER Oberkante verbinden (Luecke < 1 cm)
+        for a_, b_ in iv:
+            if anf and a_ - anf[-1][1] < 0.01: anf[-1][1] = max(anf[-1][1], b_)
+            else: anf.append([a_, b_])
+        anf = np.array([a_ for a_, _ in anf])
+        return float(np.median(np.diff(anf))) if len(anf) >= 4 else float("nan")
     def z_am_punkt(self, punkt, z0, z1, dz=0.02, suche="oben", puffer=0.02, **k):
         """Hoechster (suche='oben') bzw. tiefster ('unten') z in [z0, z1], bei dem der Achspunkt (x, y) eines FREISTEHENDEN Bauteils im Querschnitt liegt
         (Puffer m): Scheitel einer Figur, Spitze einer Pendelkonsole - ohne dass die Wand dahinter (max_z_im_bereich nimmt Flaechenpunkte) oder

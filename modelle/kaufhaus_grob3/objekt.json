@@ -6796,11 +6796,13 @@
     {"u": 11.36, "z": 14.35, "z_ende": 13.85, "laenge": 2.0, "breite": 0.22, "hoehe": 0.22, "kopf_laenge": 0.5, "kopf_hoehe": 0.4, "quelle": "Anzahl 2: Z-6162-001 (Foto 6162, n11_04, n11_01). Lage/Neigung/Laenge TRIANGULIERT (foto_mass --tri): Fuss M-6162-001/003 (6162+6132, 6162+6145: u 11,36 n 12,68 z 14,3), Kopf M-6162-002/004 (u 11,5-11,6 n 14,7 z 13,8); Kopfblock 0,5x0,4 und Querschnitt 0,22 = ANNAHME Sichtschaetzung (Drachenkopf als Block)"},
     {"u": -4.47, "z": 14.5, "z_ende": 13.85, "laenge": 1.95, "breite": 0.22, "hoehe": 0.22, "kopf_laenge": 0.5, "kopf_hoehe": 0.4, "quelle": "Anzahl 2: Z-6162-001 (Foto 6162, n11_04, n11_01). Lage/Neigung/Laenge TRIANGULIERT (foto_mass --tri 6162+6145): Fuss M-6162-005 (u -4,47 n 12,55 z 14,5), Kopf M-6162-006 (u -4,40 n 14,55 z 13,86); Kopfblock 0,5x0,4 und Querschnitt 0,22 = ANNAHME Sichtschaetzung (Drachenkopf als Block)"}
    ],
-   "ziegel_abstand": 0.35,
-   "ziegel_tiefe": 0.07,
+   "ziegel_abstand": 0.18,
+   "ziegel_tiefe": 0.04,
+   "ziegel_fase": 0.0,
+   "ziegel_rand": 0.05,
    "ziegel_anteil": 0.4,
    "werte_quellen": {
-    "ziegel_abstand": "ANNAHME Startwert; Foto-Kantenabstand und Foto-Diff stimmen ab",
+    "ziegel_abstand": "Foto-Entzerrung des Vorderhangs (K-6162/K-6132/K-6145/K-j05, Hangebene aus Traufe/First, 1 cm/px, s 3,5-9 m, u 5-8 m) + Autokorrelation entlang des Hangs: Reihenpeaks 0,18/0,36/0,54/0,72 m in allen 4 Fotos (tools/foto_dachreihen.py, Messprotokoll messprotokoll/ZR-dachreihen.json); ALT 0,35 (ANNAHME) = doppelter Abstand. ziegel_tiefe 0,07/ziegel_anteil 0,4 bleiben ANNAHME (Tiefe im Foto nicht messbar)",
     "u0": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json along_w -8.82 (Endebene West, belegt)",
     "u1": "Dach endet an der Ost-Giebelwand: Giebel-Aussenebene u 15,85 (Foto-Triangulation M-6115-001..008, Gegenprobe Foto 6145; Overlay 6145/6115: Dach-Endkante bei u 17,15 lag auf keiner Fotokante, die Dachflaeche endet an den Giebelstufen); ersetzt rohkoerper along_e 17.15 'plus UNSICHER'; Kantengitter z 15-19 u 15,5-15,75",
     "n_traufe_v": "kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json off_front 12.66 (Frontebene, Stuetzlaenge 392 m)",
@@ -6810,11 +6812,15 @@
     "n_traufe_h": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "z_traufe_h": "param_wolke_fit.py gegen lot2-Wolke, durch teil_tor.py (Gesamtscore) angenommen",
     "symmetrisch": "ANNAHME: Rueckhang spiegelt den Vorderhang (Rohkoerper 'Rueckwand ANNAHME Firstspiegel'; Gitter sieht die Rueckseite nicht)",
+    "ziegel_tiefe": "ANNAHME 0,04 m (reale Ziegeldicke/Ueberdeckung, Druckgrenze H0 >= 0,3 mm = 0,026 m); ALT 0,07 (ANNAHME) liess die Druckreparatur bei Reihenabstand 0,18 scheitern (91 Teilnetze) und hob die Hangflaeche ueber das Sollband",
+    "ziegel_rand": "ANNAHME 0,05 m: Leisten enden vor den Dachenden (Randbohle); deckungsgleiche Stirnflaechen mit u0/u1 liessen die Druckreparatur scheitern",
+    "ziegel_fase": "ANNAHME: Rampe (Fase 0,03 bei Tiefe 0,04, ca. 53 Grad; 0,04 und 0,05 scheiterten an der Druckreparatur) der unteren Leistenflanke (Biberschwanz-Reihen laufen hangaufwaerts aus; senkrechte Stufe = Druckueberhang)",
     "ziegel_einbindung": "Druck: Ziegelleisten 0,01 m in die Dachflaeche (sonst Beruehrflaeche -> nicht-mannigfaltige Kanten im STL), sichtbare Tiefe unveraendert"
    },
    "symmetrisch": true,
    "pult_quelle": "Schnitt Wolke u -2..2/4..6: nur EINE steile Vorderflaeche bis z 19,3 (Rueckhang unsichtbar); LoD2-dachtyp enthaelt 'Sheddach'; Rueckwand n 5,84/z 11,6 = ANNAHME aus dem vorgebauten Modell (stl_teil:dach); n_first 5,9 fest, First = Verlaengerung der Vorderflaeche bis zur Rueckwand",
    "historie": [
+    {"datum": "2026-11-12", "wer": "Kreis1 040618 r1 (Agent)", "alt": {"ziegel_abstand": 0.35}, "neu": {"ziegel_abstand": 0.18}, "grund": "Reihenabstand am Foto gemessen (4 Kameras 0,18 m); Pruefung ziegel_reihenabstand_haupt war ROT"},
     {
      "datum": "2026-11-09",
      "wer": "Agent Gitter->Generator",

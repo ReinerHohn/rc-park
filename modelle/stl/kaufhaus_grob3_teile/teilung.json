@@ -1,6 +1,6 @@
 {
  "stl": "modelle/stl/kaufhaus_grob3_1-87.stl",
- "modell_volumen_m3": 8982.016,
+ "modell_volumen_m3": 8973.248,
  "massstab": 87.0,
  "winkel_grad": 60.0,
  "ziel_anteil": 0.01,
@@ -16,7 +16,7 @@
    "achse": "z",
    "wert": 8.26,
    "grund": "Unterseite 17.8 m2 waagerecht nach unten -> Bettflaeche",
-   "gewinn_m2": 45.29,
+   "gewinn_m2": 43.94,
    "stifte": [
     [
      -4.528,
@@ -155,17 +155,17 @@
     [
      5.156,
      1.416,
-     27.0
+     26.99
     ],
     [
      7.797,
      8.873,
-     16.44
+     16.43
     ],
     [
      2.509,
      -6.059,
-     16.43
+     16.41
     ],
     [
      4.452,
@@ -173,9 +173,9 @@
      8.56
     ],
     [
-     4.045,
-     -1.723,
-     21.24
+     4.041,
+     -1.732,
+     21.23
     ]
    ]
   }
@@ -191,10 +191,10 @@
    ],
    "passt": true,
    "ueberhang_m2": 11.601,
-   "flaeche_m2": 1741.32,
-   "ueberhang_anteil": 0.00666,
+   "flaeche_m2": 1759.19,
+   "ueberhang_anteil": 0.00659,
    "wasserdicht": true,
-   "volumen_m3": 3317.93,
+   "volumen_m3": 3313.28,
    "rahmen_u": [
     -10.64,
     4.39
@@ -221,11 +221,11 @@
     235.6
    ],
    "passt": true,
-   "ueberhang_m2": 8.094,
-   "flaeche_m2": 1694.16,
-   "ueberhang_anteil": 0.00478,
+   "ueberhang_m2": 8.058,
+   "flaeche_m2": 1709.41,
+   "ueberhang_anteil": 0.00471,
    "wasserdicht": true,
-   "volumen_m3": 3095.84,
+   "volumen_m3": 3091.73,
    "rahmen_u": [
     4.39,
     17.71
@@ -309,7 +309,7 @@
  "max_ueberhang_anteil": 0.00716,
  "alle_passen": true,
  "log": [
-  "Schnitt z 8.260: Ueberhang -45.29 m2",
+  "Schnitt z 8.260: Ueberhang -43.94 m2",
   "Bettschnitt u 0.553",
   "Bettschnitt u 4.388"
  ],
