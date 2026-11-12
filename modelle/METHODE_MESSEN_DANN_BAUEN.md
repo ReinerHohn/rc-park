@@ -81,3 +81,10 @@ Reihenfolge: erst Rippen der Erker-Frontflaeche von Hand durch die Kette ziehen 
 5. Breite je Bauteil aus der Maske (0,72 x Maskenbreite), seitlich gesehene Teile messen zu schmal (Nachbarmass).
 6. Masse: Abdeckung der Mittellinien (luecken_rippen --nur_mass) statt Kanten-F1 bei bemalten Streifen (Farbe ist keine Geometrie). IMMER in Fotos pruefen, die NICHT zum Nachfuehren dienten; sonst nur Selbstbestaetigung (6171 0,43 -> 0,71, Fremdfotos unveraendert).
 7. Grenzen: Fremdfoto-Masken nur bei scharfen, nahen Fotos; Tiefe/Mehrfoto-Konsistenz braucht Naheaufnahmen (AUFNAHMEPLAN). Abnahme reagiert auf Topologie (Druckreparatur): Pfade entfernen/kuerzen kann sie kippen.
+
+## Gelernt 12./13.11.: Erker-Achteck, Nutzerform und blinde Prueffelder
+- Benennt der Nutzer eine Form ("Achteck", "geschlossenes Gebaeude"), gilt sie als SOLLFORM, bis ein Foto das Gegenteil zeigt. Eine fruehere Eintragung "Teil-Achteck" war nur an der Aussenseite gemessen; die Rueckseiten lagen verdeckt hinter der Fassade und wurden als "gemessen" gefuehrt.
+- Foto-Gegenproben melden nur, wo das Foto eine Kante hat und das Modell nicht; verdeckte Seiten erzeugen nie einen Treffer. Fuer Koerper (Erker, Tuerme) deshalb Grundriss-Schnitt des Modells ansehen (Schnitt auf Fensterhoehe, Wandlinie einzeichnen) und gegen die Sollform pruefen.
+- Immer aus mindestens zwei Blickrichtungen vergleichen (Front UND Seite aus der Gasse); die Viewer-Ansicht des Nutzers (Foto-Name steht im Viewer) nachbauen, nicht eine eigene waehlen.
+- Abgeschaltete Teile (`*_verworfen`) mit `tools/abgeschaltete_teile.py` listen, bevor ein Fehlteil gemeldet wird (Seitengelaender war 2 Tage abgeschaltet).
+- Offene Beobachtungen mit "ungeklaert" (hier: Erker Ost, Gassenseite, 9.11.) zuerst aufloesen.
