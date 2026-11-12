@@ -34,14 +34,15 @@ def main():
     for p, q in zip(pix[:-1], pix[1:]):
         w, _ = route_through_array(c, (int(p[1] - y0), int(p[0] - x0)), (int(q[1] - y0), int(q[0] - x0)), fully_connected=True, geometric=True); pf += [(cc + x0, rr + y0) for rr, cc in w]
     pf = np.array(pf, float)[::6]; o = np.array([EPI.strahl(K, q)[0] for q in pf]); d = np.array([EPI.strahl(K, q)[1] for q in pf])
-    loc, ir, _ = sub.ray.intersects_location(o, d, multiple_hits=False); P = np.full((len(pf), 3), np.nan); P[ir] = loc
+    loc, ir, it = sub.ray.intersects_location(o, d, multiple_hits=False); P = np.full((len(pf), 3), np.nan); P[ir] = loc
+    nf = np.asarray(sub.face_normals)[it]; nf = nf * np.where(np.sum(nf * d[ir], axis=1) > 0, -1.0, 1.0)[:, None]; nm = nf.mean(axis=0); nm = nm / np.linalg.norm(nm)   # mittlere Flaechennormale (zur Kamera hin) fuer die Einbindung im Generator
     ok = ~np.isnan(P[:, 0]); print("Treffer", int(ok.sum()), "von", len(pf))
     if ok.sum() < 5: sys.exit("zu wenige Treffer")
     P = P[ok]; Pm0 = P
     Pm = np.array([medfilt(P[:, i], 5) for i in range(3)]).T; k_ = np.r_[True, np.linalg.norm(np.diff(Pm, axis=0), axis=1) > 1e-4]; Pm = Pm[k_]; tck, _ = splprep(Pm.T, s=len(Pm) * 0.0004); Q = np.array(splev(np.linspace(0, 1, n_aus), tck)).T
-    res = dict(name=name, kam=kid, pix=[list(p) for p in pix], pfad_xyz=Q.round(3).tolist(), n_treffer=int(ok.sum()), farbe=modus)
+    res = dict(name=name, kam=kid, pix=[list(p) for p in pix], pfad_xyz=Q.round(3).tolist(), n_treffer=int(ok.sum()), farbe=modus, normale_xyz=nm.round(3).tolist())
     if "--achse_n" in a:
         n_ = np.array([float(v) for v in a[a.index("--achse_n") + 1:a.index("--achse_n") + 3]]); n_ /= np.linalg.norm(n_); u_ = np.array([n_[1], -n_[0]])
-        res["pfad_uvz"] = [[round(float(p[:2] @ u_), 3), round(float(p[:2] @ n_), 3), round(float(p[2]), 3)] for p in Q]
+        res["normale_uvz"] = [round(float(nm[:2] @ u_), 3), round(float(nm[:2] @ n_), 3), round(float(nm[2]), 3)]; res["pfad_uvz"] = [[round(float(p[:2] @ u_), 3), round(float(p[:2] @ n_), 3), round(float(p[2]), 3)] for p in Q]
     json.dump(res, open(os.path.join(aus, f"kante_{name}.json"), "w"), indent=1); print("->", os.path.join(aus, f"kante_{name}.json"))
 if __name__ == "__main__": main()

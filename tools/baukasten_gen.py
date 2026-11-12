@@ -890,7 +890,10 @@ def erker_polygon(cfg, ctx):
         pfade_ = [(np.array(p_, float), nrm_.copy()) for p_ in rpf["pfade"]]
         if rpf.get("spiegel_u") is not None:                                                                           # ANNAHME (siehe quelle): zweiter Bogen = Spiegelbild an u = spiegel_u (Normale u-Anteil gespiegelt)
             uc_ = float(rpf["spiegel_u"]); pfade_ += [(np.column_stack([2 * uc_ - q_[:, 0], q_[:, 1], q_[:, 2]]), np.array([-n0_[0], n0_[1], n0_[2]])) for q_, n0_ in pfade_]
-        pfade_ += [(np.array(q_, float), nrm_.copy()) for q_ in rpf.get("pfade_ohne_spiegel", [])]                         # 12.11.: Rippen aus dem Gold-Skelett des Fotos, beidseitig gemessen -> nicht spiegeln
+        for e_ in rpf.get("pfade_ohne_spiegel", []):                                                                    # 12.11.: Rippe aus dem Foto; Eintrag = Pfad (Frontnormale) ODER {pfad, normale (u,n,z), spiegeln}: Einbindung entlang der echten Flaechennormale (sonst steht der Zapfen an den Seiten als Platte im Raum)
+            q_ = np.array(e_["pfad"] if isinstance(e_, dict) else e_, float); n1_ = np.array(e_["normale"], float) if isinstance(e_, dict) and e_.get("normale") else nrm_.copy(); n1_ /= np.linalg.norm(n1_)
+            pfade_.append((q_, n1_))
+            if isinstance(e_, dict) and e_.get("spiegeln"): pfade_.append((np.column_stack([2 * float(rpf["spiegel_u"]) - q_[:, 0], q_[:, 1], q_[:, 2]]), np.array([-n1_[0], n1_[1], n1_[2]])))
         if rpf.get("drehungen"):                                                                                       # ANNAHME: Schraegflaechen = Frontnetz um die Erkerachse gedreht (regelmaessiges Teil-Achteck, seite_schraeg = seite_front, 45 Grad); Normale dreht mit
             cu_, cn_ = [float(v) for v in rpf["drehung_zentrum"]]; neu_ = []
             for ang_ in rpf["drehungen"]:
