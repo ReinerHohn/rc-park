@@ -1,0 +1,54 @@
+{
+ "id": "Z-6130-002",
+ "typ": "zaehlung",
+ "foto": "6130",
+ "datei": "6130_ip_IMG_6130.jpg",
+ "was": "Sockelfront laube_sockel_w, u -4,9..-1,6: senkrechte Steinfugen (Nutlinien) auf Hoehe z 1,75, Punkte per K-Kamera auf Ebene n 7,73",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-12",
+ "punkte": [
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 1384.0,
+   "y": 3274.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 983.0,
+   "y": 3232.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 945.0,
+   "y": 3228.0
+  },
+  {
+   "flaeche": "F1",
+   "art": "voll",
+   "x": 744.0,
+   "y": 3207.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F1": {
+   "art": "voll",
+   "n": 4
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 4,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-6130-002.jpg",
+ "ausschnitt": [
+  494,
+  2957,
+  1634,
+  3524
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

@@ -690,6 +690,42 @@
  },
  {
   "seite": "alle",
+  "element": "Quader-Aussparung Fuge Ost 1 (Tiefe 0.020)",
+  "quelle": "Fotos 6130/6145/h11_112108 (Rektifizierung Ebene n 7,73 aus K-Kamera-Bruecke, kreis1 12.11. Lauf 070036): senkrechte Steinfuge der Sockelfront bei u -2,93 (Block-/Pfeilerfuge, doppelte Linie -2,93/-2,78) (+-0,05 m, in allen drei Fotos sichtbar); Breite 0,04 und Tiefe 0,02 ANNAHME; Zaehlung Z-6130-002/Z-6145-003/Z-h11_112108-001",
+  "u0": -2.95,
+  "u1": -2.91,
+  "z0": 1.51,
+  "z1": 1.97,
+  "tiefe": 0.02,
+  "n_front": 7.73,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Quader-Aussparung Fuge Ost 1b (Tiefe 0.020)",
+  "quelle": "Fotos 6130/6145/h11_112108 (Rektifizierung Ebene n 7,73, Z-6130-002/Z-6145-003/Z-h11_112108-001, kreis2 12.11.): zweite Linie der doppelten Fuge bei u -2,78 (+-0,05 m); Breite 0,04 und Tiefe 0,02 ANNAHME. Fuge u -2,50 NICHT gebaut: Fotos widersprechen sich (6130 -2,52, 112108 -2,45, in 6145 ohne Kante), Regel 5",
+  "u0": -2.8,
+  "u1": -2.76,
+  "z0": 1.51,
+  "z1": 1.97,
+  "tiefe": 0.02,
+  "n_front": 7.73,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Quader-Aussparung Fuge Ost 3 (Tiefe 0.020)",
+  "quelle": "Fotos 6130/6145/h11_112108 (Rektifizierung Ebene n 7,73 aus K-Kamera-Bruecke, kreis1 12.11. Lauf 070036): senkrechte Steinfuge der Sockelfront bei u -1,88 (+-0,05 m, in allen drei Fotos sichtbar); Breite 0,04 und Tiefe 0,02 ANNAHME; Zaehlung Z-6130-002/Z-6145-003/Z-h11_112108-001",
+  "u0": -1.9,
+  "u1": -1.86,
+  "z0": 1.51,
+  "z1": 1.97,
+  "tiefe": 0.02,
+  "n_front": 7.73,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Quader (anbau) mit Profil (6 Punkte)",
   "quelle": "Fotos 6117/6124/6130 (Stufe 0): durchgehender Sockel mit Gesimsband vor der Laubenrueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006); Front n 7,73 aus Wolke lot2 (z 1,75-2,10, Spitze 7,7-7,8); Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
   "u0": -7.2,

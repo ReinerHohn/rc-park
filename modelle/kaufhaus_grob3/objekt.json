@@ -5037,6 +5037,36 @@
      "n_front": 7.73,
      "tiefe": 0.02,
      "quelle": "Fotos 6130/6124 (Raster Ebene n 7,73, kreis4 12.11.): senkrechte Steinfuge der Sockelfront bei u -4.55 (+-0,05 m); in 6145 nur schwach; Breite 0,04 und Tiefe 0,02 ANNAHME"
+    },
+    {
+     "name": "Fuge Ost 1",
+     "u0": -2.95,
+     "u1": -2.91,
+     "z0": 1.51,
+     "z1": 1.97,
+     "n_front": 7.73,
+     "tiefe": 0.02,
+     "quelle": "Fotos 6130/6145/h11_112108 (Rektifizierung Ebene n 7,73 aus K-Kamera-Bruecke, kreis1 12.11. Lauf 070036): senkrechte Steinfuge der Sockelfront bei u -2,93 (Block-/Pfeilerfuge, doppelte Linie -2,93/-2,78) (+-0,05 m, in allen drei Fotos sichtbar); Breite 0,04 und Tiefe 0,02 ANNAHME; Zaehlung Z-6130-002/Z-6145-003/Z-h11_112108-001"
+    },
+    {
+     "name": "Fuge Ost 1b",
+     "u0": -2.80,
+     "u1": -2.76,
+     "z0": 1.51,
+     "z1": 1.97,
+     "n_front": 7.73,
+     "tiefe": 0.02,
+     "quelle": "Fotos 6130/6145/h11_112108 (Rektifizierung Ebene n 7,73, Z-6130-002/Z-6145-003/Z-h11_112108-001, kreis2 12.11.): zweite Linie der doppelten Fuge bei u -2,78 (+-0,05 m); Breite 0,04 und Tiefe 0,02 ANNAHME. Fuge u -2,50 NICHT gebaut: Fotos widersprechen sich (6130 -2,52, 112108 -2,45, in 6145 ohne Kante), Regel 5"
+    },
+    {
+     "name": "Fuge Ost 3",
+     "u0": -1.90,
+     "u1": -1.86,
+     "z0": 1.51,
+     "z1": 1.97,
+     "n_front": 7.73,
+     "tiefe": 0.02,
+     "quelle": "Fotos 6130/6145/h11_112108 (Rektifizierung Ebene n 7,73 aus K-Kamera-Bruecke, kreis1 12.11. Lauf 070036): senkrechte Steinfuge der Sockelfront bei u -1,88 (+-0,05 m, in allen drei Fotos sichtbar); Breite 0,04 und Tiefe 0,02 ANNAHME; Zaehlung Z-6130-002/Z-6145-003/Z-h11_112108-001"
     }
    ],
    "aktiv": true,
