@@ -4,49 +4,6 @@
  "kamera": "K-d20 (amtliche Anker)",
  "zelle_px": 140,
  "schwelle": 0.35,
- "treffer": [
-  {
-   "zelle": [
-    1260,
-    1120,
-    140
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    13.92,
-    -6.55,
-    14.75
-   ]
-  },
-  {
-   "zelle": [
-    1400,
-    1120,
-    140
-   ],
-   "score": -0.905,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    13.25,
-    -7.71,
-    14.95
-   ]
-  },
-  {
-   "zelle": [
-    1400,
-    980,
-    140
-   ],
-   "score": -0.661,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    13.7,
-    -8.44,
-    16.75
-   ]
-  }
- ],
+ "treffer": [],
  "versatz_test": null
 }

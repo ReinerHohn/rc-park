@@ -3,6 +3,7 @@
  "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
  "kamera": "K-6182 (amtliche Anker)",
  "zelle_px": 178,
+ "schwelle": 0.35,
  "treffer": [],
- "hinweis": "keine gueltige Zelle: Modellflaeche im Foto < 1 Zelle - nicht bewertbar"
+ "versatz_test": null
 }
