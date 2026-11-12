@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261112_075923konsregate/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.667000282287596,
@@ -14,9 +14,9 @@
   "fenster2_sohl": 8.856999847412109,
   "erker_w_unterkante": 8.18699988555908,
   "sockel_fugen_anzahl": 4.0,
-  "sockel_fugen_breite_median": 0.04,
+  "sockel_fugen_breite_median": 0.03,
   "sockel_fugen_breite_max": 0.04,
-  "sockel_fugen_ebene_abstand": 0.2699999163931262,
+  "sockel_fugen_ebene_abstand": 0.26999991656098865,
   "lichter_g2_anzahl": 3.0,
   "lichter_g2_breite_median": 0.68,
   "lichter_g2_breite_max": 0.72,
@@ -44,17 +44,17 @@
   "fenster_b3_ebene_abstand": 1.2521246259134438,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.07189832627773285,
+  "wand_pq": 0.07189836353063583,
   "wand_anteil_unter": 0.0007,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
-  "kons_b3_grund_abstand": -0.004027325177424768,
+  "kons_b3_grund_abstand": -0.004027439078454709,
   "bogen3_licht_anzahl": 1.0,
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 2.128511469441953,
-  "teile_ueberhang": 0.00716,
+  "teile_ueberhang": 0.00717,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.72,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.72,
@@ -164,7 +164,7 @@
   "fenster_og_g4_lichtweite_breite_median": 0.68,
   "fenster_og_g4_lichtweite_breite_max": 0.72,
   "fenster_og_g4_lichtweite_ebene_abstand": 2.0994977929358005,
-  "fenster_og_g3_wand_aussen_l": 0.0008463696506626484,
+  "fenster_og_g3_wand_aussen_l": 0.0008462632169905504,
   "fenster_og_g3_wand_aussen_r": -0.002103412574150365,
   "fenster_og_g3_stegscheitel_l": 11.946999999999992,
   "fenster_og_g3_stegscheitel_r": 11.946999999999992,
@@ -207,9 +207,9 @@
   "tuer_b3_schaft_r_breite_median": 0.05,
   "tuer_b3_schaft_r_grund_abstand": 0.1053239090386251,
   "balkon_luecke_west": 0.005366135070099087,
-  "balkon_luecke_ost": -0.012597067409629403,
+  "balkon_luecke_ost": -0.012597022685886472,
   "bruestung_luecke_west": 0.005928792921551462,
-  "bruestung_luecke_ost": -0.01235490957997376,
+  "bruestung_luecke_ost": -0.012354978380177517,
   "balkon_soffit_frei": -0.0050184289008181615,
   "balkon_stirn_mitte": -1.2034247810476817,
   "laube_sockel_front_w": -0.44543003677855575,
@@ -479,7 +479,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.07189832627773285,
+   "wert": 0.07189836353063583,
    "soll": [
     0.0348,
     100
@@ -509,7 +509,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00716,
+   "wert": 0.00717,
    "soll": [
     0,
     0.01
@@ -1309,7 +1309,7 @@
   },
   {
    "name": "Fenstergruppe 3 (1. OG): Wandflaeche links ausserhalb des Rahmens (u 1,45..1,62 von der Mitte; 0 = Wand n 12,66, Altmodell Rahmenfront -0,15)",
-   "wert": 0.0008463696506626484,
+   "wert": 0.0008462632169905504,
    "soll": [
     -0.06,
     0.08
@@ -1659,7 +1659,7 @@
   },
   {
    "name": "Balkonplatte endet vor dem Ost-Erker: in u 12,6..13,1 (z 8,15) steht die Wand n 12,66 frei",
-   "wert": -0.012597067409629403,
+   "wert": -0.012597022685886472,
    "soll": [
     -0.08,
     0.25
@@ -1679,7 +1679,7 @@
   },
   {
    "name": "Balustrade endet mit der Platte im Osten: in u 12,5..13,1 (z 9,6) steht die Wand n 12,66 frei",
-   "wert": -0.01235490957997376,
+   "wert": -0.012354978380177517,
    "soll": [
     -0.08,
     0.25
