@@ -7361,7 +7361,7 @@
     "kopf_hoehe": 0.2,
     "aus": 0.26,
     "einbindung": 0.12,
-    "quelle": "Anzahl 3 (Ecken 2,3,4; Ecke 1 zur Hausmitte ohne Figur): Z-6145-eckfig (Fotos 6145, h13, i08, 6225; Modell-Eckpunkte in die kalibrierten Fotos projiziert, Figuren liegen an Ecke 2/3/4). Spitze (tiefster Punkt Figur Ecke 3) TRIANGULIERT M-6145-003 (6145+h13): P (-3,94 / 16,35 / z 12,67) -> z_ende 12,67; Breite 0,28, Rumpfhoehe 0,33, Vorsprung 0,35, Kopf 0,22x0,2, z_oben 13,0 (Figurkopf ~0,25 m ueber der Gesimsunterkante in 6145) = ANNAHME Sichtschaetzung (Pixelmass h13: Figur ~55x85 px bei 0,0052 m/px); Form Keil/Drache vereinfacht, keine Einzelheiten der Schnitzerei"
+    "quelle": "Anzahl 3 (Ecken 2,3,4; Ecke 1 zur Hausmitte ohne Figur): Z-6145-eckfig (Fotos 6145, h13, i08, 6225; Modell-Eckpunkte in die kalibrierten Fotos projiziert, Figuren liegen an Ecke 2/3/4). Spitze (tiefster Punkt Figur Ecke 3) TRIANGULIERT M-6145-003 (6145+h13): P (-3,94 / 16,35 / z 12,67) -> z_ende 12,67; Breite 0,28, Rumpfhoehe 0,33, Vorsprung 0,35, Kopf 0,22x0,2, z_oben 13,0 (Figurkopf ~0,25 m ueber der Gesimsunterkante in 6145) = ANNAHME Sichtschaetzung (Pixelmass h13: Figur ~55x85 px bei 0,0052 m/px); Form Keil/Drache vereinfacht, keine Einzelheiten der Schnitzerei | 13.11. Nutzerbefund (Foto-Modell-Paar K-d11): Wasserspeier im Foto etwa doppelt so weit vorstehend wie im Modell (Laenge ~ 0,5 Erkerfront 1,28 m); vorsprung 0,35 -> 0,60, kopf_laenge 0,22 -> 0,30 = ANNAHME aus Bildverhaeltnis, nicht triangulierbar"
    },
    "gesims": [
     {
@@ -10639,7 +10639,7 @@
     "kopf_hoehe": 0.2,
     "aus": 0.26,
     "einbindung": 0.12,
-    "quelle": "ANNAHME Spiegelbild zu Erker 1 (Ecken 1,2,3; Ecke 4 zur Hausmitte ohne Figur): am Foto 6164 + Uebersicht 6162 (Modell-Eckpunkte projiziert, Figuren an Ecke 1/2/3 gesehen); Masse = Erker 1 (M-6145-003, Sichtschaetzung), nicht eigens trianguliert"
+    "quelle": "ANNAHME Spiegelbild zu Erker 1 (Ecken 1,2,3; Ecke 4 zur Hausmitte ohne Figur): am Foto 6164 + Uebersicht 6162 (Modell-Eckpunkte projiziert, Figuren an Ecke 1/2/3 gesehen); Masse = Erker 1 (M-6145-003, Sichtschaetzung), nicht eigens trianguliert | 13.11. Nutzerbefund (Foto-Modell-Paar K-d11): Wasserspeier im Foto etwa doppelt so weit vorstehend wie im Modell (Laenge ~ 0,5 Erkerfront 1,28 m); vorsprung 0,35 -> 0,60, kopf_laenge 0,22 -> 0,30 = ANNAHME aus Bildverhaeltnis, nicht triangulierbar"
    },
    "gesims": [
     {
@@ -11266,6 +11266,134 @@
     "radius": "ANNAHME: oben 0,185 wie die anderen Dienste (M-6120-064), unten 0,12 (Buendel verjuengt sich zur Muschel, Foto 6119 Ausschnitt; nicht gemessen)"
    },
    "aktiv": true
+  },
+  {
+   "typ": "zylinder:schlussstein_laube_j1",
+   "gruppe": "Schlussstein (Rosette) im Laubengewoelbe",
+   "u": -5.509,
+   "n": 9.57,
+   "z0": 7.72,
+   "z1": 7.9,
+   "radius": 0.2,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie kreuzgewoelbe:laube",
+   "quelle": "Nutzerbefund 13.11. (Foto-Modell-Paar K-h11_112126: Rosette/Schlussstein am Rippenkreuz sichtbar, im Modell fehlend); Unterseite z 7,844 = M-6120-063 (Kappenhoehe in Jochmitte); Lage Jochmitte u0+(k+0,5)*pitch, n Mitte n_wand..n_front = ANNAHME; Radius 0,20 = ANNAHME (Rippenbreite 0,30)",
+   "werte_quellen": {
+    "u": "Jochmitte = u0 + (k+0,5) x pitch (kreuzgewoelbe:laube) ANNAHME",
+    "n": "Mitte n_wand..n_front ANNAHME",
+    "z0": "M-6120-063 Schlussstein-Unterseite 7,844 (0,12 darunter) ANNAHME",
+    "z1": "in die Kappe eingebunden",
+    "radius": "ANNAHME 0,20"
+   },
+   "aktiv": true,
+   "historie": [
+    {
+     "datum": "2026-11-13",
+     "wer": "Claude (Nutzerbefund Foto-Paar)",
+     "alt": null,
+     "neu": "angelegt"
+    }
+   ]
+  },
+  {
+   "typ": "zylinder:schlussstein_laube_j2",
+   "gruppe": "Schlussstein (Rosette) im Laubengewoelbe",
+   "u": 0.513,
+   "n": 9.57,
+   "z0": 7.72,
+   "z1": 7.9,
+   "radius": 0.2,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie kreuzgewoelbe:laube",
+   "quelle": "Nutzerbefund 13.11. (Foto-Modell-Paar K-h11_112126: Rosette/Schlussstein am Rippenkreuz sichtbar, im Modell fehlend); Unterseite z 7,844 = M-6120-063 (Kappenhoehe in Jochmitte); Lage Jochmitte u0+(k+0,5)*pitch, n Mitte n_wand..n_front = ANNAHME; Radius 0,20 = ANNAHME (Rippenbreite 0,30)",
+   "werte_quellen": {
+    "u": "Jochmitte = u0 + (k+0,5) x pitch (kreuzgewoelbe:laube) ANNAHME",
+    "n": "Mitte n_wand..n_front ANNAHME",
+    "z0": "M-6120-063 Schlussstein-Unterseite 7,844 (0,12 darunter) ANNAHME",
+    "z1": "in die Kappe eingebunden",
+    "radius": "ANNAHME 0,20"
+   },
+   "aktiv": true,
+   "historie": [
+    {
+     "datum": "2026-11-13",
+     "wer": "Claude (Nutzerbefund Foto-Paar)",
+     "alt": null,
+     "neu": "angelegt"
+    }
+   ]
+  },
+  {
+   "typ": "zylinder:schlussstein_laube_j3",
+   "gruppe": "Schlussstein (Rosette) im Laubengewoelbe",
+   "u": 6.535,
+   "n": 9.57,
+   "z0": 7.72,
+   "z1": 7.9,
+   "radius": 0.2,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie kreuzgewoelbe:laube",
+   "quelle": "Nutzerbefund 13.11. (Foto-Modell-Paar K-h11_112126: Rosette/Schlussstein am Rippenkreuz sichtbar, im Modell fehlend); Unterseite z 7,844 = M-6120-063 (Kappenhoehe in Jochmitte); Lage Jochmitte u0+(k+0,5)*pitch, n Mitte n_wand..n_front = ANNAHME; Radius 0,20 = ANNAHME (Rippenbreite 0,30)",
+   "werte_quellen": {
+    "u": "Jochmitte = u0 + (k+0,5) x pitch (kreuzgewoelbe:laube) ANNAHME",
+    "n": "Mitte n_wand..n_front ANNAHME",
+    "z0": "M-6120-063 Schlussstein-Unterseite 7,844 (0,12 darunter) ANNAHME",
+    "z1": "in die Kappe eingebunden",
+    "radius": "ANNAHME 0,20"
+   },
+   "aktiv": true,
+   "historie": [
+    {
+     "datum": "2026-11-13",
+     "wer": "Claude (Nutzerbefund Foto-Paar)",
+     "alt": null,
+     "neu": "angelegt"
+    }
+   ]
+  },
+  {
+   "typ": "zylinder:schlussstein_laube_j4",
+   "gruppe": "Schlussstein (Rosette) im Laubengewoelbe",
+   "u": 12.557,
+   "n": 9.57,
+   "z0": 7.72,
+   "z1": 7.9,
+   "radius": 0.2,
+   "modus": "anbau",
+   "achse_n": [
+    0.3338,
+    0.9426
+   ],
+   "achse_quelle": "wie kreuzgewoelbe:laube",
+   "quelle": "Nutzerbefund 13.11. (Foto-Modell-Paar K-h11_112126: Rosette/Schlussstein am Rippenkreuz sichtbar, im Modell fehlend); Unterseite z 7,844 = M-6120-063 (Kappenhoehe in Jochmitte); Lage Jochmitte u0+(k+0,5)*pitch, n Mitte n_wand..n_front = ANNAHME; Radius 0,20 = ANNAHME (Rippenbreite 0,30)",
+   "werte_quellen": {
+    "u": "Jochmitte = u0 + (k+0,5) x pitch (kreuzgewoelbe:laube) ANNAHME",
+    "n": "Mitte n_wand..n_front ANNAHME",
+    "z0": "M-6120-063 Schlussstein-Unterseite 7,844 (0,12 darunter) ANNAHME",
+    "z1": "in die Kappe eingebunden",
+    "radius": "ANNAHME 0,20"
+   },
+   "aktiv": true,
+   "historie": [
+    {
+     "datum": "2026-11-13",
+     "wer": "Claude (Nutzerbefund Foto-Paar)",
+     "alt": null,
+     "neu": "angelegt"
+    }
+   ]
   },
   {
    "typ": "quader:laube_sockel_w",
