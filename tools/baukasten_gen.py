@@ -706,7 +706,7 @@ def _uszT(cfg):
 def konsolenreihe(cfg, ctx):
     """Reihe von Konsolen (Kragsteine) unter einer Platte, Lage JE INSTANZ (kein Raster): je Lage u (Mitte), breite, profil [[z, ausladung], ...] (Ausladung vor der
     Wandebene wand_n, aufsteigend in z); Koerper = konvexe Huelle der Profilpunkte (+-breite/2), hinten einbindung m in die Wand, oben bis z_oben (in die Platte),
-    vorn hoechstens max_ausladung (nicht buendig mit der Plattenfront: deckungsgleiche Flaechen = Splitter im Druck). Voluten/Schnitzwerk nicht modelliert (ANNAHME Huelle).
+    vorn hoechstens max_ausladung (nicht buendig mit der Plattenfront: deckungsgleiche Flaechen = Splitter im Druck). Voluten/Schnitzwerk nicht modelliert (ANNAHME Huelle). Option segmenthuellen: je Profilintervall eine Huelle (Vorderkante folgt dem gemessenen Profil statt der Sehne).
     Lagen entweder inline (lagen: [{u, breite, profil?, quelle}], profil sonst cfg.profil) oder aus einer Messdatei: lagen_datei (JSON, Liste unter lagen_schluessel,
     Felder along/breite/profil/breite_quelle/status) im Quellrahmen quell_rahmen {u: [ux, uy], n: [nx, ny], off_front} (along/off der Datei -> Welt -> eigener Rahmen achse_n;
     Ausladung der Datei bezieht sich auf off_front). Pflicht: wand_n, z_oben, achse_n, achse_quelle, quelle, lagen|lagen_datei."""
@@ -727,9 +727,13 @@ def konsolenreihe(cfg, ctx):
     teile = []
     for l_ in lagen:
         hw = float(l_["breite"]) / 2; pr_ = sorted(l_["profil"]); uc = float(l_["u"]); pts = []
+        ringe = []
         for z, d in pr_ + [[zo, pr_[-1][1]]]:
-            d = min(d, amax); pts += [[uc - hw, wn - ein, z], [uc + hw, wn - ein, z], [uc - hw, wn + d, z], [uc + hw, wn + d, z]]
-        teile.append(M.hull_points(pts))
+            d = min(d, amax); ringe.append([[uc - hw, wn - ein, z], [uc + hw, wn - ein, z], [uc - hw, wn + d, z], [uc + hw, wn + d, z]])
+        if cfg.get("segmenthuellen"):                                                              # Vorderkante folgt dem gemessenen Profil (konkav), keine Sehne Fuss-Kopf
+            teile += [M.hull_points(ringe[i] + ringe[i + 1]) for i in range(len(ringe) - 1)]
+        else:
+            teile.append(M.hull_points([p_ for r_ in ringe for p_ in r_]))
         beleg("alle", f"Konsole u {uc:.2f} (b {2 * hw:.2f})", (l_.get("quelle") or cfg["quelle"]) + " | Form: konvexe Huelle des Profils (ANNAHME, Voluten nicht modelliert)",
               u=uc, breite=2 * hw, z_unten=pr_[0][0], z_oben=zo, ausladung_max=min(max(d for _, d in pr_), amax), wand_n=wn)
     beleg("alle", f"Konsolenreihe {len(lagen)} Konsolen", cfg["quelle"] + (f" | Zaehlung {', '.join(cfg.get('zaehlung', []))}" if cfg.get("zaehlung") else ""), n=len(lagen))
