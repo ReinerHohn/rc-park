@@ -205,11 +205,12 @@ def fehlversuche_global():
     for _, lauf, z in ev:
         t = z["ziel"]["teil"]
         if z["ziel"].get("art") == "beobachtung": t = beob_schluessel(z["ziel"].get("beob") or {})   # eigene Zaehlung je Beobachtung (neue Information, z. B. Nutzer-Sichtfund)
-        if z.get("angenommen") is False and not z.get("infra_oom") and z.get("metrik", "v1") == METRIK_SOLL and ("tor" in z or (t.endswith("__neu") and "guete_vor_nach" in z)): n[t] = n.get(t, 0) + 1   # nur Runden mit dem Foto-Tor (Feld 'tor', ab 10.11. abends) zaehlen - Verwerfungen unter dem Wolken-Tor sperren nicht
+        _zt = (not RAUSCHTOR) or bool(z.get("rauschtor"))   # 12.11.: Nachtlauf blockiert - Erker/Baldachine/Figuren gesperrt durch Verwerfungen unter dem rauschblinden Tor (Schwelle 0,02 < Rauschen); nur Rauschtor-Runden zaehlen
+        if _zt and z.get("angenommen") is False and not z.get("infra_oom") and z.get("metrik", "v1") == METRIK_SOLL and ("tor" in z or (t.endswith("__neu") and "guete_vor_nach" in z)): n[t] = n.get(t, 0) + 1   # nur Runden mit dem Foto-Tor (Feld 'tor', ab 10.11. abends) zaehlen - Verwerfungen unter dem Wolken-Tor sperren nicht
         _ff = z.get("foto_f1_vor_nach") or [None, None]
         _lr = z.get("agent_leer") if "agent_leer" in z else bool(z.get("frueh_abgelehnt") and _ff[0] is not None and _ff[0] == _ff[1])   # Altbestand vor 11.11. 02:5x
         _tt = z["ziel"]["teil"]   # leere Runden zaehlen am TEIL, nicht am Beobachtungsschluessel (gesperrte Beobachtung -> Teil kam als Teil wieder)
-        if _lr and z.get("angenommen") is False and not z.get("infra_oom") and z.get("metrik", "v1") == METRIK_SOLL: leer[_tt] = leer.get(_tt, 0) + 1   # 12.11.: Infra-Runden nie als leer zaehlen
+        if _zt and _lr and z.get("angenommen") is False and not z.get("infra_oom") and z.get("metrik", "v1") == METRIK_SOLL: leer[_tt] = leer.get(_tt, 0) + 1   # 12.11.: Infra-Runden nie als leer zaehlen
         if z.get("angenommen") is False and not z.get("infra_oom"): _lf[t] = _lf[_tt] = z.get("zeit", "")
         if z.get("angenommen") is True:
             n[t] = 0; leer[z["ziel"]["teil"]] = 0
