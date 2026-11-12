@@ -40,7 +40,7 @@ print("Skelettpixel", len(px))
 kk = json.load(open(os.path.join(od, "messprotokoll", kam + ".json")))["kamera"]
 m = trimesh.load(os.path.join(root, obj["stl"])); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0); m.apply_translation(np.asarray(kk.get("rahmen_verschiebung", [0, 0, 0]), float))
 ct = m.triangles_center; sel = np.all((ct >= bx[:3]) & (ct <= bx[3:]), axis=1); sub = trimesh.Trimesh(m.vertices, m.faces[sel], process=False); fn = np.asarray(sub.face_normals)
-rest = np.ones(len(px), bool); tr = cKDTree(px); out = []
+dbg = []; rest = np.ones(len(px), bool); tr = cKDTree(px); out = []
 for it in range(80):
     ids = np.where(rest)[0]
     if len(ids) < 40: break
@@ -56,16 +56,18 @@ for it in range(80):
     if len(gl) < minpx: continue
     pp = px[gl][::6]; o = np.array([EPI.strahl(K, q)[0] for q in pp]); d = np.array([EPI.strahl(K, q)[1] for q in pp])
     loc, ir, it_ = sub.ray.intersects_location(o, d, multiple_hits=False)
-    if len(ir) < 12: continue
+    if len(ir) < 6: dbg.append((int(px[gl][0][0]), int(px[gl][0][1]), len(gl), len(ir))); continue
     nf = fn[it_] * np.where(np.sum(fn[it_] * d[ir], axis=1) > 0, -1.0, 1.0)[:, None]; nm = nf.mean(axis=0); nm /= np.linalg.norm(nm)
     P = loc[np.r_[True, np.linalg.norm(np.diff(loc, axis=0), axis=1) > 1e-3]]
     try: tck, _ = splprep(P.T, s=len(P) * 0.0004); Q = np.array(splev(np.linspace(0, 1, 24), tck)).T
     except Exception: continue
     L = float(np.linalg.norm(np.diff(Q, axis=0), axis=1).sum()); sehne = Q[-1] - Q[0]; sl = float(np.linalg.norm(sehne))
-    if L < 0.35: continue
+    if L < float(opt("--min_m", 0.35)): continue
     dz = abs(sehne[2]) / (sl + 1e-9); mid = Q[len(Q) // 2]; pfeil = float(np.linalg.norm(np.cross(Q[-1] - Q[0], mid - Q[0])) / (sl + 1e-9)) / (sl + 1e-9)
     ori = "waagerecht" if dz < 0.2 else ("senkrecht" if dz > 0.85 else "geneigt"); form = "gerade" if pfeil < 0.03 else "gebogen"
-    out.append(dict(klasse=f"{ori}, {form}", laenge_m=round(L, 2), pfad_xyz=Q.round(3).tolist(), normale_xyz=nm.round(3).tolist(), pixel=px[gl][::8].tolist()))
+    pq = px[gl][::10].astype(float); tv = np.diff(pq, axis=0); ang = np.unwrap(np.arctan2(tv[:, 1], tv[:, 0])); wel = float(np.abs(np.diff(ang)).mean()) if len(ang) > 2 else 9.0   # Welligkeit: mittlere Richtungsaenderung je 10 px (Wandrauschen schlaengelt, Rippen laufen glatt)
+    if wel > float(opt("--max_wellig", 9)): continue
+    out.append(dict(wellig=round(wel, 2), klasse=f"{ori}, {form}", laenge_m=round(L, 2), pfad_xyz=Q.round(3).tolist(), normale_xyz=nm.round(3).tolist(), pixel=px[gl][::8].tolist()))
 # Doppelkanten (zwei Goldkanten je Rippe) zu Mittellinie zusammenlegen: Pfade mit mittlerem 3D-Abstand < --paar_m (0,14) und gleicher Richtung
 pm_ = float(opt("--paar_m", 0.2)); out.sort(key=lambda d: -d["laenge_m"]); used = set(); mer = []
 for i, d in enumerate(out):
@@ -89,5 +91,5 @@ if "--pruef" in a:
 out.sort(key=lambda d: -d["laenge_m"]); json.dump(out, open(os.path.join(aus, f"features_{name}.json"), "w"))
 c = im[y0:y1, x0:x1].copy(); fs = 1000 / c.shape[0]; c = cv2.resize(c, None, fx=fs, fy=fs, interpolation=cv2.INTER_AREA)
 for i, d in enumerate(out):
-    pts = ((np.array(d["pixel"]) - [x0, y0]) * fs).astype(np.int32); cv2.polylines(c, [pts], False, (255, 0, 255), 3); cv2.putText(c, f"{i} {d['klasse'][:6]} x{d['n_kanten']} g{d.get('gegenprobe')}", tuple(pts[len(pts) // 2]), 0, 0.6, (0, 255, 255), 2)
+    pts = ((np.array(d["pixel"]) - [x0, y0]) * fs).astype(np.int32); cv2.polylines(c, [pts], False, (255, 0, 255), 3); cv2.putText(c, f"{i} {d['klasse'][:6]} x{d['n_kanten']} w{d['wellig']} g{d.get('gegenprobe')}", tuple(pts[len(pts) // 2]), 0, 0.6, (0, 255, 255), 2)
 cv2.imwrite(os.path.join(aus, f"features_{name}.jpg"), c); print(len(out), "Features:", [(i, d["klasse"], d["laenge_m"]) for i, d in enumerate(out)][:30])

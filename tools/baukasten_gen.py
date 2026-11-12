@@ -1417,6 +1417,9 @@ def main():
             for t_ in teile[1:]:
                 if t_.volume() < 1e-3: n_s += 1; continue
                 V_ = np.asarray(t_.to_mesh().vert_properties)[:, :3]; z_ = V_[:, 2]; un = V_[z_ <= z_.min() + 0.2 * (z_.max() - z_.min())]
+                if (OBJ.get('druck') or {}).get('konsole_nahpunkte', False):                                          # lange duenne Teile (Rippen): Fuss dort, wo das Teil dem Rumpf nahe ist (< 0,15 m), nicht an der tiefsten Stelle -> keine Klumpen
+                    dn_, _ = kd.query(V_); nah = V_[dn_ < 0.15]
+                    if len(nah) >= 4: un = nah
                 dd, ii = kd.query(un); ri = P_[ii] - un; ri /= np.maximum(np.linalg.norm(ri, axis=1, keepdims=True), 1e-9)
                 hp = np.vstack([un, P_[ii] + 0.1 * ri]); hp = np.unique(np.round(hp / rund) * rund, axis=0)             # S4 (2026-11-05): Hüllpunkte auf `rund` runden/entdoppeln - fast deckungsgleiche Punkte (Netzpunkte + Wandpunkte) gaben Splitterflaechen, die im STL zu Beruehrkanten wurden
                 model = model + t_ + M.hull_points(hp.tolist()); n_k += 1                                                # (T3b: ohne Rundung 61 Koerper/Loecher nach Druckreparatur, mit 2 mm: 1 Koerper, wasserdicht)

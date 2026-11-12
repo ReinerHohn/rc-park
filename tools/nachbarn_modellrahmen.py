@@ -24,7 +24,7 @@ def nachbarn_netz(objp, georef, radius=70.0):
     return trimesh.Trimesh(V, np.asarray(mL.faces), process=True)
 
 
-def brandwand(P, N, nachbar, weite=2.0):
+def brandwand(P, N, nachbar, weite=2.0, start=0.3, min_d=None):
     """Bool je Punkt: Normalenstrahl trifft Nachbarnetz innerhalb weite m (angebaute Wand), oder Punkt liegt im Nachbarn (Strahl nach innen trifft
     Rueckseite der Nachbarflaeche - ebenfalls Treffer innerhalb weite)."""
     if nachbar is None or len(P) == 0: return np.zeros(len(P), bool)
@@ -32,10 +32,13 @@ def brandwand(P, N, nachbar, weite=2.0):
     out = np.zeros(len(P), bool); seitlich = np.abs(N[:, 2]) < 0.7     # nur Wandflaechen; Dach-/Bodenflaechen sind keine Brandwaende
     idx = np.nonzero(seitlich)[0]
     if len(idx) == 0: return out
-    o = P[idx] - N[idx] * 0.3                                             # 0,3 m hinter der Flaeche starten: Nachbar, der die Wand schon durchdringt, zaehlt mit
+    # start > 0: Strahl beginnt start m HINTER der Flaeche (Nachbarhaus, das die Wand durchdringt, zaehlt mit - LoD2/Georef ~1 m ungenau).
+    # start < 0 + min_d: Strahl beginnt VOR der Flaeche, nur Treffer > min_d davor zaehlen (Modellteile stecken ineinander: Fenster in der Rumpfwand
+    # duerfen sich nicht gegenseitig 'verdecken'; 10.11. markierte start 0,3 75 % der OG-Fenster und die gut passende Rumpffront).
+    o = P[idx] - N[idx] * start
     loc, ri, _ = nachbar.ray.intersects_location(o, N[idx], multiple_hits=False)
     if len(ri):
-        d = np.linalg.norm(loc - o[ri], axis=1); out[idx[ri[d < weite + 0.3]]] = True
+        d = np.linalg.norm(loc - o[ri], axis=1) - start; out[idx[ri[(d < weite) & ((d > min_d) if min_d is not None else True)]]] = True
     return out
 
 

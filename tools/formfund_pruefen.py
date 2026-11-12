@@ -41,6 +41,7 @@ Vorgehen, in dieser Reihenfolge:
 3. Beschreibe die Form NACHHER am selben Merkmal.
 4. Frage `verbessert`: Ist NACHHER naeher am Foto als VORHER, und zwar an diesem Merkmal (Formfamilie: Bogenart, Treppe/Saegezahn, Zahl der Elemente, Aufsatz/Gelaender/Stirn)? true/false.
 5. Frage `erfunden`: Hat NACHHER etwas, das im Foto NICHT da ist (erfundene Form, falsche Bogenart, zu viele oder zu wenige Elemente, zusaetzlicher Koerper, der nirgends im Foto auftaucht)? Auch kleine Zusatzkoerper melden. true/false.
+Bei NEUEN oder verschobenen Teilen pruefe zusaetzlich die LAGE gegen Nachbarelemente im Foto (sitzt das Teil auf gleicher Hoehe/Stelle wie im Foto, z. B. an der Dachkante/Traufe/Gesimskante, nicht sichtbar darueber oder darunter?). Sitzt es NACHHER sichtbar falsch (grob ueber ca. 0,3 m, in mindestens 2 Bildern erkennbar), ist `verbessert` false und die Lage steht in der Begruendung.
 Nicht melden: Farbe, Textur, Feinlage von wenigen cm, Verdeckungen im Foto (Baeume, Personen, Gerueste, Nachbarhaeuser), Details unter ca. 0,3 m.
 `sicher`: hoch nur, wenn dein Urteil in mindestens 2 Bildern klar zu sehen ist; ein einziges Bild oder unklare Sicht = hoechstens mittel; Vermutung = niedrig.
 Wenn das Merkmal im Foto nicht erkennbar ist: verbessert=false, sicher=niedrig, das in der Begruendung sagen.
@@ -140,7 +141,7 @@ def ersatz_sicht(mn, kam, objp, obj, nmax=12):
             kk = json.load(open(FF.k_datei(objp, obj, R0, nr)))["kamera"]; Rm, _ = cv2.Rodrigues(np.array(kk["rvec"])); fw = Rm[2]
         except Exception: continue
         d = ctr - C; dist = float(np.linalg.norm(d)); cosw = float(d @ fw) / (dist + 1e-9)
-        if dist < 2 * ext or cosw < math.cos(math.radians(22)): continue
+        if cosw < math.cos(math.radians(22)): continue
         out.append((1e8 / dist ** 2, nr))
     return {nr: {"sicht_px": max(MIN_SICHT, v)} for v, nr in sorted(out, reverse=True)[:nmax]}
 

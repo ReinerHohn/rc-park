@@ -160,16 +160,23 @@ if WOLKE and TDIR and os.path.isdir(TDIR):
     if NBF and os.path.exists(NBF):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from nachbarn_modellrahmen import brandwand as _brandwand
         NB = trimesh.load(NBF, force="mesh")
+    # Vorgebaut (10.11., Rumpf-Frontbild): Flaeche, deren Normalenstrahl innerhalb 1,5 m ein ANDERES Teil trifft (Rumpfwand hinter Erker,
+    # Balkon, Laube), ist von aussen nie zu sehen - zaehlt im Rangwert nicht (sonst gilt der Rumpf wegen verdeckter Wand als 'schwaechstes Teil').
+    _alle = {f: trimesh.load(os.path.join(TDIR, f), force="mesh") for f in sorted(os.listdir(TDIR)) if f.endswith(".stl") and "ausschnitt" not in f}
+    for _m in _alle.values(): _m.apply_scale(SK)
     teile = []
     for f in sorted(os.listdir(TDIR)):
         if not f.endswith(".stl") or "ausschnitt" in f:
             continue
-        tm = trimesh.load(os.path.join(TDIR, f), force="mesh"); tm.apply_scale(SK)
+        tm = _alle[f]
         Pt, fi = tm.sample(60000, return_index=True); Pt = Pt.astype(np.float32); dt = md(Pt, Wv)
         vis = sichtbar(Pt, tm.face_normals[fi]); nah = (dt < NAH) & vis
-        bw = _brandwand(Pt, tm.face_normals[fi], NB) if NB is not None else np.zeros(len(Pt), bool); nf = nah & ~bw
+        bw = _brandwand(Pt, tm.face_normals[fi], NB) if NB is not None else np.zeros(len(Pt), bool)
+        _rest = trimesh.util.concatenate([v for k_, v in _alle.items() if k_ != f]) if len(_alle) > 1 else None
+        vg = _brandwand(Pt, tm.face_normals[fi], _rest, weite=1.5, start=-0.02, min_d=0.05) if (_rest is not None and NBF) else np.zeros(len(Pt), bool)
+        nf = nah & ~bw & ~vg
         teile.append({"teil": f[:-4], "anteil_mit_daten": round(float(nah.mean()), 3), "anteil_sichtbar": round(float(vis.mean()), 3),
-                      "anteil_brandwand": round(float(bw.mean()), 3), "rang_beleg": round(float((dt[nf] < BEL).mean()), 3) if nf.sum() >= 50 else None,
+                      "anteil_brandwand": round(float(bw.mean()), 3), "anteil_vorgebaut": round(float(vg.mean()), 3), "rang_beleg": round(float((dt[nf] < BEL).mean()), 3) if nf.sum() >= 50 else None,
                       "beleg": round(float((dt[nah] < BEL).mean()), 3) if nah.any() else None,
                       "median_m": round(float(np.median(dt[nah])), 3) if nah.any() else None,
                       "ueber_wolke_z": round(float((Pt[:, 2] > zw).mean()), 3)})
@@ -197,6 +204,8 @@ if WOLKE and TDIR and os.path.isdir(TDIR):
                     _L = np.linalg.norm(Et[:, 1] - Et[:, 0], axis=1); _cnt = np.maximum(2, np.ceil(_L / 0.05).astype(int))   # wie entlang()
                     _kn = np.repeat(_n, _cnt, 0)   # Kantenpunkt -> Normale seiner Kante
                     kw &= ~_brandwand(KP, _kn, NB)
+                    _rest = trimesh.util.concatenate([v for k_, v in _alle.items() if k_ != nm + ".stl"]) if len(_alle) > 1 else None
+                    if _rest is not None: kw &= ~_brandwand(KP, _kn, _rest, weite=1.5, start=-0.02, min_d=0.05)
                 pr2[nm] = round(float((dk[kw] < TOL).mean()), 3) if kw.sum() >= 50 else None
             else:
                 pr[nm] = (None, 0); pr2[nm] = None
