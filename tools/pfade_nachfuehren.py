@@ -41,6 +41,25 @@ for i, e in enumerate(r.get("pfade_ohne_spiegel", [])):
         c, dv = E.strahl(K, q + [x0, y0]); den = dv @ n3; Pn.append(c + dv * (((p0 - c) @ n3) / den) if abs(den) > 1e-3 else p0)
     Pn = np.array(Pn); rep.append((i, f"mittl. Verschiebung {np.abs(disp).mean():.1f} px, max {np.abs(disp).max():.1f} px, 3D max {np.linalg.norm(Pn - P3, axis=1).max() * 100:.1f} cm"))
     cv2.polylines(vis, [pxs.astype(np.int32)], False, (255, 255, 255), 3); cv2.polylines(vis, [new.astype(np.int32)], False, (0, 255, 0), 3); cv2.putText(vis, str(i), tuple(new[len(new) // 2].astype(int) + [8, 0]), 0, 1.3, (0, 255, 255), 3)
+    if "--breite" in a:                                   # Rippenbreite aus der Maske: Breite des Maskenbands senkrecht zur Mittellinie (px) -> m ueber Abstand/Brennweite
+        wm = []
+        for q, nl_, p3 in zip(new, nl, Pn):
+            dq, iq = T.query(q)
+            if dq > 12: continue                                  # Mittelpunkt nicht an der Maske: keine Messung
+            q = np.array([xs[iq], ys[iq]], float); lim = []
+            for sg in (1, -1):
+                t_ = 0
+                while t_ < 90:
+                    x_, y_ = (q + sg * nl_ * (t_ + 1)).astype(int)
+                    if not (0 <= x_ < m.shape[1] and 0 <= y_ < m.shape[0]) or not m[y_, x_]: break
+                    t_ += 1
+                lim.append(t_)
+            dist = float(np.linalg.norm(p3 - K["c"])); wm.append((lim[0] + lim[1]) * dist / K["f"])
+        wmed = 0.72 * float(np.median([w_ for w_ in wm if w_ > 0.02])) if any(w_ > 0.02 for w_ in wm) else None   # 0,72: Gold-zu-Gold-Frontbreite / Maske inkl. dunkler Flanken (Messung 6171: 0,07 / 0,098)
+        if wmed is None: continue
+        rep.append((i, f"Maskenbreite Median {wmed * 100:.1f} cm (Min {min(wm) * 100:.1f}, Max {max(wm) * 100:.1f})"))
+        if not dct: e = dict(pfad=r["pfade_ohne_spiegel"][i], spiegeln=False); r["pfade_ohne_spiegel"][i] = e; dct = True
+        e["b"] = round(float(np.clip(wmed, float(opt("--b_min", 0.03)), float(opt("--b_max", 0.09)))), 3)
     newq = [UVZ(p) for p in Pn]; 
     if dct: e["pfad"] = [[round(v, 3) for v in q] for q in newq]
     else: r["pfade_ohne_spiegel"][i] = [[round(v, 3) for v in q] for q in newq]
