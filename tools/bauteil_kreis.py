@@ -90,6 +90,12 @@ RUECKGABE = opt("--rueckgabe", 0, int)
 # MESSBARKEITS-FILTER in waehlen(): Ziel nur, wenn das Teil in >= SICHT_FOTOS Fotos der Formliste sichtbar ist (sicht_px >= SICHT_PX, Kantenpixel > 0)
 # und (mit Rauschtor) ein trennendes Mass hat; sonst Eintrag in <kreisdir>/<objekt>/fotowunsch.jsonl und ueberspringen.
 MESSBAR = opt("--messbar", 1, int); SICHT_FOTOS = opt("--sicht_fotos", 3, int); SICHT_PX = opt("--sicht_px", 2000, int)
+
+# REGEL 1 (12.11., Nacht ohne Erker): Sperrzaehler zaehlen nur Runden unter dem AKTUELLEN Tor. TOR_VERSION = Hash der torrelevanten Parameter;
+# aendert sich ein Parameter (oder die Metrik), faengt jedes Teil bei 0 an. Altbestand mit Feld 'rauschtor' gilt als Standardparameter-Version.
+import hashlib as _hl
+def _tor_version(metrik, rt, fak, mn, grob, klein, messbar):
+    return _hl.sha1(f"{metrik}|{rt}|{fak}|{mn}|{grob}|{klein}|{messbar}".encode()).hexdigest()[:8]
 NUR_WAHL = "--nur_wahl" in a   # Probe der Zielwahl: alle Kandidaten mit Messbarkeit/Grund auflisten, nichts belegen, nichts starten
 if NUR_WAHL: TROCKEN = True
 RAUSCHDIR = os.path.join(KREISDIR, OBJ, "rauschen"); FOTOWUNSCH = os.path.join(KREISDIR, OBJ, "fotowunsch.jsonl")
@@ -201,11 +207,14 @@ def fehlversuche_global():
             except Exception: continue
             if (z.get("ziel") or {}).get("teil"): ev.append((z.get("zeit", ""), lauf, z))
     ev.sort(key=lambda e: e[0])   # zeitlich ueber alle Spuren, damit eine Annahme spaetere Zaehlung zuruecksetzt
+    try: _fr = json.load(open(os.path.join(KREISDIR, OBJ, "freigabe.json")))   # Regel 3: {schluessel_oder_teil: "Zeit"} - Runden bis dahin zaehlen nicht
+    except Exception: _fr = {}
     boxen = teil_boxen(); n = {}; leer = {}; _lf = {}   # _lf: Zeit der letzten Verwerfung/leeren Runde je Teil (fuer die Freigabe durch neue Kameras)
     for _, lauf, z in ev:
         t = z["ziel"]["teil"]
         if z["ziel"].get("art") == "beobachtung": t = beob_schluessel(z["ziel"].get("beob") or {})   # eigene Zaehlung je Beobachtung (neue Information, z. B. Nutzer-Sichtfund)
-        _zt = (not RAUSCHTOR) or bool(z.get("rauschtor"))   # 12.11.: Nachtlauf blockiert - Erker/Baldachine/Figuren gesperrt durch Verwerfungen unter dem rauschblinden Tor (Schwelle 0,02 < Rauschen); nur Rauschtor-Runden zaehlen
+        _zt = z.get("tor_version", TOR_VERSION_ALT if z.get("rauschtor") else None) == TOR_VERSION   # Regel 1: nur Runden unter dem aktuellen Tor zaehlen; Regel 3: Freigabe (freigabe.json) setzt Zaehler ab Zeitpunkt zurueck
+        if z.get("zeit", "") <= max(_fr.get(t, ""), _fr.get(z["ziel"]["teil"], "")): _zt = False
         if _zt and z.get("angenommen") is False and not z.get("infra_oom") and z.get("metrik", "v1") == METRIK_SOLL and ("tor" in z or (t.endswith("__neu") and "guete_vor_nach" in z)): n[t] = n.get(t, 0) + 1   # nur Runden mit dem Foto-Tor (Feld 'tor', ab 10.11. abends) zaehlen - Verwerfungen unter dem Wolken-Tor sperren nicht
         _ff = z.get("foto_f1_vor_nach") or [None, None]
         _lr = z.get("agent_leer") if "agent_leer" in z else bool(z.get("frueh_abgelehnt") and _ff[0] is not None and _ff[0] == _ff[1])   # Altbestand vor 11.11. 02:5x
@@ -357,6 +366,8 @@ SKALA_VOR = opt("--vorpruef_skala", 0.5, float); HALBDIR = os.path.join(KREISDIR
 # Formlisten verschiedener Metrik duerfen NIE verglichen werden: Dateiname <stl_sha>_<metrik>.json (v1 unveraendert <stl_sha>.json) UND Pruefung des Feldes "metrik".
 import re as _re
 METRIK_SOLL = _re.search(r'^METRIK = "([^"]+)"', open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "teil_fotoform.py")).read(), _re.M).group(1)   # Quelle der Wahrheit: teil_fotoform.METRIK
+TOR_VERSION = _tor_version(METRIK_SOLL, RAUSCHTOR, RAUSCH_FAKTOR, RAUSCH_MIN, RAUSCH_GROB, RAUSCH_KLEIN, MESSBAR)
+TOR_VERSION_ALT = _tor_version(METRIK_SOLL, 1, 0.5, 0.01, 0.05, 0.36, 1)   # Standard, unter dem die Nacht 12.11. lief
 def metrik_suffix(): return "_" + METRIK_SOLL
 def formliste_halb(wt):
     import hashlib
@@ -630,6 +641,16 @@ def waehlen(z, sperre):
             ok, gr, inf = messbar(t["teil"], fl, (bz.get(t["teil"]) or {}).get("beob"))
             print(f"  {i + 1:2d}. {t['teil']:45s} {'WAEHLBAR ' if ok else 'UEBERSPR.'} {gr}" + (f"  [Beobachtung: {str(bz[t['teil']]['beob'].get('merkmal', ''))[:60]}]" if t["teil"] in bz else ""), flush=True)
         _kt = {t["teil"] for t in kand}
+        try:   # Regel 2/3: Maschinenlesbare Probe fuer den Regler (Nutzerfunde: waehlbar / gesperrt)
+            _Bp = json.load(open(os.path.join(ROOT, "modelle", OBJ, "masstabelle.json"))).get("beobachtungen_offen") or []
+            _nf = [b for b in _Bp if isinstance(b, dict) and b.get("teil") and not b.get("erledigt") and _istn(b)]
+            _gesp = [{"teil": str(b["teil"]).replace(":", "__"), "schluessel": beob_schluessel(b), "fehlversuche": fg.get(beob_schluessel(b), 0)}
+                     for b in _nf if fg.get(beob_schluessel(b), 0) >= MAX_GLOBAL or sperre.get(beob_schluessel(b), 0) >= MAX_FEHL]
+            json.dump({"zeit": time.strftime("%Y-%m-%d %H:%M:%S"), "tor_version": TOR_VERSION,
+                       "waehlbar": [t["teil"] for t in kand if messbar(t["teil"], fl, (bz.get(t["teil"]) or {}).get("beob"))[0]],
+                       "nutzerfund_teile": sorted({str(b["teil"]).replace(":", "__") for b in _nf}), "nutzerfund_gesperrt": _gesp},
+                      open(os.path.join(KREISDIR, OBJ, "wahl_probe.json"), "w"), ensure_ascii=False, indent=1)
+        except Exception as ex: print("wahl_probe.json:", ex, flush=True)
         print("ZIELWAHL-PROBE: nicht in der Kandidatenliste (gesperrt/belegt/Foto-Cluster) - Messbarkeit zur Info:", flush=True)
         for t_ in sorted(((fl or {}).get("teile") or {})):
             if t_ in _kt: continue
@@ -1517,7 +1538,7 @@ for runde in range(1, RUNDEN + 1):
         subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
                "agent_rc": rcA, "agent_leer": _agent_leer, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or "") or INFRA["runde"], "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "metrik": METRIK_SOLL, "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else (("foto_neu" if foto_tor else "region") if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "kontroll_f1_vor_nach": [kf_v, kf_n], "kontroll_skala": SKALA_VOR if _flk is not None else 1.0, "frueh_abgelehnt": _frueh, "kontroll_fotos": kf_fotos, "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
-               "tor_konvergenz": tor_konv, "rauschtor": ({"mass": _rmass, "R": (_RZ or {}).get("R"), "schluessel": (_RZ or {}).get("schluessel"), "besteht": rt_ok, "urteile": RTLOG} if _RT else None), "rueckgabe": RUECKGABE, "foto_f1": [ff_v, ff_n], "foto_fotos": ff_fotos, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
+               "tor_version": TOR_VERSION, "tor_konvergenz": tor_konv, "rauschtor": ({"mass": _rmass, "R": (_RZ or {}).get("R"), "schluessel": (_RZ or {}).get("schluessel"), "besteht": rt_ok, "urteile": RTLOG} if _RT else None), "rueckgabe": RUECKGABE, "foto_f1": [ff_v, ff_n], "foto_fotos": ff_fotos, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")
     if ohne_annahme >= 2:

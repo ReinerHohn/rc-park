@@ -10,6 +10,7 @@ Startbedingung je Takt (alle muessen gelten):
   laufende Spuren < --max, letzter Start > --abstand s her (Spuren nicht gleichzeitig in die Messphase)
   main fuer den aktuellen HEAD nicht rot (main_status.json von bauteil_kreis.py, Start-Abnahme 12.11.)
 Spuren laufen mit den Kreis-Standards (Rauschtor an, Rueckgabe aus, Messbarkeits-Filter an; 12.11.).
+Regeln 2-4 (12.11.): stuendliche Zielwahl-Probe (wahl_probe.json), Freigabe gesperrter Nutzerfunde nach 1 h ohne Runde (freigabe.json), Stundenbericht (stundenbericht.txt).
 Ende: 3 Spuren in Folge melden 'kein Kandidat' -> nichts mehr zu tun. Jede Entscheidung wird geloggt.
 """
 import sys, os, time, subprocess, shutil, json, glob
@@ -164,8 +165,89 @@ def platz_schaffen():
         print(f"{time.strftime('%H:%M:%S')} PLATZ root {rf:.1f} GB -> Git-Packs auf Datenplatte", flush=True)
     if cmd: _platz_proc = subprocess.Popen(cmd, cwd=ROOT, stdout=open(os.path.join(KD, "platz_schaffen.log"), "a"), stderr=subprocess.STDOUT)
 
+
+# --- Regeln 2-4 (12.11., Nacht 00:30-07:45 lief ohne Erker/Baldachine: Sperrzaehler aus dem alten Tor) -----------------------------------
+PROBE_ALTER = 3600; BERICHT_ALTER = 3600; FREIGABE_PAUSE = 3 * 3600
+_probe_proc = None; _probe_t = 0.0; _bericht_t = 0.0; _takte = {"gesamt": 0, "leer": 0}
+
+def _kj(): return os.path.join(KD, OBJ)
+
+def wahl_probe_starten():
+    """Regel 2: stuendlich (und beim Start) die Zielwahl-Probe laufen lassen (schreibt wahl_probe.json); Auswertung in wahl_probe_pruefen."""
+    global _probe_proc, _probe_t
+    if _probe_proc is not None and _probe_proc.poll() is None: return
+    if time.time() - _probe_t < PROBE_ALTER: return
+    _probe_t = time.time()
+    _probe_proc = subprocess.Popen(["python3", "tools/bauteil_kreis.py", OBJ, "--nur_wahl"], cwd=ROOT,
+                                   stdout=open(os.path.join(KD, "wahl_probe.log"), "w"), stderr=subprocess.STDOUT)
+
+def nutzerfund_runden_letzte_stunde(teile):
+    n = 0; grenze = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() - 3600))
+    for f in glob.glob(os.path.join(_kj(), "2026*", "kreis.jsonl")):
+        if time.time() - os.path.getmtime(f) > 3600: continue
+        for l in open(f, errors="replace"):
+            try: z = json.loads(l)
+            except ValueError: continue
+            if z.get("zeit", "") >= grenze and str((z.get("ziel") or {}).get("teil", "")) in teile: n += 1
+    return n
+
+def wahl_probe_pruefen():
+    """Regel 2 + 3: Probe fertig -> sind offene Nutzerfunde gesperrt UND lief in der letzten Stunde keine Runde an einem Nutzerfund-Teil, wird die
+    Sperre freigegeben (freigabe.json: Runden bis jetzt zaehlen nicht mehr), hoechstens alle 3 h je Schluessel. Laut loggen, nie abbrechen."""
+    global _probe_proc
+    if _probe_proc is None or _probe_proc.poll() is None: return
+    _probe_proc = None
+    try: pj = json.load(open(os.path.join(_kj(), "wahl_probe.json")))
+    except (OSError, ValueError): print(time.strftime("%H:%M:%S"), "ALARM Probe ohne wahl_probe.json (wahl_probe.log lesen)"); return
+    nf = set(pj.get("nutzerfund_teile") or []); wb = set(pj.get("waehlbar") or []); gesp = pj.get("nutzerfund_gesperrt") or []
+    print(time.strftime("%H:%M:%S"), f"PROBE {len(wb)} waehlbar, Nutzerfund-Teile {len(nf)} (davon waehlbar {len(nf & wb)}), gesperrt {len(gesp)}")
+    if not nf or not gesp: return
+    if sp_nutzerfund_aktiv(nf) or nutzerfund_runden_letzte_stunde(nf) > 0: return
+    try: fr = json.load(open(os.path.join(_kj(), "freigabe.json")))
+    except (OSError, ValueError): fr = {}
+    jetzt = time.strftime("%Y-%m-%d %H:%M:%S"); alt = time.time() - FREIGABE_PAUSE; neu = []
+    for g in gesp:
+        for k in (g["schluessel"], g["teil"]):
+            z0 = fr.get(k + "#frei", "")
+            if z0 and time.mktime(time.strptime(z0, "%Y-%m-%d %H:%M:%S")) > alt: break
+        else:
+            for k in (g["schluessel"], g["teil"]): fr[k] = jetzt
+            fr[g["schluessel"] + "#frei"] = jetzt; neu.append(g["teil"])
+    if neu:
+        json.dump(fr, open(os.path.join(_kj(), "freigabe.json"), "w"), ensure_ascii=False, indent=1)
+        print(time.strftime("%H:%M:%S"), "ALARM Nutzerfunde seit 1 h ohne Runde und gesperrt -> Sperre freigegeben:", sorted(set(neu)))
+
+def sp_nutzerfund_aktiv(teile):
+    bd = os.path.join(_kj(), "belegt")
+    return any(t in teile for t in (os.listdir(bd) if os.path.isdir(bd) else []))
+
+def stundenbericht(sp):
+    """Regel 4: stuendlich Runden je Teil, Annahmen, leere Runden, Anteil 'kein Kandidat' -> Log + stundenbericht.txt."""
+    global _bericht_t
+    if time.time() - _bericht_t < BERICHT_ALTER: return
+    _bericht_t = time.time(); grenze = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() - 3600))
+    je = {}; ang = leer = 0
+    for f in glob.glob(os.path.join(_kj(), "2026*", "kreis.jsonl")):
+        if time.time() - os.path.getmtime(f) > 3600: continue
+        for l in open(f, errors="replace"):
+            try: z = json.loads(l)
+            except ValueError: continue
+            if z.get("zeit", "") < grenze or not (z.get("ziel") or {}).get("teil"): continue
+            t = z["ziel"]["teil"]; je[t] = je.get(t, 0) + 1; ang += bool(z.get("angenommen")); leer += bool(z.get("agent_leer"))
+    kk = _takte["leer"] / max(_takte["gesamt"], 1)
+    try: nf = set(json.load(open(os.path.join(_kj(), "wahl_probe.json"))).get("nutzerfund_teile") or [])
+    except (OSError, ValueError): nf = set()
+    nfr = sum(v for t, v in je.items() if t in nf)
+    txt = (f"{time.strftime('%Y-%m-%d %H:%M')} STUNDENBERICHT Runden {sum(je.values())} (angenommen {ang}, leer {leer}), Nutzerfund-Runden {nfr}, "
+           f"Takte ohne Kandidat {kk:.0%}, Spuren jetzt {len(sp)}; je Teil: " + ", ".join(f"{t} {v}" for t, v in sorted(je.items(), key=lambda x: -x[1])[:12]))
+    if sum(je.values()) == 0 or (nf and nfr == 0) or kk > 0.8: txt += "  >>> ALARM: " + ("keine Runde" if not je else "keine Runde an Nutzerfunden" if nf and nfr == 0 else "ueber 80 % Takte ohne Kandidat")
+    print(txt); open(os.path.join(_kj(), "stundenbericht.txt"), "a").write(txt + "\n")
+    _takte["gesamt"] = _takte["leer"] = 0
+
 while True:
     tote_sperren_freigeben()
+    try: wahl_probe_starten(); wahl_probe_pruefen()
+    except Exception as ex: print("wahl_probe:", ex)
     _takt_nr += 1
     if _takt_nr % 10 == 1:
         try: tote_worktrees_aufraeumen()
@@ -208,6 +290,9 @@ while True:
         if _ms.get("head") == sig[0] and _ms.get("gruen") is False: grund.append(f"main rot (Abnahme {_ms.get('zeit')}, {_ms.get('log')})")
     except (OSError, ValueError): pass
     if time.time() - letzter < ABSTAND: grund.append("Abstand")
+    _takte["gesamt"] += 1; _takte["leer"] += any(g_.startswith("kein Kandidat") for g_ in grund)
+    try: stundenbericht(sp)
+    except Exception as ex: print("stundenbericht:", ex)
     zeile = f"{time.strftime('%H:%M:%S')} Spuren {len(sp)} GPU {u:.0f}/{ug:.0f} % VRAM {m:.0f} RAM {r:.1f} Last {last:.1f} root {rf:.1f} daten {df:.1f}"
     if grund:
         print(zeile, "-> warten:", ", ".join(grund))
