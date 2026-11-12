@@ -2,7 +2,7 @@
 """kanten_features.py - Linienhafte Features (Rippen, Baender, Leisten, Fensterstaebe, Dachkanten ...) in EINEM Foto automatisch finden, klassifizieren und auf die Modellflaeche legen.
 
 Aufruf: kanten_features.py OBJ.json --kam K-6171 --fenster x0 y0 x1 y1 --box "x0,y0,z0,x1,y1,z1" [--farbe gold|dunkel|hell] [--schwelle 70] [--maske KURVEN.json]
-        [--maskenbreite_px 40] [--paar_m 0.2] [--pruef K-6259] [--min_px 110] [--aus DIR] [--name N]
+        [--maskenbreite_px 40] [--paar_m 0.2] [--sweep SWEEP.npz --nur_ref --min_belegt 0.2 --stuetz_px 6 --band 0.25] [--pruef K-6259] [--min_px 110] [--aus DIR] [--name N]
 Ablauf (reine Geometrie + Bildverarbeitung, nichts objektspezifisch):
   1. Farbmaske (Standard: Goldanteil = (R+G)/2 - B) im Fenster -> Skelett (skeletonize).
   2. Optional --maske: Datei mit 3D-Kurven schon vorhandener Features ({"kurven": [[[x,y,z],...], ...]} Welt) -> in die Kamera projiziert und aus dem Skelett ausgenommen: uebrig bleibt, was FEHLT.
@@ -28,7 +28,9 @@ obj = json.load(open(a[0])); root = os.path.dirname(os.path.dirname(os.path.dirn
 kam = opt("--kam", None); fw = [int(v) for v in a[a.index("--fenster") + 1:a.index("--fenster") + 5]]; bx = [float(v) for v in opt("--box", "").split(",")]
 farbe, th, mb, minpx, aus, name = opt("--farbe", "gold"), float(opt("--schwelle", 70)), int(opt("--maskenbreite_px", 40)), int(opt("--min_px", 110)), opt("--aus", "."), opt("--name", "feat"); os.makedirs(aus, exist_ok=True)
 K = EPI.kam(od, kam); im = cv2.imread(glob.glob(os.path.join(root, obj["fotos_dir"], kam[2:] + "_*"))[0]); H, W = im.shape[:2]; x0, y0, x1, y1 = fw
-f = im.astype(np.float32); sig = {"gold": np.clip((f[..., 2] + f[..., 1]) / 2 - f[..., 0], 0, None), "dunkel": 255 - f.mean(axis=2), "hell": f.mean(axis=2)}[farbe]
+f = im.astype(np.float32); sig = {"gold": np.clip((f[..., 2] + f[..., 1]) / 2 - f[..., 0], 0, None), "dunkel": 255 - f.mean(axis=2), "hell": f.mean(axis=2)}.get(farbe, f.mean(axis=2))
+if farbe == "stabil":                                  # Signal = Kantenstabilitaetskarte (Konsens ueber Farbkanaele/Kontraste, kanten_stabilitaet), auf Fotogroesse
+    sm = cv2.imread(os.path.join(opt("--stabildir", "/media/oem/scan/rc-park_daten/kaufhaus_alle/stabil"), "ip_IMG_" + kam[2:] + ".png"), 0); sig = cv2.resize(sm, (W, H), interpolation=cv2.INTER_LINEAR).astype(np.float32)
 sk = skeletonize((sig > th)[y0:y1, x0:x1]); ys, xs = np.nonzero(sk); px = np.c_[xs + x0, ys + y0]
 if "--maske" in a:
     mk = np.zeros((H, W), np.uint8)
@@ -40,7 +42,11 @@ print("Skelettpixel", len(px))
 kk = json.load(open(os.path.join(od, "messprotokoll", kam + ".json")))["kamera"]
 m = trimesh.load(os.path.join(root, obj["stl"])); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0); m.apply_translation(np.asarray(kk.get("rahmen_verschiebung", [0, 0, 0]), float))
 ct = m.triangles_center; sel = np.all((ct >= bx[:3]) & (ct <= bx[3:]), axis=1); sub = trimesh.Trimesh(m.vertices, m.faces[sel], process=False); fn = np.asarray(sub.face_normals)
-dbg = []; rest = np.ones(len(px), bool); tr = cKDTree(px); out = []
+dbg = []; SW = None
+if "--sweep" in a:                                       # Mehrfoto-Sweep-Punkte (kanten_tiefe_sweep) als Tiefenanker: Pixel in dieser Kamera + Tiefe entlang des Strahls
+    zz = np.load(opt("--sweep", "")); Ps = zz["P"]; ref_ok = np.isin(zz["ref"], [i for i, f_ in enumerate(zz["fotos"]) if kam[2:] in str(f_)]) if "--nur_ref" in a else np.ones(len(Ps), bool)
+    pj = [EPI.projekt(K, q_) for q_ in Ps]; vv = np.array([p_ is not None for p_ in pj]); Ps = Ps[vv & ref_ok]; pj = np.array([p_ for p_, o_ in zip(pj, vv & ref_ok) if o_]); SW = (cKDTree(pj), np.linalg.norm(Ps - K["c"], axis=1), Ps)
+rest = np.ones(len(px), bool); tr = cKDTree(px); out = []
 for it in range(80):
     ids = np.where(rest)[0]
     if len(ids) < 40: break
@@ -55,7 +61,15 @@ for it in range(80):
     gl = ids[idx[seq[::-1]]]; nb = tr.query_ball_point(px[gl], 12.0); rest[np.unique(np.concatenate([np.array(v, int) for v in nb]))] = False
     if len(gl) < minpx: continue
     pp = px[gl][::6]; o = np.array([EPI.strahl(K, q)[0] for q in pp]); d = np.array([EPI.strahl(K, q)[1] for q in pp])
-    loc, ir, it_ = sub.ray.intersects_location(o, d, multiple_hits=False)
+    loc, ir, it_ = sub.ray.intersects_location(o, d, multiple_hits=False); belegt = None
+    if SW is not None and len(ir) >= 6:                  # Luecken fuellen: gesicherte Sweep-Tiefen entlang des Zweigs, dazwischen Spline; Zweig zaehlt nur bei genug Belegung
+        dd_, jj_ = SW[0].query(pp[ir], distance_upper_bound=float(opt("--stuetz_px", 6)))
+        tt_ = np.linalg.norm(loc - K["c"], axis=1); fl = np.isfinite(dd_) & (np.abs(SW[1][np.minimum(jj_, len(SW[1]) - 1)] - tt_) < float(opt("--band", 0.25)))
+        belegt = float(fl.mean())
+        if fl.sum() >= 4 and belegt >= float(opt("--min_belegt", 0.2)):
+            s_ = np.arange(len(ir), dtype=float); tz = SW[1][jj_[fl]]; tz_f = np.interp(s_, s_[fl], np.median(np.c_[tz, np.r_[tz[:1], tz[:-1]], np.r_[tz[1:], tz[-1:]]], axis=1))
+            tz_s = np.convolve(np.pad(tz_f, 4, mode="edge"), np.ones(9) / 9, mode="valid"); loc = o[ir] + d[ir] * tz_s[:, None]; it_ = it_
+        else: continue
     if len(ir) < 6: dbg.append((int(px[gl][0][0]), int(px[gl][0][1]), len(gl), len(ir))); continue
     nf = fn[it_] * np.where(np.sum(fn[it_] * d[ir], axis=1) > 0, -1.0, 1.0)[:, None]; nm = nf.mean(axis=0); nm /= np.linalg.norm(nm)
     P = loc[np.r_[True, np.linalg.norm(np.diff(loc, axis=0), axis=1) > 1e-3]]
@@ -67,7 +81,7 @@ for it in range(80):
     ori = "waagerecht" if dz < 0.2 else ("senkrecht" if dz > 0.85 else "geneigt"); form = "gerade" if pfeil < 0.03 else "gebogen"
     pq = px[gl][::10].astype(float); tv = np.diff(pq, axis=0); ang = np.unwrap(np.arctan2(tv[:, 1], tv[:, 0])); wel = float(np.abs(np.diff(ang)).mean()) if len(ang) > 2 else 9.0   # Welligkeit: mittlere Richtungsaenderung je 10 px (Wandrauschen schlaengelt, Rippen laufen glatt)
     if wel > float(opt("--max_wellig", 9)): continue
-    out.append(dict(wellig=round(wel, 2), klasse=f"{ori}, {form}", laenge_m=round(L, 2), pfad_xyz=Q.round(3).tolist(), normale_xyz=nm.round(3).tolist(), pixel=px[gl][::8].tolist()))
+    out.append(dict(wellig=round(wel, 2), klasse=f"{ori}, {form}", laenge_m=round(L, 2), pfad_xyz=Q.round(3).tolist(), normale_xyz=nm.round(3).tolist(), belegt=None if belegt is None else round(belegt, 2), pixel=px[gl][::8].tolist()))
 # Doppelkanten (zwei Goldkanten je Rippe) zu Mittellinie zusammenlegen: Pfade mit mittlerem 3D-Abstand < --paar_m (0,14) und gleicher Richtung
 pm_ = float(opt("--paar_m", 0.2)); out.sort(key=lambda d: -d["laenge_m"]); used = set(); mer = []
 for i, d in enumerate(out):
@@ -82,7 +96,7 @@ out = mer
 # Gegenprobe in zweiter Kamera: Anteil der in --pruef projizierten Pfadpunkte mit Signal in 8 px Umgebung
 if "--pruef" in a:
     K2 = EPI.kam(od, opt("--pruef", "")); im2 = cv2.imread(glob.glob(os.path.join(root, obj["fotos_dir"], opt("--pruef", "")[2:] + "_*"))[0]); f2 = im2.astype(np.float32)
-    s2 = {"gold": np.clip((f2[..., 2] + f2[..., 1]) / 2 - f2[..., 0], 0, None), "dunkel": 255 - f2.mean(axis=2), "hell": f2.mean(axis=2)}[farbe]; s2 = cv2.dilate(cv2.GaussianBlur(s2, (0, 0), 1.5), np.ones((7, 7), np.uint8)); H2, W2 = s2.shape
+    s2 = {"gold": np.clip((f2[..., 2] + f2[..., 1]) / 2 - f2[..., 0], 0, None), "dunkel": 255 - f2.mean(axis=2), "hell": f2.mean(axis=2)}.get(farbe, f2.mean(axis=2)); s2 = cv2.dilate(cv2.GaussianBlur(s2, (0, 0), 1.5), np.ones((7, 7), np.uint8)); H2, W2 = s2.shape
     def mw(q, dx, dy):
         v = [s2[int(p[1] + dy), int(p[0] + dx)] for p in q if p is not None and 0 <= p[0] + dx < W2 and 0 <= p[1] + dy < H2]; return (float(np.mean(v)), len(v)) if len(v) >= 8 else (None, len(v))
     for d in out:   # Kontrast = Signal auf dem Pfad / Mittel gleicher, seitlich verschobener Pfade (+-30 px); ohne echte Linie ~1, mit Linie deutlich > 1,5
@@ -91,5 +105,5 @@ if "--pruef" in a:
 out.sort(key=lambda d: -d["laenge_m"]); json.dump(out, open(os.path.join(aus, f"features_{name}.json"), "w"))
 c = im[y0:y1, x0:x1].copy(); fs = 1000 / c.shape[0]; c = cv2.resize(c, None, fx=fs, fy=fs, interpolation=cv2.INTER_AREA)
 for i, d in enumerate(out):
-    pts = ((np.array(d["pixel"]) - [x0, y0]) * fs).astype(np.int32); cv2.polylines(c, [pts], False, (255, 0, 255), 3); cv2.putText(c, f"{i} {d['klasse'][:6]} x{d['n_kanten']} w{d['wellig']} g{d.get('gegenprobe')}", tuple(pts[len(pts) // 2]), 0, 0.6, (0, 255, 255), 2)
+    pts = ((np.array(d["pixel"]) - [x0, y0]) * fs).astype(np.int32); cv2.polylines(c, [pts], False, (255, 0, 255), 3); cv2.putText(c, f"{i} {d['klasse'][:6]} x{d['n_kanten']} w{d['wellig']} b{d.get('belegt')} g{d.get('gegenprobe')}", tuple(pts[len(pts) // 2]), 0, 0.6, (0, 255, 255), 2)
 cv2.imwrite(os.path.join(aus, f"features_{name}.jpg"), c); print(len(out), "Features:", [(i, d["klasse"], d["laenge_m"]) for i, d in enumerate(out)][:30])
