@@ -666,6 +666,30 @@
  },
  {
   "seite": "alle",
+  "element": "Quader-Aussparung Fuge West (Tiefe 0.020)",
+  "quelle": "Fotos 6130/6124 (Raster Ebene n 7,73, kreis4 12.11.): senkrechte Steinfuge der Sockelfront bei u -6.43 (+-0,05 m); in 6145 nur schwach; Breite 0,04 und Tiefe 0,02 ANNAHME",
+  "u0": -6.45,
+  "u1": -6.41,
+  "z0": 1.51,
+  "z1": 1.97,
+  "tiefe": 0.02,
+  "n_front": 7.73,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
+  "element": "Quader-Aussparung Fuge Mitte (Tiefe 0.020)",
+  "quelle": "Fotos 6130/6124 (Raster Ebene n 7,73, kreis4 12.11.): senkrechte Steinfuge der Sockelfront bei u -4.55 (+-0,05 m); in 6145 nur schwach; Breite 0,04 und Tiefe 0,02 ANNAHME",
+  "u0": -4.57,
+  "u1": -4.53,
+  "z0": 1.51,
+  "z1": 1.97,
+  "tiefe": 0.02,
+  "n_front": 7.73,
+  "seite_name": "alle"
+ },
+ {
+  "seite": "alle",
   "element": "Quader (anbau) mit Profil (6 Punkte)",
   "quelle": "Fotos 6117/6124/6130 (Stufe 0): durchgehender Sockel mit Gesimsband vor der Laubenrueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006); Front n 7,73 aus Wolke lot2 (z 1,75-2,10, Spitze 7,7-7,8); Wolke lot2: Sockelfront u -7..-2 belegt (152..993 Punkte je 1 m), u -1..5 leer (Tuerbucht); Westende ANNAHME",
   "u0": -7.2,

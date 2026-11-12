@@ -16,7 +16,7 @@
    "achse": "z",
    "wert": 8.26,
    "grund": "Unterseite 17.8 m2 waagerecht nach unten -> Bettflaeche",
-   "gewinn_m2": 43.81,
+   "gewinn_m2": 43.79,
    "stifte": [
     [
      -4.528,
@@ -221,8 +221,8 @@
     235.6
    ],
    "passt": true,
-   "ueberhang_m2": 8.077,
-   "flaeche_m2": 1709.38,
+   "ueberhang_m2": 8.084,
+   "flaeche_m2": 1709.39,
    "ueberhang_anteil": 0.00473,
    "wasserdicht": true,
    "volumen_m3": 3091.72,
@@ -283,8 +283,8 @@
     78.2
    ],
    "passt": true,
-   "ueberhang_m2": 5.081,
-   "flaeche_m2": 792.45,
+   "ueberhang_m2": 5.083,
+   "flaeche_m2": 792.49,
    "ueberhang_anteil": 0.00641,
    "wasserdicht": true,
    "volumen_m3": 931.45,
@@ -309,7 +309,7 @@
  "max_ueberhang_anteil": 0.00716,
  "alle_passen": true,
  "log": [
-  "Schnitt z 8.260: Ueberhang -43.81 m2",
+  "Schnitt z 8.260: Ueberhang -43.79 m2",
   "Bettschnitt u 0.553",
   "Bettschnitt u 4.388"
  ],

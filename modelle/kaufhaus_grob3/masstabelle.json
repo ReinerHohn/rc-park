@@ -7725,7 +7725,8 @@
    "teil": "quader:laube_sockel_w",
    "merkmal": "Pruefer-Rest quader:laube_sockel_w kreis 20261112_055730a055730 r3",
    "text": "Offene Fehler laut Pruefer nach angenommener Runde: Fuellungsfelder-Rahmen und senkrechte Fugen der Sockelfront fehlen (6130/6124 deutlich sichtbar, Fugen ungezaehlt) | Gelber Streifen auf Bandhoehe direkt ueber den Tuerchen bleibt (Grob-F1 unveraendert 0,815) | Wulst unter dem Gesimsband / Bandunterkante fehlt (gelb) | Gelb oben links am Band (u ca. -7..-6) und Westende u -7,2 nur ANNAHME | Schaltschild/Schluesselloch im rechten Tuerchen fehlt (gelber Fleck 6130) | Tuerchen-Unterkante z0 1,57 in h11_112108 evtl. zu hoch (Foto reicht tiefer) - nicht gemessen | rechtes Tuerchen linke Kante in 6124 ca. 10 px rechts der Fotokante | Ostende-Ueberstand ueber den Pfeiler (gruen/rot 6130) ungeklaert | Tuerchen-Anzahl ohne Z-Protokoll foto_zaehlung.py (Regel 9); Tiefen 0,03/0,06 ANNAHME | Verschiebungskontrolle t marge -0,002 (Dichte-Verdacht): Lage nur per Sichtpruefung in 4 Fotos bestaetigt | nach Werkzeugaenderung baukasten_gen fehlen regression.py --pruefen, teile_lage_pruefen, foto_diff, fehlteile_finden",
-   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern.",
+   "erledigt": "ersetzt durch Pruefer-Rest kreis 20261112_055730a055730 r4"
   },
   {
    "datum": "auto",
@@ -7754,11 +7755,11 @@
    "z_bis": 18.23,
    "xyz": [
     14.61,
-    -7.16,
+    -7.15,
     18.23
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.16 m (Zelle [312, 1794, 78], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -7794,6 +7795,14 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.08 m, y=-7.16 m (Zelle [312, 1872, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-12",
+   "wer": "Pruefer opus kreis 20261112_055730a055730 r4 (automatisch)",
+   "teil": "quader:laube_sockel_w",
+   "merkmal": "Pruefer-Rest quader:laube_sockel_w kreis 20261112_055730a055730 r4",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: Gelber Rest 6130 grob: Gesimsband-Unterkante/Wulst unter dem Band fehlt über die ganze Länge | Gelber Rest 6130 grob: Westende (linke Blöcke x~230-370) falsch, ANNAHME | Gelber Rest 6130 grob: Schaltkasten/Schild auf Türchen 2 fehlt | Vertiefte Füllungsfelder zwischen den Fugen fehlen | Weitere senkrechte Steinfugen westlich von u -6,43 fehlen (6130 Fein-Overlay x~105/345) | Fugenzahl ohne Z-Protokoll foto_zaehlung.py (Regel 9) | Fugenbreite 0,04/Fugentiefe 0,02 ANNAHME, H0 ~0,46x0,23 mm an der Druckgrenze | Verschiebungskontrolle marge_t -0,001: Lage längs der Front nur per Sichtprüfung bestätigt (6130/6124/6145 Abweichung <=10 px, 0,3 m ~70 px) | objekt.json komplett per json.dump umformatiert (großer Diff, Merge-Risiko) | 6206: Modellkasten gegen Foto versetzt (Altfehler) | teile_lage_pruefen/foto_diff/fehlteile_finden nicht gelaufen, Beobachtung offen",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"

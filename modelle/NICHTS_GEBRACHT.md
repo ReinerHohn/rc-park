@@ -306,3 +306,4 @@ BS-Balkon-Enden (10.11. Kreis 213718): Kuerzung u -5,4..12,3 (+Bruestung 57 Rast
 
 - 2026-11-12 kreis1 040618 r1 (satteldach:haupt Ziegel): Leisten 0,18 m mit Tiefe 0,07 liessen Druckreparatur scheitern (91 Teilnetze); Fase 0,04/0,05 scheiterte ebenfalls; Ursachen: deckungsgleiche Leistenstirnflaechen mit u0/u1 (-> ziegel_rand 0,05) und Leiste ueber der Traufhuelle (n -6,58 statt -6,56 -> Druckbett 244,1 mm -> Extra-Schnitt, Ueberhang 1,1 %). Fase brachte keinen Ueberhang-Gewinn (Fase 0). Reparaturerfolg ist ohne ziegel_rand ein Zufallsschalter.
 - 12.11. kreis3 laube_sockel_w: Aussparung ohne n_front (Huellmaximum Band 7,8 statt Front 7,73) schnitt nichts, Kennzahl identisch; erkannt am gleichen Volumen.
+- 12.11. kreis4 laube_sockel_w: kein Fehlschlag; Fugen u -4,55/-6,43 als Aussparung f1_fein 0,618->0,636; objekt.json per json.dump umformatiert (grosser Diff).

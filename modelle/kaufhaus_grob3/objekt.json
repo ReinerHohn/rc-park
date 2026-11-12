@@ -3672,10 +3672,22 @@
     "archivolt_tiefe": "kantengitter segmente_gitter_v12.json: Laibungs-Vorderkante bei s 12,4-12,5 gegen Bandfront 12,66 -> 0,22; ANNAHME Stufe senkrecht"
    },
    "sockel_weite": 1.5,
-   "sockel_hoehe": 0.80,
+   "sockel_hoehe": 0.8,
    "fase_hoehe": 0.16,
    "historie": [
-    {"datum": "2026-11-11", "wer": "Agent Kreis2 r2", "alt": {"sockel_hoehe": 0.55, "fase_hoehe": 0.2}, "neu": {"sockel_hoehe": 0.8, "fase_hoehe": 0.16}, "grund": "Nutzerfund Saeulensockel zu niedrig; Foto 6117+6115 Pfeiler 3: Wandoberkante z 2,27-2,30, Faseoberkante z 2,40-2,42 (M-6117-008/009, M-6115-016/017); 0,83/0,13 verletzte Ueberhangtor"},
+    {
+     "datum": "2026-11-11",
+     "wer": "Agent Kreis2 r2",
+     "alt": {
+      "sockel_hoehe": 0.55,
+      "fase_hoehe": 0.2
+     },
+     "neu": {
+      "sockel_hoehe": 0.8,
+      "fase_hoehe": 0.16
+     },
+     "grund": "Nutzerfund Saeulensockel zu niedrig; Foto 6117+6115 Pfeiler 3: Wandoberkante z 2,27-2,30, Faseoberkante z 2,40-2,42 (M-6117-008/009, M-6115-016/017); 0,83/0,13 verletzte Ueberhangtor"
+    },
     {
      "datum": "2026-11-09",
      "wer": "Agent Gitter->Generator",
@@ -3769,10 +3781,36 @@
    "archivolt_breite": 0.31,
    "archivolt_tiefe": 0.22,
    "stirnboegen": [
-    {"seite": "west", "u_aussen": -8.82, "dicke": 0.5, "s_von": 7.2, "s_bis": 11.95, "bogen_s0": 7.28, "bogen_s1": 11.87, "kaempfer_z": 5.28, "scheitel_z": 7.15, "oberkante_z": 8.0, "archivolt_breite": 0.31, "archivolt_tiefe": 0.22,
-     "quelle": "Foto 6225 (kalibriert, Strahlschnitt auf Stirnebene u -8,82): goldgesaeumter Westbogen, Innenkante Scheitel z 7,17-7,21 bei s 9,55-10,23, z 6,88 bei s 8,60; Spannweite s 7,28 (Rueckwand) bis 11,87 (Endsaeule); Kaempfer 5,28 wie Frontbogen (Foto 6130/6124: gleiche Bogenfamilie); Wanddicke 0,5 ANNAHME (Laibungstiefe nicht sichtbar); Wandoberkante 8,0 = Oberkante Bogenband; Pruefungen stirnbogen_west_*; Aussenring: Goldrand in 6225 ausserhalb der Innenkante sichtbar (Scheitel aussen z 7,4-7,8), Breite 0,31/Tiefe 0,22 von der Frontarkade uebernommen = ANNAHME (nicht an 6225 trianguliert)"},
-    {"seite": "ost", "u_aussen": 15.86, "dicke": 0.5, "s_von": 7.2, "s_bis": 11.95, "bogen_s0": 7.28, "bogen_s1": 11.87, "kaempfer_z": 5.28, "scheitel_z": 7.15, "oberkante_z": 8.0, "archivolt_breite": 0.31, "archivolt_tiefe": 0.22,
-     "quelle": "ANNAHME: Ostende gespiegelt zum Westende (Foto 6117 zeigt links der Endsaeule die Randkurve eines Bogens, Spannweite/Hoehe nicht kalibriert messbar; 6174/6176/6119 sehen die Ostoeffnung nicht); Ebene u 15,86 = Spiegel von -8,82 an der Endsaeulenmitte 15,56 ungeprueft"}
+    {
+     "seite": "west",
+     "u_aussen": -8.82,
+     "dicke": 0.5,
+     "s_von": 7.2,
+     "s_bis": 11.95,
+     "bogen_s0": 7.28,
+     "bogen_s1": 11.87,
+     "kaempfer_z": 5.28,
+     "scheitel_z": 7.15,
+     "oberkante_z": 8.0,
+     "archivolt_breite": 0.31,
+     "archivolt_tiefe": 0.22,
+     "quelle": "Foto 6225 (kalibriert, Strahlschnitt auf Stirnebene u -8,82): goldgesaeumter Westbogen, Innenkante Scheitel z 7,17-7,21 bei s 9,55-10,23, z 6,88 bei s 8,60; Spannweite s 7,28 (Rueckwand) bis 11,87 (Endsaeule); Kaempfer 5,28 wie Frontbogen (Foto 6130/6124: gleiche Bogenfamilie); Wanddicke 0,5 ANNAHME (Laibungstiefe nicht sichtbar); Wandoberkante 8,0 = Oberkante Bogenband; Pruefungen stirnbogen_west_*; Aussenring: Goldrand in 6225 ausserhalb der Innenkante sichtbar (Scheitel aussen z 7,4-7,8), Breite 0,31/Tiefe 0,22 von der Frontarkade uebernommen = ANNAHME (nicht an 6225 trianguliert)"
+    },
+    {
+     "seite": "ost",
+     "u_aussen": 15.86,
+     "dicke": 0.5,
+     "s_von": 7.2,
+     "s_bis": 11.95,
+     "bogen_s0": 7.28,
+     "bogen_s1": 11.87,
+     "kaempfer_z": 5.28,
+     "scheitel_z": 7.15,
+     "oberkante_z": 8.0,
+     "archivolt_breite": 0.31,
+     "archivolt_tiefe": 0.22,
+     "quelle": "ANNAHME: Ostende gespiegelt zum Westende (Foto 6117 zeigt links der Endsaeule die Randkurve eines Bogens, Spannweite/Hoehe nicht kalibriert messbar; 6174/6176/6119 sehen die Ostoeffnung nicht); Ebene u 15,86 = Spiegel von -8,82 an der Endsaeulenmitte 15,56 ungeprueft"
+    }
    ]
   },
   {
@@ -4168,7 +4206,11 @@
     "rippen_vor": 0.07
    },
    "eckfiguren": {
-    "ecken": [2, 3, 4],
+    "ecken": [
+     2,
+     3,
+     4
+    ],
     "z_oben": 13.0,
     "z_ende": 12.67,
     "breite": 0.28,
@@ -4283,7 +4325,11 @@
     "kegel_achse_n": 11.9
    },
    "eckfiguren": {
-    "ecken": [1, 2, 3],
+    "ecken": [
+     1,
+     2,
+     3
+    ],
     "z_oben": 13.0,
     "z_ende": 12.67,
     "breite": 0.28,
@@ -4971,6 +5017,26 @@
      "n_front": 7.73,
      "tiefe": 0.06,
      "quelle": "Fotos 6130/6124/6145 (je Raster Ebene n 7,73 aus K-Kamera-Bruecke, Stufe 0 kreis3 12.11.): zwei gerahmte Tuerchen mit eingelassener Fuellung in der Sockelfront unter dem Band; Innenfeld = Rahmen minus ~0,07 m Rand (Foto), Tiefe ANNAHME"
+    },
+    {
+     "name": "Fuge West",
+     "u0": -6.45,
+     "u1": -6.41,
+     "z0": 1.51,
+     "z1": 1.97,
+     "n_front": 7.73,
+     "tiefe": 0.02,
+     "quelle": "Fotos 6130/6124 (Raster Ebene n 7,73, kreis4 12.11.): senkrechte Steinfuge der Sockelfront bei u -6.43 (+-0,05 m); in 6145 nur schwach; Breite 0,04 und Tiefe 0,02 ANNAHME"
+    },
+    {
+     "name": "Fuge Mitte",
+     "u0": -4.57,
+     "u1": -4.53,
+     "z0": 1.51,
+     "z1": 1.97,
+     "n_front": 7.73,
+     "tiefe": 0.02,
+     "quelle": "Fotos 6130/6124 (Raster Ebene n 7,73, kreis4 12.11.): senkrechte Steinfuge der Sockelfront bei u -4.55 (+-0,05 m); in 6145 nur schwach; Breite 0,04 und Tiefe 0,02 ANNAHME"
     }
    ],
    "aktiv": true,
@@ -5002,43 +5068,43 @@
    "achse_quelle": "wie quader:laube_rueck (Hauptfassadenebene)",
    "quelle": "Fotos 6117/6124/6130 (Stufe 0): durchgehender Sockel mit Gesimsband vor der Laubenrueckwand; Oberkante z 2,16-2,24 (M-6117-006, M-6130-006); Front n 7,73 aus Wolke lot2 (z 1,75-2,10, Spitze 7,7-7,8); Wolke lot2: Sockelfront u 5..16 belegt (213..976 Punkte je 1 m); Ostende = laube_rueck u1; u 5 ANNAHME",
    "profil": [
-     [
-      7.2,
-      1.77
-     ],
-     [
-      7.73,
-      1.77
-     ],
-     [
-      7.73,
-      2.03
-     ],
-     [
-      7.76,
-      2.04
-     ],
-     [
-      7.76,
-      2.08
-     ],
-     [
-      7.8,
-      2.1
-     ],
-     [
-      7.8,
-      2.16
-     ],
-     [
-      7.77,
-      2.2
-     ],
-     [
-      7.2,
-      2.2
-     ]
+    [
+     7.2,
+     1.77
     ],
+    [
+     7.73,
+     1.77
+    ],
+    [
+     7.73,
+     2.03
+    ],
+    [
+     7.76,
+     2.04
+    ],
+    [
+     7.76,
+     2.08
+    ],
+    [
+     7.8,
+     2.1
+    ],
+    [
+     7.8,
+     2.16
+    ],
+    [
+     7.77,
+     2.2
+    ],
+    [
+     7.2,
+     2.2
+    ]
+   ],
    "aktiv": true,
    "werte_quellen": {
     "u0": "Wolke lot2: Sockelfront u 5..16 belegt (213..976 Punkte je 1 m); Ostende = laube_rueck u1; u 5 ANNAHME",
@@ -6673,13 +6739,25 @@
     }
    ],
    "historie": [
-   {
-    "datum": "2026-11-11",
-    "wer": "Kreis 20261111_165210a165209 r2 (Agent, baldachine)",
-    "alt": {"figuren[1..3].u": [5.468, 1.476, -2.463]},
-    "neu": {"figuren[1..3].u": [5.382, 1.507, -2.487]},
-    "grund": "Nutzer 11.11. 16:17: Kopfachse in denselben Kameras wie die Baldachin-Mittelfialen gepeilt (M-6161-050/048/052), vorher andere Kamerasaetze (6120) = Versatz bis 0,09 m"
-   },
+    {
+     "datum": "2026-11-11",
+     "wer": "Kreis 20261111_165210a165209 r2 (Agent, baldachine)",
+     "alt": {
+      "figuren[1..3].u": [
+       5.468,
+       1.476,
+       -2.463
+      ]
+     },
+     "neu": {
+      "figuren[1..3].u": [
+       5.382,
+       1.507,
+       -2.487
+      ]
+     },
+     "grund": "Nutzer 11.11. 16:17: Kopfachse in denselben Kameras wie die Baldachin-Mittelfialen gepeilt (M-6161-050/048/052), vorher andere Kamerasaetze (6120) = Versatz bis 0,09 m"
+    },
     {
      "datum": "2026-11-10",
      "wer": "Kreis r2 (Agent)",
@@ -6782,13 +6860,25 @@
     }
    ],
    "historie": [
-   {
-    "datum": "2026-11-11",
-    "wer": "Kreis 20261111_165210a165209 r2 (Agent, baldachine)",
-    "alt": {"baldachine[1..3].u": [5.42, 1.614, -2.447]},
-    "neu": {"baldachine[1..3].u": [5.385, 1.583, -2.41]},
-    "grund": "Nutzer 11.11. 16:17 Aufsaetze nicht mittig: Mittelfiale in 4/3/2 Kameras (6161/6145/6132/6117) gepeilt, M-6161-049/047/051"
-   },
+    {
+     "datum": "2026-11-11",
+     "wer": "Kreis 20261111_165210a165209 r2 (Agent, baldachine)",
+     "alt": {
+      "baldachine[1..3].u": [
+       5.42,
+       1.614,
+       -2.447
+      ]
+     },
+     "neu": {
+      "baldachine[1..3].u": [
+       5.385,
+       1.583,
+       -2.41
+      ]
+     },
+     "grund": "Nutzer 11.11. 16:17 Aufsaetze nicht mittig: Mittelfiale in 4/3/2 Kameras (6161/6145/6132/6117) gepeilt, M-6161-049/047/051"
+    },
     {
      "datum": "2026-11-11",
      "wer": "Kreis 20261111_045306a045306 r2 (Agent, baldachine)",
@@ -6836,8 +6926,28 @@
    "achse_quelle": "Hauptfassadennormale: Flaechengewichtetes Histogramm der Wandnormalen von g_fassade.stl (70,0 Grad), unabhaengig bestaetigt durch Wolke-RANSAC Fassadenebenen n=(0.34,0.94) (NICHTS_GEBRACHT BS48)",
    "quelle": "First/Traufe/Frontebene/Enden: kantengitter (SfM lot2, 440 Fotos + 336 Videoframes) koerper/rohkoerper_v7.json; Dachneigung 53,3 Grad folgt aus First-Traufe; Rueckhang ANNAHME Firstspiegel; Ziegel ANNAHME",
    "speier": [
-    {"u": 11.36, "z": 14.35, "z_ende": 13.85, "laenge": 2.0, "breite": 0.22, "hoehe": 0.22, "kopf_laenge": 0.5, "kopf_hoehe": 0.4, "quelle": "Anzahl 2: Z-6162-001 (Foto 6162, n11_04, n11_01). Lage/Neigung/Laenge TRIANGULIERT (foto_mass --tri): Fuss M-6162-001/003 (6162+6132, 6162+6145: u 11,36 n 12,68 z 14,3), Kopf M-6162-002/004 (u 11,5-11,6 n 14,7 z 13,8); Kopfblock 0,5x0,4 und Querschnitt 0,22 = ANNAHME Sichtschaetzung (Drachenkopf als Block)"},
-    {"u": -4.47, "z": 14.5, "z_ende": 13.85, "laenge": 1.95, "breite": 0.22, "hoehe": 0.22, "kopf_laenge": 0.5, "kopf_hoehe": 0.4, "quelle": "Anzahl 2: Z-6162-001 (Foto 6162, n11_04, n11_01). Lage/Neigung/Laenge TRIANGULIERT (foto_mass --tri 6162+6145): Fuss M-6162-005 (u -4,47 n 12,55 z 14,5), Kopf M-6162-006 (u -4,40 n 14,55 z 13,86); Kopfblock 0,5x0,4 und Querschnitt 0,22 = ANNAHME Sichtschaetzung (Drachenkopf als Block)"}
+    {
+     "u": 11.36,
+     "z": 14.35,
+     "z_ende": 13.85,
+     "laenge": 2.0,
+     "breite": 0.22,
+     "hoehe": 0.22,
+     "kopf_laenge": 0.5,
+     "kopf_hoehe": 0.4,
+     "quelle": "Anzahl 2: Z-6162-001 (Foto 6162, n11_04, n11_01). Lage/Neigung/Laenge TRIANGULIERT (foto_mass --tri): Fuss M-6162-001/003 (6162+6132, 6162+6145: u 11,36 n 12,68 z 14,3), Kopf M-6162-002/004 (u 11,5-11,6 n 14,7 z 13,8); Kopfblock 0,5x0,4 und Querschnitt 0,22 = ANNAHME Sichtschaetzung (Drachenkopf als Block)"
+    },
+    {
+     "u": -4.47,
+     "z": 14.5,
+     "z_ende": 13.85,
+     "laenge": 1.95,
+     "breite": 0.22,
+     "hoehe": 0.22,
+     "kopf_laenge": 0.5,
+     "kopf_hoehe": 0.4,
+     "quelle": "Anzahl 2: Z-6162-001 (Foto 6162, n11_04, n11_01). Lage/Neigung/Laenge TRIANGULIERT (foto_mass --tri 6162+6145): Fuss M-6162-005 (u -4,47 n 12,55 z 14,5), Kopf M-6162-006 (u -4,40 n 14,55 z 13,86); Kopfblock 0,5x0,4 und Querschnitt 0,22 = ANNAHME Sichtschaetzung (Drachenkopf als Block)"
+    }
    ],
    "ziegel_abstand": 0.18,
    "ziegel_tiefe": 0.04,
@@ -6863,7 +6973,17 @@
    "symmetrisch": true,
    "pult_quelle": "Schnitt Wolke u -2..2/4..6: nur EINE steile Vorderflaeche bis z 19,3 (Rueckhang unsichtbar); LoD2-dachtyp enthaelt 'Sheddach'; Rueckwand n 5,84/z 11,6 = ANNAHME aus dem vorgebauten Modell (stl_teil:dach); n_first 5,9 fest, First = Verlaengerung der Vorderflaeche bis zur Rueckwand",
    "historie": [
-    {"datum": "2026-11-12", "wer": "Kreis1 040618 r1 (Agent)", "alt": {"ziegel_abstand": 0.35}, "neu": {"ziegel_abstand": 0.18}, "grund": "Reihenabstand am Foto gemessen (4 Kameras 0,18 m); Pruefung ziegel_reihenabstand_haupt war ROT"},
+    {
+     "datum": "2026-11-12",
+     "wer": "Kreis1 040618 r1 (Agent)",
+     "alt": {
+      "ziegel_abstand": 0.35
+     },
+     "neu": {
+      "ziegel_abstand": 0.18
+     },
+     "grund": "Reihenabstand am Foto gemessen (4 Kameras 0,18 m); Pruefung ziegel_reihenabstand_haupt war ROT"
+    },
     {
      "datum": "2026-11-09",
      "wer": "Agent Gitter->Generator",
@@ -9054,16 +9174,33 @@
  },
  "fotos_eingang": {
   "hinweis": "tools/fotos_eingang.py: neue Fotoordner automatisch registrieren (11.11.). Nur nutzerfotos_* (neue Nutzerfotos); alte handy_*-Serien sind schon im SfM, handy_phone_*/nicht_kaufhaus = privat, ausgeschlossen.",
-  "muster": [{"glob": "/media/oem/scan/rc-park_daten/kaufhaus_grob3/nutzerfotos_*", "kurz": "n11"}],
-  "ausschluss": ["nicht_kaufhaus", "handy_phone"],
+  "muster": [
+   {
+    "glob": "/media/oem/scan/rc-park_daten/kaufhaus_grob3/nutzerfotos_*",
+    "kurz": "n11"
+   }
+  ],
+  "ausschluss": [
+   "nicht_kaufhaus",
+   "handy_phone"
+  ],
   "zusatz_dir": "/media/oem/scan/rc-park_daten/kaufhaus_grob3/zusatz_n11_eingang",
-  "bekannt_glob": ["/media/oem/scan/rc-park_daten/kaufhaus_grob3/zusatz_*/vorbereitet.json", "/media/oem/scan/rc-park_daten/kaufhaus_grob3/zusatz_n11_eingang/*/vorbereitet.json", "/media/oem/scan/rc-park_daten/kaufhaus_alle/zusatz_handy11/*/vorbereitet.json"],
+  "bekannt_glob": [
+   "/media/oem/scan/rc-park_daten/kaufhaus_grob3/zusatz_*/vorbereitet.json",
+   "/media/oem/scan/rc-park_daten/kaufhaus_grob3/zusatz_n11_eingang/*/vorbereitet.json",
+   "/media/oem/scan/rc-park_daten/kaufhaus_alle/zusatz_handy11/*/vorbereitet.json"
+  ],
   "ref_db": "/media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/db.db",
   "ref_sparse": "/media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/sparse/0",
   "kam_alt": "/media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/kam_lot2.json",
   "T": "/media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/T_gemeinsam_nach_netz.npz",
   "rot": "/media/oem/scan/rc-park_daten/kaufhaus_alle/sfm/kam_lot2.json.rot.json",
   "kamera_profil": "modelle/kamera_profil/handy_nubia_gruppen.json",
-  "f_px": 2790, "max_reproj_px": 2.5, "zmin": 1.5, "zmax": 6.0, "max_rot": 0.25, "gpu_mb": 2600
+  "f_px": 2790,
+  "max_reproj_px": 2.5,
+  "zmin": 1.5,
+  "zmax": 6.0,
+  "max_rot": 0.25,
+  "gpu_mb": 2600
  }
 }
