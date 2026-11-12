@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """kanten_ketten.py - DURCHGEHENDE Linienzuege (Bogenrippen, Baender, Staebe) automatisch aus einem Foto: Skelett der Kantenkarte, an Kreuzungen GERADEAUS weiter (kleinste Richtungsaenderung), dann 3D wie kanten_features (Strahl x Modellflaeche, Sweep-Tiefen, Spline).
-Aufruf: kanten_ketten.py OBJ.json --kam K-6171 --fenster x0 y0 x1 y1 --box "x0,y0,z0,x1,y1,z1" [--farbe stabil|gold] [--schwelle 130] [--sweep SWEEP.npz --nur_ref] [--schliessen 9] [--max_winkel 35] [--min_m 0.6] [--aus DIR --name N]
+Aufruf: kanten_ketten.py OBJ.json --kam K-6171 --fenster x0 y0 x1 y1 --box "x0,y0,z0,x1,y1,z1" [--farbe stabil|gold|band] [--schwelle 130] [--sweep SWEEP.npz --nur_ref] [--schliessen 9] [--max_winkel 35] [--min_m 0.6] [--aus DIR --name N]
 Ablauf: Kreuzungspixel (>= 3 Nachbarn) entfernen -> Segmente (laengster Weg, Stummel < 12 px verworfen) -> an jeder Kreuzung Segmentenden paaren: Tangenten (letzte 18 px) gegenlaeufig, Winkel < --max_winkel (Standard 35 Grad), beste Paare zuerst, Ende nur einmal -> Ketten -> je Kette 3D-Pfad (Sweep-Tiefe wo belegt, sonst Flaechentiefe; Belegung gemeldet) -> Spline 32 Punkte.
 Ausgabe: DIR/ketten_<name>.json (wie features: klasse, laenge_m, pfad_xyz, normale_xyz, belegt, n_segmente, pixel) + ketten_<name>.jpg (Foto, Ketten farbig nummeriert). Grenzen: Tiefe nur auf Flaechenband gesichert; Doppelkanten (zwei Goldkanten je Rippe) bleiben zwei Ketten (Mittellinie: features_in_objekt Duplikatabstand)."""
 import sys, os, json, glob, importlib.util
@@ -25,6 +25,12 @@ MAXW = np.cos(np.radians(float(opt("--max_winkel", 35)))); MINM = float(opt("--m
 K = EPI.kam(od, kam); im = cv2.imread(glob.glob(os.path.join(root, obj["fotos_dir"], kam[2:] + "_*"))[0]); H, W = im.shape[:2]; x0, y0, x1, y1 = fw
 if farbe == "stabil":
     sm = cv2.imread(os.path.join(opt("--stabildir", "/media/oem/scan/rc-park_daten/kaufhaus_alle/stabil"), "ip_IMG_" + kam[2:] + ".png"), 0); sig = cv2.resize(sm, (W, H), interpolation=cv2.INTER_LINEAR).astype(np.float32)
+elif farbe == "band":   # 12.11.: Rippenkoerper = schwarze Farbe (neutral dunkel) + Gold, Putz (rot) faellt weg -> EIN Skelett je Rippe statt eines je Goldlinie
+    from skimage.morphology import remove_small_objects
+    fi = im.astype(int); r_, g_, b_ = fi[..., 2], fi[..., 1], fi[..., 0]
+    bm = ((fi.max(2) < 80) & ((r_ - b_) < 30)) | ((g_ > 0.62 * r_) & (r_ > 140) & ((r_ - b_) > 70)); bm = cv2.morphologyEx(bm.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((11, 11), np.uint8))
+    gl = cv2.dilate((((g_ > 0.62 * r_) & (r_ > 140) & ((r_ - b_) > 70)).astype(np.uint8)), cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (31, 31))); bm = bm * gl   # dunkle Pixel nur nahe Gold (Schatten in den Zwickeln ist keine Rippe)
+    bm = remove_small_objects(bm.astype(bool), 800).astype(np.uint8); bm = cv2.morphologyEx(bm, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8)); sig = bm.astype(np.float32) * 255
 else:
     f = im.astype(np.float32); sig = np.clip((f[..., 2] + f[..., 1]) / 2 - f[..., 0], 0, None)
 msk = (sig[y0:y1, x0:x1] > th).astype(np.uint8); cl = int(opt('--schliessen', 0))

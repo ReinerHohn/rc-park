@@ -5825,7 +5825,8 @@
         0.581,
         -0.566
        ],
-       "spiegeln": false
+       "spiegeln": false,
+       "b": 0.045
       },
       {
        "pfad": [

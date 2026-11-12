@@ -888,10 +888,12 @@ def erker_polygon(cfg, ctx):
         if not rpf.get("quelle") or not rpf.get("pfade") or not rpf.get("normale"): sys.exit("erker_polygon: rippen_pfade braucht quelle, pfade, normale (Regel 3b)")
         bb_, vor_, emb_ = float(rpf.get("b", 0.12)), float(rpf.get("vor", 0.07)), float(rpf.get("einbindung", 0.25)); nrm_ = np.array(rpf["normale"], float); nrm_ /= np.linalg.norm(nrm_)
         pfade_ = [(np.array(p_, float), nrm_.copy()) for p_ in rpf["pfade"]]
+        bpf_ = {}
         if rpf.get("spiegel_u") is not None:                                                                           # ANNAHME (siehe quelle): zweiter Bogen = Spiegelbild an u = spiegel_u (Normale u-Anteil gespiegelt)
             uc_ = float(rpf["spiegel_u"]); pfade_ += [(np.column_stack([2 * uc_ - q_[:, 0], q_[:, 1], q_[:, 2]]), np.array([-n0_[0], n0_[1], n0_[2]])) for q_, n0_ in pfade_]
         for e_ in rpf.get("pfade_ohne_spiegel", []):                                                                    # 12.11.: Rippe aus dem Foto; Eintrag = Pfad (Frontnormale) ODER {pfad, normale (u,n,z), spiegeln}: Einbindung entlang der echten Flaechennormale (sonst steht der Zapfen an den Seiten als Platte im Raum)
             q_ = np.array(e_["pfad"] if isinstance(e_, dict) else e_, float); n1_ = np.array(e_["normale"], float) if isinstance(e_, dict) and e_.get("normale") else nrm_.copy(); n1_ /= np.linalg.norm(n1_)
+            if isinstance(e_, dict) and e_.get("b") is not None: bpf_[len(pfade_)] = float(e_["b"])   # optionale eigene Rippenbreite (Foto: schmalere Rippe)
             pfade_.append((q_, n1_))
             if isinstance(e_, dict) and e_.get("spiegeln"): pfade_.append((np.column_stack([2 * float(rpf["spiegel_u"]) - q_[:, 0], q_[:, 1], q_[:, 2]]), np.array([-n1_[0], n1_[1], n1_[2]])))
         if rpf.get("drehungen"):                                                                                       # ANNAHME: Schraegflaechen = Frontnetz um die Erkerachse gedreht (regelmaessiges Teil-Achteck, seite_schraeg = seite_front, 45 Grad); Normale dreht mit
@@ -904,7 +906,7 @@ def erker_polygon(cfg, ctx):
                     neu_.append((np.column_stack([ru_, rn_, q_[:, 2]]), np.array([nu_, nn2_, n0_[2]])))
             pfade_ += neu_
         for k_, (p_, nrm_) in enumerate(pfade_):
-            bw_ = bb_ * (1 + 0.013 * (k_ % 7)); nn_ = len(p_) - 1; qs_ = []   # bw_: Breite je Rippe um <= 8 % verschieden (Breitenstreuung ~ Messunsicherheit), sonst deckungsgleiche Flaechen sich kreuzender Rippen -> manifold3d-Splitter
+            bw_ = bpf_.get(k_, bb_) * (1 + 0.013 * (k_ % 7)); nn_ = len(p_) - 1; qs_ = []   # bw_: Breite je Rippe um <= 8 % verschieden (Breitenstreuung ~ Messunsicherheit), sonst deckungsgleiche Flaechen sich kreuzender Rippen -> manifold3d-Splitter
             for i in range(nn_ + 1):
                 d_ = p_[min(i + 1, nn_)] - p_[max(i - 1, 0)]; d_ /= np.linalg.norm(d_); wd_ = np.cross(d_, nrm_); wd_ /= np.linalg.norm(wd_)
                 t_, b_ = p_[i] + nrm_ * vor_, p_[i] - nrm_ * emb_                                                      # Oberseite 'vor' ueber der gemessenen Linie (Goldlinie = Vorderkante), Fuss 'emb' im Koerper
