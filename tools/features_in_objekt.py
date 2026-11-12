@@ -25,7 +25,7 @@ for q in r.get("pfade_ohne_spiegel", []): vor.append(np.array(q["pfad"] if isins
 nuvz = lambda v: [float(v[0] * u[0] + v[1] * u[1]), float(v[0] * n[0] + v[1] * n[1]), float(v[2])]       # Normale xyz -> (u,n,z)
 C, NO = [], []
 for f in F:
-    if f.get("belegt") is None or f["belegt"] < mb: continue
+    if mb > 0 and (f.get("belegt") is None or f["belegt"] < mb): continue   # ohne Sweep (Band-Ketten) ist belegt None: mit --min_belegt 0 zulassen
     A = uvz(f["pfad_xyz"])
     if ur[0] < A[:, 0].min() and A[:, 0].max() < ur[1] and zr[0] < A[:, 2].min() and A[:, 2].max() < zr[1]: C.append(A); NO.append(nuvz(f["normale_xyz"]) if f.get("normale_xyz") else None)
 LUE = opt("--luecke_m", [0.35])[0]; COS = opt("--cos", [0.8])[0]
