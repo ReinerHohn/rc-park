@@ -168,7 +168,7 @@ def platz_schaffen():
 
 # --- Regeln 2-4 (12.11., Nacht 00:30-07:45 lief ohne Erker/Baldachine: Sperrzaehler aus dem alten Tor) -----------------------------------
 PROBE_ALTER = 3600; BERICHT_ALTER = 3600; FREIGABE_PAUSE = 3 * 3600
-_probe_proc = None; _probe_t = 0.0; _bericht_t = 0.0; _takte = {"gesamt": 0, "leer": 0}
+_probe_proc = None; _probe_t = 0.0; _bericht_t = time.time(); _takte = {"gesamt": 0, "leer": 0}
 
 def _kj(): return os.path.join(KD, OBJ)
 
@@ -240,7 +240,7 @@ def stundenbericht(sp):
     nfr = sum(v for t, v in je.items() if t in nf)
     txt = (f"{time.strftime('%Y-%m-%d %H:%M')} STUNDENBERICHT Runden {sum(je.values())} (angenommen {ang}, leer {leer}), Nutzerfund-Runden {nfr}, "
            f"Takte ohne Kandidat {kk:.0%}, Spuren jetzt {len(sp)}; je Teil: " + ", ".join(f"{t} {v}" for t, v in sorted(je.items(), key=lambda x: -x[1])[:12]))
-    if sum(je.values()) == 0 or (nf and nfr == 0) or kk > 0.8: txt += "  >>> ALARM: " + ("keine Runde" if not je else "keine Runde an Nutzerfunden" if nf and nfr == 0 else "ueber 80 % Takte ohne Kandidat")
+    if sum(je.values()) == 0 or (nf and nfr == 0) or (kk > 0.8 and _takte['gesamt'] >= 30): txt += "  >>> ALARM: " + ("keine Runde" if not je else "keine Runde an Nutzerfunden" if nf and nfr == 0 else "ueber 80 % Takte ohne Kandidat")
     print(txt); open(os.path.join(_kj(), "stundenbericht.txt"), "a").write(txt + "\n")
     _takte["gesamt"] = _takte["leer"] = 0
 
