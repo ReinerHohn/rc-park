@@ -836,8 +836,13 @@ def erker_polygon(cfg, ctx):
     hu, ne = s_f / 2 + s_d * math.cos(al), nf - s_d * math.sin(al)
     if not (0 < al < math.pi / 2 and s_f > 0.3 and s_d > 0.3 and ne > wn - ein): sys.exit(f"erker_polygon: unplausibler Grundriss (hu={hu:.2f}, ne={ne:.2f}, wand {wn})")
     base = [(hu, wn - ein), (hu, ne), (s_f / 2, nf), (-s_f / 2, nf), (-hu, ne), (-hu, wn - ein)]                  # (u relativ, n absolut), gegen den Uhrzeigersinn; Rueckkehr (hu, ne)->Wand
+    vo_ = cfg.get("voll")                                                                                             # 12.11. Nutzer: Erker ist ein GESCHLOSSENES Achteck (acht Seiten, an jeder Fenster/Wand): voll {seite_rueck, seite_hinten} setzt Rueckkehrflaechen + 3 Rueckseiten oberhalb des Balkons dazu (Unterbau/Rippen bleiben Teil-Achteck: darunter ist der Laubengang offen)
+    base_k = base
+    if vo_:
+        s_r_, s_b_ = float(vo_.get("seite_rueck", s_f)), float(vo_.get("seite_hinten", s_f)); nb1_ = ne - s_r_; nb2_ = nb1_ - s_d * math.sin(al)
+        base_k = [(hu, nb1_), (hu, ne), (s_f / 2, nf), (-s_f / 2, nf), (-hu, ne), (-hu, nb1_), (-s_b_ / 2, nb2_), (s_b_ / 2, nb2_)]
     def prisma(z0, z1, aus=0.0):
-        cs = C([ccw(np.array(base, float))]); cs = cs.offset(aus, JoinType.Miter) if aus else cs
+        cs = C([ccw(np.array(base_k, float))]); cs = cs.offset(aus, JoinType.Miter) if aus else cs
         return M.extrude(cs, z1 - z0).translate((um, 0.0, z0))
     teile = []; z_o = Zn["z_unterbau_oben"]; ub = cfg["unterbau"]; kr_ = float(ub.get("kappe_rueck", 0.0)); prof = [(float(z), max(float(p) - kr_, 0.02)) for z, p in ub["profil"]]; v0 = float(ub["vorsprung_spitze"]); pmax = nf - wn   # kappe_rueck: Kappenflaeche liegt um diesen Betrag HINTER der Rippenvorderkante (Rippen stellen die Silhouette wieder her)
     if not (prof and all(b[0] > a[0] for a, b in zip(prof, prof[1:])) and Zn["z_unterbau_spitze"] < prof[0][0] and prof[-1][0] < z_o): sys.exit("erker_polygon: unplausibles Unterbau-Profil")
@@ -917,7 +922,7 @@ def erker_polygon(cfg, ctx):
         pr = [(float(z), float(a_)) for z, a_ in pr]
         if len(pr) < 2 or any(b[0] <= a[0] for a, b in zip(pr, pr[1:])) or any(a_ < 0 for _, a_ in pr): sys.exit(f"erker_polygon: unplausibles Gesims-Profil {pr}")
         def rg(z, a_):
-            cs = C([ccw(np.array(base, float))]); cs = cs.offset(a_, JoinType.Miter) if a_ else cs
+            cs = C([ccw(np.array(base_k, float))]); cs = cs.offset(a_, JoinType.Miter) if a_ else cs
             return [[um + float(x), float(y), z] for x, y in cs.to_polygons()[0]]
         return UNION([M.hull_points(rg(*a) + rg(*b)) for a, b in zip(pr, pr[1:])])
     for g_ in cfg["gesims"]: teile.append(prisma_profil(g_["profil"]) if g_.get("profil") else prisma(float(g_["z0"]), float(g_["z1"]), float(g_["aus"])))
@@ -929,6 +934,7 @@ def erker_polygon(cfg, ctx):
         w = float(np.linalg.norm(b - a)); t = (b - a) / w; nu = np.array([t[1], -t[0]]); c = (a + b) / 2 + nu * 0.05
         return w, [[-t[0], 0, -nu[0], um + c[0]], [-t[1], 0, -nu[1], c[1]], [0, 1, 0, 0]], tief + 0.05
     fl_ = [(a_, b_, nl, rb) for a_, b_ in fl3] + [(np.array(base[i_], float), np.array(base[i_ + 1], float), 1, float(fz.get("end_rahmen_b", 0.05))) for i_ in (fz.get("end_flaechen") or [])]   # 12.11.: Seitenfenster der aeusseren Rueckkehrflaechen (base 0->1 und 4->5), je 1 Licht
+    if vo_: fl_ = [(np.array(base_k[i_], float), np.array(base_k[(i_ + 1) % 8], float), nl, rb) for i_ in (1, 2, 3, 0, 4, 5, 6, 7)]   # geschlossenes Achteck: an jeder der 8 Seiten gleiches Fensterband; fi_ >= 3 = ohne Wappenfeld (Rueckkehr + Rueckseiten)
     for fi_, (a, b, nlf, rbf) in enumerate(fl_):
         w, T_, dep = flaechen_matrix(a, b, td); wl = (w - 2 * rbf - (nlf - 1) * pf) / nlf
         for j in range(nlf):
