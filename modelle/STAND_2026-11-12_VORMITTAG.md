@@ -80,3 +80,8 @@ Offener Nutzerfund 20:59: "Erker Ost: aeusseres Segment fehlt (Gassenseite)" (Fo
 - Generator: Breite je Rippe streut +-8 % (bw_), sonst Splitter. b 0,07 (am Foto gemessen 0,05-0,08) bricht noch die Druckpruefung -> b 0,10.
 - Knoten: 6171-links = 6259-aussen-links (3 Kameras); 6259-Mitte = 6171-rechts. Der vom Nutzer markierte Bogen (6259 Mitte -> rechts unten) gehoert zur RECHTEN Schraegflaeche (nur gespiegelt). Es fehlen: rechte Flaeche gemessen, lange untere Boegen, Buendel am Fuss, ~14 weitere Rippen der Front. Foto-F1/Realitaets-% nicht neu gemessen.
 - Renders: Scratchpad render4.py (Tiefenkanten), Vergleich Foto|Modell vor jeder Aussage ansehen.
+
+## Nachtrag Rippen unter Erker (12.11. abends)
+- Methode umgestellt: KEINE Tiefenmessung je Rippe mehr; Lage im Foto (Rippenmaske = schwarz neutral + Gold, Putz faellt weg -> Skelett) + Projektion auf die Flaeche. Werkzeuge: `kanten_ketten.py --farbe band`, `luecken_rippen.py` (ungedeckte Rippen, `--maske gold` fuer Buendel), `pfade_nachfuehren.py [--breite]` (Pfade auf Rippenmitte, Breite je Pfad = 0,72 x Maskenbreite).
+- Ergebnis: Pfade sitzen auf Rippenmitte (Verschiebungen 0,3-24 px, max 5 cm), o10 ohne Haken, 4 Fussrippen + 3 Zwillingsrippen, Abnahme gruen (Commit 1dd8367e). rippen_f1 0,280 / Recall 0,572 unveraendert: Mass zaehlt Goldkanten (3-4 je Rippe), nicht Rippenmitten.
+- Offen: Profilierung (Goldkanten), dichte Fussbuendel (Maske verschmilzt; Rippen dort ~2-3 cm breit), untere Randleiste (Wolke-Veto). Ziel "extrem gut in H0 erkennbar" NICHT als erreicht erklaert; Urteil Nutzer am Bild.
