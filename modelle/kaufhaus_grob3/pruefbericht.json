@@ -1,5 +1,5 @@
 {
- "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_grob3_1-87.stl",
+ "stl": "/media/oem/scan/rc-park_kreis/kaufhaus_grob3/20261112_032915a032915/wt_r1/modelle/stl/kaufhaus_grob3_1-87.stl",
  "werte": {
   "z_unterkante_lot2": 1.453,
   "hoehe": 27.667000282287596,
@@ -40,8 +40,8 @@
   "fenster_b3_ebene_abstand": 1.2521246259134438,
   "teilnetze": 1.0,
   "dicht": 1.0,
-  "wand_pq": 0.10634970664978027,
-  "wand_anteil_unter": 0.0006333333333333333,
+  "wand_pq": 0.10590148717164993,
+  "wand_anteil_unter": 0.0007333333333333333,
   "wand_ohne_treffer": 0.0,
   "kons_b3_anzahl": 3.0,
   "kons_b3_breite_median": 0.34,
@@ -50,7 +50,7 @@
   "bogen3_licht_breite_median": 5.0600000000000005,
   "bogen3_licht_breite_max": 5.0600000000000005,
   "bogen3_licht_ebene_abstand": 2.128511469441953,
-  "teile_ueberhang": 0.00744,
+  "teile_ueberhang": 0.00716,
   "lichter_g2_bei_kaempfer_seite_anzahl": 1.0,
   "lichter_g2_bei_kaempfer_seite_breite_median": 0.72,
   "lichter_g2_bei_kaempfer_seite_breite_max": 0.72,
@@ -464,7 +464,7 @@
   },
   {
    "name": "Druck: Wandstaerke p1 (m) >= 0,0348 (0,4 mm H0)",
-   "wert": 0.10634970664978027,
+   "wert": 0.10590148717164993,
    "soll": [
     0.0348,
     100
@@ -494,7 +494,7 @@
   },
   {
    "name": "Druck: Ueberhang > 60 Grad je Druckteil (groesster Anteil) < 1 %",
-   "wert": 0.00744,
+   "wert": 0.00716,
    "soll": [
     0,
     0.01

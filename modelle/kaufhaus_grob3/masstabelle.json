@@ -7014,7 +7014,9 @@
    "teil": "quader:laube_sockel_o",
    "merkmal": "Pruefer-Rest quader:laube_sockel_o kreis 20261111_044705a044705 r2",
    "text": "Offene Fehler laut Pruefer nach angenommener Runde: Lage entlang t (Fassadenlaengs) nicht belegt: Verschiebungskontrolle marge_t -0,002 (Dichte-Verdacht); Annahme nur wegen z-Korrektur (marge_z 0,039, in 6120/6119/6117/6174/d20 sichtbar: violette Pflasterflaeche weg, blaue Fusskante auf Pflasterlinie), u0/u1 unveraendert und weiter unbelegt | 6119 links vom Pfeiler: Fusskante weiter gelb ohne blauen Treffer - Fuss dort nicht exakt | 6120: gelb an Band-Unterkante Mitte (u~8-12) und rechts oben, gelbe Treppe am Ostende; neu rot/gruen an Bandoberkante rechts | 6117: neuer roter Streifen an Bandoberkante Mitte (erfundene Kante); gelbes Band auf Hoehe Steinlagenfuge bleibt; gelb an Band-Oberkante rechts | 6174: grosse rote/gruene Flaechen im Bandbereich unveraendert, Ursache ungeklaert (Bandueberstand/Front-n?) | d20: neu rot/gruen an Oberkante links, gelbe Treppe im Bandbereich Mitte | Band z 2,04-2,2 und Ueberstand 0,07 ANNAHME von laube_sockel_w uebernommen, nicht gemessen | Ostende, Pfeilerbasen-Anschluss, Steinlagen/Fugen ungeprueft | Pflaster jetzt 0,27 m ueber laube_rueck z0 1,5 - Laubenboden offen, laube_sockel_w vermutlich gleicher z0-Fehler | teile_lage_pruefen/foto_diff/fehlteile_finden vom Agenten nicht angesehen",
-   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern.",
+   "erledigt_teil": "kreis1 20261112: Bandprofil Kehle/Absatz/Wulst + gerundete Vorderkante (Fasen) nach 6119 M-6119-019..021 und Sitzbank-Form 6207/6243/6174; f1_fein 0,520 -> 0,686 (10 Torfotos, volle Aufl.), Foto-F1 0,789 -> 0,779. OFFEN: Lage u0/u1 (marge_t), Ostende/Stirnende (6243: Modellende ~110 px hinter Plattenende), Fugen, 6119 Fuss links vom Pfeiler",
+   "erledigt": "ersetzt durch Pruefer-Rest kreis 20261112_032915a032915 r1"
   },
   {
    "datum": "2026-11-11",
@@ -7688,6 +7690,31 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.23 m, y=-7.15 m (Zelle [312, 1794, 78], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto 6261, Treffer 6)",
+   "auto_id": "fehlteile-6261-234-1872",
+   "art": "fehlteil",
+   "foto": "6261",
+   "z_von": 17.42,
+   "z_bis": 17.42,
+   "xyz": [
+    14.28,
+    -8.91,
+    17.42
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=17.42 m, y=-8.91 m (Zelle [234, 1872, 78], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_6261.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-12",
+   "wer": "Pruefer opus kreis 20261112_032915a032915 r1 (automatisch)",
+   "teil": "quader:laube_sockel_o",
+   "merkmal": "Pruefer-Rest quader:laube_sockel_o kreis 20261112_032915a032915 r1",
+   "text": "Offene Fehler laut Pruefer nach angenommener Runde: 6243/6207: Ostende ~110 px zu lang und eckig statt gerundeter Stirn (roter Fleck x980-1170 in 6243, 6207 unveraendert rot) | 6174: breiter roter Streifen auf der Sitzflaeche unveraendert (Sitztiefe/Wandkante falsch) | 6119 links: obere Bandkante nicht getroffen, x480-750 von blau nach gelb verschlechtert, dazu gelb x140-480 | 6119 gelb: Fuss/Fugen links vom Pfeiler (y~150-190) und rechts x1900-2240, rechte Stirn x~2280 | 6243 gelb: unten links x0-250 und Unterkante x350-500/690-735 | Vorderkante/Wulst in 6243 dicker und runder als Modell; Ueberstaende 0,03/0,07 und Fasen nur ANNAHME | Fugen/Steinlagen nicht gebaut | Lage u0/u1 nicht belegt (marge_t 0, in der Runde unveraendert), z nur schwach (0,012), Laubenboden vs. z 1,77 offen",
+   "naechster_schritt": "Fehler einzeln an >= 3 Fotos bestaetigen (Formbilder teil_fotoform), je Fehler Pruefung die am Modell FEHLSCHLAEGT, dann Generator; Ornamente als neue Formfamilie mit Parametern."
   }
  ],
  "_rahmen_hinweis": "tools/pruefstand.py lade_modell setzt z=0 auf die Modellunterkante (hier alte Fassaden-STL g_fassade/g_waende bei lot2 z 1,34). Gitter-Hoehen (lot2) werden daher ueber die Konstante z_unterkante_lot2 umgerechnet; aendert sich das tiefste Bauteil, MUSS die Konstante nachgezogen werden (Gegenprobe: Fenstergruppe-2-Sohlbank ist direkt gesetzter Parameter 10,31). | 2026-11-09 Runde 3: tiefstes Bauteil jetzt bogenreihe boden_z 1,453 (Alt-Fassaden-STL bei 1,34 inaktiv) -> Konstante 1,34 -> 1,453 (STL-Unterkante nachgemessen)"
