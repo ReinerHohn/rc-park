@@ -38,7 +38,11 @@ gl = cv2.dilate(gold.astype(np.uint8), cv2.getStructuringElement(cv2.MORPH_ELLIP
 m = remove_small_objects(m.astype(bool), 800).astype(np.uint8); m = cv2.morphologyEx(m, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8)); sk = skeletonize(m > 0)
 if opt("--maske", "band") == "gold":                                                  # dicht gepackte Buendel: Rippenband verschmilzt, einzelne Goldlinien bleiben getrennt
     gm = cv2.morphologyEx(gold.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8)); gm = remove_small_objects(gm.astype(bool), 120).astype(np.uint8); m = gm; sk = skeletonize(gm > 0)
-ys, xs = np.nonzero(sk); d = T.query(np.c_[xs, ys])[0]; unc = np.zeros_like(sk); sel = d > float(opt("--abstand_px", 30)); unc[ys[sel], xs[sel]] = True
+ys, xs = np.nonzero(sk); d = T.query(np.c_[xs, ys])[0]
+if "--nur_mass" in a:                                                                    # Abdeckung der Rippenmitten (Skelett der Rippenmaske) durch Modellpfade, nur im --roi
+    ro = rois[0] if rois else [x0, y0, x1, y1]; ins = (xs + x0 >= ro[0]) & (xs + x0 < ro[2]) & (ys + y0 >= ro[1]) & (ys + y0 < ro[3])
+    print("Skelett-px im ROI", int(ins.sum()), "| gedeckt <=15px %.3f | <=30px %.3f | <=45px %.3f" % tuple(float((d[ins] <= t).mean()) for t in (15, 30, 45))); sys.exit(0)
+unc = np.zeros_like(sk); sel = d > float(opt("--abstand_px", 30)); unc[ys[sel], xs[sel]] = True
 if rois: keep = np.zeros_like(unc); [keep.__setitem__((slice(ry0 - y0, ry1 - y0), slice(rx0 - x0, rx1 - x0)), True) for rx0, ry0, rx1, ry1 in rois]; unc &= keep
 unc = cv2.dilate(unc.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool) & sk; lab, nl = label(unc, structure=np.ones((3, 3))); out = []; vis = im.copy()
 vis[m > 0] = (0.7 * vis[m > 0] + 0.3 * np.array([255, 0, 255])).astype(np.uint8)
