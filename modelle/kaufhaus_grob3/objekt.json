@@ -7735,7 +7735,7 @@
     "pfosten_t": "ANNAHME 0,20 (Seitenflaeche im Foto schmal)",
     "profil": "Foto ip_IMG_6120 (K-6120, Ebene Balusterachse 13,84): Silhouettendurchmesser Kappe 0,078, Hals 0,058-0,065, Bauch 0,074, Wulst 0,081, Fuss 0,076 (aus Vorversuch a053953 r3, M-6120-051..056, +-0,009); Zwischenform = ANNAHME aus Fotoausschnitt",
     "pfosten_zusatz": "Endpfosten Rasterplatz 0 und 56 (Ost M-6161-023 u -4,976; West M-6161-025 12,09+-0,22 vs Raster 12,17); Breite wie Zwischenpfosten = ANNAHME",
-    "stirn": "VERWORFEN 11.11. (Kreis2 r2): Foto-F1 halbe Aufl. mit Stirn 0,761, ohne 0,783 (-0,022): Lage/Anzahl nur ANNAHME, am Foto nicht gemessen; erst Pfosten/Docken am Ende zaehlen + foto_mass"
+    "stirn": "Nutzer 12.11. (Sichtbefund Viewer + Foto 6259: Seitengelaender am Balkonende laeuft als Rueckfront zur Wand, am West-Ende x 1050-1100 im Ausschnitt sichtbar); Anzahl 3 Baluster je Ende = ANNAHME (Foto fast streifend, nicht zaehlbar)"
    },
    "pfosten_alle": 12,
    "pfosten_erster": 3,
@@ -7768,6 +7768,23 @@
        0,
        56
       ],
+      "stirn": {
+       "n_wand": 12.66,
+       "n_baluster": 3
+      }
+     }
+    },
+    {
+     "datum": "2026-11-12",
+     "wer": "Claude (Nutzer-Befund Balkonseite)",
+     "alt": {
+      "stirn": null,
+      "stirn_verworfen": {
+       "n_wand": 12.66,
+       "n_baluster": 3
+      }
+     },
+     "neu": {
       "stirn": {
        "n_wand": 12.66,
        "n_baluster": 3
@@ -7825,7 +7842,7 @@
     0,
     56
    ],
-   "stirn_verworfen": {
+   "stirn": {
     "n_wand": 12.66,
     "n_baluster": 3
    }
