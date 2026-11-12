@@ -20,7 +20,7 @@ def opt(n, d, t=str): return t(a[a.index(n) + 1]) if n in a else d
 OBJ = a[1]
 MAX = opt("--max", 6, int); TAKT = opt("--takt", 60, int); GPU_ZIEL = opt("--gpu_ziel", 60, float)
 VRAM_MAX = opt("--vram_max", 5000, int); RAM_MIN = opt("--ram_min", 6.0, float); ABSTAND = opt("--abstand", 180, int)
-RUNDEN = opt("--runden", 4, int)
+RUNDEN = opt("--runden", 4, int); MAXMIN = opt("--max_minuten", 35, int)   # 12.11.: 60 -> 35 (Annahmen brauchten Median 16 min; Runden darueber brachten fast nie etwas)
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); KD = "/media/oem/scan/rc-park_kreis"
 sys.stdout.reconfigure(line_buffering=True)
 
@@ -299,7 +299,7 @@ while True:
     else:
         name = "a" + time.strftime("%H%M%S")
         subprocess.run([os.path.join(ROOT, "tools", "job_start.sh"), f"kreis_{name}", os.path.join(KD, f"kreis_{name}.log"),
-                        "python3", "tools/bauteil_kreis.py", OBJ, "--rechte", "bypassPermissions", "--runden", str(RUNDEN), "--nach_main", "--spur", name, "--max_minuten", "60"],   # Nutzer 10.11. abends: Agent hart 60 min (Annahmen brauchten Median 16 min, ab 11 Uhr 42 min ohne Ertrag)
+                        "python3", "tools/bauteil_kreis.py", OBJ, "--rechte", "bypassPermissions", "--runden", str(RUNDEN), "--nach_main", "--spur", name, "--max_minuten", str(MAXMIN)],   # Nutzer 10.11. abends: Agent hart 60 min (Annahmen brauchten Median 16 min, ab 11 Uhr 42 min ohne Ertrag)
                        cwd=ROOT, capture_output=True)
         letzter = time.time(); print(zeile, f"-> START Spur {name}")
         if kk >= 1: leer_sig = sig   # Probestart nach Aenderung: endet auch er leer, auf die naechste Aenderung warten
