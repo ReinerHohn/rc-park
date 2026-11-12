@@ -4327,7 +4327,7 @@
     "rippen_pfade": {
      "quelle": "12.11.2026 Pixelkurve Bogen A (Goldlinie) in 6171 und 6259 verfolgt (Wegpunkte aus M-6171-002/004/005), je 6171-Punkt per Epipolarlinie gegen 6259-Kurve trianguliert (107 Punkte), Querform aus der 6171-Kurve, Tiefe aus 6259 ausreisserfest (Medianfilter 0,08 m, Spline, Tiefenrest Median 0,011 m), Endhaken entfernt, gemessener Fusspunkt E angehaengt; vor=-0,03: Oberseite 3 cm unter der gemessenen Goldlinie (innerhalb Messunsicherheit +-0,05 m; Abnahme Reichweite z 6,6 verlangt <= 0,60, bei vor=0 gemessen 0,62, bei -0,02 0,60 (Rundung)); Eckknoten/Kreuzung/Fuss mit 3 Kameras (6171/6259/6161), Gegenprobe 6162. ANNAHME: Bogen B = Spiegelbild von A an u = spiegel_u (Messbeleg R u 14,94 gegen Spiegel 14,84, F u 15,90 gegen 15,85); b/vor/einbindung = Annahme (kraeftiger als Realmass fuer H0-Erkennbarkeit nicht erhoeht: b 0,12 m). | 12.11. Rippe C (steil, vom linken Eckknoten): kante_3d 6171+6259, Wegpunkte L, M-6171-006 (Mitte), Fuss bei z 6,471 (Strahl-Ebene, ANNAHME); D = Spiegelbild von C (ANNAHME; Messversuch D scheiterte: Pick in 6171 neben der Rippe). | 12.11. Rippe L2 (unteres Netz, vom Kreuzpunkt mit B zum Fuss): kante_3d 6171+6259, Wegpunkte Kreuzpunkt L2xB (aus Kurve B, Pixelabstand 54 px zum Foto-Kreuz) und Fuss z 6,471 (Strahl-Ebene, ANNAHME); R2 = Spiegelbild (Messversuch R2 scheiterte in 6259: Abstand Start 0,31 m); obere Teile der Nachbarbogen kommen mit den Schraegflaechen. | 12.11. VERWORFEN: Schraegflaechen als um +-45 Grad gedrehtes Frontnetz (Zentrum u 15,52 / n 12,271): Render 6259 zeigt quer stehende, aus dem Koerper ragende Rippenstuecke, passt nicht zum Foto; Schraegflaechen muessen direkt gemessen werden (6259/6162). | 12.11. linke Schraegflaeche Rippen L_R2,L_R4 (kante_auf_flaeche aus 6171; Lage ANNAHME) | 12.11. b 0,07 m (Foto 6171 bei (1329,1186), 1,5 mm/px: Gold-Gold 0,05 m, mit Schattenflanke 0,08 m; Mittel 0,07) und ueberlapp 0,6 -> wasserdicht (Abnahme besteht) | 12.11. R4 verworfen (Gegenprobe 6259: Kurve unten ausserhalb des Trichters); R3b (senkrechte Rippe links) ergaenzt, Lage ANNAHME | 12.11. 6 weitere Rippen (pfade_ohne_spiegel): Gold-Skelett Foto 6171 ausserhalb der vorhandenen Rippen, Pixelpfad -> Modellflaeche (kante_auf_flaeche-Verfahren, an Bogen A geprueft Median 2,1 cm); Lage nur aus EINEM Foto = ANNAHME | 12.11. R3b (senkrechte Seitenrippe + Spiegelung) entfernt: im Render Platte statt Rippe (Nutzer: 'zu fett'), Einbindung an der Schraegflaeche laeuft aus der Flaeche",
      "b": 0.07,
-     "vor": 0.0,
+     "vor": 0.05,
      "einbindung": 0.4,
      "normale": [
       -0.084,
@@ -5558,7 +5558,137 @@
         12.435,
         7.079
        ]
-      ]
+      ],
+      {
+       "pfad": [
+        [
+         16.306,
+         13.77,
+         8.02
+        ],
+        [
+         16.244,
+         13.803,
+         8.0
+        ],
+        [
+         16.217,
+         13.784,
+         7.992
+        ],
+        [
+         16.216,
+         13.728,
+         7.989
+        ],
+        [
+         16.231,
+         13.648,
+         7.983
+        ],
+        [
+         16.255,
+         13.558,
+         7.967
+        ],
+        [
+         16.279,
+         13.466,
+         7.938
+        ],
+        [
+         16.298,
+         13.383,
+         7.892
+        ],
+        [
+         16.309,
+         13.309,
+         7.831
+        ],
+        [
+         16.313,
+         13.243,
+         7.758
+        ],
+        [
+         16.311,
+         13.18,
+         7.679
+        ],
+        [
+         16.306,
+         13.118,
+         7.598
+        ],
+        [
+         16.297,
+         13.052,
+         7.519
+        ],
+        [
+         16.287,
+         12.982,
+         7.445
+        ],
+        [
+         16.275,
+         12.908,
+         7.376
+        ],
+        [
+         16.262,
+         12.833,
+         7.309
+        ],
+        [
+         16.248,
+         12.757,
+         7.244
+        ],
+        [
+         16.232,
+         12.682,
+         7.178
+        ],
+        [
+         16.215,
+         12.611,
+         7.11
+        ],
+        [
+         16.196,
+         12.545,
+         7.039
+        ],
+        [
+         16.177,
+         12.485,
+         6.963
+        ],
+        [
+         16.156,
+         12.433,
+         6.88
+        ],
+        [
+         16.134,
+         12.392,
+         6.79
+        ],
+        [
+         16.111,
+         12.362,
+         6.69
+        ]
+       ],
+       "normale": [
+        0.248,
+        0.669,
+        -0.701
+       ],
+       "spiegeln": false
+      }
      ]
     }
    },
@@ -10419,7 +10549,8 @@
  },
  "druck": {
   "anbau_konsolen": true,
-  "anbau_konsolen_quelle": "Runde 4 (2026-11-09): Rumpf ist jetzt Volumen (quader:rumpf_eg/og) -> Druckregel an: frei schwebende Anbauteile (Figuren/Konsolen-Teile vor der Wand) per Konsolenhuelle an die naechste Flaeche | vorher (8.11.): Anpassungsphase 8.11.: Rumpf ist stl_teil (Rohdreiecke), parametrische Teile schweben als eigene Koerper; Konsolen-Huelle (Druckregel) fuellte die Arkadenboegen. Vor dem Druck: true + Rumpf als Volumen"
+  "anbau_konsolen_quelle": "Runde 4 (2026-11-09): Rumpf ist jetzt Volumen (quader:rumpf_eg/og) -> Druckregel an: frei schwebende Anbauteile (Figuren/Konsolen-Teile vor der Wand) per Konsolenhuelle an die naechste Flaeche | vorher (8.11.): Anpassungsphase 8.11.: Rumpf ist stl_teil (Rohdreiecke), parametrische Teile schweben als eigene Koerper; Konsolen-Huelle (Druckregel) fuellte die Arkadenboegen. Vor dem Druck: true + Rumpf als Volumen",
+  "splitter_verwerfen": true
  },
  "fassade_n": {
   "wert": [

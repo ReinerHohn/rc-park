@@ -1432,6 +1432,11 @@ def main():
             try:                                                                                           # Druckreparatur (2026-11-05): fast deckungsgleiche Punkte (< 1 um) werden im STL zu Splittern ->
                 import trimesh as _tm                                                                      # Pruefstand 'nicht wasserdicht / 8 Koerper' verwarf Fotowert First -0,63. Schweissen, entartete Dreiecke weg,
                 tm = _tm.Trimesh(np.asarray(V, np.float32).astype(float), Fi, process=True)                                                    # Loecher schliessen; nur wenn noetig und nur bei Volumenaenderung < 0,1 %
+                if (OBJ.get('druck') or {}).get('splitter_verwerfen', False):                                    # Mini-Splitter (<= 12 Dreiecke, Volumen ~0) neben dem Hauptnetz verwerfen, bevor 'genau ein Teilnetz' geprueft wird
+                    _pt = tm.split(only_watertight=False)
+                    if len(_pt) > 1:
+                        _pt = sorted(_pt, key=lambda q_: -len(q_.faces)); _kl = [q_ for q_ in _pt[1:] if len(q_.faces) <= 12 or float(np.linalg.norm(q_.extents)) < float((OBJ.get('druck') or {}).get('splitter_max_m', 0.1)) * K]
+                        if len(_kl) == len(_pt) - 1: print(f"  {len(_kl)} Mini-Splitter (<= 12 Dreiecke oder Ausdehnung < splitter_max_m) verworfen"); tm = _pt[0]; V, Fi = np.asarray(tm.vertices), np.asarray(tm.faces)          # Hauptnetz uebernehmen (auch wenn es schon wasserdicht ist)
                 if not (tm.is_watertight and len(tm.split(only_watertight=False)) == 1):
                     v0 = abs(model.volume()); tm.merge_vertices(digits_vertex=3); tm.update_faces(tm.nondegenerate_faces(height=1e-4)); tm.remove_unreferenced_vertices(); _tm.repair.fill_holes(tm)
                     if tm.is_watertight and len(tm.split(only_watertight=False)) == 1 and abs(abs(tm.volume) - v0) < 1e-3 * v0:
