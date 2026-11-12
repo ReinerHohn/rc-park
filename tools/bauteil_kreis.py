@@ -25,6 +25,7 @@ Aufruf:
   Tor (12.11.): --rauschtor 1 (Standard; teil-lokales Rauschtor, tools/kreis_rauschtor.py; 0 = alte Schwellen), --rausch_faktor 0.5, --rausch_min 0.01,
        --rausch_grob 0.05, --rausch_klein 0.36, --rueckgabe 0 (Standard, keine Rueckgabe an den Agenten), --grauzone 0 (Standard),
        --messbar 1 --sicht_fotos 3 --sicht_px 2000 (Messbarkeits-Filter der Zielwahl, Fotowunschliste <kreisdir>/<objekt>/fotowunsch.jsonl).
+       --element_region 0|1 (Standard 0), --element_zelle 1.5, --element_max 8: Teile ohne trennendes Mass auf Teil-Ebene je ELEMENT messen (tools/kreis_elemente.py, kreis_rauschtor.elemente_*).
        Start-Abnahme auf main (bauen_abnehmen.sh --nur-pruefen, Status je HEAD <= 30 min in main_status.json): rot -> Exit 4, kein Kreis.
   Lange Laeufe ueber tools/job_start.sh starten (Nachtlauf).
 Konfiguration aus objekt.json "kreis" (alles optional): {"stl": ..., "skala": 0.087, "gitter": ..., "wolke": ..., "tabu": [...]}
@@ -84,6 +85,12 @@ RAUSCHTOR = opt("--rauschtor", 1, int)
 RAUSCH_FAKTOR = opt("--rausch_faktor", 0.5, float); RAUSCH_MIN = opt("--rausch_min", 0.01, float)
 RAUSCH_GROB = opt("--rausch_grob", 0.05, float)   # Grobschranke fuer NICHT trennende Masse (wie ORN_GROB; 0 = aus)
 RAUSCH_KLEIN = opt("--rausch_klein", 0.36, float)   # kleinste Kastenkante (m) unter der f1_fein entscheidet
+# ELEMENT-MESSREGION (12.11., tools/kreis_elemente.py + kreis_rauschtor.elemente_*): Reihen-Teile (Baldachine, Konsolen, Figuren) und Ornament-Teile (Erker) hatten kein trennendes Mass,
+# weil die Messregion die GANZE Reihe war und die Nullkontrollen die ganze Reihe verschoben. Mit --element_region 1: ist das Teil auf Teil-Ebene NICHT messbar (kein trennendes Mass), wird es in
+# Elemente geteilt (zusammenhaengende Koerper, sonst Raster --element_zelle m); R je Element aus Nullkontrollen NUR auf das Element, f1/f1_fein/f1_h in der Bildregion des Elements.
+# Annahme (urteil_elemente): >= 1 geaendertes Element mit trennendem Mass besteht (Gewinn >= max(0,5 R, 0,01), kein anderes trennendes Mass faellt > 0,5 R) und KEIN geaendertes Element verschlechtert sich.
+# Standard AUS (0): ohne den Schalter bitgleiches Verhalten (Teile ohne trennendes Mass bleiben "nicht messbar").
+ELEMENT_REGION = opt("--element_region", 0, int); ELEMENT_ZELLE = opt("--element_zelle", 1.5, float); ELEMENT_MAX = opt("--element_max", 8, int)
 if RAUSCHTOR and GRAUZONE: print("--grauzone 1 wirkt nur mit --rauschtor 0 - Grauzone aus", flush=True); GRAUZONE = 0
 # RUECKGABE (Vorpruefung -> claude --continue): Analyse 12.11.: 40 Rueckgaben -> 2 Annahmen. Standard aus.
 RUECKGABE = opt("--rueckgabe", 0, int)
@@ -367,6 +374,7 @@ SKALA_VOR = opt("--vorpruef_skala", 0.5, float); HALBDIR = os.path.join(KREISDIR
 import re as _re
 METRIK_SOLL = _re.search(r'^METRIK = "([^"]+)"', open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "teil_fotoform.py")).read(), _re.M).group(1)   # Quelle der Wahrheit: teil_fotoform.METRIK
 TOR_VERSION = _tor_version(METRIK_SOLL, RAUSCHTOR, RAUSCH_FAKTOR, RAUSCH_MIN, RAUSCH_GROB, RAUSCH_KLEIN, MESSBAR)
+if ELEMENT_REGION: TOR_VERSION = _hl.sha1(f"{TOR_VERSION}|element|{ELEMENT_ZELLE}|{ELEMENT_MAX}".encode()).hexdigest()[:8]   # anderes Tor -> Sperrzaehler faengt neu an (Regel 1); ohne Schalter unveraendert
 TOR_VERSION_ALT = _tor_version(METRIK_SOLL, 1, 0.5, 0.01, 0.05, 0.36, 1)   # Standard, unter dem die Nacht 12.11. lief
 def metrik_suffix(): return "_" + METRIK_SOLL
 def formliste_halb(wt):
@@ -490,11 +498,15 @@ def ziel_fest(z):
     return t
 
 TW = None   # Teile-Export des Basisstands dieser Runde (fuer den Rauschcache-Schluessel in waehlen), vor waehlen() gesetzt
+def fein_text(ziel_oder_teil, beob=None):
+    """Text, in dem nach ORN_WORTE gesucht wird (Teilname + Beobachtung)."""
+    teil = ziel_oder_teil if isinstance(ziel_oder_teil, str) else ziel_oder_teil["teil"]
+    b = beob if beob is not None else ((ziel_oder_teil.get("beob") if isinstance(ziel_oder_teil, dict) else None) or {})
+    return " ".join([teil, str(b.get("merkmal", "")), str(b.get("text", ""))[:400]] + [str(x) for x in (b.get("pruef_stichworte") or []) + (b.get("pruef_pflicht") or [])])
 def fein_bevorzugt(ziel_oder_teil, beob=None, tdir=None):
     """f1_fein entscheidet bei Ornament-/Feinfund (ORN_WORTE in Beobachtungstext/Stichworten/Teilname) oder kleinem Teil (kleinste Kastenkante < RAUSCH_KLEIN)."""
     teil = ziel_oder_teil if isinstance(ziel_oder_teil, str) else ziel_oder_teil["teil"]
-    b = beob if beob is not None else ((ziel_oder_teil.get("beob") if isinstance(ziel_oder_teil, dict) else None) or {})
-    txt = " ".join([teil, str(b.get("merkmal", "")), str(b.get("text", ""))[:400]] + [str(x) for x in (b.get("pruef_stichworte") or []) + (b.get("pruef_pflicht") or [])])
+    txt = fein_text(ziel_oder_teil, beob)
     ts = os.path.join(tdir or "", teil + ".stl")
     return RT.fein_bevorzugt(txt, ORN_WORTE, RT.kleinste_kante_m(ts) if (tdir and os.path.exists(ts)) else None, RAUSCH_KLEIN)
 def fotowunsch(teil, grund, **extra):
@@ -516,6 +528,12 @@ def messbar(teil, fl, beob=None):
     if e is None: return True, f"{n} Fotos sichtbar, Rauschen noch unbekannt (Runde misst es vor dem Agenten)", {"fotos_sichtbar": n}
     fein = fein_bevorzugt(teil, beob or {}, TW); m = RT.mass_waehlen(e.get("R"), fein)
     info = {"fotos_sichtbar": n, "R": e.get("R"), "fein_bevorzugt": fein, "mass": m, "rausch_schluessel": e.get("schluessel")}
+    if m is None and ELEMENT_REGION:   # Elementregion nur, wenn das Teil auf Teil-Ebene nicht messbar ist
+        ee = RT.elemente_laden(RAUSCHDIR, teil, TW, fotos, ELEMENT_ZELLE, ELEMENT_MAX)
+        if ee is None: return True, f"{n} Fotos sichtbar, Teil-Ebene nicht trennend (R {e.get('R')}), Elementregion noch unbekannt (Runde misst sie vor dem Agenten)", dict(info, element_region="unbekannt")
+        em = RT.elemente_masse(ee, fein_text(teil, beob), ORN_WORTE, RAUSCH_KLEIN); info = dict(info, element_region=ee.get("schluessel"), element_masse=em)
+        if any(em.values()): return True, f"{n} Fotos sichtbar, Elementregion: trennende Elemente {[k for k, v in em.items() if v]}", info
+        return False, f"kein trennendes Mass (Teil R {e.get('R')}; Elemente: {ee.get('modus')}, {len(ee.get('elemente') or {})} Elemente, keines trennend)", info
     if m is None: return False, f"kein trennendes Mass (R {e.get('R')})", info
     return True, f"{n} Fotos sichtbar, mass={m} R={e['R'][m]}", info
 
@@ -865,7 +883,7 @@ if NACH:
     print("HINWEIS nachpruefen: ohne Foto-Tor (Wolkenguete) - fuer Torfragen --ziel/--patch benutzen", flush=True)
     NACH_Z = [json.loads(l) for l in open(os.path.join(_ld, "kreis.jsonl")) if l.strip() and json.loads(l).get("runde") == int(_r) and "angenommen" in json.loads(l)][-1]
 import hashlib as _hl
-_CODE = lambda: _hl.sha256(b"".join(open(os.path.join(ROOT, "tools", f_), "rb").read() for f_ in ("bauteil_kreis.py", "kreis_rauschtor.py"))).hexdigest()
+_CODE = lambda: _hl.sha256(b"".join(open(os.path.join(ROOT, "tools", f_), "rb").read() for f_ in ("bauteil_kreis.py", "kreis_rauschtor.py", "kreis_elemente.py"))).hexdigest()
 _CODE0 = _CODE()
 # INFRA-TOR BEIM START (12.11.): main muss die Abnahme bestehen (seit 11.11. 21:00 waren alle Abnahmen rot wegen eines Masstabellen-Pflichtfelds -
 # jede Runde lief bis zum Tor und wurde verworfen). Status je main-HEAD in <kreisdir>/<objekt>/main_status.json, hoechstens 30 min alt wiederverwendet.
@@ -955,7 +973,7 @@ for runde in range(1, RUNDEN + 1):
             # masstabelle.json liest keiner von beiden (nur ueber pruefbericht.json, das eingecheckt ist) -> pruefbericht + audit statt masstabelle;
             # Werkzeuge ohne Einfluss auf die Messung (Kreis-Steuerung, Viewer, Sichtpruefungen) aus dem tools-Hash nehmen. Jede ANDERE
             # Werkzeugaenderung macht den Speicher weiter ungueltig (sicher statt schnell).
-            _ohne = {"bauteil_kreis.py", "kreis_regler.py", "kreis_rauschtor.py", "teil_varianten_tor.py", "formfamilie_pruefen.py", "test_formfamilie_nutzerfunde.py", "viewer_kanten_bauen.py",
+            _ohne = {"bauteil_kreis.py", "kreis_regler.py", "kreis_rauschtor.py", "kreis_elemente.py", "teil_varianten_tor.py", "formfamilie_pruefen.py", "test_formfamilie_nutzerfunde.py", "viewer_kanten_bauen.py",
                      "viewer_kanten_vorlage.html", "beobachtung_aus_viewer.py", "teil_fotoform.py", "tor_verschiebung.py", "realitaet_prozent.py"}
             _lt = subprocess.run(["git", "-C", wt, "ls-tree", "-r", "HEAD", "tools"], capture_output=True, text=True).stdout.splitlines()
             _h = [hashlib.sha256("\n".join(l for l in _lt if l.split("\t")[-1].split("/")[-1] not in _ohne).encode()).hexdigest()] + \
@@ -1035,15 +1053,34 @@ for runde in range(1, RUNDEN + 1):
         _fein = fein_bevorzugt(ziel, None, _rtd)
         _rmass = RT.mass_waehlen((_RZ or {}).get("R"), _fein) if _RZ and not _RZ.get("infra") else None
         print(f"Runde {runde}: RAUSCHEN {ziel['teil']}: R {(_RZ or {}).get('R')}, trennend {(_RZ or {}).get('trennend')}, f1_fein bevorzugt {_fein} -> Mass {_rmass}", flush=True)
+        _EZ, _EMASSE, _EL_INFO, _EL_MEMO, _EL_LOG = None, {}, {}, {}, []
+        if _rmass is None and ELEMENT_REGION and _RZ is not None and not _RZ.get("infra"):   # Teil-Ebene nicht trennend -> Elementregion (nur mit Schalter)
+            _EZ = RT.elemente_laden(RAUSCHDIR, ziel["teil"], _rtd, ff_fotos, ELEMENT_ZELLE, ELEMENT_MAX)
+            if _EZ is None:
+                print(f"Runde {runde}: ELEMENTREGION {ziel['teil']}: kein Cache - Elemente werden gemessen (Sichtvorlauf + Nullkontrollen je Element, {len(ff_fotos)} Fotos)", flush=True)
+                _EZ = RT.elemente_berechnen(RAUSCHDIR, OBJ, ziel["teil"], _rtd, _rsv, ff_fotos, wt, lauf=lambda c_, w_, l_: sh_tor(c_, w_, l_, env={"RCPARK_FOTO_SKALA": "1"}, sperre=False),
+                                            zelle_m=ELEMENT_ZELLE, max_n=ELEMENT_MAX)
+            if _EZ.get("infra"): _RZ = _EZ
+            else:
+                _EMASSE = RT.elemente_masse(_EZ, fein_text(ziel), ORN_WORTE, RAUSCH_KLEIN)
+                print(f"Runde {runde}: ELEMENTREGION {ziel['teil']} (Modus {_EZ.get('modus')}):\n" + RT.element_tabelle(_EZ, _EMASSE), flush=True)
+                if any(_EMASSE.values()): _rmass = "elemente"
         if _RZ is None or _RZ.get("infra") or _rmass is None:
-            _grund = ("Infrastruktur in der Rauschmessung" if (_RZ or {}).get("infra") else ("Rauschmessung nicht moeglich (Teil-Export fehlt)" if _RZ is None else f"kein trennendes Mass (R {_RZ.get('R')})"))
+            _grund = ("Infrastruktur in der Rauschmessung" if (_RZ or {}).get("infra") else ("Rauschmessung nicht moeglich (Teil-Export fehlt)" if _RZ is None else f"kein trennendes Mass (R {_RZ.get('R')})"
+                      + (f"; Elementregion {_EZ.get('modus')}: {len(_EZ.get('elemente') or {})} Elemente, keines trennend" if _EZ else "")))
             if _RZ is not None and not _RZ.get("infra"): fotowunsch(ziel["teil"], _grund, R=_RZ.get("R"), rausch_schluessel=_RZ.get("schluessel"), nutzerfund="nutzer" in str((ziel.get("beob") or {}).get("wer", "")).lower())
             print(f"Runde {runde}: NICHT MESSBAR {ziel['teil']}: {_grund} - kein Agent, Ziel zaehlt nicht als Fehlversuch", flush=True)
             freigeben(ziel["teil"]); subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
             protokoll({"runde": runde, "ziel": ziel, "ende": "nicht messbar", "grund": _grund, "rauschen": _RZ, "infra_oom": bool((_RZ or {}).get("infra"))})
             continue
         _R = _RZ["R"]; _andere = [m_ for m_ in RT.MASSE if m_ != _rmass and (_R.get(m_) or 0) > 0]
-        txt += (f"\n\nTOR DIESER RUNDE = TEIL-LOKALES RAUSCHTOR (ersetzt alle festen Schwellen oben: 0,02 / Grauzone / Formfund-Toleranz / Ornament-Weg): "
+        if _rmass == "elemente":
+            txt += (f"\n\nTOR DIESER RUNDE = ELEMENT-RAUSCHTOR: {ziel['teil']} ist auf Teil-Ebene nicht messbar (kein trennendes Mass), wird aber je ELEMENT gemessen (Nullkontrollen nur auf das Element, Foto-F1 nur in der Bildregion des Elements). "
+                    f"Trennende Elemente (Mass, R): " + "; ".join(f"{k} ({v}, R={(_EZ['elemente'][k]['R'] or {}).get(v):.3f})" for k, v in _EMASSE.items() if v)
+                    + f". Annahme: mindestens ein GEAENDERTES trennendes Element gewinnt >= max({RAUSCH_FAKTOR} x R, {RAUSCH_MIN}) im eigenen Mass, kein anderes trennendes Mass dieses Elements faellt um mehr als {RAUSCH_FAKTOR} x R, "
+                    "und KEIN geaendertes Element wird schlechter. Aendere also gezielt Elemente, deren Foto-Form du belegen kannst (Elementboxen: " + os.path.join(_EZ['elemente_dir'], 'elemente.json') + "). Wolkenbeleg und Kantengitter bleiben Lage-Veto. Keine Rueckgabe nach der Vorpruefung.")
+        else:
+          txt += (f"\n\nTOR DIESER RUNDE = TEIL-LOKALES RAUSCHTOR (ersetzt alle festen Schwellen oben: 0,02 / Grauzone / Formfund-Toleranz / Ornament-Weg): "
                 f"an {ziel['teil']} trennen die Nullkontrollen (Teil 0,3 m verschoben / angehoben / 90 Grad gedreht) nur {_RZ.get('trennend') or []}. "
                 f"Entscheidend ist {_rmass} (teil_fotoform _gesamt.{_rmass}, volle Aufloesung, die 10 Torfotos): muss um >= {max(RAUSCH_FAKTOR * _R[_rmass], RAUSCH_MIN):.3f} steigen "
                 f"(Rauschen R = {_R[_rmass]:.3f})" + (f"; {', '.join(f'{m_} darf um hoechstens {RAUSCH_FAKTOR * _R[m_]:.3f} fallen' for m_ in _andere)}" if _andere else "")
@@ -1110,6 +1147,20 @@ for runde in range(1, RUNDEN + 1):
     def _rt_ok(kv, kn, fv, fn, wo, halb=False):
         """RAUSCHTOR-Urteil auf den Werten vorher (Schluessel r<N>_<kv>) / nachher (r<N>_<kn>); Grob-F1 kommt angeglichen (gemeinsame Fotos) herein.
         halb: halbe Vorstufe - gleiches Kriterium, gelockert (Gewinn > 0, Veto 1,0 x R, Grobschranke doppelt): halbe Aufloesung unterschaetzt Betraege."""
+        if _rmass == "elemente":   # ELEMENTTOR (--element_region 1): halbe Vorstufe wird uebersprungen (nur volle Aufloesung beurteilt Elemente), sonst Nachher-Messung der geaenderten Elemente
+            if halb:
+                RTLOG.append({"wo": wo, "besteht": True, "text": "Elementtor: halbe Vorstufe uebersprungen (Urteil erst in voller Aufloesung)", "halb": True}); return True
+            _ek = _hl.sha1(open(os.path.join(_tn, ziel["teil"] + ".stl"), "rb").read() + open(os.path.join(wt, STL), "rb").read()).hexdigest()
+            if _ek not in _EL_MEMO:
+                _EL_MEMO[_ek] = RT.elemente_nachher(_EZ, ziel["teil"], _tn, os.path.join(wt, STL), _rsv, OBJ, ff_fotos, wt, os.path.join(LDIR, f"elemente_r{runde}_{kn}"),
+                                                    vorher_dir=_rtd, lauf=lambda c_, w_, l_: sh_tor(c_, w_, l_, env={"RCPARK_FOTO_SKALA": "1"}, sperre=False))
+            _mess = _EL_MEMO[_ek]
+            if _mess.get("infra") or _mess.get("fehler"):
+                ok, txt_, info_ = False, "Elementtor: " + str(_mess.get("grund") or _mess.get("fehler")), {"gewinn": None}
+            else: ok, txt_, info_ = RT.urteil_elemente(_EZ, _EMASSE, _mess, faktor=RAUSCH_FAKTOR, mindest=RAUSCH_MIN, grob=RAUSCH_GROB)
+            _EL_INFO.clear(); _EL_INFO.update(info_)
+            print(f"RAUSCHTOR {ziel['teil']}: {txt_} [{wo}]", flush=True)
+            RTLOG.append({"wo": wo, "besteht": ok, "text": txt_, "elementtor": True, "betroffen": _mess.get("betroffen"), "vorher": _mess.get("vorher"), "nachher": _mess.get("nachher")}); return ok
         v = {"f1": fv, "f1_fein": FEIN.get(f"r{runde}_{kv}"), "f1_h": HOEHE.get(f"r{runde}_{kv}")}
         n = {"f1": fn, "f1_fein": FEIN.get(f"r{runde}_{kn}"), "f1_h": HOEHE.get(f"r{runde}_{kn}")}
         ok, txt = (RT.urteil(_RZ["R"], _rmass, v, n, faktor=0.0, mindest=0.001, grob=2 * RAUSCH_GROB, veto_faktor=1.0) if halb else
@@ -1273,7 +1324,8 @@ for runde in range(1, RUNDEN + 1):
         _nk = "vorpruef" if (_vorab_gebaut and not _halb) else "nachher"
         rt_ok = _rt_ok("vorher", _nk, ff_v, ff_n, "Tor")
         rueck_teil = [x for x in rueck_teil if x not in ("foto_f1", "hoehe_f1")]
-        _gm = ((ff_n - ff_v) if _rmass == "f1" else ((FEIN.get(f"r{runde}_{_nk}") or 0) - (FEIN.get(f"r{runde}_vorher") or 0)))
+        _gm = ((_EL_INFO.get("gewinn") or 0.0) if _rmass == "elemente" else
+               ((ff_n - ff_v) if _rmass == "f1" else ((FEIN.get(f"r{runde}_{_nk}") or 0) - (FEIN.get(f"r{runde}_vorher") or 0))))
         gewinn = _gm; min_g = _gm if rt_ok else _gm + 1.0   # gewinn >= min_g  <=>  Rauschtor besteht (fuer band_vorrang/tor_konv unten)
     # FEINMASS-TOR (SPEC_ORNAMENT_FEINMASS 3, Nutzer 11.11. 17:5x): Grob-F1 (0,18 m) ist blind fuer Rippen/Sprossen/Figuren (Erker-Varianten F1 0,570-0,576,
     # f1_fein 0,496-0,535). Feinform-Gewinn >= MIN_GEWINN_FOTO zaehlt als Gewinn, wenn der Grob-F1 hoechstens FORMFUND_TOL faellt; Bildpruefer entscheidet die Form.
@@ -1538,7 +1590,8 @@ for runde in range(1, RUNDEN + 1):
         subprocess.run(["git", "-C", ROOT, "worktree", "remove", "--force", wt], capture_output=True)
     protokoll({"runde": runde, "nachgeprueft": NACH or None, "ziel": ziel, "branch": br, "worktree": wt, "minuten": round((time.time() - t0) / 60, 1),
                "agent_rc": rcA, "agent_leer": _agent_leer, "tor_abnahme": tor_abnahme, "infra_oom": "INFRA_OOM" in outB or "INFRA_OOM" in (outK or "") or INFRA["runde"], "konvergenz_rc": rcK, "ersatz_teil": ersatz, "rueckschritt_teil": rueck_teil, "gewinn": round(gewinn, 3), "metrik": METRIK_SOLL, "tor": ("foto" if (not ist_fehlteil(ziel) and foto_tor) else (("foto_neu" if foto_tor else "region") if ist_fehlteil(ziel) else "alt")), "foto_f1_vor_nach": [ff_v, ff_n], "kontroll_f1_vor_nach": [kf_v, kf_n], "kontroll_skala": SKALA_VOR if _flk is not None else 1.0, "frueh_abgelehnt": _frueh, "kontroll_fotos": kf_fotos, "hoehe_f1_vor_nach": [h_v, h_n], "guete_vor_nach": [vor.get(ziel["teil"]), nach.get(ziel["teil"])],
-               "tor_version": TOR_VERSION, "tor_konvergenz": tor_konv, "rauschtor": ({"mass": _rmass, "R": (_RZ or {}).get("R"), "schluessel": (_RZ or {}).get("schluessel"), "besteht": rt_ok, "urteile": RTLOG} if _RT else None), "rueckgabe": RUECKGABE, "foto_f1": [ff_v, ff_n], "foto_fotos": ff_fotos, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
+               "tor_version": TOR_VERSION, "tor_konvergenz": tor_konv, "rauschtor": ({"mass": _rmass, "R": (_RZ or {}).get("R"), "schluessel": (_RZ or {}).get("schluessel"), "besteht": rt_ok, "urteile": RTLOG,
+                                                                                                                                                  **({"elemente": {"schluessel": _EZ.get("schluessel"), "modus": _EZ.get("modus"), "masse": _EMASSE}} if _rmass == "elemente" else {})} if _RT else None), "rueckgabe": RUECKGABE, "foto_f1": [ff_v, ff_n], "foto_fotos": ff_fotos, "fehlteil_befund": fbefund, "pruefer": urteil, "angenommen": angenommen,
                "rueckschritt": (z1 or {}).get("rueckschritt"), "recall_gesamt": [z0["kanten"]["gesamt"]["recall"], (z1 or {}).get("kanten", {}).get("gesamt", {}).get("recall")]})
     print(f"Runde {runde}: {'ANGENOMMEN' if angenommen else 'VERWORFEN'} (Abnahme {tor_abnahme}, Konvergenz {tor_konv} Gewinn {gewinn:+.3f}, Pruefer {urteil.get('annehmen')})")
     if ohne_annahme >= 2:
