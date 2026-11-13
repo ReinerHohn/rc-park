@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """snap_in_objekt.py - wege3d.json (rippen_pfad_snap.py) -> rippen_pfade.pfade_ohne_spiegel eines erker_polygon (13.11.2026).
-Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/snap_in_objekt.py modelle/<objekt>/objekt.json BAUTEIL_INDEX wege3d.json "QUELLTEXT" [--du 0] [--um -8.47]
+Aufruf: /media/oem/scan/venv-seg/bin/python -I tools/snap_in_objekt.py modelle/<objekt>/objekt.json BAUTEIL_INDEX wege3d.json "QUELLTEXT" [--du 0] [--um -8.47] [--anhaengen]
 Normale je Achteck-Facette (0/+-45/+-90 Grad um (um, 12,27)) gedreht, Pfade an Facettengrenzen geteilt.
 Ersetzt pfade_ohne_spiegel (Gauss-geglaettet, 5 cm Raster, Spruenge > 0,25 m trennen, Stuecke < 0,3 m verwerfen), setzt quelle_snap. --du: u-Verschiebung (z.B. fuer Spiegel/Uebertragung)."""
 import sys, json, numpy as np
@@ -26,4 +26,4 @@ for k, w in d.items():
             if len(seg) < 4: continue
             f_ = int(np.bincount(fi[a_:b_] + 4).argmax()) - 4; th = np.radians(45.0 * f_); out.append(dict(pfad=np.round(seg, 3).tolist(), normale=[round(nor[1] * np.sin(th), 4), round(nor[1] * np.cos(th), 4), nor[2]]))
         tot += L[-1]
-r["pfade_ohne_spiegel"] = out; r["quelle_snap"] = a[3]; json.dump(o, open(a[0], "w"), indent=1, ensure_ascii=False); print(len(out), "Pfade", round(tot, 1), "m")
+r["pfade_ohne_spiegel"] = (r["pfade_ohne_spiegel"] + out) if "--anhaengen" in a else out; r["quelle_snap"] = a[3]; json.dump(o, open(a[0], "w"), indent=1, ensure_ascii=False); print(len(out), "Pfade", round(tot, 1), "m")

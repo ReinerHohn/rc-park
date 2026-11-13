@@ -5898,11 +5898,135 @@
         0.0,
         -0.605
        ]
+      },
+      {
+       "pfad": [
+        [
+         -9.09,
+         13.807,
+         8.032
+        ],
+        [
+         -9.048,
+         13.811,
+         8.058
+        ],
+        [
+         -9.006,
+         13.814,
+         8.085
+        ],
+        [
+         -8.961,
+         13.816,
+         8.107
+        ],
+        [
+         -8.913,
+         13.816,
+         8.105
+        ],
+        [
+         -8.874,
+         13.814,
+         8.075
+        ],
+        [
+         -8.825,
+         13.814,
+         8.073
+        ],
+        [
+         -8.775,
+         13.815,
+         8.08
+        ],
+        [
+         -8.728,
+         13.813,
+         8.067
+        ],
+        [
+         -8.679,
+         13.813,
+         8.057
+        ],
+        [
+         -8.629,
+         13.814,
+         8.056
+        ],
+        [
+         -8.579,
+         13.814,
+         8.057
+        ],
+        [
+         -8.529,
+         13.814,
+         8.065
+        ],
+        [
+         -8.481,
+         13.814,
+         8.078
+        ],
+        [
+         -8.432,
+         13.809,
+         8.076
+        ],
+        [
+         -8.384,
+         13.802,
+         8.065
+        ],
+        [
+         -8.334,
+         13.8,
+         8.065
+        ],
+        [
+         -8.284,
+         13.799,
+         8.065
+        ],
+        [
+         -8.234,
+         13.799,
+         8.064
+        ],
+        [
+         -8.184,
+         13.799,
+         8.064
+        ],
+        [
+         -8.134,
+         13.799,
+         8.065
+        ],
+        [
+         -8.084,
+         13.796,
+         8.069
+        ],
+        [
+         -8.036,
+         13.793,
+         8.08
+        ]
+       ],
+       "normale": [
+        0.0,
+        0.796,
+        -0.605
+       ]
       }
      ],
      "quelle_faecher": "13.11.2026 ANNAHME-FAECHER (Nutzerwahl 'Faecher aus Messpunkten'): je Flaeche 6 Rippen (2 Kreuzbogen, Mittelrippe, 2 Mittelknauf-Boegen, linker Randbogen) + rechter Randbogen der letzten Flaeche, Flaeche 0/+45/-45 Grad um die Achteckmitte (u_mitte, n 12,27). Gemessen: Fuss u15,81 n12,48 z6,47 und Knaeufe vorn u16,20/14,87 n13,8 z8,12 (Triangulation K-6261/K-6162, Strahlabstand 3-9 cm); n(z) der Kegelflaeche aus den bisherigen gemessenen Pfaden (z6,45 12,55 ... z8,12 13,75; oben 4 cm zurueck wegen Abnahme Reichweite z8,0 <= 1,48). ANNAHME: Rippenzahl (Sichtzaehlung K-6162 ~7, nicht im Zaehlprotokoll), Bogenformen, Fussbreite 0,30 m. Ersetzt die 24 Fragmentpfade.",
      "quelle_breite": "13.11.2026 Rippenbreite 0,14 m (Nahfotos K-6130 597 px/m, K-n11_06 625 px/m: Band ~90-110 px = 0,15-0,18 m schraeg, Profil gold-schwarz-gold; LOGBUCH_RIPPEN_2026-11-13 Kap. 20), vor 0,04 (war 0,05): Abnahme Reichweite z 8,0 <= 1,48 (Wolke-Veto) bei b 0,14 / vor 0,05 gemessen 1,48+. Vorher b 0,07.",
-     "quelle_snap": "13.11.2026 Rippenbahnen Erker 0 aus Handwegpunkten in K-n11_06 auf Goldgrat eingerastet (tools/rippen_pfad_snap.py, 11 Wege), Tiefe: Mehrfoto-Gold-Konsens im +-0,12 m Band (R5,R6 +-0,35 m, Westfacette) um die gemessene Achteck-Kegelflaeche; Normale je Facette gedreht; R9 verworfen (Score 0); ANNAHME: Flaeche n(z) auch fuer Diagonal- und Seitenfacetten",
+     "quelle_snap": "13.11.2026 + Wege N3, N7 (Randrippe links, Bogen rechte Facette) aus K-n11_06, Band 0,12",
      "quelle_tor": "13.11.2026 Pfade mit Fremdfoto-Treffer < 0.45 (Kameras K-6225,K-h13) verworfen (tools/rippen_pfade_tor.py)"
     },
     "kappe_rueck_profil": [

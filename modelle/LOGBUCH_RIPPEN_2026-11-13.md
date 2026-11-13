@@ -216,3 +216,8 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 ## Kap. 46 – H0-Aufloesungstest (aktueller Stand e1d9a97a)
 - sh_kp_h0.jpg: Streiflicht-Render auf 300 px Breite verkleinert (~0,11 mm/px H0, Erker ~3 m = 34 mm) neben dem Foto. Befund (Augenschein, keine Messung): die grosse V/X-Kreuzung und mehrere Boegen lesen sich als erhabene, sich kreuzende Baender; aber nur ~4-6 kraeftige Rippen statt der ~12+ im Foto, Baender breiter/rauer, Gold-Schwarz-Gold nicht sichtbar (nur Relief, Farbe waere Bemalung), Kegel unten klotzig. Urteil: 'als Netzgewoelbe-Rippen erkennbar: teilweise'; 'extrem gut': nein.
 - Offen fuer Erkennbarkeit: fehlende Rippen (Erker West 15,7 m von >20 m, Ost 18,8 m), Randrippen/Knotenstrahlen, Rippenbreite je Rippe (0,14 pauschal), Probedruck.
+
+## Kap. 47 – Zusatzwege Erker West (N3, N7; N9 verworfen)
+- Neue Wege in K-n11_06 (Randrippe links N3, Bogen rechte Facette N7, Bogen N9): N9 Score 0 -> verworfen; N3/N7 eingerastet, `snap_in_objekt.py --anhaengen` (neu), Tor (K-6225/h13, 0,45): von 3 neuen Pfaden (2,2 m) bleibt 1 (1,15 m, 91 %). Netto +0,5 m (Erker West jetzt 14,9 m).
+- Gegenprobe: K-i08 65 -> 68 % (Null 22), K-6145 55 -> 54 % (Null 21). Abnahme gruen (168, 1 alter Widerspruch), wasserdicht.
+- Befund: der Gewinn pro Handrunde ist klein (~0,5 m von >20 m); Engpass ist nicht die Handarbeit sondern, dass viele Baender in n11_06 nur in einer Naehe-Kamera sichtbar sind (Tiefe nur Flaechenannahme). Fuer deutlich mehr Laenge: zweites Nahfoto aus anderer Richtung (Aufnahme von u<-10 oder Sued-West) oder Flaechenmodell aus Wolke.
