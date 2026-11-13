@@ -145,3 +145,8 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 - 10 Wege (A-J), Einrasten gut (snap_K-6171.jpg); I (Randrippe links oben) ohne gueltige Tiefe (ausserhalb Flaechenband). snap_in_objekt Bauteil 10 --um 15.52. Abnahme gruen (169 Beobachtungen, 1 Widerspruch alt).
 - Render sh_e1_6171: kreuzende Boegen mit X sichtbar; Gold-Schwarz-Gold-Profil, Rosetten, Kegelfuss und Pfeilerform weichen weiter ab. Realitaet Rippen Erker Ost ca. 45 %.
 - Zeit: Wege lesen + Einrasten + Abnahme ca. 25 min pro Erker (vorher Tage mit Skelett/Ketten). Lehre: Handwegpunkte + Einrasten + Flaechenband schlaegt automatische Kettenbildung.
+
+## Kap. 32 – Kappenruecksprung (kappe_rueck) 0,07 -> 0,10
+- Der Generator hatte `unterbau.kappe_rueck` schon (0,07); ich hatte ihn uebersehen. Test: 0,14 -> Abnahme FEHLER Druck wasserdicht (0,00); 0,10 -> alle Pruefungen bestanden. Rippen stehen jetzt ca. 0,10 + 0,05 vor dem Kappenkoerper (ca. 1,7 mm in H0).
+- Render sh_kr10_6171: Rippen heben sich etwas staerker ab; Gewoelbekappen weiter eben (echt: eingemuldet). Realitaet Rippen ca. 50 %, H0-Erkennbarkeit weiter nicht belegt.
+- Offen: 0,14 wasserdicht-Fehler untersuchen (welches Teil), Kappenmulde, Westfacette, Rosetten.
