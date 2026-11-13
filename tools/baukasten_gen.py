@@ -913,7 +913,7 @@ def erker_polygon(cfg, ctx):
         for k_, (p_, nrm_) in enumerate(pfade_):
             bw_ = bpf_.get(k_, bb_) * (1 + 0.013 * (k_ % 7)); nn_ = len(p_) - 1; qs_ = []   # bw_: Breite je Rippe um <= 8 % verschieden (Breitenstreuung ~ Messunsicherheit), sonst deckungsgleiche Flaechen sich kreuzender Rippen -> manifold3d-Splitter
             for i in range(nn_ + 1):
-                d_ = p_[min(i + 1, nn_)] - p_[max(i - 1, 0)]; d_ /= np.linalg.norm(d_); wd_ = np.cross(d_, nrm_); wd_ /= np.linalg.norm(wd_)
+                d_ = p_[min(i + 3, nn_)] - p_[max(i - 3, 0)]; d_ /= np.linalg.norm(d_); wd_ = np.cross(d_, nrm_)   # 13.11.2026: Tangente ueber +-3 Punkte (15 cm) statt +-1: Querschnitt dreht nicht mit dem Pfadrauschen (Facettenrauheit im Streiflicht); wd_ /= np.linalg.norm(wd_)
                 t_, b_ = p_[i] + nrm_ * vor_, p_[i] - nrm_ * emb_                                                      # Oberseite 'vor' ueber der gemessenen Linie (Goldlinie = Vorderkante), Fuss 'emb' im Koerper
                 qs_.append(np.array([b_ - wd_ * bw_ / 2, b_ + wd_ * bw_ / 2, t_ - wd_ * bw_ / 2, t_ + wd_ * bw_ / 2]))
             def qat_(x_): i0_ = min(int(x_), nn_ - 1); fr_ = x_ - i0_; return list(qs_[i0_] * (1 - fr_) + qs_[i0_ + 1] * fr_)

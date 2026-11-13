@@ -196,3 +196,8 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 
 ## Kap. 42 – Sackgasse: zusaetzliche Pfadglaettung gegen Facettenrauheit
 - Gauss sigma 3 (15 cm) auf alle Pfade: Fremdfoto-Treffer fallen (K-i08 65 -> 56 %, K-6145 55 -> 52 %, K-n11_04 61 -> 59 %): die Glaettung schneidet Bogenkruemmung ab. VERWORFEN, objekt.json unveraendert (9444911d). Die Facettenrauheit im Streiflicht kommt also nicht (nur) von Pfadrauschen; Kandidaten: Hüllensegmente (ueberlapp 0,35, Querschnittsdrehung wd_ je Punkt), Pfadabtastung 5 cm. Naechster Test: Querschnitts-Orientierung (Breitenrichtung) glaetten statt der Pfade.
+
+## Kap. 43 – Querschnitts-Tangente +-3 Punkte (baukasten_gen.py, rippen_pfade)
+- Facettenrauheit kam vom Querschnittsdreh je Punkt (Tangente aus Nachbarn +-1 = 5 cm Basis, rauschempfindlich), nicht von den Pfaden (Kap. 42). Aenderung: d_ = p[i+3] - p[i-3]. Pfade unveraendert -> Fremdfoto-Treffer unveraendert.
+- Abnahme gruen (169, 1 alter Widerspruch), wasserdicht, Regression identisch. Streiflicht-Render sh_graz2_6171: Baender glatter, V/X-Kreuzung wie im Foto, falsche Mittelrippe weg. Rest-Rauheit an den Pfeilerfuessen/Konsolen.
+- Lehre: Rauheit bei richtiger Lage -> Querschnitt/Orientierung pruefen, nicht die Mittellinie.
