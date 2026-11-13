@@ -179,3 +179,8 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 - Naechster Schritt (nicht getan): Ursache der Wasserdichtigkeit klaeren (welches Teil: Rippe-Einbindung 0,38 m vs. Kappenruecksprung; Mesh-Reparatur oder Einbindung anpassen), erst dann tiefere Kappen.
 
 - Nachtrag Kap. 38: kappe_rueck 0,12 + einbindung 0,41 (statt 0,38) -> weiter wasserdicht 0,00. Einbindung ist es nicht. Ursache offen (Verdacht: Kappenkoerper-Huelle mit Rippenfuessen, Reparatur schlaegt bei allen Toleranzen 3-7 mm fehl). Naechster Test: Erker-Teile einzeln auf Manifold pruefen (trimesh, split), nicht blind Parameter drehen. Stand zurueck auf 0,10/0,38.
+
+## Kap. 39 – Ursache wasserdicht gefunden: eine Kante (Pfad 3, Erker West)
+- Methode: STL laden, Kanten mit != 2 Flaechen zaehlen (np.unique ueber edges_sorted): bei kappe_rueck 0,12 genau 1 Kante mit 4 Flaechen bei (x -4,914, y 14,702, z 7,482) = u -9,54, n 12,24 (Westfacette Erker West). Naechstliegende Pfade 3 und 12; Pfad 12 entfernen/verbreitern half nicht, Pfad 3 entfernen -> wasserdicht; Pfad 3 mit eigener Breite b 0,157 (statt 0,14*(1+0,013*(k%7))) -> wasserdicht, auch bei 0,14.
+- kappe_rueck 0,14: Abnahme gruen (168 Beobachtungen, 1 alter Widerspruch). Rippen stehen ca. 0,19 m (2,2 mm H0) vor dem Kappenkoerper. Render sh_kr14: etwas mehr Relief, Kappen weiter eben.
+- Lehre: bei 'wasserdicht 0' zuerst die Fehlkante lokalisieren (1 Zeile trimesh), nicht Parameter drehen: vorher 4 blinde Abnahmeruns (~25 min). Fix = eigene Breite je Pfad (pfade_ohne_spiegel[i].b), Muster fuer koinzidente Rippenkanten.
