@@ -184,3 +184,7 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 - Methode: STL laden, Kanten mit != 2 Flaechen zaehlen (np.unique ueber edges_sorted): bei kappe_rueck 0,12 genau 1 Kante mit 4 Flaechen bei (x -4,914, y 14,702, z 7,482) = u -9,54, n 12,24 (Westfacette Erker West). Naechstliegende Pfade 3 und 12; Pfad 12 entfernen/verbreitern half nicht, Pfad 3 entfernen -> wasserdicht; Pfad 3 mit eigener Breite b 0,157 (statt 0,14*(1+0,013*(k%7))) -> wasserdicht, auch bei 0,14.
 - kappe_rueck 0,14: Abnahme gruen (168 Beobachtungen, 1 alter Widerspruch). Rippen stehen ca. 0,19 m (2,2 mm H0) vor dem Kappenkoerper. Render sh_kr14: etwas mehr Relief, Kappen weiter eben.
 - Lehre: bei 'wasserdicht 0' zuerst die Fehlkante lokalisieren (1 Zeile trimesh), nicht Parameter drehen: vorher 4 blinde Abnahmeruns (~25 min). Fix = eigene Breite je Pfad (pfade_ohne_spiegel[i].b), Muster fuer koinzidente Rippenkanten.
+
+## Kap. 40 – kappe_rueck 0,20
+- 0,20: wasserdicht (0 Fehlkanten), Abnahme gruen (171 Beobachtungen, 1 alter Widerspruch). Rippen stehen ca. 0,25 m (2,9 mm H0) vor dem Kappenkoerper. ANNAHME: der echte Rueckstand der Kappen ist NICHT gemessen (Foto-Schattenkante / Mehrfoto-Tiefe der Kappenflaeche zwischen Rippen waere die Messung); 0,20 ist so gewaehlt, dass H0-Relief sichtbar wird und die Abnahme besteht.
+- Render sh_kr20_6171: im ungetexturierten Weiss-Render kaum mehr Unterschied zu 0,14; die Wirkung zeigt sich erst im Schattenwurf/Druck.
