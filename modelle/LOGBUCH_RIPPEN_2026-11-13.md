@@ -233,3 +233,8 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 ## Kap. 50 – Erker Ost: Wege G und Q2 neu gesetzt
 - Wegpunkte aus dem Overlay (/tmp/ost_pfade.jpg) neu gelesen (Q2 Start an den Eckknoten statt Abkuerzung, G Ende auf dem Grat). Gesamtliste neu integriert (snap_in_objekt ohne --anhaengen; Duplikat zu `pfade[0]` automatisch entfernt: 1), Tor: 23 -> 21 Pfade, 18,8 m (vorher 19,6 m inkl. Kurzschlussgeraden). K-n11_04 66 % (Null 20). Abnahme gruen (171, 1 alter Widerspruch), wasserdicht.
 - Lehre: Neusetzen schlecht gesetzter Wegpunkte an Overlay-Koordinaten dauert ~10 min je Weg und entfernt falsche Geraden ohne Laengenverlust durch Filter. Overlay-Bild (Wege auf Ref-Foto) vor jeder Integration ansehen.
+
+## 51. Viewer v67 + West-Luecken (13.11.)
+- Viewer v67 = Stand 72e543ea (Wege G/Q2 Ost). West-Overlay auf K-n11_06 geprueft.
+- Wege ohne Tiefe (West): R3 35, R4 43, R0 27 Punkte von 300-413 (je <12 %); Rest hat Tiefe. Luecken per Spline bei snap_in_objekt.
+- Offen: Randrippen/Knotenstrahlen West, Kappentiefe unten, Probedruck, Nutzerurteil. Ziel (H0 extrem gut erkennbar) NICHT belegt.
