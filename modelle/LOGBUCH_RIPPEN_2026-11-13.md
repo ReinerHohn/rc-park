@@ -43,3 +43,9 @@ Der Messwert `rippe_gurt_u954_z`/Diagonalrippe wird nach der Druckreparatur geme
 - Faecher an beiden Erkern (je 19 Rippen, ANNAHME laut quelle_faecher in objekt.json): Abnahme "alle Pruefungen bestanden", Regression identisch.
 - Schattierter Vergleich (modelle/rippen_runde_2026-11-13/sh_fan_6261.jpg, sh_fan_6162.jpg): Rippen jetzt dicht (~7 je Flaeche), aber dick, kantig und ohne die Kreuzungsgeometrie des Fotos; Fuss laeuft in unruhige Spitzen aus; Kegelsilhouette weicht ab (Foto: schlanker Trichter, Modell: Glocke). Foto: duenne goldgerahmte Rippen. Fehler: (a) Rippenbreite 0,07 m zu dick, Foto etwa 0,03-0,04 m je Einzellinie (Rippe = 3 Goldlinien), (b) Fussbuendel 0,30 m breit angenommen, (c) Bogenformen angenommen, nicht gemessen, (d) Kegel-Silhouette.
 - Naechste Schritte: Rippenbreite/Vorsprung gegen Foto messen (foto_mass.py), Fussbreite triangulieren, Silhouette des Kegels (profil in unterbau) gegen K-6162-Kontur pruefen; Druckregel: ueber 0,0348 m (0,4 mm H0) bleiben.
+
+## 16. Rippenbreite am Foto (Zwischenmessung)
+- Massstab am Erker: K-6162 106 px/m (Tiefe 28,5 m), K-6261 99 px/m (30,7 m). Bei diesen Entfernungen ist eine Rippe von 0,07 m nur ~7 px breit; Einzelgoldlinien sind nicht aufgeloest.
+- Querprofil Goldanteil (K-6162, 4 Stellen): nur eine saubere Stelle (600,1880): 7 px = 0,066 m; die uebrigen drei Profile verrauscht (Gold-Maximum 13-19, Breite 24-35 px = Rippe + Nachbarrippe + Schatten) -> keine belastbare Aussage. 
+- Folgerung (vorlaeufig, EINE Messung): Rippenbreite 0,07 m ist plausibel, "klobig" im Render kommt eher aus Vorsprung 0,05 m, flacher Beleuchtung und den unruhigen Fuss-/Kreuzungsstellen. Fuer eine sichere Breite fehlt ein Nahfoto (Aufnahmeplan Punkt 3, 1-2 m Abstand -> ~500 px/m).
+- LEHRE: Aufloesung vor Messung pruefen (px/m aus Kamera) - bei 100 px/m sind Rippendetails unter 5 cm nicht messbar; spart Messversuche.
