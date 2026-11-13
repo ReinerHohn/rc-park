@@ -133,3 +133,9 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 - 10 Wege, 11 Pfade, 16,3 m (Foto: >20 m geschaetzt). R5/R9 (Westfacette unten/oben) fast leer. Abnahme: Reichweite z7,2 0,81 (Soll 0,82-1,04) bei vor 0,04 -> vor 0,05 gruen (nur Erker West). freiraum_audit-Fehler (SFM-AUSRICHTUNG-buendel.json fehlt) ist alt.
 - Render sh_snap_n11_06: gebogene, kreuzende Rippen jetzt sichtbar, aber treppenartig gezackt (Glaettung/Facetten), Diagonalfacetten luckig. Realitaet Rippen ca. 40 %.
 - Offen: restliche Wege (Westfacette, Randboegen, Knotenstrahlen), Rosetten, Erker 1 (gleiches Verfahren mit K-6171), Zackenglaettung (Hüllen-Segmente).
+
+## Kap. 30 – Facettennormalen: Zacken weg
+- Ursache der Treppenzacken auf den Diagonal-/Seitenfacetten: eine feste Normale (0;0,796;-0,605) fuer alle Pfade (gilt nur fuer die Frontfacette). snap_in_objekt.py teilt jetzt Pfade an den Facettengrenzen (phi = round(45 Grad)) und dreht die Normale um die Hochachse.
+- Ergebnis: Abnahme gruen (170 Beobachtungen, 1 Widerspruch alt); Render sh_snap5_n11_06: glatte, kreuzende Boegen, X-Kreuzungen erkennbar, Zacken rechts weg. Realitaet Rippen ca. 50 %.
+- Lehre: bei Zacken zuerst die Querschnitts-Orientierung (Normale) pruefen, nicht die Pfadglaettung. Der Render-Ausschnitt war entgegen erstem Eindruck richtig ausgerichtet (Vertices im Rohrahmen verifiziert).
+- Offen: Westfacette (R5, R9 leer), Rosetten, Profil Gold-Schwarz-Gold, Erker 1.

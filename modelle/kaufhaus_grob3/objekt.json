@@ -4516,6 +4516,25 @@
          -8.722,
          12.894,
          7.028
+        ]
+       ],
+       "normale": [
+        -0.5629,
+        0.5629,
+        -0.605
+       ]
+      },
+      {
+       "pfad": [
+        [
+         -8.763,
+         12.918,
+         7.032
+        ],
+        [
+         -8.722,
+         12.894,
+         7.028
         ],
         [
          -8.681,
@@ -4561,6 +4580,25 @@
          -8.691,
          12.78,
          6.885
+        ]
+       ],
+       "normale": [
+        0.0,
+        0.796,
+        -0.605
+       ]
+      },
+      {
+       "pfad": [
+        [
+         -8.672,
+         12.792,
+         6.93
+        ],
+        [
+         -8.691,
+         12.78,
+         6.885
         ],
         [
          -8.699,
@@ -4581,6 +4619,25 @@
          -8.624,
          12.661,
          6.8
+        ]
+       ],
+       "normale": [
+        -0.5629,
+        0.5629,
+        -0.605
+       ]
+      },
+      {
+       "pfad": [
+        [
+         -8.658,
+         12.695,
+         6.787
+        ],
+        [
+         -8.624,
+         12.661,
+         6.8
         ],
         [
          -8.611,
@@ -4591,11 +4648,6 @@
          -8.616,
          12.616,
          6.724
-        ],
-        [
-         -8.632,
-         12.61,
-         6.677
         ]
        ],
        "normale": [
@@ -4795,6 +4847,25 @@
          -9.21,
          12.576,
          7.115
+        ]
+       ],
+       "normale": [
+        -0.5629,
+        0.5629,
+        -0.605
+       ]
+      },
+      {
+       "pfad": [
+        [
+         -9.226,
+         12.608,
+         7.15
+        ],
+        [
+         -9.21,
+         12.576,
+         7.115
         ],
         [
          -9.19,
@@ -4885,6 +4956,25 @@
          -8.796,
          12.13,
          6.814
+        ]
+       ],
+       "normale": [
+        -0.796,
+        0.0,
+        -0.605
+       ]
+      },
+      {
+       "pfad": [
+        [
+         -8.811,
+         12.15,
+         6.856
+        ],
+        [
+         -8.796,
+         12.13,
+         6.814
         ],
         [
          -8.797,
@@ -4923,8 +5013,8 @@
         ]
        ],
        "normale": [
-        0.0,
-        0.796,
+        -0.5629,
+        -0.5629,
         -0.605
        ]
       },
@@ -4940,6 +5030,25 @@
          12.897,
          8.138
         ],
+        [
+         -10.029,
+         12.897,
+         8.09
+        ],
+        [
+         -10.007,
+         12.907,
+         8.046
+        ]
+       ],
+       "normale": [
+        -0.796,
+        0.0,
+        -0.605
+       ]
+      },
+      {
+       "pfad": [
         [
          -10.029,
          12.897,
@@ -5125,6 +5234,25 @@
          12.903,
          7.027
         ],
+        [
+         -8.742,
+         12.874,
+         7.016
+        ],
+        [
+         -8.699,
+         12.859,
+         7.038
+        ]
+       ],
+       "normale": [
+        -0.5629,
+        0.5629,
+        -0.605
+       ]
+      },
+      {
+       "pfad": [
         [
          -8.742,
          12.874,
@@ -5373,6 +5501,25 @@
          -9.195,
          11.95,
          7.235
+        ]
+       ],
+       "normale": [
+        -0.796,
+        0.0,
+        -0.605
+       ]
+      },
+      {
+       "pfad": [
+        [
+         -9.221,
+         11.965,
+         7.273
+        ],
+        [
+         -9.195,
+         11.95,
+         7.235
         ],
         [
          -9.187,
@@ -5386,8 +5533,8 @@
         ]
        ],
        "normale": [
-        0.0,
-        0.796,
+        -0.5629,
+        -0.5629,
         -0.605
        ]
       },
@@ -5465,8 +5612,8 @@
         ]
        ],
        "normale": [
+        -0.796,
         0.0,
-        0.796,
         -0.605
        ]
       },
@@ -5599,8 +5746,8 @@
         ]
        ],
        "normale": [
-        0.0,
-        0.796,
+        -0.5629,
+        -0.5629,
         -0.605
        ]
       },
@@ -5795,6 +5942,25 @@
          -8.904,
          12.455,
          7.016
+        ]
+       ],
+       "normale": [
+        -0.796,
+        0.0,
+        -0.605
+       ]
+      },
+      {
+       "pfad": [
+        [
+         -8.948,
+         12.453,
+         7.038
+        ],
+        [
+         -8.904,
+         12.455,
+         7.016
         ],
         [
          -8.864,
@@ -5838,8 +6004,8 @@
         ]
        ],
        "normale": [
-        0.0,
-        0.796,
+        -0.5629,
+        0.5629,
         -0.605
        ]
       },
@@ -6035,8 +6201,8 @@
         ]
        ],
        "normale": [
-        0.0,
-        0.796,
+        0.5629,
+        0.5629,
         -0.605
        ]
       },
@@ -6106,11 +6272,6 @@
       },
       {
        "pfad": [
-        [
-         -9.125,
-         13.805,
-         8.042
-        ],
         [
          -9.106,
          13.787,
@@ -6392,15 +6553,15 @@
         ]
        ],
        "normale": [
+        -0.796,
         0.0,
-        0.796,
         -0.605
        ]
       }
      ],
      "quelle_faecher": "13.11.2026 ANNAHME-FAECHER (Nutzerwahl 'Faecher aus Messpunkten'): je Flaeche 6 Rippen (2 Kreuzbogen, Mittelrippe, 2 Mittelknauf-Boegen, linker Randbogen) + rechter Randbogen der letzten Flaeche, Flaeche 0/+45/-45 Grad um die Achteckmitte (u_mitte, n 12,27). Gemessen: Fuss u15,81 n12,48 z6,47 und Knaeufe vorn u16,20/14,87 n13,8 z8,12 (Triangulation K-6261/K-6162, Strahlabstand 3-9 cm); n(z) der Kegelflaeche aus den bisherigen gemessenen Pfaden (z6,45 12,55 ... z8,12 13,75; oben 4 cm zurueck wegen Abnahme Reichweite z8,0 <= 1,48). ANNAHME: Rippenzahl (Sichtzaehlung K-6162 ~7, nicht im Zaehlprotokoll), Bogenformen, Fussbreite 0,30 m. Ersetzt die 24 Fragmentpfade.",
      "quelle_breite": "13.11.2026 Rippenbreite 0,14 m (Nahfotos K-6130 597 px/m, K-n11_06 625 px/m: Band ~90-110 px = 0,15-0,18 m schraeg, Profil gold-schwarz-gold; LOGBUCH_RIPPEN_2026-11-13 Kap. 20), vor 0,04 (war 0,05): Abnahme Reichweite z 8,0 <= 1,48 (Wolke-Veto) bei b 0,14 / vor 0,05 gemessen 1,48+. Vorher b 0,07.",
-     "quelle_snap": "13.11.2026 Rippenbahnen Erker 0 aus Handwegpunkten in K-n11_06 auf Goldgrat eingerastet (tools/rippen_pfad_snap.py, 12 Wege), Tiefe: Mehrfoto-Gold-Konsens im +-0,12 m Band um die gemessene Achteck-Kegelflaeche; ANNAHME: Flaeche n(z) auch fuer Diagonal- und Seitenfacetten"
+     "quelle_snap": "13.11.2026 Rippenbahnen Erker 0 aus Handwegpunkten in K-n11_06 auf Goldgrat eingerastet (tools/rippen_pfad_snap.py, 12 Wege), Tiefe: Mehrfoto-Gold-Konsens im +-0,12 m Band um die gemessene Achteck-Kegelflaeche; Normale je Facette gedreht; ANNAHME: Flaeche n(z) auch fuer Diagonal- und Seitenfacetten"
     }
    },
    "eckfiguren": {
