@@ -150,3 +150,6 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 - Der Generator hatte `unterbau.kappe_rueck` schon (0,07); ich hatte ihn uebersehen. Test: 0,14 -> Abnahme FEHLER Druck wasserdicht (0,00); 0,10 -> alle Pruefungen bestanden. Rippen stehen jetzt ca. 0,10 + 0,05 vor dem Kappenkoerper (ca. 1,7 mm in H0).
 - Render sh_kr10_6171: Rippen heben sich etwas staerker ab; Gewoelbekappen weiter eben (echt: eingemuldet). Realitaet Rippen ca. 50 %, H0-Erkennbarkeit weiter nicht belegt.
 - Offen: 0,14 wasserdicht-Fehler untersuchen (welches Teil), Kappenmulde, Westfacette, Rosetten.
+
+## Kap. 33 – Westfacette Erker West
+- R5, R6 mit Tiefenband +-0,35 m neu (R5 liegt auf u -10,2..-10,0 = Westfacette), R9 verworfen (Score 0, Median). Abnahme gruen (167 Beobachtungen, 1 alter Widerspruch). Render sh_west_n11_06: rechte Facette jetzt mit Rippen belegt. Realitaet Rippen ca. 50 %; Kappenmulde, Rosetten, Profil, Kegelfuss offen; H0-Erkennbarkeit weiter nicht belegt.
