@@ -188,3 +188,8 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 ## Kap. 40 – kappe_rueck 0,20
 - 0,20: wasserdicht (0 Fehlkanten), Abnahme gruen (171 Beobachtungen, 1 alter Widerspruch). Rippen stehen ca. 0,25 m (2,9 mm H0) vor dem Kappenkoerper. ANNAHME: der echte Rueckstand der Kappen ist NICHT gemessen (Foto-Schattenkante / Mehrfoto-Tiefe der Kappenflaeche zwischen Rippen waere die Messung); 0,20 ist so gewaehlt, dass H0-Relief sichtbar wird und die Abnahme besteht.
 - Render sh_kr20_6171: im ungetexturierten Weiss-Render kaum mehr Unterschied zu 0,14; die Wirkung zeigt sich erst im Schattenwurf/Druck.
+
+## Kap. 41 – Streiflicht-Render, Annahme-Mittelrippe entfernt, Kappenruecksprung durch Wolke begrenzt
+- Streiflicht-Render (render9.py, Licht fast parallel zur Flaeche): Rippen sind als erhabene, sich kreuzende Baender erkennbar (X-Kreuzung, Boegen), aber Oberflaeche facettig. Fund: senkrechte Mittelrippe auf der Frontfacette (alter Annahme-Pfad `pfade`, gerade von z 8,12 nach 6,45) - im Foto gibt es dort keine. Entfernt: `pfade` wird je Erker durch einen echten gemessenen Pfad ersetzt.
+- Folge: Abnahme 'Reichweite Erker Ost z 8,0 (Wolke-Median Mittellinie)' 1,24 (Soll 1,28-1,48) bei kappe_rueck 0,20: die Mittelrippe hatte die Wolkenreichweite getragen. Das ist eine MESSUNG gegen 0,20: die Kappe liegt oben in der Mitte nur hoechstens ~0,16 m hinter der Rippenlinie. kappe_rueck 0,14: alle Pruefungen bestanden, wasserdicht.
+- Lehre: Sollwerte aus der Wolke koennen eine Annahme-Geometrie bestaetigen, die im Foto nicht existiert - Sollwert und Modell gegen das Foto lesen (Mittelrippe war nie am Foto). Rueckstand der Kappen oben <= 0,16 m (Wolke), sonst offen.
