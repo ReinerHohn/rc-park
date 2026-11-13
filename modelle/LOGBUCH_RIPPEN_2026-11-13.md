@@ -159,3 +159,9 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 - K-6225 (515 px/m): echt 54 % Treffer (Mittel 0,51), Null (u +-0,3/0,6 m) 40 %. K-h13 (230 px/m): 53 % gegen 44 %. K-6145 (204 px/m): 47 % gegen 16 %. Referenz K-n11_06 (tautologisch): 89 %.
 - Lesart: die Bahnen liegen im Fremdfoto nur etwa zur Haelfte auf Gold; der Abstand zur Nullprobe ist wegen der dichten, parallelen Rippen klein (6225/h13) -> Lage nur grob bestaetigt, Tiefe/Flaechenband ist der Schwachpunkt. Fruehere 'Realitaet ca. 50 %' war Augenschein; gemessen eher ~40-50 %.
 - Naechster Schritt: Tiefe nicht aus Flaechenband, sondern Gold-Konsens mit engerem Suchfenster um die Flaeche; Treffer je Weg aufschluesseln (schwache Wege neu setzen).
+
+## Kap. 35 – Fremdfoto-Tor je Pfad (tools/rippen_pfade_tor.py)
+- Je Pfad Treffer in K-6225/K-h13: lange Pfade 76-92 %, kurze Fragmente (<0,6 m) oft 0-30 %. Tor min 0,45 (Mittel ueber Kameras): 22 -> 13 Pfade, 20,6 -> 15,7 m verworfen sind die Schwachen.
+- Gegenprobe in nicht fuer das Tor benutzten Kameras: K-i08 64 % (Null 19 %), K-6145 56 % (Null 17 %; vorher 47 % / 16 %), K-6130 66 % (Null 56 %, war an der Tiefe beteiligt). Abnahme gruen.
+- Lesart: Lage der behaltenen Pfade besser bestaetigt (Abstand zur Nullprobe 37-45 Punkte), aber Rippenlaenge sank um ~24 %: Vollstaendigkeit schlechter. Realitaet gemessen: Lage ~60 %, Vollstaendigkeit ~60 % (15,7 von >20 m) -> gesamt ~35-40 %.
+- Offen: ausgesonderte Bereiche mit besserer Tiefe neu setzen (z.B. Foto-Triangulation statt Flaechenband), Erker Ost gleiches Tor, Kappenmulde, Rosetten.
