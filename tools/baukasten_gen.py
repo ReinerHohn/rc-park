@@ -844,7 +844,7 @@ def erker_polygon(cfg, ctx):
     def prisma(z0, z1, aus=0.0):
         cs = C([ccw(np.array(base_k, float))]); cs = cs.offset(aus, JoinType.Miter) if aus else cs
         return M.extrude(cs, z1 - z0).translate((um, 0.0, z0))
-    teile = []; z_o = Zn["z_unterbau_oben"]; ub = cfg["unterbau"]; kr_ = float(ub.get("kappe_rueck", 0.0)); prof = [(float(z), max(float(p) - kr_, 0.02)) for z, p in ub["profil"]]; v0 = float(ub["vorsprung_spitze"]); pmax = nf - wn   # kappe_rueck: Kappenflaeche liegt um diesen Betrag HINTER der Rippenvorderkante (Rippen stellen die Silhouette wieder her)
+    teile = []; z_o = Zn["z_unterbau_oben"]; ub = cfg["unterbau"]; kr_ = float(ub.get("kappe_rueck", 0.0)); krp_ = ub.get("kappe_rueck_profil") or [kr_] * len(ub["profil"]); prof = [(float(z), max(float(p) - float(k_), 0.02)) for (z, p), k_ in zip(ub["profil"], krp_)]; v0 = float(ub["vorsprung_spitze"]); pmax = nf - wn   # kappe_rueck: Kappenflaeche liegt um diesen Betrag HINTER der Rippenvorderkante (Rippen stellen die Silhouette wieder her)   # 13.11.2026: optional Rueckstand je Profilring (unten tiefer, oben durch Wolke begrenzt)
     if not (prof and all(b[0] > a[0] for a, b in zip(prof, prof[1:])) and Zn["z_unterbau_spitze"] < prof[0][0] and prof[-1][0] < z_o): sys.exit("erker_polygon: unplausibles Unterbau-Profil")
     cn = ub.get("kegel_achse_n"); cn = wn if cn in (None, "") else float(cn)                                         # Kreis 225455 r1: Skalierzentrum des Unterbau-Trichters (n der Achse); ohne Angabe = Wandebene (Spitze an der Wand, alt)
     def fakt(p): return max((wn + p - cn) if cn != wn else p, 0.02) / ((nf - cn) if cn != wn else pmax)             # Skalierfaktor des Rings aus der Vorderflaechen-Reichweite p (Wolke/Foto: Front n = wn + p)

@@ -5190,7 +5190,7 @@
         0.0,
         -0.605
        ],
-       "b": 0.157
+       "b": 0.162
       },
       {
        "pfad": [
@@ -5904,7 +5904,14 @@
      "quelle_breite": "13.11.2026 Rippenbreite 0,14 m (Nahfotos K-6130 597 px/m, K-n11_06 625 px/m: Band ~90-110 px = 0,15-0,18 m schraeg, Profil gold-schwarz-gold; LOGBUCH_RIPPEN_2026-11-13 Kap. 20), vor 0,04 (war 0,05): Abnahme Reichweite z 8,0 <= 1,48 (Wolke-Veto) bei b 0,14 / vor 0,05 gemessen 1,48+. Vorher b 0,07.",
      "quelle_snap": "13.11.2026 Rippenbahnen Erker 0 aus Handwegpunkten in K-n11_06 auf Goldgrat eingerastet (tools/rippen_pfad_snap.py, 11 Wege), Tiefe: Mehrfoto-Gold-Konsens im +-0,12 m Band (R5,R6 +-0,35 m, Westfacette) um die gemessene Achteck-Kegelflaeche; Normale je Facette gedreht; R9 verworfen (Score 0); ANNAHME: Flaeche n(z) auch fuer Diagonal- und Seitenfacetten",
      "quelle_tor": "13.11.2026 Pfade mit Fremdfoto-Treffer < 0.45 (Kameras K-6225,K-h13) verworfen (tools/rippen_pfade_tor.py)"
-    }
+    },
+    "kappe_rueck_profil": [
+     0.22,
+     0.22,
+     0.22,
+     0.2,
+     0.14
+    ]
    },
    "eckfiguren": {
     "ecken": [
@@ -8119,7 +8126,14 @@
      "quelle_breite": "13.11.2026 Rippenbreite 0,14 m (Nahfotos K-6130 597 px/m, K-n11_06 625 px/m: Band ~90-110 px = 0,15-0,18 m schraeg, Profil gold-schwarz-gold; LOGBUCH_RIPPEN_2026-11-13 Kap. 20), vor 0,04 (war 0,05): Abnahme Reichweite z 8,0 <= 1,48 (Wolke-Veto) bei b 0,14 / vor 0,05 gemessen 1,48+. Vorher b 0,07.",
      "quelle_snap": "13.11.2026 Rippenbahnen Erker 1 aus Handwegpunkten in K-6171 auf Goldgrat eingerastet (tools/rippen_pfad_snap.py, 10 Wege), Tiefe: Mehrfoto-Gold-Konsens (K-6176,h11_112038,d11,n11_04) im +-0,12 m Band um die gemessene Achteck-Kegelflaeche; Normale je Facette gedreht; ANNAHME: Flaeche n(z) wie Erker 0",
      "quelle_tor": "13.11.2026 Pfade mit Fremdfoto-Treffer < 0.45 (Kameras K-6176,K-d11) verworfen (tools/rippen_pfade_tor.py)"
-    }
+    },
+    "kappe_rueck_profil": [
+     0.22,
+     0.22,
+     0.22,
+     0.2,
+     0.14
+    ]
    },
    "eckfiguren": {
     "ecken": [
