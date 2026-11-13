@@ -120,3 +120,8 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 - R/G-Verhaeltnis: rote Wand R/G ~1,24-1,75, Gold 1,05-1,5 -> Trennung nur grob. Maske (R/G < 1,45 & V > 110 | V < 42) erfasst die Rippenbaender samt schwarzen Flanken, aber auch den hellen Pfeilerstein (bandmaske_n11_06_r_g.jpg); Skelett (10525 Pixel) verlaeuft teils auf Rippenmitten, teils in Schleifen um Nischen. Noch kein brauchbarer Rippenspur-Satz.
 - Naechster Schritt: Bereich auf den Erker (Bildprojektion der Box) und z >= 6,45 begrenzen (Pfeiler weg), dann Skelett nur an Aesten ab Laenge >= 0,3 m, Tiefe aus der gemessenen Punktwolke (Kap. 23) per Nachbarschaft im Bild; Gegenprobe in Fremdfoto.
 - Gesamtbilanz Rippen 13.11.: Es gibt (1) Messpunkte mit bestandener Fremdfoto-Gegenprobe (Kap. 23), (2) Werkzeuge zur Kameraauswahl und Knotenpruefung, (3) 9 m Ketten. Es gibt NICHT: ein Modell mit gemessenen Rippen. Annahme-Faecher bleibt im Modell (Abnahme gruen, Qualitaet laut Kap. 15 unzureichend).
+
+## Kap. 28 – Rippenbreite 0,14 m (Nahfotos), Sichtvergleich
+- objekt.json: rippen_pfade b 0.07 -> 0.14, vor 0.05 -> 0.04 (b0.14/vor0.05: Abnahme Reichweite Erker Ost z 8,0 = 1,48 Fehler; b0.12 gruen; b0.14/vor0.04 gruen). Sollwerte nicht gelockert. Regression identisch.
+- Sichtvergleich K-n11_06 / K-6130: Modell zeigt breite, fast gerade Faecherbalken; Foto zeigt sich kreuzende, gebogene Rippenbaender mit Rosetten. Topologie (Annahme-Faecher) bleibt der Hauptfehler, Breite allein macht es nicht erkennbar. Realitaet Rippen ca. 25 %.
+- Lehre: Breite lag um Faktor 2 daneben (Artefakt aus 100 px/m); Nahfoto-Messung zuerst.
