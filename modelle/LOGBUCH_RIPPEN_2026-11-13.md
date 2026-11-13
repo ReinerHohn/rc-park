@@ -165,3 +165,7 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 - Gegenprobe in nicht fuer das Tor benutzten Kameras: K-i08 64 % (Null 19 %), K-6145 56 % (Null 17 %; vorher 47 % / 16 %), K-6130 66 % (Null 56 %, war an der Tiefe beteiligt). Abnahme gruen.
 - Lesart: Lage der behaltenen Pfade besser bestaetigt (Abstand zur Nullprobe 37-45 Punkte), aber Rippenlaenge sank um ~24 %: Vollstaendigkeit schlechter. Realitaet gemessen: Lage ~60 %, Vollstaendigkeit ~60 % (15,7 von >20 m) -> gesamt ~35-40 %.
 - Offen: ausgesonderte Bereiche mit besserer Tiefe neu setzen (z.B. Foto-Triangulation statt Flaechenband), Erker Ost gleiches Tor, Kappenmulde, Rosetten.
+
+## Kap. 36 – Tor Erker Ost
+- Tor (K-6176, K-d11, min 0,45): 22 -> 20 Pfade, 19,8 -> 18,8 m. Unabhaengig K-n11_04: 61 % Treffer (Null 21 %). K-h11_112126 (Rueckseite, Gold kaum sichtbar) 7 %/5 % unbrauchbar. Abnahme gruen.
+- Erker Ost schneidet besser ab als West (bessere Ref-Aufnahme 6171 frontal, Flaechenband passt). Lage ~60 %, Vollstaendigkeit ~90 % -> ca. 50 %.
