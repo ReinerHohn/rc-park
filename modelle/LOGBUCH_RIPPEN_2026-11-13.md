@@ -125,3 +125,11 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 - objekt.json: rippen_pfade b 0.07 -> 0.14, vor 0.05 -> 0.04 (b0.14/vor0.05: Abnahme Reichweite Erker Ost z 8,0 = 1,48 Fehler; b0.12 gruen; b0.14/vor0.04 gruen). Sollwerte nicht gelockert. Regression identisch.
 - Sichtvergleich K-n11_06 / K-6130: Modell zeigt breite, fast gerade Faecherbalken; Foto zeigt sich kreuzende, gebogene Rippenbaender mit Rosetten. Topologie (Annahme-Faecher) bleibt der Hauptfehler, Breite allein macht es nicht erkennbar. Realitaet Rippen ca. 25 %.
 - Lehre: Breite lag um Faktor 2 daneben (Artefakt aus 100 px/m); Nahfoto-Messung zuerst.
+
+## Kap. 29 – Rippen aus Handwegpunkten + Goldgrat-Einrasten (Erker 0)
+- Neu: tools/rippen_pfad_snap.py (Wegpunkte in K-n11_06 -> Minimalkostenpfad auf 1-Gold -> Tiefe per Mehrfoto-Gold-Konsens), tools/snap_in_objekt.py (-> pfade_ohne_spiegel). Dateien modelle/rippen_runde_2026-11-13/snap1..3.
+- Erkenntnis 1: Einrasten funktioniert sehr gut (Pfade liegen auf den Baendern); Wegpunkte von Hand aus dem Gitterbild lesen dauert ~2 Rundungen.
+- Erkenntnis 2: freie Tiefensuche in breiter Box streut +-1 m (Box-Rand-Klemmung); Band +-0,12 m um die gemessene Kegelflaeche (Achteck, auch Seitenfacette phi bis 115 Grad) liefert glatte Bahnen (Spruenge <0,2 m). Tiefe ist damit zum Teil Flaechenannahme.
+- 10 Wege, 11 Pfade, 16,3 m (Foto: >20 m geschaetzt). R5/R9 (Westfacette unten/oben) fast leer. Abnahme: Reichweite z7,2 0,81 (Soll 0,82-1,04) bei vor 0,04 -> vor 0,05 gruen (nur Erker West). freiraum_audit-Fehler (SFM-AUSRICHTUNG-buendel.json fehlt) ist alt.
+- Render sh_snap_n11_06: gebogene, kreuzende Rippen jetzt sichtbar, aber treppenartig gezackt (Glaettung/Facetten), Diagonalfacetten luckig. Realitaet Rippen ca. 40 %.
+- Offen: restliche Wege (Westfacette, Randboegen, Knotenstrahlen), Rosetten, Erker 1 (gleiches Verfahren mit K-6171), Zackenglaettung (Hüllen-Segmente).
