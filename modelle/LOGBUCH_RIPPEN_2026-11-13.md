@@ -153,3 +153,9 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 
 ## Kap. 33 – Westfacette Erker West
 - R5, R6 mit Tiefenband +-0,35 m neu (R5 liegt auf u -10,2..-10,0 = Westfacette), R9 verworfen (Score 0, Median). Abnahme gruen (167 Beobachtungen, 1 alter Widerspruch). Render sh_west_n11_06: rechte Facette jetzt mit Rippen belegt. Realitaet Rippen ca. 50 %; Kappenmulde, Rosetten, Profil, Kegelfuss offen; H0-Erkennbarkeit weiter nicht belegt.
+
+## Kap. 34 – Erste unabhaengige Messung der Rippenlage (tools/rippen_gegenprobe.py)
+- Modell-Rippenpfade Erker West (11 Wege) in nicht zum Einrasten benutzte Kameras projiziert, Wert = Gold G-B lokal normiert (3x3-Max). Treffer = Gold > 0,5.
+- K-6225 (515 px/m): echt 54 % Treffer (Mittel 0,51), Null (u +-0,3/0,6 m) 40 %. K-h13 (230 px/m): 53 % gegen 44 %. K-6145 (204 px/m): 47 % gegen 16 %. Referenz K-n11_06 (tautologisch): 89 %.
+- Lesart: die Bahnen liegen im Fremdfoto nur etwa zur Haelfte auf Gold; der Abstand zur Nullprobe ist wegen der dichten, parallelen Rippen klein (6225/h13) -> Lage nur grob bestaetigt, Tiefe/Flaechenband ist der Schwachpunkt. Fruehere 'Realitaet ca. 50 %' war Augenschein; gemessen eher ~40-50 %.
+- Naechster Schritt: Tiefe nicht aus Flaechenband, sondern Gold-Konsens mit engerem Suchfenster um die Flaeche; Treffer je Weg aufschluesseln (schwache Wege neu setzen).
