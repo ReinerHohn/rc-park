@@ -67,3 +67,10 @@ Der Messwert `rippe_gurt_u954_z`/Diagonalrippe wird nach der Druckreparatur geme
 - Erker 0 (West, u -8,47 n 13,3 z 7,3): K-n11_06 625 px/m (Az 96), K-6130 597 px/m (Az 167, 5,9 m), K-i08 515, K-e04 406 (Az -124), K-6124 404. Schnittwinkel n11_06/6130 = 71 Grad -> Triangulation moeglich.
 - Erker 1 (Ost, u 15,52): K-6171 684 px/m (Az -177), K-h11_112038 596 (Az -68), K-d11 589 (Az -143), n11_04 342. Schnittwinkel 6171/h11_112038 ~109 Grad.
 - Die "keine Nahfotos"-Aussage (Kap. 14-17) war FALSCH; 100 px/m galt nur fuer K-6261/K-6162, die ich zufaellig gewaehlt hatte. Das Tool gehoert in den Leitfaden Schritt 2/5 (vor Fotoplan).
+
+## 20. Auswertung der Nahfotos K-n11_06 (625 px/m, Az 96) und K-6130 (597 px/m, Az 167), Erker 0 (West)
+Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jpg (Beschriftung = Vollbildkoordinate).
+- RIPPENBREITE: Rippenband ~90-110 px = 0,15-0,18 m (schraeg gemessen ~0,15 m, Profil gold-schwarz-gold mit dunklen Flanken, Goldlinien selbst ~0,01 m). Das Modell hat 0,07 m (aus 7-px-Messung bei 100 px/m, Kap. 16). VORLAEUFIG: wirkliche Rippenbreite etwa doppelt so gross; Kap. 16 ist damit ueberholt. Noch nicht in objekt.json (rippen_pfade.b 0,07 gilt), Abnahme-/Druckfolgen offen.
+- TOPOLOGIE: Rautennetz mit breiten Rippen; ca. 12 Rippen im Bild von K-6130, Rosetten in den Dreiecksfeldern (K-6130 (1650,300), n11_06 (225,1235) und (780,1090)). Faecher falsch.
+- Triangulation Merkmalspunkte (7 x 8 Handpunkte, alle Paare; nur Strahlabstand < 0,15 m und in Huelle): mehrdeutig (X1 passt zu 3 Gegenpunkten). Plausibelste Knoten: X1x1 (-8,70 / 12,89 / 7,02, Gap 3 cm, grosse Kreuzung ueber dem Fuss, auf der Achse u -8,47), X5x6 (-9,29 / 13,36 / 7,33, Gap 0,8 cm). Nicht verifiziert.
+- LEHRE: Handpunkt-Zuordnung bleibt mehrdeutig, auch bei 70 Grad Schnittwinkel. Besser: Rosetten als eindeutige Ankerpunkte nehmen, danach Zuordnung der Kreuzungen per Nachbarschaft zu den Ankern; oder Epipolarlinien einblenden und mit Auge entscheiden (Werkzeug fehlt).
