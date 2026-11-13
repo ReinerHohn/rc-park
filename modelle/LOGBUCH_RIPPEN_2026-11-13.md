@@ -173,3 +173,7 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 ## Kap. 37 – Sackgasse: Band je Weg nach Fremdfoto waehlen
 - Tiefenband 0,06/0,12/0,20 je Weg neu eingerastet und das beste nach Treffer in K-6225/h13 gewaehlt (+3 bis +10 Punkte dort). Danach Tor + Gegenprobe in anderen Kameras: K-i08 64 -> 56 %, K-6145 56 -> 52 %, Laenge 15,7 -> 15,1 m. Ueberanpassung an die Auswahlkameras (K-6225 liegt azimutal bei n11_06, 103 vs 110 Grad) -> VERWORFEN, objekt.json zurueck auf c6446a1e.
 - Lehre: Auswahl und Kontrolle nie mit denselben/aehnlichen Kameras; Auswahlkameras mit grossem Azimutabstand zur Ref waehlen (h13, e04), Kontrolle in dritter Kamera. Zeitfresser ~25 min.
+
+## Kap. 38 – kappe_rueck-Grenze
+- 0,12 -> Abnahme FEHLER Druck wasserdicht 0,00 (wie 0,14). Grenze liegt zwischen 0,10 (gruen) und 0,12. objekt.json zurueck auf 0,10. Hinweis: nach json.dump steht der Wert als `0.1` (sed muss darauf passen, sonst laeuft der Test ohne Aenderung).
+- Naechster Schritt (nicht getan): Ursache der Wasserdichtigkeit klaeren (welches Teil: Rippe-Einbindung 0,38 m vs. Kappenruecksprung; Mesh-Reparatur oder Einbindung anpassen), erst dann tiefere Kappen.
