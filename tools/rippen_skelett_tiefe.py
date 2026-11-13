@@ -32,7 +32,7 @@ Kr = cam(ref); Ir = foto(ref); allk = [cam(k) for k in kams]; Is = [foto(k) for 
 # Bildbereich der Box in der Ref-Kamera
 ec = np.array([[u * ax[1] + n * ax[0], -u * ax[0] + n * ax[1], z] for u in (u0, u1) for n in (n0, n1) for z in (z0, z1)]); px, py, _ = proj(Kr, ec)
 bx0, bx1, by0, by1 = int(max(px.min() - 20, 0)), int(min(px.max() + 20, Ir.shape[1])), int(max(py.min() - 20, 0)), int(min(py.max() + 20, Ir.shape[0]))
-scale_r = float(Kr["f"] / np.median(proj(Kr, ec)[2])); G = goldkarte(Ir, scale_r)[by0:by1, bx0:bx1]; m = G > 0.55; m = cv2.morphologyEx(m.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((5, 5))); sk = skeletonize(m > 0)
+scale_r = float(Kr["f"] / np.median(proj(Kr, ec)[2])); G = goldkarte(Ir, scale_r)[by0:by1, bx0:bx1]; m = G > 0.55; ck = int(float(opt("--close_m", 0.0)) * scale_r) | 1 if float(opt("--close_m", 0.0)) > 0 else 5; m = cv2.morphologyEx(m.astype(np.uint8), cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (ck, ck))); sk = skeletonize(m > 0)   # --close_m: Goldlinien einer Rippe (2-3 parallel) zum Band schliessen; sk = skeletonize(m > 0)
 ys, xs = np.nonzero(sk); sel = np.arange(0, len(xs), step); xs, ys = xs[sel] + bx0, ys[sel] + by0; print("Skelettpunkte", len(xs), "Ref-Massstab %.0f px/m" % scale_r)
 c, d = strahl(Kr, xs.astype(float), ys.astype(float)); ts = np.arange(1.5, 45, 0.01); best = np.zeros(len(xs)); bt = np.zeros(len(xs)); nk = np.zeros(len(xs), int)
 Gs = [goldkarte(im, float(K["f"] / 5.0)) for im, K in zip(Is, allk)]
@@ -46,6 +46,7 @@ for j in range(len(xs)):
     sc = np.where(N >= mink, S / np.maximum(N, 1), 0); k = int(np.argmax(sc)); best[j], bt[j], nk[j] = sc[k], tt[k], N[k]
 P3 = c + d * bt[:, None]; thr = float(opt("--schwelle", 0)) or max(0.25, float(np.percentile(best[best > 0], 60))); good = best > thr; print("Score-Perzentile 10/50/90/99:", [round(float(np.percentile(best[best > 0], q)), 2) for q in (10, 50, 90, 99)], "Schwelle", round(thr, 2), "gute Punkte:", int(good.sum()), "von", len(xs))
 res = [dict(u=round(float(p[0] * ax[1] - p[1] * ax[0]), 3), n=round(float(p[0] * ax[0] + p[1] * ax[1]), 3), z=round(float(p[2]), 3), score=round(float(s), 2), kams=int(k_), px=int(x_), py=int(y_)) for p, s, k_, x_, y_ in zip(P3[good], best[good], nk[good], xs[good], ys[good])]
+np.savez(os.path.join(aus, "alle_punkte.npz"), px=xs, py=ys, u=P3[:, 0] * ax[1] - P3[:, 1] * ax[0], n=P3[:, 0] * ax[0] + P3[:, 1] * ax[1], z=P3[:, 2], score=best, nk=nk, thr=thr)   # ALLE Skelettpunkte (auch schwache) fuer Kettenbildung im Bild
 json.dump(dict(ref=ref, kams=kams, box=[u0, u1, n0, n1, z0, z1], punkte=res), open(os.path.join(aus, "rippen3d.json"), "w"))
 for kid, K, im in [(ref, Kr, Ir)] + list(zip(kams, allk, Is)):
     qx, qy, qz = proj(K, P3[good]); o = im.copy()
