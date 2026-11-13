@@ -62,3 +62,8 @@ Der Messwert `rippe_gurt_u954_z`/Diagonalrippe wird nach der Druckreparatur geme
 - Grenze: n11_05 und n11_06 stehen praktisch am selben Ort (Basis 0,06 m, 0,5 Grad) -> keine Triangulation zwischen beiden. Zweiter Blick muss aus einer anderen Kamera kommen (z. B. K-6259/6162 mit 100-200 px/m) oder Tiefe aus der bekannten Facettenflaeche (Knauf/Fuss triangulierte Punkte, +-0,1 m).
 - LEHRE (Zeitfresser): Ich habe einen ganzen Nachmittag lang "keine Nahfotos" behauptet und Aufnahmeauftraege geschrieben, ohne vorher die vorhandenen Kameras nach Aufloesung am Ziel (px/m, Abstand) zu sortieren. Regel kuenftig: VOR jeder Aufnahmebitte `kameras_am_ziel` (alle Kameras, px/m, im Bild) laufen lassen. Werkzeug fehlt noch -> bauen.
 - Naechster Schritt: Rautennetz in n11_06 (und n11_05) von Hand/halbautomatisch nachzeichnen (2D, hohe Aufloesung), per Strahl x Facettenflaeche (Knauf/Fuss-Ebene) in 3D, Gegenprobe in K-6162/6259; dann Faecher durch Netz ersetzen; Abnahme; Schattenvergleich.
+
+## 19. tools/kameras_am_ziel.py gebaut; Ergebnis
+- Erker 0 (West, u -8,47 n 13,3 z 7,3): K-n11_06 625 px/m (Az 96), K-6130 597 px/m (Az 167, 5,9 m), K-i08 515, K-e04 406 (Az -124), K-6124 404. Schnittwinkel n11_06/6130 = 71 Grad -> Triangulation moeglich.
+- Erker 1 (Ost, u 15,52): K-6171 684 px/m (Az -177), K-h11_112038 596 (Az -68), K-d11 589 (Az -143), n11_04 342. Schnittwinkel 6171/h11_112038 ~109 Grad.
+- Die "keine Nahfotos"-Aussage (Kap. 14-17) war FALSCH; 100 px/m galt nur fuer K-6261/K-6162, die ich zufaellig gewaehlt hatte. Das Tool gehoert in den Leitfaden Schritt 2/5 (vor Fotoplan).
