@@ -169,3 +169,7 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 ## Kap. 36 – Tor Erker Ost
 - Tor (K-6176, K-d11, min 0,45): 22 -> 20 Pfade, 19,8 -> 18,8 m. Unabhaengig K-n11_04: 61 % Treffer (Null 21 %). K-h11_112126 (Rueckseite, Gold kaum sichtbar) 7 %/5 % unbrauchbar. Abnahme gruen.
 - Erker Ost schneidet besser ab als West (bessere Ref-Aufnahme 6171 frontal, Flaechenband passt). Lage ~60 %, Vollstaendigkeit ~90 % -> ca. 50 %.
+
+## Kap. 37 – Sackgasse: Band je Weg nach Fremdfoto waehlen
+- Tiefenband 0,06/0,12/0,20 je Weg neu eingerastet und das beste nach Treffer in K-6225/h13 gewaehlt (+3 bis +10 Punkte dort). Danach Tor + Gegenprobe in anderen Kameras: K-i08 64 -> 56 %, K-6145 56 -> 52 %, Laenge 15,7 -> 15,1 m. Ueberanpassung an die Auswahlkameras (K-6225 liegt azimutal bei n11_06, 103 vs 110 Grad) -> VERWORFEN, objekt.json zurueck auf c6446a1e.
+- Lehre: Auswahl und Kontrolle nie mit denselben/aehnlichen Kameras; Auswahlkameras mit grossem Azimutabstand zur Ref waehlen (h13, e04), Kontrolle in dritter Kamera. Zeitfresser ~25 min.
