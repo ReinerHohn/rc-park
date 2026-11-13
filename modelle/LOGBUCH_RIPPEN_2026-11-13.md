@@ -247,3 +247,8 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 ## 53. U1/U2 mit freier Tiefe (Band 1,2, Box z 5,5-8,5, +K-6145) - verworfen (13.11.)
 - Score jetzt 0,88/0,80 (gueltig 120/127, 76/76), ABER Lage unplausibel: alle Punkte kollabieren auf u ~ -9,85 (Streuung 0,04-0,11), n laeuft 12,25 -> 11,66, z 6,1-6,8 = Punkte laufen entlang eines Sehstrahls der Kameras (Tiefenmehrdeutigkeit, Kameras zu aehnlich im Azimut), kein Bogen. Hoher Score bei freier Tiefe beweist hier nichts.
 - Nicht integriert. Lehre: Score allein nie als Beleg bei freier Tiefe; Streuung je Achse pruefen. Echte Loesung nur mit Kamera aus anderem Azimut (Nahfoto von Westseite/unten).
+
+## 54. Beobachtung Nutzer: Fenster/Bogenfelder unter dem Erker haengen zu stark durch (13.11.)
+- Screenshot Viewer (Kaufhaus, Erker, Mitte): Die Oberkanten der unteren Felder sind als U-Bogen (durchhaengend) modelliert.
+- Foto K-n11_06 (/tmp/erker_fenster_real.jpg): Die Bogenrippen sind Spitzbogen-artig (oben zum Knoten hin gewoelbt, Scheitel oben), nicht durchhaengend. Die Form im Modell ist damit vermutlich invertiert oder zu tief.
+- Status: Testauftrag, noch nicht gemessen. Naechster Schritt: Rippenform gegen Foto im gleichen Blickwinkel rendern und Sagitta (Stich) an den Feldern messen, bevor der Generator geaendert wird. Keine Aenderung am Modell in diesem Schritt.
