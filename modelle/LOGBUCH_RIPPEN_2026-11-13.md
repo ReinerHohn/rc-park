@@ -221,3 +221,7 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 - Neue Wege in K-n11_06 (Randrippe links N3, Bogen rechte Facette N7, Bogen N9): N9 Score 0 -> verworfen; N3/N7 eingerastet, `snap_in_objekt.py --anhaengen` (neu), Tor (K-6225/h13, 0,45): von 3 neuen Pfaden (2,2 m) bleibt 1 (1,15 m, 91 %). Netto +0,5 m (Erker West jetzt 14,9 m).
 - Gegenprobe: K-i08 65 -> 68 % (Null 22), K-6145 55 -> 54 % (Null 21). Abnahme gruen (168, 1 alter Widerspruch), wasserdicht.
 - Befund: der Gewinn pro Handrunde ist klein (~0,5 m von >20 m); Engpass ist nicht die Handarbeit sondern, dass viele Baender in n11_06 nur in einer Naehe-Kamera sichtbar sind (Tiefe nur Flaechenannahme). Fuer deutlich mehr Laenge: zweites Nahfoto aus anderer Richtung (Aufnahme von u<-10 oder Sued-West) oder Flaechenmodell aus Wolke.
+
+## Kap. 48 – Zusatzwege Erker Ost (Q1, Q2)
+- Zwei senkrechte Rippen (linke/rechte Facette) aus K-6171 (Score 0,70), alle 4 Pfade (2,7 m) bestehen das Tor (89/75/100 %). Erker Ost jetzt 23 Pfade, 19,6 m. Gegenprobe K-n11_04 61 -> 65 % (Null 21). Abnahme gruen, wasserdicht.
+- Befund: bei frontaler Nahaufnahme (6171) laufen Zusatzwege fast ohne Verlust durchs Tor; bei West (schraeg von oben, n11_06) fallen 2 von 3 durch -> bessere Aufnahmegeometrie bringt mehr als mehr Handarbeit.
