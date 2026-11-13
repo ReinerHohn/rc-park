@@ -243,3 +243,7 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 - Im Raster (K-n11_06, x 900-1700, y 1500-2500) fehlen zwei untere Boegen am Ostrand von Erker West (U1 Bogen ~y 1900-2000, U2 Band ~y 2000-2050). Wegpunkte per Hand gesetzt (127/76 px-Punkte).
 - Einrasten: Score-Median 0,00, gueltig bei Band 0,12: 0/0; Band 0,3: 13/0; Band 0,6: 59/0. Wie schon N9/R9 (Kap. 44): diese Boegen liegen NICHT auf der Achteck-Kegelflaeche (anderes Rippenniveau/Fassungsflaeche) -> Tiefenverfahren greift nicht, nichts integriert, objekt.json unveraendert.
 - Naechster Schritt (nicht begonnen): freie Tiefensuche ohne Flaechenband nur fuer diese Wege, mit >=3 Kameras in anderem Azimut, oder zweites Nahfoto von unten.
+
+## 53. U1/U2 mit freier Tiefe (Band 1,2, Box z 5,5-8,5, +K-6145) - verworfen (13.11.)
+- Score jetzt 0,88/0,80 (gueltig 120/127, 76/76), ABER Lage unplausibel: alle Punkte kollabieren auf u ~ -9,85 (Streuung 0,04-0,11), n laeuft 12,25 -> 11,66, z 6,1-6,8 = Punkte laufen entlang eines Sehstrahls der Kameras (Tiefenmehrdeutigkeit, Kameras zu aehnlich im Azimut), kein Bogen. Hoher Score bei freier Tiefe beweist hier nichts.
+- Nicht integriert. Lehre: Score allein nie als Beleg bei freier Tiefe; Streuung je Achse pruefen. Echte Loesung nur mit Kamera aus anderem Azimut (Nahfoto von Westseite/unten).
