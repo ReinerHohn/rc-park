@@ -49,3 +49,9 @@ Der Messwert `rippe_gurt_u954_z`/Diagonalrippe wird nach der Druckreparatur geme
 - Querprofil Goldanteil (K-6162, 4 Stellen): nur eine saubere Stelle (600,1880): 7 px = 0,066 m; die uebrigen drei Profile verrauscht (Gold-Maximum 13-19, Breite 24-35 px = Rippe + Nachbarrippe + Schatten) -> keine belastbare Aussage. 
 - Folgerung (vorlaeufig, EINE Messung): Rippenbreite 0,07 m ist plausibel, "klobig" im Render kommt eher aus Vorsprung 0,05 m, flacher Beleuchtung und den unruhigen Fuss-/Kreuzungsstellen. Fuer eine sichere Breite fehlt ein Nahfoto (Aufnahmeplan Punkt 3, 1-2 m Abstand -> ~500 px/m).
 - LEHRE: Aufloesung vor Messung pruefen (px/m aus Kamera) - bei 100 px/m sind Rippendetails unter 5 cm nicht messbar; spart Messversuche.
+
+## 17. Zwei-Foto-Konsens-Fit des Faechers (faecher_fit.py)
+- Idee: 3D-Modell als Messer; Rippenmittellinien in K-6162 UND K-6261 projiziert, Score = mittleres lokal normiertes Gold-Signal entlang der Linien; 5 Parameter (Fussbreite, 3 Endlagen, Aussenexponent) per differential_evolution.
+- Ergebnis: Score 6162 0,371 -> 0,381, 6261 0,543 -> 0,546 (praktisch flach). Parameter laufen an die Grenzen (Fusshalbbreite 0,448 bei Grenze 0,45; a1_aussen 0,50 an Grenze). Nullkontrolle (Gold-Bild um 90 px verschoben): 0,09 / 0,37 -> Score unterscheidet die Lage in K-6162 klar, in K-6261 kaum (viel Gold ueberall).
+- Folgerung: Der Annahme-Faecher liegt schon grob auf dem Gold; der Score trennt Detailformen nicht. Fit NICHT uebernommen (Grenzwerte, Gewinn 0,01 = Rauschen, kein Foto-Beleg). Zweifel am Verfahren: Gold-Signal bei 100 px/m ohne Aufloesung der Einzelrippen.
+- LEHRE: Ohne hoehere Aufloesung (Nahfotos) bringt weiteres Optimieren am selben Signal nichts; Zeit: ~6 min. Naechster Hebel bleibt Aufnahmeplan Punkt 1+3.
