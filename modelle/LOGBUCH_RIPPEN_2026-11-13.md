@@ -29,3 +29,17 @@ Der Messwert `rippe_gurt_u954_z`/Diagonalrippe wird nach der Druckreparatur geme
 - Neue Fotos nach `modelle/AUFNAHMEPLAN_ERKER_RIPPEN.md` loesen das Tiefenproblem eher als jede weitere Auswertung.
 - Fehlerquellen dieser Runde: falscher STL-Pfad, Welt- vs. Fassadenkoordinaten (u = x*ny - y*nx, n = x*nx + y*ny, achse_n 0.3338 0.9426), `head` auf grep-Ausgabe schnitt FEHLER-Zeilen ab (immer `grep "^  FEHLER"`), ein Tool-Ergebnis ging durch Timeout/Verbindung verloren.
 - Stand des Modells: objekt.json = HEAD (Faecher NICHT eingebaut), Abnahme gruen, Rippen weiter fragmentiert.
+
+## Nachtrag: Diagnose Laubenfehler (14.)
+- Bau `beide` (Faecher an beiden Erkern) und `nur1` (nur Erker 1) je gebaut, STL als /tmp-Scratch gesichert, Vergleich der Teile in der Laube (u 3-10, n 8-9).
+
+## Ergebnis Diagnose Laubenfehler (14.) - GELOEST, war ein Messartefakt
+- Laubengeometrie in beiden Bauten identisch (534 Vertices in der Laubenbox, gleiche Bounds, Strahl trifft beide Male die Gewoelbeunterseite bei 5,924 m).
+- Ursache: `Messer.z_am_punkt` (tools/pruefstand.py) schneidet mit trimesh bei z = z0 + k*0,01. Bei z = 5,797 faellt die Ebene auf eine waagerechte Modellflaeche; `section` liefert dann 3 entartete Polygone (~490 m2) ohne Loecher, die jeden Punkt enthalten -> Messwert 5,80 statt 5,92. Ob eine Ebene so faellt, haengt von der Gesamtgeometrie ab -> "gruen bei 2-5 verworfenen Splittern, rot bei 1" war ein Scheinmuster.
+- Fix: Schnittebene um 1,3 mm versetzt (Sollwerte unveraendert). Regression `regression.py --pruefen`: identisch - nichts verloren.
+- Zeitaufwand dieser Fehlersuche: ~12 blinde Builds (je 3-5 min) vor der Diagnose; die Diagnose selbst (Strahltest, Messer direkt auf zwei STL) brauchte 5 Schritte. LEHRE: Bei "Wert aendert sich, obwohl Geometrie gleich" sofort den Messer isoliert auf beiden STL laufen lassen, nicht weiter Varianten bauen.
+
+## Ergebnis Faecher (15.) - eingebaut, Abnahme gruen, Qualitaet NICHT ausreichend
+- Faecher an beiden Erkern (je 19 Rippen, ANNAHME laut quelle_faecher in objekt.json): Abnahme "alle Pruefungen bestanden", Regression identisch.
+- Schattierter Vergleich (modelle/rippen_runde_2026-11-13/sh_fan_6261.jpg, sh_fan_6162.jpg): Rippen jetzt dicht (~7 je Flaeche), aber dick, kantig und ohne die Kreuzungsgeometrie des Fotos; Fuss laeuft in unruhige Spitzen aus; Kegelsilhouette weicht ab (Foto: schlanker Trichter, Modell: Glocke). Foto: duenne goldgerahmte Rippen. Fehler: (a) Rippenbreite 0,07 m zu dick, Foto etwa 0,03-0,04 m je Einzellinie (Rippe = 3 Goldlinien), (b) Fussbuendel 0,30 m breit angenommen, (c) Bogenformen angenommen, nicht gemessen, (d) Kegel-Silhouette.
+- Naechste Schritte: Rippenbreite/Vorsprung gegen Foto messen (foto_mass.py), Fussbreite triangulieren, Silhouette des Kegels (profil in unterbau) gegen K-6162-Kontur pruefen; Druckregel: ueber 0,0348 m (0,4 mm H0) bleiben.

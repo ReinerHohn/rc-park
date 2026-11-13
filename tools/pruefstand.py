@@ -166,9 +166,10 @@ class Messer:
         from shapely.geometry import Point
         zs = np.arange(z0, z1 + 1e-9, dz); zs = zs[::-1] if suche == "oben" else zs
         for z in zs:
-            s = self.m.section(plane_origin=[0, 0, z], plane_normal=[0, 0, 1])
+            zs_ = z + 0.0013                                                  # 13.11.2026: Schnittebene 1,3 mm versetzt - faellt sie genau auf eine waagerechte Modellflaeche (z. B. 5,797 im Kaufhaus), liefert trimesh entartete Polygone (3 x ~490 m2), die jeden Punkt enthalten (Laubenrippen-Wert 5,80 statt 5,92, Modellgeometrie identisch)
+            s = self.m.section(plane_origin=[0, 0, zs_], plane_normal=[0, 0, 1])
             if s is None: continue
-            p2, T = s.to_2D(); q = (np.linalg.inv(T) @ np.array([punkt[0], punkt[1], z, 1.0]))[:2]; pt = Point(q[0], q[1])
+            p2, T = s.to_2D(); q = (np.linalg.inv(T) @ np.array([punkt[0], punkt[1], zs_, 1.0]))[:2]; pt = Point(q[0], q[1])
             if any(g.buffer(puffer).contains(pt) for g in p2.polygons_full): return float(z)
         return float("nan")
     def schnitt_mitte(self, z, x0, x1, y0, y1, achse="x", **k):
