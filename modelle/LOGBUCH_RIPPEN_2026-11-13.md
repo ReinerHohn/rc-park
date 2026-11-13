@@ -139,3 +139,9 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 - Ergebnis: Abnahme gruen (170 Beobachtungen, 1 Widerspruch alt); Render sh_snap5_n11_06: glatte, kreuzende Boegen, X-Kreuzungen erkennbar, Zacken rechts weg. Realitaet Rippen ca. 50 %.
 - Lehre: bei Zacken zuerst die Querschnitts-Orientierung (Normale) pruefen, nicht die Pfadglaettung. Der Render-Ausschnitt war entgegen erstem Eindruck richtig ausgerichtet (Vertices im Rohrahmen verifiziert).
 - Offen: Westfacette (R5, R9 leer), Rosetten, Profil Gold-Schwarz-Gold, Erker 1.
+
+## Kap. 31 – Erker 1 (Ost) nach gleichem Verfahren
+- kameras_am_ziel (u 15,52): K-6176 742 px/m (nur Randausschnitt, kaum Rippen), K-6171 637 px/m (volle Frontansicht, gut), h11_112038 598, d11 567. Ref K-6171, Gegenkameras 6176, h11_112038, d11, n11_04.
+- 10 Wege (A-J), Einrasten gut (snap_K-6171.jpg); I (Randrippe links oben) ohne gueltige Tiefe (ausserhalb Flaechenband). snap_in_objekt Bauteil 10 --um 15.52. Abnahme gruen (169 Beobachtungen, 1 Widerspruch alt).
+- Render sh_e1_6171: kreuzende Boegen mit X sichtbar; Gold-Schwarz-Gold-Profil, Rosetten, Kegelfuss und Pfeilerform weichen weiter ab. Realitaet Rippen Erker Ost ca. 45 %.
+- Zeit: Wege lesen + Einrasten + Abnahme ca. 25 min pro Erker (vorher Tage mit Skelett/Ketten). Lehre: Handwegpunkte + Einrasten + Flaechenband schlaegt automatische Kettenbildung.
