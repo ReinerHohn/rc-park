@@ -177,3 +177,5 @@ Bilder mit Raster: modelle/rippen_runde_2026-11-13/rast_n11_06.jpg, rast_6130.jp
 ## Kap. 38 – kappe_rueck-Grenze
 - 0,12 -> Abnahme FEHLER Druck wasserdicht 0,00 (wie 0,14). Grenze liegt zwischen 0,10 (gruen) und 0,12. objekt.json zurueck auf 0,10. Hinweis: nach json.dump steht der Wert als `0.1` (sed muss darauf passen, sonst laeuft der Test ohne Aenderung).
 - Naechster Schritt (nicht getan): Ursache der Wasserdichtigkeit klaeren (welches Teil: Rippe-Einbindung 0,38 m vs. Kappenruecksprung; Mesh-Reparatur oder Einbindung anpassen), erst dann tiefere Kappen.
+
+- Nachtrag Kap. 38: kappe_rueck 0,12 + einbindung 0,41 (statt 0,38) -> weiter wasserdicht 0,00. Einbindung ist es nicht. Ursache offen (Verdacht: Kappenkoerper-Huelle mit Rippenfuessen, Reparatur schlaegt bei allen Toleranzen 3-7 mm fehl). Naechster Test: Erker-Teile einzeln auf Manifold pruefen (trimesh, split), nicht blind Parameter drehen. Stand zurueck auf 0,10/0,38.
