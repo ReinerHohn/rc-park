@@ -123,6 +123,15 @@ def extract(gml_path, name=None, center=None, radius=40.0):
     return picked
 
 
+def grundflaechen(obj, gml):
+    """GroundSurfaces + WallSurfaces des Gebaeudes obj['lod2']['id'] (Reihenfolge = GML; dach_vermessen/dach_bauen zaehlen Teile so)."""
+    m0 = np.array(obj["rahmen"]["mitte_utm"], float)
+    for meta, polys in extract(gml, center=tuple(m0), radius=80.0):
+        if meta.get("id") != obj["lod2"]["id"]: continue
+        return meta, [p for t, p in polys if t == "GroundSurface"], [p for t, p in polys if t == "WallSurface"]
+    return None, [], []
+
+
 def build_mesh(picked, types=None, origin=None):
     """gewählte Flächentypen → ein trimesh, lokaler Ursprung. types=None → alle.
     origin: gemeinsamer Ursprung über mehrere Aufrufe (sonst verrutschen Teil-Meshes!)."""

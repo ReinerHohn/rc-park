@@ -163,7 +163,7 @@
    "datum": "2026-11-14",
    "wer": "Claude",
    "text": "Turmdach als Pyramide ist ANNAHME; echtes Dach mit Treppengiebeln (Foto, Wolke) noch nicht modelliert. Fachwerkhaus Tvdv und Fluegel (Ringseite) gehoeren nicht zum Generator.",
-   "naechster_schritt": "Dachform aus Wolke J + Fotos (VORLAGE_BAUTEIL_RUNDE)"
+   "naechster_schritt": "2026-11-14 erledigt Grobform: tools/dach_vermessen.py (DOM1) -> walm_a/Zelt 56 Grad, First 45,46 m, RMS 0,26 m, eindeutig (BIC); Spitze 6 Pixel bis 49,6 m -> Pyramide bis hoehe_m 50,8 (Form ANNAHME). Gebaut mit tools/dach_bauen.py. Offen: Spitzenform + Dachdetails am Foto."
   }
  ]
 }

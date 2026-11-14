@@ -1,26 +1,46 @@
 [
  {
-  "seite": "wand",
-  "element": "Turmschaft",
-  "quelle": "LoD2 DEBW_001000hPLcp (LGL): GroundSurface + Wandoberkante 37,00 m",
-  "breite_u": 12.13,
-  "tiefe_v": 12.5,
-  "hoehe": 37.0,
-  "seite_name": "wand"
- },
- {
   "seite": "dach",
-  "element": "Turmdach",
-  "quelle": "First: Stadt-LoD2 DEBWL001000hPLcp 50,80 m + Wikipedia 51 m; ANNAHME Pyramidenform (Treppengiebel nicht gemessen)",
-  "first": 50.8,
+  "element": "Dach Teil 0 (walm_a)",
+  "quelle": "Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_001000hPLcp-Grundriss Teil 0",
+  "first": 45.46,
+  "neigung_grad": 56.1,
+  "rms_m": 0.26,
+  "eindeutig": true,
   "seite_name": "dach"
  },
  {
-  "seite": "+y",
-  "element": "Treppentuermchen (Rundanbau)",
-  "quelle": "LoD2 PLcp zweite GroundSurface, Hoehe 13,72 m (LGL heights[1]); Foto IMG_20261106_113545_1 'Zinnfiguren-Klause'",
-  "hoehe": 13.72,
-  "durchmesser": 2.99,
-  "seite_name": "West"
+  "seite": "dach",
+  "element": "Spitze Teil 0",
+  "quelle": "DOM1 6 Pixel bis 49.6 m; Hoehe objekt.json hoehe_m",
+  "hoehe": 50.8,
+  "hinweis": "ANNAHME: Pyramide Grundseite 2.4 m (sqrt Pixel), Form nicht gemessen",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "Grundriss Teil 0",
+  "quelle": "LoD2 DEBW_001000hPLcp GroundSurface 0",
+  "breite_u": 12.13,
+  "tiefe_v": 12.5,
+  "flaeche_m2": 141.3,
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Teil 1 (ohne Dachmessung)",
+  "quelle": "LoD2 DEBW_001000hPLcp Wandoberkante (31 eigene Waende)",
+  "hoehe": 13.69,
+  "hinweis": "ANNAHME: Flachdach auf Wandoberkante (Teil zu klein fuer DOM1-Dachfit)",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Grundriss Teil 1",
+  "quelle": "LoD2 DEBW_001000hPLcp GroundSurface 1",
+  "breite_u": 2.99,
+  "tiefe_v": 2.65,
+  "flaeche_m2": 6.9,
+  "seite_name": "wand"
  }
 ]

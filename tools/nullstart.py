@@ -79,7 +79,7 @@ def main():
     zobj = os.path.join(zd, "objekt.json"); log = os.path.join(zd, "nullstart.log")
     bp = os.path.join(zd, "nullstart_bericht.json"); bericht = json.load(open(bp)) if os.path.exists(bp) and a.ab != "anlegen" else dict(referenz=refname, ziel=a.ziel, start=time.strftime("%Y-%m-%d %H:%M"), schritte=[])
     bericht["_pfad"] = bp
-    schritte = ["anlegen"] + [f"netz_{s_}" for s_ in seiten_cfg] + [f"ausrichten_{s_}" for s_ in seiten_cfg] + ["verzerrung", "registrieren", "buendel", "generator0", "dicht", "grundriss", "entzerren", "video", "kameras", "kamera_bruecke", "kalibrieren", "beweis_anker", "kamera_lod2", "textur", "abgleich", "wolke_seiten", "auswertung", "overlay", "hybrid", "vergleich", "beweise", "stufen"]
+    schritte = ["anlegen"] + [f"netz_{s_}" for s_ in seiten_cfg] + [f"ausrichten_{s_}" for s_ in seiten_cfg] + ["verzerrung", "registrieren", "buendel", "generator0", "dicht", "grundriss", "dach", "entzerren", "video", "kameras", "kamera_bruecke", "kalibrieren", "beweis_anker", "kamera_lod2", "textur", "abgleich", "wolke_seiten", "auswertung", "overlay", "hybrid", "vergleich", "beweise", "stufen"]
     a.ab = {"kalibrieren_061": "kalibrieren", "netz_nord": f"netz_{haupt}"}.get(a.ab, a.ab)          # alte Schrittnamen weiter erlaubt
     start_i = schritte.index(a.ab)
     def dran(n): return schritte.index(n) >= start_i
@@ -238,6 +238,12 @@ def main():
         if os.path.exists(wk_):
             if not lauf(bericht, "grundriss", f"{PY} -I tools/wolke_grundriss_pruefen.py {Z} --wolke {wk_}", repo, log):
                 print("    WARNUNG grundriss: Wolke auf der Strasse oder Lage gegen LoD2 mehrdeutig - audit/wolke_grundriss.png ansehen, NICHT modellieren", flush=True)
+    if dran("dach"):                                                                              # Lehre Schwabentor 2026-11-14: Dach war Pyramiden-ANNAHME; DOM1 zeigte Zelt 56 Grad + Spitze
+        _oz = json.load(open(os.path.join(repo, Z)))                                               # -> dach.json (Ebenen je LoD2-Teil), Generator baut es mit tools/dach_bauen.py
+        if _oz.get("lod2", {}).get("id"):
+            wk_ = os.path.join(sfmd, f"dicht_{haupt}_modell.npy")
+            lauf(bericht, "dach", f"{PY} -I tools/dach_vermessen.py {Z}" + (f" --wolke {wk_}" if os.path.exists(wk_) else ""), repo, log)
+        else: bericht["schritte"].append(dict(schritt="dach", ok=True, uebersprungen=True, grund="objekt.json ohne lod2.id"))
     _SEITEN = SEITEN_ALLE
     if dran("entzerren") and haupt.lower() not in _SEITEN:                                         # Netz 'alle' (Buendel an LoD2): keine einseitige Tiefendrift -> ueberspringen statt abbrechen (Kaufhaus: KeyError 'alle')
         bericht["schritte"].append(dict(schritt="entzerren", ok=True, uebersprungen=True, grund=f"Netz '{haupt}' ist keine Fassadenseite {sorted(_SEITEN)}; Buendel haelt die Wolke an LoD2/DGM1")); json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)

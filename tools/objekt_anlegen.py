@@ -41,22 +41,30 @@ def main():
     if not os.path.exists(gp):
         open(gp, "w").write(f'''#!/usr/bin/env python3
 """{ob}_gen.py - Generator-Rumpf (manifold3d). Jedes sichtbare Element meldet sich mit beleg(); Bau + Abnahme: tools/bauen_abnehmen.sh {ob}"""
-import os, json, numpy as np
+import os, sys, json, numpy as np
 from manifold3d import Manifold as M
+HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.join(os.path.dirname(HERE), "tools"))
+from dach_bauen import gebaeude_aus_lod2, seiten_aus_rahmen
 SCALE = float(os.environ.get("SCALE", "87")); K = 1000.0 / SCALE
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "stl", "{ob}_1-{{SCALE:.0f}}.stl".format(SCALE=SCALE))
+OUT = os.path.join(HERE, "stl", "{ob}_1-{{SCALE:.0f}}.stl".format(SCALE=SCALE))
 ELEMENTE = []
 def beleg(seite, element, quelle, **masse): ELEMENTE.append(dict(seite=seite, element=element, quelle=quelle, **masse))
-SEITEN = {{"+x": "Sued", "-x": "Nord", "+y": "Ost", "-y": "West"}}
-H = {hoehe or 10.0}                                   # Gesamthoehe (m) - Quelle in masstabelle.json
-beleg("dach", "Grundkoerper", "ANNAHME: Rumpf noch ohne Quelle", hoehe=H)
-model = M.cube((8.0, 8.0, H)).translate((-4.0, -4.0, 0.0)).scale((K, K, K))
+OBJ = os.path.join(HERE, "{ob}", "objekt.json"); obj = json.load(open(OBJ))
+SEITEN = seiten_aus_rahmen(obj)
+if obj.get("lod2", {{}}).get("id"):                    # Standard: LoD2-Grundriss + DOM1-Dach (dach.json, Nullstart-Schritt 'dach') - tools/dach_bauen.py
+    koerper, belege, haupt = gebaeude_aus_lod2(OBJ)
+    for b_ in belege: beleg(**b_)
+    cu, cv = haupt.mean(0); model = koerper.translate((-cu, -cv, 0.0)).scale((K, K, K))
+else:
+    H = {hoehe or 10.0}                               # Gesamthoehe (m) - Quelle in masstabelle.json
+    beleg("dach", "Grundkoerper", "ANNAHME: Rumpf ohne LoD2 (objekt.json lod2.id fehlt)", hoehe=H)
+    model = M.cube((8.0, 8.0, H)).translate((-4.0, -4.0, 0.0)).scale((K, K, K))
 mesh = model.to_mesh(); V = np.asarray(mesh.vert_properties)[:, :3]; F = np.asarray(mesh.tri_verts)
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 tri = V[F]; nrm = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]); nrm /= np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-12
 rec = np.zeros(len(F), dtype=[("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")]); rec["n"], rec["v"] = nrm, tri
 with open(OUT, "wb") as f: f.write(b"{ob}".ljust(80, b" ")); f.write(np.uint32(len(F)).tobytes()); f.write(rec.tobytes())
-json.dump([dict(e, seite_name=SEITEN.get(e["seite"], e["seite"])) for e in ELEMENTE], open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "{ob}", "elemente.json"), "w"), indent=1, ensure_ascii=False)
+json.dump([dict(e, seite_name=SEITEN.get(e["seite"], e["seite"])) for e in ELEMENTE], open(os.path.join(HERE, "{ob}", "elemente.json"), "w"), indent=1, ensure_ascii=False)
 print("->", OUT)
 ''')
         print("Generator-Rumpf angelegt:", gp)
