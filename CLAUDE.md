@@ -2,6 +2,11 @@
 Volltext aller Regeln (Nummern 1-9e, Technik, Lesepflichten): `modelle/REGELN_AUSFUEHRLICH.md` – bei Bedarf gezielt per grep/Read-Abschnitt lesen, nicht komplett.
 Aktueller Stand: `modelle/STAND_2026-11-12_VORMITTAG.md` (neueste STAND_*-Datei).
 
+## KERNMETHODE (nie vergessen, Nutzer 15.11.2026)
+- Modell = Fotokanten + Triangulation (Kanten-Tiefen-Sweep mit SfM-Kameras) -> Generator-Features. NICHT aus der dichten Wolke.
+- SfM liefert vor allem die KAMERAS (K, R, t). Dichte Wolke/LoD2/DOM1 nur Lage-Veto, Hoehe, Gegenprobe. Dachart/Form aus Fotos (Regel 9d/9e).
+- Jede Pipeline/Kette (auch `tools/gesamtkette.py`) braucht die Kantenstufe + Foto-F1 (`tools/teil_fotoform.py`) + `tools/foto_diff.py` als Tor.
+
 ## Abnahme (Pflicht)
 - Nach JEDER Generatoraenderung: `tools/bauen_abnehmen.sh <objekt>`; nur bei "alle Pruefungen bestanden" weiter. Sollwerte nie lockern ohne neue Quelle (+ `historie`).
 - Sichtbeobachtung = Testauftrag: erst `beobachtungen_offen` (datum, wer, text, naechster_schritt) in `masstabelle.json`, dann messen, dann Generator aendern.
