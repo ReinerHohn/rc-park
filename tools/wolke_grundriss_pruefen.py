@@ -14,7 +14,17 @@ Was das Werkzeug prueft (alles im Modellrahmen = objekt.json 'rahmen'):
   B  EINDEUTIGKEIT: Wandpunkte per FFT-Korrelation gegen die LoD2-Wandlinien, Drehung 0..359 Grad, mit und ohne Spiegelung.
      Verglichen werden die aktuelle Lage (Identitaet) und die beste Alternative (> 15 Grad weg oder gespiegelt).
      Alternative besser als aktuelle Lage, oder Abstand < --abstand (relativ) = HINWEIS (kein Tor: warnt auch am richtig liegenden Kaufhaus).
-     Rueckgabe: 0 ok, 3 = Haufen auf der Strasse (Tor).
+  C  TEILE OHNE WOLKE (Lehre Schwabentor 2026-11-14, Treppentuermchen): je LoD2-GroundSurface des Zielgebaeudes (objekt.json lod2.id) Anteil
+     der eigenen Randpunkte (> 0,6 m von anderen Grundrissen) mit Wolke (Wandband, 0,4 m). Fehlt die Wolke, wird gesucht, ob die
+     unerklaerten Punkte (ausserhalb der Ziel-Grundrisse) gedreht um die Mitte des Hauptteils (0..359 Grad, Versatz +-1 m) den Rand fuellen
+     und das Innere frei lassen: F1 aus Randdeckung (>= 4 Punkte je Randprobe im 0,2-m-Fenster; ohne Dichte Schein-Treffer 100 Grad aus Streupunkten) und Anteil Punkte
+     auf dem Rand statt innen (Toleranz 0,2 m, GPU). Drehzentrum = Flaechenmitte
+     des Hauptteils (Eckpunktmittel lag 1,7 m daneben -> 180-Grad-Kreis 3 m verfehlt); reine Belegung gab Schein-Treffer 105 Grad / 97 %.
+     Das Tuermchen lag 180 Grad punktgespiegelt an der Gegenecke, dicht an der Turmwand -> A sah es nicht (Wandabstand < 1,5 m).
+     HINWEIS C (kein Tor): gedrehte Form F1 >= 0,6 und deckt >= 40 Prozentpunkte mehr Rand als der Ist-Zustand. Kontrolle 2026-11-14:
+     Schwabentor-Tuermchen 174 Grad F1 0,92 (richtig), aber Kaufhaus (liegt richtig) Teil 1 15 m2 ungesehen 284 Grad F1 0,76 -> gerade Waende
+     fuellen kleine Rechtecke beliebig. Rundformen sind aussagekraeftig, Rechtecke nicht. = falsch gedrehtes Teilnetz. Nur fehlende Deckung = Hinweis.
+     Rueckgabe: 0 ok, 3 = Haufen auf der Strasse (Tor A).
 Quellen-Blindheit: LoD2 kennt keine Erker, Arkaden, Vordaecher, Baeume, Autos - Punkte dort landen in A als 'Strasse'.
 Deshalb wird nur gewarnt und gelistet; die Entscheidung faellt am Foto (tools/foto_diff.py, Ueberlagerung).
 
@@ -50,6 +60,82 @@ def grundrisse(obj, radius):
         os.makedirs(CACHE, exist_ok=True); pickle.dump(B, open(cp, "wb"))
     tm = lambda U: np.c_[(U - m0) @ xh, (U - m0) @ yh]
     return [dict(id=b["id"], ground=[tm(g) for g in b["ground"]]) for b in B]
+
+
+def flaechenmitte(g):
+    x, y = g[:, 0], g[:, 1]; c = x * np.roll(y, -1) - np.roll(x, -1) * y; A = c.sum() / 2
+    return np.array([((x + np.roll(x, -1)) * c).sum(), ((y + np.roll(y, -1)) * c).sum()]) / (6 * A), abs(A)
+
+
+def rand(g, d=0.1):
+    q = np.vstack([g, g[:1]])
+    return np.vstack([p0 + np.linspace(0, 1, max(2, int(np.linalg.norm(p1 - p0) / d)), endpoint=False)[:, None] * (p1 - p0) for p0, p1 in zip(q[:-1], q[1:])])
+
+
+def teile_pruefen(zp, andere_g, Q, min_abstand, z0, Path, tol=0.2, schritt_w=2, versatz=1.5, schritt_v=0.25, n_max=150000, min_dichte=4):
+    """Test C je Teil: eigener Rand (> 0,6 m von anderen Grundrissen) - Deckung jetzt; dann bester starrer Kandidat (Drehung um die
+    Flaechenmitte des Hauptteils, Versatz +-versatz) der UNERKLAERTEN Punkte: F1 aus Randdeckung (recall) und Anteil Punkte auf dem Rand
+    statt innen (precision). Hohes F1 nur bei echter Wandform (Kreisbogen), nicht bei dichten Fremdflaechen."""
+    import torch
+    dev = "cuda" if torch.cuda.is_available() else "cpu"
+    mit = [flaechenmitte(g) for g in zp]; hi = int(np.argmax([m[1] for m in mit])); hc = mit[hi][0]
+    alle_r = np.vstack([rand(g) for g in zp]); zin = np.zeros(len(Q), bool)
+    for g in zp: zin |= Path(g).contains_points(Q)
+    unerkl = Q[~zin & (min_abstand(z0(Q), z0(alle_r)) > 0.5)]
+    andere = np.vstack([rand(g) for g in andere_g]) if andere_g else np.zeros((0, 2))
+    out = []
+    for i, g in enumerate(zp):
+        S = rand(g); eig = np.ones(len(S), bool)
+        for j, h in enumerate(zp):
+            if j != i: eig &= min_abstand(z0(S), z0(rand(h))) > 0.6
+        if len(andere): eig &= min_abstand(z0(S), z0(andere)) > 0.6
+        S = S[eig]
+        if len(S) < 20: continue
+        # lokales Raster um den Teil: Rand-Band (eigener Rand, tol) und Innen (> tol vom Rand) - 0,05 m
+        R = 0.05; lo = g.min(0) - 0.6; hi_ = g.max(0) + 0.6; nx, ny = np.ceil((hi_ - lo) / R).astype(int)
+        gx, gy = np.meshgrid(lo[0] + (np.arange(nx) + .5) * R, lo[1] + (np.arange(ny) + .5) * R); C = np.c_[gx.ravel(), gy.ravel()]
+        dS = min_abstand(z0(C), z0(S)); dR = min_abstand(z0(C), z0(rand(g)))
+        band = torch.as_tensor((dS < tol).astype(np.float32), device=dev)
+        innen = torch.as_tensor((Path(g).contains_points(C) & (dR > tol)).astype(np.float32), device=dev)
+        Sk = torch.as_tensor(np.floor((S - lo) / R).astype(np.int64), device=dev); Sidx = Sk[:, 1] * nx + Sk[:, 0]
+        r_ = max(1, int(round(tol / R)))
+        def dichte_deckung(PP, f=1.0):                                          # Anteil Randproben mit >= min_dichte*f Punkten im tol-Fenster
+            kk = np.floor((PP - lo) / R).astype(int); m = (kk[:, 0] >= 0) & (kk[:, 0] < nx) & (kk[:, 1] >= 0) & (kk[:, 1] < ny)
+            o_ = torch.zeros(nx * ny, device=dev); o_.index_add_(0, torch.as_tensor(kk[m, 1] * nx + kk[m, 0], device=dev), torch.ones(int(m.sum()), device=dev))
+            o_ = torch.nn.functional.avg_pool2d(o_.view(1, 1, ny, nx), 2 * r_ + 1, 1, r_, count_include_pad=False) * (2 * r_ + 1) ** 2
+            return float((o_.view(-1)[Sidx] >= min_dichte * f).float().mean())
+        jetzt = dichte_deckung(Q)                                               # Ist-Zustand, gleiche Dichteschwelle wie die Kandidaten
+        # nur Punkte, die nach Drehung um hc in die Naehe kommen koennen (Abstand zu hc bleibt erhalten)
+        rr = np.hypot(*(g - hc).T); dq = np.hypot(*(unerkl - hc).T); P = unerkl[(dq > rr.min() - versatz - 1) & (dq < rr.max() + versatz + 1)]
+        fak = 1.0
+        if len(P) > n_max: fak = n_max / len(P); P = P[np.random.default_rng(0).choice(len(P), n_max, replace=False)]   # Schwelle mit ausduennen
+        best = dict(f1=0.0)
+        if len(P):
+            Pt = torch.as_tensor(P - hc, dtype=torch.float32, device=dev)
+            vs = np.arange(-versatz, versatz + 1e-6, schritt_v); V = torch.as_tensor(np.array([[a, b] for a in vs for b in vs]), dtype=torch.float32, device=dev)
+            hct = torch.as_tensor(hc, dtype=torch.float32, device=dev); lot = torch.as_tensor(lo, dtype=torch.float32, device=dev)
+            # Randpunkte duerfen nicht von Nahpunkten (Hauptteil) gedeckt werden: nur gedrehte Punkte zaehlen
+            for w in range(0, 360, schritt_w):
+                if min(w, 360 - w) <= 15: continue
+                t = np.radians(w); Rm = torch.as_tensor([[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]], dtype=torch.float32, device=dev)
+                Y = Pt @ Rm.T + hct                                                     # (n,2)
+                Y = Y[None] + V[:, None]                                               # (nv,n,2)
+                k = torch.floor((Y - lot) / R).long(); ok = (k[..., 0] >= 0) & (k[..., 0] < nx) & (k[..., 1] >= 0) & (k[..., 1] < ny)
+                lin = (k[..., 1] * nx + k[..., 0]).clamp(0, nx * ny - 1)
+                auf = (band[lin] * ok).sum(1); inn = (innen[lin] * ok).sum(1)
+                prec = auf / (auf + inn + 1e-6)
+                # recall: Randproben mit mind. 1 Punkt in tol -> Belegungsraster je Versatz
+                occ = torch.zeros((len(V), nx * ny), device=dev); occ.scatter_add_(1, lin, ok.float())
+                occ = occ.view(len(V), 1, ny, nx); r_ = max(1, int(round(tol / R)))
+                occ = (torch.nn.functional.avg_pool2d(occ, 2 * r_ + 1, 1, r_, count_include_pad=False) * (2 * r_ + 1) ** 2 >= min_dichte * fak).float().view(len(V), -1)   # Dichte statt 'irgendein Punkt'
+                rec = occ[:, Sidx].mean(1); f1 = 2 * prec * rec / (prec + rec + 1e-6); b = int(torch.argmax(f1))
+                if float(f1[b]) > best["f1"]:
+                    best = dict(f1=float(f1[b]), drehung_grad=w, versatz_m=[float(V[b, 0]), float(V[b, 1])], randdeckung=float(rec[b]), auf_rand=float(prec[b]))
+        t = dict(teil=i, flaeche_m2=round(float(mit[i][1]), 1), randproben=int(len(S)), deckung=round(jetzt, 3), gedreht={k: (round(v, 3) if isinstance(v, float) else v) for k, v in best.items()})
+        # Warnung: gedrehte Form passt (F1 >= 0,6) UND erklaert >= 40 Prozentpunkte mehr Rand als der Ist-Zustand
+        # (Schwabentor-Tuermchen: Ist 31 % - eine fremde Wandlinie streift die gerade Seite -, gedreht 174 Grad 94 %; Hauptteil Ist 65 %, gedreht 42 %)
+        t["hinweis"] = bool(jetzt < 0.5); t["warnung"] = bool(best["f1"] >= 0.6 and best.get("randdeckung", 0) - jetzt >= 0.4); out.append(t)
+    return out
 
 
 def main():
@@ -94,6 +180,14 @@ def main():
                                ausdehnung_m=[int(np.ptp(xx) + 1), int(np.ptp(yy) + 1)]))
         haufen.sort(key=lambda h: -h["punkte"])
     anteil = float(strasse.mean())
+    # --- C: LoD2-Teile des Zielgebaeudes ohne Wolke / gedrehtes Teilnetz (Formvergleich auf GPU)
+    teile_c = []; warn_c = False
+    zid = obj["lod2"].get("id") if isinstance(obj.get("lod2"), dict) else None
+    ziel = [b for b in B if b["id"] == zid]
+    if ziel:
+        teile_c = teile_pruefen([g for g in ziel[0]["ground"] if len(g) >= 3], [g for b in B if b["id"] != zid for g in b["ground"] if len(g) >= 3], Q,
+                                min_abstand, z0, Path)
+        warn_c = any(t["warnung"] for t in teile_c)
     # --- B: Eindeutigkeit (FFT, Drehung x Spiegelung)
     R = a.zelle; N = int(2 * a.radius / R); N += N % 2; half = N * R / 2
     def ras(p):
@@ -133,7 +227,7 @@ def main():
     warn_b = best_alt["anteil"] > best_nah["anteil"] or rel < a.abstand
     warn_a = bool(haufen) and haufen[0]["punkte"] > a.haufen
     out = dict(werkzeug="wolke_grundriss_pruefen.py", wolke=a.wolke, lod2_gebaeude=len(B), wandpunkte=int(len(Q)),
-               strasse=dict(anteil=round(anteil, 4), haufen=haufen[:10], warnung=warn_a),
+               strasse=dict(anteil=round(anteil, 4), haufen=haufen[:10], warnung=warn_a), teile=dict(ziel=zid, teile=teile_c, warnung=warn_c),
                eindeutigkeit=dict(identitaet_anteil=round(ident, 4), beste_nahe_identitaet=best_nah, beste_alternative=best_alt,
                                   abstand_relativ=round(rel, 3), warnung=warn_b, top5=res[:5]))
     os.makedirs(os.path.join(od, "audit"), exist_ok=True)
@@ -156,6 +250,13 @@ def main():
     # Kontrolle 2026-11-14: B warnt auch am korrekt liegenden Kaufhaus (Abstand 4,4 %), Wandlinien-Ueberlapp trennt nicht -> B nur HINWEIS, Tor ist A
     # (Kaufhaus 0,4 % / Haufen <1200 Punkte, Schwabentor 10 % / Haufen 207 190 Punkte = falscher Fluegel).
     if warn_b: print("HINWEIS B: Drehlage gegen LoD2 nicht eindeutig (allein kein Fehlerbeleg, Kontrolle Kaufhaus warnt auch) - nur zusammen mit A deuten.")
+    for t in teile_c:
+        gd = t["gedreht"]
+        print("C Teil %d (%.0f m2): Wolke deckt %.0f %% des eigenen Randes; beste gedrehte Form %s Grad (Versatz %s m): F1 %.2f (Rand %.0f %%, auf Rand %.0f %%)" % (
+              t["teil"], t["flaeche_m2"], 100 * t["deckung"], gd.get("drehung_grad", "-"), gd.get("versatz_m", "-"), gd["f1"], 100 * gd.get("randdeckung", 0), 100 * gd.get("auf_rand", 0)))
+    if any(t["hinweis"] and not t["warnung"] for t in teile_c): print("HINWEIS C: LoD2-Teil kaum von Wolke gedeckt (ungesehen? Kameraabdeckung pruefen)")
+    if warn_c: print("HINWEIS C: gedrehte Wolke fuellt einen LoD2-Teil deutlich besser als der Ist-Zustand - moeglich falsch gedrehtes Teilnetz; "
+                     "am Foto/Kamera-GPS klaeren (kein Tor: Kontrolle Kaufhaus schlaegt bei kleinen Rechteckteilen auch an)")
     if warn_a: print("WARNUNG A: grosser Wolkenhaufen auf der Strasse - am Foto klaeren (falsch verortetes Teilnetz?), NICHT modellieren."); raise SystemExit(3)
 
 

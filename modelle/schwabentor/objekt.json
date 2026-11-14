@@ -1,6 +1,6 @@
 {
  "name": "Schwabentor",
- "ort": "",
+ "ort": "Freiburg im Breisgau",
  "generator": "SCALE=87 MINMM=0.8 ~/.venvs/rcpark/bin/python modelle/schwabentor_gen.py",
  "stl": "modelle/stl/schwabentor_1-87.stl",
  "stl_massstab": 87,
