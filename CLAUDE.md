@@ -1,6 +1,6 @@
 # RC-Park – Arbeitsregeln (Kurzfassung)
 Volltext aller Regeln (Nummern 1-9e, Technik, Lesepflichten): `modelle/REGELN_AUSFUEHRLICH.md` – bei Bedarf gezielt per grep/Read-Abschnitt lesen, nicht komplett.
-Aktueller Stand: `modelle/STAND_2026-11-12_VORMITTAG.md` (neueste STAND_*-Datei).
+Aktueller Stand: `modelle/STAND_2026-11-14.md` (Abschnitt UEBERGABE am Ende zuerst lesen).
 
 ## KERNMETHODE (nie vergessen, Nutzer 15.11.2026)
 - Modell = Fotokanten + Triangulation (Kanten-Tiefen-Sweep mit SfM-Kameras) -> Generator-Features. NICHT aus der dichten Wolke.
