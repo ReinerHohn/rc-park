@@ -1,0 +1,135 @@
+<title>__NAME__ 3D-Modell</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#f3f2ee; --panel:#fbfaf7; --fg:#22211d; --muted:#6b675d; --line:#d9d5ca;
+  --accent:#a3341f; --stone:#7a5a45; --modell:#c9b9a1; --kante:#4d4133; --canvas:#e9e6de;
+  --f-body:"Source Sans 3",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#181715; --panel:#201f1c; --fg:#ece9e1; --muted:#a39e92; --line:#3a3833;
+  --accent:#e0745c; --stone:#c09a7e; --modell:#bfae95; --kante:#2a241d; --canvas:#11100e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#181715; --panel:#201f1c; --fg:#ece9e1; --muted:#a39e92; --line:#3a3833;
+  --accent:#e0745c; --stone:#c09a7e; --modell:#bfae95; --kante:#2a241d; --canvas:#11100e; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px}
+h1{font-size:1.5rem;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.kopf{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;max-width:72ch}
+.kopf p{margin:0;color:var(--muted)}
+.werk{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+@media (max-width:860px){.werk{grid-template-columns:minmax(0,1fr)}}
+#fenster{position:relative;width:100%;height:min(76vh,760px);min-height:360px;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--canvas)}
+#fenster canvas{display:block;width:100%;height:100%}
+.hinweis{position:absolute;left:10px;bottom:8px;font:12px var(--f-mono);color:var(--muted);pointer-events:none}
+.seite{display:flex;flex-direction:column;gap:14px;min-width:0}
+.block{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.etikett{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+label{display:flex;gap:8px;align-items:center;cursor:pointer}
+label:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.punkt{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.ramp{width:10px;height:10px;border-radius:50%;flex:none;background:linear-gradient(90deg,#2b5d9e,#4fa36b,#e0c341,#c8452b)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+td,th{padding:4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12px}
+td.z{font-family:var(--f-mono);font-size:12px;white-space:nowrap}
+.annahme{font-size:13px;color:var(--muted)}
+.annahme b{color:var(--accent);font-weight:600}
+.kompass{position:absolute;right:10px;top:8px;font:600 12px var(--f-mono);color:var(--muted);pointer-events:none}
+</style>
+
+<div class="kopf">
+  <h1>__NAME__ 3D-Modell</h1>
+  <p>Baukörper aus LoD2-Grundriss und Laser-Dach (tools/dach_bauen.py) im Rahmen der Prüfwerkzeuge, gegen dichte Wolke und DOM1-Laserpixel.</p>
+</div>
+<div class="werk">
+  <div id="fenster"><div class="kompass" id="kompass"></div><div class="hinweis">Ziehen: drehen · Rechts/zwei Finger: schieben · Rad: Zoom</div></div>
+  <div class="seite">
+    <div class="block">
+      <span class="etikett">Ebenen</span>
+      <label><input type="checkbox" id="c-m" checked><span class="punkt" style="background:var(--modell)"></span>Modell (Flächen)</label>
+      <label><input type="checkbox" id="c-k" checked><span class="punkt" style="background:var(--kante)"></span>Modell-Kanten</label>
+      <label><input type="checkbox" id="c-w" checked><span class="punkt" style="background:var(--stone)"></span>Dichte Wolke (Fotofarben)</label>
+      <label><input type="checkbox" id="c-d"><span class="ramp"></span>DOM1-Laser (1-m-Pixel, Höhe)</label>
+      <label><input type="checkbox" id="c-l" checked><span class="punkt" style="background:var(--accent)"></span>LoD2-Wände</label>
+      <label><input type="range" id="r-o" min="0.2" max="1" step="0.05" value="0.55" aria-label="Deckkraft Modell" style="flex:1">Deckkraft</label>
+    </div>
+    <div class="block">
+      <span class="etikett">Dach aus DOM1</span>
+      <table id="dach"><tr><th>Teil</th><th>Form</th><th>First</th><th>Neigung</th><th>RMS</th></tr></table>
+      <span class="annahme" id="hoehe"></span>
+    </div>
+    <div class="block">
+      <span class="etikett">Belege und Annahmen</span>
+      <div id="belege" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const DATA = /*__DATA__*/null;
+const $ = id => document.getElementById(id);
+const dec = s => { const b = atob(s), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; };
+const i16 = s => new Int16Array(dec(s).buffer);
+// Rahmen (u, v, z) -> three (u, z, -v); Mitte des Hauptgrundrisses in den Ursprung
+const C0 = DATA.mitte;
+const auf3 = (a, sk) => { const o = new Float32Array(a.length); for (let i = 0; i < a.length; i += 3) {
+  o[i] = a[i] * sk - C0[0]; o[i + 1] = a[i + 2] * sk; o[i + 2] = -(a[i + 1] * sk - C0[1]); } return o; };
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fen = $("fenster");
+const ren = new THREE.WebGLRenderer({ antialias: true }); ren.setPixelRatio(Math.min(2, devicePixelRatio)); fen.prepend(ren.domElement);
+const szene = new THREE.Scene(); const kam = new THREE.PerspectiveCamera(45, 1, 0.3, 3000);
+const H = DATA.hoehe; kam.position.set(-1.3 * H, 0.9 * H, 1.1 * H);
+const st = new THREE.OrbitControls(kam, ren.domElement); st.target.set(0, H * 0.45, 0); st.update();
+szene.add(new THREE.HemisphereLight(0xffffff, 0x6b5a48, 0.75)); const sonne = new THREE.DirectionalLight(0xffffff, 0.7); sonne.position.set(-40, 80, 30); szene.add(sonne);
+// Modell
+const mv = new Float32Array(dec(DATA.mv).buffer), mf = new Uint32Array(dec(DATA.mf).buffer);
+const mg = new THREE.BufferGeometry(); mg.setAttribute("position", new THREE.BufferAttribute(auf3(mv, 1), 3)); mg.setIndex(new THREE.BufferAttribute(mf, 1)); mg.computeVertexNormals();
+const mmat = new THREE.MeshLambertMaterial({ color: new THREE.Color(css("--modell")), transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false });
+const modell = new THREE.Mesh(mg, mmat); modell.renderOrder = 2; szene.add(modell);
+const kanten = new THREE.LineSegments(new THREE.EdgesGeometry(mg, 25), new THREE.LineBasicMaterial({ color: new THREE.Color(css("--kante")) })); szene.add(kanten);
+// Wolke
+let wolke = null;
+if (DATA.w) { const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(auf3(i16(DATA.w), 0.01), 3));
+  let mat; if (DATA.wc) { const c = dec(DATA.wc), f = new Float32Array(c.length); for (let i = 0; i < c.length; i++) f[i] = c[i] / 255;
+    g.setAttribute("color", new THREE.BufferAttribute(f, 3)); mat = new THREE.PointsMaterial({ size: 0.12, vertexColors: true }); }
+  else mat = new THREE.PointsMaterial({ size: 0.12, color: new THREE.Color(css("--stone")) });
+  wolke = new THREE.Points(g, mat); szene.add(wolke); } else $("c-w").closest("label").hidden = true;
+// DOM1
+const dp = auf3(i16(DATA.d), 0.01), dg = new THREE.BufferGeometry(); dg.setAttribute("position", new THREE.BufferAttribute(dp, 3));
+let zmax = 0; for (let i = 1; i < dp.length; i += 3) zmax = Math.max(zmax, dp[i]);
+const ramp = [[0.17,0.36,0.62],[0.31,0.64,0.42],[0.88,0.76,0.25],[0.78,0.27,0.17]], dc = new Float32Array(dp.length);
+for (let i = 0; i < dp.length; i += 3) { const t = Math.max(0, Math.min(0.999, dp[i + 1] / zmax)) * 3, k = Math.floor(t), f = t - k;
+  for (let j = 0; j < 3; j++) dc[i + j] = ramp[k][j] * (1 - f) + ramp[Math.min(3, k + 1)][j] * f; }
+dg.setAttribute("color", new THREE.BufferAttribute(dc, 3));
+const dom = new THREE.Points(dg, new THREE.PointsMaterial({ size: 0.5, vertexColors: true })); dom.visible = false; szene.add(dom);
+// LoD2
+let lod = null;
+if (DATA.l) { const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(auf3(i16(DATA.l), 0.01), 3));
+  lod = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: new THREE.Color(css("--accent")) })); szene.add(lod); }
+// Boden-Raster 5 m
+const raster = new THREE.GridHelper(80, 16); raster.material.transparent = true; raster.material.opacity = 0.25; szene.add(raster);
+// Tafeln
+const fmt = (x, d = 2) => x == null ? "–" : x.toFixed(d).replace(".", ",");
+for (const t of DATA.dach || []) { const tr = document.createElement("tr");
+  tr.innerHTML = `<td class="z">${t.teil}</td><td>${t.form}${t.eindeutig ? "" : " (?)"}</td><td class="z">${fmt(t.first)} m</td><td class="z">${fmt(t.neigung_grad, 0)}°</td><td class="z">${fmt(t.rms_m)} m</td>`;
+  $("dach").append(tr); if (t.spitze) $("hoehe").textContent = `Spitze im DOM1 bis ${fmt(t.spitze, 1)} m (1-m-Raster, eher höher). `; }
+$("hoehe").textContent += `Modellhöhe ${fmt(H)} m über Gelände.`;
+for (const b of DATA.belege) { const d = document.createElement("div"); d.className = "annahme";
+  const hn = b.hinweis ? ` <b>${b.hinweis}</b>` : ""; d.innerHTML = `<span style="color:var(--fg);font-weight:600">${b.element}</span> · ${b.quelle}${hn}`; $("belege").append(d); }
+const S = DATA.seiten; $("kompass").textContent = `+x = ${S["+x"]} · +y = ${S["+y"]}`;
+// Schalter
+$("c-m").onchange = e => modell.visible = e.target.checked; $("c-k").onchange = e => kanten.visible = e.target.checked;
+$("c-w").onchange = e => { if (wolke) wolke.visible = e.target.checked; }; $("c-d").onchange = e => dom.visible = e.target.checked;
+$("c-l").onchange = e => { if (lod) lod.visible = e.target.checked; }; $("r-o").oninput = e => { mmat.opacity = +e.target.value; mmat.depthWrite = +e.target.value > 0.95; };
+function thema() { szene.background = new THREE.Color(css("--canvas")); mmat.color.set(css("--modell")); kanten.material.color.set(css("--kante"));
+  if (lod) lod.material.color.set(css("--accent")); if (wolke && !DATA.wc) wolke.material.color.set(css("--stone")); }
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", thema);
+new MutationObserver(thema).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+function groesse() { const w = fen.clientWidth, h = fen.clientHeight; ren.setSize(w, h, false); kam.aspect = w / h; kam.updateProjectionMatrix(); }
+new ResizeObserver(groesse).observe(fen); groesse(); thema();
+(function los() { requestAnimationFrame(los); ren.render(szene, kam); })();
+</script>
