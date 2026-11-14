@@ -1,0 +1,97 @@
+{
+ "name": "Martinstor",
+ "ort": "Freiburg im Breisgau, Kaiser-Joseph-Strasse",
+ "generator": "SCALE=87 MINMM=0.8 ~/.venvs/rcpark/bin/python modelle/martinstor_gk_gen.py",
+ "stl": "modelle/stl/martinstor_gk_1-87.stl",
+ "stl_massstab": 87,
+ "stl_einheit_mm": true,
+ "zentrierung": "achse",
+ "masstabelle": "modelle/martinstor_gk/masstabelle.json",
+ "elemente": "modelle/martinstor_gk/elemente.json",
+ "audit": "modelle/martinstor_gk/audit",
+ "ueberwacht": [
+  "modelle/martinstor_gk_gen.py",
+  "modelle/stl/martinstor_gk_1-87.stl",
+  "modelle/martinstor_gk/masstabelle.json",
+  "modelle/martinstor_gk/elemente.json"
+ ],
+ "fotos_dir": "/media/oem/scan/rc-park_daten/martinstor_gk/commons",
+ "seiten_konvention": {
+  "+x": "Sued = Feldseite (Doppeladler ueber dem Bogen, 2+1 Fenster; Fotos 030/041/042/000)",
+  "-x": "Nord = Stadtseite (Gedenktafel 1796, 3+1 Fenster, runder Eckturm an der NW-Ecke; Fotos 001/031)",
+  "+y": "Ost (Annahme)",
+  "-y": "West = Seite des 1901er Torbaus/McDonald's (de.wikipedia: 'Torbau westlich')",
+  "quelle": "de.wikipedia Martinstor (2026-11-01): Gedenktafel 1796 + Martinsbild auf der Stadtseite; Reichsadler an der Toraussenseite; Torbau westlich. Stadtseite = Nord (Zentrum liegt noerdlich). Nutzer: 'Uhr zeigt nach Sueden' (beide Uhrseiten N/S)."
+ },
+ "fotos": {},
+ "quellen": {
+  "dokument": "OFFEN",
+  "lod2": "OFFEN",
+  "dom1_dgm1": "OFFEN",
+  "dop20": "OFFEN",
+  "fotos": "OFFEN",
+  "laser_punkte": "n/a (kostenpflichtig)"
+ },
+ "bildquellen": {
+  "commons": {
+   "kategorien": [
+    "Martinstor (Freiburg im Breisgau)"
+   ],
+   "suchen": [
+    "Martinstor Freiburg",
+    "Martinstor Freiburg im Breisgau",
+    "Kaiser-Joseph-Straße Freiburg Martinstor",
+    "Freiburg Martin's Gate"
+   ],
+   "geosearch_radius_m": 150,
+   "titel_enthaelt": [
+    "martinstor",
+    "martin's gate",
+    "kaiser-joseph",
+    "kajo"
+   ]
+  },
+  "mapillary": {
+   "radius_m": 80,
+   "max": 200,
+   "hinweis": "Token unter ~/.config/mapillary_token eintragen (gratis, Mapillary Developers); dann liefert die Quelle georeferenzierte Strassenbilder aller Seiten"
+  },
+  "videos": [],
+  "ausgabe": "/media/oem/scan/rc-park_daten/martinstor/fotos_eingang",
+  "max_neu": 120,
+  "min_breite_px": 1000,
+  "max_je_blickgruppe": 4,
+  "min_schaerfe": 40.0,
+  "regel": "Mehrwert statt Masse: Duplikate nur das beste, aehnliche mit Parallaxe gedeckelt je Blickgruppe, neue Blickwinkel immer; Lizenz/Autor je Bild Pflicht (LIZENZ_WERKZEUGE.md)"
+ },
+ "gesamtkette": {
+  "quelle": "martinstor",
+  "hinweis": "von tools/gesamtkette.py angelegt; Masse/Pruefungen nur aus Quellen dieser Kette"
+ },
+ "lod2": {
+  "gml": "/media/oem/scan/rc-park_daten/_geo/LoD2_32_413_5316_2_bw/LoD2_32_414_5316_1_BW.gml",
+  "id": "DEBW_001000hPLcn",
+  "name": "Martinstor",
+  "quelle": "tools/rahmen_aus_lod2.py (GML-Namensattribut)"
+ },
+ "koordinate_utm": [
+  414127.02,
+  5316243.1
+ ],
+ "rahmen": {
+  "mitte_utm": [
+   414127.02,
+   5316243.1
+  ],
+  "xhat_utm": [
+   0.2679,
+   0.9635
+  ],
+  "yhat_utm": [
+   -0.9635,
+   0.2679
+  ],
+  "gelaende": 277.96,
+  "quelle": "tools/rahmen_aus_lod2.py: LoD2 DEBW_001000hPLcn 'Martinstor', xhat = lange Rechteckseite, gelaende DGM1"
+ }
+}

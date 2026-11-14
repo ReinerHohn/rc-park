@@ -76,6 +76,7 @@ def dgm_ziel(obj, halb):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--sparse", default=None); ap.add_argument("--name", default=""); ap.add_argument("--schreiben", action="store_true")
+    ap.add_argument("--loesung", type=int, default=0, help="K-te unterscheidbare Loesung (>10 Grad oder >3 m) statt der besten - Korrekturkreislauf tools/gesamtkette.py")
     ap.add_argument("--radius", type=float, default=80.0, help="LoD2-Gebaeude in diesem Umkreis um die Objektmitte (m)"); ap.add_argument("--zelle", type=float, default=0.25, help="Rasterweite Grobsuche (m)")
     ap.add_argument("--mitte-max", type=float, default=20.0, help="Wolkenmitte hoechstens so weit von der Objektmitte (m): die Bilder sind um das Objekt ausgewaehlt")
     ap.add_argument("--kamerahoehe", nargs=2, type=float, default=[1.6, 1.0], metavar=("H0", "SIGMA"), help="ANNAHME Strassenfotos: Kamerahoehe ueber Boden (robust gewichtet)")
@@ -273,7 +274,14 @@ def main():
         zc = np.median(Cq[:, 2]) / s; p0[6] = 1.6 - zc                                         # Hoehenstart: Kameras ~1,6 m ueber Boden (nur Start, ANNAHME)
         p, frac, rms, ok = fein(p0, Q); ab = abdeckung(p, Q); loes.append((frac * ab, rms, p, ok, frac, ab))
         print(f"   Start {math.degrees(th):5.0f} Grad s={s:.3f}: Inlier {100 * frac:.0f} %, Objektwand-Abdeckung {100 * ab:.0f} %, RMS {rms:.2f} m, Massstab {math.exp(p[0]):.4f}")
-    loes.sort(key=lambda l: -l[0]); guete, rms, p, ok, frac, ab = loes[0]
+    loes.sort(key=lambda l: -l[0])
+    _verschieden = []
+    for l in loes:                                                                              # unterscheidbare Lagen (Korrekturkreislauf: Loesung K probieren, Tore entscheiden)
+        if all(np.degrees((Rot.from_rotvec(l[2][1:4]).inv() * Rot.from_rotvec(v[2][1:4])).magnitude()) > 10 or np.linalg.norm(np.asarray(l[2][4:7]) - np.asarray(v[2][4:7])) > 3 for v in _verschieden):
+            _verschieden.append(l)
+    if a.loesung >= len(_verschieden): print(f"KEINE_LOESUNG {a.loesung}: nur {len(_verschieden)} unterscheidbare Loesungen"); sys.exit(5)
+    if a.loesung: print(f"Korrekturkreislauf: nehme unterscheidbare Loesung {a.loesung} von {len(_verschieden)} (Guete {100 * _verschieden[a.loesung][0]:.1f} % statt {100 * loes[0][0]:.1f} %)")
+    guete, rms, p, ok, frac, ab = _verschieden[a.loesung]
     # Bootstrap: Massstab-/Lage-Streuung aus Teilstichproben
     rng = np.random.default_rng(1); bs = []
     for _ in range(8):
@@ -303,7 +311,7 @@ def main():
                            k=[float(v) for v in pr[3:]] if cam.model.name in ("SIMPLE_RADIAL", "RADIAL") else [], bild_b=cam.width, bild_h=cam.height, hinweis="f/cx/cy in SfM-Bildpixeln (fak nicht bestimmt)")
         out = dict(verfahren="sfm_lod2_ausrichten.py (ohne Picks: Kameraebene -> Lot, LoD2-Wandlinien -> Grob, Punkt-zu-Flaeche LoD2+DGM1 -> Fein)", sparse=a.sparse, fotos_sfm=sorted(kam), fotos_mit_picks=[],
                    transformation=dict(beschreibung="X_sfm = s * R @ X_modell + t ; Modellsystem = objekt.json rahmen (anker3d.json)", s=s, s_sigma_prozent=float(s_sig), rvec=Rot.from_matrix(R_s).as_rotvec().tolist(),
-                                       t=t_s.tolist(), t_sigma_m=t_sig.tolist(), inlier_anteil=float(frac), rms_m=float(rms), zweitbeste_inlier=float(zweit), mehrdeutig=mehrdeutig),
+                                       t=t_s.tolist(), t_sigma_m=t_sig.tolist(), inlier_anteil=float(frac), rms_m=float(rms), zweitbeste_inlier=float(zweit), mehrdeutig=mehrdeutig, loesung_nr=a.loesung, loesungen_unterscheidbar=len(_verschieden)),
                    ziel=dict(lod2_gebaeude=nb, radius_m=a.radius, boden=gq), kameras=kam,
                    kamerahoehen=dict(median=float(np.median(hz)), auf_strassenniveau=int(np.sum((hz > -1) & (hz < 6))), n=len(hz)),
                    wolke=dict(n=len(Pm), z_p1=float(np.percentile(Pm[:, 2], 1)), z_p999=float(np.percentile(Pm[:, 2], 99.9))), annahmen=dict(kamerahoehe=dict(h0=a.kamerahoehe[0], sigma=a.kamerahoehe[1], gewicht=a.kamera_gewicht, hinweis="ANNAHME Strassenfotos, robuste Bedingung (Huber)")))
