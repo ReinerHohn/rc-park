@@ -4,7 +4,7 @@ Nutzerregel "alles vollautomatisch"). Schritt vor tools/video_frames.py / nullst
 
 1. Suche: yt-dlp "ytsearchN:<Anfrage>" fuer alle Anfragen aus objekt.json (name, ort, bildquellen.commons.suchen) x Zusaetze (Drohne, drone, aerial, 4K, walk).
 2. Vorpruefung je Clip (Laenge <= --max-s): Vorschau in niedriger Aufloesung (<= 480p) laden, je --abstand s ein Bild.
-3. Beweis, dass das Objekt zu sehen ist (nicht Titel/Bildbeschreibung): SIFT-Merkmale (OpenCV, Apache 2) jedes Bildes gegen die Objektfotos
+3. Beweis, dass das Objekt zu sehen ist (nicht Titel/Bildbeschreibung): ALIKED+LightGlue-Zuordnungen (GPU, BSD-3/Apache 2) jedes Bildes gegen die Objektfotos
    (objekt.json fotos_dir, --ref beste N); Treffer = >= --min-inlier RANSAC-Inlier (Fundamentalmatrix) zu mindestens einem Objektfoto.
 4. Ergebnis je Clip: Treffer-Bilder, Zeitabschnitte (Treffer zusammengefasst), Bildwinkel-Neuheit grob (Treffer zu verschiedenen Objektfotos).
 Ausgabe --aus/video_kandidaten.json (sortiert nach Trefferzahl) + Kontaktabzug je Clip (Treffer gruen). LIZENZ: YouTube = nur private Messvorlage
@@ -17,25 +17,51 @@ import numpy as np, cv2
 ZUSAETZE = ["drohne", "drone 4k", "aerial", "walk 4k", ""]
 
 
+DEV = None
+_LG = {}
+
+
+def _sift(n):
+    """GPU-Merkmale ALIKED + LightGlue (BSD-3 / Apache-2.0, modelle/LIZENZ_WERKZEUGE.md). Lehre 2026-11-14: OpenCV-SIFT + BFMatcher lief auf
+    18 CPU-Kernen bei GPU 0 % (Nutzerfrage); Kornia-SIFT auf GPU verlor Treffer (Positivkontrolle 113604: CPU 67 Inlier, Kornia 0)."""
+    global DEV
+    import torch
+    from lightglue import LightGlue, ALIKED
+    DEV = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if DEV.type != "cuda": print("WARNUNG: keine GPU - Merkmale laufen auf CPU", flush=True)
+    if "m" not in _LG: _LG["m"] = LightGlue(features="aliked").eval().to(DEV)
+    return ALIKED(max_num_keypoints=n).eval().to(DEV)
+
+
+def _merkmale(s, grau):
+    import torch
+    t = torch.from_numpy(grau).to(DEV, torch.float32)[None, None].expand(1, 3, -1, -1) / 255.0
+    with torch.inference_mode():
+        f = s.extract(t)
+    return f["keypoints"][0].cpu().numpy().astype(np.float32), f
+
+
 def sift_ref(pfade, kante=1000):
-    s = cv2.SIFT_create(4000); R = []
+    s = _sift(2048); R = []
     for p in pfade:
         im = cv2.imread(p, cv2.IMREAD_GRAYSCALE)
         if im is None: continue
         f = kante / max(im.shape); im = cv2.resize(im, None, fx=min(1, f), fy=min(1, f), interpolation=cv2.INTER_AREA)
-        k, d = s.detectAndCompute(im, None)
-        if d is not None and len(k) > 50: R.append((os.path.basename(p), np.float32([x.pt for x in k]), d))
+        P, d = _merkmale(s, im)
+        if len(P) > 50: R.append((os.path.basename(p), P, d))
     return R
 
 
 def treffer(bild, R, bf, s, min_inlier):
-    k, d = s.detectAndCompute(bild, None); best = (0, None)
-    if d is None or len(k) < 50: return best
-    P = np.float32([x.pt for x in k])
+    """bf ungenutzt (Signatur gleich). LightGlue-Zuordnung auf der GPU, RANSAC (Fundamentalmatrix, 3 px) auf der CPU wie vorher."""
+    import torch
+    P, d = _merkmale(s, bild); best = (0, None)
+    if len(P) < 50: return best
     for nm, Q, dq in R:
-        mm = bf.knnMatch(d, dq, k=2); g = [m for m, n in (x for x in mm if len(x) == 2) if m.distance < 0.75 * n.distance]
-        if len(g) < min_inlier: continue
-        A = P[[m.queryIdx for m in g]]; B = Q[[m.trainIdx for m in g]]; F, msk = cv2.findFundamentalMat(A, B, cv2.FM_RANSAC, 3.0, 0.999)
+        with torch.inference_mode():
+            m = _LG["m"]({"image0": d, "image1": dq})["matches"][0].cpu().numpy()
+        if len(m) < min_inlier: continue
+        F, msk = cv2.findFundamentalMat(P[m[:, 0]], Q[m[:, 1]], cv2.FM_RANSAC, 3.0, 0.999)
         n = int(msk.sum()) if msk is not None else 0
         if n > best[0]: best = (n, nm)
     return best
@@ -43,7 +69,7 @@ def treffer(bild, R, bf, s, min_inlier):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--aus", required=True); ap.add_argument("--suchen", type=int, default=12)
-    ap.add_argument("--abstand", type=float, default=2.0); ap.add_argument("--ref", type=int, default=12); ap.add_argument("--min-inlier", type=int, default=40)
+    ap.add_argument("--abstand", type=float, default=2.0); ap.add_argument("--ref", type=int, default=12); ap.add_argument("--min-inlier", type=int, default=60)
     ap.add_argument("--max-s", type=int, default=1500); ap.add_argument("--anfragen", nargs="*"); ap.add_argument("--nur", nargs="*", help="nur diese Clip-IDs pruefen")
     a = ap.parse_args(argv); t0 = time.time(); os.makedirs(a.aus, exist_ok=True); op = os.path.abspath(a.objekt); obj = json.load(open(op))
     root = os.path.dirname(os.path.dirname(os.path.dirname(op)))
@@ -66,7 +92,7 @@ def main(argv=None):
                         except ValueError: du = None
                         kand[p[0]] = dict(id=p[0], dauer=du, titel=p[2], anfrage=q)
         print(f"{len(kand)} Kandidaten aus {len(basis)} Anfragen ({time.time() - t0:.0f} s)", flush=True)
-    s = cv2.SIFT_create(2000); bf = cv2.BFMatcher(); erg = []
+    s = _sift(2048); bf = None; erg = []
     for c in kand.values():
         if c["dauer"] and c["dauer"] > a.max_s: c["status"] = "zu lang"; erg.append(c); continue
         vd = os.path.join(a.aus, "vorschau", c["id"]); os.makedirs(vd, exist_ok=True)
