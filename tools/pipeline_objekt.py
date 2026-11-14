@@ -96,9 +96,15 @@ def main():
         # 3 dichte Wolke
     fused = os.path.join(daten, "dicht", "fused.ply")
     if not (os.path.exists(fused) and os.path.getsize(fused) > 0):
+        # Bildwahl fuer Tiefenkarten (Lehre 14.11.: Fernansichten/gleiche Videobilder kosten voll, bringen am Objekt wenig) -> tools/dicht_bildwahl.py
+        sparse_wahl = os.path.join(daten, "sfm", "sparse_dicht")
+        if stufe_wahl != "grob" and not os.path.isdir(sparse_wahl):
+            rc_w, out_w = run([PY_COL, "-I", "tools/dicht_bildwahl.py", sparse_dir, sparse_wahl], log); print(out_w.strip()[-400:], flush=True)
+            if rc_w != 0: sparse_wahl = sparse_dir
+        sparse_dicht = sparse_wahl if os.path.isdir(sparse_wahl) else sparse_dir
         script = os.path.join(daten, "dicht_kette.py")
         open(script, "w").write(f'''import pycolmap, os, time
-bilder = {fotos!r}; sparse = {sparse_dir!r}; out = {os.path.join(daten, "dicht")!r}
+bilder = {fotos!r}; sparse = {sparse_dicht!r}; out = {os.path.join(daten, "dicht")!r}
 os.makedirs(out, exist_ok=True)
 STUFE = {stufe_wahl!r}
 uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = 1600
