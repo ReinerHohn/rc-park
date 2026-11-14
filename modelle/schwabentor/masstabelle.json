@@ -176,6 +176,12 @@
    "wer": "Claude (Draufsicht Wolke J)",
    "text": "Kreisfoermige Struktur (r ~1,3 m, bis ~30 m hoch) in Wolke J bei u -6 / v 7 (Ecke Sued/Ost, ausserhalb LoD2-Grundriss); LoD2-Rundanbau liegt Nord/West (u 0..3, v 21..24). Lage des Treppentuermchens damit fraglich.",
    "naechster_schritt": "2026-11-14 geklaert: Kreis (r 1,45 m, Mitte u -6,16/v 7,14) = Treppentuermchen, als Teilnetz um ~180 Grad punktgespiegelt durch die Turmmitte (gespiegelt 1,88/23,18 = LoD2-Rundanbau). Foto IMG_20261106_113545_1: Kamera (SfM uv 6,4/27) und GPS (uv 3,8/22,8) an der Nord/West-Ecke -> LoD2-Lage richtig, Wolke dort falsch. Modell nimmt LoD2. Offen: Teilnetz in der Wolke korrigieren (wie Fluegel), Tuermchenhoehe am Foto (Foto zeigt Rundturm bis knapp unter das obere Geschoss, nicht 13,7 m)."
+  },
+  {
+   "datum": "2026-11-14",
+   "wer": "Claude (Drohnenvideo NW-Mt7ryZ8c, Bilder vf_000..006)",
+   "text": "Turmspitze: Zeltdach mit deutlichem Dachueberstand ueber Gesims; oben Laterne (schmaler Schaft) mit gruener Zwiebelhaube und Knauf. Modell: Pyramide (ANNAHME), Dach buendig ohne Ueberstand.",
+   "naechster_schritt": "Nach Wolke v2 (Drohnenbilder enthalten): Laterne/Zwiebel und Traufueberstand aus Wolke+Foto vermessen (VORLAGE_BAUTEIL_RUNDE), Spitzenform in dach_bauen als Bauteil statt Pyramide"
   }
  ]
 }
