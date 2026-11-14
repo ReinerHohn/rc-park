@@ -31,3 +31,9 @@ daten/martinstor/commons_neu
 modelle/martinstor_null
 daten/martinstor/fotos_eingang
 modelle/*/masstabelle.json.lock
+
+# Schwabentor: Wolken/Netze liegen auf der Datenplatte (Symlinks), nur Skripte ins Git
+modelle/schwabentor/sfm/*.npy
+modelle/schwabentor/sfm/sparse_modell_*
+modelle/schwabentor/sfm/__pycache__/
+modelle/schwabentor/punktwolke.html

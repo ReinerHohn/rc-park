@@ -79,7 +79,7 @@ def main():
     zobj = os.path.join(zd, "objekt.json"); log = os.path.join(zd, "nullstart.log")
     bp = os.path.join(zd, "nullstart_bericht.json"); bericht = json.load(open(bp)) if os.path.exists(bp) and a.ab != "anlegen" else dict(referenz=refname, ziel=a.ziel, start=time.strftime("%Y-%m-%d %H:%M"), schritte=[])
     bericht["_pfad"] = bp
-    schritte = ["anlegen"] + [f"netz_{s_}" for s_ in seiten_cfg] + [f"ausrichten_{s_}" for s_ in seiten_cfg] + ["verzerrung", "registrieren", "buendel", "generator0", "dicht", "entzerren", "video", "kameras", "kamera_bruecke", "kalibrieren", "beweis_anker", "kamera_lod2", "textur", "abgleich", "wolke_seiten", "auswertung", "overlay", "hybrid", "vergleich", "beweise", "stufen"]
+    schritte = ["anlegen"] + [f"netz_{s_}" for s_ in seiten_cfg] + [f"ausrichten_{s_}" for s_ in seiten_cfg] + ["verzerrung", "registrieren", "buendel", "generator0", "dicht", "grundriss", "entzerren", "video", "kameras", "kamera_bruecke", "kalibrieren", "beweis_anker", "kamera_lod2", "textur", "abgleich", "wolke_seiten", "auswertung", "overlay", "hybrid", "vergleich", "beweise", "stufen"]
     a.ab = {"kalibrieren_061": "kalibrieren", "netz_nord": f"netz_{haupt}"}.get(a.ab, a.ab)          # alte Schrittnamen weiter erlaubt
     start_i = schritte.index(a.ab)
     def dran(n): return schritte.index(n) >= start_i
@@ -228,6 +228,16 @@ def main():
     if sued_thr:
         print(f"    Suednetz parallel: {'ok' if all(sued_res.values()) else 'FEHLER'} (Log nullstart_<seite>.log)", flush=True)
         if dran("verzerrung") and not a.ohne_sued: verzerrung_gate()
+    if dran("grundriss"):                                                                         # Lehre Schwabentor 2026-11-14: Fluegel 1 m duenn auf der Strasse, Kameraluecke 103 Grad,
+        wk_ = os.path.join(sfmd, f"dicht_{haupt}_modell.npy"); sp_ = f"modelle/{a.ziel}/sfm/sparse_{haupt}/0"   # Ausrichtung 0,222 vs 0,194 mehrdeutig -> vor Modellierung pruefen
+        if os.path.exists(os.path.join(repo, sp_)):
+            lauf(bericht, "kamera_abdeckung", f"{PY} -I tools/kamera_abdeckung.py {sp_}", repo, log)   # rc 2 = Seite ohne Kameras: Warnung, kein Abbruch
+        au_ = f"modelle/{a.ziel}/messprotokoll/SFM-AUSRICHTUNG-{haupt}.json"                  # Lehre Schwabentor: Lage 1,8x zu klein + 134 Grad verdreht, GPS haette es gezeigt
+        if os.path.exists(os.path.join(repo, au_)) and not lauf(bericht, "lage_gps", f"{PY} -I tools/lage_gps_pruefen.py {Z} {au_}", repo, log):
+            print("    WARNUNG lage_gps: Ausrichtung widerspricht dem Foto-GPS - audit/lage_gps.json ansehen, NICHT modellieren", flush=True)
+        if os.path.exists(wk_):
+            if not lauf(bericht, "grundriss", f"{PY} -I tools/wolke_grundriss_pruefen.py {Z} --wolke {wk_}", repo, log):
+                print("    WARNUNG grundriss: Wolke auf der Strasse oder Lage gegen LoD2 mehrdeutig - audit/wolke_grundriss.png ansehen, NICHT modellieren", flush=True)
     _SEITEN = SEITEN_ALLE
     if dran("entzerren") and haupt.lower() not in _SEITEN:                                         # Netz 'alle' (Buendel an LoD2): keine einseitige Tiefendrift -> ueberspringen statt abbrechen (Kaufhaus: KeyError 'alle')
         bericht["schritte"].append(dict(schritt="entzerren", ok=True, uebersprungen=True, grund=f"Netz '{haupt}' ist keine Fassadenseite {sorted(_SEITEN)}; Buendel haelt die Wolke an LoD2/DGM1")); json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)

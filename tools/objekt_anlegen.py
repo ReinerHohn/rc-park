@@ -30,6 +30,13 @@ def main():
         p = os.path.join(d, fn)
         if os.path.exists(p): print("vorhanden, nicht ueberschrieben:", p); continue
         json.dump(data, open(p, "w"), indent=1, ensure_ascii=False); print("angelegt:", p)
+    # Fotoordner aus objekt.json["fotos_dir"] anlegen (Lehre Schwabentor 13.11.: Pfad zeigte ins Leere, kein Werkzeug fand Fotos).
+    # --fotos-quelle DIR: Fotoordner wird dorthin verlinkt, wenn er noch fehlt (Symlink, Daten bleiben an ihrem Platz).
+    fd = os.path.join(root, obj["fotos_dir"]); os.makedirs(fd, exist_ok=True) if not os.path.exists(fd) else None
+    fq = opt("--fotos-quelle")
+    if fq and os.path.isdir(fq) and os.path.isdir(fd) and not os.listdir(fd):
+        os.rmdir(fd); os.symlink(os.path.abspath(fq), fd); print("fotos verlinkt:", fd, "->", fq)
+    print("fotos_dir bereit:", fd, f"({len(os.listdir(fd)) if os.path.isdir(fd) else 0} Eintraege)")
     gp = os.path.join(root, genfile)
     if not os.path.exists(gp):
         open(gp, "w").write(f'''#!/usr/bin/env python3

@@ -28,6 +28,11 @@ M.append(entry("Martinstor einfach","Generator v2 · 45,9 m","modelle/h0/martins
   "Erster parametrischer Entwurf aus LOD2-Daten: quadratischer Schaft mit Torbogen und Spitzhelm. Wasserdicht, aber ohne Detail und mit dem Foto verglichen deutlich schlechter als das Detailmodell.",3,status=("warn","grob")))
 M.append(entry("Ravenna-Viadukt","Brücke · Generator","modelle/h0/ravenna_h0.stl",
   "Eisenbahnviadukt über die Ravennaschlucht aus dem Brückengenerator. Wasserdicht, in 40 Teile für den Druck geteilt, 6 % der Wand sind dünner als 0,8 mm und müssen vor dem Druck geprüft werden.",40,status=("warn","dünne Stellen")))
+if os.environ.get("VIEWER_NUR") == "1": M.clear()   # nur die Zusatz-Modelle zeigen
+# Zusatz-Modelle per Umgebungsvariable VIEWER_EXTRA="name|tag|stl-pfad|notiz;..." (Standard: keine, Kaufhaus-Ausgabe unveraendert)
+for _e in [x for x in os.environ.get("VIEWER_EXTRA", "").split(";") if x.strip()]:
+    _n, _t, _p, _no = _e.split("|", 3)
+    M.append(entry(_n, _t, _p, _no, parts=1))
 tpl=open(S+"/viewer_vorlage.html").read()
 out=sys.argv[1] if len(sys.argv)>1 else R+"modelle/h0/viewer.html"
 open(out,"w").write(tpl.replace("/*MODELS*/[]",json.dumps(M)))

@@ -1,0 +1,7 @@
+{
+ "regel": "Lage-Veto Fluegel: Punkte mit x>3,5 und y<-1,5 (Modellrahmen, Median-Zentrum) entfernt. Achsmessung Kamera 131: Fluegel liegt ~6 m hinter der Gebaeudevorderseite (Innenseite). VORLAEUFIG, Nutzer-Entscheidung ausstehend.",
+ "entfernt_fluegel": 204715,
+ "behalten": 3101345,
+ "basis": "punkte_modell_schwabentor_veto.npy",
+ "datum": "2026-11-14"
+}

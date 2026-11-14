@@ -1,17 +1,17 @@
 {
  "stl": "/home/oem/git/rc-park/modelle/stl/schwabentor_1-87.stl",
  "werte": {
-  "hoehe": 51.00000109863281,
+  "hoehe": 50.799997741699215,
   "wasserdicht": 1.0,
   "koerper": 1.0
  },
  "pruefungen": [
   {
-   "name": "Gesamthoehe (m)",
-   "wert": 51.00000109863281,
+   "name": "Gesamthoehe Turm (m)",
+   "wert": 50.799997741699215,
    "soll": [
-    49.47,
-    52.53
+    49.4,
+    51.2
    ],
    "ok": true,
    "status": "ok"

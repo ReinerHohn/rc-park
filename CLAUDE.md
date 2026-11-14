@@ -10,6 +10,7 @@ Aktueller Stand: `modelle/STAND_2026-11-12_VORMITTAG.md` (neueste STAND_*-Datei)
 - Nach Bau: `tools/fehlteile_finden.py`, `tools/foto_diff.py`, `tools/teile_lage_pruefen.py`; vor Zeigen/Druck Teil neben Referenzfoto ansehen.
 - Nach tools-Aenderung: `python3 tools/regression.py modelle/<objekt>/objekt.json --pruefen`.
 - Linienhafte Features (Rippen, Baender, Leisten, Stäbe) NIE nach Farbschwelle/Wolke: Mehrfoto-Sweep mit Stabilitaetskarten (`tools/kanten_tiefe_sweep_flaeche.py`, Tiefenband um Flaeche) -> `tools/kanten_features.py --farbe stabil --sweep` (Luecken per Belegung/Spline, Rauschen faellt weg) -> `tools/features_in_objekt.py`; danach Abnahme + Render neben Foto. Druck-Teilnetze: erst `druck.splitter_verwerfen` pruefen (Mini-Splitter), nicht Konsolen.
+- Nach dichter Wolke (jedes Objekt, auch im Nullstart Schritt `grundriss`): `tools/kamera_abdeckung.py <sparse>` (Kameraluecke >90 Grad = Seite ungesehen) + `tools/wolke_grundriss_pruefen.py <objekt.json> --wolke <npy>` (rc 3 = Wolkenhaufen auf der Strasse = falsch verortetes Teilnetz, nicht modellieren; Test B dort nur Hinweis) + `tools/lage_gps_pruefen.py <objekt.json> <SFM-AUSRICHTUNG.json>` (Foto-GPS gegen Lage: Massstab/Drehung, rc 3).
 - Quellen-Blindheit beachten (Laser/LoD2/Fotos/Dokumente); Quellenwidersprueche nicht mitteln.
 - Neues Bauteil/falsch: Agentenauftrag aus `modelle/VORLAGE_BAUTEIL_RUNDE.md`.
 

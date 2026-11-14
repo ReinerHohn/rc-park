@@ -1,0 +1,11 @@
+{
+ "regel": "Sparse-Stuetzung: dichte Punkte mit Abstand > 5x typischer Sparse-Abstand (Sparse-zu-Sparse-Median) zum naechsten triangulierten Punkt entfernt. Generische Regel, identisch fuer alle Objekte.",
+ "entfernt": 589175,
+ "behalten": 2717383,
+ "anteil_entfernt": 0.1782,
+ "vergleich": {
+  "kaufhaus_dicht_alle": 0.1269,
+  "martinstor_dicht_nord": 0.0814
+ },
+ "datum": "2026-11-14"
+}

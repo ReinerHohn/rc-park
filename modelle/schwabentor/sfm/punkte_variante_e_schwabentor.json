@@ -1,0 +1,15 @@
+{
+ "basis": "punkte_modell_schwabentor.npy ohne 498 Fernpunkte",
+ "haus_punkte": 190731,
+ "turmwand_streifen": 13984,
+ "drehung_grad": 90.0,
+ "dx": 3.6,
+ "dy": -3.3,
+ "dz": 0.0,
+ "zentrum": [
+  0.0,
+  -0.86
+ ],
+ "quelle": "ANNAHME: Variante E, Drehung +90 Grad aus Fassadennormale (parallel zur Turm-Aussenwand, Aussenfassade nach aussen), a=-5,2 b buendig an Turm-Aussenwand",
+ "n": 3306060
+}

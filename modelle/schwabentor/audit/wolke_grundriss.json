@@ -1,0 +1,115 @@
+{
+ "werkzeug": "wolke_grundriss_pruefen.py",
+ "wolke": "modelle/schwabentor/sfm/punkte_modell_schwabentor_variante_j.npy",
+ "lod2_gebaeude": 36,
+ "wandpunkte": 1721402,
+ "strasse": {
+  "anteil": 0.0008,
+  "haufen": [
+   {
+    "punkte": 381,
+    "mitte": [
+     8.3,
+     5.6
+    ],
+    "ausdehnung_m": [
+     8,
+     8
+    ]
+   },
+   {
+    "punkte": 331,
+    "mitte": [
+     17.1,
+     5.5
+    ],
+    "ausdehnung_m": [
+     5,
+     6
+    ]
+   },
+   {
+    "punkte": 302,
+    "mitte": [
+     6.9,
+     11.6
+    ],
+    "ausdehnung_m": [
+     5,
+     7
+    ]
+   }
+  ],
+  "warnung": false
+ },
+ "eindeutigkeit": {
+  "identitaet_anteil": 0.5288,
+  "beste_nahe_identitaet": {
+   "anteil": 0.5335567593574524,
+   "spiegel": 0,
+   "drehung": 359,
+   "verschiebung": [
+    0.25,
+    0.0
+   ]
+  },
+  "beste_alternative": {
+   "anteil": 0.35258084535598755,
+   "spiegel": 1,
+   "drehung": 358,
+   "verschiebung": [
+    3.5,
+    -1.75
+   ]
+  },
+  "abstand_relativ": 0.339,
+  "warnung": false,
+  "top5": [
+   {
+    "anteil": 0.5335567593574524,
+    "spiegel": 0,
+    "drehung": 359,
+    "verschiebung": [
+     0.25,
+     0.0
+    ]
+   },
+   {
+    "anteil": 0.5288093686103821,
+    "spiegel": 0,
+    "drehung": 0,
+    "verschiebung": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "anteil": 0.5209143161773682,
+    "spiegel": 0,
+    "drehung": 1,
+    "verschiebung": [
+     -0.25,
+     0.0
+    ]
+   },
+   {
+    "anteil": 0.49587443470954895,
+    "spiegel": 0,
+    "drehung": 358,
+    "verschiebung": [
+     0.5,
+     0.25
+    ]
+   },
+   {
+    "anteil": 0.4953017830848694,
+    "spiegel": 0,
+    "drehung": 2,
+    "verschiebung": [
+     -0.25,
+     -0.25
+    ]
+   }
+  ]
+ }
+}

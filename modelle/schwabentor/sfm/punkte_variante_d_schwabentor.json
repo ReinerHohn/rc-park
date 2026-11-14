@@ -1,0 +1,15 @@
+{
+ "basis": "punkte_modell_schwabentor.npy ohne 498 Fernpunkte",
+ "haus_punkte": 190731,
+ "turmwand_streifen": 13984,
+ "drehung_grad": -180.0,
+ "dx": 6.5,
+ "dy": 7.1,
+ "dz": 0.0,
+ "zentrum": [
+  0.0,
+  -0.86
+ ],
+ "quelle": "Nutzerschaetzung Viewer 14:22",
+ "n": 3306060
+}

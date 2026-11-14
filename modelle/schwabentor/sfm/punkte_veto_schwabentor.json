@@ -1,0 +1,7 @@
+{
+ "regel": "Lage-Veto Wolke: Punkte mit Abstand >=30 m (xy, Median Modellwolke) ausgeschlossen. Form nicht aus Wolke.",
+ "entfernt": 498,
+ "behalten": 3306060,
+ "quelle": "punkte_modell_schwabentor.npy (Original unveraendert)",
+ "datum": "2026-11-14"
+}

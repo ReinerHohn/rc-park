@@ -1,26 +1,49 @@
-# Massnachweis Schwabentor (automatisch aus masstabelle.json, 2026-11-01)
+# Massnachweis Schwabentor (automatisch aus masstabelle.json, 2026-11-14)
 
 Status je Mass: **OK** = Istwert im Sollbereich der Quelle; **WIDERSPRUCH** = Quellen uneins (nicht gemittelt); **FEHLER** = Modell verletzt die Quelle.
 Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im selben Foto; *modell* = zirkulaer (nur Richtung belastbar).
 
 | Merkmal | Ist | Soll | Quelltyp | Massstab | Status | Quelle |
 |---|---|---|---|---|---|---|
-| Gesamthoehe (m) | 51.00 | 49.47..52.53 | dokument | dokument | OK | Wikipedia: Schwabentor Freiburg, Turm 51 m |
+| Gesamthoehe Turm (m) | 50.80 | 49.4..51.2 | lod2 | lod2 | OK | Stadt-LoD2 DEBWL001000hPLcp First 50,80 m (Objekt PLcp, GML-Name 'Schwabentor'); Kontrollen: Laser DOM1-2017 Max 49,62 m (blind fuer Spitze, nur Kontrolle), Wikipedia 51 m |
 | Wasserdicht (1=ja) | 1.00 | 1..1 | modell | - | OK | Druckfaehigkeit |
 | Anzahl getrennte Koerper | 1.00 | 1..1 | modell | - | OK | Schwebende Teile |
 
 ## Belegt durch
 
-- **dokument**: 1 von 1 Pruefungen gruen (Bauforschung/Denkmalamt/Wikipedia; Bezugshoehe oft unklar (60 vs 65 m))
+- **lod2**: 1 von 1 Pruefungen gruen (amtlicher Grundriss + Traufe/First, keine Aufbauten/Details)
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
 
-## Elemente des Generators: 1 belegt, 1 Annahmen
+## Elemente des Generators: 3 belegt, 0 Annahmen
 
-- dach: Grundkoerper - ANNAHME: Rumpf noch ohne Quelle
+- wand: Turmschaft - LoD2 DEBW_001000hPLcp (LGL): GroundSurface + Wandoberkante 37,00 m
+- dach: Turmdach - First: Stadt-LoD2 DEBWL001000hPLcp 50,80 m + Wikipedia 51 m; ANNAHME Pyramidenform (Treppengiebel nicht gemessen)
+- West: Treppentuermchen (Rundanbau) - LoD2 PLcp zweite GroundSurface, Hoehe 13,72 m (LGL heights[1]); Foto IMG_20261106_113545_1 'Zinnfiguren-Klause'
+
+## Seiten
+
+- West: KEIN FOTO - ungeprueft
 
 ## Beobachtungen ohne Pruefung
 
 - heute Anlage: Quellen sichten: Dokumente (Hoehe), LoD2 (Grundriss/Traufe), DOM1 (Dachform), Fotos je Seite -> objekt.json/quellen fuellen, Zeilen mit Quelle anlegen
+- 2026-11-13 Agent (Schwabentor-Start): QUELLENWIDERSPRUCH Hoehe: modelle/schwarzwald_katalog (tools/schwarzwald_katalog.py Z.54) fuehrt Schwabentor hoehe=26 m; Wikipedia-Eintrag in masstabelle 51 m. Nicht mitteln. Entscheidung offen, bis LoD2-Traufe/First (Stadtmodell) gemessen ist. -> LoD2 Stand 2025-12-03 (Stadt Freiburg, amtlich): Gebaeude DEBWL001000hPLcp bei E414506 N5316149 hat First 50,80 m ueber Gelaende (Traufe 9,84 m), Fussflaeche ca. 10,6 m tief. Passt zu Wikipedia 51 m, widerspricht 26 m (Katalog). Zuordnung Turm<->LoD2 per Foto pruefen (Fotos 193 eigene + Commons).
+- 2026-11-13 Agent (lod2_kandidaten.py): LOD2-Kandidaten um E414515 N5316164 (r=45): DEBWL0010007Tvdv First 25,82 m, Traufe 10,29 m, 14,7 m entfernt, Tiefe 19,9 m = passt zu Katalog 26 m und zu Fotos (Turm ca. 2x Haeuser). DEBWL001000hPLcp (50,80 m) liegt 17,7 m entfernt - vermutlich anderer Bau. Zuordnung NOCH NICHT per Foto/SfM bestaetigt. -> SfM-Wolke (Fotos) gegen Tvdv-Grundriss pruefen; danach Soll-Hoehe setzen und Generator bauen
+- 2026-11-13 Agent (Wolken-Zylinder): SfM-Wolke im Modellsystem (65717 Punkte): 99 % der z-Werte <= 15,3 m, KEIN Punkt darueber. Obere 10-25 m des Turms fehlen in der Wolke -> Hoehe (25,8 vs 50,8 m) aus Fotos nicht messbar. Zylinder-Schnitt r<=15 veraendert nichts. Ausrichtung instabil (Massstab 0,112 vs 0,257). -> Hoehe per Entscheidung/anderer Quelle klaeren; Wolke fuer obere Hoehen gezielt mit Fotos aus Hoehe (Drohne/Leiter/Nachbardach) ergaenzen, falls verfuegbar
+- 2026-11-13 Agent (LGL-Laser): Freie amtliche Laserdaten LGL BW (DOM1 1 m minus DGM1, Kachel 413_5316 / Raster 414_5316, Lizenz dl-de/by 2.0): Hoehe ueber Grund am Mittelpunkt LOD2 Tvdv = 25,5 m (p98, 12-m-Fenster); am Mittelpunkt hPLcp = 45,8 m. LOD2 Firste: Tvdv 25,82 m, hPLcp 50,80 m. Beide Gebaeude sind real; die Frage ist nur, welches das Tor ist. Fotos: Tor ca. 2x Haeuser -> Tvdv. Wikipedia 51 m = vermutlich hPLcp (nicht gemittelt). -> Entscheidung: Tor = Tvdv (25,8 m) oder hPLcp; danach Soll mit Quelle setzen und Pruefung Wikipedia-Zeile als WIDERSPRUCH kennzeichnen. Drohnenvideos: Clips nicht dem Tor zuordenbar (Bildabgleich ohne Treffer).
+- 2026-11-13 Nutzer-Entscheidung: Wikipedia 51 m (Quelle dokument, Soll 49,47-52,53) NICHT als Pruefung gewertet: Bezugshoehe unklar (60 oder 65 m), widerspricht LOD2 Tvdv (25,82 m) und Laser (25,5 m). Nicht gemittelt. Originalzeile: {"name": "Gesamthoehe Wikipedia 51 m (WIDERSPRUCH, nicht gemittelt)", "wert": "hoehe", "soll": [49.47, 52.53], "quelle": "Wikipedia: Schwabentor Freiburg, Turm 51 m", "quelltyp": "dokument", "merkmal": "absolut_hoehe", "massstab": "dokument"} -> nur bei neuer belastbarer Quelle wieder aufnehmen
+- 2026-11-13 Agent (alle Quellen): Zweite LOD2-Quelle (LGL, LoD2_32_414_5316): Tvdv First 28,67 m (Traufe 3,82 m, unplausibel niedrig), hPLcp First 45,98 m. Stadt-LOD2: Tvdv 25,82 m, hPLcp 50,80 m. Laser DOM1-DGM1 Mitte: Tvdv 25,5 m, hPLcp 45,8 m. Laser stuetzt bei Tvdv die Stadt-Daten, bei hPLcp die LGL-Daten. Hoehe Tvdv = 25,5 bis 28,7 m, NICHT gemittelt. DOP20-Luftbild (LGL 2025, 20 cm): Dachform am Tvdv-Mittelpunkt NICHT eindeutig Walm; zwei gruene Kupferkuppen im Ausschnitt (Fotos vom Tor zeigen gruenes Dach). -> Dachform per Foto (Fassade/Dachkante) klaeren; Hoehe Tvdv im Modell bei 25,8 (Stadt-LOD2, Laser-gestuetzt) mit Band 25,5-28,7 dokumentieren
+- 2026-11-14 Nutzer (Sichtbeobachtung): Wolke auf der rechten Seite am Schwabentor gehoert nicht hin. Ansicht/Seite noch nicht eindeutig: in seiten.jpg (Draufsicht) zeigt sich rechts oben eine kleine Ausbuchtung am Dachrand; Wolke in Vorschau ist nur Schema-Rauschen. -> Nutzer nach Ansicht fragen (Foto/Viewer-Ansicht/Seite). Dann Wolkenpunkte rechts im Objekt-Koordinatensystem zaehlen (Lage pruefen), bevor Generator geaendert wird.
+- 2026-11-14 Agent (Messung dichte Wolke): Dichte Wolke dicht/fused.ply (3.306.558 Punkte, SfM-Frame): getrennter Haufen 498 Punkte (0,015 %) bei x 2,9-4,5 / y -7,0 bis -4,65 / z -25 bis -19 (Median z -24,6), 2-6,5 m von der Gebaeudewolke entfernt (Gebaeude z 0,7-3,1). Liegt in der Draufsicht unten rechts. In punkte_modell_schwabentor.npy (gleiche Anzahl) KEIN Punkt z<-10: Transformation des Modellframes nicht geklaert, Lage dort noch nicht zugeordnet. -> Ausrichtungs-Transformation (SFM-AUSRICHTUNG-schwabentor.json) anwenden, Haufen im Modellframe lokalisieren, pruefen ob er ins Modell/Generator geht. Dann Lage-Veto (Wolke) anwenden, Form nicht aus Wolke.
+- 2026-11-14 Agent (Lage-Veto Wolke): Haufen = 498 Punkte, im Modellrahmen bei x -81, y -101, z 7-14 (ca. 120 m vom Gebaeude). Transformation SFM-AUSRICHTUNG (s, R, t) geprueft: Vorwaertsprobe 0,0 m. Trennung eindeutig: alle entfernten Punkte >= 95 m, alle behaltenen <= 24 m vom Zentrum. Gefilterte Kopie sfm/punkte_modell_schwabentor_veto.npy (+ _farben_, punkte_veto_schwabentor.json). Original unveraendert. Generator modelle/schwabentor_gen.py liest keine Wolke; betrifft nur SfM-Auswertung/Viewer. -> Viewer/Auswertungen mit der _veto-Datei laufen lassen und Sichtbild pruefen; Original-Datei nur mit Auftrag aendern.
+- 2026-11-14 Nutzer (Sichtbeobachtung im 3D-Viewer): Rechter Gebaeudefluegel (neben Turm) im 3D-Viewer falsch: duenne diagonale Punktreihe rechts, im Viewer uebereinander mit Teilen der Rueckseite. Ort noch nicht eindeutig abgegrenzt. -> Nutzer bestimmt den falschen Bereich (Draufsicht-Markierung). Kandidatenregel (x>3,5 & y<-1,5: 204.715 Punkte) waere zu grob; nicht ohne Abgrenzung entfernen.
+- 2026-11-14 Agent (Rueckprojektion + Overlay): Fluegel-Punkte (x>3,5 / y<-1,5) in Foto IMG_20261106_113902 projiziert: liegen auf dem realen Gebaeude rechts neben dem Turm (Rundbogen-Durchfahrt, Fenster, Gesims). Abstand Kamera-Punkte ca. 2 SfM-Einheiten (plausibel fuer Strassenabstand). Foto-NCC Fluegel 0,52 = Fassade 0,52 (schwacher Test). Kein Hinweis auf falschen Abgleich. Die Wolke zeigt dieses Haus; das Modell (LOD2 Tvdv, nur Turm) nicht. Overlay: scratchpad/overlay_131.jpg -> Nutzer entscheidet: Haus rechts gehoert zum Schwabentor-Komplex oder nicht. Wenn nicht: Ausschluss ueber Objektgrenze (Turm), nicht ueber Wolkenfilter.
+- 2026-11-14 Agent (bereinigte Wolke): Fluegel (x>3,5, y<-1,5, 204.715 Punkte) aus Kopie punkte_modell_schwabentor_sauber.npy entfernt; Original unveraendert. Entscheidung Innenseite vorlaeufig (Achsmessung Kamera 131). 3D-Ansicht v2 zeigt Fluegel in Orange. -> Nutzer bestaetigt oder verwirft Fluegel-Entfernung. Dann Generator nicht betroffen (liest keine Wolke).
+- 2026-11-14 Nutzer-Entscheidung: Fluegel rechts neben dem Turm wird entfernt (Variante A ist Stand). Fotos 144/156: Punkte im Himmel bzw. leerem Raum. Triangulation stuetzt die Punkte; ungeklaert, aber nicht Teil der Entscheidung. -> Ansicht v3 pruefen (Node fehlt, ungeprueft). Kaufhaus/Martinstor Fotopruefung der markierten Bloecke offen.
+- 2026-11-14 Nutzer: Hausfluegel (Aussenwand Richtung Schlossbergring) falsch verortet: liegt als 1 m duenne Scheibe auf der Strasse statt als Rueckseite des Fachwerkhauses links vom Turm (Stadtansicht); Wand vom Schlossbergring fehlt. -> Fluegel an LoD2-Grundriss des Fachwerkhauses setzen; Beleg unabhaengig vom Fit: Dachprofil/Traufe gegen LoD2, Wandlaenge, Nullvergleich gegen alle anderen Waende, Bild neben Foto.
+- 2026-11-14 Claude: QUELLENWIDERSPRUCH First PLcp: LGL-LoD2-Kachel 45,98 m gegen Stadt-LoD2 50,80 m, Laser DOM1 49,62 m, Wikipedia 51 m. Nicht gemittelt; Soll aus Laser/Stadt/Wikipedia. -> Turmspitze am Foto messen (tools/foto_mass.py), sobald Turm ueber 22 m (Wolke) bzw. Spitze fotografiert ist.
+- 2026-11-14 Claude: Treppentuermchen-Hoehe: LGL heights[1] 13,72 m; Foto IMG_20261106_113545_1 wirkt hoeher (Haube nahe Galerie). Wolke trennt nicht (mit Turmwand vermischt). -> Hoehe am Foto mit tools/foto_mass.py messen; bis dahin ANNAHME LGL 13,72 m.
+- 2026-11-14 Claude: Turmdach als Pyramide ist ANNAHME; echtes Dach mit Treppengiebeln (Foto, Wolke) noch nicht modelliert. Fachwerkhaus Tvdv und Fluegel (Ringseite) gehoeren nicht zum Generator. -> Dachform aus Wolke J + Fotos (VORLAGE_BAUTEIL_RUNDE)
 
 ## Grenze
 

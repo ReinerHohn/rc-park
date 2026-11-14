@@ -1,0 +1,166 @@
+{
+ "kameras": 178,
+ "luecken": [
+  {
+   "seite": "nord",
+   "band_m": "0-5",
+   "median": 0,
+   "aufnahmeort_modell_m": [
+    37.0,
+    -0.7,
+    2.5
+   ],
+   "standort_wgs84": [
+    47.993292,
+    7.854195
+   ],
+   "blick_kompass_grad": 166,
+   "empfehlung": "nord-Seite, 0-5 m Hoehe: stehe bei 47.993292, 7.854195, Hoehe 2.5 m, Blick Kompass 166 Grad (Wand); mind. 3 Fotos. Jetzt 0 Ansichten."
+  },
+  {
+   "seite": "nord",
+   "band_m": "5-10",
+   "median": 0,
+   "aufnahmeort_modell_m": [
+    37.0,
+    -0.7,
+    7.5
+   ],
+   "standort_wgs84": [
+    47.993292,
+    7.854195
+   ],
+   "blick_kompass_grad": 166,
+   "empfehlung": "nord-Seite, 5-10 m Hoehe: stehe bei 47.993292, 7.854195, Hoehe 7.5 m, Blick Kompass 166 Grad (Wand); mind. 3 Fotos. Jetzt 0 Ansichten."
+  },
+  {
+   "seite": "nord",
+   "band_m": "10-15",
+   "median": 0,
+   "aufnahmeort_modell_m": [
+    37.0,
+    -0.7,
+    12.5
+   ],
+   "standort_wgs84": [
+    47.993292,
+    7.854195
+   ],
+   "blick_kompass_grad": 166,
+   "empfehlung": "nord-Seite, 10-15 m Hoehe: stehe bei 47.993292, 7.854195, Hoehe 12.5 m, Blick Kompass 166 Grad (Wand); mind. 3 Fotos. Jetzt 0 Ansichten."
+  },
+  {
+   "seite": "nord",
+   "band_m": "15-20",
+   "median": 0,
+   "aufnahmeort_modell_m": [
+    37.0,
+    -0.7,
+    17.5
+   ],
+   "standort_wgs84": [
+    47.993292,
+    7.854195
+   ],
+   "blick_kompass_grad": 166,
+   "empfehlung": "nord-Seite, 15-20 m Hoehe: stehe bei 47.993292, 7.854195, Hoehe 17.5 m, Blick Kompass 166 Grad (Wand); mind. 3 Fotos. Jetzt 0 Ansichten."
+  },
+  {
+   "seite": "nord",
+   "band_m": "20-25",
+   "median": 0,
+   "aufnahmeort_modell_m": [
+    37.0,
+    -0.7,
+    22.5
+   ],
+   "standort_wgs84": [
+    47.993292,
+    7.854195
+   ],
+   "blick_kompass_grad": 166,
+   "empfehlung": "nord-Seite, 20-25 m Hoehe: stehe bei 47.993292, 7.854195, Hoehe 22.5 m, Blick Kompass 166 Grad (Wand); mind. 3 Fotos. Jetzt 0 Ansichten."
+  },
+  {
+   "seite": "west",
+   "band_m": "0-5",
+   "median": 0,
+   "aufnahmeort_modell_m": [
+    2.4,
+    34.2,
+    2.5
+   ],
+   "standort_wgs84": [
+    47.99291,
+    7.853862
+   ],
+   "blick_kompass_grad": 76,
+   "empfehlung": "west-Seite, 0-5 m Hoehe: stehe bei 47.992910, 7.853862, Hoehe 2.5 m, Blick Kompass 76 Grad (Wand); mind. 3 Fotos. Jetzt 0 Ansichten."
+  },
+  {
+   "seite": "west",
+   "band_m": "5-10",
+   "median": 0,
+   "aufnahmeort_modell_m": [
+    2.4,
+    34.2,
+    7.5
+   ],
+   "standort_wgs84": [
+    47.99291,
+    7.853862
+   ],
+   "blick_kompass_grad": 76,
+   "empfehlung": "west-Seite, 5-10 m Hoehe: stehe bei 47.992910, 7.853862, Hoehe 7.5 m, Blick Kompass 76 Grad (Wand); mind. 3 Fotos. Jetzt 0 Ansichten."
+  },
+  {
+   "seite": "west",
+   "band_m": "10-15",
+   "median": 0,
+   "aufnahmeort_modell_m": [
+    2.4,
+    34.2,
+    12.5
+   ],
+   "standort_wgs84": [
+    47.99291,
+    7.853862
+   ],
+   "blick_kompass_grad": 76,
+   "empfehlung": "west-Seite, 10-15 m Hoehe: stehe bei 47.992910, 7.853862, Hoehe 12.5 m, Blick Kompass 76 Grad (Wand); mind. 3 Fotos. Jetzt 0 Ansichten."
+  },
+  {
+   "seite": "west",
+   "band_m": "15-20",
+   "median": 0,
+   "aufnahmeort_modell_m": [
+    2.4,
+    34.2,
+    17.5
+   ],
+   "standort_wgs84": [
+    47.99291,
+    7.853862
+   ],
+   "blick_kompass_grad": 76,
+   "empfehlung": "west-Seite, 15-20 m Hoehe: stehe bei 47.992910, 7.853862, Hoehe 17.5 m, Blick Kompass 76 Grad (Wand); mind. 3 Fotos. Jetzt 0 Ansichten."
+  },
+  {
+   "seite": "west",
+   "band_m": "20-25",
+   "median": 0,
+   "aufnahmeort_modell_m": [
+    2.4,
+    34.2,
+    22.5
+   ],
+   "standort_wgs84": [
+    47.99291,
+    7.853862
+   ],
+   "blick_kompass_grad": 76,
+   "empfehlung": "west-Seite, 20-25 m Hoehe: stehe bei 47.992910, 7.853862, Hoehe 22.5 m, Blick Kompass 76 Grad (Wand); mind. 3 Fotos. Jetzt 0 Ansichten."
+  }
+ ],
+ "min": 3
+}

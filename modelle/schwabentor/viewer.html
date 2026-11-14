@@ -1,0 +1,159 @@
+<title>H0 Modellschau</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: Werkbank – Modellliste links, Drehteller mittig, Datenblatt unten. Papierblau-Grau, Kupfer als einzige Betonung. */
+:root{
+  --bg:#e9edf0; --panel:#f7f9fa; --ink:#18232b; --mute:#5b6a74; --line:#c6d0d6;
+  --accent:#b4531f; --ok:#2f7d4f; --warn:#a9650b; --stage-a:#f4f7f8; --stage-b:#d3dbe0; --model:#c9ccd0;
+  --display:'Archivo','Helvetica Neue',Arial,sans-serif; --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f161b; --panel:#172027; --ink:#e6edf1; --mute:#8ea0ab; --line:#2a3943;
+  --accent:#e1895a; --ok:#6cc38e; --warn:#e0a24a; --stage-a:#1e2a32; --stage-b:#0d1317; --model:#aeb5bb; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f161b; --panel:#172027; --ink:#e6edf1; --mute:#8ea0ab; --line:#2a3943;
+  --accent:#e1895a; --ok:#6cc38e; --warn:#e0a24a; --stage-a:#1e2a32; --stage-b:#0d1317; --model:#aeb5bb; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--display);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;justify-content:space-between}
+h1{margin:0;font-size:clamp(26px,4vw,40px);font-weight:800;letter-spacing:-.02em;line-height:1}
+.sub{font-family:var(--mono);font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em}
+.main{display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:760px){.main{grid-template-columns:minmax(0,1fr)}}
+.list{display:flex;flex-direction:column;gap:8px;min-width:0}
+@media (max-width:760px){.list{flex-direction:row;overflow-x:auto;padding-bottom:4px}}
+.item{all:unset;box-sizing:border-box;cursor:pointer;background:var(--panel);border:1px solid var(--line);padding:10px 12px;min-width:200px;
+  display:grid;gap:3px;text-align:left}
+.item:hover{border-color:var(--mute)}
+.item:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.item[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.item b{font-size:15px;font-weight:600}
+.item span{font-family:var(--mono);font-size:11px;color:var(--mute)}
+.stagebox{background:var(--panel);border:1px solid var(--line);min-width:0}
+#stage{position:relative;height:min(68vh,620px);min-height:380px;background:radial-gradient(ellipse at 50% 35%,var(--stage-a),var(--stage-b));overflow:hidden;touch-action:none}
+#stage canvas{display:block;width:100%;height:100%}
+.bar{display:flex;flex-wrap:wrap;gap:8px;padding:8px 10px;border-top:1px solid var(--line);align-items:center}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;font-family:var(--mono);font-size:12px;padding:6px 10px;border:1px solid var(--line);color:var(--ink)}
+.btn:hover{border-color:var(--mute)} .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.hint{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--mute)}
+.sheet{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.sheet div{background:var(--panel);padding:10px 12px;min-width:0}
+.sheet dt{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
+.sheet dd{margin:3px 0 0;font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.ok{color:var(--ok)} .warn{color:var(--warn)}
+.note{background:var(--panel);border:1px solid var(--line);padding:12px 14px;font-size:14px;line-height:1.5;max-width:75ch}
+.note b{font-weight:600}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>H0 Modellschau</h1>
+    <div class="sub">Maßstab 1:87 · Struktur ohne Textur · STL aus dem rc-park</div>
+  </header>
+  <div class="main">
+    <div class="list" id="list"></div>
+    <div class="stagebox">
+      <div id="stage" aria-label="3D-Ansicht, mit der Maus drehen"></div>
+      <div class="bar">
+        <button class="btn" id="bWire" aria-pressed="false">Gitter</button>
+        <button class="btn" id="bRot" aria-pressed="true">Drehen</button>
+        <button class="btn" id="bFig" aria-pressed="false">H0-Figur 21 mm</button>
+        <span class="hint">Ziehen: drehen · Scroll: zoomen · Rechtsklick: verschieben</span>
+      </div>
+    </div>
+  </div>
+  <dl class="sheet" id="sheet"></dl>
+  <div class="note" id="note"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+<script>
+const MODELS = [{"name": "Schwabentor Generator", "tag": "Torturm \u00b7 Annahme Tvdv 25,8 m \u00b7 Walm angenommen", "faces": 20, "watertight": true, "parts": 1, "status": "ok", "status_text": "", "note": "Generator-Modell (Quader + Walm). Nicht gegen die Fotowolke ausgerichtet: die Wolke liegt versetzt.", "stl": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAAACAvwAAAAAAAAAAaoSlwgOZ9MIAAAAAaoSlwgOZ9MIYyOxCaoSlwsik1EIYyOxCAAAAAAAAAACAvwAAAABqhKXCA5n0wgAAAAASlglDA5n0wgAAAABqhKXCA5n0whjI7EIAAAAAAAAAAAAAAACAv2qEpcIDmfTCAAAAAGqEpcLIpNRCAAAAABKWCUMDmfTCAAAAAAAAAACAvwAAAAAAAAAAaoSlwgOZ9MIAAAAAaoSlwsik1EIYyOxCaoSlwsik1EIAAAAAAAAAAAAAAACAPwAAAABqhKXCyKTUQgAAAABqhKXCyKTUQhjI7EISlglDyKTUQhjI7EIAAAAAAAAAAIC/AAAAABKWCUMDmfTCAAAAABKWCUMDmfTCGMjsQmqEpcIDmfTCGMjsQgAAAACAPwAAAAAAAAAAEpYJQwOZ9MIAAAAAEpYJQ8ik1EIAAAAAEpYJQwOZ9MIYyOxCAAAAAAAAAAAAAAAAgL9qhKXCyKTUQgAAAAASlglDyKTUQgAAAAASlglDA5n0wgAAAAAAAAAAAAAAAIA/AAAAAGqEpcLIpNRCAAAAABKWCUPIpNRCGMjsQhKWCUPIpNRCAAAAAAAAAACAPwAAAIAAAAAAEpYJQwOZ9MIYyOxCEpYJQ8ik1EIAAAAAEpYJQ8ik1EIYyOxCAACnTFu/AAAAACkTBD9qhKXCA5n0whjI7EJkUsRBCcstwZ9GlENqhKXCyKTUQhjI7EIAAAAAAABVClm/V8EHP2qEpcIDmfTCGMjsQhKWCUMDmfTCGMjsQmRSxEEJyy3Bn0aUQwAAAAAAAAAAAAAAAIA/ZFLEQQnLLcGfRpRDgUzyQQnLLcGfRpRDZFLEQZyto8CfRpRDAACmTFu/AAAAACkTBD9kUsRBCcstwZ9GlENkUsRBnK2jwJ9GlENqhKXCyKTUQhjI7EIAAAAAAIBVClk/V8EHP2qEpcLIpNRCGMjsQmRSxEGcraPAn0aUQxKWCUPIpNRCGMjsQgAAAAAAAFUKWb9XwQc/ZFLEQQnLLcGfRpRDEpYJQwOZ9MIYyOxCgUzyQQnLLcGfRpRDAACnTFs/AAAAACkTBD+BTPJBCcstwZ9GlEMSlglDA5n0whjI7EISlglDyKTUQhjI7EIAAAAAAIAAAAAAAACAP2RSxEGcraPAn0aUQ4FM8kEJyy3Bn0aUQ4FM8kGcraPAn0aUQwAAAAAAgFUKWT9XwQc/ZFLEQZyto8CfRpRDgUzyQZyto8CfRpRDEpYJQ8ik1EIYyOxCAACmTFs/AAAAgCkTBD+BTPJBCcstwZ9GlEMSlglDyKTUQhjI7EKBTPJBnK2jwJ9GlEMAAA=="}];
+function b64(s){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u.buffer}
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const stage=document.getElementById('stage');
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(35,1,1,20000);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+stage.appendChild(renderer.domElement);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true; controls.autoRotate=true; controls.autoRotateSpeed=1.2;
+scene.add(new THREE.HemisphereLight(0xffffff,0x667788,0.75));
+const key=new THREE.DirectionalLight(0xffffff,0.9); key.position.set(300,-400,700); scene.add(key);
+const fill=new THREE.DirectionalLight(0xffffff,0.3); fill.position.set(-400,300,200); scene.add(fill);
+let grp=new THREE.Group(); scene.add(grp);
+let mat=new THREE.MeshStandardMaterial({color:0xc9ccd0,roughness:.85,metalness:0,flatShading:true});
+let wire=false, cur=null;
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(stage);
+
+function show(i){
+  cur=MODELS[i];
+  document.querySelectorAll('.item').forEach((e,k)=>e.setAttribute('aria-pressed',k===i));
+  scene.remove(grp); grp=new THREE.Group(); scene.add(grp);
+  const geo=new THREE.STLLoader().parse(b64(cur.stl));
+  geo.computeVertexNormals(); geo.computeBoundingBox();
+  const bb=geo.boundingBox, size=new THREE.Vector3(); bb.getSize(size);
+  const c=new THREE.Vector3(); bb.getCenter(c);
+  mat.color.set(css('--model')); mat.wireframe=wire;
+  const mesh=new THREE.Mesh(geo,mat);
+  mesh.position.set(-c.x,-c.y,-bb.min.z);
+  grp.add(mesh);
+  const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geo,35),new THREE.LineBasicMaterial({color:css('--ink'),transparent:true,opacity:.22}));
+  edges.position.copy(mesh.position); grp.add(edges);
+  const gsz=Math.max(size.x,size.y)*1.5;
+  const grid=new THREE.GridHelper(gsz,Math.max(4,Math.round(gsz/20)),new THREE.Color(css('--line')),new THREE.Color(css('--line')));
+  grid.rotation.x=Math.PI/2; grp.add(grid);
+  if(document.getElementById('bFig').getAttribute('aria-pressed')==='true') addFig(size);
+  const r=Math.max(size.x,size.y,size.z);
+  camera.up.set(0,0,1);
+  camera.position.set(r*1.5,-r*1.8,size.z*0.75+r*.35);
+  controls.target.set(0,0,size.z*0.45); controls.update();
+  camera.far=r*40; camera.updateProjectionMatrix();
+  sheet(size);
+}
+function addFig(size){
+  // H0-Figur: 1,80 m / 87 = 20,7 mm, neben dem Modell
+  const h=1800/87, g=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(2.2,2.6,h*.72,10),new THREE.MeshStandardMaterial({color:0xb4531f}));
+  body.rotation.x=Math.PI/2; body.position.z=h*.36;
+  const head=new THREE.Mesh(new THREE.SphereGeometry(2.4,12,10),new THREE.MeshStandardMaterial({color:0xd9b99b}));
+  head.position.z=h*.72+2.4; g.add(body,head);
+  g.position.set(size.x/2+15,-size.y/2-5,0); grp.add(g);
+}
+function sheet(size){
+  const m=cur, k=87/1000;
+  const f=(v,u)=>v.toFixed(v<10?1:0)+' '+u;
+  const st=m.status==='ok'?'<span class="ok">druckbar</span>':'<span class="warn">'+m.status_text+'</span>';
+  document.getElementById('sheet').innerHTML=[
+    ['Modell (mm)',size.x.toFixed(0)+' × '+size.y.toFixed(0)+' × '+size.z.toFixed(0)],
+    ['Original (m)',(size.x*k).toFixed(1)+' × '+(size.y*k).toFixed(1)+' × '+(size.z*k).toFixed(1)],
+    ['Flächen',m.faces.toLocaleString('de-DE')],
+    ['Wasserdicht',m.watertight?'ja':'nein'],
+    ['Druckteile',String(m.parts)],
+    ['Status',st]
+  ].map(a=>'<div><dt>'+a[0]+'</dt><dd>'+a[1]+'</dd></div>').join('');
+  document.getElementById('note').innerHTML='<b>'+m.name+'.</b> '+m.note;
+}
+const list=document.getElementById('list');
+MODELS.forEach((m,i)=>{
+  const b=document.createElement('button'); b.className='item'; b.setAttribute('aria-pressed','false');
+  b.innerHTML='<b>'+m.name+'</b><span>'+m.tag+'</span>'; b.onclick=()=>show(i); list.appendChild(b);
+});
+function tog(id,fn){const b=document.getElementById(id);b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);fn(on)}}
+tog('bWire',on=>{wire=on;mat.wireframe=on});
+tog('bRot',on=>{controls.autoRotate=on});
+tog('bFig',()=>show(MODELS.indexOf(cur)));
+controls.addEventListener('start',()=>{controls.autoRotate=false;document.getElementById('bRot').setAttribute('aria-pressed','false')});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>show(MODELS.indexOf(cur)));
+(function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera)})();
+resize(); if(MODELS.length) show(0);
+</script>

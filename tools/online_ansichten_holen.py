@@ -12,6 +12,12 @@ UA = {"User-Agent": "RCParkResearchBot/1.0 (private non-commercial research)"}
 STD = r"Blick vom|Turm|Aussicht|Aerial|Luftbild|von oben|Dach|Drohne|drone|Panorama|view from|rooftop|Kreuzblume|Achteck"
 
 
+def jpeg_ok(p):
+    """Datei ist ein echtes JPEG (Magic-Bytes FF D8, Groesse > 0)."""
+    try:
+        with open(p, "rb") as f: return f.read(2) == b"\xff\xd8"
+    except OSError: return False
+
 def api(**p):
     p["format"] = "json"; u = "https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode(p)
     r = urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=60); return json.load(r)
@@ -33,11 +39,11 @@ def main():
         time.sleep(3)
     sel = [t for t in titel if rx.search(t)][:a.max * 2]; info = []
     for i in range(0, len(sel), 20):
-        r = api(action="query", titles="|".join(sel[i:i + 20]), prop="imageinfo", iiprop="url|size|extmetadata|mime")
+        r = api(action="query", titles="|".join(sel[i:i + 20]), prop="imageinfo", iiprop="url|size|extmetadata|mime|thumbmime", iiurlwidth=2400)
         for p in r["query"]["pages"].values():
             ii = (p.get("imageinfo") or [{}])[0]; em = ii.get("extmetadata", {}); g = lambda k: re.sub("<[^>]+>", "", em.get(k, {}).get("value", ""))
             if not ii.get("url") or ii.get("mime") != "image/jpeg" or (ii.get("width") or 0) < a.min_breite or not g("LicenseShortName"): continue
-            info.append(dict(titel=p["title"], url=ii["url"].split("?")[0], page=ii.get("descriptionurl"), lic=g("LicenseShortName"), artist=g("Artist")[:100], date=g("DateTimeOriginal")[:30], w=ii["width"], h=ii["height"]))
+            info.append(dict(titel=p["title"], url=(ii.get("thumburl") or ii["url"]).split("?")[0], page=ii.get("descriptionurl"), lic=g("LicenseShortName"), artist=g("Artist")[:100], date=g("DateTimeOriginal")[:30], w=ii["width"], h=ii["height"]))
         time.sleep(3)
     info = info[:a.max]; os.makedirs(a.aus + "/orig", exist_ok=True)
     for i, m in enumerate(info): m["datei"] = f"od_{i:02d}.jpg"
@@ -45,11 +51,16 @@ def main():
     if a.nur_liste: return
     for m in info:
         p = f"{a.aus}/orig/{m['datei']}"
-        if os.path.exists(p) and os.path.getsize(p) > 0: continue
-        try: open(p, "wb").write(urllib.request.urlopen(urllib.request.Request(m["url"], headers=UA), timeout=120).read())
+        if os.path.exists(p) and jpeg_ok(p): continue
+        # Erst laden und pruefen, dann atomar schreiben: ein Fehler hinterlaesst KEINE leere Datei (Lehre Schwabentor 13.11.: od_10 war 0 Byte, Abbruch per 429 mitgezaehlt).
+        try: daten = urllib.request.urlopen(urllib.request.Request(m["url"], headers=UA), timeout=120).read()
         except Exception as e:
-            print("Abbruch", m["datei"], e); break
+            print("Abbruch", m["datei"], e, "- erneut starten, bereits geladene werden uebersprungen"); break
+        if not daten[:2] == b"\xff\xd8":
+            print("kein JPEG, verworfen:", m["datei"], len(daten), "Byte"); continue
+        open(p + ".tmp", "wb").write(daten); os.replace(p + ".tmp", p)
         time.sleep(25)
+    print("geladen (gueltige JPEG):", sum(1 for m in info if jpeg_ok(f"{a.aus}/orig/{m['datei']}")), "von", len(info))
 
 
 if __name__ == "__main__":

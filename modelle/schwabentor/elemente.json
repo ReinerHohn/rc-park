@@ -1,9 +1,26 @@
 [
  {
+  "seite": "wand",
+  "element": "Turmschaft",
+  "quelle": "LoD2 DEBW_001000hPLcp (LGL): GroundSurface + Wandoberkante 37,00 m",
+  "breite_u": 12.13,
+  "tiefe_v": 12.5,
+  "hoehe": 37.0,
+  "seite_name": "wand"
+ },
+ {
   "seite": "dach",
-  "element": "Grundkoerper",
-  "quelle": "ANNAHME: Rumpf noch ohne Quelle",
-  "hoehe": 51,
+  "element": "Turmdach",
+  "quelle": "First: Stadt-LoD2 DEBWL001000hPLcp 50,80 m + Wikipedia 51 m; ANNAHME Pyramidenform (Treppengiebel nicht gemessen)",
+  "first": 50.8,
   "seite_name": "dach"
+ },
+ {
+  "seite": "+y",
+  "element": "Treppentuermchen (Rundanbau)",
+  "quelle": "LoD2 PLcp zweite GroundSurface, Hoehe 13,72 m (LGL heights[1]); Foto IMG_20261106_113545_1 'Zinnfiguren-Klause'",
+  "hoehe": 13.72,
+  "durchmesser": 2.99,
+  "seite_name": "West"
  }
 ]

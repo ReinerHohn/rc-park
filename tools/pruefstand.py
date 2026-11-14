@@ -575,7 +575,15 @@ def main():
     for p in tab["pruefungen"]:
         q = QUELLEN.get(p.get("quelltyp"))
         if q is None: unzul.append((p["name"], f"unbekannter Quelltyp '{p.get('quelltyp')}'"))
-        elif p.get("merkmal") in q["blind"]: unzul.append((p["name"], f"Quelle '{p['quelltyp']}' ist BLIND fuer '{p['merkmal']}' ({q['hinweis']})"))
+        elif p.get("merkmal") in q["blind"] and not p.get("letzte_option"):
+            unzul.append((p["name"], f"Quelle '{p['quelltyp']}' ist BLIND fuer '{p['merkmal']}' ({q['hinweis']})"))
+        elif p.get("merkmal") in q["blind"]:
+            # Ausnahme 'letzte Option' (Nutzerfreigabe): nur wenn keine andere Quelle fuer dieses Merkmal existiert.
+            lo = p["letzte_option"]
+            andere = [x["name"] for x in tab["pruefungen"] if x is not p and x.get("merkmal") == p.get("merkmal") and x.get("quelltyp") not in ("", None) and p.get("merkmal") not in QUELLEN.get(x.get("quelltyp"), {}).get("blind", [])]
+            if andere: unzul.append((p["name"], f"'letzte_option' nicht zulaessig: andere Quelle vorhanden ({', '.join(andere)})"))
+            elif not (lo.get("begruendung") and lo.get("freigabe")): unzul.append((p["name"], "'letzte_option' braucht begruendung und freigabe"))
+            else: print(f"LETZTE OPTION: '{p['name']}' - Quelle '{p['quelltyp']}' blind fuer '{p['merkmal']}', freigegeben von {lo['freigabe']}: {lo['begruendung']}")
         elif p.get("merkmal") not in q["sieht"]: unzul.append((p["name"], f"Merkmal '{p.get('merkmal')}' fuer Quelle '{p['quelltyp']}' nicht freigegeben"))
     # 1b) Struktur-Lint (Register CB, 2026-11-03: 'zwei Boegen je Flaeche' kam aus der Wolke, getarnt als Merkmal 'schlankheit', Soll aus derselben Wolke):
     #     (i) Messarten, die ZAEHLEN/STRUKTUR messen, duerfen nur Merkmal anzahl|fassade tragen (sonst umgeht ein falsches Etikett die Quellen-Matrix);

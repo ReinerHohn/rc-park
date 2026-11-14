@@ -1,0 +1,122 @@
+<title>Schwabentor Lagekorrektur</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: Werkbank - 3D-Fenster links, Schalter + Belegtabelle rechts; schmal: untereinander */
+:root{
+  --bg:#f3f2ee; --panel:#fbfaf7; --fg:#22211d; --muted:#6b675d; --line:#d9d5ca;
+  --accent:#a3341f; --stone:#7a5a45; --cam:#2357b5; --gps:#2f8a3a; --wing:#c02aa8; --canvas:#e9e6de;
+  --f-body:"Source Sans 3",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#181715; --panel:#201f1c; --fg:#ece9e1; --muted:#a39e92; --line:#3a3833;
+  --accent:#e0745c; --stone:#c09a7e; --cam:#6b9cf0; --gps:#6cc97a; --wing:#e46cd2; --canvas:#11100e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#181715; --panel:#201f1c; --fg:#ece9e1; --muted:#a39e92; --line:#3a3833;
+  --accent:#e0745c; --stone:#c09a7e; --cam:#6b9cf0; --gps:#6cc97a; --wing:#e46cd2; --canvas:#11100e; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px}
+h1{font-size:1.5rem;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.kopf{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;max-width:72ch}
+.kopf p{margin:0;color:var(--muted)}
+.werk{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+@media (max-width:860px){.werk{grid-template-columns:minmax(0,1fr)}}
+#fenster{position:relative;width:100%;height:min(72vh,720px);min-height:360px;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--canvas)}
+#fenster canvas{display:block;width:100%;height:100%}
+.hinweis{position:absolute;left:10px;bottom:8px;font:12px var(--f-mono);color:var(--muted);pointer-events:none}
+.seite{display:flex;flex-direction:column;gap:14px;min-width:0}
+.block{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.etikett{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.lage{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.lage button{font:600 14px var(--f-body);padding:8px;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:4px;cursor:pointer}
+.lage button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.lage button:focus-visible,label:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.punkt{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+td,th{padding:4px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12px}
+td.z{font-family:var(--f-mono);font-size:12px;white-space:nowrap}
+.gut{color:var(--gps);font-weight:600}.schlecht{color:var(--accent);font-weight:600}
+.annahme{font-size:13px;color:var(--muted)}
+</style>
+
+<div class="kopf">
+  <h1>Schwabentor Lagekorrektur</h1>
+  <p>Dichte Wolke gegen LoD2: alte Lage und neue Lage (Variante J) im Vergleich. Norden zeigt in die Tiefe, rot umrandet sind Turm (PLcp) und Fachwerkhaus (Tvdv).</p>
+</div>
+<div class="werk">
+  <div id="fenster"><div class="hinweis">Ziehen: drehen · Rechts/zwei Finger: schieben · Rad: Zoom</div></div>
+  <div class="seite">
+    <div class="block">
+      <span class="etikett">Lage</span>
+      <div class="lage"><button id="b-alt" aria-pressed="false">Alte Lage</button><button id="b-neu" aria-pressed="true">Variante J</button></div>
+      <label><input type="checkbox" id="c-wing" checked><span class="punkt" style="background:var(--wing)"></span>Flügel (Ringseite) hervorheben</label>
+      <label><input type="checkbox" id="c-lod" checked><span class="punkt" style="background:var(--stone)"></span>LoD2-Wände</label>
+      <label><input type="checkbox" id="c-cam" checked><span class="punkt" style="background:var(--cam)"></span>Kameras (Rekonstruktion)</label>
+      <label><input type="checkbox" id="c-gps" checked><span class="punkt" style="background:var(--gps)"></span>GPS derselben Fotos</label>
+    </div>
+    <div class="block">
+      <span class="etikett">Belege</span>
+      <table>
+        <tr><th>Prüfung</th><th>alt</th><th>J</th></tr>
+        <tr><td>Wandpunkte auf der Straße</td><td class="z schlecht">10 %</td><td class="z gut">0,1 %</td></tr>
+        <tr><td>Drehlage gegen LoD2 eindeutig</td><td class="z schlecht">−23 %</td><td class="z gut">+34 %</td></tr>
+        <tr><td>Kamera-Median ↔ GPS-Median</td><td class="z schlecht">29 m</td><td class="z gut">5 m</td></tr>
+        <tr><td>Münster-Entfernung (Soll 310 m)</td><td class="z schlecht">178 m</td><td class="z gut">312 m</td></tr>
+        <tr><td>Turmbreite (LoD2 12,1 m)</td><td class="z schlecht">6,8 m</td><td class="z gut">12,2 m</td></tr>
+        <tr><td>Außenkameras vor der Flügelfassade</td><td class="z">–</td><td class="z gut">14 / 16</td></tr>
+      </table>
+      <span class="annahme">Münster, GPS und Turmbreite gingen nicht in den Fit ein. Fit war nur Wandlinien (Maßstab ×1,80, Drehung 134°, Flügel 189°).</span>
+    </div>
+    <div class="block">
+      <span class="etikett">Annahmen</span>
+      <span class="annahme">ANNAHME: Boden bei z = 0, Gelände eben; Flügel starr verschoben; Turmspitze der Wolke weiter unvollständig (Wolke endet bei etwa 49 m).</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const DATA = /*__DATA__*/null;
+const dec = s => { const b = atob(s), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; };
+const i16 = s => new Int16Array(dec(s).buffer);
+const auf3 = a => { const o = new Float32Array(a.length); for (let i = 0; i < a.length; i += 3) { o[i] = a[i] / 100; o[i + 1] = a[i + 2] / 100; o[i + 2] = -a[i + 1] / 100; } return o; };
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fen = document.getElementById("fenster");
+const ren = new THREE.WebGLRenderer({ antialias: true }); ren.setPixelRatio(Math.min(2, devicePixelRatio)); fen.prepend(ren.domElement);
+const szene = new THREE.Scene(); const kam = new THREE.PerspectiveCamera(50, 1, 0.5, 2000);
+kam.position.set(-55, 60, 55); const st = new THREE.OrbitControls(kam, ren.domElement); st.target.set(-8, 10, 0); st.update();
+const ALT = auf3(i16(DATA.alt)), NEU = auf3(i16(DATA.neu)), FOTO = dec(DATA.col);
+const n = DATA.n, nf = DATA.nf, farbe = new Float32Array(n * 3);
+const geo = new THREE.BufferGeometry(); const pos = new THREE.BufferAttribute(new Float32Array(NEU), 3); geo.setAttribute("position", pos);
+geo.setAttribute("color", new THREE.BufferAttribute(farbe, 3));
+const wolke = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.12, vertexColors: true })); szene.add(wolke);
+function punkte(arr, cssvar, size) { const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(arr, 3));
+  const m = new THREE.PointsMaterial({ size, color: new THREE.Color(css(cssvar)), sizeAttenuation: true }); const p = new THREE.Points(g, m); szene.add(p); return p; }
+const KA = auf3(i16(DATA.kalt)), KN = auf3(i16(DATA.kneu));
+const kams = punkte(new Float32Array(KN), "--cam", 1.0), gps = punkte(auf3(i16(DATA.gps)), "--gps", 1.0);
+const L = auf3(i16(DATA.lod)); const lg1 = [], lg2 = [];
+for (let k = 0; k < DATA.lodh.length; k++) (DATA.lodh[k] ? lg1 : lg2).push(...L.slice(k * 6, k * 6 + 6));
+function linien(a, cssvar) { const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(a), 3));
+  const l = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: new THREE.Color(css(cssvar)) })); szene.add(l); return l; }
+const lodA = linien(lg1, "--accent"), lodB = linien(lg2, "--stone");
+const $ = id => document.getElementById(id);
+function faerben() { const w = $("c-wing").checked, wc = new THREE.Color(css("--wing"));
+  for (let i = 0; i < n; i++) { if (w && i >= n - nf) { farbe[i * 3] = wc.r; farbe[i * 3 + 1] = wc.g; farbe[i * 3 + 2] = wc.b; }
+    else { farbe[i * 3] = FOTO[i * 3] / 255; farbe[i * 3 + 1] = FOTO[i * 3 + 1] / 255; farbe[i * 3 + 2] = FOTO[i * 3 + 2] / 255; } }
+  geo.attributes.color.needsUpdate = true; }
+function lage(neu) { pos.array.set(neu ? NEU : ALT); pos.needsUpdate = true; kams.geometry.attributes.position.array.set(neu ? KN : KA);
+  kams.geometry.attributes.position.needsUpdate = true; $("b-neu").setAttribute("aria-pressed", neu); $("b-alt").setAttribute("aria-pressed", !neu); geo.computeBoundingSphere(); }
+function thema() { szene.background = new THREE.Color(css("--canvas")); lodA.material.color.set(css("--accent")); lodB.material.color.set(css("--stone"));
+  kams.material.color.set(css("--cam")); gps.material.color.set(css("--gps")); faerben(); }
+$("b-alt").onclick = () => lage(false); $("b-neu").onclick = () => lage(true);
+$("c-wing").onchange = faerben; $("c-lod").onchange = e => { lodA.visible = lodB.visible = e.target.checked; };
+$("c-cam").onchange = e => kams.visible = e.target.checked; $("c-gps").onchange = e => gps.visible = e.target.checked;
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", thema);
+new MutationObserver(thema).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+function groesse() { const w = fen.clientWidth, h = fen.clientHeight; ren.setSize(w, h, false); kam.aspect = w / h; kam.updateProjectionMatrix(); }
+new ResizeObserver(groesse).observe(fen); groesse(); thema();
+(function los() { requestAnimationFrame(los); ren.render(szene, kam); })();
+</script>

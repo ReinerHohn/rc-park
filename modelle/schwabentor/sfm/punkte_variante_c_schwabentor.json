@@ -1,0 +1,7 @@
+{
+ "regel": "Variante A + Fluegel (204715 Punkte, Bezugsrahmen Modell zentriert mit c) gespiegelt an Ebene durch (0.15,-0.99), Normale (-0.74,0.67) (Turm-Langachse) war FALSCH; Variante C ist jetzt Kandidat D (Kandidat E: 180 Grad um Turmmitte (0,-0.86), dann +7.8 m in y, nach Nutzer-Markierung in der Draufsicht); KORRIGIERT: fruehere Fassung nutzte fluegel_punkte.npy im um c verschobenen Rahmen. Lage UNENTSCHIEDEN, Kandidaten A/B/Y/P siehe 3D-Ansicht v7",
+ "c": [
+  -2.514662165952805,
+  -6.902154197037862
+ ]
+}

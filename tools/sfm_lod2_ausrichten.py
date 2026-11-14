@@ -17,17 +17,33 @@ from scipy.optimize import least_squares
 from scipy.spatial import cKDTree
 from scipy.spatial.transform import Rotation as Rot
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import pycolmap
+try:
+    import pycolmap
+except ImportError:  # GPU-Umgebung: Kameras kommen aus --kameras
+    pycolmap = None
 
 
 def lod2_ziel(obj, radius, dichte=0.35):
     """LoD2-Flaechen (alle Gebaeude im Umkreis) im Modellsystem, abgetastet: Punkte, Normalen, Typ (0 Wand, 1 Dach)."""
     import lod2_gebaeude as LG
     R = obj["rahmen"]; c0 = np.array(R["mitte_utm"]); xh, yh = np.array(R["xhat_utm"]), np.array(R["yhat_utm"]); gel = R["gelaende"]
-    gml = obj["lod2"]["gml"]; picked = LG.extract(gml, center=tuple(c0), radius=radius)
+    gml = obj["lod2"]["gml"]
+    # Cache: das Einlesen des amtlichen GML ist reines Textparsen (~2 min). Schluessel: Datei (Groesse, Zeit), Mitte, Radius.
+    import pickle, hashlib
+    st = os.stat(gml); schl = hashlib.sha1(f"{gml}|{st.st_size}|{int(st.st_mtime)}|{c0.tolist()}|{radius}".encode()).hexdigest()[:16]
+    cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "modelle", ".cache_lod2"); os.makedirs(cache_dir, exist_ok=True)
+    cpfad = os.path.join(cache_dir, f"lod2_{schl}.pkl")
+    if os.path.exists(cpfad):
+        picked = pickle.load(open(cpfad, "rb")); print("LOD2: aus Cache", os.path.basename(cpfad), flush=True)
+    else:
+        picked = LG.extract(gml, center=tuple(c0), radius=radius)
+        pickle.dump(picked, open(cpfad, "wb")); print("LOD2: eingelesen und gecacht", os.path.basename(cpfad), flush=True)
     lok = lambda P: np.c_[(P[:, :2] - c0) @ xh, (P[:, :2] - c0) @ yh, P[:, 2] - gel]
     pts, nrm, typ, wand2d, grund2d, eigen = [], [], [], [], [], []
     rng = np.random.default_rng(0)
+    if os.environ.get("AUSR_NUR_ZIEL") == "1":   # nur das Torgebaeude als Ziel (keine Nachbarn)
+        picked = [(m, pl) for m, pl in picked if m.get("id") == obj["lod2"].get("id")]
+        print(f"AUSR_NUR_ZIEL: {len(picked)} Gebaeude (nur {obj['lod2'].get('id')})", flush=True)
     for meta, polys in picked:
         for t, P in polys:
             if t == "GroundSurface": grund2d.append(lok(P)[:, :2])
@@ -59,17 +75,50 @@ def dgm_ziel(obj, halb):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--sparse", required=True); ap.add_argument("--name", default=""); ap.add_argument("--schreiben", action="store_true")
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--sparse", default=None); ap.add_argument("--name", default=""); ap.add_argument("--schreiben", action="store_true")
     ap.add_argument("--radius", type=float, default=80.0, help="LoD2-Gebaeude in diesem Umkreis um die Objektmitte (m)"); ap.add_argument("--zelle", type=float, default=0.25, help="Rasterweite Grobsuche (m)")
     ap.add_argument("--mitte-max", type=float, default=20.0, help="Wolkenmitte hoechstens so weit von der Objektmitte (m): die Bilder sind um das Objekt ausgewaehlt")
     ap.add_argument("--kamerahoehe", nargs=2, type=float, default=[1.6, 1.0], metavar=("H0", "SIGMA"), help="ANNAHME Strassenfotos: Kamerahoehe ueber Boden (robust gewichtet)")
     ap.add_argument("--kamera-gewicht", type=float, default=0.3, help="Gewicht der Kamerahoehen gegen die Punkte (0 = aus)")
-    ap.add_argument("--wand", help="ignoriert (Kompatibilitaet zu sfm_ausrichten.py-Aufrufen)"); a = ap.parse_args()
+    ap.add_argument("--wand", help="ignoriert (Kompatibilitaet zu sfm_ausrichten.py-Aufrufen)")
+    ap.add_argument("--kameras", default=None, help="kamera_export.py-JSON: Kameras ohne pycolmap (GPU-Umgebung)")
+    ap.add_argument("--fein-punkte", type=int, default=40000, help="Punkte im Feinfit (feste Zufallsauswahl)")
+    ap.add_argument("--dicht", default=None, help="dichte Wolke (binary PLY, COLMAP fusion): Punkte kommen daraus, Kameras weiter aus --sparse"); a = ap.parse_args()
     obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); obj = __import__('objekt_rahmen').ergaenzen(obj, od)
-    rec = pycolmap.Reconstruction(a.sparse)
-    ids = list(rec.points3D.keys()); P = np.array([rec.points3D[i].xyz for i in ids]); err = np.array([rec.points3D[i].error for i in ids]); tl = np.array([rec.points3D[i].track.length() for i in ids])
-    gut = (tl >= 3) & (err < np.percentile(err, 90)); Pg = P[gut]
-    ims = list(rec.images.values()); C = np.array([im.projection_center() for im in ims])
+    rec = None; CAMS = {}
+    if a.kameras:  # Kameras aus JSON (keine pycolmap-Abhaengigkeit)
+        KJ = json.load(open(a.kameras))
+        class _Rot:
+            def __init__(s_, M): s_._M = np.asarray(M)
+            def matrix(s_): return s_._M
+        class _CW:
+            def __init__(s_, R_, t_): s_.rotation = _Rot(R_); s_.translation = np.asarray(t_)
+        class _Im:
+            def __init__(s_, d): s_.name = d["name"]; s_.camera_id = d["cam"]; s_._cw = _CW(d["R"], d["t"]); s_._c = np.asarray(d["C"])
+            def cam_from_world(s_): return s_._cw
+            def projection_center(s_): return s_._c
+        class _Mod:
+            def __init__(s_, n): s_.name = n
+        class _Cam:
+            def __init__(s_, d): s_.params = d["params"]; s_.model = _Mod(d["model"]); s_.width = d["width"]; s_.height = d["height"]
+        ims = [_Im(d) for d in KJ["bilder"]]; C = np.array([im._c for im in ims])
+        CAMS = {int(k): _Cam(v) for k, v in KJ["kameras"].items()}
+    elif not a.dicht:
+        rec = pycolmap.Reconstruction(a.sparse); CAMS = rec.cameras
+    if rec is not None:
+        ids = list(rec.points3D.keys()); P = np.array([rec.points3D[i].xyz for i in ids]); err = np.array([rec.points3D[i].error for i in ids]); tl = np.array([rec.points3D[i].track.length() for i in ids])
+        FARBEN = np.array([rec.points3D[i].color for i in ids], dtype=np.uint8)
+    if a.dicht:  # dichte Wolke: Punkte und Farben aus dem PLY, Spur/Fehler entfallen (alle gelten)
+        dt = np.dtype([("x", "<f4"), ("y", "<f4"), ("z", "<f4"), ("nx", "<f4"), ("ny", "<f4"), ("nz", "<f4"), ("r", "u1"), ("g", "u1"), ("b", "u1")])
+        raw = open(a.dicht, "rb").read(); kopf_ende = raw.index(b"end_header\n") + len(b"end_header\n")
+        n = int([l for l in raw[:kopf_ende].decode().splitlines() if l.startswith("element vertex")][0].split()[-1])
+        V = np.frombuffer(raw, dtype=dt, count=n, offset=kopf_ende)
+        P = np.c_[V["x"], V["y"], V["z"]].astype(float); FARBEN = np.c_[V["r"], V["g"], V["b"]].astype(np.uint8)
+        err = np.zeros(len(P)); tl = np.full(len(P), 3); ids = list(range(len(P)))
+        print(f"dichte Wolke: {len(P)} Punkte aus {a.dicht}", flush=True)
+    gut = np.ones(len(P), bool) if a.dicht else ((tl >= 3) & (err < np.percentile(err, 90))); Pg = P[gut]
+    if rec is not None:
+        ims = list(rec.images.values()); C = np.array([im.projection_center() for im in ims])
     print(f"SfM: {len(ims)} Kameras, {len(P)} Punkte ({gut.sum()} mit Spur >= 3)")
     # 1. Lot aus der Kameraebene
     cm = C.mean(0); _, sv, vt = np.linalg.svd(C - cm); up = vt[2]
@@ -98,6 +147,15 @@ def main():
     for Pg_ in grund2d: cv2.fillPoly(innb, [np.round((Pg_ + H) / z - 0.5).astype(np.int32)], 1)
     inn = innb.astype(bool); Tief = (distance_transform_edt(inn) * z > 1.0).astype(float)    # mehr als 1 m im Gebaeude: dort kann kein Fassadenpunkt liegen
     FT = np.fft.rfft2(Tief); zc_q = np.median(Cq[:, 2])
+    GPU_FFT = False
+    try:
+        import torch
+        if os.environ.get("ALIGN_CPU") == "1": raise ImportError("CPU erzwungen (ALIGN_CPU=1, Vergleich)")
+        if torch.cuda.is_available():
+            GPU_FFT = True; FTt = torch.fft.rfft2(torch.as_tensor(Tief, dtype=torch.float32, device="cuda"))
+            print("Grobsuche-FFT: GPU (torch)", flush=True)
+    except Exception as e:
+        print("Grobsuche-FFT: CPU (numpy), GPU nicht verfuegbar:", type(e).__name__, flush=True)
     print(f"Grobsuche: Fassadenpunkte (1-7 m ueber Boden beim Probemassstab) muessen an LoD2-Waenden liegen (Naehe, Sigma 0,5 m) und nicht > 1 m im Gebaeude (Strafe x2)")
     ext = np.percentile(np.hypot(Q[:, 0], Q[:, 1]), 80); ziel_ext = 0.8 * a.radius * 0.5
     s0 = ext / ziel_ext                                                                       # grober Startmassstab (SfM-Einheiten je m), Suche ueber Faktor 6 in beide Richtungen
@@ -108,12 +166,36 @@ def main():
         if fs.sum() < 50: continue
         sig_m = max(z, 0.75 * s0 / s)                                                          # Toleranz in SfM-EINHEITEN konstant (massstabsneutral; in Metern bevorzugt jede Toleranz das geschrumpfte Modell)
         FN = np.fft.rfft2(np.exp(-0.5 * (Dw / sig_m) ** 2))
+        if GPU_FFT: FNt = torch.fft.rfft2(torch.as_tensor(np.exp(-0.5 * (Dw / sig_m) ** 2), dtype=torch.float32, device="cuda"))
+        if GPU_FFT:  # gesamter Winkel-Durchlauf auf der GPU (Drehung, Raster, FFT, Maximum)
+            Qf = torch.as_tensor(Q[fs, :2], dtype=torch.float64, device="cuda"); sh_t = np.fft.fftfreq(n, 1.0 / n) * z
+            for th in np.radians(np.arange(0, 360, 3)):
+                c, si = math.cos(th), math.sin(th)
+                Rt = torch.tensor([[c, -si], [si, c]], dtype=torch.float64, device="cuda")
+                xyt = (Qf @ Rt.T) / s
+                ijf = torch.floor((xyt + H) / z).long(); okt = (ijf >= 0).all(1) & (ijf < n).all(1)
+                if int(okt.sum()) < 0.3 * len(xyt): continue
+                Dt = torch.zeros((n, n), dtype=torch.float32, device="cuda")
+                Dt.index_put_((ijf[okt, 1], ijf[okt, 0]), torch.ones(int(okt.sum()), dtype=torch.float32, device="cuda"), accumulate=True)
+                K = torch.fft.irfft2((FNt - 2.0 * FTt) * torch.conj(torch.fft.rfft2(Dt))).double()
+                m0 = torch.median(xyt, 0).values.cpu().numpy()
+                fern = np.hypot(m0[0] + sh_t[None, :], m0[1] + sh_t[:, None]) > a.mitte_max
+                K = K.masked_fill(torch.as_tensor(fern, device="cuda"), float("-inf"))
+                kf = int(torch.argmax(K)); ky, kx = divmod(kf, n); kval = float(K[ky, kx])
+                dy, dx = [(v if v < n // 2 else v - n) * z for v in (ky, kx)]
+                best.append((kval / len(Q), s, th, dx, dy))
+            continue
         for th in np.radians(np.arange(0, 360, 3)):
             c, si = math.cos(th), math.sin(th); xy = (Q[fs, :2] @ np.array([[c, -si], [si, c]]).T) / s
             ij = ((xy + H) / z).astype(int); ok = (ij >= 0).all(1) & (ij < n).all(1)
             if ok.sum() < 0.3 * len(xy): continue
-            D = np.zeros((n, n)); np.add.at(D, (ij[ok, 1], ij[ok, 0]), 1.0)
-            FD = np.conj(np.fft.rfft2(D)); K = np.fft.irfft2((FN - 2.0 * FT) * FD, s=(n, n))   # K[dy,dx] = sum D(p) * (Nahe - 2 Tief)(p + d)
+            if GPU_FFT:  # GPU: Raster per scatter-add, FFT per torch (gleiche Mathematik wie numpy)
+                ijt = torch.as_tensor(np.c_[ij[ok, 1], ij[ok, 0]], dtype=torch.long, device="cuda")
+                Dt = torch.zeros((n, n), dtype=torch.float32, device="cuda"); Dt.index_put_((ijt[:, 0], ijt[:, 1]), torch.ones(len(ijt), dtype=torch.float32, device="cuda"), accumulate=True)
+                FDt = torch.conj(torch.fft.rfft2(Dt)); K = torch.fft.irfft2((FNt - 2.0 * FTt) * FDt, s=(n, n)).double().cpu().numpy()
+            else:
+                D = np.zeros((n, n)); np.add.at(D, (ij[ok, 1], ij[ok, 0]), 1.0)
+                FD = np.conj(np.fft.rfft2(D)); K = np.fft.irfft2((FN - 2.0 * FT) * FD, s=(n, n))   # K[dy,dx] = sum D(p) * (Nahe - 2 Tief)(p + d)
             m0 = np.median(xy, 0); sh = np.fft.fftfreq(n, 1.0 / n) * z                          # Verschiebung je Rasterindex (m)
             fern = np.hypot(m0[0] + sh[None, :], m0[1] + sh[:, None]) > a.mitte_max                 # Fotos sind um das Objekt ausgewaehlt: Wolkenmitte (Median) <= mitte_max vom Objekt
             K[fern] = -np.inf
@@ -128,6 +210,19 @@ def main():
 
     # 3. Fein: 7 Parameter, Punkt-zu-Flaeche, getrimmt; Startwerte aus den besten Grobloesungen
     Tall = np.vstack([T, G]); Nall = np.vstack([Tn, Gn]); baum = cKDTree(Tall)
+    # Nachbarsuche auf der GPU (gpu_knn, Nutzerregel); ohne GPU Rueckfall auf cKDTree
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from gpu_knn import naechster as _gnn
+        def nn(M, bound=None):
+            d, j = _gnn(np.asarray(M, np.float64), Tall)
+            if bound is not None: bad = d > bound; d = np.where(bad, np.inf, d); j = np.where(bad, 0, j)
+            return d, j
+        print("Nachbarsuche: GPU (gpu_knn)", flush=True)
+    except Exception as e:
+        print("Nachbarsuche: CPU (cKDTree), GPU nicht verfuegbar:", type(e).__name__, flush=True)
+        def nn(M, bound=None):
+            d, j = baum.query(M, distance_upper_bound=bound) if bound is not None else baum.query(M)
+            return d, j
 
     def zu_modell(p, X):                                                                      # X im lotrechten Netzsystem -> Modell
         s = math.exp(p[0]); return Rot.from_rotvec(p[1:4]).apply(X) / s + p[4:7]
@@ -136,17 +231,33 @@ def main():
         p = np.array(p0, float); ls0 = p[0]
         for sw in schwellen:
             for _ in range(3):
-                M = zu_modell(p, X); d, j = baum.query(M, distance_upper_bound=sw * 2)
+                M = zu_modell(p, X); d, j = nn(M, sw * 2)
                 ok = np.isfinite(d); jj = j[ok]; Xo = X[ok]
+                if len(Xo) > a.fein_punkte:  # Feinfit mit fester Zufallsauswahl (7 Parameter brauchen keine Millionen Punkte; spart CPU je Schritt)
+                    sel = np.random.default_rng(7).choice(len(Xo), a.fein_punkte, replace=False); Xo = Xo[sel]; jj = jj[sel]
                 if ok.sum() < 30: return p, 0.0, np.inf, ok
                 wk = a.kamera_gewicht * math.sqrt(len(Xo) / len(Cq))
                 def r(q):
                     rp = np.einsum("ij,ij->i", zu_modell(q, Xo) - Tall[jj], Nall[jj]) * math.exp(q[0])  # Residuum in SfM-Einheiten (massstabsneutral, kein Kollaps)
                     rk = (zu_modell(q, Cq)[:, 2] - a.kamerahoehe[0]) / a.kamerahoehe[1] * math.exp(ls0) * wk   # ANNAHME Strassenfotos: Kamerahoehe h0 +- sigma (robust: Turm-/Fensterfotos sind Ausreisser)
                     return np.r_[rp, rk]
+                if GPU_FFT:  # Residuum auf der GPU (torch): gleiche Formeln wie oben, Rodrigues-Rotation
+                    Xo_t = torch.as_tensor(Xo, dtype=torch.float64, device="cuda"); Tj_t = torch.as_tensor(Tall[jj], dtype=torch.float64, device="cuda")
+                    Nj_t = torch.as_tensor(Nall[jj], dtype=torch.float64, device="cuda"); Cq_t = torch.as_tensor(Cq, dtype=torch.float64, device="cuda")
+                    def r(q, _Xo=Xo_t, _Tj=Tj_t, _Nj=Nj_t, _wk=wk, _ls0=ls0):
+                        qt = torch.as_tensor(np.asarray(q, np.float64), device="cuda")
+                        th = torch.linalg.norm(qt[1:4]) + 1e-18; k = qt[1:4] / th
+                        Kx = torch.stack([torch.zeros((), dtype=torch.float64, device="cuda"), -k[2], k[1], k[2], torch.zeros((), dtype=torch.float64, device="cuda"), -k[0], -k[1], k[0], torch.zeros((), dtype=torch.float64, device="cuda")]).reshape(3, 3)
+                        Rm = torch.eye(3, dtype=torch.float64, device="cuda") + torch.sin(th) * Kx + (1 - torch.cos(th)) * (Kx @ Kx)
+                        s_ = torch.exp(qt[0])
+                        Y = (_Xo @ Rm.T) / s_ + qt[4:7]
+                        rp = ((Y - _Tj) * _Nj).sum(1) * s_
+                        Yc = (Cq_t @ Rm.T) / s_ + qt[4:7]
+                        rk = (Yc[:, 2] - a.kamerahoehe[0]) / a.kamerahoehe[1] * math.exp(_ls0) * _wk
+                        return torch.cat([rp, rk]).cpu().numpy()
                 lo = np.full(7, -np.inf); hi = np.full(7, np.inf); lo[0], hi[0] = ls0 - 0.35, ls0 + 0.35   # Massstab begrenzt (+-40 % um den Start): sonst Kollaps aller Punkte auf eine Flaeche
                 p = least_squares(r, np.clip(p, lo + 1e-9, hi - 1e-9), loss="huber", f_scale=sw / 3 * math.exp(ls0), max_nfev=200, bounds=(lo, hi)).x
-        M = zu_modell(p, X); d, _ = baum.query(M); ok = d * math.exp(p[0]) < schwellen[-1] * s0      # Inlier-Schwelle in SfM-Einheiten (massstabsneutral)
+        M = zu_modell(p, X); d, _ = nn(M); ok = d * math.exp(p[0]) < schwellen[-1] * s0      # Inlier-Schwelle in SfM-Einheiten (massstabsneutral)
         return p, ok.mean(), float(np.sqrt(np.mean(d[ok] ** 2))) if ok.any() else np.inf, ok
 
     def abdeckung(p, X):
@@ -169,6 +280,12 @@ def main():
         sub = rng.choice(len(Q), len(Q) // 2, replace=False); pb, *_ = fein(p, Q[sub], schwellen=(1.5, 0.8)); bs.append(pb)
     bs = np.array(bs); s_sig = 100 * np.std(np.exp(bs[:, 0])) / math.exp(p[0]); t_sig = np.std(bs[:, 4:7], 0)
     zweit = loes[1][0] if len(loes) > 1 else 0; frac = guete                                   # Guete = Inlier x Abdeckung
+    _anders = [l for l in loes[1:] if np.degrees((Rot.from_rotvec(l[2][1:4]).inv() * Rot.from_rotvec(p[1:4])).magnitude()) > 10
+               or np.linalg.norm(np.asarray(l[2][4:7]) - np.asarray(p[4:7])) > 3]              # nur wirklich andere Lagen, nicht Duplikate derselben
+    mehrdeutig = bool(_anders) and _anders[0][0] > 0.85 * guete                                   # Schwabentor 2026-11-14: 0,222 vs 0,194 (87 %) -> Fluegel auf der Strasse
+    if mehrdeutig:
+        print(f"\nWARNUNG MEHRDEUTIG: andere Lage (>10 Grad oder >3 m) erreicht {100 * _anders[0][0]:.1f} % gegen {100 * guete:.1f} % "
+              f"({100 * _anders[0][0] / guete:.0f} %) - danach tools/wolke_grundriss_pruefen.py + tools/kamera_abdeckung.py, Lage am Foto belegen")
     # Gesamt: X_modell = Rz(X_sfm - cm) B0^T / s + t  ->  X_sfm = s * R @ X_modell + t
     s = math.exp(p[0]); Rl = Rot.from_rotvec(p[1:4]).as_matrix(); Rm = Rl @ B0                  # X_m = Rm (X_s - cm)/s + tm
     tm = p[4:7]; R_s = Rm.T; t_s = cm - s * R_s @ tm
@@ -181,17 +298,17 @@ def main():
         kam = {}
         for im, c in zip(ims, Cm):
             nr = os.path.splitext(im.name)[0]; cw = im.cam_from_world(); Rc = cw.rotation.matrix() @ R_s; tc = (cw.rotation.matrix() @ t_s + np.array(cw.translation)) / s
-            cam = rec.cameras[im.camera_id]; pr = list(cam.params)
+            cam = CAMS[im.camera_id]; pr = list(cam.params)
             kam[nr] = dict(standort=c.round(2).tolist(), f_px_original=float(pr[0]), fak=1.0, off=[0.0, 0.0], R=Rc.tolist(), t=tc.tolist(), cx=float(pr[2] if cam.model.name in ("PINHOLE", "OPENCV", "FULL_OPENCV") else pr[1]), cy=float(pr[3] if cam.model.name in ("PINHOLE", "OPENCV", "FULL_OPENCV") else pr[2]),
                            k=[float(v) for v in pr[3:]] if cam.model.name in ("SIMPLE_RADIAL", "RADIAL") else [], bild_b=cam.width, bild_h=cam.height, hinweis="f/cx/cy in SfM-Bildpixeln (fak nicht bestimmt)")
         out = dict(verfahren="sfm_lod2_ausrichten.py (ohne Picks: Kameraebene -> Lot, LoD2-Wandlinien -> Grob, Punkt-zu-Flaeche LoD2+DGM1 -> Fein)", sparse=a.sparse, fotos_sfm=sorted(kam), fotos_mit_picks=[],
                    transformation=dict(beschreibung="X_sfm = s * R @ X_modell + t ; Modellsystem = objekt.json rahmen (anker3d.json)", s=s, s_sigma_prozent=float(s_sig), rvec=Rot.from_matrix(R_s).as_rotvec().tolist(),
-                                       t=t_s.tolist(), t_sigma_m=t_sig.tolist(), inlier_anteil=float(frac), rms_m=float(rms), zweitbeste_inlier=float(zweit)),
+                                       t=t_s.tolist(), t_sigma_m=t_sig.tolist(), inlier_anteil=float(frac), rms_m=float(rms), zweitbeste_inlier=float(zweit), mehrdeutig=mehrdeutig),
                    ziel=dict(lod2_gebaeude=nb, radius_m=a.radius, boden=gq), kameras=kam,
                    kamerahoehen=dict(median=float(np.median(hz)), auf_strassenniveau=int(np.sum((hz > -1) & (hz < 6))), n=len(hz)),
                    wolke=dict(n=len(Pm), z_p1=float(np.percentile(Pm[:, 2], 1)), z_p999=float(np.percentile(Pm[:, 2], 99.9))), annahmen=dict(kamerahoehe=dict(h0=a.kamerahoehe[0], sigma=a.kamerahoehe[1], gewicht=a.kamera_gewicht, hinweis="ANNAHME Strassenfotos, robuste Bedingung (Huber)")))
         os.makedirs(os.path.join(od, "messprotokoll"), exist_ok=True); pth = os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG{sfx}.json"); json.dump(out, open(pth, "w"), indent=1, ensure_ascii=False); print("geschrieben:", pth)
-        np.save(os.path.join(od, "sfm", f"punkte_modell{usfx}.npy"), Pm); np.save(os.path.join(od, "sfm", f"punkte_farben{usfx}.npy"), np.array([rec.points3D[i].color for i in ids], dtype=np.uint8))
+        np.save(os.path.join(od, "sfm", f"punkte_modell{usfx}.npy"), Pm); np.save(os.path.join(od, "sfm", f"punkte_farben{usfx}.npy"), FARBEN)
         try:
             sim = pycolmap.Sim3d(1.0 / s, pycolmap.Rotation3d(Rm), tm - Rm @ cm / s); rec.transform(sim); ziel = os.path.join(od, "sfm", f"sparse_modell{usfx}"); os.makedirs(ziel, exist_ok=True); rec.write(ziel)
             print("geschrieben:", ziel, "(COLMAP-Modell im Modellsystem, Meter)")
