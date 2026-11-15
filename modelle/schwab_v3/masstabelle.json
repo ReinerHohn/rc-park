@@ -1029,6 +1029,12 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.67 m, y=9.66 m (Zelle [1010, 1818, 101], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Claude",
+   "text": "QUELLENWIDERSPRUCH HOEHE (nicht gemittelt): Foto-Triangulation Nord: Traufe 39,26 m, Dach an der Wandlinie ~40,9 m, gedachte Spitze 49,25 m, Knauf 54,18 m. Amtlich: LoD2-Wandoberkante 37,0 m, Laser-Dachfit DOM1 Wandlinie 36,7 m / Spitze 45,5 m, DOM1-Maximum ueber der Turmmitte 49,6 m (DGM1 am Tor 282,1 = Rahmenhoehe, also KEIN Hoehenbezugsfehler). Die amtlichen Werte liegen 3,7-4,5 m bzw. ~8-9 % unter den Fotowerten. Dazu: die Fotogruppe der SUEDSEITE bildet ein Teilmodell mit Massstab ~0,89 (Wolke: Suedwand nur 10,7 m breit statt 12,03, Traufe dort bei z 35) - auf LoD2-Breite hochgerechnet ergibt auch sie ~39-40 m. Fuer die Fotowerte sprechen also zwei Fotogruppen, fuer 36-37 m zwei amtliche Quellen.",
+   "naechster_schritt": "Entscheidend und SfM-frei messen: in EINEM entzerrten Frontalfoto das Verhaeltnis Traufhoehe : Turmbreite (Breite 12,1 m amtlich) per foto_mass.py mit Massstab aus der Turmbreite; zusaetzlich DOM1-Profil quer ueber das Dach gegen das Modell legen. Danach SfM neu (eine Kamera je Geraet statt PER_IMAGE, GPS als Vorgabe - offene Punkte 3 und 5), damit Sued/West/Ost im gleichen Massstab liegen; bis dahin an der Suedseite NICHT messen. Bis zur Klaerung gelten die Fotomasse Nord (Kernmethode), Hoehen aber als UNSICHER +-4 m"
   }
  ]
 }
