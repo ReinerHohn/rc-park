@@ -346,3 +346,10 @@ Versuch: Rippen der Frontflaeche (A,B,C,D,L2,R2) um die Erkerachse (u 15,52 / n 
 - **Wandebene aus zwei gepeilten Ecken:** lag 0,17 m neben der Wolke; Wandanzug beim Relief abgezogen. Immer Schnitt Wolke/Modell ansehen.
 - **foto_diff-Quote fuer flache, scharfe Bauteile (Fensternischen 0,15 m):** erkennt sie aus 83 m nicht als Modellkanten; Beleg ist dann der eingezeichnete Umriss im Foto.
 - **Wiederkehrender Wach-Zeitplan (alle 20 min):** hat den Nutzer gestoert und das Gespraech mit "nichts Neues" gefuellt - abgeschaltet, nicht wieder anlegen.
+
+## 16.11.2026 Lokale Feinrechnung der Tiefe (tools/tiefe_lokal.py) - was NICHT ging
+- **Figur ueber dem Schwabentor-Nordtor als eigenes 5-mm-Feld (1,7 x 2 m, 14 Fotos, 4000 px, 930 s):** 11 272 Punkte je m2 = ein Punkt je cm2 -> bei 5 mm 69 % Loecher, bei 1 cm noch 46 %; die Figur ist im Hoehenbild nicht zu erkennen (gerade die Steinflaechen sind Loecher). Ursache: die COLMAP-Fusion liefert auch bei 4000 px nur ~1 cm Punktabstand in 8,5 m Hoehe aus 15-25 m Entfernung; feiner als ~1-2 cm geht dieser Weg mit den vorhandenen Fotos nicht. Fuer Figuren braucht es Nahfotos (Tele/Leiter) oder ein anderes Verfahren (Tiefenkarten direkt statt Fusion - nicht probiert).
+- **Suedwand des Turms (14 Fotos, davon nur 3 scharfe eigene):** feines Relief pockennarbig, nicht besser als das grobe -> verworfen. Faustregel: unter ~5 Fotos mit Guete > 100 (px/m x Abdeckung x cos) lohnt die Feinrechnung nicht.
+- **Zwei 4000-px-Laeufe parallel + OWLv2 + Kontrollbild auf 8 GB:** CUDA out of memory (rc 134), je 590 MB Speicherabbild auf Root. Je 4000-px-Lauf 4500 MiB ansetzen, nichts daneben.
+- **Zwischendaten liegen lassen:** 2-4 GB je Feld (stereo/, images/), 13,6 GB nach 5 Feldern - Datenplatte voll. Werkzeug raeumt jetzt selbst auf.
+- **Zwei Generatorlaeufe desselben Objekts gleichzeitig (16.11., mein Fehler: zweiten Bau gestartet, waehrend der erste im Hintergrund noch lief):** Abnahme des ersten meldete 1 Fehler unklarer Herkunft; Ergebnis nur vom zweiten Lauf gueltig. Vor jedem Bau `pgrep -f <objekt>_gen.py`.
