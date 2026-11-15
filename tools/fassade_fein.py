@@ -7,6 +7,7 @@ und die Kameras Reste haben. Ein EINZELNES entzerrtes Foto ist dagegen in sich s
   1. Bezugsfoto je Fassade = groesste Summe (Zellen x Guete) aus fassaden.json.
   2. Die naechstbesten k-1 Fotos per SIFT + RANSAC-Homographie IM ORTHO-RAUM auf das Bezugsfoto ziehen (ebene Fassade -> Homographie; Kontrolle: Inlier >= 40,
      Verschiebung der Bildecken <= 2 m, sonst Foto verworfen).
+  2b. Laub (gruen-dominante Flaechen) wird je Foto ausgeblendet; Bezugsfoto = meiste Wand ohne Laub. Gruene Bauteile (Kupferdach, gruene Ziegel) fallen damit auch heraus - ansehen.
   3. Ergebnis: Median der ausgerichteten Fotos, wo >= 3 die Zelle sehen (Passanten, Draehte, Spiegelungen fallen heraus), sonst das beste vorhandene.
 Ausgabe ortho_<id>_fein.png + Bericht fein.json (Bezugsfoto, Inlier, Versatz je Foto). Massstab und Lage bleiben die des Bezugsfotos auf der Modellebene
 (Lagefehler der Ebene geht 1:1 ein - das Bild ist fuer MUSTER und Kanten, Masse weiter ueber foto_mass.py).
@@ -23,7 +24,13 @@ def main():
         rang = sorted(F["fotos"].items(), key=lambda kv: -kv[1]["zellen"] * kv[1]["guete_median"])[:a.k]; bilder = []
         for nr, _ in rang:
             im = cv2.imread(os.path.join(ed, nr + ".png"))
-            if im is not None: bilder.append((nr, im))
+            if im is None: continue
+            hs_ = cv2.cvtColor(im, cv2.COLOR_BGR2HSV); gruen = (hs_[..., 0] >= 22) & (hs_[..., 0] <= 90) & (hs_[..., 1] > 60) & (hs_[..., 2] > 40)   # Farbton gelbgruen..gruen, gesaettigt (besonntes Laub ist gelbgruen: G > R + 12 griff nicht)          # 15.11.2026 (Nutzer: "du siehst den Baum aber?"): Laub ist keine Wand -
+            gruen = cv2.dilate(cv2.morphologyEx(gruen.astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8)), np.ones((41, 41), np.uint8)).astype(bool)   # gruen-dominante Flaechen (Baum, Busch) gelten als nicht gesehen
+            anteil = float(gruen.sum()) / max(int((im.sum(2) > 0).sum()), 1)
+            if anteil > 0.02: im = im.copy(); im[gruen] = 0
+            bilder.append((nr, im, anteil))
+        bilder.sort(key=lambda x: -int((x[1].sum(2) > 0).sum())); laub = {x[0]: round(x[2], 3) for x in bilder}; bilder = [(x[0], x[1]) for x in bilder]      # Bezug = meiste Wand OHNE Laub
         if not bilder: continue
         ref_nr, ref = bilder[0]; H_, W_ = ref.shape[:2]; g0 = cv2.cvtColor(ref, cv2.COLOR_BGR2GRAY); m0 = (ref.sum(2) > 0).astype(np.uint8) * 255; k0, d0 = sift.detectAndCompute(g0, cv2.erode(m0, np.ones((9, 9), np.uint8)))
         stapel = [ref]; info = [dict(foto=ref_nr, rolle="bezug")]
@@ -44,7 +51,7 @@ def main():
         for i in range(len(stapel)):
             nimm = gueltig[i] & ~belegt; erst[nimm] = np.nan_to_num(S[i])[nimm]; belegt |= gueltig[i]
         aus = np.where((n >= 3)[..., None], np.nan_to_num(med), erst).astype(np.uint8); cv2.imwrite(os.path.join(a.ortho, f"ortho_{fid}_fein.png"), aus)
-        bericht[fid] = dict(fotos=info, abdeckung=round(float(belegt.mean()), 3), zelle=F["raster"]["zelle"]); print(f"{fid}: Bezug {ref_nr[-14:]}, " + ", ".join(f"{i_['foto'][-10:]} {i_['rolle']}" + (f" ({i_['inlier']} Inl., {i_['mittel_versatz_m']*100:.0f} cm)" if i_["rolle"] == "ausgerichtet" else f" ({i_.get('grund', '')})" if i_["rolle"] == "verworfen" else "") for i_ in info[1:]) + f"; Abdeckung {belegt.mean():.0%}")
+        bericht[fid] = dict(fotos=info, laubanteil=laub, abdeckung=round(float(belegt.mean()), 3), zelle=F["raster"]["zelle"]); print(f"{fid}: Bezug {ref_nr[-14:]}, " + ", ".join(f"{i_['foto'][-10:]} {i_['rolle']}" + (f" ({i_['inlier']} Inl., {i_['mittel_versatz_m']*100:.0f} cm)" if i_["rolle"] == "ausgerichtet" else f" ({i_.get('grund', '')})" if i_["rolle"] == "verworfen" else "") for i_ in info[1:]) + f"; Abdeckung {belegt.mean():.0%}")
     json.dump(bericht, open(os.path.join(a.ortho, "fein.json"), "w"), indent=1); return 0
 
 
