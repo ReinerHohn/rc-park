@@ -9,7 +9,11 @@
   "traufe_ost_reichweite": 7.07999976348877,
   "traufe_oben_z": 39.34000000000029,
   "dach_nord_z45": 2.8405637426797656,
-  "wand_nord_reichweite": 5.824653808425237
+  "wand_nord_reichweite": 5.824653808425237,
+  "tor_halb_west": 2.266284181097376,
+  "tor_halb_ost": 2.372950791446179,
+  "tor_scheitel_z": 6.919999999999959,
+  "tor_halb_z555": 1.952121087049644
  },
  "pruefungen": [
   {
@@ -98,6 +102,46 @@
    "soll": [
     5.65,
     5.95
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Tor Nord: halbe lichte Breite nach West bei z 2 (m)",
+   "wert": 2.266284181097376,
+   "soll": [
+    2.2,
+    2.43
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Tor Nord: halbe lichte Breite nach Ost bei z 2 (m)",
+   "wert": 2.372950791446179,
+   "soll": [
+    2.2,
+    2.43
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Tor Nord: Scheitel der Durchfahrt innen z (m)",
+   "wert": 6.919999999999959,
+   "soll": [
+    6.78,
+    7.08
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Tor Nord: halbe Breite im Bogen bei z 5,55 (m)",
+   "wert": 1.952121087049644,
+   "soll": [
+    1.85,
+    2.15
    ],
    "ok": true,
    "status": "ok"

@@ -90,6 +90,58 @@
    ],
    "quer_max": 3.0,
    "r_max": 10.0
+  },
+  "tor_halb_west": {
+   "typ": "schnitt_reichweite",
+   "z": 2.0,
+   "zentrum": [
+    0.0,
+    15.354
+   ],
+   "richtung": [
+    0,
+    1
+   ],
+   "quer_max": 0.3,
+   "r_max": 4.0
+  },
+  "tor_halb_ost": {
+   "typ": "schnitt_reichweite",
+   "z": 2.0,
+   "zentrum": [
+    0.0,
+    15.354
+   ],
+   "richtung": [
+    0,
+    -1
+   ],
+   "quer_max": 0.3,
+   "r_max": 4.0
+  },
+  "tor_scheitel_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    0.0,
+    15.354
+   ],
+   "z0": 5.0,
+   "z1": 9.0,
+   "suche": "unten"
+  },
+  "tor_halb_z555": {
+   "typ": "schnitt_reichweite",
+   "z": 5.55,
+   "zentrum": [
+    0.0,
+    15.354
+   ],
+   "richtung": [
+    0,
+    1
+   ],
+   "quer_max": 0.3,
+   "r_max": 4.0
   }
  },
  "pruefungen": [
@@ -233,6 +285,70 @@
     "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m",
     "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-012): Wandecken A' (3,54 / 21,38), C' (3,72 / 9,22) -> Wand x 3,63 = 5,78; Soll [5.7, 6.0] -> [5.65, 5.95]"
    ]
+  },
+  {
+   "name": "Tor Nord: halbe lichte Breite nach West bei z 2 (m)",
+   "wert": "tor_halb_west",
+   "soll": [
+    2.2,
+    2.43
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Nordwandebene (0,17 m vor der gepeilten Wand = Sockelflaeche), Frontalfoto 113602 (1 Grad zur Wandnormalen); Lage der Kanten auf der Ebene durch Schraegfoto 113310 (-47 Grad) bestaetigt; lichte Breite zwischen den Pfeilern 4,63 m (M-113602-001), Mitte u 6,135",
+   "merkmal": "fassade",
+   "protokoll": "M-113602-001",
+   "quelltyp": "foto_kalibriert",
+   "massstab": "K-eigen__IMG_20261106_113602 (SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen)",
+   "historie": [
+    "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)"
+   ]
+  },
+  {
+   "name": "Tor Nord: halbe lichte Breite nach Ost bei z 2 (m)",
+   "wert": "tor_halb_ost",
+   "soll": [
+    2.2,
+    2.43
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Nordwandebene (0,17 m vor der gepeilten Wand = Sockelflaeche), Frontalfoto 113602 (1 Grad zur Wandnormalen); Lage der Kanten auf der Ebene durch Schraegfoto 113310 (-47 Grad) bestaetigt; wie West (M-113602-001), linker Pfeiler 3,82 m ab Wandecke Ost (M-113602-006)",
+   "merkmal": "fassade",
+   "protokoll": "M-113602-006",
+   "quelltyp": "foto_kalibriert",
+   "massstab": "K-eigen__IMG_20261106_113602 (SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen)",
+   "historie": [
+    "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)"
+   ]
+  },
+  {
+   "name": "Tor Nord: Scheitel der Durchfahrt innen z (m)",
+   "wert": "tor_scheitel_z",
+   "soll": [
+    6.78,
+    7.08
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Nordwandebene (0,17 m vor der gepeilten Wand = Sockelflaeche), Frontalfoto 113602 (1 Grad zur Wandnormalen); Lage der Kanten auf der Ebene durch Schraegfoto 113310 (-47 Grad) bestaetigt; lichte Hoehe 6,88 m ueber Pflaster z 0,05 (M-113602-004); Scheitel aussen 7,20 m (M-113602-003, Gegenprobe M-113310-001 ebenfalls 7,20)",
+   "merkmal": "absolut_hoehe",
+   "protokoll": "M-113602-004",
+   "quelltyp": "foto_kalibriert",
+   "massstab": "K-eigen__IMG_20261106_113602 (SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen)",
+   "historie": [
+    "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)"
+   ]
+  },
+  {
+   "name": "Tor Nord: halbe Breite im Bogen bei z 5,55 (m)",
+   "wert": "tor_halb_z555",
+   "soll": [
+    1.85,
+    2.15
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Nordwandebene (0,17 m vor der gepeilten Wand = Sockelflaeche), Frontalfoto 113602 (1 Grad zur Wandnormalen); Lage der Kanten auf der Ebene durch Schraegfoto 113310 (-47 Grad) bestaetigt; Kaempfer 4,25 m ueber Pflaster (M-113602-005) und Scheitel 6,88 m; ANNAHME Spitzbogen aus zwei Kreisboegen r 2,65 m -> 2,00 m",
+   "merkmal": "fassade",
+   "protokoll": "M-113602-005",
+   "quelltyp": "foto_kalibriert",
+   "massstab": "K-eigen__IMG_20261106_113602 (SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen)",
+   "historie": [
+    "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -301,112 +417,112 @@
    "naechster_schritt": "Turmkanten am Foto in 3-4 Hoehen peilen (foto_mass.py --tri2d je Ecke) -> Wandanzug und Sockelbreite als Masse, dann Generatorwand statt LoD2-Prisma"
   },
   {
+   "datum": "2026-11-15",
+   "wer": "Nutzer (3D-Seite V8, Bildschirmfoto 13:30)",
+   "text": "Relief Nordwand: 'die Kanten sind ein erster Ansatz, aber das musst du noch schaerfen mit Generator - noch nicht gut genug'. Torbogen, Fenster, Vordach und Holzgalerie erscheinen im Relief nur als weiche Wuelste/Flecken, nicht als scharfe Bauteile. Bild audit/beobachtung_1330_relief_unscharf.jpg",
+   "naechster_schritt": "Regelmaessige Bauteile der Nordwand aus FOTOKANTEN in den Generator (KERNMETHODE): 1) Torbogen als echte Oeffnung (Gewaendekanten per --tri2d, Kaempfer/Scheitel per --tri in Fotos 113208/113141/113612), 2) zwei Rundbogenfenster mit Gewaende, 3) Vordach (Pultdach) und 4) Holzgalerie als Koerper, 5) Eckquader. Relief nur noch als Maske auf den Bruchsteinflaechen dazwischen (Bauteilflaechen im Hoehenbild auf 0), Kanten-Sweep kanten_tiefe_sweep_flaeche.py fuer Fugen/Leisten. Tor: foto_diff je Bauteil + Bild neben Foto"
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1683-1089",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1700-1100",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 38.85,
-   "z_bis": 38.85,
+   "z_von": 38.71,
+   "z_bis": 38.71,
    "xyz": [
-    2.69,
-    19.56,
-    38.85
+    2.67,
+    19.86,
+    38.71
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.85 m, y=19.56 m (Zelle [1683, 1089, 99], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.71 m, y=19.86 m (Zelle [1700, 1100, 100], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1782-1188",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1800-1200",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 37.09,
-   "z_bis": 37.09,
+   "z_von": 36.77,
+   "z_bis": 36.77,
    "xyz": [
-    2.47,
-    20.94,
-    37.09
+    2.52,
+    21.01,
+    36.77
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=37.09 m, y=20.94 m (Zelle [1782, 1188, 99], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=36.77 m, y=21.01 m (Zelle [1800, 1200, 100], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-990-1584",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1800-1300",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 29.31,
-   "z_bis": 29.31,
+   "z_von": 34.11,
+   "z_bis": 34.11,
    "xyz": [
-    -1.99,
-    9.42,
-    29.31
+    2.65,
+    20.69,
+    34.11
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.31 m, y=9.42 m (Zelle [990, 1584, 99], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=34.11 m, y=20.69 m (Zelle [1800, 1300, 100], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-990-1683",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1000-1500",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 27.46,
-   "z_bis": 27.46,
+   "z_von": 31.24,
+   "z_bis": 31.24,
    "xyz": [
-    -2.01,
-    9.46,
-    27.46
+    -2.13,
+    9.6,
+    31.24
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.46 m, y=9.46 m (Zelle [990, 1683, 99], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=31.24 m, y=9.6 m (Zelle [1000, 1500, 100], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-990-1782",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1000-1600",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 25.64,
-   "z_bis": 25.64,
+   "z_von": 28.73,
+   "z_bis": 28.73,
    "xyz": [
-    -1.96,
-    9.48,
-    25.64
+    -1.68,
+    9.51,
+    28.73
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=25.64 m, y=9.48 m (Zelle [990, 1782, 99], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.73 m, y=9.51 m (Zelle [1000, 1600, 100], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-891-1980",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1000-1700",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 24.15,
-   "z_bis": 24.15,
+   "z_von": 26.88,
+   "z_bis": 26.88,
    "xyz": [
-    -4.62,
-    9.13,
-    24.15
+    -1.69,
+    9.53,
+    26.88
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.15 m, y=9.13 m (Zelle [891, 1980, 99], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.88 m, y=9.53 m (Zelle [1000, 1700, 100], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "2026-11-15",
-   "wer": "Nutzer (3D-Seite V8, Bildschirmfoto 13:30)",
-   "text": "Relief Nordwand: 'die Kanten sind ein erster Ansatz, aber das musst du noch schaerfen mit Generator - noch nicht gut genug'. Torbogen, Fenster, Vordach und Holzgalerie erscheinen im Relief nur als weiche Wuelste/Flecken, nicht als scharfe Bauteile. Bild audit/beobachtung_1330_relief_unscharf.jpg",
-   "naechster_schritt": "Regelmaessige Bauteile der Nordwand aus FOTOKANTEN in den Generator (KERNMETHODE): 1) Torbogen als echte Oeffnung (Gewaendekanten per --tri2d, Kaempfer/Scheitel per --tri in Fotos 113208/113141/113612), 2) zwei Rundbogenfenster mit Gewaende, 3) Vordach (Pultdach) und 4) Holzgalerie als Koerper, 5) Eckquader. Relief nur noch als Maske auf den Bruchsteinflaechen dazwischen (Bauteilflaechen im Hoehenbild auf 0), Kanten-Sweep kanten_tiefe_sweep_flaeche.py fuer Fugen/Leisten. Tor: foto_diff je Bauteil + Bild neben Foto"
   }
  ]
 }

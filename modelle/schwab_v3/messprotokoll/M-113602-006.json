@@ -1,0 +1,32 @@
+{
+ "id": "M-113602-006",
+ "foto": "113602",
+ "kamera": "K-eigen__IMG_20261106_113602",
+ "ebene": "0.99989,0.0148,0=4.026",
+ "name": "Tor Nord: linker Pfeiler ab Wandecke Ost (u=0)",
+ "mess_px": [
+  697.0,
+  2602.0,
+  1571.0,
+  2556.0
+ ],
+ "P1": [
+  3.89,
+  9.224,
+  2.002
+ ],
+ "P2": [
+  3.833,
+  13.041,
+  2.001
+ ],
+ "dz": -0.001,
+ "dy": 3.817,
+ "dx": -0.056,
+ "abstand": 3.817,
+ "z1": 2.002,
+ "z2": 2.001,
+ "unsicherheit_rel": 0.0237,
+ "unsicherheit_m": 0.109,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113602 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.99989,0.0148,0=4.026 (+-0.3 m)"
+}

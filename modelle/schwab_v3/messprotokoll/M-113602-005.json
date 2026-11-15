@@ -1,0 +1,32 @@
+{
+ "id": "M-113602-005",
+ "foto": "113602",
+ "kamera": "K-eigen__IMG_20261106_113602",
+ "ebene": "0.99989,0.0148,0=4.026",
+ "name": "Tor Nord: Kaempferhoehe ueber Pflaster",
+ "mess_px": [
+  1537.0,
+  3083.0,
+  1497.0,
+  2001.0
+ ],
+ "P1": [
+  3.837,
+  12.823,
+  0.05
+ ],
+ "P2": [
+  3.837,
+  12.824,
+  4.299
+ ],
+ "dz": 4.249,
+ "dy": 0.001,
+ "dx": -0.0,
+ "abstand": 4.249,
+ "z1": 0.05,
+ "z2": 4.299,
+ "unsicherheit_rel": 0.0263,
+ "unsicherheit_m": 0.129,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113602 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.99989,0.0148,0=4.026 (+-0.3 m)"
+}

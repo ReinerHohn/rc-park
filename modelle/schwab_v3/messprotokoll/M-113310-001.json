@@ -1,0 +1,32 @@
+{
+ "id": "M-113310-001",
+ "foto": "113310",
+ "kamera": "K-eigen__IMG_20261106_113310",
+ "ebene": "0.99989,0.0148,0=4.026",
+ "name": "Tor Nord: Scheitel aussen ueber Pflaster (Gegenprobe schraeg -47 Grad)",
+ "mess_px": [
+  2080.0,
+  3291.0,
+  1917.0,
+  2025.0
+ ],
+ "P1": [
+  3.8,
+  15.272,
+  0.052
+ ],
+ "P2": [
+  3.8,
+  15.269,
+  7.25
+ ],
+ "dz": 7.198,
+ "dy": -0.003,
+ "dx": 0.0,
+ "abstand": 7.198,
+ "z1": 0.052,
+ "z2": 7.25,
+ "unsicherheit_rel": 0.0179,
+ "unsicherheit_m": 0.154,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113310 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.99989,0.0148,0=4.026 (+-0.3 m)"
+}

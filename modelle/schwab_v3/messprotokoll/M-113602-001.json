@@ -1,0 +1,32 @@
+{
+ "id": "M-113602-001",
+ "foto": "113602",
+ "kamera": "K-eigen__IMG_20261106_113602",
+ "ebene": "0.99989,0.0148,0=4.026",
+ "name": "Tor Nord: lichte Breite zwischen den Pfeilern bei z 2",
+ "mess_px": [
+  1571.0,
+  2556.0,
+  2835.0,
+  2495.0
+ ],
+ "P1": [
+  3.833,
+  13.041,
+  2.001
+ ],
+ "P2": [
+  3.765,
+  17.672,
+  2.0
+ ],
+ "dz": -0.0,
+ "dy": 4.63,
+ "dx": -0.069,
+ "abstand": 4.631,
+ "z1": 2.001,
+ "z2": 2.0,
+ "unsicherheit_rel": 0.0265,
+ "unsicherheit_m": 0.14,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113602 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.99989,0.0148,0=4.026 (+-0.3 m)"
+}

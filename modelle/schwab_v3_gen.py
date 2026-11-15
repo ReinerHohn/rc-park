@@ -57,6 +57,19 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12)
         beleg("wand", "Relief Nordwand z 0,6-29,6 m", "OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)",
               hinweis="Scan-Relief, kein Mass: Torbogen, Holzgalerie und Vordach sind darin Loecher (glatte Wand) und fehlen noch; Wandanzug (~0,6 cm/m) abgezogen")
+    # Tordurchfahrt Nord als ECHTE Oeffnung aus Fotokanten (Nutzer 13:30: Relief mit dem Generator schaerfen). Masse M-113602-001..-006 auf der Sockelebene.
+    def spitzbogen(halb, kaempfer, scheitel, unten=-0.6, nseg=24):
+        h = scheitel - kaempfer; r = (halb * halb + h * h) / (2 * halb); w0 = np.arcsin(h / r)          # Kreisbogen: Mitte auf der Kaempferlinie, r - halb jenseits der Achse
+        re = [[-(r - halb) + r * np.cos(w), kaempfer + r * np.sin(w)] for w in np.linspace(0, w0, nseg)]  # rechter Bogen vom Kaempfer zum Scheitel
+        li = [[-x, z] for x, z in re[::-1]]
+        return CrossSection([[[-halb, unten], [halb, unten]] + re[:-1] + li])
+    T_UM, T_PF = 6.135, 0.05                                   # Tormitte ab Wandecke Ost (u), Pflasterhoehe
+    ac = ca + T_UM * tn; M_tor = [[tn[0], 0.0, nn[0], ac[0]], [tn[1], 0.0, nn[1], ac[1]], [0.0, 1.0, 0.0, 0.0]]     # lokal (quer, hoch, tief nach aussen) -> Welt
+    innen = M.extrude(spitzbogen(4.63 / 2, T_PF + 4.25, T_PF + 6.88), 16.0).translate((0, 0, -15.0)).transform(M_tor)   # ANNAHME: Durchfahrt mit gleichem Querschnitt bis zur Suedseite
+    aussen = M.extrude(spitzbogen(5.47 / 2, T_PF + 4.25, T_PF + 7.20, unten=T_PF + 4.25), 1.0).translate((0, 0, -0.08)).transform(M_tor)  # Bogenring: ANNAHME Stufe 0,25 m statt Fase
+    rumpf = rumpf - innen - aussen
+    beleg("wand", "Tordurchfahrt Nord (Spitzbogen)", "foto_mass.py auf der Sockelebene, Frontalfoto 113602 + Schraegfoto 113310 (M-113602-001..-006, M-113310-001)", lichte_breite=4.63,
+          kaempfer=4.25, lichte_hoehe=6.88, scheitel_aussen=7.20, hinweis="ANNAHME: Kreisboegen; Bogenring als Stufe 0,25 m; Durchfahrt mit gleichem Querschnitt bis Sued (Suedbogen nicht gemessen); Kaempfersteine fehlen")
     koerper = rumpf + dach + lat
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:

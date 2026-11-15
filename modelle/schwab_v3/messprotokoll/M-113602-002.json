@@ -1,0 +1,32 @@
+{
+ "id": "M-113602-002",
+ "foto": "113602",
+ "kamera": "K-eigen__IMG_20261106_113602",
+ "ebene": "0.99989,0.0148,0=4.026",
+ "name": "Tor Nord: Bogen aussen (Fase) Breite am Kaempfer z 4,4",
+ "mess_px": [
+  1468.0,
+  1981.0,
+  2878.0,
+  1841.0
+ ],
+ "P1": [
+  3.838,
+  12.701,
+  4.398
+ ],
+ "P2": [
+  3.757,
+  18.17,
+  4.4
+ ],
+ "dz": 0.001,
+ "dy": 5.469,
+ "dx": -0.081,
+ "abstand": 5.47,
+ "z1": 4.398,
+ "z2": 4.4,
+ "unsicherheit_rel": 0.0255,
+ "unsicherheit_m": 0.157,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113602 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.99989,0.0148,0=4.026 (+-0.3 m)"
+}

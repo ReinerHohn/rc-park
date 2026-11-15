@@ -68,5 +68,16 @@
   "quelle": "OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)",
   "hinweis": "Scan-Relief, kein Mass: Torbogen, Holzgalerie und Vordach sind darin Loecher (glatte Wand) und fehlen noch; Wandanzug (~0,6 cm/m) abgezogen",
   "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Tordurchfahrt Nord (Spitzbogen)",
+  "quelle": "foto_mass.py auf der Sockelebene, Frontalfoto 113602 + Schraegfoto 113310 (M-113602-001..-006, M-113310-001)",
+  "lichte_breite": 4.63,
+  "kaempfer": 4.25,
+  "lichte_hoehe": 6.88,
+  "scheitel_aussen": 7.2,
+  "hinweis": "ANNAHME: Kreisboegen; Bogenring als Stufe 0,25 m; Durchfahrt mit gleichem Querschnitt bis Sued (Suedbogen nicht gemessen); Kaempfersteine fehlen",
+  "seite_name": "wand"
  }
 ]
