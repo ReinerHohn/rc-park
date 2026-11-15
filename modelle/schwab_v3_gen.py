@@ -160,6 +160,14 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     beleg("wand", "Suedfassade: Torbogen, Fenster, Uhr, Gesims, Verdachung", "foto_mass.py auf der Suedwandebene, Fotos commons 127 und 217 (M-commons127-002..-010, M-commons217-001..-003)", tor_breite=4.49, tor_scheitel=5.85,
           tor_kaempfer=3.86, uhr_durchmesser=4.95, uhr_mitte_z=30.97, fenster_breite=0.92, fenster_hoehe=1.41, gesims_z=26.53,
           hinweis="ANNAHME: Tiefen/Ausladungen, Torwand 1 m, Bogen aus Kreisboegen; Georgsbild, Eckquader und Bruchstein fehlen (Relief erst nach neuer dichter Wolke); Knauf-Tor Nord-Sued 0,9 m -> Masse auf ~2-3 %")
+    # ---- WESTFASSADE (15.11.2026): Fenster auf der Mittelachse, Masse M-114039-001..-006 (Foto 114039, Kameras aus dem SfM-Neuaufbau); Wandebene aus den neuen SfM-Punkten ----
+    WW = Wand((-7.37, 20.85), (3.30, 21.00), aussen=(-2.0, 40.0))
+    koerper = koerper - WW.prisma(b_rund(0.81, 21.70, 23.45), u=5.40, w0=-0.8, w1=0.6)                          # grosses Fenster (Tiefe ANNAHME; Gewaende buendig = Farbe)
+    for u0_, u1_, z0_, z1_ in ((5.31, 5.52, 27.82, 30.19), (5.20, 5.45, 33.0, 34.4), (5.33, 5.47, 16.93, 17.86), (5.27, 5.39, 10.46, 11.44)):   # Schlitzfenster; das oberste (z 33-34,4) ist aus steiler Sicht nur ungefaehr
+        koerper = koerper - WW.kasten(u0_, u1_, z0_, z1_, -0.8, 0.6)
+    koerper = koerper + WW.kasten(0.0, WW.laenge, 26.0, 26.53, -0.4, 0.10)                                      # Gesims West: Hoehe wie Sued (im Foto 114039 bei z ~26,5), Ausladung ANNAHME
+    beleg("wand", "Westfassade: grosses Fenster, 4 Schlitzfenster, Gesims", "foto_mass.py auf der Westwandebene, Foto 114039 (M-114039-001..-006)", fenster_breite=0.81, fenster_hoehe=1.75, fensterachse_u=5.40,
+          hinweis="ANNAHME: Tiefen, Schlitzbreiten 0,12-0,25 m aus einem steilen Foto, Gesimshoehe von der Suedseite; Wandlage West nur aus Wolke/LoD2; Treppenturm (LoD2-Nebenteil) unveraendert; Eckquader/Bruchstein fehlen")
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json

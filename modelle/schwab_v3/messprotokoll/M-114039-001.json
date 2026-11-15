@@ -1,0 +1,32 @@
+{
+ "id": "M-114039-001",
+ "foto": "114039",
+ "kamera": "K-eigen__IMG_20261106_114039",
+ "ebene": "-0.01406,0.9999,0=20.952",
+ "name": "West: grosses Fenster Oeffnung Breite",
+ "mess_px": [
+  1252.0,
+  898.0,
+  1347.0,
+  927.0
+ ],
+ "P1": [
+  -1.573,
+  20.932,
+  22.599
+ ],
+ "P2": [
+  -2.376,
+  20.921,
+  22.595
+ ],
+ "dz": -0.004,
+ "dy": -0.011,
+ "dx": -0.803,
+ "abstand": 0.803,
+ "z1": 22.599,
+ "z2": 22.595,
+ "unsicherheit_rel": 0.0125,
+ "unsicherheit_m": 0.046,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_114039 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.01406,0.9999,0=20.952 (+-0.3 m)"
+}

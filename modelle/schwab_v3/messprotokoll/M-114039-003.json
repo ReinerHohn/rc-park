@@ -1,0 +1,32 @@
+{
+ "id": "M-114039-003",
+ "foto": "114039",
+ "kamera": "K-eigen__IMG_20261106_114039",
+ "ebene": "-0.01406,0.9999,0=20.952",
+ "name": "West: Schlitzfenster Uhrgeschoss Hoehe",
+ "mess_px": [
+  1268.0,
+  619.0,
+  1257.0,
+  509.0
+ ],
+ "P1": [
+  -1.959,
+  20.927,
+  27.819
+ ],
+ "P2": [
+  -1.962,
+  20.927,
+  30.198
+ ],
+ "dz": 2.38,
+ "dy": -0.0,
+ "dx": -0.003,
+ "abstand": 2.38,
+ "z1": 27.819,
+ "z2": 30.198,
+ "unsicherheit_rel": 0.0104,
+ "unsicherheit_m": 0.068,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_114039 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.01406,0.9999,0=20.952 (+-0.3 m)"
+}

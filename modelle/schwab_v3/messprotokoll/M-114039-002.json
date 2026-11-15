@@ -1,0 +1,32 @@
+{
+ "id": "M-114039-002",
+ "foto": "114039",
+ "kamera": "K-eigen__IMG_20261106_114039",
+ "ebene": "-0.01406,0.9999,0=20.952",
+ "name": "West: grosses Fenster Oeffnung Hoehe",
+ "mess_px": [
+  1305.0,
+  972.0,
+  1294.0,
+  859.0
+ ],
+ "P1": [
+  -1.967,
+  20.926,
+  21.693
+ ],
+ "P2": [
+  -1.973,
+  20.926,
+  23.448
+ ],
+ "dz": 1.755,
+ "dy": -0.0,
+ "dx": -0.005,
+ "abstand": 1.755,
+ "z1": 21.693,
+ "z2": 23.448,
+ "unsicherheit_rel": 0.0129,
+ "unsicherheit_m": 0.058,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_114039 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.01406,0.9999,0=20.952 (+-0.3 m)"
+}

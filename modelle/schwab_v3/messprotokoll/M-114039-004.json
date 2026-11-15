@@ -1,0 +1,32 @@
+{
+ "id": "M-114039-004",
+ "foto": "114039",
+ "kamera": "K-eigen__IMG_20261106_114039",
+ "ebene": "-0.01406,0.9999,0=20.952",
+ "name": "West: kleines Fenster z 17 Schlitzhoehe",
+ "mess_px": [
+  1344.0,
+  1346.0,
+  1335.0,
+  1264.0
+ ],
+ "P1": [
+  -1.972,
+  20.926,
+  16.933
+ ],
+ "P2": [
+  -1.968,
+  20.926,
+  17.86
+ ],
+ "dz": 0.927,
+ "dy": 0.0,
+ "dx": 0.004,
+ "abstand": 0.927,
+ "z1": 16.933,
+ "z2": 17.86,
+ "unsicherheit_rel": 0.0155,
+ "unsicherheit_m": 0.044,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_114039 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.01406,0.9999,0=20.952 (+-0.3 m)"
+}

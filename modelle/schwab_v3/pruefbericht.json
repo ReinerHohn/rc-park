@@ -44,12 +44,19 @@
   "fen_s_innen": 6.754068221417363,
   "fen_s_kante_ost_innen": 6.743340659937715,
   "fen_s_kante_ost_aussen": 7.187047141977814,
-  "fen_s_ueber": 7.204262079754699,
-  "gesims_s": 7.2234595802705925,
-  "gesims_s_ueber": 7.123406994179973,
+  "fen_s_ueber": 7.204261393953047,
+  "gesims_s": 7.223459602294739,
+  "gesims_s_ueber": 7.1234010750787675,
   "tor_s_scheitel": 5.839999999999971,
   "tor_s_halb_west": 2.245315384006187,
-  "tor_s_halb_ost": 2.24470702536376
+  "tor_s_halb_ost": 2.24470702536376,
+  "fen_w_gross_innen": 20.12582439657914,
+  "fen_w_gross_kante": 20.825916476033203,
+  "fen_w_gross_ueber": 20.803565493497814,
+  "fen_w_schlitz_innen": 20.126066763103452,
+  "fen_w_schlitz_ueber": 20.80421802084317,
+  "fen_w_klein17_innen": 20.125810903492365,
+  "fen_w_klein11_innen": 20.124843913652235
  },
  "pruefungen": [
   {
@@ -484,7 +491,7 @@
   },
   {
    "name": "Sued (fen_s_ueber): |x| der ersten Flaeche bei u 5.75 z 23.80 (m)",
-   "wert": 7.204262079754699,
+   "wert": 7.204261393953047,
    "soll": [
     7.17,
     7.24
@@ -494,7 +501,7 @@
   },
   {
    "name": "Sued (gesims_s): |x| der ersten Flaeche bei u 3.00 z 26.30 (m)",
-   "wert": 7.2234595802705925,
+   "wert": 7.223459602294739,
    "soll": [
     7.16,
     7.29
@@ -504,7 +511,7 @@
   },
   {
    "name": "Sued (gesims_s_ueber): |x| der ersten Flaeche bei u 3.00 z 26.75 (m)",
-   "wert": 7.123406994179973,
+   "wert": 7.1234010750787675,
    "soll": [
     7.09,
     7.16
@@ -538,6 +545,76 @@
    "soll": [
     2.1,
     2.4
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "West (fen_w_gross_innen): |y| der ersten Flaeche bei u 5.40 z 22.60 (m)",
+   "wert": 20.12582439657914,
+   "soll": [
+    19.83,
+    20.53
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "West (fen_w_gross_kante): |y| der ersten Flaeche bei u 5.95 z 22.60 (m)",
+   "wert": 20.825916476033203,
+   "soll": [
+    20.58,
+    21.05
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "West (fen_w_gross_ueber): |y| der ersten Flaeche bei u 5.40 z 23.65 (m)",
+   "wert": 20.803565493497814,
+   "soll": [
+    20.58,
+    21.05
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "West (fen_w_schlitz_innen): |y| der ersten Flaeche bei u 5.42 z 29.00 (m)",
+   "wert": 20.126066763103452,
+   "soll": [
+    19.83,
+    20.53
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "West (fen_w_schlitz_ueber): |y| der ersten Flaeche bei u 5.42 z 30.45 (m)",
+   "wert": 20.80421802084317,
+   "soll": [
+    20.58,
+    21.05
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "West (fen_w_klein17_innen): |y| der ersten Flaeche bei u 5.40 z 17.40 (m)",
+   "wert": 20.125810903492365,
+   "soll": [
+    19.83,
+    20.53
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "West (fen_w_klein11_innen): |y| der ersten Flaeche bei u 5.33 z 10.95 (m)",
+   "wert": 20.124843913652235,
+   "soll": [
+    19.82,
+    20.52
    ],
    "ok": true,
    "status": "ok"

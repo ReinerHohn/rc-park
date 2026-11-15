@@ -154,5 +154,15 @@
   "gesims_z": 26.53,
   "hinweis": "ANNAHME: Tiefen/Ausladungen, Torwand 1 m, Bogen aus Kreisboegen; Georgsbild, Eckquader und Bruchstein fehlen (Relief erst nach neuer dichter Wolke); Knauf-Tor Nord-Sued 0,9 m -> Masse auf ~2-3 %",
   "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Westfassade: grosses Fenster, 4 Schlitzfenster, Gesims",
+  "quelle": "foto_mass.py auf der Westwandebene, Foto 114039 (M-114039-001..-006)",
+  "fenster_breite": 0.81,
+  "fenster_hoehe": 1.75,
+  "fensterachse_u": 5.4,
+  "hinweis": "ANNAHME: Tiefen, Schlitzbreiten 0,12-0,25 m aus einem steilen Foto, Gesimshoehe von der Suedseite; Wandlage West nur aus Wolke/LoD2; Treppenturm (LoD2-Nebenteil) unveraendert; Eckquader/Bruchstein fehlen",
+  "seite_name": "wand"
  }
 ]
