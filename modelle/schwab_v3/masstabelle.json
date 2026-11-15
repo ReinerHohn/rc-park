@@ -401,6 +401,12 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.15 m, y=9.13 m (Zelle [891, 1980, 99], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Nutzer (3D-Seite V8, Bildschirmfoto 13:30)",
+   "text": "Relief Nordwand: 'die Kanten sind ein erster Ansatz, aber das musst du noch schaerfen mit Generator - noch nicht gut genug'. Torbogen, Fenster, Vordach und Holzgalerie erscheinen im Relief nur als weiche Wuelste/Flecken, nicht als scharfe Bauteile. Bild audit/beobachtung_1330_relief_unscharf.jpg",
+   "naechster_schritt": "Regelmaessige Bauteile der Nordwand aus FOTOKANTEN in den Generator (KERNMETHODE): 1) Torbogen als echte Oeffnung (Gewaendekanten per --tri2d, Kaempfer/Scheitel per --tri in Fotos 113208/113141/113612), 2) zwei Rundbogenfenster mit Gewaende, 3) Vordach (Pultdach) und 4) Holzgalerie als Koerper, 5) Eckquader. Relief nur noch als Maske auf den Bruchsteinflaechen dazwischen (Bauteilflaechen im Hoehenbild auf 0), Kanten-Sweep kanten_tiefe_sweep_flaeche.py fuer Fugen/Leisten. Tor: foto_diff je Bauteil + Bild neben Foto"
   }
  ]
 }

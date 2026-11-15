@@ -1,80 +1,56 @@
 {
  "werkzeug": "wolke_grundriss_pruefen.py",
- "wolke": "/home/oem/git/rc-park/modelle/schwab_v3/sfm/punkte_modell_schwab_v3.npy",
+ "wolke": "modelle/schwab_v3/sfm/punkte_modell_schwab_v3.npy",
  "lod2_gebaeude": 36,
- "wandpunkte": 1168517,
+ "wandpunkte": 1164972,
  "strasse": {
-  "anteil": 0.0073,
+  "anteil": 0.0056,
   "haufen": [
    {
-    "punkte": 5442,
+    "punkte": 2795,
     "mitte": [
-     -12.2,
-     3.8
+     -11.9,
+     3.5
     ],
     "ausdehnung_m": [
-     13,
+     12,
      15
     ],
     "geklaert": "Erker und Traufe des Nachbarhauses mit dem grossen Torbogen (kragen ueber dessen LoD2-Grundriss), echt, gehoert nicht zum Turm"
    },
    {
-    "punkte": 1061,
+    "punkte": 1991,
     "mitte": [
-     8.5,
-     10.5
+     12.1,
+     8.9
     ],
     "ausdehnung_m": [
-     14,
-     21
+     22,
+     22
     ],
     "geklaert": null
    },
    {
-    "punkte": 696,
+    "punkte": 751,
     "mitte": [
-     18.3,
-     6.6
+     40.0,
+     13.3
     ],
     "ausdehnung_m": [
-     14,
-     11
-    ],
-    "geklaert": null
-   },
-   {
-    "punkte": 342,
-    "mitte": [
-     41.5,
-     14.5
-    ],
-    "ausdehnung_m": [
-     1,
-     1
-    ],
-    "geklaert": null
-   },
-   {
-    "punkte": 327,
-    "mitte": [
-     32.1,
-     12.3
-    ],
-    "ausdehnung_m": [
-     2,
+     6,
      3
     ],
     "geklaert": null
    },
    {
-    "punkte": 237,
+    "punkte": 325,
     "mitte": [
-     -5.9,
-     25.2
+     33.0,
+     11.5
     ],
     "ausdehnung_m": [
-     12,
-     12
+     2,
+     1
     ],
     "geklaert": null
    }
@@ -88,16 +64,16 @@
     "teil": 0,
     "flaeche_m2": 141.4,
     "randproben": 306,
-    "deckung": 0.853,
+    "deckung": 1.0,
     "gedreht": {
-     "f1": 0.568,
-     "drehung_grad": 266,
+     "f1": 0.539,
+     "drehung_grad": 88,
      "versatz_m": [
-      1.25,
+      -1.0,
       -0.5
      ],
-     "randdeckung": 0.412,
-     "auf_rand": 0.916
+     "randdeckung": 0.373,
+     "auf_rand": 0.972
     },
     "hinweis": false,
     "warnung": false
@@ -106,66 +82,66 @@
     "teil": 1,
     "flaeche_m2": 6.9,
     "randproben": 84,
-    "deckung": 0.524,
+    "deckung": 0.167,
     "gedreht": {
-     "f1": 0.903,
-     "drehung_grad": 154,
+     "f1": 0.91,
+     "drehung_grad": 150,
      "versatz_m": [
-      -0.75,
+      -1.25,
       -1.25
      ],
-     "randdeckung": 0.893,
-     "auf_rand": 0.914
+     "randdeckung": 0.905,
+     "auf_rand": 0.915
     },
-    "hinweis": false,
-    "warnung": false
+    "hinweis": true,
+    "warnung": true
    }
   ],
-  "warnung": false
+  "warnung": true
  },
  "eindeutigkeit": {
-  "identitaet_anteil": 0.4785,
+  "identitaet_anteil": 0.4695,
   "beste_nahe_identitaet": {
-   "anteil": 0.5257368683815002,
+   "anteil": 0.5220814347267151,
    "spiegel": 0,
-   "drehung": 2,
+   "drehung": 1,
    "verschiebung": [
-    0.0,
-    -0.5
+    -0.25,
+    0.0
    ]
   },
   "beste_alternative": {
-   "anteil": 0.3652527332305908,
+   "anteil": 0.36222004890441895,
    "spiegel": 1,
    "drehung": 187,
    "verschiebung": [
-    0.5,
+    0.0,
     -2.25
    ]
   },
-  "abstand_relativ": 0.305,
+  "abstand_relativ": 0.306,
   "warnung": false,
   "top5": [
    {
-    "anteil": 0.5257368683815002,
-    "spiegel": 0,
-    "drehung": 2,
-    "verschiebung": [
-     0.0,
-     -0.5
-    ]
-   },
-   {
-    "anteil": 0.5255284309387207,
+    "anteil": 0.5220814347267151,
     "spiegel": 0,
     "drehung": 1,
     "verschiebung": [
-     0.0,
+     -0.25,
      0.0
     ]
    },
    {
-    "anteil": 0.4972117841243744,
+    "anteil": 0.5117825269699097,
+    "spiegel": 0,
+    "drehung": 2,
+    "verschiebung": [
+     -0.25,
+     -0.5
+    ]
+   },
+   {
+    "anteil": 0.49203431606292725,
     "spiegel": 0,
     "drehung": 0,
     "verschiebung": [
@@ -174,21 +150,21 @@
     ]
    },
    {
-    "anteil": 0.4718288481235504,
+    "anteil": 0.466589093208313,
     "spiegel": 0,
     "drehung": 3,
     "verschiebung": [
-     0.0,
+     -0.25,
      -1.0
     ]
    },
    {
-    "anteil": 0.467070996761322,
+    "anteil": 0.4615243077278137,
     "spiegel": 0,
     "drehung": 359,
     "verschiebung": [
-     0.0,
-     0.75
+     -0.25,
+     1.0
     ]
    }
   ]
