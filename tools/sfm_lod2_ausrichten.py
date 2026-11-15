@@ -290,7 +290,7 @@ def main():
     zweit = loes[1][0] if len(loes) > 1 else 0; frac = guete                                   # Guete = Inlier x Abdeckung
     _anders = [l for l in loes[1:] if np.degrees((Rot.from_rotvec(l[2][1:4]).inv() * Rot.from_rotvec(p[1:4])).magnitude()) > 10
                or np.linalg.norm(np.asarray(l[2][4:7]) - np.asarray(p[4:7])) > 3]              # nur wirklich andere Lagen, nicht Duplikate derselben
-    mehrdeutig = bool(_anders) and _anders[0][0] > 0.85 * guete                                   # Schwabentor 2026-11-14: 0,222 vs 0,194 (87 %) -> Fluegel auf der Strasse
+    mehrdeutig = bool(_anders) and bool(_anders[0][0] > 0.85 * guete)                                   # Schwabentor 2026-11-14: 0,222 vs 0,194 (87 %) -> Fluegel auf der Strasse
     if mehrdeutig:
         print(f"\nWARNUNG MEHRDEUTIG: andere Lage (>10 Grad oder >3 m) erreicht {100 * _anders[0][0]:.1f} % gegen {100 * guete:.1f} % "
               f"({100 * _anders[0][0] / guete:.0f} %) - danach tools/wolke_grundriss_pruefen.py + tools/kamera_abdeckung.py, Lage am Foto belegen")

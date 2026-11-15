@@ -55,7 +55,12 @@ def main():
     for i, (p, q, n, eig) in enumerate(uniq):
         if not behalten[i]: continue
         qn = "eigen" if eig else q.split("/rc-park_daten/")[-1].split("/", 1)[-1].replace("/", "_") or "fremd"
-        nm = f"{qn}__{os.path.basename(p)}"; os.symlink(p, os.path.join(a.ziel, nm)); liste.append(dict(name=nm, pfad=p, quelle=qn, inlier=n))
+        nm = f"{qn}__{os.path.basename(p)}"
+        if os.path.lexists(os.path.join(a.ziel, nm)):                      # 15.11. Kaufhaus: gleicher Dateiname in zwei Unterordnern derselben Quelle -> Nummer anhaengen
+            b, e = os.path.splitext(nm); k = 2
+            while os.path.lexists(os.path.join(a.ziel, f"{b}_{k}{e}")): k += 1
+            nm = f"{b}_{k}{e}"
+        os.symlink(p, os.path.join(a.ziel, nm)); liste.append(dict(name=nm, pfad=p, quelle=qn, inlier=n))
     from collections import Counter
     json.dump(dict(bilder=liste, dubletten=dubl, je_quelle=Counter(x["quelle"] for x in liste)), open(os.path.join(a.ziel, "sammlung.json"), "w"), indent=1, ensure_ascii=False)
     print(f"{len(liste)} Bilder ({len(dubl)} Dubletten entfernt) -> {a.ziel}")

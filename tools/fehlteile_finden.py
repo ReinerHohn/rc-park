@@ -169,7 +169,7 @@ def main():
     _zeit("import"); a = sys.argv[1:]; objp, nr = a[0], a[1]; dx = float(a[a.index("--dx") + 1]) if "--dx" in a else 0.0; dy = float(a[a.index("--dy") + 1]) if "--dy" in a else 0.0; sch = float(a[a.index("--schwelle") + 1]) if "--schwelle" in a else 0.35; top = int(a[a.index("--top") + 1]) if "--top" in a else 12
     obj = json.load(open(objp)); root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(objp)))); od = os.path.join(root, os.path.dirname(obj["masstabelle"]))
     kp = k_datei(objp, obj, root, nr); K = json.load(open(kp)) if os.path.exists(kp) else {}
-    _zeit("json"); im = cv2.imread(glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]); H, W = im.shape[:2]; _zeit("imread"); kk = K.get("kamera", {}); cx, cy = float(kk.get("cx", W / 2)) + dx, float(kk.get("cy", H / 2)) + dy   # Hauptpunkt aus K (Buendelkameras), sonst Bildmitte
+    _zeit("json"); im = cv2.imread((glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*")) or glob.glob(os.path.join(root, obj["fotos_dir"], nr + ".*")))[0]); H, W = im.shape[:2]; _zeit("imread"); kk = K.get("kamera", {}); cx, cy = float(kk.get("cx", W / 2)) + dx, float(kk.get("cy", H / 2)) + dy   # Hauptpunkt aus K (Buendelkameras), sonst Bildmitte
     R, t, f, quelle, (zlo, zhi) = kamera_laden(K, obj, nr, root, W, H)
     vt = None
     if "--versatz-test" in a or "--nur-versatz-test" in a:

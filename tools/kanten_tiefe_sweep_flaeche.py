@@ -27,6 +27,13 @@ if "--ref_prefix" in sys.argv: pool = np.array([i for i in pool if fs[i].startsw
 if "--ref_namen" in sys.argv: refs = np.array([fs.index(n) for n in opt("--ref_namen", "", str).split(",")])   # gezielte Referenzfotos (Diagnose)
 DIAG = opt("--diag", "", str); ds = torch.linspace(DMIN, DMAX, int((DMAX - DMIN) / opt('--schritt', 0.01)), device=dev); out = []
 ZENTRUM = np.median(np.load(opt("--box", "", str))[:, :3], 0) if "--box" in sys.argv else None   # Szenenmitte fuer relative Basis
+ZAUTO = "--ziel_auto" in sys.argv; MM = None   # 15.11.: allgemein (Gesamtkette): Flaechen-Massstab per --flaeche_skala (Standard 0,087 = Kaufhaus), Blickziel je Referenz aus der Flaeche
+if "--flaeche" in sys.argv:
+    import trimesh; mm = trimesh.load(opt('--flaeche', '', str)); mm.apply_scale(opt('--flaeche_skala', 0.087)); bxs = np.array([float(v_) for v_ in opt('--box3', '14,3,6,27,12,8.4', str).split(',')]); ct = mm.triangles_center; mm = trimesh.Trimesh(mm.vertices, mm.faces[np.all((ct >= bxs[:3]) & (ct <= bxs[3:]), axis=1)], process=False); MM = mm
+def blickziel(a, n=24):                                                         # Median der Treffer eines n x n-Strahlengitters mit der Modellflaeche (None = Foto sieht das Modell kaum)
+    Hh, Ww = HW[a]; g = torch.stack(torch.meshgrid(torch.linspace(0, Ww - 1, n, device=dev), torch.linspace(0, Hh - 1, n, device=dev), indexing="xy"), -1).reshape(-1, 2)
+    rr = strahl(a, g[:, 0], g[:, 1]).cpu().numpy(); loc, _, _ = MM.ray.intersects_location(np.repeat(Cn[a][None], len(rr), 0), rr, multiple_hits=False)
+    return np.median(loc, 0) if len(loc) >= 0.05 * n * n else None
 for a in refs:
     bz, bmax = BZ, BMAX
     if '--dziel' in sys.argv:
@@ -35,14 +42,16 @@ for a in refs:
     if DZ > 0 and ZENTRUM is not None:                                             # Basis nach Tiefenaufloesung: 1 px Verschiebung = DZ Meter -> b_min = d^2 / (f_px * DZ)
         da = float(np.linalg.norm(Cn[a] - ZENTRUM)); fpx = float(FL[a] * SJ[a]); bmin = da * da / (fpx * DZ); bz = max(1.5, 1.5 * bmin); bmax = min(opt("--basis_max", 25.0), max(6.0, 4 * bmin))
     if ZENTRUM is not None and float(np.linalg.norm(Cn[a] - ZENTRUM)) > opt("--dmax_ref", 1e9): continue        # ferne Referenzfotos liefern nur Rauschen (Test 6254: 10 % < 10 cm)
-    ZP = np.array([float(v) for v in opt('--ziel', '20,7,7', str).split(',')]); cand = [(-abs(np.linalg.norm(Cn[b] - Cn[a])), b) for b in range(J) if b != a and 1.0 < np.linalg.norm(Cn[b] - Cn[a]) < bmax and float(Dn[b] @ ((ZP - Cn[b]) / np.linalg.norm(ZP - Cn[b]))) > 0.8 and np.linalg.norm(ZP - Cn[b]) < opt('--nbdist', 30.0)]; cand.sort(); nb = [b for _, b in cand[::max(1, len(cand) // NB)][:NB]]
+    ZP = blickziel(a) if ZAUTO else np.array([float(v) for v in opt('--ziel', '20,7,7', str).split(',')])
+    if ZP is None: continue
+    cand = [(-abs(np.linalg.norm(Cn[b] - Cn[a])), b) for b in range(J) if b != a and 1.0 < np.linalg.norm(Cn[b] - Cn[a]) < bmax and float(Dn[b] @ ((ZP - Cn[b]) / np.linalg.norm(ZP - Cn[b]))) > 0.8 and np.linalg.norm(ZP - Cn[b]) < opt('--nbdist', 30.0)]; cand.sort(); nb = [b for _, b in cand[::max(1, len(cand) // NB)][:NB]]
     if len(nb) < 5: continue
     ys, xs = torch.nonzero(V[a] >= 255 * VMIN, as_tuple=True)
     fw = [float(v) for v in opt('--fenster', '0,0,99999,99999', str).split(',')]; kf = (xs.float() / SJ[a] >= fw[0]) & (xs.float() / SJ[a] < fw[2]) & (ys.float() / SJ[a] >= fw[1]) & (ys.float() / SJ[a] < fw[3]); ys, xs = ys[kf], xs[kf]
     if len(xs) > MAXPX: p = torch.randperm(len(xs), device=dev)[:MAXPX]; ys, xs = ys[p], xs[p]
     u = xs.float() + 0.5; v = ys.float() + 0.5
     if '--flaeche' in sys.argv:
-        import trimesh; mm = trimesh.load(opt('--flaeche', '', str)); mm.apply_scale(0.087); bxs = np.array([float(v_) for v_ in opt('--box3', '14,3,6,27,12,8.4', str).split(',')]); ct = mm.triangles_center; mm = trimesh.Trimesh(mm.vertices, mm.faces[np.all((ct >= bxs[:3]) & (ct <= bxs[3:]), axis=1)], process=False)
+        mm = MM
         rr = strahl(a, u, v).cpu().numpy(); oo = np.repeat(Cn[a][None], len(rr), 0); loc, ir, _ = mm.ray.intersects_location(oo, rr, multiple_hits=False); tz0 = np.full(len(rr), np.nan); tz0[ir] = np.linalg.norm(loc - Cn[a], axis=1)
         kk = torch.from_numpy(~np.isnan(tz0)).to(dev); ys, xs, u, v = ys[kk], xs[kk], u[kk], v[kk]; T0 = torch.from_numpy(tz0[~np.isnan(tz0)]).float().to(dev)
         ds = torch.linspace(-opt('--band', 0.25), opt('--band', 0.25), int(2 * opt('--band', 0.25) / opt('--schritt', 0.01)) + 1, device=dev)

@@ -49,7 +49,7 @@ def main():
     except Exception as e: print("WARNUNG: Rueckprojektion je Kamera nicht berechenbar:", str(e)[:120])
     neu = gesch = 0; ber = []
     for nr, k in sorted(A["kameras"].items()):
-        fp = sorted(glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*")))
+        fp = sorted(glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*")) or glob.glob(os.path.join(root, obj["fotos_dir"], nr + ".*")))
         if not fp: ber.append((nr, "Foto fehlt")); continue
         W, H = Image.open(fp[0]).size; bw, bh = float(k.get("bild_b", W)), float(k.get("bild_h", H)); s = W / bw
         if abs(H / bh - s) > 0.01 * s: ber.append((nr, f"Seitenverhaeltnis {W}x{H} vs SfM {bw:.0f}x{bh:.0f}")); continue

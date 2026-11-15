@@ -17,6 +17,8 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
              sfm_lod2_ausrichten --loesung 1..max probieren, die erste Loesung, die ALLE Tore besteht, gilt; sonst Abbruch mit Bericht
   dach       tools/dach_vermessen.py (DOM1, mit Wolke)
   bauen      tools/bauen_abnehmen.sh <ziel> (Generator aus Vorlage = LoD2 + Dach)
+  kanten     KERNMETHODE (15.11.): tools/kantenstufe.py - SfM-Kameras -> Stabilkarten -> Kanten-Tiefen-Sweep um die Modellflaeche -> 3D-Kanten-F1 + Liste fehlender Kanten
+  fototor    tools/kameras_aus_buendel.py (K-<foto>.json) -> tools/foto_diff.py auf den Fotos mit bester Modellsicht (Foto-Tor)
   html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html
   vergleich  optional --referenz-wolke: Abstand neue Wolke -> bewiesene Wolke (Median, Anteil < 0,5 m) = Konvergenzbeweis
 """
@@ -24,7 +26,7 @@ import sys, os, json, glob, shutil, subprocess, time, argparse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = "/media/oem/scan/venv-seg/bin/python"; PYC = "/media/oem/scan/venv-colmap/bin/python"
-STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "html", "vergleich"]
+STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "kanten", "fototor", "html", "vergleich"]
 UEBERNEHMEN = ["name", "ort", "lod2", "rahmen", "rahmen_wand", "koordinate_utm", "hoehe_m", "fotos_dir", "seiten_konvention", "bildquellen"]
 
 
@@ -129,6 +131,14 @@ def main():
         lauf(B, "dach", [PY, "-I", "tools/dach_vermessen.py", ZR] + (["--wolke", W] if os.path.exists(W) else []), log)
     if dran("bauen"):
         lauf(B, "bauen", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
+    KD = os.path.join(D, "kanten")
+    if dran("kanten"):
+        if os.path.exists(AU): lauf(B, "kanten", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU, "--bilder", FV, "--aus", KD], log, ok=(0, 4))
+        else: notiz(B, "kanten", False, fehler=f"keine Ausrichtung {AU}")
+    if dran("fototor") and os.path.exists(AU):
+        lauf(B, "fototor_kameras", [PYC, "-I", "tools/kameras_aus_buendel.py", ZR, "--ausrichtung", AU], log)
+        kw = os.path.join(KD, "kam_wahl.json"); wahl = list(json.load(open(kw)))[:6] if os.path.exists(kw) else []
+        for f in wahl: lauf(B, f"fototor_{os.path.splitext(f)[0]}", [PY, "-W", "ignore", "-I", "tools/foto_diff.py", ZR, os.path.splitext(f)[0]], log)
     if dran("html"):
         args = [PY, "-I", "tools/modell_3d_html.py", ZR, os.path.join(D, f"{a.ziel}_3d.html")]
         if os.path.exists(W): args += ["--wolke", W, "--farben", W.replace("punkte_modell_", "punkte_farben_")]
