@@ -42,6 +42,27 @@
    "wer": "Anlage",
    "text": "Quellen sichten: Dokumente (Hoehe), LoD2 (Grundriss/Traufe), DOM1 (Dachform), Fotos je Seite",
    "naechster_schritt": "objekt.json/quellen fuellen, Zeilen mit Quelle anlegen"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Nutzer (3D-Seite, Bildschirmfotos 12:14)",
+   "text": "Turm trifft die Wolke noch nicht ganz: Wolkenwand liegt an der Kante sichtbar neben der Modellkante",
+   "hinweis_wolke": "Wolke schwab_v3 (gesaeubert), z 14-33 m: Wand liegt auf 3 Seiten im Median 0,16 m INNERHALB der LoD2-Wand (-x -0,16, +x -0,16, +y -0,16; -y +0,17 unsicher, Anbau). Wolke = nur Hinweis.",
+   "naechster_schritt": "Turmbreite am Foto messen (tools/foto_mass.py, je Seite eine waagerechte Strecke auf 2 Hoehen) gegen LoD2 12,13 x 12,50 m; pruefen, ob Sockel breiter als Schaft (LoD2 = Katasterumring am Sockel)"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Nutzer (3D-Seite)",
+   "text": "Das Dach ist ein ueberstehendes Dach - Modell hat keinen Dachueberstand; Dachpunkte der Wolke liegen ausserhalb der Modelldachflaeche",
+   "hinweis_wolke": "Ausladung der Wolke ueber die LoD2-Wand (p95): z 39-42 m +x +0,97 m, -y +0,85 m; z 37-39 m +x +0,24 m. Modelltraufe 36,7 m -> Traufe/Ueberstand liegt in der Wolke hoeher (39-42 m). Nur 3 466 Punkte in dem Band, -x-Seite ohne Punkte.",
+   "naechster_schritt": "Traufhoehe, Ueberstand und Dachneigung am Foto messen (foto_mass.py an Drohnenbildern NW-Mt7ryZ8c vf_000..003 und Schlossbergfotos 1107/1108/1112; Kanten-Sweep mit --band 1.5 um die Dachflaeche) -> dach.json nicht aus DOM1, sondern Foto (Regel 9d) -> Generator: Ueberstand + Gesims"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Nutzer (3D-Seite)",
+   "text": "Das Fachwerkhaus nebenan hat keine Modellkanten",
+   "hinweis_wolke": "Das Modell enthaelt nur das Zielgebaeude LoD2 DEBW_001000hPLcp (Turm + Rundanbau). Nachbarhaeuser sind eigene LoD2-Gebaeude; ihre Waende zeigt nur die Ebene 'LoD2-Waende' der 3D-Seite.",
+   "naechster_schritt": "ENTSCHEIDUNG NUTZER: Nachbarhaeuser (Fachwerkhaus, Haus mit Torbogen) als Kontextkoerper aus LoD2 ins Modell aufnehmen (eigene Teile, nicht Teil des Schwabentor-Drucks) oder nur in der 3D-Seite als Kanten zeigen?"
   }
  ]
 }
