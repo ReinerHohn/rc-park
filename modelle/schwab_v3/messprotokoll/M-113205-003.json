@@ -1,0 +1,83 @@
+{
+ "id": "M-113205-003",
+ "typ": "triangulation",
+ "foto": "113205",
+ "name": "Traufecke C (Nord/Ost, +x,-y) Dachkante aussen oben, 6 Fotos mit SfM-Punkten in Dachhoehe",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__IMG_20261106_113231",
+   "px": [
+    1078.0,
+    782.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113205",
+   "px": [
+    680.0,
+    842.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113106",
+   "px": [
+    1051.0,
+    984.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113029",
+   "px": [
+    1308.0,
+    853.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113128",
+   "px": [
+    551.0,
+    783.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113201",
+   "px": [
+    1258.0,
+    753.0
+   ]
+  }
+ ],
+ "P": [
+  4.917,
+  8.159,
+  39.198
+ ],
+ "strahl_abstand_m": [
+  0.072,
+  0.028,
+  0.039,
+  0.074,
+  0.006,
+  0.116
+ ],
+ "schnittwinkel_grad": [
+  13.8,
+  27.2,
+  34.7,
+  18.5,
+  14.0,
+  13.5,
+  20.9,
+  4.7,
+  0.1,
+  7.6,
+  8.8,
+  13.3,
+  16.2,
+  20.8,
+  4.6
+ ],
+ "z": 39.198,
+ "unsicherheit_m": 0.278,
+ "massstab_von": "Kameras K-eigen__IMG_20261106_113231, K-eigen__IMG_20261106_113205, K-eigen__IMG_20261106_113106, K-eigen__IMG_20261106_113029, K-eigen__IMG_20261106_113128, K-eigen__IMG_20261106_113201 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

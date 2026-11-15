@@ -76,6 +76,12 @@
    "wer": "Claude",
    "text": "Dachmessung am Foto (Traufecken, foto_mass.py --tri) scheitert an den Kameras in Dachhoehe: dieselbe Traufecke B aus 6 Fotos -> Strahlabstaende 0,26-0,87 m; Fotogruppe -x-Seite ergibt z 34,5 m, Gruppe +y-Seite z 39,9 m. Rueckprojektion der SfM-Punkte je Bild ist dagegen ~1 px (K-Dateien = SfM). VORLAEUFIG: Traufecke A (+x,+y) = (4,86 / 22,50 / 39,40) m aus 2 Fotos mit 57 Grad Schnittwinkel (M-113205-001), Wolke zeigt Traufe bei ~39-40 m, Modell 36,7 m. Kein Sollwert.",
    "naechster_schritt": "Kameras in Dachhoehe verfeinern: Handpicks der 4 Traufecken + Laternenfuss als Verknuepfungspunkte in einen Buendelausgleich (Drehung je Foto frei, Lage fest), danach Traufhoehe/Ueberstand/Neigung neu mit foto_mass.py --tri (>= 3 Fotos je Ecke, Strahlabstand < 0,1 m als Tor). Nebenbefund: foto_mass.py findet die v3-Fotos nicht fuer den Protokollausschnitt (fotos_dir zeigt auf daten/schwabentor/fotos, v3-Fotos liegen in rc-park_daten/schwab_v3/fotos)"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Claude",
+   "text": "DACH AM FOTO GEMESSEN (Nordseite +x, 5-6 Fotos mit SfM-Punkten in Dachhoehe, Strahlabstaende 1-12 cm): Traufecke A (+x,+y) = (4,85 / 22,51 / 39,15) m [M-113205-002], Traufecke C (+x,-y) = (4,92 / 8,16 / 39,20) m [M-113205-003], Laternenfuss vorn Mitte = (-0,77 / 15,04 / 47,28) m [M-113205-004]. Daraus: Traufe aussen oben 39,18 m (Modell 36,7 m), Trauflaenge Nordseite 14,35 m gegen LoD2-Wand 12,16 m -> Ueberstand ~1,1 m je Seite, Neigung Nordflaeche 55,1 Grad (DOM1 56,1), gedachte Spitze der Pyramide ~49,5 m (DOM1 max 49,62). URSACHE der frueheren Widersprueche: Der Turmkopf (z > 36 m) hat SfM-Punkte nur aus Richtung Nord (Azimut -23..+11 Grad); Bodenfotos der anderen drei Seiten haben 0-1 Punkte in Dachhoehe, ihre Kameras sind dort nicht verankert (M-113205-001, M-114037-001/-002 sind damit ungueltig).",
+   "naechster_schritt": "Generator: Dach als Zeltdach mit Traufe 39,18 m, Ueberstand 1,1 m, Neigung 55 Grad, Pyramidenstumpf bis Laternenfuss ~47,3 m + Laterne (Hoehe der Spitze noch messen); vorher Wandoberkante/Holzgalerie unter der Traufe und Laternenspitze am Foto messen (gleiche Fotos 113231/113205/113106/113029/113128/113201). Andere drei Seiten: Fotos mit Abstand (flacher Blick) suchen oder SfM am Turmkopf verdichten; bis dahin ANNAHME Dach symmetrisch."
   }
  ]
 }
