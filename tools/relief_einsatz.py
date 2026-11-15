@@ -42,6 +42,8 @@ def main():
     A = np.array(a.ecke_a); B = np.array(a.ecke_b); t = (B - A) / np.linalg.norm(B - A); n = np.array([t[1], -t[0]]); n = n if (np.array(a.aussen) - A) @ n > 0 else -n
     u0, u1, z0, z1 = a.feld; px = a.px; W = int(round((u1 - u0) / px)); H = int(round((z1 - z0) / px))
     Z = np.load(a.netz); tri = Z["V"].astype(np.float64)[Z["F"]]; c = tri.mean(1); uu = (c[:, :2] - A) @ t; dd = (c[:, :2] - A) @ n
+    hi_ = (uu > u0) & (uu < u1) & (dd < -a.band) & (dd > -a.band - 6.0) & (c[:, 2] > z0) & (c[:, 2] < z1)      # Netz HINTER dem Band: dort ist die Wand offen (Tor, Laube, Nische) - nicht Verdeckung
+    hinten = np.zeros((H, W), bool); hinten[np.clip((H - 1 - (c[hi_, 2] - z0) / px).astype(int), 0, H - 1), np.clip(((uu[hi_] - u0) / px).astype(int), 0, W - 1)] = True
     tri = tri[(uu > u0 - 0.1) & (uu < u1 + 0.1) & (np.abs(dd) < a.band) & (c[:, 2] > z0 - 0.1) & (c[:, 2] < z1 + 0.1)]
     w = np.random.default_rng(0).dirichlet((1, 1, 1), (len(tri), 12)); P = (w[:, :, :, None] * tri[:, None, :, :]).sum(2).reshape(-1, 3)
     uu = (P[:, :2] - A) @ t; dd = (P[:, :2] - A) @ n; iu = ((uu - u0) / px).astype(int); iv = (H - 1 - (P[:, 2] - z0) / px).astype(int); g = (iu >= 0) & (iu < W) & (iv >= 0) & (iv < H)
@@ -49,8 +51,9 @@ def main():
     fl = cv2.dilate(hm, np.ones((3, 3), np.uint8)); hm[loch] = fl[loch]; loch = hm < -5
     yy, xx = np.mgrid[0:H, 0:W]; G = np.c_[xx[~loch], yy[~loch], np.ones((~loch).sum())]; ko = np.linalg.lstsq(G, hm[~loch], rcond=None)[0]
     rel = hm - (ko[0] * xx + ko[1] * yy + ko[2]); rel -= np.median(rel[~loch]); rel[loch] = 0.0; q5, q95 = np.percentile(rel[~loch], [5, 95]); rel = np.clip(rel, a.klemme[0], a.klemme[1])
+    oeffnung = loch & cv2.morphologyEx(cv2.dilate(hinten.astype(np.uint8), np.ones((5, 5), np.uint8)), cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8)).astype(bool)   # Loch UND Netz dahinter = Oeffnung (15.11.: steine_generieren laesst sie aus)
     os.makedirs(os.path.dirname(os.path.abspath(a.aus)), exist_ok=True)
-    np.savez_compressed(a.aus, rel=rel.astype(np.float32), a=A, t=t, n=n, u0=u0, z0=z0, px=px, lochanteil=float(loch.mean()), lochanteil_roh=roh, hub_p5_p95=float(q95 - q5), ebene_abstand_m=float(ko[2]),
+    np.savez_compressed(a.aus, rel=rel.astype(np.float32), a=A, t=t, n=n, u0=u0, z0=z0, px=px, oeffnung=oeffnung, lochanteil=float(loch.mean()), lochanteil_roh=roh, hub_p5_p95=float(q95 - q5), ebene_abstand_m=float(ko[2]),
                         trend_je_m=np.array([ko[0] / px, -ko[1] / px]))
     lx = np.gradient(rel, px, axis=1); lz = np.gradient(rel, px, axis=0); s = np.clip(0.7 - 0.5 * lx + 0.7 * lz, 0, 1); im = cv2.cvtColor((s * 255).astype(np.uint8), cv2.COLOR_GRAY2BGR); im[loch] = (0, 0, 255)
     cv2.imwrite(os.path.splitext(a.aus)[0] + ".jpg", cv2.resize(im, None, fx=3, fy=3, interpolation=cv2.INTER_NEAREST))

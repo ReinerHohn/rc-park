@@ -54,6 +54,9 @@ SEITEN = seiten_aus_rahmen(obj)
 if obj.get("lod2", {{}}).get("id"):                    # Standard: LoD2-Grundriss + DOM1-Dach (dach.json, Nullstart-Schritt 'dach') - tools/dach_bauen.py
     koerper, belege, haupt = gebaeude_aus_lod2(OBJ)
     for b_ in belege: beleg(**b_)
+    from fassaden_kette import anbauen                 # Fassaden-Kette (tools/fassaden_kette.py): Reliefs je Wand, falls audit/fassaden_kette.json da ist
+    koerper, belege = anbauen(koerper, OBJ)
+    for b_ in belege: beleg(**b_)
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = {hoehe or 10.0}                               # Gesamthoehe (m) - Quelle in masstabelle.json

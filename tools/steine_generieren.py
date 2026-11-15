@@ -31,17 +31,25 @@ def lagerfugen(rel, gueltig, px, min_zellen=30):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("relief"); ap.add_argument("aus"); ap.add_argument("--zone", nargs=4, type=float, action="append", required=True)
-    ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Felder u0 u1 z0 z1, in denen NICHT generiert wird (Toroeffnungen - Nutzer 15.11.: 'nicht im Tor kuenstlich')"); ap.add_argument("--fremd", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 mit einem FREMDKOERPER vor der Wand (Nachbardach, Schild): Zellen an der oberen Klemme und Nullzellen darin gelten als Loch"); ap.add_argument("--unten", type=float); ap.add_argument("--seed", type=int, default=1); ap.add_argument("--laenge", nargs=2, type=float, default=[0.4, 1.25])
+    ap = argparse.ArgumentParser(); ap.add_argument("relief"); ap.add_argument("aus"); ap.add_argument("--zone", nargs=4, type=float, action="append", help="Steinzonen; ohne Angabe das ganze Feld (Putz und Oeffnungen fallen ueber die Masken des Reliefs heraus)")
+    ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Felder u0 u1 z0 z1, in denen NICHT generiert wird (Toroeffnungen - Nutzer 15.11.: 'nicht im Tor kuenstlich')"); ap.add_argument("--fremd", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 mit einem FREMDKOERPER vor der Wand (Nachbardach, Schild): Zellen an der oberen Klemme und Nullzellen darin gelten als Loch"); ap.add_argument("--max_loch_m2", type=float, help="AUTOMATIK (fassaden_kette): zusammenhaengende Loecher ab dieser Groesse sind Oeffnungen (Tor, Laube) oder grosse Verdeckungen und bleiben GLATT; reicht so ein Loch bis in den Sockelstreifen, bleibt auch dessen Spaltenbereich frei"); ap.add_argument("--unten", type=float); ap.add_argument("--seed", type=int, default=1); ap.add_argument("--laenge", nargs=2, type=float, default=[0.4, 1.25])
     ap.add_argument("--min_loch", type=int, default=12, help="kleinste Lochgroesse in Zellen"); a = ap.parse_args(); rng = np.random.default_rng(a.seed)
     Z = dict(np.load(a.relief)); rel = Z["rel"].astype(np.float64); px = float(Z["px"]); u0 = float(Z["u0"]); z0 = float(Z["z0"])
     if a.unten is not None and a.unten < z0 - 1e-6:
         k = int(round((z0 - a.unten) / px)); rel = np.vstack([rel, np.zeros((k, rel.shape[1]))]); z0 = z0 - k * px          # Zeilen laufen von oben nach unten
     H, W = rel.shape; ii, jj = np.mgrid[0:H, 0:W]; U = u0 + (jj + 0.5) * px; ZZ = z0 + (H - 1 - ii + 0.5) * px
-    zone = np.zeros((H, W), bool)
-    for f0, f1, g0, g1 in a.zone: zone |= (U >= f0) & (U <= f1) & (ZZ >= g0) & (ZZ <= g1)
+    zone = np.zeros((H, W), bool) if a.zone else np.ones((H, W), bool)
+    if "oeffnung" in Z: zone &= ~ndi.binary_dilation(np.vstack([Z["oeffnung"], np.zeros((H - Z["oeffnung"].shape[0], W), bool)]), iterations=2)   # Oeffnungen (relief_einsatz: Netz hinter dem Band) bleiben frei
+    for f0, f1, g0, g1 in (a.zone or []): zone |= (U >= f0) & (U <= f1) & (ZZ >= g0) & (ZZ <= g1)
     for f0, f1, g0, g1 in a.ohne: zone &= ~((U >= f0) & (U <= f1) & (ZZ >= g0) & (ZZ <= g1))
     if "putz" in Z: zone &= ~np.vstack([Z["putz"], np.zeros((H - Z["putz"].shape[0], W), bool)])       # Putzflaechen (tools/relief_putz.py) sind absichtlich eben - keine Steine hinein
+    if a.max_loch_m2:
+        null = rel == 0.0; voll_z = null.mean(1) >= 0.7; k_ = H
+        while k_ > 0 and voll_z[k_ - 1]: k_ -= 1                           # Sockelstreifen = unterste Zeilen fast ohne Netz
+        lab_, n_ = ndi.label(null & (ii < k_)); gr_ = ndi.sum(np.ones_like(rel), lab_, np.arange(1, n_ + 1)) * px * px
+        for q_ in 1 + np.flatnonzero(gr_ >= a.max_loch_m2):
+            m_ = lab_ == q_; zone &= ~ndi.binary_dilation(m_, iterations=2)
+            if k_ < H and m_[max(k_ - 3, 0):k_].any(): sp_ = np.flatnonzero(m_[max(k_ - 3, 0):k_].any(0)); zone[k_:, max(sp_.min() - 2, 0):sp_.max() + 3] = False
     flach = ndi.maximum_filter(rel, 3) == ndi.minimum_filter(rel, 3)       # konstante Flecken = an der Klemme abgeschnittene Fremdkoerper (Schild, Auto, Kasten vor der Wand) -> ebenfalls Loch
     lab, n = ndi.label(ndi.binary_dilation(flach, iterations=2) | (rel == 0.0)); gr = ndi.sum(np.ones_like(rel), lab, np.arange(1, n + 1)); loch = np.isin(lab, 1 + np.flatnonzero(gr >= a.min_loch)) & zone
     for f0, f1, g0, g1 in a.fremd:                                        # 15.11.2026 Nutzerbild: Nachbardach lag als schraege Rippe im Suedrelief (an der Klemme abgeschnitten)
