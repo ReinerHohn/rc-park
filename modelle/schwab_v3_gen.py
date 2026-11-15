@@ -150,6 +150,10 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     # ---- SUEDFASSADE (15.11.2026) im KORRIGIERTEN Rahmen, nach dem Skalieren: Masse M-commons127-002..-010, M-commons217-001..-003 (Kameras aus dem SfM-Neuaufbau) ----
     from bauteile import Wand, spitzbogen as b_spitz, rundbogen as b_rund
     WS = Wand(S_A, S_B, aussen=(-30.0, 15.0)); T_U = 5.76
+    rel_s = os.path.join(HERE, "schwab_v3", "relief", "sued.npz")              # Relief Sued aus dem NEUEN OpenMVS-Netz (sfm_neu), korrigierter Rahmen; Bauteilfelder ausgeblendet
+    if os.path.exists(rel_s) and os.environ.get("OHNE_RELIEF") != "1":
+        koerper = koerper + relief_koerper(rel_s, tiefe=0.30, trend=True, null_felder=[(3.0, 8.4, 28.2, 33.75), (5.1, 6.4, 22.0, 23.95), (0.0, 11.5, 25.85, 26.95), (2.4, 7.2, 18.1, 18.5)])
+        beleg("wand", "Relief Suedwand z 0,6-34 m", "OpenMVS-Netz der neuen dichten Wolke (sfm_neu/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m, Loecher 8 %", hinweis="Scan-Relief, kein Mass; Uhr-, Fenster-, Gesims- und Verdachungsfeld ausgeblendet")
     koerper = koerper + WS.kasten(T_U - 2.7, T_U + 2.7, 0.0, 6.9, -1.0, 0.0)                     # Torwand Sued: ANNAHME 1 m stark; der Suedbogen ist niedriger als die Durchfahrt (Nord 6,42 m)
     koerper = koerper - WS.prisma(b_spitz(4.49 / 2, 3.86, 5.85), u=T_U, w0=-1.3, w1=0.6)
     koerper = koerper - WS.prisma(b_rund(0.92, 22.26, 23.66), u=5.745, w0=-0.45, w1=0.6)        # Fenster: Tiefe ANNAHME 0,45 m; Steingewaende 2,02 m breit ist buendig (Farbe)
@@ -161,7 +165,11 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
           tor_kaempfer=3.86, uhr_durchmesser=4.95, uhr_mitte_z=30.97, fenster_breite=0.92, fenster_hoehe=1.41, gesims_z=26.53,
           hinweis="ANNAHME: Tiefen/Ausladungen, Torwand 1 m, Bogen aus Kreisboegen; Georgsbild, Eckquader und Bruchstein fehlen (Relief erst nach neuer dichter Wolke); Knauf-Tor Nord-Sued 0,9 m -> Masse auf ~2-3 %")
     # ---- WESTFASSADE (15.11.2026): Fenster auf der Mittelachse, Masse M-114039-001..-006 (Foto 114039, Kameras aus dem SfM-Neuaufbau); Wandebene aus den neuen SfM-Punkten ----
-    WW = Wand((-7.37, 20.85), (3.30, 21.00), aussen=(-2.0, 40.0))
+    WW = Wand((-7.37, 20.46), (3.30, 20.96), aussen=(-2.0, 40.0))               # Westwand: Ausgleichsebene des neuen Netzes (erste Annahme 20,85..21,00 lag am Suedende 0,39 m zu weit aussen; passt zum skalierten LoD2)
+    rel_w = os.path.join(HERE, "schwab_v3", "relief", "west.npz")
+    if os.path.exists(rel_w) and os.environ.get("OHNE_RELIEF") != "1":
+        koerper = koerper + relief_koerper(rel_w, tiefe=0.45, trend=True, null_felder=[(4.8, 6.0, 21.5, 23.7), (0.0, 8.4, 25.85, 26.95)])
+        beleg("wand", "Relief Westwand z 0,6-34 m (ohne Treppenturm)", "OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm, geklemmt -0,10..+0,15 m", hinweis="Scan-Relief, kein Mass; Fenster- und Gesimsfeld ausgeblendet")
     koerper = koerper - WW.prisma(b_rund(0.81, 21.70, 23.45), u=5.40, w0=-0.8, w1=0.6)                          # grosses Fenster (Tiefe ANNAHME; Gewaende buendig = Farbe)
     for u0_, u1_, z0_, z1_ in ((5.31, 5.52, 27.82, 30.19), (5.20, 5.45, 33.0, 34.4), (5.33, 5.47, 16.93, 17.86), (5.27, 5.39, 10.46, 11.44)):   # Schlitzfenster; das oberste (z 33-34,4) ist aus steiler Sicht nur ungefaehr
         koerper = koerper - WW.kasten(u0_, u1_, z0_, z1_, -0.8, 0.6)

@@ -142,6 +142,13 @@
  },
  {
   "seite": "wand",
+  "element": "Relief Suedwand z 0,6-34 m",
+  "quelle": "OpenMVS-Netz der neuen dichten Wolke (sfm_neu/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m, Loecher 8 %",
+  "hinweis": "Scan-Relief, kein Mass; Uhr-, Fenster-, Gesims- und Verdachungsfeld ausgeblendet",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Suedfassade: Torbogen, Fenster, Uhr, Gesims, Verdachung",
   "quelle": "foto_mass.py auf der Suedwandebene, Fotos commons 127 und 217 (M-commons127-002..-010, M-commons217-001..-003)",
   "tor_breite": 4.49,
@@ -153,6 +160,13 @@
   "fenster_hoehe": 1.41,
   "gesims_z": 26.53,
   "hinweis": "ANNAHME: Tiefen/Ausladungen, Torwand 1 m, Bogen aus Kreisboegen; Georgsbild, Eckquader und Bruchstein fehlen (Relief erst nach neuer dichter Wolke); Knauf-Tor Nord-Sued 0,9 m -> Masse auf ~2-3 %",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Westwand z 0,6-34 m (ohne Treppenturm)",
+  "quelle": "OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm, geklemmt -0,10..+0,15 m",
+  "hinweis": "Scan-Relief, kein Mass; Fenster- und Gesimsfeld ausgeblendet",
   "seite_name": "wand"
  },
  {
