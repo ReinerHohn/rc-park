@@ -15,7 +15,7 @@ import numpy as np, pycolmap
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("ein"); ap.add_argument("aus")
-    ap.add_argument("--fern", type=float, default=4.0); ap.add_argument("--kern", type=float, default=80); ap.add_argument("--min_kern", type=int, default=150); ap.add_argument("--schritt", type=float, default=0.03); ap.add_argument("--winkel", type=float, default=4.0)
+    ap.add_argument("--hoch_winkel", type=float, default=9.0); ap.add_argument("--hoch_kern", type=int, default=300); ap.add_argument("--hoch_fern", type=float, default=12.0); ap.add_argument("--fern", type=float, default=4.0); ap.add_argument("--kern", type=float, default=80); ap.add_argument("--min_kern", type=int, default=150); ap.add_argument("--schritt", type=float, default=0.03); ap.add_argument("--winkel", type=float, default=4.0)
     a = ap.parse_args(); r = pycolmap.Reconstruction(a.ein)
     P = np.array([p.xyz for p in r.points3D.values() if p.track.length() >= 5]); mitte = np.median(P, 0)
     rk = np.percentile(np.linalg.norm(P - mitte, axis=1), a.kern); kern = {pid for pid, p in r.points3D.items() if np.linalg.norm(p.xyz - mitte) <= rk}
@@ -23,8 +23,19 @@ def main():
     for iid in r.reg_image_ids():
         im = r.images[iid]; C = np.asarray(im.projection_center()); R = np.asarray(im.cam_from_world().rotation.matrix())
         nk = sum(1 for p2 in im.points2D if p2.has_point3D() and p2.point3D_id in kern)
-        info[iid] = dict(name=im.name, C=C, d=float(np.linalg.norm(C - mitte)), blick=R[2], drin=bool(nk >= a.min_kern), kernpunkte=nk)
+        info[iid] = dict(punkte3d=int(im.num_points3D), name=im.name, C=C, d=float(np.linalg.norm(C - mitte)), blick=R[2], drin=bool(nk >= a.min_kern), kernpunkte=nk)
     dmed = float(np.median([v["d"] for v in info.values()])); behalten = {i for i, v in info.items() if v["drin"] and v["d"] <= a.fern * dmed}
+    # 4. SICHT VON OBEN (15.11.2026, Nutzer: "das Dach fehlt komplett, es gibt viele Bilder von oben"): Drohnen-/Hangbilder fielen durch Regel 2
+    #    (wenige Kernpunkte, weit weg) - 20 von 22 hohen Kameras fehlten, ueber der Traufe nur ~1400 Wolkenpunkte. Lot = Normale der Kameraebene
+    #    (Kern der Kameras), oben = wo die Punkte liegen. Behalten, wenn die Kamera >= --hoch_winkel Grad ueber der Objektmitte steht, >= --hoch_kern
+    #    3D-Punkte ueberhaupt sieht (Dachbilder sehen kaum KERNpunkte: Drohnenbild 004 hatte 810 Punkte, 0 im Kern) und nicht weiter als --hoch_fern x Median-Abstand weg ist. Solche Videobilder werden nicht ausgeduennt.
+    Call = np.array([v["C"] for v in info.values()]); cm_ = np.median(Call, 0); dk = np.linalg.norm(Call - cm_, axis=1); kk = dk <= np.percentile(dk, 70)
+    up = np.linalg.svd(Call[kk] - Call[kk].mean(0))[2][2]; up = up if np.median((P - cm_) @ up) > 0 else -up
+    oben = set()
+    for i, v in info.items():
+        rel = v["C"] - mitte; h = float(rel @ up); hor = float(np.linalg.norm(rel - h * up)); v["hoehenwinkel"] = float(np.degrees(np.arctan2(h, max(hor, 1e-9))))
+        if v["hoehenwinkel"] >= a.hoch_winkel and v["punkte3d"] >= a.hoch_kern and v["d"] <= a.hoch_fern * dmed: oben.add(i)
+    behalten |= oben
     clips = {}
     for i in behalten:
         m = re.match(r"(.+)__vf_(\d+)\.", info[i]["name"])
@@ -36,13 +47,13 @@ def main():
             v = info[i]
             if letzt is not None:
                 w = np.degrees(np.arccos(np.clip(v["blick"] @ letzt["blick"], -1, 1)))
-                if np.linalg.norm(v["C"] - letzt["C"]) < a.schritt * dmed and w < a.winkel: behalten.discard(i); weg_video += 1; continue
+                if i not in oben and np.linalg.norm(v["C"] - letzt["C"]) < a.schritt * dmed and w < a.winkel: behalten.discard(i); weg_video += 1; continue
             letzt = v
     for i in info:
         if i not in behalten: r.deregister_frame(r.images[i].frame_id)
     os.makedirs(a.aus, exist_ok=True); r.write(a.aus)
     erg = dict(registriert=len(info), behalten=len(behalten), weg_zu_wenig_kern=sum(not v["drin"] for v in info.values()),
-               weg_zu_fern=sum(v["drin"] and v["d"] > a.fern * dmed for v in info.values()), weg_video_doppelt=weg_video, median_abstand=dmed)
+               weg_zu_fern=sum(v["drin"] and v["d"] > a.fern * dmed for v in info.values()), weg_video_doppelt=weg_video, median_abstand=dmed, von_oben_behalten=len(oben), von_oben_namen=sorted(info[i]["name"] for i in oben)[:40])
     json.dump(dict(erg, behalten_namen=sorted(info[i]["name"] for i in behalten)), open(os.path.join(a.aus, "dicht_bildwahl.json"), "w"), indent=1)
     print("Bildwahl dicht:", erg, flush=True)
 
