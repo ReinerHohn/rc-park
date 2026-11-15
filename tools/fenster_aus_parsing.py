@@ -21,7 +21,7 @@ def iou(a, b):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("ortho"); ap.add_argument("--aus"); ap.add_argument("--stimmen", type=int, default=3); ap.add_argument("--weiss", type=float, default=0.12)
-    ap.add_argument("--luecke", type=float, default=0.25); ap.add_argument("--min_b", type=float, default=0.25); a = ap.parse_args()
+    ap.add_argument("--fein", help="Ordner mit ortho_<id>_fein.png (fassade_fein.py, 1-cm-Zelle): Sprossen werden dort gesucht statt im groben Ortho"); ap.add_argument("--luecke", type=float, default=0.25); ap.add_argument("--min_b", type=float, default=0.25); a = ap.parse_args()
     FA = {F.get("id_vorbau") or F.get("_id") or F.get("id"): F for F in json.load(open(os.path.join(a.ortho, "fassaden.json")))["fassaden"]}; EL = json.load(open(os.path.join(a.ortho, "elemente.json")))["fassaden"]; erg = {}
     def seite(F_): return int(round(np.degrees(np.arctan2(F_["n"][1], F_["n"][0])) / 20.0)) % 18
     VMED = {}; samm = {}
@@ -80,10 +80,14 @@ def main():
             fen.append(dict(u0=round(u0, 3), u1=round(u1, 3), z0=round(z0, 3), z1=round(z1, 3), teiler=teiler, kaempfer=ka[0] if len(ka) == 1 else None, scheiben=len(g), stimmen_min=min(p.get("stimmen", 0) for p in g)))
         # Sprossen (Nutzer 15.11.: "trifft der Erkenner auch die Streben innerhalb des Fensters?"): je Scheibe duenne dunkle Linien im Ortho - Helligkeitsprofil quer,
         # Einbruch gegen den gleitenden Median > 0,05, hoechstens 6 cm breit, nicht am Scheibenrand; gilt nur, wenn die Linie ueber >= 70 % der Scheibe durchlaeuft.
-        grau = hsv[..., 2]
+        grau = hsv[..., 2]; zl_s, u0_s, z1_s = zl, r["u0"], r["z1"]
+        if a.fein and os.path.exists(os.path.join(a.fein, f"ortho_{fid}_fein.png")):          # feines, ausgerichtetes Bild (Sechsecke/Sprossen sichtbar)
+            Ff = {X_.get("id"): X_ for X_ in json.load(open(os.path.join(a.fein, "fassaden.json")))["fassaden"]}.get(fid); imf = cv2.imread(os.path.join(a.fein, f"ortho_{fid}_fein.png"))
+            if Ff is not None and imf is not None: grau = cv2.cvtColor(imf, cv2.COLOR_BGR2HSV)[..., 2].astype(np.float32) / 255.0; zl_s, u0_s, z1_s = Ff["raster"]["zelle"], Ff["raster"]["u0"], Ff["raster"]["z1"]
+        def pxs(e): return int((e["u0"] - u0_s) / zl_s), int((e["u1"] - u0_s) / zl_s), int((z1_s - e["z1"]) / zl_s), int((z1_s - e["z0"]) / zl_s)
         def linien(c, achse):
             from scipy.ndimage import median_filter, label
-            prof = c.mean(axis=achse); n_ = len(prof); k = max(5, int(0.25 / zl) | 1)
+            zl = zl_s; prof = c.mean(axis=achse); n_ = len(prof); k = max(5, int(0.25 / zl) | 1)
             if n_ < 12: return []
             ein = median_filter(prof, size=k, mode="nearest") - prof; lab, m = label(ein > 0.05); out = []
             for q in range(1, m + 1):
@@ -97,7 +101,7 @@ def main():
             return gut
         # je Scheibe messen, dann REGELMAESSIGKEIT: gleich grosse Scheiben einer Fassade tragen dasselbe Sprossenbild - das haeufigste gemessene Muster (Anzahl), Lagen gemittelt, gilt fuer alle
         for p in S:
-            x0, x1, y0, y1 = px(p, 0.0); c = grau[max(y0, 0):y1, max(x0, 0):x1]; p["_v"] = []; p["_h"] = []
+            x0, x1, y0, y1 = pxs(p); c = grau[max(y0, 0):y1, max(x0, 0):x1]; p["_v"] = []; p["_h"] = []
             if c.size >= 100: p["_v"] = [(m_ + 0.5) / c.shape[1] for m_ in linien(c, 0)]; p["_h"] = [(m_ + 0.5) / c.shape[0] for m_ in linien(c, 1)]
         import collections
         for p in S:

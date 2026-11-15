@@ -153,7 +153,7 @@ def main(argv=None):
         im = cv2.imread(pf[0]); H, W = im.shape[:2]; R, t, f, _, _ = FF.kamera_laden(K, obj, nr, ROOT, W, H)
         tr = np.asarray(kk.get("rahmen_verschiebung", [0, 0, 0]), float); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2)); k1 = float(kk.get("k1") or 0.0)
         Cw = -R.T @ np.asarray(t, float) - tr                                                        # Kamerazentrum im Modellrahmen
-        erg = {}
+        erg = {}; weich = {}
         for i, F in enumerate(fas):
             X = F["_S"]; n = np.array(F["n"] + [0.0]); v = Cw - X; dist = np.linalg.norm(v, axis=1); cosw = (v @ n) / dist
             px, z = projizieren(X + tr, R, np.asarray(t, float), f, cx, cy, k1)
@@ -167,7 +167,12 @@ def main(argv=None):
             sicht &= np.isfinite(F["_rel"][idx])                                                      # ohne Modellflaeche (Himmel/Nachbar) keine Farbe
             idx = idx[sicht]
             if len(idx) < 200: continue
-            col = bilinear(im, px[idx, 0], px[idx, 1])
+            # 15.11.2026: Zelle groesser als der Fotopixel -> Foto vor dem Abtasten auf die Zellgroesse glaetten (sonst Aliasing: das 5-cm-Ortho des Kaufhauses war fleckig/koernig)
+            sig_ = 0.4 * (F["raster"]["zelle"] / float(np.median(mpp[idx]))); sig_ = round(sig_ * 2) / 2.0
+            if sig_ >= 1.0:
+                if sig_ not in weich: weich[sig_] = cv2.GaussianBlur(im, (0, 0), sig_)
+                col = bilinear(weich[sig_], px[idx, 0], px[idx, 1])
+            else: col = bilinear(im, px[idx, 0], px[idx, 1])
             erg[i] = (idx.astype(np.int32), col, (cosw[idx] / mpp[idx]).astype(np.float32))
         return nr, erg
 
