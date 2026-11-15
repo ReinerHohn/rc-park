@@ -33,18 +33,6 @@
   "seite_name": "wand"
  },
  {
-  "seite": "dach",
-  "element": "Zeltdach mit Ueberstand",
-  "quelle": "Foto-Triangulation Nordseite (foto_mass.py --tri, M-113205-008/-009/-010, Rahmen lotrecht aus Foto-Vertikalen)",
-  "traufe": 36.63,
-  "neigung_grad": 54.4,
-  "trauflaenge_ost_west": 13.39,
-  "ueberstand": 1.09,
-  "spitze_gedacht": 45.69,
-  "hinweis": "Dachflaeche geschweift: Zwischenpunkte r 3-6 m aus DOM1-Laser (41,5 / 40,0 / 38,5 / 37,5 m); ANNAHME: Sued-, Ost- und Westflaeche wie Nord, Traufdicke 0,25 m | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
-  "seite_name": "dach"
- },
- {
   "seite": "wand",
   "element": "Hauptteil Wand bis Traufe",
   "quelle": "LoD2 DEBW_001000hPLcp GroundSurface 0; Nordwand am Foto bestaetigt (M-113205-006/-007)",
@@ -131,6 +119,20 @@
   "x": -6.89,
   "hinweis": "Lage-Veto der neuen SfM-Punkte, nicht am Foto gepeilt; Knauf-Tor Nord-Sued noch 0,9 m | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
   "seite_name": "wand"
+ },
+ {
+  "seite": "dach",
+  "element": "Zeltdach geschweift mit Ueberstand, vier gemessene Traufecken",
+  "quelle": "Foto-Triangulation: Nordecken aus 6 Nordfotos, Suedecken aus 3 Suedfotos (Kameras SfM-Neuaufbau); Flaechenprofil DOM1-Laser",
+  "traufe_nord": 36.74,
+  "traufe_sued": 36.5,
+  "laenge_nord_sued": 12.35,
+  "breite_nord": 13.44,
+  "breite_sued": 12.99,
+  "ueberstand_nord": 0.9,
+  "ueberstand_sued": 0.83,
+  "hinweis": "Suedecken auf ~2-3 % (Knauf-Tor 0,9 m); Traufdicke 0,23 m ANNAHME; Aufschiebling aus dem Laserprofil",
+  "seite_name": "dach"
  },
  {
   "seite": "dach",

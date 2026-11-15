@@ -143,9 +143,23 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     beleg("wand", "Suedwand (Ebene)", "SfM-Neuaufbau mit Eckpaaren (sfm_neu), Wandpunkte z 8-33 m; Gegenprobe Uhr/Traufe im entzerrten Suedfoto 127", x=round(X_SUED, 2),
           hinweis="Lage-Veto der neuen SfM-Punkte, nicht am Foto gepeilt; Knauf-Tor Nord-Sued noch 0,9 m")
     ELEMENTE[:] = [e_ for e_ in ELEMENTE if e_["element"] != "Laterne mit Zwiebelhaube"]      # alte Laterne (Form ANNAHME) entfaellt, neue unten aus Fotomassen
-    koerper = massstab(rumpf + dach, MK); N_BELEGE_ROH = len(ELEMENTE)
+    ELEMENTE[:] = [e_ for e_ in ELEMENTE if e_["element"] != "Zeltdach mit Ueberstand"]       # altes Dach (Sued/Ost/West gespiegelt angenommen) entfaellt, neues unten aus VIER gemessenen Traufecken
+    koerper = massstab(rumpf, MK); N_BELEGE_ROH = len(ELEMENTE)
+    # ---- DACH (15.11.2026) im korrigierten Rahmen: vier Traufecken trianguliert (Nord: M-113205-016/-025 + Ecke A; Sued: M-commons127-011/-012), Achse = Knauf ----
+    D_E = [(4.34, 8.62, 36.79), (4.27, 22.06, 36.69), (-8.05, 21.76, 36.54), (-8.00, 8.77, 36.47)]      # NO, NW, SW, SO: Dachkante aussen oben (m)
+    D_A = (-1.86, 15.11)                                                                              # Achse: x = Mitte der Traufen Nord/Sued (-1,86) = Knauf x (-1,85); y = Knauf (15,11)
+    D_ZE = sum(e_[2] for e_ in D_E) / 4; D_RE = 6.38                                                    # mittlere Traufhoehe 36,62 (Laser 36,6); mittlerer Achsabstand der Traufkanten
+    D_PROF = [(1.0, None), (6.0 / D_RE, 37.5), (5.0 / D_RE, 38.5), (4.0 / D_RE, 40.0), (3.0 / D_RE, 41.5), (0.196, 44.1)]   # (Anteil des Achsabstands, z): Zwischenpunkte DOM1-Laser, oben Laternenfuss (Foto)
+    def ring(f_, z_, dz_=0.0): return [[D_A[0] + f_ * (e_[0] - D_A[0]), D_A[1] + f_ * (e_[1] - D_A[1]), (e_[2] if z_ is None else z_) - dz_] for e_ in D_E]
+    dach = M.hull_points(ring(1.0, None) + ring(1.0, None, 0.23))
+    for (f0_, z0_), (f1_, z1_) in zip(D_PROF[:-1], D_PROF[1:]): dach = dach + M.hull_points(ring(f0_, z0_) + ring(f0_, z0_, 0.23) + ring(f1_, z1_) + ring(f1_, z1_, 0.23))
+    dach = dach + M.hull_points(ring(0.9, D_ZE - 0.3) + ring(0.196, 43.9))                                # Kern unter der Dachhaut
+    koerper = koerper + dach
+    beleg("dach", "Zeltdach geschweift mit Ueberstand, vier gemessene Traufecken", "Foto-Triangulation: Nordecken aus 6 Nordfotos, Suedecken aus 3 Suedfotos (Kameras SfM-Neuaufbau); Flaechenprofil DOM1-Laser",
+          traufe_nord=36.74, traufe_sued=36.5, laenge_nord_sued=12.35, breite_nord=13.44, breite_sued=12.99, ueberstand_nord=0.9, ueberstand_sued=0.83,
+          hinweis="Suedecken auf ~2-3 % (Knauf-Tor 0,9 m); Traufdicke 0,23 m ANNAHME; Aufschiebling aus dem Laserprofil")
     # ---- LATERNE (15.11.2026) im korrigierten Rahmen aus Fotomassen M-113205-017..-024 (Foto 113205, Ebene durch die Laternenachse) + Knauf-Triangulation ----
-    L_X, L_Y, L_ZF = -2.15, 15.11, 44.1                       # Achse: y aus dem Knauf (Nordfotos), x = Dachmitte (ANNAHME, Blickrichtung); Fuss = Oberkante Dachstumpf (47,28 roh x 0,933)
+    L_X, L_Y, L_ZF = -1.86, 15.11, 44.1                       # Achse: y aus dem Knauf (Nordfotos), x = Mitte der gemessenen Traufen Nord/Sued = Knauf x aus der Triangulation; Fuss = Oberkante Dachstumpf (47,28 roh x 0,933)
     lat = M.cylinder(0.4, 1.35, 1.25, 4).rotate((0, 0, 0)).translate((L_X, L_Y, L_ZF - 0.25))           # Sockelplatte auf dem Dachstumpf (ANNAHME)
     for dx_, dy_ in ((0.8, 0), (-0.8, 0), (0, 0.8), (0, -0.8)):                                            # 4 Pfosten an den Hauptachsen: Aussenabstand 1,78 m (M-113205-024), Staerke ANNAHME 0,18 m
         lat = lat + M.cube((0.18, 0.18, 47.0 - L_ZF + 0.1)).translate((L_X + dx_ - 0.09, L_Y + dy_ - 0.09, L_ZF))

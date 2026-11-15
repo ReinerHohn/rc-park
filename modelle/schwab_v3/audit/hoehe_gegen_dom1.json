@@ -1,22 +1,22 @@
 {
  "werkzeug": "hoehe_gegen_dom1.py",
- "pixel": 62,
- "median_modell_minus_laser_m": 0.46,
- "streuung_mad_m": 0.12,
+ "pixel": 51,
+ "median_modell_minus_laser_m": 0.38,
+ "streuung_mad_m": 0.1,
  "p10_p90": [
-  -0.24,
-  1.04
+  -0.17,
+  0.91
  ],
- "massstab_k": 0.9884,
+ "massstab_k": 0.9904,
  "versatz_modell_xy_m": [
-  0.0,
-  -0.5
+  -0.25,
+  -0.25
  ],
- "median_ohne_versatz_m": 0.56,
+ "median_ohne_versatz_m": 0.61,
  "hoehen_laser": [
-  38.2,
-  39.3,
-  41.1
+  38.3,
+  39.4,
+  41.0
  ],
  "tol_m": 0.5
 }

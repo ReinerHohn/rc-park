@@ -1,0 +1,47 @@
+{
+ "id": "M-commons127-011",
+ "typ": "triangulation",
+ "foto": "commons127",
+ "name": "Traufecke Sued-Ost (Dachkante aussen oben), 3 Suedfotos, neue Kameras",
+ "beobachtungen": [
+  {
+   "kamera": "K-commons_orig2__191",
+   "px": [
+    1023.0,
+    495.0
+   ]
+  },
+  {
+   "kamera": "K-commons_orig2__127",
+   "px": [
+    803.0,
+    562.0
+   ]
+  },
+  {
+   "kamera": "K-commons_orig2__052",
+   "px": [
+    803.0,
+    515.0
+   ]
+  }
+ ],
+ "P": [
+  -7.999,
+  8.772,
+  36.47
+ ],
+ "strahl_abstand_m": [
+  0.112,
+  0.137,
+  0.025
+ ],
+ "schnittwinkel_grad": [
+  25.7,
+  24.8,
+  5.2
+ ],
+ "z": 36.47,
+ "unsicherheit_m": 0.497,
+ "massstab_von": "Kameras K-commons_orig2__191, K-commons_orig2__127, K-commons_orig2__052 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

@@ -13,7 +13,7 @@
   },
   "traufe_nord_reichweite": {
    "typ": "schnitt_reichweite",
-   "z": 36.425,
+   "z": 36.55,
    "zentrum": [
     -2.15,
     15.28
@@ -27,7 +27,7 @@
   },
   "traufe_west_reichweite": {
    "typ": "schnitt_reichweite",
-   "z": 36.425,
+   "z": 36.55,
    "zentrum": [
     -2.15,
     15.28
@@ -41,7 +41,7 @@
   },
   "traufe_ost_reichweite": {
    "typ": "schnitt_reichweite",
-   "z": 36.425,
+   "z": 36.55,
    "zentrum": [
     -2.15,
     15.28
@@ -466,7 +466,7 @@
   "lat_spitze_z": {
    "typ": "z_am_punkt",
    "punkt": [
-    -2.15,
+    -1.86,
     15.11
    ],
    "z0": 49.0,
@@ -477,7 +477,7 @@
    "typ": "schnitt_reichweite",
    "z": 47.02,
    "zentrum": [
-    -2.15,
+    -1.86,
     15.11
    ],
    "richtung": [
@@ -491,7 +491,7 @@
    "typ": "schnitt_reichweite",
    "z": 47.95,
    "zentrum": [
-    -2.15,
+    -1.86,
     15.11
    ],
    "richtung": [
@@ -541,15 +541,16 @@
     "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m",
     "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-008): Traufecken A x 4,76 / C x 4,83 -> 4,80; 6,95 von der Dachmitte; Soll [6.85, 7.25] -> [6.75, 7.15]",
     "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [6.75, 7.15]",
-    "2026-11-15 zweite Massstabsstufe x 0,985 (Hoehen-Tor gegen DOM1, 61 ebene Dachpixel; gesamt 0,933): Soll vorher [6.39, 6.77]"
+    "2026-11-15 zweite Massstabsstufe x 0,985 (Hoehen-Tor gegen DOM1, 61 ebene Dachpixel; gesamt 0,933): Soll vorher [6.39, 6.77]",
+    "2026-11-15 Schnitthoehe 36,44 -> 36,55 m: Traufe jetzt je Ecke in gemessener Hoehe (Nord 36,69-36,79, Sued 36,47-36,54), die alte Schnitthoehe lag unter der Nordtraufe; Soll unveraendert"
    ]
   },
   {
    "name": "Traufkante West (+y): Abstand von Dachmitte bei z 39,05 (m)",
    "wert": "traufe_west_reichweite",
    "soll": [
-    6.64,
-    6.92
+    6.48,
+    6.78
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Traufecke A y 22,51 (M-113205-002), Dachmitte y 15,28 -> 7,23 +-0,15 | NACH LOTKORREKTUR: Traufecke A y 22,55 -> 7,27 (M-113205-008)",
    "quelltyp": "sfm_bodenanker",
@@ -560,7 +561,9 @@
     "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m",
     "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-008): Traufecke A y 22,55 -> 7,27; Soll [7.08, 7.38] -> [7.12, 7.42]",
     "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [7.12, 7.42]",
-    "2026-11-15 zweite Massstabsstufe x 0,985 (Hoehen-Tor gegen DOM1, 61 ebene Dachpixel; gesamt 0,933): Soll vorher [6.74, 7.03]"
+    "2026-11-15 zweite Massstabsstufe x 0,985 (Hoehen-Tor gegen DOM1, 61 ebene Dachpixel; gesamt 0,933): Soll vorher [6.74, 7.03]",
+    "2026-11-15 Traufecke Sued-West gemessen (-8,05 / 21,76; M-commons127-012): Westtraufe laeuft von y 22,06 (Nord) nach 21,76 (Sued), in der Mitte 21,91 -> 6,63 von der Messachse; Soll [6.64, 6.92] -> [6.48, 6.78]",
+    "2026-11-15 Schnitthoehe 36,44 -> 36,55 m: Traufe jetzt je Ecke in gemessener Hoehe (Nord 36,69-36,79, Sued 36,47-36,54), die alte Schnitthoehe lag unter der Nordtraufe; Soll unveraendert"
    ]
   },
   {
@@ -579,7 +582,8 @@
     "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m",
     "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-009): Traufecke C y 8,20 -> 7,08; Soll [6.97, 7.27] -> [6.93, 7.23]",
     "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [6.93, 7.23]",
-    "2026-11-15 zweite Massstabsstufe x 0,985 (Hoehen-Tor gegen DOM1, 61 ebene Dachpixel; gesamt 0,933): Soll vorher [6.56, 6.85]"
+    "2026-11-15 zweite Massstabsstufe x 0,985 (Hoehen-Tor gegen DOM1, 61 ebene Dachpixel; gesamt 0,933): Soll vorher [6.56, 6.85]",
+    "2026-11-15 Schnitthoehe 36,44 -> 36,55 m: Traufe jetzt je Ecke in gemessener Hoehe (Nord 36,69-36,79, Sued 36,47-36,54), die alte Schnitthoehe lag unter der Nordtraufe; Soll unveraendert"
    ]
   },
   {
