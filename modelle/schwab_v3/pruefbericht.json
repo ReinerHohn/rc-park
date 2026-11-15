@@ -1,7 +1,7 @@
 {
  "stl": "/home/oem/git/rc-park/modelle/stl/schwab_v3_1-87.stl",
  "werte": {
-  "hoehe": 51.59491351318359,
+  "hoehe": 51.760040405273436,
   "wasserdicht": 1.0,
   "koerper": 1.0,
   "traufe_nord_reichweite": 6.484339973449707,
@@ -17,7 +17,7 @@
   "fl_kante_innen": 3.303123605712763,
   "fl_kante_aussen": 3.4899893344072623,
   "fl_scheitel_innen": 3.290045512890728,
-  "fl_scheitel_aussen": 3.4684786145601763,
+  "fl_scheitel_aussen": 3.46843533153568,
   "fr_kante_innen": 3.2438935658500583,
   "fr_kante_aussen": 3.4490302298946105,
   "fl_oeffnung": 3.0101431387707294,
@@ -25,9 +25,9 @@
   "gal_ende_ost_innen": 4.903750585622802,
   "gal_ende_ost_aussen": 3.5807312552984527,
   "gal_ende_west_innen": 4.787367503057865,
-  "gal_ende_west_aussen": 3.496158821733353,
+  "gal_ende_west_aussen": 3.4961416114652337,
   "gal_holm_unter": 4.869472396322891,
-  "gal_holm_ueber": 3.5477890259795117,
+  "gal_holm_ueber": 3.5478170959594735,
   "vordach_traufe": 4.939329078692957,
   "vordach_oben": 3.4836106289191875,
   "vordach_darueber": 3.481297745347746,
@@ -43,23 +43,26 @@
   "uhr_s_aussen_oben": 7.203262200912285,
   "fen_s_innen": 6.754068221417363,
   "fen_s_kante_ost_innen": 6.743340659937715,
-  "fen_s_kante_ost_aussen": 7.201728995194969,
-  "fen_s_ueber": 7.21683130642235,
+  "fen_s_kante_ost_aussen": 7.201728995201115,
+  "fen_s_ueber": 7.216822156716155,
   "gesims_s": 7.223459602294739,
   "gesims_s_ueber": 7.127877754577938,
   "tor_s_scheitel": 5.839999999999971,
   "tor_s_halb_west": 2.2452901438646067,
   "tor_s_halb_ost": 2.2447312812301012,
   "fen_w_gross_innen": 19.912087085502833,
-  "fen_w_gross_kante": 20.858717304425433,
-  "fen_w_gross_ueber": 20.822495727692875,
+  "fen_w_gross_kante": 20.858724587277255,
+  "fen_w_gross_ueber": 20.822495727861558,
   "fen_w_schlitz_innen": 19.91281979742987,
   "fen_w_schlitz_ueber": 20.804211745605045,
   "fen_w_klein17_innen": 19.91212981048533,
   "fen_w_klein11_innen": 19.908870427862034,
   "turm_r_west": 1.5199728088378919,
   "turm_r_nordwest": 1.519997089118821,
-  "turm_r_oben": 1.5199728088378919
+  "turm_r_oben": 1.5199728088378919,
+  "lat_spitze_z": 51.74000000000043,
+  "lat_krempe": 1.4249595947265625,
+  "lat_haube": 1.3200309483559458
  },
  "pruefungen": [
   {
@@ -134,7 +137,7 @@
   },
   {
    "name": "Gesamthoehe mit Laterne (m)",
-   "wert": 51.59491351318359,
+   "wert": 51.760040405273436,
    "soll": [
     50.56,
     52.05
@@ -224,7 +227,7 @@
   },
   {
    "name": "Fenster Nord (fl_scheitel_aussen): Tiefe x der ersten Flaeche bei u 4.00 z 26.83 (m)",
-   "wert": 3.4684786145601763,
+   "wert": 3.46843533153568,
    "soll": [
     3.43,
     3.51
@@ -304,7 +307,7 @@
   },
   {
    "name": "Galerie/Vordach Nord (gal_ende_west_aussen): x der ersten Flaeche bei u 10.66 z 11.10 (m)",
-   "wert": 3.496158821733353,
+   "wert": 3.4961416114652337,
    "soll": [
     3.38,
     3.57
@@ -324,7 +327,7 @@
   },
   {
    "name": "Galerie/Vordach Nord (gal_holm_ueber): x der ersten Flaeche bei u 4.50 z 12.33 (m)",
-   "wert": 3.5477890259795117,
+   "wert": 3.5478170959594735,
    "soll": [
     3.33,
     3.56
@@ -484,7 +487,7 @@
   },
   {
    "name": "Sued (fen_s_kante_ost_aussen): |x| der ersten Flaeche bei u 5.16 z 23.00 (m)",
-   "wert": 7.201728995194969,
+   "wert": 7.201728995201115,
    "soll": [
     7.16,
     7.23
@@ -494,7 +497,7 @@
   },
   {
    "name": "Sued (fen_s_ueber): |x| der ersten Flaeche bei u 5.75 z 23.80 (m)",
-   "wert": 7.21683130642235,
+   "wert": 7.216822156716155,
    "soll": [
     7.17,
     7.24
@@ -564,7 +567,7 @@
   },
   {
    "name": "West (fen_w_gross_kante): |y| der ersten Flaeche bei u 5.95 z 22.60 (m)",
-   "wert": 20.858717304425433,
+   "wert": 20.858724587277255,
    "soll": [
     20.58,
     21.05
@@ -574,7 +577,7 @@
   },
   {
    "name": "West (fen_w_gross_ueber): |y| der ersten Flaeche bei u 5.40 z 23.65 (m)",
-   "wert": 20.822495727692875,
+   "wert": 20.822495727861558,
    "soll": [
     20.58,
     21.05
@@ -648,6 +651,36 @@
    "soll": [
     1.44,
     1.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laterne (lat_spitze_z) (m)",
+   "wert": 51.74000000000043,
+   "soll": [
+    51.5,
+    52.0
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laterne (lat_krempe) (m)",
+   "wert": 1.4249595947265625,
+   "soll": [
+    1.32,
+    1.52
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laterne (lat_haube) (m)",
+   "wert": 1.3200309483559458,
+   "soll": [
+    1.22,
+    1.42
    ],
    "ok": true,
    "status": "ok"

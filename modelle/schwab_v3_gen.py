@@ -142,7 +142,21 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     rumpf = rumpf.trim_by_plane((float(sn_[0]), float(sn_[1]), 0.0), float(sn_ @ sa_)); X_SUED = float(sa_[0])
     beleg("wand", "Suedwand (Ebene)", "SfM-Neuaufbau mit Eckpaaren (sfm_neu), Wandpunkte z 8-33 m; Gegenprobe Uhr/Traufe im entzerrten Suedfoto 127", x=round(X_SUED, 2),
           hinweis="Lage-Veto der neuen SfM-Punkte, nicht am Foto gepeilt; Knauf-Tor Nord-Sued noch 0,9 m")
-    koerper = massstab(rumpf + dach + lat, MK); N_BELEGE_ROH = len(ELEMENTE)
+    ELEMENTE[:] = [e_ for e_ in ELEMENTE if e_["element"] != "Laterne mit Zwiebelhaube"]      # alte Laterne (Form ANNAHME) entfaellt, neue unten aus Fotomassen
+    koerper = massstab(rumpf + dach, MK); N_BELEGE_ROH = len(ELEMENTE)
+    # ---- LATERNE (15.11.2026) im korrigierten Rahmen aus Fotomassen M-113205-017..-024 (Foto 113205, Ebene durch die Laternenachse) + Knauf-Triangulation ----
+    L_X, L_Y, L_ZF = -2.15, 15.11, 44.1                       # Achse: y aus dem Knauf (Nordfotos), x = Dachmitte (ANNAHME, Blickrichtung); Fuss = Oberkante Dachstumpf (47,28 roh x 0,933)
+    lat = M.cylinder(0.4, 1.35, 1.25, 4).rotate((0, 0, 0)).translate((L_X, L_Y, L_ZF - 0.25))           # Sockelplatte auf dem Dachstumpf (ANNAHME)
+    for dx_, dy_ in ((0.8, 0), (-0.8, 0), (0, 0.8), (0, -0.8)):                                            # 4 Pfosten an den Hauptachsen: Aussenabstand 1,78 m (M-113205-024), Staerke ANNAHME 0,18 m
+        lat = lat + M.cube((0.18, 0.18, 47.0 - L_ZF + 0.1)).translate((L_X + dx_ - 0.09, L_Y + dy_ - 0.09, L_ZF))
+    lat = lat + M.cylinder(0.12, 1.425, 1.425, 4).translate((L_X, L_Y, 46.93)) + M.cylinder(0.22, 1.425, 1.0, 4).translate((L_X, L_Y, 47.05))                              # Krempe: 4 Spitzen an den Hauptachsen, Spitze zu Spitze 2,85 m bei z 47,0 (M-113205-023)
+    profil = [(1.0, 47.2), (1.28, 47.6), (1.32, 47.95), (1.22, 48.6), (0.88, 49.3), (0.45, 49.85), (0.16, 50.17)]   # Zwiebelhaube: groesste Breite 2,64 m bei z 47,95 (M-113205-022), Hals z 50,17 (M-113205-019); Zwischenpunkte nach Augenschein
+    for (r0_, z0_), (r1_, z1_) in zip(profil[:-1], profil[1:]): lat = lat + M.cylinder(z1_ - z0_, r0_, r1_, 32).translate((L_X, L_Y, z0_))
+    lat = lat + M.cylinder(0.5, 0.12, 0.08, 16).translate((L_X, L_Y, 50.15)) + M.sphere(0.17, 20).translate((L_X, L_Y, 50.77)) + M.cylinder(0.9, 0.05, 0.02, 8).translate((L_X, L_Y, 50.86))   # Hals, Knauf z 50,77, Spitze bis 51,76
+    koerper = koerper + lat
+    beleg("dach", "Laterne: 4 Pfosten, Krempe, Zwiebelhaube, Knauf, Spitze", "foto_mass.py Foto 113205 auf der Ebene durch die Laternenachse (M-113205-017..-024); Knauf zusaetzlich aus 5 Nordfotos trianguliert (50,73 m)",
+          krempe_z=47.0, krempe_breite=2.85, haube_breite=2.64, haube_breite_z=47.95, hals_z=50.17, knauf_z=50.77, spitze_z=51.76,
+          hinweis="ANNAHME: Pfostenstaerke, Sockelplatte, Zwischenpunkte des Haubenprofils, Achse x (Blickrichtung); Hoehen unter der Haube (Fuss) aus der Triangulation")
     for e_ in ELEMENTE[N_BELEGE_LOD2:N_BELEGE_ROH]:                    # Masse der Belege in den korrigierten Rahmen: Laengen/Hoehen x MK, Winkel bleiben, x-Lagen um den Drehpunkt
         for q_, v_ in list(e_.items()):
             if isinstance(v_, (int, float)) and not isinstance(v_, bool) and q_ != "neigung_grad": e_[q_] = round(MC[0] + MK * (v_ - MC[0]), 2) if q_.startswith("x_bei") else round(v_ * MK, 2)

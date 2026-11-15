@@ -1,0 +1,32 @@
+{
+ "id": "M-113205-024",
+ "foto": "113205",
+ "kamera": "K-eigen__IMG_20261106_113205",
+ "ebene": "1,0,0=-1.85",
+ "name": "Laterne: Pfostenabstand aussen (linker zu rechtem Pfosten)",
+ "mess_px": [
+  1340.0,
+  660.0,
+  1580.0,
+  680.0
+ ],
+ "P1": [
+  -1.85,
+  14.252,
+  45.94
+ ],
+ "P2": [
+  -1.85,
+  16.036,
+  45.932
+ ],
+ "dz": -0.008,
+ "dy": 1.784,
+ "dx": 0.0,
+ "abstand": 1.784,
+ "z1": 45.94,
+ "z2": 45.932,
+ "unsicherheit_rel": 0.005,
+ "unsicherheit_m": 0.04,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113205 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 1,0,0=-1.85 (+-0.3 m)"
+}

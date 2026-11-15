@@ -1,0 +1,32 @@
+{
+ "id": "M-113205-023",
+ "foto": "113205",
+ "kamera": "K-eigen__IMG_20261106_113205",
+ "ebene": "1,0,0=-1.85",
+ "name": "Laterne: Krempe Spitze zu Spitze",
+ "mess_px": [
+  1253.0,
+  555.0,
+  1633.0,
+  587.0
+ ],
+ "P1": [
+  -1.85,
+  13.68,
+  47.006
+ ],
+ "P2": [
+  -1.85,
+  16.533,
+  46.999
+ ],
+ "dz": -0.006,
+ "dy": 2.854,
+ "dx": 0.0,
+ "abstand": 2.854,
+ "z1": 47.006,
+ "z2": 46.999,
+ "unsicherheit_rel": 0.0049,
+ "unsicherheit_m": 0.045,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113205 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 1,0,0=-1.85 (+-0.3 m)"
+}

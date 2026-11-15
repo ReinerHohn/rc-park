@@ -53,14 +53,6 @@
   "seite_name": "wand"
  },
  {
-  "seite": "dach",
-  "element": "Laterne mit Zwiebelhaube",
-  "quelle": "Knauf-Hoehe 54,17 m aus Foto-Triangulation (M-113205-005)",
-  "hoehe": 51.59,
-  "hinweis": "ANNAHME: Form (geschlossener Achteckschaft statt 4 Pfosten, Krempe, Zwiebel, Spitze 1 m) nach Augenschein Foto 113205, nicht gemessen | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
-  "seite_name": "dach"
- },
- {
   "seite": "wand",
   "element": "Nordwand (Ebene)",
   "quelle": "Foto-Peilung foto_mass.py --tri2d der Wandecken am Uhrgeschoss (M-113205-012/-013)",
@@ -139,6 +131,20 @@
   "x": -6.89,
   "hinweis": "Lage-Veto der neuen SfM-Punkte, nicht am Foto gepeilt; Knauf-Tor Nord-Sued noch 0,9 m | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
   "seite_name": "wand"
+ },
+ {
+  "seite": "dach",
+  "element": "Laterne: 4 Pfosten, Krempe, Zwiebelhaube, Knauf, Spitze",
+  "quelle": "foto_mass.py Foto 113205 auf der Ebene durch die Laternenachse (M-113205-017..-024); Knauf zusaetzlich aus 5 Nordfotos trianguliert (50,73 m)",
+  "krempe_z": 47.0,
+  "krempe_breite": 2.85,
+  "haube_breite": 2.64,
+  "haube_breite_z": 47.95,
+  "hals_z": 50.17,
+  "knauf_z": 50.77,
+  "spitze_z": 51.76,
+  "hinweis": "ANNAHME: Pfostenstaerke, Sockelplatte, Zwischenpunkte des Haubenprofils, Achse x (Blickrichtung); Hoehen unter der Haube (Fuss) aus der Triangulation",
+  "seite_name": "dach"
  },
  {
   "seite": "wand",

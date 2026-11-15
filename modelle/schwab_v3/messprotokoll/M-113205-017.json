@@ -1,0 +1,32 @@
+{
+ "id": "M-113205-017",
+ "foto": "113205",
+ "kamera": "K-eigen__IMG_20261106_113205",
+ "ebene": "1,0,0=-1.85",
+ "name": "Laterne: Fusspunkt vorn bis Knaufmitte (Ebene durch die Laternenachse x -1,85)",
+ "mess_px": [
+  1486.0,
+  745.0,
+  1409.0,
+  239.0
+ ],
+ "P1": [
+  -1.85,
+  15.27,
+  45.153
+ ],
+ "P2": [
+  -1.85,
+  15.136,
+  50.768
+ ],
+ "dz": 5.614,
+ "dy": -0.133,
+ "dx": 0.0,
+ "abstand": 5.616,
+ "z1": 45.153,
+ "z2": 50.768,
+ "unsicherheit_rel": 0.005,
+ "unsicherheit_m": 0.059,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113205 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 1,0,0=-1.85 (+-0.3 m)"
+}

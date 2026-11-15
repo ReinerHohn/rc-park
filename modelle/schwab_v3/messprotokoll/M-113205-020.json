@@ -1,0 +1,32 @@
+{
+ "id": "M-113205-020",
+ "foto": "113205",
+ "kamera": "K-eigen__IMG_20261106_113205",
+ "ebene": "1,0,0=-1.85",
+ "name": "Laterne: Fusspunkt bis groesste Breite der Haube",
+ "mess_px": [
+  1486.0,
+  745.0,
+  1432.0,
+  485.0
+ ],
+ "P1": [
+  -1.85,
+  15.27,
+  45.153
+ ],
+ "P2": [
+  -1.85,
+  15.092,
+  47.952
+ ],
+ "dz": 2.798,
+ "dy": -0.177,
+ "dx": 0.0,
+ "abstand": 2.804,
+ "z1": 45.153,
+ "z2": 47.952,
+ "unsicherheit_rel": 0.005,
+ "unsicherheit_m": 0.045,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113205 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 1,0,0=-1.85 (+-0.3 m)"
+}

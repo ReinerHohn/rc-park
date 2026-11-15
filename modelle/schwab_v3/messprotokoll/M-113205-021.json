@@ -1,0 +1,32 @@
+{
+ "id": "M-113205-021",
+ "foto": "113205",
+ "kamera": "K-eigen__IMG_20261106_113205",
+ "ebene": "1,0,0=-1.85",
+ "name": "Laterne: Fusspunkt bis Krempe (Unterkante Haube/Pfostenkopf)",
+ "mess_px": [
+  1486.0,
+  745.0,
+  1450.0,
+  575.0
+ ],
+ "P1": [
+  -1.85,
+  15.27,
+  45.153
+ ],
+ "P2": [
+  -1.85,
+  15.15,
+  46.966
+ ],
+ "dz": 1.813,
+ "dy": -0.12,
+ "dx": 0.0,
+ "abstand": 1.817,
+ "z1": 45.153,
+ "z2": 46.966,
+ "unsicherheit_rel": 0.005,
+ "unsicherheit_m": 0.04,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113205 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 1,0,0=-1.85 (+-0.3 m)"
+}

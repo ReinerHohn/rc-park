@@ -1,0 +1,32 @@
+{
+ "id": "M-113205-019",
+ "foto": "113205",
+ "kamera": "K-eigen__IMG_20261106_113205",
+ "ebene": "1,0,0=-1.85",
+ "name": "Laterne: Fusspunkt bis Zwiebelhals (Oberkante Haube)",
+ "mess_px": [
+  1486.0,
+  745.0,
+  1410.0,
+  290.0
+ ],
+ "P1": [
+  -1.85,
+  15.27,
+  45.153
+ ],
+ "P2": [
+  -1.85,
+  15.098,
+  50.168
+ ],
+ "dz": 5.015,
+ "dy": -0.172,
+ "dx": 0.0,
+ "abstand": 5.018,
+ "z1": 45.153,
+ "z2": 50.168,
+ "unsicherheit_rel": 0.005,
+ "unsicherheit_m": 0.056,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113205 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 1,0,0=-1.85 (+-0.3 m)"
+}

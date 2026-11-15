@@ -462,6 +462,44 @@
    ],
    "quer_max": 0.2,
    "r_max": 3.0
+  },
+  "lat_spitze_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    -2.15,
+    15.11
+   ],
+   "z0": 49.0,
+   "z1": 53.5,
+   "suche": "oben"
+  },
+  "lat_krempe": {
+   "typ": "schnitt_reichweite",
+   "z": 47.02,
+   "zentrum": [
+    -2.15,
+    15.11
+   ],
+   "richtung": [
+    0,
+    1
+   ],
+   "quer_max": 0.15,
+   "r_max": 2.5
+  },
+  "lat_haube": {
+   "typ": "schnitt_reichweite",
+   "z": 47.95,
+   "zentrum": [
+    -2.15,
+    15.11
+   ],
+   "richtung": [
+    0,
+    1
+   ],
+   "quer_max": 0.15,
+   "r_max": 2.5
   }
  },
  "pruefungen": [
@@ -1499,6 +1537,54 @@
    "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
    "historie": [
     "2026-11-15 angelegt: foto_diff 114039 zeigte den LoD2-Treppenturm neben den Fotokanten (zu schmal, zu flach); Ist vorher LoD2-Nebenteil 2,8 x 2,5 m"
+   ]
+  },
+  {
+   "name": "Laterne (lat_spitze_z) (m)",
+   "wert": "lat_spitze_z",
+   "soll": [
+    51.5,
+    52.0
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene, Foto 113205, Ebene durch die Laternenachse (x -1,85); Spitze z 51,76 (Knauf 50,77; Triangulation Knauf 50,73)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113205-018",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Laterne nach Augenschein (Achteckschaft, Hoehe 51,6)"
+   ]
+  },
+  {
+   "name": "Laterne (lat_krempe) (m)",
+   "wert": "lat_krempe",
+   "soll": [
+    1.32,
+    1.52
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene, Foto 113205, Ebene durch die Laternenachse (x -1,85); Krempe Spitze zu Spitze 2,85 m bei z 47,0",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113205-023",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Laterne nach Augenschein (Achteckschaft, Hoehe 51,6)"
+   ]
+  },
+  {
+   "name": "Laterne (lat_haube) (m)",
+   "wert": "lat_haube",
+   "soll": [
+    1.22,
+    1.42
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene, Foto 113205, Ebene durch die Laternenachse (x -1,85); Haube groesste Breite 2,64 m bei z 47,95",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113205-022",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Laterne nach Augenschein (Achteckschaft, Hoehe 51,6)"
    ]
   }
  ],
