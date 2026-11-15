@@ -9,7 +9,7 @@
   "traufe_ost_reichweite": 7.07999976348877,
   "traufe_oben_z": 39.34000000000029,
   "dach_nord_z45": 2.8405637426797656,
-  "wand_nord_reichweite": 5.824616144038895
+  "wand_nord_reichweite": 5.824653808425237
  },
  "pruefungen": [
   {
@@ -94,7 +94,7 @@
   },
   {
    "name": "Nordwand Uhrgeschoss: Abstand von Dachmitte bei z 36 (m)",
-   "wert": 5.824616144038895,
+   "wert": 5.824653808425237,
    "soll": [
     5.65,
     5.95

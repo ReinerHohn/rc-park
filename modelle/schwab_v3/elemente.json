@@ -61,5 +61,12 @@
   "x_bei_y21": 3.54,
   "hinweis": "ANNAHME: Wand ueber die ganze Hoehe in dieser Ebene (Anzug/Sockel noch nicht gemessen)",
   "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Nordwand z 0,6-29,6 m",
+  "quelle": "OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)",
+  "hinweis": "Scan-Relief, kein Mass: Torbogen, Holzgalerie und Vordach sind darin Loecher (glatte Wand) und fehlen noch; Wandanzug (~0,6 cm/m) abgezogen",
+  "seite_name": "wand"
  }
 ]

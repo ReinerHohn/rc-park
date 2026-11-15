@@ -20,7 +20,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
 - **sfm_bodenanker**: 7 von 7 Pruefungen gruen (COLMAP-Netz je Fassadenseite (tools/sfm_ausrichten.py), 7 Parameter aus LoD2-Eckkanten in >= 4 Fotos, Hoehenlage aus ANNAHME Strassenkamera 1,7 +- 0,6 m; Massstab +-2-3 %, Hoehe +-0,7 m systematisch; sieht keine Fassadenzaehlung (Punkte, keine Semantik). Register AH)
 
-## Elemente des Generators: 7 belegt, 0 Annahmen
+## Elemente des Generators: 8 belegt, 0 Annahmen
 
 - wand: Grundriss Teil 0 - LoD2 DEBW_001000hPLcp GroundSurface 0
 - wand: Teil 1 (ohne Dachmessung) - LoD2 DEBW_001000hPLcp Wandoberkante (31 eigene Waende)
@@ -29,6 +29,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - wand: Hauptteil Wand bis Traufe - LoD2 DEBW_001000hPLcp GroundSurface 0; Nordwand am Foto bestaetigt (M-113205-006/-007)
 - dach: Laterne mit Zwiebelhaube - Knauf-Hoehe 54,17 m aus Foto-Triangulation (M-113205-005)
 - wand: Nordwand (Ebene) - Foto-Peilung foto_mass.py --tri2d der Wandecken am Uhrgeschoss (M-113205-012/-013)
+- wand: Relief Nordwand z 0,6-29,6 m - OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)
 
 ## Beobachtungen ohne Pruefung
 
@@ -42,12 +43,12 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - 2026-11-15 Claude: Gesamthoehe: Knauf der Laterne am Foto 54,17 m (M-113205-005, 5 Fotos), objekt.json hoehe_m sagt 50,8 m. Quellenwiderspruch, nicht gemittelt. -> Herkunft von hoehe_m 50,8 pruefen (Dokument? ohne Laterne?); Laternenform (Pfosten, Krempe, Zwiebel, Spitze) am Foto messen - bisher ANNAHME
 - 2026-11-15 Nutzer (3D-Seite V6, Bildschirmfoto 13:19): Fotowolke passt nicht ganz auf das Modell: an der rechten Turmkante der Seite mit dem Georgsbild (Sued, -x) steht die Modellwand im oberen Schaft sichtbar ueber die Wolkenwand hinaus (rot markiert, etwa z 15-32 m). Bild audit/beobachtung_1319_wolke_neben_modell.jpg -> Wandlage je Hoehenband auf allen vier Seiten messen: Wolke/Netz nur als Hinweis, Beleg per foto_mass.py --tri2d der Turmkanten in mehreren Hoehen; unterscheiden Rahmen schief (Lot) / Wand geneigt (Anzug) / LoD2-Grundriss zu breit (Sockelumring)
 - 2026-11-15 Claude: Zur Nutzerbeobachtung 13:19: Rahmen stand 0,77 Grad schief (up = 0,0123 / -0,0056 / 0,9999 aus Fluchtpunkten der Senkrechten in 84 Fotos; Wolkenwaende aller vier Seiten wanderten gleichsinnig +x/-y um 0,3-0,4 m auf 30 m). Korrigiert (ausrichtung_lot_korrigieren.py, Drehpunkt Turmmitte z 32), Kameras, Wolken, Netz und Dachmasse neu. Rest nach der Korrektur (Wolke gegen LoD2-Wand, nur Hinweis): West unten +0,16 m -> oben 0 (Sockel breiter / Anzug), Nord durchgehend +0,1-0,2 m (Bossen/Eckquader), Sued unten -0,1 -> oben +0,16, Ost ~ -0,05. -> Turmkanten am Foto in 3-4 Hoehen peilen (foto_mass.py --tri2d je Ecke) -> Wandanzug und Sockelbreite als Masse, dann Generatorwand statt LoD2-Prisma
-- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=41.61 m, y=13.61 m (Zelle [1287, 990, 99], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
-- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2): Foto zeigt Struktur ohne Modellgegenstueck bei z=39.52 m, y=16.73 m (Zelle [1485, 1089, 99], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()
-- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3): Foto zeigt Struktur ohne Modellgegenstueck bei z=37.05 m, y=20.92 m (Zelle [1782, 1188, 99], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()
-- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4): Foto zeigt Struktur ohne Modellgegenstueck bei z=34.72 m, y=20.7 m (Zelle [1782, 1287, 99], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()
-- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5): Foto zeigt Struktur ohne Modellgegenstueck bei z=29.37 m, y=9.43 m (Zelle [990, 1584, 99], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()
-- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6): Foto zeigt Struktur ohne Modellgegenstueck bei z=27.94 m, y=20.77 m (Zelle [1881, 1584, 99], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=39.66 m, y=16.78 m (Zelle [1485, 1089, 99], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2): Foto zeigt Struktur ohne Modellgegenstueck bei z=39.07 m, y=18.1 m (Zelle [1584, 1089, 99], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3): Foto zeigt Struktur ohne Modellgegenstueck bei z=37.09 m, y=20.93 m (Zelle [1782, 1188, 99], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4): Foto zeigt Struktur ohne Modellgegenstueck bei z=34.71 m, y=20.69 m (Zelle [1782, 1287, 99], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5): Foto zeigt Struktur ohne Modellgegenstueck bei z=29.31 m, y=9.43 m (Zelle [990, 1584, 99], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()
+- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6): Foto zeigt Struktur ohne Modellgegenstueck bei z=27.45 m, y=9.46 m (Zelle [990, 1683, 99], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()
 
 ## Grenze
 

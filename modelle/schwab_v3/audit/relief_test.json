@@ -7,66 +7,66 @@
   9.5
  ],
  "px_m": 0.01,
- "lochanteil": 0.0001,
- "lochanteil_vor_nadelfuellung": 0.0128,
- "hub_p5_p95_cm": 13.0,
- "hub_mm_bei_1_87": 1.491,
- "vortritt_nach_oben_m_je_m": 0.0043,
+ "lochanteil": 0.0095,
+ "lochanteil_vor_nadelfuellung": 0.023,
+ "hub_p5_p95_cm": 12.6,
+ "hub_mm_bei_1_87": 1.452,
+ "vortritt_nach_oben_m_je_m": -0.0069,
  "fotos": {
   "K-eigen__IMG_20261106_113208": {
-   "fugen_korrelation": -0.005,
-   "fugen_korrelation_bester_versatz": -0.416,
+   "fugen_korrelation": -0.277,
+   "fugen_korrelation_bester_versatz": -0.41,
    "versatz_cm": [
-    -4.0,
-    -9.0
+    5.0,
+    -5.0
    ],
    "fugen_korrelation_null": [
-    0.014,
-    0.062,
-    -0.049,
-    -0.083
+    0.065,
+    0.076,
+    -0.068,
+    -0.095
    ],
-   "f1": 0.371,
-   "reliefkanten_mit_fotokante": 0.832,
-   "fotokanten_mit_reliefkante": 0.239,
-   "f1_verschoben_null": 0.349
+   "f1": 0.389,
+   "reliefkanten_mit_fotokante": 0.835,
+   "fotokanten_mit_reliefkante": 0.254,
+   "f1_verschoben_null": 0.368
   },
   "K-eigen__IMG_20261106_113612": {
-   "fugen_korrelation": 0.095,
-   "fugen_korrelation_bester_versatz": -0.461,
+   "fugen_korrelation": -0.269,
+   "fugen_korrelation_bester_versatz": -0.397,
    "versatz_cm": [
-    4.0,
-    -13.0
+    -10.0,
+    1.0
    ],
    "fugen_korrelation_null": [
-    -0.033,
-    0.042,
-    -0.032,
-    -0.059
+    0.066,
+    0.125,
+    -0.062,
+    -0.018
    ],
-   "f1": 0.369,
-   "reliefkanten_mit_fotokante": 0.795,
-   "fotokanten_mit_reliefkante": 0.24,
-   "f1_verschoben_null": 0.338
+   "f1": 0.397,
+   "reliefkanten_mit_fotokante": 0.79,
+   "fotokanten_mit_reliefkante": 0.266,
+   "f1_verschoben_null": 0.359
   },
   "K-eigen__IMG_20261106_113141": {
-   "fugen_korrelation": -0.03,
-   "fugen_korrelation_bester_versatz": -0.381,
+   "fugen_korrelation": -0.258,
+   "fugen_korrelation_bester_versatz": -0.371,
    "versatz_cm": [
-    -3.0,
-    -9.0
+    4.0,
+    -5.0
    ],
    "fugen_korrelation_null": [
-    0.021,
-    0.06,
-    -0.03,
-    -0.071
+    0.063,
+    0.07,
+    -0.056,
+    -0.095
    ],
-   "f1": 0.379,
-   "reliefkanten_mit_fotokante": 0.859,
-   "fotokanten_mit_reliefkante": 0.243,
-   "f1_verschoben_null": 0.353
+   "f1": 0.39,
+   "reliefkanten_mit_fotokante": 0.845,
+   "fotokanten_mit_reliefkante": 0.254,
+   "f1_verschoben_null": 0.368
   }
  },
- "f1_foto_gegen_foto": 0.868
+ "f1_foto_gegen_foto": 0.795
 }

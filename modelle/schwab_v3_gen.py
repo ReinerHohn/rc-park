@@ -49,6 +49,14 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     rumpf = (koerper + wand).trim_by_plane((-nn[0], -nn[1], 0.0), float(-(nn @ ca)))
     beleg("wand", "Nordwand (Ebene)", "Foto-Peilung foto_mass.py --tri2d der Wandecken am Uhrgeschoss (M-113205-012/-013)", x_bei_y9=3.72, x_bei_y21=3.54,
           hinweis="ANNAHME: Wand ueber die ganze Hoehe in dieser Ebene (Anzug/Sockel noch nicht gemessen)")
+    # Relief-Einsatz Nordwand (Nutzerentscheidung 15.11.2026): Hoehenbild aus dem OpenMVS-Netz als Platte vor der gepeilten Wandebene; Wand, Kanten und
+    # Oeffnungen bleiben Sache des Generators. Erzeugt mit tools/relief_einsatz.py (modelle/schwab_v3/relief/nord.npz), geprueft mit tools/relief_test.py.
+    from relief_einsatz import koerper as relief_koerper
+    rel_n = os.path.join(HERE, "schwab_v3", "relief", "nord.npz")
+    if os.path.exists(rel_n) and os.environ.get("OHNE_RELIEF") != "1":
+        rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12)
+        beleg("wand", "Relief Nordwand z 0,6-29,6 m", "OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)",
+              hinweis="Scan-Relief, kein Mass: Torbogen, Holzgalerie und Vordach sind darin Loecher (glatte Wand) und fehlen noch; Wandanzug (~0,6 cm/m) abgezogen")
     koerper = rumpf + dach + lat
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
