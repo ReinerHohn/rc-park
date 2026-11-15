@@ -54,7 +54,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     from relief_einsatz import koerper as relief_koerper
     rel_n = os.path.join(HERE, "schwab_v3", "relief", "nord.npz")
     if os.path.exists(rel_n) and os.environ.get("OHNE_RELIEF") != "1":
-        rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12, null_felder=[(2.6, 5.4, 23.9, 27.1), (6.9, 9.7, 23.9, 27.1)])   # Fensterfelder baut der Generator scharf (unten)
+        rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12, null_felder=[(2.6, 5.4, 23.9, 27.1), (6.9, 9.7, 23.9, 27.1), (1.6, 11.1, 9.7, 21.1)])   # Fensterfelder baut der Generator scharf (unten)
         beleg("wand", "Relief Nordwand z 0,6-29,6 m", "OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)",
               hinweis="Scan-Relief, kein Mass: Torbogen, Holzgalerie und Vordach sind darin Loecher (glatte Wand) und fehlen noch; Wandanzug (~0,6 cm/m) abgezogen")
     # Tordurchfahrt Nord als ECHTE Oeffnung aus Fotokanten (Nutzer 13:30: Relief mit dem Generator schaerfen). Masse M-113602-001..-006 auf der Sockelebene.
@@ -82,6 +82,28 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         rumpf = rumpf - nische - oeffn + bank
     beleg("wand", "2 Rundbogenfenster Nord (Blendnische + Oeffnung + Sohlbank)", "foto_mass.py auf der Wandebene, Foto 113029 (M-113029-001..-007)", nische_breite=F_NB, nische_hoehe=F_NH,
           oeffnung_breite=F_OB, oeffnung_hoehe=F_OH, sohlbank_z=F_SOHL, hinweis="ANNAHME: Nischentiefe 0,15 m, Laden 0,45 m hinter der Wand, Sohlbank 10 x 12 cm; rechtes Fenster = Masse des linken, nur Lage gemessen")
+    # Holzgalerie und geschweiftes Vordach Nord aus Foto-Triangulation (M-113231-001..-004, M-113128-001..-004); lokal (u, z, w nach aussen) ueber M_w
+    def kasten(u0, u1, z0, z1, w0, w1): return M.cube((u1 - u0, z1 - z0, w1 - w0)).translate((u0, z0, w0)).transform(M_w)
+    def huelle(pts): return M.hull_points([[ca[0] + u * tn[0] + w * nn[0], ca[1] + u * tn[1] + w * nn[1], z] for u, z, w in pts])
+    G_U0, G_U1, G_W, G_ZU, G_ZO = 1.91, 10.55, 1.55, 10.95, 12.24          # Enden (u), Ausladung, Schwelle unten, Holm oben
+    gal = kasten(G_U0, G_U1, G_ZU, G_ZU + 0.35, -0.05, G_W)                 # Schwelle + Boden (ANNAHME: geschlossene Platte 0,35 m)
+    gal = gal + kasten(G_U0, G_U1, G_ZU, G_ZO, G_W - 0.15, G_W)             # Bruestung vorn (ANNAHME: geschlossen statt Andreaskreuze mit Gitter)
+    gal = gal + kasten(G_U0, G_U0 + 0.15, G_ZU, G_ZO, -0.05, G_W) + kasten(G_U1 - 0.15, G_U1, G_ZU, G_ZO, -0.05, G_W)
+    V_ZT, V_W, V_U0, V_U1, V_ZO, V_O0, V_O1 = 17.25, 1.65, 1.83, 10.83, 20.82, 3.28, 9.31    # Traufe z, Ausladung, Traufe u, Anschluss z, Anschluss u
+    for up in (G_U0 + 0.11, (G_U0 + G_U1) / 2, G_U1 - 0.11):                # 3 Pfosten vorn (Lage Enden/Mitte nach Foto 113231, Querschnitt ANNAHME 0,22 m)
+        gal = gal + kasten(up - 0.11, up + 0.11, G_ZO, V_ZT + 0.1, G_W - 0.22, G_W)
+    for us in np.linspace(G_U0 + 0.3, G_U1 - 0.3, 6):                       # 6 Kopfstreben unter dem Boden (ANNAHME: Zahl/Lage nach Foto, Wandfuss z 9,9)
+        gal = gal + huelle([(us - 0.1, G_ZU, G_W - 0.3), (us + 0.1, G_ZU, G_W - 0.3), (us - 0.1, G_ZU, G_W - 0.05), (us + 0.1, G_ZU, G_W - 0.05),
+                            (us - 0.1, 9.9, -0.05), (us + 0.1, 9.9, -0.05), (us - 0.1, 10.25, -0.05), (us + 0.1, 10.25, -0.05)])
+    V_MZ, V_MW = 18.9, 0.55; fm = V_MW / V_W; V_M0, V_M1 = V_O0 + (V_U0 - V_O0) * 0.37, V_O1 + (V_U1 - V_O1) * 0.37    # Schweifung: ANNAHME Zwischenschnitt nach Umriss im Foto 113128
+    d_ = 0.15
+    vd = huelle([(V_O0, V_ZO, -0.05), (V_O1, V_ZO, -0.05), (V_O0, V_ZO - d_, -0.05), (V_O1, V_ZO - d_, -0.05), (V_M0, V_MZ, V_MW), (V_M1, V_MZ, V_MW), (V_M0, V_MZ - d_, V_MW), (V_M1, V_MZ - d_, V_MW)])
+    vd = vd + huelle([(V_M0, V_MZ, V_MW), (V_M1, V_MZ, V_MW), (V_M0, V_MZ - d_, V_MW), (V_M1, V_MZ - d_, V_MW), (V_U0, V_ZT + d_, V_W), (V_U1, V_ZT + d_, V_W), (V_U0, V_ZT, V_W), (V_U1, V_ZT, V_W)])
+    rumpf = rumpf + gal + vd
+    beleg("wand", "Holzgalerie Nord (Boden, Bruestung, 3 Pfosten, 6 Streben)", "Foto-Triangulation foto_mass.py --tri (M-113231-001..-004)", breite=round(G_U1 - G_U0, 2), ausladung=G_W, schwelle_unten=G_ZU, holm_oben=G_ZO,
+          hinweis="ANNAHME: Bruestung geschlossen (statt Andreaskreuze), Bodenplatte 0,35 m, Pfosten 0,22 m, Streben 6 Stueck bis z 9,9")
+    beleg("dach", "Vordach Nord (geschweiftes Pultdach)", "Foto-Triangulation foto_mass.py --tri (M-113128-001..-004)", traufe_z=V_ZT, ausladung=V_W, traufbreite=round(V_U1 - V_U0, 2), anschluss_z=V_ZO, anschlussbreite=round(V_O1 - V_O0, 2),
+          hinweis="ANNAHME: Schweifung aus einem Zwischenschnitt (z 18,9 / 0,55 m), Dachhaut 0,15 m")
     koerper = rumpf + dach + lat
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:

@@ -1,0 +1,37 @@
+{
+ "id": "M-113128-002",
+ "typ": "triangulation",
+ "foto": "113128",
+ "name": "Vordach Nord: Traufecke rechts (West)",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__IMG_20261106_113128",
+   "px": [
+    2809.0,
+    3862.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113231",
+   "px": [
+    2116.0,
+    2170.0
+   ]
+  }
+ ],
+ "P": [
+  5.098,
+  20.047,
+  17.308
+ ],
+ "strahl_abstand_m": [
+  0.123,
+  0.123
+ ],
+ "schnittwinkel_grad": [
+  20.1
+ ],
+ "z": 17.308,
+ "unsicherheit_m": 0.27,
+ "massstab_von": "Kameras K-eigen__IMG_20261106_113128, K-eigen__IMG_20261106_113231 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

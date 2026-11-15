@@ -1,0 +1,47 @@
+{
+ "id": "M-113128-004",
+ "typ": "triangulation",
+ "foto": "113128",
+ "name": "Vordach Nord: Anschluss an die Wand oben rechts",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__IMG_20261106_113128",
+   "px": [
+    2368.0,
+    3359.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113231",
+   "px": [
+    1889.0,
+    1977.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113106",
+   "px": [
+    2404.0,
+    3213.0
+   ]
+  }
+ ],
+ "P": [
+  3.685,
+  18.527,
+  20.83
+ ],
+ "strahl_abstand_m": [
+  0.005,
+  0.005,
+  0.001
+ ],
+ "schnittwinkel_grad": [
+  19.0,
+  8.3,
+  27.3
+ ],
+ "z": 20.83,
+ "unsicherheit_m": 0.149,
+ "massstab_von": "Kameras K-eigen__IMG_20261106_113128, K-eigen__IMG_20261106_113231, K-eigen__IMG_20261106_113106 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

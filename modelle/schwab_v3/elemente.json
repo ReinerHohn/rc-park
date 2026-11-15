@@ -91,5 +91,28 @@
   "sohlbank_z": 24.21,
   "hinweis": "ANNAHME: Nischentiefe 0,15 m, Laden 0,45 m hinter der Wand, Sohlbank 10 x 12 cm; rechtes Fenster = Masse des linken, nur Lage gemessen",
   "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Holzgalerie Nord (Boden, Bruestung, 3 Pfosten, 6 Streben)",
+  "quelle": "Foto-Triangulation foto_mass.py --tri (M-113231-001..-004)",
+  "breite": 8.64,
+  "ausladung": 1.55,
+  "schwelle_unten": 10.95,
+  "holm_oben": 12.24,
+  "hinweis": "ANNAHME: Bruestung geschlossen (statt Andreaskreuze), Bodenplatte 0,35 m, Pfosten 0,22 m, Streben 6 Stueck bis z 9,9",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "dach",
+  "element": "Vordach Nord (geschweiftes Pultdach)",
+  "quelle": "Foto-Triangulation foto_mass.py --tri (M-113128-001..-004)",
+  "traufe_z": 17.25,
+  "ausladung": 1.65,
+  "traufbreite": 9.0,
+  "anschluss_z": 20.82,
+  "anschlussbreite": 6.03,
+  "hinweis": "ANNAHME: Schweifung aus einem Zwischenschnitt (z 18,9 / 0,55 m), Dachhaut 0,15 m",
+  "seite_name": "dach"
  }
 ]

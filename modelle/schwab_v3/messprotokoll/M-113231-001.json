@@ -1,0 +1,47 @@
+{
+ "id": "M-113231-001",
+ "typ": "triangulation",
+ "foto": "113231",
+ "name": "Galerie Nord: Schwelle vorn unten, Ende links (Ost)",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__IMG_20261106_113231",
+   "px": [
+    1422.0,
+    2655.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113208",
+   "px": [
+    866.0,
+    1030.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113029",
+   "px": [
+    1555.0,
+    3661.0
+   ]
+  }
+ ],
+ "P": [
+  5.336,
+  11.148,
+  10.923
+ ],
+ "strahl_abstand_m": [
+  0.101,
+  0.184,
+  0.085
+ ],
+ "schnittwinkel_grad": [
+  12.0,
+  25.0,
+  12.9
+ ],
+ "z": 10.923,
+ "unsicherheit_m": 0.38,
+ "massstab_von": "Kameras K-eigen__IMG_20261106_113231, K-eigen__IMG_20261106_113208, K-eigen__IMG_20261106_113029 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

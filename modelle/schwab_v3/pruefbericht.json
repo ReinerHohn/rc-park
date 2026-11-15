@@ -15,12 +15,22 @@
   "tor_scheitel_z": 6.919999999999959,
   "tor_halb_z555": 1.952121087049644,
   "fl_kante_innen": 3.524687559652669,
-  "fl_kante_aussen": 3.682664800056479,
+  "fl_kante_aussen": 3.6826648000631366,
   "fl_scheitel_innen": 3.510699153806307,
   "fl_scheitel_aussen": 3.665715880681134,
   "fr_kante_innen": 3.4611990574316778,
   "fr_kante_aussen": 3.619176620566691,
-  "fl_oeffnung": 3.2106661729699297
+  "fl_oeffnung": 3.2106661729699297,
+  "gal_front": 5.178408297789886,
+  "gal_ende_ost_innen": 5.240268497487271,
+  "gal_ende_ost_aussen": 3.698355753392967,
+  "gal_ende_west_innen": 5.11549705606204,
+  "gal_ende_west_aussen": 3.5672193028894412,
+  "gal_holm_unter": 5.20355794828113,
+  "gal_holm_ueber": 3.6583885365174,
+  "vordach_traufe": 5.2784192001123955,
+  "vordach_oben": 3.646990304036187,
+  "vordach_darueber": 3.6332390295135255
  },
  "pruefungen": [
   {
@@ -165,7 +175,7 @@
   },
   {
    "name": "Fenster Nord (fl_kante_aussen): Tiefe x der ersten Flaeche bei u 2.86 z 25.00 (m)",
-   "wert": 3.682664800056479,
+   "wert": 3.6826648000631366,
    "soll": [
     3.65,
     3.73
@@ -219,6 +229,106 @@
    "soll": [
     2.77,
     3.42
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_front): x der ersten Flaeche bei u 6.20 z 11.10 (m)",
+   "wert": 5.178408297789886,
+   "soll": [
+    5.0,
+    5.35
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_ende_ost_innen): x der ersten Flaeche bei u 2.02 z 11.10 (m)",
+   "wert": 5.240268497487271,
+   "soll": [
+    5.0,
+    5.5
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_ende_ost_aussen): x der ersten Flaeche bei u 1.80 z 11.10 (m)",
+   "wert": 3.698355753392967,
+   "soll": [
+    3.6,
+    3.8
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_ende_west_innen): x der ersten Flaeche bei u 10.45 z 11.10 (m)",
+   "wert": 5.11549705606204,
+   "soll": [
+    4.85,
+    5.3
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_ende_west_aussen): x der ersten Flaeche bei u 10.66 z 11.10 (m)",
+   "wert": 3.5672193028894412,
+   "soll": [
+    3.5,
+    3.7
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_holm_unter): x der ersten Flaeche bei u 4.50 z 12.15 (m)",
+   "wert": 5.20355794828113,
+   "soll": [
+    5.0,
+    5.4
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_holm_ueber): x der ersten Flaeche bei u 4.50 z 12.33 (m)",
+   "wert": 3.6583885365174,
+   "soll": [
+    3.55,
+    3.8
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Galerie/Vordach Nord (vordach_traufe): x der ersten Flaeche bei u 6.20 z 17.40 (m)",
+   "wert": 5.2784192001123955,
+   "soll": [
+    5.0,
+    5.5
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Galerie/Vordach Nord (vordach_oben): x der ersten Flaeche bei u 6.20 z 20.60 (m)",
+   "wert": 3.646990304036187,
+   "soll": [
+    3.6,
+    3.95
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Galerie/Vordach Nord (vordach_darueber): x der ersten Flaeche bei u 6.20 z 21.00 (m)",
+   "wert": 3.6332390295135255,
+   "soll": [
+    3.55,
+    3.72
    ],
    "ok": true,
    "status": "ok"

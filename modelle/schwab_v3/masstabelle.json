@@ -184,6 +184,66 @@
    "seite": "+x",
    "z": 25.0,
    "quer": 13.225
+  },
+  "gal_front": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 11.1,
+   "quer": 15.419
+  },
+  "gal_ende_ost_innen": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 11.1,
+   "quer": 11.24
+  },
+  "gal_ende_ost_aussen": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 11.1,
+   "quer": 11.02
+  },
+  "gal_ende_west_innen": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 11.1,
+   "quer": 19.669
+  },
+  "gal_ende_west_aussen": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 11.1,
+   "quer": 19.879
+  },
+  "gal_holm_unter": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 12.15,
+   "quer": 13.72
+  },
+  "gal_holm_ueber": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 12.33,
+   "quer": 13.72
+  },
+  "vordach_traufe": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 17.4,
+   "quer": 15.419
+  },
+  "vordach_oben": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 20.6,
+   "quer": 15.419
+  },
+  "vordach_darueber": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 21.0,
+   "quer": 15.419
   }
  },
  "pruefungen": [
@@ -503,6 +563,166 @@
    "historie": [
     "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
    ]
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_front): x der ersten Flaeche bei u 6.20 z 11.10 (m)",
+   "wert": "gal_front",
+   "soll": [
+    5.0,
+    5.35
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Galerie-Vorderkante: Schwelle vorn x 5,34 (Ost) / 4,99 (West)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113231-002",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+   ]
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_ende_ost_innen): x der ersten Flaeche bei u 2.02 z 11.10 (m)",
+   "wert": "gal_ende_ost_innen",
+   "soll": [
+    5.0,
+    5.5
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Galerie-Ende Ost bei y 11,13-11,15 (u 1,91): 0,1 m innerhalb steht die Schwelle",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113231-001",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+   ]
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_ende_ost_aussen): x der ersten Flaeche bei u 1.80 z 11.10 (m)",
+   "wert": "gal_ende_ost_aussen",
+   "soll": [
+    3.6,
+    3.8
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Galerie-Ende Ost: 0,1 m ausserhalb ist Wand",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113231-001",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+   ]
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_ende_west_innen): x der ersten Flaeche bei u 10.45 z 11.10 (m)",
+   "wert": "gal_ende_west_innen",
+   "soll": [
+    4.85,
+    5.3
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Galerie-Ende West bei y 19,75-19,79 (u 10,55)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113231-002",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+   ]
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_ende_west_aussen): x der ersten Flaeche bei u 10.66 z 11.10 (m)",
+   "wert": "gal_ende_west_aussen",
+   "soll": [
+    3.5,
+    3.7
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Galerie-Ende West: 0,1 m ausserhalb ist Wand",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113231-002",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+   ]
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_holm_unter): x der ersten Flaeche bei u 4.50 z 12.15 (m)",
+   "wert": "gal_holm_unter",
+   "soll": [
+    5.0,
+    5.4
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Bruestungsholm Oberkante z 12,24: 0,09 m darunter Bruestung",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113231-004",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+   ]
+  },
+  {
+   "name": "Galerie/Vordach Nord (gal_holm_ueber): x der ersten Flaeche bei u 4.50 z 12.33 (m)",
+   "wert": "gal_holm_ueber",
+   "soll": [
+    3.55,
+    3.8
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Bruestungsholm Oberkante z 12,24: 0,09 m darueber frei bis zur Wand",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113231-004",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+   ]
+  },
+  {
+   "name": "Galerie/Vordach Nord (vordach_traufe): x der ersten Flaeche bei u 6.20 z 17.40 (m)",
+   "wert": "vordach_traufe",
+   "soll": [
+    5.0,
+    5.5
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Vordach-Traufe: Ecken (5,42 / 11,05 / 17,18) und (5,10 / 20,05 / 17,31)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113128-001",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+   ]
+  },
+  {
+   "name": "Galerie/Vordach Nord (vordach_oben): x der ersten Flaeche bei u 6.20 z 20.60 (m)",
+   "wert": "vordach_oben",
+   "soll": [
+    3.6,
+    3.95
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Vordach-Anschluss an die Wand z 20,81-20,83",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113128-003",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+   ]
+  },
+  {
+   "name": "Galerie/Vordach Nord (vordach_darueber): x der ersten Flaeche bei u 6.20 z 21.00 (m)",
+   "wert": "vordach_darueber",
+   "soll": [
+    3.55,
+    3.72
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): ueber dem Vordach-Anschluss (z 20,82) ist Wand",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113128-004",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -579,103 +799,103 @@
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1700-1100",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1616-1111",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 38.73,
-   "z_bis": 38.73,
+   "z_von": 38.68,
+   "z_bis": 38.68,
    "xyz": [
-    2.66,
-    19.87,
-    38.73
+    2.08,
+    18.64,
+    38.68
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.73 m, y=19.87 m (Zelle [1700, 1100, 100], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.68 m, y=18.64 m (Zelle [1616, 1111, 101], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1600-1200",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1010-1515",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 37.52,
-   "z_bis": 37.52,
+   "z_von": 30.55,
+   "z_bis": 30.55,
    "xyz": [
-    1.16,
-    18.59,
-    37.52
+    -1.74,
+    9.66,
+    30.55
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=37.52 m, y=18.59 m (Zelle [1600, 1200, 100], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.55 m, y=9.66 m (Zelle [1010, 1515, 101], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1800-1200",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1010-1616",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 36.82,
-   "z_bis": 36.82,
+   "z_von": 28.11,
+   "z_bis": 28.11,
    "xyz": [
-    2.48,
-    21.04,
-    36.82
+    -1.32,
+    9.58,
+    28.11
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=36.82 m, y=21.04 m (Zelle [1800, 1200, 100], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.11 m, y=9.58 m (Zelle [1010, 1616, 101], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1800-1300",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-909-1717",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 34.13,
-   "z_bis": 34.13,
+   "z_von": 28.59,
+   "z_bis": 28.59,
    "xyz": [
-    2.63,
-    20.7,
-    34.13
+    -4.2,
+    9.15,
+    28.59
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=34.13 m, y=20.7 m (Zelle [1800, 1300, 100], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.59 m, y=9.15 m (Zelle [909, 1717, 101], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1000-1500",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1010-1717",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 31.24,
-   "z_bis": 31.24,
+   "z_von": 26.36,
+   "z_bis": 26.36,
    "xyz": [
-    -2.14,
-    9.6,
-    31.24
+    -1.43,
+    9.62,
+    26.36
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=31.24 m, y=9.6 m (Zelle [1000, 1500, 100], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.36 m, y=9.62 m (Zelle [1010, 1717, 101], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1000-1600",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-909-1818",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 28.72,
-   "z_bis": 28.72,
+   "z_von": 26.69,
+   "z_bis": 26.69,
    "xyz": [
-    -1.67,
-    9.51,
-    28.72
+    -4.2,
+    9.17,
+    26.69
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.72 m, y=9.51 m (Zelle [1000, 1600, 100], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.69 m, y=9.17 m (Zelle [909, 1818, 101], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ]

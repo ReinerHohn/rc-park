@@ -1,0 +1,47 @@
+{
+ "id": "M-113231-003",
+ "typ": "triangulation",
+ "foto": "113231",
+ "name": "Galerie Nord: Bruestungsholm oben, Ende links (Ost)",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__IMG_20261106_113231",
+   "px": [
+    1401.0,
+    2515.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113208",
+   "px": [
+    860.0,
+    754.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113029",
+   "px": [
+    1554.0,
+    3516.0
+   ]
+  }
+ ],
+ "P": [
+  5.245,
+  11.121,
+  12.236
+ ],
+ "strahl_abstand_m": [
+  0.058,
+  0.137,
+  0.085
+ ],
+ "schnittwinkel_grad": [
+  12.4,
+  25.8,
+  13.5
+ ],
+ "z": 12.236,
+ "unsicherheit_m": 0.327,
+ "massstab_von": "Kameras K-eigen__IMG_20261106_113231, K-eigen__IMG_20261106_113208, K-eigen__IMG_20261106_113029 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}
