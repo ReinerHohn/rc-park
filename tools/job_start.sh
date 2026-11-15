@@ -25,6 +25,24 @@ if [ "${JOB_OHNE_GPU_SPERRE:-0}" != "1" ]; then
       break;; esac
   done < "$(dirname "$0")/gpu_werkzeuge.txt"
 fi
+# BUCHUNG statt Messung (15.11.2026, Nutzer "macht das"): bisher (a) griff die Sperre nur bei Werkzeugnamen aus gpu_werkzeuge.txt - Skriptjobs mit JOB_GPU_MB
+# liefen ungebremst - und (b) wurde der freie VRAM nur GEMESSEN: zwei fast gleichzeitige Starts sahen beide "frei" (3x CUDA out of memory am 15.11.).
+# Jetzt: JOB_GPU_MB > 0 macht jeden Job zum GPU-Job; das Budget wird unter flock in $BUCH (NAME MiB ZEIT) gebucht. Start nur, wenn
+# max(Summe der Buchungen laufender Jobs, gemessener VRAM) + Budget <= Grenze. Buchungen toter Jobs (aelter als 120 s, Dienst nicht aktiv) verfallen.
+BUCH=/media/oem/scan/rc-park_daten/.gpu_buchung
+[ "${JOB_OHNE_GPU_SPERRE:-0}" != "1" ] && [ "${BUDGET:-0}" -gt 0 ] 2>/dev/null && GPUJOB=1
+buchen() {  # gibt 0 zurueck und bucht, wenn Platz ist; sonst 1 und setzt GRUND
+  exec 9>>"$BUCH.lock"; flock 9
+  local jetzt sum=0 n mb t tmp; jetzt=$(date +%s); tmp=$(mktemp)
+  while read -r n mb t; do
+    [ -n "$n" ] || continue
+    if systemctl --user is-active --quiet "rcpark-$n" 2>/dev/null || [ $((jetzt - ${t:-0})) -lt 120 ]; then echo "$n $mb $t" >> "$tmp"; [ "$n" != "$NAME" ] && sum=$((sum + mb)); fi
+  done < <(cat "$BUCH" 2>/dev/null)
+  USED=$(${JOB_NVSMI:-nvidia-smi} --query-gpu=memory.used --format=csv,noheader,nounits 2>/dev/null | head -1 | tr -dc 0-9); USED=${USED:-0}
+  local basis=$sum; [ "$USED" -gt "$basis" ] && basis=$USED
+  if [ $((basis + BUDGET)) -gt "$LIMIT" ]; then GRUND="VRAM-Buchung: gebucht ${sum} MiB / gemessen ${USED} MiB + Job ${BUDGET} MiB > Grenze ${LIMIT} MiB"; mv "$tmp" "$BUCH"; flock -u 9; return 1; fi
+  grep -v "^$NAME " "$tmp" > "$BUCH" 2>/dev/null || : > "$BUCH"; echo "$NAME $BUDGET $jetzt" >> "$BUCH"; rm -f "$tmp"; flock -u 9; return 0
+}
 if [ "$GPUJOB" = 1 ]; then
   T0=$(date +%s); LAST=$T0
   while :; do
@@ -36,8 +54,7 @@ if [ "$GPUJOB" = 1 ]; then
       fi
     fi
     if [ -z "$GRUND" ] && [ "$BUDGET" -gt 0 ]; then
-      USED=$(${JOB_NVSMI:-nvidia-smi} --query-gpu=memory.used --format=csv,noheader,nounits 2>/dev/null | head -1 | tr -dc 0-9); USED=${USED:-0}
-      [ $((USED + BUDGET)) -gt "$LIMIT" ] && GRUND="VRAM-Budget: belegt ${USED} MiB + Job ${BUDGET} MiB > Grenze ${LIMIT} MiB"
+      buchen || true
     elif [ -z "$GRUND" ] && [ -n "$(${JOB_NVSMI:-nvidia-smi} --query-compute-apps=pid --format=csv,noheader 2>/dev/null | tr -d ' \n')" ]; then
       GRUND="GPU belegt durch fremden Prozess (nvidia-smi: $(${JOB_NVSMI:-nvidia-smi} --query-compute-apps=pid --format=csv,noheader | tr '\n' ' '))"
     fi
@@ -54,7 +71,7 @@ CMD=$(printf '%q ' "$@")
 # (CPUWeight 1000, alle Kerne); reine CPU-Jobs (JOB_GPU_MB=0) laufen mit CPUWeight 20 auf den 12 langsamen Kernen 16-27 (JOB_CPU=alle hebt das auf).
 if [ "${BUDGET:-0}" -gt 0 ] 2>/dev/null || [ "${JOB_CPU:-}" = "alle" ]; then CPUW=1000; PIN=""; else CPUW=20; PIN="taskset -c ${JOB_CPU_KERNE:-16-27} "; fi
 systemd-run --user --unit "rcpark-$NAME" --collect -p MemoryHigh="${JOB_MEMORY_HIGH:-11G}" -p CPUWeight="$CPUW" -p WorkingDirectory="$(pwd)" \
-  /bin/bash -c "$PIN$CMD > '$LOG' 2>&1; rc=\$?; echo \"JOB_ENDE rc=\$rc\" >> '$LOG'; [ \"\$(cut -d' ' -f1 '$LOCK' 2>/dev/null)\" = '$NAME' ] && rm -f '$LOCK'; exit \$rc"
+  /bin/bash -c "$PIN$CMD > '$LOG' 2>&1; rc=\$?; echo \"JOB_ENDE rc=\$rc\" >> '$LOG'; [ \"\$(cut -d' ' -f1 '$LOCK' 2>/dev/null)\" = '$NAME' ] && rm -f '$LOCK'; ( flock 9; sed -i '/^$NAME /d' '$BUCH' 2>/dev/null ) 9>>'$BUCH.lock'; [ \$rc -ne 0 ] && echo \"\$(date +%FT%T) $NAME rc=\$rc log=$LOG | \$(grep -v JOB_ENDE '$LOG' | tail -2 | tr '\\n' ' ' | cut -c1-300)\" >> /media/oem/scan/rc-park_daten/job_fehler.log; exit \$rc"
 if [ "${RCPARK_OHNE_GPU_WACHE:-0}" != "1" ]; then                    # GPU-Wache (Lehre 14.11.: CPU-Werkzeug lief unbemerkt auf 18 Kernen, GPU 0 %)
   systemd-run --user --unit "rcpark-$NAME-gpuwache" --collect -p WorkingDirectory="$(pwd)" /bin/bash "$(cd "$(dirname "$0")" && pwd)/gpu_wache.sh" "$NAME" "$LOG" >/dev/null 2>&1 || true
 fi
