@@ -57,6 +57,9 @@ if obj.get("lod2", {{}}).get("id"):                    # Standard: LoD2-Grundris
     from fassaden_kette import anbauen                 # Fassaden-Kette (tools/fassaden_kette.py): Reliefs je Wand, falls audit/fassaden_kette.json da ist
     koerper, belege = anbauen(koerper, OBJ)
     for b_ in belege: beleg(**b_)
+    from bauteile import fenster_aus_json            # automatisch erkannte Fenster (Kettenstufe 'fenster' schreibt audit/fenster_auto.json)
+    koerper, belege = fenster_aus_json(koerper, os.path.join(HERE, "{ob}", "audit", "fenster_auto.json"))
+    for b_ in belege: beleg(**b_)
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = {hoehe or 10.0}                               # Gesamthoehe (m) - Quelle in masstabelle.json

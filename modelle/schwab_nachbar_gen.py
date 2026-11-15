@@ -44,6 +44,10 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
            (-1.50, -0.85, 14.69, 16.33, 0.73, (), 15.78), (0.67, 2.11, 14.69, 16.33, 0.73, (1.39,), 15.78), (3.57, 4.23, 14.69, 16.33, 0.73, (), 15.78),
            (-2.31, -0.89, 18.02, 19.27, 0.93, (-1.60,), 18.72), (0.69, 2.11, 18.02, 19.27, 0.93, (1.40,), 18.72), (-0.89, 0.61, 20.97, 21.80, 1.11, (-0.14,), None)]
     VERDECKT = []
+    if os.environ.get("AUTO_FENSTER") == "1":            # Gegenprobe der Automatik (tools/fenster_aus_parsing.py) gegen die Handmasse: gleiche Pruefungen muessen bestehen
+        from bauteile import fenster_aus_json
+        koerper, _b = fenster_aus_json(koerper, os.path.join(HERE, "schwab_nachbar", "audit", "fenster_auto.json")); FEN = []
+        for b_ in _b: beleg(**b_)
     for u0_, u1_, z0_, z1_, w_, tl_, kz_ in FEN:
         sonde = WN.kasten(u0_, u1_, z0_, z1_, w_ + 0.03, w_ + 0.08)
         if (koerper ^ sonde).volume() > 0.2 * sonde.volume(): VERDECKT.append((u0_, z0_)); continue          # Fluegeldach (Teil 0, Laser) steht im Modell davor -> kein Hohlraum im Inneren bauen

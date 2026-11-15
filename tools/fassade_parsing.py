@@ -126,7 +126,7 @@ def z_protokolle(objp, F, fid, elemente, rang, aus_dir, lauf):
     import glob as _g; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import fehlteile_finden as FF; from fassade_ortho import projizieren
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); obj = json.load(open(objp)); mp = aus_dir or os.path.join(os.path.dirname(os.path.abspath(objp)), "messprotokoll"); os.makedirs(mp, exist_ok=True)
     nr = max(F["fotos"], key=lambda k: F["fotos"][k]["zellen"]); K = json.load(open(FF.k_datei(objp, obj, root, nr))); kk = K["kamera"]
-    pf = _g.glob(os.path.join(root, obj["fotos_dir"], nr + "_*")); im = cv2.imread(pf[0]); H, W = im.shape[:2]; R, t, f, _, _ = FF.kamera_laden(K, obj, nr, root, W, H)
+    pf = _g.glob(os.path.join(root, obj["fotos_dir"], nr + ".*")) or _g.glob(os.path.join(root, obj["fotos_dir"], nr + "_*")); im = cv2.imread(pf[0]); H, W = im.shape[:2]; R, t, f, _, _ = FF.kamera_laden(K, obj, nr, root, W, H)
     tr = np.asarray(kk.get("rahmen_verschiebung", [0, 0, 0]), float); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2)); k1 = float(kk.get("k1") or 0.0)
     o, d = np.array(F["o"]), np.array(F["d"]); ids = []
     for kl in KLASSEN:

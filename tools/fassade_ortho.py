@@ -146,7 +146,7 @@ def main(argv=None):
         rel[rel < -a.relief_hinten] = np.nan; F["_S"] = X + n3 * np.nan_to_num(rel, nan=0.0)[:, None]; F["_rel"] = rel
 
     def ein_foto(nr):
-        K = json.load(open(FF.k_datei(a.objekt, obj, ROOT, nr))); kk = K["kamera"]; pf = glob.glob(os.path.join(ROOT, obj["fotos_dir"], nr + "_*"))
+        K = json.load(open(FF.k_datei(a.objekt, obj, ROOT, nr))); kk = K["kamera"]; pf = glob.glob(os.path.join(ROOT, obj["fotos_dir"], nr + ".*")) or glob.glob(os.path.join(ROOT, obj["fotos_dir"], nr + "_*"))   # 15.11.2026: Fotos heissen bei neuen Objekten <nr>.jpg (ohne das fand der Lauf 0 Fotos, 8 min umsonst)
         if not pf: return nr, None
         im = cv2.imread(pf[0]); H, W = im.shape[:2]; R, t, f, _, _ = FF.kamera_laden(K, obj, nr, ROOT, W, H)
         tr = np.asarray(kk.get("rahmen_verschiebung", [0, 0, 0]), float); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2)); k1 = float(kk.get("k1") or 0.0)

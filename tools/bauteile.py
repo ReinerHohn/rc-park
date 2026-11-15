@@ -83,6 +83,24 @@ class Wand:
         return koerper.trim_by_plane((-self.n[0], -self.n[1], 0.0), float(-(self.n @ self.a)))
 
 
+def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
+    """Automatisch erkannte Fenster (tools/fenster_aus_parsing.py: je Fassade o, d, n und Rechtecke mit Pfosten/Kaempfer) in den Koerper schneiden.
+    Fenster, vor denen im Modell schon etwas steht (Sonde 3-8 cm vor der Flaeche zu > 20 % gefuellt), werden ausgelassen. Liefert (koerper, belege)."""
+    import json, os
+    if not os.path.exists(datei): return koerper, []
+    belege = []
+    for fid, F in json.load(open(datei)).items():
+        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); n_ = 0
+        for f in F["fenster"]:
+            if f.get("stimmen_min", 0) < min_stimmen: continue
+            sonde = W.kasten(f["u0"], f["u1"], f["z0"], f["z1"], 0.03, 0.08)
+            if (koerper ^ sonde).volume() > 0.2 * sonde.volume(): continue
+            ab, zu = W.fenster(f["u0"], f["u1"], f["z0"], f["z1"], 0.0, tiefe=tiefe, teiler=f.get("teiler", ()), kaempfer=f.get("kaempfer")); koerper = koerper - ab + zu; n_ += 1
+        if n_: belege.append(dict(seite="wand", element=f"{n_} Fenster Fassade {fid} (automatisch erkannt)", quelle="OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos " + ", ".join(F.get("fotos", [])[:3]),
+                                  hinweis="ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME"))
+    return koerper, belege
+
+
 def massstab(koerper, faktor, drehpunkt): return koerper.translate((-drehpunkt[0], -drehpunkt[1], -drehpunkt[2])).scale((faktor, faktor, faktor)).translate(drehpunkt)
 
 

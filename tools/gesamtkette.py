@@ -26,7 +26,7 @@ import sys, os, json, glob, shutil, subprocess, time, argparse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = "/media/oem/scan/venv-seg/bin/python"; PYC = "/media/oem/scan/venv-colmap/bin/python"
-STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "kanten", "fototor", "fassaden", "html", "vergleich"]
+STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "kanten", "fototor", "fassaden", "fenster", "html", "vergleich"]
 UEBERNEHMEN = ["name", "ort", "lod2", "rahmen", "rahmen_wand", "koordinate_utm", "hoehe_m", "fotos_dir", "seiten_konvention", "bildquellen"]
 
 
@@ -160,6 +160,13 @@ def main():
         if os.path.exists(os.path.join(dd, "fused.ply")) and lauf(B, "fassaden_netz", [PY, "-I", "tools/netz_aus_dicht.py", ZR, dd], log)[0] == 0 and os.path.exists(nz):
             if lauf(B, "fassaden_kette", [PY, "-I", "tools/fassaden_kette.py", ZR, "--netz", nz], log)[0] == 0: lauf(B, "bauen_mit_fassaden", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
         else: notiz(B, "fassaden", False, fehler="kein dichter Ordner / Netz")
+    if dran("fenster") and os.path.exists(AU):                          # 15.11.2026: Fenster automatisch (Mehrfoto-Ortho -> OWLv2 -> Scheiben gruppieren); Probe Nordgiebel Schwabentor-Nachbarhaus: 6 von 6 sichtbaren Fenstern, 1-4 cm
+        fo = os.path.join(D, "fassade"); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); fa = os.path.join(Z, "audit", "fenster_auto.json")
+        if lauf(B, "fenster_ortho", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--stl", stl_, "--aus", fo, "--einzeln", "--min-flaeche", "6"], log)[0] == 0:
+            env_alt = dict(os.environ); os.environ.update(HF_HOME="/media/oem/scan/hf_cache", HF_HUB_OFFLINE="1")
+            if lauf(B, "fenster_parsing", [PY, "-W", "ignore", "-I", "tools/fassade_parsing.py", "--ortho", fo, "--gpu"], log)[0] == 0 and lauf(B, "fenster_bauen_liste", [PY, "-I", "tools/fenster_aus_parsing.py", fo, "--aus", fa], log)[0] == 0:
+                lauf(B, "bauen_mit_fenstern", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
+            os.environ.clear(); os.environ.update(env_alt)
     if dran("html"):
         args = [PY, "-I", "tools/modell_3d_html.py", ZR, os.path.join(D, f"{a.ziel}_3d.html")]
         if os.path.exists(W): args += ["--wolke", W, "--farben", W.replace("punkte_modell_", "punkte_farben_")]
