@@ -21,7 +21,7 @@ def cm16(X): return b64(np.round(np.asarray(X, float) * 100).clip(-32767, 32767)
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("aus")
     ap.add_argument("--wolke", default=""); ap.add_argument("--farben", default=""); ap.add_argument("--n", type=int, default=250000)
-    ap.add_argument("--radius", type=float, default=45.0)
+    ap.add_argument("--radius", type=float, default=45.0); ap.add_argument("--extra", nargs="*", default=[], help="weitere STL im selben Rahmen (z. B. Nachbarhaus als eigenes Objekt), werden mit angezeigt")
     a = ap.parse_args()
     obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); r = obj["rahmen"]
     m0 = np.array(r["mitte_utm"], float); xh = np.array(r["xhat_utm"], float); yh = np.array(r["yhat_utm"], float); g0 = float(r["gelaende"])
@@ -33,6 +33,8 @@ def main():
         ms = trimesh.load(stl, process=True); ms.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0 if obj.get("stl_einheit_mm", True) else 1.0)
         V = np.asarray(ms.vertices, np.float32); F = np.asarray(ms.faces, np.uint32)
         if os.path.exists(ej): belege = json.load(open(ej))
+        for ex in a.extra:                                                   # 15.11.2026: Nachbarobjekte im selben Rahmen dazuladen
+            me_ = trimesh.load(ex, process=True); me_.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0); F = np.vstack([F, np.asarray(me_.faces, np.uint32) + len(V)]).astype(np.uint32); V = np.vstack([V, np.asarray(me_.vertices, np.float32)]).astype(np.float32)
     c = haupt.mean(0)
     D = dict(name=obj.get("name", os.path.basename(od)), mitte=c.round(2).tolist(), seiten=seiten_aus_rahmen(obj),
              mv=b64(V), mf=b64(F), belege=belege)

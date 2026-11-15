@@ -1,0 +1,55 @@
+{
+ "name": "Schwabentor Nachbarhaus (Fachwerkhaus + Haus mit Torbogen, LoD2 Tvdv)",
+ "ort": "",
+ "generator": "SCALE=87 MINMM=0.8 ~/.venvs/rcpark/bin/python modelle/schwab_nachbar_gen.py",
+ "stl": "modelle/stl/schwab_nachbar_1-87.stl",
+ "stl_massstab": 87,
+ "stl_einheit_mm": true,
+ "zentrierung": "achse",
+ "masstabelle": "modelle/schwab_nachbar/masstabelle.json",
+ "elemente": "modelle/schwab_nachbar/elemente.json",
+ "audit": "modelle/schwab_nachbar/audit",
+ "ueberwacht": [
+  "modelle/schwab_nachbar_gen.py",
+  "modelle/stl/schwab_nachbar_1-87.stl",
+  "modelle/schwab_nachbar/masstabelle.json",
+  "modelle/schwab_nachbar/elemente.json"
+ ],
+ "fotos_dir": "daten/schwab_v3/fotos",
+ "seiten_konvention": {
+  "+x": "Nord",
+  "-x": "Sued",
+  "+y": "West",
+  "-y": "Ost",
+  "quelle": "rahmen xhat_utm (-0,24/0,97) = Nord 14 Grad West, yhat_utm (-0,97/-0,24) = West (2026-11-14)"
+ },
+ "fotos": {},
+ "quellen": {
+  "lod2": "Grundriss",
+  "dom1_dgm1": "Dach (Laser)",
+  "fotos": "daten/schwab_v3/fotos, Kameras = Kopie aus schwab_v3 (SfM-Neuaufbau)"
+ },
+ "rahmen": {
+  "mitte_utm": [
+   414525.9,
+   5316153.75
+  ],
+  "xhat_utm": [
+   -0.2426,
+   0.9701
+  ],
+  "yhat_utm": [
+   -0.9701,
+   -0.2426
+  ],
+  "gelaende": 282.16,
+  "quelle": "Koordinatenrahmen bleibt (urspruenglich aus LOD2 Tvdv abgeleitet, alle Wolken-npy liegen darin); Objekt ist PLcp (siehe lod2.hinweis)"
+ },
+ "hoehen_tor": true,
+ "lod2": {
+  "gml": "/media/oem/scan/rc-park_daten/_geo/LoD2_32_413_5316_2_bw/LoD2_32_414_5316_1_BW.gml",
+  "id": "DEBW_0010007Tvdv",
+  "hinweis": "2026-11-15: einziges an das Schwabentor angebautes LoD2-Gebaeude (3 Teile); Rahmen = schwab_v3 (Lot aus Fotos, Lasermassstab)"
+ },
+ "fotodiag_fotos": []
+}

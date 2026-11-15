@@ -1,0 +1,60 @@
+[
+ {
+  "seite": "dach",
+  "element": "Dach Teil 0 (sattel_a)",
+  "quelle": "Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_0010007Tvdv-Grundriss Teil 0",
+  "first": 21.68,
+  "neigung_grad": 49.5,
+  "rms_m": 1.12,
+  "eindeutig": false,
+  "hinweis": "ANNAHME: Form nicht eindeutig (BIC)",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "Grundriss Teil 0",
+  "quelle": "LoD2 DEBW_0010007Tvdv GroundSurface 0",
+  "breite_u": 13.32,
+  "tiefe_v": 13.4,
+  "flaeche_m2": 82.1,
+  "seite_name": "wand"
+ },
+ {
+  "seite": "dach",
+  "element": "Dach Teil 1 (sattel_b)",
+  "quelle": "Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_0010007Tvdv-Grundriss Teil 1",
+  "first": 25.85,
+  "neigung_grad": 57.6,
+  "rms_m": 0.65,
+  "eindeutig": true,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "Grundriss Teil 1",
+  "quelle": "LoD2 DEBW_0010007Tvdv GroundSurface 1",
+  "breite_u": 10.72,
+  "tiefe_v": 13.49,
+  "flaeche_m2": 103.5,
+  "seite_name": "wand"
+ },
+ {
+  "seite": "dach",
+  "element": "Dach Teil 2 (sattel_b)",
+  "quelle": "Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_0010007Tvdv-Grundriss Teil 2",
+  "first": 14.62,
+  "neigung_grad": 55.1,
+  "rms_m": 0.17,
+  "eindeutig": true,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "Grundriss Teil 2",
+  "quelle": "LoD2 DEBW_0010007Tvdv GroundSurface 2",
+  "breite_u": 9.68,
+  "tiefe_v": 8.95,
+  "flaeche_m2": 35.8,
+  "seite_name": "wand"
+ }
+]
