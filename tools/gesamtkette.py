@@ -116,6 +116,9 @@ def main():
     if dran("tore"):
         erg = tore("")
         bestanden = lambda e: e.get("gps") in (0, None) and e.get("grundriss") == 0
+        if not bestanden(erg) and erg.get("kamera_gelaende") == 3 and erg.get("gps") in (0, None):   # 15.11.: Geisterwand aus Kameras unter Gelaende -> ohne sie neu fusionieren (Minuten), Tore wiederholen
+            rc_f, _ = lauf(B, "neu_fusionieren", [PYC, "-I", "tools/wolke_neu_fusionieren.py", ZR, P, "--stufe", a.dicht_stufe], log, ok=(0, 2))
+            if rc_f == 0: erg = tore("_ohne_tiefe_kameras")
         kaputt = lambda e: e.get("gps") in (1, 4) or e.get("grundriss") == 1          # rc 1/4 = Werkzeug abgestuerzt/nicht geprueft (15.11.: CUDA out of memory) - kein Lage-Urteil
         if kaputt(erg): print(f"ABBRUCH: Tor-Werkzeug abgestuerzt/nicht geprueft {erg} (Log ansehen, z. B. GPU-Speicher) - KEIN Lage-Urteil", flush=True); B["lage"] = dict(tore=erg, bestanden=False, fehler="tor_abgestuerzt"); json.dump(B, open(bp, "w"), indent=1, ensure_ascii=False); return 4
         k = 0
