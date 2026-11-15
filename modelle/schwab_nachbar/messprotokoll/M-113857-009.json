@@ -1,0 +1,32 @@
+{
+ "id": "M-113857-009",
+ "foto": "113857",
+ "kamera": "K-eigen__IMG_20261106_113857",
+ "ebene": "-0.99965,-0.0263,0=6.7713",
+ "name": "Sued 1. OG links: Dreier-Fenster lichte Breite",
+ "mess_px": [
+  870.0,
+  1820.0,
+  1281.0,
+  1910.0
+ ],
+ "P1": [
+  -6.966,
+  7.327,
+  8.702
+ ],
+ "P2": [
+  -6.906,
+  5.018,
+  8.703
+ ],
+ "dz": 0.001,
+ "dy": -2.309,
+ "dx": 0.061,
+ "abstand": 2.31,
+ "z1": 8.702,
+ "z2": 8.703,
+ "unsicherheit_rel": 0.0213,
+ "unsicherheit_m": 0.07,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113857 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=6.7713 (+-0.3 m)"
+}

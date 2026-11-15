@@ -1,0 +1,32 @@
+{
+ "id": "M-113857-003",
+ "foto": "113857",
+ "kamera": "K-eigen__IMG_20261106_113857",
+ "ebene": "-0.99965,-0.0263,0=7.9213",
+ "name": "Sued 2. OG: Fensterbreite (2. Fenster von links)",
+ "mess_px": [
+  1081.0,
+  1189.0,
+  1182.0,
+  1226.0
+ ],
+ "P1": [
+  -8.098,
+  6.597,
+  12.099
+ ],
+ "P2": [
+  -8.082,
+  5.999,
+  12.096
+ ],
+ "dz": -0.003,
+ "dy": -0.597,
+ "dx": 0.016,
+ "abstand": 0.598,
+ "z1": 12.099,
+ "z2": 12.096,
+ "unsicherheit_rel": 0.0193,
+ "unsicherheit_m": 0.035,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113857 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=7.9213 (+-0.3 m)"
+}

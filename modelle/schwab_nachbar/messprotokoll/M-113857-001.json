@@ -1,0 +1,32 @@
+{
+ "id": "M-113857-001",
+ "foto": "113857",
+ "kamera": "K-eigen__IMG_20261106_113857",
+ "ebene": "-0.99965,-0.0263,0=7.9213",
+ "name": "Sued 2. OG (Vorbau): Breite der Front",
+ "mess_px": [
+  714.0,
+  1071.0,
+  2298.0,
+  1639.0
+ ],
+ "P1": [
+  -8.149,
+  8.565,
+  12.001
+ ],
+ "P2": [
+  -7.85,
+  -2.834,
+  11.999
+ ],
+ "dz": -0.002,
+ "dy": -11.399,
+ "dx": 0.3,
+ "abstand": 11.403,
+ "z1": 12.001,
+ "z2": 11.999,
+ "unsicherheit_rel": 0.0201,
+ "unsicherheit_m": 0.252,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113857 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=7.9213 (+-0.3 m)"
+}

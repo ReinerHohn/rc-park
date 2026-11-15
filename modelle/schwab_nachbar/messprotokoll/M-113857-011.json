@@ -1,0 +1,32 @@
+{
+ "id": "M-113857-011",
+ "foto": "113857",
+ "kamera": "K-eigen__IMG_20261106_113857",
+ "ebene": "-0.99965,-0.0263,0=6.7713",
+ "name": "Sued Erdgeschoss: kleiner Rundbogen Scheitelhoehe",
+ "mess_px": [
+  2501.0,
+  3601.0,
+  2333.0,
+  2863.0
+ ],
+ "P1": [
+  -6.73,
+  -1.647,
+  0.101
+ ],
+ "P2": [
+  -6.73,
+  -1.652,
+  3.828
+ ],
+ "dz": 3.727,
+ "dy": -0.005,
+ "dx": 0.0,
+ "abstand": 3.727,
+ "z1": 0.101,
+ "z2": 3.828,
+ "unsicherheit_rel": 0.017,
+ "unsicherheit_m": 0.09,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113857 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=6.7713 (+-0.3 m)"
+}

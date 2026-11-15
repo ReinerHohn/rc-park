@@ -1,0 +1,32 @@
+{
+ "id": "M-113855-001",
+ "foto": "113855",
+ "kamera": "K-eigen__IMG_20261106_113855",
+ "ebene": "-0.99965,-0.0263,0=6.7713",
+ "name": "Sued Giebel: Doppelfenster links lichte Breite",
+ "mess_px": [
+  1442.0,
+  1259.0,
+  1649.0,
+  1325.0
+ ],
+ "P1": [
+  -6.903,
+  4.902,
+  18.594
+ ],
+ "P2": [
+  -6.856,
+  3.135,
+  18.605
+ ],
+ "dz": 0.011,
+ "dy": -1.767,
+ "dx": 0.046,
+ "abstand": 1.768,
+ "z1": 18.594,
+ "z2": 18.605,
+ "unsicherheit_rel": 0.0139,
+ "unsicherheit_m": 0.057,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113855 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=6.7713 (+-0.3 m)"
+}

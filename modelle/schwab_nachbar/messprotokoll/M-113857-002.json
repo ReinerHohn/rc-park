@@ -1,0 +1,32 @@
+{
+ "id": "M-113857-002",
+ "foto": "113857",
+ "kamera": "K-eigen__IMG_20261106_113857",
+ "ebene": "-0.99965,-0.0263,0=7.9213",
+ "name": "Sued 2. OG (Vorbau): Hoehe Unterkante Gesims bis Traufgesims",
+ "mess_px": [
+  1679.0,
+  1680.0,
+  1609.0,
+  1221.0
+ ],
+ "P1": [
+  -8.002,
+  2.966,
+  10.038
+ ],
+ "P2": [
+  -8.002,
+  2.967,
+  13.404
+ ],
+ "dz": 3.366,
+ "dy": 0.001,
+ "dx": -0.0,
+ "abstand": 3.366,
+ "z1": 10.038,
+ "z2": 13.404,
+ "unsicherheit_rel": 0.0188,
+ "unsicherheit_m": 0.087,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113857 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=7.9213 (+-0.3 m)"
+}

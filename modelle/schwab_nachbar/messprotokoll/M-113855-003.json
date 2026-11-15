@@ -1,0 +1,32 @@
+{
+ "id": "M-113855-003",
+ "foto": "113855",
+ "kamera": "K-eigen__IMG_20261106_113855",
+ "ebene": "-0.99965,-0.0263,0=6.7713",
+ "name": "Sued Giebel: Breite am Ortgangfuss",
+ "mess_px": [
+  1078.0,
+  1302.0,
+  2288.0,
+  1663.0
+ ],
+ "P1": [
+  -6.978,
+  7.775,
+  16.805
+ ],
+ "P2": [
+  -6.708,
+  -2.514,
+  16.802
+ ],
+ "dz": -0.002,
+ "dy": -10.289,
+ "dx": 0.271,
+ "abstand": 10.293,
+ "z1": 16.805,
+ "z2": 16.802,
+ "unsicherheit_rel": 0.0154,
+ "unsicherheit_m": 0.188,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113855 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=6.7713 (+-0.3 m)"
+}

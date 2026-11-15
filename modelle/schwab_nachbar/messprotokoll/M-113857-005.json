@@ -1,0 +1,32 @@
+{
+ "id": "M-113857-005",
+ "foto": "113857",
+ "kamera": "K-eigen__IMG_20261106_113857",
+ "ebene": "-0.99965,-0.0263,0=7.9213",
+ "name": "Sued Erker 1. OG: Breite ueber alles",
+ "mess_px": [
+  1408.0,
+  1829.0,
+  2007.0,
+  1975.0
+ ],
+ "P1": [
+  -8.053,
+  4.916,
+  8.601
+ ],
+ "P2": [
+  -7.945,
+  0.797,
+  8.6
+ ],
+ "dz": -0.0,
+ "dy": -4.119,
+ "dx": 0.108,
+ "abstand": 4.12,
+ "z1": 8.601,
+ "z2": 8.6,
+ "unsicherheit_rel": 0.0212,
+ "unsicherheit_m": 0.109,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113857 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=7.9213 (+-0.3 m)"
+}

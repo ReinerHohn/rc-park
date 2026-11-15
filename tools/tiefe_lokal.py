@@ -10,7 +10,8 @@ Auf EINER Stelle sind dagegen wenige nahe Fotos in VOLLER Aufloesung bezahlbar:
   4. Punkte in den Modellrahmen (SFM-AUSRICHTUNG), auf das Feld +-Band beschneiden, je Zelle Median des Abstands vor der Wandebene -> Hoehenbild im
      Format von relief_einsatz.py (rel, a, t, n, u0, z0, px, ...) = direkt als Relief-Einsatz baubar; dazu <name>.jpg (Schattierung) und Punktdichte.
 --massstab: das Hoehenbild soll im ROHRAHMEN liegen (Schwabentor Nord): Punkte X_roh = M + (X - M) / k vor dem Rastern.
-Arbeitsordner: <rc-park_daten>/<objekt>/tiefe_lokal/<name> (Datenplatte). Start als Job: JOB_GPU_MB=6500 tools/job_start.sh ...
+Arbeitsordner: <rc-park_daten>/<objekt>/tiefe_lokal/<name> (Datenplatte, waehrend des Laufs 2-4 GB, danach nur fused.ply). Start als Job: JOB_GPU_MB=6500 tools/job_start.sh ...
+VRAM: 3200 px ~2,2 GB, 4000 px ~3 GB je Lauf - zwei 4000-px-Laeufe PLUS ein weiterer GPU-Nutzer (OWLv2, Kontrollbild) liefen in 'CUDA out of memory'; Budget 4500 MiB je 4000-px-Lauf ansetzen.
 """
 import sys, os, json, argparse, time, shutil, numpy as np, cv2
 HIER = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HIER)
@@ -25,7 +26,8 @@ def ply_lesen(p):
 
 
 def main():
-    import pycolmap
+    import pycolmap, resource
+    resource.setrlimit(resource.RLIMIT_CORE, (0, 0))                     # 15.11.2026: zwei Abstuerze (CUDA out of memory) schrieben je 590 MB Speicherabbild nach /var/lib/systemd/coredump = Root-Platte
     from scipy.spatial.transform import Rotation as Rot
     from fassaden_kette import fotos_fuer_wand
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("sparse"); ap.add_argument("bilder"); ap.add_argument("--name", required=True); ap.add_argument("--a", nargs=2, type=float, required=True); ap.add_argument("--b", nargs=2, type=float, required=True)
@@ -58,6 +60,7 @@ def main():
         po = pycolmap.PatchMatchOptions(); po.max_image_size = a.max_size; po.geom_consistency = True; po.gpu_index = "0"; po.cache_size = 12; po.filter_min_triangulation_angle = 1.5; po.geom_consistency_max_cost = 2.0
         pycolmap.patch_match_stereo(W, options=po); print(f"PatchMatch fertig, {time.time() - t0:.0f} s", flush=True)
         fo = pycolmap.StereoFusionOptions(); fo.max_image_size = a.max_size; fo.min_num_pixels = 2; fo.max_reproj_error = 3.0; fo.max_depth_error = 0.03; fo.max_normal_error = 25; pycolmap.stereo_fusion(fused, W, options=fo, input_type="geometric", output_type="ply"); print(f"Fusion fertig, {time.time() - t0:.0f} s", flush=True)
+    for d_ in ("stereo", "images", "sparse"): shutil.rmtree(os.path.join(W, d_), ignore_errors=True)   # Zwischendaten weg (2-4 GB je Feld; 15.11. liefen so 13 GB auf der Datenplatte voll) - fused.ply und sparse_teil bleiben
     V = ply_lesen(fused); X = ((np.c_[V["x"], V["y"], V["z"]].astype(np.float64) - tt) / s) @ R
     if a.massstab: k_, M3 = a.massstab[0], np.array(a.massstab[1:]); X = M3 + (X - M3) / k_
     uu = (X[:, :2] - A) @ t; dd = (X[:, :2] - A) @ n; g = (uu >= u0) & (uu < u1) & (X[:, 2] >= z0) & (X[:, 2] < z1) & (np.abs(dd) < a.band); uu, dd, zz = uu[g], dd[g], X[g, 2]

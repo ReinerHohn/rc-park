@@ -1,0 +1,32 @@
+{
+ "id": "M-113857-008",
+ "foto": "113857",
+ "kamera": "K-eigen__IMG_20261106_113857",
+ "ebene": "-0.99965,-0.0263,0=6.7713",
+ "name": "Sued Zwischengeschoss: Fensterhoehe",
+ "mess_px": [
+  2232.0,
+  2643.0,
+  2188.0,
+  2442.0
+ ],
+ "P1": [
+  -6.742,
+  -1.2,
+  5.091
+ ],
+ "P2": [
+  -6.742,
+  -1.2,
+  6.332
+ ],
+ "dz": 1.241,
+ "dy": 0.0,
+ "dx": -0.0,
+ "abstand": 1.241,
+ "z1": 5.091,
+ "z2": 6.332,
+ "unsicherheit_rel": 0.017,
+ "unsicherheit_m": 0.048,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113857 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=6.7713 (+-0.3 m)"
+}

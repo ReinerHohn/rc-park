@@ -1,0 +1,32 @@
+{
+ "id": "M-113857-010",
+ "foto": "113857",
+ "kamera": "K-eigen__IMG_20261106_113857",
+ "ebene": "-0.99965,-0.0263,0=6.7713",
+ "name": "Sued Erdgeschoss: kleiner Rundbogen lichte Breite",
+ "mess_px": [
+  2250.0,
+  3324.0,
+  2598.0,
+  3286.0
+ ],
+ "P1": [
+  -6.768,
+  -0.2,
+  1.502
+ ],
+ "P2": [
+  -6.692,
+  -3.088,
+  1.502
+ ],
+ "dz": 0.0,
+ "dy": -2.888,
+ "dx": 0.076,
+ "abstand": 2.889,
+ "z1": 1.502,
+ "z2": 1.502,
+ "unsicherheit_rel": 0.0182,
+ "unsicherheit_m": 0.077,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113857 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=6.7713 (+-0.3 m)"
+}

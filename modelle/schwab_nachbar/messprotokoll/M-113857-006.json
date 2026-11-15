@@ -1,0 +1,32 @@
+{
+ "id": "M-113857-006",
+ "foto": "113857",
+ "kamera": "K-eigen__IMG_20261106_113857",
+ "ebene": "-0.99965,-0.0263,0=7.9213",
+ "name": "Sued Erker 1. OG: Hoehe Bruestungsfuss bis Unterkante Vorbau",
+ "mess_px": [
+  1758.0,
+  2202.0,
+  1682.0,
+  1701.0
+ ],
+ "P1": [
+  -8.002,
+  2.971,
+  6.85
+ ],
+ "P2": [
+  -8.002,
+  2.968,
+  9.897
+ ],
+ "dz": 3.048,
+ "dy": -0.003,
+ "dx": 0.0,
+ "abstand": 3.048,
+ "z1": 6.85,
+ "z2": 9.897,
+ "unsicherheit_rel": 0.0207,
+ "unsicherheit_m": 0.085,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113857 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=7.9213 (+-0.3 m)"
+}

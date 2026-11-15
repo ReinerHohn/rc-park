@@ -1,0 +1,32 @@
+{
+ "id": "M-113855-002",
+ "foto": "113855",
+ "kamera": "K-eigen__IMG_20261106_113855",
+ "ebene": "-0.99965,-0.0263,0=6.7713",
+ "name": "Sued Giebel: Doppelfenster Hoehe",
+ "mess_px": [
+  1561.0,
+  1352.0,
+  1540.0,
+  1241.0
+ ],
+ "P1": [
+  -6.879,
+  3.997,
+  17.916
+ ],
+ "P2": [
+  -6.879,
+  3.996,
+  19.236
+ ],
+ "dz": 1.32,
+ "dy": -0.001,
+ "dx": 0.0,
+ "abstand": 1.32,
+ "z1": 17.916,
+ "z2": 19.236,
+ "unsicherheit_rel": 0.014,
+ "unsicherheit_m": 0.051,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113855 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=6.7713 (+-0.3 m)"
+}

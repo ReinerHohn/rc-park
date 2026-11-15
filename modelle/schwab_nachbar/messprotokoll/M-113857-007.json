@@ -1,0 +1,32 @@
+{
+ "id": "M-113857-007",
+ "foto": "113857",
+ "kamera": "K-eigen__IMG_20261106_113857",
+ "ebene": "-0.99965,-0.0263,0=6.7713",
+ "name": "Sued Zwischengeschoss: Vierer-Fenster lichte Breite",
+ "mess_px": [
+  2073.0,
+  2529.0,
+  2408.0,
+  2563.0
+ ],
+ "P1": [
+  -6.772,
+  -0.052,
+  5.698
+ ],
+ "P2": [
+  -6.694,
+  -3.016,
+  5.701
+ ],
+ "dz": 0.003,
+ "dy": -2.964,
+ "dx": 0.078,
+ "abstand": 2.965,
+ "z1": 5.698,
+ "z2": 5.701,
+ "unsicherheit_rel": 0.0177,
+ "unsicherheit_m": 0.078,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113857 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=6.7713 (+-0.3 m)"
+}
