@@ -32,7 +32,7 @@ def stufe(bericht, name, status, detail):
 
 def main():
     obj, fotos, daten = sys.argv[1], sys.argv[2], sys.argv[3]
-    stufe_wahl = sys.argv[sys.argv.index("--stufe") + 1] if "--stufe" in sys.argv else "fein"   # grob: Vorschau; fein: volle Qualitaet (Standard)
+    stufe_wahl = sys.argv[sys.argv.index("--stufe") + 1] if "--stufe" in sys.argv else "schnell"   # grob: Vorschau 800 px; schnell (Standard seit 15.11.2026, Nutzer "Ja"): 1600 px nur fotometrisch + Filter, Fusion min_num_pixels 8 (Schwabentor: 2 cm Median zur geometrischen Wolke, ~50 statt ~125 min, aber 4,0 statt 2,2 % Strassenpunkte); fein: mit geometrischem Durchgang - nur wenn ein Tor zweifelt
     os.makedirs(daten, exist_ok=True)
     bericht = {"objekt": obj, "start": time.strftime("%Y-%m-%d %H:%M:%S"), "stufen": []}
     spath = os.path.join(daten, "pipeline_bericht.json")
@@ -111,18 +111,19 @@ uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = 1600
 import glob as _g
 _n = pycolmap.Reconstruction(sparse).num_reg_images()   # nur eingehaengte Bilder bekommen Tiefenkarten
 _dm = os.path.join(out, "stereo", "depth_maps")
-_fertig = os.path.isdir(_dm) and len(_g.glob(os.path.join(_dm, "*.photometric.bin"))) >= _n and (STUFE == "grob" or len(_g.glob(os.path.join(_dm, "*.geometric.bin"))) >= _n)
+_fertig = os.path.isdir(_dm) and len(_g.glob(os.path.join(_dm, "*.photometric.bin"))) >= _n and (STUFE != "fein" or len(_g.glob(os.path.join(_dm, "*.geometric.bin"))) >= _n)
 if _fertig:
     print("Tiefenkarten aus Cache (" + str(_n) + " Bilder, Modus " + STUFE + ")", flush=True)
 else:
     pycolmap.undistort_images(out, sparse, bilder, output_type="COLMAP", undistort_options=uo)
 GROB = STUFE == "grob"
 po = pycolmap.PatchMatchOptions(); po.max_image_size = 800 if GROB else 1600; po.gpu_index = "0"
-po.geom_consistency = not GROB   # grob: nur fotometrisch (schneller); fein: mit geometrischer Konsistenz
+FEIN = STUFE == "fein"; po.geom_consistency = FEIN; po.filter = True   # grob/schnell: nur fotometrisch (gefiltert); fein: mit geometrischer Konsistenz
 if not _fertig:
     pycolmap.patch_match_stereo(out, options=po)
 fo = pycolmap.StereoFusionOptions(); fo.max_image_size = 800 if GROB else 1600
-pycolmap.stereo_fusion(os.path.join(out, "fused.ply"), out, options=fo, input_type="photometric" if GROB else "geometric", output_type="ply")
+if STUFE == "schnell": fo.min_num_pixels = 8   # strenger, weil die geometrische Pruefung fehlt (COLMAP-FAQ)
+pycolmap.stereo_fusion(os.path.join(out, "fused.ply"), out, options=fo, input_type="geometric" if FEIN else "photometric", output_type="ply")
 print("FERTIG", flush=True)
 ''')
         rc, out = run([PY_COL, "-I", script], log)

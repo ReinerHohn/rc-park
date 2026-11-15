@@ -48,7 +48,7 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument("quelle"); ap.add_argument("--ziel", required=True)
     ap.add_argument("--ab", default="anlegen", choices=STUFEN); ap.add_argument("--bis", default="vergleich", choices=STUFEN)
     ap.add_argument("--fremd", nargs="*", default=[]); ap.add_argument("--commons-kategorie", default=""); ap.add_argument("--ohne-video", action="store_true")
-    ap.add_argument("--referenz-wolke", default=""); ap.add_argument("--max-loesung", type=int, default=3); ap.add_argument("--fotos", default="", help="fotos_dir ersetzen")
+    ap.add_argument("--dicht-stufe", default="schnell", choices=["grob", "schnell", "fein"], help="schnell = ohne geometrischen PatchMatch-Durchgang (Standard 15.11.2026); fein nur wenn ein Tor zweifelt"); ap.add_argument("--referenz-wolke", default=""); ap.add_argument("--max-loesung", type=int, default=3); ap.add_argument("--fotos", default="", help="fotos_dir ersetzen")
     a = ap.parse_args()
     D = f"/media/oem/scan/rc-park_daten/{a.ziel}"; os.makedirs(D, exist_ok=True); log = os.path.join(D, "gesamtkette.log")
     Z = os.path.join(ROOT, "modelle", a.ziel); ZJ = os.path.join(Z, "objekt.json"); ZR = os.path.relpath(ZJ, ROOT)
@@ -102,7 +102,7 @@ def main():
 
     P = os.path.join(D, "pipe")
     if dran("sfm"):
-        lauf(B, "sfm", [PY, "-u", "-I", "tools/pipeline_objekt.py", a.ziel, FV, P, "--stufe", "fein"], log)
+        lauf(B, "sfm", [PY, "-u", "-I", "tools/pipeline_objekt.py", a.ziel, FV, P, "--stufe", a.dicht_stufe], log)
     W = os.path.join(Z, "sfm", f"punkte_modell_{a.ziel}.npy"); AU = os.path.join(Z, "messprotokoll", f"SFM-AUSRICHTUNG-{a.ziel}.json")
 
     def tore(tag):
