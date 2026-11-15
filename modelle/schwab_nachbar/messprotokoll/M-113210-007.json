@@ -1,0 +1,32 @@
+{
+ "id": "M-113210-007",
+ "foto": "113210",
+ "kamera": "K-eigen__IMG_20261106_113210",
+ "ebene": "x=3.545",
+ "name": "Steinfenster 1. OG: Gewaende aussen Breite",
+ "mess_px": [
+  1122.0,
+  1725.0,
+  1822.0,
+  1720.0
+ ],
+ "P1": [
+  3.545,
+  4.681,
+  8.802
+ ],
+ "P2": [
+  3.545,
+  7.648,
+  8.8
+ ],
+ "dz": -0.002,
+ "dy": 2.967,
+ "dx": 0.0,
+ "abstand": 2.967,
+ "z1": 8.802,
+ "z2": 8.8,
+ "unsicherheit_rel": 0.0085,
+ "unsicherheit_m": 0.043,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113210 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=3.545 (+-0.3 m)"
+}

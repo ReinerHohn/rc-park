@@ -1,0 +1,32 @@
+{
+ "id": "M-113033-004",
+ "foto": "113033",
+ "kamera": "K-eigen__IMG_20261106_113033",
+ "ebene": "x=4.47",
+ "name": "Fachwerk Geschoss C: Doppelfenster rechts Breite",
+ "mess_px": [
+  1250.0,
+  1458.0,
+  1409.0,
+  1461.0
+ ],
+ "P1": [
+  4.47,
+  3.535,
+  18.62
+ ],
+ "P2": [
+  4.47,
+  4.957,
+  18.619
+ ],
+ "dz": -0.001,
+ "dy": 1.422,
+ "dx": 0.0,
+ "abstand": 1.422,
+ "z1": 18.62,
+ "z2": 18.619,
+ "unsicherheit_rel": 0.0041,
+ "unsicherheit_m": 0.043,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113033 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.47 (+-0.3 m)"
+}

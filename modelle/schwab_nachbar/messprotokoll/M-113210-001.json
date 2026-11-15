@@ -1,0 +1,32 @@
+{
+ "id": "M-113210-001",
+ "foto": "113210",
+ "kamera": "K-eigen__IMG_20261106_113210",
+ "ebene": "x=4.08",
+ "name": "Fachwerk Geschoss A: Dreierfenster Breite",
+ "mess_px": [
+  1536.0,
+  912.0,
+  2059.0,
+  910.0
+ ],
+ "P1": [
+  4.08,
+  6.473,
+  12.199
+ ],
+ "P2": [
+  4.08,
+  8.7,
+  12.197
+ ],
+ "dz": -0.002,
+ "dy": 2.227,
+ "dx": 0.0,
+ "abstand": 2.227,
+ "z1": 12.199,
+ "z2": 12.197,
+ "unsicherheit_rel": 0.0084,
+ "unsicherheit_m": 0.037,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113210 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.08 (+-0.3 m)"
+}

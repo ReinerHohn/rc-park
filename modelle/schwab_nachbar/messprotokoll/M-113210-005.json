@@ -1,0 +1,32 @@
+{
+ "id": "M-113210-005",
+ "foto": "113210",
+ "kamera": "K-eigen__IMG_20261106_113210",
+ "ebene": "x=3.545",
+ "name": "Steinfenster 1. OG: lichte Breite",
+ "mess_px": [
+  1183.0,
+  1725.0,
+  1740.0,
+  1721.0
+ ],
+ "P1": [
+  3.545,
+  4.938,
+  8.8
+ ],
+ "P2": [
+  3.545,
+  7.299,
+  8.799
+ ],
+ "dz": -0.002,
+ "dy": 2.361,
+ "dx": 0.0,
+ "abstand": 2.361,
+ "z1": 8.8,
+ "z2": 8.799,
+ "unsicherheit_rel": 0.0085,
+ "unsicherheit_m": 0.038,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113210 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=3.545 (+-0.3 m)"
+}

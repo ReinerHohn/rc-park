@@ -1,0 +1,32 @@
+{
+ "id": "M-113033-003",
+ "foto": "113033",
+ "kamera": "K-eigen__IMG_20261106_113033",
+ "ebene": "x=5.0",
+ "name": "Nordgiebel: rechter Ortgang z 21 - z 17",
+ "mess_px": [
+  1468.0,
+  1201.0,
+  1721.0,
+  1642.0
+ ],
+ "P1": [
+  5.0,
+  5.442,
+  20.868
+ ],
+ "P2": [
+  5.0,
+  7.794,
+  16.895
+ ],
+ "dz": -3.973,
+ "dy": 2.352,
+ "dx": 0.0,
+ "abstand": 4.617,
+ "z1": 20.868,
+ "z2": 16.895,
+ "unsicherheit_rel": 0.0041,
+ "unsicherheit_m": 0.056,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113033 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=5.0 (+-0.3 m)"
+}

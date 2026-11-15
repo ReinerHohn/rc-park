@@ -68,6 +68,150 @@
    ],
    "quer_max": 0.25,
    "r_max": 3.0
+  },
+  "first_n": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    2.0,
+    2.72
+   ],
+   "z0": 23.0,
+   "z1": 27.0,
+   "suche": "oben"
+  },
+  "dach_w_y6": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    0.0,
+    6.0
+   ],
+   "z0": 17.0,
+   "z1": 23.0,
+   "suche": "oben"
+  },
+  "wand_A": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 12.2,
+   "quer": 3.2
+  },
+  "wand_B": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 15.5,
+   "quer": 3.2
+  },
+  "wand_C": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 18.6,
+   "quer": 3.2
+  },
+  "wand_D": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 21.4,
+   "quer": 3.75
+  },
+  "f_A3": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    4.08,
+    2.85
+   ],
+   "n": [
+    1.0,
+    0.0
+   ],
+   "z": 12.0,
+   "u0": 3.0,
+   "u1": 6.4,
+   "tiefe": 0.03,
+   "vor": 3.0,
+   "schritt": 0.02,
+   "min_b": 0.3,
+   "max_b": 3.0,
+   "rand": 0.0
+  },
+  "f_A2": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    4.08,
+    2.85
+   ],
+   "n": [
+    1.0,
+    0.0
+   ],
+   "z": 12.0,
+   "u0": 0.2,
+   "u1": 2.6,
+   "tiefe": 0.03,
+   "vor": 3.0,
+   "schritt": 0.02,
+   "min_b": 0.3,
+   "max_b": 3.0,
+   "rand": 0.0
+  },
+  "f_B3": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    4.27,
+    2.85
+   ],
+   "n": [
+    1.0,
+    0.0
+   ],
+   "z": 15.2,
+   "u0": 3.1,
+   "u1": 4.7,
+   "tiefe": 0.03,
+   "vor": 3.0,
+   "schritt": 0.02,
+   "min_b": 0.3,
+   "max_b": 3.0,
+   "rand": 0.0
+  },
+  "f_C2": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    4.47,
+    2.85
+   ],
+   "n": [
+    1.0,
+    0.0
+   ],
+   "z": 18.4,
+   "u0": 0.3,
+   "u1": 2.5,
+   "tiefe": 0.03,
+   "vor": 3.0,
+   "schritt": 0.02,
+   "min_b": 0.3,
+   "max_b": 3.0,
+   "rand": 0.0
+  },
+  "f_D": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    4.65,
+    2.85
+   ],
+   "n": [
+    1.0,
+    0.0
+   ],
+   "z": 21.4,
+   "u0": -1.3,
+   "u1": 1.0,
+   "tiefe": 0.03,
+   "vor": 3.0,
+   "schritt": 0.02,
+   "min_b": 0.3,
+   "max_b": 3.0,
+   "rand": 0.0
   }
  },
  "pruefungen": [
@@ -177,6 +321,178 @@
     "2026-11-15 Messstelle von 1,0 m auf 0,25 m hinter die Fassadenebene verlegt (LoD2-Koerper liegt dort schraeg hinter der Fassade, bei 1 m Tiefe traf der Strahl erst die LoD2-Wand); Soll unveraendert",
     "2026-11-15 r_max 5,0 -> 3,0 m: schnitt_reichweite liefert die WEITESTE Kontur im Streifen; jenseits des Pfeilers lagen Reliefkonturen. Soll unveraendert"
    ]
+  },
+  {
+   "name": "Nordgiebel: Lage der Geschossflaeche A (x, m)",
+   "wert": "wand_A",
+   "soll": [
+    4.0,
+    4.16
+   ],
+   "quelle": "dichte Wolke sfm_neu (Lage der Fachwerkflaeche je Geschoss, Haeufigkeitsmaximum in x, Raster 5 cm)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Netz-Relief"
+   ]
+  },
+  {
+   "name": "Nordgiebel: Lage der Geschossflaeche B (x, m)",
+   "wert": "wand_B",
+   "soll": [
+    4.19,
+    4.35
+   ],
+   "quelle": "dichte Wolke sfm_neu (Lage der Fachwerkflaeche je Geschoss, Haeufigkeitsmaximum in x, Raster 5 cm)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Netz-Relief"
+   ]
+  },
+  {
+   "name": "Nordgiebel: Lage der Geschossflaeche C (x, m)",
+   "wert": "wand_C",
+   "soll": [
+    4.39,
+    4.55
+   ],
+   "quelle": "dichte Wolke sfm_neu (Lage der Fachwerkflaeche je Geschoss, Haeufigkeitsmaximum in x, Raster 5 cm)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Netz-Relief"
+   ]
+  },
+  {
+   "name": "Nordgiebel: Lage der Geschossflaeche D (x, m)",
+   "wert": "wand_D",
+   "soll": [
+    4.57,
+    4.73
+   ],
+   "quelle": "dichte Wolke sfm_neu (Lage der Fachwerkflaeche je Geschoss, Haeufigkeitsmaximum in x, Raster 5 cm)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Netz-Relief"
+   ]
+  },
+  {
+   "name": "Nordgiebel: Firsthoehe (m)",
+   "wert": "first_n",
+   "soll": [
+    25.15,
+    25.55
+   ],
+   "quelle": "foto_mass.py auf der Ortgangebene x 5,12, Fernfoto 113033 (72 m): First z 25,35, y 2,72",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113033-001",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Laserdach 25,3 (First 25,85 laut Laser-Anpassung)"
+   ]
+  },
+  {
+   "name": "Dach Teil 1, Westflaeche bei y 6,0 (m)",
+   "wert": "dach_w_y6",
+   "soll": [
+    19.7,
+    20.1
+   ],
+   "quelle": "foto_mass.py Ortgang rechts: Neigung 1,66 ab First (y 2,72 / z 25,35) -> z 19,9 bei y 6,0",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "hoehe_flaeche",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113033-001, M-113033-003",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Laserdach 20,4"
+   ]
+  },
+  {
+   "name": "Nordgiebel Fenster A3: Breite der Fensternische (m)",
+   "wert": "f_A3_breite_max",
+   "soll": [
+    2.15,
+    2.31
+   ],
+   "quelle": "foto_mass.py auf der Geschossebene, Picks ueber wand_ortho.py",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113210-001",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Relief ohne scharfe Nische"
+   ]
+  },
+  {
+   "name": "Nordgiebel Fenster A2: Breite der Fensternische (m)",
+   "wert": "f_A2_breite_max",
+   "soll": [
+    1.37,
+    1.53
+   ],
+   "quelle": "foto_mass.py auf der Geschossebene, Picks ueber wand_ortho.py",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113210-003",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Relief ohne scharfe Nische"
+   ]
+  },
+  {
+   "name": "Nordgiebel Fenster B3: Breite der Fensternische (m)",
+   "wert": "f_B3_breite_max",
+   "soll": [
+    0.6,
+    0.72
+   ],
+   "quelle": "foto_mass.py auf der Geschossebene, Picks ueber wand_ortho.py",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113144-002",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Relief ohne scharfe Nische"
+   ]
+  },
+  {
+   "name": "Nordgiebel Fenster C2: Breite der Fensternische (m)",
+   "wert": "f_C2_breite_max",
+   "soll": [
+    1.34,
+    1.5
+   ],
+   "quelle": "foto_mass.py auf der Geschossebene, Picks ueber wand_ortho.py",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113033-004",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Relief ohne scharfe Nische"
+   ]
+  },
+  {
+   "name": "Nordgiebel Fenster D: Breite der Fensternische (m)",
+   "wert": "f_D_breite_max",
+   "soll": [
+    1.42,
+    1.58
+   ],
+   "quelle": "foto_mass.py auf der Geschossebene, Picks ueber wand_ortho.py",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113033-006",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Relief ohne scharfe Nische"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -191,6 +507,12 @@
    "wer": "Claude",
    "text": "Durchfahrt: die halbe lichte Breite (Nord 3,20 m, Sued 3,15 m; M-113310-001, M-commons217-001) laesst sich an diesem Objekt nicht pruefen - der turmseitige Pfeiler liegt bei u 6,5 und damit AUSSERHALB des LoD2-Grundrisses dieses Hauses (Hausende u 6,35): der Bogen ueberspannt das ganze Erdgeschoss, die Pfeiler gehoeren zum Turm bzw. zur Nachbarwand. Zwei falsch gestellte Pruefungen wieder entfernt.",
    "naechster_schritt": "Pfeiler der Durchfahrt als eigene Bauteile (am Turm-Eck und am Ostende) aus Fotokanten bauen, dann Breite pruefen; zweite Bogenhaelfte in einem Foto von Osten messen (Symmetrie ist ANNAHME)"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Claude",
+   "text": "Nordfassade Teil 1 ist ein symmetrischer Fachwerk-Steilgiebel (First y 2,72 / z 25,35, Ortgangneigung 1,66 = 59 Grad; M-113033-001..-003), vier Auskragungen (Wolke: x 4,08 / 4,27 / 4,47 / 4,65 / 4,92), Fenster je Geschoss (M-113210-001..-007, M-113144-001/-002, M-113033-004..-007). Im Modell bisher: weiches Netz-Relief, Laserdach 0,4-0,9 m ueber dem gemessenen Ortgang, Haus endet bei y 9,3 statt 9,84 (Turmkante).",
+   "naechster_schritt": "Giebel scharf bauen (Geschossplatten, Fenster, Dach nach Ortgang); danach Fachwerkbalken per Mehrfoto-Sweep (kanten_tiefe_sweep_flaeche), Balkenkoepfe, Eckquader, Steinfenster-Pruefung (Zaehlung per foto_zaehlung.py)"
   }
  ]
 }

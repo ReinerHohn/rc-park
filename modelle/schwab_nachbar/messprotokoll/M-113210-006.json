@@ -1,0 +1,32 @@
+{
+ "id": "M-113210-006",
+ "foto": "113210",
+ "kamera": "K-eigen__IMG_20261106_113210",
+ "ebene": "x=3.545",
+ "name": "Steinfenster 1. OG: lichte Hoehe",
+ "mess_px": [
+  1402.0,
+  1908.0,
+  1395.0,
+  1546.0
+ ],
+ "P1": [
+  3.545,
+  5.851,
+  8.001
+ ],
+ "P2": [
+  3.545,
+  5.848,
+  9.574
+ ],
+ "dz": 1.572,
+ "dy": -0.002,
+ "dx": 0.0,
+ "abstand": 1.572,
+ "z1": 8.001,
+ "z2": 9.574,
+ "unsicherheit_rel": 0.0086,
+ "unsicherheit_m": 0.031,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113210 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=3.545 (+-0.3 m)"
+}

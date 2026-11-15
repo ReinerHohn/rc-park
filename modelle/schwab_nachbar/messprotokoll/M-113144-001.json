@@ -1,0 +1,32 @@
+{
+ "id": "M-113144-001",
+ "foto": "113144",
+ "kamera": "K-eigen__IMG_20261106_113144",
+ "ebene": "x=4.27",
+ "name": "Fachwerk Geschoss B: Fensterhoehe",
+ "mess_px": [
+  846.0,
+  573.0,
+  851.0,
+  252.0
+ ],
+ "P1": [
+  4.27,
+  3.851,
+  14.698
+ ],
+ "P2": [
+  4.27,
+  3.854,
+  16.338
+ ],
+ "dz": 1.64,
+ "dy": 0.003,
+ "dx": 0.0,
+ "abstand": 1.64,
+ "z1": 14.698,
+ "z2": 16.338,
+ "unsicherheit_rel": 0.0072,
+ "unsicherheit_m": 0.033,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113144 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.27 (+-0.3 m)"
+}

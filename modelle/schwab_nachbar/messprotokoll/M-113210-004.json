@@ -1,0 +1,32 @@
+{
+ "id": "M-113210-004",
+ "foto": "113210",
+ "kamera": "K-eigen__IMG_20261106_113210",
+ "ebene": "x=4.08",
+ "name": "Fachwerk Geschoss A: Wandbreite Fallrohr-Kante bis Turm",
+ "mess_px": [
+  275.0,
+  909.0,
+  2326.0,
+  908.0
+ ],
+ "P1": [
+  4.08,
+  1.178,
+  12.209
+ ],
+ "P2": [
+  4.08,
+  9.839,
+  12.198
+ ],
+ "dz": -0.011,
+ "dy": 8.661,
+ "dx": 0.0,
+ "abstand": 8.661,
+ "z1": 12.209,
+ "z2": 12.198,
+ "unsicherheit_rel": 0.0084,
+ "unsicherheit_m": 0.091,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113210 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.08 (+-0.3 m)"
+}

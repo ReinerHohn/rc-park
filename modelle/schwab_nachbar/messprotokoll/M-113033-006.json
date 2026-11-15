@@ -1,0 +1,32 @@
+{
+ "id": "M-113033-006",
+ "foto": "113033",
+ "kamera": "K-eigen__IMG_20261106_113033",
+ "ebene": "x=4.65",
+ "name": "Fachwerk Geschoss D: Doppelfenster Breite",
+ "mess_px": [
+  1085.0,
+  1151.0,
+  1252.0,
+  1154.0
+ ],
+ "P1": [
+  4.65,
+  1.972,
+  21.371
+ ],
+ "P2": [
+  4.65,
+  3.472,
+  21.37
+ ],
+ "dz": -0.001,
+ "dy": 1.5,
+ "dx": 0.0,
+ "abstand": 1.5,
+ "z1": 21.371,
+ "z2": 21.37,
+ "unsicherheit_rel": 0.004,
+ "unsicherheit_m": 0.044,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113033 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.65 (+-0.3 m)"
+}

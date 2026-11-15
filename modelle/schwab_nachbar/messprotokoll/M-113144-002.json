@@ -1,0 +1,32 @@
+{
+ "id": "M-113144-002",
+ "foto": "113144",
+ "kamera": "K-eigen__IMG_20261106_113144",
+ "ebene": "x=4.27",
+ "name": "Fachwerk Geschoss B: Einzelfenster rechts Breite",
+ "mess_px": [
+  1370.0,
+  427.0,
+  1503.0,
+  430.0
+ ],
+ "P1": [
+  4.27,
+  6.423,
+  15.504
+ ],
+ "P2": [
+  4.27,
+  7.081,
+  15.502
+ ],
+ "dz": -0.002,
+ "dy": 0.659,
+ "dx": 0.0,
+ "abstand": 0.659,
+ "z1": 15.504,
+ "z2": 15.502,
+ "unsicherheit_rel": 0.0072,
+ "unsicherheit_m": 0.026,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113144 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.27 (+-0.3 m)"
+}
