@@ -66,7 +66,7 @@
   414505.5,
   5316149.2
  ],
- "hoehe_m": 55.3,
+ "hoehe_m": 52.4,
  "gesamtkette": {
   "quelle": "schwabentor",
   "hinweis": "von tools/gesamtkette.py angelegt; Masse/Pruefungen nur aus Quellen dieser Kette"
@@ -84,7 +84,7 @@
    "wer": "Claude"
   }
  ],
- "hoehe_m_quelle": "2026-11-15: Knauf der Laterne 54,17 m aus Foto-Triangulation (M-113205-005) + Spitze (ANNAHME ~1 m). Vorher 50,8 = Platzhalter aus DOM1-Maximum 49,6 (Laser blind fuer duenne Laterne), keine Dokumentquelle",
+ "hoehe_m_quelle": "2026-11-15: Knauf 54,18 m (Foto-Triangulation, Rohrahmen) x Lasermassstab 0,947 = 51,3 m + Spitze (ANNAHME ~1 m); DOM1-Maximum ueber der Turmmitte 49,6 m",
  "fotodiag_fotos": [
   "eigen__IMG_20261106_113029",
   "eigen__IMG_20261106_113106",

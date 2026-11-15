@@ -4,24 +4,24 @@
  "lage": null,
  "n_kameras": 566,
  "n_gps": 193,
- "median_abstand_m": 2.5044183463556164,
+ "median_abstand_m": 2.841276931571262,
  "gps_fit": {
-  "drehung_grad": 5.399466634037019,
+  "drehung_grad": 5.399365963497913,
   "drehung_90": [
-   3.7841115056844985,
-   7.177871281902447
+   3.7839973479280755,
+   7.17788824483273
   ],
-  "massstab": 0.8611580150841142,
+  "massstab": 0.9093527998912263,
   "massstab_90": [
-   0.8393647162269662,
-   0.8794326439404642
+   0.8863423096855267,
+   0.9286508152717053
   ],
-  "rest_median_m": 4.630307020677852
+  "rest_median_m": 4.6307122501264555
  },
  "fernfotos": {
   "n": 15,
-  "entfernung_gps_durch_modell": 0.9694104401973231,
-  "richtungsfehler_grad": -0.12829694835505734
+  "entfernung_gps_durch_modell": 1.0233966761916722,
+  "richtungsfehler_grad": 0.020022983801908367
  },
  "warnungen": []
 }

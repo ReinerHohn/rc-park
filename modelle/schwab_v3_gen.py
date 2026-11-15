@@ -18,6 +18,14 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     for b_ in belege:
         if b_["element"] == "Teil 0 (ohne Dachmessung)": continue           # Hauptteil bekommt das Fotodach unten
         beleg(**b_)
+    # MASSSTAB (15.11.2026): Alle Fotomasse unten sind ROHMASSE im SfM-Rahmen VOR der Massstabskorrektur. Der DOM1-Laser zeigt, dass dieser Rahmen 5,3 % zu gross
+    # war (Dachtraufe 37,2 statt 39,26 m, Vordach 16,4 statt 17,3 m, Dachflaeche 169 statt 199,5 m2; Foto-GPS 0,97). Die Ausrichtung ist korrigiert
+    # (tools/ausrichtung_massstab_korrigieren.py, Faktor 0,947 um die Turmmitte am Boden). Hier: amtliche LoD2-Teile in den Rohrahmen zurueckrechnen, alles
+    # wie gemessen bauen, am Ende den ganzen Koerper mit MK skalieren -> LoD2-Teile bleiben amtlich, Fototeile bekommen den Lasermassstab.
+    MK, MC = 0.947, (-2.15, 15.28, 0.0)
+    def massstab(k_, f): return k_.translate((-MC[0], -MC[1], -MC[2])).scale((f, f, f)).translate(MC)
+    koerper = massstab(koerper, 1.0 / MK); haupt = (np.asarray(haupt) - np.array(MC[:2])) / MK + np.array(MC[:2])
+    N_BELEGE_LOD2 = len(ELEMENTE)
     ZT = 39.26                                # Traufe aussen oben: Ecken A 39,20 / C 39,32 (M-113205-008/-009, nach Lotkorrektur)
     X1, Y0, Y1 = 4.80, 8.20, 22.55            # Traufkante Nord (x) und Ecken Ost/West (y), gleiche Protokolle
     MX = -2.15                                # Dachmitte x = Mitte zwischen Nordwand 3,69 (M-113205-006/-007) und Suedwand LoD2 -8,0
@@ -111,13 +119,22 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     for ub in (3.05, 9.10): rumpf = rumpf + kasten(ub - 0.15, ub + 0.15, 35.55, 36.0, -0.05, 0.25)            # Balkenkoepfe: Lage aus dem entzerrten Foto 113029, Groesse ANNAHME
     beleg("wand", "Uhr Nord (Zifferblatt 5,36 m, Innenfeld 3,52 m)", "foto_mass.py auf der Wandebene, Fotos 113029 und 113205", durchmesser=U_D, mitte_u=U_UM, mitte_z=U_ZM,
           hinweis="ANNAHME: Ring 10 cm / Innenfeld 6 cm vor der Wand; Ziffern, Zeiger, Sonne/Mond nicht modelliert; 2 Balkenkoepfe nach Augenschein")
-    koerper = rumpf + dach + lat
+    koerper = massstab(rumpf + dach + lat, MK)
+    for e_ in ELEMENTE[N_BELEGE_LOD2:]:                    # Masse der Belege in den korrigierten Rahmen: Laengen/Hoehen x MK, Winkel bleiben, x-Lagen um den Drehpunkt
+        for q_, v_ in list(e_.items()):
+            if isinstance(v_, (int, float)) and not isinstance(v_, bool) and q_ != "neigung_grad": e_[q_] = round(MC[0] + MK * (v_ - MC[0]), 2) if q_.startswith("x_bei") else round(v_ * MK, 2)
+        e_["hinweis"] = (e_.get("hinweis", "") + " | Masse mit Lasermassstab 0,947 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur").strip(" |")
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json
     beleg("dach", "Grundkoerper", "ANNAHME: Rumpf ohne LoD2 (objekt.json lod2.id fehlt)", hoehe=H)
     model = M.cube((8.0, 8.0, H)).translate((-4.0, -4.0, 0.0)).scale((K, K, K))
-mesh = model.to_mesh(); V = np.asarray(mesh.vert_properties)[:, :3]; F = np.asarray(mesh.tri_verts)
+if hasattr(model, "simplify"): model = model.simplify(0.005)      # 15.11.2026: nach der Massstabs-Skalierung fielen Splitterdreiecke (< 5 Mikrometer im Druckmassstab) im float32-STL als 17 Einzelkoerper heraus
+mesh = model.to_mesh(); V = np.array(mesh.vert_properties)[:, :3]; F = np.asarray(mesh.tri_verts)
+_mf, _mt = np.asarray(mesh.merge_from_vert), np.asarray(mesh.merge_to_vert)
+if len(_mf): V[_mf] = V[_mt]; print("verschmolzene Doppelecken:", len(_mf))            # Manifold fuehrt Doppelecken getrennt; im STL muessen sie bitgleich sein
+_vq, _inv = np.unique(np.round(V.astype(np.float64), 3), axis=0, return_inverse=True); F = _inv.ravel()[F]; V = _vq.astype(np.float32)   # Ecken auf 1 Mikrometer (Druckmassstab) verschweissen
+F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]                                              # entartete Dreiecke (Kante der Laenge 0) entfernen
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 tri = V[F]; nrm = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]); nrm /= np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-12
 rec = np.zeros(len(F), dtype=[("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")]); rec["n"], rec["v"] = nrm, tri

@@ -13,7 +13,7 @@
   },
   "traufe_nord_reichweite": {
    "typ": "schnitt_reichweite",
-   "z": 39.05,
+   "z": 36.98,
    "zentrum": [
     -2.15,
     15.28
@@ -27,7 +27,7 @@
   },
   "traufe_west_reichweite": {
    "typ": "schnitt_reichweite",
-   "z": 39.05,
+   "z": 36.98,
    "zentrum": [
     -2.15,
     15.28
@@ -41,7 +41,7 @@
   },
   "traufe_ost_reichweite": {
    "typ": "schnitt_reichweite",
-   "z": 39.05,
+   "z": 36.98,
    "zentrum": [
     -2.15,
     15.28
@@ -56,16 +56,16 @@
   "traufe_oben_z": {
    "typ": "z_am_punkt",
    "punkt": [
-    4.75,
+    4.384,
     15.28
    ],
-   "z0": 37.5,
-   "z1": 42.0,
+   "z0": 35.51,
+   "z1": 39.77,
    "suche": "oben"
   },
   "dach_nord_z45": {
    "typ": "schnitt_reichweite",
-   "z": 45.0,
+   "z": 42.615,
    "zentrum": [
     -2.15,
     15.28
@@ -79,7 +79,7 @@
   },
   "wand_nord_reichweite": {
    "typ": "schnitt_reichweite",
-   "z": 36.0,
+   "z": 34.092,
    "zentrum": [
     -2.15,
     15.28
@@ -93,10 +93,10 @@
   },
   "tor_halb_west": {
    "typ": "schnitt_reichweite",
-   "z": 2.0,
+   "z": 1.894,
    "zentrum": [
-    0.0,
-    15.354
+    -0.114,
+    15.35
    ],
    "richtung": [
     0,
@@ -107,10 +107,10 @@
   },
   "tor_halb_ost": {
    "typ": "schnitt_reichweite",
-   "z": 2.0,
+   "z": 1.894,
    "zentrum": [
-    0.0,
-    15.354
+    -0.114,
+    15.35
    ],
    "richtung": [
     0,
@@ -122,19 +122,19 @@
   "tor_scheitel_z": {
    "typ": "z_am_punkt",
    "punkt": [
-    0.0,
-    15.354
+    -0.114,
+    15.35
    ],
-   "z0": 5.0,
-   "z1": 9.0,
+   "z0": 4.73,
+   "z1": 8.52,
    "suche": "unten"
   },
   "tor_halb_z555": {
    "typ": "schnitt_reichweite",
-   "z": 5.55,
+   "z": 5.256,
    "zentrum": [
-    0.0,
-    15.354
+    -0.114,
+    15.35
    ],
    "richtung": [
     0,
@@ -146,140 +146,140 @@
   "fl_kante_innen": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 25.0,
-   "quer": 12.28
+   "z": 23.675,
+   "quer": 12.439
   },
   "fl_kante_aussen": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 25.0,
-   "quer": 12.08
+   "z": 23.675,
+   "quer": 12.25
   },
   "fl_scheitel_innen": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 26.63,
-   "quer": 13.225
+   "z": 25.219,
+   "quer": 13.334
   },
   "fl_scheitel_aussen": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 26.83,
-   "quer": 13.225
+   "z": 25.408,
+   "quer": 13.334
   },
   "fr_kante_innen": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 25.0,
-   "quer": 16.569
+   "z": 23.675,
+   "quer": 16.501
   },
   "fr_kante_aussen": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 25.0,
-   "quer": 16.369
+   "z": 23.675,
+   "quer": 16.311
   },
   "fl_oeffnung": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 25.0,
-   "quer": 13.225
+   "z": 23.675,
+   "quer": 13.334
   },
   "gal_front": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 11.1,
-   "quer": 15.419
+   "z": 10.512,
+   "quer": 15.412
   },
   "gal_ende_ost_innen": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 11.1,
-   "quer": 11.24
+   "z": 10.512,
+   "quer": 11.454
   },
   "gal_ende_ost_aussen": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 11.1,
-   "quer": 11.02
+   "z": 10.512,
+   "quer": 11.246
   },
   "gal_ende_west_innen": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 11.1,
-   "quer": 19.669
+   "z": 10.512,
+   "quer": 19.436
   },
   "gal_ende_west_aussen": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 11.1,
-   "quer": 19.879
+   "z": 10.512,
+   "quer": 19.635
   },
   "gal_holm_unter": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 12.15,
-   "quer": 13.72
+   "z": 11.506,
+   "quer": 13.803
   },
   "gal_holm_ueber": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 12.33,
-   "quer": 13.72
+   "z": 11.677,
+   "quer": 13.803
   },
   "vordach_traufe": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 17.4,
-   "quer": 15.419
+   "z": 16.478,
+   "quer": 15.412
   },
   "vordach_oben": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 20.6,
-   "quer": 15.419
+   "z": 19.508,
+   "quer": 15.412
   },
   "vordach_darueber": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 21.0,
-   "quer": 15.419
+   "z": 19.887,
+   "quer": 15.412
   },
   "uhr_ring_ost": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 33.49,
-   "quer": 12.81
+   "z": 31.715,
+   "quer": 12.941
   },
   "uhr_aussen_ost": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 33.49,
-   "quer": 12.51
+   "z": 31.715,
+   "quer": 12.657
   },
   "uhr_ring_oben": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 36.04,
-   "quer": 15.359
+   "z": 34.13,
+   "quer": 15.355
   },
   "uhr_aussen_oben": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 36.34,
-   "quer": 15.359
+   "z": 34.414,
+   "quer": 15.355
   },
   "uhr_ring_west": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 33.49,
-   "quer": 17.909
+   "z": 31.715,
+   "quer": 17.77
   },
   "uhr_aussen_west": {
    "typ": "tiefe_bei",
    "seite": "+x",
-   "z": 33.49,
-   "quer": 18.209
+   "z": 31.715,
+   "quer": 18.054
   }
  },
  "pruefungen": [
@@ -309,8 +309,8 @@
    "name": "Traufkante Nord: Abstand von Dachmitte bei z 39,05 (m)",
    "wert": "traufe_nord_reichweite",
    "soll": [
-    6.75,
-    7.15
+    6.39,
+    6.77
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Traufecken A x 4,85 / C x 4,92 (M-113205-002/-003), Dachmitte x -2,15 = Mitte der Waende (Nordwand x 3,69 aus M-113205-006/-007, Suedwand LoD2 -8,0) -> 7,03 +-0,2 (Tiefe entlang der Blickrichtung) | NACH LOTKORREKTUR: Traufecken A x 4,76 / C x 4,83 -> 4,80; 6,95 von der Dachmitte (M-113205-008)",
    "quelltyp": "sfm_bodenanker",
@@ -319,15 +319,16 @@
    "protokoll": "M-113205-008",
    "historie": [
     "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m",
-    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-008): Traufecken A x 4,76 / C x 4,83 -> 4,80; 6,95 von der Dachmitte; Soll [6.85, 7.25] -> [6.75, 7.15]"
+    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-008): Traufecken A x 4,76 / C x 4,83 -> 4,80; 6,95 von der Dachmitte; Soll [6.85, 7.25] -> [6.75, 7.15]",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [6.75, 7.15]"
    ]
   },
   {
    "name": "Traufkante West (+y): Abstand von Dachmitte bei z 39,05 (m)",
    "wert": "traufe_west_reichweite",
    "soll": [
-    7.12,
-    7.42
+    6.74,
+    7.03
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Traufecke A y 22,51 (M-113205-002), Dachmitte y 15,28 -> 7,23 +-0,15 | NACH LOTKORREKTUR: Traufecke A y 22,55 -> 7,27 (M-113205-008)",
    "quelltyp": "sfm_bodenanker",
@@ -336,15 +337,16 @@
    "protokoll": "M-113205-008",
    "historie": [
     "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m",
-    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-008): Traufecke A y 22,55 -> 7,27; Soll [7.08, 7.38] -> [7.12, 7.42]"
+    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-008): Traufecke A y 22,55 -> 7,27; Soll [7.08, 7.38] -> [7.12, 7.42]",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [7.12, 7.42]"
    ]
   },
   {
    "name": "Traufkante Ost (-y): Abstand von Dachmitte bei z 39,05 (m)",
    "wert": "traufe_ost_reichweite",
    "soll": [
-    6.93,
-    7.23
+    6.56,
+    6.85
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Traufecke C y 8,16 (M-113205-003), Dachmitte y 15,28 -> 7,12 +-0,15 | NACH LOTKORREKTUR: Traufecke C y 8,20 -> 7,08 (M-113205-009)",
    "quelltyp": "sfm_bodenanker",
@@ -353,15 +355,16 @@
    "protokoll": "M-113205-009",
    "historie": [
     "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m",
-    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-009): Traufecke C y 8,20 -> 7,08; Soll [6.97, 7.27] -> [6.93, 7.23]"
+    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-009): Traufecke C y 8,20 -> 7,08; Soll [6.97, 7.27] -> [6.93, 7.23]",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [6.93, 7.23]"
    ]
   },
   {
    "name": "Traufe Nord Oberkante z bei x 4,75 (m)",
    "wert": "traufe_oben_z",
    "soll": [
-    39.15,
-    39.55
+    37.08,
+    37.45
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Traufecken z 39,15 / 39,20 (M-113205-002/-003); Dachflaeche steigt bis x 4,75 um ~0,15 m | NACH LOTKORREKTUR: Traufecken z 39,20 / 39,32 -> 39,26 (M-113205-009)",
    "quelltyp": "sfm_bodenanker",
@@ -370,15 +373,16 @@
    "protokoll": "M-113205-009",
    "historie": [
     "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m",
-    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-009): Traufecken z 39,20 / 39,32 -> 39,26; Soll [39.1, 39.5] -> [39.15, 39.55]"
+    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-009): Traufecken z 39,20 / 39,32 -> 39,26; Soll [39.1, 39.5] -> [39.15, 39.55]",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [39.15, 39.55]"
    ]
   },
   {
    "name": "Dachflaeche Nord bei z 45: Abstand von Dachmitte (m)",
    "wert": "dach_nord_z45",
    "soll": [
-    2.5,
-    3.2
+    2.37,
+    3.03
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Gerade Traufe (4,88 / 39,18) - Laternenfuss (-0,77 / 47,28) (M-113205-004) -> x 0,82 bei z 45 = 2,97 m von der Mitte; +-0,35 (Tiefe); Neigung 55,1 Grad, Gegenprobe Laser DOM1 56,1 | NACH LOTKORREKTUR: Gerade Traufe (4,80 / 39,26) - Laternenfuss (-0,96 / 47,30) -> 2,84; Neigung 54,4 Grad (M-113205-010)",
    "quelltyp": "sfm_bodenanker",
@@ -387,15 +391,16 @@
    "protokoll": "M-113205-010",
    "historie": [
     "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m",
-    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-010): Gerade Traufe (4,80 / 39,26) - Laternenfuss (-0,96 / 47,30) -> 2,84; Neigung 54,4 Grad; Soll [2.6, 3.3] -> [2.5, 3.2]"
+    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-010): Gerade Traufe (4,80 / 39,26) - Laternenfuss (-0,96 / 47,30) -> 2,84; Neigung 54,4 Grad; Soll [2.6, 3.3] -> [2.5, 3.2]",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [2.5, 3.2]"
    ]
   },
   {
    "name": "Gesamthoehe mit Laterne (m)",
    "wert": "hoehe",
    "soll": [
-    54.2,
-    55.8
+    51.33,
+    52.84
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Knauf ueber der Zwiebelhaube z 54,17 (M-113205-005); darueber Spitze (ANNAHME bis ~1,5 m, nicht gemessen). WIDERSPRUCH zu objekt.json hoehe_m 50,8 - nicht gemittelt, Nutzer gemeldet | NACH LOTKORREKTUR: Knauf 54,18 (unveraendert) (M-113205-011)",
    "quelltyp": "sfm_bodenanker",
@@ -404,15 +409,16 @@
    "protokoll": "M-113205-011",
    "historie": [
     "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m",
-    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-011): Knauf 54,18 (unveraendert); Soll [54.2, 55.8] -> [54.2, 55.8]"
+    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-011): Knauf 54,18 (unveraendert); Soll [54.2, 55.8] -> [54.2, 55.8]",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [54.2, 55.8]"
    ]
   },
   {
    "name": "Nordwand Uhrgeschoss: Abstand von Dachmitte bei z 36 (m)",
    "wert": "wand_nord_reichweite",
    "soll": [
-    5.65,
-    5.95
+    5.35,
+    5.63
    ],
    "quelle": "Foto-Peilung foto_mass.py --tri2d: Wandecken A' (3,60 / 21,36) und C' (3,78 / 9,20) (M-113205-006/-007) -> Wand x 3,69 = 5,84 von der Mitte; LoD2 3,54..3,92 | NACH LOTKORREKTUR: Wandecken A' (3,54 / 21,38), C' (3,72 / 9,22) -> Wand x 3,63 = 5,78 (M-113205-012)",
    "quelltyp": "sfm_bodenanker",
@@ -421,15 +427,16 @@
    "protokoll": "M-113205-012",
    "historie": [
     "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m",
-    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-012): Wandecken A' (3,54 / 21,38), C' (3,72 / 9,22) -> Wand x 3,63 = 5,78; Soll [5.7, 6.0] -> [5.65, 5.95]"
+    "2026-11-15 Lotkorrektur des Rahmens 0,77 Grad (Foto-Vertikalen, lot_aus_fotos.py; Nutzerbeobachtung 13:19): gleiche Picks neu trianguliert (M-113205-012): Wandecken A' (3,54 / 21,38), C' (3,72 / 9,22) -> Wand x 3,63 = 5,78; Soll [5.7, 6.0] -> [5.65, 5.95]",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [5.65, 5.95]"
    ]
   },
   {
    "name": "Tor Nord: halbe lichte Breite nach West bei z 2 (m)",
    "wert": "tor_halb_west",
    "soll": [
-    2.2,
-    2.43
+    2.08,
+    2.3
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Nordwandebene (0,17 m vor der gepeilten Wand = Sockelflaeche), Frontalfoto 113602 (1 Grad zur Wandnormalen); Lage der Kanten auf der Ebene durch Schraegfoto 113310 (-47 Grad) bestaetigt; lichte Breite zwischen den Pfeilern 4,63 m (M-113602-001), Mitte u 6,135",
    "merkmal": "fassade",
@@ -437,15 +444,16 @@
    "quelltyp": "foto_kalibriert",
    "massstab": "K-eigen__IMG_20261106_113602 (SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen)",
    "historie": [
-    "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)"
+    "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [2.2, 2.43]"
    ]
   },
   {
    "name": "Tor Nord: halbe lichte Breite nach Ost bei z 2 (m)",
    "wert": "tor_halb_ost",
    "soll": [
-    2.2,
-    2.43
+    2.08,
+    2.3
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Nordwandebene (0,17 m vor der gepeilten Wand = Sockelflaeche), Frontalfoto 113602 (1 Grad zur Wandnormalen); Lage der Kanten auf der Ebene durch Schraegfoto 113310 (-47 Grad) bestaetigt; wie West (M-113602-001), linker Pfeiler 3,82 m ab Wandecke Ost (M-113602-006)",
    "merkmal": "fassade",
@@ -453,15 +461,16 @@
    "quelltyp": "foto_kalibriert",
    "massstab": "K-eigen__IMG_20261106_113602 (SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen)",
    "historie": [
-    "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)"
+    "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [2.2, 2.43]"
    ]
   },
   {
    "name": "Tor Nord: Scheitel der Durchfahrt innen z (m)",
    "wert": "tor_scheitel_z",
    "soll": [
-    6.78,
-    7.08
+    6.42,
+    6.7
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Nordwandebene (0,17 m vor der gepeilten Wand = Sockelflaeche), Frontalfoto 113602 (1 Grad zur Wandnormalen); Lage der Kanten auf der Ebene durch Schraegfoto 113310 (-47 Grad) bestaetigt; lichte Hoehe 6,88 m ueber Pflaster z 0,05 (M-113602-004); Scheitel aussen 7,20 m (M-113602-003, Gegenprobe M-113310-001 ebenfalls 7,20)",
    "merkmal": "absolut_hoehe",
@@ -469,15 +478,16 @@
    "quelltyp": "foto_kalibriert",
    "massstab": "K-eigen__IMG_20261106_113602 (SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen)",
    "historie": [
-    "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)"
+    "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [6.78, 7.08]"
    ]
   },
   {
    "name": "Tor Nord: halbe Breite im Bogen bei z 5,55 (m)",
    "wert": "tor_halb_z555",
    "soll": [
-    1.85,
-    2.15
+    1.75,
+    2.04
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Nordwandebene (0,17 m vor der gepeilten Wand = Sockelflaeche), Frontalfoto 113602 (1 Grad zur Wandnormalen); Lage der Kanten auf der Ebene durch Schraegfoto 113310 (-47 Grad) bestaetigt; Kaempfer 4,25 m ueber Pflaster (M-113602-005) und Scheitel 6,88 m; ANNAHME Spitzbogen aus zwei Kreisboegen r 2,65 m -> 2,00 m",
    "merkmal": "fassade",
@@ -485,15 +495,16 @@
    "quelltyp": "foto_kalibriert",
    "massstab": "K-eigen__IMG_20261106_113602 (SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen)",
    "historie": [
-    "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)"
+    "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [1.85, 2.15]"
    ]
   },
   {
    "name": "Fenster Nord (fl_kante_innen): Tiefe x der ersten Flaeche bei u 3.06 z 25.00 (m)",
    "wert": "fl_kante_innen",
    "soll": [
-    3.08,
-    3.6
+    2.8,
+    3.29
    ],
    "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: linke Nischenkante 2,96 m ab Ecke: 0,1 m innerhalb liegt die Nische (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
    "quelltyp": "foto_kalibriert",
@@ -501,15 +512,16 @@
    "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
    "protokoll": "M-113029-005",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.08, 3.6]"
    ]
   },
   {
    "name": "Fenster Nord (fl_kante_aussen): Tiefe x der ersten Flaeche bei u 2.86 z 25.00 (m)",
    "wert": "fl_kante_aussen",
    "soll": [
-    3.65,
-    3.73
+    3.34,
+    3.42
    ],
    "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: linke Nischenkante 2,96 m: 0,1 m ausserhalb ist Wand (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
    "quelltyp": "foto_kalibriert",
@@ -517,15 +529,16 @@
    "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
    "protokoll": "M-113029-005",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.65, 3.73]"
    ]
   },
   {
    "name": "Fenster Nord (fl_scheitel_innen): Tiefe x der ersten Flaeche bei u 4.00 z 26.63 (m)",
    "wert": "fl_scheitel_innen",
    "soll": [
-    3.07,
-    3.59
+    2.79,
+    3.29
    ],
    "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: Nischenscheitel = Sohlbank 24,21 + 2,52 = 26,73: 0,1 m darunter Nische (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
    "quelltyp": "foto_kalibriert",
@@ -533,15 +546,16 @@
    "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
    "protokoll": "M-113029-002",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.07, 3.59]"
    ]
   },
   {
    "name": "Fenster Nord (fl_scheitel_aussen): Tiefe x der ersten Flaeche bei u 4.00 z 26.83 (m)",
    "wert": "fl_scheitel_aussen",
    "soll": [
-    3.64,
-    3.72
+    3.33,
+    3.41
    ],
    "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: Nischenscheitel 26,73: 0,1 m darueber Wand (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
    "quelltyp": "foto_kalibriert",
@@ -549,15 +563,16 @@
    "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
    "protokoll": "M-113029-002",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.64, 3.72]"
    ]
   },
   {
    "name": "Fenster Nord (fr_kante_innen): Tiefe x der ersten Flaeche bei u 7.35 z 25.00 (m)",
    "wert": "fr_kante_innen",
    "soll": [
-    3.02,
-    3.54
+    2.75,
+    3.24
    ],
    "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: rechtes Fenster: linke Nischenkante 7,25 m ab Ecke (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
    "quelltyp": "foto_kalibriert",
@@ -565,15 +580,16 @@
    "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
    "protokoll": "M-113029-006",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.02, 3.54]"
    ]
   },
   {
    "name": "Fenster Nord (fr_kante_aussen): Tiefe x der ersten Flaeche bei u 7.15 z 25.00 (m)",
    "wert": "fr_kante_aussen",
    "soll": [
-    3.59,
-    3.67
+    3.29,
+    3.36
    ],
    "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: rechtes Fenster: linke Nischenkante 7,25 m (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
    "quelltyp": "foto_kalibriert",
@@ -581,15 +597,16 @@
    "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
    "protokoll": "M-113029-006",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.59, 3.67]"
    ]
   },
   {
    "name": "Fenster Nord (fl_oeffnung): Tiefe x der ersten Flaeche bei u 4.00 z 25.00 (m)",
    "wert": "fl_oeffnung",
    "soll": [
-    2.77,
-    3.42
+    2.51,
+    3.12
    ],
    "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: Oeffnung 0,68 m breit in Nischenmitte: tiefer als die Nische (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
    "quelltyp": "foto_kalibriert",
@@ -597,15 +614,16 @@
    "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
    "protokoll": "M-113029-003",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [2.77, 3.42]"
    ]
   },
   {
    "name": "Galerie/Vordach Nord (gal_front): x der ersten Flaeche bei u 6.20 z 11.10 (m)",
    "wert": "gal_front",
    "soll": [
-    5.0,
-    5.35
+    4.62,
+    4.95
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Galerie-Vorderkante: Schwelle vorn x 5,34 (Ost) / 4,99 (West)",
    "quelltyp": "foto_kalibriert",
@@ -613,15 +631,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113231-002",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [5.0, 5.35]"
    ]
   },
   {
    "name": "Galerie/Vordach Nord (gal_ende_ost_innen): x der ersten Flaeche bei u 2.02 z 11.10 (m)",
    "wert": "gal_ende_ost_innen",
    "soll": [
-    5.0,
-    5.5
+    4.62,
+    5.09
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Galerie-Ende Ost bei y 11,13-11,15 (u 1,91): 0,1 m innerhalb steht die Schwelle",
    "quelltyp": "foto_kalibriert",
@@ -629,15 +648,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113231-001",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [5.0, 5.5]"
    ]
   },
   {
    "name": "Galerie/Vordach Nord (gal_ende_ost_aussen): x der ersten Flaeche bei u 1.80 z 11.10 (m)",
    "wert": "gal_ende_ost_aussen",
    "soll": [
-    3.6,
-    3.8
+    3.29,
+    3.48
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Galerie-Ende Ost: 0,1 m ausserhalb ist Wand",
    "quelltyp": "foto_kalibriert",
@@ -645,15 +665,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113231-001",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.6, 3.8]"
    ]
   },
   {
    "name": "Galerie/Vordach Nord (gal_ende_west_innen): x der ersten Flaeche bei u 10.45 z 11.10 (m)",
    "wert": "gal_ende_west_innen",
    "soll": [
-    4.85,
-    5.3
+    4.48,
+    4.91
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Galerie-Ende West bei y 19,75-19,79 (u 10,55)",
    "quelltyp": "foto_kalibriert",
@@ -661,15 +682,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113231-002",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [4.85, 5.3]"
    ]
   },
   {
    "name": "Galerie/Vordach Nord (gal_ende_west_aussen): x der ersten Flaeche bei u 10.66 z 11.10 (m)",
    "wert": "gal_ende_west_aussen",
    "soll": [
-    3.5,
-    3.7
+    3.2,
+    3.39
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Galerie-Ende West: 0,1 m ausserhalb ist Wand",
    "quelltyp": "foto_kalibriert",
@@ -677,15 +699,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113231-002",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.5, 3.7]"
    ]
   },
   {
    "name": "Galerie/Vordach Nord (gal_holm_unter): x der ersten Flaeche bei u 4.50 z 12.15 (m)",
    "wert": "gal_holm_unter",
    "soll": [
-    5.0,
-    5.4
+    4.62,
+    5.0
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Bruestungsholm Oberkante z 12,24: 0,09 m darunter Bruestung",
    "quelltyp": "foto_kalibriert",
@@ -693,15 +716,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113231-004",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [5.0, 5.4]"
    ]
   },
   {
    "name": "Galerie/Vordach Nord (gal_holm_ueber): x der ersten Flaeche bei u 4.50 z 12.33 (m)",
    "wert": "gal_holm_ueber",
    "soll": [
-    3.55,
-    3.8
+    3.25,
+    3.48
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Bruestungsholm Oberkante z 12,24: 0,09 m darueber frei bis zur Wand",
    "quelltyp": "foto_kalibriert",
@@ -709,15 +733,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113231-004",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.55, 3.8]"
    ]
   },
   {
    "name": "Galerie/Vordach Nord (vordach_traufe): x der ersten Flaeche bei u 6.20 z 17.40 (m)",
    "wert": "vordach_traufe",
    "soll": [
-    5.0,
-    5.5
+    4.62,
+    5.09
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Vordach-Traufe: Ecken (5,42 / 11,05 / 17,18) und (5,10 / 20,05 / 17,31)",
    "quelltyp": "foto_kalibriert",
@@ -725,15 +750,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113128-001",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [5.0, 5.5]"
    ]
   },
   {
    "name": "Galerie/Vordach Nord (vordach_oben): x der ersten Flaeche bei u 6.20 z 20.60 (m)",
    "wert": "vordach_oben",
    "soll": [
-    3.6,
-    3.95
+    3.29,
+    3.63
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): Vordach-Anschluss an die Wand z 20,81-20,83",
    "quelltyp": "foto_kalibriert",
@@ -741,15 +767,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113128-003",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.6, 3.95]"
    ]
   },
   {
    "name": "Galerie/Vordach Nord (vordach_darueber): x der ersten Flaeche bei u 6.20 z 21.00 (m)",
    "wert": "vordach_darueber",
    "soll": [
-    3.55,
-    3.72
+    3.25,
+    3.41
    ],
    "quelle": "Foto-Triangulation foto_mass.py --tri (Fotos 113128/113231/113106/113208/113029, Picks ueber wand_ortho.py): ueber dem Vordach-Anschluss (z 20,82) ist Wand",
    "quelltyp": "foto_kalibriert",
@@ -757,15 +784,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113128-004",
    "historie": [
-    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.55, 3.72]"
    ]
   },
   {
    "name": "Uhr Nord (uhr_ring_ost): x der ersten Flaeche bei u 3.59 z 33.49 (m)",
    "wert": "uhr_ring_ost",
    "soll": [
-    3.71,
-    3.83
+    3.4,
+    3.51
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Wandebene, Fotos 113029 und 113205 (M-113029-008..-012, M-113205-014/-015): Zifferblatt aussen 5,33-5,41 m -> 5,36 m, Mitte u 6,14 / z 33,49 (Mittel beider Fotos, Abweichung 0,1 m); geprueft wird der Rand +-0,15 m, die Staerke 8 cm ist ANNAHME",
    "quelltyp": "foto_kalibriert",
@@ -773,15 +801,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113029-008",
    "historie": [
-    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand"
+    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.71, 3.83]"
    ]
   },
   {
    "name": "Uhr Nord (uhr_aussen_ost): x der ersten Flaeche bei u 3.29 z 33.49 (m)",
    "wert": "uhr_aussen_ost",
    "soll": [
-    3.64,
-    3.7
+    3.33,
+    3.39
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Wandebene, Fotos 113029 und 113205 (M-113029-008..-012, M-113205-014/-015): Zifferblatt aussen 5,33-5,41 m -> 5,36 m, Mitte u 6,14 / z 33,49 (Mittel beider Fotos, Abweichung 0,1 m); geprueft wird der Rand +-0,15 m, die Staerke 8 cm ist ANNAHME",
    "quelltyp": "foto_kalibriert",
@@ -789,15 +818,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113029-008",
    "historie": [
-    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand"
+    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.64, 3.7]"
    ]
   },
   {
    "name": "Uhr Nord (uhr_ring_oben): x der ersten Flaeche bei u 6.14 z 36.04 (m)",
    "wert": "uhr_ring_oben",
    "soll": [
-    3.67,
-    3.79
+    3.36,
+    3.48
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Wandebene, Fotos 113029 und 113205 (M-113029-008..-012, M-113205-014/-015): Zifferblatt aussen 5,33-5,41 m -> 5,36 m, Mitte u 6,14 / z 33,49 (Mittel beider Fotos, Abweichung 0,1 m); geprueft wird der Rand +-0,15 m, die Staerke 8 cm ist ANNAHME",
    "quelltyp": "foto_kalibriert",
@@ -805,15 +835,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113029-008",
    "historie": [
-    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand"
+    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.67, 3.79]"
    ]
   },
   {
    "name": "Uhr Nord (uhr_aussen_oben): x der ersten Flaeche bei u 6.14 z 36.34 (m)",
    "wert": "uhr_aussen_oben",
    "soll": [
-    3.6,
-    3.66
+    3.29,
+    3.35
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Wandebene, Fotos 113029 und 113205 (M-113029-008..-012, M-113205-014/-015): Zifferblatt aussen 5,33-5,41 m -> 5,36 m, Mitte u 6,14 / z 33,49 (Mittel beider Fotos, Abweichung 0,1 m); geprueft wird der Rand +-0,15 m, die Staerke 8 cm ist ANNAHME",
    "quelltyp": "foto_kalibriert",
@@ -821,15 +852,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113029-008",
    "historie": [
-    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand"
+    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.6, 3.66]"
    ]
   },
   {
    "name": "Uhr Nord (uhr_ring_west): x der ersten Flaeche bei u 8.69 z 33.49 (m)",
    "wert": "uhr_ring_west",
    "soll": [
-    3.63,
-    3.75
+    3.32,
+    3.44
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Wandebene, Fotos 113029 und 113205 (M-113029-008..-012, M-113205-014/-015): Zifferblatt aussen 5,33-5,41 m -> 5,36 m, Mitte u 6,14 / z 33,49 (Mittel beider Fotos, Abweichung 0,1 m); geprueft wird der Rand +-0,15 m, die Staerke 8 cm ist ANNAHME",
    "quelltyp": "foto_kalibriert",
@@ -837,15 +869,16 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113029-008",
    "historie": [
-    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand"
+    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.63, 3.75]"
    ]
   },
   {
    "name": "Uhr Nord (uhr_aussen_west): x der ersten Flaeche bei u 8.99 z 33.49 (m)",
    "wert": "uhr_aussen_west",
    "soll": [
-    3.56,
-    3.62
+    3.26,
+    3.31
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Wandebene, Fotos 113029 und 113205 (M-113029-008..-012, M-113205-014/-015): Zifferblatt aussen 5,33-5,41 m -> 5,36 m, Mitte u 6,14 / z 33,49 (Mittel beider Fotos, Abweichung 0,1 m); geprueft wird der Rand +-0,15 m, die Staerke 8 cm ist ANNAHME",
    "quelltyp": "foto_kalibriert",
@@ -853,7 +886,8 @@
    "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
    "protokoll": "M-113029-008",
    "historie": [
-    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand"
+    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand",
+    "2026-11-15 MASSSTABSKORREKTUR 0,947 (Quelle: DOM1-Laser direkt abgefragt - Dachtraufe 37,2 m, Vordach 16,4 m, Dachflaeche 169 m2; Foto-GPS 0,97): Messstelle und Soll in den korrigierten Rahmen umgerechnet (Aehnlichkeit um Turmmitte am Boden), Soll vorher [3.56, 3.62]"
    ]
   }
  ],
@@ -929,108 +963,6 @@
    "naechster_schritt": "Regelmaessige Bauteile der Nordwand aus FOTOKANTEN in den Generator (KERNMETHODE): 1) Torbogen als echte Oeffnung (Gewaendekanten per --tri2d, Kaempfer/Scheitel per --tri in Fotos 113208/113141/113612), 2) zwei Rundbogenfenster mit Gewaende, 3) Vordach (Pultdach) und 4) Holzgalerie als Koerper, 5) Eckquader. Relief nur noch als Maske auf den Bruchsteinflaechen dazwischen (Bauteilflaechen im Hoehenbild auf 0), Kanten-Sweep kanten_tiefe_sweep_flaeche.py fuer Fugen/Leisten. Tor: foto_diff je Bauteil + Bild neben Foto"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1010-1515",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 30.55,
-   "z_bis": 30.55,
-   "xyz": [
-    -1.75,
-    9.66,
-    30.55
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.55 m, y=9.66 m (Zelle [1010, 1515, 101], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1010-1616",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 28.11,
-   "z_bis": 28.11,
-   "xyz": [
-    -1.32,
-    9.58,
-    28.11
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.11 m, y=9.58 m (Zelle [1010, 1616, 101], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-909-1717",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 28.59,
-   "z_bis": 28.59,
-   "xyz": [
-    -4.2,
-    9.15,
-    28.59
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.59 m, y=9.15 m (Zelle [909, 1717, 101], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1010-1717",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 26.37,
-   "z_bis": 26.37,
-   "xyz": [
-    -1.43,
-    9.63,
-    26.37
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.37 m, y=9.63 m (Zelle [1010, 1717, 101], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-909-1818",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 26.69,
-   "z_bis": 26.69,
-   "xyz": [
-    -4.19,
-    9.17,
-    26.69
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.69 m, y=9.17 m (Zelle [909, 1818, 101], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1010-1818",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 24.67,
-   "z_bis": 24.67,
-   "xyz": [
-    -1.49,
-    9.66,
-    24.67
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.67 m, y=9.66 m (Zelle [1010, 1818, 101], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-15",
    "wer": "Claude",
    "text": "QUELLENWIDERSPRUCH HOEHE (nicht gemittelt): Foto-Triangulation Nord: Traufe 39,26 m, Dach an der Wandlinie ~40,9 m, gedachte Spitze 49,25 m, Knauf 54,18 m. Amtlich: LoD2-Wandoberkante 37,0 m, Laser-Dachfit DOM1 Wandlinie 36,7 m / Spitze 45,5 m, DOM1-Maximum ueber der Turmmitte 49,6 m (DGM1 am Tor 282,1 = Rahmenhoehe, also KEIN Hoehenbezugsfehler). Die amtlichen Werte liegen 3,7-4,5 m bzw. ~8-9 % unter den Fotowerten. Dazu: die Fotogruppe der SUEDSEITE bildet ein Teilmodell mit Massstab ~0,89 (Wolke: Suedwand nur 10,7 m breit statt 12,03, Traufe dort bei z 35) - auf LoD2-Breite hochgerechnet ergibt auch sie ~39-40 m. Fuer die Fotowerte sprechen also zwei Fotogruppen, fuer 36-37 m zwei amtliche Quellen.",
@@ -1041,6 +973,114 @@
    "wer": "Claude",
    "text": "HOEHE GEKLAERT ZU UNGUNSTEN DER FOTOMASSE: DOM1-Laser direkt abgefragt (1-m-Pixel, Gelaende am Tor = Rahmenhoehe). Dachflaeche im Abstand r von der Dachmitte: r 3 m 41,3-41,9 / r 4 m 39,8-40,5 / r 5 m 38,4-38,7 / r 6 m 37,1-37,7 m; Traufpixel 0,3-0,7 m vor der Nordwand 37,1-37,3 m; Vordach-Traufzone 16,4 m; Turmmitte 49,6 m. Modell aus den Nordfotos an denselben Stellen: 44,8 / 43,4 / 42,0 / 40,6; Traufe 39,26; Vordach-Traufe 17,25-17,4; Laterne bis 54-55. Die Fotohoehen sind um ~5,5 % gestreckt (16,4/17,3 = 0,948; 37,2/39,3 = 0,946), am Dach bis 3 m zu hoch; waagerecht stimmt das Modell mit LoD2 (Turmbreite 12,16 gegen 12,03-12,16). Der Laser sieht Flaechenhoehen direkt -> die Hoehen des Modells (Traufe, Dach, Vordach, Fenster, Uhr, Laterne) sind ZU HOCH. Ausserdem ist das echte Dach an der Traufe flacher (Aufschiebling: 0,9 m/m zwischen r 5 und 6, darueber ~1,45 m/m).",
    "naechster_schritt": "NICHT im Generator mit einem Faktor flicken (die K-Kameras leben im gestreckten Rahmen, Foto-Tore wuerden brechen; eine reine Hoehenstreckung laesst sich nicht als Lochkamera mit einem f abbilden). Ursache im SfM beheben: Neulauf mit einer Kamera je Geraet statt PER_IMAGE und GPS als Vorgabe (offene Punkte 3 und 5), danach Ausrichtung mit Hoehen-Tor gegen DOM1 (neues Tor: Dach-/Vordachflaechen der Wolke gegen DOM1-Pixel, Massstab in z getrennt pruefen), Lot aus Fotos, K-Dateien neu, alle Protokolle M-* neu rechnen (Picks bleiben gueltig), Sollwerte mit Historie nachfuehren. Bis dahin: Modellhoehen ~5,5 % zu gross, kein Druck."
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1484-1060",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 37.8,
+   "z_bis": 37.8,
+   "xyz": [
+    1.27,
+    16.65,
+    37.8
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=37.8 m, y=16.65 m (Zelle [1484, 1060, 106], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-954-1272",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 33.99,
+   "z_bis": 33.99,
+   "xyz": [
+    -2.14,
+    9.27,
+    33.99
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=33.99 m, y=9.27 m (Zelle [954, 1272, 106], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-954-1590",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 27.83,
+   "z_bis": 27.83,
+   "xyz": [
+    -2.37,
+    9.37,
+    27.83
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.83 m, y=9.37 m (Zelle [954, 1590, 106], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-954-1696",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 25.88,
+   "z_bis": 25.88,
+   "xyz": [
+    -2.32,
+    9.41,
+    25.88
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=25.88 m, y=9.41 m (Zelle [954, 1696, 106], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-954-1802",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 24.06,
+   "z_bis": 24.06,
+   "xyz": [
+    -2.27,
+    9.44,
+    24.06
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.06 m, y=9.44 m (Zelle [954, 1802, 106], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-954-2014",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 20.75,
+   "z_bis": 20.75,
+   "xyz": [
+    -2.22,
+    9.5,
+    20.75
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=20.75 m, y=9.5 m (Zelle [954, 2014, 106], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Claude",
+   "text": "Nach der Massstabskorrektur 0,947: Modell-Dachflaeche liegt noch im Median +0,66 m ueber dem DOM1-Laser (r 3-6 m von der Dachmitte: Laser 41,4 / 39,8 / 38,4 / 37,4, Modell 42,2 / 40,9 / 39,5 / 38,1), Vordach +0,3 m (16,7 gegen 16,4), hoechster Punkt 52,4 gegen DOM1-Mitte 49,6. Vorher +3,2 m. Rest = Massstab noch ~1-2 % zu gross (k eher 0,93) und/oder Dachform (echtes Dach an der Traufe flacher = Aufschiebling, Modell gerade Pyramide).",
+   "naechster_schritt": "Hoehen-Tor als Werkzeug: Modell-/Wolkenflaechen (Dach, Vordach, Nachbardaecher) gegen DOM1-Pixel ausgleichen -> Massstab k mit Streuung; Dach als zweiteilige Flaeche (Aufschiebling) aus dem Laserprofil + Fotokante; dann Pruefung 'Dachflaeche gegen DOM1' (laser_dom1, hoehe_flaeche) anlegen"
   }
  ]
 }
