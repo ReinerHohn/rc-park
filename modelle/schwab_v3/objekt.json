@@ -66,7 +66,7 @@
   414505.5,
   5316149.2
  ],
- "hoehe_m": 52.4,
+ "hoehe_m": 51.6,
  "gesamtkette": {
   "quelle": "schwabentor",
   "hinweis": "von tools/gesamtkette.py angelegt; Masse/Pruefungen nur aus Quellen dieser Kette"
@@ -92,5 +92,6 @@
   "eigen__IMG_20261106_113205",
   "eigen__IMG_20261106_113208",
   "eigen__IMG_20261106_113231"
- ]
+ ],
+ "hoehen_tor": true
 }

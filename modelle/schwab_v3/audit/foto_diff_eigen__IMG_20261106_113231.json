@@ -12,192 +12,192 @@
  "cy": 2000.0,
  "tol_m": 0.35,
  "laenge_m": 0.8,
- "anteil_modellkanten_ohne_foto": 0.1067,
- "anteil_fotokanten_ohne_modell": 0.5519,
+ "anteil_modellkanten_ohne_foto": 0.108,
+ "anteil_fotokanten_ohne_modell": 0.5483,
  "anteil_modellkanten_nicht_beurteilbar": 0.0,
  "versatz": {
   "versatz_px": [
-   -13,
-   115
+   -11,
+   116
   ],
-  "versatz_m": 1.049,
-  "gewinn": 0.0311,
-  "kosten0": 1.0904,
-  "kosten_best": 1.05648,
+  "versatz_m": 1.039,
+  "gewinn": 0.0148,
+  "kosten0": 1.07305,
+  "kosten_best": 1.05718,
   "deutlich": false
  },
  "treffer": [
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 839.71,
+   "laenge_m": 584.52,
    "box": [
-    1150,
-    946,
-    2003,
-    2088
+    1140,
+    950,
+    1999,
+    2097
    ],
    "xyz": [
-    3.36,
-    15.47,
-    27.92
+    3.27,
+    15.44,
+    25.98
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 346.48,
+   "laenge_m": 330.76,
    "box": [
-    1882,
-    2631,
-    2557,
-    3467
+    1876,
+    2640,
+    2571,
+    3439
    ],
    "xyz": [
-    3.26,
-    19.71,
-    7.31
+    3.18,
+    19.61,
+    7.18
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 334.26,
+   "laenge_m": 310.68,
    "box": [
-    911,
-    1065,
-    1080,
-    2256
+    1160,
+    2750,
+    1750,
+    3663
    ],
    "xyz": [
-    -1.22,
-    9.12,
-    24.04
+    3.3,
+    11.77,
+    6.41
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 306.3,
+   "box": [
+    903,
+    1070,
+    1073,
+    2249
+   ],
+   "xyz": [
+    -1.38,
+    9.11,
+    23.87
    ],
    "in_ankerzone": true
   },
   {
    "art": "FALSCH/ERFUNDEN (Modellkante ohne Fotokante)",
-   "laenge_m": 306.05,
+   "laenge_m": 302.83,
    "box": [
-    1076,
-    877,
-    1882,
-    1138
+    1070,
+    870,
+    1879,
+    1135
    ],
    "xyz": [
-    3.37,
-    14.77,
-    36.87
+    3.3,
+    14.71,
+    36.32
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 228.93,
+   "laenge_m": 256.75,
+   "box": [
+    1370,
+    1100,
+    1719,
+    1369
+   ],
+   "xyz": [
+    3.31,
+    15.26,
+    31.24
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 204.06,
    "box": [
     1714,
-    3400,
-    2144,
-    3999
+    3520,
+    2142,
+    3979
    ],
    "xyz": [
-    -0.52,
-    17.48,
-    2.7
+    -0.79,
+    17.45,
+    2.52
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 214.45,
+   "laenge_m": 130.37,
    "box": [
-    1204,
-    2946,
-    1583,
-    3724
+    882,
+    2330,
+    1042,
+    2609
    ],
    "xyz": [
-    3.39,
-    11.39,
-    5.46
+    -1.55,
+    9.11,
+    14.73
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 132.88,
+   "laenge_m": 106.73,
    "box": [
-    891,
-    2335,
-    1057,
-    2610
+    1144,
+    1790,
+    1303,
+    2217
    ],
    "xyz": [
-    -1.18,
-    9.12,
-    14.76
+    3.32,
+    10.35,
+    17.32
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 125.98,
+   "laenge_m": 88.75,
    "box": [
-    2428,
-    3488,
-    2729,
-    3980
+    1456,
+    2200,
+    1709,
+    2459
    ],
    "xyz": [
-    3.16,
-    21.4,
-    2.42
-   ],
-   "in_ankerzone": true
-  },
-  {
-   "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 96.33,
-   "box": [
-    1405,
-    2985,
-    1748,
-    3241
-   ],
-   "xyz": [
-    3.37,
-    13.16,
-    7.48
-   ],
-   "in_ankerzone": true
-  },
-  {
-   "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 92.18,
-   "box": [
-    1457,
-    2207,
-    1717,
-    2463
-   ],
-   "xyz": [
-    3.35,
-    14.02,
-    14.67
+    3.27,
+    14.0,
+    14.5
    ],
    "in_ankerzone": true
   }
  ],
  "ankerzone": [
   -2.5,
-  57.800001586914064
+  54.86912536621094
  ],
- "modellkanten_px": 456246,
- "fotokanten_px": 593707,
+ "modellkanten_px": 461655,
+ "fotokanten_px": 601890,
  "versatz_angewandt": false,
  "versatz_max_m": 1.5,
- "rot_versatz": 0.1067,
- "gelb_versatz": 0.5519,
+ "rot_versatz": 0.108,
+ "gelb_versatz": 0.5483,
  "gpu": true,
  "raster": true
 }

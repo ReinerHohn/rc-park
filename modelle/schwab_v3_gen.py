@@ -22,7 +22,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     # war (Dachtraufe 37,2 statt 39,26 m, Vordach 16,4 statt 17,3 m, Dachflaeche 169 statt 199,5 m2; Foto-GPS 0,97). Die Ausrichtung ist korrigiert
     # (tools/ausrichtung_massstab_korrigieren.py, Faktor 0,947 um die Turmmitte am Boden). Hier: amtliche LoD2-Teile in den Rohrahmen zurueckrechnen, alles
     # wie gemessen bauen, am Ende den ganzen Koerper mit MK skalieren -> LoD2-Teile bleiben amtlich, Fototeile bekommen den Lasermassstab.
-    MK, MC = 0.947, (-2.15, 15.28, 0.0)
+    MK, MC = 0.933, (-2.15, 15.28, 0.0)                    # 0,947 (Laser Traufpixel/Vordach) x 0,985 (Hoehen-Tor: 61 ebene Dachpixel)
     def massstab(k_, f): return k_.translate((-MC[0], -MC[1], -MC[2])).scale((f, f, f)).translate(MC)
     koerper = massstab(koerper, 1.0 / MK); haupt = (np.asarray(haupt) - np.array(MC[:2])) / MK + np.array(MC[:2])
     N_BELEGE_LOD2 = len(ELEMENTE)
@@ -36,11 +36,17 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     cx, cy = (X0 + X1) / 2, (Y0 + Y1) / 2; hx, hy = (X1 - X0) / 2, (Y1 - Y0) / 2
     zs = ZT + hx * np.tan(np.radians(NEIG)); f = (zs - ZF) / (zs - ZT)       # gedachte Spitze (~49,25 m; Laser max 49,62)
     ecken = lambda h_x, h_y, z: [[cx + a * h_x, cy + b * h_y, z] for a in (-1, 1) for b in (-1, 1)]
-    dach = M.hull_points(ecken(hx, hy, ZT - DICKE) + ecken(hx, hy, ZT) + ecken(hx * f, hy * f, ZF))
+    # Dachprofil GESCHWEIFT (15.11.2026, Hoehen-Tor tools/hoehe_gegen_dom1.py: gerade Pyramide lag in der Flaechenmitte +1,34 m ueber dem Laser, an der Traufe richtig).
+    # Stuetzpunkte (Abstand von der Dachmitte r, Hoehe z) im KORRIGIERTEN Rahmen: Traufe und Laternenfuss aus Fotos, dazwischen DOM1-Laser (Mittel N/S/W/O):
+    PROFIL = [(6.0, 37.5), (5.0, 38.5), (4.0, 40.0), (3.0, 41.5)]            # laser_dom1, hoehe_flaeche; unten flacher (Aufschiebling), oben steiler
+    ringe = [(1.0, ZT)] + [(r_ / (hx * MK), z_ / MK) for r_, z_ in PROFIL] + [(f, ZF)]
+    dach = M.hull_points(ecken(hx, hy, ZT - DICKE) + ecken(hx, hy, ZT))
+    for (f0, z0_), (f1, z1_) in zip(ringe[:-1], ringe[1:]): dach = dach + M.hull_points(ecken(hx * f0, hy * f0, z0_ - DICKE) + ecken(hx * f0, hy * f0, z0_) + ecken(hx * f1, hy * f1, z1_ - DICKE) + ecken(hx * f1, hy * f1, z1_))
+    dach = dach + M.hull_points(ecken(hx * 0.9, hy * 0.9, ZT - DICKE) + ecken(hx * f, hy * f, ZF - DICKE))        # Kern unter der Dachhaut (innen voll)
     wand = M.extrude(CrossSection([np.asarray(haupt).tolist()]), ZT)        # ANNAHME: Wand laeuft bis unter die Dachhaut (Untersicht/Holzwerk nicht gemessen)
     beleg("dach", "Zeltdach mit Ueberstand", "Foto-Triangulation Nordseite (foto_mass.py --tri, M-113205-008/-009/-010, Rahmen lotrecht aus Foto-Vertikalen)", traufe=ZT, neigung_grad=NEIG,
           trauflaenge_ost_west=round(Y1 - Y0, 2), ueberstand=round(X1 - 3.63, 2), spitze_gedacht=round(float(zs), 2),
-          hinweis="ANNAHME: Sued-, Ost- und Westflaeche wie Nord (gleiche Spitzenhoehe), Traufdicke 0,25 m")
+          hinweis="Dachflaeche geschweift: Zwischenpunkte r 3-6 m aus DOM1-Laser (41,5 / 40,0 / 38,5 / 37,5 m); ANNAHME: Sued-, Ost- und Westflaeche wie Nord, Traufdicke 0,25 m")
     beleg("wand", "Hauptteil Wand bis Traufe", "LoD2 DEBW_001000hPLcp GroundSurface 0; Nordwand am Foto bestaetigt (M-113205-006/-007)", hoehe=ZT,
           hinweis="ANNAHME: Wand bis Traufhoehe, Dachuntersicht nicht gemessen")
     # Laterne: nur der Knauf ist gemessen (-1,50 / 15,02 / 54,17, M-113205-005; x entlang der Blickrichtung unsicher) - Form = ANNAHME nach Foto 113205
@@ -123,7 +129,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     for e_ in ELEMENTE[N_BELEGE_LOD2:]:                    # Masse der Belege in den korrigierten Rahmen: Laengen/Hoehen x MK, Winkel bleiben, x-Lagen um den Drehpunkt
         for q_, v_ in list(e_.items()):
             if isinstance(v_, (int, float)) and not isinstance(v_, bool) and q_ != "neigung_grad": e_[q_] = round(MC[0] + MK * (v_ - MC[0]), 2) if q_.startswith("x_bei") else round(v_ * MK, 2)
-        e_["hinweis"] = (e_.get("hinweis", "") + " | Masse mit Lasermassstab 0,947 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur").strip(" |")
+        e_["hinweis"] = (e_.get("hinweis", "") + " | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur").strip(" |")
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json
