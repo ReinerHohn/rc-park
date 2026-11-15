@@ -1,0 +1,32 @@
+{
+ "id": "M-113529-005",
+ "foto": "113529",
+ "kamera": "K-eigen__IMG_20261106_113529",
+ "ebene": "0.4619,0.8869,0=4.224",
+ "name": "Nordost: Loggia lichte Breite",
+ "mess_px": [
+  1162.0,
+  2147.0,
+  383.0,
+  2204.0
+ ],
+ "P1": [
+  5.71,
+  1.789,
+  9.004
+ ],
+ "P2": [
+  11.967,
+  -1.47,
+  8.996
+ ],
+ "dz": -0.008,
+ "dy": -3.258,
+ "dx": 6.257,
+ "abstand": 7.054,
+ "z1": 9.004,
+ "z2": 8.996,
+ "unsicherheit_rel": 0.0125,
+ "unsicherheit_m": 0.124,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113529 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.4619,0.8869,0=4.224 (+-0.3 m)"
+}

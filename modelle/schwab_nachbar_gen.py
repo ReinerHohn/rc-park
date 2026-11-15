@@ -30,7 +30,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
             beleg("wand", f"Relief Fassade {nm_} (Teil 1) mit Auskragungen", "OpenMVS-Netz der neuen dichten Wolke (rc-park_daten/schwab_v3/sfm_neu/openmvs), Hoehenbild 5 cm",
                   hinweis="Scan-Relief, kein Mass: Geschosse kragen bis 0,6 m (Nord) bzw. 1,2 m (Sued, Erker) vor; Fenster, Fachwerk und Gesimse nur als weiches Relief - scharf nachbauen")
     WNO = Wand((3.5, 2.8), (12.0, -1.5), aussen=(9.0, 12.0)); rp = os.path.join(HERE, "schwab_nachbar", "relief", "nordost.npz")       # Nordost-Fassade (Teile 0 und 2): LoD2-Kante, Lage/Schraege kommen aus dem Relief (trend)
-    if os.path.exists(rp) and os.environ.get("OHNE_RELIEF") != "1":
+    if os.path.exists(rp) and os.environ.get("MIT_RELIEF_NO") == "1":      # 16.11.: Nordost-Fassade ist jetzt scharf gebaut (unten), Netz-Relief nur noch auf Wunsch
         hu_ = koerper + koerper.translate(tuple(0.8 * WNO.n) + (0.0,)) + koerper.translate(tuple(1.6 * WNO.n) + (0.0,))
         koerper = koerper + (relief_koerper(rp, tiefe=0.9, trend=True) ^ hu_)
         beleg("wand", "Relief Nordost-Fassade (Teile 0/2) z 0,5-11,3 m", "OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm", hinweis="Scan-Relief, kein Mass; der dritte Bogen (Laube am Nordostfluegel) ist darin ein Loch = geschlossene Wand (ANNAHME), Rundfenster und Fenster nur weich; LoD2-Kante liegt ~5 Grad schraeg zur Fassade")
@@ -100,6 +100,16 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     beleg("dach", "Querdach zum Turm (Sattel, First z 22,5 in der Turmachse)", "dichte Wolke sfm_neu (Median je 0,5-m-Streifen); Augenschein Nord-Fernfoto 113033", first=QZ, neigung_sued=QS, neigung_nord=QN,
           hinweis="Form aus der Wolke, nicht aus Fotokanten (kein Foto zeigt es frei); Anschluss an Hauptdach und Turmwand ANNAHME, Traufen nicht gemessen")
     WL = Wand((5.15, 2.08), (11.89, -1.43), aussen=(9.0, 12.0))                 # Nordost-Fassade im Erdgeschoss: Wandgerade aus der dichten Wolke (23 952 Punkte, Rest 0,8 cm)
+    # ---- 16.11.2026 NORDOST-FASSADE SCHARF (Fluegel mit Laube): M-113529-005..-011 auf der Fassadenebene ----
+    koerper = koerper - WL.kasten(-1.7, 7.7, 0.0, 10.0, 0.0, 2.5) + WL.kasten(-1.7, 7.6, 0.0, 10.0, -0.6, 0.0)       # vor der Ebene frei, Wand bis in die Ebene
+    koerper = koerper - WL.kasten(0.63, 7.5, 8.01, 9.83, -1.5, 0.3)                                                # Loggia: offen ueber der Bruestung, 1,5 m tief (ANNAHME)
+    for u_ in (2.84, 5.25): koerper = koerper + WL.kasten(u_ - 0.11, u_ + 0.11, 7.95, 9.9, -0.3, -0.05)            # zwei Saeulen (als Vierkant 22 cm; Form ANNAHME)
+    koerper = koerper + WL.kasten(0.5, 7.6, 6.9, 7.0, -0.05, 0.08) + WL.kasten(0.5, 7.6, 7.93, 8.01, -0.05, 0.06)   # Gesims unter und Handlauf auf der Bruestung
+    for u0_, u1_, z0_, z1_, tl_ in ((-1.51, -0.11, 8.08, 9.54, (-0.80,)), (-1.49, -0.02, 5.02, 6.39, (-0.75,))):
+        koerper = koerper + WL.kasten(u0_ - 0.15, u1_ + 0.15, z0_ - 0.15, z1_ + 0.15, -0.1, 0.05); ab_, zu_ = WL.fenster(u0_, u1_, z0_, z1_, 0.05, tiefe=0.17, teiler=tl_, b=0.12); koerper = koerper - ab_ + zu_
+    koerper = koerper + WL.scheibe(-0.06, 2.85, 1.42, -0.05, 0.05) - WL.scheibe(-0.06, 2.85, 0.80, -0.15, 0.1)     # Rundfenster: Steinring 5 cm vor dem Putz, Nische 15 cm (ANNAHME)
+    beleg("wand", "Nordost-Fassade scharf: Loggia mit Bruestung und zwei Saeulen, 2 Doppelfenster, Rundfenster", "foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-005..-011), Picks ueber wand_ortho.py",
+          loggia_breite=7.05, loggia_hoehe=1.82, bruestung=1.10, hinweis="ANNAHME: Loggiatiefe 1,5 m, Saeulen als Vierkant, Bruestung geschlossen (Masswerk fehlt), Gewaende 5 cm; Walmdach, Dachgelaender, Eckquader, Schriftzug fehlen")
     koerper = koerper - WL.prisma(spitzbogen(5.41 / 2, 3.5, 5.83), u=4.535, w0=-4.0, w1=2.2)       # Laube (dritter Bogen): Masse M-113529-001..-004; Tiefe 4 m = ANNAHME (offene Halle, Rueckwand im Foto sichtbar)
     beleg("wand", "Laube Nordost (dritter Bogen)", "foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-001..-004), Gegenprobe Foto 113452 (gleiche Kanten aus anderem Winkel)", lichte_breite=5.41, scheitel=5.83, kaempfer=3.5,
           hinweis="ANNAHME: Tiefe der Halle 4 m, Kreisboegen; Masswerkbruestung darueber (z 7-8 m), Holzstreben in der Laube und Treppe dahinter fehlen")

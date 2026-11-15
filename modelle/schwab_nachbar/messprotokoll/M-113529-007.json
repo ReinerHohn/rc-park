@@ -1,0 +1,32 @@
+{
+ "id": "M-113529-007",
+ "foto": "113529",
+ "kamera": "K-eigen__IMG_20261106_113529",
+ "ebene": "0.4619,0.8869,0=4.224",
+ "name": "Nordost: Bruestung (Masswerk) Hoehe ab Gesims",
+ "mess_px": [
+  766.0,
+  2412.0,
+  776.0,
+  2285.0
+ ],
+ "P1": [
+  8.701,
+  0.231,
+  6.901
+ ],
+ "P2": [
+  8.698,
+  0.233,
+  8.007
+ ],
+ "dz": 1.105,
+ "dy": 0.002,
+ "dx": -0.004,
+ "abstand": 1.105,
+ "z1": 6.901,
+ "z2": 8.007,
+ "unsicherheit_rel": 0.0122,
+ "unsicherheit_m": 0.051,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113529 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.4619,0.8869,0=4.224 (+-0.3 m)"
+}

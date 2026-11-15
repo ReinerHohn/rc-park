@@ -1,0 +1,32 @@
+{
+ "id": "M-113529-008",
+ "foto": "113529",
+ "kamera": "K-eigen__IMG_20261106_113529",
+ "ebene": "0.4619,0.8869,0=4.224",
+ "name": "Nordost: Doppelfenster 1. OG Breite",
+ "mess_px": [
+  1409.0,
+  2152.0,
+  1247.0,
+  2164.0
+ ],
+ "P1": [
+  3.809,
+  2.779,
+  8.802
+ ],
+ "P2": [
+  5.049,
+  2.133,
+  8.797
+ ],
+ "dz": -0.005,
+ "dy": -0.646,
+ "dx": 1.24,
+ "abstand": 1.398,
+ "z1": 8.802,
+ "z2": 8.797,
+ "unsicherheit_rel": 0.0127,
+ "unsicherheit_m": 0.053,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113529 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.4619,0.8869,0=4.224 (+-0.3 m)"
+}

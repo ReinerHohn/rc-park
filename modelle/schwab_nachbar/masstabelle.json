@@ -45,28 +45,28 @@
    "typ": "schnitt_reichweite",
    "z": 2.0,
    "zentrum": [
-    9.057,
-    -0.236
+    9.034,
+    -0.281
    ],
    "richtung": [
     -0.8869,
     0.4619
    ],
-   "quer_max": 0.25,
+   "quer_max": 0.15,
    "r_max": 3.0
   },
   "laube_halb_o": {
    "typ": "schnitt_reichweite",
    "z": 2.0,
    "zentrum": [
-    9.057,
-    -0.236
+    9.034,
+    -0.281
    ],
    "richtung": [
     0.8869,
     -0.4619
    ],
-   "quer_max": 0.25,
+   "quer_max": 0.15,
    "r_max": 3.0
   },
   "first_n": {
@@ -310,6 +310,46 @@
    "z0": 18.0,
    "z1": 25.0,
    "suche": "oben"
+  },
+  "no_loggia": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    8.84,
+    0.159
+   ],
+   "n": [
+    0.46189128778850785,
+    0.8869365469215224
+   ],
+   "z": 9.0,
+   "u0": -4.3,
+   "u1": 4.3,
+   "tiefe": 0.5,
+   "vor": 3.0,
+   "schritt": 0.02,
+   "min_b": 1.0,
+   "max_b": 9.0,
+   "rand": 0.0
+  },
+  "no_fenster": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    4.455,
+    2.498
+   ],
+   "n": [
+    0.46189128778850785,
+    0.8869365469215224
+   ],
+   "z": 8.8,
+   "u0": -1.0,
+   "u1": 1.0,
+   "tiefe": 0.03,
+   "vor": 3.0,
+   "schritt": 0.02,
+   "min_b": 0.3,
+   "max_b": 3.0,
+   "rand": 0.0
   }
  },
  "pruefungen": [
@@ -399,7 +439,8 @@
    "historie": [
     "2026-11-15 angelegt; Ist vorher geschlossene Wand (Loch im Netz)",
     "2026-11-15 Messstelle von 1,0 m auf 0,25 m hinter die Fassadenebene verlegt (LoD2-Koerper liegt dort schraeg hinter der Fassade, bei 1 m Tiefe traf der Strahl erst die LoD2-Wand); Soll unveraendert",
-    "2026-11-15 r_max 5,0 -> 3,0 m: schnitt_reichweite liefert die WEITESTE Kontur im Streifen; jenseits des Pfeilers lagen Reliefkonturen. Soll unveraendert"
+    "2026-11-15 r_max 5,0 -> 3,0 m: schnitt_reichweite liefert die WEITESTE Kontur im Streifen; jenseits des Pfeilers lagen Reliefkonturen. Soll unveraendert",
+    "2026-11-16 Messstelle 0,30 m (statt 0,25) hinter die Fassadenebene, Streifen +-0,15 m: die neue scharfe Wandflaeche lag genau auf dem Streifenrand und zaehlte als Kontur (Wert = r_max 3,0). Soll unveraendert"
    ]
   },
   {
@@ -417,7 +458,8 @@
    "historie": [
     "2026-11-15 angelegt; Ist vorher geschlossene Wand (Loch im Netz)",
     "2026-11-15 Messstelle von 1,0 m auf 0,25 m hinter die Fassadenebene verlegt (LoD2-Koerper liegt dort schraeg hinter der Fassade, bei 1 m Tiefe traf der Strahl erst die LoD2-Wand); Soll unveraendert",
-    "2026-11-15 r_max 5,0 -> 3,0 m: schnitt_reichweite liefert die WEITESTE Kontur im Streifen; jenseits des Pfeilers lagen Reliefkonturen. Soll unveraendert"
+    "2026-11-15 r_max 5,0 -> 3,0 m: schnitt_reichweite liefert die WEITESTE Kontur im Streifen; jenseits des Pfeilers lagen Reliefkonturen. Soll unveraendert",
+    "2026-11-16 Messstelle 0,30 m (statt 0,25) hinter die Fassadenebene, Streifen +-0,15 m: die neue scharfe Wandflaeche lag genau auf dem Streifenrand und zaehlte als Kontur (Wert = r_max 3,0). Soll unveraendert"
    ]
   },
   {
@@ -716,6 +758,38 @@
    "historie": [
     "2026-11-16 angelegt; Ist vorher 15,7 (nur Hauptdach)"
    ]
+  },
+  {
+   "name": "Nordost Loggia: groesstes Feld zwischen den Saeulen (m)",
+   "wert": "no_loggia_breite_max",
+   "soll": [
+    2.1,
+    2.6
+   ],
+   "quelle": "Ablesung am entzerrten Foto 113529: Saeulen bei u 2,84 und 5,25, Oeffnung u 0,63..7,69 (lichte Breite 7,05 m aus foto_mass)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113529-005",
+   "historie": [
+    "2026-11-16 angelegt; Ist vorher geschlossenes Relief"
+   ]
+  },
+  {
+   "name": "Nordost Doppelfenster 1. OG: Breite der Fensternische (m)",
+   "wert": "no_fenster_breite_max",
+   "soll": [
+    1.3,
+    1.5
+   ],
+   "quelle": "foto_mass.py auf der Fassadenebene, Foto 113529",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113529-008",
+   "historie": [
+    "2026-11-16 angelegt"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -754,6 +828,12 @@
    "wer": "Claude (Kontrollbild modell_ansicht von Nordost)",
    "text": "Fluegel (LoD2-Teil 0) im Modell viel zu hoch: angepasstes Satteldach First 21,7 m ueber dem ganzen Teil, die Wand steht vor der linken Haelfte des Fachwerkgiebels (deshalb 3 Fenster nicht geoeffnet). Am Foto Traufe dort ~10-11 m.",
    "naechster_schritt": "Dach des Fluegels als Laser-Hoehenfeld (tools/laserdach.py); danach Traufe/Gauben am Foto messen"
+  },
+  {
+   "datum": "2026-11-16",
+   "wer": "Claude (Modell neben Foto 113529)",
+   "text": "Nordost-Fassade (Fluegel mit Laube) ist nur weiches Netz-Relief: Loggia im 1. OG (7,05 m breit, Bruestung z 6,9-8,0 mit Masswerk, offen bis z 9,83, zwei Saeulen), zwei Doppelfenster rechts (1,40 x 1,46 und ~1,47 x 1,37), Rundfenster (Steinring 1,42 m, Mitte z 2,85), Traufe z 10,0. M-113529-005..-011.",
+   "naechster_schritt": "scharf bauen; offen: Masswerk der Bruestung, Saeulenform, Holzstreben der Laube, Walmdach (jetzt Laser-Sattel), Dachgelaender"
   }
  ]
 }

@@ -66,13 +66,6 @@
  },
  {
   "seite": "wand",
-  "element": "Relief Nordost-Fassade (Teile 0/2) z 0,5-11,3 m",
-  "quelle": "OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm",
-  "hinweis": "Scan-Relief, kein Mass; der dritte Bogen (Laube am Nordostfluegel) ist darin ein Loch = geschlossene Wand (ANNAHME), Rundfenster und Fenster nur weich; LoD2-Kante liegt ~5 Grad schraeg zur Fassade",
-  "seite_name": "wand"
- },
- {
-  "seite": "wand",
   "element": "Fachwerkbalken Nordgiebel, Geschosse A-D (flaches Relief 3,5 cm)",
   "quelle": "Mehrfoto-Fassadenbild (fassade_ortho.py, 12 Fotos, Median) -> tools/fachwerk_aus_ortho.py (Helligkeitsschwelle)",
   "hinweis": "ANNAHME: Balkenstaerke vor dem Putz 3,5 cm; Lage aus Farbschwelle auf dem Mehrfoto-Median statt Kanten-Sweep; linke Giebelhaelfte (im Fassadenbild verdeckt) und oberstes Giebelfeld ohne Balken; Schnitzwerk fehlt",
@@ -107,6 +100,16 @@
   "neigung_nord": 1.44,
   "hinweis": "Form aus der Wolke, nicht aus Fotokanten (kein Foto zeigt es frei); Anschluss an Hauptdach und Turmwand ANNAHME, Traufen nicht gemessen",
   "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "Nordost-Fassade scharf: Loggia mit Bruestung und zwei Saeulen, 2 Doppelfenster, Rundfenster",
+  "quelle": "foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-005..-011), Picks ueber wand_ortho.py",
+  "loggia_breite": 7.05,
+  "loggia_hoehe": 1.82,
+  "bruestung": 1.1,
+  "hinweis": "ANNAHME: Loggiatiefe 1,5 m, Saeulen als Vierkant, Bruestung geschlossen (Masswerk fehlt), Gewaende 5 cm; Walmdach, Dachgelaender, Eckquader, Schriftzug fehlen",
+  "seite_name": "wand"
  },
  {
   "seite": "wand",

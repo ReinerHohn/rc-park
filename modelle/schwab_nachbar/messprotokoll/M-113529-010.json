@@ -1,0 +1,32 @@
+{
+ "id": "M-113529-010",
+ "foto": "113529",
+ "kamera": "K-eigen__IMG_20261106_113529",
+ "ebene": "0.4619,0.8869,0=4.224",
+ "name": "Nordost: Rundfenster Aussendurchmesser Steinring",
+ "mess_px": [
+  1324.0,
+  2896.0,
+  1143.0,
+  2903.0
+ ],
+ "P1": [
+  4.465,
+  2.437,
+  2.847
+ ],
+ "P2": [
+  5.728,
+  1.779,
+  2.848
+ ],
+ "dz": 0.001,
+ "dy": -0.658,
+ "dx": 1.263,
+ "abstand": 1.424,
+ "z1": 2.847,
+ "z2": 2.848,
+ "unsicherheit_rel": 0.0133,
+ "unsicherheit_m": 0.053,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113529 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.4619,0.8869,0=4.224 (+-0.3 m)"
+}

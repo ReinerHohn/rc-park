@@ -1,0 +1,32 @@
+{
+ "id": "M-113529-011",
+ "foto": "113529",
+ "kamera": "K-eigen__IMG_20261106_113529",
+ "ebene": "0.4619,0.8869,0=4.224",
+ "name": "Nordost: Doppelfenster Zwischengeschoss Hoehe",
+ "mess_px": [
+  1321.0,
+  2609.0,
+  1321.0,
+  2439.0
+ ],
+ "P1": [
+  4.485,
+  2.427,
+  5.021
+ ],
+ "P2": [
+  4.483,
+  2.428,
+  6.391
+ ],
+ "dz": 1.37,
+ "dy": 0.001,
+ "dx": -0.001,
+ "abstand": 1.37,
+ "z1": 5.021,
+ "z2": 6.391,
+ "unsicherheit_rel": 0.0132,
+ "unsicherheit_m": 0.052,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113529 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.4619,0.8869,0=4.224 (+-0.3 m)"
+}
