@@ -12,10 +12,13 @@ Die WAND (Lage, Kanten, Oeffnungen) bleibt Sache des Generators. Aus dem Netz ko
 import sys, os, argparse, numpy as np
 
 
-def koerper(npz, tiefe=0.06, faktor=1.0, sockel=0.005):
+def koerper(npz, tiefe=0.06, faktor=1.0, sockel=0.005, null_felder=()):
     from manifold3d import Manifold, Mesh
     Z = np.load(npz); rel = Z["rel"].astype(np.float64) * faktor; H, W = rel.shape; a = Z["a"]; t = Z["t"]; n = Z["n"]; u0, z0, px = float(Z["u0"]), float(Z["z0"]), float(Z["px"])
-    ii, jj = np.mgrid[0:H, 0:W]; rand = np.minimum.reduce([ii, jj, H - 1 - ii, W - 1 - jj]); rel = rel * np.clip(rand / 2.0, 0, 1)        # Rand auf 0 auslaufen
+    ii, jj = np.mgrid[0:H, 0:W]
+    for f0, f1, g0, g1 in null_felder:                                   # Felder (u0, u1, z0, z1), in denen der Generator selbst ein scharfes Bauteil baut: Relief dort 0
+        rel[(u0 + (jj + 0.5) * px >= f0) & (u0 + (jj + 0.5) * px <= f1) & (z0 + (H - 1 - ii + 0.5) * px >= g0) & (z0 + (H - 1 - ii + 0.5) * px <= g1)] = 0.0
+    rand = np.minimum.reduce([ii, jj, H - 1 - ii, W - 1 - jj]); rel = rel * np.clip(rand / 2.0, 0, 1)        # Rand auf 0 auslaufen
     # sockel: Platte steht ueberall etwas vor der Wandebene - deckungsgleiche Flaechen mit der Wand ergeben Splitter (STL nicht wasserdicht, 656 Koerper)
     rel = np.maximum(rel, -tiefe + 0.01) + sockel; u = u0 + (jj + 0.5) * px; z = z0 + (H - 1 - ii + 0.5) * px
     def P(d): return np.c_[(a[0] + u * t[0] + d * n[0]).ravel(), (a[1] + u * t[1] + d * n[1]).ravel(), z.ravel()]

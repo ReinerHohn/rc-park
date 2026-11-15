@@ -18,14 +18,21 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 | Tor Nord: halbe lichte Breite nach Ost bei z 2 (m) | 2.37 | 2.2..2.43 | foto_kalibriert | K-eigen__IMG_20261106_113602 (SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen) | OK | foto_mass.py --kamera/--ebene auf der Nordwandebene (0,17 m vor der gepeilten Wand = Sockelflaeche), Frontalfoto 113602 (1 Grad zur Wandnormalen); Lage der Kanten auf der Ebene durch Schraegfoto 113310 (-47 Grad) bestaetigt; wie West (M-113602-001), linker Pfeiler 3,82 m ab Wandecke Ost (M-113602-006) |
 | Tor Nord: Scheitel der Durchfahrt innen z (m) | 6.92 | 6.78..7.08 | foto_kalibriert | K-eigen__IMG_20261106_113602 (SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen) | OK | foto_mass.py --kamera/--ebene auf der Nordwandebene (0,17 m vor der gepeilten Wand = Sockelflaeche), Frontalfoto 113602 (1 Grad zur Wandnormalen); Lage der Kanten auf der Ebene durch Schraegfoto 113310 (-47 Grad) bestaetigt; lichte Hoehe 6,88 m ueber Pflaster z 0,05 (M-113602-004); Scheitel aussen 7,20 m (M-113602-003, Gegenprobe M-113310-001 ebenfalls 7,20) |
 | Tor Nord: halbe Breite im Bogen bei z 5,55 (m) | 1.95 | 1.85..2.15 | foto_kalibriert | K-eigen__IMG_20261106_113602 (SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen) | OK | foto_mass.py --kamera/--ebene auf der Nordwandebene (0,17 m vor der gepeilten Wand = Sockelflaeche), Frontalfoto 113602 (1 Grad zur Wandnormalen); Lage der Kanten auf der Ebene durch Schraegfoto 113310 (-47 Grad) bestaetigt; Kaempfer 4,25 m ueber Pflaster (M-113602-005) und Scheitel 6,88 m; ANNAHME Spitzbogen aus zwei Kreisboegen r 2,65 m -> 2,00 m |
+| Fenster Nord (fl_kante_innen): Tiefe x der ersten Flaeche bei u 3.06 z 25.00 (m) | 3.52 | 3.08..3.6 | foto_kalibriert | K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht) | OK | foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: linke Nischenkante 2,96 m ab Ecke: 0,1 m innerhalb liegt die Nische (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m) |
+| Fenster Nord (fl_kante_aussen): Tiefe x der ersten Flaeche bei u 2.86 z 25.00 (m) | 3.68 | 3.65..3.73 | foto_kalibriert | K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht) | OK | foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: linke Nischenkante 2,96 m: 0,1 m ausserhalb ist Wand (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m) |
+| Fenster Nord (fl_scheitel_innen): Tiefe x der ersten Flaeche bei u 4.00 z 26.63 (m) | 3.51 | 3.07..3.59 | foto_kalibriert | K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht) | OK | foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: Nischenscheitel = Sohlbank 24,21 + 2,52 = 26,73: 0,1 m darunter Nische (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m) |
+| Fenster Nord (fl_scheitel_aussen): Tiefe x der ersten Flaeche bei u 4.00 z 26.83 (m) | 3.67 | 3.64..3.72 | foto_kalibriert | K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht) | OK | foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: Nischenscheitel 26,73: 0,1 m darueber Wand (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m) |
+| Fenster Nord (fr_kante_innen): Tiefe x der ersten Flaeche bei u 7.35 z 25.00 (m) | 3.46 | 3.02..3.54 | foto_kalibriert | K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht) | OK | foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: rechtes Fenster: linke Nischenkante 7,25 m ab Ecke (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m) |
+| Fenster Nord (fr_kante_aussen): Tiefe x der ersten Flaeche bei u 7.15 z 25.00 (m) | 3.62 | 3.59..3.67 | foto_kalibriert | K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht) | OK | foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: rechtes Fenster: linke Nischenkante 7,25 m (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m) |
+| Fenster Nord (fl_oeffnung): Tiefe x der ersten Flaeche bei u 4.00 z 25.00 (m) | 3.21 | 2.77..3.42 | foto_kalibriert | K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht) | OK | foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: Oeffnung 0,68 m breit in Nischenmitte: tiefer als die Nische (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m) |
 
 ## Belegt durch
 
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
 - **sfm_bodenanker**: 7 von 7 Pruefungen gruen (COLMAP-Netz je Fassadenseite (tools/sfm_ausrichten.py), 7 Parameter aus LoD2-Eckkanten in >= 4 Fotos, Hoehenlage aus ANNAHME Strassenkamera 1,7 +- 0,6 m; Massstab +-2-3 %, Hoehe +-0,7 m systematisch; sieht keine Fassadenzaehlung (Punkte, keine Semantik). Register AH)
-- **foto_kalibriert**: 4 von 4 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
+- **foto_kalibriert**: 11 von 11 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
 
-## Elemente des Generators: 9 belegt, 0 Annahmen
+## Elemente des Generators: 10 belegt, 0 Annahmen
 
 - wand: Grundriss Teil 0 - LoD2 DEBW_001000hPLcp GroundSurface 0
 - wand: Teil 1 (ohne Dachmessung) - LoD2 DEBW_001000hPLcp Wandoberkante (31 eigene Waende)
@@ -36,6 +43,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - wand: Nordwand (Ebene) - Foto-Peilung foto_mass.py --tri2d der Wandecken am Uhrgeschoss (M-113205-012/-013)
 - wand: Relief Nordwand z 0,6-29,6 m - OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)
 - wand: Tordurchfahrt Nord (Spitzbogen) - foto_mass.py auf der Sockelebene, Frontalfoto 113602 + Schraegfoto 113310 (M-113602-001..-006, M-113310-001)
+- wand: 2 Rundbogenfenster Nord (Blendnische + Oeffnung + Sohlbank) - foto_mass.py auf der Wandebene, Foto 113029 (M-113029-001..-007)
 
 ## Beobachtungen ohne Pruefung
 

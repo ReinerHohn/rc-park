@@ -54,7 +54,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     from relief_einsatz import koerper as relief_koerper
     rel_n = os.path.join(HERE, "schwab_v3", "relief", "nord.npz")
     if os.path.exists(rel_n) and os.environ.get("OHNE_RELIEF") != "1":
-        rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12)
+        rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12, null_felder=[(2.6, 5.4, 23.9, 27.1), (6.9, 9.7, 23.9, 27.1)])   # Fensterfelder baut der Generator scharf (unten)
         beleg("wand", "Relief Nordwand z 0,6-29,6 m", "OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)",
               hinweis="Scan-Relief, kein Mass: Torbogen, Holzgalerie und Vordach sind darin Loecher (glatte Wand) und fehlen noch; Wandanzug (~0,6 cm/m) abgezogen")
     # Tordurchfahrt Nord als ECHTE Oeffnung aus Fotokanten (Nutzer 13:30: Relief mit dem Generator schaerfen). Masse M-113602-001..-006 auf der Sockelebene.
@@ -70,6 +70,18 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     rumpf = rumpf - innen - aussen
     beleg("wand", "Tordurchfahrt Nord (Spitzbogen)", "foto_mass.py auf der Sockelebene, Frontalfoto 113602 + Schraegfoto 113310 (M-113602-001..-006, M-113310-001)", lichte_breite=4.63,
           kaempfer=4.25, lichte_hoehe=6.88, scheitel_aussen=7.20, hinweis="ANNAHME: Kreisboegen; Bogenring als Stufe 0,25 m; Durchfahrt mit gleichem Querschnitt bis Sued (Suedbogen nicht gemessen); Kaempfersteine fehlen")
+    # Zwei Rundbogenfenster Nord (Blendnische mit Sohlbank, darin schmale Oeffnung mit Laden), Masse M-113029-001..-007 (Foto 113029, Wandebene)
+    def rundbogen(breite, unten, scheitel, nseg=20):
+        r = breite / 2; return CrossSection([[[-r, unten], [r, unten]] + [[r * np.cos(w), scheitel - r + r * np.sin(w)] for w in np.linspace(0, np.pi, nseg)]])
+    M_w = [[tn[0], 0.0, nn[0], ca[0]], [tn[1], 0.0, nn[1], ca[1]], [0.0, 1.0, 0.0, 0.0]]            # lokal (u ab Wandecke Ost, z, nach aussen) -> Welt
+    F_SOHL, F_NB, F_NH, F_OB, F_OH, F_NT, F_OT = 24.21, 2.09, 2.52, 0.68, 1.89, 0.15, 0.45          # Sohlbank z; Nische Breite/Hoehe; Oeffnung Breite/Hoehe; Tiefen = ANNAHME
+    for um in (2.96 + F_NB / 2, 7.25 + F_NB / 2):
+        nische = M.extrude(rundbogen(F_NB, F_SOHL, F_SOHL + F_NH), F_NT + 0.6).translate((um, 0, -F_NT)).transform(M_w)
+        oeffn = M.extrude(rundbogen(F_OB, F_SOHL, F_SOHL + F_OH), F_OT + 0.6).translate((um, 0, -F_OT)).transform(M_w)
+        bank = M.cube((F_NB + 0.1, 0.10, 0.12 + F_NT)).translate((um - F_NB / 2 - 0.05, F_SOHL - 0.10, -F_NT)).transform(M_w)   # Sohlbank: ANNAHME 10 cm stark, 12 cm Ausladung
+        rumpf = rumpf - nische - oeffn + bank
+    beleg("wand", "2 Rundbogenfenster Nord (Blendnische + Oeffnung + Sohlbank)", "foto_mass.py auf der Wandebene, Foto 113029 (M-113029-001..-007)", nische_breite=F_NB, nische_hoehe=F_NH,
+          oeffnung_breite=F_OB, oeffnung_hoehe=F_OH, sohlbank_z=F_SOHL, hinweis="ANNAHME: Nischentiefe 0,15 m, Laden 0,45 m hinter der Wand, Sohlbank 10 x 12 cm; rechtes Fenster = Masse des linken, nur Lage gemessen")
     koerper = rumpf + dach + lat
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:

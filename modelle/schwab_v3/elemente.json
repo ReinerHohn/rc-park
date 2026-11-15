@@ -79,5 +79,17 @@
   "scheitel_aussen": 7.2,
   "hinweis": "ANNAHME: Kreisboegen; Bogenring als Stufe 0,25 m; Durchfahrt mit gleichem Querschnitt bis Sued (Suedbogen nicht gemessen); Kaempfersteine fehlen",
   "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "2 Rundbogenfenster Nord (Blendnische + Oeffnung + Sohlbank)",
+  "quelle": "foto_mass.py auf der Wandebene, Foto 113029 (M-113029-001..-007)",
+  "nische_breite": 2.09,
+  "nische_hoehe": 2.52,
+  "oeffnung_breite": 0.68,
+  "oeffnung_hoehe": 1.89,
+  "sohlbank_z": 24.21,
+  "hinweis": "ANNAHME: Nischentiefe 0,15 m, Laden 0,45 m hinter der Wand, Sohlbank 10 x 12 cm; rechtes Fenster = Masse des linken, nur Lage gemessen",
+  "seite_name": "wand"
  }
 ]

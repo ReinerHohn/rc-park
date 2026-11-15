@@ -142,6 +142,48 @@
    ],
    "quer_max": 0.3,
    "r_max": 4.0
+  },
+  "fl_kante_innen": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 25.0,
+   "quer": 12.28
+  },
+  "fl_kante_aussen": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 25.0,
+   "quer": 12.08
+  },
+  "fl_scheitel_innen": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 26.63,
+   "quer": 13.225
+  },
+  "fl_scheitel_aussen": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 26.83,
+   "quer": 13.225
+  },
+  "fr_kante_innen": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 25.0,
+   "quer": 16.569
+  },
+  "fr_kante_aussen": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 25.0,
+   "quer": 16.369
+  },
+  "fl_oeffnung": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 25.0,
+   "quer": 13.225
   }
  },
  "pruefungen": [
@@ -349,6 +391,118 @@
    "historie": [
     "2026-11-15 angelegt aus Nutzerbeobachtung 13:30 (Relief unscharf, Bauteile mit Generator schaerfen); Ist vorher: keine Oeffnung (nan)"
    ]
+  },
+  {
+   "name": "Fenster Nord (fl_kante_innen): Tiefe x der ersten Flaeche bei u 3.06 z 25.00 (m)",
+   "wert": "fl_kante_innen",
+   "soll": [
+    3.08,
+    3.6
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: linke Nischenkante 2,96 m ab Ecke: 0,1 m innerhalb liegt die Nische (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
+   "protokoll": "M-113029-005",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+   ]
+  },
+  {
+   "name": "Fenster Nord (fl_kante_aussen): Tiefe x der ersten Flaeche bei u 2.86 z 25.00 (m)",
+   "wert": "fl_kante_aussen",
+   "soll": [
+    3.65,
+    3.73
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: linke Nischenkante 2,96 m: 0,1 m ausserhalb ist Wand (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
+   "protokoll": "M-113029-005",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+   ]
+  },
+  {
+   "name": "Fenster Nord (fl_scheitel_innen): Tiefe x der ersten Flaeche bei u 4.00 z 26.63 (m)",
+   "wert": "fl_scheitel_innen",
+   "soll": [
+    3.07,
+    3.59
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: Nischenscheitel = Sohlbank 24,21 + 2,52 = 26,73: 0,1 m darunter Nische (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
+   "protokoll": "M-113029-002",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+   ]
+  },
+  {
+   "name": "Fenster Nord (fl_scheitel_aussen): Tiefe x der ersten Flaeche bei u 4.00 z 26.83 (m)",
+   "wert": "fl_scheitel_aussen",
+   "soll": [
+    3.64,
+    3.72
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: Nischenscheitel 26,73: 0,1 m darueber Wand (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
+   "protokoll": "M-113029-002",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+   ]
+  },
+  {
+   "name": "Fenster Nord (fr_kante_innen): Tiefe x der ersten Flaeche bei u 7.35 z 25.00 (m)",
+   "wert": "fr_kante_innen",
+   "soll": [
+    3.02,
+    3.54
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: rechtes Fenster: linke Nischenkante 7,25 m ab Ecke (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
+   "protokoll": "M-113029-006",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+   ]
+  },
+  {
+   "name": "Fenster Nord (fr_kante_aussen): Tiefe x der ersten Flaeche bei u 7.15 z 25.00 (m)",
+   "wert": "fr_kante_aussen",
+   "soll": [
+    3.59,
+    3.67
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: rechtes Fenster: linke Nischenkante 7,25 m (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
+   "protokoll": "M-113029-006",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+   ]
+  },
+  {
+   "name": "Fenster Nord (fl_oeffnung): Tiefe x der ersten Flaeche bei u 4.00 z 25.00 (m)",
+   "wert": "fl_oeffnung",
+   "soll": [
+    2.77,
+    3.42
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene, Foto 113029 auf der Wandebene: Oeffnung 0,68 m breit in Nischenmitte: tiefer als die Nische (Tiefe selbst = ANNAHME, geprueft wird die Kantenlage +-0,1 m)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "K-eigen__IMG_20261106_113029 (SfM-Buendel, Rahmen lotrecht)",
+   "protokoll": "M-113029-003",
+   "historie": [
+    "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -428,100 +582,100 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-1700-1100",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 38.71,
-   "z_bis": 38.71,
+   "z_von": 38.73,
+   "z_bis": 38.73,
    "xyz": [
-    2.67,
-    19.86,
-    38.71
+    2.66,
+    19.87,
+    38.73
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.71 m, y=19.86 m (Zelle [1700, 1100, 100], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.73 m, y=19.87 m (Zelle [1700, 1100, 100], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1800-1200",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1600-1200",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 36.77,
-   "z_bis": 36.77,
+   "z_von": 37.52,
+   "z_bis": 37.52,
    "xyz": [
-    2.52,
-    21.01,
-    36.77
+    1.16,
+    18.59,
+    37.52
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=36.77 m, y=21.01 m (Zelle [1800, 1200, 100], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=37.52 m, y=18.59 m (Zelle [1600, 1200, 100], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1800-1300",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1800-1200",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 34.11,
-   "z_bis": 34.11,
+   "z_von": 36.82,
+   "z_bis": 36.82,
    "xyz": [
-    2.65,
-    20.69,
-    34.11
+    2.48,
+    21.04,
+    36.82
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=34.11 m, y=20.69 m (Zelle [1800, 1300, 100], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=36.82 m, y=21.04 m (Zelle [1800, 1200, 100], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1800-1300",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 34.13,
+   "z_bis": 34.13,
+   "xyz": [
+    2.63,
+    20.7,
+    34.13
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=34.13 m, y=20.7 m (Zelle [1800, 1300, 100], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5)",
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-1000-1500",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
    "z_von": 31.24,
    "z_bis": 31.24,
    "xyz": [
-    -2.13,
+    -2.14,
     9.6,
     31.24
    ],
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=31.24 m, y=9.6 m (Zelle [1000, 1500, 100], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1000-1600",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 28.73,
-   "z_bis": 28.73,
-   "xyz": [
-    -1.68,
-    9.51,
-    28.73
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.73 m, y=9.51 m (Zelle [1000, 1600, 100], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1000-1700",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1000-1600",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 26.88,
-   "z_bis": 26.88,
+   "z_von": 28.72,
+   "z_bis": 28.72,
    "xyz": [
-    -1.69,
-    9.53,
-    26.88
+    -1.67,
+    9.51,
+    28.72
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.88 m, y=9.53 m (Zelle [1000, 1700, 100], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.72 m, y=9.51 m (Zelle [1000, 1600, 100], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ]

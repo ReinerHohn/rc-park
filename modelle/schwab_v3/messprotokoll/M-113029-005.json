@@ -1,0 +1,32 @@
+{
+ "id": "M-113029-005",
+ "foto": "113029",
+ "kamera": "K-eigen__IMG_20261106_113029",
+ "ebene": "0.99989,0.0148,0=3.886",
+ "name": "Fenster Nord links: Nischenkante ab Wandecke Ost (u=0)",
+ "mess_px": [
+  1372.0,
+  2223.0,
+  1672.0,
+  2232.0
+ ],
+ "P1": [
+  3.75,
+  9.217,
+  25.002
+ ],
+ "P2": [
+  3.706,
+  12.181,
+  25.003
+ ],
+ "dz": 0.002,
+ "dy": 2.964,
+ "dx": -0.044,
+ "abstand": 2.964,
+ "z1": 25.002,
+ "z2": 25.003,
+ "unsicherheit_rel": 0.0037,
+ "unsicherheit_m": 0.052,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113029 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.99989,0.0148,0=3.886 (+-0.3 m)"
+}

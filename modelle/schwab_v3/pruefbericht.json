@@ -13,7 +13,14 @@
   "tor_halb_west": 2.266284181097376,
   "tor_halb_ost": 2.372950791446179,
   "tor_scheitel_z": 6.919999999999959,
-  "tor_halb_z555": 1.952121087049644
+  "tor_halb_z555": 1.952121087049644,
+  "fl_kante_innen": 3.524687559652669,
+  "fl_kante_aussen": 3.682664800056479,
+  "fl_scheitel_innen": 3.510699153806307,
+  "fl_scheitel_aussen": 3.665715880681134,
+  "fr_kante_innen": 3.4611990574316778,
+  "fr_kante_aussen": 3.619176620566691,
+  "fl_oeffnung": 3.2106661729699297
  },
  "pruefungen": [
   {
@@ -142,6 +149,76 @@
    "soll": [
     1.85,
     2.15
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Nord (fl_kante_innen): Tiefe x der ersten Flaeche bei u 3.06 z 25.00 (m)",
+   "wert": 3.524687559652669,
+   "soll": [
+    3.08,
+    3.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Nord (fl_kante_aussen): Tiefe x der ersten Flaeche bei u 2.86 z 25.00 (m)",
+   "wert": 3.682664800056479,
+   "soll": [
+    3.65,
+    3.73
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Nord (fl_scheitel_innen): Tiefe x der ersten Flaeche bei u 4.00 z 26.63 (m)",
+   "wert": 3.510699153806307,
+   "soll": [
+    3.07,
+    3.59
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Nord (fl_scheitel_aussen): Tiefe x der ersten Flaeche bei u 4.00 z 26.83 (m)",
+   "wert": 3.665715880681134,
+   "soll": [
+    3.64,
+    3.72
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Nord (fr_kante_innen): Tiefe x der ersten Flaeche bei u 7.35 z 25.00 (m)",
+   "wert": 3.4611990574316778,
+   "soll": [
+    3.02,
+    3.54
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Nord (fr_kante_aussen): Tiefe x der ersten Flaeche bei u 7.15 z 25.00 (m)",
+   "wert": 3.619176620566691,
+   "soll": [
+    3.59,
+    3.67
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster Nord (fl_oeffnung): Tiefe x der ersten Flaeche bei u 4.00 z 25.00 (m)",
+   "wert": 3.2106661729699297,
+   "soll": [
+    2.77,
+    3.42
    ],
    "ok": true,
    "status": "ok"

@@ -12,40 +12,40 @@
  "cy": 2000.0,
  "tol_m": 0.35,
  "laenge_m": 0.8,
- "anteil_modellkanten_ohne_foto": 0.1772,
- "anteil_fotokanten_ohne_modell": 0.6862,
+ "anteil_modellkanten_ohne_foto": 0.1656,
+ "anteil_fotokanten_ohne_modell": 0.69,
  "anteil_modellkanten_nicht_beurteilbar": 0.0,
  "versatz": {
   "versatz_px": [
-   15,
-   -1
+   19,
+   -3
   ],
-  "versatz_m": 0.155,
-  "gewinn": 0.0113,
-  "kosten0": 1.26791,
-  "kosten_best": 1.25355,
+  "versatz_m": 0.199,
+  "gewinn": 0.0131,
+  "kosten0": 1.27221,
+  "kosten_best": 1.25552,
   "deutlich": false
  },
  "treffer": [
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 1238.11,
+   "laenge_m": 1282.03,
    "box": [
-    1395,
+    1400,
     1909,
     2577,
     3479
    ],
    "xyz": [
-    3.63,
-    16.97,
-    18.33
+    3.62,
+    16.88,
+    18.17
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 400.33,
+   "laenge_m": 401.27,
    "box": [
     1738,
     1224,
@@ -54,14 +54,14 @@
    ],
    "xyz": [
     3.63,
-    15.32,
+    15.3,
     33.41
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 350.73,
+   "laenge_m": 336.16,
    "box": [
     1409,
     1087,
@@ -69,15 +69,15 @@
     1916
    ],
    "xyz": [
-    3.65,
-    15.19,
-    33.64
+    3.64,
+    15.39,
+    33.88
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 272.68,
+   "laenge_m": 261.54,
    "box": [
     2387,
     3306,
@@ -86,104 +86,104 @@
    ],
    "xyz": [
     3.43,
-    20.98,
+    20.96,
     10.75
    ],
    "in_ankerzone": true
   },
   {
    "art": "FALSCH/ERFUNDEN (Modellkante ohne Fotokante)",
-   "laenge_m": 214.94,
+   "laenge_m": 131.68,
    "box": [
-    1354,
-    883,
-    2231,
+    1692,
+    941,
+    2250,
     986
    ],
    "xyz": [
-    3.79,
-    13.27,
+    3.72,
+    14.98,
     38.97
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 193.41,
+   "laenge_m": 109.68,
    "box": [
     1376,
-    2074,
-    1536,
-    2958
+    2503,
+    1527,
+    2940
    ],
    "xyz": [
     3.71,
-    10.15,
-    21.48
+    10.21,
+    19.69
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 106.4,
+   "laenge_m": 107.03,
    "box": [
     1583,
     1005,
-    2387,
+    2396,
     1077
    ],
    "xyz": [
     3.63,
-    15.06,
+    15.09,
     38.2
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 99.96,
+   "laenge_m": 102.6,
+   "box": [
+    1418,
+    1873,
+    1706,
+    2797
+   ],
+   "xyz": [
+    3.71,
+    11.07,
+    24.81
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 86.27,
    "box": [
     1372,
-    3504,
-    1598,
+    3553,
+    1582,
     3908
    ],
    "xyz": [
-    3.7,
-    10.6,
+    3.71,
+    10.55,
     10.48
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 85.11,
+   "laenge_m": 76.26,
    "box": [
-    1546,
-    1918,
-    1706,
-    2797
+    2066,
+    3645,
+    2368,
+    3900
    ],
    "xyz": [
-    3.7,
-    11.2,
-    24.06
-   ],
-   "in_ankerzone": true
-  },
-  {
-   "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 83.2,
-   "box": [
-    1656,
-    2055,
-    1820,
-    2328
-   ],
-   "xyz": [
-    3.68,
-    12.82,
-    25.41
+    3.62,
+    17.73,
+    9.88
    ],
    "in_ankerzone": true
   }
@@ -192,12 +192,12 @@
   -2.5,
   57.800001586914064
  ],
- "modellkanten_px": 157954,
- "fotokanten_px": 523057,
+ "modellkanten_px": 156909,
+ "fotokanten_px": 524443,
  "versatz_angewandt": false,
  "versatz_max_m": 1.5,
- "rot_versatz": 0.1772,
- "gelb_versatz": 0.6862,
+ "rot_versatz": 0.1656,
+ "gelb_versatz": 0.69,
  "gpu": true,
  "raster": true
 }

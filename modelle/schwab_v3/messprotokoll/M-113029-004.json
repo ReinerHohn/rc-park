@@ -1,0 +1,32 @@
+{
+ "id": "M-113029-004",
+ "foto": "113029",
+ "kamera": "K-eigen__IMG_20261106_113029",
+ "ebene": "0.99989,0.0148,0=3.886",
+ "name": "Fenster Nord links: Oeffnung Sohlbank bis Scheitel",
+ "mess_px": [
+  1775.0,
+  2312.0,
+  1777.0,
+  2130.0
+ ],
+ "P1": [
+  3.691,
+  13.207,
+  24.211
+ ],
+ "P2": [
+  3.691,
+  13.21,
+  26.097
+ ],
+ "dz": 1.886,
+ "dy": 0.003,
+ "dx": -0.0,
+ "abstand": 1.886,
+ "z1": 24.211,
+ "z2": 26.097,
+ "unsicherheit_rel": 0.0037,
+ "unsicherheit_m": 0.048,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113029 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.99989,0.0148,0=3.886 (+-0.3 m)"
+}
