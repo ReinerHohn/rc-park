@@ -29,6 +29,10 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         hu_ = koerper + koerper.translate(tuple(0.8 * WNO.n) + (0.0,)) + koerper.translate(tuple(1.6 * WNO.n) + (0.0,))
         koerper = koerper + (relief_koerper(rp, tiefe=0.9, trend=True) ^ hu_)
         beleg("wand", "Relief Nordost-Fassade (Teile 0/2) z 0,5-11,3 m", "OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm", hinweis="Scan-Relief, kein Mass; der dritte Bogen (Laube am Nordostfluegel) ist darin ein Loch = geschlossene Wand (ANNAHME), Rundfenster und Fenster nur weich; LoD2-Kante liegt ~5 Grad schraeg zur Fassade")
+    WL = Wand((5.15, 2.08), (11.89, -1.43), aussen=(9.0, 12.0))                 # Nordost-Fassade im Erdgeschoss: Wandgerade aus der dichten Wolke (23 952 Punkte, Rest 0,8 cm)
+    koerper = koerper - WL.prisma(spitzbogen(5.41 / 2, 3.5, 5.83), u=4.535, w0=-4.0, w1=2.2)       # Laube (dritter Bogen): Masse M-113529-001..-004; Tiefe 4 m = ANNAHME (offene Halle, Rueckwand im Foto sichtbar)
+    beleg("wand", "Laube Nordost (dritter Bogen)", "foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-001..-004), Gegenprobe Foto 113452 (gleiche Kanten aus anderem Winkel)", lichte_breite=5.41, scheitel=5.83, kaempfer=3.5,
+          hinweis="ANNAHME: Tiefe der Halle 4 m, Kreisboegen; Masswerkbruestung darueber (z 7-8 m), Holzstreben in der Laube und Treppe dahinter fehlen")
     koerper = koerper - WN.prisma(spitzbogen(3.20, 3.90, 6.35), u=3.30, w0=-7.0, w1=1.7) - WS.prisma(spitzbogen(3.15, 4.05, 6.39), u=5.25, w0=-7.0, w1=2.4)
     beleg("wand", "Durchfahrt (zweiter Torbogen) Nord und Sued", "foto_mass.py auf den Fassadenebenen, Fotos 113310 (Nord) und commons 217 (Sued): M-113310-001..-004, M-commons217-001..-003", nord_halbe_breite=3.20,
           nord_scheitel=6.35, nord_kaempfer=3.90, sued_halbe_breite=3.15, sued_scheitel=6.39, sued_kaempfer=4.05,

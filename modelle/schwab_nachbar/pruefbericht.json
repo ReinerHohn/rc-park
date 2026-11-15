@@ -5,7 +5,10 @@
   "wasserdicht": 1.0,
   "koerper": 1.0,
   "tor_n_scheitel": 6.339999999999961,
-  "tor_s_scheitel": 6.37999999999996
+  "tor_s_scheitel": 6.37999999999996,
+  "laube_scheitel": 5.819999999999961,
+  "laube_halb_w": 2.705039236085863,
+  "laube_halb_o": 2.7050350505554768
  },
  "pruefungen": [
   {
@@ -44,6 +47,36 @@
    "soll": [
     6.2,
     6.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laube Nordost (laube_scheitel) (m)",
+   "wert": 5.819999999999961,
+   "soll": [
+    5.65,
+    6.0
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laube Nordost (laube_halb_w) (m)",
+   "wert": 2.705039236085863,
+   "soll": [
+    2.55,
+    2.85
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laube Nordost (laube_halb_o) (m)",
+   "wert": 2.7050350505554768,
+   "soll": [
+    2.55,
+    2.85
    ],
    "ok": true,
    "status": "ok"

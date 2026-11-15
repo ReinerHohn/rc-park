@@ -1,0 +1,32 @@
+{
+ "id": "M-113529-003",
+ "foto": "113529",
+ "kamera": "K-eigen__IMG_20261106_113529",
+ "ebene": "0.4619,0.8869,0=4.224",
+ "name": "Laubenbogen Nordost: Kaempfer ueber Rahmen-Null",
+ "mess_px": [
+  286.0,
+  3335.0,
+  349.0,
+  2851.0
+ ],
+ "P1": [
+  11.569,
+  -1.263,
+  0.002
+ ],
+ "P2": [
+  11.569,
+  -1.263,
+  3.502
+ ],
+ "dz": 3.5,
+ "dy": 0.0,
+ "dx": -0.0,
+ "abstand": 3.5,
+ "z1": 0.002,
+ "z2": 3.502,
+ "unsicherheit_rel": 0.0118,
+ "unsicherheit_m": 0.08,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113529 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.4619,0.8869,0=4.224 (+-0.3 m)"
+}

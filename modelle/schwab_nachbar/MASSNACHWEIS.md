@@ -9,13 +9,16 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 | Anzahl getrennte Koerper | 1.00 | 1..1 | modell | - | OK | Schwebende Teile |
 | Durchfahrt (tor_n_scheitel) (m) | 6.34 | 6.15..6.55 | foto_kalibriert | SfM-Neuaufbau, Rahmen = Lasermassstab 0,933 | OK | foto_mass.py --kamera/--ebene auf der Fassadenebene (Wandgerade aus der dichten Wolke), Kameras aus dem SfM-Neuaufbau; Torbogen Nord Scheitel innen 6,35 m (Foto 113310) |
 | Durchfahrt (tor_s_scheitel) (m) | 6.38 | 6.2..6.6 | foto_kalibriert | SfM-Neuaufbau, Rahmen = Lasermassstab 0,933 | OK | foto_mass.py --kamera/--ebene auf der Fassadenebene (Wandgerade aus der dichten Wolke), Kameras aus dem SfM-Neuaufbau; Torbogen Sued Scheitel innen 6,39 m (Foto commons 217) |
+| Laube Nordost (laube_scheitel) (m) | 5.82 | 5.65..6 | foto_kalibriert | SfM-Neuaufbau, Rahmen = Lasermassstab 0,933 | OK | foto_mass.py --kamera/--ebene auf der Nordost-Fassade (Wandgerade aus der dichten Wolke), Foto 113529: Scheitel innen 5,83 m |
+| Laube Nordost (laube_halb_w) (m) | 2.71 | 2.55..2.85 | foto_kalibriert | SfM-Neuaufbau, Rahmen = Lasermassstab 0,933 | OK | foto_mass.py --kamera/--ebene auf der Nordost-Fassade (Wandgerade aus der dichten Wolke), Foto 113529: lichte Breite 5,41 m, Achse u 4,535 |
+| Laube Nordost (laube_halb_o) (m) | 2.71 | 2.55..2.85 | foto_kalibriert | SfM-Neuaufbau, Rahmen = Lasermassstab 0,933 | OK | foto_mass.py --kamera/--ebene auf der Nordost-Fassade (Wandgerade aus der dichten Wolke), Foto 113529: lichte Breite 5,41 m |
 
 ## Belegt durch
 
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
-- **foto_kalibriert**: 2 von 2 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
+- **foto_kalibriert**: 5 von 5 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
 
-## Elemente des Generators: 10 belegt, 0 Annahmen
+## Elemente des Generators: 11 belegt, 0 Annahmen
 
 - dach: Dach Teil 0 (sattel_a) - Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_0010007Tvdv-Grundriss Teil 0
 - wand: Grundriss Teil 0 - LoD2 DEBW_0010007Tvdv GroundSurface 0
@@ -26,6 +29,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - wand: Relief Fassade nord (Teil 1) mit Auskragungen - OpenMVS-Netz der neuen dichten Wolke (rc-park_daten/schwab_v3/sfm_neu/openmvs), Hoehenbild 5 cm
 - wand: Relief Fassade sued (Teil 1) mit Auskragungen - OpenMVS-Netz der neuen dichten Wolke (rc-park_daten/schwab_v3/sfm_neu/openmvs), Hoehenbild 5 cm
 - wand: Relief Nordost-Fassade (Teile 0/2) z 0,5-11,3 m - OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm
+- wand: Laube Nordost (dritter Bogen) - foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-001..-004), Gegenprobe Foto 113452 (gleiche Kanten aus anderem Winkel)
 - wand: Durchfahrt (zweiter Torbogen) Nord und Sued - foto_mass.py auf den Fassadenebenen, Fotos 113310 (Nord) und commons 217 (Sued): M-113310-001..-004, M-commons217-001..-003
 
 ## Beobachtungen ohne Pruefung

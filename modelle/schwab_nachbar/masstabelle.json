@@ -30,6 +30,44 @@
    "z0": 4.5,
    "z1": 9.0,
    "suche": "unten"
+  },
+  "laube_scheitel": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    9.057,
+    -0.236
+   ],
+   "z0": 4.0,
+   "z1": 8.5,
+   "suche": "unten"
+  },
+  "laube_halb_w": {
+   "typ": "schnitt_reichweite",
+   "z": 2.0,
+   "zentrum": [
+    9.057,
+    -0.236
+   ],
+   "richtung": [
+    -0.8869,
+    0.4619
+   ],
+   "quer_max": 0.25,
+   "r_max": 3.0
+  },
+  "laube_halb_o": {
+   "typ": "schnitt_reichweite",
+   "z": 2.0,
+   "zentrum": [
+    9.057,
+    -0.236
+   ],
+   "richtung": [
+    0.8869,
+    -0.4619
+   ],
+   "quer_max": 0.25,
+   "r_max": 3.0
   }
  },
  "pruefungen": [
@@ -85,6 +123,59 @@
    "protokoll": "M-commons217-002",
    "historie": [
     "2026-11-15 angelegt; Ist vorher geschlossener Grundkoerper"
+   ]
+  },
+  {
+   "name": "Laube Nordost (laube_scheitel) (m)",
+   "wert": "laube_scheitel",
+   "soll": [
+    5.65,
+    6.0
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Nordost-Fassade (Wandgerade aus der dichten Wolke), Foto 113529: Scheitel innen 5,83 m",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113529-002",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher geschlossene Wand (Loch im Netz)",
+    "2026-11-15 Messstelle von 1,0 m auf 0,25 m hinter die Fassadenebene verlegt (LoD2-Koerper liegt dort schraeg hinter der Fassade, bei 1 m Tiefe traf der Strahl erst die LoD2-Wand); Soll unveraendert"
+   ]
+  },
+  {
+   "name": "Laube Nordost (laube_halb_w) (m)",
+   "wert": "laube_halb_w",
+   "soll": [
+    2.55,
+    2.85
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Nordost-Fassade (Wandgerade aus der dichten Wolke), Foto 113529: lichte Breite 5,41 m, Achse u 4,535",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113529-001",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher geschlossene Wand (Loch im Netz)",
+    "2026-11-15 Messstelle von 1,0 m auf 0,25 m hinter die Fassadenebene verlegt (LoD2-Koerper liegt dort schraeg hinter der Fassade, bei 1 m Tiefe traf der Strahl erst die LoD2-Wand); Soll unveraendert",
+    "2026-11-15 r_max 5,0 -> 3,0 m: schnitt_reichweite liefert die WEITESTE Kontur im Streifen; jenseits des Pfeilers lagen Reliefkonturen. Soll unveraendert"
+   ]
+  },
+  {
+   "name": "Laube Nordost (laube_halb_o) (m)",
+   "wert": "laube_halb_o",
+   "soll": [
+    2.55,
+    2.85
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Nordost-Fassade (Wandgerade aus der dichten Wolke), Foto 113529: lichte Breite 5,41 m",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113529-001",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher geschlossene Wand (Loch im Netz)",
+    "2026-11-15 Messstelle von 1,0 m auf 0,25 m hinter die Fassadenebene verlegt (LoD2-Koerper liegt dort schraeg hinter der Fassade, bei 1 m Tiefe traf der Strahl erst die LoD2-Wand); Soll unveraendert",
+    "2026-11-15 r_max 5,0 -> 3,0 m: schnitt_reichweite liefert die WEITESTE Kontur im Streifen; jenseits des Pfeilers lagen Reliefkonturen. Soll unveraendert"
    ]
   }
  ],

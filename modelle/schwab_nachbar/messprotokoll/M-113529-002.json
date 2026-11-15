@@ -1,0 +1,32 @@
+{
+ "id": "M-113529-002",
+ "foto": "113529",
+ "kamera": "K-eigen__IMG_20261106_113529",
+ "ebene": "0.4619,0.8869,0=4.224",
+ "name": "Laubenbogen Nordost: Scheitel innen ueber Rahmen-Null",
+ "mess_px": [
+  627.0,
+  3326.0,
+  694.0,
+  2543.0
+ ],
+ "P1": [
+  9.174,
+  -0.015,
+  -0.002
+ ],
+ "P2": [
+  9.179,
+  -0.018,
+  5.831
+ ],
+ "dz": 5.833,
+ "dy": -0.003,
+ "dx": 0.005,
+ "abstand": 5.833,
+ "z1": -0.002,
+ "z2": 5.831,
+ "unsicherheit_rel": 0.0124,
+ "unsicherheit_m": 0.109,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113529 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.4619,0.8869,0=4.224 (+-0.3 m)"
+}

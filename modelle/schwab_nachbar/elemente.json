@@ -80,6 +80,16 @@
  },
  {
   "seite": "wand",
+  "element": "Laube Nordost (dritter Bogen)",
+  "quelle": "foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-001..-004), Gegenprobe Foto 113452 (gleiche Kanten aus anderem Winkel)",
+  "lichte_breite": 5.41,
+  "scheitel": 5.83,
+  "kaempfer": 3.5,
+  "hinweis": "ANNAHME: Tiefe der Halle 4 m, Kreisboegen; Masswerkbruestung darueber (z 7-8 m), Holzstreben in der Laube und Treppe dahinter fehlen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Durchfahrt (zweiter Torbogen) Nord und Sued",
   "quelle": "foto_mass.py auf den Fassadenebenen, Fotos 113310 (Nord) und commons 217 (Sued): M-113310-001..-004, M-commons217-001..-003",
   "nord_halbe_breite": 3.2,

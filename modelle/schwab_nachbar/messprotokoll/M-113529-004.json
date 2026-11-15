@@ -1,0 +1,32 @@
+{
+ "id": "M-113529-004",
+ "foto": "113529",
+ "kamera": "K-eigen__IMG_20261106_113529",
+ "ebene": "0.4619,0.8869,0=4.224",
+ "name": "Laubenbogen Nordost: Pfeiler West ab Fassadenanfang (u=0)",
+ "mess_px": [
+  1224.0,
+  3018.0,
+  990.0,
+  3026.0
+ ],
+ "P1": [
+  5.151,
+  2.08,
+  1.997
+ ],
+ "P2": [
+  6.775,
+  1.234,
+  1.999
+ ],
+ "dz": 0.001,
+ "dy": -0.846,
+ "dx": 1.624,
+ "abstand": 1.831,
+ "z1": 1.997,
+ "z2": 1.999,
+ "unsicherheit_rel": 0.0133,
+ "unsicherheit_m": 0.058,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113529 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.4619,0.8869,0=4.224 (+-0.3 m)"
+}

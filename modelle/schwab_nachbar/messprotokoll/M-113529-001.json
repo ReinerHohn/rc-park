@@ -1,0 +1,32 @@
+{
+ "id": "M-113529-001",
+ "foto": "113529",
+ "kamera": "K-eigen__IMG_20261106_113529",
+ "ebene": "0.4619,0.8869,0=4.224",
+ "name": "Laubenbogen Nordost: lichte Breite zwischen den Pfeilern",
+ "mess_px": [
+  323.0,
+  3051.0,
+  990.0,
+  3026.0
+ ],
+ "P1": [
+  11.571,
+  -1.263,
+  2.001
+ ],
+ "P2": [
+  6.775,
+  1.234,
+  1.999
+ ],
+ "dz": -0.002,
+ "dy": 2.497,
+ "dx": -4.795,
+ "abstand": 5.407,
+ "z1": 2.001,
+ "z2": 1.999,
+ "unsicherheit_rel": 0.0119,
+ "unsicherheit_m": 0.102,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113529 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.4619,0.8869,0=4.224 (+-0.3 m)"
+}
