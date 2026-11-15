@@ -45,9 +45,12 @@ Grenzen: nur Rechtecke (kein Spitz-/Vorhangbogen, kein Masswerk), Erker nur als 
 Ein Fassadenbild ist die Wand wie auf einem Bauplan: jeder Bildpunkt = ein festes Stueck Wand (fein: 1 cm x 1 cm), senkrecht gesehen.
 - Entstehung: Raster auf der Modellwand -> je Zelle der Ort im Foto (Kamera aus dem Buendel) -> Farbe in die Zelle.
 - Problem bei 1 cm: die Wandbilder verschiedener Fotos liegen 0,1-1 m versetzt (Modellebene != echte Tiefe, Kamerareste) -> zellweise Mischung gibt Naehte/Geister.
-- Loesung: Bezugsfoto (groesste Summe Zellen x Guete); weitere Fotos per SIFT + RANSAC-Homographie im Ortho-Raum darauf ziehen
+- Loesung: Bezugsfoto (siehe Verdecker); weitere Fotos per SIFT + RANSAC-Homographie im Ortho-Raum darauf ziehen
   (>= 40 Inlier, Eckversatz <= 2 m, sonst verworfen); Median wo >= 3 Fotos (Passanten, Draehte fallen heraus), sonst das beste.
-- Laub: gruen-gelbgruene, gesaettigte Flaechen gelten je Foto als nicht gesehen; Bezugsfoto = meiste Wand ohne Laub (Schwabentor Sued: Baum vor der Wandmitte, danach 7 Fotos ausgerichtet, Wand frei). Achtung gruene Bauteile (Kupfer, gruene Ziegel).
+- Verdecker (Baum, Mast, Schild, Passanten) OHNE Farbregel - eine Laub-Farbregel war zu speziell (gruene/gelbe Gebaeude) und wurde verworfen. Grundsatz: was VOR der Wand
+  steht, wandert von Foto zu Foto; die Wand bleibt deckungsgleich. (a) Bezugsfoto = groesste Inlier-Summe der Paar-Homographien (eine Homographie passt nur auf die Wandebene,
+  Baum-Merkmale werden keine Inlier); (b) nach dem Ausrichten gilt ein Foto dort als verdeckt, wo es grossflaechig vom Median abweicht; (c) `abdeckung_<id>_fein.png`:
+  weiss = >= 3 Fotos einig, grau = nur 1-2 Fotos (ungeprueft), schwarz = nichts. Schwabentor Sued: Baum vor der Wandmitte verschwindet, zwei baumlastige Fotos zu 61 / 79 % als verdeckt erkannt.
 - Ergebnis Kaufhaus f02 (242 m2, 2141 x 1309 px, 87 s Ortho): nahtfrei, Sechseck-Verglasung, Fensterform, Figuren lesbar; Restversatz 1-3 cm.
   Beispiele: `modelle/schwab_v3/audit/beispiele/kaufhaus_*_fein_1cm.jpg`.
 - Feinheit = Fotoaufloesung: 1 cm nur mit Fotos <= ~1-2 cm je Pixel; sonst so fein wie die Fotos. Der Erkenner bleibt am groben Bild (960-px-Kacheln).

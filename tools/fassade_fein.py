@@ -1,57 +1,69 @@
 #!/usr/bin/env python3
-"""fassade_fein.py <ortho-ordner> [--nur f02,e17] [--k 4] - FEINES, nahtfreies Fassadenbild aus den Einzelfoto-Orthos (fassade_ortho.py --einzeln --zelle 0.01).
+"""fassade_fein.py <ortho-ordner> [--nur f02,e17] [--k 6] - FEINES, nahtfreies Fassadenbild aus den Einzelfoto-Orthos (fassade_ortho.py --einzeln --zelle 0.01).
 
 Warum (Nutzer 15.11.2026: Sechseck-Verglasung am Kaufhaus, Steinrelief-Details an Martins-/Schwabentor): bei 1 cm Zelle zeigt die zellweise Mischung von
-fassade_ortho Naehte und Geister - die Fotos liegen 0,1-1 m gegeneinander versetzt, weil die Modellflaeche (grobes Stufenmodell) nicht die echte Tiefe hat
-und die Kameras Reste haben. Ein EINZELNES entzerrtes Foto ist dagegen in sich scharf. Also:
-  1. Bezugsfoto je Fassade = groesste Summe (Zellen x Guete) aus fassaden.json.
-  2. Die naechstbesten k-1 Fotos per SIFT + RANSAC-Homographie IM ORTHO-RAUM auf das Bezugsfoto ziehen (ebene Fassade -> Homographie; Kontrolle: Inlier >= 40,
-     Verschiebung der Bildecken <= 2 m, sonst Foto verworfen).
-  2b. Laub (gruen-dominante Flaechen) wird je Foto ausgeblendet; Bezugsfoto = meiste Wand ohne Laub. Gruene Bauteile (Kupferdach, gruene Ziegel) fallen damit auch heraus - ansehen.
-  3. Ergebnis: Median der ausgerichteten Fotos, wo >= 3 die Zelle sehen (Passanten, Draehte, Spiegelungen fallen heraus), sonst das beste vorhandene.
-Ausgabe ortho_<id>_fein.png + Bericht fein.json (Bezugsfoto, Inlier, Versatz je Foto). Massstab und Lage bleiben die des Bezugsfotos auf der Modellebene
-(Lagefehler der Ebene geht 1:1 ein - das Bild ist fuer MUSTER und Kanten, Masse weiter ueber foto_mass.py).
+fassade_ortho Naehte und Geister - die Fotos liegen 0,1-1 m gegeneinander versetzt (Modellflaeche != echte Tiefe, Kamerareste). Ein EINZELNES entzerrtes
+Foto ist in sich scharf. Verdecker (Baum, Mast, Schild, Passanten) werden OHNE Farbregel erkannt - Nutzer: "nicht Laub ausblenden, zu spezifisch; was ist bei
+einem gruenen oder gelben Gebaeude?" Grundsatz: was VOR der Wand steht, wandert von Foto zu Foto (Parallaxe); die Wand selbst bleibt deckungsgleich.
+  1. SIFT je Foto, Homographie + RANSAC zwischen allen Fotopaaren im Ortho-Raum. Eine Homographie passt nur auf die WANDEBENE - Merkmale auf dem Baum
+     werden keine Inlier. Bezugsfoto = groesste Inlier-Summe zu den anderen (zeigt am meisten Wand, die auch andere sehen), nicht die groesste Bildflaeche.
+  2. Alle Fotos mit >= 40 Inliern und Eckversatz <= 2 m auf das Bezugsfoto ziehen.
+  3. Uebereinstimmung je Zelle: Median der ausgerichteten Fotos; ein Foto gilt an einer Stelle als VERDECKT, wenn es dort grossflaechig vom Median abweicht
+     (geglaettete Farbdifferenz > --abw). Verdeckte Stellen zaehlen als nicht gesehen. Ergebnis = Median der nicht verdeckten Fotos (>= 3), sonst das beste nicht verdeckte.
+     Wo nur EIN Foto hinsieht, laesst sich nichts pruefen - die Stelle bleibt wie fotografiert und steht als 'ungeprueft' in abdeckung_<id>_fein.png (grau).
+Ausgabe ortho_<id>_fein.png, abdeckung_<id>_fein.png (weiss = >= 3 Fotos einig, grau = 1-2 Fotos, schwarz = nichts), Bericht fein.json.
+Massstab und Lage = Bezugsfoto auf der Modellebene; das Bild ist fuer MUSTER und Kanten, Masse weiter ueber foto_mass.py.
 """
 import sys, os, json, argparse, numpy as np, cv2
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("ortho"); ap.add_argument("--nur"); ap.add_argument("--k", type=int, default=4); a = ap.parse_args()
-    FA = json.load(open(os.path.join(a.ortho, "fassaden.json")))["fassaden"]; bericht = {}; sift = cv2.SIFT_create(8000)
+    ap = argparse.ArgumentParser(); ap.add_argument("ortho"); ap.add_argument("--nur"); ap.add_argument("--k", type=int, default=6); ap.add_argument("--abw", type=float, default=38.0); a = ap.parse_args()
+    FA = json.load(open(os.path.join(a.ortho, "fassaden.json")))["fassaden"]; bericht = {}; sift = cv2.SIFT_create(8000); bf = cv2.BFMatcher()
     for F in FA:
         fid = F.get("id"); ed = os.path.join(a.ortho, f"ortho_{fid}_einzeln")
         if (a.nur and fid not in a.nur.split(",")) or not os.path.isdir(ed) or not F.get("fotos"): continue
-        rang = sorted(F["fotos"].items(), key=lambda kv: -kv[1]["zellen"] * kv[1]["guete_median"])[:a.k]; bilder = []
+        rang = sorted(F["fotos"].items(), key=lambda kv: -kv[1]["zellen"] * kv[1]["guete_median"])[:a.k]; B = []
         for nr, _ in rang:
             im = cv2.imread(os.path.join(ed, nr + ".png"))
             if im is None: continue
-            hs_ = cv2.cvtColor(im, cv2.COLOR_BGR2HSV); gruen = (hs_[..., 0] >= 22) & (hs_[..., 0] <= 90) & (hs_[..., 1] > 60) & (hs_[..., 2] > 40)   # Farbton gelbgruen..gruen, gesaettigt (besonntes Laub ist gelbgruen: G > R + 12 griff nicht)          # 15.11.2026 (Nutzer: "du siehst den Baum aber?"): Laub ist keine Wand -
-            gruen = cv2.dilate(cv2.morphologyEx(gruen.astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8)), np.ones((41, 41), np.uint8)).astype(bool)   # gruen-dominante Flaechen (Baum, Busch) gelten als nicht gesehen
-            anteil = float(gruen.sum()) / max(int((im.sum(2) > 0).sum()), 1)
-            if anteil > 0.02: im = im.copy(); im[gruen] = 0
-            bilder.append((nr, im, anteil))
-        bilder.sort(key=lambda x: -int((x[1].sum(2) > 0).sum())); laub = {x[0]: round(x[2], 3) for x in bilder}; bilder = [(x[0], x[1]) for x in bilder]      # Bezug = meiste Wand OHNE Laub
-        if not bilder: continue
-        ref_nr, ref = bilder[0]; H_, W_ = ref.shape[:2]; g0 = cv2.cvtColor(ref, cv2.COLOR_BGR2GRAY); m0 = (ref.sum(2) > 0).astype(np.uint8) * 255; k0, d0 = sift.detectAndCompute(g0, cv2.erode(m0, np.ones((9, 9), np.uint8)))
-        stapel = [ref]; info = [dict(foto=ref_nr, rolle="bezug")]
-        for nr, im in bilder[1:]:
-            g = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY); m = (im.sum(2) > 0).astype(np.uint8) * 255; k1, d1 = sift.detectAndCompute(g, cv2.erode(m, np.ones((9, 9), np.uint8)))
-            if d0 is None or d1 is None or len(k1) < 50: info.append(dict(foto=nr, rolle="verworfen", grund="zu wenig Merkmale")); continue
-            mm = cv2.BFMatcher().knnMatch(d1, d0, k=2); gut = [p for p, q in (x for x in mm if len(x) == 2) if p.distance < 0.75 * q.distance]
-            if len(gut) < 40: info.append(dict(foto=nr, rolle="verworfen", grund=f"{len(gut)} Paare")); continue
-            src = np.float32([k1[p.queryIdx].pt for p in gut]); dst = np.float32([k0[p.trainIdx].pt for p in gut]); Hm, inl = cv2.findHomography(src, dst, cv2.RANSAC, 3.0)
-            n_in = int(inl.sum()) if inl is not None else 0
-            if Hm is None or n_in < 40: info.append(dict(foto=nr, rolle="verworfen", grund=f"{n_in} Inlier")); continue
-            ecken = np.float32([[0, 0], [W_, 0], [W_, H_], [0, H_]]).reshape(-1, 1, 2); vers = float(np.abs(cv2.perspectiveTransform(ecken, Hm) - ecken).max()) * F["raster"]["zelle"]
-            if vers > 2.0: info.append(dict(foto=nr, rolle="verworfen", grund=f"Eckversatz {vers:.1f} m")); continue
-            w = cv2.warpPerspective(im, Hm, (W_, H_), flags=cv2.INTER_LINEAR); stapel.append(w); info.append(dict(foto=nr, rolle="ausgerichtet", inlier=n_in, eckversatz_m=round(vers, 2), mittel_versatz_m=round(float(np.linalg.norm(cv2.perspectiveTransform(src[inl.ravel() > 0].reshape(-1, 1, 2), Hm).reshape(-1, 2) - src[inl.ravel() > 0], axis=1).mean()) * F["raster"]["zelle"], 3)))
-        S = np.stack(stapel).astype(np.float32); gueltig = S.sum(3) > 0; n = gueltig.sum(0); S[~gueltig] = np.nan
-        with np.errstate(all="ignore"): med = np.nanmedian(S, axis=0)
-        erst = np.zeros((H_, W_, 3), np.float32); belegt = np.zeros((H_, W_), bool)
-        for i in range(len(stapel)):
-            nimm = gueltig[i] & ~belegt; erst[nimm] = np.nan_to_num(S[i])[nimm]; belegt |= gueltig[i]
-        aus = np.where((n >= 3)[..., None], np.nan_to_num(med), erst).astype(np.uint8); cv2.imwrite(os.path.join(a.ortho, f"ortho_{fid}_fein.png"), aus)
-        bericht[fid] = dict(fotos=info, laubanteil=laub, abdeckung=round(float(belegt.mean()), 3), zelle=F["raster"]["zelle"]); print(f"{fid}: Bezug {ref_nr[-14:]}, " + ", ".join(f"{i_['foto'][-10:]} {i_['rolle']}" + (f" ({i_['inlier']} Inl., {i_['mittel_versatz_m']*100:.0f} cm)" if i_["rolle"] == "ausgerichtet" else f" ({i_.get('grund', '')})" if i_["rolle"] == "verworfen" else "") for i_ in info[1:]) + f"; Abdeckung {belegt.mean():.0%}")
+            m = (im.sum(2) > 0).astype(np.uint8) * 255; kp, de = sift.detectAndCompute(cv2.cvtColor(im, cv2.COLOR_BGR2GRAY), cv2.erode(m, np.ones((9, 9), np.uint8))); B.append(dict(nr=nr, im=im, kp=kp, de=de))
+        if not B: continue
+        H_, W_ = B[0]["im"].shape[:2]; zl = F["raster"]["zelle"]; n = len(B); HM = {}; INL = np.zeros((n, n), int); ecken = np.float32([[0, 0], [W_, 0], [W_, H_], [0, H_]]).reshape(-1, 1, 2)
+        for i in range(n):                                                 # Homographie j -> i fuer alle Paare
+            for j in range(n):
+                if i == j or B[i]["de"] is None or B[j]["de"] is None or len(B[j]["kp"]) < 50 or len(B[i]["kp"]) < 50: continue
+                mm = bf.knnMatch(B[j]["de"], B[i]["de"], k=2); gut = [p for p, q in (x for x in mm if len(x) == 2) if p.distance < 0.75 * q.distance]
+                if len(gut) < 40: continue
+                src = np.float32([B[j]["kp"][p.queryIdx].pt for p in gut]); dst = np.float32([B[i]["kp"][p.trainIdx].pt for p in gut]); Hm, inl = cv2.findHomography(src, dst, cv2.RANSAC, 3.0)
+                if Hm is None or inl is None or int(inl.sum()) < 40: continue
+                vers = float(np.abs(cv2.perspectiveTransform(ecken, Hm) - ecken).max()) * zl
+                if vers > 2.0: continue
+                sel = inl.ravel() > 0; HM[(i, j)] = (Hm, int(inl.sum()), vers, float(np.linalg.norm(cv2.perspectiveTransform(src[sel].reshape(-1, 1, 2), Hm).reshape(-1, 2) - src[sel], axis=1).mean()) * zl); INL[i, j] = int(inl.sum())
+        ref = int(np.argmax(INL.sum(1))) if INL.sum() > 0 else 0; stapel = [B[ref]["im"]]; info = [dict(foto=B[ref]["nr"], rolle="bezug", inlier_summe=int(INL[ref].sum()))]
+        for j in range(n):
+            if j == ref: continue
+            if (ref, j) not in HM: info.append(dict(foto=B[j]["nr"], rolle="verworfen", grund="keine sichere Homographie zum Bezug")); continue
+            Hm, ni, vers, mv = HM[(ref, j)]; stapel.append(cv2.warpPerspective(B[j]["im"], Hm, (W_, H_), flags=cv2.INTER_LINEAR)); info.append(dict(foto=B[j]["nr"], rolle="ausgerichtet", inlier=ni, eckversatz_m=round(vers, 2), mittel_versatz_m=round(mv, 3)))
+        S = np.stack(stapel).astype(np.float32); gueltig = S.sum(3) > 0
+        def median(S, g):
+            T = S.copy(); T[~g] = np.nan
+            with np.errstate(all="ignore"):
+                import warnings
+                with warnings.catch_warnings(): warnings.simplefilter("ignore"); return np.nanmedian(T, axis=0)
+        med = median(S, gueltig); n_s = gueltig.sum(0); verdeckt = np.zeros_like(gueltig); kern = max(5, int(0.12 / zl) | 1)
+        for i in range(len(stapel)):                                       # Verdecker: grossflaechige Abweichung vom Median, nur wo >= 3 Fotos pruefen koennen
+            d = np.abs(S[i] - np.nan_to_num(med)).max(2); d[~gueltig[i] | (n_s < 3)] = 0; d = cv2.blur(d, (kern, kern)); v = (d > a.abw).astype(np.uint8)
+            v = cv2.dilate(cv2.morphologyEx(v, cv2.MORPH_OPEN, np.ones((kern, kern), np.uint8)), np.ones((2 * kern + 1, 2 * kern + 1), np.uint8)).astype(bool); verdeckt[i] = v & gueltig[i]
+        g2 = gueltig & ~verdeckt; med2 = median(S, g2); n2 = g2.sum(0); erst = np.zeros((H_, W_, 3), np.float32); belegt = np.zeros((H_, W_), bool)
+        for g_ in (g2, gueltig):                                           # Rueckfall: bestes nicht verdecktes Foto, dann irgendeines
+            for i in range(len(stapel)):
+                nimm = g_[i] & ~belegt; erst[nimm] = S[i][nimm]; belegt |= g_[i]
+        aus = np.where((n2 >= 3)[..., None], np.nan_to_num(med2), erst).astype(np.uint8); cv2.imwrite(os.path.join(a.ortho, f"ortho_{fid}_fein.png"), aus)
+        cv2.imwrite(os.path.join(a.ortho, f"abdeckung_{fid}_fein.png"), np.where(n2 >= 3, 255, np.where(belegt, 110, 0)).astype(np.uint8))
+        for k_, i_ in enumerate([x for x in info if x["rolle"] != "verworfen"]): i_["verdeckt_anteil"] = round(float(verdeckt[k_].sum()) / max(int(gueltig[k_].sum()), 1), 3)
+        bericht[fid] = dict(fotos=info, abdeckung=round(float(belegt.mean()), 3), einig_ab_3_fotos=round(float((n2 >= 3).mean()), 3), zelle=zl)
+        print(f"{fid}: Bezug {B[ref]['nr'][-14:]} (Inlier-Summe {int(INL[ref].sum())}), " + ", ".join(f"{i_['foto'][-10:]} " + (f"{i_['inlier']} Inl. {i_['mittel_versatz_m']*100:.0f} cm verdeckt {i_['verdeckt_anteil']:.0%}" if i_["rolle"] == "ausgerichtet" else "verworfen") for i_ in info[1:]) + f"; Bezug verdeckt {info[0]['verdeckt_anteil']:.0%}; einig (>= 3 Fotos) {(n2 >= 3).mean():.0%}, Abdeckung {belegt.mean():.0%}")
     json.dump(bericht, open(os.path.join(a.ortho, "fein.json"), "w"), indent=1); return 0
 
 
