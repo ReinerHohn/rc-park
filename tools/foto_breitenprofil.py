@@ -106,7 +106,7 @@ def main():
     K = json.load(open(os.path.join(od, "messprotokoll", f"K-{nr}.json")))
     if "kamera" not in K: raise SystemExit(f"K-{nr}.json hat keine Kamera - erst tools/foto_kalibrieren.py")
     R, t, C, f, cx, cy = strahlen_setup(K["kamera"])
-    im = cv2.imread(glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]); H, W = im.shape[:2]
+    im = cv2.imread((glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*")) or glob.glob(os.path.join(root, obj["fotos_dir"], nr + ".*")))[0]); H, W = im.shape[:2]
     import foto_pick as FP
     himmel = FP.himmel_cached(im, os.path.join(od, "himmelsmaske", nr + ".png"), streng=True); objekt = ~himmel                                   # "Objekt" = alles, was nicht Himmel ist (inkl. Nachbarhaeuser!)
     stl = a[a.index("--stl") + 1] if "--stl" in a else os.path.join(root, obj["stl"])

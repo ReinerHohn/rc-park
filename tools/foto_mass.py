@@ -50,7 +50,7 @@ def main():
         json.dump(rec, open(os.path.join(d, pid + ".json"), "w"), indent=1, ensure_ascii=False)
         bilder = []
         for kid, x, y in obs:
-            fn = glob.glob(os.path.join(root, obj["fotos_dir"], kid[2:] + "_*"))
+            fn = (glob.glob(os.path.join(root, obj["fotos_dir"], kid[2:] + "_*")) or glob.glob(os.path.join(root, obj["fotos_dir"], kid[2:] + ".*")))
             if fn:
                 im = cv2.imread(fn[0]); cv2.circle(im, (int(x), int(y)), 14, (0, 255, 255), 3)
                 c_ = im[max(0, int(y) - 300):int(y) + 300, max(0, int(x) - 300):int(x) + 300].copy(); c_ = cv2.resize(c_, (600, 600)); cv2.putText(c_, kid, (8, 26), 0, 0.8, (0, 0, 255), 2); bilder.append(c_)
@@ -82,7 +82,7 @@ def main():
         json.dump(rec, open(os.path.join(d, pid + ".json"), "w"), indent=1, ensure_ascii=False)
         bilder = []
         for kid, x, y in obs:
-            fn = glob.glob(os.path.join(root, obj["fotos_dir"], kid[2:] + "_*"))
+            fn = (glob.glob(os.path.join(root, obj["fotos_dir"], kid[2:] + "_*")) or glob.glob(os.path.join(root, obj["fotos_dir"], kid[2:] + ".*")))
             if fn:
                 im = cv2.imread(fn[0]); H, W = im.shape[:2]; cv2.circle(im, (int(x), int(y)), 14, (0, 255, 255), 3)
                 c_ = im[max(0, int(y) - 300):int(y) + 300, max(0, int(x) - 300):int(x) + 300].copy(); c_ = cv2.resize(c_, (600, 600)); cv2.putText(c_, kid, (8, 26), 0, 0.8, (0, 0, 255), 2); bilder.append(c_)
@@ -101,7 +101,7 @@ def main():
                    massstab_von=(f"Kamera {kid} aus SfM-Buendel ({kq.get('typ')}, KEINE amtlichen Anker)" if (kq := json.load(open(os.path.join(od, "messprotokoll", kid + ".json")))).get("typ", "").startswith("kamera_bruecke")
                                  else f"Kamera {kid} aus amtlichen Ankern (LoD2/DOM1/Dokument)") + f", Ebene {ebene} (+-{tiefe_sigma} m)")
         json.dump(rec, open(os.path.join(d, pid + ".json"), "w"), indent=1, ensure_ascii=False)
-        fn = glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))                                 # markierter Ausschnitt zum Nachpruefen der Picks
+        fn = (glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*")) or glob.glob(os.path.join(root, obj["fotos_dir"], nr + ".*")))                                 # markierter Ausschnitt zum Nachpruefen der Picks
         if fn:
             im = cv2.imread(fn[0]); H, W = im.shape[:2]; cv2.line(im, (int(pts[0]), int(pts[1])), (int(pts[2]), int(pts[3])), (0, 0, 255), 3)
             for q_ in (pts[:2], pts[2:]): cv2.circle(im, (int(q_[0]), int(q_[1])), 12, (0, 255, 255), 3)
@@ -113,7 +113,7 @@ def main():
         i = a.index(k); return a[i + 1] if n == 1 else a[i + 1:i + 1 + n]
     mess = [float(x) for x in opt("--mess", 4)]; name = opt("--name", d="Messung"); richtung = opt("--richtung", d="frei"); st = float(opt("--stauchung", d="1.0"))
     von = opt("--massstab-von", d="?"); merkmal = opt("--merkmal", d="-")
-    fn = glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*"))[0]; im = cv2.imread(fn); H, W = im.shape[:2]
+    fn = (glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*")) or glob.glob(os.path.join(root, obj["fotos_dir"], nr + ".*")))[0]; im = cv2.imread(fn); H, W = im.shape[:2]
     if opt("--px-pro-m"): ppm = float(opt("--px-pro-m")); mpx = None
     else:
         mpx = [float(x) for x in opt("--massstab-px", 4)]; L = float(opt("--massstab-m")); ppm = math.hypot(mpx[2] - mpx[0], mpx[3] - mpx[1]) / L
