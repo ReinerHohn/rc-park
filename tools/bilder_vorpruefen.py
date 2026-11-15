@@ -3,7 +3,7 @@
 gleiche Funktionen wie tools/video_suchen.py) gegen die eigenen Objektfotos; Treffer = >= --min-inlier RANSAC-Inlier (Fundamentalmatrix).
 Lehre Schwabentor 2026-11-14: 206 Commons-Bilder lagen geladen herum, nur 49 waren von Hand ausgewaehlt; Innenraeume/Gemaelde stoeren die SfM.
   /media/oem/scan/venv-seg/bin/python -I tools/bilder_vorpruefen.py modelle/<objekt>/objekt.json <ordner_oder_bild>... --aus liste.json [--ref 24] [--min-inlier 60]
-Kette (--kette 6): Nachbarbilder eines Treffers im selben Ordner, die ihn >= min-inlier treffen, zaehlen mit (Videostetigkeit).
+Kette (--kette 40, bis 14.11. 6): Nachbarbilder eines Treffers im selben Ordner, die ihn >= min-inlier treffen, zaehlen mit (Videostetigkeit).
 Ausgabe: JSON {bild: {inlier, foto}} + Zusammenfassung; Bilder werden auf <= 1000 px (kurze Seite 720) verkleinert geprueft.
 """
 import sys, os, json, glob, argparse, time
@@ -15,7 +15,8 @@ import video_suchen as VS
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("quellen", nargs="+"); ap.add_argument("--aus", required=True)
     ap.add_argument("--ref", type=int, default=24); ap.add_argument("--min-inlier", type=int, default=60)
-    ap.add_argument("--kette", type=int, default=6, help="Videobilder: Nachbarbilder (<= N Schritte, gleicher Ordner) eines Treffers zaehlen, wenn sie ihn >= min-inlier treffen")
+    ap.add_argument("--kette", type=int, default=40,   # 15.11.2026: 6 liess vom Drohnenclip nur 6 von 81 Bildern durch (Dach fehlte); mit allen 81 behielt die Objektregel der Bildwahl 23 -> Kette lang, Aussortieren uebernimmt dicht_bildwahl (>= 60 Objektpunkte)
+                     help="Videobilder: Nachbarbilder (<= N Schritte, gleicher Ordner) eines Treffers zaehlen, wenn sie ihn >= min-inlier treffen")
     a = ap.parse_args(); t0 = time.time(); op = os.path.abspath(a.objekt); obj = json.load(open(op))
     root = os.path.dirname(os.path.dirname(os.path.dirname(op))); fd = obj["fotos_dir"]; fd = fd if os.path.isabs(fd) else os.path.join(root, fd)
     fotos = sorted(glob.glob(os.path.join(fd, "*.jpg")) + glob.glob(os.path.join(fd, "*.jpeg")) + glob.glob(os.path.join(fd, "*.png")))
