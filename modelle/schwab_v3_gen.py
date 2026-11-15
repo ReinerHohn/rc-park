@@ -65,7 +65,11 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     # Nordwand: LoD2 liegt am Uhrgeschoss bis 0,2 m zu weit aussen (3,92 statt 3,72 bei y 9,2). Am Foto gepeilte Wandecken C' (3,72 / 9,22) und A' (3,54 / 21,38),
     # M-113205-012/-013 -> Wandkoerper an dieser senkrechten Ebene abschneiden (Dach und Laterne bleiben)
     ca, cb = np.array([3.72, 9.22]), np.array([3.54, 21.38]); tn = (cb - ca) / np.linalg.norm(cb - ca); nn = np.array([tn[1], -tn[0]]); nn = nn if nn[0] > 0 else -nn
-    rumpf = (koerper + wand).trim_by_plane((-nn[0], -nn[1], 0.0), float(-(nn @ ca)))
+    # 15.11.2026 (Nutzerbilder 14:39): die Wolke/das Netz stehen 0,15-0,3 m VOR dieser gepeilten Ebene (Peilung +-0,19..0,35 m unsicher; Netzflaeche bei z 29,6: +0,17 m,
+    # nach unten zunehmend = Wandanzug 0,6 cm/m). Lage-Veto der Wolke: Wandebene um 0,17 m nach aussen; der Anzug darunter kommt mit dem Relief (trend=True).
+    WV = 0.17; ca, cb = ca + WV * nn, cb + WV * nn
+    _L = float(np.linalg.norm(cb - ca)); fuell = M.hull_points([[ca[0] + u_ * tn[0] + w_ * nn[0], ca[1] + u_ * tn[1] + w_ * nn[1], z_] for u_ in (0.0, _L) for w_ in (-1.0, 0.0) for z_ in (0.0, ZT)])
+    rumpf = (koerper + wand + fuell).trim_by_plane((-nn[0], -nn[1], 0.0), float(-(nn @ ca)))      # Fuellkoerper: Wand reicht ueberall BIS zur Ebene (skaliertes LoD2 lag bis 0,14 m dahinter -> Uhr schwebte)
     beleg("wand", "Nordwand (Ebene)", "Foto-Peilung foto_mass.py --tri2d der Wandecken am Uhrgeschoss (M-113205-012/-013)", x_bei_y9=3.72, x_bei_y21=3.54,
           hinweis="ANNAHME: Wand ueber die ganze Hoehe in dieser Ebene (Anzug/Sockel noch nicht gemessen)")
     # Relief-Einsatz Nordwand (Nutzerentscheidung 15.11.2026): Hoehenbild aus dem OpenMVS-Netz als Platte vor der gepeilten Wandebene; Wand, Kanten und
@@ -73,7 +77,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     from relief_einsatz import koerper as relief_koerper
     rel_n = os.path.join(HERE, "schwab_v3", "relief", "nord.npz")
     if os.path.exists(rel_n) and os.environ.get("OHNE_RELIEF") != "1":
-        rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12, null_felder=[(2.6, 5.4, 23.9, 27.1), (6.9, 9.7, 23.9, 27.1), (1.6, 11.1, 9.7, 21.1)])   # Fensterfelder baut der Generator scharf (unten)
+        rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12 + WV, trend=True, versatz=0.0, null_felder=[(2.6, 5.4, 23.9, 27.1), (6.9, 9.7, 23.9, 27.1), (1.6, 11.1, 9.7, 21.1)])   # Fensterfelder baut der Generator scharf (unten)
         beleg("wand", "Relief Nordwand z 0,6-29,6 m", "OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)",
               hinweis="Scan-Relief, kein Mass: Torbogen, Holzgalerie und Vordach sind darin Loecher (glatte Wand) und fehlen noch; Wandanzug (~0,6 cm/m) abgezogen")
     # Tordurchfahrt Nord als ECHTE Oeffnung aus Fotokanten (Nutzer 13:30: Relief mit dem Generator schaerfen). Masse M-113602-001..-006 auf der Sockelebene.

@@ -9,34 +9,34 @@
   "traufe_ost_reichweite": 6.605664840698243,
   "traufe_oben_z": 36.74000000000027,
   "dach_nord_z45": 2.200680254041951,
-  "wand_nord_reichweite": 5.422596263803175,
-  "tor_halb_west": 2.114672730358336,
-  "tor_halb_ost": 2.2143092189869353,
+  "wand_nord_reichweite": 5.58116125400052,
+  "tor_halb_west": 2.1147361272427148,
+  "tor_halb_ost": 2.214331982201804,
   "tor_scheitel_z": 6.459999999999962,
-  "tor_halb_z555": 1.8223249498022156,
-  "fl_kante_innen": 3.144487697045143,
-  "fl_kante_aussen": 3.2918825919790393,
-  "fl_scheitel_innen": 3.1314095312026566,
-  "fl_scheitel_aussen": 3.2760770878972423,
-  "fr_kante_innen": 3.0852579236495927,
-  "fr_kante_aussen": 3.2326431838068856,
-  "fl_oeffnung": 2.8515073383110874,
-  "gal_front": 4.687421110534906,
-  "gal_ende_ost_innen": 4.745116167549405,
-  "gal_ende_ost_aussen": 3.306475682488319,
-  "gal_ende_west_innen": 4.628731547545144,
-  "gal_ende_west_aussen": 3.1841777360190306,
-  "gal_holm_unter": 4.710866209126536,
-  "gal_holm_ueber": 3.2692437283774183,
-  "vordach_traufe": 4.780693949428816,
-  "vordach_oben": 3.2601126548856527,
-  "vordach_darueber": 3.2457646516330882,
-  "uhr_ring_ost": 3.370448135844221,
-  "uhr_aussen_ost": 3.2812812234921083,
-  "uhr_ring_oben": 3.335252429764516,
-  "uhr_aussen_oben": 3.2418979405167576,
-  "uhr_ring_west": 3.3000428355462006,
-  "uhr_aussen_west": 3.2025649946880748
+  "tor_halb_z555": 1.8223088212081322,
+  "fl_kante_innen": 3.3031236046796835,
+  "fl_kante_aussen": 3.4899893344072623,
+  "fl_scheitel_innen": 3.290045512543358,
+  "fl_scheitel_aussen": 3.4684609140021436,
+  "fr_kante_innen": 3.2438935658500583,
+  "fr_kante_aussen": 3.4490302298946105,
+  "fl_oeffnung": 3.0101431387707294,
+  "gal_front": 4.846056715175642,
+  "gal_ende_ost_innen": 4.903750585622802,
+  "gal_ende_ost_aussen": 3.5807312552984527,
+  "gal_ende_west_innen": 4.787367503131193,
+  "gal_ende_west_aussen": 3.4961588710906,
+  "gal_holm_unter": 4.869472396322891,
+  "gal_holm_ueber": 3.547831422427521,
+  "vordach_traufe": 4.939329078692957,
+  "vordach_oben": 3.483645904324675,
+  "vordach_darueber": 3.481323141827801,
+  "uhr_ring_ost": 3.5290838787101464,
+  "uhr_aussen_ost": 3.439928862041654,
+  "uhr_ring_oben": 3.4938877904509127,
+  "uhr_aussen_oben": 3.4005711082466448,
+  "uhr_ring_west": 3.45867829275587,
+  "uhr_aussen_west": 3.3612006729389776
  },
  "pruefungen": [
   {
@@ -121,17 +121,17 @@
   },
   {
    "name": "Nordwand Uhrgeschoss: Abstand von Dachmitte bei z 36 (m)",
-   "wert": 5.422596263803175,
+   "wert": 5.58116125400052,
    "soll": [
-    5.27,
-    5.55
+    5.43,
+    5.71
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Tor Nord: halbe lichte Breite nach West bei z 2 (m)",
-   "wert": 2.114672730358336,
+   "wert": 2.1147361272427148,
    "soll": [
     2.05,
     2.27
@@ -141,7 +141,7 @@
   },
   {
    "name": "Tor Nord: halbe lichte Breite nach Ost bei z 2 (m)",
-   "wert": 2.2143092189869353,
+   "wert": 2.214331982201804,
    "soll": [
     2.05,
     2.27
@@ -161,7 +161,7 @@
   },
   {
    "name": "Tor Nord: halbe Breite im Bogen bei z 5,55 (m)",
-   "wert": 1.8223249498022156,
+   "wert": 1.8223088212081322,
    "soll": [
     1.72,
     2.01
@@ -171,230 +171,230 @@
   },
   {
    "name": "Fenster Nord (fl_kante_innen): Tiefe x der ersten Flaeche bei u 3.06 z 25.00 (m)",
-   "wert": 3.144487697045143,
+   "wert": 3.3031236046796835,
    "soll": [
-    2.73,
-    3.21
+    2.89,
+    3.37
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Fenster Nord (fl_kante_aussen): Tiefe x der ersten Flaeche bei u 2.86 z 25.00 (m)",
-   "wert": 3.2918825919790393,
+   "wert": 3.4899893344072623,
    "soll": [
-    3.26,
-    3.34
+    3.45,
+    3.53
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Fenster Nord (fl_scheitel_innen): Tiefe x der ersten Flaeche bei u 4.00 z 26.63 (m)",
-   "wert": 3.1314095312026566,
+   "wert": 3.290045512543358,
    "soll": [
-    2.72,
-    3.21
+    2.88,
+    3.37
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Fenster Nord (fl_scheitel_aussen): Tiefe x der ersten Flaeche bei u 4.00 z 26.83 (m)",
-   "wert": 3.2760770878972423,
+   "wert": 3.4684609140021436,
    "soll": [
-    3.25,
-    3.33
+    3.43,
+    3.51
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Fenster Nord (fr_kante_innen): Tiefe x der ersten Flaeche bei u 7.35 z 25.00 (m)",
-   "wert": 3.0852579236495927,
+   "wert": 3.2438935658500583,
    "soll": [
-    2.68,
-    3.16
+    2.84,
+    3.32
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Fenster Nord (fr_kante_aussen): Tiefe x der ersten Flaeche bei u 7.15 z 25.00 (m)",
-   "wert": 3.2326431838068856,
+   "wert": 3.4490302298946105,
    "soll": [
-    3.21,
-    3.28
+    3.4,
+    3.47
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Fenster Nord (fl_oeffnung): Tiefe x der ersten Flaeche bei u 4.00 z 25.00 (m)",
-   "wert": 2.8515073383110874,
+   "wert": 3.0101431387707294,
    "soll": [
-    2.44,
-    3.04
+    2.6,
+    3.2
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Galerie/Vordach Nord (gal_front): x der ersten Flaeche bei u 6.20 z 11.10 (m)",
-   "wert": 4.687421110534906,
+   "wert": 4.846056715175642,
    "soll": [
-    4.52,
-    4.84
+    4.68,
+    5.0
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Galerie/Vordach Nord (gal_ende_ost_innen): x der ersten Flaeche bei u 2.02 z 11.10 (m)",
-   "wert": 4.745116167549405,
+   "wert": 4.903750585622802,
    "soll": [
-    4.52,
-    4.98
+    4.68,
+    5.14
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Galerie/Vordach Nord (gal_ende_ost_aussen): x der ersten Flaeche bei u 1.80 z 11.10 (m)",
-   "wert": 3.306475682488319,
+   "wert": 3.5807312552984527,
    "soll": [
-    3.21,
-    3.4
+    3.47,
+    3.66
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Galerie/Vordach Nord (gal_ende_west_innen): x der ersten Flaeche bei u 10.45 z 11.10 (m)",
-   "wert": 4.628731547545144,
+   "wert": 4.787367503131193,
    "soll": [
-    4.38,
-    4.8
+    4.54,
+    4.96
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Galerie/Vordach Nord (gal_ende_west_aussen): x der ersten Flaeche bei u 10.66 z 11.10 (m)",
-   "wert": 3.1841777360190306,
+   "wert": 3.4961588710906,
    "soll": [
-    3.12,
-    3.31
+    3.38,
+    3.57
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Galerie/Vordach Nord (gal_holm_unter): x der ersten Flaeche bei u 4.50 z 12.15 (m)",
-   "wert": 4.710866209126536,
+   "wert": 4.869472396322891,
    "soll": [
-    4.52,
-    4.89
+    4.68,
+    5.05
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Galerie/Vordach Nord (gal_holm_ueber): x der ersten Flaeche bei u 4.50 z 12.33 (m)",
-   "wert": 3.2692437283774183,
+   "wert": 3.547831422427521,
    "soll": [
-    3.17,
-    3.4
+    3.33,
+    3.56
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Galerie/Vordach Nord (vordach_traufe): x der ersten Flaeche bei u 6.20 z 17.40 (m)",
-   "wert": 4.780693949428816,
+   "wert": 4.939329078692957,
    "soll": [
-    4.52,
-    4.98
+    4.68,
+    5.14
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Galerie/Vordach Nord (vordach_oben): x der ersten Flaeche bei u 6.20 z 20.60 (m)",
-   "wert": 3.2601126548856527,
+   "wert": 3.483645904324675,
    "soll": [
-    3.21,
-    3.54
+    3.37,
+    3.7
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Galerie/Vordach Nord (vordach_darueber): x der ersten Flaeche bei u 6.20 z 21.00 (m)",
-   "wert": 3.2457646516330882,
+   "wert": 3.481323141827801,
    "soll": [
-    3.17,
-    3.33
+    3.33,
+    3.49
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Uhr Nord (uhr_ring_ost): x der ersten Flaeche bei u 3.59 z 33.49 (m)",
-   "wert": 3.370448135844221,
+   "wert": 3.5290838787101464,
    "soll": [
-    3.32,
-    3.42
+    3.48,
+    3.58
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Uhr Nord (uhr_aussen_ost): x der ersten Flaeche bei u 3.29 z 33.49 (m)",
-   "wert": 3.2812812234921083,
+   "wert": 3.439928862041654,
    "soll": [
-    3.25,
-    3.31
+    3.41,
+    3.47
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Uhr Nord (uhr_ring_oben): x der ersten Flaeche bei u 6.14 z 36.04 (m)",
-   "wert": 3.335252429764516,
+   "wert": 3.4938877904509127,
    "soll": [
-    3.28,
-    3.4
+    3.44,
+    3.56
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Uhr Nord (uhr_aussen_oben): x der ersten Flaeche bei u 6.14 z 36.34 (m)",
-   "wert": 3.2418979405167576,
+   "wert": 3.4005711082466448,
    "soll": [
-    3.21,
-    3.27
+    3.37,
+    3.43
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Uhr Nord (uhr_ring_west): x der ersten Flaeche bei u 8.69 z 33.49 (m)",
-   "wert": 3.3000428355462006,
+   "wert": 3.45867829275587,
    "soll": [
-    3.24,
-    3.36
+    3.4,
+    3.52
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Uhr Nord (uhr_aussen_west): x der ersten Flaeche bei u 8.99 z 33.49 (m)",
-   "wert": 3.2025649946880748,
+   "wert": 3.3612006729389776,
    "soll": [
-    3.18,
-    3.23
+    3.34,
+    3.39
    ],
    "ok": true,
    "status": "ok"
