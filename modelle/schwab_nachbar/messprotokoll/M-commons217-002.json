@@ -1,0 +1,32 @@
+{
+ "id": "M-commons217-002",
+ "foto": "commons217",
+ "kamera": "K-commons_orig2__217",
+ "ebene": "-0.99965,-0.02634,0=6.771",
+ "name": "Nachbar Torbogen Sued: Scheitel innen ueber Rahmen-Null",
+ "mess_px": [
+  1878.0,
+  2653.0,
+  1822.0,
+  1998.0
+ ],
+ "P1": [
+  -6.938,
+  6.244,
+  0.004
+ ],
+ "P2": [
+  -6.938,
+  6.248,
+  6.398
+ ],
+ "dz": 6.393,
+ "dy": 0.004,
+ "dx": -0.0,
+ "abstand": 6.393,
+ "z1": 0.004,
+ "z2": 6.398,
+ "unsicherheit_rel": 0.0091,
+ "unsicherheit_m": 0.103,
+ "massstab_von": "Kamera K-commons_orig2__217 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.02634,0=6.771 (+-0.3 m)"
+}

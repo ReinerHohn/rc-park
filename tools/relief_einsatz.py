@@ -38,11 +38,11 @@ def main():
     import cv2
     ap = argparse.ArgumentParser(); ap.add_argument("netz"); ap.add_argument("aus"); ap.add_argument("--ecke_a", nargs=2, type=float, required=True); ap.add_argument("--ecke_b", nargs=2, type=float, required=True)
     ap.add_argument("--aussen", nargs=2, type=float, required=True); ap.add_argument("--feld", nargs=4, type=float, required=True); ap.add_argument("--px", type=float, default=0.04)
-    ap.add_argument("--klemme", nargs=2, type=float, default=[-0.08, 0.15]); a = ap.parse_args()
+    ap.add_argument("--klemme", nargs=2, type=float, default=[-0.08, 0.15]); ap.add_argument("--band", type=float, default=0.6, help="Suchtiefe +- um die Ebene (m); fuer Auskragungen/Erker groesser waehlen"); a = ap.parse_args()
     A = np.array(a.ecke_a); B = np.array(a.ecke_b); t = (B - A) / np.linalg.norm(B - A); n = np.array([t[1], -t[0]]); n = n if (np.array(a.aussen) - A) @ n > 0 else -n
     u0, u1, z0, z1 = a.feld; px = a.px; W = int(round((u1 - u0) / px)); H = int(round((z1 - z0) / px))
     Z = np.load(a.netz); tri = Z["V"].astype(np.float64)[Z["F"]]; c = tri.mean(1); uu = (c[:, :2] - A) @ t; dd = (c[:, :2] - A) @ n
-    tri = tri[(uu > u0 - 0.1) & (uu < u1 + 0.1) & (np.abs(dd) < 0.6) & (c[:, 2] > z0 - 0.1) & (c[:, 2] < z1 + 0.1)]
+    tri = tri[(uu > u0 - 0.1) & (uu < u1 + 0.1) & (np.abs(dd) < a.band) & (c[:, 2] > z0 - 0.1) & (c[:, 2] < z1 + 0.1)]
     w = np.random.default_rng(0).dirichlet((1, 1, 1), (len(tri), 12)); P = (w[:, :, :, None] * tri[:, None, :, :]).sum(2).reshape(-1, 3)
     uu = (P[:, :2] - A) @ t; dd = (P[:, :2] - A) @ n; iu = ((uu - u0) / px).astype(int); iv = (H - 1 - (P[:, 2] - z0) / px).astype(int); g = (iu >= 0) & (iu < W) & (iv >= 0) & (iv < H)
     hm = np.full((H, W), -9, np.float32); np.maximum.at(hm, (iv[g], iu[g]), dd[g].astype(np.float32)); loch = hm < -5; roh = float(loch.mean())

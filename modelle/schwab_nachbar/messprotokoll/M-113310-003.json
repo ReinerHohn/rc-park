@@ -1,0 +1,32 @@
+{
+ "id": "M-113310-003",
+ "foto": "113310",
+ "kamera": "K-eigen__IMG_20261106_113310",
+ "ebene": "1.0,0.00455,0=3.573",
+ "name": "Nachbar Torbogen Nord: Kaempfer ueber Rahmen-Null",
+ "mess_px": [
+  1016.0,
+  3472.0,
+  1016.0,
+  2438.0
+ ],
+ "P1": [
+  3.53,
+  9.348,
+  0.002
+ ],
+ "P2": [
+  3.53,
+  9.352,
+  3.899
+ ],
+ "dz": 3.897,
+ "dy": 0.004,
+ "dx": -0.0,
+ "abstand": 3.897,
+ "z1": 0.002,
+ "z2": 3.899,
+ "unsicherheit_rel": 0.025,
+ "unsicherheit_m": 0.116,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113310 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 1.0,0.00455,0=3.573 (+-0.3 m)"
+}

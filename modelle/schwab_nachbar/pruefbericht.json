@@ -3,7 +3,9 @@
  "werte": {
   "hoehe": 25.849439575195312,
   "wasserdicht": 1.0,
-  "koerper": 1.0
+  "koerper": 1.0,
+  "tor_n_scheitel": 6.339999999999961,
+  "tor_s_scheitel": 6.37999999999996
  },
  "pruefungen": [
   {
@@ -22,6 +24,26 @@
    "soll": [
     1,
     1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Durchfahrt (tor_n_scheitel) (m)",
+   "wert": 6.339999999999961,
+   "soll": [
+    6.15,
+    6.55
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Durchfahrt (tor_s_scheitel) (m)",
+   "wert": 6.37999999999996,
+   "soll": [
+    6.2,
+    6.6
    ],
    "ok": true,
    "status": "ok"

@@ -56,5 +56,32 @@
   "tiefe_v": 8.95,
   "flaeche_m2": 35.8,
   "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade nord (Teil 1) mit Auskragungen",
+  "quelle": "OpenMVS-Netz der neuen dichten Wolke (rc-park_daten/schwab_v3/sfm_neu/openmvs), Hoehenbild 5 cm",
+  "hinweis": "Scan-Relief, kein Mass: Geschosse kragen bis 0,6 m (Nord) bzw. 1,2 m (Sued, Erker) vor; Fenster, Fachwerk und Gesimse nur als weiches Relief - scharf nachbauen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade sued (Teil 1) mit Auskragungen",
+  "quelle": "OpenMVS-Netz der neuen dichten Wolke (rc-park_daten/schwab_v3/sfm_neu/openmvs), Hoehenbild 5 cm",
+  "hinweis": "Scan-Relief, kein Mass: Geschosse kragen bis 0,6 m (Nord) bzw. 1,2 m (Sued, Erker) vor; Fenster, Fachwerk und Gesimse nur als weiches Relief - scharf nachbauen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Durchfahrt (zweiter Torbogen) Nord und Sued",
+  "quelle": "foto_mass.py auf den Fassadenebenen, Fotos 113310 (Nord) und commons 217 (Sued): M-113310-001..-004, M-commons217-001..-003",
+  "nord_halbe_breite": 3.2,
+  "nord_scheitel": 6.35,
+  "nord_kaempfer": 3.9,
+  "sued_halbe_breite": 3.15,
+  "sued_scheitel": 6.39,
+  "sued_kaempfer": 4.05,
+  "hinweis": "ANNAHME: Boegen symmetrisch (in den Fotos ist nur die turmseitige Haelfte zu sehen; Spannweite passt zum Netz), Kreisboegen, Durchfahrt gerade von Nord nach Sued",
+  "seite_name": "wand"
  }
 ]

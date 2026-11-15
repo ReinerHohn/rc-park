@@ -1,0 +1,32 @@
+{
+ "id": "M-113310-001",
+ "foto": "113310",
+ "kamera": "K-eigen__IMG_20261106_113310",
+ "ebene": "1.0,0.00455,0=3.573",
+ "name": "Nachbar Torbogen Nord: Pfeilerkante West bis Scheitelachse (halbe lichte Breite)",
+ "mess_px": [
+  1016.0,
+  2908.0,
+  146.0,
+  2939.0
+ ],
+ "P1": [
+  3.53,
+  9.348,
+  1.998
+ ],
+ "P2": [
+  3.545,
+  6.151,
+  2.001
+ ],
+ "dz": 0.003,
+ "dy": -3.197,
+ "dx": 0.015,
+ "abstand": 3.197,
+ "z1": 1.998,
+ "z2": 2.001,
+ "unsicherheit_rel": 0.0251,
+ "unsicherheit_m": 0.098,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113310 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 1.0,0.00455,0=3.573 (+-0.3 m)"
+}

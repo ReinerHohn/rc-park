@@ -1,0 +1,32 @@
+{
+ "id": "M-commons217-003",
+ "foto": "commons217",
+ "kamera": "K-commons_orig2__217",
+ "ebene": "-0.99965,-0.02634,0=6.771",
+ "name": "Nachbar Torbogen Sued: Kaempfer ueber Rahmen-Null",
+ "mess_px": [
+  1549.0,
+  2653.0,
+  1528.0,
+  2234.0
+ ],
+ "P1": [
+  -7.021,
+  9.401,
+  0.001
+ ],
+ "P2": [
+  -7.021,
+  9.394,
+  4.052
+ ],
+ "dz": 4.051,
+ "dy": -0.008,
+ "dx": 0.0,
+ "abstand": 4.051,
+ "z1": 0.001,
+ "z2": 4.052,
+ "unsicherheit_rel": 0.0092,
+ "unsicherheit_m": 0.082,
+ "massstab_von": "Kamera K-commons_orig2__217 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.02634,0=6.771 (+-0.3 m)"
+}

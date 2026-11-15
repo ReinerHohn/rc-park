@@ -10,6 +10,26 @@
   },
   "koerper": {
    "typ": "koerper_anzahl"
+  },
+  "tor_n_scheitel": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    2.545,
+    6.145
+   ],
+   "z0": 4.5,
+   "z1": 9.0,
+   "suche": "unten"
+  },
+  "tor_s_scheitel": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    -5.939,
+    6.275
+   ],
+   "z0": 4.5,
+   "z1": 9.0,
+   "suche": "unten"
   }
  },
  "pruefungen": [
@@ -34,6 +54,38 @@
    "quelle": "Schwebende Teile",
    "quelltyp": "modell",
    "merkmal": "druck"
+  },
+  {
+   "name": "Durchfahrt (tor_n_scheitel) (m)",
+   "wert": "tor_n_scheitel",
+   "soll": [
+    6.15,
+    6.55
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Fassadenebene (Wandgerade aus der dichten Wolke), Kameras aus dem SfM-Neuaufbau; Torbogen Nord Scheitel innen 6,35 m (Foto 113310)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-113310-002",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher geschlossener Grundkoerper"
+   ]
+  },
+  {
+   "name": "Durchfahrt (tor_s_scheitel) (m)",
+   "wert": "tor_s_scheitel",
+   "soll": [
+    6.2,
+    6.6
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Fassadenebene (Wandgerade aus der dichten Wolke), Kameras aus dem SfM-Neuaufbau; Torbogen Sued Scheitel innen 6,39 m (Foto commons 217)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons217-002",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher geschlossener Grundkoerper"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -42,6 +94,12 @@
    "wer": "Anlage",
    "text": "Quellen sichten: Dokumente (Hoehe), LoD2 (Grundriss/Traufe), DOM1 (Dachform), Fotos je Seite",
    "naechster_schritt": "objekt.json/quellen fuellen, Zeilen mit Quelle anlegen"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Claude",
+   "text": "Durchfahrt: die halbe lichte Breite (Nord 3,20 m, Sued 3,15 m; M-113310-001, M-commons217-001) laesst sich an diesem Objekt nicht pruefen - der turmseitige Pfeiler liegt bei u 6,5 und damit AUSSERHALB des LoD2-Grundrisses dieses Hauses (Hausende u 6,35): der Bogen ueberspannt das ganze Erdgeschoss, die Pfeiler gehoeren zum Turm bzw. zur Nachbarwand. Zwei falsch gestellte Pruefungen wieder entfernt.",
+   "naechster_schritt": "Pfeiler der Durchfahrt als eigene Bauteile (am Turm-Eck und am Ostende) aus Fotokanten bauen, dann Breite pruefen; zweite Bogenhaelfte in einem Foto von Osten messen (Symmetrie ist ANNAHME)"
   }
  ]
 }

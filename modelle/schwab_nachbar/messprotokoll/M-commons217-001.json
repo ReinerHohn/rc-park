@@ -1,0 +1,32 @@
+{
+ "id": "M-commons217-001",
+ "foto": "commons217",
+ "kamera": "K-commons_orig2__217",
+ "ebene": "-0.99965,-0.02634,0=6.771",
+ "name": "Nachbar Torbogen Sued: Pfeilerkante West bis Scheitelachse (halbe lichte Breite)",
+ "mess_px": [
+  1539.0,
+  2442.0,
+  1860.0,
+  2440.0
+ ],
+ "P1": [
+  -7.021,
+  9.393,
+  2.001
+ ],
+ "P2": [
+  -6.938,
+  6.247,
+  1.996
+ ],
+ "dz": -0.006,
+ "dy": -3.146,
+ "dx": 0.083,
+ "abstand": 3.147,
+ "z1": 2.001,
+ "z2": 1.996,
+ "unsicherheit_rel": 0.0092,
+ "unsicherheit_m": 0.074,
+ "massstab_von": "Kamera K-commons_orig2__217 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.02634,0=6.771 (+-0.3 m)"
+}
