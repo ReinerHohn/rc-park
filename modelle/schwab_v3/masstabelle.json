@@ -62,7 +62,8 @@
    "wer": "Nutzer (3D-Seite)",
    "text": "Das Fachwerkhaus nebenan hat keine Modellkanten",
    "hinweis_wolke": "Das Modell enthaelt nur das Zielgebaeude LoD2 DEBW_001000hPLcp (Turm + Rundanbau). Nachbarhaeuser sind eigene LoD2-Gebaeude; ihre Waende zeigt nur die Ebene 'LoD2-Waende' der 3D-Seite.",
-   "naechster_schritt": "ENTSCHEIDUNG NUTZER: Nachbarhaeuser (Fachwerkhaus, Haus mit Torbogen) als Kontextkoerper aus LoD2 ins Modell aufnehmen (eigene Teile, nicht Teil des Schwabentor-Drucks) oder nur in der 3D-Seite als Kanten zeigen?"
+   "naechster_schritt": "LoD2-IDs der beiden Nachbarhaeuser bestimmen (Kandidatenliste rc-park_daten/schwab_v3/pipe/kandidaten.log, 16 Gebaeude im Umkreis), als eigene Teile/Objekte mit gebaeude_aus_lod2 anlegen (gleicher Rahmen), dann je Haus Kantenstufe + Bauteile",
+   "entscheidung_nutzer": "2026-11-15 12:25: VOLL AUSMODELLIEREN (Fachwerkhaus und Haus mit Torbogen wie das Schwabentor mit Details aus Fotokanten)"
   }
  ]
 }
