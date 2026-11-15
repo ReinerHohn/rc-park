@@ -133,6 +133,8 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     U_UM, U_ZM, U_D, U_DI = 6.14, 33.49, 5.36, 3.52
     ring = M.cylinder(0.10 + 0.05, U_D / 2, U_D / 2, 64) - M.cylinder(0.3, U_DI / 2, U_DI / 2, 64).translate((0, 0, 0.11))     # Ring 10 cm, Innenfeld 6 cm vor der Wand: ANNAHME
     rumpf = rumpf + ring.translate((U_UM, U_ZM, -0.05)).transform(M_w)
+    from bauteile import Wand as _Wand
+    rumpf = rumpf + _Wand(ca, cb, aussen=ca + 5.0 * nn).zifferblatt(U_UM, U_ZM, U_D, U_DI, zeit=(12, 30), k=1.0 / 0.933)      # 15.11. abends (Nutzer: "Uhr noch nicht richtig"): Wulste, Ziffern, Zeiger; Zeit wie Foto 113029 (ANNAHME)
     for ub in (3.05, 9.10): rumpf = rumpf + kasten(ub - 0.15, ub + 0.15, 35.55, 36.0, -0.05, 0.25)            # Balkenkoepfe: Lage aus dem entzerrten Foto 113029, Groesse ANNAHME
     beleg("wand", "Uhr Nord (Zifferblatt 5,36 m, Innenfeld 3,52 m)", "foto_mass.py auf der Wandebene, Fotos 113029 und 113205", durchmesser=U_D, mitte_u=U_UM, mitte_z=U_ZM,
           hinweis="ANNAHME: Ring 10 cm / Innenfeld 6 cm vor der Wand; Ziffern, Zeiger, Sonne/Mond nicht modelliert; 2 Balkenkoepfe nach Augenschein")
@@ -190,6 +192,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper - WS.prisma(b_spitz(4.49 / 2, 3.86, 5.85), u=T_U, w0=-1.3, w1=0.6)
     koerper = koerper - WS.prisma(b_rund(0.92, 22.26, 23.66), u=5.745, w0=-0.45, w1=0.6)        # Fenster: Tiefe ANNAHME 0,45 m; Steingewaende 2,02 m breit ist buendig (Farbe)
     koerper = koerper + WS.scheibe(5.71, 30.97, 4.95, -0.05, 0.10) - WS.scheibe(5.71, 30.97, 3.16, 0.06, 0.4)   # Uhr: Ring 10 cm, Innenfeld 6 cm vor der Wand (ANNAHME wie Nord)
+    koerper = koerper + WS.zifferblatt(5.71, 30.97, 4.95, 3.16, zeit=(2, 5))                     # Wulste, 12 roemische Ziffern, Zeiger mit Sonne/Mond (Ablesung entzerrtes Foto commons 127; Zeit und Relieftiefen ANNAHME)
     for ub in (8.52, 2.97): koerper = koerper + WS.kasten(ub - 0.15, ub + 0.15, 32.95, 33.5, -0.05, 0.25)       # Balkenkoepfe: Lage aus dem entzerrten Foto 127, Groesse ANNAHME
     koerper = koerper + WS.kasten(0.0, WS.laenge, 26.0, 26.53, -0.05, 0.10)                      # Gesims: Ausladung ANNAHME 10 cm
     koerper = koerper + WS.kasten(2.57, 7.0, 18.22, 18.38, -0.05, 0.15)                          # Verdachung ueber der Inschrift (Georgsbild darunter ist flach): Staerke/Ausladung ANNAHME

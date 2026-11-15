@@ -50,6 +50,34 @@ class Wand:
         for t_ in teiler: zus = zus + K_(t_ - b / 2, t_ + b / 2, z0 - e, z1 + e, v0, v1)
         if kaempfer: zus = zus + K_(u0 - e, u1 + e, kaempfer - b / 2, kaempfer + b / 2, v0, v1)
         return K_(u0, u1, z0, z1, w - tiefe, w + 0.02), zus
+    def stab(self, p, q, b, w0, w1):
+        """Gerader Stab von p = (u, z) nach q = (u, z), Breite b, von w0 bis w1 vor der Wand (Zeiger, Ziffernstriche, Leisten)."""
+        p = np.array(p, float); q = np.array(q, float); d = q - p; d = d / np.linalg.norm(d); s = np.array([-d[1], d[0]]) * b / 2
+        return self.huelle([(c[0], c[1], w_) for c in (p + s, p - s, q + s, q - s) for w_ in (w0, w1)])
+    def zifferblatt(self, u, z, d_aussen, d_innen, zeit=(2, 5), k=1.0, w_ring=0.10, w_feld=0.06):
+        """Turmuhr-Details AUF einer vorhandenen Ringscheibe (Ring bis w_ring, Innenfeld bis w_feld vor der Wand): Wulst aussen und innen, 12 roemische Ziffern
+        (radial, Fuss zur Mitte, IIII statt IV wie an Turmuhren ueblich), Nabe, Stundenzeiger mit Sonne und Mondsichel am Gegenende, Minutenzeiger mit Pfeil.
+        Masse relativ zum Durchmesser (Ablesung Schwabentor Sued, entzerrtes Foto commons 127); k = Laengenfaktor fuer Tiefen/Breiten (Rohrahmen). Zeit = ANNAHME."""
+        ra, ri = d_aussen / 2, d_innen / 2; sr = 1.0 if self.t @ np.array([-self.n[1], self.n[0]]) > 0 else -1.0; S = self.scheibe; e = 0.01 * k
+        def P(r, phi, dx=0.0, dy=0.0):                                     # Uhrwinkel phi im Uhrzeigersinn ab 12; dx entlang des Uhrzeigersinns, dy nach aussen
+            return (u + sr * (r * np.sin(phi) + dx * np.cos(phi) + dy * np.sin(phi)), z + r * np.cos(phi) - dx * np.sin(phi) + dy * np.cos(phi))
+        t = (S(u, z, d_aussen, w_ring - e, w_ring + 0.04 * k) - S(u, z, d_aussen - 0.14 * k, w_ring - 2 * e, w_ring + 0.1 * k)) + (S(u, z, d_innen + 0.13 * k, w_feld - e, w_ring + 0.04 * k) - S(u, z, d_innen, w_feld - 2 * e, w_ring + 0.1 * k))
+        rm = (ri + ra) / 2; h = 0.70 * (ra - ri) ; b = 0.075 * k; a_ = 0.13 * h / 0.63; w0, w1 = w_ring - e, w_ring + 0.03 * k
+        for n_, txt in enumerate(("I", "II", "III", "IIII", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"), 1):
+            phi = np.radians(30.0 * n_); br = [0.11 * h / 0.63 if c == "I" else 2 * a_ + 0.06 * h for c in txt]; x = -sum(br) / 2
+            for c, bw in zip(txt, br):
+                xm = x + bw / 2; x += bw
+                if c == "I": t = t + self.stab(P(rm, phi, xm, -h / 2), P(rm, phi, xm, h / 2), b, w0, w1)
+                elif c == "V": t = t + self.stab(P(rm, phi, xm - a_, h / 2), P(rm, phi, xm, -h / 2), b, w0, w1) + self.stab(P(rm, phi, xm + a_, h / 2), P(rm, phi, xm, -h / 2), b * 0.6, w0, w1)
+                else: t = t + self.stab(P(rm, phi, xm - a_, h / 2), P(rm, phi, xm + a_, -h / 2), b, w0, w1) + self.stab(P(rm, phi, xm - a_, -h / 2), P(rm, phi, xm + a_, h / 2), b * 0.6, w0, w1)
+        ph = np.radians(30.0 * (zeit[0] % 12) + 0.5 * zeit[1]); pm = np.radians(6.0 * zeit[1]); v0, v1, v2 = w_feld - e, w_feld + 0.10 * k, w_feld + 0.16 * k
+        t = t + S(u, z, 0.30 * k, v0, v2 + 0.03 * k)                                                                            # Nabe traegt beide Zeiger
+        t = t + self.stab(P(0.74 * ri, ph + np.pi), P(0.80 * ri, ph), 0.07 * k, v1 - 0.03 * k, v1) + S(*P(0.80 * ri, ph), 0.36 * ri, v1 - 0.03 * k, v1 + 0.02 * k)      # Stundenzeiger + Sonne
+        mo = P(0.62 * ri, ph + np.pi); mi = P(0.62 * ri - 0.07 * ri, ph + np.pi, 0.05 * ri)
+        t = t + (S(*mo, 0.34 * ri, v1 - 0.03 * k, v1) - S(*mi, 0.28 * ri, v1 - 0.05 * k, v1 + 0.02 * k))                         # Mondsichel am Gegenende
+        t = t + self.stab(P(0.62 * ri, pm + np.pi), P(ra - 0.30 * (ra - ri), pm), 0.05 * k, v2 - 0.03 * k, v2)                   # Minutenzeiger bis in den Ziffernring
+        sp = ra - 0.30 * (ra - ri); t = t + self.huelle([(c[0], c[1], w_) for c in (P(sp + 0.22 * ri, pm), P(sp - 0.10 * ri, pm, 0.07 * ri), P(sp - 0.10 * ri, pm, -0.07 * ri)) for w_ in (v2 - 0.03 * k, v2)])
+        return t
     def halbraum_innen(self, koerper):
         """Koerper an der Wandebene abschneiden (alles VOR der Ebene faellt weg)."""
         return koerper.trim_by_plane((-self.n[0], -self.n[1], 0.0), float(-(self.n @ self.a)))
