@@ -1,0 +1,74 @@
+{
+ "name": "Schwabentor",
+ "ort": "Freiburg im Breisgau",
+ "generator": "SCALE=87 MINMM=0.8 ~/.venvs/rcpark/bin/python modelle/schwab_auto_gen.py",
+ "stl": "modelle/stl/schwab_auto_1-87.stl",
+ "stl_massstab": 87,
+ "stl_einheit_mm": true,
+ "zentrierung": "achse",
+ "masstabelle": "modelle/schwab_auto/masstabelle.json",
+ "elemente": "modelle/schwab_auto/elemente.json",
+ "audit": "modelle/schwab_auto/audit",
+ "ueberwacht": [
+  "modelle/schwab_auto_gen.py",
+  "modelle/stl/schwab_auto_1-87.stl",
+  "modelle/schwab_auto/masstabelle.json",
+  "modelle/schwab_auto/elemente.json"
+ ],
+ "fotos_dir": "daten/schwabentor/fotos",
+ "seiten_konvention": {
+  "+x": "Nord",
+  "-x": "Sued",
+  "+y": "West",
+  "-y": "Ost",
+  "quelle": "rahmen xhat_utm (-0,24/0,97) = Nord 14 Grad West, yhat_utm (-0,97/-0,24) = West (2026-11-14)"
+ },
+ "fotos": {},
+ "quellen": {
+  "dokument": "OFFEN",
+  "lod2": "OFFEN",
+  "dom1_dgm1": "OFFEN",
+  "dop20": "OFFEN",
+  "fotos": "OFFEN",
+  "laser_punkte": "n/a (kostenpflichtig)"
+ },
+ "lod2": {
+  "gml": "/media/oem/scan/rc-park_daten/_geo/LoD2_32_413_5316_2_bw/LoD2_32_414_5316_1_BW.gml",
+  "id": "DEBW_001000hPLcp",
+  "id_stadtmodell": "DEBWL001000hPLcp",
+  "gml_stadtmodell_fehlt": "/media/oem/scan/rc-park_daten/freiburg_stadt/lod2/20261007_Freiburg_LoD2.gml",
+  "hinweis": "2026-11-14 umgestellt von Tvdv (Nachbarhaus) auf PLcp: GML-Attribut name='Schwabentor'; Rundanbau = Treppentuermchen (Foto IMG_20261106_113545_1); dichte Wolke Variante J passt nur hier (Massstab x1,8, Muenster-Entfernung 312/310 m, EXIF-GPS 5 m). Alt: Tvdv per First-Kandidat ohne Namenspruefung."
+ },
+ "rahmen": {
+  "mitte_utm": [
+   414525.9,
+   5316153.75
+  ],
+  "xhat_utm": [
+   -0.2426,
+   0.9701
+  ],
+  "yhat_utm": [
+   -0.9701,
+   -0.2426
+  ],
+  "gelaende": 282.16,
+  "quelle": "Koordinatenrahmen bleibt (urspruenglich aus LOD2 Tvdv abgeleitet, alle Wolken-npy liegen darin); Objekt ist PLcp (siehe lod2.hinweis)"
+ },
+ "rahmen_wand": {
+  "u0": -8.21,
+  "u1": 3.92,
+  "v0": 8.93,
+  "v1": 21.43,
+  "quelle": "LGL GroundSurface PLcp (ohne Rundanbau)"
+ },
+ "koordinate_utm": [
+  414505.5,
+  5316149.2
+ ],
+ "hoehe_m": 50.8,
+ "gesamtkette": {
+  "quelle": "schwabentor",
+  "hinweis": "von tools/gesamtkette.py angelegt; Masse/Pruefungen nur aus Quellen dieser Kette"
+ }
+}

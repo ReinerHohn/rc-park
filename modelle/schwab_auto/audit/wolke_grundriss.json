@@ -1,0 +1,146 @@
+{
+ "werkzeug": "wolke_grundriss_pruefen.py",
+ "wolke": "/home/oem/git/rc-park/modelle/schwab_auto/sfm/punkte_modell_schwab_auto.npy",
+ "lod2_gebaeude": 36,
+ "wandpunkte": 1147734,
+ "strasse": {
+  "anteil": 0.0053,
+  "haufen": [
+   {
+    "punkte": 3613,
+    "mitte": [
+     -10.4,
+     3.7
+    ],
+    "ausdehnung_m": [
+     22,
+     30
+    ]
+   },
+   {
+    "punkte": 1932,
+    "mitte": [
+     10.4,
+     11.5
+    ],
+    "ausdehnung_m": [
+     16,
+     26
+    ]
+   }
+  ],
+  "warnung": false
+ },
+ "teile": {
+  "ziel": "DEBW_001000hPLcp",
+  "teile": [
+   {
+    "teil": 0,
+    "flaeche_m2": 141.4,
+    "randproben": 306,
+    "deckung": 0.902,
+    "gedreht": {
+     "f1": 0.433,
+     "drehung_grad": 260,
+     "versatz_m": [
+      1.5,
+      -0.5
+     ],
+     "randdeckung": 0.278,
+     "auf_rand": 0.982
+    },
+    "hinweis": false,
+    "warnung": false
+   },
+   {
+    "teil": 1,
+    "flaeche_m2": 6.9,
+    "randproben": 84,
+    "deckung": 0.774,
+    "gedreht": {
+     "f1": 0.888,
+     "drehung_grad": 128,
+     "versatz_m": [
+      -1.25,
+      -1.5
+     ],
+     "randdeckung": 0.893,
+     "auf_rand": 0.884
+    },
+    "hinweis": false,
+    "warnung": false
+   }
+  ],
+  "warnung": false
+ },
+ "eindeutigkeit": {
+  "identitaet_anteil": 0.5355,
+  "beste_nahe_identitaet": {
+   "anteil": 0.5354701280593872,
+   "spiegel": 0,
+   "drehung": 0,
+   "verschiebung": [
+    0.0,
+    0.0
+   ]
+  },
+  "beste_alternative": {
+   "anteil": 0.3280509114265442,
+   "spiegel": 1,
+   "drehung": 186,
+   "verschiebung": [
+    -0.25,
+    -0.5
+   ]
+  },
+  "abstand_relativ": 0.387,
+  "warnung": false,
+  "top5": [
+   {
+    "anteil": 0.5354701280593872,
+    "spiegel": 0,
+    "drehung": 0,
+    "verschiebung": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "anteil": 0.514380156993866,
+    "spiegel": 0,
+    "drehung": 1,
+    "verschiebung": [
+     0.0,
+     -0.5
+    ]
+   },
+   {
+    "anteil": 0.5061643719673157,
+    "spiegel": 0,
+    "drehung": 359,
+    "verschiebung": [
+     0.0,
+     0.25
+    ]
+   },
+   {
+    "anteil": 0.4622330069541931,
+    "spiegel": 0,
+    "drehung": 2,
+    "verschiebung": [
+     0.0,
+     -0.75
+    ]
+   },
+   {
+    "anteil": 0.45140016078948975,
+    "spiegel": 0,
+    "drehung": 358,
+    "verschiebung": [
+     0.0,
+     0.75
+    ]
+   }
+  ]
+ }
+}

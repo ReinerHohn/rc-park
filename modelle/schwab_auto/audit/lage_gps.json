@@ -1,0 +1,27 @@
+{
+ "werkzeug": "lage_gps_pruefen.py",
+ "ausrichtung": "modelle/schwab_auto/messprotokoll/SFM-AUSRICHTUNG-schwab_auto.json",
+ "lage": null,
+ "n_kameras": 493,
+ "n_gps": 193,
+ "median_abstand_m": 3.6927688397346583,
+ "gps_fit": {
+  "drehung_grad": 2.869858695323979,
+  "drehung_90": [
+   1.135297149794982,
+   4.984827232176839
+  ],
+  "massstab": 0.8754351161478245,
+  "massstab_90": [
+   0.849192655945536,
+   0.8958109528715773
+  ],
+  "rest_median_m": 4.80575254681742
+ },
+ "fernfotos": {
+  "n": 15,
+  "entfernung_gps_durch_modell": 0.981518197738979,
+  "richtungsfehler_grad": 1.0295940539225796
+ },
+ "warnungen": []
+}
