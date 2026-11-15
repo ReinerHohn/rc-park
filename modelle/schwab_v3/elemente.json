@@ -28,12 +28,12 @@
  {
   "seite": "dach",
   "element": "Zeltdach mit Ueberstand",
-  "quelle": "Foto-Triangulation Nordseite (foto_mass.py --tri, M-113205-002/-003/-004)",
-  "traufe": 39.18,
-  "neigung_grad": 55.1,
+  "quelle": "Foto-Triangulation Nordseite (foto_mass.py --tri, M-113205-008/-009/-010, Rahmen lotrecht aus Foto-Vertikalen)",
+  "traufe": 39.26,
+  "neigung_grad": 54.4,
   "trauflaenge_ost_west": 14.35,
-  "ueberstand": 1.19,
-  "spitze_gedacht": 49.26,
+  "ueberstand": 1.17,
+  "spitze_gedacht": 48.97,
   "hinweis": "ANNAHME: Sued-, Ost- und Westflaeche wie Nord (gleiche Spitzenhoehe), Traufdicke 0,25 m",
   "seite_name": "dach"
  },
@@ -41,7 +41,7 @@
   "seite": "wand",
   "element": "Hauptteil Wand bis Traufe",
   "quelle": "LoD2 DEBW_001000hPLcp GroundSurface 0; Nordwand am Foto bestaetigt (M-113205-006/-007)",
-  "hoehe": 39.18,
+  "hoehe": 39.26,
   "hinweis": "ANNAHME: Wand bis Traufhoehe, Dachuntersicht nicht gemessen",
   "seite_name": "wand"
  },
@@ -52,5 +52,14 @@
   "hoehe": 55.3,
   "hinweis": "ANNAHME: Form (geschlossener Achteckschaft statt 4 Pfosten, Krempe, Zwiebel, Spitze 1 m) nach Augenschein Foto 113205, nicht gemessen",
   "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "Nordwand (Ebene)",
+  "quelle": "Foto-Peilung foto_mass.py --tri2d der Wandecken am Uhrgeschoss (M-113205-012/-013)",
+  "x_bei_y9": 3.72,
+  "x_bei_y21": 3.54,
+  "hinweis": "ANNAHME: Wand ueber die ganze Hoehe in dieser Ebene (Anzug/Sockel noch nicht gemessen)",
+  "seite_name": "wand"
  }
 ]

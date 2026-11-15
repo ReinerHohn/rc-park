@@ -4,12 +4,12 @@
   "hoehe": 55.30000158691406,
   "wasserdicht": 1.0,
   "koerper": 1.0,
-  "traufe_nord_reichweite": 7.029999935150146,
-  "traufe_west_reichweite": 7.229999481201171,
-  "traufe_ost_reichweite": 7.119999771118165,
-  "traufe_oben_z": 39.380000000000294,
-  "dach_nord_z45": 2.9699127771214395,
-  "wand_nord_reichweite": 5.975326385496881
+  "traufe_nord_reichweite": 6.949999919891358,
+  "traufe_west_reichweite": 7.270000152587889,
+  "traufe_ost_reichweite": 7.07999976348877,
+  "traufe_oben_z": 39.34000000000029,
+  "dach_nord_z45": 2.8405637426797656,
+  "wand_nord_reichweite": 5.824616144038895
  },
  "pruefungen": [
   {
@@ -34,50 +34,50 @@
   },
   {
    "name": "Traufkante Nord: Abstand von Dachmitte bei z 39,05 (m)",
-   "wert": 7.029999935150146,
+   "wert": 6.949999919891358,
    "soll": [
-    6.85,
-    7.25
+    6.75,
+    7.15
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Traufkante West (+y): Abstand von Dachmitte bei z 39,05 (m)",
-   "wert": 7.229999481201171,
+   "wert": 7.270000152587889,
    "soll": [
-    7.08,
-    7.38
+    7.12,
+    7.42
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Traufkante Ost (-y): Abstand von Dachmitte bei z 39,05 (m)",
-   "wert": 7.119999771118165,
+   "wert": 7.07999976348877,
    "soll": [
-    6.97,
-    7.27
+    6.93,
+    7.23
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Traufe Nord Oberkante z bei x 4,75 (m)",
-   "wert": 39.380000000000294,
+   "wert": 39.34000000000029,
    "soll": [
-    39.1,
-    39.5
+    39.15,
+    39.55
    ],
    "ok": true,
    "status": "ok"
   },
   {
    "name": "Dachflaeche Nord bei z 45: Abstand von Dachmitte (m)",
-   "wert": 2.9699127771214395,
+   "wert": 2.8405637426797656,
    "soll": [
-    2.6,
-    3.3
+    2.5,
+    3.2
    ],
    "ok": true,
    "status": "ok"
@@ -94,10 +94,10 @@
   },
   {
    "name": "Nordwand Uhrgeschoss: Abstand von Dachmitte bei z 36 (m)",
-   "wert": 5.975326385496881,
+   "wert": 5.824616144038895,
    "soll": [
-    5.7,
-    6.0
+    5.65,
+    5.95
    ],
    "ok": true,
    "status": "ok"

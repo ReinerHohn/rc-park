@@ -1,0 +1,70 @@
+{
+ "id": "M-113205-010",
+ "typ": "triangulation",
+ "foto": "113205",
+ "name": "Laternenfuss vorn Mitte, 5 Fotos, nach Lotkorrektur",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__IMG_20261106_113205",
+   "px": [
+    1486.0,
+    745.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113106",
+   "px": [
+    1814.0,
+    647.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113029",
+   "px": [
+    1942.0,
+    472.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113128",
+   "px": [
+    1365.0,
+    571.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113201",
+   "px": [
+    1558.0,
+    708.0
+   ]
+  }
+ ],
+ "P": [
+  -0.955,
+  15.127,
+  47.295
+ ],
+ "strahl_abstand_m": [
+  0.046,
+  0.052,
+  0.036,
+  0.065,
+  0.048
+ ],
+ "schnittwinkel_grad": [
+  12.2,
+  19.6,
+  4.1,
+  0.0,
+  7.5,
+  8.2,
+  12.2,
+  15.6,
+  19.6,
+  4.0
+ ],
+ "z": 47.295,
+ "unsicherheit_m": 0.369,
+ "massstab_von": "Kameras K-eigen__IMG_20261106_113205, K-eigen__IMG_20261106_113106, K-eigen__IMG_20261106_113029, K-eigen__IMG_20261106_113128, K-eigen__IMG_20261106_113201 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

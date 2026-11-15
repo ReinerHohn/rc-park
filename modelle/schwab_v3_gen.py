@@ -18,20 +18,20 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     for b_ in belege:
         if b_["element"] == "Teil 0 (ohne Dachmessung)": continue           # Hauptteil bekommt das Fotodach unten
         beleg(**b_)
-    ZT = 39.18                                # Traufe aussen oben: Ecken A 39,15 / C 39,20 (M-113205-002/-003)
-    X1, Y0, Y1 = 4.88, 8.16, 22.51            # Traufkante Nord (x) und Ecken Ost/West (y), gleiche Protokolle
+    ZT = 39.26                                # Traufe aussen oben: Ecken A 39,20 / C 39,32 (M-113205-008/-009, nach Lotkorrektur)
+    X1, Y0, Y1 = 4.80, 8.20, 22.55            # Traufkante Nord (x) und Ecken Ost/West (y), gleiche Protokolle
     MX = -2.15                                # Dachmitte x = Mitte zwischen Nordwand 3,69 (M-113205-006/-007) und Suedwand LoD2 -8,0
     X0 = 2 * MX - X1                          # ANNAHME: Suedtraufe spiegelbildlich (Turmkopf im SfM nur von Norden gesehen)
-    NEIG = 55.1                               # Neigung Nordflaeche: Traufe -> Laternenfuss (-0,77 / 47,28), M-113205-004; Laser DOM1 56,1
-    ZF = 47.28                                # Laternenfuss = Oberkante Pyramidenstumpf
+    NEIG = 54.4                               # Neigung Nordflaeche: Traufe -> Laternenfuss (-0,96 / 47,30), M-113205-010; Laser DOM1 56,1
+    ZF = 47.30                                # Laternenfuss = Oberkante Pyramidenstumpf
     DICKE = 0.25                              # ANNAHME: Traufbrett/Sparrenkopf 0,25 m
     cx, cy = (X0 + X1) / 2, (Y0 + Y1) / 2; hx, hy = (X1 - X0) / 2, (Y1 - Y0) / 2
     zs = ZT + hx * np.tan(np.radians(NEIG)); f = (zs - ZF) / (zs - ZT)       # gedachte Spitze (~49,25 m; Laser max 49,62)
     ecken = lambda h_x, h_y, z: [[cx + a * h_x, cy + b * h_y, z] for a in (-1, 1) for b in (-1, 1)]
     dach = M.hull_points(ecken(hx, hy, ZT - DICKE) + ecken(hx, hy, ZT) + ecken(hx * f, hy * f, ZF))
     wand = M.extrude(CrossSection([np.asarray(haupt).tolist()]), ZT)        # ANNAHME: Wand laeuft bis unter die Dachhaut (Untersicht/Holzwerk nicht gemessen)
-    beleg("dach", "Zeltdach mit Ueberstand", "Foto-Triangulation Nordseite (foto_mass.py --tri, M-113205-002/-003/-004)", traufe=ZT, neigung_grad=NEIG,
-          trauflaenge_ost_west=round(Y1 - Y0, 2), ueberstand=round(X1 - 3.69, 2), spitze_gedacht=round(float(zs), 2),
+    beleg("dach", "Zeltdach mit Ueberstand", "Foto-Triangulation Nordseite (foto_mass.py --tri, M-113205-008/-009/-010, Rahmen lotrecht aus Foto-Vertikalen)", traufe=ZT, neigung_grad=NEIG,
+          trauflaenge_ost_west=round(Y1 - Y0, 2), ueberstand=round(X1 - 3.63, 2), spitze_gedacht=round(float(zs), 2),
           hinweis="ANNAHME: Sued-, Ost- und Westflaeche wie Nord (gleiche Spitzenhoehe), Traufdicke 0,25 m")
     beleg("wand", "Hauptteil Wand bis Traufe", "LoD2 DEBW_001000hPLcp GroundSurface 0; Nordwand am Foto bestaetigt (M-113205-006/-007)", hoehe=ZT,
           hinweis="ANNAHME: Wand bis Traufhoehe, Dachuntersicht nicht gemessen")
@@ -39,11 +39,17 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     lat = M.cylinder(51.3 - (ZF - 0.3), 0.75, 0.75, 8).translate((cx, cy, ZF - 0.3))
     lat = lat + M.cylinder(0.35, 1.05, 0.80, 8).translate((cx, cy, 51.2))                                   # Krempe
     lat = lat + M.sphere(1.0, 24).scale((0.9, 0.9, 1.2)).translate((cx, cy, 52.5))                          # Zwiebelhaube
-    lat = lat + M.cylinder(0.6, 0.14, 0.10, 12).translate((cx, cy, 53.5)) + M.sphere(0.22, 16).translate((cx, cy, 54.17))
+    lat = lat + M.cylinder(0.6, 0.14, 0.10, 12).translate((cx, cy, 53.5)) + M.sphere(0.22, 16).translate((cx, cy, 54.18))
     lat = lat + M.cylinder(1.0, 0.06, 0.05, 8).translate((cx, cy, 54.3))                                    # Spitze
     beleg("dach", "Laterne mit Zwiebelhaube", "Knauf-Hoehe 54,17 m aus Foto-Triangulation (M-113205-005)", hoehe=55.3,
           hinweis="ANNAHME: Form (geschlossener Achteckschaft statt 4 Pfosten, Krempe, Zwiebel, Spitze 1 m) nach Augenschein Foto 113205, nicht gemessen")
-    koerper = koerper + wand + dach + lat
+    # Nordwand: LoD2 liegt am Uhrgeschoss bis 0,2 m zu weit aussen (3,92 statt 3,72 bei y 9,2). Am Foto gepeilte Wandecken C' (3,72 / 9,22) und A' (3,54 / 21,38),
+    # M-113205-012/-013 -> Wandkoerper an dieser senkrechten Ebene abschneiden (Dach und Laterne bleiben)
+    ca, cb = np.array([3.72, 9.22]), np.array([3.54, 21.38]); tn = (cb - ca) / np.linalg.norm(cb - ca); nn = np.array([tn[1], -tn[0]]); nn = nn if nn[0] > 0 else -nn
+    rumpf = (koerper + wand).trim_by_plane((-nn[0], -nn[1], 0.0), float(-(nn @ ca)))
+    beleg("wand", "Nordwand (Ebene)", "Foto-Peilung foto_mass.py --tri2d der Wandecken am Uhrgeschoss (M-113205-012/-013)", x_bei_y9=3.72, x_bei_y21=3.54,
+          hinweis="ANNAHME: Wand ueber die ganze Hoehe in dieser Ebene (Anzug/Sockel noch nicht gemessen)")
+    koerper = rumpf + dach + lat
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json
