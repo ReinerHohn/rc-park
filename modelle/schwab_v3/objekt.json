@@ -84,5 +84,13 @@
    "wer": "Claude"
   }
  ],
- "hoehe_m_quelle": "2026-11-15: Knauf der Laterne 54,17 m aus Foto-Triangulation (M-113205-005) + Spitze (ANNAHME ~1 m). Vorher 50,8 = Platzhalter aus DOM1-Maximum 49,6 (Laser blind fuer duenne Laterne), keine Dokumentquelle"
+ "hoehe_m_quelle": "2026-11-15: Knauf der Laterne 54,17 m aus Foto-Triangulation (M-113205-005) + Spitze (ANNAHME ~1 m). Vorher 50,8 = Platzhalter aus DOM1-Maximum 49,6 (Laser blind fuer duenne Laterne), keine Dokumentquelle",
+ "fotodiag_fotos": [
+  "eigen__IMG_20261106_113029",
+  "eigen__IMG_20261106_113106",
+  "eigen__IMG_20261106_113128",
+  "eigen__IMG_20261106_113205",
+  "eigen__IMG_20261106_113208",
+  "eigen__IMG_20261106_113231"
+ ]
 }

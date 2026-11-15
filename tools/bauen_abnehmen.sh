@@ -33,7 +33,12 @@ export -f fotodiag
 # RCPARK_OHNE_FOTODIAG=1 (Kreis-Tor, 10.11. abends): Diagnosen aendern das Ergebnis nicht (RC = Pruefstand), kosteten im Tor bis 40 min unter der GPU-Sperre
 # (Erker 1: Abnahme Lauf 2417 s, Rumpf EG wartete 2906 s). main_abnahme laeuft weiter MIT Diagnosen.
 [ "${RCPARK_OHNE_FOTODIAG:-0}" = "1" ] && echo "Foto-Diagnosen uebersprungen (RCPARK_OHNE_FOTODIAG=1)" || \
-ls modelle/$1/messprotokoll/K-*.json 2>/dev/null | xargs -P 4 -I{} bash -c 'fotodiag "$@"' _ {} "$OBJ" "$PY"
+{ KLISTE=$($PY -c "
+import json,glob,sys
+o=json.load(open('$OBJ')); alle=sorted(glob.glob('modelle/$1/messprotokoll/K-*.json')); w=o.get('fotodiag_fotos')
+if w: alle=[k for k in alle if k.split('/K-')[-1][:-5] in set(w)]
+elif len(alle)>100: sys.stderr.write('Foto-Diagnosen: %d K-Kameras (Buendel) und kein objekt.json fotodiag_fotos -> uebersprungen (15.11.2026: 569 Kameras fuellten Masstabelle mit 282 Auto-Beobachtungen und die Root-Platte mit 240 MB)\\n'%len(alle)); alle=[]
+print('\\n'.join(alle))"); [ -n "$KLISTE" ] && echo "$KLISTE" | xargs -P 4 -I{} bash -c 'fotodiag "$@"' _ {} "$OBJ" "$PY"; }
 # Gegenbeweis Register CB: die Fehlerklasse 'Zaehlmerkmal aus Wolke / Etikettenumgehung / Selbstbezug' muss weiter abgelehnt werden (nur Objekte mit Zaehlprotokollen)
 if ls modelle/$1/messprotokoll/Z-*.json >/dev/null 2>&1; then
   set +e; TOUT=$($PY -W ignore -I tools/test_regeln_cb.py "$OBJ" 2>&1); RT=$?; set -e; echo "$TOUT" | grep -E "out of memory|OutOfMemory|CUDA_ERROR|Traceback" | head -3; echo "$TOUT" | tail -8
