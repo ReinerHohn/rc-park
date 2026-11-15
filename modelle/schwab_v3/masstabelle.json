@@ -1723,15 +1723,15 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1526",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 28.74,
-   "z_bis": 28.74,
+   "z_von": 28.72,
+   "z_bis": 28.72,
    "xyz": [
-    -2.38,
+    -2.37,
     9.76,
-    28.74
+    28.72
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.74 m, y=9.76 m (Zelle [981, 1526, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.72 m, y=9.76 m (Zelle [981, 1526, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1743,12 +1743,12 @@
    "z_von": 26.73,
    "z_bis": 26.73,
    "xyz": [
-    -2.37,
-    9.81,
+    -2.38,
+    9.8,
     26.73
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.73 m, y=9.81 m (Zelle [981, 1635, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.73 m, y=9.8 m (Zelle [981, 1635, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1757,15 +1757,15 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1744",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 24.77,
-   "z_bis": 24.77,
+   "z_von": 24.74,
+   "z_bis": 24.74,
    "xyz": [
-    -2.3,
-    9.82,
-    24.77
+    -2.28,
+    9.81,
+    24.74
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.77 m, y=9.82 m (Zelle [981, 1744, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.74 m, y=9.81 m (Zelle [981, 1744, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1774,15 +1774,15 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-2071",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 19.65,
-   "z_bis": 19.65,
+   "z_von": 19.64,
+   "z_bis": 19.64,
    "xyz": [
-    -2.18,
+    -2.17,
     9.88,
-    19.65
+    19.64
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.65 m, y=9.88 m (Zelle [981, 2071, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.64 m, y=9.88 m (Zelle [981, 2071, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1794,13 +1794,36 @@
    "z_von": 18.16,
    "z_bis": 18.16,
    "xyz": [
-    -2.19,
+    -2.17,
     9.91,
     18.16
    ],
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.16 m, y=9.91 m (Zelle [981, 2180, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-872-2507",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 15.12,
+   "z_bis": 15.12,
+   "xyz": [
+    -4.38,
+    9.58,
+    15.12
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=15.12 m, y=9.58 m (Zelle [872, 2507, 109], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Nutzer (20:58 / 21:05)",
+   "text": "(1) 'Nicht im Torbogen kuenstlich; auf der Mauer zuerst die echten Kanten, nur wo nicht moeglich generieren.' (2) Reliefbild West 'schon fast gut', in der 3D-Ansicht aber noch nicht. (3) 'Die Uhr ist auch noch nicht ganz richtig - guck dir die Details an.'",
+   "naechster_schritt": "(1) erledigt: Reliefs aus dem neuen Netz bis z 0, Generieren nur in Loechern ausserhalb der Tore; offen Sockel 0-1,2 m aus Fotofugen statt gewuerfelt. (2) Anzeige-Netz 4 statt 7 cm; am Bildschirmfoto des Nutzers gegenpruefen. (3) Uhr Nord/Sued am entzerrten Foto nachmessen (Ziffernring, Zeiger, Rahmen, Lage) und Details-Liste je Seite"
   }
  ]
 }

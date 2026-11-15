@@ -53,7 +53,7 @@
   "seite": "wand",
   "element": "Generierte Quader Nord (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)",
   "quelle": "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben",
-  "anteil": 0.13,
+  "anteil": 0.04,
   "hinweis": "ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
   "seite_name": "wand"
  },
@@ -160,7 +160,7 @@
   "seite": "wand",
   "element": "Generierte Quader Sued (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)",
   "quelle": "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben",
-  "anteil": 0.10720327954190526,
+  "anteil": 0.04040213430504945,
   "hinweis": "ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original",
   "seite_name": "wand"
  },
