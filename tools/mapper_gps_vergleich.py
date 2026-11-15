@@ -2,7 +2,8 @@
 """mapper_gps_vergleich.py FOTOORDNER SPARSE_A SPARSE_B ... - SfM-Modelle ohne LoD2 gegen Foto-GPS vergleichen (15.11.): gemeinsame eigene Fotos, robuste 2D-Aehnlichkeit je Modell, GPS-Rest; Anteil > 15 m = falsch angesetzte Bildgruppen."""
 import pycolmap, numpy as np, sys, os
 from PIL import Image
-fd, mods = sys.argv[1], sys.argv[2:]
+ALLE = "--alle" in sys.argv; PRE = sys.argv[sys.argv.index("--praefix") + 1] if "--praefix" in sys.argv else ""   # --alle: jedes Foto mit GPS (nicht nur eigen/IMG_); --praefix: nur Namen mit diesem Anfang
+fd, mods = sys.argv[1], [x for i, x in enumerate(sys.argv[2:], 2) if not x.startswith("--") and sys.argv[i - 1] != "--praefix"]
 def gps(f):
     try:
         g = (Image.open(PFAD.get(f, os.path.join(fd, f)))._getexif() or {}).get(34853); dm = lambda v: float(v[0]) + float(v[1]) / 60 + float(v[2]) / 3600
@@ -12,7 +13,7 @@ PFAD = {os.path.basename(x): x for x in __import__('glob').glob(os.path.join(fd,
 C = {}
 for m in mods:
     r = pycolmap.Reconstruction(m); C[m] = {os.path.basename(im.name): im.projection_center() for im in r.images.values() if im.has_pose}
-gem = sorted(set.intersection(*[set(c) for c in C.values()])); P = {k: gps(k) for k in gem}; keys = [k for k in gem if P[k] is not None and ("eigen" in k or k.startswith("IMG_"))]
+gem = sorted(set.intersection(*[set(c) for c in C.values()])); P = {k: gps(k) for k in gem}; keys = [k for k in gem if P[k] is not None and (k.startswith(PRE) if PRE else (ALLE or "eigen" in k or k.startswith("IMG_")))]
 print("gemeinsame eigene Fotos mit GPS:", len(keys))
 Y = np.array([P[k] for k in keys])
 for m in mods:
