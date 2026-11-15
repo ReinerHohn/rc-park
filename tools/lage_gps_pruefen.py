@@ -46,15 +46,21 @@ def main():
     if a.lage:
         pf, fn = a.lage.split(":"); sp = importlib.util.spec_from_file_location("lage_mod", pf); md = importlib.util.module_from_spec(sp)
         sys.path.insert(0, os.path.dirname(os.path.abspath(pf))); sp.loader.exec_module(md); korr = getattr(md, fn)
-    namen, M, G = [], [], []
+    namen, M, G = [], [], []; gefunden = 0
     for nr, k in kam.items():
-        hit = [p for p in glob.glob(os.path.join(fd, nr + ".*")) + glob.glob(os.path.join(fd, nr + "_*")) if p.lower().endswith((".jpg", ".jpeg"))]   # Kaufhaus: 122 -> 122_<quelle>.jpg
-        g = gps_exif(hit[0]) if hit else None
+        kand = [nr] + ([nr.split("__", 1)[1]] if "__" in nr else [])          # 15.11.: Gesamtkette benennt eigen__IMG_... (Quellpraefix) -> auch ohne Praefix suchen
+        hit = [p for n_ in kand for p in glob.glob(os.path.join(fd, glob.escape(n_) + ".*")) + glob.glob(os.path.join(fd, glob.escape(n_) + "_*")) + glob.glob(os.path.join(fd, "*__" + glob.escape(n_) + ".*"))
+               if p.lower().endswith((".jpg", ".jpeg"))]   # Kaufhaus: 122 -> 122_<quelle>.jpg
+        gefunden += bool(hit); g = gps_exif(hit[0]) if hit else None
         if not g: continue
         namen.append(nr); M.append(k["standort"]); G.append(np.array(wgs84_zu_utm(*g)) - m0)
     erg = dict(werkzeug="lage_gps_pruefen.py", ausrichtung=a.ausrichtung, lage=a.lage or None, n_kameras=len(kam), n_gps=len(G))
     if len(G) < 10:
-        print(f"HINWEIS: nur {len(G)} Fotos mit GPS - keine Pruefung"); erg["ergebnis"] = "zu wenig GPS"
+        erg["fotos_gefunden"] = gefunden
+        if gefunden < 0.5 * len(kam):                                          # 15.11.: Tor bestand STUMM, weil die Fotos nicht gefunden wurden (v2: 0 von 494) -> laut scheitern
+            print(f"FEHLER: nur {gefunden} von {len(kam)} Kamerafotos in {fd} gefunden - GPS-Tor NICHT geprueft (--fotos setzen)"); erg["ergebnis"] = "fotos nicht gefunden"
+            os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(erg, open(os.path.join(od, "audit", "lage_gps.json"), "w"), indent=1); return 4
+        print(f"HINWEIS: nur {len(G)} Fotos mit GPS ({gefunden} Fotos gefunden, ohne GPS-EXIF) - keine Pruefung"); erg["ergebnis"] = "zu wenig GPS"
         os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(erg, open(os.path.join(od, "audit", "lage_gps.json"), "w"), indent=1); return 0
     M = np.array(M, float)
     if korr is not None: M = np.asarray(korr(M), float)

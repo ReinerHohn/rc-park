@@ -23,4 +23,4 @@ for m in mods:
             mx, my = Z[sel].mean(0), Y[sel].mean(0); U, S_, V2 = np.linalg.svd((Y[sel] - my).T @ (Z[sel] - mx) / sel.sum()); D = np.diag([1, np.sign(np.linalg.det(U @ V2))]); R = U @ D @ V2; s = np.trace(np.diag(S_) @ D) / (Z[sel] - mx).var(0).sum()
             r = np.linalg.norm((s * (R @ (Z - mx).T)).T + my - Y, axis=1); sel = r < max(2.5 * np.median(r), 10)
         if best is None or np.median(r) < np.median(best): best = r
-    r = best; print(f"{m.split('schwabentor/')[1]}: GPS-Rest Median {np.median(r):.1f} m, p75 {np.percentile(r,75):.1f}, p90 {np.percentile(r,90):.1f}, Anteil > 15 m {np.mean(r>15)*100:.0f} % ({int((r>15).sum())} Fotos)")
+    r = best; print(f"{'/'.join(m.rstrip('/').split('/')[-3:])}: GPS-Rest Median {np.median(r):.1f} m, p75 {np.percentile(r,75):.1f}, p90 {np.percentile(r,90):.1f}, Anteil > 15 m {np.mean(r>15)*100:.0f} % ({int((r>15).sum())} Fotos)")

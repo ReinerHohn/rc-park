@@ -74,8 +74,28 @@ def dgm_ziel(obj, halb):
     return L, np.repeat([[0, 0, 1.0]], len(L), 0), quelle
 
 
+def gps_massstab(ims, C, obj, od, fotos=""):
+    """Massstab SfM-Einheiten je m aus Foto-GPS (EXIF): Median der Verhaeltnisse Kameraabstand SfM / GPS fuer Paare > 15 m GPS-Abstand.
+    Unabhaengig von LoD2 und von weit entfernten Wolkenteilen. None bei < 15 Kameras mit GPS."""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from gps_ausrichtung import gps_exif; from bilder_holen import wgs84_zu_utm
+    except Exception as e: print("GPS-Massstab: Hilfsmodule fehlen:", type(e).__name__); return None
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); ds = [d for d in (fotos, obj.get("fotos_dir", "")) if d]; ds = [d if os.path.isabs(d) else os.path.join(root, d) for d in ds]
+    U, X = [], []
+    for im, c in zip(ims, C):
+        nm = os.path.splitext(os.path.basename(im.name))[0]; kand = [nm] + ([nm.split("__", 1)[1]] if "__" in nm else [])
+        hit = [p for d in ds for n_ in kand for p in glob.glob(os.path.join(d, glob.escape(n_) + ".*")) if p.lower().endswith((".jpg", ".jpeg"))]
+        g = gps_exif(hit[0]) if hit else None
+        if g: U.append(wgs84_zu_utm(*g)); X.append(c)
+    if len(U) < 15: print(f"GPS-Massstab: nur {len(U)} Kameras mit GPS - Startmassstab aus Wolkenausdehnung"); return None
+    U = np.array(U, float); X = np.array(X, float); i, j = np.triu_indices(len(U), 1); dg = np.hypot(*(U[i] - U[j]).T); dx = np.linalg.norm(X[i] - X[j], axis=1); m = dg > 15
+    if m.sum() < 30: return None
+    print(f"GPS-Massstab: {len(U)} Kameras, {int(m.sum())} Paare > 15 m"); return float(np.median(dx[m] / dg[m]))
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--sparse", default=None); ap.add_argument("--name", default=""); ap.add_argument("--schreiben", action="store_true")
+    ap.add_argument("--fotos", default="", help="Fotoordner fuer GPS-Startmassstab (Standard objekt.json fotos_dir; Quellpraefix eigen__ wird abgestreift)")
     ap.add_argument("--loesung", type=int, default=0, help="K-te unterscheidbare Loesung (>10 Grad oder >3 m) statt der besten - Korrekturkreislauf tools/gesamtkette.py")
     ap.add_argument("--radius", type=float, default=80.0, help="LoD2-Gebaeude in diesem Umkreis um die Objektmitte (m)"); ap.add_argument("--zelle", type=float, default=0.25, help="Rasterweite Grobsuche (m)")
     ap.add_argument("--mitte-max", type=float, default=20.0, help="Wolkenmitte hoechstens so weit von der Objektmitte (m): die Bilder sind um das Objekt ausgewaehlt")
@@ -122,7 +142,8 @@ def main():
         ims = list(rec.images.values()); C = np.array([im.projection_center() for im in ims])
     print(f"SfM: {len(ims)} Kameras, {len(P)} Punkte ({gut.sum()} mit Spur >= 3)")
     # 1. Lot aus der Kameraebene
-    cm = C.mean(0); _, sv, vt = np.linalg.svd(C - cm); up = vt[2]
+    _cmed = np.median(C, 0); _dc = np.linalg.norm(C - _cmed, axis=1); _nah = _dc <= np.percentile(_dc, 70)   # 15.11.: ferne Kameras (Schlossberg, Commons, Drohne) kippten Lot und Mitte (v2)
+    cm = C[_nah].mean(0); _, sv, vt = np.linalg.svd(C[_nah] - cm); up = vt[2]
     if np.median((Pg - cm) @ up) < 0: up = -up
     flach = sv[2] / sv[0]
     print(f"Lot aus Kameraebene: Streuung {sv.round(2).tolist()} (Dicke/Laenge {flach:.2f}; < 0,25 = Strassenfotos in einer Ebene)")
@@ -160,6 +181,9 @@ def main():
     print(f"Grobsuche: Fassadenpunkte (1-7 m ueber Boden beim Probemassstab) muessen an LoD2-Waenden liegen (Naehe, Sigma 0,5 m) und nicht > 1 m im Gebaeude (Strafe x2)")
     ext = np.percentile(np.hypot(Q[:, 0], Q[:, 1]), 80); ziel_ext = 0.8 * a.radius * 0.5
     s0 = ext / ziel_ext                                                                       # grober Startmassstab (SfM-Einheiten je m), Suche ueber Faktor 6 in beide Richtungen
+    s_gps = gps_massstab(ims, C, obj, od, a.fotos)                                            # 15.11.: v2 (Video/Commons weit weg) -> Wolkenausdehnung 70x falsch, Suchband verfehlte den Massstab
+    if s_gps:
+        print(f"Startmassstab aus Foto-GPS: {s_gps:.4f} SfM-Einheiten/m (Wolkenausdehnung haette {s0:.4f} gegeben)"); s0 = s_gps
     best = []
     print(f"Startmassstab s0 = {s0:.4f} SfM-Einheiten/m (Wolkenausdehnung), Suche s0/4 .. 4 s0; Toleranz 0,75 m * s0/s (konstant in SfM-Einheiten)")
     for ls in np.linspace(math.log(s0 / 4), math.log(s0 * 4), 33):
@@ -316,6 +340,7 @@ def main():
                    kamerahoehen=dict(median=float(np.median(hz)), auf_strassenniveau=int(np.sum((hz > -1) & (hz < 6))), n=len(hz)),
                    wolke=dict(n=len(Pm), z_p1=float(np.percentile(Pm[:, 2], 1)), z_p999=float(np.percentile(Pm[:, 2], 99.9))), annahmen=dict(kamerahoehe=dict(h0=a.kamerahoehe[0], sigma=a.kamerahoehe[1], gewicht=a.kamera_gewicht, hinweis="ANNAHME Strassenfotos, robuste Bedingung (Huber)")))
         os.makedirs(os.path.join(od, "messprotokoll"), exist_ok=True); pth = os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG{sfx}.json"); json.dump(out, open(pth, "w"), indent=1, ensure_ascii=False); print("geschrieben:", pth)
+        os.makedirs(os.path.join(od, "sfm"), exist_ok=True); os.makedirs(os.path.join(od, "messprotokoll"), exist_ok=True)   # 15.11.: neues Objekt der Gesamtkette hat keinen sfm-Ordner
         np.save(os.path.join(od, "sfm", f"punkte_modell{usfx}.npy"), Pm); np.save(os.path.join(od, "sfm", f"punkte_farben{usfx}.npy"), FARBEN)
         try:
             sim = pycolmap.Sim3d(1.0 / s, pycolmap.Rotation3d(Rm), tm - Rm @ cm / s); rec.transform(sim); ziel = os.path.join(od, "sfm", f"sparse_modell{usfx}"); os.makedirs(ziel, exist_ok=True); rec.write(ziel)
