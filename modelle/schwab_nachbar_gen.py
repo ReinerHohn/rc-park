@@ -13,6 +13,11 @@ SEITEN = seiten_aus_rahmen(obj)
 if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss + DOM1-Dach (dach.json, Nullstart-Schritt 'dach') - tools/dach_bauen.py
     koerper, belege, haupt = gebaeude_aus_lod2(OBJ)
     for b_ in belege: beleg(**b_)
+    # 16.11.2026 FLUEGEL (LoD2-Teil 0): die angepasste Sattelform (First 21,7, RMS 1,1 m) stand als hohe Wand vor dem halben Fachwerkgiebel -> Dach als Hoehenfeld direkt aus dem Laser
+    from laserdach import laserdach_koerper, prisma as _prisma
+    _T0 = json.load(open(os.path.join(HERE, "schwab_nachbar", "dach.json")))["teile"][0]["grundriss_uv"]
+    koerper = (koerper - _prisma(_T0, 60.0)) + laserdach_koerper(OBJ, _T0, px=0.5)
+    beleg("dach", "Fluegel (Teil 0): Dach als Hoehenfeld aus dem DOM1-Laser", "DOM1-Laser 1 m (LGL), bilinear auf 0,5 m; Grundriss LoD2", hinweis="grob (1-m-Pixel), keine Traufkanten/Gauben als Form; vom Boden nicht einsehbar - Fotos/Wolke blind; am Giebelanschluss misst der Laser den Giebel mit")
     # ---- 15.11.2026 Nachbarhaus Teil 1 (direkt am Turm): Fassaden Nord (Fachwerkgiebel) und Sued als Relief aus dem neuen OpenMVS-Netz, Durchfahrt aus Fotomassen ----
     from bauteile import Wand, spitzbogen
     from relief_einsatz import koerper as relief_koerper
@@ -30,6 +35,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         koerper = koerper + (relief_koerper(rp, tiefe=0.9, trend=True) ^ hu_)
         beleg("wand", "Relief Nordost-Fassade (Teile 0/2) z 0,5-11,3 m", "OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm", hinweis="Scan-Relief, kein Mass; der dritte Bogen (Laube am Nordostfluegel) ist darin ein Loch = geschlossene Wand (ANNAHME), Rundfenster und Fenster nur weich; LoD2-Kante liegt ~5 Grad schraeg zur Fassade")
     # ---- 15.11.2026 NORDGIEBEL SCHARF (Fachwerk-Steilgiebel): Ortgang/First M-113033-001..-003, Geschossebenen aus der dichten Wolke, Fenster M-113210-001..-007, M-113144-001/-002, M-113033-004..-007 ----
+    koerper = koerper - WN.kasten(-7.5, 0.0, 11.0, 30.0, 0.0, 3.4)       # 16.11.: vor der linken Giebelhaelfte misst der Laser (1-m-Pixel) den Giebel mit -> Fluegeldach dort bis 2,6 m vor der Wand auf 11 m begrenzt (ANNAHME; Traufe am Foto ~10-11 m)
     UA, ZA, ST, UR = -0.13, 25.35, 1.66, 6.99                          # Firstlage u (= y 2,72), Firsthoehe, Ortgangneigung, Hausende am Turm (u 6,99 = y 9,84)
     def dreieck(ab, w0, w1): return WN.huelle([(UA, ZA - ab, w_) for w_ in (w0, w1)] + [(UA + s_ * 20.0, ZA - ab - 20.0 * ST, w_) for s_ in (-1, 1) for w_ in (w0, w1)])
     koerper = koerper + WN.kasten(0.0, UR, 0.0, 10.14, -0.6, 0.0)       # Erdgeschoss + 1. OG (Putz) bis in die Wandebene und bis zur Turmkante
@@ -65,13 +71,13 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper + WS.kasten(-5.2, 8.45, 0.0, 14.4, -0.6, 0.0)      # Wand bis in die Ebene, von der Ostecke bis zum Turm
     koerper = koerper + (WS.kasten(-3.45, 6.75, 14.3, 26.0, -0.5, 0.0) ^ dr_s(0.35, -1.0, 0.5))                       # Giebelwand
     koerper = koerper + ((dr_s(0.0, -3.0, 0.3) - dr_s(0.35, -3.1, 0.4)) ^ WS.kasten(-3.52, 6.78, 16.8, 26.0, -3.0, 0.3))   # Ortgang/Dachplatte am Suedgiebel (Ueberstand 0,3 m, Tiefe 3 m: ANNAHME)
-    VB = [(-3.8, 0.0), (-3.8, 1.15), (7.6, 1.15), (8.45, 0.0)]            # Vorbau 2. OG im Grundriss (u, w); Westende schraeg zum Turm
+    VB = [(-3.8, -0.05), (-3.8, 1.15), (7.6, 1.15), (8.45, -0.05)]            # Vorbau 2. OG im Grundriss (u, w); Westende schraeg zum Turm
     koerper = koerper + saeule(VB, 10.17, 13.3) + saeule([(u_ - 0.1 * np.sign(u_ - 2.0), w_ + (0.1 if w_ > 0 else 0.0)) for u_, w_ in VB], 10.04, 10.17) + saeule([(u_ - 0.1 * np.sign(u_ - 2.0), w_ + (0.1 if w_ > 0 else 0.0)) for u_, w_ in VB], 13.3, 13.4)
-    koerper = koerper + WS.huelle([(u_, z_, w_) for u_ in (-3.95, 8.45) for z_, w_ in ((13.4, 0.0), (13.4, 1.65), (13.5, 1.65), (14.4, 0.0))])     # Pultdach ueber dem Vorbau
-    EK = [(-0.17, 0.0), (0.3, 1.05), (3.55, 1.05), (3.95, 0.0)]           # Erker 1. OG
-    koerper = koerper + saeule(EK, 6.85, 10.1) + WS.huelle([(u_, 6.85, w_) for u_, w_ in EK] + [(u_, 5.5, w_) for u_, w_ in ((1.0, 0.0), (1.4, 0.3), (2.4, 0.3), (2.8, 0.0))])
-    koerper = koerper + WS.kasten(0.25, 3.6, 7.95, 8.05, 0.0, 1.12)     # Bruestungsgesims des Erkers
-    for u0_, u1_ in ((7.0, 7.9), (-3.75, -2.9)): koerper = koerper + WS.huelle([(u_, z_, w_) for u_ in (u0_, u1_) for z_, w_ in ((8.1, 0.0), (10.1, 0.0), (10.1, 1.1))])   # Konsolen unter dem Vorbau (Form ANNAHME)
+    koerper = koerper + WS.huelle([(u_, z_, w_) for u_ in (-3.95, 8.45) for z_, w_ in ((13.4, -0.05), (13.4, 1.65), (13.5, 1.65), (14.4, -0.05))])     # Pultdach ueber dem Vorbau
+    EK = [(-0.17, -0.05), (0.3, 1.05), (3.55, 1.05), (3.95, -0.05)]           # Erker 1. OG
+    koerper = koerper + saeule(EK, 6.85, 10.1) + WS.huelle([(u_, 6.85, w_) for u_, w_ in EK] + [(u_, 5.5, w_) for u_, w_ in ((1.0, -0.05), (1.4, 0.3), (2.4, 0.3), (2.8, -0.05))])
+    koerper = koerper + WS.kasten(0.25, 3.6, 7.95, 8.05, -0.05, 1.12)     # Bruestungsgesims des Erkers
+    for u0_, u1_ in ((7.0, 7.9), (-3.75, -2.9)): koerper = koerper + WS.huelle([(u_, z_, w_) for u_ in (u0_, u1_) for z_, w_ in ((8.1, -0.05), (10.1, -0.05), (10.1, 1.1))])   # Konsolen unter dem Vorbau (Form ANNAHME)
     SF = [(u1_, u0_, 11.42, 12.79, 1.15, (), 12.42) for u0_, u1_ in ((7.11, 6.50), (5.63, 5.03), (4.54, 4.0), (3.44, 2.92), (2.63, 2.04), (1.76, 1.25), (0.96, 0.45), (-0.12, -0.66), (-1.2, -1.69), (-2.65, -3.08))]
     SF += [(2.92, 3.46, 8.03, 9.4, 1.05, (), 9.0), (2.09, 2.63, 8.03, 9.4, 1.05, (), 9.0), (1.25, 1.79, 8.03, 9.4, 1.05, (), 9.0), (0.47, 0.96, 8.03, 9.4, 1.05, (), 9.0)]      # Erker
     SF += [(4.02, 6.33, 8.03, 9.44, 0.0, (4.73, 5.57), 9.0), (-2.28, -1.79, 8.05, 9.47, 0.0, (), 9.0), (-4.02, -1.05, 5.09, 6.33, 0.0, (-1.74, -2.57, -3.35), None), (0.17, 0.62, 2.66, 3.74, 0.0, (), None)]

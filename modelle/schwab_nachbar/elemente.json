@@ -58,6 +58,13 @@
   "seite_name": "wand"
  },
  {
+  "seite": "dach",
+  "element": "Fluegel (Teil 0): Dach als Hoehenfeld aus dem DOM1-Laser",
+  "quelle": "DOM1-Laser 1 m (LGL), bilinear auf 0,5 m; Grundriss LoD2",
+  "hinweis": "grob (1-m-Pixel), keine Traufkanten/Gauben als Form; vom Boden nicht einsehbar - Fotos/Wolke blind; am Giebelanschluss misst der Laser den Giebel mit",
+  "seite_name": "dach"
+ },
+ {
   "seite": "wand",
   "element": "Relief Nordost-Fassade (Teile 0/2) z 0,5-11,3 m",
   "quelle": "OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm",
@@ -70,7 +77,7 @@
   "quelle": "foto_mass.py (M-113033-001..-007, M-113210-001..-007, M-113144-001/-002), Picks ueber wand_ortho.py; Geschossebenen aus der dichten Wolke",
   "first": 25.35,
   "ortgang_neigung": 1.66,
-  "fenster_verdeckt": 3,
+  "fenster_verdeckt": 0,
   "hinweis": "Fenster links (u < 0), die im Modell vom Fluegeldach (Teil 0, Laserform) verdeckt sind, wurden nicht geoeffnet - am Foto sind sie frei, das Fluegeldach ist also zu hoch/zu weit vorn; ANNAHME: Nischentiefe 12 cm, Rahmenbreiten 5-7 cm, Dachplatte 18 cm, Dach laeuft gerade bis zur Suedfassade; Fachwerkbalken, Balkenkoepfe, Eckquader, Firstspitze und Kamin fehlen; links unter z 18,5 verdeckt der Fluegel den Giebel (nicht gemessen)",
   "seite_name": "wand"
  },

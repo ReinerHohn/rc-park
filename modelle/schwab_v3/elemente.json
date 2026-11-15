@@ -238,5 +238,12 @@
   "kugel": 14.6,
   "hinweis": "ANNAHME: Schlitzfenster nur ungefaehr (Lage am Foto abgelesen), Gesimsprofil vereinfacht; Blechbahnen der Haube fehlen",
   "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Holzfries unter der Traufe (Schwelle, Raehm, je Seite 6 Pfosten)",
+  "quelle": "feines Fassadenbild Nord (fassade_fein, 1 cm) und Fernfoto 110756: Rahmenwerk z 34,95-36,55",
+  "hinweis": "ANNAHME: Pfostenzahl 6 je Seite (in den Fotos zu dunkel zum Zaehlen - Zaehlprotokoll fehlt), Querschnitte 24-26 cm, 7-8 cm vor der Wand; Felder nicht zurueckgesetzt; Ost- und Westseite wie Nord",
+  "seite_name": "wand"
  }
 ]

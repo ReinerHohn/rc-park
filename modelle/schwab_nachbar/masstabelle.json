@@ -748,6 +748,12 @@
    "wer": "Nutzer (Bildschirmfoto 00:16: 'Warum fehlt dieses Dach, obwohl die Punktwolke da ist?')",
    "text": "Zwischen Giebel und Turm liegen 17 000 dunkle (ziegelfarbene) Wolkenpunkte bis 6 m UEBER der Hauptdachflaeche: ein QUERDACH zum Turm (Sattel, First Ost-West bei x -2,0 = Turmachse, z 22,5; Neigung Sued 1,55, Nord 1,44; reicht bis an die Turm-Ostwand y ~9,6). Im Modell fehlte es ganz. Auch im Nord-Fernfoto 113033 als waagerechte Firstlinie rechts hinter dem Fachwerkgiebel zu sehen.",
    "naechster_schritt": "Querdach bauen (Form aus der dichten Wolke, Foto nur Augenschein); First/Traufen am Foto nachmessen, sobald ein Foto es frei zeigt"
+  },
+  {
+   "datum": "2026-11-16",
+   "wer": "Claude (Kontrollbild modell_ansicht von Nordost)",
+   "text": "Fluegel (LoD2-Teil 0) im Modell viel zu hoch: angepasstes Satteldach First 21,7 m ueber dem ganzen Teil, die Wand steht vor der linken Haelfte des Fachwerkgiebels (deshalb 3 Fenster nicht geoeffnet). Am Foto Traufe dort ~10-11 m.",
+   "naechster_schritt": "Dach des Fluegels als Laser-Hoehenfeld (tools/laserdach.py); danach Traufe/Gauben am Foto messen"
   }
  ]
 }

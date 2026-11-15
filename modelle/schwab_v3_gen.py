@@ -241,6 +241,14 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper + turm.translate((TT_C[0], TT_C[1], 0.0))
     beleg("wand", "Treppenturm (Zylinder, Gesims, geschweifte Haube mit Stange und Kugel)", "foto_mass.py auf der Ebene durch die Turmachse, Foto commons 054 (M-054-001..-005), Gegenprobe Foto commons 192; Lage/Radius aus dem Kreisausgleich der dichten Wolke (r 1,54-1,57, Rest 2 cm)",
           radius=TT_R, traufradius=TT_RT, traufe=11.57, spitzenansatz=13.5, kugel=14.6, hinweis="ANNAHME: Schlitzfenster nur ungefaehr (Lage am Foto abgelesen), Gesimsprofil vereinfacht; Blechbahnen der Haube fehlen")
+    # ---- 16.11.2026 HOLZFRIES unter der Traufe (feines Fassadenbild Nord/Sued, Fernfoto 110756): Rahmenwerk z 34,95-36,55 mit Schwelle, Raehm und Pfosten vor der Wand ----
+    FR_E = [(3.49, 9.63), (3.32, 20.97), (-7.36, 20.58), (-7.03, 9.36)]; FR_M = (-1.9, 15.2)                    # Wandecken bei z 35,6 (aus dem Modellschnitt), NO, NW, SW, SO
+    for a_, b_ in zip(FR_E, FR_E[1:] + FR_E[:1]):
+        mi_ = (0.5 * (a_[0] + b_[0]), 0.5 * (a_[1] + b_[1])); Wf = Wand(a_, b_, aussen=(2 * mi_[0] - FR_M[0], 2 * mi_[1] - FR_M[1])); Lf = Wf.laenge
+        koerper = koerper + Wf.kasten(-0.08, Lf + 0.08, 34.95, 35.2, -0.3, 0.08) + Wf.kasten(-0.08, Lf + 0.08, 36.3, 36.56, -0.3, 0.08)
+        for k_ in range(6): koerper = koerper + Wf.kasten(k_ * (Lf - 0.24) / 5.0, k_ * (Lf - 0.24) / 5.0 + 0.24, 35.15, 36.35, -0.3, 0.07)
+    beleg("wand", "Holzfries unter der Traufe (Schwelle, Raehm, je Seite 6 Pfosten)", "feines Fassadenbild Nord (fassade_fein, 1 cm) und Fernfoto 110756: Rahmenwerk z 34,95-36,55",
+          hinweis="ANNAHME: Pfostenzahl 6 je Seite (in den Fotos zu dunkel zum Zaehlen - Zaehlprotokoll fehlt), Querschnitte 24-26 cm, 7-8 cm vor der Wand; Felder nicht zurueckgesetzt; Ost- und Westseite wie Nord")
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json
