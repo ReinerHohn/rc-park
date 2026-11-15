@@ -17,10 +17,11 @@ def proj(K,R,tt,X):
 def welt(u,z,d): u=np.asarray(u,float); z=np.asarray(z,float); return np.c_[A[0]+u*t[0]+d*n[0],A[1]+u*t[1]+d*n[1],z]
 if sys.argv[1]=="bild":
     nm,K,R,tt=kam(sys.argv[2]); u0,u1,z0,z1,px=[float(v) for v in sys.argv[3:8]]; d=float(sys.argv[8]) if len(sys.argv)>8 else 0.0
-    W=int((u1-u0)/px); H=int((z1-z0)/px); yy,xx=np.mgrid[0:H,0:W]; uv=proj(K,R,tt,welt(u0+(xx.ravel()+.5)*px,z0+(H-1-yy.ravel()+.5)*px,d))
+    W=int((u1-u0)/px); H=int((z1-z0)/px); yy,xx=np.mgrid[0:H,0:W]; SP=(t[0]*n[1]-t[1]*n[0])>0   # von der Kamera aus laeuft u nach LINKS -> Bild so zeichnen, wie man die Wand sieht (15.11.2026: Suedbild war gespiegelt)
+    ucol=(u1-(xx.ravel()+.5)*px) if SP else (u0+(xx.ravel()+.5)*px); uv=proj(K,R,tt,welt(ucol,z0+(H-1-yy.ravel()+.5)*px,d))
     im=cv2.imread((glob.glob(os.path.join(ROOT,FD,nm+".*")) or glob.glob(os.path.join(ROOT,FD,nm+"_*")))[0]); o=cv2.remap(im,uv[:,0].reshape(H,W).astype(np.float32),uv[:,1].reshape(H,W).astype(np.float32),cv2.INTER_LINEAR)
     s=max(1,int(round(1000/max(H,W)))); o=cv2.resize(o,None,fx=s,fy=s,interpolation=cv2.INTER_CUBIC); st=0.5 if (u1-u0)<=6 else 1.0
-    for g in np.arange(np.ceil(u0/st)*st,u1,st): X=int((g-u0)/px*s); cv2.line(o,(X,0),(X,o.shape[0]),(0,255,255),1); cv2.putText(o,"u%.1f"%g,(X+2,12),0,0.4,(0,255,255),1)
+    for g in np.arange(np.ceil(u0/st)*st,u1,st): X=int(((u1-g) if SP else (g-u0))/px*s); cv2.line(o,(X,0),(X,o.shape[0]),(0,255,255),1); cv2.putText(o,"u%.1f"%g,(X+2,12),0,0.4,(0,255,255),1)
     for g in np.arange(np.ceil(z0/st)*st,z1,st): Y=int((H-(g-z0)/px)*s); cv2.line(o,(0,Y),(o.shape[1],Y),(0,255,255),1); cv2.putText(o,"z%.1f"%g,(2,Y-2),0,0.4,(0,255,255),1)
     cv2.imwrite(sys.argv[9] if len(sys.argv)>9 else "o.jpg",o); print(o.shape)
 else:

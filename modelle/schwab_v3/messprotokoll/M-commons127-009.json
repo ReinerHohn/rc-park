@@ -1,0 +1,32 @@
+{
+ "id": "M-commons127-009",
+ "foto": "commons127",
+ "kamera": "K-commons_orig2__127",
+ "ebene": "-0.99957,-0.02947,0=6.755",
+ "name": "Sued: Gesims Oberkante ueber Rahmen-Null",
+ "mess_px": [
+  421.0,
+  2611.0,
+  444.0,
+  1081.0
+ ],
+ "P1": [
+  -7.203,
+  15.097,
+  -0.004
+ ],
+ "P2": [
+  -7.203,
+  15.095,
+  26.526
+ ],
+ "dz": 26.53,
+ "dy": -0.002,
+ "dx": 0.0,
+ "abstand": 26.53,
+ "z1": -0.004,
+ "z2": 26.526,
+ "unsicherheit_rel": 0.0033,
+ "unsicherheit_m": 0.155,
+ "massstab_von": "Kamera K-commons_orig2__127 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99957,-0.02947,0=6.755 (+-0.3 m)"
+}

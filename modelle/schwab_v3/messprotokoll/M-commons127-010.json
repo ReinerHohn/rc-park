@@ -1,0 +1,32 @@
+{
+ "id": "M-commons127-010",
+ "foto": "commons127",
+ "kamera": "K-commons_orig2__127",
+ "ebene": "-0.99957,-0.02947,0=6.755",
+ "name": "Sued: Fassadenbreite am Uhrgeschoss (Eckquader aussen)",
+ "mess_px": [
+  136.0,
+  893.0,
+  763.0,
+  911.0
+ ],
+ "P1": [
+  -7.365,
+  20.589,
+  30.008
+ ],
+ "P2": [
+  -7.04,
+  9.558,
+  29.996
+ ],
+ "dz": -0.012,
+ "dy": -11.03,
+ "dx": 0.325,
+ "abstand": 11.035,
+ "z1": 30.008,
+ "z2": 29.996,
+ "unsicherheit_rel": 0.003,
+ "unsicherheit_m": 0.107,
+ "massstab_von": "Kamera K-commons_orig2__127 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99957,-0.02947,0=6.755 (+-0.3 m)"
+}

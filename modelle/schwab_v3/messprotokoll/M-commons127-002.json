@@ -1,0 +1,32 @@
+{
+ "id": "M-commons127-002",
+ "foto": "commons127",
+ "kamera": "K-commons_orig2__127",
+ "ebene": "-0.99957,-0.02947,0=6.755",
+ "name": "Uhr Sued: Durchmesser aussen waagerecht",
+ "mess_px": [
+  310.0,
+  849.0,
+  588.0,
+  856.0
+ ],
+ "P1": [
+  -7.276,
+  17.559,
+  30.963
+ ],
+ "P2": [
+  -7.131,
+  12.653,
+  30.979
+ ],
+ "dz": 0.016,
+ "dy": -4.906,
+ "dx": 0.145,
+ "abstand": 4.908,
+ "z1": 30.963,
+ "z2": 30.979,
+ "unsicherheit_rel": 0.003,
+ "unsicherheit_m": 0.089,
+ "massstab_von": "Kamera K-commons_orig2__127 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99957,-0.02947,0=6.755 (+-0.3 m)"
+}

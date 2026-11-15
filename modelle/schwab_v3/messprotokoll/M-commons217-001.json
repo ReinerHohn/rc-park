@@ -1,0 +1,32 @@
+{
+ "id": "M-commons217-001",
+ "foto": "commons217",
+ "kamera": "K-commons_orig2__217",
+ "ebene": "-0.99957,-0.02947,0=6.755",
+ "name": "Tor Sued: lichte Breite bei z 2",
+ "mess_px": [
+  761.0,
+  2444.0,
+  1190.0,
+  2444.0
+ ],
+ "P1": [
+  -7.271,
+  17.403,
+  1.999
+ ],
+ "P2": [
+  -7.139,
+  12.912,
+  1.996
+ ],
+ "dz": -0.002,
+ "dy": -4.492,
+ "dx": 0.132,
+ "abstand": 4.494,
+ "z1": 1.999,
+ "z2": 1.996,
+ "unsicherheit_rel": 0.0089,
+ "unsicherheit_m": 0.086,
+ "massstab_von": "Kamera K-commons_orig2__217 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99957,-0.02947,0=6.755 (+-0.3 m)"
+}

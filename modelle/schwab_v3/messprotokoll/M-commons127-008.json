@@ -1,0 +1,32 @@
+{
+ "id": "M-commons127-008",
+ "foto": "commons127",
+ "kamera": "K-commons_orig2__127",
+ "ebene": "-0.99957,-0.02947,0=6.755",
+ "name": "Fenster Sued: Steingewaende Breite",
+ "mess_px": [
+  377.0,
+  1256.0,
+  495.0,
+  1259.0
+ ],
+ "P1": [
+  -7.235,
+  16.172,
+  23.205
+ ],
+ "P2": [
+  -7.175,
+  14.156,
+  23.205
+ ],
+ "dz": -0.0,
+ "dy": -2.016,
+ "dx": 0.059,
+ "abstand": 2.017,
+ "z1": 23.205,
+ "z2": 23.205,
+ "unsicherheit_rel": 0.0031,
+ "unsicherheit_m": 0.078,
+ "massstab_von": "Kamera K-commons_orig2__127 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99957,-0.02947,0=6.755 (+-0.3 m)"
+}

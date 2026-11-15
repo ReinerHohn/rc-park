@@ -1,0 +1,32 @@
+{
+ "id": "M-commons127-004",
+ "foto": "commons127",
+ "kamera": "K-commons_orig2__127",
+ "ebene": "-0.99957,-0.02947,0=6.755",
+ "name": "Uhr Sued: Durchmesser Innenfeld",
+ "mess_px": [
+  359.0,
+  850.0,
+  538.0,
+  855.0
+ ],
+ "P1": [
+  -7.25,
+  16.695,
+  30.969
+ ],
+ "P2": [
+  -7.157,
+  13.536,
+  30.97
+ ],
+ "dz": 0.0,
+ "dy": -3.159,
+ "dx": 0.093,
+ "abstand": 3.16,
+ "z1": 30.969,
+ "z2": 30.97,
+ "unsicherheit_rel": 0.003,
+ "unsicherheit_m": 0.084,
+ "massstab_von": "Kamera K-commons_orig2__127 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99957,-0.02947,0=6.755 (+-0.3 m)"
+}

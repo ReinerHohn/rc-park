@@ -136,8 +136,23 @@
   "seite": "wand",
   "element": "Suedwand (Ebene)",
   "quelle": "SfM-Neuaufbau mit Eckpaaren (sfm_neu), Wandpunkte z 8-33 m; Gegenprobe Uhr/Traufe im entzerrten Suedfoto 127",
-  "x": -6.96,
+  "x": -6.89,
   "hinweis": "Lage-Veto der neuen SfM-Punkte, nicht am Foto gepeilt; Knauf-Tor Nord-Sued noch 0,9 m | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Suedfassade: Torbogen, Fenster, Uhr, Gesims, Verdachung",
+  "quelle": "foto_mass.py auf der Suedwandebene, Fotos commons 127 und 217 (M-commons127-002..-010, M-commons217-001..-003)",
+  "tor_breite": 4.49,
+  "tor_scheitel": 5.85,
+  "tor_kaempfer": 3.86,
+  "uhr_durchmesser": 4.95,
+  "uhr_mitte_z": 30.97,
+  "fenster_breite": 0.92,
+  "fenster_hoehe": 1.41,
+  "gesims_z": 26.53,
+  "hinweis": "ANNAHME: Tiefen/Ausladungen, Torwand 1 m, Bogen aus Kreisboegen; Georgsbild, Eckquader und Bruchstein fehlen (Relief erst nach neuer dichter Wolke); Knauf-Tor Nord-Sued 0,9 m -> Masse auf ~2-3 %",
   "seite_name": "wand"
  }
 ]

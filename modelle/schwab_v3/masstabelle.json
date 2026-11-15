@@ -280,6 +280,104 @@
    "seite": "+x",
    "z": 31.239,
    "quer": 18.012
+  },
+  "uhr_s_ring_ost": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 30.97,
+   "quer": 12.764
+  },
+  "uhr_s_aussen_ost": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 30.97,
+   "quer": 12.464
+  },
+  "uhr_s_ring_oben": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 33.31,
+   "quer": 15.108
+  },
+  "uhr_s_aussen_oben": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 33.62,
+   "quer": 15.108
+  },
+  "fen_s_innen": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 23.0,
+   "quer": 15.143
+  },
+  "fen_s_kante_ost_innen": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 23.0,
+   "quer": 14.778
+  },
+  "fen_s_kante_ost_aussen": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 23.0,
+   "quer": 14.558
+  },
+  "fen_s_ueber": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 23.8,
+   "quer": 15.143
+  },
+  "gesims_s": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 26.3,
+   "quer": 12.399
+  },
+  "gesims_s_ueber": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 26.75,
+   "quer": 12.399
+  },
+  "tor_s_scheitel": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    -6.805,
+    15.169
+   ],
+   "z0": 4.5,
+   "z1": 8.0,
+   "suche": "unten"
+  },
+  "tor_s_halb_west": {
+   "typ": "schnitt_reichweite",
+   "z": 2.0,
+   "zentrum": [
+    -6.805,
+    15.169
+   ],
+   "richtung": [
+    -0.02947,
+    0.99957
+   ],
+   "quer_max": 0.25,
+   "r_max": 4.0
+  },
+  "tor_s_halb_ost": {
+   "typ": "schnitt_reichweite",
+   "z": 2.0,
+   "zentrum": [
+    -6.805,
+    15.169
+   ],
+   "richtung": [
+    0.02947,
+    -0.99957
+   ],
+   "quer_max": 0.25,
+   "r_max": 4.0
   }
  },
  "pruefungen": [
@@ -953,6 +1051,214 @@
     "2026-11-15 zweite Massstabsstufe x 0,985 (Hoehen-Tor gegen DOM1, 61 ebene Dachpixel; gesamt 0,933): Soll vorher [3.26, 3.31]",
     "2026-11-15 Nordwandebene +0,17 m (roh) nach aussen = Lage-Veto der Wolke/des Netzes (Nutzerbilder 14:39; Peilung der Wandecken war +-0,19..0,35 m unsicher): Soll [3.18, 3.23] -> [3.34, 3.39]"
    ]
+  },
+  {
+   "name": "Sued (uhr_s_ring_ost): |x| der ersten Flaeche bei u 3.37 z 30.97 (m)",
+   "wert": "uhr_s_ring_ost",
+   "soll": [
+    7.17,
+    7.3
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Uhr Sued 4,91 x 4,98 m, Mitte u 5,71 / z 30,97 (Nord: 5,0 m, z 31,25)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons127-002",
+   "historie": [
+    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Sued (uhr_s_aussen_ost): |x| der ersten Flaeche bei u 3.06 z 30.97 (m)",
+   "wert": "uhr_s_aussen_ost",
+   "soll": [
+    7.1,
+    7.17
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Uhr Sued: 0,17 m ausserhalb des Rands ist Wand",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons127-002",
+   "historie": [
+    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Sued (uhr_s_ring_oben): |x| der ersten Flaeche bei u 5.71 z 33.31 (m)",
+   "wert": "uhr_s_ring_oben",
+   "soll": [
+    7.24,
+    7.37
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Uhr Sued Scheitel z 33,46",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons127-003",
+   "historie": [
+    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Sued (uhr_s_aussen_oben): |x| der ersten Flaeche bei u 5.71 z 33.62 (m)",
+   "wert": "uhr_s_aussen_oben",
+   "soll": [
+    7.17,
+    7.24
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; ueber der Uhr Wand",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons127-003",
+   "historie": [
+    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Sued (fen_s_innen): |x| der ersten Flaeche bei u 5.75 z 23.00 (m)",
+   "wert": "fen_s_innen",
+   "soll": [
+    6.25,
+    7.0
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Fensteroeffnung Sued 0,92 x 1,41 m, Mitte u 5,745, Bank z 22,26",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons127-006",
+   "historie": [
+    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Sued (fen_s_kante_ost_innen): |x| der ersten Flaeche bei u 5.38 z 23.00 (m)",
+   "wert": "fen_s_kante_ost_innen",
+   "soll": [
+    6.24,
+    6.99
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Oeffnungskante Ost u 5,28: 0,1 m innerhalb offen",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons127-006",
+   "historie": [
+    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Sued (fen_s_kante_ost_aussen): |x| der ersten Flaeche bei u 5.16 z 23.00 (m)",
+   "wert": "fen_s_kante_ost_aussen",
+   "soll": [
+    7.16,
+    7.23
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Oeffnungskante Ost u 5,28: 0,12 m ausserhalb Gewaende (buendig)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons127-006",
+   "historie": [
+    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Sued (fen_s_ueber): |x| der ersten Flaeche bei u 5.75 z 23.80 (m)",
+   "wert": "fen_s_ueber",
+   "soll": [
+    7.17,
+    7.24
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Scheitel der Oeffnung z 23,66: 0,14 m darueber Wand",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons127-007",
+   "historie": [
+    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Sued (gesims_s): |x| der ersten Flaeche bei u 3.00 z 26.30 (m)",
+   "wert": "gesims_s",
+   "soll": [
+    7.16,
+    7.29
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Gesims Sued Oberkante z 26,53 (Band 26,0-26,53)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons127-009",
+   "historie": [
+    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Sued (gesims_s_ueber): |x| der ersten Flaeche bei u 3.00 z 26.75 (m)",
+   "wert": "gesims_s_ueber",
+   "soll": [
+    7.09,
+    7.16
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; ueber dem Gesims Wand",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons127-009",
+   "historie": [
+    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Sued (tor_s_scheitel) (m)",
+   "wert": "tor_s_scheitel",
+   "soll": [
+    5.7,
+    6.0
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Tor Sued: Scheitel innen 5,85 m (Nordtor 6,42 m - Suedbogen ist niedriger) (Foto 217)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons217-002",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Durchfahrt mit Nordquerschnitt"
+   ]
+  },
+  {
+   "name": "Sued (tor_s_halb_west) (m)",
+   "wert": "tor_s_halb_west",
+   "soll": [
+    2.1,
+    2.4
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Tor Sued: lichte Breite 4,49 m, Mitte u 5,76 (Foto 217)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons217-001",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Durchfahrt mit Nordquerschnitt"
+   ]
+  },
+  {
+   "name": "Sued (tor_s_halb_ost) (m)",
+   "wert": "tor_s_halb_ost",
+   "soll": [
+    2.1,
+    2.4
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Tor Sued: lichte Breite 4,49 m (Foto 217)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-commons217-001",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Durchfahrt mit Nordquerschnitt"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -1057,108 +1363,6 @@
    "naechster_schritt": "Ursache pruefen: seit der Massstabskorrektur bleibt der LoD2-Grundkoerper unskaliert (12,1 m), die Fototeile sind mit 0,933 skaliert (Schaft 11,3 m) -> Koerper je Seite ~0,4 m zu breit. Wolkenwaende im neuen Rahmen gegen den Koerper messen, Koerper an die Wolke/Fotowand legen"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1512-1080",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 36.84,
-   "z_bis": 36.84,
-   "xyz": [
-    1.27,
-    17.06,
-    36.84
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=36.84 m, y=17.06 m (Zelle [1512, 1080, 108], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1512",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 29.34,
-   "z_bis": 29.34,
-   "xyz": [
-    -2.74,
-    9.78,
-    29.34
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.34 m, y=9.78 m (Zelle [972, 1512, 108], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1620",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 27.1,
-   "z_bis": 27.1,
-   "xyz": [
-    -2.55,
-    9.76,
-    27.1
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.1 m, y=9.76 m (Zelle [972, 1620, 108], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1728",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 25.22,
-   "z_bis": 25.22,
-   "xyz": [
-    -2.56,
-    9.81,
-    25.22
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=25.22 m, y=9.81 m (Zelle [972, 1728, 108], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1836",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 23.37,
-   "z_bis": 23.37,
-   "xyz": [
-    -2.49,
-    9.82,
-    23.37
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=23.37 m, y=9.82 m (Zelle [972, 1836, 108], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-2052",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 20.0,
-   "z_bis": 20.0,
-   "xyz": [
-    -2.34,
-    9.85,
-    20.0
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=20.0 m, y=9.85 m (Zelle [972, 2052, 108], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
    "datum": "2026-11-15",
    "wer": "Nutzer (3D-Seite, Bildschirmfotos 14:39, zwei Ansichten)",
    "text": "'Diese Ansicht meine ich': von vorn und entlang der Nordfassade gesehen steht die Fotowolke VOR bzw. neben der Modellfassade (rot markierter Streifen an der Turmkante). Bilder audit/beobachtung_1439_ansicht_a.jpg / _b.jpg. GEMESSEN: Wolkenwand Nord 0,15-0,30 m vor der Modellwand (z 4-33 m), Ost/West/Sued nach der Skalierung des Grundkoerpers +-0,2 m. ERLEDIGT 15.11.: Nordwandebene +0,17 m nach aussen (Lage-Veto Wolke/Netz; meine Peilung der Wandecken war +-0,19..0,35 m unsicher), Wandanzug 0,6 cm/m ueber das Relief (trend=True), Wand bis zur Ebene aufgefuellt. Danach Wolke - Modell an freien Wandstreifen: +0,01..+0,06 m (z 6-33), -0,17 m bei z 3 und z 14.",
@@ -1175,6 +1379,91 @@
    "wer": "Nutzer (3D-Seite V16, Bildschirmfoto 15:35, rote Punkte)",
    "text": "'Immer noch das Gleiche - das Modell ist zu gross': von Sued gesehen liegt die Ostkante der Wolke ~1 m innerhalb der Modellkante. Bild audit/beobachtung_1535_modell_zu_gross_sued.jpg. GEMESSEN mit dem neuen SfM (Eckpaare, sfm_neu, Knauf-Tor noch 0,9 m): Suedwand reicht dort von y ~9,6 bis ~20,8 = volle Modellbreite (Modellecken 9,36 / 20,57); die ALTE dichte Wolke reicht nur von ~10,2 bis ~19 (verzerrte Suedgruppe). In Nord-Sued-Richtung liegt die Suedwand des neuen SfM aber bei x -7,1, das Modell bei -7,6: Modell dort moeglicherweise 0,4-0,5 m zu lang. Bild audit/schnitt_alt_neu_sfm_modell.jpg.",
    "naechster_schritt": "Breite Ost-West am Modell lassen. Nord-Sued-Laenge klaeren, sobald das Knauf-Tor < 0,3 m ist (dann Suedwand am Foto peilen und gegen die neue dichte Wolke schneiden); bis dahin Suedwand = ANNAHME (LoD2 x 0,933). 3D-Seite zeigt ab V17 die neuen SfM-Punkte statt der alten dichten Wolke"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1526",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 28.8,
+   "z_bis": 28.8,
+   "xyz": [
+    -2.43,
+    9.78,
+    28.8
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.8 m, y=9.78 m (Zelle [981, 1526, 109], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1635",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 26.71,
+   "z_bis": 26.71,
+   "xyz": [
+    -2.36,
+    9.8,
+    26.71
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.71 m, y=9.8 m (Zelle [981, 1635, 109], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1744",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 24.77,
+   "z_bis": 24.77,
+   "xyz": [
+    -2.3,
+    9.82,
+    24.77
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.77 m, y=9.82 m (Zelle [981, 1744, 109], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-2071",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 19.68,
+   "z_bis": 19.68,
+   "xyz": [
+    -2.23,
+    9.9,
+    19.68
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.68 m, y=9.9 m (Zelle [981, 2071, 109], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-2180",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 18.18,
+   "z_bis": 18.18,
+   "xyz": [
+    -2.2,
+    9.92,
+    18.18
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.18 m, y=9.92 m (Zelle [981, 2180, 109], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   }
  ]
 }

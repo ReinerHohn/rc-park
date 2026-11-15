@@ -1,0 +1,32 @@
+{
+ "id": "M-commons217-002",
+ "foto": "commons217",
+ "kamera": "K-commons_orig2__217",
+ "ebene": "-0.99957,-0.02947,0=6.755",
+ "name": "Tor Sued: Scheitel innen ueber Rahmen-Null",
+ "mess_px": [
+  972.0,
+  2649.0,
+  975.0,
+  2070.0
+ ],
+ "P1": [
+  -7.205,
+  15.159,
+  0.003
+ ],
+ "P2": [
+  -7.205,
+  15.155,
+  5.851
+ ],
+ "dz": 5.848,
+ "dy": -0.004,
+ "dx": 0.0,
+ "abstand": 5.848,
+ "z1": 0.003,
+ "z2": 5.851,
+ "unsicherheit_rel": 0.0091,
+ "unsicherheit_m": 0.098,
+ "massstab_von": "Kamera K-commons_orig2__217 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99957,-0.02947,0=6.755 (+-0.3 m)"
+}

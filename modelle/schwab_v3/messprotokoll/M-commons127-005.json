@@ -1,0 +1,32 @@
+{
+ "id": "M-commons127-005",
+ "foto": "commons127",
+ "kamera": "K-commons_orig2__127",
+ "ebene": "-0.99957,-0.02947,0=6.755",
+ "name": "Uhr Sued: Mitte ab Wandecke Ost (u=0)",
+ "mess_px": [
+  772.0,
+  862.0,
+  449.0,
+  852.0
+ ],
+ "P1": [
+  -7.035,
+  9.398,
+  30.972
+ ],
+ "P2": [
+  -7.203,
+  15.107,
+  30.979
+ ],
+ "dz": 0.007,
+ "dy": 5.709,
+ "dx": -0.168,
+ "abstand": 5.711,
+ "z1": 30.972,
+ "z2": 30.979,
+ "unsicherheit_rel": 0.003,
+ "unsicherheit_m": 0.091,
+ "massstab_von": "Kamera K-commons_orig2__127 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99957,-0.02947,0=6.755 (+-0.3 m)"
+}

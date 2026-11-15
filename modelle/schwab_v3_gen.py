@@ -137,15 +137,29 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     # Suedwand (15.11.2026, Nutzerbilder 14:47/15:35 "Modell zu gross"): im neuen SfM (Eckpaare) liegt die Suedwand bei x -7,10 (korrigierter Rahmen), der skalierte
     # LoD2-Umriss bei -7,6. Mit den neuen Kameras stimmt die Suedfassade mit der Nordseite ueberein (Uhrmitte 31,1 / 31,25 m, Uhr 4,9 / 5,0 m, Traufe ~37 m).
     # Lage-Veto: Koerper an x = -7,10 abschneiden (im Rohrahmen umgerechnet). ANNAHME: Wand senkrecht und parallel zur y-Achse; am Foto noch zu peilen.
-    X_SUED = MC[0] + (-7.10 - MC[0]) / MK
-    rumpf = rumpf.trim_by_plane((1.0, 0.0, 0.0), float(X_SUED))
+    S_A, S_B = np.array([-7.035, 9.40]), np.array([-7.374, 20.90])          # Suedwand im KORRIGIERTEN Rahmen: Gerade durch 7 828 Wandpunkte des neuen SfM (Rest 2 cm), leicht schraeg
+    roh = lambda p_: np.array(MC[:2]) + (np.asarray(p_) - np.array(MC[:2])) / MK; sa_, sb_ = roh(S_A), roh(S_B); st_ = (sb_ - sa_) / np.linalg.norm(sb_ - sa_); sn_ = np.array([st_[1], -st_[0]]); sn_ = sn_ if sn_[0] > 0 else -sn_
+    rumpf = rumpf.trim_by_plane((float(sn_[0]), float(sn_[1]), 0.0), float(sn_ @ sa_)); X_SUED = float(sa_[0])
     beleg("wand", "Suedwand (Ebene)", "SfM-Neuaufbau mit Eckpaaren (sfm_neu), Wandpunkte z 8-33 m; Gegenprobe Uhr/Traufe im entzerrten Suedfoto 127", x=round(X_SUED, 2),
           hinweis="Lage-Veto der neuen SfM-Punkte, nicht am Foto gepeilt; Knauf-Tor Nord-Sued noch 0,9 m")
-    koerper = massstab(rumpf + dach + lat, MK)
-    for e_ in ELEMENTE[N_BELEGE_LOD2:]:                    # Masse der Belege in den korrigierten Rahmen: Laengen/Hoehen x MK, Winkel bleiben, x-Lagen um den Drehpunkt
+    koerper = massstab(rumpf + dach + lat, MK); N_BELEGE_ROH = len(ELEMENTE)
+    for e_ in ELEMENTE[N_BELEGE_LOD2:N_BELEGE_ROH]:                    # Masse der Belege in den korrigierten Rahmen: Laengen/Hoehen x MK, Winkel bleiben, x-Lagen um den Drehpunkt
         for q_, v_ in list(e_.items()):
             if isinstance(v_, (int, float)) and not isinstance(v_, bool) and q_ != "neigung_grad": e_[q_] = round(MC[0] + MK * (v_ - MC[0]), 2) if q_.startswith("x_bei") else round(v_ * MK, 2)
         e_["hinweis"] = (e_.get("hinweis", "") + " | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur").strip(" |")
+    # ---- SUEDFASSADE (15.11.2026) im KORRIGIERTEN Rahmen, nach dem Skalieren: Masse M-commons127-002..-010, M-commons217-001..-003 (Kameras aus dem SfM-Neuaufbau) ----
+    from bauteile import Wand, spitzbogen as b_spitz, rundbogen as b_rund
+    WS = Wand(S_A, S_B, aussen=(-30.0, 15.0)); T_U = 5.76
+    koerper = koerper + WS.kasten(T_U - 2.7, T_U + 2.7, 0.0, 6.9, -1.0, 0.0)                     # Torwand Sued: ANNAHME 1 m stark; der Suedbogen ist niedriger als die Durchfahrt (Nord 6,42 m)
+    koerper = koerper - WS.prisma(b_spitz(4.49 / 2, 3.86, 5.85), u=T_U, w0=-1.3, w1=0.6)
+    koerper = koerper - WS.prisma(b_rund(0.92, 22.26, 23.66), u=5.745, w0=-0.45, w1=0.6)        # Fenster: Tiefe ANNAHME 0,45 m; Steingewaende 2,02 m breit ist buendig (Farbe)
+    koerper = koerper + WS.scheibe(5.71, 30.97, 4.95, -0.05, 0.10) - WS.scheibe(5.71, 30.97, 3.16, 0.06, 0.4)   # Uhr: Ring 10 cm, Innenfeld 6 cm vor der Wand (ANNAHME wie Nord)
+    for ub in (8.52, 2.97): koerper = koerper + WS.kasten(ub - 0.15, ub + 0.15, 32.95, 33.5, -0.05, 0.25)       # Balkenkoepfe: Lage aus dem entzerrten Foto 127, Groesse ANNAHME
+    koerper = koerper + WS.kasten(0.0, WS.laenge, 26.0, 26.53, -0.05, 0.10)                      # Gesims: Ausladung ANNAHME 10 cm
+    koerper = koerper + WS.kasten(2.57, 7.0, 18.22, 18.38, -0.05, 0.15)                          # Verdachung ueber der Inschrift (Georgsbild darunter ist flach): Staerke/Ausladung ANNAHME
+    beleg("wand", "Suedfassade: Torbogen, Fenster, Uhr, Gesims, Verdachung", "foto_mass.py auf der Suedwandebene, Fotos commons 127 und 217 (M-commons127-002..-010, M-commons217-001..-003)", tor_breite=4.49, tor_scheitel=5.85,
+          tor_kaempfer=3.86, uhr_durchmesser=4.95, uhr_mitte_z=30.97, fenster_breite=0.92, fenster_hoehe=1.41, gesims_z=26.53,
+          hinweis="ANNAHME: Tiefen/Ausladungen, Torwand 1 m, Bogen aus Kreisboegen; Georgsbild, Eckquader und Bruchstein fehlen (Relief erst nach neuer dichter Wolke); Knauf-Tor Nord-Sued 0,9 m -> Masse auf ~2-3 %")
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json

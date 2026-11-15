@@ -1,0 +1,32 @@
+{
+ "id": "M-commons127-007",
+ "foto": "commons127",
+ "kamera": "K-commons_orig2__127",
+ "ebene": "-0.99957,-0.02947,0=6.755",
+ "name": "Fenster Sued: Oeffnung Hoehe (Bank bis Scheitel)",
+ "mess_px": [
+  436.0,
+  1309.0,
+  438.0,
+  1233.0
+ ],
+ "P1": [
+  -7.204,
+  15.145,
+  22.254
+ ],
+ "P2": [
+  -7.204,
+  15.139,
+  23.661
+ ],
+ "dz": 1.407,
+ "dy": -0.006,
+ "dx": 0.0,
+ "abstand": 1.407,
+ "z1": 22.254,
+ "z2": 23.661,
+ "unsicherheit_rel": 0.0031,
+ "unsicherheit_m": 0.076,
+ "massstab_von": "Kamera K-commons_orig2__127 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99957,-0.02947,0=6.755 (+-0.3 m)"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-commons127-006",
+ "foto": "commons127",
+ "kamera": "K-commons_orig2__127",
+ "ebene": "-0.99957,-0.02947,0=6.755",
+ "name": "Fenster Sued: Oeffnung Breite",
+ "mess_px": [
+  410.0,
+  1268.0,
+  464.0,
+  1269.0
+ ],
+ "P1": [
+  -7.218,
+  15.604,
+  22.998
+ ],
+ "P2": [
+  -7.191,
+  14.682,
+  23.005
+ ],
+ "dz": 0.007,
+ "dy": -0.922,
+ "dx": 0.027,
+ "abstand": 0.922,
+ "z1": 22.998,
+ "z2": 23.005,
+ "unsicherheit_rel": 0.0031,
+ "unsicherheit_m": 0.075,
+ "massstab_von": "Kamera K-commons_orig2__127 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99957,-0.02947,0=6.755 (+-0.3 m)"
+}
