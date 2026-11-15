@@ -142,7 +142,7 @@ print("FERTIG", flush=True)
 
     # 5 Abgleich (Ausrichtung, Entscheidung beim Nutzer)
     if os.path.exists(oj) and sparse_dir:
-        rc, out = run([PY_SEG, "-u", "-I", "tools/sfm_lod2_ausrichten.py", oj, "--kameras", kam_json, "--dicht", fused, "--name", obj, "--radius", "30", "--schreiben"], log)
+        rc, out = run([PY_SEG, "-u", "-I", "tools/sfm_lod2_ausrichten.py", oj, "--kameras", kam_json, "--dicht", fused, "--name", obj, "--radius", "30", "--schreiben", "--fotos", fotos], log)   # --fotos: GPS-Startmassstab aus den Bildern dieses Laufs (15.11.)
         g = re.findall(r"Guete[^\n]*", out)
         stufe(bericht, "abgleich", "OK" if rc == 0 else "FEHLER", (g[-1] if g else "ohne Guete-Zeile") + " | Entscheidung beim Nutzer")
     else:

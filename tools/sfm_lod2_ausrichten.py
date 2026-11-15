@@ -90,9 +90,9 @@ def gps_massstab(ims, C, obj, od, fotos=""):
         hit = [p for d in ds for n_ in kand for p in glob.glob(os.path.join(d, glob.escape(n_) + ".*")) if p.lower().endswith((".jpg", ".jpeg"))]
         g = gps_exif(hit[0]) if hit else None
         if g: U.append(wgs84_zu_utm(*g)); X.append(c); GPS_KAM.append((_i, U[-1]))
-    if len(U) < 15: print(f"GPS-Massstab: nur {len(U)} Kameras mit GPS - Startmassstab aus Wolkenausdehnung"); return None
+    if len(U) < 8: print(f"GPS-Massstab: nur {len(U)} Kameras mit GPS - Startmassstab aus Wolkenausdehnung"); return None   # 8: Kaufhaus hatte 10 (Chat-Kopien ohne EXIF)
     U = np.array(U, float); X = np.array(X, float); i, j = np.triu_indices(len(U), 1); dg = np.hypot(*(U[i] - U[j]).T); dx = np.linalg.norm(X[i] - X[j], axis=1); m = dg > 15
-    if m.sum() < 30: return None
+    if m.sum() < 15: return None
     print(f"GPS-Massstab: {len(U)} Kameras, {int(m.sum())} Paare > 15 m"); return float(np.median(dx[m] / dg[m]))
 
 

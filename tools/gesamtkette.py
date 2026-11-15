@@ -108,20 +108,24 @@ def main():
     def tore(tag):
         sp = os.path.join(P, "sfm", "sparse", "0"); erg = {}
         if os.path.isdir(sp): erg["kamera"] = lauf(B, f"tor_kamera{tag}", [PY, "-I", "tools/kamera_abdeckung.py", sp], log, ok=(0, 2))[0]
-        erg["gps"] = lauf(B, f"tor_gps{tag}", [PY, "-I", "tools/lage_gps_pruefen.py", ZR, os.path.relpath(AU, ROOT)], log)[0] if os.path.exists(AU) else None
+        erg["gps"] = lauf(B, f"tor_gps{tag}", [PY, "-I", "tools/lage_gps_pruefen.py", ZR, os.path.relpath(AU, ROOT), "--fotos", FV], log)[0] if os.path.exists(AU) else None
         erg["grundriss"] = lauf(B, f"tor_grundriss{tag}", [PY, "-I", "tools/wolke_grundriss_pruefen.py", ZR, "--wolke", W], log)[0] if os.path.exists(W) else None
         return erg
 
     if dran("tore"):
         erg = tore("")
         bestanden = lambda e: e.get("gps") in (0, None) and e.get("grundriss") == 0
+        kaputt = lambda e: e.get("gps") in (1, 4) or e.get("grundriss") == 1          # rc 1/4 = Werkzeug abgestuerzt/nicht geprueft (15.11.: CUDA out of memory) - kein Lage-Urteil
+        if kaputt(erg): print(f"ABBRUCH: Tor-Werkzeug abgestuerzt/nicht geprueft {erg} (Log ansehen, z. B. GPU-Speicher) - KEIN Lage-Urteil", flush=True); B["lage"] = dict(tore=erg, bestanden=False, fehler="tor_abgestuerzt"); json.dump(B, open(bp, "w"), indent=1, ensure_ascii=False); return 4
         k = 0
         while not bestanden(erg) and k < a.max_loesung:
             k += 1
             rc, out = lauf(B, f"korrektur_loesung{k}", [PY, "-u", "-I", "tools/sfm_lod2_ausrichten.py", ZR, "--kameras", os.path.join(P, "kameras.json"), "--dicht",
-                                                        os.path.join(P, "dicht", "fused.ply"), "--name", a.ziel, "--radius", "30", "--schreiben", "--loesung", str(k)], log, ok=(0, 5))
+                                                        os.path.join(P, "dicht", "fused.ply"), "--name", a.ziel, "--radius", "30", "--schreiben", "--fotos", FV, "--loesung", str(k)], log, ok=(0, 5))
             if rc == 5: break
+            if rc != 0: print(f"ABBRUCH: Ausrichtung Loesung {k} abgestuerzt (rc {rc}) - KEIN Lage-Urteil", flush=True); return 4
             erg = tore(f"_l{k}")
+            if kaputt(erg): print(f"ABBRUCH: Tor-Werkzeug abgestuerzt {erg} - KEIN Lage-Urteil", flush=True); return 4
         B["lage"] = dict(loesung=k, tore=erg, bestanden=bestanden(erg)); json.dump(B, open(bp, "w"), indent=1, ensure_ascii=False)
         print(f"    LAGE: Loesung {k}, Tore {erg} -> {'BESTANDEN' if bestanden(erg) else 'NICHT bestanden'}", flush=True)
         if not bestanden(erg):
