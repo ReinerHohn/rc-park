@@ -26,6 +26,13 @@
   "seite_name": "wand"
  },
  {
+  "seite": "wand",
+  "element": "Grundriss Schaft = LoD2-Umriss x 0,933",
+  "quelle": "Wolkenwaende aller vier Seiten im Lasermassstab (tools/..., Stand 15.11.): LoD2 unskaliert 0,2-0,6 m zu breit, skaliert +-0,2 m",
+  "hinweis": "ANNAHME fuer Sued/Ost/West: Wandlage aus der Wolke (nur Nordwand am Foto gepeilt); Anzug/Sockel nicht gebaut",
+  "seite_name": "wand"
+ },
+ {
   "seite": "dach",
   "element": "Zeltdach mit Ueberstand",
   "quelle": "Foto-Triangulation Nordseite (foto_mass.py --tri, M-113205-008/-009/-010, Rahmen lotrecht aus Foto-Vertikalen)",

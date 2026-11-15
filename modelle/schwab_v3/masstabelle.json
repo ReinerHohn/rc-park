@@ -1016,129 +1016,118 @@
    "naechster_schritt": "Hoehen-Tor als Werkzeug: Modell-/Wolkenflaechen (Dach, Vordach, Nachbardaecher) gegen DOM1-Pixel ausgleichen -> Massstab k mit Streuung; Dach als zweiteilige Flaeche (Aufschiebling) aus dem Laserprofil + Fotokante; dann Pruefung 'Dachflaeche gegen DOM1' (laser_dom1, hoehe_flaeche) anlegen"
   },
   {
+   "datum": "2026-11-15",
+   "wer": "hoehe_gegen_dom1.py / Claude",
+   "text": "Hoehen-Tor nach Massstab 0,933 und geschweiftem Dach: 62 ebene Dachpixel, Modell - Laser +0,46 m (MAD 0,12) beim besten Lageversatz des Modells (0 / -0,5 m); ohne Versatz +0,56 m. Das Modelldach liegt also ~0,5 m zu weit in +y (West) gegenueber dem Laser und noch knapp 0,5 m zu hoch (Tor mit Toleranz 0,5 m gerade bestanden).",
+   "naechster_schritt": "Klaeren, ob nur das Dach (Traufecken Ost 8,20 / West 22,55 roh, Ueberstand ungleich 1,02 / 1,17) oder die ganze Ausrichtung 0,5 m in y versetzt ist: Wolkenwaende Ost/West gegen LoD2 im neuen Massstab, Nachbardaecher gegen DOM1; Dachprofil-Stuetzpunkte aus allen Dachpixeln ausgleichen statt aus 4 Linien"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Nutzer (3D-Seite V14, Bildschirmfoto 14:36, rot markiert)",
+   "text": "Am Turmfuss neben dem Nordtor steht der Modellkoerper als glatter Streifen seitlich ueber die Relief-Fassade und ueber die Wolke hinaus (senkrechte Kante im Modell, die es am Bau nicht gibt). Bild audit/beobachtung_1436_koerper_breiter_als_wolke.jpg",
+   "naechster_schritt": "Ursache pruefen: seit der Massstabskorrektur bleibt der LoD2-Grundkoerper unskaliert (12,1 m), die Fototeile sind mit 0,933 skaliert (Schaft 11,3 m) -> Koerper je Seite ~0,4 m zu breit. Wolkenwaende im neuen Rahmen gegen den Koerper messen, Koerper an die Wolke/Fotowand legen"
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1296",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1512-1080",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 31.96,
-   "z_bis": 31.96,
+   "z_von": 36.84,
+   "z_bis": 36.84,
    "xyz": [
-    -1.22,
-    9.34,
-    31.96
+    1.27,
+    17.06,
+    36.84
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=31.96 m, y=9.34 m (Zelle [972, 1296, 108], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=36.84 m, y=17.06 m (Zelle [1512, 1080, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1836-1296",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1512",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 31.76,
-   "z_bis": 31.76,
+   "z_von": 29.34,
+   "z_bis": 29.34,
    "xyz": [
-    2.44,
-    20.74,
-    31.76
+    -2.74,
+    9.78,
+    29.34
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=31.76 m, y=20.74 m (Zelle [1836, 1296, 108], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.34 m, y=9.78 m (Zelle [972, 1512, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1836-1404",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1620",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 29.67,
-   "z_bis": 29.67,
+   "z_von": 27.1,
+   "z_bis": 27.1,
    "xyz": [
-    2.29,
-    20.64,
-    29.67
+    -2.55,
+    9.76,
+    27.1
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.67 m, y=20.64 m (Zelle [1836, 1404, 108], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.1 m, y=9.76 m (Zelle [972, 1620, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-864-1836",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1728",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 24.54,
-   "z_bis": 24.54,
+   "z_von": 25.22,
+   "z_bis": 25.22,
    "xyz": [
-    -4.19,
-    9.15,
-    24.54
+    -2.56,
+    9.81,
+    25.22
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.54 m, y=9.15 m (Zelle [864, 1836, 108], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=25.22 m, y=9.81 m (Zelle [972, 1728, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-864-1944",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1836",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 22.78,
-   "z_bis": 22.78,
+   "z_von": 23.37,
+   "z_bis": 23.37,
    "xyz": [
-    -4.19,
-    9.16,
-    22.78
+    -2.49,
+    9.82,
+    23.37
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=22.78 m, y=9.16 m (Zelle [864, 1944, 108], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=23.37 m, y=9.82 m (Zelle [972, 1836, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-864-2052",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-2052",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 21.06,
-   "z_bis": 21.06,
+   "z_von": 20.0,
+   "z_bis": 20.0,
    "xyz": [
-    -4.13,
-    9.17,
-    21.06
+    -2.34,
+    9.85,
+    20.0
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=21.06 m, y=9.17 m (Zelle [864, 2052, 108], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=20.0 m, y=9.85 m (Zelle [972, 2052, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113128, Treffer 4)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113128-486-3078",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113128",
-   "z_von": 23.4,
-   "z_bis": 23.4,
-   "xyz": [
-    -2.3,
-    9.15,
-    23.4
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=23.4 m, y=9.15 m (Zelle [486, 3078, 162], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113128.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "2026-11-15",
-   "wer": "hoehe_gegen_dom1.py / Claude",
-   "text": "Hoehen-Tor nach Massstab 0,933 und geschweiftem Dach: 62 ebene Dachpixel, Modell - Laser +0,46 m (MAD 0,12) beim besten Lageversatz des Modells (0 / -0,5 m); ohne Versatz +0,56 m. Das Modelldach liegt also ~0,5 m zu weit in +y (West) gegenueber dem Laser und noch knapp 0,5 m zu hoch (Tor mit Toleranz 0,5 m gerade bestanden).",
-   "naechster_schritt": "Klaeren, ob nur das Dach (Traufecken Ost 8,20 / West 22,55 roh, Ueberstand ungleich 1,02 / 1,17) oder die ganze Ausrichtung 0,5 m in y versetzt ist: Wolkenwaende Ost/West gegen LoD2 im neuen Massstab, Nachbardaecher gegen DOM1; Dachprofil-Stuetzpunkte aus allen Dachpixeln ausgleichen statt aus 4 Linien"
   }
  ]
 }

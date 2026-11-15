@@ -24,7 +24,12 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     # wie gemessen bauen, am Ende den ganzen Koerper mit MK skalieren -> LoD2-Teile bleiben amtlich, Fototeile bekommen den Lasermassstab.
     MK, MC = 0.933, (-2.15, 15.28, 0.0)                    # 0,947 (Laser Traufpixel/Vordach) x 0,985 (Hoehen-Tor: 61 ebene Dachpixel)
     def massstab(k_, f): return k_.translate((-MC[0], -MC[1], -MC[2])).scale((f, f, f)).translate(MC)
-    koerper = massstab(koerper, 1.0 / MK); haupt = (np.asarray(haupt) - np.array(MC[:2])) / MK + np.array(MC[:2])
+    # 15.11.2026 (Nutzerbild 14:36, Koerper stand als glatter Streifen ueber Relief und Wolke hinaus): der LoD2-GRUNDRISS wird MIT skaliert. Im Rohrahmen lag er
+    # auf den Wolkenwaenden (+-0,2 m); im Lasermassstab sind die Wolkenwaende aller vier Seiten 0,2-0,6 m schmaler als LoD2 (LoD2 = Sockelumring, Schaft 11,3 m).
+    # Waagerecht gilt also Wolke/Foto (Lage-Veto), nur die amtlichen HOEHEN der LoD2-Nebenteile bleiben (z vorab durch MK geteilt).
+    koerper = koerper.scale((1.0, 1.0, 1.0 / MK))
+    beleg("wand", "Grundriss Schaft = LoD2-Umriss x 0,933", "Wolkenwaende aller vier Seiten im Lasermassstab (tools/..., Stand 15.11.): LoD2 unskaliert 0,2-0,6 m zu breit, skaliert +-0,2 m",
+          hinweis="ANNAHME fuer Sued/Ost/West: Wandlage aus der Wolke (nur Nordwand am Foto gepeilt); Anzug/Sockel nicht gebaut")
     N_BELEGE_LOD2 = len(ELEMENTE)
     ZT = 39.26                                # Traufe aussen oben: Ecken A 39,20 / C 39,32 (M-113205-008/-009, nach Lotkorrektur)
     X1, Y0, Y1 = 4.80, 8.20, 22.55            # Traufkante Nord (x) und Ecken Ost/West (y), gleiche Protokolle
