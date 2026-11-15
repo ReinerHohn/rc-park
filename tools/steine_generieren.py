@@ -41,6 +41,7 @@ def main():
     zone = np.zeros((H, W), bool)
     for f0, f1, g0, g1 in a.zone: zone |= (U >= f0) & (U <= f1) & (ZZ >= g0) & (ZZ <= g1)
     for f0, f1, g0, g1 in a.ohne: zone &= ~((U >= f0) & (U <= f1) & (ZZ >= g0) & (ZZ <= g1))
+    if "putz" in Z: zone &= ~np.vstack([Z["putz"], np.zeros((H - Z["putz"].shape[0], W), bool)])       # Putzflaechen (tools/relief_putz.py) sind absichtlich eben - keine Steine hinein
     flach = ndi.maximum_filter(rel, 3) == ndi.minimum_filter(rel, 3)       # konstante Flecken = an der Klemme abgeschnittene Fremdkoerper (Schild, Auto, Kasten vor der Wand) -> ebenfalls Loch
     lab, n = ndi.label(ndi.binary_dilation(flach, iterations=2) | (rel == 0.0)); gr = ndi.sum(np.ones_like(rel), lab, np.arange(1, n + 1)); loch = np.isin(lab, 1 + np.flatnonzero(gr >= a.min_loch)) & zone
     gueltig = zone & ~loch & (rel != 0.0)
