@@ -225,7 +225,14 @@ def main():
     best_nah = next(r for r in res if nah(r)); best_alt = next(r for r in res if not nah(r))
     rel = (best_nah["anteil"] - best_alt["anteil"]) / max(best_nah["anteil"], 1e-9)
     warn_b = best_alt["anteil"] > best_nah["anteil"] or rel < a.abstand
-    warn_a = bool(haufen) and haufen[0]["punkte"] > a.haufen
+    # 15.11.2026: am FOTO geklaerte Haufen (objekt.json "grundriss_haufen_geklaert": [{"mitte": [x, y], "radius_m": r, "befund": "...", "quelle": "Fotos ..."}])
+    # zaehlen nicht mehr als Warnung - z. B. Erker/Traufe des Nachbarhauses oder Galerie, die ueber den LoD2-Grundriss kragen (echt, kein Teilnetzfehler).
+    _gekl = obj.get("grundriss_haufen_geklaert", [])
+    for h in haufen: h["geklaert"] = next((g.get("befund", "ja") for g in _gekl if np.hypot(h["mitte"][0] - g["mitte"][0], h["mitte"][1] - g["mitte"][1]) <= g.get("radius_m", 5.0)), None)
+    _offen = [h for h in haufen if not h["geklaert"]]
+    warn_a = bool(_offen) and _offen[0]["punkte"] > a.haufen
+    for h in haufen[:5]:
+        if h["geklaert"] and h["punkte"] > a.haufen: print(f"A Haufen bei {h['mitte']} ({h['punkte']} Punkte) am Foto geklaert: {h['geklaert']}")
     out = dict(werkzeug="wolke_grundriss_pruefen.py", wolke=a.wolke, lod2_gebaeude=len(B), wandpunkte=int(len(Q)),
                strasse=dict(anteil=round(anteil, 4), haufen=haufen[:10], warnung=warn_a), teile=dict(ziel=zid, teile=teile_c, warnung=warn_c),
                eindeutigkeit=dict(identitaet_anteil=round(ident, 4), beste_nahe_identitaet=best_nah, beste_alternative=best_alt,
