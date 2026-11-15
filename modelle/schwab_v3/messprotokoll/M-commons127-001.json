@@ -1,0 +1,47 @@
+{
+ "id": "M-commons127-001",
+ "typ": "triangulation",
+ "foto": "commons127",
+ "name": "Laterne Knauf aus SUEDFOTOS (Teilmodell Sued, Massstab ungeprueft)",
+ "beobachtungen": [
+  {
+   "kamera": "K-commons_orig2__191",
+   "px": [
+    668.0,
+    195.0
+   ]
+  },
+  {
+   "kamera": "K-commons_orig2__127",
+   "px": [
+    476.0,
+    124.0
+   ]
+  },
+  {
+   "kamera": "K-commons_orig2__052",
+   "px": [
+    522.0,
+    122.0
+   ]
+  }
+ ],
+ "P": [
+  -3.653,
+  15.938,
+  44.606
+ ],
+ "strahl_abstand_m": [
+  0.147,
+  0.183,
+  0.123
+ ],
+ "schnittwinkel_grad": [
+  24.0,
+  20.8,
+  8.2
+ ],
+ "z": 44.606,
+ "unsicherheit_m": 0.595,
+ "massstab_von": "Kameras K-commons_orig2__191, K-commons_orig2__127, K-commons_orig2__052 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}
