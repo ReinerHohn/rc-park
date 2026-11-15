@@ -1,23 +1,5 @@
 [
  {
-  "seite": "dach",
-  "element": "Dach Teil 0 (walm_a)",
-  "quelle": "Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_001000hPLcp-Grundriss Teil 0",
-  "first": 45.46,
-  "neigung_grad": 56.1,
-  "rms_m": 0.26,
-  "eindeutig": true,
-  "seite_name": "dach"
- },
- {
-  "seite": "dach",
-  "element": "Spitze Teil 0",
-  "quelle": "DOM1 6 Pixel bis 49.6 m; Hoehe objekt.json hoehe_m",
-  "hoehe": 50.8,
-  "hinweis": "ANNAHME: Pyramide Grundseite 2.4 m (sqrt Pixel), Form nicht gemessen",
-  "seite_name": "dach"
- },
- {
   "seite": "wand",
   "element": "Grundriss Teil 0",
   "quelle": "LoD2 DEBW_001000hPLcp GroundSurface 0",
@@ -42,5 +24,33 @@
   "tiefe_v": 2.65,
   "flaeche_m2": 6.9,
   "seite_name": "wand"
+ },
+ {
+  "seite": "dach",
+  "element": "Zeltdach mit Ueberstand",
+  "quelle": "Foto-Triangulation Nordseite (foto_mass.py --tri, M-113205-002/-003/-004)",
+  "traufe": 39.18,
+  "neigung_grad": 55.1,
+  "trauflaenge_ost_west": 14.35,
+  "ueberstand": 1.19,
+  "spitze_gedacht": 49.26,
+  "hinweis": "ANNAHME: Sued-, Ost- und Westflaeche wie Nord (gleiche Spitzenhoehe), Traufdicke 0,25 m",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "Hauptteil Wand bis Traufe",
+  "quelle": "LoD2 DEBW_001000hPLcp GroundSurface 0; Nordwand am Foto bestaetigt (M-113205-006/-007)",
+  "hoehe": 39.18,
+  "hinweis": "ANNAHME: Wand bis Traufhoehe, Dachuntersicht nicht gemessen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "dach",
+  "element": "Laterne mit Zwiebelhaube",
+  "quelle": "Knauf-Hoehe 54,17 m aus Foto-Triangulation (M-113205-005)",
+  "hoehe": 55.3,
+  "hinweis": "ANNAHME: Form (geschlossener Achteckschaft statt 4 Pfosten, Krempe, Zwiebel, Spitze 1 m) nach Augenschein Foto 113205, nicht gemessen",
+  "seite_name": "dach"
  }
 ]

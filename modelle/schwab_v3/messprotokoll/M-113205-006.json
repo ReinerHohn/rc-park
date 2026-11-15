@@ -1,0 +1,56 @@
+{
+ "id": "M-113205-006",
+ "typ": "triangulation_plan",
+ "foto": "113205",
+ "name": "Wandecke A' (+x,+y) Uhrgeschoss, senkrechte Kante",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__IMG_20261106_113231",
+   "px": [
+    1879.0,
+    1214.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113205",
+   "px": [
+    2698.0,
+    1444.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113106",
+   "px": [
+    2646.0,
+    1409.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_113029",
+   "px": [
+    2576.0,
+    1202.0
+   ]
+  }
+ ],
+ "P_xy": [
+  3.598,
+  21.358
+ ],
+ "strahl_abstand_m": [
+  0.009,
+  0.01,
+  0.022,
+  0.024
+ ],
+ "schnittwinkel_grad": [
+  14.0,
+  26.6,
+  30.7,
+  12.6,
+  16.7,
+  4.1
+ ],
+ "unsicherheit_m": 0.189,
+ "massstab_von": "Kameras K-eigen__IMG_20261106_113231, K-eigen__IMG_20261106_113205, K-eigen__IMG_20261106_113106, K-eigen__IMG_20261106_113029 aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme"
+}

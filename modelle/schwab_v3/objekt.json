@@ -15,7 +15,7 @@
   "modelle/schwab_v3/masstabelle.json",
   "modelle/schwab_v3/elemente.json"
  ],
- "fotos_dir": "daten/schwabentor/fotos",
+ "fotos_dir": "daten/schwab_v3/fotos",
  "seiten_konvention": {
   "+x": "Nord",
   "-x": "Sued",
@@ -66,7 +66,7 @@
   414505.5,
   5316149.2
  ],
- "hoehe_m": 50.8,
+ "hoehe_m": 55.3,
  "gesamtkette": {
   "quelle": "schwabentor",
   "hinweis": "von tools/gesamtkette.py angelegt; Masse/Pruefungen nur aus Quellen dieser Kette"
@@ -83,5 +83,6 @@
    "datum": "2026-11-15",
    "wer": "Claude"
   }
- ]
+ ],
+ "hoehe_m_quelle": "2026-11-15: Knauf der Laterne 54,17 m aus Foto-Triangulation (M-113205-005) + Spitze (ANNAHME ~1 m). Vorher 50,8 = Platzhalter aus DOM1-Maximum 49,6 (Laser blind fuer duenne Laterne), keine Dokumentquelle"
 }

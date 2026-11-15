@@ -27,6 +27,12 @@ def main():
     m0 = np.array(r["mitte_utm"], float); xh = np.array(r["xhat_utm"], float); yh = np.array(r["yhat_utm"], float); g0 = float(r["gelaende"])
     k, belege, haupt = gebaeude_aus_lod2(a.objekt)
     me = k.to_mesh(); V = np.asarray(me.vert_properties)[:, :3].astype(np.float32); F = np.asarray(me.tri_verts).astype(np.uint32)
+    root = os.path.dirname(os.path.dirname(od)); stl = os.path.join(root, obj.get("stl", "")); ej = os.path.join(od, "elemente.json")
+    if obj.get("stl") and os.path.exists(stl) and obj.get("zentrierung") == "achse":     # 15.11.2026: das GEBAUTE Generator-Modell zeigen (STL = Rahmen), nicht den LoD2/Laser-Rumpf neu rechnen
+        import trimesh
+        ms = trimesh.load(stl, process=True); ms.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0 if obj.get("stl_einheit_mm", True) else 1.0)
+        V = np.asarray(ms.vertices, np.float32); F = np.asarray(ms.faces, np.uint32)
+        if os.path.exists(ej): belege = json.load(open(ej))
     c = haupt.mean(0)
     D = dict(name=obj.get("name", os.path.basename(od)), mitte=c.round(2).tolist(), seiten=seiten_aus_rahmen(obj),
              mv=b64(V), mf=b64(F), belege=belege)

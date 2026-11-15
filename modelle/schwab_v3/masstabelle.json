@@ -10,6 +10,86 @@
   },
   "koerper": {
    "typ": "koerper_anzahl"
+  },
+  "traufe_nord_reichweite": {
+   "typ": "schnitt_reichweite",
+   "z": 39.05,
+   "zentrum": [
+    -2.15,
+    15.28
+   ],
+   "richtung": [
+    1,
+    0
+   ],
+   "quer_max": 3.0,
+   "r_max": 10.0
+  },
+  "traufe_west_reichweite": {
+   "typ": "schnitt_reichweite",
+   "z": 39.05,
+   "zentrum": [
+    -2.15,
+    15.28
+   ],
+   "richtung": [
+    0,
+    1
+   ],
+   "quer_max": 3.0,
+   "r_max": 10.0
+  },
+  "traufe_ost_reichweite": {
+   "typ": "schnitt_reichweite",
+   "z": 39.05,
+   "zentrum": [
+    -2.15,
+    15.28
+   ],
+   "richtung": [
+    0,
+    -1
+   ],
+   "quer_max": 3.0,
+   "r_max": 10.0
+  },
+  "traufe_oben_z": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    4.75,
+    15.28
+   ],
+   "z0": 37.5,
+   "z1": 42.0,
+   "suche": "oben"
+  },
+  "dach_nord_z45": {
+   "typ": "schnitt_reichweite",
+   "z": 45.0,
+   "zentrum": [
+    -2.15,
+    15.28
+   ],
+   "richtung": [
+    1,
+    0
+   ],
+   "quer_max": 0.5,
+   "r_max": 10.0
+  },
+  "wand_nord_reichweite": {
+   "typ": "schnitt_reichweite",
+   "z": 36.0,
+   "zentrum": [
+    -2.15,
+    15.28
+   ],
+   "richtung": [
+    1,
+    0
+   ],
+   "quer_max": 3.0,
+   "r_max": 10.0
   }
  },
  "pruefungen": [
@@ -34,6 +114,118 @@
    "quelle": "Schwebende Teile",
    "quelltyp": "modell",
    "merkmal": "druck"
+  },
+  {
+   "name": "Traufkante Nord: Abstand von Dachmitte bei z 39,05 (m)",
+   "wert": "traufe_nord_reichweite",
+   "soll": [
+    6.85,
+    7.25
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Traufecken A x 4,85 / C x 4,92 (M-113205-002/-003), Dachmitte x -2,15 = Mitte der Waende (Nordwand x 3,69 aus M-113205-006/-007, Suedwand LoD2 -8,0) -> 7,03 +-0,2 (Tiefe entlang der Blickrichtung)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-113205-002",
+   "historie": [
+    "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m"
+   ]
+  },
+  {
+   "name": "Traufkante West (+y): Abstand von Dachmitte bei z 39,05 (m)",
+   "wert": "traufe_west_reichweite",
+   "soll": [
+    7.08,
+    7.38
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Traufecke A y 22,51 (M-113205-002), Dachmitte y 15,28 -> 7,23 +-0,15",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-113205-002",
+   "historie": [
+    "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m"
+   ]
+  },
+  {
+   "name": "Traufkante Ost (-y): Abstand von Dachmitte bei z 39,05 (m)",
+   "wert": "traufe_ost_reichweite",
+   "soll": [
+    6.97,
+    7.27
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Traufecke C y 8,16 (M-113205-003), Dachmitte y 15,28 -> 7,12 +-0,15",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-113205-003",
+   "historie": [
+    "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m"
+   ]
+  },
+  {
+   "name": "Traufe Nord Oberkante z bei x 4,75 (m)",
+   "wert": "traufe_oben_z",
+   "soll": [
+    39.1,
+    39.5
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Traufecken z 39,15 / 39,20 (M-113205-002/-003); Dachflaeche steigt bis x 4,75 um ~0,15 m",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-113205-003",
+   "historie": [
+    "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m"
+   ]
+  },
+  {
+   "name": "Dachflaeche Nord bei z 45: Abstand von Dachmitte (m)",
+   "wert": "dach_nord_z45",
+   "soll": [
+    2.6,
+    3.3
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Gerade Traufe (4,88 / 39,18) - Laternenfuss (-0,77 / 47,28) (M-113205-004) -> x 0,82 bei z 45 = 2,97 m von der Mitte; +-0,35 (Tiefe); Neigung 55,1 Grad, Gegenprobe Laser DOM1 56,1",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "hoehe_flaeche",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-113205-004",
+   "historie": [
+    "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m"
+   ]
+  },
+  {
+   "name": "Gesamthoehe mit Laterne (m)",
+   "wert": "hoehe",
+   "soll": [
+    54.2,
+    55.8
+   ],
+   "quelle": "Foto-Triangulation foto_mass.py --tri, 5-6 Fotos der Nordseite mit SfM-Punkten in Dachhoehe, Strahlabstand 1-12 cm; Knauf ueber der Zwiebelhaube z 54,17 (M-113205-005); darueber Spitze (ANNAHME bis ~1,5 m, nicht gemessen). WIDERSPRUCH zu objekt.json hoehe_m 50,8 - nicht gemittelt, Nutzer gemeldet",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "absolut_hoehe",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-113205-005",
+   "historie": [
+    "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m"
+   ]
+  },
+  {
+   "name": "Nordwand Uhrgeschoss: Abstand von Dachmitte bei z 36 (m)",
+   "wert": "wand_nord_reichweite",
+   "soll": [
+    5.7,
+    6.0
+   ],
+   "quelle": "Foto-Peilung foto_mass.py --tri2d: Wandecken A' (3,60 / 21,36) und C' (3,78 / 9,20) (M-113205-006/-007) -> Wand x 3,69 = 5,84 von der Mitte; LoD2 3,54..3,92",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "sfm_buendel",
+   "protokoll": "M-113205-006",
+   "historie": [
+    "2026-11-15 angelegt aus Sichtbeobachtung Nutzer 'Dach steht ueber'; Ist vor Generatoraenderung: kein Ueberstand, Traufe 36,7 m"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -82,6 +274,12 @@
    "wer": "Claude",
    "text": "DACH AM FOTO GEMESSEN (Nordseite +x, 5-6 Fotos mit SfM-Punkten in Dachhoehe, Strahlabstaende 1-12 cm): Traufecke A (+x,+y) = (4,85 / 22,51 / 39,15) m [M-113205-002], Traufecke C (+x,-y) = (4,92 / 8,16 / 39,20) m [M-113205-003], Laternenfuss vorn Mitte = (-0,77 / 15,04 / 47,28) m [M-113205-004]. Daraus: Traufe aussen oben 39,18 m (Modell 36,7 m), Trauflaenge Nordseite 14,35 m gegen LoD2-Wand 12,16 m -> Ueberstand ~1,1 m je Seite, Neigung Nordflaeche 55,1 Grad (DOM1 56,1), gedachte Spitze der Pyramide ~49,5 m (DOM1 max 49,62). URSACHE der frueheren Widersprueche: Der Turmkopf (z > 36 m) hat SfM-Punkte nur aus Richtung Nord (Azimut -23..+11 Grad); Bodenfotos der anderen drei Seiten haben 0-1 Punkte in Dachhoehe, ihre Kameras sind dort nicht verankert (M-113205-001, M-114037-001/-002 sind damit ungueltig).",
    "naechster_schritt": "Generator: Dach als Zeltdach mit Traufe 39,18 m, Ueberstand 1,1 m, Neigung 55 Grad, Pyramidenstumpf bis Laternenfuss ~47,3 m + Laterne (Hoehe der Spitze noch messen); vorher Wandoberkante/Holzgalerie unter der Traufe und Laternenspitze am Foto messen (gleiche Fotos 113231/113205/113106/113029/113128/113201). Andere drei Seiten: Fotos mit Abstand (flacher Blick) suchen oder SfM am Turmkopf verdichten; bis dahin ANNAHME Dach symmetrisch."
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Claude",
+   "text": "Gesamthoehe: Knauf der Laterne am Foto 54,17 m (M-113205-005, 5 Fotos), objekt.json hoehe_m sagt 50,8 m. Quellenwiderspruch, nicht gemittelt.",
+   "naechster_schritt": "Herkunft von hoehe_m 50,8 pruefen (Dokument? ohne Laterne?); Laternenform (Pfosten, Krempe, Zwiebel, Spitze) am Foto messen - bisher ANNAHME"
   }
  ]
 }

@@ -1,9 +1,15 @@
 {
  "stl": "/home/oem/git/rc-park/modelle/stl/schwab_v3_1-87.stl",
  "werte": {
-  "hoehe": 50.799997741699215,
+  "hoehe": 55.30000158691406,
   "wasserdicht": 1.0,
-  "koerper": 1.0
+  "koerper": 1.0,
+  "traufe_nord_reichweite": 7.029999935150146,
+  "traufe_west_reichweite": 7.229999481201171,
+  "traufe_ost_reichweite": 7.119999771118165,
+  "traufe_oben_z": 39.380000000000294,
+  "dach_nord_z45": 2.9699127771214395,
+  "wand_nord_reichweite": 5.975326385496881
  },
  "pruefungen": [
   {
@@ -22,6 +28,76 @@
    "soll": [
     1,
     1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Traufkante Nord: Abstand von Dachmitte bei z 39,05 (m)",
+   "wert": 7.029999935150146,
+   "soll": [
+    6.85,
+    7.25
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Traufkante West (+y): Abstand von Dachmitte bei z 39,05 (m)",
+   "wert": 7.229999481201171,
+   "soll": [
+    7.08,
+    7.38
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Traufkante Ost (-y): Abstand von Dachmitte bei z 39,05 (m)",
+   "wert": 7.119999771118165,
+   "soll": [
+    6.97,
+    7.27
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Traufe Nord Oberkante z bei x 4,75 (m)",
+   "wert": 39.380000000000294,
+   "soll": [
+    39.1,
+    39.5
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Dachflaeche Nord bei z 45: Abstand von Dachmitte (m)",
+   "wert": 2.9699127771214395,
+   "soll": [
+    2.6,
+    3.3
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gesamthoehe mit Laterne (m)",
+   "wert": 55.30000158691406,
+   "soll": [
+    54.2,
+    55.8
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Nordwand Uhrgeschoss: Abstand von Dachmitte bei z 36 (m)",
+   "wert": 5.975326385496881,
+   "soll": [
+    5.7,
+    6.0
    ],
    "ok": true,
    "status": "ok"
