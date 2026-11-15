@@ -248,18 +248,26 @@ def main():
         _gk = [(i, u) for i, u in GPS_KAM if _nah[i]]                                         # nur Kamerakern: globaler Mapper setzt einzelne Kameras tausende Einheiten weit weg
         Mxy = np.array([[(u - c0_) @ xh_, (u - c0_) @ yh_] for _, u in _gk]); Cxy = Cq[[i for i, _ in _gk], :2]
         w_ = np.isfinite(Mxy).all(1) & np.isfinite(Cxy).all(1) & (np.linalg.norm(Mxy, axis=1) < 5000)   # Kaufhaus: einzelne Fotos mit unsinnigem EXIF-GPS (NaN/fern) -> SVD-Absturz
-        Rg = -np.eye(2); res = np.full(len(Mxy), np.inf); k_ = 1.0; tg = np.zeros(2)
-        for _ in range(5):
-            if w_.sum() < 8: break
-            try: np.linalg.svd((Mxy[w_] - Mxy[w_].mean(0)).T @ (Cxy[w_] - Cxy[w_].mean(0)))
-            except np.linalg.LinAlgError: w_[:] = False; break                                                            # Kaufhaus 15.11.: schlechtes GPS -> Ausreisserschleife lief leer (SVD-Absturz)
-            mc, cc = Mxy[w_].mean(0), Cxy[w_].mean(0); Hm = (Mxy[w_] - mc).T @ (Cxy[w_] - cc); Uu, Ss, Vv = np.linalg.svd(Hm); Rg = Uu @ np.diag([1, np.sign(np.linalg.det(Uu @ Vv))]) @ Vv
-            k_ = Ss.sum() / ((Cxy[w_] - cc) ** 2).sum(); tg = mc - k_ * Rg @ cc; res = np.linalg.norm(k_ * Cxy @ Rg.T + tg - Mxy, axis=1); w_ = res < max(2.5 * np.median(res), 8)
+        def _gpsfit(Cxy_, w0):
+            w = w0.copy(); Rg_ = np.eye(2); res_ = np.full(len(Mxy), np.inf); k = 1.0; tg_ = np.zeros(2)
+            for _ in range(5):
+                if w.sum() < 8: break
+                try:
+                    mc, cc = Mxy[w].mean(0), Cxy_[w].mean(0); Uu, Ss, Vv = np.linalg.svd((Mxy[w] - mc).T @ (Cxy_[w] - cc))
+                except np.linalg.LinAlgError: w[:] = False; break
+                Rg_ = Uu @ np.diag([1, np.sign(np.linalg.det(Uu @ Vv))]) @ Vv; k = Ss.sum() / ((Cxy_[w] - cc) ** 2).sum(); tg_ = mc - k * Rg_ @ cc
+                res_ = np.linalg.norm(k * Cxy_ @ Rg_.T + tg_ - Mxy, axis=1); w = res_ < max(2.5 * np.median(res_), 8)
+            return Rg_, k, tg_, res_, w
+        Rg, k_, tg, res, w1 = _gpsfit(Cxy, w_); Rs, ks, ts, ress, ws = _gpsfit(Cxy * [1, -1], w_)
+        if ws.sum() >= 8 and np.median(ress) < 8 and np.median(ress) < 0.5 * np.median(res):     # 15.11. Kaufhaus: GPS passt nur GESPIEGELT -> Lot zeigt nach unten (Kameras/Wolke standen kopf)
+            print(f"LOT UMGEDREHT: GPS-Fit gespiegelt Rest {np.median(ress):.1f} m gegen {np.median(res):.1f} m - Hochachse war falsch herum; Grobsuche verworfen, nur GPS-Startlagen")
+            B0[1:] *= -1; Q[:, 1:] *= -1; Cq[:, 1:] *= -1; Cxy = Cxy * [1, -1]; Rg, k_, tg, res, w1 = Rs, ks, ts, ress, ws; top.clear()
+        w_ = w1
         if np.linalg.det(Rg) > 0 and w_.sum() >= 8 and np.median(res) < 12:                  # nur ein brauchbarer GPS-Fit wird Startkandidat
             thg = math.atan2(Rg[1, 0], Rg[0, 0])
             for _dx, _dy in ((4, 0), (-4, 0), (0, 4), (0, -4), (0, 0)): top.insert(0, (-1.0, 1.0 / k_, thg, float(tg[0]) + _dx, float(tg[1]) + _dy))   # GPS-Lage +-4 m (Handy-GPS in der Gasse), Fangbereich Feinfit ~3 m
             print(f"GPS-Startkandidat: Massstab {1 / k_:.4f} SfM-Einheiten/m, Drehung {math.degrees(thg):.0f} Grad, Rest Median {np.median(res):.1f} m ({int(w_.sum())} von {len(w_)} Kameras)")
-        else: print("GPS-Startkandidat: gespiegelt (Lot falsch?) - nicht benutzt")
+        else: print(f"GPS-Startkandidat nicht benutzt: Rest Median {np.median(res):.1f} m, {int(w_.sum())} Kameras")
         if np.linalg.det(Rg) > 0 and np.median(res) < 8 and int(w_.sum()) >= 15: GPS_PRUEF = (np.array([i for i, _ in _gk]), Mxy, 1.0 / k_)   # guter GPS-Fit -> Veto fuer Loesungen (unabhaengiger Lagebeleg)
     print("Grobsuche (Anteil nahe LoD2-Wand, Massstab, Drehung, Verschiebung): " + "; ".join(f"{b[0]:.2f} s={b[1]:.3f} {math.degrees(b[2]):.0f} Grad" for b in top[:4]))
 

@@ -12,7 +12,7 @@ Pruefungen (Telefon-GPS streut in Gassen 10-30 m, darum nur grobe Fehler):
   3. Fernfotos (GPS > --nah m): Entfernungsverhaeltnis GPS/Modell und Richtungsfehler (Massstab-/Drehhinweis mit langem Hebel)
 Rueckgabe: 0 ok / zu wenig GPS (Hinweis), 3 = Lage widerspricht dem GPS. Ausgabe audit/lage_gps.json.
 """
-import sys, os, json, glob, argparse, importlib.util
+import math, sys, os, json, glob, argparse, importlib.util
 import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gps_ausrichtung import gps_exif
@@ -53,6 +53,9 @@ def main():
                if p.lower().endswith((".jpg", ".jpeg"))]   # Kaufhaus: 122 -> 122_<quelle>.jpg
         gefunden += bool(hit); g = gps_exif(hit[0]) if hit else None
         if not g: continue
+        try:
+            if not all(math.isfinite(float(x)) for x in g) or (abs(float(g[0])) < 1e-6 and abs(float(g[1])) < 1e-6): continue   # 15.11. Kaufhaus: EXIF-GPS NaN/0,0 liess den Fit abstuerzen
+        except Exception: continue
         namen.append(nr); M.append(k["standort"]); G.append(np.array(wgs84_zu_utm(*g)) - m0)
     erg = dict(werkzeug="lage_gps_pruefen.py", ausrichtung=a.ausrichtung, lage=a.lage or None, n_kameras=len(kam), n_gps=len(G))
     if len(G) < 10:
