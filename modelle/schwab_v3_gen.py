@@ -134,6 +134,13 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     for ub in (3.05, 9.10): rumpf = rumpf + kasten(ub - 0.15, ub + 0.15, 35.55, 36.0, -0.05, 0.25)            # Balkenkoepfe: Lage aus dem entzerrten Foto 113029, Groesse ANNAHME
     beleg("wand", "Uhr Nord (Zifferblatt 5,36 m, Innenfeld 3,52 m)", "foto_mass.py auf der Wandebene, Fotos 113029 und 113205", durchmesser=U_D, mitte_u=U_UM, mitte_z=U_ZM,
           hinweis="ANNAHME: Ring 10 cm / Innenfeld 6 cm vor der Wand; Ziffern, Zeiger, Sonne/Mond nicht modelliert; 2 Balkenkoepfe nach Augenschein")
+    # Suedwand (15.11.2026, Nutzerbilder 14:47/15:35 "Modell zu gross"): im neuen SfM (Eckpaare) liegt die Suedwand bei x -7,10 (korrigierter Rahmen), der skalierte
+    # LoD2-Umriss bei -7,6. Mit den neuen Kameras stimmt die Suedfassade mit der Nordseite ueberein (Uhrmitte 31,1 / 31,25 m, Uhr 4,9 / 5,0 m, Traufe ~37 m).
+    # Lage-Veto: Koerper an x = -7,10 abschneiden (im Rohrahmen umgerechnet). ANNAHME: Wand senkrecht und parallel zur y-Achse; am Foto noch zu peilen.
+    X_SUED = MC[0] + (-7.10 - MC[0]) / MK
+    rumpf = rumpf.trim_by_plane((1.0, 0.0, 0.0), float(X_SUED))
+    beleg("wand", "Suedwand (Ebene)", "SfM-Neuaufbau mit Eckpaaren (sfm_neu), Wandpunkte z 8-33 m; Gegenprobe Uhr/Traufe im entzerrten Suedfoto 127", x=round(X_SUED, 2),
+          hinweis="Lage-Veto der neuen SfM-Punkte, nicht am Foto gepeilt; Knauf-Tor Nord-Sued noch 0,9 m")
     koerper = massstab(rumpf + dach + lat, MK)
     for e_ in ELEMENTE[N_BELEGE_LOD2:]:                    # Masse der Belege in den korrigierten Rahmen: Laengen/Hoehen x MK, Winkel bleiben, x-Lagen um den Drehpunkt
         for q_, v_ in list(e_.items()):
