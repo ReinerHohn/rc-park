@@ -1,0 +1,32 @@
+{
+ "id": "M-054-005",
+ "foto": "054",
+ "kamera": "K-commons_orig2__054",
+ "ebene": "-0.77257,0.63492,0=12.8502",
+ "name": "Treppenturm: Haubenradius bei z 12,37",
+ "mess_px": [
+  356.0,
+  1670.0,
+  438.0,
+  1679.0
+ ],
+ "P1": [
+  2.488,
+  23.267,
+  12.371
+ ],
+ "P2": [
+  1.859,
+  22.502,
+  12.365
+ ],
+ "dz": -0.005,
+ "dy": -0.765,
+ "dx": -0.629,
+ "abstand": 0.99,
+ "z1": 12.371,
+ "z2": 12.365,
+ "unsicherheit_rel": 0.01,
+ "unsicherheit_m": 0.062,
+ "massstab_von": "Kamera K-commons_orig2__054 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.77257,0.63492,0=12.8502 (+-0.3 m)"
+}

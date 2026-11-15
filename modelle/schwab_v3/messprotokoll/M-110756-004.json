@@ -1,0 +1,32 @@
+{
+ "id": "M-110756-004",
+ "foto": "110756",
+ "kamera": "K-eigen__IMG_20261106_110756",
+ "ebene": "0.98419,0.17710,0=0.8454",
+ "name": "Turmdach Gegenprobe: Uhrmitte Nord bis Traufe",
+ "mess_px": [
+  1308.0,
+  605.0,
+  1307.0,
+  459.0
+ ],
+ "P1": [
+  -1.807,
+  14.814,
+  31.193
+ ],
+ "P2": [
+  -1.804,
+  14.798,
+  36.605
+ ],
+ "dz": 5.412,
+ "dy": -0.016,
+ "dx": 0.003,
+ "abstand": 5.412,
+ "z1": 31.193,
+ "z2": 36.605,
+ "unsicherheit_rel": 0.0009,
+ "unsicherheit_m": 0.168,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_110756 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.98419,0.17710,0=0.8454 (+-0.3 m)"
+}

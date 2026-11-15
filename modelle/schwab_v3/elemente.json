@@ -229,12 +229,14 @@
  },
  {
   "seite": "wand",
-  "element": "Treppenturm (Zylinder mit Kegeldach)",
-  "quelle": "Kreisausgleich der neuen dichten Wolke (20 580 Punkte, Rest 1,8 cm); Gegenprobe foto_diff Foto 114039",
-  "radius": 1.52,
-  "wand_oberkante": 11.3,
-  "spitze": 14.2,
-  "hinweis": "Lage/Radius/Wandhoehe aus der Wolke (Lage-Veto), Kegelhoehe und Traufe ANNAHME nach Foto; Schlitzfenster und Knauf fehlen; am Foto noch zu messen",
+  "element": "Treppenturm (Zylinder, Gesims, geschweifte Haube mit Stange und Kugel)",
+  "quelle": "foto_mass.py auf der Ebene durch die Turmachse, Foto commons 054 (M-054-001..-005), Gegenprobe Foto commons 192; Lage/Radius aus dem Kreisausgleich der dichten Wolke (r 1,54-1,57, Rest 2 cm)",
+  "radius": 1.555,
+  "traufradius": 1.85,
+  "traufe": 11.57,
+  "spitzenansatz": 13.5,
+  "kugel": 14.6,
+  "hinweis": "ANNAHME: Schlitzfenster nur ungefaehr (Lage am Foto abgelesen), Gesimsprofil vereinfacht; Blechbahnen der Haube fehlen",
   "seite_name": "wand"
  }
 ]

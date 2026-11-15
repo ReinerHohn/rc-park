@@ -500,6 +500,36 @@
    ],
    "quer_max": 0.15,
    "r_max": 2.5
+  },
+  "tt_haube_mitte": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    2.85,
+    22.49
+   ],
+   "z0": 11.5,
+   "z1": 14.0,
+   "suche": "oben"
+  },
+  "tt_kugel": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    1.85,
+    22.49
+   ],
+   "z0": 13.0,
+   "z1": 16.0,
+   "suche": "oben"
+  },
+  "dach_grat_mitte": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    1.24,
+    11.864999999999998
+   ],
+   "z0": 38.0,
+   "z1": 44.0,
+   "suche": "oben"
   }
  },
  "pruefungen": [
@@ -1590,6 +1620,54 @@
    "historie": [
     "2026-11-15 angelegt; Ist vorher Laterne nach Augenschein (Achteckschaft, Hoehe 51,6)"
    ]
+  },
+  {
+   "name": "Treppenturm: Haubenhoehe bei r 1,0 (m)",
+   "wert": "tt_haube_mitte",
+   "soll": [
+    12.25,
+    12.5
+   ],
+   "quelle": "foto_mass.py auf der Ebene durch die Turmachse, Foto commons 054: Haubenradius 0,99 m bei z 12,37",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-054-005",
+   "historie": [
+    "2026-11-16 angelegt; Ist vorher gerader Kegel bis 14,2"
+   ]
+  },
+  {
+   "name": "Treppenturm: Oberkante Kugel (m)",
+   "wert": "tt_kugel",
+   "soll": [
+    14.6,
+    14.9
+   ],
+   "quelle": "foto_mass.py auf der Ebene durch die Turmachse, Foto commons 054: Kugelmitte z 14,60, Durchmesser ~0,32",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-054-004",
+   "historie": [
+    "2026-11-16 angelegt; Ist vorher gerader Kegel bis 14,2"
+   ]
+  },
+  {
+   "name": "Turmdach: Hoehe des Nordost-Grats auf halbem Weg zur Achse (m)",
+   "wert": "dach_grat_mitte",
+   "soll": [
+    40.6,
+    41.3
+   ],
+   "quelle": "foto_mass.py auf der Achsebene, waagerechtes Fernfoto 110756 (320 m): Grat gerade von z 36,6 bis 45,2 -> Mitte 40,9",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "hoehe_flaeche",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "protokoll": "M-110756-001, M-110756-002",
+   "historie": [
+    "2026-11-16 angelegt; Ist vorher geschweiftes Profil (~39,7)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -1718,20 +1796,32 @@
    "naechster_schritt": "tools/steine_generieren.py: Loecher der Reliefs Nord/Sued/West in den Steinzonen (z 0-9,7 / 0-9 / 0-9 m) mit generierten Quadern fuellen (ANNAHME, kein Mass); offen: Ostseite des Turms, Treppenturm, Bogensteine der Tore"
   },
   {
+   "datum": "2026-11-15",
+   "wer": "Nutzer (20:58 / 21:05)",
+   "text": "(1) 'Nicht im Torbogen kuenstlich; auf der Mauer zuerst die echten Kanten, nur wo nicht moeglich generieren.' (2) Reliefbild West 'schon fast gut', in der 3D-Ansicht aber noch nicht. (3) 'Die Uhr ist auch noch nicht ganz richtig - guck dir die Details an.'",
+   "naechster_schritt": "(1) erledigt: Reliefs aus dem neuen Netz bis z 0, Generieren nur in Loechern ausserhalb der Tore; offen Sockel 0-1,2 m aus Fotofugen statt gewuerfelt. (2) Anzeige-Netz 4 statt 7 cm; am Bildschirmfoto des Nutzers gegenpruefen. (3) Uhr Nord/Sued am entzerrten Foto nachmessen (Ziffernring, Zeiger, Rahmen, Lage) und Details-Liste je Seite"
+  },
+  {
+   "datum": "2026-11-16",
+   "wer": "Nutzer (Bildschirmfotos 00:17)",
+   "text": "'Die Dachform passt noch nicht ganz; das Tuermchen rechts ist noch ein bisschen zu schmal; das Daechlein von diesem Tuermchen ist auch noch nicht richtig.'",
+   "naechster_schritt": "Treppenturm: Haube am Foto messen und bauen (erledigt 16.11.: M-054-001..-005); Turmdach: Profil am Fernfoto pruefen, Fries/Untersicht unter der Traufe bauen"
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1526",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 28.72,
-   "z_bis": 28.72,
+   "z_von": 28.77,
+   "z_bis": 28.77,
    "xyz": [
-    -2.37,
-    9.76,
-    28.72
+    -2.42,
+    9.77,
+    28.77
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.72 m, y=9.76 m (Zelle [981, 1526, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.77 m, y=9.77 m (Zelle [981, 1526, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1740,15 +1830,15 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1635",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 26.73,
-   "z_bis": 26.73,
+   "z_von": 26.65,
+   "z_bis": 26.65,
    "xyz": [
-    -2.38,
-    9.8,
-    26.73
+    -2.3,
+    9.78,
+    26.65
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.73 m, y=9.8 m (Zelle [981, 1635, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.65 m, y=9.78 m (Zelle [981, 1635, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1757,73 +1847,50 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1744",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 24.74,
-   "z_bis": 24.74,
+   "z_von": 24.76,
+   "z_bis": 24.76,
    "xyz": [
-    -2.28,
+    -2.29,
     9.81,
-    24.74
+    24.76
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.74 m, y=9.81 m (Zelle [981, 1744, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.76 m, y=9.81 m (Zelle [981, 1744, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-2071",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1962",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 19.64,
-   "z_bis": 19.64,
+   "z_von": 21.23,
+   "z_bis": 21.23,
    "xyz": [
-    -2.17,
-    9.88,
-    19.64
+    -2.18,
+    9.85,
+    21.23
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.64 m, y=9.88 m (Zelle [981, 2071, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=21.23 m, y=9.85 m (Zelle [981, 1962, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-2180",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-2071",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 18.16,
-   "z_bis": 18.16,
+   "z_von": 19.67,
+   "z_bis": 19.67,
    "xyz": [
-    -2.17,
-    9.91,
-    18.16
+    -2.22,
+    9.89,
+    19.67
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.16 m, y=9.91 m (Zelle [981, 2180, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.67 m, y=9.89 m (Zelle [981, 2071, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-872-2507",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 15.12,
-   "z_bis": 15.12,
-   "xyz": [
-    -4.38,
-    9.58,
-    15.12
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=15.12 m, y=9.58 m (Zelle [872, 2507, 109], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "2026-11-15",
-   "wer": "Nutzer (20:58 / 21:05)",
-   "text": "(1) 'Nicht im Torbogen kuenstlich; auf der Mauer zuerst die echten Kanten, nur wo nicht moeglich generieren.' (2) Reliefbild West 'schon fast gut', in der 3D-Ansicht aber noch nicht. (3) 'Die Uhr ist auch noch nicht ganz richtig - guck dir die Details an.'",
-   "naechster_schritt": "(1) erledigt: Reliefs aus dem neuen Netz bis z 0, Generieren nur in Loechern ausserhalb der Tore; offen Sockel 0-1,2 m aus Fotofugen statt gewuerfelt. (2) Anzeige-Netz 4 statt 7 cm; am Bildschirmfoto des Nutzers gegenpruefen. (3) Uhr Nord/Sued am entzerrten Foto nachmessen (Ziffernring, Zeiger, Rahmen, Lage) und Details-Liste je Seite"
   }
  ]
 }

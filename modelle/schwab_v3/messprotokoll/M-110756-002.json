@@ -1,0 +1,32 @@
+{
+ "id": "M-110756-002",
+ "foto": "110756",
+ "kamera": "K-eigen__IMG_20261106_110756",
+ "ebene": "0.98419,0.17710,0=0.8454",
+ "name": "Turmdach: zwei Punkte auf dem Nordost-Grat (Geradheit)",
+ "mess_px": [
+  1201.0,
+  366.0,
+  1259.0,
+  284.0
+ ],
+ "P1": [
+  -1.098,
+  10.876,
+  39.999
+ ],
+ "P2": [
+  -1.489,
+  13.047,
+  42.995
+ ],
+ "dz": 2.996,
+ "dy": 2.171,
+ "dx": -0.391,
+ "abstand": 3.721,
+ "z1": 39.999,
+ "z2": 42.995,
+ "unsicherheit_rel": 0.0009,
+ "unsicherheit_m": 0.166,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_110756 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.98419,0.17710,0=0.8454 (+-0.3 m)"
+}

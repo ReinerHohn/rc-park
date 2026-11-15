@@ -1,0 +1,32 @@
+{
+ "id": "M-110756-003",
+ "foto": "110756",
+ "kamera": "K-eigen__IMG_20261106_110756",
+ "ebene": "0.98419,0.17710,0=0.8454",
+ "name": "Turmdach: Dachspitze bis Unterkante Laternenhaube",
+ "mess_px": [
+  1306.0,
+  223.0,
+  1306.0,
+  165.0
+ ],
+ "P1": [
+  -1.804,
+  14.797,
+  45.211
+ ],
+ "P2": [
+  -1.805,
+  14.806,
+  47.299
+ ],
+ "dz": 2.088,
+ "dy": 0.009,
+ "dx": -0.002,
+ "abstand": 2.088,
+ "z1": 45.211,
+ "z2": 47.299,
+ "unsicherheit_rel": 0.0009,
+ "unsicherheit_m": 0.165,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_110756 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.98419,0.17710,0=0.8454 (+-0.3 m)"
+}

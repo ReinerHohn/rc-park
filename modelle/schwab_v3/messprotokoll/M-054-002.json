@@ -1,0 +1,32 @@
+{
+ "id": "M-054-002",
+ "foto": "054",
+ "kamera": "K-commons_orig2__054",
+ "ebene": "-0.77257,0.63492,0=12.8502",
+ "name": "Treppenturm: Traufkante der Haube bis Achse (Radius)",
+ "mess_px": [
+  275.0,
+  1723.0,
+  431.0,
+  1739.0
+ ],
+ "P1": [
+  3.036,
+  23.933,
+  11.574
+ ],
+ "P2": [
+  1.86,
+  22.502,
+  11.573
+ ],
+ "dz": -0.002,
+ "dy": -1.431,
+ "dx": -1.176,
+ "abstand": 1.852,
+ "z1": 11.574,
+ "z2": 11.573,
+ "unsicherheit_rel": 0.0101,
+ "unsicherheit_m": 0.07,
+ "massstab_von": "Kamera K-commons_orig2__054 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.77257,0.63492,0=12.8502 (+-0.3 m)"
+}

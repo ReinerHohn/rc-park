@@ -1,0 +1,32 @@
+{
+ "id": "M-110756-001",
+ "foto": "110756",
+ "kamera": "K-eigen__IMG_20261106_110756",
+ "ebene": "0.98419,0.17710,0=0.8454",
+ "name": "Turmdach (Fernfoto Schlossberg, 320 m, waagerecht): Gratfuss NO bis Dachspitze am Laternenfuss",
+ "mess_px": [
+  1133.0,
+  458.0,
+  1306.0,
+  223.0
+ ],
+ "P1": [
+  -0.638,
+  8.316,
+  36.612
+ ],
+ "P2": [
+  -1.804,
+  14.797,
+  45.211
+ ],
+ "dz": 8.599,
+ "dy": 6.48,
+ "dx": -1.166,
+ "abstand": 10.83,
+ "z1": 36.612,
+ "z2": 45.211,
+ "unsicherheit_rel": 0.0009,
+ "unsicherheit_m": 0.173,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_110756 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.98419,0.17710,0=0.8454 (+-0.3 m)"
+}

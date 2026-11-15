@@ -1,0 +1,32 @@
+{
+ "id": "M-054-003",
+ "foto": "054",
+ "kamera": "K-commons_orig2__054",
+ "ebene": "-0.77257,0.63492,0=12.8502",
+ "name": "Treppenturm: Haube Traufe bis Spitzenansatz",
+ "mess_px": [
+  431.0,
+  1739.0,
+  447.0,
+  1596.0
+ ],
+ "P1": [
+  1.86,
+  22.502,
+  11.573
+ ],
+ "P2": [
+  1.865,
+  22.509,
+  13.495
+ ],
+ "dz": 1.922,
+ "dy": 0.007,
+ "dx": 0.006,
+ "abstand": 1.922,
+ "z1": 11.573,
+ "z2": 13.495,
+ "unsicherheit_rel": 0.0101,
+ "unsicherheit_m": 0.071,
+ "massstab_von": "Kamera K-commons_orig2__054 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.77257,0.63492,0=12.8502 (+-0.3 m)"
+}

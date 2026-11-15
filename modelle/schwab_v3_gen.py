@@ -158,7 +158,10 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     D_E = [(4.34, 8.62, 36.79), (4.27, 22.06, 36.69), (-8.05, 21.76, 36.54), (-8.00, 8.77, 36.47)]      # NO, NW, SW, SO: Dachkante aussen oben (m)
     D_A = (-1.86, 15.11)                                                                              # Achse: x = Mitte der Traufen Nord/Sued (-1,86) = Knauf x (-1,85); y = Knauf (15,11)
     D_ZE = sum(e_[2] for e_ in D_E) / 4; D_RE = 6.38                                                    # mittlere Traufhoehe 36,62 (Laser 36,6); mittlerer Achsabstand der Traufkanten
-    D_PROF = [(1.0, None), (6.0 / D_RE, 37.5), (5.0 / D_RE, 38.5), (4.0 / D_RE, 40.0), (3.0 / D_RE, 41.5), (0.196, 44.1)]   # (Anteil des Achsabstands, z): Zwischenpunkte DOM1-Laser, oben Laternenfuss (Foto)
+    # 16.11.2026 (Nutzer: "Die Dachform passt noch nicht ganz"): waagerechtes Fernfoto vom Schlossberg (110756, 320 m, 26 px/m; Gegenprobe Uhrmitte-Traufe 5,41 m = Modell):
+    # der Grat ist GERADE vom Trauf-Eck (z 36,6) bis zur Dachspitze am Laternenfuss z 45,2 (M-110756-001/-002: Steigung 1,31-1,38 durchgehend). Vorher geschweiftes Profil
+    # mit Stumpf bei 44,1 (aus einem steilen Nahfoto); die Laserpunkte (r 6/5/4/3 m -> 37,5/38,5/40,0/41,5) liegen auf derselben Geraden (+-0,4 m).
+    D_PROF = [(1.0, None), (0.05, 45.2)]                                   # (Anteil des Achsabstands, z)
     def ring(f_, z_, dz_=0.0): return [[D_A[0] + f_ * (e_[0] - D_A[0]), D_A[1] + f_ * (e_[1] - D_A[1]), (e_[2] if z_ is None else z_) - dz_] for e_ in D_E]
     dach = M.hull_points(ring(1.0, None) + ring(1.0, None, 0.23))
     for (f0_, z0_), (f1_, z1_) in zip(D_PROF[:-1], D_PROF[1:]): dach = dach + M.hull_points(ring(f0_, z0_) + ring(f0_, z0_, 0.23) + ring(f1_, z1_) + ring(f1_, z1_, 0.23))
@@ -168,7 +171,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
           traufe_nord=36.74, traufe_sued=36.5, laenge_nord_sued=12.35, breite_nord=13.44, breite_sued=12.99, ueberstand_nord=0.9, ueberstand_sued=0.83,
           hinweis="Suedecken auf ~2-3 % (Knauf-Tor 0,9 m); Traufdicke 0,23 m ANNAHME; Aufschiebling aus dem Laserprofil")
     # ---- LATERNE (15.11.2026) im korrigierten Rahmen aus Fotomassen M-113205-017..-024 (Foto 113205, Ebene durch die Laternenachse) + Knauf-Triangulation ----
-    L_X, L_Y, L_ZF = -1.86, 15.11, 44.1                       # Achse: y aus dem Knauf (Nordfotos), x = Mitte der gemessenen Traufen Nord/Sued = Knauf x aus der Triangulation; Fuss = Oberkante Dachstumpf (47,28 roh x 0,933)
+    L_X, L_Y, L_ZF = -1.86, 15.11, 45.2                       # Achse: y aus dem Knauf (Nordfotos), x = Mitte der gemessenen Traufen Nord/Sued = Knauf x aus der Triangulation; Fuss = Oberkante Dachstumpf (47,28 roh x 0,933)
     lat = M.cylinder(0.4, 1.35, 1.25, 4).rotate((0, 0, 0)).translate((L_X, L_Y, L_ZF - 0.25))           # Sockelplatte auf dem Dachstumpf (ANNAHME)
     for dx_, dy_ in ((0.8, 0), (-0.8, 0), (0, 0.8), (0, -0.8)):                                            # 4 Pfosten an den Hauptachsen: Aussenabstand 1,78 m (M-113205-024), Staerke ANNAHME 0,18 m
         lat = lat + M.cube((0.18, 0.18, 47.0 - L_ZF + 0.1)).translate((L_X + dx_ - 0.09, L_Y + dy_ - 0.09, L_ZF))
@@ -227,12 +230,17 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     beleg("wand", "Westfassade: grosses Fenster, 4 Schlitzfenster, Gesims", "foto_mass.py auf der Westwandebene, Foto 114039 (M-114039-001..-006)", fenster_breite=0.81, fenster_hoehe=1.75, fensterachse_u=5.40,
           hinweis="ANNAHME: Tiefen, Schlitzbreiten 0,12-0,25 m aus einem steilen Foto, Gesimshoehe von der Suedseite; Wandlage West nur aus Wolke/LoD2; Treppenturm (LoD2-Nebenteil) unveraendert; Eckquader/Bruchstein fehlen")
     # ---- TREPPENTURM (15.11.2026): LoD2-Nebenteil (D-foermig, 2,8 x 2,5 m, flach) ersetzt durch Zylinder aus dem Kreisausgleich der neuen dichten Wolke ----
-    TT_C, TT_R, TT_ZW, TT_RT, TT_ZS = (1.845, 22.525), 1.52, 11.3, 1.85, 14.2     # Mitte, Radius, Wandoberkante (Wolke), Traufradius (Wolke p90), Kegelspitze (ANNAHME nach Foto 114039: Kegel ~3 m hoch)
+    # 16.11.2026 (Nutzer: "Tuermchen zu schmal, Daechlein noch nicht richtig"): Haube am entzerrten Foto commons 054 auf der Ebene durch die Turmachse gemessen (M-054-001..-005):
+    # Schaft r 1,56 (Wolke 1,55), Gesims bis r 1,85 bei z 11,57, GESCHWEIFTE Kupferhaube bis z 13,5, Stange, Kugel bei z 14,6. Vorher: Zylinder r 1,52 mit geradem Kegel bis 14,2.
+    TT_C, TT_R, TT_ZW, TT_RT = (1.85, 22.49), 1.555, 11.0, 1.85
     koerper = koerper - M.cube((5.4, 4.0, 16.0)).translate((-1.6, 21.03, -0.5))                                 # alten Anbau westlich der Westwand entfernen
-    turm = M.cylinder(TT_ZW, TT_R, TT_R, 48) + M.cylinder(0.12, TT_RT, TT_RT, 48).translate((0, 0, TT_ZW - 0.12)) + M.cylinder(TT_ZS - TT_ZW, TT_RT, 0.02, 48).translate((0, 0, TT_ZW))
+    TT_PROF = [(0.0, 0.0), (TT_R, 0.0), (TT_R, TT_ZW), (1.70, 11.25), (TT_RT, 11.45), (TT_RT + 0.01, 11.57), (1.45, 11.92), (1.0, 12.37), (0.61, 12.80), (0.27, 13.20), (0.08, 13.50), (0.035, 13.9), (0.03, 14.52), (0.0, 14.52)]
+    turm = M.revolve(CrossSection([[list(p_) for p_ in TT_PROF]]), 64) + M.sphere(0.16, 24).translate((0, 0, 14.6))
+    for wz_, z_ in ((-35.0, 10.7), (35.0, 10.7), (-60.0, 8.0), (10.0, 6.2), (-35.0, 4.0)):                       # Schlitzfenster (Lage nach Foto 054/192 abgelesen, 0,12 x 0,6 m, 15 cm tief: ANNAHME)
+        turm = turm - M.cube((0.4, 0.12, 0.6)).translate((TT_R - 0.15, -0.06, z_ - 0.3)).rotate((0, 0, 140.0 + wz_))
     koerper = koerper + turm.translate((TT_C[0], TT_C[1], 0.0))
-    beleg("wand", "Treppenturm (Zylinder mit Kegeldach)", "Kreisausgleich der neuen dichten Wolke (20 580 Punkte, Rest 1,8 cm); Gegenprobe foto_diff Foto 114039", radius=TT_R, wand_oberkante=TT_ZW, spitze=TT_ZS,
-          hinweis="Lage/Radius/Wandhoehe aus der Wolke (Lage-Veto), Kegelhoehe und Traufe ANNAHME nach Foto; Schlitzfenster und Knauf fehlen; am Foto noch zu messen")
+    beleg("wand", "Treppenturm (Zylinder, Gesims, geschweifte Haube mit Stange und Kugel)", "foto_mass.py auf der Ebene durch die Turmachse, Foto commons 054 (M-054-001..-005), Gegenprobe Foto commons 192; Lage/Radius aus dem Kreisausgleich der dichten Wolke (r 1,54-1,57, Rest 2 cm)",
+          radius=TT_R, traufradius=TT_RT, traufe=11.57, spitzenansatz=13.5, kugel=14.6, hinweis="ANNAHME: Schlitzfenster nur ungefaehr (Lage am Foto abgelesen), Gesimsprofil vereinfacht; Blechbahnen der Haube fehlen")
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json

@@ -1,0 +1,32 @@
+{
+ "id": "M-054-001",
+ "foto": "054",
+ "kamera": "K-commons_orig2__054",
+ "ebene": "-0.77257,0.63492,0=12.8502",
+ "name": "Treppenturm: Schaft linke Kante bis Achse (Radius)",
+ "mess_px": [
+  281.0,
+  1850.0,
+  416.0,
+  1863.0
+ ],
+ "P1": [
+  2.858,
+  23.717,
+  9.997
+ ],
+ "P2": [
+  1.866,
+  22.51,
+  9.994
+ ],
+ "dz": -0.003,
+ "dy": -1.207,
+ "dx": -0.992,
+ "abstand": 1.563,
+ "z1": 9.997,
+ "z2": 9.994,
+ "unsicherheit_rel": 0.0103,
+ "unsicherheit_m": 0.067,
+ "massstab_von": "Kamera K-commons_orig2__054 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.77257,0.63492,0=12.8502 (+-0.3 m)"
+}

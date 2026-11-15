@@ -1,0 +1,32 @@
+{
+ "id": "M-054-004",
+ "foto": "054",
+ "kamera": "K-commons_orig2__054",
+ "ebene": "-0.77257,0.63492,0=12.8502",
+ "name": "Treppenturm: Spitzenansatz bis Kugelmitte",
+ "mess_px": [
+  447.0,
+  1596.0,
+  457.0,
+  1518.0
+ ],
+ "P1": [
+  1.865,
+  22.509,
+  13.495
+ ],
+ "P2": [
+  1.86,
+  22.502,
+  14.597
+ ],
+ "dz": 1.102,
+ "dy": -0.007,
+ "dx": -0.005,
+ "abstand": 1.102,
+ "z1": 13.495,
+ "z2": 14.597,
+ "unsicherheit_rel": 0.0099,
+ "unsicherheit_m": 0.064,
+ "massstab_von": "Kamera K-commons_orig2__054 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.77257,0.63492,0=12.8502 (+-0.3 m)"
+}
