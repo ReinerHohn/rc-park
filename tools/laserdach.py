@@ -22,7 +22,14 @@ def prisma(polygon_uv, hoehe):
     return Manifold.extrude(CrossSection([(Q if fl > 0 else Q[::-1]).tolist()]), hoehe)
 
 
-def laserdach_koerper(objekt_json, polygon_uv, px=0.5, zmin=2.5, aufmass=0.03):
+def _randabstand(X, Y, P):
+    d = np.full(X.shape, np.inf)
+    for a_, b_ in zip(P, np.roll(P, -1, axis=0)):
+        ab = b_ - a_; L2 = float(ab @ ab) or 1e-9; t_ = np.clip(((X - a_[0]) * ab[0] + (Y - a_[1]) * ab[1]) / L2, 0, 1); d = np.minimum(d, np.hypot(X - (a_[0] + t_ * ab[0]), Y - (a_[1] + t_ * ab[1])))
+    return d
+
+
+def laserdach_koerper(objekt_json, polygon_uv, px=0.5, zmin=2.5, aufmass=0.03, rand=1.3):
     from manifold3d import Manifold, Mesh, CrossSection
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from dom1_kachel import dom1_hoehe
     obj = json.load(open(objekt_json)); r = obj["rahmen"]; m0 = np.array(r["mitte_utm"], float); xh = np.array(r["xhat_utm"], float); yh = np.array(r["yhat_utm"], float); g0 = float(r["gelaende"])
@@ -35,6 +42,11 @@ def laserdach_koerper(objekt_json, polygon_uv, px=0.5, zmin=2.5, aufmass=0.03):
                 except Exception: pass
             Z[i, j] = sum(h * w for h, w in v) / max(sum(w for _, w in v), 1e-9) if v else zmin
     Z = np.maximum(np.nan_to_num(Z, nan=zmin, posinf=zmin, neginf=zmin), zmin); nx, ny = Z.shape; ii, jj = np.mgrid[0:nx, 0:ny]; X = xs[ii]; Y = ys[jj]      # Laser ohne Wert (NaN) -> Mindesthoehe; NaN-Ecken machten den Koerper ungueltig
+    if rand > 0:                                                          # 16.11.2026: Randpixeln nicht trauen - ein 1-m-Laserpixel am Grundrissrand misst die hoehere Nachbarwand (Giebel) mit -> Spiesse.
+        k_ = int(round(rand / px)); Zm = Z.copy()                          # Zellen naeher als `rand` am Rand bekommen das Minimum ihrer Umgebung (+-rand)
+        for di in range(-k_, k_ + 1):
+            for dj in range(-k_, k_ + 1): Zm = np.minimum(Zm, np.roll(np.roll(Z, di, 0), dj, 1))
+        nah = _randabstand(X, Y, P) < rand; Z = np.where(nah, Zm, Z)
     V = np.r_[np.c_[X.ravel(), Y.ravel(), Z.ravel()], np.c_[X.ravel(), Y.ravel(), np.zeros(nx * ny)]]; N_ = nx * ny; idx = ii * ny + jj
     q00, q01, q10, q11 = idx[:-1, :-1].ravel(), idx[:-1, 1:].ravel(), idx[1:, :-1].ravel(), idx[1:, 1:].ravel()
     F = [np.c_[q00, q10, q01], np.c_[q01, q10, q11], np.c_[q00 + N_, q01 + N_, q10 + N_], np.c_[q01 + N_, q11 + N_, q10 + N_]]

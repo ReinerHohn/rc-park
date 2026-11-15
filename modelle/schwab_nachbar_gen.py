@@ -36,6 +36,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         beleg("wand", "Relief Nordost-Fassade (Teile 0/2) z 0,5-11,3 m", "OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm", hinweis="Scan-Relief, kein Mass; der dritte Bogen (Laube am Nordostfluegel) ist darin ein Loch = geschlossene Wand (ANNAHME), Rundfenster und Fenster nur weich; LoD2-Kante liegt ~5 Grad schraeg zur Fassade")
     # ---- 15.11.2026 NORDGIEBEL SCHARF (Fachwerk-Steilgiebel): Ortgang/First M-113033-001..-003, Geschossebenen aus der dichten Wolke, Fenster M-113210-001..-007, M-113144-001/-002, M-113033-004..-007 ----
     koerper = koerper - WN.kasten(-7.5, 0.0, 11.0, 30.0, 0.0, 3.4)       # 16.11.: vor der linken Giebelhaelfte misst der Laser (1-m-Pixel) den Giebel mit -> Fluegeldach dort bis 2,6 m vor der Wand auf 11 m begrenzt (ANNAHME; Traufe am Foto ~10-11 m)
+    koerper = koerper + WN.kasten(-0.5, 0.15, 0.0, 18.6, -0.6, 0.015)      # Zwickel zwischen Fluegel (Laser-Hoehenfeld) und Giebelwand schliessen (dort blieben Splitterkoerper)
     UA, ZA, ST, UR = -0.13, 25.35, 1.66, 6.99                          # Firstlage u (= y 2,72), Firsthoehe, Ortgangneigung, Hausende am Turm (u 6,99 = y 9,84)
     def dreieck(ab, w0, w1): return WN.huelle([(UA, ZA - ab, w_) for w_ in (w0, w1)] + [(UA + s_ * 20.0, ZA - ab - 20.0 * ST, w_) for s_ in (-1, 1) for w_ in (w0, w1)])
     koerper = koerper + WN.kasten(0.0, UR, 0.0, 10.14, -0.6, 0.0)       # Erdgeschoss + 1. OG (Putz) bis in die Wandebene und bis zur Turmkante
