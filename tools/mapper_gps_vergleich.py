@@ -17,9 +17,9 @@ gem = sorted(set.intersection(*[set(c) for c in C.values()])); P = {k: gps(k) fo
 print("gemeinsame eigene Fotos mit GPS:", len(keys))
 Y = np.array([P[k] for k in keys])
 for m in mods:
-    X = np.array([C[m][k] for k in keys]); Xc = X - np.median(X, 0); _, _, Vt = np.linalg.svd(Xc, full_matrices=False); X2 = Xc @ Vt[:2].T; best = None
+    X = np.array([C[m][k] for k in keys]); Xc = X - np.median(X, 0); _k = np.linalg.norm(Xc, axis=1); _k = _k <= np.percentile(_k, 75); _, _, Vt = np.linalg.svd(Xc[_k], full_matrices=False); X2 = Xc @ Vt[:2].T; best = None
     for sp in (1, -1):
-        Z = X2 * [1, sp]; sel = np.ones(len(Z), bool)
+        Z = X2 * [1, sp]; _d = np.linalg.norm(X - np.median(X, 0), axis=1); sel = _d <= np.percentile(_d, 75)   # 15.11.: Start nur mit dem Kamerakern - einzelne km-weit entfernte Kameras (globaler Mapper) kippten den ersten Fit (56 % statt 3 %)
         for _ in range(6):
             mx, my = Z[sel].mean(0), Y[sel].mean(0); U, S_, V2 = np.linalg.svd((Y[sel] - my).T @ (Z[sel] - mx) / sel.sum()); D = np.diag([1, np.sign(np.linalg.det(U @ V2))]); R = U @ D @ V2; s = np.trace(np.diag(S_) @ D) / (Z[sel] - mx).var(0).sum()
             r = np.linalg.norm((s * (R @ (Z - mx).T)).T + my - Y, axis=1); sel = r < max(2.5 * np.median(r), 10)

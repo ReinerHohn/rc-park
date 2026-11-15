@@ -62,7 +62,7 @@ _env = dict(os.environ, LD_LIBRARY_PATH=":".join(["/media/oem/scan/cuda-toolkit-
 # ein Thread: reproduzierbare Anzahl eingehaengter Bilder (Messung 13.11.: Mehrthread 181/149/181/21, Einthread 181/181); Qualitaet vor Tempo
 # MAPPERWAHL (15.11.2026, Bericht Massnahmen 1+2): --mapper auto (Standard) | global | inkrementell
 #   auto: erst global (view_graph_calibrator auf DB-KOPIE + global_mapper, Minuten statt 40 min), dann GPS-TOR (tools/mapper_gps_vergleich.py: Anteil der
-#   eigenen GPS-Fotos > 15 m neben GPS). Besteht (<= 10 %, >= 15 GPS-Fotos) -> global gilt. Sonst zusaetzlich schrittweise und das Modell mit dem kleineren
+#   eigenen GPS-Fotos > 15 m neben GPS). Besteht (<= 15 %, >= 15 GPS-Fotos) -> global gilt. Sonst zusaetzlich schrittweise und das Modell mit dem kleineren
 #   Anteil nehmen. Ohne GPS-Beleg (< 15 Fotos) gilt wie bisher der schrittweise Mapper (kein Urteil moeglich). Messungen: Schwabentor global 3 % / schrittweise
 #   18 %; global ist NICHT immun (Variante gemeinsame Kamera: 18 %) -> Tor ist Pflicht. Ergebnis: <w>/mapper_wahl.json.
 import re, json, shutil
@@ -85,7 +85,7 @@ if MAPPER == "inkrementell": _inkrementell(f"{w}/sparse"); wahl["gewaehlt"] = "i
 else:
     ok_g = _global(f"{w}/sparse_global"); wahl["global_sek"] = round(time.time() - _t0); tg = _gps_tor(f"{w}/sparse_global/0") if ok_g else dict(n_gps=0, anteil_ueber_15m=None); wahl["tor_global"] = tg
     print("Mapper global:", "ok" if ok_g else "FEHLGESCHLAGEN", wahl["global_sek"], "s, GPS-Tor", tg, flush=True)
-    besteht = ok_g and tg["n_gps"] >= 15 and tg["anteil_ueber_15m"] is not None and tg["anteil_ueber_15m"] <= 10
+    besteht = ok_g and tg["n_gps"] >= 15 and tg["anteil_ueber_15m"] is not None and tg["anteil_ueber_15m"] <= 15   # ANNAHME Schwelle 15 % (Einzelmodell-Messung 15.11.: gutes Modell 12 % inkl. Ausreisserkameras, verwechselte 16 % und 26 %); Durchfall kostet nur Zeit (Vergleichslauf)
     if MAPPER == "global" or besteht:
         if not ok_g: raise SystemExit("globaler Mapper fehlgeschlagen (kalib.log/global.log)")
         shutil.rmtree(f"{w}/sparse", ignore_errors=True); os.rename(f"{w}/sparse_global", f"{w}/sparse"); wahl["gewaehlt"] = "global"
@@ -94,7 +94,7 @@ else:
         print("Mapper schrittweise:", wahl["inkrementell_sek"], "s, GPS-Tor", ti, flush=True)
         g_besser = ok_g and tg["n_gps"] >= 15 and ti["anteil_ueber_15m"] is not None and tg["anteil_ueber_15m"] is not None and tg["anteil_ueber_15m"] < ti["anteil_ueber_15m"]
         nimm = "sparse_global" if g_besser else "sparse_inkr"; wahl["gewaehlt"] = "global" if g_besser else "inkrementell"
-        wahl["hinweis"] = "kein Modell besteht das GPS-Tor (<= 10 % > 15 m) - Lage NICHT glauben" if tg["n_gps"] >= 15 else "zu wenig GPS-Fotos fuer ein Urteil - schrittweiser Mapper wie bisher"
+        wahl["hinweis"] = "kein Modell besteht das GPS-Tor (<= 15 % > 15 m) - Lage NICHT glauben" if tg["n_gps"] >= 15 else "zu wenig GPS-Fotos fuer ein Urteil - schrittweiser Mapper wie bisher"
         shutil.rmtree(f"{w}/sparse", ignore_errors=True); os.rename(f"{w}/{nimm}", f"{w}/sparse")
 json.dump(wahl, open(os.path.join(w, "mapper_wahl.json"), "w"), indent=1); print("MAPPERWAHL", json.dumps(wahl), flush=True)
 rec = {k: pycolmap.Reconstruction(os.path.join(f"{w}/sparse", k)) for k in sorted(os.listdir(f"{w}/sparse")) if k.isdigit()}
