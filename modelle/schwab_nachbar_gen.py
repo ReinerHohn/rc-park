@@ -83,6 +83,11 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper - WS.prisma(rundbogen(2.89, -0.6, 3.83), u=-2.65, w0=-4.0, w1=0.5)                               # kleiner Rundbogen (Laube, Suedseite): Tiefe 4 m ANNAHME
     beleg("wand", "Suedfassade scharf: Giebel, Vorbau 2. OG mit 10 Fenstern, Erker 1. OG, Pultdach, 10 Wand-/Giebelfenster, kleiner Rundbogen", "foto_mass.py (M-113857-001..-011, M-113855-001..-003), Picks ueber wand_ortho.py; Ebenen aus der dichten Wolke",
           vorbau_breite=11.4, vorbau_tiefe=1.15, erker_breite=4.12, hinweis="ANNAHME: Nischentiefen 17 cm, Gewaende 5 cm, Konsolen- und Erkerfussform, Dachplatte, Fensterlagen der uebrigen 2.-OG-Fenster am entzerrten Bild abgelesen (nicht einzeln protokolliert); Masswerk der Erkerbruestung, Stufenquader am Ortgang, Eckquader fehlen")
+    # ---- 16.11.2026 QUERDACH zum Turm (Nutzer: "Warum fehlt dieses Dach?"): Sattel mit First Ost-West in der Turmachse; Form aus der dichten Wolke (17 000 Punkte ueber dem Hauptdach) ----
+    QX, QZ, QS, QN = -2.0, 22.5, 1.55, 1.44                              # Firstlage x, Firsthoehe, Neigung Sued-/Nordflaeche
+    koerper = koerper + M.hull_points([[x_, y_, z_] for y_ in (4.2, 9.7) for x_, z_ in ((QX, QZ), (QX - (QZ - 15.5) / QS, 15.5), (QX + (QZ - 15.5) / QN, 15.5))])
+    beleg("dach", "Querdach zum Turm (Sattel, First z 22,5 in der Turmachse)", "dichte Wolke sfm_neu (Median je 0,5-m-Streifen); Augenschein Nord-Fernfoto 113033", first=QZ, neigung_sued=QS, neigung_nord=QN,
+          hinweis="Form aus der Wolke, nicht aus Fotokanten (kein Foto zeigt es frei); Anschluss an Hauptdach und Turmwand ANNAHME, Traufen nicht gemessen")
     WL = Wand((5.15, 2.08), (11.89, -1.43), aussen=(9.0, 12.0))                 # Nordost-Fassade im Erdgeschoss: Wandgerade aus der dichten Wolke (23 952 Punkte, Rest 0,8 cm)
     koerper = koerper - WL.prisma(spitzbogen(5.41 / 2, 3.5, 5.83), u=4.535, w0=-4.0, w1=2.2)       # Laube (dritter Bogen): Masse M-113529-001..-004; Tiefe 4 m = ANNAHME (offene Halle, Rueckwand im Foto sichtbar)
     beleg("wand", "Laube Nordost (dritter Bogen)", "foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-001..-004), Gegenprobe Foto 113452 (gleiche Kanten aus anderem Winkel)", lichte_breite=5.41, scheitel=5.83, kaempfer=3.5,

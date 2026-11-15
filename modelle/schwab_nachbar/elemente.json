@@ -85,6 +85,16 @@
   "seite_name": "wand"
  },
  {
+  "seite": "dach",
+  "element": "Querdach zum Turm (Sattel, First z 22,5 in der Turmachse)",
+  "quelle": "dichte Wolke sfm_neu (Median je 0,5-m-Streifen); Augenschein Nord-Fernfoto 113033",
+  "first": 22.5,
+  "neigung_sued": 1.55,
+  "neigung_nord": 1.44,
+  "hinweis": "Form aus der Wolke, nicht aus Fotokanten (kein Foto zeigt es frei); Anschluss an Hauptdach und Turmwand ANNAHME, Traufen nicht gemessen",
+  "seite_name": "dach"
+ },
+ {
   "seite": "wand",
   "element": "Laube Nordost (dritter Bogen)",
   "quelle": "foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-001..-004), Gegenprobe Foto 113452 (gleiche Kanten aus anderem Winkel)",

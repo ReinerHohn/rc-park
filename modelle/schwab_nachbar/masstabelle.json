@@ -300,6 +300,16 @@
    "z0": 2.5,
    "z1": 5.5,
    "suche": "unten"
+  },
+  "querdach_first": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    -2.0,
+    8.5
+   ],
+   "z0": 18.0,
+   "z1": 25.0,
+   "suche": "oben"
   }
  },
  "pruefungen": [
@@ -691,6 +701,21 @@
     "2026-11-15 angelegt; Ist vorher Netz-Relief"
    ],
    "protokoll": "M-113857-011"
+  },
+  {
+   "name": "Querdach zum Turm: Firsthoehe bei y 8,5 (m)",
+   "wert": "querdach_first",
+   "soll": [
+    22.2,
+    22.8
+   ],
+   "quelle": "dichte Wolke sfm_neu: Median z je 0,5-m-Streifen, Scheitel 22,52 bei x -2,0 (911 Punkte)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "hoehe_flaeche",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-16 angelegt; Ist vorher 15,7 (nur Hauptdach)"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -717,6 +742,12 @@
    "wer": "Nutzer (Bildschirmfotos 21:20, 'Fenster zu weiche Kanten, alles schaerfer')",
    "text": "Suedfassade Teil 1 besteht nur aus weichem Netz-Relief (Fenster matschig, Fetzen am Dach). Entzerrte Fotos 113857/113855: verputzter Steilgiebel (First u 1,7 / z 25,35, Ortgangfuss z 16,8, Breite dort 10,3 m), Vorbau 2. OG (11,4 m breit, 1,15 m vor der Wand, z 10,04-13,4, 10 Fenster), Erker 1. OG (4,12 m, Masswerkbruestung), Pultdach z 13,4-14,4, Wandfenster, kleiner Rundbogen (2,89 m, Scheitel 3,83). M-113857-001..-011, M-113855-001..-003.",
    "naechster_schritt": "scharf bauen; offen: Steingewaende/Eckquader (Farbe), Masswerk der Erkerbruestung, Konsolenform, Stufenquader am Ortgang, Fenster im Erker-Seitenteil"
+  },
+  {
+   "datum": "2026-11-16",
+   "wer": "Nutzer (Bildschirmfoto 00:16: 'Warum fehlt dieses Dach, obwohl die Punktwolke da ist?')",
+   "text": "Zwischen Giebel und Turm liegen 17 000 dunkle (ziegelfarbene) Wolkenpunkte bis 6 m UEBER der Hauptdachflaeche: ein QUERDACH zum Turm (Sattel, First Ost-West bei x -2,0 = Turmachse, z 22,5; Neigung Sued 1,55, Nord 1,44; reicht bis an die Turm-Ostwand y ~9,6). Im Modell fehlte es ganz. Auch im Nord-Fernfoto 113033 als waagerechte Firstlinie rechts hinter dem Fachwerkgiebel zu sehen.",
+   "naechster_schritt": "Querdach bauen (Form aus der dichten Wolke, Foto nur Augenschein); First/Traufen am Foto nachmessen, sobald ein Foto es frei zeigt"
   }
  ]
 }
