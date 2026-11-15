@@ -73,6 +73,13 @@
  },
  {
   "seite": "wand",
+  "element": "Fachwerkbalken Nordgiebel, Geschosse A-D (flaches Relief 3,5 cm)",
+  "quelle": "Mehrfoto-Fassadenbild (fassade_ortho.py, 12 Fotos, Median) -> tools/fachwerk_aus_ortho.py (Helligkeitsschwelle)",
+  "hinweis": "ANNAHME: Balkenstaerke vor dem Putz 3,5 cm; Lage aus Farbschwelle auf dem Mehrfoto-Median statt Kanten-Sweep; linke Giebelhaelfte (im Fassadenbild verdeckt) und oberstes Giebelfeld ohne Balken; Schnitzwerk fehlt",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Nordgiebel: fuenf Fachwerkgeschosse mit Auskragungen, Ortgang, 9 Fenster, Steinfenster 1. OG",
   "quelle": "foto_mass.py (M-113033-001..-007, M-113210-001..-007, M-113144-001/-002), Picks ueber wand_ortho.py; Geschossebenen aus der dichten Wolke",
   "first": 25.35,

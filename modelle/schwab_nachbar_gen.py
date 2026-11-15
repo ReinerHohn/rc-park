@@ -46,6 +46,11 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper + WN.kasten(-1.67, UR, 9.96, 10.14, -0.3, 0.40)   # Balkenlage unter dem ersten Fachwerkgeschoss (Balkenkoepfe fehlen)
     for z0_, z1_, w_, ul_ in ((10.14, 13.41, 0.54, -1.67), (13.41, 16.75, 0.73, -1.9), (16.75, 19.75, 0.93, -3.96), (19.75, 22.2, 1.11, -3.96), (22.2, 26.0, 1.38, -3.96)):
         koerper = koerper + (WN.kasten(ul_, UR, z0_ - 0.01, z1_, -0.3, w_) ^ dreieck(0.34, -1.0, 2.0))
+    # 16.11.2026 FACHWERKBALKEN: 3,5 cm vor dem Putz, Lage aus dem Mehrfoto-Fassadenbild (tools/fachwerk_aus_ortho.py; 10-12 Fotos gemittelt, Schwelle dunkel/hell), je Geschoss auf dessen Flaeche
+    for id_, z0_, z1_, w_, ul_ in (("e17", 10.14, 13.41, 0.54, -1.67), ("e18", 13.41, 16.75, 0.73, -1.9), ("e20", 16.75, 19.75, 0.93, -3.96), ("e21", 19.75, 22.2, 1.11, -3.96)):
+        fw_ = os.path.join(HERE, "schwab_nachbar", "relief", f"fachwerk_{id_}.npz")
+        if os.path.exists(fw_) and os.environ.get("OHNE_FACHWERK") != "1": koerper = koerper + (relief_koerper(fw_, tiefe=0.05, rand_auslauf=False) ^ (WN.kasten(ul_, UR, z0_, z1_, w_ - 0.1, w_ + 0.1) ^ dreieck(0.34, -1.0, 2.0)))
+    beleg("wand", "Fachwerkbalken Nordgiebel, Geschosse A-D (flaches Relief 3,5 cm)", "Mehrfoto-Fassadenbild (fassade_ortho.py, 12 Fotos, Median) -> tools/fachwerk_aus_ortho.py (Helligkeitsschwelle)", hinweis="ANNAHME: Balkenstaerke vor dem Putz 3,5 cm; Lage aus Farbschwelle auf dem Mehrfoto-Median statt Kanten-Sweep; linke Giebelhaelfte (im Fassadenbild verdeckt) und oberstes Giebelfeld ohne Balken; Schnitzwerk fehlt")
     FEN = [(-1.50, -0.85, 11.43, 12.99, 0.54, (), 12.53), (0.67, 2.11, 11.43, 12.99, 0.54, (1.39,), 12.53), (3.62, 5.85, 11.43, 12.99, 0.54, (4.35, 5.12), 12.53),
            (-1.50, -0.85, 14.69, 16.33, 0.73, (), 15.78), (0.67, 2.11, 14.69, 16.33, 0.73, (1.39,), 15.78), (3.57, 4.23, 14.69, 16.33, 0.73, (), 15.78),
            (-2.31, -0.89, 18.02, 19.27, 0.93, (-1.60,), 18.72), (0.69, 2.11, 18.02, 19.27, 0.93, (1.40,), 18.72), (-0.89, 0.61, 20.97, 21.80, 1.11, (-0.14,), None)]
@@ -57,7 +62,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     for u0_, u1_, z0_, z1_, w_, tl_, kz_ in FEN:
         sonde = WN.kasten(u0_, u1_, z0_, z1_, w_ + 0.03, w_ + 0.08)
         if (koerper ^ sonde).volume() > 0.2 * sonde.volume(): VERDECKT.append((u0_, z0_)); continue          # Fluegeldach (Teil 0, Laser) steht im Modell davor -> kein Hohlraum im Inneren bauen
-        ab_, zu_ = WN.fenster(u0_, u1_, z0_, z1_, w_, teiler=tl_, kaempfer=kz_); koerper = koerper - ab_ + zu_
+        ab_, zu_ = WN.fenster(u0_, u1_, z0_, z1_, w_, teiler=tl_, kaempfer=kz_); koerper = koerper - ab_ - WN.kasten(u0_ - 0.03, u1_ + 0.03, z0_ - 0.03, z1_ + 0.03, w_ + 0.001, w_ + 0.12) + zu_   # auch die Balkenplatte vor dem Fenster weg (sonst 2 cm Lippe / Splitter)
     koerper = koerper + WN.kasten(1.83, 4.80, 7.85, 9.98, -0.1, 0.06) - WN.kasten(2.09, 4.45, 8.0, 9.575, -0.2, 0.1)     # Steinfenster 1. OG: Gewaende 6 cm vor dem Putz (ANNAHME), Nische 20 cm (ANNAHME)
     koerper = koerper + WN.kasten(2.80, 2.93, 7.99, 9.585, -0.21, 0.03) + WN.kasten(3.65, 3.78, 7.99, 9.585, -0.21, 0.03)
     beleg("wand", "Nordgiebel: fuenf Fachwerkgeschosse mit Auskragungen, Ortgang, 9 Fenster, Steinfenster 1. OG", "foto_mass.py (M-113033-001..-007, M-113210-001..-007, M-113144-001/-002), Picks ueber wand_ortho.py; Geschossebenen aus der dichten Wolke",
