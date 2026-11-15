@@ -74,6 +74,9 @@ def dgm_ziel(obj, halb):
     return L, np.repeat([[0, 0, 1.0]], len(L), 0), quelle
 
 
+GPS_KAM = []   # (Kameraindex, UTM) aus gps_massstab - fuer den GPS-Startkandidaten
+
+
 def gps_massstab(ims, C, obj, od, fotos=""):
     """Massstab SfM-Einheiten je m aus Foto-GPS (EXIF): Median der Verhaeltnisse Kameraabstand SfM / GPS fuer Paare > 15 m GPS-Abstand.
     Unabhaengig von LoD2 und von weit entfernten Wolkenteilen. None bei < 15 Kameras mit GPS."""
@@ -81,12 +84,12 @@ def gps_massstab(ims, C, obj, od, fotos=""):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from gps_ausrichtung import gps_exif; from bilder_holen import wgs84_zu_utm
     except Exception as e: print("GPS-Massstab: Hilfsmodule fehlen:", type(e).__name__); return None
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); ds = [d for d in (fotos, obj.get("fotos_dir", "")) if d]; ds = [d if os.path.isabs(d) else os.path.join(root, d) for d in ds]
-    U, X = [], []
-    for im, c in zip(ims, C):
+    U, X = [], []; GPS_KAM.clear()
+    for _i, (im, c) in enumerate(zip(ims, C)):
         nm = os.path.splitext(os.path.basename(im.name))[0]; kand = [nm] + ([nm.split("__", 1)[1]] if "__" in nm else [])
         hit = [p for d in ds for n_ in kand for p in glob.glob(os.path.join(d, glob.escape(n_) + ".*")) if p.lower().endswith((".jpg", ".jpeg"))]
         g = gps_exif(hit[0]) if hit else None
-        if g: U.append(wgs84_zu_utm(*g)); X.append(c)
+        if g: U.append(wgs84_zu_utm(*g)); X.append(c); GPS_KAM.append((_i, U[-1]))
     if len(U) < 15: print(f"GPS-Massstab: nur {len(U)} Kameras mit GPS - Startmassstab aus Wolkenausdehnung"); return None
     U = np.array(U, float); X = np.array(X, float); i, j = np.triu_indices(len(U), 1); dg = np.hypot(*(U[i] - U[j]).T); dx = np.linalg.norm(X[i] - X[j], axis=1); m = dg > 15
     if m.sum() < 30: return None
@@ -231,6 +234,18 @@ def main():
         if not any(abs(math.log(b[1] / t[1])) < 0.15 for t in top): top.append(b)
         # KEINE Obergrenze (Martinstor 2026-11-04): mit 'top 12' fiel das richtige Band (s = 0,071, alte Pick-Kette) heraus, weil die Grobsumme kleine
         # Modelle bevorzugt -> Turm 0,66-fach. Jedes Massstabsband (Abstand 0,15 in log s, ~19 Baender) bekommt eine Feinloesung; entschieden wird dort.
+    if sum(_nah[i] for i, _ in GPS_KAM) >= 15:                                               # 15.11.: GPS-Startkandidat (v2: LoD2-Grobsuche verfehlte Lage; 190 Kameras mit GPS)
+        R_ = obj["rahmen"]; c0_ = np.array(R_["mitte_utm"], float); xh_, yh_ = np.array(R_["xhat_utm"], float), np.array(R_["yhat_utm"], float)
+        _gk = [(i, u) for i, u in GPS_KAM if _nah[i]]                                         # nur Kamerakern: globaler Mapper setzt einzelne Kameras tausende Einheiten weit weg
+        Mxy = np.array([[(u - c0_) @ xh_, (u - c0_) @ yh_] for _, u in _gk]); Cxy = Cq[[i for i, _ in _gk], :2]
+        w_ = np.ones(len(Mxy), bool)
+        for _ in range(5):
+            mc, cc = Mxy[w_].mean(0), Cxy[w_].mean(0); Hm = (Mxy[w_] - mc).T @ (Cxy[w_] - cc); Uu, Ss, Vv = np.linalg.svd(Hm); Rg = Uu @ np.diag([1, np.sign(np.linalg.det(Uu @ Vv))]) @ Vv
+            k_ = Ss.sum() / ((Cxy[w_] - cc) ** 2).sum(); tg = mc - k_ * Rg @ cc; res = np.linalg.norm(k_ * Cxy @ Rg.T + tg - Mxy, axis=1); w_ = res < max(2.5 * np.median(res), 8)
+        if np.linalg.det(Rg) > 0:
+            thg = math.atan2(Rg[1, 0], Rg[0, 0]); top.insert(0, (-1.0, 1.0 / k_, thg, float(tg[0]), float(tg[1])))
+            print(f"GPS-Startkandidat: Massstab {1 / k_:.4f} SfM-Einheiten/m, Drehung {math.degrees(thg):.0f} Grad, Rest Median {np.median(res):.1f} m ({int(w_.sum())} von {len(w_)} Kameras)")
+        else: print("GPS-Startkandidat: gespiegelt (Lot falsch?) - nicht benutzt")
     print("Grobsuche (Anteil nahe LoD2-Wand, Massstab, Drehung, Verschiebung): " + "; ".join(f"{b[0]:.2f} s={b[1]:.3f} {math.degrees(b[2]):.0f} Grad" for b in top[:4]))
 
     # 3. Fein: 7 Parameter, Punkt-zu-Flaeche, getrimmt; Startwerte aus den besten Grobloesungen

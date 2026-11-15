@@ -151,6 +151,12 @@ def main():
         mr = np.median(r_[:, :2], 0); n = n[np.hypot(*(n[:, :2] - mr).T) < 30]; d = min_abstand(n, r_)
         notiz(B, "vergleich", bool(np.median(d) < 0.5), referenz=a.referenz_wolke, punkte=int(len(d)), median_m=round(float(np.median(d)), 3),
               anteil_unter_0_5m=round(float((d < 0.5).mean()), 3), p90_m=round(float(np.percentile(d, 90)), 3))
+    try:                                                                   # 15.11. (Nutzer): Warnungen aller Logs des Laufs in den Bericht - nichts ungelesen verwerfen
+        sys.path.insert(0, os.path.join(ROOT, "tools")); import log_warnungen as LW
+        w = LW.sammeln([log] + sorted(glob.glob(os.path.join(P, "*.log"))) + sorted(glob.glob(os.path.join(P, "sfm", "*.log"))))
+        B["warnungen"] = [dict(n=e["n"], text=e["text"][:240], datei=os.path.basename(e["datei"]), zeile=e["zeile"]) for e in w[:40]]; json.dump(B, open(bp, "w"), indent=1, ensure_ascii=False)
+        print(f"WARNUNGEN im Lauf: {len(w)} verschiedene (Bericht 'warnungen'); haeufigste: " + " | ".join(f"{e['n']}x {e['text'][:90]}" for e in w[:3]), flush=True)
+    except Exception as e: print("Warnungen nicht gesammelt:", type(e).__name__, e, flush=True)
     print("GESAMTKETTE_ENDE", bp, flush=True); return 0
 
 
