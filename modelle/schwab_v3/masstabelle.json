@@ -420,6 +420,48 @@
    "seite": "+y",
    "z": 10.95,
    "quer": -2.041
+  },
+  "turm_r_west": {
+   "typ": "schnitt_reichweite",
+   "z": 6.0,
+   "zentrum": [
+    1.845,
+    22.525
+   ],
+   "richtung": [
+    0,
+    1
+   ],
+   "quer_max": 0.2,
+   "r_max": 3.0
+  },
+  "turm_r_nordwest": {
+   "typ": "schnitt_reichweite",
+   "z": 6.0,
+   "zentrum": [
+    1.845,
+    22.525
+   ],
+   "richtung": [
+    0.7071,
+    0.7071
+   ],
+   "quer_max": 0.2,
+   "r_max": 3.0
+  },
+  "turm_r_oben": {
+   "typ": "schnitt_reichweite",
+   "z": 11.0,
+   "zentrum": [
+    1.845,
+    22.525
+   ],
+   "richtung": [
+    0,
+    1
+   ],
+   "quer_max": 0.2,
+   "r_max": 3.0
   }
  },
  "pruefungen": [
@@ -1412,6 +1454,51 @@
    "protokoll": "M-114039-005",
    "historie": [
     "2026-11-15 angelegt (Westfassade); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Treppenturm (turm_r_west) (m)",
+   "wert": "turm_r_west",
+   "soll": [
+    1.44,
+    1.6
+   ],
+   "quelle": "Kreisausgleich der neuen dichten Wolke (sfm_neu, 20 580 Punkte z 2,5-12 m, Bogen ~250 Grad, Rest 1,8 cm): Mitte (1,845 / 22,525), Radius 1,52 m; Wandpunkte bis z ~11,3 m; Radius nach West bei z 6",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt: foto_diff 114039 zeigte den LoD2-Treppenturm neben den Fotokanten (zu schmal, zu flach); Ist vorher LoD2-Nebenteil 2,8 x 2,5 m"
+   ]
+  },
+  {
+   "name": "Treppenturm (turm_r_nordwest) (m)",
+   "wert": "turm_r_nordwest",
+   "soll": [
+    1.44,
+    1.6
+   ],
+   "quelle": "Kreisausgleich der neuen dichten Wolke (sfm_neu, 20 580 Punkte z 2,5-12 m, Bogen ~250 Grad, Rest 1,8 cm): Mitte (1,845 / 22,525), Radius 1,52 m; Wandpunkte bis z ~11,3 m; Radius nach Nordwest bei z 6",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt: foto_diff 114039 zeigte den LoD2-Treppenturm neben den Fotokanten (zu schmal, zu flach); Ist vorher LoD2-Nebenteil 2,8 x 2,5 m"
+   ]
+  },
+  {
+   "name": "Treppenturm (turm_r_oben) (m)",
+   "wert": "turm_r_oben",
+   "soll": [
+    1.44,
+    1.6
+   ],
+   "quelle": "Kreisausgleich der neuen dichten Wolke (sfm_neu, 20 580 Punkte z 2,5-12 m, Bogen ~250 Grad, Rest 1,8 cm): Mitte (1,845 / 22,525), Radius 1,52 m; Wandpunkte bis z ~11,3 m; Radius bei z 11 (Wand reicht bis ~11,3 m)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt: foto_diff 114039 zeigte den LoD2-Treppenturm neben den Fotokanten (zu schmal, zu flach); Ist vorher LoD2-Nebenteil 2,8 x 2,5 m"
    ]
   }
  ],

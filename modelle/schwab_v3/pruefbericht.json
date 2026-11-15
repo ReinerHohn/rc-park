@@ -17,7 +17,7 @@
   "fl_kante_innen": 3.303123605712763,
   "fl_kante_aussen": 3.4899893344072623,
   "fl_scheitel_innen": 3.290045512890728,
-  "fl_scheitel_aussen": 3.4684609140021436,
+  "fl_scheitel_aussen": 3.468450184622533,
   "fr_kante_innen": 3.2438935658500583,
   "fr_kante_aussen": 3.4490302298946105,
   "fl_oeffnung": 3.0101431387707294,
@@ -27,7 +27,7 @@
   "gal_ende_west_innen": 4.787367503057865,
   "gal_ende_west_aussen": 3.496158821733353,
   "gal_holm_unter": 4.869472396322891,
-  "gal_holm_ueber": 3.5478194741519147,
+  "gal_holm_ueber": 3.5478191923176823,
   "vordach_traufe": 4.939329078692957,
   "vordach_oben": 3.4836106289191875,
   "vordach_darueber": 3.481297745347746,
@@ -36,7 +36,7 @@
   "uhr_ring_oben": 3.4938877904509127,
   "uhr_aussen_oben": 3.4005710726978435,
   "uhr_ring_west": 3.45867829275587,
-  "uhr_aussen_west": 3.3612006729272252,
+  "uhr_aussen_west": 3.3612006729389776,
   "uhr_s_ring_ost": 7.234212089728999,
   "uhr_s_aussen_ost": 7.125341131013521,
   "uhr_s_ring_oben": 7.303315252383172,
@@ -56,7 +56,10 @@
   "fen_w_schlitz_innen": 20.126066763103452,
   "fen_w_schlitz_ueber": 20.80421802084317,
   "fen_w_klein17_innen": 20.125810903492365,
-  "fen_w_klein11_innen": 20.124843913652235
+  "fen_w_klein11_innen": 20.124843913652235,
+  "turm_r_west": 1.5199728088378919,
+  "turm_r_nordwest": 1.519997089118821,
+  "turm_r_oben": 1.5199728088378919
  },
  "pruefungen": [
   {
@@ -221,7 +224,7 @@
   },
   {
    "name": "Fenster Nord (fl_scheitel_aussen): Tiefe x der ersten Flaeche bei u 4.00 z 26.83 (m)",
-   "wert": 3.4684609140021436,
+   "wert": 3.468450184622533,
    "soll": [
     3.43,
     3.51
@@ -321,7 +324,7 @@
   },
   {
    "name": "Galerie/Vordach Nord (gal_holm_ueber): x der ersten Flaeche bei u 4.50 z 12.33 (m)",
-   "wert": 3.5478194741519147,
+   "wert": 3.5478191923176823,
    "soll": [
     3.33,
     3.56
@@ -411,7 +414,7 @@
   },
   {
    "name": "Uhr Nord (uhr_aussen_west): x der ersten Flaeche bei u 8.99 z 33.49 (m)",
-   "wert": 3.3612006729272252,
+   "wert": 3.3612006729389776,
    "soll": [
     3.34,
     3.39
@@ -615,6 +618,36 @@
    "soll": [
     19.82,
     20.52
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Treppenturm (turm_r_west) (m)",
+   "wert": 1.5199728088378919,
+   "soll": [
+    1.44,
+    1.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Treppenturm (turm_r_nordwest) (m)",
+   "wert": 1.519997089118821,
+   "soll": [
+    1.44,
+    1.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Treppenturm (turm_r_oben) (m)",
+   "wert": 1.5199728088378919,
+   "soll": [
+    1.44,
+    1.6
    ],
    "ok": true,
    "status": "ok"

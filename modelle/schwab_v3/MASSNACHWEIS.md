@@ -61,15 +61,18 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 | West (fen_w_schlitz_ueber): |y| der ersten Flaeche bei u 5.42 z 30.45 (m) | 20.80 | 20.58..21.05 | foto_kalibriert | SfM-Neuaufbau, Rahmen = Lasermassstab 0,933 | OK | foto_mass.py --kamera/--ebene auf der Westwandebene (Ecken aus den neuen SfM-Punkten), Foto 114039 (16 Grad zur Wandnormalen, 17 m), Kameras aus dem SfM-Neuaufbau; ueber dem Schlitz Wand; Wandlage selbst nur aus Wolke/LoD2 (+-0,25 m), geprueft wird offen/zu |
 | West (fen_w_klein17_innen): |y| der ersten Flaeche bei u 5.40 z 17.40 (m) | 20.13 | 19.83..20.53 | foto_kalibriert | SfM-Neuaufbau, Rahmen = Lasermassstab 0,933 | OK | foto_mass.py --kamera/--ebene auf der Westwandebene (Ecken aus den neuen SfM-Punkten), Foto 114039 (16 Grad zur Wandnormalen, 17 m), Kameras aus dem SfM-Neuaufbau; kleines Fenster z 16,93-17,86; Wandlage selbst nur aus Wolke/LoD2 (+-0,25 m), geprueft wird offen/zu |
 | West (fen_w_klein11_innen): |y| der ersten Flaeche bei u 5.33 z 10.95 (m) | 20.12 | 19.82..20.52 | foto_kalibriert | SfM-Neuaufbau, Rahmen = Lasermassstab 0,933 | OK | foto_mass.py --kamera/--ebene auf der Westwandebene (Ecken aus den neuen SfM-Punkten), Foto 114039 (16 Grad zur Wandnormalen, 17 m), Kameras aus dem SfM-Neuaufbau; kleines Fenster z 10,46-11,44; Wandlage selbst nur aus Wolke/LoD2 (+-0,25 m), geprueft wird offen/zu |
+| Treppenturm (turm_r_west) (m) | 1.52 | 1.44..1.6 | sfm_bodenanker | SfM-Neuaufbau, Rahmen = Lasermassstab 0,933 | OK | Kreisausgleich der neuen dichten Wolke (sfm_neu, 20 580 Punkte z 2,5-12 m, Bogen ~250 Grad, Rest 1,8 cm): Mitte (1,845 / 22,525), Radius 1,52 m; Wandpunkte bis z ~11,3 m; Radius nach West bei z 6 |
+| Treppenturm (turm_r_nordwest) (m) | 1.52 | 1.44..1.6 | sfm_bodenanker | SfM-Neuaufbau, Rahmen = Lasermassstab 0,933 | OK | Kreisausgleich der neuen dichten Wolke (sfm_neu, 20 580 Punkte z 2,5-12 m, Bogen ~250 Grad, Rest 1,8 cm): Mitte (1,845 / 22,525), Radius 1,52 m; Wandpunkte bis z ~11,3 m; Radius nach Nordwest bei z 6 |
+| Treppenturm (turm_r_oben) (m) | 1.52 | 1.44..1.6 | sfm_bodenanker | SfM-Neuaufbau, Rahmen = Lasermassstab 0,933 | OK | Kreisausgleich der neuen dichten Wolke (sfm_neu, 20 580 Punkte z 2,5-12 m, Bogen ~250 Grad, Rest 1,8 cm): Mitte (1,845 / 22,525), Radius 1,52 m; Wandpunkte bis z ~11,3 m; Radius bei z 11 (Wand reicht bis ~11,3 m) |
 
 ## Belegt durch
 
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
-- **sfm_bodenanker**: 6 von 6 Pruefungen gruen (COLMAP-Netz je Fassadenseite (tools/sfm_ausrichten.py), 7 Parameter aus LoD2-Eckkanten in >= 4 Fotos, Hoehenlage aus ANNAHME Strassenkamera 1,7 +- 0,6 m; Massstab +-2-3 %, Hoehe +-0,7 m systematisch; sieht keine Fassadenzaehlung (Punkte, keine Semantik). Register AH)
+- **sfm_bodenanker**: 9 von 9 Pruefungen gruen (COLMAP-Netz je Fassadenseite (tools/sfm_ausrichten.py), 7 Parameter aus LoD2-Eckkanten in >= 4 Fotos, Hoehenlage aus ANNAHME Strassenkamera 1,7 +- 0,6 m; Massstab +-2-3 %, Hoehe +-0,7 m systematisch; sieht keine Fassadenzaehlung (Punkte, keine Semantik). Register AH)
 - **laser_dom1**: 1 von 1 Pruefungen gruen (1-m-Raster, interpoliert, nur von oben; Strukturen < ~3 m verschmiert, Nadeln unsichtbar. BLIND auch fuer Grundriss mit Vorspruengen < ~1 m (Gesims, Erker): die Flaeche ueber Hoehe faellt dann 15-20 % zu klein aus (Martinstor 2026-11-01, Register O/P))
 - **foto_kalibriert**: 47 von 47 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
 
-## Elemente des Generators: 17 belegt, 0 Annahmen
+## Elemente des Generators: 18 belegt, 0 Annahmen
 
 - wand: Grundriss Teil 0 - LoD2 DEBW_001000hPLcp GroundSurface 0
 - wand: Teil 1 (ohne Dachmessung) - LoD2 DEBW_001000hPLcp Wandoberkante (31 eigene Waende)
@@ -88,6 +91,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - wand: Suedwand (Ebene) - SfM-Neuaufbau mit Eckpaaren (sfm_neu), Wandpunkte z 8-33 m; Gegenprobe Uhr/Traufe im entzerrten Suedfoto 127
 - wand: Suedfassade: Torbogen, Fenster, Uhr, Gesims, Verdachung - foto_mass.py auf der Suedwandebene, Fotos commons 127 und 217 (M-commons127-002..-010, M-commons217-001..-003)
 - wand: Westfassade: grosses Fenster, 4 Schlitzfenster, Gesims - foto_mass.py auf der Westwandebene, Foto 114039 (M-114039-001..-006)
+- wand: Treppenturm (Zylinder mit Kegeldach) - Kreisausgleich der neuen dichten Wolke (20 580 Punkte, Rest 1,8 cm); Gegenprobe foto_diff Foto 114039
 
 ## Beobachtungen ohne Pruefung
 

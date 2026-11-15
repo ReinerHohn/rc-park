@@ -168,6 +168,13 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper + WW.kasten(0.0, WW.laenge, 26.0, 26.53, -0.4, 0.10)                                      # Gesims West: Hoehe wie Sued (im Foto 114039 bei z ~26,5), Ausladung ANNAHME
     beleg("wand", "Westfassade: grosses Fenster, 4 Schlitzfenster, Gesims", "foto_mass.py auf der Westwandebene, Foto 114039 (M-114039-001..-006)", fenster_breite=0.81, fenster_hoehe=1.75, fensterachse_u=5.40,
           hinweis="ANNAHME: Tiefen, Schlitzbreiten 0,12-0,25 m aus einem steilen Foto, Gesimshoehe von der Suedseite; Wandlage West nur aus Wolke/LoD2; Treppenturm (LoD2-Nebenteil) unveraendert; Eckquader/Bruchstein fehlen")
+    # ---- TREPPENTURM (15.11.2026): LoD2-Nebenteil (D-foermig, 2,8 x 2,5 m, flach) ersetzt durch Zylinder aus dem Kreisausgleich der neuen dichten Wolke ----
+    TT_C, TT_R, TT_ZW, TT_RT, TT_ZS = (1.845, 22.525), 1.52, 11.3, 1.85, 14.2     # Mitte, Radius, Wandoberkante (Wolke), Traufradius (Wolke p90), Kegelspitze (ANNAHME nach Foto 114039: Kegel ~3 m hoch)
+    koerper = koerper - M.cube((5.4, 4.0, 16.0)).translate((-1.6, 21.03, -0.5))                                 # alten Anbau westlich der Westwand entfernen
+    turm = M.cylinder(TT_ZW, TT_R, TT_R, 48) + M.cylinder(0.12, TT_RT, TT_RT, 48).translate((0, 0, TT_ZW - 0.12)) + M.cylinder(TT_ZS - TT_ZW, TT_RT, 0.02, 48).translate((0, 0, TT_ZW))
+    koerper = koerper + turm.translate((TT_C[0], TT_C[1], 0.0))
+    beleg("wand", "Treppenturm (Zylinder mit Kegeldach)", "Kreisausgleich der neuen dichten Wolke (20 580 Punkte, Rest 1,8 cm); Gegenprobe foto_diff Foto 114039", radius=TT_R, wand_oberkante=TT_ZW, spitze=TT_ZS,
+          hinweis="Lage/Radius/Wandhoehe aus der Wolke (Lage-Veto), Kegelhoehe und Traufe ANNAHME nach Foto; Schlitzfenster und Knauf fehlen; am Foto noch zu messen")
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json
