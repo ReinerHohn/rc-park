@@ -18,7 +18,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     from relief_einsatz import koerper as relief_koerper
     WN = Wand((3.56, 2.85), (3.53, 9.45), aussen=(20.0, 6.0)); WS = Wand((-6.80, 1.00), (-7.02, 9.35), aussen=(-30.0, 5.0))      # Wandgeraden im Erdgeschoss aus der dichten Wolke (Rest 0,7 cm)
     huelle_n = koerper + koerper.translate((0.8, 0, 0)) + koerper.translate((1.6, 0, 0)); huelle_s = koerper + koerper.translate((-0.8, 0, 0)) + koerper.translate((-1.6, 0, 0)) + koerper.translate((-2.3, 0, 0))
-    for nm_, W_, hu_, tf_ in (("sued", WS, huelle_s, 0.4),):            # Nord: seit 15.11. abends scharf gebaut (unten), kein Netz-Relief mehr
+    for nm_, W_, hu_, tf_ in ():                                         # Nord und Sued seit 15.11. scharf gebaut (unten), kein Netz-Relief mehr
         rp = os.path.join(HERE, "schwab_nachbar", "relief", nm_ + ".npz")
         if os.path.exists(rp) and os.environ.get("OHNE_RELIEF") != "1":
             koerper = koerper + (relief_koerper(rp, tiefe=tf_, trend=True) ^ hu_)        # nur innerhalb des Gebaeudeumrisses (sonst stuende die Platte im Himmel neben dem Giebel)
@@ -56,6 +56,33 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper + WN.kasten(2.80, 2.93, 7.99, 9.585, -0.21, 0.03) + WN.kasten(3.65, 3.78, 7.99, 9.585, -0.21, 0.03)
     beleg("wand", "Nordgiebel: fuenf Fachwerkgeschosse mit Auskragungen, Ortgang, 9 Fenster, Steinfenster 1. OG", "foto_mass.py (M-113033-001..-007, M-113210-001..-007, M-113144-001/-002), Picks ueber wand_ortho.py; Geschossebenen aus der dichten Wolke",
           first=ZA, ortgang_neigung=ST, fenster_verdeckt=len(VERDECKT), hinweis="Fenster links (u < 0), die im Modell vom Fluegeldach (Teil 0, Laserform) verdeckt sind, wurden nicht geoeffnet - am Foto sind sie frei, das Fluegeldach ist also zu hoch/zu weit vorn; ANNAHME: Nischentiefe 12 cm, Rahmenbreiten 5-7 cm, Dachplatte 18 cm, Dach laeuft gerade bis zur Suedfassade; Fachwerkbalken, Balkenkoepfe, Eckquader, Firstspitze und Kamin fehlen; links unter z 18,5 verdeckt der Fluegel den Giebel (nicht gemessen)")
+    # ---- 15.11.2026 SUEDFASSADE SCHARF (Nutzer: "Fenster zu weiche Kanten, alles schaerfer"): Masse M-113857-001..-011, M-113855-001..-003, Ebenen aus der dichten Wolke ----
+    from bauteile import rundbogen
+    SA, SZ, SS = 1.72, 25.35, 1.66                                       # First (u = y - 1; gleiche Firstlinie und Neigung wie am Nordgiebel), Ortgangfuss bei z 16,8
+    def dr_s(ab, w0, w1): return WS.huelle([(SA, SZ - ab, w_) for w_ in (w0, w1)] + [(SA + s_ * 20.0, SZ - ab - 20.0 * SS, w_) for s_ in (-1, 1) for w_ in (w0, w1)])
+    def saeule(poly, z0, z1): return WS.huelle([(u_, z_, w_) for u_, w_ in poly for z_ in (z0, z1)])
+    koerper = koerper - WS.kasten(-6.5, 9.5, 0.0, 30.0, 0.0, 3.5)        # alles VOR der Wandebene weg (Reste von LoD2/Laserdach), dann neu aufbauen
+    koerper = koerper + WS.kasten(-5.2, 8.45, 0.0, 14.4, -0.6, 0.0)      # Wand bis in die Ebene, von der Ostecke bis zum Turm
+    koerper = koerper + (WS.kasten(-3.45, 6.75, 14.3, 26.0, -0.5, 0.0) ^ dr_s(0.35, -1.0, 0.5))                       # Giebelwand
+    koerper = koerper + ((dr_s(0.0, -3.0, 0.3) - dr_s(0.35, -3.1, 0.4)) ^ WS.kasten(-3.52, 6.78, 16.8, 26.0, -3.0, 0.3))   # Ortgang/Dachplatte am Suedgiebel (Ueberstand 0,3 m, Tiefe 3 m: ANNAHME)
+    VB = [(-3.8, 0.0), (-3.8, 1.15), (7.6, 1.15), (8.45, 0.0)]            # Vorbau 2. OG im Grundriss (u, w); Westende schraeg zum Turm
+    koerper = koerper + saeule(VB, 10.17, 13.3) + saeule([(u_ - 0.1 * np.sign(u_ - 2.0), w_ + (0.1 if w_ > 0 else 0.0)) for u_, w_ in VB], 10.04, 10.17) + saeule([(u_ - 0.1 * np.sign(u_ - 2.0), w_ + (0.1 if w_ > 0 else 0.0)) for u_, w_ in VB], 13.3, 13.4)
+    koerper = koerper + WS.huelle([(u_, z_, w_) for u_ in (-3.95, 8.45) for z_, w_ in ((13.4, 0.0), (13.4, 1.65), (13.5, 1.65), (14.4, 0.0))])     # Pultdach ueber dem Vorbau
+    EK = [(-0.17, 0.0), (0.3, 1.05), (3.55, 1.05), (3.95, 0.0)]           # Erker 1. OG
+    koerper = koerper + saeule(EK, 6.85, 10.1) + WS.huelle([(u_, 6.85, w_) for u_, w_ in EK] + [(u_, 5.5, w_) for u_, w_ in ((1.0, 0.0), (1.4, 0.3), (2.4, 0.3), (2.8, 0.0))])
+    koerper = koerper + WS.kasten(0.25, 3.6, 7.95, 8.05, 0.0, 1.12)     # Bruestungsgesims des Erkers
+    for u0_, u1_ in ((7.0, 7.9), (-3.75, -2.9)): koerper = koerper + WS.huelle([(u_, z_, w_) for u_ in (u0_, u1_) for z_, w_ in ((8.1, 0.0), (10.1, 0.0), (10.1, 1.1))])   # Konsolen unter dem Vorbau (Form ANNAHME)
+    SF = [(u1_, u0_, 11.42, 12.79, 1.15, (), 12.42) for u0_, u1_ in ((7.11, 6.50), (5.63, 5.03), (4.54, 4.0), (3.44, 2.92), (2.63, 2.04), (1.76, 1.25), (0.96, 0.45), (-0.12, -0.66), (-1.2, -1.69), (-2.65, -3.08))]
+    SF += [(2.92, 3.46, 8.03, 9.4, 1.05, (), 9.0), (2.09, 2.63, 8.03, 9.4, 1.05, (), 9.0), (1.25, 1.79, 8.03, 9.4, 1.05, (), 9.0), (0.47, 0.96, 8.03, 9.4, 1.05, (), 9.0)]      # Erker
+    SF += [(4.02, 6.33, 8.03, 9.44, 0.0, (4.73, 5.57), 9.0), (-2.28, -1.79, 8.05, 9.47, 0.0, (), 9.0), (-4.02, -1.05, 5.09, 6.33, 0.0, (-1.74, -2.57, -3.35), None), (0.17, 0.62, 2.66, 3.74, 0.0, (), None)]
+    SF += [(3.80, 5.49, 14.95, 16.3, 0.0, (4.65,), None), (0.57, 3.07, 14.95, 16.3, 0.0, (1.40, 2.24), None), (-1.88, -0.17, 14.95, 16.3, 0.0, (-1.03,), None),
+           (2.14, 3.90, 17.91, 19.24, 0.0, (3.02,), None), (-0.32, 1.35, 17.91, 19.24, 0.0, (0.52,), None), (1.65, 1.89, 20.8, 22.08, 0.0, (), None)]
+    for u0_, u1_, z0_, z1_, w_, tl_, kz_ in SF:
+        if w_ == 0.0: koerper = koerper + WS.kasten(u0_ - 0.15, u1_ + 0.15, z0_ - 0.15, z1_ + 0.15, -0.1, 0.05)        # Steingewaende 5 cm vor dem Putz (ANNAHME)
+        ab_, zu_ = WS.fenster(u0_, u1_, z0_, z1_, w_ + (0.05 if w_ == 0.0 else 0.0), tiefe=0.17, teiler=tl_, kaempfer=kz_, b=(0.30 if u0_ == -4.02 else 0.12) if (w_ == 0.0 and tl_) else 0.07); koerper = koerper - ab_ + zu_   # Zwischengeschoss: Steinpfosten ~0,3 m breit (entzerrtes Foto: Lichter je ~0,5 m)
+    koerper = koerper - WS.prisma(rundbogen(2.89, -0.6, 3.83), u=-2.65, w0=-4.0, w1=0.5)                               # kleiner Rundbogen (Laube, Suedseite): Tiefe 4 m ANNAHME
+    beleg("wand", "Suedfassade scharf: Giebel, Vorbau 2. OG mit 10 Fenstern, Erker 1. OG, Pultdach, 10 Wand-/Giebelfenster, kleiner Rundbogen", "foto_mass.py (M-113857-001..-011, M-113855-001..-003), Picks ueber wand_ortho.py; Ebenen aus der dichten Wolke",
+          vorbau_breite=11.4, vorbau_tiefe=1.15, erker_breite=4.12, hinweis="ANNAHME: Nischentiefen 17 cm, Gewaende 5 cm, Konsolen- und Erkerfussform, Dachplatte, Fensterlagen der uebrigen 2.-OG-Fenster am entzerrten Bild abgelesen (nicht einzeln protokolliert); Masswerk der Erkerbruestung, Stufenquader am Ortgang, Eckquader fehlen")
     WL = Wand((5.15, 2.08), (11.89, -1.43), aussen=(9.0, 12.0))                 # Nordost-Fassade im Erdgeschoss: Wandgerade aus der dichten Wolke (23 952 Punkte, Rest 0,8 cm)
     koerper = koerper - WL.prisma(spitzbogen(5.41 / 2, 3.5, 5.83), u=4.535, w0=-4.0, w1=2.2)       # Laube (dritter Bogen): Masse M-113529-001..-004; Tiefe 4 m = ANNAHME (offene Halle, Rueckwand im Foto sichtbar)
     beleg("wand", "Laube Nordost (dritter Bogen)", "foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-001..-004), Gegenprobe Foto 113452 (gleiche Kanten aus anderem Winkel)", lichte_breite=5.41, scheitel=5.83, kaempfer=3.5,

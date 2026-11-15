@@ -212,6 +212,94 @@
    "min_b": 0.3,
    "max_b": 3.0,
    "rand": 0.0
+  },
+  "s_vorbau_x": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 10.8,
+   "quer": 3.0
+  },
+  "s_erker_x": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 7.4,
+   "quer": 3.0
+  },
+  "s_giebel_x": {
+   "typ": "tiefe_bei",
+   "seite": "-x",
+   "z": 17.4,
+   "quer": 6.0
+  },
+  "s_f2og": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    -8.09,
+    6.298
+   ],
+   "n": [
+    -0.9996530903523537,
+    -0.026338165254792524
+   ],
+   "z": 12.1,
+   "u0": -0.6,
+   "u1": 0.6,
+   "tiefe": 0.03,
+   "vor": 3.0,
+   "schritt": 0.02,
+   "min_b": 0.3,
+   "max_b": 3.5,
+   "rand": 0.0
+  },
+  "s_fmezz": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    -6.733,
+    -1.534
+   ],
+   "n": [
+    -0.9996530903523537,
+    -0.026338165254792524
+   ],
+   "z": 5.7,
+   "u0": -1.9,
+   "u1": 1.9,
+   "tiefe": 0.03,
+   "vor": 3.0,
+   "schritt": 0.02,
+   "min_b": 0.3,
+   "max_b": 3.5,
+   "rand": 0.0
+  },
+  "s_fgiebel": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    -6.88,
+    4.019
+   ],
+   "n": [
+    -0.9996530903523537,
+    -0.026338165254792524
+   ],
+   "z": 18.6,
+   "u0": -1.25,
+   "u1": 1.25,
+   "tiefe": 0.03,
+   "vor": 3.0,
+   "schritt": 0.02,
+   "min_b": 0.3,
+   "max_b": 3.5,
+   "rand": 0.0
+  },
+  "s_bogen_klein": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    -6.23,
+    -1.636
+   ],
+   "z0": 2.5,
+   "z1": 5.5,
+   "suche": "unten"
   }
  },
  "pruefungen": [
@@ -493,6 +581,116 @@
    "historie": [
     "2026-11-15 angelegt; Ist vorher Relief ohne scharfe Nische"
    ]
+  },
+  {
+   "name": "Sued: Front des Vorbaus 2. OG (|x|, m)",
+   "wert": "s_vorbau_x",
+   "soll": [
+    7.85,
+    8.25
+   ],
+   "quelle": "dichte Wolke sfm_neu: Front bei x -7,9 (Ostteil) bis -8,15 (Westteil)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Netz-Relief"
+   ]
+  },
+  {
+   "name": "Sued: Front des Erkers 1. OG (|x|, m)",
+   "wert": "s_erker_x",
+   "soll": [
+    7.8,
+    8.15
+   ],
+   "quelle": "dichte Wolke sfm_neu: Erkerfront x -7,97..-8,02",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Netz-Relief"
+   ]
+  },
+  {
+   "name": "Sued: Giebelwand (|x|, m)",
+   "wert": "s_giebel_x",
+   "soll": [
+    6.77,
+    6.99
+   ],
+   "quelle": "dichte Wolke sfm_neu: Giebelwand x -6,87 (z 15-21)",
+   "quelltyp": "sfm_bodenanker",
+   "merkmal": "grundriss",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Netz-Relief"
+   ]
+  },
+  {
+   "name": "Sued 2. OG Fenster (2. von links): Breite der Fensternische (m)",
+   "wert": "s_f2og_breite_max",
+   "soll": [
+    0.52,
+    0.68
+   ],
+   "quelle": "foto_mass.py auf der Fassadenebene, Picks ueber wand_ortho.py",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Netz-Relief"
+   ],
+   "protokoll": "M-113857-003"
+  },
+  {
+   "name": "Sued Zwischengeschoss Vierer-Fenster: Breite eines Lichts zwischen den Steinpfosten (m)",
+   "wert": "s_fmezz_breite_max",
+   "soll": [
+    0.44,
+    0.62
+   ],
+   "quelle": "Ablesung am entzerrten Foto 113857 (Wandebene): vier Lichter je ~0,5 m, Steinpfosten ~0,3 m; Gesamtbreite 2,96 m aus foto_mass (M-113857-007)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Netz-Relief",
+    "2026-11-16 Pruefung umgestellt: ebene_oeffnungen misst das einzelne Licht (Steinpfosten liegen in der Wandflaeche), nicht die Gesamtbreite; alter Soll 2,84..3,08 galt der Gesamtbreite und war mit dieser Messart nicht pruefbar. Ist vorher 0,70 (Pfosten faelschlich 12 cm)"
+   ],
+   "protokoll": "M-113857-007"
+  },
+  {
+   "name": "Sued Giebel Doppelfenster links: Breite der Fensternische (m)",
+   "wert": "s_fgiebel_breite_max",
+   "soll": [
+    1.67,
+    1.87
+   ],
+   "quelle": "foto_mass.py auf der Fassadenebene, Picks ueber wand_ortho.py",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Netz-Relief"
+   ],
+   "protokoll": "M-113855-001"
+  },
+  {
+   "name": "Sued: kleiner Rundbogen, Scheitel (m)",
+   "wert": "s_bogen_klein",
+   "soll": [
+    3.7,
+    3.95
+   ],
+   "quelle": "foto_mass.py auf der Wandebene, Foto 113857",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
+   "historie": [
+    "2026-11-15 angelegt; Ist vorher Netz-Relief"
+   ],
+   "protokoll": "M-113857-011"
   }
  ],
  "beobachtungen_offen": [
@@ -513,6 +711,12 @@
    "wer": "Claude",
    "text": "Nordfassade Teil 1 ist ein symmetrischer Fachwerk-Steilgiebel (First y 2,72 / z 25,35, Ortgangneigung 1,66 = 59 Grad; M-113033-001..-003), vier Auskragungen (Wolke: x 4,08 / 4,27 / 4,47 / 4,65 / 4,92), Fenster je Geschoss (M-113210-001..-007, M-113144-001/-002, M-113033-004..-007). Im Modell bisher: weiches Netz-Relief, Laserdach 0,4-0,9 m ueber dem gemessenen Ortgang, Haus endet bei y 9,3 statt 9,84 (Turmkante).",
    "naechster_schritt": "Giebel scharf bauen (Geschossplatten, Fenster, Dach nach Ortgang); danach Fachwerkbalken per Mehrfoto-Sweep (kanten_tiefe_sweep_flaeche), Balkenkoepfe, Eckquader, Steinfenster-Pruefung (Zaehlung per foto_zaehlung.py)"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Nutzer (Bildschirmfotos 21:20, 'Fenster zu weiche Kanten, alles schaerfer')",
+   "text": "Suedfassade Teil 1 besteht nur aus weichem Netz-Relief (Fenster matschig, Fetzen am Dach). Entzerrte Fotos 113857/113855: verputzter Steilgiebel (First u 1,7 / z 25,35, Ortgangfuss z 16,8, Breite dort 10,3 m), Vorbau 2. OG (11,4 m breit, 1,15 m vor der Wand, z 10,04-13,4, 10 Fenster), Erker 1. OG (4,12 m, Masswerkbruestung), Pultdach z 13,4-14,4, Wandfenster, kleiner Rundbogen (2,89 m, Scheitel 3,83). M-113857-001..-011, M-113855-001..-003.",
+   "naechster_schritt": "scharf bauen; offen: Steingewaende/Eckquader (Farbe), Masswerk der Erkerbruestung, Konsolenform, Stufenquader am Ortgang, Fenster im Erker-Seitenteil"
   }
  ]
 }
