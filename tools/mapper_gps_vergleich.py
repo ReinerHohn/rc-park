@@ -5,12 +5,13 @@ from PIL import Image
 fd, mods = sys.argv[1], sys.argv[2:]
 def gps(f):
     try:
-        g = (Image.open(os.path.join(fd, f))._getexif() or {}).get(34853); dm = lambda v: float(v[0]) + float(v[1]) / 60 + float(v[2]) / 3600
+        g = (Image.open(PFAD.get(f, os.path.join(fd, f)))._getexif() or {}).get(34853); dm = lambda v: float(v[0]) + float(v[1]) / 60 + float(v[2]) / 3600
         la, lo = dm(g[2]), dm(g[4]); return np.array([(lo - 7.85) * 111320 * np.cos(np.radians(la)), (la - 47.99) * 110574])
     except Exception: return None
+PFAD = {os.path.basename(x): x for x in __import__('glob').glob(os.path.join(fd, '**', '*'), recursive=True)}   # Unterordner (Kamera je Ordner)
 C = {}
 for m in mods:
-    r = pycolmap.Reconstruction(m); C[m] = {im.name: im.projection_center() for im in r.images.values() if im.has_pose}
+    r = pycolmap.Reconstruction(m); C[m] = {os.path.basename(im.name): im.projection_center() for im in r.images.values() if im.has_pose}
 gem = sorted(set.intersection(*[set(c) for c in C.values()])); P = {k: gps(k) for k in gem}; keys = [k for k in gem if P[k] is not None and ("eigen" in k or k.startswith("IMG_"))]
 print("gemeinsame eigene Fotos mit GPS:", len(keys))
 Y = np.array([P[k] for k in keys])
