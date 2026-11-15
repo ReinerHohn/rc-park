@@ -1,0 +1,17 @@
+{
+ "werkzeug": "kamera_plausibel.py",
+ "ausrichtung": "modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json",
+ "unter_m": 1.5,
+ "n": 196,
+ "tief": {
+  "eigen__114_00_0782_Historisches_Kaufhaus_-_Freiburg_im_Breisgau": -2.66,
+  "eigen__007_M_nsterplatz_Freiburg_jm3221": -1.96,
+  "eigen__025_Fenster_und_Habsburgerskulpturen_des_historischen_Kaufhauses": -1.56
+ },
+ "gruppen": {},
+ "ausschliessen": [
+  "eigen__007_M_nsterplatz_Freiburg_jm3221",
+  "eigen__025_Fenster_und_Habsburgerskulpturen_des_historischen_Kaufhauses",
+  "eigen__114_00_0782_Historisches_Kaufhaus_-_Freiburg_im_Breisgau"
+ ]
+}

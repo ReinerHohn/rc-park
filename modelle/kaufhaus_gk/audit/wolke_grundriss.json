@@ -1,0 +1,186 @@
+{
+ "werkzeug": "wolke_grundriss_pruefen.py",
+ "wolke": "/home/oem/git/rc-park/modelle/kaufhaus_gk/sfm/punkte_modell_kaufhaus_gk.npy",
+ "lod2_gebaeude": 47,
+ "wandpunkte": 1113181,
+ "strasse": {
+  "anteil": 0.0042,
+  "haufen": [
+   {
+    "punkte": 1982,
+    "mitte": [
+     27.5,
+     5.6
+    ],
+    "ausdehnung_m": [
+     3,
+     6
+    ]
+   },
+   {
+    "punkte": 1700,
+    "mitte": [
+     11.8,
+     24.3
+    ],
+    "ausdehnung_m": [
+     9,
+     7
+    ]
+   },
+   {
+    "punkte": 308,
+    "mitte": [
+     18.3,
+     10.5
+    ],
+    "ausdehnung_m": [
+     6,
+     7
+    ]
+   },
+   {
+    "punkte": 260,
+    "mitte": [
+     -11.2,
+     21.5
+    ],
+    "ausdehnung_m": [
+     7,
+     6
+    ]
+   }
+  ],
+  "warnung": false
+ },
+ "teile": {
+  "ziel": "DEBW_0010007Tv9r",
+  "teile": [
+   {
+    "teil": 0,
+    "flaeche_m2": 307.6,
+    "randproben": 481,
+    "deckung": 0.553,
+    "gedreht": {
+     "f1": 0.388,
+     "drehung_grad": 182,
+     "versatz_m": [
+      0.5,
+      0.25
+     ],
+     "randdeckung": 0.241,
+     "auf_rand": 0.995
+    },
+    "hinweis": false,
+    "warnung": false
+   },
+   {
+    "teil": 1,
+    "flaeche_m2": 15.1,
+    "randproben": 63,
+    "deckung": 0.0,
+    "gedreht": {
+     "f1": 0.774,
+     "drehung_grad": 146,
+     "versatz_m": [
+      -1.0,
+      0.0
+     ],
+     "randdeckung": 0.635,
+     "auf_rand": 0.991
+    },
+    "hinweis": true,
+    "warnung": true
+   },
+   {
+    "teil": 2,
+    "flaeche_m2": 50.0,
+    "randproben": 156,
+    "deckung": 0.0,
+    "gedreht": {
+     "f1": 0.453,
+     "drehung_grad": 244,
+     "versatz_m": [
+      -0.75,
+      1.5
+     ],
+     "randdeckung": 0.314,
+     "auf_rand": 0.809
+    },
+    "hinweis": true,
+    "warnung": false
+   }
+  ],
+  "warnung": true
+ },
+ "eindeutigkeit": {
+  "identitaet_anteil": 0.4325,
+  "beste_nahe_identitaet": {
+   "anteil": 0.502126932144165,
+   "spiegel": 0,
+   "drehung": 0,
+   "verschiebung": [
+    0.0,
+    0.5
+   ]
+  },
+  "beste_alternative": {
+   "anteil": 0.38855189085006714,
+   "spiegel": 1,
+   "drehung": 322,
+   "verschiebung": [
+    -1.5,
+    0.75
+   ]
+  },
+  "abstand_relativ": 0.226,
+  "warnung": false,
+  "top5": [
+   {
+    "anteil": 0.502126932144165,
+    "spiegel": 0,
+    "drehung": 0,
+    "verschiebung": [
+     0.0,
+     0.5
+    ]
+   },
+   {
+    "anteil": 0.47439056634902954,
+    "spiegel": 0,
+    "drehung": 1,
+    "verschiebung": [
+     1.75,
+     0.0
+    ]
+   },
+   {
+    "anteil": 0.4649692475795746,
+    "spiegel": 0,
+    "drehung": 359,
+    "verschiebung": [
+     -0.75,
+     0.5
+    ]
+   },
+   {
+    "anteil": 0.41156435012817383,
+    "spiegel": 0,
+    "drehung": 358,
+    "verschiebung": [
+     -3.75,
+     1.25
+    ]
+   },
+   {
+    "anteil": 0.40790143609046936,
+    "spiegel": 0,
+    "drehung": 2,
+    "verschiebung": [
+     1.75,
+     -0.25
+    ]
+   }
+  ]
+ }
+}

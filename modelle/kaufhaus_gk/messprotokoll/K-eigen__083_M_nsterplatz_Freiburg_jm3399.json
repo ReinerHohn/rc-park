@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__083_M_nsterplatz_Freiburg_jm3399",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.3137337570634263,
+   1.8917466329170225,
+   -2.152854418513807
+  ],
+  "t": [
+   -16.975321482382505,
+   8.935755365338592,
+   41.19828688790481
+  ],
+  "f_px": 7379.1919854278385,
+  "cx": 1559.0,
+  "cy": 1950.0,
+  "k1": 0.3277848551647725,
+  "bild": [
+   3118,
+   3900
+  ],
+  "standort_xyz": [
+   -2.068,
+   45.252,
+   3.642
+  ],
+  "hoehe_ueber_gelaende": 3.64,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

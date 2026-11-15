@@ -1,0 +1,44 @@
+{
+ "foto": "commons__015_Dach_Historisches_Kaufhaus_von_1532_Freiburg_Deutschland",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.6106032248580568,
+   -1.615839235285843,
+   1.982980138497404
+  ],
+  "t": [
+   8.848844869198201,
+   11.757401372590781,
+   51.43954403311058
+  ],
+  "f_px": 5799.845454128313,
+  "cx": 960.0,
+  "cy": 683.5,
+  "k1": 0.9128326693705868,
+  "bild": [
+   1920,
+   1367
+  ],
+  "standort_xyz": [
+   -26.715,
+   46.335,
+   1.398
+  ],
+  "hoehe_ueber_gelaende": 1.4,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

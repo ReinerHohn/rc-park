@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__000_Freiburg_1987_06_Historisches_Kaufhaus_51087501961_",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.5670340798699494,
+   1.4610086980246029,
+   -2.1122852230397573
+  ],
+  "t": [
+   -2.036081074732067,
+   14.765341587434092,
+   36.01356817500592
+  ],
+  "f_px": 5388.430725555568,
+  "cx": 1920.0,
+  "cy": 1308.5,
+  "k1": 0.019887384207262798,
+  "bild": [
+   3840,
+   2617
+  ],
+  "standort_xyz": [
+   22.358,
+   31.88,
+   1.705
+  ],
+  "hoehe_ueber_gelaende": 1.71,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

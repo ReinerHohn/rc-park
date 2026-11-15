@@ -29,7 +29,7 @@ def rodrigues(R):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ausrichtung", required=True); ap.add_argument("--stl")
-    ap.add_argument("--ueberschreiben", action="store_true"); ap.add_argument("--trocken", action="store_true"); a = ap.parse_args()
+    ap.add_argument("--fotos", default="", help="Fotoordner statt objekt.json fotos_dir (Gesamtkette: Sammelordner mit Quellpraefix eigen__)"); ap.add_argument("--ueberschreiben", action="store_true"); ap.add_argument("--trocken", action="store_true"); a = ap.parse_args()
     from PIL import Image
     objp = os.path.abspath(a.objekt); obj = json.load(open(objp)); od = os.path.dirname(objp); root = os.path.dirname(os.path.dirname(od))
     ap_ = a.ausrichtung if os.path.isabs(a.ausrichtung) else (os.path.join(od, a.ausrichtung) if os.path.exists(os.path.join(od, a.ausrichtung)) else os.path.join(root, a.ausrichtung))
@@ -49,7 +49,7 @@ def main():
     except Exception as e: print("WARNUNG: Rueckprojektion je Kamera nicht berechenbar:", str(e)[:120])
     neu = gesch = 0; ber = []
     for nr, k in sorted(A["kameras"].items()):
-        fp = sorted(glob.glob(os.path.join(root, obj["fotos_dir"], nr + "_*")) or glob.glob(os.path.join(root, obj["fotos_dir"], nr + ".*")))
+        fp = sorted(glob.glob(os.path.join(a.fotos or os.path.join(root, obj["fotos_dir"]), glob.escape(nr) + "_*")) or glob.glob(os.path.join(a.fotos or os.path.join(root, obj["fotos_dir"]), glob.escape(nr) + ".*")))
         if not fp: ber.append((nr, "Foto fehlt")); continue
         W, H = Image.open(fp[0]).size; bw, bh = float(k.get("bild_b", W)), float(k.get("bild_h", H)); s = W / bw
         if abs(H / bh - s) > 0.01 * s: ber.append((nr, f"Seitenverhaeltnis {W}x{H} vs SfM {bw:.0f}x{bh:.0f}")); continue

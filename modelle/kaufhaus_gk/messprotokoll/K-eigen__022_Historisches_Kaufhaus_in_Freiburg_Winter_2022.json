@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.6299238796008245,
+   -1.6521293784006683,
+   1.9297840001749496
+  ],
+  "t": [
+   6.245069643232143,
+   11.481050596007016,
+   67.13193091975343
+  ],
+  "f_px": 5167.5665224310205,
+  "cx": 1920.0,
+  "cy": 1280.0,
+  "k1": 0.1900794425910971,
+  "bild": [
+   3840,
+   2560
+  ],
+  "standort_xyz": [
+   -39.69,
+   55.683,
+   1.286
+  ],
+  "hoehe_ueber_gelaende": 1.29,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

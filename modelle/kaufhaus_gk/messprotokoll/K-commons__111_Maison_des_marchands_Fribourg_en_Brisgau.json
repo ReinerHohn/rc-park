@@ -1,0 +1,44 @@
+{
+ "foto": "commons__111_Maison_des_marchands_Fribourg_en_Brisgau",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.8880311203441486,
+   1.2120958305040217,
+   -1.6763248287856833
+  ],
+  "t": [
+   -7.337027716749825,
+   11.760473696146136,
+   32.643175372978824
+  ],
+  "f_px": 1183.3822863822672,
+  "cx": 640.0,
+  "cy": 480.0,
+  "k1": 0.036464177774011494,
+  "bild": [
+   1280,
+   960
+  ],
+  "standort_xyz": [
+   29.265,
+   19.942,
+   1.896
+  ],
+  "hoehe_ueber_gelaende": 1.9,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

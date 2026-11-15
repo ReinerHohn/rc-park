@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__094_Muensterplatz_with_Historisches_Kaufhaus",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.7307308122907702,
+   -1.872556253902804,
+   1.7275916724496119
+  ],
+  "t": [
+   19.942585354180444,
+   9.362967437881522,
+   51.61688404078197
+  ],
+  "f_px": 2916.1841514283988,
+  "cx": 1296.0,
+  "cy": 972.0,
+  "k1": -0.12225052966746235,
+  "bild": [
+   2592,
+   1944
+  ],
+  "standort_xyz": [
+   -19.367,
+   50.92,
+   13.481
+  ],
+  "hoehe_ueber_gelaende": 13.48,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

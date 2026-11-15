@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__aca3a5e5-image",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   -0.004696514939099302,
+   1.7636764608276991,
+   -2.5857628993502444
+  ],
+  "t": [
+   7.397310629287915,
+   10.96995061942555,
+   22.600967480428213
+  ],
+  "f_px": 2778.6777750206884,
+  "cx": 1500.0,
+  "cy": 2000.0,
+  "k1": 0.05436653814075736,
+  "bild": [
+   3000,
+   4000
+  ],
+  "standort_xyz": [
+   7.613,
+   24.986,
+   1.897
+  ],
+  "hoehe_ueber_gelaende": 1.9,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

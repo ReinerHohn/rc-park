@@ -1,0 +1,44 @@
+{
+ "foto": "commons__008_Altes_Kaufhaus",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.788309149624458,
+   -1.5256429382477876,
+   1.7801475709062793
+  ],
+  "t": [
+   11.584133438444105,
+   8.809435985939599,
+   42.99928755395152
+  ],
+  "f_px": 1025.8603042785796,
+  "cx": 240.0,
+  "cy": 320.0,
+  "k1": 0.07436221272099382,
+  "bild": [
+   480,
+   640
+  ],
+  "standort_xyz": [
+   -27.88,
+   35.744,
+   2.401
+  ],
+  "hoehe_ueber_gelaende": 2.4,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

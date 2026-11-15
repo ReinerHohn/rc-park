@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__006_Historisches_Kaufhaus_im_Winter",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.18720110342426924,
+   -1.9617908401681616,
+   2.2864396419654347
+  ],
+  "t": [
+   4.959679241895723,
+   9.956940039192654,
+   45.72108492016896
+  ],
+  "f_px": 3223.0006772406377,
+  "cx": 1920.0,
+  "cy": 1280.0,
+  "k1": -0.034718448576595486,
+  "bild": [
+   3840,
+   2560
+  ],
+  "standort_xyz": [
+   -3.169,
+   46.859,
+   2.881
+  ],
+  "hoehe_ueber_gelaende": 2.88,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

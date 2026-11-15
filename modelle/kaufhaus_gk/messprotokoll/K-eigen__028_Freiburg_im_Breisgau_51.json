@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__028_Freiburg_im_Breisgau_51",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.7095320962066991,
+   1.0078474011214824,
+   -2.191634785690097
+  ],
+  "t": [
+   -7.73366762338917,
+   14.820234085041797,
+   14.528277126612755
+  ],
+  "f_px": 3720.010205624679,
+  "cx": 1920.0,
+  "cy": 1280.0,
+  "k1": -0.08639264424062972,
+  "bild": [
+   3840,
+   2560
+  ],
+  "standort_xyz": [
+   9.283,
+   20.009,
+   1.99
+  ],
+  "hoehe_ueber_gelaende": 1.99,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

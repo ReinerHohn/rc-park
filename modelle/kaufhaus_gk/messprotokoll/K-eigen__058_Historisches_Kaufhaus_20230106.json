@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__058_Historisches_Kaufhaus_20230106",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.7215689504427855,
+   1.0273739900764025,
+   -1.771070617825964
+  ],
+  "t": [
+   -6.859483477200135,
+   15.861689780568529,
+   28.335060537834885
+  ],
+  "f_px": 4883.820759861653,
+  "cx": 1878.0,
+  "cy": 2551.0,
+  "k1": -0.9514083885115532,
+  "bild": [
+   3756,
+   5102
+  ],
+  "standort_xyz": [
+   27.176,
+   19.051,
+   0.195
+  ],
+  "hoehe_ueber_gelaende": 0.19,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

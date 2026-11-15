@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__handy_f_06",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.5287249400587415,
+   0.7678814421512897,
+   -1.897392700299507
+  ],
+  "t": [
+   -15.151673706729555,
+   9.018398418928822,
+   5.333659418903992
+  ],
+  "f_px": 7316.395892790241,
+  "cx": 1500.0,
+  "cy": 2000.0,
+  "k1": 0.15492901651554716,
+  "bild": [
+   3000,
+   4000
+  ],
+  "standort_xyz": [
+   2.766,
+   18.082,
+   2.182
+  ],
+  "hoehe_ueber_gelaende": 2.18,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

@@ -1,0 +1,23 @@
+{
+ "werkzeug": "lage_gps_pruefen.py",
+ "ausrichtung": "modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json",
+ "lage": null,
+ "n_kameras": 196,
+ "n_gps": 32,
+ "median_abstand_m": 12.449040962943787,
+ "gps_fit": {
+  "drehung_grad": -3.3327858974910023,
+  "drehung_90": [
+   -8.878634579846834,
+   2.105809569041494
+  ],
+  "massstab": 0.9555935148251697,
+  "massstab_90": [
+   0.8794476128448813,
+   1.039421447979903
+  ],
+  "rest_median_m": 3.05865627652278
+ },
+ "fernfotos": null,
+ "warnungen": []
+}

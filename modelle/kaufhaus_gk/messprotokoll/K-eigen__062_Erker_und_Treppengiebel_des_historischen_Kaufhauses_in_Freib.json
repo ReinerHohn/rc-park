@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__062_Erker_und_Treppengiebel_des_historischen_Kaufhauses_in_Freib",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.07569195697197283,
+   -1.9292507345091408,
+   2.4657553913124755
+  ],
+  "t": [
+   -2.189718963312609,
+   14.995666519046186,
+   64.61124398773359
+  ],
+  "f_px": 16320.603438368056,
+  "cx": 1687.5,
+  "cy": 2250.0,
+  "k1": 0.2790755878965896,
+  "bild": [
+   3375,
+   4500
+  ],
+  "standort_xyz": [
+   -4.709,
+   66.192,
+   -0.877
+  ],
+  "hoehe_ueber_gelaende": -0.88,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

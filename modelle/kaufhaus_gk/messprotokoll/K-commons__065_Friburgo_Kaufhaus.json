@@ -1,0 +1,44 @@
+{
+ "foto": "commons__065_Friburgo_Kaufhaus",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.3679596519739573,
+   1.6818956755058632,
+   -2.2235291829329435
+  ],
+  "t": [
+   -1.333109472705063,
+   13.23755961193307,
+   43.108726610670125
+  ],
+  "f_px": 2091.4830069758696,
+  "cx": 960.0,
+  "cy": 718.5,
+  "k1": -0.10761291046306033,
+  "bild": [
+   1920,
+   1437
+  ],
+  "standort_xyz": [
+   17.174,
+   41.705,
+   1.071
+  ],
+  "hoehe_ueber_gelaende": 1.07,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__051_Kaufhaus_-_panoramio_2_",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.1475375052390881,
+   1.7700137659674402,
+   -2.4262384295080976
+  ],
+  "t": [
+   0.27759663586467903,
+   10.463250935739824,
+   27.25544485195228
+  ],
+  "f_px": 2631.051485729847,
+  "cx": 1824.0,
+  "cy": 1368.0,
+  "k1": -0.014319958355598305,
+  "bild": [
+   3648,
+   2736
+  ],
+  "standort_xyz": [
+   5.109,
+   28.699,
+   1.642
+  ],
+  "hoehe_ueber_gelaende": 1.64,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

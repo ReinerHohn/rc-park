@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__125_M_nsterplatz_-_Historisches_Kaufhaus_-_panoramio",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.8496561508109951,
+   1.2493369055392887,
+   -1.7654113728689909
+  ],
+  "t": [
+   -3.926348216762885,
+   11.5211905434942,
+   30.02966899502427
+  ],
+  "f_px": 1198.3052495945078,
+  "cx": 800.0,
+  "cy": 600.0,
+  "k1": -0.0066986401403398965,
+  "bild": [
+   1600,
+   1200
+  ],
+  "standort_xyz": [
+   26.601,
+   18.387,
+   2.049
+  ],
+  "hoehe_ueber_gelaende": 2.05,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

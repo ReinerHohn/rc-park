@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__089_Einfahrt_der_Oldtimer_der_Schauinsland-Klassik_auf_dem_Freib",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.2656091668395855,
+   1.050937540732658,
+   -1.097913962090332
+  ],
+  "t": [
+   -23.83761250974993,
+   3.0766163453071735,
+   20.40861608024463
+  ],
+  "f_px": 7766.494768469983,
+  "cx": 1500.0,
+  "cy": 2000.0,
+  "k1": 0.08073564053919338,
+  "bild": [
+   3000,
+   4000
+  ],
+  "standort_xyz": [
+   24.375,
+   19.881,
+   2.187
+  ],
+  "hoehe_ueber_gelaende": 2.19,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__111_March_Bourgoisie_Freiburg_M_nster_-_Master_Habitat_Rhine_Val",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.6414482974337957,
+   0.942451330230506,
+   -2.015741559483798
+  ],
+  "t": [
+   -1.9158387933297956,
+   16.418718515557327,
+   17.972361281746004
+  ],
+  "f_px": 2754.166146738565,
+  "cx": 1024.0,
+  "cy": 768.0,
+  "k1": -0.06875626720166501,
+  "bild": [
+   2048,
+   1536
+  ],
+  "standort_xyz": [
+   18.995,
+   15.18,
+   2.236
+  ],
+  "hoehe_ueber_gelaende": 2.24,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__039_Freiburg_im_Sommer_2013_9878817246_",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.5388440102201753,
+   -1.6904883584811015,
+   2.0016086067130767
+  ],
+  "t": [
+   -1.4769250995503826,
+   11.406133088899976,
+   57.904345422052906
+  ],
+  "f_px": 5008.239342163074,
+  "cx": 1920.0,
+  "cy": 1280.0,
+  "k1": -0.20049792719836432,
+  "bild": [
+   3840,
+   2560
+  ],
+  "standort_xyz": [
+   -35.291,
+   47.3,
+   1.575
+  ],
+  "hoehe_ueber_gelaende": 1.57,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

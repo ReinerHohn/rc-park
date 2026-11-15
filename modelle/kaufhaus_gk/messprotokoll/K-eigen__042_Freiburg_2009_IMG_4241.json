@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__042_Freiburg_2009_IMG_4241",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.3489845521051089,
+   -1.7494004525628317,
+   2.324732698532232
+  ],
+  "t": [
+   9.665462976464765,
+   12.687794995656498,
+   38.505657180765986
+  ],
+  "f_px": 3520.595621005804,
+  "cx": 1920.0,
+  "cy": 1280.0,
+  "k1": -0.10212369831744185,
+  "bild": [
+   3840,
+   2560
+  ],
+  "standort_xyz": [
+   -3.165,
+   41.537,
+   1.323
+  ],
+  "hoehe_ueber_gelaende": 1.32,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

@@ -1,0 +1,73 @@
+[
+ {
+  "seite": "dach",
+  "element": "Dach Teil 0 (sattel_a)",
+  "quelle": "Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_0010007Tv9r-Grundriss Teil 0",
+  "first": 21.0,
+  "neigung_grad": 52.3,
+  "rms_m": 0.25,
+  "eindeutig": true,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Spitze Teil 0",
+  "quelle": "DOM1 3 Pixel bis 21.2 m; Hoehe DOM1-max",
+  "hoehe": 21.16,
+  "hinweis": "ANNAHME: Pyramide Grundseite 1.7 m (sqrt Pixel), Form nicht gemessen",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "Grundriss Teil 0",
+  "quelle": "LoD2 DEBW_0010007Tv9r GroundSurface 0",
+  "breite_u": 23.64,
+  "tiefe_v": 21.18,
+  "flaeche_m2": 307.6,
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Teil 1 (ohne Dachmessung)",
+  "quelle": "LoD2 DEBW_0010007Tv9r Wandoberkante (5 eigene Waende)",
+  "hoehe": 16.52,
+  "hinweis": "ANNAHME: Flachdach auf Wandoberkante (Teil zu klein fuer DOM1-Dachfit)",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Grundriss Teil 1",
+  "quelle": "LoD2 DEBW_0010007Tv9r GroundSurface 1",
+  "breite_u": 4.82,
+  "tiefe_v": 4.7,
+  "flaeche_m2": 15.1,
+  "seite_name": "wand"
+ },
+ {
+  "seite": "dach",
+  "element": "Dach Teil 2 (sattel_a)",
+  "quelle": "Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_0010007Tv9r-Grundriss Teil 2",
+  "first": 12.93,
+  "neigung_grad": 47.3,
+  "rms_m": 0.07,
+  "eindeutig": true,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Spitze Teil 2",
+  "quelle": "DOM1 1 Pixel bis 13.1 m; Hoehe DOM1-max",
+  "hoehe": 13.14,
+  "hinweis": "ANNAHME: Pyramide Grundseite 1.0 m (sqrt Pixel), Form nicht gemessen",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "Grundriss Teil 2",
+  "quelle": "LoD2 DEBW_0010007Tv9r GroundSurface 2",
+  "breite_u": 7.91,
+  "tiefe_v": 10.06,
+  "flaeche_m2": 50.0,
+  "seite_name": "wand"
+ }
+]

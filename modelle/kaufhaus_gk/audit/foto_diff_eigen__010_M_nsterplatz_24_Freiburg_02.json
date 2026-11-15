@@ -1,0 +1,171 @@
+{
+ "foto": "eigen__010_M_nsterplatz_24_Freiburg_02",
+ "kamera": "K-eigen__010_M_nsterplatz_24_Freiburg_02 (amtliche Anker)",
+ "kamera_datei": "/home/oem/git/rc-park/modelle/kaufhaus_gk/messprotokoll/K-eigen__010_M_nsterplatz_24_Freiburg_02.json",
+ "entzerrt_k1": -0.026964262171098655,
+ "verdecker": {
+  "quelle": "keine passende Tiefenkarte: kein sfm/dicht_*",
+  "anteil_silhouette": 0.0
+ },
+ "f_px": 2056.2592751782076,
+ "cx": 1920.0,
+ "cy": 1280.0,
+ "tol_m": 0.35,
+ "laenge_m": 0.8,
+ "anteil_modellkanten_ohne_foto": 0.011,
+ "anteil_fotokanten_ohne_modell": 0.9419,
+ "anteil_modellkanten_nicht_beurteilbar": 0.0,
+ "versatz": {
+  "versatz_px": [
+   221,
+   -75
+  ],
+  "versatz_m": 1.323,
+  "gewinn": 0.0906,
+  "kosten0": 1.27298,
+  "kosten_best": 1.15758,
+  "deutlich": true
+ },
+ "treffer": [
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 6242.01,
+   "box": [
+    0,
+    197,
+    3839,
+    2441
+   ],
+   "xyz": [
+    4.71,
+    12.89,
+    5.74
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 76.14,
+   "box": [
+    1497,
+    1832,
+    1949,
+    2185
+   ],
+   "xyz": [
+    5.34,
+    12.66,
+    2.01
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 57.08,
+   "box": [
+    1241,
+    1950,
+    1437,
+    2225
+   ],
+   "xyz": [
+    6.93,
+    12.07,
+    1.57
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 41.04,
+   "box": [
+    3584,
+    1084,
+    3839,
+    1260
+   ],
+   "xyz": [
+    -3.37,
+    15.85,
+    5.42
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 37.14,
+   "box": [
+    2383,
+    1852,
+    2500,
+    2028
+   ],
+   "xyz": [
+    2.69,
+    13.63,
+    2.09
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 9.01,
+   "box": [
+    1930,
+    217,
+    2028,
+    255
+   ],
+   "xyz": [
+    4.29,
+    13.04,
+    11.12
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 7.65,
+   "box": [
+    1221,
+    221,
+    1297,
+    255
+   ],
+   "xyz": [
+    8.02,
+    11.67,
+    11.17
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FALSCH/ERFUNDEN (Modellkante ohne Fotokante)",
+   "laenge_m": 2.85,
+   "box": [
+    3013,
+    218,
+    3061,
+    236
+   ],
+   "xyz": [
+    -1.43,
+    15.13,
+    11.32
+   ],
+   "in_ankerzone": true
+  }
+ ],
+ "ankerzone": [
+  -2.5,
+  23.660011337280274
+ ],
+ "modellkanten_px": 46949,
+ "fotokanten_px": 1454352,
+ "versatz_angewandt": true,
+ "versatz_max_m": 1.5,
+ "rot_versatz": 0.0137,
+ "gelb_versatz": 0.969,
+ "gpu": true,
+ "raster": true
+}

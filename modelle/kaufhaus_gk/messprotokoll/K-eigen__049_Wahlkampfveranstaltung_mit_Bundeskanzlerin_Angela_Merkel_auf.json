@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__049_Wahlkampfveranstaltung_mit_Bundeskanzlerin_Angela_Merkel_auf",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.0259712266790337,
+   -1.5011373341541008,
+   1.5195509097303745
+  ],
+  "t": [
+   24.41716281465071,
+   2.456560030905952,
+   28.755498863384904
+  ],
+  "f_px": 3852.7639921011983,
+  "cx": 1920.0,
+  "cy": 1440.0,
+  "k1": -0.11071710929939657,
+  "bild": [
+   3840,
+   2880
+  ],
+  "standort_xyz": [
+   -16.715,
+   33.853,
+   1.914
+  ],
+  "hoehe_ueber_gelaende": 1.91,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

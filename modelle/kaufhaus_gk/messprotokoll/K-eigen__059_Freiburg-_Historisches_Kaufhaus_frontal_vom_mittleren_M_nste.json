@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__059_Freiburg-_Historisches_Kaufhaus_frontal_vom_mittleren_M_nste",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.21693541708374361,
+   -2.024569919385845,
+   2.253988568017009
+  ],
+  "t": [
+   3.1593049382019385,
+   7.395174187957336,
+   50.12244618985906
+  ],
+  "f_px": 6341.19835643865,
+  "cx": 1845.5,
+  "cy": 2676.0,
+  "k1": 0.018591451724269924,
+  "bild": [
+   3691,
+   5352
+  ],
+  "standort_xyz": [
+   -5.527,
+   50.421,
+   2.036
+  ],
+  "hoehe_ueber_gelaende": 2.04,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

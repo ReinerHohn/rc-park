@@ -1,0 +1,44 @@
+{
+ "foto": "commons__097_Historisches_Kaufhaus_FR",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.4317870859147695,
+   -2.540030073856975,
+   1.6015963202701502
+  ],
+  "t": [
+   -0.03574384011747586,
+   5.870801456674708,
+   77.59156123291946
+  ],
+  "f_px": 3434.3728368642733,
+  "cx": 960.0,
+  "cy": 902.0,
+  "k1": 0.029023494648701027,
+  "bild": [
+   1920,
+   1804
+  ],
+  "standort_xyz": [
+   -17.595,
+   64.825,
+   39.281
+  ],
+  "hoehe_ueber_gelaende": 39.28,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__064_Freiburg-_Historisches_Kaufhaus_Erker_westlich_-_LABW_-_Staa",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.08034704845845725,
+   -1.4763938342387886,
+   2.698333186230714
+  ],
+  "t": [
+   -3.642617930211228,
+   14.945392741965282,
+   19.72196306690845
+  ],
+  "f_px": 6183.64924496998,
+  "cx": 1859.5,
+  "cy": 2822.5,
+  "k1": -0.02405512879513421,
+  "bild": [
+   3719,
+   5645
+  ],
+  "standort_xyz": [
+   -5.618,
+   24.289,
+   2.021
+  ],
+  "hoehe_ueber_gelaende": 2.02,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

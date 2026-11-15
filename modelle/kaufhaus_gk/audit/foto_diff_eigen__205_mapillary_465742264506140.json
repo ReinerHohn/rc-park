@@ -1,0 +1,203 @@
+{
+ "foto": "eigen__205_mapillary_465742264506140",
+ "kamera": "K-eigen__205_mapillary_465742264506140 (amtliche Anker)",
+ "kamera_datei": "/home/oem/git/rc-park/modelle/kaufhaus_gk/messprotokoll/K-eigen__205_mapillary_465742264506140.json",
+ "entzerrt_k1": -0.08948430598229538,
+ "verdecker": {
+  "quelle": "keine passende Tiefenkarte: kein sfm/dicht_*",
+  "anteil_silhouette": 0.0
+ },
+ "f_px": 1016.6627517510494,
+ "cx": 1024.0,
+ "cy": 768.0,
+ "tol_m": 0.35,
+ "laenge_m": 0.8,
+ "anteil_modellkanten_ohne_foto": 0.9781,
+ "anteil_fotokanten_ohne_modell": 0.9182,
+ "anteil_modellkanten_nicht_beurteilbar": 0.0,
+ "versatz": {
+  "versatz_px": [
+   52,
+   -52
+  ],
+  "versatz_m": 1.471,
+  "gewinn": 0.1936,
+  "kosten0": 1.98562,
+  "kosten_best": 1.60129,
+  "deutlich": true
+ },
+ "treffer": [
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 1050.5,
+   "box": [
+    934,
+    0,
+    1541,
+    886
+   ],
+   "xyz": [
+    -7.48,
+    10.59,
+    9.81
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FALSCH/ERFUNDEN (Modellkante ohne Fotokante)",
+   "laenge_m": 199.37,
+   "box": [
+    1641,
+    359,
+    1680,
+    901
+   ],
+   "xyz": [
+    -9.95,
+    2.29,
+    5.26
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 109.24,
+   "box": [
+    1771,
+    471,
+    2034,
+    882
+   ],
+   "xyz": [
+    -11.24,
+    -1.95,
+    3.94
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 51.42,
+   "box": [
+    1372,
+    715,
+    1438,
+    885
+   ],
+   "xyz": [
+    -8.48,
+    7.29,
+    2.11
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 48.75,
+   "box": [
+    1000,
+    733,
+    1133,
+    886
+   ],
+   "xyz": [
+    -6.52,
+    13.74,
+    2.25
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 37.67,
+   "box": [
+    1694,
+    471,
+    1747,
+    883
+   ],
+   "xyz": [
+    -10.32,
+    1.13,
+    4.6
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FALSCH/ERFUNDEN (Modellkante ohne Fotokante)",
+   "laenge_m": 36.95,
+   "box": [
+    1954,
+    329,
+    2003,
+    435
+   ],
+   "xyz": [
+    -11.4,
+    -5.65,
+    10.79
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FALSCH/ERFUNDEN (Modellkante ohne Fotokante)",
+   "laenge_m": 29.3,
+   "box": [
+    1792,
+    450,
+    2047,
+    458
+   ],
+   "xyz": [
+    -11.72,
+    -3.64,
+    9.25
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 20.66,
+   "box": [
+    1049,
+    207,
+    1080,
+    408
+   ],
+   "xyz": [
+    -6.54,
+    13.67,
+    12.19
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FEHLT (Fotokante ohne Modellkante)",
+   "laenge_m": 18.78,
+   "box": [
+    934,
+    813,
+    1012,
+    886
+   ],
+   "xyz": [
+    -5.96,
+    15.38,
+    1.1
+   ],
+   "in_ankerzone": true
+  }
+ ],
+ "ankerzone": [
+  -2.5,
+  23.660011337280274
+ ],
+ "modellkanten_px": 13616,
+ "fotokanten_px": 78969,
+ "versatz_angewandt": true,
+ "versatz_max_m": 1.5,
+ "rot_versatz": 0.2166,
+ "gelb_versatz": 0.893,
+ "gpu": true,
+ "raster": true
+}

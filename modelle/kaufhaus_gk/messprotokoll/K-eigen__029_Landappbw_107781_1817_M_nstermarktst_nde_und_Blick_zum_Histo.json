@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__029_Landappbw_107781_1817_M_nstermarktst_nde_und_Blick_zum_Histo",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.67446330754821,
+   1.5779750012720772,
+   -1.930231424275417
+  ],
+  "t": [
+   -11.978454124379573,
+   10.87965154487459,
+   52.029147561917554
+  ],
+  "f_px": 2682.5372239060507,
+  "cx": 1920.0,
+  "cy": 1078.5,
+  "k1": -0.01001194862213088,
+  "bild": [
+   3840,
+   2157
+  ],
+  "standort_xyz": [
+   28.074,
+   46.694,
+   0.661
+  ],
+  "hoehe_ueber_gelaende": 0.66,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

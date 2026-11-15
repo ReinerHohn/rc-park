@@ -1,0 +1,120 @@
+{
+ "name": "Historisches Kaufhaus Freiburg - grober Generator aus Teilen (Foto-Diff-Fahrzeug)",
+ "ort": "Freiburg im Breisgau, Muensterplatz 24",
+ "generator": "SCALE=87 MINMM=0.8 ~/.venvs/rcpark/bin/python modelle/kaufhaus_gk_gen.py",
+ "stl": "modelle/stl/kaufhaus_gk_1-87.stl",
+ "stl_massstab": 87,
+ "stl_einheit_mm": true,
+ "zentrierung": "achse",
+ "masstabelle": "modelle/kaufhaus_gk/masstabelle.json",
+ "elemente": "modelle/kaufhaus_gk/elemente.json",
+ "audit": "modelle/kaufhaus_gk/audit",
+ "ueberwacht": [
+  "modelle/kaufhaus_gk_gen.py",
+  "modelle/stl/kaufhaus_gk_1-87.stl",
+  "modelle/kaufhaus_gk/masstabelle.json",
+  "modelle/kaufhaus_gk/elemente.json"
+ ],
+ "fotos_dir": "daten/kaufhaus/fotos",
+ "seiten_konvention": {
+  "+x": "Ost",
+  "-x": "West",
+  "+y": "Nord",
+  "-y": "Sued",
+  "quelle": "tools/objekt_daten.py: Kompassrichtung der Rahmenachsen (LoD2-Grundriss); Fassadennamen/Merkmale je Seite noch am Foto festlegen"
+ },
+ "fotos": {},
+ "quellen": {
+  "dokument": "OFFEN",
+  "lod2": "OFFEN",
+  "dom1_dgm1": "OFFEN",
+  "dop20": "OFFEN",
+  "fotos": "OFFEN",
+  "laser_punkte": "n/a (kostenpflichtig)"
+ },
+ "lod2": {
+  "gml": "/media/oem/scan/rc-park_daten/_geo/LoD2_32_413_5316_2_bw/LoD2_32_414_5316_1_BW.gml",
+  "id": "DEBW_0010007Tv9r",
+  "traufe_m": 9.65100000000001,
+  "first_m": 21.404999999999973,
+  "grundriss_kanten_m": [
+   20.4,
+   12.54,
+   8.89,
+   7.78,
+   7.52,
+   7.22,
+   7.22,
+   4.31,
+   4.31,
+   3.86,
+   3.8,
+   3.53,
+   3.44,
+   3.44,
+   3.44,
+   3.43,
+   3.42,
+   3.22,
+   3.05,
+   2.59,
+   2.21,
+   2.21,
+   1.54,
+   1.16
+  ],
+  "dachtyp": [
+   "Satteldach",
+   "Sheddach",
+   "Satteldach"
+  ]
+ },
+ "rahmen": {
+  "mitte_utm": [
+   414405.54,
+   5316373.86
+  ],
+  "xhat_utm": [
+   0.9992,
+   0.0411
+  ],
+  "yhat_utm": [
+   -0.0411,
+   0.9992
+  ],
+  "gelaende": 278.32,
+  "hinweis": "Modellrahmen aus LoD2 (tools/objekt_daten.py): Ursprung Grundriss-Mitte, +x Langachse nach Ost, +y nach Nord (rechtshaendig), z ueber DGM1"
+ },
+ "bildquellen": {
+  "commons": {
+   "kategorien": [
+    "Historisches Kaufhaus Freiburg",
+    "Historisches Kaufhaus Freiburg at night"
+   ],
+   "suchen": [
+    "Historisches Kaufhaus Freiburg",
+    "Kaufhaus Münsterplatz Freiburg"
+   ],
+   "geosearch_radius_m": 100,
+   "titel_enthaelt": [
+    "kaufhaus",
+    "münsterplatz",
+    "muensterplatz",
+    "merchants"
+   ]
+  },
+  "mapillary": {
+   "radius_m": 60,
+   "max": 200
+  },
+  "ausgabe": "daten/kaufhaus/fotos_eingang",
+  "max_neu": 150,
+  "min_breite_px": 1000,
+  "max_je_blickgruppe": 4,
+  "hinweis": "Innenraum-Kategorien (inside, Kaminsaal, Stube, Rokokosaal, events) bewusst nicht: Aussenmodell"
+ },
+ "gesamtkette": {
+  "quelle": "kaufhaus_grob3",
+  "hinweis": "von tools/gesamtkette.py angelegt; Masse/Pruefungen nur aus Quellen dieser Kette"
+ }
+}

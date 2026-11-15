@@ -141,21 +141,23 @@ def main():
         if os.path.exists(AU): lauf(B, "kanten", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU, "--bilder", FV, "--aus", KD], log, ok=(0, 4))
         else: notiz(B, "kanten", False, fehler=f"keine Ausrichtung {AU}")
     if dran("fototor") and os.path.exists(AU):
-        lauf(B, "fototor_kameras", [PYC, "-I", "tools/kameras_aus_buendel.py", ZR, "--ausrichtung", AU], log)
+        lauf(B, "fototor_kameras", [PYC, "-I", "tools/kameras_aus_buendel.py", ZR, "--ausrichtung", AU, "--fotos", FV], log)
         kw = os.path.join(KD, "kam_wahl.json"); wahl = list(json.load(open(kw)))[:6] if os.path.exists(kw) else []
-        for f in wahl: lauf(B, f"fototor_{os.path.splitext(f)[0]}", [PY, "-W", "ignore", "-I", "tools/foto_diff.py", ZR, os.path.splitext(f)[0]], log)
+        for f in wahl: lauf(B, f"fototor_{os.path.splitext(f)[0]}", [PY, "-W", "ignore", "-I", "tools/foto_diff.py", ZR, os.path.splitext(f)[0], "--bild", os.path.join(FV, f)], log)
     if dran("html"):
         args = [PY, "-I", "tools/modell_3d_html.py", ZR, os.path.join(D, f"{a.ziel}_3d.html")]
         if os.path.exists(W): args += ["--wolke", W, "--farben", W.replace("punkte_modell_", "punkte_farben_")]
         lauf(B, "html", args, log)
-    if dran("vergleich") and a.referenz_wolke and os.path.exists(W):
-        import numpy as np
-        sys.path.insert(0, os.path.join(ROOT, "tools")); from gpu_knn import min_abstand
-        rng = np.random.default_rng(0); N = np.load(W, mmap_mode="r"); R_ = np.load(a.referenz_wolke, mmap_mode="r")
-        n = np.asarray(N[rng.choice(len(N), min(200000, len(N)), replace=False)], float); r_ = np.asarray(R_[rng.choice(len(R_), min(400000, len(R_)), replace=False)], float)
-        mr = np.median(r_[:, :2], 0); n = n[np.hypot(*(n[:, :2] - mr).T) < 30]; d = min_abstand(n, r_)
-        notiz(B, "vergleich", bool(np.median(d) < 0.5), referenz=a.referenz_wolke, punkte=int(len(d)), median_m=round(float(np.median(d)), 3),
-              anteil_unter_0_5m=round(float((d < 0.5).mean()), 3), p90_m=round(float(np.percentile(d, 90)), 3))
+    if dran("vergleich") and a.referenz_wolke and os.path.exists(W):       # 15.11.: in venv-seg (torch/gpu_knn); die Kette selbst laeuft mit System-Python
+        code = ("import sys, json, numpy as np; sys.path.insert(0, 'tools'); from gpu_knn import min_abstand; rng = np.random.default_rng(0); "
+                "N = np.load(sys.argv[1], mmap_mode='r'); R_ = np.load(sys.argv[2], mmap_mode='r'); "
+                "n = np.asarray(N[rng.choice(len(N), min(200000, len(N)), replace=False)], float); r_ = np.asarray(R_[rng.choice(len(R_), min(400000, len(R_)), replace=False)], float); "
+                "mr = np.median(r_[:, :2], 0); n = n[np.hypot(*(n[:, :2] - mr).T) < 30]; d = min_abstand(n, r_); "
+                "print('VERGLEICH ' + json.dumps(dict(punkte=int(len(d)), median_m=round(float(np.median(d)), 3), anteil_unter_0_5m=round(float((d < 0.5).mean()), 3), p90_m=round(float(np.percentile(d, 90)), 3))))")
+        rc, out = lauf(B, "vergleich", [PY, "-I", "-c", code, W, a.referenz_wolke], log)
+        try:
+            v = json.loads([l for l in out.splitlines() if l.startswith("VERGLEICH ")][-1][10:]); notiz(B, "vergleich_ergebnis", bool(v["median_m"] < 0.5), referenz=a.referenz_wolke, **v)
+        except Exception as e: notiz(B, "vergleich_ergebnis", False, fehler=str(e)[:200])
     try:                                                                   # 15.11. (Nutzer): Warnungen aller Logs des Laufs in den Bericht - nichts ungelesen verwerfen
         sys.path.insert(0, os.path.join(ROOT, "tools")); import log_warnungen as LW
         w = LW.sammeln([log] + sorted(glob.glob(os.path.join(P, "*.log"))) + sorted(glob.glob(os.path.join(P, "sfm", "*.log"))))

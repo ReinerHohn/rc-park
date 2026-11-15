@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__084_Redoutenhaus_Freiburg_4146",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.1687591547465275,
+   1.7981523920781812,
+   -2.3503797284085466
+  ],
+  "t": [
+   15.696884943382718,
+   11.126830636507973,
+   32.51320387614291
+  ],
+  "f_px": 5434.023861144696,
+  "cx": 1567.0,
+  "cy": 1843.0,
+  "k1": -0.16885690025937347,
+  "bild": [
+   3134,
+   3686
+  ],
+  "standort_xyz": [
+   22.539,
+   30.261,
+   1.896
+  ],
+  "hoehe_ueber_gelaende": 1.9,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

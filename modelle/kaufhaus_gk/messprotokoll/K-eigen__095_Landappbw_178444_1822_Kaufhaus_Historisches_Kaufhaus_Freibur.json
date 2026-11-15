@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__095_Landappbw_178444_1822_Kaufhaus_Historisches_Kaufhaus_Freibur",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.8432659068305002,
+   -1.2321910535886016,
+   1.6475221077077475
+  ],
+  "t": [
+   11.738309101420505,
+   12.661560249286923,
+   36.136368128913624
+  ],
+  "f_px": 9102.6428967607,
+  "cx": 1368.0,
+  "cy": 1824.0,
+  "k1": 0.04904236713314284,
+  "bild": [
+   2736,
+   3648
+  ],
+  "standort_xyz": [
+   -30.994,
+   25.277,
+   2.094
+  ],
+  "hoehe_ueber_gelaende": 2.09,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

@@ -1,0 +1,401 @@
+{
+ "werkzeug": "dach_vermessen.py",
+ "quelle": "Laser DOM1 (LGL 2017) ueber rahmen.gelaende; Grossform, Details (Treppengiebel, Gauben) NICHT erfasst",
+ "lod2_id": "DEBW_0010007Tv9r",
+ "teile": [
+  {
+   "teil": 0,
+   "flaeche_m2": 307.6,
+   "pixel": 254,
+   "mitte_uv": [
+    2.288,
+    6.056
+   ],
+   "achse_a": [
+    0.949,
+    -0.31527
+   ],
+   "halb_a": 10.785,
+   "halb_b": 7.582,
+   "grundriss_uv": [
+    [
+     -4.649,
+     0.371
+    ],
+    [
+     -6.747,
+     1.068
+    ],
+    [
+     -10.014,
+     2.154
+    ],
+    [
+     -7.783,
+     9.611
+    ],
+    [
+     -6.772,
+     12.99
+    ],
+    [
+     -5.531,
+     16.642
+    ],
+    [
+     13.627,
+     9.619
+    ],
+    [
+     12.745,
+     5.922
+    ],
+    [
+     12.327,
+     5.979
+    ],
+    [
+     11.669,
+     2.827
+    ],
+    [
+     10.132,
+     -4.539
+    ],
+    [
+     6.045,
+     -3.181
+    ]
+   ],
+   "dom1_max": 21.160010986328132,
+   "dom1_p95": 20.594506530761723,
+   "wand_oberkante_lod2": 21.404999999999973,
+   "wolke_p995": 20.634258881700916,
+   "spitze": {
+    "dom1_max": 21.160010986328132,
+    "lage_uv": [
+     -6.64,
+     9.92
+    ],
+    "pixel": 3,
+    "hinweis": "DOM1 1-m-Raster: Spitze eher HOEHER; Hoehe aus masstabelle (Gesamthoehe) nehmen, Form Foto-Aufgabe"
+   },
+   "beste": {
+    "form": "sattel_a",
+    "first_versatz_b": 0.0,
+    "ebenen": [
+     [
+      0.0,
+      1.0,
+      -0.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    ],
+    "first": 21.003467559814453,
+    "steigung": 1.2929316759109497,
+    "neigung_grad": 52.280340188670024,
+    "rms_m": 0.25481337308883667,
+    "bic": -677.9377241807023
+   },
+   "zweitbeste": {
+    "form": "walm_a",
+    "first_halblaenge": 3.2030170602648953,
+    "ebenen": [
+     [
+      1.0,
+      0.0,
+      -3.203
+     ],
+     [
+      -1.0,
+      0.0,
+      -3.203
+     ],
+     [
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    ],
+    "first": 21.248987197875977,
+    "steigung": 1.2511529922485352,
+    "neigung_grad": 51.365957385215765,
+    "rms_m": 0.9073666334152222,
+    "bic": -32.77000870491436
+   },
+   "eindeutig": true,
+   "alle": [
+    {
+     "form": "sattel_a",
+     "first_versatz_b": 0.0,
+     "first": 21.003,
+     "steigung": 1.293,
+     "neigung_grad": 52.28,
+     "rms_m": 0.255,
+     "bic": -677.938
+    },
+    {
+     "form": "sattel_a",
+     "first_versatz_b": 0.379,
+     "first": 20.921,
+     "steigung": 1.237,
+     "neigung_grad": 51.052,
+     "rms_m": 0.489,
+     "bic": -346.959
+    },
+    {
+     "form": "sattel_a",
+     "first_versatz_b": -0.379,
+     "first": 20.791,
+     "steigung": 1.228,
+     "neigung_grad": 50.852,
+     "rms_m": 0.509,
+     "bic": -326.279
+    },
+    {
+     "form": "sattel_a",
+     "first_versatz_b": 0.758,
+     "first": 20.637,
+     "steigung": 1.116,
+     "neigung_grad": 48.129,
+     "rms_m": 0.865,
+     "bic": -56.778
+    },
+    {
+     "form": "sattel_a",
+     "first_versatz_b": -0.758,
+     "first": 20.387,
+     "steigung": 1.072,
+     "neigung_grad": 46.993,
+     "rms_m": 0.87,
+     "bic": -53.867
+    },
+    {
+     "form": "walm_a",
+     "first_halblaenge": 3.203,
+     "first": 21.249,
+     "steigung": 1.251,
+     "neigung_grad": 51.366,
+     "rms_m": 0.907,
+     "bic": -32.77
+    },
+    {
+     "form": "walm_a",
+     "first_halblaenge": 3.043,
+     "first": 21.169,
+     "steigung": 1.219,
+     "neigung_grad": 50.636,
+     "rms_m": 0.969,
+     "bic": 0.669
+    },
+    {
+     "form": "walm_a",
+     "first_halblaenge": 2.883,
+     "first": 21.094,
+     "steigung": 1.188,
+     "neigung_grad": 49.907,
+     "rms_m": 1.03,
+     "bic": 31.662
+    }
+   ]
+  },
+  {
+   "teil": 2,
+   "flaeche_m2": 50.0,
+   "pixel": 31,
+   "mitte_uv": [
+    -8.188,
+    -3.03
+   ],
+   "achse_a": [
+    -0.28673,
+    -0.95801
+   ],
+   "halb_a": 4.444,
+   "halb_b": 3.236,
+   "grundriss_uv": [
+    [
+     -5.964,
+     -6.791
+    ],
+    [
+     -6.271,
+     -7.909
+    ],
+    [
+     -9.234,
+     -7.179
+    ],
+    [
+     -12.563,
+     -6.359
+    ],
+    [
+     -10.014,
+     2.154
+    ],
+    [
+     -6.747,
+     1.068
+    ],
+    [
+     -4.649,
+     0.371
+    ],
+    [
+     -6.705,
+     -6.55
+    ]
+   ],
+   "dom1_max": 13.139991455078132,
+   "dom1_p95": 12.885001831054694,
+   "wand_oberkante_lod2": 21.404999999999973,
+   "wolke_p995": null,
+   "spitze": {
+    "dom1_max": 13.139991455078132,
+    "lage_uv": [
+     -11.29,
+     -5.9
+    ],
+    "pixel": 1,
+    "hinweis": "DOM1 1-m-Raster: Spitze eher HOEHER; Hoehe aus masstabelle (Gesamthoehe) nehmen, Form Foto-Aufgabe"
+   },
+   "beste": {
+    "form": "sattel_a",
+    "first_versatz_b": 0.1618032923152594,
+    "ebenen": [
+     [
+      0.0,
+      1.0,
+      -0.1618
+     ],
+     [
+      0.0,
+      -1.0,
+      0.1618
+     ]
+    ],
+    "first": 12.925339698791504,
+    "steigung": 1.0833840370178223,
+    "neigung_grad": 47.29194654377203,
+    "rms_m": 0.0739000141620636,
+    "bic": -151.2106584687116
+   },
+   "zweitbeste": {
+    "form": "walm_a",
+    "first_halblaenge": 1.2074359429121344,
+    "ebenen": [
+     [
+      1.0,
+      0.0,
+      -1.2074
+     ],
+     [
+      -1.0,
+      0.0,
+      -1.2074
+     ],
+     [
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    ],
+    "first": 13.049927711486816,
+    "steigung": 1.1079717874526978,
+    "neigung_grad": 47.93216740249067,
+    "rms_m": 0.3684801459312439,
+    "bic": -51.596882092739726
+   },
+   "eindeutig": true,
+   "alle": [
+    {
+     "form": "sattel_a",
+     "first_versatz_b": 0.162,
+     "first": 12.925,
+     "steigung": 1.083,
+     "neigung_grad": 47.292,
+     "rms_m": 0.074,
+     "bic": -151.211
+    },
+    {
+     "form": "sattel_a",
+     "first_versatz_b": 0.324,
+     "first": 12.87,
+     "steigung": 0.987,
+     "neigung_grad": 44.617,
+     "rms_m": 0.144,
+     "bic": -109.894
+    },
+    {
+     "form": "sattel_a",
+     "first_versatz_b": 0.0,
+     "first": 12.939,
+     "steigung": 1.145,
+     "neigung_grad": 48.874,
+     "rms_m": 0.177,
+     "bic": -96.918
+    },
+    {
+     "form": "sattel_a",
+     "first_versatz_b": 0.485,
+     "first": 12.803,
+     "steigung": 0.879,
+     "neigung_grad": 41.306,
+     "rms_m": 0.253,
+     "bic": -75.008
+    },
+    {
+     "form": "sattel_a",
+     "first_versatz_b": -0.162,
+     "first": 12.836,
+     "steigung": 1.093,
+     "neigung_grad": 47.536,
+     "rms_m": 0.33,
+     "bic": -58.51
+    },
+    {
+     "form": "sattel_a",
+     "first_versatz_b": 0.647,
+     "first": 12.765,
+     "steigung": 0.79,
+     "neigung_grad": 38.304,
+     "rms_m": 0.338,
+     "bic": -56.94
+    },
+    {
+     "form": "walm_a",
+     "first_halblaenge": 1.207,
+     "first": 13.05,
+     "steigung": 1.108,
+     "neigung_grad": 47.932,
+     "rms_m": 0.368,
+     "bic": -51.597
+    },
+    {
+     "form": "walm_a",
+     "first_halblaenge": 1.147,
+     "first": 13.047,
+     "steigung": 1.094,
+     "neigung_grad": 47.571,
+     "rms_m": 0.389,
+     "bic": -48.21
+    }
+   ]
+  }
+ ]
+}

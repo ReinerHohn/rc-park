@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__088_Gable_detail_of_the_Historisches_kaufhaus_at_Freiburg._See_a",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.8929922799179084,
+   -1.1752455665550674,
+   1.7091971617905328
+  ],
+  "t": [
+   10.382636056156473,
+   13.989842038705033,
+   33.92651122552448
+  ],
+  "f_px": 8406.242600271376,
+  "cx": 1423.0,
+  "cy": 1979.0,
+  "k1": 0.3295354327354493,
+  "bild": [
+   2846,
+   3958
+  ],
+  "standort_xyz": [
+   -29.783,
+   23.725,
+   2.143
+  ],
+  "hoehe_ueber_gelaende": 2.14,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__061_The_so_called_famous_Red_House_Alte_Kaufhaus_A.D._1532_in_Fr",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.20885848319990225,
+   -1.6566860061042117,
+   2.324220625292928
+  ],
+  "t": [
+   4.105461749574018,
+   12.870603245196294,
+   30.579610221592144
+  ],
+  "f_px": 3038.399113899006,
+  "cx": 1709.5,
+  "cy": 1361.0,
+  "k1": -0.10950460303315793,
+  "bild": [
+   3419,
+   2722
+  ],
+  "standort_xyz": [
+   -6.359,
+   32.751,
+   2.141
+  ],
+  "hoehe_ueber_gelaende": 2.14,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

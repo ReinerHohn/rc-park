@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__102_Historisches_Kaufhaus_Freiburg_im_Breisgau_jm8185",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.12129137808419128,
+   1.8489062702431913,
+   -2.3974943890931644
+  ],
+  "t": [
+   0.5587305463684392,
+   12.488279913854232,
+   28.468724749630013
+  ],
+  "f_px": 16699.48725637664,
+  "cx": 1223.0,
+  "cy": 1825.0,
+  "k1": -0.6435206854688522,
+  "bild": [
+   2446,
+   3650
+  ],
+  "standort_xyz": [
+   4.777,
+   30.341,
+   4.831
+  ],
+  "hoehe_ueber_gelaende": 4.83,
+  "rms_px": null,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   21.660011337280274
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/kaufhaus_gk/messprotokoll/SFM-AUSRICHTUNG-kaufhaus_gk.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}
