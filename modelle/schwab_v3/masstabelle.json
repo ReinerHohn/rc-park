@@ -64,6 +64,18 @@
    "hinweis_wolke": "Das Modell enthaelt nur das Zielgebaeude LoD2 DEBW_001000hPLcp (Turm + Rundanbau). Nachbarhaeuser sind eigene LoD2-Gebaeude; ihre Waende zeigt nur die Ebene 'LoD2-Waende' der 3D-Seite.",
    "naechster_schritt": "LoD2-IDs der beiden Nachbarhaeuser bestimmen (Kandidatenliste rc-park_daten/schwab_v3/pipe/kandidaten.log, 16 Gebaeude im Umkreis), als eigene Teile/Objekte mit gebaeude_aus_lod2 anlegen (gleicher Rahmen), dann je Haus Kantenstufe + Bauteile",
    "entscheidung_nutzer": "2026-11-15 12:25: VOLL AUSMODELLIEREN (Fachwerkhaus und Haus mit Torbogen wie das Schwabentor mit Details aus Fotokanten)"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Claude",
+   "text": "Drohnenclip NW-Mt7ryZ8c: 22 von 23 Bildern im Dichtsatz sind eine Insel-Kette (0 % Fremdstuetze, Flug ~500 m bis hinter das Muenster, im SfM auf 27 m zusammengefallen). Ihre Miniaturstadt schwebte in z 25-32 m um den Turm (16 686 Sparse-Punkte im 35-m-Umkreis). Nach Ausschluss: schwebende Punkte z 24-34 m, 10-35 m um den Turm 94 725 -> 6 282, Dachpunkte z>40 m 2 491 -> 2 433.",
+   "naechster_schritt": "erledigt fuer die Wolke (tools/kette_insel_pruefen.py + wolke_neu_fusionieren.py); offen: Pruefung in pipeline_objekt.py/gesamtkette.py als Tor nach dem Mapper einbauen und K-Dateien der Insel-Bilder fuer Fotomessungen sperren"
+  },
+  {
+   "datum": "2026-11-15",
+   "wer": "Claude",
+   "text": "Dachmessung am Foto (Traufecken, foto_mass.py --tri) scheitert an den Kameras in Dachhoehe: dieselbe Traufecke B aus 6 Fotos -> Strahlabstaende 0,26-0,87 m; Fotogruppe -x-Seite ergibt z 34,5 m, Gruppe +y-Seite z 39,9 m. Rueckprojektion der SfM-Punkte je Bild ist dagegen ~1 px (K-Dateien = SfM). VORLAEUFIG: Traufecke A (+x,+y) = (4,86 / 22,50 / 39,40) m aus 2 Fotos mit 57 Grad Schnittwinkel (M-113205-001), Wolke zeigt Traufe bei ~39-40 m, Modell 36,7 m. Kein Sollwert.",
+   "naechster_schritt": "Kameras in Dachhoehe verfeinern: Handpicks der 4 Traufecken + Laternenfuss als Verknuepfungspunkte in einen Buendelausgleich (Drehung je Foto frei, Lage fest), danach Traufhoehe/Ueberstand/Neigung neu mit foto_mass.py --tri (>= 3 Fotos je Ecke, Strahlabstand < 0,1 m als Tor). Nebenbefund: foto_mass.py findet die v3-Fotos nicht fuer den Protokollausschnitt (fotos_dir zeigt auf daten/schwabentor/fotos, v3-Fotos liegen in rc-park_daten/schwab_v3/fotos)"
   }
  ]
 }

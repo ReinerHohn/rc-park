@@ -1,0 +1,37 @@
+{
+ "id": "M-113205-001",
+ "typ": "triangulation",
+ "foto": "113205",
+ "name": "Traufecke A (+x,+y) Dachkante aussen oben",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__IMG_20261106_113205",
+   "px": [
+    2822.0,
+    1005.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__IMG_20261106_114037",
+   "px": [
+    1132.0,
+    364.0
+   ]
+  }
+ ],
+ "P": [
+  4.862,
+  22.498,
+  39.403
+ ],
+ "strahl_abstand_m": [
+  0.135,
+  0.135
+ ],
+ "schnittwinkel_grad": [
+  56.8
+ ],
+ "z": 39.403,
+ "unsicherheit_m": 0.207,
+ "massstab_von": "Kameras K-eigen__IMG_20261106_113205, K-eigen__IMG_20261106_114037 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

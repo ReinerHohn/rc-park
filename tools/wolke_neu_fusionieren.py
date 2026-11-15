@@ -64,6 +64,8 @@ def main():
     aus = set(json.load(open(os.path.join(od, "audit", "kamera_plausibel.json")))["ausschliessen"]); D = os.path.join(pipe, "dicht"); cfg = os.path.join(D, "stereo", "fusion.cfg")
     alle = [l.strip() for l in open(cfg) if l.strip()] if os.path.exists(cfg) else sorted(os.listdir(os.path.join(D, "images")))
     if "--haufen" in sys.argv: aus |= haufen_quellen(od, D, name)
+    ki = os.path.join(od, "audit", "kette_insel.json")                    # 15.11.2026: Insel-Ketten (tools/kette_insel_pruefen.py) - Bilder ohne Fremdstuetze, Massstab der Kette nicht belegt
+    if os.path.exists(ki): n0 = len(aus); aus |= set(json.load(open(ki))["ausschliessen"]); print(f"Insel-Ketten: {len(aus) - n0} weitere Bilder ausgeschlossen")
     bleibt = [b for b in alle if os.path.splitext(b)[0] not in aus]; print(f"Fusion: {len(alle)} Bilder, {len(alle) - len(bleibt)} ausgeschlossen (Kameras unter Gelaende), {len(bleibt)} bleiben")
     if len(bleibt) == len(alle): return 2
     if not os.path.exists(cfg + ".alle"): open(cfg + ".alle", "w").write("\n".join(alle) + "\n")
