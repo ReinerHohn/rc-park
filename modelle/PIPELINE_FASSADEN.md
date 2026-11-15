@@ -67,7 +67,17 @@ in voller Aufloesung bezahlbar.
 4. Punkte in den Modellrahmen, auf Feld +- Band beschneiden, je 1-cm-Zelle Median des Abstands vor der Wandebene
    -> Hoehenbild im Format von `relief_einsatz.py` (direkt als Relief-Einsatz baubar) + Schattierungsbild.
 Aufruf (als Job): `JOB_GPU_MB=6500 tools/job_start.sh NAME LOG /media/oem/scan/venv-colmap/bin/python -I tools/tiefe_lokal.py <objekt.json> <sparse> <bilder> --name N --a .. --b .. --aussen .. --feld u0 u1 z0 z1 [--k 12] [--max_size 3200] [--px 0.01] [--massstab ..]`
-Erster Lauf: Schwabentor Nordwand unten (u 0,1-12,05 m, z 0-10,5 m, Rohrahmen), 12 Fotos, 3200 px, 1 cm. **Ergebnis: siehe Nachtrag unten.**
+**Ergebnis (15.11.2026, Schwabentor Nordwand unten, u 0,1-12,05 m, z 0-10,5 m, Rohrahmen, 3200 px, 1 cm):**
+- Lauf 1 (12 schaerfste Fotos): 633 s, 3842 Punkte je m2, 73 % Loecher. Ursache: die Fotos standen fast am selben Fleck, Schnittwinkel < 3 Grad, in den Tiefenkarten nur 15-30 % gueltig.
+- Lauf 2 (Fotowahl FUER STEREO: 4-35 Grad Blickunterschied zu einem gewaehlten Foto, keine Doppel < 1,5 Grad; Filter gelockert: Triangulationswinkel 1,5 Grad,
+  Fusion min 2 Pixel / 3 px / 3 % Tiefe): 672 s, 7201 Punkte je m2, 59 % Loecher im Feld; von der Flaeche, die das grobe Relief abdeckt, trifft die Feinrechnung 60 %.
+  VRAM nur ~2,2 GB - 4000 px waeren moeglich. Rechenzeit ~11 min je Feld.
+- Qualitaet: wo Daten sind, zeigt das 1-cm-Bild Steinflaechen, Bossen und Fugen einzeln; das 5-cm-Relief zeigt nur Kissen (Bild `modelle/schwab_v3/audit/tiefe_lokal_vergleich_5cm_1cm.jpg`).
+- Einbau: `relief_mischen.py fein.npz grob_voll.npz aus.npz --px 0.02` (Putz bleibt eben; fein wo vorhanden; sonst grob/generiert auf das Niveau des feinen gebracht;
+  Entstoeren: Ausreisser > 2,5 cm gegen den 5x5-Median, Uebergang fein/grob ueber 3 Zellen - ohne das schwarze Sprenkel im Modell). Raster 2 cm = 0,23 mm bei 1:87;
+  1 cm waere unter der Druckaufloesung und vervierfacht das STL. Im Generator: grobes Relief mit `tief_felder=[Feld]` zurueck, gemischter Einsatz davor.
+  Nordwand: 44 % fein, 25 % aus dem groben Relief (davon 11 % generiert), 5 % Putz, 27 % leer (Tor, Galeriezone). Abnahme gruen, Modell neben Foto angesehen.
+- Offen: Abdeckung (mehr/naehere Fotos, 4000 px, Tiefenkarten direkt statt Fusion), Figuren (z. B. ueber dem Nordtor) gezielt als eigenes kleines Feld mit 5 mm, Aufnahme in die Kette als Stufe.
 Abnahme des Versuchs: (a) Schattierungsbild neben dem feinen Fassadenbild - sind Fugen/Figur schaerfer als im 5-cm-Relief? (b) Punkte je Zelle, Lochanteil;
 (c) Modell neben Foto nach dem Einbau; (d) Laufzeit und VRAM. Scheitert er, kommt er mit Ursache nach `modelle/NICHTS_GEBRACHT.md`.
 

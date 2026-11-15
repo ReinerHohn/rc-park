@@ -79,7 +79,12 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     if os.path.exists(rel_n.replace(".npz", "_voll.npz")):          # 15.11.2026 Nutzer: "Rest der Steine notfalls generieren" - Loecher des Scan-Reliefs mit generierten Quadern gefuellt (tools/steine_generieren.py)
         rel_n = rel_n.replace(".npz", "_voll.npz"); beleg("wand", "Generierte Quader Nord (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)", "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben", anteil=float(np.load(rel_n)["generiert_anteil"]), hinweis="ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original")
     if os.path.exists(rel_n) and os.environ.get("OHNE_RELIEF") != "1":
-        rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12 + WV, trend=True, versatz=0.0, null_felder=[(2.6, 5.4, 23.9, 27.1), (6.9, 9.7, 23.9, 27.1), (1.6, 11.1, 9.7, 21.1)])   # Fensterfelder baut der Generator scharf (unten)
+        rel_nm = os.path.join(HERE, "schwab_v3", "relief", "nord_misch.npz"); fein_n = os.path.exists(rel_nm) and os.environ.get("OHNE_FEIN") != "1"   # 15.11. spaet: lokale Feinrechnung der Tiefe (tools/tiefe_lokal.py -> relief_mischen.py), Nordwand unten 2 cm statt 5 cm
+        rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12 + WV, trend=True, versatz=0.0, null_felder=[(2.6, 5.4, 23.9, 27.1), (6.9, 9.7, 23.9, 27.1), (1.6, 11.1, 9.7, 21.1)], tief_felder=[(0.0, 12.2, 0.0, 10.4)] if fein_n else [])
+        if fein_n:
+            rumpf = rumpf + relief_koerper(rel_nm, tiefe=0.12 + WV, trend=True, null_felder=[(1.6, 11.1, 9.7, 21.1)])
+            beleg("wand", "Feines Relief Nordwand z 0-10,5 m (2 cm)", "lokale Feinrechnung: 13 Nahfotos in 3200 px, COLMAP PatchMatch nur fuer dieses Feld (tools/tiefe_lokal.py), gemischt mit dem groben Relief (tools/relief_mischen.py)",
+                  fein_anteil=float(np.load(rel_nm)["fein"].mean()), hinweis="Scan-Relief, kein Mass; wo die Feinrechnung keine Daten hat (56 %), steht das grobe bzw. generierte Relief")   # Fensterfelder baut der Generator scharf (unten)
         beleg("wand", "Relief Nordwand z 0,6-29,6 m", "OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)",
               hinweis="Scan-Relief, kein Mass: Torbogen, Holzgalerie und Vordach sind darin Loecher (glatte Wand) und fehlen noch; Wandanzug (~0,6 cm/m) abgezogen")
     # Tordurchfahrt Nord als ECHTE Oeffnung aus Fotokanten (Nutzer 13:30: Relief mit dem Generator schaerfen). Masse M-113602-001..-006 auf der Sockelebene.

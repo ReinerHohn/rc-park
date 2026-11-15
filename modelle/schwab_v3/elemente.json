@@ -59,6 +59,14 @@
  },
  {
   "seite": "wand",
+  "element": "Feines Relief Nordwand z 0-10,5 m (2 cm)",
+  "quelle": "lokale Feinrechnung: 13 Nahfotos in 3200 px, COLMAP PatchMatch nur fuer dieses Feld (tools/tiefe_lokal.py), gemischt mit dem groben Relief (tools/relief_mischen.py)",
+  "fein_anteil": 0.41,
+  "hinweis": "Scan-Relief, kein Mass; wo die Feinrechnung keine Daten hat (56 %), steht das grobe bzw. generierte Relief | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Relief Nordwand z 0,6-29,6 m",
   "quelle": "OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)",
   "hinweis": "Scan-Relief, kein Mass: Torbogen, Holzgalerie und Vordach sind darin Loecher (glatte Wand) und fehlen noch; Wandanzug (~0,6 cm/m) abgezogen | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",

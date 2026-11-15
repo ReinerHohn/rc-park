@@ -39,7 +39,15 @@ def main():
     else: zf = 1.0
     fused = os.path.join(W, "fused.ply")
     if not a.nur_raster or not os.path.exists(fused):
-        fotos, bew = fotos_fuer_wand(od, Am, Bm, n, z0 * zf, z1 * zf, k=a.k); print("Fotos:", [(f[-12:], round(sc)) for sc, _, f in bew], flush=True)
+        # Fotowahl FUER STEREO (erster Lauf 15.11.: die 12 besten Fotos standen fast am selben Fleck -> Schnittwinkel < 3 Grad, der Geometriefilter warf 70-85 % der Tiefen weg):
+        # gierig nach Guete, aber jedes neue Foto muss zu einem gewaehlten 4-35 Grad Blickwinkel-Unterschied haben und zu keinem < 1,5 Grad (Doppel).
+        _, kand = fotos_fuer_wand(od, Am, Bm, n, z0 * zf, z1 * zf, k=60); mitte = np.r_[0.5 * (Am + Bm), 0.5 * (z0 + z1) * zf]; gew = []; ri = []
+        for sc, _, f in kand:
+            K_ = json.load(open(os.path.join(od, "messprotokoll", "K-" + f + ".json")))["kamera"]; v = np.array(K_["standort_xyz"], float) - mitte; v /= np.linalg.norm(v)
+            w_ = [np.degrees(np.arccos(np.clip(v @ r_, -1, 1))) for r_ in ri]
+            if not ri or (min(w_) >= 1.5 and any(4.0 <= x <= 35.0 for x in w_)): gew.append((sc, f)); ri.append(v)
+            if len(gew) >= a.k: break
+        fotos = [f for _, f in gew]; print("Fotos:", [(f[-12:], round(sc)) for sc, f in gew], flush=True)
         rec = pycolmap.Reconstruction(a.sparse); namen = {os.path.splitext(im.name)[0]: im.name for im in rec.images.values()}; nimm = {namen[f] for f in fotos if f in namen}
         if len(nimm) < 4: print(f"ABBRUCH: nur {len(nimm)} der gewaehlten Fotos im Netz"); return 1
         for im in list(rec.images.values()):
@@ -47,9 +55,9 @@ def main():
         sp = os.path.join(W, "sparse_teil"); shutil.rmtree(sp, ignore_errors=True); os.makedirs(sp); rec.write(sp)
         for d_ in ("images", "stereo", "sparse"): shutil.rmtree(os.path.join(W, d_), ignore_errors=True)
         uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = a.max_size; pycolmap.undistort_images(W, sp, a.bilder, output_type="COLMAP", undistort_options=uo); print(f"entzerrt {len(nimm)} Bilder, {time.time() - t0:.0f} s", flush=True)
-        po = pycolmap.PatchMatchOptions(); po.max_image_size = a.max_size; po.geom_consistency = True; po.gpu_index = "0"; po.cache_size = 12
+        po = pycolmap.PatchMatchOptions(); po.max_image_size = a.max_size; po.geom_consistency = True; po.gpu_index = "0"; po.cache_size = 12; po.filter_min_triangulation_angle = 1.5; po.geom_consistency_max_cost = 2.0
         pycolmap.patch_match_stereo(W, options=po); print(f"PatchMatch fertig, {time.time() - t0:.0f} s", flush=True)
-        fo = pycolmap.StereoFusionOptions(); fo.max_image_size = a.max_size; fo.min_num_pixels = 3; pycolmap.stereo_fusion(fused, W, options=fo, input_type="geometric", output_type="ply"); print(f"Fusion fertig, {time.time() - t0:.0f} s", flush=True)
+        fo = pycolmap.StereoFusionOptions(); fo.max_image_size = a.max_size; fo.min_num_pixels = 2; fo.max_reproj_error = 3.0; fo.max_depth_error = 0.03; fo.max_normal_error = 25; pycolmap.stereo_fusion(fused, W, options=fo, input_type="geometric", output_type="ply"); print(f"Fusion fertig, {time.time() - t0:.0f} s", flush=True)
     V = ply_lesen(fused); X = ((np.c_[V["x"], V["y"], V["z"]].astype(np.float64) - tt) / s) @ R
     if a.massstab: k_, M3 = a.massstab[0], np.array(a.massstab[1:]); X = M3 + (X - M3) / k_
     uu = (X[:, :2] - A) @ t; dd = (X[:, :2] - A) @ n; g = (uu >= u0) & (uu < u1) & (X[:, 2] >= z0) & (X[:, 2] < z1) & (np.abs(dd) < a.band); uu, dd, zz = uu[g], dd[g], X[g, 2]
