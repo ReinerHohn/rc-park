@@ -89,7 +89,10 @@ def gps_massstab(ims, C, obj, od, fotos=""):
         nm = os.path.splitext(os.path.basename(im.name))[0]; kand = [nm] + ([nm.split("__", 1)[1]] if "__" in nm else [])
         hit = [p for d in ds for n_ in kand for p in glob.glob(os.path.join(d, glob.escape(n_) + ".*")) if p.lower().endswith((".jpg", ".jpeg"))]
         g = gps_exif(hit[0]) if hit else None
-        if g: U.append(wgs84_zu_utm(*g)); X.append(c); GPS_KAM.append((_i, U[-1]))
+        if g:
+            u_ = np.asarray(wgs84_zu_utm(*g), float)
+            if not np.isfinite(u_).all(): continue                                  # Kaufhaus 15.11.: einzelne EXIF-GPS ergeben NaN -> vergifteten Median/Fit (Rest 'nan', 0 Kameras)
+            U.append(u_); X.append(c); GPS_KAM.append((_i, u_))
     if len(U) < 8: print(f"GPS-Massstab: nur {len(U)} Kameras mit GPS - Startmassstab aus Wolkenausdehnung"); return None   # 8: Kaufhaus hatte 10 (Chat-Kopien ohne EXIF)
     U = np.array(U, float); X = np.array(X, float); i, j = np.triu_indices(len(U), 1); dg = np.hypot(*(U[i] - U[j]).T); dx = np.linalg.norm(X[i] - X[j], axis=1); m = dg > 15
     if m.sum() < 15: return None
