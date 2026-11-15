@@ -50,8 +50,11 @@ if [ "$GPUJOB" = 1 ]; then
 fi
 systemctl --user reset-failed "rcpark-$NAME" 2>/dev/null || true
 CMD=$(printf '%q ' "$@")
-systemd-run --user --unit "rcpark-$NAME" --collect -p MemoryHigh="${JOB_MEMORY_HIGH:-11G}" -p WorkingDirectory="$(pwd)" \
-  /bin/bash -c "$CMD > '$LOG' 2>&1; rc=\$?; echo \"JOB_ENDE rc=\$rc\" >> '$LOG'; [ \"\$(cut -d' ' -f1 '$LOCK' 2>/dev/null)\" = '$NAME' ] && rm -f '$LOCK'; exit \$rc"
+# 15.11.2026 (Recherche Durchsatz + Messung: SIFT 14 min statt < 1 min, weil CPU-Ausrichtungen alle Kerne belegten): GPU-Jobs bekommen CPU-Vorrang
+# (CPUWeight 1000, alle Kerne); reine CPU-Jobs (JOB_GPU_MB=0) laufen mit CPUWeight 20 auf den 12 langsamen Kernen 16-27 (JOB_CPU=alle hebt das auf).
+if [ "${BUDGET:-0}" -gt 0 ] 2>/dev/null || [ "${JOB_CPU:-}" = "alle" ]; then CPUW=1000; PIN=""; else CPUW=20; PIN="taskset -c ${JOB_CPU_KERNE:-16-27} "; fi
+systemd-run --user --unit "rcpark-$NAME" --collect -p MemoryHigh="${JOB_MEMORY_HIGH:-11G}" -p CPUWeight="$CPUW" -p WorkingDirectory="$(pwd)" \
+  /bin/bash -c "$PIN$CMD > '$LOG' 2>&1; rc=\$?; echo \"JOB_ENDE rc=\$rc\" >> '$LOG'; [ \"\$(cut -d' ' -f1 '$LOCK' 2>/dev/null)\" = '$NAME' ] && rm -f '$LOCK'; exit \$rc"
 if [ "${RCPARK_OHNE_GPU_WACHE:-0}" != "1" ]; then                    # GPU-Wache (Lehre 14.11.: CPU-Werkzeug lief unbemerkt auf 18 Kernen, GPU 0 %)
   systemd-run --user --unit "rcpark-$NAME-gpuwache" --collect -p WorkingDirectory="$(pwd)" /bin/bash "$(cd "$(dirname "$0")" && pwd)/gpu_wache.sh" "$NAME" "$LOG" >/dev/null 2>&1 || true
 fi
