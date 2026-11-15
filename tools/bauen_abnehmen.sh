@@ -17,6 +17,13 @@ if $PY -c "import json,sys; sys.exit(0 if 'druck_teilung' in json.load(open('$OB
 $PY -W ignore -I tools/freiraum_audit.py "$OBJ" || echo "freiraum_audit fehlgeschlagen - Freiraumpruefung wird nan (FEHLER)"   # Sichtstrahlen gegen Modell (nur mit objekt.json "freiraum")
 set +e; $PY -W ignore -I tools/pruefstand.py "$OBJ"; RC=$?; set -e
 if $PY -c "import json,sys; sys.exit(0 if json.load(open('$OBJ')).get('hoehen_tor') else 1)"; then set +e; $PY -W ignore -I tools/hoehe_gegen_dom1.py "$OBJ"; RH=$?; set -e; if [ "$RH" = "3" ]; then echo "HOEHEN-TOR (DOM1) NICHT BESTANDEN"; [ "$RC" = "0" ] && RC=3; fi; fi   # 15.11.2026: Modell-Oberseite gegen Laser (objekt.json hoehen_tor: true)
+# 15.11.2026: Pflichtbild Modell NEBEN Foto aus der Fotokamera (objekt.json "neben_fotos": [FOTO, "FOTO x0 y0 x1 y1", ...]) - erst an diesem Bild sah man Uhr/Putz/Fremdkoerper-Fehler
+$PY -c "
+import json,subprocess,sys
+for i,e in enumerate(json.load(open('$OBJ')).get('neben_fotos',[])):
+    t=e.split(); aus='modelle/$1/audit/neben_%s.jpg'%t[0]; cmd=['$PY','-W','ignore','-I','tools/modell_neben_foto.py','$OBJ',t[0],aus]+(['--box']+t[1:5] if len(t)>=5 else [])
+    r=subprocess.run(cmd,capture_output=True,text=True); print('ANSEHEN (Modell neben Foto):',aus if r.returncode==0 else 'FEHLER '+r.stderr[-200:])
+" || true
 $PY -W ignore -I tools/seiten_audit.py "$OBJ"     # Sichtblatt auch bei rotem Pruefstand (man will hinsehen)
 # Automatische Foto-Diagnosen fuer jedes Foto mit kalibrierter Kamera (Breite je Hoehe in Metern, fehlende/erfundene Teile).
 # Werkzeuge pruefen ihre Kameraguete selbst und steigen bei schlechter Kamera aus - kein Handgriff noetig.
