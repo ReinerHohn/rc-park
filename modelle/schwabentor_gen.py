@@ -21,7 +21,7 @@ def beleg(seite, element, quelle, **masse): ELEMENTE.append(dict(seite=seite, el
 koerper, belege, haupt = gebaeude_aus_lod2(os.path.join(HERE, "schwabentor", "objekt.json"))
 for b in belege: beleg(**b)
 cu, cv = haupt.mean(0)
-model = koerper.translate((-cu, -cv, 0)).scale((K, K, K))
+model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 
 mesh = model.to_mesh(); V = np.asarray(mesh.vert_properties)[:, :3]; F = np.asarray(mesh.tri_verts)
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
