@@ -1,0 +1,32 @@
+{
+ "id": "M-113029-011",
+ "foto": "113029",
+ "kamera": "K-eigen__IMG_20261106_113029",
+ "ebene": "0.99989,0.0148,0=3.856",
+ "name": "Uhr Nord: Mitte ab Wandecke Ost (u=0)",
+ "mess_px": [
+  1393.0,
+  1437.0,
+  1990.0,
+  1456.0
+ ],
+ "P1": [
+  3.72,
+  9.218,
+  33.417
+ ],
+ "P2": [
+  3.63,
+  15.318,
+  33.423
+ ],
+ "dz": 0.006,
+ "dy": 6.1,
+ "dx": -0.09,
+ "abstand": 6.1,
+ "z1": 33.417,
+ "z2": 33.423,
+ "unsicherheit_rel": 0.0036,
+ "unsicherheit_m": 0.065,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113029 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.99989,0.0148,0=3.856 (+-0.3 m)"
+}

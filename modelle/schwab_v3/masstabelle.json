@@ -244,6 +244,42 @@
    "seite": "+x",
    "z": 21.0,
    "quer": 15.419
+  },
+  "uhr_ring_ost": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 33.49,
+   "quer": 12.81
+  },
+  "uhr_aussen_ost": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 33.49,
+   "quer": 12.51
+  },
+  "uhr_ring_oben": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 36.04,
+   "quer": 15.359
+  },
+  "uhr_aussen_oben": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 36.34,
+   "quer": 15.359
+  },
+  "uhr_ring_west": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 33.49,
+   "quer": 17.909
+  },
+  "uhr_aussen_west": {
+   "typ": "tiefe_bei",
+   "seite": "+x",
+   "z": 33.49,
+   "quer": 18.209
   }
  },
  "pruefungen": [
@@ -723,6 +759,102 @@
    "historie": [
     "2026-11-15 angelegt (Nutzer 13:30: Bauteile mit Generator schaerfen); Ist vorher nur Relief"
    ]
+  },
+  {
+   "name": "Uhr Nord (uhr_ring_ost): x der ersten Flaeche bei u 3.59 z 33.49 (m)",
+   "wert": "uhr_ring_ost",
+   "soll": [
+    3.71,
+    3.83
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Wandebene, Fotos 113029 und 113205 (M-113029-008..-012, M-113205-014/-015): Zifferblatt aussen 5,33-5,41 m -> 5,36 m, Mitte u 6,14 / z 33,49 (Mittel beider Fotos, Abweichung 0,1 m); geprueft wird der Rand +-0,15 m, die Staerke 8 cm ist ANNAHME",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113029-008",
+   "historie": [
+    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Uhr Nord (uhr_aussen_ost): x der ersten Flaeche bei u 3.29 z 33.49 (m)",
+   "wert": "uhr_aussen_ost",
+   "soll": [
+    3.64,
+    3.7
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Wandebene, Fotos 113029 und 113205 (M-113029-008..-012, M-113205-014/-015): Zifferblatt aussen 5,33-5,41 m -> 5,36 m, Mitte u 6,14 / z 33,49 (Mittel beider Fotos, Abweichung 0,1 m); geprueft wird der Rand +-0,15 m, die Staerke 8 cm ist ANNAHME",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113029-008",
+   "historie": [
+    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Uhr Nord (uhr_ring_oben): x der ersten Flaeche bei u 6.14 z 36.04 (m)",
+   "wert": "uhr_ring_oben",
+   "soll": [
+    3.67,
+    3.79
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Wandebene, Fotos 113029 und 113205 (M-113029-008..-012, M-113205-014/-015): Zifferblatt aussen 5,33-5,41 m -> 5,36 m, Mitte u 6,14 / z 33,49 (Mittel beider Fotos, Abweichung 0,1 m); geprueft wird der Rand +-0,15 m, die Staerke 8 cm ist ANNAHME",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113029-008",
+   "historie": [
+    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Uhr Nord (uhr_aussen_oben): x der ersten Flaeche bei u 6.14 z 36.34 (m)",
+   "wert": "uhr_aussen_oben",
+   "soll": [
+    3.6,
+    3.66
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Wandebene, Fotos 113029 und 113205 (M-113029-008..-012, M-113205-014/-015): Zifferblatt aussen 5,33-5,41 m -> 5,36 m, Mitte u 6,14 / z 33,49 (Mittel beider Fotos, Abweichung 0,1 m); geprueft wird der Rand +-0,15 m, die Staerke 8 cm ist ANNAHME",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113029-008",
+   "historie": [
+    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Uhr Nord (uhr_ring_west): x der ersten Flaeche bei u 8.69 z 33.49 (m)",
+   "wert": "uhr_ring_west",
+   "soll": [
+    3.63,
+    3.75
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Wandebene, Fotos 113029 und 113205 (M-113029-008..-012, M-113205-014/-015): Zifferblatt aussen 5,33-5,41 m -> 5,36 m, Mitte u 6,14 / z 33,49 (Mittel beider Fotos, Abweichung 0,1 m); geprueft wird der Rand +-0,15 m, die Staerke 8 cm ist ANNAHME",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113029-008",
+   "historie": [
+    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand"
+   ]
+  },
+  {
+   "name": "Uhr Nord (uhr_aussen_west): x der ersten Flaeche bei u 8.99 z 33.49 (m)",
+   "wert": "uhr_aussen_west",
+   "soll": [
+    3.56,
+    3.62
+   ],
+   "quelle": "foto_mass.py --kamera/--ebene auf der Wandebene, Fotos 113029 und 113205 (M-113029-008..-012, M-113205-014/-015): Zifferblatt aussen 5,33-5,41 m -> 5,36 m, Mitte u 6,14 / z 33,49 (Mittel beider Fotos, Abweichung 0,1 m); geprueft wird der Rand +-0,15 m, die Staerke 8 cm ist ANNAHME",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "massstab": "SfM-Buendel, Rahmen lotrecht aus Foto-Vertikalen",
+   "protokoll": "M-113029-008",
+   "historie": [
+    "2026-11-15 angelegt (Bauteile schaerfen); Ist vorher glatte Wand"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -799,40 +931,23 @@
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1616-1111",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 38.68,
-   "z_bis": 38.68,
-   "xyz": [
-    2.08,
-    18.64,
-    38.68
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=38.68 m, y=18.64 m (Zelle [1616, 1111, 101], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-1010-1515",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
    "z_von": 30.55,
    "z_bis": 30.55,
    "xyz": [
-    -1.74,
+    -1.75,
     9.66,
     30.55
    ],
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=30.55 m, y=9.66 m (Zelle [1010, 1515, 101], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3)",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-1010-1616",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
@@ -845,11 +960,11 @@
    ],
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.11 m, y=9.58 m (Zelle [1010, 1616, 101], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4)",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3)",
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-909-1717",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
@@ -862,40 +977,57 @@
    ],
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.59 m, y=9.15 m (Zelle [909, 1717, 101], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1010-1717",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 26.37,
+   "z_bis": 26.37,
+   "xyz": [
+    -1.43,
+    9.63,
+    26.37
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.37 m, y=9.63 m (Zelle [1010, 1717, 101], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1010-1717",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 26.36,
-   "z_bis": 26.36,
-   "xyz": [
-    -1.43,
-    9.62,
-    26.36
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.36 m, y=9.62 m (Zelle [1010, 1717, 101], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6)",
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-909-1818",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
    "z_von": 26.69,
    "z_bis": 26.69,
    "xyz": [
-    -4.2,
+    -4.19,
     9.17,
     26.69
    ],
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.69 m, y=9.17 m (Zelle [909, 1818, 101], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1010-1818",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 24.67,
+   "z_bis": 24.67,
+   "xyz": [
+    -1.49,
+    9.66,
+    24.67
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.67 m, y=9.66 m (Zelle [1010, 1818, 101], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ]

@@ -9,7 +9,7 @@
   "traufe_ost_reichweite": 7.07999976348877,
   "traufe_oben_z": 39.34000000000029,
   "dach_nord_z45": 2.8405637426797656,
-  "wand_nord_reichweite": 5.824653808425237,
+  "wand_nord_reichweite": 5.892884057915326,
   "tor_halb_west": 2.266284181097376,
   "tor_halb_ost": 2.372950791446179,
   "tor_scheitel_z": 6.919999999999959,
@@ -30,7 +30,13 @@
   "gal_holm_ueber": 3.6583885365174,
   "vordach_traufe": 5.2784192001123955,
   "vordach_oben": 3.646990304036187,
-  "vordach_darueber": 3.6332390295135255
+  "vordach_darueber": 3.6332390295135255,
+  "uhr_ring_ost": 3.766869419147106,
+  "uhr_aussen_ost": 3.6712993419136097,
+  "uhr_ring_oben": 3.7291375328190526,
+  "uhr_aussen_oben": 3.629126701960672,
+  "uhr_ring_west": 3.691390900201604,
+  "uhr_aussen_west": 3.586939137482645
  },
  "pruefungen": [
   {
@@ -115,7 +121,7 @@
   },
   {
    "name": "Nordwand Uhrgeschoss: Abstand von Dachmitte bei z 36 (m)",
-   "wert": 5.824653808425237,
+   "wert": 5.892884057915326,
    "soll": [
     5.65,
     5.95
@@ -329,6 +335,66 @@
    "soll": [
     3.55,
     3.72
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Uhr Nord (uhr_ring_ost): x der ersten Flaeche bei u 3.59 z 33.49 (m)",
+   "wert": 3.766869419147106,
+   "soll": [
+    3.71,
+    3.83
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Uhr Nord (uhr_aussen_ost): x der ersten Flaeche bei u 3.29 z 33.49 (m)",
+   "wert": 3.6712993419136097,
+   "soll": [
+    3.64,
+    3.7
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Uhr Nord (uhr_ring_oben): x der ersten Flaeche bei u 6.14 z 36.04 (m)",
+   "wert": 3.7291375328190526,
+   "soll": [
+    3.67,
+    3.79
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Uhr Nord (uhr_aussen_oben): x der ersten Flaeche bei u 6.14 z 36.34 (m)",
+   "wert": 3.629126701960672,
+   "soll": [
+    3.6,
+    3.66
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Uhr Nord (uhr_ring_west): x der ersten Flaeche bei u 8.69 z 33.49 (m)",
+   "wert": 3.691390900201604,
+   "soll": [
+    3.63,
+    3.75
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Uhr Nord (uhr_aussen_west): x der ersten Flaeche bei u 8.99 z 33.49 (m)",
+   "wert": 3.586939137482645,
+   "soll": [
+    3.56,
+    3.62
    ],
    "ok": true,
    "status": "ok"

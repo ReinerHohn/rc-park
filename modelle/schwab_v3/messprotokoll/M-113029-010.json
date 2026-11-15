@@ -1,0 +1,32 @@
+{
+ "id": "M-113029-010",
+ "foto": "113029",
+ "kamera": "K-eigen__IMG_20261106_113029",
+ "ebene": "0.99989,0.0148,0=3.856",
+ "name": "Uhr Nord: Durchmesser blaues Innenfeld",
+ "mess_px": [
+  1819.0,
+  1451.0,
+  2163.0,
+  1462.0
+ ],
+ "P1": [
+  3.656,
+  13.569,
+  33.418
+ ],
+ "P2": [
+  3.604,
+  17.086,
+  33.417
+ ],
+ "dz": -0.001,
+ "dy": 3.517,
+ "dx": -0.052,
+ "abstand": 3.517,
+ "z1": 33.418,
+ "z2": 33.417,
+ "unsicherheit_rel": 0.0036,
+ "unsicherheit_m": 0.056,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113029 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.99989,0.0148,0=3.856 (+-0.3 m)"
+}

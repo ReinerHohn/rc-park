@@ -104,6 +104,13 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
           hinweis="ANNAHME: Bruestung geschlossen (statt Andreaskreuze), Bodenplatte 0,35 m, Pfosten 0,22 m, Streben 6 Stueck bis z 9,9")
     beleg("dach", "Vordach Nord (geschweiftes Pultdach)", "Foto-Triangulation foto_mass.py --tri (M-113128-001..-004)", traufe_z=V_ZT, ausladung=V_W, traufbreite=round(V_U1 - V_U0, 2), anschluss_z=V_ZO, anschlussbreite=round(V_O1 - V_O0, 2),
           hinweis="ANNAHME: Schweifung aus einem Zwischenschnitt (z 18,9 / 0,55 m), Dachhaut 0,15 m")
+    # Uhr Nord: Zifferblatt als flache Scheibe mit Ziffernring (Masse M-113029-008..-012, M-113205-014/-015), zwei Balkenkoepfe darueber
+    U_UM, U_ZM, U_D, U_DI = 6.14, 33.49, 5.36, 3.52
+    ring = M.cylinder(0.10 + 0.05, U_D / 2, U_D / 2, 64) - M.cylinder(0.3, U_DI / 2, U_DI / 2, 64).translate((0, 0, 0.11))     # Ring 10 cm, Innenfeld 6 cm vor der Wand: ANNAHME
+    rumpf = rumpf + ring.translate((U_UM, U_ZM, -0.05)).transform(M_w)
+    for ub in (3.05, 9.10): rumpf = rumpf + kasten(ub - 0.15, ub + 0.15, 35.55, 36.0, -0.05, 0.25)            # Balkenkoepfe: Lage aus dem entzerrten Foto 113029, Groesse ANNAHME
+    beleg("wand", "Uhr Nord (Zifferblatt 5,36 m, Innenfeld 3,52 m)", "foto_mass.py auf der Wandebene, Fotos 113029 und 113205", durchmesser=U_D, mitte_u=U_UM, mitte_z=U_ZM,
+          hinweis="ANNAHME: Ring 10 cm / Innenfeld 6 cm vor der Wand; Ziffern, Zeiger, Sonne/Mond nicht modelliert; 2 Balkenkoepfe nach Augenschein")
     koerper = rumpf + dach + lat
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:

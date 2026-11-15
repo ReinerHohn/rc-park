@@ -1,0 +1,32 @@
+{
+ "id": "M-113205-015",
+ "foto": "113205",
+ "kamera": "K-eigen__IMG_20261106_113205",
+ "ebene": "0.99989,0.0148,0=3.856",
+ "name": "Uhr Nord: Durchmesser aussen senkrecht (2. Foto)",
+ "mess_px": [
+  1901.0,
+  2070.0,
+  1804.0,
+  1403.0
+ ],
+ "P1": [
+  3.628,
+  15.4,
+  30.852
+ ],
+ "P2": [
+  3.628,
+  15.399,
+  36.264
+ ],
+ "dz": 5.412,
+ "dy": -0.001,
+ "dx": 0.0,
+ "abstand": 5.412,
+ "z1": 30.852,
+ "z2": 36.264,
+ "unsicherheit_rel": 0.0062,
+ "unsicherheit_m": 0.058,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113205 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.99989,0.0148,0=3.856 (+-0.3 m)"
+}

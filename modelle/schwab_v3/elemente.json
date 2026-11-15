@@ -114,5 +114,15 @@
   "anschlussbreite": 6.03,
   "hinweis": "ANNAHME: Schweifung aus einem Zwischenschnitt (z 18,9 / 0,55 m), Dachhaut 0,15 m",
   "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "Uhr Nord (Zifferblatt 5,36 m, Innenfeld 3,52 m)",
+  "quelle": "foto_mass.py auf der Wandebene, Fotos 113029 und 113205",
+  "durchmesser": 5.36,
+  "mitte_u": 6.14,
+  "mitte_z": 33.49,
+  "hinweis": "ANNAHME: Ring 10 cm / Innenfeld 6 cm vor der Wand; Ziffern, Zeiger, Sonne/Mond nicht modelliert; 2 Balkenkoepfe nach Augenschein",
+  "seite_name": "wand"
  }
 ]
