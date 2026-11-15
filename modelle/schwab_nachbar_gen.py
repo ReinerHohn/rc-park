@@ -24,6 +24,11 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
             koerper = koerper + (relief_koerper(rp, tiefe=tf_, trend=True) ^ hu_)        # nur innerhalb des Gebaeudeumrisses (sonst stuende die Platte im Himmel neben dem Giebel)
             beleg("wand", f"Relief Fassade {nm_} (Teil 1) mit Auskragungen", "OpenMVS-Netz der neuen dichten Wolke (rc-park_daten/schwab_v3/sfm_neu/openmvs), Hoehenbild 5 cm",
                   hinweis="Scan-Relief, kein Mass: Geschosse kragen bis 0,6 m (Nord) bzw. 1,2 m (Sued, Erker) vor; Fenster, Fachwerk und Gesimse nur als weiches Relief - scharf nachbauen")
+    WNO = Wand((3.5, 2.8), (12.0, -1.5), aussen=(9.0, 12.0)); rp = os.path.join(HERE, "schwab_nachbar", "relief", "nordost.npz")       # Nordost-Fassade (Teile 0 und 2): LoD2-Kante, Lage/Schraege kommen aus dem Relief (trend)
+    if os.path.exists(rp) and os.environ.get("OHNE_RELIEF") != "1":
+        hu_ = koerper + koerper.translate(tuple(0.8 * WNO.n) + (0.0,)) + koerper.translate(tuple(1.6 * WNO.n) + (0.0,))
+        koerper = koerper + (relief_koerper(rp, tiefe=0.9, trend=True) ^ hu_)
+        beleg("wand", "Relief Nordost-Fassade (Teile 0/2) z 0,5-11,3 m", "OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm", hinweis="Scan-Relief, kein Mass; der dritte Bogen (Laube am Nordostfluegel) ist darin ein Loch = geschlossene Wand (ANNAHME), Rundfenster und Fenster nur weich; LoD2-Kante liegt ~5 Grad schraeg zur Fassade")
     koerper = koerper - WN.prisma(spitzbogen(3.20, 3.90, 6.35), u=3.30, w0=-7.0, w1=1.7) - WS.prisma(spitzbogen(3.15, 4.05, 6.39), u=5.25, w0=-7.0, w1=2.4)
     beleg("wand", "Durchfahrt (zweiter Torbogen) Nord und Sued", "foto_mass.py auf den Fassadenebenen, Fotos 113310 (Nord) und commons 217 (Sued): M-113310-001..-004, M-commons217-001..-003", nord_halbe_breite=3.20,
           nord_scheitel=6.35, nord_kaempfer=3.90, sued_halbe_breite=3.15, sued_scheitel=6.39, sued_kaempfer=4.05,
