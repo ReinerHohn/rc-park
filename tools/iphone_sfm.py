@@ -60,7 +60,42 @@ os.makedirs(f"{w}/sparse", exist_ok=True)
 COLMAP_BIN = "/media/oem/scan/colmap-build/prefix/bin/colmap"
 _env = dict(os.environ, LD_LIBRARY_PATH=":".join(["/media/oem/scan/cuda-toolkit-combo/lib64", "/media/oem/scan/venv-seg/lib/python3.12/site-packages/nvidia/cu13/lib", "/media/oem/scan/cudss-pkg/py/nvidia/cu13/lib", "/media/oem/scan/venv-colmap/lib/python3.12/site-packages/nvidia/curand/lib"]))
 # ein Thread: reproduzierbare Anzahl eingehaengter Bilder (Messung 13.11.: Mehrthread 181/149/181/21, Einthread 181/181); Qualitaet vor Tempo
-subprocess.run([COLMAP_BIN, "mapper", "--database_path", db, "--image_path", img, "--output_path", f"{w}/sparse",
-                "--Mapper.num_threads", "1", "--Mapper.ba_use_gpu", "1", "--Mapper.ba_gpu_index", "0", "--Mapper.ba_max_num_images_direct_dense_gpu_solver", "0"], env=_env, check=True)
+# MAPPERWAHL (15.11.2026, Bericht Massnahmen 1+2): --mapper auto (Standard) | global | inkrementell
+#   auto: erst global (view_graph_calibrator auf DB-KOPIE + global_mapper, Minuten statt 40 min), dann GPS-TOR (tools/mapper_gps_vergleich.py: Anteil der
+#   eigenen GPS-Fotos > 15 m neben GPS). Besteht (<= 10 %, >= 15 GPS-Fotos) -> global gilt. Sonst zusaetzlich schrittweise und das Modell mit dem kleineren
+#   Anteil nehmen. Ohne GPS-Beleg (< 15 Fotos) gilt wie bisher der schrittweise Mapper (kein Urteil moeglich). Messungen: Schwabentor global 3 % / schrittweise
+#   18 %; global ist NICHT immun (Variante gemeinsame Kamera: 18 %) -> Tor ist Pflicht. Ergebnis: <w>/mapper_wahl.json.
+import re, json, shutil
+MAPPER = sys.argv[sys.argv.index("--mapper") + 1] if "--mapper" in sys.argv else "auto"; _tools = os.path.dirname(os.path.abspath(__file__))
+def _inkrementell(ziel):
+    os.makedirs(ziel, exist_ok=True)
+    subprocess.run([COLMAP_BIN, "mapper", "--database_path", db, "--image_path", img, "--output_path", ziel,
+                    "--Mapper.num_threads", "1", "--Mapper.ba_use_gpu", "1", "--Mapper.ba_gpu_index", "0", "--Mapper.ba_max_num_images_direct_dense_gpu_solver", "0"], env=_env, check=True)
+def _global(ziel):
+    dbg = db + ".global.db"; shutil.copyfile(db, dbg); os.makedirs(ziel, exist_ok=True)       # Kalibrierung aendert Intrinsik/Zweibild-Geometrien in der DB -> nur auf der Kopie
+    r1 = subprocess.run([COLMAP_BIN, "view_graph_calibrator", "--database_path", dbg], env=_env, stdout=open(os.path.join(w, "kalib.log"), "w"), stderr=subprocess.STDOUT)
+    r2 = subprocess.run([COLMAP_BIN, "global_mapper", "--database_path", dbg, "--image_path", img, "--output_path", ziel], env=_env, stdout=open(os.path.join(w, "global.log"), "w"), stderr=subprocess.STDOUT)
+    os.remove(dbg); return r1.returncode == 0 and r2.returncode == 0 and os.path.isdir(os.path.join(ziel, "0"))
+def _gps_tor(modell):
+    o = subprocess.run([sys.executable, "-I", os.path.join(_tools, "mapper_gps_vergleich.py"), img, modell], capture_output=True, text=True).stdout
+    n = re.search(r"mit GPS: (\d+)", o); a_ = re.search(r"Anteil > 15 m (\d+) %", o); m_ = re.search(r"Median ([\d.]+) m", o)
+    return dict(n_gps=int(n.group(1)) if n else 0, anteil_ueber_15m=int(a_.group(1)) if a_ else None, median_m=float(m_.group(1)) if m_ else None)
+_t0 = time.time(); wahl = dict(mapper=MAPPER)
+if MAPPER == "inkrementell": _inkrementell(f"{w}/sparse"); wahl["gewaehlt"] = "inkrementell"
+else:
+    ok_g = _global(f"{w}/sparse_global"); wahl["global_sek"] = round(time.time() - _t0); tg = _gps_tor(f"{w}/sparse_global/0") if ok_g else dict(n_gps=0, anteil_ueber_15m=None); wahl["tor_global"] = tg
+    print("Mapper global:", "ok" if ok_g else "FEHLGESCHLAGEN", wahl["global_sek"], "s, GPS-Tor", tg, flush=True)
+    besteht = ok_g and tg["n_gps"] >= 15 and tg["anteil_ueber_15m"] is not None and tg["anteil_ueber_15m"] <= 10
+    if MAPPER == "global" or besteht:
+        if not ok_g: raise SystemExit("globaler Mapper fehlgeschlagen (kalib.log/global.log)")
+        shutil.rmtree(f"{w}/sparse", ignore_errors=True); os.rename(f"{w}/sparse_global", f"{w}/sparse"); wahl["gewaehlt"] = "global"
+    else:
+        _t1 = time.time(); _inkrementell(f"{w}/sparse_inkr"); wahl["inkrementell_sek"] = round(time.time() - _t1); ti = _gps_tor(f"{w}/sparse_inkr/0"); wahl["tor_inkrementell"] = ti
+        print("Mapper schrittweise:", wahl["inkrementell_sek"], "s, GPS-Tor", ti, flush=True)
+        g_besser = ok_g and tg["n_gps"] >= 15 and ti["anteil_ueber_15m"] is not None and tg["anteil_ueber_15m"] is not None and tg["anteil_ueber_15m"] < ti["anteil_ueber_15m"]
+        nimm = "sparse_global" if g_besser else "sparse_inkr"; wahl["gewaehlt"] = "global" if g_besser else "inkrementell"
+        wahl["hinweis"] = "kein Modell besteht das GPS-Tor (<= 10 % > 15 m) - Lage NICHT glauben" if tg["n_gps"] >= 15 else "zu wenig GPS-Fotos fuer ein Urteil - schrittweiser Mapper wie bisher"
+        shutil.rmtree(f"{w}/sparse", ignore_errors=True); os.rename(f"{w}/{nimm}", f"{w}/sparse")
+json.dump(wahl, open(os.path.join(w, "mapper_wahl.json"), "w"), indent=1); print("MAPPERWAHL", json.dumps(wahl), flush=True)
 rec = {k: pycolmap.Reconstruction(os.path.join(f"{w}/sparse", k)) for k in sorted(os.listdir(f"{w}/sparse")) if k.isdigit()}
 for k, r in rec.items(): print(k, r.summary(), flush=True)
