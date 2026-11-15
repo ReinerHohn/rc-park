@@ -15,6 +15,7 @@ im = cv2.imread((glob.glob(os.path.join(root, obj["fotos_dir"], foto + ".*")) or
 k1 = float(K.get("k1") or 0.0)
 if k1: im = cv2.undistort(im, np.array([[f, 0, cx], [0, f, cy], [0, 0, 1.0]]), np.array([k1, 0, 0, 0.0]))
 x0, y0, x1, y1 = [int(v) for v in a[a.index("--box") + 1:a.index("--box") + 5]] if "--box" in a else (0, 0, W, H)
+x0, y0, x1, y1 = max(x0, 0), max(y0, 0), min(x1, W), min(y1, H)        # Ausschnitt auf das Bild begrenzen (sonst passten Foto- und Renderhaelfte nicht zusammen)
 ms = [trimesh.load(s_) for s_ in stls]; mm = trimesh.util.concatenate(ms) if len(ms) > 1 else ms[0]; mm.apply_scale(87.0 / 1000.0)
 res = rk.dreiecke_rastern(mm, R, t, f, cx - x0, cy - y0, x1 - x0, y1 - y0); fid = np.asarray(res[1]); tr = fid >= 0          # Dreiecks-Raster (GPU) nur im Ausschnitt - der Punkt-Renderer rauschte zu stark fuer Steine/Details
 li = R.T @ np.array([-0.45, -0.75, -1.0]); li = li / np.linalg.norm(li)      # Licht von der Kamera her, schraeg von links oben

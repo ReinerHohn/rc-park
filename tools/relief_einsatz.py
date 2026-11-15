@@ -12,7 +12,7 @@ Die WAND (Lage, Kanten, Oeffnungen) bleibt Sache des Generators. Aus dem Netz ko
 import sys, os, argparse, numpy as np
 
 
-def koerper(npz, tiefe=0.06, faktor=1.0, sockel=0.005, null_felder=(), trend=False, versatz=0.0, tief_felder=()):
+def koerper(npz, tiefe=0.06, faktor=1.0, sockel=0.005, null_felder=(), trend=False, versatz=0.0, tief_felder=(), rand_auslauf=True):
     from manifold3d import Manifold, Mesh
     Z = np.load(npz); rel = Z["rel"].astype(np.float64) * faktor; H, W = rel.shape; a = Z["a"]; t = Z["t"]; n = Z["n"]; u0, z0, px = float(Z["u0"]), float(Z["z0"]), float(Z["px"])
     ii, jj = np.mgrid[0:H, 0:W]; niv = float(Z["putz_niveau_m"]) if "putz_niveau_m" in Z.files else 0.0      # Putzniveau (tools/relief_putz.py): Bauteilfelder im Putz liegen auf DIESER Hoehe, sonst zeichnet sich das Feld als Rechteck ab
@@ -21,7 +21,7 @@ def koerper(npz, tiefe=0.06, faktor=1.0, sockel=0.005, null_felder=(), trend=Fal
     tief = np.zeros((H, W), bool)
     for f0, f1, g0, g1 in tief_felder:                                   # Felder, vor die ein FEINERER Einsatz gesetzt wird (tools/relief_mischen.py): Platte dort ganz zurueck, sonst fuellt sie dessen Fugen
         tief |= (u0 + (jj + 0.5) * px >= f0) & (u0 + (jj + 0.5) * px <= f1) & (z0 + (H - 1 - ii + 0.5) * px >= g0) & (z0 + (H - 1 - ii + 0.5) * px <= g1)
-    rand = np.minimum.reduce([ii, jj, H - 1 - ii, W - 1 - jj]); rel = rel * np.clip(rand / 2.0, 0, 1)        # Rand auf 0 auslaufen
+    rand = np.minimum.reduce([ii, jj, H - 1 - ii, W - 1 - jj]); rel = rel * np.clip(rand / 2.0, 0, 1) if rand_auslauf else rel        # Rand auf 0 auslaufen (nicht bei Feineinsaetzen vor einem groben Relief: dort gab der Auslauf eine Linie quer ueber den Putz)
     if trend:                                                             # 15.11.2026: Wandanzug/Lage der Netzflaeche wieder aufschlagen (Nutzerbild: Wolke stand 0,15-0,3 m VOR der Modellfassade)
         tu, tz = [float(v) for v in Z["trend_je_m"]]; rel = rel + float(Z["ebene_abstand_m"]) + versatz + tu * (jj + 0.5) * px - tz * (ii + 0.5) * px   # d(u, z) der Ausgleichsebene; ii laeuft nach unten
     # sockel: Platte steht ueberall etwas vor der Wandebene - deckungsgleiche Flaechen mit der Wand ergeben Splitter (STL nicht wasserdicht, 656 Koerper)

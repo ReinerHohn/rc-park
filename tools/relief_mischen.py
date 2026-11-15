@@ -5,7 +5,7 @@ Die lokale Feinrechnung trifft nur 40-60 % der Zellen (Verdeckung, schwache Schn
 0,23 mm bei 1:87; 1 cm waere unter der Druckaufloesung und macht das STL 4x so gross):
   1. Putz (Maske 'putz' des groben Reliefs) bleibt eben wie im groben Relief.
   2. sonst das FEINE Relief, wo es Daten hat (Median der gueltigen 1-cm-Zellen im Rasterfeld);
-  3. sonst das grobe Relief (echt oder generiert), auf das Niveau des feinen gebracht (Median-Versatz auf der gemeinsamen Flaeche).
+  3. sonst das grobe Relief (echt oder generiert). Das feine wird dazu auf das Niveau des groben gebracht (Median-Versatz auf der gemeinsamen Flaeche).
 Beide Hoehenbilder werden dazu in absolute Abstaende vor der Wandebene umgerechnet (rel + Ausgleichsebene). Ausgabe im Format von relief_einsatz.py
 (Feld = das feine Feld) + Masken 'fein' und 'generiert'; <aus>.jpg: gruen getoent = Putz, blau = aus dem groben Relief, grau = fein. ANSEHEN.
 Im Generator: grobes Relief mit `tief_felder=[Feld]` zuruecksetzen und diesen Einsatz davor setzen.
@@ -25,7 +25,7 @@ def main():
     with np.errstate(all="ignore"):
         import warnings
         with warnings.catch_warnings(): warnings.simplefilter("ignore"); dfe = np.nanmedian(df.reshape(H, k, W, k).transpose(0, 2, 1, 3).reshape(H, W, k * k), axis=2)
-    anz = np.isfinite(df).reshape(H, k, W, k).transpose(0, 2, 1, 3).reshape(H, W, k * k).sum(2); dfe[anz < max(1, k * k // 4)] = np.nan
+    anz = np.isfinite(df).reshape(H, k, W, k).transpose(0, 2, 1, 3).reshape(H, W, k * k).sum(2); dfe[anz < max(1, k * k // 2)] = np.nan      # mindestens die Haelfte der 1-cm-Zellen muss Daten haben (Suedwand 15.11.: mit einer einzigen Zelle wurde das feine Relief pockennarbig)
     u0 = float(Fz["u0"]); z0 = float(Fz["z0"]); ii, jj = np.mgrid[0:H, 0:W]; U = u0 + (jj + 0.5) * px; Zz = z0 + (H - 1 - ii + 0.5) * px
     rg = Gz["rel"].astype(np.float64); Hg, Wg = rg.shape; pg = float(Gz["px"]); dg = rg + ebene(Gz, Hg, Wg); ug = (U - float(Gz["u0"])) / pg - 0.5; vg = (Hg - 1) - ((Zz - float(Gz["z0"])) / pg - 0.5)
     dgo = cv2.remap(dg.astype(np.float32), ug.astype(np.float32), vg.astype(np.float32), cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE).astype(np.float64)
@@ -35,7 +35,7 @@ def main():
         return cv2.remap(m, ug.astype(np.float32), vg.astype(np.float32), cv2.INTER_NEAREST, borderMode=cv2.BORDER_REPLICATE) > 0
     putz = maske("putz"); gen = maske("generiert"); null_g = cv2.remap((rg == 0.0).astype(np.uint8), ug.astype(np.float32), vg.astype(np.float32), cv2.INTER_NEAREST, borderMode=cv2.BORDER_REPLICATE) > 0
     fein = np.isfinite(dfe) & ~putz; beide = fein & ~null_g & ~gen; vers = float(np.median(dfe[beide] - dgo[beide])) if beide.sum() > 500 else 0.0
-    d = np.where(fein, dfe, dgo + vers); leer = ~fein & null_g; yy, xx = ii, jj; ok = ~leer
+    d = np.where(fein, dfe - vers, dgo); leer = ~fein & null_g; yy, xx = ii, jj; ok = ~leer       # das FEINE auf das Niveau des groben bringen (das grobe gilt fuer die ganze Wand; umgekehrt stand der Einsatz 1-3 cm versetzt -> Linie an seiner Oberkante)
     # Entstoeren (Kontrollbild 15.11.: schwarze Sprenkel = Einzelzellen-Ausreisser der Feinrechnung und Stufen an der Grenze fein/grob): Zellen, die > 2,5 cm vom 5x5-Median abweichen, auf den Median;
     # an der Grenze fein/grob das grobe Relief ueber 3 Zellen an das feine heranfuehren.
     dm = cv2.medianBlur(np.where(ok, d, 0).astype(np.float32), 5).astype(np.float64); aus_ = ok & (np.abs(d - dm) > 0.025); d[aus_] = dm[aus_]

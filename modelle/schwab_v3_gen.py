@@ -82,7 +82,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         rel_nm = os.path.join(HERE, "schwab_v3", "relief", "nord_misch.npz"); fein_n = os.path.exists(rel_nm) and os.environ.get("OHNE_FEIN") != "1"   # 15.11. spaet: lokale Feinrechnung der Tiefe (tools/tiefe_lokal.py -> relief_mischen.py), Nordwand unten 2 cm statt 5 cm
         rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12 + WV, trend=True, versatz=0.0, null_felder=[(2.6, 5.4, 23.9, 27.1), (6.9, 9.7, 23.9, 27.1), (1.6, 11.1, 9.7, 21.1)], tief_felder=[(0.0, 12.2, 0.0, 10.4)] if fein_n else [])
         if fein_n:
-            rumpf = rumpf + relief_koerper(rel_nm, tiefe=0.12 + WV, trend=True, null_felder=[(1.6, 11.1, 9.7, 21.1)])
+            rumpf = rumpf + relief_koerper(rel_nm, tiefe=0.12 + WV, trend=True, null_felder=[(1.6, 11.1, 9.7, 21.1)], rand_auslauf=False)
             beleg("wand", "Feines Relief Nordwand z 0-10,5 m (2 cm)", "lokale Feinrechnung: 13 Nahfotos in 3200 px, COLMAP PatchMatch nur fuer dieses Feld (tools/tiefe_lokal.py), gemischt mit dem groben Relief (tools/relief_mischen.py)",
                   fein_anteil=float(np.load(rel_nm)["fein"].mean()), hinweis="Scan-Relief, kein Mass; wo die Feinrechnung keine Daten hat (56 %), steht das grobe bzw. generierte Relief")   # Fensterfelder baut der Generator scharf (unten)
         beleg("wand", "Relief Nordwand z 0,6-29,6 m", "OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)",
@@ -191,7 +191,11 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     if os.path.exists(rel_s.replace(".npz", "_voll.npz")):          # 15.11.2026 Nutzer: "Rest der Steine notfalls generieren" - Loecher des Scan-Reliefs mit generierten Quadern gefuellt (tools/steine_generieren.py)
         rel_s = rel_s.replace(".npz", "_voll.npz"); beleg("wand", "Generierte Quader Sued (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)", "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben", anteil=float(np.load(rel_s)["generiert_anteil"]), hinweis="ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original")
     if os.path.exists(rel_s) and os.environ.get("OHNE_RELIEF") != "1":
-        koerper = koerper + relief_koerper(rel_s, tiefe=0.30, trend=True, null_felder=[(3.0, 8.4, 28.2, 33.75), (5.1, 6.4, 22.0, 23.95), (0.0, 11.5, 25.85, 26.95), (2.4, 7.2, 18.1, 18.5)])
+        _fm = os.path.join(HERE, "schwab_v3", "relief", "sued_misch.npz"); _fein = os.path.exists(_fm) and os.environ.get("OHNE_FEIN") != "1"      # lokale Feinrechnung (tiefe_lokal.py, 4000 px) + relief_mischen.py, 2 cm
+        koerper = koerper + relief_koerper(rel_s, tiefe=0.30, trend=True, null_felder=[(3.0, 8.4, 28.2, 33.75), (5.1, 6.4, 22.0, 23.95), (0.0, 11.5, 25.85, 26.95), (2.4, 7.2, 18.1, 18.5)], tief_felder=[(0.0, 11.6, 0.0, 9.9)] if _fein else [])
+        if _fein:
+            koerper = koerper + relief_koerper(_fm, tiefe=0.30, trend=True, rand_auslauf=False)
+            beleg("wand", "Feines Relief Suedwand unten (2 cm)", "lokale Feinrechnung: 14 Fotos in 4000 px nur fuer dieses Feld (tools/tiefe_lokal.py), gemischt mit dem groben Relief (tools/relief_mischen.py)", fein_anteil=float(np.load(_fm)["fein"].mean()), hinweis="Scan-Relief, kein Mass; ohne Feindaten steht das grobe bzw. generierte Relief")
         beleg("wand", "Relief Suedwand z 0,6-34 m", "OpenMVS-Netz der neuen dichten Wolke (sfm_neu/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m, Loecher 8 %", hinweis="Scan-Relief, kein Mass; Uhr-, Fenster-, Gesims- und Verdachungsfeld ausgeblendet")
     koerper = koerper + WS.kasten(T_U - 2.7, T_U + 2.7, 0.0, 6.9, -1.0, 0.0)                     # Torwand Sued: ANNAHME 1 m stark; der Suedbogen ist niedriger als die Durchfahrt (Nord 6,42 m)
     koerper = koerper - WS.prisma(b_spitz(4.49 / 2, 3.86, 5.85), u=T_U, w0=-1.3, w1=0.6)
@@ -210,7 +214,11 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     if os.path.exists(rel_w.replace(".npz", "_voll.npz")):          # 15.11.2026 Nutzer: "Rest der Steine notfalls generieren" - Loecher des Scan-Reliefs mit generierten Quadern gefuellt (tools/steine_generieren.py)
         rel_w = rel_w.replace(".npz", "_voll.npz"); beleg("wand", "Generierte Quader West (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)", "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben", anteil=float(np.load(rel_w)["generiert_anteil"]), hinweis="ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original")
     if os.path.exists(rel_w) and os.environ.get("OHNE_RELIEF") != "1":
-        koerper = koerper + relief_koerper(rel_w, tiefe=0.45, trend=True, null_felder=[(4.8, 6.0, 21.5, 23.7), (0.0, 8.4, 25.85, 26.95)])
+        _fm = os.path.join(HERE, "schwab_v3", "relief", "west_misch.npz"); _fein = os.path.exists(_fm) and os.environ.get("OHNE_FEIN") != "1"      # lokale Feinrechnung (tiefe_lokal.py, 4000 px) + relief_mischen.py, 2 cm
+        koerper = koerper + relief_koerper(rel_w, tiefe=0.45, trend=True, null_felder=[(4.8, 6.0, 21.5, 23.7), (0.0, 8.4, 25.85, 26.95)], tief_felder=[(0.0, 8.5, 0.0, 9.4)] if _fein else [])
+        if _fein:
+            koerper = koerper + relief_koerper(_fm, tiefe=0.45, trend=True, rand_auslauf=False)
+            beleg("wand", "Feines Relief Westwand unten (2 cm)", "lokale Feinrechnung: 14 Fotos in 4000 px nur fuer dieses Feld (tools/tiefe_lokal.py), gemischt mit dem groben Relief (tools/relief_mischen.py)", fein_anteil=float(np.load(_fm)["fein"].mean()), hinweis="Scan-Relief, kein Mass; ohne Feindaten steht das grobe bzw. generierte Relief")
         beleg("wand", "Relief Westwand z 0,6-34 m (ohne Treppenturm)", "OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm, geklemmt -0,10..+0,15 m", hinweis="Scan-Relief, kein Mass; Fenster- und Gesimsfeld ausgeblendet")
     koerper = koerper - WW.prisma(b_rund(0.81, 21.70, 23.45), u=5.40, w0=-0.8, w1=0.6)                          # grosses Fenster (Tiefe ANNAHME; Gewaende buendig = Farbe)
     for u0_, u1_, z0_, z1_ in ((5.31, 5.52, 27.82, 30.19), (5.20, 5.45, 33.0, 34.4), (5.33, 5.47, 16.93, 17.86), (5.27, 5.39, 10.46, 11.44)):   # Schlitzfenster; das oberste (z 33-34,4) ist aus steiler Sicht nur ungefaehr
@@ -236,6 +244,7 @@ _mf, _mt = np.asarray(mesh.merge_from_vert), np.asarray(mesh.merge_to_vert)
 if len(_mf): V[_mf] = V[_mt]; print("verschmolzene Doppelecken:", len(_mf))            # Manifold fuehrt Doppelecken getrennt; im STL muessen sie bitgleich sein
 _vq, _inv = np.unique(np.round(V.astype(np.float64), 3), axis=0, return_inverse=True); F = _inv.ravel()[F]; V = _vq.astype(np.float32)   # Ecken auf 1 Mikrometer (Druckmassstab) verschweissen
 F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]                                              # entartete Dreiecke (Kante der Laenge 0) entfernen
+_fs = np.sort(F, axis=1); _u, _inv2, _cnt = np.unique(_fs, axis=0, return_inverse=True, return_counts=True); F = F[_cnt[_inv2.ravel()] == 1]                 # 15.11.2026: Flaechenpaare mit denselben drei Ecken (Lappen ohne Dicke nach dem Verschweissen) fallen sonst als 2-Flaechen-Koerper heraus
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 tri = V[F]; nrm = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]); nrm /= np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-12
 rec = np.zeros(len(F), dtype=[("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")]); rec["n"], rec["v"] = nrm, tri
