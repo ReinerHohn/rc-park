@@ -31,7 +31,7 @@ KLASSEN = {
     "balkon": ["a balcony", "a balustrade"],
 }
 # Gegenbegriffe (aus zier_ausschnitt.GEGEN + S4-Spec): Dinge, die Fensterkasten/Figurkasten vortaeuschen. Eine Box, deren bester Begriff ein Gegenbegriff ist, wird verworfen.
-GEGEN = ["a wrought iron sign", "a shop sign", "a lamp", "an awning", "a canopy", "a coat of arms"]
+GEGEN = ["a wrought iron sign", "a shop sign", "a lamp", "an awning", "a canopy", "a coat of arms", "a half-timbered wall panel", "a wooden beam", "a carved wooden ornament"]   # 15.11.2026: Fachwerkfelder/Balken/Schnitzfelder wurden am Schwabentor-Nachbarhaus als Fenster gemeldet
 MODELL = "google/owlv2-base-patch16-ensemble"
 
 

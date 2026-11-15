@@ -42,13 +42,14 @@ class Wand:
     def kasten(self, u0, u1, z0, z1, w0, w1): return M.hull_points([self.punkt(u, z, w) for u in (u0, u1) for z in (z0, z1) for w in (w0, w1)])
     def huelle(self, pts): return M.hull_points([self.punkt(u, z, w) for u, z, w in pts])
     def scheibe(self, u, z, durchmesser, w0, w1, nseg=64): return M.cylinder(w1 - w0, durchmesser / 2, durchmesser / 2, nseg).translate((0, 0, w0)).transform(self.matrix(u)).translate((0, 0, z))
-    def fenster(self, u0, u1, z0, z1, w, tiefe=0.12, teiler=(), kaempfer=None, b=0.07, rahmen=0.05):
+    def fenster(self, u0, u1, z0, z1, w, tiefe=0.12, teiler=(), kaempfer=None, b=0.07, rahmen=0.05, sprossen=(), b_sprosse=0.03):
         """Rechteckfenster in einer Wandflaeche bei w: liefert (abzug, zusatz). Nische 'tiefe' tief; Rahmen, Pfosten (teiler = u-Lagen) und Kaempfer (z) 'b' breit,
         5 cm hinter der Wandflaeche (so misst pruefstand.ebene_oeffnungen mit tiefe 0,03 die volle Nischenbreite). koerper = koerper - abzug + zusatz."""
         v0, v1 = w - tiefe - 0.01, w - 0.05; K_ = self.kasten; e = 0.005          # e: Rahmen greifen 5 mm in die Laibung (deckungsgleiche Flaechen gaben Splitterkoerper)
         zus = K_(u0 - e, u0 + rahmen, z0 - e, z1 + e, v0, v1) + K_(u1 - rahmen, u1 + e, z0 - e, z1 + e, v0, v1) + K_(u0 - e, u1 + e, z0 - e, z0 + rahmen, v0, v1) + K_(u0 - e, u1 + e, z1 - rahmen, z1 + e, v0, v1)
         for t_ in teiler: zus = zus + K_(t_ - b / 2, t_ + b / 2, z0 - e, z1 + e, v0, v1)
         if kaempfer: zus = zus + K_(u0 - e, u1 + e, kaempfer - b / 2, kaempfer + b / 2, v0, v1)
+        for a0, c0, a1, c1 in sprossen: zus = zus + self.stab((a0, c0), (a1, c1), b_sprosse, v0, v1 - 0.01)      # Sprossen (u0, z0, u1, z1) aus fenster_aus_parsing.py, 1 cm hinter den Pfosten
         return K_(u0, u1, z0, z1, w - tiefe, w + 0.02), zus
     def stab(self, p, q, b, w0, w1):
         """Gerader Stab von p = (u, z) nach q = (u, z), Breite b, von w0 bis w1 vor der Wand (Zeiger, Ziffernstriche, Leisten)."""
@@ -95,7 +96,7 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
             if f.get("stimmen_min", 0) < min_stimmen: continue
             sonde = W.kasten(f["u0"], f["u1"], f["z0"], f["z1"], 0.03, 0.08)
             if (koerper ^ sonde).volume() > 0.2 * sonde.volume(): continue
-            ab, zu = W.fenster(f["u0"], f["u1"], f["z0"], f["z1"], 0.0, tiefe=tiefe, teiler=f.get("teiler", ()), kaempfer=f.get("kaempfer")); koerper = koerper - ab + zu; n_ += 1
+            ab, zu = W.fenster(f["u0"], f["u1"], f["z0"], f["z1"], 0.0, tiefe=tiefe, teiler=f.get("teiler", ()), kaempfer=f.get("kaempfer"), sprossen=f.get("sprossen", ())); koerper = koerper - ab + zu; n_ += 1
         if n_: belege.append(dict(seite="wand", element=f"{n_} Fenster Fassade {fid} (automatisch erkannt)", quelle="OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos " + ", ".join(F.get("fotos", [])[:3]),
                                   hinweis="ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME"))
     return koerper, belege

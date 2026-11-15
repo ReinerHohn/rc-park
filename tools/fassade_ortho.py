@@ -111,7 +111,9 @@ def main(argv=None):
         ms_ = trimesh.load(a.stl); ms_.apply_scale(obj.get("stl_massstab", 87) / 1000.0)            # nur Flaechen, die KEINE LoD2-Fassade sind (Ebenenabstand > 0,3 m), mit eigener Kennung e00..
         lod = fassaden_gruppieren(waende, mitte); senk = np.abs(ms_.face_normals[:, 2]) < 0.2
         fs = []                                                                                    # zusammenhaengende koplanare Flaechenstuecke (trimesh facets) statt "gleiche Ebene irgendwo im Modell"
-        for fc_ in list(ms_.facets) + [[i_] for i_ in np.where(senk)[0] if not any(i_ in f__ for f__ in ms_.facets)]:
+        in_fc_ = np.zeros(len(ms_.faces), bool)                                                      # 15.11.2026: vorher `any(i in f for f in facets)` je Dreieck = 550 Mio Python-Schritte, 476 von 484 s (Profil); Ergebnis gleich
+        if len(ms_.facets): in_fc_[np.concatenate([np.asarray(f__) for f__ in ms_.facets])] = True
+        for fc_ in list(ms_.facets) + [[i_] for i_ in np.where(senk & ~in_fc_ & (ms_.area_faces >= a.min_flaeche))[0]]:
             fc_ = np.asarray(fc_)
             if not senk[fc_].all() or ms_.area_faces[fc_].sum() < a.min_flaeche: continue
             fs += fassaden_gruppieren([ms_.vertices[f_] for f_ in ms_.faces[fc_]], mitte, min_flaeche=a.min_flaeche)
