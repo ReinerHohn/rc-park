@@ -80,6 +80,8 @@ def main():
         gen[r0, :] = -0.15                                                 # Lagerfuge
     gen += 0.7 * ndi.gaussian_filter(rng.standard_normal((H, W)), 1.5) / 0.19 * 0.5 * 0.5; gen = ndi.gaussian_filter(gen, 0.45)
     g5, g95 = np.percentile(gen, [25, 75]); r25, r75 = np.percentile(rel[gueltig], [25, 75]); gen = np.clip(r25 + (gen - g5) / (g95 - g5) * (r75 - r25), q5 - 0.02, q95)   # auf den mittleren Hub des echten Reliefs (p25/p75), nicht auf die Ausreisser
+    g_ = gueltig.astype(np.float64); niv_ = ndi.gaussian_filter(rel * g_, 8.0) / np.maximum(ndi.gaussian_filter(g_, 8.0), 1e-3); nah_ = ndi.gaussian_filter(g_, 8.0) > 0.02
+    gen = gen + np.where(nah_, niv_ - float(np.median(rel[gueltig])), 0.0)      # 15.11. (Kontrollbild Nordtor): generierter Sockel lag tiefer als das echte Relief darueber -> Stufe; Niveau aus der echten Umgebung uebernehmen
     w = np.clip(ndi.distance_transform_edt(loch) / 2.0, 0, 1); neu = np.where(loch, gen * w, rel); neu[loch & (neu == 0.0)] = 1e-4
     Z["rel"] = neu.astype(np.float32); Z["z0"] = z0; Z["generiert"] = loch; Z["generiert_anteil"] = float(loch.mean())
     np.savez_compressed(a.aus, **Z)
