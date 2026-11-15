@@ -98,6 +98,7 @@ def gps_massstab(ims, C, obj, od, fotos=""):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--sparse", default=None); ap.add_argument("--name", default=""); ap.add_argument("--schreiben", action="store_true")
+    ap.add_argument("--fit_punkte", type=int, default=600000, help="dichte Wolke: Zufallsauswahl fuer die Anpassung (7 Parameter)")
     ap.add_argument("--fotos", default="", help="Fotoordner fuer GPS-Startmassstab (Standard objekt.json fotos_dir; Quellpraefix eigen__ wird abgestreift)")
     ap.add_argument("--loesung", type=int, default=0, help="K-te unterscheidbare Loesung (>10 Grad oder >3 m) statt der besten - Korrekturkreislauf tools/gesamtkette.py")
     ap.add_argument("--radius", type=float, default=80.0, help="LoD2-Gebaeude in diesem Umkreis um die Objektmitte (m)"); ap.add_argument("--zelle", type=float, default=0.25, help="Rasterweite Grobsuche (m)")
@@ -141,6 +142,7 @@ def main():
         err = np.zeros(len(P)); tl = np.full(len(P), 3); ids = list(range(len(P)))
         print(f"dichte Wolke: {len(P)} Punkte aus {a.dicht}", flush=True)
     gut = np.ones(len(P), bool) if a.dicht else ((tl >= 3) & (err < np.percentile(err, 90))); Pg = P[gut]
+    if a.dicht and len(Pg) > a.fit_punkte: Pg = Pg[np.random.default_rng(3).choice(len(Pg), a.fit_punkte, replace=False)]; print(f"Fit auf {len(Pg)} Zufallspunkten der dichten Wolke (Ausgabe: alle)")   # 15.11.: 4,4 Mio Punkte = 2,5 min je Startwert, 85 min je Lauf
     if rec is not None:
         ims = list(rec.images.values()); C = np.array([im.projection_center() for im in ims])
     print(f"SfM: {len(ims)} Kameras, {len(P)} Punkte ({gut.sum()} mit Spur >= 3)")
@@ -234,6 +236,7 @@ def main():
         if not any(abs(math.log(b[1] / t[1])) < 0.15 for t in top): top.append(b)
         # KEINE Obergrenze (Martinstor 2026-11-04): mit 'top 12' fiel das richtige Band (s = 0,071, alte Pick-Kette) heraus, weil die Grobsumme kleine
         # Modelle bevorzugt -> Turm 0,66-fach. Jedes Massstabsband (Abstand 0,15 in log s, ~19 Baender) bekommt eine Feinloesung; entschieden wird dort.
+    GPS_PRUEF = None
     if sum(_nah[i] for i, _ in GPS_KAM) >= 15:                                               # 15.11.: GPS-Startkandidat (v2: LoD2-Grobsuche verfehlte Lage; 190 Kameras mit GPS)
         R_ = obj["rahmen"]; c0_ = np.array(R_["mitte_utm"], float); xh_, yh_ = np.array(R_["xhat_utm"], float), np.array(R_["yhat_utm"], float)
         _gk = [(i, u) for i, u in GPS_KAM if _nah[i]]                                         # nur Kamerakern: globaler Mapper setzt einzelne Kameras tausende Einheiten weit weg
@@ -243,9 +246,11 @@ def main():
             mc, cc = Mxy[w_].mean(0), Cxy[w_].mean(0); Hm = (Mxy[w_] - mc).T @ (Cxy[w_] - cc); Uu, Ss, Vv = np.linalg.svd(Hm); Rg = Uu @ np.diag([1, np.sign(np.linalg.det(Uu @ Vv))]) @ Vv
             k_ = Ss.sum() / ((Cxy[w_] - cc) ** 2).sum(); tg = mc - k_ * Rg @ cc; res = np.linalg.norm(k_ * Cxy @ Rg.T + tg - Mxy, axis=1); w_ = res < max(2.5 * np.median(res), 8)
         if np.linalg.det(Rg) > 0:
-            thg = math.atan2(Rg[1, 0], Rg[0, 0]); top.insert(0, (-1.0, 1.0 / k_, thg, float(tg[0]), float(tg[1])))
+            thg = math.atan2(Rg[1, 0], Rg[0, 0])
+            for _dx, _dy in ((4, 0), (-4, 0), (0, 4), (0, -4), (0, 0)): top.insert(0, (-1.0, 1.0 / k_, thg, float(tg[0]) + _dx, float(tg[1]) + _dy))   # GPS-Lage +-4 m (Handy-GPS in der Gasse), Fangbereich Feinfit ~3 m
             print(f"GPS-Startkandidat: Massstab {1 / k_:.4f} SfM-Einheiten/m, Drehung {math.degrees(thg):.0f} Grad, Rest Median {np.median(res):.1f} m ({int(w_.sum())} von {len(w_)} Kameras)")
         else: print("GPS-Startkandidat: gespiegelt (Lot falsch?) - nicht benutzt")
+        if np.linalg.det(Rg) > 0 and np.median(res) < 8 and int(w_.sum()) >= 15: GPS_PRUEF = (np.array([i for i, _ in _gk]), Mxy, 1.0 / k_)   # guter GPS-Fit -> Veto fuer Loesungen (unabhaengiger Lagebeleg)
     print("Grobsuche (Anteil nahe LoD2-Wand, Massstab, Drehung, Verschiebung): " + "; ".join(f"{b[0]:.2f} s={b[1]:.3f} {math.degrees(b[2]):.0f} Grad" for b in top[:4]))
 
     # 3. Fein: 7 Parameter, Punkt-zu-Flaeche, getrimmt; Startwerte aus den besten Grobloesungen
@@ -267,7 +272,7 @@ def main():
     def zu_modell(p, X):                                                                      # X im lotrechten Netzsystem -> Modell
         s = math.exp(p[0]); return Rot.from_rotvec(p[1:4]).apply(X) / s + p[4:7]
 
-    def fein(p0, X, schwellen=(3.0, 1.5, 0.8)):
+    def fein(p0, X, schwellen=(3.0, 1.5, 0.8), band=0.35):
         p = np.array(p0, float); ls0 = p[0]
         for sw in schwellen:
             for _ in range(3):
@@ -295,7 +300,7 @@ def main():
                         Yc = (Cq_t @ Rm.T) / s_ + qt[4:7]
                         rk = (Yc[:, 2] - a.kamerahoehe[0]) / a.kamerahoehe[1] * math.exp(_ls0) * _wk
                         return torch.cat([rp, rk]).cpu().numpy()
-                lo = np.full(7, -np.inf); hi = np.full(7, np.inf); lo[0], hi[0] = ls0 - 0.35, ls0 + 0.35   # Massstab begrenzt (+-40 % um den Start): sonst Kollaps aller Punkte auf eine Flaeche
+                lo = np.full(7, -np.inf); hi = np.full(7, np.inf); lo[0], hi[0] = ls0 - band, ls0 + band   # Massstab begrenzt (+-40 % um den Start): sonst Kollaps aller Punkte auf eine Flaeche
                 p = least_squares(r, np.clip(p, lo + 1e-9, hi - 1e-9), loss="huber", f_scale=sw / 3 * math.exp(ls0), max_nfev=200, bounds=(lo, hi)).x
         M = zu_modell(p, X); d, _ = nn(M); ok = d * math.exp(p[0]) < schwellen[-1] * s0      # Inlier-Schwelle in SfM-Einheiten (massstabsneutral)
         return p, ok.mean(), float(np.sqrt(np.mean(d[ok] ** 2))) if ok.any() else np.inf, ok
@@ -310,9 +315,18 @@ def main():
     loes = []
     for sc, s, th, dx, dy in top:
         p0 = [math.log(s), 0, 0, th, dx, dy, 0.0]
+        if GPS_PRUEF is not None and (abs(p0[0] - math.log(GPS_PRUEF[2])) > 0.6 or float(np.median(np.linalg.norm(zu_modell(p0, Cq[GPS_PRUEF[0]])[:, :2] - GPS_PRUEF[1], axis=1))) > 30):
+            continue                                                                          # kann das GPS-Veto nie bestehen (Massstab > Band + Veto oder Kameras > 30 m neben GPS) -> Rechenzeit sparen
         zc = np.median(Cq[:, 2]) / s; p0[6] = 1.6 - zc                                         # Hoehenstart: Kameras ~1,6 m ueber Boden (nur Start, ANNAHME)
-        p, frac, rms, ok = fein(p0, Q); ab = abdeckung(p, Q); loes.append((frac * ab, rms, p, ok, frac, ab))
+        p, frac, rms, ok = fein(p0, Q, band=0.15 if sc == -1.0 else 0.35); ab = abdeckung(p, Q); loes.append((frac * ab, rms, p, ok, frac, ab))   # GPS-Kandidat: Massstab nur +-16 % (lief sonst an die Grenze: 0,0855 -> 0,1214)
         print(f"   Start {math.degrees(th):5.0f} Grad s={s:.3f}: Inlier {100 * frac:.0f} %, Objektwand-Abdeckung {100 * ab:.0f} %, RMS {rms:.2f} m, Massstab {math.exp(p[0]):.4f}")
+    if GPS_PRUEF is not None:                                                                 # 15.11.: GPS-Veto (v2: Loesung mit 2,5-fach zu grossem Modell gewann mit Guete 4 %)
+        _gi, _gm, _gs = GPS_PRUEF
+        def _gps_rest(p_): return float(np.median(np.linalg.norm(zu_modell(p_, Cq[_gi])[:, :2] - _gm, axis=1)))
+        _kons = [l for l in loes if _gps_rest(l[2]) < 12 and abs(l[2][0] - math.log(_gs)) < 0.25]
+        print(f"GPS-Veto: {len(_kons)} von {len(loes)} Loesungen passen zum Foto-GPS (Kamerarest < 12 m, Massstab +-28 %); beste verworfene Guete {100 * max([l[0] for l in loes if not any(l is k for k in _kons)], default=0):.0f} %")
+        if _kons: loes = _kons
+        else: print("WARNUNG GPS-Veto: KEINE Loesung passt zum Foto-GPS - Ergebnis nicht glauben (Tore entscheiden)")
     loes.sort(key=lambda l: -l[0])
     _verschieden = []
     for l in loes:                                                                              # unterscheidbare Lagen (Korrekturkreislauf: Loesung K probieren, Tore entscheiden)
