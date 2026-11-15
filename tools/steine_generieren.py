@@ -32,7 +32,7 @@ def lagerfugen(rel, gueltig, px, min_zellen=30):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("relief"); ap.add_argument("aus"); ap.add_argument("--zone", nargs=4, type=float, action="append", required=True)
-    ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Felder u0 u1 z0 z1, in denen NICHT generiert wird (Toroeffnungen - Nutzer 15.11.: 'nicht im Tor kuenstlich')"); ap.add_argument("--unten", type=float); ap.add_argument("--seed", type=int, default=1); ap.add_argument("--laenge", nargs=2, type=float, default=[0.4, 1.25])
+    ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Felder u0 u1 z0 z1, in denen NICHT generiert wird (Toroeffnungen - Nutzer 15.11.: 'nicht im Tor kuenstlich')"); ap.add_argument("--fremd", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 mit einem FREMDKOERPER vor der Wand (Nachbardach, Schild): Zellen an der oberen Klemme und Nullzellen darin gelten als Loch"); ap.add_argument("--unten", type=float); ap.add_argument("--seed", type=int, default=1); ap.add_argument("--laenge", nargs=2, type=float, default=[0.4, 1.25])
     ap.add_argument("--min_loch", type=int, default=12, help="kleinste Lochgroesse in Zellen"); a = ap.parse_args(); rng = np.random.default_rng(a.seed)
     Z = dict(np.load(a.relief)); rel = Z["rel"].astype(np.float64); px = float(Z["px"]); u0 = float(Z["u0"]); z0 = float(Z["z0"])
     if a.unten is not None and a.unten < z0 - 1e-6:
@@ -44,6 +44,9 @@ def main():
     if "putz" in Z: zone &= ~np.vstack([Z["putz"], np.zeros((H - Z["putz"].shape[0], W), bool)])       # Putzflaechen (tools/relief_putz.py) sind absichtlich eben - keine Steine hinein
     flach = ndi.maximum_filter(rel, 3) == ndi.minimum_filter(rel, 3)       # konstante Flecken = an der Klemme abgeschnittene Fremdkoerper (Schild, Auto, Kasten vor der Wand) -> ebenfalls Loch
     lab, n = ndi.label(ndi.binary_dilation(flach, iterations=2) | (rel == 0.0)); gr = ndi.sum(np.ones_like(rel), lab, np.arange(1, n + 1)); loch = np.isin(lab, 1 + np.flatnonzero(gr >= a.min_loch)) & zone
+    for f0, f1, g0, g1 in a.fremd:                                        # 15.11.2026 Nutzerbild: Nachbardach lag als schraege Rippe im Suedrelief (an der Klemme abgeschnitten)
+        feld = (U >= f0) & (U <= f1) & (ZZ >= g0) & (ZZ <= g1); fr = ndi.binary_dilation(feld & (rel >= rel.max() - 1e-3), iterations=2) | (feld & (rel == 0.0))
+        loch |= ndi.binary_fill_holes(ndi.binary_closing(fr, iterations=2)) & feld & zone
     gueltig = zone & ~loch & (rel != 0.0)
     if gueltig.sum() < 500: print("zu wenig echtes Relief in der Zone"); return 2
     J, zeile_ok = lagerfugen(rel, gueltig, px); hs = np.diff(J) * px; hs = hs[(hs > 0.2) & (hs < 0.7)]
