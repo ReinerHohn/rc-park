@@ -1,0 +1,38 @@
+{
+ "kameras": 566,
+ "luecken": [
+  {
+   "seite": "ost",
+   "band_m": "0-5",
+   "median": 1,
+   "aufnahmeort_modell_m": [
+    -2.1,
+    -16.1,
+    2.5
+   ],
+   "standort_wgs84": [
+    47.992988,
+    7.854529
+   ],
+   "blick_kompass_grad": 256,
+   "empfehlung": "ost-Seite, 0-5 m Hoehe: stehe bei 47.992988, 7.854529, Hoehe 2.5 m, Blick Kompass 256 Grad (Wand); mind. 3 Fotos. Jetzt 1 Ansichten."
+  },
+  {
+   "seite": "west",
+   "band_m": "25-30",
+   "median": 0,
+   "aufnahmeort_modell_m": [
+    -2.1,
+    46.4,
+    27.5
+   ],
+   "standort_wgs84": [
+    47.992843,
+    7.85372
+   ],
+   "blick_kompass_grad": 76,
+   "empfehlung": "west-Seite, 25-30 m Hoehe: stehe bei 47.992843, 7.853720, Hoehe 27.5 m, Blick Kompass 76 Grad (Wand); mind. 3 Fotos. Jetzt 0 Ansichten."
+  }
+ ],
+ "min": 3
+}

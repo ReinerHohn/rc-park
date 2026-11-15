@@ -1,0 +1,27 @@
+{
+ "werkzeug": "lage_gps_pruefen.py",
+ "ausrichtung": "modelle/schwab_v3/messprotokoll/SFM-AUSRICHTUNG-schwab_v3.json",
+ "lage": null,
+ "n_kameras": 566,
+ "n_gps": 193,
+ "median_abstand_m": 2.9114943961773156,
+ "gps_fit": {
+  "drehung_grad": 5.4012274962849185,
+  "drehung_90": [
+   3.7828047646780285,
+   7.176768415395347
+  ],
+  "massstab": 0.8612177237755122,
+  "massstab_90": [
+   0.8393715209901619,
+   0.8795309981552097
+  ],
+  "rest_median_m": 4.633337192654039
+ },
+ "fernfotos": {
+  "n": 15,
+  "entfernung_gps_durch_modell": 0.9684718792910382,
+  "richtungsfehler_grad": -0.17207971592785043
+ },
+ "warnungen": []
+}

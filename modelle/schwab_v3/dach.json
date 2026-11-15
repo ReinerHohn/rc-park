@@ -1,0 +1,238 @@
+{
+ "werkzeug": "dach_vermessen.py",
+ "quelle": "Laser DOM1 (LGL 2017) ueber rahmen.gelaende; Grossform, Details (Treppengiebel, Gauben) NICHT erfasst",
+ "lod2_id": "DEBW_001000hPLcp",
+ "teile": [
+  {
+   "teil": 0,
+   "flaeche_m2": 141.4,
+   "pixel": 108,
+   "mitte_uv": [
+    -2.14,
+    15.158
+   ],
+   "achse_a": [
+    -0.03213,
+    0.99948
+   ],
+   "halb_a": 6.086,
+   "halb_b": 5.884,
+   "grundriss_uv": [
+    [
+     3.915,
+     9.267
+    ],
+    [
+     3.415,
+     9.247
+    ],
+    [
+     -7.205,
+     8.945
+    ],
+    [
+     -7.673,
+     8.928
+    ],
+    [
+     -7.84,
+     12.588
+    ],
+    [
+     -8.041,
+     17.184
+    ],
+    [
+     -8.213,
+     20.948
+    ],
+    [
+     -7.641,
+     20.97
+    ],
+    [
+     0.055,
+     21.282
+    ],
+    [
+     0.055,
+     21.286
+    ],
+    [
+     1.416,
+     21.342
+    ],
+    [
+     2.995,
+     21.407
+    ],
+    [
+     2.994,
+     21.413
+    ],
+    [
+     3.545,
+     21.43
+    ],
+    [
+     3.663,
+     17.741
+    ],
+    [
+     3.811,
+     12.766
+    ]
+   ],
+   "dom1_max": 49.61999877929685,
+   "dom1_p95": 45.53600830078122,
+   "wand_oberkante_lod2": 36.99599999999998,
+   "wolke_p995": 39.18198928833009,
+   "spitze": {
+    "dom1_max": 49.61999877929685,
+    "lage_uv": [
+     -2.81,
+     14.52
+    ],
+    "pixel": 6,
+    "hinweis": "DOM1 1-m-Raster: Spitze eher HOEHER; Hoehe aus masstabelle (Gesamthoehe) nehmen, Form Foto-Aufgabe"
+   },
+   "beste": {
+    "form": "walm_a",
+    "first_halblaenge": 0.2026429221672279,
+    "ebenen": [
+     [
+      1.0,
+      0.0,
+      -0.2026
+     ],
+     [
+      -1.0,
+      0.0,
+      -0.2026
+     ],
+     [
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    ],
+    "first": 45.46276092529297,
+    "steigung": 1.4890071153640747,
+    "neigung_grad": 56.115146208727225,
+    "rms_m": 0.26362743973731995,
+    "bic": -273.92877761925985
+   },
+   "zweitbeste": {
+    "form": "zelt",
+    "first_halblaenge": 0.0,
+    "ebenen": [
+     [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     [
+      -1.0,
+      0.0,
+      -0.0
+     ],
+     [
+      0.0,
+      1.0,
+      0.0
+     ],
+     [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    ],
+    "first": 45.7001838684082,
+    "steigung": 1.5106334686279297,
+    "neigung_grad": 56.49647871119584,
+    "rms_m": 0.3012361228466034,
+    "bic": -249.80568340895616
+   },
+   "eindeutig": true,
+   "alle": [
+    {
+     "form": "walm_a",
+     "first_halblaenge": 0.203,
+     "first": 45.463,
+     "steigung": 1.489,
+     "neigung_grad": 56.115,
+     "rms_m": 0.264,
+     "bic": -273.929
+    },
+    {
+     "form": "walm_a",
+     "first_halblaenge": 0.193,
+     "first": 45.472,
+     "steigung": 1.489,
+     "neigung_grad": 56.121,
+     "rms_m": 0.264,
+     "bic": -273.902
+    },
+    {
+     "form": "walm_a",
+     "first_halblaenge": 0.182,
+     "first": 45.48,
+     "steigung": 1.49,
+     "neigung_grad": 56.125,
+     "rms_m": 0.264,
+     "bic": -273.787
+    },
+    {
+     "form": "walm_a",
+     "first_halblaenge": 0.172,
+     "first": 45.488,
+     "steigung": 1.49,
+     "neigung_grad": 56.127,
+     "rms_m": 0.264,
+     "bic": -273.572
+    },
+    {
+     "form": "walm_a",
+     "first_halblaenge": 0.162,
+     "first": 45.496,
+     "steigung": 1.49,
+     "neigung_grad": 56.127,
+     "rms_m": 0.265,
+     "bic": -273.182
+    },
+    {
+     "form": "walm_a",
+     "first_halblaenge": 0.152,
+     "first": 45.504,
+     "steigung": 1.49,
+     "neigung_grad": 56.126,
+     "rms_m": 0.265,
+     "bic": -272.618
+    },
+    {
+     "form": "walm_a",
+     "first_halblaenge": 0.142,
+     "first": 45.511,
+     "steigung": 1.49,
+     "neigung_grad": 56.124,
+     "rms_m": 0.266,
+     "bic": -271.884
+    },
+    {
+     "form": "walm_a",
+     "first_halblaenge": 0.132,
+     "first": 45.518,
+     "steigung": 1.489,
+     "neigung_grad": 56.12,
+     "rms_m": 0.267,
+     "bic": -270.982
+    }
+   ]
+  }
+ ]
+}

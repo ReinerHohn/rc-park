@@ -1,0 +1,44 @@
+{
+ "foto": "eigen__IMG_20261106_113818",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.7023684326732452,
+   -0.4787788177138706,
+   0.891512737867789
+  ],
+  "t": [
+   13.621481861636875,
+   7.43035314402863,
+   7.033593442157229
+  ],
+  "f_px": 2811.3652798964,
+  "cx": 1500.0,
+  "cy": 2000.0,
+  "k1": 0.014519813533189336,
+  "bild": [
+   3000,
+   4000
+  ],
+  "standort_xyz": [
+   -15.974,
+   5.631,
+   1.834
+  ],
+  "hoehe_ueber_gelaende": 1.83,
+  "rms_px": 1.15,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   51.299997741699215
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/schwab_v3/messprotokoll/SFM-AUSRICHTUNG-schwab_v3.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}
