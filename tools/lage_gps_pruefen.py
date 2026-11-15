@@ -74,7 +74,7 @@ def main():
     if d_med is not None:
         print(f"1 Kamera-Median <-> GPS-Median (Torfotos, n {int(nah.sum())}): {d_med:.1f} m (Grenze {a.max_abstand})")
         if d_med > a.max_abstand: warn.append(f"Kamera-Median {d_med:.1f} m vom GPS-Median")
-    w = np.ones(len(G), bool)
+    _dm = np.hypot(*(MU - np.median(MU, 0)).T); w = _dm <= np.percentile(_dm, 75)   # 15.11.: Start nur mit dem Kamerakern - einzelne km-weit versetzte Kameras (globaler Mapper) kippten den Fit (Drehung -140 Grad, Massstab 0,016 bei richtiger Lage)
     for _ in range(5):
         if w.sum() < 3 or not np.isfinite(MU[w]).all():                       # 15.11.: Absturz (SVD) statt Urteil bei entarteter Lage -> als Widerspruch werten
             print("WARNUNG: GPS-Fit nicht moeglich (zu wenige vertraegliche Kameras) - Lage widerspricht dem GPS"); erg["ergebnis"] = "fit nicht moeglich"

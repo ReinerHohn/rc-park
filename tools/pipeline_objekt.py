@@ -103,7 +103,8 @@ def main():
             if rc_w != 0: sparse_wahl = sparse_dir
         sparse_dicht = sparse_wahl if os.path.isdir(sparse_wahl) else sparse_dir
         script = os.path.join(daten, "dicht_kette.py")
-        open(script, "w").write(f'''import pycolmap, os, time
+        open(script, "w").write(f'''import pycolmap, os, time, sys
+sys.path.insert(0, {os.path.dirname(os.path.abspath(__file__))!r}); import gpu_buchung as GB
 bilder = {fotos!r}; sparse = {sparse_dicht!r}; out = {os.path.join(daten, "dicht")!r}
 os.makedirs(out, exist_ok=True)
 STUFE = {stufe_wahl!r}
@@ -124,7 +125,9 @@ if not _fertig:
     pycolmap.patch_match_stereo(out, options=po)
 fo = pycolmap.StereoFusionOptions(); fo.max_image_size = 800 if GROB else 1600
 if STUFE == "schnell": fo.min_num_pixels = 8   # strenger, weil die geometrische Pruefung fehlt (COLMAP-FAQ)
+GB.frei()   # Fusion hat keinen GPU-Code (Minuten auf der CPU)
 pycolmap.stereo_fusion(os.path.join(out, "fused.ply"), out, options=fo, input_type="geometric" if FEIN else "photometric", output_type="ply")
+GB.belegen()
 print("FERTIG", flush=True)
 ''')
         rc, out = run([PY_COL, "-I", script], log)

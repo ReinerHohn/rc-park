@@ -333,13 +333,21 @@ def main():
         if sicht.sum() < 20: return 0.0
         d, _ = cKDTree(M).query(Wo[sicht]); return float((d < 0.6).mean())
 
-    loes = []
+    loes = []; _s_gps_best = None
     for sc, s, th, dx, dy in top:
         p0 = [math.log(s), 0, 0, th, dx, dy, 0.0]
         if GPS_PRUEF is not None and (abs(p0[0] - math.log(GPS_PRUEF[2])) > 0.6 or float(np.median(np.linalg.norm(zu_modell(p0, Cq[GPS_PRUEF[0]])[:, :2] - GPS_PRUEF[1], axis=1))) > 30):
             continue                                                                          # kann das GPS-Veto nie bestehen (Massstab > Band + Veto oder Kameras > 30 m neben GPS) -> Rechenzeit sparen
         zc = np.median(Cq[:, 2]) / s; p0[6] = 1.6 - zc                                         # Hoehenstart: Kameras ~1,6 m ueber Boden (nur Start, ANNAHME)
-        p, frac, rms, ok = fein(p0, Q, band=0.15 if sc == -1.0 else 0.35); ab = abdeckung(p, Q); loes.append((frac * ab, rms, p, ok, frac, ab))   # GPS-Kandidat: Massstab nur +-16 % (lief sonst an die Grenze: 0,0855 -> 0,1214)
+        if sc == -1.0 and _s_gps_best is None:                                              # 15.11.: MASSSTABS-RASTER statt freiem Massstab. Der Feinfit lief IMMER an die Bandgrenze
+            _kand = []                                                                      # (schwab_auto 0,0737 = untere, schwab_v3 0,0968 = obere Grenze; wahr 0,0732). Jetzt: Massstab je
+            for _f in np.linspace(-0.27, 0.27, 19):                                         # Rasterwert festhalten (+-0,5 %), nur Drehung/Lage anpassen; es gewinnt Inlier x Wandabdeckung.
+                _p0 = list(p0); _p0[0] = p0[0] + float(_f); _p, _fr, _rm, _ok = fein(_p0, Q, band=0.005); _ab = abdeckung(_p, Q); _kand.append((_fr * _ab, _rm, _p, _ok, _fr, _ab))
+            _kand.sort(key=lambda l: -l[0]); _s_gps_best = _kand[0][2][0]; loes += _kand[:3]
+            print(f"   GPS-Massstabsraster: bester Massstab {math.exp(_s_gps_best):.4f} (Guete {100 * _kand[0][0]:.0f} %, Inlier {100 * _kand[0][4]:.0f} %, Abdeckung {100 * _kand[0][5]:.0f} %); zweitbester {math.exp(_kand[1][2][0]):.4f} ({100 * _kand[1][0]:.0f} %)", flush=True)
+            continue
+        if sc == -1.0: p0[0] = _s_gps_best
+        p, frac, rms, ok = fein(p0, Q, band=0.005 if sc == -1.0 else 0.35); ab = abdeckung(p, Q); loes.append((frac * ab, rms, p, ok, frac, ab))
         print(f"   Start {math.degrees(th):5.0f} Grad s={s:.3f}: Inlier {100 * frac:.0f} %, Objektwand-Abdeckung {100 * ab:.0f} %, RMS {rms:.2f} m, Massstab {math.exp(p[0]):.4f}")
     if GPS_PRUEF is not None:                                                                 # 15.11.: GPS-Veto (v2: Loesung mit 2,5-fach zu grossem Modell gewann mit Guete 4 %)
         _gi, _gm, _gs = GPS_PRUEF

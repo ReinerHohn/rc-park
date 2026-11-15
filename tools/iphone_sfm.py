@@ -80,6 +80,7 @@ def _gps_tor(modell):
     o = subprocess.run([sys.executable, "-I", os.path.join(_tools, "mapper_gps_vergleich.py"), img, modell], capture_output=True, text=True).stdout
     n = re.search(r"mit GPS: (\d+)", o); a_ = re.search(r"Anteil > 15 m (\d+) %", o); m_ = re.search(r"Median ([\d.]+) m", o)
     return dict(n_gps=int(n.group(1)) if n else 0, anteil_ueber_15m=int(a_.group(1)) if a_ else None, median_m=float(m_.group(1)) if m_ else None)
+sys.path.insert(0, _tools); import gpu_buchung as GB; GB.frei()   # Mapper rechnet fast nur auf der CPU (global ~7 min, schrittweise ~40 min) -> GPU-Budget solange freigeben
 _t0 = time.time(); wahl = dict(mapper=MAPPER)
 if MAPPER == "inkrementell": _inkrementell(f"{w}/sparse"); wahl["gewaehlt"] = "inkrementell"
 else:
@@ -96,6 +97,7 @@ else:
         nimm = "sparse_global" if g_besser else "sparse_inkr"; wahl["gewaehlt"] = "global" if g_besser else "inkrementell"
         wahl["hinweis"] = "kein Modell besteht das GPS-Tor (<= 15 % > 15 m) - Lage NICHT glauben" if tg["n_gps"] >= 15 else "zu wenig GPS-Fotos fuer ein Urteil - schrittweiser Mapper wie bisher"
         shutil.rmtree(f"{w}/sparse", ignore_errors=True); os.rename(f"{w}/{nimm}", f"{w}/sparse")
+GB.belegen()
 json.dump(wahl, open(os.path.join(w, "mapper_wahl.json"), "w"), indent=1); print("MAPPERWAHL", json.dumps(wahl), flush=True)
 rec = {k: pycolmap.Reconstruction(os.path.join(f"{w}/sparse", k)) for k in sorted(os.listdir(f"{w}/sparse")) if k.isdigit()}
 for k, r in rec.items(): print(k, r.summary(), flush=True)
