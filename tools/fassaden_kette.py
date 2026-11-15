@@ -7,6 +7,7 @@ Was am 15.11.2026 am Schwabentor von Hand lief, in einem Lauf (Nutzer: "Baue all
   3. relief_einsatz.py (Hoehenbild aus dem Netz, ab z 0, mit Oeffnungsmaske) -> relief/<wand>.npz
   4. relief_putz.py (Putz eben ueber die Fotofarbe) -> <wand>_putz.npz        (faellt weg, wenn kein Putz gefunden)
   5. steine_generieren.py (Loecher ausserhalb von Putz und Oeffnungen) -> <wand>_voll.npz
+  5b. mit --fein SPARSE BILDER: tiefe_lokal.py fuer die Steinzone der Wand (1 cm, GPU) + relief_mischen.py -> <wand>_misch.npz (2 cm), wird von anbauen() vor das grobe Relief gesetzt.
   6. Bericht audit/fassaden_kette.json (Wand, Fotos, Loch-/Putz-/Generiert-Anteile) + je Wand das Bild relief/<wand>_voll.jpg zum ANSEHEN.
 Im Generator: `from fassaden_kette import anbauen; koerper = anbauen(koerper, OBJ)` vereinigt alle *_voll.npz (nur innerhalb der nach aussen verschobenen Koerperhuelle).
 Grenzen: Auskragungen/Erker (Band 0,6 m) und regelmaessige Bauteile (Fenster, Boegen, Uhr) bleiben Sache von bauteile.py; generierte Steine sind ANNAHME.
@@ -53,7 +54,9 @@ def anbauen(koerper, objekt_json, tiefe=0.4):
     for w in json.load(open(B))["waende"]:
         f = os.path.join(od, "relief", w["name"] + "_voll.npz")
         if not os.path.exists(f) or w.get("aus"): continue
-        Z = np.load(f); n = Z["n"]; hu = koerper + koerper.translate((0.8 * n[0], 0.8 * n[1], 0.0)); koerper = koerper + (relief_koerper(f, tiefe=tiefe, trend=True) ^ hu)
+        Z = np.load(f); n = Z["n"]; hu = koerper + koerper.translate((0.8 * n[0], 0.8 * n[1], 0.0)); fm = os.path.join(od, "relief", w["name"] + "_misch.npz"); tf = [tuple(w["fein_feld"])] if w.get("fein_feld") and os.path.exists(fm) else []
+        koerper = koerper + (relief_koerper(f, tiefe=tiefe, trend=True, tief_felder=tf) ^ hu)
+        if tf: koerper = koerper + (relief_koerper(fm, tiefe=tiefe, trend=True) ^ hu)                 # lokale Feinrechnung (tools/tiefe_lokal.py + relief_mischen.py) vor dem groben Relief
         belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} (Fassaden-Kette)", quelle="Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (" + ", ".join(w.get("fotos", [])[:3]) + "); Loecher generiert",
                            generiert_anteil=w.get("generiert"), hinweis="Scan-Relief, kein Mass; generierte Steine = ANNAHME"))
     return koerper, belege
@@ -61,7 +64,8 @@ def anbauen(koerper, objekt_json, tiefe=0.4):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--netz", required=True); ap.add_argument("--wand", nargs=8, action="append", default=[]); ap.add_argument("--min_laenge", type=float, default=3.0)
-    ap.add_argument("--px", type=float, default=0.05); ap.add_argument("--massstab", nargs=4, help="wie relief_putz.py (Relief im Rohrahmen)"); a = ap.parse_args()
+    ap.add_argument("--px", type=float, default=0.05); ap.add_argument("--massstab", nargs=4, help="wie relief_putz.py (Relief im Rohrahmen)")
+    ap.add_argument("--fein", nargs=2, metavar=("SPARSE", "BILDER"), help="je Wand zusaetzlich die lokale Feinrechnung der Tiefe fuer die Steinzone (tools/tiefe_lokal.py, GPU, ~11 min je Wand) und relief_mischen.py"); ap.add_argument("--fein_max_size", default="3200"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); rd = os.path.join(od, "relief"); os.makedirs(rd, exist_ok=True)
     W = [dict(name=w[0], a=[float(w[1]), float(w[2])], b=[float(w[3]), float(w[4])], aussen=[float(w[5]), float(w[6])], z1=float(w[7])) for w in a.wand] or waende_aus_lod2(od, a.min_laenge)
     def lauf(cmd):
@@ -78,7 +82,18 @@ def main():
         if fotos and lauf([os.path.join(HIER, "relief_putz.py"), r0, r1, a.objekt, *fotos, "--feld", "0", str(L), "0", str(w["z1"])] + (["--massstab", *a.massstab] if a.massstab else [])) == 0:
             quelle = r1; w["putz"] = round(float(np.load(r1)["putz"].mean()), 3)
         if lauf([os.path.join(HIER, "steine_generieren.py"), quelle, r2, "--max_loch_m2", "1.5"]) == 0: w["generiert"] = round(float(np.load(r2)["generiert_anteil"]), 3)
-        else: w["aus"] = "steine_generieren fehlgeschlagen"
+        else: w["aus"] = "steine_generieren fehlgeschlagen"; continue
+        if a.fein:                                                        # Steinzone = Zeilen mit >= 30 % echtem Nicht-Putz-Relief; zusammenhaengender Block von unten, hoechstens 12 m
+            Zv = np.load(r2); rel_ = Zv["rel"]; H_ = rel_.shape[0]; pz = Zv["putz"] if "putz" in Zv.files else np.zeros_like(rel_, bool); pz = np.vstack([pz, np.zeros((H_ - pz.shape[0], pz.shape[1]), bool)]) if pz.shape[0] < H_ else pz
+            stein = ((rel_ != 0) & ~pz).mean(1) >= 0.3; k_ = H_
+            while k_ > 0 and (stein[k_ - 1] or (H_ - k_) * a.px < 1.5): k_ -= 1
+            z1f = round(min((H_ - k_) * a.px, 12.0), 2)
+            if z1f >= 2.0:
+                feld = ["0.1", str(round(L - 0.1, 2)), "0", str(z1f)]; rf_ = subprocess.run(["/media/oem/scan/venv-colmap/bin/python", "-I", os.path.join(HIER, "tiefe_lokal.py"), a.objekt, a.fein[0], a.fein[1], "--name", w["name"] + "_fein", "--a", *map(str, w["a"]), "--b", *map(str, w["b"]),
+                                                                                                           "--aussen", *map(str, w["aussen"]), "--feld", *feld, "--max_size", a.fein_max_size] + (["--massstab", *a.massstab] if a.massstab else []), capture_output=True, text=True)
+                print("   ", (rf_.stdout.strip().splitlines() or [rf_.stderr.strip()[-200:]])[-1][:200], flush=True); rfe = os.path.join(rd, w["name"] + "_fein.npz")
+                if rf_.returncode == 0 and os.path.exists(rfe) and lauf([os.path.join(HIER, "relief_mischen.py"), rfe, r2, os.path.join(rd, w["name"] + "_misch.npz")]) == 0:
+                    w["fein_feld"] = [0.0, round(L, 2), 0.0, round(z1f - 0.1, 2)]; w["fein_anteil"] = round(float(np.load(os.path.join(rd, w["name"] + "_misch.npz"))["fein"].mean()), 3)
     os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(dict(netz=a.netz, waende=W), open(os.path.join(od, "audit", "fassaden_kette.json"), "w"), indent=1, ensure_ascii=False)
     print("->", os.path.join(od, "audit", "fassaden_kette.json"), "| ANSEHEN: relief/<wand>_voll.jpg")
 

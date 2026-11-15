@@ -158,7 +158,7 @@ def main():
     if dran("fassaden") and os.path.exists(AU):                         # 15.11.2026: Fassaden-Kette automatisch (Netz -> Relief je LoD2-Wand -> Putz per Fotofarbe -> Steine in Loechern), danach neu bauen
         dd = os.path.join(P, "dicht"); nz = os.path.join(P, "openmvs", "mesh_modell_ausschnitt.npz")
         if os.path.exists(os.path.join(dd, "fused.ply")) and lauf(B, "fassaden_netz", [PY, "-I", "tools/netz_aus_dicht.py", ZR, dd], log)[0] == 0 and os.path.exists(nz):
-            if lauf(B, "fassaden_kette", [PY, "-I", "tools/fassaden_kette.py", ZR, "--netz", nz], log)[0] == 0: lauf(B, "bauen_mit_fassaden", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
+            if lauf(B, "fassaden_kette", [PY, "-I", "tools/fassaden_kette.py", ZR, "--netz", nz] + (["--fein", os.path.join(dd, "sparse"), FV] if os.path.isdir(os.path.join(dd, "sparse")) else []), log)[0] == 0: lauf(B, "bauen_mit_fassaden", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))   # --fein: lokale Feinrechnung der Tiefe je Wand (GPU, ~11 min je Wand)
         else: notiz(B, "fassaden", False, fehler="kein dichter Ordner / Netz")
     if dran("fenster") and os.path.exists(AU):                          # 15.11.2026: Fenster automatisch (Mehrfoto-Ortho -> OWLv2 -> Scheiben gruppieren); Probe Nordgiebel Schwabentor-Nachbarhaus: 6 von 6 sichtbaren Fenstern, 1-4 cm
         fo = os.path.join(D, "fassade"); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); fa = os.path.join(Z, "audit", "fenster_auto.json")
