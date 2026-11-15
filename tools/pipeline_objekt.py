@@ -118,7 +118,8 @@ else:
     pycolmap.undistort_images(out, sparse, bilder, output_type="COLMAP", undistort_options=uo)
 GROB = STUFE == "grob"
 po = pycolmap.PatchMatchOptions(); po.max_image_size = 800 if GROB else 1600; po.gpu_index = "0"
-FEIN = STUFE == "fein"; po.geom_consistency = FEIN; po.filter = True   # grob/schnell: nur fotometrisch (gefiltert); fein: mit geometrischer Konsistenz
+FEIN = STUFE == "fein"; po.geom_consistency = FEIN; po.filter = True
+if STUFE == "schnell": po.window_step = 2   # Messung 15.11.2026 (Schwabentor, 40 Referenzbilder): 196 statt 485 s, 11 % weniger Punkte, Abstand zur Standardwolke Median 1,3 cm, p90 4,4 cm, 0,4 % > 30 cm   # grob/schnell: nur fotometrisch (gefiltert); fein: mit geometrischer Konsistenz
 if not _fertig:
     pycolmap.patch_match_stereo(out, options=po)
 fo = pycolmap.StereoFusionOptions(); fo.max_image_size = 800 if GROB else 1600
