@@ -191,7 +191,9 @@ def main():
         print(f"Startmassstab aus Foto-GPS: {s_gps:.4f} SfM-Einheiten/m (Wolkenausdehnung haette {s0:.4f} gegeben)"); s0 = s_gps
     best = []
     print(f"Startmassstab s0 = {s0:.4f} SfM-Einheiten/m (Wolkenausdehnung), Suche s0/4 .. 4 s0; Toleranz 0,75 m * s0/s (konstant in SfM-Einheiten)")
-    for ls in np.linspace(math.log(s0 / 4), math.log(s0 * 4), 33):
+    _band = 1.5 if s_gps else 4.0                                                             # 15.11.: mit GPS-Massstab nur +-50 % suchen (GPS lag 6-8 % neben LoD2; Kaufhaus: ohne Grenze gewann ein 2,6-fach geschrumpftes Modell, Wolke 9 m hoch)
+    if s_gps: print(f"Massstabssuche auf GPS-Band begrenzt: {s0 / _band:.4f} .. {s0 * _band:.4f}")
+    for ls in np.linspace(math.log(s0 / _band), math.log(s0 * _band), 17 if s_gps else 33):
         s = math.exp(ls); hq = (Q[:, 2] - zc_q) / s + 1.6; fs = (hq > 1.0) & (hq < 7.0)
         if fs.sum() < 50: continue
         sig_m = max(z, 0.75 * s0 / s)                                                          # Toleranz in SfM-EINHEITEN konstant (massstabsneutral; in Metern bevorzugt jede Toleranz das geschrumpfte Modell)
