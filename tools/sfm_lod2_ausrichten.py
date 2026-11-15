@@ -243,9 +243,10 @@ def main():
         Mxy = np.array([[(u - c0_) @ xh_, (u - c0_) @ yh_] for _, u in _gk]); Cxy = Cq[[i for i, _ in _gk], :2]
         w_ = np.ones(len(Mxy), bool)
         for _ in range(5):
+            if w_.sum() < 8: break                                                            # Kaufhaus 15.11.: schlechtes GPS -> Ausreisserschleife lief leer (SVD-Absturz)
             mc, cc = Mxy[w_].mean(0), Cxy[w_].mean(0); Hm = (Mxy[w_] - mc).T @ (Cxy[w_] - cc); Uu, Ss, Vv = np.linalg.svd(Hm); Rg = Uu @ np.diag([1, np.sign(np.linalg.det(Uu @ Vv))]) @ Vv
             k_ = Ss.sum() / ((Cxy[w_] - cc) ** 2).sum(); tg = mc - k_ * Rg @ cc; res = np.linalg.norm(k_ * Cxy @ Rg.T + tg - Mxy, axis=1); w_ = res < max(2.5 * np.median(res), 8)
-        if np.linalg.det(Rg) > 0:
+        if np.linalg.det(Rg) > 0 and w_.sum() >= 8 and np.median(res) < 12:                  # nur ein brauchbarer GPS-Fit wird Startkandidat
             thg = math.atan2(Rg[1, 0], Rg[0, 0])
             for _dx, _dy in ((4, 0), (-4, 0), (0, 4), (0, -4), (0, 0)): top.insert(0, (-1.0, 1.0 / k_, thg, float(tg[0]) + _dx, float(tg[1]) + _dy))   # GPS-Lage +-4 m (Handy-GPS in der Gasse), Fangbereich Feinfit ~3 m
             print(f"GPS-Startkandidat: Massstab {1 / k_:.4f} SfM-Einheiten/m, Drehung {math.degrees(thg):.0f} Grad, Rest Median {np.median(res):.1f} m ({int(w_.sum())} von {len(w_)} Kameras)")

@@ -73,7 +73,13 @@ def main():
         if d_med > a.max_abstand: warn.append(f"Kamera-Median {d_med:.1f} m vom GPS-Median")
     w = np.ones(len(G), bool)
     for _ in range(5):
-        s, R, t = fit2d(MU[w], G[w]); res = np.hypot(*(MU @ R.T * s + t - G).T); w = res < max(np.percentile(res, 80), 15)
+        if w.sum() < 3 or not np.isfinite(MU[w]).all():                       # 15.11.: Absturz (SVD) statt Urteil bei entarteter Lage -> als Widerspruch werten
+            print("WARNUNG: GPS-Fit nicht moeglich (zu wenige vertraegliche Kameras) - Lage widerspricht dem GPS"); erg["ergebnis"] = "fit nicht moeglich"
+            os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(erg, open(os.path.join(od, "audit", "lage_gps.json"), "w"), indent=1); return 3
+        try: s, R, t = fit2d(MU[w], G[w])
+        except np.linalg.LinAlgError:
+            print("WARNUNG: GPS-Fit konvergiert nicht - Lage widerspricht dem GPS"); return 3
+        res = np.hypot(*(MU @ R.T * s + t - G).T); w = res < max(np.percentile(res, 80), 15)
     rng = np.random.default_rng(0); ys, ss = [], []
     iw = np.flatnonzero(w)
     for _ in range(400):
