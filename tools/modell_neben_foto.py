@@ -20,6 +20,7 @@ for s in stls:
 P = np.vstack(P); N = np.vstack(N)
 x0, y0, x1, y1 = [int(v) for v in a[a.index("--box") + 1:a.index("--box") + 5]] if "--box" in a else (0, 0, W, H)
 q = 3                                                                # Punkt-Renderer: mit 1/3 Aufloesung rechnen, sonst Loecher zwischen den Abtastpunkten
-r = rk.schattiert(P, N, R, t, f / q, cx / q, cy / q, W // q, H // q)[0]; r = cv2.cvtColor(cv2.resize(np.asarray(r).astype(np.uint8), (W, H), interpolation=cv2.INTER_LINEAR), cv2.COLOR_GRAY2BGR)
+li = R.T @ np.array([-0.45, -0.75, -1.0]); li = li / np.linalg.norm(li)      # Licht von der Kamera her, schraeg von links oben (festes Weltlicht liess abgewandte Fassaden schwarz)
+r = rk.schattiert(P, N, R, t, f / q, cx / q, cy / q, W // q, H // q, licht=tuple(li))[0]; r = cv2.cvtColor(cv2.resize(np.asarray(r).astype(np.uint8), (W, H), interpolation=cv2.INTER_LINEAR), cv2.COLOR_GRAY2BGR)
 o = np.hstack([im[y0:y1, x0:x1], r[y0:y1, x0:x1].astype(np.uint8)]); B = int(a[a.index("--breite") + 1]) if "--breite" in a else 900
 s = 2 * B / o.shape[1]; cv2.imwrite(a[3], cv2.resize(o, None, fx=s, fy=s, interpolation=cv2.INTER_AREA)); print("->", a[3])

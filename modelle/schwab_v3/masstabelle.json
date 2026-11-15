@@ -1712,20 +1712,26 @@
    "naechster_schritt": "Breite Ost-West am Modell lassen. Nord-Sued-Laenge klaeren, sobald das Knauf-Tor < 0,3 m ist (dann Suedwand am Foto peilen und gegen die neue dichte Wolke schneiden); bis dahin Suedwand = ANNAHME (LoD2 x 0,933). 3D-Seite zeigt ab V17 die neuen SfM-Punkte statt der alten dichten Wolke"
   },
   {
+   "datum": "2026-11-15",
+   "wer": "Nutzer (Bildschirmfoto 20:34)",
+   "text": "Am Turm sind Teile des Quadermauerwerks glatt (Sockelstreifen unter z 0,6 m, Flecken wo Schilder/Kaesten/Autos das Scan-Relief verdeckten, rechter Torpfeiler unten). Nutzer: 'Kannst du den Rest der Steine noch machen, notfalls generieren?'",
+   "naechster_schritt": "tools/steine_generieren.py: Loecher der Reliefs Nord/Sued/West in den Steinzonen (z 0-9,7 / 0-9 / 0-9 m) mit generierten Quadern fuellen (ANNAHME, kein Mass); offen: Ostseite des Turms, Treppenturm, Bogensteine der Tore"
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1526",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 28.8,
-   "z_bis": 28.8,
+   "z_von": 28.74,
+   "z_bis": 28.74,
    "xyz": [
-    -2.43,
-    9.78,
-    28.8
+    -2.38,
+    9.76,
+    28.74
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.8 m, y=9.78 m (Zelle [981, 1526, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.74 m, y=9.76 m (Zelle [981, 1526, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1734,15 +1740,15 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1635",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 26.71,
-   "z_bis": 26.71,
+   "z_von": 26.73,
+   "z_bis": 26.73,
    "xyz": [
-    -2.36,
-    9.8,
-    26.71
+    -2.37,
+    9.81,
+    26.73
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.71 m, y=9.8 m (Zelle [981, 1635, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.73 m, y=9.81 m (Zelle [981, 1635, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1768,15 +1774,15 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-2071",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 19.68,
-   "z_bis": 19.68,
+   "z_von": 19.65,
+   "z_bis": 19.65,
    "xyz": [
-    -2.23,
-    9.9,
-    19.68
+    -2.18,
+    9.88,
+    19.65
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.68 m, y=9.9 m (Zelle [981, 2071, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.65 m, y=9.88 m (Zelle [981, 2071, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1785,15 +1791,15 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-2180",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 18.18,
-   "z_bis": 18.18,
+   "z_von": 18.16,
+   "z_bis": 18.16,
    "xyz": [
-    -2.2,
-    9.92,
-    18.18
+    -2.19,
+    9.91,
+    18.16
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.18 m, y=9.92 m (Zelle [981, 2180, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.16 m, y=9.91 m (Zelle [981, 2180, 109], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   }
  ]

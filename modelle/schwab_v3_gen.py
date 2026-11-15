@@ -76,6 +76,8 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     # Oeffnungen bleiben Sache des Generators. Erzeugt mit tools/relief_einsatz.py (modelle/schwab_v3/relief/nord.npz), geprueft mit tools/relief_test.py.
     from relief_einsatz import koerper as relief_koerper
     rel_n = os.path.join(HERE, "schwab_v3", "relief", "nord.npz")
+    if os.path.exists(rel_n.replace(".npz", "_voll.npz")):          # 15.11.2026 Nutzer: "Rest der Steine notfalls generieren" - Loecher des Scan-Reliefs mit generierten Quadern gefuellt (tools/steine_generieren.py)
+        rel_n = rel_n.replace(".npz", "_voll.npz"); beleg("wand", "Generierte Quader Nord (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)", "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben", anteil=float(np.load(rel_n)["generiert_anteil"]), hinweis="ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original")
     if os.path.exists(rel_n) and os.environ.get("OHNE_RELIEF") != "1":
         rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12 + WV, trend=True, versatz=0.0, null_felder=[(2.6, 5.4, 23.9, 27.1), (6.9, 9.7, 23.9, 27.1), (1.6, 11.1, 9.7, 21.1)])   # Fensterfelder baut der Generator scharf (unten)
         beleg("wand", "Relief Nordwand z 0,6-29,6 m", "OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)",
@@ -179,6 +181,8 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     from bauteile import Wand, spitzbogen as b_spitz, rundbogen as b_rund
     WS = Wand(S_A, S_B, aussen=(-30.0, 15.0)); T_U = 5.76
     rel_s = os.path.join(HERE, "schwab_v3", "relief", "sued.npz")              # Relief Sued aus dem NEUEN OpenMVS-Netz (sfm_neu), korrigierter Rahmen; Bauteilfelder ausgeblendet
+    if os.path.exists(rel_s.replace(".npz", "_voll.npz")):          # 15.11.2026 Nutzer: "Rest der Steine notfalls generieren" - Loecher des Scan-Reliefs mit generierten Quadern gefuellt (tools/steine_generieren.py)
+        rel_s = rel_s.replace(".npz", "_voll.npz"); beleg("wand", "Generierte Quader Sued (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)", "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben", anteil=float(np.load(rel_s)["generiert_anteil"]), hinweis="ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original")
     if os.path.exists(rel_s) and os.environ.get("OHNE_RELIEF") != "1":
         koerper = koerper + relief_koerper(rel_s, tiefe=0.30, trend=True, null_felder=[(3.0, 8.4, 28.2, 33.75), (5.1, 6.4, 22.0, 23.95), (0.0, 11.5, 25.85, 26.95), (2.4, 7.2, 18.1, 18.5)])
         beleg("wand", "Relief Suedwand z 0,6-34 m", "OpenMVS-Netz der neuen dichten Wolke (sfm_neu/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m, Loecher 8 %", hinweis="Scan-Relief, kein Mass; Uhr-, Fenster-, Gesims- und Verdachungsfeld ausgeblendet")
@@ -195,6 +199,8 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     # ---- WESTFASSADE (15.11.2026): Fenster auf der Mittelachse, Masse M-114039-001..-006 (Foto 114039, Kameras aus dem SfM-Neuaufbau); Wandebene aus den neuen SfM-Punkten ----
     WW = Wand((-7.37, 20.46), (3.30, 20.96), aussen=(-2.0, 40.0))               # Westwand: Ausgleichsebene des neuen Netzes (erste Annahme 20,85..21,00 lag am Suedende 0,39 m zu weit aussen; passt zum skalierten LoD2)
     rel_w = os.path.join(HERE, "schwab_v3", "relief", "west.npz")
+    if os.path.exists(rel_w.replace(".npz", "_voll.npz")):          # 15.11.2026 Nutzer: "Rest der Steine notfalls generieren" - Loecher des Scan-Reliefs mit generierten Quadern gefuellt (tools/steine_generieren.py)
+        rel_w = rel_w.replace(".npz", "_voll.npz"); beleg("wand", "Generierte Quader West (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)", "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben", anteil=float(np.load(rel_w)["generiert_anteil"]), hinweis="ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original")
     if os.path.exists(rel_w) and os.environ.get("OHNE_RELIEF") != "1":
         koerper = koerper + relief_koerper(rel_w, tiefe=0.45, trend=True, null_felder=[(4.8, 6.0, 21.5, 23.7), (0.0, 8.4, 25.85, 26.95)])
         beleg("wand", "Relief Westwand z 0,6-34 m (ohne Treppenturm)", "OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm, geklemmt -0,10..+0,15 m", hinweis="Scan-Relief, kein Mass; Fenster- und Gesimsfeld ausgeblendet")

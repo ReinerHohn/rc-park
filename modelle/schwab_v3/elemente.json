@@ -51,6 +51,14 @@
  },
  {
   "seite": "wand",
+  "element": "Generierte Quader Nord (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)",
+  "quelle": "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben",
+  "anteil": 0.13,
+  "hinweis": "ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Relief Nordwand z 0,6-29,6 m",
   "quelle": "OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)",
   "hinweis": "Scan-Relief, kein Mass: Torbogen, Holzgalerie und Vordach sind darin Loecher (glatte Wand) und fehlen noch; Wandanzug (~0,6 cm/m) abgezogen | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
@@ -150,6 +158,14 @@
  },
  {
   "seite": "wand",
+  "element": "Generierte Quader Sued (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)",
+  "quelle": "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben",
+  "anteil": 0.10720327954190526,
+  "hinweis": "ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Relief Suedwand z 0,6-34 m",
   "quelle": "OpenMVS-Netz der neuen dichten Wolke (sfm_neu/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m, Loecher 8 %",
   "hinweis": "Scan-Relief, kein Mass; Uhr-, Fenster-, Gesims- und Verdachungsfeld ausgeblendet",
@@ -168,6 +184,14 @@
   "fenster_hoehe": 1.41,
   "gesims_z": 26.53,
   "hinweis": "ANNAHME: Tiefen/Ausladungen, Torwand 1 m, Bogen aus Kreisboegen; Georgsbild, Eckquader und Bruchstein fehlen (Relief erst nach neuer dichter Wolke); Knauf-Tor Nord-Sued 0,9 m -> Masse auf ~2-3 %",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Generierte Quader West (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)",
+  "quelle": "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben",
+  "anteil": 0.05339849354375897,
+  "hinweis": "ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original",
   "seite_name": "wand"
  },
  {
