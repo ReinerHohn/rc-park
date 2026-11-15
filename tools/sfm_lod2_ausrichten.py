@@ -93,7 +93,11 @@ def gps_massstab(ims, C, obj, od, fotos=""):
     if len(U) < 8: print(f"GPS-Massstab: nur {len(U)} Kameras mit GPS - Startmassstab aus Wolkenausdehnung"); return None   # 8: Kaufhaus hatte 10 (Chat-Kopien ohne EXIF)
     U = np.array(U, float); X = np.array(X, float); i, j = np.triu_indices(len(U), 1); dg = np.hypot(*(U[i] - U[j]).T); dx = np.linalg.norm(X[i] - X[j], axis=1); m = dg > 15
     if m.sum() < 15: return None
-    print(f"GPS-Massstab: {len(U)} Kameras, {int(m.sum())} Paare > 15 m"); return float(np.median(dx[m] / dg[m]))
+    q = dx[m] / dg[m]; q25, q50, q75 = np.percentile(q, [25, 50, 75]); streu = q75 / max(q25, 1e-12)
+    print(f"GPS-Massstab: {len(U)} Kameras, {int(m.sum())} Paare > 15 m, Verhaeltnis-Streuung q75/q25 {streu:.2f}")
+    if streu > 2.0:                                                            # Martinstor 15.11.: Commons-Geotags = Objektstandort statt Kamerastandort -> Massstab 10x falsch, keine Loesung
+        print("GPS-Massstab VERWORFEN: Paarverhaeltnisse streuen zu stark (Geotags sind keine Kamerastandorte?) - Startmassstab aus Wolkenausdehnung"); GPS_KAM.clear(); return None
+    return float(q50)
 
 
 def main():
