@@ -34,6 +34,7 @@ def main():
         name = a[a.index("--name") + 1] if "--name" in a else "Peilung senkrechte Kante"; A_ = np.zeros((2, 2)); b_ = np.zeros(2); L = []
         for kid, x, y in obs:
             K = json.load(open(os.path.join(od, "messprotokoll", kid + ".json")))["kamera"]; R, _ = cv2.Rodrigues(np.array(K["rvec"])); c = -R.T @ np.array(K["t"])
+            if K.get("tiefe_unsicher"): print(f"WARNUNG {kid}: Kamera 'tiefe_unsicher' ({K['tiefe_unsicher']}) - Masse nur IN der Wandebene dieses Fotos belastbar, nicht davor/dahinter", flush=True)
             xn, yn = (x - K["cx"]) / K["f_px"], (y - K["cy"]) / K["f_px"]; k1 = float(K.get("k1") or 0.0); xu, yu = xn, yn
             for _ in range(10): r2 = xu * xu + yu * yu; xu, yu = xn / (1 + k1 * r2), yn / (1 + k1 * r2)
             d = R.T @ np.array([xu, yu, 1.0]); dh = d[:2] / np.linalg.norm(d[:2]); Pm = np.eye(2) - np.outer(dh, dh); A_ += Pm; b_ += Pm @ c[:2]; L.append((kid, c[:2], dh, K))
@@ -64,6 +65,7 @@ def main():
         name = a[a.index("--name") + 1] if "--name" in a else "Triangulation"; A_ = np.zeros((3, 3)); b_ = np.zeros(3); strahlen = []
         for kid, x, y in obs:
             K = json.load(open(os.path.join(od, "messprotokoll", kid + ".json")))["kamera"]; R, _ = cv2.Rodrigues(np.array(K["rvec"])); c = -R.T @ np.array(K["t"])
+            if K.get("tiefe_unsicher"): print(f"WARNUNG {kid}: Kamera 'tiefe_unsicher' ({K['tiefe_unsicher']}) - Masse nur IN der Wandebene dieses Fotos belastbar, nicht davor/dahinter", flush=True)
             xn, yn = (x - K["cx"]) / K["f_px"], (y - K["cy"]) / K["f_px"]; k1 = float(K.get("k1") or 0.0); xu, yu = xn, yn
             for _ in range(10): r2 = xu * xu + yu * yu; xu, yu = xn / (1 + k1 * r2), yn / (1 + k1 * r2)
             d = R.T @ np.array([xu, yu, 1.0]); d /= np.linalg.norm(d); Pm = np.eye(3) - np.outer(d, d); A_ += Pm; b_ += Pm @ c; strahlen.append((kid, c, d, K))

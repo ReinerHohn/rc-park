@@ -31,7 +31,9 @@ def main():
     for nm in namen:
         kf = os.path.join(od, "messprotokoll", "K-" + nm + ".json"); ff = glob.glob(os.path.join(root, obj["fotos_dir"], nm + ".*"))
         if not os.path.exists(kf) or not ff: continue
-        k = json.load(open(kf))["kamera"]; im = cv2.imread(ff[0], 0)
+        k = json.load(open(kf))["kamera"]
+        if k.get("tiefe_unsicher"): continue      # 16.11.2026: Abstand/Zoom dieser Kamera nicht belegt (kamera_verfeinern Tiefenspanne-Tor) - fuer Tiefen VOR/HINTER der Wand unbrauchbar
+        im = cv2.imread(ff[0], 0)
         if im is None: continue
         s = min(1.0, 2400.0 / max(im.shape)); im = cv2.resize(im, None, fx=s, fy=s, interpolation=cv2.INTER_AREA) if s < 1 else im
         R = cv2.Rodrigues(np.array(k["rvec"]))[0]; K.append((torch.tensor(R, device=dev).float(), torch.tensor(k["t"], device=dev).float(), k["f_px"] * s, k["cx"] * s, k["cy"] * s, float(k.get("k1") or 0))); G.append(torch.tensor(im, device=dev).float()[None, None]); cen.append(-R.T @ np.array(k["t"]))
