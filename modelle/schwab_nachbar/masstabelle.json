@@ -886,6 +886,12 @@
    "wer": "Claude (Foto 113857 neben Modell)",
    "text": "Erkerbruestung Sued (z 6,95-7,95): vier Blendmasswerk-Felder an der Front (je eines unter jedem Fenster, stehende Mandel mit S-Schwung, nicht durchbrochen), dazu je eines an den Schraegseiten; im Modell glatte Wand.",
    "naechster_schritt": "bauteile.Wand.blendfeld_mandel unter den vier Erkerfenstern; Schraegseiten spaeter"
+  },
+  {
+   "datum": "2026-11-16",
+   "wer": "Claude (Sonnenfoto dl_openverse__ov_0005 neben Modell)",
+   "text": "Suedgiebel: Stufenquader an beiden Ortgaengen fehlen (rechts oben eine Kette z 22,6-24,8, sonst Einzelpaare; M-ov_0005-001..-007), ebenso Quaderohren an den Giebelfenstern.",
+   "naechster_schritt": "bauteile.Wand.ortgang_quader mit den gemessenen Bloecken; Fensterohren spaeter"
   }
  ]
 }

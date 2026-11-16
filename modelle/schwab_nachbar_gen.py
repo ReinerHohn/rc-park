@@ -82,7 +82,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper - WS.kasten(-6.5, 9.5, 0.0, 30.0, 0.0, 3.5)        # alles VOR der Wandebene weg (Reste von LoD2/Laserdach), dann neu aufbauen
     koerper = koerper + WS.kasten(-5.2, 8.45, 0.0, 14.4, -0.6, 0.0)      # Wand bis in die Ebene, von der Ostecke bis zum Turm
     koerper = koerper + (WS.kasten(-3.45, 6.75, 14.3, 26.0, -0.5, 0.0) ^ dr_s(0.35, -1.0, 0.5))                       # Giebelwand
-    koerper = koerper + ((dr_s(0.0, -3.0, 0.3) - dr_s(0.35, -3.1, 0.4)) ^ WS.kasten(-3.52, 6.78, 16.8, 26.0, -3.0, 0.3))   # Ortgang/Dachplatte am Suedgiebel (Ueberstand 0,3 m, Tiefe 3 m: ANNAHME)
+    koerper = koerper + ((dr_s(0.0, -3.0, 0.12) - dr_s(0.35, -3.1, 0.4)) ^ WS.kasten(-3.52, 6.78, 16.8, 26.0, -3.0, 0.12))   # Ortgang/Dachplatte am Suedgiebel: Ueberstand 0,12 m (16.11.: im Sonnenfoto ov_0005 nur ein schmales Ortgangbrett - mit 0,3 m verdeckte die Platte die Stufenquader), Tiefe 3 m ANNAHME
     VB = [(-3.8, -0.05), (-3.8, 1.15), (7.6, 1.15), (8.45, -0.05)]            # Vorbau 2. OG im Grundriss (u, w); Westende schraeg zum Turm
     koerper = koerper + saeule(VB, 10.17, 13.3) + saeule([(u_ - 0.1 * np.sign(u_ - 2.0), w_ + (0.1 if w_ > 0 else 0.0)) for u_, w_ in VB], 10.04, 10.17) + saeule([(u_ - 0.1 * np.sign(u_ - 2.0), w_ + (0.1 if w_ > 0 else 0.0)) for u_, w_ in VB], 13.3, 13.4)
     koerper = koerper + WS.huelle([(u_, z_, w_) for u_ in (-3.95, 8.45) for z_, w_ in ((13.4, -0.05), (13.4, 1.65), (13.5, 1.65), (14.4, -0.05))])     # Pultdach ueber dem Vorbau
@@ -98,6 +98,10 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     for u0_, u1_, z0_, z1_, w_, tl_, kz_ in SF:
         if w_ == 0.0: koerper = koerper + WS.kasten(u0_ - 0.15, u1_ + 0.15, z0_ - 0.15, z1_ + 0.15, -0.1, 0.05)        # Steingewaende 5 cm vor dem Putz (ANNAHME)
         ab_, zu_ = WS.fenster(u0_, u1_, z0_, z1_, w_ + (0.05 if w_ == 0.0 else 0.0), tiefe=0.17, teiler=tl_, kaempfer=kz_, b=(0.30 if u0_ == -4.02 else 0.12) if (w_ == 0.0 and tl_) else 0.07); koerper = koerper - ab_ + zu_   # Zwischengeschoss: Steinpfosten ~0,3 m breit (entzerrtes Foto: Lichter je ~0,5 m)
+    # 16.11.2026 STUFENQUADER am Suedgiebel: Bloecke gemessen am Sonnenfoto dl_openverse__ov_0005 (Flickr, J. Franganillo, CC BY 2.0; Kamera am Modell nachgezogen), M-ov_0005-001..-007
+    koerper = koerper + (WS.ortgang_quader(SA, SZ, SS, [(1, 23.41, 22.83), (1, 21.59, 20.97), (1, 20.04, 19.65), (1, 18.85, 18.43), (-1, 24.80, 22.60), (-1, 21.34, 20.95), (-1, 20.15, 19.71)], 0.0) ^ dr_s(0.35, -1.0, 0.5))
+    beleg("wand", "Stufenquader an den Ortgaengen des Suedgiebels (7 Bloecke)", "foto_mass.py auf der Suedwandebene, Foto dl_openverse__ov_0005 (M-ov_0005-001..-007)", bloecke=7,
+          hinweis="Hoehenlagen gemessen (+-0,12 m, Foto 3 cm/px); ANNAHME: Quaderlaengen 0,65/0,42 m im Wechsel, 4 cm vor dem Putz (in Wirklichkeit buendig = Farbe); Bloecke unterhalb z 18,4 und Fensterohren fehlen")
     for u0_, u1_ in ((2.92, 3.46), (2.09, 2.63), (1.25, 1.79), (0.47, 0.96)):                                            # 16.11.2026 Blendmasswerk der Erkerbruestung: ein Feld unter jedem Erkerfenster (Foto 113857), Feldbreite = Fensterbreite + 2 x 6 cm (abgelesen)
         ab_, zu_ = WS.blendfeld_mandel(u0_ - 0.06, u1_ + 0.06, 7.03, 7.88, 1.05); koerper = koerper - ab_ + zu_
     beleg("wand", "Blendmasswerk der Erkerbruestung Sued (4 Felder, Mandel mit S-Schwung)", "Foto 113857: Felder unter den vier Erkerfenstern (Fensterlagen M-113857-005/-006)", felder=4,

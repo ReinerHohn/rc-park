@@ -1,0 +1,32 @@
+{
+ "id": "M-ov_0005-004",
+ "foto": "ov_0005",
+ "kamera": "K-dl_openverse__ov_0005",
+ "ebene": "-0.99965,-0.0263,0=6.7713",
+ "name": "Suedgiebel: Quader links 3 oben - Quader links 4 unten",
+ "mess_px": [
+  792.9,
+  611.4,
+  776.6,
+  667.1
+ ],
+ "P1": [
+  -6.917,
+  5.441,
+  20.044
+ ],
+ "P2": [
+  -6.937,
+  6.198,
+  18.427
+ ],
+ "dz": -1.617,
+ "dy": 0.757,
+ "dx": -0.02,
+ "abstand": 1.785,
+ "z1": 20.044,
+ "z2": 18.427,
+ "unsicherheit_rel": 0.0036,
+ "unsicherheit_m": 0.123,
+ "massstab_von": "Kamera K-dl_openverse__ov_0005 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=6.7713 (+-0.3 m)"
+}

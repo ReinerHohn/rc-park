@@ -93,6 +93,14 @@
  },
  {
   "seite": "wand",
+  "element": "Stufenquader an den Ortgaengen des Suedgiebels (7 Bloecke)",
+  "quelle": "foto_mass.py auf der Suedwandebene, Foto dl_openverse__ov_0005 (M-ov_0005-001..-007)",
+  "bloecke": 7,
+  "hinweis": "Hoehenlagen gemessen (+-0,12 m, Foto 3 cm/px); ANNAHME: Quaderlaengen 0,65/0,42 m im Wechsel, 4 cm vor dem Putz (in Wirklichkeit buendig = Farbe); Bloecke unterhalb z 18,4 und Fensterohren fehlen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Blendmasswerk der Erkerbruestung Sued (4 Felder, Mandel mit S-Schwung)",
   "quelle": "Foto 113857: Felder unter den vier Erkerfenstern (Fensterlagen M-113857-005/-006)",
   "felder": 4,
@@ -175,7 +183,7 @@
   "element": "Gebaeude hohl, 37 Fenster durchgebrochen",
   "quelle": "Nutzerauftrag 16.11.2026; Fensterrechtecke wie oben gemessen",
   "fenster_offen": 37,
-  "hohlraum_m3": 3205.3,
+  "hohlraum_m3": 3205.4,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026: minimal duenn, stabil, schnell druckbar): 1,2 mm im Druck (3 Bahnen einer 0,4-mm-Duese; WAND_MM) = 0,10 m bei 1:87; Innenraum ohne Decken/Zwischenwaende; Rahmen, Pfosten und Kaempfer bleiben als Staebe in der Oeffnung",
   "seite_name": "wand"
  }

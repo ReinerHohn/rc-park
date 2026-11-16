@@ -21,6 +21,16 @@ Grenze: Schritt 1 braucht einen fassade_ortho-Lauf; ob ein Kandidat die Wand wir
 import sys, os, json, glob, struct, argparse, subprocess, numpy as np, cv2
 
 
+def utm32_nach_geo(e, n):
+    """ETRS89/UTM Zone 32N -> (Breite, Laenge) in Grad (Reihenentwicklung, < 1 m Fehler; pyproj fehlt in venv-seg - 16.11.2026 brach der erste Gesamtlauf daran ab)."""
+    import math
+    a_, f_ = 6378137.0, 1 / 298.257222101; k0 = 0.9996; e2 = f_ * (2 - f_); ep2 = e2 / (1 - e2); x = e - 500000.0; M = n / k0; mu = M / (a_ * (1 - e2 / 4 - 3 * e2 ** 2 / 64 - 5 * e2 ** 3 / 256)); e1 = (1 - math.sqrt(1 - e2)) / (1 + math.sqrt(1 - e2))
+    p1 = mu + (3 * e1 / 2 - 27 * e1 ** 3 / 32) * math.sin(2 * mu) + (21 * e1 ** 2 / 16 - 55 * e1 ** 4 / 32) * math.sin(4 * mu) + (151 * e1 ** 3 / 96) * math.sin(6 * mu)
+    C1 = ep2 * math.cos(p1) ** 2; T1 = math.tan(p1) ** 2; N1 = a_ / math.sqrt(1 - e2 * math.sin(p1) ** 2); R1 = a_ * (1 - e2) / (1 - e2 * math.sin(p1) ** 2) ** 1.5; D = x / (N1 * k0)
+    lat = p1 - (N1 * math.tan(p1) / R1) * (D ** 2 / 2 - (5 + 3 * T1 + 10 * C1 - 4 * C1 ** 2 - 9 * ep2) * D ** 4 / 24); lon = math.radians(9.0) + (D - (1 + 2 * T1 + C1) * D ** 3 / 6) / math.cos(p1)
+    return math.degrees(lat), math.degrees(lon)
+
+
 def registrierte(sparse):
     namen = []
     with open(os.path.join(sparse, "images.bin"), "rb") as f:
@@ -50,11 +60,10 @@ def main():
     reg = set(os.path.splitext(os.path.basename(n))[0] for n in registrierte(a.sparse)); fd = os.path.join(root, obj["fotos_dir"]); alle = sorted(f for f in glob.glob(os.path.join(fd, "*")) if f.lower().endswith((".jpg", ".jpeg", ".png")))
     kand = [f for f in alle if os.path.splitext(os.path.basename(f))[0] not in reg]; print(f"Fotobestand {len(alle)}, im SfM registriert {len(alle) - len(kand)}, NICHT registriert {len(kand)}")
     ung = [w for w in waende if w["ungesehen"]]; daten = os.path.join("/media/oem/scan/rc-park_daten", os.path.basename(od)); Z = os.path.join(daten, "seiten_nachholen"); T = os.path.join(root, "tools"); VC = "/media/oem/scan/venv-colmap/bin/python -I"; VS = "/media/oem/scan/venv-seg/bin/python -I"
-    zeilen = ["#!/bin/bash", "# erzeugt von tools/seiten_luecken.py - Kandidaten fuer ungesehene Waende nachregistrieren", "set -e", f"mkdir -p {Z}/roh"]
+    zeilen = ["#!/bin/bash", "# erzeugt von tools/seiten_luecken.py - Kandidaten fuer ungesehene Waende nachregistrieren", "set -e", f"mkdir -p {Z}/roh", f"rm -rf {Z}/bilder {Z}/vorbereitet.json {Z}/merkmale.json {Z}/db.db {Z}/lg   # Zwischenstaende eines frueheren Laufs (Downloads und roh/ bleiben)"]
     if a.download and obj.get("koordinate_utm"):
-        from pyproj import Transformer
-        lon, lat = Transformer.from_crs("EPSG:25832", "EPSG:4326", always_xy=True).transform(*obj["koordinate_utm"][:2])
-        zeilen.append(f"{VS} {T}/commons_harvest.py --lat {lat:.6f} --lon {lon:.6f} --radius 250 --max 300 --search \"{obj.get('name', '')} {obj.get('ort', '')}\" --out {Z}/commons   # freie Lizenzen, manifest.json")
+        lat, lon = utm32_nach_geo(*obj["koordinate_utm"][:2])
+        zeilen.append(f"{VS} {T}/commons_harvest.py --lat {lat:.6f} --lon {lon:.6f} --radius 250 --max 60 --search \"{obj.get('name', '')} {obj.get('ort', '')}\" --out {Z}/commons   # freie Lizenzen, manifest.json")
         nm = f"{obj.get('name', '')} {obj.get('ort', '').split(' im ')[0]}".strip(); ort = obj.get("ort", "").split(" im ")[0]
         zeilen.append(f"python3 {T}/online_ansichten_holen.py --aus {Z}/hochblick --suche \"{nm}\" \"{ort} Luftbild\" \"{ort} Panorama\" --max 40 || true   # Hochblicke (Commons): sehen Seiten ueber Nachbardaechern")
         zeilen.append(f"python3 {T}/openverse_holen.py --aus {Z}/openverse --suche \"{nm}\" \"{obj.get('name', '')}\" \"{ort} Altstadt Blick\" --max 150 || true   # Flickr u. a. ueber Openverse, nur CC0/BY/BY-SA")

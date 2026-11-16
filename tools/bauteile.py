@@ -84,6 +84,18 @@ class Wand:
             for us in np.linspace(u0 + 0.3, u1 - 0.3, streben):
                 g = g + self.huelle([(us + du, z_boden, w_) for du in (-0.1, 0.1) for w_ in (w - 0.3, w - 0.05)] + [(us + du, z_, w_wand) for du in (-0.1, 0.1) for z_ in (z_fuss, z_fuss + 0.35)])
         return g
+    def ortgang_quader(self, first_u, first_z, steigung, bloecke, w, laenge=(0.65, 0.42), schicht=0.30, staerke=0.04, rand=0.25):
+        """Stufenquader entlang der Ortgaenge eines Steilgiebels (GENERISCH): je Block (seite +1/-1 = Richtung +u/-u vom First, z_oben, z_unten) liegen Quader am Ortgang
+        und greifen abwechselnd lang/kurz in die Giebelflaeche (Schichthoehe ~'schicht'). Platte 'staerke' vor der Wandflaeche w. rand = Abstand der Quaderaussenkante
+        von der Ortganglinie (Dachueberstand/Ortgangbrett). Zu messen: First (u, z), Neigung dz/du, je Block z_oben/z_unten; Laengen = Standard (am Foto pruefen)."""
+        k = None
+        for seite, zo, zu in bloecke:
+            n = max(1, int(round((zo - zu) / schicht))); h = (zo - zu) / n
+            for i in range(n):
+                z1 = zo - i * h; z0 = z1 - h; ua = first_u + seite * ((first_z - z0) / steigung - rand); L = laenge[i % 2]       # Aussenkante am unteren Blockrand auf der Ortganglinie
+                q = self.huelle([(u_, z_, w_) for w_ in (w - 0.01, w + staerke) for u_, z_ in ((ua, z0), (ua - seite * L, z0), (ua - seite * L, z1 - 0.01), (ua - seite * h / steigung, z1 - 0.01))])
+                k = q if k is None else k + q
+        return k
     def linienzug(self, pts, b, w0, w1):
         """Stab entlang eines Linienzugs (u, z)-Punkte (Masswerk, Ranken, geschwungene Leisten)."""
         k = None

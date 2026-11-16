@@ -1,0 +1,32 @@
+{
+ "id": "M-ov_0005-005",
+ "foto": "ov_0005",
+ "kamera": "K-dl_openverse__ov_0005",
+ "ebene": "-0.99965,-0.0263,0=6.7713",
+ "name": "Suedgiebel: Quaderkette rechts oben Anfang - Ende",
+ "mess_px": [
+  854.3,
+  442.9,
+  880.0,
+  528.6
+ ],
+ "P1": [
+  -6.845,
+  2.695,
+  24.801
+ ],
+ "P2": [
+  -6.815,
+  1.579,
+  22.596
+ ],
+ "dz": -2.206,
+ "dy": -1.116,
+ "dx": 0.029,
+ "abstand": 2.472,
+ "z1": 24.801,
+ "z2": 22.596,
+ "unsicherheit_rel": 0.0037,
+ "unsicherheit_m": 0.122,
+ "massstab_von": "Kamera K-dl_openverse__ov_0005 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=6.7713 (+-0.3 m)"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-ov_0005-001",
+ "foto": "ov_0005",
+ "kamera": "K-dl_openverse__ov_0005",
+ "ebene": "-0.99965,-0.0263,0=6.7713",
+ "name": "Suedgiebel: First - Oberkante Quaderpaar links 2",
+ "mess_px": [
+  850.0,
+  417.1,
+  808.6,
+  557.1
+ ],
+ "P1": [
+  -6.85,
+  2.886,
+  25.481
+ ],
+ "P2": [
+  -6.898,
+  4.724,
+  21.594
+ ],
+ "dz": -3.888,
+ "dy": 1.838,
+ "dx": -0.048,
+ "abstand": 4.301,
+ "z1": 25.481,
+ "z2": 21.594,
+ "unsicherheit_rel": 0.0037,
+ "unsicherheit_m": 0.129,
+ "massstab_von": "Kamera K-dl_openverse__ov_0005 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene -0.99965,-0.0263,0=6.7713 (+-0.3 m)"
+}
