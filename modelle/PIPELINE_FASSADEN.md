@@ -182,3 +182,6 @@ OFFEN: Verdeckung (Baum, Nachbarhaus), Fotowahl nach Standortabstand, Kandidaten
 Lauf mit 46 Fotos (13 unregistrierte + 33 Openverse): `paare` fand 472 verifizierte Paare; `einlesen` kennt kein `--ref-db` (im Skript behoben); `registrieren` brach ab:
 "existing_camera.width == camera.width (2000 vs. 1280)" - `zusatzfotos_registrieren.py` setzt EINE Kamera fuer alle Zusatzfotos (gebaut fuer Handyserien), Webfotos haben gemischte Formate.
 OFFEN: Kamera je Bildformat (`--kameras`) automatisch erzeugen; bis dahin registriert die Stufe `seiten` gemischte Webfotos NICHT.
+
+Nachtrag 16.11. ~10:30: Fotoquader am Schwabentor jetzt mit `--px 0.03` (statt 0,02) gerechnet - der Turmbau brauchte mit 2 cm 11-12 von 15 GB RAM und wurde zweimal vom System gestoppt. Aufrufe wie oben plus `--px 0.03`; Felder inzwischen: Sued 9,9-33,8 (`--ohne 0 11.6 25.8 27.0`), West 9,4-34,6, Nord 10,4-37,2 roh (`--ohne 1.6 11.1 9.7 21.1`), Ost 26,95-34,6 aus ost_putz.npz (`--putz_s 0.45 --putz_v 0.28 --ohne 4.6 6.4 27.0 34.6`).
+Nachregistrieren: `zusatzfotos_registrieren.py registrieren --je-bild` = jedes Webfoto eigene Kamera, Brennweite je Bild aus PnP (behebt den Abbruch bei gemischten Formaten).

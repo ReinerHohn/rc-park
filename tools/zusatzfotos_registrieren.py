@@ -183,6 +183,20 @@ def registrieren(a):
         f_med = GK.get("quer_normal", next(iter(GK.values())))["params"][0]
         print("Kameragruppen:", {g: (len(e["namen"]), [round(x, 3) for x in e["params"]]) for g, e in GK.items()}, flush=True)
         camof = lambda n: cams[zuord[n][0]]
+    elif a.je_bild:
+        # 16.11.2026 (Stufe seiten, Webfotos fuer ungesehene Waende): jedes Bild EIGENE Kamera, Brennweite je Bild aus PnP mit freier Brennweite.
+        # Grund: Webfotos haben gemischte Formate und Brennweiten; der gemeinsame Median registrierte 11 von 46 und triangulate_points brach ab (Kamerabreite 2000 vs. 1280).
+        eo_f = pycolmap.AbsolutePoseEstimationOptions(); eo_f.estimate_focal_length = True; eo_f.ransac.max_error = a.max_fehler; GKb = {}
+        con2 = sqlite3.connect(f"file:{dbp}?mode=ro", uri=True); nxt = max(max(ref0.cameras), max(c[0] for c in con2.execute("select camera_id from cameras"))) + 1; con2.close(); f_bild = {}
+        for k_, n in enumerate(names):
+            W, H = WH(n); fs_ = 1.2 * max(W, H); idx, xy, pid, je = C0[n]; c_ = pycolmap.Camera.create_from_model_id(nxt + k_, pycolmap.CameraModelId.SIMPLE_RADIAL, fs_, W, H); f_ = fs_
+            if len(idx) >= 20:
+                r = pycolmap.estimate_and_refine_absolute_pose(xy, np.array([ref0.points3D[p].xyz for p in pid]), c_, eo_f)
+                if r is not None and r["num_inliers"] >= 15 and 0.4 * max(W, H) < float(c_.params[0]) < 8.0 * max(W, H): f_ = float(c_.params[0])
+            c_.params = [f_, W / 2, H / 2, 0.0]; cams[n] = c_; GKb[n] = dict(namen=[n]); f_bild[n] = round(f_, 1)
+        db.close(); db_kameras_schreiben(dbp, cams, GKb, name2id); db = pycolmap.Database.open(dbp); json.dump(f_bild, open(os.path.join(a.aus, "brennweite_je_bild.json"), "w"), indent=1)
+        print(f"je Bild eigene Kamera: {len(cams)} Kameras, Brennweite aus PnP bei {sum(1 for n in names if abs(f_bild[n] - 1.2 * max(WH(n))) > 1e-3)} Bildern", flush=True)
+        camof = lambda n: cams[n]; f_med = f0
     else:
         f_med, f_streu = _kalibrierlauf(a, pycolmap, names, C0, WH, f0, ref0)
         for k_, (W, H) in enumerate(sorted({WH(n) for n in names})):
@@ -274,7 +288,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter); sp = ap.add_subparsers(dest="cmd", required=True)
     p = sp.add_parser("vorbereiten"); p.add_argument("--fotos", nargs="+", required=True); p.add_argument("--aus", required=True); p.add_argument("--ausschluss"); p.add_argument("--unten", type=float, default=0.05, help="Anteil unten abschneiden (Wasserzeichen)"); p.add_argument("--breite", type=int, default=2000, help="Zielbreite; 0 = keine Skalierung")
     p = sp.add_parser("merkmale"); p.add_argument("--ref-db", required=True); p.add_argument("--sparse", required=True); p.add_argument("--aus", required=True); p.add_argument("--f-px", type=float, default=1444.0, help="ANNAHME: ~25 mm KB-Aequivalent bei 2000 px Breite (EXIF f=5,25 mm, Sensorbreite unbekannt); nur Startwert")
-    p = sp.add_parser("registrieren"); p.add_argument("--sparse", required=True); p.add_argument("--aus", required=True); p.add_argument("--kameras", help="JSON mit festen Kameras je Gruppe (Format x Zoom): f_orig, k1, cx_rel, cy_rel; ersetzt den Kalibrierlauf"); p.add_argument("--zoom", help="zoom_verdacht.json (Klasse gezoomt/normal je Bild)"); p.add_argument("--kalibrieren", action="store_true", help="f und k1 im Buendel der neuen Posen frei (gemeinsame Kamera)")
+    p = sp.add_parser("registrieren"); p.add_argument("--sparse", required=True); p.add_argument("--aus", required=True); p.add_argument("--je-bild", action="store_true", help="jedes Bild eigene Kamera, Brennweite je Bild aus PnP (Webfotos gemischter Formate)"); p.add_argument("--kameras", help="JSON mit festen Kameras je Gruppe (Format x Zoom): f_orig, k1, cx_rel, cy_rel; ersetzt den Kalibrierlauf"); p.add_argument("--zoom", help="zoom_verdacht.json (Klasse gezoomt/normal je Bild)"); p.add_argument("--kalibrieren", action="store_true", help="f und k1 im Buendel der neuen Posen frei (gemeinsame Kamera)")
     p.add_argument("--max-fehler", type=float, default=4.0); p.add_argument("--runden", type=int, default=4, help="Registrierrunden; nach jeder Runde Triangulation der neuen Posen (neue 3D-Punkte fuer noch offene Bilder)"); p.add_argument("--min-inlier", type=int, default=30)
     p = sp.add_parser("luecken"); p.add_argument("--sparse", required=True); p.add_argument("--dicht-npy", required=True); p.add_argument("--aus", required=True); p.add_argument("--abstand", type=float, default=0.3)
     a = ap.parse_args(argv); {"vorbereiten": vorbereiten, "merkmale": merkmale, "registrieren": registrieren, "luecken": luecken}[a.cmd](a); return 0
