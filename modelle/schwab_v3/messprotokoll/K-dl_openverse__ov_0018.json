@@ -5,6 +5,36 @@
  "linien": {},
  "kamera": {
   "rvec": [
+   1.1353966694083797,
+   0.82880617357678,
+   -1.1111819864627779
+  ],
+  "t": [
+   -30.604071756642156,
+   18.571739354162933,
+   81.60292753131992
+  ],
+  "f_px": 1593.0787563392387,
+  "cx": 451.5,
+  "cy": 500.0,
+  "k1": 0.0,
+  "standort": [
+   88.79297936847341,
+   6.77069113142575,
+   -3.24361663567111
+  ],
+  "quelle": "kamera_verfeinern.py: 290 Inlier auf 2 Waenden gegen ['commons_orig2__013', 'commons_orig2__033', 'commons_orig2__149', 'dl_commons__052_Freiburg_-_Schwabentor_2497812929', 'dl_openverse__ov_0017', 'online2_orig__od_20'], Rest 1.8 px",
+  "vertrauen": true,
+  "rest_px_median": 1.813591798013843,
+  "inlier_je_wand": {
+   "0": 257,
+   "1": 3,
+   "3": 4,
+   "4": 26
+  }
+ },
+ "kamera_vorher": {
+  "rvec": [
    1.1647818649671262,
    0.8740307035661026,
    -1.091872627060229
@@ -25,28 +55,5 @@
   ],
   "quelle": "nachregistriert (sparse_handy), Abbildung aus 529 gemeinsamen Kameras, Rest 0.01 m",
   "punkte3d": 1127
- },
- "kamera_vorher": {
-  "rvec": [
-   1.1593781521906774,
-   0.8737727417973774,
-   -1.0906737644130151
-  ],
-  "t": [
-   -31.629047224492673,
-   18.442634528483197,
-   85.95560538832105
-  ],
-  "f_px": 1600.9964956838444,
-  "cx": 451.5,
-  "cy": 500.03625,
-  "k1": 0.0012900906537515828,
-  "standort": [
-   93.14279360377157,
-   7.301383478900745,
-   0.05738756307321147
-  ],
-  "quelle": "nachregistriert (sparse_handy), Abbildung aus 529 gemeinsamen Kameras, Rest 0.01 m",
-  "punkte3d": 1066
  }
 }

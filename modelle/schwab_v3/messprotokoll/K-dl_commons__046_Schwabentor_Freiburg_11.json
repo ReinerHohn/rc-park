@@ -5,6 +5,37 @@
  "linien": {},
  "kamera": {
   "rvec": [
+   0.725493810629188,
+   -1.155828981139641,
+   1.668745659890641
+  ],
+  "t": [
+   7.976391947540553,
+   16.90357469375786,
+   39.071361223066745
+  ],
+  "f_px": 3940.5563776650292,
+  "cx": 1920.0,
+  "cy": 2880.0,
+  "k1": 0.0,
+  "standort": [
+   -36.4401259065426,
+   23.379286956375616,
+   1.2046157388863694
+  ],
+  "quelle": "kamera_verfeinern.py: 9495 Inlier auf 5 Waenden gegen ['commons_orig2__104', 'commons_orig2__190', 'commons_orig2__191', 'dl_commons__011_Freiburg_im_Breisgau_Schwabentor_1', 'dl_commons__012_Freiburg_im_Breisgau_Schwabentor_2', 'dl_commons__045_Schwabentor_Freiburg_10'], Rest 1.5 px",
+  "vertrauen": true,
+  "rest_px_median": 1.4611194918643309,
+  "inlier_je_wand": {
+   "0": 92,
+   "1": 782,
+   "2": 8250,
+   "3": 152,
+   "4": 219
+  }
+ },
+ "kamera_vorher": {
+  "rvec": [
    0.7249492683602443,
    -1.156699531295025,
    1.669143018422478
@@ -32,28 +63,5 @@
    "3": 165,
    "4": 185
   }
- },
- "kamera_vorher": {
-  "rvec": [
-   0.7243331071433016,
-   -1.156109805494079,
-   1.6694355916459254
-  ],
-  "t": [
-   7.971315360336792,
-   16.89322829296448,
-   39.042829045857445
-  ],
-  "f_px": 3942.9615193613918,
-  "cx": 1920.0,
-  "cy": 2880.0,
-  "k1": -0.005417555251878945,
-  "standort": [
-   -36.39311948395132,
-   23.39637508051215,
-   1.189965526827753
-  ],
-  "quelle": "nachregistriert (sparse_handy), Abbildung aus 529 gemeinsamen Kameras, Rest 0.01 m",
-  "punkte3d": 2766
  }
 }

@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__007_Altstadt_Freiburg_Germany_-_panoramio_9",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.47018453551216016,
+   -0.8915563678973734,
+   1.9136252163123084
+  ],
+  "t": [
+   6.554704222034569,
+   18.36461714052167,
+   19.0356462423704
+  ],
+  "f_px": 1175.7882541955155,
+  "cx": 600.0,
+  "cy": 800.0,
+  "k1": 0.0,
+  "standort": [
+   -19.959416735355504,
+   18.497311667979957,
+   1.4318808131243177
+  ],
+  "quelle": "kamera_verfeinern.py: 5865 Inlier auf 5 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__003_Freiburg_Schwabentor_1998_1', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__009_Freiburg_im_Breisgau_Schwabentor_--_2025_--_8031'], Rest 2.1 px",
+  "vertrauen": true,
+  "rest_px_median": 2.1430230509524857,
+  "inlier_je_wand": {
+   "0": 36,
+   "1": 124,
+   "2": 5572,
+   "3": 89,
+   "4": 44
+  }
+ }
+}

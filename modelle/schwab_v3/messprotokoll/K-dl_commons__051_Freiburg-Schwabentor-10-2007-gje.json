@@ -5,6 +5,36 @@
  "linien": {},
  "kamera": {
   "rvec": [
+   1.1475251784738363,
+   1.0249014654127997,
+   -1.1643030408863129
+  ],
+  "t": [
+   -24.883223527061958,
+   16.91286920064794,
+   122.00160508820771
+  ],
+  "f_px": 4798.27476179709,
+  "cx": 1024.0,
+  "cy": 1348.0,
+  "k1": 0.0,
+  "standort": [
+   125.32951252222904,
+   9.061219399462095,
+   -0.1385486564221523
+  ],
+  "quelle": "kamera_verfeinern.py: 4091 Inlier auf 4 Waenden gegen ['commons_orig2__083', 'commons_orig2__084', 'commons_orig2__085', 'commons_orig2__087', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__050_Freiburg-Schwabentor-08-2007-gje'], Rest 1.5 px",
+  "vertrauen": true,
+  "rest_px_median": 1.5320663929709495,
+  "inlier_je_wand": {
+   "0": 3658,
+   "1": 168,
+   "3": 56,
+   "4": 209
+  }
+ },
+ "kamera_vorher": {
+  "rvec": [
    1.153838621429825,
    1.030943917320595,
    -1.1597822910328603
@@ -31,28 +61,5 @@
    "3": 45,
    "4": 187
   }
- },
- "kamera_vorher": {
-  "rvec": [
-   1.1485112265726285,
-   1.0250022735088267,
-   -1.164969275638689
-  ],
-  "t": [
-   -24.8739320123466,
-   16.923939686339402,
-   122.24845988691631
-  ],
-  "f_px": 4789.674307631995,
-  "cx": 1024.0,
-  "cy": 1348.096,
-  "k1": 0.09659754141740577,
-  "standort": [
-   125.56948710206285,
-   9.06142937091727,
-   -0.11215910752561253
-  ],
-  "quelle": "nachregistriert (sparse_handy), Abbildung aus 529 gemeinsamen Kameras, Rest 0.01 m",
-  "punkte3d": 1356
  }
 }

@@ -1,0 +1,36 @@
+{
+ "foto": "dl_kat__145_Tram_door_poort_in_Freiburg",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.8627425840686914,
+   1.2581987423628664,
+   -1.595678101509525
+  ],
+  "t": [
+   -2.258944625187108,
+   8.822952509343171,
+   31.147956463360725
+  ],
+  "f_px": 1619.8818566509149,
+  "cx": 960.0,
+  "cy": 720.0,
+  "k1": 0.0,
+  "standort": [
+   29.503562825424282,
+   13.46632879669361,
+   1.1577059172277941
+  ],
+  "quelle": "kamera_verfeinern.py: 3768 Inlier auf 4 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 2.5 px",
+  "vertrauen": true,
+  "rest_px_median": 2.4974471037965875,
+  "inlier_je_wand": {
+   "0": 3201,
+   "1": 96,
+   "3": 78,
+   "4": 393
+  }
+ }
+}

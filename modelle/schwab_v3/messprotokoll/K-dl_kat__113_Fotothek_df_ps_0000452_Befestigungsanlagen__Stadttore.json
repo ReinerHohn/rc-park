@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__113_Fotothek_df_ps_0000452_Befestigungsanlagen__Stadttore",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.6236579234205875,
+   -0.6105118167806538,
+   0.5846490028022893
+  ],
+  "t": [
+   -5.745892073139223,
+   22.297844758666486,
+   65.7559125342888
+  ],
+  "f_px": 576.5828773198615,
+  "cx": 271.0,
+  "cy": 410.0,
+  "k1": 0.0,
+  "standort": [
+   -38.994218751814735,
+   -48.86635692764627,
+   30.750272427578405
+  ],
+  "quelle": "kamera_verfeinern.py: 145 Inlier auf 2 Waenden gegen ['commons_orig2__044', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__053_Freiburg_Schwabentor_1998_3', 'dl_kat__007_Altstadt_Freiburg_Germany_-_panoramio_9'], Rest 1.5 px",
+  "vertrauen": true,
+  "rest_px_median": 1.4818553175775995,
+  "inlier_je_wand": {
+   "0": 3,
+   "1": 2,
+   "2": 101,
+   "3": 30,
+   "4": 9
+  }
+ }
+}

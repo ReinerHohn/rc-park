@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__147_Trams_de_Fribourg_IMG_4375",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.0599598323366937,
+   -0.897722187959398,
+   1.1794106706520042
+  ],
+  "t": [
+   17.401027191264262,
+   12.47098302036416,
+   38.92219418437386
+  ],
+  "f_px": 3041.6571968222456,
+  "cx": 960.0,
+  "cy": 1440.0,
+  "k1": 0.0,
+  "standort": [
+   -43.250864262382294,
+   10.02805807909533,
+   1.4349761847184102
+  ],
+  "quelle": "kamera_verfeinern.py: 5459 Inlier auf 5 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 3.3 px",
+  "vertrauen": true,
+  "rest_px_median": 3.3065978625586214,
+  "inlier_je_wand": {
+   "0": 23,
+   "1": 123,
+   "2": 5088,
+   "3": 117,
+   "4": 108
+  }
+ }
+}

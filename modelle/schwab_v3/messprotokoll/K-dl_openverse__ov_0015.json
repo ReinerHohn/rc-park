@@ -5,6 +5,36 @@
  "linien": {},
  "kamera": {
   "rvec": [
+   1.0426530442454591,
+   0.9355653435401469,
+   -1.2620022574822467
+  ],
+  "t": [
+   -23.525882553959836,
+   29.910898715664658,
+   157.4591877495566
+  ],
+  "f_px": 1267.3000305577282,
+  "cx": 512.0,
+  "cy": 319.0,
+  "k1": 0.0,
+  "standort": [
+   161.041150407147,
+   8.724296485697502,
+   -15.203925316966416
+  ],
+  "quelle": "kamera_verfeinern.py: 490 Inlier auf 2 Waenden gegen ['commons_orig2__045', 'commons_orig2__048', 'commons_orig2__150', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__022_Schlossbergring_2_am_Schwabentor_in_Freiburg_im_Breisgau_2025', 'online_orig__od_07'], Rest 1.4 px",
+  "vertrauen": true,
+  "rest_px_median": 1.3896413562201295,
+  "inlier_je_wand": {
+   "0": 439,
+   "1": 14,
+   "3": 12,
+   "4": 25
+  }
+ },
+ "kamera_vorher": {
+  "rvec": [
    1.1373222749529197,
    0.8162886290731272,
    -1.1327934235008834
@@ -31,28 +61,5 @@
    "3": 5,
    "4": 29
   }
- },
- "kamera_vorher": {
-  "rvec": [
-   1.0810931760226568,
-   0.9716621509820464,
-   -1.2319635212461593
-  ],
-  "t": [
-   -23.51957132215531,
-   29.851707164708724,
-   153.36651047809744
-  ],
-  "f_px": 1242.7700561359609,
-  "cx": 512.0,
-  "cy": 318.976,
-  "k1": -0.2867494225395714,
-  "standort": [
-   157.69962973008325,
-   7.877431558217524,
-   -5.861232557582445
-  ],
-  "quelle": "nachregistriert (sparse_handy), Abbildung aus 529 gemeinsamen Kameras, Rest 0.01 m",
-  "punkte3d": 141
  }
 }

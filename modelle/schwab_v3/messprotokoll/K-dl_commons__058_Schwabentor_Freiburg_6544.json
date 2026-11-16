@@ -5,54 +5,32 @@
  "linien": {},
  "kamera": {
   "rvec": [
-   0.999241539054507,
-   1.03967929964416,
-   -1.3364137758362673
+   0.988925084560648,
+   1.0424623314520642,
+   -1.343134596730145
   ],
   "t": [
-   -15.983718381771947,
-   14.129478043752798,
-   121.73394656992924
+   -15.999319562132913,
+   14.102011022117816,
+   118.26790227399736
   ],
-  "f_px": 39310.802510407346,
+  "f_px": 38146.852354747956,
   "cx": 1920.0,
   "cy": 1227.5,
   "k1": 0.0,
   "standort": [
-   120.82838052226798,
-   19.452305447625427,
-   -17.21584803968028
+   117.20921297483217,
+   20.398911581168612,
+   -16.971342013378646
   ],
-  "quelle": "kamera_verfeinern.py: 436 Inlier auf 2 Waenden gegen ['eigen__IMG_20261106_113056', 'eigen__IMG_20261106_113058', 'eigen__IMG_20261106_113102', 'eigen__IMG_20261106_113106', 'online_orig__od_07', 'video_frames_Bbzk0Qpb5l0__vf_210'], Rest 7.8 px",
-  "rest_px_median": 7.839015062788612,
+  "quelle": "kamera_verfeinern.py: 740 Inlier auf 3 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__003_Freiburg_Schwabentor_1998_1', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__009_Freiburg_im_Breisgau_Schwabentor_--_2025_--_8031'], Rest 7.8 px",
+  "vertrauen": true,
+  "rest_px_median": 7.769339265149769,
   "inlier_je_wand": {
-   "0": 387,
-   "1": 8,
-   "3": 9,
-   "4": 32
+   "0": 684,
+   "1": 10,
+   "3": 15,
+   "4": 31
   }
- },
- "kamera_vorher": {
-  "rvec": [
-   0.9889272779119918,
-   1.0351105539307899,
-   -1.3440823884987558
-  ],
-  "t": [
-   -15.976419974200732,
-   14.133411168042143,
-   53.318020591201154
-  ],
-  "f_px": 17119.263768652872,
-  "cx": 1920.0,
-  "cy": 1227.84,
-  "k1": -0.032828411924964815,
-  "standort": [
-   54.61539176885252,
-   17.744141682435902,
-   -0.33918149878971704
-  ],
-  "quelle": "nachregistriert (sparse_handy), Abbildung aus 529 gemeinsamen Kameras, Rest 0.01 m",
-  "punkte3d": 4539
  }
 }

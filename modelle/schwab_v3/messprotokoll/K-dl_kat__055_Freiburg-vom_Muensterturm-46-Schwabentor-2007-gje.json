@@ -1,0 +1,36 @@
+{
+ "foto": "dl_kat__055_Freiburg-vom_Muensterturm-46-Schwabentor-2007-gje",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.1962562746664913,
+   1.4184969802687653,
+   -1.2896039584175791
+  ],
+  "t": [
+   -10.832894721284704,
+   18.353096317085136,
+   417.19948232790705
+  ],
+  "f_px": 15606.920756803773,
+  "cx": 960.0,
+  "cy": 1376.5,
+  "k1": 0.0,
+  "standort": [
+   404.52371917513574,
+   84.47817349956635,
+   61.10314749694419
+  ],
+  "quelle": "kamera_verfeinern.py: 1787 Inlier auf 4 Waenden gegen ['commons_orig2__044', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__050_Freiburg-Schwabentor-08-2007-gje'], Rest 2.0 px",
+  "vertrauen": true,
+  "rest_px_median": 1.9548445780798884,
+  "inlier_je_wand": {
+   "0": 1565,
+   "1": 37,
+   "3": 54,
+   "4": 131
+  }
+ }
+}

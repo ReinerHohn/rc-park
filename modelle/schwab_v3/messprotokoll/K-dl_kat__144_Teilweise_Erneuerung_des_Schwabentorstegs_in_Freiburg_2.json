@@ -1,0 +1,36 @@
+{
+ "foto": "dl_kat__144_Teilweise_Erneuerung_des_Schwabentorstegs_in_Freiburg_2",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.3584722502350213,
+   -0.13174657462487546,
+   0.029639814159250235
+  ],
+  "t": [
+   0.7555577082336181,
+   14.599342402889354,
+   56.63940389736513
+  ],
+  "f_px": 3634.8961798355094,
+  "cx": 960.0,
+  "cy": 1280.0,
+  "k1": 0.0,
+  "standort": [
+   -6.2689388035107525,
+   -58.09513361404495,
+   2.7183812352642693
+  ],
+  "quelle": "kamera_verfeinern.py: 125 Inlier auf 2 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 4.8 px",
+  "vertrauen": true,
+  "rest_px_median": 4.775453410603987,
+  "inlier_je_wand": {
+   "0": 1,
+   "2": 8,
+   "3": 32,
+   "4": 84
+  }
+ }
+}

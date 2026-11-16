@@ -171,6 +171,7 @@ def main(argv=None):
                 R0 = cv2.Rodrigues(np.asarray(c_["rvec"], float))[0]; tk_ = np.asarray(c_["t"], float); C0_ = -R0.T @ tk_; v_ = C0_ - Xg; d_ = np.linalg.norm(v_, axis=1); cw_ = (v_ @ n_) / d_; pc_ = Xg @ R0.T + tk_; z_ = np.maximum(pc_[:, 2], 1e-6)
                 u_ = c_["f_px"] * pc_[:, 0] / z_ + c_["cx"]; w_ = c_["f_px"] * pc_[:, 1] / z_ + c_["cy"]; mpp_ = d_ / (c_["f_px"] * np.maximum(cw_, 1e-3))
                 ok_ = (cw_ > math.cos(math.radians(a.max_winkel))) & (pc_[:, 2] > 1) & (u_ > 0) & (u_ < 2 * c_["cx"]) & (w_ > 0) & (w_ < 2 * c_["cy"]) & (mpp_ < a.max_mpp)
+                if not np.isfinite(d_).all() or d_.max() > 2000 or d_.min() < 0.5: continue      # unplausibler Standort (16.11.: eine 'gepruefte' Kamera stand 350 000 km entfernt und gewann wegen ihrer Schaerfe einen Platz)
                 if ok_.sum() >= 3: wert.append((float(ok_.mean()) / float(np.median(mpp_[ok_])), nr_))
             F["_wahl"] = set(n for _, n in sorted(wert, reverse=True)[:a.max_fotos])
     else:
@@ -198,6 +199,7 @@ def main(argv=None):
             mpp = dist / (f * np.maximum(cosw, 1e-3)); ok &= mpp < a.max_mpp
             if ok.sum() < 200: continue
             idx = np.where(ok)[0]
+            if not (np.isfinite(Cw).all() and np.isfinite(dist[idx]).all() and dist[idx].min() > 0.5 and dist[idx].max() < 2000): print(f"  Kamera {nr} uebersprungen (Standort unplausibel: {Cw})", flush=True); continue
             if not a.gpu_sicht:
                 dirs = -v[idx] / dist[idx, None]; loc, ri, _ = ray_alle.intersects_location(np.repeat(Cw[None], len(idx), 0), dirs, multiple_hits=False)
                 erster = np.full(len(idx), np.inf); erster[ri] = np.linalg.norm(loc - Cw, axis=1)
@@ -216,7 +218,7 @@ def main(argv=None):
             idx = idx[sicht]
             if len(idx) < 200: continue
             # 15.11.2026: Zelle groesser als der Fotopixel -> Foto vor dem Abtasten auf die Zellgroesse glaetten (sonst Aliasing: das 5-cm-Ortho des Kaufhauses war fleckig/koernig)
-            sig_ = 0.4 * (F["raster"]["zelle"] / float(np.median(mpp[idx]))); sig_ = round(sig_ * 2) / 2.0
+            sig_ = 0.4 * (F["raster"]["zelle"] / float(np.median(mpp[idx]))); sig_ = min(round(sig_ * 2) / 2.0, 6.0)      # 16.11.2026: gedeckelt - ein Foto mit sehr feiner Aufloesung (Tele/Nahaufnahme, f > 10 000 px) gab Sigma in den Hunderten: der Weichzeichner lief minutenlang auf EINEM Kern (Suedwand Turm > 240 s statt 25 s)
             if sig_ >= 1.0:
                 if sig_ not in weich: weich[sig_] = cv2.GaussianBlur(im, (0, 0), sig_)
                 col = bilinear(weich[sig_], px[idx, 0], px[idx, 1])

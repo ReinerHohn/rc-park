@@ -1,0 +1,36 @@
+{
+ "foto": "dl_kat__076_Oberlinden_Freiburg_i._Br_-_geo.hlipp.de_-_22490",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.818812298490783,
+   1.2846848304697511,
+   -1.6513841301422296
+  ],
+  "t": [
+   8.281229431656207,
+   14.14386699976022,
+   64.13409667723813
+  ],
+  "f_px": 866.0163197005618,
+  "cx": 320.0,
+  "cy": 240.0,
+  "k1": 0.0,
+  "standort": [
+   63.246761300109625,
+   19.361935934957963,
+   -2.6024436803703868
+  ],
+  "quelle": "kamera_verfeinern.py: 1181 Inlier auf 4 Waenden gegen ['commons_orig2__044', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__050_Freiburg-Schwabentor-08-2007-gje'], Rest 0.8 px",
+  "vertrauen": true,
+  "rest_px_median": 0.8375784460384436,
+  "inlier_je_wand": {
+   "0": 1064,
+   "1": 35,
+   "3": 22,
+   "4": 60
+  }
+ }
+}

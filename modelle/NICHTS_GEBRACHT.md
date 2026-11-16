@@ -358,3 +358,10 @@ Versuch: Rippen der Frontflaeche (A,B,C,D,L2,R2) um die Erkerachse (u 15,52 / n 
 - Fehler: "kein registriertes SfM-Foto sieht die Ostseite" als "es gibt kein Foto" gelesen und ein Spiegel-Werkzeug gebaut (Eckquader der Nachbarwaende kopieren). Nutzer: "Nein, nicht spiegeln ... Du musst Fotos suchen."
 - Im Bestand lagen zwei Fremdfotos (online2_orig od_15, od_12) mit freier Sicht auf die Ostseite. Kontaktbogen des GANZEN Bestands haette 5 Minuten gekostet.
 - Ebenfalls falsch am selben Tag: Galerie mit "bemalten Tafeln" geschlossen (Pruefung gal_holm_ueber fing es ab); Turmdach "Grat gerade" aus dem Fernfoto gelesen, obwohl dasselbe Fernfoto den Knick zeigt.
+
+## 16.11.2026 abends: "ein Kern 100 %" - Ursache waren Kameras mit absurdem Standort
+- Turm-Fassadenbild lief > 2 h bzw. hing an der Suedwand (> 300 s statt 25 s). Vermutungen, die FALSCH waren: zu viele Kameras (Vorauswahl half nicht), Weichzeichner-Sigma (Deckel half nicht), Strahlen auf die GPU (langsamer).
+- Gefunden erst mit faulthandler.dump_traceback_later: ein Thread hing in embree. Ursache: 14 K-Dateien mit Standort 0,7 km bis 350 000 km und f bis 1,7e10 px (entartete Tele-Loesungen des PnP mit freier Brennweite;
+  5 davon hatten mein Siegel 'vertrauen', 2 waren eigene Fotos, 6 alte Commons-Kameras). Strahlen von dort liessen embree kriechen; wegen ihrer scheinbaren Schaerfe gewannen sie sogar die Vorauswahl.
+- Behoben: 42 K-Dateien (3 Objekte) als .unplausibel beiseitegelegt; kamera_verfeinern lehnt Abstand > 600 m / f > 10 x Bildbreite ab; fassade_ortho ueberspringt unplausible Standorte. Turm 4 Waende: 111 s, 14 Kerne im Mittel.
+- LEHRE: bei "haengt auf einem Kern" zuerst den Stapel des haengenden Threads holen (faulthandler), nicht raten. Und: pkill/pgrep -f mit dem Skriptnamen trifft die eigene Shell (zweimal selbst abgeschossen).

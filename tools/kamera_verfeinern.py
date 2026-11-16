@@ -89,6 +89,7 @@ def main():
         je_wand = {int(w): int((WN[inl] == w).sum()) for w in np.unique(WN[inl])}; tragend = sum(1 for v in je_wand.values() if v >= 15)
         print(f"{a.foto}: {len(inl)} Inlier von {len(P2)}, je Wand {je_wand}, Rest Median {np.median(err):.1f} px = {np.median(err) * dist / p[6] * 100:.0f} cm an der Wand; f {K0['f_px']:.0f} -> {p[6]:.0f} px, Standort {np.round(C0, 1).tolist()} -> {np.round(C, 1).tolist()} ({np.linalg.norm(C - C0):.1f} m verschoben)")
         if tragend < 2: print("nur eine Wand mit >= 15 Inliern - Kamera bleibt unsicher, nicht geschrieben"); return 3
+        if not np.isfinite(C).all() or dist > 600 or p[6] > 10 * max(W, H) or p[6] < 0.4 * max(W, H): print(f"{a.foto}: Loesung unplausibel (Abstand {dist:.0f} m, f {p[6]:.0f} px bei {max(W, H)} px Bildbreite) - entartete Tele-Loesung, nicht geschrieben"); return 3      # 16.11.2026: PnP mit freier Brennweite lief bei fast ebenen Punkten ins Unendliche (Kamera 350 000 km entfernt, trotzdem 2 Flaechen >= 15 Inlier)
         if a.schreiben:
             kp = os.path.join(mp, "K-" + a.foto + ".json"); d = json.load(open(kp)) if os.path.exists(kp) else dict(foto=a.foto, seite="unbekannt", punkte={}, linien={})
             if d.get("kamera"): d["kamera_vorher"] = d["kamera"]

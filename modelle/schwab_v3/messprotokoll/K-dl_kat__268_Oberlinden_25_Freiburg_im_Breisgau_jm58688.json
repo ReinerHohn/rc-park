@@ -1,0 +1,36 @@
+{
+ "foto": "dl_kat__268_Oberlinden_25_Freiburg_im_Breisgau_jm58688",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.11055394335849866,
+   1.3099150772783499,
+   -2.358288483464354
+  ],
+  "t": [
+   7.958400529362329,
+   11.167162095807777,
+   26.20976504504201
+  ],
+  "f_px": 2242.679043750727,
+  "cx": 960.0,
+  "cy": 858.5,
+  "k1": 0.0,
+  "standort": [
+   18.136505758623642,
+   22.507809364155392,
+   -6.281648547185398
+  ],
+  "quelle": "kamera_verfeinern.py: 253 Inlier auf 2 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__053_Freiburg_Schwabentor_1998_3', 'dl_kat__007_Altstadt_Freiburg_Germany_-_panoramio_9'], Rest 4.3 px",
+  "vertrauen": true,
+  "rest_px_median": 4.2864981806254505,
+  "inlier_je_wand": {
+   "0": 228,
+   "1": 3,
+   "3": 1,
+   "4": 21
+  }
+ }
+}

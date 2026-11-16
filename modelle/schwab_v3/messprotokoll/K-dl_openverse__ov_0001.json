@@ -5,6 +5,37 @@
  "linien": {},
  "kamera": {
   "rvec": [
+   1.07727185656294,
+   -1.1677452507485855,
+   1.3285000772498674
+  ],
+  "t": [
+   7.964035554556639,
+   23.68290271021078,
+   292.2901812994433
+  ],
+  "f_px": 20211.87518652053,
+  "cx": 1479.5,
+  "cy": 1852.5,
+  "k1": 0.0,
+  "standort": [
+   -291.3456804123889,
+   31.169810435071327,
+   -14.282620545294165
+  ],
+  "quelle": "kamera_verfeinern.py: 3006 Inlier auf 4 Waenden gegen ['commons_orig2__008', 'commons_orig2__034', 'commons_orig2__035', 'commons_orig2__052', 'commons_orig2__211', 'dl_commons__048_Schwabentor_Freiburg_im_Breisgau'], Rest 4.4 px",
+  "vertrauen": true,
+  "rest_px_median": 4.375087695726327,
+  "inlier_je_wand": {
+   "0": 7,
+   "1": 51,
+   "2": 2767,
+   "3": 76,
+   "4": 105
+  }
+ },
+ "kamera_vorher": {
+  "rvec": [
    1.257016462739306,
    -1.1900780103926998,
    1.1603821010765336
