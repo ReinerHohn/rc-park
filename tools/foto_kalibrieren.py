@@ -150,6 +150,8 @@ def main():
     out = dict(silhouette_genutzt=bool(sil), residuen_du_dv=dres, rvec=rvec.tolist(), t=t.tolist(), f_px=float(f), cx=cx, cy=cy, bild=[W, H], standort_xyz=cam.round(2).tolist(), hoehe_ueber_gelaende=round(float(cam[2]), 2),
                abstand_zur_achse=round(float(math.hypot(cam[0], cam[1])), 1), residuen_px={n: round(float(r), 1) for n, r in zip(namen, res)},
                rms_px=round(float(np.sqrt(np.mean(res ** 2))), 1), plausibel_strassenfoto=bool(1.0 <= cam[2] <= 3.0), brennweite_quelle="EXIF" if fexif else "geloest")
+    import kamera_plausibel as KP; ok_p, grund_p = KP.plausibel(float(f), (W, H), cam, max_m=3000)
+    if not ok_p: print(f"K-{nr}: Loesung UNPLAUSIBEL ({grund_p}), rms {out['rms_px']} px - NICHT gespeichert (Punkte liegen zu flach oder sind falsch gepickt; Brennweite vorgeben)"); sys.exit(3)
     K["kamera"] = out
     K["kalibrier_optionen"] = [x for i_, x in enumerate(sys.argv[3:]) if x.startswith("--") or (i_ > 0 and sys.argv[3:][i_ - 1] == "--sil-gewicht")]   # Eingabe fuer den Nullstart: gleiche Loesung reproduzierbar (Register CK)
     json.dump(K, open(kp, "w"), indent=1, ensure_ascii=False)

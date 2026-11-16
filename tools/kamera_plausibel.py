@@ -1,29 +1,42 @@
 #!/usr/bin/env python3
-"""kamera_plausibel.py <objekt.json> <SFM-AUSRICHTUNG.json> [--unter 1.5] [--gruppe 4] - Kameras unter dem Gelaende finden (falsch verortete Bildgruppen).
+"""kamera_plausibel.py [modelle/<objekt> ...] [--beiseite] - EINE Regel fuer "kann diese Kamera stimmen?", von allen Werkzeugen benutzt, die K-Dateien schreiben.
 
-Lehre Schwabentor 15.11.2026: eine Geisterwand in der dichten Wolke (27 852 Punkte auf der Strasse) kam zu 92 % aus 6 Bildern EINES Videoclips,
-deren Kameras 0,3-4,5 m UNTER dem Gelaende standen (70 m entfernt). Das Grundriss-Tor sah nur den Haufen, nicht die Ursache.
-Pruefung: Kamerahoehe im Modellrahmen (z = 0 am Gelaende des Objekts, ANNAHME: Umgebung etwa eben; Hang -> --unter groesser waehlen) < -unter.
-Je Quelle (Namensteil vor '__vf_' bzw. vor '__', sonst 'eigen') gezaehlt; >= --gruppe Kameras einer Quelle unter Gelaende = rc 3 + Liste
-audit/kamera_plausibel.json ('ausschliessen': Bildnamen fuer die dichte Wolke/Fusion). Einzelne Ausreisser = nur Hinweis.
+Anlass 16.11.2026: 49 Kameras mit Standort bis 350 000 km und Brennweite bis 1,7e10 px (Abstand und Zoom sind bei fast ebenen Punkten nicht trennbar; der Ausgleich
+laeuft "zum Mond"). Sie liessen das Fassadenbild stundenlang auf einem Kern haengen. Regel: Standort endlich, hoechstens `max_m` vom Bezugspunkt, Brennweite 0,3 bis 12 x Bildbreite.
+Aufruf als Programm: prueft alle K-*.json der genannten Objektordner (ohne Angabe: alle), rc 3 bei Funden; --beiseite benennt sie in .unplausibel um (nichts wird geloescht).
+Grenze: findet nur GROBE Ausreisser. Eine Kamera, die 50 m falsch steht, erkennt nur der Vergleich mit dem Foto (umriss_tor.py, modell_neben_foto.py).
 """
-import sys, os, json, collections
+import sys, os, json, glob, numpy as np
+
+
+def plausibel(f_px, bild_wh, standort, bezug=None, max_m=1500.0):
+    """-> (ok, grund). bild_wh = (W, H) oder None (dann 2 x Hauptpunkt uebergeben); bezug = Punkt am Objekt (Standard Ursprung)."""
+    C = np.asarray(standort, float); b = float(max(bild_wh)) if bild_wh else None
+    if not np.isfinite(C).all() or not np.isfinite(f_px): return False, "Standort/Brennweite nicht endlich"
+    d = float(np.linalg.norm(C - (np.zeros(3) if bezug is None else np.asarray(bezug, float))))
+    if d > max_m: return False, f"Standort {d:.0f} m vom Objekt (> {max_m:.0f} m)"
+    if b and not (0.3 * b <= f_px <= 12 * b): return False, f"Brennweite {f_px:.0f} px bei {b:.0f} px Bildbreite (erlaubt 0,3 bis 12 x)"
+    return True, ""
+
+
+def datei_pruefen(pfad):
+    import cv2
+    k = json.load(open(pfad)).get("kamera")
+    if not isinstance(k, dict) or "rvec" not in k: return True, ""
+    C = -cv2.Rodrigues(np.array(k["rvec"], float))[0].T @ np.array(k["t"], float); wh = k.get("bild") or ([2 * k["cx"], 2 * k["cy"]] if "cx" in k else None)
+    return plausibel(k["f_px"], wh, C)
 
 
 def main():
-    a = sys.argv[1:]
-    if len(a) < 2: sys.exit(__doc__)
-    opt = lambda n, d: float(a[a.index(n) + 1]) if n in a else d
-    unter, gruppe = opt("--unter", 1.5), int(opt("--gruppe", 4)); od = os.path.dirname(os.path.abspath(a[0])); K = json.load(open(a[1]))["kameras"]
-    quelle = lambda n: n.split("__vf_")[0] if "__vf_" in n else (n.split("__")[0] if "__" in n else "eigen")
-    tief = {n: k["standort"][2] for n, k in K.items() if k["standort"][2] < -unter}; je = collections.Counter(quelle(n) for n in tief); alle = collections.Counter(quelle(n) for n in K)
-    schlecht = {q: c for q, c in je.items() if c >= gruppe}; aus = sorted(tief)   # JEDE Kamera unter Gelaende ist fuer die dichte Wolke unbrauchbar (v2: Commons-Einzelbilder bis km tief = Ausreisser des globalen Mappers)
-    print(f"{len(tief)} von {len(K)} Kameras tiefer als {unter} m unter dem Gelaende")
-    for q, c in je.most_common(8): print(f"  {q[:50]:50s} {c:3d} von {alle[q]:3d}  (tiefste {min(tief[n] for n in tief if quelle(n) == q):.1f} m){'  <-- GRUPPE' if q in schlecht else ''}")
-    os.makedirs(os.path.join(od, "audit"), exist_ok=True)
-    json.dump(dict(werkzeug="kamera_plausibel.py", ausrichtung=a[1], unter_m=unter, n=len(K), tief=tief, gruppen=schlecht, ausschliessen=aus), open(os.path.join(od, "audit", "kamera_plausibel.json"), "w"), indent=1)
-    if schlecht: print(f"WARNUNG: {len(schlecht)} Quelle(n) mit >= {gruppe} Kameras unter Gelaende - Bildgruppe falsch verortet? {len(aus)} Bilder aus der dichten Wolke nehmen (audit/kamera_plausibel.json)"); return 3
-    return 0
+    arg = [x for x in sys.argv[1:] if not x.startswith("--")]; root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); n = 0
+    for od in (arg or sorted(glob.glob(os.path.join(root, "modelle", "*")))):
+        for f in sorted(glob.glob(os.path.join(od, "messprotokoll", "K-*.json"))):
+            try: ok, g = datei_pruefen(f)
+            except Exception as e: ok, g = False, f"nicht lesbar ({str(e)[:50]})"
+            if not ok:
+                n += 1; print(f"{os.path.basename(od)}/{os.path.basename(f)[:44]}: {g}")
+                if "--beiseite" in sys.argv: os.rename(f, f + ".unplausibel")
+    print(f"{n} unplausible Kamera(s)"); return 3 if n else 0
 
 
 if __name__ == "__main__":

@@ -12,6 +12,8 @@ GRENZEN: k1 wird gespeichert, aber foto_diff/fehlteile rendern ohne Verzeichnung
 (im Protokoll) - aendert sich die STL-Unterkante, neu schreiben.
 """
 import sys, os, json, glob, struct, argparse, numpy as np
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import kamera_plausibel as KP
 
 
 def stl_punkte(p):
@@ -56,6 +58,8 @@ def main():
         R = np.array(k["R"], float); t = np.array(k["t"], float) - R @ T_; Cw = -R.T @ t
         kp = os.path.join(od, "messprotokoll", f"K-{nr}.json"); K = json.load(open(kp)) if os.path.exists(kp) else dict(foto=nr, seite=obj.get("fotos", {}).get(nr, {}).get("seite", "unbekannt"), punkte={}, linien={})
         if K.get("kamera") and K["kamera"].get("brennweite_quelle") != "buendel" and not a.ueberschreiben: gesch += 1; ber.append((nr, "handkalibriert - nicht ueberschrieben")); continue
+        ok_p, grund_p = KP.plausibel(float(k["f_px_original"]) * s, (W, H), Cw)
+        if not ok_p: ber.append((nr, "UNPLAUSIBEL, nicht geschrieben: " + grund_p)); continue      # 16.11.2026: 9 solche Kameras lagen tagelang unbemerkt im Bestand
         K["kamera"] = dict(rvec=rodrigues(R).tolist(), t=t.tolist(), f_px=float(k["f_px_original"]) * s, cx=float(k["cx"]) * s, cy=float(k["cy"]) * s, k1=float((k.get("k") or [0.0])[0]),
                            bild=[W, H], standort_xyz=[round(float(x), 3) for x in Cw], hoehe_ueber_gelaende=round(float(Cw[2]), 2), rms_px=round(rms.get(nr, float("nan")) * s, 2) if nr in rms else None,
                            brennweite_quelle="buendel", ankerzone_z=zone, rahmen_verschiebung=T_.round(4).tolist(),

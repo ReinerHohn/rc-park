@@ -30,12 +30,5 @@ if [ -f $FO/elemente.json ]; then
 fi
 a=$($P -W ignore -I tools/pruefstand.py modelle/$O/objekt.json 2>&1 | grep -c "alle Pruefungen bestanden"); [ "$a" = "1" ] && ok "Pruefstand ober_tvdr gruen" || rot "Pruefstand ober_tvdr"
 v=$(grep -l '"vertrauen": true' modelle/schwab_v3/messprotokoll/K-dl_*.json 2>/dev/null | wc -l); e=$(ls modelle/schwab_v3/messprotokoll/K-eigen__*.json | wc -l); [ "$e" -ge 150 ] && [ "$v" -ge 100 ] && ok "Kameras: $e eigene, $v gepruefte Fremdkameras" || rot "Kameras: $e eigene, $v gepruefte Fremdkameras (erwartet >= 150 / >= 100)"
-u=$($P -I -c "
-import json,glob,numpy as np,cv2
-n=0
-for f in glob.glob('modelle/*/messprotokoll/K-*.json'):
-    k=json.load(open(f)).get('kamera')
-    if isinstance(k,dict) and 'rvec' in k and 'cx' in k:
-        C=-cv2.Rodrigues(np.array(k['rvec']))[0].T@np.array(k['t']); n+= (not np.isfinite(C).all()) or np.linalg.norm(C)>3000 or k['f_px']>20*max(k['cx'],k['cy'])
-print(n)"); [ "$u" = "0" ] && ok "keine Kamera mit absurdem Standort/Brennweite" || rot "$u Kameras mit absurdem Standort (> 3 km) oder Brennweite (> 10 x Bildbreite) - als .unplausibel beiseitelegen"
+u=$($P -I tools/kamera_plausibel.py | tail -1 | cut -d" " -f1); [ "$u" = "0" ] && ok "keine Kamera mit absurdem Standort/Brennweite" || rot "$u Kameras mit absurdem Standort (> 3 km) oder Brennweite (> 10 x Bildbreite) - als .unplausibel beiseitelegen"
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F

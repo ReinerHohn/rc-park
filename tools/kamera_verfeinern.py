@@ -20,10 +20,19 @@ import render_kern as rk
 from scipy.optimize import least_squares
 
 
+def exif_f_px(pfad_, W, H):
+    """Brennweite in Pixeln aus EXIF (35-mm-Aequivalent), None wenn nicht vorhanden oder das Bild offensichtlich beschnitten/verkleinert ohne Angabe ist."""
+    try:
+        from PIL import Image
+        ex = Image.open(pfad_).getexif(); f35 = ex.get_ifd(0x8769).get(0xA405)
+        return float(f35) / 36.0 * max(W, H) if f35 and 10 <= float(f35) <= 1200 else None
+    except Exception: return None
+
+
 def main():
     from lightglue import LightGlue, ALIKED
     from lightglue.utils import load_image, rbd
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fassaden"); ap.add_argument("foto"); ap.add_argument("--liste", help="Datei mit Fotonamen (einer je Zeile) - alle in einem Lauf, Referenzen werden nur einmal gerechnet; Argument FOTO dann beliebig"); ap.add_argument("--gegen"); ap.add_argument("--n", type=int, default=6); ap.add_argument("--schreiben", action="store_true"); ap.add_argument("--stl", help="weitere STL (Nachbarobjekte im selben Rahmen), Komma-Liste"); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fassaden"); ap.add_argument("foto"); ap.add_argument("--liste", help="Datei mit Fotonamen (einer je Zeile) - alle in einem Lauf, Referenzen werden nur einmal gerechnet; Argument FOTO dann beliebig"); ap.add_argument("--gegen"); ap.add_argument("--n", type=int, default=6); ap.add_argument("--schreiben", action="store_true"); ap.add_argument("--min_tiefe", type=float, default=0.06, help="kleinste Tiefenspanne der Inlier relativ zum Abstand, ab der die Brennweite frei geschaetzt werden darf"); ap.add_argument("--stl", help="weitere STL (Nachbarobjekte im selben Rahmen), Komma-Liste"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); fd = os.path.join(root, obj["fotos_dir"]); mp = os.path.join(od, "messprotokoll")
     ms = [trimesh.load(q_) for q_ in ([os.path.join(root, obj["stl"])] + (a.stl.split(",") if a.stl else []))]; mm = trimesh.util.concatenate(ms) if len(ms) > 1 else ms[0]; mm.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0)
     def kam(n):
@@ -88,12 +97,21 @@ def main():
         s = least_squares(res, np.r_[r.ravel(), t.ravel(), f], loss="soft_l1", f_scale=3.0); p = s.x; err = np.sqrt((res(p) ** 2).reshape(-1, 2).sum(1)); R = cv2.Rodrigues(p[:3])[0]; C = -R.T @ p[3:6]; dist = float(np.median(np.linalg.norm(P3[inl] - C, axis=1)))
         je_wand = {int(w): int((WN[inl] == w).sum()) for w in np.unique(WN[inl])}; tragend = sum(1 for v in je_wand.values() if v >= 15)
         print(f"{a.foto}: {len(inl)} Inlier von {len(P2)}, je Wand {je_wand}, Rest Median {np.median(err):.1f} px = {np.median(err) * dist / p[6] * 100:.0f} cm an der Wand; f {K0['f_px']:.0f} -> {p[6]:.0f} px, Standort {np.round(C0, 1).tolist()} -> {np.round(C, 1).tolist()} ({np.linalg.norm(C - C0):.1f} m verschoben)")
+        # 16.11.2026 nachts (Kameras "am Mond"): Brennweite und Abstand sind nur trennbar, wenn die Punkte in der TIEFE verteilt sind. Mass: Tiefenspanne (p5-p95 entlang der Blickachse) / Abstand.
+        zc_ = (P3[inl] @ R.T + p[3:6])[:, 2]; tiefe_rel = float((np.percentile(zc_, 95) - np.percentile(zc_, 5)) / max(np.median(zc_), 1e-6)); f_exif = exif_f_px(pfad(a.foto), W, H)
+        if f_exif and (tiefe_rel < a.min_tiefe or abs(np.log(p[6] / f_exif)) > np.log(1.25)):      # bekannte Linse (EXIF): festhalten, wenn die Geometrie die Brennweite nicht traegt oder ihr um > 25 % widerspricht
+            def res_f(q): pr, _ = cv2.projectPoints(P3[inl], q[:3], q[3:6], np.array([[f_exif, 0, cx], [0, f_exif, cy], [0, 0, 1.0]]), None); return (pr.reshape(-1, 2) - P2[inl]).ravel()
+            ok_, r_, t_ = cv2.solvePnP(P3[inl], P2[inl], np.array([[f_exif, 0, cx], [0, f_exif, cy], [0, 0, 1.0]]), None, flags=cv2.SOLVEPNP_EPNP); q = least_squares(res_f, np.r_[r_.ravel(), t_.ravel()], loss="soft_l1", f_scale=3.0).x
+            e2 = np.sqrt((res_f(q) ** 2).reshape(-1, 2).sum(1))
+            if np.median(e2) < max(3 * np.median(err), 6.0): print(f"  Brennweite aus EXIF festgehalten ({f_exif:.0f} px statt {p[6]:.0f}; Tiefenspanne {tiefe_rel * 100:.0f} %), Rest {np.median(e2):.1f} px"); p = np.r_[q, f_exif]; err = e2; R = cv2.Rodrigues(p[:3])[0]; C = -R.T @ p[3:6]; dist = float(np.median(np.linalg.norm(P3[inl] - C, axis=1)))
+            else: print(f"{a.foto}: EXIF-Brennweite {f_exif:.0f} px passt nicht zu den Punkten (Rest {np.median(e2):.0f} px) - falsche Zuordnung, nicht geschrieben"); return 3
+        elif tiefe_rel < a.min_tiefe: print(f"{a.foto}: Punkte liegen fast in einer Ebene (Tiefenspanne {tiefe_rel * 100:.1f} % des Abstands < {a.min_tiefe * 100:.0f} %) und keine EXIF-Brennweite - Abstand/Zoom nicht trennbar, nicht geschrieben"); return 3
         if tragend < 2: print("nur eine Wand mit >= 15 Inliern - Kamera bleibt unsicher, nicht geschrieben"); return 3
         if not np.isfinite(C).all() or dist > 600 or p[6] > 10 * max(W, H) or p[6] < 0.4 * max(W, H): print(f"{a.foto}: Loesung unplausibel (Abstand {dist:.0f} m, f {p[6]:.0f} px bei {max(W, H)} px Bildbreite) - entartete Tele-Loesung, nicht geschrieben"); return 3      # 16.11.2026: PnP mit freier Brennweite lief bei fast ebenen Punkten ins Unendliche (Kamera 350 000 km entfernt, trotzdem 2 Flaechen >= 15 Inlier)
         if a.schreiben:
             kp = os.path.join(mp, "K-" + a.foto + ".json"); d = json.load(open(kp)) if os.path.exists(kp) else dict(foto=a.foto, seite="unbekannt", punkte={}, linien={})
             if d.get("kamera"): d["kamera_vorher"] = d["kamera"]
-            d["kamera"] = dict(rvec=p[:3].tolist(), t=p[3:6].tolist(), f_px=float(p[6]), cx=cx, cy=cy, k1=0.0, standort=C.tolist(), quelle=f"kamera_verfeinern.py: {len(inl)} Inlier auf {tragend} Waenden gegen {sorted(set(RF))[:6]}, Rest {np.median(err):.1f} px", vertrauen=True, rest_px_median=float(np.median(err)), inlier_je_wand=je_wand)
+            d["kamera"] = dict(rvec=p[:3].tolist(), t=p[3:6].tolist(), f_px=float(p[6]), cx=cx, cy=cy, k1=0.0, standort=C.tolist(), quelle=f"kamera_verfeinern.py: {len(inl)} Inlier auf {tragend} Waenden gegen {sorted(set(RF))[:6]}, Rest {np.median(err):.1f} px", tiefenspanne=round(tiefe_rel, 3), vertrauen=True, rest_px_median=float(np.median(err)), inlier_je_wand=je_wand)
             json.dump(d, open(kp, "w"), indent=1); print("geschrieben:", kp)
         return 0
     for f_ in fotos:
