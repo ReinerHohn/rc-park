@@ -250,3 +250,17 @@ LEHREN:
 7. Jede neue Kettenstufe einmal ganz laufen lassen, bevor man sie "fertig" nennt: der Gesamtlauf fand drei Fehler (pyproj fehlte, falsches Argument, Ueberschreiben).
 NOCH NICHT GENERISCH (Handarbeit am Schwabentor): Aufruf von `fassade_ein_foto auto` + `steine_aus_foto` je Wand steht nicht in `fassaden_kette.py`; Felder (z-Bereiche, Fensterspalten) von Hand;
 Tor fuer "unmoeglicher Standort"; Zusatz-Einsaetze je Wand im Generator (west_foto_oben) sind Einzelzeilen.
+
+## Runde Bauteile und Wandebene - 16.11.2026 mittags (Nutzer: Treppenturm "kleine Fensterchen", "wichtig fuer Schloesser"; "Warum nicht automatisch?")
+WARUM ES NICHT AUTOMATISCH KAM: foto_mass.py und die Fenstererkennung kennen nur Ebenen; Rundtuerme fielen durch alle Werkzeuge, ihre Schlitze standen als ANNAHME im Modell;
+die Hinweise von fehlteile_finden/foto_diff (>30 offene Auto-Beobachtungen) wurden nicht abgearbeitet.
+NEU, generisch:
+- `tools/zylinder_mass.py <objekt.json> --achse x y --radius r --mess FOTO u v ... [--tri FOTO u v FOTO u v]`: Sehstrahl x Zylinder -> Punkt + Azimut; zwei Fotos als Gegenprobe; Triangulation fuer Spitzen.
+- `tools/fassade_zylinder.py <objekt.json> <aus.png> --achse x y --radius r --z z0 z1 [--fotos auto] --stl ...`: ABWICKLUNG der Mantelflaeche (1 cm/px), Fotos selbst gewaehlt (steilster Blick je Zelle,
+  max. 3 je 45-Grad-Sektor), Verdecktes ausgeblendet. Treppenturm Schwabentor: 74 % gesehen aus 14 Fotos; die drei einzeln gemessenen Schlitze liegen in der Abwicklung auf wenige cm gleich;
+  zwei weitere Schlitze (z 5,8 und 4,5) und eine Tuer mit Gewaende am Fuss wurden erst dort gefunden. GRENZEN: am streifenden Rand zeigt ein Streifen faelschlich die Turmwand dahinter
+  (Verdeckungstoleranz); Fenster werden nur sichtbar, nicht erkannt; Hauben/Kegel fehlen. NAECHSTER SCHRITT: fassade_parsing/fenster_aus_parsing auf die Abwicklung, Ergebnis als Zylinder-Schnitte in den Generator.
+- `steine_aus_foto.py --foto <FOTO> --objekt <objekt.json> --stl ...` (statt Ortho; Aufruf `relief aus - 0 - --foto ...`): liest das Bild DIREKT aus dem Foto auf der Wandebene des Reliefs.
+  GRUND: ein Ortho auf der LoD2-Fassadenebene liegt bis 0,75 m neben der echten Wand; bei schraegem Einzelfoto verschiebt das den Inhalt seitlich um 0,2-1 m
+  (West: Nordwestecke 1 m zu frueh, dahinter "Steine" aus Himmel; Ost: Schlitz/Luke/Balkenkopf 0,2-0,4 m daneben). Fuer Einzelfotos IMMER diesen Weg nehmen.
+  `fassade_ein_foto.py auto` bleibt fuer die Fotowahl und zum Ansehen; fuer Masse/Quader nicht mehr als Quelle.
