@@ -56,6 +56,28 @@ class Wand:
         """Gerader Stab von p = (u, z) nach q = (u, z), Breite b, von w0 bis w1 vor der Wand (Zeiger, Ziffernstriche, Leisten)."""
         p = np.array(p, float); q = np.array(q, float); d = q - p; d = d / np.linalg.norm(d); s = np.array([-d[1], d[0]]) * b / 2
         return self.huelle([(c[0], c[1], w_) for c in (p + s, p - s, q + s, q - s) for w_ in (w0, w1)])
+    def linienzug(self, pts, b, w0, w1):
+        """Stab entlang eines Linienzugs (u, z)-Punkte (Masswerk, Ranken, geschwungene Leisten)."""
+        k = None
+        for p, q in zip(pts[:-1], pts[1:]):
+            if np.hypot(q[0] - p[0], q[1] - p[1]) < 1e-4: continue
+            s_ = self.stab(p, q, b, w0, w1); k = s_ if k is None else k + s_
+        return k
+    def masswerk_fischblase(self, u0, u1, z0, z1, w0, w1, b=0.07, n=14):
+        """Vereinfachtes Fischblasen-Masswerk fuer ein Bruestungsfeld (spaetgotisch): Ring in der Mitte mit S-Schwung (zwei Blasen), links und rechts je zwei
+        spitz zulaufende Blasen (Bogenstaebe zur Feldmitte der Schmalseite) und eine Mittelrippe. Form nach Foto 113529 (Loggia Schwabentor-Nachbarhaus), Einzelkurven ANNAHME.
+        Liefert die Staebe; das Feld vorher ausschneiden: koerper - kasten(u0, u1, z0, z1, ...) + masswerk."""
+        cu, cz = 0.5 * (u0 + u1), 0.5 * (z0 + z1); h = 0.5 * (z1 - z0); L = 0.5 * (u1 - u0); R = min(h - b / 2, 0.45 * L); t = np.linspace(0, 1, n)
+        ring = [(cu + R * np.cos(a_), cz + R * np.sin(a_)) for a_ in np.linspace(0, 2 * np.pi, 33)]
+        s_kurve = [(cu + 0.5 * R * np.sin(a_), cz + 0.5 * R + 0.5 * R * np.cos(a_)) for a_ in np.linspace(0, np.pi, n)] + [(cu - 0.5 * R * np.sin(a_), cz - 0.5 * R + 0.5 * R * np.cos(a_)) for a_ in np.linspace(0, np.pi, n)]
+        k = self.linienzug(ring, b, w0, w1) + self.linienzug(s_kurve, b, w0, w1)
+        def bez(p0, p1, p2): return [((1 - x) ** 2 * p0[0] + 2 * x * (1 - x) * p1[0] + x * x * p2[0], (1 - x) ** 2 * p0[1] + 2 * x * (1 - x) * p1[1] + x * x * p2[1]) for x in t]
+        for sg in (-1.0, 1.0):
+            e = cu + sg * (L + 0.01); a0 = cu + sg * R * 0.8
+            for sz in (-1.0, 1.0):
+                k = k + self.linienzug(bez((a0, cz + sz * R * 0.6), (cu + sg * 0.5 * (R + L), cz + sz * (h + 0.25 * h)), (e, cz + sz * 0.15 * h)), b, w0, w1)       # aeusserer Blasenbogen
+                k = k + self.linienzug(bez((cu + sg * R, cz), (cu + sg * 0.5 * (R + L), cz + sz * 0.55 * h), (e, cz + sz * 0.9 * h)), b, w0, w1)                 # innerer Gegenschwung zur Feldecke
+        return k ^ self.kasten(u0 - 0.01, u1 + 0.01, z0 - 0.01, z1 + 0.01, w0 - 0.01, w1 + 0.01)
     def zifferblatt(self, u, z, d_aussen, d_innen, zeit=(2, 5), k=1.0, w_ring=0.10, w_feld=0.06):
         """Turmuhr-Details AUF einer vorhandenen Ringscheibe (Ring bis w_ring, Innenfeld bis w_feld vor der Wand): Wulst aussen und innen, 12 roemische Ziffern
         (radial, Fuss zur Mitte, IIII statt IV wie an Turmuhren ueblich), Nabe, Stundenzeiger mit Sonne und Mondsichel am Gegenende, Minutenzeiger mit Pfeil.
@@ -164,6 +186,11 @@ def stl_schreiben(model, pfad, kopf=b"rcpark"):
     vq, inv = np.unique(np.round(V.astype(np.float64), 3), axis=0, return_inverse=True); F = inv.ravel()[F]; V = vq.astype(np.float32)
     F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]
     fs = np.sort(F, axis=1); _u, inv2, cnt = np.unique(fs, axis=0, return_inverse=True, return_counts=True); F = F[cnt[inv2.ravel()] == 1]      # Flaechenpaare mit denselben drei Ecken (Lappen ohne Dicke) entfernen
+    try:                                                                 # 16.11.2026: Kruemel (<= 8 Dreiecke, z. B. 2-cm-Tetraeder nach dem Aushoehlen) fallen sonst als Einzelkoerper heraus
+        from scipy.sparse import coo_matrix; from scipy.sparse.csgraph import connected_components
+        e_ = np.r_[F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]]; nk_, lab_ = connected_components(coo_matrix((np.ones(len(e_)), (e_[:, 0], e_[:, 1])), shape=(len(V), len(V))), directed=False)
+        fl_ = lab_[F[:, 0]]; cnt_ = np.bincount(fl_, minlength=nk_); F = F[cnt_[fl_] > 8]
+    except ImportError: pass
     tri = V[F]; nrm = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]); nrm /= np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-12
     rec = np.zeros(len(F), dtype=[("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")]); rec["n"], rec["v"] = nrm, tri; os.makedirs(os.path.dirname(pfad), exist_ok=True)
     with open(pfad, "wb") as f: f.write(kopf.ljust(80, b" ")); f.write(np.uint32(len(F)).tobytes()); f.write(rec.tobytes())

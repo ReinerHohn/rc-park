@@ -114,6 +114,12 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper + WL.kasten(0.5, 7.6, 6.9, 7.0, -0.05, 0.08) + WL.kasten(0.5, 7.6, 7.93, 8.01, -0.05, 0.06)   # Gesims unter und Handlauf auf der Bruestung
     for u0_, u1_, z0_, z1_, tl_ in ((-1.51, -0.11, 8.08, 9.54, (-0.80,)), (-1.49, -0.02, 5.02, 6.39, (-0.75,))):
         koerper = koerper + WL.kasten(u0_ - 0.15, u1_ + 0.15, z0_ - 0.15, z1_ + 0.15, -0.1, 0.05); ab_, zu_ = WL.fenster(u0_, u1_, z0_, z1_, 0.05, tiefe=0.17, teiler=tl_, b=0.12); koerper = koerper - ab_ + zu_
+    # 16.11.2026 MASSWERK der Loggia-Bruestung (drei Felder, Fischblasen): Feldgrenzen am Foto 113529 abgelesen (zwischen den Massen M-113529-005/-007), Kurven vereinfacht
+    koerper = koerper - WL.kasten(0.63, 7.5, 7.0, 8.02, -1.5, -0.2)                                                # Loggia reicht hinter der 20 cm starken Bruestung bis zum Boden (z 7,0)
+    for u0_, u1_ in ((0.72, 2.72), (3.15, 5.13), (5.55, 7.42)):
+        koerper = koerper - WL.kasten(u0_, u1_, 7.09, 7.85, -0.3, 0.1) + WL.masswerk_fischblase(u0_, u1_, 7.09, 7.85, -0.16, -0.04)
+    beleg("wand", "Masswerk der Loggia-Bruestung (3 Felder, Fischblasen, durchbrochen)", "Foto 113529: Feldteilung abgelesen, Bruestungshoehe M-113529-007", felder=3,
+          hinweis="ANNAHME: Kurven vereinfacht (Ring mit S-Schwung, seitliche Blasen), Stabbreite 7 cm (Druckminimum), Bruestung 20 cm stark; Feldgrenzen ohne Protokoll")
     koerper = koerper + WL.scheibe(-0.06, 2.85, 1.42, -0.05, 0.05) - WL.scheibe(-0.06, 2.85, 0.80, -0.15, 0.1)     # Rundfenster: Steinring 5 cm vor dem Putz, Nische 15 cm (ANNAHME)
     beleg("wand", "Nordost-Fassade scharf: Loggia mit Bruestung und zwei Saeulen, 2 Doppelfenster, Rundfenster", "foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-005..-011), Picks ueber wand_ortho.py",
           loggia_breite=7.05, loggia_hoehe=1.82, bruestung=1.10, hinweis="ANNAHME: Loggiatiefe 1,5 m, Saeulen als Vierkant, Bruestung geschlossen (Masswerk fehlt), Gewaende 5 cm; Walmdach, Dachgelaender, Eckquader, Schriftzug fehlen")

@@ -113,6 +113,14 @@
  },
  {
   "seite": "wand",
+  "element": "Masswerk der Loggia-Bruestung (3 Felder, Fischblasen, durchbrochen)",
+  "quelle": "Foto 113529: Feldteilung abgelesen, Bruestungshoehe M-113529-007",
+  "felder": 3,
+  "hinweis": "ANNAHME: Kurven vereinfacht (Ring mit S-Schwung, seitliche Blasen), Stabbreite 7 cm (Druckminimum), Bruestung 20 cm stark; Feldgrenzen ohne Protokoll",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Nordost-Fassade scharf: Loggia mit Bruestung und zwei Saeulen, 2 Doppelfenster, Rundfenster",
   "quelle": "foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-005..-011), Picks ueber wand_ortho.py",
   "loggia_breite": 7.05,
@@ -159,7 +167,7 @@
   "element": "Gebaeude hohl, 37 Fenster durchgebrochen",
   "quelle": "Nutzerauftrag 16.11.2026; Fensterrechtecke wie oben gemessen",
   "fenster_offen": 37,
-  "hohlraum_m3": 3248.9,
+  "hohlraum_m3": 3239.3,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026: minimal duenn, stabil, schnell druckbar): 1,2 mm im Druck (3 Bahnen einer 0,4-mm-Duese; WAND_MM) = 0,10 m bei 1:87; Innenraum ohne Decken/Zwischenwaende; Rahmen, Pfosten und Kaempfer bleiben als Staebe in der Oeffnung",
   "seite_name": "wand"
  }
