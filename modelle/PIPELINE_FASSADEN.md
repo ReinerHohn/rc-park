@@ -324,3 +324,11 @@ Nachtrag 16.11. ~18:30 - zwei Fehler der Fensterstufe, die erst der zweite Durch
 - MOSAIK: eine Fassade mit 52 Fotos und 94 % "Abdeckung" war ein Flickwerk aus Baum, Nachbarn und Strassenszene, trotzdem 4 "Fenster". `fassade_ortho.py` schreibt jetzt `uneinig_<id>.png`
   (Streuung der Grauwerte ueber die Fotos je Zelle), `fenster_aus_parsing.py --uneinig 28` verwirft Kaesten in widerspruechlichen Zonen. Messung: gute Fassade 0-18, Mosaik 40-67.
   LEHRE: "Abdeckung in Prozent" sagt nichts ueber Brauchbarkeit; kuenftig Uneinigkeit mitmelden (foto_auftrag.py und seiten_luecken.py tun das noch NICHT).
+
+Nachtrag 16.11. abends - Tempo und Selbstkontrolle (alles Standardverhalten der Werkzeuge, damit ohne Zusatzschalter in der Kette):
+- `fassade_ortho.py`: (a) Vorpruefung "sieht das Foto ueberhaupt eine Fassade" VOR dem Laden; (b) `--max-fotos 40` = je Fassade nur die 40 besten Kameras (Sichtanteil / Meter je Pixel, nur aus K-Dateien).
+  Anlass: Turm mit 700 Kameras x 4 Waende lief > 2 h. Messung Haeuserzeile: 60 -> 41 s durch (a); (b) dort ohne Wirkung auf das Ergebnis (wenige Kameras je Wand); Turm-Messung siehe Aufgabenliste.
+  GPU-Sichtbarkeit (`--gpu-sicht`) gebaut und VERWORFEN als Standard: langsamer (61 gegen 41 s) und weniger streng.
+- `pruefstand.py` z_am_punkt ueber senkrechte Strahlen: Turm 153 -> 35 s, Werte identisch an 3 Objekten.
+- `umriss_tor.py` laeuft in `bauen_abnehmen.sh` (Hinweis), `schnelltest.sh` nach jeder Werkzeugaenderung (CLAUDE.md).
+- `fenster_aus_parsing.py`: Stimmen >= 50 % der sehenden Fotos, Uneinigkeits-Tor, Raster-Regel (alles Standard; `--ohne-raster` schaltet die Regel ab).
