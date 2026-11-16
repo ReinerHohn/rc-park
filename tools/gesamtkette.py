@@ -101,6 +101,15 @@ def main():
     if dran("sammeln"):
         lauf(B, "sammeln", ["python3", "-I", "tools/fotos_sammeln.py", FV, "--eigen", fd] + (["--geprueft", vp] if os.path.exists(vp) else []), log)
 
+    if os.path.isdir(FV) and len(os.listdir(FV)) > 0:                    # 16.11.2026 (Kettenlauf schwab_auto: 0 Fotos auf allen Fassaden, IndexError in fassaden_kette): die Kameras K-<name> heissen nach den GESAMMELTEN Fotos,
+        ln = os.path.join(ROOT, "daten", a.ziel, "fotos"); oj = json.load(open(ZJ))      # objekt.json zeigte aber noch auf den Fotoordner der Quelle. Verknuepfung daten/<ziel>/fotos -> Sammelordner, fotos_dir darauf.
+        if os.path.realpath(os.path.join(ROOT, oj.get("fotos_dir", ""))) != os.path.realpath(FV):
+            os.makedirs(os.path.dirname(ln), exist_ok=True)
+            if not os.path.lexists(ln): os.symlink(FV, ln)
+            if os.path.realpath(ln) == os.path.realpath(FV):
+                oj.setdefault("fotos_dir_quelle", oj.get("fotos_dir")); oj["fotos_dir"] = os.path.relpath(ln, ROOT); json.dump(oj, open(ZJ, "w"), indent=1, ensure_ascii=False); notiz(B, "fotos_dir", True, hinweis=f"fotos_dir -> {oj['fotos_dir']} (Sammelordner); vorher {oj['fotos_dir_quelle']}")
+            else: notiz(B, "fotos_dir", False, fehler=f"{ln} existiert und zeigt nicht auf {FV}")
+
     P = os.path.join(D, "pipe")
     if dran("sfm"):
         lauf(B, "sfm", [PY, "-u", "-I", "tools/pipeline_objekt.py", a.ziel, FV, P, "--stufe", a.dicht_stufe], log)
@@ -165,13 +174,16 @@ def main():
     if dran("fenster") and os.path.exists(AU):                          # 15.11.2026: Fenster automatisch (Mehrfoto-Ortho -> OWLv2 -> Scheiben gruppieren); Probe Nordgiebel Schwabentor-Nachbarhaus: 6 von 6 sichtbaren Fenstern, 1-4 cm
         fo = os.path.join(D, "fassade"); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); fa = os.path.join(Z, "audit", "fenster_auto.json")
         if lauf(B, "fenster_ortho", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--stl", stl_, "--aus", fo, "--einzeln", "--min-flaeche", "6"], log)[0] == 0:
+            try: nfo = sum(len(f_.get("fotos") or {}) for f_ in json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"])
+            except Exception: nfo = 0
+            if nfo == 0: notiz(B, "fenster_ortho_inhalt", False, fehler="KEIN Foto auf irgendeiner Fassade - Kameras/fotos_dir pruefen (rc 0 allein beweist nichts; 16.11.2026 lief die Kette so leer durch)")
             env_alt = dict(os.environ); os.environ.update(HF_HOME="/media/oem/scan/hf_cache", HF_HUB_OFFLINE="1")
             if lauf(B, "fenster_parsing", [PY, "-W", "ignore", "-I", "tools/fassade_parsing.py", "--ortho", fo, "--gpu"], log)[0] == 0 and (lauf(B, "fenster_ortho_fein", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--stl", stl_, "--aus", fo + "_fein", "--einzeln", "--min-flaeche", "6", "--zelle", "0.01", "--max-mpp", "0.02", "--beste", "3"], log, ok=(0, 1))[0] in (0, 1)) and (lauf(B, "fenster_fein", [PY, "-I", "tools/fassade_fein.py", fo + "_fein"], log, ok=(0, 1))[0] in (0, 1)) and lauf(B, "fenster_bauen_liste", [PY, "-I", "tools/fenster_aus_parsing.py", fo, "--aus", fa, "--fein", fo + "_fein"], log)[0] == 0:   # feines, ausgerichtetes 1-cm-Bild fuer Sprossen/Muster (Nutzer 15.11.: "immer alle Details mitnehmen"); wo kein Foto <= 2 cm/px hat, bleibt das grobe
                 lauf(B, "bauen_mit_fenstern", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
             os.environ.clear(); os.environ.update(env_alt)
     if dran("fenster") and os.path.exists(os.path.join(Z, "messprotokoll")): lauf(B, "umriss_tor", [PY, "-W", "ignore", "-I", "tools/umriss_tor.py", ZR, "--eintragen"], log, ok=(0, 3))      # 16.11.2026: Dachlinie Modell gegen Himmelskante; Befunde -> beobachtungen_offen
     if dran("seiten") and os.path.exists(AU):                           # 16.11.2026 Nutzer (Schwabentor Ostseite): "Er muss doch wissen, dass dort Bilder fehlen und die sich dann holen, notfalls downloaden. Alles muss in die Pipeline."
-        fo = os.path.join(D, "fassade"); sp = next((q_ for q_ in (os.path.join(P, "sparse_ba"), os.path.join(P, "dicht", "sparse"), os.path.join(P, "sparse", "0")) if os.path.exists(os.path.join(q_, "images.bin"))), None); db = os.path.join(P, "db.db")
+        fo = os.path.join(D, "fassade"); sp = next((q_ for q_ in (os.path.join(P, "sparse_ba"), os.path.join(P, "dicht", "sparse"), os.path.join(P, "sparse", "0"), os.path.join(P, "sfm", "sparse_dicht"), os.path.join(P, "sfm", "sparse", "0"), os.path.join(P, "sfm", "sparse")) if os.path.exists(os.path.join(q_, "images.bin"))), None); db = next((q_ for q_ in (os.path.join(P, "db.db"), os.path.join(P, "sfm", "db.db")) if os.path.exists(q_)), os.path.join(P, "db.db"))
         if os.path.exists(os.path.join(fo, "fassaden.json")) and sp and os.path.exists(db):
             nf = len(json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"]); vb = {}
             for i_ in range(nf):                                              # 16.11.2026: Vorbauten/Nischen automatisch (Ebenen-Sweep je Fassade); rc 2 = zu wenige Fotos, rc 4 = nicht belastbar

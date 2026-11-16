@@ -23,7 +23,8 @@ def main():
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); fd = json.load(open(a.objekt))["fotos_dir"]; stimmen = np.zeros(H * W); gesehen = np.zeros(H * W)
     for nm in a.fotos:
         K = json.load(open(os.path.join(od, "messprotokoll", "K-" + nm + ".json")))["kamera"]; R = cv2.Rodrigues(np.array(K["rvec"]))[0]; tt = np.array(K["t"])
-        im = cv2.imread((glob.glob(os.path.join(root, fd, nm + ".*")) or glob.glob(os.path.join(root, fd, nm + "_*")))[0])
+        fl_ = glob.glob(os.path.join(root, fd, nm + ".*")) or glob.glob(os.path.join(root, fd, nm + "_*")); im = cv2.imread(fl_[0]) if fl_ else None
+        if im is None: print(f"    Foto {nm} nicht im fotos_dir {fd} - uebersprungen (objekt.json fotos_dir pruefen)"); continue      # 16.11.2026: Kettenlauf brach hier 16x mit IndexError ab
         p = X @ R.T + tt; x = p[:, 0] / p[:, 2]; y = p[:, 1] / p[:, 2]; f_ = 1 + float(K.get("k1") or 0) * (x * x + y * y); mx = (K["f_px"] * x * f_ + K["cx"]).astype(np.float32); my = (K["f_px"] * y * f_ + K["cy"]).astype(np.float32)
         ppm = K["f_px"] / np.median(p[:, 2]); im = cv2.GaussianBlur(im, (0, 0), max(0.5, 0.4 * px * ppm))            # auf Zellgroesse glaetten
         ok = (p[:, 2] > 0) & (mx > 2) & (mx < im.shape[1] - 3) & (my > 2) & (my < im.shape[0] - 3)
