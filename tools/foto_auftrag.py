@@ -71,6 +71,9 @@ def main():
         if F.get("flaeche_m2", 0) < 40: continue
         R = F["raster"]; im = cv2.imread(os.path.join(a.ordner, f"ortho_f{i:02d}.png")); c = 0.5; W = int((F["u"][1] - F["u"][0]) / c); H = int((F["z"][1] - F["z"][0]) / c)
         dat = cv2.resize((im.max(2) > 8).astype(np.float32), (R["nu"], R["nz"]))[int((R["z1"] - F["z"][1]) / R["zelle"]):int((R["z1"] - F["z"][0]) / R["zelle"]), int((F["u"][0] - R["u0"]) / R["zelle"]):int((F["u"][1] - R["u0"]) / R["zelle"])] if im is not None else np.zeros((10, 10), np.float32)
+        un_ = cv2.imread(os.path.join(a.ordner, f"uneinig_f{i:02d}.png"), 0)      # 16.11.2026: widerspruechliche Zonen (Fotos zeigen Verschiedenes) zaehlen als NICHT gesehen - "94 % Abdeckung" war an ober_tvdr ein Mosaik
+        if un_ is not None and im is not None and un_.shape == im.shape[:2]:
+            gut_ = ((im.max(2) > 8) & (cv2.blur(un_.astype(np.float32), (9, 9)) <= 28)).astype(np.float32); dat = cv2.resize(gut_, (R["nu"], R["nz"]))[int((R["z1"] - F["z"][1]) / R["zelle"]):int((R["z1"] - F["z"][0]) / R["zelle"]), int((F["u"][0] - R["u0"]) / R["zelle"]):int((F["u"][1] - R["u0"]) / R["zelle"])]
         leer = cv2.resize(dat, (W, H), interpolation=cv2.INTER_AREA) < 0.3; leer = ndi.binary_opening(leer, np.ones((3, 3))); lab, n = ndi.label(leer)
         for li, sl in enumerate(ndi.find_objects(lab), 1):
             fl = (lab[sl] == li).sum() * c * c

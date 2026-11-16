@@ -9,7 +9,8 @@ Reihenfolge nach Nutzen. Status hier pflegen (offen / in Arbeit / erledigt + Com
        an schwab_v3, schwab_nachbar, ober_tvdr (alter Weg: PRUEFSTAND_SCHNITT=1). Pflichtbilder neben_fotos 3 gleichzeitig (ungemessen). Rest (fotodiag/seiten_audit parallel zum Pruefstand) offen.
    1d. Bildvergleich (zusatzfotos_lightglue paare): Stapel + Vorauswahl ueber Bildaehnlichkeit - offen
 2. UMRISS-TOR Modell gegen Foto als Pflicht (Formfehler wie Bogen, Dachknick, Umgang automatisch melden); >30 offene Auto-Beobachtungen abarbeiten - offen
-3. FENSTER-REGELMAESSIGKEIT je Fassade (Achsen/Geschosse; verdeckte ergaenzen, Fehltreffer aussieben) - offen
+3. FENSTER-REGELMAESSIGKEIT - ERSTE FASSUNG ERLEDIGT: fenster_aus_parsing.raster_regel (Achsen/Geschosse angleichen, leere Rasterplaetze ergaenzen, markiert 'ergaenzt'); ober_tvdr rote Fassade: 3 x 2 Fenster, eines ergaenzt.
+   Dazu Uneinigkeits-Tor (Mosaik-Fassaden) und Loch-Rueckkopplung im Fassadenbild behoben; Stimmenschwelle 50 %. OFFEN: nur an EINER Fassade geprueft; Fensterkaesten enthalten die Steinrahmen (zu breit).
 4. MapAnything (Apache-Gewichte) als Test fuer Tiefe von Vorbauten/Daechern; VRAM pruefen - offen
 5. SCHNELLTEST fuer Werkzeugaenderungen (fester Satz, < 2 min) - offen
 6. PLATZ (Nutzerentscheidung): groessere Datenplatte oder alte Zwischenstaende loeschen - offen, beim Nutzer

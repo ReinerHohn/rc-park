@@ -20,8 +20,44 @@ def iou(a, b):
     i = w * h; return i / ((a["u1"] - a["u0"]) * (a["z1"] - a["z0"]) + (b["u1"] - b["u0"]) * (b["z1"] - b["z0"]) - i)
 
 
+def raster_regel(fen, un, r, un_max):
+    """FENSTER-REGELMAESSIGKEIT (Aufgabenliste 3, 16.11.2026): Fenster einer Fassade stehen in Achsen (Spalten) und Geschossen (Zeilen).
+    Spalten = Gruppen der Fenstermitten in u (Abstand < 0,6 m), Zeilen = Gruppen der Fenstermitten in z (< 0,8 m). Nur wenn das Raster traegt (>= 2 Zeilen, >= 2 Spalten, >= 60 % besetzt):
+      1. Angleichen: je Zeile gleiche z0/z1 (Median), je Spalte gleiche Mitte; Breiten bleiben.
+      2. Ergaenzen: leere Rasterplaetze bekommen ein Fenster mit der Spaltenbreite und Zeilenhoehe (Median), wenn die Stelle nicht widerspruechlich ist (Uneinigkeitskarte) - markiert 'ergaenzt'.
+    Erdgeschoss (z0 < 2,5 m) bleibt unberuehrt (Laeden/Tueren sind unregelmaessig). Ergaenzte Fenster sind ANNAHME aus der Regel, kein Fund."""
+    ob = [f for f in fen if f["z0"] >= 2.5]
+    if len(ob) < 3: return fen
+    def gruppen(werte, tol):
+        o = np.argsort(werte); g = [[int(o[0])]]
+        for i in o[1:]:
+            if werte[i] - werte[g[-1][-1]] < tol: g[-1].append(int(i))
+            else: g.append([int(i)])
+        return g
+    cu = np.array([(f["u0"] + f["u1"]) / 2 for f in ob]); cz = np.array([(f["z0"] + f["z1"]) / 2 for f in ob]); sp = gruppen(cu, 0.6); ze = gruppen(cz, 0.8)
+    if len(sp) < 2 or len(ze) < 2 or len(ob) < 0.6 * len(sp) * len(ze): return fen
+    for g in ze:
+        z0 = float(np.median([ob[i]["z0"] for i in g])); z1 = float(np.median([ob[i]["z1"] for i in g]))
+        for i in g: ob[i]["z0"], ob[i]["z1"] = round(z0, 3), round(z1, 3)
+    for g in sp:
+        m = float(np.median([cu[i] for i in g]))
+        for i in g: b = ob[i]["u1"] - ob[i]["u0"]; ob[i]["u0"], ob[i]["u1"] = round(m - b / 2, 3), round(m + b / 2, 3)
+    neu = []
+    for gs in sp:
+        m = float(np.median([cu[i] for i in gs])); b = float(np.median([ob[i]["u1"] - ob[i]["u0"] for i in gs]))
+        for gz in ze:
+            if set(gs) & set(gz): continue
+            z0, z1 = ob[gz[0]]["z0"], ob[gz[0]]["z1"]
+            if any(o_["u0"] < m + b / 2 and o_["u1"] > m - b / 2 and o_["z0"] < z1 and o_["z1"] > z0 for o_ in fen): continue      # dort steht schon etwas (z. B. breiteres Fenster)
+            if un is not None:
+                x0, x1, y0, y1 = int((m - b / 2 - r["u0"]) / r["zelle"]), int((m + b / 2 - r["u0"]) / r["zelle"]), int((r["z1"] - z1) / r["zelle"]), int((r["z1"] - z0) / r["zelle"])
+                if y1 <= y0 or x1 <= x0 or x0 < 0 or y0 < 0 or float(np.median(un[y0:y1, x0:x1])) > un_max: continue
+            neu.append(dict(u0=round(m - b / 2, 3), u1=round(m + b / 2, 3), z0=z0, z1=z1, teiler=[], kaempfer=None, scheiben=0, stimmen_min=2, ergaenzt=True))
+    return fen + neu
+
+
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("ortho"); ap.add_argument("--aus"); ap.add_argument("--stimmen", type=int, default=3); ap.add_argument("--weiss", type=float, default=0.12); ap.add_argument("--uneinig", type=float, default=28.0, help="Median der Grauwert-Streuung ueber die Fotos im Kasten (0-255), darueber verworfen")
+    ap = argparse.ArgumentParser(); ap.add_argument("ortho"); ap.add_argument("--aus"); ap.add_argument("--stimmen", type=int, default=3); ap.add_argument("--weiss", type=float, default=0.12); ap.add_argument("--ohne-raster", action="store_true", help="Regelmaessigkeit (Achsen/Geschosse angleichen, Luecken ergaenzen) abschalten"); ap.add_argument("--uneinig", type=float, default=28.0, help="Median der Grauwert-Streuung ueber die Fotos im Kasten (0-255), darueber verworfen")
     ap.add_argument("--fein", help="Ordner mit ortho_<id>_fein.png (fassade_fein.py, 1-cm-Zelle): Sprossen werden dort gesucht statt im groben Ortho"); ap.add_argument("--luecke", type=float, default=0.25); ap.add_argument("--min_b", type=float, default=0.25); a = ap.parse_args()
     FA = {F.get("id_vorbau") or F.get("_id") or F.get("id"): F for F in json.load(open(os.path.join(a.ortho, "fassaden.json")))["fassaden"]}; EL = json.load(open(os.path.join(a.ortho, "elemente.json")))["fassaden"]; erg = {}
     def seite(F_): return int(round(np.degrees(np.arctan2(F_["n"][1], F_["n"][0])) / 20.0)) % 18
@@ -31,7 +67,7 @@ def main():
         if F is None or im is None: continue
         r = F["raster"]; zl = r["zelle"]; hv = cv2.cvtColor(im, cv2.COLOR_BGR2HSV).astype(np.float32) / 255.0
         for e in X["elemente"]:
-            if e["klasse"] != "fenster" or e.get("stimmen", 0) < min(a.stimmen, max(2, int(np.ceil(0.6 * e.get("gesehen", a.stimmen))))): continue
+            if e["klasse"] != "fenster" or e.get("stimmen", 0) < min(a.stimmen, max(2, int(np.ceil(0.5 * e.get("gesehen", a.stimmen))))): continue
             du = (e["u1"] - e["u0"]) * 0.2; dz = (e["z1"] - e["z0"]) * 0.2; c = hv[max(int((r["z1"] - e["z1"] + dz) / zl), 0):int((r["z1"] - e["z0"] - dz) / zl), max(int((e["u0"] + du - r["u0"]) / zl), 0):int((e["u1"] - du - r["u0"]) / zl)]
             if c.size < 60 or ((c[..., 2] > 0.85) & (c[..., 1] < 0.12)).mean() >= 0.08: continue
             samm.setdefault(seite(F), []).append((float(c[..., 2].mean()), e.get("stimmen", 1) * (e["u1"] - e["u0"]) * (e["z1"] - e["z0"])))
@@ -46,7 +82,7 @@ def main():
             return int((e["u0"] + du - r["u0"]) / zl), int((e["u1"] - du - r["u0"]) / zl), int((r["z1"] - e["z1"] + dz) / zl), int((r["z1"] - e["z0"] - dz) / zl)
         K = []
         for e in X["elemente"]:
-            if e["klasse"] != "fenster" or e.get("stimmen", 0) < min(a.stimmen, max(2, int(np.ceil(0.6 * e.get("gesehen", a.stimmen))))) or e["u1"] - e["u0"] < a.min_b or e["z1"] - e["z0"] < a.min_b: continue
+            if e["klasse"] != "fenster" or e.get("stimmen", 0) < min(a.stimmen, max(2, int(np.ceil(0.5 * e.get("gesehen", a.stimmen))))) or e["u1"] - e["u0"] < a.min_b or e["z1"] - e["z0"] < a.min_b: continue
             x0, x1, y0, y1 = px(e); w = weiss[max(y0, 0):y1, max(x0, 0):x1]
             if w.size < 20 or leer[max(y0, 0):y1, max(x0, 0):x1].mean() > 0.3: continue
             c = hsv[max(y0, 0):y1, max(x0, 0):x1]; hell = float(((c[..., 2] > 0.85) & (c[..., 1] < 0.12)).mean()); dunkel = float((c[..., 2] < 0.3).mean()); sd = float(c[..., 2].std())
@@ -123,6 +159,7 @@ def main():
                 bu = p["u1"] - p["u0"]; bz = p["z1"] - p["z0"]
                 w["sprossen"] += [[round(p["u0"] + t * bu, 3), round(p["z0"], 3), round(p["u0"] + t * bu, 3), round(p["z1"], 3)] for t in p["_vm"]]
                 w["sprossen"] += [[round(p["u0"], 3), round(p["z1"] - t * bz, 3), round(p["u1"], 3), round(p["z1"] - t * bz, 3)] for t in p["_hm"]]
+        if not a.ohne_raster: fen = raster_regel(fen, un_ if (un_ is not None and un_.shape == im.shape[:2]) else None, r, a.uneinig)
         fen.sort(key=lambda w: (round(w["z0"]), w["u0"])); erg[fid] = dict(o=F["o"], d=F["d"], n=F["n"], fenster=fen, fotos=X.get("fotos", [])[:4])
         for w in fen:
             x0, x1, y0, y1 = px(w, 0.0); cv2.rectangle(im, (x0, y0), (x1, y1), (0, 255, 0), 2)
