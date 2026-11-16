@@ -146,3 +146,20 @@ Ablauf (Schwabentor Ostseite, so gelaufen):
 VERWORFEN: Eckstreifen der Nachbarwaende an die ungesehene Wand spiegeln (Werkzeug relief_ungesehen.py geloescht) - Erfindung, solange Fotos existieren.
 Grenzen: Kamera aus Modellpunkten ist nur so gut wie das Modell (hier +-0,2 m); Einzelfoto = keine Verdeckungspruefung; Schattenseite -> Fugen unsicher.
 OFFEN (Automatik): die Kette sucht noch nicht selbst nach unregistrierten Fotos fuer leere Waende.
+
+## Stufe `seiten` der Gesamtkette: Wand ohne Foto -> Fotos holen (16.11.2026)
+Nutzer: "Er muss doch wissen, dass dort Bilder fehlen und die sich dann holen, notfalls downloaden ... alle Quellen ... Alles muss in die Pipeline rein und dokumentiert werden."
+Warum es am Schwabentor nicht automatisch ging: (1) `kamera_abdeckung.py` meldete die Luecke (Ost) seit 14.11., aber keine Stufe handelte danach;
+(2) das einzige gute Ostfoto (online2_orig od_15) war nie im SfM registriert; nicht registrierte Fotos wurden nie wieder angefasst;
+(3) `fassade_ortho`/`fassade_fein` lieferten fuer die Wand ein leeres Bild, ohne Alarm.
+Stufe (nach `fenster`, braucht dessen `fassade/fassaden.json`): `tools/seiten_luecken.py <objekt.json> <fassade> --sparse <Netz> --ref-db <db.db> --download --holen`
+1. Abdeckung je Wand (Anteil Wandzellen mit Bilddaten); < 20 % = UNGESEHEN (rc 3). Schwabentor: N 88 %, S 82 %, W 75 %, O 0 %.
+2. Kandidaten = Fotobestand minus registrierte Bilder (Schwabentor: 13 von 578); Kontaktbogen `audit/seiten_luecken_kandidaten.jpg`.
+3. `--download`: alle FREIEN Quellen nach `<daten>/seiten_nachholen/`: `commons_harvest.py` (Geosuche 250 m + Name), `online_ansichten_holen.py` (Hochblicke: Luftbild/Panorama),
+   `openverse_holen.py` (Flickr u. a.; nur CC0/PDM/BY/BY-SA; `herkunft.json` mit Urheber/Lizenz). NICHT: Mapillary, Google-Bilder/Street View (Lizenz, `LIZENZ_WERKZEUGE.md`).
+   Etikette: Wikimedia 1 Datei je 25 s; HTTP 429 sperrt nur die Quelle fuer den Lauf (erster Lauf 16.11.: nach 3 Bildern gedrosselt, weil 1,5 s).
+4. `--holen`: Skript `audit/seiten_luecken_holen.sh` = Nachregistrieren mit ALIKED+LightGlue (`zusatzfotos_registrieren.py` vorbereiten/merkmale/registrieren, `zusatzfotos_lightglue.py` refnamen/paare/einlesen).
+   GPU: nicht parallel zu einer Abnahme starten (16.11.: CUDA out of memory, 7,6-GB-Karte).
+5. Danach `fassade_ortho`/`fassade_fein` fuer die Wand neu. Bleibt sie leer, obwohl ein Foto sie zeigt: Kamera aus gemessenen Modellpunkten + `fassade_ein_foto.py` (Abschnitt "Ungesehene Seite").
+NICHT GEGANGEN: Aufloesungsgrenze (`--max-mpp`) fuer die leere Wand lockern - 24 "passende" registrierte Kameras (Videobilder in 40 m Hoehe) ergaben ein Mischbild fremder Daecher (Posen falsch). Nicht einbauen ohne Uebereinstimmungs-Tor.
+STAND: Erkennung, Kandidatenliste, Openverse-Abruf einzeln gelaufen; der Gesamtablauf (Download + Nachregistrierung + neue Orthos) ist noch NICHT einmal komplett durchgelaufen; Stufe in gesamtkette.py nur syntaxgeprueft.

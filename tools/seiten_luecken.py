@@ -9,7 +9,8 @@ Ablauf:
   2. Fotobestand (objekt.json fotos_dir) gegen die registrierten Bilder des SfM (images.bin) abgleichen -> Liste der NICHT registrierten Fotos (Kandidaten).
   3. Skript <audit>/seiten_luecken_holen.sh schreiben: Kandidaten mit ALIKED+LightGlue gegen das Netz nachregistrieren
      (tools/zusatzfotos_registrieren.py vorbereiten/merkmale/registrieren, tools/zusatzfotos_lightglue.py refnamen/paare/einlesen), Zielordner <daten>/seiten_nachholen.
-     --download: davor tools/commons_harvest.py (Geosuche 250 m um objekt.json koordinate_utm, freie Lizenzen, manifest.json) in <daten>/seiten_nachholen/commons;
+     --download: davor ALLE freien Quellen: tools/commons_harvest.py (Geosuche 250 m + Namenssuche), tools/online_ansichten_holen.py (Hochblicke auf Commons),
+     tools/openverse_holen.py (Flickr u. a., nur CC0/BY/BY-SA) nach <daten>/seiten_nachholen/{commons,hochblick,openverse}; Mapillary/Google NICHT (Lizenz, LIZENZ_WERKZEUGE.md);
      diese Bilder kommen zu den Kandidaten.
      --holen: das Skript sofort ausfuehren (GPU; nur ueber tools/job_start.sh starten, wenn es lange laeuft).
   4. Bericht <audit>/seiten_luecken.json. Exit-Code 3, solange eine Wand ungesehen ist.
@@ -54,7 +55,10 @@ def main():
         from pyproj import Transformer
         lon, lat = Transformer.from_crs("EPSG:25832", "EPSG:4326", always_xy=True).transform(*obj["koordinate_utm"][:2])
         zeilen.append(f"{VS} {T}/commons_harvest.py --lat {lat:.6f} --lon {lon:.6f} --radius 250 --max 300 --search \"{obj.get('name', '')} {obj.get('ort', '')}\" --out {Z}/commons   # freie Lizenzen, manifest.json")
-        zeilen.append(f"for f in {Z}/commons/*.jpg; do ln -sf \"$f\" {Z}/roh/dl__$(basename \"$f\"); done")
+        nm = f"{obj.get('name', '')} {obj.get('ort', '').split(' im ')[0]}".strip(); ort = obj.get("ort", "").split(" im ")[0]
+        zeilen.append(f"python3 {T}/online_ansichten_holen.py --aus {Z}/hochblick --suche \"{nm}\" \"{ort} Luftbild\" \"{ort} Panorama\" --max 40 || true   # Hochblicke (Commons): sehen Seiten ueber Nachbardaechern")
+        zeilen.append(f"python3 {T}/openverse_holen.py --aus {Z}/openverse --suche \"{nm}\" \"{obj.get('name', '')}\" \"{ort} Altstadt Blick\" --max 150 || true   # Flickr u. a. ueber Openverse, nur CC0/BY/BY-SA")
+        zeilen.append(f"for f in {Z}/commons/*.jpg {Z}/hochblick/orig/*.jpg {Z}/openverse/*.jpg; do [ -e \"$f\" ] && ln -sf \"$f\" {Z}/roh/dl_$(basename $(dirname \"$f\"))__$(basename \"$f\"); done")
     zeilen += [f"ln -sf \"{f}\" {Z}/roh/" for f in kand]
     zeilen += [f"{VC} {T}/zusatzfotos_registrieren.py vorbereiten --fotos {Z}/roh --aus {Z} --unten 0.0", f"{VC} {T}/zusatzfotos_registrieren.py merkmale --ref-db {a.ref_db} --sparse {a.sparse} --aus {Z}",
                f"{VC} {T}/zusatzfotos_lightglue.py refnamen --ziel {Z} --ref-sparse {a.sparse}", f"{VS} {T}/zusatzfotos_lightglue.py paare --ziel {Z} --ref-sparse {a.sparse} --ref-bilder {fd}",
