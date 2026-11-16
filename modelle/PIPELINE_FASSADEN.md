@@ -90,3 +90,9 @@ Abnahme des Versuchs: (a) Schattierungsbild neben dem feinen Fassadenbild - sind
 - Sechseck-/Butzenraster und Fensterformen (Bogen, Masswerk) als Geometrie; Fachwerkbalken; Gesimse; Erker.
 - Gruppen-Punkt-Tor (braucht Handpicks) nicht in der Kette.
 - Schwellen der Fensterregeln an weiteren Fassaden pruefen (Putzfassade mit Steingewaenden, Gegenlicht).
+
+## Nachtrag 16.11.2026: Fenster als echte Loecher, ebene Eckquader
+- `bauteile.aushoehlen(koerper, d=Wandstaerke, schnitte=[...], z_min=...)` am ENDE des Generators (nach allen Fenstern): Gebaeude hohl, alle mit `Wand.fenster` gebauten Fenster (Liste `bauteile.DURCH`) und die uebergebenen Schnittkoerper werden durchgebrochen. Wandstaerke ist ANNAHME. Tuerme: `z_min` ueber dem Torgewoelbe. Laufzeit 20-40 s.
+- Pruefungen, die eine Nischenrueckwand erwarten (`tiefe_bei`, `schnitt_reichweite` mit grossem r_max), sehen danach die Innenwand - Pruefdefinition anpassen (historie), Sollwerte der Oeffnungsmasse bleiben.
+- `tools/relief_quader_eben.py <voll.npz> <eben.npz> --feld u0 u1 z0 z1`: nur fuer GLATT behauene Quader (am feinen Fassadenbild pruefen), nie fuer Bruchstein.
+- 3D-Seite: ebene Flaechennormalen; Bilder aus der Seite vor einer Generatoraenderung am STL nachrendern (`tools/modell_ansicht.py`).

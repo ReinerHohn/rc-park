@@ -1,0 +1,9 @@
+{
+ "werkzeug": "wolke_freiraum_pruefen.py",
+ "wolke": "/media/oem/scan/rc-park_daten/schwab_v3/punkte_modell_sauber_w4.npy",
+ "punkte_umkreis": 2188625,
+ "im_koerper_prozent": 0.0,
+ "schwebend_prozent": 13.71,
+ "tief_m": 1.2,
+ "grenze_prozent": 0.5
+}

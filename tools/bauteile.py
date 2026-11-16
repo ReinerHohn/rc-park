@@ -116,7 +116,7 @@ def hohlraum(koerper, d, decke=None, boden=None):
     return v
 
 
-def aushoehlen(koerper, d=0.3, schnitte=(), fenster=None, min_m3=0.5, decke=None, boden=None):
+def aushoehlen(koerper, d=0.3, schnitte=(), fenster=None, min_m3=0.5, decke=None, boden=None, z_min=None):
     """Nutzer 16.11.2026: "alles, was in Wirklichkeit ein Loch ist (Fenster ...), muss ein Loch werden". Gebaeude hohl (Wandstaerke d = ANNAHME), Fenster durchgebrochen.
     fenster: Liste wie DURCH (Standard: alle bisher mit Wand.fenster gebauten); schnitte: weitere Durchbruchkoerper (Rundfenster, Schlitze).
     Nur Hohlraumteile, die von einem Durchbruch erreicht werden, bleiben (sonst geschlossene Blasen = Extrakoerper im STL). Liefert (koerper, anzahl_offen, hohlraum_m3)."""
@@ -126,7 +126,9 @@ def aushoehlen(koerper, d=0.3, schnitte=(), fenster=None, min_m3=0.5, decke=None
     alle = cuts[0]
     for c in cuts[1:]: alle = alle + c
     raum = None; vol = 0.0
-    for t in hohlraum(koerper, d, decke, boden).decompose():
+    roh = hohlraum(koerper, d, decke, boden)
+    if z_min is not None: roh = roh.trim_by_plane((0.0, 0.0, 1.0), z_min)      # darunter massiv (Torgeschoss eines Turms: Pfeiler neben der Durchfahrt)
+    for t in roh.decompose():
         if t.volume() >= min_m3 and (t ^ alle).volume() > 1e-4: raum = t if raum is None else raum + t; vol += t.volume()
     offen = sum(1 for c in cuts if raum is not None and (c ^ raum).volume() > 1e-5)
     erg = (koerper - raum if raum is not None else koerper) - alle

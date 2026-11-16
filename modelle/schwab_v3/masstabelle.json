@@ -1276,8 +1276,8 @@
    "name": "Sued (fen_s_innen): |x| der ersten Flaeche bei u 5.75 z 23.00 (m)",
    "wert": "fen_s_innen",
    "soll": [
-    6.25,
-    7.0
+    0.0,
+    6.2
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Fensteroeffnung Sued 0,92 x 1,41 m, Mitte u 5,745, Bank z 22,26",
    "quelltyp": "foto_kalibriert",
@@ -1285,15 +1285,21 @@
    "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
    "protokoll": "M-commons127-006",
    "historie": [
-    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand"
+    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand",
+    {
+     "datum": "2026-11-16",
+     "alt": "Soll [6.25, 7.0]",
+     "neu": "Soll [0.0, 6.2]",
+     "grund": "Nutzerauftrag 16.11.2026 (3D-Seite V38): 'alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden'. Die alte Spanne pruefte eine Nische mit ANGENOMMENER Tiefe (0,45/0,8 m); jetzt muss der Strahl die Mauer (mind. 0,8 m) durchdringen = Fenster offen. Lage/Breite der Oeffnung pruefen die uebrigen fen_*-Pruefungen unveraendert."
+    }
    ]
   },
   {
    "name": "Sued (fen_s_kante_ost_innen): |x| der ersten Flaeche bei u 5.38 z 23.00 (m)",
    "wert": "fen_s_kante_ost_innen",
    "soll": [
-    6.24,
-    6.99
+    0.0,
+    6.2
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Suedwandebene (Gerade durch 7 828 Wandpunkte des neuen SfM, Rest 2 cm), Kameras aus dem SfM-Neuaufbau; Oeffnungskante Ost u 5,28: 0,1 m innerhalb offen",
    "quelltyp": "foto_kalibriert",
@@ -1301,7 +1307,13 @@
    "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
    "protokoll": "M-commons127-006",
    "historie": [
-    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand"
+    "2026-11-15 angelegt (Suedfassade wie Nord bauen); Ist vorher glatte Wand",
+    {
+     "datum": "2026-11-16",
+     "alt": "Soll [6.24, 6.99]",
+     "neu": "Soll [0.0, 6.2]",
+     "grund": "Nutzerauftrag 16.11.2026 (3D-Seite V38): 'alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden'. Die alte Spanne pruefte eine Nische mit ANGENOMMENER Tiefe (0,45/0,8 m); jetzt muss der Strahl die Mauer (mind. 0,8 m) durchdringen = Fenster offen. Lage/Breite der Oeffnung pruefen die uebrigen fen_*-Pruefungen unveraendert."
+    }
    ]
   },
   {
@@ -1420,8 +1432,8 @@
    "name": "West (fen_w_gross_innen): |y| der ersten Flaeche bei u 5.40 z 22.60 (m)",
    "wert": "fen_w_gross_innen",
    "soll": [
-    19.83,
-    20.53
+    0.0,
+    19.8
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Westwandebene (Ecken aus den neuen SfM-Punkten), Foto 114039 (16 Grad zur Wandnormalen, 17 m), Kameras aus dem SfM-Neuaufbau; grosses Fenster 0,81 x 1,75 m, Achse u 5,40, Bank z 21,70; Wandlage selbst nur aus Wolke/LoD2 (+-0,25 m), geprueft wird offen/zu",
    "quelltyp": "foto_kalibriert",
@@ -1429,7 +1441,13 @@
    "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
    "protokoll": "M-114039-001",
    "historie": [
-    "2026-11-15 angelegt (Westfassade); Ist vorher glatte Wand"
+    "2026-11-15 angelegt (Westfassade); Ist vorher glatte Wand",
+    {
+     "datum": "2026-11-16",
+     "alt": "Soll [19.83, 20.53]",
+     "neu": "Soll [0.0, 19.8]",
+     "grund": "Nutzerauftrag 16.11.2026 (3D-Seite V38): 'alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden'. Die alte Spanne pruefte eine Nische mit ANGENOMMENER Tiefe (0,45/0,8 m); jetzt muss der Strahl die Mauer (mind. 0,8 m) durchdringen = Fenster offen. Lage/Breite der Oeffnung pruefen die uebrigen fen_*-Pruefungen unveraendert."
+    }
    ]
   },
   {
@@ -1468,8 +1486,8 @@
    "name": "West (fen_w_schlitz_innen): |y| der ersten Flaeche bei u 5.42 z 29.00 (m)",
    "wert": "fen_w_schlitz_innen",
    "soll": [
-    19.83,
-    20.53
+    0.0,
+    19.8
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Westwandebene (Ecken aus den neuen SfM-Punkten), Foto 114039 (16 Grad zur Wandnormalen, 17 m), Kameras aus dem SfM-Neuaufbau; Schlitzfenster z 27,82-30,19, ~0,2 m breit; Wandlage selbst nur aus Wolke/LoD2 (+-0,25 m), geprueft wird offen/zu",
    "quelltyp": "foto_kalibriert",
@@ -1477,7 +1495,13 @@
    "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
    "protokoll": "M-114039-003",
    "historie": [
-    "2026-11-15 angelegt (Westfassade); Ist vorher glatte Wand"
+    "2026-11-15 angelegt (Westfassade); Ist vorher glatte Wand",
+    {
+     "datum": "2026-11-16",
+     "alt": "Soll [19.83, 20.53]",
+     "neu": "Soll [0.0, 19.8]",
+     "grund": "Nutzerauftrag 16.11.2026 (3D-Seite V38): 'alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden'. Die alte Spanne pruefte eine Nische mit ANGENOMMENER Tiefe (0,45/0,8 m); jetzt muss der Strahl die Mauer (mind. 0,8 m) durchdringen = Fenster offen. Lage/Breite der Oeffnung pruefen die uebrigen fen_*-Pruefungen unveraendert."
+    }
    ]
   },
   {
@@ -1500,8 +1524,8 @@
    "name": "West (fen_w_klein17_innen): |y| der ersten Flaeche bei u 5.40 z 17.40 (m)",
    "wert": "fen_w_klein17_innen",
    "soll": [
-    19.83,
-    20.53
+    0.0,
+    19.8
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Westwandebene (Ecken aus den neuen SfM-Punkten), Foto 114039 (16 Grad zur Wandnormalen, 17 m), Kameras aus dem SfM-Neuaufbau; kleines Fenster z 16,93-17,86; Wandlage selbst nur aus Wolke/LoD2 (+-0,25 m), geprueft wird offen/zu",
    "quelltyp": "foto_kalibriert",
@@ -1509,15 +1533,21 @@
    "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
    "protokoll": "M-114039-004",
    "historie": [
-    "2026-11-15 angelegt (Westfassade); Ist vorher glatte Wand"
+    "2026-11-15 angelegt (Westfassade); Ist vorher glatte Wand",
+    {
+     "datum": "2026-11-16",
+     "alt": "Soll [19.83, 20.53]",
+     "neu": "Soll [0.0, 19.8]",
+     "grund": "Nutzerauftrag 16.11.2026 (3D-Seite V38): 'alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden'. Die alte Spanne pruefte eine Nische mit ANGENOMMENER Tiefe (0,45/0,8 m); jetzt muss der Strahl die Mauer (mind. 0,8 m) durchdringen = Fenster offen. Lage/Breite der Oeffnung pruefen die uebrigen fen_*-Pruefungen unveraendert."
+    }
    ]
   },
   {
    "name": "West (fen_w_klein11_innen): |y| der ersten Flaeche bei u 5.33 z 10.95 (m)",
    "wert": "fen_w_klein11_innen",
    "soll": [
-    19.82,
-    20.52
+    0.0,
+    19.8
    ],
    "quelle": "foto_mass.py --kamera/--ebene auf der Westwandebene (Ecken aus den neuen SfM-Punkten), Foto 114039 (16 Grad zur Wandnormalen, 17 m), Kameras aus dem SfM-Neuaufbau; kleines Fenster z 10,46-11,44; Wandlage selbst nur aus Wolke/LoD2 (+-0,25 m), geprueft wird offen/zu",
    "quelltyp": "foto_kalibriert",
@@ -1525,7 +1555,13 @@
    "massstab": "SfM-Neuaufbau, Rahmen = Lasermassstab 0,933",
    "protokoll": "M-114039-005",
    "historie": [
-    "2026-11-15 angelegt (Westfassade); Ist vorher glatte Wand"
+    "2026-11-15 angelegt (Westfassade); Ist vorher glatte Wand",
+    {
+     "datum": "2026-11-16",
+     "alt": "Soll [19.82, 20.52]",
+     "neu": "Soll [0.0, 19.8]",
+     "grund": "wie fen_w_gross_innen: Nutzerauftrag 16.11.2026 Fenster = echtes Loch; die alte Spanne pruefte eine Nische mit angenommener Tiefe"
+    }
    ]
   },
   {
@@ -1808,89 +1844,61 @@
    "naechster_schritt": "Treppenturm: Haube am Foto messen und bauen (erledigt 16.11.: M-054-001..-005); Turmdach: Profil am Fernfoto pruefen, Fries/Untersicht unter der Traufe bauen"
   },
   {
+   "datum": "2026-11-16",
+   "wer": "Nutzer",
+   "text": "Nutzer (3D-Seite V38, 06:46, drei Bilder): (1) Beulen im Eckquaderstreifen rechts neben der Suedhr oberhalb des Gesimses; (2) Anschluss Querdach/Turm; (3) 'Klotz mit Schraege' am Suedfenster und Strahlen auf dem Putz. Befund: (3) und die Strahlen sind NUR Anzeige (Ecken-Raster 3,5 cm + geglaettete Normalen), im STL ist das Fenster eine saubere Nische (modell_ansicht.py). Dazu: Fenster muessen echte Loecher werden.",
+   "naechster_schritt": "bauteile.aushoehlen (Wandstaerke ANNAHME), Fenster durchbrechen; Anzeige mit ebenen Flaechennormalen; Eckquader oben eben mit Fotokontur"
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1526",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1512",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 28.77,
-   "z_bis": 28.77,
+   "z_von": 29.78,
+   "z_bis": 29.78,
    "xyz": [
-    -2.42,
-    9.77,
-    28.77
+    -3.13,
+    9.9,
+    29.78
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=28.77 m, y=9.77 m (Zelle [981, 1526, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.78 m, y=9.9 m (Zelle [972, 1512, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1635",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1620",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 26.65,
-   "z_bis": 26.65,
+   "z_von": 27.73,
+   "z_bis": 27.73,
    "xyz": [
-    -2.3,
-    9.78,
-    26.65
+    -3.15,
+    9.92,
+    27.73
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=26.65 m, y=9.78 m (Zelle [981, 1635, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.73 m, y=9.92 m (Zelle [972, 1620, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1744",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1728",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 24.76,
-   "z_bis": 24.76,
+   "z_von": 25.77,
+   "z_bis": 25.77,
    "xyz": [
-    -2.29,
-    9.81,
-    24.76
+    -3.12,
+    9.96,
+    25.77
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=24.76 m, y=9.81 m (Zelle [981, 1744, 109], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=25.77 m, y=9.96 m (Zelle [972, 1728, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-1962",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 21.23,
-   "z_bis": 21.23,
-   "xyz": [
-    -2.18,
-    9.85,
-    21.23
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=21.23 m, y=9.85 m (Zelle [981, 1962, 109], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 5)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-981-2071",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 19.67,
-   "z_bis": 19.67,
-   "xyz": [
-    -2.22,
-    9.89,
-    19.67
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.67 m, y=9.89 m (Zelle [981, 2071, 109], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
   }
  ]
 }

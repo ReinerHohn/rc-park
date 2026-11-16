@@ -245,5 +245,14 @@
   "quelle": "feines Fassadenbild Nord (fassade_fein, 1 cm) und Fernfoto 110756: Rahmenwerk z 34,95-36,55",
   "hinweis": "ANNAHME: Pfostenzahl 6 je Seite (in den Fotos zu dunkel zum Zaehlen - Zaehlprotokoll fehlt), Querschnitte 24-26 cm, 7-8 cm vor der Wand; Felder nicht zurueckgesetzt; Ost- und Westseite wie Nord",
   "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Turm hohl, 6 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
+  "quelle": "Nutzerauftrag 16.11.2026; Fenstermasse wie oben",
+  "fenster_offen": 6,
+  "hohlraum_m3": 2371.0,
+  "hinweis": "ANNAHME: Mauerstaerke 1,2 m (Treppenturm 0,35 m), Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
+  "seite_name": "wand"
  }
 ]

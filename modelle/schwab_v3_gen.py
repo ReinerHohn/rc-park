@@ -78,6 +78,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     rel_n = os.path.join(HERE, "schwab_v3", "relief", "nord.npz")
     if os.path.exists(rel_n.replace(".npz", "_voll.npz")):          # 15.11.2026 Nutzer: "Rest der Steine notfalls generieren" - Loecher des Scan-Reliefs mit generierten Quadern gefuellt (tools/steine_generieren.py)
         rel_n = rel_n.replace(".npz", "_voll.npz"); beleg("wand", "Generierte Quader Nord (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)", "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben", anteil=float(np.load(rel_n)["generiert_anteil"]), hinweis="ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original")
+    if os.path.exists(rel_n.replace("_voll.npz", "_eben.npz")) and rel_n.endswith("_voll.npz"): rel_n = rel_n.replace("_voll.npz", "_eben.npz")      # 16.11.2026 Nutzer (Beulen neben der Uhr): glatt behauene Eckquader ueber dem Gesims eben, Kontur aus der Fotofarbe (tools/relief_quader_eben.py); Fugen fehlen
     if os.path.exists(rel_n) and os.environ.get("OHNE_RELIEF") != "1":
         rel_nm = os.path.join(HERE, "schwab_v3", "relief", "nord_misch.npz"); fein_n = os.path.exists(rel_nm) and os.environ.get("OHNE_FEIN") != "1"   # 15.11. spaet: lokale Feinrechnung der Tiefe (tools/tiefe_lokal.py -> relief_mischen.py), Nordwand unten 2 cm statt 5 cm
         rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12 + WV, trend=True, versatz=0.0, null_felder=[(2.6, 5.4, 23.9, 27.1), (6.9, 9.7, 23.9, 27.1), (1.6, 11.1, 9.7, 21.1)], tief_felder=[(0.0, 12.2, 0.0, 10.4)] if fein_n else [])
@@ -193,6 +194,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     rel_s = os.path.join(HERE, "schwab_v3", "relief", "sued.npz")              # Relief Sued aus dem NEUEN OpenMVS-Netz (sfm_neu), korrigierter Rahmen; Bauteilfelder ausgeblendet
     if os.path.exists(rel_s.replace(".npz", "_voll.npz")):          # 15.11.2026 Nutzer: "Rest der Steine notfalls generieren" - Loecher des Scan-Reliefs mit generierten Quadern gefuellt (tools/steine_generieren.py)
         rel_s = rel_s.replace(".npz", "_voll.npz"); beleg("wand", "Generierte Quader Sued (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)", "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben", anteil=float(np.load(rel_s)["generiert_anteil"]), hinweis="ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original")
+    if os.path.exists(rel_s.replace("_voll.npz", "_eben.npz")) and rel_s.endswith("_voll.npz"): rel_s = rel_s.replace("_voll.npz", "_eben.npz")      # 16.11.2026 Nutzer (Beulen neben der Uhr): glatt behauene Eckquader ueber dem Gesims eben, Kontur aus der Fotofarbe (tools/relief_quader_eben.py); Fugen fehlen
     if os.path.exists(rel_s) and os.environ.get("OHNE_RELIEF") != "1":
         _fm = os.path.join(HERE, "schwab_v3", "relief", "sued_misch.npz"); _fein = os.path.exists(_fm) and os.environ.get("OHNE_FEIN") != "1"      # lokale Feinrechnung (tiefe_lokal.py, 4000 px) + relief_mischen.py, 2 cm
         koerper = koerper + relief_koerper(rel_s, tiefe=0.30, trend=True, null_felder=[(3.0, 8.4, 28.2, 33.75), (5.1, 6.4, 22.0, 23.95), (0.0, 11.5, 25.85, 26.95), (2.4, 7.2, 18.1, 18.5)], tief_felder=[(0.0, 11.6, 0.0, 9.9)] if _fein else [])
@@ -216,6 +218,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     rel_w = os.path.join(HERE, "schwab_v3", "relief", "west.npz")
     if os.path.exists(rel_w.replace(".npz", "_voll.npz")):          # 15.11.2026 Nutzer: "Rest der Steine notfalls generieren" - Loecher des Scan-Reliefs mit generierten Quadern gefuellt (tools/steine_generieren.py)
         rel_w = rel_w.replace(".npz", "_voll.npz"); beleg("wand", "Generierte Quader West (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)", "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben", anteil=float(np.load(rel_w)["generiert_anteil"]), hinweis="ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original")
+    if os.path.exists(rel_w.replace("_voll.npz", "_eben.npz")) and rel_w.endswith("_voll.npz"): rel_w = rel_w.replace("_voll.npz", "_eben.npz")      # 16.11.2026 Nutzer (Beulen neben der Uhr): glatt behauene Eckquader ueber dem Gesims eben, Kontur aus der Fotofarbe (tools/relief_quader_eben.py); Fugen fehlen
     if os.path.exists(rel_w) and os.environ.get("OHNE_RELIEF") != "1":
         _fm = os.path.join(HERE, "schwab_v3", "relief", "west_misch.npz"); _fein = os.path.exists(_fm) and os.environ.get("OHNE_FEIN") != "1"      # lokale Feinrechnung (tiefe_lokal.py, 4000 px) + relief_mischen.py, 2 cm
         koerper = koerper + relief_koerper(rel_w, tiefe=0.45, trend=True, null_felder=[(4.8, 6.0, 21.5, 23.7), (0.0, 8.4, 25.85, 26.95)], tief_felder=[(0.0, 8.5, 0.0, 9.4)] if _fein else [])
@@ -236,8 +239,9 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper - M.cube((5.4, 4.0, 16.0)).translate((-1.6, 21.03, -0.5))                                 # alten Anbau westlich der Westwand entfernen
     TT_PROF = [(0.0, 0.0), (TT_R, 0.0), (TT_R, TT_ZW), (1.70, 11.25), (TT_RT, 11.45), (TT_RT + 0.01, 11.57), (1.45, 11.92), (1.0, 12.37), (0.61, 12.80), (0.27, 13.20), (0.08, 13.50), (0.035, 13.9), (0.03, 14.52), (0.0, 14.52)]
     turm = M.revolve(CrossSection([[list(p_) for p_ in TT_PROF]]), 64) + M.sphere(0.16, 24).translate((0, 0, 14.6))
+    if os.environ.get("OHNE_HOHL") != "1": turm = turm - M.cylinder(10.6, TT_R - 0.35, TT_R - 0.35, 48).translate((0, 0, 0.5))      # 16.11.2026 Nutzer: Fenster = echte Loecher -> Treppenturm hohl (Wand 0,35 m ANNAHME); im Hauptturm fuellt dessen Mauer den Hohlraum wieder
     for wz_, z_ in ((-35.0, 10.7), (35.0, 10.7), (-60.0, 8.0), (10.0, 6.2), (-35.0, 4.0)):                       # Schlitzfenster (Lage nach Foto 054/192 abgelesen, 0,12 x 0,6 m, 15 cm tief: ANNAHME)
-        turm = turm - M.cube((0.4, 0.12, 0.6)).translate((TT_R - 0.15, -0.06, z_ - 0.3)).rotate((0, 0, 140.0 + wz_))
+        turm = turm - M.cube((0.7, 0.12, 0.6)).translate((TT_R - 0.45, -0.06, z_ - 0.3)).rotate((0, 0, 140.0 + wz_))
     koerper = koerper + turm.translate((TT_C[0], TT_C[1], 0.0))
     beleg("wand", "Treppenturm (Zylinder, Gesims, geschweifte Haube mit Stange und Kugel)", "foto_mass.py auf der Ebene durch die Turmachse, Foto commons 054 (M-054-001..-005), Gegenprobe Foto commons 192; Lage/Radius aus dem Kreisausgleich der dichten Wolke (r 1,54-1,57, Rest 2 cm)",
           radius=TT_R, traufradius=TT_RT, traufe=11.57, spitzenansatz=13.5, kugel=14.6, hinweis="ANNAHME: Schlitzfenster nur ungefaehr (Lage am Foto abgelesen), Gesimsprofil vereinfacht; Blechbahnen der Haube fehlen")
@@ -249,6 +253,15 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         for k_ in range(6): koerper = koerper + Wf.kasten(k_ * (Lf - 0.24) / 5.0, k_ * (Lf - 0.24) / 5.0 + 0.24, 35.15, 36.35, -0.3, 0.07)
     beleg("wand", "Holzfries unter der Traufe (Schwelle, Raehm, je Seite 6 Pfosten)", "feines Fassadenbild Nord (fassade_fein, 1 cm) und Fernfoto 110756: Rahmenwerk z 34,95-36,55",
           hinweis="ANNAHME: Pfostenzahl 6 je Seite (in den Fotos zu dunkel zum Zaehlen - Zaehlprotokoll fehlt), Querschnitte 24-26 cm, 7-8 cm vor der Wand; Felder nicht zurueckgesetzt; Ost- und Westseite wie Nord")
+    # ---- 16.11.2026 FENSTER ALS ECHTE LOECHER (Nutzer: "alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden") ----
+    if os.environ.get("OHNE_HOHL") != "1":
+        from bauteile import aushoehlen; import time as _t; _t0 = _t.time()
+        _sch = [WS.prisma(b_rund(0.92, 22.26, 23.66), u=5.745, w0=-1.7, w1=-0.4), WW.prisma(b_rund(0.81, 21.70, 23.45), u=5.40, w0=-1.7, w1=-0.7)]
+        _sch += [WW.kasten(u0_, u1_, z0_, z1_, -1.7, -0.7) for u0_, u1_, z0_, z1_ in ((5.31, 5.52, 27.82, 30.19), (5.20, 5.45, 33.0, 34.4), (5.33, 5.47, 16.93, 17.86), (5.27, 5.39, 10.46, 11.44))]
+        koerper, n_offen, v_hohl = aushoehlen(koerper, d=1.2, schnitte=_sch, fenster=[], min_m3=20.0, z_min=8.0)
+        beleg("wand", f"Turm hohl, {n_offen} Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen", "Nutzerauftrag 16.11.2026; Fenstermasse wie oben", fenster_offen=n_offen, hohlraum_m3=round(v_hohl, 1),
+              hinweis="ANNAHME: Mauerstaerke 1,2 m (Treppenturm 0,35 m), Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen")
+        print(f"hohl: {n_offen} Durchbrueche, Hohlraum {v_hohl:.0f} m3, {_t.time() - _t0:.0f} s")
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json

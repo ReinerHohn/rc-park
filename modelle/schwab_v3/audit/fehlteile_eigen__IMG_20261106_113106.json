@@ -1,0 +1,94 @@
+{
+ "foto": "eigen__IMG_20261106_113106",
+ "stl": "/home/oem/git/rc-park/modelle/stl/schwab_v3_1-87.stl",
+ "kamera": "K-eigen__IMG_20261106_113106 (amtliche Anker)",
+ "zelle_px": 135,
+ "schwelle": 0.35,
+ "treffer": [
+  {
+   "zelle": [
+    1080,
+    1080,
+    135
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    1.66,
+    9.6,
+    37.04
+   ]
+  },
+  {
+   "zelle": [
+    1620,
+    1080,
+    135
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    0.12,
+    13.82,
+    38.46
+   ]
+  },
+  {
+   "zelle": [
+    2430,
+    1080,
+    135
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    1.91,
+    20.08,
+    37.31
+   ]
+  },
+  {
+   "zelle": [
+    1755,
+    1215,
+    135
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.81,
+    15.12,
+    37.5
+   ]
+  },
+  {
+   "zelle": [
+    1755,
+    1620,
+    135
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -2.55,
+    15.2,
+    34.69
+   ]
+  },
+  {
+   "zelle": [
+    1620,
+    2025,
+    135
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -2.92,
+    14.19,
+    31.25
+   ]
+  }
+ ],
+ "versatz_test": null
+}
