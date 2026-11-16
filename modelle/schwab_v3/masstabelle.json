@@ -1874,21 +1874,10 @@
    "naechster_schritt": "Ostseite bauen (Quaderkontur, Schlitz, Bogenfenster, Gesims, Balkenkopf); Pruefungen fuer die Ostmasse anlegen"
   },
   {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1819-1284",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 31.76,
-   "z_bis": 31.76,
-   "xyz": [
-    2.61,
-    20.3,
-    31.76
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=31.76 m, y=20.3 m (Zelle [1819, 1284, 107], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+   "datum": "2026-11-16",
+   "wer": "Nutzer (Bild Modell neben Sonnenfoto, Ostseite am Gesims markiert)",
+   "text": "Am Gesims der Ostseite laeuft ein Band aus dunklen Quadern ueber die ganze Breite, mit den Eckquadern verzahnt; im Modell nur ein glatter Kasten und darunter leere Wand.",
+   "naechster_schritt": "Steinband aus dem entzerrten Foto (steine_aus_foto --nah 0, Verdeckung automatisch); Gesimskasten Ost entfernen"
   }
  ]
 }

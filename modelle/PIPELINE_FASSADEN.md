@@ -232,3 +232,21 @@ Test mit zwei Bestandsfotos als "Hochladung": Nordfoto 113205 -> Standort auf 0,
 Nachtfoto od_12 vom Schlossberg -> Standort neben od_15, Zielrahmen sitzt genau auf Ostwand und Georgsbild, Urteil "zu grob: 6 cm/px".
 Grenzen: Schwellen sind Richtwerte ohne Feldtest; "nicht zuordenbar", wenn < 40 Stellen wiedererkannt werden; Verdeckung nur indirekt ueber die Punktzahl im Ziel;
 die Soll-Aufloesung 1 cm/px der automatischen Luecken ist vom Schlossberg mit dem Handy nicht erreichbar (dort gilt: so gut wie moeglich, Tele).
+
+## Lehren 16.11.2026 nachmittags (fuer das naechste Gebaeude) und was davon schon generisch ist
+GENERISCH EINGEBAUT:
+- `fassade_ein_foto.py ... auto --stl <eigenes.stl>,<nachbarn.stl>`: waehlt je Wand(-zone) selbst das beste vertrauenswuerdige Foto (sichtbare Flaeche / Meter je Pixel, Sichtbarkeit ueber das Tiefenbild des Modells)
+  und blendet Verdecktes aus (mit 0,3 m Sicherheitsrand). Ersetzt die Handwahl des Fotos und die --ohne-Felder fuer Nachbardaecher. Ost Schwabentor: waehlt von selbst das 3840-px-Original (86 % sichtbar, 1,0 cm/px) vor od_15 (2,2) und der 1024-px-Kopie (3,7).
+- `steine_aus_foto.py --nah 0` (Waende ohne Wandbild: Steinbaender abseits der groben Maske bleiben), `--duenn 0.12` (duenne Scheinsteine an Kanten weg).
+- Kameras: `kameras_nachtragen.py` ueberschreibt nie eine vorhandene Kamera; `kamera_verfeinern.py` nimmt als Referenz nur Buendelkameras eigener/Commons-Fotos oder Kameras mit `vertrauen` (keine Videobilder, keine ungeprueften Downloads).
+LEHREN:
+1. Erst die vorhandenen und frei ladbaren Bilder ausreizen, dann den Nutzer um Fotos bitten: 100 geladene Bilder enthielten die Ostseite in 0,8 cm/px und die Westseite oben in 0,6 cm/px.
+2. Dasselbe Motiv liegt mehrfach vor (Flickr-Kopie 1024 px, Commons-Original 3840 px). Immer nach der schaerfsten Fassung suchen; `auto` nimmt sie von selbst.
+3. Eine Kamera, die nur an EINER Wand haengt, hat zwei Loesungen (nah/weitwinklig oder fern/Tele). Pruefen: steht der Standort an einem moeglichen Ort (Strasse, Hang, bekannte Aussicht)?
+   Beispiel: "27 m vor dem Turm in 25 m Hoehe" war falsch, richtig war der Schlossberghang in 95 m. Noch KEIN automatisches Tor dafuer.
+4. Automatik darf Geprueftes nicht ueberschreiben und sich nicht an eigenen Kopien bestaetigen (Gesamtlauf zerstoerte die gute Kamera von ov_0005; behoben, siehe oben).
+5. Aus einem unscharfen/Schattenfoto keine Bauteile lesen: das "Bogenfenster Ost" aus od_15 gab es nicht (im scharfen Foto liegt dort das Nachbardach). Bauteile erst bauen, wenn ein zweites Foto oder ein scharfes sie zeigt.
+6. Wikimedia drosselt Originale auch bei 25 s Abstand, wenn viele hintereinander kommen: Vorschaugroessen laden (noch nicht umgestellt).
+7. Jede neue Kettenstufe einmal ganz laufen lassen, bevor man sie "fertig" nennt: der Gesamtlauf fand drei Fehler (pyproj fehlte, falsches Argument, Ueberschreiben).
+NOCH NICHT GENERISCH (Handarbeit am Schwabentor): Aufruf von `fassade_ein_foto auto` + `steine_aus_foto` je Wand steht nicht in `fassaden_kette.py`; Felder (z-Bereiche, Fensterspalten) von Hand;
+Tor fuer "unmoeglicher Standort"; Zusatz-Einsaetze je Wand im Generator (west_foto_oben) sind Einzelzeilen.
