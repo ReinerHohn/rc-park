@@ -206,3 +206,13 @@ Danach Ostwand: `fassade_ein_foto.py ... dl_openverse__ov_0005 ortho_f02_ov5.png
 --ohne 4.6 6.4 22.5 34.6 --ohne 0 10.75 25.9 26.95 --ohne 2.6 10.75 22.5 25.95 --px 0.03` (Nachbardach und Schlitzspalte ausgenommen): 131 Steine statt 77 aus dem Schattenfoto.
 In `seiten_luecken_holen.sh` laeuft das Nachziehen jetzt fuer jede neue Kamera automatisch (Referenzen = aehnlichste Standorte). Lizenz/Urheber des Fotos: herkunft.json (CC BY 2.0, Jorge Franganillo) - bei Weitergabe nennen.
 OFFEN: Einzelfoto ohne Verdeckungspruefung (Nachbardach von Hand per --ohne ausgenommen); Referenzwahl nach Standort ist ungetestet (hier Liste von Hand).
+
+## Fotoauftrag an den Nutzer (`tools/foto_auftrag.py`, 16.11.2026)
+Nutzer: "wenn du mehr Daten willst, brauchst du ein Verfahren, wie du mir zeigen willst, welche Daten du brauchst."
+`foto_auftrag.py <objekt.json> <fassaden-ordner> <aus.html> [--wunsch modelle/<objekt>/fotowuensche.json] [--min_m2 30] [--extra-umriss x0 y0 x1 y1 ...]`
+- Bedarf automatisch: Wandbereiche ohne Daten im Fassadenbild (gelten als ungesehen; ein erhoehtes vorhandenes Foto dient nur als Vorbild fuer den Standort).
+- Bedarf als Wunsch: `fotowuensche.json` je Objekt (Wand, u-/z-Bereich in Fassadenkoordinaten, Soll-Aufloesung, Titel, Begruendung) - dort eintragen, was zu grob ist.
+- Je Auftrag: bestes vorhandenes Foto mit rot markiertem Ziel, Ist-/Soll-Aufloesung, Rat (Zoomfaktor am selben Standort oder naeher heran), Standort als Koordinate mit Kartenlink; Lageplan mit allen Standorten.
+- Ausgabe: eine HTML-Seite (Bilder eingebettet) + JSON; veroeffentlichen als Artifact. In der Kette: Stufe `seiten`, nach seiten_luecken.
+Schwabentor 16.11.: 7 Auftraege (Ost ganz, West oben, Figur Nordtor, Galerie/Vordach, Georgsbild, West-Eckquader, Umgang) - https://claude.ai/artifact/VG6sjn3AXswJ5RaFJsX8Km
+Grenzen: "Fotos mit Blick darauf" ist bei Wuenschen rein rechnerisch (ohne Verdeckung, falsch registrierte Kameras zaehlen mit); keine Strassenkenntnis; Dachflaechen sind keine Waende und fehlen.
