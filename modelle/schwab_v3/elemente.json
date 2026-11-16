@@ -105,13 +105,13 @@
  },
  {
   "seite": "wand",
-  "element": "Holzgalerie Nord (Boden, Bruestung, 3 Pfosten, 6 Streben)",
+  "element": "Holzgalerie Nord (Boden, Bruestung mit Holm/Schwelle und Knaggen, 3 Pfosten, offen ueber dem Holm, 6 Streben)",
   "quelle": "Foto-Triangulation foto_mass.py --tri (M-113231-001..-004)",
   "breite": 8.06,
   "ausladung": 1.45,
   "schwelle_unten": 10.22,
   "holm_oben": 11.42,
-  "hinweis": "ANNAHME: Bruestung geschlossen (statt Andreaskreuze), Bodenplatte 0,35 m, Pfosten 0,22 m, Streben 6 Stueck bis z 9,9 | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
+  "hinweis": "Bauteil bauteile.Wand.galerie; ANNAHME: Querschnitte (Pfosten/Riegel 0,22 m), Knaggenform, Bodenplatte 0,35 m, Streben 6 Stueck bis z 9,9; Aufteilung nach dem feinen Fassadenbild Nord, nicht einzeln protokolliert | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
   "seite_name": "wand"
  },
  {
@@ -275,7 +275,7 @@
   "element": "Turm hohl, 6 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
   "quelle": "Nutzerauftrag 16.11.2026; Fenstermasse wie oben",
   "fenster_offen": 6,
-  "hohlraum_m3": 3752.9,
+  "hohlraum_m3": 3753.0,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
   "seite_name": "wand"
  }

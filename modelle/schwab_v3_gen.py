@@ -119,22 +119,16 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     def kasten(u0, u1, z0, z1, w0, w1): return M.cube((u1 - u0, z1 - z0, w1 - w0)).translate((u0, z0, w0)).transform(M_w)
     def huelle(pts): return M.hull_points([[ca[0] + u * tn[0] + w * nn[0], ca[1] + u * tn[1] + w * nn[1], z] for u, z, w in pts])
     G_U0, G_U1, G_W, G_ZU, G_ZO = 1.91, 10.55, 1.55, 10.95, 12.24          # Enden (u), Ausladung, Schwelle unten, Holm oben
-    gal = kasten(G_U0, G_U1, G_ZU, G_ZU + 0.35, -0.05, G_W)                 # Schwelle + Boden (ANNAHME: geschlossene Platte 0,35 m)
-    gal = gal + kasten(G_U0, G_U1, G_ZU, G_ZO, G_W - 0.15, G_W)             # Bruestung vorn (ANNAHME: geschlossen statt Andreaskreuze mit Gitter)
-    gal = gal + kasten(G_U0, G_U0 + 0.15, G_ZU, G_ZO, -0.05, G_W) + kasten(G_U1 - 0.15, G_U1, G_ZU, G_ZO, -0.05, G_W)
     V_ZT, V_W, V_U0, V_U1, V_ZO, V_O0, V_O1 = 17.25, 1.65, 1.83, 10.83, 20.82, 3.28, 9.31    # Traufe z, Ausladung, Traufe u, Anschluss z, Anschluss u
-    for up in (G_U0 + 0.11, (G_U0 + G_U1) / 2, G_U1 - 0.11):                # 3 Pfosten vorn (Lage Enden/Mitte nach Foto 113231, Querschnitt ANNAHME 0,22 m)
-        gal = gal + kasten(up - 0.11, up + 0.11, G_ZO, V_ZT + 0.1, G_W - 0.22, G_W)
-    for us in np.linspace(G_U0 + 0.3, G_U1 - 0.3, 6):                       # 6 Kopfstreben unter dem Boden (ANNAHME: Zahl/Lage nach Foto, Wandfuss z 9,9)
-        gal = gal + huelle([(us - 0.1, G_ZU, G_W - 0.3), (us + 0.1, G_ZU, G_W - 0.3), (us - 0.1, G_ZU, G_W - 0.05), (us + 0.1, G_ZU, G_W - 0.05),
-                            (us - 0.1, 9.9, -0.05), (us + 0.1, 9.9, -0.05), (us - 0.1, 10.25, -0.05), (us + 0.1, 10.25, -0.05)])
+    from bauteile import Wand as _WandG                                    # 16.11.2026 (Nutzerbild: Riegel/Tafeln der Galerie fehlen; 'baue generische Tools'): Galerie aus bauteile.Wand.galerie statt Einzelfall
+    gal = _WandG(ca, cb, aussen=ca + 5.0 * nn).galerie(G_U0, G_U1, G_ZU, G_ZO, V_ZT + 0.1, G_W, pfosten=3, streben=6, z_fuss=9.9, tafeln=False)   # Holm/Schwelle als Riegel, Knaggen. OHNE Tafeln: die Galerie ist ueber dem Holm OFFEN, das Wandbild sitzt auf der Turmwand dahinter (Pruefung gal_holm_ueber aus der Triangulation; im Fassadenbild ist das Bild scharf, der Mittelpfosten doppelt = Pfosten vor der Bildebene)
     V_MZ, V_MW = 18.9, 0.55; fm = V_MW / V_W; V_M0, V_M1 = V_O0 + (V_U0 - V_O0) * 0.37, V_O1 + (V_U1 - V_O1) * 0.37    # Schweifung: ANNAHME Zwischenschnitt nach Umriss im Foto 113128
     d_ = 0.15
     vd = huelle([(V_O0, V_ZO, -0.05), (V_O1, V_ZO, -0.05), (V_O0, V_ZO - d_, -0.05), (V_O1, V_ZO - d_, -0.05), (V_M0, V_MZ, V_MW), (V_M1, V_MZ, V_MW), (V_M0, V_MZ - d_, V_MW), (V_M1, V_MZ - d_, V_MW)])
     vd = vd + huelle([(V_M0, V_MZ, V_MW), (V_M1, V_MZ, V_MW), (V_M0, V_MZ - d_, V_MW), (V_M1, V_MZ - d_, V_MW), (V_U0, V_ZT + d_, V_W), (V_U1, V_ZT + d_, V_W), (V_U0, V_ZT, V_W), (V_U1, V_ZT, V_W)])
     rumpf = rumpf + gal + vd
-    beleg("wand", "Holzgalerie Nord (Boden, Bruestung, 3 Pfosten, 6 Streben)", "Foto-Triangulation foto_mass.py --tri (M-113231-001..-004)", breite=round(G_U1 - G_U0, 2), ausladung=G_W, schwelle_unten=G_ZU, holm_oben=G_ZO,
-          hinweis="ANNAHME: Bruestung geschlossen (statt Andreaskreuze), Bodenplatte 0,35 m, Pfosten 0,22 m, Streben 6 Stueck bis z 9,9")
+    beleg("wand", "Holzgalerie Nord (Boden, Bruestung mit Holm/Schwelle und Knaggen, 3 Pfosten, offen ueber dem Holm, 6 Streben)", "Foto-Triangulation foto_mass.py --tri (M-113231-001..-004)", breite=round(G_U1 - G_U0, 2), ausladung=G_W, schwelle_unten=G_ZU, holm_oben=G_ZO,
+          hinweis="Bauteil bauteile.Wand.galerie; ANNAHME: Querschnitte (Pfosten/Riegel 0,22 m), Knaggenform, Bodenplatte 0,35 m, Streben 6 Stueck bis z 9,9; Aufteilung nach dem feinen Fassadenbild Nord, nicht einzeln protokolliert")
     beleg("dach", "Vordach Nord (geschweiftes Pultdach)", "Foto-Triangulation foto_mass.py --tri (M-113128-001..-004)", traufe_z=V_ZT, ausladung=V_W, traufbreite=round(V_U1 - V_U0, 2), anschluss_z=V_ZO, anschlussbreite=round(V_O1 - V_O0, 2),
           hinweis="ANNAHME: Schweifung aus einem Zwischenschnitt (z 18,9 / 0,55 m), Dachhaut 0,15 m")
     # Uhr Nord: Zifferblatt als flache Scheibe mit Ziffernring (Masse M-113029-008..-012, M-113205-014/-015), zwei Balkenkoepfe darueber
