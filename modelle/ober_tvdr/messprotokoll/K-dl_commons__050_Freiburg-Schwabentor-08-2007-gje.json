@@ -1,0 +1,65 @@
+{
+ "foto": "dl_commons__050_Freiburg-Schwabentor-08-2007-gje",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.1733219976246896,
+   1.0556721901459318,
+   -1.1651841328543042
+  ],
+  "t": [
+   -23.00111331081621,
+   12.595511730752703,
+   119.48955949515513
+  ],
+  "f_px": 4691.160664545782,
+  "cx": 1024.0,
+  "cy": 1536.0,
+  "k1": 0.0,
+  "standort": [
+   121.98001030864498,
+   9.291390295039594,
+   0.01044657184224107
+  ],
+  "quelle": "kamera_verfeinern.py: 3244 Inlier auf 4 Waenden gegen ['commons_orig2__084', 'commons_orig2__085', 'commons_orig2__087', 'commons_orig2__160', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__023_Schwabentor_Freiburg_2416'], Rest 1.6 px",
+  "vertrauen": true,
+  "rest_px_median": 1.645814577712426,
+  "inlier_je_wand": {
+   "0": 2867,
+   "1": 135,
+   "3": 54,
+   "4": 188
+  }
+ },
+ "kamera_vorher": {
+  "rvec": [
+   1.1735170852575991,
+   1.0554183675443056,
+   -1.166085232619981
+  ],
+  "t": [
+   -22.986077436241168,
+   12.589464476848196,
+   123.284751169465
+  ],
+  "f_px": 4833.377440788034,
+  "cx": 1024.0,
+  "cy": 1536.0,
+  "k1": 0.0,
+  "standort": [
+   125.7239443357968,
+   8.904034974237582,
+   -0.43843410293799856
+  ],
+  "quelle": "kamera_verfeinern.py: 871 Inlier auf 3 Waenden gegen ['commons_orig2__084', 'commons_orig2__085', 'video_frames_Bbzk0Qpb5l0__vf_178', 'video_frames_Bbzk0Qpb5l0__vf_179', 'video_frames_Bbzk0Qpb5l0__vf_180', 'video_frames_Bbzk0Qpb5l0__vf_181'], Rest 1.1 px",
+  "rest_px_median": 1.1106196261083947,
+  "inlier_je_wand": {
+   "0": 717,
+   "1": 14,
+   "3": 26,
+   "4": 114
+  }
+ }
+}

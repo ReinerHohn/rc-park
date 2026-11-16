@@ -12,7 +12,10 @@ NEUTRAL = [(re.compile(r"^[WEFI]\d{8} [\d:.]+ +\d+ "), ""), (re.compile(r"/[\w./
 AUSNAHME = re.compile(r"Unknown EXIF orientation|^\s+File \"|raise |warnings\.warn")   # bekannt harmlos bzw. Traceback-Zwischenzeilen
 
 
-def sammeln(pfade):
+def sammeln(pfade, ab_zeile=None, seit=None):
+    """ab_zeile = {pfad: n}: in dieser Datei nur Zeilen NACH Zeile n; seit = Zeitstempel: andere Dateien nur, wenn danach geaendert.
+    16.11.2026: die Gesamtkette meldete als 'WARNUNGEN im Lauf' auch alles aus frueheren Laeufen (das Log wird fortgeschrieben) - 16 laengst behobene Fehler standen oben."""
+    ab_zeile = ab_zeile or {}
     dateien = []
     for p in pfade:
         dateien += sorted(glob.glob(os.path.join(p, "*.log"))) if os.path.isdir(p) else [p]
@@ -20,8 +23,10 @@ def sammeln(pfade):
     for d in dateien:
         try: zeilen = open(d, errors="replace").read().splitlines()
         except OSError: continue
+        if seit is not None and d not in ab_zeile and os.path.getmtime(d) < seit: continue
+        ab = ab_zeile.get(d, 0)
         for nr, l in enumerate(zeilen, 1):
-            if not MUSTER.search(l) or AUSNAHME.search(l): continue
+            if nr <= ab or not MUSTER.search(l) or AUSNAHME.search(l): continue
             k = l.strip()
             for m, e in NEUTRAL: k = m.sub(e, k)
             k = k[:200]; e = z.setdefault(k, dict(n=0, beispiel=l.strip()[:300], datei=d, zeile=nr, dateien=set())); e["n"] += 1; e["dateien"].add(os.path.basename(d))

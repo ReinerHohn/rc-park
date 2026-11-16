@@ -271,7 +271,7 @@ def bogen_einpassen(D, G, suchfenster, zb, familien=("rund", "stich", "spitz"), 
     if e["median_m"] >= MED_MAX: grund.append(f"Median {e['median_m']:.3f} >= {MED_MAX}")
     if e["p90_m"] >= P90_MAX: grund.append(f"P90 {e['p90_m']:.3f} >= {P90_MAX}")
     if e["streuung_seeds"] > SEED_MAX: grund.append(f"Seeds uneinig ({e['streuung_seeds']:.3f} m > {SEED_MAX})")
-    return dict(familie=wahl, p=e["p"], p_maske=p_mask, verfeinerung=verf, rest=dict(median_m=e["median_m"], p90_m=e["p90_m"], max_m=e["max_m"], stuetze_anteil=e["stuetze_anteil"]),
+    return dict(familie=wahl, p=e["p"], p_maske=list(e["p"]), verfeinerung=None, rest=dict(median_m=e["median_m"], p90_m=e["p90_m"], max_m=e["max_m"], stuetze_anteil=e["stuetze_anteil"]),
                 angenommen=not grund, ablehngrund=grund, alle_familien=erg, n_daten=int(N), zb=float(zb))
 
 

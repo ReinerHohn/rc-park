@@ -1,0 +1,29 @@
+{
+ "foto": "dl_commons__042_Schwabentor_Freiburg_05",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.8003632517096381,
+   1.3702024431624291,
+   -1.7014392274735908
+  ],
+  "t": [
+   -5.828168849378531,
+   2.978211592988848,
+   7.601333865841704
+  ],
+  "f_px": 2033.1067814952012,
+  "cx": 1920.0,
+  "cy": 1279.68,
+  "k1": -0.0029437329475536303,
+  "standort": [
+   4.215067329911028,
+   9.009787491298656,
+   1.294028490963873
+  ],
+  "quelle": "nachregistriert (sparse_handy), Abbildung aus 529 gemeinsamen Kameras, Rest 0.01 m",
+  "punkte3d": 497
+ }
+}

@@ -1949,6 +1949,20 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=20.25 m, y=9.88 m (Zelle [972, 2052, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-commons_orig2__127-0",
+   "text": "Modell hoeher (zu hoch / erfunden): -0.40 m ueber 1.76 m bei [-4.31, 12.6, 41.7] (Foto commons_orig2__127)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-commons_orig2__054-1",
+   "text": "GANZE KANTE versetzt - Kamera dieses Fotos oder Gesamthoehe pruefen: -0.57 m ueber 15.76 m bei [-2.12, 16.13, 48.93] (Foto commons_orig2__054)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
   }
  ]
 }

@@ -1,0 +1,36 @@
+{
+ "foto": "dl_kat__280_P1130679_07.12._2015_Freiburg_im_Breisgau_Strassenbahn",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.9365718178000021,
+   1.100732079418582,
+   -1.3843404266066803
+  ],
+  "t": [
+   -13.30166652108676,
+   6.911575614648536,
+   734.3947200997679
+  ],
+  "f_px": 17497.465033012537,
+  "cx": 600.0,
+  "cy": 450.0,
+  "k1": 0.0,
+  "standort": [
+   704.4172310161874,
+   96.8145793055117,
+   -184.34644287730552
+  ],
+  "quelle": "kamera_verfeinern.py: 1296 Inlier auf 3 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__053_Freiburg_Schwabentor_1998_3', 'dl_kat__007_Altstadt_Freiburg_Germany_-_panoramio_9'], Rest 1.7 px",
+  "vertrauen": true,
+  "rest_px_median": 1.6554378626533413,
+  "inlier_je_wand": {
+   "0": 1191,
+   "1": 32,
+   "3": 13,
+   "4": 60
+  }
+ }
+}

@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__095_Schwabentor_im_Feuerwerk",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.5128708693802322,
+   -0.3804225759164523,
+   0.3831677647340974
+  ],
+  "t": [
+   14.819212660688956,
+   31.257341405156538,
+   74.69199938468344
+  ],
+  "f_px": 2360.5423759602327,
+  "cx": 960.0,
+  "cy": 640.0,
+  "k1": 0.0,
+  "standort": [
+   -48.371148822407044,
+   -59.68145617891568,
+   29.561477934086884
+  ],
+  "quelle": "kamera_verfeinern.py: 1273 Inlier auf 5 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__053_Freiburg_Schwabentor_1998_3'], Rest 2.3 px",
+  "vertrauen": true,
+  "rest_px_median": 2.2624662361824055,
+  "inlier_je_wand": {
+   "0": 15,
+   "1": 47,
+   "2": 1125,
+   "3": 70,
+   "4": 16
+  }
+ }
+}

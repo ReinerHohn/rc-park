@@ -1,0 +1,36 @@
+{
+ "foto": "dl_kat__035_Freiburg_Tram_6",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.052181659692923,
+   -1.3490925432465037,
+   1.4045864088485642
+  ],
+  "t": [
+   9.382720785653332,
+   2.9638596173430223,
+   39.983869181154866
+  ],
+  "f_px": 1952.2747854895892,
+  "cx": 512.0,
+  "cy": 384.0,
+  "k1": 0.0,
+  "standort": [
+   -36.691727984612385,
+   18.64755890541335,
+   1.230996442280122
+  ],
+  "quelle": "kamera_verfeinern.py: 2204 Inlier auf 3 Waenden gegen ['commons_orig2__044', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__050_Freiburg-Schwabentor-08-2007-gje'], Rest 1.4 px",
+  "vertrauen": true,
+  "rest_px_median": 1.380255613044233,
+  "inlier_je_wand": {
+   "1": 34,
+   "2": 2106,
+   "3": 6,
+   "4": 58
+  }
+ }
+}

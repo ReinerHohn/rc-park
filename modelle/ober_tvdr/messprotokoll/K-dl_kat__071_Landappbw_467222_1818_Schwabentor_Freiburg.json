@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__071_Landappbw_467222_1818_Schwabentor_Freiburg",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.1843874061872361,
+   -0.7708150811149737,
+   0.9590155638177057
+  ],
+  "t": [
+   15.732708517266861,
+   24.613807567587983,
+   122.77553127986434
+  ],
+  "f_px": 2664.4156602426483,
+  "cx": 480.0,
+  "cy": 640.0,
+  "k1": 0.0,
+  "standort": [
+   -120.6256973837947,
+   -36.96797365377109,
+   -3.1620841107948685
+  ],
+  "quelle": "kamera_verfeinern.py: 729 Inlier auf 3 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 1.7 px",
+  "vertrauen": true,
+  "rest_px_median": 1.7344214535061935,
+  "inlier_je_wand": {
+   "0": 12,
+   "1": 20,
+   "2": 658,
+   "3": 36,
+   "4": 3
+  }
+ }
+}

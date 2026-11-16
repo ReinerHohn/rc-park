@@ -1,0 +1,65 @@
+{
+ "foto": "dl_commons__022_Schlossbergring_2_am_Schwabentor_in_Freiburg_im_Breisgau_2025",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.1229149837745773,
+   1.126749139379897,
+   -1.2671804028311695
+  ],
+  "t": [
+   -9.283390749207287,
+   7.625843867837036,
+   60.67660908345959
+  ],
+  "f_px": 7249.813957129977,
+  "cx": 1687.5,
+  "cy": 2250.0,
+  "k1": 0.0,
+  "standort": [
+   61.09791602172577,
+   9.62774323315842,
+   0.5804708473151221
+  ],
+  "quelle": "kamera_verfeinern.py: 5348 Inlier auf 4 Waenden gegen ['eigen__IMG_20261106_113056', 'eigen__IMG_20261106_113058', 'eigen__IMG_20261106_113102', 'eigen__IMG_20261106_113106', 'online_orig__od_07', 'online_orig__od_09'], Rest 4.2 px",
+  "vertrauen": true,
+  "rest_px_median": 4.2380547955160806,
+  "inlier_je_wand": {
+   "0": 3783,
+   "1": 277,
+   "3": 80,
+   "4": 1208
+  }
+ },
+ "kamera_vorher": {
+  "rvec": [
+   1.1425615730311043,
+   1.175504646557799,
+   -1.2668446730254956
+  ],
+  "t": [
+   -9.179507042703921,
+   7.530174449372311,
+   54.02872181225414
+  ],
+  "f_px": 6295.866215860111,
+  "cx": 1687.5,
+  "cy": 2250.0,
+  "k1": 0.0,
+  "standort": [
+   54.13454720999312,
+   10.816247826104574,
+   3.539666479245011
+  ],
+  "quelle": "kamera_verfeinern.py: 2757 Inlier auf 4 Waenden gegen ['commons_orig2__045', 'online_orig__od_07', 'video_frames_Bbzk0Qpb5l0__vf_207', 'video_frames_Bbzk0Qpb5l0__vf_208', 'video_frames_Bbzk0Qpb5l0__vf_209', 'video_frames_Bbzk0Qpb5l0__vf_210'], Rest 4.9 px",
+  "rest_px_median": 4.949190806711781,
+  "inlier_je_wand": {
+   "0": 2200,
+   "1": 36,
+   "3": 50,
+   "4": 471
+  }
+ }
+}

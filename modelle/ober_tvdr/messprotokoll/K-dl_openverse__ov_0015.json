@@ -1,0 +1,65 @@
+{
+ "foto": "dl_openverse__ov_0015",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.0426530442454591,
+   0.9355653435401469,
+   -1.2620022574822467
+  ],
+  "t": [
+   -23.525882553959836,
+   29.910898715664658,
+   157.4591877495566
+  ],
+  "f_px": 1267.3000305577282,
+  "cx": 512.0,
+  "cy": 319.0,
+  "k1": 0.0,
+  "standort": [
+   161.041150407147,
+   8.724296485697502,
+   -15.203925316966416
+  ],
+  "quelle": "kamera_verfeinern.py: 490 Inlier auf 2 Waenden gegen ['commons_orig2__045', 'commons_orig2__048', 'commons_orig2__150', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__022_Schlossbergring_2_am_Schwabentor_in_Freiburg_im_Breisgau_2025', 'online_orig__od_07'], Rest 1.4 px",
+  "vertrauen": true,
+  "rest_px_median": 1.3896413562201295,
+  "inlier_je_wand": {
+   "0": 439,
+   "1": 14,
+   "3": 12,
+   "4": 25
+  }
+ },
+ "kamera_vorher": {
+  "rvec": [
+   1.1373222749529197,
+   0.8162886290731272,
+   -1.1327934235008834
+  ],
+  "t": [
+   -23.820150393254114,
+   30.301833196002107,
+   53.332582681243686
+  ],
+  "f_px": 435.6311360673351,
+  "cx": 512.0,
+  "cy": 319.0,
+  "k1": 0.0,
+  "standort": [
+   63.6979426315983,
+   8.106262340890616,
+   14.381434233397709
+  ],
+  "quelle": "kamera_verfeinern.py: 269 Inlier auf 2 Waenden gegen ['commons_orig2__083', 'commons_orig2__084', 'commons_orig2__085', 'commons_orig2__087', 'dl_commons__050_Freiburg-Schwabentor-08-2007-gje', 'dl_commons__051_Freiburg-Schwabentor-10-2007-gje'], Rest 2.2 px",
+  "rest_px_median": 2.1831470356695664,
+  "inlier_je_wand": {
+   "0": 231,
+   "1": 4,
+   "3": 5,
+   "4": 29
+  }
+ }
+}

@@ -25,7 +25,8 @@ def eins(e):
     t=e.split(); aus='modelle/$1/audit/neben_%s.jpg'%t[0]; cmd=['$PY','-W','ignore','-I','tools/modell_neben_foto.py','$OBJ',t[0],aus]+(['--box']+t[1:5] if len(t)>=5 else [])
     r=subprocess.run(cmd,capture_output=True,text=True); return 'ANSEHEN (Modell neben Foto): '+(aus if r.returncode==0 else 'FEHLER '+r.stderr[-200:])
 with ThreadPoolExecutor(3) as ex:      # 16.11.2026 (Aufgabenliste 1c): 3 Pflichtbilder gleichzeitig (je ~15 s, GPU ~1 GB)
-    for z in ex.map(eins, json.load(open('$OBJ')).get('neben_fotos',[])): print(z)
+    L=json.load(open('$OBJ')).get('neben_fotos',[]); Z=list(ex.map(eins, L))
+for e,z in zip(L,Z): print(eins(e) if 'FEHLER' in z else z)      # 16.11.2026: bei 4 Mio. Dreiecken reichte der Grafikspeicher fuer 3 gleichzeitig nicht - Fehlschlaege einzeln wiederholen
 " || true
 $PY -W ignore -I tools/umriss_tor.py "$OBJ" 2>&1 | grep -v "^ *$" | sed "s/^/UMRISS-TOR: /" | tail -12 || true   # 16.11.2026: Dachlinie Modell gegen Himmelskante der Pflichtfotos (Hinweis; Bilder audit/umriss_<foto>.jpg)
 $PY -W ignore -I tools/seiten_audit.py "$OBJ"     # Sichtblatt auch bei rotem Pruefstand (man will hinsehen)

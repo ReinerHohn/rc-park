@@ -71,5 +71,10 @@
   "quelle": "schwabentor",
   "hinweis": "von tools/gesamtkette.py angelegt; Masse/Pruefungen nur aus Quellen dieser Kette"
  },
- "fotos_dir_quelle": "daten/schwabentor/fotos"
+ "fotos_dir_quelle": "daten/schwabentor/fotos",
+ "neben_fotos": [
+  "eigen__IMG_20261106_113201",
+  "online_orig__od_08",
+  "online2_orig__od_15"
+ ]
 }

@@ -1,0 +1,36 @@
+{
+ "foto": "dl_kat__032_Freiburg_Schwabentor_mit_Baechle",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.0861179953415847,
+   0.9881385816744005,
+   -1.2816596639375601
+  ],
+  "t": [
+   -10.367251806662784,
+   14.82529601535953,
+   60.94208544230786
+  ],
+  "f_px": 2084.140686047125,
+  "cx": 768.0,
+  "cy": 1024.0,
+  "k1": 0.0,
+  "standort": [
+   63.19654935519587,
+   6.863117537588206,
+   0.5485045896602259
+  ],
+  "quelle": "kamera_verfeinern.py: 5514 Inlier auf 4 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 1.7 px",
+  "vertrauen": true,
+  "rest_px_median": 1.6661920825524417,
+  "inlier_je_wand": {
+   "0": 4525,
+   "1": 169,
+   "3": 141,
+   "4": 679
+  }
+ }
+}

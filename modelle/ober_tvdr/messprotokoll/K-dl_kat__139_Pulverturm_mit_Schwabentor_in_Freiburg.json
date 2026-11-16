@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__139_Pulverturm_mit_Schwabentor_in_Freiburg",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.7275225634120998,
+   -1.7958341192697496,
+   1.752458700722341
+  ],
+  "t": [
+   7.4370865210406505,
+   -5.954443715333975,
+   162.12691207148484
+  ],
+  "f_px": 2883.859569091929,
+  "cx": 960.0,
+  "cy": 1280.0,
+  "k1": 0.0,
+  "standort": [
+   -107.43739912955617,
+   121.77604235642826,
+   -1.9240712038046404
+  ],
+  "quelle": "kamera_verfeinern.py: 979 Inlier auf 5 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 2.0 px",
+  "vertrauen": true,
+  "rest_px_median": 2.0399031995108596,
+  "inlier_je_wand": {
+   "0": 15,
+   "1": 79,
+   "2": 828,
+   "3": 39,
+   "4": 18
+  }
+ }
+}

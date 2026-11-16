@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__059_Freiburger_Schwabentor_mit_Stadtbahn_GT8N_7",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.8993978562969498,
+   -0.9818355420240301,
+   1.4045965676007992
+  ],
+  "t": [
+   7.372236773645285,
+   21.841338173564978,
+   95.65935791818501
+  ],
+  "f_px": 5021.328540059231,
+  "cx": 960.0,
+  "cy": 1239.5,
+  "k1": 0.0,
+  "standort": [
+   -96.45843998863593,
+   13.76518645520108,
+   -13.725730668725898
+  ],
+  "quelle": "kamera_verfeinern.py: 4150 Inlier auf 5 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 2.9 px",
+  "vertrauen": true,
+  "rest_px_median": 2.8606451058184468,
+  "inlier_je_wand": {
+   "0": 42,
+   "1": 148,
+   "2": 3834,
+   "3": 90,
+   "4": 36
+  }
+ }
+}

@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__062_Freiburger_Schwabentor_vom_Greiffenegg-Schl\u00f6ssle_rechts_der_M\u00fcnsterturm",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.5743091023204723,
+   -0.6525665288173523,
+   0.6078849940670298
+  ],
+  "t": [
+   -10.221475106263119,
+   21.498550563749877,
+   94.75220780604981
+  ],
+  "f_px": 2343.85352000248,
+  "cx": 960.0,
+  "cy": 720.0,
+  "k1": 0.0,
+  "standort": [
+   -58.974920082620024,
+   -71.59258434520547,
+   30.677480043741156
+  ],
+  "quelle": "kamera_verfeinern.py: 760 Inlier auf 3 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 2.6 px",
+  "vertrauen": true,
+  "rest_px_median": 2.5638106419754134,
+  "inlier_je_wand": {
+   "0": 14,
+   "1": 37,
+   "2": 603,
+   "3": 98,
+   "4": 8
+  }
+ }
+}

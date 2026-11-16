@@ -1,0 +1,36 @@
+{
+ "foto": "dl_commons__058_Schwabentor_Freiburg_6544",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.988925084560648,
+   1.0424623314520642,
+   -1.343134596730145
+  ],
+  "t": [
+   -15.999319562132913,
+   14.102011022117816,
+   118.26790227399736
+  ],
+  "f_px": 38146.852354747956,
+  "cx": 1920.0,
+  "cy": 1227.5,
+  "k1": 0.0,
+  "standort": [
+   117.20921297483217,
+   20.398911581168612,
+   -16.971342013378646
+  ],
+  "quelle": "kamera_verfeinern.py: 740 Inlier auf 3 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__003_Freiburg_Schwabentor_1998_1', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__009_Freiburg_im_Breisgau_Schwabentor_--_2025_--_8031'], Rest 7.8 px",
+  "vertrauen": true,
+  "rest_px_median": 7.769339265149769,
+  "inlier_je_wand": {
+   "0": 684,
+   "1": 10,
+   "3": 15,
+   "4": 31
+  }
+ }
+}

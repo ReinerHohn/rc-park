@@ -1,0 +1,36 @@
+{
+ "foto": "dl_kat__218_Lastwagen_im_B\u00e4chle",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.2640611277206353,
+   1.2526912997946846,
+   -1.120186329142129
+  ],
+  "t": [
+   -6.953139169814178,
+   -9.390276194408019,
+   74.99452792825052
+  ],
+  "f_px": 1949.9808936159725,
+  "cx": 338.5,
+  "cy": 510.0,
+  "k1": 0.0,
+  "standort": [
+   75.71495834018667,
+   4.226261865424604,
+   -3.175916354672495
+  ],
+  "quelle": "kamera_verfeinern.py: 176 Inlier auf 2 Waenden gegen ['commons_orig2__044', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__053_Freiburg_Schwabentor_1998_3', 'dl_kat__007_Altstadt_Freiburg_Germany_-_panoramio_9', 'dl_kat__025_Freiburg_2009_IMG_4367'], Rest 2.2 px",
+  "vertrauen": true,
+  "rest_px_median": 2.2366080214386654,
+  "inlier_je_wand": {
+   "0": 143,
+   "1": 18,
+   "3": 5,
+   "4": 10
+  }
+ }
+}

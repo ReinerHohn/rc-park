@@ -1,0 +1,65 @@
+{
+ "foto": "dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.160268207792313,
+   1.0591148850710657,
+   -1.1735935599079923
+  ],
+  "t": [
+   -14.164564443126588,
+   11.029284877021695,
+   127.86337270572093
+  ],
+  "f_px": 7825.751473741018,
+  "cx": 1687.5,
+  "cy": 2250.0,
+  "k1": 0.0,
+  "standort": [
+   129.06728054382418,
+   0.9219896802373491,
+   -3.4798158709051723
+  ],
+  "quelle": "kamera_verfeinern.py: 1051 Inlier auf 4 Waenden gegen ['commons_orig2__083', 'commons_orig2__084', 'commons_orig2__085', 'commons_orig2__087', 'commons_orig2__160', 'commons_orig2__213'], Rest 3.6 px",
+  "vertrauen": true,
+  "rest_px_median": 3.621436670834372,
+  "inlier_je_wand": {
+   "0": 885,
+   "1": 21,
+   "3": 28,
+   "4": 117
+  }
+ },
+ "kamera_vorher": {
+  "rvec": [
+   1.1571740132208705,
+   1.0800865891502285,
+   -1.1869349951523145
+  ],
+  "t": [
+   -14.132449500244329,
+   11.04418107597036,
+   140.19898730744248
+  ],
+  "f_px": 8532.696362312627,
+  "cx": 1687.5,
+  "cy": 2250.0,
+  "k1": 0.0,
+  "standort": [
+   141.2662323866691,
+   2.710648531053211,
+   -3.736318825380904
+  ],
+  "quelle": "kamera_verfeinern.py: 1779 Inlier auf 4 Waenden gegen ['eigen__IMG_20261106_113015', 'eigen__IMG_20261106_113017', 'eigen__IMG_20261106_113018', 'eigen__IMG_20261106_113025', 'eigen__IMG_20261106_113031', 'eigen__IMG_20261106_113033'], Rest 2.2 px",
+  "rest_px_median": 2.2200992781362268,
+  "inlier_je_wand": {
+   "0": 1400,
+   "1": 40,
+   "3": 29,
+   "4": 310
+  }
+ }
+}

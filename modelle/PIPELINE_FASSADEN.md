@@ -369,3 +369,24 @@ Nachtrag 16.11. abends - KETTE AB 'bauen' ALS EIN BEFEHL (Probe schwab_auto): `p
 - Laufzeit ab 'fassaden' bis 'html' mit Inhalt: 11 min (ohne Download). Abnahme schwab_auto bestanden.
 - ERGEBNIS ANGESEHEN (audit/seiten.jpg), ehrlich: Nordseite mit Relief (Uhr, Eckquader, Galerie als Abdruck), 2+2 Fenster; Sued/West/Ost fast glatt, KEINE Tordurchfahrten, Dach nur LoD2-Zelt, kein Treppenturm-Detail.
   Vorbauten-Sweep auf allen 8 Fassaden 'nicht belastbar' (LoD2-Ebene bis 2,5 m neben der Wand). Widerspruch: seiten_luecken meldet 'alle Waende gesehen', foto_auftrag meldet Ostseite 240 m2 ohne Daten (verschiedene Schwellen) - OFFEN.
+
+## Nachtrag 16.11.2026 nachts: Fehlersuche (statische Pruefung + Kettenbericht + Bild Modell neben Foto)
+Vorgehen, das Fehler fand: (1) pyflakes ueber tools/ (nur "undefined name"), (2) JEDE Zeile des Kettenberichts lesen, auch rc 0 mit leerer Ausgabe, (3) Modell neben Foto ansehen.
+Behoben:
+- `kamera_plausibel.py` hatte am 16.11. ein AELTERES Werkzeug gleichen Namens ueberschrieben (Kameras unter Gelaende, Tor `tor_kamera_gelaende`, Liste fuer `wolke_neu_fusionieren.py`). Das alte heisst jetzt `tools/kamera_gelaende.py`; die Kette ruft es wieder richtig auf. Lehre: vor `Write` einer neuen Werkzeugdatei `git log -- <pfad>` pruefen.
+- Kameras tief unter der Strasse (25 bis 240 m) lieferten Fassadenbilder (schwab_auto f01/f03/f05). Regel in `kamera_plausibel.plausibel`: tiefer als 5 m UND steiler als 25 % = unplausibel; Kette zusaetzlich `--tief=3` (ANNAHME ebenes Umland; in Hanglage braucht es das DGM - offen). 44 + 33 Kameras beiseitegelegt (`.unplausibel`).
+- Umriss-Tor: lief ohne `neben_fotos` leer mit rc 0 (jetzt rc 2 + Meldung); brach ab, wenn die Himmelsmaske fehlte (sys.exit aus foto_pick, rc 1, kein Ergebnis - auch am handgefuehrten Turm); meldet jetzt, wenn >= 2 Fotos dieselbe grobe Abweichung zeigen (Kettenturm: +5,1 m, Dach fehlt/zu niedrig) statt jedes einzeln als "nicht auswertbar" zu verwerfen.
+- NEU `tools/neben_fotos_waehlen.py`: je Seite das beste Vergleichsfoto (Kette traegt es ein, wenn keins da ist). Kettenturm: Nord, Sued, Ost gefunden, West ohne Foto.
+- Kettenbericht "WARNUNGEN im Lauf" zaehlte alle frueheren Laeufe mit (`log_warnungen.sammeln(ab_zeile, seit)`).
+- `bauen_abnehmen.sh`: Pflichtbilder scheiterten bei 4 Mio. Dreiecken am Grafikspeicher (3 gleichzeitig) - Fehlschlaege werden einzeln wiederholt.
+- `modell_3d_html.py`: ueber 800 000 Dreiecke waehlt es das Anzeige-Raster selbst (Kettenturm 98 MB -> 12 MB).
+- `foto_bundle.py`: ein Kommentar mitten in der Zeile schluckte Code (NameError bei Fotos ohne Einzelkamera); `element_einpassen.bogen_einpassen`: zwei undefinierte Namen; `regression.py`: KeyError ohne Konfiguration.
+Gefunden, OFFEN:
+- Verzeichnung k1 der Messkameras ungeprueft (Werte bis -160; `modell_neben_foto` entzerrt damit, Foto online_orig__od_08 kommt verzerrt heraus).
+- Kamera des Nordfotos eigen__IMG_20261106_113201 am Kettenturm: Modell erscheint gekippt neben dem Foto - Kamera pruefen.
+- Himmelsmaske lehnt ein Foto mit klarem blauem Himmel ab (online2_orig__od_15: "unten_mitte 0.79").
+- `relief_putz.py` meldet "Stein im Mittel +nan cm", wenn kein Stein uebrig ist.
+- Vertrauensliste der Fremdkameras am Turm enthielt Kameras unter Gelaende - Liste neu rechnen.
+- Tuerme haben keine Regressions-Konfiguration (`objekt.json["regression"]`): die Pflicht "regression.py nach tools-Aenderung" prueft dort nichts.
+- `seiten_luecken.py` ("alle Waende gesehen") gegen `foto_auftrag.py` (Ostseite 240 m2 ohne Daten): Schwellen weiter verschieden.
+- `bauwerk_generator.py`: Farbschluessel 'laterne' doppelt; `terrain_eggcrate.py`: ungueltige Escape-Folge (nur Warnung).

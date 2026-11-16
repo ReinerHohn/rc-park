@@ -1,0 +1,36 @@
+{
+ "foto": "dl_kat__053_Freiburg-Schwabentor-06-2007-gje",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.9189378740704088,
+   0.7834056755644304,
+   -1.3250413405368822
+  ],
+  "t": [
+   -28.05363288066173,
+   18.319239369313348,
+   364.99355257879677
+  ],
+  "f_px": 9001.963890796553,
+  "cx": 960.0,
+  "cy": 640.0,
+  "k1": 0.0,
+  "standort": [
+   335.3272731841319,
+   -11.007774818788011,
+   -147.57148445887967
+  ],
+  "quelle": "kamera_verfeinern.py: 3227 Inlier auf 4 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 3.0 px",
+  "vertrauen": true,
+  "rest_px_median": 2.962453762017937,
+  "inlier_je_wand": {
+   "0": 2740,
+   "1": 55,
+   "3": 86,
+   "4": 346
+  }
+ }
+}

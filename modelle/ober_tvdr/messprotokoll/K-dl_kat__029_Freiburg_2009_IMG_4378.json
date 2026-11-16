@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__029_Freiburg_2009_IMG_4378",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.5802027063071317,
+   -1.259082045778311,
+   1.9761565822156828
+  ],
+  "t": [
+   6.653129445361048,
+   20.077950375149015,
+   40.11716079087553
+  ],
+  "f_px": 2337.6824348285845,
+  "cx": 960.0,
+  "cy": 1440.0,
+  "k1": 0.0,
+  "standort": [
+   -29.94426065636008,
+   34.03928760285166,
+   1.201235130585541
+  ],
+  "quelle": "kamera_verfeinern.py: 2427 Inlier auf 4 Waenden gegen ['commons_orig2__044', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__050_Freiburg-Schwabentor-08-2007-gje'], Rest 3.6 px",
+  "vertrauen": true,
+  "rest_px_median": 3.563341839739898,
+  "inlier_je_wand": {
+   "0": 37,
+   "1": 189,
+   "2": 2116,
+   "3": 74,
+   "4": 11
+  }
+ }
+}

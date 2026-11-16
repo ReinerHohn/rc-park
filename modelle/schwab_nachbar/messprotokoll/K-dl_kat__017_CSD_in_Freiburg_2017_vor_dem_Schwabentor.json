@@ -1,0 +1,36 @@
+{
+ "foto": "dl_kat__017_CSD_in_Freiburg_2017_vor_dem_Schwabentor",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.9725929444076707,
+   1.1277303882251137,
+   -1.4153135715251774
+  ],
+  "t": [
+   -4.626444384563816,
+   21.906934233005074,
+   84.07709466946032
+  ],
+  "f_px": 4030.5891384431447,
+  "cx": 960.0,
+  "cy": 1280.0,
+  "k1": 0.0,
+  "standort": [
+   85.41643081836239,
+   16.441395667004496,
+   1.9973627519771213
+  ],
+  "quelle": "kamera_verfeinern.py: 3854 Inlier auf 4 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__003_Freiburg_Schwabentor_1998_1', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__009_Freiburg_im_Breisgau_Schwabentor_--_2025_--_8031'], Rest 2.2 px",
+  "vertrauen": true,
+  "rest_px_median": 2.2122670253002688,
+  "inlier_je_wand": {
+   "0": 3126,
+   "1": 76,
+   "3": 92,
+   "4": 560
+  }
+ }
+}

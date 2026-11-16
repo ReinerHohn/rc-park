@@ -1,0 +1,29 @@
+{
+ "foto": "video_frames_7wvSPHS1gDA__vf_040",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.027916022790245,
+   1.0181746091881916,
+   -1.3116432119705517
+  ],
+  "t": [
+   -19.766476505372427,
+   12.012428114527356,
+   90.5344959501858
+  ],
+  "f_px": 5480.179105487374,
+  "cx": 640.0,
+  "cy": 360.0,
+  "k1": 0.22867366052125576,
+  "standort": [
+   90.84810939825951,
+   19.06792670618283,
+   -10.70243754888733
+  ],
+  "quelle": "nachregistriert (sparse_handy), Abbildung aus 529 gemeinsamen Kameras, Rest 0.01 m",
+  "punkte3d": 970
+ }
+}

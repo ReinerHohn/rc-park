@@ -35,6 +35,11 @@ def main():
         if os.path.exists(ej): belege = json.load(open(ej))
         for ex in a.extra:                                                   # 15.11.2026: Nachbarobjekte im selben Rahmen dazuladen
             me_ = trimesh.load(ex, process=True); me_.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0); F = np.vstack([F, np.asarray(me_.faces, np.uint32) + len(V)]).astype(np.uint32); V = np.vstack([V, np.asarray(me_.vertices, np.float32)]).astype(np.float32)
+    if a.netz_raster == 0 and len(F) > 800000:                              # 16.11.2026: Kettenobjekt mit 4 Mio. Dreiecken gab eine 98-MB-Seite (Grenze 16 MB) - Anzeige-Raster selbst waehlen
+        for r_ in (0.02, 0.03, 0.04, 0.06, 0.08, 0.10, 0.12):
+            _, i_ = np.unique(np.round(V / r_).astype(np.int64), axis=0, return_inverse=True); f_ = i_.ravel()[F]; a.netz_raster = r_
+            if int(((f_[:, 0] != f_[:, 1]) & (f_[:, 1] != f_[:, 2]) & (f_[:, 0] != f_[:, 2])).sum()) <= 500000: break
+        print(f"Anzeige-Netz automatisch auf {a.netz_raster * 100:.0f}-cm-Raster vergroebert ({len(F)} Dreiecke im STL; das STL bleibt unveraendert)")
     if a.netz_raster > 0:                                                   # Eckpunkt-Clustering nur fuer die Anzeige (das STL bleibt unveraendert)
         q_, inv_ = np.unique(np.round(V / a.netz_raster).astype(np.int64), axis=0, return_inverse=True); F = inv_.ravel()[F]; F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])].astype(np.uint32)
         n_ = np.bincount(inv_.ravel(), minlength=len(q_)).astype(np.float64); V = np.stack([np.bincount(inv_.ravel(), weights=V[:, k_].astype(np.float64), minlength=len(q_)) / n_ for k_ in range(3)], 1).astype(np.float32)   # 16.11.2026: Schwerpunkt der Gruppe statt Rasterpunkt - der Rasterpunkt liegt bis 2 cm NEBEN der Wandebene, lange Wanddreiecke kippten und schattierten als 'Strahlen' (Nutzerbild)

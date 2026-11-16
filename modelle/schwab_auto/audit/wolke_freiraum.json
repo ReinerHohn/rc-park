@@ -1,0 +1,9 @@
+{
+ "werkzeug": "wolke_freiraum_pruefen.py",
+ "wolke": "modelle/schwab_auto/sfm/punkte_modell_schwab_auto.npy",
+ "punkte_umkreis": 2212660,
+ "im_koerper_prozent": 3.121,
+ "schwebend_prozent": 5.62,
+ "tief_m": 1.2,
+ "grenze_prozent": 0.5
+}

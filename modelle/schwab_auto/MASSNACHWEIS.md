@@ -1,4 +1,4 @@
-# Massnachweis Schwabentor (automatisch aus masstabelle.json, 2026-11-15)
+# Massnachweis Schwabentor (automatisch aus masstabelle.json, 2026-11-16)
 
 Status je Mass: **OK** = Istwert im Sollbereich der Quelle; **WIDERSPRUCH** = Quellen uneins (nicht gemittelt); **FEHLER** = Modell verletzt die Quelle.
 Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im selben Foto; *modell* = zirkulaer (nur Richtung belastbar).
@@ -12,17 +12,37 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
 
-## Elemente des Generators: 5 belegt, 0 Annahmen
+## Elemente des Generators: 24 belegt, 0 Annahmen
 
 - dach: Dach Teil 0 (walm_a) - Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_001000hPLcp-Grundriss Teil 0
 - dach: Spitze Teil 0 - DOM1 6 Pixel bis 49.6 m; Hoehe objekt.json hoehe_m
 - wand: Grundriss Teil 0 - LoD2 DEBW_001000hPLcp GroundSurface 0
 - wand: Teil 1 (ohne Dachmessung) - LoD2 DEBW_001000hPLcp Wandoberkante (31 eigene Waende)
 - wand: Grundriss Teil 1 - LoD2 DEBW_001000hPLcp GroundSurface 1
+- wand: Quader mit Fugen aus dem Foto, Fassade w00 ab z 10 m - tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)
+- wand: Relief Fassade w00 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_114133, eigen__IMG_20261106_114023, eigen__IMG_20261106_114052); Loecher generiert
+- wand: Quader mit Fugen aus dem Foto, Fassade w01 ab z 10 m - tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)
+- wand: Relief Fassade w01 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113429, eigen__IMG_20261106_113128, eigen__IMG_20261106_113441); Loecher generiert
+- wand: Quader mit Fugen aus dem Foto, Fassade w02 ab z 10 m - tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)
+- wand: Relief Fassade w02 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113128, eigen__IMG_20261106_113605, eigen__IMG_20261106_113205); Loecher generiert
+- wand: Quader mit Fugen aus dem Foto, Fassade w03 ab z 10 m - tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)
+- wand: Relief Fassade w03 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113416, eigen__IMG_20261106_113128, eigen__IMG_20261106_113338_1); Loecher generiert
+- wand: Quader mit Fugen aus dem Foto, Fassade w04 ab z 10 m - tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)
+- wand: Relief Fassade w04 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113726, eigen__IMG_20261106_113743, eigen__IMG_20261106_113727_1); Loecher generiert
+- wand: Quader mit Fugen aus dem Foto, Fassade w05 ab z 0 m - tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)
+- wand: Relief Fassade w05 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113854, eigen__IMG_20261106_113852, eigen__IMG_20261106_113836); Loecher generiert
+- wand: Quader mit Fugen aus dem Foto, Fassade w06 ab z 0 m - tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)
+- wand: Relief Fassade w06 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113852, eigen__IMG_20261106_113854, online_orig__od_02); Loecher generiert
+- wand: Quader mit Fugen aus dem Foto, Fassade w07 ab z 0 m - tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)
+- wand: Relief Fassade w07 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (online_orig__od_02, eigen__IMG_20261106_113852, online_orig__od_08); Loecher generiert
+- wand: 2 Fenster Fassade f00 (automatisch erkannt) - OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__IMG_20261106_113130, eigen__IMG_20261106_113142, eigen__IMG_20261106_113141
+- wand: 2 Fenster Fassade f03 (automatisch erkannt) - OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__IMG_20261106_114049, eigen__IMG_20261106_114046, eigen__IMG_20261106_114034
+- wand: Gebaeude hohl, 4 Fenster durchgebrochen - bauteile.aushoehlen auf den automatisch erkannten Fenstern
 
 ## Beobachtungen ohne Pruefung
 
 - heute Anlage: Quellen sichten: Dokumente (Hoehe), LoD2 (Grundriss/Traufe), DOM1 (Dachform), Fotos je Seite -> objekt.json/quellen fuellen, Zeilen mit Quelle anlegen
+- auto umriss_tor: GANZE DACHLINIE versetzt (Foto hoeher: Dach/Aufbau fehlt oder zu niedrig), 2 Fotos einig: +5.07 m ueber 0.0 m bei [0.0, 0.0, 0.0] (Foto eigen__IMG_20261106_113201) -> am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen
 
 ## Grenze
 

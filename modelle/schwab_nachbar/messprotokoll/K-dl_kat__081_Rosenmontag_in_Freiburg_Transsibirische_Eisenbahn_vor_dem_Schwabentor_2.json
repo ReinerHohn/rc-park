@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__081_Rosenmontag_in_Freiburg_Transsibirische_Eisenbahn_vor_dem_Schwabentor_2",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.8982395099193704,
+   -1.4614769682978246,
+   1.6134757267671294
+  ],
+  "t": [
+   15.753070839752978,
+   6.569822154038202,
+   61.11529784002199
+  ],
+  "f_px": 1862.077341016085,
+  "cx": 960.0,
+  "cy": 641.0,
+  "k1": 0.0,
+  "standort": [
+   -47.41808066700027,
+   42.16042293716892,
+   0.652531768926262
+  ],
+  "quelle": "kamera_verfeinern.py: 1194 Inlier auf 4 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 2.4 px",
+  "vertrauen": true,
+  "rest_px_median": 2.3828399533743028,
+  "inlier_je_wand": {
+   "0": 23,
+   "1": 82,
+   "2": 1066,
+   "3": 19,
+   "4": 4
+  }
+ }
+}

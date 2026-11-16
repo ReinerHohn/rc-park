@@ -59,7 +59,7 @@ def main():
         if k: p0 += list(k["rvec"]) + list(k["t"]) + [k["f_px"]]
         else:
             W, H = dims[nr]; az = {"Sued": 0.0, "Nord": math.pi, "Ost": math.pi / 2, "West": -math.pi / 2}.get(Ks[nr].get("seite"), 0.0)
-            cam = np.array([40.0 * math.cos(az), 40.0 * math.sin(az), 1.7]); fw = np.array([0, 0, 25.0]) - cam      # Start auf der Fotoseite; fw /= np.linalg.norm(fw); rt = np.cross(fw, [0, 0, 1.0]); rt /= np.linalg.norm(rt)
+            cam = np.array([40.0 * math.cos(az), 40.0 * math.sin(az), 1.7]); fw = np.array([0, 0, 25.0]) - cam; fw /= np.linalg.norm(fw); rt = np.cross(fw, [0, 0, 1.0]); rt /= np.linalg.norm(rt)      # Start auf der Fotoseite (16.11.2026: der Kommentar stand mitten in der Zeile und schluckte fw-Normierung und rt -> NameError bei Fotos ohne Einzelkamera)
             R = np.vstack([rt, np.cross(fw, rt), fw]); rv, _ = cv2.Rodrigues(R); p0 += list(rv.ravel()) + list(-R @ cam) + [1.0 * H]
     p0 = np.array(p0 + list(z0))
     sol = least_squares(resid, p0, method="trf", x_scale="jac", max_nfev=20000)

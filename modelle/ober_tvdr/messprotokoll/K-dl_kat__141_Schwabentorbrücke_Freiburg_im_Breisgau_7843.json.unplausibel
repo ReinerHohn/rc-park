@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__141_Schwabentorbr\u00fccke_Freiburg_im_Breisgau_7843",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.1983830632548158,
+   -1.1988756046793296,
+   1.1834177989045402
+  ],
+  "t": [
+   78.71939263266886,
+   28.8651384213031,
+   966.6146251730205
+  ],
+  "f_px": 6120.621736428339,
+  "cx": 960.0,
+  "cy": 564.5,
+  "k1": 0.0,
+  "standort": [
+   -968.156658614445,
+   59.19753386956893,
+   23.283233349150425
+  ],
+  "quelle": "kamera_verfeinern.py: 550 Inlier auf 4 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 1.7 px",
+  "vertrauen": true,
+  "rest_px_median": 1.6949455580930257,
+  "inlier_je_wand": {
+   "0": 41,
+   "1": 21,
+   "2": 451,
+   "3": 8,
+   "4": 29
+  }
+ }
+}

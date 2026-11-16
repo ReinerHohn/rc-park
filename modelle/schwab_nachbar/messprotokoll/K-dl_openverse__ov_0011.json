@@ -1,0 +1,65 @@
+{
+ "foto": "dl_openverse__ov_0011",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.0826985090761867,
+   0.7738109074870098,
+   -1.1927014127244515
+  ],
+  "t": [
+   -13.13496476691224,
+   14.52097126470182,
+   37.50517484505965
+  ],
+  "f_px": 2642.41372854569,
+  "cx": 500.0,
+  "cy": 326.5,
+  "k1": 0.0,
+  "standort": [
+   42.15776769842631,
+   3.5275475462172885,
+   0.5505243423463959
+  ],
+  "quelle": "kamera_verfeinern.py: 2189 Inlier auf 4 Waenden gegen ['dl_commons__015_Freiburg_im_Breisgau_Schwabentor_5', 'eigen__IMG_20261106_113130', 'eigen__IMG_20261106_113142', 'eigen__IMG_20261106_113145', 'eigen__IMG_20261106_113148', 'eigen__IMG_20261106_113149'], Rest 2.1 px",
+  "vertrauen": true,
+  "rest_px_median": 2.0853546017077105,
+  "inlier_je_wand": {
+   "0": 1840,
+   "1": 22,
+   "3": 61,
+   "4": 266
+  }
+ },
+ "kamera_vorher": {
+  "rvec": [
+   1.086059849385016,
+   0.7755905054001961,
+   -1.1893421755745974
+  ],
+  "t": [
+   -13.160894609582273,
+   14.518123782664405,
+   40.82674465866769
+  ],
+  "f_px": 2847.4842140308665,
+  "cx": 500.0,
+  "cy": 326.5,
+  "k1": 0.0,
+  "standort": [
+   45.20586995272091,
+   2.6662870887250865,
+   -0.35830084500384984
+  ],
+  "quelle": "kamera_verfeinern.py: 1680 Inlier auf 4 Waenden gegen ['eigen__IMG_20261106_113130', 'eigen__IMG_20261106_113145', 'eigen__IMG_20261106_113149', 'video_frames_Bbzk0Qpb5l0__vf_218', 'video_frames_Bbzk0Qpb5l0__vf_219', 'video_frames_Bbzk0Qpb5l0__vf_220'], Rest 2.2 px",
+  "rest_px_median": 2.173234317881688,
+  "inlier_je_wand": {
+   "0": 1414,
+   "1": 15,
+   "3": 44,
+   "4": 207
+  }
+ }
+}

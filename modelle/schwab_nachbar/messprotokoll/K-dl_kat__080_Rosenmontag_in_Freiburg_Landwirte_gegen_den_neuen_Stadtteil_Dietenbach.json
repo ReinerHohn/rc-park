@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__080_Rosenmontag_in_Freiburg_Landwirte_gegen_den_neuen_Stadtteil_Dietenbach",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.9740879614504605,
+   -1.3549483711284938,
+   1.5231505101106804
+  ],
+  "t": [
+   33.85192087765221,
+   6.793180517334948,
+   72.91798885574846
+  ],
+  "f_px": 2135.444201620542,
+  "cx": 960.0,
+  "cy": 720.0,
+  "k1": 0.0,
+  "standort": [
+   -57.8701843272118,
+   56.194724593176275,
+   -1.5256609212338281
+  ],
+  "quelle": "kamera_verfeinern.py: 1027 Inlier auf 3 Waenden gegen ['commons_orig2__044', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__050_Freiburg-Schwabentor-08-2007-gje'], Rest 2.2 px",
+  "vertrauen": true,
+  "rest_px_median": 2.1895649203016943,
+  "inlier_je_wand": {
+   "0": 7,
+   "1": 86,
+   "2": 886,
+   "3": 38,
+   "4": 10
+  }
+ }
+}

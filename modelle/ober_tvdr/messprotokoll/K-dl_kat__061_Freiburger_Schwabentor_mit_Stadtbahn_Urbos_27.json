@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__061_Freiburger_Schwabentor_mit_Stadtbahn_Urbos_27",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.8890747025194121,
+   -0.9942311158870784,
+   1.4325972849703816
+  ],
+  "t": [
+   5.787043345697518,
+   22.06379942200241,
+   103.25958245434558
+  ],
+  "f_px": 6056.4588419592055,
+  "cx": 960.0,
+  "cy": 1402.0,
+  "k1": 0.0,
+  "standort": [
+   -103.25916788461979,
+   15.660679224549177,
+   -16.587038863727372
+  ],
+  "quelle": "kamera_verfeinern.py: 4507 Inlier auf 5 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 3.2 px",
+  "vertrauen": true,
+  "rest_px_median": 3.2387611986647893,
+  "inlier_je_wand": {
+   "0": 46,
+   "1": 143,
+   "2": 4184,
+   "3": 98,
+   "4": 36
+  }
+ }
+}

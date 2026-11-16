@@ -1,0 +1,37 @@
+{
+ "foto": "dl_kat__098_St._Georg_Schwabenthor_Freiburg_3266",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.0927042618294291,
+   -0.9778611511041346,
+   1.2270501825589206
+  ],
+  "t": [
+   14.547873765159519,
+   14.44473625125781,
+   43.679932634615604
+  ],
+  "f_px": 12203.020814599091,
+  "cx": 960.0,
+  "cy": 1556.5,
+  "k1": 0.0,
+  "standort": [
+   -47.00549519487325,
+   9.874641552046896,
+   4.604609334494384
+  ],
+  "quelle": "kamera_verfeinern.py: 2899 Inlier auf 3 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 6.4 px",
+  "vertrauen": true,
+  "rest_px_median": 6.410620601887747,
+  "inlier_je_wand": {
+   "0": 13,
+   "1": 14,
+   "2": 2832,
+   "3": 18,
+   "4": 22
+  }
+ }
+}

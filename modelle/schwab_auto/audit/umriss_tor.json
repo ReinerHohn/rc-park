@@ -1,0 +1,16 @@
+{
+ "tol_m": 0.35,
+ "befunde": [
+  {
+   "foto": "eigen__IMG_20261106_113201",
+   "art": "GANZE DACHLINIE versetzt (Foto hoeher: Dach/Aufbau fehlt oder zu niedrig), 2 Fotos einig",
+   "abweichung_m": 5.07,
+   "breite_m": 0.0,
+   "xyz": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ ]
+}

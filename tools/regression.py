@@ -52,7 +52,8 @@ def vergleiche(a, b, tol, ign, pfad="", out=None):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--schnappschuss", action="store_true"); ap.add_argument("--pruefen", action="store_true"); ap.add_argument("--ohne-kette", action="store_true")
-    a = ap.parse_args(); obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); repo = os.path.dirname(os.path.dirname(od)); R = obj["regression"]
+    a = ap.parse_args(); obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); repo = os.path.dirname(os.path.dirname(od)); R = obj.get("regression")
+    if not R: print(f"KEINE Regressions-Konfiguration in {a.objekt} (objekt.json[\"regression\"] fehlt) - nichts geprueft"); return 2      # 16.11.2026: brach mit KeyError ab
     basis = os.path.join(od, "regression", "basis"); os.makedirs(basis, exist_ok=True)
     if not a.ohne_kette:
         for cmd in R["kette"]:

@@ -1,0 +1,36 @@
+{
+ "foto": "dl_kat__083_Salzkaufmann_Schwabentor_Salt_Merchant_Swabian_Gate_-_geo.hlipp.de_-_22493",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.9936015827885366,
+   0.7928833594587564,
+   -1.273418831821989
+  ],
+  "t": [
+   -7.054912249237325,
+   17.125934962302747,
+   36.806730894360804
+  ],
+  "f_px": 939.6865117677798,
+  "cx": 320.0,
+  "cy": 240.0,
+  "k1": 0.0,
+  "standort": [
+   41.17538315192914,
+   1.0516583970159745,
+   1.1343329384147758
+  ],
+  "quelle": "kamera_verfeinern.py: 1281 Inlier auf 3 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 1.2 px",
+  "vertrauen": true,
+  "rest_px_median": 1.2010679965043034,
+  "inlier_je_wand": {
+   "0": 1126,
+   "1": 12,
+   "3": 41,
+   "4": 102
+  }
+ }
+}

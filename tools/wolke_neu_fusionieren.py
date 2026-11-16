@@ -2,7 +2,7 @@
 """wolke_neu_fusionieren.py <objekt.json> <pipe-ordner> [--stufe schnell|fein] - dichte Wolke OHNE die unplausiblen Kameras neu fusionieren.
 
 Warum (Schwabentor 15.11.2026): eine Geisterwand (Haufen auf der Strasse, Grundriss-Tor rc 3) kam aus Bildern eines Videoclips, deren Kameras unter dem
-Gelaende standen. tools/kamera_plausibel.py schreibt diese Bilder nach audit/kamera_plausibel.json ('ausschliessen'). Hier: fusion.cfg ohne sie neu
+Gelaende standen. tools/kamera_gelaende.py schreibt diese Bilder nach audit/kamera_plausibel.json ('ausschliessen'). Hier: fusion.cfg ohne sie neu
 schreiben, stereo_fusion (CPU, Minuten; Tiefenkarten bleiben), alte fused.ply -> fused_alle.ply, dann die VORHANDENE Ausrichtung auf die neue Wolke
 anwenden (X_m = R^T (X_sfm - t) / s, keine neue LoD2-Suche) -> sfm/punkte_modell_<name>.npy + punkte_farben_<name>.npy.
   /media/oem/scan/venv-colmap/bin/python -I tools/wolke_neu_fusionieren.py modelle/<obj>/objekt.json /media/oem/scan/rc-park_daten/<obj>/pipe
