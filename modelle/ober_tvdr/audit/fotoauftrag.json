@@ -4,7 +4,7 @@
   {
    "nr": 1,
    "seite": "Nordseite",
-   "titel": "Nordseite: 149 m² ohne Fotodaten",
+   "titel": "Nordseite: 168 m² ohne Fotodaten",
    "warum": "Kein registriertes Foto zeigt diesen Wandbereich - dort ist das Modell geraten oder leer.",
    "wand": 0,
    "u": [
@@ -95,7 +95,7 @@
   {
    "nr": 3,
    "seite": "Nordseite",
-   "titel": "Nordseite: 68 m² ohne Fotodaten",
+   "titel": "Nordseite: 65 m² ohne Fotodaten",
    "warum": "Kein registriertes Foto zeigt diesen Wandbereich - dort ist das Modell geraten oder leer.",
    "wand": 4,
    "u": [
@@ -103,7 +103,7 @@
     2.3
    ],
    "z": [
-    -1.4,
+    -0.9,
     9.1
    ],
    "soll_mpp": 0.01,
@@ -185,7 +185,7 @@
   {
    "nr": 5,
    "seite": "Nordseite",
-   "titel": "Nordseite: 52 m² ohne Fotodaten",
+   "titel": "Nordseite: 50 m² ohne Fotodaten",
    "warum": "Kein registriertes Foto zeigt diesen Wandbereich - dort ist das Modell geraten oder leer.",
    "wand": 6,
    "u": [
@@ -193,7 +193,7 @@
     2.4
    ],
    "z": [
-    -1.4,
+    -0.9,
     9.1
    ],
    "soll_mpp": 0.01,
@@ -230,7 +230,7 @@
   {
    "nr": 6,
    "seite": "Nordseite",
-   "titel": "Nordseite: 42 m² ohne Fotodaten",
+   "titel": "Nordseite: 40 m² ohne Fotodaten",
    "warum": "Kein registriertes Foto zeigt diesen Wandbereich - dort ist das Modell geraten oder leer.",
    "wand": 8,
    "u": [
@@ -238,7 +238,7 @@
     2.0
    ],
    "z": [
-    -1.4,
+    -0.9,
     9.1
    ],
    "soll_mpp": 0.01,

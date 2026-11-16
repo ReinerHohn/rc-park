@@ -332,3 +332,11 @@ Nachtrag 16.11. abends - Tempo und Selbstkontrolle (alles Standardverhalten der 
 - `pruefstand.py` z_am_punkt ueber senkrechte Strahlen: Turm 153 -> 35 s, Werte identisch an 3 Objekten.
 - `umriss_tor.py` laeuft in `bauen_abnehmen.sh` (Hinweis), `schnelltest.sh` nach jeder Werkzeugaenderung (CLAUDE.md).
 - `fenster_aus_parsing.py`: Stimmen >= 50 % der sehenden Fotos, Uneinigkeits-Tor, Raster-Regel (alles Standard; `--ohne-raster` schaltet die Regel ab).
+
+Nachtrag 16.11. nachts - generisch und in der Kette (Nutzer: "alles generisch bauen und in die Pipeline einbauen, alles"):
+- KAMERA-PLAUSIBILITAET ueberall: `kamera_verfeinern.py` (Abstand <= 600 m, f zwischen 0,4 und 10 x Bildbreite), `fassade_ortho.py` (Vorauswahl und Sichtpruefung ueberspringen Standorte > 2 km / nicht endlich),
+  `schnelltest.sh` prueft ALLE Objekte auf absurde Kameras. Bereinigt: 49 K-Dateien als `.unplausibel` (schwab_v3, ober_tvdr, schwab_nachbar, schwab_auto, martinstor). Anlass: siehe NICHTS_GEBRACHT.md "ein Kern 100 %".
+- UNEINIGKEITSKARTE dritte Fassung: grobe Bloecke 0,3 m, Belichtung je Foto angeglichen, MAD statt Streuung. Sie dient NUR dem Fenster-Tor (`fenster_aus_parsing --uneinig 28`).
+  Als Mass "Wand gesehen ja/nein" taugt sie NICHT (saubere Turm-Suedwand 30, gemischte Zeilenfassade 18): in `foto_auftrag.py` nur mit `--mit-uneinig`, in `seiten_luecken.py` nur mit LUECKEN_MIT_UNEINIG=1.
+  OFFEN: ein belastbares Mass fuer "Fotos zeigen dasselbe" (Strukturvergleich statt Helligkeit, vgl. Gegenfoto-Korrelation in steine_aus_foto.py).
+- Turm nach der Download-Runde (fassade_neu, 3 cm, 40 Kameras je Wand, 111 s): Nord 91 %, Sued 91 %, West 90 %, Ost 45 % (morgens 0 %). Fotoauftrag Turm: nur noch Ost unten + 5 Detailwuensche.

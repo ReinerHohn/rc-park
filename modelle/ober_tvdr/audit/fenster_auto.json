@@ -14,10 +14,10 @@
   ],
   "fenster": [],
   "fotos": [
-   "commons_orig2__162",
-   "eigen__IMG_20261106_113058",
-   "eigen__IMG_20261106_113459",
-   "dl_commons__022_Schlossbergring_2_am_Schwabentor_in_Freiburg_im_Breisgau_2025"
+   "online_orig__od_07",
+   "dl_commons__022_Schlossbergring_2_am_Schwabentor_in_Freiburg_im_Breisgau_2025",
+   "eigen__IMG_20261106_113031",
+   "eigen__IMG_20261106_113018"
   ]
  },
  "f01": {
@@ -33,12 +33,35 @@
    -0.9687629716828479,
    -0.24798851726686402
   ],
-  "fenster": [],
+  "fenster": [
+   {
+    "u0": -0.943,
+    "u1": 0.552,
+    "z0": 6.167,
+    "z1": 8.347,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 2,
+    "stimmen_min": 3,
+    "sprossen": []
+   },
+   {
+    "u0": 1.493,
+    "u1": 2.336,
+    "z0": 6.167,
+    "z1": 8.347,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 2,
+    "stimmen_min": 3,
+    "sprossen": []
+   }
+  ],
   "fotos": [
-   "commons_orig2__080",
-   "dl_kat__050_Freiburg_de_Schwabentor_Kdm_IMG_1811_2022-05-17_15.06",
    "online_orig__od_02",
-   "dl_commons__008_Freiburg_im_Breisgau_Schwabentor_--_2025_--_8028"
+   "dl_commons__008_Freiburg_im_Breisgau_Schwabentor_--_2025_--_8028",
+   "dl_commons__043_Schwabentor_Freiburg_08",
+   "dl_commons__030_Schwabentor_Freiburg_im_Breisgau_jm52907"
   ]
  },
  "f02": {
@@ -56,10 +79,10 @@
   ],
   "fenster": [
    {
-    "u0": -1.893,
-    "u1": -1.105,
-    "z0": -0.151,
-    "z1": 2.223,
+    "u0": -1.908,
+    "u1": -1.067,
+    "z0": -0.031,
+    "z1": 2.245,
     "teiler": [],
     "kaempfer": null,
     "scheiben": 1,
@@ -67,69 +90,60 @@
     "sprossen": []
    },
    {
-    "u0": -2.97,
-    "u1": -1.143,
-    "z0": 3.681,
-    "z1": 5.662,
-    "teiler": [],
+    "u0": -3.04,
+    "u1": 0.859,
+    "z0": 3.437,
+    "z1": 6.077,
+    "teiler": [
+     -1.154
+    ],
     "kaempfer": null,
-    "scheiben": 2,
-    "stimmen_min": 3,
-    "sprossen": []
-   },
-   {
-    "u0": -0.521,
-    "u1": 0.701,
-    "z0": 3.681,
-    "z1": 5.662,
-    "teiler": [],
-    "kaempfer": null,
-    "scheiben": 2,
+    "scheiben": 4,
     "stimmen_min": 2,
     "sprossen": []
    },
    {
-    "u0": 1.389,
-    "u1": 2.335,
-    "z0": 3.681,
-    "z1": 5.662,
-    "teiler": [],
-    "kaempfer": null,
-    "scheiben": 0,
-    "stimmen_min": 2,
-    "ergaenzt": true
-   },
-   {
-    "u0": -2.799,
-    "u1": -1.313,
-    "z0": 6.442,
-    "z1": 8.467,
-    "teiler": [],
-    "kaempfer": null,
-    "scheiben": 2,
-    "stimmen_min": 2,
-    "sprossen": []
-   },
-   {
-    "u0": -0.64,
-    "u1": 0.821,
-    "z0": 6.442,
-    "z1": 8.467,
-    "teiler": [],
-    "kaempfer": null,
-    "scheiben": 2,
-    "stimmen_min": 4,
-    "sprossen": []
-   },
-   {
-    "u0": 1.389,
-    "u1": 2.335,
-    "z0": 6.442,
-    "z1": 8.467,
+    "u0": 1.211,
+    "u1": 2.809,
+    "z0": 3.437,
+    "z1": 6.077,
     "teiler": [],
     "kaempfer": null,
     "scheiben": 1,
+    "stimmen_min": 2,
+    "sprossen": []
+   },
+   {
+    "u0": -2.761,
+    "u1": -1.249,
+    "z0": 6.441,
+    "z1": 8.474,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 2,
+    "stimmen_min": 2,
+    "sprossen": []
+   },
+   {
+    "u0": -0.658,
+    "u1": 0.805,
+    "z0": 6.441,
+    "z1": 8.474,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 2,
     "stimmen_min": 4,
+    "sprossen": []
+   },
+   {
+    "u0": 1.305,
+    "u1": 2.716,
+    "z0": 6.441,
+    "z1": 8.474,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 2,
+    "stimmen_min": 2,
     "sprossen": []
    }
   ],

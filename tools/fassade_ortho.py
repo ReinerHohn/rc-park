@@ -234,10 +234,19 @@ def main(argv=None):
         img = np.zeros((N, 3), np.uint8); cnt = np.zeros(N, np.int32)
         if beitr:
             I = np.concatenate([x[0] for _, x in beitr]); Cc = np.concatenate([x[1] for _, x in beitr]).astype(np.float32); G = np.concatenate([x[2] for _, x in beitr])
-            o_ = np.lexsort((-G, I)); I, Cc, G = I[o_], Cc[o_], G[o_]; st = np.r_[0, np.where(np.diff(I))[0] + 1, len(I)]
+            med_ = [float(np.median(x[1].mean(1))) for _, x in beitr]; Mz = float(np.median(med_)) if med_ else 1.0      # 16.11.2026: Belichtung je Foto angleichen (Nachtaufnahme, Sonne/Schatten, s/w), sonst ist die
+            Gr = np.concatenate([x[1].mean(1) * float(np.clip(Mz / max(m_, 1.0), 0.4, 2.5)) for (_, x), m_ in zip(beitr, med_)]).astype(np.float64)      # 'Uneinigkeit' nur Helligkeitsunterschied (Turm: 33-46 trotz sauberem Bild)
+            o_ = np.lexsort((-G, I)); I, Cc, G = I[o_], Cc[o_], G[o_]; Gr = Gr[o_]; st = np.r_[0, np.where(np.diff(I))[0] + 1, len(I)]
             cnt[I[st[:-1]]] = np.diff(st)
-            g_ = Cc.mean(1).astype(np.float64); n_ = np.diff(st).astype(np.float64); m1 = np.add.reduceat(g_, st[:-1]) / n_; m2 = np.add.reduceat(g_ * g_, st[:-1]) / n_      # 16.11.2026: UNEINIGKEIT je Zelle = Streuung der Grauwerte ueber die Fotos
-            un = np.zeros(N, np.float32); un[I[st[:-1]]] = np.where(n_ >= 3, np.sqrt(np.maximum(m2 - m1 * m1, 0)), 0); cv2.imwrite(os.path.join(a.aus, f"uneinig_{F['_id']}.png"), np.clip(un, 0, 255).astype(np.uint8).reshape(r["nz"], r["nu"]))      # (Fotos zeigen Verschiedenes: Baum, Nachbarhaus, falsche Kamera) - Tor fuer die Fenstererkennung
+            # UNEINIGKEIT (16.11.2026, zweite Fassung): Streuung ueber die Fotos auf GROBEN Bloecken (~0,3 m), Belichtung je Foto angeglichen. Erste Fassung (je Zelle) schlug am Turm ueberall an
+            # (25-31 Fotos je Zelle, cm-Versatz an Steinkanten = hohe Streuung) und war bei < 3 Fotos per Definition 0. Grob = "zeigen die Fotos dort dasselbe Ding" (Wand gegen Baum/Nachbarhaus).
+            kb = max(1, int(round(0.3 / r["zelle"]))); nbz, nbu = -(-r["nz"] // kb), -(-r["nu"] // kb); Mb = np.full((len(beitr), nbz * nbu), np.nan, np.float32)
+            for q_, ((_, x), m_) in enumerate(zip(beitr, med_)):
+                bi = (x[0] // r["nu"] // kb) * nbu + (x[0] % r["nu"]) // kb; gg = x[1].mean(1) * float(np.clip(Mz / max(m_, 1.0), 0.4, 2.5)); c_ = np.bincount(bi, minlength=nbz * nbu)
+                Mb[q_] = np.where(c_ >= 0.3 * kb * kb, np.bincount(bi, weights=gg, minlength=nbz * nbu) / np.maximum(c_, 1), np.nan)
+            with np.errstate(all="ignore"): mdn = np.nanmedian(Mb, 0); mad = np.nanmedian(np.abs(Mb - mdn), 0) * 1.48      # MAD statt Streuung: eine Minderheit abweichender Fotos (Nacht, s/w, Gegenlicht) zaehlt nicht,
+            ub = np.where(np.isfinite(Mb).sum(0) >= 2, np.nan_to_num(mad), 0).reshape(nbz, nbu)                               # ein Mosaik ohne Mehrheit schon (dritte Fassung; die Streuung schlug am Turm auf hellem Putz an)
+            cv2.imwrite(os.path.join(a.aus, f"uneinig_{F['_id']}.png"), cv2.resize(np.clip(ub, 0, 255).astype(np.uint8), (r["nu"], r["nz"]), interpolation=cv2.INTER_NEAREST))
             rang = np.arange(len(I)) - np.repeat(st[:-1], np.diff(st)); w_ = rang < a.beste; I, Cc, G = I[w_], Cc[w_], G[w_]   # je Zelle die besten k
             # gewichteter Median je Kanal und Zelle, vektorisiert: Proben je Zelle nach Wert sortieren, kumulierte Gewichte, erster Wert >= halbes Gewicht
             for k_ in range(3):

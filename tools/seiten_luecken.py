@@ -55,7 +55,7 @@ def main():
         p = os.path.join(a.fassaden, f"ortho_f{i:02d}.png"); R = F["raster"]; maske = np.zeros((R["nz"], R["nu"]), np.uint8)
         for poly in F["polys_uz"]: cv2.fillPoly(maske, [np.array([[(u - R["u0"]) / R["zelle"], (R["z1"] - z) / R["zelle"]] for u, z in poly], np.int32)], 1)
         im = cv2.imread(p); daten = (im.max(2) > 8) if im is not None else np.zeros(maske.shape, bool); un_ = cv2.imread(os.path.join(a.fassaden, f"uneinig_f{i:02d}.png"), 0)
-        if un_ is not None and im is not None and un_.shape == daten.shape: daten &= cv2.blur(un_.astype(np.float32), (9, 9)) <= 28      # widerspruechliche Zonen zaehlen nicht als gesehen (16.11.2026)
+        if os.environ.get("LUECKEN_MIT_UNEINIG") == "1" and un_ is not None and im is not None and un_.shape == daten.shape: daten &= cv2.blur(un_.astype(np.float32), (9, 9)) <= 28      # widerspruechliche Zonen zaehlen nicht als gesehen (16.11.2026)
         ant = float((daten & (maske > 0)).sum() / max(maske.sum(), 1))
         waende.append(dict(nr=i, normale=F["n"], mitte=F["o"], flaeche_m2=F["flaeche_m2"], abdeckung=round(ant, 3), fotos=len(F.get("fotos", {})), ungesehen=ant < a.schwelle))
         print(f"Wand f{i:02d}: Normale ({F['n'][0]:+.2f}, {F['n'][1]:+.2f}), {F['flaeche_m2']:.0f} m2, {ant * 100:5.1f} % mit Bilddaten aus {len(F.get('fotos', {}))} Fotos" + ("   <-- UNGESEHEN" if ant < a.schwelle else ""))

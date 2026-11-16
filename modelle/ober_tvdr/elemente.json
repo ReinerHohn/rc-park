@@ -28,14 +28,21 @@
  },
  {
   "seite": "wand",
-  "element": "7 Fenster Fassade f02 (automatisch erkannt)",
+  "element": "2 Fenster Fassade f01 (automatisch erkannt)",
+  "quelle": "OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos online_orig__od_02, dl_commons__008_Freiburg_im_Breisgau_Schwabentor_--_2025_--_8028, dl_commons__043_Schwabentor_Freiburg_08",
+  "hinweis": "ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "6 Fenster Fassade f02 (automatisch erkannt)",
   "quelle": "OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__IMG_20261106_113149, eigen__IMG_20261106_113148, eigen__IMG_20261106_113201",
   "hinweis": "ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME",
   "seite_name": "wand"
  },
  {
   "seite": "wand",
-  "element": "Gebaeude hohl, 7 Fenster durchgebrochen",
+  "element": "Gebaeude hohl, 8 Fenster durchgebrochen",
   "quelle": "bauteile.aushoehlen auf den automatisch erkannten Fenstern",
   "hinweis": "Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende",
   "seite_name": "wand"

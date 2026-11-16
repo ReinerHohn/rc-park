@@ -59,7 +59,7 @@ def proj(k, X):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("ordner"); ap.add_argument("aus"); ap.add_argument("--wunsch"); ap.add_argument("--mpp", type=float, default=0.01, help="Soll-Auflösung fuer automatisch gefundene Luecken (m je Pixel)")
-    ap.add_argument("--min_m2", type=float, default=8.0); ap.add_argument("--stl", help="Modell-STL(s): Auftraege ohne Foto vom Standort bekommen ein gerendertes Modellbild mit rot markiertem Ziel"); ap.add_argument("--extra-umriss", nargs="*", type=float, default=[], help="weitere Rechtecke x0 y0 x1 y1 (Nachbargebaeude) fuer die Karte"); a = ap.parse_args()
+    ap.add_argument("--min_m2", type=float, default=8.0); ap.add_argument("--mit-uneinig", action="store_true", help="widerspruechliche Zonen als ungesehen zaehlen. NICHT Standard: das Mass trennt saubere Wand und Mosaik nicht verlaesslich (Turm Sued sauber = 30, Mosaik Zeile = 18; 16.11.2026)"); ap.add_argument("--stl", help="Modell-STL(s): Auftraege ohne Foto vom Standort bekommen ein gerendertes Modellbild mit rot markiertem Ziel"); ap.add_argument("--extra-umriss", nargs="*", type=float, default=[], help="weitere Rechtecke x0 y0 x1 y1 (Nachbargebaeude) fuer die Karte"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); fd = os.path.join(root, obj["fotos_dir"]); mp = os.path.join(od, "messprotokoll"); FA = json.load(open(os.path.join(a.ordner, "fassaden.json")))["fassaden"]; KAM = kameras(mp, fd)
     def seite(F): n_ = F["n"]; return ("Nordseite" if n_[0] > 0 else "Südseite") if abs(n_[0]) > abs(n_[1]) else ("Westseite" if n_[1] > 0 else "Ostseite")      # Rahmen: +x Nord, +y West (objekt.json seiten_konvention)
     MM = None
@@ -72,7 +72,7 @@ def main():
         R = F["raster"]; im = cv2.imread(os.path.join(a.ordner, f"ortho_f{i:02d}.png")); c = 0.5; W = int((F["u"][1] - F["u"][0]) / c); H = int((F["z"][1] - F["z"][0]) / c)
         dat = cv2.resize((im.max(2) > 8).astype(np.float32), (R["nu"], R["nz"]))[int((R["z1"] - F["z"][1]) / R["zelle"]):int((R["z1"] - F["z"][0]) / R["zelle"]), int((F["u"][0] - R["u0"]) / R["zelle"]):int((F["u"][1] - R["u0"]) / R["zelle"])] if im is not None else np.zeros((10, 10), np.float32)
         un_ = cv2.imread(os.path.join(a.ordner, f"uneinig_f{i:02d}.png"), 0)      # 16.11.2026: widerspruechliche Zonen (Fotos zeigen Verschiedenes) zaehlen als NICHT gesehen - "94 % Abdeckung" war an ober_tvdr ein Mosaik
-        if un_ is not None and im is not None and un_.shape == im.shape[:2]:
+        if a.mit_uneinig and un_ is not None and im is not None and un_.shape == im.shape[:2]:
             gut_ = ((im.max(2) > 8) & (cv2.blur(un_.astype(np.float32), (9, 9)) <= 28)).astype(np.float32); dat = cv2.resize(gut_, (R["nu"], R["nz"]))[int((R["z1"] - F["z"][1]) / R["zelle"]):int((R["z1"] - F["z"][0]) / R["zelle"]), int((F["u"][0] - R["u0"]) / R["zelle"]):int((F["u"][1] - R["u0"]) / R["zelle"])]
         leer = cv2.resize(dat, (W, H), interpolation=cv2.INTER_AREA) < 0.3; leer = ndi.binary_opening(leer, np.ones((3, 3))); lab, n = ndi.label(leer)
         for li, sl in enumerate(ndi.find_objects(lab), 1):

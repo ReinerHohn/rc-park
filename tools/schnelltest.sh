@@ -25,9 +25,17 @@ PY
 S=$(mktemp -d); O=ober_tvdr; FO=/media/oem/scan/rc-park_daten/$O/fassade
 if [ -f $FO/elemente.json ]; then
   n=$($P -I tools/fenster_aus_parsing.py $FO --aus $S/f.json 2>&1 | grep "^f02" | sed 's/.*: \([0-9]*\) Fenster.*/\1/'); [ "${n:-0}" -ge 6 ] && [ "${n:-0}" -le 8 ] && ok "Fenster ober_tvdr f02: $n (erwartet 6-8)" || rot "Fenster ober_tvdr f02: $n statt 6-8"
-  m=$($P -I tools/fenster_aus_parsing.py $FO --aus $S/f.json 2>&1 | grep "^f01" | sed 's/.*: \([0-9]*\) Fenster.*/\1/'); [ "${m:-9}" -eq 0 ] && ok "Mosaik-Fassade f01: 0 Fenster (Uneinigkeits-Tor)" || rot "Mosaik-Fassade f01 liefert $m Fenster"
+  m=$($P -I tools/fenster_aus_parsing.py $FO --aus $S/f.json 2>&1 | grep "^f01" | sed 's/.*: \([0-9]*\) Fenster.*/\1/'); [ "${m:-9}" -le 2 ] && ok "gemischte Fassade f01: $m Fenster (erwartet <= 2; seit MAD-Mass und Kamerabereinigung ist die rechte Haelfte sauber)" || rot "gemischte Fassade f01 liefert $m Fenster (erwartet <= 2)"
   k=$($P -W ignore -I tools/fassade_ortho.py modelle/$O/objekt.json --stl modelle/stl/${O}_1-87.stl --aus $S/o --nur f02 --min-flaeche 40 2>&1 | grep "f02:" | sed 's/.*, *\([0-9]*\) Fotos, Abdeckung \([0-9]*\)%.*/\1 \2/'); set -- $k; [ "${1:-0}" -ge 4 ] && [ "${2:-0}" -ge 75 ] && ok "Fassadenbild f02: $1 Fotos, $2 % (erwartet >= 4 Fotos, >= 75 %)" || rot "Fassadenbild f02: '$k' (eigene Kameras ausgeschlossen? Loecher schwarz?)"
 fi
 a=$($P -W ignore -I tools/pruefstand.py modelle/$O/objekt.json 2>&1 | grep -c "alle Pruefungen bestanden"); [ "$a" = "1" ] && ok "Pruefstand ober_tvdr gruen" || rot "Pruefstand ober_tvdr"
 v=$(grep -l '"vertrauen": true' modelle/schwab_v3/messprotokoll/K-dl_*.json 2>/dev/null | wc -l); e=$(ls modelle/schwab_v3/messprotokoll/K-eigen__*.json | wc -l); [ "$e" -ge 150 ] && [ "$v" -ge 100 ] && ok "Kameras: $e eigene, $v gepruefte Fremdkameras" || rot "Kameras: $e eigene, $v gepruefte Fremdkameras (erwartet >= 150 / >= 100)"
+u=$($P -I -c "
+import json,glob,numpy as np,cv2
+n=0
+for f in glob.glob('modelle/*/messprotokoll/K-*.json'):
+    k=json.load(open(f)).get('kamera')
+    if isinstance(k,dict) and 'rvec' in k and 'cx' in k:
+        C=-cv2.Rodrigues(np.array(k['rvec']))[0].T@np.array(k['t']); n+= (not np.isfinite(C).all()) or np.linalg.norm(C)>3000 or k['f_px']>20*max(k['cx'],k['cy'])
+print(n)"); [ "$u" = "0" ] && ok "keine Kamera mit absurdem Standort/Brennweite" || rot "$u Kameras mit absurdem Standort (> 3 km) oder Brennweite (> 10 x Bildbreite) - als .unplausibel beiseitelegen"
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F
