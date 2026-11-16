@@ -868,6 +868,12 @@
    "wer": "Nutzer (3D-Seite V39, 07:11)",
    "text": "Dritter Bogen (Laube Nordost): 'das musst du noch durchbrechen, das ist keine Wand, das ist ein Tor'. Bisher 4 m tiefe Halle mit Rueckwand (ANNAHME).",
    "naechster_schritt": "Durchgang bis zum kleinen Rundbogen der Suedseite verbinden (Weg im Inneren ANNAHME: gerader Gang vom Suedbogen nach Osten bis in die Halle)"
+  },
+  {
+   "datum": "2026-11-16",
+   "wer": "Claude (Modell neben Foto 113033)",
+   "text": "Am Nordgiebel fehlen die Firststange (1,36 m, M-113033-008) und der Kamin rechts hinter dem Ortgang (Haube 0,57 x 0,58 m, Oberkante z 24,78 bei angenommener Ebene x=3,0; M-113033-009/-010).",
+   "naechster_schritt": "bauen; Kamintiefe hinter dem Giebel ist ANNAHME"
   }
  ]
 }

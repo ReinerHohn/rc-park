@@ -135,11 +135,21 @@
   "seite_name": "wand"
  },
  {
+  "seite": "dach",
+  "element": "Firststange und Kamin am Nordgiebel",
+  "quelle": "foto_mass.py Foto 113033 (M-113033-008..-010)",
+  "stange": 1.36,
+  "kamin_oben": 24.78,
+  "haube_breite": 0.57,
+  "hinweis": "ANNAHME: Kamin 2 m hinter der Giebelflaeche (Ebene x=3,0 - nur ein Foto), Schaft 0,44 m, Stangenstaerke auf Druckminimum",
+  "seite_name": "dach"
+ },
+ {
   "seite": "wand",
   "element": "Gebaeude hohl, 37 Fenster durchgebrochen",
   "quelle": "Nutzerauftrag 16.11.2026; Fensterrechtecke wie oben gemessen",
   "fenster_offen": 37,
-  "hohlraum_m3": 3248.7,
+  "hohlraum_m3": 3248.9,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026: minimal duenn, stabil, schnell druckbar): 1,2 mm im Druck (3 Bahnen einer 0,4-mm-Duese; WAND_MM) = 0,10 m bei 1:87; Innenraum ohne Decken/Zwischenwaende; Rahmen, Pfosten und Kaempfer bleiben als Staebe in der Oeffnung",
   "seite_name": "wand"
  }

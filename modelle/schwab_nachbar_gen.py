@@ -119,6 +119,11 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
           nord_scheitel=6.35, nord_kaempfer=3.90, sued_halbe_breite=3.15, sued_scheitel=6.39, sued_kaempfer=4.05,
           hinweis="ANNAHME: Boegen symmetrisch (in den Fotos ist nur die turmseitige Haelfte zu sehen; Spannweite passt zum Netz), Kreisboegen, Durchfahrt gerade von Nord nach Sued")
     koerper = koerper - WN.kasten(-1.95, -1.25, 10.9, 30.0, 3.3, 3.75)     # 9 x 22 cm duenner Pfahl (z 11-18) am Rand des Laser-Hoehenfelds neben dem Giebelfreischnitt: Rest ohne Vorbild, weg
+    # ---- 16.11.2026 FIRSTSTANGE und KAMIN am Nordgiebel: M-113033-008..-010 (Foto 113033) ----
+    koerper = koerper + M.cylinder(26.68 - 25.2, 0.04, 0.02, 12).translate((4.95, 2.72, 25.2)) + M.sphere(0.07, 12).translate((4.95, 2.72, 25.75))      # Stange 1,36 m ueber dem First, Knoten auf ~1/3 (Augenschein)
+    koerper = koerper + M.cube((0.44, 0.44, 24.25 - 22.3)).translate((3.0 - 0.22, 4.2 - 0.22, 22.3)) + M.hull_points([[3.0 + sx * r_, 4.2 + sy * r_, z_] for sx in (-1, 1) for sy in (-1, 1) for r_, z_ in ((0.285, 24.2), (0.285, 24.55), (0.2, 24.78))])
+    beleg("dach", "Firststange und Kamin am Nordgiebel", "foto_mass.py Foto 113033 (M-113033-008..-010)", stange=1.36, kamin_oben=24.78, haube_breite=0.57,
+          hinweis="ANNAHME: Kamin 2 m hinter der Giebelflaeche (Ebene x=3,0 - nur ein Foto), Schaft 0,44 m, Stangenstaerke auf Druckminimum")
     # ---- 16.11.2026 FENSTER ALS ECHTE LOECHER (Nutzer: "alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden") ----
     if os.environ.get("OHNE_HOHL") != "1":
         from bauteile import aushoehlen

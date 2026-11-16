@@ -1,0 +1,32 @@
+{
+ "id": "M-113033-010",
+ "foto": "113033",
+ "kamera": "K-eigen__IMG_20261106_113033",
+ "ebene": "x=3.0",
+ "name": "Kamin am Nordgiebel: Haube oben - Haube unten (Ebene x=3,0 ANNAHME)",
+ "mess_px": [
+  1357.0,
+  848.0,
+  1357.0,
+  909.0
+ ],
+ "P1": [
+  3.0,
+  4.197,
+  24.777
+ ],
+ "P2": [
+  3.0,
+  4.216,
+  24.196
+ ],
+ "dz": -0.581,
+ "dy": 0.019,
+ "dx": 0.0,
+ "abstand": 0.581,
+ "z1": 24.777,
+ "z2": 24.196,
+ "unsicherheit_rel": 0.0039,
+ "unsicherheit_m": 0.041,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113033 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=3.0 (+-0.3 m)"
+}

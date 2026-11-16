@@ -1,0 +1,32 @@
+{
+ "id": "M-113033-008",
+ "foto": "113033",
+ "kamera": "K-eigen__IMG_20261106_113033",
+ "ebene": "x=5.12",
+ "name": "Nordgiebel: Firstspitze (Stange) Fuss - Spitze",
+ "mess_px": [
+  1179.0,
+  709.0,
+  1196.0,
+  564.0
+ ],
+ "P1": [
+  5.12,
+  2.717,
+  25.332
+ ],
+ "P2": [
+  5.12,
+  2.823,
+  26.684
+ ],
+ "dz": 1.352,
+ "dy": 0.106,
+ "dx": 0.0,
+ "abstand": 1.356,
+ "z1": 25.332,
+ "z2": 26.684,
+ "unsicherheit_rel": 0.004,
+ "unsicherheit_m": 0.044,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113033 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=5.12 (+-0.3 m)"
+}
