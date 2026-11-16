@@ -57,7 +57,7 @@ def anbauen(koerper, objekt_json, tiefe=0.4):
         if not os.path.exists(f) or w.get("aus"): continue
         Z = np.load(f); n = Z["n"]; hu = koerper + koerper.translate((0.8 * n[0], 0.8 * n[1], 0.0)); fm = os.path.join(od, "relief", w["name"] + "_misch.npz"); tf = [tuple(w["fein_feld"])] if w.get("fein_feld") and os.path.exists(fm) else []
         ff = os.path.join(od, "relief", w["name"] + "_foto.npz"); hat_foto = bool(w.get("foto_feld")) and os.path.exists(ff)
-        koerper = koerper + (relief_koerper(f, tiefe=tiefe, trend=True, tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else [])) ^ hu)
+        if not w.get("nur_foto"): koerper = koerper + (relief_koerper(f, tiefe=tiefe, trend=True, tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else [])) ^ hu)
         if hat_foto: koerper = koerper + (relief_koerper(ff, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu); belege.append(dict(seite="wand", element=f"Quader mit Fugen aus dem Foto, Fassade {w['name']} ab z {w['foto_feld'][2]:.0f} m", quelle="tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)", steine=w.get("foto_steine"), hinweis="Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen"))
         if tf: koerper = koerper + (relief_koerper(fm, tiefe=tiefe, trend=True) ^ hu)                 # lokale Feinrechnung (tools/tiefe_lokal.py + relief_mischen.py) vor dem groben Relief
         belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} (Fassaden-Kette)", quelle="Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (" + ", ".join(w.get("fotos", [])[:3]) + "); Loecher generiert",
@@ -78,20 +78,29 @@ def main():
         fotos, bew = fotos_fuer_wand(od, A, Bp, n, 0.0, w["z1"]); w["fotos"] = fotos; w["laenge"] = round(L, 2); print(f"WAND {w['name']}: {L:.1f} m, z bis {w['z1']:.1f}, Fotos {[(f[-12:], round(s_)) for s_, _, f in bew]}", flush=True)
         r0 = os.path.join(rd, w["name"] + ".npz"); r1 = os.path.join(rd, w["name"] + "_putz.npz"); r2 = os.path.join(rd, w["name"] + "_voll.npz")
         rc = lauf([os.path.join(HIER, "relief_einsatz.py"), a.netz, r0, "--ecke_a", *map(str, w["a"]), "--ecke_b", *map(str, w["b"]), "--aussen", *map(str, w["aussen"]), "--feld", "0.1", str(round(L - 0.1, 2)), "0", str(w["z1"]), "--px", str(a.px), "--klemme", "-0.10", "0.15"])
-        if rc or not os.path.exists(r0): w["aus"] = "kein Relief"; continue
+        leer = bool(rc) or not os.path.exists(r0) or float(np.load(r0)["lochanteil"]) > 0.6
+        if leer:                                                          # 16.11.2026 (Haertetest ober_tvdr): Netz deckt die Wand nicht -> frueher AUS. Jetzt: leeres Relief als Traeger, Putz und Steine NUR aus Fotos (Stufe 5c ab Boden)
+            w["netz"] = "deckt die Wand nicht"; print("    Netz deckt die Wand nicht - nur Fotostufe", flush=True)
+            if not a.fotosteine or not fotos or lauf([os.path.join(HIER, "relief_einsatz.py"), "-", r0, "--ecke_a", *map(str, w["a"]), "--ecke_b", *map(str, w["b"]), "--aussen", *map(str, w["aussen"]), "--feld", "0.1", str(round(L - 0.1, 2)), "0", str(w["z1"]), "--px", str(a.px)]) != 0: w["aus"] = "kein Netz, keine Fotostufe"; continue
         Z = np.load(r0); w["loch"] = round(float(Z["lochanteil"]), 3); w["oeffnung"] = round(float(Z["oeffnung"].mean()), 3)
-        if w["loch"] > 0.6: w["aus"] = "Netz deckt die Wand nicht (Loecher > 60 %)"; print("    AUS:", w["aus"]); continue
         quelle = r0
         if fotos and lauf([os.path.join(HIER, "relief_putz.py"), r0, r1, a.objekt, *fotos, "--feld", "0", str(L), "0", str(w["z1"])] + (["--massstab", *a.massstab] if a.massstab else [])) == 0:
             quelle = r1; w["putz"] = round(float(np.load(r1)["putz"].mean()), 3)
-        if lauf([os.path.join(HIER, "steine_generieren.py"), quelle, r2, "--max_loch_m2", "1.5"]) == 0: w["generiert"] = round(float(np.load(r2)["generiert_anteil"]), 3)
+        if leer:
+            if quelle != r1: w["aus"] = "kein Netz und kein Putz erkannt (Fotofarbe) - nichts zu tun"; print("    AUS:", w["aus"]); continue
+            import shutil; shutil.copy(r1, r2); w["generiert"] = 0.0
+        elif lauf([os.path.join(HIER, "steine_generieren.py"), quelle, r2, "--max_loch_m2", "1.5"]) == 0: w["generiert"] = round(float(np.load(r2)["generiert_anteil"]), 3)
         else: w["aus"] = "steine_generieren fehlgeschlagen"; continue
-        if a.fotosteine and "putz" in np.load(quelle).files and w["z1"] > a.foto_ab + 2.0:      # 16.11.2026 Stufe 5c: oberhalb --foto_ab (Strassenfotos zu flach fuer brauchbares Scan-Relief) Quader/Gewaende/Baender
+        fab = 0.0 if leer else a.foto_ab
+        if a.fotosteine and "putz" in np.load(quelle).files and w["z1"] > fab + 2.0:      # 16.11.2026 Stufe 5c: oberhalb --foto_ab (Strassenfotos zu flach fuer brauchbares Scan-Relief) Quader/Gewaende/Baender
             rfo = os.path.join(rd, w["name"] + "_foto.npz"); stl_ = os.path.join(os.path.dirname(os.path.dirname(od)), json.load(open(a.objekt))["stl"])                                 # mit Fugen aus dem BESTEN Foto, direkt auf der Wandebene, Verdeckung gegen das Modell + Gegenfoto (Baeume)
             if os.path.exists(stl_) and lauf([os.path.join(HIER, "steine_aus_foto.py"), quelle, rfo, "-", "0", "-", "--foto", "auto", "--objekt", a.objekt, "--stl", stl_ + ("," + a.nachbar_stl if a.nachbar_stl else ""),
-                                              "--feld", "0.1", str(round(L - 0.1, 2)), str(a.foto_ab), str(w["z1"]), "--px", "0.03", "--nah", "0"] + (["--massstab", *a.massstab] if a.massstab else [])) == 0 and os.path.exists(rfo):
-                w["foto_feld"] = [0.0, round(L, 2), a.foto_ab, round(float(w["z1"]), 2)]; w["foto_steine"] = int(np.load(rfo)["steine"])
-        if a.fein:                                                        # Steinzone = Zeilen mit >= 30 % echtem Nicht-Putz-Relief; zusammenhaengender Block von unten, hoechstens 12 m
+                                              "--feld", "0.1", str(round(L - 0.1, 2)), str(fab), str(w["z1"]), "--px", "0.03", "--nah", "0"] + (["--massstab", *a.massstab] if a.massstab else [])) == 0 and os.path.exists(rfo):
+                w["foto_feld"] = [0.0, round(L, 2), fab, round(float(w["z1"]), 2)]; w["foto_steine"] = int(np.load(rfo)["steine"])
+        if leer:
+            if not w.get("foto_feld"): w["aus"] = "kein Netz und kein brauchbares Foto fuer Steine"; print("    AUS:", w["aus"]); continue
+            w["nur_foto"] = True                                          # anbauen(): nur die Fotoplatte, keine leere Grundplatte (gab 193 Splitterkoerper am Haertetest)
+        if a.fein and not leer:                                           # Steinzone = Zeilen mit >= 30 % echtem Nicht-Putz-Relief; zusammenhaengender Block von unten, hoechstens 12 m
             Zv = np.load(r2); rel_ = Zv["rel"]; H_ = rel_.shape[0]; pz = Zv["putz"] if "putz" in Zv.files else np.zeros_like(rel_, bool); pz = np.vstack([pz, np.zeros((H_ - pz.shape[0], pz.shape[1]), bool)]) if pz.shape[0] < H_ else pz
             stein = ((rel_ != 0) & ~pz).mean(1) >= 0.3; k_ = H_
             while k_ > 0 and (stein[k_ - 1] or (H_ - k_) * a.px < 1.5): k_ -= 1

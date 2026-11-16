@@ -1,0 +1,31 @@
+{
+ "stl": "/home/oem/git/rc-park/modelle/stl/ober_tvdr_1-87.stl",
+ "werte": {
+  "hoehe": 16.940005554199217,
+  "wasserdicht": 1.0,
+  "koerper": 1.0
+ },
+ "pruefungen": [
+  {
+   "name": "Wasserdicht (1=ja)",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Anzahl getrennte Koerper",
+   "wert": 1.0,
+   "soll": [
+    1,
+    1
+   ],
+   "ok": true,
+   "status": "ok"
+  }
+ ],
+ "bestanden": true
+}

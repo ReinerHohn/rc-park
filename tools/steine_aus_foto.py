@@ -56,9 +56,9 @@ def main():
                 R_ = cv2.Rodrigues(np.array(K_["rvec"]))[0]; C_ = -R_.T @ np.array(K_["t"]); v_ = C_ - Pm_; di_ = np.linalg.norm(v_); cw_ = float(v_[:2] @ nv_[:2] / di_)
                 if cw_ >= 0.3 and di_ <= 250: kand.append((di_ / (K_["f_px"] * cw_), n_, K_))
             for mpp_, n_, K_ in sorted(kand, key=lambda q_: q_[0])[:12]:
-                ok0 = FE.sichtbar(mm_, K_, G_, rk_, tol=0.6)[0]; rang.append((float(ok0.mean()) / mpp_, n_, float(ok0.mean()), mpp_))
+                ok0 = FE.sichtbar(mm_, K_, G_, rk_, tol=0.6)[0]; rang.append((float(ok0.mean()) ** 2 / max(mpp_, 0.005), n_, float(ok0.mean()), mpp_))      # Abdeckung zaehlt quadratisch, Aufloesung nur bis 0,5 cm/px: sonst gewinnt eine Nahaufnahme, die 15 % der Wand zeigt (Haertetest ober_tvdr)
             rang.sort(key=lambda q_: -q_[0])
-            if not rang or rang[0][2] < 0.1: print("kein vertrauenswuerdiges Foto sieht dieses Feld"); return 3
+            if not rang or rang[0][2] < 0.3: print("kein vertrauenswuerdiges Foto sieht mindestens 30 % dieses Feldes"); return 3
             a.foto = rang[0][1]; print("Fotowahl:", [(q_[1][-22:], f"{q_[2] * 100:.0f} %", f"{q_[3] * 100:.1f} cm/px") for q_ in rang[:4]])
         Kc = FE.kamera(os.path.join(mp_, "K-" + a.foto + ".json")); ok_, mx_, my_, zc_ = FE.sichtbar(mm_, Kc, P_, rk_, tol=0.6)
         if a.stl and a.rand > 0: ok_ = cv2.erode(ok_.reshape(U.shape).astype(np.uint8), np.ones((2 * int(a.rand / c) + 1,) * 2, np.uint8)).astype(bool).ravel()

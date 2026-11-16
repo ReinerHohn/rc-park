@@ -1,0 +1,61 @@
+{
+ "name": "Oberlinden Haus Tvdr (Ketten-Haertetest)",
+ "ort": "Freiburg im Breisgau",
+ "generator": "SCALE=87 MINMM=0.8 ~/.venvs/rcpark/bin/python modelle/ober_tvdr_gen.py",
+ "stl": "modelle/stl/ober_tvdr_1-87.stl",
+ "stl_massstab": 87,
+ "stl_einheit_mm": true,
+ "zentrierung": "achse",
+ "masstabelle": "modelle/ober_tvdr/masstabelle.json",
+ "elemente": "modelle/ober_tvdr/elemente.json",
+ "audit": "modelle/ober_tvdr/audit",
+ "ueberwacht": [
+  "modelle/ober_tvdr_gen.py",
+  "modelle/stl/ober_tvdr_1-87.stl",
+  "modelle/ober_tvdr/masstabelle.json",
+  "modelle/ober_tvdr/elemente.json"
+ ],
+ "fotos_dir": "daten/schwab_v3/fotos",
+ "seiten_konvention": {
+  "+x": "Nord",
+  "-x": "Sued",
+  "+y": "West",
+  "-y": "Ost",
+  "quelle": "rahmen xhat_utm (-0,24/0,97) = Nord 14 Grad West, yhat_utm (-0,97/-0,24) = West (2026-11-14)"
+ },
+ "fotos": {},
+ "quellen": {
+  "dokument": "OFFEN",
+  "lod2": "OFFEN",
+  "dom1_dgm1": "OFFEN",
+  "dop20": "OFFEN",
+  "fotos": "OFFEN",
+  "laser_punkte": "n/a (kostenpflichtig)"
+ },
+ "rahmen": {
+  "mitte_utm": [
+   414525.9,
+   5316153.75
+  ],
+  "xhat_utm": [
+   -0.2426,
+   0.9701
+  ],
+  "yhat_utm": [
+   -0.9701,
+   -0.2426
+  ],
+  "gelaende": 282.16,
+  "quelle": "Koordinatenrahmen bleibt (urspruenglich aus LOD2 Tvdv abgeleitet, alle Wolken-npy liegen darin); Objekt ist PLcp (siehe lod2.hinweis)"
+ },
+ "lod2": {
+  "gml": "/media/oem/scan/rc-park_daten/_geo/LoD2_32_413_5316_2_bw/LoD2_32_414_5316_1_BW.gml",
+  "id": "DEBW_0010007Tvdr",
+  "hinweis": "16.11.2026 Haertetest der Kette an einem dritten, einfachen Gebaeude; Rahmen/Kameras/Wolke/Netz von schwab_v3 uebernommen (SfM NICHT neu gerechnet)"
+ },
+ "koordinate_utm": [
+  414505.5,
+  5316149.2
+ ],
+ "hoehen_tor": true
+}

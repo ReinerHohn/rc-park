@@ -282,3 +282,19 @@ Nachtrag 16.11. ~15:00 - IN DER KETTE:
 - `bauteile.spitzbogen`: gedrueckter Bogen (Stich < halbe Breite) = zwei Kreisboegen mit Mittelpunkten 0,3 x halbe Breite unter der Kaempferlinie. Dritte Fassung an einem Tag:
   waagerechter Sturz (falsch) -> Vier-Zentren (Nutzer: "spitzes Fehlerding") -> diese; am Bild neben Foto 217 passt die Form. Lehre: Bogenform IMMER am Bild neben dem Foto pruefen, bevor veroeffentlicht wird.
 - Bogensteine der Tore werden NICHT generiert (Nutzerregel 15.11.: nichts Kuenstliches im Tor; die echten stehen im Scan-Relief).
+
+## HAERTETEST 16.11.2026 nachmittags: drittes Gebaeude `ober_tvdr` (LoD2 DEBW_0010007Tvdr, Haeuserzeile Oberlinden noerdlich des Tors)
+NICHT von null: Rahmen, Kameras (630 K-Dateien), Wolke und Netz von schwab_v3 uebernommen; SfM/dichte Wolke nicht neu (Platte 10 GB frei, Laufzeit Stunden). Stufen von Hand in Kettenreihenfolge:
+objekt_anlegen -> dach_vermessen -> bauen -> fassaden_kette --fotosteine -> fassade_ortho/parsing/fein -> fenster_aus_parsing -> bauen (mit aushoehlen) -> modell_neben_foto.
+ERGEBNIS: Abnahme gruen; LoD2-Koerper sitzt im Foto 113056 an der richtigen Stelle; an der einen gut gesehenen Fassade (rotes Haus, f02, 9 m) schneidet die Automatik 6 Fenster
+(5 echte + Schaufenster; eines fehlt hinter einem Fahrdraht-Artefakt), im Bild neben Foto 113148 an passender Stelle. Kein Handmass.
+GEFUNDENE FEHLER (alle behoben, ausser markiert):
+1. fassaden_kette brauchte dach.json (Stufe dach vorher) - Reihenfolge, kein Fehler.
+2. Netz deckt das Gebaeude nicht -> alle Waende "AUS", Fotostufe lief nie. Jetzt: leeres Relief als Traeger, Putz/Steine nur aus Fotos; ohne brauchbares Foto AUS; anbauen() setzt bei solchen Waenden nur die Fotoplatte (sonst 193 Splitterkoerper).
+3. steine_aus_foto --foto auto waehlte eine Nahaufnahme des Schwabentors, die 15 % der Wand streifte (Wertung sichtbar/Aufloesung). Jetzt sichtbar^2 / Aufloesung (gedeckelt 0,5 cm) und mindestens 30 % sichtbar.
+4. fassade_ortho fand 0 Fotos (verlangt buendel_tor in den K-Dateien) -> Rueckfall auf alle vertrauenswuerdigen Messkameras.
+5. fenster_aus_parsing: feste Schwelle 3 Stimmen warf bei nur 3 Fotos fast alle Fenster weg (2 von 11) -> anteilige Schwelle (>= 2 und 60 % der sehenden Fotos); fenster_aus_json entsprechend.
+6. OFFEN: die Generator-VORLAGE (objekt_anlegen) schreibt ihr STL selbst ohne Kruemelfilter; eine Fotoplatte (w00) gab 44 Zwei-Flaechen-Kruemel und wurde von Hand ausgeschlossen.
+7. OFFEN: relief_einsatz.py stuerzt bei leerem Netzausschnitt ab (IndexError) statt sauber "leer" zu melden (Kette faengt es ab).
+8. OFFEN: nur 1 von 13 Fassaden hat genug Fotos (>= 3 mit >= 96 px); Daecher, Rueckseiten, Laeden unten sind nicht bearbeitet; Dach = Walm-Fit aus DOM1 (RMS 1,06 m), nicht aus Fotos.
+BEWERTUNG: fuer ein gewoehnliches Haus liefert die Kette jetzt ohne Handmass Koerper + Fenster einer gut fotografierten Fassade. Der Engpass ist die Fotoabdeckung je Fassade, nicht mehr die Software der Fensterstufe.

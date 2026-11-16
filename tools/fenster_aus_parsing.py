@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# 16.11.2026 (Haertetest ober_tvdr): Stimmenschwelle = min(--stimmen, mindestens 2 und 60 % der Fotos, die die Stelle sehen) - mit nur 3 Fotos fielen sonst alle 2-von-3-Fenster weg.
 """fenster_aus_parsing.py <ortho-ordner> [--aus fenster.json] [--stimmen 3] - aus den OWLv2-Kaesten (fassade_parsing.py) BAUBARE Fenster machen.
 
 Der Erkenner findet je Fensterfluegel/Oberlicht einen eigenen Kasten (gut, 15.11.2026 Nordgiebel Nachbarhaus: Lage auf ~5 cm) und daneben Fehltreffer
@@ -30,7 +31,7 @@ def main():
         if F is None or im is None: continue
         r = F["raster"]; zl = r["zelle"]; hv = cv2.cvtColor(im, cv2.COLOR_BGR2HSV).astype(np.float32) / 255.0
         for e in X["elemente"]:
-            if e["klasse"] != "fenster" or e.get("stimmen", 0) < a.stimmen: continue
+            if e["klasse"] != "fenster" or e.get("stimmen", 0) < min(a.stimmen, max(2, int(np.ceil(0.6 * e.get("gesehen", a.stimmen))))): continue
             du = (e["u1"] - e["u0"]) * 0.2; dz = (e["z1"] - e["z0"]) * 0.2; c = hv[max(int((r["z1"] - e["z1"] + dz) / zl), 0):int((r["z1"] - e["z0"] - dz) / zl), max(int((e["u0"] + du - r["u0"]) / zl), 0):int((e["u1"] - du - r["u0"]) / zl)]
             if c.size < 60 or ((c[..., 2] > 0.85) & (c[..., 1] < 0.12)).mean() >= 0.08: continue
             samm.setdefault(seite(F), []).append((float(c[..., 2].mean()), e.get("stimmen", 1) * (e["u1"] - e["u0"]) * (e["z1"] - e["z0"])))
@@ -45,7 +46,7 @@ def main():
             return int((e["u0"] + du - r["u0"]) / zl), int((e["u1"] - du - r["u0"]) / zl), int((r["z1"] - e["z1"] + dz) / zl), int((r["z1"] - e["z0"] - dz) / zl)
         K = []
         for e in X["elemente"]:
-            if e["klasse"] != "fenster" or e.get("stimmen", 0) < a.stimmen or e["u1"] - e["u0"] < a.min_b or e["z1"] - e["z0"] < a.min_b: continue
+            if e["klasse"] != "fenster" or e.get("stimmen", 0) < min(a.stimmen, max(2, int(np.ceil(0.6 * e.get("gesehen", a.stimmen))))) or e["u1"] - e["u0"] < a.min_b or e["z1"] - e["z0"] < a.min_b: continue
             x0, x1, y0, y1 = px(e); w = weiss[max(y0, 0):y1, max(x0, 0):x1]
             if w.size < 20 or leer[max(y0, 0):y1, max(x0, 0):x1].mean() > 0.3: continue
             c = hsv[max(y0, 0):y1, max(x0, 0):x1]; hell = float(((c[..., 2] > 0.85) & (c[..., 1] < 0.12)).mean()); dunkel = float((c[..., 2] < 0.3).mean()); sd = float(c[..., 2].std())

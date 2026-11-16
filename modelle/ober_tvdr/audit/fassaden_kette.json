@@ -1,0 +1,285 @@
+{
+ "netz": "/media/oem/scan/rc-park_daten/schwab_v3/sfm_neu/openmvs/mesh_modell_ausschnitt.npz",
+ "waende": [
+  {
+   "name": "w00",
+   "a": [
+    14.349144853379306,
+    42.33205874078249
+   ],
+   "b": [
+    19.348897813921404,
+    44.35955304271798
+   ],
+   "aussen": [
+    13.091066996883995,
+    52.61283234055132
+   ],
+   "z1": 13.768110275268555,
+   "fotos": [
+    "commons_orig2__155"
+   ],
+   "laenge": 5.4,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "putz": 0.62,
+   "generiert": 0.0,
+   "foto_feld": [
+    0.0,
+    5.4,
+    0.0,
+    13.77
+   ],
+   "foto_steine": 142,
+   "nur_foto": true,
+   "aus": "Fotoplatte unbrauchbar (Splitter; von Hand ausgeschlossen 16.11.)"
+  },
+  {
+   "name": "w01",
+   "a": [
+    19.939048571465005,
+    43.088896432743496
+   ],
+   "b": [
+    22.103961794893728,
+    38.47272677235246
+   ],
+   "aussen": [
+    30.075277541239096,
+    45.02689286512804
+   ],
+   "z1": 13.768110275268555,
+   "fotos": [
+    "dl_commons__000_Baden-Württemberg_Freiburg_im_Breisgau_Schwabentor_01",
+    "dl_commons__023_Schwabentor_Freiburg_2416",
+    "dl_commons__050_Freiburg-Schwabentor-08-2007-gje"
+   ],
+   "laenge": 5.1,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "aus": "kein Netz und kein Putz erkannt (Fotofarbe) - nichts zu tun"
+  },
+  {
+   "name": "w02",
+   "a": [
+    24.10542338918593,
+    39.22181709117139
+   ],
+   "b": [
+    25.482778364014397,
+    35.373619229713036
+   ],
+   "aussen": [
+    34.209193986791306,
+    40.66758785027166
+   ],
+   "z1": 13.768110275268555,
+   "fotos": [
+    "dl_commons__000_Baden-Württemberg_Freiburg_im_Breisgau_Schwabentor_01",
+    "dl_commons__023_Schwabentor_Freiburg_2416",
+    "online2_orig__od_20"
+   ],
+   "laenge": 4.09,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "aus": "kein Netz und kein Putz erkannt (Fotofarbe) - nichts zu tun"
+  },
+  {
+   "name": "w03",
+   "a": [
+    25.48318876486681,
+    35.37236997160962
+   ],
+   "b": [
+    26.94089479510554,
+    30.50707803780331
+   ],
+   "aussen": [
+    35.79132364028676,
+    35.80980397587732
+   ],
+   "z1": 13.768110275268555,
+   "fotos": [
+    "dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025",
+    "dl_commons__023_Schwabentor_Freiburg_2416",
+    "online2_orig__od_20"
+   ],
+   "laenge": 5.08,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "putz": 0.033,
+   "generiert": 0.0,
+   "aus": "kein Netz und kein brauchbares Foto fuer Steine"
+  },
+  {
+   "name": "w04",
+   "a": [
+    27.343219388999973,
+    30.567795700850805
+   ],
+   "b": [
+    30.248783778109537,
+    14.618186913832286
+   ],
+   "aussen": [
+    38.634088312383405,
+    24.385210466943853
+   ],
+   "z1": 13.768110275268555,
+   "fotos": [
+    "dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025",
+    "dl_openverse__ov_0000",
+    "eigen__IMG_20261106_113056"
+   ],
+   "laenge": 16.21,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "putz": 0.385,
+   "generiert": 0.0,
+   "aus": "kein Netz und kein brauchbares Foto fuer Steine"
+  },
+  {
+   "name": "w05",
+   "a": [
+    30.247797650879658,
+    14.617099362688705
+   ],
+   "b": [
+    22.312186362740327,
+    15.272901958433149
+   ],
+   "aussen": [
+    25.456394941433633,
+    4.978973976174444
+   ],
+   "z1": 13.768110275268555,
+   "fotos": [
+    "eigen__IMG_20261106_113201",
+    "video_frames_LMS3Va6psfY__vf_118",
+    "video_frames_LMS3Va6psfY__vf_119"
+   ],
+   "laenge": 7.96,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "putz": 0.131,
+   "generiert": 0.0,
+   "aus": "kein Netz und kein brauchbares Foto fuer Steine"
+  },
+  {
+   "name": "w06",
+   "a": [
+    22.310704849858887,
+    15.274153236790436
+   ],
+   "b": [
+    18.881192092843378,
+    28.674249437817224
+   ],
+   "aussen": [
+    10.908195952138328,
+    19.49479593953485
+   ],
+   "z1": 13.768110275268555,
+   "fotos": [
+    "eigen__IMG_20261106_113946",
+    "eigen__IMG_20261106_113944",
+    "dl_commons__030_Schwabentor_Freiburg_im_Breisgau_jm52907"
+   ],
+   "laenge": 13.83,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "putz": 0.574,
+   "generiert": 0.0,
+   "aus": "kein Netz und kein brauchbares Foto fuer Steine"
+  },
+  {
+   "name": "w07",
+   "a": [
+    18.88078474492753,
+    28.675744250296827
+   ],
+   "b": [
+    17.706400848209704,
+    32.73620867368369
+   ],
+   "aussen": [
+    8.687309860525248,
+    27.927608568301235
+   ],
+   "z1": 13.768110275268555,
+   "fotos": [
+    "dl_commons__025_Schwabentor_Freiburg_im_Breisgau_jm04051",
+    "eigen__IMG_20261106_113944",
+    "dl_commons__030_Schwabentor_Freiburg_im_Breisgau_jm52907"
+   ],
+   "laenge": 4.23,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "putz": 0.515,
+   "generiert": 0.0,
+   "aus": "kein Netz und kein brauchbares Foto fuer Steine"
+  },
+  {
+   "name": "w08",
+   "a": [
+    17.478468316782273,
+    32.71706089513232
+   ],
+   "b": [
+    15.973677292358788,
+    35.71964856338768
+   ],
+   "aussen": [
+    7.785969879915299,
+    29.737890501462733
+   ],
+   "z1": 13.768110275268555,
+   "fotos": [
+    "dl_commons__030_Schwabentor_Freiburg_im_Breisgau_jm52907",
+    "eigen__IMG_20261106_113851",
+    "eigen__IMG_20261106_113907"
+   ],
+   "laenge": 3.36,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "aus": "kein Netz und kein Putz erkannt (Fotofarbe) - nichts zu tun"
+  },
+  {
+   "name": "w09",
+   "a": [
+    15.972490636372166,
+    35.72242325491427
+   ],
+   "b": [
+    13.704425982147509,
+    42.059809728155486
+   ],
+   "aussen": [
+    5.423258731495901,
+    35.52154427671683
+   ],
+   "z1": 13.768110275268555,
+   "fotos": [
+    "eigen__IMG_20261106_113907",
+    "eigen__IMG_20261106_113830",
+    "eigen__IMG_20261106_113741"
+   ],
+   "laenge": 6.73,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "putz": 0.133,
+   "generiert": 0.0,
+   "aus": "kein Netz und kein brauchbares Foto fuer Steine"
+  }
+ ]
+}

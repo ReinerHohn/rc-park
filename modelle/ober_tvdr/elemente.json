@@ -1,0 +1,43 @@
+[
+ {
+  "seite": "dach",
+  "element": "Dach Teil 0 (walm_a)",
+  "quelle": "Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_0010007Tvdr-Grundriss Teil 0",
+  "first": 13.77,
+  "neigung_grad": 31.5,
+  "rms_m": 1.06,
+  "eindeutig": true,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Spitze Teil 0",
+  "quelle": "DOM1 26 Pixel bis 16.9 m; Hoehe DOM1-max",
+  "hoehe": 16.94,
+  "hinweis": "ANNAHME: Pyramide Grundseite 5.1 m (sqrt Pixel), Form nicht gemessen",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "Grundriss Teil 0",
+  "quelle": "LoD2 DEBW_0010007Tvdr GroundSurface 0",
+  "breite_u": 16.55,
+  "tiefe_v": 29.74,
+  "flaeche_m2": 235.8,
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "6 Fenster Fassade f02 (automatisch erkannt)",
+  "quelle": "OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__IMG_20261106_113149, commons_orig2__051, eigen__IMG_20261106_113201",
+  "hinweis": "ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Gebaeude hohl, 6 Fenster durchgebrochen",
+  "quelle": "bauteile.aushoehlen auf den automatisch erkannten Fenstern",
+  "hinweis": "Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende",
+  "seite_name": "wand"
+ }
+]

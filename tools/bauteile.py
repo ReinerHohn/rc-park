@@ -166,7 +166,7 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
     for fid, F in json.load(open(datei)).items():
         o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); n_ = 0
         for f in F["fenster"]:
-            if f.get("stimmen_min", 0) < min_stimmen: continue
+            if f.get("stimmen_min", 0) < min(min_stimmen, 2): continue          # Stimmen prueft schon fenster_aus_parsing.py (anteilig); hier nur noch Einzelstimmen aussieben
             sonde = W.kasten(f["u0"], f["u1"], f["z0"], f["z1"], 0.03, 0.08)
             if (koerper ^ sonde).volume() > 0.2 * sonde.volume(): continue
             ab, zu = W.fenster(f["u0"], f["u1"], f["z0"], f["z1"], 0.0, tiefe=tiefe, teiler=f.get("teiler", ()), kaempfer=f.get("kaempfer"), sprossen=f.get("sprossen", ())); koerper = koerper - ab + zu; n_ += 1

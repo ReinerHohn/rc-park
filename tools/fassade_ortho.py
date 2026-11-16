@@ -127,6 +127,9 @@ def main(argv=None):
     if a.nur: fas = [F_ for F_ in fas if F_["_id"] in set(a.nur.split(","))]
     fotos = a.fotos.split(",") if a.fotos else sorted(os.path.basename(k)[2:-5] for k in glob.glob(os.path.join(od, "messprotokoll", "K-*.json"))
                                                        if json.load(open(k)).get("kamera", {}).get("buendel_tor", {}).get("ok"))
+    if not fotos:                                                         # 16.11.2026 (Haertetest ober_tvdr): Kameras ohne buendel_tor (uebernommen/nachgezogen) -> alle vertrauenswuerdigen Messkameras statt Abbruch mit 0 Fotos
+        def _ok(k_): c_ = json.load(open(k_)).get("kamera"); n_ = os.path.basename(k_)[2:-5]; return isinstance(c_, dict) and "rvec" in c_ and "cx" in c_ and not n_.startswith("video") and (not n_.startswith(("dl_", "neu__")) or c_.get("vertrauen"))
+        fotos = sorted(os.path.basename(k)[2:-5] for k in glob.glob(os.path.join(od, "messprotokoll", "K-*.json")) if _ok(k)); print(f"keine Kamera mit buendel_tor - nehme {len(fotos)} vertrauenswuerdige Messkameras", flush=True)
     m = trimesh.load(a.stl); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0)
     if obj.get("zentrierung", "huelle") == "huelle": sys.exit("zentrierung huelle nicht unterstuetzt (Rahmen der Buendelkameras = Modellrahmen)")
     # Zellraster je Fassade (Modellrahmen)
