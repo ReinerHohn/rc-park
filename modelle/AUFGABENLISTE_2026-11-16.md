@@ -12,7 +12,7 @@ Reihenfolge nach Nutzen. Status hier pflegen (offen / in Arbeit / erledigt + Com
 3. FENSTER-REGELMAESSIGKEIT - ERSTE FASSUNG ERLEDIGT: fenster_aus_parsing.raster_regel (Achsen/Geschosse angleichen, leere Rasterplaetze ergaenzen, markiert 'ergaenzt'); ober_tvdr rote Fassade: 3 x 2 Fenster, eines ergaenzt.
    Dazu Uneinigkeits-Tor (Mosaik-Fassaden) und Loch-Rueckkopplung im Fassadenbild behoben; Stimmenschwelle 50 %. OFFEN: nur an EINER Fassade geprueft; Fensterkaesten enthalten die Steinrahmen (zu breit).
 4. MapAnything (Apache-Gewichte) als Test fuer Tiefe von Vorbauten/Daechern; VRAM pruefen - offen
-5. SCHNELLTEST fuer Werkzeugaenderungen (fester Satz, < 2 min) - offen
+5. SCHNELLTEST - ERLEDIGT: tools/schnelltest.sh (29 s; Syntax, Bauteile wasserdicht, Bogenform, Raster-Regel, Fenster/Mosaik/Fassadenbild an ober_tvdr, Pruefstand, Kamerabestand). Nach JEDER Werkzeugaenderung laufen lassen.
 6. PLATZ (Nutzerentscheidung): groessere Datenplatte oder alte Zwischenstaende loeschen - offen, beim Nutzer
 Weitere blinde Flecken (ohne Reihenfolge): Tor "ist das Quaderwerk?"; Kamerastandort-Plausibilitaet; Einzelfoto ohne Gegenfoto; fassade_tiefe nur 1 von 3 Seiten; Daecher aus Fotos;
 freie Formen; Schwellen nur an einem Bauwerk; gesamtkette.py als EIN Befehl von null; LIMAP (Lizenz pruefen) fuer 3D-Kanten; Kamera gegen Modell-Renderings (MeshLoc-Prinzip) fuer Seiten ohne Referenzfoto.
