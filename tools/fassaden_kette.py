@@ -51,11 +51,12 @@ def anbauen(koerper, objekt_json, tiefe=0.4):
     sys.path.insert(0, HIER); from relief_einsatz import koerper as relief_koerper
     od = os.path.dirname(os.path.abspath(objekt_json)); B = os.path.join(od, "audit", "fassaden_kette.json")
     if not os.path.exists(B): return koerper, []
-    belege = []
+    belege = []; basis = koerper      # 16.11.2026: Huelle je Wand aus dem GRUNDKOERPER, nicht aus dem wachsenden Koerper (sonst wird jede weitere Wand gegen alle frueheren Reliefs geschnitten: schwab_auto, 8 Waende, 13,6 GB -> vom System beendet)
     for w in json.load(open(B))["waende"]:
         f = os.path.join(od, "relief", w["name"] + "_voll.npz")
         if not os.path.exists(f) or w.get("aus"): continue
-        Z = np.load(f); n = Z["n"]; hu = koerper + koerper.translate((0.8 * n[0], 0.8 * n[1], 0.0)); fm = os.path.join(od, "relief", w["name"] + "_misch.npz"); tf = [tuple(w["fein_feld"])] if w.get("fein_feld") and os.path.exists(fm) else []
+        Z = np.load(f); n = Z["n"]; hu = basis + basis.translate((0.8 * n[0], 0.8 * n[1], 0.0)); koerper.num_tri();      # num_tri: Zwischenergebnis ausrechnen, damit der Rechenbaum nicht ueber alle Waende waechst
+        fm = os.path.join(od, "relief", w["name"] + "_misch.npz"); tf = [tuple(w["fein_feld"])] if w.get("fein_feld") and os.path.exists(fm) else []
         ff = os.path.join(od, "relief", w["name"] + "_foto.npz"); hat_foto = bool(w.get("foto_feld")) and os.path.exists(ff)
         if not w.get("nur_foto"): koerper = koerper + (relief_koerper(f, tiefe=tiefe, trend=True, tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else [])) ^ hu)
         if hat_foto: koerper = koerper + (relief_koerper(ff, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu); belege.append(dict(seite="wand", element=f"Quader mit Fugen aus dem Foto, Fassade {w['name']} ab z {w['foto_feld'][2]:.0f} m", quelle="tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)", steine=w.get("foto_steine"), hinweis="Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen"))

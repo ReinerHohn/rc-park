@@ -359,3 +359,13 @@ Nachtrag 16.11. spaet - Kameras sicher, Zwischenspeicher, Kette:
   brauchbar als Hinweis auf Vorbauten/Verdecker und als Mosaik-Warnung (Wandmedian > 40). NOCH KEIN TOR: Fensterrahmen und Quader schlagen zu Recht an; die Fenstererkennung bleibt bei `uneinig_<id>.png`.
 - ZWISCHENSPEICHER gemessen (Turm): unveraenderter Bau 28 s statt 115 s, Speicher 4,1 statt 9,7 GB; `aushoehlen` (80 s) als Funktion uebergeben (`_zw(_hohl, "5_hohl")`), sonst laeuft es trotz Treffer.
   Aenderung an einer Fassade: gespart werden nur ~10 s davor, das Aushoehlen laeuft neu. STL kalt = warm bitgleich; gegenueber dem Stand ohne Zwischenspeicher gleiche Form (Volumen +-1 mm3), andere Dreieckszahl.
+
+Nachtrag 16.11. abends - KETTE AB 'bauen' ALS EIN BEFEHL (Probe schwab_auto): `python3 tools/gesamtkette.py schwab_auto --ziel schwab_auto --ab bauen --bis html` (ueber job_start.sh)
+- Drei Laeufe noetig; gefundene und behobene Kettenfehler: (1) objekt.json `fotos_dir` zeigte auf den Fotoordner der Quelle, die Kameras heissen aber nach dem Sammelordner -> 0 Fotos auf allen Fassaden,
+  IndexError in relief_putz; die Kette setzt fotos_dir jetzt selbst (daten/<ziel>/fotos -> Sammelordner). (2) rc 0 mit leerem Ergebnis galt als Erfolg -> `fenster_ortho_inhalt` (0 Fotos = Fehler), Stufe seiten
+  laeuft dann NICHT (sonst 32 min Download umsonst). (3) Stufe seiten fand sparse/db nicht (liegen unter pipe/sfm/). (4) Generator aus alter Vorlage rief anbauen/fenster_aus_json nicht auf -> `generator_vorlage`-Meldung.
+  (5) `fassaden_kette.anbauen` schnitt jede Wand gegen alle frueheren Reliefs: 13,6 GB, vom System beendet -> Huelle aus dem Grundkoerper + Zwischenergebnis je Wand: 7,2 GB, 96 s.
+  (6) Root-Platte unter 5 GB durch Git-Objekte (118-MB-STL je Commit) -> `tools/git_packs_auslagern.sh --packen`.
+- Laufzeit ab 'fassaden' bis 'html' mit Inhalt: 11 min (ohne Download). Abnahme schwab_auto bestanden.
+- ERGEBNIS ANGESEHEN (audit/seiten.jpg), ehrlich: Nordseite mit Relief (Uhr, Eckquader, Galerie als Abdruck), 2+2 Fenster; Sued/West/Ost fast glatt, KEINE Tordurchfahrten, Dach nur LoD2-Zelt, kein Treppenturm-Detail.
+  Vorbauten-Sweep auf allen 8 Fassaden 'nicht belastbar' (LoD2-Ebene bis 2,5 m neben der Wand). Widerspruch: seiten_luecken meldet 'alle Waende gesehen', foto_auftrag meldet Ostseite 240 m2 ohne Daten (verschiedene Schwellen) - OFFEN.

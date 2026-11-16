@@ -42,5 +42,154 @@
   "tiefe_v": 2.65,
   "flaeche_m2": 6.9,
   "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Quader mit Fugen aus dem Foto, Fassade w00 ab z 10 m",
+  "quelle": "tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)",
+  "steine": 75,
+  "hinweis": "Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w00 (Fassaden-Kette)",
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_114133, eigen__IMG_20261106_114023, eigen__IMG_20261106_114052); Loecher generiert",
+  "generiert_anteil": 0.028,
+  "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Quader mit Fugen aus dem Foto, Fassade w01 ab z 10 m",
+  "quelle": "tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)",
+  "steine": 181,
+  "hinweis": "Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w01 (Fassaden-Kette)",
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113429, eigen__IMG_20261106_113128, eigen__IMG_20261106_113441); Loecher generiert",
+  "generiert_anteil": 0.184,
+  "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Quader mit Fugen aus dem Foto, Fassade w02 ab z 10 m",
+  "quelle": "tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)",
+  "steine": 168,
+  "hinweis": "Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w02 (Fassaden-Kette)",
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113128, eigen__IMG_20261106_113605, eigen__IMG_20261106_113205); Loecher generiert",
+  "generiert_anteil": 0.203,
+  "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Quader mit Fugen aus dem Foto, Fassade w03 ab z 10 m",
+  "quelle": "tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)",
+  "steine": 201,
+  "hinweis": "Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w03 (Fassaden-Kette)",
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113416, eigen__IMG_20261106_113128, eigen__IMG_20261106_113338_1); Loecher generiert",
+  "generiert_anteil": 0.181,
+  "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Quader mit Fugen aus dem Foto, Fassade w04 ab z 10 m",
+  "quelle": "tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)",
+  "steine": 916,
+  "hinweis": "Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w04 (Fassaden-Kette)",
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113726, eigen__IMG_20261106_113743, eigen__IMG_20261106_113727_1); Loecher generiert",
+  "generiert_anteil": 0.14,
+  "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Quader mit Fugen aus dem Foto, Fassade w05 ab z 0 m",
+  "quelle": "tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)",
+  "steine": 54,
+  "hinweis": "Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w05 (Fassaden-Kette)",
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113854, eigen__IMG_20261106_113852, eigen__IMG_20261106_113836); Loecher generiert",
+  "generiert_anteil": 0.0,
+  "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Quader mit Fugen aus dem Foto, Fassade w06 ab z 0 m",
+  "quelle": "tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)",
+  "steine": 313,
+  "hinweis": "Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w06 (Fassaden-Kette)",
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113852, eigen__IMG_20261106_113854, online_orig__od_02); Loecher generiert",
+  "generiert_anteil": 0.0,
+  "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Quader mit Fugen aus dem Foto, Fassade w07 ab z 0 m",
+  "quelle": "tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)",
+  "steine": 78,
+  "hinweis": "Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w07 (Fassaden-Kette)",
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (online_orig__od_02, eigen__IMG_20261106_113852, online_orig__od_08); Loecher generiert",
+  "generiert_anteil": 0.0,
+  "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "2 Fenster Fassade f00 (automatisch erkannt)",
+  "quelle": "OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__IMG_20261106_113130, eigen__IMG_20261106_113142, eigen__IMG_20261106_113141",
+  "hinweis": "ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "2 Fenster Fassade f03 (automatisch erkannt)",
+  "quelle": "OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__IMG_20261106_114049, eigen__IMG_20261106_114046, eigen__IMG_20261106_114034",
+  "hinweis": "ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Gebaeude hohl, 4 Fenster durchgebrochen",
+  "quelle": "bauteile.aushoehlen auf den automatisch erkannten Fenstern",
+  "hinweis": "Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende",
+  "seite_name": "wand"
  }
 ]

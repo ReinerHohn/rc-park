@@ -15,7 +15,7 @@
   "modelle/schwab_auto/masstabelle.json",
   "modelle/schwab_auto/elemente.json"
  ],
- "fotos_dir": "daten/schwabentor/fotos",
+ "fotos_dir": "daten/schwab_auto/fotos",
  "seiten_konvention": {
   "+x": "Nord",
   "-x": "Sued",
@@ -70,5 +70,6 @@
  "gesamtkette": {
   "quelle": "schwabentor",
   "hinweis": "von tools/gesamtkette.py angelegt; Masse/Pruefungen nur aus Quellen dieser Kette"
- }
+ },
+ "fotos_dir_quelle": "daten/schwabentor/fotos"
 }
