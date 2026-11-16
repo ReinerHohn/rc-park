@@ -2,9 +2,11 @@
 Reihenfolge nach Nutzen. Status hier pflegen (offen / in Arbeit / erledigt + Commit + Messwert vorher/nachher).
 
 1. HARDWARE
-   1a. fassade_ortho.py: Sichtbarkeit auf die GPU (render_kern statt CPU-Strahlen) - offen
+   1a. fassade_ortho.py - ERLEDIGT, aber anders als gedacht: GPU-Sichtbarkeit gebaut und gemessen = LANGSAMER (61 s gegen 41 s, ober_tvdr 700 Kameras) und weniger streng -> nur als Option --gpu-sicht.
+       Der echte Engpass war das Laden aller Fotos: Vorpruefung 'sieht das Foto ueberhaupt eine Fassade' vor dem Laden: 59,6 -> 40,6 s (-32 %), gleiche Ergebnisse. Meine Aussage 'groesster Hebel' war falsch.
    1b. Generator: Zwischenspeicher je Bauteilgruppe (nicht alles neu bei kleiner Aenderung) - offen
-   1c. bauen_abnehmen.sh: unabhaengige Pruefschritte parallel - offen
+   1c. Abnahme - ERLEDIGT (Teil): Profil zeigte pruefstand.z_am_punkt = 133 von 158 s (je z-Stufe ein Schnitt durch 3 Mio. Dreiecke). Jetzt senkrechte Strahlen: Turm 153 -> 35 s, Werte identisch
+       an schwab_v3, schwab_nachbar, ober_tvdr (alter Weg: PRUEFSTAND_SCHNITT=1). Pflichtbilder neben_fotos 3 gleichzeitig (ungemessen). Rest (fotodiag/seiten_audit parallel zum Pruefstand) offen.
    1d. Bildvergleich (zusatzfotos_lightglue paare): Stapel + Vorauswahl ueber Bildaehnlichkeit - offen
 2. UMRISS-TOR Modell gegen Foto als Pflicht (Formfehler wie Bogen, Dachknick, Umgang automatisch melden); >30 offene Auto-Beobachtungen abarbeiten - offen
 3. FENSTER-REGELMAESSIGKEIT je Fassade (Achsen/Geschosse; verdeckte ergaenzen, Fehltreffer aussieben) - offen

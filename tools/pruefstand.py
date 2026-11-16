@@ -165,6 +165,16 @@ class Messer:
         Fremdeckpunkte (min_im_bereich) das Mass bestimmen (2026-11-10 Kreis r2, Figuren: max_z_im_bereich lieferte die Wandhoehe). nan ohne Treffer."""
         from shapely.geometry import Point
         zs = np.arange(z0, z1 + 1e-9, dz); zs = zs[::-1] if suche == "oben" else zs
+        if os.environ.get("PRUEFSTAND_SCHNITT") != "1":                      # 16.11.2026 (Aufgabenliste 1c, Profil: 7 Aufrufe = 133 von 158 s, je z-Stufe ein Schnitt durch 3 Mio. Dreiecke):
+            try:                                                           # senkrechte Geraden durch den Punkt (Mitte + 16 Punkte auf dem Pufferkreis) mit dem Netz schneiden -> Innen-Abschnitte; gleiche z-Stufen wie bisher
+                O = np.array([[punkt[0] + dx, punkt[1] + dy, z0 - 1.0] for dx, dy in [(0, 0)] + [(puffer * np.cos(w_), puffer * np.sin(w_)) for w_ in np.linspace(0, 2 * np.pi, 16, endpoint=False)]], float)
+                loc, ri, _ = self.m.ray.intersects_location(O, np.tile([0.0, 0.0, 1.0], (len(O), 1)), multiple_hits=True); innen = np.zeros(len(zs), bool); gut = True
+                for r in range(len(O)):
+                    h = np.sort(loc[ri == r, 2]); h = h[np.r_[True, np.diff(h) > 1e-6]] if len(h) else h
+                    if len(h) % 2: gut = False; break                      # ungerade Trefferzahl (Kante gestreift): alten Weg nehmen
+                    for a_, b_ in zip(h[0::2], h[1::2]): innen |= (zs + 0.0013 > a_) & (zs + 0.0013 < b_)
+                if gut: return float(zs[np.argmax(innen)]) if innen.any() else float("nan")
+            except Exception: pass
         for z in zs:
             zs_ = z + 0.0013                                                  # 13.11.2026: Schnittebene 1,3 mm versetzt - faellt sie genau auf eine waagerechte Modellflaeche (z. B. 5,797 im Kaufhaus), liefert trimesh entartete Polygone (3 x ~490 m2), die jeden Punkt enthalten (Laubenrippen-Wert 5,80 statt 5,92, Modellgeometrie identisch)
             s = self.m.section(plane_origin=[0, 0, zs_], plane_normal=[0, 0, 1])
