@@ -73,6 +73,16 @@
  },
  {
   "seite": "wand",
+  "element": "Fachwerk oberstes Giebelfeld (Pfosten, 2 Riegel, 2 Streben)",
+  "quelle": "foto_mass.py Foto 113033 auf der Giebelflaeche (M-113033-011..-013)",
+  "riegel_oben": 23.88,
+  "riegel_unten": 23.07,
+  "strebenfuss_abstand": 0.99,
+  "hinweis": "ANNAHME: Balkenbreiten 13-16 cm, 3,5 cm vor dem Putz; Schnitzwerk am Pfosten fehlt",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Nordgiebel: fuenf Fachwerkgeschosse mit Auskragungen, Ortgang, 9 Fenster, Steinfenster 1. OG",
   "quelle": "foto_mass.py (M-113033-001..-007, M-113210-001..-007, M-113144-001/-002), Picks ueber wand_ortho.py; Geschossebenen aus der dichten Wolke",
   "first": 25.35,

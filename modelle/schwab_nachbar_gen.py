@@ -52,6 +52,12 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         fw_ = os.path.join(HERE, "schwab_nachbar", "relief", f"fachwerk_{id_}.npz")
         if os.path.exists(fw_) and os.environ.get("OHNE_FACHWERK") != "1": koerper = koerper + (relief_koerper(fw_, tiefe=0.05, rand_auslauf=False) ^ (WN.kasten(ul_, UR, z0_, z1_, w_ - 0.1, w_ + 0.1) ^ dreieck(0.34, -1.0, 2.0)))
     beleg("wand", "Fachwerkbalken Nordgiebel, Geschosse A-D (flaches Relief 3,5 cm)", "Mehrfoto-Fassadenbild (fassade_ortho.py, 12 Fotos, Median) -> tools/fachwerk_aus_ortho.py (Helligkeitsschwelle)", hinweis="ANNAHME: Balkenstaerke vor dem Putz 3,5 cm; Lage aus Farbschwelle auf dem Mehrfoto-Median statt Kanten-Sweep; linke Giebelhaelfte (im Fassadenbild verdeckt) und oberstes Giebelfeld ohne Balken; Schnitzwerk fehlt")
+    # 16.11.2026 oberstes Giebelfeld (z 22,5-25): Mittelpfosten, zwei Riegel, zwei Streben - M-113033-011..-013 (Foto 113033, Ebene x=4,93)
+    _gf = WN.stab((UA, 22.3), (UA, 25.2), 0.16, 1.37, 1.415) + WN.kasten(-3.0, 3.0, 23.80, 23.96, 1.37, 1.415) + WN.kasten(-3.0, 3.0, 22.99, 23.15, 1.37, 1.415)
+    for uf_ in (2.23 - 2.85, 3.21 - 2.85): _gf = _gf + WN.stab((UA, 23.79), (uf_, 22.3), 0.13, 1.37, 1.415)
+    koerper = koerper + (_gf ^ dreieck(0.34, -1.0, 2.0) ^ WN.kasten(-4.0, 4.0, 22.21, 26.0, 1.0, 1.5))
+    beleg("wand", "Fachwerk oberstes Giebelfeld (Pfosten, 2 Riegel, 2 Streben)", "foto_mass.py Foto 113033 auf der Giebelflaeche (M-113033-011..-013)", riegel_oben=23.88, riegel_unten=23.07, strebenfuss_abstand=0.99,
+          hinweis="ANNAHME: Balkenbreiten 13-16 cm, 3,5 cm vor dem Putz; Schnitzwerk am Pfosten fehlt")
     FEN = [(-1.50, -0.85, 11.43, 12.99, 0.54, (), 12.53), (0.67, 2.11, 11.43, 12.99, 0.54, (1.39,), 12.53), (3.62, 5.85, 11.43, 12.99, 0.54, (4.35, 5.12), 12.53),
            (-1.50, -0.85, 14.69, 16.33, 0.73, (), 15.78), (0.67, 2.11, 14.69, 16.33, 0.73, (1.39,), 15.78), (3.57, 4.23, 14.69, 16.33, 0.73, (), 15.78),
            (-2.31, -0.89, 18.02, 19.27, 0.93, (-1.60,), 18.72), (0.69, 2.11, 18.02, 19.27, 0.93, (1.40,), 18.72), (-0.89, 0.61, 20.97, 21.80, 1.11, (-0.14,), None)]

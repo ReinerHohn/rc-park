@@ -1,0 +1,32 @@
+{
+ "id": "M-113033-011",
+ "foto": "113033",
+ "kamera": "K-eigen__IMG_20261106_113033",
+ "ebene": "x=4.93",
+ "name": "Giebelfeld oben: oberer Riegel - unterer Riegel (Mittelpfosten)",
+ "mess_px": [
+  1179.0,
+  872.0,
+  1179.0,
+  960.0
+ ],
+ "P1": [
+  4.93,
+  2.751,
+  23.883
+ ],
+ "P2": [
+  4.93,
+  2.78,
+  23.067
+ ],
+ "dz": -0.816,
+ "dy": 0.029,
+ "dx": 0.0,
+ "abstand": 0.816,
+ "z1": 23.883,
+ "z2": 23.067,
+ "unsicherheit_rel": 0.004,
+ "unsicherheit_m": 0.041,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113033 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene x=4.93 (+-0.3 m)"
+}
