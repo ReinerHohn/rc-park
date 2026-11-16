@@ -125,11 +125,15 @@ def main(argv=None):
     else: fas = fassaden_gruppieren(waende, mitte)
     for i_, F_ in enumerate(fas): F_["_id"] = F_.get("id_vorbau") or f"f{i_:02d}"
     if a.nur: fas = [F_ for F_ in fas if F_["_id"] in set(a.nur.split(","))]
-    fotos = a.fotos.split(",") if a.fotos else sorted(os.path.basename(k)[2:-5] for k in glob.glob(os.path.join(od, "messprotokoll", "K-*.json"))
-                                                       if isinstance(json.load(open(k)).get("kamera"), dict) and (json.load(open(k))["kamera"].get("buendel_tor", {}).get("ok") or json.load(open(k))["kamera"].get("vertrauen")))      # 16.11.2026: auch am Modell nachgezogene Fremdfotos (kamera_verfeinern.py)
-    if not fotos:                                                         # 16.11.2026 (Haertetest ober_tvdr): Kameras ohne buendel_tor (uebernommen/nachgezogen) -> alle vertrauenswuerdigen Messkameras statt Abbruch mit 0 Fotos
-        def _ok(k_): c_ = json.load(open(k_)).get("kamera"); n_ = os.path.basename(k_)[2:-5]; return isinstance(c_, dict) and "rvec" in c_ and "cx" in c_ and not n_.startswith("video") and (not n_.startswith(("dl_", "neu__")) or c_.get("vertrauen"))
-        fotos = sorted(os.path.basename(k)[2:-5] for k in glob.glob(os.path.join(od, "messprotokoll", "K-*.json")) if _ok(k)); print(f"keine Kamera mit buendel_tor - nehme {len(fotos)} vertrauenswuerdige Messkameras", flush=True)
+    def _kam(k_): c_ = json.load(open(k_)).get("kamera"); return c_ if isinstance(c_, dict) and "rvec" in c_ and "cx" in c_ else None
+    alle_k = {os.path.basename(k)[2:-5]: _kam(k) for k in glob.glob(os.path.join(od, "messprotokoll", "K-*.json"))}; alle_k = {n_: c_ for n_, c_ in alle_k.items() if c_}
+    mit_tor = any("buendel_tor" in c_ for c_ in alle_k.values())          # 16.11.2026: gibt es das Pruefsiegel im Objekt gar nicht (uebernommene/neu ausgerichtete Kameras), zaehlen alle eigenen/Commons/online-Kameras;
+    def _ok(n_, c_):                                                     # Fremdfotos (dl_, neu__) immer nur mit 'vertrauen' (kamera_verfeinern.py), Videobilder nur mit bestandenem Siegel
+        if n_.startswith(("dl_", "neu__")): return bool(c_.get("vertrauen"))
+        if c_.get("buendel_tor", {}).get("ok"): return True
+        return (not mit_tor) and not n_.startswith("video")
+    fotos = a.fotos.split(",") if a.fotos else sorted(n_ for n_, c_ in alle_k.items() if _ok(n_, c_))
+    print(f"{len(fotos)} Messkameras" + ("" if mit_tor else " (kein buendel_tor im Objekt: alle eigenen/Commons/online + nachgezogene Fremdfotos)"), flush=True)
     m = trimesh.load(a.stl); m.apply_scale(obj.get("stl_massstab", 87) / 1000.0)
     if obj.get("zentrierung", "huelle") == "huelle": sys.exit("zentrierung huelle nicht unterstuetzt (Rahmen der Buendelkameras = Modellrahmen)")
     # Zellraster je Fassade (Modellrahmen)
