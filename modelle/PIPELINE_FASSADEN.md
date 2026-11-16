@@ -195,3 +195,14 @@ GRENZEN (gemessen): (a) dessen Pose stimmt auf der Suedseite auf 5-10 px, auf de
 Punkten auf nur einer Wand schlecht bestimmt; vor dem Messen Kamera mit gemessenen Modellpunkten nachziehen (wie bei od_15). (b) od_15: SfM-Pose (30 Inlier) liegt 74 m neben der
 Kamera aus 11 Modellpunkten - die Gegenprobe im Werkzeug meldet das, die vorhandene Kamera bleibt. (c) 26 von 46 nicht registriert (meist Bilder ohne den Turm).
 OFFEN: neue Kameras automatisch gegen Modellpunkte verfeinern; danach fassade_ortho/fassade_fein fuer die Ostwand mit ov_0005 + od_15 neu; Commons-Teil nachholen.
+
+## Kamera am Modell nachziehen (`tools/kamera_verfeinern.py`, 16.11.2026) - schliesst die Luecke der Stufe `seiten`
+Ablauf: ALIKED+LightGlue zwischen dem neuen Foto und Referenzfotos mit guter Kamera -> Treffer der Referenz ueber das TIEFENBILD DES MODELLS (STL, GPU-Raster) in 3D heben ->
+PnP mit RANSAC ueber Brennweiten + Feinausgleich. Tor: >= 2 Flaechenrichtungen mit je >= 15 Inliern, sonst rc 3 (nicht schreiben).
+Schwabentor, Flickr-Foto ov_0005 gegen od_15 + 4 Suedfotos: 1404 Inlier von 1906 (Sued 1254, Ost 59, Dach 57, West/Nachbar 31), Rest 1,6 px = 5 cm;
+Brennweite 1251 -> 3003 px, Standort um 54 m verschoben (jetzt neben dem Standort von od_15 am Schlossberghang). Probe: Schlitzfenster Ost projiziert auf 8 px (vorher 30).
+FEHLVERSUCH davor: Treffer mit den LoD2-Fassadenebenen schneiden - die liegen bis 0,75 m neben der echten Wand, alle Ostpunkte fielen heraus (nur 1 Wand, Tor lehnte ab).
+Danach Ostwand: `fassade_ein_foto.py ... dl_openverse__ov_0005 ortho_f02_ov5.png` (2,9 cm/px, Sonne) -> `relief_putz.py` (Standardschwellen) -> `steine_aus_foto.py --feld 0 10.75 22.5 34.6
+--ohne 4.6 6.4 22.5 34.6 --ohne 0 10.75 25.9 26.95 --ohne 2.6 10.75 22.5 25.95 --px 0.03` (Nachbardach und Schlitzspalte ausgenommen): 131 Steine statt 77 aus dem Schattenfoto.
+In `seiten_luecken_holen.sh` laeuft das Nachziehen jetzt fuer jede neue Kamera automatisch (Referenzen = aehnlichste Standorte). Lizenz/Urheber des Fotos: herkunft.json (CC BY 2.0, Jorge Franganillo) - bei Weitergabe nennen.
+OFFEN: Einzelfoto ohne Verdeckungspruefung (Nachbardach von Hand per --ohne ausgenommen); Referenzwahl nach Standort ist ungetestet (hier Liste von Hand).
