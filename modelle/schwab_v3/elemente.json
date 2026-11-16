@@ -273,10 +273,28 @@
  },
  {
   "seite": "wand",
-  "element": "Turm hohl, 6 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
+  "element": "Eckquader Ost im Obergeschoss (Kontur aus dem Foto)",
+  "quelle": "entzerrtes Einzelfoto od_15 (tools/fassade_ein_foto.py) -> relief_putz.py -> steine_aus_foto.py; Streifenbreiten M-od_15-003/-004 (1,39 / 1,29 m)",
+  "steine": 77,
+  "hinweis": "Kontur (Verzahnung) aus dem Foto; Fugen unsicher (Seite im Schatten, 1,6 cm/px); unter dem Gesims (z < 26,9) verdeckt das Nachbardach - dort glatte Wand",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Ostfassade: Schlitzfenster, Bogenfenster (halb verdeckt), Gesims, Balkenkopf",
+  "quelle": "foto_mass.py auf der Ostwandebene, Fremdfoto od_15 (M-od_15-001..-007)",
+  "schlitz_hoehe": 2.42,
+  "schlitz_z0": 28.0,
+  "schlitz_u": 5.47,
+  "hinweis": "Kamera nur aus Modellpunkten (+-0,2 m); Bogenfenster nur zur Haelfte sichtbar, Breite von der Suedseite uebernommen; Zone unter z ~22 vom Nachbarhaus verdeckt",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Turm hohl, 8 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
   "quelle": "Nutzerauftrag 16.11.2026; Fenstermasse wie oben",
-  "fenster_offen": 6,
-  "hohlraum_m3": 3705.8,
+  "fenster_offen": 8,
+  "hohlraum_m3": 3704.0,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
   "seite_name": "wand"
  }

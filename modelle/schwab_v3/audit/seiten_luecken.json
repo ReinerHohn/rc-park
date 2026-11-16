@@ -1,0 +1,85 @@
+{
+ "waende": [
+  {
+   "nr": 0,
+   "normale": [
+    0.999560172604249,
+    0.029655713502864632
+   ],
+   "mitte": [
+    3.736338765143183,
+    15.285188595694338
+   ],
+   "flaeche_m2": 445.5,
+   "abdeckung": 0.876,
+   "fotos": 12,
+   "ungesehen": false
+  },
+  {
+   "nr": 1,
+   "normale": [
+    -0.999045362266701,
+    -0.04368482726755523
+   ],
+   "mitte": [
+    -7.9413026159985,
+    14.903203890713131
+   ],
+   "flaeche_m2": 441.8,
+   "abdeckung": 0.817,
+   "fotos": 8,
+   "ungesehen": false
+  },
+  {
+   "nr": 2,
+   "normale": [
+    0.02846097419521499,
+    -0.9995949044227164
+   ],
+   "mitte": [
+    -1.8894434344153221,
+    9.096353324232904
+   ],
+   "flaeche_m2": 428.3,
+   "abdeckung": 0.0,
+   "fotos": 1,
+   "ungesehen": true
+  },
+  {
+   "nr": 3,
+   "normale": [
+    -0.04054927084916809,
+    0.9991775400966542
+   ],
+   "mitte": [
+    -1.5459415024223213,
+    21.216985409295155
+   ],
+   "flaeche_m2": 390.7,
+   "abdeckung": 0.75,
+   "fotos": 9,
+   "ungesehen": false
+  }
+ ],
+ "ungesehen": [
+  2
+ ],
+ "fotobestand": 578,
+ "nicht_registriert": [
+  "commons_orig2__032.jpg",
+  "commons_orig2__034.jpg",
+  "commons_orig2__035.jpg",
+  "commons_orig2__129.jpg",
+  "eigen__IMG_20261106_113323.jpg",
+  "eigen__IMG_20261106_113446.jpg",
+  "eigen__IMG_20261106_113700.jpg",
+  "eigen__IMG_20261106_113702.jpg",
+  "eigen__IMG_20261106_113723.jpg",
+  "online2_orig__od_15.jpg",
+  "video_frames_7wvSPHS1gDA__vf_024.jpg",
+  "video_frames_7wvSPHS1gDA__vf_040.jpg",
+  "video_frames_wyzOTzUZXyU__vf_036.jpg"
+ ],
+ "skript": "/home/oem/git/rc-park/modelle/schwab_v3/audit/seiten_luecken_holen.sh",
+ "zielordner": "/media/oem/scan/rc-park_daten/schwab_v3/seiten_nachholen"
+}
