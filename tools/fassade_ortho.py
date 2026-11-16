@@ -100,7 +100,7 @@ def main(argv=None):
     ap.add_argument("--zelle", type=float, default=0.05); ap.add_argument("--tol", type=float, default=0.10); ap.add_argument("--relief-vorn", type=float, default=3.0); ap.add_argument("--relief-hinten", type=float, default=6.0); ap.add_argument("--max-mpp", type=float, default=0.06)
     ap.add_argument("--max-winkel", type=float, default=70.0); ap.add_argument("--fotos", help="Komma-Liste (Standard: alle mit K-Datei und buendel_tor ok)")
     ap.add_argument("--waende-stl", action="store_true", help="Fassaden aus senkrechten Modelldreiecken, die keine LoD2-Ebene sind (Erker/Vorbauten)"); ap.add_argument("--min-flaeche", type=float, default=1.0); ap.add_argument("--einzeln", action="store_true"); ap.add_argument("--ohne-nachbarn", action="store_true"); ap.add_argument("--beste", type=int, default=5, help="je Zelle nur die k Fotos mit der besten Guete (cos/mpp) mitteln: 61 Fotos im Median verschmierten Kanten (Kamerareste 1-4 px)"); ap.add_argument("--arbeiter", type=int, default=6, help="parallele Fotos (RAM: Vollbilder bis 0,3 GB je Foto)"); ap.add_argument("--rand", type=float, default=0.5, help="Rand um die Wand (m) fuer Vorsprung/Traufe")
-    ap.add_argument("--gpu-sicht", action="store_true", help="Sichtbarkeit ueber ein GPU-Tiefenbild je Foto statt CPU-Strahlen. Messung 16.11.2026 (ober_tvdr, 700 Kameras): LANGSAMER (61 s gegen 41 s) und weniger streng - Standard bleibt CPU (embree)"); ap.add_argument("--nur", help="Komma-Liste Flaechen-IDs (f02,e05 ...): nur diese rastern (Tests/Vergleiche; IDs bleiben die des vollen Laufs)")
+    ap.add_argument("--max-fotos", type=int, default=40, help="je Fassade nur die besten N Kameras (0 = alle)"); ap.add_argument("--gpu-sicht", action="store_true", help="Sichtbarkeit ueber ein GPU-Tiefenbild je Foto statt CPU-Strahlen. Messung 16.11.2026 (ober_tvdr, 700 Kameras): LANGSAMER (61 s gegen 41 s) und weniger streng - Standard bleibt CPU (embree)"); ap.add_argument("--nur", help="Komma-Liste Flaechen-IDs (f02,e05 ...): nur diese rastern (Tests/Vergleiche; IDs bleiben die des vollen Laufs)")
     ap.add_argument("--px-ziel", type=int, default=256, help="Flaechen unter --klein-m2: Zelle = min(--zelle, kleinere Ausdehnung / px-ziel), damit kleine Flaechen (Vorbauseiten, Erkerstreifen) genug Pixel fuer den Erkenner haben (S4: die feste 5-cm-Zelle gab einem 2-m-Streifen nur 40 px; Aufloesung statt Handschwelle ist die physikalische Grenze)")
     ap.add_argument("--klein-m2", type=float, default=20.0, help="Flaechen kleiner als dies bekommen die feinere Zelle (Begruendung: grosse Fassaden brauchen 5 cm, Speicher/Rechenzeit wachsen mit 1/Zelle^2)")
     ap.add_argument("--zelle-min", type=float, default=0.005, help="feinste Zelle (m): Untergrenze, damit eine sehr schmale Flaeche keine Riesenraster erzeugt; 5 mm ~ Bodenaufloesung der besten Fotos (ANNAHME; 1 cm schloss in T1 0,5-m-Erkerfacetten mit < 96 px aus, die Spec verlangt 256 px je 2 m = 7,8 mm)")
@@ -160,6 +160,21 @@ def main(argv=None):
         F["_loch"] = np.isnan(rel) & (mp_.ravel() > 0) if mp_.size == len(rel) else np.zeros(len(rel), bool)
         F["_S"] = X + n3 * np.nan_to_num(rel, nan=0.0)[:, None]; F["_rel"] = rel
 
+    # 16.11.2026 KAMERA-VORAUSWAHL je Fassade (Turm: 700 Kameras x 4 Waende rechneten > 2 h, die Verschmelzung sortierte Hunderte Proben je Zelle): je Fassade nur die --max-fotos besten
+    # nach (gesehener Anteil der Stichprobe) / (Meter je Pixel), rein aus den K-Dateien (kein Bild laden). 0 = alle wie frueher.
+    if a.max_fotos > 0:
+        for F in fas:
+            Xg = F["_S"][::61]; Xg = Xg[np.isfinite(Xg).all(1)]; n_ = np.array(F["n"] + [0.0]); wert = []
+            for nr_ in fotos:
+                c_ = alle_k.get(nr_)
+                if not c_: continue
+                R0 = cv2.Rodrigues(np.asarray(c_["rvec"], float))[0]; tk_ = np.asarray(c_["t"], float); C0_ = -R0.T @ tk_; v_ = C0_ - Xg; d_ = np.linalg.norm(v_, axis=1); cw_ = (v_ @ n_) / d_; pc_ = Xg @ R0.T + tk_; z_ = np.maximum(pc_[:, 2], 1e-6)
+                u_ = c_["f_px"] * pc_[:, 0] / z_ + c_["cx"]; w_ = c_["f_px"] * pc_[:, 1] / z_ + c_["cy"]; mpp_ = d_ / (c_["f_px"] * np.maximum(cw_, 1e-3))
+                ok_ = (cw_ > math.cos(math.radians(a.max_winkel))) & (pc_[:, 2] > 1) & (u_ > 0) & (u_ < 2 * c_["cx"]) & (w_ > 0) & (w_ < 2 * c_["cy"]) & (mpp_ < a.max_mpp)
+                if ok_.sum() >= 3: wert.append((float(ok_.mean()) / float(np.median(mpp_[ok_])), nr_))
+            F["_wahl"] = set(n for _, n in sorted(wert, reverse=True)[:a.max_fotos])
+    else:
+        for F in fas: F["_wahl"] = None
     import threading, render_kern as rk; GPU_SPERRE = threading.Lock(); m_alle = trimesh.util.concatenate([m, nb]) if nb is not None else m
     def ein_foto(nr):
         K = json.load(open(FF.k_datei(a.objekt, obj, ROOT, nr))); kk = K["kamera"]; pf = glob.glob(os.path.join(ROOT, obj["fotos_dir"], nr + ".*")) or glob.glob(os.path.join(ROOT, obj["fotos_dir"], nr + "_*"))   # 15.11.2026: Fotos heissen bei neuen Objekten <nr>.jpg (ohne das fand der Lauf 0 Fotos, 8 min umsonst)
@@ -170,12 +185,13 @@ def main(argv=None):
                 Xg = F["_S"][::97]; n_ = np.array(F["n"] + [0.0]); v_ = C0_ - Xg; d_ = np.linalg.norm(v_, axis=1); cw_ = (v_ @ n_) / d_; pc_ = Xg @ R0.T + t0; z_ = np.maximum(pc_[:, 2], 1e-6)
                 u_ = kk["f_px"] * pc_[:, 0] / z_ + kk["cx"]; w_ = kk["f_px"] * pc_[:, 1] / z_ + kk["cy"]
                 if ((cw_ > math.cos(math.radians(a.max_winkel))) & (pc_[:, 2] > 1) & (u_ > -50) & (u_ < 2 * kk["cx"] + 50) & (w_ > -50) & (w_ < 2 * kk["cy"] + 50) & (d_ / (kk["f_px"] * np.maximum(cw_, 1e-3)) < a.max_mpp)).sum() >= 3: sieht = True; break
-            if not sieht: return nr, None
+            if not sieht or not any(F["_wahl"] is None or nr in F["_wahl"] for F in fas): return nr, None
         im = cv2.imread(pf[0]); H, W = im.shape[:2]; R, t, f, _, _ = FF.kamera_laden(K, obj, nr, ROOT, W, H)
         tr = np.asarray(kk.get("rahmen_verschiebung", [0, 0, 0]), float); cx, cy = float(kk.get("cx", W / 2)), float(kk.get("cy", H / 2)); k1 = float(kk.get("k1") or 0.0)
         Cw = -R.T @ np.asarray(t, float) - tr                                                        # Kamerazentrum im Modellrahmen
         erg = {}; weich = {}; tief = [None]
         for i, F in enumerate(fas):
+            if F["_wahl"] is not None and nr not in F["_wahl"]: continue
             X = F["_S"]; n = np.array(F["n"] + [0.0]); v = Cw - X; dist = np.linalg.norm(v, axis=1); cosw = (v @ n) / dist
             px, z = projizieren(X + tr, R, np.asarray(t, float), f, cx, cy, k1)
             ok = (cosw > math.cos(math.radians(a.max_winkel))) & (z > 1) & (px[:, 0] >= 0) & (px[:, 0] < W - 1) & (px[:, 1] >= 0) & (px[:, 1] < H - 1)
@@ -237,7 +253,7 @@ def main(argv=None):
         F["id"] = tag; F["abdeckung_anteil"] = round(float((cnt > 0).mean()), 3); F["fotos_median_je_zelle"] = float(np.median(cnt[cnt > 0])) if (cnt > 0).any() else 0
         rl = F["_rel"].reshape(r["nz"], r["nu"]); cv2.imwrite(os.path.join(a.aus, f"relief_{tag}.png"), np.where(np.isfinite(rl), np.clip((rl + 10) * 1000, 1, 65535), 0).astype(np.uint16))   # mm + 10 m, 0 = kein Modell
         F["relief_png"] = f"relief_{tag}.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
-        del F["_X"], F["_S"], F["_rel"], F["_loch"]; F.pop("_id", None); bericht.append(f"  {tag}: {F['flaeche_m2']:6.1f} m2, n=({F['n'][0]:+.2f},{F['n'][1]:+.2f}), {len(beitr):2d} Fotos, Abdeckung {F['abdeckung_anteil']:.0%}, Median {F['fotos_median_je_zelle']:.0f} Fotos/Zelle")
+        del F["_X"], F["_S"], F["_rel"], F["_loch"]; F.pop("_wahl", None); F.pop("_id", None); bericht.append(f"  {tag}: {F['flaeche_m2']:6.1f} m2, n=({F['n'][0]:+.2f},{F['n'][1]:+.2f}), {len(beitr):2d} Fotos, Abdeckung {F['abdeckung_anteil']:.0%}, Median {F['fotos_median_je_zelle']:.0f} Fotos/Zelle")
     json.dump(dict(objekt=a.objekt, stl=os.path.abspath(a.stl), zelle_m=a.zelle, tol_m=a.tol, max_mpp=a.max_mpp, fotos=fotos, fassaden=fas,
                    beste_k=a.beste, nachbarn_lod2=n_nb, quelle="fassade_ortho.py: LoD2-Waende + K-Dateien (buendel_tor) + Sichtbarkeit gegen Stufenmodell + LoD2-Nachbarn", sekunden=round(time.time() - t0, 1)),
               open(os.path.join(a.aus, "fassaden.json"), "w"), indent=1)
