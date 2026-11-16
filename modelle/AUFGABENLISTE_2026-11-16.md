@@ -19,3 +19,11 @@ Reihenfolge nach Nutzen. Status hier pflegen (offen / in Arbeit / erledigt + Com
 Weitere blinde Flecken (ohne Reihenfolge): Tor "ist das Quaderwerk?"; Kamerastandort-Plausibilitaet; Einzelfoto ohne Gegenfoto; fassade_tiefe nur 1 von 3 Seiten; Daecher aus Fotos;
 freie Formen; Schwellen nur an einem Bauwerk; gesamtkette.py als EIN Befehl von null; LIMAP (Lizenz pruefen) fuer 3D-Kanten; Kamera gegen Modell-Renderings (MeshLoc-Prinzip) fuer Seiten ohne Referenzfoto.
 Quellen der Recherche: MeshLoc arXiv 2207.10762, MapAnything arXiv 2509.13414, LIMAP arXiv 2303.17504, Mueller 2007 / Nishida 2018 (Fassaden-Grammatik).
+
+## Nachtrag 16.11. spaet (Nutzer: "geh alles durch")
+- ERLEDIGT Kameras sicher: kamera_plausibel.py (alle Schreiber + Schnelltest + Kette), Tiefenspanne-Tor + EXIF in kamera_verfeinern; 60 Kameras beiseite, 38 von 128 Fremdkameras `tiefe_unsicher`.
+  OFFEN: Messwerkzeuge werten `tiefe_unsicher` nicht aus; Kameras, die nur ~50 m falsch stehen, findet nur der Bildvergleich.
+- ERLEDIGT 1b Zwischenspeicher (bauteile.zwischenstand): 28 s statt 115 s bei unveraendertem Bau. Der Generator war NICHT der Zeitfresser (115 s), die Abnahme danach kostet ~145 s gesamt.
+- TEILS Strukturmass: Karte struktur_<id>.png, Werte in PIPELINE_FASSADEN.md; noch kein Tor.
+- LAEUFT/OFFEN Kette ab 'bauen' als ein Befehl an schwab_auto; Fensterkaesten ohne Steinrahmen; Daecher aus Fotos; Vorbauten-Tiefe; Kantenvergleich vor der Wand; 1d Bildvergleich; 4 MapAnything.
+- Nutzer 16.11.: Die dichte Wolke BLEIBT Standard (nicht abschaffen).

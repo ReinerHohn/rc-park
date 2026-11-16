@@ -354,3 +354,8 @@ Nachtrag 16.11. spaet - Kameras sicher, Zwischenspeicher, Kette:
   (und keine EXIF-Brennweite), 5 nur mit festgehaltener EXIF-Brennweite (frei geschaetzt lag f um das 1,3- bis 5-Fache daneben), 5 ohne tragfaehige Loesung. Die 38 tragen jetzt `tiefe_unsicher` in der K-Datei:
   sie bleiben fuer das Bild IHRER Wand brauchbar (dort passen sie auf wenige Pixel), sind aber KEINE Referenz mehr fuer neue Kameras (`kamera_verfeinern.py`) und taugen nicht fuer Masse ausserhalb der Wandebene.
   OFFEN: Messwerkzeuge (foto_mass, fassade_tiefe, steine_aus_foto --foto auto) werten das Kennzeichen noch nicht aus.
+- STRUKTURKARTE `struktur_<id>.png` (jeder fassade_ortho-Lauf schreibt sie): je Foto 0,1-m-Bild, lokal normiert, MAD ueber die Fotos, Wert x 100. Gemessen (Median der Wand): Putzhaus sauber 3, Turmwaende 22-33
+  (Putzfelder ~5-15 blau; Eckquader, Galerie, Vordach, Tordurchblick, Baum 50-80), Mosaik-Fassade der Zeile 44. Sie zeigt also "liegt nicht in der Wandebene ODER wird verdeckt ODER Fotos zeigen Verschiedenes" -
+  brauchbar als Hinweis auf Vorbauten/Verdecker und als Mosaik-Warnung (Wandmedian > 40). NOCH KEIN TOR: Fensterrahmen und Quader schlagen zu Recht an; die Fenstererkennung bleibt bei `uneinig_<id>.png`.
+- ZWISCHENSPEICHER gemessen (Turm): unveraenderter Bau 28 s statt 115 s, Speicher 4,1 statt 9,7 GB; `aushoehlen` (80 s) als Funktion uebergeben (`_zw(_hohl, "5_hohl")`), sonst laeuft es trotz Treffer.
+  Aenderung an einer Fassade: gespart werden nur ~10 s davor, das Aushoehlen laeuft neu. STL kalt = warm bitgleich; gegenueber dem Stand ohne Zwischenspeicher gleiche Form (Volumen +-1 mm3), andere Dreieckszahl.
