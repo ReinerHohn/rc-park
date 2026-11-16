@@ -14,13 +14,12 @@ import numpy as np
 from manifold3d import Manifold as M, CrossSection
 
 
-def spitzbogen(halb, kaempfer, scheitel, unten=-0.6, nseg=24):
+def spitzbogen(halb, kaempfer, scheitel, unten=-0.6, nseg=24, tief=0.3):
     """Querschnitt (quer, hoch) eines Spitzbogens aus zwei Kreisboegen: halbe lichte Breite, Kaempferhoehe, Scheitelhoehe; Pfeiler bis 'unten'."""
     h = scheitel - kaempfer
-    if h < halb:                                                          # 16.11.2026 (Nutzerbild: Bogenform falsch): GEDRUECKTER Spitzbogen - zwei Kreisboegen mit Mittelpunkt auf der Kaempferlinie treffen sich dann NICHT im Scheitel (gab einen waagerechten Sturz).
-        r1 = 0.5 * halb; phi = np.radians(55.0); d = np.array([np.cos(phi), np.sin(phi)]); C1 = np.array([halb - r1, 0.0]); A = np.array([0.0, h])       # Vier-Zentren-Bogen: kleiner Radius an der Schulter (senkrecht aus dem Pfeiler), grosser bis zum Scheitel
-        t = ((C1 - A) @ (C1 - A) - r1 * r1) / (2 * (r1 + d @ (C1 - A))); C2 = C1 - t * d; r2 = t + r1; w1 = np.arctan2(A[1] - C2[1], A[0] - C2[0])
-        re = [[C1[0] + r1 * np.cos(w), kaempfer + r1 * np.sin(w)] for w in np.linspace(0, phi, nseg // 2)] + [[C2[0] + r2 * np.cos(w), kaempfer + C2[1] + r2 * np.sin(w)] for w in np.linspace(phi, w1, nseg // 2)[1:]]
+    if h < halb:                                                          # GEDRUECKTER Spitzbogen: zwei Kreisboegen, Mittelpunkte UNTER der Kaempferlinie (tief = 0,3 x halbe Breite, ANNAHME) -
+        d = tief * halb; c = (h * h + 2 * h * d - halb * halb) / (2 * halb); r = float(np.hypot(halb + c, d)); w_a = np.arctan2(d, halb + c); w_b = np.arctan2(h + d, c)      # 16.11.2026: erst waagerechter Sturz (falsch), dann Vier-Zentren-Bogen
+        re = [[-c + r * np.cos(w), kaempfer - d + r * np.sin(w)] for w in np.linspace(w_a, w_b, nseg)]                                                                      # (Nutzerbild: "spitzes Fehlerding" - Schultern zu flach, Spitze aufgesetzt); Foto zeigt glatte Boegen bis zur Spitze
         return CrossSection([[[-halb, unten], [halb, unten]] + re[:-1] + [[-x, z] for x, z in re[::-1]]])
     r = (halb * halb + h * h) / (2 * halb); w0 = np.arcsin(h / r)
     re = [[-(r - halb) + r * np.cos(w), kaempfer + r * np.sin(w)] for w in np.linspace(0, w0, nseg)]

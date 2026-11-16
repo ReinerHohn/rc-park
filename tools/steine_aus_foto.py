@@ -31,7 +31,7 @@ def linien(m, min_len):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("relief"); ap.add_argument("aus"); ap.add_argument("fassaden"); ap.add_argument("nr"); ap.add_argument("ortho")
     ap.add_argument("--feld", nargs=4, type=float, required=True); ap.add_argument("--px", type=float, default=0.02); ap.add_argument("--fuge", type=float, default=0.03); ap.add_argument("--massstab", nargs=4, type=float)
-    ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 ohne Steine (Vordach, Wandbild: Generator baut dort selbst)"); ap.add_argument("--bosse", type=float, default=0.04, help="Buckel der Steinflaeche (m), 0 = eben"); ap.add_argument("--putz_s", type=float, default=0.22); ap.add_argument("--foto", help="statt des Orthos: Bild direkt aus diesem kalibrierten Foto auf der Reliefebene lesen (fassaden/nr/ortho dann als - - 0 - angeben)"); ap.add_argument("--objekt"); ap.add_argument("--stl", help="Modell-STL(s) fuer die Verdeckungspruefung"); ap.add_argument("--rand", type=float, default=0.3); ap.add_argument("--nah", type=float, default=0.25, help="Stein nur so nah (m) an der groben Steinmaske; 0 = aus (Wand ohne Wandbilder: sonst gehen Steinbaender verloren, die die grobe Maske nicht kennt)"); ap.add_argument("--duenn", type=float, default=0.12, help="Steinflaechen duenner als dies (m) verwerfen; 0 = aus"); ap.add_argument("--putz_v", type=float, default=0.45)
+    ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 ohne Steine (Vordach, Wandbild: Generator baut dort selbst)"); ap.add_argument("--bosse", type=float, default=0.04, help="Buckel der Steinflaeche (m), 0 = eben"); ap.add_argument("--putz_s", type=float, default=0.22); ap.add_argument("--foto", help="statt des Orthos: Bild direkt aus diesem kalibrierten Foto auf der Reliefebene lesen (fassaden/nr/ortho dann als - - 0 - angeben)"); ap.add_argument("--objekt"); ap.add_argument("--stl", help="Modell-STL(s) fuer die Verdeckungspruefung"); ap.add_argument("--rand", type=float, default=0.3); ap.add_argument("--gegenfoto", help="Foto fuer die Verdecker-Gegenprobe (sonst das naechstbeste von anderem Standort bei --foto auto)"); ap.add_argument("--uneinig", type=float, default=0.25, help="oertliche Korrelation mit dem Gegenfoto unter diesem Wert = Verdecker"); ap.add_argument("--textur", type=float, default=8.0, help="nur Stellen mit Struktur pruefen (Grauwert-Streuung); glatter Putz hat keine Korrelation"); ap.add_argument("--nah", type=float, default=0.25, help="Stein nur so nah (m) an der groben Steinmaske; 0 = aus (Wand ohne Wandbilder: sonst gehen Steinbaender verloren, die die grobe Maske nicht kennt)"); ap.add_argument("--duenn", type=float, default=0.12, help="Steinflaechen duenner als dies (m) verwerfen; 0 = aus"); ap.add_argument("--putz_v", type=float, default=0.45)
     ap.add_argument("--schwelle", type=float, default=2.4, help="Fuge ab so vielen Standardabweichungen der Abweichung vom oertlichen Median"); a = ap.parse_args()
     Z = dict(np.load(a.relief)); rel = Z["rel"].astype(np.float32); H, W = rel.shape; rp = float(Z["px"]); u0 = float(Z["u0"]); z0 = float(Z["z0"]); A = Z["a"]; t = Z["t"]; niv = float(Z.get("putz_niveau_m", 0.0))
     if not a.foto: F = json.load(open(a.fassaden))["fassaden"][int(a.nr)]; R = F["raster"]; o = np.array(F["o"]); d = np.array(F["d"]); im = cv2.imread(a.ortho)
@@ -43,13 +43,40 @@ def main():
         nv_ = Z["n"]; tu_, tz_ = [float(v) for v in Z["trend_je_m"]]; dpl = float(Z["ebene_abstand_m"]) + tu_ * (U - u0) - tz_ * ((z0 + H * rp) - ZZ)
         X = A[0] + U * t[0] + dpl * nv_[0]; Y = A[1] + U * t[1] + dpl * nv_[1]; Zw = ZZ
         if a.massstab: k = a.massstab[0]; Mp = a.massstab[1:]; X = Mp[0] + k * (X - Mp[0]); Y = Mp[1] + k * (Y - Mp[1]); Zw = Mp[2] + k * (ZZ - Mp[2])
-        od_ = os.path.dirname(os.path.abspath(a.objekt)); root_ = os.path.dirname(os.path.dirname(od_)); obj_ = json.load(open(a.objekt)); Kc = FE.kamera(os.path.join(od_, "messprotokoll", "K-" + a.foto + ".json")); mm_ = None; rk_ = None
+        od_ = os.path.dirname(os.path.abspath(a.objekt)); root_ = os.path.dirname(os.path.dirname(od_)); obj_ = json.load(open(a.objekt)); mm_ = None; rk_ = None; mp_ = os.path.join(od_, "messprotokoll")
         if a.stl:
             import trimesh, render_kern as rk_
             ms_ = [trimesh.load(q_) for q_ in a.stl.split(",")]; mm_ = trimesh.util.concatenate(ms_) if len(ms_) > 1 else ms_[0]; mm_.apply_scale(float(obj_.get("stl_massstab", 87)) / 1000.0)
-        P_ = np.stack([X, Y, Zw], -1).reshape(-1, 3); ok_, mx_, my_, zc_ = FE.sichtbar(mm_, Kc, P_, rk_, tol=0.6)
+        P_ = np.stack([X, Y, Zw], -1).reshape(-1, 3); rang = []
+        if a.foto == "auto":                                              # bestes vertrauenswuerdiges Foto fuer DIESES Feld: sichtbare Flaeche / Meter je Pixel (Verdeckung gegen das Modell)
+            G_ = P_.reshape(U.shape + (3,))[::25, ::25].reshape(-1, 3); Pm_ = G_.mean(0); kand = []
+            for kf in glob.glob(os.path.join(mp_, "K-*.json")):
+                n_ = os.path.basename(kf)[2:-5]; K_ = FE.kamera(kf)
+                if K_ is None or n_.startswith("video") or (n_.startswith(("dl_", "neu__")) and not K_.get("vertrauen")) or not glob.glob(os.path.join(root_, obj_["fotos_dir"], n_ + ".*")): continue
+                R_ = cv2.Rodrigues(np.array(K_["rvec"]))[0]; C_ = -R_.T @ np.array(K_["t"]); v_ = C_ - Pm_; di_ = np.linalg.norm(v_); cw_ = float(v_[:2] @ nv_[:2] / di_)
+                if cw_ >= 0.3 and di_ <= 250: kand.append((di_ / (K_["f_px"] * cw_), n_, K_))
+            for mpp_, n_, K_ in sorted(kand, key=lambda q_: q_[0])[:12]:
+                ok0 = FE.sichtbar(mm_, K_, G_, rk_, tol=0.6)[0]; rang.append((float(ok0.mean()) / mpp_, n_, float(ok0.mean()), mpp_))
+            rang.sort(key=lambda q_: -q_[0])
+            if not rang or rang[0][2] < 0.1: print("kein vertrauenswuerdiges Foto sieht dieses Feld"); return 3
+            a.foto = rang[0][1]; print("Fotowahl:", [(q_[1][-22:], f"{q_[2] * 100:.0f} %", f"{q_[3] * 100:.1f} cm/px") for q_ in rang[:4]])
+        Kc = FE.kamera(os.path.join(mp_, "K-" + a.foto + ".json")); ok_, mx_, my_, zc_ = FE.sichtbar(mm_, Kc, P_, rk_, tol=0.6)
         if a.stl and a.rand > 0: ok_ = cv2.erode(ok_.reshape(U.shape).astype(np.uint8), np.ones((2 * int(a.rand / c) + 1,) * 2, np.uint8)).astype(bool).ravel()
         im = cv2.imread(glob.glob(os.path.join(root_, obj_["fotos_dir"], a.foto + ".*"))[0]); bild = cv2.remap(im, mx_.astype(np.float32).reshape(U.shape), my_.astype(np.float32).reshape(U.shape), cv2.INTER_LINEAR, borderValue=(0, 0, 0)); bild[~ok_.reshape(U.shape)] = 0
+        # VERDECKER, die nicht im Modell stehen (Baum, Geruest, Fahrzeug): Gegenprobe mit dem naechstbesten Foto von einem ANDEREN Standort - auf der Wandebene muessen beide
+        # dasselbe zeigen (oertlich normierte Helligkeit); wo sie sich grossflaechig widersprechen, gilt die Stelle als "keine Daten" (16.11.2026: Baum wurde auf der Suedseite zu Steinen).
+        C0_ = -cv2.Rodrigues(np.array(Kc["rvec"]))[0].T @ np.array(Kc["t"]); zweit = None
+        for q_ in rang[1:] if rang else []:
+            K2 = FE.kamera(os.path.join(mp_, "K-" + q_[1] + ".json")); C2_ = -cv2.Rodrigues(np.array(K2["rvec"]))[0].T @ np.array(K2["t"])
+            if np.linalg.norm(C2_ - C0_) > 0.08 * np.linalg.norm(C0_ - P_.mean(0)) and q_[2] > 0.3: zweit = (q_[1], K2); break
+        if a.gegenfoto: zweit = (a.gegenfoto, FE.kamera(os.path.join(mp_, "K-" + a.gegenfoto + ".json")))
+        if zweit:
+            ok2, mx2, my2, _ = FE.sichtbar(mm_, zweit[1], P_, rk_, tol=0.6); im2 = cv2.imread(glob.glob(os.path.join(root_, obj_["fotos_dir"], zweit[0] + ".*"))[0]); b2 = cv2.remap(im2, mx2.astype(np.float32).reshape(U.shape), my2.astype(np.float32).reshape(U.shape), cv2.INTER_LINEAR)
+            def nrm_(b_): g_ = cv2.GaussianBlur(cv2.cvtColor(b_, cv2.COLOR_BGR2GRAY).astype(np.float32), (0, 0), 3); m_ = cv2.blur(g_, (61, 61)); sd_ = np.sqrt(np.maximum(cv2.blur(g_ * g_, (61, 61)) - m_ * m_, 0)); return (g_ - m_) / (sd_ + 2.0), sd_
+            (na_, sa_), (nb_, sb_) = nrm_(bild), nrm_(b2); beide = ok_.reshape(U.shape) & ok2.reshape(U.shape); korr = cv2.blur(na_ * nb_, (81, 81))      # oertliche Korrelation: gleiche Wand = hoch, Laub gegen Wand oder Laub gegen Laub = ~0
+            uneinig = beide & (sa_ > a.textur) & (korr < a.uneinig); uneinig = cv2.dilate(cv2.morphologyEx(uneinig.astype(np.uint8), cv2.MORPH_OPEN, np.ones((25, 25), np.uint8)), np.ones((31, 31), np.uint8)).astype(bool)
+            bild[uneinig] = 0; print(f"Gegenfoto {zweit[0][-30:]}: {beide.mean() * 100:.0f} % des Feldes von beiden gesehen, {uneinig.mean() * 100:.0f} % widerspruechlich (Verdecker?) -> ausgeblendet")
+        else: print("kein Gegenfoto von anderem Standort - Verdecker ausserhalb des Modells NICHT geprueft")
         print(f"Foto {a.foto[-40:]}: {np.median(zc_[ok_]) / Kc['f_px'] * 100:.1f} cm/px an der Wand, {ok_.mean() * 100:.0f} % des Feldes sichtbar")
     else:
         X = A[0] + U * t[0]; Y = A[1] + U * t[1]; Zw = ZZ

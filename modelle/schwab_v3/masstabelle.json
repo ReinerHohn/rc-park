@@ -1894,6 +1894,12 @@
    "naechster_schritt": "Schlitze an die gemessenen Stellen (bisher 5 angenommene), Haube 12-eckig, Anschlussdach zur Turmwand; Werkzeug tools/zylinder_mass.py"
   },
   {
+   "datum": "2026-11-16",
+   "wer": "Nutzer (3D-Seite V47, 13:26, Suedtor markiert)",
+   "text": "Im Tor 'ein spitzes Fehlerding': der Suedbogen hat flache Schultern mit aufgesetzter Spitze (Vier-Zentren-Bogen aus bauteile.spitzbogen seit heute Vormittag); im Foto laufen zwei glatte Boegen bis zur Spitze.",
+   "naechster_schritt": "spitzbogen fuer gedrueckte Boegen: zwei Kreisboegen mit Mittelpunkten unter der Kaempferlinie; am Bild neben dem Foto pruefen"
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-1819-1284",
@@ -1902,12 +1908,12 @@
    "z_von": 31.76,
    "z_bis": 31.76,
    "xyz": [
-    2.62,
-    20.29,
+    2.61,
+    20.3,
     31.76
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=31.76 m, y=20.29 m (Zelle [1819, 1284, 107], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=31.76 m, y=20.3 m (Zelle [1819, 1284, 107], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1916,15 +1922,15 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-963-1605",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 27.84,
-   "z_bis": 27.84,
+   "z_von": 27.82,
+   "z_bis": 27.82,
    "xyz": [
-    -3.02,
+    -2.99,
     9.71,
-    27.84
+    27.82
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.84 m, y=9.71 m (Zelle [963, 1605, 107], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.82 m, y=9.71 m (Zelle [963, 1605, 107], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1936,7 +1942,7 @@
    "z_von": 20.72,
    "z_bis": 20.72,
    "xyz": [
-    -2.96,
+    -2.95,
     9.83,
     20.72
    ],
@@ -1950,15 +1956,15 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-963-2140",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 19.14,
-   "z_bis": 19.14,
+   "z_von": 19.13,
+   "z_bis": 19.13,
    "xyz": [
     -2.86,
-    9.84,
-    19.14
+    9.83,
+    19.13
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.14 m, y=9.84 m (Zelle [963, 2140, 107], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.13 m, y=9.83 m (Zelle [963, 2140, 107], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()"
   }
  ]

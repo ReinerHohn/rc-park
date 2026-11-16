@@ -4,21 +4,6 @@
  "kamera": "K-eigen__IMG_20261106_113208 (amtliche Anker)",
  "zelle_px": 212,
  "schwelle": 0.35,
- "treffer": [
-  {
-   "zelle": [
-    212,
-    636,
-    212
-   ],
-   "score": -0.964,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -2.33,
-    9.72,
-    13.63
-   ]
-  }
- ],
+ "treffer": [],
  "versatz_test": null
 }
