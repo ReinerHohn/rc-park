@@ -53,7 +53,7 @@ def fulltext(query, limit):
     return out[:limit]
 
 
-def category_files(cat, limit):
+def category_files(cat, limit, tiefe=0):
     """alle Datei-Mitglieder einer Kategorie (rekursiv 1 Ebene)."""
     cat = cat if cat.lower().startswith("category:") else f"Category:{cat}"
     out, cont = [], None
@@ -64,7 +64,8 @@ def category_files(cat, limit):
         d = api(p)
         for m in d.get("query", {}).get("categorymembers", []):
             if m["title"].lower().startswith("category:"):
-                continue                               # Unterkategorien hier ignorieren
+                if tiefe > 0: out += category_files(m["title"], limit - len(out), tiefe - 1)      # 16.11.2026: Unterkategorien mitnehmen (--tiefe)
+                continue
             out.append(m["title"])
         cont = d.get("continue", {}).get("cmcontinue")
         if not cont: break
@@ -109,6 +110,8 @@ def main():
     ap.add_argument("--radius", type=float, default=150, help="Geosearch-Radius [m]")
     ap.add_argument("--category", default="", help="Commons-Kategorie")
     ap.add_argument("--max", type=int, default=300)
+    ap.add_argument("--tiefe", type=int, default=0, help="Unterkategorien so viele Ebenen tief mitnehmen; mehrere Kategorien mit | trennen")
+    ap.add_argument("--pause", type=float, default=0.5, help="Sekunden zwischen zwei Bildern (Wikimedia drosselt Serien: 3-5 s und Standardbreiten 1280/1920 nehmen)")
     ap.add_argument("--width", type=int, default=2048, help="Zielbreite [px]")
     ap.add_argument("--out", required=True)
     ap.add_argument("--search", default="", help="Volltextsuche im Datei-Namensraum, z. B. 'Martinstor Freiburg'")
@@ -119,7 +122,7 @@ def main():
 
     titles = []
     if a.category:
-        titles += category_files(a.category, a.max)
+        for c_ in a.category.split("|"): titles += category_files(c_, a.max, a.tiefe)
         print(f"  Kategorie '{a.category}': {len(titles)} Dateien")
     if a.search:
         s = fulltext(a.search, a.max); print(f"  Volltext '{a.search}': {len(s)} Dateien"); titles += s
@@ -154,12 +157,12 @@ def main():
                 req = urllib.request.Request(meta["url"], headers={"User-Agent": UA})
                 daten = urllib.request.urlopen(req, timeout=60).read(); break
             except urllib.error.HTTPError as ex:
-                if ex.code == 429 and versuch < 3: time.sleep(10 * (versuch + 1)); continue
+                if ex.code == 429 and versuch < 3: time.sleep(60 * (versuch + 1)); continue
                 print(f"  dl-err {t[:40]}: {ex}"); break
             except Exception as ex:
                 print(f"  dl-err {t[:40]}: {ex}"); break
         if daten is None: continue
-        open(dst, "wb").write(daten); time.sleep(0.5)
+        open(dst, "wb").write(daten); time.sleep(a.pause)
         manifest.append({"file": os.path.basename(dst), "title": t, **meta})
         n += 1
         if n % 25 == 0:

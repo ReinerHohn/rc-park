@@ -126,7 +126,7 @@ def main(argv=None):
     for i_, F_ in enumerate(fas): F_["_id"] = F_.get("id_vorbau") or f"f{i_:02d}"
     if a.nur: fas = [F_ for F_ in fas if F_["_id"] in set(a.nur.split(","))]
     fotos = a.fotos.split(",") if a.fotos else sorted(os.path.basename(k)[2:-5] for k in glob.glob(os.path.join(od, "messprotokoll", "K-*.json"))
-                                                       if json.load(open(k)).get("kamera", {}).get("buendel_tor", {}).get("ok"))
+                                                       if isinstance(json.load(open(k)).get("kamera"), dict) and (json.load(open(k))["kamera"].get("buendel_tor", {}).get("ok") or json.load(open(k))["kamera"].get("vertrauen")))      # 16.11.2026: auch am Modell nachgezogene Fremdfotos (kamera_verfeinern.py)
     if not fotos:                                                         # 16.11.2026 (Haertetest ober_tvdr): Kameras ohne buendel_tor (uebernommen/nachgezogen) -> alle vertrauenswuerdigen Messkameras statt Abbruch mit 0 Fotos
         def _ok(k_): c_ = json.load(open(k_)).get("kamera"); n_ = os.path.basename(k_)[2:-5]; return isinstance(c_, dict) and "rvec" in c_ and "cx" in c_ and not n_.startswith("video") and (not n_.startswith(("dl_", "neu__")) or c_.get("vertrauen"))
         fotos = sorted(os.path.basename(k)[2:-5] for k in glob.glob(os.path.join(od, "messprotokoll", "K-*.json")) if _ok(k)); print(f"keine Kamera mit buendel_tor - nehme {len(fotos)} vertrauenswuerdige Messkameras", flush=True)

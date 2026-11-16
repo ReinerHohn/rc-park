@@ -311,3 +311,9 @@ Nachtrag 16.11. ~16:40 `foto_auftrag.py` (Nutzer: "eine Uebersicht, dann jede ei
 Seite = Uebersicht (Stadtplan + nummerierte Liste mit Sprunglinks), danach je Auftrag EIN Block: links "Hier stehen" (Planausschnitt, Blickrichtung, Kartenlinks), rechts "Das fotografieren"
 (Foto vom Standort mit rotem Rahmen; gibt es keins: mit `--stl` ein gerendertes Modellbild mit rotem Rahmen), darunter Anweisung, Ziel vergroessert, Zahlen, "weiter zu N". Allgemeine Regeln ans Ende.
 Aufruf jetzt mit `--stl <eigenes>,<nachbarn>`. Modellbild bei Standort < 1,6 x Zielgroesse: Kamera zurueck/schraeg/erhoeht (Orientierungsbild, nicht der Standort).
+
+Nachtrag 16.11. ~17:00 "alle Quellen" (Nutzer: "Muss ich wirklich Fotos machen?" - "Gib Vollgas"):
+- `commons_harvest.py --category "A|B" --tiefe 2 --width 1920 --pause 4`: mehrere Kategorien, Unterkategorien, Standardbreite, Pause (Wikimedia drosselt Serien). Kategorien Schwabentor (162 Dateien + 4 Unterkat.) und Oberlinden (100 + 5) laufen.
+- `kamera_verfeinern.py --liste datei`: viele Fotos in EINEM Lauf (Referenzmerkmale/-tiefenbilder nur einmal); Fotos OHNE Kamera werden gegen einen Kranz guter Fotos (3 je Fassade + nachgezogene Fremdfotos) eingehaengt.
+- `fassade_ortho.py` nimmt jetzt auch Kameras mit `vertrauen` (bisher nur buendel_tor) - sonst kaemen nachgeholte Fotos nie ins Fassadenbild.
+- Ablaufskript dieses Laufs: <daten>/schwab_v3/seiten_nachholen/nachlauf.sh (ungepruefte SfM-Posen der Downloads werden als .unsicher beiseitegelegt, dann alles ohne Vorwissen eingehaengt, Orthos und Fotoauftraege neu). NOCH NICHT als Teil von seiten_luecken.py.
