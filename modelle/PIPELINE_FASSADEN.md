@@ -185,3 +185,13 @@ OFFEN: Kamera je Bildformat (`--kameras`) automatisch erzeugen; bis dahin regist
 
 Nachtrag 16.11. ~10:30: Fotoquader am Schwabentor jetzt mit `--px 0.03` (statt 0,02) gerechnet - der Turmbau brauchte mit 2 cm 11-12 von 15 GB RAM und wurde zweimal vom System gestoppt. Aufrufe wie oben plus `--px 0.03`; Felder inzwischen: Sued 9,9-33,8 (`--ohne 0 11.6 25.8 27.0`), West 9,4-34,6, Nord 10,4-37,2 roh (`--ohne 1.6 11.1 9.7 21.1`), Ost 26,95-34,6 aus ost_putz.npz (`--putz_s 0.45 --putz_v 0.28 --ohne 4.6 6.4 27.0 34.6`).
 Nachregistrieren: `zusatzfotos_registrieren.py registrieren --je-bild` = jedes Webfoto eigene Kamera, Brennweite je Bild aus PnP (behebt den Abbruch bei gemischten Formaten).
+
+## Stufe `seiten`: ERSTER DURCHLAUF bis zur Messkamera (16.11.2026 ~10:45, Schwabentor)
+Download (Openverse, nur Flickr - Wikimedia war gedrosselt): 33 Bilder. Nachregistrierung von 46 Kandidaten (13 Altbestand + 33 neu) mit `--je-bild`:
+20 registriert (Reprojektion Median 1,2 px), darunter 13 Openverse-Fotos, 2 historische Commons-Aufnahmen und das Ostfoto od_15.
+`kameras_nachtragen.py`: Abbildung SfM -> Modell aus 529 gemeinsamen Kameras, Restfehler Median 1 cm; 17 neue K-Dateien.
+TREFFER: Flickr-Foto ov_0005 (CC BY 2.0, Jorge Franganillo; herkunft.json) zeigt die OSTSEITE in der Sonne, mit Fugen - automatisch geladen und registriert.
+GRENZEN (gemessen): (a) dessen Pose stimmt auf der Suedseite auf 5-10 px, auf der Ostseite liegt der Schlitz ~30 px (~0,9 m) daneben - Brennweite/Abstand sind bei wenigen
+Punkten auf nur einer Wand schlecht bestimmt; vor dem Messen Kamera mit gemessenen Modellpunkten nachziehen (wie bei od_15). (b) od_15: SfM-Pose (30 Inlier) liegt 74 m neben der
+Kamera aus 11 Modellpunkten - die Gegenprobe im Werkzeug meldet das, die vorhandene Kamera bleibt. (c) 26 von 46 nicht registriert (meist Bilder ohne den Turm).
+OFFEN: neue Kameras automatisch gegen Modellpunkte verfeinern; danach fassade_ortho/fassade_fein fuer die Ostwand mit ov_0005 + od_15 neu; Commons-Teil nachholen.
