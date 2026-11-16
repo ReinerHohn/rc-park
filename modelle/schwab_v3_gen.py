@@ -151,6 +151,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     ELEMENTE[:] = [e_ for e_ in ELEMENTE if e_["element"] != "Laterne mit Zwiebelhaube"]      # alte Laterne (Form ANNAHME) entfaellt, neue unten aus Fotomassen
     ELEMENTE[:] = [e_ for e_ in ELEMENTE if e_["element"] != "Zeltdach mit Ueberstand"]       # altes Dach (Sued/Ost/West gespiegelt angenommen) entfaellt, neues unten aus VIER gemessenen Traufecken
     koerper = massstab(rumpf, MK); N_BELEGE_ROH = len(ELEMENTE)
+    from bauteile import zwischenstand as _zw; koerper = _zw(koerper, "1_nord")      # 16.11.2026 Zwischenspeicher (bauteile.zwischenstand): wer weiter unten aendert, rechnet nur ab dem letzten Stand davor neu
     # ---- DACH (15.11.2026) im korrigierten Rahmen: vier Traufecken trianguliert (Nord: M-113205-016/-025 + Ecke A; Sued: M-commons127-011/-012), Achse = Knauf ----
     D_E = [(4.34, 8.62, 36.79), (4.27, 22.06, 36.69), (-8.05, 21.76, 36.54), (-8.00, 8.77, 36.47)]      # NO, NW, SW, SO: Dachkante aussen oben (m)
     D_A = (-1.86, 15.11)                                                                              # Achse: x = Mitte der Traufen Nord/Sued (-1,86) = Knauf x (-1,85); y = Knauf (15,11)
@@ -219,6 +220,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     beleg("wand", "Suedfassade: Torbogen, Fenster, Uhr, Gesims, Verdachung", "foto_mass.py auf der Suedwandebene, Fotos commons 127 und 217 (M-commons127-002..-010, M-commons217-001..-003)", tor_breite=4.49, tor_scheitel=5.85,
           tor_kaempfer=3.86, uhr_durchmesser=4.95, uhr_mitte_z=30.97, fenster_breite=0.92, fenster_hoehe=1.41, gesims_z=26.53,
           hinweis="ANNAHME: Tiefen/Ausladungen, Torwand 1 m, Bogen aus Kreisboegen; Georgsbild, Eckquader und Bruchstein fehlen (Relief erst nach neuer dichter Wolke); Knauf-Tor Nord-Sued 0,9 m -> Masse auf ~2-3 %")
+    koerper = _zw(koerper, "2_sued")
     # ---- WESTFASSADE (15.11.2026): Fenster auf der Mittelachse, Masse M-114039-001..-006 (Foto 114039, Kameras aus dem SfM-Neuaufbau); Wandebene aus den neuen SfM-Punkten ----
     WW = Wand((-7.37, 20.46), (3.30, 20.96), aussen=(-2.0, 40.0))               # Westwand: Ausgleichsebene des neuen Netzes (erste Annahme 20,85..21,00 lag am Suedende 0,39 m zu weit aussen; passt zum skalierten LoD2)
     rel_w = os.path.join(HERE, "schwab_v3", "relief", "west.npz")
@@ -253,6 +255,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper + WW.kasten(0.0, WW.laenge, 26.0, 26.53, -0.4, 0.10)                                      # Gesims West: Hoehe wie Sued (im Foto 114039 bei z ~26,5), Ausladung ANNAHME
     beleg("wand", "Westfassade: grosses Fenster, 4 Schlitzfenster, Gesims", "foto_mass.py auf der Westwandebene, Foto 114039 (M-114039-001..-006)", fenster_breite=0.81, fenster_hoehe=1.75, fensterachse_u=5.40,
           hinweis="ANNAHME: Tiefen, Schlitzbreiten 0,12-0,25 m aus einem steilen Foto, Gesimshoehe von der Suedseite; Wandlage West nur aus Wolke/LoD2; Treppenturm (LoD2-Nebenteil) unveraendert; Eckquader/Bruchstein fehlen")
+    koerper = _zw(koerper, "3_west")
     # ---- TREPPENTURM (15.11.2026): LoD2-Nebenteil (D-foermig, 2,8 x 2,5 m, flach) ersetzt durch Zylinder aus dem Kreisausgleich der neuen dichten Wolke ----
     # 16.11.2026 (Nutzer: "Tuermchen zu schmal, Daechlein noch nicht richtig"): Haube am entzerrten Foto commons 054 auf der Ebene durch die Turmachse gemessen (M-054-001..-005):
     # Schaft r 1,56 (Wolke 1,55), Gesims bis r 1,85 bei z 11,57, GESCHWEIFTE Kupferhaube bis z 13,5, Stange, Kugel bei z 14,6. Vorher: Zylinder r 1,52 mit geradem Kegel bis 14,2.
@@ -294,6 +297,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper - WO.kasten(*O_SCHL, -0.8, 0.6) - WO.kasten(*O_LUKE, -0.8, 0.6)       # 16.11. Bogenfenster Ost ENTFERNT: im scharfen Sonnenfoto liegt an der Stelle das Nachbardach, das 'Fenster' im Schattenfoto od_15 war eine Fehllesung
     beleg("wand", "Ostfassade: Schlitzfenster, kleine Luke, Gesims, Balkenkopf", "foto_mass.py auf der Ostwandebene, Fremdfoto od_15 (M-od_15-001..-007)", schlitz_hoehe=2.42, schlitz_z0=28.0, schlitz_u=5.47,
           hinweis="Kamera nur aus Modellpunkten (+-0,2 m); Luke 0,26 x 0,30 m am entzerrten Foto abgelesen (kein Protokoll); Zone unter z ~22 vom Nachbarhaus verdeckt")
+    koerper = _zw(koerper, "4_vor_hohl")
     # ---- 16.11.2026 FENSTER ALS ECHTE LOECHER (Nutzer: "alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden") ----
     if os.environ.get("OHNE_HOHL") != "1":
         from bauteile import aushoehlen; import time as _t; _t0 = _t.time()
@@ -304,6 +308,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         beleg("wand", f"Turm hohl, {n_offen} Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen", "Nutzerauftrag 16.11.2026; Fenstermasse wie oben", fenster_offen=n_offen, hohlraum_m3=round(v_hohl, 1),
               hinweis="Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen")
         print(f"hohl: {n_offen} Durchbrueche, Hohlraum {v_hohl:.0f} m3, {_t.time() - _t0:.0f} s")
+        koerper = _zw(koerper, "5_hohl", extra=(n_offen, round(v_hohl, 1)))
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json

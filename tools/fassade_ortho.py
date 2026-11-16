@@ -246,6 +246,18 @@ def main(argv=None):
                 Mb[q_] = np.where(c_ >= 0.3 * kb * kb, np.bincount(bi, weights=gg, minlength=nbz * nbu) / np.maximum(c_, 1), np.nan)
             with np.errstate(all="ignore"): mdn = np.nanmedian(Mb, 0); mad = np.nanmedian(np.abs(Mb - mdn), 0) * 1.48      # MAD statt Streuung: eine Minderheit abweichender Fotos (Nacht, s/w, Gegenlicht) zaehlt nicht,
             ub = np.where(np.isfinite(Mb).sum(0) >= 2, np.nan_to_num(mad), 0).reshape(nbz, nbu)                               # ein Mosaik ohne Mehrheit schon (dritte Fassung; die Streuung schlug am Turm auf hellem Putz an)
+            # STRUKTUR-UNEINIGKEIT (16.11.2026 spaet, vierte Fassung, eigene Karte struktur_<id>.png): die Helligkeitskarte trennt saubere Wand und Mosaik nicht (Turm Sued 30, Zeile 18).
+            # Hier je Foto ein 0,1-m-Bild, LOKAL normiert (Mittel/Streuung im 0,9-m-Fenster weg: Belichtung, Schatten, Nacht, s/w fallen heraus; glatter Putz wird ~0), dann MAD ueber die Fotos.
+            # Wert x 100 als uint8: ~0-25 = Fotos zeigen dieselbe Struktur (oder alle nichts), > ~45 = verschiedene Dinge (Baum, Nachbarhaus, falsche Kamera).
+            ks = max(1, int(round(0.1 / r["zelle"]))); sz, su = -(-r["nz"] // ks), -(-r["nu"] // ks); Ns = np.full((len(beitr), sz, su), np.nan, np.float32)
+            for q_, (_, x) in enumerate(beitr):
+                bi = (x[0] // r["nu"] // ks) * su + (x[0] % r["nu"]) // ks; c_ = np.bincount(bi, minlength=sz * su); da = (c_ >= 0.3 * ks * ks).reshape(sz, su)
+                L_ = (np.bincount(bi, weights=x[1].mean(1), minlength=sz * su) / np.maximum(c_, 1)).reshape(sz, su).astype(np.float32); w_ = da.astype(np.float32); kk = (9, 9)
+                n_ = np.maximum(cv2.blur(w_, kk), 1e-6); mu = cv2.blur(L_ * w_, kk) / n_; sd = np.sqrt(np.maximum(cv2.blur(L_ * L_ * w_, kk) / n_ - mu * mu, 0))
+                Ns[q_] = np.where(da & (cv2.blur(w_, kk) > 0.5), (L_ - mu) / (sd + 6.0), np.nan)
+            with np.errstate(all="ignore"): md_ = np.nanmedian(Ns, 0); st_ = np.nanmedian(np.abs(Ns - md_), 0) * 1.48
+            st_ = np.where(np.isfinite(Ns).sum(0) >= 3, np.nan_to_num(st_), 0); st_ = cv2.blur(st_.astype(np.float32), (3, 3)); del Ns
+            cv2.imwrite(os.path.join(a.aus, f"struktur_{F['_id']}.png"), cv2.resize(np.clip(st_ * 100, 0, 255).astype(np.uint8), (r["nu"], r["nz"]), interpolation=cv2.INTER_NEAREST))
             cv2.imwrite(os.path.join(a.aus, f"uneinig_{F['_id']}.png"), cv2.resize(np.clip(ub, 0, 255).astype(np.uint8), (r["nu"], r["nz"]), interpolation=cv2.INTER_NEAREST))
             rang = np.arange(len(I)) - np.repeat(st[:-1], np.diff(st)); w_ = rang < a.beste; I, Cc, G = I[w_], Cc[w_], G[w_]   # je Zelle die besten k
             # gewichteter Median je Kanal und Zelle, vektorisiert: Proben je Zelle nach Wert sortieren, kumulierte Gewichte, erster Wert >= halbes Gewicht

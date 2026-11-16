@@ -255,6 +255,44 @@ def kneifkanten_schliessen(koerper, r=0.02, runden=6, stellen=4):
 def massstab(koerper, faktor, drehpunkt): return koerper.translate((-drehpunkt[0], -drehpunkt[1], -drehpunkt[2])).scale((faktor, faktor, faktor)).translate(drehpunkt)
 
 
+def zwischenstand(koerper, name, muster=("relief/*.npz", "dach.json", "objekt.json", "audit/zyl_*.json", "audit/fenster_auto.json"), extra=()):
+    """ZWISCHENSPEICHER im Generator (Aufgabenliste 1b, 16.11.2026): koerper = zwischenstand(koerper, "nord") an festen Stellen des Generators.
+    Schluessel = Generatortext BIS zu dieser Zeile + Inhalt von bauteile.py/relief_einsatz.py/dach_bauen.py + Groesse/Zeit der Eingabedateien (muster, relativ zu modelle/<objekt>/)
+    + Umgebungsvariablen (SCALE, WAND_MM, MINMM, OHNE_*) + extra. Treffer: der gespeicherte Koerper wird geladen, der bis hierher aufgebaute (noch nicht ausgerechnete) Baum verworfen -
+    manifold3d rechnet erst bei der Ausgabe, deshalb kostet der Code davor dann fast nichts. Kein Treffer: ausrechnen, speichern, den GESPEICHERTEN Stand weitergeben (kalter und warmer Lauf sind so gleich).
+    Wer am Generator Zeile N aendert, rechnet nur ab dem letzten Zwischenstand davor neu. OHNE_CACHE=1 schaltet ab. Ablage: /media/oem/scan/rc-park_daten/gen_cache/<objekt>/ (je Name nur der neueste Stand).
+    Grenze: Dateien, die der Generator ausserhalb von `muster` liest, muessen ueber muster/extra gemeldet werden - sonst alter Stand trotz neuer Eingabe."""
+    import inspect, hashlib, glob, os, time
+    if os.environ.get("OHNE_CACHE") == "1": return koerper
+    from manifold3d import Mesh64
+    fr = inspect.stack()[1]; gen = os.path.abspath(fr.filename); h = hashlib.sha1("\n".join(open(gen).read().split("\n")[:fr.lineno]).encode()); td = os.path.dirname(os.path.abspath(__file__))
+    for t_ in ("bauteile.py", "relief_einsatz.py", "dach_bauen.py"): h.update(open(os.path.join(td, t_), "rb").read())
+    od = gen[:-len("_gen.py")] if gen.endswith("_gen.py") else os.path.splitext(gen)[0]
+    for mu in muster:
+        for f in sorted(glob.glob(os.path.join(od, mu))): st = os.stat(f); h.update(f"{os.path.relpath(f, od)}|{st.st_size}|{st.st_mtime_ns}".encode())
+    h.update(repr(sorted((k, v) for k, v in os.environ.items() if k in ("SCALE", "WAND_MM", "MINMM") or k.startswith("OHNE_"))).encode()); h.update(repr(extra).encode())
+    cd = os.path.join("/media/oem/scan/rc-park_daten/gen_cache", os.path.basename(od)); cf = os.path.join(cd, f"{name}_{h.hexdigest()[:16]}.npz"); t0 = time.time()
+
+    def laden():
+        Z = np.load(cf); m = M(Mesh64(vert_properties=Z["V"], tri_verts=Z["F"], merge_from_vert=Z["mf"], merge_to_vert=Z["mt"]))
+        return m if m.status().name == "NoError" and not m.is_empty() else None
+    if os.path.exists(cf):
+        try:
+            m = laden()
+            if m is not None: print(f"zwischenstand {name}: geladen ({time.time() - t0:.1f} s)", flush=True); return m
+        except Exception as e: print(f"zwischenstand {name}: Datei unbrauchbar ({str(e)[:60]}) - rechne neu", flush=True)
+    try:
+        me = koerper.to_mesh64(); os.makedirs(cd, exist_ok=True)
+        for alt in glob.glob(os.path.join(cd, f"{name}_*.npz")): os.remove(alt)
+        np.savez(cf, V=np.asarray(me.vert_properties)[:, :3], F=np.asarray(me.tri_verts), mf=np.asarray(me.merge_from_vert), mt=np.asarray(me.merge_to_vert)); m = laden()
+        if m is None: os.remove(cf); print(f"zwischenstand {name}: gespeicherter Stand nicht ladbar - ohne Zwischenspeicher weiter", flush=True); return koerper
+        print(f"zwischenstand {name}: gerechnet und gespeichert ({time.time() - t0:.1f} s, {len(Z_F(me)) // 1000}k Dreiecke)", flush=True); return m
+    except Exception as e: print(f"zwischenstand {name}: nicht gespeichert ({type(e).__name__}: {str(e)[:80]})", flush=True); return koerper
+
+
+def Z_F(me): return np.asarray(me.tri_verts)
+
+
 def stl_schreiben(model, pfad, kopf=b"rcpark"):
     """Binaeres STL; Ecken auf 1 Mikrometer verschweisst, entartete Dreiecke entfernt (sonst fallen Splitter als Einzelkoerper heraus)."""
     import os

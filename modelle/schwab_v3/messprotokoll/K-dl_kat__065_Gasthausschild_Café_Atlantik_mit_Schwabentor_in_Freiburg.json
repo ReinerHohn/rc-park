@@ -1,5 +1,5 @@
 {
- "foto": "dl_kat__065_Gasthausschild_Caf\u00e9_Atlantik_mit_Schwabentor_in_Freiburg",
+ "foto": "dl_kat__065_Gasthausschild_Café_Atlantik_mit_Schwabentor_in_Freiburg",
  "seite": "unbekannt",
  "punkte": {},
  "linien": {},
@@ -23,7 +23,7 @@
    -5.1095192852005376,
    -23.14503508115058
   ],
-  "quelle": "kamera_verfeinern.py: 573 Inlier auf 2 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 4.1 px",
+  "quelle": "kamera_verfeinern.py: 573 Inlier auf 2 Waenden gegen ['commons_orig2__044', 'commons_orig2__082', 'dl_commons__000_Baden-Württemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899'], Rest 4.1 px",
   "vertrauen": true,
   "rest_px_median": 4.062611111942685,
   "inlier_je_wand": {
@@ -31,6 +31,7 @@
    "1": 12,
    "3": 13,
    "4": 80
-  }
+  },
+  "tiefe_unsicher": "eben"
  }
 }

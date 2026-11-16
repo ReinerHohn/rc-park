@@ -19,6 +19,7 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
   bauen      tools/bauen_abnehmen.sh <ziel> (Generator aus Vorlage = LoD2 + Dach)
   kanten     KERNMETHODE (15.11.): tools/kantenstufe.py - SfM-Kameras -> Stabilkarten -> Kanten-Tiefen-Sweep um die Modellflaeche -> 3D-Kanten-F1 + Liste fehlender Kanten
   fototor    tools/kameras_aus_buendel.py (K-<foto>.json) -> tools/foto_diff.py auf den Fotos mit bester Modellsicht (Foto-Tor)
+  (in fototor: tools/kamera_plausibel.py --beiseite; nach fenster: tools/umriss_tor.py --eintragen; fassaden/fenster/seiten siehe modelle/PIPELINE_FASSADEN.md)
   html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html
   vergleich  optional --referenz-wolke: Abstand neue Wolke -> bewiesene Wolke (Median, Anteil < 0,5 m) = Konvergenzbeweis
 """
@@ -153,6 +154,7 @@ def main():
         else: notiz(B, "kanten", False, fehler=f"keine Ausrichtung {AU}")
     if dran("fototor") and os.path.exists(AU):
         lauf(B, "fototor_kameras", [PYC, "-I", "tools/kameras_aus_buendel.py", ZR, "--ausrichtung", AU, "--fotos", FV], log)
+        lauf(B, "kamera_plausibel", [PY, "-I", "tools/kamera_plausibel.py", Z, "--beiseite"], log, ok=(0, 3))      # 16.11.2026: Kameras "am Mond" (Abstand/Zoom nicht trennbar) beiseitelegen, bevor ein Werkzeug sie benutzt
         kw = os.path.join(KD, "kam_wahl.json"); wahl = list(json.load(open(kw)))[:6] if os.path.exists(kw) else []
         for f in wahl: lauf(B, f"fototor_{os.path.splitext(f)[0]}", [PY, "-W", "ignore", "-I", "tools/foto_diff.py", ZR, os.path.splitext(f)[0], "--bild", os.path.join(FV, f)], log)
     if dran("fassaden") and os.path.exists(AU):                         # 15.11.2026: Fassaden-Kette automatisch (Netz -> Relief je LoD2-Wand -> Putz per Fotofarbe -> Steine in Loechern), danach neu bauen
@@ -167,6 +169,7 @@ def main():
             if lauf(B, "fenster_parsing", [PY, "-W", "ignore", "-I", "tools/fassade_parsing.py", "--ortho", fo, "--gpu"], log)[0] == 0 and (lauf(B, "fenster_ortho_fein", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--stl", stl_, "--aus", fo + "_fein", "--einzeln", "--min-flaeche", "6", "--zelle", "0.01", "--max-mpp", "0.02", "--beste", "3"], log, ok=(0, 1))[0] in (0, 1)) and (lauf(B, "fenster_fein", [PY, "-I", "tools/fassade_fein.py", fo + "_fein"], log, ok=(0, 1))[0] in (0, 1)) and lauf(B, "fenster_bauen_liste", [PY, "-I", "tools/fenster_aus_parsing.py", fo, "--aus", fa, "--fein", fo + "_fein"], log)[0] == 0:   # feines, ausgerichtetes 1-cm-Bild fuer Sprossen/Muster (Nutzer 15.11.: "immer alle Details mitnehmen"); wo kein Foto <= 2 cm/px hat, bleibt das grobe
                 lauf(B, "bauen_mit_fenstern", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
             os.environ.clear(); os.environ.update(env_alt)
+    if dran("fenster") and os.path.exists(os.path.join(Z, "messprotokoll")): lauf(B, "umriss_tor", [PY, "-W", "ignore", "-I", "tools/umriss_tor.py", ZR, "--eintragen"], log, ok=(0, 3))      # 16.11.2026: Dachlinie Modell gegen Himmelskante; Befunde -> beobachtungen_offen
     if dran("seiten") and os.path.exists(AU):                           # 16.11.2026 Nutzer (Schwabentor Ostseite): "Er muss doch wissen, dass dort Bilder fehlen und die sich dann holen, notfalls downloaden. Alles muss in die Pipeline."
         fo = os.path.join(D, "fassade"); sp = next((q_ for q_ in (os.path.join(P, "sparse_ba"), os.path.join(P, "dicht", "sparse"), os.path.join(P, "sparse", "0")) if os.path.exists(os.path.join(q_, "images.bin"))), None); db = os.path.join(P, "db.db")
         if os.path.exists(os.path.join(fo, "fassaden.json")) and sp and os.path.exists(db):

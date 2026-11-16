@@ -1,5 +1,5 @@
 {
- "foto": "dl_kat__063_Freiburger_Schwabentor_von_der_Gr\u00fcnanlage_am_Pulverturm",
+ "foto": "dl_kat__063_Freiburger_Schwabentor_von_der_Grünanlage_am_Pulverturm",
  "seite": "unbekannt",
  "punkte": {},
  "linien": {},
@@ -23,7 +23,7 @@
    166.07201746038896,
    -4.467904758090366
   ],
-  "quelle": "kamera_verfeinern.py: 1581 Inlier auf 4 Waenden gegen ['commons_orig2__044', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__050_Freiburg-Schwabentor-08-2007-gje'], Rest 2.9 px",
+  "quelle": "kamera_verfeinern.py: 1581 Inlier auf 4 Waenden gegen ['commons_orig2__044', 'dl_commons__000_Baden-Württemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__005_Freiburg_Schwabentor_1998_4', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__050_Freiburg-Schwabentor-08-2007-gje'], Rest 2.9 px",
   "vertrauen": true,
   "rest_px_median": 2.947885379749604,
   "inlier_je_wand": {
@@ -32,6 +32,7 @@
    "2": 1112,
    "3": 50,
    "4": 5
-  }
+  },
+  "tiefe_unsicher": "eben"
  }
 }

@@ -340,3 +340,17 @@ Nachtrag 16.11. nachts - generisch und in der Kette (Nutzer: "alles generisch ba
   Als Mass "Wand gesehen ja/nein" taugt sie NICHT (saubere Turm-Suedwand 30, gemischte Zeilenfassade 18): in `foto_auftrag.py` nur mit `--mit-uneinig`, in `seiten_luecken.py` nur mit LUECKEN_MIT_UNEINIG=1.
   OFFEN: ein belastbares Mass fuer "Fotos zeigen dasselbe" (Strukturvergleich statt Helligkeit, vgl. Gegenfoto-Korrelation in steine_aus_foto.py).
 - Turm nach der Download-Runde (fassade_neu, 3 cm, 40 Kameras je Wand, 111 s): Nord 91 %, Sued 91 %, West 90 %, Ost 45 % (morgens 0 %). Fotoauftrag Turm: nur noch Ost unten + 5 Detailwuensche.
+
+Nachtrag 16.11. spaet - Kameras sicher, Zwischenspeicher, Kette:
+- `tools/kamera_plausibel.py` = EINE Regel (Standort endlich, <= 1500 m vom Objekt, Brennweite 0,3 bis 12 x Bildbreite) fuer alle Kamera-Schreiber: `kameras_aus_buendel.py` (schreibt Unplausibles nicht),
+  `foto_kalibrieren.py` (bricht mit rc 3 ab), `kamera_verfeinern.py`, `schnelltest.sh` (alle Objekte), Gesamtkette Stufe `fototor` (`--beiseite`). Zweiter Fund: 11 Kameras mit NEGATIVER oder winziger Brennweite.
+- `kamera_verfeinern.py` TIEFENSPANNE-TOR: Abstand und Zoom sind nur trennbar, wenn die Inlier in der Tiefe verteilt sind. Mass = Tiefenspanne (p5-p95 entlang der Blickachse) / Abstand, Schwelle `--min_tiefe 0.06`.
+  Darunter: Brennweite aus EXIF festhalten (wenn vorhanden und der Rest dann <= 3 x so gross bleibt), sonst NICHT schreiben. Probe: beide "Mond-Kameras" (4609 bzw. 205 Inlier, Tiefenspanne 0,0 % / 0,4 %) abgelehnt, gute Kameras unveraendert.
+  Die Inlier-ZAHL sagt darueber nichts (4223 von 4609 lagen auf einer Wand).
+- `bauteile.zwischenstand(koerper, name)` = Zwischenspeicher im Generator (Schluessel: Generatortext bis zur Zeile, Werkzeug-Inhalt, Eingabedateien, Umgebung). Im Turm-Generator an 5 Stellen
+  (1_nord, 2_sued, 3_west, 4_vor_hohl, 5_hohl). OHNE_CACHE=1 schaltet ab. Neue Generatoren: nach jeder Fassade und vor/nach `aushoehlen` einen Zwischenstand setzen.
+- Gesamtkette: `kamera_plausibel` in Stufe fototor, `umriss_tor.py --eintragen` nach Stufe fenster.
+- NACHPRUEFUNG aller 128 'vertrauen'-Fremdkameras des Turms mit dem Tiefenspanne-Tor (16.11. spaet, Ergebnis `seiten_nachholen/tiefentor_ergebnis.json`): 90 bestehen, 28 haben Punkte fast in einer Ebene
+  (und keine EXIF-Brennweite), 5 nur mit festgehaltener EXIF-Brennweite (frei geschaetzt lag f um das 1,3- bis 5-Fache daneben), 5 ohne tragfaehige Loesung. Die 38 tragen jetzt `tiefe_unsicher` in der K-Datei:
+  sie bleiben fuer das Bild IHRER Wand brauchbar (dort passen sie auf wenige Pixel), sind aber KEINE Referenz mehr fuer neue Kameras (`kamera_verfeinern.py`) und taugen nicht fuer Masse ausserhalb der Wandebene.
+  OFFEN: Messwerkzeuge (foto_mass, fassade_tiefe, steine_aus_foto --foto auto) werten das Kennzeichen noch nicht aus.

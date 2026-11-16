@@ -50,7 +50,7 @@ def main():
             refs = []                                                         # je Fassade die 3 mit den meisten Zellen im Fassadenbild + alle schon nachgezogenen Fremdfotos (erhoehte Standorte)
             for F in json.load(open(a.fassaden))["fassaden"]:
                 if F.get("flaeche_m2", 0) >= 40: refs += sorted(F.get("fotos", {}), key=lambda k_: -F["fotos"][k_].get("zellen", 0))[:3]
-            refs += [os.path.basename(p_)[2:-5] for p_ in glob.glob(os.path.join(mp, "K-*.json")) if (kam(os.path.basename(p_)[2:-5]) or {}).get("vertrauen")]
+            refs += [os.path.basename(p_)[2:-5] for p_ in glob.glob(os.path.join(mp, "K-*.json")) if (kam(os.path.basename(p_)[2:-5]) or {}).get("vertrauen") and not (kam(os.path.basename(p_)[2:-5]) or {}).get("tiefe_unsicher")]
             refs = [n for n in dict.fromkeys(refs) if n != a.foto and kam(n) and pfad(n) and not n.startswith("video")][:24]
             K0 = dict(f_px=float("nan")); C0 = np.full(3, np.nan)
         else:
@@ -58,7 +58,7 @@ def main():
             for p in glob.glob(os.path.join(mp, "K-*.json")):
                 n = os.path.basename(p)[2:-5]; k = kam(n)
                 if n == a.foto or k is None or not pfad(n): continue
-                if n.startswith(("dl_", "neu__", "video")) and not k.get("vertrauen"): continue     # 16.11.2026: nur vertrauenswuerdige Referenzen (Buendelkameras eigener/Commons-Fotos oder schon nachgezogene) -
+                if k.get("tiefe_unsicher") or (n.startswith(("dl_", "neu__", "video")) and not k.get("vertrauen")): continue     # 16.11.2026: nur vertrauenswuerdige Referenzen (Buendelkameras eigener/Commons-Fotos oder schon nachgezogene) -
                                                                                                    # sonst bestaetigt sich eine falsche Pose am eigenen Duplikat / an falsch verorteten Videobildern (ov_0005: 27 m vor dem Turm in der Luft)
                 R = cv2.Rodrigues(np.array(k["rvec"]))[0]; C = -R.T @ np.array(k["t"]); kand.append((np.linalg.norm(C - C0) * (2.0 - float(R[2] @ blick0)), n))
             refs = [n for _, n in sorted(kand)[:a.n]]

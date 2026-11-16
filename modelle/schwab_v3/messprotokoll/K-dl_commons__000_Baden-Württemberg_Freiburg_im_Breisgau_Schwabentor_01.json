@@ -1,5 +1,5 @@
 {
- "foto": "dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01",
+ "foto": "dl_commons__000_Baden-Württemberg_Freiburg_im_Breisgau_Schwabentor_01",
  "seite": "unbekannt",
  "punkte": {},
  "linien": {},
@@ -31,7 +31,8 @@
    "1": 9,
    "3": 8,
    "4": 20
-  }
+  },
+  "tiefe_unsicher": "eben"
  },
  "kamera_vorher": {
   "rvec": [

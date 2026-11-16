@@ -23,7 +23,7 @@
    19.386807330591196,
    8.552683765219005
   ],
-  "quelle": "kamera_verfeinern.py: 742 Inlier auf 2 Waenden gegen ['commons_orig2__044', 'dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__053_Freiburg_Schwabentor_1998_3', 'dl_kat__018_European_tour_2003_185'], Rest 0.8 px",
+  "quelle": "kamera_verfeinern.py: 742 Inlier auf 2 Waenden gegen ['commons_orig2__044', 'dl_commons__000_Baden-Württemberg_Freiburg_im_Breisgau_Schwabentor_01', 'dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__053_Freiburg_Schwabentor_1998_3', 'dl_kat__018_European_tour_2003_185'], Rest 0.8 px",
   "vertrauen": true,
   "rest_px_median": 0.793852629978778,
   "inlier_je_wand": {
@@ -32,6 +32,7 @@
    "2": 1,
    "3": 14,
    "4": 37
-  }
+  },
+  "tiefe_unsicher": "eben"
  }
 }
