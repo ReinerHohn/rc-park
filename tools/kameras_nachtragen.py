@@ -41,12 +41,10 @@ def main():
     bericht = dict(gemeinsam=int(gut.sum()), massstab=float(s), rest_median_m=float(np.median(rest[gut])), neu=[], gegenprobe=[])
     for im, R, C, k in neu:
         Cm = s * Ra @ C + ta; Rm = R @ Ra.T; stem = os.path.splitext(im.name)[0]
-        if k is not None:
-            if stem.startswith(("eigen", "commons", "video", "online")) and not a.ueberschreiben:
-                if not any(np.allclose(C, q) for q in alt_s[gut]) or True:
-                    Rk = cv2.Rodrigues(np.array(k["rvec"]))[0]; dC = float(np.linalg.norm(Cm - (-Rk.T @ np.array(k["t"]))))
-                    if dC > 1.0: bericht["gegenprobe"].append(dict(foto=stem, standort_unterschied_m=round(dC, 2)))
-                continue
+        if k is not None and not a.ueberschreiben:                         # vorhandene Kamera bleibt IMMER (16.11.2026: der Gesamtlauf ueberschrieb die am Modell nachgezogene Kamera von ov_0005 mit der schlechteren SfM-Pose)
+            Rk = cv2.Rodrigues(np.array(k["rvec"]))[0]; dC = float(np.linalg.norm(Cm - (-Rk.T @ np.array(k["t"]))))
+            if dC > 1.0 and not any(np.allclose(C, q) for q in alt_s[gut]): bericht["gegenprobe"].append(dict(foto=stem, standort_unterschied_m=round(dC, 2)))
+            continue
         cam = rec.cameras[im.camera_id]; orig = (glob.glob(os.path.join(fd, stem + ".*")) or (glob.glob(os.path.join(a.bilder, stem + ".*")) if a.bilder else []))
         if not orig: continue
         if not orig[0].startswith(fd): ziel = os.path.join(fd, os.path.basename(orig[0])); os.path.lexists(ziel) or os.symlink(os.path.realpath(orig[0]), ziel); orig = [ziel]

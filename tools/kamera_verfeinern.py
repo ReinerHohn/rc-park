@@ -38,6 +38,8 @@ def main():
         for p in glob.glob(os.path.join(mp, "K-*.json")):
             n = os.path.basename(p)[2:-5]; k = kam(n)
             if n == a.foto or k is None or not pfad(n): continue
+            if n.startswith(("dl_", "neu__", "video")) and not k.get("vertrauen"): continue     # 16.11.2026: nur vertrauenswuerdige Referenzen (Buendelkameras eigener/Commons-Fotos oder schon nachgezogene) -
+                                                                                               # sonst bestaetigt sich eine falsche Pose am eigenen Duplikat / an falsch verorteten Videobildern (ov_0005: 27 m vor dem Turm in der Luft)
             R = cv2.Rodrigues(np.array(k["rvec"]))[0]; C = -R.T @ np.array(k["t"]); kand.append((np.linalg.norm(C - C0) * (2.0 - float(R[2] @ blick0)), n))
         refs = [n for _, n in sorted(kand)[:a.n]]
     dev = "cuda"; ex = ALIKED(max_num_keypoints=4096).eval().to(dev); mt = LightGlue(features="aliked").eval().to(dev)
@@ -75,7 +77,7 @@ def main():
     if tragend < 2: print("nur eine Wand mit >= 15 Inliern - Kamera bleibt unsicher, nicht geschrieben"); return 3
     if a.schreiben:
         kp = os.path.join(mp, "K-" + a.foto + ".json"); d = json.load(open(kp)); d["kamera_vorher"] = d["kamera"]
-        d["kamera"] = dict(rvec=p[:3].tolist(), t=p[3:6].tolist(), f_px=float(p[6]), cx=cx, cy=cy, k1=0.0, standort=C.tolist(), quelle=f"kamera_verfeinern.py: {len(inl)} Inlier auf {tragend} Waenden gegen {sorted(set(RF))[:6]}, Rest {np.median(err):.1f} px", rest_px_median=float(np.median(err)), inlier_je_wand=je_wand)
+        d["kamera"] = dict(rvec=p[:3].tolist(), t=p[3:6].tolist(), f_px=float(p[6]), cx=cx, cy=cy, k1=0.0, standort=C.tolist(), quelle=f"kamera_verfeinern.py: {len(inl)} Inlier auf {tragend} Waenden gegen {sorted(set(RF))[:6]}, Rest {np.median(err):.1f} px", vertrauen=True, rest_px_median=float(np.median(err)), inlier_je_wand=je_wand)
         json.dump(d, open(kp, "w"), indent=1); print("geschrieben:", kp)
     return 0
 

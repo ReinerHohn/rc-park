@@ -5,55 +5,62 @@
  "linien": {},
  "kamera": {
   "rvec": [
-   1.5537011780324244,
-   -0.4064348666980151,
-   0.3974487360050442
+   1.5544509905564652,
+   -0.40643884981510886,
+   0.40027117533499185
   ],
   "t": [
-   16.411381315711587,
-   27.472476770014488,
-   81.48587153177476
+   16.387862890131608,
+   27.505199671974324,
+   82.04671230997691
   ],
-  "f_px": 3003.1229934095422,
+  "f_px": 3018.6469357715423,
   "cx": 512.0,
   "cy": 341.5,
   "k1": 0.0,
   "standort": [
-   -53.88876986302646,
-   -62.516606817643336,
-   29.18376313156917
+   -54.293459706782215,
+   -62.88200682098124,
+   29.237553098902268
   ],
-  "quelle": "kamera_verfeinern.py: 1404 Inlier auf 4 Waenden gegen ['commons_orig2__127', 'commons_orig2__172', 'commons_orig2__195', 'online2_orig__od_15', 'online_orig__od_08'], Rest 1.6 px",
-  "rest_px_median": 1.5599616001703513,
+  "quelle": "kamera_verfeinern.py: 1433 Inlier auf 4 Waenden gegen ['commons_orig2__127', 'commons_orig2__172', 'commons_orig2__195', 'online2_orig__od_15', 'online_orig__od_08'], Rest 1.6 px",
+  "vertrauen": true,
+  "rest_px_median": 1.571591128618674,
   "inlier_je_wand": {
-   "0": 3,
-   "1": 31,
-   "2": 1254,
-   "3": 59,
-   "4": 57
+   "0": 4,
+   "1": 33,
+   "2": 1293,
+   "3": 50,
+   "4": 53
   }
  },
  "kamera_vorher": {
   "rvec": [
-   1.5052061715467961,
-   -0.3638715987493194,
-   0.3823260193723577
+   1.4916872450556928,
+   -0.34386362960150635,
+   0.3668823224830454
   ],
   "t": [
-   15.832343449040318,
-   26.839997521779175,
-   25.07446965823153
+   15.957970452194123,
+   27.063748750418938,
+   28.93993427723291
   ],
-  "f_px": 1250.7595954765675,
+  "f_px": 1257.4736705960725,
   "cx": 512.0,
-  "cy": 341.504,
-  "k1": 0.008919174434683439,
+  "cy": 341.5,
+  "k1": 0.0,
   "standort": [
-   -26.09773874916045,
-   -15.745317675667529,
-   25.899239335778486
+   -27.74550834785549,
+   -20.116398734512288,
+   25.49785053338138
   ],
-  "quelle": "nachregistriert (sparse_handy), Abbildung aus 529 gemeinsamen Kameras, Rest 0.01 m",
-  "punkte3d": 260
+  "quelle": "kamera_verfeinern.py: 964 Inlier auf 3 Waenden gegen ['dl_commons__010_Freiburg_im_Breisgau-_Schwabentor_-_51733735810', 'video_frames_NW-Mt7ryZ8c__vf_037', 'video_frames_NW-Mt7ryZ8c__vf_038', 'video_frames_NW-Mt7ryZ8c__vf_039', 'video_frames_NW-Mt7ryZ8c__vf_040', 'video_frames_NW-Mt7ryZ8c__vf_041'], Rest 0.4 px",
+  "rest_px_median": 0.36833538338140975,
+  "inlier_je_wand": {
+   "0": 9,
+   "2": 359,
+   "3": 510,
+   "4": 86
+  }
  }
 }

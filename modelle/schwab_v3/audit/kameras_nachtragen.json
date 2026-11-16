@@ -6,186 +6,602 @@
   {
    "foto": "dl_openverse__ov_0019",
    "standort": [
-    117.6,
-    5.4,
-    0.0
+    117.2,
+    5.5,
+    0.2
    ],
-   "f_px": 1214,
-   "punkte3d": 634
+   "f_px": 1206,
+   "punkte3d": 638
   },
   {
    "foto": "dl_openverse__ov_0015",
    "standort": [
-    158.4,
-    6.9,
-    -4.1
+    157.7,
+    7.9,
+    -5.9
    ],
-   "f_px": 1231,
-   "punkte3d": 161
+   "f_px": 1243,
+   "punkte3d": 141
   },
   {
    "foto": "dl_openverse__ov_0005",
    "standort": [
-    -26.1,
-    -15.7,
-    25.9
+    -27.8,
+    -19.4,
+    25.8
    ],
-   "f_px": 1251,
-   "punkte3d": 260
+   "f_px": 1239,
+   "punkte3d": 382
   },
   {
    "foto": "dl_openverse__ov_0004",
    "standort": [
-    44.6,
-    -0.3,
-    -0.4
+    43.6,
+    0.3,
+    0.1
    ],
-   "f_px": 1204,
-   "punkte3d": 247
+   "f_px": 1214,
+   "punkte3d": 268
   },
   {
    "foto": "dl_openverse__ov_0003",
    "standort": [
-    60.5,
-    -2.2,
-    -1.8
+    59.1,
+    -2.5,
+    -0.9
    ],
    "f_px": 1221,
-   "punkte3d": 688
+   "punkte3d": 850
   },
   {
-   "foto": "commons_orig2__035",
+   "foto": "dl_commons__049_Schwabentor_vom_Kastaniengarten_Freiburg_01",
    "standort": [
-    -71.3,
-    18.7,
-    5.4
+    -95.1,
+    -130.2,
+    35.8
    ],
-   "f_px": 3489,
-   "punkte3d": 538
+   "f_px": 4324,
+   "punkte3d": 228
   },
   {
-   "foto": "commons_orig2__034",
+   "foto": "dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899",
    "standort": [
-    -66.5,
-    16.7,
-    12.9
+    -23.6,
+    -57.0,
+    0.2
    ],
-   "f_px": 3147,
-   "punkte3d": 634
-  },
-  {
-   "foto": "video_frames_7wvSPHS1gDA__vf_040",
-   "standort": [
-    90.8,
-    19.1,
-    -10.7
-   ],
-   "f_px": 5480,
-   "punkte3d": 970
-  },
-  {
-   "foto": "video_frames_7wvSPHS1gDA__vf_024",
-   "standort": [
-    101.8,
-    48.4,
-    2.5
-   ],
-   "f_px": 755,
+   "f_px": 6169,
    "punkte3d": 123
+  },
+  {
+   "foto": "dl_commons__010_Freiburg_im_Breisgau-_Schwabentor_-_51733735810",
+   "standort": [
+    -27.7,
+    -20.1,
+    25.5
+   ],
+   "f_px": 4707,
+   "punkte3d": 380
   },
   {
    "foto": "dl_openverse__ov_0026",
    "standort": [
-    77.5,
-    13.2,
-    -0.7
+    91.8,
+    14.1,
+    -0.5
    ],
-   "f_px": 1261,
-   "punkte3d": 553
+   "f_px": 1509,
+   "punkte3d": 623
   },
   {
    "foto": "dl_openverse__ov_0018",
    "standort": [
-    93.1,
-    7.3,
-    0.1
+    92.6,
+    7.5,
+    0.3
    ],
-   "f_px": 1601,
-   "punkte3d": 1066
+   "f_px": 1578,
+   "punkte3d": 1127
   },
   {
    "foto": "dl_openverse__ov_0017",
    "standort": [
-    105.0,
-    6.4,
-    -1.8
+    101.8,
+    5.9,
+    0.4
    ],
-   "f_px": 975,
-   "punkte3d": 439
+   "f_px": 934,
+   "punkte3d": 849
   },
   {
    "foto": "dl_openverse__ov_0011",
    "standort": [
-    42.8,
-    3.1,
-    0.3
+    45.3,
+    2.7,
+    -0.9
    ],
-   "f_px": 2689,
-   "punkte3d": 2123
+   "f_px": 2858,
+   "punkte3d": 2261
   },
   {
    "foto": "dl_openverse__ov_0010",
    "standort": [
-    13.1,
-    3.4,
-    1.4
+    14.0,
+    2.4,
+    1.3
    ],
-   "f_px": 559,
-   "punkte3d": 2012
+   "f_px": 625,
+   "punkte3d": 2118
   },
   {
    "foto": "dl_openverse__ov_0002",
    "standort": [
-    -94.1,
-    7.2,
-    -3.5
+    -84.2,
+    8.0,
+    -1.3
    ],
-   "f_px": 1426,
-   "punkte3d": 1997
-  },
-  {
-   "foto": "dl_openverse__ov_0001",
-   "standort": [
-    -71.8,
-    5.2,
-    24.7
-   ],
-   "f_px": 4601,
-   "punkte3d": 2293
+   "f_px": 1264,
+   "punkte3d": 2165
   },
   {
    "foto": "dl_openverse__ov_0000",
    "standort": [
-    108.4,
-    3.9,
-    0.0
+    88.5,
+    4.8,
+    4.4
    ],
-   "f_px": 6732,
-   "punkte3d": 2875
+   "f_px": 5437,
+   "punkte3d": 2760
+  },
+  {
+   "foto": "dl_commons__058_Schwabentor_Freiburg_6544",
+   "standort": [
+    54.6,
+    17.7,
+    -0.3
+   ],
+   "f_px": 17119,
+   "punkte3d": 4539
+  },
+  {
+   "foto": "dl_commons__057_Schwabentor-Freiburg",
+   "standort": [
+    65.8,
+    13.8,
+    -19.6
+   ],
+   "f_px": 13345,
+   "punkte3d": 3966
+  },
+  {
+   "foto": "dl_commons__056_Georg_Schwabentor_Freiburg",
+   "standort": [
+    -20.6,
+    13.4,
+    1.1
+   ],
+   "f_px": 2446,
+   "punkte3d": 3504
+  },
+  {
+   "foto": "dl_commons__053_Freiburg_Schwabentor_1998_3",
+   "standort": [
+    -20.4,
+    13.7,
+    2.0
+   ],
+   "f_px": 1436,
+   "punkte3d": 3028
+  },
+  {
+   "foto": "dl_commons__052_Freiburg_-_Schwabentor_2497812929",
+   "standort": [
+    95.1,
+    10.6,
+    0.4
+   ],
+   "f_px": 1390,
+   "punkte3d": 1255
+  },
+  {
+   "foto": "dl_commons__051_Freiburg-Schwabentor-10-2007-gje",
+   "standort": [
+    125.6,
+    9.1,
+    -0.1
+   ],
+   "f_px": 4790,
+   "punkte3d": 1356
+  },
+  {
+   "foto": "dl_commons__050_Freiburg-Schwabentor-08-2007-gje",
+   "standort": [
+    125.9,
+    9.0,
+    -0.3
+   ],
+   "f_px": 4834,
+   "punkte3d": 1275
+  },
+  {
+   "foto": "dl_commons__048_Schwabentor_Freiburg_im_Breisgau",
+   "standort": [
+    -66.4,
+    3.7,
+    -2.5
+   ],
+   "f_px": 3269,
+   "punkte3d": 2329
+  },
+  {
+   "foto": "dl_commons__047_Schwabentor_Freiburg_12",
+   "standort": [
+    -14.5,
+    35.3,
+    0.9
+   ],
+   "f_px": 3924,
+   "punkte3d": 2278
+  },
+  {
+   "foto": "dl_commons__046_Schwabentor_Freiburg_11",
+   "standort": [
+    -36.4,
+    23.4,
+    1.2
+   ],
+   "f_px": 3943,
+   "punkte3d": 2766
+  },
+  {
+   "foto": "dl_commons__045_Schwabentor_Freiburg_10",
+   "standort": [
+    -36.4,
+    23.4,
+    1.2
+   ],
+   "f_px": 3947,
+   "punkte3d": 2778
+  },
+  {
+   "foto": "dl_commons__044_Schwabentor_Freiburg_09",
+   "standort": [
+    18.0,
+    26.4,
+    1.3
+   ],
+   "f_px": 6293,
+   "punkte3d": 3563
+  },
+  {
+   "foto": "dl_commons__043_Schwabentor_Freiburg_08",
+   "standort": [
+    -29.9,
+    36.5,
+    1.0
+   ],
+   "f_px": 2058,
+   "punkte3d": 1462
+  },
+  {
+   "foto": "dl_commons__042_Schwabentor_Freiburg_05",
+   "standort": [
+    4.2,
+    9.0,
+    1.3
+   ],
+   "f_px": 2033,
+   "punkte3d": 497
+  },
+  {
+   "foto": "dl_commons__041_Schwabentor_Freiburg_04",
+   "standort": [
+    17.5,
+    14.4,
+    1.0
+   ],
+   "f_px": 2043,
+   "punkte3d": 2266
+  },
+  {
+   "foto": "dl_commons__040_Schwabentor_Freiburg_03",
+   "standort": [
+    17.5,
+    14.1,
+    1.2
+   ],
+   "f_px": 1997,
+   "punkte3d": 2215
+  },
+  {
+   "foto": "dl_commons__039_Schwabentor_Freiburg_02",
+   "standort": [
+    13.5,
+    20.3,
+    1.0
+   ],
+   "f_px": 2066,
+   "punkte3d": 4352
+  },
+  {
+   "foto": "dl_commons__038_Schwabentor_Freiburg_01",
+   "standort": [
+    28.8,
+    3.9,
+    0.9
+   ],
+   "f_px": 3082,
+   "punkte3d": 4145
+  },
+  {
+   "foto": "dl_commons__036_Schwabentor_Freiburg_im_Breisgau_jm60903",
+   "standort": [
+    -70.1,
+    -49.6,
+    1.1
+   ],
+   "f_px": 6503,
+   "punkte3d": 402
+  },
+  {
+   "foto": "dl_commons__030_Schwabentor_Freiburg_im_Breisgau_jm52907",
+   "standort": [
+    -193.7,
+    0.2,
+    -1.1
+   ],
+   "f_px": 15659,
+   "punkte3d": 2580
+  },
+  {
+   "foto": "dl_commons__029_Schwabentor_Freiburg_im_Breisgau_jm52903",
+   "standort": [
+    17.8,
+    15.7,
+    14.2
+   ],
+   "f_px": 4585,
+   "punkte3d": 2634
+  },
+  {
+   "foto": "dl_commons__026_Schwabentor_Freiburg_im_Breisgau_jm04052",
+   "standort": [
+    -20.9,
+    17.0,
+    11.0
+   ],
+   "f_px": 5836,
+   "punkte3d": 1641
+  },
+  {
+   "foto": "dl_commons__025_Schwabentor_Freiburg_im_Breisgau_jm04051",
+   "standort": [
+    -42.8,
+    -7.4,
+    9.4
+   ],
+   "f_px": 24412,
+   "punkte3d": 2026
+  },
+  {
+   "foto": "dl_commons__024_Schwabentor_Freiburg_3249",
+   "standort": [
+    -259.4,
+    28.6,
+    -17.1
+   ],
+   "f_px": 18036,
+   "punkte3d": 2855
+  },
+  {
+   "foto": "dl_commons__023_Schwabentor_Freiburg_2416",
+   "standort": [
+    110.5,
+    6.5,
+    0.3
+   ],
+   "f_px": 4933,
+   "punkte3d": 1653
+  },
+  {
+   "foto": "dl_commons__022_Schlossbergring_2_am_Schwabentor_in_Freiburg_im_Breisgau_2025",
+   "standort": [
+    60.3,
+    10.0,
+    2.9
+   ],
+   "f_px": 7066,
+   "punkte3d": 3841
+  },
+  {
+   "foto": "dl_commons__020_Oberlinden_mit_Schwabenturm_in_Freiburg_im_Breisgau_2025",
+   "standort": [
+    76.9,
+    4.4,
+    5.7
+   ],
+   "f_px": 4535,
+   "punkte3d": 2243
+  },
+  {
+   "foto": "dl_commons__019_Oberlinden_Schwabentor_Freiburg_im_Breisgau",
+   "standort": [
+    36.5,
+    2.3,
+    0.9
+   ],
+   "f_px": 3017,
+   "punkte3d": 6677
+  },
+  {
+   "foto": "dl_commons__015_Freiburg_im_Breisgau_Schwabentor_5",
+   "standort": [
+    42.9,
+    6.4,
+    0.6
+   ],
+   "f_px": 2036,
+   "punkte3d": 3736
+  },
+  {
+   "foto": "dl_commons__014_Freiburg_im_Breisgau_Schwabentor_4",
+   "standort": [
+    29.5,
+    11.6,
+    0.6
+   ],
+   "f_px": 2063,
+   "punkte3d": 5536
+  },
+  {
+   "foto": "dl_commons__013_Freiburg_im_Breisgau_Schwabentor_3",
+   "standort": [
+    30.8,
+    11.5,
+    -0.1
+   ],
+   "f_px": 2174,
+   "punkte3d": 4662
+  },
+  {
+   "foto": "dl_commons__012_Freiburg_im_Breisgau_Schwabentor_2",
+   "standort": [
+    -37.0,
+    22.8,
+    1.3
+   ],
+   "f_px": 2000,
+   "punkte3d": 4317
+  },
+  {
+   "foto": "dl_commons__011_Freiburg_im_Breisgau_Schwabentor_1",
+   "standort": [
+    -39.1,
+    23.9,
+    0.3
+   ],
+   "f_px": 2143,
+   "punkte3d": 4480
+  },
+  {
+   "foto": "dl_commons__009_Freiburg_im_Breisgau_Schwabentor_--_2025_--_8031",
+   "standort": [
+    -23.2,
+    36.7,
+    0.9
+   ],
+   "f_px": 7610,
+   "punkte3d": 990
+  },
+  {
+   "foto": "dl_commons__008_Freiburg_im_Breisgau_Schwabentor_--_2025_--_8028",
+   "standort": [
+    -29.7,
+    33.8,
+    1.5
+   ],
+   "f_px": 3720,
+   "punkte3d": 1452
+  },
+  {
+   "foto": "dl_commons__006_Freiburg_Schwabentor_Muenster_155_PICT0084_19939415_1022",
+   "standort": [
+    301.2,
+    67.2,
+    54.0
+   ],
+   "f_px": 5824,
+   "punkte3d": 477
+  },
+  {
+   "foto": "dl_commons__005_Freiburg_Schwabentor_1998_4",
+   "standort": [
+    111.8,
+    19.6,
+    -4.4
+   ],
+   "f_px": 3491,
+   "punkte3d": 876
+  },
+  {
+   "foto": "dl_commons__004_Freiburg_Schwabentor_1998_2",
+   "standort": [
+    12.0,
+    2.3,
+    1.9
+   ],
+   "f_px": 1265,
+   "punkte3d": 3198
+  },
+  {
+   "foto": "dl_commons__003_Freiburg_Schwabentor_1998_1",
+   "standort": [
+    12.9,
+    1.2,
+    1.5
+   ],
+   "f_px": 1561,
+   "punkte3d": 2527
+  },
+  {
+   "foto": "dl_commons__002_Freiburg_2007_1",
+   "standort": [
+    25.4,
+    11.7,
+    1.9
+   ],
+   "f_px": 2105,
+   "punkte3d": 4474
+  },
+  {
+   "foto": "dl_commons__001_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_02",
+   "standort": [
+    -234.2,
+    36.6,
+    -111.2
+   ],
+   "f_px": 13087,
+   "punkte3d": 1296
+  },
+  {
+   "foto": "dl_commons__000_Baden-W\u00fcrttemberg_Freiburg_im_Breisgau_Schwabentor_01",
+   "standort": [
+    170.0,
+    18.6,
+    -44.8
+   ],
+   "f_px": 8072,
+   "punkte3d": 1868
   }
  ],
  "gegenprobe": [
   {
    "foto": "online2_orig__od_15",
-   "standort_unterschied_m": 74.08
+   "standort_unterschied_m": 256.13
+  },
+  {
+   "foto": "commons_orig2__035",
+   "standort_unterschied_m": 3.5
+  },
+  {
+   "foto": "commons_orig2__034",
+   "standort_unterschied_m": 3.93
+  },
+  {
+   "foto": "video_frames_7wvSPHS1gDA__vf_040",
+   "standort_unterschied_m": 76.3
+  },
+  {
+   "foto": "video_frames_7wvSPHS1gDA__vf_024",
+   "standort_unterschied_m": 389.37
   },
   {
    "foto": "eigen__IMG_20261106_113723",
-   "standort_unterschied_m": 93.92
+   "standort_unterschied_m": 94.23
   },
   {
    "foto": "commons_orig2__129",
-   "standort_unterschied_m": 271.99
+   "standort_unterschied_m": 303.42
   },
   {
    "foto": "eigen__IMG_20261106_113459_2",

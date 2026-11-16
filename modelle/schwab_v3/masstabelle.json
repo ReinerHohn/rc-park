@@ -1876,36 +1876,19 @@
   {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-963-2033",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-1819-1284",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 20.72,
-   "z_bis": 20.72,
+   "z_von": 31.76,
+   "z_bis": 31.76,
    "xyz": [
-    -2.95,
-    9.83,
-    20.72
+    2.61,
+    20.3,
+    31.76
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=20.72 m, y=9.83 m (Zelle [963, 2033, 107], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=31.76 m, y=20.3 m (Zelle [1819, 1284, 107], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-963-2140",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 19.15,
-   "z_bis": 19.15,
-   "xyz": [
-    -2.89,
-    9.84,
-    19.15
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=19.15 m, y=9.84 m (Zelle [963, 2140, 107], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   }
  ]
 }

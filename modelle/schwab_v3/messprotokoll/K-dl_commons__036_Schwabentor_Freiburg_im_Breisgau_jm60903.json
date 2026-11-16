@@ -1,0 +1,57 @@
+{
+ "foto": "dl_commons__036_Schwabentor_Freiburg_im_Breisgau_jm60903",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.2041433426460897,
+   -0.6500033637810643,
+   0.7993856383164222
+  ],
+  "t": [
+   1.1385980131753612,
+   16.62101237172171,
+   58.04290388917477
+  ],
+  "f_px": 4656.674555933518,
+  "cx": 1920.0,
+  "cy": 2904.5,
+  "k1": 0.0,
+  "standort": [
+   -50.142739729188705,
+   -33.590731731147386,
+   1.9752325942637672
+  ],
+  "quelle": "kamera_verfeinern.py: 373 Inlier auf 2 Waenden gegen ['commons_orig2__082', 'commons_orig2__178', 'dl_commons__035_Schwabentor_Freiburg_im_Breisgau_jm60899', 'dl_commons__049_Schwabentor_vom_Kastaniengarten_Freiburg_01', 'online2_orig__od_15'], Rest 10.3 px",
+  "rest_px_median": 10.33568644357575,
+  "inlier_je_wand": {
+   "2": 250,
+   "3": 120,
+   "4": 3
+  }
+ },
+ "kamera_vorher": {
+  "rvec": [
+   1.2606497705606357,
+   -0.6701620468242295,
+   0.7685903095690383
+  ],
+  "t": [
+   0.8330526071024096,
+   16.958522767152303,
+   84.19816222483162
+  ],
+  "f_px": 6503.309260801434,
+  "cx": 1920.0,
+  "cy": 2904.96,
+  "k1": -0.03488139998006923,
+  "standort": [
+   -70.14658909211391,
+   -49.55738762933986,
+   1.066472328174573
+  ],
+  "quelle": "nachregistriert (sparse_handy), Abbildung aus 529 gemeinsamen Kameras, Rest 0.01 m",
+  "punkte3d": 402
+ }
+}

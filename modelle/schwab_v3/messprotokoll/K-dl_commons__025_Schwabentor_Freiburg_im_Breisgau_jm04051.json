@@ -1,0 +1,29 @@
+{
+ "foto": "dl_commons__025_Schwabentor_Freiburg_im_Breisgau_jm04051",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.3305711112940792,
+   -0.7461137007402593,
+   0.8317990014748526
+  ],
+  "t": [
+   15.826600492041567,
+   13.481026762496993,
+   39.27991644418632
+  ],
+  "f_px": 24411.78408529155,
+  "cx": 1622.5,
+  "cy": 3165.4975,
+  "k1": 0.08876762520612808,
+  "standort": [
+   -42.813568369720606,
+   -7.369445327462682,
+   9.371277425458407
+  ],
+  "quelle": "nachregistriert (sparse_handy), Abbildung aus 529 gemeinsamen Kameras, Rest 0.01 m",
+  "punkte3d": 2026
+ }
+}

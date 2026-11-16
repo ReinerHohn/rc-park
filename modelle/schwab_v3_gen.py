@@ -260,19 +260,19 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     WO = Wand((-7.25, 9.40), (3.50, 9.73), aussen=(-2.0, 0.0)); _fo_ost = os.path.join(HERE, "schwab_v3", "relief", "ost_foto.npz")
     if os.path.exists(_fo_ost) and os.environ.get("OHNE_RELIEF") != "1":
         koerper = koerper + relief_koerper(_fo_ost, tiefe=0.30, rand_auslauf=False)
-        beleg("wand", "Eckquader Ost (Obergeschoss, beide Ecken)", "entzerrtes Einzelfoto dl_openverse__ov_0005 (Flickr, Jorge Franganillo, CC BY 2.0; automatisch geladen/registriert, Kamera mit kamera_verfeinern.py am Modell nachgezogen: 1404 Inlier, 5 cm) -> relief_putz.py -> steine_aus_foto.py; Gegenprobe Streifenbreiten M-od_15-003/-004 (1,39 / 1,29 m)", steine=int(np.load(_fo_ost)["steine"]),
-              hinweis="Kontur und Fugen aus einem Sonnenfoto mit 2,9 cm/px (Fugen an der Aufloesungsgrenze); unter dem Gesims nicht gebaut: der Versuch mit dem Suedost-Eckstreifen (z 22,5-25,9) ergab im Bild neben dem Foto nur waagerechte Streifen (schraeger Blick, 3 cm/px)")
+        beleg("wand", "Eckquader Ost (Obergeschoss beide Ecken, Suedost-Ecke unter dem Gesims bis z 22,5)", "entzerrtes Einzelfoto dl_commons__010 (Commons-Original des Flickr-Fotos von Jorge Franganillo, CC BY 2.0, 3840 px = 0,8 cm/px; automatisch geladen/registriert, Kamera mit kamera_verfeinern.py nachgezogen: 1518 Inlier) -> relief_putz.py -> steine_aus_foto.py; Gegenprobe Streifenbreiten M-od_15-003/-004 (1,39 / 1,29 m)", steine=int(np.load(_fo_ost)["steine"]),
+              hinweis="Kontur und Fugen aus einem Sonnenfoto mit 2,9 cm/px (Fugen an der Aufloesungsgrenze); Kontur und Fugen aus einem Sonnenfoto mit 0,8 cm/px; Nachbardach und Fensterspalte von Hand ausgenommen")
     koerper = koerper + WO.kasten(0.0, WO.laenge, 26.0, 26.53, -0.05, 0.10)                                        # Gesims Ost: im Foto bei z 26,75 +- 0,2 (M-od_15-005), Hoehe wie Sued/West uebernommen
     koerper = koerper + WO.kasten(5.54 - 0.15, 5.54 + 0.15, 33.05, 33.6, -0.05, 0.25)                             # Balkenkopf Ost z 33,3 (M-od_15-005)
-    O_SCHL = (5.47 - 0.12, 5.47 + 0.12, 28.0, 30.42); O_BOG = b_rund(0.92, 22.76, 24.15)                         # Schlitz 2,42 m hoch (M-od_15-001), Breite 0,33 +- 0,07 gemessen -> 0,24 wie die Westschlitze; Bogenfenster halb verdeckt (M-od_15-007), Breite wie Sued
-    koerper = koerper - WO.kasten(*O_SCHL, -0.8, 0.6) - WO.prisma(O_BOG, u=5.32, w0=-0.8, w1=0.6)
-    beleg("wand", "Ostfassade: Schlitzfenster, Bogenfenster (halb verdeckt), Gesims, Balkenkopf", "foto_mass.py auf der Ostwandebene, Fremdfoto od_15 (M-od_15-001..-007)", schlitz_hoehe=2.42, schlitz_z0=28.0, schlitz_u=5.47,
-          hinweis="Kamera nur aus Modellpunkten (+-0,2 m); Bogenfenster nur zur Haelfte sichtbar, Breite von der Suedseite uebernommen; Zone unter z ~22 vom Nachbarhaus verdeckt")
+    O_SCHL = (5.47 - 0.12, 5.47 + 0.12, 28.0, 30.42); O_LUKE = (3.02, 3.28, 24.62, 24.92)                        # Schlitz 2,42 m hoch (M-od_15-001); kleine Luke unter dem Gesims: Lage aus dem entzerrten Sonnenfoto 010 (0,8 cm/px) abgelesen
+    koerper = koerper - WO.kasten(*O_SCHL, -0.8, 0.6) - WO.kasten(*O_LUKE, -0.8, 0.6)       # 16.11. Bogenfenster Ost ENTFERNT: im scharfen Sonnenfoto liegt an der Stelle das Nachbardach, das 'Fenster' im Schattenfoto od_15 war eine Fehllesung
+    beleg("wand", "Ostfassade: Schlitzfenster, kleine Luke, Gesims, Balkenkopf", "foto_mass.py auf der Ostwandebene, Fremdfoto od_15 (M-od_15-001..-007)", schlitz_hoehe=2.42, schlitz_z0=28.0, schlitz_u=5.47,
+          hinweis="Kamera nur aus Modellpunkten (+-0,2 m); Luke 0,26 x 0,30 m am entzerrten Foto abgelesen (kein Protokoll); Zone unter z ~22 vom Nachbarhaus verdeckt")
     # ---- 16.11.2026 FENSTER ALS ECHTE LOECHER (Nutzer: "alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden") ----
     if os.environ.get("OHNE_HOHL") != "1":
         from bauteile import aushoehlen; import time as _t; _t0 = _t.time()
         _sch = [WS.prisma(b_rund(0.92, 22.26, 23.66), u=5.745, w0=-1.7, w1=-0.4), WW.prisma(b_rund(0.81, 21.70, 23.45), u=5.40, w0=-1.7, w1=-0.7)]
-        _sch += [WO.kasten(*O_SCHL, -1.7, -0.7), WO.prisma(O_BOG, u=5.32, w0=-1.7, w1=-0.7)]
+        _sch += [WO.kasten(*O_SCHL, -1.7, -0.7), WO.kasten(*O_LUKE, -1.7, -0.7)]
         _sch += [WW.kasten(u0_, u1_, z0_, z1_, -1.7, -0.7) for u0_, u1_, z0_, z1_ in ((5.31, 5.52, 27.82, 30.19), (5.20, 5.45, 33.0, 34.4), (5.33, 5.47, 16.93, 17.86), (5.27, 5.39, 10.46, 11.44))]
         koerper, n_offen, v_hohl = aushoehlen(koerper, d=float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0, schnitte=_sch, fenster=[], min_m3=20.0, z_min=8.0)
         beleg("wand", f"Turm hohl, {n_offen} Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen", "Nutzerauftrag 16.11.2026; Fenstermasse wie oben", fenster_offen=n_offen, hohlraum_m3=round(v_hohl, 1),

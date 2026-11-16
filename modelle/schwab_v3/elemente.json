@@ -273,20 +273,20 @@
  },
  {
   "seite": "wand",
-  "element": "Eckquader Ost (Obergeschoss, beide Ecken)",
-  "quelle": "entzerrtes Einzelfoto dl_openverse__ov_0005 (Flickr, Jorge Franganillo, CC BY 2.0; automatisch geladen/registriert, Kamera mit kamera_verfeinern.py am Modell nachgezogen: 1404 Inlier, 5 cm) -> relief_putz.py -> steine_aus_foto.py; Gegenprobe Streifenbreiten M-od_15-003/-004 (1,39 / 1,29 m)",
-  "steine": 83,
-  "hinweis": "Kontur und Fugen aus einem Sonnenfoto mit 2,9 cm/px (Fugen an der Aufloesungsgrenze); unter dem Gesims nicht gebaut: der Versuch mit dem Suedost-Eckstreifen (z 22,5-25,9) ergab im Bild neben dem Foto nur waagerechte Streifen (schraeger Blick, 3 cm/px)",
+  "element": "Eckquader Ost (Obergeschoss beide Ecken, Suedost-Ecke unter dem Gesims bis z 22,5)",
+  "quelle": "entzerrtes Einzelfoto dl_commons__010 (Commons-Original des Flickr-Fotos von Jorge Franganillo, CC BY 2.0, 3840 px = 0,8 cm/px; automatisch geladen/registriert, Kamera mit kamera_verfeinern.py nachgezogen: 1518 Inlier) -> relief_putz.py -> steine_aus_foto.py; Gegenprobe Streifenbreiten M-od_15-003/-004 (1,39 / 1,29 m)",
+  "steine": 127,
+  "hinweis": "Kontur und Fugen aus einem Sonnenfoto mit 2,9 cm/px (Fugen an der Aufloesungsgrenze); Kontur und Fugen aus einem Sonnenfoto mit 0,8 cm/px; Nachbardach und Fensterspalte von Hand ausgenommen",
   "seite_name": "wand"
  },
  {
   "seite": "wand",
-  "element": "Ostfassade: Schlitzfenster, Bogenfenster (halb verdeckt), Gesims, Balkenkopf",
+  "element": "Ostfassade: Schlitzfenster, kleine Luke, Gesims, Balkenkopf",
   "quelle": "foto_mass.py auf der Ostwandebene, Fremdfoto od_15 (M-od_15-001..-007)",
   "schlitz_hoehe": 2.42,
   "schlitz_z0": 28.0,
   "schlitz_u": 5.47,
-  "hinweis": "Kamera nur aus Modellpunkten (+-0,2 m); Bogenfenster nur zur Haelfte sichtbar, Breite von der Suedseite uebernommen; Zone unter z ~22 vom Nachbarhaus verdeckt",
+  "hinweis": "Kamera nur aus Modellpunkten (+-0,2 m); Luke 0,26 x 0,30 m am entzerrten Foto abgelesen (kein Protokoll); Zone unter z ~22 vom Nachbarhaus verdeckt",
   "seite_name": "wand"
  },
  {
@@ -294,7 +294,7 @@
   "element": "Turm hohl, 8 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
   "quelle": "Nutzerauftrag 16.11.2026; Fenstermasse wie oben",
   "fenster_offen": 8,
-  "hohlraum_m3": 3704.0,
+  "hohlraum_m3": 3705.4,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
   "seite_name": "wand"
  }
