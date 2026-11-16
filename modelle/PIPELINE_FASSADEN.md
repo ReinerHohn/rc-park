@@ -135,3 +135,14 @@ Regel: kein Bauteil als Einzelfall in den Objekt-Generator. Erst hier pruefen/er
 - `Wand.masswerk_fischblase(u0, u1, z0, z1, w0, w1)`: durchbrochenes Bruestungsfeld.
 - Dach als Laser-Hoehenfeld: `tools/laserdach.py`. Reliefs: `relief_einsatz.py`, `relief_putz.py`, `relief_quader_eben.py`, `steine_generieren.py`, `steine_aus_foto.py`.
 Noch NICHT generisch (Einzelfall im Schwabentor-Generator, bei Bedarf herausziehen): Zeltdach mit Knickprofil (D_PROF), Laterne mit Zwiebelhaube, Treppenturm mit Haube (Rotationsprofil), Holzfries, Kamin/Firststange, Erker mit Konsolen.
+
+## Ungesehene Seite (kein SfM-Foto) - Nutzer 16.11.2026: "Nein, nicht spiegeln. Du musst Fotos suchen von dieser ungesehenen Seite."
+Erkennen: `fassade_fein`/`fassade_ortho` liefert fuer die Wand ein (fast) leeres Bild (`abdeckung_fNN.png` ~0 %). Das heisst NUR: kein REGISTRIERTES Foto sieht sie.
+Ablauf (Schwabentor Ostseite, so gelaufen):
+1. GANZEN Fotobestand durchsehen, auch nicht registrierte Bilder (commons/online/Videobilder): Kontaktbogen bauen und ansehen. Erhoehte Standorte (Hang, Turm, Luftbild) zeigen Seiten ueber Nachbardaechern. Erst wenn dort nichts ist: Nutzer um ein Foto bitten / im Netz suchen.
+2. Kamera des Fundes aus >= 8 verteilten, schon gemessenen Modellpunkten loesen (solvePnP + Brennweite frei) -> `messprotokoll/K-<FOTO>.json` mit Punkten und Restfehler. Gegenprobe: bekannte Hoehen (Gesims, Traufe) auf der neuen Wand nachmessen.
+3. Masse mit `foto_mass.py --kamera K-<FOTO> --ebene <Wandebene>`; Wandgerade aus dem Modellschnitt.
+4. Bild der Wand: `fassade_ein_foto.py <fassaden.json> <nr> <objekt.json> <FOTO> ortho_fNN_fein.png`; Traeger `relief_einsatz.py - <wand>.npz ...` (leeres Relief), dann `relief_putz.py` (Schwellen --s/--v an Schattenlage anpassen) und `steine_aus_foto.py`.
+VERWORFEN: Eckstreifen der Nachbarwaende an die ungesehene Wand spiegeln (Werkzeug relief_ungesehen.py geloescht) - Erfindung, solange Fotos existieren.
+Grenzen: Kamera aus Modellpunkten ist nur so gut wie das Modell (hier +-0,2 m); Einzelfoto = keine Verdeckungspruefung; Schattenseite -> Fugen unsicher.
+OFFEN (Automatik): die Kette sucht noch nicht selbst nach unregistrierten Fotos fuer leere Waende.

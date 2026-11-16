@@ -353,3 +353,8 @@ Versuch: Rippen der Frontflaeche (A,B,C,D,L2,R2) um die Erkerachse (u 15,52 / n 
 - **Zwei 4000-px-Laeufe parallel + OWLv2 + Kontrollbild auf 8 GB:** CUDA out of memory (rc 134), je 590 MB Speicherabbild auf Root. Je 4000-px-Lauf 4500 MiB ansetzen, nichts daneben.
 - **Zwischendaten liegen lassen:** 2-4 GB je Feld (stereo/, images/), 13,6 GB nach 5 Feldern - Datenplatte voll. Werkzeug raeumt jetzt selbst auf.
 - **Zwei Generatorlaeufe desselben Objekts gleichzeitig (16.11., mein Fehler: zweiten Bau gestartet, waehrend der erste im Hintergrund noch lief):** Abnahme des ersten meldete 1 Fehler unklarer Herkunft; Ergebnis nur vom zweiten Lauf gueltig. Vor jedem Bau `pgrep -f <objekt>_gen.py`.
+
+## 16.11.2026 Ungesehene Ostseite: gespiegelt statt gesucht (verworfen)
+- Fehler: "kein registriertes SfM-Foto sieht die Ostseite" als "es gibt kein Foto" gelesen und ein Spiegel-Werkzeug gebaut (Eckquader der Nachbarwaende kopieren). Nutzer: "Nein, nicht spiegeln ... Du musst Fotos suchen."
+- Im Bestand lagen zwei Fremdfotos (online2_orig od_15, od_12) mit freier Sicht auf die Ostseite. Kontaktbogen des GANZEN Bestands haette 5 Minuten gekostet.
+- Ebenfalls falsch am selben Tag: Galerie mit "bemalten Tafeln" geschlossen (Pruefung gal_holm_ueber fing es ab); Turmdach "Grat gerade" aus dem Fernfoto gelesen, obwohl dasselbe Fernfoto den Knick zeigt.
