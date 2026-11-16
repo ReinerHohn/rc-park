@@ -27,6 +27,7 @@ def eins(e):
 with ThreadPoolExecutor(3) as ex:      # 16.11.2026 (Aufgabenliste 1c): 3 Pflichtbilder gleichzeitig (je ~15 s, GPU ~1 GB)
     for z in ex.map(eins, json.load(open('$OBJ')).get('neben_fotos',[])): print(z)
 " || true
+$PY -W ignore -I tools/umriss_tor.py "$OBJ" 2>&1 | grep -v "^ *$" | sed "s/^/UMRISS-TOR: /" | tail -12 || true   # 16.11.2026: Dachlinie Modell gegen Himmelskante der Pflichtfotos (Hinweis; Bilder audit/umriss_<foto>.jpg)
 $PY -W ignore -I tools/seiten_audit.py "$OBJ"     # Sichtblatt auch bei rotem Pruefstand (man will hinsehen)
 # Automatische Foto-Diagnosen fuer jedes Foto mit kalibrierter Kamera (Breite je Hoehe in Metern, fehlende/erfundene Teile).
 # Werkzeuge pruefen ihre Kameraguete selbst und steigen bei schlechter Kamera aus - kein Handgriff noetig.

@@ -8,7 +8,8 @@ Reihenfolge nach Nutzen. Status hier pflegen (offen / in Arbeit / erledigt + Com
    1c. Abnahme - ERLEDIGT (Teil): Profil zeigte pruefstand.z_am_punkt = 133 von 158 s (je z-Stufe ein Schnitt durch 3 Mio. Dreiecke). Jetzt senkrechte Strahlen: Turm 153 -> 35 s, Werte identisch
        an schwab_v3, schwab_nachbar, ober_tvdr (alter Weg: PRUEFSTAND_SCHNITT=1). Pflichtbilder neben_fotos 3 gleichzeitig (ungemessen). Rest (fotodiag/seiten_audit parallel zum Pruefstand) offen.
    1d. Bildvergleich (zusatzfotos_lightglue paare): Stapel + Vorauswahl ueber Bildaehnlichkeit - offen
-2. UMRISS-TOR Modell gegen Foto als Pflicht (Formfehler wie Bogen, Dachknick, Umgang automatisch melden); >30 offene Auto-Beobachtungen abarbeiten - offen
+2. UMRISS-TOR - ERSTE FASSUNG ERLEDIGT: tools/umriss_tor.py (Dachlinie Modell gegen Himmelskante, Abweichung in Metern, Befunde mit 3D-Ort, Bild audit/umriss_<foto>.jpg), laeuft in bauen_abnehmen.sh als Hinweis.
+   Turm Nordfoto 113029: Median 8 cm (Dachknick bestaetigt). GRENZEN: nur Kante gegen Himmel - Boegen/Galerie/Fenster vor der Wand sieht es nicht; Fotos ohne Himmel hinter dem Bau fallen aus. OFFEN: >30 Auto-Beobachtungen abarbeiten; Tor fuer Formen VOR der Wand (Kantenvergleich).
 3. FENSTER-REGELMAESSIGKEIT - ERSTE FASSUNG ERLEDIGT: fenster_aus_parsing.raster_regel (Achsen/Geschosse angleichen, leere Rasterplaetze ergaenzen, markiert 'ergaenzt'); ober_tvdr rote Fassade: 3 x 2 Fenster, eines ergaenzt.
    Dazu Uneinigkeits-Tor (Mosaik-Fassaden) und Loch-Rueckkopplung im Fassadenbild behoben; Stimmenschwelle 50 %. OFFEN: nur an EINER Fassade geprueft; Fensterkaesten enthalten die Steinrahmen (zu breit).
 4. MapAnything (Apache-Gewichte) als Test fuer Tiefe von Vorbauten/Daechern; VRAM pruefen - offen
