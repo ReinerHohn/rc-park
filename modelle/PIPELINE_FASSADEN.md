@@ -96,3 +96,30 @@ Abnahme des Versuchs: (a) Schattierungsbild neben dem feinen Fassadenbild - sind
 - Pruefungen, die eine Nischenrueckwand erwarten (`tiefe_bei`, `schnitt_reichweite` mit grossem r_max), sehen danach die Innenwand - Pruefdefinition anpassen (historie), Sollwerte der Oeffnungsmasse bleiben.
 - `tools/relief_quader_eben.py <voll.npz> <eben.npz> --feld u0 u1 z0 z1`: nur fuer GLATT behauene Quader (am feinen Fassadenbild pruefen), nie fuer Bruchstein.
 - 3D-Seite: ebene Flaechennormalen; Bilder aus der Seite vor einer Generatoraenderung am STL nachrendern (`tools/modell_ansicht.py`).
+
+## Nachtrag 16.11.2026 (2): Quader mit Fugen aus dem Foto, duennste Wand, Anzeige
+### Quader aus dem feinen Fassadenbild (`tools/steine_aus_foto.py`)
+Wann: Steinflaechen, an denen das Scan-Relief nur Brei ist (hoch am Turm, flacher Blick), das 1-cm-Fassadenbild die Fugen aber scharf zeigt.
+Voraussetzung: `fassade_fein.py` ist fuer die Wand gelaufen (ortho_fNN_fein.png + fassaden.json), Relief hat die Putzmaske (`relief_putz.py`).
+Aufruf (Schwabentor, so gelaufen):
+- Sued:  `steine_aus_foto.py relief/sued_eben.npz relief/sued_foto.npz <fein>/fassaden.json 1 <fein>/ortho_f01_fein.png --feld 0.1 11.4 9.9 26.0 --schwelle 2.4`
+- West:  `... west_eben.npz west_foto.npz ... 3 ortho_f03_fein.png --feld 0.1 8.3 9.4 26.0 --schwelle 2.4`
+- Nord (Relief im Rohrahmen): `... nord_eben.npz nord_foto.npz ... 0 ortho_f00_fein.png --feld 0.1 12.0 14.8 27.8 --schwelle 2.4 --massstab 0.933 -2.15 15.28 0`
+  (`<fein>` = /media/oem/scan/rc-park_daten/schwab_v3/fassade_fein; die Nummer ist der Index der Fassade in fassaden.json)
+Verfahren: je zusammenhaengendem Steinfeld Lagerfugen = Spitzen im Zeilenprofil der Abweichung vom oertlichen Median, Stossfugen = Spitzen im Spaltenprofil je Schicht;
+Polaritaet (helle Moertelfuge / dunkle Schattenfuge) wird nicht vorgegeben - beide gerechnet, die deutlichere gewinnt. Keine Farbregel.
+Im Generator: `relief_koerper(<x>_foto.npz, tiefe wie grob, trend=True, rand_auslauf=False, null_felder=<Bauteilfelder>)`, das grobe Relief bekommt das Feld als `tief_felder`.
+Kontrolle: `<x>_foto.jpg` (links Foto, rechts Relief) ANSEHEN.
+Was NICHT ging (gleicher Tag): (1) Schwelle auf Helligkeitsabweichung + "lange duenne Linien" - fand oben fast nichts (15 Steine);
+(2) Hesse-Grat-Filter mit Hysterese - Felsstruktur der Bossen ueberstimmt die Fugen; (3) Schichtmodell mit --schwelle 0.8 - erfindet ein Ziegelraster (Steine 19 x 19 cm statt ~40 x 25).
+Erst Schichtmodell mit --schwelle 2.4, Mindestabstand 16 cm (Lager) / 20 cm (Stoss) passte zum Bild. Der Wert ist an EINEM Bauwerk eingestellt.
+Grenzen: Schichtmodell = durchlaufende waagerechte Lagerfugen je Steinfeld; unregelmaessiger Bruchstein geht damit nicht (dort Scan-Relief/`tiefe_lokal.py`).
+Nicht jede Fuge stimmt; Fugentiefe 3 cm und ebene Steinflaeche sind ANNAHME, Bossen fehlen. Feld von Hand gewaehlt (unterhalb stoert z. B. das Vordach).
+### Wandstaerke beim Aushoehlen
+Nutzer 16.11.: "minimal duenn, einigermassen stabil, schnell druckbar" -> d = WAND_MM x SCALE / 1000, Standard WAND_MM = 1,2 (drei Bahnen einer 0,4-mm-Duese) = 0,10 m bei 1:87.
+Umgebungsvariable `WAND_MM` aendert sie ohne Codeaenderung; `OHNE_HOHL=1` baut voll. Bei duenner Wand: `kneifkanten_schliessen` zusaetzlich NACH dem Skalieren (mm, `stellen=3`).
+### Anzeige (3D-Seite)
+"Strahlen" auf ebenen Waenden kamen vom Ecken-Clustering: der Rasterpunkt liegt bis 2 cm neben der Wandebene, lange Dreiecke kippen. Jetzt Schwerpunkt der Gruppe
+(`modell_3d_html.py`). Ebene Flaechennormalen allein (erster Versuch) haben das NICHT behoben. Seitenlimit 16 MB: mit Hohlraeumen `--netz_raster 0.042 --n 40000`.
+### Noch nicht automatisch
+`steine_aus_foto.py` und `relief_quader_eben.py` sind KEINE Stufe von `tools/fassaden_kette.py`/`gesamtkette.py` - Felder und Schwelle werden von Hand gesetzt.

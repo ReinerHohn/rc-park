@@ -59,6 +59,14 @@
  },
  {
   "seite": "wand",
+  "element": "Quader mit Fugen nord (mittlere Zone)",
+  "quelle": "feines Fassadenbild 1 cm (fassade_fein.py) -> tools/steine_aus_foto.py: Lagerfugen aus dem Zeilenprofil, Stossfugen je Schicht",
+  "steine": 256.57,
+  "hinweis": "Fugenlage aus dem Foto (Schichtmodell: nicht jede einzelne Fuge stimmt), Fugentiefe 3 cm und ebene Steinflaeche ANNAHME; Bossen fehlen | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Feines Relief Nordwand z 0-10,5 m (2 cm)",
   "quelle": "lokale Feinrechnung: 13 Nahfotos in 3200 px, COLMAP PatchMatch nur fuer dieses Feld (tools/tiefe_lokal.py), gemischt mit dem groben Relief (tools/relief_mischen.py)",
   "fein_anteil": 0.38,
@@ -174,6 +182,14 @@
  },
  {
   "seite": "wand",
+  "element": "Quader mit Fugen sued (mittlere Zone)",
+  "quelle": "feines Fassadenbild 1 cm (fassade_fein.py) -> tools/steine_aus_foto.py: Lagerfugen aus dem Zeilenprofil, Stossfugen je Schicht",
+  "steine": 393,
+  "hinweis": "Fugenlage aus dem Foto (Schichtmodell: nicht jede einzelne Fuge stimmt), Fugentiefe 3 cm und ebene Steinflaeche ANNAHME; Bossen fehlen",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Relief Suedwand z 0,6-34 m",
   "quelle": "OpenMVS-Netz der neuen dichten Wolke (sfm_neu/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m, Loecher 8 %",
   "hinweis": "Scan-Relief, kein Mass; Uhr-, Fenster-, Gesims- und Verdachungsfeld ausgeblendet",
@@ -200,6 +216,14 @@
   "quelle": "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben",
   "anteil": 0.03542862266857963,
   "hinweis": "ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Quader mit Fugen west (mittlere Zone)",
+  "quelle": "feines Fassadenbild 1 cm (fassade_fein.py) -> tools/steine_aus_foto.py: Lagerfugen aus dem Zeilenprofil, Stossfugen je Schicht",
+  "steine": 231,
+  "hinweis": "Fugenlage aus dem Foto (Schichtmodell: nicht jede einzelne Fuge stimmt), Fugentiefe 3 cm und ebene Steinflaeche ANNAHME; Bossen fehlen",
   "seite_name": "wand"
  },
  {
@@ -251,8 +275,8 @@
   "element": "Turm hohl, 6 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
   "quelle": "Nutzerauftrag 16.11.2026; Fenstermasse wie oben",
   "fenster_offen": 6,
-  "hohlraum_m3": 2371.0,
-  "hinweis": "ANNAHME: Mauerstaerke 1,2 m (Treppenturm 0,35 m), Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
+  "hohlraum_m3": 3818.4,
+  "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
   "seite_name": "wand"
  }
 ]

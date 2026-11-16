@@ -19,6 +19,7 @@ Aktueller Stand: `modelle/STAND_2026-11-14.md` (Abschnitt UEBERGABE am Ende zuer
 - Nach jedem Bau das Bild Modell NEBEN Foto ansehen (`tools/modell_neben_foto.py`, automatisch ueber objekt.json `neben_fotos` -> `audit/neben_<foto>.jpg`), je Seite mindestens ein Foto; ohne dieses Bild nichts als passend melden.
 - Fassaden-Kette: regelmaessige Teile scharf (`tools/bauteile.py`, Picks `tools/wand_ortho.py`, Masse `foto_mass.py`); Bruchstein `relief_einsatz.py` -> Putz eben per Fotofarbe `relief_putz.py` -> Loecher/Fremdkoerper `steine_generieren.py` (nie in Oeffnungen; generiert = ANNAHME).
 - Fassaden automatisch (Stufen `fassaden`, `fenster` der Gesamtkette; feines 1-cm-Fassadenbild `fassade_fein.py`; lokale Feinrechnung der Tiefe `tiefe_lokal.py`): Ablauf, Zahlen, Grenzen in `modelle/PIPELINE_FASSADEN.md` - vor Fassadenarbeit lesen.
+- Fenster = echte Loecher: am Generatorende `bauteile.aushoehlen` (Wand `WAND_MM` 1,2 mm im Druck); glatte Quader `relief_quader_eben.py`; Fugen, wo das Scan-Relief Brei ist, aus dem feinen Fassadenbild `steine_aus_foto.py` (Bild `<x>_foto.jpg` ansehen). Nutzerbild aus der 3D-Seite erst am STL nachrendern (`modell_ansicht.py`).
 - Quellen-Blindheit beachten (Laser/LoD2/Fotos/Dokumente); Quellenwidersprueche nicht mitteln.
 - Neues Bauteil/falsch: Agentenauftrag aus `modelle/VORLAGE_BAUTEIL_RUNDE.md`.
 
