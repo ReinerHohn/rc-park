@@ -52,6 +52,8 @@ def main():
     hi_ = (uu > u0) & (uu < u1) & (dd < -a.band) & (dd > -a.band - 6.0) & (c[:, 2] > z0) & (c[:, 2] < z1)      # Netz HINTER dem Band: dort ist die Wand offen (Tor, Laube, Nische) - nicht Verdeckung
     hinten = np.zeros((H, W), bool); hinten[np.clip((H - 1 - (c[hi_, 2] - z0) / px).astype(int), 0, H - 1), np.clip(((uu[hi_] - u0) / px).astype(int), 0, W - 1)] = True
     tri = tri[(uu > u0 - 0.1) & (uu < u1 + 0.1) & (np.abs(dd) < a.band) & (c[:, 2] > z0 - 0.1) & (c[:, 2] < z1 + 0.1)]
+    if len(tri) < 50:                                                    # 16.11.2026 (Haertetest): Netz hat an dieser Wand nichts - sauber melden statt IndexError
+        print(f"{os.path.basename(a.aus)}: Netz deckt die Wand nicht ({len(tri)} Dreiecke im Band)"); sys.exit(4)
     w = np.random.default_rng(0).dirichlet((1, 1, 1), (len(tri), 12)); P = (w[:, :, :, None] * tri[:, None, :, :]).sum(2).reshape(-1, 3)
     uu = (P[:, :2] - A) @ t; dd = (P[:, :2] - A) @ n; iu = ((uu - u0) / px).astype(int); iv = (H - 1 - (P[:, 2] - z0) / px).astype(int); g = (iu >= 0) & (iu < W) & (iv >= 0) & (iv < H)
     hm = np.full((H, W), -9, np.float32); np.maximum.at(hm, (iv[g], iu[g]), dd[g].astype(np.float32)); loch = hm < -5; roh = float(loch.mean())

@@ -93,7 +93,7 @@ def main():
             sehen.append((dist / (k["f"] * cw), k, dist, cw, px[1:]))
         vorbild = None
         if b.get("auto"):                                                 # Luecke im Fassadenbild: die Geometrie allein taeuscht (Verdeckung durch Nachbarn, falsch registrierte Videobilder) -> gilt als ungesehen;
-            hoch = sorted([s_ for s_ in sehen if s_[1]["C"][2] > 10 and not s_[1]["name"].startswith("video")], key=lambda s_: s_[0]); vorbild = hoch[0] if hoch else None; sehen = []   # ein erhoehtes Foto dient nur als Vorbild für den Standort
+            hoch = sorted([s_ for s_ in sehen if s_[1]["C"][2] > 10 and s_[2] < 130 and s_[1]["name"].startswith(("eigen", "online", "neu__"))], key=lambda s_: s_[0]); vorbild = hoch[0] if hoch else None; sehen = []   # ein erhoehtes Foto dient nur als Vorbild für den Standort
         nah = [s_ for s_ in sehen if s_[2] < 130]; sehen = nah if nah else sehen           # Kameras > 130 m entfernt sind meist falsch registrierte Nahaufnahmen
         sehen.sort(key=lambda s: s[0]); e = dict(nr=nr, seite=seite(F), titel=b["titel"], warum=b.get("warum", ""), wand=b["wand"], u=[round(v, 1) for v in b["u"]], z=[round(v, 1) for v in b["z"]], soll_mpp=b["mpp"], fotos_bisher=len(sehen), auto=bool(b.get("auto")))
         hoehe = zm - 1.6; rvec = nv[:2] / np.linalg.norm(nv[:2])
@@ -108,8 +108,8 @@ def main():
             e.update(bilder(k, ex))
             e["rat"] = f"Im Fassadenbild fehlt dieser Bereich ganz. Das Foto unten (aus {dist:.0f} m, Standort {k['C'][2]:.0f} m über der Straße) zeigt, von wo man ihn sieht: von dort oder aus ähnlicher Richtung 6-8 Fotos mit Zoom auf den roten Bereich, dazwischen je 3-5 m zur Seite gehen."
         else:
-            dh = max(12.0, 1.2 * hoehe); S = P[:2] + rvec * dh; e.update(ist_mpp=None, standort=[round(float(S[0]), 1), round(float(S[1]), 1), 1.6], abstand_m=round(float(math.hypot(dh, hoehe)), 0), zoom=None)
-            e["rat"] = f"Kein Foto zeigt diesen Bereich. Gesucht ist ein Standort etwa {dh:.0f} m vor der Wand (Pfeil in der Karte) - wenn dort ein Haus steht: von einem erhöhten Punkt in dieser Richtung (Hang, Turm, Fenster gegenüber). 6-8 Fotos, dazwischen je 2-3 m zur Seite."
+            dh = min(max(8.0, 1.0 * (b['z'][1] - 1.6)), 20.0); S = P[:2] + rvec * dh; e.update(ist_mpp=None, standort=[round(float(S[0]), 1), round(float(S[1]), 1), 1.6], abstand_m=round(float(math.hypot(dh, hoehe)), 0), zoom=None)
+            e["rat"] = f"Kein brauchbares Foto zeigt diese Fassade. Stell dich etwa {dh:.0f} m davor (rote Nummer im Plan, Pfeil = Blickrichtung) und fotografiere die ganze Fassade: 6-8 Fotos, dazwischen je 2-3 m zur Seite gehen. Steht dort ein Haus im Weg (Hof, Rückseite), dann von der nächsten freien Stelle in dieser Richtung."
         vv = (P[0] - e["standort"][0]) * xh + (P[1] - e["standort"][1]) * yh; e["peilung"] = round(float(np.degrees(np.arctan2(vv[0], vv[1])) % 360)); e["richtung"] = himmelsrichtung(e["peilung"]); zl = geo(float(P[0]), float(P[1])); e["ziel_geo"] = [round(zl[0], 6), round(zl[1], 6)]
         lat, lon = geo(e["standort"][0], e["standort"][1]); e["lat"], e["lon"] = round(lat, 6), round(lon, 6); e["ziel_xy"] = [round(float(P[0]), 1), round(float(P[1]), 1)]; karten.append(e)
     # Stadtplan (OpenStreetMap-Kacheln, eingebettet) mit Standorten und Blickpfeilen; ohne Netz: schematischer Plan

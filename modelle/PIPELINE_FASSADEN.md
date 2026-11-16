@@ -298,3 +298,11 @@ GEFUNDENE FEHLER (alle behoben, ausser markiert):
 7. OFFEN: relief_einsatz.py stuerzt bei leerem Netzausschnitt ab (IndexError) statt sauber "leer" zu melden (Kette faengt es ab).
 8. OFFEN: nur 1 von 13 Fassaden hat genug Fotos (>= 3 mit >= 96 px); Daecher, Rueckseiten, Laeden unten sind nicht bearbeitet; Dach = Walm-Fit aus DOM1 (RMS 1,06 m), nicht aus Fotos.
 BEWERTUNG: fuer ein gewoehnliches Haus liefert die Kette jetzt ohne Handmass Koerper + Fenster einer gut fotografierten Fassade. Der Engpass ist die Fotoabdeckung je Fassade, nicht mehr die Software der Fensterstufe.
+
+Nachtrag Haertetest (16.11. ~16:00), offene Punkte 6/7 und Fotoauftrag:
+- Vorlage `objekt_anlegen.py` und `ober_tvdr_gen.py` schreiben jetzt ueber `bauteile.stl_schreiben` (Kruemelfilter). `relief_einsatz.py` meldet ein leeres Netz sauber (rc 4).
+- `steine_aus_foto.py --streng` (in der Kette gesetzt): kein Ergebnis ohne Gegenfoto oder bei > 2 cm/px. Anlass: an ober_tvdr w00 wurde ein Holzgeruest aus einem 6-cm-Foto zu "Quadern".
+  GRUNDSAETZLICH OFFEN: "Stein = nicht Putzfarbe" gilt nur fuer Putzbauten mit Werkstein; an farbigen Haeusern (rot, gelb) ist alles "Stein". Die Stufe braucht ein Tor "ist das ueberhaupt Quaderwerk?" (Fugenraster vorhanden).
+- `foto_auftrag.py` fuer gewoehnliche Haeuser: ungesehene Fassade -> Standort 8-20 m DAVOR auf der Strasse (nicht mehr ein Fernfoto vom Muensterturm als Vorbild; Vorbild nur aus eigenen/online-Fotos < 130 m).
+  Fehler dabei: ein angehaengter Kommentar hatte den Rest einer Codezeile auskommentiert (0 statt 6 ungesehene) - am Zahlenvergleich bemerkt.
+  Fotoauftrag Oberlinden (6 Fassaden): https://claude.ai/artifact/ (siehe STAND), Daten `modelle/ober_tvdr/audit/fotoauftrag.json` -> `tools/foto_check.sh ober_tvdr <datei>` ist damit einsatzbereit.

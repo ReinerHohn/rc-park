@@ -95,7 +95,7 @@ def main():
         if a.fotosteine and "putz" in np.load(quelle).files and w["z1"] > fab + 2.0:      # 16.11.2026 Stufe 5c: oberhalb --foto_ab (Strassenfotos zu flach fuer brauchbares Scan-Relief) Quader/Gewaende/Baender
             rfo = os.path.join(rd, w["name"] + "_foto.npz"); stl_ = os.path.join(os.path.dirname(os.path.dirname(od)), json.load(open(a.objekt))["stl"])                                 # mit Fugen aus dem BESTEN Foto, direkt auf der Wandebene, Verdeckung gegen das Modell + Gegenfoto (Baeume)
             if os.path.exists(stl_) and lauf([os.path.join(HIER, "steine_aus_foto.py"), quelle, rfo, "-", "0", "-", "--foto", "auto", "--objekt", a.objekt, "--stl", stl_ + ("," + a.nachbar_stl if a.nachbar_stl else ""),
-                                              "--feld", "0.1", str(round(L - 0.1, 2)), str(fab), str(w["z1"]), "--px", "0.03", "--nah", "0"] + (["--massstab", *a.massstab] if a.massstab else [])) == 0 and os.path.exists(rfo):
+                                              "--feld", "0.1", str(round(L - 0.1, 2)), str(fab), str(w["z1"]), "--px", "0.03", "--nah", "0", "--streng"] + (["--massstab", *a.massstab] if a.massstab else [])) == 0 and os.path.exists(rfo):
                 w["foto_feld"] = [0.0, round(L, 2), fab, round(float(w["z1"]), 2)]; w["foto_steine"] = int(np.load(rfo)["steine"])
         if leer:
             if not w.get("foto_feld"): w["aus"] = "kein Netz und kein brauchbares Foto fuer Steine"; print("    AUS:", w["aus"]); continue

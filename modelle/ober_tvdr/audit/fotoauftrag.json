@@ -1,0 +1,276 @@
+{
+ "objekt": "Oberlinden Haus Tvdr (Ketten-Haertetest)",
+ "auftraege": [
+  {
+   "nr": 1,
+   "seite": "Nordseite",
+   "titel": "Nordseite: 149 m² ohne Fotodaten",
+   "warum": "Kein registriertes Foto zeigt diesen Wandbereich - dort ist das Modell geraten oder leer.",
+   "wand": 0,
+   "u": [
+    -8.1,
+    7.9
+   ],
+   "z": [
+    -1.4,
+    9.1
+   ],
+   "soll_mpp": 0.01,
+   "fotos_bisher": 0,
+   "auto": true,
+   "ist_mpp": null,
+   "standort": [
+    36.7,
+    23.9,
+    1.6
+   ],
+   "abstand_m": 8.0,
+   "zoom": null,
+   "rat": "Kein brauchbares Foto zeigt diese Fassade. Stell dich etwa 8 m davor (rote Nummer im Plan, Pfeil = Blickrichtung) und fotografiere die ganze Fassade: 6-8 Fotos, dazwischen je 2-3 m zur Seite gehen. Steht dort ein Haus im Weg (Hof, Rückseite), dann von der nächsten freien Stelle in dieser Richtung.",
+   "peilung": 156,
+   "richtung": "Südosten",
+   "ziel_geo": [
+    47.993167,
+    7.853923
+   ],
+   "lat": 47.993232,
+   "lon": 7.853877,
+   "ziel_xy": [
+    28.8,
+    22.5
+   ],
+   "plan_px": [
+    313.7568013784267,
+    327.11798092836875,
+    327.9497303596851,
+    357.7283292313788
+   ]
+  },
+  {
+   "nr": 2,
+   "seite": "Südseite",
+   "titel": "Südseite: 68 m² ohne Fotodaten",
+   "warum": "Kein registriertes Foto zeigt diesen Wandbereich - dort ist das Modell geraten oder leer.",
+   "wand": 3,
+   "u": [
+    -3.4,
+    3.1
+   ],
+   "z": [
+    -1.4,
+    9.1
+   ],
+   "soll_mpp": 0.01,
+   "fotos_bisher": 0,
+   "auto": true,
+   "ist_mpp": null,
+   "bestes_foto": "online2_orig__od_15",
+   "standort": [
+    -58.9,
+    -57.2,
+    33.8
+   ],
+   "abstand_m": 125.0,
+   "zoom": null,
+   "rat": "Im Fassadenbild fehlt dieser Bereich ganz. Das Foto unten (aus 125 m, Standort 34 m über der Straße) zeigt, von wo man ihn sieht: von dort oder aus ähnlicher Richtung 6-8 Fotos mit Zoom auf den roten Bereich, dazwischen je 3-5 m zur Seite gehen.",
+   "peilung": 293,
+   "richtung": "Nordwesten",
+   "ziel_geo": [
+    47.993007,
+    7.853757
+   ],
+   "lat": 47.992589,
+   "lon": 7.855257,
+   "ziel_xy": [
+    14.8,
+    39.0
+   ],
+   "plan_px": [
+    745.6098026526508,
+    628.1649974953217,
+    276.150496873949,
+    432.49997912503005
+   ]
+  },
+  {
+   "nr": 3,
+   "seite": "Nordseite",
+   "titel": "Nordseite: 68 m² ohne Fotodaten",
+   "warum": "Kein registriertes Foto zeigt diesen Wandbereich - dort ist das Modell geraten oder leer.",
+   "wand": 4,
+   "u": [
+    -4.2,
+    2.3
+   ],
+   "z": [
+    -1.4,
+    9.1
+   ],
+   "soll_mpp": 0.01,
+   "fotos_bisher": 0,
+   "auto": true,
+   "ist_mpp": null,
+   "standort": [
+    28.0,
+    44.8,
+    1.6
+   ],
+   "abstand_m": 8.0,
+   "zoom": null,
+   "rat": "Kein brauchbares Foto zeigt diese Fassade. Stell dich etwa 8 m davor (rote Nummer im Plan, Pfeil = Blickrichtung) und fotografiere die ganze Fassade: 6-8 Fotos, dazwischen je 2-3 m zur Seite gehen. Steht dort ein Haus im Weg (Hof, Rückseite), dann von der nächsten freien Stelle in dieser Richtung.",
+   "peilung": 141,
+   "richtung": "Südosten",
+   "ziel_geo": [
+    47.993053,
+    7.853706
+   ],
+   "lat": 47.993108,
+   "lon": 7.853637,
+   "ziel_xy": [
+    20.7,
+    41.4
+   ],
+   "plan_px": [
+    238.4053540374361,
+    385.09618124660494,
+    260.0596896247633,
+    411.10383775641225
+   ]
+  },
+  {
+   "nr": 4,
+   "seite": "Westseite",
+   "titel": "Westseite: 52 m² ohne Fotodaten",
+   "warum": "Kein registriertes Foto zeigt diesen Wandbereich - dort ist das Modell geraten oder leer.",
+   "wand": 5,
+   "u": [
+    -2.7,
+    2.3
+   ],
+   "z": [
+    -1.4,
+    9.1
+   ],
+   "soll_mpp": 0.01,
+   "fotos_bisher": 0,
+   "auto": true,
+   "ist_mpp": null,
+   "standort": [
+    14.0,
+    50.8,
+    1.6
+   ],
+   "abstand_m": 8.0,
+   "zoom": null,
+   "rat": "Kein brauchbares Foto zeigt diese Fassade. Stell dich etwa 8 m davor (rote Nummer im Plan, Pfeil = Blickrichtung) und fotografiere die ganze Fassade: 6-8 Fotos, dazwischen je 2-3 m zur Seite gehen. Steht dort ein Haus im Weg (Hof, Rückseite), dann von der nächsten freien Stelle in dieser Richtung.",
+   "peilung": 54,
+   "richtung": "Nordosten",
+   "ziel_geo": [
+    47.993016,
+    7.853692
+   ],
+   "lat": 47.992973,
+   "lon": 7.853607,
+   "ziel_xy": [
+    17.0,
+    43.4
+   ],
+   "plan_px": [
+    229.17453534067124,
+    448.51335701115653,
+    255.94053939818892,
+    428.3120880598453
+   ]
+  },
+  {
+   "nr": 5,
+   "seite": "Nordseite",
+   "titel": "Nordseite: 52 m² ohne Fotodaten",
+   "warum": "Kein registriertes Foto zeigt diesen Wandbereich - dort ist das Modell geraten oder leer.",
+   "wand": 6,
+   "u": [
+    -2.6,
+    2.4
+   ],
+   "z": [
+    -1.4,
+    9.1
+   ],
+   "soll_mpp": 0.01,
+   "fotos_bisher": 0,
+   "auto": true,
+   "ist_mpp": null,
+   "standort": [
+    33.9,
+    35.2,
+    1.6
+   ],
+   "abstand_m": 8.0,
+   "zoom": null,
+   "rat": "Kein brauchbares Foto zeigt diese Fassade. Stell dich etwa 8 m davor (rote Nummer im Plan, Pfeil = Blickrichtung) und fotografiere die ganze Fassade: 6-8 Fotos, dazwischen je 2-3 m zur Seite gehen. Steht dort ein Haus im Weg (Hof, Rückseite), dann von der nächsten freien Stelle in dieser Richtung.",
+   "peilung": 149,
+   "richtung": "Südosten",
+   "ziel_geo": [
+    47.993121,
+    7.853797
+   ],
+   "lat": 47.993182,
+   "lon": 7.853741,
+   "ziel_xy": [
+    26.2,
+    32.9
+   ],
+   "plan_px": [
+    270.9639300189134,
+    350.7233868040311,
+    288.5899805519452,
+    379.5471678001445
+   ]
+  },
+  {
+   "nr": 6,
+   "seite": "Nordseite",
+   "titel": "Nordseite: 42 m² ohne Fotodaten",
+   "warum": "Kein registriertes Foto zeigt diesen Wandbereich - dort ist das Modell geraten oder leer.",
+   "wand": 8,
+   "u": [
+    -2.0,
+    2.0
+   ],
+   "z": [
+    -1.4,
+    9.1
+   ],
+   "soll_mpp": 0.01,
+   "fotos_bisher": 0,
+   "auto": true,
+   "ist_mpp": null,
+   "standort": [
+    32.3,
+    40.0,
+    1.6
+   ],
+   "abstand_m": 8.0,
+   "zoom": null,
+   "rat": "Kein brauchbares Foto zeigt diese Fassade. Stell dich etwa 8 m davor (rote Nummer im Plan, Pfeil = Blickrichtung) und fotografiere die ganze Fassade: 6-8 Fotos, dazwischen je 2-3 m zur Seite gehen. Steht dort ein Haus im Weg (Hof, Rückseite), dann von der nächsten freien Stelle in dieser Richtung.",
+   "peilung": 146,
+   "richtung": "Südosten",
+   "ziel_geo": [
+    47.993098,
+    7.853745
+   ],
+   "lat": 47.993157,
+   "lon": 7.853684,
+   "ziel_xy": [
+    24.8,
+    37.3
+   ],
+   "plan_px": [
+    253.22915415432473,
+    362.4202031357242,
+    272.26123818154656,
+    389.998134186686
+   ]
+  }
+ ]
+}
