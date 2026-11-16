@@ -15,9 +15,9 @@
   "fenster": [],
   "fotos": [
    "commons_orig2__162",
+   "eigen__IMG_20261106_113058",
    "eigen__IMG_20261106_113459",
-   "eigen__IMG_20261106_113149",
-   "eigen__IMG_20261106_111237"
+   "dl_commons__022_Schlossbergring_2_am_Schwabentor_in_Freiburg_im_Breisgau_2025"
   ]
  },
  "f01": {
@@ -35,10 +35,10 @@
   ],
   "fenster": [],
   "fotos": [
-   "eigen__IMG_20261106_114102",
    "commons_orig2__080",
+   "dl_kat__050_Freiburg_de_Schwabentor_Kdm_IMG_1811_2022-05-17_15.06",
    "online_orig__od_02",
-   "eigen__IMG_20261106_114009"
+   "dl_commons__008_Freiburg_im_Breisgau_Schwabentor_--_2025_--_8028"
   ]
  },
  "f02": {
@@ -56,39 +56,10 @@
   ],
   "fenster": [
    {
-    "u0": -3.035,
-    "u1": -1.124,
-    "z0": 0.055,
-    "z1": 2.188,
-    "teiler": [],
-    "kaempfer": null,
-    "scheiben": 1,
-    "stimmen_min": 2,
-    "sprossen": []
-   },
-   {
-    "u0": -0.382,
-    "u1": 0.695,
-    "z0": 3.439,
-    "z1": 5.22,
-    "teiler": [],
-    "kaempfer": null,
-    "scheiben": 2,
-    "stimmen_min": 2,
-    "sprossen": [
-     [
-      0.284,
-      3.526,
-      0.284,
-      4.828
-     ]
-    ]
-   },
-   {
-    "u0": -3.033,
-    "u1": -1.177,
-    "z0": 3.837,
-    "z1": 6.039,
+    "u0": -3.042,
+    "u1": -1.215,
+    "z0": 3.875,
+    "z1": 6.052,
     "teiler": [],
     "kaempfer": null,
     "scheiben": 2,
@@ -96,65 +67,44 @@
     "sprossen": []
    },
    {
-    "u0": -2.719,
-    "u1": -1.232,
-    "z0": 6.44,
-    "z1": 8.439,
+    "u0": -2.727,
+    "u1": -1.241,
+    "z0": 6.442,
+    "z1": 8.467,
     "teiler": [],
     "kaempfer": null,
     "scheiben": 2,
     "stimmen_min": 2,
-    "sprossen": [
-     [
-      -1.732,
-      6.604,
-      -1.732,
-      7.878
-     ]
-    ]
+    "sprossen": []
    },
    {
-    "u0": -0.637,
-    "u1": 0.796,
-    "z0": 6.44,
-    "z1": 8.439,
+    "u0": -0.658,
+    "u1": 0.803,
+    "z0": 6.442,
+    "z1": 8.467,
     "teiler": [],
     "kaempfer": null,
     "scheiben": 2,
-    "stimmen_min": 2,
-    "sprossen": [
-     [
-      0.277,
-      6.604,
-      0.277,
-      7.878
-     ]
-    ]
+    "stimmen_min": 4,
+    "sprossen": []
    },
    {
-    "u0": 1.42,
-    "u1": 2.858,
-    "z0": 6.44,
-    "z1": 8.439,
+    "u0": 1.389,
+    "u1": 2.335,
+    "z0": 6.442,
+    "z1": 8.467,
     "teiler": [],
     "kaempfer": null,
-    "scheiben": 2,
-    "stimmen_min": 2,
-    "sprossen": [
-     [
-      2.348,
-      6.604,
-      2.348,
-      7.878
-     ]
-    ]
+    "scheiben": 1,
+    "stimmen_min": 4,
+    "sprossen": []
    }
   ],
   "fotos": [
    "eigen__IMG_20261106_113149",
-   "commons_orig2__051",
+   "eigen__IMG_20261106_113148",
    "eigen__IMG_20261106_113201",
-   "eigen__IMG_20261106_113148"
+   "commons_orig2__049"
   ]
  }
 }

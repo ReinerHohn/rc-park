@@ -21,7 +21,7 @@ def iou(a, b):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("ortho"); ap.add_argument("--aus"); ap.add_argument("--stimmen", type=int, default=3); ap.add_argument("--weiss", type=float, default=0.12)
+    ap = argparse.ArgumentParser(); ap.add_argument("ortho"); ap.add_argument("--aus"); ap.add_argument("--stimmen", type=int, default=3); ap.add_argument("--weiss", type=float, default=0.12); ap.add_argument("--uneinig", type=float, default=28.0, help="Median der Grauwert-Streuung ueber die Fotos im Kasten (0-255), darueber verworfen")
     ap.add_argument("--fein", help="Ordner mit ortho_<id>_fein.png (fassade_fein.py, 1-cm-Zelle): Sprossen werden dort gesucht statt im groben Ortho"); ap.add_argument("--luecke", type=float, default=0.25); ap.add_argument("--min_b", type=float, default=0.25); a = ap.parse_args()
     FA = {F.get("id_vorbau") or F.get("_id") or F.get("id"): F for F in json.load(open(os.path.join(a.ortho, "fassaden.json")))["fassaden"]}; EL = json.load(open(os.path.join(a.ortho, "elemente.json")))["fassaden"]; erg = {}
     def seite(F_): return int(round(np.degrees(np.arctan2(F_["n"][1], F_["n"][0])) / 20.0)) % 18
@@ -54,6 +54,12 @@ def main():
         # Glasprobe (Zahlen aus dem Nordgiebel, 34 Kaesten): Scheiben sd 0,01-0,14 / hellweiss 0 / dunkel <= 0,11; Fachwerkfelder, Konsolen, Sammelkaesten sd >= 0,17 oder dunkel >= 0,37 oder hellweiss >= 0,17
         # 15.11. Gegenprobe Historisches Kaufhaus: die Regel "gleichmaessiges helles Glas" (sd < 0,16, dunkel < 0,3) warf dort ALLE Masswerkfenster weg (Butzen/Sechseck-Verglasung,
         # dunkel, bunt). Allgemein gilt nur: im Fenster liegt kein hellweisser Putz. Balken/Schnitzfelder faengt der Erkenner selbst ueber Gegenbegriffe (fassade_parsing GEGEN).
+        un_ = cv2.imread(os.path.join(a.ortho, f"uneinig_{fid}.png"), 0)      # 16.11.2026 (ober_tvdr f01: Mosaik aus Baum/Nachbarn, trotzdem 4 "Fenster"): Kaesten in Zonen, in denen sich die Fotos widersprechen, verwerfen
+        if un_ is not None and un_.shape == im.shape[:2]:
+            def uneinig(e): x0, x1, y0, y1 = px(e, 0.0); return float(np.median(un_[max(y0, 0):y1, max(x0, 0):x1])) if y1 > y0 and x1 > x0 else 0.0
+            if os.environ.get("FENSTER_DEBUG"): print(fid, "uneinig", [round(uneinig(e)) for e in K])
+            K = [e for e in K if uneinig(e) <= a.uneinig]
+        if os.environ.get("FENSTER_DEBUG"): print(F.get("_id"), [(round(e["hellweiss"], 2), round(e["V"], 2), round(VMED.get(seite(F), -1), 2)) for e in K])
         K = [e for e in K if e["hellweiss"] < 0.08]
         # Fassadenrichtungs-Regel: die echten Fenster EINER Gebaeudeseite sehen aehnlich hell aus (helles Spiegelglas ODER dunkle Butzenfenster). Kaesten, deren Helligkeit
         # > 0,17 vom stimmen- und flaechengewichteten Median der Seite abweicht, sind etwas anderes (dunkle Schnitzfelder/Balken am Fachwerk; helle Tafeln am Kaufhaus).

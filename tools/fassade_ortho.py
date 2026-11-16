@@ -152,7 +152,13 @@ def main(argv=None):
         X = F["_X"]; n3 = np.array(F["n"] + [0.0]); vorn = a.relief_vorn
         loc, ri, _ = ray.intersects_location(X + n3 * vorn, np.repeat(-n3[None], len(X), 0), multiple_hits=False)
         rel = np.full(len(X), np.nan); rel[ri] = vorn - np.linalg.norm(loc - (X[ri] + n3 * vorn), axis=1)   # Relief s (+ = vor der Wandebene)
-        rel[rel < -a.relief_hinten] = np.nan; F["_S"] = X + n3 * np.nan_to_num(rel, nan=0.0)[:, None]; F["_rel"] = rel
+        rel[rel < -a.relief_hinten] = np.nan
+        # 16.11.2026: OEFFNUNGEN. Seit die Fenster echte Loecher sind (aushoehlen), trifft der Strahl dort keine Flaeche -> das Fassadenbild war an jedem Fenster schwarz und die Fenstererkennung fand
+        # an der eigenen, schon gebauten Fassade nichts mehr (ober_tvdr: 6 -> 0). Zellen INNERHALB des Fassadenpolygons ohne Flaeche = Oeffnung: Farbe von der Wandebene, sichtbar, wenn nichts DAVOR steht.
+        r_ = F["raster"]; mp_ = np.zeros((r_["nz"], r_["nu"]), np.uint8)
+        for poly in F["polys_uz"]: cv2.fillPoly(mp_, [np.array([[(u_ - r_["u0"]) / r_["zelle"], (r_["z1"] - z_) / r_["zelle"]] for u_, z_ in poly], np.int32)], 1)
+        F["_loch"] = np.isnan(rel) & (mp_.ravel() > 0) if mp_.size == len(rel) else np.zeros(len(rel), bool)
+        F["_S"] = X + n3 * np.nan_to_num(rel, nan=0.0)[:, None]; F["_rel"] = rel
 
     import threading, render_kern as rk; GPU_SPERRE = threading.Lock(); m_alle = trimesh.util.concatenate([m, nb]) if nb is not None else m
     def ein_foto(nr):
@@ -189,7 +195,8 @@ def main(argv=None):
                 for du, dv in ((0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)):                             # Nachbarpixel mitnehmen: an Kanten trifft der Pixelmittelpunkt sonst die Flaeche daneben
                     d_ = T_[np.clip(vi + dv, 0, Hr - 1), np.clip(ui + du, 0, Wr - 1)]; d_ = np.where(d_ > 0, d_, np.inf); dmin = np.where(np.abs(d_ - zc) < np.abs(dmin - zc), d_, dmin)
                 sicht = np.abs(dmin - zc) < a.tol + 0.002 * dist[idx]
-            sicht &= np.isfinite(F["_rel"][idx])                                                      # ohne Modellflaeche (Himmel/Nachbar) keine Farbe
+            if not a.gpu_sicht: sicht |= F["_loch"][idx] & (erster > dist[idx] - a.tol)               # Oeffnung: sichtbar, wenn der erste Treffer nicht VOR der Wandebene liegt
+            sicht &= np.isfinite(F["_rel"][idx]) | F["_loch"][idx]                                    # ohne Modellflaeche ausserhalb der Fassade (Himmel/Nachbar) keine Farbe
             idx = idx[sicht]
             if len(idx) < 200: continue
             # 15.11.2026: Zelle groesser als der Fotopixel -> Foto vor dem Abtasten auf die Zellgroesse glaetten (sonst Aliasing: das 5-cm-Ortho des Kaufhauses war fleckig/koernig)
@@ -211,6 +218,8 @@ def main(argv=None):
             I = np.concatenate([x[0] for _, x in beitr]); Cc = np.concatenate([x[1] for _, x in beitr]).astype(np.float32); G = np.concatenate([x[2] for _, x in beitr])
             o_ = np.lexsort((-G, I)); I, Cc, G = I[o_], Cc[o_], G[o_]; st = np.r_[0, np.where(np.diff(I))[0] + 1, len(I)]
             cnt[I[st[:-1]]] = np.diff(st)
+            g_ = Cc.mean(1).astype(np.float64); n_ = np.diff(st).astype(np.float64); m1 = np.add.reduceat(g_, st[:-1]) / n_; m2 = np.add.reduceat(g_ * g_, st[:-1]) / n_      # 16.11.2026: UNEINIGKEIT je Zelle = Streuung der Grauwerte ueber die Fotos
+            un = np.zeros(N, np.float32); un[I[st[:-1]]] = np.where(n_ >= 3, np.sqrt(np.maximum(m2 - m1 * m1, 0)), 0); cv2.imwrite(os.path.join(a.aus, f"uneinig_{F['_id']}.png"), np.clip(un, 0, 255).astype(np.uint8).reshape(r["nz"], r["nu"]))      # (Fotos zeigen Verschiedenes: Baum, Nachbarhaus, falsche Kamera) - Tor fuer die Fenstererkennung
             rang = np.arange(len(I)) - np.repeat(st[:-1], np.diff(st)); w_ = rang < a.beste; I, Cc, G = I[w_], Cc[w_], G[w_]   # je Zelle die besten k
             # gewichteter Median je Kanal und Zelle, vektorisiert: Proben je Zelle nach Wert sortieren, kumulierte Gewichte, erster Wert >= halbes Gewicht
             for k_ in range(3):
@@ -228,7 +237,7 @@ def main(argv=None):
         F["id"] = tag; F["abdeckung_anteil"] = round(float((cnt > 0).mean()), 3); F["fotos_median_je_zelle"] = float(np.median(cnt[cnt > 0])) if (cnt > 0).any() else 0
         rl = F["_rel"].reshape(r["nz"], r["nu"]); cv2.imwrite(os.path.join(a.aus, f"relief_{tag}.png"), np.where(np.isfinite(rl), np.clip((rl + 10) * 1000, 1, 65535), 0).astype(np.uint16))   # mm + 10 m, 0 = kein Modell
         F["relief_png"] = f"relief_{tag}.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
-        del F["_X"], F["_S"], F["_rel"]; F.pop("_id", None); bericht.append(f"  {tag}: {F['flaeche_m2']:6.1f} m2, n=({F['n'][0]:+.2f},{F['n'][1]:+.2f}), {len(beitr):2d} Fotos, Abdeckung {F['abdeckung_anteil']:.0%}, Median {F['fotos_median_je_zelle']:.0f} Fotos/Zelle")
+        del F["_X"], F["_S"], F["_rel"], F["_loch"]; F.pop("_id", None); bericht.append(f"  {tag}: {F['flaeche_m2']:6.1f} m2, n=({F['n'][0]:+.2f},{F['n'][1]:+.2f}), {len(beitr):2d} Fotos, Abdeckung {F['abdeckung_anteil']:.0%}, Median {F['fotos_median_je_zelle']:.0f} Fotos/Zelle")
     json.dump(dict(objekt=a.objekt, stl=os.path.abspath(a.stl), zelle_m=a.zelle, tol_m=a.tol, max_mpp=a.max_mpp, fotos=fotos, fassaden=fas,
                    beste_k=a.beste, nachbarn_lod2=n_nb, quelle="fassade_ortho.py: LoD2-Waende + K-Dateien (buendel_tor) + Sichtbarkeit gegen Stufenmodell + LoD2-Nachbarn", sekunden=round(time.time() - t0, 1)),
               open(os.path.join(a.aus, "fassaden.json"), "w"), indent=1)

@@ -317,3 +317,10 @@ Nachtrag 16.11. ~17:00 "alle Quellen" (Nutzer: "Muss ich wirklich Fotos machen?"
 - `kamera_verfeinern.py --liste datei`: viele Fotos in EINEM Lauf (Referenzmerkmale/-tiefenbilder nur einmal); Fotos OHNE Kamera werden gegen einen Kranz guter Fotos (3 je Fassade + nachgezogene Fremdfotos) eingehaengt.
 - `fassade_ortho.py` nimmt jetzt auch Kameras mit `vertrauen` (bisher nur buendel_tor) - sonst kaemen nachgeholte Fotos nie ins Fassadenbild.
 - Ablaufskript dieses Laufs: <daten>/schwab_v3/seiten_nachholen/nachlauf.sh (ungepruefte SfM-Posen der Downloads werden als .unsicher beiseitegelegt, dann alles ohne Vorwissen eingehaengt, Orthos und Fotoauftraege neu). NOCH NICHT als Teil von seiten_luecken.py.
+
+Nachtrag 16.11. ~18:30 - zwei Fehler der Fensterstufe, die erst der zweite Durchlauf an ober_tvdr zeigte:
+- RUECKKOPPLUNG: seit Fenster echte Loecher sind, war das Fassadenbild an jedem schon gebauten Fenster schwarz (Strahl trifft keine Flaeche) -> die Erkennung fand an der eigenen Fassade nichts mehr (6 -> 0).
+  `fassade_ortho.py`: Zellen im Fassadenpolygon ohne Modellflaeche = Oeffnung, Farbe von der Wandebene, sichtbar wenn nichts davor steht. Abdeckung f02 58 -> 86 %.
+- MOSAIK: eine Fassade mit 52 Fotos und 94 % "Abdeckung" war ein Flickwerk aus Baum, Nachbarn und Strassenszene, trotzdem 4 "Fenster". `fassade_ortho.py` schreibt jetzt `uneinig_<id>.png`
+  (Streuung der Grauwerte ueber die Fotos je Zelle), `fenster_aus_parsing.py --uneinig 28` verwirft Kaesten in widerspruechlichen Zonen. Messung: gute Fassade 0-18, Mosaik 40-67.
+  LEHRE: "Abdeckung in Prozent" sagt nichts ueber Brauchbarkeit; kuenftig Uneinigkeit mitmelden (foto_auftrag.py und seiten_luecken.py tun das noch NICHT).
