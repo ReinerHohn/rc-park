@@ -251,6 +251,14 @@
  },
  {
   "seite": "wand",
+  "element": "Steingewaende der Westfenster und Steinband am Gesims",
+  "quelle": "Foto dl_commons__047 direkt auf der Wandebene (steine_aus_foto.py --foto --nah 0)",
+  "steine": 92,
+  "hinweis": "Kontur aus der Fotofarbe (Stein gegen Putz); in Wirklichkeit fast buendig - 2-3 cm Relief als Malhilfe = ANNAHME; ueber z 31,5 ausgenommen (Schatten des Balkenkopfs)",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Eckquader West, Nordwest-Ecke ueber dem Treppenturm (z 14,5-34)",
   "quelle": "Foto dl_commons__047 direkt auf der Wandebene (steine_aus_foto.py --foto), Verdeckung gegen das Modell",
   "steine": 176,
@@ -310,7 +318,7 @@
   "element": "Turm hohl, 8 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
   "quelle": "Nutzerauftrag 16.11.2026; Fenstermasse wie oben",
   "fenster_offen": 8,
-  "hohlraum_m3": 3708.3,
+  "hohlraum_m3": 3708.5,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
   "seite_name": "wand"
  }

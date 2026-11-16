@@ -235,6 +235,10 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         koerper = koerper + relief_koerper(_fo_w2, tiefe=0.45, trend=True, rand_auslauf=False)
         beleg("wand", "Eckquader West oben (Suedwest-Ecke, z 27-34)", "entzerrtes Einzelfoto dl_commons__047_Schwabentor_Freiburg_12 (Commons, Lizenz im manifest.json) -> steine_aus_foto.py", steine=int(np.load(_fo_w2)["steine"]),
               hinweis="nur der Suedwest-Streifen (u 0,1-3,0); Nordwest-Eckstreifen am Treppenturm fehlt; Fugen aus einem Schraegfoto")
+    _fo_w4 = os.path.join(HERE, "schwab_v3", "relief", "west_foto_gew.npz")           # 16.11.2026: Steingewaende der Westfenster und Steinband am Gesims - alles, was im Foto 047 in der Wandmitte NICHT Putz ist (steine_aus_foto --foto --nah 0, Bosse 1,5 cm)
+    if os.path.exists(_fo_w4) and os.environ.get("OHNE_RELIEF") != "1":
+        koerper = koerper + relief_koerper(_fo_w4, tiefe=0.45, trend=True, rand_auslauf=False)
+        beleg("wand", "Steingewaende der Westfenster und Steinband am Gesims", "Foto dl_commons__047 direkt auf der Wandebene (steine_aus_foto.py --foto --nah 0)", steine=int(np.load(_fo_w4)["steine"]), hinweis="Kontur aus der Fotofarbe (Stein gegen Putz); in Wirklichkeit fast buendig - 2-3 cm Relief als Malhilfe = ANNAHME; ueber z 31,5 ausgenommen (Schatten des Balkenkopfs)")
     _fo_w3 = os.path.join(HERE, "schwab_v3", "relief", "west_foto_nw.npz")            # 16.11.2026: Nordwest-Eckstreifen ueber dem Treppenturm (u 8,3-10,55, z 14,5-34), Foto 047 direkt auf der Wandebene gelesen
     if os.path.exists(_fo_w3) and os.environ.get("OHNE_RELIEF") != "1":
         koerper = koerper + relief_koerper(_fo_w3, tiefe=0.45, trend=True, rand_auslauf=False)
@@ -309,6 +313,9 @@ if len(_mf): V[_mf] = V[_mt]; print("verschmolzene Doppelecken:", len(_mf))     
 _vq, _inv = np.unique(np.round(V.astype(np.float64), 3), axis=0, return_inverse=True); F = _inv.ravel()[F]; V = _vq.astype(np.float32)   # Ecken auf 1 Mikrometer (Druckmassstab) verschweissen
 F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]                                              # entartete Dreiecke (Kante der Laenge 0) entfernen
 _fs = np.sort(F, axis=1); _u, _inv2, _cnt = np.unique(_fs, axis=0, return_inverse=True, return_counts=True); F = F[_cnt[_inv2.ravel()] == 1]                 # 15.11.2026: Flaechenpaare mit denselben drei Ecken (Lappen ohne Dicke nach dem Verschweissen) fallen sonst als 2-Flaechen-Koerper heraus
+from scipy.sparse import coo_matrix as _coo; from scipy.sparse.csgraph import connected_components as _cc      # 16.11.2026: Kruemel (<= 8 Dreiecke) fallen sonst als Einzelkoerper heraus (wie bauteile.stl_schreiben)
+_e = np.sort(np.r_[F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]], axis=1); _fi = np.tile(np.arange(len(F)), 3); _o = np.lexsort((_e[:, 1], _e[:, 0])); _e, _fi = _e[_o], _fi[_o]; _g = np.flatnonzero((_e[1:] == _e[:-1]).all(1))      # Flaechen, die eine KANTE teilen (wie trimesh.split; gemeinsame Ecke allein genuegt nicht)
+_nk, _fl = _cc(_coo((np.ones(len(_g)), (_fi[_g], _fi[_g + 1])), shape=(len(F), len(F))), directed=False); F = F[np.bincount(_fl, minlength=_nk)[_fl] > 8]
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 tri = V[F]; nrm = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]); nrm /= np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-12
 rec = np.zeros(len(F), dtype=[("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")]); rec["n"], rec["v"] = nrm, tri

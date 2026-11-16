@@ -266,8 +266,8 @@ def stl_schreiben(model, pfad, kopf=b"rcpark"):
     fs = np.sort(F, axis=1); _u, inv2, cnt = np.unique(fs, axis=0, return_inverse=True, return_counts=True); F = F[cnt[inv2.ravel()] == 1]      # Flaechenpaare mit denselben drei Ecken (Lappen ohne Dicke) entfernen
     try:                                                                 # 16.11.2026: Kruemel (<= 8 Dreiecke, z. B. 2-cm-Tetraeder nach dem Aushoehlen) fallen sonst als Einzelkoerper heraus
         from scipy.sparse import coo_matrix; from scipy.sparse.csgraph import connected_components
-        e_ = np.r_[F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]]; nk_, lab_ = connected_components(coo_matrix((np.ones(len(e_)), (e_[:, 0], e_[:, 1])), shape=(len(V), len(V))), directed=False)
-        fl_ = lab_[F[:, 0]]; cnt_ = np.bincount(fl_, minlength=nk_); F = F[cnt_[fl_] > 8]
+        e_ = np.sort(np.r_[F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]], axis=1); fi_ = np.tile(np.arange(len(F)), 3); o_ = np.lexsort((e_[:, 1], e_[:, 0])); e_, fi_ = e_[o_], fi_[o_]; g_ = np.flatnonzero((e_[1:] == e_[:-1]).all(1))      # Nachbarschaft ueber gemeinsame KANTEN (wie trimesh.split)
+        nk_, fl_ = connected_components(coo_matrix((np.ones(len(g_)), (fi_[g_], fi_[g_ + 1])), shape=(len(F), len(F))), directed=False); F = F[np.bincount(fl_, minlength=nk_)[fl_] > 8]
     except ImportError: pass
     tri = V[F]; nrm = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]); nrm /= np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-12
     rec = np.zeros(len(F), dtype=[("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")]); rec["n"], rec["v"] = nrm, tri; os.makedirs(os.path.dirname(pfad), exist_ok=True)
