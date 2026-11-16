@@ -880,6 +880,12 @@
    "wer": "Nutzer (Bild ~/Bilder/sdfsfssdfdsfs.png: Foto neben 3D-Seite, 5 Markierungen)",
    "text": "(1) Turmdach: im Foto unten ausgeschweift (Aufschiebling) mit weitem Ueberstand, Modell gerade; (2) Eckquader oben links fehlen/zu schwach; (3) zwei Flecken unter dem linken Nordfenster; (4) Vordach/Galerie Nord: Riegel zwischen Wandbild und Bruestungsband fehlt; (5) zweiter Torbogen (Nachbarhaus): Bogenform falsch - bauteile.spitzbogen gab bei gedrueckten Boegen (Stich < halbe Breite) einen waagerechten Sturz statt eines Scheitels (betrifft auch Laube und Turmtor Sued).",
    "naechster_schritt": "spitzbogen als Vier-Zentren-Bogen; Dachprofil am Foto messen; Fotoquader bis unter den Fries; Galerie am feinen Fassadenbild messen"
+  },
+  {
+   "datum": "2026-11-16",
+   "wer": "Claude (Foto 113857 neben Modell)",
+   "text": "Erkerbruestung Sued (z 6,95-7,95): vier Blendmasswerk-Felder an der Front (je eines unter jedem Fenster, stehende Mandel mit S-Schwung, nicht durchbrochen), dazu je eines an den Schraegseiten; im Modell glatte Wand.",
+   "naechster_schritt": "bauteile.Wand.blendfeld_mandel unter den vier Erkerfenstern; Schraegseiten spaeter"
   }
  ]
 }

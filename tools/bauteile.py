@@ -106,6 +106,17 @@ class Wand:
                 k = k + self.linienzug(bez((a0, cz + sz * R * 0.6), (cu + sg * 0.5 * (R + L), cz + sz * (h + 0.25 * h)), (e, cz + sz * 0.15 * h)), b, w0, w1)       # aeusserer Blasenbogen
                 k = k + self.linienzug(bez((cu + sg * R, cz), (cu + sg * 0.5 * (R + L), cz + sz * 0.55 * h), (e, cz + sz * 0.9 * h)), b, w0, w1)                 # innerer Gegenschwung zur Feldecke
         return k ^ self.kasten(u0 - 0.01, u1 + 0.01, z0 - 0.01, z1 + 0.01, w0 - 0.01, w1 + 0.01)
+    def blendfeld_mandel(self, u0, u1, z0, z1, w, tiefe=0.04, b=0.05, n=16):
+        """Blendmasswerk-Feld (NICHT durchbrochen): vertieftes Feld mit stehender Mandel (zwei Spitzboegen) und S-Schwung darin - Bruestungsfelder spaetgotischer Erker.
+        Liefert (abzug, zusatz) wie fenster(): koerper = koerper - abzug + zusatz. Zu messen: Feldrechteck; Kurven nach Foto 113857 vereinfacht (ANNAHME)."""
+        cu, cz = 0.5 * (u0 + u1), 0.5 * (z0 + z1); h = 0.5 * (z1 - z0) - b; L = min(0.5 * (u1 - u0) - b, 0.55 * h); t = np.linspace(0, 1, n); w0, w1 = w - tiefe - 0.01, w
+        def bez(p0, p1, p2): return [((1 - x) ** 2 * p0[0] + 2 * x * (1 - x) * p1[0] + x * x * p2[0], (1 - x) ** 2 * p0[1] + 2 * x * (1 - x) * p1[1] + x * x * p2[1]) for x in t]
+        k = None
+        for sg in (-1.0, 1.0):
+            for sz in (-1.0, 1.0):
+                s_ = self.linienzug(bez((cu + sg * L, cz), (cu + sg * L, cz + sz * 0.65 * h), (cu, cz + sz * h)), b, w0, w1); k = s_ if k is None else k + s_
+        k = k + self.linienzug(bez((cu, cz + h), (cu + 0.9 * L, cz + 0.45 * h), (cu, cz)) + bez((cu, cz), (cu - 0.9 * L, cz - 0.45 * h), (cu, cz - h)), b, w0, w1)
+        return self.kasten(u0, u1, z0, z1, w - tiefe, w + 0.02), k ^ self.kasten(u0 - 0.005, u1 + 0.005, z0 - 0.005, z1 + 0.005, w0, w1)
     def zifferblatt(self, u, z, d_aussen, d_innen, zeit=(2, 5), k=1.0, w_ring=0.10, w_feld=0.06):
         """Turmuhr-Details AUF einer vorhandenen Ringscheibe (Ring bis w_ring, Innenfeld bis w_feld vor der Wand): Wulst aussen und innen, 12 roemische Ziffern
         (radial, Fuss zur Mitte, IIII statt IV wie an Turmuhren ueblich), Nabe, Stundenzeiger mit Sonne und Mondsichel am Gegenende, Minutenzeiger mit Pfeil.
@@ -200,7 +211,7 @@ def kneifkanten_schliessen(koerper, r=0.02, runden=6, stellen=4):
         r = r * (1.5 if runde else 1.0)                                  # an gekruemmten Flaechen (Bogenlaibung) wandert die Beruehrung sonst nur weiter
         o = np.array([[sx, sy, sz] for sx in (-r, r) for sy in (-r, r) for sz in (-r, r)])
         for a_, b_ in vq[bad]: koerper = koerper + M.hull_points(np.r_[a_ + o, b_ + o].tolist())
-        print("kneifkanten:", [(np.round(a_, 2).tolist(), np.round(b_, 2).tolist()) for a_, b_ in vq[bad]])
+        print("kneifkanten geschlossen:", len(bad))
     return koerper
 
 
@@ -210,6 +221,7 @@ def massstab(koerper, faktor, drehpunkt): return koerper.translate((-drehpunkt[0
 def stl_schreiben(model, pfad, kopf=b"rcpark"):
     """Binaeres STL; Ecken auf 1 Mikrometer verschweisst, entartete Dreiecke entfernt (sonst fallen Splitter als Einzelkoerper heraus)."""
     import os
+    model = kneifkanten_schliessen(model, r=0.25, stellen=3)            # im Druckmassstab (mm): Beruehrkanten, die erst nach dem Skalieren zusammenfallen (16.11.2026 Blendmasswerk)
     mesh = model.to_mesh(); V = np.array(mesh.vert_properties)[:, :3]; F = np.asarray(mesh.tri_verts)
     vq, inv = np.unique(np.round(V.astype(np.float64), 3), axis=0, return_inverse=True); F = inv.ravel()[F]; V = vq.astype(np.float32)
     F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]

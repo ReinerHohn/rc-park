@@ -93,6 +93,14 @@
  },
  {
   "seite": "wand",
+  "element": "Blendmasswerk der Erkerbruestung Sued (4 Felder, Mandel mit S-Schwung)",
+  "quelle": "Foto 113857: Felder unter den vier Erkerfenstern (Fensterlagen M-113857-005/-006)",
+  "felder": 4,
+  "hinweis": "ANNAHME: Kurven vereinfacht, Feldtiefe 4 cm, Stab 5 cm; Felder an den Schraegseiten fehlen; Feldgrenzen ohne eigenes Protokoll",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Suedfassade scharf: Giebel, Vorbau 2. OG mit 10 Fenstern, Erker 1. OG, Pultdach, 10 Wand-/Giebelfenster, kleiner Rundbogen",
   "quelle": "foto_mass.py (M-113857-001..-011, M-113855-001..-003), Picks ueber wand_ortho.py; Ebenen aus der dichten Wolke",
   "vorbau_breite": 11.4,
@@ -167,7 +175,7 @@
   "element": "Gebaeude hohl, 37 Fenster durchgebrochen",
   "quelle": "Nutzerauftrag 16.11.2026; Fensterrechtecke wie oben gemessen",
   "fenster_offen": 37,
-  "hohlraum_m3": 3205.4,
+  "hohlraum_m3": 3205.3,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026: minimal duenn, stabil, schnell druckbar): 1,2 mm im Druck (3 Bahnen einer 0,4-mm-Duese; WAND_MM) = 0,10 m bei 1:87; Innenraum ohne Decken/Zwischenwaende; Rahmen, Pfosten und Kaempfer bleiben als Staebe in der Oeffnung",
   "seite_name": "wand"
  }
