@@ -273,21 +273,25 @@ def zwischenstand(koerper, name, muster=("relief/*.npz", "dach.json", "objekt.js
     h.update(repr(sorted((k, v) for k, v in os.environ.items() if k in ("SCALE", "WAND_MM", "MINMM") or k.startswith("OHNE_"))).encode()); h.update(repr(extra).encode())
     cd = os.path.join("/media/oem/scan/rc-park_daten/gen_cache", os.path.basename(od)); cf = os.path.join(cd, f"{name}_{h.hexdigest()[:16]}.npz"); t0 = time.time()
 
+    import json as _js; fn = koerper if callable(koerper) else None      # TEURE SCHRITTE (aushoehlen: 80 s am Turm): koerper, info = zwischenstand(lambda: (aushoehlen(...), dict(...)), "hohl") - die Funktion laeuft nur ohne Treffer
+
     def laden():
         Z = np.load(cf); m = M(Mesh64(vert_properties=Z["V"], tri_verts=Z["F"], merge_from_vert=Z["mf"], merge_to_vert=Z["mt"]))
-        return m if m.status().name == "NoError" and not m.is_empty() else None
+        return (m, _js.loads(str(Z["info"]))) if m.status().name == "NoError" and not m.is_empty() else None
     if os.path.exists(cf):
         try:
             m = laden()
-            if m is not None: print(f"zwischenstand {name}: geladen ({time.time() - t0:.1f} s)", flush=True); return m
+            if m is not None: print(f"zwischenstand {name}: geladen ({time.time() - t0:.1f} s)", flush=True); return m if fn else m[0]
         except Exception as e: print(f"zwischenstand {name}: Datei unbrauchbar ({str(e)[:60]}) - rechne neu", flush=True)
+    info = {}
+    if fn: koerper, info = fn()
     try:
         me = koerper.to_mesh64(); os.makedirs(cd, exist_ok=True)
         for alt in glob.glob(os.path.join(cd, f"{name}_*.npz")): os.remove(alt)
-        np.savez(cf, V=np.asarray(me.vert_properties)[:, :3], F=np.asarray(me.tri_verts), mf=np.asarray(me.merge_from_vert), mt=np.asarray(me.merge_to_vert)); m = laden()
-        if m is None: os.remove(cf); print(f"zwischenstand {name}: gespeicherter Stand nicht ladbar - ohne Zwischenspeicher weiter", flush=True); return koerper
-        print(f"zwischenstand {name}: gerechnet und gespeichert ({time.time() - t0:.1f} s, {len(Z_F(me)) // 1000}k Dreiecke)", flush=True); return m
-    except Exception as e: print(f"zwischenstand {name}: nicht gespeichert ({type(e).__name__}: {str(e)[:80]})", flush=True); return koerper
+        np.savez(cf, V=np.asarray(me.vert_properties)[:, :3], F=np.asarray(me.tri_verts), mf=np.asarray(me.merge_from_vert), mt=np.asarray(me.merge_to_vert), info=_js.dumps(info)); m = laden()
+        if m is None: os.remove(cf); print(f"zwischenstand {name}: gespeicherter Stand nicht ladbar - ohne Zwischenspeicher weiter", flush=True); return (koerper, info) if fn else koerper
+        print(f"zwischenstand {name}: gerechnet und gespeichert ({time.time() - t0:.1f} s, {len(Z_F(me)) // 1000}k Dreiecke)", flush=True); return m if fn else m[0]
+    except Exception as e: print(f"zwischenstand {name}: nicht gespeichert ({type(e).__name__}: {str(e)[:80]})", flush=True); return (koerper, info) if fn else koerper
 
 
 def Z_F(me): return np.asarray(me.tri_verts)

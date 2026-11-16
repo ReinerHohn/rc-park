@@ -304,11 +304,11 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         _sch = [WS.prisma(b_rund(0.92, 22.26, 23.66), u=5.745, w0=-1.7, w1=-0.4), WW.prisma(b_rund(0.81, 21.70, 23.45), u=5.40, w0=-1.7, w1=-0.7)]
         _sch += [WO.kasten(*O_SCHL, -1.7, -0.7), WO.kasten(*O_LUKE, -1.7, -0.7)]
         _sch += [WW.kasten(u0_, u1_, z0_, z1_, -1.7, -0.7) for u0_, u1_, z0_, z1_ in ((5.31, 5.52, 27.82, 30.19), (5.20, 5.45, 33.0, 34.4), (5.33, 5.47, 16.93, 17.86), (5.27, 5.39, 10.46, 11.44))]
-        koerper, n_offen, v_hohl = aushoehlen(koerper, d=float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0, schnitte=_sch, fenster=[], min_m3=20.0, z_min=8.0)
+        def _hohl(): k_, n_, v_ = aushoehlen(koerper, d=float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0, schnitte=_sch, fenster=[], min_m3=20.0, z_min=8.0); return k_, dict(n=int(n_), v=float(v_))
+        koerper, _hi = _zw(_hohl, "5_hohl"); n_offen, v_hohl = _hi["n"], _hi["v"]      # teurer Schritt (80 s): laeuft nur, wenn sich am Generator bis hierher etwas geaendert hat
         beleg("wand", f"Turm hohl, {n_offen} Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen", "Nutzerauftrag 16.11.2026; Fenstermasse wie oben", fenster_offen=n_offen, hohlraum_m3=round(v_hohl, 1),
               hinweis="Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen")
         print(f"hohl: {n_offen} Durchbrueche, Hohlraum {v_hohl:.0f} m3, {_t.time() - _t0:.0f} s")
-        koerper = _zw(koerper, "5_hohl", extra=(n_offen, round(v_hohl, 1)))
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json
