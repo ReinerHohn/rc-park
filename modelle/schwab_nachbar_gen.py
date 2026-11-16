@@ -92,7 +92,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     for u0_, u1_, z0_, z1_, w_, tl_, kz_ in SF:
         if w_ == 0.0: koerper = koerper + WS.kasten(u0_ - 0.15, u1_ + 0.15, z0_ - 0.15, z1_ + 0.15, -0.1, 0.05)        # Steingewaende 5 cm vor dem Putz (ANNAHME)
         ab_, zu_ = WS.fenster(u0_, u1_, z0_, z1_, w_ + (0.05 if w_ == 0.0 else 0.0), tiefe=0.17, teiler=tl_, kaempfer=kz_, b=(0.30 if u0_ == -4.02 else 0.12) if (w_ == 0.0 and tl_) else 0.07); koerper = koerper - ab_ + zu_   # Zwischengeschoss: Steinpfosten ~0,3 m breit (entzerrtes Foto: Lichter je ~0,5 m)
-    koerper = koerper - WS.prisma(rundbogen(2.89, -0.6, 3.83), u=-2.65, w0=-4.0, w1=0.5)                               # kleiner Rundbogen (Laube, Suedseite): Tiefe 4 m ANNAHME
+    koerper = koerper - WS.prisma(rundbogen(2.89, -0.6, 3.83), u=-2.65, w0=-15.0, w1=0.5)                               # kleiner Rundbogen (Suedseite): 16.11. Nutzer 'das ist ein Tor' -> Gang 15 m gerade nach Osten bis in die Halle des dritten Bogens (Weg im Inneren ANNAHME)
     beleg("wand", "Suedfassade scharf: Giebel, Vorbau 2. OG mit 10 Fenstern, Erker 1. OG, Pultdach, 10 Wand-/Giebelfenster, kleiner Rundbogen", "foto_mass.py (M-113857-001..-011, M-113855-001..-003), Picks ueber wand_ortho.py; Ebenen aus der dichten Wolke",
           vorbau_breite=11.4, vorbau_tiefe=1.15, erker_breite=4.12, hinweis="ANNAHME: Nischentiefen 17 cm, Gewaende 5 cm, Konsolen- und Erkerfussform, Dachplatte, Fensterlagen der uebrigen 2.-OG-Fenster am entzerrten Bild abgelesen (nicht einzeln protokolliert); Masswerk der Erkerbruestung, Stufenquader am Ortgang, Eckquader fehlen")
     # ---- 16.11.2026 QUERDACH zum Turm (Nutzer: "Warum fehlt dieses Dach?"): Sattel mit First Ost-West in der Turmachse; Form aus der dichten Wolke (17 000 Punkte ueber dem Hauptdach) ----
@@ -122,9 +122,9 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     # ---- 16.11.2026 FENSTER ALS ECHTE LOECHER (Nutzer: "alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden") ----
     if os.environ.get("OHNE_HOHL") != "1":
         from bauteile import aushoehlen
-        koerper, n_offen, v_hohl = aushoehlen(koerper, d=0.30, schnitte=[WL.scheibe(-0.06, 2.85, 0.76, -0.75, -0.14), WN.kasten(2.09, 4.45, 8.0, 9.575, -0.75, -0.19) - WN.kasten(2.80, 2.93, 7.9, 9.7, -0.21, 0.03) - WN.kasten(3.65, 3.78, 7.9, 9.7, -0.21, 0.03)])
+        koerper, n_offen, v_hohl = aushoehlen(koerper, d=float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0, schnitte=[WL.scheibe(-0.06, 2.85, 0.76, -0.75, -0.14), WN.kasten(2.09, 4.45, 8.0, 9.575, -0.75, -0.19) - WN.kasten(2.80, 2.93, 7.9, 9.7, -0.21, 0.03) - WN.kasten(3.65, 3.78, 7.9, 9.7, -0.21, 0.03)])
         beleg("wand", f"Gebaeude hohl, {n_offen} Fenster durchgebrochen", "Nutzerauftrag 16.11.2026; Fensterrechtecke wie oben gemessen", fenster_offen=n_offen, hohlraum_m3=round(v_hohl, 1),
-              hinweis="ANNAHME: Wandstaerke 0,30 m (3,4 mm bei 1:87), Innenraum ohne Decken/Zwischenwaende; Rahmen, Pfosten und Kaempfer bleiben als Staebe in der Oeffnung")
+              hinweis="Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026: minimal duenn, stabil, schnell druckbar): 1,2 mm im Druck (3 Bahnen einer 0,4-mm-Duese; WAND_MM) = 0,10 m bei 1:87; Innenraum ohne Decken/Zwischenwaende; Rahmen, Pfosten und Kaempfer bleiben als Staebe in der Oeffnung")
         print(f"hohl: {n_offen} Durchbrueche erreichen den Innenraum, Hohlraum {v_hohl:.0f} m3")
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:

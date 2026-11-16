@@ -53,13 +53,19 @@
     0.4619
    ],
    "quer_max": 0.15,
-   "r_max": 2.9,
+   "r_max": 2.77,
    "historie": [
     {
      "datum": "2026-11-16",
      "alt": "r_max 3.0",
      "neu": "r_max 2.9",
      "grund": "Gebaeude ist jetzt hohl (Nutzerauftrag Fenster = Loecher): die Innenflaeche der 0,30-m-Wand liegt bei 3,0 m und wurde als Reichweite mitgemessen; Sollwert 2,55..2,85 unveraendert"
+    },
+    {
+     "datum": "2026-11-16",
+     "alt": "r_max 2.9",
+     "neu": "r_max 2.77",
+     "grund": "Wand jetzt 0,10 m duenn (Nutzer: minimal duenne, druckstabile Wand): die Innenflaeche liegt bei 2,80 m und wurde als Reichweite gemessen; Sollwert unveraendert"
     }
    ]
   },
@@ -75,7 +81,15 @@
     -0.4619
    ],
    "quer_max": 0.15,
-   "r_max": 3.0
+   "r_max": 2.77,
+   "historie": [
+    {
+     "datum": "2026-11-16",
+     "alt": "r_max 3.0",
+     "neu": "r_max 2.77",
+     "grund": "Wand jetzt 0,10 m duenn (Nutzer: minimal duenne, druckstabile Wand): die Innenflaeche liegt bei 2,80 m und wurde als Reichweite gemessen; Sollwert unveraendert"
+    }
+   ]
   },
   "first_n": {
    "typ": "z_am_punkt",
@@ -848,6 +862,12 @@
    "wer": "Nutzer",
    "text": "Nutzer (3D-Seite V38, 06:46): 'alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden' - Fenster sind nur 12-17 cm tiefe Nischen im Vollkoerper.",
    "naechster_schritt": "bauteile.aushoehlen (Wandstaerke ANNAHME), Fenster durchbrechen; Anzeige mit ebenen Flaechennormalen; Eckquader oben eben mit Fotokontur"
+  },
+  {
+   "datum": "2026-11-16",
+   "wer": "Nutzer (3D-Seite V39, 07:11)",
+   "text": "Dritter Bogen (Laube Nordost): 'das musst du noch durchbrechen, das ist keine Wand, das ist ein Tor'. Bisher 4 m tiefe Halle mit Rueckwand (ANNAHME).",
+   "naechster_schritt": "Durchgang bis zum kleinen Rundbogen der Suedseite verbinden (Weg im Inneren ANNAHME: gerader Gang vom Suedbogen nach Osten bis in die Halle)"
   }
  ]
 }

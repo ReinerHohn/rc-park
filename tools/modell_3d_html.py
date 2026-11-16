@@ -37,7 +37,7 @@ def main():
             me_ = trimesh.load(ex, process=True); me_.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0); F = np.vstack([F, np.asarray(me_.faces, np.uint32) + len(V)]).astype(np.uint32); V = np.vstack([V, np.asarray(me_.vertices, np.float32)]).astype(np.float32)
     if a.netz_raster > 0:                                                   # Eckpunkt-Clustering nur fuer die Anzeige (das STL bleibt unveraendert)
         q_, inv_ = np.unique(np.round(V / a.netz_raster).astype(np.int64), axis=0, return_inverse=True); F = inv_.ravel()[F]; F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])].astype(np.uint32)
-        V = (q_ * a.netz_raster).astype(np.float32)
+        n_ = np.bincount(inv_.ravel(), minlength=len(q_)).astype(np.float64); V = np.stack([np.bincount(inv_.ravel(), weights=V[:, k_].astype(np.float64), minlength=len(q_)) / n_ for k_ in range(3)], 1).astype(np.float32)   # 16.11.2026: Schwerpunkt der Gruppe statt Rasterpunkt - der Rasterpunkt liegt bis 2 cm NEBEN der Wandebene, lange Wanddreiecke kippten und schattierten als 'Strahlen' (Nutzerbild)
     c = haupt.mean(0)
     D = dict(name=obj.get("name", os.path.basename(od)), mitte=c.round(2).tolist(), seiten=seiten_aus_rahmen(obj),
              mv=b64(V), mf=b64(F), belege=belege)

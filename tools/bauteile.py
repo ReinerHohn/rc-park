@@ -139,14 +139,15 @@ def aushoehlen(koerper, d=0.3, schnitte=(), fenster=None, min_m3=0.5, decke=None
     return kneifkanten_schliessen(erg), offen, vol
 
 
-def kneifkanten_schliessen(koerper, r=0.02, runden=3):
+def kneifkanten_schliessen(koerper, r=0.02, runden=6, stellen=4):
     """Kanten, an denen sich der Koerper nur beruehrt (4 Flaechen an einer Kante, z. B. Hohlraum tippt an eine Nische): im STL 'nicht wasserdicht'.
     Um jede solche Kante einen kleinen Klotz (r) auffuellen - schliesst die Beruehrung, oeffnet nie ein Loch."""
-    for _ in range(runden):
+    for runde in range(runden):
         me = koerper.to_mesh(); V = np.array(me.vert_properties)[:, :3].astype(np.float64); F = np.asarray(me.tri_verts)
-        vq, inv = np.unique(np.round(V, 4), axis=0, return_inverse=True); F = inv.ravel()[F]; F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]
+        vq, inv = np.unique(np.round(V, stellen), axis=0, return_inverse=True); F = inv.ravel()[F]; F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]
         e = np.sort(np.r_[F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]], axis=1); u, cnt = np.unique(e, axis=0, return_counts=True); bad = u[cnt > 2]
         if not len(bad): break
+        r = r * (1.5 if runde else 1.0)                                  # an gekruemmten Flaechen (Bogenlaibung) wandert die Beruehrung sonst nur weiter
         o = np.array([[sx, sy, sz] for sx in (-r, r) for sy in (-r, r) for sz in (-r, r)])
         for a_, b_ in vq[bad]: koerper = koerper + M.hull_points(np.r_[a_ + o, b_ + o].tolist())
         print("kneifkanten:", [(np.round(a_, 2).tolist(), np.round(b_, 2).tolist()) for a_, b_ in vq[bad]])
