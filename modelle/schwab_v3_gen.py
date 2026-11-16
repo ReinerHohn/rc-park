@@ -251,12 +251,10 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
           radius=TT_R, traufradius=TT_RT, traufe=11.57, spitzenansatz=13.5, kugel=14.6, hinweis="ANNAHME: Schlitzfenster nur ungefaehr (Lage am Foto abgelesen), Gesimsprofil vereinfacht; Blechbahnen der Haube fehlen")
     # ---- 16.11.2026 HOLZFRIES unter der Traufe (feines Fassadenbild Nord/Sued, Fernfoto 110756): Rahmenwerk z 34,95-36,55 mit Schwelle, Raehm und Pfosten vor der Wand ----
     FR_E = [(3.49, 9.63), (3.32, 20.97), (-7.36, 20.58), (-7.03, 9.36)]; FR_M = (-1.9, 15.2)                    # Wandecken bei z 35,6 (aus dem Modellschnitt), NO, NW, SW, SO
-    for a_, b_ in zip(FR_E, FR_E[1:] + FR_E[:1]):
-        mi_ = (0.5 * (a_[0] + b_[0]), 0.5 * (a_[1] + b_[1])); Wf = Wand(a_, b_, aussen=(2 * mi_[0] - FR_M[0], 2 * mi_[1] - FR_M[1])); Lf = Wf.laenge
-        koerper = koerper + Wf.kasten(-0.08, Lf + 0.08, 34.95, 35.2, -0.3, 0.08) + Wf.kasten(-0.08, Lf + 0.08, 36.3, 36.56, -0.3, 0.08)
-        for k_ in range(6): koerper = koerper + Wf.kasten(k_ * (Lf - 0.24) / 5.0, k_ * (Lf - 0.24) / 5.0 + 0.24, 35.15, 36.35, -0.3, 0.07)
-    beleg("wand", "Holzfries unter der Traufe (Schwelle, Raehm, je Seite 6 Pfosten)", "feines Fassadenbild Nord (fassade_fein, 1 cm) und Fernfoto 110756: Rahmenwerk z 34,95-36,55",
-          hinweis="ANNAHME: Pfostenzahl 6 je Seite (in den Fotos zu dunkel zum Zaehlen - Zaehlprotokoll fehlt), Querschnitte 24-26 cm, 7-8 cm vor der Wand; Felder nicht zurueckgesetzt; Ost- und Westseite wie Nord")
+    from bauteile import umgang as _umgang                    # 16.11.2026 Nutzer (Fremdfoto NO): "oben unterm Dach ist eine Einkerbung, da kann man rumlaufen" -> offener Umgang statt Fries vor der Wand; generisch bauteile.umgang
+    koerper = _umgang(koerper, FR_E, 34.95, 36.56, tiefe=0.9, pfosten=4)
+    beleg("wand", "Offener Umgang unter der Traufe (Schwelle, Raehm, je Seite 4 Pfosten, Wand 0,9 m zurueckgesetzt)", "Fernfoto 110756 und Nahfoto 113029: Rahmenwerk z 34,95-36,55, helle Wand hinter den Pfosten, je Seite 4 Pfosten (an beiden Fotos gleich gezaehlt, Nordseite)",
+          pfosten_je_seite=4, hinweis="ANNAHME: Ruecksprung 0,9 m, Querschnitte 24-25 cm, Ost/Sued/West wie Nord; Zaehlung ohne Z-Protokoll; Bruestung/Gelaender im Umgang nicht erkennbar")
     # ---- 16.11.2026 FENSTER ALS ECHTE LOECHER (Nutzer: "alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden") ----
     if os.environ.get("OHNE_HOHL") != "1":
         from bauteile import aushoehlen; import time as _t; _t0 = _t.time()

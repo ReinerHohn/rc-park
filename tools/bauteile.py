@@ -164,6 +164,21 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
     return koerper, belege
 
 
+def umgang(koerper, ecken, z0, z1, tiefe=0.9, pfosten=4, b=0.24, riegel=0.25, vor=0.08):
+    """Offener Umgang / Laufgang unter der Traufe eines Turms (GENERISCH): rundum zurueckgesetzte Wand hinter einer Pfostenreihe.
+    ecken: Wandecken (x, y) im Umlauf auf Hoehe des Umgangs; z0..z1: Schwelle unten bis Raehm oben (beide 'riegel' hoch, stehen 'vor' vor der Wand);
+    dazwischen ist die Wand um 'tiefe' zurueckgesetzt und zwischen 'pfosten' Pfosten je Seite (Eckpfosten mitgezaehlt) offen.
+    Zu messen: z0, z1, Pfostenzahl (am Foto zaehlen); tiefe, Querschnitte = ANNAHME. Liefert den neuen Koerper."""
+    m = np.mean(np.asarray(ecken, float), axis=0); zus = None; ab = None
+    for a_, b_ in zip(ecken, list(ecken[1:]) + [ecken[0]]):
+        mi = 0.5 * (np.asarray(a_, float) + np.asarray(b_, float)); W = Wand(a_, b_, aussen=tuple(2 * mi - m)); L = W.laenge
+        c_ = W.kasten(-0.05, L + 0.05, z0 + riegel, z1 - riegel, -tiefe, vor + 0.3); ab = c_ if ab is None else ab + c_
+        t_ = W.kasten(-vor, L + vor, z0, z0 + riegel, -0.3, vor) + W.kasten(-vor, L + vor, z1 - riegel, z1, -0.3, vor)
+        for k_ in range(pfosten): u_ = k_ * (L - b) / (pfosten - 1); t_ = t_ + W.kasten(u_, u_ + b, z0 + riegel - 0.02, z1 - riegel + 0.02, -0.3, vor - 0.01)
+        zus = t_ if zus is None else zus + t_
+    return koerper - ab + zus
+
+
 DURCH = []   # von Wand.fenster gesammelte Oeffnungen (Wand, u0, u1, z0, z1, w der Nischenrueckwand)
 
 

@@ -44,6 +44,10 @@ def main():
     ap.add_argument("--klemme", nargs=2, type=float, default=[-0.08, 0.15]); ap.add_argument("--band", type=float, default=0.6, help="Suchtiefe +- um die Ebene (m); fuer Auskragungen/Erker groesser waehlen"); a = ap.parse_args()
     A = np.array(a.ecke_a); B = np.array(a.ecke_b); t = (B - A) / np.linalg.norm(B - A); n = np.array([t[1], -t[0]]); n = n if (np.array(a.aussen) - A) @ n > 0 else -n
     u0, u1, z0, z1 = a.feld; px = a.px; W = int(round((u1 - u0) / px)); H = int(round((z1 - z0) / px))
+    if a.netz == "-":                                                    # 16.11.2026: Wand ohne Netz (kein SfM-Foto sieht sie) - leeres Relief als Traeger fuer relief_putz.py / steine_aus_foto.py mit einem kalibrierten Einzelfoto
+        os.makedirs(os.path.dirname(os.path.abspath(a.aus)), exist_ok=True)
+        np.savez_compressed(a.aus, rel=np.zeros((H, W), np.float32), a=A, t=t, n=n, u0=u0, z0=z0, px=px, oeffnung=np.zeros((H, W), bool), lochanteil=1.0, lochanteil_roh=1.0, hub_p5_p95=0.0, ebene_abstand_m=0.0, trend_je_m=np.zeros(2))
+        print(f"{os.path.basename(a.aus)}: leeres Relief {W}x{H} (kein Netz)"); return
     Z = np.load(a.netz); tri = Z["V"].astype(np.float64)[Z["F"]]; c = tri.mean(1); uu = (c[:, :2] - A) @ t; dd = (c[:, :2] - A) @ n
     hi_ = (uu > u0) & (uu < u1) & (dd < -a.band) & (dd > -a.band - 6.0) & (c[:, 2] > z0) & (c[:, 2] < z1)      # Netz HINTER dem Band: dort ist die Wand offen (Tor, Laube, Nische) - nicht Verdeckung
     hinten = np.zeros((H, W), bool); hinten[np.clip((H - 1 - (c[hi_, 2] - z0) / px).astype(int), 0, H - 1), np.clip(((uu[hi_] - u0) / px).astype(int), 0, W - 1)] = True

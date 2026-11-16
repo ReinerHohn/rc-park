@@ -1,0 +1,131 @@
+{
+ "foto": "online2_orig__od_15",
+ "seite": "sued/ost",
+ "punkte": {
+  "knauf": [
+   1862.5,
+   647.5
+  ],
+  "traufe_SW": [
+   1318.75,
+   1522.5
+  ],
+  "traufe_SO": [
+   1806,
+   1525
+  ],
+  "traufe_NO": [
+   2394,
+   1544
+  ],
+  "uhr_sued": [
+   1593.75,
+   1856
+  ],
+  "fenster_sued": [
+   1581,
+   2369
+  ],
+  "gesims_SO": [
+   1787,
+   2181
+  ],
+  "first_nachbar_sued": [
+   2094,
+   2306
+  ],
+  "gesims_SW": [
+   1394,
+   2131
+  ],
+  "verdachung_ost": [
+   1700,
+   2685
+  ],
+  "verdachung_west": [
+   1525,
+   2647.5
+  ]
+ },
+ "punkte_3d": {
+  "knauf": [
+   -1.86,
+   15.11,
+   50.77
+  ],
+  "traufe_SW": [
+   -8.05,
+   21.76,
+   36.54
+  ],
+  "traufe_SO": [
+   -8.0,
+   8.77,
+   36.47
+  ],
+  "traufe_NO": [
+   4.34,
+   8.62,
+   36.79
+  ],
+  "uhr_sued": [
+   -7.3,
+   15.108,
+   30.97
+  ],
+  "fenster_sued": [
+   -7.204,
+   15.143,
+   22.96
+  ],
+  "gesims_SO": [
+   -7.035,
+   9.4,
+   26.53
+  ],
+  "first_nachbar_sued": [
+   -6.845,
+   2.72,
+   25.35
+  ],
+  "gesims_SW": [
+   -7.374,
+   20.9,
+   26.53
+  ],
+  "verdachung_ost": [
+   -7.111,
+   11.969,
+   18.3
+  ],
+  "verdachung_west": [
+   -7.241,
+   16.397,
+   18.3
+  ]
+ },
+ "notiz": "16.11.2026: Kamera aus 11 Modellpunkten (gemessene Bauteile des Turms: Knauf, Traufecken, Uhr, Fenster, Gesims, Verdachung; First Nachbarhaus) - fuer die sonst ungesehene OSTSEITE. Fremdfoto (online), nicht im SfM.",
+ "kamera": {
+  "rvec": [
+   1.6802821441053744,
+   -0.5648508810379006,
+   0.506674108941038
+  ],
+  "t": [
+   10.067572045237002,
+   19.403510969486742,
+   86.05598763154202
+  ],
+  "f_px": 5426.92778921719,
+  "cx": 1849.0,
+  "cy": 2664.5,
+  "k1": 0.0,
+  "standort": [
+   -58.91213527447941,
+   -57.17916041370104,
+   33.814038266004644
+  ],
+  "rest_px_mittel": 11.789943732077738,
+  "rest_px_max": 26.063362216923217
+ }
+}

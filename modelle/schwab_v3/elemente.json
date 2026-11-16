@@ -265,9 +265,10 @@
  },
  {
   "seite": "wand",
-  "element": "Holzfries unter der Traufe (Schwelle, Raehm, je Seite 6 Pfosten)",
-  "quelle": "feines Fassadenbild Nord (fassade_fein, 1 cm) und Fernfoto 110756: Rahmenwerk z 34,95-36,55",
-  "hinweis": "ANNAHME: Pfostenzahl 6 je Seite (in den Fotos zu dunkel zum Zaehlen - Zaehlprotokoll fehlt), Querschnitte 24-26 cm, 7-8 cm vor der Wand; Felder nicht zurueckgesetzt; Ost- und Westseite wie Nord",
+  "element": "Offener Umgang unter der Traufe (Schwelle, Raehm, je Seite 4 Pfosten, Wand 0,9 m zurueckgesetzt)",
+  "quelle": "Fernfoto 110756 und Nahfoto 113029: Rahmenwerk z 34,95-36,55, helle Wand hinter den Pfosten, je Seite 4 Pfosten (an beiden Fotos gleich gezaehlt, Nordseite)",
+  "pfosten_je_seite": 4,
+  "hinweis": "ANNAHME: Ruecksprung 0,9 m, Querschnitte 24-25 cm, Ost/Sued/West wie Nord; Zaehlung ohne Z-Protokoll; Bruestung/Gelaender im Umgang nicht erkennbar",
   "seite_name": "wand"
  },
  {
@@ -275,7 +276,7 @@
   "element": "Turm hohl, 6 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
   "quelle": "Nutzerauftrag 16.11.2026; Fenstermasse wie oben",
   "fenster_offen": 6,
-  "hohlraum_m3": 3753.0,
+  "hohlraum_m3": 3705.8,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
   "seite_name": "wand"
  }

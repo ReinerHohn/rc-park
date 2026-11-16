@@ -1,0 +1,32 @@
+{
+ "id": "M-od_15-004",
+ "foto": "od_15",
+ "kamera": "K-online2_orig__od_15",
+ "ebene": "0.02999,-0.99955,0=-9.6157",
+ "name": "Ost: Eckquader Nordost Innenkante - Aussenkante (Obergeschoss)",
+ "mess_px": [
+  2250.0,
+  1787.0,
+  2306.0,
+  1787.0
+ ],
+ "P1": [
+  2.261,
+  9.688,
+  32.678
+ ],
+ "P2": [
+  3.552,
+  9.727,
+  32.689
+ ],
+ "dz": 0.011,
+ "dy": 0.039,
+ "dx": 1.291,
+ "abstand": 1.292,
+ "z1": 32.678,
+ "z2": 32.689,
+ "unsicherheit_rel": 0.0033,
+ "unsicherheit_m": 0.074,
+ "massstab_von": "Kamera K-online2_orig__od_15 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.02999,-0.99955,0=-9.6157 (+-0.3 m)"
+}

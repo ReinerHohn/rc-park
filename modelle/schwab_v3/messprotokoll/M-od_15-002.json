@@ -1,0 +1,32 @@
+{
+ "id": "M-od_15-002",
+ "foto": "od_15",
+ "kamera": "K-online2_orig__od_15",
+ "ebene": "0.02999,-0.99955,0=-9.6157",
+ "name": "Ost: Schlitzfenster Breite",
+ "mess_px": [
+  2054.0,
+  2000.0,
+  2069.0,
+  2000.0
+ ],
+ "P1": [
+  -1.945,
+  9.562,
+  29.264
+ ],
+ "P2": [
+  -1.619,
+  9.571,
+  29.259
+ ],
+ "dz": -0.005,
+ "dy": 0.01,
+ "dx": 0.325,
+ "abstand": 0.326,
+ "z1": 29.264,
+ "z2": 29.259,
+ "unsicherheit_rel": 0.0034,
+ "unsicherheit_m": 0.069,
+ "massstab_von": "Kamera K-online2_orig__od_15 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.02999,-0.99955,0=-9.6157 (+-0.3 m)"
+}

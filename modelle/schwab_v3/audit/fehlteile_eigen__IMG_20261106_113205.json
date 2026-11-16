@@ -2,91 +2,91 @@
  "foto": "eigen__IMG_20261106_113205",
  "stl": "/home/oem/git/rc-park/modelle/stl/schwab_v3_1-87.stl",
  "kamera": "K-eigen__IMG_20261106_113205 (amtliche Anker)",
- "zelle_px": 175,
+ "zelle_px": 174,
  "schwelle": 0.35,
  "treffer": [
   {
    "zelle": [
-    2450,
-    1750,
-    175
+    2436,
+    1218,
+    174
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -0.05,
-    20.68,
-    33.91
+    2.15,
+    20.42,
+    35.83
    ]
   },
   {
    "zelle": [
-    2275,
-    1750,
-    175
+    696,
+    1566,
+    174
    ],
-   "score": -0.893,
+   "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -2.05,
-    20.57,
-    35.15
+    -0.77,
+    9.82,
+    34.98
    ]
   },
   {
    "zelle": [
-    2625,
-    1750,
-    175
+    2262,
+    1392,
+    174
    ],
-   "score": -0.834,
+   "score": -0.981,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    2.34,
-    20.65,
-    31.59
+    0.8,
+    19.91,
+    35.85
    ]
   },
   {
    "zelle": [
-    700,
-    1400,
-    175
+    2088,
+    1914,
+    174
    ],
-   "score": -0.794,
+   "score": -0.977,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    0.14,
-    9.72,
-    35.6
+    -3.51,
+    19.69,
+    34.98
    ]
   },
   {
    "zelle": [
-    2275,
-    1925,
-    175
+    696,
+    1392,
+    174
    ],
-   "score": -0.786,
+   "score": -0.966,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -2.9,
-    20.45,
-    34.53
+    0.66,
+    9.82,
+    35.24
    ]
   },
   {
    "zelle": [
-    700,
-    1575,
-    175
+    2262,
+    2088,
+    174
    ],
-   "score": -0.764,
+   "score": -0.946,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -1.18,
-    9.7,
-    35.31
+    -3.48,
+    20.4,
+    33.75
    ]
   }
  ],

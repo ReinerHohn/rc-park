@@ -1,0 +1,32 @@
+{
+ "id": "M-od_15-005",
+ "foto": "od_15",
+ "kamera": "K-online2_orig__od_15",
+ "ebene": "0.02999,-0.99955,0=-9.6157",
+ "name": "Ost: Balkenkopf - Gesims Oberkante",
+ "mess_px": [
+  2072.5,
+  1743.75,
+  2062.0,
+  2156.0
+ ],
+ "P1": [
+  -1.708,
+  9.569,
+  33.326
+ ],
+ "P2": [
+  -1.671,
+  9.57,
+  26.752
+ ],
+ "dz": -6.574,
+ "dy": 0.001,
+ "dx": 0.038,
+ "abstand": 6.574,
+ "z1": 33.326,
+ "z2": 26.752,
+ "unsicherheit_rel": 0.0034,
+ "unsicherheit_m": 0.09,
+ "massstab_von": "Kamera K-online2_orig__od_15 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.02999,-0.99955,0=-9.6157 (+-0.3 m)"
+}

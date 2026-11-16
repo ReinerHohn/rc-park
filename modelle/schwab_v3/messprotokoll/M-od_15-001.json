@@ -1,0 +1,32 @@
+{
+ "id": "M-od_15-001",
+ "foto": "od_15",
+ "kamera": "K-online2_orig__od_15",
+ "ebene": "0.02999,-0.99955,0=-9.6157",
+ "name": "Ost: Schlitzfenster oben - unten",
+ "mess_px": [
+  2062.5,
+  1927.5,
+  2060.0,
+  2078.75
+ ],
+ "P1": [
+  -1.807,
+  9.566,
+  30.418
+ ],
+ "P2": [
+  -1.764,
+  9.567,
+  27.999
+ ],
+ "dz": -2.419,
+ "dy": 0.001,
+ "dx": 0.043,
+ "abstand": 2.419,
+ "z1": 30.418,
+ "z2": 27.999,
+ "unsicherheit_rel": 0.0034,
+ "unsicherheit_m": 0.076,
+ "massstab_von": "Kamera K-online2_orig__od_15 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.02999,-0.99955,0=-9.6157 (+-0.3 m)"
+}

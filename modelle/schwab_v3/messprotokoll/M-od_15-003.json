@@ -1,0 +1,32 @@
+{
+ "id": "M-od_15-003",
+ "foto": "od_15",
+ "kamera": "K-online2_orig__od_15",
+ "ebene": "0.02999,-0.99955,0=-9.6157",
+ "name": "Ost: Eckquader Suedost Aussenkante - Innenkante (Obergeschoss)",
+ "mess_px": [
+  1806.0,
+  1787.0,
+  1875.0,
+  1787.0
+ ],
+ "P1": [
+  -7.201,
+  9.404,
+  32.598
+ ],
+ "P2": [
+  -5.815,
+  9.446,
+  32.61
+ ],
+ "dz": 0.012,
+ "dy": 0.042,
+ "dx": 1.386,
+ "abstand": 1.387,
+ "z1": 32.598,
+ "z2": 32.61,
+ "unsicherheit_rel": 0.0036,
+ "unsicherheit_m": 0.07,
+ "massstab_von": "Kamera K-online2_orig__od_15 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.02999,-0.99955,0=-9.6157 (+-0.3 m)"
+}
