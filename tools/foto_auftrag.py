@@ -59,9 +59,13 @@ def proj(k, X):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("ordner"); ap.add_argument("aus"); ap.add_argument("--wunsch"); ap.add_argument("--mpp", type=float, default=0.01, help="Soll-Auflösung fuer automatisch gefundene Luecken (m je Pixel)")
-    ap.add_argument("--min_m2", type=float, default=8.0); ap.add_argument("--extra-umriss", nargs="*", type=float, default=[], help="weitere Rechtecke x0 y0 x1 y1 (Nachbargebaeude) fuer die Karte"); a = ap.parse_args()
+    ap.add_argument("--min_m2", type=float, default=8.0); ap.add_argument("--stl", help="Modell-STL(s): Auftraege ohne Foto vom Standort bekommen ein gerendertes Modellbild mit rot markiertem Ziel"); ap.add_argument("--extra-umriss", nargs="*", type=float, default=[], help="weitere Rechtecke x0 y0 x1 y1 (Nachbargebaeude) fuer die Karte"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); fd = os.path.join(root, obj["fotos_dir"]); mp = os.path.join(od, "messprotokoll"); FA = json.load(open(os.path.join(a.ordner, "fassaden.json")))["fassaden"]; KAM = kameras(mp, fd)
     def seite(F): n_ = F["n"]; return ("Nordseite" if n_[0] > 0 else "Südseite") if abs(n_[0]) > abs(n_[1]) else ("Westseite" if n_[1] > 0 else "Ostseite")      # Rahmen: +x Nord, +y West (objekt.json seiten_konvention)
+    MM = None
+    if a.stl:
+        import trimesh, render_kern as rk
+        ms_ = [trimesh.load(q_) for q_ in a.stl.split(",")]; MM = trimesh.util.concatenate(ms_) if len(ms_) > 1 else ms_[0]; MM.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0)
     bedarf = []
     for i, F in enumerate(FA):                                             # automatisch: Wandbereiche ohne Bilddaten
         if F.get("flaeche_m2", 0) < 40: continue
@@ -111,6 +115,14 @@ def main():
             dh = min(max(8.0, 1.0 * (b['z'][1] - 1.6)), 20.0); S = P[:2] + rvec * dh; e.update(ist_mpp=None, standort=[round(float(S[0]), 1), round(float(S[1]), 1), 1.6], abstand_m=round(float(math.hypot(dh, hoehe)), 0), zoom=None)
             e["rat"] = f"Kein brauchbares Foto zeigt diese Fassade. Stell dich etwa {dh:.0f} m davor (rote Nummer im Plan, Pfeil = Blickrichtung) und fotografiere die ganze Fassade: 6-8 Fotos, dazwischen je 2-3 m zur Seite gehen. Steht dort ein Haus im Weg (Hof, Rückseite), dann von der nächsten freien Stelle in dieser Richtung."
         vv = (P[0] - e["standort"][0]) * xh + (P[1] - e["standort"][1]) * yh; e["peilung"] = round(float(np.degrees(np.arctan2(vv[0], vv[1])) % 360)); e["richtung"] = himmelsrichtung(e["peilung"]); zl = geo(float(P[0]), float(P[1])); e["ziel_geo"] = [round(zl[0], 6), round(zl[1], 6)]
+        if not e.get("bild_ganz") and MM is not None:                    # kein Foto vom Standort: MODELL von dort rendern und das Ziel rot markieren, damit jeder Auftrag ein Bild hat
+            Cc = np.array([e["standort"][0], e["standort"][1], max(e["standort"][2], 1.6)]); gr_ = float(np.linalg.norm(ecken.max(0) - ecken.min(0)))
+            if np.linalg.norm(P - Cc) < 1.6 * gr_: v_ = Cc - P; v_[2] = 0; v_ /= np.linalg.norm(v_) + 1e-9; q_ = np.array([-v_[1], v_[0], 0.0]); Cc = P + 1.6 * gr_ * (0.87 * v_ + 0.5 * q_) + np.array([0, 0, 0.35 * gr_])      # zu nah fuer ein lesbares Bild: zurueck, schraeg und etwas erhoeht (Uebersichtsbild, nicht der Standort)
+            zv = P - Cc; dist_ = np.linalg.norm(zv); zv /= dist_; xv = np.cross(zv, [0, 0, 1.0]); xv /= np.linalg.norm(xv); yv = np.cross(zv, xv); Rr = np.stack([xv, yv, zv]); tr_ = -Rr @ Cc
+            aus_ = max(np.abs((ecken - Cc) @ xv).max(), np.abs((ecken - Cc) @ yv).max()); Wb = Hb = 640; fr = 0.33 * Wb * dist_ / max(aus_, 0.5); tief_, fid_ = [np.asarray(v_) for v_ in rk.dreiecke_rastern(MM, Rr, tr_, fr, Wb / 2, Hb / 2, Wb, Hb)[:2]]
+            li_ = Rr.T @ np.array([-0.45, -0.75, -1.0]); li_ /= np.linalg.norm(li_); im_ = np.full((Hb, Wb), 235, np.uint8); tr2 = fid_ >= 0; im_[tr2] = (70 + 180 * np.clip(MM.face_normals[fid_[tr2]] @ li_, 0, 1)).astype(np.uint8); im_ = cv2.cvtColor(im_, cv2.COLOR_GRAY2BGR)
+            pc_ = ecken @ Rr.T + tr_; pe = np.c_[fr * pc_[:, 0] / pc_[:, 2] + Wb / 2, fr * pc_[:, 1] / pc_[:, 2] + Hb / 2]; cv2.rectangle(im_, tuple(int(v_) for v_ in pe.min(0)), tuple(int(v_) for v_ in pe.max(0)), (0, 0, 255), 4)
+            e["bild_ganz"] = "data:image/jpeg;base64," + base64.b64encode(cv2.imencode(".jpg", im_, [cv2.IMWRITE_JPEG_QUALITY, 80])[1].tobytes()).decode(); e["bild_art"] = "modell"
         lat, lon = geo(e["standort"][0], e["standort"][1]); e["lat"], e["lon"] = round(lat, 6), round(lon, 6); e["ziel_xy"] = [round(float(P[0]), 1), round(float(P[1]), 1)]; karten.append(e)
     # Stadtplan (OpenStreetMap-Kacheln, eingebettet) mit Standorten und Blickpfeilen; ohne Netz: schematischer Plan
     rw = obj.get("rahmen_wand", {}); mitte = np.array([0.5 * (rw.get("u0", 0) + rw.get("u1", 0)), 0.5 * (rw.get("v0", 0) + rw.get("v1", 0))]); alle = np.array([e["standort"][:2] for e in karten] + [mitte.tolist()])
@@ -143,16 +155,17 @@ def main():
     json.dump(dict(objekt=obj.get("name"), auftraege=[{k_: v for k_, v in e.items() if not k_.startswith("bild")} for e in karten]), open(os.path.splitext(a.aus)[0] + ".json", "w"), indent=1, ensure_ascii=False)
     def karte(e):
         zeile = lambda l, w: f'<div class="zeile"><dt>{l}</dt><dd>{w}</dd></div>'
-        ist = "kein Foto im Fassadenbild" if e["ist_mpp"] is None else f'{e["ist_mpp"] * 100:.1f} cm je Pixel aus {e["abstand_m"]:.0f} m'; hoch = e["standort"][2] > 6
-        wo = f'Blick nach <strong>{e["richtung"]}</strong> ({e["peilung"]} Grad), etwa {math.hypot(e["standort"][0] - e["ziel_xy"][0], e["standort"][1] - e["ziel_xy"][1]):.0f} m bis zur Wand' + (f', Standort liegt etwa {e["standort"][2]:.0f} m über der Straße (Hang, Turm oder Fenster)' if hoch else '')
-        fotos = ""
-        if e.get("bild_ganz"): fotos += f'<figure><img src="{e["bild_ganz"]}" alt="Foto von diesem Standort, Zielbereich rot markiert"><figcaption>{"So sieht man die Wand von dort" if e["ist_mpp"] is None else "Von diesem Standort aufgenommen"} ({e["bestes_foto"][-22:]})</figcaption></figure>'
-        if e.get("bild"): fotos += f'<figure><img src="{e["bild"]}" alt="Zielbereich vergrößert"><figcaption>Das soll das neue Foto füllen</figcaption></figure>'
+        ist = "kein Foto im Fassadenbild" if e["ist_mpp"] is None else f'{e["ist_mpp"] * 100:.1f} cm je Pixel aus {e["abstand_m"]:.0f} m'; hoch = e["standort"][2] > 6; dist_ = math.hypot(e["standort"][0] - e["ziel_xy"][0], e["standort"][1] - e["ziel_xy"][1])
+        wo = f'Blick nach <strong>{e["richtung"]}</strong>, etwa {dist_:.0f} m entfernt' + (f', Standort {e["standort"][2]:.0f} m über der Straße' if hoch else '')
+        art = e.get("bild_art"); unter = "Modellbild zur Orientierung (noch kein Foto)" if art == "modell" else "Foto von dort"
+        bild = (f'<figure class="ziel"><figcaption class="kopf">Das fotografieren</figcaption><img src="{e["bild_ganz"]}" alt="Ansicht vom Standort, Zielbereich rot markiert"><figcaption>{unter} - der rote Rahmen ist das Ziel</figcaption></figure>' if e.get("bild_ganz") else '<figure class="ziel"><figcaption class="kopf">Das fotografieren</figcaption><p class="ohne">Kein Bild vorhanden.</p></figure>')
+        nah = f'<figure class="nah"><img src="{e["bild"]}" alt="Zielbereich vergrößert"><figcaption>Ziel vergrößert: so groß soll es im neuen Foto sein</figcaption></figure>' if e.get("bild") else ""
         return (f'<article class="auftrag" id="auftrag-{e["nr"]}"><header><span class="num">{e["nr"]}</span><h2>{e["titel"]}</h2><span class="marke {"leer" if e["ist_mpp"] is None else "grob"}">{"ungesehen" if e["ist_mpp"] is None else "zu grob" if (e["zoom"] or 0) > 1.2 else "mehr Blickwinkel"}</span></header>'
-                f'<p class="rat">{e["rat"]}</p><div class="wo">{miniplan(e)}<div class="wotext"><p>{wo}</p><p><a href="https://www.google.com/maps/search/?api=1&query={e["lat"]},{e["lon"]}">Standort in Google Maps</a> &middot; <a href="https://www.openstreetmap.org/?mlat={e["lat"]}&mlon={e["lon"]}#map=19/{e["lat"]}/{e["lon"]}">OpenStreetMap</a></p><p class="koord">{e["lat"]}, {e["lon"]}</p></div></div>'
-                + (f'<div class="fotos">{fotos}</div>' if fotos else "") + f'<p class="warum">{e["warum"]}</p>'
-                + '<dl>' + zeile("Bereich", f'{e["seite"]}, Höhe {e["z"][0]:.0f}-{e["z"][1]:.0f} m') + zeile("Heute", ist) + zeile("Gebraucht", f'{e["soll_mpp"] * 100:.1f} cm je Pixel') + zeile("Fotos mit Blick darauf", str(e["fotos_bisher"]) + (" (im Fassadenbild)" if e["ist_mpp"] is None else " (rechnerisch)")) + '</dl></article>')
-    html = VORLAGE.replace("__NAME__", str(obj.get("name", "Objekt"))).replace("__N__", str(len(karten))).replace("__SVG__", "\n".join(svg)).replace("__PLAN__", plan_uri).replace("__QUELLE__", "Karte: &copy; OpenStreetMap-Mitwirkende. " if osm else "").replace("__KARTEN__", "\n".join(karte(e) for e in karten))
+                f'<div class="paar"><figure class="lage"><figcaption class="kopf">Hier stehen</figcaption>{miniplan(e)}<figcaption>{wo}<br><a href="https://www.google.com/maps/search/?api=1&query={e["lat"]},{e["lon"]}">Google Maps</a> &middot; <a href="https://www.openstreetmap.org/?mlat={e["lat"]}&mlon={e["lon"]}#map=19/{e["lat"]}/{e["lon"]}">OpenStreetMap</a></figcaption></figure>{bild}</div>'
+                f'<p class="rat">{e["rat"]}</p>{nah}<p class="warum">{e["warum"]}</p>'
+                + '<dl>' + zeile("Bereich", f'{e["seite"]}, Höhe {max(e["z"][0], 0):.0f}-{e["z"][1]:.0f} m') + zeile("Heute", ist) + zeile("Gebraucht", f'{e["soll_mpp"] * 100:.1f} cm je Pixel') + '</dl><p class="weiter">' + (f'<a href="#auftrag-{e["nr"] + 1}">weiter zu {e["nr"] + 1} &darr;</a>' if e["nr"] < len(karten) else '<a href="#uebersicht">zurück zur Übersicht &uarr;</a>') + '</p></article>')
+    liste = "".join(f'<li><a href="#auftrag-{e["nr"]}"><span class="num">{e["nr"]}</span><span>{e["titel"]}</span></a></li>' for e in karten)
+    html = VORLAGE.replace("__NAME__", str(obj.get("name", "Objekt"))).replace("__N__", str(len(karten))).replace("__SVG__", "\n".join(svg)).replace("__PLAN__", plan_uri).replace("__QUELLE__", "Karte: &copy; OpenStreetMap-Mitwirkende. " if osm else "").replace("__LISTE__", liste).replace("__KARTEN__", "\n".join(karte(e) for e in karten))
     open(a.aus, "w").write(html); print(f"{a.aus}: {len(karten)} Auftraege ({sum(1 for e in karten if e['ist_mpp'] is None)} ungesehen), {os.path.getsize(a.aus) / 1e6:.1f} MB")
     for e in karten: print(f"  {e['nr']:2d} {e['titel'][:52]:52s} heute {'-' if e['ist_mpp'] is None else '%.1f cm/px' % (e['ist_mpp'] * 100)}, soll {e['soll_mpp'] * 100:.1f}, Fotos {e['fotos_bisher']}")
 
@@ -187,13 +200,16 @@ a { color: var(--rot); } a:focus-visible { outline: 2px solid var(--gelb); outli
 .fotos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; align-items: start; }
 @media (max-width: 480px) { .wo { grid-template-columns: 1fr; } .mini { max-width: 280px; } }
 svg .alt { fill: #2b6cb0; stroke: #fff; stroke-width: 1; opacity: 0.75; } svg .schild { fill: #fff; opacity: 0.85; }
+.ueb { font-size: 1rem; margin: 0 0 10px; } .liste { list-style: none; margin: 12px 0 0; padding: 0; display: grid; } .liste a { display: flex; gap: 10px; align-items: center; text-decoration: none; color: var(--text); padding: 7px 4px; border-top: 1px solid var(--linie); }
+.paar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; } .paar figure { min-width: 0; } .paar .mini { max-width: none; } .paar img { width: 100%; aspect-ratio: 1; object-fit: contain; background: var(--karte); border: 1px solid var(--linie); border-radius: 4px; }
+.kopf { font: 600 0.72rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--rot); margin: 0 0 6px; } .ohne { color: var(--leise); margin: 0; } .nah img { max-height: 360px; } .weiter { margin: 0; text-align: right; font-size: 0.9rem; }
 .regeln { background: var(--blatt); border: 1px solid var(--linie); border-radius: 6px; padding: 14px 16px; } .regeln h2 { font-size: 1rem; margin: 0 0 6px; } .regeln ul { margin: 0; padding-left: 1.1rem; } .regeln li { margin: 3px 0; }
 </style>
 <main>
-<header><h1>Fotoauftrag __NAME__</h1><p class="unter">__N__ Stellen, an denen dem Modell Fotos fehlen. Die Nummern im Plan sind die Standorte, die Karten darunter sagen, was dort zu fotografieren ist.</p></header>
-<section class="plan">__SVG__<p>Rote Nummer = dort hinstellen, roter Pfeil = in diese Richtung fotografieren. Blaue Punkte: Orte, an denen schon fotografiert wurde. Norden ist oben. __QUELLE__</p></section>
-<section class="regeln"><h2>Für alle Fotos</h2><ul><li>Zwischen zwei Fotos immer 1-3 m zur Seite gehen, nicht nur drehen. Erst dadurch entsteht Tiefe.</li><li>Den rot markierten Bereich bildfüllend, Nachbarflaechen dürfen am Rand mit drauf.</li><li>Hochformat für hohe Bereiche, kein Digitalzoom über die Tele-Linse hinaus.</li><li>Lieber bedeckter Himmel als harte Schatten.</li></ul></section>
+<header id="uebersicht"><h1>Fotoauftrag __NAME__</h1><p class="unter">__N__ fehlende Ansichten. Oben die Übersicht, darunter jede Ansicht einzeln: wo du stehst und was du fotografierst.</p></header>
+<section class="plan"><h2 class="ueb">Übersicht</h2>__SVG__<p>Rote Nummer = Standort, roter Pfeil = Blickrichtung. Blaue Punkte: dort wurde schon fotografiert. Norden ist oben. __QUELLE__</p><ol class="liste">__LISTE__</ol></section>
 __KARTEN__
+<section class="regeln"><h2>Für alle Fotos</h2><ul><li>Zwischen zwei Fotos immer 1-3 m zur Seite gehen, nicht nur drehen. Erst dadurch entsteht Tiefe.</li><li>Den roten Rahmen bildfüllend aufnehmen, die Umgebung darf am Rand mit drauf.</li><li>Hochformat für hohe Bereiche, kein Digitalzoom über die Tele-Linse hinaus.</li><li>Lieber bedeckter Himmel als harte Schatten.</li></ul></section>
 </main>
 """
 

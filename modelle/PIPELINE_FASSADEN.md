@@ -306,3 +306,8 @@ Nachtrag Haertetest (16.11. ~16:00), offene Punkte 6/7 und Fotoauftrag:
 - `foto_auftrag.py` fuer gewoehnliche Haeuser: ungesehene Fassade -> Standort 8-20 m DAVOR auf der Strasse (nicht mehr ein Fernfoto vom Muensterturm als Vorbild; Vorbild nur aus eigenen/online-Fotos < 130 m).
   Fehler dabei: ein angehaengter Kommentar hatte den Rest einer Codezeile auskommentiert (0 statt 6 ungesehene) - am Zahlenvergleich bemerkt.
   Fotoauftrag Oberlinden (6 Fassaden): https://claude.ai/artifact/BtfcXPeVi14Yid3kGypyRJ, Daten `modelle/ober_tvdr/audit/fotoauftrag.json` -> `tools/foto_check.sh ober_tvdr <datei>` ist damit einsatzbereit.
+
+Nachtrag 16.11. ~16:40 `foto_auftrag.py` (Nutzer: "eine Uebersicht, dann jede einzelne Ansicht: die Lage und ein Bild rot markiert, was ich fotografieren muss - zusammen, jedes fehlende Ding als Objekt"):
+Seite = Uebersicht (Stadtplan + nummerierte Liste mit Sprunglinks), danach je Auftrag EIN Block: links "Hier stehen" (Planausschnitt, Blickrichtung, Kartenlinks), rechts "Das fotografieren"
+(Foto vom Standort mit rotem Rahmen; gibt es keins: mit `--stl` ein gerendertes Modellbild mit rotem Rahmen), darunter Anweisung, Ziel vergroessert, Zahlen, "weiter zu N". Allgemeine Regeln ans Ende.
+Aufruf jetzt mit `--stl <eigenes>,<nachbarn>`. Modellbild bei Standort < 1,6 x Zielgroesse: Kamera zurueck/schraeg/erhoeht (Orientierungsbild, nicht der Standort).

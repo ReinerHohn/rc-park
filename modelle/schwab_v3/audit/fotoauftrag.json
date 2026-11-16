@@ -66,28 +66,28 @@
    "auto": true,
    "ist_mpp": null,
    "standort": [
-    -3.7,
-    59.0,
+    -3.0,
+    41.2,
     1.6
    ],
-   "abstand_m": 49.0,
+   "abstand_m": 37.0,
    "zoom": null,
-   "rat": "Kein Foto zeigt diesen Bereich. Gesucht ist ein Standort etwa 38 m vor der Wand (Pfeil in der Karte) - wenn dort ein Haus steht: von einem erhöhten Punkt in dieser Richtung (Hang, Turm, Fenster gegenüber). 6-8 Fotos, dazwischen je 2-3 m zur Seite.",
+   "rat": "Kein brauchbares Foto zeigt diese Fassade. Stell dich etwa 20 m davor (rote Nummer im Plan, Pfeil = Blickrichtung) und fotografiere die ganze Fassade: 6-8 Fotos, dazwischen je 2-3 m zur Seite gehen. Steht dort ein Haus im Weg (Hof, Rückseite), dann von der nächsten freien Stelle in dieser Richtung.",
    "peilung": 74,
    "richtung": "Osten",
    "ziel_geo": [
     47.9929,
     7.854046
    ],
-   "lat": 47.9928,
-   "lon": 7.853562,
+   "lat": 47.992847,
+   "lon": 7.85379,
    "ziel_xy": [
     -2.2,
     21.2
    ],
    "plan_px": [
-    289.31182570182364,
-    500.40032533498913,
+    354.7388133635888,
+    480.1560494418328,
     428.2391090117968,
     457.35964533228145
    ]
@@ -107,33 +107,33 @@
     10.5
    ],
    "soll_mpp": 0.003,
-   "fotos_bisher": 170,
+   "fotos_bisher": 184,
    "auto": false,
-   "ist_mpp": 0.0048,
-   "bestes_foto": "eigen__IMG_20261106_113208",
-   "abstand_m": 36.0,
-   "zoom": 1.6,
+   "ist_mpp": 0.0041,
+   "bestes_foto": "dl_commons__044_Schwabentor_Freiburg_09",
+   "abstand_m": 19.0,
+   "zoom": 1.4,
    "standort": [
-    37.7,
-    4.4,
-    0.8
+    18.0,
+    26.5,
+    1.3
    ],
-   "rat": "Vom markierten Standort (dort entstand das Foto unten) mit 2-fachem Zoom auf den roten Bereich, 5 Fotos, dazwischen je 1-2 m zur Seite gehen.",
-   "peilung": 184,
-   "richtung": "Süden",
+   "rat": "Vom markierten Standort (dort entstand das Foto unten) mit 1-fachem Zoom auf den roten Bereich, 5 Fotos, dazwischen je 1-2 m zur Seite gehen.",
+   "peilung": 128,
+   "richtung": "Südosten",
    "ziel_geo": [
     47.992966,
     7.854103
    ],
-   "lat": 47.993286,
-   "lon": 7.854127,
+   "lat": 47.993064,
+   "lon": 7.853908,
    "ziel_xy": [
     3.7,
     15.3
    ],
    "plan_px": [
-    451.2300357222557,
-    292.05671439377164,
+    388.5983420106081,
+    387.3507270790064,
     444.3268207059457,
     429.53211920765733
    ]
@@ -153,33 +153,33 @@
     21.5
    ],
    "soll_mpp": 0.005,
-   "fotos_bisher": 156,
+   "fotos_bisher": 173,
    "auto": false,
-   "ist_mpp": 0.0053,
-   "bestes_foto": "eigen__IMG_20261106_113208",
-   "abstand_m": 39.0,
-   "zoom": 1.1,
+   "ist_mpp": 0.0031,
+   "bestes_foto": "dl_commons__029_Schwabentor_Freiburg_im_Breisgau_jm52903",
+   "abstand_m": 14.0,
+   "zoom": 0.6,
    "standort": [
-    37.7,
-    4.4,
-    0.8
+    17.8,
+    15.7,
+    14.2
    ],
-   "rat": "Auflösung reicht (0.5 cm je Pixel). Es fehlen nur weitere Blickwinkel: 4-6 Fotos vom gleichen Abstand, zwischen den Fotos je 2-3 m zur Seite gehen.",
-   "peilung": 184,
+   "rat": "Auflösung reicht (0.3 cm je Pixel). Es fehlen nur weitere Blickwinkel: 4-6 Fotos vom gleichen Abstand, zwischen den Fotos je 2-3 m zur Seite gehen.",
+   "peilung": 164,
    "richtung": "Süden",
    "ziel_geo": [
     47.992966,
     7.854102
    ],
-   "lat": 47.993286,
-   "lon": 7.854127,
+   "lat": 47.993087,
+   "lon": 7.854049,
    "ziel_xy": [
     3.7,
     15.3
    ],
    "plan_px": [
-    451.2300357222557,
-    292.05671439377164,
+    428.9129616320133,
+    377.3953271026795,
     444.3268207059457,
     429.53211920765733
    ]
@@ -199,33 +199,33 @@
     19.0
    ],
    "soll_mpp": 0.004,
-   "fotos_bisher": 105,
+   "fotos_bisher": 119,
    "auto": false,
-   "ist_mpp": 0.0034,
-   "bestes_foto": "commons_orig2__211",
-   "abstand_m": 54.0,
-   "zoom": 0.9,
+   "ist_mpp": 0.002,
+   "bestes_foto": "dl_commons__025_Schwabentor_Freiburg_im_Breisgau_jm04051",
+   "abstand_m": 42.0,
+   "zoom": 0.5,
    "standort": [
-    -59.6,
-    8.9,
-    1.3
+    -42.8,
+    -7.4,
+    9.4
    ],
-   "rat": "Auflösung reicht (0.3 cm je Pixel). Es fehlen nur weitere Blickwinkel: 4-6 Fotos vom gleichen Abstand, zwischen den Fotos je 2-3 m zur Seite gehen.",
-   "peilung": 339,
-   "richtung": "Norden",
+   "rat": "Auflösung reicht (0.2 cm je Pixel). Es fehlen nur weitere Blickwinkel: 4-6 Fotos vom gleichen Abstand, zwischen den Fotos je 2-3 m zur Seite gehen.",
+   "peilung": 313,
+   "richtung": "Nordwesten",
    "ziel_geo": [
     47.992865,
     7.854148
    ],
-   "lat": 47.99243,
-   "lon": 7.854403,
+   "lat": 47.992614,
+   "lon": 7.854557,
    "ziel_xy": [
     -7.9,
     14.9
    ],
    "plan_px": [
-    530.6268110871315,
-    659.0299684726275,
+    574.578695847438,
+    580.2885121565599,
     457.27111250162125,
     472.3544485752399
    ]
@@ -245,33 +245,33 @@
     36.5
    ],
    "soll_mpp": 0.008,
-   "fotos_bisher": 9,
+   "fotos_bisher": 12,
    "auto": false,
-   "ist_mpp": 0.0347,
-   "bestes_foto": "commons_orig2__054",
+   "ist_mpp": 0.013,
+   "bestes_foto": "dl_commons__009_Freiburg_im_Breisgau_Schwabentor_--_2025_--_8031",
    "abstand_m": 40.0,
-   "zoom": 4.3,
+   "zoom": 1.6,
    "standort": [
-    -19.3,
-    39.9,
-    0.1
+    -22.8,
+    36.5,
+    1.3
    ],
-   "rat": "Vom markierten Standort (dort entstand das Foto unten) mit 4-fachem Zoom auf den roten Bereich, 5 Fotos, dazwischen je 1-2 m zur Seite gehen.",
-   "peilung": 34,
+   "rat": "Vom markierten Standort (dort entstand das Foto unten) mit 2-fachem Zoom auf den roten Bereich, 5 Fotos, dazwischen je 1-2 m zur Seite gehen.",
+   "peilung": 23,
    "richtung": "Nordosten",
    "ziel_geo": [
     47.992899,
     7.854047
    ],
-   "lat": 47.992709,
-   "lon": 7.853863,
+   "lat": 47.992686,
+   "lon": 7.853919,
    "ziel_xy": [
     -2.3,
     21.2
    ],
    "plan_px": [
-    375.66901513017143,
-    539.5974365564493,
+    391.75568689520543,
+    549.2687979340553,
     428.3378893366227,
     457.73221961580794
    ]
@@ -291,7 +291,7 @@
     37.0
    ],
    "soll_mpp": 0.006,
-   "fotos_bisher": 75,
+   "fotos_bisher": 84,
    "auto": false,
    "ist_mpp": 0.0088,
    "bestes_foto": "eigen__IMG_20261106_113128",
