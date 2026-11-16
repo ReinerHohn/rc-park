@@ -221,3 +221,14 @@ Nachtrag 16.11. (Nutzer: "Ich brauche ein besseres Tool. Stadtplan mit Richtung 
 (OpenStreetMap-Kacheln Zoom 18, einmal je Lauf geladen, Quellenangabe auf der Seite), zeichnet je Auftrag Standort + roten Blickpfeil, dazu je Karte einen Planausschnitt, die Peilung in Worten
 ("Blick nach Nordwesten (297 Grad), 87 m"), Links zu Google Maps/OpenStreetMap, das ganze Foto vom Standort mit rotem Ziel und den vergroesserten Zielbereich. Seitennamen statt Wandnummern.
 Kameras > 130 m Abstand werden als Vorlage uebergangen (meist falsch registrierte Nahaufnahmen). Geprueft mit einem Bildschirmfoto der Seite in Handybreite (firefox --headless --screenshot).
+
+## Sofort-Urteil fuer Fotos vor Ort (`tools/foto_schnellcheck.py`, Aufruf `tools/foto_check.sh <objekt> <datei>`) - 16.11.2026
+Nutzer: "ich mache ein Foto, lade es dir hoch und du musst sagen, ja, passt oder passt nicht - ich bin dann in der Stadt und kann nicht hin und her fahren."
+ABLAUF IN DER SITZUNG: Nutzer schickt ein Bild (liegt unter ~/.claude/uploads/<sitzung>/...) -> `tools/foto_check.sh schwab_v3 <datei>` -> Text-Urteil + Bild mit Zielrahmen per SendUserFile zurueck. Antwort kurz: PASST / PASST NICHT + ein Satz, was zu aendern ist.
+Technik: Kamera ohne Vorwissen aus ALIKED+LightGlue gegen ~10 Referenzfotos + Tiefenbild des Modells + PnP (45 s, GPU). Je Auftrag aus `audit/fotoauftrag.json`:
+Anteil des Ziels im Bild (>= 80 %), Aufloesung gegen Soll (<= 1,3x), Blickwinkel (<= 65 Grad), wiedererkannte Punkte im Ziel (>= 8, sonst wohl verdeckt), Schaerfe, Seitenabstand zum letzten angenommenen Foto (>= 1 m).
+Angenommene Fotos: `audit/fotoauftrag_eingang.json`, K-Datei `K-neu__<name>.json`, Bild in fotos_dir als `neu__<name>.jpg`.
+Test mit zwei Bestandsfotos als "Hochladung": Nordfoto 113205 -> Standort auf 0,6 m wie die SfM-Kamera, 4851 Punkte, Urteil "Auftrag 4 nur 34 % im Bild; Auftrag 7 1,5-fach zoomen";
+Nachtfoto od_12 vom Schlossberg -> Standort neben od_15, Zielrahmen sitzt genau auf Ostwand und Georgsbild, Urteil "zu grob: 6 cm/px".
+Grenzen: Schwellen sind Richtwerte ohne Feldtest; "nicht zuordenbar", wenn < 40 Stellen wiedererkannt werden; Verdeckung nur indirekt ueber die Punktzahl im Ziel;
+die Soll-Aufloesung 1 cm/px der automatischen Luecken ist vom Schlossberg mit dem Handy nicht erreichbar (dort gilt: so gut wie moeglich, Tele).

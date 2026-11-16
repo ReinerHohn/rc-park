@@ -21,6 +21,7 @@ Aktueller Stand: `modelle/STAND_2026-11-14.md` (Abschnitt UEBERGABE am Ende zuer
 - Fassaden automatisch (Stufen `fassaden`, `fenster` der Gesamtkette; feines 1-cm-Fassadenbild `fassade_fein.py`; lokale Feinrechnung der Tiefe `tiefe_lokal.py`): Ablauf, Zahlen, Grenzen in `modelle/PIPELINE_FASSADEN.md` - vor Fassadenarbeit lesen.
 - Fenster = echte Loecher: am Generatorende `bauteile.aushoehlen` (Wand `WAND_MM` 1,2 mm im Druck); glatte Quader `relief_quader_eben.py`; Fugen, wo das Scan-Relief Brei ist, aus dem feinen Fassadenbild `steine_aus_foto.py` (Bild `<x>_foto.jpg` ansehen). Nutzerbild aus der 3D-Seite erst am STL nachrendern (`modell_ansicht.py`).
 - Wand ohne Foto (leeres Fassadenbild) = Auftrag: `tools/seiten_luecken.py ... --download --holen` (Stufe `seiten`; alle freien Quellen, Nachregistrieren), sonst Kamera aus Modellpunkten + `fassade_ein_foto.py`. Nie spiegeln/erfinden. Neue Bauteile nur als generische Funktion in `tools/bauteile.py` (Katalog in PIPELINE_FASSADEN.md).
+- Nutzer laedt vor Ort ein Foto hoch = sofort `tools/foto_check.sh <objekt> <datei>` laufen lassen und kurz antworten: PASST / PASST NICHT + was aendern, Bild mit Zielrahmen zurueckschicken. Fotobedarf zeigen: `tools/foto_auftrag.py` (Stadtplan, Standorte, markierte Ziele; Wunschliste `modelle/<objekt>/fotowuensche.json`).
 - Quellen-Blindheit beachten (Laser/LoD2/Fotos/Dokumente); Quellenwidersprueche nicht mitteln.
 - Neues Bauteil/falsch: Agentenauftrag aus `modelle/VORLAGE_BAUTEIL_RUNDE.md`.
 
