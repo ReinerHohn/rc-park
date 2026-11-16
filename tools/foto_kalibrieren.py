@@ -154,7 +154,7 @@ def main():
     if not ok_p: print(f"K-{nr}: Loesung UNPLAUSIBEL ({grund_p}), rms {out['rms_px']} px - NICHT gespeichert (Punkte liegen zu flach oder sind falsch gepickt; Brennweite vorgeben)"); sys.exit(3)
     K["kamera"] = out
     K["kalibrier_optionen"] = [x for i_, x in enumerate(sys.argv[3:]) if x.startswith("--") or (i_ > 0 and sys.argv[3:][i_ - 1] == "--sil-gewicht")]   # Eingabe fuer den Nullstart: gleiche Loesung reproduzierbar (Register CK)
-    json.dump(K, open(kp, "w"), indent=1, ensure_ascii=False)
+    __import__("json_sicher").schreiben(kp, K)
     print(f"K-{nr}: f={f:.0f} px ({f / H * 24:.1f} mm bei 24-mm-Bildhoehe), Standort {out['standort_xyz']} -> Hoehe {out['hoehe_ueber_gelaende']} m ueber Gelaende, Abstand {out['abstand_zur_achse']} m")
     print("  Residuen px:", out["residuen_px"], "| RMS", out["rms_px"], "| plausibel:", out["plausibel_strassenfoto"])
     print("  signiert (du, dv; dv>0 = Modellpunkt liegt im Bild TIEFER als Pick):", dres)

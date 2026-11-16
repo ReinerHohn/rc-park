@@ -12,7 +12,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
 
-## Elemente des Generators: 24 belegt, 0 Annahmen
+## Elemente des Generators: 23 belegt, 0 Annahmen
 
 - dach: Dach Teil 0 (walm_a) - Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_001000hPLcp-Grundriss Teil 0
 - dach: Spitze Teil 0 - DOM1 6 Pixel bis 49.6 m; Hoehe objekt.json hoehe_m
@@ -27,8 +27,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - wand: Relief Fassade w02 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113128, eigen__IMG_20261106_113605, eigen__IMG_20261106_113205); Loecher generiert
 - wand: Quader mit Fugen aus dem Foto, Fassade w03 ab z 10 m - tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)
 - wand: Relief Fassade w03 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113416, eigen__IMG_20261106_113128, eigen__IMG_20261106_113338_1); Loecher generiert
-- wand: Quader mit Fugen aus dem Foto, Fassade w04 ab z 10 m - tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)
-- wand: Relief Fassade w04 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113726, eigen__IMG_20261106_113743, eigen__IMG_20261106_113727_1); Loecher generiert
+- wand: Relief Fassade w04 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113743, eigen__IMG_20261106_113727_1, eigen__IMG_20261106_113744_1); Loecher generiert
 - wand: Quader mit Fugen aus dem Foto, Fassade w05 ab z 0 m - tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)
 - wand: Relief Fassade w05 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113854, eigen__IMG_20261106_113852, eigen__IMG_20261106_113836); Loecher generiert
 - wand: Quader mit Fugen aus dem Foto, Fassade w06 ab z 0 m - tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)

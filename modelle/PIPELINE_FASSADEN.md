@@ -390,3 +390,23 @@ Gefunden, OFFEN:
 - Tuerme haben keine Regressions-Konfiguration (`objekt.json["regression"]`): die Pflicht "regression.py nach tools-Aenderung" prueft dort nichts.
 - `seiten_luecken.py` ("alle Waende gesehen") gegen `foto_auftrag.py` (Ostseite 240 m2 ohne Daten): Schwellen weiter verschieden.
 - `bauwerk_generator.py`: Farbschluessel 'laterne' doppelt; `terrain_eggcrate.py`: ungueltige Escape-Folge (nur Warnung).
+
+## Nachtrag 16.11.2026 spaet nachts: zweite Fehlersuche (Kameras)
+- Verzeichnung: `kamera_plausibel.plausibel(k1=, bild_diag=)` - Bildrand hoechstens 25 % verschoben und nirgends gefaltet (1 + 3 k1 r^2 > 0). 19 Kameradateien beiseite (k1 bis -160). Das "verzerrte" Vergleichsfoto war eine solche Kamera (online2_orig__od_15), NICHT die Himmelsmaske und nicht od_08 (Verwechslung in der ersten Auswertung; die Himmelsmaske lehnte ein Nachtfoto zu Recht ab).
+- Kameras ohne Netzpunkte: `kameras_aus_buendel.py` schrieb JEDE Kamera der Ausrichtung, auch 21 ohne einen einzigen 3D-Punkt (der globale Mapper stellt sie irgendwohin). Der eingebaute Pruefblock lief nie (pycolmap fehlt in venv-seg, 'sparse' der Kettenausrichtung ist None). Jetzt: `--sparse` + `tools/kamera_sfm_guete.py` (ohne pycolmap); unter `--min_beob 30` Netzpunkten wird nicht geschrieben, alte Datei wird beiseitegelegt; `rms_px` und `sfm_guete` stehen in der Kameradatei. Kettenturm: 24 Kameras weg, 31 der uebrigen 427 sind Klasse 'schlecht' (Rueckprojektion > 2 px oder < 150 Punkte) - noch NICHT ausgeschlossen (erst Wirkung messen).
+- Nordkamera eigen__IMG_20261106_113201: 2608 Netzpunkte, 1,2 px - die Kamera stimmt; der "gekippte" Eindruck war Weitwinkel. Kein Fehler.
+- Kette: Python-Absturz in einer Stufe ist immer ein Fehler (vorher galt rc 1 bei bauen/fenster_fein als Hinweis); Bau ohne Ergebniszeile = Fehler.
+- `seiten_luecken.py` meldet Waende mit >= 30 m2 ohne Bilddaten als TEILWEISE (vorher "alle Waende gesehen" neben einem Fotoauftrag ueber 240 m2).
+- `steine_aus_foto.py --foto auto` und 'tiefe_unsicher': kein Handlungsbedarf, das Werkzeug liest nur Bildinhalt der eigenen Wandebene.
+- 7 der 128 "vertrauenswuerdigen" Fremdkameras am Turm standen tief unter der Strasse (jetzt beiseite, 121 uebrig) - die Vertrauenspruefung (Einzelfoto gegen eigene Wand) sieht das nicht.
+
+## Nachtrag 17.11.2026 00:30: Stabilisierung der Kette
+- `gesamtkette.lauf`: Ausgabe zeilenweise ins Log (vorher erst am Stufenende), Zeitlimit je Stufe (RCPARK_STUFE_MAX_S, Standard 3 h, Prozessgruppe wird beendet, rc 124), Platztor vor JEDER Stufe, Python-Absturz = Fehler, Bau ohne Ergebniszeile = Fehler.
+- Kettenende: `ERGEBNIS DES LAUFS` mit Liste der Stufen, die nicht in Ordnung sind, rc 4 statt immer 0; Marke `LAUF_START` im Bericht.
+- `tools/json_sicher.py`: objekt.json, masstabelle.json, K-Dateien und der Kettenbericht werden erst vollstaendig gewandelt, dann atomar ersetzt (12 Werkzeuge, 26 Stellen). Vorher leerte ein Fehler mitten im Schreiben die Datei.
+- `bauteile.stl_schreiben` und `zwischenstand`: erst fertig schreiben, dann umbenennen (Verknuepfung auf die Datenplatte bleibt erhalten).
+- `bauen_abnehmen.sh`: Sperre je Objekt (zweiter Lauf bricht mit rc 5 ab); am Ende zaehlt es Abstuerze der Nebenpruefungen ("ACHTUNG: ...").
+- `seiten_luecken.py --holen`: dieselben Kandidaten fuer dieselben Waende werden nicht noch einmal 30 min nachregistriert (Marke `versucht_<hash>.txt`, neu erzwingen SEITEN_NEU=1).
+- Schnelltest prueft jetzt: Zeitlimit, Absturz-Erkennung, Kameraregeln (Tiefe, Verzeichnung).
+OFFEN (gefunden, nicht geaendert): `baukasten_gen.py:916` - Kommentar schluckt `wd_ /= np.linalg.norm(wd_)` (Rippenbreite haengt seit 13.11. leicht vom Winkel ab); Aenderung braucht Abnahme der Erker-Objekte.
+OFFEN: `objekt.json["regression"]` ist bei ALLEN Objekten leer oder fehlt - `regression.py --pruefen` prueft nirgends etwas; der Schnelltest ist der einzige feste Test.

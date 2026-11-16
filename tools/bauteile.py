@@ -288,7 +288,7 @@ def zwischenstand(koerper, name, muster=("relief/*.npz", "dach.json", "objekt.js
     try:
         me = koerper.to_mesh64(); os.makedirs(cd, exist_ok=True)
         for alt in glob.glob(os.path.join(cd, f"{name}_*.npz")): os.remove(alt)
-        np.savez(cf, V=np.asarray(me.vert_properties)[:, :3], F=np.asarray(me.tri_verts), mf=np.asarray(me.merge_from_vert), mt=np.asarray(me.merge_to_vert), info=_js.dumps(info)); m = laden()
+        np.savez(cf[:-4] + ".tmp.npz", V=np.asarray(me.vert_properties)[:, :3], F=np.asarray(me.tri_verts), mf=np.asarray(me.merge_from_vert), mt=np.asarray(me.merge_to_vert), info=_js.dumps(info)); os.replace(cf[:-4] + ".tmp.npz", cf); m = laden()      # 16.11.2026: erst fertig schreiben, dann umbenennen (abgebrochener Lauf hinterlaesst keinen halben Stand)
         if m is None: os.remove(cf); print(f"zwischenstand {name}: gespeicherter Stand nicht ladbar - ohne Zwischenspeicher weiter", flush=True); return (koerper, info) if fn else koerper
         print(f"zwischenstand {name}: gerechnet und gespeichert ({time.time() - t0:.1f} s, {len(Z_F(me)) // 1000}k Dreiecke)", flush=True); return m if fn else m[0]
     except Exception as e: print(f"zwischenstand {name}: nicht gespeichert ({type(e).__name__}: {str(e)[:80]})", flush=True); return (koerper, info) if fn else koerper
@@ -312,5 +312,7 @@ def stl_schreiben(model, pfad, kopf=b"rcpark"):
     except ImportError: pass
     tri = V[F]; nrm = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]); nrm /= np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-12
     rec = np.zeros(len(F), dtype=[("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")]); rec["n"], rec["v"] = nrm, tri; os.makedirs(os.path.dirname(pfad), exist_ok=True)
-    with open(pfad, "wb") as f: f.write(kopf.ljust(80, b" ")); f.write(np.uint32(len(F)).tobytes()); f.write(rec.tobytes())
+    pfad = os.path.realpath(pfad)                  # modelle/stl/*.stl sind Verknuepfungen auf die Datenplatte - die Verknuepfung darf nicht durch eine Datei auf der Systemplatte ersetzt werden
+    with open(pfad + ".teil", "wb") as f: f.write(kopf.ljust(80, b" ")); f.write(np.uint32(len(F)).tobytes()); f.write(rec.tobytes())
+    os.replace(pfad + ".teil", pfad)      # 16.11.2026: ein abgebrochener Bau (Speicher, Platte) liess sonst ein halbes STL liegen, das die naechste Stufe als frisch las
     return len(F)

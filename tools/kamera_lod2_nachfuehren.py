@@ -166,7 +166,7 @@ def main():
         if vis is not None: cv2.imwrite(os.path.join(aus, nr + ".jpg"), vis, [cv2.IMWRITE_JPEG_QUALITY, 85])
         if a.schreiben:
             KK.setdefault("kamera_vor_lod2", K); tor = dict(r, werkzeug="kamera_lod2_nachfuehren.py", annahmen={k: v for k, v in vars(a).items() if k not in ("objekt", "fotos", "schreiben", "stl")})
-            KK["kamera"] = dict(neu, lod2_tor=tor) if r["ok"] else dict(K, lod2_tor=tor); json.dump(KK, open(kp, "w"), indent=1, ensure_ascii=False)
+            KK["kamera"] = dict(neu, lod2_tor=tor) if r["ok"] else dict(K, lod2_tor=tor); __import__("json_sicher").schreiben(kp, KK)
     n_ok = sum(1 for r in erg.values() if r["ok"])
     json.dump(dict(bestanden=n_ok, geprueft=len(erg), kameras=erg, annahmen={k: v for k, v in vars(a).items()}), open(os.path.join(od, "audit", "kamera_lod2.json"), "w"), indent=1)
     print(f"LoD2-Nachfuehrung: {n_ok} von {len(erg)} Kameras bestanden -> audit/kamera_lod2.json, audit/kamera_lod2/<foto>.jpg")

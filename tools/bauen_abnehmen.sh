@@ -7,7 +7,9 @@ set -e
 cd "$(dirname "$0")/.."
 python3 tools/platz_pruefen.py || exit 3   # Platztor (G1)
 OBJ="modelle/$1/objekt.json"; [ -f "$OBJ" ] || { echo "kein $OBJ"; exit 2; }
+exec 8>"/tmp/rcpark_bau_$1.lock"; flock -n 8 || { echo "ABBRUCH: fuer $1 laeuft schon ein Bau/eine Abnahme (zwei Generatorlaeufe desselben Objekts ueberschreiben sich die Zwischendateien)"; exit 5; }   # 16.11.2026: Regel stand nur im Text
 PY=/media/oem/scan/venv-seg/bin/python
+MIT=$(mktemp); exec > >(tee "$MIT") 2>&1      # 16.11.2026: Mitschrift, damit am Ende gezaehlt wird, was NEBEN dem Pruefstand schiefging (die Nebenpruefungen enden mit "|| true")
 if [ "$2" != "--nur-pruefen" ]; then
   GEN=$($PY -c "import json;print(json.load(open('$OBJ'))['generator'])")
   echo "+ $GEN"; eval "$GEN"
@@ -66,4 +68,7 @@ for i, b in enumerate(o.get("bauteile", [])):
         z = b["zonen"]; zm = (float(z["z_wappen_unten"]) + float(z["z_trauf_unten"])) / 2; n = (float(b["wand_n"]) + float(b["n_front"])) / 2
         subprocess.run([sys.executable, "-W", "ignore", "-I", "tools/rundum_kanten.py", sys.argv[1], "--u", str(b["u_mitte"]), "--n", str(n), "--z", f"{zm:.2f}", "--abstand", "7", "--hoehe", "9", "--aus", os.path.join(aud, f"rundum_{b['typ'].replace(':', '_')}.jpg")], check=False)
 PYE
+NF=$(grep -c -E "Traceback \(most recent|out of memory|OutOfMemory|FEHLER |Killed|Getoetet" "$MIT" || true)
+if [ "$NF" != "0" ]; then echo "ACHTUNG: $NF Zeile(n) mit Absturz/Fehler in den Nebenpruefungen (Modell neben Foto, Umriss-Tor, Diagnosen) - 'bestanden' gilt nur fuer den Pruefstand:"; grep -E "Traceback \(most recent|out of memory|OutOfMemory|FEHLER |Killed|Getoetet" "$MIT" | cut -c1-160 | sort | uniq -c | head -5; fi
+rm -f "$MIT"; sleep 0.2
 exit $RC

@@ -23,7 +23,8 @@ Stufen (Bericht: /media/oem/scan/rc-park_daten/<ziel>/gesamtkette_bericht.json; 
   html       tools/modell_3d_html.py -> <daten>/<ziel>_3d.html
   vergleich  optional --referenz-wolke: Abstand neue Wolke -> bewiesene Wolke (Median, Anteil < 0,5 m) = Konvergenzbeweis
 """
-import sys, os, json, glob, shutil, subprocess, time, argparse
+import sys, os, re, json, glob, shutil, subprocess, time, argparse
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = "/media/oem/scan/venv-seg/bin/python"; PYC = "/media/oem/scan/venv-colmap/bin/python"
@@ -31,18 +32,42 @@ STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore",
 UEBERNEHMEN = ["name", "ort", "lod2", "rahmen", "rahmen_wand", "koordinate_utm", "hoehe_m", "fotos_dir", "seiten_konvention", "bildquellen"]
 
 
+class _Erg:                                                                  # wie subprocess.CompletedProcess (returncode, stdout)
+    def __init__(self, rc, out): self.returncode, self.stdout = rc, out
+
+
 def lauf(B, name, cmd, log, ok=(0,), timeout=None):
-    t0 = time.time(); print(f"[{time.strftime('%H:%M:%S')}] {name}: {' '.join(cmd)[:220]}", flush=True)
+    """Eine Stufe starten. 16.11.2026 (Stabilisierung): Ausgabe laeuft ZEILENWEISE ins Log (vorher erst am Stufenende - eine 30-Minuten-Stufe war blind, ein Haenger nicht zu erkennen);
+    Zeitlimit je Stufe (Standard RCPARK_STUFE_MAX_S = 3 h, die Prozessgruppe wird beendet) - ein Haenger auf einem Kern hielt am 16.11. die Kette stundenlang an."""
+    import threading, signal
+    if subprocess.run(["python3", os.path.join(ROOT, "tools", "platz_pruefen.py")], capture_output=True).returncode != 0:      # Platztor VOR jeder Stufe (16.11.2026: Systemplatte lief mitten im Lauf unter 5 GB, die Stufe danach scheiterte halb)
+        e = dict(stufe=name, rc=3, ok=False, sekunden=0, fehler="PLATZ ZU KNAPP vor Stufenstart (tools/platz_pruefen.py) - Kette haelt an"); B["schritte"].append(e); __import__("json_sicher").schreiben(B["_pfad"], B); print("    FEHLER: " + e["fehler"], flush=True); raise SystemExit(3)
+    t0 = time.time(); print(f"[{time.strftime('%H:%M:%S')}] {name}: {' '.join(cmd)[:220]}", flush=True); timeout = timeout or float(os.environ.get("RCPARK_STUFE_MAX_S", "10800")); teile = []; abgelaufen = []
     with open(log, "a") as L:
-        L.write(f"\n=== {name}\n"); L.flush()
-        r = subprocess.run(cmd, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=timeout); L.write(r.stdout)
+        L.write(f"\n=== {name}  [{time.strftime('%Y-%m-%d %H:%M:%S')}]\n"); L.flush()
+        p = subprocess.Popen(cmd, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors="replace", start_new_session=True)
+        def _stop():
+            abgelaufen.append(1)
+            try:
+                os.killpg(p.pid, signal.SIGTERM)
+                try: p.wait(timeout=10)
+                except subprocess.TimeoutExpired: pass
+                os.killpg(p.pid, signal.SIGKILL)
+            except ProcessLookupError: pass
+        uhr = threading.Timer(timeout, _stop); uhr.daemon = True; uhr.start()
+        for z in p.stdout: teile.append(z); L.write(z); L.flush()
+        p.wait(); uhr.cancel()
+        if abgelaufen: L.write(f"ZEITLIMIT {timeout:.0f} s ueberschritten - Stufe beendet\n")
+    r = _Erg(p.returncode if not abgelaufen else 124, "".join(teile) + (f"\nZEITLIMIT {timeout:.0f} s ueberschritten - Stufe beendet" if abgelaufen else ""))
     e = dict(stufe=name, rc=r.returncode, ok=r.returncode in ok, sekunden=round(time.time() - t0), ende=r.stdout.strip().splitlines()[-3:] if r.stdout.strip() else [])
-    B["schritte"].append(e); json.dump(B, open(B["_pfad"], "w"), indent=1, ensure_ascii=False)
+    if r.returncode != 0 and "Traceback (most recent call last)" in r.stdout: e["ok"] = False; e["fehler"] = "Python-Absturz: " + ([z_ for z_ in r.stdout.strip().splitlines() if re.match(r"^[\w.]*(Error|Exception|Exit|Interrupt)\b", z_)] or r.stdout.strip().splitlines())[-1][:200]; print("    FEHLER: " + e["fehler"], flush=True)      # 16.11.2026: mehrere Stufen lassen rc 1/3/4 als Hinweis gelten - ein Absturz ist nie ein Hinweis
+    if "tools/bauen_abnehmen.sh" in cmd and "ERGEBNIS:" not in r.stdout: e["ok"] = False; e["fehler"] = "Bau/Abnahme lief nicht bis zur Ergebniszeile (Generator abgestuerzt oder vom System beendet?) - rc 1 heisst hier NICHT 'nur Pruefstand rot'"; print("    FEHLER: " + e["fehler"], flush=True)      # 16.11.2026: rc 1 galt als bestanden, ein Python-Absturz im Generator gibt aber auch rc 1
+    B["schritte"].append(e); __import__("json_sicher").schreiben(B["_pfad"], B)
     print(f"    rc {r.returncode} ({e['sekunden']} s) {' | '.join(e['ende'])[:300]}", flush=True); return r.returncode, r.stdout
 
 
 def notiz(B, name, ok, **k):
-    B["schritte"].append(dict(stufe=name, ok=ok, **k)); json.dump(B, open(B["_pfad"], "w"), indent=1, ensure_ascii=False); print(f"    {name}: {k}", flush=True)
+    B["schritte"].append(dict(stufe=name, ok=ok, **k)); __import__("json_sicher").schreiben(B["_pfad"], B); print(f"    {name}: {k}", flush=True)
 
 
 def main():
@@ -55,6 +80,7 @@ def main():
     Z = os.path.join(ROOT, "modelle", a.ziel); ZJ = os.path.join(Z, "objekt.json"); ZR = os.path.relpath(ZJ, ROOT)
     bp = os.path.join(D, "gesamtkette_bericht.json")
     B = json.load(open(bp)) if os.path.exists(bp) and a.ab != "anlegen" else dict(quelle=a.quelle, ziel=a.ziel, start=time.strftime("%Y-%m-%d %H:%M"), schritte=[])
+    B.setdefault("schritte", []).append(dict(stufe="LAUF_START", ok=True, zeit=time.strftime("%Y-%m-%d %H:%M:%S"), ab=a.ab, bis=a.bis)); n_start = len(B["schritte"])      # 16.11.2026: der Bericht haengt alle Laeufe aneinander - Marke, damit man den letzten findet
     B["_pfad"] = bp; i0, i1 = STUFEN.index(a.ab), STUFEN.index(a.bis); dran = lambda s: i0 <= STUFEN.index(s) <= i1
     QJ = os.path.join(ROOT, "modelle", a.quelle, "objekt.json")
 
@@ -66,7 +92,7 @@ def main():
             if k in q: z[k] = q[k]
         if a.fotos: z["fotos_dir"] = a.fotos
         z["gesamtkette"] = dict(quelle=a.quelle, hinweis="von tools/gesamtkette.py angelegt; Masse/Pruefungen nur aus Quellen dieser Kette")
-        json.dump(z, open(ZJ, "w"), indent=1, ensure_ascii=False)
+        __import__("json_sicher").schreiben(ZJ, z)
         if not isinstance(z.get("lod2"), dict) or not z["lod2"].get("id") or "rahmen" not in z:          # von null: Gebaeude per GML-Name, Rahmen aus Grundriss
             lauf(B, "rahmen_aus_lod2", [PY, "-I", "tools/rahmen_aus_lod2.py", ZR, "--schreiben"], log); z = json.load(open(ZJ))
         notiz(B, "anlegen", bool(z.get("lod2", {}).get("id")) and "rahmen" in z, lod2=z.get("lod2", {}).get("id"), fotos_dir=z.get("fotos_dir"))
@@ -79,7 +105,7 @@ def main():
     bild = lambda d: os.path.isdir(d) and any(f.lower().endswith((".jpg", ".jpeg", ".png")) for f in os.listdir(d))
     if not bild(fd):                                       # Lehre Martinstor 2026-11-14: eigene Fotos verloren (Auslagerungsplatte) -> Commons-Kategorie wird Basis
         if not bild(CO): notiz(B, "basis", False, fehler=f"keine Bilder in fotos_dir {fd} und keine Commons-Ernte (--commons-kategorie)"); return 1
-        fd = CO; obj["fotos_dir"] = CO; json.dump(obj, open(ZJ, "w"), indent=1, ensure_ascii=False)
+        fd = CO; obj["fotos_dir"] = CO; __import__("json_sicher").schreiben(ZJ, obj)
         notiz(B, "basis", True, fotos_dir=CO, hinweis="ANNAHME: Bilder der Commons-Kategorie zeigen das Objekt (Kategorie = Kuratierung); Ausreisser faellt die SfM")
     if os.path.isdir(CO) and CO not in fremd and os.path.realpath(CO) != os.path.realpath(fd): fremd.append(CO)
 
@@ -108,7 +134,7 @@ def main():
             if os.path.isdir(ln) and not os.path.islink(ln) and not os.listdir(ln): os.rmdir(ln)      # leerer Ordner aus Stufe anlegen
             if not os.path.lexists(ln): os.symlink(FV, ln)
             if os.path.realpath(ln) == os.path.realpath(FV):
-                oj.setdefault("fotos_dir_quelle", oj.get("fotos_dir")); oj["fotos_dir"] = os.path.relpath(ln, ROOT); json.dump(oj, open(ZJ, "w"), indent=1, ensure_ascii=False); notiz(B, "fotos_dir", True, hinweis=f"fotos_dir -> {oj['fotos_dir']} (Sammelordner); vorher {oj['fotos_dir_quelle']}")
+                oj.setdefault("fotos_dir_quelle", oj.get("fotos_dir")); oj["fotos_dir"] = os.path.relpath(ln, ROOT); __import__("json_sicher").schreiben(ZJ, oj); notiz(B, "fotos_dir", True, hinweis=f"fotos_dir -> {oj['fotos_dir']} (Sammelordner); vorher {oj['fotos_dir_quelle']}")
             else: notiz(B, "fotos_dir", False, fehler=f"{ln} existiert und zeigt nicht auf {FV}")
 
     P = os.path.join(D, "pipe")
@@ -139,7 +165,7 @@ def main():
                 rc_h, _ = lauf(B, "neu_fusionieren_haufen", [PYC, "-I", "tools/wolke_neu_fusionieren.py", ZR, P, "--stufe", a.dicht_stufe, "--haufen"], log, ok=(0, 2))
                 if rc_h == 0: erg = tore("_ohne_haufenquelle")
         kaputt = lambda e: e.get("gps") in (1, 4) or e.get("grundriss") == 1          # rc 1/4 = Werkzeug abgestuerzt/nicht geprueft (15.11.: CUDA out of memory) - kein Lage-Urteil
-        if kaputt(erg): print(f"ABBRUCH: Tor-Werkzeug abgestuerzt/nicht geprueft {erg} (Log ansehen, z. B. GPU-Speicher) - KEIN Lage-Urteil", flush=True); B["lage"] = dict(tore=erg, bestanden=False, fehler="tor_abgestuerzt"); json.dump(B, open(bp, "w"), indent=1, ensure_ascii=False); return 4
+        if kaputt(erg): print(f"ABBRUCH: Tor-Werkzeug abgestuerzt/nicht geprueft {erg} (Log ansehen, z. B. GPU-Speicher) - KEIN Lage-Urteil", flush=True); B["lage"] = dict(tore=erg, bestanden=False, fehler="tor_abgestuerzt"); __import__("json_sicher").schreiben(bp, B); return 4
         k = 0
         while not bestanden(erg) and k < a.max_loesung:
             k += 1
@@ -149,7 +175,7 @@ def main():
             if rc != 0: print(f"ABBRUCH: Ausrichtung Loesung {k} abgestuerzt (rc {rc}) - KEIN Lage-Urteil", flush=True); return 4
             erg = tore(f"_l{k}")
             if kaputt(erg): print(f"ABBRUCH: Tor-Werkzeug abgestuerzt {erg} - KEIN Lage-Urteil", flush=True); return 4
-        B["lage"] = dict(loesung=k, tore=erg, bestanden=bestanden(erg)); json.dump(B, open(bp, "w"), indent=1, ensure_ascii=False)
+        B["lage"] = dict(loesung=k, tore=erg, bestanden=bestanden(erg)); __import__("json_sicher").schreiben(bp, B)
         print(f"    LAGE: Loesung {k}, Tore {erg} -> {'BESTANDEN' if bestanden(erg) else 'NICHT bestanden'}", flush=True)
         if not bestanden(erg):
             print("ABBRUCH: keine Lage besteht alle Tore - nicht modellieren (Bericht, audit/lage_gps.json, audit/wolke_grundriss.png)", flush=True); return 3
@@ -163,7 +189,7 @@ def main():
         if os.path.exists(AU): lauf(B, "kanten", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU, "--bilder", FV, "--aus", KD], log, ok=(0, 4))
         else: notiz(B, "kanten", False, fehler=f"keine Ausrichtung {AU}")
     if dran("fototor") and os.path.exists(AU):
-        lauf(B, "fototor_kameras", [PYC, "-I", "tools/kameras_aus_buendel.py", ZR, "--ausrichtung", AU, "--fotos", FV], log)
+        lauf(B, "fototor_kameras", [PYC, "-I", "tools/kameras_aus_buendel.py", ZR, "--ausrichtung", AU, "--fotos", FV] + (["--sparse", os.path.join(P, "sfm", "sparse", "0")] if os.path.exists(os.path.join(P, "sfm", "sparse", "0", "images.bin")) else []), log)
         lauf(B, "kamera_plausibel", [PY, "-I", "tools/kamera_plausibel.py", Z, "--beiseite", "--tief=3"], log, ok=(0, 3))      # 16.11.2026: Kameras "am Mond" (Abstand/Zoom nicht trennbar) beiseitelegen, bevor ein Werkzeug sie benutzt
         kw = os.path.join(KD, "kam_wahl.json"); wahl = list(json.load(open(kw)))[:6] if os.path.exists(kw) else []
         for f in wahl: lauf(B, f"fototor_{os.path.splitext(f)[0]}", [PY, "-W", "ignore", "-I", "tools/foto_diff.py", ZR, os.path.splitext(f)[0], "--bild", os.path.join(FV, f)], log)
@@ -221,10 +247,14 @@ def main():
     try:                                                                   # 15.11. (Nutzer): Warnungen aller Logs des Laufs in den Bericht - nichts ungelesen verwerfen
         sys.path.insert(0, os.path.join(ROOT, "tools")); import log_warnungen as LW
         w = LW.sammeln([log] + sorted(glob.glob(os.path.join(P, "*.log"))) + sorted(glob.glob(os.path.join(P, "sfm", "*.log"))), ab_zeile={log: log_ab}, seit=t_lauf)
-        B["warnungen"] = [dict(n=e["n"], text=e["text"][:240], datei=os.path.basename(e["datei"]), zeile=e["zeile"]) for e in w[:40]]; json.dump(B, open(bp, "w"), indent=1, ensure_ascii=False)
+        B["warnungen"] = [dict(n=e["n"], text=e["text"][:240], datei=os.path.basename(e["datei"]), zeile=e["zeile"]) for e in w[:40]]; __import__("json_sicher").schreiben(bp, B)
         print(f"WARNUNGEN im Lauf: {len(w)} verschiedene (Bericht 'warnungen'); haeufigste: " + " | ".join(f"{e['n']}x {e['text'][:90]}" for e in w[:3]), flush=True)
     except Exception as e: print("Warnungen nicht gesammelt:", type(e).__name__, e, flush=True)
-    print("GESAMTKETTE_ENDE", bp, flush=True); return 0
+    rot = [e for e in B["schritte"][n_start:] if e.get("ok") is False]      # 16.11.2026: die Kette endete IMMER mit rc 0 - auch mit abgestuerzten Stufen
+    B["lauf_ergebnis"] = dict(zeit=time.strftime("%Y-%m-%d %H:%M:%S"), stufen=len(B["schritte"]) - n_start, fehlgeschlagen=[e["stufe"] for e in rot]); json.dump({k_: v_ for k_, v_ in B.items()}, open(bp + ".neu", "w"), indent=1, ensure_ascii=False); os.replace(bp + ".neu", bp)
+    print(f"ERGEBNIS DES LAUFS: {len(B['schritte']) - n_start} Stufen, " + (f"{len(rot)} NICHT in Ordnung: " + ", ".join(e["stufe"] for e in rot) if rot else "alle in Ordnung"), flush=True)
+    for e in rot: print(f"    {e['stufe']}: {str(e.get('fehler') or ' | '.join(e.get('ende', [])) or e.get('hinweis', ''))[:200]}", flush=True)
+    print("GESAMTKETTE_ENDE", bp, flush=True); return 4 if rot else 0
 
 
 if __name__ == "__main__":

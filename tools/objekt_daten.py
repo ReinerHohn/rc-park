@@ -118,7 +118,7 @@ def main():
     if not sk or sk.get("quelle") == "OFFEN" or "festlegen" in str(sk.get("+x", "")):              # Platzhalter aus objekt_anlegen.py -> aus dem Rahmen (Kompass); vom Nutzer gesetzte bleibt
         obj["seiten_konvention"] = {"+x": himmel(xh), "-x": himmel(-xh), "+y": himmel(yh), "-y": himmel(-yh),
                                     "quelle": "tools/objekt_daten.py: Kompassrichtung der Rahmenachsen (LoD2-Grundriss); Fassadennamen/Merkmale je Seite noch am Foto festlegen"}
-    json.dump(obj, open(op, "w"), indent=1, ensure_ascii=False)
+    __import__("json_sicher").schreiben(op, obj)
     print(f"Seiten: {obj['seiten_konvention']}")
     print(f"LoD2 {b['id']} ({b.get('name')}): Traufe {b.get('eave_m'):.1f} m, First {b.get('ridge_m'):.1f} m, Grundriss {b.get('footprint_edges_m', [])[:4]} m, Dach {obj['lod2']['dachtyp']}")
     print(f"Gelaende {gel:.2f} m ue.NN; DOM1-Maximum {np.nanmax(Wm) - gel:.2f} m ueber Gelaende; {len(ecken)} Grundrissecken; {len(anker)} Anker -> {os.path.join(od, 'anker3d.json')}")

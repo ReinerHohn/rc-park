@@ -9,7 +9,7 @@ Grenze: findet nur GROBE Ausreisser. Eine Kamera, die 50 m falsch steht, erkennt
 import sys, os, json, glob, numpy as np
 
 
-def plausibel(f_px, bild_wh, standort, bezug=None, max_m=1500.0, tief_m=None):
+def plausibel(f_px, bild_wh, standort, bezug=None, max_m=1500.0, tief_m=None, k1=None, bild_diag=None):
     """-> (ok, grund). bild_wh = (W, H) oder None (dann 2 x Hauptpunkt uebergeben); bezug = Punkt am Objekt (Standard Ursprung).
     Unter Gelaende (Modellrahmen: z = 0 am Gelaende des Objekts): immer unplausibel bei mehr als 5 m UND steiler als 25 % Gefaelle zum Objekt (16.11.2026: Kameras 25 bis 240 m
     unter der Strasse lieferten Fassadenbilder); tief_m = strengere feste Grenze fuer ebenes Umland (ANNAHME des Aufrufers, in Hanglage nicht setzen)."""
@@ -21,6 +21,9 @@ def plausibel(f_px, bild_wh, standort, bezug=None, max_m=1500.0, tief_m=None):
     if bezug is None and len(C) == 3:
         if C[2] < -5.0 and C[2] < -0.25 * float(np.hypot(C[0], C[1])): return False, f"Standort {-C[2]:.0f} m unter dem Gelaende"
         if tief_m is not None and C[2] < -float(tief_m): return False, f"Standort {-C[2]:.1f} m unter dem Gelaende (Grenze {float(tief_m):.1f} m, ebenes Umland angenommen)"
+    if k1 and bild_diag and f_px > 0:                # Verzeichnung (x_v = x (1 + k1 r^2), normiert): am Bildrand hoechstens 25 % und nirgends im Bild gefaltet (16.11.2026: k1 bis -160 aus dem Buendel bei Fotos mit wenigen Punkten)
+        r2 = (0.5 * float(bild_diag) / float(f_px)) ** 2
+        if 1 + 3 * k1 * r2 <= 0 or abs(k1) * r2 > 0.25: return False, f"Verzeichnung k1 {k1:.2f}: Bildrand um {abs(k1) * r2 * 100:.0f} % verschoben" + (" (Bild gefaltet)" if 1 + 3 * k1 * r2 <= 0 else "")
     return True, ""
 
 
@@ -29,7 +32,7 @@ def datei_pruefen(pfad, tief_m=None):
     k = json.load(open(pfad)).get("kamera")
     if not isinstance(k, dict) or "rvec" not in k: return True, ""
     C = -cv2.Rodrigues(np.array(k["rvec"], float))[0].T @ np.array(k["t"], float); wh = k.get("bild") or ([2 * k["cx"], 2 * k["cy"]] if "cx" in k else None)
-    return plausibel(k["f_px"], wh, C, tief_m=tief_m)
+    return plausibel(k["f_px"], wh, C, tief_m=tief_m, k1=float(k.get("k1") or 0.0), bild_diag=(float(np.hypot(*wh)) if wh else None))
 
 
 def main():

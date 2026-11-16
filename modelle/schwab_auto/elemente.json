@@ -109,17 +109,9 @@
  },
  {
   "seite": "wand",
-  "element": "Quader mit Fugen aus dem Foto, Fassade w04 ab z 10 m",
-  "quelle": "tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)",
-  "steine": 916,
-  "hinweis": "Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen",
-  "seite_name": "wand"
- },
- {
-  "seite": "wand",
   "element": "Relief Fassade w04 (Fassaden-Kette)",
-  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113726, eigen__IMG_20261106_113743, eigen__IMG_20261106_113727_1); Loecher generiert",
-  "generiert_anteil": 0.14,
+  "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (eigen__IMG_20261106_113743, eigen__IMG_20261106_113727_1, eigen__IMG_20261106_113744_1); Loecher generiert",
+  "generiert_anteil": 0.174,
   "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
   "seite_name": "wand"
  },

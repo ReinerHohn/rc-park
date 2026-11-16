@@ -12,178 +12,178 @@
  "cy": 1440.0,
  "tol_m": 0.35,
  "laenge_m": 0.8,
- "anteil_modellkanten_ohne_foto": 0.1054,
- "anteil_fotokanten_ohne_modell": 0.7681,
+ "anteil_modellkanten_ohne_foto": 0.1206,
+ "anteil_fotokanten_ohne_modell": 0.7021,
  "anteil_modellkanten_nicht_beurteilbar": 0.0,
  "versatz": {
   "versatz_px": [
-   -12,
-   75
+   -15,
+   3
   ],
-  "versatz_m": 0.765,
-  "gewinn": 0.0534,
-  "kosten0": 1.2581,
-  "kosten_best": 1.1909,
+  "versatz_m": 0.165,
+  "gewinn": 0.018,
+  "kosten0": 1.22399,
+  "kosten_best": 1.20191,
   "deutlich": false
  },
  "treffer": [
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 1646.31,
+   "laenge_m": 1451.59,
    "box": [
-    546,
-    276,
-    1268,
-    2819
+    545,
+    252,
+    1271,
+    2827
    ],
    "xyz": [
-    -4.62,
-    21.09,
-    9.89
+    -4.79,
+    21.11,
+    10.45
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 1005.22,
+   "laenge_m": 984.58,
    "box": [
-    1205,
-    330,
-    1724,
-    2793
+    1234,
+    504,
+    1730,
+    2801
    ],
    "xyz": [
-    -7.97,
-    15.52,
-    12.72
+    -7.98,
+    15.58,
+    12.2
    ],
    "in_ankerzone": true
   },
   {
    "art": "FALSCH/ERFUNDEN (Modellkante ohne Fotokante)",
-   "laenge_m": 64.02,
+   "laenge_m": 51.99,
    "box": [
-    591,
-    1664,
-    668,
-    1822
+    597,
+    1632,
+    674,
+    1821
    ],
    "xyz": [
-    -0.21,
+    -0.23,
     21.44,
-    10.02
-   ],
-   "in_ankerzone": true
-  },
-  {
-   "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 60.4,
-   "box": [
-    774,
-    781,
-    920,
-    936
-   ],
-   "xyz": [
-    -2.1,
-    21.19,
-    23.61
+    9.95
    ],
    "in_ankerzone": true
   },
   {
    "art": "FALSCH/ERFUNDEN (Modellkante ohne Fotokante)",
-   "laenge_m": 48.89,
+   "laenge_m": 43.92,
    "box": [
-    617,
+    615,
     1440,
-    686,
+    683,
     1564
    ],
    "xyz": [
-    -0.09,
+    -0.07,
     21.44,
-    13.36
+    13.37
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 34.57,
+   "laenge_m": 37.88,
    "box": [
     405,
     1562,
-    587,
-    1708
+    584,
+    1717
    ],
    "xyz": [
-    0.18,
+    0.16,
     23.01,
-    11.11
+    11.03
    ],
    "in_ankerzone": true
   },
   {
-   "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 34.07,
+   "art": "FALSCH/ERFUNDEN (Modellkante ohne Fotokante)",
+   "laenge_m": 37.1,
    "box": [
-    774,
-    1076,
-    860,
-    1179
+    857,
+    842,
+    934,
+    945
    ],
    "xyz": [
-    -2.15,
-    21.19,
-    18.45
+    -2.14,
+    19.76,
+    24.11
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 33.45,
+   "laenge_m": 36.05,
    "box": [
     415,
-    1452,
-    596,
+    1456,
+    593,
     1552
    ],
    "xyz": [
-    0.3,
-    23.29,
-    12.55
+    0.28,
+    23.26,
+    12.56
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 32.21,
+   "laenge_m": 33.81,
    "box": [
-    444,
-    2013,
-    512,
+    433,
+    2004,
+    527,
     2272
    ],
    "xyz": [
     0.01,
     22.75,
-    5.72
+    5.79
    ],
    "in_ankerzone": true
   },
   {
    "art": "FEHLT (Fotokante ohne Modellkante)",
-   "laenge_m": 31.59,
+   "laenge_m": 32.38,
    "box": [
-    756,
+    753,
     1527,
-    851,
+    838,
     1648
    ],
    "xyz": [
-    -2.36,
-    21.18,
-    11.64
+    -2.31,
+    21.19,
+    11.58
+   ],
+   "in_ankerzone": true
+  },
+  {
+   "art": "FALSCH/ERFUNDEN (Modellkante ohne Fotokante)",
+   "laenge_m": 26.1,
+   "box": [
+    1350,
+    2724,
+    1383,
+    2879
+   ],
+   "xyz": [
+    -8.19,
+    20.88,
+    0.47
    ],
    "in_ankerzone": true
   }
@@ -192,12 +192,12 @@
   -2.5,
   53.299997741699215
  ],
- "modellkanten_px": 143532,
- "fotokanten_px": 376788,
+ "modellkanten_px": 177035,
+ "fotokanten_px": 380178,
  "versatz_angewandt": false,
  "versatz_max_m": 1.5,
- "rot_versatz": 0.1054,
- "gelb_versatz": 0.7681,
+ "rot_versatz": 0.1206,
+ "gelb_versatz": 0.7021,
  "gpu": true,
  "raster": true
 }

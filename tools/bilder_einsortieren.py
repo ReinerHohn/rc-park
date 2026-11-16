@@ -45,7 +45,7 @@ def main():
         shutil.copy2(q, os.path.join(fd, ziel)); fotos[n] = e
         M["images"].append(dict(file=ziel, title=it["title"], url=it["url"], license=it["license"], artist=it["artist"], w=it.get("orig_w"), h=it.get("orig_h"), exif_f35=it.get("exif_f35"), exif_f_mm=it.get("exif_f_mm"), exif_model=it.get("exif_model"), exif_stufe=it.get("exif_stufe", "fehlt"), lizenz_klasse=it.get("lizenz_klasse", "unklar"), produkt_pixel=LR.produkt(it.get("lizenz_klasse", "unklar"))[0], quelle="bilder_holen", klasse=it["klasse"], stand=E.get("stand")))
         if e.get("sfm_netz") and n not in sfm.setdefault(e["sfm_netz"], []): sfm[e["sfm_netz"]].append(n)
-    json.dump(M, open(mp, "w"), indent=1, ensure_ascii=False); json.dump(obj, open(a.objekt, "w"), indent=1, ensure_ascii=False)
+    json.dump(M, open(mp, "w"), indent=1, ensure_ascii=False); __import__("json_sicher").schreiben(a.objekt, obj)
     print(f"einsortiert: {len(neu)} Fotos -> {os.path.relpath(fd, repo)}, objekt.json fotos/sfm aktualisiert (nord {len(sfm.get('nord', []))}, sued {len(sfm.get('sued', []))})")
 
 if __name__ == "__main__":

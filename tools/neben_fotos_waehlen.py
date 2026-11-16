@@ -5,7 +5,7 @@ Anlass 16.11.2026: Kettenobjekte hatten kein 'neben_fotos' in objekt.json. Folge
 die Pflicht "nach jedem Bau Modell neben Foto, je Seite mindestens ein Foto" war fuer jedes automatisch gebaute Objekt unerfuellt, ohne dass es jemand merkte.
 Wahl je Seite (+x, -x, +y, -y des Rahmens): Messkamera K-*.json (nicht 'tiefe_unsicher', Standort -3 .. 60 m ueber Gelaende, Foto im fotos_dir vorhanden),
 die auf diese Seite schaut (Winkel Standort-Richtung gegen Seitennormale < 40 Grad), den Modellquader (aus dem STL) oben und seitlich ganz im Bild hat
-und ihn moeglichst gross zeigt; gibt es fuer eine Seite keins, das beste seitlich angeschnittene (Oberkante im Bild, so gemeldet). Wertung = Bildanteil des Quaders x Kosinus des Winkels.
+und ihn moeglichst gross zeigt; gibt es fuer eine Seite keins, das beste seitlich angeschnittene (Oberkante im Bild, so gemeldet). Wertung = Bildanteil des Quaders x Kosinus des Winkels x Herkunft (eigene Fotos 1,3; Videobilder 0,6 - unscharf, oft mit Menschen davor).
 Ausgabe: Liste je Seite; --eintragen schreibt objekt.json 'neben_fotos' NUR, wenn dort noch keine stehen (Geprueftes wird nie ueberschrieben).
 rc 3, wenn eine Seite kein Foto bekommt (= Fotoauftrag fuer diese Seite, kein Fehler der Rechnung).
 Grenze: waehlt nach Geometrie, nicht nach Bildguete (Gegenlicht, Baum davor sieht dieses Werkzeug nicht) - die Bilder audit/neben_<foto>.jpg ansehen.
@@ -39,7 +39,7 @@ def main():
         anteil = (min(u.max(), W) - max(u.min(), 0)) * (min(v.max(), H) - v.min()) / (W * H) * (1.0 if ganz else 0.001); r = (C - mitte)[:2]; r /= max(np.linalg.norm(r), 1e-9)
         for s, nv in normale.items():
             c = float(r @ np.array(nv, float))
-            if c > np.cos(np.radians(40)) and anteil * (1 if ganz else 1000) > 0.04: kand[s].append((anteil * c, nm, round(float(anteil if ganz else anteil * 1000), 2), ganz, round(float(np.degrees(np.arccos(min(c, 1.0))))), round(float(np.linalg.norm((C - mitte)[:2])))))
+            if c > np.cos(np.radians(40)) and anteil * (1 if ganz else 1000) > 0.04: kand[s].append((anteil * c * (1.3 if nm.startswith('eigen') else 0.6 if 'video' in nm or '__vf_' in nm else 1.0), nm, round(float(anteil if ganz else anteil * 1000), 2), ganz, round(float(np.degrees(np.arccos(min(c, 1.0))))), round(float(np.linalg.norm((C - mitte)[:2])))))
     wahl = []; leer = []
     print(f"{n_k} Messkameras mit Foto geprueft")
     for s in normale:
@@ -49,7 +49,7 @@ def main():
     wahl = list(dict.fromkeys(wahl))
     if "--eintragen" in sys.argv and wahl:
         if obj.get("neben_fotos"): print("objekt.json hat schon neben_fotos - nichts ueberschrieben")
-        else: obj["neben_fotos"] = wahl; json.dump(obj, open(op, "w"), indent=1, ensure_ascii=False); print(f"-> {len(wahl)} neben_fotos in objekt.json eingetragen")
+        else: obj["neben_fotos"] = wahl; __import__("json_sicher").schreiben(op, obj); print(f"-> {len(wahl)} neben_fotos in objekt.json eingetragen")
     if leer: print("OHNE Vergleichsfoto: " + ", ".join(leer) + " (Fotoauftrag)")
     return 3 if leer else 0
 

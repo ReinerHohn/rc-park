@@ -44,7 +44,7 @@ def main():
     Z["rel"] = neu.astype(np.float32); Z["putz"] = putz; Z["putz_niveau_m"] = niveau; np.savez_compressed(a.aus, **Z)
     lx = np.gradient(neu, px, axis=1); lz = np.gradient(neu, px, axis=0); s = np.clip(0.7 - 0.5 * lx + 0.7 * lz, 0, 1); im = cv2.cvtColor((s * 255).astype(np.uint8), cv2.COLOR_GRAY2BGR)
     im[putz] = (im[putz] * np.array([0.8, 1.0, 0.8])).astype(np.uint8); cv2.imwrite(os.path.splitext(a.aus)[0] + ".jpg", cv2.resize(im, None, fx=3, fy=3, interpolation=cv2.INTER_NEAREST))
-    print(f"{os.path.basename(a.aus)}: Putz {putz.mean()*100:.1f} % der Flaeche ({putz.sum()*px*px:.0f} m2), Putzniveau {niveau*100:+.1f} cm, Stein im Mittel {np.median(rel[stein])*100:+.1f} cm")
+    print(f"{os.path.basename(a.aus)}: Putz {putz.mean()*100:.1f} % der Flaeche ({putz.sum()*px*px:.0f} m2), Putzniveau {niveau*100:+.1f} cm, Stein im Mittel " + (f"{np.median(rel[stein])*100:+.1f} cm" if stein.any() else "- (kein Relief ausserhalb des Putzes)"))
 
 
 if __name__ == "__main__":

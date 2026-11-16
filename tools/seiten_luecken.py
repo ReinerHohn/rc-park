@@ -18,6 +18,7 @@ Letzter Skriptschritt: tools/kameras_nachtragen.py (K-Dateien im Modellrahmen). 
 <audit>/seiten_luecken_kandidaten.jpg ANSEHEN): Kamera aus gemessenen Modellpunkten + tools/fassade_ein_foto.py (modelle/PIPELINE_FASSADEN.md "Ungesehene Seite").
 Grenze: Schritt 1 braucht einen fassade_ortho-Lauf; ob ein Kandidat die Wand wirklich zeigt, entscheidet erst die Registrierung bzw. der Blick auf den Kontaktbogen.
 """
+import time
 import sys, os, json, glob, struct, argparse, subprocess, numpy as np, cv2
 
 
@@ -57,8 +58,8 @@ def main():
         im = cv2.imread(p); daten = (im.max(2) > 8) if im is not None else np.zeros(maske.shape, bool); un_ = cv2.imread(os.path.join(a.fassaden, f"uneinig_f{i:02d}.png"), 0)
         if os.environ.get("LUECKEN_MIT_UNEINIG") == "1" and un_ is not None and im is not None and un_.shape == daten.shape: daten &= cv2.blur(un_.astype(np.float32), (9, 9)) <= 28      # widerspruechliche Zonen zaehlen nicht als gesehen (16.11.2026)
         ant = float((daten & (maske > 0)).sum() / max(maske.sum(), 1))
-        waende.append(dict(nr=i, normale=F["n"], mitte=F["o"], flaeche_m2=F["flaeche_m2"], abdeckung=round(ant, 3), fotos=len(F.get("fotos", {})), ungesehen=ant < a.schwelle))
-        print(f"Wand f{i:02d}: Normale ({F['n'][0]:+.2f}, {F['n'][1]:+.2f}), {F['flaeche_m2']:.0f} m2, {ant * 100:5.1f} % mit Bilddaten aus {len(F.get('fotos', {}))} Fotos" + ("   <-- UNGESEHEN" if ant < a.schwelle else ""))
+        waende.append(dict(nr=i, normale=F["n"], mitte=F["o"], flaeche_m2=F["flaeche_m2"], abdeckung=round(ant, 3), fotos=len(F.get("fotos", {})), ungesehen=ant < a.schwelle, ohne_daten_m2=round(float(F["flaeche_m2"]) * (1 - ant), 1)))
+        print(f"Wand f{i:02d}: Normale ({F['n'][0]:+.2f}, {F['n'][1]:+.2f}), {F['flaeche_m2']:.0f} m2, {ant * 100:5.1f} % mit Bilddaten aus {len(F.get('fotos', {}))} Fotos" + ("   <-- UNGESEHEN" if ant < a.schwelle else (f"   <-- TEILWEISE: {F['flaeche_m2'] * (1 - ant):.0f} m2 ohne Bilddaten" if F["flaeche_m2"] * (1 - ant) >= 30 else "")))
     reg = set(os.path.splitext(os.path.basename(n))[0] for n in registrierte(a.sparse)); fd = os.path.join(root, obj["fotos_dir"]); alle = sorted(f for f in glob.glob(os.path.join(fd, "*")) if f.lower().endswith((".jpg", ".jpeg", ".png")))
     kand = [f for f in alle if os.path.splitext(os.path.basename(f))[0] not in reg]; print(f"Fotobestand {len(alle)}, im SfM registriert {len(alle) - len(kand)}, NICHT registriert {len(kand)}")
     ung = [w for w in waende if w["ungesehen"]]; daten = os.path.join("/media/oem/scan/rc-park_daten", os.path.basename(od)); Z = os.path.join(daten, "seiten_nachholen"); T = os.path.join(root, "tools"); VC = "/media/oem/scan/venv-colmap/bin/python -I"; VS = "/media/oem/scan/venv-seg/bin/python -I"
@@ -85,11 +86,18 @@ def main():
         while len(kacheln) % 10: kacheln.append(np.zeros((Tn, Tn, 3), np.uint8))
         if kacheln: cv2.imwrite(os.path.join(audit, "seiten_luecken_kandidaten.jpg"), np.vstack([np.hstack(kacheln[i:i + 10]) for i in range(0, len(kacheln), 10)]))
     json.dump(dict(waende=waende, ungesehen=[w["nr"] for w in ung], fotobestand=len(alle), nicht_registriert=[os.path.basename(f) for f in kand], skript=sk, zielordner=Z), open(os.path.join(audit, "seiten_luecken.json"), "w"), indent=1)
-    if not ung: print("alle Waende gesehen"); return 0
+    if not ung:
+        teil = [w for w in waende if w["ohne_daten_m2"] >= 30]      # 16.11.2026: "alle Waende gesehen" stand neben einem Fotoauftrag ueber 240 m2 - die Wandschwelle (20 %) sieht grosse Loecher in einer sonst gesehenen Wand nicht
+        print("keine Wand ganz ungesehen" + ("; ABER " + ", ".join(f"f{w['nr']:02d} {w['ohne_daten_m2']:.0f} m2" for w in teil) + " ohne Bilddaten (Ziele: tools/foto_auftrag.py)" if teil else " - alle Waende gesehen")); return 0
     print(f"UNGESEHEN: {', '.join('f%02d' % w['nr'] for w in ung)} -> {len(kand)} nicht registrierte Fotos als Kandidaten; Skript {sk}" + ("" if a.holen else "  (mit --holen ausfuehren; --download holt zusaetzlich Commons-Fotos)"))
     if a.holen:
+        import hashlib      # 16.11.2026 (Stabilisierung): jeder Kettenlauf wiederholte ~30 min Nachregistrieren derselben Kandidaten mit demselben Ergebnis
+        marke = os.path.join(Z, "versucht_" + hashlib.sha1(("|".join(sorted(f"{os.path.basename(f)}:{os.path.getsize(f)}" for f in kand)) + "|" + ",".join(str(w["nr"]) for w in ung) + "|" + open(sk).read()).encode()).hexdigest()[:16] + ".txt")
+        if os.path.exists(marke) and os.environ.get("SEITEN_NEU") != "1":
+            print(f"Nachholen UEBERSPRUNGEN: dieselben {len(kand)} Kandidaten fuer dieselben Waende wurden schon versucht ({open(marke).read().strip()}); neu erzwingen: SEITEN_NEU=1"); return 3
         rc = subprocess.call(["bash", sk])
         if rc: print("Nachholen abgebrochen, rc", rc)
+        else: os.makedirs(Z, exist_ok=True); open(marke, "w").write(time.strftime("%Y-%m-%d %H:%M") + f", {len(kand)} Kandidaten")
     return 3
 
 

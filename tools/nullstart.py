@@ -18,6 +18,7 @@ Ehrlichkeit: masse.json ist Eingabe. Werte darin, die frueher von Hand aus Werkz
 NICHT neu abgeleitet - der Bericht listet sie (Stufe C). Automatisch neu entstehen Netze, Wolke, Profile, Baender, Pruefzeilen, Modell (Stufen A+B).
 """
 import sys, os, json, glob, shutil, subprocess, time, argparse, resource
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PY = "/media/oem/scan/venv-seg/bin/python"; PC = "/media/oem/scan/venv-colmap/bin/python"; RC = os.path.expanduser("~/.venvs/rcpark/bin/python")
 
@@ -130,7 +131,7 @@ def main():
         if "stl" in o["regression"]["dateien"]: o["regression"]["dateien"]["stl"]["pfad"] = f"../stl/{stl_name}"
         o["nullstart"] = dict(referenz=refname, hinweis="von den Eingaben neu gerechnet (tools/nullstart.py)")
         json.dump(o, open(zobj, "w"), indent=1, ensure_ascii=False); open(log, "w").write(f"Nullstart {a.ziel} aus {refname}\n")
-        bericht["schritte"].append(dict(schritt="anlegen", ok=True, kopiert=["masse.json", "anker3d.json", "masstabelle.json", "fassade.json", "messprotokoll/K-*,V-* (ohne Kameras), Z-*, M-* (Foto-Zaehl-/Massprotokolle)", "" + "/, ".join(neben_dirs) + "/"])); json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)
+        bericht["schritte"].append(dict(schritt="anlegen", ok=True, kopiert=["masse.json", "anker3d.json", "masstabelle.json", "fassade.json", "messprotokoll/K-*,V-* (ohne Kameras), Z-*, M-* (Foto-Zaehl-/Massprotokolle)", "" + "/, ".join(neben_dirs) + "/"])); __import__("json_sicher").schreiben(bp, bericht)
     Z = os.path.relpath(zobj, repo)
     # Foto-Eingang belegen (Register BZ): der Nullstart laedt keine Bilder, liest nur fotos_dir -> Ordner gegen festgeschriebene Fotoliste (SHA-256) pruefen
     if a.ab == "anlegen" and os.path.exists(os.path.join(od, "fotoliste.json")):
@@ -168,7 +169,7 @@ def main():
             shutil.rmtree(os.path.join(sfmd, t), ignore_errors=True); shutil.copytree(os.path.join(sfmd, f"{t.replace(s, s + '_v' + str(k), 1)}"), os.path.join(sfmd, t), symlinks=True)
         shutil.copy2(os.path.join(sfmd, f"netz_{s}_v{k}.json"), os.path.join(sfmd, f"netz_{s}.json")); shutil.copy2(os.path.join(sfmd, f"db_{s}_v{k}.db"), os.path.join(sfmd, f"db_{s}.db")) if os.path.exists(os.path.join(sfmd, f"db_{s}_v{k}.db")) else None
         for t in glob.glob(os.path.join(sfmd, f"*_{s}_v*")) + glob.glob(os.path.join(zd, "messprotokoll", f"*{s}_v*")) + glob.glob(os.path.join(sfmd, f"sparse_modell_{s}_v*")): shutil.rmtree(t, ignore_errors=True) if os.path.isdir(t) else os.remove(t)
-        bericht["schritte"].append(dict(schritt=f"netzwahl_{s}", ok=True, versuche=versuche, gewaehlt=k)); json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)
+        bericht["schritte"].append(dict(schritt=f"netzwahl_{s}", ok=True, versuche=versuche, gewaehlt=k)); __import__("json_sicher").schreiben(bp, bericht)
         print(f"    gewaehlt: Versuch {k} von {K}", flush=True)
         return kan(auskmd(f"modelle/{a.ziel}/sfm/sparse_{s}/0", s, "--schreiben"))
     import threading; sued_thr = []; sued_res = {}
@@ -246,7 +247,7 @@ def main():
         else: bericht["schritte"].append(dict(schritt="dach", ok=True, uebersprungen=True, grund="objekt.json ohne lod2.id"))
     _SEITEN = SEITEN_ALLE
     if dran("entzerren") and haupt.lower() not in _SEITEN:                                         # Netz 'alle' (Buendel an LoD2): keine einseitige Tiefendrift -> ueberspringen statt abbrechen (Kaufhaus: KeyError 'alle')
-        bericht["schritte"].append(dict(schritt="entzerren", ok=True, uebersprungen=True, grund=f"Netz '{haupt}' ist keine Fassadenseite {sorted(_SEITEN)}; Buendel haelt die Wolke an LoD2/DGM1")); json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)
+        bericht["schritte"].append(dict(schritt="entzerren", ok=True, uebersprungen=True, grund=f"Netz '{haupt}' ist keine Fassadenseite {sorted(_SEITEN)}; Buendel haelt die Wolke an LoD2/DGM1")); __import__("json_sicher").schreiben(bp, bericht)
     elif dran("entzerren") and not lauf(bericht, "entzerren", f"{PY} -W ignore -I tools/wolke_vs_modell.py {Z} {haupt} --entzerren" + (" --nebengebaeude" if ref.get("nebengebaeude") else ""), repo, log): sys.exit("entzerren fehlgeschlagen")
     if dran("video") and a.videos:                                                              # Videostufe (Register BQ): Drohnenclips -> SfM -> Ausrichtung -> dichte Wolke -> obere Haelfte in die Nordwolke
         vz = json.load(open(zobj)).get("video_stufe") or {}; vd = vz.get("ordner"); PCV = PC; _n0v = len(bericht["schritte"])
@@ -266,7 +267,7 @@ def main():
             if lauf(bericht, "video_ausrichten", f"{PCV} -W ignore -I tools/video_ausrichten.py {Z} {vs} {vmod} --jeder {vz.get('jeder', 2)}" + (f" --tol-m {vz['tol_m']}" if vz.get("tol_m") else ""), repo, log) and lauf(bericht, "video_dicht", f"{PCV} -W ignore -I tools/video_dicht.py {Z} {vs} {vmod}", repo, log):
                 lauf(bericht, "video_merge", f"{PCV} -W ignore -I tools/video_merge.py {Z} {vs} --zmin {vz.get('zmin', 38)}", repo, log)   # Standard: nach sfm/dicht_<netz>_video/, Basiswolke bleibt; objekt.json freiraum_video
     if a.nur_video and a.videos and dran("video"):
-        bericht["ende"] = time.strftime("%Y-%m-%d %H:%M"); bericht["nur_video"] = True; json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)
+        bericht["ende"] = time.strftime("%Y-%m-%d %H:%M"); bericht["nur_video"] = True; __import__("json_sicher").schreiben(bp, bericht)
         print("    --nur-video: Schritt video fertig - keine Folgeschritte (kein auswertung/regression-Schnappschuss)", flush=True); sys.exit(0 if all(x.get("ok", True) for x in bericht["schritte"][_n0v:]) else 1)
     if kal_thr is not None: kal_thr.join()
     ausr_b = os.path.join(zd, "messprotokoll", "SFM-AUSRICHTUNG-buendel.json")
@@ -293,7 +294,7 @@ def main():
             if K_.get("brennweite_quelle") == "buendel" and not ((K_.get("buendel_tor") or {}).get("ok") or (K_.get("lod2_tor") or {}).get("ok")): n_weg += 1; continue   # Buendelkamera nur mit bestandenem Bruecken-Tor
             n_ab += 1; lauf(bericht, f"foto_diff_{nr_}", f"{PY} -W ignore -I tools/foto_diff.py {Z} {nr_} --stl modelle/stl/{stl_name}", repo, log, ok_rcs=(0, 1, 3))
             lauf(bericht, f"fehlteile_{nr_}", f"{PY} -W ignore -I tools/fehlteile_finden.py {Z} {nr_} --stl modelle/stl/{stl_name}", repo, log, ok_rcs=(0, 1, 3))
-        bericht["schritte"].append(dict(schritt="abgleich", ok=n_ab > 0, grund=None if n_ab else "keine Kamera mit bewiesenem Tor (buendel_tor/lod2_tor/handkalibriert) - Abgleich nicht erfolgt", fotos=n_ab, ohne_bestandenes_tor=n_weg, hinweis="Buendelkameras ohne bestandenes Bruecken-Tor (kamera_bruecke_pruefen) werden nicht verglichen")); json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)
+        bericht["schritte"].append(dict(schritt="abgleich", ok=n_ab > 0, grund=None if n_ab else "keine Kamera mit bewiesenem Tor (buendel_tor/lod2_tor/handkalibriert) - Abgleich nicht erfolgt", fotos=n_ab, ohne_bestandenes_tor=n_weg, hinweis="Buendelkameras ohne bestandenes Bruecken-Tor (kamera_bruecke_pruefen) werden nicht verglichen")); __import__("json_sicher").schreiben(bp, bericht)
         print(f"    abgleich: {n_ab} Fotos verglichen, {n_weg} Kameras ohne bestandenes Tor ausgelassen", flush=True)
     if dran("wolke_seiten"):                                                                        # Wolke gegen Modell je Fassadenseite, auch beim Netz 'alle'
         wk_ = os.path.join(sfmd, f"dicht_{haupt}_modell.npy")
@@ -312,7 +313,7 @@ def main():
         wk = os.path.join(sfmd, f"dicht_{haupt}_entzerrt.npy"); hy = os.path.join(zd, "hybrid")
         if os.path.exists(wk) and os.path.exists(os.path.join(repo, "modelle", "stl", stl_name)):
             lauf(bericht, "hybrid", f"/media/oem/scan/venv-mesh/bin/python -I tools/wolke_auf_generator.py {wk} {hy} --stl modelle/stl/{stl_name}", repo, log, ok_rcs=(0, 3))
-        else: print(f"    hybrid uebersprungen: dicht_{haupt}_entzerrt.npy oder STL fehlt", flush=True); bericht["schritte"].append(dict(schritt="hybrid", ok=True, uebersprungen=True, grund="Eingabe fehlt")); json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)
+        else: print(f"    hybrid uebersprungen: dicht_{haupt}_entzerrt.npy oder STL fehlt", flush=True); bericht["schritte"].append(dict(schritt="hybrid", ok=True, uebersprungen=True, grund="Eingabe fehlt")); __import__("json_sicher").schreiben(bp, bericht)
     if dran("beweise"): lauf(bericht, "beweise", f"{PY} -I tools/test_nullstart_schritte.py --bericht {bp}" + (" --foto-diff" if os.environ.get("NULLSTART_FD_BEWEIS") == "1" else ""), repo, log, ok_rcs=(0, 1))   # Pflichtliste gegen den Lauf (Schritt ok + Beweisdatei)
     if dran("vergleich"):
         sys.path.insert(0, os.path.join(repo, "tools")); import regression as RG
@@ -343,7 +344,7 @@ def main():
         # Stufe C: Masse, die aus Werkzeugausgaben von Hand uebertragen wurden (Historie mit Werkzeugnamen) - werden im Nullstart NICHT neu abgeleitet
         M = json.load(open(os.path.join(zd, "masse.json")))["masse"]; hand = sorted(k for k, v in M.items() if any(w in (v.get("quelle", "") + " ".join(h.get("grund", "") for h in v.get("historie", []))) for w in ("wolke_", "foto_silhouette", "foto_kalibrieren", "Register A")))
         bericht["vergleich"] = verg; bericht["stufe_C_masse_von_hand_uebertragen"] = hand; bericht["ende"] = time.strftime("%Y-%m-%d %H:%M")
-        json.dump(bericht, open(bp, "w"), indent=1, ensure_ascii=False)
+        __import__("json_sicher").schreiben(bp, bericht)
         print("\n=== VERGLEICH Nullstart vs Referenz"); [print(f"  {n:18s} {v.get('status'):10s} {json.dumps({k: x for k, x in v.items() if k not in ('status', 'beispiele')}, ensure_ascii=False)[:120]}") for n, v in verg.items()]
         try:                                                                                        # Serienprotokoll: welche Pruefung scheitert in wie vielen Laeufen? (tools/nullstart_serie.py wertet aus)
             sp = os.path.join(od, "nullstart_serie.json"); S_ = json.load(open(sp)) if os.path.exists(sp) else dict(laeufe=[])

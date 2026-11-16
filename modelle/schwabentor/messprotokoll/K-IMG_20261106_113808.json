@@ -1,0 +1,44 @@
+{
+ "foto": "IMG_20261106_113808",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   1.2520027790632726,
+   -0.6923639015207429,
+   0.8196843357334943
+  ],
+  "t": [
+   11.649376269289418,
+   3.693859390084672,
+   10.978562929399487
+  ],
+  "f_px": 2804.958965795705,
+  "cx": 1500.0,
+  "cy": 2000.0,
+  "k1": 0.016748183733357846,
+  "bild": [
+   3000,
+   4000
+  ],
+  "standort_xyz": [
+   -15.956,
+   3.523,
+   1.695
+  ],
+  "hoehe_ueber_gelaende": 1.7,
+  "rms_px": 2.12,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   51.299997741699215
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/schwabentor/messprotokoll/SFM-AUSRICHTUNG-glob_v1g.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

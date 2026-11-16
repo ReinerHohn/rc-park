@@ -65,7 +65,7 @@ def main():
     if a.eintragen and alle:
         mt = os.path.join(root, obj["masstabelle"]); d = json.load(open(mt)); d["beobachtungen_offen"] = [b for b in d.get("beobachtungen_offen", []) if b.get("auto_id", "").split("-")[0] != "umriss"]
         for i, b in enumerate(alle): d["beobachtungen_offen"].append(dict(datum="auto", wer="umriss_tor", auto_id=f"umriss-{b['foto']}-{i}", text=f"{b['art']}: {b['abweichung_m']:+.2f} m ueber {b['breite_m']} m bei {b['xyz']} (Foto {b['foto']})", naechster_schritt="am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"))
-        json.dump(d, open(mt, "w"), indent=1, ensure_ascii=False)
+        __import__("json_sicher").schreiben(mt, d)
     if not n_gepr: print("KEIN Foto geprueft - das Umriss-Tor hat nichts belegt"); return 2
     return 3 if schlimm else 0
 

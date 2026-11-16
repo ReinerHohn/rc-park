@@ -54,7 +54,7 @@ def main():
     if a.schreiben:
         for k in ("lod2", "koordinate_utm", "rahmen"):
             if k not in obj or not obj[k] or (k == "lod2" and not isinstance(obj[k], dict)): obj[k] = erg[k]
-        json.dump(obj, open(a.objekt, "w"), indent=1, ensure_ascii=False); print("geschrieben:", a.objekt)
+        __import__("json_sicher").schreiben(a.objekt, obj); print("geschrieben:", a.objekt)
     return 0
 
 

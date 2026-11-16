@@ -45,7 +45,7 @@ def main():
         if x["f"]: f.update(brennweite_px=round(x["f"], 1), brennweite_quelle=f"Bildwinkel des 360-Grad-Ausschnitts {a.fov} Grad (mapillary_rip --fov)")
         obj.setdefault("fotos", {})[x["nr"]] = f; obj.setdefault("sfm", {}).setdefault(netz, [])
         if x["nr"] not in obj["sfm"][netz]: obj["sfm"][netz].append(x["nr"])
-    json.dump(FM, open(mp, "w"), indent=1, ensure_ascii=False); json.dump(obj, open(objp, "w"), indent=1, ensure_ascii=False)
+    json.dump(FM, open(mp, "w"), indent=1, ensure_ascii=False); __import__("json_sicher").schreiben(objp, obj)
     print("uebernommen:", len(neu), "->", fd, "| objekt.json fotos + sfm." + netz)
 
 

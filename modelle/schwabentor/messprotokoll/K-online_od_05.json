@@ -1,0 +1,44 @@
+{
+ "foto": "online_od_05",
+ "seite": "unbekannt",
+ "punkte": {},
+ "linien": {},
+ "kamera": {
+  "rvec": [
+   0.7992822136490388,
+   0.609949750341704,
+   -1.2168317168436553
+  ],
+  "t": [
+   -11.907187327427026,
+   22.618884878454015,
+   29.681194690007292
+  ],
+  "f_px": 3020.6155377562404,
+  "cx": 1134.0,
+  "cy": 1914.5,
+  "k1": 0.008793094262440137,
+  "bild": [
+   2268,
+   3829
+  ],
+  "standort_xyz": [
+   39.106,
+   2.177,
+   0.614
+  ],
+  "hoehe_ueber_gelaende": 0.61,
+  "rms_px": 1.14,
+  "brennweite_quelle": "buendel",
+  "ankerzone_z": [
+   -0.5,
+   51.299997741699215
+  ],
+  "rahmen_verschiebung": [
+   -0.0,
+   -0.0,
+   -0.0
+  ],
+  "quelle": "kameras_aus_buendel.py aus modelle/schwabentor/messprotokoll/SFM-AUSRICHTUNG-glob_v1g.json (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x 1.0000"
+ }
+}

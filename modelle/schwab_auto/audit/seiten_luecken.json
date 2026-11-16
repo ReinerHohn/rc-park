@@ -13,7 +13,8 @@
    "flaeche_m2": 445.5,
    "abdeckung": 0.998,
    "fotos": 40,
-   "ungesehen": false
+   "ungesehen": false,
+   "ohne_daten_m2": 0.7
   },
   {
    "nr": 1,
@@ -27,8 +28,9 @@
    ],
    "flaeche_m2": 441.8,
    "abdeckung": 1.0,
-   "fotos": 38,
-   "ungesehen": false
+   "fotos": 39,
+   "ungesehen": false,
+   "ohne_daten_m2": 0.2
   },
   {
    "nr": 2,
@@ -41,9 +43,10 @@
     9.096353324232904
    ],
    "flaeche_m2": 428.3,
-   "abdeckung": 0.397,
-   "fotos": 30,
-   "ungesehen": false
+   "abdeckung": 0.101,
+   "fotos": 24,
+   "ungesehen": true,
+   "ohne_daten_m2": 385.2
   },
   {
    "nr": 3,
@@ -57,11 +60,14 @@
    ],
    "flaeche_m2": 390.7,
    "abdeckung": 0.996,
-   "fotos": 40,
-   "ungesehen": false
+   "fotos": 39,
+   "ungesehen": false,
+   "ohne_daten_m2": 1.6
   }
  ],
- "ungesehen": [],
+ "ungesehen": [
+  2
+ ],
  "fotobestand": 504,
  "nicht_registriert": [
   "commons_orig2__004.jpg",

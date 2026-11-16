@@ -31,4 +31,13 @@ fi
 a=$($P -W ignore -I tools/pruefstand.py modelle/$O/objekt.json 2>&1 | grep -c "alle Pruefungen bestanden"); [ "$a" = "1" ] && ok "Pruefstand ober_tvdr gruen" || rot "Pruefstand ober_tvdr"
 v=$(grep -l '"vertrauen": true' modelle/schwab_v3/messprotokoll/K-dl_*.json 2>/dev/null | wc -l); e=$(ls modelle/schwab_v3/messprotokoll/K-eigen__*.json | wc -l); [ "$e" -ge 150 ] && [ "$v" -ge 100 ] && ok "Kameras: $e eigene, $v gepruefte Fremdkameras" || rot "Kameras: $e eigene, $v gepruefte Fremdkameras (erwartet >= 150 / >= 100)"
 u=$($P -I tools/kamera_plausibel.py | tail -1 | cut -d" " -f1); [ "$u" = "0" ] && ok "keine Kamera mit absurdem Standort/Brennweite" || rot "$u Kameras mit absurdem Standort (> 3 km) oder Brennweite (> 10 x Bildbreite) - als .unplausibel beiseitelegen"
+python3 -I - "$S" <<'PY' > /dev/null 2>&1 && ok "Kette: Stufe mit Zeitlimit, Absturz = Fehler; Kameraregeln (Tiefe, Verzeichnung)" || rot "Kette lauf()/Kameraregeln"
+import sys, os; sys.path.insert(0, "tools"); import gesamtkette as G, kamera_plausibel as KP
+os.makedirs(sys.argv[1], exist_ok=True); B = dict(schritte=[], _pfad=sys.argv[1] + "/b.json"); L = sys.argv[1] + "/l.log"
+assert G.lauf(B, "gut", ["bash", "-c", "echo a"], L)[0] == 0 and B["schritte"][-1]["ok"]
+assert G.lauf(B, "haenger", ["bash", "-c", "sleep 60"], L, timeout=1)[0] == 124 and not B["schritte"][-1]["ok"]
+assert G.lauf(B, "absturz", ["python3", "-c", "raise ValueError(1)"], L, ok=(0, 1))[0] == 1 and not B["schritte"][-1]["ok"]
+assert KP.plausibel(3000, (4000, 3000), (30, 0, 1.6))[0] and not KP.plausibel(3000, (4000, 3000), (30, 0, -20))[0] and KP.plausibel(3000, (4000, 3000), (200, 0, -8))[0]
+assert not KP.plausibel(3000, (4000, 3000), (30, 0, -4), tief_m=3)[0] and not KP.plausibel(3000, (4000, 3000), (30, 0, 1.6), k1=-3.0, bild_diag=5000)[0] and KP.plausibel(3000, (4000, 3000), (30, 0, 1.6), k1=0.06, bild_diag=5000)[0]
+PY
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F

@@ -47,7 +47,7 @@
    "datum": "auto",
    "wer": "umriss_tor",
    "auto_id": "umriss-eigen__IMG_20261106_113201-0",
-   "text": "GANZE DACHLINIE versetzt (Foto hoeher: Dach/Aufbau fehlt oder zu niedrig), 2 Fotos einig: +5.07 m ueber 0.0 m bei [0.0, 0.0, 0.0] (Foto eigen__IMG_20261106_113201)",
+   "text": "GANZE DACHLINIE versetzt (Foto hoeher: Dach/Aufbau fehlt oder zu niedrig), 3 Fotos einig: +4.95 m ueber 0.0 m bei [0.0, 0.0, 0.0] (Foto eigen__IMG_20261106_113201)",
    "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
   }
  ]
