@@ -123,7 +123,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper = koerper + WL.scheibe(-0.06, 2.85, 1.42, -0.05, 0.05) - WL.scheibe(-0.06, 2.85, 0.80, -0.15, 0.1)     # Rundfenster: Steinring 5 cm vor dem Putz, Nische 15 cm (ANNAHME)
     beleg("wand", "Nordost-Fassade scharf: Loggia mit Bruestung und zwei Saeulen, 2 Doppelfenster, Rundfenster", "foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-005..-011), Picks ueber wand_ortho.py",
           loggia_breite=7.05, loggia_hoehe=1.82, bruestung=1.10, hinweis="ANNAHME: Loggiatiefe 1,5 m, Saeulen als Vierkant, Bruestung geschlossen (Masswerk fehlt), Gewaende 5 cm; Walmdach, Dachgelaender, Eckquader, Schriftzug fehlen")
-    koerper = koerper - WL.prisma(spitzbogen(5.41 / 2, 3.5, 5.83), u=4.535, w0=-4.0, w1=2.2)       # Laube (dritter Bogen): Masse M-113529-001..-004; Tiefe 4 m = ANNAHME (offene Halle, Rueckwand im Foto sichtbar)
+    koerper = koerper - WL.prisma(spitzbogen(5.41 / 2, 3.5, 5.83), u=4.535, w0=-16.0, w1=2.2)       # Laube (dritter Bogen): Masse M-113529-001..-004; 16.11. Nutzer (zweimal): "das ist ein Tor, durchgaengig, da hast du eine Wand drin" -> gerade durch den ganzen Fluegel (Verlauf im Inneren ANNAHME)
     beleg("wand", "Laube Nordost (dritter Bogen)", "foto_mass.py auf der Fassadenebene, Foto 113529 (M-113529-001..-004), Gegenprobe Foto 113452 (gleiche Kanten aus anderem Winkel)", lichte_breite=5.41, scheitel=5.83, kaempfer=3.5,
           hinweis="ANNAHME: Tiefe der Halle 4 m, Kreisboegen; Masswerkbruestung darueber (z 7-8 m), Holzstreben in der Laube und Treppe dahinter fehlen")
     koerper = koerper - WN.prisma(spitzbogen(3.20, 3.90, 6.35), u=3.30, w0=-7.0, w1=1.7) - WS.prisma(spitzbogen(3.15, 4.05, 6.39), u=5.25, w0=-7.0, w1=2.4)

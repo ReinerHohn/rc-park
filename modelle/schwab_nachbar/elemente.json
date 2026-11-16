@@ -167,7 +167,7 @@
   "element": "Gebaeude hohl, 37 Fenster durchgebrochen",
   "quelle": "Nutzerauftrag 16.11.2026; Fensterrechtecke wie oben gemessen",
   "fenster_offen": 37,
-  "hohlraum_m3": 3239.3,
+  "hohlraum_m3": 3205.4,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026: minimal duenn, stabil, schnell druckbar): 1,2 mm im Druck (3 Bahnen einer 0,4-mm-Duese; WAND_MM) = 0,10 m bei 1:87; Innenraum ohne Decken/Zwischenwaende; Rahmen, Pfosten und Kaempfer bleiben als Staebe in der Oeffnung",
   "seite_name": "wand"
  }
