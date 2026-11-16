@@ -62,6 +62,28 @@ class Wand:
         """Gerader Stab von p = (u, z) nach q = (u, z), Breite b, von w0 bis w1 vor der Wand (Zeiger, Ziffernstriche, Leisten)."""
         p = np.array(p, float); q = np.array(q, float); d = q - p; d = d / np.linalg.norm(d); s = np.array([-d[1], d[0]]) * b / 2
         return self.huelle([(c[0], c[1], w_) for c in (p + s, p - s, q + s, q - s) for w_ in (w0, w1)])
+    def galerie(self, u0, u1, z_boden, z_holm, z_dach, w, pfosten=3, streben=6, z_fuss=None, boden=0.35, b=0.22, tafeln=True, knaggen=True, w_wand=-0.05):
+        """Auskragende Holzgalerie / Holzerker vor einer Wand (GENERISCH, Nutzer 16.11.2026: "lerne daraus und baue generische Tools").
+        u0..u1 Breite, z_boden Unterkante Schwelle, z_holm Oberkante Bruestung, z_dach Oberkante der Pfosten (Anschluss Vordach), w Ausladung.
+        Teile: Bodenplatte, Schwelle und Holm als vorstehende Riegel, geschlossene Bruestung, 'pfosten' Pfosten (Zahl oder Liste von u-Lagen),
+        tafeln=True: Fuellung zwischen den Pfosten oberhalb des Holms (bemalte Tafeln, verglaste oder verbretterte Felder), 7 cm hinter der Pfostenflucht;
+        knaggen=True: dreieckige Knaggen beidseits jedes Pfostens im Bruestungsband; 'streben' Kopfstreben vom Wandfuss z_fuss unter den Boden (0 = keine).
+        Gemessen werden muessen nur u0, u1, z_boden, z_holm, z_dach, w und die Zahlen (am Foto zaehlen); Querschnitte sind Standardwerte = ANNAHME."""
+        K = self.kasten; ups = list(np.linspace(u0 + b / 2, u1 - b / 2, pfosten)) if np.isscalar(pfosten) else list(pfosten)
+        g = K(u0, u1, z_boden, z_boden + boden, w_wand, w) + K(u0, u1, z_boden, z_holm, w - 0.15, w) + K(u0, u0 + 0.15, z_boden, z_holm, w_wand, w) + K(u1 - 0.15, u1, z_boden, z_holm, w_wand, w)
+        g = g + K(u0 - 0.05, u1 + 0.05, z_holm - 0.20, z_holm + 0.08, w - b, w + 0.06) + K(u0 - 0.05, u1 + 0.05, z_boden, z_boden + 0.22, w - b, w + 0.05)       # Holm und Schwelle stehen vor
+        for up in ups:
+            g = g + K(up - b / 2, up + b / 2, z_boden, z_dach, w - b, w + 0.02)
+            if knaggen:
+                for sg in (-1.0, 1.0):
+                    if u0 + 0.3 < up + sg * 0.5 < u1 - 0.3: g = g + self.huelle([(up + sg * b / 2, z_holm - 0.2, w_) for w_ in (w - 0.02, w + 0.04)] + [(up + sg * (b / 2 + 0.38), z_holm - 0.2, w_) for w_ in (w - 0.02, w + 0.04)] + [(up + sg * b / 2, z_holm - 0.62, w_) for w_ in (w - 0.02, w + 0.04)])
+        if tafeln:
+            for ua, ub in zip(ups[:-1], ups[1:]): g = g + K(ua + b / 2 - 0.01, ub - b / 2 + 0.01, z_holm, z_dach, w - 0.17, w - 0.07)
+            g = g + K(u0, u0 + 0.1, z_holm, z_dach, w_wand, w - 0.05) + K(u1 - 0.1, u1, z_holm, z_dach, w_wand, w - 0.05)                                      # Seiten geschlossen
+        if streben and z_fuss is not None:
+            for us in np.linspace(u0 + 0.3, u1 - 0.3, streben):
+                g = g + self.huelle([(us + du, z_boden, w_) for du in (-0.1, 0.1) for w_ in (w - 0.3, w - 0.05)] + [(us + du, z_, w_wand) for du in (-0.1, 0.1) for z_ in (z_fuss, z_fuss + 0.35)])
+        return g
     def linienzug(self, pts, b, w0, w1):
         """Stab entlang eines Linienzugs (u, z)-Punkte (Masswerk, Ranken, geschwungene Leisten)."""
         k = None

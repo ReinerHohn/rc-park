@@ -123,3 +123,15 @@ Umgebungsvariable `WAND_MM` aendert sie ohne Codeaenderung; `OHNE_HOHL=1` baut v
 (`modell_3d_html.py`). Ebene Flaechennormalen allein (erster Versuch) haben das NICHT behoben. Seitenlimit 16 MB: mit Hohlraeumen `--netz_raster 0.042 --n 40000`.
 ### Noch nicht automatisch
 `steine_aus_foto.py` und `relief_quader_eben.py` sind KEINE Stufe von `tools/fassaden_kette.py`/`gesamtkette.py` - Felder und Schwelle werden von Hand gesetzt.
+
+## Bauteil-Katalog (generisch, `tools/bauteile.py`) - Nutzer 16.11.2026: "lerne daraus und baue generische Tools"
+Regel: kein Bauteil als Einzelfall in den Objekt-Generator. Erst hier pruefen/ergaenzen, dann aufrufen. Zu messen ist jeweils nur das Genannte, der Rest sind Standardwerte (= ANNAHME im beleg).
+- `Wand(a, b, aussen)`: Wandkoordinaten u/z/w; `kasten`, `huelle`, `prisma`, `scheibe`, `stab`, `linienzug` (geschwungene Leisten).
+- `spitzbogen(halb, kaempfer, scheitel)`: bei Stich >= halbe Breite zwei Kreisboegen, sonst Vier-Zentren-Bogen (gedrueckt). `rundbogen(breite, unten, scheitel)`.
+- `Wand.fenster(u0, u1, z0, z1, w, teiler, kaempfer, sprossen)`: Nische + Rahmen; meldet sich in `DURCH` fuer `aushoehlen`. `fenster_aus_json` fuer erkannte Fenster.
+- `aushoehlen(koerper, d, schnitte, z_min)`: Gebaeude hohl, Fenster als Loecher; `kneifkanten_schliessen`.
+- `Wand.zifferblatt(u, z, d_aussen, d_innen, zeit)`: Turmuhr.
+- `Wand.galerie(u0, u1, z_boden, z_holm, z_dach, w, pfosten, streben, z_fuss, tafeln, knaggen)`: auskragende Holzgalerie / Holzerker.
+- `Wand.masswerk_fischblase(u0, u1, z0, z1, w0, w1)`: durchbrochenes Bruestungsfeld.
+- Dach als Laser-Hoehenfeld: `tools/laserdach.py`. Reliefs: `relief_einsatz.py`, `relief_putz.py`, `relief_quader_eben.py`, `steine_generieren.py`, `steine_aus_foto.py`.
+Noch NICHT generisch (Einzelfall im Schwabentor-Generator, bei Bedarf herausziehen): Zeltdach mit Knickprofil (D_PROF), Laterne mit Zwiebelhaube, Treppenturm mit Haube (Rotationsprofil), Holzfries, Kamin/Firststange, Erker mit Konsolen.
