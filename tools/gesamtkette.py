@@ -105,6 +105,7 @@ def main():
         ln = os.path.join(ROOT, "daten", a.ziel, "fotos"); oj = json.load(open(ZJ))      # objekt.json zeigte aber noch auf den Fotoordner der Quelle. Verknuepfung daten/<ziel>/fotos -> Sammelordner, fotos_dir darauf.
         if os.path.realpath(os.path.join(ROOT, oj.get("fotos_dir", ""))) != os.path.realpath(FV):
             os.makedirs(os.path.dirname(ln), exist_ok=True)
+            if os.path.isdir(ln) and not os.path.islink(ln) and not os.listdir(ln): os.rmdir(ln)      # leerer Ordner aus Stufe anlegen
             if not os.path.lexists(ln): os.symlink(FV, ln)
             if os.path.realpath(ln) == os.path.realpath(FV):
                 oj.setdefault("fotos_dir_quelle", oj.get("fotos_dir")); oj["fotos_dir"] = os.path.relpath(ln, ROOT); json.dump(oj, open(ZJ, "w"), indent=1, ensure_ascii=False); notiz(B, "fotos_dir", True, hinweis=f"fotos_dir -> {oj['fotos_dir']} (Sammelordner); vorher {oj['fotos_dir_quelle']}")
@@ -184,7 +185,10 @@ def main():
     if dran("fenster") and os.path.exists(os.path.join(Z, "messprotokoll")): lauf(B, "umriss_tor", [PY, "-W", "ignore", "-I", "tools/umriss_tor.py", ZR, "--eintragen"], log, ok=(0, 3))      # 16.11.2026: Dachlinie Modell gegen Himmelskante; Befunde -> beobachtungen_offen
     if dran("seiten") and os.path.exists(AU):                           # 16.11.2026 Nutzer (Schwabentor Ostseite): "Er muss doch wissen, dass dort Bilder fehlen und die sich dann holen, notfalls downloaden. Alles muss in die Pipeline."
         fo = os.path.join(D, "fassade"); sp = next((q_ for q_ in (os.path.join(P, "sparse_ba"), os.path.join(P, "dicht", "sparse"), os.path.join(P, "sparse", "0"), os.path.join(P, "sfm", "sparse_dicht"), os.path.join(P, "sfm", "sparse", "0"), os.path.join(P, "sfm", "sparse")) if os.path.exists(os.path.join(q_, "images.bin"))), None); db = next((q_ for q_ in (os.path.join(P, "db.db"), os.path.join(P, "sfm", "db.db")) if os.path.exists(q_)), os.path.join(P, "db.db"))
-        if os.path.exists(os.path.join(fo, "fassaden.json")) and sp and os.path.exists(db):
+        try: nfo_s = sum(len(f_.get("fotos") or {}) for f_ in json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"])
+        except Exception: nfo_s = -1
+        if nfo_s == 0: notiz(B, "seiten", False, fehler="kein Foto auf IRGENDEINER Fassade = Einrichtungsfehler (Kameras/fotos_dir), keine Fotoluecke - Download uebersprungen (16.11.2026: 32 min und 1,8 GB umsonst)")
+        elif os.path.exists(os.path.join(fo, "fassaden.json")) and sp and os.path.exists(db):
             nf = len(json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"]); vb = {}
             for i_ in range(nf):                                              # 16.11.2026: Vorbauten/Nischen automatisch (Ebenen-Sweep je Fassade); rc 2 = zu wenige Fotos, rc 4 = nicht belastbar
                 if lauf(B, f"vorbauten_f{i_:02d}", [PY, "-W", "ignore", "-I", "tools/fassade_tiefe.py", ZR, fo, str(i_)], log, ok=(0, 2, 4))[0] == 0:
