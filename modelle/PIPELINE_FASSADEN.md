@@ -305,4 +305,4 @@ Nachtrag Haertetest (16.11. ~16:00), offene Punkte 6/7 und Fotoauftrag:
   GRUNDSAETZLICH OFFEN: "Stein = nicht Putzfarbe" gilt nur fuer Putzbauten mit Werkstein; an farbigen Haeusern (rot, gelb) ist alles "Stein". Die Stufe braucht ein Tor "ist das ueberhaupt Quaderwerk?" (Fugenraster vorhanden).
 - `foto_auftrag.py` fuer gewoehnliche Haeuser: ungesehene Fassade -> Standort 8-20 m DAVOR auf der Strasse (nicht mehr ein Fernfoto vom Muensterturm als Vorbild; Vorbild nur aus eigenen/online-Fotos < 130 m).
   Fehler dabei: ein angehaengter Kommentar hatte den Rest einer Codezeile auskommentiert (0 statt 6 ungesehene) - am Zahlenvergleich bemerkt.
-  Fotoauftrag Oberlinden (6 Fassaden): https://claude.ai/artifact/ (siehe STAND), Daten `modelle/ober_tvdr/audit/fotoauftrag.json` -> `tools/foto_check.sh ober_tvdr <datei>` ist damit einsatzbereit.
+  Fotoauftrag Oberlinden (6 Fassaden): https://claude.ai/artifact/BtfcXPeVi14Yid3kGypyRJ, Daten `modelle/ober_tvdr/audit/fotoauftrag.json` -> `tools/foto_check.sh ober_tvdr <datei>` ist damit einsatzbereit.
