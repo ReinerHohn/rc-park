@@ -245,8 +245,16 @@
   "seite": "wand",
   "element": "Eckquader West oben (Suedwest-Ecke, z 27-34)",
   "quelle": "entzerrtes Einzelfoto dl_commons__047_Schwabentor_Freiburg_12 (Commons, Lizenz im manifest.json) -> steine_aus_foto.py",
-  "steine": 62,
+  "steine": 39,
   "hinweis": "nur der Suedwest-Streifen (u 0,1-3,0); Nordwest-Eckstreifen am Treppenturm fehlt; Fugen aus einem Schraegfoto",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Eckquader West, Nordwest-Ecke ueber dem Treppenturm (z 14,5-34)",
+  "quelle": "Foto dl_commons__047 direkt auf der Wandebene (steine_aus_foto.py --foto), Verdeckung gegen das Modell",
+  "steine": 176,
+  "hinweis": "Fugen aus einem Schraegfoto (0,7 cm/px); hinter dem Treppenturm (z < 14,5) nicht einsehbar",
   "seite_name": "wand"
  },
  {
@@ -268,7 +276,7 @@
   "traufe": 11.57,
   "spitzenansatz": 13.5,
   "kugel": 14.6,
-  "hinweis": "3 Schlitzfenster gemessen (zylinder_mass.py, 2 Fotos); Haube 12-eckig; Anschlussdach zur Turmwand: nur ein Punkt gemessen (z 12,47 bei x 1,22), Firsthoehe und Form ANNAHME; weitere Schlitze auf der Nord-/Rueckseite nicht einsehbar",
+  "hinweis": "5 Schlitzfenster: 3 gemessen (zylinder_mass.py, 2 Fotos), 2 aus der Abwicklung (fassade_zylinder.py) abgelesen; Tuer mit Steingewaende am Fuss in der Abwicklung gesehen, noch nicht gebaut; Haube 12-eckig; Anschlussdach zur Turmwand: nur ein Punkt gemessen (z 12,47 bei x 1,22), Firsthoehe und Form ANNAHME; weitere Schlitze auf der Nord-/Rueckseite nicht einsehbar",
   "seite_name": "wand"
  },
  {
@@ -283,7 +291,7 @@
   "seite": "wand",
   "element": "Quader Ost: beide Eckstreifen ab z 22,5 und das Steinband am Gesims",
   "quelle": "entzerrtes Einzelfoto dl_commons__010 (Commons-Original des Flickr-Fotos von Jorge Franganillo, CC BY 2.0, 3840 px = 0,8 cm/px; automatisch geladen/registriert, Kamera mit kamera_verfeinern.py nachgezogen: 1518 Inlier) -> relief_putz.py -> steine_aus_foto.py; Gegenprobe Streifenbreiten M-od_15-003/-004 (1,39 / 1,29 m)",
-  "steine": 208,
+  "steine": 230,
   "hinweis": "Kontur und Fugen aus einem Sonnenfoto mit 2,9 cm/px (Fugen an der Aufloesungsgrenze); Kontur und Fugen aus einem Sonnenfoto mit 0,8 cm/px; Foto automatisch gewaehlt (fassade_ein_foto.py auto), Nachbardach automatisch ausgeblendet (Verdeckung gegen das Modell)",
   "seite_name": "wand"
  },
@@ -302,7 +310,7 @@
   "element": "Turm hohl, 8 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
   "quelle": "Nutzerauftrag 16.11.2026; Fenstermasse wie oben",
   "fenster_offen": 8,
-  "hohlraum_m3": 3706.1,
+  "hohlraum_m3": 3708.3,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
   "seite_name": "wand"
  }
