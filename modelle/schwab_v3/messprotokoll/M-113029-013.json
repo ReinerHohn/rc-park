@@ -1,0 +1,32 @@
+{
+ "id": "M-113029-013",
+ "foto": "113029",
+ "kamera": "K-eigen__IMG_20261106_113029",
+ "ebene": "0.7500,-0.6615,0=-11.390",
+ "name": "Dach: Knick des Nordwest-Grats - Traufecke NW (Gratebene Achse-Ecke)",
+ "mess_px": [
+  2429.0,
+  807.0,
+  2693.0,
+  910.0
+ ],
+ "P1": [
+  2.187,
+  19.698,
+  38.804
+ ],
+ "P2": [
+  4.171,
+  21.948,
+  36.735
+ ],
+ "dz": -2.069,
+ "dy": 2.25,
+ "dx": 1.985,
+ "abstand": 3.645,
+ "z1": 38.804,
+ "z2": 36.735,
+ "unsicherheit_rel": 0.0036,
+ "unsicherheit_m": 0.056,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113029 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.7500,-0.6615,0=-11.390 (+-0.3 m)"
+}

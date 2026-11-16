@@ -79,7 +79,7 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     if os.path.exists(rel_n.replace(".npz", "_voll.npz")):          # 15.11.2026 Nutzer: "Rest der Steine notfalls generieren" - Loecher des Scan-Reliefs mit generierten Quadern gefuellt (tools/steine_generieren.py)
         rel_n = rel_n.replace(".npz", "_voll.npz"); beleg("wand", "Generierte Quader Nord (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m)", "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben", anteil=float(np.load(rel_n)["generiert_anteil"]), hinweis="ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original")
     if os.path.exists(rel_n.replace("_voll.npz", "_eben.npz")) and rel_n.endswith("_voll.npz"): rel_n = rel_n.replace("_voll.npz", "_eben.npz")      # 16.11.2026 Nutzer (Beulen neben der Uhr): glatt behauene Eckquader ueber dem Gesims eben, Kontur aus der Fotofarbe (tools/relief_quader_eben.py); Fugen fehlen
-    _fo_nord = os.path.join(HERE, "schwab_v3", "relief", "nord_foto.npz"); _ft_nord = [(0.0, 12.2, 14.8, 27.8)] if os.path.exists(_fo_nord) and os.environ.get("OHNE_FOTOSTEINE") != "1" else []      # 16.11.2026 Nutzer: 'Steine nach oben noch nicht korrekt' -> Quader mit Fugen aus dem feinen Fassadenbild (tools/steine_aus_foto.py)
+    _fo_nord = os.path.join(HERE, "schwab_v3", "relief", "nord_foto.npz"); _ft_nord = [(0.0, 12.2, 10.4, 27.8)] if os.path.exists(_fo_nord) and os.environ.get("OHNE_FOTOSTEINE") != "1" else []      # 16.11.2026 Nutzer: 'Steine nach oben noch nicht korrekt' -> Quader mit Fugen aus dem feinen Fassadenbild (tools/steine_aus_foto.py)
     if os.path.exists(rel_n) and os.environ.get("OHNE_RELIEF") != "1":
         rel_nm = os.path.join(HERE, "schwab_v3", "relief", "nord_misch.npz"); fein_n = os.path.exists(rel_nm) and os.environ.get("OHNE_FEIN") != "1"   # 15.11. spaet: lokale Feinrechnung der Tiefe (tools/tiefe_lokal.py -> relief_mischen.py), Nordwand unten 2 cm statt 5 cm
         rumpf = rumpf + relief_koerper(rel_n, tiefe=0.12 + WV, trend=True, versatz=0.0, null_felder=[(2.6, 5.4, 23.9, 27.1), (6.9, 9.7, 23.9, 27.1), (1.6, 11.1, 9.7, 21.1)], tief_felder=([(0.0, 12.2, 0.0, 10.4)] if fein_n else []) + _ft_nord)
@@ -164,11 +164,15 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     # 16.11.2026 (Nutzer: "Die Dachform passt noch nicht ganz"): waagerechtes Fernfoto vom Schlossberg (110756, 320 m, 26 px/m; Gegenprobe Uhrmitte-Traufe 5,41 m = Modell):
     # der Grat ist GERADE vom Trauf-Eck (z 36,6) bis zur Dachspitze am Laternenfuss z 45,2 (M-110756-001/-002: Steigung 1,31-1,38 durchgehend). Vorher geschweiftes Profil
     # mit Stumpf bei 44,1 (aus einem steilen Nahfoto); die Laserpunkte (r 6/5/4/3 m -> 37,5/38,5/40,0/41,5) liegen auf derselben Geraden (+-0,4 m).
-    D_PROF = [(1.0, None), (0.05, 45.2)]                                   # (Anteil des Achsabstands, z)
+    # 16.11.2026 (Nutzer markiert im Foto: Dach unten ausgeschweift): Nahfoto 113029 zeigt an BEIDEN Nordgraten einen Knick - eine Gerade bleibt in jedem Foto gerade, der Knick ist also echt.
+    # Knick auf der Gratebene (Achse-Traufecke) gemessen: NO z 38,75 bei 0,661 des Achsabstands, NW z 38,80 bei 0,660 (M-113029-012/-013; Traufecken dabei auf 5-19 cm wie trianguliert).
+    # Widerspruch zur Fernfoto-Lesung "Grat gerade" (M-110756-001/-002, 26 px/m): nicht gemittelt - das Nahfoto loest den Knick auf, das Fernfoto nicht.
+    D_PROF = [(1.0, None), (0.66, 38.78), (0.5, 40.7), (0.05, 45.2)]   # Zwischenpunkt 0,5: Fernfoto 110756 misst den Grat dort bei 40,6-41,3 (Pruefung dach_grat_mitte) - beide Quellen erfuellt, Dach ueber dem Knick leicht steiler
+    D_PROF_ALT = [(1.0, None), (0.66, 38.78), (0.05, 45.2)]                    # (Anteil des Achsabstands, z): flacher Aufschiebling unten, steiles Zeltdach darueber
     def ring(f_, z_, dz_=0.0): return [[D_A[0] + f_ * (e_[0] - D_A[0]), D_A[1] + f_ * (e_[1] - D_A[1]), (e_[2] if z_ is None else z_) - dz_] for e_ in D_E]
     dach = M.hull_points(ring(1.0, None) + ring(1.0, None, 0.23))
     for (f0_, z0_), (f1_, z1_) in zip(D_PROF[:-1], D_PROF[1:]): dach = dach + M.hull_points(ring(f0_, z0_) + ring(f0_, z0_, 0.23) + ring(f1_, z1_) + ring(f1_, z1_, 0.23))
-    dach = dach + M.hull_points(ring(0.9, D_ZE - 0.3) + ring(0.196, 43.9))                                # Kern unter der Dachhaut
+    dach = dach + M.hull_points(ring(0.9, D_ZE - 0.3) + ring(0.62, 38.3)) + M.hull_points(ring(0.62, 38.3) + ring(0.196, 43.2))       # Kern unter der Dachhaut (folgt dem Knick)
     koerper = koerper + dach
     beleg("dach", "Zeltdach geschweift mit Ueberstand, vier gemessene Traufecken", "Foto-Triangulation: Nordecken aus 6 Nordfotos, Suedecken aus 3 Suedfotos (Kameras SfM-Neuaufbau); Flaechenprofil DOM1-Laser",
           traufe_nord=36.74, traufe_sued=36.5, laenge_nord_sued=12.35, breite_nord=13.44, breite_sued=12.99, ueberstand_nord=0.9, ueberstand_sued=0.83,

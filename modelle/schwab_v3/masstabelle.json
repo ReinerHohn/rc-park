@@ -1856,20 +1856,26 @@
    "naechster_schritt": "tools/steine_aus_foto.py (Fugen aus dem feinen Fassadenbild) fuer N/S/W; Anzeige: Gruppenschwerpunkt statt Rasterpunkt"
   },
   {
+   "datum": "2026-11-16",
+   "wer": "Nutzer (Bild ~/Bilder/sdfsfssdfdsfs.png: Foto neben 3D-Seite, 5 Markierungen)",
+   "text": "(1) Turmdach: im Foto unten ausgeschweift (Aufschiebling) mit weitem Ueberstand, Modell gerade; (2) Eckquader oben links fehlen/zu schwach; (3) zwei Flecken unter dem linken Nordfenster; (4) Vordach/Galerie Nord: Riegel zwischen Wandbild und Bruestungsband fehlt; (5) zweiter Torbogen (Nachbarhaus): Bogenform falsch - bauteile.spitzbogen gab bei gedrueckten Boegen (Stich < halbe Breite) einen waagerechten Sturz statt eines Scheitels (betrifft auch Laube und Turmtor Sued).",
+   "naechster_schritt": "spitzbogen als Vier-Zentren-Bogen; Dachprofil am Foto messen; Fotoquader bis unter den Fries; Galerie am feinen Fassadenbild messen"
+  },
+  {
    "datum": "auto",
    "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1512",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 29.34,
-   "z_bis": 29.34,
+   "z_von": 29.31,
+   "z_bis": 29.31,
    "xyz": [
-    -2.73,
-    9.73,
-    29.34
+    -2.7,
+    9.72,
+    29.31
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.34 m, y=9.73 m (Zelle [972, 1512, 108], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=29.31 m, y=9.72 m (Zelle [972, 1512, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1878,15 +1884,15 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1620",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 27.25,
-   "z_bis": 27.25,
+   "z_von": 27.3,
+   "z_bis": 27.3,
    "xyz": [
-    -2.67,
-    9.74,
-    27.25
+    -2.72,
+    9.75,
+    27.3
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.25 m, y=9.74 m (Zelle [972, 1620, 108], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.3 m, y=9.75 m (Zelle [972, 1620, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
   },
   {
@@ -1898,7 +1904,7 @@
    "z_von": 25.31,
    "z_bis": 25.31,
    "xyz": [
-    -2.63,
+    -2.64,
     9.76,
     25.31
    ],
@@ -1915,7 +1921,7 @@
    "z_von": 23.48,
    "z_bis": 23.48,
    "xyz": [
-    -2.6,
+    -2.59,
     9.79,
     23.48
    ],
@@ -1929,33 +1935,16 @@
    "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-2052",
    "art": "fehlteil",
    "foto": "eigen__IMG_20261106_113231",
-   "z_von": 20.15,
-   "z_bis": 20.15,
+   "z_von": 20.26,
+   "z_bis": 20.26,
    "xyz": [
-    -2.52,
-    9.84,
-    20.15
+    -2.68,
+    9.88,
+    20.26
    ],
    "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=20.15 m, y=9.84 m (Zelle [972, 2052, 108], Score +1.00)",
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=20.26 m, y=9.88 m (Zelle [972, 2052, 108], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 6)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-2160",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 18.6,
-   "z_bis": 18.6,
-   "xyz": [
-    -2.46,
-    9.86,
-    18.6
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=18.6 m, y=9.86 m (Zelle [972, 2160, 108], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
   }
  ]
 }

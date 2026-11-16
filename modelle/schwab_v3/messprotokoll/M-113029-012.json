@@ -1,0 +1,32 @@
+{
+ "id": "M-113029-012",
+ "foto": "113029",
+ "kamera": "K-eigen__IMG_20261106_113029",
+ "ebene": "0.7230,0.6908,0=9.093",
+ "name": "Dach: Knick des Nordost-Grats - Traufecke NO (Gratebene Achse-Ecke)",
+ "mess_px": [
+  1536.0,
+  786.0,
+  1329.0,
+  874.0
+ ],
+ "P1": [
+  2.238,
+  10.821,
+  38.746
+ ],
+ "P2": [
+  4.155,
+  8.815,
+  36.741
+ ],
+ "dz": -2.005,
+ "dy": -2.006,
+ "dx": 1.916,
+ "abstand": 3.423,
+ "z1": 38.746,
+ "z2": 36.741,
+ "unsicherheit_rel": 0.0036,
+ "unsicherheit_m": 0.055,
+ "massstab_von": "Kamera K-eigen__IMG_20261106_113029 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.7230,0.6908,0=9.093 (+-0.3 m)"
+}
