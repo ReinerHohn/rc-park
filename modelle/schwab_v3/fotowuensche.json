@@ -1,7 +1,7 @@
 [
- {"wand": 0, "u": [-2.5, 2.5], "z": [6.5, 10.5], "mpp": 0.003, "titel": "Nordtor: Figur und Steinwerk ueber dem Bogen", "warum": "Die Figur ueber dem Nordtor ist als Relief gescheitert - die vorhandenen Fotos sind zu grob und alle von unten."},
- {"wand": 0, "u": [-5.8, 5.9], "z": [9.5, 21.5], "mpp": 0.005, "titel": "Nordseite: Galerie, Vordach und Wandbild", "warum": "Knaggen, Streben und Vordachform sind nur grob gemessen; fuer die automatische Tiefensuche fehlen Fotos von deutlich verschiedenen Standorten."},
- {"wand": 1, "u": [-3.0, 3.0], "z": [9.5, 19.0], "mpp": 0.004, "titel": "Suedseite: Georgsbild mit Verdachung", "warum": "Das Bild ist im Modell eine glatte Wand; fuer Kontur und Verdachung fehlt Aufloesung, unten verdeckt der Baum."},
- {"wand": 3, "u": [-5.0, 6.6], "z": [26.5, 36.5], "mpp": 0.008, "titel": "Westseite oben: Eckquader und Umgang", "warum": "Ueber dem Gesims gibt es auf der Westseite keine brauchbaren Fotodaten - die Quader dort haben keine Fugen."},
- {"wand": 0, "u": [-6.0, 6.1], "z": [33.5, 37.0], "mpp": 0.006, "titel": "Umgang unter der Traufe (Nordseite)", "warum": "Pfosten, Balkenkoepfe und die zurueckgesetzte Wand sind nur aus zwei Fotos abgelesen; Tiefe des Umgangs ist geschaetzt."}
+ {"wand": 0, "u": [-2.5, 2.5], "z": [6.5, 10.5], "mpp": 0.003, "titel": "Nordtor: Figur und Steinwerk über dem Bogen", "warum": "Die Figur über dem Nordtor ist als Relief gescheitert - die vorhandenen Fotos sind zu grob und alle von unten."},
+ {"wand": 0, "u": [-5.8, 5.9], "z": [9.5, 21.5], "mpp": 0.005, "titel": "Nordseite: Galerie, Vordach und Wandbild", "warum": "Knaggen, Streben und Vordachform sind nur grob gemessen; für die automatische Tiefensuche fehlen Fotos von deutlich verschiedenen Standorten."},
+ {"wand": 1, "u": [-3.0, 3.0], "z": [9.5, 19.0], "mpp": 0.004, "titel": "Südseite: Georgsbild mit Verdachung", "warum": "Das Bild ist im Modell eine glatte Wand; für Kontur und Verdachung fehlt Auflösung, unten verdeckt der Baum."},
+ {"wand": 3, "u": [-5.0, 6.6], "z": [26.5, 36.5], "mpp": 0.008, "titel": "Westseite oben: Eckquader und Umgang", "warum": "Über dem Gesims gibt es auf der Westseite keine brauchbaren Fotodaten - die Quader dort haben keine Fugen."},
+ {"wand": 0, "u": [-6.0, 6.1], "z": [33.5, 37.0], "mpp": 0.006, "titel": "Umgang unter der Traufe (Nordseite)", "warum": "Pfosten, Balkenköpfe und die zurückgesetzte Wand sind nur aus zwei Fotos abgelesen; Tiefe des Umgangs ist geschätzt."}
 ]

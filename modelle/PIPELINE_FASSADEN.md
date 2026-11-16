@@ -216,3 +216,8 @@ Nutzer: "wenn du mehr Daten willst, brauchst du ein Verfahren, wie du mir zeigen
 - Ausgabe: eine HTML-Seite (Bilder eingebettet) + JSON; veroeffentlichen als Artifact. In der Kette: Stufe `seiten`, nach seiten_luecken.
 Schwabentor 16.11.: 7 Auftraege (Ost ganz, West oben, Figur Nordtor, Galerie/Vordach, Georgsbild, West-Eckquader, Umgang) - https://claude.ai/artifact/VG6sjn3AXswJ5RaFJsX8Km
 Grenzen: "Fotos mit Blick darauf" ist bei Wuenschen rein rechnerisch (ohne Verdeckung, falsch registrierte Kameras zaehlen mit); keine Strassenkenntnis; Dachflaechen sind keine Waende und fehlen.
+
+Nachtrag 16.11. (Nutzer: "Ich brauche ein besseres Tool. Stadtplan mit Richtung oder echte Bilder, aus der Richtung fotografieren"): foto_auftrag.py bettet jetzt den ECHTEN Stadtplan ein
+(OpenStreetMap-Kacheln Zoom 18, einmal je Lauf geladen, Quellenangabe auf der Seite), zeichnet je Auftrag Standort + roten Blickpfeil, dazu je Karte einen Planausschnitt, die Peilung in Worten
+("Blick nach Nordwesten (297 Grad), 87 m"), Links zu Google Maps/OpenStreetMap, das ganze Foto vom Standort mit rotem Ziel und den vergroesserten Zielbereich. Seitennamen statt Wandnummern.
+Kameras > 130 m Abstand werden als Vorlage uebergangen (meist falsch registrierte Nahaufnahmen). Geprueft mit einem Bildschirmfoto der Seite in Handybreite (firefox --headless --screenshot).
