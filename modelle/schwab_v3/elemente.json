@@ -276,7 +276,7 @@
   "traufe": 11.57,
   "spitzenansatz": 13.5,
   "kugel": 14.6,
-  "hinweis": "5 Schlitzfenster: 3 gemessen (zylinder_mass.py, 2 Fotos), 2 aus der Abwicklung (fassade_zylinder.py) abgelesen; Tuer mit Steingewaende am Fuss in der Abwicklung gesehen, noch nicht gebaut; Haube 12-eckig; Anschlussdach zur Turmwand: nur ein Punkt gemessen (z 12,47 bei x 1,22), Firsthoehe und Form ANNAHME; weitere Schlitze auf der Nord-/Rueckseite nicht einsehbar",
+  "hinweis": "6 Schlitzfenster automatisch aus der Abwicklung (fassade_zylinder.py), 3 davon mit zylinder_mass.py aus zwei Fotos bestaetigt; Tuer mit Steingewaende am Fuss (Nordseite) aus der Abwicklung; zwei weitere helle Schlitze auf der Nordostseite (z ~7,3 und ~4,6) gesehen, nicht erkannt, nicht gebaut; Haube 12-eckig; Anschlussdach zur Turmwand: nur ein Punkt gemessen (z 12,47 bei x 1,22), Firsthoehe und Form ANNAHME; weitere Schlitze auf der Nord-/Rueckseite nicht einsehbar",
   "seite_name": "wand"
  },
  {

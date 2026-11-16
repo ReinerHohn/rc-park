@@ -1,0 +1,87 @@
+{
+ "achse": [
+  1.85,
+  22.49
+ ],
+ "radius": 1.555,
+ "az0_grad": -180.0,
+ "drehsinn": "az waechst nach rechts im Bild (mathematisch positiv, +x -> +y)",
+ "z1": 11.0,
+ "z0": 0.5,
+ "zelle": 0.01,
+ "fotos": [
+  "eigen__IMG_20261106_113551",
+  "eigen__IMG_20261106_113544",
+  "eigen__IMG_20261106_113547",
+  "eigen__IMG_20261106_113545_1",
+  "eigen__IMG_20261106_113426",
+  "eigen__IMG_20261106_113428",
+  "eigen__IMG_20261106_114059",
+  "eigen__IMG_20261106_114101",
+  "eigen__IMG_20261106_114102",
+  "eigen__IMG_20261106_114050",
+  "eigen__IMG_20261106_114049",
+  "eigen__IMG_20261106_114009",
+  "eigen__IMG_20261106_114003",
+  "eigen__IMG_20261106_113512"
+ ],
+ "anteil_gesehen": 0.6721070331919872,
+ "oeffnungen": [
+  {
+   "azimut": -40.0,
+   "z0": 1.48,
+   "z1": 2.01,
+   "breite": 0.42,
+   "fuellung": 0.62,
+   "foto": "eigen__IMG_20261106_113426"
+  },
+  {
+   "azimut": 84.6,
+   "z0": 4.17,
+   "z1": 4.84,
+   "breite": 0.18,
+   "fuellung": 0.95,
+   "foto": "eigen__IMG_20261106_114050"
+  },
+  {
+   "azimut": -178.0,
+   "z0": 5.54,
+   "z1": 6.05,
+   "breite": 0.12,
+   "fuellung": 0.8,
+   "foto": "eigen__IMG_20261106_114003"
+  },
+  {
+   "azimut": -174.3,
+   "z0": 8.08,
+   "z1": 8.76,
+   "breite": 0.13,
+   "fuellung": 0.86,
+   "foto": "eigen__IMG_20261106_114003"
+  },
+  {
+   "azimut": -31.3,
+   "z0": 9.82,
+   "z1": 10.31,
+   "breite": 0.09,
+   "fuellung": 0.66,
+   "foto": "eigen__IMG_20261106_113512"
+  },
+  {
+   "azimut": -171.3,
+   "z0": 9.86,
+   "z1": 10.5,
+   "breite": 0.13,
+   "fuellung": 0.87,
+   "foto": "eigen__IMG_20261106_114003"
+  },
+  {
+   "azimut": 99.5,
+   "z0": 9.86,
+   "z1": 10.53,
+   "breite": 0.17,
+   "fuellung": 0.94,
+   "foto": "eigen__IMG_20261106_114050"
+  }
+ ]
+}

@@ -176,6 +176,17 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
     return koerper, belege
 
 
+def zylinder_oeffnungen(datei, tiefe=0.7, innen=0.45, nur=None):
+    """Schnittkoerper fuer die Oeffnungen eines runden Bauteils aus tools/fassade_zylinder.py (<aus>.json: achse, radius, oeffnungen mit azimut/z0/z1/breite).
+    Jeder Schnitt ist ein Quader radial durch den Mantel (von radius - innen bis radius - innen + tiefe). koerper = koerper - zylinder_oeffnungen(...). nur = Liste von Indizes."""
+    import json
+    J = json.load(open(datei)); ax = J["achse"]; r = J["radius"]; k = None
+    for i, o in enumerate(J.get("oeffnungen", [])):
+        if nur is not None and i not in nur: continue
+        q = M.cube((tiefe, o["breite"], o["z1"] - o["z0"])).translate((r - innen, -o["breite"] / 2, o["z0"])).rotate((0, 0, o["azimut"])).translate((ax[0], ax[1], 0.0)); k = q if k is None else k + q
+    return k
+
+
 def umgang(koerper, ecken, z0, z1, tiefe=0.9, pfosten=4, b=0.24, riegel=0.25, vor=0.08):
     """Offener Umgang / Laufgang unter der Traufe eines Turms (GENERISCH): rundum zurueckgesetzte Wand hinter einer Pfostenreihe.
     ecken: Wandecken (x, y) im Umlauf auf Hoehe des Umgangs; z0..z1: Schwelle unten bis Raehm oben (beide 'riegel' hoch, stehen 'vor' vor der Wand);

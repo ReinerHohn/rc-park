@@ -17,7 +17,7 @@ import fassade_ein_foto as FE
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("aus"); ap.add_argument("--achse", nargs=2, type=float, required=True); ap.add_argument("--radius", type=float, required=True); ap.add_argument("--z", nargs=2, type=float, required=True)
-    ap.add_argument("--fotos", default="auto"); ap.add_argument("--stl"); ap.add_argument("--zelle", type=float, default=0.01); a = ap.parse_args()
+    ap.add_argument("--fotos", default="auto"); ap.add_argument("--stl"); ap.add_argument("--zelle", type=float, default=0.01); ap.add_argument("--cos_min", type=float, default=0.5, help="flachster zugelassener Blick auf die Flaeche (0,5 = 60 Grad; 0,35 liess am streifenden Rand die Wand dahinter durch)"); ap.add_argument("--dunkel", type=float, default=0.55, help="Oeffnung = dunkler als dieser Anteil der oertlichen Helligkeit"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); fd = os.path.join(root, obj["fotos_dir"]); mp = os.path.join(od, "messprotokoll"); mm = None; rk = None
     if a.stl:
         import trimesh, render_kern as rk
@@ -38,18 +38,39 @@ def main():
             if sektor.get(s_, 0) < 3: sektor[s_] = sektor.get(s_, 0) + 1; namen.append(n)
         namen = namen[:14]
     else: namen = a.fotos.split(",")
-    bild = np.zeros((nz * nu, 3), np.uint8); best = np.full(nz * nu, 0.35, np.float32); quelle = np.full(nz * nu, -1, np.int16); genutzt = []
+    bild = np.zeros((nz * nu, 3), np.uint8); best = np.full(nz * nu, a.cos_min, np.float32); quelle = np.full(nz * nu, -1, np.int16); genutzt = []
     for qi, n in enumerate(namen):
         K = FE.kamera(os.path.join(mp, "K-" + n + ".json")); im = cv2.imread(glob.glob(os.path.join(fd, n + ".*"))[0]); R = cv2.Rodrigues(np.array(K["rvec"]))[0]; C = -R.T @ np.array(K["t"])
         v = C - X; cw = (v * N).sum(1) / np.linalg.norm(v, axis=1); kandz = cw > best
         if kandz.sum() < 500: continue
-        ok, mx, my, zc = FE.sichtbar(mm, K, X[kandz], rk, tol=0.25); idx = np.flatnonzero(kandz)[ok]
+        ok, mx, my, zc = FE.sichtbar(mm, K, X[kandz], rk, tol=0.25)
+        if mm is not None: ok &= FE.sichtbar(mm, K, X[kandz] + 0.3 * N[kandz], rk, tol=0.08)[0]      # 30 cm VOR dem Mantel muss freie Luft sein: Zellen am Anschluss an eine Wand zeigten sonst die Wand (Toleranz liess sie durch)
+        idx = np.flatnonzero(kandz)[ok]
         if len(idx) < 500: continue
         m_ = len(idx); br = 4096; pad = (-m_) % br; fx_ = np.r_[mx[ok], np.zeros(pad)].astype(np.float32).reshape(-1, br); fy_ = np.r_[my[ok], np.zeros(pad)].astype(np.float32).reshape(-1, br)      # remap vertraegt keine Zeile > 32767 Pixel
         farbe = cv2.remap(im, fx_, fy_, cv2.INTER_LINEAR).reshape(-1, 3)[:m_]; bild[idx] = farbe; best[idx] = cw[idx]; quelle[idx] = qi; genutzt.append(n); print(f"  {n[-40:]:40s} {len(idx) * c * c:6.1f} m2 uebernommen")
     bild = bild.reshape(nz, nu, 3); quelle = quelle.reshape(nz, nu); cv2.imwrite(a.aus, bild); pal = np.array([[60, 60, 60]] + [list(cv2.cvtColor(np.uint8([[[int(h_), 200, 230]]]), cv2.COLOR_HSV2BGR)[0, 0]) for h_ in np.linspace(0, 170, max(len(namen), 1))], np.uint8)
     cv2.imwrite(os.path.splitext(a.aus)[0] + "_quelle.png", cv2.resize(pal[quelle + 1], None, fx=0.25, fy=0.25, interpolation=cv2.INTER_NEAREST))
-    json.dump(dict(achse=a.achse, radius=r, az0_grad=-180.0, drehsinn="az waechst nach rechts im Bild (mathematisch positiv, +x -> +y)", z1=a.z[1], z0=a.z[0], zelle=c, fotos=genutzt, anteil_gesehen=float((quelle >= 0).mean())), open(os.path.splitext(a.aus)[0] + ".json", "w"), indent=1)
+    # OEFFNUNGEN (Schlitze, Fenster, Tueren): dunkle, kompakte Rechtecke gegen die oertliche Helligkeit - ohne Farbregel. Vorschlaege, am Bild <aus>_oeffnungen.jpg pruefen.
+    from scipy import ndimage as ndi
+    gesehen = quelle >= 0; g = cv2.cvtColor(bild, cv2.COLOR_BGR2GRAY).astype(np.float32); k = int(0.8 / c) | 1; med = cv2.blur(np.where(gesehen, g, 0), (k, k)) / np.maximum(cv2.blur(gesehen.astype(np.float32), (k, k)), 1e-3)
+    med = ndi.maximum_filter(med, size=int(0.6 / c))                      # helle Umgebung (Wandflaeche), nicht der Mittelwert ueber die Oeffnung selbst
+    dunkel = ndi.binary_opening(gesehen & (g < a.dunkel * med) & (med > 60), np.ones((3, 3))); lab, nl = ndi.label(dunkel); oeff = []; mal = bild.copy()
+    for li, sl in enumerate(ndi.find_objects(lab), 1):
+        h_ = (sl[0].stop - sl[0].start) * c; b_ = (sl[1].stop - sl[1].start) * c; fuell = (lab[sl] == li).mean()
+        if not (0.06 <= b_ <= 1.6 and 0.25 <= h_ <= 2.6 and fuell >= 0.6 and h_ >= 0.8 * b_): continue
+        rand = ~gesehen[max(sl[0].start - 3, 0):sl[0].stop + 3, max(sl[1].start - 3, 0):sl[1].stop + 3]
+        if rand.mean() > 0.15: continue                                   # klebt am ungesehenen Bereich: wahrscheinlich Schatten/Rand, keine Oeffnung
+        azm = float(np.degrees(((sl[1].start + sl[1].stop) / 2) * c / r - np.pi)); oeff.append(dict(azimut=round(azm, 1), z0=round(a.z[1] - sl[0].stop * c, 2), z1=round(a.z[1] - sl[0].start * c, 2), breite=round(b_, 2), fuellung=round(float(fuell), 2), foto=genutzt[int(np.bincount(quelle[sl][lab[sl] == li] + 1).argmax()) - 1] if genutzt else None))
+        cv2.rectangle(mal, (sl[1].start - 3, sl[0].start - 3), (sl[1].stop + 3, sl[0].stop + 3), (0, 0, 255), 2)
+    oeff.sort(key=lambda o_: (o_["z0"], o_["azimut"])); eins = []
+    for o_ in oeff:                                                       # dieselbe Oeffnung an der Bildnaht (+-180 Grad) oder aus zwei Fotos doppelt: zusammenfassen
+        d_ = [e_ for e_ in eins if abs(e_["z0"] - o_["z0"]) < 0.25 and min(abs(e_["azimut"] - o_["azimut"]), 360 - abs(e_["azimut"] - o_["azimut"])) * np.pi / 180 * r < 0.3]
+        if d_: d_[0]["breite"] = max(d_[0]["breite"], o_["breite"], 0.12); d_[0]["z1"] = max(d_[0]["z1"], o_["z1"])
+        else: eins.append(o_)
+    oeff = eins
+    cv2.imwrite(os.path.splitext(a.aus)[0] + "_oeffnungen.jpg", mal); print(f"{len(oeff)} Oeffnungen:", [(o_["azimut"], o_["z0"], o_["z1"], o_["breite"]) for o_ in oeff])
+    json.dump(dict(achse=a.achse, radius=r, az0_grad=-180.0, drehsinn="az waechst nach rechts im Bild (mathematisch positiv, +x -> +y)", z1=a.z[1], z0=a.z[0], zelle=c, fotos=genutzt, anteil_gesehen=float((quelle >= 0).mean()), oeffnungen=oeff), open(os.path.splitext(a.aus)[0] + ".json", "w"), indent=1)
     print(f"{a.aus}: Abwicklung {nu}x{nz} Zellen ({2 * np.pi * r:.2f} m Umfang x {a.z[1] - a.z[0]:.1f} m), {100 * (quelle >= 0).mean():.0f} % gesehen aus {len(genutzt)} Fotos")
 
 

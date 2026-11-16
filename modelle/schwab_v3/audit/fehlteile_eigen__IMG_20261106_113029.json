@@ -14,23 +14,9 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -0.23,
-    20.9,
+    -0.22,
+    20.89,
     35.26
-   ]
-  },
-  {
-   "zelle": [
-    2160,
-    1728,
-    108
-   ],
-   "score": -1.0,
-   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
-   "xyz": [
-    -2.66,
-    18.2,
-    30.33
    ]
   },
   {
@@ -42,9 +28,9 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    0.71,
-    20.71,
-    27.93
+    0.74,
+    20.7,
+    27.92
    ]
   },
   {
@@ -56,9 +42,9 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    0.62,
+    0.61,
     20.7,
-    26.85
+    26.86
    ]
   },
   {
@@ -70,23 +56,37 @@
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    0.52,
-    20.71,
-    25.78
+    0.58,
+    20.72,
+    25.77
    ]
   },
   {
    "zelle": [
-    2052,
+    1620,
     2376,
     108
    ],
    "score": -1.0,
    "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
    "xyz": [
-    -2.53,
-    16.79,
-    23.25
+    -2.32,
+    12.46,
+    23.09
+   ]
+  },
+  {
+   "zelle": [
+    1944,
+    3132,
+    108
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.94,
+    15.88,
+    15.4
    ]
   }
  ],
