@@ -133,5 +133,14 @@
   "sued_kaempfer": 4.05,
   "hinweis": "ANNAHME: Boegen symmetrisch (in den Fotos ist nur die turmseitige Haelfte zu sehen; Spannweite passt zum Netz), Kreisboegen, Durchfahrt gerade von Nord nach Sued",
   "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Gebaeude hohl, 37 Fenster durchgebrochen",
+  "quelle": "Nutzerauftrag 16.11.2026; Fensterrechtecke wie oben gemessen",
+  "fenster_offen": 37,
+  "hohlraum_m3": 2997.6,
+  "hinweis": "ANNAHME: Wandstaerke 0,30 m (3,4 mm bei 1:87), Innenraum ohne Decken/Zwischenwaende; Rahmen, Pfosten und Kaempfer bleiben als Staebe in der Oeffnung",
+  "seite_name": "wand"
  }
 ]

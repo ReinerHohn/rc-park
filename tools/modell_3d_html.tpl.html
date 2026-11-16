@@ -88,7 +88,7 @@ szene.add(new THREE.HemisphereLight(0xffffff, 0x6b5a48, 0.75)); const sonne = ne
 // Modell
 const mv = new Float32Array(dec(DATA.mv).buffer), mf = new Uint32Array(dec(DATA.mf).buffer);
 const mg = new THREE.BufferGeometry(); mg.setAttribute("position", new THREE.BufferAttribute(auf3(mv, 1), 3)); mg.setIndex(new THREE.BufferAttribute(mf, 1)); mg.computeVertexNormals();
-const mmat = new THREE.MeshLambertMaterial({ color: new THREE.Color(css("--modell")), transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false });
+const mmat = new THREE.MeshPhongMaterial({ flatShading: true, shininess: 0, specular: 0x000000, color: new THREE.Color(css("--modell")), transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false });
 const modell = new THREE.Mesh(mg, mmat); modell.renderOrder = 2; szene.add(modell);
 const kanten = new THREE.LineSegments(new THREE.EdgesGeometry(mg, 25), new THREE.LineBasicMaterial({ color: new THREE.Color(css("--kante")) })); szene.add(kanten);
 // Wolke

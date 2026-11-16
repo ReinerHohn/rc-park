@@ -53,7 +53,15 @@
     0.4619
    ],
    "quer_max": 0.15,
-   "r_max": 3.0
+   "r_max": 2.9,
+   "historie": [
+    {
+     "datum": "2026-11-16",
+     "alt": "r_max 3.0",
+     "neu": "r_max 2.9",
+     "grund": "Gebaeude ist jetzt hohl (Nutzerauftrag Fenster = Loecher): die Innenflaeche der 0,30-m-Wand liegt bei 3,0 m und wurde als Reichweite mitgemessen; Sollwert 2,55..2,85 unveraendert"
+    }
+   ]
   },
   "laube_halb_o": {
    "typ": "schnitt_reichweite",
@@ -834,6 +842,12 @@
    "wer": "Claude (Modell neben Foto 113529)",
    "text": "Nordost-Fassade (Fluegel mit Laube) ist nur weiches Netz-Relief: Loggia im 1. OG (7,05 m breit, Bruestung z 6,9-8,0 mit Masswerk, offen bis z 9,83, zwei Saeulen), zwei Doppelfenster rechts (1,40 x 1,46 und ~1,47 x 1,37), Rundfenster (Steinring 1,42 m, Mitte z 2,85), Traufe z 10,0. M-113529-005..-011.",
    "naechster_schritt": "scharf bauen; offen: Masswerk der Bruestung, Saeulenform, Holzstreben der Laube, Walmdach (jetzt Laser-Sattel), Dachgelaender"
+  },
+  {
+   "datum": "2026-11-16",
+   "wer": "Nutzer",
+   "text": "Nutzer (3D-Seite V38, 06:46): 'alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden' - Fenster sind nur 12-17 cm tiefe Nischen im Vollkoerper.",
+   "naechster_schritt": "bauteile.aushoehlen (Wandstaerke ANNAHME), Fenster durchbrechen; Anzeige mit ebenen Flaechennormalen; Eckquader oben eben mit Fotokontur"
   }
  ]
 }

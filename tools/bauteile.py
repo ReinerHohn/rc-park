@@ -50,6 +50,7 @@ class Wand:
         for t_ in teiler: zus = zus + K_(t_ - b / 2, t_ + b / 2, z0 - e, z1 + e, v0, v1)
         if kaempfer: zus = zus + K_(u0 - e, u1 + e, kaempfer - b / 2, kaempfer + b / 2, v0, v1)
         for a0, c0, a1, c1 in sprossen: zus = zus + self.stab((a0, c0), (a1, c1), b_sprosse, v0, v1 - 0.01)      # Sprossen (u0, z0, u1, z1) aus fenster_aus_parsing.py, 1 cm hinter den Pfosten
+        DURCH.append((self, u0, u1, z0, z1, w - tiefe))                    # fuer aushoehlen(): Fenster = echtes Loch (Nutzer 16.11.2026)
         return K_(u0, u1, z0, z1, w - tiefe, w + 0.02), zus
     def stab(self, p, q, b, w0, w1):
         """Gerader Stab von p = (u, z) nach q = (u, z), Breite b, von w0 bis w1 vor der Wand (Zeiger, Ziffernstriche, Leisten)."""
@@ -100,6 +101,54 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
         if n_: belege.append(dict(seite="wand", element=f"{n_} Fenster Fassade {fid} (automatisch erkannt)", quelle="OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos " + ", ".join(F.get("fotos", [])[:3]),
                                   hinweis="ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME"))
     return koerper, belege
+
+
+DURCH = []   # von Wand.fenster gesammelte Oeffnungen (Wand, u0, u1, z0, z1, w der Nischenrueckwand)
+
+
+def hohlraum(koerper, d, decke=None, boden=None):
+    """Innenraum = Koerper, um die Wandstaerke d nach innen geschrumpft (Schnitt von 8 waagerecht und 2 senkrecht verschobenen Kopien = Erosion)."""
+    v = koerper; r = d * 0.7071
+    for dx, dy in ((d, 0), (-d, 0), (0, d), (0, -d), (r, r), (r, -r), (-r, r), (-r, -r)): v = v ^ koerper.translate((dx, dy, 0.0))
+    v = v ^ koerper.translate((0.0, 0.0, -(decke or d))) ^ koerper.translate((0.0, 0.0, boden or d))
+    for dx, dy in ((d, 0), (-d, 0), (0, d), (0, -d)):                    # schraeg nach oben/unten: sonst beruehrt der Raum waagerechte Aussenflaechen (Auskragungen) entlang einer Kante (4 Flaechen an einer Kante = nicht wasserdicht)
+        for dz in (-0.5 * d, 0.5 * d): v = v ^ koerper.translate((0.7 * dx, 0.7 * dy, dz))
+    return v
+
+
+def aushoehlen(koerper, d=0.3, schnitte=(), fenster=None, min_m3=0.5, decke=None, boden=None):
+    """Nutzer 16.11.2026: "alles, was in Wirklichkeit ein Loch ist (Fenster ...), muss ein Loch werden". Gebaeude hohl (Wandstaerke d = ANNAHME), Fenster durchgebrochen.
+    fenster: Liste wie DURCH (Standard: alle bisher mit Wand.fenster gebauten); schnitte: weitere Durchbruchkoerper (Rundfenster, Schlitze).
+    Nur Hohlraumteile, die von einem Durchbruch erreicht werden, bleiben (sonst geschlossene Blasen = Extrakoerper im STL). Liefert (koerper, anzahl_offen, hohlraum_m3)."""
+    fenster = DURCH if fenster is None else fenster
+    cuts = [W.kasten(u0, u1, z0, z1, wr - d - 0.25, wr + 0.002) for W, u0, u1, z0, z1, wr in fenster] + list(schnitte)
+    if not cuts: return koerper, 0, 0.0
+    alle = cuts[0]
+    for c in cuts[1:]: alle = alle + c
+    raum = None; vol = 0.0
+    for t in hohlraum(koerper, d, decke, boden).decompose():
+        if t.volume() >= min_m3 and (t ^ alle).volume() > 1e-4: raum = t if raum is None else raum + t; vol += t.volume()
+    offen = sum(1 for c in cuts if raum is not None and (c ^ raum).volume() > 1e-5)
+    erg = (koerper - raum if raum is not None else koerper) - alle
+    teile = erg.decompose()                                               # Spaene zwischen Hohlraum und Boegen/Nischen schweben frei (5 Extrakoerper am Nachbarhaus) -> weg
+    if len(teile) > 1:
+        gross = [t for t in teile if t.volume() >= 0.05]; erg = gross[0]
+        for t in gross[1:]: erg = erg + t
+    return kneifkanten_schliessen(erg), offen, vol
+
+
+def kneifkanten_schliessen(koerper, r=0.02, runden=3):
+    """Kanten, an denen sich der Koerper nur beruehrt (4 Flaechen an einer Kante, z. B. Hohlraum tippt an eine Nische): im STL 'nicht wasserdicht'.
+    Um jede solche Kante einen kleinen Klotz (r) auffuellen - schliesst die Beruehrung, oeffnet nie ein Loch."""
+    for _ in range(runden):
+        me = koerper.to_mesh(); V = np.array(me.vert_properties)[:, :3].astype(np.float64); F = np.asarray(me.tri_verts)
+        vq, inv = np.unique(np.round(V, 4), axis=0, return_inverse=True); F = inv.ravel()[F]; F = F[(F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])]
+        e = np.sort(np.r_[F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]], axis=1); u, cnt = np.unique(e, axis=0, return_counts=True); bad = u[cnt > 2]
+        if not len(bad): break
+        o = np.array([[sx, sy, sz] for sx in (-r, r) for sy in (-r, r) for sz in (-r, r)])
+        for a_, b_ in vq[bad]: koerper = koerper + M.hull_points(np.r_[a_ + o, b_ + o].tolist())
+        print("kneifkanten:", [(np.round(a_, 2).tolist(), np.round(b_, 2).tolist()) for a_, b_ in vq[bad]])
+    return koerper
 
 
 def massstab(koerper, faktor, drehpunkt): return koerper.translate((-drehpunkt[0], -drehpunkt[1], -drehpunkt[2])).scale((faktor, faktor, faktor)).translate(drehpunkt)

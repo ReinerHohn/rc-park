@@ -118,6 +118,14 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     beleg("wand", "Durchfahrt (zweiter Torbogen) Nord und Sued", "foto_mass.py auf den Fassadenebenen, Fotos 113310 (Nord) und commons 217 (Sued): M-113310-001..-004, M-commons217-001..-003", nord_halbe_breite=3.20,
           nord_scheitel=6.35, nord_kaempfer=3.90, sued_halbe_breite=3.15, sued_scheitel=6.39, sued_kaempfer=4.05,
           hinweis="ANNAHME: Boegen symmetrisch (in den Fotos ist nur die turmseitige Haelfte zu sehen; Spannweite passt zum Netz), Kreisboegen, Durchfahrt gerade von Nord nach Sued")
+    koerper = koerper - WN.kasten(-1.95, -1.25, 10.9, 30.0, 3.3, 3.75)     # 9 x 22 cm duenner Pfahl (z 11-18) am Rand des Laser-Hoehenfelds neben dem Giebelfreischnitt: Rest ohne Vorbild, weg
+    # ---- 16.11.2026 FENSTER ALS ECHTE LOECHER (Nutzer: "alles, was in Wirklichkeit durch ein Loch ist, zum Beispiel Fenster, muessen Loecher werden") ----
+    if os.environ.get("OHNE_HOHL") != "1":
+        from bauteile import aushoehlen
+        koerper, n_offen, v_hohl = aushoehlen(koerper, d=0.30, schnitte=[WL.scheibe(-0.06, 2.85, 0.76, -0.75, -0.14), WN.kasten(2.09, 4.45, 8.0, 9.575, -0.75, -0.19) - WN.kasten(2.80, 2.93, 7.9, 9.7, -0.21, 0.03) - WN.kasten(3.65, 3.78, 7.9, 9.7, -0.21, 0.03)])
+        beleg("wand", f"Gebaeude hohl, {n_offen} Fenster durchgebrochen", "Nutzerauftrag 16.11.2026; Fensterrechtecke wie oben gemessen", fenster_offen=n_offen, hohlraum_m3=round(v_hohl, 1),
+              hinweis="ANNAHME: Wandstaerke 0,30 m (3,4 mm bei 1:87), Innenraum ohne Decken/Zwischenwaende; Rahmen, Pfosten und Kaempfer bleiben als Staebe in der Oeffnung")
+        print(f"hohl: {n_offen} Durchbrueche erreichen den Innenraum, Hohlraum {v_hohl:.0f} m3")
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json
