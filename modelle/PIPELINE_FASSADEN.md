@@ -273,3 +273,12 @@ Nachtrag 16.11. ~14:00:
 - GRENZE Einzelfoto: Verdeckung wird nur gegen das MODELL geprueft. Ein Baum (nicht im Modell) wurde auf der Suedseite zu "Steinen" - dort das Mehrfoto-Fassadenbild nehmen (fassade_fein erkennt Verdecker ueber Parallaxe).
   `fassade_ein_foto auto` kennt keine Baeume: Ergebnis immer ansehen. OFFEN: Verdecker-Test auch fuer Einzelfotos (Vergleich mit einem zweiten Foto).
 - Kruemelfilter beim STL-Schreiben arbeitet jetzt ueber gemeinsame KANTEN (wie trimesh.split); ueber gemeinsame Ecken blieb ein 6-Flaechen-Kruemel als zweiter Koerper.
+
+Nachtrag 16.11. ~15:00 - IN DER KETTE:
+- `steine_aus_foto.py --foto auto`: waehlt das beste vertrauenswuerdige Foto fuer das Feld selbst; VERDECKER ausserhalb des Modells (Baum) ueber ein Gegenfoto von anderem Standort:
+  oertliche Korrelation der normierten Helligkeit auf der Wandebene < 0,25 bei vorhandener Struktur = widerspruechlich = keine Daten. Test Sued (Baum in beiden Fotos): 89 % ausgeblendet (richtig);
+  West mit eigenem Gegenfoto: 41 % ausgeblendet - ob das zu streng ist, ist NICHT geprueft (Schwellen an einem Bauwerk).
+- `fassaden_kette.py --fotosteine [--foto_ab 10] [--nachbar_stl ...]` = Stufe 5c; `anbauen()` setzt `<wand>_foto.npz` vor das grobe Relief. `gesamtkette.py` ruft die Kette mit `--fotosteine`. NUR SYNTAXGEPRUEFT, nicht gelaufen.
+- `bauteile.spitzbogen`: gedrueckter Bogen (Stich < halbe Breite) = zwei Kreisboegen mit Mittelpunkten 0,3 x halbe Breite unter der Kaempferlinie. Dritte Fassung an einem Tag:
+  waagerechter Sturz (falsch) -> Vier-Zentren (Nutzer: "spitzes Fehlerding") -> diese; am Bild neben Foto 217 passt die Form. Lehre: Bogenform IMMER am Bild neben dem Foto pruefen, bevor veroeffentlicht wird.
+- Bogensteine der Tore werden NICHT generiert (Nutzerregel 15.11.: nichts Kuenstliches im Tor; die echten stehen im Scan-Relief).

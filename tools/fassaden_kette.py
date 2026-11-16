@@ -7,6 +7,7 @@ Was am 15.11.2026 am Schwabentor von Hand lief, in einem Lauf (Nutzer: "Baue all
   3. relief_einsatz.py (Hoehenbild aus dem Netz, ab z 0, mit Oeffnungsmaske) -> relief/<wand>.npz
   4. relief_putz.py (Putz eben ueber die Fotofarbe) -> <wand>_putz.npz        (faellt weg, wenn kein Putz gefunden)
   5. steine_generieren.py (Loecher ausserhalb von Putz und Oeffnungen) -> <wand>_voll.npz
+  5c. mit --fotosteine: steine_aus_foto.py --foto auto oberhalb --foto_ab -> <wand>_foto.npz (anbauen() setzt es vor das grobe Relief)
   5b. mit --fein SPARSE BILDER: tiefe_lokal.py fuer die Steinzone der Wand (1 cm, GPU) + relief_mischen.py -> <wand>_misch.npz (2 cm), wird von anbauen() vor das grobe Relief gesetzt.
   6. Bericht audit/fassaden_kette.json (Wand, Fotos, Loch-/Putz-/Generiert-Anteile) + je Wand das Bild relief/<wand>_voll.jpg zum ANSEHEN.
 Im Generator: `from fassaden_kette import anbauen; koerper = anbauen(koerper, OBJ)` vereinigt alle *_voll.npz (nur innerhalb der nach aussen verschobenen Koerperhuelle).
@@ -55,7 +56,9 @@ def anbauen(koerper, objekt_json, tiefe=0.4):
         f = os.path.join(od, "relief", w["name"] + "_voll.npz")
         if not os.path.exists(f) or w.get("aus"): continue
         Z = np.load(f); n = Z["n"]; hu = koerper + koerper.translate((0.8 * n[0], 0.8 * n[1], 0.0)); fm = os.path.join(od, "relief", w["name"] + "_misch.npz"); tf = [tuple(w["fein_feld"])] if w.get("fein_feld") and os.path.exists(fm) else []
-        koerper = koerper + (relief_koerper(f, tiefe=tiefe, trend=True, tief_felder=tf) ^ hu)
+        ff = os.path.join(od, "relief", w["name"] + "_foto.npz"); hat_foto = bool(w.get("foto_feld")) and os.path.exists(ff)
+        koerper = koerper + (relief_koerper(f, tiefe=tiefe, trend=True, tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else [])) ^ hu)
+        if hat_foto: koerper = koerper + (relief_koerper(ff, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu); belege.append(dict(seite="wand", element=f"Quader mit Fugen aus dem Foto, Fassade {w['name']} ab z {w['foto_feld'][2]:.0f} m", quelle="tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)", steine=w.get("foto_steine"), hinweis="Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen"))
         if tf: koerper = koerper + (relief_koerper(fm, tiefe=tiefe, trend=True) ^ hu)                 # lokale Feinrechnung (tools/tiefe_lokal.py + relief_mischen.py) vor dem groben Relief
         belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} (Fassaden-Kette)", quelle="Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (" + ", ".join(w.get("fotos", [])[:3]) + "); Loecher generiert",
                            generiert_anteil=w.get("generiert"), hinweis="Scan-Relief, kein Mass; generierte Steine = ANNAHME"))
@@ -65,7 +68,7 @@ def anbauen(koerper, objekt_json, tiefe=0.4):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--netz", required=True); ap.add_argument("--wand", nargs=8, action="append", default=[]); ap.add_argument("--min_laenge", type=float, default=3.0)
     ap.add_argument("--px", type=float, default=0.05); ap.add_argument("--massstab", nargs=4, help="wie relief_putz.py (Relief im Rohrahmen)")
-    ap.add_argument("--fein", nargs=2, metavar=("SPARSE", "BILDER"), help="je Wand zusaetzlich die lokale Feinrechnung der Tiefe fuer die Steinzone (tools/tiefe_lokal.py, GPU, ~11 min je Wand) und relief_mischen.py"); ap.add_argument("--fein_max_size", default="3200"); a = ap.parse_args()
+    ap.add_argument("--fotosteine", action="store_true", help="Stufe 5c: Quader mit Fugen aus dem besten Foto oberhalb --foto_ab (tools/steine_aus_foto.py --foto auto)"); ap.add_argument("--foto_ab", type=float, default=10.0); ap.add_argument("--nachbar_stl", default="", help="STL der Nachbarobjekte fuer die Verdeckung"); ap.add_argument("--fein", nargs=2, metavar=("SPARSE", "BILDER"), help="je Wand zusaetzlich die lokale Feinrechnung der Tiefe fuer die Steinzone (tools/tiefe_lokal.py, GPU, ~11 min je Wand) und relief_mischen.py"); ap.add_argument("--fein_max_size", default="3200"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); rd = os.path.join(od, "relief"); os.makedirs(rd, exist_ok=True)
     W = [dict(name=w[0], a=[float(w[1]), float(w[2])], b=[float(w[3]), float(w[4])], aussen=[float(w[5]), float(w[6])], z1=float(w[7])) for w in a.wand] or waende_aus_lod2(od, a.min_laenge)
     def lauf(cmd):
@@ -83,6 +86,11 @@ def main():
             quelle = r1; w["putz"] = round(float(np.load(r1)["putz"].mean()), 3)
         if lauf([os.path.join(HIER, "steine_generieren.py"), quelle, r2, "--max_loch_m2", "1.5"]) == 0: w["generiert"] = round(float(np.load(r2)["generiert_anteil"]), 3)
         else: w["aus"] = "steine_generieren fehlgeschlagen"; continue
+        if a.fotosteine and "putz" in np.load(quelle).files and w["z1"] > a.foto_ab + 2.0:      # 16.11.2026 Stufe 5c: oberhalb --foto_ab (Strassenfotos zu flach fuer brauchbares Scan-Relief) Quader/Gewaende/Baender
+            rfo = os.path.join(rd, w["name"] + "_foto.npz"); stl_ = os.path.join(os.path.dirname(os.path.dirname(od)), json.load(open(a.objekt))["stl"])                                 # mit Fugen aus dem BESTEN Foto, direkt auf der Wandebene, Verdeckung gegen das Modell + Gegenfoto (Baeume)
+            if os.path.exists(stl_) and lauf([os.path.join(HIER, "steine_aus_foto.py"), quelle, rfo, "-", "0", "-", "--foto", "auto", "--objekt", a.objekt, "--stl", stl_ + ("," + a.nachbar_stl if a.nachbar_stl else ""),
+                                              "--feld", "0.1", str(round(L - 0.1, 2)), str(a.foto_ab), str(w["z1"]), "--px", "0.03", "--nah", "0"] + (["--massstab", *a.massstab] if a.massstab else [])) == 0 and os.path.exists(rfo):
+                w["foto_feld"] = [0.0, round(L, 2), a.foto_ab, round(float(w["z1"]), 2)]; w["foto_steine"] = int(np.load(rfo)["steine"])
         if a.fein:                                                        # Steinzone = Zeilen mit >= 30 % echtem Nicht-Putz-Relief; zusammenhaengender Block von unten, hoechstens 12 m
             Zv = np.load(r2); rel_ = Zv["rel"]; H_ = rel_.shape[0]; pz = Zv["putz"] if "putz" in Zv.files else np.zeros_like(rel_, bool); pz = np.vstack([pz, np.zeros((H_ - pz.shape[0], pz.shape[1]), bool)]) if pz.shape[0] < H_ else pz
             stein = ((rel_ != 0) & ~pz).mean(1) >= 0.3; k_ = H_
