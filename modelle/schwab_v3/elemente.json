@@ -273,10 +273,10 @@
  },
  {
   "seite": "wand",
-  "element": "Eckquader Ost im Obergeschoss (Kontur aus dem Foto)",
-  "quelle": "entzerrtes Einzelfoto od_15 (tools/fassade_ein_foto.py) -> relief_putz.py -> steine_aus_foto.py; Streifenbreiten M-od_15-003/-004 (1,39 / 1,29 m)",
-  "steine": 77,
-  "hinweis": "Kontur (Verzahnung) aus dem Foto; Fugen unsicher (Seite im Schatten, 1,6 cm/px); unter dem Gesims (z < 26,9) verdeckt das Nachbardach - dort glatte Wand",
+  "element": "Eckquader Ost (Obergeschoss beide Ecken, unter dem Gesims Suedost-Ecke bis z 22,5)",
+  "quelle": "entzerrtes Einzelfoto dl_openverse__ov_0005 (Flickr, Jorge Franganillo, CC BY 2.0; automatisch geladen/registriert, Kamera mit kamera_verfeinern.py am Modell nachgezogen: 1404 Inlier, 5 cm) -> relief_putz.py -> steine_aus_foto.py; Gegenprobe Streifenbreiten M-od_15-003/-004 (1,39 / 1,29 m)",
+  "steine": 131,
+  "hinweis": "Kontur und Fugen aus einem Sonnenfoto mit 2,9 cm/px (Fugen an der Aufloesungsgrenze); unter dem Gesims verdeckt das Nachbardach alles ausser dem Suedost-Eckstreifen",
   "seite_name": "wand"
  },
  {
@@ -294,7 +294,7 @@
   "element": "Turm hohl, 8 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
   "quelle": "Nutzerauftrag 16.11.2026; Fenstermasse wie oben",
   "fenster_offen": 8,
-  "hohlraum_m3": 3704.0,
+  "hohlraum_m3": 3704.2,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
   "seite_name": "wand"
  }

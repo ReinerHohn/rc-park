@@ -260,8 +260,8 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     WO = Wand((-7.25, 9.40), (3.50, 9.73), aussen=(-2.0, 0.0)); _fo_ost = os.path.join(HERE, "schwab_v3", "relief", "ost_foto.npz")
     if os.path.exists(_fo_ost) and os.environ.get("OHNE_RELIEF") != "1":
         koerper = koerper + relief_koerper(_fo_ost, tiefe=0.30, rand_auslauf=False)
-        beleg("wand", "Eckquader Ost im Obergeschoss (Kontur aus dem Foto)", "entzerrtes Einzelfoto od_15 (tools/fassade_ein_foto.py) -> relief_putz.py -> steine_aus_foto.py; Streifenbreiten M-od_15-003/-004 (1,39 / 1,29 m)", steine=int(np.load(_fo_ost)["steine"]),
-              hinweis="Kontur (Verzahnung) aus dem Foto; Fugen unsicher (Seite im Schatten, 1,6 cm/px); unter dem Gesims (z < 26,9) verdeckt das Nachbardach - dort glatte Wand")
+        beleg("wand", "Eckquader Ost (Obergeschoss beide Ecken, unter dem Gesims Suedost-Ecke bis z 22,5)", "entzerrtes Einzelfoto dl_openverse__ov_0005 (Flickr, Jorge Franganillo, CC BY 2.0; automatisch geladen/registriert, Kamera mit kamera_verfeinern.py am Modell nachgezogen: 1404 Inlier, 5 cm) -> relief_putz.py -> steine_aus_foto.py; Gegenprobe Streifenbreiten M-od_15-003/-004 (1,39 / 1,29 m)", steine=int(np.load(_fo_ost)["steine"]),
+              hinweis="Kontur und Fugen aus einem Sonnenfoto mit 2,9 cm/px (Fugen an der Aufloesungsgrenze); unter dem Gesims verdeckt das Nachbardach alles ausser dem Suedost-Eckstreifen")
     koerper = koerper + WO.kasten(0.0, WO.laenge, 26.0, 26.53, -0.05, 0.10)                                        # Gesims Ost: im Foto bei z 26,75 +- 0,2 (M-od_15-005), Hoehe wie Sued/West uebernommen
     koerper = koerper + WO.kasten(5.54 - 0.15, 5.54 + 0.15, 33.05, 33.6, -0.05, 0.25)                             # Balkenkopf Ost z 33,3 (M-od_15-005)
     O_SCHL = (5.47 - 0.12, 5.47 + 0.12, 28.0, 30.42); O_BOG = b_rund(0.92, 22.76, 24.15)                         # Schlitz 2,42 m hoch (M-od_15-001), Breite 0,33 +- 0,07 gemessen -> 0,24 wie die Westschlitze; Bogenfenster halb verdeckt (M-od_15-007), Breite wie Sued
