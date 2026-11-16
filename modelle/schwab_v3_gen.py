@@ -247,13 +247,16 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     TT_C, TT_R, TT_ZW, TT_RT = (1.85, 22.49), 1.555, 11.0, 1.85
     koerper = koerper - M.cube((5.4, 4.0, 16.0)).translate((-1.6, 21.03, -0.5))                                 # alten Anbau westlich der Westwand entfernen
     TT_PROF = [(0.0, 0.0), (TT_R, 0.0), (TT_R, TT_ZW), (1.70, 11.25), (TT_RT, 11.45), (TT_RT + 0.01, 11.57), (1.45, 11.92), (1.0, 12.37), (0.61, 12.80), (0.27, 13.20), (0.08, 13.50), (0.035, 13.9), (0.03, 14.52), (0.0, 14.52)]
-    turm = M.revolve(CrossSection([[list(p_) for p_ in TT_PROF]]), 64) + M.sphere(0.16, 24).translate((0, 0, 14.6))
+    # 16.11.2026 (Nutzer: "kein Runddach rundherum, zum grossen Turm hin angebautes Dach; kleine Fensterchen"): Haube 12-eckig (Kupferbahnen im Foto), Schaft rund;
+    # Anschlussdach zur Turmwand: Dach trifft die Wand bei x 1,22 in z 12,47 (Foto 047, Ebene der Westwand) - First vom Haubenhals zur Wand (Firsthoehe ANNAHME aus diesem einen Punkt)
+    turm = M.revolve(CrossSection([[list(p_) for p_ in TT_PROF[:3]] + [[0.0, TT_ZW]]]), 64) + M.revolve(CrossSection([[[0.0, TT_ZW - 0.01]] + [list(p_) for p_ in TT_PROF[2:]]]), 12).rotate((0, 0, 15.0)) + M.sphere(0.16, 24).translate((0, 0, 14.67))
+    turm = turm + M.hull_points([[0.0, -0.25, 13.35], [0.0, -1.75, 13.25]] + [[sx_ * 1.30, -1.75, 11.6] for sx_ in (-1, 1)] + [[sx_ * 1.55, -0.75, 11.6] for sx_ in (-1, 1)] + [[sx_ * 1.2, -1.75, 11.4] for sx_ in (-1, 1)])
     if os.environ.get("OHNE_HOHL") != "1": turm = turm - M.cylinder(10.6, TT_R - float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0, TT_R - float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0, 48).translate((0, 0, 0.5))      # 16.11.2026 Nutzer: Fenster = echte Loecher -> Treppenturm hohl (Wand 0,35 m ANNAHME); im Hauptturm fuellt dessen Mauer den Hohlraum wieder
-    for wz_, z_ in ((-35.0, 10.7), (35.0, 10.7), (-60.0, 8.0), (10.0, 6.2), (-35.0, 4.0)):                       # Schlitzfenster (Lage nach Foto 054/192 abgelesen, 0,12 x 0,6 m, 15 cm tief: ANNAHME)
-        turm = turm - M.cube((0.7, 0.12, 0.6)).translate((TT_R - 0.45, -0.06, z_ - 0.3)).rotate((0, 0, 140.0 + wz_))
+    for az_, z_, h_ in ((102.0, 10.22, 0.63), (-173.0, 10.21, 0.58), (-173.5, 8.49, 0.63)):                     # 3 Schlitzfenster GEMESSEN (tools/zylinder_mass.py: Fotos commons 047 und 054 stimmen auf 1-9 cm ueberein); Breite 0,13 m; die 5 angenommenen entfallen
+        turm = turm - M.cube((0.7, 0.13, h_)).translate((TT_R - 0.45, -0.065, z_ - h_ / 2)).rotate((0, 0, az_))
     koerper = koerper + turm.translate((TT_C[0], TT_C[1], 0.0))
     beleg("wand", "Treppenturm (Zylinder, Gesims, geschweifte Haube mit Stange und Kugel)", "foto_mass.py auf der Ebene durch die Turmachse, Foto commons 054 (M-054-001..-005), Gegenprobe Foto commons 192; Lage/Radius aus dem Kreisausgleich der dichten Wolke (r 1,54-1,57, Rest 2 cm)",
-          radius=TT_R, traufradius=TT_RT, traufe=11.57, spitzenansatz=13.5, kugel=14.6, hinweis="ANNAHME: Schlitzfenster nur ungefaehr (Lage am Foto abgelesen), Gesimsprofil vereinfacht; Blechbahnen der Haube fehlen")
+          radius=TT_R, traufradius=TT_RT, traufe=11.57, spitzenansatz=13.5, kugel=14.6, hinweis="3 Schlitzfenster gemessen (zylinder_mass.py, 2 Fotos); Haube 12-eckig; Anschlussdach zur Turmwand: nur ein Punkt gemessen (z 12,47 bei x 1,22), Firsthoehe und Form ANNAHME; weitere Schlitze auf der Nord-/Rueckseite nicht einsehbar")
     # ---- 16.11.2026 HOLZFRIES unter der Traufe (feines Fassadenbild Nord/Sued, Fernfoto 110756): Rahmenwerk z 34,95-36,55 mit Schwelle, Raehm und Pfosten vor der Wand ----
     FR_E = [(3.49, 9.63), (3.32, 20.97), (-7.36, 20.58), (-7.03, 9.36)]; FR_M = (-1.9, 15.2)                    # Wandecken bei z 35,6 (aus dem Modellschnitt), NO, NW, SW, SO
     from bauteile import umgang as _umgang                    # 16.11.2026 Nutzer (Fremdfoto NO): "oben unterm Dach ist eine Einkerbung, da kann man rumlaufen" -> offener Umgang statt Fries vor der Wand; generisch bauteile.umgang

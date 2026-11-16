@@ -29,16 +29,32 @@ def linien(m, min_len):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("relief"); ap.add_argument("aus"); ap.add_argument("fassaden"); ap.add_argument("nr", type=int); ap.add_argument("ortho")
+    ap = argparse.ArgumentParser(); ap.add_argument("relief"); ap.add_argument("aus"); ap.add_argument("fassaden"); ap.add_argument("nr"); ap.add_argument("ortho")
     ap.add_argument("--feld", nargs=4, type=float, required=True); ap.add_argument("--px", type=float, default=0.02); ap.add_argument("--fuge", type=float, default=0.03); ap.add_argument("--massstab", nargs=4, type=float)
-    ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 ohne Steine (Vordach, Wandbild: Generator baut dort selbst)"); ap.add_argument("--bosse", type=float, default=0.04, help="Buckel der Steinflaeche (m), 0 = eben"); ap.add_argument("--putz_s", type=float, default=0.22); ap.add_argument("--nah", type=float, default=0.25, help="Stein nur so nah (m) an der groben Steinmaske; 0 = aus (Wand ohne Wandbilder: sonst gehen Steinbaender verloren, die die grobe Maske nicht kennt)"); ap.add_argument("--duenn", type=float, default=0.12, help="Steinflaechen duenner als dies (m) verwerfen; 0 = aus"); ap.add_argument("--putz_v", type=float, default=0.45)
+    ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 ohne Steine (Vordach, Wandbild: Generator baut dort selbst)"); ap.add_argument("--bosse", type=float, default=0.04, help="Buckel der Steinflaeche (m), 0 = eben"); ap.add_argument("--putz_s", type=float, default=0.22); ap.add_argument("--foto", help="statt des Orthos: Bild direkt aus diesem kalibrierten Foto auf der Reliefebene lesen (fassaden/nr/ortho dann als - - 0 - angeben)"); ap.add_argument("--objekt"); ap.add_argument("--stl", help="Modell-STL(s) fuer die Verdeckungspruefung"); ap.add_argument("--rand", type=float, default=0.3); ap.add_argument("--nah", type=float, default=0.25, help="Stein nur so nah (m) an der groben Steinmaske; 0 = aus (Wand ohne Wandbilder: sonst gehen Steinbaender verloren, die die grobe Maske nicht kennt)"); ap.add_argument("--duenn", type=float, default=0.12, help="Steinflaechen duenner als dies (m) verwerfen; 0 = aus"); ap.add_argument("--putz_v", type=float, default=0.45)
     ap.add_argument("--schwelle", type=float, default=2.4, help="Fuge ab so vielen Standardabweichungen der Abweichung vom oertlichen Median"); a = ap.parse_args()
     Z = dict(np.load(a.relief)); rel = Z["rel"].astype(np.float32); H, W = rel.shape; rp = float(Z["px"]); u0 = float(Z["u0"]); z0 = float(Z["z0"]); A = Z["a"]; t = Z["t"]; niv = float(Z.get("putz_niveau_m", 0.0))
-    F = json.load(open(a.fassaden))["fassaden"][a.nr]; R = F["raster"]; o = np.array(F["o"]); d = np.array(F["d"]); im = cv2.imread(a.ortho)
+    if not a.foto: F = json.load(open(a.fassaden))["fassaden"][int(a.nr)]; R = F["raster"]; o = np.array(F["o"]); d = np.array(F["d"]); im = cv2.imread(a.ortho)
     f0, f1, g0, g1 = a.feld; c = 0.01; nu = int(round((f1 - f0) / c)); nz = int(round((g1 - g0) / c)); jj, ii = np.meshgrid(np.arange(nu), np.arange(nz)); U = f0 + (jj + 0.5) * c; ZZ = g1 - (ii + 0.5) * c
-    X = A[0] + U * t[0]; Y = A[1] + U * t[1]; Zw = ZZ
-    if a.massstab: k = a.massstab[0]; Mp = a.massstab[1:]; X = Mp[0] + k * (X - Mp[0]); Y = Mp[1] + k * (Y - Mp[1]); Zw = Mp[2] + k * (ZZ - Mp[2])
-    uo = (X - o[0]) * d[0] + (Y - o[1]) * d[1]; bild = cv2.remap(im, ((uo - R["u0"]) / R["zelle"] - 0.5).astype(np.float32), ((R["z1"] - Zw) / R["zelle"] - 0.5).astype(np.float32), cv2.INTER_LINEAR, borderValue=(0, 0, 0))
+    if a.foto:
+        # 16.11.2026: DIREKT aus dem Foto auf der WANDEBENE DES RELIEFS lesen (nicht ueber ein Ortho auf der LoD2-Fassadenebene): die LoD2-Ebene liegt bis 0,75 m neben der Wand,
+        # bei schraegem Blick verschiebt das den Bildinhalt seitlich um Dezimeter (West Schwabentor: Nordwestecke erschien 1 m zu frueh, dahinter "Steine" aus Himmel).
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import glob, fassade_ein_foto as FE
+        nv_ = Z["n"]; tu_, tz_ = [float(v) for v in Z["trend_je_m"]]; dpl = float(Z["ebene_abstand_m"]) + tu_ * (U - u0) - tz_ * ((z0 + H * rp) - ZZ)
+        X = A[0] + U * t[0] + dpl * nv_[0]; Y = A[1] + U * t[1] + dpl * nv_[1]; Zw = ZZ
+        if a.massstab: k = a.massstab[0]; Mp = a.massstab[1:]; X = Mp[0] + k * (X - Mp[0]); Y = Mp[1] + k * (Y - Mp[1]); Zw = Mp[2] + k * (ZZ - Mp[2])
+        od_ = os.path.dirname(os.path.abspath(a.objekt)); root_ = os.path.dirname(os.path.dirname(od_)); obj_ = json.load(open(a.objekt)); Kc = FE.kamera(os.path.join(od_, "messprotokoll", "K-" + a.foto + ".json")); mm_ = None; rk_ = None
+        if a.stl:
+            import trimesh, render_kern as rk_
+            ms_ = [trimesh.load(q_) for q_ in a.stl.split(",")]; mm_ = trimesh.util.concatenate(ms_) if len(ms_) > 1 else ms_[0]; mm_.apply_scale(float(obj_.get("stl_massstab", 87)) / 1000.0)
+        P_ = np.stack([X, Y, Zw], -1).reshape(-1, 3); ok_, mx_, my_, zc_ = FE.sichtbar(mm_, Kc, P_, rk_, tol=0.6)
+        if a.stl and a.rand > 0: ok_ = cv2.erode(ok_.reshape(U.shape).astype(np.uint8), np.ones((2 * int(a.rand / c) + 1,) * 2, np.uint8)).astype(bool).ravel()
+        im = cv2.imread(glob.glob(os.path.join(root_, obj_["fotos_dir"], a.foto + ".*"))[0]); bild = cv2.remap(im, mx_.astype(np.float32).reshape(U.shape), my_.astype(np.float32).reshape(U.shape), cv2.INTER_LINEAR, borderValue=(0, 0, 0)); bild[~ok_.reshape(U.shape)] = 0
+        print(f"Foto {a.foto[-40:]}: {np.median(zc_[ok_]) / Kc['f_px'] * 100:.1f} cm/px an der Wand, {ok_.mean() * 100:.0f} % des Feldes sichtbar")
+    else:
+        X = A[0] + U * t[0]; Y = A[1] + U * t[1]; Zw = ZZ
+        if a.massstab: k = a.massstab[0]; Mp = a.massstab[1:]; X = Mp[0] + k * (X - Mp[0]); Y = Mp[1] + k * (Y - Mp[1]); Zw = Mp[2] + k * (ZZ - Mp[2])
+        uo = (X - o[0]) * d[0] + (Y - o[1]) * d[1]; bild = cv2.remap(im, ((uo - R["u0"]) / R["zelle"] - 0.5).astype(np.float32), ((R["z1"] - Zw) / R["zelle"] - 0.5).astype(np.float32), cv2.INTER_LINEAR, borderValue=(0, 0, 0))
     daten = bild.max(2) > 8; grau = cv2.cvtColor(bild, cv2.COLOR_BGR2GRAY).astype(np.float32)
     def gross(x, interp=cv2.INTER_LINEAR): return cv2.remap(x, ((U - u0) / rp - 0.5).astype(np.float32), (H - (ZZ - z0) / rp - 0.5).astype(np.float32), interp, borderMode=cv2.BORDER_REPLICATE)
     putz = gross(Z["putz"].astype(np.float32)) > 0.5; grob = gross(rel)

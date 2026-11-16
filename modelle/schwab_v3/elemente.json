@@ -268,7 +268,7 @@
   "traufe": 11.57,
   "spitzenansatz": 13.5,
   "kugel": 14.6,
-  "hinweis": "ANNAHME: Schlitzfenster nur ungefaehr (Lage am Foto abgelesen), Gesimsprofil vereinfacht; Blechbahnen der Haube fehlen",
+  "hinweis": "3 Schlitzfenster gemessen (zylinder_mass.py, 2 Fotos); Haube 12-eckig; Anschlussdach zur Turmwand: nur ein Punkt gemessen (z 12,47 bei x 1,22), Firsthoehe und Form ANNAHME; weitere Schlitze auf der Nord-/Rueckseite nicht einsehbar",
   "seite_name": "wand"
  },
  {
@@ -302,7 +302,7 @@
   "element": "Turm hohl, 8 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
   "quelle": "Nutzerauftrag 16.11.2026; Fenstermasse wie oben",
   "fenster_offen": 8,
-  "hohlraum_m3": 3705.2,
+  "hohlraum_m3": 3706.1,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
   "seite_name": "wand"
  }
