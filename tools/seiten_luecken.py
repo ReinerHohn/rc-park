@@ -62,7 +62,7 @@ def main():
     zeilen += [f"ln -sf \"{f}\" {Z}/roh/" for f in kand]
     zeilen += [f"{VC} {T}/zusatzfotos_registrieren.py vorbereiten --fotos {Z}/roh --aus {Z} --unten 0.0", f"{VC} {T}/zusatzfotos_registrieren.py merkmale --ref-db {a.ref_db} --sparse {a.sparse} --aus {Z}",
                f"{VC} {T}/zusatzfotos_lightglue.py refnamen --ziel {Z} --ref-sparse {a.sparse}", f"{VS} {T}/zusatzfotos_lightglue.py paare --ziel {Z} --ref-sparse {a.sparse} --ref-bilder {fd}",
-               f"{VC} {T}/zusatzfotos_lightglue.py einlesen --ziel {Z} --ref-db {a.ref_db} --ref-sparse {a.sparse}", f"{VC} {T}/zusatzfotos_registrieren.py registrieren --sparse {Z}/lg/ref_tri --aus {Z}/lg --kalibrieren", "echo NACHHOLEN_FERTIG"]
+               f"{VC} {T}/zusatzfotos_lightglue.py einlesen --ziel {Z} --ref-sparse {a.sparse}", f"{VC} {T}/zusatzfotos_registrieren.py registrieren --sparse {Z}/lg/ref_tri --aus {Z}/lg --kalibrieren", "echo NACHHOLEN_FERTIG"]
     sk = os.path.join(audit, "seiten_luecken_holen.sh"); open(sk, "w").write("\n".join(zeilen) + "\n"); os.chmod(sk, 0o755)
     if ung and kand:                                                          # Kontaktbogen der Kandidaten zum Ansehen
         Tn = 200; kacheln = []

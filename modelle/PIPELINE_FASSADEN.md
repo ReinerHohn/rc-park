@@ -163,3 +163,22 @@ Stufe (nach `fenster`, braucht dessen `fassade/fassaden.json`): `tools/seiten_lu
 5. Danach `fassade_ortho`/`fassade_fein` fuer die Wand neu. Bleibt sie leer, obwohl ein Foto sie zeigt: Kamera aus gemessenen Modellpunkten + `fassade_ein_foto.py` (Abschnitt "Ungesehene Seite").
 NICHT GEGANGEN: Aufloesungsgrenze (`--max-mpp`) fuer die leere Wand lockern - 24 "passende" registrierte Kameras (Videobilder in 40 m Hoehe) ergaben ein Mischbild fremder Daecher (Posen falsch). Nicht einbauen ohne Uebereinstimmungs-Tor.
 STAND: Erkennung, Kandidatenliste, Openverse-Abruf einzeln gelaufen; der Gesamtablauf (Download + Nachregistrierung + neue Orthos) ist noch NICHT einmal komplett durchgelaufen; Stufe in gesamtkette.py nur syntaxgeprueft.
+
+## Vorbauten automatisch: Ebenen-Sweep je Fassade (`tools/fassade_tiefe.py`, 16.11.2026) - ERSTE FASSUNG, nur Vorschlaege
+Nutzer: Balkon vor der Wand braucht eine eigene Messebene - "mache den naechsten Automatisierungsschritt".
+Prinzip: jede Wandzelle in Schritten von 5 cm vor/hinter die Wandebene schieben, in alle Fotos projizieren; wo die Fotos uebereinstimmen, liegt die echte Tiefe.
+Haeufigste Tiefe = die Wand selbst (meldet den Versatz der LoD2-Ebene), Abweichungen >= 0,25 m in drei Tiefenklassen = Kandidaten mit `ebene` fuer `foto_mass.py`.
+Aufruf: `fassade_tiefe.py <objekt.json> <fassaden-ordner> <nr>` -> `tiefe_fNN.jpg` (ANSEHEN), `vorbauten_fNN.json`. Laufzeit 4 s je Fassade (GPU). In der Kette: Stufe `seiten` (vor seiten_luecken).
+Ergebnis Schwabentor:
+- Nord (12 Fotos, Standorte bis 36 m auseinander): belastbar. Die zwei groessten Kandidaten sind die echten Vorbauten: Galerie (u -3,98..4,30, z 9,4-13,2, w +1,15; gemessen Breite 8,06 m, Ausladung ~1,45 m)
+  und Vordach (z 14,7-19,2, w +1,00; schraeg, gemessen 1,54 m an der Traufe). Tiefe ~0,3 m zu klein (Mischung mit Streben/Schraege). Wandversatz -0,25 m. Fensternischen und offenes Wandbild hinter der Galerie sind im Tiefenbild zu sehen.
+  Daneben 20+ kleine Fehlkandidaten (Fahrdraehte, Nachbarhaus am Bildrand, Tordurchfahrt).
+- Sued (8 Fotos, Baum davor): Wandversatz -0,75 m = der bekannte LoD2-Fehler der Suedwand, aber am Rand des Suchbereichs -> Tor lehnt ab; mit `--w -1.8 1.8` kommen Fehlkandidaten (Uhr +1,55). NICHT brauchbar.
+- West (9 Fotos fast aus einem Punkt, steil): Tiefenbild Streifenmuster, Tor lehnt ab (26 % auf Wandtiefe).
+Tor: >= 35 % der sicheren Zellen auf der Wandtiefe, sichere Tiefe auf >= 30 % der Wand, Wandtiefe nicht am Rand des Suchbereichs; sonst rc 4, keine Kandidaten. Schwellen an EINEM Bauwerk gesetzt.
+OFFEN: Verdeckung (Baum, Nachbarhaus), Fotowahl nach Standortabstand, Kandidaten automatisch vermessen und mit `bauteile` bauen. Bis dahin: Kandidatenliste = Hinweis, wo eine zweite Ebene noetig ist.
+
+## Nachregistrieren fremder Fotos - Stand 16.11.2026
+Lauf mit 46 Fotos (13 unregistrierte + 33 Openverse): `paare` fand 472 verifizierte Paare; `einlesen` kennt kein `--ref-db` (im Skript behoben); `registrieren` brach ab:
+"existing_camera.width == camera.width (2000 vs. 1280)" - `zusatzfotos_registrieren.py` setzt EINE Kamera fuer alle Zusatzfotos (gebaut fuer Handyserien), Webfotos haben gemischte Formate.
+OFFEN: Kamera je Bildformat (`--kameras`) automatisch erzeugen; bis dahin registriert die Stufe `seiten` gemischte Webfotos NICHT.
