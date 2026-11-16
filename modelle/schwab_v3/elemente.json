@@ -197,6 +197,14 @@
  },
  {
   "seite": "wand",
+  "element": "Steingewaende des Suedfensters",
+  "quelle": "feines Mehrfoto-Fassadenbild Sued (fassade_fein) -> steine_aus_foto.py --nah 0",
+  "steine": 33,
+  "hinweis": "Kontur aus der Fotofarbe, links durch Baumreste im Fassadenbild etwas zu breit; 2-3 cm Relief als Malhilfe = ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Suedfassade: Torbogen, Fenster, Uhr, Gesims, Verdachung",
   "quelle": "foto_mass.py auf der Suedwandebene, Fotos commons 127 und 217 (M-commons127-002..-010, M-commons217-001..-003)",
   "tor_breite": 4.49,
@@ -318,7 +326,7 @@
   "element": "Turm hohl, 8 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
   "quelle": "Nutzerauftrag 16.11.2026; Fenstermasse wie oben",
   "fenster_offen": 8,
-  "hohlraum_m3": 3708.5,
+  "hohlraum_m3": 3708.6,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
   "seite_name": "wand"
  }

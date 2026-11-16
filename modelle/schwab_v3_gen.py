@@ -206,6 +206,10 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         beleg("wand", "Relief Suedwand z 0,6-34 m", "OpenMVS-Netz der neuen dichten Wolke (sfm_neu/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m, Loecher 8 %", hinweis="Scan-Relief, kein Mass; Uhr-, Fenster-, Gesims- und Verdachungsfeld ausgeblendet")
     koerper = koerper + WS.kasten(T_U - 2.7, T_U + 2.7, 0.0, 6.9, -1.0, 0.0)                     # Torwand Sued: ANNAHME 1 m stark; der Suedbogen ist niedriger als die Durchfahrt (Nord 6,42 m)
     koerper = koerper - WS.prisma(b_spitz(4.49 / 2, 3.86, 5.85), u=T_U, w0=-1.3, w1=0.6)
+    _fo_s4 = os.path.join(HERE, "schwab_v3", "relief", "sued_foto_gew.npz")           # 16.11.2026: Steingewaende des Suedfensters aus dem MEHRFOTO-Fassadenbild (das Einzelfoto zeigte dort den Baum -> Steine aus Laub, verworfen)
+    if os.path.exists(_fo_s4) and os.environ.get("OHNE_RELIEF") != "1":
+        koerper = koerper + relief_koerper(_fo_s4, tiefe=0.30, trend=True, rand_auslauf=False)
+        beleg("wand", "Steingewaende des Suedfensters", "feines Mehrfoto-Fassadenbild Sued (fassade_fein) -> steine_aus_foto.py --nah 0", steine=int(np.load(_fo_s4)["steine"]), hinweis="Kontur aus der Fotofarbe, links durch Baumreste im Fassadenbild etwas zu breit; 2-3 cm Relief als Malhilfe = ANNAHME")
     koerper = koerper - WS.prisma(b_rund(0.92, 22.26, 23.66), u=5.745, w0=-0.45, w1=0.6)        # Fenster: Tiefe ANNAHME 0,45 m; Steingewaende 2,02 m breit ist buendig (Farbe)
     koerper = koerper + WS.scheibe(5.71, 30.97, 4.95, -0.05, 0.10) - WS.scheibe(5.71, 30.97, 3.16, 0.06, 0.4)   # Uhr: Ring 10 cm, Innenfeld 6 cm vor der Wand (ANNAHME wie Nord)
     koerper = koerper + WS.zifferblatt(5.71, 30.97, 4.95, 3.16, zeit=(2, 5))                     # Wulste, 12 roemische Ziffern, Zeiger mit Sonne/Mond (Ablesung entzerrtes Foto commons 127; Zeit und Relieftiefen ANNAHME)

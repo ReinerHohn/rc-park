@@ -264,3 +264,12 @@ NEU, generisch:
   GRUND: ein Ortho auf der LoD2-Fassadenebene liegt bis 0,75 m neben der echten Wand; bei schraegem Einzelfoto verschiebt das den Inhalt seitlich um 0,2-1 m
   (West: Nordwestecke 1 m zu frueh, dahinter "Steine" aus Himmel; Ost: Schlitz/Luke/Balkenkopf 0,2-0,4 m daneben). Fuer Einzelfotos IMMER diesen Weg nehmen.
   `fassade_ein_foto.py auto` bleibt fuer die Fotowahl und zum Ansehen; fuer Masse/Quader nicht mehr als Quelle.
+
+Nachtrag 16.11. ~14:00:
+- `fassade_zylinder.py` findet jetzt OEFFNUNGEN selbst (dunkle kompakte Rechtecke gegen die oertliche Helligkeit, Dubletten an der Bildnaht zusammengefasst) -> `<aus>.json` "oeffnungen" + `<aus>_oeffnungen.jpg`;
+  im Generator `bauteile.zylinder_oeffnungen(json, nur=[...])`. Treppenturm: 7 Vorschlaege, 6 echt (1 Fehltreffer = Sockelstein an der Bildnaht, von Hand ausgeschlossen); helle (verschlossene) Schlitze werden NICHT erkannt.
+  Zusaetzliche Sichtpruefung "30 cm vor dem Mantel freie Luft" gegen durchscheinende Anschlusswaende; cos_min 0,5.
+- Steingewaende/Steinbaender in Putzwaenden: `steine_aus_foto.py --nah 0 --bosse 0.015` ueber die Wandmitte = alles, was nicht Putz ist (West: 3 Fenstergewaende + Gesimsband aus Foto 047).
+- GRENZE Einzelfoto: Verdeckung wird nur gegen das MODELL geprueft. Ein Baum (nicht im Modell) wurde auf der Suedseite zu "Steinen" - dort das Mehrfoto-Fassadenbild nehmen (fassade_fein erkennt Verdecker ueber Parallaxe).
+  `fassade_ein_foto auto` kennt keine Baeume: Ergebnis immer ansehen. OFFEN: Verdecker-Test auch fuer Einzelfotos (Vergleich mit einem zweiten Foto).
+- Kruemelfilter beim STL-Schreiben arbeitet jetzt ueber gemeinsame KANTEN (wie trimesh.split); ueber gemeinsame Ecken blieb ein 6-Flaechen-Kruemel als zweiter Koerper.
