@@ -243,6 +243,14 @@
  },
  {
   "seite": "wand",
+  "element": "Eckquader West oben (Suedwest-Ecke, z 27-34)",
+  "quelle": "entzerrtes Einzelfoto dl_commons__047_Schwabentor_Freiburg_12 (Commons, Lizenz im manifest.json) -> steine_aus_foto.py",
+  "steine": 62,
+  "hinweis": "nur der Suedwest-Streifen (u 0,1-3,0); Nordwest-Eckstreifen am Treppenturm fehlt; Fugen aus einem Schraegfoto",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Westfassade: grosses Fenster, 4 Schlitzfenster, Gesims",
   "quelle": "foto_mass.py auf der Westwandebene, Foto 114039 (M-114039-001..-006)",
   "fenster_breite": 0.81,

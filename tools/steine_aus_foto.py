@@ -31,7 +31,7 @@ def linien(m, min_len):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("relief"); ap.add_argument("aus"); ap.add_argument("fassaden"); ap.add_argument("nr", type=int); ap.add_argument("ortho")
     ap.add_argument("--feld", nargs=4, type=float, required=True); ap.add_argument("--px", type=float, default=0.02); ap.add_argument("--fuge", type=float, default=0.03); ap.add_argument("--massstab", nargs=4, type=float)
-    ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 ohne Steine (Vordach, Wandbild: Generator baut dort selbst)"); ap.add_argument("--bosse", type=float, default=0.04, help="Buckel der Steinflaeche (m), 0 = eben"); ap.add_argument("--putz_s", type=float, default=0.22); ap.add_argument("--putz_v", type=float, default=0.45)
+    ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 ohne Steine (Vordach, Wandbild: Generator baut dort selbst)"); ap.add_argument("--bosse", type=float, default=0.04, help="Buckel der Steinflaeche (m), 0 = eben"); ap.add_argument("--putz_s", type=float, default=0.22); ap.add_argument("--nah", type=float, default=0.25, help="Stein nur so nah (m) an der groben Steinmaske; 0 = aus (Wand ohne Wandbilder: sonst gehen Steinbaender verloren, die die grobe Maske nicht kennt)"); ap.add_argument("--duenn", type=float, default=0.12, help="Steinflaechen duenner als dies (m) verwerfen; 0 = aus"); ap.add_argument("--putz_v", type=float, default=0.45)
     ap.add_argument("--schwelle", type=float, default=2.4, help="Fuge ab so vielen Standardabweichungen der Abweichung vom oertlichen Median"); a = ap.parse_args()
     Z = dict(np.load(a.relief)); rel = Z["rel"].astype(np.float32); H, W = rel.shape; rp = float(Z["px"]); u0 = float(Z["u0"]); z0 = float(Z["z0"]); A = Z["a"]; t = Z["t"]; niv = float(Z.get("putz_niveau_m", 0.0))
     F = json.load(open(a.fassaden))["fassaden"][a.nr]; R = F["raster"]; o = np.array(F["o"]); d = np.array(F["d"]); im = cv2.imread(a.ortho)
@@ -44,8 +44,9 @@ def main():
     putz = gross(Z["putz"].astype(np.float32)) > 0.5; grob = gross(rel)
     hsv = cv2.cvtColor(cv2.GaussianBlur(bild, (0, 0), 2.0), cv2.COLOR_BGR2HSV).astype(np.float32); pf = (hsv[..., 1] / 255 < a.putz_s) & (hsv[..., 2] / 255 > a.putz_v)   # Kontur Putz/Stein im 1-cm-Bild neu (gleiche Regel wie relief_putz.py, dort nur 5 cm): Verzahnung scharf statt ausgefranst
     if (putz & daten).sum() > 500: pf &= hsv[..., 2] > 0.82 * float(np.median(hsv[..., 2][putz & daten]))      # Putz ist so hell wie der sichere Putz daneben - graue (wenig gesaettigte) Steine sind dunkler
-    pf = ndi.binary_closing(ndi.binary_opening(pf, np.ones((7, 7))), np.ones((7, 7))); nah = ndi.binary_dilation(~putz, np.ones((51, 51)))          # Stein nur in der Naehe (25 cm) der groben Steinmaske: Wandbilder/Fenster im Putz bleiben Putz
+    pf = ndi.binary_closing(ndi.binary_opening(pf, np.ones((7, 7))), np.ones((7, 7))); nah = ndi.binary_dilation(~putz, np.ones((2 * int(a.nah / c) + 1,) * 2)) if a.nah > 0 else np.ones(putz.shape, bool)          # Stein nur in der Naehe (25 cm) der groben Steinmaske: Wandbilder/Fenster im Putz bleiben Putz
     putz = np.where(daten, pf | ~nah, putz)
+    if a.duenn > 0: st_ = ndi.binary_opening(~putz & daten, np.ones((int(a.duenn / c) | 1,) * 2)); putz = np.where(daten, ~st_, putz)      # duenne 'Stein'-Linien (Ortgangkante, Draht, Rand einer Verdeckung) sind keine Quader
     for wert, min_zellen in ((True, 3000), (False, 1000)):               # Inseln weg: helle Steine mitten im Quaderfeld sind kein Putz (< 0,3 m2), Farbflecken im Putz kein Stein (< 0,1 m2)
         lab_, n_ = ndi.label(putz == wert)
         if n_: gr_ = ndi.sum(np.ones(putz.shape), lab_, np.arange(1, n_ + 1)); putz[np.isin(lab_, 1 + np.flatnonzero(gr_ < min_zellen))] = not wert

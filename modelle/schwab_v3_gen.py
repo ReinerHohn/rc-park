@@ -230,6 +230,11 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
             koerper = koerper + relief_koerper(_fm, tiefe=0.45, trend=True, rand_auslauf=False)
             beleg("wand", "Feines Relief Westwand unten (2 cm)", "lokale Feinrechnung: 14 Fotos in 4000 px nur fuer dieses Feld (tools/tiefe_lokal.py), gemischt mit dem groben Relief (tools/relief_mischen.py)", fein_anteil=float(np.load(_fm)["fein"].mean()), hinweis="Scan-Relief, kein Mass; ohne Feindaten steht das grobe bzw. generierte Relief")
         beleg("wand", "Relief Westwand z 0,6-34 m (ohne Treppenturm)", "OpenMVS-Netz der neuen dichten Wolke, Hoehenbild 5 cm, geklemmt -0,10..+0,15 m", hinweis="Scan-Relief, kein Mass; Fenster- und Gesimsfeld ausgeblendet")
+    _fo_w2 = os.path.join(HERE, "schwab_v3", "relief", "west_foto_oben.npz")          # 16.11.2026: Suedwest-Eckquader UEBER dem Gesims aus dem Commons-Foto 047 (5760 px, 0,6 cm/px; Kamera nachgezogen, 4351 Inlier) - vorher dort keine Fotodaten
+    if os.path.exists(_fo_w2) and os.environ.get("OHNE_RELIEF") != "1":
+        koerper = koerper + relief_koerper(_fo_w2, tiefe=0.45, trend=True, rand_auslauf=False)
+        beleg("wand", "Eckquader West oben (Suedwest-Ecke, z 27-34)", "entzerrtes Einzelfoto dl_commons__047_Schwabentor_Freiburg_12 (Commons, Lizenz im manifest.json) -> steine_aus_foto.py", steine=int(np.load(_fo_w2)["steine"]),
+              hinweis="nur der Suedwest-Streifen (u 0,1-3,0); Nordwest-Eckstreifen am Treppenturm fehlt; Fugen aus einem Schraegfoto")
     koerper = koerper - WW.prisma(b_rund(0.81, 21.70, 23.45), u=5.40, w0=-0.8, w1=0.6)                          # grosses Fenster (Tiefe ANNAHME; Gewaende buendig = Farbe)
     for u0_, u1_, z0_, z1_ in ((5.31, 5.52, 27.82, 30.19), (5.20, 5.45, 33.0, 34.4), (5.33, 5.47, 16.93, 17.86), (5.27, 5.39, 10.46, 11.44)):   # Schlitzfenster; das oberste (z 33-34,4) ist aus steiler Sicht nur ungefaehr
         koerper = koerper - WW.kasten(u0_, u1_, z0_, z1_, -0.8, 0.6)
