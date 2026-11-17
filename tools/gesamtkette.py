@@ -72,7 +72,7 @@ def notiz(B, name, ok, **k):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("quelle"); ap.add_argument("--ziel", required=True)
-    ap.add_argument("--ab", default="anlegen", choices=STUFEN); ap.add_argument("--bis", default="vergleich", choices=STUFEN)
+    ap.add_argument("--trotz-lage", action="store_true", help="Fotostufen auch dann rechnen, wenn die Lage-Tore rot sind (nur zum Untersuchen)"); ap.add_argument("--ab", default="anlegen", choices=STUFEN); ap.add_argument("--bis", default="vergleich", choices=STUFEN)
     ap.add_argument("--fremd", nargs="*", default=[]); ap.add_argument("--commons-kategorie", default=""); ap.add_argument("--ohne-video", action="store_true")
     ap.add_argument("--dicht-stufe", default="schnell", choices=["grob", "schnell", "fein"], help="schnell = ohne geometrischen PatchMatch-Durchgang (Standard 15.11.2026); fein nur wenn ein Tor zweifelt"); ap.add_argument("--referenz-wolke", default=""); ap.add_argument("--max-loesung", type=int, default=3); ap.add_argument("--fotos", default="", help="fotos_dir ersetzen")
     a = ap.parse_args()
@@ -180,6 +180,11 @@ def main():
         if not bestanden(erg):
             print("ABBRUCH: keine Lage besteht alle Tore - nicht modellieren (Bericht, audit/lage_gps.json, audit/wolke_grundriss.png)", flush=True); return 3
 
+    if (B.get("lage") or {}).get("bestanden") is False and "--trotz-lage" not in sys.argv:      # 17.11.2026: am Martinstor waren ALLE Lage-Tore rot (GPS widerspricht, Grundriss passt nicht) - die Kette baute trotzdem Fassaden aus dem falsch liegenden Netz (9 % Bilddaten, 0 Fenster)
+        gesperrt = [s_ for s_ in ("kanten", "fototor", "fassaden", "fenster", "seiten") if dran(s_)]
+        if gesperrt:
+            notiz(B, "lage_tor", False, fehler=f"Lage des Fotonetzes ist NICHT belegt (Tore {B['lage'].get('tore')}) - Stufen {', '.join(gesperrt)} uebersprungen. Erst Ausrichtung klaeren (mehr Fotos rundum, GPS, Stufe 'tore'); erzwingen: --trotz-lage")
+            _dran0 = dran; dran = lambda s_: _dran0(s_) and s_ not in gesperrt
     if dran("dach"):
         lauf(B, "dach", [PY, "-I", "tools/dach_vermessen.py", ZR] + (["--wolke", W] if os.path.exists(W) else []), log)
     if dran("bauen"):
@@ -192,11 +197,13 @@ def main():
         lauf(B, "fototor_kameras", [PYC, "-I", "tools/kameras_aus_buendel.py", ZR, "--ausrichtung", AU, "--fotos", FV] + (["--sparse", os.path.join(P, "sfm", "sparse", "0")] if os.path.exists(os.path.join(P, "sfm", "sparse", "0", "images.bin")) else []), log)
         lauf(B, "kamera_plausibel", [PY, "-I", "tools/kamera_plausibel.py", Z, "--beiseite", "--tief=3"], log, ok=(0, 3))      # 16.11.2026: Kameras "am Mond" (Abstand/Zoom nicht trennbar) beiseitelegen, bevor ein Werkzeug sie benutzt
         kw = os.path.join(KD, "kam_wahl.json"); wahl = list(json.load(open(kw)))[:6] if os.path.exists(kw) else []
+        wahl = [f for f in wahl if os.path.exists(os.path.join(Z, "messprotokoll", "K-" + os.path.splitext(f)[0] + ".json"))]      # 17.11.2026: beiseitegelegte (unplausible) Kameras standen noch in der Fotowahl der Kantenstufe -> 3 Stufen "keine Kamera" am Martinstor
         for f in wahl: lauf(B, f"fototor_{os.path.splitext(f)[0]}", [PY, "-W", "ignore", "-I", "tools/foto_diff.py", ZR, os.path.splitext(f)[0], "--bild", os.path.join(FV, f)], log)
     gp_ = os.path.join(ROOT, "modelle", f"{a.ziel}_gen.py")           # 16.11.2026: schwab_auto hatte einen Generator aus einer alten Vorlage - Reliefs und Fenster wurden gerechnet, aber nie gebaut (Modell blieb bei 244 Dreiecken)
     if (dran("bauen") or dran("fassaden") or dran("fenster")) and os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("fassaden_kette", "fenster_aus_json")): lauf(B, "generator_erneuern", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))      # unberuehrter alter Rumpf -> aktuelle Vorlage (alter bleibt als .alt_<zeit>)
     if (dran("fassaden") or dran("fenster")) and os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("fassaden_kette", "fenster_aus_json")):
         notiz(B, "generator_vorlage", False, fehler=f"{os.path.basename(gp_)} ruft fassaden_kette.anbauen / bauteile.fenster_aus_json nicht auf - Ergebnisse der Stufen fassaden/fenster kommen NICHT ins Modell (Zeilen aus der Vorlage in tools/objekt_anlegen.py uebernehmen)")
+    if dran("fassaden") and os.path.exists(AU) and not os.path.exists(os.path.join(Z, "dach.json")): lauf(B, "dach_nachholen", [PY, "-I", "tools/dach_vermessen.py", ZR] + (["--wolke", W] if os.path.exists(W) else []), log)      # 17.11.2026: Einstieg ab 'fassaden' ohne dach.json -> fassaden_kette stuerzte ab (Martinstor)
     if dran("fassaden") and os.path.exists(AU):                         # 15.11.2026: Fassaden-Kette automatisch (Netz -> Relief je LoD2-Wand -> Putz per Fotofarbe -> Steine in Loechern), danach neu bauen
         dd = os.path.join(P, "dicht"); nz = os.path.join(P, "openmvs", "mesh_modell_ausschnitt.npz")
         if os.path.exists(os.path.join(dd, "fused.ply")) and lauf(B, "fassaden_netz", [PY, "-I", "tools/netz_aus_dicht.py", ZR, dd], log)[0] == 0 and os.path.exists(nz):
