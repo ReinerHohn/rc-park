@@ -31,6 +31,7 @@ def main():
     ap.add_argument("--radius", type=float, default=0.0); ap.add_argument("--rechteck", default=""); ap.add_argument("--name", default="detail"); ap.add_argument("--aus", default="")
     ap.add_argument("--loch_mm", type=float, default=1.9); ap.add_argument("--loch_tief_mm", type=float, default=1.5); ap.add_argument("--haut_mm", type=float, default=0.6)
     ap.add_argument("--aufsatz", default="", help="Hoehenbaender (mm ueber der Rueckseite) 'z0-z1,z1-z2': alles darueber wird abgetrennt, je Band ein FLACHES Teil (Zeiger)")
+    ap.add_argument("--rahmen", action="store_true", help="Aufsaetze zusaetzlich als Spritzling (Rahmen + Angussstege) ausgeben - haftet sicher, ohne Brim")
     ap.add_argument("--zeiger_min_mm", type=float, default=1.0, help="Mindestdicke flacher Aufsaetze (Zeiger)")
     ap.add_argument("--achse_mm", type=float, default=0.0, help="Achsloch in der Detailmitte durch Blatt und Aufsaetze (z. B. 1.9 fuer Filamentstift)")
     ap.add_argument("--farbe_ab_mm", type=float, default=0.0, help="Farbwechsel ab dieser Hoehe melden (z. B. Oberkante Zifferblatt -> Ziffern andere Farbe)")
@@ -146,6 +147,21 @@ def main():
     fk = os.path.join(aus, f"{a.name}_klips.stl"); fw = os.path.join(aus, f"{a.name}_wand.stl")
     stl_schreiben(detail, fk, b"rcpark klips"); stl_schreiben(wand, fw, b"rcpark wand ohne klips")
     ok_k = trimesh.load(fk).is_watertight; ok_w = trimesh.load(fw).is_watertight
+    if len(aufsaetze) and a.rahmen:                                                 # 17.11.2026 Druck v5: kleiner Zeiger allein haftet schlecht, Brim wird Faeden -> Spritzling wie im Bausatz:
+        teile = []; x0 = 0.0                                                         # Teile nebeneinander, umlaufender Rahmen 3 mm (grosse Haftflaeche), Angussstege 0,8 mm breit
+        for k, teil, z0, z1, dk in aufsaetze:
+            bb_ = teil.bounding_box(); w_ = bb_[3] - bb_[0]; teile.append(teil.translate((x0 - bb_[0], -0.5 * (bb_[1] + bb_[4]), 0))); x0 += w_ + 6.0
+        alle = M.batch_boolean(teile, OpType.Add); bb_ = alle.bounding_box(); dmin = min(x[4] for x in aufsaetze)
+        X0, Y0, X1, Y1 = bb_[0] - 5, bb_[1] - 5, bb_[3] + 5, bb_[4] + 5
+        rahmen = (CS.square((X1 - X0, Y1 - Y0)).translate((X0, Y0)) - CS.square((X1 - X0 - 6, Y1 - Y0 - 6)).translate((X0 + 3, Y0 + 3))).extrude(dmin)
+        stege = []
+        for tl in teile:                                                             # je Teil oben und unten ein Steg vom aeussersten Punkt senkrecht zum Rahmen
+            pr = tl.project(); b2 = pr.bounds()
+            for yz, ys in ((b2[1], Y0 + 1.5), (b2[3], Y1 - 1.5)):
+                pts = np.vstack([np.asarray(q) for q in pr.to_polygons()]); xm = float(pts[np.argmin(np.abs(pts[:, 1] - yz)), 0])
+                y_a, y_b = sorted((yz, ys)); stege.append(M.cube((0.8, y_b - y_a + 1.0, min(0.6, dmin))).translate((xm - 0.4, y_a - 0.5, 0)))
+        spr = alle + rahmen + M.batch_boolean(stege, OpType.Add); fr = os.path.join(aus, f"{a.name}_aufsaetze_rahmen.stl"); stl_schreiben(spr, fr, b"rcpark spritzling")
+        print(f"  Spritzling (Rahmen 3 mm, Stege 0,8 mm): {X1 - X0:.0f} x {Y1 - Y0:.0f} mm, {len(spr.decompose())} Stueck -> {fr}  (OHNE Brim drucken)")
     for k, teil, z0, z1, dk in aufsaetze:
         fa = os.path.join(aus, f"{a.name}_aufsatz{k}.stl"); stl_schreiben(teil, fa, b"rcpark aufsatz"); bb_ = teil.bounding_box()
         print(f"  Aufsatz {k} (Band {z0}-{z1} mm, flach {dk:.2f} mm): {bb_[3] - bb_[0]:.1f} x {bb_[4] - bb_[1]:.1f} mm, {len(teil.decompose())} Stueck(e) -> {fa}")
