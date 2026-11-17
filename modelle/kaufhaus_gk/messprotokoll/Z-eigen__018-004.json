@@ -1,0 +1,324 @@
+{
+ "id": "Z-eigen__018-004",
+ "typ": "zaehlung",
+ "foto": "eigen__018",
+ "datei": "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta.jpg",
+ "was": "Balkon Nordfront: Docken (gedrechselte Baluster) zwischen den Pfosten, ohne Seitenruecklaeufe",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-17",
+ "punkte": [
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 922.0,
+   "y": 1372.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 957.0,
+   "y": 1372.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 990.0,
+   "y": 1372.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1076.0,
+   "y": 1371.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1113.0,
+   "y": 1371.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1152.0,
+   "y": 1370.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1190.0,
+   "y": 1370.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1226.0,
+   "y": 1369.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1263.0,
+   "y": 1369.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1301.0,
+   "y": 1369.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1337.0,
+   "y": 1368.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1375.0,
+   "y": 1368.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1411.0,
+   "y": 1368.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1446.0,
+   "y": 1367.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1534.0,
+   "y": 1367.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1568.0,
+   "y": 1366.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1604.0,
+   "y": 1366.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1639.0,
+   "y": 1366.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1675.0,
+   "y": 1365.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1711.0,
+   "y": 1365.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1748.0,
+   "y": 1364.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1784.0,
+   "y": 1364.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1819.0,
+   "y": 1364.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1855.0,
+   "y": 1363.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1889.0,
+   "y": 1363.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1966.0,
+   "y": 1362.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2001.0,
+   "y": 1362.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2037.0,
+   "y": 1362.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2072.0,
+   "y": 1361.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2107.0,
+   "y": 1361.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2143.0,
+   "y": 1361.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2179.0,
+   "y": 1360.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2213.0,
+   "y": 1360.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2252.0,
+   "y": 1360.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2290.0,
+   "y": 1359.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2322.0,
+   "y": 1359.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2405.0,
+   "y": 1358.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2442.0,
+   "y": 1358.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2476.0,
+   "y": 1357.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2514.0,
+   "y": 1357.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2549.0,
+   "y": 1357.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2584.0,
+   "y": 1356.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2620.0,
+   "y": 1356.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2656.0,
+   "y": 1356.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2691.0,
+   "y": 1355.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2725.0,
+   "y": 1355.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2801.0,
+   "y": 1354.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2833.0,
+   "y": 1354.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2864.0,
+   "y": 1354.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F": {
+   "art": "voll",
+   "n": 49
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 49,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-eigen__018-004.jpg",
+ "ausschnitt": [
+  672,
+  1104,
+  3114,
+  1622
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Segmente zwischen den Pfosten von West nach Ost 3/11/11/11/10/3 = 49; Lage abgelesen am entzerrten Foto der Gelaenderebene w 0,82 (M-eigen__018-005), Abstand 0,225 m wie in commons 052; 1 Docke bei u 10,2 hinter Fallrohr (Abstand)"
+}

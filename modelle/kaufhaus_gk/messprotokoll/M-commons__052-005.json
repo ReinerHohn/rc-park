@@ -1,0 +1,32 @@
+{
+ "id": "M-commons__052-005",
+ "foto": "commons__052",
+ "kamera": "K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+ "ebene": "0.344,0.939,0=13.153",
+ "name": "Laube Ecksaeule Ost: Schaftdurchmesser bei z 2,5 (Picks am entzerrten Bild, wand_ortho)",
+ "mess_px": [
+  469.3,
+  854.9,
+  420.0,
+  855.2
+ ],
+ "P1": [
+  11.917,
+  9.642,
+  2.499
+ ],
+ "P2": [
+  12.762,
+  9.332,
+  2.5
+ ],
+ "dz": 0.001,
+ "dy": -0.309,
+ "dx": 0.844,
+ "abstand": 0.899,
+ "z1": 2.499,
+ "z2": 2.5,
+ "unsicherheit_rel": 0.0043,
+ "unsicherheit_m": 0.084,
+ "massstab_von": "Kamera K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.344,0.939,0=13.153 (+-0.15 m)"
+}

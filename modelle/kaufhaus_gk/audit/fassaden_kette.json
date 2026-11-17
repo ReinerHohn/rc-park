@@ -128,7 +128,9 @@
    "gefuellt": 0.005,
    "generiert": 0.0,
    "vorstand": 0.11,
-   "ohne_trend": true
+   "ohne_trend": true,
+   "putz_eben": 0.555,
+   "putz_band": 0.05
   },
   {
    "name": "w04",
@@ -161,7 +163,9 @@
    "gefuellt": 0.009,
    "generiert": 0.0,
    "vorstand": 0.11,
-   "ohne_trend": true
+   "ohne_trend": true,
+   "putz_eben": 0.487,
+   "putz_band": 0.05
   },
   {
    "name": "w05",
@@ -194,7 +198,9 @@
    "gefuellt": 0.002,
    "generiert": 0.0,
    "vorstand": 0.11,
-   "ohne_trend": true
+   "ohne_trend": true,
+   "putz_eben": 0.603,
+   "putz_band": 0.05
   },
   {
    "name": "w06",

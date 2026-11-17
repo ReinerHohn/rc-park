@@ -117,7 +117,25 @@ def loecher_glatt(rel, zu, max_m2, px):
     return neu.astype(np.float32), float(klein.mean())
 
 
-def relief_roh(r0, r2, px):
+def putz_eben(rel, m, px, band=0.05, kachel=1.0):
+    """Glatte Wandflaeche (Putz ohne Quaderwerk) aus dem Netz-Relief: Wandniveau = Median je 1-m-Kachel (3x3-Umgebung, nur Wandzellen m), bilinear;
+    Zellen naeher als 'band' am Niveau = Wand -> genau auf das Niveau; Rest (Gewaende, Gesimse, Figuren, Pfosten) bleibt, Median 3x3 + Gauss 0,6 Zellen gegen Einzelspitzen.
+    GRUND (kaufhaus_gk 17.11.2026, drei Bilder Foto | grob3 Hand | gk Kette): das rohe Netz (Rausch-Sigma 6,6 cm) machte die glatt verputzte Hauptfassade zu 'Brei',
+    grob3 hatte glatte Wand + Teile. 5 cm = 0,6 mm bei 1:87 (ANNAHME: Putzunebenheit unter 5 cm ist Netzrauschen, kein Bauteil)."""
+    import cv2
+    from scipy import ndimage as ndi
+    H_, W_ = rel.shape; k = max(2, int(round(kachel / px))); gy = np.arange(0, H_, k); gx = np.arange(0, W_, k); G = np.full((len(gy), len(gx)), np.nan)
+    for i, y in enumerate(gy):
+        for j, x in enumerate(gx):
+            sl = (slice(max(0, y - k), y + 2 * k), slice(max(0, x - k), x + 2 * k)); v = rel[sl][m[sl]]
+            if v.size > 20: G[i, j] = np.median(v)
+    if np.isnan(G).all(): return rel, 0.0
+    G = np.where(np.isnan(G), np.nanmedian(G), G); L = cv2.resize(G.astype(np.float32), (W_, H_), interpolation=cv2.INTER_LINEAR)
+    flach = m & (np.abs(rel - L) < band); x = np.where(flach, L, rel); x = cv2.GaussianBlur(ndi.median_filter(x, 3).astype(np.float32), (0, 0), 0.6)
+    return np.where(m, x, rel).astype(np.float32), float(flach.sum() / max(m.sum(), 1))
+
+
+def relief_roh(r0, r2, px, putz_band=0.05):
     """Wand OHNE Quaderwerk: Netz-Relief unveraendert als <wand>_voll.npz. Kleine Loecher glatt, Oeffnungen (Loch mit Netz dahinter: Arkade, Tor) auf das tiefste Niveau (Ruecksprung statt Wandflaeche),
     'vorstand' = das ganze Relief so weit vor die Wandebene, dass sein tiefster Ruecksprung 1 cm davor liegt (hoechstens Klemme + 1 cm = 11 cm = 1,3 mm bei 1:87), OHNE den Ebenentrend des Netzes.
     GRUND (kaufhaus_gk 17.11.2026, Bild Modell neben Foto): die Netzflaeche lag im Mittel 1,5 cm HINTER der LoD2-Ebene - alles unter der Ebene verschwand im Grundkoerper, von Fenstern/Arkaden blieben nur
@@ -125,12 +143,14 @@ def relief_roh(r0, r2, px):
     das Netz liefert nur die Form. Der Vorstand ist Darstellung, kein Mass (ANNAHME)."""
     import cv2
     Zr = dict(np.load(r0)); H_, W_ = Zr["rel"].shape; wand = Zr["wand"] if "wand" in Zr else np.ones((H_, W_), bool); zu = (Zr["rel"] == 0.0) & ~Zr["oeffnung"] & wand
-    Zr["rel"], gef = loecher_glatt(Zr["rel"], zu, 1.5, px); da = wand & (Zr["rel"] != 0.0); tief = float(Zr["rel"][da].min()) if da.any() else 0.0; vor = round(0.01 - tief, 3)
+    Zr["rel"], gef = loecher_glatt(Zr["rel"], zu, 1.5, px); da = wand & (Zr["rel"] != 0.0); eben = 0.0
+    if putz_band: Zr["rel"], eben = putz_eben(Zr["rel"], da & ~Zr["oeffnung"], px, band=putz_band); Zr["rel"][~da] = 0.0      # 17.11.2026 glatter Putz statt Netzrauschen (putz_eben)
+    tief = float(Zr["rel"][da].min()) if da.any() else 0.0; vor = round(0.01 - tief, 3)
     loch = (Zr["rel"] == 0.0) & wand & ~Zr["oeffnung"]; neu = np.where(wand, Zr["rel"] + vor, 0.0); neu[Zr["oeffnung"] & wand] = 0.01      # Oeffnung = tiefster Ruecksprung; grosse Loecher = mittlere Wandflaeche; ausserhalb der Wand nichts
     Zr["rel"] = neu.astype(np.float32); Zr["loch"] = loch; Zr["generiert_anteil"] = 0.0; np.savez_compressed(r2, **Zr)
     lx = np.gradient(neu, px, axis=1); lz = np.gradient(neu, px, axis=0); im_ = cv2.cvtColor((np.clip(0.7 - 0.5 * lx + 0.7 * lz, 0, 1) * 255).astype(np.uint8), cv2.COLOR_GRAY2BGR); im_[loch] = (0, 0, 255); im_[Zr["oeffnung"] & wand] = (120, 60, 0); im_[~wand] = (90, 90, 90)
     cv2.imwrite(r2[:-4] + ".jpg", cv2.resize(im_, None, fx=3, fy=3, interpolation=cv2.INTER_NEAREST))      # rot = Loch in der Wand (bleibt glatt), blau = Oeffnung (Ruecksprung), dunkelgrau = keine Wand (Dach, Himmel, Nachbar)
-    return dict(gefuellt=round(gef, 3), generiert=0.0, vorstand=vor, ohne_trend=True)
+    return dict(gefuellt=round(gef, 3), generiert=0.0, vorstand=vor, ohne_trend=True, putz_eben=round(eben, 3), putz_band=putz_band)
 
 
 _NETZ = {}
@@ -205,7 +225,7 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None):
         if hat_foto: koerper = koerper + offen(relief_koerper(ff, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu); belege.append(dict(seite="wand", element=f"Quader mit Fugen aus dem Foto, Fassade {w['name']} ab z {w['foto_feld'][2]:.0f} m", quelle="tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)", steine=w.get("foto_steine"), hinweis="Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen"))
         if tf: koerper = koerper + (relief_koerper(fm, tiefe=tiefe, trend=True) ^ hu)                 # lokale Feinrechnung (tools/tiefe_lokal.py + relief_mischen.py) vor dem groben Relief
         belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} (Fassaden-Kette)", quelle=("Netz der dichten Wolke (Hoehenbild 5 cm), roh: das Foto zeigt kein Quaderwerk (Quader-Tor), kleine Loecher glatt gefuellt" if w.get("quader") is False else "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (" + ", ".join(w.get("fotos", [])[:3]) + "); Loecher generiert"),
-                           generiert_anteil=w.get("generiert"), hinweis="Scan-Relief, kein Mass" + (f"; ANNAHME: Relief {w.get('vorstand', 0) * 100:.0f} cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung" if w.get("quader") is False else "; generierte Steine = ANNAHME")))
+                           generiert_anteil=w.get("generiert"), hinweis="Scan-Relief, kein Mass" + (f"; ANNAHME: Relief {w.get('vorstand', 0) * 100:.0f} cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung" + (f"; ANNAHME: {w['putz_eben'] * 100:.0f} % der Wand naeher als {w.get('putz_band', 0.05) * 100:.0f} cm am Wandniveau = glatter Putz (Netzrauschen weg)" if w.get("putz_eben") else "") if w.get("quader") is False else "; generierte Steine = ANNAHME")))
     return koerper, belege
 
 

@@ -202,6 +202,186 @@
    ],
    "quer_max": 0.03,
    "r_max": 1.0
+  },
+  "laube_saeule1_vor": {
+   "typ": "schnitt_reichweite",
+   "z": 2.5,
+   "zentrum": [
+    -4.534,
+    15.668
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 1.5
+  },
+  "laube_saeule2_vor": {
+   "typ": "schnitt_reichweite",
+   "z": 2.5,
+   "zentrum": [
+    -0.421,
+    14.161
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 1.5
+  },
+  "laube_saeule3_vor": {
+   "typ": "schnitt_reichweite",
+   "z": 2.5,
+   "zentrum": [
+    3.851,
+    12.596
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 1.5
+  },
+  "laube_saeule4_vor": {
+   "typ": "schnitt_reichweite",
+   "z": 2.5,
+   "zentrum": [
+    8.105,
+    11.037
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 1.5
+  },
+  "laube_saeule5_vor": {
+   "typ": "schnitt_reichweite",
+   "z": 2.5,
+   "zentrum": [
+    12.34,
+    9.486
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 1.5
+  },
+  "laube_saeule3_basis": {
+   "typ": "schnitt_reichweite",
+   "z": 0.9,
+   "zentrum": [
+    3.851,
+    12.596
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 1.5
+  },
+  "balkon_docken": {
+   "typ": "ebene_vorspruenge",
+   "o": [
+    -5.53,
+    16.64
+   ],
+   "n": [
+    0.344,
+    0.939
+   ],
+   "z": 6.4,
+   "u0": -16.62,
+   "u1": -3.75,
+   "hoehe_min": 0.5,
+   "vor": 3.0,
+   "schritt": 0.01,
+   "min_b": 0.04,
+   "max_b": 0.12
+  },
+  "balkon_konsolen": {
+   "typ": "ebene_vorspruenge",
+   "o": [
+    -5.53,
+    16.64
+   ],
+   "n": [
+    0.344,
+    0.939
+   ],
+   "z": 5.5,
+   "u0": -16.95,
+   "u1": -3.45,
+   "hoehe_min": 0.2,
+   "vor": 3.0,
+   "schritt": 0.01,
+   "min_b": 0.12,
+   "max_b": 0.5
+  },
+  "balkon_handlauf": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    7.501,
+    12.675
+   ],
+   "z0": 6.0,
+   "z1": 7.6,
+   "suche": "oben",
+   "puffer": 0.02
+  },
+  "balkon_vorderkante": {
+   "typ": "schnitt_reichweite",
+   "z": 6.82,
+   "zentrum": [
+    4.799,
+    12.856
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 2.0
+  },
+  "fenster2_schulter": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    7.68,
+    11.768
+   ],
+   "z0": 8.6,
+   "z1": 10.4,
+   "suche": "unten",
+   "puffer": 0.015
+  },
+  "fenster2_pfosten": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    7.134,
+    11.904
+   ],
+   "z0": 7.1,
+   "z1": 10.4,
+   "suche": "unten",
+   "puffer": 0.01
+  },
+  "laube_boden": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    1.703,
+    13.564
+   ],
+   "z0": -0.5,
+   "z1": 2.5,
+   "suche": "oben",
+   "puffer": 0.02
   }
  },
  "pruefungen": [
@@ -519,6 +699,198 @@
    "historie": [
     "2026-11-17 angelegt"
    ]
+  },
+  {
+   "name": "Laube Saeule 1 (Ecke West): Schaft rund, Vorderkante ab Achse bei z 2,5 (Radius)",
+   "wert": "laube_saeule1_vor",
+   "soll": [
+    0.35,
+    0.47
+   ],
+   "quelle": "Achse trianguliert M-eigen__018-002 (Lage aus Saeulen 2-4: w -0,57), Schaft 0,76-0,90 am entzerrten Bild 052; Schaft 0,62-0,66 (innen) / 0,83-0,90 (Ecken) am entzerrten Bild 052/018 (M-eigen__018-006/010, M-commons__052-001/005)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "protokoll": "Z-eigen__018-006",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2), vor dem Bau rot"
+   ]
+  },
+  {
+   "name": "Laube Saeule 2: Schaft rund, Vorderkante ab Achse bei z 2,5 (Radius)",
+   "wert": "laube_saeule2_vor",
+   "soll": [
+    0.27,
+    0.39
+   ],
+   "quelle": "Achse trianguliert M-eigen__018-003; Schaft 0,62-0,66 (innen) / 0,83-0,90 (Ecken) am entzerrten Bild 052/018 (M-eigen__018-006/010, M-commons__052-001/005)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "protokoll": "Z-eigen__018-006",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2), vor dem Bau rot"
+   ]
+  },
+  {
+   "name": "Laube Saeule 3: Schaft rund, Vorderkante ab Achse bei z 2,5 (Radius)",
+   "wert": "laube_saeule3_vor",
+   "soll": [
+    0.27,
+    0.39
+   ],
+   "quelle": "Achse trianguliert M-eigen__018-002; Schaft 0,62-0,66 (innen) / 0,83-0,90 (Ecken) am entzerrten Bild 052/018 (M-eigen__018-006/010, M-commons__052-001/005)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "protokoll": "Z-eigen__018-006",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2), vor dem Bau rot"
+   ]
+  },
+  {
+   "name": "Laube Saeule 4: Schaft rund, Vorderkante ab Achse bei z 2,5 (Radius)",
+   "wert": "laube_saeule4_vor",
+   "soll": [
+    0.27,
+    0.39
+   ],
+   "quelle": "Achse trianguliert M-eigen__018-004; Schaft 0,62-0,66 (innen) / 0,83-0,90 (Ecken) am entzerrten Bild 052/018 (M-eigen__018-006/010, M-commons__052-001/005)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "protokoll": "Z-eigen__018-006",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2), vor dem Bau rot"
+   ]
+  },
+  {
+   "name": "Laube Saeule 5 (Ecke Ost): Schaft rund, Vorderkante ab Achse bei z 2,5 (Radius)",
+   "wert": "laube_saeule5_vor",
+   "soll": [
+    0.35,
+    0.47
+   ],
+   "quelle": "Achse trianguliert Schaft 0,85-0,90 am entzerrten Bild 052 (M-eigen__018-010); Schaft 0,62-0,66 (innen) / 0,83-0,90 (Ecken) am entzerrten Bild 052/018 (M-eigen__018-006/010, M-commons__052-001/005)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "protokoll": "Z-eigen__018-006",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2), vor dem Bau rot"
+   ]
+  },
+  {
+   "name": "Laube Saeule 3: Basis (Plinthe) halbe Breite bei z 0,9",
+   "wert": "laube_saeule3_basis",
+   "soll": [
+    0.38,
+    0.5
+   ],
+   "quelle": "Plinthe 0,88 breit, z 0,65-1,28 am entzerrten Bild 018/052 (M-eigen__018-007/008)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "protokoll": "Z-eigen__018-006",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2), vor dem Bau rot"
+   ]
+  },
+  {
+   "name": "Balkon: Docken (Baluster) in der Gelaenderebene bei z 6,4 (Anzahl, Laeufe 4-12 cm = ohne Pfosten)",
+   "wert": "balkon_docken_anzahl",
+   "soll": [
+    49,
+    49
+   ],
+   "quelle": "Zaehlung am Foto Z-eigen__018-004: 49 Docken (Segmente 3/11/11/11/10/3 zwischen 7 Pfosten Z-eigen__018-005)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "anzahl",
+   "protokoll": "Z-eigen__018-004",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2), vor dem Bau rot"
+   ]
+  },
+  {
+   "name": "Balkon: Konsolen unter der Bodenplatte bei z 5,5 (Anzahl)",
+   "wert": "balkon_konsolen_anzahl",
+   "soll": [
+    11,
+    11
+   ],
+   "quelle": "Zaehlung am Foto Z-eigen__018-007 (11, unter jedem Pfosten und mittig dazwischen)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "anzahl",
+   "protokoll": "Z-eigen__018-007",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2), vor dem Bau rot"
+   ]
+  },
+  {
+   "name": "Balkon: Handlauf Oberkante (z)",
+   "wert": "balkon_handlauf",
+   "soll": [
+    6.75,
+    6.95
+   ],
+   "quelle": "trianguliert M-eigen__018-005 (6,84, 3 Fotos) und entzerrtes Bild w 0,82 (6,85, M-eigen__018-011)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2), vor dem Bau rot"
+   ]
+  },
+  {
+   "name": "Balkon: Vorderkante Handlauf ab Traufwand bei z 6,82",
+   "wert": "balkon_vorderkante",
+   "soll": [
+    0.74,
+    0.92
+   ],
+   "quelle": "trianguliert M-eigen__018-005: w 0,82 (+-0,14)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2), vor dem Bau rot"
+   ]
+  },
+  {
+   "name": "Fenster 2 Vorhangbogen: Laibung oben 0,12 m innen der Seite (z)",
+   "wert": "fenster2_schulter",
+   "soll": [
+    9.03,
+    9.22
+   ],
+   "quelle": "entzerrtes Bild commons 052 + eigen 018 (Schulter 9,09, Spitze 9,78; M-eigen__018-014, M-commons__052-009)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "protokoll": "Z-eigen__018-008",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2), vor dem Bau rot"
+   ]
+  },
+  {
+   "name": "Fenster 2: Pfosten unter der Spitze (unterstes Material, z)",
+   "wert": "fenster2_pfosten",
+   "soll": [
+    6.9,
+    7.2
+   ],
+   "quelle": "Pfosten an den Spitzen u 13,53/12,78 am entzerrten Bild 052/018 (M-eigen__018-016)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "protokoll": "Z-eigen__018-008",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2), vor dem Bau rot"
+   ]
+  },
+  {
+   "name": "Laube Bogen 2: Boden/Pflaster unter dem Bogen (z)",
+   "wert": "laube_boden",
+   "soll": [
+    0.55,
+    0.75
+   ],
+   "quelle": "Plinthen-Unterkante = Pflaster z 0,65 am entzerrten Bild 018/052 (M-eigen__018-008, M-commons__052-003)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde 2, nach Sichtpruefung: Saeulen im Modell 0,65 m zu tief gestellt), vor dem Bau rot"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -758,6 +1130,42 @@
    "abweichung": 1.0,
    "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=9.12 m, y=-6.71 m (Zelle [0, 637, 49], Score +1.00)",
    "naechster_schritt": "audit/fehlteile_commons__024_Freiburg_812503898.jpg Treffer 12 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Koordinator/Claude (Bild neben_eigen__018)",
+   "text": "Laube: Foto zeigt RUNDE Saeulen mit Basis unter den Korbboegen, Modell hat rechteckige Wandpfeiler 0,8 m tief",
+   "naechster_schritt": "Saeulen am Foto zaehlen (Z-eigen__018-006), Achsen triangulieren (M-eigen__018-002..004), Durchmesser/Basis messen, bauteile.saeule"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Koordinator/Claude (Bild neben_eigen__018)",
+   "text": "Balkon mit Docken-Gelaender ueber der Laube fehlt (Modell: nur Scan-Reliefbrei)",
+   "naechster_schritt": "Docken/Pfosten/Konsolen am Foto zaehlen (Z-eigen__018-004/005/007), Vorderkante triangulieren (M-eigen__018-005), bauteile.balkon"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Koordinator/Claude (Bild neben_eigen__018)",
+   "text": "Obergeschossfenster: Foto zeigt Vorhangboegen (3 Felder, Spitzen an 2 Pfosten), Modell hat Rechtecke",
+   "naechster_schritt": "Kopfform am entzerrten Bild 052/018 messen (M-eigen__018-014..017), bauteile.vorhangbogen"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Claude Runde 2 (drei_eigen__IMG_6115, drei_commons__110: Foto | grob3 | gk)",
+   "text": "Hauptfassade/Zwickel: gk zeigt Netz-'Brei' (Rausch-Sigma 6,6 cm), Foto glatter roter Putz; grob3 glatt",
+   "naechster_schritt": "fassaden_kette.putz_eben in relief_roh (erledigt 17.11.: 49 % der Wand w04 eben, foto_diff unveraendert +-0,01, Bild glatter)"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Koordinator (Nutzer 3D-Vergleich)",
+   "text": "gk ~20 % kleiner als grob3 (STL 299x292x250 gegen 364x331x318 mm)",
+   "naechster_schritt": "Befund: grob3-lot2-Rahmen 1,30x zu gross (Aehnlichkeit aus 19 gemeinsamen Kameras s=0,767; Laube grob3 24,08 m gegen gk 18,8 m; LoD2-Traufwand 20,4 m; GPS-Fit gk s=0,956) - gk-Masstab bleibt"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Koordinator",
+   "text": "Kette nutzt 363 Bilder, weitere Fotoordner (iPhone, Handyserien, Nutzerfotos, Videobilder, Mapillary) bleiben liegen",
+   "naechster_schritt": "tools/fotoquellen.py + gesamtkette Stufe vorpruefen (erledigt; Stichprobe 119/194 zeigen das Objekt); naechster Kettenlauf ab 'vorpruefen' mit SfM neu"
   }
  ]
 }

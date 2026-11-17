@@ -1,0 +1,32 @@
+{
+ "id": "M-commons__052-010",
+ "foto": "commons__052",
+ "kamera": "K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+ "ebene": "0.344,0.939,0=13.673",
+ "name": "Fenster 2 Vorhangbogen: Spitze -> Scheitel Mittelfeld (hangend) (Picks am entzerrten Bild, wand_ortho)",
+ "mess_px": [
+  758.3,
+  455.4,
+  778.3,
+  458.4
+ ],
+ "P1": [
+  7.157,
+  11.939,
+  9.78
+ ],
+ "P2": [
+  6.81,
+  12.067,
+  9.72
+ ],
+ "dz": -0.06,
+ "dy": 0.127,
+ "dx": -0.348,
+ "abstand": 0.375,
+ "z1": 9.78,
+ "z2": 9.72,
+ "unsicherheit_rel": 0.0044,
+ "unsicherheit_m": 0.08,
+ "massstab_von": "Kamera K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.344,0.939,0=13.673 (+-0.15 m)"
+}

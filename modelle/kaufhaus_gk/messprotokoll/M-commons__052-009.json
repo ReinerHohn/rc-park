@@ -1,0 +1,32 @@
+{
+ "id": "M-commons__052-009",
+ "foto": "commons__052",
+ "kamera": "K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+ "ebene": "0.344,0.939,0=13.673",
+ "name": "Fenster 2 Vorhangbogen: Schulter (Seitenrand) -> Spitze am Pfosten (Picks am entzerrten Bild, wand_ortho)",
+ "mess_px": [
+  722.7,
+  492.3,
+  758.3,
+  455.4
+ ],
+ "P1": [
+  7.768,
+  11.716,
+  9.089
+ ],
+ "P2": [
+  7.157,
+  11.939,
+  9.78
+ ],
+ "dz": 0.691,
+ "dy": 0.224,
+ "dx": -0.611,
+ "abstand": 0.949,
+ "z1": 9.089,
+ "z2": 9.78,
+ "unsicherheit_rel": 0.0044,
+ "unsicherheit_m": 0.082,
+ "massstab_von": "Kamera K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.344,0.939,0=13.673 (+-0.15 m)"
+}

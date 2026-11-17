@@ -1,0 +1,32 @@
+{
+ "id": "M-commons__052-004",
+ "foto": "commons__052",
+ "kamera": "K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+ "ebene": "0.344,0.939,0=13.153",
+ "name": "Laube Saeule 3: Schaft bis Kapitellansatz (Aufweitung) (Picks am entzerrten Bild, wand_ortho)",
+ "mess_px": [
+  946.9,
+  919.5,
+  946.2,
+  788.2
+ ],
+ "P1": [
+  3.758,
+  12.631,
+  1.28
+ ],
+ "P2": [
+  3.757,
+  12.631,
+  3.649
+ ],
+ "dz": 2.369,
+ "dy": 0.0,
+ "dx": -0.001,
+ "abstand": 2.369,
+ "z1": 1.28,
+ "z2": 3.649,
+ "unsicherheit_rel": 0.0045,
+ "unsicherheit_m": 0.088,
+ "massstab_von": "Kamera K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.344,0.939,0=13.153 (+-0.15 m)"
+}

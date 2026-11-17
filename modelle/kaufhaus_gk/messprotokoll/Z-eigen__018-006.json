@@ -1,0 +1,60 @@
+{
+ "id": "Z-eigen__018-006",
+ "typ": "zaehlung",
+ "foto": "eigen__018",
+ "datei": "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta.jpg",
+ "was": "Laube: runde Saeulen mit Basis unter den Korbboegen (inkl. 2 Ecksaeulen)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-17",
+ "punkte": [
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 488.0,
+   "y": 1990.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1209.0,
+   "y": 1985.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1909.0,
+   "y": 1976.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2598.0,
+   "y": 1968.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 3306.0,
+   "y": 1960.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F": {
+   "art": "voll",
+   "n": 5
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 5,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-eigen__018-006.jpg",
+ "ausschnitt": [
+  238,
+  1710,
+  3556,
+  2240
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "rund: Schattierung quer zum Schaft in 018/052/110/061; Achsen trianguliert M-eigen__018-002..004"
+}

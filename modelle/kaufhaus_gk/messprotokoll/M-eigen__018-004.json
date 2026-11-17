@@ -1,0 +1,47 @@
+{
+ "id": "M-eigen__018-004",
+ "typ": "triangulation_plan",
+ "foto": "eigen__018",
+ "name": "Laube Saeule 4 (u ~14,5): Schaftachse",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta",
+   "px": [
+    1201.0,
+    1985.0
+   ]
+  },
+  {
+   "kamera": "K-commons__110_Középkori_bevásárlóközpont_Medieval_shopping_centre_-_panoramio",
+   "px": [
+    822.0,
+    1017.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__061_The_so_called_famous_Red_House_Alte_Kaufhaus_A.D._1532_in_Fr",
+   "px": [
+    822.0,
+    2400.0
+   ]
+  }
+ ],
+ "P_xy": [
+  8.099,
+  11.024
+ ],
+ "strahl_abstand_m": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "schnittwinkel_grad": [
+  48.2,
+  45.9,
+  94.1
+ ],
+ "unsicherheit_m": 0.077,
+ "massstab_von": "Kameras K-eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta, K-commons__110_Középkori_bevásárlóközpont_Medieval_shopping_centre_-_panoramio, K-eigen__061_The_so_called_famous_Red_House_Alte_Kaufhaus_A.D._1532_in_Fr aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme",
+ "n": 13.138,
+ "u": 3.813
+}

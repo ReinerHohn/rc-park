@@ -30,12 +30,35 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
             GE[g["name"]] = Wand(g["a"], g["b"], aussen=g["aussen"]).versetzt(g["versatz"]); koerper = GE[g["name"]].halbraum_innen(koerper)
             beleg("wand", "Giebelwand %s auf der Foto-Ebene (Rumpf %.2f m zurueckgenommen)" % (g["name"], -g["versatz"]), g["quelle"])
         L = BF["laube"]; koerper, _ = laube(koerper, WT, L["boegen"], L["tiefe"], L["decke"], pfeiler_tiefe=L["pfeiler_tiefe"], u0=L["u0"], u1=L["u1"],
-                                            stirn=[(GE[s["giebel"]], s) for s in L.get("stirn", [])])
+                                            stirn=[(GE[s["giebel"]], s) for s in L.get("stirn", [])], frei=L.get("frei") if BF.get("saeulen") else None, unten=L.get("boden", -0.5))
         beleg("wand", "Laube: %d Korbboegen + offene Halle %.2f m tief, Stirnbogen West" % (len(L["boegen"]), L["tiefe"]), L["quelle"], hinweis="ANNAHME: " + "; ".join(L["annahmen"]))
+        if BF.get("saeulen"): beleg("wand", "Laube: Pfeilerzone bis Kaempfer freigeraeumt (Saeulen statt Wandpfeiler)", L["frei_quelle"])
+        if "boden" in L: beleg("wand", "Laube: Boden/Pflaster auf z %.2f (Bogenunterkanten)" % L["boden"], L["boden_quelle"])
     if belege and os.environ.get("OHNE_HOHL") != "1":        # 16.11.2026 Nutzer: Fenster muessen echte Loecher sein -> Gebaeude hohl, erkannte Fenster durchgebrochen
         from bauteile import aushoehlen
         koerper, n_offen, v_hohl = aushoehlen(koerper, d=float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0)
         beleg("wand", "Gebaeude hohl, %d Fenster durchgebrochen" % n_offen, "bauteile.aushoehlen auf den automatisch erkannten Fenstern", hinweis="Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende")
+    if BF and os.environ.get("OHNE_BAUTEILE") != "1":   # 17.11.2026 Runde 2: Saeulen, Vorhangbogenfenster, Balkon (tools/bauteile.py saeule / vorhangbogen_fenster / balkon), alle NACH dem Aushoehlen
+        from bauteile import saeule, balkon, vorhangbogen_fenster
+        SA = BF.get("saeulen")
+        if SA:
+            for i, s in enumerate(SA["liste"]):
+                ecke = i in (0, len(SA["liste"]) - 1)
+                koerper = koerper + saeule(WT, s["u"], SA["w"], SA["z0"], SA["z1"], s["d"], basis=SA["basis_ecke" if ecke else "basis"], kapitell=SA["kapitell_ecke" if ecke else "kapitell"])
+            beleg("wand", "Laube: %d runde Saeulen mit Plinthe, Wulst und Aufweitung (statt Wandpfeiler)" % len(SA["liste"]), SA["quelle"], hinweis="ANNAHME: " + "; ".join(SA["annahmen"]),
+                  durchmesser=[s["d"] for s in SA["liste"]])
+        VF = BF.get("vorhangfenster")
+        if VF:
+            for u0_, u1_ in VF["fenster"]:
+                zu_, ab_, pf_ = vorhangbogen_fenster(WT, u0_, u1_, VF["z0"], VF["z1"], VF["schulter"], VF["spitze"], VF["mitte"], VF["feld"], exponent=VF["exponent"], kaempfer=VF.get("kaempfer"), w_fuell=tuple(VF["w_fuell"]))
+                koerper = (koerper + zu_ - ab_) + pf_
+            beleg("wand", "%d Obergeschossfenster mit Vorhangbogen (3 Felder, 2 Pfosten an den Spitzen, Kaempfer)" % len(VF["fenster"]), VF["quelle"], hinweis="ANNAHME: " + "; ".join(VF["annahmen"]))
+        BK = BF.get("balkon")
+        if BK:
+            koerper = koerper + balkon(WT, BK["u0"], BK["u1"], BK["z_boden"], BK["w_vorne"], BK["z_handlauf"], BK["docken"], BK["pfosten"], BK["konsolen"], platte=BK["platte"],
+                                       konsole=tuple(BK["konsole"]), seiten_docken=BK["seiten_docken"])
+            beleg("wand", "Balkon ueber der Laube: Bodenplatte, %d Konsolen, %d Pfosten, %d Docken vorn + je %d seitlich, Handlauf" % (len(BK["konsolen"]), len(BK["pfosten"]), len(BK["docken"]), BK["seiten_docken"]),
+                  BK["quelle"], hinweis="ANNAHME: " + "; ".join(BK["annahmen"]))
     if BF and os.environ.get("OHNE_BAUTEILE") != "1":   # massive Anbauten NACH dem Aushoehlen (sonst Null-Volumen-Splitter an den Gauben: 11 Teilnetze)
         for G in BF["staffelgiebel"]:
             koerper = koerper + staffelgiebel(GE[G["giebel"]], G["mitte_u"], G["spitze_breite"], G["spitze_z"], G["flanken"], dicke=G["dicke"], fuss_z=G["fuss_z"])

@@ -1,0 +1,32 @@
+{
+ "id": "M-commons__052-002",
+ "foto": "commons__052",
+ "kamera": "K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+ "ebene": "0.344,0.939,0=13.153",
+ "name": "Laube Saeule 3: Basis (Plinthe) Breite bei z 0,9 (Picks am entzerrten Bild, wand_ortho)",
+ "mess_px": [
+  970.9,
+  940.6,
+  922.1,
+  941.0
+ ],
+ "P1": [
+  3.353,
+  12.779,
+  0.901
+ ],
+ "P2": [
+  4.181,
+  12.476,
+  0.9
+ ],
+ "dz": -0.001,
+ "dy": -0.303,
+ "dx": 0.828,
+ "abstand": 0.881,
+ "z1": 0.901,
+ "z2": 0.9,
+ "unsicherheit_rel": 0.0045,
+ "unsicherheit_m": 0.081,
+ "massstab_von": "Kamera K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.344,0.939,0=13.153 (+-0.15 m)"
+}

@@ -1,0 +1,96 @@
+{
+ "id": "Z-eigen__018-007",
+ "typ": "zaehlung",
+ "foto": "eigen__018",
+ "datei": "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta.jpg",
+ "was": "Balkon: Konsolen unter der Bodenplatte",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-17",
+ "punkte": [
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 873.0,
+   "y": 1505.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1023.0,
+   "y": 1504.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1252.0,
+   "y": 1502.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1481.0,
+   "y": 1499.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1702.0,
+   "y": 1497.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1930.0,
+   "y": 1495.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2158.0,
+   "y": 1492.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2370.0,
+   "y": 1490.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2581.0,
+   "y": 1488.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2768.0,
+   "y": 1486.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2908.0,
+   "y": 1485.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F": {
+   "art": "voll",
+   "n": 11
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 11,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-eigen__018-007.jpg",
+ "ausschnitt": [
+  623,
+  1235,
+  3158,
+  1755
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "unter jedem Pfosten und mittig dazwischen; Lage am entzerrten Bild w 0,82 (018 + commons 052 deckungsgleich)"
+}

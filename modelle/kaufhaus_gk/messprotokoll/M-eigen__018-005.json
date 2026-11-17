@@ -1,0 +1,49 @@
+{
+ "id": "M-eigen__018-005",
+ "typ": "triangulation",
+ "foto": "eigen__018",
+ "name": "Balkon: Handlauf Oberkante, vordere Westecke",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta",
+   "px": [
+    862.0,
+    1301.0
+   ]
+  },
+  {
+   "kamera": "K-commons__110_Középkori_bevásárlóközpont_Medieval_shopping_centre_-_panoramio",
+   "px": [
+    750.0,
+    652.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__061_The_so_called_famous_Red_House_Alte_Kaufhaus_A.D._1532_in_Fr",
+   "px": [
+    570.0,
+    1871.0
+   ]
+  }
+ ],
+ "P": [
+  10.425,
+  11.664,
+  6.836
+ ],
+ "strahl_abstand_m": [
+  0.067,
+  0.047,
+  0.059
+ ],
+ "schnittwinkel_grad": [
+  49.3,
+  45.6,
+  92.9
+ ],
+ "z": 6.836,
+ "unsicherheit_m": 0.143,
+ "massstab_von": "Kameras K-eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta, K-commons__110_Középkori_bevásárlóközpont_Medieval_shopping_centre_-_panoramio, K-eigen__061_The_so_called_famous_Red_House_Alte_Kaufhaus_A.D._1532_in_Fr aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme",
+ "n": 14.538,
+ "u": 5.776
+}

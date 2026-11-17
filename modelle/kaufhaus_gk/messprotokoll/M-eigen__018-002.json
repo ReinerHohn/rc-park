@@ -1,0 +1,47 @@
+{
+ "id": "M-eigen__018-002",
+ "typ": "triangulation_plan",
+ "foto": "eigen__018",
+ "name": "Laube Saeule 3 (u ~10,1): Schaftachse (Mitte der Silhouette)",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta",
+   "px": [
+    1902.0,
+    1976.0
+   ]
+  },
+  {
+   "kamera": "K-commons__110_Középkori_bevásárlóközpont_Medieval_shopping_centre_-_panoramio",
+   "px": [
+    1045.5,
+    1005.0
+   ]
+  },
+  {
+   "kamera": "K-eigen__061_The_so_called_famous_Red_House_Alte_Kaufhaus_A.D._1532_in_Fr",
+   "px": [
+    1200.0,
+    2385.0
+   ]
+  }
+ ],
+ "P_xy": [
+  3.862,
+  12.626
+ ],
+ "strahl_abstand_m": [
+  0.053,
+  0.04,
+  0.041
+ ],
+ "schnittwinkel_grad": [
+  49.7,
+  48.0,
+  97.6
+ ],
+ "unsicherheit_m": 0.13,
+ "massstab_von": "Kameras K-eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta, K-commons__110_Középkori_bevásárlóközpont_Medieval_shopping_centre_-_panoramio, K-eigen__061_The_so_called_famous_Red_House_Alte_Kaufhaus_A.D._1532_in_Fr aus SfM-Buendel (KEINE amtlichen Anker); waagerechte Peilung einer senkrechten Kante, Pickhoehe beliebig, keine Ebenenannahme",
+ "n": 13.184,
+ "u": -0.716
+}

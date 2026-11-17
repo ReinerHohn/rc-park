@@ -1,0 +1,72 @@
+{
+ "id": "Z-eigen__018-005",
+ "typ": "zaehlung",
+ "foto": "eigen__018",
+ "datei": "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta.jpg",
+ "was": "Balkon Nordfront: Pfosten (Rahmenpfosten) inkl. 2 Eckpfosten",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-17",
+ "punkte": [
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 853.0,
+   "y": 1373.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1026.0,
+   "y": 1371.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1482.0,
+   "y": 1367.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1921.0,
+   "y": 1363.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2366.0,
+   "y": 1359.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2778.0,
+   "y": 1355.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2917.0,
+   "y": 1353.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F": {
+   "art": "voll",
+   "n": 7
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 7,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-eigen__018-005.jpg",
+ "ausschnitt": [
+  603,
+  1103,
+  3167,
+  1623
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

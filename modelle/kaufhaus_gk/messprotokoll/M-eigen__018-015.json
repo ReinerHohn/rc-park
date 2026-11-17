@@ -1,0 +1,32 @@
+{
+ "id": "M-eigen__018-015",
+ "foto": "eigen__018",
+ "kamera": "K-eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta",
+ "ebene": "0.344,0.939,0=13.673",
+ "name": "Fenster 2 Vorhangbogen: Spitze -> Scheitel Mittelfeld (hangend) (Picks am entzerrten Bild, wand_ortho)",
+ "mess_px": [
+  1384.7,
+  882.7,
+  1440.0,
+  890.9
+ ],
+ "P1": [
+  7.157,
+  11.939,
+  9.78
+ ],
+ "P2": [
+  6.81,
+  12.066,
+  9.72
+ ],
+ "dz": -0.06,
+ "dy": 0.127,
+ "dx": -0.348,
+ "abstand": 0.375,
+ "z1": 9.78,
+ "z2": 9.72,
+ "unsicherheit_rel": 0.0049,
+ "unsicherheit_m": 0.03,
+ "massstab_von": "Kamera K-eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.344,0.939,0=13.673 (+-0.15 m)"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "M-commons__052-012",
+ "foto": "commons__052",
+ "kamera": "K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+ "ebene": "0.344,0.939,0=13.673",
+ "name": "Fenster 2: lichte Breite (Picks am entzerrten Bild, wand_ortho)",
+ "mess_px": [
+  722.4,
+  518.4,
+  834.4,
+  517.5
+ ],
+ "P1": [
+  7.768,
+  11.716,
+  8.599
+ ],
+ "P2": [
+  5.833,
+  12.424,
+  8.6
+ ],
+ "dz": 0.001,
+ "dy": 0.709,
+ "dx": -1.935,
+ "abstand": 2.06,
+ "z1": 8.599,
+ "z2": 8.6,
+ "unsicherheit_rel": 0.0044,
+ "unsicherheit_m": 0.087,
+ "massstab_von": "Kamera K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.344,0.939,0=13.673 (+-0.15 m)"
+}

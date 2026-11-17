@@ -1,0 +1,32 @@
+{
+ "id": "M-commons__052-008",
+ "foto": "commons__052",
+ "kamera": "K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+ "ebene": "0.344,0.939,0=14.543",
+ "name": "Balkon: Konsole Breite (Picks am entzerrten Bild, wand_ortho)",
+ "mess_px": [
+  877.8,
+  679.4,
+  863.7,
+  679.5
+ ],
+ "P1": [
+  5.344,
+  13.53,
+  5.5
+ ],
+ "P2": [
+  5.578,
+  13.444,
+  5.501
+ ],
+ "dz": 0.0,
+ "dy": -0.086,
+ "dx": 0.234,
+ "abstand": 0.249,
+ "z1": 5.5,
+ "z2": 5.501,
+ "unsicherheit_rel": 0.0046,
+ "unsicherheit_m": 0.075,
+ "massstab_von": "Kamera K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.344,0.939,0=14.543 (+-0.15 m)"
+}

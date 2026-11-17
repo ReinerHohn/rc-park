@@ -1,0 +1,32 @@
+{
+ "id": "M-commons__052-006",
+ "foto": "commons__052",
+ "kamera": "K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+ "ebene": "0.344,0.939,0=14.543",
+ "name": "Balkon: Bodenplatte Unterkante -> Handlauf Oberkante (Vorderebene) (Picks am entzerrten Bild, wand_ortho)",
+ "mess_px": [
+  859.7,
+  663.3,
+  859.8,
+  604.1
+ ],
+ "P1": [
+  5.644,
+  13.42,
+  5.789
+ ],
+ "P2": [
+  5.644,
+  13.42,
+  6.849
+ ],
+ "dz": 1.06,
+ "dy": 0.0,
+ "dx": -0.001,
+ "abstand": 1.06,
+ "z1": 5.789,
+ "z2": 6.849,
+ "unsicherheit_rel": 0.0046,
+ "unsicherheit_m": 0.079,
+ "massstab_von": "Kamera K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.344,0.939,0=14.543 (+-0.15 m)"
+}

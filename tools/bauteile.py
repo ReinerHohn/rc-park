@@ -246,14 +246,16 @@ def umgang(koerper, ecken, z0, z1, tiefe=0.9, pfosten=4, b=0.24, riegel=0.25, vo
     return koerper - ab + zus
 
 
-def laube(koerper, W, boegen, tiefe, decke, pfeiler_tiefe=0.8, u0=None, u1=None, vor=0.8, unten=-0.5, stirn=()):
+def laube(koerper, W, boegen, tiefe, decke, pfeiler_tiefe=0.8, u0=None, u1=None, vor=0.8, unten=-0.5, stirn=(), frei=None):
     """OFFENE LAUBE / ARKADENHALLE hinter einer Bogenreihe (GENERISCH, 17.11.2026 Kaufhaus: "Arkaden nur 10 cm Ruecksprung").
     W: Wand der Bogenreihe (Aussenflaeche w = 0). boegen: Liste dict(u, breite, kaempfer, scheitel, form) mit LICHTEN Massen der Oeffnungen (form 'rund'|'stich'|'spitz'|'korb');
     jede Oeffnung wird von 'vor' m vor der Wand (Reliefplatten davor fallen mit) bis knapp hinter die Pfeilerflucht (pfeiler_tiefe) geschnitten.
     Halle: Quader u0..u1 (Standard: aeusserste Bogenkanten), w = -tiefe .. -pfeiler_tiefe, z = unten .. decke (flache Decke = ANNAHME statt Gewoelbe).
     stirn: Bogenoeffnungen in Stirnwaenden, je (Wand2, dict wie boegen + 'durch' = Schnitttiefe hinter Wand2, Standard 1,5 m).
     Zu messen: Bogenlagen und -masse (entzerrtes Frontfoto, tools/wand_ortho.py, 2 Fotos deckungsgleich), Zahl am Foto (foto_zaehlung.py), Hallentiefe (Ebenen-Sweep durch die Boegen).
-    ANNAHME meist: pfeiler_tiefe, decke. Liefert (koerper, schnittkoerper)."""
+    ANNAHME meist: pfeiler_tiefe, decke. Liefert (koerper, schnittkoerper).
+    frei = (u0, u1, z1[, w_hinten]) oder Liste davon: Pfeilerzone u0..u1 unterhalb z1 (Kaempfer) freiraeumen (bis w_hinten, Standard ganz), von vor bis hinter die Pfeilerflucht - fuer freistehende Saeulen statt Wandpfeiler
+    (17.11.2026 Runde 2: Foto zeigt runde Saeulen; die Saeulen selbst mit saeule() NACH aushoehlen addieren)."""
     sch = None
     for b in boegen:
         k = W.prisma(bogen_querschnitt(b.get("form", "rund"), b["breite"], b["kaempfer"], b["scheitel"], unten), u=b["u"], w0=-pfeiler_tiefe - 0.05, w1=vor); sch = k if sch is None else sch + k
@@ -261,7 +263,85 @@ def laube(koerper, W, boegen, tiefe, decke, pfeiler_tiefe=0.8, u0=None, u1=None,
     sch = sch + W.kasten(u0, u1, unten, decke, -tiefe, -pfeiler_tiefe)
     for W2, b in stirn:
         sch = sch + W2.prisma(bogen_querschnitt(b.get("form", "rund"), b["breite"], b["kaempfer"], b["scheitel"], unten), u=b["u"], w0=-float(b.get("durch", 1.5)), w1=vor)
+    for f_ in ([frei] if frei and np.isscalar(frei[0]) else (frei or ())):     # je Kasten (u0, u1, z1[, w_hinten]); w_hinten Standard = hinter der Pfeilerflucht
+        sch = sch + W.kasten(f_[0], f_[1], unten, f_[2], f_[3] if len(f_) > 3 else -pfeiler_tiefe - 0.05, vor)
     return koerper - sch, sch
+
+
+def saeule(W, u, w, z0, z1, d, basis=None, kapitell=None, nseg=40):
+    """RUNDE SAEULE mit Basis und Kapitell (GENERISCH, 17.11.2026 Kaufhaus-Laube Runde 2). Achse bei Wandkoordinaten (u, w) der Wand W, Schaft z0..z1, Durchmesser d.
+    basis = dict(z1, breite, form='quadrat'|'rund', wulst=0.06): Plinthe z0..z1 (quadratisch = Kanten parallel zur Wand), darauf ein Wulst (Ring halbe Hoehe 'wulst',
+    Durchmesser zwischen Schaft und Plinthe) als Uebergang. kapitell = dict(z0, z1, d_oben): Aufweitung (Kegelstumpf) vom Schaft auf d_oben - an der Laube laufen dort
+    die Bogenprofile aus. Zu messen: Achse (Triangulation der Silhouettenmitte in >= 2 Fotos, foto_mass --tri2d), d (Silhouette am entzerrten Bild in der Achsebene),
+    Plinthe Breite/Hoehe, Beginn der Aufweitung; Zahl am Foto. Liefert den Saeulenkoerper (z0 nicht unter die Modellunterkante legen: der Pruefstand setzt z = 0 dort)."""
+    x, y, _ = W.punkt(u, 0.0, w); zs = (basis or {}).get("z1", z0); k = M.cylinder(z1 - zs + 0.02, d / 2, d / 2, nseg).translate((x, y, zs - 0.01))
+    if basis:
+        b = basis["breite"]
+        k = k + (W.kasten(u - b / 2, u + b / 2, z0, basis["z1"], w - b / 2, w + b / 2) if basis.get("form", "quadrat") == "quadrat"
+                 else M.cylinder(basis["z1"] - z0, b / 2, b / 2, nseg).translate((x, y, z0)))
+        hw = basis.get("wulst", 0.06); dw = 0.5 * (d + min(b, d + 0.16))
+        if hw > 0: k = k + M.cylinder(hw, dw / 2, d / 2, nseg).translate((x, y, basis["z1"] - 0.005))
+    if kapitell:
+        k = k + M.cylinder(kapitell["z1"] - kapitell["z0"], d / 2, kapitell["d_oben"] / 2, nseg).translate((x, y, kapitell["z0"]))
+    return k
+
+
+def balkon(W, u0, u1, z_boden, w_vorne, z_handlauf, docken, pfosten, konsolen=(), platte=0.11, ueber=0.05, d_docke=0.09, b_pfosten=0.16, schwelle=0.07,
+           handlauf=(0.10, 0.18), konsole=(0.25, 0.62, 0.30), seiten_docken=3, w_wand=-0.05):
+    """AUSKRAGENDER BALKON mit Docken-Gelaender (GENERISCH, 17.11.2026 Kaufhaus Runde 2) vor der Wand W (Aussenflaeche w = 0).
+    u0..u1: Laenge (Aussenkanten der Eckpfosten), z_boden: Unterkante Bodenplatte, w_vorne: Vorderflucht des Gelaenders (Handlauf), z_handlauf: Oberkante Handlauf.
+    docken: u-Lagen der Docken (Baluster, je Segment am Foto gezaehlt und abgelesen); pfosten: u-Lagen der Pfosten (inkl. Eckpfosten); konsolen: u-Lagen der Konsolen.
+    Teile: Bodenplatte (platte hoch, 'ueber' vor der Gelaenderflucht), Schwelle, Handlauf (hoch, tief), Pfosten (b_pfosten quadratisch), Docken (Zylinder d_docke mit Fuss- und
+    Kopfklotz), Seitenruecklaeufe mit 'seiten_docken' Docken je Seite, Konsolen (breite, hoehe, unten_tief): oben bis unter die Vorderkante, unten 'unten_tief' tief (Keil statt Volute).
+    Zu messen: Vorderecke (Triangulation, foto_mass --tri), Hoehen am entzerrten Bild der Gelaenderebene, Zahlen am Foto. Querschnitte = ANNAHME. Liefert den Balkonkoerper."""
+    K = W.kasten; zb1 = z_boden + platte; zs1 = zb1 + schwelle; hh, ht = handlauf; zh0 = z_handlauf - hh; wv = w_vorne; wm = wv - ht / 2
+    g = K(u0 - ueber, u1 + ueber, z_boden, zb1, w_wand, wv + ueber)                                                  # Bodenplatte
+    g = g + K(u0, u1, zb1 - 0.01, zs1, wv - ht + 0.02, wv - 0.02)                                                    # Schwelle (vorn)
+    g = g + K(u0 - 0.03, u1 + 0.03, zh0, z_handlauf, wv - ht, wv + 0.02)                                            # Handlauf (vorn)
+    for s_ in (u0 + b_pfosten / 2, u1 - b_pfosten / 2):                                                             # Seitenruecklaeufe: Schwelle, Handlauf, Docken
+        g = g + K(s_ - b_pfosten / 2, s_ + b_pfosten / 2, zb1 - 0.01, zs1, w_wand, wv - 0.02) + K(s_ - b_pfosten / 2 - 0.01, s_ + b_pfosten / 2 + 0.01, zh0, z_handlauf, w_wand, wv)
+        for i in range(seiten_docken):
+            wd = (i + 1) * (wv - ht) / (seiten_docken + 1); g = g + M.cylinder(zh0 - zs1 + 0.02, d_docke / 2, d_docke / 2, 16).translate((*W.punkt(s_, 0.0, wd)[:2], zs1 - 0.01))
+    for up in pfosten: g = g + K(up - b_pfosten / 2, up + b_pfosten / 2, zb1 - 0.01, zh0 + 0.01, wm - b_pfosten / 2, wm + b_pfosten / 2)
+    kl = 0.06; kb = d_docke + 0.03
+    for ud in docken:
+        x, y, _ = W.punkt(ud, 0.0, wm)
+        g = g + M.cylinder(zh0 - zs1 + 0.02, d_docke / 2, d_docke / 2, 16).translate((x, y, zs1 - 0.01)) + K(ud - kb / 2, ud + kb / 2, zs1 - 0.01, zs1 + kl, wm - kb / 2, wm + kb / 2) \
+            + K(ud - kb / 2, ud + kb / 2, zh0 - kl, zh0 + 0.01, wm - kb / 2, wm + kb / 2)
+    kb_, kh, kt = konsole
+    for uk in konsolen:
+        g = g + W.huelle([(uk + s * kb_ / 2, z_, w_) for s in (-1.0, 1.0) for z_, w_ in ((z_boden + 0.01, w_wand), (z_boden + 0.01, wv - 0.05), (z_boden - kh, w_wand), (z_boden - kh, kt))])
+    return g
+
+
+def vorhangbogen(breite, unten, schulter, spitze, mitte, feld, exponent=1.9, nseg=14):
+    """Querschnitt (quer, hoch) einer VORHANGBOGEN-Oeffnung (spaetgotischer Fensterkopf, GENERISCH, 17.11.2026 Kaufhaus Runde 2): senkrechte Seiten bis zur Schulter,
+    aussen je ein hohl geschwungener Bogen (z = schulter + (spitze - schulter) * s^exponent, s = 0 an der Seite .. 1 an der Spitze) bis zu den Spitzen bei +-feld/2,
+    dazwischen ein haengender Bogen (Parabel) mit dem tiefsten Punkt 'mitte'. Zu messen: Breite, Schulter, Spitzen (Hoehe, Abstand = Breite des Mittelfeldes),
+    Scheitel des Mittelfeldes, 3-5 Punkte eines Aussenbogens fuer den Exponenten (entzerrtes Bild, 2 Fotos)."""
+    a = breite / 2; f = feld / 2; s = np.linspace(0, 1, nseg)
+    re = [(a - si * (a - f), schulter + (spitze - schulter) * si ** exponent) for si in s]                       # rechts: Seite -> Spitze
+    mi = [(x, mitte + (spitze - mitte) * (x / f) ** 2) for x in np.linspace(f, -f, nseg)][1:-1]                   # haengend, rechts -> links
+    li = [(-x, z) for x, z in re[::-1]]                                                                        # links: Spitze -> Seite
+    return CrossSection([[[-a, unten], [a, unten]] + [list(p) for p in re + mi + li]])
+
+
+def vorhangbogen_fenster(W, u0, u1, z0, z1, schulter, spitze, mitte, feld, exponent=1.9, w_fuell=(-0.11, -0.005), schnitt=(-0.3, 0.4),
+                         pfosten_b=0.07, rahmen=(-0.13, -0.05), kaempfer=None):
+    """Rechteckiges Fenster (u0..u1, z0..z1, schon als Nische/Loch gebaut, z. B. fenster_aus_json + aushoehlen) zum VORHANGBOGEN-Fenster umbauen (GENERISCH, 17.11.2026):
+    oberhalb der Schulter Wand zurueck (Fuellung w_fuell), dann die Vorhangbogenform durch die Wand schneiden (schnitt = w-Bereich, auch durch Reliefplatten davor) -
+    die Spitzen duerfen hoeher als z1 liegen. Pfosten unter den beiden Spitzen (z0 bis Spitze) und Kaempfer = (z in den Seitenfeldern, z im Mittelfeld) in der Rahmenebene.
+    NACH aushoehlen aufrufen. Liefert (zusatz, abzug, pfosten): koerper = (koerper + zusatz - abzug) + pfosten."""
+    um = 0.5 * (u0 + u1); B = u1 - u0
+    zus = W.kasten(u0 - 0.02, u1 + 0.02, schulter - 0.02, z1 + 0.03, w_fuell[0], w_fuell[1])
+    ab = W.prisma(vorhangbogen(B, schulter - 0.3, schulter, spitze, mitte, feld, exponent), u=um, w0=schnitt[0], w1=schnitt[1])
+    pf = None
+    for uc in (um - feld / 2, um + feld / 2):
+        q = W.kasten(uc - pfosten_b / 2, uc + pfosten_b / 2, z0 - 0.01, spitze + 0.04, rahmen[0], rahmen[1]); pf = q if pf is None else pf + q
+    if kaempfer:
+        zs_, zm_ = kaempfer; ul, ur = um - feld / 2, um + feld / 2
+        for zk, ua, ub in ((zs_, u0 - 0.01, ul), (zs_, ur, u1 + 0.01), (zm_, ul, ur)): pf = pf + W.kasten(ua, ub, zk - 0.03, zk + 0.03, rahmen[0], rahmen[1])
+    return zus, ab, pf
 
 
 def staffelgiebel(W, mitte_u, spitze_breite, spitze_z, flanken, dicke=0.63, fuss_z=None, kappe=0.22, sims=0.08, ueber=0.08):

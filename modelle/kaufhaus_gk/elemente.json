@@ -75,7 +75,7 @@
   "element": "Relief Fassade w03 (Fassaden-Kette)",
   "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm), roh: das Foto zeigt kein Quaderwerk (Quader-Tor), kleine Loecher glatt gefuellt",
   "generiert_anteil": 0.0,
-  "hinweis": "Scan-Relief, kein Mass; ANNAHME: Relief 11 cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung",
+  "hinweis": "Scan-Relief, kein Mass; ANNAHME: Relief 11 cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung; ANNAHME: 56 % der Wand naeher als 5 cm am Wandniveau = glatter Putz (Netzrauschen weg)",
   "seite_name": "wand"
  },
  {
@@ -83,7 +83,7 @@
   "element": "Relief Fassade w04 (Fassaden-Kette)",
   "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm), roh: das Foto zeigt kein Quaderwerk (Quader-Tor), kleine Loecher glatt gefuellt",
   "generiert_anteil": 0.0,
-  "hinweis": "Scan-Relief, kein Mass; ANNAHME: Relief 11 cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung",
+  "hinweis": "Scan-Relief, kein Mass; ANNAHME: Relief 11 cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung; ANNAHME: 49 % der Wand naeher als 5 cm am Wandniveau = glatter Putz (Netzrauschen weg)",
   "seite_name": "wand"
  },
  {
@@ -91,7 +91,7 @@
   "element": "Relief Fassade w05 (Fassaden-Kette)",
   "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm), roh: das Foto zeigt kein Quaderwerk (Quader-Tor), kleine Loecher glatt gefuellt",
   "generiert_anteil": 0.0,
-  "hinweis": "Scan-Relief, kein Mass; ANNAHME: Relief 11 cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung",
+  "hinweis": "Scan-Relief, kein Mass; ANNAHME: Relief 11 cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung; ANNAHME: 60 % der Wand naeher als 5 cm am Wandniveau = glatter Putz (Netzrauschen weg)",
   "seite_name": "wand"
  },
  {
@@ -122,9 +122,49 @@
  },
  {
   "seite": "wand",
+  "element": "Laube: Pfeilerzone bis Kaempfer freigeraeumt (Saeulen statt Wandpfeiler)",
+  "quelle": "Pfeilerzone bis Kaempfer 3,5 freigeraeumt (Runde 2): Foto zeigt freistehende runde Saeulen statt Wandpfeiler (Z-eigen__018-006); am Ostende nur VOR der Ecksaeulenachse (ANNAHME: dahinter geschlossene Stirnwand, kein Durchblick belegt)",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Laube: Boden/Pflaster auf z 0.65 (Bogenunterkanten)",
+  "quelle": "Pflaster an der Laube bei z 0,65 (Plinthen-Unterkante, entzerrtes Bild 018/052 in der Saeulenebene, M-eigen__018-008 / M-commons__052-003); Modellunterkante z 0 liegt tiefer (Gelaende faellt) -> Laubenboden und Bogenunterkanten auf 0,65",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Gebaeude hohl, 5 Fenster durchgebrochen",
   "quelle": "bauteile.aushoehlen auf den automatisch erkannten Fenstern",
   "hinweis": "Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Laube: 5 runde Saeulen mit Plinthe, Wulst und Aufweitung (statt Wandpfeiler)",
+  "quelle": "Zahl 5 Z-eigen__018-006 (rund: Schattierung quer zum Schaft in 018/052/110/061); Achsen trianguliert (tri2d, Silhouettenmitte) M-eigen__018-002/003/004: u 10,20/5,65/14,73, w -0,54/-0,58/-0,59 -> w -0,57; Schaft 0,62-0,66 (Saeulen 2-4), Ecksaeulen 0,76-0,90 am entzerrten Bild 052 in der Achsebene w -0,57 (M-eigen__018-006/010, M-commons__052-001/005); Plinthe 0,88 breit (Ecken 1,05-1,1), Oberkante 1,28 (M-eigen__018-007/008); Schaft weitet sich ab z 3,65 in die Bogenprofile (M-eigen__018-009)",
+  "hinweis": "ANNAHME: Plinthe quadratisch, Kanten parallel zur Wand (Front im Foto flach); Kapitell als Kegelstumpf 3,6-3,8 auf 0,85 m (Foto: Aufweitung in die Bogenprofile, keine Kapitellplastik erkennbar); Ecksaeulen-Achsen 1,40/19,10 statt abgelesen 1,27/19,24 (+-0,1), damit sie in der Giebelflucht enden; Wulst 6 cm",
+  "durchmesser": [
+   0.83,
+   0.65,
+   0.65,
+   0.65,
+   0.83
+  ],
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "5 Obergeschossfenster mit Vorhangbogen (3 Felder, 2 Pfosten an den Spitzen, Kaempfer)",
+  "quelle": "Zahl 5 Z-eigen__018-008; Fensterrechtecke aus audit/fenster_bau.json (Fassade f02 = Traufwand); Kopf am entzerrten Bild commons 052 und eigen 018 (Fenster 2, 4 mm/px): Schulter 9,09, Spitzen 9,78 an Pfosten u 13,53/12,78 (Mittelfeld 0,75), Scheitel Mittelfeld 9,72, Aussenbogen hohl (Punkte 9,21/9,31/9,47/9,67 bei 28/58/80/92 % -> Exponent 1,9) (M-eigen__018-014..017, M-commons__052-009..012); Kaempfer Seitenfelder 8,45, Mittelfeld 8,9",
+  "hinweis": "ANNAHME: alle 5 Fenster wie Fenster 2 (Foto: gleich); Pfosten 7 cm, Kaempfer 6 cm in der Rahmenebene; Wandfuellung oberhalb der Schulter bis w 0,06 (Reliefflaeche dort 0,02-0,15)",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Balkon ueber der Laube: Bodenplatte, 11 Konsolen, 7 Pfosten, 49 Docken vorn + je 3 seitlich, Handlauf",
+  "quelle": "Vorderecke West trianguliert M-eigen__018-005 (018/110/061, Strahlabstand <= 0,07: u 16,69, w 0,82, z 6,84); Hoehen am entzerrten Bild der Gelaenderebene w 0,82 (018 + commons 052 deckungsgleich): Bodenplatte 5,79-5,90, Handlauf 6,85, Konsolen 5,17-5,79 x 0,25 (M-eigen__018-011..013, M-commons__052-006..008); Ostende u 3,55-3,6 am selben Bild; Zahlen Z-eigen__018-004 (49 Docken, Segmente 3/11/11/11/10/3), -005 (7 Pfosten), -007 (11 Konsolen); Dockenabstand 0,225 in beiden Fotos",
+  "hinweis": "ANNAHME: Querschnitte (Docke 9 cm rund mit Fuss/Kopf, Pfosten 16 cm, Handlauf 10x18, Schwelle 7 cm); Konsolenprofil als Keil (Foto: Volute); Seitenruecklaeufe je 3 Docken (West in 110 sichtbar, Ost ungesehen); Docken-Lage aus 018 (052 um bis zu eine halbe Teilung verschoben; Abstand gleich); Docken nicht per Kanten-Sweep (regelmaessige Reihe, Lage aus Ecktriangulation + Rhythmus)",
   "seite_name": "wand"
  },
  {

@@ -1,0 +1,32 @@
+{
+ "id": "M-commons__052-007",
+ "foto": "commons__052",
+ "kamera": "K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+ "ebene": "0.344,0.939,0=14.543",
+ "name": "Balkon: Konsole Unterkante -> Bodenplatte Unterkante (Picks am entzerrten Bild, wand_ortho)",
+ "mess_px": [
+  871.0,
+  698.1,
+  871.0,
+  663.2
+ ],
+ "P1": [
+  5.457,
+  13.489,
+  5.169
+ ],
+ "P2": [
+  5.457,
+  13.489,
+  5.79
+ ],
+ "dz": 0.62,
+ "dy": -0.0,
+ "dx": 0.0,
+ "abstand": 0.62,
+ "z1": 5.169,
+ "z2": 5.79,
+ "unsicherheit_rel": 0.0046,
+ "unsicherheit_m": 0.077,
+ "massstab_von": "Kamera K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.344,0.939,0=14.543 (+-0.15 m)"
+}

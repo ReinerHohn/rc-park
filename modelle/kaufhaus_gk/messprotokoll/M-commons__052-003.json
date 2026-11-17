@@ -1,0 +1,32 @@
+{
+ "id": "M-commons__052-003",
+ "foto": "commons__052",
+ "kamera": "K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+ "ebene": "0.344,0.939,0=13.153",
+ "name": "Laube Saeule 3: Basis Unterkante -> Oberkante (Plinthe) (Picks am entzerrten Bild, wand_ortho)",
+ "mess_px": [
+  947.1,
+  954.9,
+  946.9,
+  919.5
+ ],
+ "P1": [
+  3.758,
+  12.631,
+  0.649
+ ],
+ "P2": [
+  3.758,
+  12.631,
+  1.28
+ ],
+ "dz": 0.631,
+ "dy": 0.0,
+ "dx": -0.0,
+ "abstand": 0.631,
+ "z1": 0.649,
+ "z2": 1.28,
+ "unsicherheit_rel": 0.0045,
+ "unsicherheit_m": 0.08,
+ "massstab_von": "Kamera K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.344,0.939,0=13.153 (+-0.15 m)"
+}

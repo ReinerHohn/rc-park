@@ -1,0 +1,32 @@
+{
+ "id": "M-commons__052-001",
+ "foto": "commons__052",
+ "kamera": "K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+ "ebene": "0.344,0.939,0=13.153",
+ "name": "Laube Saeule 3: Schaftdurchmesser bei z 2,5 (Silhouette) (Picks am entzerrten Bild, wand_ortho)",
+ "mess_px": [
+  961.4,
+  851.5,
+  927.3,
+  851.7
+ ],
+ "P1": [
+  3.504,
+  12.724,
+  2.499
+ ],
+ "P2": [
+  4.086,
+  12.511,
+  2.5
+ ],
+ "dz": 0.001,
+ "dy": -0.213,
+ "dx": 0.582,
+ "abstand": 0.62,
+ "z1": 2.499,
+ "z2": 2.5,
+ "unsicherheit_rel": 0.0045,
+ "unsicherheit_m": 0.08,
+ "massstab_von": "Kamera K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.344,0.939,0=13.153 (+-0.15 m)"
+}

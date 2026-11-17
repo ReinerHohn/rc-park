@@ -5,9 +5,9 @@
   "wasserdicht": 1.0,
   "koerper": 1.0,
   "arkade_n_anzahl": 4.0,
-  "arkade_n_breite_median": 3.6,
-  "arkade_n_breite_max": 3.7,
-  "arkade_n_ebene_abstand": 1.984644281587586,
+  "arkade_n_breite_median": 3.71,
+  "arkade_n_breite_max": 3.9,
+  "arkade_n_ebene_abstand": 2.2643609450285354,
   "arkade_scheitel_b2": 4.960000000000002,
   "giebel_west_spitze": 21.75,
   "giebel_west_n5": 16.799960723876953,
@@ -25,7 +25,24 @@
   "erker_w_knauf": 0.17925864937420236,
   "erker_o_front80": 1.1000026015315763,
   "erker_o_helm128": 0.46498165078499437,
-  "erker_o_knauf": 0.17927121571664495
+  "erker_o_knauf": 0.17927121571664495,
+  "laube_saeule1_vor": 0.4003335204273939,
+  "laube_saeule2_vor": 0.32488793920518966,
+  "laube_saeule3_vor": 0.32459625606601494,
+  "laube_saeule4_vor": 0.3249649227442218,
+  "laube_saeule5_vor": 0.39873048818017287,
+  "laube_saeule3_basis": 0.43986058858529997,
+  "balkon_docken_anzahl": 49.0,
+  "balkon_docken_breite_median": 0.09,
+  "balkon_docken_grund_abstand": -0.1135343888968472,
+  "balkon_konsolen_anzahl": 11.0,
+  "balkon_konsolen_breite_median": 0.25,
+  "balkon_konsolen_grund_abstand": -0.15016313045203322,
+  "balkon_handlauf": 6.839999999999982,
+  "balkon_vorderkante": 0.8396161812488909,
+  "fenster2_schulter": 9.119999999999989,
+  "fenster2_pfosten": 7.1,
+  "laube_boden": 0.640000000000001
  },
  "pruefungen": [
   {
@@ -60,7 +77,7 @@
   },
   {
    "name": "Arkade Nord: lichte Bogenbreite (Median) bei z 2,5",
-   "wert": 3.6,
+   "wert": 3.71,
    "soll": [
     3.3,
     3.9
@@ -244,6 +261,136 @@
    "soll": [
     0.12,
     0.26
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laube Saeule 1 (Ecke West): Schaft rund, Vorderkante ab Achse bei z 2,5 (Radius)",
+   "wert": 0.4003335204273939,
+   "soll": [
+    0.35,
+    0.47
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laube Saeule 2: Schaft rund, Vorderkante ab Achse bei z 2,5 (Radius)",
+   "wert": 0.32488793920518966,
+   "soll": [
+    0.27,
+    0.39
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laube Saeule 3: Schaft rund, Vorderkante ab Achse bei z 2,5 (Radius)",
+   "wert": 0.32459625606601494,
+   "soll": [
+    0.27,
+    0.39
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laube Saeule 4: Schaft rund, Vorderkante ab Achse bei z 2,5 (Radius)",
+   "wert": 0.3249649227442218,
+   "soll": [
+    0.27,
+    0.39
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laube Saeule 5 (Ecke Ost): Schaft rund, Vorderkante ab Achse bei z 2,5 (Radius)",
+   "wert": 0.39873048818017287,
+   "soll": [
+    0.35,
+    0.47
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laube Saeule 3: Basis (Plinthe) halbe Breite bei z 0,9",
+   "wert": 0.43986058858529997,
+   "soll": [
+    0.38,
+    0.5
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Balkon: Docken (Baluster) in der Gelaenderebene bei z 6,4 (Anzahl, Laeufe 4-12 cm = ohne Pfosten)",
+   "wert": 49.0,
+   "soll": [
+    49,
+    49
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Balkon: Konsolen unter der Bodenplatte bei z 5,5 (Anzahl)",
+   "wert": 11.0,
+   "soll": [
+    11,
+    11
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Balkon: Handlauf Oberkante (z)",
+   "wert": 6.839999999999982,
+   "soll": [
+    6.75,
+    6.95
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Balkon: Vorderkante Handlauf ab Traufwand bei z 6,82",
+   "wert": 0.8396161812488909,
+   "soll": [
+    0.74,
+    0.92
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster 2 Vorhangbogen: Laibung oben 0,12 m innen der Seite (z)",
+   "wert": 9.119999999999989,
+   "soll": [
+    9.03,
+    9.22
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Fenster 2: Pfosten unter der Spitze (unterstes Material, z)",
+   "wert": 7.1,
+   "soll": [
+    6.9,
+    7.2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Laube Bogen 2: Boden/Pflaster unter dem Bogen (z)",
+   "wert": 0.640000000000001,
+   "soll": [
+    0.55,
+    0.75
    ],
    "ok": true,
    "status": "ok"

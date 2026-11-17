@@ -1,0 +1,60 @@
+{
+ "id": "Z-eigen__018-008",
+ "typ": "zaehlung",
+ "foto": "eigen__018",
+ "datei": "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta.jpg",
+ "was": "Obergeschoss Traufwand: Fenster mit Vorhangbogen (3 Felder, 2 Pfosten an den Spitzen)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-17",
+ "punkte": [
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 996.0,
+   "y": 927.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1441.0,
+   "y": 923.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 1893.0,
+   "y": 919.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2345.0,
+   "y": 916.0
+  },
+  {
+   "flaeche": "F",
+   "art": "voll",
+   "x": 2786.0,
+   "y": 913.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "F": {
+   "art": "voll",
+   "n": 5
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 5,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-eigen__018-008.jpg",
+ "ausschnitt": [
+  746,
+  663,
+  3036,
+  1177
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}
