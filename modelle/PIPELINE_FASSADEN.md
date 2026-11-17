@@ -441,3 +441,12 @@ Netzstufe: braucht voruebergehend ~0,03 GB je Bild; raeumt die Tiefenkarten-Kopi
 - OFFEN fuer das Miniaturwunderland: Testdruck einer Steinplatte (Fugen ~0,35 mm tief = 2 Schichten - sichtbar?); flache Wandpaneele (`druck_paneele.py`, ~2,5x schneller); Sockel hohl; Ostplatte; Dach als eigenes Farbteil ist schon ein Teil (Farbe ANNAHME); duenne Grate an den Turmkanten (0,7 %).
 - Kette: `netz_aus_dicht.py` nimmt einen Arbeitsordner auf der Datenplatte, wenn der Ordner neben der dichten Wolke auf einer anderen/vollen Platte liegt (kaufhaus_gk/pipe -> externe Platte, 4 GB frei).
 - Kette: rote Lage sperrt Fotostufen (`lage_tor`, Martinstor); Einstieg ab 'fassaden' holt `dach.json` nach; Fototor nur fuer Fotos mit Messkamera.
+
+### Bausatz fuer zwei Drucker (17.11.2026, Nutzer: grobe Teile Prusa MK4S 0,8-mm-Duese, feine Teile Bambu) - `tools/bausatz.sh <objekt> <masken> [WAND_MM] [SPIEL_MM]`
+Turm (Wand 2,4 mm, Spiel 0,3 mm), gemessen mit PrusaSlicer-Standardprofil:
+- Koerper MK4S (Duese 0,8, Schicht 0,4, 250x210x220): 6 Teile + 3 Verbinderringe, 23 h 52 min, 824 cm3 (~1 kg). Groesstes Teil 143 x 172 x 173 mm, laengstes 8 h 22 min (Sockel).
+- Steinplatten Bambu (Duese 0,4, Schicht 0,16): 6 Stueck, 14 h 2 min, 75 cm3.
+- Vergleich: derselbe Koerper mit 0,4-mm-Duese / 0,2 mm Schicht 67 h. Parallel gedruckt ~24 h Wanduhr statt ~81 h.
+Kettenpruefstand 17.11.: kaufhaus_gk ab 'fassaden' 10 Stufen alle in Ordnung, 19 min, Relief an 9 Waenden, 9 Fenster, 4,6 Mio. Dreiecke (Sichtblatt: Ost mit Steinmuster, West/Sued fast glatt, keine Arkaden/Erker);
+martinstor_gk haelt an 'lage_tor' an (Lage nie belegt); schwab_auto: Ostwand 10 % Bilddaten nach Aussortieren falscher Kameras.
+`fassade_ortho.py`: 41 statt 65 s (ober_tvdr, 1-cm-Bild), Ergebnisbilder bitgleich. `--gpu-sicht` bleibt Option: 53 s, aber andere Abdeckung (f07 71 statt 82 %).
