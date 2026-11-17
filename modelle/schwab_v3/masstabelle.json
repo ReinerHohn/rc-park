@@ -1963,6 +1963,12 @@
    "auto_id": "umriss-commons_orig2__054-1",
    "text": "GANZE KANTE versetzt - Kamera dieses Fotos oder Gesamthoehe pruefen: -0.57 m ueber 15.76 m bei [-2.12, 16.13, 48.93] (Foto commons_orig2__054)",
    "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Nutzer (Foto Druck demo_tor_sued_stein, Bambu 0,16 mm)",
+   "text": "Steinrelief Tor Sued gedruckt: Steine/Fugen gut lesbar; Mitte rechts verwaschene fleckige Zone (Scan-Brei statt Fugen), Torbogen ohne Bogensteine (glatter Rand), Hoehenlinien der 0,16-mm-Schichten auf den Steinkuppen.",
+   "naechster_schritt": "Brei-Zone: steine_aus_foto.py fuer diesen Bereich; Bogensteine als Bauteil (Keilsteine radial) aus dem feinen Fassadenbild; Platten mit 0,08 mm oder variabler Schichthoehe slicen und Zeit messen"
   }
  ]
 }
