@@ -1901,57 +1901,6 @@
   },
   {
    "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1620",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 27.33,
-   "z_bis": 27.33,
-   "xyz": [
-    -2.76,
-    9.75,
-    27.33
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.33 m, y=9.75 m (Zelle [972, 1620, 108], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-1836",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 23.49,
-   "z_bis": 23.49,
-   "xyz": [
-    -2.59,
-    9.79,
-    23.49
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=23.49 m, y=9.79 m (Zelle [972, 1836, 108], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
-   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3)",
-   "auto_id": "fehlteile-eigen__IMG_20261106_113231-972-2052",
-   "art": "fehlteil",
-   "foto": "eigen__IMG_20261106_113231",
-   "z_von": 20.25,
-   "z_bis": 20.25,
-   "xyz": [
-    -2.67,
-    9.88,
-    20.25
-   ],
-   "abweichung": 1.0,
-   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=20.25 m, y=9.88 m (Zelle [972, 2052, 108], Score +1.00)",
-   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()"
-  },
-  {
-   "datum": "auto",
    "wer": "umriss_tor",
    "auto_id": "umriss-commons_orig2__127-0",
    "text": "Modell hoeher (zu hoch / erfunden): -0.40 m ueber 1.76 m bei [-4.31, 12.6, 41.7] (Foto commons_orig2__127)",
@@ -1969,6 +1918,44 @@
    "wer": "Nutzer (Foto Druck demo_tor_sued_stein, Bambu 0,16 mm)",
    "text": "Steinrelief Tor Sued gedruckt: Steine/Fugen gut lesbar; Mitte rechts verwaschene fleckige Zone (Scan-Brei statt Fugen), Torbogen ohne Bogensteine (glatter Rand), Hoehenlinien der 0,16-mm-Schichten auf den Steinkuppen.",
    "naechster_schritt": "Brei-Zone: steine_aus_foto.py fuer diesen Bereich; Bogensteine als Bauteil (Keilsteine radial) aus dem feinen Fassadenbild; Platten mit 0,08 mm oder variabler Schichthoehe slicen und Zeit messen"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Agent Mono-Relief (Auftrag Koordinator)",
+   "text": "Feinrelief mono Nord (relief/nord_mono.jpg): Oberleitungsdraht mit Isolator oben rechts als Grat/Rille im Relief (u ~10-12 m, z ~6-10 m); duenne Linien weiterer Drahtlagen aus anderen Fotos.",
+   "naechster_schritt": "relief_aus_fotos_mono.py: gerade dunkle lange Linien je Foto im entzerrten Wandbild erkennen und ausblenden (draht_linien), Luecken aus der Umgebung fuellen; Relief neu, Bild ansehen",
+   "stand": "2026-11-17 abends: draht_linien + geteilte Standort-Maske -> Draht und Isolator weg; dafuer je Drahtlage ein ~25 cm breites raues Band (Feinrechnung nord_misch) quer ueber die Steine, im STL sichtbar (audit/mono_vorher_nachher_nord.jpg, neben_eigen__IMG_20261106_113602.jpg). OFFEN: Band mit Fotos eines anderen Standorts fuellen."
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Agent Mono-Relief (Auftrag Koordinator)",
+   "text": "Feinrelief mono Sued (relief/sued_mono.jpg): senkrechter Strich (Rille + Grat) rechts an der Steintafel (u ~11 m, z ~1,5-4 m) und Draht-Grat quer ueber dem Bogen.",
+   "naechster_schritt": "Ursache am Einzelfoto suchen (Draht/Kabel oder Schattenkante), generisch im Werkzeug beheben; Relief neu, Bild ansehen",
+   "stand": "2026-11-17 abends: Ursache Parallaxe der vorspringenden Tafel (Entzerrung auf der Ebene) + Sichtgrenze Foto 113849 -> Entzerrung auf der Reliefflaeche, Rand-Auslauf ab 8 cm. Doppelstrich weg; eine Rille an der rechten Tafelkante bleibt (echte Kante/Schatten, nicht getrennt). Draht-Grat ueber dem Bogen weitgehend weg."
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Agent Mono-Relief (Auftrag Koordinator)",
+   "text": "Feinrelief mono Sued: Keilsteine des Torbogens Sued nur schwach (Fugen radial im Foto deutlich, im Relief glatter Ring).",
+   "naechster_schritt": "Kachel-Normierung/Randbereich am Tor pruefen (Tiefensprung zur Durchfahrt drueckt die Kachel), Fugen-F1 in Zone Bogen 3,0-8,4 / 4,0-7,5 vorher/nachher",
+   "stand": "2026-11-17 abends: robuste Kachel-Normierung; Fugen-F1 Bogenzone gegen Holdout 113836: Scan 0,35, neu 0,42 (Zufall 0,28-0,32). Keilsteine sichtbar, aber flach; Bogenring-Saum an der Leibung bleibt."
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1)",
+   "auto_id": "fehlteile-eigen__IMG_20261106_113231-963-1605",
+   "art": "fehlteil",
+   "foto": "eigen__IMG_20261106_113231",
+   "z_von": 27.87,
+   "z_bis": 27.87,
+   "xyz": [
+    -3.05,
+    9.72,
+    27.87
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=27.87 m, y=9.72 m (Zelle [963, 1605, 107], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
   }
  ]
 }

@@ -3,24 +3,46 @@
  "befunde": [
   {
    "foto": "commons_orig2__127",
-   "art": "Modell hoeher (zu hoch / erfunden)",
-   "abweichung_m": -0.4,
-   "breite_m": 1.76,
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 1.33,
+   "breite_m": 1.13,
    "xyz": [
-    -4.31,
-    12.6,
-    41.7
+    -2.4,
+    15.83,
+    49.24
+   ]
+  },
+  {
+   "foto": "commons_orig2__127",
+   "art": "Modell hoeher (zu hoch / erfunden)",
+   "abweichung_m": -0.48,
+   "breite_m": 0.84,
+   "xyz": [
+    -2.3,
+    14.13,
+    48.89
    ]
   },
   {
    "foto": "commons_orig2__054",
-   "art": "GANZE KANTE versetzt - Kamera dieses Fotos oder Gesamthoehe pruefen",
-   "abweichung_m": -0.57,
-   "breite_m": 15.76,
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 0.52,
+   "breite_m": 0.68,
    "xyz": [
-    -2.12,
-    16.13,
-    48.93
+    3.11,
+    21.19,
+    18.26
+   ]
+  },
+  {
+   "foto": "commons_orig2__054",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 0.4,
+   "breite_m": 2.16,
+   "xyz": [
+    -8.04,
+    19.46,
+    36.51
    ]
   }
  ]

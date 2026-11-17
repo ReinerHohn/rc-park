@@ -9,54 +9,54 @@
   "traufe_ost_reichweite": 6.617526652144829,
   "traufe_oben_z": 36.760000000000275,
   "dach_nord_z45": 2.1939514531297886,
-  "wand_nord_reichweite": 5.581105186208445,
+  "wand_nord_reichweite": 5.581135040645563,
   "tor_halb_west": 2.114625974383575,
   "tor_halb_ost": 2.214277377435158,
   "tor_scheitel_z": 6.459999999999962,
   "tor_halb_z555": 1.8223200190143913,
   "fl_kante_innen": 3.3031236046796835,
-  "fl_kante_aussen": 3.482510390716385,
+  "fl_kante_aussen": 3.4825137932238164,
   "fl_scheitel_innen": 3.290045512543358,
-  "fl_scheitel_aussen": 3.4596693359578694,
+  "fl_scheitel_aussen": 3.4596735427837118,
   "fr_kante_innen": 3.2438935658500583,
-  "fr_kante_aussen": 3.438884758391211,
+  "fr_kante_aussen": 3.438850078535282,
   "fl_oeffnung": 3.0101431387707294,
   "gal_front": 4.8926553734341525,
   "gal_ende_ost_innen": 4.950359516672137,
-  "gal_ende_ost_aussen": 3.5780380127486424,
+  "gal_ende_ost_aussen": 3.5780706226561563,
   "gal_ende_west_innen": 4.833989247813385,
   "gal_ende_west_aussen": 3.487951775754894,
   "gal_holm_unter": 4.925484430077127,
-  "gal_holm_ueber": 3.543072530240636,
+  "gal_holm_ueber": 3.543077463265412,
   "vordach_traufe": 4.939329078692957,
-  "vordach_oben": 3.4753597535403244,
-  "vordach_darueber": 3.472918745248471,
+  "vordach_oben": 3.4753589872356585,
+  "vordach_darueber": 3.4729164192674133,
   "uhr_ring_ost": 3.5290949414499124,
-  "uhr_aussen_ost": 3.4399093954748423,
+  "uhr_aussen_ost": 3.4398703442201253,
   "uhr_ring_oben": 3.523884101136744,
-  "uhr_aussen_oben": 3.4005599668583883,
+  "uhr_aussen_oben": 3.4005525307591924,
   "uhr_ring_west": 3.458628915613218,
-  "uhr_aussen_west": 3.3683455775018984,
+  "uhr_aussen_west": 3.3683877752789257,
   "uhr_s_ring_ost": 7.264240778315141,
   "uhr_s_aussen_ost": 7.125347700820512,
   "uhr_s_ring_oben": 7.333330648057668,
-  "uhr_s_aussen_oben": 7.203273684270769,
-  "fen_s_innen": 3.349107936045449,
-  "fen_s_kante_ost_innen": 3.3530997309253223,
+  "uhr_s_aussen_oben": 7.203291401780781,
+  "fen_s_innen": 3.3491299204578056,
+  "fen_s_kante_ost_innen": 3.3531283741403257,
   "fen_s_kante_ost_aussen": 7.223318294965345,
   "fen_s_ueber": 7.2165682037722405,
   "gesims_s": 7.223472264703972,
   "gesims_s_ueber": 7.124988321667132,
   "tor_s_scheitel": 5.859999999999971,
-  "tor_s_halb_west": 2.245274101999595,
-  "tor_s_halb_ost": 2.244745401676018,
+  "tor_s_halb_west": 2.2453095928967213,
+  "tor_s_halb_ost": 2.2447485540459087,
   "fen_w_gross_innen": 9.613258917669416,
   "fen_w_gross_kante": 20.883774705884314,
   "fen_w_gross_ueber": 20.821523046949896,
   "fen_w_schlitz_innen": 10.362862462282841,
-  "fen_w_schlitz_ueber": 20.804202773155247,
-  "fen_w_klein17_innen": 9.613228343463476,
-  "fen_w_klein11_innen": 9.611224524303417,
+  "fen_w_schlitz_ueber": 20.80423816023157,
+  "fen_w_klein17_innen": 9.613239279212053,
+  "fen_w_klein11_innen": 9.611239566192623,
   "turm_r_west": 1.5199728088378919,
   "turm_r_nordwest": 1.5337782993623907,
   "turm_r_oben": 1.5199728014554985,
@@ -150,7 +150,7 @@
   },
   {
    "name": "Nordwand Uhrgeschoss: Abstand von Dachmitte bei z 36 (m)",
-   "wert": 5.581105186208445,
+   "wert": 5.581135040645563,
    "soll": [
     5.43,
     5.71
@@ -210,7 +210,7 @@
   },
   {
    "name": "Fenster Nord (fl_kante_aussen): Tiefe x der ersten Flaeche bei u 2.86 z 25.00 (m)",
-   "wert": 3.482510390716385,
+   "wert": 3.4825137932238164,
    "soll": [
     3.45,
     3.53
@@ -230,7 +230,7 @@
   },
   {
    "name": "Fenster Nord (fl_scheitel_aussen): Tiefe x der ersten Flaeche bei u 4.00 z 26.83 (m)",
-   "wert": 3.4596693359578694,
+   "wert": 3.4596735427837118,
    "soll": [
     3.43,
     3.51
@@ -250,7 +250,7 @@
   },
   {
    "name": "Fenster Nord (fr_kante_aussen): Tiefe x der ersten Flaeche bei u 7.15 z 25.00 (m)",
-   "wert": 3.438884758391211,
+   "wert": 3.438850078535282,
    "soll": [
     3.4,
     3.47
@@ -290,7 +290,7 @@
   },
   {
    "name": "Galerie/Vordach Nord (gal_ende_ost_aussen): x der ersten Flaeche bei u 1.80 z 11.10 (m)",
-   "wert": 3.5780380127486424,
+   "wert": 3.5780706226561563,
    "soll": [
     3.47,
     3.66
@@ -330,7 +330,7 @@
   },
   {
    "name": "Galerie/Vordach Nord (gal_holm_ueber): x der ersten Flaeche bei u 4.50 z 12.33 (m)",
-   "wert": 3.543072530240636,
+   "wert": 3.543077463265412,
    "soll": [
     3.33,
     3.56
@@ -350,7 +350,7 @@
   },
   {
    "name": "Galerie/Vordach Nord (vordach_oben): x der ersten Flaeche bei u 6.20 z 20.60 (m)",
-   "wert": 3.4753597535403244,
+   "wert": 3.4753589872356585,
    "soll": [
     3.37,
     3.7
@@ -360,7 +360,7 @@
   },
   {
    "name": "Galerie/Vordach Nord (vordach_darueber): x der ersten Flaeche bei u 6.20 z 21.00 (m)",
-   "wert": 3.472918745248471,
+   "wert": 3.4729164192674133,
    "soll": [
     3.33,
     3.49
@@ -380,7 +380,7 @@
   },
   {
    "name": "Uhr Nord (uhr_aussen_ost): x der ersten Flaeche bei u 3.29 z 33.49 (m)",
-   "wert": 3.4399093954748423,
+   "wert": 3.4398703442201253,
    "soll": [
     3.41,
     3.47
@@ -400,7 +400,7 @@
   },
   {
    "name": "Uhr Nord (uhr_aussen_oben): x der ersten Flaeche bei u 6.14 z 36.34 (m)",
-   "wert": 3.4005599668583883,
+   "wert": 3.4005525307591924,
    "soll": [
     3.37,
     3.43
@@ -420,7 +420,7 @@
   },
   {
    "name": "Uhr Nord (uhr_aussen_west): x der ersten Flaeche bei u 8.99 z 33.49 (m)",
-   "wert": 3.3683455775018984,
+   "wert": 3.3683877752789257,
    "soll": [
     3.34,
     3.39
@@ -460,7 +460,7 @@
   },
   {
    "name": "Sued (uhr_s_aussen_oben): |x| der ersten Flaeche bei u 5.71 z 33.62 (m)",
-   "wert": 7.203273684270769,
+   "wert": 7.203291401780781,
    "soll": [
     7.17,
     7.24
@@ -470,7 +470,7 @@
   },
   {
    "name": "Sued (fen_s_innen): |x| der ersten Flaeche bei u 5.75 z 23.00 (m)",
-   "wert": 3.349107936045449,
+   "wert": 3.3491299204578056,
    "soll": [
     0.0,
     6.2
@@ -480,7 +480,7 @@
   },
   {
    "name": "Sued (fen_s_kante_ost_innen): |x| der ersten Flaeche bei u 5.38 z 23.00 (m)",
-   "wert": 3.3530997309253223,
+   "wert": 3.3531283741403257,
    "soll": [
     0.0,
     6.2
@@ -540,7 +540,7 @@
   },
   {
    "name": "Sued (tor_s_halb_west) (m)",
-   "wert": 2.245274101999595,
+   "wert": 2.2453095928967213,
    "soll": [
     2.1,
     2.4
@@ -550,7 +550,7 @@
   },
   {
    "name": "Sued (tor_s_halb_ost) (m)",
-   "wert": 2.244745401676018,
+   "wert": 2.2447485540459087,
    "soll": [
     2.1,
     2.4
@@ -600,7 +600,7 @@
   },
   {
    "name": "West (fen_w_schlitz_ueber): |y| der ersten Flaeche bei u 5.42 z 30.45 (m)",
-   "wert": 20.804202773155247,
+   "wert": 20.80423816023157,
    "soll": [
     20.58,
     21.05
@@ -610,7 +610,7 @@
   },
   {
    "name": "West (fen_w_klein17_innen): |y| der ersten Flaeche bei u 5.40 z 17.40 (m)",
-   "wert": 9.613228343463476,
+   "wert": 9.613239279212053,
    "soll": [
     0.0,
     19.8
@@ -620,7 +620,7 @@
   },
   {
    "name": "West (fen_w_klein11_innen): |y| der ersten Flaeche bei u 5.33 z 10.95 (m)",
-   "wert": 9.611224524303417,
+   "wert": 9.611239566192623,
    "soll": [
     0.0,
     19.8

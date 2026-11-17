@@ -13,6 +13,12 @@ KERNMETHODE bleibt: Lage, Ebene, Massstab und Kanten der Wand kommen aus Kameras
      Korrelation je Foto wird ausgegeben - sie zeigt, ob das Modell dieselben Steine sieht wie der Scan.
   5. Fotos mitteln: Median der skalierten Hochpass-Anteile (< --trenn) ueber die Fotos (Verdecker/Passanten fallen heraus, wo >= 3 Fotos).
   6. Relief = Tiefpass des Scan-Reliefs (Lage, Woelbung > trenn) + Hochpass aus den Fotos. Putz bleibt Scan (eben), ohne Fotodaten bleibt Scan.
+NACHTRAG 17.11.2026 abends (Integration Schwabentor, drei Fehlerbilder generisch behoben):
+  - Entzerrung auf der FLAECHE des Eingangsreliefs statt der Ebene (--auf_relief 1): vorspringende Teile (Steintafel Sued) lagen je Foto an anderer Stelle -> Doppelstrich.
+  - Drahtlinien je Foto (draht_linien: gerichteter Linienfilter + Hough + Duennheitsprobe), Maske geteilt fuer Fotos vom selben Standort (< 1 m), WEICH ausgeblendet;
+    wo alle Fotos den Draht zeigen, steht die Feinform des Eingangsreliefs (Nord: Oberleitung + Isolator weg, dafuer ein Streifen Scan-Feinform).
+  - Kachel-Normierung robust (MAD im Kachelinneren, +-5 gekappt, --kachel_norm) und Rand-Auslauf erst ab --rand_weg (8 cm) hinter der SICHTgrenze (nicht an Oeffnungen).
+  Fugen-F1 Sued gegen Holdout 113836 (Zufall ~0,28): Feld 0,395 -> 0,417, Bogen 3,0-8,4/4,0-7,5: 0,42, Brei-Zone 0,41 (Scan 0,34/0,35/0,35).
 aus.npz im Format der Relief-Einsaetze (rel, a, t, n, u0, z0, px, ebene_abstand_m, trend_je_m, putz_niveau_m, fein = Fotoanteil, putz), dazu
 aus.jpg (Foto | Scan | neu, Schattierung) und aus.json (Zahlen, Fugenabgleich gegen das Holdout-Foto, Rechenzeit). Fugentiefe = Scan-Massstab (siehe 4), sonst ANNAHME.
 Lizenz: nur Depth Anything V2 SMALL (Apache-2.0). DSINE (Imperial, nur Forschung) und Base/Large/Giant (NC) NICHT verwenden.
@@ -39,7 +45,7 @@ def _da2_modell(gpu_mb):
     return _MOD
 
 
-def tiefe_kacheln(bild, m, kachel, s_hp, gpu_mb=3300, seite=518):
+def tiefe_kacheln(bild, m, kachel, s_hp, gpu_mb=3300, seite=518, norm="robust"):
     """Hochpass der relativen Disparitaet (gross = nah) aus Depth Anything V2 Small, KACHELWEISE (kachel Zellen, halbe Ueberlappung, Hann-Fenster).
     Gemessen 17.11.2026 Schwabentor Sued (1-cm-Wandbild): ganzes Feld in einem Durchlauf sieht nur Tor/Wand (Korrelation mit dem Scan-Bandpass 0,04);
     Kacheln 1,0/1,5/2,5/4,0 m: 0,23/0,24/0,23/0,11 (Foto 113851), 0,28/0,28/0,17/0,09 (Foto 113830). Je Kachel Hochpass (Gauss s_hp) und auf Streuung 1 normiert
@@ -56,7 +62,13 @@ def tiefe_kacheln(bild, m, kachel, s_hp, gpu_mb=3300, seite=518):
             x = (x - np.array([0.485, 0.456, 0.406], np.float32)) / np.array([0.229, 0.224, 0.225], np.float32)
             with torch.no_grad(): d = mod(pixel_values=torch.from_numpy(x.transpose(2, 0, 1)[None].copy()).to(dev, next(mod.parameters()).dtype)).predicted_depth[0].float().cpu().numpy()
             d = cv2.resize(d, (k, k), interpolation=cv2.INTER_CUBIC).astype(np.float64); hp = d - gauss_maske(d, mm, s_hp)[0]
-            acc[y0:y0 + k, x0:x0 + k] += win * hp / (hp[mm].std() + 1e-9); ws[y0:y0 + k, x0:x0 + k] += win
+            # 17.11.2026 (Keilsteine Bogen Sued schwach): Streuung NUR im Kachelinneren und robust (MAD) - der Rand zur Toroeffnung/Sichtgrenze (gefuellte Flaeche)
+            # gibt im Modell einen starken Saum; mit std ueber die ganze Kachel drueckte er die Steine aller Kacheln am Tor; Saum auf +-5 Streuungen gekappt
+            if norm == "std": acc[y0:y0 + k, x0:x0 + k] += win * hp / (hp[mm].std() + 1e-9)
+            else:
+                mi = ndi.binary_erosion(mm, np.ones((21, 21))); mi = mi if mi.sum() > 0.2 * mm.sum() else mm
+                sk = 1.4826 * float(np.median(np.abs(hp[mi] - np.median(hp[mi])))) + 1e-9; acc[y0:y0 + k, x0:x0 + k] += win * np.clip(hp / sk, -5.0, 5.0)
+            ws[y0:y0 + k, x0:x0 + k] += win
     if dev.type == "cuda": torch.cuda.empty_cache()
     return acc / np.maximum(ws, 1e-6), ws
 
@@ -69,6 +81,39 @@ def taeler(r, s_cm):
 def linienkarte(g, polaritaet, s_cm=9):
     k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (s_cm, s_cm)); g = cv2.GaussianBlur(g.astype(np.float32), (0, 0), 1.0)
     return cv2.morphologyEx(g, cv2.MORPH_BLACKHAT if polaritaet == "dunkel" else cv2.MORPH_TOPHAT, k)
+
+
+def draht_linien(b, m, c, min_len=1.0, breite=0.08, winkel=4.0, dick=0.05, lk=0.6, k=3.0, quote=0.6):
+    """Maske duenner, langer, GERADER dunkler Linien im entzerrten Wandbild (Oberleitung, Kabel, Abspannseil) - je Foto, generisch.
+    17.11.2026: die Graustufen-Oeffnung des Hochpasses (--draht) nimmt nur erhabene Grate < 5 cm; das Tiefenmodell liest einen Draht vor der Wand aber oft als
+    Rille + Grat (Nord oben rechts: Oberleitung mit Isolator, Sued: Spanndraht ueber dem Bogen). Ablauf: Black-Top-Hat (dunkle Linie < dick) -> GERICHTETER
+    Linienfilter (Mittel ueber lk m je Richtung, 2-Grad-Schritte; Steintextur mittelt sich weg, ein Draht nicht) -> Hough (>= min_len, Luecken <= 30 cm) ->
+    je Strecke Probe: >= quote der Punkte ueber Schwelle UND quer +-5 cm deutlich schwaecher (duenn). Lagerfugen (waagerecht +-winkel Grad) ausgenommen,
+    Stossfugen sind zu kurz. Gemessen Sued 113830/113851: Spanndraehte ueber dem Bogen gefunden, Bild-/Sichtrand nicht (Rand 5 cm weg). Maske = Linie +-breite."""
+    g = cv2.cvtColor(b, cv2.COLOR_BGR2GRAY).astype(np.float32); kd = int(round(dick / c)) | 1
+    r = cv2.morphologyEx(cv2.GaussianBlur(g, (0, 0), 0.8), cv2.MORPH_BLACKHAT, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kd + 2, kd + 2))); r[~m] = 0
+    me = ndi.binary_erosion(m, np.ones((11, 11))); mm = ndi.binary_erosion(m, np.ones((31, 31)))
+    if mm.sum() < 5000: return np.zeros(m.shape, bool), []
+    Lk = int(round(lk / c)) | 1; h = Lk // 2; R = np.zeros_like(r)
+    for w in np.arange(0.0, 180.0, 2.0):
+        if min(w, 180.0 - w) < winkel: continue
+        kk = np.zeros((Lk, Lk), np.float32); d = np.array([np.cos(np.radians(w)), np.sin(np.radians(w))])
+        cv2.line(kk, (int(h - h * d[0]), int(h - h * d[1])), (int(h + h * d[0]), int(h + h * d[1])), 1, 1); R = np.maximum(R, cv2.filter2D(r, -1, kk / kk.sum()))
+    med = float(np.median(R[mm])); mad = 1.4826 * float(np.median(np.abs(R[mm] - med))) + 1e-6; th = med + k * mad
+    bw = ((R > th) & me).astype(np.uint8) * 255; L = int(round(min_len / c))
+    seg = cv2.HoughLinesP(bw, 1, np.pi / 360, threshold=int(0.25 * L), minLineLength=L, maxLineGap=int(round(0.3 / c)))
+    aus = np.zeros(m.shape, np.uint8); gut = []; ve = int(round(0.30 / c)); o = 0.05 / c
+    def probe(xs, ys, dx, dy): return R[np.clip(np.round(ys + dy).astype(int), 0, R.shape[0] - 1), np.clip(np.round(xs + dx).astype(int), 0, R.shape[1] - 1)]
+    for x0, y0, x1, y1 in ([] if seg is None else seg.reshape(-1, 4)):
+        w_ = np.degrees(np.arctan2(y1 - y0, x1 - x0)) % 180.0
+        if min(w_, 180.0 - w_) < winkel: continue                          # waagerecht = Lagerfuge
+        d_ = np.array([x1 - x0, y1 - y0], float); d_ /= max(np.linalg.norm(d_), 1e-9); nv_ = np.array([-d_[1], d_[0]])
+        tt = np.linspace(0, 1, max(int(np.hypot(x1 - x0, y1 - y0)), 2)); xs = x0 + tt * (x1 - x0); ys = y0 + tt * (y1 - y0)
+        mitte = np.max([probe(xs, ys, nv_[0] * e, nv_[1] * e) for e in (-1, 0, 1)], 0); seite = np.maximum(probe(xs, ys, nv_[0] * o, nv_[1] * o), probe(xs, ys, -nv_[0] * o, -nv_[1] * o))
+        if (mitte > th).mean() < quote or np.median(mitte - seite) < 2.0 * mad: continue
+        p0 = (int(x0 - ve * d_[0]), int(y0 - ve * d_[1])); p1 = (int(x1 + ve * d_[0]), int(y1 + ve * d_[1]))
+        cv2.line(aus, p0, p1, 1, 2 * int(round(breite / c)) + 1); gut.append([int(x0), int(y0), int(x1), int(y1)])
+    return aus.astype(bool) & m, gut
 
 
 def fugen_abgleich(r_rel, r_foto, m, anteil=0.12, tol=2, schub=(13, 9)):
@@ -94,7 +139,7 @@ def main():
     ap.add_argument("--px", type=float, default=0.02); ap.add_argument("--trenn", type=float, default=0.6, help="Trennwellenlaenge m: darueber Scan, darunter Fotos")
     ap.add_argument("--max_mpp", type=float, default=0.025); ap.add_argument("--massstab", nargs=4, type=float); ap.add_argument("--polaritaet", default="dunkel", choices=["dunkel", "hell"])
     ap.add_argument("--zone", nargs=4, type=float, action="append", default=[], help="Pruefzone u0 u1 z0 z1 (z. B. Brei-Zone) fuer den Fugenabgleich")
-    ap.add_argument("--gpu_mb", type=int, default=3300); ap.add_argument("--min_korr", type=float, default=0.2); ap.add_argument("--kachel", type=float, default=1.5, help="Kachelkante m fuer das Tiefenmodell"); ap.add_argument("--abstand", type=float, default=0.5, help="Mindestabstand der Fotostandorte m"); ap.add_argument("--draht", type=float, default=0.05, help="duenne ERHABENE Linien schmaler als das (m) je Foto weg (Graustufen-Oeffnung): Oberleitungen, Kabel")
+    ap.add_argument("--gpu_mb", type=int, default=3300); ap.add_argument("--min_korr", type=float, default=0.2); ap.add_argument("--kachel", type=float, default=1.5, help="Kachelkante m fuer das Tiefenmodell"); ap.add_argument("--abstand", type=float, default=0.5, help="Mindestabstand der Fotostandorte m"); ap.add_argument("--draht", type=float, default=0.05, help="duenne ERHABENE Linien schmaler als das (m) je Foto weg (Graustufen-Oeffnung): Oberleitungen, Kabel"); ap.add_argument("--auf_relief", type=int, default=1, help="1 = Fotos auf die Reliefflaeche entzerren (Parallaxe vorspringender Teile), 0 = auf die Ebene"); ap.add_argument("--kachel_norm", default="robust", choices=["robust", "std"], help="Streuung je Kachel: robust (MAD im Inneren, Saum gekappt) oder std (bis 17.11.)"); ap.add_argument("--rand_weg", type=float, default=0.08, help="Saum an der Sichtgrenze je Foto (m) ohne Gewicht"); ap.add_argument("--draht_laenge", type=float, default=1.0, help="gerade dunkle Linien (Draht/Kabel) ab dieser Laenge m je Foto ausblenden (draht_linien), 0 = aus")
     ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 ohne Foto-Relief (Fremdkoerper: Verkehrsschild, Lampe) - dort bleibt der Scan"); ap.add_argument("--zwischen", default=None, help="Ordner fuer Zwischenbilder (Datenplatte)"); a = ap.parse_args()
     T0 = time.time(); sys.path.insert(0, HIER); import fassade_ein_foto as FE, render_kern as rk, trimesh, torch
     if torch.cuda.is_available(): torch.cuda.set_per_process_memory_fraction(min(0.95, a.gpu_mb / (torch.cuda.get_device_properties(0).total_memory / 2**20)))   # Budget gilt auch fuer das Sichtbarkeitsraster
@@ -103,11 +148,14 @@ def main():
     tu, tz = [float(v) for v in Z["trend_je_m"]]; niv = float(Z.get("putz_niveau_m", 0.0))
     f0, f1, g0, g1 = a.feld; c = 0.01; nu = int(round((f1 - f0) / c)); nz = int(round((g1 - g0) / c)); jj, ii = np.meshgrid(np.arange(nu), np.arange(nz)); U = f0 + (jj + 0.5) * c; ZZ = g1 - (ii + 0.5) * c
     dpl = float(Z["ebene_abstand_m"]) + tu * (U - u0) - tz * ((z0 + H * rp) - ZZ)
+    def gross(x, interp=cv2.INTER_LINEAR): return cv2.remap(x.astype(np.float32), ((U - u0) / rp - 0.5).astype(np.float32), (H - (ZZ - z0) / rp - 0.5).astype(np.float32), interp, borderMode=cv2.BORDER_REPLICATE).astype(np.float64)
+    scan = gross(rel); putz = gross(Z["putz"]) > 0.5 if "putz" in Z else np.zeros(U.shape, bool); gen = gross(Z["generiert"]) > 0.5 if "generiert" in Z else np.zeros(U.shape, bool)
+    # 17.11.2026 (Sued: senkrechter Doppelstrich rechts an der Steintafel): auf der EBENE entzerrt stand die vorspringende Tafel in jedem Foto an anderer Stelle (Parallaxe,
+    # 113830/113849/113851: Kante 0,45 m auseinander) -> zwei Kanten im Mittel. Entzerrt wird jetzt auf der FLAECHE des Eingangsreliefs (Ebene + Scan-Relief, 5 cm geglaettet).
+    hs = np.abs(scan) > 1e-6; dpl = dpl + (gauss_maske(scan, hs, 5)[0] * hs if a.auf_relief else 0.0)
     X = A[0] + U * t[0] + dpl * nv[0]; Y = A[1] + U * t[1] + dpl * nv[1]; Zw = ZZ.copy()
     if a.massstab: k = a.massstab[0]; Mp = a.massstab[1:]; X = Mp[0] + k * (X - Mp[0]); Y = Mp[1] + k * (Y - Mp[1]); Zw = Mp[2] + k * (ZZ - Mp[2])
     P = np.stack([X, Y, Zw], -1).reshape(-1, 3)
-    def gross(x, interp=cv2.INTER_LINEAR): return cv2.remap(x.astype(np.float32), ((U - u0) / rp - 0.5).astype(np.float32), (H - (ZZ - z0) / rp - 0.5).astype(np.float32), interp, borderMode=cv2.BORDER_REPLICATE).astype(np.float64)
-    scan = gross(rel); putz = gross(Z["putz"]) > 0.5 if "putz" in Z else np.zeros(U.shape, bool); gen = gross(Z["generiert"]) > 0.5 if "generiert" in Z else np.zeros(U.shape, bool)
     oeff = gross(Z["oeffnung"]) > 0.5 if "oeffnung" in Z else np.zeros(U.shape, bool)
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); mp = os.path.join(od, "messprotokoll")
     mm = trimesh.load(a.stl); mm.apply_scale(float(obj.get("stl_massstab", 87)) / 1000.0); T1 = time.time()
@@ -143,12 +191,14 @@ def main():
     def band(x, m, s0, s1): return gauss_maske(x, m, s0)[0] - gauss_maske(x, m, s1)[0]
     s_tr = a.trenn / c / 2.5                                              # Gauss-Sigma der Trennung (Zellen)
     def mad(x): return 1.4826 * float(np.median(np.abs(x - np.median(x))))
-    hp_liste = []; info = []; bilder = []
+    hp_liste = []; info = []; bilder = []; sicht_liste = []; draht_liste = []; standorte = []
     for q in wahl:
         tq = time.time(); b, ok_, mpp = entzerren(q); m = ok_ & ~oeff & (b.max(2) > 8)
         if m.sum() < 5000: info.append(dict(foto=q[1], verworfen="zu wenig sichtbar")); continue
         fuell = b.copy(); fuell[~m] = cv2.inpaint(b, (~m).astype(np.uint8), 15, cv2.INPAINT_TELEA)[~m]
-        hp, ws = tiefe_kacheln(fuell, m, int(round(a.kachel / c)), s_tr, a.gpu_mb); m &= ws > 0.05
+        hp, ws = tiefe_kacheln(fuell, m, int(round(a.kachel / c)), s_tr, a.gpu_mb, norm=a.kachel_norm); m &= ws > 0.05
+        dm, dseg = draht_linien(b, m, c, min_len=a.draht_laenge) if a.draht_laenge > 0 else (np.zeros(m.shape, bool), [])
+        m &= ~dm                                                          # Drahtlinien dieses Fotos: kein Foto-Relief (andere Fotos oder Luecken-Fuellung uebernehmen)
         bm = band(hp, m, 2, s_tr); bs = band(scan, m & echt, 2, s_tr); mk = m & echt & ndi.binary_erosion(m, np.ones((15, 15)))
         x = bm[mk]; y = bs[mk]; r = float(np.corrcoef(x, y)[0, 1]) if mk.sum() > 100 else 0.0
         kq = mad(y) / max(mad(x), 1e-12) * (1.0 if r >= 0 else -1.0)      # Massstab = gleiche Streuung im Band wie der Scan (Regression wuerde bei r ~ 0,3 auf ein Drittel daempfen)
@@ -163,25 +213,42 @@ def main():
         # wird als Vertiefung gelesen; Holdout-Fotolinien liegen auf dem Scan, Versatz 0). Darum Hochpass um den besten Versatz zurueckschieben (Grenze +-12 cm).
         if a.draht > 0:                                                   # Oberleitung/Kabel vor der Wand: das Modell liest sie als schmale erhabene Grate (17.11. Sued/Nord); Steinkuppen sind breiter
             kd = int(round(a.draht / c)) | 1; hp = np.minimum(hp, cv2.morphologyEx(hp.astype(np.float32), cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kd, kd))).astype(np.float64))
-        hp = np.roll(np.roll(kq * hp, vb[1], 0), vb[2], 1); m = np.roll(np.roll(m, vb[1], 0), vb[2], 1); hp[~m] = np.nan
+        hp = np.roll(np.roll(kq * hp, vb[1], 0), vb[2], 1); m = np.roll(np.roll(m, vb[1], 0), vb[2], 1); hp[~m] = np.nan; dm = np.roll(np.roll(dm, vb[1], 0), vb[2], 1)
         info.append(dict(foto=q[1], cm_je_px=round(mpp * 100, 2), sichtbar=round(float(ok_.mean()), 3), massstab=kq, korrelation_band_scan=round(r, 3),
-                         bester_versatz_cm=dict(nach_unten=vb[1], nach_rechts=vb[2], korrelation=round(vb[0], 3)), sekunden=round(time.time() - tq, 1)))
+                         bester_versatz_cm=dict(nach_unten=vb[1], nach_rechts=vb[2], korrelation=round(vb[0], 3)), draht_linien=len(dseg), draht_anteil=round(float(dm.mean()), 4), sekunden=round(time.time() - tq, 1)))
         print(f"  {q[1][-30:]}: {mpp * 100:.1f} cm/px, sichtbar {ok_.mean() * 100:.0f} %, Korrelation mit Scan (2-{a.trenn * 100:.0f} cm) {r:+.2f} "
               f"(verschoben {vb[1]:+d}/{vb[2]:+d} cm: {vb[0]:+.2f}), Massstab {kq:.4g}, {time.time() - tq:.0f} s", flush=True)
         if r < a.min_korr: info[-1]["verworfen"] = "keine Korrelation mit dem Scan (Modell sieht andere Form)"; continue
-        hp_liste.append(hp); bilder.append(b)
-        if a.zwischen: os.makedirs(a.zwischen, exist_ok=True); cv2.imwrite(os.path.join(a.zwischen, q[1][-40:] + "_wand.jpg"), b); np.save(os.path.join(a.zwischen, q[1][-40:] + "_hp.npy"), hp.astype(np.float32))
+        hp_liste.append(hp); bilder.append(b); sicht_liste.append(m | dm); draht_liste.append(dm); standorte.append(np.asarray(q[5], float)); draht_u = dm if not hp_liste[:-1] else (draht_u | dm)
+        if a.zwischen:
+            os.makedirs(a.zwischen, exist_ok=True); bd = b.copy()
+            for x0, y0, x1, y1 in dseg: cv2.line(bd, (x0, y0), (x1, y1), (0, 0, 255), 3)
+            cv2.imwrite(os.path.join(a.zwischen, q[1][-40:] + "_wand.jpg"), bd); np.save(os.path.join(a.zwischen, q[1][-40:] + "_hp.npy"), hp.astype(np.float32))
     if not hp_liste: print("kein Foto mit Korrelation zum Scan - nichts erzeugt"); json.dump(dict(fotos=info), open(a.aus.replace(".npz", ".json"), "w"), indent=1); return 4
     # Fotos vereinen: gewichtetes Mittel mit (a) Rand-Auslauf je Foto (20 cm ab Sichtgrenze - sonst Naehte, wo ein Foto endet: Nord 17.11. harte Linien) und
     # (b) Kappung auf Median +- 1,5 Streuungen (ein Draht/Passant in EINEM Foto zieht das Mittel nicht mit). Ein Foto allein = sein Wert.
+    # Draehte vom selben Standort (< 1 m) liegen im Wandbild an derselben Stelle: Drahtmaske eines Fotos gilt fuer alle Fotos dieses Standorts
+    # (17.11.2026 Nord: Serie 113602-113610, Isolator oben rechts nur in 113608 erkannt - im Mittel der anderen blieb er stehen)
+    draht_liste = [np.any([d_ for d_, c_ in zip(draht_liste, standorte) if np.linalg.norm(c_ - ci) < 1.0], 0) for ci in standorte]
+    for h_, d_ in zip(hp_liste, draht_liste): h_[d_] = np.nan
+    draht_u = np.any(draht_liste, 0)
     S = np.stack(hp_liste); fin = np.isfinite(S); nfoto = fin.sum(0); S0 = np.where(fin, S, 0.0)
     with np.errstate(all="ignore"): med = np.nan_to_num(np.nanmedian(np.where(fin, S, np.nan), 0))
-    tau = 1.5 * mad((S - med)[fin]); Wg = np.stack([np.clip(ndi.distance_transform_edt(f_) * c / 0.20, 0, 1) for f_ in fin])
-    hpm = (Wg * np.clip(S0, med - tau, med + tau)).sum(0) / np.maximum(Wg.sum(0), 1e-6); hpm = np.where(nfoto > 0, hpm, 0.0)
+    # Rand-Auslauf ab der SICHTgrenze des Fotos (nicht ab Oeffnungen - dort enden alle Fotos, der Saum ist fuer alle gleich); die ersten --rand_weg m ganz ohne Gewicht:
+    # 17.11.2026 Sued, senkrechter Strich rechts der Steintafel = Sichtgrenze von Foto 113849 (gefuellte Flaeche jenseits der Grenze -> Saum im Tiefenmodell)
+    # Drahtstreifen sind KEINE Sichtgrenze (sonst Rampen = Doppellinien neben dem Draht, Nord 17.11.): Gewicht aus der Sicht ohne Drahtmaske, Drahtzellen nur ohne Wert
+    tau = 1.5 * mad((S - med)[fin]); Wr = np.stack([np.clip((ndi.distance_transform_edt(f_ | oeff) * c - a.rand_weg) / 0.20, 0, 1) for f_ in sicht_liste])
+    # Drahtstreifen WEICH ausblenden (Rampe ~10 cm): hart ausgeschnitten gab der Wechsel der Fotomenge an den Streifenkanten Doppellinien (Sued 17.11., s_std gegen s_std_ohnedraht)
+    Wg = Wr * fin * np.stack([1.0 - np.clip(ndi.gaussian_filter(d_.astype(np.float64), 4.0) * 2.0 + d_, 0, 1) for d_ in draht_liste])
+    hpm = (Wg * np.clip(S0, med - tau, med + tau)).sum(0) / np.maximum(Wg.sum(0), 1e-6); sicht = np.any(sicht_liste, 0); hpm = np.where(nfoto > 0, hpm, 0.0)
+    # Drahtstreifen, die in KEINEM Foto frei sind (Fotoserie vom selben Standort: Draht liegt ueberall gleich): dort KEIN Foto-Relief, sondern die Feinform des
+    # Eingangsreliefs (das Netz kennt keinen Draht) - weich ueber das Gewicht wsum. Sackgassen 17.11. Nord: Telea-Fuellung des Hochpasses nur im Streifen gab eine Rinne
+    # (Saum des Drahts am Rand), Telea ueber alle Zellen mit > 50 % Gewichtsverlust zog den Isolator-Umriss wieder hinein. Rest: ein Band Feinform (rauer) quer ueber die Steine.
     lp_scan = gauss_maske(scan, ~oeff, s_tr)[0]
     for q0, q1, r0, r1 in a.ohne: oeff = oeff | ((U >= q0) & (U <= q1) & (ZZ >= r0) & (ZZ <= r1))
-    foto_da = (nfoto > 0) & ~putz & ~oeff
-    neu = np.where(foto_da, lp_scan + hpm, scan); neu = np.where(putz, scan, neu)
+    foto_da = sicht & ~putz & ~oeff
+    wsum = np.clip(Wg.sum(0), 0, 1)      # wo kein Foto Gewicht hat (Saum an allen Sichtgrenzen, Draht in allen Fotos): Feinform des Eingangsreliefs statt glatt
+    neu = np.where(foto_da, lp_scan + wsum * hpm + (1 - wsum) * (scan - lp_scan), scan); neu = np.where(putz, scan, neu)
     # Rand der Fotodaten weich in den Scan ueberfuehren (5 cm)
     w = ndi.gaussian_filter(foto_da.astype(np.float64), 3) * foto_da; neu = w * neu + (1 - w) * scan
     neu = np.clip(neu, float(np.quantile(scan, 0.001)) - 0.03, float(np.quantile(scan, 0.999)) + 0.03)

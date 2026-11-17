@@ -1,4 +1,4 @@
-# Massnachweis Schwabentor (automatisch aus masstabelle.json, 2026-11-16)
+# Massnachweis Schwabentor (automatisch aus masstabelle.json, 2026-11-17)
 
 Status je Mass: **OK** = Istwert im Sollbereich der Quelle; **WIDERSPRUCH** = Quellen uneins (nicht gemittelt); **FEHLER** = Modell verletzt die Quelle.
 Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im selben Foto; *modell* = zirkulaer (nur Richtung belastbar).
@@ -78,7 +78,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - **laser_dom1**: 1 von 1 Pruefungen gruen (1-m-Raster, interpoliert, nur von oben; Strukturen < ~3 m verschmiert, Nadeln unsichtbar. BLIND auch fuer Grundriss mit Vorspruengen < ~1 m (Gesims, Erker): die Flaeche ueber Hoehe faellt dann 15-20 % zu klein aus (Martinstor 2026-11-01, Register O/P))
 - **foto_kalibriert**: 53 von 53 Pruefungen gruen (Kamera aus amtlichen Ankern (LoD2/DOM1), Pixel->Meter auf bekannter Ebene; +-0,1-0,3 m je Mass, +-1 m systematisch in der Hoehe (Ankerhoehen))
 
-## Elemente des Generators: 36 belegt, 3 Annahmen
+## Elemente des Generators: 37 belegt, 3 Annahmen
 
 - wand: Grundriss Teil 0 - LoD2 DEBW_001000hPLcp GroundSurface 0
 - wand: Teil 1 (ohne Dachmessung) - LoD2 DEBW_001000hPLcp Wandoberkante (31 eigene Waende)
@@ -87,8 +87,8 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - wand: Hauptteil Wand bis Traufe - LoD2 DEBW_001000hPLcp GroundSurface 0; Nordwand am Foto bestaetigt (M-113205-006/-007)
 - wand: Nordwand (Ebene) - Foto-Peilung foto_mass.py --tri2d der Wandecken am Uhrgeschoss (M-113205-012/-013)
 - wand: Generierte Quader Nord (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m) - ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben
+- wand: Feinrelief Nordwand z 0-10,4 m aus Einzelfotos (2 cm) - tools/relief_aus_fotos_mono.py: Tiefpass der Feinrechnung nord_misch (> 60 cm) + Hochpass Depth Anything V2 Small (Apache-2.0) aus 4 Nahfotos, Massstab und Lage am Scan-Bandpass verankert
 - wand: Quader mit Fugen nord (Torgeschoss bis Fries) - feines Fassadenbild 1 cm (fassade_fein.py) -> tools/steine_aus_foto.py: Lagerfugen aus dem Zeilenprofil, Stossfugen je Schicht
-- wand: Feines Relief Nordwand z 0-10,5 m (2 cm) - lokale Feinrechnung: 13 Nahfotos in 3200 px, COLMAP PatchMatch nur fuer dieses Feld (tools/tiefe_lokal.py), gemischt mit dem groben Relief (tools/relief_mischen.py)
 - wand: Relief Nordwand z 0,6-29,6 m - OpenMVS-Netz der Fotowolke (rc-park_daten/schwab_v3/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m; Fugen gegen 3 Fotos korreliert (audit/relief_test.json)
 - wand: Tordurchfahrt Nord (Spitzbogen) - foto_mass.py auf der Sockelebene, Frontalfoto 113602 + Schraegfoto 113310 (M-113602-001..-006, M-113310-001)
 - wand: 2 Rundbogenfenster Nord (Blendnische + Oeffnung + Sohlbank) - foto_mass.py auf der Wandebene, Foto 113029 (M-113029-001..-007)
@@ -99,6 +99,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - dach: Zeltdach geschweift mit Ueberstand, vier gemessene Traufecken - Foto-Triangulation: Nordecken aus 6 Nordfotos, Suedecken aus 3 Suedfotos (Kameras SfM-Neuaufbau); Flaechenprofil DOM1-Laser
 - dach: Laterne: 4 Pfosten, Krempe, Zwiebelhaube, Knauf, Spitze - foto_mass.py Foto 113205 auf der Ebene durch die Laternenachse (M-113205-017..-024); Knauf zusaetzlich aus 5 Nordfotos trianguliert (50,73 m)
 - wand: Generierte Quader Sued (Loecher des Scan-Reliefs, Sockelstreifen z 0-0,6 m) - ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben
+- wand: Feinrelief Suedwand z 0-9,9 m aus Einzelfotos (2 cm) - tools/relief_aus_fotos_mono.py: Tiefpass Scan sued_eben (> 60 cm) + Hochpass Depth Anything V2 Small (Apache-2.0) aus 5 Nahfotos, Massstab und Lage am Scan-Bandpass verankert; Fugen-F1 gegen Holdout-Foto
 - wand: Quader mit Fugen sued (Torgeschoss bis Fries) - feines Fassadenbild 1 cm (fassade_fein.py) -> tools/steine_aus_foto.py: Lagerfugen aus dem Zeilenprofil, Stossfugen je Schicht
 - wand: Relief Suedwand z 0,6-34 m - OpenMVS-Netz der neuen dichten Wolke (sfm_neu/openmvs/mesh.ply), Hoehenbild 5 cm, geklemmt -0,10..+0,15 m, Loecher 8 %
 - wand: Steingewaende des Suedfensters - feines Mehrfoto-Fassadenbild Sued (fassade_fein) -> steine_aus_foto.py --nah 0
@@ -149,10 +150,13 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - 2026-11-16 Nutzer (Bild Modell neben Sonnenfoto, Ostseite am Gesims markiert): Am Gesims der Ostseite laeuft ein Band aus dunklen Quadern ueber die ganze Breite, mit den Eckquadern verzahnt; im Modell nur ein glatter Kasten und darunter leere Wand. -> Steinband aus dem entzerrten Foto (steine_aus_foto --nah 0, Verdeckung automatisch); Gesimskasten Ost entfernen
 - 2026-11-16 Nutzer (3D-Seite V45, 12:04): Treppenturm: Dach ist nicht rundherum ein Runddach - zum grossen Turm hin ist es ein angebautes Dach (Anschluss an die Turmwand); ausserdem hat das Tuermchen kleine Fensterchen. Messung (Fotos commons 047 und 054, Sehstrahl x Zylinder, beide Fotos auf 1-9 cm gleich): Schlitz bei Azimut 102 Grad z 9,90-10,53; Schlitz bei -173 Grad z 9,92-10,50; Schlitz bei -174 Grad z 8,17-8,80; Kugel trianguliert (1,98 / 22,39 / 14,67) = Turmachse; Dach trifft die Turmwand bei x 1,22 in z 12,47 (1 m ueber der Traufe 11,24) = Anschlussdach. -> Schlitze an die gemessenen Stellen (bisher 5 angenommene), Haube 12-eckig, Anschlussdach zur Turmwand; Werkzeug tools/zylinder_mass.py
 - 2026-11-16 Nutzer (3D-Seite V47, 13:26, Suedtor markiert): Im Tor 'ein spitzes Fehlerding': der Suedbogen hat flache Schultern mit aufgesetzter Spitze (Vier-Zentren-Bogen aus bauteile.spitzbogen seit heute Vormittag); im Foto laufen zwei glatte Boegen bis zur Spitze. -> spitzbogen fuer gedrueckte Boegen: zwei Kreisboegen mit Mittelpunkten unter der Kaempferlinie; am Bild neben dem Foto pruefen
-- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=31.76 m, y=20.3 m (Zelle [1819, 1284, 107], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
-- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 2): Foto zeigt Struktur ohne Modellgegenstueck bei z=27.82 m, y=9.71 m (Zelle [963, 1605, 107], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()
-- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 3): Foto zeigt Struktur ohne Modellgegenstueck bei z=20.72 m, y=9.83 m (Zelle [963, 2033, 107], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 3 ansehen, Element benennen, Zeile + beleg()
-- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 4): Foto zeigt Struktur ohne Modellgegenstueck bei z=19.13 m, y=9.83 m (Zelle [963, 2140, 107], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 4 ansehen, Element benennen, Zeile + beleg()
+- auto umriss_tor: Modell hoeher (zu hoch / erfunden): -0.40 m ueber 1.76 m bei [-4.31, 12.6, 41.7] (Foto commons_orig2__127) -> am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen
+- auto umriss_tor: GANZE KANTE versetzt - Kamera dieses Fotos oder Gesamthoehe pruefen: -0.57 m ueber 15.76 m bei [-2.12, 16.13, 48.93] (Foto commons_orig2__054) -> am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen
+- 2026-11-17 Nutzer (Foto Druck demo_tor_sued_stein, Bambu 0,16 mm): Steinrelief Tor Sued gedruckt: Steine/Fugen gut lesbar; Mitte rechts verwaschene fleckige Zone (Scan-Brei statt Fugen), Torbogen ohne Bogensteine (glatter Rand), Hoehenlinien der 0,16-mm-Schichten auf den Steinkuppen. -> Brei-Zone: steine_aus_foto.py fuer diesen Bereich; Bogensteine als Bauteil (Keilsteine radial) aus dem feinen Fassadenbild; Platten mit 0,08 mm oder variabler Schichthoehe slicen und Zeit messen
+- 2026-11-17 Agent Mono-Relief (Auftrag Koordinator): Feinrelief mono Nord (relief/nord_mono.jpg): Oberleitungsdraht mit Isolator oben rechts als Grat/Rille im Relief (u ~10-12 m, z ~6-10 m); duenne Linien weiterer Drahtlagen aus anderen Fotos. -> relief_aus_fotos_mono.py: gerade dunkle lange Linien je Foto im entzerrten Wandbild erkennen und ausblenden (draht_linien), Luecken aus der Umgebung fuellen; Relief neu, Bild ansehen
+- 2026-11-17 Agent Mono-Relief (Auftrag Koordinator): Feinrelief mono Sued (relief/sued_mono.jpg): senkrechter Strich (Rille + Grat) rechts an der Steintafel (u ~11 m, z ~1,5-4 m) und Draht-Grat quer ueber dem Bogen. -> Ursache am Einzelfoto suchen (Draht/Kabel oder Schattenkante), generisch im Werkzeug beheben; Relief neu, Bild ansehen
+- 2026-11-17 Agent Mono-Relief (Auftrag Koordinator): Feinrelief mono Sued: Keilsteine des Torbogens Sued nur schwach (Fugen radial im Foto deutlich, im Relief glatter Ring). -> Kachel-Normierung/Randbereich am Tor pruefen (Tiefensprung zur Durchfahrt drueckt die Kachel), Fugen-F1 in Zone Bogen 3,0-8,4 / 4,0-7,5 vorher/nachher
+- auto fehlteile_finden (Foto eigen__IMG_20261106_113231, Treffer 1): Foto zeigt Struktur ohne Modellgegenstueck bei z=27.87 m, y=9.72 m (Zelle [963, 1605, 107], Score +1.00) -> audit/fehlteile_eigen__IMG_20261106_113231.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()
 
 ## Grenze
 

@@ -1,0 +1,138 @@
+{
+ "objekt": "schwab_v3",
+ "teile": [
+  {
+   "teil": "teil_01",
+   "art": "wand",
+   "z": [
+    20.03,
+    35.11
+   ],
+   "dach_m2": 16.3,
+   "wand_m2": 1447.6,
+   "farbe": "weiss/hell",
+   "farbe_bgr": [
+    194,
+    199,
+    198
+   ],
+   "anteil": 0.4,
+   "nachmalen": "dunkelrot (32 % der Wandflaeche); grau (28 % der Wandflaeche)"
+  },
+  {
+   "teil": "teil_02",
+   "art": "wand",
+   "z": [
+    -0.02,
+    6.56
+   ],
+   "dach_m2": 0.0,
+   "wand_m2": 899.3,
+   "farbe": "grau",
+   "farbe_bgr": [
+    148,
+    152,
+    157
+   ],
+   "anteil": 0.64,
+   "nachmalen": "dunkelrot (18 % der Wandflaeche); weiss/hell (18 % der Wandflaeche)"
+  },
+  {
+   "teil": "teil_03",
+   "art": "wand",
+   "z": [
+    11.18,
+    20.03
+   ],
+   "dach_m2": 0.0,
+   "wand_m2": 948.1,
+   "farbe": "weiss/hell",
+   "farbe_bgr": [
+    194,
+    199,
+    198
+   ],
+   "anteil": 0.42,
+   "nachmalen": "grau (33 % der Wandflaeche); dunkelrot (25 % der Wandflaeche)"
+  },
+  {
+   "teil": "teil_04",
+   "art": "wand",
+   "z": [
+    6.56,
+    11.18
+   ],
+   "dach_m2": 0.0,
+   "wand_m2": 566.6,
+   "farbe": "grau",
+   "farbe_bgr": [
+    148,
+    152,
+    157
+   ],
+   "anteil": 0.5,
+   "nachmalen": "weiss/hell (40 % der Wandflaeche); dunkelrot (10 % der Wandflaeche)"
+  },
+  {
+   "teil": "teil_05",
+   "art": "dach",
+   "z": [
+    36.15,
+    44.95
+   ],
+   "dach_m2": 267.1,
+   "wand_m2": 68.1,
+   "farbe": "ANNAHME: Dachfarbe waehlen (aus Fotos nicht gemessen)",
+   "nachmalen": ""
+  },
+  {
+   "teil": "teil_06",
+   "art": "wand",
+   "z": [
+    35.11,
+    36.53
+   ],
+   "dach_m2": 4.1,
+   "wand_m2": 285.0,
+   "farbe": "dunkelrot",
+   "farbe_bgr": [
+    53,
+    58,
+    70
+   ],
+   "anteil": 0.93,
+   "nachmalen": ""
+  },
+  {
+   "teil": "teil_07",
+   "art": "wand",
+   "z": [
+    46.93,
+    51.76
+   ],
+   "dach_m2": 13.7,
+   "wand_m2": 17.4,
+   "farbe": "unbekannt (kein Fassadenbild fuer diesen Hoehenbereich)",
+   "nachmalen": ""
+  },
+  {
+   "teil": "teil_08",
+   "art": "wand",
+   "z": [
+    44.95,
+    46.93
+   ],
+   "dach_m2": 3.0,
+   "wand_m2": 7.2,
+   "farbe": "unbekannt (kein Fassadenbild fuer diesen Hoehenbereich)",
+   "nachmalen": ""
+  }
+ ],
+ "farben": [
+  "ANNAHME: Dachfarbe waehlen (aus Fotos nicht gemessen)",
+  "dunkelrot",
+  "grau",
+  "unbekannt (kein Fassadenbild fuer diesen Hoehenbereich)",
+  "weiss/hell"
+ ]
+}

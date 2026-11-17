@@ -1,5 +1,5 @@
 {
- "relief": "modelle/schwab_v3/relief/nord_eben.npz",
+ "relief": "modelle/schwab_v3/relief/nord_misch.npz",
  "feld": [
   0.1,
   12.0,
@@ -10,104 +10,114 @@
  "fotos": [
   {
    "foto": "eigen__IMG_20261106_113608",
-   "cm_je_px": 0.38,
+   "cm_je_px": 0.39,
    "sichtbar": 0.864,
-   "massstab": 0.03928840058978745,
-   "korrelation_band_scan": 0.447,
+   "massstab": 0.033595111325641684,
+   "korrelation_band_scan": 0.584,
    "bester_versatz_cm": {
-    "nach_unten": -6,
-    "nach_rechts": 1,
-    "korrelation": 0.585
+    "nach_unten": -2,
+    "nach_rechts": 2,
+    "korrelation": 0.611
    },
-   "sekunden": 14.8
+   "draht_linien": 18,
+   "draht_anteil": 0.0242,
+   "sekunden": 12.0
   },
   {
    "foto": "eigen__IMG_20261106_113602",
    "cm_je_px": 0.39,
-   "sichtbar": 0.784,
-   "massstab": 0.041123093946556485,
-   "korrelation_band_scan": 0.547,
+   "sichtbar": 0.785,
+   "massstab": 0.0358164822146729,
+   "korrelation_band_scan": 0.623,
    "bester_versatz_cm": {
-    "nach_unten": -6,
-    "nach_rechts": -1,
-    "korrelation": 0.665
+    "nach_unten": -1,
+    "nach_rechts": 0,
+    "korrelation": 0.629
    },
-   "sekunden": 13.6
+   "draht_linien": 6,
+   "draht_anteil": 0.0067,
+   "sekunden": 10.1
   },
   {
    "foto": "eigen__IMG_20261106_113604",
    "cm_je_px": 0.39,
    "sichtbar": 0.692,
-   "massstab": 0.0371373709885974,
-   "korrelation_band_scan": 0.574,
+   "massstab": 0.033659818311617594,
+   "korrelation_band_scan": 0.641,
    "bester_versatz_cm": {
-    "nach_unten": -6,
+    "nach_unten": -2,
     "nach_rechts": 0,
-    "korrelation": 0.7
+    "korrelation": 0.651
    },
-   "sekunden": 14.3
+   "draht_linien": 7,
+   "draht_anteil": 0.0065,
+   "sekunden": 10.7
   },
   {
    "foto": "eigen__IMG_20261106_113610",
    "cm_je_px": 0.39,
    "sichtbar": 0.654,
-   "massstab": 0.040383025781535756,
-   "korrelation_band_scan": 0.569,
+   "massstab": 0.036180852848018204,
+   "korrelation_band_scan": 0.586,
    "bester_versatz_cm": {
-    "nach_unten": -4,
-    "nach_rechts": 0,
-    "korrelation": 0.646
+    "nach_unten": 0,
+    "nach_rechts": 2,
+    "korrelation": 0.589
    },
-   "sekunden": 13.7
+   "draht_linien": 5,
+   "draht_anteil": 0.0076,
+   "sekunden": 11.4
   },
   {
    "foto": "eigen__IMG_20261106_113512",
    "cm_je_px": 0.23,
-   "sichtbar": 0.62,
-   "massstab": 0.08746575450168714,
-   "korrelation_band_scan": 0.05,
+   "sichtbar": 0.619,
+   "massstab": 0.04871713449594971,
+   "korrelation_band_scan": 0.134,
    "bester_versatz_cm": {
-    "nach_unten": -11,
-    "nach_rechts": 5,
-    "korrelation": 0.121
+    "nach_unten": 2,
+    "nach_rechts": 0,
+    "korrelation": 0.137
    },
-   "sekunden": 14.7,
+   "draht_linien": 0,
+   "draht_anteil": 0.0,
+   "sekunden": 11.9,
    "verworfen": "keine Korrelation mit dem Scan (Modell sieht andere Form)"
   }
  ],
  "holdout": "eigen__IMG_20261106_113438",
  "fugenabgleich": {
   "feld": {
-   "zellen": 355977,
+   "zellen": 363988,
    "scan": {
-    "praezision": 0.29191441546888897,
-    "trefferquote": 0.24795168313123273,
-    "f1": 0.26814304818718865,
-    "f1_zufall": 0.32475506706317664
+    "praezision": 0.33547013438952356,
+    "trefferquote": 0.35808969985576594,
+    "f1": 0.34641106304789976,
+    "f1_zufall": 0.3635535344202003
    },
    "neu": {
-    "praezision": 0.30448522870920924,
-    "trefferquote": 0.25780701343695867,
-    "f1": 0.2792086447772291,
-    "f1_zufall": 0.3177561825860785
+    "praezision": 0.31699443668582156,
+    "trefferquote": 0.285354518189519,
+    "f1": 0.3003434936413592,
+    "f1_zufall": 0.35486276398988587
    },
    "scan_bester_versatz": [
-    0.3237255697478781,
-    8,
-    8
+    0.4283895077007958,
+    6,
+    4
    ],
    "neu_bester_versatz": [
-    0.3574082973881023,
-    8,
-    6
+    0.4736834397190705,
+    6,
+    2
    ]
   }
  },
- "foto_anteil": 0.6313461538461539,
- "hub_p5_p95_scan": 0.16809627413749695,
- "hub_p5_p95_neu": 0.16604358130070573,
- "sekunden_gesamt": 136.0,
- "sekunden_laden": 9.7,
+ "foto_anteil": 0.6319424692954104,
+ "hub_p5_p95_scan": 0.17600450515747068,
+ "hub_p5_p95_neu": 0.16644755836523745,
+ "sekunden_gesamt": 102.5,
+ "sekunden_laden": 7.5,
  "modell": "Depth-Anything-V2-Small-hf (Apache-2.0)",
  "hinweis": "Hochpass-Feinform aus monokularer Tiefe, Massstab am Scan-Bandpass verankert; Fugentiefe daher Scan-Massstab, nicht gemessen = ANNAHME"
 }

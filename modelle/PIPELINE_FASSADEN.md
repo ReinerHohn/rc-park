@@ -133,6 +133,11 @@ Regel: kein Bauteil als Einzelfall in den Objekt-Generator. Erst hier pruefen/er
 - `Wand.zifferblatt(u, z, d_aussen, d_innen, zeit)`: Turmuhr.
 - `Wand.galerie(u0, u1, z_boden, z_holm, z_dach, w, pfosten, streben, z_fuss, tafeln, knaggen)`: auskragende Holzgalerie / Holzerker.
 - `Wand.masswerk_fischblase(u0, u1, z0, z1, w0, w1)`: durchbrochenes Bruestungsfeld.
+- `saeule(W, u, w, z0, z1, d, basis, kapitell)`: runde Saeule mit Plinthe (quadrat/rund) + Wulst, Kapitell als Aufweitung; `laube(..., frei=[(u0,u1,z1[,w_hinten])])` raeumt dafuer die Pfeilerzone (17.11.2026, kaufhaus_gk).
+- `balkon(W, u0, u1, z_boden, w_vorne, z_handlauf, docken, pfosten, konsolen, ...)`: Bodenplatte, Konsolen, Pfosten, Docken (Balustre, vorn je u + seitlich), Handlauf.
+- `vorhangbogen(breite, unten, schulter, spitze, mitte, feld, exponent)` (Querschnitt) und `vorhangbogen_fenster(W, u0, u1, z0, z1, ...)` -> (zus, ab, pf), nach `aushoehlen`: `koerper = (koerper + zus - ab) + pf`; Felder, Pfosten an den Spitzen, Kaempfer.
+- Putz ohne Quaderwerk: `fassaden_kette.putz_eben` (in `relief_roh`, 17.11.2026): Zellen < 5 cm am 1-m-Wandniveau = glatter Putz, Rest (Gewaende, Gesimse, Figuren) bleibt. Grund: Netzrauschen 6,6 cm machte glatte Putzfassaden zu "Brei".
+- Fotoquellen: `tools/fotoquellen.py` findet alle Fotoordner des Objekts unter rc-park_daten/<basis>* (Gesamtkette Stufe `vorpruefen`, Notiz `weitere_fotos`; aus mit `--ohne-weitere-fotos`).
 - Dach als Laser-Hoehenfeld: `tools/laserdach.py`. Reliefs: `relief_einsatz.py`, `relief_putz.py`, `relief_quader_eben.py`, `steine_generieren.py`, `steine_aus_foto.py`.
 Noch NICHT generisch (Einzelfall im Schwabentor-Generator, bei Bedarf herausziehen): Zeltdach mit Knickprofil (D_PROF), Laterne mit Zwiebelhaube, Treppenturm mit Haube (Rotationsprofil), Holzfries, Kamin/Firststange, Erker mit Konsolen.
 
@@ -493,3 +498,19 @@ Grenzen: Standorte streuen (`--abstand`) bringt nur etwas mit >= 5 Fotos, sonst 
 Tiefenmodell erfindet Relief aus Farbe (Wandbild im Putz) - deshalb Putz immer Scan.
 Integration (Vorschlag, nicht gebaut): im Generator wie `sued_misch.npz`: `relief_koerper("relief/<wand>_mono.npz", tiefe=0.30, trend=True, rand_auslauf=False)`, grobes Relief mit dem Feld als `tief_felder`;
 in `fassaden_kette.py` als Stufe nach `relief_putz.py` (Eingang `<wand>_eben.npz`/`_voll.npz`, Feld = Wandausschnitt bis 10 m Hoehe), Tor: Korrelation je Foto >= 0,2.
+
+### Nachtrag 17.11.2026 abends: Mono-Relief im Schwabentor-Generator und in der Gesamtkette
+- Werkzeug (generisch, ohne Objektnamen): Entzerrung auf der Reliefflaeche statt der Ebene (`--auf_relief 1`; Doppelstrich an der vorspringenden Steintafel Sued war Parallaxe);
+  Drahtlinien je Foto erkannt (`draht_linien`, gerichteter Linienfilter + Hough + Duennheitsprobe, Lagerfugen +-4 Grad ausgenommen, `--draht_laenge 1.0`), Maske fuer Fotos
+  vom selben Standort (< 1 m) geteilt und WEICH ausgeblendet; wo jedes Foto den Draht zeigt, steht die Feinform des Eingangsreliefs. Kachel-Normierung robust (`--kachel_norm robust`),
+  Rand-Auslauf ab 8 cm hinter der Sichtgrenze (`--rand_weg`). Sackgassen: harter Ausschnitt der Drahtstreifen (Doppellinien an den Streifenkanten), Telea-Fuellung des Hochpasses
+  im Streifen (breite Rinne), `cv2.inpaint` auf float32 (liefert Unsinn; 16 bit geht).
+- Laeufe: Sued `relief/sued_eben.npz ... relief/sued_mono.npz --feld 0.1 11.4 0.0 9.9 --n 6 --zone 3.0 8.4 4.0 7.5 --zone 8.6 11.4 0.6 4.9`; Nord jetzt mit EINGANG `relief/nord_misch.npz`
+  (Feinrechnung statt nord_eben: ausserhalb der Fotodaten und in Drahtstreifen steht so die Feinrechnung) `--feld 0.1 12.0 0.0 10.4 --n 5 --abstand 0 --massstab 0.933 -2.15 15.28 0 --ohne 9.7 11.1 1.9 3.6 --polaritaet hell`.
+- Fugen-F1 Sued gegen Holdout 113836 (2 cm, Zufall ~0,28): Feld Scan 0,34 / alt 0,395 / neu 0,417; Bogen-Zone 0,35 / - / 0,42; Brei-Zone 0,35 / - / 0,41. Korrelation je Foto 0,27-0,48 (Sued), 0,58-0,67 (Nord, 113512 mit 0,11 verworfen).
+  Nord-Holdout 113438 weiter nicht auswertbar (Scan unter Zufall).
+- Generator `schwab_v3_gen.py`: `relief_koerper("relief/<wand>_mono.npz", trend=True, rand_auslauf=False)`, grobes Relief bekommt GENAU das Feld der Datei als `tief_felder`
+  (`_mono_feld`, sonst Rillen an den Feldraendern); Nord: `nord_misch` entfaellt, wenn `nord_mono` da ist (steckt darin); `OHNE_MONO=1` schaltet ab.
+- Kette `tools/gesamtkette.py` (Block nach `fassaden_kette`, Stufe `fassaden`): je Wand aus `audit/fassaden_kette.json` mit `_misch`/`_voll` -> `<wand>_mono.npz`, Feld 0,1..L-0,1 / 0..min(z1, 10 m),
+  Tor `--min_korr 0.2`; Ergebnis je Wand unter `mono` in fassaden_kette.json. OFFEN: `fassaden_kette.anbauen()` setzt `<wand>_mono.npz` noch nicht ein (Datei nicht in diesem Auftrag).
+- Grenzen: Nord-Drahtstreifen zeigt die (unruhigere) Feinrechnung statt Steinen; Kante rechts an der Steintafel Sued bleibt als Rille (echte Tafelkante + Schatten, nicht sicher getrennt).

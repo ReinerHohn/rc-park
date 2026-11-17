@@ -10,152 +10,162 @@
  "fotos": [
   {
    "foto": "eigen__IMG_20261106_113851",
-   "cm_je_px": 0.42,
-   "sichtbar": 0.981,
-   "massstab": 0.03755978953195402,
-   "korrelation_band_scan": 0.446,
+   "cm_je_px": 0.43,
+   "sichtbar": 0.98,
+   "massstab": 0.025449996321064514,
+   "korrelation_band_scan": 0.407,
    "bester_versatz_cm": {
     "nach_unten": -6,
     "nach_rechts": 0,
-    "korrelation": 0.576
+    "korrelation": 0.516
    },
-   "sekunden": 19.7
+   "draht_linien": 11,
+   "draht_anteil": 0.016,
+   "sekunden": 10.1
   },
   {
    "foto": "eigen__IMG_20261106_113849",
    "cm_je_px": 0.43,
-   "sichtbar": 0.968,
-   "massstab": 0.03667556885116835,
-   "korrelation_band_scan": 0.486,
+   "sichtbar": 0.967,
+   "massstab": 0.025995145369899508,
+   "korrelation_band_scan": 0.484,
    "bester_versatz_cm": {
-    "nach_unten": -5,
+    "nach_unten": -4,
     "nach_rechts": 1,
-    "korrelation": 0.581
+    "korrelation": 0.556
    },
-   "sekunden": 15.7
+   "draht_linien": 19,
+   "draht_anteil": 0.0221,
+   "sekunden": 8.3
   },
   {
    "foto": "eigen__IMG_20261106_113830",
    "cm_je_px": 0.47,
    "sichtbar": 1.0,
-   "massstab": 0.04076836556395706,
-   "korrelation_band_scan": 0.421,
+   "massstab": 0.026450050989830526,
+   "korrelation_band_scan": 0.419,
    "bester_versatz_cm": {
-    "nach_unten": -6,
+    "nach_unten": -5,
     "nach_rechts": 2,
-    "korrelation": 0.529
+    "korrelation": 0.513
    },
-   "sekunden": 9.4
+   "draht_linien": 13,
+   "draht_anteil": 0.0204,
+   "sekunden": 9.0
   },
   {
    "foto": "eigen__IMG_20261106_113939",
    "cm_je_px": 0.31,
    "sichtbar": 0.736,
-   "massstab": 0.0936707542456592,
-   "korrelation_band_scan": 0.258,
+   "massstab": 0.040380472223589585,
+   "korrelation_band_scan": 0.272,
    "bester_versatz_cm": {
-    "nach_unten": -2,
-    "nach_rechts": 3,
-    "korrelation": 0.268
+    "nach_unten": 0,
+    "nach_rechts": 5,
+    "korrelation": 0.312
    },
-   "sekunden": 14.2
+   "draht_linien": 8,
+   "draht_anteil": 0.0097,
+   "sekunden": 10.3
   },
   {
    "foto": "eigen__IMG_20261106_113930",
    "cm_je_px": 0.46,
-   "sichtbar": 0.737,
-   "massstab": 0.04500947337576244,
-   "korrelation_band_scan": 0.393,
+   "sichtbar": 0.736,
+   "massstab": 0.024697479059245003,
+   "korrelation_band_scan": 0.414,
    "bester_versatz_cm": {
-    "nach_unten": -6,
-    "nach_rechts": -4,
-    "korrelation": 0.538
+    "nach_unten": -5,
+    "nach_rechts": -2,
+    "korrelation": 0.51
    },
-   "sekunden": 15.3
+   "draht_linien": 1,
+   "draht_anteil": 0.003,
+   "sekunden": 10.3
   }
  ],
  "holdout": "eigen__IMG_20261106_113836",
  "fugenabgleich": {
   "feld": {
-   "zellen": 517694,
+   "zellen": 516726,
    "scan": {
-    "praezision": 0.37312471830532484,
-    "trefferquote": 0.31382396497327925,
-    "f1": 0.34091477683384636,
-    "f1_zufall": 0.2786534314982135
+    "praezision": 0.3707263578893046,
+    "trefferquote": 0.31266429066748375,
+    "f1": 0.3392287967825975,
+    "f1_zufall": 0.2729486720011791
    },
    "neu": {
-    "praezision": 0.42611551091365657,
-    "trefferquote": 0.36898783079003283,
-    "f1": 0.3954993767253264,
-    "f1_zufall": 0.27742677275277133
+    "praezision": 0.45626370790865695,
+    "trefferquote": 0.3835410988727443,
+    "f1": 0.4167537087045753,
+    "f1_zufall": 0.2825833977486231
    },
    "scan_bester_versatz": [
-    0.3660964287306552,
+    0.3648758927159143,
     2,
-    4
+    6
    ],
    "neu_bester_versatz": [
-    0.4474972406282985,
-    4,
+    0.4468977882012225,
+    2,
     0
    ]
   },
   "zone0": {
-   "zellen": 40479,
+   "zellen": 110213,
    "scan": {
-    "praezision": 0.3777274598600247,
-    "trefferquote": 0.35405516673528203,
-    "f1": 0.3655084281064656,
-    "f1_zufall": 0.31964453233078316
+    "praezision": 0.3947527597157115,
+    "trefferquote": 0.31778315439286253,
+    "f1": 0.3521107489569472,
+    "f1_zufall": 0.2810611249942185
    },
    "neu": {
-    "praezision": 0.4645944833264718,
-    "trefferquote": 0.4061342116097159,
-    "f1": 0.4334018513489971,
-    "f1_zufall": 0.29930397556831156
+    "praezision": 0.4638590654770906,
+    "trefferquote": 0.3861333736579465,
+    "f1": 0.4214424919750047,
+    "f1_zufall": 0.32200120480775
    },
    "scan_bester_versatz": [
-    0.40753189626025427,
-    2,
-    -8
-   ],
-   "neu_bester_versatz": [
-    0.4858483896239706,
-    2,
-    -4
-   ]
-  },
-  "zone1": {
-   "zellen": 110100,
-   "scan": {
-    "praezision": 0.3946412352406903,
-    "trefferquote": 0.31759006963366637,
-    "f1": 0.35194784762379094,
-    "f1_zufall": 0.2765439321062181
-   },
-   "neu": {
-    "praezision": 0.44656372994247656,
-    "trefferquote": 0.3870723584620042,
-    "f1": 0.41469528144649087,
-    "f1_zufall": 0.31094999678454077
-   },
-   "scan_bester_versatz": [
-    0.36378936018301306,
-    2,
+    0.3575123533655463,
+    0,
     4
    ],
    "neu_bester_versatz": [
-    0.46003621966408975,
+    0.4430813289898664,
     2,
-    -2
+    0
+   ]
+  },
+  "zone1": {
+   "zellen": 48520,
+   "scan": {
+    "praezision": 0.36338657049630774,
+    "trefferquote": 0.3451828954147347,
+    "f1": 0.3540508999988263,
+    "f1_zufall": 0.3148931048654545
+   },
+   "neu": {
+    "praezision": 0.4283015627683325,
+    "trefferquote": 0.38863128971320626,
+    "f1": 0.40750323167741703,
+    "f1_zufall": 0.2693160708605722
+   },
+   "scan_bester_versatz": [
+    0.404954401840987,
+    0,
+    -8
+   ],
+   "neu_bester_versatz": [
+    0.45979541886237474,
+    2,
+    -6
    ]
   }
  },
- "foto_anteil": 0.6392446589791723,
+ "foto_anteil": 0.6383847322785375,
  "hub_p5_p95_scan": 0.14601778164505952,
- "hub_p5_p95_neu": 0.15266666044004307,
- "sekunden_gesamt": 228.2,
+ "hub_p5_p95_neu": 0.1531669586328425,
+ "sekunden_gesamt": 159.3,
  "sekunden_laden": 8.4,
  "modell": "Depth-Anything-V2-Small-hf (Apache-2.0)",
  "hinweis": "Hochpass-Feinform aus monokularer Tiefe, Massstab am Scan-Bandpass verankert; Fugentiefe daher Scan-Massstab, nicht gemessen = ANNAHME"

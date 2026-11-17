@@ -59,18 +59,18 @@
  },
  {
   "seite": "wand",
-  "element": "Quader mit Fugen nord (Torgeschoss bis Fries)",
-  "quelle": "feines Fassadenbild 1 cm (fassade_fein.py) -> tools/steine_aus_foto.py: Lagerfugen aus dem Zeilenprofil, Stossfugen je Schicht",
-  "steine": 404.92,
-  "hinweis": "Fugenlage aus dem Foto (Schichtmodell: nicht jede einzelne Fuge stimmt), Fugentiefe 3 cm und ebene Steinflaeche ANNAHME; Bossen fehlen | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
+  "element": "Feinrelief Nordwand z 0-10,4 m aus Einzelfotos (2 cm)",
+  "quelle": "tools/relief_aus_fotos_mono.py: Tiefpass der Feinrechnung nord_misch (> 60 cm) + Hochpass Depth Anything V2 Small (Apache-2.0) aus 4 Nahfotos, Massstab und Lage am Scan-Bandpass verankert",
+  "foto_anteil": "0.63",
+  "hinweis": "ANNAHME: Fugentiefe = Scan-Massstab, nicht gemessen; Draehte je Foto ausgeblendet (draht_linien); ohne Fotodaten steht nord_misch | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
   "seite_name": "wand"
  },
  {
   "seite": "wand",
-  "element": "Feines Relief Nordwand z 0-10,5 m (2 cm)",
-  "quelle": "lokale Feinrechnung: 13 Nahfotos in 3200 px, COLMAP PatchMatch nur fuer dieses Feld (tools/tiefe_lokal.py), gemischt mit dem groben Relief (tools/relief_mischen.py)",
-  "fein_anteil": 0.38,
-  "hinweis": "Scan-Relief, kein Mass; wo die Feinrechnung keine Daten hat (56 %), steht das grobe bzw. generierte Relief | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
+  "element": "Quader mit Fugen nord (Torgeschoss bis Fries)",
+  "quelle": "feines Fassadenbild 1 cm (fassade_fein.py) -> tools/steine_aus_foto.py: Lagerfugen aus dem Zeilenprofil, Stossfugen je Schicht",
+  "steine": 404.92,
+  "hinweis": "Fugenlage aus dem Foto (Schichtmodell: nicht jede einzelne Fuge stimmt), Fugentiefe 3 cm und ebene Steinflaeche ANNAHME; Bossen fehlen | Masse mit Lasermassstab 0,933 (DOM1); Rohmasse in den Protokollen M-* gelten im Rahmen vor der Korrektur",
   "seite_name": "wand"
  },
  {
@@ -178,6 +178,14 @@
   "quelle": "ANNAHME: tools/steine_generieren.py - Verband gewuerfelt, Schichthoehe und Hub aus dem echten Relief daneben",
   "anteil": 0.04932977615825091,
   "hinweis": "ERFUNDEN, kein Mass: einzelne Steine entsprechen nicht dem Original",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Feinrelief Suedwand z 0-9,9 m aus Einzelfotos (2 cm)",
+  "quelle": "tools/relief_aus_fotos_mono.py: Tiefpass Scan sued_eben (> 60 cm) + Hochpass Depth Anything V2 Small (Apache-2.0) aus 5 Nahfotos, Massstab und Lage am Scan-Bandpass verankert; Fugen-F1 gegen Holdout-Foto",
+  "foto_anteil": 0.6365209618306964,
+  "hinweis": "ANNAHME: Fugentiefe = Scan-Massstab, nicht gemessen; Draehte je Foto ausgeblendet (draht_linien); ohne Fotodaten steht der Scan",
   "seite_name": "wand"
  },
  {
@@ -326,7 +334,7 @@
   "element": "Turm hohl, 8 Fenster durchgebrochen (Sued, West, 4 Schlitze), Treppenturm hohl mit 5 Schlitzen",
   "quelle": "Nutzerauftrag 16.11.2026; Fenstermasse wie oben",
   "fenster_offen": 8,
-  "hohlraum_m3": 3708.6,
+  "hohlraum_m3": 3708.5,
   "hinweis": "Wandstaerke = duennste druckstabile Wand (Nutzer 16.11.2026): 1,2 mm im Druck (WAND_MM) = 0,10 m bei 1:87, auch Treppenturm; Innenraum ohne Decken, unter z 8 m massiv (Torgeschoss); die zwei Nordfenster haben geschlossene Laeden und bleiben Nischen",
   "seite_name": "wand"
  }

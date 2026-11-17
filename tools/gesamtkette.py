@@ -109,6 +109,7 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument("quelle"); ap.add_argument("--ziel", required=True)
     ap.add_argument("--trotz-lage", action="store_true", help="Fotostufen auch dann rechnen, wenn die Lage-Tore rot sind (nur zum Untersuchen)"); ap.add_argument("--ab", default="anlegen", choices=STUFEN); ap.add_argument("--bis", default="vergleich", choices=STUFEN)
     ap.add_argument("--fremd", nargs="*", default=[]); ap.add_argument("--commons-kategorie", default=""); ap.add_argument("--ohne-video", action="store_true")
+    ap.add_argument("--ohne-weitere-fotos", action="store_true", help="nur fotos_dir + Commons/Video (alt); Standard: alle Fotoordner des Objekts unter rc-park_daten (tools/fotoquellen.py) als Fremdquelle vorpruefen")
     ap.add_argument("--dicht-stufe", default="schnell", choices=["grob", "schnell", "fein"], help="schnell = ohne geometrischen PatchMatch-Durchgang (Standard 15.11.2026); fein nur wenn ein Tor zweifelt"); ap.add_argument("--referenz-wolke", default=""); ap.add_argument("--max-loesung", type=int, default=3); ap.add_argument("--fotos", default="", help="fotos_dir ersetzen")
     a = ap.parse_args()
     if platte_fehler(): print("ABBRUCH: " + platte_fehler(), flush=True); return 2                  # 17.11.2026: ohne eingehaengte Datenplatte entstand der Kettenordner auf der Systemplatte
@@ -157,6 +158,11 @@ def main():
     if obj.get("fotos_dir_quelle") and os.path.realpath(fd) == os.path.realpath(os.path.join(D, "fotos")):      # 17.11.2026: nach dem ersten Lauf zeigt fotos_dir auf den SAMMELORDNER (siehe unten). Ein Einstieg --ab commons..sammeln nahm ihn dann
         fd = obj["fotos_dir_quelle"]; fd = fd if os.path.isabs(fd) else os.path.join(ROOT, fd)                  # als 'eigene Fotos': alle Fremdbilder wurden zu eigen__eigen__..., die Namen passten nicht mehr zu Netz und K-Dateien, Fremdbilder bestaetigten sich selbst
     fremd = list(a.fremd); VF = os.path.join(D, "video_frames"); CO = os.path.join(D, "commons")
+    if not a.ohne_weitere_fotos and dran("vorpruefen"):      # 17.11.2026 (kaufhaus_gk gegen Handmodell grob3): nur fotos_dir (333) + Commons gesammelt; iPhone-Fotos, Handyserien, Nutzerfotos, Videobilder und Mapillary
+        from fotoquellen import finden as fotoquellen_finden    # desselben Gebaeudes (rund 2700 Bilder in 46 Ordnern unter rc-park_daten/kaufhaus*) blieben liegen. Alle als Fremdquelle -> bilder_vorpruefen entscheidet je Bild.
+        aus_ = list((obj.get("fotos_eingang") or {}).get("ausschluss") or []) + list(obj.get("fotos_ausschluss") or [])
+        weitere = [d_ for d_, _ in fotoquellen_finden(fd, ziel=D, ausschluss=aus_) if d_ not in fremd]; fremd += weitere
+        notiz(B, "weitere_fotos", True, ordner=len(weitere), hinweis="tools/fotoquellen.py: " + "; ".join(os.path.relpath(d_, os.path.dirname(D)) for d_ in weitere[:60]))
 
     kat = a.commons_kategorie or ((obj.get("bildquellen") or {}).get("commons", {}).get("kategorien") or [""])[0]   # objekt.json bildquellen
     if dran("commons") and kat:
@@ -312,6 +318,22 @@ def main():
         if os.path.exists(os.path.join(dd, "fused.ply")) and lauf(B, "fassaden_netz", [PY, "-I", "tools/netz_aus_dicht.py", ZR, dd], log)[0] == 0 and frisch(nz, t_n):      # frisch: ein Netzausschnitt eines frueheren Laufs gilt nicht
             if lauf(B, "fassaden_kette", [PY, "-I", "tools/fassaden_kette.py", ZR, "--netz", nz, "--fotosteine"] + (["--fein", os.path.join(dd, "sparse"), FV] if os.path.isdir(os.path.join(dd, "sparse")) else []), log)[0] == 0: lauf(B, "bauen_mit_fassaden", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))   # --fein: lokale Feinrechnung der Tiefe je Wand (GPU, ~11 min je Wand)
         else: notiz(B, "fassaden", False, fehler=f"kein dichter Ordner ({dd}/fused.ply) oder Netzstufe ohne neues Ergebnis ({nz})")
+    if dran("fassaden") and os.path.exists(os.path.join(Z, "audit", "fassaden_kette.json")) and os.environ.get("RCPARK_OHNE_MONO") != "1":      # 17.11.2026 Stufe 'mono' (nach relief_putz/steine der Fassaden-Kette): Feinrelief aus Einzelfotos,
+        fkj = os.path.join(Z, "audit", "fassaden_kette.json"); FK = json.load(open(fkj)); stl_m = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); mono_w = []      # tools/relief_aus_fotos_mono.py (Depth Anything V2 Small, Apache-2.0), Feld = Wand bis 10 m
+        for w_ in FK.get("waende", []):                                   # TOR: Korrelation je Foto mit dem Scan-Bandpass >= 0,2 (schwaechere Fotos verwirft das Werkzeug; keins uebrig = rc 4 = Wand ohne Mono-Relief)
+            rq_ = [os.path.join(Z, "relief", w_["name"] + e_ + ".npz") for e_ in ("_misch", "_voll")]; rq_ = [q_ for q_ in rq_ if os.path.exists(q_)]
+            L_, z1m = float(w_.get("laenge", 0.0)), round(min(float(w_.get("z1", 0.0)), 10.0), 2)
+            if w_.get("aus") or w_.get("nur_foto") or not rq_ or not os.path.exists(stl_m) or L_ < 2.0 or z1m < 2.0: continue
+            mo = os.path.join(Z, "relief", w_["name"] + "_mono.npz")
+            for e_ in (".npz", ".jpg", ".json"):
+                if os.path.exists(mo[:-4] + e_): os.remove(mo[:-4] + e_)      # Ergebnis eines frueheren Laufs gilt nicht (das Werkzeug ueberschreibt nie)
+            rc_ = lauf(B, "mono_" + w_["name"], [PY, "-I", "tools/relief_aus_fotos_mono.py", rq_[0], ZR, mo, "--feld", "0.1", str(round(L_ - 0.1, 2)), "0", str(z1m), "--stl", stl_m, "--min_korr", "0.2", "--gpu_mb", "3500"], log, ok=(0, 3, 4))[0]
+            jm = mo[:-4] + ".json"; Jm = json.load(open(jm)) if os.path.exists(jm) else {}
+            kor = [f_.get("korrelation_band_scan") for f_ in Jm.get("fotos", []) if "verworfen" not in f_]
+            w_["mono"] = dict(rc=rc_, feld=[0.1, round(L_ - 0.1, 2), 0.0, z1m], korrelation=kor, fugen_f1=(Jm.get("fugenabgleich") or {}).get("feld"), datei=os.path.basename(mo) if rc_ == 0 and os.path.exists(mo) else None)
+            if w_["mono"]["datei"]: mono_w.append(w_["name"])
+        json.dump(FK, open(fkj, "w"), indent=1, ensure_ascii=False)
+        notiz(B, "mono", True, waende=mono_w, hinweis="ANSEHEN: relief/<wand>_mono.jpg (Foto | Scan | neu); fassaden_kette.anbauen setzt <wand>_mono.npz noch NICHT ein (Generator von Hand: relief_koerper(..., trend=True, rand_auslauf=False), grobes Relief mit dem Feld als tief_felder)")
     if dran("fenster") and os.path.exists(AU):                          # 15.11.2026: Fenster automatisch (Mehrfoto-Ortho -> OWLv2 -> Scheiben gruppieren); Probe Nordgiebel Schwabentor-Nachbarhaus: 6 von 6 sichtbaren Fenstern, 1-4 cm
         fo = os.path.join(D, "fassade"); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); fa = os.path.join(Z, "audit", "fenster_auto.json")
         if lauf(B, "fenster_ortho", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--stl", stl_, "--aus", fo, "--einzeln", "--min-flaeche", "6"], log)[0] == 0:

@@ -59,4 +59,16 @@ assert e["urteil"] == "schlechter" and r["urteil"] == "besser" and g["urteil"] =
 assert T.vergleichen(b, dict(b, mk=np.zeros((H, W), bool)))["urteil"] == "nicht beurteilbar"
 assert T.gesamt({"a": e, "b": e, "c": g})["urteil"] == "schlechter" and T.gesamt({"a": e})["urteil"] == "nicht beurteilbar" and T.gesamt({"a": e, "b": r, "c": g})["urteil"] == "gleich"
 PY
+$P -I - <<'PY' > /dev/null 2>&1 && ok "Mono-Relief: Draht (gerade dunkle Linie) erkannt, Quaderwand mit Fugen ohne Fehlalarm (relief_aus_fotos_mono.draht_linien)" || rot "relief_aus_fotos_mono.draht_linien (Draht nicht erkannt oder Fehlalarm auf Fugen)"
+import sys; sys.path.insert(0, "tools"); import numpy as np, cv2; from relief_aus_fotos_mono import draht_linien
+rng = np.random.default_rng(3); H, W = 600, 900; b = np.zeros((H, W, 3), np.uint8)
+for y in range(0, H, 30):                                   # Quader 30 cm hoch, 40-70 cm lang, helle Fugen, Textur
+    x = int(rng.integers(-40, 0))
+    while x < W: L = int(rng.integers(40, 70)); b[y:y + 30, max(x, 0):x + L] = rng.integers(60, 140, 3); x += L; b[y:y + 30, max(x - 2, 0):x] = 210
+    b[y:y + 2] = 210
+b = np.clip(b.astype(int) + rng.normal(0, 18, b.shape), 0, 255).astype(np.uint8); m = np.ones((H, W), bool)
+n0 = len(draht_linien(b, m, 0.01)[1]); cv2.line(b, (80, 560), (820, 60), (25, 25, 25), 2); dm, seg = draht_linien(b, m, 0.01)
+auf = np.zeros((H, W), np.uint8); cv2.line(auf, (80, 560), (820, 60), 1, 1); auf = auf > 0
+assert n0 == 0 and len(seg) >= 1 and dm[auf].mean() > 0.8 and dm[~cv2.dilate(auf.astype(np.uint8), np.ones((25, 25))).astype(bool)].mean() < 0.005
+PY
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F
