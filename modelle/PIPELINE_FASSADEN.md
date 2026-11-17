@@ -514,3 +514,15 @@ in `fassaden_kette.py` als Stufe nach `relief_putz.py` (Eingang `<wand>_eben.npz
 - Kette `tools/gesamtkette.py` (Block nach `fassaden_kette`, Stufe `fassaden`): je Wand aus `audit/fassaden_kette.json` mit `_misch`/`_voll` -> `<wand>_mono.npz`, Feld 0,1..L-0,1 / 0..min(z1, 10 m),
   Tor `--min_korr 0.2`; Ergebnis je Wand unter `mono` in fassaden_kette.json. OFFEN: `fassaden_kette.anbauen()` setzt `<wand>_mono.npz` noch nicht ein (Datei nicht in diesem Auftrag).
 - Grenzen: Nord-Drahtstreifen zeigt die (unruhigere) Feinrechnung statt Steinen; Kante rechts an der Steintafel Sued bleibt als Rille (echte Tafelkante + Schatten, nicht sicher getrennt).
+
+## Nachtrag 17.11.2026 abends: Runde 3 Kaufhaus - Feinteil-Mass, Restbrei, Erker-Masswerk, Dachdeckung, Figuren
+- **Feinteil-Mass `tools/feinteil_tor.py`** (nur Hinweis in `bauen_abnehmen.sh`, objekt.json `feinteil`): Feinband 2-12 cm von Foto (Grau) und Modell (Normalenbild),
+  Strukturtensor -> Richtungshistogramm je 1-m-Kachel, SSIM-artige Kachelnote, Zonen als Kaesten (`modelle/<objekt>/feinteil_zonen.json`), fester Bewertungsbereich (`--bereich_stl`),
+  Modellstaerke mit festem Bezug (erstes STL). Nachweis kaufhaus_gk, 9 Fotos: grob3 0,537 > gk 0,465-0,480 in 9/9 Fotos, in allen Zonen; grob3 0,5 m verschoben 0,471 (1 m: 0,433, 9/9 schlechter);
+  Wiederholung bitgleich 9/9; falsches Fotopaar 0,29 < richtiges 9/9. foto_diff-F1 sah denselben Unterschied nicht (0,77/0,78). GRENZE: Brei (Netzrauschen) bekommt Punkte, wo das Foto
+  viel Feinstruktur hat (Figuren, Goldrahmen, Bleiglas) - glatter Putz verliert dort (Ablation: Brei weg -0,020). Darum kein Tor.
+- `fassaden_kette.relief_bereinigen` / `anbauen(..., bereinigen=dict(ersetzt, erhalten))`: Abweichungen >= 5 cm vom Wandniveau (wandniveau, 1-m-Median) als Stuecke; linienhafte gerade
+  (Gesims/Gewaende, Fuellgrad >= 0,5) bleiben, Klumpen -> Wandniveau; Rechtecke `ersetzt` (Fotobauteile: Fenster, Balkon, Figuren, Erker als ("rund", xy, r, z0, z1)) -> Wandniveau. Bild relief/<wand>_rein.jpg.
+- Katalog `tools/bauteile.py` neu: `dachflaechen`, `schindeln(koerper, abstand, tiefe)` (Saegezahn-Reihen je Dachebene, Abstand am Foto per Hang-Autokorrelation, Stufe >= 0,3 mm im Druck),
+  `figur(W, u, w, konsole, koerper)`, `baldachin(W, u, w_wand, z_spitze, stufen, fialen)` (beide KLIPSTEIL-Kandidaten), `erker_polygon(..., konsole_rippen=)` + fenster.kopf/kaempfer + felder.medaillon.
+- Uebertrag von Handmodell-Teilen: `modelle/kaufhaus_gk/uebertrag_grob3.py` (Similaritaet grob3 -> gk s 0,767; Gegenprobe: Figurenachsen auf den Fensterpfeilern +-0,08 m).

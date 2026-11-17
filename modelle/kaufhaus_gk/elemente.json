@@ -72,6 +72,13 @@
  },
  {
   "seite": "wand",
+  "element": "Relief Fassade w03: Restbrei auf Wandniveau, Bauteilflaechen ersetzt",
+  "quelle": "fassaden_kette.relief_bereinigen (Netz-Relief, linienhafte Formen bleiben)",
+  "hinweis": "ANNAHME: Klumpen ohne Bauteil = Netzrauschen; Brei weg 18 %, durch Fotobauteile ersetzt 35 %, 1 linienhafte Stuecke behalten; Bild relief/w03_rein.jpg",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Relief Fassade w03 (Fassaden-Kette)",
   "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm), roh: das Foto zeigt kein Quaderwerk (Quader-Tor), kleine Loecher glatt gefuellt",
   "generiert_anteil": 0.0,
@@ -80,10 +87,24 @@
  },
  {
   "seite": "wand",
+  "element": "Relief Fassade w04: Restbrei auf Wandniveau, Bauteilflaechen ersetzt",
+  "quelle": "fassaden_kette.relief_bereinigen (Netz-Relief, linienhafte Formen bleiben)",
+  "hinweis": "ANNAHME: Klumpen ohne Bauteil = Netzrauschen; Brei weg 9 %, durch Fotobauteile ersetzt 66 %, 16 linienhafte Stuecke behalten; Bild relief/w04_rein.jpg",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Relief Fassade w04 (Fassaden-Kette)",
   "quelle": "Netz der dichten Wolke (Hoehenbild 5 cm), roh: das Foto zeigt kein Quaderwerk (Quader-Tor), kleine Loecher glatt gefuellt",
   "generiert_anteil": 0.0,
   "hinweis": "Scan-Relief, kein Mass; ANNAHME: Relief 11 cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung; ANNAHME: 49 % der Wand naeher als 5 cm am Wandniveau = glatter Putz (Netzrauschen weg)",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Relief Fassade w05: Restbrei auf Wandniveau, Bauteilflaechen ersetzt",
+  "quelle": "fassaden_kette.relief_bereinigen (Netz-Relief, linienhafte Formen bleiben)",
+  "hinweis": "ANNAHME: Klumpen ohne Bauteil = Netzrauschen; Brei weg 13 %, durch Fotobauteile ersetzt 45 %, 0 linienhafte Stuecke behalten; Bild relief/w05_rein.jpg",
   "seite_name": "wand"
  },
  {
@@ -114,6 +135,13 @@
   "seite_name": "wand"
  },
  {
+  "seite": "dach",
+  "element": "Dachdeckung: 205 Reihen auf 4 Dachflaechen, Reihenabstand 0.146 m, Stufe 0.035 m",
+  "quelle": "Reihenabstand 0,146 m entlang des Hangs: messprotokoll/ZR-dachreihen.json (Hang der Traufseite aus bauteile_foto.gauben dach_z0/dach_s entzerrt, 1 cm/px, Autokorrelation; 6 Fotos x 3 Streifen, Peaks k x 0,145-0,147 m in 15 von 18 Faellen; Gegenprobe grob3 0,18 m x 0,767 = 0,138 m)",
+  "hinweis": "ANNAHME: Stufentiefe 0,035 m im Foto nicht messbar (Druck 0,40 mm >= 0,3 mm); Rueckhang und Helme mit gleichem Reihenabstand; nur Reihen, keine Biberschwanz-Rundungen/Stossfugen (unter Druckaufloesung: Fuge 2 mm breit waere 0,17 m)",
+  "seite_name": "dach"
+ },
+ {
   "seite": "wand",
   "element": "Laube: 4 Korbboegen + offene Halle 4.25 m tief, Stirnbogen West",
   "quelle": "Zahl 4 Boegen Z-eigen__018-001; Pfeiler (Schaft) u 1,0-2,0 / 5,4-6,0 / 9,7-10,5 / 14,1-14,9 / 18,5-19,5, Kaempfer 3,5, Scheitel (Laibung) 4,95 abgelesen am entzerrten Foto commons 052 (1 cm/px) und eigen 018, deckungsgleich (modelle/kaufhaus_gk/audit/bauteile_1711/arkade_052_a.jpg, _b.jpg); Bogenform: setzt senkrecht an, Pfeil 1,45 < halbe Breite 1,8 -> Korbbogen. Hallentiefe 4,25: Ebenen-Sweep durch Bogen 2 (7 Fotos, Maximum -4,25..-4,5; LoD2-Stufe w03 3,86 als Gegenprobe). Westende offen (Durchblick auf das Nachbarhaus in commons 110), Stirnbogen u 10,95-14,05 (Giebelebene West), Kaempfer ~4,0, Scheitel ~5,3 am entzerrten Foto 006 (unsicher, 1 Foto). Ostende: kein Durchblick belegt -> geschlossen.",
@@ -137,6 +165,34 @@
   "element": "Gebaeude hohl, 5 Fenster durchgebrochen",
   "quelle": "bauteile.aushoehlen auf den automatisch erkannten Fenstern",
   "hinweis": "Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "4 Figuren auf Rundkonsolen zwischen den Obergeschossfenstern (KLIPSTEIL-Kandidat)",
+  "quelle": "UEBERTRAGEN aus kaufhaus_grob3 figurenreihe (Masse dort am Foto trianguliert: Profil Figur 2 (Fotos 6120): Spitze 10,59 (M-6120-045), Knauf d 0,10 (M-6120-044), 2. Stufe d 0,31 bei 10,87 (M-6120-042/043), Kranz d 0,58 bei 11,01 (M-6120-04 ...; Zaehlung Z-6161-001, Z-6145-001) per Similaritaet s 0.767 (modelle/kaufhaus_gk/uebertrag_grob3.py)",
+  "hinweis": "ANNAHME: Profile relativ zum Kronenscheitel, ganze Figur auf z_scheitel geschoben (grob3 schob nur den Kopf); Huellkoerper ohne Arme/Attribute (wie grob3); Achse 0.172 m vor der Putzebene w 0.115",
+  "klipsteil": true,
+  "u": [
+   14.712,
+   11.612,
+   8.639,
+   5.575
+  ],
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "4 Baldachine ueber den Figuren (Haube + Krone + 3 Fialen, KLIPSTEIL-Kandidat)",
+  "quelle": "UEBERTRAGEN aus kaufhaus_grob3 baldachinreihe (Fotos 6120/6132/6127 (Fig 2: M-6120-051..064, Triangulation 3 Kameras) und 6161+6145 (alle 4: M-6161-022..025); Baldachin = rote Wimperg-Konsole (Haube mit Maßwerkband) + Fialenkrone ueber dem Figuren) per Similaritaet s 0.767 (uebertrag_grob3.py); Zaehlung Z-6161-002",
+  "hinweis": "ANNAHME: Form aller 4 wie gemessener Baldachin 2 (grob3); Seitenfialen symmetrisch (grob3 ANNAHME); Masswerk/Blattwerk nicht einzeln",
+  "klipsteil": true,
+  "u": [
+   14.747,
+   11.619,
+   8.702,
+   5.639
+  ],
   "seite_name": "wand"
  },
  {
@@ -218,16 +274,22 @@
  },
  {
   "seite": "wand",
-  "element": "erker:0 West-Ecke: Achteck-Eckerker (Konsole, Wappenband, Fensterband 2 Lichter je Flaeche, Gesims, geschweifter Helm, Knauf)",
-  "quelle": "Achse = Helmknauf trianguliert M-eigen__018-001 (5 Fotos, Strahlabstand <= 0,14 m); Achteck, Frontflaeche parallel zur Traufwand, Abstand Flaeche-Achse 1,1 m: Achteck 1,1/1,3/1,5 in eigen 018, commons 006/110/024 projiziert, 1,1 trifft Fensterband und Pfosten (modelle/kaufhaus_gk/audit/bauteile_1711/erker_achteck_W.jpg); Zonengrenzen am entzerrten Frontfoto 018 (modelle/kaufhaus_gk/audit/bauteile_1711/erker_band_018.jpg); Helmprofil r(z) an der Silhouette (commons 052, auf die Achsebene umgerechnet); 2 Lichter je Flaeche (Fotos 018/006; Zaehlung Z-6124-001 kaufhaus_grob3)",
-  "hinweis": "ANNAHME: Lichter rechteckig (Vorhangbogenkoepfe nicht gebaut); Konsole als glatte Pyramide (Rippennetz nicht gebaut); Helm achteckig wie der Erker; Wetterfahne nicht gebaut",
+  "element": "erker:0 West-Ecke: Achteck-Eckerker (Konsole mit Rippennetz, Wappenband mit Medaillons, Fensterband 2 Lichter je Flaeche mit Kaempfer und Kielbogenkopf, Gesims, geschweifter Helm mit Deckung, Knauf)",
+  "quelle": "Achse = Helmknauf trianguliert M-eigen__018-001 (5 Fotos, Strahlabstand <= 0,14 m); Achteck, Frontflaeche parallel zur Traufwand, Abstand Flaeche-Achse 1,1 m: Achteck 1,1/1,3/1,5 in eigen 018, commons 006/110/024 projiziert, 1,1 trifft Fensterband und Pfosten (modelle/kaufhaus_gk/audit/bauteile_1711/erker_achteck_W.jpg); Zonengrenzen am entzerrten Frontfoto 018 (modelle/kaufhaus_gk/audit/bauteile_1711/erker_band_018.jpg); Helmprofil r(z) an der Silhouette (commons 052, auf die Achsebene umgerechnet); 2 Lichter je Flaeche (Fotos 018/006; Zaehlung Z-6124-001 kaufhaus_grob3) | Runde 3 (17.11.): Kielbogenkoepfe (Hoehe 0,30), Kaempferriegel bei 2/3 der Lichthoehe, Wappenmedaillons (r 0,22) und Rippennetz der Konsole (2 sich kreuzende Bogenrippen je Flaeche + Grate) nach Sicht commons__110 (Ausschnitt Erker Ost, Lichter 2 je Flaeche mit Querholz, Wappenscheiben im Bruestungsfeld, Rippen der Konsole laufen von den oberen Ecken gekreuzt zur Spitze); Vorlage grob3 erker_polygon unterbau.rippen",
+  "hinweis": "ANNAHME: Helm achteckig wie der Erker; Wetterfahne nicht gebaut; Kopfhoehe 0,30 und Kaempfer bei 2/3 aus Bildverhaeltnis commons__110 (NICHT foto_mass-gemessen); Rippen b 0,10 / vor 0,09 (auf der Flaechennormalen) und Kreuzform (Bezier 0,15/0,75/0,7) = Sichtschaetzung; Medaillon r 0,22 = Sichtschaetzung, Wappenrelief nicht modelliert",
   "seite_name": "wand"
  },
  {
   "seite": "wand",
-  "element": "erker:1 Ost-Ecke: Achteck-Eckerker (Konsole, Wappenband, Fensterband 2 Lichter je Flaeche, Gesims, geschweifter Helm, Knauf)",
-  "quelle": "Achse = Helmknauf trianguliert M-commons__024-001 (4 Fotos); Achteck 1,1 in eigen 018, commons 024/110/006 projiziert (modelle/kaufhaus_gk/audit/bauteile_1711/erker_achteck_O.jpg); Zonen am entzerrten Frontfoto 018; Helmprofil wie West (Silhouette commons 052 gleich)",
-  "hinweis": "ANNAHME: wie erker:0",
+  "element": "erker:1 Ost-Ecke: Achteck-Eckerker (Konsole mit Rippennetz, Wappenband mit Medaillons, Fensterband 2 Lichter je Flaeche mit Kaempfer und Kielbogenkopf, Gesims, geschweifter Helm mit Deckung, Knauf)",
+  "quelle": "Achse = Helmknauf trianguliert M-commons__024-001 (4 Fotos); Achteck 1,1 in eigen 018, commons 024/110/006 projiziert (modelle/kaufhaus_gk/audit/bauteile_1711/erker_achteck_O.jpg); Zonen am entzerrten Frontfoto 018; Helmprofil wie West (Silhouette commons 052 gleich) | Runde 3 (17.11.): Kielbogenkoepfe (Hoehe 0,30), Kaempferriegel bei 2/3 der Lichthoehe, Wappenmedaillons (r 0,22) und Rippennetz der Konsole (2 sich kreuzende Bogenrippen je Flaeche + Grate) nach Sicht commons__110 (Ausschnitt Erker Ost, Lichter 2 je Flaeche mit Querholz, Wappenscheiben im Bruestungsfeld, Rippen der Konsole laufen von den oberen Ecken gekreuzt zur Spitze); Vorlage grob3 erker_polygon unterbau.rippen",
+  "hinweis": "ANNAHME: wie erker:0; Kopfhoehe 0,30 und Kaempfer bei 2/3 aus Bildverhaeltnis commons__110 (NICHT foto_mass-gemessen); Rippen b 0,10 / vor 0,09 (auf der Flaechennormalen) und Kreuzform (Bezier 0,15/0,75/0,7) = Sichtschaetzung; Medaillon r 0,22 = Sichtschaetzung, Wappenrelief nicht modelliert",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "29 Null-Volumen-Splitter entfernt",
+  "quelle": "Generator (decompose, Volumen < 1e-5 m3)",
   "seite_name": "wand"
  }
 ]

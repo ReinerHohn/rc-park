@@ -532,6 +532,8 @@ def main(argv=None):
         sg_ = np.sign((((-np.asarray(R).T @ np.asarray(t, float))[None, None, :] - pos_) * nrm_).sum(2)); sg_[sg_ == 0] = 1; nrm_ = np.nan_to_num(nrm_ * sg_[..., None]); del pos_, sg_   # zur Kamera gedreht (Netznormalen uneinheitlich)
         _RUECK["masken"] = dict(mk=(mk_roh | rand_), fk=fk.copy(), sil=sil_f > 0, occ=occ.copy(), nrm=nrm_.astype(np.float16), ppm=float(ppm), dmed=float(dmed), dmed_aktuell=float(dmed_aktuell),
                                 f=float(f), C=(-np.asarray(R).T @ np.asarray(t, float)).tolist(), kamera=quelle, kamera_datei=os.path.abspath(kp), occ_quelle=occ_q, W=W, H=H)
+        if _RUECK.get("mit_grau"):                                                                    # feinteil_tor (17.11., additiv): entzerrtes Graubild + Kamera fuer Feinstruktur und Zonenkasten
+            _RUECK["masken"].update(grau=gray.copy(), R=np.asarray(R, float).tolist(), t=np.asarray(t, float).tolist(), cx=float(cx0), cy=float(cy0))
         if gpu:
             import torch; del nrm, pos; torch.cuda.empty_cache()
         return None

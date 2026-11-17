@@ -1166,6 +1166,18 @@
    "wer": "Koordinator",
    "text": "Kette nutzt 363 Bilder, weitere Fotoordner (iPhone, Handyserien, Nutzerfotos, Videobilder, Mapillary) bleiben liegen",
    "naechster_schritt": "tools/fotoquellen.py + gesamtkette Stufe vorpruefen (erledigt; Stichprobe 119/194 zeigen das Objekt); naechster Kettenlauf ab 'vorpruefen' mit SfM neu"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Claude Runde 3",
+   "text": "Feinteil-Mass (tools/feinteil_tor.py, 9 Fotos): grob3 0,537 > gk Runde 2 0,480 > gk Runde 3 0,472. Ablation: Schindeln +0,010 (Dach +0,03), Figuren/Baldachine +0,012 (OG +0,05), Konsolrippen -0,003, Restbrei-Entfernung (relief_bereinigen) -0,020 (OG -0,08) - das Mass belohnt den Brei, das Auge nicht.",
+   "naechster_schritt": "Fenstergewaende/Bleiverglasung und Laubenrueckwand als Bauteile (grob3 fensterreihe) statt glatter Loecher; danach Feinteil-Mass erneut; klaeren, ob Brei-Vorteil echt (Figurenlage) oder Mass-Schwaeche (glatte Flaeche gegen Foto-Textur)"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Claude Runde 3",
+   "text": "Erker-Kielbogenkoepfe (0,30), Kaempfer (2/3) und Medaillons r 0,22 nur nach Bildverhaeltnis commons__110 gesetzt, Rippennetz der Konsole generische Bezierform (ANNAHME)",
+   "naechster_schritt": "foto_mass.py --tri an commons__110 + eigen__018 + IMG_6127: Kaempferhoehe, Kopfhoehe, Medaillondurchmesser, Rippenpfade (wie grob3 rippen_pfade)"
   }
  ]
 }

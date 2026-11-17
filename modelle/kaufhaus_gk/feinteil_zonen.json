@@ -1,0 +1,150 @@
+{
+ "_doku": "Zonen fuer tools/feinteil_tor.py im Modellrahmen kaufhaus_gk: Kaesten an der Traufwand (LoD2-Wand w04 = bauteile_foto.traufwand), u entlang a->b (0..20,4 m), w nach aussen. Erkerachsen aus bauteile_foto.erker (u 0,9 / 19,5). Nur Bewertungsbereiche, keine Modellform.",
+ "zonen": [
+  {
+   "name": "erker_w",
+   "wand": {
+    "a": [
+     -5.53,
+     16.64
+    ],
+    "b": [
+     13.63,
+     9.62
+    ],
+    "aussen": [
+     4.0,
+     30.0
+    ]
+   },
+   "u": [
+    -0.8,
+    2.6
+   ],
+   "w": [
+    -1.0,
+    2.2
+   ],
+   "z": [
+    4.4,
+    17.4
+   ]
+  },
+  {
+   "name": "erker_o",
+   "wand": {
+    "a": [
+     -5.53,
+     16.64
+    ],
+    "b": [
+     13.63,
+     9.62
+    ],
+    "aussen": [
+     4.0,
+     30.0
+    ]
+   },
+   "u": [
+    17.8,
+    21.2
+   ],
+   "w": [
+    -1.0,
+    2.2
+   ],
+   "z": [
+    4.3,
+    17.4
+   ]
+  },
+  {
+   "name": "obergeschoss",
+   "wand": {
+    "a": [
+     -5.53,
+     16.64
+    ],
+    "b": [
+     13.63,
+     9.62
+    ],
+    "aussen": [
+     4.0,
+     30.0
+    ]
+   },
+   "u": [
+    2.6,
+    17.8
+   ],
+   "w": [
+    -0.3,
+    1.5
+   ],
+   "z": [
+    6.8,
+    11.4
+   ]
+  },
+  {
+   "name": "dach",
+   "wand": {
+    "a": [
+     -5.53,
+     16.64
+    ],
+    "b": [
+     13.63,
+     9.62
+    ],
+    "aussen": [
+     4.0,
+     30.0
+    ]
+   },
+   "u": [
+    2.6,
+    17.8
+   ],
+   "w": [
+    -9.0,
+    0.3
+   ],
+   "z": [
+    11.4,
+    21.0
+   ]
+  },
+  {
+   "name": "laube",
+   "wand": {
+    "a": [
+     -5.53,
+     16.64
+    ],
+    "b": [
+     13.63,
+     9.62
+    ],
+    "aussen": [
+     4.0,
+     30.0
+    ]
+   },
+   "u": [
+    2.6,
+    17.8
+   ],
+   "w": [
+    -0.5,
+    1.2
+   ],
+   "z": [
+    0.0,
+    6.0
+   ]
+  }
+ ]
+}

@@ -15,15 +15,15 @@
   "giebel_ost_spitze": 21.499962615966794,
   "giebel_ost_n4": 17.431689544677734,
   "giebel_ost_s1": 20.394975597381592,
-  "gaube_unten_ost_z": 14.123460205078123,
-  "gaube_unten_mitte_z": 14.145735900878904,
+  "gaube_unten_ost_z": 14.078165847778317,
+  "gaube_unten_mitte_z": 14.14202372741699,
   "gaube_unten_west_z": 14.106397327423094,
-  "gaube_oben_ost_z": 16.64254846191406,
-  "gaube_oben_west_z": 16.62365516281128,
-  "erker_w_front80": 1.1000119420766665,
+  "gaube_oben_ost_z": 16.63851768493652,
+  "gaube_oben_west_z": 16.64811650085449,
+  "erker_w_front80": 1.1000179413669857,
   "erker_w_helm128": 0.4799897653446078,
   "erker_w_knauf": 0.17925864937420236,
-  "erker_o_front80": 1.1000026015315763,
+  "erker_o_front80": 1.1000035275130293,
   "erker_o_helm128": 0.46498165078499437,
   "erker_o_knauf": 0.17927121571664495,
   "laube_saeule1_vor": 0.4003335204273939,
@@ -34,10 +34,10 @@
   "laube_saeule3_basis": 0.43986058858529997,
   "balkon_docken_anzahl": 49.0,
   "balkon_docken_breite_median": 0.09,
-  "balkon_docken_grund_abstand": -0.1135343888968472,
+  "balkon_docken_grund_abstand": -0.11337367503728535,
   "balkon_konsolen_anzahl": 11.0,
   "balkon_konsolen_breite_median": 0.25,
-  "balkon_konsolen_grund_abstand": -0.15016313045203322,
+  "balkon_konsolen_grund_abstand": -0.11322500843974259,
   "balkon_handlauf": 6.839999999999982,
   "balkon_vorderkante": 0.8396161812488909,
   "fenster2_schulter": 9.119999999999989,
@@ -157,7 +157,7 @@
   },
   {
    "name": "Gaube unten_ost: Gaubendach hinter der Front (z, Dach am Fuss 13.21)",
-   "wert": 14.123460205078123,
+   "wert": 14.078165847778317,
    "soll": [
     13.96,
     14.21
@@ -167,7 +167,7 @@
   },
   {
    "name": "Gaube unten_mitte: Gaubendach hinter der Front (z, Dach am Fuss 13.21)",
-   "wert": 14.145735900878904,
+   "wert": 14.14202372741699,
    "soll": [
     13.96,
     14.21
@@ -187,7 +187,7 @@
   },
   {
    "name": "Gaube oben_ost: Gaubendach hinter der Front (z, Dach am Fuss 15.73)",
-   "wert": 16.64254846191406,
+   "wert": 16.63851768493652,
    "soll": [
     16.48,
     16.73
@@ -197,7 +197,7 @@
   },
   {
    "name": "Gaube oben_west: Gaubendach hinter der Front (z, Dach am Fuss 15.73)",
-   "wert": 16.62365516281128,
+   "wert": 16.64811650085449,
    "soll": [
     16.48,
     16.73
@@ -207,7 +207,7 @@
   },
   {
    "name": "Erker West: Frontflaeche Abstand von der Achse bei z 8,0",
-   "wert": 1.1000119420766665,
+   "wert": 1.1000179413669857,
    "soll": [
     1.0,
     1.2
@@ -237,7 +237,7 @@
   },
   {
    "name": "Erker Ost: Frontflaeche Abstand von der Achse bei z 8,0",
-   "wert": 1.1000026015315763,
+   "wert": 1.1000035275130293,
    "soll": [
     1.0,
     1.2

@@ -31,6 +31,12 @@ with ThreadPoolExecutor(3) as ex:      # 16.11.2026 (Aufgabenliste 1c): 3 Pflich
 for e,z in zip(L,Z): print(eins(e) if 'FEHLER' in z else z)      # 16.11.2026: bei 4 Mio. Dreiecken reichte der Grafikspeicher fuer 3 gleichzeitig nicht - Fehlschlaege einzeln wiederholen
 " || true
 $PY -W ignore -I tools/umriss_tor.py "$OBJ" 2>&1 | grep -v "^ *$" | sed "s/^/UMRISS-TOR: /" | tail -12 || true   # 16.11.2026: Dachlinie Modell gegen Himmelskante der Pflichtfotos (Hinweis; Bilder audit/umriss_<foto>.jpg)
+# 17.11.2026 Runde 3: Feinteil-Mass (tools/feinteil_tor.py) - NUR HINWEIS, kein Tor: Feinstruktur Modell gegen Foto, je Zone, gegen einen festen Bezug (objekt.json "feinteil": bezug_stl, bereich_stl, fotos, zonen)
+if $PY -c "import json,sys; sys.exit(0 if json.load(open('$OBJ')).get('feinteil') else 1)"; then $PY -W ignore -I -c "
+import json,subprocess,sys; o=json.load(open('$OBJ'))['feinteil']; d='modelle/$1/audit'
+cmd=['$PY','-W','ignore','-I','tools/feinteil_tor.py','$OBJ','--fotos',','.join(o['fotos']),'--stl',o['bezug_stl']+','+json.load(open('$OBJ'))['stl'],'--namen','bezug,aktuell','--bereich_stl',','.join(o['bereich_stl']),'--aus',d+'/feinteil.json','--bilder',d+'/feinteil']+(['--zonen',o['zonen']] if o.get('zonen') else [])
+r=subprocess.run(cmd,capture_output=True,text=True); print('\n'.join(l for l in r.stdout.splitlines() if l.startswith('MITTEL')) or 'FEINTEIL: kein Ergebnis '+r.stderr[-200:])
+" 2>&1 | sed "s/^/FEINTEIL-HINWEIS (kein Tor): /" || true; fi
 set +e; $PY -W ignore -I tools/seiten_audit.py "$OBJ"; RS=$?; set -e     # Sichtblatt auch bei rotem Pruefstand (man will hinsehen)
 # 17.11.2026: unter 'set -e' beendete ein Fehler von seiten_audit das Skript HIER mit dessen rc (meist 1 = fuer die Kette "nur Pruefstand rot", auch wenn das Hoehen-Tor schon rc 3 gesetzt hatte);
 # Foto-Diagnosen, Gegenproben CB und die Fehlerzaehlung am Ende liefen nicht mehr. Jetzt: weiterlaufen, das alte Sichtblatt gilt nicht als angesehen (rc 3, wenn sonst alles gruen waere).

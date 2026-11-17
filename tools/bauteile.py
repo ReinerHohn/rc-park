@@ -11,7 +11,7 @@ tools/wand_ortho.py. Reihenfolge im Generator: Relief (relief_einsatz.koerper) z
   rumpf = rumpf + W.kasten(1.9, 10.5, 10.95, 11.3, -0.05, 1.55)                      # Galerieboden
 """
 import numpy as np
-from manifold3d import Manifold as M, CrossSection
+from manifold3d import Manifold as M, CrossSection, OpType
 
 
 def spitzbogen(halb, kaempfer, scheitel, unten=-0.6, nseg=24, tief=0.3):
@@ -386,7 +386,7 @@ def _ngon(achse, phase, apothem, z, n):
     R = apothem / np.cos(np.pi / n); return [(achse[0] + R * np.cos(phase + (i + 0.5) * 2 * np.pi / n), achse[1] + R * np.sin(phase + (i + 0.5) * 2 * np.pi / n), z) for i in range(n)]
 
 
-def erker_polygon(achse, front_n, apothem, zonen, konsole=None, fenster=None, helm=None, knauf=None, stange=None, n=8, felder=None, wirt=None):
+def erker_polygon(achse, front_n, apothem, zonen, konsole=None, fenster=None, helm=None, knauf=None, stange=None, n=8, felder=None, wirt=None, konsole_rippen=None):
     """POLYGONALER ERKER mit Konsole und Helm (GENERISCH, 17.11.2026 Kaufhaus-Eckerker; Nutzer: nicht wieder 'besserer Kasten').
     Grundriss: regelmaessiges n-Eck um achse (x, y), eine Flaeche mit der Normalen front_n (Plan), Abstand der Flaechen von der Achse = apothem.
     zonen: Liste (z0, z1, apothem) - Prismen gleicher Ausrichtung (Gesimse = groesserer Abstand, Bruestung, Fensterband ...).
@@ -396,7 +396,13 @@ def erker_polygon(achse, front_n, apothem, zonen, konsole=None, fenster=None, he
     wirt: Rumpf, an dem der Erker sitzt - Flaechen, die ihn beruehren (halb in der Wand), bekommen keine Nischen (sonst Null-Volumen-Splitter).
     helm: Liste (z, apothem) von unten nach oben - geschweifter n-eckiger Helm aus Stumpfstuecken; knauf: (z_mitte, radius); stange: (z_oben, radius).
     Zu messen: Achse (Triangulation der Helmspitze/des Knaufs in >= 3 Fotos), apothem (n-Eck in die Fotos projizieren, Pfosten treffen), Zonengrenzen (entzerrtes Frontfoto),
-    Helmprofil r(z) (Silhouette), Lichter je Flaeche am Foto zaehlen. Liefert den Erkerkoerper (zum Rumpf addieren; Flaechen im Rumpf verschwinden dort)."""
+    Helmprofil r(z) (Silhouette), Lichter je Flaeche am Foto zaehlen. Liefert den Erkerkoerper (zum Rumpf addieren; Flaechen im Rumpf verschwinden dort).
+    17.11.2026 Runde 3 (Masswerk/Rippen, alle Schluessel optional, ohne sie bitgleich wie vorher):
+      fenster.kaempfer = (z, b): waagerechter Kaempferriegel (Querholz) durch alle Lichter; fenster.kopf = h: Lichtkopf spitz (Kielbogen-Huelle, Seiten bis z1 - h, Spitze z1).
+      felder.medaillon = (r, w_front): runde Wappenscheibe je Feld (Mitte des Feldes, Front w_front vor der Flaeche, meist knapp dahinter, z. B. -0,01).
+      konsole_rippen = dict(b, vor, grate=True, kreuz=True, n=10, kreuz_form=(s_ctrl, v_ctrl, s_ende)): Rippennetz auf dem Pyramiden-Unterbau - Grate (Kantenlinien)
+        und je Flaeche zwei sich kreuzende gekruemmte Rippen von den oberen Ecken zur Spitze (Bezier, Flaechenparameter s quer 0..1, v nach unten 0..1).
+        Vorlage: kaufhaus_grob3 erker_polygon unterbau.rippen/rippen_bogen (dort Pfade gemessen; hier generische Form, ANNAHME bis gemessen)."""
     ph = float(np.arctan2(front_n[1], front_n[0])); P = lambda a, z: _ngon(achse, ph, a, z, n)
     k = None
     for z0, z1, a in zonen:
@@ -405,7 +411,7 @@ def erker_polygon(achse, front_n, apothem, zonen, konsole=None, fenster=None, he
         zs, a_s, zo, a_o = konsole; k = k + M.hull_points(P(a_s, zs) + P(a_o, zo + 0.01))
     for spec, ist_fenster in ((fenster, True), (felder, False)):
         if not spec: continue
-        s_ = 2 * apothem * np.tan(np.pi / n); z0, z1 = spec["z0"], spec["z1"]; ab = None
+        s_ = 2 * apothem * np.tan(np.pi / n); z0, z1 = spec["z0"], spec["z1"]; ab = None; zus = []
         for i in (spec.get("flaechen") or range(n)):
             phi = ph + i * 2 * np.pi / n; e = np.array([np.cos(phi), np.sin(phi)]); t = np.array([-e[1], e[0]]); c = np.array(achse, float) + apothem * e
             if wirt is not None and not (wirt ^ M.hull_points([tuple(c + sg * s_ / 2 * t + w_ * e) + (z_,) for sg in (-1, 1) for w_ in (-0.02, 0.15) for z_ in (z0, z1)])).is_empty(): continue
@@ -413,14 +419,104 @@ def erker_polygon(achse, front_n, apothem, zonen, konsole=None, fenster=None, he
                 kk = int(spec["je_flaeche"]); pf = spec.get("pfosten", 0.08); lw = (s_ - (kk + 1) * pf) / kk; offs = [-s_ / 2 + pf + lw / 2 + j * (lw + pf) for j in range(kk)]; tf = spec.get("tiefe", 0.08)
             else:
                 lw = s_ - 2 * spec.get("rand", 0.12); offs = [0.0]; tf = spec.get("tiefe", 0.04)
+            kopf = float(spec.get("kopf") or 0.0) if ist_fenster else 0.0; kae = spec.get("kaempfer") if ist_fenster else None
+            baender = [(z0, kae[0] - kae[1] / 2, 0.0), (kae[0] + kae[1] / 2, z1, kopf)] if kae else [(z0, z1, kopf)]
             for o in offs:
-                q = M.hull_points([tuple(c + (o + sg * lw / 2) * t + w_ * e) + (z_,) for sg in (-1, 1) for w_ in (-tf, 0.3) for z_ in (z0, z1)]); ab = q if ab is None else ab + q
-        k = k - ab
+                for za, zb, hk in baender:
+                    pts = [tuple(c + (o + sg * lw / 2) * t + w_ * e) + (z_,) for sg in (-1, 1) for w_ in (-tf, 0.3) for z_ in (za, zb - hk)]
+                    if hk > 0: pts += [tuple(c + o * t + w_ * e) + (zb,) for w_ in (-tf, 0.3)]
+                    q = M.hull_points(pts); ab = q if ab is None else ab + q
+                if not ist_fenster and spec.get("medaillon"):
+                    r_m, wf = spec["medaillon"]; zm = 0.5 * (z0 + z1); cc = c + o * t
+                    zus.append(M.cylinder(wf + tf + 0.01, r_m, r_m, 32).transform([[t[0], 0, e[0], cc[0] - (tf + 0.01) * e[0]], [t[1], 0, e[1], cc[1] - (tf + 0.01) * e[1]], [0, 1, 0, zm]]))
+        if ab is not None: k = k - ab
+        for q in zus: k = k + q
+    if konsole and konsole_rippen:
+        zs, a_s, zo, a_o = konsole; R_ = konsole_rippen; b_, v_ = float(R_["b"]), float(R_["vor"]); nn_ = int(R_.get("n", 10)); sc, vc, se = R_.get("kreuz_form", (0.15, 0.75, 0.7))
+        To = P(a_o, zo); Bu = P(a_s, zs); rip = []
+        for i in range(n):
+            phi = ph + i * 2 * np.pi / n; e = np.array([np.cos(phi), np.sin(phi)]); t = np.array([-e[1], e[0]])
+            nf = np.r_[e * (zo - zs), -(a_o - a_s)]; nf /= np.linalg.norm(nf)                 # wahre Flaechennormale der Pyramidenflaeche (nach aussen-unten): Rippen stehen senkrecht darauf
+            L_, R2 = (i - 1) % n, i                                                        # Flaeche i liegt zwischen den Ecken i-1 und i (_ngon: Ecken bei (j + 0,5) Teilung)
+            def Q(s, v): return (1 - v) * ((1 - s) * np.array(To[L_]) + s * np.array(To[R2])) + v * ((1 - s) * np.array(Bu[L_]) + s * np.array(Bu[R2]))
+            def rippe(pts):                                                                 # Abschnittshuellen: +-b/2 quer (t), -0,03..vor entlang der Flaechennormalen
+                return M.batch_boolean([M.hull_points([tuple(np.asarray(x, float) + np.r_[sg * b_ / 2 * t, 0.0] + d * nf) for x in (p_, q_) for sg in (-1, 1) for d in (-0.03, v_)])
+                                        for p_, q_ in zip(pts[:-1], pts[1:])], OpType.Add)
+            if R_.get("grate", True): rip.append(rippe([Q(0.0, v) for v in np.linspace(0, 1, 3)]))
+            if R_.get("kreuz", True):
+                for s0, s1, s2 in ((0.0, sc, se), (1.0, 1 - sc, 1 - se)):
+                    x = np.linspace(0, 1, nn_); S_ = (1 - x) ** 2 * s0 + 2 * x * (1 - x) * s1 + x * x * s2; V_ = 2 * x * (1 - x) * vc + x * x * 1.0
+                    rip.append(rippe([Q(a_, b2) for a_, b2 in zip(S_, V_)]))
+        k = k + M.batch_boolean(rip, OpType.Add)
     if helm:
         for (za, aa), (zb, ab_) in zip(helm[:-1], helm[1:]): k = k + M.hull_points(P(aa, za) + P(max(ab_, 0.01), zb))
     if knauf: k = k + M.sphere(knauf[1], 24).translate((achse[0], achse[1], knauf[0]))
     if stange: zt = helm[-1][0] - 0.05 if helm else knauf[0]; k = k + M.cylinder(stange[0] - zt, stange[1], stange[1], 12).translate((achse[0], achse[1], zt))
     return k
+
+
+def dachflaechen(koerper, nz_min=0.3, nz_max=0.97, z_min=None, tol=0.05, min_m2=2.0):
+    """Ebene Dachflaechen eines Koerpers: Dreiecke mit Normalen-z in [nz_min, nz_max] (geneigt, nicht flach), gruppiert nach Ebene (|n.n_g| > 0,999, Abstand < tol).
+    Rueckgabe Liste (n, Dreiecke [k, 3, 3], Flaeche m2), groesste zuerst; Gruppen unter min_m2 fallen weg (Gaubendaechlein, Splitter)."""
+    me = koerper.to_mesh(); V = np.asarray(me.vert_properties)[:, :3].astype(float); T = V[np.asarray(me.tri_verts)]
+    N = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]); A = np.linalg.norm(N, axis=1); ok = A > 1e-9; N[ok] /= A[ok, None]
+    sel = ok & (N[:, 2] >= nz_min) & (N[:, 2] <= nz_max)
+    if z_min is not None: sel &= T[:, :, 2].min(1) >= z_min
+    G = []
+    for i in np.flatnonzero(sel)[np.argsort(-A[sel])]:
+        d = float(N[i] @ T[i, 0])
+        for g in G:
+            if g[0] @ N[i] > 0.999 and abs(d - g[1]) < tol: g[2].append(i); break
+        else: G.append([N[i].copy(), d, [i]])
+    return [(g[0], T[g[2]], float(A[g[2]].sum() / 2)) for g in G if A[g[2]].sum() / 2 >= min_m2]
+
+
+def schindeln(koerper, abstand, tiefe, nz_min=0.3, nz_max=0.97, z_min=None, min_m2=2.0, rand=0.0):
+    """DACHDECKUNG ALS STUFENRELIEF (Biberschwanz-/Ziegelreihen, GENERISCH, 17.11.2026 Runde 3; Vorlage kaufhaus_grob3 satteldach ziegel_abstand/ziegel_tiefe).
+    Je ebener Dachflaeche (dachflaechen) eine Saegezahn-Schicht: Reihe k = Keil zwischen zwei Reihenlinien (waagerecht in der Flaeche), am unteren Rand 'tiefe' ueber
+    der Flaeche, am oberen Rand 0 (jede Reihe liegt ueber der naechsthoeheren wie die Ziegel). Reihen ab der Traufe (tiefste Kante der Flaeche) nach oben im Abstand
+    'abstand' (entlang des Hangs). Begrenzt auf die Flaeche (Dreiecke entlang der Normalen extrudiert, rand m eingerueckt nicht noetig).
+    Zu messen: abstand am Foto (Hang entzerrt, Autokorrelation: tools/foto_dachreihen.py bzw. messprotokoll ZR-dachreihen); tiefe ist im Foto nicht messbar
+    (ANNAHME, im Druck >= 0,3 mm: tiefe >= 0,3 x Massstab/1000 m, H0 >= 0,026 m). Rueckgabe (Schicht, Anzahl Flaechen, Reihen gesamt). Zum Koerper ADDIEREN."""
+    teile = []; n_r = 0; fl = dachflaechen(koerper, nz_min, nz_max, z_min, min_m2=min_m2)
+    for n, T, _ in fl:
+        dn = np.array([0.0, 0.0, -1.0]) - n * (-n[2]); dn /= np.linalg.norm(dn); e = np.cross(dn, n); e /= np.linalg.norm(e)
+        X = T.reshape(-1, 3); s = X @ dn; q = X @ e; h0 = float(np.median(X @ n))
+        s_hi = float(s.max()); s_lo = float(s.min()); q0, q1 = float(q.min()) - 0.1, float(q.max()) + 0.1
+        P = lambda s_, q_, h_: (s_ * dn + q_ * e + (h0 + h_) * n).tolist()
+        kz = []; k = 0
+        while s_hi - k * abstand > s_lo - abstand:
+            a_, b_ = s_hi - k * abstand, s_hi - (k + 1) * abstand                       # a_ = untere (traufseitige) Reihenkante, b_ = obere
+            kz.append(M.hull_points([P(a_, qq, -0.01) for qq in (q0, q1)] + [P(a_, qq, tiefe) for qq in (q0, q1)] + [P(b_, qq, -0.01) for qq in (q0, q1)] + [P(b_, qq, 0.002) for qq in (q0, q1)]))
+            k += 1
+        clip = M.batch_boolean([M.hull_points([tuple(v + o * n) for v in tri for o in (-0.02, tiefe + 0.03)]) for tri in T], OpType.Add)
+        teile.append(M.batch_boolean(kz, OpType.Add) ^ clip); n_r += k
+    return (M.batch_boolean(teile, OpType.Add) if teile else M()), len(fl), n_r
+
+
+def figur(W, u, w, konsole, koerper, nseg=16):
+    """FREISTEHENDE FIGUR AUF RUNDKONSOLE vor einer Wand (GENERISCH, 17.11.2026; Vorlage kaufhaus_grob3 figurenreihe).
+    konsole [[z, r], ...] = Rotationsprofil (Kreisringe), koerper [[z, breite_u, tiefe_w], ...] = Ellipsenringe um die senkrechte Achse bei (u, w);
+    Teilkoerper = Huelle je zwei benachbarter Ringe. Arme/Attribute nicht modelliert (Huellkoerper, H0). KLIPSTEIL-KANDIDAT (tools/druck_klips.py): Figur getrennt drucken."""
+    th = np.linspace(0, 2 * np.pi, nseg, endpoint=False)
+    def ring(z, b, d): return [W.punkt(u + 0.5 * b * np.cos(t), z, w + 0.5 * d * np.sin(t)) for t in th]
+    rs = [ring(z, 2 * r, 2 * r) for z, r in sorted(konsole)]; rk = [ring(z, b, d) for z, b, d in sorted(koerper)]
+    return M.batch_boolean([M.hull_points(a + b) for R_ in (rs, rk) for a, b in zip(R_[:-1], R_[1:])], OpType.Add)
+
+
+def baldachin(W, u, w_wand, z_spitze, stufen, fialen, einbindung=0.1, kegel_h=0.18, nseg=8):
+    """WANDBALDACHIN (Wimperg-Haube mit Fialenkrone) ueber einer Figur (GENERISCH, 17.11.2026; Vorlage kaufhaus_grob3 baldachinreihe).
+    stufen [[z0_rel, z1_rel, halbbreite, tiefe0, tiefe1(, wangendicke)]] relativ zur Fialenspitze z_spitze (negativ = darunter), Tiefen vor w_wand; wangendicke > 0 = hohle Haube
+    (nur zwei Seitenwangen). fialen [[du, tiefe, radius, z_unten_rel, z_spitze_rel]]: Achteck-Schaft + Spitzkegel (kegel_h). KLIPSTEIL-KANDIDAT."""
+    teile = []
+    for st in stufen:
+        z0, z1, hb, t0, t1 = st[:5]; dk = float(st[5]) if len(st) > 5 else 0.0
+        for lo_, hi_ in ([(-hb, hb)] if dk <= 0 else [(-hb, -hb + dk), (hb - dk, hb)]):
+            teile.append(W.huelle([(u + a, z_spitze + (z0 if zi == 0 else z1), w_wand - einbindung if c == 0 else w_wand + (t0 if zi == 0 else t1)) for zi in (0, 1) for a in (lo_, hi_) for c in (0, 1)]))
+    for du, t, r, zu, zs in fialen:
+        ztop = z_spitze + zs; zb = z_spitze + zu; zk = max(zb + 0.02, ztop - kegel_h); p = W.punkt(u + du, 0.0, w_wand + t)
+        teile.append(M.cylinder(zk - zb, r, r, nseg).translate((p[0], p[1], zb))); teile.append(M.cylinder(ztop - zk, r, 0.012, nseg).translate((p[0], p[1], zk)))
+    return M.batch_boolean(teile, OpType.Add)
 
 
 DURCH = []   # von Wand.fenster gesammelte Oeffnungen (Wand, u0, u1, z0, z1, w der Nischenrueckwand)

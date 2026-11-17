@@ -15,12 +15,12 @@
   {
    "foto": "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
    "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
-   "abweichung_m": 0.65,
+   "abweichung_m": 0.61,
    "breite_m": 2.89,
    "xyz": [
-    -4.75,
-    8.43,
-    20.96
+    -4.74,
+    8.44,
+    21.0
    ]
   },
   {
@@ -37,23 +37,23 @@
   {
    "foto": "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
    "art": "Modell hoeher (zu hoch / erfunden)",
-   "abweichung_m": -0.5,
-   "breite_m": 7.66,
+   "abweichung_m": -0.51,
+   "breite_m": 7.74,
    "xyz": [
-    6.46,
-    4.71,
-    20.96
+    6.43,
+    4.73,
+    21.0
    ]
   },
   {
    "foto": "eigen__handy_06",
    "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
-   "abweichung_m": 1.48,
+   "abweichung_m": 1.46,
    "breite_m": 1.97,
    "xyz": [
-    13.37,
-    10.55,
-    10.56
+    13.36,
+    10.58,
+    10.57
    ]
   },
   {
@@ -81,12 +81,12 @@
   {
    "foto": "eigen__handy_06",
    "art": "Modell hoeher (zu hoch / erfunden)",
-   "abweichung_m": -0.39,
-   "breite_m": 3.94,
+   "abweichung_m": -0.42,
+   "breite_m": 3.97,
    "xyz": [
-    7.89,
-    4.24,
-    20.95
+    7.9,
+    4.23,
+    20.99
    ]
   },
   {
@@ -103,23 +103,23 @@
   {
    "foto": "commons__024_Freiburg_812503898",
    "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
-   "abweichung_m": 1.93,
+   "abweichung_m": 1.9,
    "breite_m": 0.94,
    "xyz": [
-    -4.82,
-    16.82,
-    11.23
+    -4.78,
+    16.83,
+    11.25
    ]
   },
   {
    "foto": "commons__024_Freiburg_812503898",
    "art": "Modell hoeher (zu hoch / erfunden)",
-   "abweichung_m": -0.48,
-   "breite_m": 5.52,
+   "abweichung_m": -0.5,
+   "breite_m": 5.97,
    "xyz": [
-    6.47,
-    4.7,
-    20.96
+    6.22,
+    4.8,
+    21.0
    ]
   },
   {
@@ -137,7 +137,7 @@
    "foto": "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022",
    "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
    "abweichung_m": 1.66,
-   "breite_m": 1.44,
+   "breite_m": 1.45,
    "xyz": [
     -8.38,
     5.27,
@@ -147,12 +147,12 @@
   {
    "foto": "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022",
    "art": "Modell hoeher (zu hoch / erfunden)",
-   "abweichung_m": -0.44,
-   "breite_m": 2.14,
+   "abweichung_m": -0.43,
+   "breite_m": 2.95,
    "xyz": [
-    7.57,
-    4.33,
-    20.96
+    6.74,
+    4.62,
+    20.99
    ]
   }
  ]

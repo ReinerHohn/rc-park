@@ -519,11 +519,20 @@
     "fenster": {
      "z0": 7.0,
      "z1": 8.8,
-     "je_flaeche": 2
+     "je_flaeche": 2,
+     "kopf": 0.3,
+     "kaempfer": [
+      7.99,
+      0.07
+     ]
     },
     "felder": {
      "z0": 6.02,
-     "z1": 6.58
+     "z1": 6.58,
+     "medaillon": [
+      0.22,
+      -0.005
+     ]
     },
     "helm": [
      [
@@ -565,11 +574,25 @@
     ],
     "quelle": "Achse = Helmknauf trianguliert M-eigen__018-001 (5 Fotos, Strahlabstand <= 0,14 m); Achteck, Frontflaeche parallel zur Traufwand, Abstand Flaeche-Achse 1,1 m: Achteck 1,1/1,3/1,5 in eigen 018, commons 006/110/024 projiziert, 1,1 trifft Fensterband und Pfosten (modelle/kaufhaus_gk/audit/bauteile_1711/erker_achteck_W.jpg); Zonengrenzen am entzerrten Frontfoto 018 (modelle/kaufhaus_gk/audit/bauteile_1711/erker_band_018.jpg); Helmprofil r(z) an der Silhouette (commons 052, auf die Achsebene umgerechnet); 2 Lichter je Flaeche (Fotos 018/006; Zaehlung Z-6124-001 kaufhaus_grob3)",
     "annahmen": [
-     "Lichter rechteckig (Vorhangbogenkoepfe nicht gebaut)",
-     "Konsole als glatte Pyramide (Rippennetz nicht gebaut)",
      "Helm achteckig wie der Erker",
-     "Wetterfahne nicht gebaut"
-    ]
+     "Wetterfahne nicht gebaut",
+     "Kopfhoehe 0,30 und Kaempfer bei 2/3 aus Bildverhaeltnis commons__110 (NICHT foto_mass-gemessen)",
+     "Rippen b 0,10 / vor 0,09 (auf der Flaechennormalen) und Kreuzform (Bezier 0,15/0,75/0,7) = Sichtschaetzung",
+     "Medaillon r 0,22 = Sichtschaetzung, Wappenrelief nicht modelliert"
+    ],
+    "konsole_rippen": {
+     "b": 0.1,
+     "vor": 0.09,
+     "grate": true,
+     "kreuz": true,
+     "n": 10,
+     "kreuz_form": [
+      0.15,
+      0.75,
+      0.7
+     ]
+    },
+    "quelle_runde3": "Runde 3 (17.11.): Kielbogenkoepfe (Hoehe 0,30), Kaempferriegel bei 2/3 der Lichthoehe, Wappenmedaillons (r 0,22) und Rippennetz der Konsole (2 sich kreuzende Bogenrippen je Flaeche + Grate) nach Sicht commons__110 (Ausschnitt Erker Ost, Lichter 2 je Flaeche mit Querholz, Wappenscheiben im Bruestungsfeld, Rippen der Konsole laufen von den oberen Ecken gekreuzt zur Spitze); Vorlage grob3 erker_polygon unterbau.rippen"
    },
    {
     "name": "erker:1",
@@ -615,11 +638,20 @@
     "fenster": {
      "z0": 6.85,
      "z1": 8.85,
-     "je_flaeche": 2
+     "je_flaeche": 2,
+     "kopf": 0.3,
+     "kaempfer": [
+      7.97,
+      0.07
+     ]
     },
     "felder": {
      "z0": 5.92,
-     "z1": 6.48
+     "z1": 6.48,
+     "medaillon": [
+      0.22,
+      -0.005
+     ]
     },
     "helm": [
      [
@@ -661,8 +693,24 @@
     ],
     "quelle": "Achse = Helmknauf trianguliert M-commons__024-001 (4 Fotos); Achteck 1,1 in eigen 018, commons 024/110/006 projiziert (modelle/kaufhaus_gk/audit/bauteile_1711/erker_achteck_O.jpg); Zonen am entzerrten Frontfoto 018; Helmprofil wie West (Silhouette commons 052 gleich)",
     "annahmen": [
-     "wie erker:0"
-    ]
+     "wie erker:0",
+     "Kopfhoehe 0,30 und Kaempfer bei 2/3 aus Bildverhaeltnis commons__110 (NICHT foto_mass-gemessen)",
+     "Rippen b 0,10 / vor 0,09 (auf der Flaechennormalen) und Kreuzform (Bezier 0,15/0,75/0,7) = Sichtschaetzung",
+     "Medaillon r 0,22 = Sichtschaetzung, Wappenrelief nicht modelliert"
+    ],
+    "konsole_rippen": {
+     "b": 0.1,
+     "vor": 0.09,
+     "grate": true,
+     "kreuz": true,
+     "n": 10,
+     "kreuz_form": [
+      0.15,
+      0.75,
+      0.7
+     ]
+    },
+    "quelle_runde3": "Runde 3 (17.11.): Kielbogenkoepfe (Hoehe 0,30), Kaempferriegel bei 2/3 der Lichthoehe, Wappenmedaillons (r 0,22) und Rippennetz der Konsole (2 sich kreuzende Bogenrippen je Flaeche + Grate) nach Sicht commons__110 (Ausschnitt Erker Ost, Lichter 2 je Flaeche mit Querholz, Wappenscheiben im Bruestungsfeld, Rippen der Konsole laufen von den oberen Ecken gekreuzt zur Spitze); Vorlage grob3 erker_polygon unterbau.rippen"
    }
   ],
   "saeulen": {
@@ -860,6 +908,264 @@
     -0.11,
     0.06
    ]
+  },
+  "figuren": {
+   "liste": [
+    {
+     "u": 14.712,
+     "z_scheitel": 9.73,
+     "quelle": "grob3: Triangulation M-6120-037 (Scheitel) / M-6120-038 (Pendelspitze), Kamera-Bruecke (u aus Kronen-/Pendelachse gemittelt)"
+    },
+    {
+     "u": 11.612,
+     "z_scheitel": 9.756,
+     "quelle": "grob3: Triangulation M-6120-030 / M-6120-031, Kamera-Bruecke (u aus Kronen-/Pendelachse gemittelt) | u 11.11. Kreis2: 5,382 (M-6161-050, 4 Kameras)"
+    },
+    {
+     "u": 8.639,
+     "z_scheitel": 9.716,
+     "quelle": "grob3: Triangulation M-6120-039 / M-6120-040, Kamera-Bruecke (u aus Kronen-/Pendelachse gemittelt) | u 11.11. Kreis2: 1,507 (M-6161-048)"
+    },
+    {
+     "u": 5.575,
+     "z_scheitel": 9.752,
+     "quelle": "grob3: Triangulation M-6161-016 (Hutscheitel, 2 Kameras; Konsole ANNAHME wie Figuren 1-3), Kamera-Bruecke (u aus Kronen-/Pendelachse gemittelt) | u 11.11. Kreis2: -2,487 (M-6161-052)"
+    }
+   ],
+   "w_achse": 0.287,
+   "konsole": [
+    [
+     -2.148,
+     0.015
+    ],
+    [
+     -2.079,
+     0.038
+    ],
+    [
+     -2.018,
+     0.077
+    ],
+    [
+     -1.933,
+     0.119
+    ],
+    [
+     -1.88,
+     0.13
+    ],
+    [
+     -1.826,
+     0.222
+    ],
+    [
+     -1.68,
+     0.215
+    ],
+    [
+     -1.611,
+     0.199
+    ]
+   ],
+   "koerper": [
+    [
+     -1.627,
+     0.33,
+     0.23
+    ],
+    [
+     -1.527,
+     0.33,
+     0.176
+    ],
+    [
+     -1.335,
+     0.33,
+     0.176
+    ],
+    [
+     -1.105,
+     0.345,
+     0.184
+    ],
+    [
+     -0.99,
+     0.361,
+     0.199
+    ],
+    [
+     -0.836,
+     0.384,
+     0.215
+    ],
+    [
+     -0.683,
+     0.445,
+     0.261
+    ],
+    [
+     -0.568,
+     0.476,
+     0.269
+    ],
+    [
+     -0.399,
+     0.422,
+     0.23
+    ],
+    [
+     -0.338,
+     0.184,
+     0.169
+    ],
+    [
+     -0.261,
+     0.199,
+     0.184
+    ],
+    [
+     -0.169,
+     0.23,
+     0.192
+    ],
+    [
+     -0.069,
+     0.23,
+     0.192
+    ],
+    [
+     0.0,
+     0.153,
+     0.153
+    ]
+   ],
+   "quelle": "UEBERTRAGEN aus kaufhaus_grob3 figurenreihe (Masse dort am Foto trianguliert: Profil Figur 2 (Fotos 6120): Spitze 10,59 (M-6120-045), Knauf d 0,10 (M-6120-044), 2. Stufe d 0,31 bei 10,87 (M-6120-042/043), Kranz d 0,58 bei 11,01 (M-6120-04 ...; Zaehlung Z-6161-001, Z-6145-001) per Similaritaet s 0.767 (modelle/kaufhaus_gk/uebertrag_grob3.py)",
+   "annahmen": [
+    "Profile relativ zum Kronenscheitel, ganze Figur auf z_scheitel geschoben (grob3 schob nur den Kopf)",
+    "Huellkoerper ohne Arme/Attribute (wie grob3)",
+    "Achse 0.172 m vor der Putzebene w 0.115"
+   ],
+   "klipsteil": true
+  },
+  "baldachine": {
+   "liste": [
+    {
+     "u": 14.747,
+     "z_spitze": 11.02,
+     "ds": 0.047,
+     "quelle": "grob3: M-6161-022 (Fialenspitze u 9,462 s 13,127 z 15,045; 6161+6145); Form wie Baldachin 2 = ANNAHME"
+    },
+    {
+     "u": 11.619,
+     "z_spitze": 10.932,
+     "ds": -0.02,
+     "quelle": "grob3: M-6120-051 + M-6161-023 (u 5,443/5,401 s 13,04 z 14,92/14,913); Form gemessen | u 11.11. Kreis2: 5,385 (M-6161-049, 4 Kameras)"
+    },
+    {
+     "u": 8.702,
+     "z_spitze": 10.955,
+     "ds": -0.045,
+     "quelle": "grob3: M-6161-024 (u 1,614 s 13,007 z 14,935); Form wie Baldachin 2 = ANNAHME | u 11.11. Kreis2: 1,583 (M-6161-047, 6161+6145+6132)"
+    },
+    {
+     "u": 5.639,
+     "z_spitze": 11.007,
+     "ds": 0.024,
+     "quelle": "grob3: M-6161-025 (u -2,447 s 13,097 z 14,991); Form wie Baldachin 2 = ANNAHME (Foto 6161: Hut der Figur 4 breiter, Baldachin gleich) | u 11.11. Kreis2: -2,410 (M-6161-051, 6161+6145)"
+    }
+   ],
+   "w_wand": 0.115,
+   "einbindung": 0.077,
+   "kegel_h": 0.138,
+   "stufen": [
+    [
+     -1.248,
+     -0.987,
+     0.284,
+     0.146,
+     0.169,
+     0.092
+    ],
+    [
+     -0.987,
+     -0.652,
+     0.276,
+     0.169,
+     0.276
+    ],
+    [
+     -0.652,
+     -0.345,
+     0.38,
+     0.353,
+     0.322
+    ]
+   ],
+   "fialen": [
+    [
+     0.0,
+     0.307,
+     0.054,
+     -0.46,
+     0.0
+    ],
+    [
+     -0.207,
+     0.261,
+     0.046,
+     -0.46,
+     -0.123
+    ],
+    [
+     0.207,
+     0.261,
+     0.046,
+     -0.46,
+     -0.123
+    ]
+   ],
+   "quelle": "UEBERTRAGEN aus kaufhaus_grob3 baldachinreihe (Fotos 6120/6132/6127 (Fig 2: M-6120-051..064, Triangulation 3 Kameras) und 6161+6145 (alle 4: M-6161-022..025); Baldachin = rote Wimperg-Konsole (Haube mit Maßwerkband) + Fialenkrone ueber dem Figuren) per Similaritaet s 0.767 (uebertrag_grob3.py); Zaehlung Z-6161-002",
+   "annahmen": [
+    "Form aller 4 wie gemessener Baldachin 2 (grob3)",
+    "Seitenfialen symmetrisch (grob3 ANNAHME)",
+    "Masswerk/Blattwerk nicht einzeln"
+   ],
+   "klipsteil": true
+  },
+  "dach_schindeln": {
+   "abstand": 0.146,
+   "tiefe": 0.035,
+   "z_min": 11.0,
+   "nz_min": 0.3,
+   "nz_max": 0.97,
+   "helm": true,
+   "helm_min_m2": 0.3,
+   "quelle": "Reihenabstand 0,146 m entlang des Hangs: messprotokoll/ZR-dachreihen.json (Hang der Traufseite aus bauteile_foto.gauben dach_z0/dach_s entzerrt, 1 cm/px, Autokorrelation; 6 Fotos x 3 Streifen, Peaks k x 0,145-0,147 m in 15 von 18 Faellen; Gegenprobe grob3 0,18 m x 0,767 = 0,138 m)",
+   "annahmen": [
+    "Stufentiefe 0,035 m im Foto nicht messbar (Druck 0,40 mm >= 0,3 mm)",
+    "Rueckhang und Helme mit gleichem Reihenabstand",
+    "nur Reihen, keine Biberschwanz-Rundungen/Stossfugen (unter Druckaufloesung: Fuge 2 mm breit waere 0,17 m)"
+   ]
   }
+ },
+ "feinteil": {
+  "bezug_stl": "/media/oem/scan/rc-park_daten/kaufhaus_gk/feinteil/grob3_im_gk.stl",
+  "bereich_stl": [
+   "/media/oem/scan/rc-park_daten/kaufhaus_gk/feinteil/grob3_im_gk.stl",
+   "/media/oem/scan/rc-park_daten/kaufhaus_gk/feinteil/gk_runde2.stl"
+  ],
+  "fotos": [
+   "commons__024_Freiburg_812503898",
+   "commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+   "commons__110_Középkori_bevásárlóközpont_Medieval_shopping_centre_-_panoramio",
+   "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta",
+   "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022",
+   "eigen__handy_06",
+   "eigen__IMG_6115",
+   "eigen__IMG_6120",
+   "eigen__IMG_6127"
+  ],
+  "zonen": "modelle/kaufhaus_gk/feinteil_zonen.json",
+  "hinweis": "tools/feinteil_tor.py, nur Hinweis in bauen_abnehmen.sh. Bezug = Handmodell grob3 im gk-Rahmen (Similaritaet s 0,767, sim_g3_gk.json), Bereich fest = Silhouetten grob3 + gk Runde 2."
  }
 }

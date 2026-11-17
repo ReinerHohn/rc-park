@@ -135,6 +135,60 @@ def putz_eben(rel, m, px, band=0.05, kachel=1.0):
     return np.where(m, x, rel).astype(np.float32), float(flach.sum() / max(m.sum(), 1))
 
 
+def wandniveau(rel, m, px, kachel=1.0):
+    """Wandniveau je Zelle = Median je kachel-m-Kachel (3x3-Umgebung, nur Zellen m), bilinear (wie putz_eben; ohne cv2, laeuft auch in der Generator-Umgebung)."""
+    from scipy.interpolate import RegularGridInterpolator
+    H_, W_ = rel.shape; k = max(2, int(round(kachel / px))); gy = np.arange(0, H_, k); gx = np.arange(0, W_, k); G = np.full((len(gy), len(gx)), np.nan)
+    for i, y in enumerate(gy):
+        for j, x in enumerate(gx):
+            sl = (slice(max(0, y - k), y + 2 * k), slice(max(0, x - k), x + 2 * k)); v = rel[sl][m[sl]]
+            if v.size > 20: G[i, j] = np.median(v)
+    if np.isnan(G).all(): return None
+    G = np.where(np.isnan(G), np.nanmedian(G), G)
+    if len(gy) < 2 or len(gx) < 2: return np.full((H_, W_), float(np.median(G)), np.float32)
+    f = RegularGridInterpolator((gy + k / 2.0, gx + k / 2.0), G, bounds_error=False, fill_value=None)
+    yy, xx = np.meshgrid(np.arange(H_), np.arange(W_), indexing="ij"); return f(np.c_[np.clip(yy.ravel(), gy[0] + k / 2.0, gy[-1] + k / 2.0), np.clip(xx.ravel(), gx[0] + k / 2.0, gx[-1] + k / 2.0)]).reshape(H_, W_).astype(np.float32)
+
+
+def relief_bereinigen(f_in, f_out, ersetzt=(), band=0.05, lang=1.5, dick=0.45, erhalten=(), fuell=0.5):
+    """RESTBREI WEG (17.11.2026 Runde 3, kaufhaus_gk: zwischen den Fenstern der Hauptfassade blieben nach putz_eben wellige Netzklumpen 5-30 cm stehen, Foto zeigt glatten Putz).
+    Auf einem fertigen Relief (<wand>_voll.npz, Wand ohne Quaderwerk) jede Abweichung >= band vom Wandniveau (wandniveau) als zusammenhaengendes Stueck pruefen:
+      BLEIBT, wenn linienhaft: waagerecht (Breite >= lang, Hoehe <= dick: Gesims, Band) oder senkrecht (Hoehe >= lang, Breite <= dick: Gewaende, Lisene)
+              UND gerade (fuellt >= fuell seines Rahmens; wellige Breistreifen fuellen weniger),
+              oder im Rechteck 'erhalten' (u0, u1, z0, z1 in Reliefkoordinaten).
+      FAELLT (auf das Wandniveau), wenn klumpig (Netzrauschen, Figurenbrei) oder in einem Rechteck 'ersetzt' (dort baut der Generator das Bauteil aus Fotomassen:
+              Fenster mit Gewaende, Balkon, Figuren, Laube - das Netz-Relief davor waere doppelt).
+    ersetzt/erhalten = Liste (u0, u1, z0, z1) in Reliefkoordinaten (u entlang Z['t'] ab Z['a'], z absolut). Schreibt f_out (+ .jpg Schummerung), Rueckgabe dict Anteile.
+    ANNAHME: linienhafte Formen im Netz sind echte Bauteile (Gesimse/Gewaende), Klumpen ohne Bauteil-Beleg sind Rauschen; Figuren kommen als eigene Bauteile (Klipsteile)."""
+    from scipy import ndimage as ndi
+    Z = dict(np.load(f_in)); rel = Z["rel"].astype(np.float32); px = float(Z["px"]); u0 = float(Z["u0"]); z0 = float(Z["z0"]); H_, W_ = rel.shape
+    wand = Z["wand"] if "wand" in Z else np.ones_like(rel, bool); m = wand & ~Z["oeffnung"] & (rel > 0.0)
+    L = wandniveau(rel, m & (rel > 0.011), px)
+    if L is None: return dict(unveraendert=True)
+    def recht(u_a, u_b, z_a, z_b):
+        r = np.zeros_like(m); j0, j1 = int(max(0, (u_a - u0) / px)), int(min(W_, np.ceil((u_b - u0) / px))); i0, i1 = int(max(0, H_ - (z_b - z0) / px)), int(min(H_, np.ceil(H_ - (z_a - z0) / px)))
+        if j1 > j0 and i1 > i0: r[i0:i1, j0:j1] = True
+        return r
+    ers = np.zeros_like(m); erh = np.zeros_like(m)
+    for q in ersetzt: ers |= recht(*q)
+    for q in erhalten: erh |= recht(*q)
+    D = m & ~ers & (np.abs(rel - L) >= band); lab, n = ndi.label(D, np.ones((3, 3)))     # Stuecke OHNE die Bauteilflaechen beurteilen (sonst bleiben angeschnittene Reste eines 'senkrechten' Klumpens stehen)
+    weg = np.zeros_like(m); n_lin = 0
+    for k, sl in enumerate(ndi.find_objects(lab), 1):
+        if sl is None: continue
+        h = (sl[0].stop - sl[0].start) * px; b = (sl[1].stop - sl[1].start) * px; c = lab[sl] == k
+        linie = ((b >= lang and h <= dick) or (h >= lang and b <= dick)) and c.mean() >= fuell     # gerade Leiste fuellt ihren Rahmen; welliger Brei-Streifen nicht
+        if (erh[sl] & c).any() or linie: n_lin += 1; continue
+        weg[sl] |= c
+    weg = (weg | (ers & m)) & ~erh; weg = ndi.binary_dilation(weg, np.ones((3, 3), bool)) & m & ~erh   # Rand der Klumpen mit
+    neu = np.where(weg, L, rel).astype(np.float32); neu[ers & m] = L[ers & m]; Z["rel"] = neu; np.savez_compressed(f_out, **Z)
+    from PIL import Image
+    lx = np.gradient(neu, px, axis=1); lz = np.gradient(neu, px, axis=0); g_ = (np.clip(0.7 - 0.5 * lx + 0.7 * lz, 0, 1) * 255).astype(np.uint8); im_ = np.stack([g_] * 3, -1)
+    im_[~wand] = (90, 90, 90); im_[Z["oeffnung"] & wand] = (0, 60, 120); im_[weg & ~ers] = (im_[weg & ~ers] * 0.6 + np.array([120, 0, 0])).astype(np.uint8); im_[ers & m] = (im_[ers & m] * 0.6 + np.array([0, 0, 110])).astype(np.uint8)
+    Image.fromarray(np.repeat(np.repeat(im_, 3, 0), 3, 1)).save(f_out[:-4] + ".jpg", quality=88)     # rotstichig = Brei entfernt, blaustichig = durch Fotobauteil ersetzt (beides auf Wandniveau)
+    return dict(brei_weg=round(float((weg & ~ers).sum() / max(m.sum(), 1)), 3), ersetzt=round(float((ers & m).sum() / max(m.sum(), 1)), 3), linienhaft_behalten=n_lin)
+
+
 def relief_roh(r0, r2, px, putz_band=0.05):
     """Wand OHNE Quaderwerk: Netz-Relief unveraendert als <wand>_voll.npz. Kleine Loecher glatt, Oeffnungen (Loch mit Netz dahinter: Arkade, Tor) auf das tiefste Niveau (Ruecksprung statt Wandflaeche),
     'vorstand' = das ganze Relief so weit vor die Wandebene, dass sein tiefster Ruecksprung 1 cm davor liegt (hoechstens Klemme + 1 cm = 11 cm = 1,3 mm bei 1:87), OHNE den Ebenentrend des Netzes.
@@ -196,11 +250,14 @@ def fenster_fuer_bau(objekt_json, fenster_json, vorbau=0.3):
     return aus
 
 
-def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None):
+def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None, bereinigen=None):
     """Fuer Generatoren: alle relief/*_voll.npz der Fassaden-Kette als Platten anfuegen, begrenzt auf die nach aussen verschobene Koerperhuelle.
     fenster = Pfad der Fensterliste (fenster_fuer_bau), wenn die Fenster VOR dem Relief geschnitten wurden: die Reliefplatte bleibt dann in den Fensterrechtecken offen.
     GRUND (kaufhaus_gk 17.11.2026): bauteile.fenster_aus_json laesst Fenster aus, vor denen im Modell etwas steht - nach dem Relief gebaut fielen 5 von 9 erkannten Fenstern weg (Platte davor),
-    mit dem Netz-Relief der Hauptfassade alle. Reihenfolge im Generator daher: fenster_aus_json(koerper, FJ) -> anbauen(koerper, OBJ, fenster=FJ) -> aushoehlen."""
+    mit dem Netz-Relief der Hauptfassade alle. Reihenfolge im Generator daher: fenster_aus_json(koerper, FJ) -> anbauen(koerper, OBJ, fenster=FJ) -> aushoehlen.
+    bereinigen (17.11.2026 Runde 3) = dict(ersetzt=[(Wand, u0, u1, z0, z1) oder ("rund", (x, y), r, z0, z1)], erhalten=[...], band, lang, dick) oder {}: Waende ohne Quaderwerk (quader False/None) vorher
+    durch relief_bereinigen (Restbrei weg, Bauteil-Rechtecke auf Wandniveau) -> relief/<wand>_rein.npz/.jpg; Wand = bauteile.Wand der Bauteile (Rechtecke werden auf
+    die Reliefwand umgerechnet, nur gleiche Richtung n.n > 0,9 und Abstand < 1,5 m)."""
     sys.path.insert(0, HIER); from relief_einsatz import koerper as relief_koerper
     od = os.path.dirname(os.path.abspath(objekt_json)); B = os.path.join(od, "audit", "fassaden_kette.json")
     if not os.path.exists(B): return koerper, []
@@ -221,6 +278,22 @@ def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None):
             for nf_, k_ in frei:
                 if nf_ @ n[:2] > 0.9: pl = pl - k_
             return pl
+        if bereinigen is not None and w.get("quader") is not True and not w.get("nur_foto"):
+            def um(lst):
+                r = []
+                for W_, a_, b_, za, zb in lst:
+                    if isinstance(W_, str):                                      # ("rund", Mitte xy, Radius, z0, z1): senkrechter Zylinder (Erker) - auf JEDE nahe Wand projiziert
+                        c_ = np.asarray(a_, float) - Z["a"][:2]
+                        if abs(c_ @ n[:2]) <= b_ + 0.5: uc = c_ @ Z["t"][:2]; r.append((uc - b_, uc + b_, za, zb))
+                        continue
+                    if W_.n @ n[:2] < 0.9 or abs((W_.a + 0.5 * (a_ + b_) * W_.t - Z["a"][:2]) @ n[:2]) > 1.5: continue
+                    ua, ub = sorted(((W_.a + a_ * W_.t - Z["a"][:2]) @ Z["t"][:2], (W_.a + b_ * W_.t - Z["a"][:2]) @ Z["t"][:2])); r.append((ua, ub, za, zb))
+                return r
+            f2 = os.path.join(od, "relief", w["name"] + "_rein.npz")
+            info = relief_bereinigen(f, f2, um(bereinigen.get("ersetzt", [])), band=bereinigen.get("band", 0.05), lang=bereinigen.get("lang", 1.5), dick=bereinigen.get("dick", 0.45), erhalten=um(bereinigen.get("erhalten", [])))
+            if not info.get("unveraendert"):
+                f = f2; belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']}: Restbrei auf Wandniveau, Bauteilflaechen ersetzt", quelle="fassaden_kette.relief_bereinigen (Netz-Relief, linienhafte Formen bleiben)",
+                                           hinweis=f"ANNAHME: Klumpen ohne Bauteil = Netzrauschen; Brei weg {info['brei_weg'] * 100:.0f} %, durch Fotobauteile ersetzt {info['ersetzt'] * 100:.0f} %, {info['linienhaft_behalten']} linienhafte Stuecke behalten; Bild relief/{w['name']}_rein.jpg"))
         if not w.get("nur_foto"): koerper = koerper + offen(relief_koerper(f, tiefe=tiefe, trend=not w.get("ohne_trend"), tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else [])) ^ hu)
         if hat_foto: koerper = koerper + offen(relief_koerper(ff, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu); belege.append(dict(seite="wand", element=f"Quader mit Fugen aus dem Foto, Fassade {w['name']} ab z {w['foto_feld'][2]:.0f} m", quelle="tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)", steine=w.get("foto_steine"), hinweis="Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen"))
         if tf: koerper = koerper + (relief_koerper(fm, tiefe=tiefe, trend=True) ^ hu)                 # lokale Feinrechnung (tools/tiefe_lokal.py + relief_mischen.py) vor dem groben Relief
