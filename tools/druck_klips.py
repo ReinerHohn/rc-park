@@ -31,6 +31,7 @@ def main():
     ap.add_argument("--radius", type=float, default=0.0); ap.add_argument("--rechteck", default=""); ap.add_argument("--name", default="detail"); ap.add_argument("--aus", default="")
     ap.add_argument("--loch_mm", type=float, default=1.9); ap.add_argument("--loch_tief_mm", type=float, default=1.5); ap.add_argument("--haut_mm", type=float, default=0.6)
     ap.add_argument("--aufsatz", default="", help="Hoehenbaender (mm ueber der Rueckseite) 'z0-z1,z1-z2': alles darueber wird abgetrennt, je Band ein FLACHES Teil (Zeiger)")
+    ap.add_argument("--zeiger_min_mm", type=float, default=1.0, help="Mindestdicke flacher Aufsaetze (Zeiger)")
     ap.add_argument("--achse_mm", type=float, default=0.0, help="Achsloch in der Detailmitte durch Blatt und Aufsaetze (z. B. 1.9 fuer Filamentstift)")
     ap.add_argument("--farbe_ab_mm", type=float, default=0.0, help="Farbwechsel ab dieser Hoehe melden (z. B. Oberkante Zifferblatt -> Ziffern andere Farbe)")
     ap.add_argument("--schicht_mm", type=float, default=0.08); ap.add_argument("--vor_mm", type=float, default=0.0, help="Schnitt zusaetzlich so weit nach vorn"); ap.add_argument("--boden_mm", type=float, default=0.8, help="Grundplatte unter der vollen Detailebene")
@@ -98,7 +99,7 @@ def main():
             if lo: flach[k - 1] = flach[k - 1] + CS.batch_boolean(lo, OpType.Add); flach[k] = flach[k] - CS.batch_boolean(lo, OpType.Add)
         for k, ((z0, z1), fl) in enumerate(zip(bd, flach)):
             if fl.is_empty(): print(f"  Aufsatz-Band {z0}-{z1} mm leer"); continue
-            dk = max(0.6, z1 - z0); teil = fl.extrude(dk)
+            dk = max(a.zeiger_min_mm, z1 - z0); teil = fl.extrude(dk)                     # 17.11.2026 Druck v4: Stundenzeiger 0,68 mm loeste sich und wurde Faeden, Minutenzeiger 1,1 mm gut -> mind. 1,0 mm
             if a.achse_mm > 0: teil = teil - M.cylinder(dk + 1, a.achse_mm / 2, a.achse_mm / 2, 24).translate((0, 0, -0.5))
             import bauteile as _bt                                                    # Kneifkanten hier schliessen und danach plan schneiden - sonst setzt stl_schreiben 0,25-mm-Kugeln UNTER die Bettflaeche (Luftinseln)
             teil = _bt.kneifkanten_schliessen(teil, r=0.25, stellen=3).trim_by_plane((0, 0, 1), 0.0).trim_by_plane((0, 0, -1), -dk)
