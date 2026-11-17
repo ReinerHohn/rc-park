@@ -381,3 +381,10 @@ Versuch: Rippen der Frontflaeche (A,B,C,D,L2,R2) um die Erkerachse (u 15,52 / n 
 - Schattierungsmass (tools/schatten_tor.py, Lambert mit je Foto/Modell geschaetztem Licht, Kachelkorrelation 2-25 cm): Korrelationen nur 0,02-0,17 (9 Fotos); grob3 > gk Runde 3 in 9/9 Fotos,
   aber gk Runde 3 > Brei (Runde 2) nur 6/9 (Mittel 0,034 / 0,031), grob3 > grob3 um 0,5 m verschoben 8/9, falsches Paar < richtig 8/9, Wiederholung bitgleich 9/9 -> trennt Brei NICHT (Kriterium >= 8/9 verfehlt), kein Hinweis-Einbau.
   Vermutete Ursache: Albedo (Fenster, Malerei, Gold) dominiert das Feinband, Licht nur 3 Parameter; Schatten werfen (Gesimse) nicht modelliert.
+- form_aus_wandbild (17.11.2026, Agent Form-aus-Wandbild, Kaufhaus OG-Fenster) - Sackgassen auf dem Weg:
+  Lab-Abstand + Otsu als Lochentscheid: Goldrahmen verschmilzt mit Glas -> ersetzt durch k-means + Tiefe je Klasse. Tiefen-Veto 0,45 x Oeffnungstiefe: Lichter zerfallen in Kleckse -> 0,25.
+  Medianglaettung 5 cm: duenne Pfosten (4-6 cm) verschwinden -> 3 cm. Median mehrerer Fotos bei Restversatz > 1 cm (Fenster 1/3): Geisterkanten -> bestes Einzelfoto als Rueckfall.
+  fassade_fein --fein_ausrichten an f02: nur 3-5 % der Zellen vertraut, kein schaerferes Bild als ohne. Erkerflaechen ew0/ew1 (Gegenlicht, zu dunkel) und eo1 (Netzebene schief, +12,7 cm/m -> fast alles "vorn"): unbrauchbar.
+  Wandniveau = Median des Zonenrands statt Median der Wandfarbklasse: am Kaufhaus Fenster 2 falsch (Figurenreste im Rand, Oeffnungstiefe 0,12 -> 0,19 m) -> nur mit --leer_offen (Tor).
+  foto_diff (tol 0,35 m) unterscheidet Katalog- und Wandbild-Fenster gar nicht (bitgleiche Anteile 018/handy_06) -> fuer Fensterinnenleben ungeeignet, nur feinteil_tor misst den Unterschied.
+  Ergebnis: Wandbild-Fenster feinteil obergeschoss 0,6028 -> 0,6138 (7 von 9 Fotos besser), Abnahme gruen, aber am Foto NICHT sichtbar besser (Kanten wellig 1-2 cm, Pfosten ungleich dick, Kielbogen eckig) -> nicht uebernommen, Schalter FORM_WANDBILD=1.

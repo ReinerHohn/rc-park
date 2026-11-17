@@ -1146,6 +1146,39 @@
     "Rueckhang und Helme mit gleichem Reihenabstand",
     "nur Reihen, keine Biberschwanz-Rundungen/Stossfugen (unter Druckaufloesung: Fuge 2 mm breit waere 0,17 m)"
    ]
+  },
+  "form_wandbild": {
+   "aktiv": false,
+   "zonen": [
+    {
+     "name": "og_1",
+     "datei": "relief/form_og_1.npz"
+    },
+    {
+     "name": "og_2",
+     "datei": "relief/form_og_2.npz"
+    },
+    {
+     "name": "og_3",
+     "datei": "relief/form_og_3.npz"
+    },
+    {
+     "name": "og_4",
+     "datei": "relief/form_og_4.npz"
+    },
+    {
+     "name": "og_5",
+     "datei": "relief/form_og_5.npz"
+    }
+   ],
+   "quelle": "tools/form_aus_wandbild.py je Fenster (Zone = Fensterrechteck vorhangfenster +-0,24 m, z 6,88..10,1): Wandbild direkt aus den 5 besten Fotos (Sichtbarkeit gegen das Katalog-STL, Belichtung angeglichen, Feinausrichtung; Restversatz > 1 cm -> bestes Einzelfoto), Tiefe relief/w04.npz (Netz 5 cm), Wandflaeche relief/w04_rein.npz; Bild/Bericht relief/form_og_<i>.jpg/.json",
+   "annahmen": [
+    "Gewaendeprofil: Stufenkanten an den Bildlinien, gleiche Stufenhoehe je Linie (Summe = gemessene Oeffnungstiefe)",
+    "Pfosten/Kaempfer = Plateau (P80 der Netztiefe)",
+    "Wand der Zone eben auf der gebauten Reliefflaeche",
+    "Fensterunterkante hinter der Bruestung: aus Netztiefe bzw. Bild, Bruestung im Foto per Sichtbarkeit ausgeblendet"
+   ],
+   "_doku": "Schalter: aktiv true/false oder Umgebung FORM_WANDBILD=1/0; false = Katalogweg bauteile.vorhangbogen_fenster (vorhangfenster)"
   }
  },
  "feinteil": {

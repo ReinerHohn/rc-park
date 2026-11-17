@@ -1,0 +1,246 @@
+{
+ "nachgeprueft_m2": 0.315,
+ "tiefe_veto_m2": 0.165,
+ "nur_tiefe_m2": 0.0,
+ "wandfarbe_lab": [
+  190.0,
+  158.0,
+  143.0
+ ],
+ "klassen_lab": [
+  [
+   92.9,
+   132.7,
+   125.5
+  ],
+  [
+   193.5,
+   158.3,
+   145.4
+  ],
+  [
+   239.4,
+   126.2,
+   147.1
+  ],
+  [
+   122.1,
+   146.1,
+   142.1
+  ],
+  [
+   146.0,
+   129.1,
+   125.6
+  ],
+  [
+   50.7,
+   137.6,
+   129.2
+  ]
+ ],
+ "klassen_stufe_m": [
+  0.103,
+  0.012,
+  0.076,
+  0.103,
+  0.075,
+  0.103
+ ],
+ "klassen_flaechig": [
+  0.426,
+  0.954,
+  0.277,
+  0.413,
+  0.565,
+  0.589
+ ],
+ "wand_klasse": 1,
+ "loch_klassen": [
+  0,
+  3,
+  5
+ ],
+ "tiefe_wand": 0.005,
+ "oeffnungstiefe_m": 0.103,
+ "regionen": [
+  {
+   "flaeche_m2": 0.438,
+   "stufe_m": 0.103,
+   "loch": true,
+   "bbox_px": [
+    16,
+    41,
+    83,
+    162
+   ]
+  },
+  {
+   "flaeche_m2": 0.346,
+   "stufe_m": 0.103,
+   "loch": true,
+   "bbox_px": [
+    155,
+    41,
+    220,
+    163
+   ]
+  },
+  {
+   "flaeche_m2": 0.291,
+   "stufe_m": 0.103,
+   "loch": true,
+   "bbox_px": [
+    86,
+    42,
+    152,
+    121
+   ]
+  },
+  {
+   "flaeche_m2": 0.703,
+   "stufe_m": 0.103,
+   "loch": true,
+   "bbox_px": [
+    84,
+    125,
+    149,
+    289
+   ]
+  },
+  {
+   "flaeche_m2": 0.616,
+   "stufe_m": 0.103,
+   "loch": true,
+   "bbox_px": [
+    12,
+    166,
+    78,
+    280
+   ]
+  },
+  {
+   "flaeche_m2": 0.493,
+   "stufe_m": 0.103,
+   "loch": true,
+   "bbox_px": [
+    151,
+    167,
+    217,
+    284
+   ]
+  },
+  {
+   "flaeche_m2": 0.015,
+   "stufe_m": -0.007,
+   "loch": false,
+   "bbox_px": [
+    246,
+    221,
+    254,
+    247
+   ]
+  }
+ ],
+ "n_loch": 6,
+ "n_feld": 1,
+ "schwebend_zu_loch_m2": 0.0,
+ "profil_stufen_m": [
+  0.04
+ ],
+ "profil": "stufen",
+ "gewaende_breite_m": 0.04,
+ "pfosten_rueck_m": 0.031,
+ "huelle_m2": 3.985,
+ "loch_m2": 3.142,
+ "linien_je_abstand": [
+  0,
+  0,
+  638,
+  335,
+  170,
+  169,
+  112,
+  150,
+  170,
+  147,
+  124,
+  90,
+  71,
+  62,
+  43,
+  37,
+  33,
+  38,
+  32,
+  26,
+  14,
+  5,
+  1,
+  0,
+  0,
+  0,
+  0,
+  1,
+  2,
+  0,
+  2
+ ],
+ "huelle_umfang_px": 760,
+ "w_flaeche": 0.1175,
+ "zone": [
+  5.834,
+  8.371,
+  6.88,
+  10.1
+ ],
+ "px": 0.01,
+ "wandbild": {
+  "fotos": [
+   {
+    "foto": "eigen__044_Historisches_Kaufhaus_Freiburg_im_Breisgau_jm3309",
+    "wert": 382.1,
+    "mm_je_px": 2.6,
+    "sichtbar": 0.965,
+    "restversatz_cm": 0.37
+   },
+   {
+    "foto": "eigen__handy_j_04",
+    "wert": 296.7,
+    "mm_je_px": 3.4,
+    "sichtbar": 0.771,
+    "restversatz_cm": 0.3
+   },
+   {
+    "foto": "eigen__handy_j_05",
+    "wert": 296.4,
+    "mm_je_px": 3.4,
+    "sichtbar": 0.772,
+    "restversatz_cm": 0.31
+   },
+   {
+    "foto": "eigen__062_Erker_und_Treppengiebel_des_historischen_Kaufhauses_in_Freib",
+    "wert": 270.4,
+    "mm_je_px": 3.7,
+    "sichtbar": 0.941,
+    "restversatz_cm": 0.46
+   },
+   {
+    "foto": "eigen__025_Fenster_und_Habsburgerskulpturen_des_historischen_Kaufhauses",
+    "wert": 257.1,
+    "mm_je_px": 3.9,
+    "sichtbar": 0.96,
+    "restversatz_cm": 0.53
+   }
+  ],
+  "feinausrichtung": true,
+  "modus": "median_ausgerichtet"
+ },
+ "tiefe": "modelle/kaufhaus_gk/relief/w04.npz",
+ "n_polygone": 6,
+ "annahmen": [
+  "Profil im Gewaendeband: Stufenkanten an den Bildlinien, gleiche Stufenhoehe je Linie (Summe = gemessene Oeffnungstiefe) bzw. Schraege",
+  "Pfosten = Plateau (P80 der Tiefe)",
+  "Wandzellen der Zone eben auf der gebauten Flaeche"
+ ]
+}

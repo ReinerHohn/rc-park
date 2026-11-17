@@ -555,3 +555,10 @@ in `fassaden_kette.py` als Stufe nach `relief_putz.py` (Eingang `<wand>_eben.npz
 - Katalog `tools/bauteile.py` neu: `dachflaechen`, `schindeln(koerper, abstand, tiefe)` (Saegezahn-Reihen je Dachebene, Abstand am Foto per Hang-Autokorrelation, Stufe >= 0,3 mm im Druck),
   `figur(W, u, w, konsole, koerper)`, `baldachin(W, u, w_wand, z_spitze, stufen, fialen)` (beide KLIPSTEIL-Kandidaten), `erker_polygon(..., konsole_rippen=)` + fenster.kopf/kaempfer + felder.medaillon.
 - Uebertrag von Handmodell-Teilen: `modelle/kaufhaus_gk/uebertrag_grob3.py` (Similaritaet grob3 -> gk s 0,767; Gegenprobe: Figurenachsen auf den Fensterpfeilern +-0,08 m).
+
+### Nachtrag 17.11.2026 nachts: Gestalt aus Wandbild + Tiefe - `tools/form_aus_wandbild.py` (Versuch, nicht Standard)
+- Zone (u0..u1, z0..z1) einer Wand: Wandbild (feines Fassadenbild `--ortho DIR:fid` oder direkt aus K-Kameras `--fotos auto --k 5 --fein 1`, Sichtbarkeit gegen das STL, Belichtungsangleich, Feinausrichtung, Rueckfall Einzelfoto bei Rest > 1 cm) + Tiefe (Relief-npz, `--flaeche` fuer die Wandebene).
+- Segmentierung: k-means in Lab, Wandklasse = Zonenrand, Lochklassen per Tiefenstufe (>= 0,75 x max, flaechig), Tiefen-Veto, Pfosten = Rest zwischen Loechern; Gewaende = Linienabstand zur Huelle, Stufen je Bildlinie (gleiche Stufenhoehe = ANNAHME).
+- Ausgabe npz (Terrassen + Lochpolygone) -> `form_aus_wandbild.teil(npz)` liefert (zusatz, abzug) fuer den Generator. Kaufhaus: `bauteile_foto.form_wandbild` (aktiv false), einschalten mit `FORM_WANDBILD=1`.
+- Stand: OG-Fenster feinteil 0,603 -> 0,614, Abnahme gruen, Augenurteil gemischt (Topologie treuer, Kanten unruhig) -> Katalog bleibt Standard. Naechster Schritt: Kanten der Loecher an Fotokanten/Geraden einrasten (Hough/LSD), Bogen als Spline.
+- Tor (Schwabentor Nord, `--leer_offen 1`): Durchfahrt als Loch erkannt, aber Ausfransen am Bogen (Quader im Bogen dunkel wie Durchblick) - nur Probe.

@@ -73,8 +73,14 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
                 koerper = koerper + saeule(WT, s["u"], SA["w"], SA["z0"], SA["z1"], s["d"], basis=SA["basis_ecke" if ecke else "basis"], kapitell=SA["kapitell_ecke" if ecke else "kapitell"])
             beleg("wand", "Laube: %d runde Saeulen mit Plinthe, Wulst und Aufweitung (statt Wandpfeiler)" % len(SA["liste"]), SA["quelle"], hinweis="ANNAHME: " + "; ".join(SA["annahmen"]),
                   durchmesser=[s["d"] for s in SA["liste"]])
-        VF = BF.get("vorhangfenster")
-        if VF:
+        VF = BF.get("vorhangfenster"); FW = BF.get("form_wandbild")
+        FW_an = FW and (os.environ.get("FORM_WANDBILD", "1" if FW.get("aktiv") else "0") == "1")
+        if FW_an:                                   # 18.11.2026: Obergeschossfenster aus dem WANDBILD nachgebildet (tools/form_aus_wandbild.py: Umriss/Pfosten/Gewaendestufen aus Bildkanten, Tiefe aus dem Netz-Relief); Katalogweg: FORM_WANDBILD=0
+            from form_aus_wandbild import teil
+            for z_ in FW["zonen"]:
+                zu_, ab_ = teil(os.path.join(HERE, "kaufhaus_gk", z_["datei"]), loch_tiefe=z_.get("loch_tiefe")); koerper = (koerper + zu_) - ab_
+            beleg("wand", "%d Obergeschossfenster aus dem Wandbild nachgebildet (Umriss, Pfosten, Kaempfer, Gewaendestufen aus Bildkanten; Oeffnungstiefe aus dem Netz-Relief)" % len(FW["zonen"]), FW["quelle"], hinweis="ANNAHME: " + "; ".join(FW["annahmen"]))
+        elif VF:
             for u0_, u1_ in VF["fenster"]:
                 zu_, ab_, pf_ = vorhangbogen_fenster(WT, u0_, u1_, VF["z0"], VF["z1"], VF["schulter"], VF["spitze"], VF["mitte"], VF["feld"], exponent=VF["exponent"], kaempfer=VF.get("kaempfer"), w_fuell=tuple(VF["w_fuell"]))
                 koerper = (koerper + zu_ - ab_) + pf_

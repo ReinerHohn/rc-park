@@ -1,0 +1,203 @@
+{
+ "nachgeprueft_m2": 0.099,
+ "tiefe_veto_m2": 0.63,
+ "nur_tiefe_m2": 0.0,
+ "wandfarbe_lab": [
+  113.0,
+  155.0,
+  148.0
+ ],
+ "klassen_lab": [
+  [
+   88.5,
+   134.2,
+   137.7
+  ],
+  [
+   39.3,
+   130.9,
+   125.8
+  ],
+  [
+   144.8,
+   129.7,
+   140.3
+  ],
+  [
+   50.3,
+   150.9,
+   141.0
+  ],
+  [
+   105.8,
+   160.7,
+   149.5
+  ],
+  [
+   144.3,
+   146.4,
+   154.9
+  ]
+ ],
+ "klassen_stufe_m": [
+  0.08,
+  0.086,
+  0.086,
+  0.086,
+  -0.008,
+  0.008
+ ],
+ "klassen_flaechig": [
+  0.165,
+  0.899,
+  0.5,
+  0.886,
+  0.971,
+  0.674
+ ],
+ "wand_klasse": 4,
+ "loch_klassen": [
+  1,
+  2,
+  3
+ ],
+ "tiefe_wand": -0.012,
+ "oeffnungstiefe_m": 0.086,
+ "regionen": [
+  {
+   "flaeche_m2": 3.452,
+   "stufe_m": 0.086,
+   "loch": true,
+   "bbox_px": [
+    32,
+    51,
+    238,
+    315
+   ]
+  },
+  {
+   "flaeche_m2": 0.023,
+   "stufe_m": -0.04,
+   "loch": false,
+   "bbox_px": [
+    13,
+    111,
+    28,
+    156
+   ]
+  },
+  {
+   "flaeche_m2": 0.031,
+   "stufe_m": -0.032,
+   "loch": false,
+   "bbox_px": [
+    13,
+    205,
+    26,
+    243
+   ]
+  }
+ ],
+ "n_loch": 1,
+ "n_feld": 2,
+ "schwebend_zu_loch_m2": 0.1025,
+ "profil_stufen_m": [
+  0.04,
+  0.13
+ ],
+ "profil": "stufen",
+ "gewaende_breite_m": 0.14,
+ "pfosten_rueck_m": 0.0,
+ "huelle_m2": 3.742,
+ "loch_m2": 3.123,
+ "linien_je_abstand": [
+  0,
+  0,
+  469,
+  334,
+  344,
+  457,
+  286,
+  307,
+  293,
+  206,
+  205,
+  209,
+  230,
+  238,
+  193,
+  184,
+  178,
+  166,
+  148,
+  109,
+  92,
+  84,
+  65,
+  65,
+  62,
+  79,
+  78,
+  59,
+  78,
+  67,
+  14
+ ],
+ "huelle_umfang_px": 804,
+ "w_flaeche": 0.1225,
+ "zone": [
+  14.819,
+  17.42,
+  6.88,
+  10.1
+ ],
+ "px": 0.01,
+ "wandbild": {
+  "fotos": [
+   {
+    "foto": "eigen__086_Freiburg_im_Breisgau_37",
+    "wert": 254.8,
+    "mm_je_px": 3.9,
+    "sichtbar": 0.629,
+    "restversatz_cm": null
+   },
+   {
+    "foto": "eigen__025_Fenster_und_Habsburgerskulpturen_des_historischen_Kaufhauses",
+    "wert": 250.9,
+    "mm_je_px": 4.0,
+    "sichtbar": 0.938,
+    "restversatz_cm": 4.0
+   },
+   {
+    "foto": "eigen__IMG_6119",
+    "wert": 234.5,
+    "mm_je_px": 4.3,
+    "sichtbar": 0.671,
+    "restversatz_cm": 4.33
+   },
+   {
+    "foto": "eigen__000_Freiburg_1987_06_Historisches_Kaufhaus_51087501961_",
+    "wert": 201.0,
+    "mm_je_px": 5.0,
+    "sichtbar": 0.955,
+    "restversatz_cm": 3.18
+   },
+   {
+    "foto": "eigen__IMG_6117",
+    "wert": 192.6,
+    "mm_je_px": 5.2,
+    "sichtbar": 0.69,
+    "restversatz_cm": 3.67
+   }
+  ],
+  "feinausrichtung": true,
+  "modus": "bestes_einzelfoto (Restversatz > 1.0 cm)"
+ },
+ "tiefe": "modelle/kaufhaus_gk/relief/w04.npz",
+ "n_polygone": 3,
+ "annahmen": [
+  "Profil im Gewaendeband: Stufenkanten an den Bildlinien, gleiche Stufenhoehe je Linie (Summe = gemessene Oeffnungstiefe) bzw. Schraege",
+  "Pfosten = Plateau (P80 der Tiefe)",
+  "Wandzellen der Zone eben auf der gebauten Flaeche"
+ ]
+}
