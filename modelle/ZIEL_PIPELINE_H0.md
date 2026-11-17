@@ -20,7 +20,9 @@ Dokumentiere alle Versuche."  -> Diese Datei ist das Versuchsprotokoll (jeder Ve
 - L5 Platten: Daten auf 5 Laufwerke verteilt, Systemplatte knapp (5-7 GB) -> 2-TB-Platte 18.11.
 
 ## Versuche
-- V1 17.11. 18:20 kaufhaus_gk2 von null (gesamtkette kaufhaus --ziel kaufhaus_gk2): 6410 Bilder vorgeprueft (GPU), 1945 zeigen das Objekt, 1364 nach Sammeln. Globaler Mapper: 14 Teilmodelle, GPS-Tor nicht bestanden -> schrittweiser Mapper (laeuft). Ergebnis: offen.
+- V1 17.11. 18:20 kaufhaus_gk2 von null (gesamtkette kaufhaus --ziel kaufhaus_gk2): 6410 Bilder vorgeprueft (GPU, 49 min), 1945 zeigen das Objekt, 1364 nach Sammeln. Globaler Mapper: 14 Teilmodelle; groesstes Teilmodell GPS-Rest Median 9,0 m, p90 243 m, 36 % > 15 m (44 eigene GPS-Fotos) -> Tor nicht bestanden (Schwelle 15 %). Fallback schrittweiser Mapper (1 Thread, bewusst: Mehrthread nicht reproduzierbar, Messung 13.11.) lief in das Stufen-Zeitlimit 10800 s -> rc 124, Kette Abbruch rc 4. ERGEBNIS: GESCHEITERT an L4 (Rechenzeit), nicht an Qualitaet.
+- V1b 17.11. 23:29 dieselbe Kette --ab sfm mit RCPARK_STUFE_MAX_S=36000 (Merkmale/Paare aus Cache). Ergebnis: offen.
+  Ideen falls V1b scheitert: (a) globaler Mapper nur auf eigenen Fotos + Commons, Videobilder danach registrieren (image_registrator); (b) Bildwahl auf ~700 Bilder nach Blickrichtungsabdeckung vor dem Mapper; (c) hierarchical_mapper testen (Reproduzierbarkeit messen).
 - V2 17.11. Kaufhaus Runde 2/3 (Agenten, Commits 1877c251, 920af251): Pipeline-Bugs gefunden (Fotoquellen, Brei, blindes Mass); Katalogteile wirken steif (-> Grundsatz Wandbild = Bauplan).
 - V3 17.11. Feinausrichtung Wandbild (eeafa1e7): Restversatz 1,2-2,5 -> 0,2-0,5 cm, Fugen-F1 0,417 -> 0,431; am Kaufhaus ohne Wirkung (Putz, Fotos aus Jahrzehnten).
 - V4 17.11. form_aus_wandbild (9ba2dca2): Topologie treuer, Kanten wellig -> Standard aus; Folgeauftrag Kanten einrasten (laeuft).
