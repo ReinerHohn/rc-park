@@ -10,6 +10,7 @@ ap.add_argument("--print", dest="prn", default="0.10mm FAST DETAIL @MK4IS 0.4")
 ap.add_argument("--filament", default="Prusament PLA @PGIS")
 ap.add_argument("--support", action="store_true"); ap.add_argument("--arrange", action="store_true")
 ap.add_argument("--set", action="append", default=[], help="key=value Ueberschreibung")
+ap.add_argument("--brim", type=float, default=5.0, help="Brimbreite mm (17.11.2026: Turmschaft 129x136 mm mit 1-mm-Wand ohne Brim verzog sich; 0 = aus)")
 a = ap.parse_args()
 sec = {}; cur = None
 for l in open(F, encoding="utf8"):
@@ -27,6 +28,7 @@ for kind, name in (("printer", a.printer), ("print", a.prn), ("filament", a.fila
 for k in ("compatible_printers_condition", "compatible_prints_condition", "compatible_printers", "compatible_prints"): cfg.pop(k, None)
 cfg["binary_gcode"] = "0"; cfg["support_material"] = "1" if a.support else cfg.get("support_material", "0")
 if a.support: cfg["support_material_auto"] = "1"
+cfg["brim_width"] = f"{a.brim:g}"; cfg["brim_type"] = "outer_only"
 for s in a.set: k, v = s.split("=", 1); cfg[k] = v
 os.makedirs(a.out, exist_ok=True)
 ini = os.path.join(a.out, "_profil_mk4s.ini")

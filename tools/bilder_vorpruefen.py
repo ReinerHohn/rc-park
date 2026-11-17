@@ -18,13 +18,14 @@ def main():
     ap.add_argument("--kette", type=int, default=40,   # 15.11.2026: 6 liess vom Drohnenclip nur 6 von 81 Bildern durch (Dach fehlte); mit allen 81 behielt die Objektregel der Bildwahl 23 -> Kette lang, Aussortieren uebernimmt dicht_bildwahl (>= 60 Objektpunkte)
                      help="Videobilder: Nachbarbilder (<= N Schritte, gleicher Ordner) eines Treffers zaehlen, wenn sie ihn >= min-inlier treffen")
     a = ap.parse_args(); t0 = time.time(); op = os.path.abspath(a.objekt); obj = json.load(open(op))
-    root = os.path.dirname(os.path.dirname(os.path.dirname(op))); fd = obj["fotos_dir"]; fd = fd if os.path.isabs(fd) else os.path.join(root, fd)
-    fotos = sorted(glob.glob(os.path.join(fd, "*.jpg")) + glob.glob(os.path.join(fd, "*.jpeg")) + glob.glob(os.path.join(fd, "*.png")))
+    root = os.path.dirname(os.path.dirname(os.path.dirname(op))); fotos, fd, woher = VS.referenzfotos(obj, root)      # 17.11.2026: .JPG wurde nicht gefunden; Referenz kam nach dem ersten Kettenlauf auch aus Fremdbildern (siehe video_suchen.referenzfotos)
+    if not fotos: print(f"FEHLER: kein Objektfoto (.jpg/.jpeg/.png) in {fd} - ohne Referenz waere jedes Fremdbild 'zeigt das Objekt nicht'; {a.aus} NICHT geschrieben"); return 2
     R = VS.sift_ref(fotos[::max(1, len(fotos) // a.ref)][:a.ref]); s = VS._sift(2048)
+    if not R: print(f"FEHLER: keines der Referenzfotos aus {fd} lesbar/mit Merkmalen - {a.aus} NICHT geschrieben"); return 2
     bilder = []
     for q in a.quellen:
         bilder += [q] if os.path.isfile(q) else sorted(p for p in glob.glob(os.path.join(q, "**", "*"), recursive=True) if p.lower().endswith((".jpg", ".jpeg", ".png", ".webp")))
-    print(f"{len(R)} Referenzfotos, {len(bilder)} Bilder (GPU {VS.DEV})", flush=True)
+    print(f"{len(R)} Referenzfotos aus {fd} [{woher}], {len(bilder)} Bilder (GPU {VS.DEV})", flush=True)
     erg = {}
     for p in bilder:
         g = cv2.imread(p, cv2.IMREAD_GRAYSCALE)
@@ -64,7 +65,8 @@ def main():
     ja = [p for p, e in erg.items() if e["inlier"] >= a.min_inlier]
     json.dump(dict(objekt=op, min_inlier=a.min_inlier, referenz=[r[0] for r in R], treffer=len(ja), bilder=erg), open(a.aus, "w"), indent=1, ensure_ascii=False)
     print(f"{len(ja)} von {len(bilder)} zeigen das Objekt (>= {a.min_inlier} Inlier), {time.time() - t0:.0f} s -> {a.aus}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

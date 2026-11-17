@@ -15,6 +15,22 @@ import os, sys, json, glob, argparse, subprocess, time, shutil
 import numpy as np, cv2
 
 ZUSAETZE = ["drohne", "drone 4k", "aerial", "walk 4k", ""]
+BILD_ENDUNGEN = (".jpg", ".jpeg", ".png")
+
+
+def referenzfotos(obj, root):
+    """EIGENE Objektfotos als Referenz (auch fuer tools/bilder_vorpruefen.py). Rueckgabe (sortierte Pfade, Ordner, Hinweis).
+    17.11.2026 (Durchsicht), zwei stille Fehler: (1) `glob("*.jpg")` unterscheidet Gross-/Kleinschreibung - Kameras schreiben .JPG: 0 Referenzfotos, jede Pruefung
+    'kein Treffer', rc 0 (kaufhaus_gk: 8 von 363 Bildern fehlten, martinstor_gk 7 von 243). (2) Nach dem ersten Kettenlauf zeigt objekt.json fotos_dir auf den SAMMELORDNER
+    (eigene + Fremdbilder, tools/gesamtkette.py): die Referenz wurde quer durch alle Quellen gezogen (schwab_auto: 15 von 24 Referenzfotos waren Commons-/Videobilder) -
+    Fremdbilder bestaetigten sich selbst. Jetzt: fotos_dir_quelle, wenn gesetzt und nicht leer; im Sammelordner nur die Bilder 'eigen__*', wenn es welche gibt."""
+    def bilder(d): return sorted(os.path.join(d, f) for f in os.listdir(d) if f.lower().endswith(BILD_ENDUNGEN)) if os.path.isdir(d) else []
+    absolut = lambda d: d if os.path.isabs(d) else os.path.join(root, d)
+    fq = obj.get("fotos_dir_quelle")
+    if fq and bilder(absolut(fq)): return bilder(absolut(fq)), absolut(fq), "fotos_dir_quelle (eigene Fotos vor dem Sammeln)"
+    fd = absolut(obj.get("fotos_dir") or ""); alle = bilder(fd); eig = [p for p in alle if os.path.basename(p).startswith("eigen__")]
+    if eig and len(eig) < len(alle): return eig, fd, f"nur eigen__* ({len(eig)} von {len(alle)} Bildern im Sammelordner)"
+    return alle, fd, "fotos_dir"
 
 
 DEV = None
@@ -75,10 +91,11 @@ def main(argv=None):
     root = os.path.dirname(os.path.dirname(os.path.dirname(op)))
     name = obj.get("name", "").split("(")[0].strip(); ort = obj.get("ort", "").split(",")[0].strip()
     basis = a.anfragen or sorted({x for x in [name, f"{name} {ort}".strip()] + list((obj.get("bildquellen", {}).get("commons", {}) or {}).get("suchen", [])) if x})
-    fd = obj.get("fotos_dir"); fd = fd if os.path.isabs(fd) else os.path.join(root, fd)
-    fotos = sorted(glob.glob(os.path.join(fd, "*.jpg")) + glob.glob(os.path.join(fd, "*.png")) + glob.glob(os.path.join(fd, "*.jpeg")))
+    fotos, fd, woher = referenzfotos(obj, root)
     if obj.get("fotos"): fotos = [p for p in fotos if os.path.splitext(os.path.basename(p))[0] in obj["fotos"]] or fotos
-    step = max(1, len(fotos) // a.ref); R = sift_ref(fotos[::step][:a.ref]); print(f"{len(R)} Objektfotos als Referenz ({time.time() - t0:.0f} s)", flush=True)
+    if not fotos: print(f"FEHLER: kein Objektfoto (.jpg/.jpeg/.png) in {fd} - ohne Referenz ist jede Clip-Pruefung 'kein Treffer'; nichts gesucht"); return 2      # 17.11.2026: lief mit 0 Referenzfotos durch (rc 0, alle Clips 0 Treffer)
+    step = max(1, len(fotos) // a.ref); R = sift_ref(fotos[::step][:a.ref]); print(f"{len(R)} Objektfotos als Referenz aus {fd} [{woher}] ({time.time() - t0:.0f} s)", flush=True)
+    if not R: print(f"FEHLER: keines der {len(fotos[::step][:a.ref])} Referenzfotos lesbar/mit Merkmalen - nichts gesucht"); return 2
     kand = {}
     if a.nur: kand = {c: dict(id=c, dauer=None, titel="", anfrage="--nur") for c in a.nur}
     else:
@@ -92,6 +109,7 @@ def main(argv=None):
                         except ValueError: du = None
                         kand[p[0]] = dict(id=p[0], dauer=du, titel=p[2], anfrage=q)
         print(f"{len(kand)} Kandidaten aus {len(basis)} Anfragen ({time.time() - t0:.0f} s)", flush=True)
+        if not kand: print(f"FEHLER: Videosuche lieferte KEINEN Kandidaten (kein Netz? yt-dlp veraltet?) - letzte Meldung: {(r.stderr or '').strip()[-200:] if basis else 'keine Anfrage (objekt.json name/ort leer)'}"); return 3      # 17.11.2026: rc 0 mit leerer Kandidatenliste
     s = _sift(2048); bf = None; erg = []
     for c in kand.values():
         if c["dauer"] and c["dauer"] > a.max_s: c["status"] = "zu lang"; erg.append(c); continue
@@ -119,7 +137,10 @@ def main(argv=None):
         json.dump(dict(objekt=op, referenz=[x[0] for x in R], parameter=vars(a), clips=sorted(erg, key=lambda x: -x.get("treffer", 0))), open(os.path.join(a.aus, "video_kandidaten.json"), "w"), indent=1, ensure_ascii=False)
     json.dump(dict(objekt=op, referenz=[x[0] for x in R], parameter=vars(a), clips=sorted(erg, key=lambda x: -x.get("treffer", 0)), sekunden=round(time.time() - t0)),
               open(os.path.join(a.aus, "video_kandidaten.json"), "w"), indent=1, ensure_ascii=False)
+    n_gepr = sum(1 for c in erg if c.get("status") == "geprueft" and c.get("bilder")); n_dl = sum(1 for c in erg if str(c.get("status", "")).startswith("Download fehlgeschlagen"))
+    if erg and n_gepr == 0 and n_dl: print(f"FEHLER: KEIN Clip geprueft - {n_dl} von {len(erg)} Vorschau-Downloads fehlgeschlagen (video_kandidaten.json 'status')"); return 3      # 17.11.2026: alle Downloads gescheitert = rc 0, Liste ohne Treffer
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

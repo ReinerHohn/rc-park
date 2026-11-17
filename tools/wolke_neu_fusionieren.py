@@ -6,15 +6,28 @@ Gelaende standen. tools/kamera_gelaende.py schreibt diese Bilder nach audit/kame
 schreiben, stereo_fusion (CPU, Minuten; Tiefenkarten bleiben), alte fused.ply -> fused_alle.ply, dann die VORHANDENE Ausrichtung auf die neue Wolke
 anwenden (X_m = R^T (X_sfm - t) / s, keine neue LoD2-Suche) -> sfm/punkte_modell_<name>.npy + punkte_farben_<name>.npy.
   /media/oem/scan/venv-colmap/bin/python -I tools/wolke_neu_fusionieren.py modelle/<obj>/objekt.json /media/oem/scan/rc-park_daten/<obj>/pipe
-Danach die Tore wiederholen (gesamtkette.py --ab tore bzw. wolke_grundriss_pruefen.py). rc 2 = nichts auszuschliessen.
+Danach die Tore wiederholen (gesamtkette.py --ab tore bzw. wolke_grundriss_pruefen.py). rc 2 = nichts zu tun (Wolke entspricht schon der Ausschlussliste), rc 4 = es bliebe kein Bild.
+
+17.11.2026 (Durchsicht), zwei stille Fehler behoben:
+  1. Ausschluesse waren DAUERHAFT: 'alle Bilder' wurde aus der schon gekuerzten fusion.cfg gelesen. Ein Bild, das heute in keiner Liste mehr steht (neue Ausrichtung, Kamera nicht mehr
+     unter Gelaende), kam nie zurueck - und niemand sah, warum es fehlt. Jetzt: Grundmenge ist immer fusion.cfg.alle; Listen-Ausschluesse (audit/kamera_plausibel.json, kette_insel.json)
+     gelten nur, solange das Bild dort steht. Haufenquellen (--haufen) lassen sich an der bereinigten Wolke NICHT neu feststellen - sie werden deshalb ausdruecklich gemerkt:
+     <pipe>/dicht/stereo/fusion_ausschluss.json ('haufen'; beim ersten Lauf nach dieser Aenderung zusaetzlich 'uebernommen' = was in fusion.cfg fehlt und in keiner Liste steht).
+     Diese Datei loeschen (oder Eintraege streichen) = die Bilder kommen beim naechsten Lauf zurueck.
+  2. Ein Absturz der Fusion (Arbeitsspeicher, Zeitlimit) hinterliess einen halben Zustand: fusion.cfg schon gekuerzt, fused.ply schon nach fused_alle.ply verschoben, keine neue Wolke -
+     die Korrektur der Ausrichtung und der naechste Pipeline-Lauf fanden keine dichte Wolke. Jetzt: Fusion in fused_neu.ply; erst wenn sie fertig ist und Punkte hat, wird umbenannt;
+     scheitert sie, steht fusion.cfg wieder wie vorher. Marke stereo/fusion.cfg.laeuft: liegt sie beim Start noch da (Prozess wurde hart beendet), wird in jedem Fall neu fusioniert.
 """
-import sys, os, json, shutil, numpy as np
+import sys, os, json, shutil, time, numpy as np
 
 
 def ply_lesen(p):
     with open(p, "rb") as f:
         kopf = b""
-        while not kopf.endswith(b"end_header\n"): kopf += f.readline()
+        while not kopf.endswith(b"end_header\n"):
+            l = f.readline()
+            if not l: raise ValueError(f"{p}: kein vollstaendiger PLY-Kopf (Datei abgeschnitten?)")      # 17.11.2026: an einer abgeschnittenen fused.ply lief diese Schleife endlos (readline liefert am Dateiende b"")
+            kopf += l
         n = int([l for l in kopf.decode().splitlines() if l.startswith("element vertex")][0].split()[-1])
         props = [l.split()[1:] for l in kopf.decode().splitlines() if l.startswith("property")]
         dt = np.dtype([(nm, {"float": "<f4", "uchar": "u1", "double": "<f8"}[t]) for t, nm in props]); return np.frombuffer(f.read(n * dt.itemsize), dtype=dt, count=n)
@@ -56,27 +69,85 @@ def haufen_quellen(od, D, name, anteil=0.7, min_punkte=3000):
     return weg
 
 
-def main():
+def zeilen(p): return [l.strip() for l in open(p) if l.strip()]
+
+
+def text_atomar(p, text):
+    with open(p + ".neu", "w") as f: f.write(text); f.flush(); os.fsync(f.fileno())
+    os.replace(p + ".neu", p)
+
+
+def npy_atomar(p, feld):
+    """Verknuepfung (Datenplatte) bleibt erhalten; erst fertig schreiben, dann umbenennen."""
+    p = os.path.realpath(p) if os.path.islink(p) else p
+    with open(p + ".neu", "wb") as f: np.save(f, feld); f.flush(); os.fsync(f.fileno())
+    os.replace(p + ".neu", p)
+
+
+def ply_punkte(p):
+    """Punktzahl aus dem Kopf (0, wenn die Datei fehlt oder kein PLY ist)."""
+    try:
+        with open(p, "rb") as f:
+            for _ in range(40):
+                l = f.readline()
+                if l.startswith(b"element vertex"): return int(l.split()[-1])
+                if not l or l.startswith(b"end_header"): break
+    except OSError: pass
+    return 0
+
+
+def fusionieren(ziel, D, stufe):
+    """COLMAP-Fusion (CPU, Minuten) mit der fusion.cfg des Arbeitsordners D nach `ziel` (+ ziel.vis)."""
     import pycolmap
-    from scipy.spatial.transform import Rotation as Rot
-    objp, pipe = os.path.abspath(sys.argv[1]), sys.argv[2]; od = os.path.dirname(objp); name = os.path.basename(od)
-    stufe = sys.argv[sys.argv.index("--stufe") + 1] if "--stufe" in sys.argv else "schnell"
-    aus = set(json.load(open(os.path.join(od, "audit", "kamera_plausibel.json")))["ausschliessen"]); D = os.path.join(pipe, "dicht"); cfg = os.path.join(D, "stereo", "fusion.cfg")
-    alle = [l.strip() for l in open(cfg) if l.strip()] if os.path.exists(cfg) else sorted(os.listdir(os.path.join(D, "images")))
-    if "--haufen" in sys.argv: aus |= haufen_quellen(od, D, name)
-    ki = os.path.join(od, "audit", "kette_insel.json")                    # 15.11.2026: Insel-Ketten (tools/kette_insel_pruefen.py) - Bilder ohne Fremdstuetze, Massstab der Kette nicht belegt
-    if os.path.exists(ki): n0 = len(aus); aus |= set(json.load(open(ki))["ausschliessen"]); print(f"Insel-Ketten: {len(aus) - n0} weitere Bilder ausgeschlossen")
-    bleibt = [b for b in alle if os.path.splitext(b)[0] not in aus]; print(f"Fusion: {len(alle)} Bilder, {len(alle) - len(bleibt)} ausgeschlossen (Kameras unter Gelaende), {len(bleibt)} bleiben")
-    if len(bleibt) == len(alle): return 2
-    if not os.path.exists(cfg + ".alle"): open(cfg + ".alle", "w").write("\n".join(alle) + "\n")
-    open(cfg, "w").write("\n".join(bleibt) + "\n"); f = os.path.join(D, "fused.ply")
-    if os.path.exists(f) and not os.path.exists(os.path.join(D, "fused_alle.ply")): shutil.move(f, os.path.join(D, "fused_alle.ply"))
     fo = pycolmap.StereoFusionOptions(); fo.max_image_size = 1600
     if stufe == "schnell": fo.min_num_pixels = 8
-    pycolmap.stereo_fusion(f, D, options=fo, input_type="geometric" if stufe == "fein" else "photometric", output_type="ply")
+    pycolmap.stereo_fusion(ziel, D, options=fo, input_type="geometric" if stufe == "fein" else "photometric", output_type="ply")
+
+
+def main():
+    from scipy.spatial.transform import Rotation as Rot
+    objp, pipe = os.path.abspath(sys.argv[1]), sys.argv[2]; od = os.path.dirname(objp); name = os.path.basename(od)
+    stufe = sys.argv[sys.argv.index("--stufe") + 1] if "--stufe" in sys.argv else "schnell"; stamm = lambda b: os.path.splitext(b)[0]
+    listen = set(json.load(open(os.path.join(od, "audit", "kamera_plausibel.json")))["ausschliessen"]); D = os.path.join(pipe, "dicht"); cfg = os.path.join(D, "stereo", "fusion.cfg")
+    aktiv = zeilen(cfg) if os.path.exists(cfg) else None
+    alle = zeilen(cfg + ".alle") if os.path.exists(cfg + ".alle") else (aktiv if aktiv is not None else sorted(os.listdir(os.path.join(D, "images"))))      # Grundmenge = ALLE Bilder, nicht die schon gekuerzte Liste
+    if aktiv is None: aktiv = list(alle)
+    ki = os.path.join(od, "audit", "kette_insel.json")                    # 15.11.2026: Insel-Ketten (tools/kette_insel_pruefen.py) - Bilder ohne Fremdstuetze, Massstab der Kette nicht belegt
+    if os.path.exists(ki): n0 = len(listen); listen |= set(json.load(open(ki))["ausschliessen"]); print(f"Insel-Ketten: {len(listen) - n0} weitere Bilder ausgeschlossen")
+    aj = os.path.join(D, "stereo", "fusion_ausschluss.json"); gem_neu = not os.path.exists(aj)
+    gem = dict(haufen=[], uebernommen=sorted(({stamm(b) for b in alle} - {stamm(b) for b in aktiv}) - listen)) if gem_neu else json.load(open(aj))
+    if gem_neu and gem["uebernommen"]: print(f"Ausschluss uebernommen: {len(gem['uebernommen'])} Bilder fehlen in fusion.cfg und stehen heute in keiner Liste (frueherer Listenstand oder Haufenquelle) - bleiben ausgeschlossen, gemerkt in {aj}")
+    if "--haufen" in sys.argv: gem["haufen"] = sorted(set(gem.get("haufen", [])) | haufen_quellen(od, D, name))
+    aus = listen | set(gem.get("haufen", [])) | set(gem.get("uebernommen", []))
+    bleibt = [b for b in alle if stamm(b) not in aus]; zurueck = len({stamm(b) for b in bleibt} - {stamm(b) for b in aktiv})
+    print(f"Fusion: {len(alle)} Bilder, {len(alle) - len(bleibt)} ausgeschlossen (Listen: Kameras unter Gelaende/Insel-Ketten; gemerkt: {len(gem.get('haufen', []))} Haufenquelle, {len(gem.get('uebernommen', []))} uebernommen), {len(bleibt)} bleiben"
+          + (f"; {zurueck} frueher ausgeschlossene Bilder kommen ZURUECK (stehen in keiner Liste mehr)" if zurueck else ""))
+    laeuft = cfg + ".laeuft"; f = os.path.join(D, "fused.ply"); fn = os.path.join(D, "fused_neu.ply")
+    merken = lambda: text_atomar(aj, json.dumps(dict(gem, hinweis="tools/wolke_neu_fusionieren.py: gemerkte Ausschluesse (Haufenquellen lassen sich an der bereinigten Wolke nicht neu feststellen). Datei loeschen = Bilder kommen beim naechsten Lauf zurueck."), indent=1, ensure_ascii=False))
+    if os.path.exists(laeuft): print(f"ACHTUNG: {laeuft} liegt noch da - ein frueherer Lauf wurde hart beendet; es wird in jedem Fall neu fusioniert")
+    elif bleibt == aktiv and ply_punkte(f) > 0:
+        if gem_neu and os.path.isdir(os.path.dirname(aj)): merken()
+        return 2
+    if len(bleibt) < 2: print(f"FEHLER: nach dem Ausschluss blieben {len(bleibt)} Bilder - nichts geaendert (Listen pruefen: audit/kamera_plausibel.json, kette_insel.json, {aj})"); return 4
+    if not os.path.exists(cfg + ".alle"): text_atomar(cfg + ".alle", "\n".join(alle) + "\n")
+    open(laeuft, "w").write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} pid {os.getpid()}\n"); text_atomar(cfg, "\n".join(bleibt) + "\n")
+    try:
+        for q in (fn, fn + ".vis"):
+            if os.path.exists(q): os.remove(q)
+        fusionieren(fn, D, stufe); n_neu = ply_punkte(fn)
+        if n_neu == 0: raise RuntimeError(f"Fusion lieferte keine Punkte ({fn})")
+    except BaseException as e:                                             # auch Strg-C/Zeitlimit (SIGTERM der Kette kommt als SystemExit nur, wenn ein Handler gesetzt ist - sonst hilft die Marke)
+        text_atomar(cfg, "\n".join(aktiv) + "\n")
+        for q in (fn, fn + ".vis", laeuft):
+            if os.path.exists(q): os.remove(q)
+        print(f"FEHLER: Fusion gescheitert ({type(e).__name__}: {str(e)[:200]}) - fusion.cfg und fused.ply stehen wie vor dem Lauf", flush=True); raise
+    if os.path.exists(f) and not os.path.exists(os.path.join(D, "fused_alle.ply")): shutil.move(f, os.path.join(D, "fused_alle.ply"))
+    os.replace(fn, f)
+    if os.path.exists(fn + ".vis"): os.replace(fn + ".vis", f + ".vis")
     T = json.load(open(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG-{name}.json")))["transformation"]; s = T["s"]; R = Rot.from_rotvec(T["rvec"]).as_matrix(); t = np.array(T["t"])
     V = ply_lesen(f); X = np.c_[V["x"], V["y"], V["z"]].astype(float); Pm = ((X - t) / s) @ R
-    np.save(os.path.join(od, "sfm", f"punkte_modell_{name}.npy"), Pm.astype(np.float32)); np.save(os.path.join(od, "sfm", f"punkte_farben_{name}.npy"), np.c_[V["red"], V["green"], V["blue"]].astype(np.uint8))
+    npy_atomar(os.path.join(od, "sfm", f"punkte_modell_{name}.npy"), Pm.astype(np.float32)); npy_atomar(os.path.join(od, "sfm", f"punkte_farben_{name}.npy"), np.c_[V["red"], V["green"], V["blue"]].astype(np.uint8))
+    merken(); os.remove(laeuft)
     print(f"neue Wolke: {len(Pm)} Punkte, z p1 {np.percentile(Pm[:, 2], 1):.1f} .. p99 {np.percentile(Pm[:, 2], 99):.1f} m -> sfm/punkte_modell_{name}.npy"); return 0
 
 

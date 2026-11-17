@@ -37,7 +37,8 @@ def extract(video, raw_dir, fps):
     cmd = ["ffmpeg", "-y", "-i", video, "-vf", f"fps={fps}", "-qscale:v", "2",
            os.path.join(raw_dir, "f_%04d.jpg")]
     print(f"  ffmpeg extrahiert {fps} Frames/s ...")
-    subprocess.run(cmd, capture_output=True, text=True)
+    r = subprocess.run(cmd, capture_output=True, text=True)
+    if r.returncode != 0: print(f"  ffmpeg-Fehler (rc {r.returncode}): {(r.stderr or '').strip()[-200:]}")      # 17.11.2026: Fehler von ffmpeg wurde verschluckt
     return sorted(glob.glob(os.path.join(raw_dir, "f_*.jpg")))
 
 
@@ -84,8 +85,11 @@ def main():
               open(os.path.join(a.out, "manifest.json"), "w"), indent=2)
     print(f"\n{len(manifest)} scharfe Frames (von {len(frames)}) → {a.out}")
     print(f"Schärfe behalten: {round(keep[-1][1],0) if keep else 0}..{round(keep[0][1],0) if keep else 0}")
+    if not manifest:                                                      # 17.11.2026: 0 Bilder (ffmpeg gescheitert, Video leer, alles unscharf) endete mit rc 0 - die Kette hielt den Clip fuer erledigt
+        print(f"FEHLER: KEIN Bild behalten ({len(frames)} Rohbilder, Schaerfegrenze {a.min_sharp}) - {a.out} enthaelt kein Videobild"); return 2
     print("Nächster Schritt: opensfm_run.py / COLMAP (Photogrammetrie) ODER besten Frontal-Frame nehmen.")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

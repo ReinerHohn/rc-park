@@ -11,6 +11,9 @@ Was am 15.11.2026 am Schwabentor von Hand lief, in einem Lauf (Nutzer: "Baue all
   5b. mit --fein SPARSE BILDER: tiefe_lokal.py fuer die Steinzone der Wand (1 cm, GPU) + relief_mischen.py -> <wand>_misch.npz (2 cm), wird von anbauen() vor das grobe Relief gesetzt.
   6. Bericht audit/fassaden_kette.json (Wand, Fotos, Loch-/Putz-/Generiert-Anteile) + je Wand das Bild relief/<wand>_voll.jpg zum ANSEHEN.
 Im Generator: `from fassaden_kette import anbauen; koerper = anbauen(koerper, OBJ)` vereinigt alle *_voll.npz (nur innerhalb der nach aussen verschobenen Koerperhuelle).
+17.11.2026 (kaufhaus_gk, Putzbau): (a) Wandflaeche je Kante aus den LoD2-Wandpolygonen (wand_flaeche): Hoehe = Wandoberkante statt First, Lochanteil nur in der freien Wand ohne Oeffnungen,
+  angebaute Flaechen (Nachbar-LoD2 < 1 m davor) sind keine Fassade (Wand 'aus: Brandwand'); (b) LoD2-Nachbarn als Verdecker der Fotostufe (relief/nachbarn_lod2.stl);
+  (c) QUADER-TOR (steine_aus_foto.py --tor, rc 5) vor Putzglaetten/Steine-Generieren: zeigt das beste Foto kein Fugenraster, bleibt das Netz-Relief roh (kleine Loecher glatt gefuellt), nichts wird generiert.
 Grenzen: Auskragungen/Erker (Band 0,6 m) und regelmaessige Bauteile (Fenster, Boegen, Uhr) bleiben Sache von bauteile.py; generierte Steine sind ANNAHME.
 """
 import sys, os, json, glob, argparse, subprocess, numpy as np
@@ -46,6 +49,74 @@ def waende_aus_lod2(od, min_laenge):
     return W
 
 
+_LOD2 = {}
+
+
+def lod2_netze(objekt_json):
+    """LoD2-Wandpolygone des eigenen Gebaeudes + Netz der Nachbargebaeude (Modellrahmen), je Objekt einmal. (None, None) ohne LoD2 oder wenn die Werkzeuge fehlen."""
+    if objekt_json not in _LOD2:
+        try:
+            sys.path.insert(0, HIER); import fassade_ortho as FO; obj = json.load(open(objekt_json))
+            _LOD2[objekt_json] = (FO.lod2_waende(obj)[0], FO.nachbarn_netz(obj)[0]) if obj.get("lod2", {}).get("id") else (None, None)
+        except Exception as e: print(f"    LoD2-Wandflaechen nicht lesbar ({type(e).__name__}: {str(e)[:120]}) - Wandhoehe = Firsthoehe wie frueher", flush=True); _LOD2[objekt_json] = (None, None)
+    return _LOD2[objekt_json]
+
+
+def wand_flaeche(objekt_json, A, B, n, px, angebaut=1.0):
+    """ECHTE Wandflaeche einer Grundrisskante (17.11.2026, kaufhaus_gk). Vorher galt fuer JEDE Wand 'z bis zum hoechsten Dachpunkt': an der Traufseite ist ueber der Traufe aber Dach.
+    Folge am Kaufhaus: die Hauptfassade (Traufe 11,6 m, Feld bis 21 m) hatte '65 % Loecher' > 60 % -> das gute Netz-Relief (Arkaden, Fenster, Figuren) wurde als 'Netz deckt die Wand nicht' VERWORFEN
+    und durch Foto-'Quader' ersetzt. Hier: LoD2-WallSurface-Polygone in der Wandebene (Normale < 8 Grad, Abstand < 0,4 m) als Maske im Reliefraster; z1 = ihre Oberkante.
+    Dazu 'frei': Zellen, vor denen kein Nachbargebaeude (LoD2) naeher als `angebaut` m steht - angebaute Flaechen (Brandwand) sieht kein Foto, dort zeigte die Fotostufe das NACHBARHAUS.
+    Rueckgabe (wand HxW bool, frei HxW bool, z1) im Raster von relief_einsatz (u 0.1..L-0.1, z 0..z1, Zeile 0 oben) oder None (kein LoD2 / keine passende Flaeche)."""
+    import cv2
+    W_, nb = lod2_netze(objekt_json)
+    if not W_: return None
+    A = np.asarray(A, float); B = np.asarray(B, float); L = float(np.linalg.norm(B - A)); t = (B - A) / L; pol = []
+    for P in W_:
+        c = P.mean(0); _, _, V = np.linalg.svd(P - c); pn = V[2][:2]
+        if np.linalg.norm(pn) < 0.9 or abs(pn @ n) / np.linalg.norm(pn) < np.cos(np.radians(8.0)) or abs((c[:2] - A) @ n) > 0.4: continue
+        u = (P[:, :2] - A) @ t
+        if min(u.max(), L) - max(u.min(), 0.0) < 0.2: continue
+        pol.append(np.c_[u, P[:, 2]])
+    if not pol: return None
+    z1 = float(max(q[:, 1].max() for q in pol)); u0 = 0.1; Wn = int(round((L - 0.2) / px)); Hn = int(round(z1 / px)); wand = np.zeros((Hn, Wn), np.uint8)
+    if Wn < 2 or Hn < 2: return None
+    for q in pol: cv2.fillPoly(wand, [np.c_[(q[:, 0] - u0) / px, Hn - q[:, 1] / px].round().astype(np.int32)], 1)
+    wand = wand.astype(bool); frei = wand.copy()
+    if nb is not None and wand.any():
+        try:
+            import trimesh, fassade_ortho as FO
+            k = max(1, int(round(0.25 / px))); ii, jj = np.mgrid[0:Hn:k, 0:Wn:k]; uu = u0 + (jj + 0.5) * px; zz = (Hn - ii - 0.5) * px; n3 = np.array([n[0], n[1], 0.0])
+            S0 = np.c_[(A[0] + uu * t[0]).ravel(), (A[1] + uu * t[1]).ravel(), zz.ravel()] - n3 * 0.3      # Start 0,3 m hinter der Ebene: die Nachbarwand liegt oft genau in der eigenen Wandebene
+            RI = trimesh.ray.ray_pyembree.RayMeshIntersector if hasattr(trimesh.ray, "ray_pyembree") else trimesh.ray.ray_triangle.RayMeshIntersector
+            ti, ri = FO.erster_treffer(RI(nb), S0, n3); zu = np.zeros(len(S0), bool)
+            if len(ri): nn = np.asarray(nb.face_normals)[ti]; nen = nn @ n3; d_ = np.einsum("ij,ij->i", np.asarray(nb.triangles[:, 0])[ti] - S0[ri], nn) / np.where(np.abs(nen) < 1e-12, 1e-12, nen); zu[ri[(d_ >= 0) & (d_ < angebaut + 0.3)]] = True
+            frei &= ~cv2.resize(zu.reshape(ii.shape).astype(np.uint8), (Wn, Hn), interpolation=cv2.INTER_NEAREST).astype(bool)
+        except Exception as e: print(f"    Nachbarpruefung ausgefallen ({type(e).__name__}: {str(e)[:120]})", flush=True)
+    return wand, frei, z1
+
+
+def nachbarn_stl(objekt_json, rd):
+    """LoD2-Nachbarn als STL im Massstab des Objekt-STL (fuer die Verdeckungspruefung von steine_aus_foto.py --stl). '' ohne LoD2."""
+    nb = lod2_netze(objekt_json)[1]
+    if nb is None: return ""
+    f = os.path.join(rd, "nachbarn_lod2.stl"); m = nb.copy(); m.apply_scale(1000.0 / float(json.load(open(objekt_json)).get("stl_massstab", 87))); m.export(f); return f
+
+
+def loecher_glatt(rel, zu, max_m2, px):
+    """Kleine Loecher (rel == 0, nicht Oeffnung, in der Wand) aus der Umgebung auffuellen (gewichtetes Mittel, 15 cm) - fuer Waende OHNE Quaderwerk statt generierter Steine."""
+    import cv2
+    from scipy import ndimage as ndi
+    lab, m = ndi.label(zu)
+    if not m: return rel, 0.0
+    gr = ndi.sum(zu, lab, np.arange(1, m + 1)) * px * px; klein = np.isin(lab, 1 + np.flatnonzero(gr < max_m2)); da = (rel != 0.0).astype(np.float32); neu = rel.copy()
+    for _ in range(8):                                                    # von den Raendern nach innen
+        offen = klein & (da == 0)
+        if not offen.any(): break
+        g = cv2.GaussianBlur(neu * da, (0, 0), 3.0); wg = cv2.GaussianBlur(da, (0, 0), 3.0); ok = offen & (wg > 0.05); neu[ok] = (g[ok] / wg[ok]); neu[ok & (neu == 0.0)] = 1e-4; da[ok] = 1.0
+    return neu.astype(np.float32), float(klein.mean())
+
+
 def anbauen(koerper, objekt_json, tiefe=0.4):
     """Fuer Generatoren: alle relief/*_voll.npz der Fassaden-Kette als Platten anfuegen, begrenzt auf die nach aussen verschobene Koerperhuelle."""
     sys.path.insert(0, HIER); from relief_einsatz import koerper as relief_koerper
@@ -61,8 +132,8 @@ def anbauen(koerper, objekt_json, tiefe=0.4):
         if not w.get("nur_foto"): koerper = koerper + (relief_koerper(f, tiefe=tiefe, trend=True, tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else [])) ^ hu)
         if hat_foto: koerper = koerper + (relief_koerper(ff, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu); belege.append(dict(seite="wand", element=f"Quader mit Fugen aus dem Foto, Fassade {w['name']} ab z {w['foto_feld'][2]:.0f} m", quelle="tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)", steine=w.get("foto_steine"), hinweis="Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen"))
         if tf: koerper = koerper + (relief_koerper(fm, tiefe=tiefe, trend=True) ^ hu)                 # lokale Feinrechnung (tools/tiefe_lokal.py + relief_mischen.py) vor dem groben Relief
-        belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} (Fassaden-Kette)", quelle="Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (" + ", ".join(w.get("fotos", [])[:3]) + "); Loecher generiert",
-                           generiert_anteil=w.get("generiert"), hinweis="Scan-Relief, kein Mass; generierte Steine = ANNAHME"))
+        belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} (Fassaden-Kette)", quelle=("Netz der dichten Wolke (Hoehenbild 5 cm), roh: das Foto zeigt kein Quaderwerk (Quader-Tor), kleine Loecher glatt gefuellt" if w.get("quader") is False else "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (" + ", ".join(w.get("fotos", [])[:3]) + "); Loecher generiert"),
+                           generiert_anteil=w.get("generiert"), hinweis="Scan-Relief, kein Mass" + ("" if w.get("quader") is False else "; generierte Steine = ANNAHME")))
     return koerper, belege
 
 
@@ -72,19 +143,59 @@ def main():
     ap.add_argument("--fotosteine", action="store_true", help="Stufe 5c: Quader mit Fugen aus dem besten Foto oberhalb --foto_ab (tools/steine_aus_foto.py --foto auto)"); ap.add_argument("--foto_ab", type=float, default=10.0); ap.add_argument("--nachbar_stl", default="", help="STL der Nachbarobjekte fuer die Verdeckung"); ap.add_argument("--fein", nargs=2, metavar=("SPARSE", "BILDER"), help="je Wand zusaetzlich die lokale Feinrechnung der Tiefe fuer die Steinzone (tools/tiefe_lokal.py, GPU, ~11 min je Wand) und relief_mischen.py"); ap.add_argument("--fein_max_size", default="3200"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); rd = os.path.join(od, "relief"); os.makedirs(rd, exist_ok=True)
     W = [dict(name=w[0], a=[float(w[1]), float(w[2])], b=[float(w[3]), float(w[4])], aussen=[float(w[5]), float(w[6])], z1=float(w[7])) for w in a.wand] or waende_aus_lod2(od, a.min_laenge)
+    abstuerze = []                                                        # 17.11.2026 (Durchsicht, nur Rueckgabecode/Meldung): Abstuerze der Teilwerkzeuge wurden wie 'kein Putz'/'kein Ergebnis' behandelt und verschwanden
+    def absturz_merken(r, cmd):                                           # Absturz = Python-Traceback oder vom System beendet; rc 1-4 mit eigener Meldung ('kein Putz gefunden', 'ABBRUCH: ...') bleibt ein regulaeres 'geht nicht'
+        if r.returncode < 0 or (r.returncode != 0 and "Traceback (most recent call last)" in (r.stderr or "")):
+            t_ = f"{os.path.basename([c_ for c_ in cmd if str(c_).endswith('.py')][0])}: " + (f"vom System beendet (Signal {-r.returncode})" if r.returncode < 0 else (r.stderr.strip().splitlines() or ["?"])[-1][:200])
+            abstuerze.append(t_); print("    FEHLER (Werkzeug abgestuerzt, NICHT 'kein Ergebnis'):", t_, flush=True)
     def lauf(cmd):
-        r = subprocess.run([PY, "-W", "ignore", "-I"] + cmd, capture_output=True, text=True); z = (r.stdout.strip().splitlines() or [r.stderr.strip()[-200:]])[-1]; print("   ", z[:200], flush=True); return r.returncode
+        r = subprocess.run([PY, "-W", "ignore", "-I"] + cmd, capture_output=True, text=True); z = (r.stdout.strip().splitlines() or [r.stderr.strip()[-200:]])[-1]; print("   ", z[:200], flush=True); absturz_merken(r, cmd); return r.returncode
+    nb_stl = nachbarn_stl(a.objekt, rd) if not a.wand else ""            # 17.11.2026: LoD2-Nachbarn als Verdecker der Fotostufe (am Kaufhaus zeigte das "beste Foto" der Ostwand das Nachbarhaus davor)
     for w in W:
         A = np.array(w["a"]); Bp = np.array(w["b"]); L = float(np.linalg.norm(Bp - A)); t = (Bp - A) / L; n = np.array([t[1], -t[0]]); n = n if (np.array(w["aussen"]) - A) @ n > 0 else -n
+        for q_ in ("_putz", "_voll", "_foto", "_tor"):                   # 17.11.2026: eigene Ergebnisse eines FRUEHEREN Laufs dieser Wand weg, bevor neu gerechnet wird - sonst liegen neben einer Wand, die jetzt 'aus' ist,
+            for e_ in (".npz", ".jpg"):                                  # noch alte Bilder (kaufhaus_gk: w07_foto.jpg mit dem Nachbarhaus als "Quader"). _misch (lokale Feinrechnung, teuer) bleibt.
+                if os.path.exists(os.path.join(rd, w["name"] + q_ + e_)): os.remove(os.path.join(rd, w["name"] + q_ + e_))
+        wf = wand_flaeche(a.objekt, A, Bp, n, a.px) if not a.wand else None      # nur fuer LoD2-Kanten; --wand = gemessene Wandgerade mit eigener Hoehe
+        if wf is not None:
+            w["z1_first"] = w["z1"]; w["z1"] = round(wf[2], 2); w["wand_m2"] = round(float(wf[0].sum()) * a.px ** 2, 1); w["frei_m2"] = round(float(wf[1].sum()) * a.px ** 2, 1)
+            if wf[1].sum() < max(0.1 * wf[0].sum(), 2.0 / a.px ** 2):
+                w["aus"] = f"Brandwand: von {w['wand_m2']} m2 Wandflaeche (LoD2) nur {w['frei_m2']} m2 frei, davor steht ein Nachbargebaeude (LoD2 < 1 m)"; w["fotos"] = []; w["laenge"] = round(L, 2); print(f"WAND {w['name']}: {L:.1f} m - AUS: {w['aus']}", flush=True); continue
         fotos, bew = fotos_fuer_wand(od, A, Bp, n, 0.0, w["z1"]); w["fotos"] = fotos; w["laenge"] = round(L, 2); print(f"WAND {w['name']}: {L:.1f} m, z bis {w['z1']:.1f}, Fotos {[(f[-12:], round(s_)) for s_, _, f in bew]}", flush=True)
         r0 = os.path.join(rd, w["name"] + ".npz"); r1 = os.path.join(rd, w["name"] + "_putz.npz"); r2 = os.path.join(rd, w["name"] + "_voll.npz")
         rc = lauf([os.path.join(HIER, "relief_einsatz.py"), a.netz, r0, "--ecke_a", *map(str, w["a"]), "--ecke_b", *map(str, w["b"]), "--aussen", *map(str, w["aussen"]), "--feld", "0.1", str(round(L - 0.1, 2)), "0", str(w["z1"]), "--px", str(a.px), "--klemme", "-0.10", "0.15"])
         leer = bool(rc) or not os.path.exists(r0) or float(np.load(r0)["lochanteil"]) > 0.6
+        def wand_eintragen(f_):                                           # Wandmaske ins Relief: ausserhalb (Dach, Himmel, angebauter Nachbar) kein Relief; steine_aus_foto.py liest 'wand'
+            Z_ = dict(np.load(f_)); H_, W_ = Z_["rel"].shape; m_ = np.zeros((H_, W_), bool); h_ = min(H_, wf[1].shape[0]); b_ = min(W_, wf[1].shape[1]); m_[H_ - h_:, :b_] = wf[1][wf[1].shape[0] - h_:, :b_]
+            Z_["rel"] = np.where(m_, Z_["rel"], 0.0).astype(np.float32); Z_["wand"] = m_; Z_["oeffnung"] = Z_["oeffnung"] & m_; np.savez_compressed(f_, **Z_); return Z_, m_
+        if wf is not None and not rc and os.path.exists(r0):              # 17.11.2026: Lochanteil nur INNERHALB der freien Wandflaeche und ohne Oeffnungen (Arkaden, Tore sind kein fehlendes Netz)
+            Z_, m_ = wand_eintragen(r0); zaehl = m_ & ~Z_["oeffnung"]; w["loch_wand"] = round(float(((Z_["rel"] == 0.0) & zaehl).sum() / max(zaehl.sum(), 1)), 3); leer = w["loch_wand"] > 0.6
+            print(f"    Wandflaeche (LoD2) {w['wand_m2']} m2 bis z {w['z1']:.1f}, frei {w['frei_m2']} m2; Loecher in der freien Wand ohne Oeffnungen {w['loch_wand'] * 100:.0f} %", flush=True)
         if leer:                                                          # 16.11.2026 (Haertetest ober_tvdr): Netz deckt die Wand nicht -> frueher AUS. Jetzt: leeres Relief als Traeger, Putz und Steine NUR aus Fotos (Stufe 5c ab Boden)
             w["netz"] = "deckt die Wand nicht"; print("    Netz deckt die Wand nicht - nur Fotostufe", flush=True)
             if not a.fotosteine or not fotos or lauf([os.path.join(HIER, "relief_einsatz.py"), "-", r0, "--ecke_a", *map(str, w["a"]), "--ecke_b", *map(str, w["b"]), "--aussen", *map(str, w["aussen"]), "--feld", "0.1", str(round(L - 0.1, 2)), "0", str(w["z1"]), "--px", str(a.px)]) != 0: w["aus"] = "kein Netz, keine Fotostufe"; continue
+            if wf is not None: wand_eintragen(r0)
         Z = np.load(r0); w["loch"] = round(float(Z["lochanteil"]), 3); w["oeffnung"] = round(float(Z["oeffnung"].mean()), 3)
         quelle = r0
+        # 17.11.2026 QUADER-TOR VOR Putzglaetten und Steine-Generieren: beide Stufen setzen einen Putzbau mit Werkstein voraus (Schwabentor). Am Kaufhaus (roter Putz) erklaerte relief_putz 90 % der Wand zu "Stein"
+        # und steine_generieren ueberschrieb Fenster und Figuren des echten Netz-Reliefs mit erfundenen Kissen (30 % der Flaeche). Probe: steine_aus_foto.py auf der ganzen Wand (bestes Foto, Verdeckung gegen
+        # Modell + LoD2-Nachbarn); rc 5 = das Foto zeigt KEIN Fugenraster -> Netz-Relief bleibt roh (nur kleine Loecher glatt gefuellt), keine Fotosteine. rc 0 = Quaderwerk -> Ablauf wie bisher.
+        # Anderer Ausgang (kein Foto, kein Gegenfoto, zu grob) = unbekannt -> Ablauf wie bisher.
+        stl_ = os.path.join(os.path.dirname(os.path.dirname(od)), json.load(open(a.objekt))["stl"]); verd = ",".join(q_ for q_ in (stl_, nb_stl, a.nachbar_stl) if q_); rpr = os.path.join(rd, w["name"] + "_tor.npz")
+        if a.fotosteine and os.path.exists(stl_):
+            rc_t = lauf([os.path.join(HIER, "steine_aus_foto.py"), r0, rpr, "-", "0", "-", "--foto", "auto", "--objekt", a.objekt, "--stl", verd, "--feld", "0.1", str(round(L - 0.1, 2)), "0", str(w["z1"]), "--px", "0.03", "--nah", "0", "--streng"] + (["--massstab", *a.massstab] if a.massstab else []))
+            w["quader"] = True if rc_t == 0 else (False if rc_t == 5 else None)
+            for q_ in (rpr, rpr[:-4] + ".jpg"):
+                if os.path.exists(q_) and rc_t != 0: os.remove(q_)
+        if w.get("quader") is False:
+            if leer: w["aus"] = "kein Netz in der Wand und kein Quaderwerk im Foto (Quader-Tor) - nichts zu tun"; print("    AUS:", w["aus"], flush=True); continue
+            Zr = dict(np.load(r0)); zu = (Zr["rel"] == 0.0) & ~Zr["oeffnung"] & (Zr["wand"] if "wand" in Zr else True); Zr["rel"], w["gefuellt"] = loecher_glatt(Zr["rel"], zu, 1.5, a.px); w["gefuellt"] = round(w["gefuellt"], 3); w["generiert"] = 0.0
+            Zr["generiert_anteil"] = 0.0; np.savez_compressed(r2, **Zr); print(f"    kein Quaderwerk im Foto: Netz-Relief roh, kleine Loecher glatt gefuellt ({w['gefuellt'] * 100:.1f} % der Flaeche), keine generierten Steine", flush=True)
+            import cv2; lx = np.gradient(Zr["rel"], a.px, axis=1); lz = np.gradient(Zr["rel"], a.px, axis=0); im_ = cv2.cvtColor((np.clip(0.7 - 0.5 * lx + 0.7 * lz, 0, 1) * 255).astype(np.uint8), cv2.COLOR_GRAY2BGR); im_[Zr["rel"] == 0.0] = (0, 0, 255)
+            cv2.imwrite(r2[:-4] + ".jpg", cv2.resize(im_, None, fx=3, fy=3, interpolation=cv2.INTER_NEAREST))
+            for q_ in (r1, r1[:-4] + ".jpg", os.path.join(rd, w["name"] + "_foto.npz"), os.path.join(rd, w["name"] + "_foto.jpg")):      # Reste eines frueheren Laufs (Putzmaske/Fotosteine) gelten nicht mehr
+                if os.path.exists(q_): os.remove(q_)
+            continue
         if fotos and lauf([os.path.join(HIER, "relief_putz.py"), r0, r1, a.objekt, *fotos, "--feld", "0", str(L), "0", str(w["z1"])] + (["--massstab", *a.massstab] if a.massstab else [])) == 0:
             quelle = r1; w["putz"] = round(float(np.load(r1)["putz"].mean()), 3)
         if leer:
@@ -94,8 +205,8 @@ def main():
         else: w["aus"] = "steine_generieren fehlgeschlagen"; continue
         fab = 0.0 if leer else a.foto_ab
         if a.fotosteine and "putz" in np.load(quelle).files and w["z1"] > fab + 2.0:      # 16.11.2026 Stufe 5c: oberhalb --foto_ab (Strassenfotos zu flach fuer brauchbares Scan-Relief) Quader/Gewaende/Baender
-            rfo = os.path.join(rd, w["name"] + "_foto.npz"); stl_ = os.path.join(os.path.dirname(os.path.dirname(od)), json.load(open(a.objekt))["stl"])                                 # mit Fugen aus dem BESTEN Foto, direkt auf der Wandebene, Verdeckung gegen das Modell + Gegenfoto (Baeume)
-            if os.path.exists(stl_) and lauf([os.path.join(HIER, "steine_aus_foto.py"), quelle, rfo, "-", "0", "-", "--foto", "auto", "--objekt", a.objekt, "--stl", stl_ + ("," + a.nachbar_stl if a.nachbar_stl else ""),
+            rfo = os.path.join(rd, w["name"] + "_foto.npz")                                 # mit Fugen aus dem BESTEN Foto, direkt auf der Wandebene, Verdeckung gegen das Modell + Gegenfoto (Baeume)
+            if os.path.exists(stl_) and lauf([os.path.join(HIER, "steine_aus_foto.py"), quelle, rfo, "-", "0", "-", "--foto", "auto", "--objekt", a.objekt, "--stl", verd,
                                               "--feld", "0.1", str(round(L - 0.1, 2)), str(fab), str(w["z1"]), "--px", "0.03", "--nah", "0", "--streng"] + (["--massstab", *a.massstab] if a.massstab else [])) == 0 and os.path.exists(rfo):
                 w["foto_feld"] = [0.0, round(L, 2), fab, round(float(w["z1"]), 2)]; w["foto_steine"] = int(np.load(rfo)["steine"])
         if leer:
@@ -109,11 +220,15 @@ def main():
             if z1f >= 2.0:
                 feld = ["0.1", str(round(L - 0.1, 2)), "0", str(z1f)]; rf_ = subprocess.run(["/media/oem/scan/venv-colmap/bin/python", "-I", os.path.join(HIER, "tiefe_lokal.py"), a.objekt, a.fein[0], a.fein[1], "--name", w["name"] + "_fein", "--a", *map(str, w["a"]), "--b", *map(str, w["b"]),
                                                                                                            "--aussen", *map(str, w["aussen"]), "--feld", *feld, "--max_size", a.fein_max_size] + (["--massstab", *a.massstab] if a.massstab else []), capture_output=True, text=True)
-                print("   ", (rf_.stdout.strip().splitlines() or [rf_.stderr.strip()[-200:]])[-1][:200], flush=True); rfe = os.path.join(rd, w["name"] + "_fein.npz")
+                print("   ", (rf_.stdout.strip().splitlines() or [rf_.stderr.strip()[-200:]])[-1][:200], flush=True); absturz_merken(rf_, [os.path.join(HIER, "tiefe_lokal.py")]); rfe = os.path.join(rd, w["name"] + "_fein.npz")
                 if rf_.returncode == 0 and os.path.exists(rfe) and lauf([os.path.join(HIER, "relief_mischen.py"), rfe, r2, os.path.join(rd, w["name"] + "_misch.npz")]) == 0:
                     w["fein_feld"] = [0.0, round(L, 2), 0.0, round(z1f - 0.1, 2)]; w["fein_anteil"] = round(float(np.load(os.path.join(rd, w["name"] + "_misch.npz"))["fein"].mean()), 3)
     os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(dict(netz=a.netz, waende=W), open(os.path.join(od, "audit", "fassaden_kette.json"), "w"), indent=1, ensure_ascii=False)
     print("->", os.path.join(od, "audit", "fassaden_kette.json"), "| ANSEHEN: relief/<wand>_voll.jpg")
+    n_rel = sum(1 for w in W if not w.get("aus"))                         # 17.11.2026 (Durchsicht): die Stufe endete IMMER mit rc 0 - auch ohne ein einziges Relief und nach Abstuerzen der Teilwerkzeuge
+    if abstuerze: print(f"FEHLER: {len(abstuerze)} Teilwerkzeug-Absturz/Abstuerze (Ergebnis der betroffenen Waende unvollstaendig): " + " | ".join(abstuerze[:4]), flush=True); return 3
+    if n_rel == 0: print(f"FEHLER: KEIN Relief fuer irgendeine der {len(W)} Waende (alle 'aus': " + "; ".join(sorted({str(w.get('aus')) for w in W}))[:300] + ") - die Stufe hat nichts geliefert", flush=True); return 2
+    return 0
 
 
 if __name__ == "__main__":

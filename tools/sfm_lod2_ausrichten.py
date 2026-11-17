@@ -103,6 +103,40 @@ def gps_massstab(ims, C, obj, od, fotos=""):
     return float(q50)
 
 
+def loesung_index(loesung, n, schreiben):
+    """Welche der n unterscheidbaren Loesungen wird geschrieben, und mit welchem rc endet der Lauf? -> (Index oder None, rc).
+    17.11.2026 (Durchsicht): der Korrekturkreislauf der Kette ruft --loesung 1, 2, ... --schreiben, bis die Lage-Tore bestehen. Fiel auch die letzte durch, blieb SIE liegen
+    (Ausrichtung, Wolke) - nicht die beste (Loesung 0); ein spaeterer Einstieg '--ab tore' pruefte dann die durchgefallene als Ausgangslage und Loesung 0 nie wieder.
+    Jetzt: gibt es Loesung K nicht mehr (rc 5 = alle probiert), wird vor dem Ende Loesung 0 zurueckgeschrieben. OFFEN bleibt der Fall 'mehr Loesungen als --max-loesung der Kette':
+    dort endet der Kreislauf ohne rc 5 - die Kette muesste dann selbst noch einmal --loesung 0 --schreiben rufen (in der Datei steht transformation.loesung_nr)."""
+    if loesung < n: return loesung, 0
+    return (0 if (schreiben and loesung > 0 and n > 0) else None), 5
+
+
+def ergebnis_schreiben(od, sfx, usfx, out, Pm, FARBEN):
+    """Ausrichtung + Wolke + Farben als EIN Stand: erst alles vollstaendig neben das Ziel schreiben, dann umbenennen (Wolke, Farben, zuletzt die JSON als Marke).
+    17.11.2026 (Durchsicht): vorher JSON zuerst (`json.dump(out, open(pth, "w"))` - ein nicht schreibbarer Wert liess eine abgeschnittene Ausrichtung zurueck), dann die Wolke:
+    ein Abbruch dazwischen (volle Platte, Zeitlimit der Kette) hinterliess die NEUE Ausrichtung mit der ALTEN Wolke - das Grundriss-Tor pruefte dann die alte Lage.
+    Verknuepfungen (grosse Daten liegen auf der Datenplatte) bleiben erhalten: geschrieben wird neben das wirkliche Ziel."""
+    text = json.dumps(out, indent=1, ensure_ascii=False); json.loads(text)                     # erst wandeln: scheitert das, ist noch nichts angefasst
+    os.makedirs(os.path.join(od, "messprotokoll"), exist_ok=True); os.makedirs(os.path.join(od, "sfm"), exist_ok=True)   # 15.11.: neues Objekt der Gesamtkette hat keinen sfm-Ordner
+    wirklich = lambda q: os.path.realpath(q) if os.path.islink(q) else q
+    pth = wirklich(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG{sfx}.json")); pw = wirklich(os.path.join(od, "sfm", f"punkte_modell{usfx}.npy")); pf = wirklich(os.path.join(od, "sfm", f"punkte_farben{usfx}.npy"))
+    neu = lambda q: f"{q}.neu{os.getpid()}"; fertig = []
+    try:
+        for q, feld in ((pw, Pm), (pf, FARBEN)):
+            with open(neu(q), "wb") as f: np.save(f, feld); f.flush(); os.fsync(f.fileno())
+            fertig.append(q)
+        with open(neu(pth), "w") as f: f.write(text); f.flush(); os.fsync(f.fileno())
+        fertig.append(pth)
+        for q in (pw, pf, pth): os.replace(neu(q), q)
+    except BaseException:
+        for q in (pw, pf, pth):
+            if os.path.exists(neu(q)): os.remove(neu(q))
+        raise
+    return pth
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--sparse", default=None); ap.add_argument("--name", default=""); ap.add_argument("--schreiben", action="store_true")
     ap.add_argument("--fit_punkte", type=int, default=600000, help="dichte Wolke: Zufallsauswahl fuer die Anpassung (7 Parameter)")
@@ -361,9 +395,16 @@ def main():
     for l in loes:                                                                              # unterscheidbare Lagen (Korrekturkreislauf: Loesung K probieren, Tore entscheiden)
         if all(np.degrees((Rot.from_rotvec(l[2][1:4]).inv() * Rot.from_rotvec(v[2][1:4])).magnitude()) > 10 or np.linalg.norm(np.asarray(l[2][4:7]) - np.asarray(v[2][4:7])) > 3 for v in _verschieden):
             _verschieden.append(l)
-    if a.loesung >= len(_verschieden): print(f"KEINE_LOESUNG {a.loesung}: nur {len(_verschieden)} unterscheidbare Loesungen"); sys.exit(5)
-    if a.loesung: print(f"Korrekturkreislauf: nehme unterscheidbare Loesung {a.loesung} von {len(_verschieden)} (Guete {100 * _verschieden[a.loesung][0]:.1f} % statt {100 * loes[0][0]:.1f} %)")
-    guete, rms, p, ok, frac, ab = _verschieden[a.loesung]
+    i_loes, rc_ende = loesung_index(a.loesung, len(_verschieden), a.schreiben)
+    if rc_ende == 5 and i_loes is not None:                                                     # liegt schon Loesung 0 auf der Platte (es gab nur eine), nichts neu schreiben
+        try: _nr_alt = json.load(open(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG{('-' + a.name) if a.name else ''}.json")))["transformation"].get("loesung_nr", 0)
+        except Exception: _nr_alt = None
+        if _nr_alt == 0: i_loes = None
+    if rc_ende == 5:
+        print(f"KEINE_LOESUNG {a.loesung}: nur {len(_verschieden)} unterscheidbare Loesungen" + (" - schreibe Loesung 0 (beste Guete) ZURUECK, damit nicht die zuletzt probierte, durchgefallene liegen bleibt" if i_loes is not None else ""), flush=True)
+        if i_loes is None: sys.exit(5)
+    elif a.loesung: print(f"Korrekturkreislauf: nehme unterscheidbare Loesung {a.loesung} von {len(_verschieden)} (Guete {100 * _verschieden[a.loesung][0]:.1f} % statt {100 * loes[0][0]:.1f} %)")
+    guete, rms, p, ok, frac, ab = _verschieden[i_loes]
     # Bootstrap: Massstab-/Lage-Streuung aus Teilstichproben
     rng = np.random.default_rng(1); bs = []
     for _ in range(8):
@@ -393,17 +434,16 @@ def main():
                            k=[float(v) for v in pr[3:]] if cam.model.name in ("SIMPLE_RADIAL", "RADIAL") else [], bild_b=cam.width, bild_h=cam.height, hinweis="f/cx/cy in SfM-Bildpixeln (fak nicht bestimmt)")
         out = dict(verfahren="sfm_lod2_ausrichten.py (ohne Picks: Kameraebene -> Lot, LoD2-Wandlinien -> Grob, Punkt-zu-Flaeche LoD2+DGM1 -> Fein)", sparse=a.sparse, fotos_sfm=sorted(kam), fotos_mit_picks=[],
                    transformation=dict(beschreibung="X_sfm = s * R @ X_modell + t ; Modellsystem = objekt.json rahmen (anker3d.json)", s=s, s_sigma_prozent=float(s_sig), rvec=Rot.from_matrix(R_s).as_rotvec().tolist(),
-                                       t=t_s.tolist(), t_sigma_m=t_sig.tolist(), inlier_anteil=float(frac), rms_m=float(rms), zweitbeste_inlier=float(zweit), mehrdeutig=mehrdeutig, loesung_nr=a.loesung, loesungen_unterscheidbar=len(_verschieden)),
+                                       t=t_s.tolist(), t_sigma_m=t_sig.tolist(), inlier_anteil=float(frac), rms_m=float(rms), zweitbeste_inlier=float(zweit), mehrdeutig=mehrdeutig, loesung_nr=i_loes, loesungen_unterscheidbar=len(_verschieden)),
                    ziel=dict(lod2_gebaeude=nb, radius_m=a.radius, boden=gq), kameras=kam,
                    kamerahoehen=dict(median=float(np.median(hz)), auf_strassenniveau=int(np.sum((hz > -1) & (hz < 6))), n=len(hz)),
                    wolke=dict(n=len(Pm), z_p1=float(np.percentile(Pm[:, 2], 1)), z_p999=float(np.percentile(Pm[:, 2], 99.9))), annahmen=dict(kamerahoehe=dict(h0=a.kamerahoehe[0], sigma=a.kamerahoehe[1], gewicht=a.kamera_gewicht, hinweis="ANNAHME Strassenfotos, robuste Bedingung (Huber)")))
-        os.makedirs(os.path.join(od, "messprotokoll"), exist_ok=True); pth = os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG{sfx}.json"); json.dump(out, open(pth, "w"), indent=1, ensure_ascii=False); print("geschrieben:", pth)
-        os.makedirs(os.path.join(od, "sfm"), exist_ok=True); os.makedirs(os.path.join(od, "messprotokoll"), exist_ok=True)   # 15.11.: neues Objekt der Gesamtkette hat keinen sfm-Ordner
-        np.save(os.path.join(od, "sfm", f"punkte_modell{usfx}.npy"), Pm); np.save(os.path.join(od, "sfm", f"punkte_farben{usfx}.npy"), FARBEN)
+        pth = ergebnis_schreiben(od, sfx, usfx, out, Pm, FARBEN); print("geschrieben:", pth, "+ sfm/punkte_modell, punkte_farben (ein Stand, atomar)")
         try:
             sim = pycolmap.Sim3d(1.0 / s, pycolmap.Rotation3d(Rm), tm - Rm @ cm / s); rec.transform(sim); ziel = os.path.join(od, "sfm", f"sparse_modell{usfx}"); os.makedirs(ziel, exist_ok=True); rec.write(ziel)
             print("geschrieben:", ziel, "(COLMAP-Modell im Modellsystem, Meter)")
         except Exception as e: print("sparse_modell nicht geschrieben:", type(e).__name__, e)
+    if rc_ende: sys.exit(rc_ende)
 
 
 if __name__ == "__main__":

@@ -10,7 +10,10 @@ Pruefungen (Telefon-GPS streut in Gassen 10-30 m, darum nur grobe Fehler):
   2. Aehnlichkeitsfit Kamera -> GPS (getrimmt, Bootstrap): Drehung und Massstab; WARNUNG, wenn das 90-%-Band 0 Grad bzw. 1,0 ausschliesst
      UND |Drehung| > --max_dreh (15 Grad) bzw. |Massstab-1| > --max_skala (0,15)
   3. Fernfotos (GPS > --nah m): Entfernungsverhaeltnis GPS/Modell und Richtungsfehler (Massstab-/Drehhinweis mit langem Hebel)
-Rueckgabe: 0 ok / zu wenig GPS (Hinweis), 3 = Lage widerspricht dem GPS. Ausgabe audit/lage_gps.json.
+Rueckgabe: 0 = passt ODER nicht geprueft (unter 10 GPS-Fotos; Hinweis), 3 = Lage widerspricht dem GPS, 4 = Fotos nicht gefunden. Ausgabe audit/lage_gps.json.
+17.11.2026 (Durchsicht): "zu wenig GPS" war am rc nicht von "passt" zu unterscheiden. Der rc bleibt 0 (sonst koennte kein Objekt ohne GPS-Fotos - Commons, Video - je die Lage-Tore
+der Kette bestehen), aber: Ausgabezeile "NICHT GEPRUEFT (GPS-Tor)" und in lage_gps.json `geprueft: false`, `ergebnis: "nicht geprueft: ..."`; bei einem Urteil `geprueft: true`.
+Wer den Lagebeleg braucht, liest `geprueft` - rc 0 allein ist KEIN unabhaengiger Beleg der Lage.
 """
 import math, sys, os, json, glob, argparse, importlib.util
 import numpy as np
@@ -61,9 +64,9 @@ def main():
     if len(G) < 10:
         erg["fotos_gefunden"] = gefunden
         if gefunden < 0.5 * len(kam):                                          # 15.11.: Tor bestand STUMM, weil die Fotos nicht gefunden wurden (v2: 0 von 494) -> laut scheitern
-            print(f"FEHLER: nur {gefunden} von {len(kam)} Kamerafotos in {fd} gefunden - GPS-Tor NICHT geprueft (--fotos setzen)"); erg["ergebnis"] = "fotos nicht gefunden"
+            print(f"FEHLER: nur {gefunden} von {len(kam)} Kamerafotos in {fd} gefunden - GPS-Tor NICHT geprueft (--fotos setzen)"); erg["ergebnis"] = "fotos nicht gefunden"; erg["geprueft"] = False
             os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(erg, open(os.path.join(od, "audit", "lage_gps.json"), "w"), indent=1); return 4
-        print(f"HINWEIS: nur {len(G)} Fotos mit GPS ({gefunden} Fotos gefunden, ohne GPS-EXIF) - keine Pruefung"); erg["ergebnis"] = "zu wenig GPS"
+        print(f"NICHT GEPRUEFT (GPS-Tor): nur {len(G)} Fotos mit GPS ({gefunden} Fotos gefunden, Rest ohne GPS-EXIF; noetig 10) - KEIN Urteil ueber die Lage, das ist kein 'bestanden' (rc 0 nur als Hinweis)"); erg["ergebnis"] = "nicht geprueft: zu wenig GPS"; erg["geprueft"] = False
         os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(erg, open(os.path.join(od, "audit", "lage_gps.json"), "w"), indent=1); return 0
     M = np.array(M, float)
     if korr is not None: M = np.asarray(korr(M), float)
@@ -77,11 +80,12 @@ def main():
     _dm = np.hypot(*(MU - np.median(MU, 0)).T); w = _dm <= np.percentile(_dm, 75)   # 15.11.: Start nur mit dem Kamerakern - einzelne km-weit versetzte Kameras (globaler Mapper) kippten den Fit (Drehung -140 Grad, Massstab 0,016 bei richtiger Lage)
     for _ in range(5):
         if w.sum() < 3 or not np.isfinite(MU[w]).all():                       # 15.11.: Absturz (SVD) statt Urteil bei entarteter Lage -> als Widerspruch werten
-            print("WARNUNG: GPS-Fit nicht moeglich (zu wenige vertraegliche Kameras) - Lage widerspricht dem GPS"); erg["ergebnis"] = "fit nicht moeglich"
+            print("WARNUNG: GPS-Fit nicht moeglich (zu wenige vertraegliche Kameras) - Lage widerspricht dem GPS"); erg["ergebnis"] = "fit nicht moeglich"; erg["geprueft"] = True
             os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(erg, open(os.path.join(od, "audit", "lage_gps.json"), "w"), indent=1); return 3
         try: s, R, t = fit2d(MU[w], G[w])
         except np.linalg.LinAlgError:
-            print("WARNUNG: GPS-Fit konvergiert nicht - Lage widerspricht dem GPS"); return 3
+            print("WARNUNG: GPS-Fit konvergiert nicht - Lage widerspricht dem GPS"); erg["ergebnis"] = "fit konvergiert nicht"; erg["geprueft"] = True      # 17.11.2026: hier blieb die lage_gps.json eines frueheren Laufs liegen
+            os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(erg, open(os.path.join(od, "audit", "lage_gps.json"), "w"), indent=1); return 3
         res = np.hypot(*(MU @ R.T * s + t - G).T); w = res < max(np.percentile(res, 80), 15)
     rng = np.random.default_rng(0); ys, ss = [], []
     iw = np.flatnonzero(w)
@@ -99,7 +103,7 @@ def main():
         print(f"3 Fernfotos (n {fe['n']}): Entfernung GPS/Modell {fe['entfernung_gps_durch_modell']:.2f}, Richtungsfehler {fe['richtungsfehler_grad']:.0f} Grad")
         if abs(fe["entfernung_gps_durch_modell"] - 1) > a.max_skala: warn.append(f"Fernfotos: Entfernung x{fe['entfernung_gps_durch_modell']:.2f}")
         if abs(fe["richtungsfehler_grad"]) > a.max_dreh: warn.append(f"Fernfotos: Richtung {fe['richtungsfehler_grad']:.0f} Grad daneben")
-    erg.update(median_abstand_m=d_med, gps_fit=dict(drehung_grad=winkel(R), drehung_90=[float(yb[0]), float(yb[2])], massstab=float(s),
+    erg.update(geprueft=True, median_abstand_m=d_med, gps_fit=dict(drehung_grad=winkel(R), drehung_90=[float(yb[0]), float(yb[2])], massstab=float(s),
                massstab_90=[float(sb[0]), float(sb[2])], rest_median_m=float(np.median(res[w]))), fernfotos=fe, warnungen=warn)
     os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(erg, open(os.path.join(od, "audit", "lage_gps.json"), "w"), indent=1, ensure_ascii=False)
     if warn:

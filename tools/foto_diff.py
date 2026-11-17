@@ -11,7 +11,12 @@ Anders als fehlteile_finden.py (Kantendichte je 1-m-Zelle, Ankerzone-Filter) ver
     FEHLT           : Fotokante ohne Modellkante in der Naehe
 Ausgabe: audit/foto_diff_<foto>.jpg (Foto + gruene = passende, ROTE = falsche/erfundene Modellkanten, GELBE = fehlende; Treffer nummeriert)
          + audit/foto_diff_<foto>_roi.jpg (je Treffer: Foto | Modell-Render nebeneinander) + .json; Beobachtungen automatisch in der Masstabelle.
-Exit 0 immer (Bericht); mit --streng Exit 1, wenn Treffer in der Ankerzone liegen. Grenzen: Kamerafehler > tol erzeugt Doppelkanten (Versatz-Hinweis im Bericht);
+Exit 0 = gelaufen (Bericht, KEIN Urteil); mit --streng Exit 1, wenn Treffer in der Ankerzone liegen; Exit 2 = NICHT BEURTEILBAR (0 Modellkanten oder 0 Fotokanten im Bild -
+  17.11.2026: das stand als "Modellkanten ohne Foto 0.0 %" mit rc 0 da, z. B. schwab_v3 Foto 113852 am 15.11.; fuer Versuchsreihen abschaltbar mit FD_LEER_OK=1).
+NUR HINWEIS, KEIN TOR (Messreihe 17.11.2026, je 5 gleiche Fotos, Standardaufruf): Anteil Modellkanten ohne Foto schwab_v3 (gut) 0,04-0,22, schwab_auto (schlecht) 0,08-0,23,
+  absichtlich falsches Paar (Kamera von Foto i, Bild von Foto i+1) 0,19-0,36; Anteil Fotokanten ohne Modell 0,19-0,68 / 0,38-0,88 / 0,36-0,74; F1 daraus 0,47-0,85 / 0,21-0,68 / 0,39-0,68.
+  Keine feste Schwelle trennt gut von schlecht. Nur der PAARVERGLEICH auf demselben Foto traegt (richtiges gegen falsches Paar: 5 von 5 besser; schwab_v3 gegen schwab_auto: 4 von 5) -
+  ein Tor braucht also einen Bezugsstand je Foto (tools/teil_fotoform.py, Kreis), keine absolute Zahl. Feld 'beurteilbar' im Bericht. Grenzen: Kamerafehler > tol erzeugt Doppelkanten (Versatz-Hinweis im Bericht);
 Verdeckung (Baeume, Leitungen) erzeugt Scheintreffer -> ROI-Blatt ansehen; Treffer ausserhalb der Ankerzone sind als 'unsicher' markiert.
   /media/oem/scan/venv-seg/bin/python -W ignore -I tools/foto_diff.py modelle/<objekt>/objekt.json <foto> [--tol 0.35] [--laenge 0.8] [--top 10] [--streng]
 """
@@ -630,6 +635,7 @@ def main(argv=None):
     # Nur wenn der Versatz DEUTLICH ist (Gewinn >= 0,08) und |versatz_m| <= --versatz-max; sonst gleich den unkompensierten Werten. Der Versatz ist ein Stoerparameter je Foto-Modell-Paar.
     anw = bool(vs.get("deutlich") and vs.get("versatz_px") is not None and vs.get("versatz_m") is not None and abs(vs["versatz_m"]) <= a.versatz_max)
     erg["modellkanten_px"] = int(mk.sum()); erg["fotokanten_px"] = int(fk_i.sum()); erg["versatz_angewandt"] = anw; erg["versatz_max_m"] = a.versatz_max
+    erg["beurteilbar"] = bool(mk.any() and fk_i.any())                                             # 17.11.2026: 0 Modellkanten ergaben "0 % falsch" (rot 0.0) - das ist KEIN gutes Ergebnis, sondern keins
     if anw:
         vdx, vdy = vs["versatz_px"]; mk_s = _verschieben(mk, vdx, vdy) & ~occ
         if a.kanten != "netz": mk_s &= inner
@@ -648,6 +654,7 @@ def main(argv=None):
     json.dump(erg, open(os.path.join(out, f"foto_diff_{nr}.json"), "w"), indent=1, ensure_ascii=False)
     print(f"foto_diff {nr} ({quelle}): Modellkanten ohne Foto {100 * falsch.sum() / max(1, mk.sum()):.1f} %, Fotokanten ohne Modell {100 * fehlt.sum() / max(1, fk_i.sum()):.1f} %, Versatz {vs['versatz_m']} m {vs['versatz_px']} px (Gewinn {vs['gewinn']}{', DEUTLICH: Kamera oder Modell global versetzt' if vs['deutlich'] else ', nicht deutlich'}) -> {out}/foto_diff_{nr}.jpg")
     for k, d in enumerate(tr, 1): print(f"  {k:2d}. {d['art']:46s} {d['laenge_m']:5.1f} m  bei x={d['xyz'][0]} y={d['xyz'][1]} z={d['xyz'][2]}{'' if d['in_ankerzone'] else '  (ausserhalb Ankerzone: unsicher)'}")
+    if not erg["beurteilbar"]: print(f"FEHLER foto_diff {nr}: NICHT BEURTEILBAR - {int(mk.sum())} Modellkanten-Pixel, {int(fk_i.sum())} Fotokanten-Pixel im Bild (Kamera sieht das Modell nicht? Modell feiner als die Fotoglaettung? Foto leer?) - die Prozentzahlen oben sind KEIN Ergebnis", flush=True)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from masstabelle_io import aendern, auto_ersetzen
     def _e(tab):
         auto_ersetzen(tab, f"fotodiff-{nr}-"); neu = 0
@@ -665,4 +672,5 @@ def main(argv=None):
 
 if __name__ == "__main__":
     import gpu_slot; gpu_slot.belegen("foto_diff")   # gemeinsame GPU-Schlange (10.11.: >2-3 gleichzeitige GPU-Pruefungen = Einbruch)
-    main()
+    _erg = main()
+    if isinstance(_erg, dict) and _erg.get("beurteilbar") is False and os.environ.get("FD_LEER_OK") != "1": sys.exit(2)      # 17.11.2026: nichts geprueft ist nicht bestanden (main() selbst gibt weiter das Ergebnis zurueck - Aufrufer im selben Prozess unveraendert)

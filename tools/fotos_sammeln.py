@@ -23,8 +23,11 @@ def main():
     a = ap.parse_args(); os.makedirs(a.ziel, exist_ok=True)
     kand = []                                                              # (pfad, quelle, inlier, eigen)
     for d in a.eigen:
+        n_vor = len(kand)
         for p in sorted(glob.glob(os.path.join(d, "*"))):
             if p.lower().endswith((".jpg", ".jpeg", ".png")): kand.append((os.path.realpath(p), "eigen", None, True))
+        if len(kand) == n_vor:                                             # 17.11.2026: leerer/fehlender --eigen-Ordner (Platte nicht eingehaengt, falscher Pfad) loeschte unten alle Verknuepfungen des Sammelordners und endete mit rc 0
+            print(f"FEHLER: --eigen {d}: {'kein Bild (.jpg/.jpeg/.png)' if os.path.isdir(d) else 'Ordner fehlt'} - Sammelordner {a.ziel} bleibt UNVERAENDERT"); return 2
     for j in a.geprueft:
         for p, e in json.load(open(j))["bilder"].items():
             if e["inlier"] >= a.min_inlier: kand.append((os.path.realpath(p), os.path.dirname(p), e["inlier"], False))
@@ -49,6 +52,8 @@ def main():
             weg, bleibt = (j, i) if keep_i else (i, j)
             behalten[weg] = False; dubl.append(dict(weg=uniq[weg][0], bleibt=uniq[bleibt][0], abw=round(float(d[y]), 2)))
             if weg == i: break
+    if not behalten.any():                                                 # 17.11.2026: nichts zu sammeln (keine Quelle, kein Bild lesbar) = Fehler; die Verknuepfungen eines frueheren Laufs NICHT loeschen
+        print(f"FEHLER: kein Bild zu sammeln ({len(uniq)} Kandidaten, davon lesbar {len(ok)}) - Sammelordner {a.ziel} bleibt UNVERAENDERT"); return 2
     for f in glob.glob(os.path.join(a.ziel, "*")):
         if os.path.islink(f): os.remove(f)
     liste = []
@@ -65,7 +70,8 @@ def main():
     json.dump(dict(bilder=liste, dubletten=dubl, je_quelle=Counter(x["quelle"] for x in liste)), open(os.path.join(a.ziel, "sammlung.json"), "w"), indent=1, ensure_ascii=False)
     print(f"{len(liste)} Bilder ({len(dubl)} Dubletten entfernt) -> {a.ziel}")
     for q, n in Counter(x["quelle"] for x in liste).most_common(): print(f"  {n:4d}  {q}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

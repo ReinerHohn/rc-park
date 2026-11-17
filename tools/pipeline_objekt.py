@@ -11,8 +11,22 @@ Reihenfolge (Regel: Fotos zuerst, LOD2 nur als Abgleich):
 Ergebnis: <daten_ordner>/pipeline_bericht.json mit Status je Stufe. Eine Stufe, die ausfaellt, stoppt die Kette
 und wird im Bericht mit der Ursache festgehalten. Fehlt ein Eingang (z. B. Koordinate), wird die Stufe als OFFEN markiert.
 Aufruf (ueber GPU-Steuerung): JOB_GPU_MB=6000 tools/job_start.sh pipe_<objekt> <log> /media/oem/scan/venv-seg/bin/python -I tools/pipeline_objekt.py <objekt> <fotos> <daten>
+        [--stufe grob|schnell|fein] [--sfm-von DIR] [--neu sfm|dicht] [--ohne-abnahme]
+
+17.11.2026 (Durchsicht) - Zwischenstaende galten allein deshalb als gueltig, weil sie EXISTIEREN:
+  - Bildbestand: nach der SfM wird der Fotoordner mit der SfM-Datenbank verglichen. Bilder, die die SfM nie gesehen hat (neu gesammelt) oder die es nicht mehr gibt, stehen als
+    Zeile 'ACHTUNG Bildbestand' in Ausgabe und Bericht. Das Netz wird NICHT von selbst neu gerechnet (Stunden; nachregistrierte Fotos der Stufe 'seiten' liegen absichtlich im
+    Ordner, ohne im Netz zu sein - schwab_v3: 352). Neu rechnen: `--neu sfm` oder Umgebungsvariable RCPARK_PIPE_NEU=sfm (fuer Kettenlaeufe): sfm/, kameras.json und dicht/ werden
+    BEISEITEGELEGT (<name>.alt_<zeit>, nichts wird geloescht - Platz danach selbst freigeben), dann alles neu. `--neu dicht`: nur dicht/ und sfm/sparse_dicht.
+  - Abgeleitete Staende: kameras.json aelter als das Netz -> neu exportiert. Bildwahl/Tiefenkarten/fused.ply aelter als das Netz (jemand hat sfm/ entfernt und neu gerechnet):
+    FEHLER rc 3 statt stiller Mischung aus neuem Netz und alter Wolke (die Tiefenkarten galten allein ueber ihre ANZAHL als fertig) - mit `--neu dicht` neu rechnen.
+  - dichte Wolke: Pruefung an der Punktzahl im PLY-Kopf (vorher Datei > 0 Byte: eine fused.ply mit 0 Punkten hat 300 Byte Kopf und galt als OK).
+  - Abgleich gescheitert -> rc 5 und KEINE Abnahme (vorher rc 0; an martinstor_gk/kaufhaus_gk lief die Abnahme nach gescheitertem Abgleich).
+  - Abnahme: Objekte der Gesamtkette (objekt.json 'gesamtkette') werden hier NICHT gebaut - die Kette baut in ihrer Stufe 'bauen' NACH den Lage-Toren und dem Dach
+    (vorher lief bauen_abnehmen.sh schon in der Kettenstufe 'sfm', vor jedem Tor). Auch mit --ohne-abnahme.
 """
 import sys, os, json, glob, subprocess, time, re
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY_SEG = "/media/oem/scan/venv-seg/bin/python"
@@ -30,13 +44,61 @@ def stufe(bericht, name, status, detail):
     bericht["stufen"].append({"name": name, "status": status, "detail": detail})
     print(f"[{status}] {name}: {detail}", flush=True)
 
+BILD_ENDUNGEN = (".jpg", ".jpeg", ".png")
+
+
+def db_bilder(db):
+    """Namen aller Bilder, die die SfM gesehen hat (COLMAP-Datenbank, nur lesend); None, wenn es keine lesbare Datenbank gibt."""
+    if not os.path.exists(db): return None
+    try:
+        import sqlite3
+        c = sqlite3.connect(f"file:{db}?mode=ro", uri=True); n = {r[0] for r in c.execute("SELECT name FROM images")}; c.close(); return n
+    except Exception: return None
+
+
+def stand_pruefen(daten, fotos):
+    """Passen die Zwischenstaende unter `daten` zum Fotoordner und zueinander? Nur lesen. Rueckgabe dict:
+    neu/fehlend = Bilder im Ordner, die die SfM nie sah / die die SfM sah und die es nicht mehr gibt (None = keine Datenbank);
+    kameras_alt = kameras.json aelter als das Netz; dicht_alt = Liste der dichten Zwischenstaende, die aelter sind als das Netz."""
+    mt = lambda q: os.path.getmtime(q) if os.path.exists(q) else None
+    im_ordner = {f for f in os.listdir(fotos) if f.lower().endswith(BILD_ENDUNGEN) and os.path.isfile(os.path.join(fotos, f))} if os.path.isdir(fotos) else set()
+    n_db = db_bilder(os.path.join(daten, "sfm", "db.db")); netz = mt(os.path.join(daten, "sfm", "sparse", "0", "images.bin"))
+    erg = dict(bilder_ordner=len(im_ordner), bilder_sfm=None if n_db is None else len(n_db), neu=None if n_db is None else sorted(im_ordner - n_db), fehlend=None if n_db is None else sorted(n_db - im_ordner), kameras_alt=False, dicht_alt=[])
+    if netz is not None:
+        k = mt(os.path.join(daten, "kameras.json")); erg["kameras_alt"] = k is not None and k < netz - 2
+        erg["dicht_alt"] = [q for q in (os.path.join("sfm", "sparse_dicht", "images.bin"), os.path.join("dicht", "sparse", "images.bin"), os.path.join("dicht", "fused.ply")) if mt(os.path.join(daten, q)) is not None and mt(os.path.join(daten, q)) < netz - 2]
+    return erg
+
+
+def beiseite(pfade, marke):
+    """Zwischenstaende umbenennen statt loeschen (<pfad>.alt_<marke>); Verknuepfungen (--sfm-von) werden als Verknuepfung umbenannt. Rueckgabe: neue Namen."""
+    weg = []
+    for q in pfade:
+        if os.path.lexists(q): z = f"{q.rstrip('/')}.alt_{marke}"; os.rename(q.rstrip("/"), z); weg.append(z)
+    return weg
+
+
+def ply_punkte(p):
+    """Punktzahl aus dem PLY-Kopf; 0, wenn die Datei fehlt, leer ist oder keinen Kopf hat."""
+    try:
+        with open(p, "rb") as f:
+            for _ in range(60):
+                l = f.readline()
+                if l.startswith(b"element vertex"): return int(l.split()[-1])
+                if not l or l.startswith(b"end_header"): break
+    except (OSError, ValueError): pass
+    return 0
+
+
 def main():
     obj, fotos, daten = sys.argv[1], sys.argv[2], sys.argv[3]
     stufe_wahl = sys.argv[sys.argv.index("--stufe") + 1] if "--stufe" in sys.argv else "schnell"   # grob: Vorschau 800 px; schnell (Standard seit 15.11.2026, Nutzer "Ja"): 1600 px nur fotometrisch + Filter, Fusion min_num_pixels 8 (Schwabentor: 2 cm Median zur geometrischen Wolke, ~50 statt ~125 min, aber 4,0 statt 2,2 % Strassenpunkte); fein: mit geometrischem Durchgang - nur wenn ein Tor zweifelt
     os.makedirs(daten, exist_ok=True)
     bericht = {"objekt": obj, "start": time.strftime("%Y-%m-%d %H:%M:%S"), "stufen": []}
     spath = os.path.join(daten, "pipeline_bericht.json")
-    def sichern(): json.dump(bericht, open(spath, "w"), indent=1, ensure_ascii=False)
+    def sichern(): __import__("json_sicher").schreiben(spath, bericht)      # 17.11.2026: erst vollstaendig wandeln, dann ersetzen
+    neu_wahl = sys.argv[sys.argv.index("--neu") + 1] if "--neu" in sys.argv and sys.argv.index("--neu") + 1 < len(sys.argv) else os.environ.get("RCPARK_PIPE_NEU", "")
+    if neu_wahl not in ("", "sfm", "dicht"): print(f"FEHLER: --neu/RCPARK_PIPE_NEU kennt nur 'sfm' oder 'dicht', nicht {neu_wahl!r}", flush=True); return 4
     log = os.path.join(daten, "pipeline.log")
 
     # 0 Eingangscheck (Lehre Schwabentor 13.11.: Platzhalter-Objekt und fehlender Fotopfad fielen erst spaet auf)
@@ -57,6 +119,10 @@ def main():
     stufe(bericht, "fotos", "OK" if rc in (0, 1) and n_gueltig > 0 else "FEHLER", f"{n_gueltig} Dateien im Ordner nach Pruefung; rc={rc}")
     if n_gueltig == 0: sichern(); return 1
     sichern()
+
+    if neu_wahl:                                                          # ausdruecklich neu rechnen: alte Staende beiseitelegen (nie loeschen)
+        weg = beiseite([os.path.join(daten, "sfm"), os.path.join(daten, "kameras.json"), os.path.join(daten, "dicht")] if neu_wahl == "sfm" else [os.path.join(daten, "dicht"), os.path.join(daten, "sfm", "sparse_dicht")], time.strftime("%Y%m%d_%H%M%S"))
+        stufe(bericht, "neu", "OK", f"--neu {neu_wahl}: beiseitegelegt (NICHT geloescht, Platz selbst freigeben): " + (", ".join(os.path.relpath(q, daten) for q in weg) or "nichts vorhanden")); sichern()
 
     # 2 SfM (duenne Wolke)
     # --sfm-von DIR: Fotowolke aus einem frueheren Lauf mit denselben Fotos wiederverwenden (identisches Ergebnis, spart die Stunde nicht, aber Minuten)
@@ -81,10 +147,25 @@ def main():
     if status != "OK": sichern(); return 2
     sichern()
 
+    # Bildbestand und abgeleitete Staende (17.11.2026): passt das vorhandene Netz noch zum Fotoordner, passen Kameras/Bildwahl/Tiefenkarten/Wolke zum Netz?
+    st = stand_pruefen(daten, fotos)
+    if st["neu"] or st["fehlend"]:
+        txt = (f"{len(st['neu'])} Bilder im Fotoordner sind NICHT im SfM-Netz (nie gesehen; z. B. {', '.join(st['neu'][:3])})" if st["neu"] else "") + (" und " if st["neu"] and st["fehlend"] else "") + \
+              (f"{len(st['fehlend'])} Bilder des Netzes gibt es im Fotoordner nicht mehr (z. B. {', '.join(st['fehlend'][:3])})" if st["fehlend"] else "")
+        print(f"ACHTUNG Bildbestand: {txt} - das Netz ({st['bilder_sfm']} Bilder) wurde NICHT neu gerechnet. Neue Bilder ins Netz: --neu sfm bzw. RCPARK_PIPE_NEU=sfm (nachregistrierte Fotos der Stufe 'seiten' sind hier zu erwarten)", flush=True)
+        stufe(bericht, "bildbestand", "ACHTUNG", txt + " - Netz nicht neu gerechnet (--neu sfm)"); sichern()
+    if st["dicht_alt"]:
+        stufe(bericht, "dicht", "FEHLER", "aelter als das SfM-Netz: " + ", ".join(st["dicht_alt"]) + " - Bildwahl/Tiefenkarten/Wolke gehoeren zu einem FRUEHEREN Netz; neu rechnen mit --neu dicht bzw. RCPARK_PIPE_NEU=dicht (legt dicht/ und sfm/sparse_dicht beiseite)")
+        sichern(); return 3
+
     # Kameras als JSON fuer die GPU-Umgebung (Ausrichtung und Luecken brauchen kein pycolmap mehr)
     kam_json = os.path.join(daten, "kameras.json")
-    if not os.path.exists(kam_json):
+    if not os.path.exists(kam_json) or st["kameras_alt"]:                 # 17.11.2026: 'existiert' reichte - nach neu gerechneter SfM blieben die Kameras des alten Netzes
+        if st["kameras_alt"]: print("kameras.json ist aelter als das SfM-Netz - wird neu exportiert", flush=True)
         run([PY_COL, "-I", "tools/kamera_export.py", sparse_dir, kam_json], log)
+        ib = os.path.join(sparse_dir, "images.bin")
+        if not os.path.exists(kam_json) or (os.path.exists(ib) and os.path.getmtime(kam_json) < os.path.getmtime(ib) - 2):
+            stufe(bericht, "kameras", "FEHLER", f"tools/kamera_export.py schrieb {kam_json} nicht (neu) - siehe {log}"); sichern(); return 2
 
     # Parallel: Kandidatenliste (CPU, LOD2-Text) laeuft waehrend der dichten Stufe (GPU). Keine gemeinsame Ressource.
     koord = cfg.get("koordinate_utm")
@@ -95,7 +176,7 @@ def main():
         kand_proc = subprocess.Popen([PY_SEG, "-W", "ignore", "-I", "tools/lod2_kandidaten.py", "--gml", gml, "--e", str(koord[0]), "--n", str(koord[1]), "--radius", "45"], cwd=ROOT, stdout=kand_log, stderr=subprocess.STDOUT)
         # 3 dichte Wolke
     fused = os.path.join(daten, "dicht", "fused.ply")
-    if not (os.path.exists(fused) and os.path.getsize(fused) > 0):
+    if ply_punkte(fused) == 0:                                            # 17.11.2026: vorher 'Datei > 0 Byte' - eine fused.ply mit 0 Punkten (nur Kopf) galt als fertig
         # Bildwahl fuer Tiefenkarten (Lehre 14.11.: Fernansichten/gleiche Videobilder kosten voll, bringen am Objekt wenig) -> tools/dicht_bildwahl.py
         sparse_wahl = os.path.join(daten, "sfm", "sparse_dicht")
         if stufe_wahl != "grob" and not os.path.isdir(sparse_wahl):
@@ -131,8 +212,8 @@ GB.belegen()
 print("FERTIG", flush=True)
 ''')
         rc, out = run([PY_COL, "-I", script], log)
-    ok = os.path.exists(fused) and os.path.getsize(fused) > 0
-    stufe(bericht, "dicht", "OK" if ok else "FEHLER", f"fused.ply {os.path.getsize(fused) if ok else 0} Byte")
+    n_pkt = ply_punkte(fused); ok = n_pkt > 0
+    stufe(bericht, "dicht", "OK" if ok else "FEHLER", f"fused.ply {n_pkt} Punkte, {os.path.getsize(fused) if os.path.exists(fused) else 0} Byte" + ("" if ok else " - dichte Wolke LEER oder nicht geschrieben"))
     if not ok: sichern(); return 3
     sichern()
 
@@ -149,7 +230,8 @@ print("FERTIG", flush=True)
     if os.path.exists(oj) and sparse_dir:
         rc, out = run([PY_SEG, "-u", "-I", "tools/sfm_lod2_ausrichten.py", oj, "--kameras", kam_json, "--dicht", fused, "--name", obj, "--radius", "30", "--schreiben", "--fotos", fotos], log)   # --fotos: GPS-Startmassstab aus den Bildern dieses Laufs (15.11.)
         g = re.findall(r"Guete[^\n]*", out)
-        stufe(bericht, "abgleich", "OK" if rc == 0 else "FEHLER", (g[-1] if g else "ohne Guete-Zeile") + " | Entscheidung beim Nutzer")
+        stufe(bericht, "abgleich", "OK" if rc == 0 else "FEHLER", (g[-1] if g else "ohne Guete-Zeile") + " | Entscheidung beim Nutzer" + ("" if rc == 0 else f" | rc {rc}: {out.strip().splitlines()[-1][:160] if out.strip() else 'keine Ausgabe'}"))
+        if rc != 0: sichern(); print("BERICHT", spath, flush=True); return 5      # 17.11.2026: lief mit rc 0 weiter bis zur Abnahme - Wolke/Ausrichtung im Objekt sind dann die eines frueheren Laufs
     else:
         stufe(bericht, "abgleich", "OFFEN", "kein objekt.json")
     sichern()
@@ -162,7 +244,9 @@ print("FERTIG", flush=True)
     sichern()
 
     # 6 Abnahme
-    if os.path.exists(os.path.join(ROOT, "modelle", f"{obj}_gen.py")) or os.path.exists(os.path.join(ROOT, "modelle", obj, "objekt.json")):
+    if "--ohne-abnahme" in sys.argv or "gesamtkette" in cfg:              # 17.11.2026: in Kettenlaeufen lief der Bau schon HIER (Kettenstufe 'sfm'), vor Lage-Toren und Dach; die Kette baut selbst in 'bauen'
+        stufe(bericht, "abnahme", "UEBERSPRUNGEN", "Objekt der Gesamtkette: gebaut und abgenommen wird in der Kettenstufe 'bauen' nach den Lage-Toren" if "gesamtkette" in cfg else "--ohne-abnahme")
+    elif os.path.exists(os.path.join(ROOT, "modelle", f"{obj}_gen.py")) or os.path.exists(os.path.join(ROOT, "modelle", obj, "objekt.json")):
         rc, out = run(["bash", "tools/bauen_abnehmen.sh", obj], log)
         stufe(bericht, "abnahme", "OK" if rc == 0 else f"ROT rc={rc}", "bauen_abnehmen.sh; Sichtblatt audit/seiten.jpg ansehen")
     sichern()

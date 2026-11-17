@@ -176,7 +176,10 @@ def main():
     print(f"Lizenzen: {lics}")
     print("Nächster Schritt: tools/opensfm_run.py --images <out> ...  (oder COLMAP)")
     print("ACHTUNG Attribution: manifest.json führt Autor+Lizenz je Bild (Namensnennung wahren).")
+    if n == 0:                                                            # 17.11.2026: 0 geladene Bilder (Drosselung 429, keine freie Lizenz, keine Rasterbilder) endeten mit rc 0
+        print(f"FEHLER: KEIN Bild geladen ({len(titles)} Kandidaten, {len(info)} mit Bildinfo) - Drosselung/Lizenzfilter pruefen"); return 2
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

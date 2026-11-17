@@ -23,11 +23,19 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); PY = "/media
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 
 
+BILD_ENDUNGEN = (".jpg", ".jpeg", ".png")
+
+
 def bild_finden(bd, name):
-    for e in ("", ".jpg", ".JPG", ".jpeg", ".png"):
-        if os.path.exists(os.path.join(bd, name + e)): return name + e
-    g = sorted(glob.glob(os.path.join(bd, glob.escape(name) + "*")))
-    return os.path.basename(g[0]) if g else None
+    """Bilddatei zur Kamera `name` (Kennung ohne Endung, wie in der Ausrichtung). 17.11.2026 (Durchsicht): der Ersatzweg `glob(name + "*")` nahm die erste Datei mit diesem ANFANG -
+    fuer IMG_1 ohne eigene Datei (oder mit .JPEG, das nicht in der Liste stand) war das IMG_10.jpg: Kamera von Bild 1 mit dem Inhalt von Bild 10, die Kantenstufe rechnete still damit.
+    Jetzt: (1) genau diese Datei, (2) Datei mit genau diesem Namen vor der Endung (Endung in beliebiger Schreibweise), (3) `name_<zusatz>` (Kaufhaus: 122 -> 122_<quelle>.jpg) NUR wenn eindeutig."""
+    if os.path.isfile(os.path.join(bd, name)): return name
+    try: alle = sorted(f for f in os.listdir(bd) if f.lower().endswith(BILD_ENDUNGEN))
+    except OSError: return None
+    g = [f for f in alle if os.path.splitext(f)[0] == name]
+    if not g: g = [f for f in alle if f.startswith(name + "_")]; g = g if len(g) == 1 else []
+    return g[0] if g else None
 
 
 def kameras(A, bd):

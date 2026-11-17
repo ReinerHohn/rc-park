@@ -18,7 +18,7 @@ fi
 if $PY -c "import json,sys; sys.exit(0 if 'druck_teilung' in json.load(open('$OBJ')) else 1)"; then $PY -W ignore -I tools/druck_teilung.py "$1" | tail -3 || echo "druck_teilung fehlgeschlagen (Pruefung Ueberhang je Teil faellt durch)"; fi
 $PY -W ignore -I tools/freiraum_audit.py "$OBJ" || echo "freiraum_audit fehlgeschlagen - Freiraumpruefung wird nan (FEHLER)"   # Sichtstrahlen gegen Modell (nur mit objekt.json "freiraum")
 set +e; $PY -W ignore -I tools/pruefstand.py "$OBJ"; RC=$?; set -e
-if $PY -c "import json,sys; sys.exit(0 if json.load(open('$OBJ')).get('hoehen_tor') else 1)"; then set +e; $PY -W ignore -I tools/hoehe_gegen_dom1.py "$OBJ"; RH=$?; set -e; if [ "$RH" = "3" ]; then echo "HOEHEN-TOR (DOM1) NICHT BESTANDEN"; [ "$RC" = "0" ] && RC=3; fi; fi   # 15.11.2026: Modell-Oberseite gegen Laser (objekt.json hoehen_tor: true)
+if $PY -c "import json,sys; sys.exit(0 if json.load(open('$OBJ')).get('hoehen_tor') else 1)"; then set +e; $PY -W ignore -I tools/hoehe_gegen_dom1.py "$OBJ"; RH=$?; set -e; if [ "$RH" = "3" ]; then echo "HOEHEN-TOR (DOM1) NICHT BESTANDEN"; [ "$RC" = "0" ] && RC=3; elif [ "$RH" != "0" ]; then echo "HOEHEN-TOR (DOM1) NICHT GEPRUEFT: tools/hoehe_gegen_dom1.py abgestuerzt (rc $RH) - gilt NICHT als bestanden"; [ "$RC" = "0" ] && RC=3; fi; fi   # 15.11.2026: Modell-Oberseite gegen Laser (objekt.json hoehen_tor: true)      # 17.11.2026: nur rc 3 zaehlte - ein Absturz des Tors (rc 1) galt als bestanden
 # 15.11.2026: Pflichtbild Modell NEBEN Foto aus der Fotokamera (objekt.json "neben_fotos": [FOTO, "FOTO x0 y0 x1 y1", ...]) - erst an diesem Bild sah man Uhr/Putz/Fremdkoerper-Fehler
 $PY -c "
 import json,subprocess,sys
@@ -31,7 +31,10 @@ with ThreadPoolExecutor(3) as ex:      # 16.11.2026 (Aufgabenliste 1c): 3 Pflich
 for e,z in zip(L,Z): print(eins(e) if 'FEHLER' in z else z)      # 16.11.2026: bei 4 Mio. Dreiecken reichte der Grafikspeicher fuer 3 gleichzeitig nicht - Fehlschlaege einzeln wiederholen
 " || true
 $PY -W ignore -I tools/umriss_tor.py "$OBJ" 2>&1 | grep -v "^ *$" | sed "s/^/UMRISS-TOR: /" | tail -12 || true   # 16.11.2026: Dachlinie Modell gegen Himmelskante der Pflichtfotos (Hinweis; Bilder audit/umriss_<foto>.jpg)
-$PY -W ignore -I tools/seiten_audit.py "$OBJ"     # Sichtblatt auch bei rotem Pruefstand (man will hinsehen)
+set +e; $PY -W ignore -I tools/seiten_audit.py "$OBJ"; RS=$?; set -e     # Sichtblatt auch bei rotem Pruefstand (man will hinsehen)
+# 17.11.2026: unter 'set -e' beendete ein Fehler von seiten_audit das Skript HIER mit dessen rc (meist 1 = fuer die Kette "nur Pruefstand rot", auch wenn das Hoehen-Tor schon rc 3 gesetzt hatte);
+# Foto-Diagnosen, Gegenproben CB und die Fehlerzaehlung am Ende liefen nicht mehr. Jetzt: weiterlaufen, das alte Sichtblatt gilt nicht als angesehen (rc 3, wenn sonst alles gruen waere).
+if [ "$RS" != "0" ]; then echo "SICHTBLATT FEHLGESCHLAGEN: tools/seiten_audit.py rc $RS - audit/seiten.jpg ist NICHT von diesem Bau"; [ "$RC" = "0" ] && RC=3; fi
 # Automatische Foto-Diagnosen fuer jedes Foto mit kalibrierter Kamera (Breite je Hoehe in Metern, fehlende/erfundene Teile).
 # Werkzeuge pruefen ihre Kameraguete selbst und steigen bei schlechter Kamera aus - kein Handgriff noetig.
 fotodiag() {   # eine Kamera: Breitenprofil + Fehlteile (laeuft parallel je Foto, Ausgabe gebuendelt)

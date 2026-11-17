@@ -145,6 +145,7 @@ def main():
     ap.add_argument("--abstand", type=float, default=0.15); ap.add_argument("--zelle", type=float, default=0.25)
     ap.add_argument("--max_verschiebung", type=float, default=8.0, help="m; FFT-Treffer weiter weg passen auf Nachbarhaeuser (Schwabentor: 52 m), nicht zaehlen")
     ap.add_argument("--gml", default="", help="LoD2-GML statt objekt.json lod2.gml")
+    ap.add_argument("--min_wandpunkte", type=int, default=0, help="Mindestzahl Wolkenpunkte im Wandband (z 1,5-9 m, Umkreis); 0 = --haufen. Darunter rc 4 'nicht geprueft'")
     a = ap.parse_args()
     obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt))
     if a.gml: obj["_gml"] = a.gml
@@ -160,6 +161,17 @@ def main():
     X = np.load(a.wolke).astype(float)
     band = (X[:, 2] > 1.5) & (X[:, 2] < 9) & (np.hypot(X[:, 0], X[:, 1]) < a.radius * 0.8)
     Q = X[band][:, :2]
+    # 17.11.2026 (Durchsicht): keine Mindestzahl - eine fast leere Wolke im Rahmen (300 Punkte: falscher Massstab/falsche Lage, Fusion fast leer) ergab "A Strasse 0.0 %" und rc 0 = Tor bestanden.
+    # Test A schlaegt erst bei einem Haufen > --haufen Punkten an; mit weniger Wandpunkten als --haufen KANN er nicht durchfallen - dann ist nichts geprueft (rc 4, kein Urteil).
+    # Bestand: schwab_v3 1,16 Mio., kaufhaus_gk 1,11 Mio., martinstor_gk 0,49 Mio. Wandpunkte - fuer sie aendert sich nichts.
+    n_min = a.min_wandpunkte or a.haufen
+    if len(Q) < n_min:
+        print(f"NICHT GEPRUEFT (Grundriss-Tor): nur {len(Q)} Wolkenpunkte im Wandband (z 1,5-9 m, Umkreis {a.radius * 0.8:.0f} m; Wolke {len(X)} Punkte), Mindestzahl {n_min} - "
+              "Wolke leer/falsch skaliert/falsch verortet? KEIN Lage-Urteil, gilt nicht als bestanden")
+        os.makedirs(os.path.join(od, "audit"), exist_ok=True)
+        json.dump(dict(werkzeug="wolke_grundriss_pruefen.py", wolke=a.wolke, lod2_gebaeude=len(B), wandpunkte=int(len(Q)), geprueft=False, ergebnis=f"nicht geprueft: {len(Q)} Wandpunkte < {n_min}",
+                       strasse=dict(anteil=None, haufen=[], warnung=None)), open(os.path.join(od, "audit", "wolke_grundriss.json"), "w"), indent=1, ensure_ascii=False)
+        raise SystemExit(4)
     # --- A: Strasse
     innen = np.zeros(len(Q), bool)
     for g in polys:
@@ -233,7 +245,7 @@ def main():
     warn_a = bool(_offen) and _offen[0]["punkte"] > a.haufen
     for h in haufen[:5]:
         if h["geklaert"] and h["punkte"] > a.haufen: print(f"A Haufen bei {h['mitte']} ({h['punkte']} Punkte) am Foto geklaert: {h['geklaert']}")
-    out = dict(werkzeug="wolke_grundriss_pruefen.py", wolke=a.wolke, lod2_gebaeude=len(B), wandpunkte=int(len(Q)),
+    out = dict(werkzeug="wolke_grundriss_pruefen.py", wolke=a.wolke, lod2_gebaeude=len(B), wandpunkte=int(len(Q)), geprueft=True,
                strasse=dict(anteil=round(anteil, 4), haufen=haufen[:10], warnung=warn_a), teile=dict(ziel=zid, teile=teile_c, warnung=warn_c),
                eindeutigkeit=dict(identitaet_anteil=round(ident, 4), beste_nahe_identitaet=best_nah, beste_alternative=best_alt,
                                   abstand_relativ=round(rel, 3), warnung=warn_b, top5=res[:5]))

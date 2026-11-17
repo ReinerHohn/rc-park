@@ -273,7 +273,7 @@ def main():
         zc = float(s_["wert"]); lo_, hi_ = mf0.slice(zc - 0.03), mf0.slice(zc + 0.03); hohl = (gefuellt(lo_) ^ gefuellt(hi_)) - (lo_ + hi_)
         ring = hohl.offset(-tol, _m3.JoinType.Round) - hohl.offset(-(tol + vw), _m3.JoinType.Round)
         if ring.is_empty() or ring.area() < 1e-3: s_["verbinder"] = "kein Hohlraum am Schnitt - stumpf kleben"; continue
-        k3 = ring.extrude(2 * vh).translate((0, 0, zc - vh)) - mf0; st_ = [d_ for d_ in k3.decompose() if d_.volume() > 0.2 * ring.area() * 2 * vh]
+        k3 = ring.extrude(2 * vh).translate((0, 0, zc - vh)) - mf0; st_ = [d_ for d_ in k3.decompose() if d_.volume() > min(0.2 * ring.area(), vw * 8.0 / K) * 2 * vh]      # 17.11.2026: Innenrippen (druck_rippen.py) teilen den Ring in Stuecke - Stuecke ab 8 mm Laenge bleiben
         if not st_: s_["verbinder"] = "Ring kollidiert mit dem Modell - stumpf kleben"; continue
         k3 = M.batch_boolean(st_, _m3.OpType.Add) if len(st_) > 1 else st_[0]; nr_ = len(verbinder) + 1; verbinder.append(nr_)
         tv = zu_tm(k3.translate((0, 0, -(zc - vh)))); tv.apply_scale(K); tv.export(os.path.join(ad, f"verbinder_{nr_:02d}.stl")); bb_ = tv.bounds

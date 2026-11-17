@@ -19,7 +19,7 @@ def sek(t):
 def main():
     a = sys.argv[1:]; opt = lambda n, d: a[a.index(n) + 1] if n in a else d
     if not a or a[0].startswith("--"): sys.exit(__doc__)
-    od = a[0]; fl = sorted(f for f in glob.glob(os.path.join(od, "*.stl")) if os.path.basename(f) not in ("stifte.stl", "koerper.stl"))      # koerper.stl = ungeteilter Koerper (wird ueber druck_teilung --stl geteilt und dort gemessen)
+    od = a[0]; fl = sorted(f for f in glob.glob(os.path.join(od, "*.stl")) if os.path.basename(f) not in ("stifte.stl", "koerper.stl", "koerper_rippen.stl"))      # koerper.stl = ungeteilter Koerper (wird ueber druck_teilung --stl geteilt und dort gemessen)
     if not fl: print("keine STL in", od); return 2
     tmp = tempfile.mkdtemp(dir="/media/oem/scan/tmp" if os.path.isdir("/media/oem/scan/tmp") else None)
     bett = opt("--bett", "256")      # Druckraum (mm), Standard Bambu P1S; 17.11.2026: ohne Angabe lehnte der Slicer ein 241 mm hohes Teil ab (Standardprofil 210 mm)
