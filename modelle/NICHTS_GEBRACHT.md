@@ -365,3 +365,19 @@ Versuch: Rippen der Frontflaeche (A,B,C,D,L2,R2) um die Erkerachse (u 15,52 / n 
   5 davon hatten mein Siegel 'vertrauen', 2 waren eigene Fotos, 6 alte Commons-Kameras). Strahlen von dort liessen embree kriechen; wegen ihrer scheinbaren Schaerfe gewannen sie sogar die Vorauswahl.
 - Behoben: 42 K-Dateien (3 Objekte) als .unplausibel beiseitegelegt; kamera_verfeinern lehnt Abstand > 600 m / f > 10 x Bildbreite ab; fassade_ortho ueberspringt unplausible Standorte. Turm 4 Waende: 111 s, 14 Kerne im Mittel.
 - LEHRE: bei "haengt auf einem Kern" zuerst den Stapel des haengenden Threads holen (faulthandler), nicht raten. Und: pkill/pgrep -f mit dem Skriptnamen trifft die eigene Shell (zweimal selbst abgeschossen).
+
+## 17.11.2026 nachts: Feinausrichtung der Wandbilder / Feinpunkt-Anker / Schattierungsmass (Agent Feinausrichtung)
+- Feinausrichtung (tools/wand_feinausrichtung.py) GEHT (Sued: Restversatz 1,2-2,5 -> 0,2-0,5 cm, F1 0,417 -> 0,431). Sackgassen auf dem Weg:
+  - Nach der Ausrichtung den Versatz zum Scan weiter JE FOTO in ganzen cm rollen (relief_aus_fotos_mono): Einzelschaetzer streuen 1-3 cm -> die Fotos liegen wieder auseinander,
+    F1 0,417 -> 0,400 trotz Restversatz 0,2 cm. Fix: ein gemeinsamer Versatz aus dem Mittel der Hochpaesse (--fa_versatz mittel); Median der Einzelversaetze gab 0,397.
+  - Abwaegung (Sued, gleiche Fotos): nur gemeinsamer Versatz 0,417 / + starrer Versatz je Foto 0,425 / + glattes Feld 0,431 -> der Gewinn kommt aus der Ausrichtung.
+  - OpenCV-DIS-Fluss als unabhaengige Probe des Restversatzes: auf Fotos mit anderem Licht/anderer Zeit 10-30 Zellen "Versatz", wo NCC < 1 sah - unbrauchbar; ersetzt durch Phasenkorrelation je 64er-Kachel.
+  - Bilineares Neuabtasten der Farbbilder verwischt schon bei Feld ~0 (Kaufhaus f06 Schaerfe 3390 -> 3295); jetzt kubisch + Foto ohne Belege (< 10 % vertraut) unveraendert.
+  - Unscharfes/verwackeltes Foto (Sued 113939) laesst sich nicht ausrichten (2 % vertraut) - bleibt wie projiziert; es sollte eher aus der Fotowahl fallen (offen).
+  - Kaufhaus f06 (glatter Putz + Erker, Fotos verschiedener Jahrzehnte): NCC-Median 0,3, 2-11 % vertraut -> keine Wirkung (auch mit min_ncc 0,3 / 10 cm: Schaerfe +1 %). Kein Schaden.
+- Mono-Massstab je Kachel aus tiefe_lokal-Feinpunkten (--anker_fein): Huber-Steigung a ~ 0,6-0,8 ist durch das Rauschen im Mono-Hochpass GEDAEMPFT (Regressionsdaempfung);
+  der Scan-Massstab liegt in 69-72 % der Kacheln in der Spanne [a_lo, a_hi] -> Fugentiefe bestaetigt, aber nicht genauer messbar. Neu skaliert faellt F1 (0,431 -> 0,421; ohne Ausrichtung 0,417 -> 0,409).
+  Nur als Gegenprobe nutzen. Nullkontrolle glatter Traeger (synthetisch) besteht: erfundenes Relief 20 mm -> 0,2 mm.
+- Schattierungsmass (tools/schatten_tor.py, Lambert mit je Foto/Modell geschaetztem Licht, Kachelkorrelation 2-25 cm): Korrelationen nur 0,02-0,17 (9 Fotos); grob3 > gk Runde 3 in 9/9 Fotos,
+  aber gk Runde 3 > Brei (Runde 2) nur 6/9 (Mittel 0,034 / 0,031), grob3 > grob3 um 0,5 m verschoben 8/9, falsches Paar < richtig 8/9, Wiederholung bitgleich 9/9 -> trennt Brei NICHT (Kriterium >= 8/9 verfehlt), kein Hinweis-Einbau.
+  Vermutete Ursache: Albedo (Fenster, Malerei, Gold) dominiert das Feinband, Licht nur 3 Parameter; Schatten werfen (Gesimse) nicht modelliert.

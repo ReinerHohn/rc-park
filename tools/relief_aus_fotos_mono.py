@@ -19,6 +19,14 @@ NACHTRAG 17.11.2026 abends (Integration Schwabentor, drei Fehlerbilder generisch
     wo alle Fotos den Draht zeigen, steht die Feinform des Eingangsreliefs (Nord: Oberleitung + Isolator weg, dafuer ein Streifen Scan-Feinform).
   - Kachel-Normierung robust (MAD im Kachelinneren, +-5 gekappt, --kachel_norm) und Rand-Auslauf erst ab --rand_weg (8 cm) hinter der SICHTgrenze (nicht an Oeffnungen).
   Fugen-F1 Sued gegen Holdout 113836 (Zufall ~0,28): Feld 0,395 -> 0,417, Bogen 3,0-8,4/4,0-7,5: 0,42, Brei-Zone 0,41 (Scan 0,34/0,35/0,35).
+NACHTRAG 17.11.2026 nachts (Agent Feinausrichtung):
+  - --fein_ausrichten 1: die entzerrten Wandbilder werden VOR dem Tiefenmodell gegeneinander fein ausgerichtet (tools/wand_feinausrichtung.py; Holdout unberuehrt);
+    danach EIN gemeinsamer Versatz zum Scan aus dem Mittel der Hochpaesse (--fa_versatz mittel), nicht mehr je Foto in ganzen cm (das brachte 1-2 cm Unterschied zurueck).
+    Sued (5 Fotos, Holdout 113836): Restversatz 1,2-2,5 -> 0,2-0,5 cm (Phasenkorrelation unabhaengig 1,1-2,9 -> 0,2-0,5), Schaerfe Median-Wandbild +26 %,
+    Fugen-F1 Feld 0,417 -> 0,431 (Bogen 0,421 -> 0,436, Brei-Zone 0,408 -> 0,417), Wiederholung bitgleich. Das unscharfe Foto 113939 bleibt unausgerichtet (2 % vertraut).
+  - --anker_fein <tiefe_lokal.npz>: Massstab des Hochpasses je Kachel aus den Feinpunkten (Huber, Fit-/Pruefhaelfte, anker_fein). Sued: 52/107 Kacheln angenommen,
+    a ~ 0,6-0,7 (Regressionsdaempfung, da Mono verrauscht); Scan-Massstab liegt in 69 % der Kacheln in der Spanne [a_lo, a_hi] -> Fugentiefe (Scan-Massstab) durch Feinpunkte
+    BESTAETIGT, nicht genauer gemessen; F1 faellt leicht (0,431 -> 0,421). Darum nur als Gegenprobe, Standard aus.
 aus.npz im Format der Relief-Einsaetze (rel, a, t, n, u0, z0, px, ebene_abstand_m, trend_je_m, putz_niveau_m, fein = Fotoanteil, putz), dazu
 aus.jpg (Foto | Scan | neu, Schattierung) und aus.json (Zahlen, Fugenabgleich gegen das Holdout-Foto, Rechenzeit). Fugentiefe = Scan-Massstab (siehe 4), sonst ANNAHME.
 Lizenz: nur Depth Anything V2 SMALL (Apache-2.0). DSINE (Imperial, nur Forschung) und Base/Large/Giant (NC) NICHT verwenden.
@@ -127,6 +135,62 @@ def fugen_abgleich(r_rel, r_foto, m, anteil=0.12, tol=2, schub=(13, 9)):
     return dict(praezision=f1(b)[0], trefferquote=f1(b)[1], f1=f1(b)[2], f1_zufall=f1(bs)[2])
 
 
+def huber_affin(x, y, k=1.345, it=8):
+    """robuste Gerade y ~ a x + b (Huber-IRLS, Skala MAD)"""
+    w = np.ones_like(x)
+    for _ in range(it):
+        X = np.stack([x, np.ones_like(x)], 1) * np.sqrt(w)[:, None]; ab = np.linalg.lstsq(X, y * np.sqrt(w), rcond=None)[0]; r = y - ab[0] * x - ab[1]
+        sk = 1.4826 * np.median(np.abs(r - np.median(r))) + 1e-9; u = np.abs(r) / (k * sk); w = np.where(u <= 1, 1.0, 1.0 / np.maximum(u, 1e-9))
+    return float(ab[0]), float(ab[1])
+
+
+def fein_auf_raster(Zf, U, ZZ, X, Y, c):
+    """Feinpunkt-Hoehenbild (tiefe_lokal.py, Relief-Format) auf das Raster: Hoehe der Feinflaeche ueber der Ebene des Rasters (Weltpunkt X/Y der Ebene,
+    entlang der Feinnormalen). Rueckgabe (hoehe, gueltig). Allgemeiner Rahmen (a, t, n, Ebene, Trend der Feindatei duerfen anders sein)."""
+    rf = Zf["rel"].astype(np.float64); Hf = rf.shape[0]; pf = float(Zf["px"]); Af = Zf["a"]; tf = Zf["t"]; nf = Zf["n"]; u0f = float(Zf["u0"]); z0f = float(Zf["z0"]); tuf, tzf = [float(v) for v in Zf["trend_je_m"]]
+    uf = (X - Af[0]) * tf[0] + (Y - Af[1]) * tf[1]; sf = (X - Af[0]) * nf[0] + (Y - Af[1]) * nf[1]
+    gm = (np.abs(rf) > 1e-6) & np.isfinite(rf)
+    if "oeffnung" in Zf: gm &= ~(Zf["oeffnung"] > 0.5)
+    mx = ((uf - u0f) / pf - 0.5).astype(np.float32); my = (Hf - (ZZ - z0f) / pf - 0.5).astype(np.float32)
+    r_ = cv2.remap(np.nan_to_num(rf).astype(np.float32), mx, my, cv2.INTER_NEAREST, borderValue=0).astype(np.float64)
+    g_ = cv2.remap(gm.astype(np.uint8), mx, my, cv2.INTER_NEAREST, borderValue=0) > 0
+    ebf = float(Zf["ebene_abstand_m"]) + tuf * (uf - u0f) - tzf * ((z0f + Hf * pf) - ZZ)
+    return np.where(g_, ebf + r_ - sf, 0.0), g_
+
+
+def anker_fein(hp, fein, gf, m, c, kachel_m=1.5, s_tr=24.0, min_n=1500, block_m=0.10, min_gewinn=0.02):
+    """Massstab des Mono-Hochpasses JE KACHEL aus den Feinpunkten (gemessen) statt aus dem Scan-Bandpass (Schritt B2 der Recherche 17.11.).
+    Band 2 Zellen .. s_tr beider Seiten; Huber-Gerade fein ~ a * hp + b auf der FIT-Haelfte (Schachbrett aus block_m-Bloecken), Pruefung auf der anderen Haelfte:
+    angenommen nur, wenn der Pruefrest (MAD) mit a um >= min_gewinn (relativ) kleiner ist als mit a = 1 (Scan-Massstab). a auf [0, 3] begrenzt (a ~ 0 = Feinpunkte
+    sehen dort KEIN Relief -> Mono-Erfindung wird gedaempft, Nullkontrolle glatter Traeger). Rueckgabe (Faktorfeld, Bericht)."""
+    H, W = hp.shape; k = int(round(kachel_m / c)); st = max(k // 2, 1); bk = max(int(round(block_m / c)), 1)
+    def band(x, mm): return gauss_maske(x, mm, 2)[0] - gauss_maske(x, mm, s_tr)[0]
+    def mad_(r): return 1.4826 * float(np.median(np.abs(r - np.median(r))))
+    g = gf & m; bf = band(fein, gf); bh = band(np.nan_to_num(hp), m)
+    jj, ii = np.meshgrid(np.arange(W), np.arange(H)); fit = ((jj // bk + ii // bk) % 2) == 0
+    win = np.outer(np.hanning(k + 2)[1:-1], np.hanning(k + 2)[1:-1]); acc = np.zeros((H, W)); ws = np.zeros((H, W)); kach = []
+    ys = sorted(set(list(range(0, max(H - k, 0) + 1, st)) + [max(H - k, 0)])); xs = sorted(set(list(range(0, max(W - k, 0) + 1, st)) + [max(W - k, 0)]))
+    for y0 in ys:
+        for x0 in xs:
+            sl = (slice(y0, y0 + k), slice(x0, x0 + k)); gg = g[sl]; a_ = 1.0; e = dict(u_zelle=x0, z_zelle=y0, n=int(gg.sum()))
+            if (gg & fit[sl]).sum() >= min_n and (gg & ~fit[sl]).sum() >= min_n:
+                xf = bh[sl][gg & fit[sl]]; yf = bf[sl][gg & fit[sl]]; xp = bh[sl][gg & ~fit[sl]]; yp = bf[sl][gg & ~fit[sl]]
+                af, bfit = huber_affin(xf, yf); af = float(np.clip(af, 0.0, 3.0)); b1 = float(np.median(yf - xf))
+                cv_ = float(np.cov(xf, yf)[0, 1]); a_lo = cv_ / max(float(np.var(xf)), 1e-12); a_hi = float(np.var(yf)) / cv_ if cv_ > 0 else float('inf')   # Spanne: Rauschen in x daempft a_lo, Rauschen in y hebt a_hi
+                rf_ = mad_(yp - af * xp - bfit); rs_ = mad_(yp - xp - b1); r0_ = mad_(yp)
+                ok = rf_ < (1 - min_gewinn) * rs_; a_ = af if ok else 1.0
+                e.update(a=round(af, 3), pruef_rest_fein_mm=round(rf_ * 1000, 2), pruef_rest_scan_mm=round(rs_ * 1000, 2), pruef_streuung_fein_mm=round(r0_ * 1000, 2),
+                         korrelation_fit=round(float(np.corrcoef(xf, yf)[0, 1]), 3), a_spanne=[round(a_lo, 3), round(min(a_hi, 99.0), 3)], scan_in_spanne=bool(a_lo <= 1.0 <= a_hi), angenommen=bool(ok))
+            kach.append(e); wv = win[:sl[0].stop - y0, :sl[1].stop - x0]; acc[sl] += wv * a_; ws[sl] += wv
+    A = np.where(ws > 1e-6, acc / np.maximum(ws, 1e-6), 1.0)
+    an = [e for e in kach if e.get("angenommen")]; geprueft = [e for e in kach if "a" in e]
+    ber = dict(kacheln=len(kach), geprueft=len(geprueft), angenommen=len(an), a_median_angenommen=float(np.median([e["a"] for e in an])) if an else None,
+               pruef_rest_fein_mm_median=float(np.median([e["pruef_rest_fein_mm"] for e in geprueft])) if geprueft else None,
+               pruef_rest_scan_mm_median=float(np.median([e["pruef_rest_scan_mm"] for e in geprueft])) if geprueft else None,
+               scan_massstab_in_spanne=round(float(np.mean([e["scan_in_spanne"] for e in geprueft])), 3) if geprueft else None, kachel_liste=kach)
+    return A, ber
+
+
 def schatten(r, px, zmax=None):
     gy, gx = np.gradient(r, px); l = np.array([-1.0, 1.0, 1.2]); l /= np.linalg.norm(l); nn = np.sqrt(gx ** 2 + gy ** 2 + 1)
     s = (-gx * l[0] + gy * l[1] + l[2]) / nn; return np.clip((s - 0.3) / 0.7 * 255, 0, 255).astype(np.uint8)
@@ -140,7 +204,10 @@ def main():
     ap.add_argument("--max_mpp", type=float, default=0.025); ap.add_argument("--massstab", nargs=4, type=float); ap.add_argument("--polaritaet", default="dunkel", choices=["dunkel", "hell"])
     ap.add_argument("--zone", nargs=4, type=float, action="append", default=[], help="Pruefzone u0 u1 z0 z1 (z. B. Brei-Zone) fuer den Fugenabgleich")
     ap.add_argument("--gpu_mb", type=int, default=3300); ap.add_argument("--min_korr", type=float, default=0.2); ap.add_argument("--kachel", type=float, default=1.5, help="Kachelkante m fuer das Tiefenmodell"); ap.add_argument("--abstand", type=float, default=0.5, help="Mindestabstand der Fotostandorte m"); ap.add_argument("--draht", type=float, default=0.05, help="duenne ERHABENE Linien schmaler als das (m) je Foto weg (Graustufen-Oeffnung): Oberleitungen, Kabel"); ap.add_argument("--auf_relief", type=int, default=1, help="1 = Fotos auf die Reliefflaeche entzerren (Parallaxe vorspringender Teile), 0 = auf die Ebene"); ap.add_argument("--kachel_norm", default="robust", choices=["robust", "std"], help="Streuung je Kachel: robust (MAD im Inneren, Saum gekappt) oder std (bis 17.11.)"); ap.add_argument("--rand_weg", type=float, default=0.08, help="Saum an der Sichtgrenze je Foto (m) ohne Gewicht"); ap.add_argument("--draht_laenge", type=float, default=1.0, help="gerade dunkle Linien (Draht/Kabel) ab dieser Laenge m je Foto ausblenden (draht_linien), 0 = aus")
-    ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 ohne Foto-Relief (Fremdkoerper: Verkehrsschild, Lampe) - dort bleibt der Scan"); ap.add_argument("--zwischen", default=None, help="Ordner fuer Zwischenbilder (Datenplatte)"); a = ap.parse_args()
+    ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 ohne Foto-Relief (Fremdkoerper: Verkehrsschild, Lampe) - dort bleibt der Scan"); ap.add_argument("--zwischen", default=None, help="Ordner fuer Zwischenbilder (Datenplatte)")
+    ap.add_argument("--fein_ausrichten", type=int, default=1, help="1 (Standard seit 17.11.2026 nach Test Sued: F1 0,417 -> 0,431) = Wandbilder der Fotos vor dem Tiefenmodell gegeneinander fein ausrichten (wand_feinausrichtung.py), 0 = wie bis 17.11."); ap.add_argument("--fa_max", type=float, default=0.05, help="Feinausrichtung: max. Verschiebung m"); ap.add_argument("--fa_glatt", type=float, default=0.30, help="Feinausrichtung: Glaettung des Felds (Gauss-Sigma m)"); ap.add_argument("--fa_fenster", type=float, default=0.25, help="Feinausrichtung: NCC-Fenster m"); ap.add_argument("--fa_iter", type=int, default=3, help="Feinausrichtung: Runden des glatten Felds (0 = nur starr)"); ap.add_argument("--fa_global", type=float, default=0.15, help="Feinausrichtung: max. starrer Versatz je Foto m (0 = aus)"); ap.add_argument("--fa_versatz", default="mittel", choices=["mittel", "median"], help="Feinausrichtung: gemeinsamer Versatz zum Scan aus dem Mittel-Hochpass oder Median der Einzelversaetze")
+    ap.add_argument("--anker_fein", default=None, help="Feinpunkt-Hoehenbild (tiefe_lokal.py, Relief-Format): Massstab des Hochpasses JE KACHEL daraus (anker_fein), sonst Scan")
+    a = ap.parse_args()
     T0 = time.time(); sys.path.insert(0, HIER); import fassade_ein_foto as FE, render_kern as rk, trimesh, torch
     if torch.cuda.is_available(): torch.cuda.set_per_process_memory_fraction(min(0.95, a.gpu_mb / (torch.cuda.get_device_properties(0).total_memory / 2**20)))   # Budget gilt auch fuer das Sichtbarkeitsraster
     if os.path.exists(a.aus): print("Ziel existiert schon (nicht ueberschreiben):", a.aus); return 2
@@ -153,6 +220,7 @@ def main():
     # 17.11.2026 (Sued: senkrechter Doppelstrich rechts an der Steintafel): auf der EBENE entzerrt stand die vorspringende Tafel in jedem Foto an anderer Stelle (Parallaxe,
     # 113830/113849/113851: Kante 0,45 m auseinander) -> zwei Kanten im Mittel. Entzerrt wird jetzt auf der FLAECHE des Eingangsreliefs (Ebene + Scan-Relief, 5 cm geglaettet).
     hs = np.abs(scan) > 1e-6; dpl = dpl + (gauss_maske(scan, hs, 5)[0] * hs if a.auf_relief else 0.0)
+    dpl0 = float(Z["ebene_abstand_m"]) + tu * (U - u0) - tz * ((z0 + H * rp) - ZZ); Xe = A[0] + U * t[0] + dpl0 * nv[0]; Ye = A[1] + U * t[1] + dpl0 * nv[1]   # Ebene im Reliefrahmen (fuer --anker_fein)
     X = A[0] + U * t[0] + dpl * nv[0]; Y = A[1] + U * t[1] + dpl * nv[1]; Zw = ZZ.copy()
     if a.massstab: k = a.massstab[0]; Mp = a.massstab[1:]; X = Mp[0] + k * (X - Mp[0]); Y = Mp[1] + k * (Y - Mp[1]); Zw = Mp[2] + k * (ZZ - Mp[2])
     P = np.stack([X, Y, Zw], -1).reshape(-1, 3)
@@ -191,9 +259,26 @@ def main():
     def band(x, m, s0, s1): return gauss_maske(x, m, s0)[0] - gauss_maske(x, m, s1)[0]
     s_tr = a.trenn / c / 2.5                                              # Gauss-Sigma der Trennung (Zellen)
     def mad(x): return 1.4826 * float(np.median(np.abs(x - np.median(x))))
-    hp_liste = []; info = []; bilder = []; sicht_liste = []; draht_liste = []; standorte = []
+    hp_liste = []; info = []; bilder = []; sicht_liste = []; draht_liste = []; standorte = []; vb_liste = []; vb_ok = []
+    vor = []
     for q in wahl:
-        tq = time.time(); b, ok_, mpp = entzerren(q); m = ok_ & ~oeff & (b.max(2) > 8)
+        b, ok_, mpp = entzerren(q); vor.append((b, ok_, mpp, ok_ & ~oeff & (b.max(2) > 8)))
+    fa_ber = None
+    if a.fein_ausrichten:                                                 # Feinausrichtung der Wandbilder gegeneinander (tools/wand_feinausrichtung.py), Holdout bleibt unberuehrt
+        import wand_feinausrichtung as WF
+        ix = [i for i, v in enumerate(vor) if v[3].sum() >= 5000]
+        if len(ix) >= 3:
+            nb, nm_, _, fa_ber = WF.fein_ausrichten([vor[i][0] for i in ix], [vor[i][3] for i in ix], c, max_m=a.fa_max, glatt_m=a.fa_glatt, fenster_m=a.fa_fenster, iter=a.fa_iter, global_m=a.fa_global, gpu_mb=a.gpu_mb)
+            zon = [("feld", None), ("echt", echt)] + [(f"zone{i}", (U >= z_[0]) & (U <= z_[1]) & (ZZ >= z_[2]) & (ZZ <= z_[3])) for i, z_ in enumerate(a.zone)]
+            fa_ber["schaerfe_median_wandbild"] = {}
+            for zn, zm in zon:
+                s0, med0 = WF.schaerfe([vor[i][0] for i in ix], [vor[i][3] for i in ix], zm); s1, med1 = WF.schaerfe(nb, nm_, zm); fa_ber["schaerfe_median_wandbild"][zn] = [s0, s1]
+            print("  Schaerfe Median-Wandbild (Gradientenenergie) vorher -> nachher: " + ", ".join(f"{k_} {v_[0]:.0f}->{v_[1]:.0f}" for k_, v_ in fa_ber["schaerfe_median_wandbild"].items() if v_[0]), flush=True)
+            if a.zwischen:
+                os.makedirs(a.zwischen, exist_ok=True); cv2.imwrite(os.path.join(a.zwischen, "median_vorher.png"), np.clip(med0, 0, 255).astype(np.uint8)); cv2.imwrite(os.path.join(a.zwischen, "median_nachher.png"), np.clip(med1, 0, 255).astype(np.uint8))
+            for j, i in enumerate(ix): vor[i] = (nb[j], vor[i][1], vor[i][2], nm_[j] & ~oeff)
+    for q, (b, ok_, mpp, m) in zip(wahl, vor):
+        tq = time.time()
         if m.sum() < 5000: info.append(dict(foto=q[1], verworfen="zu wenig sichtbar")); continue
         fuell = b.copy(); fuell[~m] = cv2.inpaint(b, (~m).astype(np.uint8), 15, cv2.INPAINT_TELEA)[~m]
         hp, ws = tiefe_kacheln(fuell, m, int(round(a.kachel / c)), s_tr, a.gpu_mb, norm=a.kachel_norm); m &= ws > 0.05
@@ -213,17 +298,31 @@ def main():
         # wird als Vertiefung gelesen; Holdout-Fotolinien liegen auf dem Scan, Versatz 0). Darum Hochpass um den besten Versatz zurueckschieben (Grenze +-12 cm).
         if a.draht > 0:                                                   # Oberleitung/Kabel vor der Wand: das Modell liest sie als schmale erhabene Grate (17.11. Sued/Nord); Steinkuppen sind breiter
             kd = int(round(a.draht / c)) | 1; hp = np.minimum(hp, cv2.morphologyEx(hp.astype(np.float32), cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kd, kd))).astype(np.float64))
-        hp = np.roll(np.roll(kq * hp, vb[1], 0), vb[2], 1); m = np.roll(np.roll(m, vb[1], 0), vb[2], 1); hp[~m] = np.nan; dm = np.roll(np.roll(dm, vb[1], 0), vb[2], 1)
+        # Mit Feinausrichtung liegen die Fotos schon deckungsgleich: der Versatz zum Scan wird danach EINMAL gemeinsam (Median) angewandt - je Foto in ganzen cm
+        # gerollt kamen 1-2 cm Unterschied zwischen den Fotos zurueck (17.11.2026: F1 0,417 -> 0,400 trotz Restversatz 0,2-0,5 cm)
+        ry, rx = (0, 0) if fa_ber is not None else (vb[1], vb[2]); vb_liste.append((vb[1], vb[2]))
+        hp = np.roll(np.roll(kq * hp, ry, 0), rx, 1); m = np.roll(np.roll(m, ry, 0), rx, 1); hp[~m] = np.nan; dm = np.roll(np.roll(dm, ry, 0), rx, 1)
         info.append(dict(foto=q[1], cm_je_px=round(mpp * 100, 2), sichtbar=round(float(ok_.mean()), 3), massstab=kq, korrelation_band_scan=round(r, 3),
                          bester_versatz_cm=dict(nach_unten=vb[1], nach_rechts=vb[2], korrelation=round(vb[0], 3)), draht_linien=len(dseg), draht_anteil=round(float(dm.mean()), 4), sekunden=round(time.time() - tq, 1)))
         print(f"  {q[1][-30:]}: {mpp * 100:.1f} cm/px, sichtbar {ok_.mean() * 100:.0f} %, Korrelation mit Scan (2-{a.trenn * 100:.0f} cm) {r:+.2f} "
               f"(verschoben {vb[1]:+d}/{vb[2]:+d} cm: {vb[0]:+.2f}), Massstab {kq:.4g}, {time.time() - tq:.0f} s", flush=True)
         if r < a.min_korr: info[-1]["verworfen"] = "keine Korrelation mit dem Scan (Modell sieht andere Form)"; continue
-        hp_liste.append(hp); bilder.append(b); sicht_liste.append(m | dm); draht_liste.append(dm); standorte.append(np.asarray(q[5], float)); draht_u = dm if not hp_liste[:-1] else (draht_u | dm)
+        vb_ok.append(vb_liste[-1]); hp_liste.append(hp); bilder.append(b); sicht_liste.append(m | dm); draht_liste.append(dm); standorte.append(np.asarray(q[5], float)); draht_u = dm if not hp_liste[:-1] else (draht_u | dm)
         if a.zwischen:
             os.makedirs(a.zwischen, exist_ok=True); bd = b.copy()
             for x0, y0, x1, y1 in dseg: cv2.line(bd, (x0, y0), (x1, y1), (0, 0, 255), 3)
             cv2.imwrite(os.path.join(a.zwischen, q[1][-40:] + "_wand.jpg"), bd); np.save(os.path.join(a.zwischen, q[1][-40:] + "_hp.npy"), hp.astype(np.float32))
+    if fa_ber is not None and hp_liste:
+        # gemeinsamer Versatz zum Scan aus dem MITTEL der (deckungsgleichen) Hochpaesse - ein Schaetzer statt Median der Einzelschaetzer (17.11.: Median -6/+1 cm gab F1 0,397)
+        with np.errstate(all="ignore"): Sm = np.nanmean(np.stack(hp_liste), 0)
+        mf = np.isfinite(Sm); bm_ = band(np.nan_to_num(Sm), mf, 2, s_tr); bs_ = band(scan, mf & echt, 2, s_tr); mk_ = mf & echt & ndi.binary_erosion(mf, np.ones((15, 15))); y_ = bs_[mk_]
+        def kor(dy, dx): return float(np.corrcoef(np.roll(np.roll(bm_, dy, 0), dx, 1)[mk_], y_)[0, 1])
+        vg = max((kor(dy, dx), dy, dx) for dy in range(-12, 13, 2) for dx in range(-12, 13, 2)); vg = max([vg] + [(kor(dy, dx), dy, dx) for dy in range(vg[1] - 1, vg[1] + 2) for dx in range(vg[2] - 1, vg[2] + 2)])
+        ry, rx = (vg[1], vg[2]) if a.fa_versatz == "mittel" else (int(np.median([v[0] for v in vb_ok])), int(np.median([v[1] for v in vb_ok])))
+        fa_ber["gemeinsamer_versatz_scan_cm"] = [ry, rx]; fa_ber["versatz_mittel_cm"] = [vg[1], vg[2], round(vg[0], 3)]; fa_ber["versatz_median_einzeln_cm"] = [int(np.median([v[0] for v in vb_ok])), int(np.median([v[1] for v in vb_ok]))]
+        print(f"  gemeinsamer Versatz zum Scan ({a.fa_versatz}): {ry:+d}/{rx:+d} cm (Mittel-Hochpass {vg[1]:+d}/{vg[2]:+d} r {vg[0]:.2f}, Median einzeln {fa_ber['versatz_median_einzeln_cm']})", flush=True)
+        def _r(x): return np.roll(np.roll(x, ry, 0), rx, 1)
+        hp_liste = [_r(h_) for h_ in hp_liste]; sicht_liste = [_r(x) for x in sicht_liste]; draht_liste = [_r(x) for x in draht_liste]
     if not hp_liste: print("kein Foto mit Korrelation zum Scan - nichts erzeugt"); json.dump(dict(fotos=info), open(a.aus.replace(".npz", ".json"), "w"), indent=1); return 4
     # Fotos vereinen: gewichtetes Mittel mit (a) Rand-Auslauf je Foto (20 cm ab Sichtgrenze - sonst Naehte, wo ein Foto endet: Nord 17.11. harte Linien) und
     # (b) Kappung auf Median +- 1,5 Streuungen (ein Draht/Passant in EINEM Foto zieht das Mittel nicht mit). Ein Foto allein = sein Wert.
@@ -245,6 +344,12 @@ def main():
     # Eingangsreliefs (das Netz kennt keinen Draht) - weich ueber das Gewicht wsum. Sackgassen 17.11. Nord: Telea-Fuellung des Hochpasses nur im Streifen gab eine Rinne
     # (Saum des Drahts am Rand), Telea ueber alle Zellen mit > 50 % Gewichtsverlust zog den Isolator-Umriss wieder hinein. Rest: ein Band Feinform (rauer) quer ueber die Steine.
     lp_scan = gauss_maske(scan, ~oeff, s_tr)[0]
+    anker = None
+    if a.anker_fein:                                                      # Massstab je Kachel aus Feinpunkten (gemessen) statt Scan-Bandpass, mit Fit-/Pruefhaelfte
+        fh, fg = fein_auf_raster(dict(np.load(a.anker_fein)), U, ZZ, Xe, Ye, c); Af_, anker = anker_fein(hpm, fh, fg & ~putz & ~oeff, (nfoto > 0) & ~putz & ~oeff, c, a.kachel, s_tr)
+        anker["feinpunkte_anteil_feld"] = round(float(fg.mean()), 3); hpm = hpm * Af_
+        anker["gemessen_anteil_fotoflaeche"] = round(float((np.abs(Af_ - 1) > 1e-3)[nfoto > 0].mean()), 3)
+        print(f"Anker Feinpunkte: {anker['angenommen']}/{anker['geprueft']} Kacheln angenommen (a Median {anker['a_median_angenommen']}), Pruefrest Median fein {anker['pruef_rest_fein_mm_median']} mm / Scan {anker['pruef_rest_scan_mm_median']} mm; Scan-Massstab in der Spanne [a_lo, a_hi] in {anker['scan_massstab_in_spanne']:.0%} der Kacheln", flush=True)
     for q0, q1, r0, r1 in a.ohne: oeff = oeff | ((U >= q0) & (U <= q1) & (ZZ >= r0) & (ZZ <= r1))
     foto_da = sicht & ~putz & ~oeff
     wsum = np.clip(Wg.sum(0), 0, 1)      # wo kein Foto Gewicht hat (Saum an allen Sichtgrenzen, Draht in allen Fotos): Feinform des Eingangsreliefs statt glatt
@@ -288,7 +393,7 @@ def main():
         for i in range(3):
             x0 = int((z_[0] - f0) / c) + i * (nu + 8); x1 = int((z_[1] - f0) / c) + i * (nu + 8); y0 = int((g1 - z_[3]) / c); y1 = int((g1 - z_[2]) / c); cv2.rectangle(tafel, (x0, y0), (x1, y1), (0, 200, 255), 3)
     cv2.imwrite(a.aus.replace(".npz", ".jpg"), tafel, [cv2.IMWRITE_JPEG_QUALITY, 88])
-    erg = dict(relief=a.relief, feld=a.feld, trenn_m=a.trenn, fotos=info, holdout=hold[1] if hold else None, fugenabgleich=abgl, foto_anteil=float(foto_da.mean()),
+    erg = dict(relief=a.relief, feld=a.feld, feinausrichtung=fa_ber, anker_fein=anker, trenn_m=a.trenn, fotos=info, holdout=hold[1] if hold else None, fugenabgleich=abgl, foto_anteil=float(foto_da.mean()),
                hub_p5_p95_scan=float(np.ptp(np.quantile(scan[echt], [0.05, 0.95]))) if echt.any() else None, hub_p5_p95_neu=float(np.ptp(np.quantile(neu[foto_da], [0.05, 0.95]))) if foto_da.any() else None,
                sekunden_gesamt=round(T, 1), sekunden_laden=round(T1 - T0, 1), modell="Depth-Anything-V2-Small-hf (Apache-2.0)",
                hinweis="Hochpass-Feinform aus monokularer Tiefe, Massstab am Scan-Bandpass verankert; Fugentiefe daher Scan-Massstab, nicht gemessen = ANNAHME")

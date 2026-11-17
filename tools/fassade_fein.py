@@ -13,12 +13,19 @@ einem gruenen oder gelben Gebaeude?" Grundsatz: was VOR der Wand steht, wandert 
      Wo nur EIN Foto hinsieht, laesst sich nichts pruefen - die Stelle bleibt wie fotografiert und steht als 'ungeprueft' in abdeckung_<id>_fein.png (grau).
 Ausgabe ortho_<id>_fein.png, abdeckung_<id>_fein.png (weiss = >= 3 Fotos einig, grau = 1-2 Fotos, schwarz = nichts), Bericht fein.json.
 Massstab und Lage = Bezugsfoto auf der Modellebene; das Bild ist fuer MUSTER und Kanten, Masse weiter ueber foto_mass.py.
+NACHTRAG 17.11.2026 (Feinausrichtung, Option --fein_ausrichten 1, Standard aus): nach der Homographie je Foto ein glattes Verschiebungsfeld gegen den Median der
+ANDEREN Fotos (tools/wand_feinausrichtung.py: starrer Versatz bis 15 cm, dann NCC-Blockmatching +-5 cm mit Vorwaerts-Rueckwaerts-Probe, Gauss-Glaettung 30 cm,
+Foto ohne Belege < 10 % bleibt unveraendert). Kaufhaus f06 (Putz + Erker, Fotos verschiedener Jahre): nur 2-6 % vertraut -> Bild unveraendert (kein Schaden, kein Gewinn).
+--aus <ordner> schreibt die Ergebnisse woanders hin (Test, ohne den Bestand zu ueberschreiben).
 """
 import sys, os, json, argparse, numpy as np, cv2
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("ortho"); ap.add_argument("--nur"); ap.add_argument("--k", type=int, default=6); ap.add_argument("--abw", type=float, default=38.0); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument("ortho"); ap.add_argument("--nur"); ap.add_argument("--k", type=int, default=6); ap.add_argument("--abw", type=float, default=38.0)
+    ap.add_argument("--fein_ausrichten", type=int, default=0, help="1 = nach der Homographie Feinausrichtung je Foto gegen den Median der anderen (wand_feinausrichtung.py)")
+    ap.add_argument("--fa_max", type=float, default=0.05); ap.add_argument("--fa_glatt", type=float, default=0.30); ap.add_argument("--fa_min_ncc", type=float, default=0.5); ap.add_argument("--gpu_mb", type=int, default=1500)
+    ap.add_argument("--aus", default=None, help="Ausgabeordner (Standard: Ortho-Ordner)"); a = ap.parse_args(); aus_d = a.aus or a.ortho; os.makedirs(aus_d, exist_ok=True)
     FA = json.load(open(os.path.join(a.ortho, "fassaden.json")))["fassaden"]; bericht = {}; sift = cv2.SIFT_create(8000); bf = cv2.BFMatcher()
     for F in FA:
         fid = F.get("id"); ed = os.path.join(a.ortho, f"ortho_{fid}_einzeln")
@@ -45,6 +52,12 @@ def main():
             if j == ref: continue
             if (ref, j) not in HM: info.append(dict(foto=B[j]["nr"], rolle="verworfen", grund="keine sichere Homographie zum Bezug")); continue
             Hm, ni, vers, mv = HM[(ref, j)]; stapel.append(cv2.warpPerspective(B[j]["im"], Hm, (W_, H_), flags=cv2.INTER_LINEAR)); info.append(dict(foto=B[j]["nr"], rolle="ausgerichtet", inlier=ni, eckversatz_m=round(vers, 2), mittel_versatz_m=round(mv, 3)))
+        fa = None
+        if a.fein_ausrichten and len(stapel) >= 3:                         # Feinausrichtung: Restversatz der Homographie (Kamerareste, Flaeche != Tiefe) per glattem Feld
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import wand_feinausrichtung as WF
+            mk = [cv2.erode((x.sum(2) > 0).astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool) for x in stapel]; s0, _ = WF.schaerfe(stapel, mk)
+            stapel, mk, _, fa = WF.fein_ausrichten(stapel, mk, zl, max_m=a.fa_max, glatt_m=a.fa_glatt, min_ncc=a.fa_min_ncc, gpu_mb=a.gpu_mb); stapel = [np.where(m_[..., None], x, 0).astype(np.uint8) for x, m_ in zip(stapel, mk)]
+            s1, _ = WF.schaerfe(stapel, mk); fa["schaerfe_median_wandbild"] = [s0, s1]; print(f"  Schaerfe Median-Wandbild {s0:.0f} -> {s1:.0f}")
         S = np.stack(stapel).astype(np.float32); gueltig = S.sum(3) > 0
         def median(S, g):
             T = S.copy(); T[~g] = np.nan
@@ -59,12 +72,12 @@ def main():
         for g_ in (g2, gueltig):                                           # Rueckfall: bestes nicht verdecktes Foto, dann irgendeines
             for i in range(len(stapel)):
                 nimm = g_[i] & ~belegt; erst[nimm] = S[i][nimm]; belegt |= g_[i]
-        aus = np.where((n2 >= 3)[..., None], np.nan_to_num(med2), erst).astype(np.uint8); cv2.imwrite(os.path.join(a.ortho, f"ortho_{fid}_fein.png"), aus)
-        cv2.imwrite(os.path.join(a.ortho, f"abdeckung_{fid}_fein.png"), np.where(n2 >= 3, 255, np.where(belegt, 110, 0)).astype(np.uint8))
+        aus = np.where((n2 >= 3)[..., None], np.nan_to_num(med2), erst).astype(np.uint8); cv2.imwrite(os.path.join(aus_d, f"ortho_{fid}_fein.png"), aus)
+        cv2.imwrite(os.path.join(aus_d, f"abdeckung_{fid}_fein.png"), np.where(n2 >= 3, 255, np.where(belegt, 110, 0)).astype(np.uint8))
         for k_, i_ in enumerate([x for x in info if x["rolle"] != "verworfen"]): i_["verdeckt_anteil"] = round(float(verdeckt[k_].sum()) / max(int(gueltig[k_].sum()), 1), 3)
-        bericht[fid] = dict(fotos=info, abdeckung=round(float(belegt.mean()), 3), einig_ab_3_fotos=round(float((n2 >= 3).mean()), 3), zelle=zl)
+        bericht[fid] = dict(fotos=info, feinausrichtung=fa, abdeckung=round(float(belegt.mean()), 3), einig_ab_3_fotos=round(float((n2 >= 3).mean()), 3), zelle=zl)
         print(f"{fid}: Bezug {B[ref]['nr'][-14:]} (Inlier-Summe {int(INL[ref].sum())}), " + ", ".join(f"{i_['foto'][-10:]} " + (f"{i_['inlier']} Inl. {i_['mittel_versatz_m']*100:.0f} cm verdeckt {i_['verdeckt_anteil']:.0%}" if i_["rolle"] == "ausgerichtet" else "verworfen") for i_ in info[1:]) + f"; Bezug verdeckt {info[0]['verdeckt_anteil']:.0%}; einig (>= 3 Fotos) {(n2 >= 3).mean():.0%}, Abdeckung {belegt.mean():.0%}")
-    json.dump(bericht, open(os.path.join(a.ortho, "fein.json"), "w"), indent=1); return 0
+    json.dump(bericht, open(os.path.join(aus_d, "fein.json"), "w"), indent=1); return 0
 
 
 if __name__ == "__main__":

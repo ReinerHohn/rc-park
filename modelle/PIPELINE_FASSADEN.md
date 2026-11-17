@@ -525,6 +525,25 @@ in `fassaden_kette.py` als Stufe nach `relief_putz.py` (Eingang `<wand>_eben.npz
   Tor `--min_korr 0.2`; Ergebnis je Wand unter `mono` in fassaden_kette.json. OFFEN: `fassaden_kette.anbauen()` setzt `<wand>_mono.npz` noch nicht ein (Datei nicht in diesem Auftrag).
 - Grenzen: Nord-Drahtstreifen zeigt die (unruhigere) Feinrechnung statt Steinen; Kante rechts an der Steintafel Sued bleibt als Rille (echte Tafelkante + Schatten, nicht sicher getrennt).
 
+### Nachtrag 17.11.2026 nachts: Feinausrichtung der Wandbilder ("pixelgenau uebereinander") - `tools/wand_feinausrichtung.py`
+- Wozu: nach Kameraprojektion/Homographie liegen die Einzelfotos im Wandraster noch 1-3 cm gegeneinander (Kamerareste, Flaeche != Tiefe) -> Median verwischt Fugen.
+- Ablauf (generisch, GPU per torch, ~70-100 s je Wand mit 5 Fotos): Grau -> Bandpass 1 Zelle..8 cm (Licht faellt weg) -> Bezug je Foto = Median der ANDEREN Fotos ->
+  (0) starrer Versatz je Foto bis 15 cm (Phasenkorrelation, zweimal) -> (1-3) dichtes NCC-Blockmatching (Fenster 25 cm, +-5 cm um den starren Versatz, Subpixel),
+  Vertrauen nur bei NCC >= 0,5, deutlicher Spitze, nicht am Suchrand, Vorwaerts-Rueckwaerts <= 1 Zelle -> glattes Feld (normierte Gauss-Faltung 30 cm, Vorgabe 0 ohne Belege,
+  Ausreisser > 1,5 Zellen raus) -> Median der Felder ueber die Fotos abgezogen (Gesamtlage = Kameras) -> kubisch neu abgetastet. Foto mit < 10 % Vertrauen bleibt unveraendert.
+  Verdecker (Draht, Baum, Passant) stimmen nicht mit dem Median der anderen ueberein -> kein Vertrauen -> dort nur das glatte Wandfeld, nichts "eingezogen".
+- Eingebaut: `relief_aus_fotos_mono.py --fein_ausrichten 1` (STANDARD seit 17.11.; danach ein gemeinsamer Versatz zum Scan aus dem Mittel-Hochpass) und
+  `fassade_fein.py --fein_ausrichten 1` (Option, Standard aus; `--aus` fuer Testordner).
+- Test Schwabentor Sued (schwab_v3, Feld 0,1-11,4 / 0-9,9, 5 Fotos, Holdout 113836 nicht ausgerichtet; Sichtbarkeit mit auf 15 % reduziertem STL, Ergebnis wie mit vollem STL: F1 0,417 reproduziert):
+  Restversatz je Foto 1,24/1,17/2,42/2,54 -> 0,20/0,20/0,44/0,46 cm (unabhaengige Phasenkorrelation 1,44/1,06/2,56/2,93 -> 0,23/0,31/0,38/0,45); unscharfes Foto 113939 bleibt 2,8 cm (2 % vertraut).
+  Schaerfe Median-Wandbild (Gradientenenergie): Feld 4488 -> 5642, Stein 5002 -> 6221, Bogen 5109 -> 7184, Brei-Zone 2581 -> 2865.
+  Fugen-F1 gegen Holdout: Feld 0,417 -> 0,431, Bogen 0,421 -> 0,436, Brei-Zone 0,408 -> 0,417 (Zufall 0,26-0,32). Abwaegung: nur gemeinsamer Versatz 0,417, + starr 0,425, + Feld 0,431.
+  Wiederholung bitgleich (npz). Drahtzone: Median zeigt den Draht vorher wie nachher nicht, Relief-Draht-Grat nicht staerker. Bilder: `/media/oem/scan/rc-park_daten/tmp_feinausr/vergleich_*.png`, `relief_vergleich_*.png`.
+- Schwabentor f01 (fassade_fein, 7 Fotos nach Homographie): Restversatz 0,65-1,52 -> 0,10-0,16 cm (ein Foto 0,85 -> 0,61), Phasenkorrelation 0,9-3,0 -> 0,17-0,36 (eins 1,98),
+  Schaerfe 3799 -> 4384 (+15 %), 440 s mit 700 MB GPU. Bilder `tmp_feinausr/sw_fein_vergleich_stein.png`, `_georg.png` (Steinstruktur und Gesicht sichtbar schaerfer).
+- Kaufhaus f06 (fassade_fein): 2-6 % vertraut (glatter Putz, Fotos aus Jahrzehnten) -> unveraendert. Wirkung nur, wo Fotos dieselbe Steinzeichnung zeigen.
+- Feinpunkt-Anker `--anker_fein <tiefe_lokal.npz>` (Schritt B2): Scan-Massstab liegt in ~70 % der Kacheln in der gemessenen Spanne -> Fugentiefe bestaetigt; Neuskalierung senkt F1 -> nur Gegenprobe.
+
 ## Nachtrag 17.11.2026 abends: Runde 3 Kaufhaus - Feinteil-Mass, Restbrei, Erker-Masswerk, Dachdeckung, Figuren
 - **Feinteil-Mass `tools/feinteil_tor.py`** (nur Hinweis in `bauen_abnehmen.sh`, objekt.json `feinteil`): Feinband 2-12 cm von Foto (Grau) und Modell (Normalenbild),
   Strukturtensor -> Richtungshistogramm je 1-m-Kachel, SSIM-artige Kachelnote, Zonen als Kaesten (`modelle/<objekt>/feinteil_zonen.json`), fester Bewertungsbereich (`--bereich_stl`),

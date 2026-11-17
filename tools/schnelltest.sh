@@ -71,4 +71,12 @@ n0 = len(draht_linien(b, m, 0.01)[1]); cv2.line(b, (80, 560), (820, 60), (25, 25
 auf = np.zeros((H, W), np.uint8); cv2.line(auf, (80, 560), (820, 60), 1, 1); auf = auf > 0
 assert n0 == 0 and len(seg) >= 1 and dm[auf].mean() > 0.8 and dm[~cv2.dilate(auf.astype(np.uint8), np.ones((25, 25))).astype(bool)].mean() < 0.005
 PY
+$P -I tools/wand_feinausrichtung.py --selbsttest --klein > /dev/null 2>&1 && ok "Wandbild-Feinausrichtung: 5 versetzte Fotos (1-4 cm, eins 7 cm starr) auf < 0,5 Zellen, Median schaerfer, Wiederholung bitgleich (wand_feinausrichtung)" || rot "wand_feinausrichtung --selbsttest (Restversatz/Schaerfe/bitgleich)"
+$P -I - <<'PY' > /dev/null 2>&1 && ok "Mono-Relief Feinpunkt-Anker: glatter Traeger daempft erfundenes Relief (< 2 mm), halbe Tiefe -> a ~ 0,5 (relief_aus_fotos_mono.anker_fein)" || rot "relief_aus_fotos_mono.anker_fein (Nullkontrolle glatter Traeger / Massstab)"
+import sys; sys.path.insert(0, "tools"); import numpy as np, cv2; from relief_aus_fotos_mono import anker_fein
+rng = np.random.default_rng(0); H, W = 300, 450; hp = cv2.GaussianBlur(rng.normal(0, 1, (H, W)).astype(np.float32), (0, 0), 4).astype(np.float64); hp *= 0.02 / hp.std()
+m = np.ones((H, W), bool); gf = rng.random((H, W)) < 0.4
+A, b = anker_fein(hp, rng.normal(0, 0.003, (H, W)), gf, m, 0.01, 1.5, 24.0); assert (hp * A).std() < 0.002, (hp * A).std()
+A, b = anker_fein(hp, 0.5 * hp + rng.normal(0, 0.003, (H, W)), gf, m, 0.01, 1.5, 24.0); assert abs(float(np.median(A)) - 0.5) < 0.05, np.median(A)
+PY
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F
