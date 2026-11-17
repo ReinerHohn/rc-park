@@ -423,3 +423,12 @@ OFFEN: Raender Stein/Putz ausgefranst (Maske aus Fotofarbe) -> Kanten glaetten/a
 Farbteile fuer Dach/Gesims/Uhr fehlen; Kettenobjekte: Masken heissen dort relief/wNN_putz.npz - Lauf steht aus.
 Kettenpruefstand (`tools/ketten_pruefstand.py`), erster Lauf: kaufhaus_gk 23 Stufen, 2 nicht in Ordnung (fassaden_netz: InterfaceCOLMAP 'error writing depth-data', Ursache offen; fassaden), 13 Fenster, Abdeckung 30 %, kein Relief.
 Netzstufe: braucht voruebergehend ~0,03 GB je Bild; raeumt die Tiefenkarten-Kopien jetzt selbst weg; Platzpruefung vorab.
+
+### Druckzeit gemessen (17.11.2026, Turm, PrusaSlicer-Standardprofil, Bett 256 mm) - Grundlage fuer die naechste Bauart
+- Steinplatten flach (6 Stueck, Schicht 0,16): 15 h 9 min, 83 cm3.
+- Koerper mit Taschen, aufrecht in 5 Teilen (Schicht 0,2): OHNE Stuetzen 65 h 35 min / 690 cm3, MIT Stuetzen 98 h 15 min / 1013 cm3. Das unterste Teil (0-21 m, unter 8 m massiv) allein 35 h.
+- Versuch: Schaftteil 21-35 m (aufrecht 19 h 9 min / 166 cm3) als 4 FLACHE Wandpaneele (3,4 mm dick): 2 gemessene Paneele 1 h 40 min und 2 h 4 min, alle 4 zusammen 45 cm3 -> etwa 7-8 h statt 19 h, Material 1/3,7.
+  (2 der 4 Paneele lehnte der Slicer ab - die Taschen der Steinplatten zerlegen die Wandscheibe in bis zu 26 Stuecke; ein Paneel braucht eine durchgehende Traegerschicht.)
+- FOLGERUNG: der schnelle Bausatz besteht aus FLACHEN WANDPANEELEN (Putz) + flachen Steinplatten + Dach/Aufbauten als Koerper; der aufrechte Hohlkoerper ist die langsamste Bauart.
+  Naechster Schritt: `druck_paneele.py` (Waende an den Gebaeudeecken trennen, Traegerschicht, Eckverbindung, Sockel hohl statt massiv).
+- `druck_zeit.py`: Druckraum wird angegeben (`--bett 256`), sonst lehnt der Slicer Teile ueber 210 mm ab.
