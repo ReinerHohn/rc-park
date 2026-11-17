@@ -11,7 +11,7 @@ tools/wand_ortho.py. Reihenfolge im Generator: Relief (relief_einsatz.koerper) z
   rumpf = rumpf + W.kasten(1.9, 10.5, 10.95, 11.3, -0.05, 1.55)                      # Galerieboden
 """
 import numpy as np
-from manifold3d import Manifold as M, CrossSection, OpType
+from manifold3d import Manifold as M, CrossSection, OpType, JoinType
 
 
 def spitzbogen(halb, kaempfer, scheitel, unten=-0.6, nseg=24, tief=0.3):
@@ -198,6 +198,46 @@ def bogen_querschnitt(form, breite, kaempfer, scheitel, unten):
     if form == "spitz": return spitzbogen(breite / 2, kaempfer, scheitel, unten=unten)
     if form == "stich" and scheitel - kaempfer < breite / 2 - 1e-3: return stichbogen(breite, unten, kaempfer, scheitel)
     return rundbogen(breite, unten, kaempfer + breite / 2)
+
+
+def oeffnungen_aus_wandbild(koerper, datei, ncc_min=0.2, ersatz=None, steg_tiefe=0.05, vor=0.05, nur=None):
+    """OEFFNUNGEN AUS DEM WANDBILD bauen (18.11.2026, Rueckwand/Laube; Datei von tools/oeffnungen_wandbild.py): je Oeffnung der Bildumriss als Nische bis zur
+    gemessenen Tiefe (Parallaxe der Einzelfoto-Orthos) - der flache Nischengrund IST die Rueckwand nach Regel A (Glas/Torblatt in Leibungstiefe). Bei Fenstern
+    die Stege (Pfosten/Kaempfer/Rahmen = Zellen in Wandfarbe innerhalb des Umrisses) steg_tiefe dick vor dem Grund. 'flach' (Tafel, Bild) wird nicht gebaut.
+    Tiefe unsicher (NCC innen < ncc_min): ersatz[klasse] = (tiefe, quelle) aus objekt.json (benannte Quelle), sonst Tiefe der sichersten Oeffnung derselben Klasse auf derselben Wand (ANNAHME), sonst nicht gebaut.
+    VOR aushoehlen aufrufen: die Hohlraumschale folgt dann der Nische (kein Durchblick ins Innere). nur = Liste von Fassaden-ids. Liefert (koerper, belege)."""
+    import json, os
+    if not os.path.exists(datei): return koerper, []
+    belege = []; ersatz = ersatz or {}
+    for fid, F in json.load(open(datei)).items():
+        if nur and fid not in nur: continue
+        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); s = -1.0 if W.spiegel else 1.0
+        sicher = {}
+        for e in F["oeffnungen"]:
+            if e.get("tiefe") is not None and not e.get("flach") and e.get("ncc_innen", 0) >= ncc_min and e.get("ncc_innen", 0) > sicher.get(e["klasse"], (0, 0))[1]: sicher[e["klasse"]] = (e["tiefe"], e["ncc_innen"], e["zone"])
+        ab = None; zu = None; liste = []
+        for e in F["oeffnungen"]:
+            if e.get("flach") or not e.get("umriss"): continue
+            if e.get("tiefe") is not None and e.get("ncc_innen", 0) >= ncc_min: T, q = e["tiefe"], "gemessen (Parallaxe, NCC %.2f)" % e["ncc_innen"]
+            elif e["klasse"] in ersatz: T, q = ersatz[e["klasse"]][0], "Ersatzquelle: " + ersatz[e["klasse"]][1] + " (eigene Messung %s, NCC %.2f zu schwach)" % (e.get("tiefe"), e.get("ncc_innen", 0))
+            elif e["klasse"] in sicher: T, q = sicher[e["klasse"]][0], "ANNAHME: wie %s u %.2f..%.2f (eigene Messung %s, NCC %.2f zu schwach)" % (e["klasse"], sicher[e["klasse"]][2][0], sicher[e["klasse"]][2][1], e.get("tiefe"), e.get("ncc_innen", 0))
+            else: continue
+            P = [[s * u, z] for u, z in e["umriss"]]
+            if sum(P[i][0] * P[(i + 1) % len(P)][1] - P[(i + 1) % len(P)][0] * P[i][1] for i in range(len(P))) < 0: P = P[::-1]
+            k = M.extrude(CrossSection([P]), T + vor).translate((0, 0, -T)).transform(W.matrix(0)); ab = k if ab is None else ab + k
+            if e["klasse"] == "fenster":
+                for st in e.get("stege", []):
+                    S = [[s * u, z] for u, z in st]
+                    if sum(S[i][0] * S[(i + 1) % len(S)][1] - S[(i + 1) % len(S)][0] * S[i][1] for i in range(len(S))) < 0: S = S[::-1]
+                    k2 = M.extrude(CrossSection([S]), steg_tiefe + 0.01).translate((0, 0, -T - 0.01)).transform(W.matrix(0)); zu = k2 if zu is None else zu + k2
+            liste.append(dict(klasse=e["klasse"], zone=e["zone"], tiefe=round(float(T), 3), tiefe_quelle=q))
+        if ab is not None: koerper = koerper - ab
+        if zu is not None: koerper = koerper + zu
+        if liste:
+            belege.append(dict(seite="wand", element="Wand %s: %d Oeffnungen aus dem Wandbild (%s)" % (fid, len(liste), ", ".join("%s %.2f m tief" % (x["klasse"], x["tiefe"]) for x in liste)),
+                               quelle="tools/oeffnungen_wandbild.py: Zone OWLv2, Umriss aus dem feinen Wandbild (Helligkeit + Farbabstand zur Wand), Tiefe Parallaxen-Sweep der Einzelfoto-Orthos; " + os.path.basename(datei),
+                               hinweis="; ".join("%s u %.2f..%.2f: %s" % (x["klasse"], x["zone"][0], x["zone"][1], x["tiefe_quelle"]) for x in liste) + "; Stege 5 cm vor dem Grund = ANNAHME", oeffnungen=liste))
+    return koerper, belege
 
 
 def oeffnungen_aus_json(koerper, datei, vor=0.8, gewoelbe=0.5):
@@ -553,6 +593,55 @@ def aushoehlen(koerper, d=0.3, schnitte=(), fenster=None, min_m3=0.5, decke=None
         gross = [t for t in teile if t.volume() >= 0.05]; erg = gross[0]
         for t in gross[1:]: erg = erg + t
     return kneifkanten_schliessen(erg), offen, vol
+
+
+def _wand_inv(W):
+    """Welt -> Wandkoordinaten (x = s*u wie in Wand.matrix, y = z, z = w) als 3x4-Matrix fuer Manifold.transform."""
+    s = -1.0 if W.spiegel else 1.0
+    return [[s * W.t[0], s * W.t[1], 0.0, -s * float(W.t @ W.a)], [0.0, 0.0, 1.0, 0.0], [float(W.n[0]), float(W.n[1]), 0.0, -float(W.n @ W.a)]]
+
+
+def rueckwaende(koerper, felder, tiefe, d, rand=0.6, schliessen=0.05, schritt=0.01, w_bereich=(-1.0, 1.0), voll_ab=0.8, max_faktor=3.0):
+    """REGEL A (Rueckwand/Laube 18.11.2026; Nutzer: im Render sah man durch die Obergeschossfenster in den Hohlraum mit diagonalen Innenkanten):
+    hinter JEDER durchgebrochenen Oeffnung sitzt in Leibungstiefe eine ebene Rueckwand (Platte d dick), ein Kragen (Ring d breit um den Oeffnungsumriss,
+    von der Wandschale bis zur Platte) schliesst den Hohlraum seitlich ab - durch kein Fenster sieht man ins Hohlinnere oder auf Innenkanten.
+    Die Oeffnung selbst bleibt unberuehrt (Gewaende, Pfosten, Kaempfer, Masswerk in ihr bleiben); sie ist danach eine tiefe Nische, kein Durchblick mehr.
+    Alles wird am GEBAUTEN Koerper je Feld gemessen (daher NACH allen Oeffnungsschnitten aufrufen, auch nach Umformungen wie vorhangbogen_fenster):
+      1. Tiefenprofil im Umfeld (Feld + rand ohne das Feld): Belegung je w-Ebene (Manifold.slice in Wandkoordinaten). Wandflaeche 'vorn' = vorderste Ebene
+         mit >= 50 % Belegung (Relief darf vor der Wandebene w = 0 liegen), Wandschale = zusammenhaengende Ebenen mit >= voll_ab Belegung ab dort.
+      2. Umriss = leere Zellen in der Schale (Projektion), Pfosten/Kaempfer schmaler als 2*schliessen ueberbrueckt, nur Stuecke am Feld, vereinigt mit dem Feld.
+      3. Rueckwand bei vorn - tiefe; liegt etwas IN der Oeffnung tiefer (Rahmen, Pfosten), dann 1 cm dahinter (gemeldet als tiefe_ist).
+    tiefe = Leibungstiefe ab Wandflaeche (Fotomass oder ANNAHME im Beleg). felder: [(Wand, u0, u1, z0, z1, ...)] - im Generator bauteile.DURCH + eigene Felder.
+    Liefert (koerper, info je Feld: u0, u1, z0, z1, vorn, schale, tiefe_ist, flaeche_m2, erkannt, nur_feld | fehlt)."""
+    zus = None; info = []; w0, w1 = w_bereich
+    for f in felder:
+        W, u0, u1, z0, z1 = f[:5]; s = -1.0 if W.spiegel else 1.0
+        xa, xb = sorted((s * (u0 - rand), s * (u1 + rand))); fa, fb = sorted((s * u0, s * u1)); ya, yb = z0 - rand, z1 + rand
+        box = lambda q0, q1: M.cube((xb - xa, yb - ya, q1 - q0)).translate((xa, ya, q0))
+        st = (koerper ^ box(w0, w1).transform(W.matrix(0))).transform(_wand_inv(W))
+        feld = CrossSection.square((fb - fa, z1 - z0)).translate((fa, z0)); gross = CrossSection.square((xb - xa, yb - ya)).translate((xa, ya))
+        umfeld = gross - feld.offset(0.05, JoinType.Miter); A_r = umfeld.area(); kern = None
+        ws = np.arange(w1 - schritt / 2, w0, -schritt); SL = [st.slice(float(w)) for w in ws]; occ = np.array([(S ^ umfeld).area() / A_r for S in SL])
+        e = dict(u0=round(float(u0), 3), u1=round(float(u1), 3), z0=round(float(z0), 3), z1=round(float(z1), 3))
+        if not (occ >= voll_ab).any(): info.append(dict(e, fehlt="keine Wandschale im Umfeld")); continue
+        vorn = float(ws[np.where(occ >= 0.5)[0][0]]); i0 = int(np.where(occ >= voll_ab)[0][0]); i1 = i0
+        while i1 + 1 < len(ws) and occ[i1 + 1] >= voll_ab: i1 += 1
+        sv, sh = float(ws[i0]) + schritt / 2, float(ws[i1]) - schritt / 2
+        voll = (st ^ box(sh, sv)).project()
+        offen = (gross - voll).offset(schliessen, JoinType.Miter).offset(-schliessen, JoinType.Miter); Q = feld; k = 0
+        for p in offen.decompose():
+            if p.area() >= 0.01 and (p ^ feld).area() > 1e-4: Q = Q + p; k += 1
+        nur = Q.area() > max_faktor * feld.area()
+        if nur: Q = feld; print("rueckwaende: Umriss bei u %.2f-%.2f zu gross -> nur Feld" % (u0, u1))
+        innen = Q.offset(-0.03, JoinType.Miter); tiefst = None
+        for w, S in zip(ws, SL):
+            if vorn - 0.6 < w < sv and (S ^ innen).area() > 1e-4: tiefst = float(w)
+        wp = vorn - tiefe if tiefst is None else min(vorn - tiefe, tiefst - schritt / 2 - 0.01)
+        ring = Q.offset(d, JoinType.Miter) - Q
+        k_ = M.extrude(ring, 0.5 * (sv + sh) - (wp - d)).translate((0, 0, wp - d)) + M.extrude(Q, d).translate((0, 0, wp - d))
+        k_ = k_.transform(W.matrix(0)); zus = k_ if zus is None else zus + k_
+        info.append(dict(e, vorn=round(vorn, 3), schale=[round(sh, 3), round(sv, 3)], tiefe_ist=round(vorn - wp, 3), flaeche_m2=round(float(Q.area()), 3), erkannt=k, nur_feld=bool(nur)))
+    return (koerper if zus is None else koerper + zus), info
 
 
 def kneifkanten_schliessen(koerper, r=0.02, runden=6, stellen=4):

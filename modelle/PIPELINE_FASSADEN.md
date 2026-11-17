@@ -562,3 +562,16 @@ in `fassaden_kette.py` als Stufe nach `relief_putz.py` (Eingang `<wand>_eben.npz
 - Ausgabe npz (Terrassen + Lochpolygone) -> `form_aus_wandbild.teil(npz)` liefert (zusatz, abzug) fuer den Generator. Kaufhaus: `bauteile_foto.form_wandbild` (aktiv false), einschalten mit `FORM_WANDBILD=1`.
 - Stand: OG-Fenster feinteil 0,603 -> 0,614, Abnahme gruen, Augenurteil gemischt (Topologie treuer, Kanten unruhig) -> Katalog bleibt Standard. Naechster Schritt: Kanten der Loecher an Fotokanten/Geraden einrasten (Hough/LSD), Bogen als Spline.
 - Tor (Schwabentor Nord, `--leer_offen 1`): Durchfahrt als Loch erkannt, aber Ausfransen am Bogen (Quader im Bogen dunkel wie Durchblick) - nur Probe.
+## Nachtrag 18.11.2026: Rueckwand hinter Oeffnungen (Regel A) und Innenwaende (Laube/Arkade)
+- REGEL A `bauteile.rueckwaende(koerper, felder, tiefe, d)` am Generatorende (nach ALLEN Oeffnungsschnitten, auch Umformungen wie vorhangbogen_fenster):
+  hinter jeder durchgebrochenen Oeffnung eine ebene Rueckwand in Leibungstiefe + Kragen zum Hohlraum -> kein Blick ins Hohlinnere/auf Innenkanten.
+  Wandflaeche, Schale und Umriss werden je Feld am gebauten Koerper gemessen (Tiefenprofil per Manifold.slice); steht etwas tiefer in der Oeffnung (Rahmen), liegt die
+  Rueckwand 1 cm dahinter (Beleg tiefe_ist). felder = bauteile.DURCH (+ eigene). Leibungstiefe am Foto messen: Pixel der Leibungskanten in die Wandebene (foto_mass --kamera),
+  waagerechter Versatz / tan(Blickwinkel), zwei Fotos aus Gegenrichtungen (Kaufhaus OG: 0,14 / 0,19). objekt.json "rueckwand": {tiefe, quelle, hinweis}.
+  Im Render ist die Rueckwand hell wie die Wand (Renderer ohne Umgebungsverdeckung); im Druck dunkel bemalen.
+- INNENWAENDE: objekt.json "innenwaende" [{name, a, b, aussen, versatz, u, z, relief_vorn}] -> `fassade_ortho.py` rechnet sie als eigene Fassade (id = name, innen: true;
+  Sicht nur durch die Oeffnungen davor, gegen das Stufenmodell). Danach wie jede Wand: fassade_fein (--fein_ausrichten 1), fassade_parsing (Zonen),
+  `tools/oeffnungen_wandbild.py` (Tiefe je Zone aus der Parallaxe der Einzelorthos, flach < 6 cm = keine Oeffnung, Umriss aus dem Wandbild, Stege) ->
+  objekt.json "innenwand_oeffnungen" -> `bauteile.oeffnungen_aus_wandbild` im Generator NACH dem Bauteil, das die Wand freilegt (laube), VOR aushoehlen.
+  Kaufhaus i00 (Laubenrueckwand): 39 Fotos, 3 Fenster + Tuer + Tor, Tafel als flach erkannt (Zaehlung Z-eigen__010_M_nsterplatz_24_Freiburg-001).
+  OFFEN: in gesamtkette.py laufen innenwaende automatisch mit (fassade_ortho), oeffnungen_wandbild ist noch NICHT als Kettenschritt eingebaut.

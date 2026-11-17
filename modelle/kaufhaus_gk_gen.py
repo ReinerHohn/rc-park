@@ -50,6 +50,14 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
         beleg("wand", "Laube: %d Korbboegen + offene Halle %.2f m tief, Stirnbogen West" % (len(L["boegen"]), L["tiefe"]), L["quelle"], hinweis="ANNAHME: " + "; ".join(L["annahmen"]))
         if BF.get("saeulen"): beleg("wand", "Laube: Pfeilerzone bis Kaempfer freigeraeumt (Saeulen statt Wandpfeiler)", L["frei_quelle"])
         if "boden" in L: beleg("wand", "Laube: Boden/Pflaster auf z %.2f (Bogenunterkanten)" % L["boden"], L["boden_quelle"])
+    # --- Rueckwand/Laube 18.11.2026 (Agent Rueckwand, eigener Block): Oeffnungen der INNENWAENDE (Laubenrueckwand i00) aus deren Wandbild - NACH laube() (die Wand
+    # entsteht erst mit der Halle), VOR aushoehlen (die Hohlraumschale folgt den Nischen). Kette: objekt.json innenwaende / innenwand_oeffnungen, tools/oeffnungen_wandbild.py
+    IO_ = obj.get("innenwand_oeffnungen")
+    if IO_ and os.environ.get("OHNE_BAUTEILE") != "1" and os.environ.get("OHNE_INNENWAND") != "1":
+        from bauteile import oeffnungen_aus_wandbild
+        koerper, bel_i = oeffnungen_aus_wandbild(koerper, os.path.join(HERE, "kaufhaus_gk", IO_["datei"]), ncc_min=IO_.get("ncc_min", 0.2), ersatz={k: tuple(v) for k, v in IO_.get("ersatz", {}).items()})
+        for b_ in bel_i: beleg(**b_)
+    # --- Ende Rueckwand/Laube 18.11. (Innenwand)
     if belege and os.environ.get("OHNE_HOHL") != "1":        # 16.11.2026 Nutzer: Fenster muessen echte Loecher sein -> Gebaeude hohl, erkannte Fenster durchgebrochen
         from bauteile import aushoehlen
         koerper, n_offen, v_hohl = aushoehlen(koerper, d=float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0)
@@ -111,6 +119,15 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
                 hs, _, _ = schindeln(ek, DS_["abstand"], DS_["tiefe"], nz_min=DS_["nz_min"], nz_max=DS_["nz_max"], z_min=E["helm"][0][0] + 0.05, min_m2=DS_.get("helm_min_m2", 0.3)); ek = ek + hs
             koerper = koerper + ek
             beleg("wand", "%s %s: Achteck-Eckerker (Konsole mit Rippennetz, Wappenband mit Medaillons, Fensterband 2 Lichter je Flaeche mit Kaempfer und Kielbogenkopf, Gesims, geschweifter Helm mit Deckung, Knauf)" % (E["name"], E["seite"]), E["quelle"] + " | " + E.get("quelle_runde3", ""), hinweis="ANNAHME: " + "; ".join(E["annahmen"]))
+    # --- Rueckwand/Laube 18.11.2026 (Agent Rueckwand, eigener Block): REGEL A - hinter jeder durchgebrochenen Oeffnung eine ebene Rueckwand in Leibungstiefe
+    # (bauteile.rueckwaende; Umriss aus dem gebauten Koerper, daher NACH allen Fenster-Umformungen). Masse/Quelle: objekt.json "rueckwand".
+    RW_ = obj.get("rueckwand")
+    if RW_ and belege and os.environ.get("OHNE_HOHL") != "1" and os.environ.get("OHNE_RUECKWAND") != "1":
+        from bauteile import rueckwaende, DURCH
+        koerper, rw_info = rueckwaende(koerper, DURCH, RW_["tiefe"], float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0)
+        beleg("wand", "Rueckwand hinter %d Oeffnungen in Leibungstiefe %.2f m (Kragen zum Hohlraum geschlossen)" % (len(rw_info), RW_["tiefe"]), RW_["quelle"],
+              hinweis=RW_.get("hinweis", ""), umrisse=rw_info)
+    # --- Ende Rueckwand/Laube 18.11.
     tl_ = koerper.decompose()                       # 17.11.2026 Runde 3: Null-Volumen-Splitter (10 Dreiecke an einer Konsolrippe, 0,0 m3) entfernen; echte schwebende Teile (Volumen) bleiben und fallen in der Pruefung auf
     if len(tl_) > 1:
         weg_ = [t_ for t_ in tl_ if t_.volume() < 1e-5]

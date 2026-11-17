@@ -85,6 +85,26 @@ def fassaden_gruppieren(waende, mitte, min_flaeche=4.0, winkel=5.0, abstand=0.3)
     return sorted(out, key=lambda f: -f["flaeche_m2"])
 
 
+def innenwaende(obj):
+    """ZURUECKGESETZTE / INNERE WAENDE als eigene Fassaden (18.11.2026, Agent Rueckwand/Laube). Ursache der kahlen Laubenrueckwand am Kaufhaus: die Wandliste kam
+    nur aus den LoD2-Aussenwaenden; die Rueckwand der Laube (4,25 m hinter der Bogenwand) war im Bild der Bogenwand nur durch die Boegen zu sehen - parallaxverschoben auf die
+    falsche Ebene gezogen, verdeckt von Pfeilern und Bogenzwickeln, und erkannte Oeffnungen wurden in der Ebene der Bogenwand (Luft) geschnitten.
+    objekt.json "innenwaende": [{"name": "i00", "a": [x, y], "b": [x, y], "aussen": [x, y], "versatz": -4.25, "u": [u0, u1], "z": [z0, z1], "relief_vorn": 0.5, "quelle": ...}]
+    a/b/aussen wie bauteile.Wand (Bezugswand, u ab a), versatz < 0 = hinter der Bezugswand; u/z = Wandfeld im u-Mass der Bezugswand. Sichtbarkeit wie jede Fassade gegen das
+    Stufenmodell (die Fotos sehen die Innenwand nur durch die Oeffnungen davor); relief_vorn = wie weit vor der Ebene die vorderste Modellflaeche gesucht wird (kleiner als der
+    Abstand zur Wand davor). Ergebnis: Fassade mit id = name, 'innen': true - fassade_fein/fassade_parsing/fenster_aus_parsing laufen darauf wie auf jeder Fassade."""
+    out = []
+    for i_, w_ in enumerate(obj.get("innenwaende", [])):
+        A = np.asarray(w_["a"], float); B = np.asarray(w_["b"], float); t = (B - A) / np.linalg.norm(B - A); n = np.array([t[1], -t[0]])
+        if (np.asarray(w_["aussen"], float) - A) @ n < 0: n = -n
+        d = np.array([-n[1], n[0]]); o = A + float(w_["versatz"]) * n                                      # gleiche Richtungskonvention wie fassaden_gruppieren (d = n um 90 Grad)
+        us = sorted(float((A + u_ * t - A) @ d) for u_ in w_["u"]); z0, z1 = map(float, w_["z"])
+        out.append(dict(n=n.tolist(), d=d.tolist(), o=o.tolist(), u=us, z=[z0, z1], flaeche_m2=round((us[1] - us[0]) * (z1 - z0), 1), teile=1,
+                        polys_uz=[[[us[0], z0], [us[1], z0], [us[1], z1], [us[0], z1]]], innen=True, versatz=float(w_["versatz"]), relief_vorn=float(w_.get("relief_vorn", 0.5)),
+                        quelle_innen=w_.get("quelle", ""), _id=w_.get("name", f"i{i_:02d}")))
+    return out
+
+
 def projizieren(X, R, t, f, cx, cy, k1):
     Xc = X @ R.T + t; z = Xc[:, 2]; xn = Xc[:, 0] / z; yn = Xc[:, 1] / z; r2 = xn * xn + yn * yn; s = 1 + k1 * r2
     return np.c_[f * xn * s + cx, f * yn * s + cy], z
@@ -129,7 +149,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--stl", required=True); ap.add_argument("--aus", required=True)
     ap.add_argument("--zelle", type=float, default=0.05); ap.add_argument("--tol", type=float, default=0.10); ap.add_argument("--relief-vorn", type=float, default=3.0); ap.add_argument("--relief-hinten", type=float, default=6.0); ap.add_argument("--max-mpp", type=float, default=0.06)
     ap.add_argument("--max-winkel", type=float, default=70.0); ap.add_argument("--fotos", help="Komma-Liste (Standard: alle mit K-Datei und buendel_tor ok)")
-    ap.add_argument("--waende-stl", action="store_true", help="Fassaden aus senkrechten Modelldreiecken, die keine LoD2-Ebene sind (Erker/Vorbauten)"); ap.add_argument("--min-flaeche", type=float, default=1.0); ap.add_argument("--einzeln", action="store_true"); ap.add_argument("--ohne-nachbarn", action="store_true"); ap.add_argument("--beste", type=int, default=5, help="je Zelle nur die k Fotos mit der besten Guete (cos/mpp) mitteln: 61 Fotos im Median verschmierten Kanten (Kamerareste 1-4 px)"); ap.add_argument("--arbeiter", type=int, default=6, help="parallele Fotos (RAM: Vollbilder bis 0,3 GB je Foto)"); ap.add_argument("--rand", type=float, default=0.5, help="Rand um die Wand (m) fuer Vorsprung/Traufe")
+    ap.add_argument("--waende-stl", action="store_true", help="Fassaden aus senkrechten Modelldreiecken, die keine LoD2-Ebene sind (Erker/Vorbauten)"); ap.add_argument("--min-flaeche", type=float, default=1.0); ap.add_argument("--ohne-innenwaende", action="store_true", help="objekt.json innenwaende (Laube/Arkade-Rueckwand) nicht als Fassaden i00.. mitrechnen"); ap.add_argument("--einzeln", action="store_true"); ap.add_argument("--ohne-nachbarn", action="store_true"); ap.add_argument("--beste", type=int, default=5, help="je Zelle nur die k Fotos mit der besten Guete (cos/mpp) mitteln: 61 Fotos im Median verschmierten Kanten (Kamerareste 1-4 px)"); ap.add_argument("--arbeiter", type=int, default=6, help="parallele Fotos (RAM: Vollbilder bis 0,3 GB je Foto)"); ap.add_argument("--rand", type=float, default=0.5, help="Rand um die Wand (m) fuer Vorsprung/Traufe")
     ap.add_argument("--max-fotos", type=int, default=40, help="je Fassade nur die besten N Kameras (0 = alle)"); ap.add_argument("--gpu-sicht", action="store_true", help="Sichtbarkeit ueber ein GPU-Tiefenbild je Foto statt CPU-Strahlen. Messung 16.11.2026 (ober_tvdr, 700 Kameras): LANGSAMER (61 s gegen 41 s) und weniger streng - Standard bleibt CPU (embree)"); ap.add_argument("--nur", help="Komma-Liste Flaechen-IDs (f02,e05 ...): nur diese rastern (Tests/Vergleiche; IDs bleiben die des vollen Laufs)")
     ap.add_argument("--ohne-gpu", action="store_true", help="Zellrechnung (Projektion, Blickwinkel, Aufloesung, Bildrand-Maske) auf der CPU statt auf der GPU; die CPU rechnet exakt wie vor dem 17.11.2026 (Vergleichsweg)")
     ap.add_argument("--gpu-mb", type=float, default=2600.0, help="Obergrenze fuer den GPU-Speicher dieses Laufs in MiB (torch-Zuteilung; dazu kommen ~0,3 GB Grundlast des Treibers). Wird sie oder der freie Kartenspeicher ueberschritten: Meldung, Rest auf der CPU")
@@ -163,6 +183,7 @@ def main(argv=None):
         print(f"  Vorbau-Fassaden aus STL: {len(fas)} (von {len(fs)} senkrechten Ebenen >= {a.min_flaeche} m2; Rest = LoD2-Ebenen)")
     else: fas = fassaden_gruppieren(waende, mitte)
     for i_, F_ in enumerate(fas): F_["_id"] = F_.get("id_vorbau") or f"f{i_:02d}"
+    if not a.ohne_innenwaende: fas += innenwaende(obj)                                              # 18.11.2026 (Rueckwand/Laube): zurueckgesetzte Waende (Laube/Arkade) als eigene Fassaden i00..
     if a.nur: fas = [F_ for F_ in fas if F_["_id"] in set(a.nur.split(","))]
     def _kam(k_): c_ = json.load(open(k_)).get("kamera"); return c_ if isinstance(c_, dict) and "rvec" in c_ and "cx" in c_ else None
     alle_k = {os.path.basename(k)[2:-5]: _kam(k) for k in glob.glob(os.path.join(od, "messprotokoll", "K-*.json"))}; alle_k = {n_: c_ for n_, c_ in alle_k.items() if c_}
@@ -193,7 +214,7 @@ def main(argv=None):
     ray_alle = RI(_ma) if nb is not None else ray                     # Sicht: Modell + Nachbarn; Relief (Ortho-Flaeche): nur Modell
     FN_M = np.asarray(m.face_normals, float); P0_M = np.asarray(m.triangles[:, 0], float)
     def relief(F):                                                                                  # echtes Orthobild: je Zelle die VORDERSTE Modellflaeche entlang -Normale (Erker, Galerie, Arkadenrueckwand)
-        X = F["_X"]; n3 = np.array(F["n"] + [0.0]); vorn = a.relief_vorn
+        X = F["_X"]; n3 = np.array(F["n"] + [0.0]); vorn = F.get("relief_vorn", a.relief_vorn)          # Innenwand: nur kurz davor suchen, sonst traefe der Strahl die Bogenwand davor
         ur_ = X + n3 * vorn; dn_ = trimesh.util.unitize(-n3[None])[0]                               # 17.11.2026 (2): Strahlkern direkt, Trefferort mit derselben trimesh-Formel (planes_lines) -> bitgleich zu intersects_location
         ti, ri = erster_treffer(ray, ur_, dn_)
         loc, gut_ = trimesh.intersections.planes_lines(plane_origins=P0_M[ti], plane_normals=FN_M[ti], line_origins=ur_[ri], line_directions=np.broadcast_to(dn_, (len(ri), 3))); ri = ri[gut_]

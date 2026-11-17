@@ -388,3 +388,14 @@ Versuch: Rippen der Frontflaeche (A,B,C,D,L2,R2) um die Erkerachse (u 15,52 / n 
   Wandniveau = Median des Zonenrands statt Median der Wandfarbklasse: am Kaufhaus Fenster 2 falsch (Figurenreste im Rand, Oeffnungstiefe 0,12 -> 0,19 m) -> nur mit --leer_offen (Tor).
   foto_diff (tol 0,35 m) unterscheidet Katalog- und Wandbild-Fenster gar nicht (bitgleiche Anteile 018/handy_06) -> fuer Fensterinnenleben ungeeignet, nur feinteil_tor misst den Unterschied.
   Ergebnis: Wandbild-Fenster feinteil obergeschoss 0,6028 -> 0,6138 (7 von 9 Fotos besser), Abnahme gruen, aber am Foto NICHT sichtbar besser (Kanten wellig 1-2 cm, Pfosten ungleich dick, Kielbogen eckig) -> nicht uebernommen, Schalter FORM_WANDBILD=1.
+
+## 18.11.2026 nachts: Rueckwand hinter Oeffnungen / Laubenrueckwand (Agent Rueckwand/Laube)
+- bauteile.rueckwaende erste Fassung: Umrisssuche in einem FESTEN w-Band (-0,8d..-0,2d hinter der Wandebene w = 0). Am Kaufhaus liegt das Relief der Hauptfassade
+  ~0,12 m VOR der LoD2-Ebene, die Wandschale bei +0,02..+0,12 -> das Band lag im Hohlraum, jeder Umriss = ganzes Suchfeld (12 m2 statt 5,7 m2). Ersatz: Tiefenprofil je Feld
+  (Belegung je w-Ebene per Manifold.slice im Umfeld) -> Wandflaeche und Schale gemessen, nicht angenommen.
+- oeffnungen_wandbild.py erste Segmentierung: Otsu auf dem Lab-Abstand zur Wandfarbe -> Holzrahmen und halbe Lichter fielen heraus (Fenster 2 zerrissen, Tuer halb).
+  Zweite: nur Helligkeit -> verschattetes Gewoelbe ueber dem Tor wurde Oeffnung. Geblieben: dunkler als Mitte(Wand, P10 innen) UND Farbabstand a*/b* > halbe Buntheit der Wand.
+- Tiefe aus der Parallaxe der Einzelorthos: bei NCC innen < 0,2 unbrauchbar (Tuer 0,14 m bei NCC 0,16/0,12 gegen grob3-Fotomessung 0,39) -> Ersatzquelle mit Namen statt Messwert.
+- Leibungstiefe OG-Fenster 3: zwei Fotos aus Gegenrichtungen geben 0,141 (handy_j_04) und 0,187 (IMG_6119) - nicht gemittelt; grob3 hatte 0,06-0,10 (Glasecke) gegen 0,2-0,29 (Wolke).
+- Zweitprobe schwab_v3 (Generator-Kopie, nicht geaendert): Rueckwand Suedfenster liegt 0,575 tief (Teile in der Oeffnung), Plattenfront im STL an einer Ecke um 8 cm verzogen
+  (Ecke 6,21/23,37 bei -0,643 statt -0,56; Render zeigt eine Diagonale). Ursache NICHT geklaert (Verdacht: Nachbearbeitung im schwab_v3-Generator simplify/Verschweissen in mm).

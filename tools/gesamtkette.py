@@ -28,7 +28,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = "/media/oem/scan/venv-seg/bin/python"; PYC = "/media/oem/scan/venv-colmap/bin/python"
-STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "kanten", "fototor", "fassaden", "fenster", "seiten", "html", "vergleich"]
+STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "kanten", "fototor", "fassaden", "fenster", "seiten", "html", "vergleich", "druck"]
 UEBERNEHMEN = ["name", "ort", "lod2", "rahmen", "rahmen_wand", "koordinate_utm", "hoehe_m", "fotos_dir", "seiten_konvention", "bildquellen"]
 
 
@@ -383,6 +383,12 @@ def main():
         try:
             v = json.loads([l for l in out.splitlines() if l.startswith("VERGLEICH ")][-1][10:]); notiz(B, "vergleich_ergebnis", bool(v["median_m"] < 0.5), referenz=a.referenz_wolke, **v)
         except Exception as e: notiz(B, "vergleich_ergebnis", False, fehler=str(e)[:200])
+    if dran("druck"):                                                    # 18.11.2026 (Ziel H0-druckbar von null, modelle/ZIEL_PIPELINE_H0.md L1): Bausatz fuer MK4S (Koerper) + Bambu (Platten)
+        mk_ = sorted(os.path.relpath(q_, Z) for q_ in glob.glob(os.path.join(Z, "relief", "*_putz.npz")))
+        if not mk_: notiz(B, "druck", False, fehler="keine Putzmasken relief/*_putz.npz (Stufe fassaden) - Bausatz braucht sie fuer die Steinplatten; ohne Masken kein Bausatz")
+        else:
+            rc_, out_ = lauf(B, "druck", ["bash", "tools/bausatz.sh", a.ziel, ",".join(mk_)], log, ok=(0, 3))
+            notiz(B, "druck_ergebnis", rc_ == 0, masken=len(mk_), hinweis="rc 3 = Luftinsel/Abbruch (Meldungen im Log); Teile: modelle/stl/<ziel>_teile, Platten: modelle/stl/<ziel>_farbteile")
     return abschluss()
 
 
