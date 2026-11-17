@@ -4,6 +4,16 @@ Was nach den Kameras (SfM, Tore) automatisch aus einer Fassade wird. Entstanden 
 gegengeprueft am Historischen Kaufhaus. Verlauf, Zahlen und Sackgassen: `modelle/STAND_2026-11-14.md` ab "12:40 PIPELINE-AUTOMATISIERUNG".
 Grundsatz (CLAUDE.md, KERNMETHODE): Form aus Fotokanten und Fotomassen; Netz/Wolke liefern Lage und Bruchstein-Relief; alles Generierte heisst ANNAHME.
 
+## GRUNDSATZ: Wandbild = Bauplan (Nutzer 17.11.2026: "ein gigantischer Schritt")
+Der Durchbruch am Schwabentor: Jede Wand wird aus vielen Fotos zu einem entzerrten Wandbild (Bauplan) im 1-cm-Raster
+(`fassade_fein.py`), dazu die Tiefe je Rasterzelle (`tiefe_lokal.py`, `relief_aus_fotos_mono.py`, Kanten-Tiefen-Sweep).
+Die Bauteile werden aus diesem Bauplan NACHGEBILDET - Umriss, Profil und Tiefenstufen kommen aus Bildkanten und Tiefe.
+- Erkennen ("hier ist ein Fenster") bestimmt nur Zone und Loch, nie die Gestalt.
+- Keine Musterteile aus einem Katalog ("irgendeine Tuer als Muster"). Katalogfunktionen in `bauteile.py` nur fuer
+  Freistehendes, das kein flaches Wandbild zeigt (Saeulenrundung, Bruestung vor der Wand) - auch dann Form aus Fotokanten
+  mehrerer Ansichten.
+- Lehre Kaufhaus Runde 2/3: Saeulen, Balkon, Erker, Figuren als Katalogteile mit Fotomassen wirkten steif -> ersetzen.
+
 ## Stufen in `tools/gesamtkette.py`
 
 Reihenfolge: ... sfm -> tore -> dach -> bauen -> kanten -> fototor -> **fassaden** -> **fenster** -> html -> vergleich.

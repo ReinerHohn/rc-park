@@ -6,6 +6,7 @@ Aktueller Stand: `modelle/STAND_2026-11-14.md` (Abschnitt UEBERGABE am Ende zuer
 - Modell = Fotokanten + Triangulation (Kanten-Tiefen-Sweep mit SfM-Kameras) -> Generator-Features. NICHT aus der dichten Wolke.
 - SfM liefert vor allem die KAMERAS (K, R, t). Dichte Wolke/LoD2/DOM1 nur Lage-Veto, Hoehe, Gegenprobe. Dachart/Form aus Fotos (Regel 9d/9e).
 - Jede Pipeline/Kette (auch `tools/gesamtkette.py`) braucht die Kantenstufe + Foto-F1 (`tools/teil_fotoform.py`) + `tools/foto_diff.py` als Tor.
+- **WANDBILD = BAUPLAN (Durchbruch Schwabentor, Nutzer 17.11.2026 "gigantischer Schritt"):** jede Wand aus vielen Fotos entzerrt zum Wandbild (`fassade_fein.py`, 1-cm-Raster) + Tiefe je Zelle (`tiefe_lokal.py`, `relief_aus_fotos_mono.py`) -> Features werden daraus NACHGEBILDET (Umriss, Profil, Tiefenstufen aus Bildkanten). Erkennen bestimmt nur Zone/Loch, nie die Gestalt; KEINE Musterteile aus dem Katalog ("irgendeine Tuer"). Katalogfunktionen nur fuer Freistehendes, auch dann Form aus Fotokanten mehrerer Ansichten. Ablauf: `modelle/PIPELINE_FASSADEN.md`.
 
 ## Abnahme (Pflicht)
 - Nach JEDER Generatoraenderung: `tools/bauen_abnehmen.sh <objekt>`; nur bei "alle Pruefungen bestanden" weiter. Sollwerte nie lockern ohne neue Quelle (+ `historie`).
