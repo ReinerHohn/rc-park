@@ -44,4 +44,19 @@ assert G.lauf(B, "absturz", ["python3", "-c", "raise ValueError(1)"], L, ok=(0, 
 assert KP.plausibel(3000, (4000, 3000), (30, 0, 1.6))[0] and not KP.plausibel(3000, (4000, 3000), (30, 0, -20))[0] and KP.plausibel(3000, (4000, 3000), (200, 0, -8))[0]
 assert not KP.plausibel(3000, (4000, 3000), (30, 0, -4), tief_m=3)[0] and not KP.plausibel(3000, (4000, 3000), (30, 0, 1.6), k1=-3.0, bild_diag=5000)[0] and KP.plausibel(3000, (4000, 3000), (30, 0, 1.6), k1=0.06, bild_diag=5000)[0]
 PY
+$P -I - <<'PY' > /dev/null 2>&1 && ok "Foto-Tor mit Bezug: Versatz schlechter, Rueckweg besser, Wiederholung gleich, leer = nicht beurteilbar, Mehrheit" || rot "foto_tor_bezug (tools/foto_tor_bezug.py vergleichen/gesamt)"
+import sys; sys.path.insert(0, "tools"); import numpy as np, cv2, foto_tor_bezug as T
+H = W = 600
+def zust(dx, rng):
+    fk = np.zeros((H, W), np.uint8); mk = np.zeros((H, W), np.uint8)
+    for i in range(40):
+        x0, y0 = rng.integers(60, 540, 2); x1, y1 = np.clip([x0 + rng.integers(-80, 80), y0 + rng.integers(-80, 80)], 0, W - 1); cv2.line(fk, (int(x0), int(y0)), (int(x1), int(y1)), 1, 1); cv2.line(mk, (int(x0 + dx), int(y0)), (int(x1 + dx), int(y1)), 1, 1)
+    sil = np.zeros((H, W), bool); sil[50:550, 50:550] = True; lab = np.where(sil, 1, 0).astype(np.uint8); lab[:, 300:][sil[:, 300:]] = 2
+    return dict(mk=mk > 0, fk=fk > 0, sil=sil, occ=np.zeros((H, W), bool), lab=lab, ppm=20.0, grau=fk.astype(np.float32) * 200)
+b, n, w = (zust(d, np.random.default_rng(1)) for d in (0, 6, 0))
+e = T.vergleichen(b, n); r = T.vergleichen(n, b); g = T.vergleichen(b, w)
+assert e["urteil"] == "schlechter" and r["urteil"] == "besser" and g["urteil"] == "gleich" and g["diff"] == 0, (e["urteil"], r["urteil"], g["urteil"])
+assert T.vergleichen(b, dict(b, mk=np.zeros((H, W), bool)))["urteil"] == "nicht beurteilbar"
+assert T.gesamt({"a": e, "b": e, "c": g})["urteil"] == "schlechter" and T.gesamt({"a": e})["urteil"] == "nicht beurteilbar" and T.gesamt({"a": e, "b": r, "c": g})["urteil"] == "gleich"
+PY
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F

@@ -283,6 +283,16 @@ def main():
         if rc_k != 0: notiz(B, "fototor", False, fehler=f"Kameras nicht geschrieben (fototor_kameras rc {rc_k}) - Foto-Tor NICHT gelaufen; K-Dateien eines frueheren Laufs sind fuer diese Ausrichtung nicht belegt"); wahl = []
         elif not wahl: notiz(B, "fototor", False, fehler=f"KEIN Foto geprueft ({kw} fehlt/leer oder alle gewaehlten Kameras beiseitegelegt) - das Foto-Tor ist damit NICHT bestanden (17.11.2026: lief mit 0 Fotos still durch)")
         for f in wahl: lauf(B, f"fototor_{os.path.splitext(f)[0]}", [PY, "-W", "ignore", "-I", "tools/foto_diff.py", ZR, os.path.splitext(f)[0], "--bild", os.path.join(FV, f)], log)
+        # 17.11.2026: foto_diff-Zahlen allein trennen gut/schlecht nicht (Messreihe im Kopf von foto_diff.py) -> URTEIL nur im Paarvergleich gegen den Bezugsstand je Foto
+        # (tools/foto_tor_bezug.py, Nachweis tools/test_foto_tor_bezug.py). rc 3 = belegte Verschlechterung (rot, Bezug bleibt; rc 1 = Absturz), 2 = nicht beurteilbar (kein Bezug -> wird angelegt), 0 = gleich/besser (Bezug fortgeschrieben)
+        wahl_t = [f for f in (list(json.load(open(kw))) if os.path.exists(kw) else []) if os.path.exists(os.path.join(Z, "messprotokoll", "K-" + os.path.splitext(f)[0] + ".json"))][:15] if wahl else []   # Urteil = Mittel ueber Fotos: mit 6 Fotos 83 %, mit ~10 sitzenden 92 % der deutlichen Faelle (Nachweis) -> bis 15 Fotos, ~10 s je Foto
+        if wahl_t:
+            rc_t = lauf(B, "fototor_bezug", [PY, "-W", "ignore", "-I", "tools/foto_tor_bezug.py", ZR, "--fotos", ",".join(os.path.splitext(f)[0] for f in wahl_t), "--bilder_dir", FV, "--setzen_wenn_ok"], log, ok=(0, 2, 3))[0]
+            try: g_ = json.load(open(os.path.join(Z, "audit", "fototor_vergleich.json")))["gesamt"]
+            except Exception: g_ = {}
+            if rc_t == 3: notiz(B, "fototor_urteil", False, urteil="schlechter", gesamt=g_, fehler=f"BELEGTE VERSCHLECHTERUNG gegen den Bezugsstand ({g_.get('schlechter')} von {g_.get('beurteilbar')} beurteilbaren Fotos schlechter, ueber der Rauschgrenze) - audit/fototor_<foto>.jpg ansehen; Bezug NICHT fortgeschrieben")
+            elif rc_t == 2: notiz(B, "fototor_urteil", True, urteil="nicht beurteilbar", gesamt=g_, hinweis="KEIN Urteil (kein Bezugsstand oder < 2 beurteilbare Fotos) - Bezug angelegt; erst der naechste Lauf vergleicht. Nicht als 'besser' lesen")
+            elif rc_t == 0: notiz(B, "fototor_urteil", True, urteil=g_.get("urteil"), gesamt=g_, hinweis="nicht schlechter als der Bezugsstand; Bezug fortgeschrieben")
     # --- 17.11.2026 Stufe 'dachfoto' (gehoert zu fototor: braucht die Messkameras): Dachhoehe und Dachumriss aus der Himmelskante der Fotos (tools/dach_aus_fotos.py) ---
     # rc 0 belegt, 3 belegt mit gemeldetem Widerspruch zu DOM1/LoD2 oder zwischen Kameragruppen, 2 nicht belegt (DOM1-Dach bleibt). Belegt -> Block 'foto' in dach.json, neu bauen.
     if dran("fototor") and os.path.exists(AU) and os.path.exists(os.path.join(Z, "dach.json")):

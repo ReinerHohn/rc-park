@@ -18,6 +18,8 @@ NUR HINWEIS, KEIN TOR (Messreihe 17.11.2026, je 5 gleiche Fotos, Standardaufruf)
   Keine feste Schwelle trennt gut von schlecht. Nur der PAARVERGLEICH auf demselben Foto traegt (richtiges gegen falsches Paar: 5 von 5 besser; schwab_v3 gegen schwab_auto: 4 von 5) -
   ein Tor braucht also einen Bezugsstand je Foto (tools/teil_fotoform.py, Kreis), keine absolute Zahl. Feld 'beurteilbar' im Bericht. Grenzen: Kamerafehler > tol erzeugt Doppelkanten (Versatz-Hinweis im Bericht);
 Verdeckung (Baeume, Leitungen) erzeugt Scheintreffer -> ROI-Blatt ansehen; Treffer ausserhalb der Ankerzone sind als 'unsicher' markiert.
+DAS TOR (gut/schlecht) ist seit 17.11.2026 tools/foto_tor_bezug.py: Bezugsstand je Foto, gekappte symmetrische Chamfer-Distanz bei festem dmed, Sitz-Tor, Mittel ueber Fotos
+  (Nachweis tools/test_foto_tor_bezug.py: deutliche Faelle 22/24, 0 falsche Richtung, 2-5 cm 'gleich'). Es holt die Rohmasken hier ueber _RUECK = {"nur_masken": True, "dmed_fix": ...}.
   /media/oem/scan/venv-seg/bin/python -W ignore -I tools/foto_diff.py modelle/<objekt>/objekt.json <foto> [--tol 0.35] [--laenge 0.8] [--top 10] [--streng]
 """
 import sys, os, json, glob, numpy as np, cv2, trimesh, argparse
@@ -472,6 +474,7 @@ def main(argv=None):
         depth, nrm, pos = (_render_gpu if gpu else _render)(P_, N_, R, t, f, W, H, cx0, cy0)
     sil, sil_f, dfill, dmed = _tiefe_vorbereiten(depth, gpu)
     dmed_aktuell = dmed
+    if _RUECK is not None and _RUECK.get("dmed_fix"): dmed = float(_RUECK["dmed_fix"])                 # foto_tor_bezug (17.11.): dmed (-> Glaettung, Fotokanten, Kappe) aus dem BEZUGSSTAND, sonst aendert ein anderes Modell die Fotokanten
     if _RUECK is not None and _RUECK.get("sigma_fest"):                                           # Metrik v3 (11.11.): dmed (damit sigma, Kappe, Randabstand) je Foto aus dem FESTEN Referenz-STL, nicht aus dem aktuellen Gesamtmodell
         dmed = _dmed_fest(_RUECK["sigma_fest"], nr, K, W, H, obj, kk, R, t, f, cx0, cy0, gpu, dmed_aktuell); _RUECK["dmed_info"] = dict(dmed_fest=dmed, dmed_aktuell=dmed_aktuell)
     ppm = f / dmed
@@ -523,6 +526,15 @@ def main(argv=None):
             if o_ is not None: occ, occ_q = o_ & (sil_f > 0), q_; break
             gruende.append(q_)
         else: occ_q = "keine passende Tiefenkarte: " + ("; ".join(gruende) if gruende else "kein sfm/dicht_*")
+    if _RUECK is not None and _RUECK.get("nur_masken"):                                          # foto_tor_bezug (17.11.): Rohmasken zurueck (Modellkanten mit Umriss, Fotokanten, Silhouette, Verdecker, Normalen), Rest ungenutzt
+        rand_ = (sil_f > 0) & ~(cv2.erode(sil_f, np.ones((3, 3), np.uint8)) > 0)
+        nrm_ = nrm.cpu().numpy() if hasattr(nrm, "cpu") else np.asarray(nrm); pos_ = pos.cpu().numpy() if hasattr(pos, "cpu") else np.asarray(pos)
+        sg_ = np.sign((((-np.asarray(R).T @ np.asarray(t, float))[None, None, :] - pos_) * nrm_).sum(2)); sg_[sg_ == 0] = 1; nrm_ = np.nan_to_num(nrm_ * sg_[..., None]); del pos_, sg_   # zur Kamera gedreht (Netznormalen uneinheitlich)
+        _RUECK["masken"] = dict(mk=(mk_roh | rand_), fk=fk.copy(), sil=sil_f > 0, occ=occ.copy(), nrm=nrm_.astype(np.float16), ppm=float(ppm), dmed=float(dmed), dmed_aktuell=float(dmed_aktuell),
+                                f=float(f), C=(-np.asarray(R).T @ np.asarray(t, float)).tolist(), kamera=quelle, kamera_datei=os.path.abspath(kp), occ_quelle=occ_q, W=W, H=H)
+        if gpu:
+            import torch; del nrm, pos; torch.cuda.empty_cache()
+        return None
     mk_vor_occ = int(mk.sum()); mk = mk & ~occ; fk = fk & ~occ; fk_i = fk_i & ~occ
     kp_param = None; kp_lr = None; kp_chamfer = None; kp_state = None
     if a.maske_aus:                                                                                # Bewertungsbereich fuer param_suche: Silhouette + Rand (param_suche vereinigt die Rasterextreme)
