@@ -450,3 +450,10 @@ Turm (Wand 2,4 mm, Spiel 0,3 mm), gemessen mit PrusaSlicer-Standardprofil:
 Kettenpruefstand 17.11.: kaufhaus_gk ab 'fassaden' 10 Stufen alle in Ordnung, 19 min, Relief an 9 Waenden, 9 Fenster, 4,6 Mio. Dreiecke (Sichtblatt: Ost mit Steinmuster, West/Sued fast glatt, keine Arkaden/Erker);
 martinstor_gk haelt an 'lage_tor' an (Lage nie belegt); schwab_auto: Ostwand 10 % Bilddaten nach Aussortieren falscher Kameras.
 `fassade_ortho.py`: 41 statt 65 s (ober_tvdr, 1-cm-Bild), Ergebnisbilder bitgleich. `--gpu-sicht` bleibt Option: 53 s, aber andere Abdeckung (f07 71 statt 82 %).
+
+### Drucker aus der Sitzung starten + Demonstrator (17.11.2026)
+- Bambu: `tools/bambu_slice.py` -> `tools/p1s_print.py print`. Prusa MK4S: `tools/prusa_slice.py` (0,8-mm-Profil "0.40mm QUALITY @MK4IS 0.8", Modellzeile jetzt "MK4S") -> `tools/prusa_print.py print` (PrusaLink; Zugang in ~/.config/rcpark/prusalink.json).
+- Gestartet: Bambu `demo_tor_sued_stein` (Suedtor-Steinplatte 130 x 112 x 3,5 mm, 0,16 mm, 1 h 7 min); MK4S `demo_schaft_uhr_wand1mm` (Schaft 26-35 m, 1 mm Wand, 0,8-mm-Duese, 1 h 11 min). Dateien `modelle/stl/demo_schwabentor/`.
+- Wand 1 mm statt 2,4 mm (MK4S 0,8 mm): Schaftabschnitt 1 h 33 statt 4 h 10, Mittelteil 2 h 46 statt 6 h 55.
+- `druck_farbteile.py --einsatz` (duenne Wand): Platte = ganze Wand, dahinter Innenschicht im Hohlraum. STAND: Koerper 1 Stueck, Platten ohne Durchdringung, aber 27 von 48 Hoehenschnitten noch offen (Luecken zwischen Putzwand und Innenschicht) - NICHT fertig.
+  Verworfen: Klebefalz nur am Rand + Eckpfosten (Koerper zerfiel in 243 Stuecke, Putzinseln im Stein ohne Halt).

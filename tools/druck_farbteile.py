@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""druck_farbteile.py <objekt> --masken relief/nord_putz.npz,relief/sued_putz.npz[,...] [--stl PFAD] [--tief_mm 0.4] [--spiel_mm 0.15] [--min_m2 1.5] [--glatt_m 0.2] [--vor_m 0.4]
+"""druck_farbteile.py <objekt> --masken relief/nord_putz.npz,relief/sued_putz.npz[,...] [--stl PFAD] [--einsatz --wand_mm 1.0 --falz_mm 3] [--tief_mm 0.4] [--spiel_mm 0.15] [--min_m2 1.5] [--glatt_m 0.2] [--vor_m 0.4]
 FARBTEILE: Steinflaechen einer Wand als EIGENE, flach druckbare Platten aus dem fertigen Modell loesen; der Koerper bekommt passende Taschen.
 
 Anlass 17.11.2026 (Nutzer): "verschiedene Farben muessen eigene Teile sein - das Steinrelief ein anderes Teil als der Putz; dann muss ich nicht anmalen, es kann flach gedruckt
@@ -48,7 +48,7 @@ def prisma(maske, u0, z0, px, a, t, n, hinten, vorn, weiten=0.0):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--masken", required=True); ap.add_argument("--stl"); ap.add_argument("--tief_mm", type=float, default=0.4); ap.add_argument("--spiel_mm", type=float, default=0.15)
-    ap.add_argument("--wand_mm", type=float, default=2.2, help="Wandstaerke des (hohlen) Koerpers im Druck - begrenzt die Taschentiefe"); ap.add_argument("--innen_mm", type=float, default=0.8, help="Innenschicht hinter jeder Tasche (Druck-mm): haelt den Koerper an Ecken und duennen Waenden geschlossen"); ap.add_argument("--min_m2", type=float, default=1.5); ap.add_argument("--glatt_m", type=float, default=0.2, help="Glaettung der Stein/Putz-Grenze (m am Gebaeude; 0,2 m = 2,3 mm im Druck)"); ap.add_argument("--vor_m", type=float, default=0.4); ap.add_argument("--bett_mm", type=float, default=244.0); a = ap.parse_args()
+    ap.add_argument("--wand_mm", type=float, default=2.2, help="Wandstaerke des (hohlen) Koerpers im Druck - begrenzt die Taschentiefe"); ap.add_argument("--innen_mm", type=float, default=0.8, help="Innenschicht hinter jeder Tasche (Druck-mm): haelt den Koerper an Ecken und duennen Waenden geschlossen"); ap.add_argument("--einsatz", action="store_true", help="duenne Wand (1 mm): Steinplatte = ganze Wand, Koerper mit Oeffnung + Klebefalz innen statt Tasche"); ap.add_argument("--falz_mm", type=float, default=3.0); ap.add_argument("--pfosten_mm", type=float, default=0.0, help="Eckpfosten innen (Druck-mm) in der Einsatz-Bauart"); ap.add_argument("--min_m2", type=float, default=1.5); ap.add_argument("--glatt_m", type=float, default=0.2, help="Glaettung der Stein/Putz-Grenze (m am Gebaeude; 0,2 m = 2,3 mm im Druck)"); ap.add_argument("--vor_m", type=float, default=0.4); ap.add_argument("--bett_mm", type=float, default=244.0); a = ap.parse_args()
     od = os.path.join(ROOT, "modelle", a.objekt); obj = json.load(open(os.path.join(od, "objekt.json"))); sc = float(obj.get("stl_massstab", 87)); s = sc / 1000.0; K = 1000.0 / sc
     stl = a.stl or os.path.join(ROOT, obj["stl"]); modell = laden(stl, s); v0 = modell.volume(); print(f"Modell {os.path.basename(stl)}: {modell.num_tri()} Dreiecke, {v0:.1f} m3, {len(modell.decompose())} Koerper")
     ad = os.path.join(ROOT, "modelle", "stl", f"{a.objekt}_farbteile"); gross = "/media/oem/scan/rc-park_stl"
@@ -57,7 +57,7 @@ def main():
     for alt in os.listdir(ad):
         if alt.endswith(".stl"): os.remove(os.path.join(ad, alt))
     for alt in os.listdir(os.path.join(ad, "lage")): os.remove(os.path.join(ad, "lage", alt))
-    tief, spiel = a.tief_mm / K, a.spiel_mm / K; koerper = modell; teile = []; schlecht = False; kruemel = [0.0]; taschen = []; innen = []
+    tief, spiel = a.tief_mm / K, a.spiel_mm / K; koerper = modell; teile = []; schlecht = False; kruemel = [0.0]; taschen = []; innen = []; waende = []
     for mp in a.masken.split(","):
         p = mp if os.path.isabs(mp) else os.path.join(od, mp); Z = np.load(p); wand = os.path.basename(p).split("_")[0].replace(".npz", "")
         if "putz" not in Z.files: print(f"{mp}: kein Feld 'putz' - uebersprungen"); continue
@@ -76,7 +76,8 @@ def main():
             loc, ir, _ = NETZ.ray.intersects_location(O, np.tile([-n[0], -n[1], 0.0], (len(O), 1)), multiple_hits=False); dd = 1.5 - np.linalg.norm(loc - O[ir], axis=1); dd = dd[dd > -0.6]
             if len(dd) > 100:
                 d50, d5 = float(np.median(dd)), float(np.percentile(dd, 5)); hinten = -d5 + tief; vor = d50 + a.vor_m; grenze = (a.wand_mm - 0.6 - a.spiel_mm) / K - d50
-                if hinten > grenze: print(f"{wand}: Platte waere {(d50 + hinten) * K:.2f} mm tief - auf {(d50 + grenze) * K:.2f} mm begrenzt, damit hinter der Tasche 0,6 mm Wand bleiben (Wand {a.wand_mm} mm; tiefere Reliefstellen bleiben am Koerper)"); hinten = grenze      # 17.11.2026: an der Westwand schnitt die Tasche (2,14 + 0,15 mm) durch die 2,2-mm-Wand - der Koerper war dort offen      # Relief bis --vor_m vor der mittleren Wandflaeche; was weiter vorsteht (Vordach, Galerie), ist kein Stein dieser Platte
+                if a.einsatz: hinten = a.wand_mm / K - d50; print(f"{wand}: EINSATZ - die Platte ist die ganze Wand ({a.wand_mm} mm), dahinter traegt eine durchgehende Innenschicht von {a.innen_mm} mm (im Hohlraum, nicht in der Wand)")
+                elif hinten > grenze: print(f"{wand}: Platte waere {(d50 + hinten) * K:.2f} mm tief - auf {(d50 + grenze) * K:.2f} mm begrenzt, damit hinter der Tasche 0,6 mm Wand bleiben (Wand {a.wand_mm} mm; tiefere Reliefstellen bleiben am Koerper)"); hinten = grenze      # 17.11.2026: an der Westwand schnitt die Tasche (2,14 + 0,15 mm) durch die 2,2-mm-Wand - der Koerper war dort offen      # Relief bis --vor_m vor der mittleren Wandflaeche; was weiter vorsteht (Vordach, Galerie), ist kein Stein dieser Platte
                 print(f"{wand}: Modellflaeche im Mittel {d50 * 100:+.1f} cm gegen die Maskenebene, tiefste 5 % bei {d5 * 100:+.1f} cm -> Plattenrueckseite {hinten * 100:.1f} cm hinter der Ebene = {(d50 + hinten) * K:.2f} mm im Druck hinter der Wandflaeche (so viel Wandstaerke + 0,4 mm braucht der Koerper)")
         # Oeffnungen (Fenster, Tor) der Wand: Strahl von aussen trifft erst weit hinter der Wand oder gar nicht -> dort KEINE Innenschicht
         offen = np.zeros(st.shape, bool)
@@ -85,6 +86,8 @@ def main():
             O = np.stack([A[0] + t[0] * uu + n[0] * 1.5, A[1] + t[1] * uu + n[1] * 1.5, zz], 1); loc, ir, _ = NETZ.ray.intersects_location(O, np.tile([-n[0], -n[1], 0.0], (len(O), 1)), multiple_hits=False)
             tr = np.full(len(O), -9.0); tr[ir] = 1.5 - np.linalg.norm(loc - O[ir], axis=1); o2 = tr < float(np.median(tr[tr > -0.6])) - a.wand_mm / K - 0.15
             og = np.zeros(((st.shape[0] + 1) // 2, (st.shape[1] + 1) // 2), np.uint8); og[gi // 2, gj // 2] = o2; og = cv2.dilate(og, np.ones((3, 3), np.uint8)); offen = cv2.resize(og, (st.shape[1], st.shape[0]), interpolation=cv2.INTER_NEAREST).astype(bool)
+        fz = max(1, int(round(a.falz_mm / K / px)))
+        if len(w_) and 'd50' in dir(): waende.append(dict(A=np.array(A, float), t=np.array(t, float), n=np.array(n, float), innen=d50 - a.wand_mm / K, u=(u0, u0 + st.shape[1] * px), z=(z0, z0 + st.shape[0] * px)))
         nl, lab, stat, _ = cv2.connectedComponentsWithStats(st, 4); nr = 0; rest = 0.0
         for i in range(1, nl):
             fl = stat[i, cv2.CC_STAT_AREA] * px * px
@@ -98,8 +101,8 @@ def main():
                 st_ = pl.decompose(); vg = max(x_.volume() for x_ in st_); kr = [x_ for x_ in st_ if x_.volume() < 0.02 * vg]
                 if kr: pl = M.batch_boolean([x_ for x_ in st_ if x_.volume() >= 0.02 * vg], OpType.Add) if len(st_) - len(kr) > 1 else max(st_, key=lambda x_: x_.volume()); kruemel[0] += sum(x_.volume() for x_ in kr)      # Kruemel (< 2 % der Platte) verwerfen
                 taschen.append(prisma(band, u0, z0, px, A, t, n, hinten + spiel, vor + 0.05, weiten=spiel))
-                iw = band & ~offen                                                # Innenschicht hinter der Tasche (17.11.2026: an den Gebaeudeecken nahmen die Taschen zweier Waende die ganze Wand weg - der Koerper war in 34 von 48 Hoehenschnitten offen)
-                if iw.any(): innen.append(prisma(iw, u0, z0, px, A, t, n, hinten + spiel + a.innen_mm / K, -(hinten + spiel) + 0.002, weiten=spiel))
+                iw = (cv2.dilate(band.astype(np.uint8), np.ones((2 * fz + 1, 2 * fz + 1), np.uint8)).astype(bool) if a.einsatz else band) & ~offen                                                # Innenschicht hinter der Tasche (17.11.2026: an den Gebaeudeecken nahmen die Taschen zweier Waende die ganze Wand weg - der Koerper war in 34 von 48 Hoehenschnitten offen)
+                if iw.any(): innen.append(prisma(iw, u0, z0, px, A, t, n, hinten + spiel + a.innen_mm / K, -(hinten + spiel) + (0.5 / K if a.einsatz else 0.002), weiten=spiel))      # Einsatz: Innenschicht greift 0,5 mm in die Wandtiefe und --falz_mm seitlich unter den Putz (sonst trennt das Fuegespiel Wand und Innenschicht: 47 von 48 Schnitten offen)
                 nr += 1; name = f"platte_{wand}_{nr:02d}"; schreiben(pl, os.path.join(ad, "lage", name + ".stl"), K)
                 R = np.array([[t[0], t[1], 0.0], [0.0, 0.0, 1.0], [n[0], n[1], 0.0]])                    # Drucklage: u -> x, z -> y, Wandnormale -> oben
                 fl_ = pl.transform(np.hstack([R, np.zeros((3, 1))])); lo, hi = fl_.bounding_box()[:3], fl_.bounding_box()[3:]; fl_ = fl_.translate((-lo[0], -lo[1], -lo[2])); schreiben(fl_, os.path.join(ad, name + ".stl"), K)
@@ -107,6 +110,21 @@ def main():
                 teile.append(dict(name=name, wand=wand, farbe="Stein", flaeche_m2=round(float(band.sum() * px * px), 1), masse_mm=[round(float(x), 1) for x in ma], passt_aufs_bett=bool(passt), koerper=nk, volumen_cm3=round(float(pl.volume() * K ** 3 / 1000), 1)))
                 print(f"  {name}: {band.sum() * px * px:6.1f} m2 Stein, Drucklage {ma[0]:.0f} x {ma[1]:.0f} x {ma[2]:.1f} mm, {'passt' if passt else 'PASST NICHT aufs Bett'}, {nk} Koerper")
         print(f"{wand}: {nr} Platten; {rest:.1f} m2 Stein in Inseln < {a.min_m2} m2 bleiben am Koerper (nachmalen)")
+    if a.einsatz and a.pfosten_mm > 0:      # Eckpfosten innen - VERWORFEN als Standard (17.11.2026): mit Klebefalz nur am Rand zerfiel der Koerper in 243 Stuecke (Putzinseln im Stein ohne Halt); jetzt traegt eine durchgehende Innenschicht, Pfosten nur auf Wunsch (17.11.2026): Steinplatten auf BEIDEN Waenden einer Gebaeudeecke nehmen die ganze Ecke weg - der Koerper zerfiel in 47 von 48 Hoehenschnitten
+        sp = a.pfosten_mm / K; wd = a.wand_mm / K; zs = [w["z"] for w in waende]
+        if zs:
+            z0_, z1_ = min(z[0] for z in zs), max(z[1] for z in zs); np_ = 0
+            for zq in np.arange(z0_ + 1.0, z1_, 4.0):                         # Ecken aus dem Querschnitt des MODELLS (alle 4 m neu: Ruecksprunge), nicht aus den Masken - auch Ecken zu Waenden ohne Steinmaske verlieren ihr Ende
+                pg = [q for q in modell.slice(float(zq)).to_polygons() if len(q) >= 4 and 0.5 * float(np.sum(q[:, 0] * np.roll(q[:, 1], -1) - np.roll(q[:, 0], -1) * q[:, 1])) > 20.0]
+                for q in pg:
+                    e = cv2.approxPolyDP(q.astype(np.float32).reshape(-1, 1, 2), 0.4, True).reshape(-1, 2).astype(float)
+                    for k_ in range(len(e)):
+                        p0, p1, p2 = e[k_ - 1], e[k_], e[(k_ + 1) % len(e)]; d1 = (p1 - p0) / max(np.linalg.norm(p1 - p0), 1e-9); d2 = (p2 - p1) / max(np.linalg.norm(p2 - p1), 1e-9)
+                        if d1[0] * d2[1] - d1[1] * d2[0] < 0.5 or min(np.linalg.norm(p1 - p0), np.linalg.norm(p2 - p1)) < 1.0: continue      # nur ausspringende Ecken (Umlauf gegen den Uhrzeiger) mit langen Schenkeln
+                        n1 = np.array([-d1[1], d1[0]]); n2 = np.array([-d2[1], d2[0]]); c = p1 + wd * 0.7 * (n1 + n2)                       # nach innen (links der Kante), 30 % in die Wand hinein
+                        qd = np.array([c, c + sp * n2, c + sp * (n1 + n2), c + sp * n1]); fl_ = 0.5 * float(np.sum(qd[:, 0] * np.roll(qd[:, 1], -1) - np.roll(qd[:, 0], -1) * qd[:, 1]))
+                        innen.append(CS([qd if fl_ > 0 else qd[::-1]], FillRule.Positive).extrude(4.0).translate((0, 0, float(zq) - 2.0))); np_ += 1
+            print(f"Eckpfosten {a.pfosten_mm} mm innen: {np_} Abschnitte (je 4 m) an den ausspringenden Ecken des Querschnitts, z {z0_:.1f}..{z1_:.1f} m")
     if taschen:
         huelle = modell.hull(); zus = (M.batch_boolean(innen, OpType.Add) ^ huelle) if innen else M()
         koerper = (modell + zus) - M.batch_boolean(taschen, OpType.Add); print(f"Innenschicht {a.innen_mm} mm hinter den Taschen: {zus.volume():.2f} m3 = {zus.volume() * K ** 3 / 1000:.1f} cm3 im Druck")
