@@ -19,9 +19,12 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     from bauteile import fenster_aus_json            # automatisch erkannte Fenster (Kettenstufe 'fenster' schreibt audit/fenster_auto.json)
     koerper, belege = fenster_aus_json(koerper, os.path.join(HERE, "schwab_auto", "audit", "fenster_auto.json"))
     for b_ in belege: beleg(**b_)
+    from bauteile import oeffnungen_aus_json         # 17.11.2026: automatisch erkannte Bogenoeffnungen / Tordurchfahrten (Kettenstufe 'fenster': tools/oeffnungen_bogen.py -> audit/oeffnungen_auto.json)
+    koerper, belege_o, z_tor = oeffnungen_aus_json(koerper, os.path.join(HERE, "schwab_auto", "audit", "oeffnungen_auto.json"))
+    for b_ in belege_o: beleg(**b_)
     if belege and os.environ.get("OHNE_HOHL") != "1":        # 16.11.2026 Nutzer: Fenster muessen echte Loecher sein -> Gebaeude hohl, erkannte Fenster durchgebrochen
         from bauteile import aushoehlen
-        koerper, n_offen, v_hohl = aushoehlen(koerper, d=float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0)
+        koerper, n_offen, v_hohl = aushoehlen(koerper, d=float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0, z_min=z_tor)      # z_tor: unter dem Scheitel einer Durchfahrt (+ 0,5 m Gewoelbe, ANNAHME) bleibt das Torgeschoss massiv
         beleg("wand", "Gebaeude hohl, %d Fenster durchgebrochen" % n_offen, "bauteile.aushoehlen auf den automatisch erkannten Fenstern", hinweis="Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende")
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:

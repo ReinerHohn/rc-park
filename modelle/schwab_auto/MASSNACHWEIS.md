@@ -1,4 +1,4 @@
-# Massnachweis Schwabentor (automatisch aus masstabelle.json, 2026-11-16)
+# Massnachweis Schwabentor (automatisch aus masstabelle.json, 2026-11-17)
 
 Status je Mass: **OK** = Istwert im Sollbereich der Quelle; **WIDERSPRUCH** = Quellen uneins (nicht gemittelt); **FEHLER** = Modell verletzt die Quelle.
 Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im selben Foto; *modell* = zirkulaer (nur Richtung belastbar).
@@ -12,7 +12,7 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 
 - **modell**: 2 von 2 Pruefungen gruen (Druckbarkeit, keine Realitaetsaussage)
 
-## Elemente des Generators: 23 belegt, 0 Annahmen
+## Elemente des Generators: 24 belegt, 0 Annahmen
 
 - dach: Dach Teil 0 (walm_a) - Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_001000hPLcp-Grundriss Teil 0
 - dach: Spitze Teil 0 - DOM1 6 Pixel bis 49.6 m; Hoehe objekt.json hoehe_m
@@ -36,12 +36,13 @@ Massstab: *dokument/lod2/laser* = absolut; *foto_intern* = bekanntes Mass im sel
 - wand: Relief Fassade w07 (Fassaden-Kette) - Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (online_orig__od_02, eigen__IMG_20261106_113852, online_orig__od_08); Loecher generiert
 - wand: 2 Fenster Fassade f00 (automatisch erkannt) - OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__IMG_20261106_113130, eigen__IMG_20261106_113142, eigen__IMG_20261106_113141
 - wand: 2 Fenster Fassade f03 (automatisch erkannt) - OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__IMG_20261106_114049, eigen__IMG_20261106_114046, eigen__IMG_20261106_114034
+- wand: Tordurchfahrt Fassade f00 (spitz, automatisch erkannt) - OWLv2-Bogenkasten als Suchfenster (fassade_parsing.py) -> Ebenen-Sweep ueber die Fotos (fassade_tiefe.py: Durchblick = Fotos in der Wandtiefe nicht deckungsgleich) -> Formfamilie eingepasst (tools/oeffnungen_bogen.py), Fotos eigen__IMG_20261106_113130, eigen__IMG_20261106_113142, eigen__IMG_20261106_113141
 - wand: Gebaeude hohl, 4 Fenster durchgebrochen - bauteile.aushoehlen auf den automatisch erkannten Fenstern
 
 ## Beobachtungen ohne Pruefung
 
 - heute Anlage: Quellen sichten: Dokumente (Hoehe), LoD2 (Grundriss/Traufe), DOM1 (Dachform), Fotos je Seite -> objekt.json/quellen fuellen, Zeilen mit Quelle anlegen
-- auto umriss_tor: GANZE DACHLINIE versetzt (Foto hoeher: Dach/Aufbau fehlt oder zu niedrig), 2 Fotos einig: +5.07 m ueber 0.0 m bei [0.0, 0.0, 0.0] (Foto eigen__IMG_20261106_113201) -> am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen
+- auto umriss_tor: GANZE DACHLINIE versetzt (Foto hoeher: Dach/Aufbau fehlt oder zu niedrig), 3 Fotos einig: +4.95 m ueber 0.0 m bei [0.0, 0.0, 0.0] (Foto eigen__IMG_20261106_113201) -> am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen
 
 ## Grenze
 

@@ -1,0 +1,448 @@
+{
+ "f00": {
+  "o": [
+   3.736338765143183,
+   15.285188595694338
+  ],
+  "d": [
+   -0.029655713502864632,
+   0.999560172604249
+  ],
+  "n": [
+   0.999560172604249,
+   0.029655713502864632
+  ],
+  "oeffnungen": [
+   {
+    "art": "bogen",
+    "kasten": [
+     -2.43,
+     2.08,
+     0.02,
+     7.01
+    ],
+    "stimmen": 8,
+    "gesehen": 8,
+    "unten": -0.028,
+    "wand_tiefe_m": -0.4,
+    "gebaut": true,
+    "lage_sweep": {
+     "form": "spitz",
+     "p": [
+      -0.065,
+      4.672,
+      3.684,
+      2.913
+     ]
+    },
+    "kanten": {
+     "punkte": 26499,
+     "fotos": 12,
+     "ebene_w": -0.4,
+     "familien": {
+      "rund": {
+       "p": [
+        -0.098,
+        4.638,
+        4.332
+       ],
+       "stuetze_vor": 0.283,
+       "stuetze_nach": 0.384,
+       "stuetze_verschoben": 0.438,
+       "uebernommen": false
+      },
+      "stich": {
+       "p": [
+        -0.282,
+        4.888,
+        4.611,
+        2.311
+       ],
+       "stuetze_vor": 0.267,
+       "stuetze_nach": 0.65,
+       "stuetze_verschoben": 0.586,
+       "uebernommen": false
+      },
+      "spitz": {
+       "p": [
+        0.09,
+        4.437,
+        3.972,
+        3.18
+       ],
+       "stuetze_vor": 0.295,
+       "stuetze_nach": 0.667,
+       "stuetze_verschoben": 0.594,
+       "uebernommen": false
+      }
+     }
+    },
+    "form": "spitz",
+    "u": -0.065,
+    "breite": 4.672,
+    "kaempfer": 3.684,
+    "scheitel": 6.597,
+    "rest": {
+     "wand_innen": 0.023,
+     "rand_wand": 0.53
+    },
+    "familien": {
+     "rund": {
+      "p": [
+       -0.032,
+       4.6059,
+       4.0323
+      ],
+      "wertung": 6316.5,
+      "wand_innen": 0.024,
+      "rand_wand": 0.446
+     },
+     "stich": {
+      "p": [
+       -0.0342,
+       4.5881,
+       4.3116,
+       2.0146
+      ],
+      "wertung": 6317.4,
+      "wand_innen": 0.023,
+      "rand_wand": 0.442
+     },
+     "spitz": {
+      "p": [
+       -0.0646,
+       4.6724,
+       3.6838,
+       2.9135
+      ],
+      "wertung": 6427.3,
+      "wand_innen": 0.023,
+      "rand_wand": 0.53
+     }
+    },
+    "durchblick": {
+     "offen_innen": 0.971,
+     "offen_flaeche_innen": 0.721,
+     "bekannt_innen": 0.742,
+     "offen_wand": 0.0,
+     "offen_wand_seiten": [
+      0.0,
+      0.26
+     ],
+     "zellen_innen": 14155
+    },
+    "grund": "",
+    "durchfahrt": true,
+    "tiefe_m": 12.284,
+    "annahmen": [
+     "ANNAHME: Durchfahrt mit DIESEM Querschnitt gerade durch das ganze Gebaeude (11.68 m) - auf der Gegenseite f01 ist der Bogen erkannt (8 Stimmen) und der Durchblick belegt (91 %), die Bogenform dort aber nicht messbar (Wand im Inneren der Form (5 %); Bogenrand nur zu 26 % von Wand begrenzt - Form nicht belegt)",
+     "ANNAHME: Kreisbogen der Formfamilie, Gewaende ohne Profil, Gewoelbe nicht gemessen"
+    ],
+    "gegen": "f01",
+    "gegen_durchblick": {
+     "offen_innen": 0.914,
+     "offen_flaeche_innen": 0.562,
+     "bekannt_innen": 0.615,
+     "offen_wand": 0.484,
+     "offen_wand_seiten": [
+      0.513,
+      0.484
+     ],
+     "zellen_innen": 14189
+    },
+    "gegen_deckung": 0.94
+   }
+  ],
+  "fotos": [
+   "eigen__IMG_20261106_113130",
+   "eigen__IMG_20261106_113142",
+   "eigen__IMG_20261106_113141",
+   "eigen__IMG_20261106_113206"
+  ]
+ },
+ "f01": {
+  "o": [
+   -7.9413026159985,
+   14.903203890713131
+  ],
+  "d": [
+   0.04368482726755523,
+   -0.999045362266701
+  ],
+  "n": [
+   -0.999045362266701,
+   -0.04368482726755523
+  ],
+  "oeffnungen": [
+   {
+    "art": "bogen",
+    "kasten": [
+     -1.87,
+     3.4,
+     0.12,
+     7.39
+    ],
+    "stimmen": 8,
+    "gesehen": 8,
+    "unten": -0.028,
+    "wand_tiefe_m": -0.45,
+    "gebaut": false,
+    "lage_sweep": {
+     "form": "spitz",
+     "p": [
+      0.662,
+      5.427,
+      2.176,
+      4.499
+     ]
+    },
+    "kanten": {
+     "punkte": 34721,
+     "fotos": 12,
+     "ebene_w": -0.45,
+     "familien": {
+      "rund": {
+       "p": [
+        0.751,
+        5.107,
+        3.132
+       ],
+       "stuetze_vor": 0.41,
+       "stuetze_nach": 0.559,
+       "stuetze_verschoben": 0.504,
+       "uebernommen": false
+      },
+      "stich": {
+       "p": [
+        0.983,
+        5.241,
+        3.092,
+        2.255
+       ],
+       "stuetze_vor": 0.412,
+       "stuetze_nach": 0.676,
+       "stuetze_verschoben": 0.587,
+       "uebernommen": false
+      },
+      "spitz": {
+       "p": [
+        0.852,
+        5.707,
+        2.232,
+        4.376
+       ],
+       "stuetze_vor": 0.529,
+       "stuetze_nach": 0.659,
+       "stuetze_verschoben": 0.546,
+       "uebernommen": false
+      }
+     }
+    },
+    "form": "spitz",
+    "u": 0.662,
+    "breite": 5.427,
+    "kaempfer": 2.176,
+    "scheitel": 6.675,
+    "rest": {
+     "wand_innen": 0.051,
+     "rand_wand": 0.263
+    },
+    "familien": {
+     "rund": {
+      "p": [
+       0.6888,
+       5.121,
+       3.3655
+      ],
+      "wertung": 4064.6,
+      "wand_innen": 0.056,
+      "rand_wand": 0.224
+     },
+     "stich": {
+      "p": [
+       0.6882,
+       5.1224,
+       3.3753,
+       2.5496
+      ],
+      "wertung": 4065.0,
+      "wand_innen": 0.056,
+      "rand_wand": 0.224
+     },
+     "spitz": {
+      "p": [
+       0.6623,
+       5.4271,
+       2.176,
+       4.4994
+      ],
+      "wertung": 4335.1,
+      "wand_innen": 0.051,
+      "rand_wand": 0.263
+     }
+    },
+    "durchblick": {
+     "offen_innen": 0.932,
+     "offen_flaeche_innen": 0.6,
+     "bekannt_innen": 0.644,
+     "offen_wand": 0.301,
+     "offen_wand_seiten": [
+      0.489,
+      0.301
+     ],
+     "zellen_innen": 15339
+    },
+    "grund": "Wand im Inneren der Form (5 %); Bogenrand nur zu 26 % von Wand begrenzt - Form nicht belegt",
+    "hinweis": "Oeffnung entsteht durch die Durchfahrt von f00 (eigene Form nicht messbar)"
+   }
+  ],
+  "fotos": [
+   "online_orig__od_08",
+   "commons_orig2__217",
+   "commons_orig2__218",
+   "eigen__IMG_20261106_113907"
+  ]
+ },
+ "f02": {
+  "o": [
+   -1.8894434344153221,
+   9.096353324232904
+  ],
+  "d": [
+   0.9995949044227164,
+   0.02846097419521499
+  ],
+  "n": [
+   0.02846097419521499,
+   -0.9995949044227164
+  ],
+  "oeffnungen": [],
+  "fotos": [
+   "eigen__IMG_20261106_113730",
+   "eigen__IMG_20261106_113744_1",
+   "eigen__IMG_20261106_113743",
+   "eigen__IMG_20261106_113813"
+  ]
+ },
+ "f03": {
+  "o": [
+   -1.5459415024223213,
+   21.216985409295155
+  ],
+  "d": [
+   -0.9991775400966542,
+   -0.04054927084916809
+  ],
+  "n": [
+   -0.04054927084916809,
+   0.9991775400966542
+  ],
+  "oeffnungen": [],
+  "fotos": [
+   "eigen__IMG_20261106_114049",
+   "eigen__IMG_20261106_114046",
+   "eigen__IMG_20261106_114034",
+   "eigen__IMG_20261106_114050"
+  ]
+ },
+ "f04": {
+  "o": [
+   2.967750999769615,
+   22.213053000076812
+  ],
+  "d": [
+   -0.033242108222572134,
+   0.9994473283975093
+  ],
+  "n": [
+   0.9994473283975093,
+   0.033242108222572134
+  ],
+  "oeffnungen": [
+   {
+    "art": "bogen",
+    "kasten": [
+     -0.1,
+     1.29,
+     0.08,
+     2.57
+    ],
+    "stimmen": 5,
+    "gesehen": 4,
+    "unten": -0.028,
+    "wand_tiefe_m": 0.0,
+    "gebaut": false,
+    "grund": "kein Durchblick im Kasten (offen 0.1 m2) - geschlossenes Bogenfeld/Tuer/Blendbogen oder glatte Flaeche ohne Bildstruktur"
+   }
+  ],
+  "fotos": [
+   "eigen__IMG_20261106_113536",
+   "eigen__IMG_20261106_113538",
+   "eigen__IMG_20261106_114122",
+   "eigen__IMG_20261106_113426"
+  ]
+ },
+ "f05": {
+  "o": [
+   0.030697650238860417,
+   21.908528499987785
+  ],
+  "d": [
+   0.03886131905651693,
+   -0.9992446136363147
+  ],
+  "n": [
+   -0.9992446136363147,
+   -0.03886131905651693
+  ],
+  "oeffnungen": [],
+  "fotos": [
+   "eigen__IMG_20261106_113946",
+   "eigen__IMG_20261106_113944",
+   "eigen__IMG_20261106_114009",
+   "eigen__IMG_20261106_114145"
+  ]
+ },
+ "f06": {
+  "o": [
+   1.8522320000223063,
+   23.81140300001242
+  ],
+  "d": [
+   -0.9836086601541539,
+   0.1803163987821136
+  ],
+  "n": [
+   0.1803163987821136,
+   0.9836086601541539
+  ],
+  "oeffnungen": [],
+  "fotos": [
+   "eigen__IMG_20261106_114059",
+   "eigen__IMG_20261106_114034",
+   "eigen__IMG_20261106_114049",
+   "eigen__IMG_20261106_114035"
+  ]
+ },
+ "f07": {
+  "o": [
+   1.2186325339470725,
+   23.907515845461113
+  ],
+  "d": [
+   -0.9978870761044623,
+   0.06497217361061128
+  ],
+  "n": [
+   0.06497217361061128,
+   0.9978870761044623
+  ],
+  "oeffnungen": [],
+  "fotos": [
+   "eigen__IMG_20261106_114049",
+   "eigen__IMG_20261106_114034",
+   "eigen__IMG_20261106_114035",
+   "eigen__IMG_20261106_114059"
+  ]
+ }
+}

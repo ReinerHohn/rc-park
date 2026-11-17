@@ -20,7 +20,9 @@ def main():
     if not os.path.exists(os.path.join(A, "mesh.ply")) and (not os.path.realpath(A).startswith("/media/oem/scan/") or shutil.disk_usage(A).free / 1e9 < 0.03 * nb_ + 1.5) and shutil.disk_usage("/media/oem/scan").free / 1e9 >= 0.03 * nb_ + 1.5:
         A = lokal; os.makedirs(A, exist_ok=True); print(f"Arbeitsordner {A} (der Ordner neben der dichten Wolke liegt auf einer anderen/vollen Platte: {os.path.realpath(ZIEL)})")      # 17.11.2026: kaufhaus_gk/pipe ist eine Verknuepfung auf die externe Platte (4 GB frei) - dort brach InterfaceCOLMAP mit Schreibfehler ab
     elif os.path.exists(os.path.join(lokal, "mesh.ply")): A = lokal
-    mesh = os.path.join(A, "mesh.ply"); scene = os.path.join(A, "scene.mvs")
+    mesh = os.path.join(A, "mesh.ply"); scene = os.path.join(A, "scene.mvs"); fused = os.path.join(D, "fused.ply")
+    if os.path.exists(mesh) and os.path.exists(fused) and os.path.getmtime(fused) > os.path.getmtime(mesh) and not a.neu:      # 17.11.2026: nach einer NEUEN dichten Wolke wurde das Netz der alten wiederverwendet - mit der neuen Ausrichtung
+        print(f"Netz {mesh} ist AELTER als die dichte Wolke {fused} - wird neu gerechnet (vorher: altes Netz im neuen Rahmen = falsch liegende Reliefs, ohne Meldung)"); a.neu = True      # umgerechnet (anderer SfM-Rahmen)
     def raeumen():                                                    # 17.11.2026: die Tiefenkarten-Kopien (depth*.dmap, ~4-5 GB je Objekt) blieben nach Erfolg UND nach Fehlschlag liegen - am Kaufhaus 4,1 GB Rest auf einer Platte mit 7 GB frei
         import glob
         for f_ in glob.glob(os.path.join(A, "depth*.dmap")): os.remove(f_)
@@ -34,7 +36,10 @@ def main():
     T = json.load(open(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG-{name}.json")))["transformation"]; s = T["s"]; R = Rot.from_rotvec(T["rvec"]).as_matrix(); t = np.array(T["t"])
     m = trimesh.load(mesh, process=False); V = ((np.asarray(m.vertices, np.float64) - t) / s) @ R; F = np.asarray(m.faces)
     drin = np.linalg.norm(V[:, :2], axis=1) < a.radius; F = F[drin[F].all(1)]; idx = np.unique(F); neu = np.full(len(V), -1); neu[idx] = np.arange(len(idx))
-    aus = os.path.join(ZIEL, "mesh_modell_ausschnitt.npz"); np.savez(aus, V=V[idx].astype(np.float32), F=neu[F].astype(np.int32))
+    aus = os.path.join(ZIEL, "mesh_modell_ausschnitt.npz")
+    if len(F) < 100:                                                   # 17.11.2026: 0 Flaechen im Radius (Ausrichtung falsch/verschoben, Netz leer) wurden als leere Datei mit rc 0 geschrieben - die Fassadenkette rechnete darauf weiter
+        print(f"ABBRUCH: nur {len(F)} Flaechen des Netzes ({len(V)} Ecken) liegen im Radius {a.radius:.0f} m um den Rahmenursprung - Ausrichtung/Netz pruefen; {aus} wird NICHT geschrieben"); return 4
+    tmp = os.path.join(ZIEL, f"mesh_modell_ausschnitt.neu{os.getpid()}.npz"); np.savez(tmp, V=V[idx].astype(np.float32), F=neu[F].astype(np.int32)); os.replace(tmp, aus)      # erst fertig schreiben, dann ersetzen
     print(f"-> {aus}: {len(idx)} Ecken, {len(F)} Flaechen im Radius {a.radius:.0f} m (Netz gesamt {len(V)} Ecken)"); return 0
 
 

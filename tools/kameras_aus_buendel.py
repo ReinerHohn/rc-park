@@ -47,10 +47,11 @@ def main():
     else: print("WARNUNG: kein Netz (--sparse) - Kameraguete NICHT geprueft, Kameras ohne Netzpunkte koennen dabei sein")
     def beiseite(kp_):                                   # alte Buendel-Kamera derselben Aufnahme nicht liegen lassen (umbenennen, nichts loeschen)
         if os.path.exists(kp_) and not a.trocken and json.load(open(kp_)).get("kamera", {}).get("brennweite_quelle") == "buendel": os.replace(kp_, kp_ + ".unplausibel")
-    neu = gesch = 0; ber = []
+    neu = gesch = 0; ber = []; behandelt = set()
     for nr, k in sorted(A["kameras"].items()):
         fp = sorted(glob.glob(os.path.join(a.fotos or os.path.join(root, obj["fotos_dir"]), glob.escape(nr) + "_*")) or glob.glob(os.path.join(a.fotos or os.path.join(root, obj["fotos_dir"]), glob.escape(nr) + ".*")))
         if not fp: ber.append((nr, "Foto fehlt")); continue
+        behandelt.add(nr)
         W, H = Image.open(fp[0]).size; bw, bh = float(k.get("bild_b", W)), float(k.get("bild_h", H)); s = W / bw
         if abs(H / bh - s) > 0.01 * s: ber.append((nr, f"Seitenverhaeltnis {W}x{H} vs SfM {bw:.0f}x{bh:.0f}")); continue
         R = np.array(k["R"], float); t = np.array(k["t"], float) - R @ T_; Cw = -R.T @ t
@@ -65,9 +66,25 @@ def main():
                            quelle=f"kameras_aus_buendel.py aus {os.path.relpath(ap_, root)} (sfm_lod2_buendel: LoD2/DGM1-Flaechen im Ausgleich, ohne Handpicks); SfM-Pixel x {s:.4f}")
         neu += 1; ber.append((nr, f"f {K['kamera']['f_px']:.0f} px, rms {K['kamera']['rms_px']} px"))
         if not a.trocken: os.makedirs(os.path.dirname(kp), exist_ok=True); __import__("json_sicher").schreiben(kp, K)
+    # 17.11.2026 VERALTETE KAMERAS: K-Dateien, die dieses Werkzeug frueher aus DERSELBEN Ausrichtungsdatei schrieb, deren Foto jetzt aber nicht mehr in der Ausrichtung steht (neue SfM mit weniger Bildern)
+    # oder dessen Foto fehlt, blieben als Messkamera liegen - im ALTEN Rahmen. fassade_ortho/foto_diff nehmen jede K-Datei. Sie werden beiseitegelegt (umbenannt, nichts geloescht).
+    marke = f"kameras_aus_buendel.py aus {os.path.relpath(ap_, root)} "; alt = 0
+    for kp_ in sorted(glob.glob(os.path.join(od, "messprotokoll", "K-*.json"))):
+        nr_ = os.path.basename(kp_)[2:-5]
+        if nr_ in behandelt or os.path.getmtime(kp_) >= os.path.getmtime(ap_): continue
+        try: kk_ = json.load(open(kp_)).get("kamera") or {}
+        except Exception: continue
+        if kk_.get("brennweite_quelle") == "buendel" and str(kk_.get("quelle", "")).startswith(marke):
+            alt += 1; ber.append((nr_, "VERALTET (nicht mehr in der Ausrichtung bzw. Foto fehlt; Datei aelter als die Ausrichtung) - beiseitegelegt als .veraltet"))
+            if not a.trocken: os.replace(kp_, kp_ + ".veraltet")
     for nr, b in ber: print(f"  K-{nr}: {b}")
-    print(f"{neu} K-Kameras aus dem Buendel {'(trocken) ' if a.trocken else ''}geschrieben, {gesch} handkalibrierte behalten; Rahmen T_ {T_.round(3).tolist()}, Ankerzone {zone}")
+    print(f"{neu} K-Kameras aus dem Buendel {'(trocken) ' if a.trocken else ''}geschrieben, {gesch} handkalibrierte behalten" + (f", {alt} veraltete beiseitegelegt" if alt else "") + f"; Rahmen T_ {T_.round(3).tolist()}, Ankerzone {zone}")
+    fehlt = sum(1 for _, b in ber if b == "Foto fehlt")
+    if fehlt > 0.5 * max(len(A["kameras"]), 1): print(f"WARNUNG: zu {fehlt} von {len(A['kameras'])} Kameras der Ausrichtung fehlt das Foto - falscher Fotoordner (--fotos / fotos_dir)?")
+    if neu + gesch == 0:                                               # 17.11.2026: rc 0 ohne eine einzige Kamera (leere Ausrichtung, falscher Fotoordner) - die Kette rechnete mit den K-Dateien eines frueheren Laufs weiter
+        print(f"FEHLER: KEINE Kamera geschrieben oder behalten ({len(A['kameras'])} in der Ausrichtung, {fehlt} ohne Foto) - Fotoordner und Ausrichtung pruefen"); return 2
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

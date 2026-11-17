@@ -175,6 +175,39 @@ def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
     return koerper, belege
 
 
+def stichbogen(breite, unten, kaempfer, scheitel, nseg=24):
+    """Querschnitt (quer, hoch) einer Stichbogenoeffnung (Segmentbogen): Pfeiler von 'unten' bis zum Kaempfer, darueber ein Kreissegment mit Pfeilhoehe scheitel - kaempfer (< halbe Breite)."""
+    a = breite / 2; h = scheitel - kaempfer; R = (a * a + h * h) / (2 * h); zc = scheitel - R; w0 = np.arcsin(min(a / R, 1.0))
+    return CrossSection([[[-a, unten], [a, unten]] + [[R * np.sin(w), zc + R * np.cos(w)] for w in np.linspace(w0, -w0, nseg)]])
+
+
+def bogen_querschnitt(form, breite, kaempfer, scheitel, unten):
+    """Querschnitt einer Bogenoeffnung nach Formfamilie (wie tools/element_einpassen.py / oeffnungen_bogen.py): 'rund' (Halbkreis ueber dem Kaempfer), 'stich' (Segmentbogen), 'spitz' (zwei Kreisboegen)."""
+    if form == "spitz": return spitzbogen(breite / 2, kaempfer, scheitel, unten=unten)
+    if form == "stich" and scheitel - kaempfer < breite / 2 - 1e-3: return stichbogen(breite, unten, kaempfer, scheitel)
+    return rundbogen(breite, unten, kaempfer + breite / 2)
+
+
+def oeffnungen_aus_json(koerper, datei, vor=0.8, gewoelbe=0.5):
+    """Automatisch erkannte Bogenoeffnungen / Tordurchfahrten (tools/oeffnungen_bogen.py: je Fassade o, d, n und 'oeffnungen' mit form, u, breite, kaempfer, scheitel, unten, tiefe_m)
+    in den Koerper schneiden. Nur Eintraege mit gebaut = true (Durchblick im Ebenen-Sweep belegt, Form gegengeprueft). Der Schnitt reicht von 'vor' m vor der Fassadenebene
+    (Reliefs, Vorsprung der LoD2-Wand) bis tiefe_m dahinter. Liefert (koerper, belege, z_massiv): z_massiv = hoechster Scheitel einer DURCHFAHRT + gewoelbe (ANNAHME 0,5 m Gewoelbestaerke)
+    fuer aushoehlen(z_min=...) - das Torgeschoss bleibt massiv, die Durchfahrt oeffnet sich nicht in den Hohlraum; None, wenn keine Durchfahrt gebaut wurde."""
+    import json, os
+    if not os.path.exists(datei): return koerper, [], None
+    belege = []; z_massiv = None
+    for fid, F in json.load(open(datei)).items():
+        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float))
+        for x in F.get("oeffnungen", []):
+            if not x.get("gebaut"): continue
+            koerper = koerper - W.prisma(bogen_querschnitt(x["form"], x["breite"], x["kaempfer"], x["scheitel"], x.get("unten", 0.0) - 0.5), u=x["u"], w0=-float(x["tiefe_m"]), w1=vor)
+            if x.get("durchfahrt"): z_massiv = max(z_massiv or -1e9, x["scheitel"] + gewoelbe)
+            belege.append(dict(seite="wand", element=("Tordurchfahrt" if x.get("durchfahrt") else "Bogenoeffnung") + f" Fassade {fid} ({x['form']}, automatisch erkannt)",
+                               quelle="OWLv2-Bogenkasten als Suchfenster (fassade_parsing.py) -> Ebenen-Sweep ueber die Fotos (fassade_tiefe.py: Durchblick = Fotos in der Wandtiefe nicht deckungsgleich) -> Formfamilie eingepasst (tools/oeffnungen_bogen.py), Fotos " + ", ".join(F.get("fotos", [])[:3]),
+                               lichte_breite=x["breite"], kaempfer=x["kaempfer"], scheitel=x["scheitel"], tiefe=x["tiefe_m"], hinweis="ERKENNUNG, am Bild oeffnungen_<id>.jpg pruefen; " + "; ".join(x.get("annahmen", []))))
+    return koerper, belege, z_massiv
+
+
 def zylinder_oeffnungen(datei, tiefe=0.7, innen=0.45, nur=None):
     """Schnittkoerper fuer die Oeffnungen eines runden Bauteils aus tools/fassade_zylinder.py (<aus>.json: achse, radius, oeffnungen mit azimut/z0/z1/breite).
     Jeder Schnitt ist ein Quader radial durch den Mantel (von radius - innen bis radius - innen + tiefe). koerper = koerper - zylinder_oeffnungen(...). nur = Liste von Indizes."""

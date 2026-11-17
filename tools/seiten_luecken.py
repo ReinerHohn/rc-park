@@ -53,14 +53,19 @@ def main():
     FJ = json.load(open(os.path.join(a.fassaden, "fassaden.json"))); waende = []
     for i, F in enumerate(FJ["fassaden"]):
         if F.get("flaeche_m2", 0) < a.min_m2: continue
-        p = os.path.join(a.fassaden, f"ortho_f{i:02d}.png"); R = F["raster"]; maske = np.zeros((R["nz"], R["nu"]), np.uint8)
+        p = os.path.join(a.fassaden, f"ortho_{F.get('id', 'f%02d' % i)}.png"); R = F["raster"]; maske = np.zeros((R["nz"], R["nu"]), np.uint8)      # Kennung aus fassaden.json (bei --nur ist die Kennung nicht die Listenposition)
+        im_ = cv2.imread(p)
+        if im_ is None or im_.shape[:2] != maske.shape:                # 17.11.2026: ein fehlendes/unlesbares oder nicht zu fassaden.json passendes Bild zaehlte als "Wand ungesehen" und loeste Download + 30 min Nachregistrieren aus
+            print(f"FEHLER: Fassadenbild {p} " + ("fehlt/unlesbar" if im_ is None else f"hat {im_.shape[1]}x{im_.shape[0]} px, fassaden.json sagt {R['nu']}x{R['nz']}") + " - Ausgabe von fassade_ortho unvollstaendig oder aus zwei Laeufen gemischt; KEINE Luecken-Aussage"); return 2
         for poly in F["polys_uz"]: cv2.fillPoly(maske, [np.array([[(u - R["u0"]) / R["zelle"], (R["z1"] - z) / R["zelle"]] for u, z in poly], np.int32)], 1)
-        im = cv2.imread(p); daten = (im.max(2) > 8) if im is not None else np.zeros(maske.shape, bool); un_ = cv2.imread(os.path.join(a.fassaden, f"uneinig_f{i:02d}.png"), 0)
+        im = im_; daten = (im.max(2) > 8) if im is not None else np.zeros(maske.shape, bool); un_ = cv2.imread(os.path.join(a.fassaden, f"uneinig_f{i:02d}.png"), 0)
         if os.environ.get("LUECKEN_MIT_UNEINIG") == "1" and un_ is not None and im is not None and un_.shape == daten.shape: daten &= cv2.blur(un_.astype(np.float32), (9, 9)) <= 28      # widerspruechliche Zonen zaehlen nicht als gesehen (16.11.2026)
         ant = float((daten & (maske > 0)).sum() / max(maske.sum(), 1))
         waende.append(dict(nr=i, normale=F["n"], mitte=F["o"], flaeche_m2=F["flaeche_m2"], abdeckung=round(ant, 3), fotos=len(F.get("fotos", {})), ungesehen=ant < a.schwelle, ohne_daten_m2=round(float(F["flaeche_m2"]) * (1 - ant), 1)))
         print(f"Wand f{i:02d}: Normale ({F['n'][0]:+.2f}, {F['n'][1]:+.2f}), {F['flaeche_m2']:.0f} m2, {ant * 100:5.1f} % mit Bilddaten aus {len(F.get('fotos', {}))} Fotos" + ("   <-- UNGESEHEN" if ant < a.schwelle else (f"   <-- TEILWEISE: {F['flaeche_m2'] * (1 - ant):.0f} m2 ohne Bilddaten" if F["flaeche_m2"] * (1 - ant) >= 30 else "")))
     reg = set(os.path.splitext(os.path.basename(n))[0] for n in registrierte(a.sparse)); fd = os.path.join(root, obj["fotos_dir"]); alle = sorted(f for f in glob.glob(os.path.join(fd, "*")) if f.lower().endswith((".jpg", ".jpeg", ".png")))
+    if not waende: print(f"FEHLER: KEINE Wand geprueft (keine Fassade >= {a.min_m2:g} m2 unter {len(FJ['fassaden'])} in fassaden.json) - das ist KEIN 'alle Waende gesehen'; --min_m2 senken oder fassade_ortho pruefen"); return 2      # 17.11.2026: lief mit rc 0 und 'alle Waende gesehen' durch
+    if not alle: print(f"FEHLER: kein Foto in fotos_dir {fd} - Einrichtungsfehler, keine Luecken-Aussage"); return 2
     kand = [f for f in alle if os.path.splitext(os.path.basename(f))[0] not in reg]; print(f"Fotobestand {len(alle)}, im SfM registriert {len(alle) - len(kand)}, NICHT registriert {len(kand)}")
     ung = [w for w in waende if w["ungesehen"]]; daten = os.path.join("/media/oem/scan/rc-park_daten", os.path.basename(od)); Z = os.path.join(daten, "seiten_nachholen"); T = os.path.join(root, "tools"); VC = "/media/oem/scan/venv-colmap/bin/python -I"; VS = "/media/oem/scan/venv-seg/bin/python -I"
     zeilen = ["#!/bin/bash", "# erzeugt von tools/seiten_luecken.py - Kandidaten fuer ungesehene Waende nachregistrieren", "set -e", f"mkdir -p {Z}/roh", f"rm -rf {Z}/bilder {Z}/vorbereitet.json {Z}/merkmale.json {Z}/db.db {Z}/lg   # Zwischenstaende eines frueheren Laufs (Downloads und roh/ bleiben)"]
@@ -86,7 +91,7 @@ def main():
             cv2.putText(c, os.path.splitext(os.path.basename(f))[0][-14:], (2, Tn - 5), 0, 0.4, (0, 255, 255), 1); kacheln.append(c)
         while len(kacheln) % 10: kacheln.append(np.zeros((Tn, Tn, 3), np.uint8))
         if kacheln: cv2.imwrite(os.path.join(audit, "seiten_luecken_kandidaten.jpg"), np.vstack([np.hstack(kacheln[i:i + 10]) for i in range(0, len(kacheln), 10)]))
-    json.dump(dict(waende=waende, ungesehen=[w["nr"] for w in ung], fotobestand=len(alle), nicht_registriert=[os.path.basename(f) for f in kand], skript=sk, zielordner=Z), open(os.path.join(audit, "seiten_luecken.json"), "w"), indent=1)
+    sys.path.insert(0, T); __import__("json_sicher").schreiben(os.path.join(audit, "seiten_luecken.json"), dict(waende=waende, ungesehen=[w["nr"] for w in ung], fotobestand=len(alle), nicht_registriert=[os.path.basename(f) for f in kand], skript=sk, zielordner=Z))
     if not ung:
         teil = [w for w in waende if w["ohne_daten_m2"] >= 30]      # 16.11.2026: "alle Waende gesehen" stand neben einem Fotoauftrag ueber 240 m2 - die Wandschwelle (20 %) sieht grosse Loecher in einer sonst gesehenen Wand nicht
         print("keine Wand ganz ungesehen" + ("; ABER " + ", ".join(f"f{w['nr']:02d} {w['ohne_daten_m2']:.0f} m2" for w in teil) + " ohne Bilddaten (Ziele: tools/foto_auftrag.py)" if teil else " - alle Waende gesehen")); return 0
@@ -97,7 +102,7 @@ def main():
         if os.path.exists(marke) and os.environ.get("SEITEN_NEU") != "1":
             print(f"Nachholen UEBERSPRUNGEN: dieselben {len(kand)} Kandidaten fuer dieselben Waende wurden schon versucht ({open(marke).read().strip()}); neu erzwingen: SEITEN_NEU=1"); return 3
         rc = subprocess.call(["bash", sk])
-        if rc: print("Nachholen abgebrochen, rc", rc)
+        if rc: print(f"FEHLER: Nachholen abgebrochen, rc {rc} (Skript {sk})"); return 5      # 17.11.2026: endete mit rc 3 wie 'Wand ungesehen, Nachholen gelaufen' - die Kette wertete das abgebrochene Skript als in Ordnung
         else: os.makedirs(Z, exist_ok=True); open(marke, "w").write(time.strftime("%Y-%m-%d %H:%M") + f", {len(kand)} Kandidaten")
     return 3
 

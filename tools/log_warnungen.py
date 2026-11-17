@@ -7,7 +7,7 @@ Erkannt: glog-Zeilen W.../E.../F... (COLMAP), WARNUNG/FEHLER/HINWEIS (eigene Wer
 Ordner: alle *.log darin (nicht rekursiv). Exit 0 immer (Bericht); die Gesamtkette schreibt das Ergebnis in ihren Bericht ('warnungen')."""
 import sys, os, re, json, glob, collections
 
-MUSTER = re.compile(r"^[WEF]\d{8} |WARNUNG|FEHLER|HINWEIS|Warning|WARNING|Error|Traceback|Falling back|nicht verfuegbar|out of memory|NO_CONVERGENCE|KEINE_LOESUNG|ABBRUCH|rejected")
+MUSTER = re.compile(r"^[WEF]\d{8} |WARNUNG|FEHLER|HINWEIS|Warning|WARNING|Error|Traceback|Falling back|nicht verfuegbar|out of memory|NO_CONVERGENCE|KEINE_LOESUNG|ABBRUCH|rejected|ACHTUNG|ZEITLIMIT|PLATZ ZU KNAPP|No space left|Killed|Segmentation fault|core dumped|Getoetet|Speicherzugriffsfehler")      # 17.11.2026: 'ACHTUNG ...' (GPU-Rueckfall, Nebenpruefung abgestuerzt), Zeitlimit, volle Platte und vom System beendete Prozesse fehlten
 NEUTRAL = [(re.compile(r"^[WEFI]\d{8} [\d:.]+ +\d+ "), ""), (re.compile(r"/[\w./\-]+"), "<pfad>"), (re.compile(r"0x[0-9a-f]+"), "<hex>"), (re.compile(r"-?\d+([.,]\d+)?"), "#")]
 AUSNAHME = re.compile(r"Unknown EXIF orientation|IMAGE_EXISTS|^\s+File \"|raise |warnings\.warn")   # bekannt harmlos bzw. Traceback-Zwischenzeilen
 
@@ -25,6 +25,7 @@ def sammeln(pfade, ab_zeile=None, seit=None):
         except OSError: continue
         if seit is not None and d not in ab_zeile and os.path.getmtime(d) < seit: continue
         ab = ab_zeile.get(d, 0)
+        if ab > len(zeilen): ab = 0                                    # Log wurde seit der Zeilenzaehlung gekuerzt/neu angelegt: sonst fiele ALLES still weg
         for nr, l in enumerate(zeilen, 1):
             if nr <= ab or not MUSTER.search(l) or AUSNAHME.search(l): continue
             k = l.strip()

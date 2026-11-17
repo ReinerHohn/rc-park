@@ -3,7 +3,8 @@
 
 Je Fassade (koplanare LoD2-WallSurface-Stuecke, gleiche Normale/Ebene) ein (u, z)-Raster mit `--zelle` m: jede Zelle = Punkt auf der Wandebene,
 in jedes Foto mit K-Datei (buendel_tor ok) projiziert (Lochkamera + k1 wie COLMAP SIMPLE_RADIAL), sichtbar nur wenn der erste Strahltreffer
-gegen das aktuelle Modell (STL der Stufe) innerhalb `--tol` vor/hinter der Zelle liegt (Embree, CPU - die GPU gehoert dem laufenden Optimierer).
+gegen das aktuelle Modell (STL der Stufe) innerhalb `--tol` vor/hinter der Zelle liegt (Strahlen: Embree auf der CPU; Zellrechnung ab --gpu-ab Zellen auf der GPU,
+hoechstens --gpu-mb MiB, bei Speicherfehler mit Meldung auf der CPU weiter - 17.11.2026).
 Guete je Foto und Zelle = cos(Blickwinkel) / (Meter je Pixel); Zellen mit Bodenaufloesung > `--max-mpp` oder Blickwinkel > 70 Grad fallen weg.
 Fusion: gewichteter Median je Kanal ueber die Fotos (Verdecker wie Baeume/Menschen sind nicht im Modell -> der Median ueberstimmt sie, wenn
 genug Fotos die Zelle sehen); dazu Anzahl Fotos je Zelle (Abdeckung) als eigenes Bild.
@@ -96,16 +97,53 @@ def bilinear(im, x, y):
     return np.clip(c + 0.5, 0, 255).astype(np.uint8)
 
 
+_STRAHL_POOL = None
+
+
+def erster_treffer(ray, ursprung, richtung, roh=False):
+    """Erster Treffer je Strahl: (Dreiecksnummern, Strahlnummern) wie trimesh `intersects_id(multiple_hits=False)`, aber direkt am Embree-Kern.
+    17.11.2026 (Profil ober_tvdr 1 cm, 1 Arbeiter): von 52 s in intersects_id rechnete Embree selbst nur ~5 s - der Rest war trimesh-Verpackung
+    (Kopien nach float64, erneutes Normieren schon normierter Richtungen, Ursprung je Strahl wiederholt). Der Kern gibt die Python-Sperre frei (gemessen: 4 Faeden = 3,3 x).
+    `ursprung` (3,) = ein Punkt fuer alle Strahlen oder (n, 3); `richtung` (3,) oder (n, 3), Einheitsvektoren. Ohne Embree (anderer Strahlkern): der alte Weg ueber trimesh.
+    roh=True: statt des Paars ein Feld (n,) mit der Dreiecksnummer je Strahl, -1 = kein Treffer."""
+    n = len(richtung) if np.ndim(richtung) == 2 else len(ursprung)
+    w = getattr(ray, "_scene", None)
+    if w is None or not hasattr(w, "scene"):
+        ti, ri = ray.intersects_id(np.broadcast_to(ursprung, (n, 3)), np.broadcast_to(richtung, (n, 3)), multiple_hits=False, return_locations=False)
+        if not roh: return ti, ri
+        q = np.full(n, -1, np.int32); q[ri] = ti; return q
+    o32 = np.ascontiguousarray(np.broadcast_to(((np.asarray(ursprung, np.float64) - w.origin) * w.scale).astype(np.float32), (n, 3)))      # dieselbe Skalierung wie trimesh._EmbreeWrap.run
+    d32 = np.ascontiguousarray(np.broadcast_to(richtung if getattr(richtung, "dtype", None) == np.float32 else np.asarray(richtung, np.float64).astype(np.float32), (n, 3)))
+    if n >= 400000:                                                                                 # grosse Strahlmengen in Stuecken auf mehreren Kernen (Kern gibt die Python-Sperre frei; Reihenfolge bleibt -> gleiches Ergebnis)
+        global _STRAHL_POOL
+        if _STRAHL_POOL is None: _STRAHL_POOL = ThreadPoolExecutor(max(2, min(12, (os.cpu_count() or 4) // 2)))
+        k = min(8, n // 200000); gr = [(j * n // k, (j + 1) * n // k) for j in range(k)]
+        q = np.concatenate(list(_STRAHL_POOL.map(lambda g_: w.scene.run(o32[g_[0]:g_[1]], d32[g_[0]:g_[1]]), gr)))
+    else: q = w.scene.run(o32, d32)
+    if roh: return q
+    ri = np.where(q != -1)[0]
+    return q[ri], ri
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--stl", required=True); ap.add_argument("--aus", required=True)
     ap.add_argument("--zelle", type=float, default=0.05); ap.add_argument("--tol", type=float, default=0.10); ap.add_argument("--relief-vorn", type=float, default=3.0); ap.add_argument("--relief-hinten", type=float, default=6.0); ap.add_argument("--max-mpp", type=float, default=0.06)
     ap.add_argument("--max-winkel", type=float, default=70.0); ap.add_argument("--fotos", help="Komma-Liste (Standard: alle mit K-Datei und buendel_tor ok)")
     ap.add_argument("--waende-stl", action="store_true", help="Fassaden aus senkrechten Modelldreiecken, die keine LoD2-Ebene sind (Erker/Vorbauten)"); ap.add_argument("--min-flaeche", type=float, default=1.0); ap.add_argument("--einzeln", action="store_true"); ap.add_argument("--ohne-nachbarn", action="store_true"); ap.add_argument("--beste", type=int, default=5, help="je Zelle nur die k Fotos mit der besten Guete (cos/mpp) mitteln: 61 Fotos im Median verschmierten Kanten (Kamerareste 1-4 px)"); ap.add_argument("--arbeiter", type=int, default=6, help="parallele Fotos (RAM: Vollbilder bis 0,3 GB je Foto)"); ap.add_argument("--rand", type=float, default=0.5, help="Rand um die Wand (m) fuer Vorsprung/Traufe")
     ap.add_argument("--max-fotos", type=int, default=40, help="je Fassade nur die besten N Kameras (0 = alle)"); ap.add_argument("--gpu-sicht", action="store_true", help="Sichtbarkeit ueber ein GPU-Tiefenbild je Foto statt CPU-Strahlen. Messung 16.11.2026 (ober_tvdr, 700 Kameras): LANGSAMER (61 s gegen 41 s) und weniger streng - Standard bleibt CPU (embree)"); ap.add_argument("--nur", help="Komma-Liste Flaechen-IDs (f02,e05 ...): nur diese rastern (Tests/Vergleiche; IDs bleiben die des vollen Laufs)")
+    ap.add_argument("--ohne-gpu", action="store_true", help="Zellrechnung (Projektion, Blickwinkel, Aufloesung, Bildrand-Maske) auf der CPU statt auf der GPU; die CPU rechnet exakt wie vor dem 17.11.2026 (Vergleichsweg)")
+    ap.add_argument("--gpu-mb", type=float, default=2600.0, help="Obergrenze fuer den GPU-Speicher dieses Laufs in MiB (torch-Zuteilung; dazu kommen ~0,3 GB Grundlast des Treibers). Wird sie oder der freie Kartenspeicher ueberschritten: Meldung, Rest auf der CPU")
+    ap.add_argument("--gpu-ab", type=int, default=500000, help="GPU erst ab so vielen Rasterzellen (alle Fassaden zusammen; 0 = immer). Darunter kostet der Start von torch/CUDA (~1-2 s) mehr, als die Karte spart (gemessen 17.11.2026 ober_tvdr 5 cm: nur f02 = 42 000 Zellen 1,6 s CPU gegen 2,7 s GPU; alle 13 Fassaden = 1,8 Mio. Zellen 8 s CPU gegen 6 s GPU)")
     ap.add_argument("--px-ziel", type=int, default=256, help="Flaechen unter --klein-m2: Zelle = min(--zelle, kleinere Ausdehnung / px-ziel), damit kleine Flaechen (Vorbauseiten, Erkerstreifen) genug Pixel fuer den Erkenner haben (S4: die feste 5-cm-Zelle gab einem 2-m-Streifen nur 40 px; Aufloesung statt Handschwelle ist die physikalische Grenze)")
     ap.add_argument("--klein-m2", type=float, default=20.0, help="Flaechen kleiner als dies bekommen die feinere Zelle (Begruendung: grosse Fassaden brauchen 5 cm, Speicher/Rechenzeit wachsen mit 1/Zelle^2)")
     ap.add_argument("--zelle-min", type=float, default=0.005, help="feinste Zelle (m): Untergrenze, damit eine sehr schmale Flaeche keine Riesenraster erzeugt; 5 mm ~ Bodenaufloesung der besten Fotos (ANNAHME; 1 cm schloss in T1 0,5-m-Erkerfacetten mit < 96 px aus, die Spec verlangt 256 px je 2 m = 7,8 mm)")
-    a = ap.parse_args(argv); t0 = time.time()
+    a = ap.parse_args(argv); t0 = time.time(); ZT = {}; _tz = [t0]
+    def zeit(name): ZT[name] = round(ZT.get(name, 0.0) + time.time() - _tz[0], 1); _tz[0] = time.time()
+    import threading
+    def _gpu_vor():                                                                                  # torch + CUDA brauchen ~2 s zum Start: im Hintergrund, waehrend Modell/Raster/Relief auf der CPU laufen
+        try: import torch; torch.cuda.is_available() and torch.zeros(1, device="cuda")
+        except Exception: pass                                                                       # der Fehler wird unten beim eigentlichen Einschalten gemeldet
+    gpu_vor = threading.Thread(target=_gpu_vor, daemon=True)
     obj = json.load(open(a.objekt)); od = os.path.dirname(os.path.abspath(a.objekt)); os.makedirs(a.aus, exist_ok=True)
     waende, mitte = lod2_waende(obj)
     if a.waende_stl:                                                                                # 2026-11-05: Vorbauten (Erker) haben keine LoD2-Wand -> Fassaden aus den senkrechten Modelldreiecken;
@@ -146,14 +184,20 @@ def main(argv=None):
         uu = u0 + (np.arange(nu) + 0.5) * zl; zz = z1 - (np.arange(nz) + 0.5) * zl        # Zeile 0 = oben
         U, Z = np.meshgrid(uu, zz); F.update(raster=dict(u0=u0, z1=z1, nu=nu, nz=nz, zelle=zl))
         F["_X"] = np.c_[o[0] + U.ravel() * d[0], o[1] + U.ravel() * d[1], Z.ravel()]
+    n_zellen = sum(len(F_["_X"]) for F_ in fas); gpu_klein = n_zellen < a.gpu_ab
+    if not a.ohne_gpu and not a.gpu_sicht and not gpu_klein: gpu_vor.start()
+    zeit("laden_raster")
     RI = trimesh.ray.ray_pyembree.RayMeshIntersector if hasattr(trimesh.ray, "ray_pyembree") else trimesh.ray.ray_triangle.RayMeshIntersector
     ray = RI(m); nb, n_nb = nachbarn_netz(obj) if not a.ohne_nachbarn else (None, 0)
     _ma = trimesh.util.concatenate([m, nb]) if nb is not None else m; FN_ALLE = np.asarray(_ma.face_normals, float); P0_ALLE = np.asarray(_ma.triangles[:, 0], float)
     ray_alle = RI(_ma) if nb is not None else ray                     # Sicht: Modell + Nachbarn; Relief (Ortho-Flaeche): nur Modell
-    for F in fas:                                                                                   # echtes Orthobild: je Zelle die VORDERSTE Modellflaeche entlang -Normale (Erker, Galerie, Arkadenrueckwand)
+    FN_M = np.asarray(m.face_normals, float); P0_M = np.asarray(m.triangles[:, 0], float)
+    def relief(F):                                                                                  # echtes Orthobild: je Zelle die VORDERSTE Modellflaeche entlang -Normale (Erker, Galerie, Arkadenrueckwand)
         X = F["_X"]; n3 = np.array(F["n"] + [0.0]); vorn = a.relief_vorn
-        loc, ri, _ = ray.intersects_location(X + n3 * vorn, np.repeat(-n3[None], len(X), 0), multiple_hits=False)
-        rel = np.full(len(X), np.nan); rel[ri] = vorn - np.linalg.norm(loc - (X[ri] + n3 * vorn), axis=1)   # Relief s (+ = vor der Wandebene)
+        ur_ = X + n3 * vorn; dn_ = trimesh.util.unitize(-n3[None])[0]                               # 17.11.2026 (2): Strahlkern direkt, Trefferort mit derselben trimesh-Formel (planes_lines) -> bitgleich zu intersects_location
+        ti, ri = erster_treffer(ray, ur_, dn_)
+        loc, gut_ = trimesh.intersections.planes_lines(plane_origins=P0_M[ti], plane_normals=FN_M[ti], line_origins=ur_[ri], line_directions=np.broadcast_to(dn_, (len(ri), 3))); ri = ri[gut_]
+        rel = np.full(len(X), np.nan); rel[ri] = vorn - np.linalg.norm(loc - ur_[ri], axis=1)   # Relief s (+ = vor der Wandebene)
         rel[rel < -a.relief_hinten] = np.nan
         # 16.11.2026: OEFFNUNGEN. Seit die Fenster echte Loecher sind (aushoehlen), trifft der Strahl dort keine Flaeche -> das Fassadenbild war an jedem Fenster schwarz und die Fenstererkennung fand
         # an der eigenen, schon gebauten Fassade nichts mehr (ober_tvdr: 6 -> 0). Zellen INNERHALB des Fassadenpolygons ohne Flaeche = Oeffnung: Farbe von der Wandebene, sichtbar, wenn nichts DAVOR steht.
@@ -161,11 +205,12 @@ def main(argv=None):
         for poly in F["polys_uz"]: cv2.fillPoly(mp_, [np.array([[(u_ - r_["u0"]) / r_["zelle"], (r_["z1"] - z_) / r_["zelle"]] for u_, z_ in poly], np.int32)], 1)
         F["_loch"] = np.isnan(rel) & (mp_.ravel() > 0) if mp_.size == len(rel) else np.zeros(len(rel), bool)
         F["_S"] = X + n3 * np.nan_to_num(rel, nan=0.0)[:, None]; F["_rel"] = rel
-
+    with ThreadPoolExecutor(max(1, min(len(fas), a.arbeiter))) as ex: list(ex.map(relief, fas))      # 17.11.2026 (2): Fassaden nebeneinander (unabhaengig; Embree und numpy geben die Python-Sperre frei)
+    zeit("relief")
     # 16.11.2026 KAMERA-VORAUSWAHL je Fassade (Turm: 700 Kameras x 4 Waende rechneten > 2 h, die Verschmelzung sortierte Hunderte Proben je Zelle): je Fassade nur die --max-fotos besten
     # nach (gesehener Anteil der Stichprobe) / (Meter je Pixel), rein aus den K-Dateien (kein Bild laden). 0 = alle wie frueher.
     if a.max_fotos > 0:
-        for F in fas:
+        def wahl(F):
             Xg = F["_S"][::61]; Xg = Xg[np.isfinite(Xg).all(1)]; n_ = np.array(F["n"] + [0.0]); wert = []
             for nr_ in fotos:
                 c_ = alle_k.get(nr_)
@@ -176,9 +221,107 @@ def main(argv=None):
                 if not np.isfinite(d_).all() or d_.max() > 2000 or d_.min() < 0.5: continue      # unplausibler Standort (16.11.: eine 'gepruefte' Kamera stand 350 000 km entfernt und gewann wegen ihrer Schaerfe einen Platz)
                 if ok_.sum() >= 3: wert.append((float(ok_.mean()) / float(np.median(mpp_[ok_])), nr_))
             F["_wahl"] = set(n for _, n in sorted(wert, reverse=True)[:a.max_fotos])
+        with ThreadPoolExecutor(max(1, min(len(fas), a.arbeiter))) as ex: list(ex.map(wahl, fas))
     else:
         for F in fas: F["_wahl"] = None
     import threading, render_kern as rk; GPU_SPERRE = threading.Lock(); m_alle = trimesh.util.concatenate([m, nb]) if nb is not None else m
+    # 17.11.2026 (2) ZELLRECHNUNG AUF DER GPU (Nutzer: "warum so viel CPU, so wenig GPU"). Profil 1 cm: nach dem Strahlkern war der groesste Posten die Rechnung ueber ALLE Zellen je Foto und Fassade
+    # (Blickvektor, Entfernung, Projektion, Bildrand, Aufloesung: ~35 s auf einem Kern), obwohl meist nur ein Teil der Zellen im Bild liegt. Die GPU rechnet dieselben Formeln in float64 und gibt nur die
+    # Zellen im Bild zurueck; Strahlen (Embree), Glaetten (cv2) und Abtasten bleiben auf der CPU und rechnen wie bisher. Gleichheit: die GPU summiert Skalarprodukte in fester Reihenfolge, numpy ueber BLAS -
+    # Unterschiede nur in der letzten Stelle (1e-16), wirksam nur genau an einer Schwelle. Gemessen 17.11.2026 mit tools/test_ortho_vergleich.py (ober_tvdr, 1 cm, 13 Fassaden, 111 Bilder mit
+    # Einzelbildern/Abdeckung/Relief, 378 Mio. Werte): GPU-Weg und CPU-Weg beide BITGLEICH zur Referenz; 52 s -> 11-15 s (GPU) bzw. 27-29 s (--ohne-gpu). Das ist gemessen, nicht garantiert: nach Aenderungen
+    # hier den Vergleich wiederholen (Grenze: groesste Abweichung <= 1 Graustufe, < 0,1 % der Werte). --ohne-gpu = alter Rechenweg. Kleine Aufgaben (< --gpu-ab Zellen, z. B. 5-cm-Laeufe) bleiben auf der CPU.
+    GPU = dict(an=False, grund="--ohne-gpu" if a.ohne_gpu else ("--gpu-sicht" if a.gpu_sicht else (f"kleine Aufgabe ({n_zellen} Zellen < --gpu-ab {a.gpu_ab})" if gpu_klein else "")), zellen=n_zellen, paare=0, cpu_paare=0, cache=0, gpu_s=0.0, strahlen=0)
+    if not a.ohne_gpu and not a.gpu_sicht and not gpu_klein:
+        try:
+            gpu_vor.join(); import torch
+            if not torch.cuda.is_available(): raise RuntimeError("keine CUDA-Karte sichtbar")
+            DEV = torch.device("cuda"); torch.cuda.set_per_process_memory_fraction(min(1.0, a.gpu_mb * 2 ** 20 / torch.cuda.get_device_properties(0).total_memory))
+            FNg = torch.from_numpy(FN_ALLE).to(DEV); P0g = torch.from_numpy(P0_ALLE).to(DEV); float(FNg.sum()); GPU["an"] = True
+        except Exception as e_:
+            GPU["grund"] = f"{type(e_).__name__}: {str(e_)[:160]}"; print(f"ACHTUNG GPU nicht nutzbar ({GPU['grund']}) - Zellrechnung laeuft auf der CPU (langsamer, Ergebnis gleich)", flush=True)
+
+    def gpu_aus(e_):                                                                                # nie still: Speicherfehler/Kartenfehler melden, Rest auf der CPU
+        with GPU_SPERRE:
+            if not GPU["an"]: return
+            GPU["an"] = False; GPU["grund"] = f"{type(e_).__name__}: {str(e_)[:160]}"
+            for F_ in fas: F_.pop("_Sg", None)
+            try: torch.cuda.empty_cache()
+            except Exception: pass
+        print(f"ACHTUNG GPU-Fehler nach {GPU['paare']} Foto-Fassaden-Paaren ({GPU['grund']}) - Rest der Zellrechnung auf der CPU (langsamer, Ergebnis gleich)", flush=True)
+
+    def fass_gpu(F):
+        """Zellpunkte + Masken der Fassade auf der Karte (bleiben dort, solange alle zusammen hoechstens 40 % der Grenze belegen; sonst je Aufruf neu hochgeladen). Nur unter GPU_SPERRE rufen."""
+        g = F.get("_Sg")
+        if g is None:
+            g = (torch.from_numpy(F["_S"]).to(DEV), torch.from_numpy(F["_loch"]).to(DEV), torch.from_numpy(np.isfinite(F["_rel"]) | F["_loch"]).to(DEV)); nb_ = g[0].numel() * 8 + 2 * len(g[1])
+            if GPU["cache"] + nb_ <= 0.4 * a.gpu_mb * 2 ** 20: F["_Sg"] = g; GPU["cache"] += nb_
+        return g
+
+    def zellen_gpu(F, Cw, tr, R, t, f, cx, cy, k1, W, H):
+        """Stufe 1 auf der GPU: Zellen der Fassade, die im Foto liegen. Rueckgabe None (< 200 Zellen), "standort" (Kamera unplausibel), False (GPU inzwischen aus) oder
+        ein Zustand (Tensoren idx, v, dist, cosw, mpp, px auf der Karte; `dirs32` = Strahlrichtungen float32 als numpy fuer Embree). Formeln wie paar_cpu, Skalarprodukte ausgeschrieben."""
+        T = torch; n = F["n"] + [0.0]; cgr = math.cos(math.radians(a.max_winkel)); Rl = np.asarray(R, float).tolist(); tl = np.asarray(t, float).tolist(); Cl = np.asarray(Cw, float).tolist(); trl = np.asarray(tr, float).tolist(); teile = []
+        with GPU_SPERRE:                                                                             # eine Rechnung zur Zeit: die Karte ist geteilt, der Speicher bleibt klein (ein Block von 1,5 Mio. Zellen ~ 0,35 GB)
+            if not GPU["an"]: return False
+            tg_ = time.time(); Sg = fass_gpu(F)[0]
+            for s0 in range(0, len(Sg), 1500000):
+                X = Sg[s0:s0 + 1500000]; x0, x1, x2 = X[:, 0], X[:, 1], X[:, 2]
+                v0, v1, v2 = Cl[0] - x0, Cl[1] - x1, Cl[2] - x2; dist = T.sqrt(v0 * v0 + v1 * v1 + v2 * v2); cosw = (v0 * n[0] + v1 * n[1] + v2 * n[2]) / dist
+                q0, q1, q2 = x0 + trl[0], x1 + trl[1], x2 + trl[2]; c_ = [q0 * Rl[k_][0] + q1 * Rl[k_][1] + q2 * Rl[k_][2] + tl[k_] for k_ in range(3)]
+                z = c_[2]; xn = c_[0] / z; yn = c_[1] / z; s_ = 1 + k1 * (xn * xn + yn * yn); pu = f * xn * s_ + cx; pv = f * yn * s_ + cy
+                mpp = dist / (f * T.clamp(cosw, min=1e-3))
+                ok = (cosw > cgr) & (z > 1) & (pu >= 0) & (pu < W - 1) & (pv >= 0) & (pv < H - 1) & (mpp < a.max_mpp); j = T.nonzero(ok)[:, 0]
+                if len(j): teile.append((j + s0, T.stack([v0[j], v1[j], v2[j]], 1), dist[j], cosw[j], mpp[j], T.stack([pu[j], pv[j]], 1)))
+                del X, x0, x1, x2, v0, v1, v2, dist, cosw, q0, q1, q2, c_, z, xn, yn, s_, pu, pv, mpp, ok, j
+            GPU["paare"] += 1
+            if sum(len(q_[0]) for q_ in teile) < 200: return None
+            st = dict(zip(("idx", "v", "dist", "cosw", "mpp", "px"), (T.cat([q_[k_] for q_ in teile]) for k_ in range(6)))); del teile
+            if not (np.isfinite(Cw).all() and bool(T.isfinite(st["dist"]).all()) and float(st["dist"].min()) > 0.5 and float(st["dist"].max()) < 2000): return "standort"
+            st["dirs"] = -st.pop("v") / st["dist"][:, None]; st["dirs32"] = st["dirs"].to(T.float32).cpu().numpy(); GPU["gpu_s"] += time.time() - tg_; GPU["strahlen"] += len(st["dirs32"]); return st
+
+    def sicht_gpu(F, st, q, Cw):
+        """Stufe 2 auf der GPU: aus den Dreiecksnummern des Strahlkerns (q, -1 = kein Treffer) die sichtbaren Zellen. Rueckgabe None (< 200), False (GPU aus) oder (idx, px, mpp, guete) als numpy."""
+        T = torch; Cl = np.asarray(Cw, float).tolist()
+        with GPU_SPERRE:
+            if not GPU["an"]: return False
+            tg_ = time.time(); _, lochg, relokg = fass_gpu(F); qg = T.from_numpy(q).to(DEV).long(); tr_ = qg >= 0; qg = T.clamp(qg, min=0); nn = FNg[qg]; p0 = P0g[qg]; d = st["dirs"]; dist = st["dist"]
+            nen = d[:, 0] * nn[:, 0] + d[:, 1] * nn[:, 1] + d[:, 2] * nn[:, 2]; zae = (p0[:, 0] - Cl[0]) * nn[:, 0] + (p0[:, 1] - Cl[1]) * nn[:, 1] + (p0[:, 2] - Cl[2]) * nn[:, 2]
+            erster = T.where(tr_, zae / T.where(T.abs(nen) < 1e-12, T.full_like(nen, 1e-12), nen), T.full_like(nen, float("inf")))
+            loch = lochg[st["idx"]]; sicht = (T.abs(erster - dist) < a.tol + 0.002 * dist) | (loch & (erster > dist - a.tol)); sicht &= relokg[st["idx"]]
+            j = T.nonzero(sicht)[:, 0]
+            if len(j) < 200: return None
+            mpp = st["mpp"][j]; GPU["gpu_s"] += time.time() - tg_; return st["idx"][j].to(T.int32).cpu().numpy(), st["px"][j].cpu().numpy(), mpp.cpu().numpy(), (st["cosw"][j] / mpp).to(T.float32).cpu().numpy()
+
+    def paar_cpu(F, nr, tief, Cw, tr, R, t, f, cx, cy, k1, W, H):
+        """Rechenweg bis 17.11.2026 (numpy ueber alle Zellen, Formeln unveraendert). Rueckgabe None oder (idx, px, mpp, guete) wie sicht_gpu."""
+        X = F["_S"]; n = np.array(F["n"] + [0.0]); v = Cw - X; dist = np.linalg.norm(v, axis=1); cosw = (v @ n) / dist
+        px, z = projizieren(X + tr, R, np.asarray(t, float), f, cx, cy, k1)
+        ok = (cosw > math.cos(math.radians(a.max_winkel))) & (z > 1) & (px[:, 0] >= 0) & (px[:, 0] < W - 1) & (px[:, 1] >= 0) & (px[:, 1] < H - 1)
+        mpp = dist / (f * np.maximum(cosw, 1e-3)); ok &= mpp < a.max_mpp
+        if ok.sum() < 200: return None
+        idx = np.where(ok)[0]
+        if not (np.isfinite(Cw).all() and np.isfinite(dist[idx]).all() and dist[idx].min() > 0.5 and dist[idx].max() < 2000): print(f"  Kamera {nr} uebersprungen (Standort unplausibel: {Cw})", flush=True); return None
+        if not a.gpu_sicht:
+            dirs = -v[idx] / dist[idx, None]      # 17.11.2026: nur Dreiecksnummer vom Strahlkern holen und die Entfernung selbst rechnen (Profil: von 66 s Strahlzeit waren 44 s trimesh-Nacharbeit fuer die Trefferorte)
+            ti, ri = erster_treffer(ray_alle, Cw, dirs)                                             # 17.11.2026 (2): Strahlkern direkt (siehe erster_treffer)
+            erster = np.full(len(idx), np.inf); nn_ = FN_ALLE[ti]; nen = np.einsum("ij,ij->i", dirs[ri], nn_); erster[ri] = np.einsum("ij,ij->i", P0_ALLE[ti] - Cw, nn_) / np.where(np.abs(nen) < 1e-12, 1e-12, nen)
+            sicht = np.abs(erster - dist[idx]) < a.tol + 0.002 * dist[idx]                           # erster Kamerastrahl-Treffer = die vorderste Flaeche der Zelle (sonst verdeckt)
+        else:                                                                                         # 16.11.2026 (Aufgabenliste 1a): Sichtbarkeit ueber EIN Tiefenbild des Modells je Foto auf der GPU statt eines CPU-Strahls je Zelle
+            if tief[0] is None:
+                sk = min(1.0, 2400.0 / max(W, H)); Wr, Hr = int(W * sk), int(H * sk); te = np.asarray(t, float) + R @ tr
+                with GPU_SPERRE: tief[0] = (np.asarray(rk.dreiecke_rastern(m_alle, R, te, f * sk, cx * sk, cy * sk, Wr, Hr)[0]), sk, Wr, Hr)
+            T_, sk, Wr, Hr = tief[0]; pc = (X[idx] + tr) @ R.T + np.asarray(t, float); zc = pc[:, 2]; ui = np.clip((f * pc[:, 0] / zc + cx) * sk, 0, Wr - 1).astype(int); vi = np.clip((f * pc[:, 1] / zc + cy) * sk, 0, Hr - 1).astype(int)
+            dmin = np.full(len(idx), np.inf)
+            for du, dv in ((0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)):                                 # Nachbarpixel mitnehmen: an Kanten trifft der Pixelmittelpunkt sonst die Flaeche daneben
+                d_ = T_[np.clip(vi + dv, 0, Hr - 1), np.clip(ui + du, 0, Wr - 1)]; d_ = np.where(d_ > 0, d_, np.inf); dmin = np.where(np.abs(d_ - zc) < np.abs(dmin - zc), d_, dmin)
+            sicht = np.abs(dmin - zc) < a.tol + 0.002 * dist[idx]
+        if not a.gpu_sicht: sicht |= F["_loch"][idx] & (erster > dist[idx] - a.tol)                   # Oeffnung: sichtbar, wenn der erste Treffer nicht VOR der Wandebene liegt
+        sicht &= np.isfinite(F["_rel"][idx]) | F["_loch"][idx]                                        # ohne Modellflaeche ausserhalb der Fassade (Himmel/Nachbar) keine Farbe
+        idx = idx[sicht]
+        if len(idx) < 200: return None
+        return idx.astype(np.int32), px[idx], mpp[idx], (cosw[idx] / mpp[idx]).astype(np.float32)
+
     def ein_foto(nr):
         K = json.load(open(FF.k_datei(a.objekt, obj, ROOT, nr))); kk = K["kamera"]; pf = glob.glob(os.path.join(ROOT, obj["fotos_dir"], nr + ".*")) or glob.glob(os.path.join(ROOT, obj["fotos_dir"], nr + "_*"))   # 15.11.2026: Fotos heissen bei neuen Objekten <nr>.jpg (ohne das fand der Lauf 0 Fotos, 8 min umsonst)
         if not pf: return nr, None
@@ -195,43 +338,32 @@ def main(argv=None):
         erg = {}; weich = {}; tief = [None]
         for i, F in enumerate(fas):
             if F["_wahl"] is not None and nr not in F["_wahl"]: continue
-            X = F["_S"]; n = np.array(F["n"] + [0.0]); v = Cw - X; dist = np.linalg.norm(v, axis=1); cosw = (v @ n) / dist
-            px, z = projizieren(X + tr, R, np.asarray(t, float), f, cx, cy, k1)
-            ok = (cosw > math.cos(math.radians(a.max_winkel))) & (z > 1) & (px[:, 0] >= 0) & (px[:, 0] < W - 1) & (px[:, 1] >= 0) & (px[:, 1] < H - 1)
-            mpp = dist / (f * np.maximum(cosw, 1e-3)); ok &= mpp < a.max_mpp
-            if ok.sum() < 200: continue
-            idx = np.where(ok)[0]
-            if not (np.isfinite(Cw).all() and np.isfinite(dist[idx]).all() and dist[idx].min() > 0.5 and dist[idx].max() < 2000): print(f"  Kamera {nr} uebersprungen (Standort unplausibel: {Cw})", flush=True); continue
-            if not a.gpu_sicht:
-                dirs = -v[idx] / dist[idx, None]      # 17.11.2026: nur Dreiecksnummer vom Strahlkern holen und die Entfernung selbst rechnen (Profil: von 66 s Strahlzeit waren 44 s trimesh-Nacharbeit fuer die Trefferorte)
-                ti, ri = ray_alle.intersects_id(np.repeat(Cw[None], len(idx), 0), dirs, multiple_hits=False, return_locations=False)
-                erster = np.full(len(idx), np.inf); nn_ = FN_ALLE[ti]; nen = np.einsum("ij,ij->i", dirs[ri], nn_); erster[ri] = np.einsum("ij,ij->i", P0_ALLE[ti] - Cw, nn_) / np.where(np.abs(nen) < 1e-12, 1e-12, nen)
-                sicht = np.abs(erster - dist[idx]) < a.tol + 0.002 * dist[idx]                       # erster Kamerastrahl-Treffer = die vorderste Flaeche der Zelle (sonst verdeckt)
-            else:                                                                                     # 16.11.2026 (Aufgabenliste 1a): Sichtbarkeit ueber EIN Tiefenbild des Modells je Foto auf der GPU statt eines CPU-Strahls je Zelle
-                if tief[0] is None:
-                    sk = min(1.0, 2400.0 / max(W, H)); Wr, Hr = int(W * sk), int(H * sk); te = np.asarray(t, float) + R @ tr
-                    with GPU_SPERRE: tief[0] = (np.asarray(rk.dreiecke_rastern(m_alle, R, te, f * sk, cx * sk, cy * sk, Wr, Hr)[0]), sk, Wr, Hr)
-                T_, sk, Wr, Hr = tief[0]; pc = (X[idx] + tr) @ R.T + np.asarray(t, float); zc = pc[:, 2]; ui = np.clip((f * pc[:, 0] / zc + cx) * sk, 0, Wr - 1).astype(int); vi = np.clip((f * pc[:, 1] / zc + cy) * sk, 0, Hr - 1).astype(int)
-                dmin = np.full(len(idx), np.inf)
-                for du, dv in ((0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)):                             # Nachbarpixel mitnehmen: an Kanten trifft der Pixelmittelpunkt sonst die Flaeche daneben
-                    d_ = T_[np.clip(vi + dv, 0, Hr - 1), np.clip(ui + du, 0, Wr - 1)]; d_ = np.where(d_ > 0, d_, np.inf); dmin = np.where(np.abs(d_ - zc) < np.abs(dmin - zc), d_, dmin)
-                sicht = np.abs(dmin - zc) < a.tol + 0.002 * dist[idx]
-            if not a.gpu_sicht: sicht |= F["_loch"][idx] & (erster > dist[idx] - a.tol)               # Oeffnung: sichtbar, wenn der erste Treffer nicht VOR der Wandebene liegt
-            sicht &= np.isfinite(F["_rel"][idx]) | F["_loch"][idx]                                    # ohne Modellflaeche ausserhalb der Fassade (Himmel/Nachbar) keine Farbe
-            idx = idx[sicht]
-            if len(idx) < 200: continue
+            zl = False
+            if GPU["an"]:
+                try:
+                    zl = zellen_gpu(F, Cw, tr, R, t, f, cx, cy, k1, W, H)
+                    if isinstance(zl, str): print(f"  Kamera {nr} uebersprungen (Standort unplausibel: {Cw})", flush=True); zl = None
+                    elif isinstance(zl, dict): zl = sicht_gpu(F, zl, erster_treffer(ray_alle, Cw, zl["dirs32"], roh=True), Cw)
+                except Exception as e_:                                                               # torch.OutOfMemoryError / CUDA-Fehler (geteilte Karte): melden, dieses Paar und den Rest auf der CPU
+                    if not (isinstance(e_, RuntimeError) or "CUDA" in str(e_) or "memory" in str(e_).lower()): raise
+                    gpu_aus(e_); zl = False
+            if zl is False: zl = paar_cpu(F, nr, tief, Cw, tr, R, t, f, cx, cy, k1, W, H); GPU["cpu_paare"] += 1
+            if zl is None: continue
+            idx, px, mpp, guete = zl                                                                 # nur die sichtbaren Zellen (Felder laufen parallel zu idx)
             # 15.11.2026: Zelle groesser als der Fotopixel -> Foto vor dem Abtasten auf die Zellgroesse glaetten (sonst Aliasing: das 5-cm-Ortho des Kaufhauses war fleckig/koernig)
-            sig_ = 0.4 * (F["raster"]["zelle"] / float(np.median(mpp[idx]))); sig_ = min(round(sig_ * 2) / 2.0, 6.0)      # 16.11.2026: gedeckelt - ein Foto mit sehr feiner Aufloesung (Tele/Nahaufnahme, f > 10 000 px) gab Sigma in den Hunderten: der Weichzeichner lief minutenlang auf EINEM Kern (Suedwand Turm > 240 s statt 25 s)
+            sig_ = 0.4 * (F["raster"]["zelle"] / float(np.median(mpp))); sig_ = min(round(sig_ * 2) / 2.0, 6.0)      # 16.11.2026: gedeckelt - ein Foto mit sehr feiner Aufloesung (Tele/Nahaufnahme, f > 10 000 px) gab Sigma in den Hunderten: der Weichzeichner lief minutenlang auf EINEM Kern (Suedwand Turm > 240 s statt 25 s)
             if sig_ >= 1.0:
                 if sig_ not in weich: weich[sig_] = cv2.GaussianBlur(im, (0, 0), sig_)
-                col = bilinear(weich[sig_], px[idx, 0], px[idx, 1])
-            else: col = bilinear(im, px[idx, 0], px[idx, 1])
-            erg[i] = (idx.astype(np.int32), col, (cosw[idx] / mpp[idx]).astype(np.float32))
+                col = bilinear(weich[sig_], px[:, 0], px[:, 1])
+            else: col = bilinear(im, px[:, 0], px[:, 1])
+            erg[i] = (idx, col, guete)
         return nr, erg
 
+    zeit("kamerawahl")
     with ThreadPoolExecutor(min(len(fotos), a.arbeiter)) as ex: alle = list(ex.map(ein_foto, fotos))
-    bericht = []
-    for i, F in enumerate(fas):
+    zeit("fotos")
+    def verschmelzen(iF):
+        i, F = iF
         r = F["raster"]; N = r["nu"] * r["nz"]; beitr = [(nr, e[i]) for nr, e in alle if e and i in e]
         F["fotos"] = {nr: dict(zellen=int(len(x[0])), guete_median=round(float(np.median(x[2])), 1)) for nr, x in beitr}
         img = np.zeros((N, 3), np.uint8); cnt = np.zeros(N, np.int32)
@@ -264,12 +396,13 @@ def main(argv=None):
             cv2.imwrite(os.path.join(a.aus, f"uneinig_{F['_id']}.png"), cv2.resize(np.clip(ub, 0, 255).astype(np.uint8), (r["nu"], r["nz"]), interpolation=cv2.INTER_NEAREST))
             rang = np.arange(len(I)) - np.repeat(st[:-1], np.diff(st)); w_ = rang < a.beste; I, Cc, G = I[w_], Cc[w_], G[w_]   # je Zelle die besten k
             # gewichteter Median je Kanal und Zelle, vektorisiert: Proben je Zelle nach Wert sortieren, kumulierte Gewichte, erster Wert >= halbes Gewicht
-            for k_ in range(3):
+            def kanal(k_):
                 key = I.astype(np.float64) * 512 + Cc[:, k_]; o2 = np.argsort(key, kind="stable"); Ik, Vk, Gk = I[o2], Cc[o2, k_], G[o2]
                 cs = np.cumsum(Gk); start = np.r_[0, np.where(np.diff(Ik))[0] + 1]; tot = np.add.reduceat(Gk, start); base = np.r_[0, cs[start[1:] - 1]] if len(start) > 1 else np.array([0.0])
                 half = base + tot / 2; grp = np.repeat(np.arange(len(start)), np.diff(np.r_[start, len(Ik)])); ueber = cs >= half[grp]
                 erst = np.full(len(start), -1); pos_ = np.where(ueber)[0]; g_ = grp[pos_]; first = np.r_[True, g_[1:] != g_[:-1]]; erst[g_[first]] = pos_[first]
                 img[Ik[start], k_] = np.clip(Vk[erst], 0, 255).astype(np.uint8)
+            with ThreadPoolExecutor(3) as ex3: list(ex3.map(kanal, range(3)))      # 17.11.2026 (2): die drei Farbkanaele nebeneinander (Sortieren gibt die Python-Sperre frei; jeder Kanal schreibt nur seine Spalte)
         tag = F["_id"]; cv2.imwrite(os.path.join(a.aus, f"ortho_{tag}.png"), img.reshape(r["nz"], r["nu"], 3))
         cv2.imwrite(os.path.join(a.aus, f"abdeckung_{tag}.png"), np.clip(cnt * 20, 0, 255).astype(np.uint8).reshape(r["nz"], r["nu"]))
         if a.einzeln:
@@ -279,9 +412,14 @@ def main(argv=None):
         F["id"] = tag; F["abdeckung_anteil"] = round(float((cnt > 0).mean()), 3); F["fotos_median_je_zelle"] = float(np.median(cnt[cnt > 0])) if (cnt > 0).any() else 0
         rl = F["_rel"].reshape(r["nz"], r["nu"]); cv2.imwrite(os.path.join(a.aus, f"relief_{tag}.png"), np.where(np.isfinite(rl), np.clip((rl + 10) * 1000, 1, 65535), 0).astype(np.uint16))   # mm + 10 m, 0 = kein Modell
         F["relief_png"] = f"relief_{tag}.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
-        del F["_X"], F["_S"], F["_rel"], F["_loch"]; F.pop("_wahl", None); F.pop("_id", None); bericht.append(f"  {tag}: {F['flaeche_m2']:6.1f} m2, n=({F['n'][0]:+.2f},{F['n'][1]:+.2f}), {len(beitr):2d} Fotos, Abdeckung {F['abdeckung_anteil']:.0%}, Median {F['fotos_median_je_zelle']:.0f} Fotos/Zelle")
+        del F["_X"], F["_S"], F["_rel"], F["_loch"]; F.pop("_Sg", None); F.pop("_wahl", None); F.pop("_id", None); return (f"  {tag}: {F['flaeche_m2']:6.1f} m2, n=({F['n'][0]:+.2f},{F['n'][1]:+.2f}), {len(beitr):2d} Fotos, Abdeckung {F['abdeckung_anteil']:.0%}, Median {F['fotos_median_je_zelle']:.0f} Fotos/Zelle")
+    with ThreadPoolExecutor(max(1, min(len(fas), 3))) as ex: bericht = list(ex.map(verschmelzen, enumerate(fas)))      # 17.11.2026 (2): bis zu 3 Fassaden nebeneinander (mehr = Arbeitsspeicher: je Fassade alle Proben aller Fotos)
+    zeit("verschmelzen_schreiben"); GPU["weg"] = ("GPU" if GPU["an"] else "CPU") if not GPU["cpu_paare"] or not GPU["paare"] else "GPU, dann CPU"
+    if GPU["paare"]: GPU["gpu_mb_spitze"] = round(torch.cuda.max_memory_reserved() / 2 ** 20)
+    print(f"Zellrechnung: {GPU['weg']} ({GPU['paare']} Foto-Fassaden-Paare GPU, {GPU['cpu_paare']} CPU" + (f", {GPU['strahlen'] / 1e6:.0f} Mio. Sichtstrahlen, GPU-Rechenzeit {GPU['gpu_s']:.1f} s, GPU-Speicher Spitze {GPU['gpu_mb_spitze']} MiB" if GPU["paare"] else "") + (f"; Grund CPU: {GPU['grund']}" if GPU["grund"] else "") + ")", flush=True)
+    print("Zeiten (s): " + ", ".join(f"{k_} {v_}" for k_, v_ in ZT.items()), flush=True)
     json.dump(dict(objekt=a.objekt, stl=os.path.abspath(a.stl), zelle_m=a.zelle, tol_m=a.tol, max_mpp=a.max_mpp, fotos=fotos, fassaden=fas,
-                   beste_k=a.beste, nachbarn_lod2=n_nb, quelle="fassade_ortho.py: LoD2-Waende + K-Dateien (buendel_tor) + Sichtbarkeit gegen Stufenmodell + LoD2-Nachbarn", sekunden=round(time.time() - t0, 1)),
+                   beste_k=a.beste, nachbarn_lod2=n_nb, quelle="fassade_ortho.py: LoD2-Waende + K-Dateien (buendel_tor) + Sichtbarkeit gegen Stufenmodell + LoD2-Nachbarn", sekunden=round(time.time() - t0, 1), zeiten_s=ZT, zellrechnung={k_: (round(v_, 1) if isinstance(v_, float) else v_) for k_, v_ in GPU.items() if k_ not in ("an", "cache")}),
               open(os.path.join(a.aus, "fassaden.json"), "w"), indent=1)
     print(f"{len(fas)} Fassaden, {len(fotos)} Fotos, {time.time() - t0:.0f} s"); print("\n".join(bericht))
 
