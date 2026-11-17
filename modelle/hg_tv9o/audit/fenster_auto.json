@@ -1,0 +1,156 @@
+{
+ "f00": {
+  "o": [
+   -4.3860637898883805,
+   6.54920678999144
+  ],
+  "d": [
+   -0.9999999999988737,
+   1.5009889024749236e-06
+  ],
+  "n": [
+   1.5009889024749236e-06,
+   0.9999999999988737
+  ],
+  "fenster": [],
+  "fotos": [
+   "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
+   "eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g",
+   "eigen__008_Historisches_Kaufhaus",
+   "eigen__043_Freiburg_2009_IMG_4353"
+  ]
+ },
+ "f01": {
+  "o": [
+   -2.314108522882455,
+   -0.963958098186005
+  ],
+  "d": [
+   0.9964546247702484,
+   -0.08413192482038855
+  ],
+  "n": [
+   -0.08413192482038855,
+   -0.9964546247702484
+  ],
+  "fenster": [],
+  "fotos": [
+   "eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu",
+   "eigen__079_Kaufhausi-in-rot",
+   "commons__015_Dach_Historisches_Kaufhaus_von_1532_Freiburg_Deutschland",
+   "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022"
+  ]
+ },
+ "f03": {
+  "o": [
+   -14.831507689664878,
+   3.3345195899885205
+  ],
+  "d": [
+   -0.0986807534112038,
+   -0.9951191430709175
+  ],
+  "n": [
+   -0.9951191430709175,
+   0.0986807534112038
+  ],
+  "fenster": [
+   {
+    "u0": -1.641,
+    "u1": -0.707,
+    "z0": 4.63,
+    "z1": 5.977,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 5,
+    "sprossen": []
+   },
+   {
+    "u0": -0.593,
+    "u1": 0.629,
+    "z0": 4.63,
+    "z1": 5.977,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 5,
+    "sprossen": []
+   },
+   {
+    "u0": 1.149,
+    "u1": 2.287,
+    "z0": 4.63,
+    "z1": 5.977,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 6,
+    "sprossen": []
+   },
+   {
+    "u0": -1.063,
+    "u1": 1.099,
+    "z0": 7.249,
+    "z1": 8.519,
+    "teiler": [
+     -0.674
+    ],
+    "kaempfer": null,
+    "scheiben": 2,
+    "stimmen_min": 7,
+    "sprossen": []
+   },
+   {
+    "u0": 1.151,
+    "u1": 2.285,
+    "z0": 7.249,
+    "z1": 8.519,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 6,
+    "sprossen": []
+   },
+   {
+    "u0": -1.641,
+    "u1": -0.707,
+    "z0": 9.734,
+    "z1": 10.95,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 0,
+    "stimmen_min": 2,
+    "ergaenzt": true
+   },
+   {
+    "u0": -0.506,
+    "u1": 0.542,
+    "z0": 9.734,
+    "z1": 10.95,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 8,
+    "sprossen": []
+   },
+   {
+    "u0": 1.207,
+    "u1": 2.228,
+    "z0": 9.734,
+    "z1": 10.95,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 9,
+    "sprossen": []
+   }
+  ],
+  "fotos": [
+   "eigen__074_M_nsterplatz_Freiburg_jm3322",
+   "eigen__067_M_nsterplatz_Freiburg_jm3344",
+   "eigen__084_Redoutenhaus_Freiburg_4146",
+   "eigen__002_M_nsterplatz_Freiburg_jm3334"
+  ]
+ }
+}

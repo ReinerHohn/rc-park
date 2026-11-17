@@ -1,0 +1,123 @@
+[
+ {
+  "seite": "dach",
+  "element": "Rumpf + Dach aus LoD2 (je Dachflaeche Prisma unter der Dachebene, auf Grundriss begrenzt)",
+  "quelle": "LoD2 DEBW_0010007Tvac (LGL BW), 8 Dachflaechen, 3 Grundflaechen",
+  "boden_z": -0.234,
+  "first_z": 17.245,
+  "x0": -13.917,
+  "x1": 5.809,
+  "y0": -8.605,
+  "y1": 5.318,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "+y",
+  "element": "ANNAHME: Fensterraster Wand w00 (4 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 4,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "Ost"
+ },
+ {
+  "seite": "+y",
+  "element": "ANNAHME: Fensterraster Wand w03 (4 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 4,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "Ost"
+ },
+ {
+  "seite": "-y",
+  "element": "ANNAHME: Fensterraster Wand w07 (3 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 3,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "West"
+ },
+ {
+  "seite": "+y",
+  "element": "ANNAHME: Fensterraster Wand w08 (2 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 2,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "Ost"
+ },
+ {
+  "seite": "+y",
+  "element": "ANNAHME: Fensterraster Wand w09 (2 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 2,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "Ost"
+ },
+ {
+  "seite": "-y",
+  "element": "ANNAHME: Fensterraster Wand w14 (24 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 24,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "West"
+ },
+ {
+  "seite": "-x",
+  "element": "ANNAHME: Fensterraster Wand w15 (16 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 16,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "dach",
+  "element": "WIDERSPRUCH Traufe LoD2/DOM1: w06 (+x) Laser-Modell +1.39 m, w07 (-y) Laser-Modell +1.06 m, w14 (-y) Laser-Modell -1.99 m",
+  "quelle": "DOM1 1 m, 0,75 m innen der Wand (Randpixel mischen Strasse/Wand - Hinweis, nicht gemittelt; am Foto pruefen)",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Dach aus LoD2 (DOM1-Gegenprobe: Median Laser - Modell -0.04 m, P10/P90 -1.54/+1.21, 166 Pixel)",
+  "quelle": "LoD2 (amtlich) Form; DOM1 1 m nur Gegenprobe",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "alle",
+  "element": "Duenne Wand 1.2 mm (= 0.104 m), Boden offen, 52 Durchbrueche erreichen den Hohlraum (3168 m3)",
+  "quelle": "bauteile.aushoehlen; Wandstaerke = Druckvorgabe (ANNAHME 1,2 mm, CLAUDE.md WAND_MM)",
+  "seite_name": "alle"
+ }
+]

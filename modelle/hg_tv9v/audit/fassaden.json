@@ -1,0 +1,673 @@
+{
+ "objekt": "/home/oem/git/rc-park/modelle/hg_tv9v/objekt.json",
+ "stl": "/media/oem/scan/rc-park_stl/hg_tv9v/hg_tv9v_1-87.stl",
+ "zelle_m": 0.05,
+ "tol_m": 0.1,
+ "max_mpp": 0.06,
+ "fotos": [
+  "commons__014_Bundesarchiv_B_145_Bild-F010469-0009_Freiburg-Breisgau_Markt_am_M\u00fcnsterplatz",
+  "commons__016_Das_Historische_Kaufhaus_-_geo.hlipp.de_-_22472",
+  "commons__024_Freiburg_812503898",
+  "commons__051_Freiburg-Historisches_Kaufhaus-04-2012-gje",
+  "commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+  "commons__053_Freiburg-Historisches_Kaufhaus-08-2012-gje",
+  "commons__059_Freiburg_im_Breisgau_TodorBozhinov_19",
+  "commons__060_Freiburg_im_Breisgau_TodorBozhinov_20",
+  "commons__065_Friburgo_Kaufhaus",
+  "commons__070_Hist._Kaufhaus_Freiburg1",
+  "commons__071_Hist._Kaufhaus_Freiburg2",
+  "commons__074_Historischen_Kaufhaus_in_Freiburg",
+  "commons__101_Historisches_Kaufhaus_Freiburg",
+  "commons__110_K\u00f6z\u00e9pkori_bev\u00e1s\u00e1rl\u00f3k\u00f6zpont_Medieval_shopping_centre_-_panoramio",
+  "commons__111_Maison_des_marchands_Fribourg_en_Brisgau",
+  "eigen__000_Freiburg_1987_06_Historisches_Kaufhaus_51087501961_",
+  "eigen__003_Historisches_Kaufhaus_Freiburg_im_Breisgau_jm3289",
+  "eigen__004_Historisches_Kaufhaus_Freiburg_im_Breisgau_jm3226",
+  "eigen__006_Historisches_Kaufhaus_im_Winter",
+  "eigen__008_Historisches_Kaufhaus",
+  "eigen__010_M_nsterplatz_24_Freiburg_02",
+  "eigen__011_00_1783_Historisches_Kaufhaus_Freiburg",
+  "eigen__013_M_nsterplatz_24_Freiburg_03",
+  "eigen__016_Historisches_Kaufhaus_in_Freiburg_Dezember_2022",
+  "eigen__017_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta",
+  "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta",
+  "eigen__020_M_nsterplatz_Freiburg_jm3065",
+  "eigen__023_M_nsterplatz_24_Freiburg_01",
+  "eigen__024_Freiburg-_Historisches_Kaufhaus_frontal_vom_mittleren_M_nste",
+  "eigen__026_Historisches_Kaufhaus_Freiburg_im_Breisgau_2025_",
+  "eigen__028_Freiburg_im_Breisgau_51",
+  "eigen__029_Landappbw_107781_1817_M_nstermarktst_nde_und_Blick_zum_Histo",
+  "eigen__032_20180423_11_Freiburg_-_M_nsterplatz_39894412760_",
+  "eigen__039_Freiburg_im_Sommer_2013_9878817246_",
+  "eigen__040_Freiburg_2009_IMG_4357",
+  "eigen__043_Freiburg_2009_IMG_4353",
+  "eigen__051_Kaufhaus_-_panoramio_2_",
+  "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
+  "eigen__054_Freiburg-Historisches_Kaufhaus-10-2007-gje",
+  "eigen__056_Das_historische_Kaufhaus_in_Freiburg_im_Breisgau_2025_",
+  "eigen__065_Das_historische_Kaufhaus_in_Freiburg_i._Br._2025_",
+  "eigen__072_Landappbw_178443_1822_Kaufhaus_Historisches_Kaufhaus_Freibur",
+  "eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g",
+  "eigen__083_M_nsterplatz_Freiburg_jm3399",
+  "eigen__086_Freiburg_im_Breisgau_37",
+  "eigen__093_Einfahrt_der_Oldtimer_der_Schauinsland-Klassik_auf_dem_Freib",
+  "eigen__099_00_0780_Historisches_Kaufhaus_Freiburg",
+  "eigen__105_Freiburg_i._Br._Baden-W_rttemberg_-_Kaufhaus_Zeno_Ansichtska",
+  "eigen__114_00_0782_Historisches_Kaufhaus_-_Freiburg_im_Breisgau",
+  "eigen__119_Freiburg_im_Breisgau_Historisches_Kaufhaus_1",
+  "eigen__120_Freiburg_im_Breisgau_Historisches_Kaufhaus_2",
+  "eigen__123_Freiburg-_Fronleichnam_Eucharistiefeier_auf_dem_M_nsterplatz",
+  "eigen__124_M_nsterplatz_-_panoramio_2_",
+  "eigen__125_M_nsterplatz_-_Historisches_Kaufhaus_-_panoramio",
+  "eigen__209_mapillary_323310452681653",
+  "eigen__210_mapillary_200074441758591",
+  "eigen__211_mapillary_293116238982627",
+  "eigen__212_mapillary_231554862080465",
+  "eigen__214_mapillary_2673631492928742",
+  "eigen__215_mapillary_296390885462004",
+  "eigen__216_mapillary_318701533021700",
+  "eigen__217_mapillary_456421925448720",
+  "eigen__218_mapillary_386647419106884",
+  "eigen__219_mapillary_505539250575510",
+  "eigen__220_mapillary_2860248804214870",
+  "eigen__221_mapillary_1438983343123216",
+  "eigen__222_mapillary_478127896733811",
+  "eigen__223_mapillary_323508795784374",
+  "eigen__224_mapillary_500922251061491",
+  "eigen__226_mapillary_814444402786029",
+  "eigen__227_mapillary_809062456374517",
+  "eigen__230_mapillary_536287657535680",
+  "eigen__233_mapillary_827163988149720",
+  "eigen__234_mapillary_914776042643474",
+  "eigen__247_mapillary_2786662561586957",
+  "eigen__3b29472b-image",
+  "eigen__3b35ded5-image",
+  "eigen__9e1944dc-image",
+  "eigen__IMG_20261108_111446",
+  "eigen__IMG_20261108_111453",
+  "eigen__IMG_20261108_111500",
+  "eigen__IMG_20261108_111507",
+  "eigen__IMG_20261108_111508",
+  "eigen__IMG_20261108_111516",
+  "eigen__IMG_20261108_111518",
+  "eigen__IMG_20261108_111528",
+  "eigen__IMG_20261108_111551",
+  "eigen__IMG_20261108_111553",
+  "eigen__IMG_20261108_112108",
+  "eigen__IMG_6115",
+  "eigen__IMG_6117",
+  "eigen__IMG_6119",
+  "eigen__IMG_6120",
+  "eigen__IMG_6124",
+  "eigen__IMG_6140",
+  "eigen__IMG_6161",
+  "eigen__IMG_6162",
+  "eigen__IMG_6164",
+  "eigen__IMG_6207",
+  "eigen__IMG_6258",
+  "eigen__IMG_6261",
+  "eigen__handy_01",
+  "eigen__handy_04",
+  "eigen__handy_05",
+  "eigen__handy_06",
+  "eigen__handy_13",
+  "eigen__handy_14",
+  "eigen__handy_c_11",
+  "eigen__handy_c_12",
+  "eigen__handy_d_11",
+  "eigen__handy_e_04",
+  "eigen__handy_q_02",
+  "eigen__handy_q_11",
+  "eigen__n11_04_3ad522f6",
+  "eigen__n11_04_3ad522f6_2"
+ ],
+ "fassaden": [
+  {
+   "n": [
+    0.9999856091789472,
+    0.005364833176352102
+   ],
+   "d": [
+    -0.005364833176352102,
+    0.9999856091789472
+   ],
+   "o": [
+    4.226548102069228,
+    -0.5751704259377798
+   ],
+   "u": [
+    -7.9848068308976785,
+    7.695436299312961
+   ],
+   "z": [
+    -0.4230000000000018,
+    15.435000000000002
+   ],
+   "flaeche_m2": 212.3,
+   "teile": 4,
+   "polys_uz": [
+    [
+     [
+      7.695,
+      13.836
+     ],
+     [
+      1.71,
+      13.625
+     ],
+     [
+      1.71,
+      10.029
+     ],
+     [
+      1.71,
+      -0.423
+     ],
+     [
+      7.695,
+      -0.423
+     ]
+    ],
+    [
+     [
+      -3.126,
+      15.435
+     ],
+     [
+      -7.985,
+      9.909
+     ],
+     [
+      -7.985,
+      -0.423
+     ],
+     [
+      -3.126,
+      -0.423
+     ]
+    ],
+    [
+     [
+      1.134,
+      10.672
+     ],
+     [
+      -3.126,
+      15.435
+     ],
+     [
+      -3.126,
+      -0.423
+     ],
+     [
+      1.134,
+      -0.423
+     ]
+    ],
+    [
+     [
+      1.71,
+      10.029
+     ],
+     [
+      1.134,
+      10.672
+     ],
+     [
+      1.134,
+      -0.423
+     ],
+     [
+      1.71,
+      -0.423
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -8.484806830897679,
+    "z1": 15.935000000000002,
+    "nu": 334,
+    "nz": 338,
+    "zelle": 0.05
+   },
+   "fotos": {},
+   "id": "f00",
+   "abdeckung_anteil": 0.0,
+   "fotos_median_je_zelle": 0,
+   "relief_png": "relief_f00.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  },
+  {
+   "n": [
+    -1.0717575389161332e-06,
+    -0.9999999999994257
+   ],
+   "d": [
+    0.9999999999994257,
+    -1.0717575389161332e-06
+   ],
+   "o": [
+    -0.9786007798977834,
+    -8.55622632023288
+   ],
+   "u": [
+    -5.924545149915203,
+    5.924545149915203
+   ],
+   "z": [
+    -0.4230000000000018,
+    10.436000000000035
+   ],
+   "flaeche_m2": 125.5,
+   "teile": 1,
+   "polys_uz": [
+    [
+     [
+      5.925,
+      9.909
+     ],
+     [
+      -5.925,
+      10.436
+     ],
+     [
+      -5.925,
+      -0.423
+     ],
+     [
+      5.925,
+      -0.423
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -6.424545149915203,
+    "z1": 10.936000000000035,
+    "nu": 257,
+    "nz": 238,
+    "zelle": 0.05
+   },
+   "fotos": {},
+   "id": "f01",
+   "abdeckung_anteil": 0.0,
+   "fotos_median_je_zelle": 0,
+   "relief_png": "relief_f01.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  },
+  {
+   "n": [
+    -0.9990482387675532,
+    -0.04361899374641795
+   ],
+   "d": [
+    0.04361899374641795,
+    -0.9990482387675532
+   ],
+   "o": [
+    -7.094588919010558,
+    -4.159616148055266
+   ],
+   "u": [
+    -4.3944505453425515,
+    4.400769855977753
+   ],
+   "z": [
+    -0.4230000000000018,
+    15.435000000000002
+   ],
+   "flaeche_m2": 117.7,
+   "teile": 2,
+   "polys_uz": [
+    [
+     [
+      -0.003,
+      15.435
+     ],
+     [
+      -4.394,
+      10.535
+     ],
+     [
+      -4.394,
+      -0.423
+     ],
+     [
+      -0.003,
+      -0.423
+     ]
+    ],
+    [
+     [
+      4.401,
+      10.436
+     ],
+     [
+      -0.003,
+      15.435
+     ],
+     [
+      -0.003,
+      -0.423
+     ],
+     [
+      4.401,
+      -0.423
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -4.8944505453425515,
+    "z1": 15.935000000000002,
+    "nu": 196,
+    "nz": 338,
+    "zelle": 0.05
+   },
+   "fotos": {},
+   "id": "f02",
+   "abdeckung_anteil": 0.0,
+   "fotos_median_je_zelle": 0,
+   "relief_png": "relief_f02.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  },
+  {
+   "n": [
+    -0.07796979582623687,
+    0.9969557216540837
+   ],
+   "d": [
+    -0.9969557216540837,
+    -0.07796979582623687
+   ],
+   "o": [
+    -1.6760953339526583,
+    0.6721537727766124
+   ],
+   "u": [
+    -5.911591378916244,
+    5.627519969920652
+   ],
+   "z": [
+    -0.4230000000000018,
+    13.625
+   ],
+   "flaeche_m2": 91.0,
+   "teile": 4,
+   "polys_uz": [
+    [
+     [
+      3.978,
+      10.461
+     ],
+     [
+      -1.875,
+      10.206
+     ],
+     [
+      -1.875,
+      -0.423
+     ],
+     [
+      3.978,
+      -0.423
+     ]
+    ],
+    [
+     [
+      5.628,
+      10.535
+     ],
+     [
+      3.978,
+      10.461
+     ],
+     [
+      3.978,
+      -0.423
+     ],
+     [
+      5.628,
+      -0.423
+     ]
+    ],
+    [
+     [
+      -1.961,
+      11.209
+     ],
+     [
+      -1.961,
+      10.203
+     ],
+     [
+      -5.912,
+      10.029
+     ],
+     [
+      -5.912,
+      13.625
+     ]
+    ],
+    [
+     [
+      -1.875,
+      10.206
+     ],
+     [
+      -1.961,
+      10.203
+     ],
+     [
+      -1.961,
+      -0.423
+     ],
+     [
+      -1.875,
+      -0.423
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -6.411591378916244,
+    "z1": 14.125,
+    "nu": 251,
+    "nz": 301,
+    "zelle": 0.05
+   },
+   "fotos": {},
+   "id": "f03",
+   "abdeckung_anteil": 0.0,
+   "fotos_median_je_zelle": 0,
+   "relief_png": "relief_f03.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  },
+  {
+   "n": [
+    -0.07286612899606244,
+    0.9973417304239952
+   ],
+   "d": [
+    -0.9973417304239952,
+    -0.07286612899606244
+   ],
+   "o": [
+    2.0432730200687708,
+    6.963660579873784
+   ],
+   "u": [
+    -2.147699514312697,
+    2.1476995143126976
+   ],
+   "z": [
+    -0.4230000000000018,
+    13.836000000000013
+   ],
+   "flaeche_m2": 55.6,
+   "teile": 1,
+   "polys_uz": [
+    [
+     [
+      2.148,
+      11.209
+     ],
+     [
+      -2.148,
+      13.836
+     ],
+     [
+      -2.148,
+      -0.423
+     ],
+     [
+      2.148,
+      -0.423
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -2.647699514312697,
+    "z1": 14.336000000000013,
+    "nu": 106,
+    "nz": 306,
+    "zelle": 0.05
+   },
+   "fotos": {},
+   "id": "f04",
+   "abdeckung_anteil": 0.0,
+   "fotos_median_je_zelle": 0,
+   "relief_png": "relief_f04.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  },
+  {
+   "n": [
+    0.9965529410385123,
+    0.08295924124225941
+   ],
+   "d": [
+    -0.08295924124225941,
+    0.9965529410385123
+   ],
+   "o": [
+    0.1351131900816196,
+    2.5577381898859697
+   ],
+   "u": [
+    -1.7385028818368764,
+    2.6077543227553135
+   ],
+   "z": [
+    -0.4230000000000018,
+    11.209000000000003
+   ],
+   "flaeche_m2": 50.4,
+   "teile": 1,
+   "polys_uz": [
+    [
+     [
+      -1.739,
+      11.209
+     ],
+     [
+      2.608,
+      11.156
+     ],
+     [
+      2.608,
+      -0.423
+     ],
+     [
+      -1.739,
+      -0.423
+     ],
+     [
+      -1.739,
+      10.203
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -2.2385028818368764,
+    "z1": 11.709000000000003,
+    "nu": 107,
+    "nz": 253,
+    "zelle": 0.05
+   },
+   "fotos": {},
+   "id": "f05",
+   "abdeckung_anteil": 0.0,
+   "fotos_median_je_zelle": 0,
+   "relief_png": "relief_f05.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  },
+  {
+   "n": [
+    -0.9999438492801083,
+    -0.010597088603960041
+   ],
+   "d": [
+    0.010597088603960041,
+    -0.9999438492801083
+   ],
+   "o": [
+    -0.08997072992350623,
+    5.9818347298763825
+   ],
+   "u": [
+    -0.8253776456916991,
+    0.8253776456916991
+   ],
+   "z": [
+    -0.4230000000000018,
+    11.209000000000003
+   ],
+   "flaeche_m2": 19.2,
+   "teile": 1,
+   "polys_uz": [
+    [
+     [
+      0.825,
+      11.156
+     ],
+     [
+      -0.825,
+      11.209
+     ],
+     [
+      -0.825,
+      -0.423
+     ],
+     [
+      0.825,
+      -0.423
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -1.3253776456916992,
+    "z1": 11.709000000000003,
+    "nu": 412,
+    "nz": 1959,
+    "zelle": 0.0064482628569663995
+   },
+   "fotos": {},
+   "id": "f06",
+   "abdeckung_anteil": 0.0,
+   "fotos_median_je_zelle": 0,
+   "relief_png": "relief_f06.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  }
+ ],
+ "beste_k": 5,
+ "nachbarn_lod2": 157,
+ "quelle": "fassade_ortho.py: LoD2-Waende + K-Dateien (buendel_tor) + Sichtbarkeit gegen Stufenmodell + LoD2-Nachbarn",
+ "sekunden": 4.6,
+ "zeiten_s": {
+  "laden_raster": 0.0,
+  "relief": 2.6,
+  "kamerawahl": 0.2,
+  "fotos": 1.7,
+  "verschmelzen_schreiben": 0.0
+ },
+ "zellrechnung": {
+  "grund": "",
+  "zellen": 1182472,
+  "paare": 161,
+  "cpu_paare": 0,
+  "gpu_s": 0.8,
+  "strahlen": 9118917,
+  "weg": "GPU",
+  "gpu_mb_spitze": 198
+ }
+}

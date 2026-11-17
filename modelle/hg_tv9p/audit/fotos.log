@@ -1,0 +1,65 @@
++ /media/oem/scan/venv-seg/bin/python -W ignore -I tools/fassade_ortho.py /home/oem/git/rc-park/modelle/hg_tv9p/objekt.json --stl /media/oem/scan/rc-park_stl/hg_tv9p/hg_tv9p_1-87.stl --aus /media/oem/scan/rc-park_daten/hg_tv9p/fassade --einzeln --min-flaeche 6 --gpu-mb 1500
+152 Messkameras (kein buendel_tor im Objekt: alle eigenen/Commons/online + nachgezogene Fremdfotos)
+Zellrechnung: GPU (170 Foto-Fassaden-Paare GPU, 0 CPU, 45 Mio. Sichtstrahlen, GPU-Rechenzeit 1.1 s, GPU-Speicher Spitze 480 MiB)
+Zeiten (s): laden_raster 0.1, relief 1.0, kamerawahl 0.6, fotos 3.6, verschmelzen_schreiben 0.8
+8 Fassaden, 152 Fotos, 6 s
+  f00:  255.7 m2, n=(+0.00,+1.00), 29 Fotos, Abdeckung 6%, Median 4 Fotos/Zelle
+  f01:  236.1 m2, n=(-0.10,-1.00), 13 Fotos, Abdeckung 1%, Median 9 Fotos/Zelle
+  f02:   86.1 m2, n=(-1.00,+0.01), 38 Fotos, Abdeckung 81%, Median 23 Fotos/Zelle
+  f03:   79.8 m2, n=(+0.99,-0.12),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f04:   16.5 m2, n=(+1.00,-0.02),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f05:   15.2 m2, n=(+0.99,-0.17),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f06:   13.4 m2, n=(-0.03,-1.00),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f07:    9.8 m2, n=(+0.04,+1.00), 15 Fotos, Abdeckung 5%, Median 3 Fotos/Zelle
++ /media/oem/scan/venv-seg/bin/python -W ignore -I -c import sys; sys.path.insert(0, 'tools'); import torch; torch.cuda.is_available() and torch.cuda.set_per_process_memory_fraction(0.281); import fassade_parsing as FP; FP.batch_groesse = lambda *a, **k: 2; FP.main(['--ortho', '/media/oem/scan/rc-park_daten/hg_tv9p/fassade', '--gpu'])
+Loading weights:   0%|          | 0/418 [00:00<?, ?it/s]Loading weights: 100%|██████████| 418/418 [00:00<00:00, 4287.43it/s]
+  f00 Foto eigen__043_Freiburg_2009_IMG_4353: 0 Kaesten, 1 Kacheln (4 s)
+  f00 Foto eigen__008_Historisches_Kaufhaus: 0 Kaesten, 1 Kacheln (5 s)
+  f00 Foto eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H: 0 Kaesten, 1 Kacheln (5 s)
+  f00 Foto eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g: 0 Kaesten, 1 Kacheln (5 s)
+  f00 Foto commons__024_Freiburg_812503898: 0 Kaesten, 1 Kacheln (5 s)
+  f00 Foto eigen__056_Das_historische_Kaufhaus_in_Freiburg_im_Breisgau_2025_: 0 Kaesten, 1 Kacheln (5 s)
+  f00 Foto eigen__065_Das_historische_Kaufhaus_in_Freiburg_i._Br._2025_: 0 Kaesten, 1 Kacheln (5 s)
+  f00 Foto eigen__093_Einfahrt_der_Oldtimer_der_Schauinsland-Klassik_auf_dem_Freib: 0 Kaesten, 1 Kacheln (5 s)
+  f00 Foto eigen__IMG_6261: 0 Kaesten, 1 Kacheln (6 s)
+  f00 Foto eigen__IMG_6115: 0 Kaesten, 1 Kacheln (6 s)
+f00: {'fenster': 0, 'tuer': 0, 'bogen': 0, 'figur': 0, 'gaube': 0, 'balkon': 0}
+  f01 Foto eigen__IMG_6162: 0 Kaesten, 1 Kacheln (6 s)
+  f01 Foto eigen__handy_05: 0 Kaesten, 1 Kacheln (6 s)
+  f01 Foto eigen__042_Freiburg_2009_IMG_4241: 0 Kaesten, 1 Kacheln (6 s)
+  f01 Foto eigen__075_Freiburg_Jul_2012_05_Historisches_Kaufhaus_Freiburg_: 0 Kaesten, 1 Kacheln (6 s)
+  f01 Foto eigen__handy_06: 0 Kaesten, 1 Kacheln (6 s)
+  f01 Foto eigen__092_Freiburg_Kaufhaus: 0 Kaesten, 1 Kacheln (6 s)
+  f01 Foto eigen__006_Historisches_Kaufhaus_im_Winter: 0 Kaesten, 1 Kacheln (7 s)
+  f01 Foto eigen__IMG_6257: 0 Kaesten, 1 Kacheln (7 s)
+  f01 Foto eigen__061_The_so_called_famous_Red_House_Alte_Kaufhaus_A.D._1532_in_Fr: 0 Kaesten, 1 Kacheln (7 s)
+  f01 Foto eigen__059_Freiburg-_Historisches_Kaufhaus_frontal_vom_mittleren_M_nste: 0 Kaesten, 1 Kacheln (7 s)
+f01: {'fenster': 0, 'tuer': 0, 'bogen': 0, 'figur': 0, 'gaube': 0, 'balkon': 0}
+  f02 Foto eigen__084_Redoutenhaus_Freiburg_4146: 24 Kaesten, 1 Kacheln (7 s)
+  f02 Foto eigen__067_M_nsterplatz_Freiburg_jm3344: 26 Kaesten, 1 Kacheln (7 s)
+  f02 Foto eigen__IMG_6115: 17 Kaesten, 1 Kacheln (8 s)
+  f02 Foto eigen__IMG_20261108_111553: 27 Kaesten, 1 Kacheln (8 s)
+  f02 Foto eigen__002_M_nsterplatz_Freiburg_jm3334: 25 Kaesten, 1 Kacheln (8 s)
+  f02 Foto eigen__003_Historisches_Kaufhaus_Freiburg_im_Breisgau_jm3289: 22 Kaesten, 1 Kacheln (8 s)
+  f02 Foto eigen__004_Historisches_Kaufhaus_Freiburg_im_Breisgau_jm3226: 26 Kaesten, 1 Kacheln (8 s)
+  f02 Foto eigen__056_Das_historische_Kaufhaus_in_Freiburg_im_Breisgau_2025_: 14 Kaesten, 1 Kacheln (8 s)
+  f02 Foto eigen__024_Freiburg-_Historisches_Kaufhaus_frontal_vom_mittleren_M_nste: 19 Kaesten, 1 Kacheln (8 s)
+  f02 Foto eigen__handy_01: 18 Kaesten, 1 Kacheln (9 s)
+f02: {'fenster': 18, 'tuer': 1, 'bogen': 0, 'figur': 0, 'gaube': 0, 'balkon': 3}
+  f07 Foto eigen__043_Freiburg_2009_IMG_4353: 0 Kaesten, 1 Kacheln (9 s)
+  f07 Foto eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H: 0 Kaesten, 1 Kacheln (9 s)
+  f07 Foto eigen__008_Historisches_Kaufhaus: 0 Kaesten, 1 Kacheln (9 s)
+  f07 Foto eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g: 0 Kaesten, 1 Kacheln (9 s)
+  f07 Foto commons__024_Freiburg_812503898: 0 Kaesten, 1 Kacheln (9 s)
+  f07 Foto eigen__056_Das_historische_Kaufhaus_in_Freiburg_im_Breisgau_2025_: 0 Kaesten, 1 Kacheln (9 s)
+  f07 Foto eigen__065_Das_historische_Kaufhaus_in_Freiburg_i._Br._2025_: 0 Kaesten, 1 Kacheln (9 s)
+  f07 Foto eigen__IMG_6261: 0 Kaesten, 1 Kacheln (10 s)
+  f07 Foto commons__111_Maison_des_marchands_Fribourg_en_Brisgau: 0 Kaesten, 1 Kacheln (10 s)
+  f07 Foto eigen__218_mapillary_386647419106884: 0 Kaesten, 1 Kacheln (10 s)
+f07: {'fenster': 0, 'tuer': 0, 'bogen': 0, 'figur': 0, 'gaube': 0, 'balkon': 0}
++ /media/oem/scan/venv-seg/bin/python -W ignore -I tools/fenster_aus_parsing.py /media/oem/scan/rc-park_daten/hg_tv9p/fassade --aus /home/oem/git/rc-park/modelle/hg_tv9p/audit/fenster_auto.json
+f00: 0 Fenster aus 0 Scheiben (0 Kaesten): 
+f01: 0 Fenster aus 0 Scheiben (0 Kaesten): 
+f02: 10 Fenster aus 11 Scheiben (22 Kaesten): u -0.00..1.18 z 1.82..4.81 T0 Spr0; u -2.10..-0.94 z 3.62..4.81 T0 Spr0; u 1.89..2.55 z 3.62..4.81 T0 Spr0; u -2.26..-0.81 z 6.36..8.31 T0 Spr0; u -0.17..1.29 z 6.36..8.31 T0 Spr0; u 1.90..2.53 z 6.36..8.31 T0 Spr0; u -4.15..-3.27 z 7.59..8.84 T0 Spr0; u -2.32..-0.84 z 9.54..11.30 T0 Spr0; u -0.19..1.30 z 9.54..11.30 T0 Spr0; u 1.88..2.53 z 9.54..11.30 T0 Spr0
+f07: 0 Fenster aus 0 Scheiben (0 Kaesten): 
+-> /home/oem/git/rc-park/modelle/hg_tv9p/audit/fenster_auto.json

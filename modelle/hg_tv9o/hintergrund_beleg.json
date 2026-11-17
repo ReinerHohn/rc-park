@@ -1,0 +1,158 @@
+{
+ "reifegrad": 1,
+ "kennzeichnung": "HINTERGRUND, Reifegrad 1: LoD2-Koerper + Fotofenster/Raster-ANNAHME, ohne Kantenstufe/Foto-F1 - nie als passend melden",
+ "lod2": "DEBW_0010007Tv9o",
+ "stl": "/media/oem/scan/rc-park_stl/hg_tv9o/hg_tv9o_1-87.stl",
+ "seiten": [
+  {
+   "wand": "w00",
+   "seite": "-y",
+   "seite_name": "West",
+   "laenge_m": 15.32,
+   "hoehe_m": 14.16,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 15.8 m) - geschlossen"
+  },
+  {
+   "wand": "w01",
+   "seite": "-x",
+   "seite_name": "Nord",
+   "laenge_m": 6.46,
+   "hoehe_m": 14.16,
+   "quelle": "FOTO: Fenster aus fassade_parsing (f03: 8)"
+  },
+  {
+   "wand": "w02",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 20.25,
+   "hoehe_m": 13.23,
+   "quelle": "ANNAHME: Fensterraster 32 Fenster (Achse 2.4 m, 1.0 x 1.4 m, Geschoss 3.0 m, EG-Bruestung 1.0 m) - kein Foto dieser Wand"
+  },
+  {
+   "wand": "w03",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 4.14,
+   "hoehe_m": 16.35,
+   "quelle": "ANNAHME: Fensterraster 1 Fenster (Achse 2.4 m, 1.0 x 1.4 m, Geschoss 3.0 m, EG-Bruestung 1.0 m) - kein Foto dieser Wand; Brandwand bis 9.3 m ausgespart"
+  },
+  {
+   "wand": "w04",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 2.74,
+   "hoehe_m": 16.35,
+   "quelle": "ANNAHME: Fensterraster 1 Fenster (Achse 2.4 m, 1.0 x 1.4 m, Geschoss 3.0 m, EG-Bruestung 1.0 m) - kein Foto dieser Wand; Brandwand bis 9.1 m ausgespart"
+  },
+  {
+   "wand": "w05",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 4.33,
+   "hoehe_m": 13.72,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  },
+  {
+   "wand": "w06",
+   "seite": "-y",
+   "seite_name": "West",
+   "laenge_m": 3.59,
+   "hoehe_m": 11.25,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  }
+ ],
+ "fenster_foto": 8,
+ "fenster_raster_annahme": 34,
+ "dach_dom1": {
+  "n_pixel": 81,
+  "median_laser_minus_modell_m": 0.05,
+  "p10_m": -1.02,
+  "p90_m": 1.96,
+  "first_modell_m": 16.35,
+  "first_laser_m": 17.46,
+  "traufen": [
+   {
+    "wand": "w01",
+    "seite": "-x",
+    "laenge_m": 6.5,
+    "traufe_modell_m": 14.07,
+    "traufe_laser_m": 12.62,
+    "median_laser_minus_modell_m": -1.38
+   },
+   {
+    "wand": "w02",
+    "seite": "+y",
+    "laenge_m": 20.3,
+    "traufe_modell_m": 13.52,
+    "traufe_laser_m": 13.58,
+    "median_laser_minus_modell_m": 0.2
+   },
+   {
+    "wand": "w05",
+    "seite": "+y",
+    "laenge_m": 4.3,
+    "traufe_modell_m": 11.82,
+    "traufe_laser_m": 10.13,
+    "median_laser_minus_modell_m": -1.7
+   }
+  ],
+  "traufe_widerspruch": [
+   "w01",
+   "w05"
+  ]
+ },
+ "dach_widerspruch": false,
+ "dach_modus": "lod2",
+ "pruefung": {
+  "wasserdicht": true,
+  "koerper": 1,
+  "hoehe_m": 16.66,
+  "masse_mm": [
+   240.1,
+   109.2,
+   191.5
+  ],
+  "dreiecke": 3118
+ },
+ "wand_mm": 1.2,
+ "raster_annahme": {
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6
+ },
+ "sekunden_bauen": 1.2,
+ "druck": {
+  "stl": "/media/oem/scan/rc-park_stl/hg_tv9o/hg_tv9o_1-87_druck.stl",
+  "rc": 0,
+  "ausgabe": [
+   "Rippen: 231 Scheiben, +11.2 cm3 (5 % mehr Material); Abstand 60, Dicke 0.9, Tiefe 6 mm (ANNAHME)",
+   "  Innenkante ohne Rippe (rund/kurz) im Mittel je Scheibe: 0.7 mm",
+   "Volumen vorher 228.4 cm3 -> nachher 239.6 cm3; 1 Koerper (vorher 1); wasserdicht: ja; 55974 Dreiecke -> /media/oem/scan/rc-park_stl/hg_tv9o/hg_tv9o_1-87_druck.stl",
+   "Bild (ansehen): /home/oem/git/rc-park/modelle/hg_tv9o/audit/rippen.png"
+  ]
+ },
+ "hoehe_gegen_dom1": {
+  "rc": 0,
+  "ausgabe": [
+   "HOEHEN-TOR: 16 Flaechenpixel (Laser 13.5-15.6 m): Modell - Laser Median +0.38 m (MAD 0.22) beim Lageversatz des Modells (+1.00, +0.25) m; ohne Versatz +0.58; Massstab k 0.9745  -> bestanden"
+  ]
+ },
+ "sichtblatt": [
+  "/home/oem/git/rc-park/modelle/hg_tv9o/audit/neben_eigen__074_M_nsterplatz_Freiburg_jm3322.jpg",
+  "/home/oem/git/rc-park/modelle/hg_tv9o/audit/kontext_eigen__074_M_nsterplatz_Freiburg_jm3322.jpg",
+  "/home/oem/git/rc-park/modelle/hg_tv9o/audit/neben_eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H.jpg",
+  "/home/oem/git/rc-park/modelle/hg_tv9o/audit/kontext_eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H.jpg"
+ ],
+ "zeiten_s": {
+  "anlegen": 0.4,
+  "rumpf": 4.0,
+  "fotos": 19.2,
+  "bauen": 0.5,
+  "druck": 2.7,
+  "pruefen": 20.7
+ },
+ "gesamt_s": 47.5
+}

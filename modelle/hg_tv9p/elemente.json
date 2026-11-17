@@ -1,0 +1,59 @@
+[
+ {
+  "seite": "dach",
+  "element": "Rumpf + Dach aus LoD2 (je Dachflaeche Prisma unter der Dachebene, auf Grundriss begrenzt)",
+  "quelle": "LoD2 DEBW_0010007Tv9p (LGL BW), 7 Dachflaechen, 3 Grundflaechen",
+  "boden_z": -0.212,
+  "first_z": 20.832,
+  "x0": -10.709,
+  "x1": 5.363,
+  "y0": -5.004,
+  "y1": 3.503,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "10 Fenster Fassade f02 (automatisch erkannt)",
+  "quelle": "OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__084_Redoutenhaus_Freiburg_4146, eigen__067_M_nsterplatz_Freiburg_jm3344, eigen__IMG_6115",
+  "hinweis": "ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "+x",
+  "element": "ANNAHME: Fensterraster Wand w06 (1 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 1,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "Sued"
+ },
+ {
+  "seite": "+y",
+  "element": "ANNAHME: Fensterraster Wand w09 (1 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 1,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "Ost"
+ },
+ {
+  "seite": "dach",
+  "element": "Dach aus LoD2 (DOM1-Gegenprobe: Median Laser - Modell +0.04 m, P10/P90 -0.30/+0.82, 95 Pixel)",
+  "quelle": "LoD2 (amtlich) Form; DOM1 1 m nur Gegenprobe",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "alle",
+  "element": "Duenne Wand 1.2 mm (= 0.104 m), Boden offen, 13 Durchbrueche erreichen den Hohlraum (1926 m3)",
+  "quelle": "bauteile.aushoehlen; Wandstaerke = Druckvorgabe (ANNAHME 1,2 mm, CLAUDE.md WAND_MM)",
+  "seite_name": "alle"
+ }
+]

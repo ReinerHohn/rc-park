@@ -1,0 +1,1150 @@
+{
+ "objekt": "/home/oem/git/rc-park/modelle/hg_tv9y/objekt.json",
+ "stl": "/media/oem/scan/rc-park_stl/hg_tv9y/hg_tv9y_1-87.stl",
+ "zelle_m": 0.05,
+ "tol_m": 0.1,
+ "max_mpp": 0.06,
+ "fotos": [
+  "commons__006_Allemagne_Foret_Noire_Freiburg_Munsterplatz_-_panoramio",
+  "commons__014_Bundesarchiv_B_145_Bild-F010469-0009_Freiburg-Breisgau_Markt_am_M\u00fcnsterplatz",
+  "commons__024_Freiburg_812503898",
+  "commons__051_Freiburg-Historisches_Kaufhaus-04-2012-gje",
+  "commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+  "commons__053_Freiburg-Historisches_Kaufhaus-08-2012-gje",
+  "commons__058_Freiburg_Muensterplatz_Kaufhaus",
+  "commons__059_Freiburg_im_Breisgau_TodorBozhinov_19",
+  "commons__060_Freiburg_im_Breisgau_TodorBozhinov_20",
+  "commons__065_Friburgo_Kaufhaus",
+  "commons__070_Hist._Kaufhaus_Freiburg1",
+  "commons__071_Hist._Kaufhaus_Freiburg2",
+  "commons__074_Historischen_Kaufhaus_in_Freiburg",
+  "commons__097_Historisches_Kaufhaus_FR",
+  "commons__101_Historisches_Kaufhaus_Freiburg",
+  "commons__108_Kaufhaus_05_03_06",
+  "commons__110_K\u00f6z\u00e9pkori_bev\u00e1s\u00e1rl\u00f3k\u00f6zpont_Medieval_shopping_centre_-_panoramio",
+  "commons__111_Maison_des_marchands_Fribourg_en_Brisgau",
+  "eigen__000_Freiburg_1987_06_Historisches_Kaufhaus_51087501961_",
+  "eigen__003_Historisches_Kaufhaus_Freiburg_im_Breisgau_jm3289",
+  "eigen__004_Historisches_Kaufhaus_Freiburg_im_Breisgau_jm3226",
+  "eigen__008_Historisches_Kaufhaus",
+  "eigen__010_M_nsterplatz_24_Freiburg_02",
+  "eigen__011_00_1783_Historisches_Kaufhaus_Freiburg",
+  "eigen__013_M_nsterplatz_24_Freiburg_03",
+  "eigen__014_Freiburg_im_Breisgau_50",
+  "eigen__016_Historisches_Kaufhaus_in_Freiburg_Dezember_2022",
+  "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta",
+  "eigen__020_M_nsterplatz_Freiburg_jm3065",
+  "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022",
+  "eigen__024_Freiburg-_Historisches_Kaufhaus_frontal_vom_mittleren_M_nste",
+  "eigen__026_Historisches_Kaufhaus_Freiburg_im_Breisgau_2025_",
+  "eigen__028_Freiburg_im_Breisgau_51",
+  "eigen__029_Landappbw_107781_1817_M_nstermarktst_nde_und_Blick_zum_Histo",
+  "eigen__032_20180423_11_Freiburg_-_M_nsterplatz_39894412760_",
+  "eigen__039_Freiburg_im_Sommer_2013_9878817246_",
+  "eigen__040_Freiburg_2009_IMG_4357",
+  "eigen__043_Freiburg_2009_IMG_4353",
+  "eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu",
+  "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
+  "eigen__054_Freiburg-Historisches_Kaufhaus-10-2007-gje",
+  "eigen__056_Das_historische_Kaufhaus_in_Freiburg_im_Breisgau_2025_",
+  "eigen__065_Das_historische_Kaufhaus_in_Freiburg_i._Br._2025_",
+  "eigen__068_Freiburg_im_Breisgau_21",
+  "eigen__072_Landappbw_178443_1822_Kaufhaus_Historisches_Kaufhaus_Freibur",
+  "eigen__076_Freiburg_im_Breisgau_30",
+  "eigen__079_Kaufhausi-in-rot",
+  "eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g",
+  "eigen__083_M_nsterplatz_Freiburg_jm3399",
+  "eigen__086_Freiburg_im_Breisgau_37",
+  "eigen__089_Einfahrt_der_Oldtimer_der_Schauinsland-Klassik_auf_dem_Freib",
+  "eigen__093_Einfahrt_der_Oldtimer_der_Schauinsland-Klassik_auf_dem_Freib",
+  "eigen__099_00_0780_Historisches_Kaufhaus_Freiburg",
+  "eigen__119_Freiburg_im_Breisgau_Historisches_Kaufhaus_1",
+  "eigen__120_Freiburg_im_Breisgau_Historisches_Kaufhaus_2",
+  "eigen__122_Freiburg-Historisches_Kaufhaus-02-2007-gje",
+  "eigen__123_Freiburg-_Fronleichnam_Eucharistiefeier_auf_dem_M_nsterplatz",
+  "eigen__124_M_nsterplatz_-_panoramio_2_",
+  "eigen__125_M_nsterplatz_-_Historisches_Kaufhaus_-_panoramio",
+  "eigen__205_mapillary_465742264506140",
+  "eigen__209_mapillary_323310452681653",
+  "eigen__210_mapillary_200074441758591",
+  "eigen__211_mapillary_293116238982627",
+  "eigen__212_mapillary_231554862080465",
+  "eigen__214_mapillary_2673631492928742",
+  "eigen__215_mapillary_296390885462004",
+  "eigen__216_mapillary_318701533021700",
+  "eigen__217_mapillary_456421925448720",
+  "eigen__218_mapillary_386647419106884",
+  "eigen__219_mapillary_505539250575510",
+  "eigen__220_mapillary_2860248804214870",
+  "eigen__221_mapillary_1438983343123216",
+  "eigen__222_mapillary_478127896733811",
+  "eigen__223_mapillary_323508795784374",
+  "eigen__224_mapillary_500922251061491",
+  "eigen__226_mapillary_814444402786029",
+  "eigen__227_mapillary_809062456374517",
+  "eigen__230_mapillary_536287657535680",
+  "eigen__233_mapillary_827163988149720",
+  "eigen__234_mapillary_914776042643474",
+  "eigen__247_mapillary_2786662561586957",
+  "eigen__3b29472b-image",
+  "eigen__3b35ded5-image",
+  "eigen__9e1944dc-image",
+  "eigen__IMG_20261108_111446",
+  "eigen__IMG_20261108_111453",
+  "eigen__IMG_20261108_111500",
+  "eigen__IMG_20261108_111507",
+  "eigen__IMG_20261108_111508",
+  "eigen__IMG_20261108_111518",
+  "eigen__IMG_20261108_111528",
+  "eigen__IMG_20261108_111551",
+  "eigen__IMG_20261108_111553",
+  "eigen__IMG_20261108_112108",
+  "eigen__IMG_6115",
+  "eigen__IMG_6117",
+  "eigen__IMG_6124",
+  "eigen__IMG_6140",
+  "eigen__IMG_6161",
+  "eigen__IMG_6164",
+  "eigen__IMG_6258",
+  "eigen__IMG_6261",
+  "eigen__handy_01",
+  "eigen__handy_04",
+  "eigen__handy_13",
+  "eigen__handy_14",
+  "eigen__handy_c_11",
+  "eigen__handy_c_12",
+  "eigen__handy_e_04",
+  "eigen__handy_q_02",
+  "eigen__handy_q_11",
+  "eigen__n11_04_3ad522f6",
+  "eigen__n11_04_3ad522f6_2"
+ ],
+ "fassaden": [
+  {
+   "n": [
+    -6.086922100083321e-07,
+    -0.9999999999998148
+   ],
+   "d": [
+    0.9999999999998148,
+    -6.086922100083321e-07
+   ],
+   "o": [
+    0.7459800088172897,
+    -5.682433758365299
+   ],
+   "u": [
+    -13.02516856910322,
+    5.885901176899349
+   ],
+   "z": [
+    -1.0080000000000382,
+    17.500999999999976
+   ],
+   "flaeche_m2": 188.5,
+   "teile": 7,
+   "polys_uz": [
+    [
+     [
+      -2.065,
+      5.11
+     ],
+     [
+      -2.065,
+      12.935
+     ],
+     [
+      -6.706,
+      17.501
+     ],
+     [
+      -13.025,
+      11.237
+     ]
+    ],
+    [
+     [
+      -2.065,
+      5.11
+     ],
+     [
+      -13.025,
+      5.11
+     ],
+     [
+      -13.025,
+      -1.008
+     ],
+     [
+      -2.065,
+      -1.008
+     ]
+    ],
+    [
+     [
+      5.434,
+      5.11
+     ],
+     [
+      1.861,
+      5.11
+     ],
+     [
+      1.861,
+      -1.008
+     ],
+     [
+      5.434,
+      -1.008
+     ]
+    ],
+    [
+     [
+      1.861,
+      5.11
+     ],
+     [
+      -1.12,
+      5.11
+     ],
+     [
+      -1.12,
+      -1.008
+     ],
+     [
+      1.861,
+      -1.008
+     ]
+    ],
+    [
+     [
+      1.861,
+      5.11
+     ],
+     [
+      1.861,
+      9.073
+     ],
+     [
+      -1.12,
+      12.01
+     ]
+    ],
+    [
+     [
+      5.886,
+      5.11
+     ],
+     [
+      5.434,
+      5.11
+     ],
+     [
+      5.434,
+      -1.008
+     ],
+     [
+      5.886,
+      -1.008
+     ]
+    ],
+    [
+     [
+      5.434,
+      5.11
+     ],
+     [
+      5.434,
+      5.555
+     ],
+     [
+      1.861,
+      9.073
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -13.52516856910322,
+    "z1": 18.000999999999976,
+    "nu": 399,
+    "nz": 391,
+    "zelle": 0.05
+   },
+   "fotos": {
+    "commons__108_Kaufhaus_05_03_06": {
+     "zellen": 1048,
+     "guete_median": 56.0
+    },
+    "eigen__039_Freiburg_im_Sommer_2013_9878817246_": {
+     "zellen": 657,
+     "guete_median": 46.8
+    }
+   },
+   "id": "f00",
+   "abdeckung_anteil": 0.007,
+   "fotos_median_je_zelle": 2.0,
+   "relief_png": "relief_f00.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  },
+  {
+   "n": [
+    0.08284742741220524,
+    0.9965622427983009
+   ],
+   "d": [
+    -0.9965622427983009,
+    0.08284742741220524
+   ],
+   "o": [
+    -4.394422649147526,
+    5.526312537566428
+   ],
+   "u": [
+    -7.936834166824249,
+    7.227757972075423
+   ],
+   "z": [
+    -1.0080000000000382,
+    17.500999999999976
+   ],
+   "flaeche_m2": 160.9,
+   "teile": 3,
+   "polys_uz": [
+    [
+     [
+      7.228,
+      5.11
+     ],
+     [
+      7.228,
+      11.305
+     ],
+     [
+      0.983,
+      17.501
+     ],
+     [
+      -3.66,
+      12.931
+     ],
+     [
+      -3.66,
+      8.72
+     ]
+    ],
+    [
+     [
+      7.228,
+      5.11
+     ],
+     [
+      -3.66,
+      5.11
+     ],
+     [
+      -3.66,
+      -1.008
+     ],
+     [
+      7.228,
+      -1.008
+     ]
+    ],
+    [
+     [
+      -7.937,
+      8.72
+     ],
+     [
+      -3.66,
+      8.72
+     ],
+     [
+      -3.66,
+      12.931
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -8.436834166824248,
+    "z1": 18.000999999999976,
+    "nu": 324,
+    "nz": 391,
+    "zelle": 0.05
+   },
+   "fotos": {
+    "commons__024_Freiburg_812503898": {
+     "zellen": 3321,
+     "guete_median": 20.3
+    },
+    "commons__060_Freiburg_im_Breisgau_TodorBozhinov_20": {
+     "zellen": 1517,
+     "guete_median": 26.1
+    },
+    "eigen__008_Historisches_Kaufhaus": {
+     "zellen": 1948,
+     "guete_median": 46.9
+    },
+    "eigen__011_00_1783_Historisches_Kaufhaus_Freiburg": {
+     "zellen": 295,
+     "guete_median": 133.4
+    },
+    "eigen__013_M_nsterplatz_24_Freiburg_03": {
+     "zellen": 3507,
+     "guete_median": 30.1
+    },
+    "eigen__020_M_nsterplatz_Freiburg_jm3065": {
+     "zellen": 3657,
+     "guete_median": 32.3
+    },
+    "eigen__028_Freiburg_im_Breisgau_51": {
+     "zellen": 774,
+     "guete_median": 65.0
+    },
+    "eigen__032_20180423_11_Freiburg_-_M_nsterplatz_39894412760_": {
+     "zellen": 3140,
+     "guete_median": 35.6
+    },
+    "eigen__040_Freiburg_2009_IMG_4357": {
+     "zellen": 2892,
+     "guete_median": 33.8
+    },
+    "eigen__043_Freiburg_2009_IMG_4353": {
+     "zellen": 3727,
+     "guete_median": 44.1
+    },
+    "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H": {
+     "zellen": 4227,
+     "guete_median": 21.4
+    },
+    "eigen__056_Das_historische_Kaufhaus_in_Freiburg_im_Breisgau_2025_": {
+     "zellen": 1008,
+     "guete_median": 69.0
+    },
+    "eigen__065_Das_historische_Kaufhaus_in_Freiburg_i._Br._2025_": {
+     "zellen": 1380,
+     "guete_median": 62.7
+    },
+    "eigen__072_Landappbw_178443_1822_Kaufhaus_Historisches_Kaufhaus_Freibur": {
+     "zellen": 1567,
+     "guete_median": 58.3
+    },
+    "eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g": {
+     "zellen": 4209,
+     "guete_median": 20.7
+    },
+    "eigen__093_Einfahrt_der_Oldtimer_der_Schauinsland-Klassik_auf_dem_Freib": {
+     "zellen": 2971,
+     "guete_median": 36.8
+    },
+    "eigen__211_mapillary_293116238982627": {
+     "zellen": 3678,
+     "guete_median": 16.3
+    },
+    "eigen__3b29472b-image": {
+     "zellen": 682,
+     "guete_median": 45.4
+    },
+    "eigen__9e1944dc-image": {
+     "zellen": 1177,
+     "guete_median": 50.3
+    },
+    "eigen__IMG_20261108_111446": {
+     "zellen": 1189,
+     "guete_median": 50.2
+    },
+    "eigen__IMG_20261108_111453": {
+     "zellen": 720,
+     "guete_median": 45.5
+    },
+    "eigen__IMG_20261108_111500": {
+     "zellen": 1253,
+     "guete_median": 42.5
+    },
+    "eigen__IMG_20261108_111508": {
+     "zellen": 1670,
+     "guete_median": 37.0
+    },
+    "eigen__IMG_20261108_111518": {
+     "zellen": 1277,
+     "guete_median": 34.1
+    },
+    "eigen__IMG_20261108_111551": {
+     "zellen": 3021,
+     "guete_median": 34.4
+    },
+    "eigen__IMG_20261108_111553": {
+     "zellen": 3268,
+     "guete_median": 35.0
+    },
+    "eigen__IMG_6164": {
+     "zellen": 3072,
+     "guete_median": 39.6
+    },
+    "eigen__IMG_6261": {
+     "zellen": 3637,
+     "guete_median": 35.4
+    },
+    "eigen__handy_01": {
+     "zellen": 3694,
+     "guete_median": 27.7
+    },
+    "eigen__handy_13": {
+     "zellen": 946,
+     "guete_median": 34.3
+    },
+    "eigen__handy_14": {
+     "zellen": 427,
+     "guete_median": 41.4
+    },
+    "eigen__handy_c_11": {
+     "zellen": 2671,
+     "guete_median": 22.6
+    },
+    "eigen__handy_q_02": {
+     "zellen": 662,
+     "guete_median": 57.4
+    }
+   },
+   "id": "f01",
+   "abdeckung_anteil": 0.033,
+   "fotos_median_je_zelle": 19.0,
+   "relief_png": "relief_f01.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  },
+  {
+   "n": [
+    -0.996882617761261,
+    0.07889896327237676
+   ],
+   "d": [
+    -0.07889896327237676,
+    -0.996882617761261
+   ],
+   "o": [
+    -11.7729570687064,
+    0.7138278895004532
+   ],
+   "u": [
+    -5.408188603634085,
+    6.41619953605027
+   ],
+   "z": [
+    -1.0080000000000382,
+    11.423000000000002
+   ],
+   "flaeche_m2": 145.7,
+   "teile": 4,
+   "polys_uz": [
+    [
+     [
+      6.416,
+      5.11
+     ],
+     [
+      6.416,
+      11.237
+     ],
+     [
+      -0.497,
+      11.423
+     ],
+     [
+      -0.497,
+      5.11
+     ]
+    ],
+    [
+     [
+      6.416,
+      5.11
+     ],
+     [
+      -0.497,
+      5.11
+     ],
+     [
+      -0.497,
+      -1.008
+     ],
+     [
+      6.416,
+      -1.008
+     ]
+    ],
+    [
+     [
+      -0.511,
+      5.11
+     ],
+     [
+      -0.511,
+      11.322
+     ],
+     [
+      -5.408,
+      11.305
+     ],
+     [
+      -5.408,
+      5.11
+     ]
+    ],
+    [
+     [
+      -0.511,
+      5.11
+     ],
+     [
+      -5.408,
+      5.11
+     ],
+     [
+      -5.408,
+      -1.008
+     ],
+     [
+      -0.511,
+      -1.008
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -5.908188603634085,
+    "z1": 11.923000000000002,
+    "nu": 257,
+    "nz": 269,
+    "zelle": 0.05
+   },
+   "fotos": {
+    "commons__006_Allemagne_Foret_Noire_Freiburg_Munsterplatz_-_panoramio": {
+     "zellen": 8179,
+     "guete_median": 50.4
+    },
+    "commons__070_Hist._Kaufhaus_Freiburg1": {
+     "zellen": 14278,
+     "guete_median": 18.5
+    },
+    "commons__097_Historisches_Kaufhaus_FR": {
+     "zellen": 9005,
+     "guete_median": 35.6
+    },
+    "commons__108_Kaufhaus_05_03_06": {
+     "zellen": 61275,
+     "guete_median": 13.9
+    },
+    "eigen__008_Historisches_Kaufhaus": {
+     "zellen": 60025,
+     "guete_median": 8.2
+    },
+    "eigen__013_M_nsterplatz_24_Freiburg_03": {
+     "zellen": 23594,
+     "guete_median": 14.2
+    },
+    "eigen__020_M_nsterplatz_Freiburg_jm3065": {
+     "zellen": 61024,
+     "guete_median": 11.6
+    },
+    "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022": {
+     "zellen": 46389,
+     "guete_median": 53.6
+    },
+    "eigen__032_20180423_11_Freiburg_-_M_nsterplatz_39894412760_": {
+     "zellen": 60277,
+     "guete_median": 9.5
+    },
+    "eigen__039_Freiburg_im_Sommer_2013_9878817246_": {
+     "zellen": 60927,
+     "guete_median": 76.5
+    },
+    "eigen__043_Freiburg_2009_IMG_4353": {
+     "zellen": 6992,
+     "guete_median": 21.4
+    },
+    "eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu": {
+     "zellen": 33847,
+     "guete_median": 48.6
+    },
+    "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H": {
+     "zellen": 61319,
+     "guete_median": 21.6
+    },
+    "eigen__072_Landappbw_178443_1822_Kaufhaus_Historisches_Kaufhaus_Freibur": {
+     "zellen": 13071,
+     "guete_median": 13.8
+    },
+    "eigen__079_Kaufhausi-in-rot": {
+     "zellen": 6625,
+     "guete_median": 33.9
+    },
+    "eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g": {
+     "zellen": 43710,
+     "guete_median": 21.3
+    },
+    "eigen__089_Einfahrt_der_Oldtimer_der_Schauinsland-Klassik_auf_dem_Freib": {
+     "zellen": 49069,
+     "guete_median": 22.5
+    },
+    "eigen__211_mapillary_293116238982627": {
+     "zellen": 61277,
+     "guete_median": 12.4
+    },
+    "eigen__212_mapillary_231554862080465": {
+     "zellen": 30671,
+     "guete_median": 11.7
+    },
+    "eigen__214_mapillary_2673631492928742": {
+     "zellen": 32945,
+     "guete_median": 10.8
+    },
+    "eigen__215_mapillary_296390885462004": {
+     "zellen": 19749,
+     "guete_median": 11.6
+    },
+    "eigen__217_mapillary_456421925448720": {
+     "zellen": 31829,
+     "guete_median": 10.6
+    },
+    "eigen__218_mapillary_386647419106884": {
+     "zellen": 710,
+     "guete_median": 11.9
+    },
+    "eigen__219_mapillary_505539250575510": {
+     "zellen": 32291,
+     "guete_median": 10.6
+    },
+    "eigen__220_mapillary_2860248804214870": {
+     "zellen": 14083,
+     "guete_median": 11.6
+    },
+    "eigen__223_mapillary_323508795784374": {
+     "zellen": 16722,
+     "guete_median": 11.6
+    },
+    "eigen__224_mapillary_500922251061491": {
+     "zellen": 24702,
+     "guete_median": 11.7
+    },
+    "eigen__226_mapillary_814444402786029": {
+     "zellen": 32582,
+     "guete_median": 10.7
+    },
+    "eigen__227_mapillary_809062456374517": {
+     "zellen": 13729,
+     "guete_median": 12.1
+    },
+    "eigen__233_mapillary_827163988149720": {
+     "zellen": 33202,
+     "guete_median": 10.5
+    },
+    "eigen__234_mapillary_914776042643474": {
+     "zellen": 34388,
+     "guete_median": 11.0
+    },
+    "eigen__9e1944dc-image": {
+     "zellen": 23004,
+     "guete_median": 8.8
+    },
+    "eigen__IMG_20261108_111446": {
+     "zellen": 22920,
+     "guete_median": 8.8
+    },
+    "eigen__IMG_20261108_111553": {
+     "zellen": 4015,
+     "guete_median": 15.8
+    },
+    "eigen__IMG_6164": {
+     "zellen": 4215,
+     "guete_median": 15.9
+    },
+    "eigen__IMG_6261": {
+     "zellen": 54592,
+     "guete_median": 12.5
+    },
+    "eigen__handy_01": {
+     "zellen": 36294,
+     "guete_median": 22.7
+    }
+   },
+   "id": "f02",
+   "abdeckung_anteil": 0.887,
+   "fotos_median_je_zelle": 18.0,
+   "relief_png": "relief_f02.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  },
+  {
+   "n": [
+    0.9977323947097533,
+    -0.06730578390258393
+   ],
+   "d": [
+    0.06730578390258393,
+    0.9977323947097533
+   ],
+   "o": [
+    6.7532182716234335,
+    -0.13194107355083742
+   ],
+   "u": [
+    -5.62060908807288,
+    6.07632816354386
+   ],
+   "z": [
+    -1.0080000000000382,
+    8.71999999999997
+   ],
+   "flaeche_m2": 77.6,
+   "teile": 7,
+   "polys_uz": [
+    [
+     [
+      4.716,
+      5.11
+     ],
+     [
+      -1.384,
+      5.11
+     ],
+     [
+      -1.384,
+      -1.008
+     ],
+     [
+      4.716,
+      -1.008
+     ]
+    ],
+    [
+     [
+      -1.384,
+      5.11
+     ],
+     [
+      -3.938,
+      5.11
+     ],
+     [
+      -3.938,
+      -1.008
+     ],
+     [
+      -1.384,
+      -1.008
+     ]
+    ],
+    [
+     [
+      6.076,
+      8.72
+     ],
+     [
+      4.716,
+      8.72
+     ],
+     [
+      4.716,
+      5.207
+     ],
+     [
+      4.716,
+      5.11
+     ],
+     [
+      4.716,
+      -1.008
+     ],
+     [
+      6.076,
+      -1.008
+     ]
+    ],
+    [
+     [
+      -3.938,
+      5.11
+     ],
+     [
+      -5.621,
+      5.11
+     ],
+     [
+      -5.621,
+      -1.008
+     ],
+     [
+      -3.938,
+      -1.008
+     ]
+    ],
+    [
+     [
+      4.716,
+      5.11
+     ],
+     [
+      4.716,
+      5.207
+     ],
+     [
+      -1.384,
+      5.299
+     ],
+     [
+      -1.384,
+      5.11
+     ]
+    ],
+    [
+     [
+      -1.384,
+      5.11
+     ],
+     [
+      -1.384,
+      5.299
+     ],
+     [
+      -3.938,
+      5.19
+     ]
+    ],
+    [
+     [
+      -3.938,
+      5.11
+     ],
+     [
+      -3.938,
+      5.19
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -6.12060908807288,
+    "z1": 9.21999999999997,
+    "nu": 254,
+    "nz": 215,
+    "zelle": 0.05
+   },
+   "fotos": {},
+   "id": "f03",
+   "abdeckung_anteil": 0.0,
+   "fotos_median_je_zelle": 0,
+   "relief_png": "relief_f03.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  },
+  {
+   "n": [
+    -0.04299394162605124,
+    0.9990753329871856
+   ],
+   "d": [
+    -0.9990753329871856,
+    -0.04299394162605124
+   ],
+   "o": [
+    4.964707146040084,
+    5.836049881446884
+   ],
+   "u": [
+    -2.199449852639691,
+    4.361404752823432
+   ],
+   "z": [
+    -1.0080000000000382,
+    11.383999999999958
+   ],
+   "flaeche_m2": 63.8,
+   "teile": 2,
+   "polys_uz": [
+    [
+     [
+      4.361,
+      8.72
+     ],
+     [
+      -2.199,
+      8.72
+     ],
+     [
+      -2.199,
+      -1.008
+     ],
+     [
+      4.361,
+      -1.008
+     ]
+    ],
+    [
+     [
+      -2.199,
+      8.72
+     ],
+     [
+      -2.124,
+      11.384
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -2.699449852639691,
+    "z1": 11.883999999999958,
+    "nu": 152,
+    "nz": 268,
+    "zelle": 0.05
+   },
+   "fotos": {},
+   "id": "f04",
+   "abdeckung_anteil": 0.0,
+   "fotos_median_je_zelle": 0,
+   "relief_png": "relief_f04.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  },
+  {
+   "n": [
+    -0.29959667203541696,
+    0.9540659485094848
+   ],
+   "d": [
+    -0.9540659485094848,
+    -0.29959667203541696
+   ],
+   "o": [
+    -0.2055473396345005,
+    5.393273760104161
+   ],
+   "u": [
+    -0.8520192773105129,
+    0.5680128515403418
+   ],
+   "z": [
+    -1.0080000000000382,
+    8.71999999999997
+   ],
+   "flaeche_m2": 13.8,
+   "teile": 1,
+   "polys_uz": [
+    [
+     [
+      0.568,
+      8.72
+     ],
+     [
+      -0.852,
+      8.72
+     ],
+     [
+      -0.852,
+      -1.008
+     ],
+     [
+      0.568,
+      -1.008
+     ],
+     [
+      0.568,
+      5.11
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -1.3520192773105129,
+    "z1": 9.21999999999997,
+    "nu": 437,
+    "nz": 1935,
+    "zelle": 0.005547000503323651
+   },
+   "fotos": {},
+   "id": "f05",
+   "abdeckung_anteil": 0.0,
+   "fotos_median_je_zelle": 0,
+   "relief_png": "relief_f05.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  },
+  {
+   "n": [
+    0.09555396368155845,
+    -0.9954242512741708
+   ],
+   "d": [
+    0.9954242512741708,
+    0.09555396368155845
+   ],
+   "o": [
+    -0.7787011171382486,
+    -5.630504885674818
+   ],
+   "u": [
+    -0.5424046500811941,
+    0.4068034875608954
+   ],
+   "z": [
+    -1.0080000000000382,
+    12.935000000000002
+   ],
+   "flaeche_m2": 9.1,
+   "teile": 2,
+   "polys_uz": [
+    [
+     [
+      0.407,
+      5.11
+     ],
+     [
+      -0.542,
+      5.11
+     ],
+     [
+      -0.542,
+      -1.008
+     ],
+     [
+      0.407,
+      -1.008
+     ]
+    ],
+    [
+     [
+      0.407,
+      5.11
+     ],
+     [
+      0.407,
+      12.01
+     ],
+     [
+      -0.542,
+      12.935
+     ]
+    ]
+   ],
+   "raster": {
+    "u0": -1.042404650081194,
+    "z1": 13.435000000000002,
+    "nu": 390,
+    "nz": 2989,
+    "zelle": 0.005
+   },
+   "fotos": {},
+   "id": "f06",
+   "abdeckung_anteil": 0.0,
+   "fotos_median_je_zelle": 0,
+   "relief_png": "relief_f06.png (uint16: (s + 10 m) in mm, 0 = keine Modellflaeche)"
+  }
+ ],
+ "beste_k": 5,
+ "nachbarn_lod2": 144,
+ "quelle": "fassade_ortho.py: LoD2-Waende + K-Dateien (buendel_tor) + Sichtbarkeit gegen Stufenmodell + LoD2-Nachbarn",
+ "sekunden": 7.9,
+ "zeiten_s": {
+  "laden_raster": 0.2,
+  "relief": 2.0,
+  "kamerawahl": 0.4,
+  "fotos": 3.6,
+  "verschmelzen_schreiben": 1.6
+ },
+ "zellrechnung": {
+  "grund": "",
+  "zellen": 2458477,
+  "paare": 163,
+  "cpu_paare": 0,
+  "gpu_s": 1.1,
+  "strahlen": 37317198,
+  "weg": "GPU",
+  "gpu_mb_spitze": 436
+ }
+}

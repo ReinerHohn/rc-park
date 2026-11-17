@@ -1,0 +1,51 @@
++ /media/oem/scan/venv-seg/bin/python -W ignore -I tools/fassade_ortho.py /home/oem/git/rc-park/modelle/hg_tv9o/objekt.json --stl /media/oem/scan/rc-park_stl/hg_tv9o/hg_tv9o_1-87.stl --aus /media/oem/scan/rc-park_daten/hg_tv9o/fassade --einzeln --min-flaeche 6 --gpu-mb 1500
+108 Messkameras (kein buendel_tor im Objekt: alle eigenen/Commons/online + nachgezogene Fremdfotos)
+Zellrechnung: GPU (138 Foto-Fassaden-Paare GPU, 0 CPU, 7 Mio. Sichtstrahlen, GPU-Rechenzeit 0.7 s, GPU-Speicher Spitze 78 MiB)
+Zeiten (s): laden_raster 0.1, relief 4.1, kamerawahl 0.2, fotos 2.4, verschmelzen_schreiben 0.7
+6 Fassaden, 108 Fotos, 7 s
+  f00:  267.4 m2, n=(+0.00,+1.00), 17 Fotos, Abdeckung 24%, Median 2 Fotos/Zelle
+  f01:  223.9 m2, n=(-0.08,-1.00), 26 Fotos, Abdeckung 2%, Median 17 Fotos/Zelle
+  f02:  140.2 m2, n=(+0.99,-0.16),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f03:   90.8 m2, n=(-1.00,+0.10), 39 Fotos, Abdeckung 88%, Median 34 Fotos/Zelle
+  f04:   49.3 m2, n=(-0.11,-0.99),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f05:   15.7 m2, n=(+0.99,-0.10),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
++ /media/oem/scan/venv-seg/bin/python -W ignore -I -c import sys; sys.path.insert(0, 'tools'); import torch; torch.cuda.is_available() and torch.cuda.set_per_process_memory_fraction(0.281); import fassade_parsing as FP; FP.batch_groesse = lambda *a, **k: 2; FP.main(['--ortho', '/media/oem/scan/rc-park_daten/hg_tv9o/fassade', '--gpu'])
+Loading weights:   0%|          | 0/418 [00:00<?, ?it/s]Loading weights: 100%|██████████| 418/418 [00:00<00:00, 12022.02it/s]
+  f00 Foto eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H: 2 Kaesten, 1 Kacheln (4 s)
+  f00 Foto eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g: 14 Kaesten, 1 Kacheln (4 s)
+  f00 Foto eigen__008_Historisches_Kaufhaus: 0 Kaesten, 1 Kacheln (4 s)
+  f00 Foto eigen__043_Freiburg_2009_IMG_4353: 0 Kaesten, 1 Kacheln (4 s)
+  f00 Foto eigen__218_mapillary_386647419106884: 3 Kaesten, 1 Kacheln (4 s)
+  f00 Foto eigen__247_mapillary_2786662561586957: 0 Kaesten, 1 Kacheln (5 s)
+  f00 Foto commons__024_Freiburg_812503898: 0 Kaesten, 1 Kacheln (5 s)
+  f00 Foto eigen__212_mapillary_231554862080465: 0 Kaesten, 1 Kacheln (5 s)
+  f00 Foto eigen__230_mapillary_536287657535680: 0 Kaesten, 1 Kacheln (5 s)
+  f00 Foto eigen__216_mapillary_318701533021700: 0 Kaesten, 1 Kacheln (5 s)
+f00: {'fenster': 1, 'tuer': 0, 'bogen': 0, 'figur': 0, 'gaube': 0, 'balkon': 0}
+  f01 Foto eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu: 1 Kaesten, 1 Kacheln (5 s)
+  f01 Foto eigen__079_Kaufhausi-in-rot: 0 Kaesten, 1 Kacheln (5 s)
+  f01 Foto commons__015_Dach_Historisches_Kaufhaus_von_1532_Freiburg_Deutschland: 1 Kaesten, 1 Kacheln (6 s)
+  f01 Foto eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022: 2 Kaesten, 1 Kacheln (6 s)
+  f01 Foto eigen__061_The_so_called_famous_Red_House_Alte_Kaufhaus_A.D._1532_in_Fr: 4 Kaesten, 1 Kacheln (6 s)
+  f01 Foto eigen__IMG_6145: 4 Kaesten, 1 Kacheln (6 s)
+  f01 Foto eigen__075_Freiburg_Jul_2012_05_Historisches_Kaufhaus_Freiburg_: 3 Kaesten, 1 Kacheln (6 s)
+  f01 Foto eigen__042_Freiburg_2009_IMG_4241: 4 Kaesten, 1 Kacheln (6 s)
+  f01 Foto eigen__IMG_6162: 1 Kaesten, 1 Kacheln (7 s)
+  f01 Foto eigen__IMG_20261108_112103: 0 Kaesten, 1 Kacheln (7 s)
+f01: {'fenster': 0, 'tuer': 0, 'bogen': 1, 'figur': 0, 'gaube': 2, 'balkon': 0}
+  f03 Foto eigen__074_M_nsterplatz_Freiburg_jm3322: 40 Kaesten, 1 Kacheln (7 s)
+  f03 Foto eigen__067_M_nsterplatz_Freiburg_jm3344: 33 Kaesten, 1 Kacheln (7 s)
+  f03 Foto eigen__084_Redoutenhaus_Freiburg_4146: 21 Kaesten, 1 Kacheln (7 s)
+  f03 Foto eigen__002_M_nsterplatz_Freiburg_jm3334: 34 Kaesten, 1 Kacheln (7 s)
+  f03 Foto eigen__007_M_nsterplatz_Freiburg_jm3221: 28 Kaesten, 1 Kacheln (8 s)
+  f03 Foto eigen__043_Freiburg_2009_IMG_4353: 32 Kaesten, 1 Kacheln (8 s)
+  f03 Foto eigen__008_Historisches_Kaufhaus: 39 Kaesten, 1 Kacheln (8 s)
+  f03 Foto eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H: 28 Kaesten, 1 Kacheln (8 s)
+  f03 Foto eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g: 31 Kaesten, 1 Kacheln (8 s)
+  f03 Foto eigen__IMG_20261108_111553: 27 Kaesten, 1 Kacheln (8 s)
+f03: {'fenster': 16, 'tuer': 0, 'bogen': 0, 'figur': 0, 'gaube': 4, 'balkon': 3}
++ /media/oem/scan/venv-seg/bin/python -W ignore -I tools/fenster_aus_parsing.py /media/oem/scan/rc-park_daten/hg_tv9o/fassade --aus /home/oem/git/rc-park/modelle/hg_tv9o/audit/fenster_auto.json
+f00: 0 Fenster aus 0 Scheiben (1 Kaesten): 
+f01: 0 Fenster aus 0 Scheiben (3 Kaesten): 
+f03: 8 Fenster aus 8 Scheiben (23 Kaesten): u -1.64..-0.71 z 4.63..5.98 T0 Spr0; u -0.59..0.63 z 4.63..5.98 T0 Spr0; u 1.15..2.29 z 4.63..5.98 T0 Spr0; u -1.06..1.10 z 7.25..8.52 T1 Spr0; u 1.15..2.29 z 7.25..8.52 T0 Spr0; u -1.64..-0.71 z 9.73..10.95 T0 Spr0; u -0.51..0.54 z 9.73..10.95 T0 Spr0; u 1.21..2.23 z 9.73..10.95 T0 Spr0
+-> /home/oem/git/rc-park/modelle/hg_tv9o/audit/fenster_auto.json

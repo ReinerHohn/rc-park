@@ -1,0 +1,52 @@
+[
+ {
+  "seite": "dach",
+  "element": "Rumpf + Dach aus LoD2 (je Dachflaeche Prisma unter der Dachebene, auf Grundriss begrenzt)",
+  "quelle": "LoD2 DEBW_0010007Tv9y (LGL BW), 5 Dachflaechen, 2 Grundflaechen",
+  "boden_z": -1.008,
+  "first_z": 17.501,
+  "x0": -12.279,
+  "x1": 7.162,
+  "y0": -5.757,
+  "y1": 5.931,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "4 Fenster Fassade f02 (automatisch erkannt)",
+  "quelle": "OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__039_Freiburg_im_Sommer_2013_9878817246_, eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022, eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu",
+  "hinweis": "ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "-y",
+  "element": "ANNAHME: Fensterraster Wand w14 (1 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 1,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "West"
+ },
+ {
+  "seite": "dach",
+  "element": "WIDERSPRUCH Traufe LoD2/DOM1: w07 (-x) Laser-Modell +1.06 m, w16 (-x) Laser-Modell +1.06 m",
+  "quelle": "DOM1 1 m, 0,75 m innen der Wand (Randpixel mischen Strasse/Wand - Hinweis, nicht gemittelt; am Foto pruefen)",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Dach aus LoD2 (DOM1-Gegenprobe: Median Laser - Modell +0.02 m, P10/P90 -5.31/+0.77, 175 Pixel)",
+  "quelle": "LoD2 (amtlich) Form; DOM1 1 m nur Gegenprobe",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "alle",
+  "element": "Duenne Wand 1.2 mm (= 0.104 m), Boden offen, 6 Durchbrueche erreichen den Hohlraum (2738 m3)",
+  "quelle": "bauteile.aushoehlen; Wandstaerke = Druckvorgabe (ANNAHME 1,2 mm, CLAUDE.md WAND_MM)",
+  "seite_name": "alle"
+ }
+]

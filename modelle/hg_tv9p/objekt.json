@@ -1,0 +1,67 @@
+{
+ "name": "Hintergrundhaus DEBW_0010007Tv9p",
+ "reifegrad": 1,
+ "kennzeichnung": "HINTERGRUND, Reifegrad 1: LoD2-Koerper + Fotofenster/Raster-ANNAHME, ohne Kantenstufe/Foto-F1 - nie als passend melden",
+ "ort": "Freiburg, Muensterplatz (Nachbar Historisches Kaufhaus)",
+ "generator": "/media/oem/scan/venv-seg/bin/python -I tools/hintergrundhaus.py bauen hg_tv9p",
+ "stl": "/media/oem/scan/rc-park_stl/hg_tv9p/hg_tv9p_1-87.stl",
+ "stl_massstab": 87,
+ "stl_einheit_mm": true,
+ "zentrierung": "achse",
+ "masstabelle": "modelle/hg_tv9p/masstabelle.json",
+ "elemente": "modelle/hg_tv9p/elemente.json",
+ "audit": "modelle/hg_tv9p/audit",
+ "ueberwacht": [
+  "tools/hintergrundhaus.py",
+  "modelle/hg_tv9p/masstabelle.json",
+  "modelle/hg_tv9p/elemente.json"
+ ],
+ "fotos_dir": "daten/kaufhaus_gk/fotos",
+ "seiten_konvention": {
+  "+x": "Sued",
+  "-x": "Nord",
+  "+y": "Ost",
+  "-y": "West",
+  "quelle": "hintergrundhaus.py: Kompass der Rahmenachsen (LoD2-Grundriss)"
+ },
+ "lod2": {
+  "gml": "/media/oem/scan/rc-park_daten/_geo/LoD2_32_413_5316_2_bw/LoD2_32_414_5316_1_BW.gml",
+  "id": "DEBW_0010007Tv9p",
+  "traufe_m": 11.836000000000013,
+  "first_m": 21.043999999999983,
+  "dachtypen": [
+   "3100",
+   "5000",
+   "3100"
+  ]
+ },
+ "rahmen": {
+  "mitte_utm": [
+   414420.506,
+   5316369.416
+  ],
+  "xhat_utm": [
+   -0.06591,
+   -0.99783
+  ],
+  "yhat_utm": [
+   0.99783,
+   -0.06591
+  ],
+  "gelaende": 278.56,
+  "hinweis": "hintergrundhaus.py: Ursprung Grundriss-Mitte (LoD2), +x laengste Grundrisskante, z ueber DGM1-Median im Grundriss (122 Pixel)"
+ },
+ "quellen": {
+  "lod2": "LGL BW LoD2 DEBW_0010007Tv9p",
+  "dom1_dgm1": "LGL BW DOM1/DGM1 (Gegenprobe Hoehe/Traufe)",
+  "fotos": "Kameras aus modelle/kaufhaus_gk/objekt.json umgerechnet (keine eigene SfM)"
+ },
+ "hintergrund": {
+  "kameras_von": "modelle/kaufhaus_gk/objekt.json",
+  "wand_mm": 1.2,
+  "raster": true
+ },
+ "neben_fotos": [
+  "eigen__084_Redoutenhaus_Freiburg_4146"
+ ]
+}

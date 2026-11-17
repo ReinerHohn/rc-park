@@ -1,0 +1,17 @@
++ /media/oem/scan/venv-seg/bin/python -W ignore -I tools/fassade_ortho.py /home/oem/git/rc-park/modelle/hg_tvac/objekt.json --stl /media/oem/scan/rc-park_stl/hg_tvac/hg_tvac_1-87.stl --aus /media/oem/scan/rc-park_daten/hg_tvac/fassade --einzeln --min-flaeche 6 --gpu-mb 1500
+124 Messkameras (kein buendel_tor im Objekt: alle eigenen/Commons/online + nachgezogene Fremdfotos)
+Zellrechnung: GPU (48 Foto-Fassaden-Paare GPU, 0 CPU, 3 Mio. Sichtstrahlen, GPU-Rechenzeit 0.4 s, GPU-Speicher Spitze 70 MiB)
+Zeiten (s): laden_raster 0.0, relief 1.8, kamerawahl 0.6, fotos 1.0, verschmelzen_schreiben 0.0
+8 Fassaden, 124 Fotos, 3 s
+  f00:  259.5 m2, n=(-0.00,-1.00),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f01:  238.7 m2, n=(-0.08,+1.00),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f02:  158.1 m2, n=(-1.00,-0.07),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f03:  133.5 m2, n=(+1.00,-0.07),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f04:   79.4 m2, n=(+1.00,+0.04),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f05:   64.6 m2, n=(+0.00,-1.00),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f06:   54.0 m2, n=(-0.14,+0.99),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f07:   50.1 m2, n=(-0.14,+0.99),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
++ /media/oem/scan/venv-seg/bin/python -W ignore -I -c import sys; sys.path.insert(0, 'tools'); import torch; torch.cuda.is_available() and torch.cuda.set_per_process_memory_fraction(0.281); import fassade_parsing as FP; FP.batch_groesse = lambda *a, **k: 2; FP.main(['--ortho', '/media/oem/scan/rc-park_daten/hg_tvac/fassade', '--gpu'])
+Loading weights:   0%|          | 0/418 [00:00<?, ?it/s]Loading weights: 100%|██████████| 418/418 [00:00<00:00, 19472.64it/s]
++ /media/oem/scan/venv-seg/bin/python -W ignore -I tools/fenster_aus_parsing.py /media/oem/scan/rc-park_daten/hg_tvac/fassade --aus /home/oem/git/rc-park/modelle/hg_tvac/audit/fenster_auto.json
+-> /home/oem/git/rc-park/modelle/hg_tvac/audit/fenster_auto.json

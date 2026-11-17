@@ -1,0 +1,71 @@
+[
+ {
+  "seite": "dach",
+  "element": "Rumpf + Dach aus LoD2 (je Dachflaeche Prisma unter der Dachebene, auf Grundriss begrenzt)",
+  "quelle": "LoD2 DEBW_0010007Tv9v (LGL BW), 3 Dachflaechen, 2 Grundflaechen",
+  "boden_z": -0.423,
+  "first_z": 15.435,
+  "x0": -7.286,
+  "x1": 4.946,
+  "y0": -8.556,
+  "y1": 7.12,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "-x",
+  "element": "ANNAHME: Fensterraster Wand w01 (3 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 3,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "West"
+ },
+ {
+  "seite": "-y",
+  "element": "ANNAHME: Fensterraster Wand w07 (15 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 15,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "Sued"
+ },
+ {
+  "seite": "+y",
+  "element": "ANNAHME: Fensterraster Wand w11 (6 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 6,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "Nord"
+ },
+ {
+  "seite": "dach",
+  "element": "WIDERSPRUCH Traufe LoD2/DOM1: w04 (+y) Laser-Modell +1.50 m",
+  "quelle": "DOM1 1 m, 0,75 m innen der Wand (Randpixel mischen Strasse/Wand - Hinweis, nicht gemittelt; am Foto pruefen)",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Dach aus LoD2 (DOM1-Gegenprobe: Median Laser - Modell +0.02 m, P10/P90 -0.41/+0.79, 98 Pixel)",
+  "quelle": "LoD2 (amtlich) Form; DOM1 1 m nur Gegenprobe",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "alle",
+  "element": "Duenne Wand 1.2 mm (= 0.104 m), Boden offen, 25 Durchbrueche erreichen den Hohlraum (1659 m3)",
+  "quelle": "bauteile.aushoehlen; Wandstaerke = Druckvorgabe (ANNAHME 1,2 mm, CLAUDE.md WAND_MM)",
+  "seite_name": "alle"
+ }
+]

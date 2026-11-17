@@ -1,0 +1,78 @@
+[
+ {
+  "seite": "dach",
+  "element": "Rumpf + Dach aus LoD2 (je Dachflaeche Prisma unter der Dachebene, auf Grundriss begrenzt)",
+  "quelle": "LoD2 DEBW_0010007Tv9o (LGL BW), 4 Dachflaechen, 2 Grundflaechen",
+  "boden_z": -0.355,
+  "first_z": 16.348,
+  "x0": -15.15,
+  "x1": 5.741,
+  "y0": -2.924,
+  "y1": 6.549,
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "8 Fenster Fassade f03 (automatisch erkannt)",
+  "quelle": "OWLv2 auf dem Mehrfoto-Ortho (fassade_ortho.py -> fassade_parsing.py -> fenster_aus_parsing.py), Fotos eigen__074_M_nsterplatz_Freiburg_jm3322, eigen__067_M_nsterplatz_Freiburg_jm3344, eigen__084_Redoutenhaus_Freiburg_4146",
+  "hinweis": "ERKENNUNG, am Bild fenster_<id>.jpg pruefen; Nischentiefe und Rahmenbreiten ANNAHME",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "+y",
+  "element": "ANNAHME: Fensterraster Wand w02 (32 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 32,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "Ost"
+ },
+ {
+  "seite": "+x",
+  "element": "ANNAHME: Fensterraster Wand w03 (1 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 1,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "Sued"
+ },
+ {
+  "seite": "+x",
+  "element": "ANNAHME: Fensterraster Wand w04 (1 Fenster)",
+  "quelle": "hintergrundhaus.raster_fenster - KEIN Foto; Masse ANNAHME (typische Altstadt-Geschosse)",
+  "n": 1,
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6,
+  "seite_name": "Sued"
+ },
+ {
+  "seite": "dach",
+  "element": "WIDERSPRUCH Traufe LoD2/DOM1: w01 (-x) Laser-Modell -1.38 m, w05 (+y) Laser-Modell -1.70 m",
+  "quelle": "DOM1 1 m, 0,75 m innen der Wand (Randpixel mischen Strasse/Wand - Hinweis, nicht gemittelt; am Foto pruefen)",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Dach aus LoD2 (DOM1-Gegenprobe: Median Laser - Modell +0.05 m, P10/P90 -1.02/+1.96, 81 Pixel)",
+  "quelle": "LoD2 (amtlich) Form; DOM1 1 m nur Gegenprobe",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "alle",
+  "element": "Duenne Wand 1.2 mm (= 0.104 m), Boden offen, 43 Durchbrueche erreichen den Hohlraum (1736 m3)",
+  "quelle": "bauteile.aushoehlen; Wandstaerke = Druckvorgabe (ANNAHME 1,2 mm, CLAUDE.md WAND_MM)",
+  "seite_name": "alle"
+ }
+]

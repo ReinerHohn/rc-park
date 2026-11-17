@@ -1,0 +1,69 @@
+{
+ "name": "Hintergrundhaus DEBW_0010007Tv9o",
+ "reifegrad": 1,
+ "kennzeichnung": "HINTERGRUND, Reifegrad 1: LoD2-Koerper + Fotofenster/Raster-ANNAHME, ohne Kantenstufe/Foto-F1 - nie als passend melden",
+ "ort": "Freiburg, Muensterplatz (Nachbar Historisches Kaufhaus)",
+ "generator": "/media/oem/scan/venv-seg/bin/python -I tools/hintergrundhaus.py bauen hg_tv9o",
+ "stl": "/media/oem/scan/rc-park_stl/hg_tv9o/hg_tv9o_1-87.stl",
+ "stl_massstab": 87,
+ "stl_einheit_mm": true,
+ "zentrierung": "achse",
+ "masstabelle": "modelle/hg_tv9o/masstabelle.json",
+ "elemente": "modelle/hg_tv9o/elemente.json",
+ "audit": "modelle/hg_tv9o/audit",
+ "ueberwacht": [
+  "tools/hintergrundhaus.py",
+  "modelle/hg_tv9o/masstabelle.json",
+  "modelle/hg_tv9o/elemente.json"
+ ],
+ "fotos_dir": "daten/kaufhaus_gk/fotos",
+ "seiten_konvention": {
+  "+x": "Sued",
+  "-x": "Nord",
+  "+y": "Ost",
+  "-y": "West",
+  "quelle": "hintergrundhaus.py: Kompass der Rahmenachsen (LoD2-Grundriss)"
+ },
+ "lod2": {
+  "gml": "/media/oem/scan/rc-park_daten/_geo/LoD2_32_413_5316_2_bw/LoD2_32_414_5316_1_BW.gml",
+  "id": "DEBW_0010007Tv9o",
+  "traufe_m": 11.59499999999997,
+  "first_m": 16.702999999999975,
+  "dachtypen": [
+   "5000",
+   "2100"
+  ]
+ },
+ "rahmen": {
+  "mitte_utm": [
+   414424.857,
+   5316364.61
+  ],
+  "xhat_utm": [
+   0.01827,
+   -0.99983
+  ],
+  "yhat_utm": [
+   0.99983,
+   0.01827
+  ],
+  "gelaende": 278.84,
+  "hinweis": "hintergrundhaus.py: Ursprung Grundriss-Mitte (LoD2), +x laengste Grundrisskante, z ueber DGM1-Median im Grundriss (153 Pixel)"
+ },
+ "quellen": {
+  "lod2": "LGL BW LoD2 DEBW_0010007Tv9o",
+  "dom1_dgm1": "LGL BW DOM1/DGM1 (Gegenprobe Hoehe/Traufe)",
+  "fotos": "Kameras aus modelle/kaufhaus_gk/objekt.json umgerechnet (keine eigene SfM)"
+ },
+ "hintergrund": {
+  "kameras_von": "modelle/kaufhaus_gk/objekt.json",
+  "wand_mm": 1.2,
+  "raster": true
+ },
+ "neben_fotos": [
+  "eigen__074_M_nsterplatz_Freiburg_jm3322",
+  "t_eigen__074_M_nsterplatz_Freiburg_jm3322",
+  "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
+  "t_eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H"
+ ]
+}

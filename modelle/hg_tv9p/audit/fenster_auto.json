@@ -1,0 +1,197 @@
+{
+ "f00": {
+  "o": [
+   -2.8508173026524797,
+   3.5031035323964086
+  ],
+  "d": [
+   -0.9999999999958021,
+   2.897531643924869e-06
+  ],
+  "n": [
+   2.897531643924869e-06,
+   0.9999999999958021
+  ],
+  "fenster": [],
+  "fotos": [
+   "eigen__043_Freiburg_2009_IMG_4353",
+   "eigen__008_Historisches_Kaufhaus",
+   "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
+   "eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g"
+  ]
+ },
+ "f01": {
+  "o": [
+   -2.7132331380138743,
+   -4.400791923059017
+  ],
+  "d": [
+   0.9951419030379437,
+   -0.09845096656722027
+  ],
+  "n": [
+   -0.09845096656722027,
+   -0.9951419030379437
+  ],
+  "fenster": [],
+  "fotos": [
+   "eigen__IMG_6162",
+   "eigen__handy_05",
+   "eigen__042_Freiburg_2009_IMG_4241",
+   "eigen__075_Freiburg_Jul_2012_05_Historisches_Kaufhaus_Freiburg_"
+  ]
+ },
+ "f02": {
+  "o": [
+   -10.660079727576226,
+   -0.6730060034175428
+  ],
+  "d": [
+   -0.01475348184897771,
+   -0.9998911614637525
+  ],
+  "n": [
+   -0.9998911614637525,
+   0.01475348184897771
+  ],
+  "fenster": [
+   {
+    "u0": -0.0,
+    "u1": 1.178,
+    "z0": 1.816,
+    "z1": 4.81,
+    "teiler": [],
+    "kaempfer": 3.575,
+    "scheiben": 2,
+    "stimmen_min": 5,
+    "sprossen": []
+   },
+   {
+    "u0": -2.105,
+    "u1": -0.936,
+    "z0": 3.619,
+    "z1": 4.81,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 9,
+    "sprossen": []
+   },
+   {
+    "u0": 1.891,
+    "u1": 2.548,
+    "z0": 3.619,
+    "z1": 4.81,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 7,
+    "sprossen": []
+   },
+   {
+    "u0": -2.258,
+    "u1": -0.805,
+    "z0": 6.358,
+    "z1": 8.315,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 10,
+    "sprossen": []
+   },
+   {
+    "u0": -0.165,
+    "u1": 1.294,
+    "z0": 6.358,
+    "z1": 8.315,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 10,
+    "sprossen": []
+   },
+   {
+    "u0": 1.898,
+    "u1": 2.534,
+    "z0": 6.358,
+    "z1": 8.315,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 8,
+    "sprossen": []
+   },
+   {
+    "u0": -4.153,
+    "u1": -3.275,
+    "z0": 7.595,
+    "z1": 8.844,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 6,
+    "sprossen": []
+   },
+   {
+    "u0": -2.316,
+    "u1": -0.84,
+    "z0": 9.536,
+    "z1": 11.302,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 9,
+    "sprossen": []
+   },
+   {
+    "u0": -0.187,
+    "u1": 1.296,
+    "z0": 9.536,
+    "z1": 11.302,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 9,
+    "sprossen": []
+   },
+   {
+    "u0": 1.879,
+    "u1": 2.533,
+    "z0": 9.536,
+    "z1": 11.302,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 8,
+    "sprossen": []
+   }
+  ],
+  "fotos": [
+   "eigen__084_Redoutenhaus_Freiburg_4146",
+   "eigen__067_M_nsterplatz_Freiburg_jm3344",
+   "eigen__IMG_6115",
+   "eigen__IMG_20261108_111553"
+  ]
+ },
+ "f07": {
+  "o": [
+   -1.026117963514899,
+   2.44610221950796
+  ],
+  "d": [
+   -0.9992117385634623,
+   0.039697626087499764
+  ],
+  "n": [
+   0.039697626087499764,
+   0.9992117385634623
+  ],
+  "fenster": [],
+  "fotos": [
+   "eigen__043_Freiburg_2009_IMG_4353",
+   "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
+   "eigen__008_Historisches_Kaufhaus",
+   "eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g"
+  ]
+ }
+}

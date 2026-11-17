@@ -1,0 +1,188 @@
+{
+ "f01": {
+  "o": [
+   -4.394422649147526,
+   5.526312537566428
+  ],
+  "d": [
+   -0.9965622427983009,
+   0.08284742741220524
+  ],
+  "n": [
+   0.08284742741220524,
+   0.9965622427983009
+  ],
+  "fenster": [],
+  "fotos": [
+   "eigen__043_Freiburg_2009_IMG_4353",
+   "eigen__IMG_6261",
+   "eigen__IMG_6164",
+   "eigen__020_M_nsterplatz_Freiburg_jm3065"
+  ]
+ },
+ "f02": {
+  "o": [
+   -11.7729570687064,
+   0.7138278895004532
+  ],
+  "d": [
+   -0.07889896327237676,
+   -0.996882617761261
+  ],
+  "n": [
+   -0.996882617761261,
+   0.07889896327237676
+  ],
+  "fenster": [
+   {
+    "u0": -5.148,
+    "u1": -3.587,
+    "z0": 3.585,
+    "z1": 5.146,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 0,
+    "stimmen_min": 2,
+    "ergaenzt": true
+   },
+   {
+    "u0": -2.893,
+    "u1": -1.677,
+    "z0": 3.585,
+    "z1": 5.146,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 0,
+    "stimmen_min": 2,
+    "ergaenzt": true
+   },
+   {
+    "u0": -1.01,
+    "u1": 0.057,
+    "z0": 3.585,
+    "z1": 5.146,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 4,
+    "sprossen": []
+   },
+   {
+    "u0": -4.978,
+    "u1": -3.757,
+    "z0": 6.348,
+    "z1": 7.779,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 6,
+    "sprossen": []
+   },
+   {
+    "u0": -2.901,
+    "u1": -1.667,
+    "z0": 6.348,
+    "z1": 7.779,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 5,
+    "sprossen": []
+   },
+   {
+    "u0": -1.114,
+    "u1": 0.161,
+    "z0": 6.348,
+    "z1": 7.779,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 7,
+    "sprossen": []
+   },
+   {
+    "u0": 0.857,
+    "u1": 2.571,
+    "z0": 6.348,
+    "z1": 7.779,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 2,
+    "stimmen_min": 4,
+    "sprossen": []
+   },
+   {
+    "u0": 5.356,
+    "u1": 6.38,
+    "z0": 6.348,
+    "z1": 7.779,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 5,
+    "sprossen": []
+   },
+   {
+    "u0": -5.318,
+    "u1": -3.417,
+    "z0": 8.919,
+    "z1": 10.347,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 2,
+    "stimmen_min": 4,
+    "sprossen": []
+   },
+   {
+    "u0": -2.883,
+    "u1": -1.685,
+    "z0": 8.919,
+    "z1": 10.347,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 4,
+    "sprossen": []
+   },
+   {
+    "u0": -1.123,
+    "u1": 0.169,
+    "z0": 8.919,
+    "z1": 10.347,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 5,
+    "sprossen": []
+   },
+   {
+    "u0": 0.806,
+    "u1": 2.623,
+    "z0": 8.919,
+    "z1": 10.347,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 2,
+    "stimmen_min": 4,
+    "sprossen": []
+   },
+   {
+    "u0": 5.356,
+    "u1": 6.38,
+    "z0": 8.919,
+    "z1": 10.347,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 0,
+    "stimmen_min": 2,
+    "ergaenzt": true
+   }
+  ],
+  "fotos": [
+   "eigen__039_Freiburg_im_Sommer_2013_9878817246_",
+   "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022",
+   "eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu",
+   "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H"
+  ]
+ }
+}

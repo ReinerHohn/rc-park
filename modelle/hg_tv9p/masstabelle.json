@@ -1,0 +1,64 @@
+{
+ "_doku": "Masstabelle Hintergrundhaus (Reifegrad 1): nur Druckfaehigkeit + Hoehe gegen LoD2; Form NICHT abgenommen (keine Kantenstufe)",
+ "konstanten": {},
+ "messungen": {
+  "hoehe": {
+   "typ": "hoehe_max"
+  },
+  "wasserdicht": {
+   "typ": "wasserdicht"
+  },
+  "koerper": {
+   "typ": "koerper_anzahl"
+  }
+ },
+ "pruefungen": [
+  {
+   "name": "Gesamthoehe (m)",
+   "wert": "hoehe",
+   "soll": [
+    20.41,
+    21.78
+   ],
+   "quelle": "LoD2 DEBW_0010007Tv9p First ueber Boden",
+   "quelltyp": "lod2",
+   "merkmal": "hoehe"
+  },
+  {
+   "name": "Wasserdicht (1=ja)",
+   "wert": "wasserdicht",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Druckfaehigkeit",
+   "quelltyp": "modell",
+   "merkmal": "druck"
+  },
+  {
+   "name": "Anzahl getrennte Koerper",
+   "wert": "koerper",
+   "soll": [
+    1,
+    1
+   ],
+   "quelle": "Schwebende Teile",
+   "quelltyp": "modell",
+   "merkmal": "druck"
+  }
+ ],
+ "beobachtungen_offen": [
+  {
+   "datum": "2026-11-17",
+   "wer": "hintergrundhaus.py",
+   "text": "Hintergrundhaus Reifegrad 1 - Fassadendetails (Gesimse, Laeden, Dachaufbauten) fehlen bewusst",
+   "naechster_schritt": "fuer Vordergrund: tools/gesamtkette.py"
+  }
+ ],
+ "historie": [
+  {
+   "datum": "2026-11-17",
+   "text": "angelegt von tools/hintergrundhaus.py"
+  }
+ ]
+}

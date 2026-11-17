@@ -1,0 +1,276 @@
+{
+ "reifegrad": 1,
+ "kennzeichnung": "HINTERGRUND, Reifegrad 1: LoD2-Koerper + Fotofenster/Raster-ANNAHME, ohne Kantenstufe/Foto-F1 - nie als passend melden",
+ "lod2": "DEBW_0010007Tvac",
+ "stl": "/media/oem/scan/rc-park_stl/hg_tvac/hg_tvac_1-87.stl",
+ "seiten": [
+  {
+   "wand": "w00",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 3.5,
+   "hoehe_m": 13.29,
+   "quelle": "ANNAHME: Fensterraster 4 Fenster (Achse 2.4 m, 1.0 x 1.4 m, Geschoss 3.0 m, EG-Bruestung 1.0 m) - kein Foto dieser Wand"
+  },
+  {
+   "wand": "w01",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 4.14,
+   "hoehe_m": 13.29,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  },
+  {
+   "wand": "w02",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 2.79,
+   "hoehe_m": 13.29,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  },
+  {
+   "wand": "w03",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 3.56,
+   "hoehe_m": 13.29,
+   "quelle": "ANNAHME: Fensterraster 4 Fenster (Achse 2.4 m, 1.0 x 1.4 m, Geschoss 3.0 m, EG-Bruestung 1.0 m) - kein Foto dieser Wand"
+  },
+  {
+   "wand": "w04",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 4.14,
+   "hoehe_m": 17.08,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  },
+  {
+   "wand": "w05",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 3.5,
+   "hoehe_m": 16.22,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  },
+  {
+   "wand": "w06",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 5.28,
+   "hoehe_m": 17.08,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  },
+  {
+   "wand": "w07",
+   "seite": "-y",
+   "seite_name": "West",
+   "laenge_m": 4.01,
+   "hoehe_m": 10.12,
+   "quelle": "ANNAHME: Fensterraster 3 Fenster (Achse 2.4 m, 1.0 x 1.4 m, Geschoss 3.0 m, EG-Bruestung 1.0 m) - kein Foto dieser Wand"
+  },
+  {
+   "wand": "w08",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 2.62,
+   "hoehe_m": 10.12,
+   "quelle": "ANNAHME: Fensterraster 2 Fenster (Achse 2.4 m, 1.0 x 1.4 m, Geschoss 3.0 m, EG-Bruestung 1.0 m) - kein Foto dieser Wand; Brandwand bis 2.7 m ausgespart"
+  },
+  {
+   "wand": "w09",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 2.59,
+   "hoehe_m": 10.12,
+   "quelle": "ANNAHME: Fensterraster 2 Fenster (Achse 2.4 m, 1.0 x 1.4 m, Geschoss 3.0 m, EG-Bruestung 1.0 m) - kein Foto dieser Wand; Brandwand bis 2.7 m ausgespart"
+  },
+  {
+   "wand": "w10",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 3.13,
+   "hoehe_m": 10.12,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 10.3 m) - geschlossen"
+  },
+  {
+   "wand": "w11",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 3.09,
+   "hoehe_m": 17.03,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  },
+  {
+   "wand": "w12",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 4.48,
+   "hoehe_m": 16.25,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  },
+  {
+   "wand": "w13",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 3.61,
+   "hoehe_m": 15.13,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 14.8 m) - geschlossen"
+  },
+  {
+   "wand": "w14",
+   "seite": "-y",
+   "seite_name": "West",
+   "laenge_m": 14.56,
+   "hoehe_m": 15.16,
+   "quelle": "ANNAHME: Fensterraster 24 Fenster (Achse 2.4 m, 1.0 x 1.4 m, Geschoss 3.0 m, EG-Bruestung 1.0 m) - kein Foto dieser Wand"
+  },
+  {
+   "wand": "w15",
+   "seite": "-x",
+   "seite_name": "Nord",
+   "laenge_m": 11.64,
+   "hoehe_m": 13.4,
+   "quelle": "ANNAHME: Fensterraster 16 Fenster (Achse 2.4 m, 1.0 x 1.4 m, Geschoss 3.0 m, EG-Bruestung 1.0 m) - kein Foto dieser Wand"
+  },
+  {
+   "wand": "w16",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 6.47,
+   "hoehe_m": 17.25,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  },
+  {
+   "wand": "w17",
+   "seite": "-x",
+   "seite_name": "Nord",
+   "laenge_m": 2.32,
+   "hoehe_m": 15.12,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  },
+  {
+   "wand": "w18",
+   "seite": "-x",
+   "seite_name": "Nord",
+   "laenge_m": 1.63,
+   "hoehe_m": 15.16,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  }
+ ],
+ "fenster_foto": 0,
+ "fenster_raster_annahme": 55,
+ "dach_dom1": {
+  "n_pixel": 166,
+  "median_laser_minus_modell_m": -0.04,
+  "p10_m": -1.54,
+  "p90_m": 1.21,
+  "first_modell_m": 17.25,
+  "first_laser_m": 18.5,
+  "traufen": [
+   {
+    "wand": "w00",
+    "seite": "+y",
+    "laenge_m": 3.5,
+    "traufe_modell_m": 16.4,
+    "traufe_laser_m": 16.58,
+    "median_laser_minus_modell_m": 0.18
+   },
+   {
+    "wand": "w05",
+    "seite": "+y",
+    "laenge_m": 3.5,
+    "traufe_modell_m": 16.4,
+    "traufe_laser_m": 16.58,
+    "median_laser_minus_modell_m": 0.18
+   },
+   {
+    "wand": "w06",
+    "seite": "+x",
+    "laenge_m": 5.3,
+    "traufe_modell_m": 15.33,
+    "traufe_laser_m": 16.73,
+    "median_laser_minus_modell_m": 1.39
+   },
+   {
+    "wand": "w07",
+    "seite": "-y",
+    "laenge_m": 4.0,
+    "traufe_modell_m": 11.48,
+    "traufe_laser_m": 12.53,
+    "median_laser_minus_modell_m": 1.06
+   },
+   {
+    "wand": "w14",
+    "seite": "-y",
+    "laenge_m": 14.6,
+    "traufe_modell_m": 14.95,
+    "traufe_laser_m": 13.06,
+    "median_laser_minus_modell_m": -1.99
+   },
+   {
+    "wand": "w15",
+    "seite": "-x",
+    "laenge_m": 11.6,
+    "traufe_modell_m": 13.81,
+    "traufe_laser_m": 12.82,
+    "median_laser_minus_modell_m": -1.0
+   }
+  ],
+  "traufe_widerspruch": [
+   "w06",
+   "w07",
+   "w14"
+  ]
+ },
+ "dach_widerspruch": false,
+ "dach_modus": "lod2",
+ "pruefung": {
+  "wasserdicht": true,
+  "koerper": 1,
+  "hoehe_m": 17.44,
+  "masse_mm": [
+   229.7,
+   164.5,
+   200.4
+  ],
+  "dreiecke": 3892
+ },
+ "wand_mm": 1.2,
+ "raster_annahme": {
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6
+ },
+ "sekunden_bauen": 1.7,
+ "druck": {
+  "stl": "/media/oem/scan/rc-park_stl/hg_tvac/hg_tvac_1-87_druck.stl",
+  "rc": 0,
+  "ausgabe": [
+   "Rippen: 247 Scheiben, +10.7 cm3 (5 % mehr Material); Abstand 60, Dicke 0.9, Tiefe 6 mm (ANNAHME)",
+   "  Innenkante ohne Rippe (rund/kurz) im Mittel je Scheibe: 4.4 mm",
+   "Volumen vorher 225.2 cm3 -> nachher 235.8 cm3; 1 Koerper (vorher 1); wasserdicht: ja; 49084 Dreiecke -> /media/oem/scan/rc-park_stl/hg_tvac/hg_tvac_1-87_druck.stl",
+   "Bild (ansehen): /home/oem/git/rc-park/modelle/hg_tvac/audit/rippen.png"
+  ]
+ },
+ "hoehe_gegen_dom1": {
+  "rc": 0,
+  "ausgabe": [
+   "HOEHEN-TOR: 76 Flaechenpixel (Laser 14.0-17.3 m): Modell - Laser Median -0.19 m (MAD 0.14) beim Lageversatz des Modells (+0.25, +0.75) m; ohne Versatz -0.05; Massstab k 1.0115  -> bestanden"
+  ]
+ },
+ "sichtblatt": [
+  "/home/oem/git/rc-park/modelle/hg_tvac/audit/ansicht_suedwest.jpg"
+ ],
+ "zeiten_s": {
+  "anlegen": 0.4,
+  "rumpf": 2.2,
+  "fotos": 8.5,
+  "bauen": 0.6,
+  "druck": 2.5,
+  "pruefen": 0.7
+ },
+ "gesamt_s": 14.9
+}

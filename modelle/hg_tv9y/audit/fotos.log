@@ -1,0 +1,82 @@
++ /media/oem/scan/venv-seg/bin/python -W ignore -I tools/fassade_ortho.py /home/oem/git/rc-park/modelle/hg_tv9y/objekt.json --stl /media/oem/scan/rc-park_stl/hg_tv9y/hg_tv9y_1-87.stl --aus /media/oem/scan/rc-park_daten/hg_tv9y/fassade --einzeln --min-flaeche 6 --gpu-mb 1500
+113 Messkameras (kein buendel_tor im Objekt: alle eigenen/Commons/online + nachgezogene Fremdfotos)
+Zellrechnung: GPU (163 Foto-Fassaden-Paare GPU, 0 CPU, 37 Mio. Sichtstrahlen, GPU-Rechenzeit 1.0 s, GPU-Speicher Spitze 436 MiB)
+Zeiten (s): laden_raster 0.1, relief 2.7, kamerawahl 0.4, fotos 2.5, verschmelzen_schreiben 0.7
+7 Fassaden, 113 Fotos, 6 s
+  f00:  188.5 m2, n=(-0.00,-1.00),  2 Fotos, Abdeckung 1%, Median 2 Fotos/Zelle
+  f01:  160.9 m2, n=(+0.08,+1.00), 33 Fotos, Abdeckung 3%, Median 19 Fotos/Zelle
+  f02:  145.7 m2, n=(-1.00,+0.08), 37 Fotos, Abdeckung 89%, Median 18 Fotos/Zelle
+  f03:   77.6 m2, n=(+1.00,-0.07),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f04:   63.8 m2, n=(-0.04,+1.00),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f05:   13.8 m2, n=(-0.30,+0.95),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f06:    9.1 m2, n=(+0.10,-1.00),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
++ /media/oem/scan/venv-seg/bin/python -W ignore -I -c import sys; sys.path.insert(0, 'tools'); import torch; torch.cuda.is_available() and torch.cuda.set_per_process_memory_fraction(0.281); import fassade_parsing as FP; FP.batch_groesse = lambda *a, **k: 2; FP.main(['--ortho', '/media/oem/scan/rc-park_daten/hg_tv9y/fassade', '--gpu'])
+Loading weights:   0%|          | 0/418 [00:00<?, ?it/s]Loading weights: 100%|██████████| 418/418 [00:00<00:00, 12554.56it/s]
+  f00: uebersprungen (370 px < 96 oder 2 Fotos < 3; 188.5 m2)
+  f01 Foto eigen__043_Freiburg_2009_IMG_4353: 0 Kaesten, 1 Kacheln (4 s)
+  f01 Foto eigen__IMG_6261: 0 Kaesten, 1 Kacheln (4 s)
+  f01 Foto eigen__IMG_6164: 0 Kaesten, 1 Kacheln (4 s)
+  f01 Foto eigen__020_M_nsterplatz_Freiburg_jm3065: 0 Kaesten, 1 Kacheln (4 s)
+  f01 Foto eigen__IMG_20261108_111553: 0 Kaesten, 1 Kacheln (4 s)
+  f01 Foto eigen__032_20180423_11_Freiburg_-_M_nsterplatz_39894412760_: 0 Kaesten, 1 Kacheln (4 s)
+  f01 Foto eigen__093_Einfahrt_der_Oldtimer_der_Schauinsland-Klassik_auf_dem_Freib: 0 Kaesten, 1 Kacheln (4 s)
+  f01 Foto eigen__013_M_nsterplatz_24_Freiburg_03: 0 Kaesten, 1 Kacheln (5 s)
+  f01 Foto eigen__IMG_20261108_111551: 0 Kaesten, 1 Kacheln (5 s)
+  f01 Foto eigen__handy_01: 0 Kaesten, 1 Kacheln (5 s)
+f01: {'fenster': 0, 'tuer': 0, 'bogen': 0, 'figur': 0, 'gaube': 0, 'balkon': 0}
+  f02 Foto eigen__039_Freiburg_im_Sommer_2013_9878817246_: 29 Kaesten, 1 Kacheln (5 s)
+  f02 Foto eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022: 28 Kaesten, 1 Kacheln (5 s)
+  f02 Foto eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu: 21 Kaesten, 1 Kacheln (5 s)
+  f02 Foto eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H: 29 Kaesten, 1 Kacheln (5 s)
+  f02 Foto eigen__089_Einfahrt_der_Oldtimer_der_Schauinsland-Klassik_auf_dem_Freib: 31 Kaesten, 1 Kacheln (6 s)
+  f02 Foto eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g: 12 Kaesten, 1 Kacheln (6 s)
+  f02 Foto commons__108_Kaufhaus_05_03_06: 36 Kaesten, 1 Kacheln (6 s)
+  f02 Foto eigen__handy_01: 13 Kaesten, 1 Kacheln (6 s)
+  f02 Foto eigen__211_mapillary_293116238982627: 23 Kaesten, 1 Kacheln (6 s)
+  f02 Foto eigen__020_M_nsterplatz_Freiburg_jm3065: 43 Kaesten, 1 Kacheln (6 s)
+f02: {'fenster': 21, 'tuer': 0, 'bogen': 0, 'figur': 0, 'gaube': 2, 'balkon': 2}
++ /media/oem/scan/venv-seg/bin/python -W ignore -I tools/fenster_aus_parsing.py /media/oem/scan/rc-park_daten/hg_tv9y/fassade --aus /home/oem/git/rc-park/modelle/hg_tv9y/audit/fenster_auto.json
+f01: 0 Fenster aus 0 Scheiben (0 Kaesten): 
+f02: 10 Fenster aus 17 Scheiben (25 Kaesten): u -1.36..-0.30 z 3.58..5.15 T0 Spr0; u -4.85..-1.50 z 6.36..8.39 T1 Spr0; u -1.12..0.13 z 6.36..7.79 T0 Spr0; u 0.83..2.53 z 6.36..7.79 T0 Spr0; u 4.02..4.91 z 6.20..7.51 T0 Spr0; u 5.54..6.38 z 6.20..7.51 T0 Spr0; u -5.37..-3.48 z 8.22..10.36 T0 Spr0; u -3.71..-1.59 z 8.91..10.36 T0 Spr0; u -0.99..0.32 z 8.91..10.36 T0 Spr0; u 0.84..2.66 z 8.91..10.36 T0 Spr0
+-> /home/oem/git/rc-park/modelle/hg_tv9y/audit/fenster_auto.json
++ /media/oem/scan/venv-seg/bin/python -W ignore -I tools/fassade_ortho.py /home/oem/git/rc-park/modelle/hg_tv9y/objekt.json --stl /media/oem/scan/rc-park_stl/hg_tv9y/hg_tv9y_1-87.stl --aus /media/oem/scan/rc-park_daten/hg_tv9y/fassade --einzeln --min-flaeche 6 --gpu-mb 1000
+113 Messkameras (kein buendel_tor im Objekt: alle eigenen/Commons/online + nachgezogene Fremdfotos)
+Zellrechnung: GPU (163 Foto-Fassaden-Paare GPU, 0 CPU, 37 Mio. Sichtstrahlen, GPU-Rechenzeit 1.1 s, GPU-Speicher Spitze 436 MiB)
+Zeiten (s): laden_raster 0.2, relief 2.0, kamerawahl 0.4, fotos 3.6, verschmelzen_schreiben 1.6
+7 Fassaden, 113 Fotos, 8 s
+  f00:  188.5 m2, n=(-0.00,-1.00),  2 Fotos, Abdeckung 1%, Median 2 Fotos/Zelle
+  f01:  160.9 m2, n=(+0.08,+1.00), 33 Fotos, Abdeckung 3%, Median 19 Fotos/Zelle
+  f02:  145.7 m2, n=(-1.00,+0.08), 37 Fotos, Abdeckung 89%, Median 18 Fotos/Zelle
+  f03:   77.6 m2, n=(+1.00,-0.07),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f04:   63.8 m2, n=(-0.04,+1.00),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f05:   13.8 m2, n=(-0.30,+0.95),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
+  f06:    9.1 m2, n=(+0.10,-1.00),  0 Fotos, Abdeckung 0%, Median 0 Fotos/Zelle
++ /media/oem/scan/venv-seg/bin/python -W ignore -I -c import sys; sys.path.insert(0, 'tools'); import torch; torch.cuda.is_available() and torch.cuda.set_per_process_memory_fraction(0.159); import fassade_parsing as FP; FP.batch_groesse = lambda *a, **k: 1; FP.main(['--ortho', '/media/oem/scan/rc-park_daten/hg_tv9y/fassade', '--gpu'])
+Loading weights:   0%|          | 0/418 [00:00<?, ?it/s]Loading weights:  75%|███████▌  | 315/418 [00:00<00:00, 3148.63it/s]Loading weights: 100%|██████████| 418/418 [00:00<00:00, 3237.55it/s]
+  f00: uebersprungen (370 px < 96 oder 2 Fotos < 3; 188.5 m2)
+  f01 Foto eigen__043_Freiburg_2009_IMG_4353: 0 Kaesten, 1 Kacheln (8 s)
+  f01 Foto eigen__IMG_6261: 0 Kaesten, 1 Kacheln (8 s)
+  f01 Foto eigen__IMG_6164: 0 Kaesten, 1 Kacheln (8 s)
+  f01 Foto eigen__020_M_nsterplatz_Freiburg_jm3065: 0 Kaesten, 1 Kacheln (9 s)
+  f01 Foto eigen__IMG_20261108_111553: 0 Kaesten, 1 Kacheln (9 s)
+  f01 Foto eigen__032_20180423_11_Freiburg_-_M_nsterplatz_39894412760_: 0 Kaesten, 1 Kacheln (9 s)
+  f01 Foto eigen__093_Einfahrt_der_Oldtimer_der_Schauinsland-Klassik_auf_dem_Freib: 0 Kaesten, 1 Kacheln (9 s)
+  f01 Foto eigen__013_M_nsterplatz_24_Freiburg_03: 0 Kaesten, 1 Kacheln (9 s)
+  f01 Foto eigen__IMG_20261108_111551: 0 Kaesten, 1 Kacheln (10 s)
+  f01 Foto eigen__handy_01: 0 Kaesten, 1 Kacheln (10 s)
+f01: {'fenster': 0, 'tuer': 0, 'bogen': 0, 'figur': 0, 'gaube': 0, 'balkon': 0}
+  f02 Foto eigen__039_Freiburg_im_Sommer_2013_9878817246_: 27 Kaesten, 1 Kacheln (10 s)
+  f02 Foto eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022: 28 Kaesten, 1 Kacheln (10 s)
+  f02 Foto eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu: 23 Kaesten, 1 Kacheln (10 s)
+  f02 Foto eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H: 29 Kaesten, 1 Kacheln (10 s)
+  f02 Foto eigen__089_Einfahrt_der_Oldtimer_der_Schauinsland-Klassik_auf_dem_Freib: 29 Kaesten, 1 Kacheln (11 s)
+  f02 Foto eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g: 12 Kaesten, 1 Kacheln (11 s)
+  f02 Foto commons__108_Kaufhaus_05_03_06: 32 Kaesten, 1 Kacheln (11 s)
+  f02 Foto eigen__handy_01: 13 Kaesten, 1 Kacheln (11 s)
+  f02 Foto eigen__211_mapillary_293116238982627: 20 Kaesten, 1 Kacheln (11 s)
+  f02 Foto eigen__020_M_nsterplatz_Freiburg_jm3065: 44 Kaesten, 1 Kacheln (11 s)
+f02: {'fenster': 18, 'tuer': 0, 'bogen': 0, 'figur': 0, 'gaube': 2, 'balkon': 3}
++ /media/oem/scan/venv-seg/bin/python -W ignore -I tools/fenster_aus_parsing.py /media/oem/scan/rc-park_daten/hg_tv9y/fassade --aus /home/oem/git/rc-park/modelle/hg_tv9y/audit/fenster_auto.json
+f01: 0 Fenster aus 0 Scheiben (0 Kaesten): 
+f02: 13 Fenster aus 13 Scheiben (23 Kaesten): u -5.15..-3.59 z 3.58..5.15 T0 Spr0; u -2.89..-1.68 z 3.58..5.15 T0 Spr0; u -1.01..0.06 z 3.58..5.15 T0 Spr0; u -4.98..-3.76 z 6.35..7.78 T0 Spr0; u -2.90..-1.67 z 6.35..7.78 T0 Spr0; u -1.11..0.16 z 6.35..7.78 T0 Spr0; u 0.86..2.57 z 6.35..7.78 T0 Spr0; u 5.36..6.38 z 6.35..7.78 T0 Spr0; u -5.32..-3.42 z 8.92..10.35 T0 Spr0; u -2.88..-1.69 z 8.92..10.35 T0 Spr0; u -1.12..0.17 z 8.92..10.35 T0 Spr0; u 0.81..2.62 z 8.92..10.35 T0 Spr0; u 5.36..6.38 z 8.92..10.35 T0 Spr0
+-> /home/oem/git/rc-park/modelle/hg_tv9y/audit/fenster_auto.json

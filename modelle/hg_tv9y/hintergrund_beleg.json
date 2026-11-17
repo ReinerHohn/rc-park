@@ -1,0 +1,260 @@
+{
+ "reifegrad": 1,
+ "kennzeichnung": "HINTERGRUND, Reifegrad 1: LoD2-Koerper + Fotofenster/Raster-ANNAHME, ohne Kantenstufe/Foto-F1 - nie als passend melden",
+ "lod2": "DEBW_0010007Tv9y",
+ "stl": "/media/oem/scan/rc-park_stl/hg_tv9y/hg_tv9y_1-87.stl",
+ "seiten": [
+  {
+   "wand": "w00",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 6.56,
+   "hoehe_m": 8.72,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 13.7 m) - geschlossen"
+  },
+  {
+   "wand": "w01",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 6.1,
+   "hoehe_m": 5.11,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 11.5 m) - geschlossen"
+  },
+  {
+   "wand": "w02",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 2.56,
+   "hoehe_m": 5.11,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 6.6 m) - geschlossen"
+  },
+  {
+   "wand": "w03",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 1.69,
+   "hoehe_m": 5.11,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 6.7 m) - geschlossen"
+  },
+  {
+   "wand": "w04",
+   "seite": "-y",
+   "seite_name": "West",
+   "laenge_m": 3.57,
+   "hoehe_m": 5.11,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 10.9 m) - geschlossen"
+  },
+  {
+   "wand": "w05",
+   "seite": "-y",
+   "seite_name": "West",
+   "laenge_m": 2.98,
+   "hoehe_m": 5.11,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 10.7 m) - geschlossen"
+  },
+  {
+   "wand": "w06",
+   "seite": "-y",
+   "seite_name": "West",
+   "laenge_m": 10.96,
+   "hoehe_m": 5.11,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 10.9 m) - geschlossen"
+  },
+  {
+   "wand": "w07",
+   "seite": "-x",
+   "seite_name": "Nord",
+   "laenge_m": 6.91,
+   "hoehe_m": 5.11,
+   "quelle": "FOTO: Fenster aus fassade_parsing (f02: 13)"
+  },
+  {
+   "wand": "w08",
+   "seite": "-x",
+   "seite_name": "Nord",
+   "laenge_m": 4.9,
+   "hoehe_m": 5.11,
+   "quelle": "FOTO: Fenster aus fassade_parsing (f02: 13)"
+  },
+  {
+   "wand": "w09",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 10.89,
+   "hoehe_m": 5.11,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 14.6 m) - geschlossen"
+  },
+  {
+   "wand": "w10",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 6.1,
+   "hoehe_m": 5.3,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 11.5 m) - geschlossen"
+  },
+  {
+   "wand": "w11",
+   "seite": "+x",
+   "seite_name": "Sued",
+   "laenge_m": 2.56,
+   "hoehe_m": 5.3,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 6.6 m) - geschlossen"
+  },
+  {
+   "wand": "w12",
+   "seite": "-y",
+   "seite_name": "West",
+   "laenge_m": 3.57,
+   "hoehe_m": 9.07,
+   "quelle": "BRANDWAND (LoD2-Nachbar davor bis z 10.9 m) - geschlossen"
+  },
+  {
+   "wand": "w13",
+   "seite": "-y",
+   "seite_name": "West",
+   "laenge_m": 2.98,
+   "hoehe_m": 12.01,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  },
+  {
+   "wand": "w14",
+   "seite": "-y",
+   "seite_name": "West",
+   "laenge_m": 10.96,
+   "hoehe_m": 17.5,
+   "quelle": "ANNAHME: Fensterraster 1 Fenster (Achse 2.4 m, 1.0 x 1.4 m, Geschoss 3.0 m, EG-Bruestung 1.0 m) - kein Foto dieser Wand; Brandwand bis 10.9 m ausgespart"
+  },
+  {
+   "wand": "w15",
+   "seite": "+y",
+   "seite_name": "Ost",
+   "laenge_m": 10.89,
+   "hoehe_m": 17.5,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  },
+  {
+   "wand": "w16",
+   "seite": "-x",
+   "seite_name": "Nord",
+   "laenge_m": 6.91,
+   "hoehe_m": 11.42,
+   "quelle": "FOTO: Fenster aus fassade_parsing (f02: 13)"
+  },
+  {
+   "wand": "w17",
+   "seite": "-x",
+   "seite_name": "Nord",
+   "laenge_m": 4.9,
+   "hoehe_m": 11.32,
+   "quelle": "FOTO: Fenster aus fassade_parsing (f02: 13)"
+  },
+  {
+   "wand": "w18",
+   "seite": "-y",
+   "seite_name": "West",
+   "laenge_m": 4.28,
+   "hoehe_m": 12.93,
+   "quelle": "kein Foto; Wandflaeche zu klein/zu niedrig fuer das Raster (oder nur ueber dem Nachbarn) - geschlossen"
+  }
+ ],
+ "fenster_foto": 13,
+ "fenster_raster_annahme": 1,
+ "dach_dom1": {
+  "n_pixel": 175,
+  "median_laser_minus_modell_m": 0.02,
+  "p10_m": -5.31,
+  "p90_m": 0.77,
+  "first_modell_m": 17.5,
+  "first_laser_m": 17.45,
+  "traufen": [
+   {
+    "wand": "w07",
+    "seite": "-x",
+    "laenge_m": 6.9,
+    "traufe_modell_m": 12.07,
+    "traufe_laser_m": 13.09,
+    "median_laser_minus_modell_m": 1.06
+   },
+   {
+    "wand": "w08",
+    "seite": "-x",
+    "laenge_m": 4.9,
+    "traufe_modell_m": 12.06,
+    "traufe_laser_m": 12.2,
+    "median_laser_minus_modell_m": 0.14
+   },
+   {
+    "wand": "w16",
+    "seite": "-x",
+    "laenge_m": 6.9,
+    "traufe_modell_m": 12.07,
+    "traufe_laser_m": 13.09,
+    "median_laser_minus_modell_m": 1.06
+   },
+   {
+    "wand": "w17",
+    "seite": "-x",
+    "laenge_m": 4.9,
+    "traufe_modell_m": 12.06,
+    "traufe_laser_m": 12.2,
+    "median_laser_minus_modell_m": 0.14
+   }
+  ],
+  "traufe_widerspruch": [
+   "w07",
+   "w16"
+  ]
+ },
+ "dach_widerspruch": false,
+ "dach_modus": "lod2",
+ "pruefung": {
+  "wasserdicht": true,
+  "koerper": 1,
+  "hoehe_m": 18.51,
+  "masse_mm": [
+   223.6,
+   136.6,
+   212.8
+  ],
+  "dreiecke": 876
+ },
+ "wand_mm": 1.2,
+ "raster_annahme": {
+  "achse_m": 2.4,
+  "breite_m": 1.0,
+  "hoehe_m": 1.4,
+  "geschoss_m": 3.0,
+  "bruestung_eg_m": 1.0,
+  "rand_m": 0.6
+ },
+ "sekunden_bauen": 0.1,
+ "druck": {
+  "stl": "/media/oem/scan/rc-park_stl/hg_tv9y/hg_tv9y_1-87_druck.stl",
+  "rc": 0,
+  "ausgabe": [
+   "Rippen: 241 Scheiben, +8.5 cm3 (5 % mehr Material); Abstand 60, Dicke 0.9, Tiefe 6 mm (ANNAHME)",
+   "  Innenkante ohne Rippe (rund/kurz) im Mittel je Scheibe: 7.5 mm",
+   "Volumen vorher 156.0 cm3 -> nachher 164.6 cm3; 1 Koerper (vorher 1); wasserdicht: ja; 43458 Dreiecke -> /media/oem/scan/rc-park_stl/hg_tv9y/hg_tv9y_1-87_druck.stl",
+   "Bild (ansehen): /home/oem/git/rc-park/modelle/hg_tv9y/audit/rippen.png"
+  ]
+ },
+ "hoehe_gegen_dom1": {
+  "rc": 0,
+  "ausgabe": [
+   "HOEHEN-TOR: 65 Flaechenpixel (Laser 13.3-16.5 m): Modell - Laser Median -0.02 m (MAD 0.03) beim Lageversatz des Modells (+0.00, -0.50) m; ohne Versatz -0.02; Massstab k 1.0013  -> bestanden"
+  ]
+ },
+ "sichtblatt": [
+  "/home/oem/git/rc-park/modelle/hg_tv9y/audit/neben_eigen__039_Freiburg_im_Sommer_2013_9878817246_.jpg",
+  "/home/oem/git/rc-park/modelle/hg_tv9y/audit/kontext_eigen__039_Freiburg_im_Sommer_2013_9878817246_.jpg"
+ ],
+ "zeiten_s": {
+  "anlegen": 0.5,
+  "rumpf": 0.6,
+  "fotos": 24.1,
+  "bauen": 0.2,
+  "druck": 2.0,
+  "pruefen": 12.3
+ },
+ "gesamt_s": 39.7
+}
