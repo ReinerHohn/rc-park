@@ -477,3 +477,19 @@ Neue generische Funktionen (keine Objektnamen, alle Masse als Parameter; Werte u
 - `erker_polygon(achse, front_n, apothem, zonen, konsole, fenster, felder, helm, knauf, stange, wirt=)`: n-eckiger Erker (Zonen-Prismen, Pyramidenkonsole, Lichter- und Feldnischen je Flaeche, geschweifter Helm aus Stumpfstuecken, Knauf, Stange). Achse = trianguliertes Helmknauf, Flaechenabstand durch Projektion des n-Ecks in >= 3 Fotos. `wirt`: Flaechen, die in der Wand stecken, bekommen keine Nischen (sonst Null-Volumen-Splitter).
 - Reihenfolge im Generator: Rumpfschnitt (Giebelebenen) und Laube VOR `aushoehlen`; massive Anbauten (Giebel, Gauben, Erker) NACH `aushoehlen` - beim Hohlmachen der Gauben entstanden sonst 10 Null-Volumen-Teilnetze.
 - Vorlage `tools/objekt_anlegen.py`: Fenster vor Relief + `fenster_fuer_bau` (wie im Kaufhaus-Generator).
+
+## Feinrelief aus Einzelfotos per monokularer Tiefe (`tools/relief_aus_fotos_mono.py`) - VERSUCH 17.11.2026
+Anlass: Druck Steinplatte Tor Sued (Brei-Zone rechts neben dem Tor, Bogen ohne Bogensteine). Modell: Depth Anything V2 SMALL (Apache-2.0); DSINE ist NC, MoGe-2 (MIT) waere der Normalen-Kandidat.
+Ablauf: 1-cm-Raster auf der Ebene des Eingangsreliefs -> je Foto entzerrt (Kameras, Sichtbarkeit gegen STL) -> Tiefenmodell KACHELWEISE (1,5 m; ganzes Feld in einem Lauf sieht nur das Tor:
+Korrelation 0,04) -> Hochpass je Kachel -> Massstab je Foto = Streuung des Scan-Bandpasses 2-60 cm -> LAGE vom Scan: Modell-Taeler liegen 4-6 cm UNTER den Scan-Fugen
+(Schattenfuge), Versatz je Foto gemessen und zurueckgeschoben -> Fotos vereinen (Rand-Auslauf 20 cm, Kappung Median +-1,5 Streuungen, duenne erhabene Grate < 5 cm weg = Draehte)
+-> Relief = Tiefpass Scan (> 60 cm) + Hochpass Fotos. Putz und Scan-Loecher bleiben Scan. `--ohne` fuer Fremdkoerper (Verkehrsschild).
+Aufruf (so gelaufen): Sued `relief/sued_eben.npz objekt.json relief/sued_mono.npz --feld 0.1 11.4 0.0 9.9 --stl modelle/stl/schwab_v3_1-87.stl --n 6`;
+Nord `relief/nord_eben.npz ... relief/nord_mono.npz --feld 0.1 12.0 0.0 10.4 --n 5 --abstand 0 --massstab 0.933 -2.15 15.28 0 --ohne 9.7 11.1 1.9 3.6 --polaritaet hell`.
+GPU: JOB_GPU_MB=3500 (fp16; Grenze ist das Sichtbarkeitsraster des 2,5-Mio-Dreieck-STL). 2-4 min je Wand.
+Ergebnis: Brei-Zone Sued zeigt die Steintafel mit Gesims und Wappen und die Steine darum; Nord zeigt die Keilsteine des Spitzbogens und die Figur. Fugenabgleich gegen ein Holdout-Foto
+(F1, 2 cm Toleranz, Zufall = 13/9 cm verschoben): Sued Feld Scan 0,34 (Zufall 0,28) / neu 0,40 (0,28); Brei-Zone 0,37 (0,32) / 0,43 (0,30). Nord nicht auswertbar (Holdout liegt schief: Scan unter Zufall).
+Grenzen: Standorte streuen (`--abstand`) bringt nur etwas mit >= 5 Fotos, sonst Naehte; eine Oberleitung bleibt als feiner Grat; Fugentiefe = Scan-Massstab (ANNAHME, nicht gemessen);
+Tiefenmodell erfindet Relief aus Farbe (Wandbild im Putz) - deshalb Putz immer Scan.
+Integration (Vorschlag, nicht gebaut): im Generator wie `sued_misch.npz`: `relief_koerper("relief/<wand>_mono.npz", tiefe=0.30, trend=True, rand_auslauf=False)`, grobes Relief mit dem Feld als `tief_felder`;
+in `fassaden_kette.py` als Stufe nach `relief_putz.py` (Eingang `<wand>_eben.npz`/`_voll.npz`, Feld = Wandausschnitt bis 10 m Hoehe), Tor: Korrelation je Foto >= 0,2.

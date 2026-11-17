@@ -48,6 +48,7 @@ Ergebnisse daraus sind "nur Test" und nicht Teil des Verkaufsprodukts.
 | 2026-11-01 | **ALIKED** (Extraktor, Gewichte `aliked-n16.pth` von `github.com/Shiaoming/ALIKED`) | **BSD-3-Clause** (geprüft: Quellkopf `lightglue/aliked.py` + README) | wie oben | ✓ erlaubt (Namensnennung/Lizenztext beilegen) |
 | 2026-11-01 | DISK (Extraktor, in LightGlue enthalten, nicht benutzt) | Apache-2.0 (README, Treffer) | Alternative zu ALIKED | ✓ |
 | 2026-11-01 | **SuperPoint** (in LightGlue enthalten) | **restriktiv (Magic Leap, nicht kommerziell)** laut README | **bewusst NICHT benutzt** - in `tools/lg_match.py` nicht waehlbar | ⚠ nein |
+| 2026-11-17 | **Depth Anything V2 Small** (`depth-anything/Depth-Anything-V2-Small-hf`, Cache `/media/oem/scan/hf_depth`, ueber transformers) | **Apache-2.0** (geprueft: HF-API cardData.license) | `tools/relief_aus_fotos_mono.py`: Feinrelief (Steine, Fugen) aus entzerrten Fassadenfotos, Massstab/Lage vom Scan | ✓ erlaubt. Dabei geprueft und NICHT benutzt: DSINE (Imperial-Lizenz, nur Forschung, LICENSE gelesen) ⚠; Marigold-Normals v1-1 (openrail++, HF-API) ?; StableNormal v0-1 (Apache-2.0 laut HF-API, baut aber auf SD2/openrail++) ?; MoGe-2 vitl-normal (MIT laut HF-API und LICENSE; Installation aus git in dieser Sitzung nicht erlaubt worden) ✓ Kandidat |
 | 2026-11-01 | kornia, kornia-rs, opencv-python, matplotlib (LightGlue-Abhaengigkeiten) | Apache-2.0 / Apache-2.0 / Apache-2.0 / PSF-basiert (ungeprüft) | Laufzeit | ✓ |
 
 ## Recherche 2026-11-01: Werkzeuge fuer "Foto -> parametrisches Modell" (vor Benutzung selbst nachlesen)

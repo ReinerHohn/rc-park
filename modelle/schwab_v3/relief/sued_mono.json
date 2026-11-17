@@ -1,0 +1,162 @@
+{
+ "relief": "modelle/schwab_v3/relief/sued_eben.npz",
+ "feld": [
+  0.1,
+  11.4,
+  0.0,
+  9.9
+ ],
+ "trenn_m": 0.6,
+ "fotos": [
+  {
+   "foto": "eigen__IMG_20261106_113851",
+   "cm_je_px": 0.42,
+   "sichtbar": 0.981,
+   "massstab": 0.03755978953195402,
+   "korrelation_band_scan": 0.446,
+   "bester_versatz_cm": {
+    "nach_unten": -6,
+    "nach_rechts": 0,
+    "korrelation": 0.576
+   },
+   "sekunden": 19.7
+  },
+  {
+   "foto": "eigen__IMG_20261106_113849",
+   "cm_je_px": 0.43,
+   "sichtbar": 0.968,
+   "massstab": 0.03667556885116835,
+   "korrelation_band_scan": 0.486,
+   "bester_versatz_cm": {
+    "nach_unten": -5,
+    "nach_rechts": 1,
+    "korrelation": 0.581
+   },
+   "sekunden": 15.7
+  },
+  {
+   "foto": "eigen__IMG_20261106_113830",
+   "cm_je_px": 0.47,
+   "sichtbar": 1.0,
+   "massstab": 0.04076836556395706,
+   "korrelation_band_scan": 0.421,
+   "bester_versatz_cm": {
+    "nach_unten": -6,
+    "nach_rechts": 2,
+    "korrelation": 0.529
+   },
+   "sekunden": 9.4
+  },
+  {
+   "foto": "eigen__IMG_20261106_113939",
+   "cm_je_px": 0.31,
+   "sichtbar": 0.736,
+   "massstab": 0.0936707542456592,
+   "korrelation_band_scan": 0.258,
+   "bester_versatz_cm": {
+    "nach_unten": -2,
+    "nach_rechts": 3,
+    "korrelation": 0.268
+   },
+   "sekunden": 14.2
+  },
+  {
+   "foto": "eigen__IMG_20261106_113930",
+   "cm_je_px": 0.46,
+   "sichtbar": 0.737,
+   "massstab": 0.04500947337576244,
+   "korrelation_band_scan": 0.393,
+   "bester_versatz_cm": {
+    "nach_unten": -6,
+    "nach_rechts": -4,
+    "korrelation": 0.538
+   },
+   "sekunden": 15.3
+  }
+ ],
+ "holdout": "eigen__IMG_20261106_113836",
+ "fugenabgleich": {
+  "feld": {
+   "zellen": 517694,
+   "scan": {
+    "praezision": 0.37312471830532484,
+    "trefferquote": 0.31382396497327925,
+    "f1": 0.34091477683384636,
+    "f1_zufall": 0.2786534314982135
+   },
+   "neu": {
+    "praezision": 0.42611551091365657,
+    "trefferquote": 0.36898783079003283,
+    "f1": 0.3954993767253264,
+    "f1_zufall": 0.27742677275277133
+   },
+   "scan_bester_versatz": [
+    0.3660964287306552,
+    2,
+    4
+   ],
+   "neu_bester_versatz": [
+    0.4474972406282985,
+    4,
+    0
+   ]
+  },
+  "zone0": {
+   "zellen": 40479,
+   "scan": {
+    "praezision": 0.3777274598600247,
+    "trefferquote": 0.35405516673528203,
+    "f1": 0.3655084281064656,
+    "f1_zufall": 0.31964453233078316
+   },
+   "neu": {
+    "praezision": 0.4645944833264718,
+    "trefferquote": 0.4061342116097159,
+    "f1": 0.4334018513489971,
+    "f1_zufall": 0.29930397556831156
+   },
+   "scan_bester_versatz": [
+    0.40753189626025427,
+    2,
+    -8
+   ],
+   "neu_bester_versatz": [
+    0.4858483896239706,
+    2,
+    -4
+   ]
+  },
+  "zone1": {
+   "zellen": 110100,
+   "scan": {
+    "praezision": 0.3946412352406903,
+    "trefferquote": 0.31759006963366637,
+    "f1": 0.35194784762379094,
+    "f1_zufall": 0.2765439321062181
+   },
+   "neu": {
+    "praezision": 0.44656372994247656,
+    "trefferquote": 0.3870723584620042,
+    "f1": 0.41469528144649087,
+    "f1_zufall": 0.31094999678454077
+   },
+   "scan_bester_versatz": [
+    0.36378936018301306,
+    2,
+    4
+   ],
+   "neu_bester_versatz": [
+    0.46003621966408975,
+    2,
+    -2
+   ]
+  }
+ },
+ "foto_anteil": 0.6392446589791723,
+ "hub_p5_p95_scan": 0.14601778164505952,
+ "hub_p5_p95_neu": 0.15266666044004307,
+ "sekunden_gesamt": 228.2,
+ "sekunden_laden": 8.4,
+ "modell": "Depth-Anything-V2-Small-hf (Apache-2.0)",
+ "hinweis": "Hochpass-Feinform aus monokularer Tiefe, Massstab am Scan-Bandpass verankert; Fugentiefe daher Scan-Massstab, nicht gemessen = ANNAHME"
+}

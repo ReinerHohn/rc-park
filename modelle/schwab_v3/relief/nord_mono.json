@@ -1,0 +1,113 @@
+{
+ "relief": "modelle/schwab_v3/relief/nord_eben.npz",
+ "feld": [
+  0.1,
+  12.0,
+  0.0,
+  10.4
+ ],
+ "trenn_m": 0.6,
+ "fotos": [
+  {
+   "foto": "eigen__IMG_20261106_113608",
+   "cm_je_px": 0.38,
+   "sichtbar": 0.864,
+   "massstab": 0.03928840058978745,
+   "korrelation_band_scan": 0.447,
+   "bester_versatz_cm": {
+    "nach_unten": -6,
+    "nach_rechts": 1,
+    "korrelation": 0.585
+   },
+   "sekunden": 14.8
+  },
+  {
+   "foto": "eigen__IMG_20261106_113602",
+   "cm_je_px": 0.39,
+   "sichtbar": 0.784,
+   "massstab": 0.041123093946556485,
+   "korrelation_band_scan": 0.547,
+   "bester_versatz_cm": {
+    "nach_unten": -6,
+    "nach_rechts": -1,
+    "korrelation": 0.665
+   },
+   "sekunden": 13.6
+  },
+  {
+   "foto": "eigen__IMG_20261106_113604",
+   "cm_je_px": 0.39,
+   "sichtbar": 0.692,
+   "massstab": 0.0371373709885974,
+   "korrelation_band_scan": 0.574,
+   "bester_versatz_cm": {
+    "nach_unten": -6,
+    "nach_rechts": 0,
+    "korrelation": 0.7
+   },
+   "sekunden": 14.3
+  },
+  {
+   "foto": "eigen__IMG_20261106_113610",
+   "cm_je_px": 0.39,
+   "sichtbar": 0.654,
+   "massstab": 0.040383025781535756,
+   "korrelation_band_scan": 0.569,
+   "bester_versatz_cm": {
+    "nach_unten": -4,
+    "nach_rechts": 0,
+    "korrelation": 0.646
+   },
+   "sekunden": 13.7
+  },
+  {
+   "foto": "eigen__IMG_20261106_113512",
+   "cm_je_px": 0.23,
+   "sichtbar": 0.62,
+   "massstab": 0.08746575450168714,
+   "korrelation_band_scan": 0.05,
+   "bester_versatz_cm": {
+    "nach_unten": -11,
+    "nach_rechts": 5,
+    "korrelation": 0.121
+   },
+   "sekunden": 14.7,
+   "verworfen": "keine Korrelation mit dem Scan (Modell sieht andere Form)"
+  }
+ ],
+ "holdout": "eigen__IMG_20261106_113438",
+ "fugenabgleich": {
+  "feld": {
+   "zellen": 355977,
+   "scan": {
+    "praezision": 0.29191441546888897,
+    "trefferquote": 0.24795168313123273,
+    "f1": 0.26814304818718865,
+    "f1_zufall": 0.32475506706317664
+   },
+   "neu": {
+    "praezision": 0.30448522870920924,
+    "trefferquote": 0.25780701343695867,
+    "f1": 0.2792086447772291,
+    "f1_zufall": 0.3177561825860785
+   },
+   "scan_bester_versatz": [
+    0.3237255697478781,
+    8,
+    8
+   ],
+   "neu_bester_versatz": [
+    0.3574082973881023,
+    8,
+    6
+   ]
+  }
+ },
+ "foto_anteil": 0.6313461538461539,
+ "hub_p5_p95_scan": 0.16809627413749695,
+ "hub_p5_p95_neu": 0.16604358130070573,
+ "sekunden_gesamt": 136.0,
+ "sekunden_laden": 9.7,
+ "modell": "Depth-Anything-V2-Small-hf (Apache-2.0)",
+ "hinweis": "Hochpass-Feinform aus monokularer Tiefe, Massstab am Scan-Bandpass verankert; Fugentiefe daher Scan-Massstab, nicht gemessen = ANNAHME"
+}
