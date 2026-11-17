@@ -194,6 +194,44 @@ def fein_ausrichten(bilder, masken, zelle, max_m=0.05, fenster_m=0.25, glatt_m=0
     return neu, M, list(zip(FY, FX)), ber
 
 
+def affin_konsens(bilder, masken, zelle, min_cc=0.5, hp_m=0.08, log=print):
+    """Stufe VOR fein_ausrichten (18.11.2026, Kaufhaus Fenster 1/3/5): Kameraposen einzelner Fotos liegen 5-15 cm und mit Mass-/Scherfehlern daneben -
+    die starre Verschiebung + glattes Feld (max 5 cm) holt das nicht, der Median der anderen ist dann selbst ein Geisterbild (NCC 0,3-0,45 fuer ALLE Fotos).
+    Ablauf: Bandpass je Foto; je Paar Phasenkorrelation (Startverschiebung) + ECC affin (cv2.findTransformECC) -> Uebereinstimmung cc[i, j].
+    Bezugsfoto = MEDOID (groesste Summe der zwei besten cc - das Foto, dem mindestens zwei andere zustimmen; nicht das 'beste' nach Pixel je Meter).
+    Behalten: Medoid + Fotos mit cc >= min_cc zum Medoid. Gesamtlage = Mittel der affinen Abbildungen der behaltenen Fotos (keine einzelne Kamera bestimmt die Lage).
+    Rueckgabe (bilder_neu, masken_neu, behalten [Indizes], bericht)."""
+    n = len(bilder); hp = hp_m / zelle
+    G = [bandpass(cv2.cvtColor(b, cv2.COLOR_BGR2GRAY), m, 1.0, hp) for b, m in zip(bilder, masken)]
+    C = np.eye(n); Wp = {}
+    for i in range(n):
+        for j in range(n):
+            if i == j: continue
+            m = (masken[i] & masken[j]).astype(np.float32); H, W = m.shape
+            if m.sum() < 500: continue
+            (sx, sy), _ = cv2.phaseCorrelate((G[i] * m).astype(np.float32), (G[j] * m).astype(np.float32), cv2.createHanningWindow((W, H), cv2.CV_32F))
+            A = np.array([[1, 0, sx], [0, 1, sy]], np.float32)
+            try:
+                cc, A = cv2.findTransformECC(G[i], G[j], A, cv2.MOTION_AFFINE, (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 100, 1e-4),
+                                             (masken[i] & ndi_ero(masken[j], 9)).astype(np.uint8), 5)
+            except cv2.error: cc = 0.0
+            if abs(np.linalg.det(A[:, :2]) - 1) > 0.25: cc = 0.0                # Abbildung entartet
+            C[i, j] = cc; Wp[i, j] = A
+    S = np.sort(np.where(np.eye(n, dtype=bool), -1, C), 1)[:, -2:].sum(1) if n >= 3 else C.sum(1); med = int(np.argmax(S))
+    beh = [med] + [j for j in range(n) if j != med and C[med, j] >= min_cc]
+    M3 = {j: (np.eye(3) if j == med else np.vstack([Wp[med, j], [0, 0, 1]])) for j in beh}
+    Wbar = np.mean([M3[j] for j in beh], 0); Wi = np.linalg.inv(Wbar); neu = []; mneu = []
+    for j in beh:
+        A = (M3[j] @ Wi)[:2].astype(np.float32); sh = bilder[j].shape[1::-1]
+        mj = cv2.warpAffine(masken[j].astype(np.uint8), A, sh, flags=cv2.INTER_NEAREST + cv2.WARP_INVERSE_MAP).astype(bool)
+        neu.append(np.where(mj[..., None], cv2.warpAffine(bilder[j], A, sh, flags=cv2.INTER_CUBIC + cv2.WARP_INVERSE_MAP), 0).astype(np.uint8)); mneu.append(mj)
+    ber = dict(medoid=med, behalten=beh, cc_zum_medoid=[round(float(C[med, j]), 3) for j in range(n)], min_cc=min_cc,
+               verschiebung_cm=[[round(float(v) * zelle * 100, 1) for v in (M3[j] @ Wi)[:2, 2]] for j in beh],
+               massstab=[round(float(np.sqrt(abs(np.linalg.det((M3[j] @ Wi)[:2, :2])))), 3) for j in beh])
+    log(f"  affiner Konsens: Medoid Foto {med}, behalten {beh} (cc zum Medoid {ber['cc_zum_medoid']}), Versatz cm {ber['verschiebung_cm']}", flush=True)
+    return neu, mneu, beh, ber
+
+
 def schaerfe(bilder, masken, zone=None, min_n=3):
     """Gradientenenergie des Median-Wandbilds (Grau, Bandpass-frei: Sobel) in der Zone, wo >= min_n Fotos liegen"""
     T = np.stack([np.where(m, cv2.cvtColor(b, cv2.COLOR_BGR2GRAY).astype(np.float32), np.nan) for b, m in zip(bilder, masken)])

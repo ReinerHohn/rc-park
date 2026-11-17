@@ -1178,6 +1178,18 @@
    "wer": "Claude Runde 3",
    "text": "Erker-Kielbogenkoepfe (0,30), Kaempfer (2/3) und Medaillons r 0,22 nur nach Bildverhaeltnis commons__110 gesetzt, Rippennetz der Konsole generische Bezierform (ANNAHME)",
    "naechster_schritt": "foto_mass.py --tri an commons__110 + eigen__018 + IMG_6127: Kaempferhoehe, Kopfhoehe, Medaillondurchmesser, Rippenpfade (wie grob3 rippen_pfade)"
+  },
+  {
+   "datum": "2026-11-18",
+   "wer": "Agent Rueckwand/Laube",
+   "text": "Render: durch die Obergeschossfenster sieht man in den Hohlraum (diagonale Innenkanten der Aushoehlung, audit Bild A_og_018/A_og_handy06 vorher)",
+   "naechster_schritt": "Regel A: bauteile.rueckwaende (Rueckwand in Leibungstiefe + Kragen zum Hohlraum) nach allen Oeffnungsschnitten; Leibungstiefe am Foto (M-eigen__IMG_6119-001/002, M-eigen__handy_j_04-001/002)"
+  },
+  {
+   "datum": "2026-11-18",
+   "wer": "Agent Rueckwand/Laube",
+   "text": "Laubenrueckwand (hinter den Boegen, EG Marktseite) kahl; Fotos (eigen 018, IMG_6120) und Handmodell grob3 zeigen Tor, Tuer und Fenster",
+   "naechster_schritt": "innere Wand als eigene Fassade (fassade_ortho --wand_versetzt) -> Wandbild fassade_fein --fein_ausrichten 1 -> Oeffnungen aus dem Wandbild; Zahl am Foto (foto_zaehlung)"
   }
  ]
 }

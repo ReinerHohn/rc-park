@@ -162,6 +162,70 @@
  },
  {
   "seite": "wand",
+  "element": "Wand i00: 5 Oeffnungen aus dem Wandbild (fenster 0.06 m tief, fenster 0.10 m tief, fenster 0.06 m tief, tuer 0.39 m tief, tuer 0.52 m tief)",
+  "quelle": "tools/oeffnungen_wandbild.py: Zone OWLv2, Umriss aus dem feinen Wandbild (Helligkeit + Farbabstand zur Wand), Tiefe Parallaxen-Sweep der Einzelfoto-Orthos; oeffnungen_innen.json",
+  "hinweis": "fenster u -17.68..-16.40: gemessen (Parallaxe, NCC 0.32); fenster u -13.65..-12.29: gemessen (Parallaxe, NCC 0.22); fenster u -4.02..-2.71: ANNAHME: wie fenster u -17.68..-16.40 (eigene Messung 0.1, NCC 0.13 zu schwach); tuer u -11.32..-10.30: Ersatzquelle: Tuerblatt grob3 M-6207-001 (0,508 m hinter der Wandfront im grob3-Rahmen) x 0,767 (Aehnlichkeit grob3 -> gk, sim_g3_gk.json) (eigene Messung 0.14, NCC 0.16 zu schwach); tuer u -9.86..-5.94: gemessen (Parallaxe, NCC 0.30); Stege 5 cm vor dem Grund = ANNAHME",
+  "oeffnungen": [
+   {
+    "klasse": "fenster",
+    "zone": [
+     -17.683,
+     -16.398,
+     2.004,
+     4.274
+    ],
+    "tiefe": 0.06,
+    "tiefe_quelle": "gemessen (Parallaxe, NCC 0.32)"
+   },
+   {
+    "klasse": "fenster",
+    "zone": [
+     -13.648,
+     -12.288,
+     2.004,
+     4.274
+    ],
+    "tiefe": 0.1,
+    "tiefe_quelle": "gemessen (Parallaxe, NCC 0.22)"
+   },
+   {
+    "klasse": "fenster",
+    "zone": [
+     -4.016,
+     -2.715,
+     2.08,
+     3.916
+    ],
+    "tiefe": 0.06,
+    "tiefe_quelle": "ANNAHME: wie fenster u -17.68..-16.40 (eigene Messung 0.1, NCC 0.13 zu schwach)"
+   },
+   {
+    "klasse": "tuer",
+    "zone": [
+     -11.322,
+     -10.299,
+     0.975,
+     2.759
+    ],
+    "tiefe": 0.39,
+    "tiefe_quelle": "Ersatzquelle: Tuerblatt grob3 M-6207-001 (0,508 m hinter der Wandfront im grob3-Rahmen) x 0,767 (Aehnlichkeit grob3 -> gk, sim_g3_gk.json) (eigene Messung 0.14, NCC 0.16 zu schwach)"
+   },
+   {
+    "klasse": "tuer",
+    "zone": [
+     -9.862,
+     -5.94,
+     0.854,
+     5.488
+    ],
+    "tiefe": 0.52,
+    "tiefe_quelle": "gemessen (Parallaxe, NCC 0.30)"
+   }
+  ],
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Gebaeude hohl, 5 Fenster durchgebrochen",
   "quelle": "bauteile.aushoehlen auf den automatisch erkannten Fenstern",
   "hinweis": "Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende",
@@ -288,7 +352,91 @@
  },
  {
   "seite": "wand",
-  "element": "29 Null-Volumen-Splitter entfernt",
+  "element": "Rueckwand hinter 5 Oeffnungen in Leibungstiefe 0.19 m (Kragen zum Hohlraum geschlossen)",
+  "quelle": "Regel A (bauteile.rueckwaende, 18.11.2026). Leibungstiefe OG-Fenster 3, Mittellicht, Goldkante der Pfostenfront bis Vorderkante Glasrahmen, beide Seiten aus Gegenrichtungen: rechte Leibung IMG_6119 (Blick 34 Grad) 0,187 +-0,022 (M-eigen__IMG_6119-001), linke Leibung handy_j_04 (41 Grad) 0,141 +-0,014 (M-eigen__handy_j_04-001); nur rote Leibungsflaeche 0,127 / 0,112 (-002). Widerspruch 0,14/0,19 nicht gemittelt: Rueckwand = Glasebene liegt HINTER der Rahmenvorderkante -> der groessere Wert. Methode: Pixel beider Kanten in die Wandebene projiziert (foto_mass --kamera), waagerechter Versatz / tan(Blickwinkel).",
+  "hinweis": "Rueckwand steht fuer Glas + dunklen Innenraum (im Druck dunkel bemalen); liegt etwas in der Oeffnung tiefer (Rahmen/Pfosten), setzt rueckwaende sie 1 cm dahinter (tiefe_ist im Beleg). ANNAHME: gleiche Leibungstiefe fuer alle Oeffnungen dieses Hauses (gemessen nur Fenster 3).",
+  "umrisse": [
+   {
+    "u0": -6.979,
+    "u1": -4.858,
+    "z0": 7.019,
+    "z1": 9.717,
+    "vorn": 0.115,
+    "schale": [
+     0.03,
+     0.12
+    ],
+    "tiefe_ist": 0.255,
+    "flaeche_m2": 5.742,
+    "erkannt": 1,
+    "nur_feld": false
+   },
+   {
+    "u0": -3.997,
+    "u1": -1.89,
+    "z0": 7.019,
+    "z1": 9.717,
+    "vorn": 0.115,
+    "schale": [
+     0.03,
+     0.12
+    ],
+    "tiefe_ist": 0.255,
+    "flaeche_m2": 5.704,
+    "erkannt": 1,
+    "nur_feld": false
+   },
+   {
+    "u0": -0.987,
+    "u1": 1.121,
+    "z0": 7.019,
+    "z1": 9.717,
+    "vorn": 0.125,
+    "schale": [
+     0.04,
+     0.12
+    ],
+    "tiefe_ist": 0.265,
+    "flaeche_m2": 5.707,
+    "erkannt": 1,
+    "nur_feld": false
+   },
+   {
+    "u0": 2.07,
+    "u1": 4.127,
+    "z0": 7.019,
+    "z1": 9.717,
+    "vorn": 0.115,
+    "schale": [
+     0.02,
+     0.12
+    ],
+    "tiefe_ist": 0.255,
+    "flaeche_m2": 5.569,
+    "erkannt": 1,
+    "nur_feld": false
+   },
+   {
+    "u0": 5.029,
+    "u1": 7.135,
+    "z0": 7.019,
+    "z1": 9.717,
+    "vorn": 0.115,
+    "schale": [
+     0.07,
+     0.11
+    ],
+    "tiefe_ist": 0.255,
+    "flaeche_m2": 5.702,
+    "erkannt": 1,
+    "nur_feld": false
+   }
+  ],
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "36 Null-Volumen-Splitter entfernt",
   "quelle": "Generator (decompose, Volumen < 1e-5 m3)",
   "seite_name": "wand"
  }

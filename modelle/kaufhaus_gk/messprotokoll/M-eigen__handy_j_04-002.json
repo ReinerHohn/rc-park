@@ -1,0 +1,32 @@
+{
+ "id": "M-eigen__handy_j_04-002",
+ "foto": "eigen__handy_j_04",
+ "kamera": "K-eigen__handy_j_04",
+ "ebene": "0.3442045910127177,0.9388946690261735,0=13.8364",
+ "name": "OG-Fenster 3 Mittellicht, LINKE Leibung: nur rote Leibungsflaeche, z ~8,3",
+ "mess_px": [
+  545.0,
+  2930.0,
+  572.0,
+  2930.0
+ ],
+ "P1": [
+  4.051,
+  13.252,
+  8.183
+ ],
+ "P2": [
+  3.96,
+  13.285,
+  8.176
+ ],
+ "dz": -0.007,
+ "dy": 0.033,
+ "dx": -0.091,
+ "abstand": 0.097,
+ "z1": 8.183,
+ "z2": 8.176,
+ "unsicherheit_rel": 0.0037,
+ "unsicherheit_m": 0.012,
+ "massstab_von": "Kamera K-eigen__handy_j_04 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.3442045910127177,0.9388946690261735,0=13.8364 (+-0.1 m)"
+}

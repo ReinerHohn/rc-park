@@ -12,7 +12,7 @@ Dokumentiere alle Versuche."  -> Diese Datei ist das Versuchsprotokoll (jeder Ve
 5. Augenurteil Bild "Foto neben Modell" je Seite (modell_neben_foto) - Fehlerliste vor Lob.
 
 ## Bekannte Luecken (Stand 18.11. nachts)
-- L1 Kette hat KEINE Druckstufe (STUFEN endet bei html/vergleich) -> bausatz/druck_teilung als Stufe "druck" anhaengen.
+- L1 ERLEDIGT 18.11. (5cfb4345): Stufe "druck" am Kettenende ruft tools/bausatz.sh mit relief/*_putz.npz; ohne Masken Notiz statt Bausatz (noch offen: Bausatz ohne Steinplatten).
 - L2 Generator aus der Kette = Vorlage (generator_vorlage); alles, was Agenten im Kaufhaus von Hand in kaufhaus_gk_gen.py/objekt.json geschrieben haben (Laube, Saeulen, Balkon, Erker, Figuren, Schindeln, Innenwaende), erzeugt die Kette NICHT selbst.
   Richtung (Grundsatz WANDBILD = BAUPLAN): Stufen, die aus Wandbild + Tiefe Zonen finden und Gestalt nachbilden (form_aus_wandbild, oeffnungen_wandbild, innenwaende) und ihre Ergebnisse in objekt.json schreiben; die Vorlage ruft sie generisch auf.
 - L3 Freistehendes (Saeulen, Bruestung, Erkerkoerper, Konsolrippen) nur Katalog; Ziel: Fotokanten mehrerer Ansichten.

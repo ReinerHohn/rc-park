@@ -1,192 +1,636 @@
 {
- "nachgeprueft_m2": 0.315,
- "tiefe_veto_m2": 0.165,
+ "nachgeprueft_m2": 0.0,
+ "tiefe_veto_m2": 0.018,
  "nur_tiefe_m2": 0.0,
  "wandfarbe_lab": [
-  190.0,
-  158.0,
-  143.0
+  101.0,
+  153.0,
+  139.0
  ],
  "klassen_lab": [
   [
-   92.9,
-   132.7,
-   125.5
+   91.8,
+   135.1,
+   130.7
   ],
   [
-   193.5,
-   158.3,
-   145.4
+   55.6,
+   132.4,
+   125.7
   ],
   [
-   239.4,
-   126.2,
-   147.1
+   109.5,
+   156.1,
+   141.6
   ],
   [
-   122.1,
-   146.1,
-   142.1
+   149.9,
+   138.0,
+   150.1
   ],
   [
-   146.0,
-   129.1,
-   125.6
+   60.2,
+   142.4,
+   135.6
   ],
   [
-   50.7,
-   137.6,
-   129.2
+   26.5,
+   134.3,
+   127.7
   ]
  ],
  "klassen_stufe_m": [
-  0.103,
-  0.012,
-  0.076,
-  0.103,
-  0.075,
-  0.103
+  0.057,
+  0.092,
+  0.001,
+  0.032,
+  0.092,
+  0.092
  ],
  "klassen_flaechig": [
-  0.426,
-  0.954,
-  0.277,
-  0.413,
-  0.565,
-  0.589
+  0.261,
+  0.534,
+  0.961,
+  0.1,
+  0.507,
+  0.59
  ],
- "wand_klasse": 1,
+ "wand_klasse": 2,
  "loch_klassen": [
-  0,
-  3,
+  1,
+  4,
   5
  ],
- "tiefe_wand": 0.005,
- "oeffnungstiefe_m": 0.103,
+ "tiefe_wand": -0.006,
+ "oeffnungstiefe_m": 0.092,
  "regionen": [
   {
-   "flaeche_m2": 0.438,
-   "stufe_m": 0.103,
-   "loch": true,
-   "bbox_px": [
-    16,
-    41,
-    83,
-    162
-   ]
-  },
-  {
-   "flaeche_m2": 0.346,
-   "stufe_m": 0.103,
-   "loch": true,
-   "bbox_px": [
-    155,
-    41,
-    220,
-    163
-   ]
-  },
-  {
-   "flaeche_m2": 0.291,
-   "stufe_m": 0.103,
-   "loch": true,
-   "bbox_px": [
-    86,
-    42,
-    152,
-    121
-   ]
-  },
-  {
-   "flaeche_m2": 0.703,
-   "stufe_m": 0.103,
-   "loch": true,
-   "bbox_px": [
-    84,
-    125,
-    149,
-    289
-   ]
-  },
-  {
-   "flaeche_m2": 0.616,
-   "stufe_m": 0.103,
-   "loch": true,
-   "bbox_px": [
-    12,
-    166,
-    78,
-    280
-   ]
-  },
-  {
-   "flaeche_m2": 0.493,
-   "stufe_m": 0.103,
-   "loch": true,
-   "bbox_px": [
-    151,
-    167,
-    217,
-    284
-   ]
-  },
-  {
-   "flaeche_m2": 0.015,
-   "stufe_m": -0.007,
+   "flaeche_m2": 0.02,
+   "stufe_m": -0.071,
    "loch": false,
    "bbox_px": [
-    246,
-    221,
-    254,
-    247
+    956,
+    0,
+    1004,
+    100
+   ]
+  },
+  {
+   "flaeche_m2": 0.353,
+   "stufe_m": 0.092,
+   "loch": true,
+   "bbox_px": [
+    356,
+    168,
+    616,
+    488
+   ]
+  },
+  {
+   "flaeche_m2": 0.469,
+   "stufe_m": 0.092,
+   "loch": true,
+   "bbox_px": [
+    76,
+    172,
+    340,
+    648
+   ]
+  },
+  {
+   "flaeche_m2": 0.421,
+   "stufe_m": 0.092,
+   "loch": true,
+   "bbox_px": [
+    628,
+    172,
+    888,
+    652
+   ]
+  },
+  {
+   "flaeche_m2": 0.013,
+   "stufe_m": 0.062,
+   "loch": true,
+   "bbox_px": [
+    356,
+    404,
+    452,
+    440
+   ]
+  },
+  {
+   "flaeche_m2": 0.022,
+   "stufe_m": -0.051,
+   "loch": false,
+   "bbox_px": [
+    968,
+    440,
+    1016,
+    576
+   ]
+  },
+  {
+   "flaeche_m2": 0.907,
+   "stufe_m": 0.092,
+   "loch": true,
+   "bbox_px": [
+    348,
+    504,
+    608,
+    1156
+   ]
+  },
+  {
+   "flaeche_m2": 0.65,
+   "stufe_m": 0.092,
+   "loch": true,
+   "bbox_px": [
+    72,
+    668,
+    332,
+    1132
+   ]
+  },
+  {
+   "flaeche_m2": 0.599,
+   "stufe_m": 0.092,
+   "loch": true,
+   "bbox_px": [
+    620,
+    668,
+    880,
+    1136
+   ]
+  },
+  {
+   "flaeche_m2": 0.027,
+   "stufe_m": -0.014,
+   "loch": false,
+   "bbox_px": [
+    968,
+    876,
+    1016,
+    1008
    ]
   }
  ],
- "n_loch": 6,
- "n_feld": 1,
+ "n_loch": 7,
+ "n_feld": 3,
  "schwebend_zu_loch_m2": 0.0,
  "profil_stufen_m": [
   0.04
  ],
  "profil": "stufen",
- "gewaende_breite_m": 0.04,
- "pfosten_rueck_m": 0.031,
- "huelle_m2": 3.985,
- "loch_m2": 3.142,
- "linien_je_abstand": [
-  0,
-  0,
-  638,
-  335,
-  170,
-  169,
-  112,
-  150,
-  170,
-  147,
-  124,
-  90,
-  71,
-  62,
-  43,
-  37,
-  33,
-  38,
-  32,
-  26,
-  14,
-  5,
-  1,
-  0,
-  0,
-  0,
-  0,
-  1,
-  2,
-  0,
-  2
+ "profil_tiefe_je_cm": [
+  0.028,
+  0.024,
+  0.021,
+  0.018,
+  0.016,
+  0.011,
+  0.006,
+  0.003,
+  -0.001,
+  -0.006,
+  -0.008,
+  -0.011,
+  -0.015,
+  -0.02,
+  -0.021
  ],
- "huelle_umfang_px": 760,
+ "gewaende_breite_m": 0.08,
+ "pfosten_rueck_m": 0.022,
+ "huelle_m2": 3.962,
+ "loch_m2": 3.577,
+ "linien_je_abstand": [
+  0.0,
+  148.375,
+  447.75,
+  409.5,
+  276.75,
+  177.3125,
+  249.625,
+  247.25,
+  171.375,
+  102.25,
+  111.9375,
+  80.9375,
+  36.5625,
+  20.625,
+  15.5625,
+  23.8125,
+  29.25,
+  30.75,
+  31.9375,
+  28.875,
+  28.0625,
+  28.375,
+  29.0625,
+  40.625,
+  46.5,
+  56.6875,
+  61.75,
+  60.8125,
+  93.25,
+  104.875,
+  0.4375
+ ],
+ "huelle_umfang_px": 775,
+ "kanten": {
+  "trenn_guete": 1.27,
+  "loecher": [
+   {
+    "geraden": 6,
+    "kurven": 1,
+    "hv": 6,
+    "ohne_kante": 0,
+    "stuetze": 0.957,
+    "teile": [
+     [
+      "g",
+      0.725,
+      0.511,
+      90.0
+     ],
+     [
+      "g",
+      0.555,
+      0.243,
+      0.0
+     ],
+     [
+      "g",
+      0.68,
+      0.739,
+      90.0
+     ],
+     [
+      "g",
+      0.115,
+      0.634,
+      90.0
+     ],
+     [
+      "k",
+      0.085,
+      0.653,
+      null
+     ],
+     [
+      "g",
+      0.135,
+      0.622,
+      90.0
+     ],
+     [
+      "g",
+      0.65,
+      0.394,
+      180.0
+     ]
+    ],
+    "rms_gerade_px": 0.44,
+    "rms_kurve_px": 0.123,
+    "verschiebung_median_px": 0.5
+   },
+   {
+    "geraden": 9,
+    "kurven": 3,
+    "hv": 6,
+    "ohne_kante": 1,
+    "stuetze": 0.841,
+    "teile": [
+     [
+      "g",
+      0.545,
+      0.129,
+      86.7
+     ],
+     [
+      "g",
+      0.53,
+      0.274,
+      0.0
+     ],
+     [
+      "g",
+      0.12,
+      0.602,
+      90.0
+     ],
+     [
+      "g",
+      0.08,
+      0.007,
+      -21.7
+     ],
+     [
+      "g",
+      0.205,
+      0.676,
+      90.0
+     ],
+     [
+      "k",
+      0.04,
+      0.57,
+      null
+     ],
+     [
+      "g",
+      0.335,
+      0.589,
+      90.0
+     ],
+     [
+      "g",
+      0.185,
+      0.689,
+      90.0
+     ],
+     [
+      "k",
+      0.09,
+      0.63,
+      null
+     ],
+     [
+      "g",
+      0.475,
+      0.654,
+      90.0
+     ],
+     [
+      "k",
+      0.355,
+      0.577,
+      null
+     ],
+     [
+      "g",
+      0.425,
+      0.494,
+      148.8
+     ]
+    ],
+    "rms_gerade_px": 0.43,
+    "rms_kurve_px": 0.099,
+    "verschiebung_median_px": 0.5
+   },
+   {
+    "geraden": 6,
+    "kurven": 2,
+    "hv": 5,
+    "ohne_kante": 0,
+    "stuetze": 0.941,
+    "teile": [
+     [
+      "g",
+      0.235,
+      0.241,
+      0.0
+     ],
+     [
+      "k",
+      0.03,
+      0.322,
+      null
+     ],
+     [
+      "g",
+      0.295,
+      0.24,
+      180.0
+     ],
+     [
+      "g",
+      0.505,
+      0.81,
+      90.0
+     ],
+     [
+      "g",
+      0.09,
+      0.166,
+      0.0
+     ],
+     [
+      "k",
+      0.395,
+      0.751,
+      null
+     ],
+     [
+      "g",
+      0.405,
+      0.607,
+      -131.7
+     ],
+     [
+      "g",
+      0.975,
+      0.511,
+      90.0
+     ]
+    ],
+    "rms_gerade_px": 0.485,
+    "rms_kurve_px": 0.153,
+    "verschiebung_median_px": 1.12
+   },
+   {
+    "geraden": 10,
+    "kurven": 2,
+    "hv": 7,
+    "ohne_kante": 1,
+    "stuetze": 0.855,
+    "teile": [
+     [
+      "g",
+      1.365,
+      0.47,
+      90.0
+     ],
+     [
+      "g",
+      0.375,
+      0.026,
+      -6.5
+     ],
+     [
+      "g",
+      0.605,
+      0.591,
+      90.0
+     ],
+     [
+      "g",
+      0.14,
+      0.382,
+      90.0
+     ],
+     [
+      "k",
+      0.085,
+      0.438,
+      null
+     ],
+     [
+      "g",
+      0.605,
+      0.586,
+      90.0
+     ],
+     [
+      "g",
+      0.1,
+      0.461,
+      -149.1
+     ],
+     [
+      "g",
+      0.27,
+      0.74,
+      90.0
+     ],
+     [
+      "g",
+      0.1,
+      0.583,
+      71.9
+     ],
+     [
+      "k",
+      0.085,
+      0.6,
+      null
+     ],
+     [
+      "g",
+      0.125,
+      0.722,
+      90.0
+     ],
+     [
+      "g",
+      0.64,
+      0.732,
+      180.0
+     ]
+    ],
+    "rms_gerade_px": 0.425,
+    "rms_kurve_px": 0.108,
+    "verschiebung_median_px": 0.25
+   },
+   {
+    "geraden": 6,
+    "kurven": 2,
+    "hv": 6,
+    "ohne_kante": 1,
+    "stuetze": 0.79,
+    "teile": [
+     [
+      "g",
+      0.415,
+      0.215,
+      90.0
+     ],
+     [
+      "k",
+      0.815,
+      0.238,
+      null
+     ],
+     [
+      "g",
+      0.345,
+      0.054,
+      -3.8
+     ],
+     [
+      "g",
+      0.485,
+      0.621,
+      90.0
+     ],
+     [
+      "g",
+      0.115,
+      0.484,
+      90.0
+     ],
+     [
+      "k",
+      0.09,
+      0.34,
+      null
+     ],
+     [
+      "g",
+      0.625,
+      0.448,
+      90.0
+     ],
+     [
+      "g",
+      0.585,
+      0.548,
+      0.0
+     ]
+    ],
+    "rms_gerade_px": 0.436,
+    "rms_kurve_px": 0.392,
+    "verschiebung_median_px": 0.5
+   },
+   {
+    "geraden": 5,
+    "kurven": 0,
+    "hv": 3,
+    "ohne_kante": 1,
+    "stuetze": 0.863,
+    "teile": [
+     [
+      "g",
+      0.95,
+      0.466,
+      90.0
+     ],
+     [
+      "g",
+      0.55,
+      0.021,
+      19.1
+     ],
+     [
+      "g",
+      0.965,
+      0.666,
+      90.0
+     ],
+     [
+      "g",
+      0.21,
+      0.377,
+      114.2
+     ],
+     [
+      "g",
+      0.635,
+      0.713,
+      0.0
+     ]
+    ],
+    "rms_gerade_px": 0.589,
+    "rms_kurve_px": null,
+    "verschiebung_median_px": 0.75
+   }
+  ],
+  "tiefe_gefuellt_m2": 0.2676,
+  "kerben_gefuellt_m2": 0.0944,
+  "rahmenlinien": 31,
+  "feld_gefuellt_m2": 0.2067
+ },
+ "raster_fein_px": 0.0025,
  "w_flaeche": 0.1175,
  "zone": [
   5.834,
@@ -194,46 +638,108 @@
   6.88,
   10.1
  ],
- "px": 0.01,
+ "px": 0.0025,
+ "px_wandbild": 0.01,
  "wandbild": {
   "fotos": [
-   {
-    "foto": "eigen__044_Historisches_Kaufhaus_Freiburg_im_Breisgau_jm3309",
-    "wert": 382.1,
-    "mm_je_px": 2.6,
-    "sichtbar": 0.965,
-    "restversatz_cm": 0.37
-   },
    {
     "foto": "eigen__handy_j_04",
     "wert": 296.7,
     "mm_je_px": 3.4,
     "sichtbar": 0.771,
-    "restversatz_cm": 0.3
+    "cc_konsens": 1.0,
+    "restversatz_cm": 0.28
+   },
+   {
+    "foto": "eigen__044_Historisches_Kaufhaus_Freiburg_im_Breisgau_jm3309",
+    "wert": 382.1,
+    "mm_je_px": 2.6,
+    "sichtbar": 0.965,
+    "cc_konsens": 0.557,
+    "restversatz_cm": 0.26
    },
    {
     "foto": "eigen__handy_j_05",
     "wert": 296.4,
     "mm_je_px": 3.4,
     "sichtbar": 0.772,
-    "restversatz_cm": 0.31
+    "cc_konsens": 0.994,
+    "restversatz_cm": 0.28
    },
    {
     "foto": "eigen__062_Erker_und_Treppengiebel_des_historischen_Kaufhauses_in_Freib",
     "wert": 270.4,
     "mm_je_px": 3.7,
     "sichtbar": 0.941,
-    "restversatz_cm": 0.46
+    "cc_konsens": 0.791,
+    "restversatz_cm": 0.33
    },
    {
     "foto": "eigen__025_Fenster_und_Habsburgerskulpturen_des_historischen_Kaufhauses",
     "wert": 257.1,
     "mm_je_px": 3.9,
     "sichtbar": 0.96,
-    "restversatz_cm": 0.53
+    "cc_konsens": 0.537,
+    "restversatz_cm": 0.31
    }
   ],
   "feinausrichtung": true,
+  "konsens": {
+   "medoid": 1,
+   "behalten": [
+    1,
+    0,
+    2,
+    3,
+    4,
+    7
+   ],
+   "cc_zum_medoid": [
+    0.557,
+    1.0,
+    0.994,
+    0.791,
+    0.537,
+    0.0,
+    0.344,
+    0.521
+   ],
+   "min_cc": 0.5,
+   "verschiebung_cm": [
+    [
+     -4.6,
+     0.3
+    ],
+    [
+     4.8,
+     -0.7
+    ],
+    [
+     -4.6,
+     0.1
+    ],
+    [
+     -2.2,
+     -2.1
+    ],
+    [
+     6.0,
+     -1.4
+    ],
+    [
+     0.7,
+     3.8
+    ]
+   ],
+   "massstab": [
+    1.004,
+    0.997,
+    1.005,
+    1.006,
+    0.989,
+    0.999
+   ]
+  },
   "modus": "median_ausgerichtet"
  },
  "tiefe": "modelle/kaufhaus_gk/relief/w04.npz",

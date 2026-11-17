@@ -42,27 +42,27 @@
    }
   },
   "aktuell": {
-   "gesamt": 0.4715,
+   "gesamt": 0.472,
    "fotos": 9,
    "zonen": {
     "erker_w": {
-     "note": 0.5535,
+     "note": 0.5542,
      "fotos": 7
     },
     "erker_o": {
-     "note": 0.5523,
+     "note": 0.5525,
      "fotos": 8
     },
     "obergeschoss": {
-     "note": 0.6028,
+     "note": 0.5803,
      "fotos": 9
     },
     "dach": {
-     "note": 0.5564,
+     "note": 0.5493,
      "fotos": 9
     },
     "laube": {
-     "note": 0.4675,
+     "note": 0.4771,
      "fotos": 9
     }
    }
@@ -98,31 +98,31 @@
     "energie_rho": 0.2124
    },
    "aktuell": {
-    "gesamt": 0.3772,
+    "gesamt": 0.385,
     "zonen": {
      "erker_w": {
-      "note": 0.5424,
+      "note": 0.5441,
       "kacheln": 14
      },
      "erker_o": {
-      "note": 0.5015,
+      "note": 0.5019,
       "kacheln": 70
      },
      "obergeschoss": {
-      "note": 0.5217,
+      "note": 0.5223,
       "kacheln": 50
      },
      "dach": {
-      "note": 0.4994,
+      "note": 0.4985,
       "kacheln": 96
      },
      "laube": {
-      "note": 0.4072,
+      "note": 0.4564,
       "kacheln": 59
      }
     },
     "kacheln": 382,
-    "energie_rho": 0.2204
+    "energie_rho": 0.2211
    }
   },
   "commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje": {
@@ -154,7 +154,7 @@
     "energie_rho": 0.2746
    },
    "aktuell": {
-    "gesamt": 0.5431,
+    "gesamt": 0.5237,
     "zonen": {
      "erker_w": {
       "note": 0.527,
@@ -165,20 +165,20 @@
       "kacheln": 33
      },
      "obergeschoss": {
-      "note": 0.5984,
+      "note": 0.5119,
       "kacheln": 80
      },
      "dach": {
-      "note": 0.4438,
+      "note": 0.439,
       "kacheln": 127
      },
      "laube": {
-      "note": 0.5734,
+      "note": 0.5719,
       "kacheln": 115
      }
     },
     "kacheln": 367,
-    "energie_rho": 0.1037
+    "energie_rho": 0.0183
    }
   },
   "commons__110_Középkori_bevásárlóközpont_Medieval_shopping_centre_-_panoramio": {
@@ -210,31 +210,31 @@
     "energie_rho": 0.2591
    },
    "aktuell": {
-    "gesamt": 0.4788,
+    "gesamt": 0.4747,
     "zonen": {
      "erker_w": {
       "note": 0.6653,
       "kacheln": 9
      },
      "erker_o": {
-      "note": 0.5431,
+      "note": 0.5415,
       "kacheln": 63
      },
      "obergeschoss": {
-      "note": 0.6479,
+      "note": 0.6518,
       "kacheln": 49
      },
      "dach": {
-      "note": 0.6392,
+      "note": 0.6405,
       "kacheln": 62
      },
      "laube": {
-      "note": 0.5229,
+      "note": 0.511,
       "kacheln": 64
      }
     },
     "kacheln": 241,
-    "energie_rho": 0.3182
+    "energie_rho": 0.2757
    }
   },
   "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta": {
@@ -266,10 +266,10 @@
     "energie_rho": 0.4894
    },
    "aktuell": {
-    "gesamt": 0.5314,
+    "gesamt": 0.5106,
     "zonen": {
      "erker_w": {
-      "note": 0.4786,
+      "note": 0.4781,
       "kacheln": 28
      },
      "erker_o": {
@@ -277,20 +277,20 @@
       "kacheln": 28
      },
      "obergeschoss": {
-      "note": 0.5726,
+      "note": 0.5071,
       "kacheln": 80
      },
      "dach": {
-      "note": 0.4939,
+      "note": 0.4737,
       "kacheln": 99
      },
      "laube": {
-      "note": 0.5013,
+      "note": 0.4884,
       "kacheln": 107
      }
     },
     "kacheln": 319,
-    "energie_rho": 0.3443
+    "energie_rho": 0.2904
    }
   },
   "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022": {
@@ -322,31 +322,31 @@
     "energie_rho": 0.1511
    },
    "aktuell": {
-    "gesamt": 0.3661,
+    "gesamt": 0.3607,
     "zonen": {
      "erker_w": {
-      "note": 0.5202,
+      "note": 0.5198,
       "kacheln": 65
      },
      "erker_o": {
-      "note": 0.5048,
+      "note": 0.5083,
       "kacheln": 19
      },
      "obergeschoss": {
-      "note": 0.4833,
+      "note": 0.474,
       "kacheln": 35
      },
      "dach": {
-      "note": 0.5226,
+      "note": 0.5218,
       "kacheln": 104
      },
      "laube": {
-      "note": 0.4145,
+      "note": 0.4083,
       "kacheln": 41
      }
     },
     "kacheln": 403,
-    "energie_rho": 0.1939
+    "energie_rho": 0.179
    }
   },
   "eigen__handy_06": {
@@ -378,31 +378,31 @@
     "energie_rho": 0.206
    },
    "aktuell": {
-    "gesamt": 0.4792,
+    "gesamt": 0.482,
     "zonen": {
      "erker_w": {
       "note": 0.5804,
       "kacheln": 43
      },
      "erker_o": {
-      "note": 0.4944,
+      "note": 0.4931,
       "kacheln": 21
      },
      "obergeschoss": {
-      "note": 0.5928,
+      "note": 0.5818,
       "kacheln": 73
      },
      "dach": {
-      "note": 0.5997,
+      "note": 0.5926,
       "kacheln": 84
      },
      "laube": {
-      "note": 0.3421,
+      "note": 0.355,
       "kacheln": 109
      }
     },
     "kacheln": 299,
-    "energie_rho": 0.2555
+    "energie_rho": 0.2338
    }
   },
   "eigen__IMG_6115": {
@@ -434,31 +434,31 @@
     "energie_rho": 0.156
    },
    "aktuell": {
-    "gesamt": 0.397,
+    "gesamt": 0.3935,
     "zonen": {
      "erker_w": {
       "note": null,
       "kacheln": 0
      },
      "erker_o": {
-      "note": 0.5706,
+      "note": 0.5718,
       "kacheln": 53
      },
      "obergeschoss": {
-      "note": 0.6307,
+      "note": 0.6294,
       "kacheln": 27
      },
      "dach": {
-      "note": 0.6094,
+      "note": 0.6088,
       "kacheln": 53
      },
      "laube": {
-      "note": 0.4307,
+      "note": 0.4127,
       "kacheln": 38
      }
     },
     "kacheln": 209,
-    "energie_rho": 0.2648
+    "energie_rho": 0.2118
    }
   },
   "eigen__IMG_6120": {
@@ -490,7 +490,7 @@
     "energie_rho": 0.5333
    },
    "aktuell": {
-    "gesamt": 0.5751,
+    "gesamt": 0.5886,
     "zonen": {
      "erker_w": {
       "note": null,
@@ -501,20 +501,20 @@
       "kacheln": 0
      },
      "obergeschoss": {
-      "note": 0.6241,
+      "note": 0.6,
       "kacheln": 32
      },
      "dach": {
-      "note": 0.6184,
+      "note": 0.593,
       "kacheln": 31
      },
      "laube": {
-      "note": 0.5472,
+      "note": 0.5822,
       "kacheln": 56
      }
     },
     "kacheln": 88,
-    "energie_rho": 0.5607
+    "energie_rho": 0.4831
    }
   },
   "eigen__IMG_6127": {
@@ -546,31 +546,31 @@
     "energie_rho": 0.3987
    },
    "aktuell": {
-    "gesamt": 0.496,
+    "gesamt": 0.5295,
     "zonen": {
      "erker_w": {
-      "note": 0.5606,
+      "note": 0.5644,
       "kacheln": 10
      },
      "erker_o": {
-      "note": 0.7238,
+      "note": 0.7237,
       "kacheln": 3
      },
      "obergeschoss": {
-      "note": 0.7534,
+      "note": 0.7445,
       "kacheln": 14
      },
      "dach": {
-      "note": 0.5811,
+      "note": 0.5754,
       "kacheln": 20
      },
      "laube": {
-      "note": 0.4679,
+      "note": 0.508,
       "kacheln": 59
      }
     },
     "kacheln": 68,
-    "energie_rho": 0.4852
+    "energie_rho": 0.4744
    }
   }
  }

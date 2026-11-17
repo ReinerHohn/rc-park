@@ -1,0 +1,32 @@
+{
+ "id": "M-eigen__handy_j_04-001",
+ "foto": "eigen__handy_j_04",
+ "kamera": "K-eigen__handy_j_04",
+ "ebene": "0.3442045910127177,0.9388946690261735,0=13.8364",
+ "name": "OG-Fenster 3 Mittellicht, LINKE Leibung (Gegenseite zu M-eigen__IMG_6119-001): Goldkante Pfostenfront bis Rahmenvorderkante (Glasrahmen), z ~8,3",
+ "mess_px": [
+  538.0,
+  2930.0,
+  572.0,
+  2930.0
+ ],
+ "P1": [
+  4.075,
+  13.243,
+  8.185
+ ],
+ "P2": [
+  3.96,
+  13.285,
+  8.176
+ ],
+ "dz": -0.009,
+ "dy": 0.042,
+ "dx": -0.115,
+ "abstand": 0.123,
+ "z1": 8.185,
+ "z2": 8.176,
+ "unsicherheit_rel": 0.0037,
+ "unsicherheit_m": 0.012,
+ "massstab_von": "Kamera K-eigen__handy_j_04 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.3442045910127177,0.9388946690261735,0=13.8364 (+-0.1 m)"
+}

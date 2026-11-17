@@ -1,0 +1,32 @@
+{
+ "id": "M-eigen__IMG_6119-001",
+ "foto": "eigen__IMG_6119",
+ "kamera": "K-eigen__IMG_6119",
+ "ebene": "0.3442045910127177,0.9388946690261735,0=13.8364",
+ "name": "OG-Fenster 3 (u -0,99..1,12) Mittellicht, rechte Leibung: Rahmenvorderkante (Glasrahmen) bis Goldkante Pfostenfront, z ~8,3 - Projektion in die Wandebene (Leibungstiefe = waagerechter Versatz / tan Blickwinkel)",
+ "mess_px": [
+  2912.0,
+  1050.0,
+  2953.0,
+  1050.0
+ ],
+ "P1": [
+  4.056,
+  13.25,
+  8.034
+ ],
+ "P2": [
+  3.937,
+  13.293,
+  8.042
+ ],
+ "dz": 0.008,
+ "dy": 0.043,
+ "dx": -0.118,
+ "abstand": 0.126,
+ "z1": 8.034,
+ "z2": 8.042,
+ "unsicherheit_rel": 0.0097,
+ "unsicherheit_m": 0.015,
+ "massstab_von": "Kamera K-eigen__IMG_6119 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.3442045910127177,0.9388946690261735,0=13.8364 (+-0.1 m)"
+}

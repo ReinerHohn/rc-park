@@ -1171,9 +1171,9 @@
      "datei": "relief/form_og_5.npz"
     }
    ],
-   "quelle": "tools/form_aus_wandbild.py je Fenster (Zone = Fensterrechteck vorhangfenster +-0,24 m, z 6,88..10,1): Wandbild direkt aus den 5 besten Fotos (Sichtbarkeit gegen das Katalog-STL, Belichtung angeglichen, Feinausrichtung; Restversatz > 1 cm -> bestes Einzelfoto), Tiefe relief/w04.npz (Netz 5 cm), Wandflaeche relief/w04_rein.npz; Bild/Bericht relief/form_og_<i>.jpg/.json",
+   "quelle": "tools/form_aus_wandbild.py je Fenster, Aufruf modelle/kaufhaus_gk/form_wandbild_og.sh (Zone = Fensterrechteck +-0,24 m, z 6,88..10,1): Wandbild aus bis zu 8 Fotos, affiner Konsens (Medoid-Foto, ECC affin, cc >= 0,5) + Feinausrichtung (Restversatz 0,13-0,76 cm, alle 5 Fenster Median), Tiefe relief/w04.npz, Wandflaeche relief/w04_rein.npz; Lochkanten an Bildkanten eingerastet (Geraden ganz verschoben, waagrecht/senkrecht bevorzugt, Kurven als Spline), Rahmengrate (Hessian + LSD) trennen Lichter, Feld zwischen Rahmenlinien gefuellt; Bild/Bericht relief/form_og_<i>.jpg/.json (18.11.2026)",
    "annahmen": [
-    "Gewaendeprofil: Stufenkanten an den Bildlinien, gleiche Stufenhoehe je Linie (Summe = gemessene Oeffnungstiefe)",
+    "Gewaendeprofil: Stufenkanten an den Bildlinien, gleiche Stufenhoehe je Linie (Summe = gemessene Oeffnungstiefe); Gegenprobe Netztiefe (profil_tiefe_je_cm) zeigt nur eine Rampe 2-5 cm an der Huelle - Stufen im 5-cm-Netz nicht aufloesbar",
     "Pfosten/Kaempfer = Plateau (P80 der Netztiefe)",
     "Wand der Zone eben auf der gebauten Reliefflaeche",
     "Fensterunterkante hinter der Bruestung: aus Netztiefe bzw. Bild, Bruestung im Foto per Sichtbarkeit ausgeblendet"
@@ -1200,5 +1200,49 @@
   ],
   "zonen": "modelle/kaufhaus_gk/feinteil_zonen.json",
   "hinweis": "tools/feinteil_tor.py, nur Hinweis in bauen_abnehmen.sh. Bezug = Handmodell grob3 im gk-Rahmen (Similaritaet s 0,767, sim_g3_gk.json), Bereich fest = Silhouetten grob3 + gk Runde 2."
+ },
+ "innenwaende": [
+  {
+   "name": "i00",
+   "a": [
+    -5.53,
+    16.64
+   ],
+   "b": [
+    13.63,
+    9.62
+   ],
+   "aussen": [
+    4.0,
+    30.0
+   ],
+   "versatz": -4.25,
+   "u": [
+    1.2,
+    18.6
+   ],
+   "z": [
+    0.65,
+    5.5
+   ],
+   "relief_vorn": 0.5,
+   "quelle": "Laubenrueckwand: Bezugswand = bauteile_foto.traufwand (LoD2 w04, am Foto bestaetigt), Versatz = Hallentiefe 4,25 (Ebenen-Sweep durch Bogen 2, bauteile_foto.laube), u = Laube u0..u1, z = Laubenboden 0,65 bis Decke 5,5 (Decke ANNAHME). Fassaden-Kette: tools/fassade_ortho.py innenwaende()"
+  }
+ ],
+ "innenwand_oeffnungen": {
+  "datei": "audit/oeffnungen_innen.json",
+  "ncc_min": 0.2,
+  "ersatz": {
+   "tuer": [
+    0.39,
+    "Tuerblatt grob3 M-6207-001 (0,508 m hinter der Wandfront im grob3-Rahmen) x 0,767 (Aehnlichkeit grob3 -> gk, sim_g3_gk.json)"
+   ]
+  },
+  "quelle": "tools/fassade_ortho.py (Innenwand i00, 5 cm + 1 cm einzeln) -> fassade_fein.py --fein_ausrichten 1 -> fassade_parsing.py (OWLv2) -> tools/oeffnungen_wandbild.py; Zaehlung Z-eigen__010_M_nsterplatz_24_Freiburg-001 (3 Fenster, 1 Tuer, 1 Tor; Tafel keine Oeffnung)"
+ },
+ "rueckwand": {
+  "tiefe": 0.19,
+  "quelle": "Regel A (bauteile.rueckwaende, 18.11.2026). Leibungstiefe OG-Fenster 3, Mittellicht, Goldkante der Pfostenfront bis Vorderkante Glasrahmen, beide Seiten aus Gegenrichtungen: rechte Leibung IMG_6119 (Blick 34 Grad) 0,187 +-0,022 (M-eigen__IMG_6119-001), linke Leibung handy_j_04 (41 Grad) 0,141 +-0,014 (M-eigen__handy_j_04-001); nur rote Leibungsflaeche 0,127 / 0,112 (-002). Widerspruch 0,14/0,19 nicht gemittelt: Rueckwand = Glasebene liegt HINTER der Rahmenvorderkante -> der groessere Wert. Methode: Pixel beider Kanten in die Wandebene projiziert (foto_mass --kamera), waagerechter Versatz / tan(Blickwinkel).",
+  "hinweis": "Rueckwand steht fuer Glas + dunklen Innenraum (im Druck dunkel bemalen); liegt etwas in der Oeffnung tiefer (Rahmen/Pfosten), setzt rueckwaende sie 1 cm dahinter (tiefe_ist im Beleg). ANNAHME: gleiche Leibungstiefe fuer alle Oeffnungen dieses Hauses (gemessen nur Fenster 3)."
  }
 }

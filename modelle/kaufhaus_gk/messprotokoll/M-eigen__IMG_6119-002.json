@@ -1,0 +1,32 @@
+{
+ "id": "M-eigen__IMG_6119-002",
+ "foto": "eigen__IMG_6119",
+ "kamera": "K-eigen__IMG_6119",
+ "ebene": "0.3442045910127177,0.9388946690261735,0=13.8364",
+ "name": "OG-Fenster 3 Mittellicht, rechte Leibung: nur rote Leibungsflaeche (Glasrahmen bis Schattenkante des Pfostenprofils), z ~8,3",
+ "mess_px": [
+  2912.0,
+  1050.0,
+  2940.0,
+  1050.0
+ ],
+ "P1": [
+  4.056,
+  13.25,
+  8.034
+ ],
+ "P2": [
+  3.975,
+  13.28,
+  8.039
+ ],
+ "dz": 0.005,
+ "dy": 0.03,
+ "dx": -0.081,
+ "abstand": 0.086,
+ "z1": 8.034,
+ "z2": 8.039,
+ "unsicherheit_rel": 0.0097,
+ "unsicherheit_m": 0.015,
+ "massstab_von": "Kamera K-eigen__IMG_6119 aus amtlichen Ankern (LoD2/DOM1/Dokument), Ebene 0.3442045910127177,0.9388946690261735,0=13.8364 (+-0.1 m)"
+}

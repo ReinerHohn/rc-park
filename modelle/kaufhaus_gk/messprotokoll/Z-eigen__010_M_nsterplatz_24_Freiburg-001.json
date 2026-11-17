@@ -1,0 +1,60 @@
+{
+ "id": "Z-eigen__010_M_nsterplatz_24_Freiburg-001",
+ "typ": "zaehlung",
+ "foto": "eigen__010_M_nsterplatz_24_Freiburg",
+ "datei": "eigen__010_M_nsterplatz_24_Freiburg_02.jpg",
+ "was": "Laubenrueckwand (Wand i00 hinter den Boegen): Oeffnungen = 3 Fenster (Bogen 1, 2, 4) + 1 Tuer mit Portalrahmen + 1 Tor mit Spitzbogen (Bogen 3); die Bronzetafel in Bogen 4 ist KEINE Oeffnung",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-17",
+ "punkte": [
+  {
+   "flaeche": "R",
+   "art": "voll",
+   "x": 892.0,
+   "y": 1802.0
+  },
+  {
+   "flaeche": "R",
+   "art": "voll",
+   "x": 1571.0,
+   "y": 1792.0
+  },
+  {
+   "flaeche": "R",
+   "art": "voll",
+   "x": 1931.0,
+   "y": 1989.0
+  },
+  {
+   "flaeche": "R",
+   "art": "voll",
+   "x": 2368.0,
+   "y": 1871.0
+  },
+  {
+   "flaeche": "R",
+   "art": "voll",
+   "x": 2949.0,
+   "y": 1772.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "R": {
+   "art": "voll",
+   "n": 5
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 5,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-eigen__010_M_nsterplatz_24_Freiburg-001.jpg",
+ "ausschnitt": [
+  642,
+  1522,
+  3199,
+  2239
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Foto eigen__010_M_nsterplatz_24_Freiburg_02; Fenster Bogen 4 teilweise hinter der Ecksaeule; Gegenprobe der automatischen Erkennung (OWLv2 fand zusaetzlich die Tafel als 'Fenster')"
+}
