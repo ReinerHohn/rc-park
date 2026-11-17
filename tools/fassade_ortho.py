@@ -90,8 +90,9 @@ def projizieren(X, R, t, f, cx, cy, k1):
 
 
 def bilinear(im, x, y):
-    x0 = np.floor(x).astype(np.int64); y0 = np.floor(y).astype(np.int64); fx = (x - x0)[:, None]; fy = (y - y0)[:, None]; I = im.astype(np.float32)
-    c = I[y0, x0] * (1 - fx) * (1 - fy) + I[y0, x0 + 1] * fx * (1 - fy) + I[y0 + 1, x0] * (1 - fx) * fy + I[y0 + 1, x0 + 1] * fx * fy
+    x0 = np.floor(x).astype(np.int64); y0 = np.floor(y).astype(np.int64); fx = (x - x0)[:, None]; fy = (y - y0)[:, None]; I = im      # 17.11.2026: nur die 4 abgegriffenen Werte wandeln, nicht das ganze Foto (Profil: 20 von 126 s gingen in astype des Vollbilds, je Fassade und Foto neu)
+    g = lambda yy, xx: I[yy, xx].astype(np.float32)
+    c = g(y0, x0) * (1 - fx) * (1 - fy) + g(y0, x0 + 1) * fx * (1 - fy) + g(y0 + 1, x0) * (1 - fx) * fy + g(y0 + 1, x0 + 1) * fx * fy
     return np.clip(c + 0.5, 0, 255).astype(np.uint8)
 
 
@@ -147,7 +148,8 @@ def main(argv=None):
         F["_X"] = np.c_[o[0] + U.ravel() * d[0], o[1] + U.ravel() * d[1], Z.ravel()]
     RI = trimesh.ray.ray_pyembree.RayMeshIntersector if hasattr(trimesh.ray, "ray_pyembree") else trimesh.ray.ray_triangle.RayMeshIntersector
     ray = RI(m); nb, n_nb = nachbarn_netz(obj) if not a.ohne_nachbarn else (None, 0)
-    ray_alle = RI(trimesh.util.concatenate([m, nb])) if nb is not None else ray                     # Sicht: Modell + Nachbarn; Relief (Ortho-Flaeche): nur Modell
+    _ma = trimesh.util.concatenate([m, nb]) if nb is not None else m; FN_ALLE = np.asarray(_ma.face_normals, float); P0_ALLE = np.asarray(_ma.triangles[:, 0], float)
+    ray_alle = RI(_ma) if nb is not None else ray                     # Sicht: Modell + Nachbarn; Relief (Ortho-Flaeche): nur Modell
     for F in fas:                                                                                   # echtes Orthobild: je Zelle die VORDERSTE Modellflaeche entlang -Normale (Erker, Galerie, Arkadenrueckwand)
         X = F["_X"]; n3 = np.array(F["n"] + [0.0]); vorn = a.relief_vorn
         loc, ri, _ = ray.intersects_location(X + n3 * vorn, np.repeat(-n3[None], len(X), 0), multiple_hits=False)
@@ -201,8 +203,9 @@ def main(argv=None):
             idx = np.where(ok)[0]
             if not (np.isfinite(Cw).all() and np.isfinite(dist[idx]).all() and dist[idx].min() > 0.5 and dist[idx].max() < 2000): print(f"  Kamera {nr} uebersprungen (Standort unplausibel: {Cw})", flush=True); continue
             if not a.gpu_sicht:
-                dirs = -v[idx] / dist[idx, None]; loc, ri, _ = ray_alle.intersects_location(np.repeat(Cw[None], len(idx), 0), dirs, multiple_hits=False)
-                erster = np.full(len(idx), np.inf); erster[ri] = np.linalg.norm(loc - Cw, axis=1)
+                dirs = -v[idx] / dist[idx, None]      # 17.11.2026: nur Dreiecksnummer vom Strahlkern holen und die Entfernung selbst rechnen (Profil: von 66 s Strahlzeit waren 44 s trimesh-Nacharbeit fuer die Trefferorte)
+                ti, ri = ray_alle.intersects_id(np.repeat(Cw[None], len(idx), 0), dirs, multiple_hits=False, return_locations=False)
+                erster = np.full(len(idx), np.inf); nn_ = FN_ALLE[ti]; nen = np.einsum("ij,ij->i", dirs[ri], nn_); erster[ri] = np.einsum("ij,ij->i", P0_ALLE[ti] - Cw, nn_) / np.where(np.abs(nen) < 1e-12, 1e-12, nen)
                 sicht = np.abs(erster - dist[idx]) < a.tol + 0.002 * dist[idx]                       # erster Kamerastrahl-Treffer = die vorderste Flaeche der Zelle (sonst verdeckt)
             else:                                                                                     # 16.11.2026 (Aufgabenliste 1a): Sichtbarkeit ueber EIN Tiefenbild des Modells je Foto auf der GPU statt eines CPU-Strahls je Zelle
                 if tief[0] is None:

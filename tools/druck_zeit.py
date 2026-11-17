@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""druck_zeit.py <ordner mit STL-Teilen> [--schicht 0.16] [--fuellung 15] [--stuetzen] [--bett 256] [--parallel 4] - Druckzeit und Material je Teil mit dem Slicer MESSEN.
+"""druck_zeit.py <ordner mit STL-Teilen> [--schicht 0.16] [--duese 0.4] [--fuellung 15] [--stuetzen] [--bett 256 | 250x210x220] [--parallel 4] - Druckzeit und Material je Teil mit dem Slicer MESSEN.
 
 Anlass 17.11.2026 (Nutzer: "es geht auch um gute Druckzeit"): Teilungen wurden nur nach Ueberhang bewertet; ob ein Bausatz 20 oder 60 Stunden druckt, stand nirgends.
 Je teil_*.stl / platte_*.stl / koerper.stl im Ordner (Drucklage, mm): prusa-slicer --export-gcode, aus dem G-Code 'estimated printing time' und 'filament used [cm3]'.
@@ -23,9 +23,10 @@ def main():
     if not fl: print("keine STL in", od); return 2
     tmp = tempfile.mkdtemp(dir="/media/oem/scan/tmp" if os.path.isdir("/media/oem/scan/tmp") else None)
     bett = opt("--bett", "256")      # Druckraum (mm), Standard Bambu P1S; 17.11.2026: ohne Angabe lehnte der Slicer ein 241 mm hohes Teil ab (Standardprofil 210 mm)
+    bx, by, bz = (bett.split("x") + [bett, bett])[:3] if "x" in bett else (bett, bett, bett)      # --bett 256 (Wuerfel) oder 250x210x220 (Prusa MK4S)
     def eins(f):
         g = os.path.join(tmp, os.path.basename(f)[:-4] + ".gcode")
-        cmd = ["prusa-slicer", "--export-gcode", "--layer-height", opt("--schicht", "0.16"), "--fill-density", opt("--fuellung", "15") + "%", "--bed-shape", f"0x0,{bett}x0,{bett}x{bett},0x{bett}", "--max-print-height", bett, "--output", g, f] + (["--support-material"] if "--stuetzen" in a else [])
+        cmd = ["prusa-slicer", "--export-gcode", "--layer-height", opt("--schicht", "0.16"), "--fill-density", opt("--fuellung", "15") + "%", "--nozzle-diameter", opt("--duese", "0.4"), "--bed-shape", f"0x0,{bx}x0,{bx}x{by},0x{by}", "--max-print-height", bz, "--output", g, f] + (["--support-material"] if "--stuetzen" in a else [])
         try: r = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
         except subprocess.TimeoutExpired: return dict(teil=os.path.basename(f), fehler="Slicer-Zeitlimit 60 min")
         if r.returncode or not os.path.exists(g): return dict(teil=os.path.basename(f), fehler=(r.stdout + r.stderr).strip().splitlines()[-1][:160] if (r.stdout + r.stderr).strip() else "kein G-Code")
@@ -39,7 +40,7 @@ def main():
     for e in erg: print(f"  {e['teil']:28s} " + (f"FEHLER {e['fehler']}" if e.get("fehler") else f"{e['zeit']:>12s}  {e['filament_cm3']:7.1f} cm3"))
     S = sum(e["sekunden"] for e in gut); V = sum(e["filament_cm3"] or 0 for e in gut)
     print(f"SUMME {len(gut)} Teile: {S // 3600} h {S % 3600 // 60} min, {V:.0f} cm3 Filament (~{V * 1.24:.0f} g PLA)" + (f"; {len(rot)} Teil(e) NICHT geslict" if rot else ""))
-    import json_sicher; json_sicher.schreiben(os.path.join(od, "druckzeit.json"), dict(schicht_mm=float(opt("--schicht", "0.16")), fuellung_prozent=float(opt("--fuellung", "15")), stuetzen="--stuetzen" in a, slicer="PrusaSlicer Standardprofil", teile=erg, summe_sekunden=S, summe_cm3=round(V, 1)))
+    import json_sicher; json_sicher.schreiben(os.path.join(od, "druckzeit.json" if opt("--duese", "0.4") == "0.4" else f"druckzeit_duese{opt('--duese', '')}.json"), dict(schicht_mm=float(opt("--schicht", "0.16")), fuellung_prozent=float(opt("--fuellung", "15")), stuetzen="--stuetzen" in a, slicer="PrusaSlicer Standardprofil", teile=erg, summe_sekunden=S, summe_cm3=round(V, 1)))
     return 3 if rot else 0
 
 

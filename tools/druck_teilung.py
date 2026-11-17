@@ -144,10 +144,12 @@ def bohrung(p, nvec, r, h):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--stl"); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--stl"); ap.add_argument("--bett_mm", type=float, help="Kantenlaenge des Druckraums (kleinste Seite, z. B. 210 fuer Prusa MK4S 250x210x220); ersetzt objekt.json druck_teilung.bett_mm"); ap.add_argument("--toleranz_mm", type=float, help="Fuegespiel der Verbinder/Stifte (grobe Duese: 0.3)"); a = ap.parse_args()
     od = os.path.join(ROOT, "modelle", a.objekt); O = json.load(open(os.path.join(od, "objekt.json"))); cfg = O.get("druck_teilung") or {}
     sc = float(O.get("massstab") or os.environ.get("SCALE", 87)); K = 1000.0 / sc
     stl = a.stl or os.path.join(ROOT, "modelle", "stl", f"{a.objekt}_1-{int(sc)}.stl")
+    if a.bett_mm: cfg = dict(cfg, bett_mm=a.bett_mm)
+    if a.toleranz_mm: cfg = dict(cfg, toleranz_mm=a.toleranz_mm)
     winkel = float(cfg.get("winkel", 60)); cosg = math.cos(math.radians(90 - winkel)); ziel = float(cfg.get("ziel_anteil", 0.01)); bett = float(cfg.get("bett_mm", 256)) - 2 * float(cfg.get("bett_rand_mm", 6))
     max_schnitte = int(cfg.get("max_schnitte", 6)); bett_tol = float(cfg.get("bett_tol_m", 0.05)); min_flaeche = float(cfg.get("min_kandidat_m2", 2.0))
     sd, sl, tol = (float(cfg.get(k, d)) / K for k, d in (("stift_mm", 2.0), ("stift_laenge_mm", 6.0), ("toleranz_mm", 0.2)))

@@ -86,6 +86,23 @@ ROOFNAMES = {"1000": "Flachdach", "2100": "Pultdach", "3100": "Satteldach",
 
 
 def extract(gml_path, name=None, center=None, radius=40.0):
+    """Mit Zwischenspeicher (17.11.2026): das Einlesen der LoD2-Kachel kostete je Aufruf ~10 s (Text lesen + alle Gebaeude zerlegen) - in fassade_ortho, dach_bauen, fassaden_kette ... bei jedem Lauf neu.
+    Schluessel = Datei (Pfad, Groesse, Aenderungszeit) + Auswahl; Ablage /media/oem/scan/rc-park_daten/lod2_cache/. LOD2_OHNE_CACHE=1 schaltet ab."""
+    import os, pickle, hashlib
+    cd = "/media/oem/scan/rc-park_daten/lod2_cache"
+    if os.environ.get("LOD2_OHNE_CACHE") == "1" or not os.path.isdir(os.path.dirname(cd)): return _extract_roh(gml_path, name, center, radius)
+    st = os.stat(gml_path); key = hashlib.sha1(repr((os.path.realpath(gml_path), st.st_size, int(st.st_mtime), name, None if center is None else [round(float(x), 3) for x in center], float(radius), os.path.getmtime(os.path.abspath(__file__)))).encode()).hexdigest()[:20]
+    cf = os.path.join(cd, key + ".pkl")
+    if os.path.exists(cf):
+        try: return pickle.load(open(cf, "rb"))
+        except Exception: pass
+    erg = _extract_roh(gml_path, name, center, radius)
+    try: os.makedirs(cd, exist_ok=True); pickle.dump(erg, open(cf + ".teil", "wb"), 4); os.replace(cf + ".teil", cf)
+    except Exception: pass
+    return erg
+
+
+def _extract_roh(gml_path, name=None, center=None, radius=40.0):
     s = open(gml_path, encoding="utf-8", errors="replace").read()
     chunks = building_chunks(s)
     picked = []
