@@ -240,7 +240,7 @@ def main():
     ad = os.path.join(ROOT, "modelle", "stl", f"{a.objekt}_teile"); gross = "/media/oem/scan/rc-park_stl"
     if not os.path.exists(ad) and os.path.isdir(gross): os.makedirs(os.path.join(gross, f"{a.objekt}_teile"), exist_ok=True); os.symlink(os.path.join(gross, f"{a.objekt}_teile"), ad)      # 17.11.2026: 238 MB Druckteile des Turms landeten auf der Systemplatte (Regel: grosse Daten nur auf der Datenplatte, Verknuepfung im Repo)
     os.makedirs(os.path.join(ad, "lage"), exist_ok=True); bericht = []
-    for alt_ in glob.glob(os.path.join(ad, "teil_*.stl")) + glob.glob(os.path.join(ad, "lage", "teil_*.stl")): os.remove(alt_)      # 17.11.2026: Teile eines frueheren Laufs blieben liegen (7 neue + 3 alte Dateien = falscher Bausatz)
+    for alt_ in glob.glob(os.path.join(ad, "teil_*.stl")) + glob.glob(os.path.join(ad, "lage", "teil_*.stl")) + glob.glob(os.path.join(ad, "verbinder_*.stl")) + glob.glob(os.path.join(ad, "stifte.stl")): os.remove(alt_)      # 17.11.2026: Teile eines frueheren Laufs blieben liegen (7 neue + 3 alte Dateien = falscher Bausatz)
     for k_, t in enumerate(sorted(teile, key=lambda t: -t["mf"].volume())):
         tm = zu_tm(t["mf"]); name, o, A, Rr, ext = beste_lage(tm, L, cosg, bett_tol, bett_m=bm)
         (tm.copy().apply_scale(K)).export(os.path.join(ad, "lage", f"teil_{k_ + 1:02d}.stl"))
@@ -251,6 +251,24 @@ def main():
                             ueberhang_anteil=round(o / A, 5), wasserdicht=bool(tm.is_watertight), volumen_m3=round(float(tm.volume), 2),
                             rahmen_u=np.round([V[:, 0].min(), V[:, 0].max()], 2).tolist(), rahmen_n=np.round([V[:, 1].min(), V[:, 1].max()], 2).tolist(), rahmen_z=np.round([V[:, 2].min(), V[:, 2].max()], 2).tolist(),
                             schnitte=t["schnitte"]))
+    # 5b: Verbinderringe (17.11.2026): hohle Teile haben keine Wand fuer Stifte - am Turm 4 Schnitte, 0 Stifte, die Teile haetten sich nur stumpf stapeln lassen.
+    #     Je waagerechtem Schnitt ohne Stift ein loser Ring, der innen an der Wand beider Teile anliegt (Spiel toleranz_mm), flach druckbar; unten einkleben, oberes Teil aufstecken.
+    import manifold3d as _m3; verbinder = []; mf0 = zu_mf(tm0)
+    vh, vw = (float(cfg.get(k, d)) / K for k, d in (("verbinder_hoehe_mm", 3.0), ("verbinder_wand_mm", 1.2)))
+    def gefuellt(cs):
+        aus = [q for q in cs.to_polygons() if len(q) >= 3 and 0.5 * float(np.sum(q[:, 0] * np.roll(q[:, 1], -1) - np.roll(q[:, 0], -1) * q[:, 1])) > 0]
+        return _m3.CrossSection(aus, _m3.FillRule.NonZero) if aus else _m3.CrossSection()
+    for si, s_ in enumerate(schnitte):
+        if s_["achse"] != "z" or s_.get("stifte"): continue
+        zc = float(s_["wert"]); lo_, hi_ = mf0.slice(zc - 0.03), mf0.slice(zc + 0.03); hohl = (gefuellt(lo_) ^ gefuellt(hi_)) - (lo_ + hi_)
+        ring = hohl.offset(-tol, _m3.JoinType.Round) - hohl.offset(-(tol + vw), _m3.JoinType.Round)
+        if ring.is_empty() or ring.area() < 1e-3: s_["verbinder"] = "kein Hohlraum am Schnitt - stumpf kleben"; continue
+        k3 = ring.extrude(2 * vh).translate((0, 0, zc - vh)) - mf0; st_ = [d_ for d_ in k3.decompose() if d_.volume() > 0.2 * ring.area() * 2 * vh]
+        if not st_: s_["verbinder"] = "Ring kollidiert mit dem Modell - stumpf kleben"; continue
+        k3 = M.batch_boolean(st_, _m3.OpType.Add) if len(st_) > 1 else st_[0]; nr_ = len(verbinder) + 1; verbinder.append(nr_)
+        tv = zu_tm(k3.translate((0, 0, -(zc - vh)))); tv.apply_scale(K); tv.export(os.path.join(ad, f"verbinder_{nr_:02d}.stl")); bb_ = tv.bounds
+        s_["verbinder"] = dict(datei=f"verbinder_{nr_:02d}.stl", stuecke=len(st_), masse_mm=[round(float(bb_[1][j] - bb_[0][j]), 1) for j in range(3)], hinweis="in das untere Teil kleben, oberes Teil aufstecken")
+        print(f"verbinder_{nr_:02d}: Schnitt z {zc:.2f} m, {len(st_)} Stueck(e), {s_['verbinder']['masse_mm']} mm")
     if stifte:
         st = zu_tm(M.batch_boolean(stifte, __import__("manifold3d").OpType.Add)); st.apply_scale(K); st.export(os.path.join(ad, "stifte.stl"))
     erg = dict(stl=os.path.relpath(stl, ROOT), modell_volumen_m3=round(float(abs(tm0.volume)), 3), massstab=sc, winkel_grad=winkel, ziel_anteil=ziel, bett_mm_nutzbar=bett, stift=dict(d_mm=sd * K, laenge_mm=sl * K, toleranz_mm=tol * K, anzahl=len(stifte)),
