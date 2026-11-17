@@ -15,6 +15,8 @@ def flat(idx, kind, name):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("aus"); ap.add_argument("stl", nargs="+"); ap.add_argument("--schicht", default="0.12"); ap.add_argument("--fuellung", default="12%"); ap.add_argument("--brim", default="8")
     ap.add_argument("--bett", default="60"); ap.add_argument("--platte", default="Textured PEI Plate"); ap.add_argument("--wande", default="3")
+    ap.add_argument("--floss", type=int, default=0, help="Floss-Schichten (raft) unter dem Teil - 17.11.2026: kleine flache Teile (Uhrzeiger) hafteten auf Textured PEI nicht, auch nicht mit Brim oder Rahmen")
+    ap.add_argument("--set", action="append", default=[], help="Prozess-Schluessel=Wert")
     ap.add_argument("--stuetzen", action="store_true", help="Baumstuetzen (tree(auto)) an; Standard aus wie bisher"); a = ap.parse_args()
     idx = {}
     for kind in ("machine", "process", "filament"):
@@ -26,6 +28,8 @@ def main():
     m = flat(idx, "machine", "Bambu Lab P1S 0.4 nozzle"); p = flat(idx, "process", pname); f = flat(idx, "filament", "Bambu PLA Basic @BBL P1S 0.4 nozzle")
     m["curr_bed_type"] = p["curr_bed_type"] = a.platte; p.update(brim_type="outer_only", brim_width=a.brim, sparse_infill_density=a.fuellung, wall_loops=a.wande)
     if a.stuetzen: p.update(enable_support="1", support_type="tree(auto)")
+    if a.floss > 0: p.update(raft_layers=str(a.floss), raft_first_layer_expansion="3", initial_layer_speed=["20"] if isinstance(p.get("initial_layer_speed"), list) else "20")
+    for s_ in a.set: k_, v_ = s_.split("=", 1); p[k_] = [v_] if isinstance(p.get(k_), list) else v_
     f["textured_plate_temp"] = [a.bett]; f["textured_plate_temp_initial_layer"] = [a.bett]
     td = tempfile.mkdtemp(prefix="bs_", dir="/media/oem/scan/tmp")
     for n, d in (("m", m), ("p", p), ("f", f)): json.dump(d, open(f"{td}/{n}.json", "w"))
