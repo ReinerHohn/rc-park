@@ -37,4 +37,7 @@ for j in jobs:
     outf = os.path.join(a.out, name + ".gcode")
     cmd = ["prusa-slicer", "--load", ini, "--export-gcode", "--center", "125,105", "--output", outf] + (["--dont-arrange"] if len(j) == 1 else []) + j
     r = subprocess.run(cmd, capture_output=True, text=True)
+    if r.returncode == 0 and os.path.exists(outf):      # 17.11.2026: die Profile kennen nur "MK4" - der MK4S haelt dann mit einer Rueckfrage am Display an (Zustand ATTENTION, Auftrag PAUSED), ein Fernstart bleibt haengen
+        t_ = open(outf, encoding="utf8", errors="replace").read()
+        if 'M862.3 P "MK4" ' in t_: open(outf, "w", encoding="utf8").write(t_.replace('M862.3 P "MK4" ', 'M862.3 P "MK4S" ', 1))
     print(("OK  " if r.returncode == 0 and os.path.exists(outf) else "FEHLER ") + name, (r.stderr or r.stdout).strip().splitlines()[-1:] if r.returncode else "")
