@@ -432,3 +432,12 @@ Netzstufe: braucht voruebergehend ~0,03 GB je Bild; raeumt die Tiefenkarten-Kopi
 - FOLGERUNG: der schnelle Bausatz besteht aus FLACHEN WANDPANEELEN (Putz) + flachen Steinplatten + Dach/Aufbauten als Koerper; der aufrechte Hohlkoerper ist die langsamste Bauart.
   Naechster Schritt: `druck_paneele.py` (Waende an den Gebaeudeecken trennen, Traegerschicht, Eckverbindung, Sockel hohl statt massiv).
 - `druck_zeit.py`: Druckraum wird angegeben (`--bett 256`), sonst lehnt der Slicer Teile ueber 210 mm ab.
+
+### Bausatz Turm, Stand 17.11.2026 vormittags (Variante 2,2 mm Wand, nie gedruckt)
+- Koerper: 6 Teile + 2 Verbinderringe (Schnitte 26,2 m und 35,0 m; an 11,1 / 36,5 / 46,9 m kein Hohlraum oder Kollision -> stumpf kleben), 67 h 23 min / 708 cm3 (Schicht 0,2, ohne Stuetzen). Unterstes Teil 22,5 h / 301 cm3 (massiv unter 8 m).
+- Steinplatten: 6 Stueck, 13 h 54 min / 73 cm3 (Schicht 0,16). Durchdringung Platte/Koerper < 0,1 mm3.
+- `druck_farbteile.py`: Taschentiefe = Wand - 0,6 mm - Spiel; Innenschicht 0,8 mm hinter jeder Tasche (ohne sie war der Koerper an den Ecken in 34 von 48 Hoehenschnitten offen; jetzt 2 von 48, bei 11 und 12 m - offen).
+- `druck_teilung.py`: Verbinderringe (`verbinder_NN.stl`, Hoehe 2 x 3 mm, Wand 1,2 mm, Spiel = toleranz_mm) fuer waagerechte Schnitte ohne Stift.
+- OFFEN fuer das Miniaturwunderland: Testdruck einer Steinplatte (Fugen ~0,35 mm tief = 2 Schichten - sichtbar?); flache Wandpaneele (`druck_paneele.py`, ~2,5x schneller); Sockel hohl; Ostplatte; Dach als eigenes Farbteil ist schon ein Teil (Farbe ANNAHME); duenne Grate an den Turmkanten (0,7 %).
+- Kette: `netz_aus_dicht.py` nimmt einen Arbeitsordner auf der Datenplatte, wenn der Ordner neben der dichten Wolke auf einer anderen/vollen Platte liegt (kaufhaus_gk/pipe -> externe Platte, 4 GB frei).
+- Kette: rote Lage sperrt Fotostufen (`lage_tor`, Martinstor); Einstieg ab 'fassaden' holt `dach.json` nach; Fototor nur fuer Fotos mit Messkamera.
