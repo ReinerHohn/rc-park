@@ -22,10 +22,36 @@ if obj.get("lod2", {}).get("id"):                    # Standard: LoD2-Grundriss 
     koerper, belege = anbauen(koerper, OBJ, fenster=FJ)
     for b_ in belege + bel_f: beleg(**b_)
     belege = bel_f
+    BF = obj.get("bauteile_foto")                    # 17.11.2026 Bauteil-Runde: Laube, Staffelgiebel, Gauben, Erker aus Fotos (Masse/Quellen in objekt.json bauteile_foto, Funktionen tools/bauteile.py)
+    if BF and os.environ.get("OHNE_BAUTEILE") != "1":
+        from bauteile import Wand, laube, staffelgiebel, schleppgaube, erker_polygon
+        T = BF["traufwand"]; WT = Wand(T["a"], T["b"], aussen=T["aussen"]); GE = {}
+        for g in BF["giebelebenen"]:                 # Rumpf an der gemessenen Giebelflaeche abschneiden (LoD2-Wand ~0,7 m zu weit aussen); Giebel, Dach und Waende enden dort
+            GE[g["name"]] = Wand(g["a"], g["b"], aussen=g["aussen"]).versetzt(g["versatz"]); koerper = GE[g["name"]].halbraum_innen(koerper)
+            beleg("wand", "Giebelwand %s auf der Foto-Ebene (Rumpf %.2f m zurueckgenommen)" % (g["name"], -g["versatz"]), g["quelle"])
+        L = BF["laube"]; koerper, _ = laube(koerper, WT, L["boegen"], L["tiefe"], L["decke"], pfeiler_tiefe=L["pfeiler_tiefe"], u0=L["u0"], u1=L["u1"],
+                                            stirn=[(GE[s["giebel"]], s) for s in L.get("stirn", [])])
+        beleg("wand", "Laube: %d Korbboegen + offene Halle %.2f m tief, Stirnbogen West" % (len(L["boegen"]), L["tiefe"]), L["quelle"], hinweis="ANNAHME: " + "; ".join(L["annahmen"]))
     if belege and os.environ.get("OHNE_HOHL") != "1":        # 16.11.2026 Nutzer: Fenster muessen echte Loecher sein -> Gebaeude hohl, erkannte Fenster durchgebrochen
         from bauteile import aushoehlen
         koerper, n_offen, v_hohl = aushoehlen(koerper, d=float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0)
         beleg("wand", "Gebaeude hohl, %d Fenster durchgebrochen" % n_offen, "bauteile.aushoehlen auf den automatisch erkannten Fenstern", hinweis="Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende")
+    if BF and os.environ.get("OHNE_BAUTEILE") != "1":   # massive Anbauten NACH dem Aushoehlen (sonst Null-Volumen-Splitter an den Gauben: 11 Teilnetze)
+        for G in BF["staffelgiebel"]:
+            koerper = koerper + staffelgiebel(GE[G["giebel"]], G["mitte_u"], G["spitze_breite"], G["spitze_z"], G["flanken"], dicke=G["dicke"], fuss_z=G["fuss_z"])
+            n_st = {s: len(st) for s, st in G["flanken"]}
+            beleg("dach", "Staffelgiebel %s: Spitzblock + %s Stufen je Flanke mit Abdeckung" % (G["giebel"], "/".join(str(v) for v in n_st.values())), G["quelle"],
+                  hinweis="ANNAHME: Dicke %.2f, Abdeckungsprofil; ab Stufe %s (Flanke) aus dem gemessenen Rhythmus fortgesetzt" % (G["dicke"], G.get("annahme_ab")))
+        g = BF["gauben"]; ab_g = None
+        for G in g["liste"]:
+            zf = g["dach_z0"] + g["dach_s"] * (-G["w_front"])
+            zu, ab = schleppgaube(WT, G["u"], G["w_front"], zf, g["breite"], g["hoehe"], g["neigung"], g["dach_z0"], g["dach_s"], dach_breite=g["dach_breite"], ueberstand=g["ueberstand"], fenster=g["fenster"])
+            koerper = koerper + zu; ab_g = ab if ab_g is None else ab_g + ab
+            beleg("dach", "Schleppgaube %s (u %.2f, Front %.2f hinter der Traufwand)" % (G["name"], G["u"], -G["w_front"]), g["quelle"], hinweis="ANNAHME: " + "; ".join(g["annahmen"]))
+        if ab_g is not None: koerper = koerper - ab_g
+        for E in BF["erker"]:
+            koerper = koerper + erker_polygon(E["achse"], WT.n, E["apothem"], E["zonen"], konsole=E["konsole"], fenster=E["fenster"], felder=E.get("felder"), helm=E["helm"], knauf=E["knauf"], stange=E["stange"], wirt=koerper)
+            beleg("wand", "%s %s: Achteck-Eckerker (Konsole, Wappenband, Fensterband 2 Lichter je Flaeche, Gesims, geschweifter Helm, Knauf)" % (E["name"], E["seite"]), E["quelle"], hinweis="ANNAHME: " + "; ".join(E["annahmen"]))
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = 10.0                               # Gesamthoehe (m) - Quelle in masstabelle.json

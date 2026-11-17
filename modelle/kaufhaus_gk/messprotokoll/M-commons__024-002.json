@@ -1,0 +1,37 @@
+{
+ "id": "M-commons__024-002",
+ "typ": "triangulation",
+ "foto": "commons__024",
+ "name": "Staffelgiebel Ost: Spitzblock Kappenfirst",
+ "beobachtungen": [
+  {
+   "kamera": "K-commons__024_Freiburg_812503898",
+   "px": [
+    380.0,
+    17.6
+   ]
+  },
+  {
+   "kamera": "K-commons__110_Középkori_bevásárlóközpont_Medieval_shopping_centre_-_panoramio",
+   "px": [
+    360.0,
+    36.8
+   ]
+  }
+ ],
+ "P": [
+  10.843,
+  3.731,
+  21.59
+ ],
+ "strahl_abstand_m": [
+  0.017,
+  0.017
+ ],
+ "schnittwinkel_grad": [
+  22.6
+ ],
+ "z": 21.59,
+ "unsicherheit_m": 0.287,
+ "massstab_von": "Kameras K-commons__024_Freiburg_812503898, K-commons__110_Középkori_bevásárlóközpont_Medieval_shopping_centre_-_panoramio aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}

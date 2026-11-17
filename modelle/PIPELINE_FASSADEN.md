@@ -466,3 +466,14 @@ martinstor_gk haelt an 'lage_tor' an (Lage nie belegt); schwab_auto: Ostwand 10 
   Koerper MK4S (0,8/0,4): 6 Teile + 4 Verbinderringe, 14 h 13 min / 334 cm3 (2,4-mm-Wand: 23 h 52 min / 824 cm3). Steinplatten Bambu (0,16): 8 Stueck, 10 h 21 min / 52 cm3.
   Offen: Platten liegen nicht ueberall auf (eine Plattenebene je Wand, bis ~1 mm Luft an der Nordwand); platte_nord_01/west_01 decken nur 30 %/17 % ihrer Maske; lose Stuecke in zwei Platten; Innenschicht 136 cm3.
 - Die Zeile "27 von 48 offen - NICHT fertig" weiter oben ist damit ueberholt.
+
+## Nachtrag 17.11.2026: Bauteil-Katalog erweitert (Bauteil-Runde Kaufhaus, `tools/bauteile.py`)
+Neue generische Funktionen (keine Objektnamen, alle Masse als Parameter; Werte und Quellen stehen in `objekt.json` -> `bauteile_foto`, der Generator ruft nur auf):
+- `korbbogen` / `bogen_querschnitt(form="korb")`: halbe Ellipse ueber dem Kaempfer, senkrechter Ansatz (Laubenboegen, flacher als ein Halbkreis, ohne Knick wie beim Stichbogen).
+- `Wand.versetzt(d)`: Parallelwand mit gleichem u-Ursprung (Ebene aus dem Sweep statt LoD2-Wand).
+- `laube(koerper, W, boegen, tiefe, decke, ...)`: offene Arkadenhalle hinter einer Bogenreihe, Stirnbogen in Querwaenden (`stirn`). Messweg: Pfeiler/Kaempfer/Scheitel am entzerrten Frontfoto (`wand_ortho.py px`, 2 Fotos deckungsgleich), Zahl `foto_zaehlung.py`, Hallentiefe per Ebenen-Sweep durch einen Bogen. Pruefung: `ebene_oeffnungen` (Anzahl + Breite) und `z_am_punkt` (Scheitel).
+- `staffelgiebel(W, mitte_u, spitze_breite, spitze_z, flanken, ...)`: Spitzblock + Stufenbloecke je Flanke, je Block Gesimsplatte + Satteldaechlein. Messweg: Giebelebene per Sweep (am Kaufhaus lag sie 0,65-0,75 m HINTER der LoD2-Wand), je Stufe Aussenkante + Oberkante am entzerrten Bild dieser Ebene. Rumpf vorher mit `W.halbraum_innen` an der Ebene abschneiden.
+- `schleppgaube(W, u, w_front, z_fuss, breite, hoehe, neigung, dach_z0, dach_s, ...)`: Front senkrecht, Gaubendach flacher als das Hauptdach bis zum Schnitt mit der Dachflaeche, Rundbogen-Fensternische. Zahl je Reihe am Foto, Lage per Triangulation der Fensteroberkanten.
+- `erker_polygon(achse, front_n, apothem, zonen, konsole, fenster, felder, helm, knauf, stange, wirt=)`: n-eckiger Erker (Zonen-Prismen, Pyramidenkonsole, Lichter- und Feldnischen je Flaeche, geschweifter Helm aus Stumpfstuecken, Knauf, Stange). Achse = trianguliertes Helmknauf, Flaechenabstand durch Projektion des n-Ecks in >= 3 Fotos. `wirt`: Flaechen, die in der Wand stecken, bekommen keine Nischen (sonst Null-Volumen-Splitter).
+- Reihenfolge im Generator: Rumpfschnitt (Giebelebenen) und Laube VOR `aushoehlen`; massive Anbauten (Giebel, Gauben, Erker) NACH `aushoehlen` - beim Hohlmachen der Gauben entstanden sonst 10 Null-Volumen-Teilnetze.
+- Vorlage `tools/objekt_anlegen.py`: Fenster vor Relief + `fenster_fuer_bau` (wie im Kaufhaus-Generator).

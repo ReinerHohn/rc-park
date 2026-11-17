@@ -1,0 +1,48 @@
+{
+ "id": "Z-eigen__018-002",
+ "typ": "zaehlung",
+ "foto": "eigen__018",
+ "datei": "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta.jpg",
+ "was": "Dachgauben Nordhang, untere Reihe",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-17",
+ "punkte": [
+  {
+   "flaeche": "UNTEN",
+   "art": "voll",
+   "x": 1245.0,
+   "y": 590.0
+  },
+  {
+   "flaeche": "UNTEN",
+   "art": "voll",
+   "x": 1879.0,
+   "y": 576.0
+  },
+  {
+   "flaeche": "UNTEN",
+   "art": "voll",
+   "x": 2521.0,
+   "y": 561.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "UNTEN": {
+   "art": "voll",
+   "n": 3
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 3,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-eigen__018-002.jpg",
+ "ausschnitt": [
+  995,
+  311,
+  2771,
+  840
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": ""
+}

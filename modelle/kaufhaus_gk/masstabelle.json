@@ -10,6 +10,198 @@
   },
   "koerper": {
    "typ": "koerper_anzahl"
+  },
+  "arkade_n": {
+   "typ": "ebene_oeffnungen",
+   "o": [
+    3.86,
+    13.2
+   ],
+   "n": [
+    0.344,
+    0.939
+   ],
+   "z": 2.5,
+   "u0": -9.5,
+   "u1": 9.5,
+   "tiefe": 3.0,
+   "vor": 2.0,
+   "schritt": 0.02,
+   "min_b": 2.5,
+   "max_b": 5.0,
+   "rand": 0.2
+  },
+  "arkade_scheitel_b2": {
+   "typ": "z_am_punkt",
+   "punkt": [
+    1.703,
+    13.564
+   ],
+   "z0": 3.0,
+   "z1": 7.0,
+   "suche": "unten",
+   "puffer": 0.03
+  },
+  "giebel_west_spitze": {
+   "typ": "max_z_im_bereich",
+   "x0": -6.768,
+   "x1": -6.528,
+   "y0": 9.558,
+   "y1": 9.798
+  },
+  "giebel_west_n5": {
+   "typ": "max_z_im_bereich",
+   "x0": -5.701,
+   "x1": -5.461,
+   "y0": 13.126,
+   "y1": 13.366
+  },
+  "giebel_west_n2": {
+   "typ": "max_z_im_bereich",
+   "x0": -6.289,
+   "x1": -6.049,
+   "y0": 11.162,
+   "y1": 11.402
+  },
+  "giebel_ost_spitze": {
+   "typ": "max_z_im_bereich",
+   "x0": 10.695,
+   "x1": 10.935,
+   "y0": 3.338,
+   "y1": 3.578
+  },
+  "giebel_ost_n4": {
+   "typ": "max_z_im_bereich",
+   "x0": 11.393,
+   "x1": 11.633,
+   "y0": 6.676,
+   "y1": 6.916
+  },
+  "giebel_ost_s1": {
+   "typ": "max_z_im_bereich",
+   "x0": 10.452,
+   "x1": 10.692,
+   "y0": 2.173,
+   "y1": 2.413
+  },
+  "gaube_unten_ost_z": {
+   "typ": "max_z_im_bereich",
+   "x0": 7.691,
+   "x1": 7.891,
+   "y0": 10.168,
+   "y1": 10.368
+  },
+  "gaube_unten_mitte_z": {
+   "typ": "max_z_im_bereich",
+   "x0": 3.503,
+   "x1": 3.703,
+   "y0": 11.703,
+   "y1": 11.903
+  },
+  "gaube_unten_west_z": {
+   "typ": "max_z_im_bereich",
+   "x0": -0.666,
+   "x1": -0.466,
+   "y0": 13.23,
+   "y1": 13.43
+  },
+  "gaube_oben_ost_z": {
+   "typ": "max_z_im_bereich",
+   "x0": 4.973,
+   "x1": 5.173,
+   "y0": 9.087,
+   "y1": 9.287
+  },
+  "gaube_oben_west_z": {
+   "typ": "max_z_im_bereich",
+   "x0": 0.786,
+   "x1": 0.986,
+   "y0": 10.622,
+   "y1": 10.822
+  },
+  "erker_w_front80": {
+   "typ": "schnitt_reichweite",
+   "z": 8.0,
+   "zentrum": [
+    -4.785,
+    15.993
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 2.5
+  },
+  "erker_w_helm128": {
+   "typ": "schnitt_reichweite",
+   "z": 12.8,
+   "zentrum": [
+    -4.785,
+    15.993
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 2.5
+  },
+  "erker_w_knauf": {
+   "typ": "schnitt_reichweite",
+   "z": 15.94,
+   "zentrum": [
+    -4.785,
+    15.993
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 1.0
+  },
+  "erker_o_front80": {
+   "typ": "schnitt_reichweite",
+   "z": 8.0,
+   "zentrum": [
+    12.68,
+    9.79
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 2.5
+  },
+  "erker_o_helm128": {
+   "typ": "schnitt_reichweite",
+   "z": 12.8,
+   "zentrum": [
+    12.68,
+    9.79
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 2.5
+  },
+  "erker_o_knauf": {
+   "typ": "schnitt_reichweite",
+   "z": 15.92,
+   "zentrum": [
+    12.68,
+    9.79
+   ],
+   "richtung": [
+    0.344,
+    0.939
+   ],
+   "quer_max": 0.03,
+   "r_max": 1.0
   }
  },
  "pruefungen": [
@@ -34,6 +226,299 @@
    "quelle": "Schwebende Teile",
    "quelltyp": "modell",
    "merkmal": "druck"
+  },
+  {
+   "name": "Arkade Nord: offene Boegen (>= 3 m tief) bei z 2,5",
+   "wert": "arkade_n_anzahl",
+   "soll": [
+    4,
+    4
+   ],
+   "quelle": "Zaehlung am Foto eigen 018 (4 Boegen, Durchblick in die Laube)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "anzahl",
+   "protokoll": "Z-eigen__018-001",
+   "historie": [
+    "2026-11-17 angelegt (Bauteil-Runde)"
+   ]
+  },
+  {
+   "name": "Arkade Nord: lichte Bogenbreite (Median) bei z 2,5",
+   "wert": "arkade_n_breite_median",
+   "soll": [
+    3.3,
+    3.9
+   ],
+   "quelle": "entzerrtes Foto commons 052/eigen 018: Pfeilerabstaende 3,4/3,7/3,6/3,6 (modelle/kaufhaus_gk/audit/bauteile_1711/arkade_052_*.jpg)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "protokoll": "Z-eigen__018-001",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Arkade Bogen 2: Scheitel der Laibung (z)",
+   "wert": "arkade_scheitel_b2",
+   "soll": [
+    4.8,
+    5.1
+   ],
+   "quelle": "entzerrtes Foto commons 052 + eigen 018 (Scheitel 4,95; Kaempfer 3,5)",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Staffelgiebel West: Spitzblock (Abdeckung 21,45-21,75) - hoechster Punkt (z)",
+   "wert": "giebel_west_spitze",
+   "soll": [
+    21.3,
+    21.9
+   ],
+   "quelle": "entzerrtes Foto der Giebelebene (Sweep-Ebene -0.75), 2 Fotos deckungsgleich, modelle/kaufhaus_gk/audit/bauteile_1711/giebel_west_022_050.jpg",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "protokoll": "Z-eigen__022-001",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Staffelgiebel West: Nordflanke Stufe 5 (Oberkante 16,5) - hoechster Punkt (z)",
+   "wert": "giebel_west_n5",
+   "soll": [
+    16.4,
+    16.95
+   ],
+   "quelle": "entzerrtes Foto der Giebelebene (Sweep-Ebene -0.75), 2 Fotos deckungsgleich, modelle/kaufhaus_gk/audit/bauteile_1711/giebel_west_022_050.jpg",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "protokoll": "Z-eigen__022-001",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Staffelgiebel West: Nordflanke Stufe 2 (Oberkante 19,4) - hoechster Punkt (z)",
+   "wert": "giebel_west_n2",
+   "soll": [
+    19.3,
+    19.85
+   ],
+   "quelle": "entzerrtes Foto der Giebelebene (Sweep-Ebene -0.75), 2 Fotos deckungsgleich, modelle/kaufhaus_gk/audit/bauteile_1711/giebel_west_022_050.jpg",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "protokoll": "Z-eigen__022-001",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Staffelgiebel Ost: Spitzblock (Oberkante 21,2, Kappenfirst 21,59 trianguliert) - hoechster Punkt (z)",
+   "wert": "giebel_ost_spitze",
+   "soll": [
+    21.15,
+    21.7
+   ],
+   "quelle": "entzerrtes Foto der Giebelebene (Sweep-Ebene -0.65), 2 Fotos deckungsgleich, modelle/kaufhaus_gk/audit/bauteile_1711/giebel_ost_024_110.jpg",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "protokoll": "Z-commons__024-001",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Staffelgiebel Ost: Nordflanke Stufe 4 (Oberkante 17,15) - hoechster Punkt (z)",
+   "wert": "giebel_ost_n4",
+   "soll": [
+    17.05,
+    17.6
+   ],
+   "quelle": "entzerrtes Foto der Giebelebene (Sweep-Ebene -0.65), 2 Fotos deckungsgleich, modelle/kaufhaus_gk/audit/bauteile_1711/giebel_ost_024_110.jpg",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "protokoll": "Z-commons__024-001",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Staffelgiebel Ost: Suedflanke Stufe 1 (Oberkante 20,15) - hoechster Punkt (z)",
+   "wert": "giebel_ost_s1",
+   "soll": [
+    20.05,
+    20.6
+   ],
+   "quelle": "entzerrtes Foto der Giebelebene (Sweep-Ebene -0.65), 2 Fotos deckungsgleich, modelle/kaufhaus_gk/audit/bauteile_1711/giebel_ost_024_110.jpg",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "absolut_hoehe",
+   "protokoll": "Z-commons__024-001",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Gaube unten_ost: Gaubendach hinter der Front (z, Dach am Fuss 13.21)",
+   "wert": "gaube_unten_ost_z",
+   "soll": [
+    13.96,
+    14.21
+   ],
+   "quelle": "Frontfoto eigen 018: Unterkante->Gaubentraufe 0,65-0,70 m + Dachplatte; Lage trianguliert 018/110; Zahl Z-eigen__018-002/003",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "protokoll": "Z-eigen__018-002",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Gaube unten_mitte: Gaubendach hinter der Front (z, Dach am Fuss 13.21)",
+   "wert": "gaube_unten_mitte_z",
+   "soll": [
+    13.96,
+    14.21
+   ],
+   "quelle": "Frontfoto eigen 018: Unterkante->Gaubentraufe 0,65-0,70 m + Dachplatte; Lage trianguliert 018/110; Zahl Z-eigen__018-002/003",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "protokoll": "Z-eigen__018-002",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Gaube unten_west: Gaubendach hinter der Front (z, Dach am Fuss 13.21)",
+   "wert": "gaube_unten_west_z",
+   "soll": [
+    13.96,
+    14.21
+   ],
+   "quelle": "Frontfoto eigen 018: Unterkante->Gaubentraufe 0,65-0,70 m + Dachplatte; Lage trianguliert 018/110; Zahl Z-eigen__018-002/003",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "protokoll": "Z-eigen__018-002",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Gaube oben_ost: Gaubendach hinter der Front (z, Dach am Fuss 15.73)",
+   "wert": "gaube_oben_ost_z",
+   "soll": [
+    16.48,
+    16.73
+   ],
+   "quelle": "Frontfoto eigen 018: Unterkante->Gaubentraufe 0,65-0,70 m + Dachplatte; Lage trianguliert 018/110; Zahl Z-eigen__018-002/003",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "protokoll": "Z-eigen__018-003",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Gaube oben_west: Gaubendach hinter der Front (z, Dach am Fuss 15.73)",
+   "wert": "gaube_oben_west_z",
+   "soll": [
+    16.48,
+    16.73
+   ],
+   "quelle": "Frontfoto eigen 018: Unterkante->Gaubentraufe 0,65-0,70 m + Dachplatte; Lage trianguliert 018/110; Zahl Z-eigen__018-002/003",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "fassade",
+   "protokoll": "Z-eigen__018-003",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Erker West: Frontflaeche Abstand von der Achse bei z 8,0",
+   "wert": "erker_w_front80",
+   "soll": [
+    1.0,
+    1.2
+   ],
+   "quelle": "Achteck 1,1 in 4 Fotos projiziert (Pfosten/Fensterband treffen), Achse = trianguliertes Helmknauf M-eigen__018-001",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Erker West: Helm Abstand Flaeche-Achse bei z 12,8 (geschweift)",
+   "wert": "erker_w_helm128",
+   "soll": [
+    0.38,
+    0.6
+   ],
+   "quelle": "Helmsilhouette commons 052 (entzerrt, auf die Achsebene umgerechnet): 0,47-0,48 bei z 12,6-12,8",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Erker West: Helmknauf Radius in Knaufmitte",
+   "wert": "erker_w_knauf",
+   "soll": [
+    0.12,
+    0.26
+   ],
+   "quelle": "Knaufmitte trianguliert z 15,94 (M-eigen__018-001), Knauf ~0,35-0,4 m Durchmesser in commons 052/110",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Erker Ost: Frontflaeche Abstand von der Achse bei z 8,0",
+   "wert": "erker_o_front80",
+   "soll": [
+    1.0,
+    1.2
+   ],
+   "quelle": "Achteck 1,1 in 4 Fotos projiziert (Pfosten/Fensterband treffen), Achse = trianguliertes Helmknauf M-commons__024-001",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "grundriss",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Erker Ost: Helm Abstand Flaeche-Achse bei z 12,8 (geschweift)",
+   "wert": "erker_o_helm128",
+   "soll": [
+    0.38,
+    0.6
+   ],
+   "quelle": "Helmsilhouette commons 052 (entzerrt, auf die Achsebene umgerechnet): 0,47-0,48 bei z 12,6-12,8",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
+  },
+  {
+   "name": "Erker Ost: Helmknauf Radius in Knaufmitte",
+   "wert": "erker_o_knauf",
+   "soll": [
+    0.12,
+    0.26
+   ],
+   "quelle": "Knaufmitte trianguliert z 15,92 (M-commons__024-001), Knauf ~0,35-0,4 m Durchmesser in commons 052/110",
+   "quelltyp": "foto_kalibriert",
+   "merkmal": "duennes_bauteil",
+   "historie": [
+    "2026-11-17 angelegt"
+   ]
   }
  ],
  "beobachtungen_offen": [
@@ -125,6 +610,154 @@
    "wer": "Agent Detailrunde (Auftrag Nutzer: Steinmuster Ostseite nie am Foto geprueft)",
    "text": "Steinmuster der Ostseite (w07) und Foto-'Quader' auf w00-w06 waren FALSCH: relief/w07_foto.jpg zeigte ein blaues Nachbarhaus mit Fensterlaeden, w04 roten Putz mit Fenstern und Dachziegeln. Kaufhaus ist verputzt. Bild: audit/detail_vorher_w07_foto.jpg",
    "naechster_schritt": "ERLEDIGT 17.11.2026: fassaden_kette.py (Wandflaeche aus LoD2, Nachbarn als Verdecker, Quader-Tor in steine_aus_foto.py) - keine Fotosteine mehr, Netz-Relief an w03/w04/w05; Bild audit/neben_eigen__handy_06.jpg angesehen. OFFEN: Erker, Gauben, offene Arkaden, Staffelgiebel fehlen"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Nutzer/Pruefer (Auftrag Bauteil-Runde)",
+   "text": "Erker, Dachgauben, Staffelgiebel und offene Arkaden fehlen; Arkaden nur 10 cm Ruecksprung, Erkerzonen glatt; Realitaet ~25 %",
+   "naechster_schritt": "Bauteil-Runde nach VORLAGE_BAUTEIL_RUNDE: Form aus Fotos, Lage per Triangulation/Sweep, Zaehlung Z-*, Pruefungen arkade_*, giebel_*, gaube_*, erker_* (vorher rot), dann tools/bauteile.py laube/staffelgiebel/schleppgaube/erker_polygon"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Agent Bauteil-Runde",
+   "text": "LAGE-WIDERSPRUCH LoD2 gegen Fotos: beide Giebelwaende stehen im LoD2 ~0,7 m zu weit aussen (Ebenen-Sweep West -0,75, Ost -0,65; Eckpfeiler der Laube enden bei u 1,0 / 19,5 statt 0 / 20,4). Traufe der Nordseite am Foto ~11,0 statt 11,65 (LoD2), Dachflaeche am Foto 0,4-0,8 m tiefer als das Modelldach (Gauben-Fensteroberkanten trianguliert 12,8-12,95 / 15,6-15,85)",
+   "naechster_schritt": "Giebelwaende: Rumpf an den Sweep-Ebenen abgeschnitten (Generator, giebelebenen). Dach/Traufe: NICHT gemittelt, offen - Traufe mit 3. Kamera (Seitenfoto) triangulieren, gegen DOM1-Profil der Nordseite legen; bis dahin Gauben auf dem Modelldach"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto commons__024_Freiburg_812503898, Treffer 1)",
+   "auto_id": "fehlteile-commons__024_Freiburg_812503898-49-343",
+   "art": "fehlteil",
+   "foto": "commons__024_Freiburg_812503898",
+   "z_von": 15.82,
+   "z_bis": 15.82,
+   "xyz": [
+    8.75,
+    -5.59,
+    15.82
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=15.82 m, y=-5.59 m (Zelle [49, 343, 49], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_commons__024_Freiburg_812503898.jpg Treffer 1 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto commons__024_Freiburg_812503898, Treffer 2)",
+   "auto_id": "fehlteile-commons__024_Freiburg_812503898-196-392",
+   "art": "fehlteil",
+   "foto": "commons__024_Freiburg_812503898",
+   "z_von": 14.03,
+   "z_bis": 14.03,
+   "xyz": [
+    8.88,
+    -1.44,
+    14.03
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=14.03 m, y=-1.44 m (Zelle [196, 392, 49], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_commons__024_Freiburg_812503898.jpg Treffer 2 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto commons__024_Freiburg_812503898, Treffer 5)",
+   "auto_id": "fehlteile-commons__024_Freiburg_812503898-392-441",
+   "art": "fehlteil",
+   "foto": "commons__024_Freiburg_812503898",
+   "z_von": 12.42,
+   "z_bis": 12.42,
+   "xyz": [
+    8.2,
+    3.1,
+    12.42
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=12.42 m, y=3.1 m (Zelle [392, 441, 49], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_commons__024_Freiburg_812503898.jpg Treffer 5 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto commons__024_Freiburg_812503898, Treffer 6)",
+   "auto_id": "fehlteile-commons__024_Freiburg_812503898-98-490",
+   "art": "fehlteil",
+   "foto": "commons__024_Freiburg_812503898",
+   "z_von": 12.13,
+   "z_bis": 12.13,
+   "xyz": [
+    8.88,
+    -4.0,
+    12.13
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=12.13 m, y=-4.0 m (Zelle [98, 490, 49], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_commons__024_Freiburg_812503898.jpg Treffer 6 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto commons__024_Freiburg_812503898, Treffer 7)",
+   "auto_id": "fehlteile-commons__024_Freiburg_812503898-196-539",
+   "art": "fehlteil",
+   "foto": "commons__024_Freiburg_812503898",
+   "z_von": 10.78,
+   "z_bis": 10.78,
+   "xyz": [
+    8.71,
+    -1.51,
+    10.78
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=10.78 m, y=-1.51 m (Zelle [196, 539, 49], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_commons__024_Freiburg_812503898.jpg Treffer 7 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto commons__024_Freiburg_812503898, Treffer 8)",
+   "auto_id": "fehlteile-commons__024_Freiburg_812503898-196-588",
+   "art": "fehlteil",
+   "foto": "commons__024_Freiburg_812503898",
+   "z_von": 9.7,
+   "z_bis": 9.7,
+   "xyz": [
+    8.56,
+    -1.61,
+    9.7
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=9.7 m, y=-1.61 m (Zelle [196, 588, 49], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_commons__024_Freiburg_812503898.jpg Treffer 8 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto commons__024_Freiburg_812503898, Treffer 9)",
+   "auto_id": "fehlteile-commons__024_Freiburg_812503898-392-588",
+   "art": "fehlteil",
+   "foto": "commons__024_Freiburg_812503898",
+   "z_von": 9.69,
+   "z_bis": 9.69,
+   "xyz": [
+    6.28,
+    1.9,
+    9.69
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=9.69 m, y=1.9 m (Zelle [392, 588, 49], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_commons__024_Freiburg_812503898.jpg Treffer 9 ansehen, Element benennen, Zeile + beleg()"
+  },
+  {
+   "datum": "auto",
+   "wer": "fehlteile_finden (Foto commons__024_Freiburg_812503898, Treffer 12)",
+   "auto_id": "fehlteile-commons__024_Freiburg_812503898-0-637",
+   "art": "fehlteil",
+   "foto": "commons__024_Freiburg_812503898",
+   "z_von": 9.12,
+   "z_bis": 9.12,
+   "xyz": [
+    8.77,
+    -6.71,
+    9.12
+   ],
+   "abweichung": 1.0,
+   "text": "Foto zeigt Struktur ohne Modellgegenstueck bei z=9.12 m, y=-6.71 m (Zelle [0, 637, 49], Score +1.00)",
+   "naechster_schritt": "audit/fehlteile_commons__024_Freiburg_812503898.jpg Treffer 12 ansehen, Element benennen, Zeile + beleg()"
   }
  ]
 }

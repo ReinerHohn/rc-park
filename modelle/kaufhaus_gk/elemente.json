@@ -103,9 +103,91 @@
  },
  {
   "seite": "wand",
+  "element": "Giebelwand west auf der Foto-Ebene (Rumpf 0.75 m zurueckgenommen)",
+  "quelle": "Ebenen-Sweep (Grauwert-NCC, Hochpass) der Giebelflaeche parallel LoD2-Wand w01 ueber 7 Fotos (commons 006/058/097, eigen 022/039/050/079): Maximum bei -0,75 m (Mittel 0,278 gegen 0,153 bei 0); entzerrte Bilder 022/050 bei -0,75 deckungsgleich (modelle/kaufhaus_gk/audit/bauteile_1711/giebel_west_022_050.jpg). LoD2-Wand steht ~0,75 m zu weit aussen (Gegenprobe: westlicher Eckpfeiler der Laube endet bei u 1,0 statt 0).",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Giebelwand ost auf der Foto-Ebene (Rumpf 0.65 m zurueckgenommen)",
+  "quelle": "Ebenen-Sweep parallel LoD2-Wand w07 ueber commons 024/110/059: Maximum 024-110 bei -0,7, 024-059 bei -0,6 -> -0,65; Spitzblock trianguliert M-commons__024-002 (10,84/3,73/21,59 = Kappenfirst, Wandmitte). Gegenprobe: oestlicher Eckpfeiler endet bei u 19,5 statt 20,4.",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "Laube: 4 Korbboegen + offene Halle 4.25 m tief, Stirnbogen West",
+  "quelle": "Zahl 4 Boegen Z-eigen__018-001; Pfeiler (Schaft) u 1,0-2,0 / 5,4-6,0 / 9,7-10,5 / 14,1-14,9 / 18,5-19,5, Kaempfer 3,5, Scheitel (Laibung) 4,95 abgelesen am entzerrten Foto commons 052 (1 cm/px) und eigen 018, deckungsgleich (modelle/kaufhaus_gk/audit/bauteile_1711/arkade_052_a.jpg, _b.jpg); Bogenform: setzt senkrecht an, Pfeil 1,45 < halbe Breite 1,8 -> Korbbogen. Hallentiefe 4,25: Ebenen-Sweep durch Bogen 2 (7 Fotos, Maximum -4,25..-4,5; LoD2-Stufe w03 3,86 als Gegenprobe). Westende offen (Durchblick auf das Nachbarhaus in commons 110), Stirnbogen u 10,95-14,05 (Giebelebene West), Kaempfer ~4,0, Scheitel ~5,3 am entzerrten Foto 006 (unsicher, 1 Foto). Ostende: kein Durchblick belegt -> geschlossen.",
+  "hinweis": "ANNAHME: pfeiler_tiefe 0,8 m (Pfeiler quadratisch wie breit); flache Decke 5,5 m statt Kreuzgewoelbe (Gewoelberippen in commons 110 sichtbar); Stirnbogen West: Breite durch die Hallentiefe begrenzt, Hoehen aus 1 Foto",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
   "element": "Gebaeude hohl, 5 Fenster durchgebrochen",
   "quelle": "bauteile.aushoehlen auf den automatisch erkannten Fenstern",
   "hinweis": "Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "dach",
+  "element": "Staffelgiebel west: Spitzblock + 8/8 Stufen je Flanke mit Abdeckung",
+  "quelle": "Nordflanke 8 Stufen Z-eigen__022-001; Aussenkanten/Oberkanten am entzerrten Foto der Giebelebene (eigen 022 und 050, 1 cm/px, deckungsgleich) modelle/kaufhaus_gk/audit/bauteile_1711/giebel_west_022_050.jpg; Suedflanke 3 Stufen sichtbar (Nachbardach davor), Stufen 4-8 = ANNAHME (gemessener Rhythmus du 0,85 / dz 0,95 fortgesetzt)",
+  "hinweis": "ANNAHME: Dicke 0.63, Abdeckungsprofil; ab Stufe {'-1': 3} (Flanke) aus dem gemessenen Rhythmus fortgesetzt",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Staffelgiebel ost: Spitzblock + 8/8 Stufen je Flanke mit Abdeckung",
+  "quelle": "Nordflanke 7 Stufen sichtbar Z-commons__024-001, 8. Stufe hinter dem Erkerhelm = ANNAHME (wie West); Masse am entzerrten Foto der Giebelebene (commons 024 und 110 deckungsgleich) modelle/kaufhaus_gk/audit/bauteile_1711/giebel_ost_024_110.jpg; Suedflanke 2 Stufen sichtbar, Rest ANNAHME (gemessener Rhythmus fortgesetzt)",
+  "hinweis": "ANNAHME: Dicke 0.63, Abdeckungsprofil; ab Stufe {'-1': 7, '1': 2} (Flanke) aus dem gemessenen Rhythmus fortgesetzt",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Schleppgaube unten_ost (u 14.70, Front 1.25 hinter der Traufwand)",
+  "quelle": "Zahl untere Reihe 3 (Z-eigen__018-002), obere Reihe 2 (Z-eigen__018-003). Lage: Fensteroberkanten trianguliert eigen 018 + commons 110 (u, Tiefe hinter der Traufwand; untere -1,1..-1,4, obere -3,0..-3,4); unten_west nur Strahl aus 018. Masse am Frontfoto 018 im Massstab der Fensterbreite: Front 0,91-0,92 breit, Unterkante->Gaubentraufe 0,65-0,70, Fenster 0,5 breit, Scheitel 0,38-0,43; Dachplatte 1,16-1,25 breit. Gaubenneigung 0,57 aus der Bildhoehe Traufe->Dachanschluss (018, Blickhoehe 23 Grad) abgeleitet. Dachflaeche (z0, Neigung) = Modelldach (LoD2/DOM1 dach.json), am Rumpf abgetastet.",
+  "hinweis": "ANNAHME: Hoehenlage auf dem Modelldach: die Fotos zeigen das Dach 0,4-0,8 m TIEFER als LoD2/DOM1 (Traufe am Foto ~11,0 statt 11,65) - Widerspruch nicht gemittelt, Gauben sitzen auf dem Modelldach; ueberstand 0,15; Wangen dreieckig, Fenster Rundbogen-Nische",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Schleppgaube unten_mitte (u 10.24, Front 1.25 hinter der Traufwand)",
+  "quelle": "Zahl untere Reihe 3 (Z-eigen__018-002), obere Reihe 2 (Z-eigen__018-003). Lage: Fensteroberkanten trianguliert eigen 018 + commons 110 (u, Tiefe hinter der Traufwand; untere -1,1..-1,4, obere -3,0..-3,4); unten_west nur Strahl aus 018. Masse am Frontfoto 018 im Massstab der Fensterbreite: Front 0,91-0,92 breit, Unterkante->Gaubentraufe 0,65-0,70, Fenster 0,5 breit, Scheitel 0,38-0,43; Dachplatte 1,16-1,25 breit. Gaubenneigung 0,57 aus der Bildhoehe Traufe->Dachanschluss (018, Blickhoehe 23 Grad) abgeleitet. Dachflaeche (z0, Neigung) = Modelldach (LoD2/DOM1 dach.json), am Rumpf abgetastet.",
+  "hinweis": "ANNAHME: Hoehenlage auf dem Modelldach: die Fotos zeigen das Dach 0,4-0,8 m TIEFER als LoD2/DOM1 (Traufe am Foto ~11,0 statt 11,65) - Widerspruch nicht gemittelt, Gauben sitzen auf dem Modelldach; ueberstand 0,15; Wangen dreieckig, Fenster Rundbogen-Nische",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Schleppgaube unten_west (u 5.80, Front 1.25 hinter der Traufwand)",
+  "quelle": "Zahl untere Reihe 3 (Z-eigen__018-002), obere Reihe 2 (Z-eigen__018-003). Lage: Fensteroberkanten trianguliert eigen 018 + commons 110 (u, Tiefe hinter der Traufwand; untere -1,1..-1,4, obere -3,0..-3,4); unten_west nur Strahl aus 018. Masse am Frontfoto 018 im Massstab der Fensterbreite: Front 0,91-0,92 breit, Unterkante->Gaubentraufe 0,65-0,70, Fenster 0,5 breit, Scheitel 0,38-0,43; Dachplatte 1,16-1,25 breit. Gaubenneigung 0,57 aus der Bildhoehe Traufe->Dachanschluss (018, Blickhoehe 23 Grad) abgeleitet. Dachflaeche (z0, Neigung) = Modelldach (LoD2/DOM1 dach.json), am Rumpf abgetastet.",
+  "hinweis": "ANNAHME: Hoehenlage auf dem Modelldach: die Fotos zeigen das Dach 0,4-0,8 m TIEFER als LoD2/DOM1 (Traufe am Foto ~11,0 statt 11,65) - Widerspruch nicht gemittelt, Gauben sitzen auf dem Modelldach; ueberstand 0,15; Wangen dreieckig, Fenster Rundbogen-Nische",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Schleppgaube oben_ost (u 12.52, Front 3.20 hinter der Traufwand)",
+  "quelle": "Zahl untere Reihe 3 (Z-eigen__018-002), obere Reihe 2 (Z-eigen__018-003). Lage: Fensteroberkanten trianguliert eigen 018 + commons 110 (u, Tiefe hinter der Traufwand; untere -1,1..-1,4, obere -3,0..-3,4); unten_west nur Strahl aus 018. Masse am Frontfoto 018 im Massstab der Fensterbreite: Front 0,91-0,92 breit, Unterkante->Gaubentraufe 0,65-0,70, Fenster 0,5 breit, Scheitel 0,38-0,43; Dachplatte 1,16-1,25 breit. Gaubenneigung 0,57 aus der Bildhoehe Traufe->Dachanschluss (018, Blickhoehe 23 Grad) abgeleitet. Dachflaeche (z0, Neigung) = Modelldach (LoD2/DOM1 dach.json), am Rumpf abgetastet.",
+  "hinweis": "ANNAHME: Hoehenlage auf dem Modelldach: die Fotos zeigen das Dach 0,4-0,8 m TIEFER als LoD2/DOM1 (Traufe am Foto ~11,0 statt 11,65) - Widerspruch nicht gemittelt, Gauben sitzen auf dem Modelldach; ueberstand 0,15; Wangen dreieckig, Fenster Rundbogen-Nische",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "dach",
+  "element": "Schleppgaube oben_west (u 8.06, Front 3.20 hinter der Traufwand)",
+  "quelle": "Zahl untere Reihe 3 (Z-eigen__018-002), obere Reihe 2 (Z-eigen__018-003). Lage: Fensteroberkanten trianguliert eigen 018 + commons 110 (u, Tiefe hinter der Traufwand; untere -1,1..-1,4, obere -3,0..-3,4); unten_west nur Strahl aus 018. Masse am Frontfoto 018 im Massstab der Fensterbreite: Front 0,91-0,92 breit, Unterkante->Gaubentraufe 0,65-0,70, Fenster 0,5 breit, Scheitel 0,38-0,43; Dachplatte 1,16-1,25 breit. Gaubenneigung 0,57 aus der Bildhoehe Traufe->Dachanschluss (018, Blickhoehe 23 Grad) abgeleitet. Dachflaeche (z0, Neigung) = Modelldach (LoD2/DOM1 dach.json), am Rumpf abgetastet.",
+  "hinweis": "ANNAHME: Hoehenlage auf dem Modelldach: die Fotos zeigen das Dach 0,4-0,8 m TIEFER als LoD2/DOM1 (Traufe am Foto ~11,0 statt 11,65) - Widerspruch nicht gemittelt, Gauben sitzen auf dem Modelldach; ueberstand 0,15; Wangen dreieckig, Fenster Rundbogen-Nische",
+  "seite_name": "dach"
+ },
+ {
+  "seite": "wand",
+  "element": "erker:0 West-Ecke: Achteck-Eckerker (Konsole, Wappenband, Fensterband 2 Lichter je Flaeche, Gesims, geschweifter Helm, Knauf)",
+  "quelle": "Achse = Helmknauf trianguliert M-eigen__018-001 (5 Fotos, Strahlabstand <= 0,14 m); Achteck, Frontflaeche parallel zur Traufwand, Abstand Flaeche-Achse 1,1 m: Achteck 1,1/1,3/1,5 in eigen 018, commons 006/110/024 projiziert, 1,1 trifft Fensterband und Pfosten (modelle/kaufhaus_gk/audit/bauteile_1711/erker_achteck_W.jpg); Zonengrenzen am entzerrten Frontfoto 018 (modelle/kaufhaus_gk/audit/bauteile_1711/erker_band_018.jpg); Helmprofil r(z) an der Silhouette (commons 052, auf die Achsebene umgerechnet); 2 Lichter je Flaeche (Fotos 018/006; Zaehlung Z-6124-001 kaufhaus_grob3)",
+  "hinweis": "ANNAHME: Lichter rechteckig (Vorhangbogenkoepfe nicht gebaut); Konsole als glatte Pyramide (Rippennetz nicht gebaut); Helm achteckig wie der Erker; Wetterfahne nicht gebaut",
+  "seite_name": "wand"
+ },
+ {
+  "seite": "wand",
+  "element": "erker:1 Ost-Ecke: Achteck-Eckerker (Konsole, Wappenband, Fensterband 2 Lichter je Flaeche, Gesims, geschweifter Helm, Knauf)",
+  "quelle": "Achse = Helmknauf trianguliert M-commons__024-001 (4 Fotos); Achteck 1,1 in eigen 018, commons 024/110/006 projiziert (modelle/kaufhaus_gk/audit/bauteile_1711/erker_achteck_O.jpg); Zonen am entzerrten Frontfoto 018; Helmprofil wie West (Silhouette commons 052 gleich)",
+  "hinweis": "ANNAHME: wie erker:0",
   "seite_name": "wand"
  }
 ]

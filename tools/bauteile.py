@@ -155,6 +155,9 @@ class Wand:
     def halbraum_innen(self, koerper):
         """Koerper an der Wandebene abschneiden (alles VOR der Ebene faellt weg)."""
         return koerper.trim_by_plane((-self.n[0], -self.n[1], 0.0), float(-(self.n @ self.a)))
+    def versetzt(self, d):
+        """Parallele Wand, um d nach aussen (d < 0 = nach innen) verschoben; u-Ursprung und Richtung bleiben (u-Werte der alten Wand gelten weiter)."""
+        a = self.a + d * self.n; return Wand(a, a + self.laenge * self.t, aussen=a + self.n)
 
 
 def fenster_aus_json(koerper, datei, tiefe=0.12, min_stimmen=3):
@@ -181,8 +184,17 @@ def stichbogen(breite, unten, kaempfer, scheitel, nseg=24):
     return CrossSection([[[-a, unten], [a, unten]] + [[R * np.sin(w), zc + R * np.cos(w)] for w in np.linspace(w0, -w0, nseg)]])
 
 
+def korbbogen(breite, unten, kaempfer, scheitel, nseg=24):
+    """Querschnitt (quer, hoch) einer Korbbogen-/Ellipsenbogenoeffnung: Pfeiler bis zum Kaempfer, darueber eine halbe Ellipse (Halbachsen breite/2 und scheitel - kaempfer).
+    17.11.2026 Kaufhaus-Laube: die Boegen setzen am Kaempfer SENKRECHT an (kein Knick wie beim Stichbogen), sind aber flacher als ein Halbkreis (Pfeil 1,45 m bei 1,8 m halber Breite)."""
+    a = breite / 2; h = scheitel - kaempfer
+    return CrossSection([[[-a, unten], [a, unten]] + [[a * np.cos(w), kaempfer + h * np.sin(w)] for w in np.linspace(0, np.pi, nseg)][:-1] + [[-a, kaempfer]]])
+
+
 def bogen_querschnitt(form, breite, kaempfer, scheitel, unten):
-    """Querschnitt einer Bogenoeffnung nach Formfamilie (wie tools/element_einpassen.py / oeffnungen_bogen.py): 'rund' (Halbkreis ueber dem Kaempfer), 'stich' (Segmentbogen), 'spitz' (zwei Kreisboegen)."""
+    """Querschnitt einer Bogenoeffnung nach Formfamilie (wie tools/element_einpassen.py / oeffnungen_bogen.py): 'rund' (Halbkreis ueber dem Kaempfer), 'stich' (Segmentbogen), 'spitz' (zwei Kreisboegen),
+    'korb' (halbe Ellipse, senkrechter Ansatz am Kaempfer)."""
+    if form == "korb": return korbbogen(breite, unten, kaempfer, scheitel)
     if form == "spitz": return spitzbogen(breite / 2, kaempfer, scheitel, unten=unten)
     if form == "stich" and scheitel - kaempfer < breite / 2 - 1e-3: return stichbogen(breite, unten, kaempfer, scheitel)
     return rundbogen(breite, unten, kaempfer + breite / 2)
@@ -232,6 +244,103 @@ def umgang(koerper, ecken, z0, z1, tiefe=0.9, pfosten=4, b=0.24, riegel=0.25, vo
         for k_ in range(pfosten): u_ = k_ * (L - b) / (pfosten - 1); t_ = t_ + W.kasten(u_, u_ + b, z0 + riegel - 0.02, z1 - riegel + 0.02, -0.3, vor - 0.01)
         zus = t_ if zus is None else zus + t_
     return koerper - ab + zus
+
+
+def laube(koerper, W, boegen, tiefe, decke, pfeiler_tiefe=0.8, u0=None, u1=None, vor=0.8, unten=-0.5, stirn=()):
+    """OFFENE LAUBE / ARKADENHALLE hinter einer Bogenreihe (GENERISCH, 17.11.2026 Kaufhaus: "Arkaden nur 10 cm Ruecksprung").
+    W: Wand der Bogenreihe (Aussenflaeche w = 0). boegen: Liste dict(u, breite, kaempfer, scheitel, form) mit LICHTEN Massen der Oeffnungen (form 'rund'|'stich'|'spitz'|'korb');
+    jede Oeffnung wird von 'vor' m vor der Wand (Reliefplatten davor fallen mit) bis knapp hinter die Pfeilerflucht (pfeiler_tiefe) geschnitten.
+    Halle: Quader u0..u1 (Standard: aeusserste Bogenkanten), w = -tiefe .. -pfeiler_tiefe, z = unten .. decke (flache Decke = ANNAHME statt Gewoelbe).
+    stirn: Bogenoeffnungen in Stirnwaenden, je (Wand2, dict wie boegen + 'durch' = Schnitttiefe hinter Wand2, Standard 1,5 m).
+    Zu messen: Bogenlagen und -masse (entzerrtes Frontfoto, tools/wand_ortho.py, 2 Fotos deckungsgleich), Zahl am Foto (foto_zaehlung.py), Hallentiefe (Ebenen-Sweep durch die Boegen).
+    ANNAHME meist: pfeiler_tiefe, decke. Liefert (koerper, schnittkoerper)."""
+    sch = None
+    for b in boegen:
+        k = W.prisma(bogen_querschnitt(b.get("form", "rund"), b["breite"], b["kaempfer"], b["scheitel"], unten), u=b["u"], w0=-pfeiler_tiefe - 0.05, w1=vor); sch = k if sch is None else sch + k
+    u0 = min(b["u"] - b["breite"] / 2 for b in boegen) if u0 is None else u0; u1 = max(b["u"] + b["breite"] / 2 for b in boegen) if u1 is None else u1
+    sch = sch + W.kasten(u0, u1, unten, decke, -tiefe, -pfeiler_tiefe)
+    for W2, b in stirn:
+        sch = sch + W2.prisma(bogen_querschnitt(b.get("form", "rund"), b["breite"], b["kaempfer"], b["scheitel"], unten), u=b["u"], w0=-float(b.get("durch", 1.5)), w1=vor)
+    return koerper - sch, sch
+
+
+def staffelgiebel(W, mitte_u, spitze_breite, spitze_z, flanken, dicke=0.63, fuss_z=None, kappe=0.22, sims=0.08, ueber=0.08):
+    """TREPPENGIEBEL / STAFFELGIEBEL (GENERISCH, 17.11.2026): Spitzblock + Stufenbloecke je Flanke in der Giebelebene W (Aussenflaeche w = 0, Dicke nach innen).
+    flanken: Liste (seite, [(u_aussen, z_oben), ...] von oben nach unten); seite +1 = Stufen laufen Richtung +u, -1 Richtung -u. u_aussen = Aussenkante der Stufe,
+    z_oben = Stufenoberkante unter der Abdeckung. Jede Stufe reicht waagerecht von der Aussenkante der naechsthoeheren Stufe (bzw. des Spitzblocks) bis zur eigenen,
+    senkrecht hinab bis fuss_z (unter die Dachflaeche, im Rumpf versenkt). Abdeckung je Block: Gesimsplatte 'sims' hoch, 'ueber' ringsum vorstehend, darauf ein Satteldaechlein
+    'kappe' hoch (First quer zur Wand, faellt nach beiden u-Seiten) - so am Kaufhaus (Fotos 022/050/024/110).
+    Zu messen: Ebene (Sweep), Spitzblock (Mitte, Breite, Oberkante), je Stufe Aussenkante + Oberkante (entzerrtes Foto der Giebelebene, 2 Fotos deckungsgleich), Stufenzahl am Foto.
+    ANNAHME: Dicke, Abdeckungsprofil. Liefert den Giebelkoerper (zum Rumpf addieren; Dach jenseits der Giebelflaeche vorher mit W.halbraum_innen abschneiden)."""
+    zs = [spitze_z] + [z for _, st in flanken for _, z in st]; fuss_z = (min(zs) - 3.0) if fuss_z is None else fuss_z
+
+    def block(ua, ub, zo):
+        lo, hi = min(ua, ub), max(ua, ub); m = 0.5 * (lo + hi)
+        k = W.kasten(lo, hi, fuss_z, zo, -dicke, 0.0) + W.kasten(lo - ueber, hi + ueber, zo - 0.01, zo + sims, -dicke - ueber, ueber)
+        return k + W.huelle([(u_, zo + sims - 0.01, w_) for u_ in (lo - ueber, hi + ueber) for w_ in (-dicke - ueber, ueber)] + [(m, zo + sims + kappe, w_) for w_ in (-dicke - ueber, ueber)])
+    g = block(mitte_u - spitze_breite / 2, mitte_u + spitze_breite / 2, spitze_z)
+    for seite, stufen in flanken:
+        prev = mitte_u + seite * spitze_breite / 2
+        for ua, zo in stufen: g = g + block(prev, ua, zo); prev = ua
+    return g
+
+
+def schleppgaube(W, u, w_front, z_fuss, breite, hoehe, neigung, dach_z0, dach_s, dach_breite=None, ueberstand=0.15, platte=0.10, fenster=(0.5, 0.10, 0.43), tief=1.5):
+    """SCHLEPPGAUBE auf einem geneigten Dach (GENERISCH, 17.11.2026 Kaufhaus). Wandkoordinaten der Traufwand W: Front senkrecht bei w = w_front (< 0 = hinter der Wand),
+    Breite 'breite', Unterkante z_fuss (auf der Dachflaeche), Oberkante z_fuss + hoehe = Traufe der Gaube. Das Gaubendach steigt mit 'neigung' (dz/dm) nach hinten, bis es die
+    Hauptdachflaeche z = dach_z0 + dach_s * (-w) trifft; Wangen dreieckig. Dachplatte 'platte' dick, 'ueberstand' vor der Front, seitlich bis dach_breite.
+    fenster = (breite, Bruestung ueber z_fuss, Scheitel ueber z_fuss): Rundbogen-Nische 0,12 m tief (kein Durchbruch).
+    Zu messen: u, w_front, Hoehen und Breiten (Frontfoto + Triangulation), neigung (Seitenfoto oder aus dem Frontfoto abgeleitet), Zahl je Reihe am Foto.
+    Liefert (zusatz, abzug): koerper = koerper + zusatz - abzug."""
+    zt = z_fuss + hoehe; wi = (dach_z0 - zt - neigung * w_front) / (dach_s - neigung)        # Schnitt Gaubendach / Hauptdach
+    wb = min(wi, w_front - 0.2) - 0.3; zb = zt + neigung * (w_front - wb); zu = z_fuss - tief; b2 = breite / 2; db = (dach_breite or breite + 0.3) / 2
+    k = W.huelle([(u + s * b2, z_, w_) for s in (-1.0, 1.0) for z_, w_ in ((zu, w_front), (zt, w_front), (zb, wb), (zu, wb))])
+    wf = w_front + ueberstand; zf = zt - neigung * ueberstand
+    k = k + W.huelle([(u + s * db, z_ + dz, w_) for s in (-1.0, 1.0) for z_, w_ in ((zf, wf), (zb, wb)) for dz in (0.0, platte)])
+    ab = None
+    if fenster: ab = W.prisma(rundbogen(fenster[0], z_fuss + fenster[1], z_fuss + fenster[2]), u=u, w0=w_front - 0.12, w1=w_front + 0.05)
+    return k, ab
+
+
+def _ngon(achse, phase, apothem, z, n):
+    R = apothem / np.cos(np.pi / n); return [(achse[0] + R * np.cos(phase + (i + 0.5) * 2 * np.pi / n), achse[1] + R * np.sin(phase + (i + 0.5) * 2 * np.pi / n), z) for i in range(n)]
+
+
+def erker_polygon(achse, front_n, apothem, zonen, konsole=None, fenster=None, helm=None, knauf=None, stange=None, n=8, felder=None, wirt=None):
+    """POLYGONALER ERKER mit Konsole und Helm (GENERISCH, 17.11.2026 Kaufhaus-Eckerker; Nutzer: nicht wieder 'besserer Kasten').
+    Grundriss: regelmaessiges n-Eck um achse (x, y), eine Flaeche mit der Normalen front_n (Plan), Abstand der Flaechen von der Achse = apothem.
+    zonen: Liste (z0, z1, apothem) - Prismen gleicher Ausrichtung (Gesimse = groesserer Abstand, Bruestung, Fensterband ...).
+    konsole: (z_spitze, apothem_spitze, z_oben, apothem_oben) - nach unten spitz zulaufender Unterbau (Pyramidenstumpf).
+    fenster: dict(z0, z1, je_flaeche, pfosten=0.08, tiefe=0.08, flaechen=None) - Lichter als Nischen je Flaeche (flaechen = Indizes ab der Frontflaeche, gegen den Uhrzeigersinn; None = alle).
+    felder: dict(z0, z1, tiefe=0.04, rand=0.12) - ein vertieftes Feld je Flaeche (Wappen-/Bruestungsfelder).
+    wirt: Rumpf, an dem der Erker sitzt - Flaechen, die ihn beruehren (halb in der Wand), bekommen keine Nischen (sonst Null-Volumen-Splitter).
+    helm: Liste (z, apothem) von unten nach oben - geschweifter n-eckiger Helm aus Stumpfstuecken; knauf: (z_mitte, radius); stange: (z_oben, radius).
+    Zu messen: Achse (Triangulation der Helmspitze/des Knaufs in >= 3 Fotos), apothem (n-Eck in die Fotos projizieren, Pfosten treffen), Zonengrenzen (entzerrtes Frontfoto),
+    Helmprofil r(z) (Silhouette), Lichter je Flaeche am Foto zaehlen. Liefert den Erkerkoerper (zum Rumpf addieren; Flaechen im Rumpf verschwinden dort)."""
+    ph = float(np.arctan2(front_n[1], front_n[0])); P = lambda a, z: _ngon(achse, ph, a, z, n)
+    k = None
+    for z0, z1, a in zonen:
+        q = M.hull_points(P(a, z0) + P(a, z1)); k = q if k is None else k + q
+    if konsole:
+        zs, a_s, zo, a_o = konsole; k = k + M.hull_points(P(a_s, zs) + P(a_o, zo + 0.01))
+    for spec, ist_fenster in ((fenster, True), (felder, False)):
+        if not spec: continue
+        s_ = 2 * apothem * np.tan(np.pi / n); z0, z1 = spec["z0"], spec["z1"]; ab = None
+        for i in (spec.get("flaechen") or range(n)):
+            phi = ph + i * 2 * np.pi / n; e = np.array([np.cos(phi), np.sin(phi)]); t = np.array([-e[1], e[0]]); c = np.array(achse, float) + apothem * e
+            if wirt is not None and not (wirt ^ M.hull_points([tuple(c + sg * s_ / 2 * t + w_ * e) + (z_,) for sg in (-1, 1) for w_ in (-0.02, 0.15) for z_ in (z0, z1)])).is_empty(): continue
+            if ist_fenster:
+                kk = int(spec["je_flaeche"]); pf = spec.get("pfosten", 0.08); lw = (s_ - (kk + 1) * pf) / kk; offs = [-s_ / 2 + pf + lw / 2 + j * (lw + pf) for j in range(kk)]; tf = spec.get("tiefe", 0.08)
+            else:
+                lw = s_ - 2 * spec.get("rand", 0.12); offs = [0.0]; tf = spec.get("tiefe", 0.04)
+            for o in offs:
+                q = M.hull_points([tuple(c + (o + sg * lw / 2) * t + w_ * e) + (z_,) for sg in (-1, 1) for w_ in (-tf, 0.3) for z_ in (z0, z1)]); ab = q if ab is None else ab + q
+        k = k - ab
+    if helm:
+        for (za, aa), (zb, ab_) in zip(helm[:-1], helm[1:]): k = k + M.hull_points(P(aa, za) + P(max(ab_, 0.01), zb))
+    if knauf: k = k + M.sphere(knauf[1], 24).translate((achse[0], achse[1], knauf[0]))
+    if stange: zt = helm[-1][0] - 0.05 if helm else knauf[0]; k = k + M.cylinder(stange[0] - zt, stange[1], stange[1], 12).translate((achse[0], achse[1], zt))
+    return k
 
 
 DURCH = []   # von Wand.fenster gesammelte Oeffnungen (Wand, u0, u1, z0, z1, w der Nischenrueckwand)

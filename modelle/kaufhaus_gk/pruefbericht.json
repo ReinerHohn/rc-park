@@ -1,9 +1,31 @@
 {
  "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_gk_1-87.stl",
  "werte": {
-  "hoehe": 21.160052490234374,
+  "hoehe": 21.75,
   "wasserdicht": 1.0,
-  "koerper": 1.0
+  "koerper": 1.0,
+  "arkade_n_anzahl": 4.0,
+  "arkade_n_breite_median": 3.6,
+  "arkade_n_breite_max": 3.7,
+  "arkade_n_ebene_abstand": 1.984644281587586,
+  "arkade_scheitel_b2": 4.960000000000002,
+  "giebel_west_spitze": 21.75,
+  "giebel_west_n5": 16.799960723876953,
+  "giebel_west_n2": 19.7000186920166,
+  "giebel_ost_spitze": 21.499962615966794,
+  "giebel_ost_n4": 17.431689544677734,
+  "giebel_ost_s1": 20.394975597381592,
+  "gaube_unten_ost_z": 14.123460205078123,
+  "gaube_unten_mitte_z": 14.145735900878904,
+  "gaube_unten_west_z": 14.106397327423094,
+  "gaube_oben_ost_z": 16.64254846191406,
+  "gaube_oben_west_z": 16.62365516281128,
+  "erker_w_front80": 1.1000119420766665,
+  "erker_w_helm128": 0.4799897653446078,
+  "erker_w_knauf": 0.17925864937420236,
+  "erker_o_front80": 1.1000026015315763,
+  "erker_o_helm128": 0.46498165078499437,
+  "erker_o_knauf": 0.17927121571664495
  },
  "pruefungen": [
   {
@@ -22,6 +44,206 @@
    "soll": [
     1,
     1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Arkade Nord: offene Boegen (>= 3 m tief) bei z 2,5",
+   "wert": 4.0,
+   "soll": [
+    4,
+    4
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Arkade Nord: lichte Bogenbreite (Median) bei z 2,5",
+   "wert": 3.6,
+   "soll": [
+    3.3,
+    3.9
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Arkade Bogen 2: Scheitel der Laibung (z)",
+   "wert": 4.960000000000002,
+   "soll": [
+    4.8,
+    5.1
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Staffelgiebel West: Spitzblock (Abdeckung 21,45-21,75) - hoechster Punkt (z)",
+   "wert": 21.75,
+   "soll": [
+    21.3,
+    21.9
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Staffelgiebel West: Nordflanke Stufe 5 (Oberkante 16,5) - hoechster Punkt (z)",
+   "wert": 16.799960723876953,
+   "soll": [
+    16.4,
+    16.95
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Staffelgiebel West: Nordflanke Stufe 2 (Oberkante 19,4) - hoechster Punkt (z)",
+   "wert": 19.7000186920166,
+   "soll": [
+    19.3,
+    19.85
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Staffelgiebel Ost: Spitzblock (Oberkante 21,2, Kappenfirst 21,59 trianguliert) - hoechster Punkt (z)",
+   "wert": 21.499962615966794,
+   "soll": [
+    21.15,
+    21.7
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Staffelgiebel Ost: Nordflanke Stufe 4 (Oberkante 17,15) - hoechster Punkt (z)",
+   "wert": 17.431689544677734,
+   "soll": [
+    17.05,
+    17.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Staffelgiebel Ost: Suedflanke Stufe 1 (Oberkante 20,15) - hoechster Punkt (z)",
+   "wert": 20.394975597381592,
+   "soll": [
+    20.05,
+    20.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube unten_ost: Gaubendach hinter der Front (z, Dach am Fuss 13.21)",
+   "wert": 14.123460205078123,
+   "soll": [
+    13.96,
+    14.21
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube unten_mitte: Gaubendach hinter der Front (z, Dach am Fuss 13.21)",
+   "wert": 14.145735900878904,
+   "soll": [
+    13.96,
+    14.21
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube unten_west: Gaubendach hinter der Front (z, Dach am Fuss 13.21)",
+   "wert": 14.106397327423094,
+   "soll": [
+    13.96,
+    14.21
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube oben_ost: Gaubendach hinter der Front (z, Dach am Fuss 15.73)",
+   "wert": 16.64254846191406,
+   "soll": [
+    16.48,
+    16.73
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Gaube oben_west: Gaubendach hinter der Front (z, Dach am Fuss 15.73)",
+   "wert": 16.62365516281128,
+   "soll": [
+    16.48,
+    16.73
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker West: Frontflaeche Abstand von der Achse bei z 8,0",
+   "wert": 1.1000119420766665,
+   "soll": [
+    1.0,
+    1.2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker West: Helm Abstand Flaeche-Achse bei z 12,8 (geschweift)",
+   "wert": 0.4799897653446078,
+   "soll": [
+    0.38,
+    0.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker West: Helmknauf Radius in Knaufmitte",
+   "wert": 0.17925864937420236,
+   "soll": [
+    0.12,
+    0.26
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker Ost: Frontflaeche Abstand von der Achse bei z 8,0",
+   "wert": 1.1000026015315763,
+   "soll": [
+    1.0,
+    1.2
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker Ost: Helm Abstand Flaeche-Achse bei z 12,8 (geschweift)",
+   "wert": 0.46498165078499437,
+   "soll": [
+    0.38,
+    0.6
+   ],
+   "ok": true,
+   "status": "ok"
+  },
+  {
+   "name": "Erker Ost: Helmknauf Radius in Knaufmitte",
+   "wert": 0.17927121571664495,
+   "soll": [
+    0.12,
+    0.26
    ],
    "ok": true,
    "status": "ok"

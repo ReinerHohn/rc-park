@@ -1,0 +1,178 @@
+{
+ "foto": "commons__024_Freiburg_812503898",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_gk_1-87.stl",
+ "kamera": "K-commons__024_Freiburg_812503898 (amtliche Anker)",
+ "zelle_px": 49,
+ "schwelle": 0.35,
+ "treffer": [
+  {
+   "zelle": [
+    49,
+    343,
+    49
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    8.75,
+    -5.59,
+    15.82
+   ]
+  },
+  {
+   "zelle": [
+    196,
+    392,
+    49
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    8.88,
+    -1.44,
+    14.03
+   ]
+  },
+  {
+   "zelle": [
+    931,
+    392,
+    49
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -2.0,
+    12.37,
+    14.95
+   ]
+  },
+  {
+   "zelle": [
+    980,
+    392,
+    49
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -4.43,
+    12.94,
+    15.42
+   ]
+  },
+  {
+   "zelle": [
+    392,
+    441,
+    49
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    8.2,
+    3.1,
+    12.42
+   ]
+  },
+  {
+   "zelle": [
+    98,
+    490,
+    49
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    8.88,
+    -4.0,
+    12.13
+   ]
+  },
+  {
+   "zelle": [
+    196,
+    539,
+    49
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    8.71,
+    -1.51,
+    10.78
+   ]
+  },
+  {
+   "zelle": [
+    196,
+    588,
+    49
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    8.56,
+    -1.61,
+    9.7
+   ]
+  },
+  {
+   "zelle": [
+    392,
+    588,
+    49
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    6.28,
+    1.9,
+    9.69
+   ]
+  },
+  {
+   "zelle": [
+    686,
+    588,
+    49
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -1.29,
+    5.81,
+    10.54
+   ]
+  },
+  {
+   "zelle": [
+    735,
+    588,
+    49
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -5.41,
+    5.56,
+    11.25
+   ]
+  },
+  {
+   "zelle": [
+    0,
+    637,
+    49
+   ],
+   "score": 1.0,
+   "art": "FEHLT im Modell",
+   "xyz": [
+    8.77,
+    -6.71,
+    9.12
+   ]
+  }
+ ],
+ "versatz_test": null
+}

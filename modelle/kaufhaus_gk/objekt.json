@@ -120,6 +120,534 @@
  "fotos_dir_quelle": "daten/kaufhaus/fotos",
  "neben_fotos": [
   "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
-  "eigen__handy_06"
- ]
+  "eigen__handy_06",
+  "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta",
+  "commons__024_Freiburg_812503898",
+  "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022"
+ ],
+ "bauteile_foto": {
+  "_doku": "Bauteil-Runde 17.11.2026 (Agent, VORLAGE_BAUTEIL_RUNDE): Form aus Fotos, Lage per Triangulation/Ebenen-Sweep mit den SfM-Kameras (messprotokoll K-*), Zaehlungen Z-*. Entzerrte Ablesebilder in modelle/kaufhaus_gk/audit/bauteile_1711/. Generator modelle/kaufhaus_gk_gen.py ruft nur tools/bauteile.py.",
+  "traufwand": {
+   "a": [
+    -5.53,
+    16.64
+   ],
+   "b": [
+    13.63,
+    9.62
+   ],
+   "aussen": [
+    4.0,
+    30.0
+   ],
+   "quelle": "LoD2-Wand w04 (fassaden_kette.json); Lage am Foto bestaetigt: entzerrte Fotos 018/052/110 auf w = 0 deckungsgleich (Pfeiler, Boegen, Figuren)"
+  },
+  "giebelebenen": [
+   {
+    "name": "west",
+    "a": [
+     -10.01,
+     2.15
+    ],
+    "b": [
+     -7.78,
+     9.61
+    ],
+    "aussen": [
+     -20.0,
+     8.0
+    ],
+    "versatz": -0.75,
+    "quelle": "Ebenen-Sweep (Grauwert-NCC, Hochpass) der Giebelflaeche parallel LoD2-Wand w01 ueber 7 Fotos (commons 006/058/097, eigen 022/039/050/079): Maximum bei -0,75 m (Mittel 0,278 gegen 0,153 bei 0); entzerrte Bilder 022/050 bei -0,75 deckungsgleich (modelle/kaufhaus_gk/audit/bauteile_1711/giebel_west_022_050.jpg). LoD2-Wand steht ~0,75 m zu weit aussen (Gegenprobe: westlicher Eckpfeiler der Laube endet bei u 1,0 statt 0)."
+   },
+   {
+    "name": "ost",
+    "a": [
+     11.67,
+     2.83
+    ],
+    "b": [
+     10.13,
+     -4.54
+    ],
+    "aussen": [
+     20.0,
+     0.0
+    ],
+    "versatz": -0.65,
+    "quelle": "Ebenen-Sweep parallel LoD2-Wand w07 ueber commons 024/110/059: Maximum 024-110 bei -0,7, 024-059 bei -0,6 -> -0,65; Spitzblock trianguliert M-commons__024-002 (10,84/3,73/21,59 = Kappenfirst, Wandmitte). Gegenprobe: oestlicher Eckpfeiler endet bei u 19,5 statt 20,4."
+   }
+  ],
+  "laube": {
+   "tiefe": 4.25,
+   "decke": 5.5,
+   "pfeiler_tiefe": 0.8,
+   "u0": 1.2,
+   "u1": 18.6,
+   "boegen": [
+    {
+     "u": 3.7,
+     "breite": 3.4,
+     "kaempfer": 3.5,
+     "scheitel": 4.95,
+     "form": "korb"
+    },
+    {
+     "u": 7.85,
+     "breite": 3.7,
+     "kaempfer": 3.5,
+     "scheitel": 4.95,
+     "form": "korb"
+    },
+    {
+     "u": 12.3,
+     "breite": 3.6,
+     "kaempfer": 3.5,
+     "scheitel": 4.95,
+     "form": "korb"
+    },
+    {
+     "u": 16.7,
+     "breite": 3.6,
+     "kaempfer": 3.5,
+     "scheitel": 4.95,
+     "form": "korb"
+    }
+   ],
+   "stirn": [
+    {
+     "giebel": "west",
+     "u": 12.5,
+     "breite": 3.1,
+     "kaempfer": 4.0,
+     "scheitel": 5.3,
+     "form": "korb",
+     "durch": 1.5
+    }
+   ],
+   "quelle": "Zahl 4 Boegen Z-eigen__018-001; Pfeiler (Schaft) u 1,0-2,0 / 5,4-6,0 / 9,7-10,5 / 14,1-14,9 / 18,5-19,5, Kaempfer 3,5, Scheitel (Laibung) 4,95 abgelesen am entzerrten Foto commons 052 (1 cm/px) und eigen 018, deckungsgleich (modelle/kaufhaus_gk/audit/bauteile_1711/arkade_052_a.jpg, _b.jpg); Bogenform: setzt senkrecht an, Pfeil 1,45 < halbe Breite 1,8 -> Korbbogen. Hallentiefe 4,25: Ebenen-Sweep durch Bogen 2 (7 Fotos, Maximum -4,25..-4,5; LoD2-Stufe w03 3,86 als Gegenprobe). Westende offen (Durchblick auf das Nachbarhaus in commons 110), Stirnbogen u 10,95-14,05 (Giebelebene West), Kaempfer ~4,0, Scheitel ~5,3 am entzerrten Foto 006 (unsicher, 1 Foto). Ostende: kein Durchblick belegt -> geschlossen.",
+   "annahmen": [
+    "pfeiler_tiefe 0,8 m (Pfeiler quadratisch wie breit)",
+    "flache Decke 5,5 m statt Kreuzgewoelbe (Gewoelberippen in commons 110 sichtbar)",
+    "Stirnbogen West: Breite durch die Hallentiefe begrenzt, Hoehen aus 1 Foto"
+   ]
+  },
+  "staffelgiebel": [
+   {
+    "giebel": "west",
+    "mitte_u": 8.175,
+    "spitze_breite": 1.15,
+    "spitze_z": 21.45,
+    "dicke": 0.63,
+    "fuss_z": 11.0,
+    "flanken": [
+     [
+      1,
+      [
+       [
+        9.55,
+        20.35
+       ],
+       [
+        10.15,
+        19.4
+       ],
+       [
+        10.85,
+        18.45
+       ],
+       [
+        11.45,
+        17.5
+       ],
+       [
+        12.15,
+        16.5
+       ],
+       [
+        12.85,
+        15.55
+       ],
+       [
+        13.55,
+        14.6
+       ],
+       [
+        14.25,
+        13.7
+       ]
+      ]
+     ],
+     [
+      -1,
+      [
+       [
+        6.7,
+        20.35
+       ],
+       [
+        5.85,
+        19.4
+       ],
+       [
+        5.0,
+        18.5
+       ],
+       [
+        4.15,
+        17.55
+       ],
+       [
+        3.3,
+        16.6
+       ],
+       [
+        2.45,
+        15.65
+       ],
+       [
+        1.6,
+        14.7
+       ],
+       [
+        0.75,
+        13.75
+       ]
+      ]
+     ]
+    ],
+    "annahme_ab": {
+     "-1": 3
+    },
+    "quelle": "Nordflanke 8 Stufen Z-eigen__022-001; Aussenkanten/Oberkanten am entzerrten Foto der Giebelebene (eigen 022 und 050, 1 cm/px, deckungsgleich) modelle/kaufhaus_gk/audit/bauteile_1711/giebel_west_022_050.jpg; Suedflanke 3 Stufen sichtbar (Nachbardach davor), Stufen 4-8 = ANNAHME (gemessener Rhythmus du 0,85 / dz 0,95 fortgesetzt)"
+   },
+   {
+    "giebel": "ost",
+    "mitte_u": -0.44,
+    "spitze_breite": 1.12,
+    "spitze_z": 21.2,
+    "dicke": 0.63,
+    "fuss_z": 11.0,
+    "flanken": [
+     [
+      -1,
+      [
+       [
+        -1.9,
+        20.15
+       ],
+       [
+        -2.7,
+        19.1
+       ],
+       [
+        -3.4,
+        18.15
+       ],
+       [
+        -4.05,
+        17.15
+       ],
+       [
+        -4.8,
+        16.1
+       ],
+       [
+        -5.5,
+        15.1
+       ],
+       [
+        -6.15,
+        14.1
+       ],
+       [
+        -6.85,
+        13.1
+       ]
+      ]
+     ],
+     [
+      1,
+      [
+       [
+        1.0,
+        20.15
+       ],
+       [
+        1.85,
+        19.15
+       ],
+       [
+        2.7,
+        18.15
+       ],
+       [
+        3.55,
+        17.15
+       ],
+       [
+        4.4,
+        16.15
+       ],
+       [
+        5.25,
+        15.15
+       ],
+       [
+        6.1,
+        14.15
+       ],
+       [
+        6.95,
+        13.15
+       ]
+      ]
+     ]
+    ],
+    "annahme_ab": {
+     "-1": 7,
+     "1": 2
+    },
+    "quelle": "Nordflanke 7 Stufen sichtbar Z-commons__024-001, 8. Stufe hinter dem Erkerhelm = ANNAHME (wie West); Masse am entzerrten Foto der Giebelebene (commons 024 und 110 deckungsgleich) modelle/kaufhaus_gk/audit/bauteile_1711/giebel_ost_024_110.jpg; Suedflanke 2 Stufen sichtbar, Rest ANNAHME (gemessener Rhythmus fortgesetzt)"
+   }
+  ],
+  "gauben": {
+   "dach_z0": 11.598,
+   "dach_s": 1.2925,
+   "breite": 0.92,
+   "hoehe": 0.68,
+   "neigung": 0.57,
+   "dach_breite": 1.2,
+   "ueberstand": 0.15,
+   "fenster": [
+    0.5,
+    0.1,
+    0.43
+   ],
+   "liste": [
+    {
+     "name": "unten_ost",
+     "u": 14.7,
+     "w_front": -1.25
+    },
+    {
+     "name": "unten_mitte",
+     "u": 10.24,
+     "w_front": -1.25
+    },
+    {
+     "name": "unten_west",
+     "u": 5.8,
+     "w_front": -1.25
+    },
+    {
+     "name": "oben_ost",
+     "u": 12.52,
+     "w_front": -3.2
+    },
+    {
+     "name": "oben_west",
+     "u": 8.06,
+     "w_front": -3.2
+    }
+   ],
+   "quelle": "Zahl untere Reihe 3 (Z-eigen__018-002), obere Reihe 2 (Z-eigen__018-003). Lage: Fensteroberkanten trianguliert eigen 018 + commons 110 (u, Tiefe hinter der Traufwand; untere -1,1..-1,4, obere -3,0..-3,4); unten_west nur Strahl aus 018. Masse am Frontfoto 018 im Massstab der Fensterbreite: Front 0,91-0,92 breit, Unterkante->Gaubentraufe 0,65-0,70, Fenster 0,5 breit, Scheitel 0,38-0,43; Dachplatte 1,16-1,25 breit. Gaubenneigung 0,57 aus der Bildhoehe Traufe->Dachanschluss (018, Blickhoehe 23 Grad) abgeleitet. Dachflaeche (z0, Neigung) = Modelldach (LoD2/DOM1 dach.json), am Rumpf abgetastet.",
+   "annahmen": [
+    "Hoehenlage auf dem Modelldach: die Fotos zeigen das Dach 0,4-0,8 m TIEFER als LoD2/DOM1 (Traufe am Foto ~11,0 statt 11,65) - Widerspruch nicht gemittelt, Gauben sitzen auf dem Modelldach",
+    "ueberstand 0,15",
+    "Wangen dreieckig, Fenster Rundbogen-Nische"
+   ]
+  },
+  "erker": [
+   {
+    "name": "erker:0",
+    "seite": "West-Ecke",
+    "achse": [
+     -4.785,
+     15.993
+    ],
+    "apothem": 1.1,
+    "konsole": [
+     4.65,
+     0.25,
+     5.7,
+     1.15
+    ],
+    "zonen": [
+     [
+      5.7,
+      5.95,
+      1.2
+     ],
+     [
+      5.95,
+      6.65,
+      1.12
+     ],
+     [
+      6.65,
+      6.9,
+      1.18
+     ],
+     [
+      6.9,
+      8.95,
+      1.1
+     ],
+     [
+      8.95,
+      9.4,
+      1.3
+     ]
+    ],
+    "fenster": {
+     "z0": 7.0,
+     "z1": 8.8,
+     "je_flaeche": 2
+    },
+    "felder": {
+     "z0": 6.02,
+     "z1": 6.58
+    },
+    "helm": [
+     [
+      9.4,
+      1.4
+     ],
+     [
+      10.5,
+      1.0
+     ],
+     [
+      11.6,
+      0.65
+     ],
+     [
+      12.8,
+      0.48
+     ],
+     [
+      13.95,
+      0.3
+     ],
+     [
+      15.1,
+      0.15
+     ],
+     [
+      15.75,
+      0.04
+     ]
+    ],
+    "knauf": [
+     15.94,
+     0.18
+    ],
+    "stange": [
+     17.2,
+     0.035
+    ],
+    "quelle": "Achse = Helmknauf trianguliert M-eigen__018-001 (5 Fotos, Strahlabstand <= 0,14 m); Achteck, Frontflaeche parallel zur Traufwand, Abstand Flaeche-Achse 1,1 m: Achteck 1,1/1,3/1,5 in eigen 018, commons 006/110/024 projiziert, 1,1 trifft Fensterband und Pfosten (modelle/kaufhaus_gk/audit/bauteile_1711/erker_achteck_W.jpg); Zonengrenzen am entzerrten Frontfoto 018 (modelle/kaufhaus_gk/audit/bauteile_1711/erker_band_018.jpg); Helmprofil r(z) an der Silhouette (commons 052, auf die Achsebene umgerechnet); 2 Lichter je Flaeche (Fotos 018/006; Zaehlung Z-6124-001 kaufhaus_grob3)",
+    "annahmen": [
+     "Lichter rechteckig (Vorhangbogenkoepfe nicht gebaut)",
+     "Konsole als glatte Pyramide (Rippennetz nicht gebaut)",
+     "Helm achteckig wie der Erker",
+     "Wetterfahne nicht gebaut"
+    ]
+   },
+   {
+    "name": "erker:1",
+    "seite": "Ost-Ecke",
+    "achse": [
+     12.68,
+     9.79
+    ],
+    "apothem": 1.1,
+    "konsole": [
+     4.5,
+     0.25,
+     5.55,
+     1.15
+    ],
+    "zonen": [
+     [
+      5.55,
+      5.85,
+      1.2
+     ],
+     [
+      5.85,
+      6.55,
+      1.12
+     ],
+     [
+      6.55,
+      6.75,
+      1.18
+     ],
+     [
+      6.75,
+      9.0,
+      1.1
+     ],
+     [
+      9.0,
+      9.3,
+      1.3
+     ]
+    ],
+    "fenster": {
+     "z0": 6.85,
+     "z1": 8.85,
+     "je_flaeche": 2
+    },
+    "felder": {
+     "z0": 5.92,
+     "z1": 6.48
+    },
+    "helm": [
+     [
+      9.3,
+      1.4
+     ],
+     [
+      10.4,
+      1.0
+     ],
+     [
+      11.5,
+      0.65
+     ],
+     [
+      12.7,
+      0.48
+     ],
+     [
+      13.9,
+      0.3
+     ],
+     [
+      15.05,
+      0.15
+     ],
+     [
+      15.72,
+      0.04
+     ]
+    ],
+    "knauf": [
+     15.92,
+     0.18
+    ],
+    "stange": [
+     17.2,
+     0.035
+    ],
+    "quelle": "Achse = Helmknauf trianguliert M-commons__024-001 (4 Fotos); Achteck 1,1 in eigen 018, commons 024/110/006 projiziert (modelle/kaufhaus_gk/audit/bauteile_1711/erker_achteck_O.jpg); Zonen am entzerrten Frontfoto 018; Helmprofil wie West (Silhouette commons 052 gleich)",
+    "annahmen": [
+     "wie erker:0"
+    ]
+   }
+  ]
+ }
 }

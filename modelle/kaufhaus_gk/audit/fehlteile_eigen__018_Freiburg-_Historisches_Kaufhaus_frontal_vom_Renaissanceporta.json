@@ -1,0 +1,178 @@
+{
+ "foto": "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta",
+ "stl": "/home/oem/git/rc-park/modelle/stl/kaufhaus_gk_1-87.stl",
+ "kamera": "K-eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta (amtliche Anker)",
+ "zelle_px": 138,
+ "schwelle": 0.35,
+ "treffer": [
+  {
+   "zelle": [
+    2898,
+    0,
+    138
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -6.22,
+    10.79,
+    18.17
+   ]
+  },
+  {
+   "zelle": [
+    1794,
+    276,
+    138
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    2.48,
+    8.7,
+    15.66
+   ]
+  },
+  {
+   "zelle": [
+    2208,
+    276,
+    138
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -0.89,
+    9.25,
+    15.72
+   ]
+  },
+  {
+   "zelle": [
+    2484,
+    276,
+    138
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -2.6,
+    10.56,
+    15.53
+   ]
+  },
+  {
+   "zelle": [
+    3036,
+    276,
+    138
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -5.3,
+    13.98,
+    14.23
+   ]
+  },
+  {
+   "zelle": [
+    966,
+    414,
+    138
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    8.31,
+    5.7,
+    14.69
+   ]
+  },
+  {
+   "zelle": [
+    1518,
+    414,
+    138
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    4.42,
+    7.75,
+    14.57
+   ]
+  },
+  {
+   "zelle": [
+    2208,
+    414,
+    138
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -1.08,
+    8.88,
+    14.49
+   ]
+  },
+  {
+   "zelle": [
+    2346,
+    1242,
+    138
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    -7.51,
+    -1.62,
+    9.96
+   ]
+  },
+  {
+   "zelle": [
+    966,
+    1380,
+    138
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    6.76,
+    -1.64,
+    7.73
+   ]
+  },
+  {
+   "zelle": [
+    828,
+    1656,
+    138
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    7.95,
+    -2.39,
+    5.27
+   ]
+  },
+  {
+   "zelle": [
+    690,
+    1794,
+    138
+   ],
+   "score": -1.0,
+   "art": "ERFUNDEN? (Modell ohne Fotobeleg)",
+   "xyz": [
+    9.66,
+    -2.0,
+    3.96
+   ]
+  }
+ ],
+ "versatz_test": null
+}

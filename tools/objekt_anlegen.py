@@ -43,7 +43,7 @@ def main():
     if nur_gen and os.path.exists(gp):
         alt = open(gp).read()
         if "Generator-Rumpf (manifold3d)" not in alt or len(alt.splitlines()) > 45: print("Generator ist kein unberuehrter Rumpf - NICHT erneuert:", gp); return 3
-        if "fassaden_kette" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
+        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
         import time; os.replace(gp, gp + ".alt_" + time.strftime("%Y%m%d_%H%M")); print("alter Generator-Rumpf beiseitegelegt:", gp + ".alt_*")
     if not os.path.exists(gp):
         open(gp, "w").write(f'''#!/usr/bin/env python3
@@ -61,15 +61,18 @@ SEITEN = seiten_aus_rahmen(obj)
 if obj.get("lod2", {{}}).get("id"):                    # Standard: LoD2-Grundriss + DOM1-Dach (dach.json, Nullstart-Schritt 'dach') - tools/dach_bauen.py
     koerper, belege, haupt = gebaeude_aus_lod2(OBJ)
     for b_ in belege: beleg(**b_)
-    from fassaden_kette import anbauen                 # Fassaden-Kette (tools/fassaden_kette.py): Reliefs je Wand, falls audit/fassaden_kette.json da ist
-    koerper, belege = anbauen(koerper, OBJ)
-    for b_ in belege: beleg(**b_)
+    # 17.11.2026 REIHENFOLGE: erst die erkannten Fenster in den Grundkoerper, dann das Relief mit offenen Fensterrechtecken (Relief zuerst liess jedes Fenster aus, vor dem eine Reliefplatte stand:
+    # Kaufhaus 5 von 9). fenster_fuer_bau stellt 'Fenster' zurueck, in deren Rechteck das Netz fehlt (Vorbau/Erker davor) - Liste audit/fenster_bau.json.
+    from fassaden_kette import anbauen, fenster_fuer_bau   # Fassaden-Kette (tools/fassaden_kette.py): Reliefs je Wand, falls audit/fassaden_kette.json da ist
+    from bauteile import fenster_aus_json            # automatisch erkannte Fenster (Kettenstufe 'fenster' schreibt audit/fenster_auto.json)
+    FJ = fenster_fuer_bau(OBJ, os.path.join(HERE, "{ob}", "audit", "fenster_auto.json"))
+    koerper, bel_f = fenster_aus_json(koerper, FJ)
+    koerper, belege = anbauen(koerper, OBJ, fenster=FJ)
+    for b_ in belege + bel_f: beleg(**b_)
     from dach_bauen import ueber_traufe_nur_dach      # 17.11.2026: Fotodach (tools/dach_aus_fotos.py) - Reliefreste ueber der Traufe schweben sonst frei
     koerper, belege = ueber_traufe_nur_dach(koerper, OBJ)
     for b_ in belege: beleg(**b_)
-    from bauteile import fenster_aus_json            # automatisch erkannte Fenster (Kettenstufe 'fenster' schreibt audit/fenster_auto.json)
-    koerper, belege = fenster_aus_json(koerper, os.path.join(HERE, "{ob}", "audit", "fenster_auto.json"))
-    for b_ in belege: beleg(**b_)
+    belege = bel_f                                   # aushoehlen nur, wenn Fenster gebaut wurden
     from bauteile import oeffnungen_aus_json         # 17.11.2026: automatisch erkannte Bogenoeffnungen / Tordurchfahrten (Kettenstufe 'fenster': tools/oeffnungen_bogen.py -> audit/oeffnungen_auto.json)
     koerper, belege_o, z_tor = oeffnungen_aus_json(koerper, os.path.join(HERE, "{ob}", "audit", "oeffnungen_auto.json"))
     for b_ in belege_o: beleg(**b_)

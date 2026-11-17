@@ -1,0 +1,78 @@
+{
+ "id": "Z-eigen__022-001",
+ "typ": "zaehlung",
+ "foto": "eigen__022",
+ "datei": "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022.jpg",
+ "was": "Staffelgiebel West, Nordflanke: Stufen unter dem Spitzblock (Aussenecke Stufenoberkante)",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-17",
+ "punkte": [
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 2318.0,
+   "y": 329.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 2274.0,
+   "y": 402.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 2221.0,
+   "y": 476.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 2175.0,
+   "y": 551.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 2121.0,
+   "y": 631.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 2066.0,
+   "y": 708.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 2011.0,
+   "y": 785.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 1954.0,
+   "y": 860.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "NORDFLANKE": {
+   "art": "voll",
+   "n": 8
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 8,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-eigen__022-001.jpg",
+ "ausschnitt": [
+  1704,
+  79,
+  2568,
+  1110
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "Suedflanke nur 3 Stufen sichtbar (Nachbardach davor)"
+}

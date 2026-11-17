@@ -4,100 +4,155 @@
   {
    "foto": "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
    "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
-   "abweichung_m": 1.59,
-   "breite_m": 1.05,
+   "abweichung_m": 1.07,
+   "breite_m": 1.02,
    "xyz": [
-    11.3,
-    1.06,
-    18.52
+    10.72,
+    1.07,
+    19.2
    ]
   },
   {
    "foto": "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
    "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
-   "abweichung_m": 0.64,
-   "breite_m": 0.93,
+   "abweichung_m": 0.65,
+   "breite_m": 2.89,
    "xyz": [
-    10.74,
-    3.27,
-    20.97
+    -4.75,
+    8.43,
+    20.96
    ]
   },
   {
    "foto": "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
    "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
-   "abweichung_m": 0.79,
-   "breite_m": 4.86,
+   "abweichung_m": 1.74,
+   "breite_m": 1.34,
    "xyz": [
-    -6.11,
-    8.86,
-    20.99
-   ]
-  },
-  {
-   "foto": "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
-   "art": "Modell hoeher (zu hoch / erfunden)",
-   "abweichung_m": -0.78,
-   "breite_m": 0.81,
-   "xyz": [
-    11.67,
-    2.98,
-    20.95
+    -6.32,
+    11.55,
+    19.57
    ]
   },
   {
    "foto": "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
    "art": "Modell hoeher (zu hoch / erfunden)",
-   "abweichung_m": -0.49,
-   "breite_m": 7.13,
+   "abweichung_m": -0.5,
+   "breite_m": 7.66,
    "xyz": [
-    6.19,
-    4.78,
-    20.98
+    6.46,
+    4.71,
+    20.96
    ]
   },
   {
    "foto": "eigen__handy_06",
    "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
-   "abweichung_m": 0.73,
-   "breite_m": 4.18,
+   "abweichung_m": 1.48,
+   "breite_m": 1.97,
    "xyz": [
-    13.34,
-    8.44,
-    13.67
+    13.37,
+    10.55,
+    10.56
    ]
   },
   {
    "foto": "eigen__handy_06",
    "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
-   "abweichung_m": 0.64,
-   "breite_m": 1.04,
+   "abweichung_m": 0.76,
+   "breite_m": 1.12,
    "xyz": [
-    11.05,
-    3.18,
-    20.95
+    12.24,
+    8.41,
+    15.15
    ]
   },
   {
    "foto": "eigen__handy_06",
-   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
-   "abweichung_m": 0.99,
-   "breite_m": 1.1,
+   "art": "Modell hoeher (zu hoch / erfunden)",
+   "abweichung_m": -0.51,
+   "breite_m": 1.32,
    "xyz": [
-    -6.68,
-    9.98,
-    21.0
+    12.78,
+    9.91,
+    15.04
    ]
   },
   {
    "foto": "eigen__handy_06",
    "art": "Modell hoeher (zu hoch / erfunden)",
    "abweichung_m": -0.39,
-   "breite_m": 4.0,
+   "breite_m": 3.94,
    "xyz": [
     7.89,
     4.24,
     20.95
+   ]
+  },
+  {
+   "foto": "commons__024_Freiburg_812503898",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 1.36,
+   "breite_m": 1.24,
+   "xyz": [
+    10.57,
+    0.34,
+    18.26
+   ]
+  },
+  {
+   "foto": "commons__024_Freiburg_812503898",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 1.93,
+   "breite_m": 0.94,
+   "xyz": [
+    -4.82,
+    16.82,
+    11.23
+   ]
+  },
+  {
+   "foto": "commons__024_Freiburg_812503898",
+   "art": "Modell hoeher (zu hoch / erfunden)",
+   "abweichung_m": -0.48,
+   "breite_m": 5.52,
+   "xyz": [
+    6.47,
+    4.7,
+    20.96
+   ]
+  },
+  {
+   "foto": "commons__024_Freiburg_812503898",
+   "art": "Modell hoeher (zu hoch / erfunden)",
+   "abweichung_m": -0.48,
+   "breite_m": 0.71,
+   "xyz": [
+    -4.79,
+    16.14,
+    15.19
+   ]
+  },
+  {
+   "foto": "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 1.66,
+   "breite_m": 1.44,
+   "xyz": [
+    -8.38,
+    5.27,
+    16.75
+   ]
+  },
+  {
+   "foto": "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022",
+   "art": "Modell hoeher (zu hoch / erfunden)",
+   "abweichung_m": -0.44,
+   "breite_m": 2.14,
+   "xyz": [
+    7.57,
+    4.33,
+    20.96
    ]
   }
  ]

@@ -1,0 +1,72 @@
+{
+ "id": "Z-commons__024-001",
+ "typ": "zaehlung",
+ "foto": "commons__024",
+ "datei": "commons__024_Freiburg_812503898.jpg",
+ "was": "Staffelgiebel Ost, Nordflanke: sichtbare Stufen unter dem Spitzblock",
+ "wer": "Claude (Sichtzaehlung am Foto)",
+ "datum": "2026-11-17",
+ "punkte": [
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 403.0,
+   "y": 58.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 431.0,
+   "y": 93.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 457.0,
+   "y": 126.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 482.0,
+   "y": 163.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 512.0,
+   "y": 203.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 540.0,
+   "y": 242.0
+  },
+  {
+   "flaeche": "NORDFLANKE",
+   "art": "voll",
+   "x": 568.0,
+   "y": 284.0
+  }
+ ],
+ "je_flaeche_gezaehlt": {
+  "NORDFLANKE": {
+   "art": "voll",
+   "n": 7
+  }
+ },
+ "ergebnis": {
+  "je_flaeche": 7,
+  "voll_sichtbare_flaechen": 1
+ },
+ "bild": "Z-commons__024-001.jpg",
+ "ausschnitt": [
+  153,
+  0,
+  818,
+  534
+ ],
+ "regel": "Quelle: Foto (Sichtzaehlung, massstabsfrei). NICHT aus Punktwolke/Generatoreingabe ableiten (Register CB).",
+ "hinweis": "7 sichtbar; unterhalb verdeckt der Erkerhelm Ost die Flanke (8. Stufe wie West = ANNAHME)"
+}

@@ -1,0 +1,70 @@
+{
+ "id": "M-eigen__018-001",
+ "typ": "triangulation",
+ "foto": "eigen__018",
+ "name": "Erker West: Helmknauf-Mitte (Achse)",
+ "beobachtungen": [
+  {
+   "kamera": "K-eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta",
+   "px": [
+    3180.3,
+    48.4
+   ]
+  },
+  {
+   "kamera": "K-commons__110_Középkori_bevásárlóközpont_Medieval_shopping_centre_-_panoramio",
+   "px": [
+    1217.2,
+    409.8
+   ]
+  },
+  {
+   "kamera": "K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje",
+   "px": [
+    1424.1,
+    131.1
+   ]
+  },
+  {
+   "kamera": "K-commons__006_Allemagne_Foret_Noire_Freiburg_Munsterplatz_-_panoramio",
+   "px": [
+    684.6,
+    226.6
+   ]
+  },
+  {
+   "kamera": "K-commons__024_Freiburg_812503898",
+   "px": [
+    1114.1,
+    388.3
+   ]
+  }
+ ],
+ "P": [
+  -4.785,
+  15.993,
+  15.944
+ ],
+ "strahl_abstand_m": [
+  0.073,
+  0.055,
+  0.144,
+  0.022,
+  0.015
+ ],
+ "schnittwinkel_grad": [
+  40.9,
+  3.4,
+  72.4,
+  40.6,
+  44.1,
+  105.0,
+  9.9,
+  70.5,
+  43.4,
+  109.8
+ ],
+ "z": 15.944,
+ "unsicherheit_m": 0.274,
+ "massstab_von": "Kameras K-eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta, K-commons__110_Középkori_bevásárlóközpont_Medieval_shopping_centre_-_panoramio, K-commons__052_Freiburg-Historisches_Kaufhaus-06-2012-gje, K-commons__006_Allemagne_Foret_Noire_Freiburg_Munsterplatz_-_panoramio, K-commons__024_Freiburg_812503898 aus SfM-Buendel (KEINE amtlichen Anker); Tiefe aus Strahlschnitt, keine Ebenenannahme"
+}
