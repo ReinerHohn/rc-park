@@ -239,7 +239,7 @@ def main():
             if rc_f in (0, 2) and not bestanden(erg) and erg.get("grundriss") == 3:        # Haufen aus EINER Bildquelle (Geisterwand, Kameras nicht unter Gelaende) -> diese Bilder auch weg
                 rc_h, _ = lauf(B, "neu_fusionieren_haufen", [PYC, "-I", "tools/wolke_neu_fusionieren.py", ZR, P, "--stufe", a.dicht_stufe, "--haufen"], log, ok=(0, 2))
                 if rc_h == 0: erg = tore("_ohne_haufenquelle")
-        kaputt = lambda e: e.get("gps") in (1, 4) or e.get("grundriss") == 1          # rc 1/4 = Werkzeug abgestuerzt/nicht geprueft (15.11.: CUDA out of memory) - kein Lage-Urteil
+        kaputt = lambda e: e.get("gps") in (1, 4) or e.get("grundriss") in (1, 4)          # rc 1/4 = Werkzeug abgestuerzt/nicht geprueft (15.11.: CUDA out of memory) - kein Lage-Urteil
         if kaputt(erg): B["lage"] = dict(tore=erg, bestanden=False, fehler="tor_abgestuerzt"); return abschluss(4, f"Tor-Werkzeug abgestuerzt/nicht geprueft {erg} (Log ansehen, z. B. GPU-Speicher) - KEIN Lage-Urteil")
         k = 0
         while not bestanden(erg) and k < a.max_loesung:
@@ -252,6 +252,8 @@ def main():
             if kaputt(erg): B["lage"] = dict(loesung=k, tore=erg, bestanden=False, fehler="tor_abgestuerzt"); return abschluss(4, f"Tor-Werkzeug abgestuerzt {erg} - KEIN Lage-Urteil")
         B["lage"] = dict(loesung=k, tore=erg, bestanden=bestanden(erg)); __import__("json_sicher").schreiben(bp, B)
         print(f"    LAGE: Loesung {k}, Tore {erg} -> {'BESTANDEN' if bestanden(erg) else 'NICHT bestanden'}", flush=True)
+        if not bestanden(erg) and k > 0:                                     # 17.11.2026 (Stabilitaetsrunde): nach gescheitertem Kreislauf lag die LETZTE Loesung auf der Platte (Martinstor: Loesung 3 von 10, Guete 0,9 %) - Loesung 0 zurueckschreiben
+            lauf(B, "loesung0_zurueck", [PY, "-u", "-I", "tools/sfm_lod2_ausrichten.py", ZR, "--kameras", os.path.join(P, "kameras.json"), "--dicht", os.path.join(P, "dicht", "fused.ply"), "--name", a.ziel, "--radius", "30", "--schreiben", "--fotos", FV, "--loesung", "0"], log, ok=(0, 5))
         if not bestanden(erg):
             return abschluss(3, "keine Lage besteht alle Tore - nicht modellieren (Bericht, audit/lage_gps.json, audit/wolke_grundriss.png)")
 
