@@ -457,3 +457,12 @@ martinstor_gk haelt an 'lage_tor' an (Lage nie belegt); schwab_auto: Ostwand 10 
 - Wand 1 mm statt 2,4 mm (MK4S 0,8 mm): Schaftabschnitt 1 h 33 statt 4 h 10, Mittelteil 2 h 46 statt 6 h 55.
 - `druck_farbteile.py --einsatz` (duenne Wand): Platte = ganze Wand, dahinter Innenschicht im Hohlraum. STAND: Koerper 1 Stueck, Platten ohne Durchdringung, aber 27 von 48 Hoehenschnitten noch offen (Luecken zwischen Putzwand und Innenschicht) - NICHT fertig.
   Verworfen: Klebefalz nur am Rand + Eckpfosten (Koerper zerfiel in 243 Stuecke, Putzinseln im Stein ohne Halt).
+
+### Agentenrunde 17.11.2026 (von mir nachgeprueft)
+- `fassade_ortho.py`: 12,3 s statt 41 s (1-cm-Bild ober_tvdr), 49 Vergleichsbilder bitgleich; Embree-Kern direkt, Zellrechnung auf der GPU (`--ohne-gpu`, `--gpu-mb`), Rueckfall auf CPU wird gemeldet.
+- Kette: ~20 Stellen gegen veraltete/leere Zwischenstaende gehaertet (`frisch()`, `abschluss()`, Platzpruefung hinter Verknuepfungen), 8 Tests `tools/test_kette_stabil.py` im Schnelltest. Ohne ganzen Kettenlauf geprueft.
+- `tools/oeffnungen_bogen.py`: Bogenoeffnungen aus Parsing-Kasten + Durchblick (Ebenen-Sweep) + Formfit; schwab_auto hat die Tordurchfahrt (Nord gemessen: Mitte -0,13 m, Breite +0,35 m, Scheitel +0,13 m gegen schwab_v3; Sued ANNAHME). Offen: Arkadenreihen (Kaufhaus verworfen), Rechtecktore, lichte Oeffnung statt Fasenrand.
+- Bausatz Einsatz-Bauart (`tools/bausatz.sh <objekt> <masken> 1.0 0.25 einsatz`, 3,5 min): Turm 1 mm Wand, Sockel hohl (`tools/druck_hohl.py`: 1342 -> 317 cm3), 0 von 73 Hoehenschnitten offen, Durchdringung 0,000 mm3.
+  Koerper MK4S (0,8/0,4): 6 Teile + 4 Verbinderringe, 14 h 13 min / 334 cm3 (2,4-mm-Wand: 23 h 52 min / 824 cm3). Steinplatten Bambu (0,16): 8 Stueck, 10 h 21 min / 52 cm3.
+  Offen: Platten liegen nicht ueberall auf (eine Plattenebene je Wand, bis ~1 mm Luft an der Nordwand); platte_nord_01/west_01 decken nur 30 %/17 % ihrer Maske; lose Stuecke in zwei Platten; Innenschicht 136 cm3.
+- Die Zeile "27 von 48 offen - NICHT fertig" weiter oben ist damit ueberholt.

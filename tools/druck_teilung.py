@@ -29,6 +29,14 @@ def zu_tm(mf):
     m = mf.to_mesh(); return trimesh.Trimesh(np.asarray(m.vert_properties)[:, :3].astype(float), np.asarray(m.tri_verts), process=True)
 
 
+def ohne_splitter(tm, v_min=1e-9):
+    """Lappen ohne Volumen entfernen (17.11.2026: lag ein Schnitt bis auf Mikrometer in einer Stufenflaeche des Modells, blieben in der Schnittebene 34 Flaechenfetzen
+    mit Volumen 0 am Teil - 'dicht=False', obwohl der Koerper selbst geschlossen war). Behaelt alle Stuecke mit Volumen > v_min m3."""
+    if tm.is_watertight: return tm
+    ks = [k for k in tm.split(only_watertight=False) if k.is_watertight and abs(k.volume) > v_min]
+    return tm if not ks else (ks[0] if len(ks) == 1 else trimesh.util.concatenate(ks))
+
+
 def lagen(B):
     """6 Achslagen: Rotationsmatrizen, die die Spalte 'oben' (Rahmenachse) auf +z drehen. B = Rahmen (u, n, z) als Spalten in Weltkoordinaten."""
     u, n, z = B[:, 0], B[:, 1], B[:, 2]; out = []
@@ -244,7 +252,7 @@ def main():
     os.makedirs(os.path.join(ad, "lage"), exist_ok=True); bericht = []
     for alt_ in glob.glob(os.path.join(ad, "teil_*.stl")) + glob.glob(os.path.join(ad, "lage", "teil_*.stl")) + glob.glob(os.path.join(ad, "verbinder_*.stl")) + glob.glob(os.path.join(ad, "stifte.stl")): os.remove(alt_)      # 17.11.2026: Teile eines frueheren Laufs blieben liegen (7 neue + 3 alte Dateien = falscher Bausatz)
     for k_, t in enumerate(sorted(teile, key=lambda t: -t["mf"].volume())):
-        tm = zu_tm(t["mf"]); name, o, A, Rr, ext = beste_lage(tm, L, cosg, bett_tol, bett_m=bm)
+        tm = ohne_splitter(zu_tm(t["mf"])); name, o, A, Rr, ext = beste_lage(tm, L, cosg, bett_tol, bett_m=bm)
         (tm.copy().apply_scale(K)).export(os.path.join(ad, "lage", f"teil_{k_ + 1:02d}.stl"))
         td = tm.copy(); td.apply_transform(np.r_[np.c_[Rr, np.zeros(3)], [[0, 0, 0, 1]]]); td.apply_translation(-np.r_[td.bounds[0, :2] + (td.bounds[1, :2] - td.bounds[0, :2]) / 2, td.bounds[0, 2]])
         td.apply_scale(K); td.export(os.path.join(ad, f"teil_{k_ + 1:02d}.stl"))
