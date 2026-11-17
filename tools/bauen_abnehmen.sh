@@ -68,7 +68,7 @@ for i, b in enumerate(o.get("bauteile", [])):
         z = b["zonen"]; zm = (float(z["z_wappen_unten"]) + float(z["z_trauf_unten"])) / 2; n = (float(b["wand_n"]) + float(b["n_front"])) / 2
         subprocess.run([sys.executable, "-W", "ignore", "-I", "tools/rundum_kanten.py", sys.argv[1], "--u", str(b["u_mitte"]), "--n", str(n), "--z", f"{zm:.2f}", "--abstand", "7", "--hoehe", "9", "--aus", os.path.join(aud, f"rundum_{b['typ'].replace(':', '_')}.jpg")], check=False)
 PYE
-NF=$(grep -c -E "Traceback \(most recent|out of memory|OutOfMemory|FEHLER |Killed|Getoetet" "$MIT" || true)
-if [ "$NF" != "0" ]; then echo "ACHTUNG: $NF Zeile(n) mit Absturz/Fehler in den Nebenpruefungen (Modell neben Foto, Umriss-Tor, Diagnosen) - 'bestanden' gilt nur fuer den Pruefstand:"; grep -E "Traceback \(most recent|out of memory|OutOfMemory|FEHLER |Killed|Getoetet" "$MIT" | cut -c1-160 | sort | uniq -c | head -5; fi
+NF=$(grep -c -E "Traceback \(most recent|out of memory|OutOfMemory|Foto\): FEHLER |Killed|Getoetet" "$MIT" || true)
+if [ "$NF" != "0" ]; then echo "ACHTUNG: $NF Zeile(n) mit Absturz/Fehler in den Nebenpruefungen (Modell neben Foto, Umriss-Tor, Diagnosen) - 'bestanden' gilt nur fuer den Pruefstand:"; grep -E "Traceback \(most recent|out of memory|OutOfMemory|Foto\): FEHLER |Killed|Getoetet" "$MIT" | cut -c1-160 | sort | uniq -c | head -5; fi
 rm -f "$MIT"; sleep 0.2
 exit $RC

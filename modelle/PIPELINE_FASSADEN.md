@@ -410,3 +410,16 @@ Gefunden, OFFEN:
 - Schnelltest prueft jetzt: Zeitlimit, Absturz-Erkennung, Kameraregeln (Tiefe, Verzeichnung).
 OFFEN (gefunden, nicht geaendert): `baukasten_gen.py:916` - Kommentar schluckt `wd_ /= np.linalg.norm(wd_)` (Rippenbreite haengt seit 13.11. leicht vom Winkel ab); Aenderung braucht Abnahme der Erker-Objekte.
 OFFEN: `objekt.json["regression"]` ist bei ALLEN Objekten leer oder fehlt - `regression.py --pruefen` prueft nirgends etwas; der Schnelltest ist der einzige feste Test.
+
+## Nachtrag 17.11.2026: Bausatz - Farbteile, Druckteilung, Druckzeit (Nutzerziel: mehrere Teile, je Farbe ein Teil, Stein flach drucken, gute Druckzeit)
+Ablauf (alles generisch, arbeitet am fertigen STL):
+1. `tools/druck_farbteile.py <objekt> --masken relief/<wand>_putz.npz,...` - Steinflaechen (nicht Putz) als flache Platten, Koerper mit Taschen (Spiel 0,15 mm). Lage der Wandflaeche wird per Strahlen am Modell gemessen (Maskenebene und Modellwand lagen am Turm bis 27 cm auseinander). Der Koerper braucht mehr Wand: Turm mit WAND_MM=2.2 in eigene Datei gebaut (`rc-park_stl/schwab_v3_wand22.stl`), das abgenommene STL bleibt.
+2. `tools/druck_teilung.py <objekt> --stl .../koerper.stl` - bettgerechte Teile; neu: Mindesthoehe je Teil (`min_teil_mm` 15), kein Schnitt, der Splitter (< 0,5 % Volumen) abtrennt, alte Teile werden vor dem Schreiben entfernt, Ausgabe auf der Datenplatte.
+3. `tools/druck_farben.py <objekt> --eintragen` - Art (Dach/Wand) und Druckfarbe je Teil aus einer Palette des ganzen Gebaeudes (3 Farbgruppen der Fassadenbilder); Dachfarbe = ANNAHME.
+4. `tools/druck_zeit.py <ordner>` - Druckzeit/Material je Teil mit PrusaSlicer (Standardprofil; nur zum Vergleich).
+5. `tools/druck_vorcheck.py` - fuer Netze > 150 000 Dreiecke per Embree (vorher 14 GB Grafikspeicher -> Absturz).
+Stand Turm (schwab_v3, Variante 2,2 mm Wand): 6 Steinplatten (518 m2, 2,6-6,3 mm dick, zusammen 15 h 9 min / 83 cm3), Koerper 1 Stueck, alles wasserdicht.
+OFFEN: Raender Stein/Putz ausgefranst (Maske aus Fotofarbe) -> Kanten glaetten/an Fugen ausrichten; Ostseite ohne Maske; Vordachbereich Nord in der Platte; Passung nie gedruckt; Farbnamen grob ("grau" = Putz im Schatten);
+Farbteile fuer Dach/Gesims/Uhr fehlen; Kettenobjekte: Masken heissen dort relief/wNN_putz.npz - Lauf steht aus.
+Kettenpruefstand (`tools/ketten_pruefstand.py`), erster Lauf: kaufhaus_gk 23 Stufen, 2 nicht in Ordnung (fassaden_netz: InterfaceCOLMAP 'error writing depth-data', Ursache offen; fassaden), 13 Fenster, Abdeckung 30 %, kein Relief.
+Netzstufe: braucht voruebergehend ~0,03 GB je Bild; raeumt die Tiefenkarten-Kopien jetzt selbst weg; Platzpruefung vorab.

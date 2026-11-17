@@ -15,7 +15,7 @@ def lade(obj, root):
     c = m.bounds.mean(0) if obj.get("zentrierung", "huelle") == "huelle" else np.zeros(3)
     m.apply_translation([-c[0], -c[1], -m.bounds[0, 2]]); return m
 
-def ortho_schnell(sz, P, N, view, hoehe=900):
+def ortho_schnell(sz, P, N, view, hoehe=900, netz=None):
     """Orthografisch ueber den gemeinsamen Renderkern: Kamera weit weg + passende Brennweite (perspektivischer Fehler < 0,5 %)."""
     import render_kern as RK
     d, r, u = [np.array(v, float) for v in view]
@@ -24,6 +24,11 @@ def ortho_schnell(sz, P, N, view, hoehe=900):
     R = np.vstack([r, -u, d]); t = -R @ cam
     s_ = (hoehe - 20) / ausd; f = D * s_
     W = int(np.ptp(P @ r) * s_) + 20; H = hoehe
+    if netz is not None:                                             # 17.11.2026: Dreiecke exakt rastern. Die Punktabtastung (2,5 Mio. Punkte) liess bei hohlen Modellen mit Relief (4 Mio. Dreiecke) die Innenwaende durchscheinen = Pixel-Pfeffer im Sichtblatt
+        try:
+            _, fid, _ = [np.asarray(v_) for v_ in RK.dreiecke_rastern(netz, R, t, f, W / 2, H / 2, W, H)]; img = np.full((H, W), 235, np.uint8); tr = fid >= 0
+            lit = np.clip(np.asarray(netz.face_normals) @ np.array([0.35, -0.45, 0.82]), 0, 1); img[tr] = (70 + 170 * (0.25 + 0.75 * lit[fid[tr]])).astype(np.uint8); return cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+        except Exception as e: print("  Dreiecksraster nicht moeglich (", str(e)[:80], ") - Punktbild")
     img, _ = sz.schattiert_np(R, t, f, W / 2, H / 2, W, H)
     return cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
 
@@ -73,7 +78,7 @@ def main():
     for name, view in VIEWS.items():
         ax = name[name.find("(") + 1:name.find(")")] if "(" in name else None
         if ax in sk: name = f"{str(sk[ax]).split()[0]} ({ax})"
-        im = ortho_schnell(sz, P, N, view); cv2.putText(im, name, (8, 26), 0, 0.8, (0, 0, 200), 2); tiles.append(im)
+        im = ortho_schnell(sz, P, N, view, netz=m); cv2.putText(im, name, (8, 26), 0, 0.8, (0, 0, 200), 2); tiles.append(im)
     H = max(t.shape[0] for t in tiles); row1 = np.hstack([cv2.copyMakeBorder(t, 0, H - t.shape[0], 0, 6, cv2.BORDER_CONSTANT, value=(255, 255, 255)) for t in tiles])
     # Foto | Render je Foto mit bekannter Seite und Kamera
     kam = {}

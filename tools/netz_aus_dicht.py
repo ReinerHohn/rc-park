@@ -17,10 +17,16 @@ def main():
     od = os.path.dirname(os.path.abspath(a.objekt)); name = os.path.basename(od); D = os.path.abspath(a.dicht); A = os.path.abspath(a.aus or os.path.join(os.path.dirname(D), "openmvs")); os.makedirs(A, exist_ok=True)
     if not A.startswith("/media/oem/scan/"): print("ABBRUCH: Ausgabeordner muss auf der Datenplatte /media/oem/scan liegen (InterfaceCOLMAP schreibt ~5 GB; 15.11.2026 lief ein Test so die Root-Platte voll)"); return 1
     mesh = os.path.join(A, "mesh.ply"); scene = os.path.join(A, "scene.mvs")
+    def raeumen():                                                    # 17.11.2026: die Tiefenkarten-Kopien (depth*.dmap, ~4-5 GB je Objekt) blieben nach Erfolg UND nach Fehlschlag liegen - am Kaufhaus 4,1 GB Rest auf einer Platte mit 7 GB frei
+        import glob
+        for f_ in glob.glob(os.path.join(A, "depth*.dmap")): os.remove(f_)
     if a.neu or not os.path.exists(mesh):
+        import shutil; frei = shutil.disk_usage(A if os.path.isdir(A) else os.path.dirname(A.rstrip("/"))).free / 1e9; nb = len(os.listdir(os.path.join(D, "images"))) if os.path.isdir(os.path.join(D, "images")) else 0
+        if frei < 0.03 * nb + 0.5 + 1.0: print(f"ABBRUCH: {frei:.1f} GB frei auf der Datenplatte, die Netzstufe braucht voruebergehend ~{0.03 * nb + 0.5:.1f} GB (+ 1 GB Reserve; die Tiefenkarten-Kopien werden danach geloescht) - Platz schaffen"); return 3
         for cmd in ([os.path.join(BIN, "InterfaceCOLMAP"), "-w", A, "-i", D, "-o", scene, "--image-folder", os.path.join(D, "images")], [os.path.join(BIN, "ReconstructMesh"), "-w", A, "-i", scene, "-o", mesh]):
             r = subprocess.run(cmd, capture_output=True, text=True)
-            if r.returncode: print("FEHLER", os.path.basename(cmd[0]), (r.stdout + r.stderr)[-400:]); return 1
+            if r.returncode: print("FEHLER", os.path.basename(cmd[0]), (r.stdout + r.stderr)[-400:]); raeumen(); return 1
+        raeumen()
     T = json.load(open(os.path.join(od, "messprotokoll", f"SFM-AUSRICHTUNG-{name}.json")))["transformation"]; s = T["s"]; R = Rot.from_rotvec(T["rvec"]).as_matrix(); t = np.array(T["t"])
     m = trimesh.load(mesh, process=False); V = ((np.asarray(m.vertices, np.float64) - t) / s) @ R; F = np.asarray(m.faces)
     drin = np.linalg.norm(V[:, :2], axis=1) < a.radius; F = F[drin[F].all(1)]; idx = np.unique(F); neu = np.full(len(V), -1); neu[idx] = np.arange(len(idx))
