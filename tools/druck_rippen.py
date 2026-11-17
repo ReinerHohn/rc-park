@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""druck_rippen.py <ein.stl> <aus.stl> [--abstand_mm 35] [--dicke_mm 1.6] [--tiefe_mm 6] [--schritt_mm 0.8] [--ecke_mm 6] [--dick_mm 2.4] [--bild PFAD.png]
+"""druck_rippen.py <ein.stl> <aus.stl> [--abstand_mm 60] [--dicke_mm 0.9] [--tiefe_mm 6] [--schritt_mm 0.8] [--ecke_mm 0 (aus)] [--dick_mm 2.4] [--bild PFAD.png]
 Duenne Gebaeudewaende von INNEN mit senkrechten Rippen und Eckzwickeln aussteifen (Druck-Nachlauf; Generator und abgenommenes STL bleiben unberuehrt). Masse in Druck-mm, z = Druckrichtung.
 
 Anlass 17.11.2026: Demodruck Turmschaft auf dem MK4S (129 x 136 x 102 mm, Wand 1 mm, 0,8-mm-Duese = EINE Bahn, kein Brim): die lange Wand bog sich durch.
 Nutzer: "wir werden sehr viele grosse Gebaeude haben mit moeglichst duenner Wand, die wir mit Rippen verstaerken muessen, damit wir schnell drucken."
 Quellenlage (Recherche 17.11.2026): Rippen steifen staerker aus als eine dickere Wand (dicke Waende schrumpfen und verziehen mehr); konkrete Rippenabstaende fand sich
-in keiner Quelle -> Standardwerte hier sind ANNAHME (35 mm Abstand, 1,6 mm = zwei Bahnen der 0,8-Duese, 6 mm tief), am Probedruck zu pruefen.
+in keiner Quelle -> Standardwerte hier sind ANNAHME, am Probedruck zu pruefen.
+Druckzeit gemessen (17.11.2026, Turmschaft 129 x 136 x 102 mm, MK4S 0,8-Duese, Schicht 0,4, PrusaSlicer): ohne Rippen 1 h 33 min; Abstand 35 / 1,6 mm / mit Eckzwickeln
+3 h 04 min; 60 / 1,6 mit Zwickeln 2 h 38; 60 / 1,6 ohne 2 h 12; 50 / 1,0 mit Zwickeln 2 h 18; 60 / 0,9 (EINE Bahn) ohne Zwickel 1 h 49 (+18 %) = Standard.
+Zwickel kosten ~25 min (Dreiecke werden gefuellt) -> nur auf Wunsch (--ecke_mm 6).
 
 Verfahren (generisch, aus waagerechten Scheiben - kein Wissen ueber das Gebaeude):
   1. Scheiben der Hoehe --schritt_mm. Je Scheibe: Material S; Umriss F = S mit Fenstern bis 2 x 7 mm zugeschlossen; Innenraum C = (F - S), nur wo darueber Material liegt
@@ -125,7 +128,7 @@ def rippen_flaechen(rr, fam, abstand, dicke, tiefe, rand, kante_min, spreiz=12.0
     return re, ohne
 
 
-def rippen(modell, abstand=35.0, dicke=1.6, tiefe=6.0, schritt=0.8, ecke=6.0, dick=2.4, schliess=7.0, fenster=2.0, rand=6.0, kante_min=20.0, melde=None, ohne_decke=False):
+def rippen(modell, abstand=60.0, dicke=0.9, tiefe=6.0, schritt=0.8, ecke=0.0, dick=2.4, schliess=7.0, fenster=2.0, rand=6.0, kante_min=20.0, melde=None, ohne_decke=False):
     bb = modell.bounding_box(); zs = np.arange(bb[2], bb[5], schritt); n = len(zs)
     S = [modell.slice(float(z + schritt / 2)).simplify(0.02) for z in zs]
     D = [None] * n; decke = CS()
@@ -143,7 +146,7 @@ def rippen(modell, abstand=35.0, dicke=1.6, tiefe=6.0, schritt=0.8, ecke=6.0, di
         if C[i].is_empty(): continue
         re, o = rippen_flaechen(ringe(C[i]), fam, abstand, dicke, tiefe, rand, kante_min); ohne += o
         roh = CS([q for q in re], FillRule.NonZero) if re else CS()
-        ec = zwickel(C[i], ecke)                                                        # 17.11.2026: Ausrunden per Oeffnung fuellte an welligen Reliefwaenden lange Streifen - jetzt Dreiecke nur an echten Ecken
+        ec = zwickel(C[i], ecke) if ecke > 0.5 else []                                                        # 17.11.2026: Ausrunden per Oeffnung fuellte an welligen Reliefwaenden lange Streifen - jetzt Dreiecke nur an echten Ecken
         if ec: roh = roh + CS(ec, FillRule.NonZero)
         if roh.is_empty(): continue
         roh = roh ^ (C[i].offset(0.05, ECKIG, 2.0) + S[i])                              # 0,05: Innenraum und Wand beruehren sich nur - ohne Ueberlapp zerfiel die Rippe in zwei Stuecke
@@ -167,7 +170,7 @@ def rippen(modell, abstand=35.0, dicke=1.6, tiefe=6.0, schritt=0.8, ecke=6.0, di
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("ein"); ap.add_argument("aus")
-    for k, d in (("abstand_mm", 35.0), ("dicke_mm", 1.6), ("tiefe_mm", 6.0), ("schritt_mm", 0.8), ("ecke_mm", 6.0), ("dick_mm", 2.4), ("fenster_mm", 2.0), ("rand_mm", 6.0), ("kante_mm", 20.0)):
+    for k, d in (("abstand_mm", 60.0), ("dicke_mm", 0.9), ("tiefe_mm", 6.0), ("schritt_mm", 0.8), ("ecke_mm", 0.0), ("dick_mm", 2.4), ("fenster_mm", 2.0), ("rand_mm", 6.0), ("kante_mm", 20.0)):
         ap.add_argument("--" + k, type=float, default=d)
     ap.add_argument("--ohne_decke", action="store_true", help="einzelnes, oben offenes Druckteil: jeder umschlossene Innenraum zaehlt (sonst nur Innenraum unter Material)")
     ap.add_argument("--bild", default=""); a = ap.parse_args()

@@ -1,0 +1,1315 @@
+{
+ "werkzeug": "dach_aus_fotos.py",
+ "quelle": "foto",
+ "datum": "2026-11-17 11:17",
+ "teil": 0,
+ "belegt": true,
+ "voxel_m": 0.15,
+ "fotos_abgestimmt": 162,
+ "fotos_widerspruch": 52,
+ "sektoren": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  15,
+  16,
+  17
+ ],
+ "traufe_z": 38.15,
+ "traufe_breite_a": 13.8,
+ "traufe_breite_b": 13.8,
+ "ueberstand_m": {
+  "a-": 0.64,
+  "a+": 0.98,
+  "b-": 1.5,
+  "b+": 0.53
+ },
+ "first_z": 45.8,
+ "neigung_grad": [
+  57.5,
+  56.7
+ ],
+ "knicke_z": [
+  38.75,
+  38.9,
+  39.8,
+  42.65,
+  44.3
+ ],
+ "aufsatz": {
+  "fuss_z": 45.8,
+  "oben_z": 51.87,
+  "breite_a": 1.65,
+  "breite_b": 1.6
+ },
+ "hoechster_punkt_z": 51.87,
+ "seiten_belegt_anteil": {
+  "a-": 1.0,
+  "a+": 0.99,
+  "b-": 0.05,
+  "b+": 0.0
+ },
+ "achse_belegt": {
+  "a": true,
+  "b": false
+ },
+ "profil": [
+  [
+   37.85,
+   -6.73,
+   7.07,
+   -7.39,
+   6.41
+  ],
+  [
+   38.15,
+   -6.73,
+   7.07,
+   -7.39,
+   6.41
+  ],
+  [
+   38.75,
+   -6.11,
+   6.46,
+   -6.72,
+   5.83
+  ],
+  [
+   38.9,
+   -5.95,
+   6.31,
+   -6.38,
+   5.68
+  ],
+  [
+   39.8,
+   -5.05,
+   5.42,
+   -5.6,
+   4.84
+  ],
+  [
+   42.65,
+   -3.07,
+   3.5,
+   -3.42,
+   3.03
+  ],
+  [
+   44.3,
+   -2.16,
+   2.62,
+   -2.41,
+   2.23
+  ],
+  [
+   45.8,
+   -1.78,
+   2.27,
+   -1.96,
+   1.96
+  ],
+  [
+   46.25,
+   -1.18,
+   1.67,
+   -1.38,
+   1.38
+  ],
+  [
+   46.4,
+   -1.03,
+   1.22,
+   -1.09,
+   1.09
+  ],
+  [
+   46.7,
+   -0.73,
+   0.92,
+   -0.8,
+   0.8
+  ],
+  [
+   46.85,
+   -0.73,
+   0.77,
+   -0.73,
+   0.73
+  ],
+  [
+   47.45,
+   -0.73,
+   0.77,
+   -0.73,
+   0.73
+  ],
+  [
+   47.6,
+   -0.88,
+   0.62,
+   -0.73,
+   0.73
+  ],
+  [
+   48.2,
+   -1.03,
+   0.62,
+   -0.8,
+   0.8
+  ],
+  [
+   48.5,
+   -1.03,
+   0.92,
+   -0.94,
+   0.94
+  ],
+  [
+   48.95,
+   -1.03,
+   0.92,
+   -0.94,
+   0.94
+  ],
+  [
+   49.1,
+   -1.03,
+   0.92,
+   -0.94,
+   0.56
+  ],
+  [
+   49.4,
+   -1.03,
+   0.92,
+   -0.94,
+   0.94
+  ],
+  [
+   49.85,
+   -1.03,
+   0.47,
+   -0.73,
+   0.73
+  ],
+  [
+   50.45,
+   -1.03,
+   0.62,
+   -0.8,
+   0.8
+  ],
+  [
+   50.6,
+   -0.73,
+   0.62,
+   -0.65,
+   0.65
+  ],
+  [
+   51.2,
+   -0.43,
+   0.32,
+   -0.36,
+   0.36
+  ],
+  [
+   51.87,
+   -0.28,
+   0.32,
+   -0.29,
+   0.29
+  ]
+ ],
+ "annahmen": [
+  "ANNAHME: Seite b- in 82 von 92 Schichten (12.3 m Hoehe) ohne Foto, das an ihr entlang schaut - Lage von der Gegenseite gespiegelt bzw. aus der anderen Achse im Grundrissverhaeltnis, begrenzt durch die Sichthuelle",
+  "ANNAHME: Seite b+ in 49 von 92 Schichten (7.3 m Hoehe) ohne Foto, das an ihr entlang schaut - Lage von der Gegenseite gespiegelt bzw. aus der anderen Achse im Grundrissverhaeltnis, begrenzt durch die Sichthuelle",
+  "Dachflaeche geschweift/geknickt AUS FOTOS: Einzug [0.6, 0.75, 0.75, 0.6] m bei 20/40/60/80 % der Dachhoehe (mittlere Abweichung zur Himmelskante 0.88 -> 0.43 m, 29 Fotos, Sektoren [0, 17]); ANNAHME: in beiden Achsen gleich (die Fotos zeigen nur das Profil quer zur Blickrichtung)",
+  "ANNAHME: Traufstaerke 0.3 m (Unterseite des Dachueberstands nicht messbar: die Huelle laeuft unter der Traufe schraeg aus)",
+  "ANNAHME: Querschnitt je Hoehe ein Rechteck in den Grundrissachsen (Laterne/runde Aufsaetze, Gauben, Grate werden zum Rechteck)"
+ ],
+ "mitte_uv": [
+  -2.14,
+  15.158
+ ],
+ "achse_a": [
+  -0.03213,
+  0.99948
+ ],
+ "gegenprobe": [
+  {
+   "foto": "commons_orig2__004",
+   "n": 112,
+   "med": 51.13,
+   "mad": 51.13,
+   "sektor": 0,
+   "abstand": 326.7,
+   "passt": false
+  },
+  {
+   "foto": "commons_orig2__009",
+   "n": 407,
+   "med": -0.04,
+   "mad": 0.09,
+   "sektor": 17,
+   "abstand": 34.3,
+   "passt": true
+  },
+  {
+   "foto": "commons_orig2__012",
+   "n": 462,
+   "med": 0.31,
+   "mad": 0.31,
+   "sektor": 8,
+   "abstand": 20.0,
+   "passt": true
+  },
+  {
+   "foto": "commons_orig2__019",
+   "n": 236,
+   "med": 0.52,
+   "mad": 0.52,
+   "sektor": 17,
+   "abstand": 88.5,
+   "passt": false
+  },
+  {
+   "foto": "commons_orig2__033",
+   "n": 394,
+   "med": -0.23,
+   "mad": 0.27,
+   "sektor": 0,
+   "abstand": 96.1,
+   "passt": true
+  },
+  {
+   "foto": "commons_orig2__044",
+   "n": 416,
+   "med": 1.24,
+   "mad": 1.24,
+   "sektor": 8,
+   "abstand": 44.0,
+   "passt": false
+  },
+  {
+   "foto": "commons_orig2__045",
+   "n": 183,
+   "med": 8.8,
+   "mad": 8.8,
+   "sektor": 17,
+   "abstand": 64.8,
+   "passt": false
+  },
+  {
+   "foto": "commons_orig2__048",
+   "n": 297,
+   "med": 0.0,
+   "mad": 0.14,
+   "sektor": 17,
+   "abstand": 65.6,
+   "passt": true
+  },
+  {
+   "foto": "commons_orig2__049",
+   "n": 349,
+   "med": 0.21,
+   "mad": 0.21,
+   "sektor": 17,
+   "abstand": 43.6,
+   "passt": true
+  },
+  {
+   "foto": "commons_orig2__050",
+   "n": 175,
+   "med": 0.04,
+   "mad": 0.08,
+   "sektor": 16,
+   "abstand": 33.3,
+   "passt": true
+  },
+  {
+   "foto": "commons_orig2__051",
+   "n": 253,
+   "med": 0.0,
+   "mad": 0.04,
+   "sektor": 16,
+   "abstand": 32.4,
+   "passt": true
+  },
+  {
+   "foto": "commons_orig2__052",
+   "n": 375,
+   "med": 1.62,
+   "mad": 1.62,
+   "sektor": 9,
+   "abstand": 66.8,
+   "passt": false
+  },
+  {
+   "foto": "commons_orig2__149",
+   "n": 276,
+   "med": -0.68,
+   "mad": 0.68,
+   "sektor": 17,
+   "abstand": 91.3,
+   "passt": false
+  },
+  {
+   "foto": "commons_orig2__183",
+   "n": 294,
+   "med": 9.97,
+   "mad": 9.97,
+   "sektor": 17,
+   "abstand": 33.5,
+   "passt": false
+  },
+  {
+   "foto": "commons_orig2__190",
+   "n": 281,
+   "med": 1.67,
+   "mad": 1.67,
+   "sektor": 8,
+   "abstand": 39.6,
+   "passt": false
+  },
+  {
+   "foto": "commons_orig2__191",
+   "n": 247,
+   "med": 1.58,
+   "mad": 1.58,
+   "sektor": 8,
+   "abstand": 39.5,
+   "passt": false
+  },
+  {
+   "foto": "commons_orig2__192",
+   "n": 512,
+   "med": 0.24,
+   "mad": 0.28,
+   "sektor": 6,
+   "abstand": 24.8,
+   "passt": true
+  },
+  {
+   "foto": "commons_orig2__213",
+   "n": 266,
+   "med": -0.22,
+   "mad": 0.34,
+   "sektor": 0,
+   "abstand": 110.9,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_110741",
+   "n": 163,
+   "med": 22.76,
+   "mad": 22.76,
+   "sektor": 0,
+   "abstand": 327.1,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_110743",
+   "n": 55,
+   "med": 100.42,
+   "mad": 100.42,
+   "sektor": 0,
+   "abstand": 327.4,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_110749",
+   "n": 56,
+   "med": 85.36,
+   "mad": 85.36,
+   "sektor": 0,
+   "abstand": 325.7,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_110754",
+   "n": 55,
+   "med": 94.21,
+   "mad": 94.21,
+   "sektor": 0,
+   "abstand": 325.9,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_110801",
+   "n": 161,
+   "med": 29.54,
+   "mad": 29.54,
+   "sektor": 0,
+   "abstand": 326.0,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_110802",
+   "n": 161,
+   "med": 29.47,
+   "mad": 29.47,
+   "sektor": 0,
+   "abstand": 326.0,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_111235",
+   "n": 160,
+   "med": 21.76,
+   "mad": 21.76,
+   "sektor": 0,
+   "abstand": 329.2,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_111235_2",
+   "n": 161,
+   "med": 20.66,
+   "mad": 20.66,
+   "sektor": 0,
+   "abstand": 329.2,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_111237",
+   "n": 56,
+   "med": 95.54,
+   "mad": 95.54,
+   "sektor": 0,
+   "abstand": 329.3,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_113015",
+   "n": 456,
+   "med": -0.15,
+   "mad": 0.18,
+   "sektor": 17,
+   "abstand": 80.5,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113019",
+   "n": 437,
+   "med": -0.21,
+   "mad": 0.21,
+   "sektor": 17,
+   "abstand": 80.5,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113025",
+   "n": 193,
+   "med": -0.16,
+   "mad": 0.24,
+   "sektor": 17,
+   "abstand": 80.4,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113029",
+   "n": 564,
+   "med": -0.13,
+   "mad": 0.22,
+   "sektor": 17,
+   "abstand": 80.5,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113056",
+   "n": 259,
+   "med": -0.06,
+   "mad": 0.25,
+   "sektor": 17,
+   "abstand": 60.7,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113106",
+   "n": 710,
+   "med": 0.09,
+   "mad": 0.16,
+   "sektor": 17,
+   "abstand": 60.6,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113128",
+   "n": 866,
+   "med": 0.16,
+   "mad": 0.16,
+   "sektor": 17,
+   "abstand": 47.5,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113148",
+   "n": 331,
+   "med": -0.11,
+   "mad": 0.16,
+   "sektor": 17,
+   "abstand": 47.6,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113149",
+   "n": 335,
+   "med": -0.11,
+   "mad": 0.26,
+   "sektor": 17,
+   "abstand": 47.6,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113201",
+   "n": 345,
+   "med": 0.0,
+   "mad": 0.15,
+   "sektor": 17,
+   "abstand": 42.3,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113205",
+   "n": 940,
+   "med": 0.11,
+   "mad": 0.13,
+   "sektor": 17,
+   "abstand": 42.1,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113231",
+   "n": 433,
+   "med": -0.09,
+   "mad": 0.13,
+   "sektor": 16,
+   "abstand": 29.3,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113233",
+   "n": 433,
+   "med": -0.13,
+   "mad": 0.17,
+   "sektor": 16,
+   "abstand": 29.3,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113300",
+   "n": 539,
+   "med": -0.11,
+   "mad": 0.15,
+   "sektor": 16,
+   "abstand": 20.0,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113312",
+   "n": 431,
+   "med": -0.15,
+   "mad": 0.18,
+   "sektor": 16,
+   "abstand": 20.2,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113338_1",
+   "n": 558,
+   "med": -0.07,
+   "mad": 0.15,
+   "sektor": 16,
+   "abstand": 15.4,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113340",
+   "n": 221,
+   "med": -0.24,
+   "mad": 0.24,
+   "sektor": 16,
+   "abstand": 15.4,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113416",
+   "n": 543,
+   "med": -0.17,
+   "mad": 0.21,
+   "sektor": 16,
+   "abstand": 10.0,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113429",
+   "n": 493,
+   "med": -0.36,
+   "mad": 0.39,
+   "sektor": 0,
+   "abstand": 10.2,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113441",
+   "n": 592,
+   "med": 4.12,
+   "mad": 4.12,
+   "sektor": 0,
+   "abstand": 9.9,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_113514",
+   "n": 103,
+   "med": 0.23,
+   "mad": 0.23,
+   "sektor": 17,
+   "abstand": 8.6,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113532",
+   "n": 571,
+   "med": -0.07,
+   "mad": 0.15,
+   "sektor": 1,
+   "abstand": 16.0,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113538",
+   "n": 42,
+   "med": -1.03,
+   "mad": 1.03,
+   "sektor": 1,
+   "abstand": 15.3,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_113545_1",
+   "n": 496,
+   "med": -0.14,
+   "mad": 0.14,
+   "sektor": 2,
+   "abstand": 15.1,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113547",
+   "n": 578,
+   "med": 0.0,
+   "mad": 0.11,
+   "sektor": 2,
+   "abstand": 15.1,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113605",
+   "n": 519,
+   "med": -0.08,
+   "mad": 0.11,
+   "sektor": 0,
+   "abstand": 16.1,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113646",
+   "n": 555,
+   "med": -0.11,
+   "mad": 0.18,
+   "sektor": 15,
+   "abstand": 17.1,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113816",
+   "n": 533,
+   "med": 1.96,
+   "mad": 1.96,
+   "sektor": 11,
+   "abstand": 19.4,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_113818",
+   "n": 586,
+   "med": 0.7,
+   "mad": 0.7,
+   "sektor": 11,
+   "abstand": 19.5,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_113836",
+   "n": 439,
+   "med": 0.04,
+   "mad": 0.11,
+   "sektor": 10,
+   "abstand": 19.2,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113837_1",
+   "n": 414,
+   "med": 0.0,
+   "mad": 0.15,
+   "sektor": 10,
+   "abstand": 19.2,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113852",
+   "n": 494,
+   "med": 0.22,
+   "mad": 0.22,
+   "sektor": 9,
+   "abstand": 18.6,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_113854",
+   "n": 507,
+   "med": 0.07,
+   "mad": 0.11,
+   "sektor": 9,
+   "abstand": 18.7,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_114023",
+   "n": 529,
+   "med": 0.07,
+   "mad": 0.1,
+   "sektor": 5,
+   "abstand": 11.9,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_114037",
+   "n": 464,
+   "med": 0.08,
+   "mad": 0.11,
+   "sektor": 3,
+   "abstand": 17.9,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_114039",
+   "n": 425,
+   "med": -0.04,
+   "mad": 0.07,
+   "sektor": 3,
+   "abstand": 17.8,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_114050",
+   "n": 42,
+   "med": -0.27,
+   "mad": 1.29,
+   "sektor": 3,
+   "abstand": 18.0,
+   "passt": false
+  },
+  {
+   "foto": "eigen__IMG_20261106_114052",
+   "n": 345,
+   "med": -0.14,
+   "mad": 0.14,
+   "sektor": 3,
+   "abstand": 18.1,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_114110",
+   "n": 577,
+   "med": 0.0,
+   "mad": 0.11,
+   "sektor": 2,
+   "abstand": 17.0,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_114117",
+   "n": 562,
+   "med": -0.11,
+   "mad": 0.11,
+   "sektor": 2,
+   "abstand": 17.0,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_114125",
+   "n": 550,
+   "med": -0.07,
+   "mad": 0.11,
+   "sektor": 2,
+   "abstand": 19.1,
+   "passt": true
+  },
+  {
+   "foto": "eigen__IMG_20261106_114133",
+   "n": 499,
+   "med": -0.07,
+   "mad": 0.07,
+   "sektor": 4,
+   "abstand": 11.5,
+   "passt": true
+  },
+  {
+   "foto": "online_orig__od_00",
+   "n": 190,
+   "med": 6.13,
+   "mad": 6.13,
+   "sektor": 0,
+   "abstand": 325.4,
+   "passt": false
+  },
+  {
+   "foto": "online_orig__od_05",
+   "n": 395,
+   "med": 2.56,
+   "mad": 2.56,
+   "sektor": 17,
+   "abstand": 41.8,
+   "passt": false
+  },
+  {
+   "foto": "online_orig__od_08",
+   "n": 393,
+   "med": 2.68,
+   "mad": 2.75,
+   "sektor": 8,
+   "abstand": 215.7,
+   "passt": false
+  },
+  {
+   "foto": "online_orig__od_09",
+   "n": 399,
+   "med": -0.08,
+   "mad": 0.35,
+   "sektor": 17,
+   "abstand": 93.5,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_184",
+   "n": 129,
+   "med": 0.34,
+   "mad": 0.85,
+   "sektor": 17,
+   "abstand": 117.8,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_185",
+   "n": 201,
+   "med": -0.25,
+   "mad": 0.59,
+   "sektor": 17,
+   "abstand": 116.0,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_186",
+   "n": 53,
+   "med": -0.24,
+   "mad": 0.24,
+   "sektor": 17,
+   "abstand": 114.5,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_188",
+   "n": 189,
+   "med": 1.68,
+   "mad": 1.68,
+   "sektor": 17,
+   "abstand": 111.7,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_189",
+   "n": 174,
+   "med": 1.7,
+   "mad": 1.7,
+   "sektor": 17,
+   "abstand": 110.3,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_190",
+   "n": 173,
+   "med": 0.71,
+   "mad": 0.8,
+   "sektor": 17,
+   "abstand": 108.7,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_191",
+   "n": 178,
+   "med": 0.26,
+   "mad": 0.44,
+   "sektor": 17,
+   "abstand": 107.0,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_192",
+   "n": 180,
+   "med": 0.17,
+   "mad": 0.43,
+   "sektor": 17,
+   "abstand": 105.5,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_193",
+   "n": 206,
+   "med": -0.08,
+   "mad": 0.33,
+   "sektor": 17,
+   "abstand": 104.3,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_194",
+   "n": 203,
+   "med": 0.46,
+   "mad": 0.53,
+   "sektor": 17,
+   "abstand": 103.2,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_197",
+   "n": 188,
+   "med": -0.08,
+   "mad": 0.57,
+   "sektor": 17,
+   "abstand": 98.1,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_198",
+   "n": 218,
+   "med": -0.08,
+   "mad": 0.34,
+   "sektor": 17,
+   "abstand": 96.7,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_199",
+   "n": 196,
+   "med": -0.11,
+   "mad": 0.3,
+   "sektor": 17,
+   "abstand": 95.1,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_200",
+   "n": 224,
+   "med": -0.15,
+   "mad": 0.22,
+   "sektor": 17,
+   "abstand": 93.7,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_201",
+   "n": 219,
+   "med": -0.15,
+   "mad": 0.22,
+   "sektor": 17,
+   "abstand": 92.2,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_236",
+   "n": 170,
+   "med": 0.7,
+   "mad": 0.7,
+   "sektor": 8,
+   "abstand": 24.8,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_237",
+   "n": 424,
+   "med": 0.6,
+   "mad": 0.6,
+   "sektor": 8,
+   "abstand": 24.7,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_Bbzk0Qpb5l0__vf_238",
+   "n": 286,
+   "med": 0.7,
+   "mad": 0.7,
+   "sektor": 8,
+   "abstand": 24.7,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_029",
+   "n": 44,
+   "med": -12.16,
+   "mad": 12.16,
+   "sektor": 9,
+   "abstand": 42.0,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_030",
+   "n": 237,
+   "med": 1.31,
+   "mad": 1.4,
+   "sektor": 9,
+   "abstand": 42.0,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_031",
+   "n": 298,
+   "med": 1.24,
+   "mad": 1.33,
+   "sektor": 9,
+   "abstand": 42.0,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_032",
+   "n": 349,
+   "med": 1.25,
+   "mad": 1.35,
+   "sektor": 9,
+   "abstand": 42.0,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_033",
+   "n": 345,
+   "med": 1.21,
+   "mad": 1.36,
+   "sektor": 9,
+   "abstand": 41.7,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_034",
+   "n": 341,
+   "med": 1.22,
+   "mad": 1.31,
+   "sektor": 9,
+   "abstand": 42.0,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_108",
+   "n": 64,
+   "med": -0.14,
+   "mad": 0.29,
+   "sektor": 16,
+   "abstand": 25.2,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_109",
+   "n": 175,
+   "med": -0.08,
+   "mad": 0.12,
+   "sektor": 16,
+   "abstand": 25.2,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_110",
+   "n": 237,
+   "med": -0.08,
+   "mad": 0.08,
+   "sektor": 16,
+   "abstand": 25.2,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_111",
+   "n": 328,
+   "med": -0.04,
+   "mad": 0.08,
+   "sektor": 16,
+   "abstand": 25.2,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_112",
+   "n": 452,
+   "med": -0.08,
+   "mad": 0.08,
+   "sektor": 16,
+   "abstand": 25.2,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_113",
+   "n": 480,
+   "med": -0.08,
+   "mad": 0.12,
+   "sektor": 16,
+   "abstand": 25.3,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_LMS3Va6psfY__vf_114",
+   "n": 477,
+   "med": -0.04,
+   "mad": 0.08,
+   "sektor": 16,
+   "abstand": 25.2,
+   "passt": true
+  },
+  {
+   "foto": "video_frames_MmtSdI6hBgA__vf_015",
+   "n": 175,
+   "med": 1.24,
+   "mad": 1.24,
+   "sektor": 7,
+   "abstand": 37.5,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_MmtSdI6hBgA__vf_016",
+   "n": 331,
+   "med": 1.15,
+   "mad": 1.15,
+   "sektor": 7,
+   "abstand": 37.5,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_MmtSdI6hBgA__vf_017",
+   "n": 291,
+   "med": 1.11,
+   "mad": 1.18,
+   "sektor": 7,
+   "abstand": 37.5,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_NW-Mt7ryZ8c__vf_000",
+   "n": 188,
+   "med": 11.77,
+   "mad": 11.77,
+   "sektor": 10,
+   "abstand": 60.2,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_NW-Mt7ryZ8c__vf_001",
+   "n": 151,
+   "med": 13.62,
+   "mad": 13.62,
+   "sektor": 10,
+   "abstand": 58.9,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_NW-Mt7ryZ8c__vf_002",
+   "n": 171,
+   "med": 14.24,
+   "mad": 14.24,
+   "sektor": 10,
+   "abstand": 57.3,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_NW-Mt7ryZ8c__vf_003",
+   "n": 83,
+   "med": 19.8,
+   "mad": 19.8,
+   "sektor": 10,
+   "abstand": 50.6,
+   "passt": false
+  },
+  {
+   "foto": "video_frames_Shrm2wCRJxg__vf_001",
+   "n": 305,
+   "med": 0.22,
+   "mad": 0.22,
+   "sektor": 17,
+   "abstand": 46.3,
+   "passt": true
+  }
+ ],
+ "gegenprobe_kurz": {
+  "fotos": 112,
+  "passt": 63,
+  "sektoren_passt": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   8,
+   9,
+   10,
+   15,
+   16,
+   17
+  ],
+  "median_abweichung_m": 0.32,
+  "grenze_m": 0.5,
+  "fotos_breit": 99,
+  "passt_breit": 60
+ },
+ "vergleich_dom1_lod2": {
+  "lod2_wandoberkante": 37.0,
+  "dom1_first": 45.46,
+  "dom1_max": 49.62,
+  "dom1_form": "walm_a",
+  "objekt_hoehe_m": 50.8,
+  "hinweis_spitze": "hoechster Punkt Foto 51.87 m ueber DOM1-Maximum 49.62 m (+2.25 m) - DOM1 ist blind fuer Nadeln/Knaeufe, fuer sich kein Widerspruch"
+ },
+ "widerspruch": [
+  "Traufe Foto 38.15 m gegen LoD2-Wandoberkante 37.00 m (+1.15 m, Faktor 1.031)",
+  "Kameras aus Richtung 120-180 Grad (10 Fotos) sehen die Dachkante im Median +1.19 m anders als die Mehrheit - Ausrichtung dieser Kameras pruefen (nicht gemittelt)",
+  "Kameras aus Richtung 180-240 Grad (8 Fotos) sehen die Dachkante im Median +1.25 m anders als die Mehrheit - Ausrichtung dieser Kameras pruefen (nicht gemittelt)"
+ ],
+ "kameragruppen_abweichend": [
+  {
+   "richtung_grad": [
+    120,
+    180
+   ],
+   "fotos": 10,
+   "median_m": 1.19
+  },
+  {
+   "richtung_grad": [
+    180,
+    240
+   ],
+   "fotos": 8,
+   "median_m": 1.25
+  }
+ ]
+}

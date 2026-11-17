@@ -281,6 +281,11 @@ def main():
         if rc_k != 0: notiz(B, "fototor", False, fehler=f"Kameras nicht geschrieben (fototor_kameras rc {rc_k}) - Foto-Tor NICHT gelaufen; K-Dateien eines frueheren Laufs sind fuer diese Ausrichtung nicht belegt"); wahl = []
         elif not wahl: notiz(B, "fototor", False, fehler=f"KEIN Foto geprueft ({kw} fehlt/leer oder alle gewaehlten Kameras beiseitegelegt) - das Foto-Tor ist damit NICHT bestanden (17.11.2026: lief mit 0 Fotos still durch)")
         for f in wahl: lauf(B, f"fototor_{os.path.splitext(f)[0]}", [PY, "-W", "ignore", "-I", "tools/foto_diff.py", ZR, os.path.splitext(f)[0], "--bild", os.path.join(FV, f)], log)
+    # --- 17.11.2026 Stufe 'dachfoto' (gehoert zu fototor: braucht die Messkameras): Dachhoehe und Dachumriss aus der Himmelskante der Fotos (tools/dach_aus_fotos.py) ---
+    # rc 0 belegt, 3 belegt mit gemeldetem Widerspruch zu DOM1/LoD2 oder zwischen Kameragruppen, 2 nicht belegt (DOM1-Dach bleibt). Belegt -> Block 'foto' in dach.json, neu bauen.
+    if dran("fototor") and os.path.exists(AU) and os.path.exists(os.path.join(Z, "dach.json")):
+        if lauf(B, "dachfoto", [PY, "-W", "ignore", "-I", "tools/dach_aus_fotos.py", ZR, "--schreiben"], log, ok=(0, 2, 3))[0] in (0, 3): lauf(B, "bauen_mit_fotodach", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
+    # --- Ende Stufe 'dachfoto' ---
     gp_ = os.path.join(ROOT, "modelle", f"{a.ziel}_gen.py")           # 16.11.2026: schwab_auto hatte einen Generator aus einer alten Vorlage - Reliefs und Fenster wurden gerechnet, aber nie gebaut (Modell blieb bei 244 Dreiecken)
     if (dran("bauen") or dran("fassaden") or dran("fenster")) and os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("fassaden_kette", "fenster_aus_json")): lauf(B, "generator_erneuern", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))      # unberuehrter alter Rumpf -> aktuelle Vorlage (alter bleibt als .alt_<zeit>)
     if (dran("fassaden") or dran("fenster")) and os.path.exists(gp_) and not all(w_ in open(gp_).read() for w_ in ("fassaden_kette", "fenster_aus_json")):

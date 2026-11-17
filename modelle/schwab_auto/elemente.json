@@ -1,20 +1,14 @@
 [
  {
   "seite": "dach",
-  "element": "Dach Teil 0 (walm_a)",
-  "quelle": "Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 DEBW_001000hPLcp-Grundriss Teil 0",
-  "first": 45.46,
-  "neigung_grad": 56.1,
-  "rms_m": 0.26,
-  "eindeutig": true,
-  "seite_name": "dach"
- },
- {
-  "seite": "dach",
-  "element": "Spitze Teil 0",
-  "quelle": "DOM1 6 Pixel bis 49.6 m; Hoehe objekt.json hoehe_m",
-  "hoehe": 50.8,
-  "hinweis": "ANNAHME: Pyramide Grundseite 2.4 m (sqrt Pixel), Form nicht gemessen",
+  "element": "Dach Teil 0 (Fotodach, mit Aufsatz)",
+  "quelle": "Fotos: Sichtkegel-Schnitt der Himmelskante aus 162 Fotos (tools/dach_aus_fotos.py, 2026-11-17 11:17); Gegenprobe 63 von 112 Fotos <= 0.5 m",
+  "traufe": 38.15,
+  "first": 45.8,
+  "hoehe": 51.87,
+  "traufe_breite_a": 13.8,
+  "traufe_breite_b": 13.8,
+  "hinweis": "ANNAHME: Seite b- in 82 von 92 Schichten (12.3 m Hoehe) ohne Foto, das an ihr entlang schaut - Lage von der Gegenseite gespiegelt bzw. aus der anderen Achse im Grundrissverhaeltnis, begrenzt durch die Sichthuelle | ANNAHME: Seite b+ in 49 von 92 Schichten (7.3 m Hoehe) ohne Foto, das an ihr entlang schaut - Lage von der Gegenseite gespiegelt bzw. aus der anderen Achse im Grundrissverhaeltnis, begrenzt durch die Sichthuelle | Dachflaeche geschweift/geknickt AUS FOTOS: Einzug [0.6, 0.75, 0.75, 0.6] m bei 20/40/60/80 % der Dachhoehe (mittlere Abweichung zur Himmelskante 0.88 -> 0.43 m, 29 Fotos, Sektoren [0, 17]); ANNAHME: in beiden Achsen gleich (die Fotos zeigen nur das Profil quer zur Blickrichtung) | ANNAHME: Traufstaerke 0.3 m (Unterseite des Dachueberstands nicht messbar: die Huelle laeuft unter der Traufe schraeg aus) | ANNAHME: Querschnitt je Hoehe ein Rechteck in den Grundrissachsen (Laterne/runde Aufsaetze, Gauben, Grate werden zum Rechteck) | WIDERSPRUCH (gemeldet, nicht gemittelt): Traufe Foto 38.15 m gegen LoD2-Wandoberkante 37.00 m (+1.15 m, Faktor 1.031) | WIDERSPRUCH (gemeldet, nicht gemittelt): Kameras aus Richtung 120-180 Grad (10 Fotos) sehen die Dachkante im Median +1.19 m anders als die Mehrheit - Ausrichtung dieser Kameras pruefen (nicht gemittelt) | WIDERSPRUCH (gemeldet, nicht gemittelt): Kameras aus Richtung 180-240 Grad (8 Fotos) sehen die Dachkante im Median +1.25 m anders als die Mehrheit - Ausrichtung dieser Kameras pruefen (nicht gemittelt)",
   "seite_name": "dach"
  },
  {
@@ -162,6 +156,13 @@
   "generiert_anteil": 0.0,
   "hinweis": "Scan-Relief, kein Mass; generierte Steine = ANNAHME",
   "seite_name": "wand"
+ },
+ {
+  "seite": "dach",
+  "element": "Teil 0: ueber der Traufunterkante nur das Fotodach",
+  "quelle": "tools/dach_bauen.ueber_traufe_nur_dach (Reliefreste ueber der Wand entfernt)",
+  "volumen_weg_m3": 14.94,
+  "seite_name": "dach"
  },
  {
   "seite": "wand",

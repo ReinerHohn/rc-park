@@ -117,11 +117,79 @@ def loecher_glatt(rel, zu, max_m2, px):
     return neu.astype(np.float32), float(klein.mean())
 
 
-def anbauen(koerper, objekt_json, tiefe=0.4):
-    """Fuer Generatoren: alle relief/*_voll.npz der Fassaden-Kette als Platten anfuegen, begrenzt auf die nach aussen verschobene Koerperhuelle."""
+def relief_roh(r0, r2, px):
+    """Wand OHNE Quaderwerk: Netz-Relief unveraendert als <wand>_voll.npz. Kleine Loecher glatt, Oeffnungen (Loch mit Netz dahinter: Arkade, Tor) auf das tiefste Niveau (Ruecksprung statt Wandflaeche),
+    'vorstand' = das ganze Relief so weit vor die Wandebene, dass sein tiefster Ruecksprung 1 cm davor liegt (hoechstens Klemme + 1 cm = 11 cm = 1,3 mm bei 1:87), OHNE den Ebenentrend des Netzes.
+    GRUND (kaufhaus_gk 17.11.2026, Bild Modell neben Foto): die Netzflaeche lag im Mittel 1,5 cm HINTER der LoD2-Ebene - alles unter der Ebene verschwand im Grundkoerper, von Fenstern/Arkaden blieben nur
+    ein paar Grate. Mit Trend waeren es 25-81 cm Vorstand geworden (LoD2-Ebene der Seitenstreifen 23-34 cm neben dem Netz, Neigung bis 10 cm/m) - die LAGE bleibt deshalb die des Grundkoerpers (LoD2),
+    das Netz liefert nur die Form. Der Vorstand ist Darstellung, kein Mass (ANNAHME)."""
+    import cv2
+    Zr = dict(np.load(r0)); H_, W_ = Zr["rel"].shape; wand = Zr["wand"] if "wand" in Zr else np.ones((H_, W_), bool); zu = (Zr["rel"] == 0.0) & ~Zr["oeffnung"] & wand
+    Zr["rel"], gef = loecher_glatt(Zr["rel"], zu, 1.5, px); da = wand & (Zr["rel"] != 0.0); tief = float(Zr["rel"][da].min()) if da.any() else 0.0; vor = round(0.01 - tief, 3)
+    loch = (Zr["rel"] == 0.0) & wand & ~Zr["oeffnung"]; neu = np.where(wand, Zr["rel"] + vor, 0.0); neu[Zr["oeffnung"] & wand] = 0.01      # Oeffnung = tiefster Ruecksprung; grosse Loecher = mittlere Wandflaeche; ausserhalb der Wand nichts
+    Zr["rel"] = neu.astype(np.float32); Zr["loch"] = loch; Zr["generiert_anteil"] = 0.0; np.savez_compressed(r2, **Zr)
+    lx = np.gradient(neu, px, axis=1); lz = np.gradient(neu, px, axis=0); im_ = cv2.cvtColor((np.clip(0.7 - 0.5 * lx + 0.7 * lz, 0, 1) * 255).astype(np.uint8), cv2.COLOR_GRAY2BGR); im_[loch] = (0, 0, 255); im_[Zr["oeffnung"] & wand] = (120, 60, 0); im_[~wand] = (90, 90, 90)
+    cv2.imwrite(r2[:-4] + ".jpg", cv2.resize(im_, None, fx=3, fy=3, interpolation=cv2.INTER_NEAREST))      # rot = Loch in der Wand (bleibt glatt), blau = Oeffnung (Ruecksprung), dunkelgrau = keine Wand (Dach, Himmel, Nachbar)
+    return dict(gefuellt=round(gef, 3), generiert=0.0, vorstand=vor, ohne_trend=True)
+
+
+_NETZ = {}
+
+
+def netz_vorn(netz, r0, band=0.6, weit=2.0):
+    """Maske 'vorn' ins Relief r0: Zellen, in denen das Netz VOR dem Suchband der Wand steht (band .. band + weit m vor der Ebene) = dort steht etwas vor der Wand (Erker, Balkon, Vordach;
+    unten auch Marktstand/Baum). relief_einsatz.py kennt nur 'Netz dahinter' (Oeffnung). Fuer fenster_fuer_bau: ein erkanntes Fenster hinter einem Vorbau wird nicht in die Wand geschnitten."""
+    import cv2
+    if netz not in _NETZ: Zn = np.load(netz); _NETZ[netz] = Zn["V"].astype(np.float64)[Zn["F"]].mean(1)
+    c = _NETZ[netz]; Z = dict(np.load(r0)); H, W = Z["rel"].shape; px = float(Z["px"]); u0 = float(Z["u0"]); z0 = float(Z["z0"]); uu = (c[:, :2] - Z["a"][:2]) @ Z["t"][:2]; dd = (c[:, :2] - Z["a"][:2]) @ Z["n"][:2]
+    g = (uu > u0) & (uu < u0 + W * px) & (dd > band) & (dd < band + weit) & (c[:, 2] > z0) & (c[:, 2] < z0 + H * px); v = np.zeros((H, W), np.uint8)
+    v[np.clip((H - 1 - (c[g, 2] - z0) / px).astype(int), 0, H - 1), np.clip(((uu[g] - u0) / px).astype(int), 0, W - 1)] = 1
+    Z["vorn"] = cv2.morphologyEx(v, cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8)).astype(bool); np.savez_compressed(r0, **Z); return float(Z["vorn"].mean())
+
+
+def fenster_fuer_bau(objekt_json, fenster_json, vorbau=0.3):
+    """Erkannte Fenster (audit/fenster_auto.json) gegen das Netz-Relief der Wand pruefen -> audit/fenster_bau.json (Pfad zurueck; ohne Kette/Relief der unveraenderte Pfad).
+    Ein 'Fenster', in dessen Rechteck auf > `vorbau` der Flaeche Netz VOR der Wand steht (Maske 'vorn' von netz_vorn: 0,6-2,6 m vor der Ebene), liegt hinter einem Vorbau (Erker, Balkon):
+    es wird NICHT als Loch in die Wand geschnitten (kaufhaus_gk 17.11.2026: die zwei Eckerker der Hauptfassade standen als 2,3 m breite 'Fenster' in der Liste). Netz = Lage-Veto, kein Mass."""
+    od = os.path.dirname(os.path.abspath(objekt_json)); B = os.path.join(od, "audit", "fassaden_kette.json")
+    if not os.path.exists(B) or not os.path.exists(fenster_json): return fenster_json
+    D = json.load(open(fenster_json)); R = []
+    for w in json.load(open(B))["waende"]:
+        f = os.path.join(od, "relief", w["name"] + ".npz")
+        if w.get("aus") or w.get("nur_foto") or not os.path.exists(f): continue
+        Z = np.load(f); R.append((Z["a"], Z["t"], Z["n"], float(Z["u0"]), float(Z["z0"]), float(Z["px"]), Z["vorn"] if "vorn" in Z.files else np.zeros(Z["rel"].shape, bool), w["name"]))
+    if not R: return fenster_json
+    n_weg = 0
+    for fid, F in D.items():
+        o = np.array(F["o"], float); d = np.array(F["d"], float); n = np.array(F["n"], float)
+        for fe in F.get("fenster", []):
+            for A, t, nw, u0, z0, px, loch, name in R:
+                if n @ nw[:2] < 0.95 or abs((o + 0.5 * (fe["u0"] + fe["u1"]) * d - A[:2]) @ nw[:2]) > 0.6: continue
+                ua, ub = sorted(((o + fe["u0"] * d - A[:2]) @ t[:2], (o + fe["u1"] * d - A[:2]) @ t[:2])); H, W = loch.shape
+                j0, j1 = int(max((ua - u0) / px, 0)), int(min((ub - u0) / px, W)); i0, i1 = int(max(H - (fe["z1"] - z0) / px, 0)), int(min(H - (fe["z0"] - z0) / px, H))
+                if j1 - j0 < 2 or i1 - i0 < 2: continue
+                fe["netz_davor"] = round(float(loch[i0:i1, j0:j1].mean()), 2); fe["wand"] = name
+                if fe["netz_davor"] > vorbau: fe["vorbau"] = True; n_weg += 1
+                break
+        F["fenster_vorbau"] = [fe for fe in F.get("fenster", []) if fe.get("vorbau")]; F["fenster"] = [fe for fe in F.get("fenster", []) if not fe.get("vorbau")]
+    aus = os.path.join(od, "audit", "fenster_bau.json"); json.dump(D, open(aus, "w"), indent=1, ensure_ascii=False); print(f"fenster_fuer_bau: {sum(len(F['fenster']) for F in D.values())} Fenster zum Bauen, {n_weg} hinter einem Vorbau (Netz vor der Wand) zurueckgestellt -> {aus}")
+    return aus
+
+
+def anbauen(koerper, objekt_json, tiefe=0.4, fenster=None):
+    """Fuer Generatoren: alle relief/*_voll.npz der Fassaden-Kette als Platten anfuegen, begrenzt auf die nach aussen verschobene Koerperhuelle.
+    fenster = Pfad der Fensterliste (fenster_fuer_bau), wenn die Fenster VOR dem Relief geschnitten wurden: die Reliefplatte bleibt dann in den Fensterrechtecken offen.
+    GRUND (kaufhaus_gk 17.11.2026): bauteile.fenster_aus_json laesst Fenster aus, vor denen im Modell etwas steht - nach dem Relief gebaut fielen 5 von 9 erkannten Fenstern weg (Platte davor),
+    mit dem Netz-Relief der Hauptfassade alle. Reihenfolge im Generator daher: fenster_aus_json(koerper, FJ) -> anbauen(koerper, OBJ, fenster=FJ) -> aushoehlen."""
     sys.path.insert(0, HIER); from relief_einsatz import koerper as relief_koerper
     od = os.path.dirname(os.path.abspath(objekt_json)); B = os.path.join(od, "audit", "fassaden_kette.json")
     if not os.path.exists(B): return koerper, []
+    frei = []
+    if fenster and os.path.exists(fenster):
+        from bauteile import Wand
+        for F_ in json.load(open(fenster)).values():
+            o_ = np.array(F_["o"], float); W_ = Wand(o_, o_ + np.array(F_["d"], float), aussen=o_ + np.array(F_["n"], float))
+            frei += [(np.array(F_["n"], float), W_.kasten(q_["u0"], q_["u1"], q_["z0"], q_["z1"], -tiefe - 0.2, 1.0)) for q_ in F_.get("fenster", [])]
     belege = []; basis = koerper      # 16.11.2026: Huelle je Wand aus dem GRUNDKOERPER, nicht aus dem wachsenden Koerper (sonst wird jede weitere Wand gegen alle frueheren Reliefs geschnitten: schwab_auto, 8 Waende, 13,6 GB -> vom System beendet)
     for w in json.load(open(B))["waende"]:
         f = os.path.join(od, "relief", w["name"] + "_voll.npz")
@@ -129,11 +197,15 @@ def anbauen(koerper, objekt_json, tiefe=0.4):
         Z = np.load(f); n = Z["n"]; hu = basis + basis.translate((0.8 * n[0], 0.8 * n[1], 0.0)); koerper.num_tri();      # num_tri: Zwischenergebnis ausrechnen, damit der Rechenbaum nicht ueber alle Waende waechst
         fm = os.path.join(od, "relief", w["name"] + "_misch.npz"); tf = [tuple(w["fein_feld"])] if w.get("fein_feld") and os.path.exists(fm) else []
         ff = os.path.join(od, "relief", w["name"] + "_foto.npz"); hat_foto = bool(w.get("foto_feld")) and os.path.exists(ff)
-        if not w.get("nur_foto"): koerper = koerper + (relief_koerper(f, tiefe=tiefe, trend=True, tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else [])) ^ hu)
-        if hat_foto: koerper = koerper + (relief_koerper(ff, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu); belege.append(dict(seite="wand", element=f"Quader mit Fugen aus dem Foto, Fassade {w['name']} ab z {w['foto_feld'][2]:.0f} m", quelle="tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)", steine=w.get("foto_steine"), hinweis="Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen"))
+        def offen(pl):                                                   # Fensterrechtecke dieser Wandrichtung aus der Platte nehmen
+            for nf_, k_ in frei:
+                if nf_ @ n[:2] > 0.9: pl = pl - k_
+            return pl
+        if not w.get("nur_foto"): koerper = koerper + offen(relief_koerper(f, tiefe=tiefe, trend=not w.get("ohne_trend"), tief_felder=tf + ([tuple(w["foto_feld"])] if hat_foto else [])) ^ hu)
+        if hat_foto: koerper = koerper + offen(relief_koerper(ff, tiefe=tiefe, trend=True, rand_auslauf=False) ^ hu); belege.append(dict(seite="wand", element=f"Quader mit Fugen aus dem Foto, Fassade {w['name']} ab z {w['foto_feld'][2]:.0f} m", quelle="tools/steine_aus_foto.py --foto auto (bestes Foto, Verdeckung, Gegenfoto)", steine=w.get("foto_steine"), hinweis="Fugenlage aus dem Foto, Fugentiefe/Bosse ANNAHME; relief/<wand>_foto.jpg ansehen"))
         if tf: koerper = koerper + (relief_koerper(fm, tiefe=tiefe, trend=True) ^ hu)                 # lokale Feinrechnung (tools/tiefe_lokal.py + relief_mischen.py) vor dem groben Relief
         belege.append(dict(seite="wand", element=f"Relief Fassade {w['name']} (Fassaden-Kette)", quelle=("Netz der dichten Wolke (Hoehenbild 5 cm), roh: das Foto zeigt kein Quaderwerk (Quader-Tor), kleine Loecher glatt gefuellt" if w.get("quader") is False else "Netz der dichten Wolke (Hoehenbild 5 cm); Putz ueber Fotofarbe (" + ", ".join(w.get("fotos", [])[:3]) + "); Loecher generiert"),
-                           generiert_anteil=w.get("generiert"), hinweis="Scan-Relief, kein Mass" + ("" if w.get("quader") is False else "; generierte Steine = ANNAHME")))
+                           generiert_anteil=w.get("generiert"), hinweis="Scan-Relief, kein Mass" + (f"; ANNAHME: Relief {w.get('vorstand', 0) * 100:.0f} cm vor die LoD2-Wandebene gesetzt (Ruecksprunge sichtbar), Oeffnungen nur als Ruecksprung" if w.get("quader") is False else "; generierte Steine = ANNAHME")))
     return koerper, belege
 
 
@@ -169,7 +241,7 @@ def main():
             Z_ = dict(np.load(f_)); H_, W_ = Z_["rel"].shape; m_ = np.zeros((H_, W_), bool); h_ = min(H_, wf[1].shape[0]); b_ = min(W_, wf[1].shape[1]); m_[H_ - h_:, :b_] = wf[1][wf[1].shape[0] - h_:, :b_]
             Z_["rel"] = np.where(m_, Z_["rel"], 0.0).astype(np.float32); Z_["wand"] = m_; Z_["oeffnung"] = Z_["oeffnung"] & m_; np.savez_compressed(f_, **Z_); return Z_, m_
         if wf is not None and not rc and os.path.exists(r0):              # 17.11.2026: Lochanteil nur INNERHALB der freien Wandflaeche und ohne Oeffnungen (Arkaden, Tore sind kein fehlendes Netz)
-            Z_, m_ = wand_eintragen(r0); zaehl = m_ & ~Z_["oeffnung"]; w["loch_wand"] = round(float(((Z_["rel"] == 0.0) & zaehl).sum() / max(zaehl.sum(), 1)), 3); leer = w["loch_wand"] > 0.6
+            netz_vorn(a.netz, r0); Z_, m_ = wand_eintragen(r0); zaehl = m_ & ~Z_["oeffnung"]; w["loch_wand"] = round(float(((Z_["rel"] == 0.0) & zaehl).sum() / max(zaehl.sum(), 1)), 3); leer = w["loch_wand"] > 0.6
             print(f"    Wandflaeche (LoD2) {w['wand_m2']} m2 bis z {w['z1']:.1f}, frei {w['frei_m2']} m2; Loecher in der freien Wand ohne Oeffnungen {w['loch_wand'] * 100:.0f} %", flush=True)
         if leer:                                                          # 16.11.2026 (Haertetest ober_tvdr): Netz deckt die Wand nicht -> frueher AUS. Jetzt: leeres Relief als Traeger, Putz und Steine NUR aus Fotos (Stufe 5c ab Boden)
             w["netz"] = "deckt die Wand nicht"; print("    Netz deckt die Wand nicht - nur Fotostufe", flush=True)
@@ -189,10 +261,7 @@ def main():
                 if os.path.exists(q_) and rc_t != 0: os.remove(q_)
         if w.get("quader") is False:
             if leer: w["aus"] = "kein Netz in der Wand und kein Quaderwerk im Foto (Quader-Tor) - nichts zu tun"; print("    AUS:", w["aus"], flush=True); continue
-            Zr = dict(np.load(r0)); zu = (Zr["rel"] == 0.0) & ~Zr["oeffnung"] & (Zr["wand"] if "wand" in Zr else True); Zr["rel"], w["gefuellt"] = loecher_glatt(Zr["rel"], zu, 1.5, a.px); w["gefuellt"] = round(w["gefuellt"], 3); w["generiert"] = 0.0
-            Zr["generiert_anteil"] = 0.0; np.savez_compressed(r2, **Zr); print(f"    kein Quaderwerk im Foto: Netz-Relief roh, kleine Loecher glatt gefuellt ({w['gefuellt'] * 100:.1f} % der Flaeche), keine generierten Steine", flush=True)
-            import cv2; lx = np.gradient(Zr["rel"], a.px, axis=1); lz = np.gradient(Zr["rel"], a.px, axis=0); im_ = cv2.cvtColor((np.clip(0.7 - 0.5 * lx + 0.7 * lz, 0, 1) * 255).astype(np.uint8), cv2.COLOR_GRAY2BGR); im_[Zr["rel"] == 0.0] = (0, 0, 255)
-            cv2.imwrite(r2[:-4] + ".jpg", cv2.resize(im_, None, fx=3, fy=3, interpolation=cv2.INTER_NEAREST))
+            w.update(relief_roh(r0, r2, a.px)); print(f"    kein Quaderwerk im Foto: Netz-Relief roh, kleine Loecher glatt gefuellt ({w['gefuellt'] * 100:.1f} % der Flaeche), Oeffnungen als Ruecksprung, Relief {w['vorstand'] * 100:.0f} cm vor die Wandebene, keine generierten Steine", flush=True)
             for q_ in (r1, r1[:-4] + ".jpg", os.path.join(rd, w["name"] + "_foto.npz"), os.path.join(rd, w["name"] + "_foto.jpg")):      # Reste eines frueheren Laufs (Putzmaske/Fotosteine) gelten nicht mehr
                 if os.path.exists(q_): os.remove(q_)
             continue

@@ -3,13 +3,46 @@
  "befunde": [
   {
    "foto": "eigen__IMG_20261106_113201",
-   "art": "GANZE DACHLINIE versetzt (Foto hoeher: Dach/Aufbau fehlt oder zu niedrig), 3 Fotos einig",
-   "abweichung_m": 4.95,
-   "breite_m": 0.0,
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 0.97,
+   "breite_m": 2.14,
    "xyz": [
-    0.0,
-    0.0,
-    0.0
+    -1.85,
+    15.49,
+    51.8
+   ]
+  },
+  {
+   "foto": "eigen__IMG_20261106_113201",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 1.65,
+   "breite_m": 0.61,
+   "xyz": [
+    3.54,
+    21.43,
+    18.32
+   ]
+  },
+  {
+   "foto": "eigen__IMG_20261106_113646",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 1.63,
+   "breite_m": 0.71,
+   "xyz": [
+    1.88,
+    8.55,
+    38.11
+   ]
+  },
+  {
+   "foto": "eigen__IMG_20261106_113646",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 2.09,
+   "breite_m": 1.12,
+   "xyz": [
+    3.79,
+    21.29,
+    32.59
    ]
   }
  ]

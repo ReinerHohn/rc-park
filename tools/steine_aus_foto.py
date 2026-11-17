@@ -7,6 +7,7 @@ scharf. KERNMETHODE: Form aus Fotokanten. Ablauf:
   1. Feld (Wandkoordinaten des Reliefs) im 1-cm-Raster aus dem Fassadenbild lesen (Lage ueber fassaden.json: o, d, raster).
   2. FUGEN = schmale Linien, die von ihrer Umgebung abweichen: Helligkeit minus oertlicher Median (15 cm). Polaritaet (helle Moertelfuge / dunkle
      Schattenfuge) wird NICHT vorgegeben: beide Masken, es gewinnt die mit mehr langen duennen Linien. Keine Farbregel (gruenes/gelbes Haus geht genauso).
+  2b. QUADER-TOR (--tor, 17.11.2026): nur wenn das Bild wirklich ein Fugenraster zeigt (durchlaufende Lagerfugen in regelmaessigem Abstand), sonst rc 5 und keine Datei.
   3. Steine = Flaechen zwischen den Fugen, nur wo das Relief Stein ist (Maske 'putz' von relief_putz.py = Putz; Kontur damit aus der Fotofarbe wie bisher).
   4. Hoehe: Steinflaeche = geglaettetes Scan-Relief (echtes Niveau, 30 cm Glaettung), Fuge --fuge tiefer, Kante ueber 3 cm gefast.
      Putz = Putzniveau. Stellen ohne Fotodaten (verdeckt) = Scan-Relief.
@@ -32,6 +33,7 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument("relief"); ap.add_argument("aus"); ap.add_argument("fassaden"); ap.add_argument("nr"); ap.add_argument("ortho")
     ap.add_argument("--feld", nargs=4, type=float, required=True); ap.add_argument("--px", type=float, default=0.02); ap.add_argument("--fuge", type=float, default=0.03); ap.add_argument("--massstab", nargs=4, type=float)
     ap.add_argument("--ohne", nargs=4, type=float, action="append", default=[], help="Feld u0 u1 z0 z1 ohne Steine (Vordach, Wandbild: Generator baut dort selbst)"); ap.add_argument("--bosse", type=float, default=0.04, help="Buckel der Steinflaeche (m), 0 = eben"); ap.add_argument("--putz_s", type=float, default=0.22); ap.add_argument("--foto", help="statt des Orthos: Bild direkt aus diesem kalibrierten Foto auf der Reliefebene lesen (fassaden/nr/ortho dann als - - 0 - angeben)"); ap.add_argument("--objekt"); ap.add_argument("--stl", help="Modell-STL(s) fuer die Verdeckungspruefung"); ap.add_argument("--rand", type=float, default=0.3); ap.add_argument("--streng", action="store_true", help="nur mit Gegenfoto und <= 2 cm/px (fuer die automatische Kette)"); ap.add_argument("--gegenfoto", help="Foto fuer die Verdecker-Gegenprobe (sonst das naechstbeste von anderem Standort bei --foto auto)"); ap.add_argument("--uneinig", type=float, default=0.25, help="oertliche Korrelation mit dem Gegenfoto unter diesem Wert = Verdecker"); ap.add_argument("--textur", type=float, default=8.0, help="nur Stellen mit Struktur pruefen (Grauwert-Streuung); glatter Putz hat keine Korrelation"); ap.add_argument("--nah", type=float, default=0.25, help="Stein nur so nah (m) an der groben Steinmaske; 0 = aus (Wand ohne Wandbilder: sonst gehen Steinbaender verloren, die die grobe Maske nicht kennt)"); ap.add_argument("--duenn", type=float, default=0.12, help="Steinflaechen duenner als dies (m) verwerfen; 0 = aus"); ap.add_argument("--putz_v", type=float, default=0.45)
+    ap.add_argument("--tor", type=float, default=0.12, help="Quader-Tor: Mindestanteil der Feldhoehe mit regelmaessigen, durchlaufenden Lagerfugen (0 = aus). Gemessen 17.11.2026: Gemessen 17.11.2026: echtes Quaderwerk (Schwabentor Sued/West/Nord, beide Polaritaeten) 18-40 %% mit 7-25 Schichten; kein Quaderwerk (kaufhaus_gk Hauptfassade roter Putz mit Fenstern/Gesimsen, Seitenstreifen) 0-3 %% mit 0-1 Schichten. Schwelle dazwischen; ausserdem >= 4 Schichten. Schwelle dazwischen; rc 5 bei Ablehnung")
     ap.add_argument("--schwelle", type=float, default=2.4, help="Fuge ab so vielen Standardabweichungen der Abweichung vom oertlichen Median"); a = ap.parse_args()
     Z = dict(np.load(a.relief)); rel = Z["rel"].astype(np.float32); H, W = rel.shape; rp = float(Z["px"]); u0 = float(Z["u0"]); z0 = float(Z["z0"]); A = Z["a"]; t = Z["t"]; niv = float(Z.get("putz_niveau_m", 0.0))
     if not a.foto: F = json.load(open(a.fassaden))["fassaden"][int(a.nr)]; R = F["raster"]; o = np.array(F["o"]); d = np.array(F["d"]); im = cv2.imread(a.ortho)
@@ -87,7 +89,8 @@ def main():
         uo = (X - o[0]) * d[0] + (Y - o[1]) * d[1]; bild = cv2.remap(im, ((uo - R["u0"]) / R["zelle"] - 0.5).astype(np.float32), ((R["z1"] - Zw) / R["zelle"] - 0.5).astype(np.float32), cv2.INTER_LINEAR, borderValue=(0, 0, 0))
     daten = bild.max(2) > 8; grau = cv2.cvtColor(bild, cv2.COLOR_BGR2GRAY).astype(np.float32)
     def gross(x, interp=cv2.INTER_LINEAR): return cv2.remap(x, ((U - u0) / rp - 0.5).astype(np.float32), (H - (ZZ - z0) / rp - 0.5).astype(np.float32), interp, borderMode=cv2.BORDER_REPLICATE)
-    putz = gross(Z["putz"].astype(np.float32)) > 0.5; grob = gross(rel)
+    putz = gross((Z["putz"] if "putz" in Z else np.zeros(rel.shape, bool)).astype(np.float32)) > 0.5; grob = gross(rel)      # 17.11.2026: ohne Putzmaske (farbiger Putzbau, relief_putz fand nichts) gilt alles als moeglicher Stein - das Quader-Tor entscheidet
+    if "wand" in Z: daten &= gross(Z["wand"].astype(np.float32)) > 0.5      # 17.11.2026: Wandflaeche laut LoD2 (fassaden_kette.wand_flaeche): Dach ueber der Traufe, Himmel und angebaute Nachbarn sind keine Wand (Dachziegel haben auch 'Lagerfugen')
     hsv = cv2.cvtColor(cv2.GaussianBlur(bild, (0, 0), 2.0), cv2.COLOR_BGR2HSV).astype(np.float32); pf = (hsv[..., 1] / 255 < a.putz_s) & (hsv[..., 2] / 255 > a.putz_v)   # Kontur Putz/Stein im 1-cm-Bild neu (gleiche Regel wie relief_putz.py, dort nur 5 cm): Verzahnung scharf statt ausgefranst
     if (putz & daten).sum() > 500: pf &= hsv[..., 2] > 0.82 * float(np.median(hsv[..., 2][putz & daten]))      # Putz ist so hell wie der sichere Putz daneben - graue (wenig gesaettigte) Steine sind dunkler
     pf = ndi.binary_closing(ndi.binary_opening(pf, np.ones((7, 7))), np.ones((7, 7))); nah = ndi.binary_dilation(~putz, np.ones((2 * int(a.nah / c) + 1,) * 2)) if a.nah > 0 else np.ones(putz.shape, bool)          # Stein nur in der Naehe (25 cm) der groben Steinmaske: Wandbilder/Fenster im Putz bleiben Putz
@@ -103,7 +106,7 @@ def main():
     g = cv2.GaussianBlur(grau, (0, 0), 1.0); ab = g - cv2.medianBlur(np.clip(g, 0, 255).astype(np.uint8), 21).astype(np.float32); best = None
     komp, nk = ndi.label(ndi.binary_opening(stein, np.ones((9, 9))))
     for name, vz in (("hell", 1.0), ("dunkel", -1.0)):                    # Polaritaet nicht vorgegeben: beide rechnen, die mit den deutlicheren Lagerfugen gewinnt
-        r = vz * ab; fuge = np.zeros(stein.shape, bool); guete = 0.0; summe = 0.0
+        r = vz * ab; fuge = np.zeros(stein.shape, bool); guete = 0.0; summe = 0.0; tor_h = 0.0; tor_deck = 0.0; tor_n = 0
         for ki in range(1, nk + 1):                                       # je zusammenhaengendem Steinfeld (Eckstreifen): Schichten = Zeilenprofil, Stossfugen = Spaltenprofil je Schicht
             m = komp == ki
             if m.sum() < 3000: continue
@@ -111,6 +114,16 @@ def main():
             nrow = mm.sum(1); p = ndi.gaussian_filter1d(rr.sum(1) / np.maximum(nrow, 1), 1.0); p[nrow < 15] = 0
             lager, pr = find_peaks(p, distance=16, prominence=a.schwelle * 0.5 * float(p.std())); guete += float(pr["prominences"].sum()) if len(lager) else 0.0
             grenzen = [0] + list(lager) + [y1 - y0]
+            # QUADER-TOR (17.11.2026, kaufhaus_gk: roter Putz und ein blaues Nachbarhaus mit Fensterlaeden wurden zu "Quadern"): find_peaks hat eine RELATIVE Schwelle und findet in jedem Bild Spitzen.
+            # Echtes Quaderwerk hat DURCHLAUFENDE Lagerfugen in regelmaessigem Abstand. Je Lagerfuge: Anteil der Feldbreite, auf dem die Zeile (15 cm laengs gemittelt) wirklich ein Grat ist
+            # (ueber der Rauschschwelle UND hoeher als 5 cm darueber/darunter) = 'tragend' ab 50 %. Deckung = Anteil der Feldhoehe zwischen benachbarten tragenden Fugen mit Schichthoehe 25-70 cm
+            # (erste Fassung 16-70 cm: Gesimsprofile und Fenstersprossen der Kaufhaus-Hauptfassade, Abstaende 17-29 cm, kamen auf 15 %; echte Schichten am Schwabentor liegen bei 30-65 cm).
+            rs_ = cv2.blur(rr, (15, 1)); sg_ = 1.48 * float(np.median(np.abs(rr[mm] - np.median(rr[mm])))); th_ = max(1.5, sg_); hk_ = y1 - y0; trag = []
+            for l_ in lager:
+                zl_ = rs_[max(l_ - 1, 0):l_ + 2].max(0); gr_ = (zl_ > th_) & (zl_ > rs_[max(l_ - 5, 0)] + 0.5 * th_) & (zl_ > rs_[min(l_ + 5, hk_ - 1)] + 0.5 * th_)
+                if mm[l_].sum() >= 15 and gr_[mm[l_]].mean() >= 0.5: trag.append(l_)
+            if os.environ.get("TOR_DEBUG"): print("   TOR", ki, "Feld", x1 - x0, "x", y1 - y0, "cm, Breite Median", int(np.median(nrow[nrow > 0])), "Abstaende", np.diff(trag).tolist())
+            tor_h += float((nrow >= 15).sum()); sch_ = [d_ for d_ in np.diff(trag) if 25 <= d_ <= 70]; tor_n += len(sch_); tor_deck += float(sum(sch_))
             for l_ in lager: fuge[y0 + l_ - 1:y0 + l_ + 2, x0:x1] |= mm[l_ - 1:l_ + 2] if l_ >= 1 else False; summe += mm[l_].sum()
             for b0, b1 in zip(grenzen[:-1], grenzen[1:]):
                 if b1 - b0 < 8: continue
@@ -118,9 +131,11 @@ def main():
                 stoss, _ = find_peaks(q, distance=20, prominence=a.schwelle * 0.6 * float(q.std()) + 1e-6)
                 for s_ in stoss: fuge[y0 + b0:y0 + b1, x0 + max(s_ - 1, 0):x0 + s_ + 2] |= mm[b0:b1, max(s_ - 1, 0):s_ + 2]; summe += b1 - b0
         fuge |= stein & ~ndi.binary_erosion(stein, np.ones((3, 3)), border_value=1) & False
-        print(f"Fugen {name}: {summe / 100:.0f} m, Deutlichkeit der Lagerfugen {guete:.1f}")
-        if best is None or guete > best[3]: best = (name, fuge, summe, guete)
+        deck = tor_deck / max(tor_h, 1.0); print(f"Fugen {name}: {summe / 100:.0f} m, Deutlichkeit der Lagerfugen {guete:.1f}; Quader-Tor: {tor_n} Schichten (25-70 cm) zwischen durchlaufenden Lagerfugen, auf {deck * 100:.0f} % der Feldhoehe")
+        if best is None or guete > best[3]: best = (name, fuge, summe, guete, deck, tor_n)
     name, fuge, summe = best[:3]
+    if a.tor > 0 and (best[4] < a.tor or best[5] < 4):                   # kein Fugenraster im Bild = kein Quaderwerk (Putz, Holz, Nachbarhaus, Laub): lieber nichts als erfundene Steine
+        print(f"QUADER-TOR: kein Fugenraster (Schichten zwischen durchlaufenden Lagerfugen auf {best[4] * 100:.0f} % der Feldhoehe < {a.tor * 100:.0f} % oder nur {best[5]} Schichten < 4) - keine Steine. Von Hand uebersteuern: --tor 0"); return 5
     lab, n = ndi.label(stein & ~fuge); fl = ndi.sum(stein, lab, np.arange(1, n + 1)); klein = np.isin(lab, 1 + np.flatnonzero(fl < 60)); fuge |= klein & stein          # Kruemel < 60 cm2 zur Fuge
     fl = fl[fl >= 60]; dt = ndi.distance_transform_edt(~fuge) * c
     niveau = cv2.GaussianBlur(np.where(stein, grob, 0).astype(np.float32), (0, 0), 30) / np.maximum(cv2.GaussianBlur(stein.astype(np.float32), (0, 0), 30), 1e-3)

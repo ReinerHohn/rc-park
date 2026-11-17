@@ -28,8 +28,12 @@
    1.926
   ],
   "hoehe_ueber_gelaende": 1.93,
-  "rms_px": null,
+  "rms_px": 0.79,
   "brennweite_quelle": "buendel",
+  "sfm_guete": {
+   "klasse": "gut",
+   "n_beob": 1239
+  },
   "ankerzone_z": [
    -0.5,
    21.660011337280274

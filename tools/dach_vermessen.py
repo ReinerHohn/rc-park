@@ -133,6 +133,11 @@ def main():
         bilder.append((gi, U, z, best, c, ea, eb, ha, hb, uv))
     erg = dict(werkzeug="dach_vermessen.py", quelle="Laser DOM1 (LGL 2017) ueber rahmen.gelaende; Grossform, Details (Treppengiebel, Gauben) NICHT erfasst",
                lod2_id=obj["lod2"]["id"], teile=teile)
+    try:                                                                   # 17.11.2026: Block 'foto' (tools/dach_aus_fotos.py) je Teil behalten - ein neuer DOM1-Lauf darf das Fotodach nicht still loeschen
+        alt = {t_["teil"]: t_["foto"] for t_ in json.load(open(os.path.join(od, "dach.json"))).get("teile", []) if t_.get("foto")}
+        for t_ in teile:
+            if t_["teil"] in alt and np.allclose(alt[t_["teil"]].get("mitte_uv", t_["mitte_uv"]), t_["mitte_uv"], atol=0.05): t_["foto"] = alt[t_["teil"]]
+    except Exception: pass
     json.dump(erg, open(os.path.join(od, "dach.json"), "w"), indent=1, ensure_ascii=False)
     if bilder:
         import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt

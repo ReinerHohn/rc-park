@@ -42,6 +42,89 @@
    "wer": "Anlage",
    "text": "Quellen sichten: Dokumente (Hoehe), LoD2 (Grundriss/Traufe), DOM1 (Dachform), Fotos je Seite",
    "naechster_schritt": "objekt.json/quellen fuellen, Zeilen mit Quelle anlegen"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H-0",
+   "text": "Foto hoeher (Modell fehlt etwas / Verdecker): +1.47 m ueber 1.09 m bei [11.42, 1.29, 18.72] (Foto eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H-1",
+   "text": "Foto hoeher (Modell fehlt etwas / Verdecker): +0.47 m ueber 0.73 m bei [10.39, 3.39, 20.97] (Foto eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H-2",
+   "text": "Foto hoeher (Modell fehlt etwas / Verdecker): +0.79 m ueber 6.48 m bei [-5.02, 8.52, 20.96] (Foto eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H-3",
+   "text": "Modell hoeher (zu hoch / erfunden): -0.97 m ueber 0.97 m bei [11.65, 3.06, 20.98] (Foto eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H-4",
+   "text": "Modell hoeher (zu hoch / erfunden): -0.63 m ueber 6.64 m bei [6.31, 4.73, 20.99] (Foto eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-eigen__handy_06-5",
+   "text": "Foto hoeher (Modell fehlt etwas / Verdecker): +1.46 m ueber 0.96 m bei [13.63, 9.62, 11.25] (Foto eigen__handy_06)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-eigen__handy_06-6",
+   "text": "Foto hoeher (Modell fehlt etwas / Verdecker): +1.37 m ueber 1.02 m bei [12.57, 9.59, 13.51] (Foto eigen__handy_06)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-eigen__handy_06-7",
+   "text": "Foto hoeher (Modell fehlt etwas / Verdecker): +1.02 m ueber 0.9 m bei [12.91, 6.73, 15.94] (Foto eigen__handy_06)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-eigen__handy_06-8",
+   "text": "Foto hoeher (Modell fehlt etwas / Verdecker): +0.68 m ueber 1.08 m bei [11.05, 3.18, 20.95] (Foto eigen__handy_06)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-eigen__handy_06-9",
+   "text": "Foto hoeher (Modell fehlt etwas / Verdecker): +1.29 m ueber 1.14 m bei [-6.72, 10.02, 20.91] (Foto eigen__handy_06)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "auto",
+   "wer": "umriss_tor",
+   "auto_id": "umriss-eigen__handy_06-10",
+   "text": "Modell hoeher (zu hoch / erfunden): -0.36 m ueber 3.17 m bei [8.27, 4.13, 20.93] (Foto eigen__handy_06)",
+   "naechster_schritt": "am Bild audit/umriss_<foto>.jpg pruefen; echt = messen und bauen, Verdecker = verwerfen"
+  },
+  {
+   "datum": "2026-11-17",
+   "wer": "Agent Detailrunde (Auftrag Nutzer: Steinmuster Ostseite nie am Foto geprueft)",
+   "text": "Steinmuster der Ostseite (w07) und Foto-'Quader' auf w00-w06 waren FALSCH: relief/w07_foto.jpg zeigte ein blaues Nachbarhaus mit Fensterlaeden, w04 roten Putz mit Fenstern und Dachziegeln. Kaufhaus ist verputzt. Bild: audit/detail_vorher_w07_foto.jpg",
+   "naechster_schritt": "ERLEDIGT 17.11.2026: fassaden_kette.py (Wandflaeche aus LoD2, Nachbarn als Verdecker, Quader-Tor in steine_aus_foto.py) - keine Fotosteine mehr, Netz-Relief an w03/w04/w05; Bild audit/neben_eigen__handy_06.jpg angesehen. OFFEN: Erker, Gauben, offene Arkaden, Staffelgiebel fehlen"
   }
  ]
 }

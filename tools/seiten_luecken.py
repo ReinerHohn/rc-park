@@ -71,7 +71,7 @@ def main():
     zeilen = ["#!/bin/bash", "# erzeugt von tools/seiten_luecken.py - Kandidaten fuer ungesehene Waende nachregistrieren", "set -e", f"mkdir -p {Z}/roh", f"rm -rf {Z}/bilder {Z}/vorbereitet.json {Z}/merkmale.json {Z}/db.db {Z}/lg   # Zwischenstaende eines frueheren Laufs (Downloads und roh/ bleiben)"]
     if a.download and obj.get("koordinate_utm"):
         lat, lon = utm32_nach_geo(*obj["koordinate_utm"][:2])
-        zeilen.append(f"{VS} {T}/commons_harvest.py --lat {lat:.6f} --lon {lon:.6f} --radius 250 --max 60 --search \"{obj.get('name', '')} {obj.get('ort', '')}\" --out {Z}/commons   # freie Lizenzen, manifest.json")
+        zeilen.append(f"{VS} {T}/commons_harvest.py --lat {lat:.6f} --lon {lon:.6f} --radius 250 --max 60 --search \"{obj.get('name', '')} {obj.get('ort', '')}\" --out {Z}/commons || echo \"Commons: nichts geholt (rc $?) - weiter mit den anderen Quellen\"   # freie Lizenzen, manifest.json; 17.11.2026: rc 2 bei 0 Bildern darf das Nachholen (set -e) nicht abbrechen")
         nm = f"{obj.get('name', '')} {obj.get('ort', '').split(' im ')[0]}".strip(); ort = obj.get("ort", "").split(" im ")[0]
         zeilen.append(f"python3 {T}/online_ansichten_holen.py --aus {Z}/hochblick --suche \"{nm}\" \"{ort} Luftbild\" \"{ort} Panorama\" --max 40 || true   # Hochblicke (Commons): sehen Seiten ueber Nachbardaechern")
         zeilen.append(f"python3 {T}/openverse_holen.py --aus {Z}/openverse --suche \"{nm}\" \"{obj.get('name', '')}\" \"{ort} Altstadt Blick\" --max 150 || true   # Flickr u. a. ueber Openverse, nur CC0/BY/BY-SA")

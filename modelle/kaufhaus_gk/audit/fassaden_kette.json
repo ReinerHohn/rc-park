@@ -1,0 +1,379 @@
+{
+ "netz": "/media/oem/scan/rc-park_daten/kaufhaus_gk/pipe/openmvs/mesh_modell_ausschnitt.npz",
+ "waende": [
+  {
+   "name": "w00",
+   "a": [
+    -12.562658211066454,
+    -6.357858513459678
+   ],
+   "b": [
+    -10.014001595565393,
+    2.1539946712247158
+   ],
+   "aussen": [
+    -20.86810904194696,
+    0.7664877927754499
+   ],
+   "z1": 9.24,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 80.3,
+   "frei_m2": 80.3,
+   "fotos": [
+    "eigen__039_Freiburg_im_Sommer_2013_9878817246_",
+    "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022",
+    "eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu"
+   ],
+   "laenge": 8.89,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "quader": null,
+   "putz": 0.31,
+   "generiert": 0.0,
+   "aus": "kein Netz und kein brauchbares Foto fuer Steine"
+  },
+  {
+   "name": "w01",
+   "a": [
+    -10.014001595565393,
+    2.1539946712247158
+   ],
+   "b": [
+    -7.783000124764307,
+    9.61099958298188
+   ],
+   "aussen": [
+    -18.478917987156656,
+    8.748785262103345
+   ],
+   "z1": 20.97,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 121.8,
+   "frei_m2": 121.8,
+   "fotos": [
+    "eigen__122_Freiburg-Historisches_Kaufhaus-02-2007-gje",
+    "eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu",
+    "eigen__039_Freiburg_im_Sommer_2013_9878817246_"
+   ],
+   "laenge": 7.78,
+   "loch_wand": 0.953,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "quader": null,
+   "putz": 0.491,
+   "generiert": 0.0,
+   "aus": "kein Netz und kein brauchbares Foto fuer Steine"
+  },
+  {
+   "name": "w02",
+   "a": [
+    -7.783000124764307,
+    9.61099958298188
+   ],
+   "b": [
+    -6.772132032774859,
+    12.989558715384518
+   ],
+   "aussen": [
+    -16.857933297711597,
+    14.166734093922646
+   ],
+   "z1": 20.97,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 62.5,
+   "frei_m2": 62.5,
+   "fotos": [
+    "eigen__088_Gable_detail_of_the_Historisches_kaufhaus_at_Freiburg._See_a",
+    "eigen__079_Kaufhausi-in-rot",
+    "eigen__122_Freiburg-Historisches_Kaufhaus-02-2007-gje"
+   ],
+   "laenge": 3.53,
+   "loch_wand": 0.692,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "quader": false,
+   "aus": "kein Netz in der Wand und kein Quaderwerk im Foto (Quader-Tor) - nichts zu tun"
+  },
+  {
+   "name": "w03",
+   "a": [
+    -6.771851800059048,
+    12.990436121018822
+   ],
+   "b": [
+    -5.531400905446398,
+    16.640820220233483
+   ],
+   "aussen": [
+    -15.61989097166246,
+    18.033075156405722
+   ],
+   "z1": 16.32,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 50.4,
+   "frei_m2": 50.4,
+   "fotos": [
+    "eigen__088_Gable_detail_of_the_Historisches_kaufhaus_at_Freiburg._See_a",
+    "eigen__095_Landappbw_178444_1822_Kaufhaus_Historisches_Kaufhaus_Freibur",
+    "eigen__IMG_6225"
+   ],
+   "laenge": 3.86,
+   "loch_wand": 0.503,
+   "loch": 0.662,
+   "oeffnung": 0.202,
+   "quader": false,
+   "gefuellt": 0.005,
+   "generiert": 0.0,
+   "vorstand": 0.11,
+   "ohne_trend": true
+  },
+  {
+   "name": "w04",
+   "a": [
+    -5.529830094824257,
+    16.641571132474724
+   ],
+   "b": [
+    13.625862439457425,
+    9.619417010527743
+   ],
+   "aussen": [
+    7.489871449864767,
+    22.519510646649756
+   ],
+   "z1": 11.65,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 230.8,
+   "frei_m2": 230.8,
+   "fotos": [
+    "eigen__010_M_nsterplatz_24_Freiburg_02",
+    "eigen__054_Freiburg-Historisches_Kaufhaus-10-2007-gje",
+    "eigen__051_Kaufhaus_-_panoramio_2_"
+   ],
+   "laenge": 20.4,
+   "loch_wand": 0.182,
+   "loch": 0.398,
+   "oeffnung": 0.263,
+   "quader": false,
+   "gefuellt": 0.009,
+   "generiert": 0.0,
+   "vorstand": 0.11,
+   "ohne_trend": true
+  },
+  {
+   "name": "w05",
+   "a": [
+    13.626718840211915,
+    9.617821487827035
+   ],
+   "b": [
+    12.745284741546795,
+    5.923193525508511
+   ],
+   "aussen": [
+    22.913018430335427,
+    5.449915492602241
+   ],
+   "z1": 16.64,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 50.9,
+   "frei_m2": 50.9,
+   "fotos": [
+    "eigen__n11_04_3ad522f6_2",
+    "eigen__n11_04_3ad522f6",
+    "eigen__056_Das_historische_Kaufhaus_in_Freiburg_im_Breisgau_2025_"
+   ],
+   "laenge": 3.8,
+   "loch_wand": 0.42,
+   "loch": 0.737,
+   "oeffnung": 0.403,
+   "quader": false,
+   "gefuellt": 0.002,
+   "generiert": 0.0,
+   "vorstand": 0.11,
+   "ohne_trend": true
+  },
+  {
+   "name": "w06",
+   "a": [
+    12.317476367489459,
+    5.933379195025489
+   ],
+   "b": [
+    11.669000464722927,
+    2.8270022261499497
+   ],
+   "aussen": [
+    21.782215016461492,
+    2.3366797324678608
+   ],
+   "z1": 20.97,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 55.6,
+   "frei_m2": 15.7,
+   "fotos": [
+    "eigen__056_Das_historische_Kaufhaus_in_Freiburg_im_Breisgau_2025_",
+    "eigen__065_Das_historische_Kaufhaus_in_Freiburg_i._Br._2025_",
+    "eigen__n11_04_3ad522f6_2"
+   ],
+   "laenge": 3.17,
+   "loch_wand": 0.634,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "quader": null,
+   "putz": 0.487,
+   "generiert": 0.0,
+   "aus": "kein Netz und kein brauchbares Foto fuer Steine"
+  },
+  {
+   "name": "w07",
+   "a": [
+    11.669000464722927,
+    2.8270022261499497
+   ],
+   "b": [
+    10.132253259114538,
+    -4.537786267639755
+   ],
+   "aussen": [
+    20.68978931062186,
+    -2.8980125319756573
+   ],
+   "z1": 20.97,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 118.7,
+   "frei_m2": 7.7,
+   "aus": "Brandwand: von 118.7 m2 Wandflaeche (LoD2) nur 7.7 m2 frei, davor steht ein Nachbargebaeude (LoD2 < 1 m)",
+   "fotos": [],
+   "laenge": 7.52
+  },
+  {
+   "name": "w08",
+   "a": [
+    10.130823378945077,
+    -4.538609040520532
+   ],
+   "b": [
+    6.045002653559804,
+    -3.1810008817064386
+   ],
+   "aussen": [
+    4.934692437595988,
+    -13.34965216653979
+   ],
+   "z1": 16.52,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 14.7,
+   "frei_m2": 14.7,
+   "fotos": [],
+   "laenge": 4.31,
+   "netz": "deckt die Wand nicht",
+   "aus": "kein Netz, keine Fotostufe"
+  },
+  {
+   "name": "w09",
+   "a": [
+    6.045002653559804,
+    -3.1810008817064386
+   ],
+   "b": [
+    -4.600009644426786,
+    0.3547279088277486
+   ],
+   "aussen": [
+    -2.4296626308380085,
+    -10.903336314951169
+   ],
+   "z1": 11.44,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 124.9,
+   "frei_m2": 124.9,
+   "fotos": [],
+   "laenge": 11.22,
+   "netz": "deckt die Wand nicht",
+   "aus": "kein Netz, keine Fotostufe"
+  },
+  {
+   "name": "w10",
+   "a": [
+    -4.6637002732880415,
+    0.32151527654351375
+   ],
+   "b": [
+    -6.691122683412652,
+    -6.503285550534515
+   ],
+   "aussen": [
+    -15.263378115461617,
+    -0.24321176524275234
+   ],
+   "z1": 10.5,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 72.3,
+   "frei_m2": 72.3,
+   "fotos": [
+    "eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu",
+    "eigen__039_Freiburg_im_Sommer_2013_9878817246_",
+    "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022"
+   ],
+   "laenge": 7.12,
+   "netz": "deckt die Wand nicht",
+   "loch": 1.0,
+   "oeffnung": 0.0,
+   "quader": null,
+   "putz": 0.138,
+   "generiert": 0.0,
+   "aus": "kein Netz und kein brauchbares Foto fuer Steine"
+  },
+  {
+   "name": "w11",
+   "a": [
+    -6.27217173205447,
+    -7.908711318123603
+   ],
+   "b": [
+    -9.233998816739652,
+    -7.179000291522125
+   ],
+   "aussen": [
+    -10.14527215203591,
+    -17.25351295337618
+   ],
+   "z1": 12.88,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 32.0,
+   "frei_m2": 3.2,
+   "fotos": [],
+   "laenge": 3.05,
+   "netz": "deckt die Wand nicht",
+   "aus": "kein Netz, keine Fotostufe"
+  },
+  {
+   "name": "w12",
+   "a": [
+    -9.233998816739652,
+    -7.179000291522125
+   ],
+   "b": [
+    -12.561843023844226,
+    -6.359284986616923
+   ],
+   "aussen": [
+    -13.2896344896712,
+    -16.478916385251623
+   ],
+   "z1": 12.88,
+   "z1_first": 21.003467559814453,
+   "wand_m2": 36.1,
+   "frei_m2": 4.0,
+   "fotos": [],
+   "laenge": 3.43,
+   "netz": "deckt die Wand nicht",
+   "aus": "kein Netz, keine Fotostufe"
+  }
+ ]
+}

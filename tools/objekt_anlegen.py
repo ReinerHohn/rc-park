@@ -64,6 +64,9 @@ if obj.get("lod2", {{}}).get("id"):                    # Standard: LoD2-Grundris
     from fassaden_kette import anbauen                 # Fassaden-Kette (tools/fassaden_kette.py): Reliefs je Wand, falls audit/fassaden_kette.json da ist
     koerper, belege = anbauen(koerper, OBJ)
     for b_ in belege: beleg(**b_)
+    from dach_bauen import ueber_traufe_nur_dach      # 17.11.2026: Fotodach (tools/dach_aus_fotos.py) - Reliefreste ueber der Traufe schweben sonst frei
+    koerper, belege = ueber_traufe_nur_dach(koerper, OBJ)
+    for b_ in belege: beleg(**b_)
     from bauteile import fenster_aus_json            # automatisch erkannte Fenster (Kettenstufe 'fenster' schreibt audit/fenster_auto.json)
     koerper, belege = fenster_aus_json(koerper, os.path.join(HERE, "{ob}", "audit", "fenster_auto.json"))
     for b_ in belege: beleg(**b_)

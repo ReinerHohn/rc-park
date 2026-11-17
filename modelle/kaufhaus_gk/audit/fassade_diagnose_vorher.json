@@ -1,0 +1,531 @@
+{
+ "objekt": "modelle/kaufhaus_gk/objekt.json",
+ "kameras": 194,
+ "messkameras": 194,
+ "nachbarn_lod2": 148,
+ "schritt_m": 0.2,
+ "max_winkel": 70.0,
+ "max_mpp": 0.06,
+ "fassaden": [
+  {
+   "id": "f00",
+   "n": [
+    0.9789425242989241,
+    -0.204136067658928
+   ],
+   "flaeche_m2": 291.3,
+   "wand_m2": 284.0,
+   "angebaut_m2": 196.6,
+   "frei_m2": 87.4,
+   "anteil_frei": {
+    "kein_foto": 0.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.022,
+    "nachbar": 0.156,
+    "gesehen": 0.822
+   },
+   "kameras_bis": {
+    "winkel": 67,
+    "aufloesung": 54,
+    "eigen": 53,
+    "nachbar": 53,
+    "gesehen": 53
+   },
+   "guete_sehende": {
+    "grob": 37,
+    "gut": 13,
+    "schlecht": 3
+   },
+   "beste": [
+    [
+     0.82,
+     "eigen__043_Freiburg_2009_IMG_4353"
+    ],
+    [
+     0.82,
+     "eigen__008_Historisches_Kaufhaus"
+    ],
+    [
+     0.82,
+     "commons__024_Freiburg_812503898"
+    ],
+    [
+     0.81,
+     "eigen__093_Einfahrt_der_Oldtimer_der_Schauinsland-Klassik_auf_dem_Freib"
+    ],
+    [
+     0.81,
+     "eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g"
+    ]
+   ]
+  },
+  {
+   "id": "f01",
+   "n": [
+    -0.9580255386635024,
+    0.28668286880890914
+   ],
+   "flaeche_m2": 281.4,
+   "wand_m2": 274.5,
+   "angebaut_m2": 0.0,
+   "frei_m2": 274.5,
+   "anteil_frei": {
+    "kein_foto": 0.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.0,
+    "nachbar": 0.7,
+    "gesehen": 0.3
+   },
+   "kameras_bis": {
+    "winkel": 35,
+    "aufloesung": 19,
+    "eigen": 19,
+    "nachbar": 19,
+    "gesehen": 15
+   },
+   "guete_sehende": {
+    "schlecht": 7,
+    "gut": 6,
+    "grob": 2
+   },
+   "beste": [
+    [
+     0.3,
+     "commons__097_Historisches_Kaufhaus_FR"
+    ],
+    [
+     0.18,
+     "eigen__082_M_nsterplatz_Freiburg_jm3052"
+    ],
+    [
+     0.16,
+     "eigen__103_2019-04-16_Westerker_des_Historischen_Kaufhauses_Blick_von_d"
+    ],
+    [
+     0.13,
+     "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022"
+    ],
+    [
+     0.13,
+     "commons__006_Allemagne_Foret_Noire_Freiburg_Munsterplatz_-_panoramio"
+    ]
+   ]
+  },
+  {
+   "id": "f02",
+   "n": [
+    0.3442045910127177,
+    0.9388946690261735
+   ],
+   "flaeche_m2": 242.2,
+   "wand_m2": 217.4,
+   "angebaut_m2": 0.0,
+   "frei_m2": 217.4,
+   "anteil_frei": {
+    "kein_foto": 0.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.0,
+    "nachbar": 0.001,
+    "gesehen": 0.999
+   },
+   "kameras_bis": {
+    "winkel": 184,
+    "aufloesung": 176,
+    "eigen": 176,
+    "nachbar": 176,
+    "gesehen": 169
+   },
+   "guete_sehende": {
+    "schlecht": 21,
+    "grob": 105,
+    "gut": 43
+   },
+   "beste": [
+    [
+     1.0,
+     "eigen__080_Freiburg-Muensterplatz-Markt-12-Historisches_Kaufhaus-2007-g"
+    ],
+    [
+     1.0,
+     "eigen__223_mapillary_323508795784374"
+    ],
+    [
+     1.0,
+     "eigen__220_mapillary_2860248804214870"
+    ],
+    [
+     1.0,
+     "eigen__218_mapillary_386647419106884"
+    ],
+    [
+     1.0,
+     "eigen__123_Freiburg-_Fronleichnam_Eucharistiefeier_auf_dem_M_nsterplatz"
+    ]
+   ]
+  },
+  {
+   "id": "f03",
+   "n": [
+    -0.31527874320658617,
+    -0.9489991117393501
+   ],
+   "flaeche_m2": 152.1,
+   "wand_m2": 151.0,
+   "angebaut_m2": 0.0,
+   "frei_m2": 151.0,
+   "anteil_frei": {
+    "kein_foto": 1.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.0,
+    "nachbar": 0.0,
+    "gesehen": 0.0
+   },
+   "kameras_bis": {
+    "winkel": 0,
+    "aufloesung": 0,
+    "eigen": 0,
+    "nachbar": 0,
+    "gesehen": 0
+   },
+   "guete_sehende": {},
+   "beste": []
+  },
+  {
+   "id": "f04",
+   "n": [
+    -0.9585932606020405,
+    0.28477879262393896
+   ],
+   "flaeche_m2": 78.8,
+   "wand_m2": 76.3,
+   "angebaut_m2": 0.0,
+   "frei_m2": 76.3,
+   "anteil_frei": {
+    "kein_foto": 0.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.0,
+    "nachbar": 1.0,
+    "gesehen": 0.0
+   },
+   "kameras_bis": {
+    "winkel": 38,
+    "aufloesung": 14,
+    "eigen": 14,
+    "nachbar": 13,
+    "gesehen": 0
+   },
+   "guete_sehende": {},
+   "beste": []
+  },
+  {
+   "id": "f05",
+   "n": [
+    -0.23908499207354728,
+    -0.9709986439564124
+   ],
+   "flaeche_m2": 75.0,
+   "wand_m2": 72.2,
+   "angebaut_m2": 64.3,
+   "frei_m2": 7.9,
+   "anteil_frei": {
+    "kein_foto": 1.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.0,
+    "nachbar": 0.0,
+    "gesehen": 0.0
+   },
+   "kameras_bis": {
+    "winkel": 0,
+    "aufloesung": 0,
+    "eigen": 0,
+    "nachbar": 0,
+    "gesehen": 0
+   },
+   "guete_sehende": {},
+   "beste": []
+  },
+  {
+   "id": "f06",
+   "n": [
+    -0.9468172921494924,
+    0.3217716819216738
+   ],
+   "flaeche_m2": 54.8,
+   "wand_m2": 52.2,
+   "angebaut_m2": 0.0,
+   "frei_m2": 52.2,
+   "anteil_frei": {
+    "kein_foto": 0.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.0,
+    "nachbar": 0.001,
+    "gesehen": 0.999
+   },
+   "kameras_bis": {
+    "winkel": 45,
+    "aufloesung": 27,
+    "eigen": 27,
+    "nachbar": 27,
+    "gesehen": 26
+   },
+   "guete_sehende": {
+    "gut": 15,
+    "schlecht": 8,
+    "grob": 3
+   },
+   "beste": [
+    [
+     1.0,
+     "commons__097_Historisches_Kaufhaus_FR"
+    ],
+    [
+     1.0,
+     "eigen__094_Muensterplatz_with_Historisches_Kaufhaus"
+    ],
+    [
+     1.0,
+     "eigen__082_M_nsterplatz_Freiburg_jm3052"
+    ],
+    [
+     1.0,
+     "eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu"
+    ],
+    [
+     1.0,
+     "eigen__039_Freiburg_im_Sommer_2013_9878817246_"
+    ]
+   ]
+  },
+  {
+   "id": "f07",
+   "n": [
+    -0.26387399989417837,
+    -0.9645571585861811
+   ],
+   "flaeche_m2": 53.8,
+   "wand_m2": 52.3,
+   "angebaut_m2": 0.0,
+   "frei_m2": 52.3,
+   "anteil_frei": {
+    "kein_foto": 1.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.0,
+    "nachbar": 0.0,
+    "gesehen": 0.0
+   },
+   "kameras_bis": {
+    "winkel": 0,
+    "aufloesung": 0,
+    "eigen": 0,
+    "nachbar": 0,
+    "gesehen": 0
+   },
+   "guete_sehende": {},
+   "beste": []
+  },
+  {
+   "id": "f08",
+   "n": [
+    0.959090171165157,
+    -0.2831007657608678
+   ],
+   "flaeche_m2": 34.7,
+   "wand_m2": 33.8,
+   "angebaut_m2": 0.0,
+   "frei_m2": 33.8,
+   "anteil_frei": {
+    "kein_foto": 0.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.0,
+    "nachbar": 1.0,
+    "gesehen": 0.0
+   },
+   "kameras_bis": {
+    "winkel": 61,
+    "aufloesung": 34,
+    "eigen": 18,
+    "nachbar": 17,
+    "gesehen": 0
+   },
+   "guete_sehende": {},
+   "beste": []
+  },
+  {
+   "id": "f09",
+   "n": [
+    0.8522683143885171,
+    0.52310488459711
+   ],
+   "flaeche_m2": 21.9,
+   "wand_m2": 22.2,
+   "angebaut_m2": 0.0,
+   "frei_m2": 22.2,
+   "anteil_frei": {
+    "kein_foto": 0.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.0,
+    "nachbar": 0.82,
+    "gesehen": 0.18
+   },
+   "kameras_bis": {
+    "winkel": 129,
+    "aufloesung": 109,
+    "eigen": 108,
+    "nachbar": 55,
+    "gesehen": 9
+   },
+   "guete_sehende": {
+    "grob": 7,
+    "gut": 2
+   },
+   "beste": [
+    [
+     0.11,
+     "commons__070_Hist._Kaufhaus_Freiburg1"
+    ],
+    [
+     0.11,
+     "eigen__002_M_nsterplatz_Freiburg_jm3334"
+    ],
+    [
+     0.1,
+     "eigen__000_Freiburg_1987_06_Historisches_Kaufhaus_51087501961_"
+    ],
+    [
+     0.1,
+     "eigen__024_Freiburg-_Historisches_Kaufhaus_frontal_vom_mittleren_M_nste"
+    ],
+    [
+     0.09,
+     "eigen__084_Redoutenhaus_Freiburg_4146"
+    ]
+   ]
+  },
+  {
+   "id": "f10",
+   "n": [
+    -0.9644975492908365,
+    0.2640917973204968
+   ],
+   "flaeche_m2": 11.6,
+   "wand_m2": 11.5,
+   "angebaut_m2": 0.0,
+   "frei_m2": 11.5,
+   "anteil_frei": {
+    "kein_foto": 0.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.0,
+    "nachbar": 1.0,
+    "gesehen": 0.0
+   },
+   "kameras_bis": {
+    "winkel": 33,
+    "aufloesung": 9,
+    "eigen": 8,
+    "nachbar": 8,
+    "gesehen": 0
+   },
+   "guete_sehende": {},
+   "beste": []
+  },
+  {
+   "id": "f11",
+   "n": [
+    -0.3089781622138467,
+    -0.95106913275269
+   ],
+   "flaeche_m2": 8.2,
+   "wand_m2": 8.1,
+   "angebaut_m2": 7.9,
+   "frei_m2": 0.2,
+   "anteil_frei": {
+    "kein_foto": 1.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.0,
+    "nachbar": 0.0,
+    "gesehen": 0.0
+   },
+   "kameras_bis": {
+    "winkel": 0,
+    "aufloesung": 0,
+    "eigen": 0,
+    "nachbar": 0,
+    "gesehen": 0
+   },
+   "guete_sehende": {},
+   "beste": []
+  },
+  {
+   "id": "f12",
+   "n": [
+    0.13564201577457982,
+    0.990757913698704
+   ],
+   "flaeche_m2": 7.2,
+   "wand_m2": 6.7,
+   "angebaut_m2": 4.9,
+   "frei_m2": 1.8,
+   "anteil_frei": {
+    "kein_foto": 0.0,
+    "winkel": 0.0,
+    "aufloesung": 0.0,
+    "eigen": 0.0,
+    "nachbar": 0.043,
+    "gesehen": 0.957
+   },
+   "kameras_bis": {
+    "winkel": 140,
+    "aufloesung": 133,
+    "eigen": 128,
+    "nachbar": 108,
+    "gesehen": 105
+   },
+   "guete_sehende": {
+    "schlecht": 7,
+    "grob": 75,
+    "gut": 23
+   },
+   "beste": [
+    [
+     0.78,
+     "eigen__043_Freiburg_2009_IMG_4353"
+    ],
+    [
+     0.78,
+     "eigen__020_M_nsterplatz_Freiburg_jm3065"
+    ],
+    [
+     0.78,
+     "commons__097_Historisches_Kaufhaus_FR"
+    ],
+    [
+     0.76,
+     "eigen__247_mapillary_2786662561586957"
+    ],
+    [
+     0.76,
+     "eigen__220_mapillary_2860248804214870"
+    ]
+   ]
+  }
+ ],
+ "summe": {
+  "wand_m2": 1262.2,
+  "frei_m2": 988.5,
+  "gesehen_m2": 429.2,
+  "gesehen_von_frei": 0.434,
+  "gesehen_von_wand": 0.34
+ }
+}

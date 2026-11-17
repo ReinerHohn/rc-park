@@ -32,8 +32,13 @@ def main():
         try: sk = FP.himmel_cached(ims, os.path.join(au, "himmel_cache", f"umriss_{nm}.png"))
         except (Exception, SystemExit) as e: print(f"{nm[-34:]}: keine Himmelsmaske ({str(e)[:80]})"); continue      # 16.11.2026: foto_pick beendet sich per sys.exit - das brach das ganze Tor ab (rc 1, kein Ergebnis geschrieben)
         R = cv2.Rodrigues(np.array(K["rvec"]))[0]; t = np.array(K["t"]); f = K["f_px"] * s; cx, cy = K["cx"] * s, K["cy"] * s
+        k1 = float(K.get("k1") or 0.0)
+        if k1:                                                                # 17.11.2026: Verzeichnung wurde hier ignoriert (Modell als Lochkamera gegen das verzeichnete Foto) - Foto und Maske entzerren wie modell_neben_foto
+            Km = np.array([[f, 0, cx], [0, f, cy], [0, 0, 1.0]]); dk = np.array([k1, 0, 0, 0.0]); ims = cv2.undistort(ims, Km, dk)
+            m1, m2 = cv2.initUndistortRectifyMap(Km, dk, None, Km, (W, H), cv2.CV_32FC1); sk = cv2.remap(sk.astype(np.uint8) * 255, m1, m2, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=255) > 127      # Rand ausserhalb des Fotos zaehlt als Himmel (sonst endet 'frei von oben' am schwarzen Rand)
         tiefe, fid = [np.asarray(v) for v in rk.dreiecke_rastern(mm, R, t, f, cx, cy, W, H)[:2]]; mod = (fid >= 0) & (fid < n_eigen); irgend = fid >= 0
-        sk = ndi.binary_opening(sk, np.ones((5, 5))); cols = np.arange(W); hat_m = mod.any(0); ym = np.where(hat_m, mod.argmax(0), -1)
+        sk = ndi.binary_opening(sk, np.ones((5, 5))); sk = ndi.binary_closing(sk, np.ones((9, 9)), border_value=1)      # 17.11.2026: Fahrdraehte/duenne Stangen (< 9 px) sind keine Dachkante - ein Draht ueber dem Turm zaehlte als 'Foto hoeher'
+        cols = np.arange(W); hat_m = mod.any(0); ym = np.where(hat_m, mod.argmax(0), -1)
         frei = np.cumprod(sk, axis=0).astype(bool)                            # Himmel zusammenhaengend von der Bildoberkante
         yf = frei.sum(0)                                                      # erste Nicht-Himmel-Zeile je Spalte
         gueltig = hat_m & (yf > 3) & (ym > 3) & (yf < H - 2)
@@ -41,6 +46,10 @@ def main():
         z = np.where(gueltig, tiefe[np.clip(ym, 0, H - 1), cols], np.nan); dm = (ym - yf) * z / f          # + = Foto hoeher (im Modell fehlt etwas), - = Modell hoeher
         med_ = float(np.median(np.abs(dm[gueltig]))) if gueltig.any() else 9.0
         if gueltig.sum() >= 40 and 1.5 < med_ < 15.0: grob.append((nm, float(np.median(dm[gueltig]))))
+        if gueltig.sum() < 40 or med_ > 1.5:                                  # 17.11.2026: auch dann das Bild schreiben - ohne Bild konnte niemand sehen, WAS 5 m abweicht
+            mal = ims.copy()
+            for c in cols[gueltig]: cv2.circle(mal, (int(c), int(ym[c])), 1, (60, 220, 60), -1); cv2.circle(mal, (int(c), int(yf[c])), 1, (40, 40, 240), -1)
+            cv2.imwrite(os.path.join(au, f"umriss_{nm}.jpg"), mal)
         if gueltig.sum() < 40 or med_ > 1.5: print(f"{nm[-34:]}: nicht auswertbar (kein Himmel hinter dem Gebaeude oder Kamera falsch; {int(gueltig.sum())} Spalten, Median {med_:.1f} m)"); continue      # 16.11.: Fernfoto mit Stadt im Hintergrund gab 12 m 'Abweichung'
         versatz = float(np.median(dm[gueltig])); gueltig &= np.abs(dm) < 3.0                              # > 3 m ist nie ein fehlendes Bauteil, sondern ein Nachbardach/Baum vor oder hinter der Kante
         dm = np.where(gueltig, dm, 0.0); mpc = np.nanmedian(z[gueltig]) / f if gueltig.any() else 1.0; mal = ims.copy(); bef = []

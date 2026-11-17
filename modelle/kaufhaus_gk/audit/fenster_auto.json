@@ -1,0 +1,231 @@
+{
+ "f00": {
+  "o": [
+   11.27860667352122,
+   0.9569402812798551
+  ],
+  "d": [
+   0.204136067658928,
+   0.9789425242989241
+  ],
+  "n": [
+   0.9789425242989241,
+   -0.204136067658928
+  ],
+  "fenster": [
+   {
+    "u0": 7.921,
+    "u1": 8.947,
+    "z0": 6.994,
+    "z1": 9.278,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 9,
+    "sprossen": []
+   },
+   {
+    "u0": 5.159,
+    "u1": 5.71,
+    "z0": 9.615,
+    "z1": 11.376,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 4,
+    "sprossen": []
+   }
+  ],
+  "fotos": [
+   "eigen__114_00_0782_Historisches_Kaufhaus_-_Freiburg_im_Breisgau",
+   "eigen__056_Das_historische_Kaufhaus_in_Freiburg_im_Breisgau_2025_",
+   "eigen__008_Historisches_Kaufhaus",
+   "eigen__065_Das_historische_Kaufhaus_in_Freiburg_i._Br._2025_"
+  ]
+ },
+ "f01": {
+  "o": [
+   -9.220904115874472,
+   4.806042689570587
+  ],
+  "d": [
+   -0.28668286880890914,
+   -0.9580255386635024
+  ],
+  "n": [
+   -0.9580255386635024,
+   0.28668286880890914
+  ],
+  "fenster": [],
+  "fotos": [
+   "eigen__079_Kaufhausi-in-rot",
+   "eigen__050_Ministru_prezidents_V._Dombrovskis_sa_em_Haijeka_fonda_balvu",
+   "eigen__039_Freiburg_im_Sommer_2013_9878817246_",
+   "eigen__022_Historisches_Kaufhaus_in_Freiburg_Winter_2022"
+  ]
+ },
+ "f02": {
+  "o": [
+   4.048209500020718,
+   13.130316499682216
+  ],
+  "d": [
+   -0.9388946690261735,
+   0.3442045910127177
+  ],
+  "n": [
+   0.3442045910127177,
+   0.9388946690261735
+  ],
+  "fenster": [
+   {
+    "u0": -10.226,
+    "u1": -7.897,
+    "z0": 6.98,
+    "z1": 9.395,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 9,
+    "sprossen": []
+   },
+   {
+    "u0": -6.979,
+    "u1": -4.858,
+    "z0": 7.019,
+    "z1": 9.717,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 9,
+    "sprossen": [
+     [
+      -6.167,
+      7.019,
+      -6.167,
+      9.717
+     ],
+     [
+      -6.979,
+      8.41,
+      -4.858,
+      8.41
+     ]
+    ]
+   },
+   {
+    "u0": -3.997,
+    "u1": -1.89,
+    "z0": 7.019,
+    "z1": 9.717,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 9,
+    "sprossen": [
+     [
+      -3.19,
+      7.019,
+      -3.19,
+      9.717
+     ],
+     [
+      -3.997,
+      8.41,
+      -1.89,
+      8.41
+     ]
+    ]
+   },
+   {
+    "u0": -0.987,
+    "u1": 1.121,
+    "z0": 7.019,
+    "z1": 9.717,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 10,
+    "sprossen": [
+     [
+      -0.18,
+      7.019,
+      -0.18,
+      9.717
+     ],
+     [
+      -0.987,
+      8.41,
+      1.121,
+      8.41
+     ]
+    ]
+   },
+   {
+    "u0": 2.07,
+    "u1": 4.127,
+    "z0": 7.019,
+    "z1": 9.717,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 10,
+    "sprossen": [
+     [
+      2.857,
+      7.019,
+      2.857,
+      9.717
+     ],
+     [
+      2.07,
+      8.41,
+      4.127,
+      8.41
+     ]
+    ]
+   },
+   {
+    "u0": 5.029,
+    "u1": 7.135,
+    "z0": 7.019,
+    "z1": 9.717,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 9,
+    "sprossen": [
+     [
+      5.836,
+      7.019,
+      5.836,
+      9.717
+     ],
+     [
+      5.029,
+      8.41,
+      7.135,
+      8.41
+     ]
+    ]
+   },
+   {
+    "u0": 7.922,
+    "u1": 10.046,
+    "z0": 6.98,
+    "z1": 9.395,
+    "teiler": [],
+    "kaempfer": null,
+    "scheiben": 1,
+    "stimmen_min": 9,
+    "sprossen": []
+   }
+  ],
+  "fotos": [
+   "eigen__018_Freiburg-_Historisches_Kaufhaus_frontal_vom_Renaissanceporta",
+   "eigen__IMG_6161",
+   "eigen__051_Kaufhaus_-_panoramio_2_",
+   "eigen__003_Historisches_Kaufhaus_Freiburg_im_Breisgau_jm3289"
+  ]
+ }
+}

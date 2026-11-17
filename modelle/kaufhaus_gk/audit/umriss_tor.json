@@ -1,0 +1,104 @@
+{
+ "tol_m": 0.35,
+ "befunde": [
+  {
+   "foto": "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 1.59,
+   "breite_m": 1.05,
+   "xyz": [
+    11.3,
+    1.06,
+    18.52
+   ]
+  },
+  {
+   "foto": "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 0.64,
+   "breite_m": 0.93,
+   "xyz": [
+    10.74,
+    3.27,
+    20.97
+   ]
+  },
+  {
+   "foto": "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 0.79,
+   "breite_m": 4.86,
+   "xyz": [
+    -6.11,
+    8.86,
+    20.99
+   ]
+  },
+  {
+   "foto": "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
+   "art": "Modell hoeher (zu hoch / erfunden)",
+   "abweichung_m": -0.78,
+   "breite_m": 0.81,
+   "xyz": [
+    11.67,
+    2.98,
+    20.95
+   ]
+  },
+  {
+   "foto": "eigen__053_2017-06-15_Fronleichnam_auf_dem_Freiburger_M_nsterplatz_im_H",
+   "art": "Modell hoeher (zu hoch / erfunden)",
+   "abweichung_m": -0.49,
+   "breite_m": 7.13,
+   "xyz": [
+    6.19,
+    4.78,
+    20.98
+   ]
+  },
+  {
+   "foto": "eigen__handy_06",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 0.73,
+   "breite_m": 4.18,
+   "xyz": [
+    13.34,
+    8.44,
+    13.67
+   ]
+  },
+  {
+   "foto": "eigen__handy_06",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 0.64,
+   "breite_m": 1.04,
+   "xyz": [
+    11.05,
+    3.18,
+    20.95
+   ]
+  },
+  {
+   "foto": "eigen__handy_06",
+   "art": "Foto hoeher (Modell fehlt etwas / Verdecker)",
+   "abweichung_m": 0.99,
+   "breite_m": 1.1,
+   "xyz": [
+    -6.68,
+    9.98,
+    21.0
+   ]
+  },
+  {
+   "foto": "eigen__handy_06",
+   "art": "Modell hoeher (zu hoch / erfunden)",
+   "abweichung_m": -0.39,
+   "breite_m": 4.0,
+   "xyz": [
+    7.89,
+    4.24,
+    20.95
+   ]
+  }
+ ]
+}

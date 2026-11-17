@@ -7,6 +7,8 @@ Je LoD2-GroundSurface (gleiche Reihenfolge wie dach_vermessen: Teil-Index = Grou
     (Schwabentor: Treppentuerm-Polygon beruehrt den Turm nicht -> zwei Koerper)
   - Teil mit Dachmessung: Prisma 0..first, geschnitten mit z <= first - steigung * (ca a + cb b + d) je Ebene (Achsen mitte_uv/achse_a)
   - Teil ohne Messung (zu klein / keine Pixel): Flachdach auf LoD2-Wandoberkante der eigenen Waende; ANNAHME im Beleg
+  - Teil mit belegtem Fotodach (dach.json Block 'foto' aus tools/dach_aus_fotos.py): Prisma bis Traufunterkante + Profilkoerper (Traufe, Knick, First, Aufsatz); geht vor DOM1.
+    DACH_OHNE_FOTO=1 baut zum Vergleich das DOM1-Dach
   - 'spitze' (DOM1 > Dachflaeche + 2 m): schlanke Pyramide bis Zielhoehe (objekt.json hoehe_m, sonst DOM1-max); Grundseite ANNAHME sqrt(Pixel) m
 Lehre Schwabentor 2026-11-14: Huelle (hull_points) auf Schaftecken erzeugt Quetschpunkte (STL in 15 Koerper zerfallen); Ebenenschnitt nicht.
 """
@@ -47,6 +49,39 @@ def dach_schneiden(prisma, t):
     return prisma
 
 
+def dach_aus_profil(t):
+    """Fotodach (dach.json Teil t, Block 'foto' aus tools/dach_aus_fotos.py): Koerper aus den Stuetzstellen [z, a0, a1, b0, b1] - je Hoehe ein Rechteck in den
+    Grundrissachsen (mitte_uv/achse_a), dazwischen gerade verbunden. EIN geschlossenes Netz (keine Huellen: Lehre Quetschpunkte)."""
+    from manifold3d import Mesh
+    f = t["foto"]; c = np.array(f.get("mitte_uv", t["mitte_uv"]), float); ea = np.array(f.get("achse_a", t["achse_a"]), float); ea /= np.linalg.norm(ea); eb = np.array([-ea[1], ea[0]])
+    V = []; T = []; q = [r for r in f["profil"]]
+    for z, a0, a1, b0, b1 in q:
+        for a_, b_ in ((a0, b0), (a1, b0), (a1, b1), (a0, b1)): V.append([c[0] + a_ * ea[0] + b_ * eb[0], c[1] + a_ * ea[1] + b_ * eb[1], z])
+    for i in range(len(q) - 1):
+        for j in range(4):
+            l0, l1, u0, u1 = 4 * i + j, 4 * i + (j + 1) % 4, 4 * (i + 1) + j, 4 * (i + 1) + (j + 1) % 4; T += [[l0, l1, u1], [l0, u1, u0]]
+    o = 4 * (len(q) - 1); T += [[0, 2, 1], [0, 3, 2], [o, o + 1, o + 2], [o, o + 2, o + 3]]
+    k = M(Mesh(vert_properties=np.asarray(V, np.float32), tri_verts=np.asarray(T, np.uint32)))
+    if k.is_empty() or k.volume() <= 0: raise SystemExit("Fotodach: Profilkoerper ungueltig (dach.json 'foto.profil' pruefen)")
+    return k
+
+
+def ueber_traufe_nur_dach(koerper, objekt_json, rand=3.0):
+    """Nach dem Anbauen der Fassadenreliefs: ueber der Traufunterkante eines Fotodachs gilt NUR das Dach. Reliefreste aus dem Scan oberhalb der Wand hingen vorher
+    im (steileren, breiteren) DOM1-Dach und schweben beim Fotodach frei (17.11.2026 Kettenturm: 1 Splitter 0,3 x 0,1 x 0,7 m ueber der Westtraufe -> 2 Koerper).
+    Schneidet je Teil mit belegtem Fotodach den Raum ueber der Traufunterkante (Grundriss + rand) frei und setzt das Dach neu. -> (koerper, belege)."""
+    od = os.path.dirname(os.path.abspath(objekt_json)); dp = os.path.join(od, "dach.json"); belege = []
+    if not os.path.exists(dp) or os.environ.get("DACH_OHNE_FOTO") == "1": return koerper, belege
+    for t in json.load(open(dp)).get("teile", []):
+        f = t.get("foto") or {}
+        if not f.get("belegt"): continue
+        g = np.array(t["grundriss_uv"], float); z0 = float(f["profil"][0][0]) + 0.05; z1 = float(f["hoechster_punkt_z"]) + 5.0
+        kasten = M.cube((float(np.ptp(g[:, 0])) + 2 * rand, float(np.ptp(g[:, 1])) + 2 * rand, z1 - z0)).translate((float(g[:, 0].min()) - rand, float(g[:, 1].min()) - rand, z0))
+        v0 = koerper.volume(); d_ = dach_aus_profil(t); koerper = (koerper - kasten) + d_; weg = v0 - koerper.volume()
+        belege.append(dict(seite="dach", element=f"Teil {t['teil']}: ueber der Traufunterkante nur das Fotodach", quelle="tools/dach_bauen.ueber_traufe_nur_dach (Reliefreste ueber der Wand entfernt)", volumen_weg_m3=round(float(weg), 2)))
+    return koerper, belege
+
+
 def dach_hoehe(t, uv):
     b = t["beste"]; c = np.array(t["mitte_uv"], float); ea = np.array(t["achse_a"], float); ea /= np.linalg.norm(ea); eb = np.array([-ea[1], ea[0]])
     a_, b_ = (np.asarray(uv) - c) @ ea, (np.asarray(uv) - c) @ eb
@@ -82,7 +117,13 @@ def gebaeude_aus_lod2(objekt_json, dach_json=None, zielhoehe=None):
             for q in andere[1:]: nb = nb + q
             cs = cs + (cs.offset(UEBERLAPP, JoinType.Miter) ^ nb.offset(UEBERLAPP, JoinType.Miter))   # Bruecke: LoD2-Teile haben oft Spalt (Schwabentor ~5 cm)
         t = dach.get(i)
-        if t:
+        if t and (t.get("foto") or {}).get("belegt") and os.environ.get("DACH_OHNE_FOTO") != "1":      # 17.11.2026: Dach aus den Fotos (tools/dach_aus_fotos.py) geht vor DOM1 - Form aus Fotos, Laser nur Gegenprobe
+            f = t["foto"]; k = M.extrude(cs, float(f["profil"][0][0]) + 0.05) + dach_aus_profil(t); gk = f.get("gegenprobe_kurz", {})
+            belege.append(dict(seite="dach", element=f"Dach Teil {i} (Fotodach" + (", mit Aufsatz" if f.get("aufsatz") else "") + ")",
+                               quelle=f"Fotos: Sichtkegel-Schnitt der Himmelskante aus {f.get('fotos_abgestimmt')} Fotos (tools/dach_aus_fotos.py, {f.get('datum')}); Gegenprobe {gk.get('passt')} von {gk.get('fotos')} Fotos <= {gk.get('grenze_m')} m",
+                               traufe=f["traufe_z"], first=f["first_z"], hoehe=f["hoechster_punkt_z"], traufe_breite_a=f["traufe_breite_a"], traufe_breite_b=f["traufe_breite_b"],
+                               hinweis=" | ".join(f.get("annahmen", []) + ["WIDERSPRUCH (gemeldet, nicht gemittelt): " + w for w in f.get("widerspruch", [])])))
+        elif t:
             b = t["beste"]; zf = float(b["first"])
             k = dach_schneiden(M.extrude(cs, zf), t)
             belege.append(dict(seite="dach", element=f"Dach Teil {i} ({b['form']})", quelle=f"Laser DOM1 (tools/dach_vermessen.py) ueber LoD2 {lid}-Grundriss Teil {i}",
