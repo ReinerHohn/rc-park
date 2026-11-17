@@ -19,6 +19,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def strahl_dicke(m, n, seed=0):
     dev = "cuda" if torch.cuda.is_available() else "cpu"
     P, fi = trimesh.sample.sample_surface(m, n, seed=seed); Nn = m.face_normals[fi]
+    if len(m.faces) > 150000 and trimesh.ray.has_embree:      # 17.11.2026: die Brute-Force-Rechnung (Strahl x Dreieck) wollte bei 2,5 Mio. Dreiecken 14 GB Grafikspeicher - Reliefmodelle waren nicht pruefbar. Embree (Baum) braucht Sekunden.
+        o_ = P - Nn * 1e-4; loc, ir, _ = m.ray.intersects_location(o_, -Nn, multiple_hits=False); t_ = np.full(len(P), np.inf); t_[ir] = np.linalg.norm(loc - o_[ir], axis=1)
+        return P, t_, "embree"
     T = torch.tensor(m.triangles, dtype=torch.float32, device=dev); v0, e1, e2 = T[:, 0], T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]
     O = torch.tensor(P - Nn * 1e-4, dtype=torch.float32, device=dev); D = torch.tensor(-Nn, dtype=torch.float32, device=dev)
     t_best = torch.full((len(P),), float("inf"), device=dev)

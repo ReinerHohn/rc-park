@@ -26,18 +26,25 @@ def main():
            "beobachtungen_offen": [{"datum": "heute", "wer": "Anlage", "text": "Quellen sichten: Dokumente (Hoehe), LoD2 (Grundriss/Traufe), DOM1 (Dachform), Fotos je Seite", "naechster_schritt": "objekt.json/quellen fuellen, Zeilen mit Quelle anlegen"}]}
     if hoehe:
         h = float(hoehe); tab["pruefungen"].insert(0, {"name": "Gesamthoehe (m)", "wert": "hoehe", "soll": [h * 0.97, h * 1.03], "quelle": opt("--hoehe-quelle", "Dokument (eintragen!)"), "quelltyp": "dokument", "merkmal": "absolut_hoehe", "massstab": "dokument"})
-    for fn, data in (("objekt.json", obj), ("masstabelle.json", tab)):
+    nur_gen = "--generator-erneuern" in a      # 16.11.2026: Kettenobjekte vom 14.11. hatten einen Generator aus der ALTEN Vorlage (ohne Fassaden/Fenster/Hohl) - nur den unberuehrten Rumpf erneuern, sonst nichts anfassen
+    for fn, data in (() if nur_gen else (("objekt.json", obj), ("masstabelle.json", tab))):
         p = os.path.join(d, fn)
         if os.path.exists(p): print("vorhanden, nicht ueberschrieben:", p); continue
         json.dump(data, open(p, "w"), indent=1, ensure_ascii=False); print("angelegt:", p)
     # Fotoordner aus objekt.json["fotos_dir"] anlegen (Lehre Schwabentor 13.11.: Pfad zeigte ins Leere, kein Werkzeug fand Fotos).
     # --fotos-quelle DIR: Fotoordner wird dorthin verlinkt, wenn er noch fehlt (Symlink, Daten bleiben an ihrem Platz).
-    fd = os.path.join(root, obj["fotos_dir"]); os.makedirs(fd, exist_ok=True) if not os.path.exists(fd) else None
+    if nur_gen and os.path.exists(os.path.join(d, "objekt.json")): genfile = json.load(open(os.path.join(d, "objekt.json")))["generator"].split()[-1]
+    fd = os.path.join(root, obj["fotos_dir"]); os.makedirs(fd, exist_ok=True) if not (os.path.exists(fd) or nur_gen) else None
     fq = opt("--fotos-quelle")
-    if fq and os.path.isdir(fq) and os.path.isdir(fd) and not os.listdir(fd):
+    if not nur_gen and fq and os.path.isdir(fq) and os.path.isdir(fd) and not os.listdir(fd):
         os.rmdir(fd); os.symlink(os.path.abspath(fq), fd); print("fotos verlinkt:", fd, "->", fq)
-    print("fotos_dir bereit:", fd, f"({len(os.listdir(fd)) if os.path.isdir(fd) else 0} Eintraege)")
+    if not nur_gen: print("fotos_dir bereit:", fd, f"({len(os.listdir(fd)) if os.path.isdir(fd) else 0} Eintraege)")
     gp = os.path.join(root, genfile)
+    if nur_gen and os.path.exists(gp):
+        alt = open(gp).read()
+        if "Generator-Rumpf (manifold3d)" not in alt or len(alt.splitlines()) > 45: print("Generator ist kein unberuehrter Rumpf - NICHT erneuert:", gp); return 3
+        if "fassaden_kette" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
+        import time; os.replace(gp, gp + ".alt_" + time.strftime("%Y%m%d_%H%M")); print("alter Generator-Rumpf beiseitegelegt:", gp + ".alt_*")
     if not os.path.exists(gp):
         open(gp, "w").write(f'''#!/usr/bin/env python3
 """{ob}_gen.py - Generator-Rumpf (manifold3d). Jedes sichtbare Element meldet sich mit beleg(); Bau + Abnahme: tools/bauen_abnehmen.sh {ob}"""
@@ -82,4 +89,4 @@ Pflichtablauf (modelle/METHODE_MASSTABELLE.md):
  5. tools/bauen_abnehmen.sh {ob}  -> Pruefstand + audit/seiten.jpg ANSEHEN     6. Beobachtung -> fehlschlagende Zeile -> Generator (beleg()!) -> gruen -> Commit""")
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)

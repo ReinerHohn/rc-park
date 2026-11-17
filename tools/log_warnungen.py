@@ -9,7 +9,7 @@ import sys, os, re, json, glob, collections
 
 MUSTER = re.compile(r"^[WEF]\d{8} |WARNUNG|FEHLER|HINWEIS|Warning|WARNING|Error|Traceback|Falling back|nicht verfuegbar|out of memory|NO_CONVERGENCE|KEINE_LOESUNG|ABBRUCH|rejected")
 NEUTRAL = [(re.compile(r"^[WEFI]\d{8} [\d:.]+ +\d+ "), ""), (re.compile(r"/[\w./\-]+"), "<pfad>"), (re.compile(r"0x[0-9a-f]+"), "<hex>"), (re.compile(r"-?\d+([.,]\d+)?"), "#")]
-AUSNAHME = re.compile(r"Unknown EXIF orientation|^\s+File \"|raise |warnings\.warn")   # bekannt harmlos bzw. Traceback-Zwischenzeilen
+AUSNAHME = re.compile(r"Unknown EXIF orientation|IMAGE_EXISTS|^\s+File \"|raise |warnings\.warn")   # bekannt harmlos bzw. Traceback-Zwischenzeilen
 
 
 def sammeln(pfade, ab_zeile=None, seit=None):

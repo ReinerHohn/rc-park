@@ -13,7 +13,7 @@ Ablauf (alles automatisch, Parameter in objekt.json 'druck_teilung', sonst Stand
      stift_laenge_mm/2 + toleranz_mm; Stifte (stift_mm x stift_laenge_mm) als eigene STL - KEINE Zapfen am Teil (Bambu-Lehre: nie Zapfen unter breiter Flaeche).
 Ausgabe: modelle/stl/<objekt>_teile/teil_NN.stl (mm, Drucklage, auf z=0), lage/teil_NN.stl (mm, Originallage fuer Overlay/Regel 9b), stifte.stl, teilung.json
 (je Teil Lage, Bettmass, Ueberhang m2/Anteil, Schnitte, Stifte). Die Pruefung 'Ueberhang je Teil' liest teilung.json (pruefstand druck_teile_ueberhang)."""
-import argparse, json, math, os, sys
+import argparse, glob, json, math, os, sys
 import numpy as np, trimesh, cv2
 from manifold3d import Manifold as M, Mesh as MM
 
@@ -151,7 +151,7 @@ def main():
     winkel = float(cfg.get("winkel", 60)); cosg = math.cos(math.radians(90 - winkel)); ziel = float(cfg.get("ziel_anteil", 0.01)); bett = float(cfg.get("bett_mm", 256)) - 2 * float(cfg.get("bett_rand_mm", 6))
     max_schnitte = int(cfg.get("max_schnitte", 6)); bett_tol = float(cfg.get("bett_tol_m", 0.05)); min_flaeche = float(cfg.get("min_kandidat_m2", 2.0))
     sd, sl, tol = (float(cfg.get(k, d)) / K for k, d in (("stift_mm", 2.0), ("stift_laenge_mm", 6.0), ("toleranz_mm", 0.2)))
-    srand = float(cfg.get("stift_rand_mm", 2.5)) / K
+    srand = float(cfg.get("stift_rand_mm", 2.5)) / K; min_teil = float(cfg.get("min_teil_mm", 15.0)) / K      # Mindesthoehe eines Teils im Druck
     an = next((b["achse_n"] for b in O.get("bauteile", []) if b.get("achse_n") and b.get("aktiv", True) is not False), [0.0, 1.0])
     n_ = np.array(an + [0.0], float); n_ /= np.linalg.norm(n_); u_ = np.array([n_[1], -n_[0], 0.0]); B = np.c_[u_, n_, [0, 0, 1.0]]
     tm0 = trimesh.load(stl, process=False); tm0.merge_vertices(); tm0.apply_scale(1.0 / K)
@@ -170,9 +170,10 @@ def main():
               nk = 0
               for fl, zc in kandidaten(tm, B, cosg):
                   if fl < min_flaeche: break
-                  if zc < zlo + 0.3 or zc > zhi - 0.3: continue
+                  if zc < zlo + min_teil or zc > zhi - min_teil: continue                             # 17.11.2026: am Turm entstanden Scheiben von 10 mm und ein Splitter von 0,8 mm Hoehe (Schnitte 0,9 m auseinander) - nicht druck- und steckbar
                   un, ob = schneide(t["mf"], B, 2, zc)
                   if un.is_empty() or ob.is_empty(): continue
+                  if min(d_.volume() for x_ in (un, ob) for d_ in x_.decompose()) < 0.005 * t["mf"].volume(): continue      # kein Schnitt, der Splitter abtrennt
                   o2 = sum(beste_lage(zu_tm(x), L, cosg, bett_tol, bett_m=bm)[1] for x in (un, ob))
                   gew = bl[1] - o2
                   if gew > 0 and (bestes is None or gew > bestes[0]): bestes = (gew, i, zc, un, ob, fl)
@@ -236,7 +237,10 @@ def main():
                 if si in t["schnitte"]: t["mf"] = t["mf"] - loch
             stifte.append(bohrung(np.zeros(3), np.array([0, 0, 1.0]), sd / 2, sl).translate((len(stifte) * 3 * sd, 0, sl / 2)))
     # Ausgabe
-    ad = os.path.join(ROOT, "modelle", "stl", f"{a.objekt}_teile"); os.makedirs(os.path.join(ad, "lage"), exist_ok=True); bericht = []
+    ad = os.path.join(ROOT, "modelle", "stl", f"{a.objekt}_teile"); gross = "/media/oem/scan/rc-park_stl"
+    if not os.path.exists(ad) and os.path.isdir(gross): os.makedirs(os.path.join(gross, f"{a.objekt}_teile"), exist_ok=True); os.symlink(os.path.join(gross, f"{a.objekt}_teile"), ad)      # 17.11.2026: 238 MB Druckteile des Turms landeten auf der Systemplatte (Regel: grosse Daten nur auf der Datenplatte, Verknuepfung im Repo)
+    os.makedirs(os.path.join(ad, "lage"), exist_ok=True); bericht = []
+    for alt_ in glob.glob(os.path.join(ad, "teil_*.stl")) + glob.glob(os.path.join(ad, "lage", "teil_*.stl")): os.remove(alt_)      # 17.11.2026: Teile eines frueheren Laufs blieben liegen (7 neue + 3 alte Dateien = falscher Bausatz)
     for k_, t in enumerate(sorted(teile, key=lambda t: -t["mf"].volume())):
         tm = zu_tm(t["mf"]); name, o, A, Rr, ext = beste_lage(tm, L, cosg, bett_tol, bett_m=bm)
         (tm.copy().apply_scale(K)).export(os.path.join(ad, "lage", f"teil_{k_ + 1:02d}.stl"))
