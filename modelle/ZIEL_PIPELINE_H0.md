@@ -117,3 +117,19 @@ Dokumentiere alle Versuche."  -> Diese Datei ist das Versuchsprotokoll (jeder Ve
   Schnelltest neu: tools/test_farbteile_neigung.py (Quader 2 Grad gedreht). OFFEN: 10 Platten aus 2-4 Stuecken (Steine durch tiefe Fugen getrennt; A hatte 1) - Traegerschicht pruefen.
   Traegerschicht (--traeger_mm 0,6, nicht ueber Oeffnungen) fuer zerfallende Platten: vor Kruemelfilter 35->10, 24->3, 10->4 Stuecke; danach 9 statt 10 mehrteilige Platten,
   fast alle 2 Stuecke (vorher bis 4); west_03 (12-mm-Streifen) bleibt 4. Rest vermutlich Fenster quer durch die Steinflaeche (Traeger dort bewusst nicht). rc 0, 1 Koerper, 0/73.
+
+## UEBERGABE 18.11. ~17:40 (vor /clear) - HIER WEITERMACHEN
+LAUFEND (systemd --user, Logs /media/oem/scan/rc-park_daten/umzug_*.log): Umzug auf die neue 2-TB-SSD (UUID c5601887, ext4 'rcdaten', /media/oem/rcdaten, USB 3):
+  rcpark-umzug_stick3 (rcstick -> auslagern_rcstick, traegt die GIT-PACKS _git_objekte!), rcpark-umzug_toshiba (84B82792 -> auslagern_84B82792, langsam ~32 MB/s, 1-1,5 h),
+  rcpark-umzug_20757b (20757D2E -> auslagern_20757D2E, USB 2 per Adapter). Volume FERTIG (1232 Links umgebogen). Werkzeug tools/umzug_auslagerung.sh (rsync + Pruefsumme
+  nur Inhalte + Links umbiegen; --nur_umbiegen fuer Schlussdurchgang). NUTZER BENACHRICHTIGEN, sobald eine Platte frei ist (er steckt nur auf Ansage um; 2 Micro-USB-B-Kabel).
+DANACH (Reihenfolge): (1) Schlussdurchgang --nur_umbiegen fuer alle 4 Quellen (rsync-Neulauf setzt umgebogene Links im Ziel zurueck); (2) 10B8430E (500 GB, 51 GB rc-park,
+  14 Links) an das Kabel der 84B82 -> umziehen; (3) Hauptplatte: AUSLAGERN_MOUNT=/media/oem/rcdaten AUSLAGERN_UUID=c5601887-391a-4272-9dca-a25e4ae68be7 tools/auslagern.sh
+  /media/oem/scan/rc-park_stl rc-park_tmp hf_cache hf_cache_s10 rc-park_daten (Log NICHT in rc-park_daten; venvs/colmap-build/swapfile bleiben intern, Nutzer-Ja);
+  (4) TESTLAUF nur mit 2-TB-Platte (alle anderen ab): 0 Links auf alte Platten, Schnelltest, regression, git fsck, Kette Kaufhaus (bauen_abnehmen + html); (5) erst dann
+  alte rc-park_auslagern-Ordner je Platte mit Nutzer-Ja loeschen.
+KAUFHAUS gk2 (Stand 17:00): Laube 4 Boegen (4. als ANNAHME angrenzendes Joch, bauteile.laube_aus_wandbild), Prüfstand bestanden, Abnahme rc 1 nur weil rc-park_kreis/gpu_slots
+  auf abgesteckter 20757 lag -> nach Umzug bauen_abnehmen.sh kaufhaus_gk2 wiederholen, audit/seiten.jpg + neben_*.jpg ansehen, 3D-Seite https://claude.ai/artifact/2UtaDZfwddHA4sDULQCJfj
+  aktualisieren (kaufhaus_gk2_3d.html aus Kette). kanten_fertig F1 0,138 (vorher 0,01). Nachholen der Seiten: Fix 'schon registriert' (86/381 neu registriert, 1,19 px) -
+  Kette --ab seiten noch NICHT wiederholt (LightGlue ~90 min) -> danach fassade_ortho der Seiten f03/f04/f05/f07 pruefen.
+OFFEN: Bogenumriss Kreis-Naeherung (Spannweiten 3,4-4,25 m, ~5 % breiter als Handmodell); Druckplatten 9 mehrteilig (meist 2); COLMAP 4.3 A/B (Memory project-colmap-versionen).

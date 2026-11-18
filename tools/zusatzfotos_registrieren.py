@@ -174,6 +174,8 @@ def registrieren(a):
     import pycolmap
     V = json.load(open(os.path.join(a.aus, "vorbereitet.json"))); names = sorted(V["bilder"]); dbp = os.path.join(a.aus, "db.db")
     ref0 = pycolmap.Reconstruction(a.sparse); db = pycolmap.Database.open(dbp)
+    schon_ = {im_.name for im_ in ref0.images.values()}; weg_ = [n_ for n_ in names if n_ in schon_]
+    if weg_: names = [n_ for n_ in names if n_ not in schon_]; print(f"{len(weg_)} Kandidaten sind im Bezugsmodell schon registriert - uebersprungen (veraltete Kandidatenliste; Kaufhaus gk2j: Absturz 'Frame already exists' nach 90 min)", flush=True)
     con = sqlite3.connect(dbp); name2id = {n: i for i, n in con.execute("select image_id,name from images")}; n2cam = {n: c for n, c in con.execute("select name,camera_id from images")}; con.close()
     f0 = json.load(open(os.path.join(a.aus, "merkmale.json")))["f_prior_px"]; WH = lambda n: tuple(V["bilder"][n]["bild"])
     C0 = {n: korrespondenzen(db, ref0, name2id, name2id[n]) for n in names}

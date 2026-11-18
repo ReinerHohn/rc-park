@@ -349,11 +349,16 @@ def laube_aus_wandbild(koerper, innenwaende, datei, pfeiler_tiefe=0.8, vor=0.8, 
         for e in F.get("oeffnungen", []):
             if e.get("flach") or not e.get("umriss") or e["klasse"] not in klassen: continue
             U = [p_[0] for p_ in e["umriss"]]; Z_ = [p_[1] for p_ in e["umriss"]]
-            if max(U) - min(U) < min_b or max(Z_) - min(Z_) < min_h or min(Z_) > iz[0] + boden or not iu[0] <= 0.5 * (min(U) + max(U)) <= iu[1]: continue
+            if max(U) - min(U) < min_b or max(Z_) - min(Z_) < min_h or min(Z_) > iz[0] + boden: continue
+            if not iu[0] <= 0.5 * (min(U) + max(U)) <= iu[1]:
+                # 18.11.2026 (Kaufhaus gk2: 4. Laubenbogen u 4,96..8,90 offen 5,2 m tief, Innenwand-Kern endete bei u 4,73): angrenzendes Joch mitnehmen, wenn die Sweep-Tiefe passt
+                luecke = max(iu[0] - max(U), min(U) - iu[1])
+                if not (e["klasse"] == "bogen" and e.get("tiefe") is not None and luecke <= 1.5 and float(e["tiefe"]) >= 0.8 * abs(w_iw)): continue
+                e = dict(e, angrenzend=True)
             P = [[s * u, z] for u, z in e["umriss"]]
             if sum(P[i][0] * P[(i + 1) % len(P)][1] - P[(i + 1) % len(P)][0] * P[i][1] for i in range(len(P))) < 0: P = P[::-1]
             k = M.extrude(CrossSection([P]), pt + 0.05 + vor).translate((0, 0, -pt - 0.05)).transform(W.matrix(0)); sch = k if sch is None else sch + k
-            gew.append((e["klasse"], min(U), max(U), min(Z_), max(Z_)))
+            gew.append((e["klasse"] + (" (ANNAHME angrenzendes Joch, Tiefe %.1f m aus Sweep-Karte)" % float(e["tiefe"]) if e.get("angrenzend") else ""), min(U), max(U), min(Z_), max(Z_)))
         if not gew:
             belege.append(dict(seite="wand", element="Innenwand %s: Laube NICHT freigelegt" % iw.get("name"), quelle="bauteile.laube_aus_wandbild; " + os.path.basename(datei), hinweis="keine grosse bodennahe Oeffnung mit Bildumriss im u-Bereich %.2f..%.2f" % tuple(iu))); continue
         ua, ub = min(g[1] for g in gew), max(g[2] for g in gew); za = min(g[3] for g in gew); zb = max(iz[1], max(g[4] for g in gew) + 0.05)

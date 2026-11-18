@@ -13,8 +13,9 @@ for q in "$@"; do
   case "$q" in /media/oem/scan/*) ;; *) echo "nur unter /media/oem/scan: $q"; continue;; esac
   rel=${q#/media/oem/scan/}; ziel="$Z/$rel"; mkdir -p "$(dirname "$ziel")"
   echo "== $q -> $ziel ($(du -sh "$q" | cut -f1))"
-  rsync -rlt --no-perms --no-owner --no-group "$q/" "$ziel/"
-  d=$(rsync -rlnc --no-perms --no-owner --no-group --itemize-changes "$q/" "$ziel/" | grep -v '^\.' | wc -l)
+  if [ "$(findmnt -no FSTYPE "$M")" = "ext4" ]; then O1="-aH"; O2="-aHnc"; else O1="-rlt --no-perms --no-owner --no-group"; O2="-rlnc --no-perms --no-owner --no-group"; fi      # 18.11.2026: ext4-Ziel (2-TB-SSD rcdaten) mit Rechten/Hardlinks
+  rsync $O1 "$q/" "$ziel/"
+  d=$(rsync $O2 --itemize-changes "$q/" "$ziel/" | grep -v '^\.' | wc -l)
   [ "$d" = 0 ] || { echo "ABWEICHUNG ($d Dateien) - Original bleibt: $q"; continue; }
   rm -rf "$q" && ln -s "$ziel" "$q" && echo "ok: $q -> $M"
 done
