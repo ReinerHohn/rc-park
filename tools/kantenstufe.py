@@ -80,7 +80,7 @@ def modellkanten(m, winkel=30.0, schritt=0.05):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--ausrichtung", required=True); ap.add_argument("--bilder", required=True)
     ap.add_argument("--aus", required=True); ap.add_argument("--max_fotos", type=int, default=80); ap.add_argument("--refs", type=int, default=30)
-    ap.add_argument("--band", type=float, default=0.5); ap.add_argument("--tol", type=float, default=0.15); ap.add_argument("--nur_bewerten", action="store_true")
+    ap.add_argument("--band", type=float, default=0.5); ap.add_argument("--tol", type=float, default=0.15); ap.add_argument("--nur_bewerten", action="store_true"); ap.add_argument("--name", default="", help="Zusatz fuer Bericht/Bild (z.B. _fertig: Bewertung des fertigen Modells nach Fassaden/Bauplan mit dem Sweep der Kantenstufe)")
     a = ap.parse_args(); import trimesh
     objp = os.path.abspath(a.objekt); obj = json.load(open(objp)); od = os.path.dirname(objp); os.makedirs(a.aus, exist_ok=True)
     A = json.load(open(a.ausrichtung if os.path.isabs(a.ausrichtung) else os.path.join(ROOT, a.ausrichtung)))
@@ -114,7 +114,7 @@ def main():
             hauf.append(dict(mitte=[round(float(x), 2) for x in c], punkte=int(cnt[i]), seite=sn.get(s, s), hoehe_m=round(float(c[2] - lo[2]), 2)))
     bericht.update(modellkanten_proben=int(len(E)), modellkanten_belegt=round(float(belegt.mean()), 3), praezision=round(prae, 3), recall=round(rec, 3), f1=round(f1, 3), tol_m=a.tol,
                    band_m=a.band, fehlende_kanten_haufen=hauf[:20], hinweis="Recall niedrig = Fotokanten ohne Modellkante (fehlende Features: Fenster, Gesimse, Lisenen ...); Praezision niedrig = Modellkanten ohne Fotokante (erfundene/falsch liegende Form)")
-    json.dump(bericht, open(os.path.join(a.aus, "kanten_bericht.json"), "w"), indent=1, ensure_ascii=False)
+    json.dump(bericht, open(os.path.join(a.aus, f"kanten_bericht{a.name}.json"), "w"), indent=1, ensure_ascii=False)
     import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
     fig, ax = plt.subplots(1, 3, figsize=(18, 7)); ok = dP < a.tol; rng = np.random.default_rng(0); sel = rng.choice(len(P), min(len(P), 120000), replace=False)
     for k, (i, j, t) in enumerate([(0, 2, f"Ansicht entlang y ({sn.get('-y', '-y')})"), (1, 2, f"Ansicht entlang x ({sn.get('-x', '-x')})"), (0, 1, "Draufsicht")]):
@@ -123,8 +123,8 @@ def main():
         x.set_aspect("equal"); x.set_title(t)
     ax[0].legend(loc="upper left", markerscale=12, fontsize=8)
     fig.suptitle(f"{obj.get('name', '')} Kantenstufe: Praezision {prae:.2f}  Recall {rec:.2f}  F1 {f1:.2f}  (tol {a.tol} m, {len(P)} Sweep-Punkte)"); fig.tight_layout()
-    os.makedirs(os.path.join(od, "audit"), exist_ok=True); fig.savefig(os.path.join(od, "audit", "kanten3d.png"), dpi=90)
-    print(f"KANTEN: Praezision {prae:.3f} Recall {rec:.3f} F1 {f1:.3f}; fehlende Haufen {len(hauf)}; Bild {os.path.join(od, 'audit', 'kanten3d.png')}", flush=True); return 0
+    os.makedirs(os.path.join(od, "audit"), exist_ok=True); fig.savefig(os.path.join(od, "audit", f"kanten3d{a.name}.png"), dpi=90)
+    print(f"KANTEN: Praezision {prae:.3f} Recall {rec:.3f} F1 {f1:.3f}; fehlende Haufen {len(hauf)}; Bild {os.path.join(od, 'audit', f'kanten3d{a.name}.png')}", flush=True); return 0
 
 
 if __name__ == "__main__":

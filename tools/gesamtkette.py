@@ -394,6 +394,10 @@ def main():
             if os.path.exists(gp_): lauf(B, "bauen_mit_bauplan", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
             notiz(B, "bauplan", True, **erg_, hinweis="ANSEHEN: audit/innenwaende_auto.jpg (Tiefe je Fassade), audit/oeffnungen_innen.jpg, audit/rueckwand_auto.json; Generator-Belege 'Rueckwand' / 'Innenwand'")
     # --- Ende Stufe 'bauplan' ---
+    # 18.11.2026: die Kantenstufe bewertet den LoD2-Klotz VOR den Fassaden (Kaufhaus gk2 F1 0,01 - Fotokanten im Fensterband, der Klotz hat dort keine). Zweite Bewertung am
+    # FERTIGEN Modell mit demselben Sweep -> kanten_bericht_fertig.json, audit/kanten3d_fertig.png (Kernmethode: misst, ob Fassaden/Bauplan die Fotokanten treffen).
+    if (dran("bauplan") or dran("fassaden")) and os.path.exists(os.path.join(KD, "sweep.npz")) and os.path.exists(AU):
+        lauf(B, "kanten_fertig", [PY, "-u", "-I", "tools/kantenstufe.py", ZR, "--ausrichtung", AU, "--bilder", FV, "--aus", KD, "--nur_bewerten", "--name", "_fertig"], log, ok=(0, 4))
     if dran("seiten") and os.path.exists(AU):                           # 16.11.2026 Nutzer (Schwabentor Ostseite): "Er muss doch wissen, dass dort Bilder fehlen und die sich dann holen, notfalls downloaden. Alles muss in die Pipeline."
         # 18.11.2026: dicht/sparse (ENTZERRT, PINHOLE) ans Ende - Nachregistrieren braucht das Modell der Originalbilder zur Datenbank (Kaufhaus gk2i: Absturz nach 90 min)
         fo = os.path.join(D, "fassade"); sp = next((q_ for q_ in (os.path.join(P, "sparse_ba"), os.path.join(P, "sparse", "0"), os.path.join(P, "sfm", "sparse", "0"), os.path.join(P, "sfm", "sparse_dicht"), os.path.join(P, "sfm", "sparse"), os.path.join(P, "dicht", "sparse")) if os.path.exists(os.path.join(q_, "images.bin"))), None); db = next((q_ for q_ in (os.path.join(P, "db.db"), os.path.join(P, "sfm", "db.db")) if os.path.exists(q_)), os.path.join(P, "db.db"))
