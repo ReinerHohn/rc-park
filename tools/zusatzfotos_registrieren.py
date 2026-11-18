@@ -106,6 +106,8 @@ def merkmale(a):
     V = json.load(open(os.path.join(a.aus, "vorbereitet.json"))); names = sorted(V["bilder"]); db = os.path.join(a.aus, "db.db")
     if not os.path.exists(db):
         src = sqlite3.connect(f"file:{a.ref_db}?mode=ro", uri=True); dst = sqlite3.connect(db); src.backup(dst); dst.close(); src.close()      # Kopie, Referenz bleibt unberuehrt
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from colmap_db_schema import kameras_alt      # 18.11.2026: Datenbank vom neuen globalen Mapper (Spalte 'source') -> pycolmap 4.2.1 oeffnet sie sonst nicht
+    if kameras_alt(db): print("Datenbank-Kopie auf das pycolmap-4.2.1-Schema zurueckgefuehrt (Kameratabelle 'source' -> prior_focal_length)", flush=True)
     gr = collections.defaultdict(list)
     for n in names: gr[tuple(V["bilder"][n]["bild"])].append(n)         # Hoch-/Querformat = verschiedene Bildgroesse -> je Gruppe EINE Kamera (gleiche f, k1)
     for (W, H), nn in gr.items():

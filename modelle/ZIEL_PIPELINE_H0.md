@@ -42,6 +42,11 @@ Dokumentiere alle Versuche."  -> Diese Datei ist das Versuchsprotokoll (jeder Ve
   V1h 12:20 Job kaufhaus_gk2g --ab tore: Ausrichter mit robustem GPS 68/110 Geotags (Rest 2,4 m), Guete 48 %, RMS 0,5 m, Kamerahoehe 1,51 m - aber Kette pruefte die neue Loesung 0 nie (rc 5 im Kreislauf) -> Fix b9fa7e32.
   V1i 12:27 kaufhaus_gk2h: GPS-Tor rc 3 auf der GUTEN Lage (Massstab 0,80): das Tor trimmte nur 20 %, 38 % der Geotags falsch. Fix: RANSAC-Konsens im Tor (>= 40 %, < 10 m), Grenzen unveraendert.
   Probe: echte Lage Drehung -5,4 / Massstab 0,91 / Rest 2,4 m -> passt; kuenstlich 73 Grad x 0,65 -> rot (-78 Grad, 1,41); x 0,8 -> rot (Median 15,6 m). OFFEN: LoD2-Massstab 9 % kleiner als GPS (innerhalb 15 %).
+  gk2h nach gruener Lage (Loesung 0 neu, alle 5 Tore 0) bis Ende: 61 Stufen, 5 rot: fassaden_netz (7,6 GB frei < 26,5 GB Bedarf), fassaden (Folge), seiten_luecken
+  ('No registered database factory': der globale Mapper colmap-build ce2b5ab schreibt cameras mit Spalte 'source' -> pycolmap 4.2.1 oeffnet keine Kettendatenbank),
+  seiten (Folge), tor_gps (alte Lage vor dem Kreislauf). Fixes: netz_aus_dicht Ausweich-Arbeitsordner (RCPARK_AUSWEICH, Standard USB-SSD rc-park_auslagern, 67 GB frei);
+  tools/colmap_db_schema.py wandelt KOPIEN zurueck (source 3 EXIF -> prior 1; Kaufhaus 1364 Bilder, 149 Prior = 149 EXIF), zusatzfotos_registrieren ruft es nach dem Kopieren.
+  3D-Seite V1 (Wolke + LoD2) https://claude.ai/artifact/2UtaDZfwddHA4sDULQCJfj. V1j Kette --ab fassaden.
   Ideen falls V1b scheitert: (a) globaler Mapper nur auf eigenen Fotos + Commons, Videobilder danach registrieren (image_registrator); (b) Bildwahl auf ~700 Bilder nach Blickrichtungsabdeckung vor dem Mapper; (c) hierarchical_mapper testen (Reproduzierbarkeit messen).
 - V2 17.11. Kaufhaus Runde 2/3 (Agenten, Commits 1877c251, 920af251): Pipeline-Bugs gefunden (Fotoquellen, Brei, blindes Mass); Katalogteile wirken steif (-> Grundsatz Wandbild = Bauplan).
 - V3 17.11. Feinausrichtung Wandbild (eeafa1e7): Restversatz 1,2-2,5 -> 0,2-0,5 cm, Fugen-F1 0,417 -> 0,431; am Kaufhaus ohne Wirkung (Putz, Fotos aus Jahrzehnten).

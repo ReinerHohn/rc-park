@@ -15,11 +15,16 @@ def main():
     from scipy.spatial.transform import Rotation as Rot
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("dicht"); ap.add_argument("--aus"); ap.add_argument("--radius", type=float, default=60.0); ap.add_argument("--neu", action="store_true"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); name = os.path.basename(od); D = os.path.abspath(a.dicht); A = os.path.abspath(a.aus or os.path.join(os.path.dirname(D), "openmvs")); os.makedirs(A, exist_ok=True)
-    if not A.startswith("/media/oem/scan/"): print("ABBRUCH: Ausgabeordner muss auf der Datenplatte /media/oem/scan liegen (InterfaceCOLMAP schreibt ~5 GB; 15.11.2026 lief ein Test so die Root-Platte voll)"); return 1
+    if not A.startswith("/media/oem/scan/"): print("ABBRUCH: Ausgabeordner muss auf der Datenplatte /media/oem/scan liegen (Arbeitsordner darf ausweichen, siehe RCPARK_AUSWEICH) (InterfaceCOLMAP schreibt ~5 GB; 15.11.2026 lief ein Test so die Root-Platte voll)"); return 1
     import shutil; ZIEL = A; nb_ = len(os.listdir(os.path.join(D, "images"))) if os.path.isdir(os.path.join(D, "images")) else 0; lokal = f"/media/oem/scan/rc-park_daten/{name}_netzarbeit"
-    if not os.path.exists(os.path.join(A, "mesh.ply")) and (not os.path.realpath(A).startswith("/media/oem/scan/") or shutil.disk_usage(A).free / 1e9 < 0.03 * nb_ + 1.5) and shutil.disk_usage("/media/oem/scan").free / 1e9 >= 0.03 * nb_ + 1.5:
-        A = lokal; os.makedirs(A, exist_ok=True); print(f"Arbeitsordner {A} (der Ordner neben der dichten Wolke liegt auf einer anderen/vollen Platte: {os.path.realpath(ZIEL)})")      # 17.11.2026: kaufhaus_gk/pipe ist eine Verknuepfung auf die externe Platte (4 GB frei) - dort brach InterfaceCOLMAP mit Schreibfehler ab
-    elif os.path.exists(os.path.join(lokal, "mesh.ply")): A = lokal
+    # 18.11.2026 (Kaufhaus gk2h: 7,6 GB frei, Bedarf 26,5 GB): Ausweich-Arbeitsordner auf anderen Platten (RCPARK_AUSWEICH, ':'-getrennt; Standard die rc-park-Auslagerung der USB-SSD 20757D2E,
+    # Nutzerfreigabe 17.11.). Nur der Arbeitsordner (scene.mvs, dmap-Kopien, mesh.ply) liegt dort; das Ergebnis mesh_modell_ausschnitt.npz kommt wie bisher nach ZIEL.
+    ausweich = [lokal] + [os.path.join(d_, f"{name}_netzarbeit") for d_ in os.environ.get("RCPARK_AUSWEICH", "/media/oem/20757D2E455CA0E8/rc-park_auslagern").split(":") if d_ and os.path.isdir(d_)]
+    bedarf_ = 0.03 * nb_ + 1.5; frei_ = lambda p_: shutil.disk_usage(p_ if os.path.isdir(p_) else os.path.dirname(p_)).free / 1e9
+    if not os.path.exists(os.path.join(A, "mesh.ply")) and (not os.path.realpath(A).startswith("/media/oem/scan/") or frei_(A) < bedarf_):
+        vorh = [d_ for d_ in ausweich if os.path.exists(os.path.join(d_, "mesh.ply"))]; platz = [d_ for d_ in ausweich if frei_(d_) >= bedarf_]
+        if vorh: A = vorh[0]
+        elif platz: A = platz[0]; os.makedirs(A, exist_ok=True); print(f"Arbeitsordner {A} ({frei_(A):.0f} GB frei; neben der dichten Wolke {os.path.realpath(ZIEL)} nur {frei_(ZIEL):.1f} GB, Bedarf {bedarf_:.1f} GB)")      # 17.11.2026: kaufhaus_gk/pipe ist eine Verknuepfung auf die externe Platte (4 GB frei) - dort brach InterfaceCOLMAP mit Schreibfehler ab
     mesh = os.path.join(A, "mesh.ply"); scene = os.path.join(A, "scene.mvs"); fused = os.path.join(D, "fused.ply")
     if os.path.exists(mesh) and os.path.exists(fused) and os.path.getmtime(fused) > os.path.getmtime(mesh) and not a.neu:      # 17.11.2026: nach einer NEUEN dichten Wolke wurde das Netz der alten wiederverwendet - mit der neuen Ausrichtung
         print(f"Netz {mesh} ist AELTER als die dichte Wolke {fused} - wird neu gerechnet (vorher: altes Netz im neuen Rahmen = falsch liegende Reliefs, ohne Meldung)"); a.neu = True      # umgerechnet (anderer SfM-Rahmen)
