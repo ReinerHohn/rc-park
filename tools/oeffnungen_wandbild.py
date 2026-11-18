@@ -32,10 +32,14 @@ def zonen(elemente, luecke=0.35, rand_z=0.3):
             else: G.append([e["u0"], e["u1"], e["z0"], e["z1"]])
         return G
     Z = [("fenster", *g) for g in gruppe("fenster")]
+    benutzt = set()
     for g in gruppe("tuer"):
-        for b in [e for e in elemente if e["klasse"] == "bogen"]:
-            if b["u0"] - 0.2 <= g[0] and g[1] <= b["u1"] + 0.2 and b["z0"] - rand_z <= g[2]: g = [min(g[0], b["u0"]), max(g[1], b["u1"]), g[2], max(g[3], b["z1"])]
+        for k_, b in enumerate([e for e in elemente if e["klasse"] == "bogen"]):
+            if b["u0"] - 0.2 <= g[0] and g[1] <= b["u1"] + 0.2 and b["z0"] - rand_z <= g[2]: g = [min(g[0], b["u0"]), max(g[1], b["u1"]), g[2], max(g[3], b["z1"])]; benutzt.add(k_)
         Z.append(("tuer", *g))
+    # 18.11.2026 (Kaufhaus gk2 f02: Erkenner fand 4 Laubenboegen, nur der mit erkannter Tuer kam an - die 3 anderen fielen still weg): Bogen ohne Tuer = eigene Zone
+    for k_, b in enumerate([e for e in elemente if e["klasse"] == "bogen"]):
+        if k_ not in benutzt: Z.append(("bogen", b["u0"], b["u1"], b["z0"], b["z1"]))
     return Z
 
 
@@ -119,10 +123,73 @@ def umriss(bild, F, zone, rand=0.15, oeffnen=0.03, min_m2=0.05):
     return zu(c), stege, (mk, hm, i0, j0), A
 
 
+def tiefe_karte(npz, zone, unten=0.6, wand_band=1.0):
+    """Offen/tief aus der Tiefenkarte von fassade_tiefe.py (Ebenen-Sweep bis -15 m, Zellen ~6 cm): Median der sicheren Zellen im unteren Teil der Zone gegen den Median
+    im Wandband UEBER der Zone. Rueckgabe (tiefe_m, anteil_tief, n_zellen) oder None. Fuer Laubenboegen: 4 m Tiefe liegen ausserhalb des Parallaxen-Sweeps (-0,2..1,2 m)."""
+    Z = np.load(npz); w, g, c, u0, z1 = Z["w"], Z["gut"], float(Z["zelle"]), float(Z["u0"]), float(Z["z1"]); H, W = w.shape
+    ix = lambda u: int(np.clip((u - u0) / c, 0, W)); iz = lambda z: int(np.clip((z1 - z) / c, 0, H))
+    zu0, zu1, zz0, zz1 = zone; zm = zz0 + unten * (zz1 - zz0)
+    A = w[iz(zm):iz(zz0), ix(zu0):ix(zu1)]; GA = g[iz(zm):iz(zz0), ix(zu0):ix(zu1)]; B = w[iz(zz1 + wand_band):iz(zz1), ix(zu0):ix(zu1)]; GB = g[iz(zz1 + wand_band):iz(zz1), ix(zu0):ix(zu1)]
+    if GA.sum() < 20 or GB.sum() < 20: return None
+    ww = float(np.median(B[GB])); t = ww - A[GA]
+    return float(np.median(t)), float((t > 1.0).mean()), int(GA.sum())
+
+
+def bogen_umriss(bild, F, zone, rand=0.3, min_punkte=12):
+    """Bogenoeffnung aus den BILDKANTEN des Wandbilds (Gestalt aus dem Foto, kein Musterteil): Pfeilerflanken = staerkste senkrechte Kante im aeusseren Drittel links/rechts
+    (untere Haelfte der Zone), Bogenlinie = je Spalte zwischen den Flanken die staerkste waagerechte Kante in der oberen Haelfte, Kreis per RANSAC durch diese Punkte.
+    Umriss: Boden der Zone - Flanke - Kreisbogen - Flanke. Liefert (umriss [[u, z]], info) oder None."""
+    r = F["raster"]; zl = r["zelle"]; u0, u1, z0, z1 = zone
+    j0, j1 = max(int((u0 - rand - r["u0"]) / zl), 0), min(int(np.ceil((u1 + rand - r["u0"]) / zl)), r["nu"]); i0, i1 = max(int((r["z1"] - z1 - rand) / zl), 0), min(int(np.ceil((r["z1"] - z0) / zl)), r["nz"])
+    A = cv2.cvtColor(bild[i0:i1, j0:j1], cv2.COLOR_BGR2GRAY).astype(np.float32)
+    if A.size == 0 or (A > 0).mean() < 0.6: return None
+    s_ = max(1.0, 0.03 / zl); A = cv2.GaussianBlur(A, (0, 0), s_); gx = np.abs(cv2.Sobel(A, cv2.CV_32F, 1, 0, ksize=3)); gy = np.abs(cv2.Sobel(A, cv2.CV_32F, 0, 1, ksize=3))
+    H, W = A.shape; U = lambda j: r["u0"] + (j0 + j + 0.5) * zl; Zz = lambda i: r["z1"] - (i0 + i + 0.5) * zl
+    # 18.11.2026: Flanken NICHT aus den Pfeilerkanten der unteren Haelfte (Personen, Staende davor - Kaufhaus Bogen 1 Flanke an einer Hallenkante, Bogen 2 ohne Umriss),
+    # sondern aus dem Kreis: Bogenkanten ueber die ganze Breite (ohne Rand 8 %), Flanken = Kreismitte -+ Radius (Rundbogen, Kaempfer auf Hoehe der Mitte).
+    jl, jr = int(0.08 * W), int(0.92 * W); pts = []
+    for j in range(jl, jr, max(1, (jr - jl) // 160)):
+        col = gy[: int(0.6 * H), j]
+        if col.max() <= 0: continue
+        med_ = 2.0 * np.median(col) + 1e-3; sep_ = max(2, int(0.05 / zl)); c2_ = col.copy()
+        for _k in range(3):      # bis zu 3 Kantenspitzen je Spalte: Archivolte (aussen) UND Laibung (innen) - die staerkste ist oft die aeussere Profilkante
+            i = int(np.argmax(c2_))
+            if c2_[i] <= med_: break
+            pts.append((U(j), Zz(i))); c2_[max(0, i - sep_):i + sep_ + 1] = 0
+    if len(pts) < min_punkte: return None
+    P = np.array(pts); rng = np.random.default_rng(0); best = None; tol = 0.045; kreise = []
+    spalten = lambda inl_: len(np.unique(np.round(P[inl_, 0], 3)))      # Stuetzung je SPALTE: eine Profillinie hat zwei Kanten und zaehlte sonst doppelt (Laibung verlor gegen die Archivolte)
+    for _ in range(1500):
+        a_, b_, c_ = P[rng.choice(len(P), 3, replace=False)]
+        M = np.array([[2 * (b_[0] - a_[0]), 2 * (b_[1] - a_[1])], [2 * (c_[0] - a_[0]), 2 * (c_[1] - a_[1])]]); v = np.array([b_ @ b_ - a_ @ a_, c_ @ c_ - a_ @ a_])
+        if abs(np.linalg.det(M)) < 1e-6: continue
+        m = np.linalg.solve(M, v); R = np.linalg.norm(a_ - m); inl = np.abs(np.linalg.norm(P - m, axis=1) - R) < tol
+        bz_ = u1 - u0
+        if not (0.25 * bz_ < R < 0.62 * bz_) or abs(m[0] - 0.5 * (u0 + u1)) > 0.2 * bz_ or not (z0 < m[1] < z1): continue
+        kreise.append((m, R, inl, spalten(inl)))
+        if best is None or kreise[-1][3] > best[3]: best = kreise[-1]
+    if best is None or best[2].sum() < 0.1 * len(P): return None
+    # innerster gut gestuetzter Kreis mit (fast) gleicher Mitte = Laibung (Kaufhaus: bester Kreis lag auf der Archivolte, Pfeiler blieben 0,2 statt ~0,8 m)
+    inn_ = [k_ for k_ in kreise if k_[3] >= 0.6 * best[3] and np.linalg.norm(k_[0] - best[0]) < 0.2 and k_[1] < best[1] - 0.05]
+    if inn_: best = min(inn_, key=lambda k_: (k_[1], -k_[3]))
+    m, R, inl = best[:3]
+    for _it in range(3):      # Ausgleich (algebraischer Kreis) ueber die Inlier, dann Inlier neu
+        Q = P[inl]; Am = np.c_[2 * Q, np.ones(len(Q))]; sol = np.linalg.lstsq(Am, (Q ** 2).sum(1), rcond=None)[0]; m = sol[:2]; R = float(np.sqrt(sol[2] + m @ m)); inl = np.abs(np.linalg.norm(P - m, axis=1) - R) < tol
+    ul, ur = float(m[0] - R + 1e-3), float(m[0] + R - 1e-3); zb = z0
+    def zk(u): q = R * R - (u - m[0]) ** 2; return m[1] + np.sqrt(q) if q > 0 else None
+    zl_, zr_ = zk(ul), zk(ur)
+    if zl_ is None or zr_ is None: return None
+    bog = [[round(float(u), 3), round(float(zk(u)), 3)] for u in np.linspace(ul, ur, 33)]
+    um = [[round(ul, 3), round(zb, 3)]] + bog + [[round(ur, 3), round(zb, 3)]]
+    return um, dict(flanke_links=round(ul, 3), flanke_rechts=round(ur, 3), kreis_mitte=[round(float(m[0]), 3), round(float(m[1]), 3)], radius=round(float(R), 3),
+                    scheitel=round(float(m[1] + R), 3), kaempfer=[round(float(zl_), 3), round(float(zr_), 3)], bogenpunkte=int(len(P)), auf_kreis=round(float(inl.mean()), 2))
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("fein", help="Ordner mit fassaden.json, ortho_<id>_fein.png, ortho_<id>_einzeln/ (1 cm)")
     ap.add_argument("--grob", help="Ordner mit elemente.json (fassade_parsing) und ortho_<id>.png (Ersatzbild, wo das feine leer ist)"); ap.add_argument("--nur"); ap.add_argument("--aus", required=True)
     ap.add_argument("--loch_stufe", type=float, default=0.06, help="Tiefe (m) ab der eine Zone als Oeffnung gilt (darunter flaches Feld)")
+    ap.add_argument("--tiefe_ordner", help="Ordner mit tiefe_fNN.npz (fassade_tiefe.py, Sweep bis -15 m): Boegen offen/tief aus dieser Karte"); ap.add_argument("--bogen_tief", type=float, default=1.0, help="Bogen gilt als offen, wenn der Median so viel (m) hinter der Wand liegt")
     ap.add_argument("--l_min", type=float, default=-0.2); ap.add_argument("--l_max", type=float, default=1.2); ap.add_argument("--l_schritt", type=float, default=0.02)
     a = ap.parse_args(); C = kameras(a.objekt); Ls = np.arange(a.l_min, a.l_max + 1e-9, a.l_schritt)
     FA = {F["id"]: F for F in json.load(open(os.path.join(a.fein, "fassaden.json")))["fassaden"]}
@@ -136,6 +203,18 @@ def main():
         oe = []; FEIN[fid] = fein
         for kl, u0, u1, z0, z1 in zonen(EL[fid]["elemente"]):
             e = dict(klasse=kl, zone=[round(u0, 3), round(u1, 3), round(z0, 3), round(z1, 3)])
+            npz_ = os.path.join(a.tiefe_ordner, f"tiefe_{fid}.npz") if a.tiefe_ordner else ""
+            if kl == "bogen" or (kl == "tuer" and npz_ and os.path.exists(npz_)):      # 18.11.2026: Bogen (Laube) - Tiefe aus der Sweep-Karte, Gestalt aus Bildkanten
+                tk = tiefe_karte(npz_, (u0, u1, z0, z1)) if npz_ and os.path.exists(npz_) else None
+                if tk and tk[0] >= a.bogen_tief and tk[1] >= 0.5:
+                    bu = bogen_umriss(fein, F, (u0, u1, z0, z1))
+                    e.update(klasse="bogen", tiefe=round(tk[0], 2), anteil_tief=round(tk[1], 2), zellen=tk[2], flach=False)
+                    if bu: e.update(umriss=bu[0], stege=[], bogen=bu[1], quelle=f"Zone OWLv2 ({kl}); offen/Tiefe aus Ebenen-Sweep-Karte {os.path.basename(npz_)} (Median {tk[0]:.2f} m hinter der Wand, {tk[1] * 100:.0f} % der Zellen > {a.bogen_tief} m); Umriss aus Bildkanten (Pfeilerflanken + Kreis-RANSAC durch {bu[1]['bogenpunkte']} Bogenkantenpunkte, {bu[1]['auf_kreis'] * 100:.0f} % auf dem Kreis)")
+                    else: e.update(hinweis="offen (Tiefe), aber Bogenlinie in den Bildkanten nicht gefunden - kein Umriss, nicht gebaut")
+                    oe.append(e); print(f"{fid} bogen   u {u0:6.2f}..{u1:6.2f} z {z0:4.2f}..{z1:4.2f}: OFFEN, {tk[0]:.2f} m tief ({tk[1] * 100:.0f} % tief, {tk[2]} Zellen)" + (f", Flanken {bu[1]['flanke_links']:.2f}..{bu[1]['flanke_rechts']:.2f}, Kaempfer {bu[1]['kaempfer']}, Scheitel {bu[1]['scheitel']:.2f}, {bu[1]['auf_kreis'] * 100:.0f} % auf Kreis" if bu else " - KEIN Umriss aus Kanten")); continue
+                if kl == "bogen":
+                    e.update(tiefe=None if not tk else round(tk[0], 2), flach=True, hinweis="Bogen nicht offen (Tiefenkarte) oder keine Karte - Blendbogen/Nische, nicht gebaut"); oe.append(e)
+                    print(f"{fid} bogen   u {u0:6.2f}..{u1:6.2f} z {z0:4.2f}..{z1:4.2f}: nicht offen ({'keine Tiefenkarte' if not tk else f'{tk[0]:.2f} m, {tk[1] * 100:.0f} % tief'})"); continue
             ts = tiefe_sweep(F, os.path.join(a.fein, f"ortho_{fid}_einzeln"), C, (u0, u1, z0, z1), Ls)
             if ts is None: e.update(tiefe=None, hinweis="Tiefe nicht messbar (zu wenige/zu aehnliche Fotos)"); oe.append(e); continue
             li, lr, ki, kr, nf = ts; e.update(tiefe=round(li - lr, 3), tiefe_innen=round(li, 3), tiefe_ring=round(lr, 3), ncc_innen=round(float(np.nanmax(ki)), 3), ncc_ring=round(float(np.nanmax(kr)), 3), fotos=nf)

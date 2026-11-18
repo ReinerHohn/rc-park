@@ -90,4 +90,14 @@ k2, bel = laube_aus_wandbild(k, [iw], sys.argv[1]); dv = k.volume() - k2.volume(
 k3, b3 = laube_aus_wandbild(k, [dict(iw, u=[20, 30])], sys.argv[1]); assert k3.volume() == k.volume() and "NICHT" in b3[0]["element"]
 PY
 k=$($P -I tools/test_farbteile_neigung.py 2>&1); [ $? = 0 ] && ok "Druckplatten folgen der oertlichen Wand (geneigte Ebene, Stufen, eine Platte, Restwand >= 0,6 mm)" || { rot "druck_farbteile Plattentiefe"; echo "$k" | tail -2 | cut -c1-300; }
+$P -I - <<'PY' > /dev/null 2>&1 && ok "Bogen aus Bildkanten: Laibung statt Archivolte, Flanken auf 5 cm, Bogen ohne Tuer = eigene Zone" || rot "oeffnungen_wandbild Bogen (bogen_umriss/zonen)"
+import sys; sys.path.insert(0, "tools"); import numpy as np, cv2, oeffnungen_wandbild as O
+zl = 0.01; W, H = 800, 600; im = np.full((H, W, 3), (90, 90, 190), np.uint8)
+F = dict(raster=dict(zelle=zl, u0=0.0, z1=6.0, nu=W, nz=H)); px = lambda u, z: (int(u / zl), int((6.0 - z) / zl))
+cv2.circle(im, px(4.0, 2.5), int(1.8 / zl), (40, 40, 120), 6)                                 # Archivolte (Profillinie aussen)
+cv2.ellipse(im, px(4.0, 2.5), (int(1.5 / zl), int(1.5 / zl)), 0, 180, 360, (30, 30, 40), -1); cv2.rectangle(im, px(2.5, 2.5), px(5.5, 0.0), (30, 30, 40), -1)   # dunkle Oeffnung
+r = O.bogen_umriss(im, F, (2.0, 6.0, 0.0, 4.5)); assert r is not None, "kein Umriss"
+b = r[1]; assert abs(b["flanke_links"] - 2.5) < 0.05 and abs(b["flanke_rechts"] - 5.5) < 0.05 and abs(b["scheitel"] - 4.0) < 0.05, b
+Z = O.zonen([dict(klasse="bogen", u0=2.0, u1=6.0, z0=0.0, z1=4.5)]); assert Z == [("bogen", 2.0, 6.0, 0.0, 4.5)], Z
+PY
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F

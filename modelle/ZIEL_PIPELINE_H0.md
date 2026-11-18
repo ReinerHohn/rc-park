@@ -53,6 +53,15 @@ Dokumentiere alle Versuche."  -> Diese Datei ist das Versuchsprotokoll (jeder Ve
   < 5 cm, Duplikate aus zwei Quellordnern) und Sichtanteil >= 50 % - beide bleiben (sinnvoll, schaden nicht). Fix fassade_tiefe: Randminima nicht 'gut'.
   Ergebnis: f02 Innenwand i00 4,26 m hinter der Wand (Hand 4,25), Signifikanz 23,7, u -9,56..4,73; Schwabentor weiter 'keine Innenwand'; Schnelltest 0, Regression null4 identisch.
   Platz: Datenplatte < 5 GB (Schnelltest 2 rot = Platztor) -> normal_maps gk2 (12 GB) per auslagern.sh auf SSD, 17 GB frei.
+  V1k gk2j (ab bauplan): Innenwand i00 in der Kette gefunden, Wandbild i00 (70 m2, 40 Fotos), Bau rc 0 - ABER Laube nur mit 1 Oeffnung: oeffnungen_wandbild nahm einen
+  Bogen-Kasten nur, wenn er eine erkannte TUER enthielt; die 3 anderen Laubenboegen (Erkenner 7-9/9) fielen still weg; Umriss des einen per Farbe zerfranst (Halle = gleicher Sandstein).
+  Fix: Bogen ohne Tuer = eigene Zone; offen/tief aus der Sweep-Karte der Innenwandsuche (bauplan/tiefe/tiefe_fNN.npz; Kette: innenwaende VOR oeffnungen_aussen, --tiefe_ordner);
+  Gestalt aus Bildkanten (bogen_umriss: bis 3 Kantenspitzen je Spalte, Kreis-RANSAC, Stuetzung je Spalte, innerster konzentrischer Kreis = Laibung, Ausgleich; Flanken = Mitte -+ R).
+  Sackgassen: Pfeilerflanken aus senkrechten Kanten der unteren Haelfte (Personen/Staende davor: Flanke an Hallenkante, Bogen 2 ohne Umriss); staerkste Kante = Archivolte
+  (Pfeiler 0,2 m); 'innerster Kreis' nur seitlich gleich (R 1,5 statt ~1,9); Stuetzung je Punkt (Profillinie zaehlt doppelt). Ergebnis f02: 4 Boegen offen (5,2-7,9 m tief),
+  Spannweiten 4,05/3,41/4,25/3,94 m, Pfeiler 0,78/0,52/0,71, Scheitel 4,29-4,40 (Handmodell Saeulenabstand 4,4-4,55 -> Spannweite ~3,7: ~5 % breiter). Schnelltest Bogen neu.
+  Seiten-Absturz gk2i: Kette gab ENTZERRTES dicht/sparse (PINHOLE) zum Nachregistrieren -> kPinhole vs kSimpleRadial nach 90 min; Fix Reihenfolge + Pruefung beim Start.
+  Kantenstufe: bewertet den LoD2-Klotz VOR den Fassaden (Fotokanten im Fensterband, Klotz ohne Kanten) -> neue Stufe kanten_fertig am fertigen Modell.
   Ideen falls V1b scheitert: (a) globaler Mapper nur auf eigenen Fotos + Commons, Videobilder danach registrieren (image_registrator); (b) Bildwahl auf ~700 Bilder nach Blickrichtungsabdeckung vor dem Mapper; (c) hierarchical_mapper testen (Reproduzierbarkeit messen).
 - V2 17.11. Kaufhaus Runde 2/3 (Agenten, Commits 1877c251, 920af251): Pipeline-Bugs gefunden (Fotoquellen, Brei, blindes Mass); Katalogteile wirken steif (-> Grundsatz Wandbild = Bauplan).
 - V3 17.11. Feinausrichtung Wandbild (eeafa1e7): Restversatz 1,2-2,5 -> 0,2-0,5 cm, Fugen-F1 0,417 -> 0,431; am Kaufhaus ohne Wirkung (Putz, Fotos aus Jahrzehnten).

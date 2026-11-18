@@ -370,9 +370,10 @@ def main():
         if not all(os.path.exists(os.path.join(fo, f_)) for f_ in ("fassaden.json", "elemente.json")): notiz(B, "bauplan", False, fehler=f"{fo}/fassaden.json oder elemente.json fehlt (Stufe fenster: fassade_ortho + fassade_parsing)")
         else:
             oa_ = os.path.join(Z, "audit", "oeffnungen_aussen.json")
-            if os.path.isdir(ffn) and lauf(B, "bauplan_oeffnungen_aussen", [PY, "-W", "ignore", "-I", "tools/oeffnungen_wandbild.py", ZR, ffn, "--grob", fo, "--aus", oa_], log)[0] == 0: pass
-            erg_["rueckwand_rc"] = lauf(B, "bauplan_rueckwand", [PY, "-I", "tools/rueckwand_tiefe.py", ZR, oa_, "--schreiben"], log, ok=(0, 3))[0]
+            # 18.11.2026: Innenwandsuche ZUERST - ihre Tiefenkarten (bauplan/tiefe/tiefe_fNN.npz, Sweep bis Gebaeudetiefe) entscheiden, ob ein Bogen offen ist (Laube; Kaufhaus: 3 von 4 Boegen fielen weg)
             erg_["innenwaende_rc"] = lauf(B, "bauplan_innenwaende", [PY, "-W", "ignore", "-I", "tools/innenwaende_finden.py", ZR, fo, "--arbeit", os.path.join(bp_, "tiefe"), "--schreiben"], log, ok=(0, 3))[0]
+            if os.path.isdir(ffn) and lauf(B, "bauplan_oeffnungen_aussen", [PY, "-W", "ignore", "-I", "tools/oeffnungen_wandbild.py", ZR, ffn, "--grob", fo, "--aus", oa_, "--tiefe_ordner", os.path.join(bp_, "tiefe")], log)[0] == 0: pass
+            erg_["rueckwand_rc"] = lauf(B, "bauplan_rueckwand", [PY, "-I", "tools/rueckwand_tiefe.py", ZR, oa_, "--schreiben"], log, ok=(0, 3))[0]
             oz_ = json.load(open(ZJ)); IW_ = [x_["name"] for x_ in oz_.get("innenwaende", []) if x_.get("auto")]; IO_ = oz_.get("innenwand_oeffnungen")
             if IW_ and not (IO_ and not IO_.get("auto")):
                 nur_ = ",".join(IW_); si_ = os.path.join(bp_, "sicht.stl"); io_ = os.path.join(bp_, "innen"); iof_ = io_ + "_fein"; oi_ = os.path.join(Z, "audit", "oeffnungen_innen.json")
