@@ -127,13 +127,13 @@ def main():
     a = ap.parse_args(); C = kameras(a.objekt); Ls = np.arange(a.l_min, a.l_max + 1e-9, a.l_schritt)
     FA = {F["id"]: F for F in json.load(open(os.path.join(a.fein, "fassaden.json")))["fassaden"]}
     EL = json.load(open(os.path.join(a.grob or a.fein, "elemente.json")))["fassaden"]; GR = {F["id"]: F for F in json.load(open(os.path.join(a.grob, "fassaden.json")))["fassaden"]} if a.grob else {}
-    aus = {}; bilder = []
+    aus = {}; bilder = []; FEIN = {}
     for fid, F in FA.items():
         if (a.nur and fid not in a.nur.split(",")) or fid not in EL: continue
         fein = cv2.imread(os.path.join(a.fein, f"ortho_{fid}_fein.png")); grob = cv2.imread(os.path.join(a.grob, f"ortho_{fid}.png")) if a.grob else None
         if grob is not None and fein is not None:      # Ersatz: grobes Ortho auf das feine Raster ziehen, wo das feine leer ist (gleiche Ebene, gleicher Rahmen)
             g2 = cv2.resize(grob, (fein.shape[1], fein.shape[0]), interpolation=cv2.INTER_CUBIC); leer = fein.sum(2) == 0; fein[leer] = g2[leer]
-        oe = []
+        oe = []; FEIN[fid] = fein
         for kl, u0, u1, z0, z1 in zonen(EL[fid]["elemente"]):
             e = dict(klasse=kl, zone=[round(u0, 3), round(u1, 3), round(z0, 3), round(z1, 3)])
             ts = tiefe_sweep(F, os.path.join(a.fein, f"ortho_{fid}_einzeln"), C, (u0, u1, z0, z1), Ls)
@@ -150,13 +150,15 @@ def main():
     json.dump(aus, open(a.aus, "w"), indent=1, ensure_ascii=False)
     tafeln = []                                                                  # Kontrollbild je Zone: Ausschnitt | Maske+Umriss | Tiefenkurven
     for fid, e, um, ki, kr in bilder:
-        F = FA[fid]; r = F["raster"]; zl = r["zelle"]; u0, u1, z0, z1 = e["zone"]
+        F = FA[fid]; r = F["raster"]; zl = r["zelle"]; u0, u1, z0, z1 = e["zone"]; fein = FEIN.get(fid)      # 18.11.2026: vorher das Bild der LETZTEN Fassade fuer alle Tafeln
+        if fein is None and um is None: continue
         A = fein[max(int((r["z1"] - z1 - 0.15) / zl), 0):int((r["z1"] - z0 + 0.15) / zl), max(int((u0 - 0.15 - r["u0"]) / zl), 0):int((u1 + 0.15 - r["u0"]) / zl)].copy() if um is None else um[3].copy()
         B_ = A.copy()
         if um is not None:
             mk, hm, i0, j0 = um[2]; B_[mk > 0] = (0.5 * B_[mk > 0] + (0, 0, 127)).astype(np.uint8)
             P = np.array([[(u_ - r["u0"]) / zl - 0.5 - j0, (r["z1"] - z_) / zl - 0.5 - i0] for u_, z_ in e["umriss"]], np.int32); cv2.polylines(B_, [P], True, (0, 255, 255), 2)
             for s in e["stege"]: cv2.polylines(B_, [np.array([[(u_ - r["u0"]) / zl - 0.5 - j0, (r["z1"] - z_) / zl - 0.5 - i0] for u_, z_ in s], np.int32)], True, (255, 255, 0), 1)
+        if A.size == 0 or A.shape[0] < 2 or A.shape[1] < 2: continue          # 18.11.2026: Zone am Rand des Rasters (Schwabentor) -> leerer Ausschnitt, cv2.resize stuerzte ab (JSON war schon geschrieben)
         h = 300; s_ = h / A.shape[0]; A = cv2.resize(A, None, fx=s_, fy=s_); B_ = cv2.resize(B_, None, fx=s_, fy=s_)
         G = np.full((h, 260, 3), 255, np.uint8)
         for k_, col in ((ki, (0, 0, 255)), (kr, (0, 160, 0))):

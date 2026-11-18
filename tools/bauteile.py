@@ -200,12 +200,14 @@ def bogen_querschnitt(form, breite, kaempfer, scheitel, unten):
     return rundbogen(breite, unten, kaempfer + breite / 2)
 
 
-def oeffnungen_aus_wandbild(koerper, datei, ncc_min=0.2, ersatz=None, steg_tiefe=0.05, vor=0.05, nur=None):
+def oeffnungen_aus_wandbild(koerper, datei, ncc_min=0.2, ersatz=None, steg_tiefe=0.05, vor=0.05, nur=None, nur_frei=False, frei_tiefe=0.3, frei_anteil=0.5):
     """OEFFNUNGEN AUS DEM WANDBILD bauen (18.11.2026, Rueckwand/Laube; Datei von tools/oeffnungen_wandbild.py): je Oeffnung der Bildumriss als Nische bis zur
     gemessenen Tiefe (Parallaxe der Einzelfoto-Orthos) - der flache Nischengrund IST die Rueckwand nach Regel A (Glas/Torblatt in Leibungstiefe). Bei Fenstern
     die Stege (Pfosten/Kaempfer/Rahmen = Zellen in Wandfarbe innerhalb des Umrisses) steg_tiefe dick vor dem Grund. 'flach' (Tafel, Bild) wird nicht gebaut.
     Tiefe unsicher (NCC innen < ncc_min): ersatz[klasse] = (tiefe, quelle) aus objekt.json (benannte Quelle), sonst Tiefe der sichersten Oeffnung derselben Klasse auf derselben Wand (ANNAHME), sonst nicht gebaut.
-    VOR aushoehlen aufrufen: die Hohlraumschale folgt dann der Nische (kein Durchblick ins Innere). nur = Liste von Fassaden-ids. Liefert (koerper, belege)."""
+    VOR aushoehlen aufrufen: die Hohlraumschale folgt dann der Nische (kein Durchblick ins Innere). nur = Liste von Fassaden-ids. Liefert (koerper, belege).
+    nur_frei (18.11.2026, Generator-Vorlage der Kette): eine Oeffnung wird nur gebaut, wenn vor ihr Luft ist (Sonde frei_tiefe vor der Wandebene ueber dem Umriss zu
+    < frei_anteil gefuellt) - im Kettenmodell ist eine Innenwand ohne freilegendes Bauteil (Laube) noch im Vollkoerper; dort geschnitten gaebe es eingeschlossene Hohlraeume (Luftinseln)."""
     import json, os
     if not os.path.exists(datei): return koerper, []
     belege = []; ersatz = ersatz or {}
@@ -215,7 +217,7 @@ def oeffnungen_aus_wandbild(koerper, datei, ncc_min=0.2, ersatz=None, steg_tiefe
         sicher = {}
         for e in F["oeffnungen"]:
             if e.get("tiefe") is not None and not e.get("flach") and e.get("ncc_innen", 0) >= ncc_min and e.get("ncc_innen", 0) > sicher.get(e["klasse"], (0, 0))[1]: sicher[e["klasse"]] = (e["tiefe"], e["ncc_innen"], e["zone"])
-        ab = None; zu = None; liste = []
+        ab = None; zu = None; liste = []; verdeckt = []
         for e in F["oeffnungen"]:
             if e.get("flach") or not e.get("umriss"): continue
             if e.get("tiefe") is not None and e.get("ncc_innen", 0) >= ncc_min: T, q = e["tiefe"], "gemessen (Parallaxe, NCC %.2f)" % e["ncc_innen"]
@@ -224,6 +226,9 @@ def oeffnungen_aus_wandbild(koerper, datei, ncc_min=0.2, ersatz=None, steg_tiefe
             else: continue
             P = [[s * u, z] for u, z in e["umriss"]]
             if sum(P[i][0] * P[(i + 1) % len(P)][1] - P[(i + 1) % len(P)][0] * P[i][1] for i in range(len(P))) < 0: P = P[::-1]
+            if nur_frei:
+                u_ = [p_[0] for p_ in e["umriss"]]; z_ = [p_[1] for p_ in e["umriss"]]; so = W.kasten(min(u_), max(u_), min(z_), max(z_), 0.02, frei_tiefe)
+                if (koerper ^ so).volume() > frei_anteil * so.volume(): verdeckt.append("%s u %.2f..%.2f" % (e["klasse"], min(u_), max(u_))); continue
             k = M.extrude(CrossSection([P]), T + vor).translate((0, 0, -T)).transform(W.matrix(0)); ab = k if ab is None else ab + k
             if e["klasse"] == "fenster":
                 for st in e.get("stege", []):
@@ -233,6 +238,7 @@ def oeffnungen_aus_wandbild(koerper, datei, ncc_min=0.2, ersatz=None, steg_tiefe
             liste.append(dict(klasse=e["klasse"], zone=e["zone"], tiefe=round(float(T), 3), tiefe_quelle=q))
         if ab is not None: koerper = koerper - ab
         if zu is not None: koerper = koerper + zu
+        if verdeckt: belege.append(dict(seite="wand", element="Wand %s: %d Oeffnungen NICHT gebaut (Wand liegt im Vollkoerper, kein Bauteil legt sie frei)" % (fid, len(verdeckt)), quelle="bauteile.oeffnungen_aus_wandbild nur_frei; " + os.path.basename(datei), hinweis="; ".join(verdeckt) + " - Freilegung (Laube/Halle) fehlt im Generator (ZIEL_PIPELINE_H0 L3)"))
         if liste:
             belege.append(dict(seite="wand", element="Wand %s: %d Oeffnungen aus dem Wandbild (%s)" % (fid, len(liste), ", ".join("%s %.2f m tief" % (x["klasse"], x["tiefe"]) for x in liste)),
                                quelle="tools/oeffnungen_wandbild.py: Zone OWLv2, Umriss aus dem feinen Wandbild (Helligkeit + Farbabstand zur Wand), Tiefe Parallaxen-Sweep der Einzelfoto-Orthos; " + os.path.basename(datei),
@@ -240,11 +246,13 @@ def oeffnungen_aus_wandbild(koerper, datei, ncc_min=0.2, ersatz=None, steg_tiefe
     return koerper, belege
 
 
-def oeffnungen_aus_json(koerper, datei, vor=0.8, gewoelbe=0.5):
+def oeffnungen_aus_json(koerper, datei, vor=0.8, gewoelbe=0.5, innenwaende=None):
     """Automatisch erkannte Bogenoeffnungen / Tordurchfahrten (tools/oeffnungen_bogen.py: je Fassade o, d, n und 'oeffnungen' mit form, u, breite, kaempfer, scheitel, unten, tiefe_m)
     in den Koerper schneiden. Nur Eintraege mit gebaut = true (Durchblick im Ebenen-Sweep belegt, Form gegengeprueft). Der Schnitt reicht von 'vor' m vor der Fassadenebene
     (Reliefs, Vorsprung der LoD2-Wand) bis tiefe_m dahinter. Liefert (koerper, belege, z_massiv): z_massiv = hoechster Scheitel einer DURCHFAHRT + gewoelbe (ANNAHME 0,5 m Gewoelbestaerke)
-    fuer aushoehlen(z_min=...) - das Torgeschoss bleibt massiv, die Durchfahrt oeffnet sich nicht in den Hohlraum; None, wenn keine Durchfahrt gebaut wurde."""
+    fuer aushoehlen(z_min=...) - das Torgeschoss bleibt massiv, die Durchfahrt oeffnet sich nicht in den Hohlraum; None, wenn keine Durchfahrt gebaut wurde.
+    innenwaende (objekt.json, Kettenstufe 'bauplan', 18.11.2026): liegt eine gebaute Nicht-Durchfahrt im u-Bereich einer Innenwand derselben Fassadenrichtung, reicht ihr
+    Schnitt bis auf die Innenwandebene (gemessene Tiefe statt der Nischen-ANNAHME) - die Innenwand liegt dann im Bogen frei."""
     import json, os
     if not os.path.exists(datei): return koerper, [], None
     belege = []; z_massiv = None
@@ -252,7 +260,14 @@ def oeffnungen_aus_json(koerper, datei, vor=0.8, gewoelbe=0.5):
         o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float))
         for x in F.get("oeffnungen", []):
             if not x.get("gebaut"): continue
-            koerper = koerper - W.prisma(bogen_querschnitt(x["form"], x["breite"], x["kaempfer"], x["scheitel"], x.get("unten", 0.0) - 0.5), u=x["u"], w0=-float(x["tiefe_m"]), w1=vor)
+            T_ = float(x["tiefe_m"]); iw_ = None
+            for iw in (innenwaende or []) if not x.get("durchfahrt") else []:
+                A_ = np.asarray(iw["a"], float); t_ = np.asarray(iw["b"], float) - A_; t_ /= np.linalg.norm(t_); n_ = np.asarray(iw["aussen"], float) - A_; n_ = n_ - (n_ @ t_) * t_; n_ /= np.linalg.norm(n_)
+                if n_ @ W.n < 0.98: continue
+                P_ = o + x["u"] * W.t; uu_ = sorted(float(iw_u) for iw_u in iw["u"]); ux_ = float((P_ - A_) @ t_)
+                if uu_[0] <= ux_ <= uu_[1]: T_ = max(T_, float((o - (A_ + float(iw["versatz"]) * n_)) @ n_)); iw_ = iw.get("name")
+            koerper = koerper - W.prisma(bogen_querschnitt(x["form"], x["breite"], x["kaempfer"], x["scheitel"], x.get("unten", 0.0) - 0.5), u=x["u"], w0=-T_, w1=vor)
+            if iw_: x = dict(x, tiefe_m=round(T_, 3), annahmen=list(x.get("annahmen", [])) + [f"Tiefe bis Innenwand {iw_} (gemessen, Stufe bauplan)"])
             if x.get("durchfahrt"): z_massiv = max(z_massiv or -1e9, x["scheitel"] + gewoelbe)
             belege.append(dict(seite="wand", element=("Tordurchfahrt" if x.get("durchfahrt") else "Bogenoeffnung") + f" Fassade {fid} ({x['form']}, automatisch erkannt)",
                                quelle="OWLv2-Bogenkasten als Suchfenster (fassade_parsing.py) -> Ebenen-Sweep ueber die Fotos (fassade_tiefe.py: Durchblick = Fotos in der Wandtiefe nicht deckungsgleich) -> Formfamilie eingepasst (tools/oeffnungen_bogen.py), Fotos " + ", ".join(F.get("fotos", [])[:3]),
@@ -642,6 +657,33 @@ def rueckwaende(koerper, felder, tiefe, d, rand=0.6, schliessen=0.05, schritt=0.
         k_ = k_.transform(W.matrix(0)); zus = k_ if zus is None else zus + k_
         info.append(dict(e, vorn=round(vorn, 3), schale=[round(sh, 3), round(sv, 3)], tiefe_ist=round(vorn - wp, 3), flaeche_m2=round(float(Q.area()), 3), erkannt=k, nur_feld=bool(nur)))
     return (koerper if zus is None else koerper + zus), info
+
+
+def entlueften(koerper, breite=0.3, schritt=0.3):
+    """GESCHLOSSENER HOHLRAUM -> Bodenoeffnung (18.11.2026, Ziel H0 L2; Kettenmodell schwab_l2): nach rueckwaende (Regel A) ist der Hohlraum von aushoehlen ringsum zu
+    (jede Oeffnung hat Rueckwand + Kragen) - im STL zwei Flaechenkoerper (aussen + Hohlraumhaut), die Abnahme zaehlt 2 Koerper, im Druck eine eingeschlossene Luftblase.
+    Abhilfe: je eingeschlossenem Hohlraum ein senkrechter Schacht breite x breite von der Unterseite des Modells bis in den Hohlraumboden, an einer Stelle, unter der
+    das Modell VOLL ist (nie durch eine Durchfahrt/Oeffnung - nur die Standflaeche bekommt ein Loch, unsichtbar). Liefert (koerper, belege)."""
+    import trimesh
+    me = koerper.to_mesh(); tm = trimesh.Trimesh(np.asarray(me.vert_properties)[:, :3], np.asarray(me.tri_verts), process=True); teile = tm.split(only_watertight=False)
+    if len(teile) <= 1: return koerper, []
+    bb = koerper.bounding_box(); zb = bb[2]; aussen = max(teile, key=lambda t: np.prod(t.extents)); belege = []
+    for t in teile:
+        if t is aussen or not t.is_watertight or t.volume > -1e-4: continue         # nur Hohlraumhaeute (geschlossen, Normalen nach innen = negatives Volumen); Rest = Flaechenstuecke, die nur an Kanten haengen
+        (x0, y0, zf), (x1, y1, _) = t.bounds; c = t.vertices[t.vertices[:, 2] < zf + 0.05].mean(0); kand = []
+        for x in np.arange(x0 + breite, x1 - breite + 1e-9, schritt):
+            for y in np.arange(y0 + breite, y1 - breite + 1e-9, schritt): kand.append((np.hypot(x - c[0], y - c[1]), x, y))
+        for _, x, y in sorted(kand):
+            luft = M.cube((breite, breite, 0.04)).translate((x - breite / 2, y - breite / 2, zf + 0.02))
+            if (luft ^ koerper).volume() > 1e-7: continue                       # Punkt nicht im Hohlraum
+            if zf - zb < 0.05: continue
+            saeule = M.cube((breite, breite, zf - zb - 0.03)).translate((x - breite / 2, y - breite / 2, zb))
+            if (saeule ^ koerper).volume() < 0.98 * saeule.volume(): continue  # darunter Luft (Durchfahrt, Oeffnung) - nicht hier
+            koerper = koerper - M.cube((breite, breite, zf - zb + 0.15)).translate((x - breite / 2, y - breite / 2, zb - 0.1))
+            belege.append(dict(seite="dach", element="Entlueftung: Hohlraum (Boden z %.2f) per Schacht %.2f x %.2f m zur Standflaeche geoeffnet" % (zf, breite, breite), quelle="bauteile.entlueften (geschlossener Hohlraum nach rueckwaende)",
+                               hinweis="Druckhilfe, keine Bauwerksgeometrie; Loch nur in der Standflaeche bei x %.2f y %.2f, Schacht durch vollen Koerper" % (x, y))); break
+        else: belege.append(dict(seite="dach", element="Hohlraum (Boden z %.2f) bleibt geschlossen - keine Schachtstelle mit vollem Koerper darunter" % zf, quelle="bauteile.entlueften", hinweis="Luftinsel im Druck: von Hand entlueften"))
+    return koerper, belege
 
 
 def kneifkanten_schliessen(koerper, r=0.02, runden=6, stellen=4):

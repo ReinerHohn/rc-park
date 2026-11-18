@@ -28,7 +28,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = "/media/oem/scan/venv-seg/bin/python"; PYC = "/media/oem/scan/venv-colmap/bin/python"
-STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "kanten", "fototor", "fassaden", "fenster", "seiten", "html", "vergleich", "druck"]
+STUFEN = ["anlegen", "commons", "video", "vorpruefen", "sammeln", "sfm", "tore", "dach", "bauen", "kanten", "fototor", "fassaden", "fenster", "bauplan", "seiten", "html", "vergleich", "druck"]
 UEBERNEHMEN = ["name", "ort", "lod2", "rahmen", "rahmen_wand", "koordinate_utm", "hoehe_m", "fotos_dir", "seiten_konvention", "bildquellen"]
 
 
@@ -352,6 +352,42 @@ def main():
     if dran("fenster") and os.path.exists(os.path.join(Z, "messprotokoll")):
         if not json.load(open(ZJ)).get("neben_fotos"): lauf(B, "neben_fotos_waehlen", [PY, "-W", "ignore", "-I", "tools/neben_fotos_waehlen.py", ZR, "--eintragen"], log, ok=(0, 3))      # 16.11.2026: ohne neben_fotos liefen Umriss-Tor und 'Modell neben Foto' leer durch
         lauf(B, "umriss_tor", [PY, "-W", "ignore", "-I", "tools/umriss_tor.py", ZR, "--eintragen"], log, ok=(0, 3))  # rc 2 (nichts geprueft) = Fehler im Bericht      # 16.11.2026: Dachlinie Modell gegen Himmelskante; Befunde -> beobachtungen_offen
+    # --- 18.11.2026 Stufe 'bauplan' (Ziel H0 von null, modelle/ZIEL_PIPELINE_H0.md L2; Grundsatz WANDBILD = BAUPLAN): was ein Agent am Kaufhaus von Hand in objekt.json eintrug,
+    # schreibt jetzt die Kette selbst - NUR objekt.json-Eintraege + Belege/Bilder, der Generator (Vorlage tools/objekt_anlegen.py) liest sie:
+    #   (c) "rueckwand" (Leibungstiefe fuer bauteile.rueckwaende): oeffnungen_wandbild.py auf den Aussenwaenden -> rueckwand_tiefe.py (Median der Fenstertiefen, sonst ANNAHME mit Beleg)
+    #   (a) "innenwaende": innenwaende_finden.py (Ebenen-Sweep durch grosse Erkennerzonen; Kriterium im Kopf des Werkzeugs; Tiefe nur LAGE)
+    #   (b) "innenwand_oeffnungen": je Innenwand Sicht-Modell (Zonen davor offen) -> fassade_ortho 5 cm + 1 cm -> fassade_fein --fein_ausrichten 1 -> fassade_parsing -> oeffnungen_wandbild.py
+    # Von Hand eingetragene Werte (ohne "auto") bleiben unberuehrt (die Werkzeuge melden rc 3).
+    if dran("bauplan") and os.path.exists(AU):
+        fo = os.path.join(D, "fassade"); ffn = fo + "_fein"; bp_ = os.path.join(D, "bauplan"); os.makedirs(bp_, exist_ok=True); stl_ = os.path.join(ROOT, "modelle", "stl", f"{a.ziel}_1-87.stl"); erg_ = {}
+        if os.path.exists(gp_) and "rueckwaende" not in open(gp_).read(): lauf(B, "generator_erneuern_bauplan", ["python3", "tools/objekt_anlegen.py", a.ziel, "--generator-erneuern"], log, ok=(0, 3))
+        if not all(os.path.exists(os.path.join(fo, f_)) for f_ in ("fassaden.json", "elemente.json")): notiz(B, "bauplan", False, fehler=f"{fo}/fassaden.json oder elemente.json fehlt (Stufe fenster: fassade_ortho + fassade_parsing)")
+        else:
+            oa_ = os.path.join(Z, "audit", "oeffnungen_aussen.json")
+            if os.path.isdir(ffn) and lauf(B, "bauplan_oeffnungen_aussen", [PY, "-W", "ignore", "-I", "tools/oeffnungen_wandbild.py", ZR, ffn, "--grob", fo, "--aus", oa_], log)[0] == 0: pass
+            erg_["rueckwand_rc"] = lauf(B, "bauplan_rueckwand", [PY, "-I", "tools/rueckwand_tiefe.py", ZR, oa_, "--schreiben"], log, ok=(0, 3))[0]
+            erg_["innenwaende_rc"] = lauf(B, "bauplan_innenwaende", [PY, "-W", "ignore", "-I", "tools/innenwaende_finden.py", ZR, fo, "--arbeit", os.path.join(bp_, "tiefe"), "--schreiben"], log, ok=(0, 3))[0]
+            oz_ = json.load(open(ZJ)); IW_ = [x_["name"] for x_ in oz_.get("innenwaende", []) if x_.get("auto")]; IO_ = oz_.get("innenwand_oeffnungen")
+            if IW_ and not (IO_ and not IO_.get("auto")):
+                nur_ = ",".join(IW_); si_ = os.path.join(bp_, "sicht.stl"); io_ = os.path.join(bp_, "innen"); iof_ = io_ + "_fein"; oi_ = os.path.join(Z, "audit", "oeffnungen_innen.json")
+                env_alt = dict(os.environ); os.environ.update(HF_HOME="/media/oem/scan/hf_cache", HF_HUB_OFFLINE="1")
+                ok_ = (lauf(B, "bauplan_sicht_stl", [PY, "-W", "ignore", "-I", "tools/innenwaende_finden.py", ZR, "--sicht_stl", stl_, si_], log)[0] == 0
+                       and lauf(B, "bauplan_innen_ortho", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--stl", si_, "--aus", io_, "--einzeln", "--nur", nur_], log)[0] == 0
+                       and lauf(B, "bauplan_innen_ortho_fein", [PY, "-W", "ignore", "-I", "tools/fassade_ortho.py", ZR, "--stl", si_, "--aus", iof_, "--einzeln", "--nur", nur_, "--zelle", "0.01", "--max-mpp", "0.02", "--beste", "3"], log, ok=(0, 1))[0] in (0, 1)
+                       and lauf(B, "bauplan_innen_fein", [PY, "-I", "tools/fassade_fein.py", iof_, "--fein_ausrichten", "1"], log, ok=(0, 1))[0] in (0, 1)
+                       and lauf(B, "bauplan_innen_parsing", [PY, "-W", "ignore", "-I", "tools/fassade_parsing.py", "--ortho", io_, "--gpu", "--mind-px", "64"], log)[0] == 0
+                       and lauf(B, "bauplan_innen_oeffnungen", [PY, "-W", "ignore", "-I", "tools/oeffnungen_wandbild.py", ZR, iof_, "--grob", io_, "--nur", nur_, "--aus", oi_], log)[0] == 0)
+                os.environ.clear(); os.environ.update(env_alt); oz_ = json.load(open(ZJ))
+                if ok_ and os.path.exists(oi_):
+                    oz_["innenwand_oeffnungen"] = dict(datei=os.path.relpath(oi_, Z), ncc_min=0.2, auto="bauplan " + time.strftime("%Y-%m-%d"), quelle=f"Kettenstufe bauplan: Sicht-Modell (innenwaende_finden --sicht_stl) -> fassade_ortho {nur_} 5 cm + 1 cm einzeln -> fassade_fein --fein_ausrichten 1 -> fassade_parsing (OWLv2) -> tools/oeffnungen_wandbild.py; Bilder {io_}/elemente_*.jpg, {oi_[:-5]}.jpg")
+                    erg_["innenwand_oeffnungen"] = sum(len(F_.get("oeffnungen", [])) for F_ in json.load(open(oi_)).values())
+                elif IO_ and IO_.get("auto"): oz_.pop("innenwand_oeffnungen", None)
+                __import__("json_sicher").schreiben(ZJ, oz_)
+            elif not IW_ and IO_ and IO_.get("auto"): oz_.pop("innenwand_oeffnungen", None); __import__("json_sicher").schreiben(ZJ, oz_)
+            oz_ = json.load(open(ZJ)); erg_.update(innenwaende=[(x_["name"], x_.get("versatz"), x_.get("u"), x_.get("z")) for x_ in oz_.get("innenwaende", [])], rueckwand=(oz_.get("rueckwand") or {}).get("tiefe"))
+            if os.path.exists(gp_): lauf(B, "bauen_mit_bauplan", ["bash", "tools/bauen_abnehmen.sh", a.ziel], log, ok=(0, 1))
+            notiz(B, "bauplan", True, **erg_, hinweis="ANSEHEN: audit/innenwaende_auto.jpg (Tiefe je Fassade), audit/oeffnungen_innen.jpg, audit/rueckwand_auto.json; Generator-Belege 'Rueckwand' / 'Innenwand'")
+    # --- Ende Stufe 'bauplan' ---
     if dran("seiten") and os.path.exists(AU):                           # 16.11.2026 Nutzer (Schwabentor Ostseite): "Er muss doch wissen, dass dort Bilder fehlen und die sich dann holen, notfalls downloaden. Alles muss in die Pipeline."
         fo = os.path.join(D, "fassade"); sp = next((q_ for q_ in (os.path.join(P, "sparse_ba"), os.path.join(P, "dicht", "sparse"), os.path.join(P, "sparse", "0"), os.path.join(P, "sfm", "sparse_dicht"), os.path.join(P, "sfm", "sparse", "0"), os.path.join(P, "sfm", "sparse")) if os.path.exists(os.path.join(q_, "images.bin"))), None); db = next((q_ for q_ in (os.path.join(P, "db.db"), os.path.join(P, "sfm", "db.db")) if os.path.exists(q_)), os.path.join(P, "db.db"))
         try: nfo_s = sum(len(f_.get("fotos") or {}) for f_ in json.load(open(os.path.join(fo, "fassaden.json")))["fassaden"])

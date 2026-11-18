@@ -583,3 +583,7 @@ in `fassaden_kette.py` als Stufe nach `relief_putz.py` (Eingang `<wand>_eben.npz
   objekt.json "innenwand_oeffnungen" -> `bauteile.oeffnungen_aus_wandbild` im Generator NACH dem Bauteil, das die Wand freilegt (laube), VOR aushoehlen.
   Kaufhaus i00 (Laubenrueckwand): 39 Fotos, 3 Fenster + Tuer + Tor, Tafel als flach erkannt (Zaehlung Z-eigen__010_M_nsterplatz_24_Freiburg-001).
   OFFEN: in gesamtkette.py laufen innenwaende automatisch mit (fassade_ortho), oeffnungen_wandbild ist noch NICHT als Kettenschritt eingebaut.
+  18.11.2026 nachts ERLEDIGT (L2): Kettenstufe 'bauplan' (gesamtkette, nach 'fenster'): rueckwand (oeffnungen_wandbild Aussenwaende -> tools/rueckwand_tiefe.py),
+  innenwaende (tools/innenwaende_finden.py: Ebenen-Sweep 1,26-m-Kostenfenster in den Kernen grosser Erkenner-Bogen/Tuer-Zonen, Spitze >= 3 x Hintergrund, vor der
+  LoD2-Rueckseite), innenwand_oeffnungen (Sicht-Modell mit offenen Zonen -> fassade_ortho/fein/parsing -> oeffnungen_wandbild). Generator-Vorlage (objekt_anlegen.py)
+  ruft oeffnungen_aus_wandbild(nur_frei=True) und rueckwaende immer auf; oeffnungen_aus_json(innenwaende=...) fuehrt einen erkannten Bogen bis auf die Innenwand.

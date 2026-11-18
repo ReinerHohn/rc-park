@@ -42,8 +42,8 @@ def main():
     gp = os.path.join(root, genfile)
     if nur_gen and os.path.exists(gp):
         alt = open(gp).read()
-        if "Generator-Rumpf (manifold3d)" not in alt or len(alt.splitlines()) > 45: print("Generator ist kein unberuehrter Rumpf - NICHT erneuert:", gp); return 3
-        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
+        if "Generator-Rumpf (manifold3d)" not in alt or len(alt.splitlines()) > 70: print("Generator ist kein unberuehrter Rumpf - NICHT erneuert:", gp); return 3
+        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt and "rueckwaende" in alt and "oeffnungen_aus_wandbild" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
         import time; os.replace(gp, gp + ".alt_" + time.strftime("%Y%m%d_%H%M")); print("alter Generator-Rumpf beiseitegelegt:", gp + ".alt_*")
     if not os.path.exists(gp):
         open(gp, "w").write(f'''#!/usr/bin/env python3
@@ -74,12 +74,28 @@ if obj.get("lod2", {{}}).get("id"):                    # Standard: LoD2-Grundris
     for b_ in belege: beleg(**b_)
     belege = bel_f                                   # aushoehlen nur, wenn Fenster gebaut wurden
     from bauteile import oeffnungen_aus_json         # 17.11.2026: automatisch erkannte Bogenoeffnungen / Tordurchfahrten (Kettenstufe 'fenster': tools/oeffnungen_bogen.py -> audit/oeffnungen_auto.json)
-    koerper, belege_o, z_tor = oeffnungen_aus_json(koerper, os.path.join(HERE, "{ob}", "audit", "oeffnungen_auto.json"))
+    koerper, belege_o, z_tor = oeffnungen_aus_json(koerper, os.path.join(HERE, "{ob}", "audit", "oeffnungen_auto.json"), innenwaende=obj.get("innenwaende"))      # 18.11.: Bogen vor einer Innenwand reicht bis zu ihr
     for b_ in belege_o: beleg(**b_)
+    IO_ = obj.get("innenwand_oeffnungen")            # 18.11.2026 (Kettenstufe 'bauplan', L2): Oeffnungen der Innenwaende aus ihrem Wandbild - nur wo die Innenwand freiliegt, VOR aushoehlen
+    if IO_ and os.environ.get("OHNE_INNENWAND") != "1":
+        from bauteile import oeffnungen_aus_wandbild
+        koerper, bel_i = oeffnungen_aus_wandbild(koerper, os.path.join(HERE, "{ob}", IO_["datei"]), ncc_min=IO_.get("ncc_min", 0.2), ersatz={{k: tuple(v) for k, v in IO_.get("ersatz", {{}}).items()}}, nur_frei=True)
+        for b_ in bel_i: beleg(**b_)
     if belege and os.environ.get("OHNE_HOHL") != "1":        # 16.11.2026 Nutzer: Fenster muessen echte Loecher sein -> Gebaeude hohl, erkannte Fenster durchgebrochen
         from bauteile import aushoehlen
         koerper, n_offen, v_hohl = aushoehlen(koerper, d=float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0, z_min=z_tor)      # z_tor: unter dem Scheitel einer Durchfahrt (+ 0,5 m Gewoelbe, ANNAHME) bleibt das Torgeschoss massiv
         beleg("wand", "Gebaeude hohl, %d Fenster durchgebrochen" % n_offen, "bauteile.aushoehlen auf den automatisch erkannten Fenstern", hinweis="Wandstaerke 1,2 mm im Druck (WAND_MM, duennste druckstabile Wand), Innenraum ohne Decken und Zwischenwaende")
+        RW_ = obj.get("rueckwand") or dict(tiefe=0.15, quelle="ANNAHME: 0,15 m (keine Kettenmessung - Stufe bauplan nicht gelaufen; Anhalt Kaufhaus-Fotomass 0,14 / 0,19 m)")
+        if os.environ.get("OHNE_RUECKWAND") != "1":      # 18.11.2026 REGEL A (Kettenstufe 'bauplan' misst objekt.json "rueckwand"): hinter jeder durchgebrochenen Oeffnung eine Rueckwand in Leibungstiefe - kein Blick ins Hohlinnere
+            from bauteile import rueckwaende, DURCH
+            koerper, rw_info = rueckwaende(koerper, DURCH, RW_["tiefe"], float(os.environ.get("WAND_MM", "1.2")) * float(os.environ.get("SCALE", "87")) / 1000.0)
+            beleg("wand", "Rueckwand hinter %d Oeffnungen in Leibungstiefe %.2f m (Kragen zum Hohlraum geschlossen)" % (len(rw_info), RW_["tiefe"]), RW_["quelle"], hinweis=RW_.get("hinweis", ""), umrisse=rw_info)
+            from bauteile import entlueften                 # Hohlraum nach Regel A ringsum zu -> Schacht zur Standflaeche (sonst 2 Koerper / Luftblase)
+            koerper, bel_e = entlueften(koerper)
+            for b_ in bel_e: beleg(**b_)
+    tl_ = koerper.decompose()                         # Null-Volumen-Splitter entfernen (wie Kaufhaus-Generator 17.11.); echte schwebende Teile bleiben und fallen in der Pruefung auf
+    if len(tl_) > 1 and any(t_.volume() < 1e-5 for t_ in tl_):
+        koerper = M.batch_boolean([t_ for t_ in tl_ if t_.volume() >= 1e-5], __import__("manifold3d").OpType.Add); beleg("wand", "%d Null-Volumen-Splitter entfernt" % sum(1 for t_ in tl_ if t_.volume() < 1e-5), "Generator (decompose, Volumen < 1e-5 m3)")
     cu, cv = haupt.mean(0); model = koerper.scale((K, K, K))   # 15.11.2026: NICHT zentrieren - STL bleibt im Rahmen (objekt.json rahmen); die Fotowerkzeuge (zentrierung 'achse') erwarten STL = Rahmen, sonst liegt das Modell um (cu, cv) neben Kameras/Wolke
 else:
     H = {hoehe or 10.0}                               # Gesamthoehe (m) - Quelle in masstabelle.json
