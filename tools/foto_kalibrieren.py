@@ -145,6 +145,8 @@ def main():
             print(f"  Silhouette Runde {runde + 1}: {len(SILP[0])} Randpunkte, mittlerer Kantenabstand {dt_wert(dt, uvs).mean():.1f} px")
             best = (float(np.sum(sol.fun ** 2)), sol.x, best[2])
     cost, p, f0 = best; rvec, t = p[:3], p[3:6]; f = fexif or p[6]
+    if not fexif and f > 10 * max(W, H):                                   # 18.11.2026 (Martinstor K-061: f 487237 px, 52 km): Fernfoto + fast ebene Picks -> f und Abstand nicht trennbar
+        print(f"  ACHTUNG: freie Brennweite divergiert (f={f:.0f} px > 10 x Bildbreite) - Ergebnis unbrauchbar. Brennweite festlegen: tools/brennweite_waehlen.py <objekt.json> {nr} --lat <Objekt-Breite> --lon <Objekt-Laenge> (EXIF-Pixelgroesse + Foto-GPS)")
     R, _ = cv2.Rodrigues(rvec); cam = (-R.T @ t); uv, z = projiziere(P3, rvec, t, f, cx, cy); res = np.linalg.norm(uv - P2, axis=1)
     dres = {n: [int(round(float(x))) for x in (uv[i] - P2[i])] for i, n in enumerate(namen)}
     out = dict(silhouette_genutzt=bool(sil), residuen_du_dv=dres, rvec=rvec.tolist(), t=t.tolist(), f_px=float(f), cx=cx, cy=cy, bild=[W, H], standort_xyz=cam.round(2).tolist(), hoehe_ueber_gelaende=round(float(cam[2]), 2),

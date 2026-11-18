@@ -2,8 +2,8 @@
  "foto": "061",
  "seite": "Ost",
  "strassenfoto": false,
- "brennweite_px": 5187.0,
- "brennweite_quelle": "EXIF 9,855 mm / Sensor 7,6 mm x 4000 px (Original-Pixelbreite): Bild nur beschnitten (3601x2757 aus 4000x3000), Pixelgroesse unveraendert. 18.11.2026: Foto-GPS (N 47.99336 E 7.85564) liegt 500 m horizontal vom Martinstor; Fit mit f=5187 gibt 506 m (f=4669 nur 460 m); RMS bleibt 4.0 px (die Bildpunkte selbst legen f nicht fest, Abstand ~ proportional f)",
+ "brennweite_px": 5333.2,
+ "brennweite_quelle": "EXIF 9.855 mm, Pixelgroesse 1.848 um (FocalPlaneResolution): nur beschnitten (Pixelgroesse aus FocalPlaneResolution); GPS-Abstand 500 m gegen Fit 519 m",
  "notiz": "Blick vom Schlossberg (Ost, ~1 km, fast Turmhoehe). Picks uebernommen aus V-061 (5x-Zoom): spitze_dokument = Goldknauf der Nadel (wie in K-006/014/040/060), nadel_spitze = Nadelende. Vier Tuermchenspitzen T1..T4 bei y 426: von Osten links = Sued, rechts = Nord; welches der beiden je Paar NE/NW bzw. SE/SW ist, wird per --tausch geprueft (ANNAHME). | 2026-11-01: Pick 'spitze_dokument' in knauf_nadel umbenannt (Goldknauf der Nadel, Anker aus SfM-Hoehen, Register AS).",
  "punkte": {
   "nadel_spitze": [
@@ -113,16 +113,16 @@
    ]
   },
   "rvec": [
-   0.30648269710574366,
-   -2.2752229928065058,
-   1.8870527381471671
+   0.3035290206121398,
+   -2.2724202896561674,
+   1.8940379326350463
   ],
   "t": [
-   55.38434221067082,
-   -47.09263603773246,
-   502.9207228257039
+   55.28981215960324,
+   -46.958355220774145,
+   516.1169904974158
   ],
-  "f_px": 5187.0,
+  "f_px": 5333.2,
   "cx": 1800.5,
   "cy": 1378.5,
   "bild": [
@@ -130,12 +130,12 @@
    2757
   ],
   "standort_xyz": [
-   -79.37,
-   499.73,
-   46.72
+   -81.41,
+   512.66,
+   46.81
   ],
-  "hoehe_ueber_gelaende": 46.72,
-  "abstand_zur_achse": 506.0,
+  "hoehe_ueber_gelaende": 46.81,
+  "abstand_zur_achse": 519.1,
   "residuen_px": {
    "nadel_spitze": 1.9,
    "tuermchen_SE": 1.4,

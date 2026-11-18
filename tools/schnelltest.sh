@@ -102,4 +102,5 @@ Z = O.zonen([dict(klasse="bogen", u0=2.0, u1=6.0, z0=0.0, z1=4.5)]); assert Z ==
 PY
 k=$($P -I tools/test_flaeche_ortho.py 2>&1); [ $? = 0 ] && ok "Wandbild fuer Rundungen/Erker (flaeche_ortho: Zylinder, Kegel, n-Eck-Erker synthetisch, Gegenprobe falscher Radius/Achse)" || { rot "flaeche_ortho synthetisch"; echo "$k" | tail -6; }
 k=$(python3 tools/importe_pruefen.py 2>&1); [ $? = 0 ] && ok "Importe: kein Generator/Werkzeug importiert etwas, das es nicht mehr gibt (Anlass bauteile.py 15.11.)" || { rot "Importe fehlen: $(echo "$k" | head -3 | tr '\n' ' ' | cut -c1-200)"; }
+k=$($P -I tools/test_brennweite_waehlen.py 2>&1); [ $? = 0 ] && ok "Brennweite aus EXIF-Pixelgroesse + GPS-Gegenprobe (Martinstor-061-Fall, Seitenverhaeltnis-Regel)" || { rot "brennweite_waehlen: $(echo "$k" | head -2 | tr '\n' ' ')"; }
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F
