@@ -99,8 +99,41 @@ def gps_massstab(ims, C, obj, od, fotos=""):
     q = dx[m] / dg[m]; q25, q50, q75 = np.percentile(q, [25, 50, 75]); streu = q75 / max(q25, 1e-12)
     print(f"GPS-Massstab: {len(U)} Kameras, {int(m.sum())} Paare > 15 m, Verhaeltnis-Streuung q75/q25 {streu:.2f}")
     if streu > 2.0:                                                            # Martinstor 15.11.: Commons-Geotags = Objektstandort statt Kamerastandort -> Massstab 10x falsch, keine Loesung
-        print("GPS-Massstab VERWORFEN: Paarverhaeltnisse streuen zu stark (Geotags sind keine Kamerastandorte?) - Startmassstab aus Wolkenausdehnung"); GPS_KAM.clear(); return None
+        # 18.11.2026 (Kaufhaus gk2f: Streuung 2,43 -> verworfen -> Massstab aus Wolkenausdehnung, Suche s0/4..4 s0, 4 Loesungen 73-158 Grad / Massstab 0,25-1,9 gegen GPS gedreht,
+        # obwohl ein robuster GPS-Fit Rest Median 5,8 m hatte): einzelne falsche Geotags verderben JEDES Paar mit ihnen -> erst robuster Aehnlichkeits-Fit (RANSAC) versuchen
+        r = gps_fit_robust(X, U)
+        if r is not None:
+            s_, inl, rest, ausd = r
+            print(f"GPS-Massstab aus robustem Fit: {int(inl.sum())} von {len(U)} Kameras passen (Rest Median {rest:.1f} m, Ausdehnung {ausd:.0f} m) -> {s_:.4f} SfM-Einheiten/m; falsche Geotags aus dem GPS-Startkandidaten genommen")
+            GPS_KAM[:] = [g_ for g_, ok_ in zip(GPS_KAM, inl) if ok_]; return float(s_)
+        print("GPS-Massstab VERWORFEN: Paarverhaeltnisse streuen zu stark und kein robuster Fit (Geotags sind keine Kamerastandorte?) - Startmassstab aus Wolkenausdehnung"); GPS_KAM.clear(); return None
     return float(q50)
+
+
+def gps_fit_robust(X, U, schwelle=10.0, iter_=3000, min_anteil=0.4, min_n=15, max_rest=8.0, min_ausd=20.0, seed=0):
+    """Robuster Aehnlichkeits-Fit SfM-Kamerazentren X (3D, beliebig gedreht) -> GPS U (UTM 2D, Hoehe 0 = ANNAHME: Strassenfotos +-2 m) per RANSAC (3 Punkte, Umeyama),
+    Nachfit auf den Inliern (Abstand < schwelle m). Angenommen nur mit >= min_anteil und >= min_n Inliern, Rest-Median <= max_rest m und raeumlicher Ausdehnung der
+    Inlier-Geotags >= min_ausd m (Objektstandort-Geotags = ein Haufen -> kein Massstab). Liefert (s SfM-Einheiten/m, inlier-Maske, rest_median, ausdehnung) oder None."""
+    X = np.asarray(X, float); Y = np.c_[np.asarray(U, float), np.zeros(len(U))]; n = len(X)
+    if n < max(min_n, 3): return None
+    def ume(A, B):
+        ma, mb = A.mean(0), B.mean(0); A0, B0 = A - ma, B - mb; S_ = B0.T @ A0 / len(A); Uu, D, Vt = np.linalg.svd(S_); E = np.eye(3); E[2, 2] = np.sign(np.linalg.det(Uu @ Vt))
+        R = Uu @ E @ Vt; va = (A0 ** 2).sum() / len(A); k = float((D * np.diag(E)).sum() / max(va, 1e-12)); return k, R, mb - k * R @ ma      # B ~ k R A + t (k in m je SfM-Einheit)
+    rng = np.random.default_rng(seed); best = None
+    for _ in range(iter_):
+        idx = rng.choice(n, 3, replace=False)
+        if np.linalg.norm(np.cross(Y[idx[1]] - Y[idx[0]], Y[idx[2]] - Y[idx[0]])) < 25.0: continue      # fast kollinear / zu eng
+        k, R, t = ume(X[idx], Y[idx])
+        if not np.isfinite(k) or k <= 0: continue
+        d = np.linalg.norm((k * (R @ X.T)).T + t - Y, axis=1); inl = d < schwelle
+        if best is None or inl.sum() > best.sum(): best = inl
+    if best is None or best.sum() < max(min_n, min_anteil * n): return None
+    for _ in range(3):
+        k, R, t = ume(X[best], Y[best]); d = np.linalg.norm((k * (R @ X.T)).T + t - Y, axis=1); best = d < schwelle
+        if best.sum() < 3: return None
+    rest = float(np.median(d[best])); ausd = float(np.ptp(Y[best, :2], axis=0).max())
+    if best.sum() < max(min_n, min_anteil * n) or rest > max_rest or ausd < min_ausd: return None
+    return 1.0 / k, best, rest, ausd
 
 
 def loesung_index(loesung, n, schreiben):
