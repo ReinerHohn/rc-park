@@ -115,3 +115,5 @@ Dokumentiere alle Versuche."  -> Diese Datei ist das Versuchsprotokoll (jeder Ve
   Sackgassen unterwegs: (1) nur Stufen ohne Neigung -> West 5 Stufen als 11-mm-Streifen (Wand 36 cm schraeg); (2) Stufen ab 0 gezaehlt -> ebene Wand in 2 Stufen (Rauschen um 0);
   (3) kleine Stufenstuecke in beliebige Nachbarstufe -> Stufe -1..+15 cm, Rueckseite zu weit vorn, platte_west_04 in 47 Stuecken; jetzt nur Nachbarstufe, sonst am Koerper -> 1 Stueck.
   Schnelltest neu: tools/test_farbteile_neigung.py (Quader 2 Grad gedreht). OFFEN: 10 Platten aus 2-4 Stuecken (Steine durch tiefe Fugen getrennt; A hatte 1) - Traegerschicht pruefen.
+  Traegerschicht (--traeger_mm 0,6, nicht ueber Oeffnungen) fuer zerfallende Platten: vor Kruemelfilter 35->10, 24->3, 10->4 Stuecke; danach 9 statt 10 mehrteilige Platten,
+  fast alle 2 Stuecke (vorher bis 4); west_03 (12-mm-Streifen) bleibt 4. Rest vermutlich Fenster quer durch die Steinflaeche (Traeger dort bewusst nicht). rc 0, 1 Koerper, 0/73.
