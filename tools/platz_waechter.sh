@@ -10,11 +10,11 @@
 #  DATEN (/media/oem/scan): unter WAECHTER_MIN_GB (Standard 14) den groessten KALTEN Ordner (kein Symlink, 60 min nichts geaendert,
 #        kein Git-Worktree darin, nicht geschuetzt) aus rc-park_null/*, rc-park_tmp/*, rc-park_daten/*/*, rc-park_kreis/*/2026*
 #        per tools/auslagern.sh (rsync + Pruefsumme, Symlink zurueck) auf das Auslagerungsziel mit dem meisten freien Platz verschieben
-#        (WAECHTER_ZIELE, Standard "/media/oem/Volume /media/oem/rcstick"; AUSLAGERN_MOUNT setzt nur noch das bevorzugte Ziel).
+#        (WAECHTER_ZIELE, Standard "/media/oem/rcdaten /media/oem/Volume" (18.11.: 2-TB-SSD statt Stick/Toshiba); AUSLAGERN_MOUNT setzt nur noch das bevorzugte Ziel).
 #        Wiederholen bis MIN + 2 GB erreicht oder kein Kandidat mehr.
 # Kein Ziel/kein Kandidat -> laut melden (Log), nichts loeschen.
 MIN=${WAECHTER_MIN_GB:-14}; RMIN=${WAECHTER_ROOT_MIN_GB:-10}; S=/media/oem/scan
-ZIELE=${WAECHTER_ZIELE:-"${AUSLAGERN_MOUNT:-} /media/oem/Volume /media/oem/rcstick"}
+ZIELE=${WAECHTER_ZIELE:-"${AUSLAGERN_MOUNT:-} /media/oem/rcdaten /media/oem/Volume"}
 GESCHUETZT="wettbewerb_kh gschleife_bog diffpar kreislauf limap _git_objekte belegt patches viewer abend"
 cd "$(dirname "$0")/.."
 frei_gb() { df -BG --output=avail "$1" 2>/dev/null | tail -1 | tr -dc 0-9; }
