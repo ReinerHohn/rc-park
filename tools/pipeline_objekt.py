@@ -217,10 +217,17 @@ fo = pycolmap.StereoFusionOptions(); fo.max_image_size = 800 if GROB else 1600
 try:
     _frei_gb = int([l for l in open("/proc/meminfo") if l.startswith("MemAvailable")][0].split()[1]) / 1048576
 except Exception: _frei_gb = 8.0
-fo.use_cache = True; fo.cache_size = max(1.0, round(0.4 * _frei_gb, 1)); print("Fusion cache_size", fo.cache_size, "GB (frei", round(_frei_gb, 1), "GB)", flush=True)
+_nf = len([l for l in open(os.path.join(out, "stereo", "fusion.cfg")) if l.strip()]); _bedarf = _nf * (0.045 if not GROB else 0.012)   # GB (Messung 18.11.: 100 Bilder 1600 px = 4,1 GB)
+# 18.11.2026: use_cache (1 Thread, Nachladen) lief am Kaufhaus 4 h ohne Ende (1,56 TB gelesen) -> passt es nicht in 60 % des freien RAM: TEILFUSION in voller Aufloesung (tools/teilfusion.py), sonst normal mit allen Kernen
+print("Fusion:", _nf, "Bilder, Bedarf ~%.1f GB, frei %.1f GB" % (_bedarf, _frei_gb), "-> TEILFUSION" if _bedarf > 0.6 * _frei_gb else "-> am Stueck", flush=True)
 if STUFE == "schnell": fo.min_num_pixels = 8   # strenger, weil die geometrische Pruefung fehlt (COLMAP-FAQ)
 GB.frei()   # Fusion hat keinen GPU-Code (Minuten auf der CPU)
-pycolmap.stereo_fusion(os.path.join(out, "fused.ply"), out, options=fo, input_type="geometric" if FEIN else "photometric", output_type="ply")
+if _bedarf > 0.6 * _frei_gb:
+    import subprocess as _sp
+    _rc = _sp.call([sys.executable, "-I", os.path.join({os.path.dirname(os.path.abspath(__file__))!r}, "teilfusion.py"), out, os.path.join(out, "fused.ply"), "--max_image_size", str(fo.max_image_size), "--min_num_pixels", str(fo.min_num_pixels), "--input_type", "geometric" if FEIN else "photometric"])
+    if _rc: sys.exit(_rc)
+else:
+    pycolmap.stereo_fusion(os.path.join(out, "fused.ply"), out, options=fo, input_type="geometric" if FEIN else "photometric", output_type="ply")
 GB.belegen()
 print("FERTIG", flush=True)
 ''')
