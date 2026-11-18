@@ -87,7 +87,23 @@ def main():
             print("WARNUNG: GPS-Fit konvergiert nicht - Lage widerspricht dem GPS"); erg["ergebnis"] = "fit konvergiert nicht"; erg["geprueft"] = True      # 17.11.2026: hier blieb die lage_gps.json eines frueheren Laufs liegen
             os.makedirs(os.path.join(od, "audit"), exist_ok=True); json.dump(erg, open(os.path.join(od, "audit", "lage_gps.json"), "w"), indent=1); return 3
         res = np.hypot(*(MU @ R.T * s + t - G).T); w = res < max(np.percentile(res, 80), 15)
-    rng = np.random.default_rng(0); ys, ss = [], []
+    # 18.11.2026 (Kaufhaus gk2h: 42 von 110 Geotags falsch - alte/Commons-Fotos; das 80-%-Trimmen liess sie im Fit -> Massstab 0,80, obwohl 68 Fotos mit 2,4 m Rest passen):
+    # robuster Konsens-Fit (RANSAC, Inlier < 10 m); gilt, wenn >= 40 % und >= 10 Fotos zustimmen, sonst bleibt der getrimmte Fit. Grenzen (max_dreh, max_skala) UNVERAENDERT.
+    rng = np.random.default_rng(0); best = None; n_ = len(G)
+    for _ in range(3000):
+        i3 = rng.choice(n_, 2, replace=False)
+        if np.hypot(*(G[i3[0]] - G[i3[1]])) < 10 or np.hypot(*(MU[i3[0]] - MU[i3[1]])) < 1e-6: continue
+        try: s_, R_, t_ = fit2d(MU[i3], G[i3])
+        except np.linalg.LinAlgError: continue
+        inl = np.hypot(*(MU @ R_.T * s_ + t_ - G).T) < 10.0
+        if best is None or inl.sum() > best.sum(): best = inl
+    erg["ransac"] = None
+    if best is not None and best.sum() >= max(10, 0.4 * n_):
+        for _ in range(3): s, R, t = fit2d(MU[best], G[best]); res = np.hypot(*(MU @ R.T * s + t - G).T); best = res < 10.0
+        if best.sum() >= max(10, 0.4 * n_):
+            w = best; erg["ransac"] = dict(inlier=int(best.sum()), von=int(n_)); print(f"   robuster Konsens-Fit: {int(best.sum())} von {n_} Geotags stimmen ueberein (< 10 m) - die anderen gelten als falsche Geotags")
+    s, R, t = fit2d(MU[w], G[w]); res = np.hypot(*(MU @ R.T * s + t - G).T)
+    ys, ss = [], []
     iw = np.flatnonzero(w)
     for _ in range(400):
         i = rng.choice(iw, len(iw)); s_, R_, _ = fit2d(MU[i], G[i]); ys.append(winkel(R_)); ss.append(s_)
