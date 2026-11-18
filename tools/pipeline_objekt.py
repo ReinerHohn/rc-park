@@ -193,6 +193,9 @@ uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = 1600
 import glob as _g
 _n = pycolmap.Reconstruction(sparse).num_reg_images()   # nur eingehaengte Bilder bekommen Tiefenkarten
 _dm = os.path.join(out, "stereo", "depth_maps")
+# 18.11.2026 (Kaufhaus gk2: Platte voll -> 272 leere Tiefenkarten, Fusion brach mit 'width_ > 0' ab, 0 Punkte): kaputte Karten (< 2 KB) loeschen, damit sie neu gerechnet werden
+for _k in _g.glob(os.path.join(out, "stereo", "*_maps", "*.bin")):
+    if os.path.getsize(_k) < 2048: os.remove(_k); print("kaputte Karte geloescht:", os.path.basename(_k), flush=True)
 _fertig = os.path.isdir(_dm) and len(_g.glob(os.path.join(_dm, "*.photometric.bin"))) >= _n and (STUFE != "fein" or len(_g.glob(os.path.join(_dm, "*.geometric.bin"))) >= _n)
 if _fertig:
     print("Tiefenkarten aus Cache (" + str(_n) + " Bilder, Modus " + STUFE + ")", flush=True)
