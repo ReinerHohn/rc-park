@@ -21,10 +21,20 @@ from scipy import ndimage as ndi
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("ordner"); ap.add_argument("nr", type=int); ap.add_argument("--zelle", type=float, default=0.04); ap.add_argument("--w", nargs=2, type=float, default=[-0.8, 2.5])
-    ap.add_argument("--dw", type=float, default=0.05); ap.add_argument("--fotos"); ap.add_argument("--min_m2", type=float, default=0.5); ap.add_argument("--min_w", type=float, default=0.25); ap.add_argument("--sicher", type=float, default=1.5); ap.add_argument("--max_fotos", type=int, default=14); ap.add_argument("--min_wand", type=float, default=0.35, help="Tor: Anteil der sicheren Zellen auf der Wandtiefe (Schwabentor 16.11.: Nord 0,47 gut, Sued 0,43 gut (Wandversatz -0,75 = bekannter LoD2-Fehler), West 0,26 unbrauchbar)"); ap.add_argument("--fenster", type=int, default=11, help="Kosten ueber so viele Zellen mitteln (ungerade; 11 x 4 cm = 44 cm)"); a = ap.parse_args()
+    ap.add_argument("--dw", type=float, default=0.05); ap.add_argument("--fotos"); ap.add_argument("--min_sicht_anteil", type=float, default=0.5, help="Tiefe nur werten, wenn so viele der auf der Wandebene sehenden Fotos sie sehen"); ap.add_argument("--min_basis", type=float, default=0.5, help="Mindestabstand der Kamerastandorte bei automatischer Fotowahl (m)"); ap.add_argument("--min_m2", type=float, default=0.5); ap.add_argument("--min_w", type=float, default=0.25); ap.add_argument("--sicher", type=float, default=1.5); ap.add_argument("--max_fotos", type=int, default=14); ap.add_argument("--min_wand", type=float, default=0.35, help="Tor: Anteil der sicheren Zellen auf der Wandtiefe (Schwabentor 16.11.: Nord 0,47 gut, Sued 0,43 gut (Wandversatz -0,75 = bekannter LoD2-Fehler), West 0,26 unbrauchbar)"); ap.add_argument("--fenster", type=int, default=11, help="Kosten ueber so viele Zellen mitteln (ungerade; 11 x 4 cm = 44 cm)"); a = ap.parse_args()
     od = os.path.dirname(os.path.abspath(a.objekt)); root = os.path.dirname(os.path.dirname(od)); obj = json.load(open(a.objekt)); F = json.load(open(os.path.join(a.ordner, "fassaden.json")))["fassaden"][a.nr]
     o = np.array(F["o"]); d = np.array(F["d"]); n = np.array(F["n"]); u0, u1 = F["u"]; z0, z1 = F["z"]; c = a.zelle; W = int((u1 - u0) / c); H = int((z1 - z0) / c); dev = "cuda" if torch.cuda.is_available() else "cpu"
-    namen = a.fotos.split(",") if a.fotos else sorted(F.get("fotos", {}), key=lambda k: -F["fotos"][k].get("zellen", 0))[:a.max_fotos]
+    namen = a.fotos.split(",") if a.fotos else sorted(F.get("fotos", {}), key=lambda k: -F["fotos"][k].get("zellen", 0))
+    if not a.fotos:      # 18.11.2026 (Kaufhaus gk2: 241 Kamerapaare < 5 cm - Duplikate aus zwei Quellordnern, Serienbilder): ohne Parallaxe passen zwei Bilder in JEDER Tiefe -> Sweep landete am Rand (-15 m). Standorte mit Mindestabstand waehlen
+        wahl = []; cz = []
+        for nm in namen:
+            kf = os.path.join(od, "messprotokoll", "K-" + nm + ".json")
+            if not os.path.exists(kf): continue
+            k_ = json.load(open(kf))["kamera"]; c_ = -cv2.Rodrigues(np.array(k_["rvec"]))[0].T @ np.array(k_["t"])
+            if any(np.linalg.norm(c_ - q_) < a.min_basis for q_ in cz): continue
+            wahl.append(nm); cz.append(c_)
+            if len(wahl) >= a.max_fotos: break
+        print(f"Fotowahl: {len(wahl)} Standorte mit >= {a.min_basis} m Abstand (aus {len(namen)} Fotos mit Wandzellen)"); namen = wahl
     if len(namen) < 3: print(f"nur {len(namen)} Fotos - kein Tiefen-Sweep moeglich"); return 2
     jj, ii = torch.meshgrid(torch.arange(W, device=dev), torch.arange(H, device=dev), indexing="xy"); U = u0 + (jj + 0.5) * c; Z = z1 - (ii + 0.5) * c
     B = torch.stack([o[0] + U * d[0], o[1] + U * d[1], Z], -1).reshape(-1, 3).float(); nv = torch.tensor([n[0], n[1], 0.0], device=dev).float(); K = []; G = []; cen = []
@@ -48,14 +58,18 @@ def main():
         m = ok.float()[None, None]; x = v[None, None] * m; mu = Fn.avg_pool2d(x, kq, 1, kq // 2) / Fn.avg_pool2d(m, kq, 1, kq // 2).clamp(min=1e-3); var = Fn.avg_pool2d((x - mu * m) ** 2, kq, 1, kq // 2) / Fn.avg_pool2d(m, kq, 1, kq // 2).clamp(min=1e-3)
         return ((v - mu[0, 0]) / (var[0, 0].sqrt() + 4.0)), var[0, 0].sqrt()
     ws = np.arange(a.w[0], a.w[1] + 1e-6, a.dw); kosten = torch.empty((len(ws), H, W), device=dev); struktur = torch.zeros((H, W), device=dev)
+    # 18.11.2026 (Kaufhaus gk2 f02, Suchbereich -15..+1: Scheinminimum am Rand -15 m, mit -6/-10 Wand richtig -0,20): tief hinter der Wand sehen nur noch wenige, eng
+    # stehende Kameras die Ebene und stimmen 'gut' ueberein. Eine Tiefe zaehlt nur, wenn >= min_sicht_anteil der Fotos sie sieht, die die Zelle auf der Wandebene sehen.
+    cnt0 = torch.stack([lies(i, 0.0)[1] for i in range(N)]).sum(0); cnt_min = torch.clamp(torch.ceil(a.min_sicht_anteil * cnt0.float()), min=3)
     for wi, w in enumerate(ws):
         V = []; O = []; S = []
         for i in range(N): v, ok = lies(i, float(w)); nvv, sd = norm(v, ok); V.append(nvv); O.append(ok); S.append(sd)
         V = torch.stack(V); O = torch.stack(O); cnt = O.sum(0); Vn = torch.where(O, V, torch.full_like(V, float("nan"))); med = torch.nanmedian(Vn, 0).values
-        ab = torch.where(O, (V - med).abs(), torch.zeros_like(V)).sum(0) / cnt.clamp(min=1); ab = torch.where(cnt >= 3, ab, torch.full_like(ab, 9.0)); kosten[wi] = Fn.avg_pool2d(ab[None, None], a.fenster, 1, a.fenster // 2)[0, 0]
+        ab = torch.where(O, (V - med).abs(), torch.zeros_like(V)).sum(0) / cnt.clamp(min=1); ab = torch.where(cnt >= cnt_min, ab, torch.full_like(ab, 9.0)); kosten[wi] = Fn.avg_pool2d(ab[None, None], a.fenster, 1, a.fenster // 2)[0, 0]
         if abs(w) < a.dw / 2: struktur = torch.stack(S).mean(0); gesehen = cnt
     kmin, arg = kosten.min(0); kmit = kosten.mean(0); kstd = kosten.std(0); sicher = ((kmit - kmin) / (kstd + 1e-6)).cpu().numpy(); wbest = ws[arg.cpu().numpy()]; struktur = struktur.cpu().numpy(); gesehen = gesehen.cpu().numpy()
     gut = (sicher >= a.sicher) & (struktur > 6.0) & (gesehen >= 3) & (kmin.cpu().numpy() < 0.5)
+    _arg = arg.cpu().numpy(); gut &= (_arg >= 2) & (_arg <= len(ws) - 3)      # 18.11.2026: Minimum in den 2 Randschritten = Kosten fallen nur weiter (kein echtes Minimum; Kaufhaus gk2 f02 Scheinwand bei -15 m)
     hist, kanten = np.histogram(wbest[gut], bins=len(ws), range=(ws[0] - a.dw / 2, ws[-1] + a.dw / 2)); w_wand = float(ws[int(np.argmax(hist))])      # haeufigste sichere Tiefe = die Wand selbst (LoD2-Ebene liegt oft 0,1-0,3 m daneben)
     print(f"Wandebene: haeufigste sichere Tiefe {w_wand:+.2f} m gegen die Fassadenebene (LoD2) - Kandidaten zaehlen relativ dazu")
     wm = ndi.median_filter(np.where(gut, wbest - w_wand, 0.0), 7)

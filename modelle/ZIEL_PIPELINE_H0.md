@@ -47,6 +47,12 @@ Dokumentiere alle Versuche."  -> Diese Datei ist das Versuchsprotokoll (jeder Ve
   seiten (Folge), tor_gps (alte Lage vor dem Kreislauf). Fixes: netz_aus_dicht Ausweich-Arbeitsordner (RCPARK_AUSWEICH, Standard USB-SSD rc-park_auslagern, 67 GB frei);
   tools/colmap_db_schema.py wandelt KOPIEN zurueck (source 3 EXIF -> prior 1; Kaufhaus 1364 Bilder, 149 Prior = 149 EXIF), zusatzfotos_registrieren ruft es nach dem Kopieren.
   3D-Seite V1 (Wolke + LoD2) https://claude.ai/artifact/2UtaDZfwddHA4sDULQCJfj. V1j Kette --ab fassaden.
+  V1j gk2i: Netz auf SSD 218 s ok; Fassaden/Fenster/Bauplan gebaut, Abnahme bestanden; ABER innenwaende_finden f02 'Wandtiefe -15 am Rand' -> keine Laube.
+  Ursache (Gegenprobe Hand-Objekt kaufhaus_gk Wand -0,10; gk2 mit Suchbereich -6/-10 Wand -0,20, mit -15 Scheinminimum am Rand): Kosten fallen bei grosser Tiefe weiter,
+  Minimum in den Randschritten wurde als 'sicher' gezaehlt. Kameras ok (K-Dateien 0,6-1,7 px gegen SfM), Bildgroessen ok. Kein Effekt: Mindestbasis 0,5 m (241 Kamerapaare
+  < 5 cm, Duplikate aus zwei Quellordnern) und Sichtanteil >= 50 % - beide bleiben (sinnvoll, schaden nicht). Fix fassade_tiefe: Randminima nicht 'gut'.
+  Ergebnis: f02 Innenwand i00 4,26 m hinter der Wand (Hand 4,25), Signifikanz 23,7, u -9,56..4,73; Schwabentor weiter 'keine Innenwand'; Schnelltest 0, Regression null4 identisch.
+  Platz: Datenplatte < 5 GB (Schnelltest 2 rot = Platztor) -> normal_maps gk2 (12 GB) per auslagern.sh auf SSD, 17 GB frei.
   Ideen falls V1b scheitert: (a) globaler Mapper nur auf eigenen Fotos + Commons, Videobilder danach registrieren (image_registrator); (b) Bildwahl auf ~700 Bilder nach Blickrichtungsabdeckung vor dem Mapper; (c) hierarchical_mapper testen (Reproduzierbarkeit messen).
 - V2 17.11. Kaufhaus Runde 2/3 (Agenten, Commits 1877c251, 920af251): Pipeline-Bugs gefunden (Fotoquellen, Brei, blindes Mass); Katalogteile wirken steif (-> Grundsatz Wandbild = Bauplan).
 - V3 17.11. Feinausrichtung Wandbild (eeafa1e7): Restversatz 1,2-2,5 -> 0,2-0,5 cm, Fugen-F1 0,417 -> 0,431; am Kaufhaus ohne Wirkung (Putz, Fotos aus Jahrzehnten).
