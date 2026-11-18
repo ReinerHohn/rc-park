@@ -19,7 +19,8 @@ if [ "$TROCKEN" != "--nur_umbiegen" ]; then
 rsync -aH --info=stats1 "$Q/" "$Z/" 2>&1 | tail -3 | tee -a "$LOG"; RC=${PIPESTATUS[0]}
 [ "$RC" = "0" ] || { echo "ABBRUCH: rsync rc $RC" | tee -a "$LOG"; exit 4; }
 # Pruefung NUR der Dateiinhalte: Ordnerdaten (.d..t) und Symlink-Ziele (cL/.L, von Nachbar-Umzuegen bewusst umgebogen) zaehlen nicht (18.11.2026: Stick-Umzug brach daran ab)
-D=$(rsync -aHc --dry-run --itemize-changes "$Q/" "$Z/" 2>&1 | grep -vE '^\.d|^cL|^\.L|^cd|^created directory' | head -20)
+# .f..t...... = Inhalt per Pruefsumme gleich, nur Zeitstempel (z.B. gpu_slots/mutex.lock von laufenden GPU-Jobs; 20757-Umzug brach 18.11. 17:40 daran ab)
+D=$(rsync -aHc --dry-run --itemize-changes "$Q/" "$Z/" 2>&1 | grep -vE '^\.d|^cL|^\.L|^cd|^created directory|^\.f\.\.t\.{6} ' | head -20)
 [ -z "$D" ] || { echo "ABBRUCH: Pruefsummen weichen ab:" | tee -a "$LOG"; echo "$D" | tee -a "$LOG"; exit 5; }
 echo "Pruefsummen gleich" | tee -a "$LOG"
 fi
