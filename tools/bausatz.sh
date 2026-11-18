@@ -27,7 +27,7 @@ if [ "$BAUART" = "einsatz" ]; then
   $P -W ignore -I tools/druck_hohl.py "$Z" "$EIN" --wand_mm "$WAND" --bild "${EIN%.stl}.png" | grep "Hoehenbereiche\|Volumen\|Bild\|FEHLER\|kein massiver"; RC=${PIPESTATUS[0]}
   [ "$RC" = "0" ] || { echo "ABBRUCH: druck_hohl rc $RC"; exit 3; }; [ -s "$EIN" ] || EIN="$Z"
 fi
-$P -W ignore -I tools/druck_farbteile.py "$O" --stl "$EIN" --wand_mm "$WAND" --spiel_mm "$SPIEL" $OPT --schicht_mm 0.16 --masken "$MASKEN" | grep "platte_\|Koerper:\|begrenzt\|keine Platte\|Durchdringung\|offene Hoehenschnitte\|  z \|Querschnittsbilder\|->"; RC=${PIPESTATUS[0]}
+$P -W ignore -I tools/druck_farbteile.py "$O" --stl "$EIN" --wand_mm "$WAND" --spiel_mm "$SPIEL" $OPT --schicht_mm 0.16 --masken "$MASKEN" | grep "platte_\|Ringschicht:\|Koerper:\|begrenzt\|keine Platte\|Durchdringung\|offene Hoehenschnitte\|  z \|Querschnittsbilder\|->"; RC=${PIPESTATUS[0]}
 [ "$RC" = "0" ] || { echo "ABBRUCH: druck_farbteile rc $RC (Meldungen oben; Schnittbilder ansehen)"; exit 3; }
 KS="modelle/stl/${O}_farbteile/koerper.stl"
 if [ "${RIPPEN:-1}" = "1" ]; then      # 17.11.2026: duenne Waende innen aussteifen (Demodruck Turmschaft bog sich durch); RIPPEN=0 schaltet ab

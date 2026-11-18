@@ -100,17 +100,30 @@ def ringschicht(modell, tasche, innen, wand, falz, spiel, dz=0.1, schliess=0.6):
       INNENRAUM = gefuellter Umriss, um `wand`/2 nach innen versetzt: darauf werden die ebenen Innenschichten beschnitten (nichts ragt nach aussen).
     Nur fuer (nahezu) senkrechte Waende - beides sind Treppen aus Scheiben. Die Scheiben ueberlappen um ein Viertel (nicht um 1 Promille: Stufen von 1 Mikrometer im Druck
     gaben in druck_teilung Flaechenfetzen ohne Volumen an der Schnittebene)."""
-    bb = tasche.bounding_box(); ringe = []; raum = []; J = JoinType.Miter
+    bb = tasche.bounding_box(); ringe = []; raum = []; J = JoinType.Miter; weit_n = 0
     for z in np.arange(bb[2] - falz - dz, bb[5] + falz + dz, dz):
         zm = float(z + dz / 2); S = modell.slice(zm)
         if S.is_empty(): continue
-        po = S.offset(schliess, J).to_polygons(); voll = [q for q in po if _fl(q) > 0.05]; lo = [q[::-1] for q in po if _fl(q) < -0.05]      # Vorzeichen nur am VERDICKTEN Schnitt lesen: nach dem Zurueckversetzen liefert Clipper den Ring als Vielecke ohne Loch (an Engstellen zusammengekniffen)
-        if not voll: continue
-        um = CS(voll, FillRule.Positive).offset(-schliess, JoinType.Round, 2.0, 24); r_ = um.offset(-0.5 * wand, JoinType.Round, 2.0, 8).simplify(0.005)      # nach innen RUND versetzen: mit Gehrung schnitt jede Kerbe der Aussenhaut einen bis 25 cm tiefen Keil in den Innenraum (Schnittbild z = 25,5 m: Innenschicht an der Ecke keilfoermig weg)
-        if not r_.is_empty(): raum.append(r_.extrude(dz * 1.25).translate((0, 0, float(z))))
         T = CS.batch_boolean([tasche.slice(float(zt)) for zt in (z - falz, z - falz / 2, z + 0.002, zm, z + dz - 0.002, z + dz + falz / 2, z + dz + falz)], OpType.Add)      # alle Taschen, die die Scheibe beruehren oder bis `falz` darueber/darunter liegen (die ebene Innenschicht reicht so weit ueber den Plattenrand und hing dort sonst frei im Hohlraum)
+        # 18.11.2026: Oeffnung im Schnitt breiter als 2 x schliess (Schwabentor z 18-25 m: Fenster/Durchgang 1,4-2,7 m) -> der geschlossene Schnitt hatte KEINEN Hohlraum, Innenraum
+        # und Ring fielen in dieser Scheibe ganz weg, die Platte nahm die Wand bis auf einen Splitter (7 von 76 Hoehenschnitten offen, "3 Stuecke statt 1"). Liegt eine Tasche in
+        # der Scheibe, wird schrittweise weiter geschlossen (bis 3 x schliess); der Innenraum ist dann Schnitt + wahrer Hohlraum (nicht der weit geschlossene Umriss: der fuellte
+        # einspringende Ecken und liesse Innenschichten nach aussen ragen).
+        # Nur Stuecke des Schnitts > 0,05 m2 schliessen weiter (wie offene_schnitte zaehlt): an z 9-10 m stehen in einer 6,7-m-Oeffnung Splitter (10 x 10 cm) - ueber sie
+        # geschlossen, entstand ein Hohlraum, und die Innenschicht hinter den Splittern hing als eigenes Stueck in der Oeffnung.
+        def zu_(sl, S_):
+            po = S_.offset(sl, J).to_polygons(); return po, [q for q in po if _fl(q) > 0.05], [q[::-1] for q in po if _fl(q) < -0.05]      # Vorzeichen nur am VERDICKTEN Schnitt lesen: nach dem Zurueckversetzen liefert Clipper den Ring als Vielecke ohne Loch (an Engstellen zusammengekniffen)
+        sl = schliess; po, voll, lo = zu_(sl, S)
+        if not T.is_empty() and sum(_fl(q) for q in lo) < 0.5:
+            Sg = [p_ for p_ in S.decompose() if p_.area() > 0.05]; Sg = CS.batch_boolean(Sg, OpType.Add) if Sg else CS()
+            for sw in ((2 * schliess, 3 * schliess) if not Sg.is_empty() else ()):
+                e_ = zu_(sw, Sg)
+                if sum(_fl(q) for q in e_[2]) >= 0.5: sl = sw; po, voll, lo = e_; break
+        if not voll: continue
+        um = CS(voll, FillRule.Positive).offset(-sl, JoinType.Round, 2.0, 24); r_ = um.offset(-0.5 * wand, JoinType.Round, 2.0, 8).simplify(0.005)      # nach innen RUND versetzen: mit Gehrung schnitt jede Kerbe der Aussenhaut einen bis 25 cm tiefen Keil in den Innenraum (Schnittbild z = 25,5 m: Innenschicht an der Ecke keilfoermig weg)
+        if sl == schliess and not r_.is_empty(): raum.append(r_.extrude(dz * 1.25).translate((0, 0, float(z))))
         if not lo or T.is_empty(): continue
-        Co = CS(lo, FillRule.Positive).offset(schliess, JoinType.Round, 2.0, 24); frei = um - S      # Co = geoeffneter Hohlraum (RUND versetzt: Ecken abgerundet, taugt nur zum Finden der Fenster; mit Gehrung stachen Spitzen durch die Wand, und die Kehle zwischen Treppenturm und Wand galt als Fenster); frei = alles Freie im geschlossenen Umriss
+        Co = CS(lo, FillRule.Positive).offset(sl, JoinType.Round, 2.0, 24); frei = um - S      # Co = geoeffneter Hohlraum (RUND versetzt: Ecken abgerundet, taugt nur zum Finden der Fenster; mit Gehrung stachen Spitzen durch die Wand, und die Kehle zwischen Treppenturm und Wand galt als Fenster); frei = alles Freie im geschlossenen Umriss
         if Co.area() < 0.5: continue
         fe = (frei - Co).offset(-0.3 * wand, J).offset(0.3 * wand, J); tu_ = []     # Fenstertunnel = Stuecke des Freien ausserhalb von Co, die vom Hohlraum bis zur Aussenhaut reichen (duenne Reste der Reliefkanten und die Ecken des Hohlraums zaehlen nicht)
         if not fe.is_empty():
@@ -119,10 +132,14 @@ def ringschicht(modell, tasche, innen, wand, falz, spiel, dz=0.1, schliess=0.6):
         hohl = [c_ for c_ in (frei - tun.offset(0.05 * wand, J) if tu_ else frei).decompose() if c_.area() > 0.5 and (c_ ^ Co).area() > 0.25]      # der WAHRE Hohlraum (scharfe Ecken): grosse Stuecke des Freien ohne die Fenstertunnel
         if not hohl: continue
         C = CS.batch_boolean(hohl, OpType.Add)
-        ring = ((S + T).offset(innen, J) ^ C.offset(0.5 * wand, J)) ^ T.offset(falz + innen, J)      # S + T: auch um Taschen herum, die in einen Hohlraum VOR der Wand schneiden (Treppenturm am Turmfuss: Tasche oeffnete den Turmring)
+        if sl > schliess:
+            r_ = (S + C).offset(-0.5 * wand, JoinType.Round, 2.0, 8).simplify(0.005); weit_n += 1
+            if not r_.is_empty(): raum.append(r_.extrude(dz * 1.25).translate((0, 0, float(z))))
+        ring =((S + T).offset(innen, J) ^ C.offset(0.5 * wand, J)) ^ T.offset(falz + innen, J)      # S + T: auch um Taschen herum, die in einen Hohlraum VOR der Wand schneiden (Treppenturm am Turmfuss: Tasche oeffnete den Turmring)
         if tu_: ring = ring - tun.offset(innen + spiel + 0.1 * wand, J)
         ring = ring.simplify(0.003)
         if not ring.is_empty(): ringe.append(ring.extrude(dz * 1.25).translate((0, 0, float(z))))
+    if weit_n: print(f"Ringschicht: {weit_n} Scheiben mit Oeffnung > {2 * schliess:.1f} m im Schnitt - Hohlraum mit bis {3 * schliess:.1f} m Schliessweite gefunden")
     return (M.batch_boolean(ringe, OpType.Add) if ringe else M()), (M.batch_boolean(raum, OpType.Add) if raum else M())
 
 
@@ -205,8 +222,17 @@ def main():
                 if not a.ohne_luft:      # 17.11.2026: 5 von 8 Platten hatten Luftinseln 0,24..1,04 mm ueber dem Bett (Rueckseite nicht ganz plan: Ruecksprung, Laibung) -> druck_luft.stuetzen fuellt bis 1,2 mm (Rueckseite, unsichtbar)
                     import druck_luft as DL
                     erg_, rest_, prot_ = DL.stuetzen(fl_.scale((K, K, K)), a.schicht_mm, 45.0, 2.0, 5.0, 1.2, 15.0, saeule_mm2=40.0, gitter_mm=4.0)      # Saeule/Gitter = Abbrech-Stuetzen fuer den Rest (in farbteile.json)
-                    if prot_["volumen_mm3"] > 0: fl_ = erg_.scale((1 / K, 1 / K, 1 / K)); pl = fl_.translate(tuple(float(x) for x in lo)).transform(np.hstack([np.linalg.inv(R), np.zeros((3, 1))]))
-                    lu = dict(schicht_mm=a.schicht_mm, inseln_vorher=prot_["inseln_vorher"], gefuellt=prot_["fuellen"], schraegen=prot_["schraege"], stuetzen_mm3=prot_["volumen_mm3"], saeulen_abbrechen=prot_["saeulen"], gitter_abbrechen=prot_["gitter"], luftinseln=len(rest_), flaeche_mm2=prot_["flaeche_rest_mm2"])
+                    if prot_["volumen_mm3"] > 0:
+                        fl_ = erg_.scale((1 / K, 1 / K, 1 / K)); pl_s = fl_.translate(tuple(float(x) for x in lo)).transform(np.hstack([np.linalg.inv(R), np.zeros((3, 1))]))
+                        # 18.11.2026: Stuetzen auf die TASCHE beschneiden (Taschenmass minus halbes Fuegespiel). druck_luft.stuetzen kennt die Tasche nicht: FUELLEN nimmt den
+                        # Inselgrundriss + 0,2 mm, eine SAEULE Insel + Kreis 1,6 mm um die Inselmitte - an einer Insel nahe dem Plattenrand ragte das seitlich aus dem
+                        # Plattenprisma in den Putz neben der Tasche (Fuegespiel 0,3 mm) -> "Durchdringung Platte/Koerper 13,8 mm3" (Kette druck, Testobjekt schwab_l2, 18.11.).
+                        kl_ = pl_s ^ prisma(band, u0, z0, px, A, t, n, hinten + 0.5 * spiel, vor + 0.025, weiten=0.5 * spiel); ab_ = (pl_s.volume() - kl_.volume()) * K ** 3
+                        if ab_ > 0.01:
+                            print(f"  {name}: Stuetzen ragten {ab_:.2f} mm3 aus der Tasche - auf Taschenmass minus {0.5 * a.spiel_mm:.2f} mm beschnitten"); pl_s = kl_
+                            fl_ = pl_s.transform(np.hstack([R, np.zeros((3, 1))])).translate(tuple(-float(x) for x in lo))
+                        pl = pl_s; prot_["beschnitten_mm3"] = round(float(ab_), 2)
+                    lu = dict(schicht_mm=a.schicht_mm, inseln_vorher=prot_["inseln_vorher"], gefuellt=prot_["fuellen"], schraegen=prot_["schraege"], stuetzen_mm3=prot_["volumen_mm3"], saeulen_abbrechen=prot_["saeulen"], gitter_abbrechen=prot_["gitter"], luftinseln=len(rest_), flaeche_mm2=prot_["flaeche_rest_mm2"], aus_tasche_beschnitten_mm3=prot_.get("beschnitten_mm3", 0.0))
                     if prot_["inseln_vorher"]: print(f"  {name}: Luftinseln {prot_['inseln_vorher']} -> {len(rest_)} ({prot_['fuellen']} gefuellt, {prot_['schraege']} Schraegen, +{prot_['volumen_mm3']:.0f} mm3)" + (" - STUETZEN NOETIG" if rest_ else ""))
                 platten[-1] = (name, pl); schreiben(pl, os.path.join(ad, "lage", name + ".stl"), K); schreiben(fl_, os.path.join(ad, name + ".stl"), K, boden=True)
                 ma = [(hi[j] - lo[j]) * K for j in range(3)]; passt = max(ma[0], ma[1]) <= a.bett_mm + 0.5; nk = len(pl.decompose()); schlecht |= not passt
@@ -246,7 +272,9 @@ def main():
     dmax = 0.0; pruef = dict()
     for name, pl in platten:
         if name is None: continue
-        d_ = (pl ^ koerper).volume() * K ** 3; dmax = max(dmax, d_)
+        x_ = pl ^ koerper; d_ = x_.volume() * K ** 3; dmax = max(dmax, d_)
+        if d_ > 1.0:      # wo? (18.11.2026: 13,8 mm3 ohne Ortsangabe - die Ursache musste nachgebaut werden)
+            for c_ in sorted(x_.decompose(), key=lambda c_: -c_.volume())[:3]: b_ = c_.bounding_box(); print(f"  DURCHDRINGUNG {name}: {c_.volume() * K ** 3:.2f} mm3 bei x {b_[0]:.2f}..{b_[3]:.2f} y {b_[1]:.2f}..{b_[4]:.2f} z {b_[2]:.2f}..{b_[5]:.2f} m (Modell)")
         for t_ in teile:
             if t_["name"] == name: t_["durchdringung_mm3"] = round(float(d_), 3)
     if platten: print(f"Durchdringung Platte/Koerper: hoechstens {dmax:.3f} mm3 je Platte (Druckmass; > 1 mm3 = Platte passt nicht in die Tasche)"); schlecht |= dmax > 1.0

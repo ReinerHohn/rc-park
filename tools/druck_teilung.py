@@ -397,9 +397,13 @@ def main():
             (tm.copy().apply_scale(K)).export(os.path.join(ad, "lage", f"teil_{k_ + 1:02d}.stl"))
             td = tm.copy(); td.apply_transform(np.r_[np.c_[Rr, np.zeros(3)], [[0, 0, 0, 1]]]); td.apply_translation(-np.r_[td.bounds[0, :2] + (td.bounds[1, :2] - td.bounds[0, :2]) / 2, td.bounds[0, 2]]); td.apply_scale(K)
         td.export(os.path.join(ad, f"teil_{k_ + 1:02d}.stl"))
+        if not trimesh.load(os.path.join(ad, f"teil_{k_ + 1:02d}.stl"), process=True).is_watertight:      # 18.11.2026: Luft-Stuetzen beruehren das Teil an Kanten (Schwabentor teil_02: 348 Kanten mit 4 Flaechen, erst im float32-STL zusammenfallend) -> 'nicht wasserdicht', obwohl 1 Koerper
+            from bauteile import kneifkanten_schliessen; tw_ = trimesh.load(os.path.join(ad, f"teil_{k_ + 1:02d}.stl"), process=True)
+            td = zu_tm(kneifkanten_schliessen(M(MM(vert_properties=np.asarray(tw_.vertices, np.float32), tri_verts=np.asarray(tw_.faces, np.uint32))), r=0.05)); td.export(os.path.join(ad, f"teil_{k_ + 1:02d}.stl"))
+            td = trimesh.load(os.path.join(ad, f"teil_{k_ + 1:02d}.stl"), process=True)
         V = tm.vertices @ B
         bericht.append(dict(teil=f"teil_{k_ + 1:02d}", lage=name, bett_mm=np.round(ext * K, 1).tolist(), passt=bool(ext.max() * K <= bett), ueberhang_m2=round(o, 3), flaeche_m2=round(A, 2),
-                            ueberhang_anteil=round(o / A, 5), wasserdicht=bool(tm.is_watertight), volumen_m3=round(float(tm.volume), 2),
+                            ueberhang_anteil=round(o / A, 5), wasserdicht=bool(tm.is_watertight and td.is_watertight), volumen_m3=round(float(tm.volume), 2),
                             rahmen_u=np.round([V[:, 0].min(), V[:, 0].max()], 2).tolist(), rahmen_n=np.round([V[:, 1].min(), V[:, 1].max()], 2).tolist(), rahmen_z=np.round([V[:, 2].min(), V[:, 2].max()], 2).tolist(),
                             schnitte=t["schnitte"], luft=lu))
     # 5b: Verbinderringe (17.11.2026): hohle Teile haben keine Wand fuer Stifte - am Turm 4 Schnitte, 0 Stifte, die Teile haetten sich nur stumpf stapeln lassen.

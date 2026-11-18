@@ -405,3 +405,7 @@ Versuch: Rippen der Frontflaeche (A,B,C,D,L2,R2) um die Erkerachse (u 15,52 / n 
   (2) NCC-Kurve ueber die ganze Bogenzone (wie oeffnungen_wandbild.tiefe_sweep, 16 Fotos): breite Buckel ohne Spitze, Tiefen 1,3 / 2,0 / 2,9 / -0,8 m je Bogen -> verworfen.
   GEHT: Sweep mit Kostenfenster 21 Zellen (1,26 m), 24 Fotos, nur KERNE der Erkenner-Bogenzonen -> -4,26 m hinter der Wand, Signifikanz 15.
   (3) Kaufhaus f00: 'Innenwand' 2,15 m hinter einer Tuer, weil die Wandtiefe selbst am Rand des Suchbereichs lag (+1,0) -> Tor: Wandtiefe muss innen liegen.
+- Druck-Taschen 18.11.2026 (Agent, tools/druck_farbteile.py): (1) 13,8 mm3 Durchdringung aus V6 nachbauen ohne das Testobjekt (schwab_l2 geloescht): schwab_auto mit altem
+  Generator und mit erneuerter Vorlage -> beide Durchdringung 0; Ursache nur ueber Mechanismus belegt (Stuetzen ragen aus dem Plattenprisma). Lehre: Fehlerfall-Objekte bis zur Klaerung behalten.
+  (2) ringschicht weiter schliessen ueber ALLE Schnittstuecke: in einer 6,7-m-Oeffnung mit 10-cm-Splittern entstand ein falscher Hohlraum, die Innenschicht hinter den Splittern
+  hing frei (3 neue offene Schnitte) -> nur Stuecke > 0,05 m2 schliessen.

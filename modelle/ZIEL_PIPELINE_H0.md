@@ -56,3 +56,19 @@ Dokumentiere alle Versuche."  -> Diese Datei ist das Versuchsprotokoll (jeder Ve
 - Nach gk2d: Bild Foto neben Modell + feinteil_tor je Zone gegen grob3 (Bezug rc-park_daten/kaufhaus_gk/feinteil/) + Abdeckung je Seite + GPS-Rest -> Zahlen dem Nutzer melden (versprochen) + 3D-HTML.
 - Offene Luecken: L2 Rest (Laube/Arkade freilegen, Tiefe Innenwand-Oeffnungen), L3 Freistehendes (Erkerkonsole/Rippen aus Fotokanten, Kielbogen = Katalogkurve an Wandbild-Geraden einpassen), L4 Mapper (Bildzahl/Zeit), L5 Platten (2-TB-Platte kommt 18.11.: Umzug laut memory reference-laufwerke-uuid).
 - Platten: SSD 20757D2E haengt als /media/oem/20757D2E455CA0E8 (rw) und traegt Auslagerungen (u. a. kaufhaus_gk2/video_frames, schwabentor, schwab_auto); NICHT abziehen lassen.
+- V8 18.11. vormittags Agent "Druck-Taschen" (nicht committet): Kettenstufe druck (bausatz.sh) am Schwabentor rc 3. Testobjekt schwab_l2 war geloescht -> Kopie schwab_dtest
+  (schwab_auto unter rc-park_daten/tmp_druck, Generator per objekt_anlegen --generator-erneuern wie in V6, OHNE_RUECKWAND). 13,8 mm3 dort NICHT exakt nachgebaut (Modell anders):
+  Durchdringung 0,000, dafuer rc 3 "offene Hoehenschnitte 7 von 76" (z 18-19 / 23,5-25 m: 3 bzw. 2 Stuecke statt 1).
+  Ursache 1 (Durchdringung): druck_luft.stuetzen kennt die Tasche nicht - FUELLEN = Insel + 0,2 mm, SAEULE = Insel + Kreis 1,6 mm -> ragt am Plattenrand aus dem Prisma in den Putz.
+  Beleg: Kunstplatte mit Randinsel 4,84 mm3 ausserhalb des Umrisses; Schwabentor platte_w02_02 0,33 mm3 (Spiel 0,3) bzw. 0,83 mm3 (Spiel 0,15) ausserhalb der Tasche minus halbes Spiel,
+  alt 0,046 mm3 Durchdringung bei Spiel 0,15. Fix: Platte nach den Stuetzen auf Tasche minus halbes Fuegespiel beschnitten (druck_farbteile; farbteile.json luft.aus_tasche_beschnitten_mm3),
+  Durchdringung > 1 mm3 nennt jetzt den Ort.
+  Ursache 2 (offene Schnitte): ringschicht schliesst den Schnitt mit 0,6 m - eine Oeffnung 1,4-2,7 m (Fenster/Durchgang des Turms) liess KEINEN Hohlraum, Innenraum leer ->
+  alle Innenschichten der Scheibe geloescht; Platten w01/w02 (Wand liegt dort bis 20 cm vor der Maskenebene) nahmen die Wand bis auf Splitter. Fix: mit Tasche in der Scheibe
+  bis 3 x schliess weiter schliessen, nur Schnittstuecke > 0,05 m2 (Splitter in der 6,7-m-Oeffnung z 9-10 m schlossen sonst einen falschen Hohlraum: 3 neue offene Schnitte),
+  Innenraum dann = Schnitt + wahrer Hohlraum. Ergebnis 7/76 -> 0/76 offen (Schnittbilder z 9,5 / 18 / 24 angesehen: Innenschicht hinter den tiefen Platten da, Splitter unveraendert).
+  Ursache 3: druck_teilung schrieb Teile nach Luft-Stuetzen mit Beruehrkanten (teil_02 348, teil_06 36 Kanten mit 4 Flaechen) -> trimesh nicht wasserdicht; Fix kneifkanten_schliessen r 0,05 mm.
+  Ergebnis bausatz.sh schwab_dtest (Wand 2,4, Spiel 0,3, tasche + Ring): rc 0 - 1 Koerper, 28 Platten, Durchdringung 0,000 mm3, 0/76 offene Schnitte, 6 Teile + Verbinder
+  + 28 Platten wasserdicht (36/36 Dateien), Luftinseln 0, Prusa 27 h 23 min / 909 cm3, Bambu 7 h 49 min / 70 cm3 (druckzeit*.json). Testobjekt danach geloescht.
+  OFFEN: Platte = Prisma ab EINER Ebene je Wand; liegt die Wand oertlich bis 20 cm vor der Maskenebene (w01/w02, z 17-33 m), nimmt die Platte die ganze Wand
+  und nur die Innenschicht (~1 mm) traegt dort (rippen.png z 376 mm: duenner Wandabschnitt) -> Plattentiefe je Pixel an die oertliche Wandflaeche binden.
