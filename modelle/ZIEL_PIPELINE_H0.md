@@ -46,6 +46,8 @@ Dokumentiere alle Versuche."  -> Diese Datei ist das Versuchsprotokoll (jeder Ve
   (0,02/0,06/-0,06/0,02/-0,06/-0,66 gegen Hand 0,06/0,10/0,0/0,10/0,14/0,52; NCC 0,12-0,35) -> keine Innenwand-Oeffnung gebaut (Vorlage baut ohnehin nur auf freiliegender Wand).
   rueckwand gemessen 0,20 m (3 Fenster 0,18/0,20/0,32) gegen Handmass 0,14/0,19. Vorlagenbau kaufhaus_l2 erwartungsgemaess rc 1 (Laube, Saeulen, Erker, Balkon fehlen = L3).
   Naechster Schritt: Laube/Arkade aus innenwaende freilegen (Bogenform aus Wandbild der Aussenwand, form_aus_wandbild), Innenwand-Tiefe je Zone robuster (mehr Blickwinkel, Ring ohne Pfeiler).
+- V7 18.11. 08:10 L2 Laube freilegen: bauteile.laube_aus_wandbild (Boegen = Bildumrisse der Aussenwand aus audit/oeffnungen_aussen.json, Halle bis zur gemessenen Innenwandebene; ANNAHME Pfeilertiefe 0,8 / ebener Boden / flache Decke), Generator-Vorlage ruft es VOR den Innenwand-Oeffnungen (nur_frei findet die Wand dann frei), gesamtkette erneuert alte Rumpfe. Schnelltest synthetisch 125 m3 / 1 Koerper gruen; Regression kaufhaus_null4 identisch. Am echten Kettenobjekt (gk2e) noch ungeprueft.
+  Nebenbefund: regression.py martinstor kaputt (bauteile.lade_masse fehlt seit 497af805) - alt, nicht V7.
 
 ## UEBERGABE 18.11. ~07:40 (vor /clear) - hier weitermachen
 - LAEUFT: systemd-Job rcpark-kaufhaus_gk2d (Log /media/oem/scan/rc-park_daten/kaufhaus_gk2d.log): gesamtkette kaufhaus --ziel kaufhaus_gk2 --ab sfm (Fusion 595 Bilder, dann tore/dach/bauen/kanten/fototor/fassaden/fenster/bauplan/seiten/html/druck). Erwartung: GPS-Tor knapp rot (18 % > 15 m) -> Kette koennte an den Lage-Toren anhalten -> dann Ursache pruefen (Videobilder/alte Fotos mit falschem GPS? GPS-Tor nur auf eigenen Handyfotos?), NICHT einfach --trotz-lage.

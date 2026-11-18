@@ -43,7 +43,7 @@ def main():
     if nur_gen and os.path.exists(gp):
         alt = open(gp).read()
         if "Generator-Rumpf (manifold3d)" not in alt or len(alt.splitlines()) > 70: print("Generator ist kein unberuehrter Rumpf - NICHT erneuert:", gp); return 3
-        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt and "rueckwaende" in alt and "oeffnungen_aus_wandbild" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
+        if "fenster_fuer_bau" in alt and "fenster_aus_json" in alt and "stl_schreiben" in alt and "oeffnungen_aus_json" in alt and "rueckwaende" in alt and "oeffnungen_aus_wandbild" in alt and "laube_aus_wandbild" in alt: print("Generator-Rumpf ist aktuell:", gp); return 0
         import time; os.replace(gp, gp + ".alt_" + time.strftime("%Y%m%d_%H%M")); print("alter Generator-Rumpf beiseitegelegt:", gp + ".alt_*")
     if not os.path.exists(gp):
         open(gp, "w").write(f'''#!/usr/bin/env python3
@@ -76,6 +76,10 @@ if obj.get("lod2", {{}}).get("id"):                    # Standard: LoD2-Grundris
     from bauteile import oeffnungen_aus_json         # 17.11.2026: automatisch erkannte Bogenoeffnungen / Tordurchfahrten (Kettenstufe 'fenster': tools/oeffnungen_bogen.py -> audit/oeffnungen_auto.json)
     koerper, belege_o, z_tor = oeffnungen_aus_json(koerper, os.path.join(HERE, "{ob}", "audit", "oeffnungen_auto.json"), innenwaende=obj.get("innenwaende"))      # 18.11.: Bogen vor einer Innenwand reicht bis zu ihr
     for b_ in belege_o: beleg(**b_)
+    if obj.get("innenwaende") and os.environ.get("OHNE_LAUBE") != "1":   # 18.11.2026 (L2): Laube/Halle vor einer gemessenen Innenwand freilegen - Boegen = Umrisse aus dem Wandbild der Aussenwand
+        from bauteile import laube_aus_wandbild
+        koerper, bel_l = laube_aus_wandbild(koerper, obj["innenwaende"], os.path.join(HERE, "{ob}", "audit", "oeffnungen_aussen.json"), pfeiler_tiefe=float(obj.get("pfeiler_tiefe", 0.8)))
+        for b_ in bel_l: beleg(**b_)
     IO_ = obj.get("innenwand_oeffnungen")            # 18.11.2026 (Kettenstufe 'bauplan', L2): Oeffnungen der Innenwaende aus ihrem Wandbild - nur wo die Innenwand freiliegt, VOR aushoehlen
     if IO_ and os.environ.get("OHNE_INNENWAND") != "1":
         from bauteile import oeffnungen_aus_wandbild

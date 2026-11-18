@@ -79,4 +79,14 @@ m = np.ones((H, W), bool); gf = rng.random((H, W)) < 0.4
 A, b = anker_fein(hp, rng.normal(0, 0.003, (H, W)), gf, m, 0.01, 1.5, 24.0); assert (hp * A).std() < 0.002, (hp * A).std()
 A, b = anker_fein(hp, 0.5 * hp + rng.normal(0, 0.003, (H, W)), gf, m, 0.01, 1.5, 24.0); assert abs(float(np.median(A)) - 0.5) < 0.05, np.median(A)
 PY
+$G -I - "$S/laube_oa.json" <<'PY' > /dev/null 2>&1 && ok "Laube aus Wandbild: 3 Bildbogen + Halle bis Innenwand -3 m nehmen 125 m3, 1 Koerper; Innenwand ohne Oeffnung im u-Bereich -> nichts (bauteile.laube_aus_wandbild)" || rot "bauteile.laube_aus_wandbild (synthetisches Gebaeude 12 x 8 m, 3 Boegen)"
+import sys, json, numpy as np; sys.path.insert(0, "tools"); from bauteile import laube_aus_wandbild; from manifold3d import Manifold as M
+k = M.cube((12, 8, 10))
+def bogen(u0, u1, z0, ks, sc):
+    m = 0.5 * (u0 + u1); r = 0.5 * (u1 - u0); return [[u0, z0], [u1, z0]] + [[m + r * np.cos(a), ks + (sc - ks) * np.sin(a)] for a in np.linspace(0, np.pi, 15)][1:-1]
+json.dump({"f00": dict(o=[0, 0], d=[1, 0], n=[0, -1], oeffnungen=[dict(klasse="bogen", zone=[u, u + 3, 0.5, 4.5], umriss=bogen(u, u + 3, 0.5, 3.0, 4.5)) for u in (1, 4.5, 8)] + [dict(klasse="fenster", zone=[2, 3, 6, 7], umriss=[[2, 6], [3, 6], [3, 7], [2, 7]])])}, open(sys.argv[1], "w"))
+iw = dict(name="i00", fassade="f00", a=[0, 0], b=[1, 0], aussen=[0, -1], versatz=-3.0, u=[0.8, 11.2], z=[0.5, 5.0])
+k2, bel = laube_aus_wandbild(k, [iw], sys.argv[1]); dv = k.volume() - k2.volume(); assert len(k2.decompose()) == 1 and 120 < dv < 130, dv
+k3, b3 = laube_aus_wandbild(k, [dict(iw, u=[20, 30])], sys.argv[1]); assert k3.volume() == k.volume() and "NICHT" in b3[0]["element"]
+PY
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F

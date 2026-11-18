@@ -323,6 +323,47 @@ def laube(koerper, W, boegen, tiefe, decke, pfeiler_tiefe=0.8, u0=None, u1=None,
     return koerper - sch, sch
 
 
+def laube_aus_wandbild(koerper, innenwaende, datei, pfeiler_tiefe=0.8, vor=0.8, klassen=("bogen", "tor", "tuer"), min_b=1.0, min_h=1.8, boden=1.0):
+    """LAUBE / HALLE AUS DEM WANDBILD FREILEGEN (18.11.2026, Ziel H0 von null L2; Grundsatz WANDBILD = BAUPLAN). Kette: innenwaende (objekt.json, tools/innenwaende_finden.py:
+    Ebenen-Sweep sieht durch grosse bodennahe Oeffnungen eine Flaeche 'versatz' m hinter der Aussenwand) + Oeffnungen der AUSSENWAND aus dem feinen Wandbild
+    (datei = audit/oeffnungen_aussen.json von tools/oeffnungen_wandbild.py: Umriss je Oeffnung aus Bildkanten). Je Innenwand:
+      Bogenoeffnungen = Bildumriss jeder grossen, bodennahen Oeffnung (klassen, >= min_b x min_h m, Unterkante <= Innenwand-z0 + boden) mit Mitte im u-Bereich der Innenwand,
+      als Prisma von 'vor' m vor der Wand (Reliefplatten fallen mit) bis hinter die Pfeilerflucht; Gestalt NUR aus dem Bild, kein Katalogbogen;
+      Halle = Quader u = Huelle der Umrisse, z = tiefste Umriss-Unterkante (ANNAHME ebener Boden) .. max(Innenwand-z1, hoechster Scheitel + 5 cm) (ANNAHME flache Decke),
+      w = Innenwandebene (gemessen) .. -pfeiler_tiefe (ANNAHME 0,8 m wie laube(); hoechstens halbe Hallentiefe).
+    VOR oeffnungen_aus_wandbild(nur_frei) der Innenwand-Oeffnungen und VOR aushoehlen aufrufen (die Innenwand liegt dann frei, die Hohlraumschale folgt der Halle).
+    Liefert (koerper, belege). Ohne passende Oeffnung bleibt die Innenwand verdeckt (Beleg mit Grund)."""
+    import json, os
+    if not innenwaende or not os.path.exists(datei): return koerper, []
+    FA = json.load(open(datei)); belege = []
+    for iw in innenwaende:
+        F = FA.get(iw.get("fassade"))
+        if not F: belege.append(dict(seite="wand", element="Innenwand %s: Laube NICHT freigelegt" % iw.get("name"), quelle="bauteile.laube_aus_wandbild", hinweis="Fassade %s fehlt in %s" % (iw.get("fassade"), os.path.basename(datei)))); continue
+        o = np.array(F["o"], float); W = Wand(o, o + np.array(F["d"], float), aussen=o + np.array(F["n"], float)); s = -1.0 if W.spiegel else 1.0
+        A_ = np.asarray(iw["a"], float); t_ = np.asarray(iw["b"], float) - A_; t_ /= np.linalg.norm(t_)
+        n_ = np.asarray(iw["aussen"], float) - A_; n_ = n_ - (n_ @ t_) * t_; n_ /= np.linalg.norm(n_)
+        if n_ @ W.n < 0.98: belege.append(dict(seite="wand", element="Innenwand %s: Laube NICHT freigelegt" % iw.get("name"), quelle="bauteile.laube_aus_wandbild", hinweis="Innenwand nicht parallel zur Fassade")); continue
+        w_iw = float(((A_ + float(iw["versatz"]) * n_) - o) @ W.n); du = float((A_ - o) @ W.t)      # Innenwandebene und u-Versatz im Fassadenrahmen
+        iu = sorted(float(x) + du for x in iw["u"]); iz = [float(x) for x in iw["z"]]
+        pt = min(pfeiler_tiefe, 0.5 * abs(w_iw)); sch = None; gew = []
+        for e in F.get("oeffnungen", []):
+            if e.get("flach") or not e.get("umriss") or e["klasse"] not in klassen: continue
+            U = [p_[0] for p_ in e["umriss"]]; Z_ = [p_[1] for p_ in e["umriss"]]
+            if max(U) - min(U) < min_b or max(Z_) - min(Z_) < min_h or min(Z_) > iz[0] + boden or not iu[0] <= 0.5 * (min(U) + max(U)) <= iu[1]: continue
+            P = [[s * u, z] for u, z in e["umriss"]]
+            if sum(P[i][0] * P[(i + 1) % len(P)][1] - P[(i + 1) % len(P)][0] * P[i][1] for i in range(len(P))) < 0: P = P[::-1]
+            k = M.extrude(CrossSection([P]), pt + 0.05 + vor).translate((0, 0, -pt - 0.05)).transform(W.matrix(0)); sch = k if sch is None else sch + k
+            gew.append((e["klasse"], min(U), max(U), min(Z_), max(Z_)))
+        if not gew:
+            belege.append(dict(seite="wand", element="Innenwand %s: Laube NICHT freigelegt" % iw.get("name"), quelle="bauteile.laube_aus_wandbild; " + os.path.basename(datei), hinweis="keine grosse bodennahe Oeffnung mit Bildumriss im u-Bereich %.2f..%.2f" % tuple(iu))); continue
+        ua, ub = min(g[1] for g in gew), max(g[2] for g in gew); za = min(g[3] for g in gew); zb = max(iz[1], max(g[4] for g in gew) + 0.05)
+        sch = sch + W.kasten(ua, ub, za, zb, w_iw, -pt); koerper = koerper - sch
+        belege.append(dict(seite="wand", element="Laube vor Innenwand %s: %d Oeffnungen aus dem Wandbild + Halle %.2f m tief" % (iw.get("name"), len(gew), -w_iw),
+                           quelle="bauteile.laube_aus_wandbild: Umrisse aus dem feinen Wandbild der Fassade %s (%s), Hallentiefe = Innenwand %s (%s)" % (iw["fassade"], os.path.basename(datei), iw.get("name"), str(iw.get("quelle", ""))[:120]),
+                           hinweis="ANNAHME: Pfeilertiefe %.2f m, ebener Boden z %.2f, flache Decke z %.2f; Oeffnungen " % (pt, za, zb) + "; ".join("%s u %.2f..%.2f z %.2f..%.2f" % g for g in gew)))
+    return koerper, belege
+
+
 def saeule(W, u, w, z0, z1, d, basis=None, kapitell=None, nseg=40):
     """RUNDE SAEULE mit Basis und Kapitell (GENERISCH, 17.11.2026 Kaufhaus-Laube Runde 2). Achse bei Wandkoordinaten (u, w) der Wand W, Schaft z0..z1, Durchmesser d.
     basis = dict(z1, breite, form='quadrat'|'rund', wulst=0.06): Plinthe z0..z1 (quadratisch = Kanten parallel zur Wand), darauf ein Wulst (Ring halbe Hoehe 'wulst',
