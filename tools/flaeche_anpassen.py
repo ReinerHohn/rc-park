@@ -36,7 +36,7 @@ def bewerten(F, cams, a, cache):
     teile = FO.flaechen_expandieren([F]); werte = []
     for T in teile:
         X, N, r = FO.raster(T, a.zelle); _, cnt, _, mad = FO.fusionieren(T, X, N, cams, a, None, cache)
-        if np.isfinite(mad).sum() < 0.2 * len(mad): werte.append(60.0)                                # kaum Zellen mit >= 3 Fotos: schlecht
+        if np.isfinite(mad).sum() < 0.03 * len(mad): werte.append(60.0)                                # kaum Zellen mit >= 3 Fotos: schlecht
         else: werte.append(float(np.nanmedian(mad)))
     return float(np.mean(werte)), werte
 
