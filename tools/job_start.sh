@@ -66,13 +66,34 @@ if [ "$GPUJOB" = 1 ]; then
   done
   [ "$BUDGET" -gt 0 ] || echo "$NAME $$ $(date +%FT%T)" > "$LOCK"      # Budget-Jobs laufen parallel, ohne Exklusiv-Sperre
 fi
+# RAM-BUCHUNG (18.11.2026, Kaufhaus gk2d: Fusion + Druck-Job gleichzeitig -> OOM-Kill; je Job MemoryHigh 11G, Rechner 15 GB): JOB_RAM_MB=<MiB> (Standard 2000)
+# wird unter flock in $RBUCH gebucht; Start erst, wenn Summe der Buchungen laufender Jobs + eigene <= JOB_RAM_LIMIT_MB (Standard 85 % MemTotal). MemoryHigh = max(Buchung, 2G) nur bei gesetztem JOB_RAM_MB
+# (JOB_MEMORY_HIGH setzt es weiter von Hand). Grosse Jobs (Fusion, Mapper, Kette) mit JOB_RAM_MB=11000 starten. JOB_OHNE_RAM_SPERRE=1 = ohne Warten.
+RBUCH=/media/oem/scan/rc-park_daten/.ram_buchung; RAM_MB=${JOB_RAM_MB:-2000}; RAM_LIMIT=${JOB_RAM_LIMIT_MB:-$(awk '/^MemTotal/ {printf "%d", $2 * 0.85 / 1024}' /proc/meminfo)}
+ram_buchen() {
+  exec 8>>"$RBUCH.lock"; flock 8
+  local jetzt sum=0 n mb t tmp; jetzt=$(date +%s); tmp=$(mktemp)
+  while read -r n mb t; do
+    [ -n "$n" ] || continue
+    if systemctl --user is-active --quiet "rcpark-$n" 2>/dev/null || [ $((jetzt - ${t:-0})) -lt 120 ]; then echo "$n $mb $t" >> "$tmp"; [ "$n" != "$NAME" ] && sum=$((sum + mb)); fi
+  done < <(cat "$RBUCH" 2>/dev/null)
+  if [ $((sum + RAM_MB)) -gt "$RAM_LIMIT" ]; then RGRUND="RAM-Buchung: gebucht ${sum} MiB + Job ${RAM_MB} MiB > Grenze ${RAM_LIMIT} MiB ($(cut -d' ' -f1,2 "$tmp" | tr '\n' ' '))"; mv "$tmp" "$RBUCH"; flock -u 8; return 1; fi
+  grep -v "^$NAME " "$tmp" > "$RBUCH" 2>/dev/null || : > "$RBUCH"; echo "$NAME $RAM_MB $jetzt" >> "$RBUCH"; rm -f "$tmp"; flock -u 8; return 0
+}
+if [ "${JOB_OHNE_RAM_SPERRE:-0}" != "1" ]; then
+  T0=$(date +%s); LAST=$T0
+  until ram_buchen; do
+    NOW=$(date +%s); if [ "$LAST" = "$T0" ] || [ $((NOW-LAST)) -ge 600 ]; then echo "$(date +%T) $RGRUND, warte (seit $((NOW-T0)) s)"; LAST=$NOW; fi; sleep 60
+  done
+else echo "$NAME $RAM_MB $(date +%s)" >> "$RBUCH"; fi
+[ -z "${JOB_MEMORY_HIGH:-}" ] && [ -n "${JOB_RAM_MB:-}" ] && JOB_MEMORY_HIGH="$(( RAM_MB > 2048 ? RAM_MB : 2048 ))M"   # ohne JOB_RAM_MB bleibt die alte Grenze 11G
 systemctl --user reset-failed "rcpark-$NAME" 2>/dev/null || true
 CMD=$(printf '%q ' "$@")
 # 15.11.2026 (Recherche Durchsatz + Messung: SIFT 14 min statt < 1 min, weil CPU-Ausrichtungen alle Kerne belegten): GPU-Jobs bekommen CPU-Vorrang
 # (CPUWeight 1000, alle Kerne); reine CPU-Jobs (JOB_GPU_MB=0) laufen mit CPUWeight 20 auf den 12 langsamen Kernen 16-27 (JOB_CPU=alle hebt das auf).
 if [ "${BUDGET:-0}" -gt 0 ] 2>/dev/null || [ "${JOB_CPU:-}" = "alle" ]; then CPUW=1000; PIN=""; else CPUW=20; PIN="taskset -c ${JOB_CPU_KERNE:-16-27} "; fi
 systemd-run --user --unit "rcpark-$NAME" --collect -p MemoryHigh="${JOB_MEMORY_HIGH:-11G}" -p CPUWeight="$CPUW" --setenv=RCPARK_JOB="$NAME" --setenv=RCPARK_GPU_MB="${BUDGET:-0}" -p WorkingDirectory="$(pwd)" \
-  /bin/bash -c "$PIN$CMD > '$LOG' 2>&1; rc=\$?; echo \"JOB_ENDE rc=\$rc\" >> '$LOG'; [ \"\$(cut -d' ' -f1 '$LOCK' 2>/dev/null)\" = '$NAME' ] && rm -f '$LOCK'; ( flock 9; sed -i '/^$NAME /d' '$BUCH' 2>/dev/null ) 9>>'$BUCH.lock'; [ \$rc -ne 0 ] && echo \"\$(date +%FT%T) $NAME rc=\$rc log=$LOG | \$(grep -v JOB_ENDE '$LOG' | tail -2 | tr '\\n' ' ' | cut -c1-300)\" >> /media/oem/scan/rc-park_daten/job_fehler.log; exit \$rc"
+  /bin/bash -c "$PIN$CMD > '$LOG' 2>&1; rc=\$?; echo \"JOB_ENDE rc=\$rc\" >> '$LOG'; [ \"\$(cut -d' ' -f1 '$LOCK' 2>/dev/null)\" = '$NAME' ] && rm -f '$LOCK'; ( flock 9; sed -i '/^$NAME /d' '$BUCH' 2>/dev/null ) 9>>'$BUCH.lock'; ( flock 8; sed -i '/^$NAME /d' '$RBUCH' 2>/dev/null ) 8>>'$RBUCH.lock'; [ \$rc -ne 0 ] && echo \"\$(date +%FT%T) $NAME rc=\$rc log=$LOG | \$(grep -v JOB_ENDE '$LOG' | tail -2 | tr '\\n' ' ' | cut -c1-300)\" >> /media/oem/scan/rc-park_daten/job_fehler.log; exit \$rc"
 if [ "${RCPARK_OHNE_GPU_WACHE:-0}" != "1" ]; then                    # GPU-Wache (Lehre 14.11.: CPU-Werkzeug lief unbemerkt auf 18 Kernen, GPU 0 %)
   systemd-run --user --unit "rcpark-$NAME-gpuwache" --collect -p WorkingDirectory="$(pwd)" /bin/bash "$(cd "$(dirname "$0")" && pwd)/gpu_wache.sh" "$NAME" "$LOG" >/dev/null 2>&1 || true
 fi

@@ -31,7 +31,7 @@ Aktueller Stand: `modelle/STAND_2026-11-14.md` (Abschnitt UEBERGABE am Ende zuer
 - Sitzungsbeginn: `bash tools/hpwmi_pruefen.sh` (bei ACHTUNG KERNEL-MODUL Nutzer sofort sagen).
 - Grosse Daten nur unter `/media/oem/scan/...`, nie Root-Platte; Symlinks im Repo.
 - Python: `/media/oem/scan/venv-seg/bin/python -I`, Generator `~/.venvs/rcpark`.
-- Lange Jobs nur `JOB_GPU_MB=<MiB> tools/job_start.sh NAME LOG BEFEHL...`. Neue Rechenwerkzeuge von Anfang an auf GPU (`tools/gpu_knn.py`, Merkmale ALIKED+LightGlue); vorhandene Werkzeuge VOR Start auf GPU-Nutzung pruefen; `gpu_wache.sh` meldet CPU-Jobs ohne GPU in `/media/oem/scan/rc-park_daten/gpu_warnungen.log`.
+- Lange Jobs nur `JOB_GPU_MB=<MiB> JOB_RAM_MB=<MiB> tools/job_start.sh NAME LOG BEFEHL...` (RAM-Buchung, grosse Jobs 11000). Neue Rechenwerkzeuge von Anfang an auf GPU (`tools/gpu_knn.py`, Merkmale ALIKED+LightGlue); vorhandene Werkzeuge VOR Start auf GPU-Nutzung pruefen; `gpu_wache.sh` meldet CPU-Jobs ohne GPU in `/media/oem/scan/rc-park_daten/gpu_warnungen.log`.
 - Nie zwei Optimierer/Generatorlaeufe mit gleicher Zwischendatei parallel.
 - Kein Commit/Push ohne Auftrag; Commit-Texte enden mit den Attribution-Zeilen der Sitzung. Pre-commit-Hook nur durch Nutzer aktivieren.
 - Vor neuen Versuchen: `modelle/NICHTS_GEBRACHT.md`, `modelle/VERSUCHSREGISTER_MARTINSTOR.md`, `modelle/LIZENZ_WERKZEUGE.md`.

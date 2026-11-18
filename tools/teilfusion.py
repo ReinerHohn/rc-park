@@ -60,6 +60,14 @@ def main():
         ziel.append(c + d * tiefe)
     ziel = np.array(ziel); kern_n = max(10, int(a.kern_anteil * a.max_bilder)); k = int(np.ceil(N / kern_n))
     L = kmeans(ziel, k) if k > 1 else np.zeros(N, int); teile = []
+    # 18.11.2026 (Kaufhaus gk2f: Kern 6 neben 78-137 -> ein ganzer Durchgang fuer 9 000 Punkte): kleine Kerne (< 30 % kern_n) in den naechsten Kern legen, solange er <= max_bilder bleibt
+    while True:
+        gr = {j: int((L == j).sum()) for j in np.unique(L)}; klein = [j for j in gr if gr[j] < 0.3 * kern_n]
+        if not klein or len(gr) < 2: break
+        j = min(klein, key=lambda x: gr[x]); C = {x: ziel[L == x].mean(0) for x in gr}
+        ziele_ = sorted((x for x in gr if x != j and gr[x] + gr[j] <= a.max_bilder), key=lambda x: np.linalg.norm(C[x] - C[j]))
+        if not ziele_: break
+        L[L == j] = ziele_[0]; print(f"kleiner Kern ({gr[j]} Bilder) in den naechsten Kern ({gr[ziele_[0]]}) gelegt", flush=True)
     for j in range(k):
         kern = [namen[i] for i in np.where(L == j)[0]]
         if not kern: continue
