@@ -118,6 +118,9 @@ def merkmale(a):
         pycolmap.extract_features(db, os.path.join(a.aus, "bilder"), image_names=nn, camera_mode=pycolmap.CameraMode.SINGLE, reader_options=ro, **kw)
     con = sqlite3.connect(db); ids = {n: i for i, n in con.execute("select image_id,name from images")}; con.close()
     ref = pycolmap.Reconstruction(a.sparse); reg = sorted(i.name for i in ref.images.values() if i.has_pose)
+    mod_ = {str(c.model).split(".")[-1] for c in ref.cameras.values()}
+    if mod_ <= {"PINHOLE"} and "dicht" in a.sparse:      # 18.11.2026 (Kaufhaus gk2i): Kette gab das ENTZERRTE Modell dicht/sparse - Keypoints der Datenbank gehoeren zu den Originalbildern; Absturz erst nach 90 min in triangulate_points (kPinhole vs kSimpleRadial)
+        print(f"FEHLER: {a.sparse} ist ein entzerrtes Modell (nur PINHOLE) - passt nicht zur Merkmalsdatenbank der Originalbilder; das SfM-Modell (sfm/sparse/0) angeben", flush=True); sys.exit(2)
     paare = [(n, r) for n in names for r in reg] + list(itertools.combinations(names, 2))
     pf = os.path.join(a.aus, "paare.txt"); open(pf, "w").write("\n".join(f"{x} {y}" for x, y in paare) + "\n")
     mo = pycolmap.FeatureMatchingOptions(); vo = pycolmap.TwoViewGeometryOptions(); vo.ransac.random_seed = 0
