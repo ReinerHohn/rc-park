@@ -45,3 +45,10 @@ Dokumentiere alle Versuche."  -> Diese Datei ist das Versuchsprotokoll (jeder Ve
   (0,02/0,06/-0,06/0,02/-0,06/-0,66 gegen Hand 0,06/0,10/0,0/0,10/0,14/0,52; NCC 0,12-0,35) -> keine Innenwand-Oeffnung gebaut (Vorlage baut ohnehin nur auf freiliegender Wand).
   rueckwand gemessen 0,20 m (3 Fenster 0,18/0,20/0,32) gegen Handmass 0,14/0,19. Vorlagenbau kaufhaus_l2 erwartungsgemaess rc 1 (Laube, Saeulen, Erker, Balkon fehlen = L3).
   Naechster Schritt: Laube/Arkade aus innenwaende freilegen (Bogenform aus Wandbild der Aussenwand, form_aus_wandbild), Innenwand-Tiefe je Zone robuster (mehr Blickwinkel, Ring ohne Pfeiler).
+
+## UEBERGABE 18.11. ~07:40 (vor /clear) - hier weitermachen
+- LAEUFT: systemd-Job rcpark-kaufhaus_gk2d (Log /media/oem/scan/rc-park_daten/kaufhaus_gk2d.log): gesamtkette kaufhaus --ziel kaufhaus_gk2 --ab sfm (Fusion 595 Bilder, dann tore/dach/bauen/kanten/fototor/fassaden/fenster/bauplan/seiten/html/druck). Erwartung: GPS-Tor knapp rot (18 % > 15 m) -> Kette koennte an den Lage-Toren anhalten -> dann Ursache pruefen (Videobilder/alte Fotos mit falschem GPS? GPS-Tor nur auf eigenen Handyfotos?), NICHT einfach --trotz-lage.
+- LAEUFT: Agent "Druckstufe: Plattentaschen-Durchdringung" (druck_farbteile, 13,8 mm3 > 1 mm3 am Schwabentor; Zwischendateien rc-park_daten/tmp_druck). Ergebnis pruefen, Schnelltest, committen; tmp_druck + Test-Symlinks im Repo wegraeumen.
+- Nach gk2d: Bild Foto neben Modell + feinteil_tor je Zone gegen grob3 (Bezug rc-park_daten/kaufhaus_gk/feinteil/) + Abdeckung je Seite + GPS-Rest -> Zahlen dem Nutzer melden (versprochen) + 3D-HTML.
+- Offene Luecken: L2 Rest (Laube/Arkade freilegen, Tiefe Innenwand-Oeffnungen), L3 Freistehendes (Erkerkonsole/Rippen aus Fotokanten, Kielbogen = Katalogkurve an Wandbild-Geraden einpassen), L4 Mapper (Bildzahl/Zeit), L5 Platten (2-TB-Platte kommt 18.11.: Umzug laut memory reference-laufwerke-uuid).
+- Platten: SSD 20757D2E haengt als /media/oem/20757D2E455CA0E8 (rw) und traegt Auslagerungen (u. a. kaufhaus_gk2/video_frames, schwabentor, schwab_auto); NICHT abziehen lassen.
