@@ -260,6 +260,12 @@ def main():
         print(f"    LAGE: Loesung {k}, Tore {erg} -> {'BESTANDEN' if bestanden(erg) else 'NICHT bestanden'}", flush=True)
         if not bestanden(erg) and k > 0:                                     # 17.11.2026 (Stabilitaetsrunde): nach gescheitertem Kreislauf lag die LETZTE Loesung auf der Platte (Martinstor: Loesung 3 von 10, Guete 0,9 %) - Loesung 0 zurueckschreiben
             lauf(B, "loesung0_zurueck", [PY, "-u", "-I", "tools/sfm_lod2_ausrichten.py", ZR, "--kameras", os.path.join(P, "kameras.json"), "--dicht", os.path.join(P, "dicht", "fused.ply"), "--name", a.ziel, "--radius", "30", "--schreiben", "--fotos", FV, "--loesung", "0"], log, ok=(0, 5))
+            # 18.11.2026 (Kaufhaus gk2g --ab tore): die ersten Tore prueften die ALTE Ausrichtung der Stufe sfm; der Kreislauf rechnete mit neuem Code eine gute Loesung 0
+            # (Guete 48 %, GPS-Veto bestanden), fand keine zweite (rc 5) - und die zurueckgeschriebene Loesung 0 wurde nie geprueft -> Abbruch. Jetzt: Tore auf der neuen Loesung 0.
+            erg0 = tore("_l0neu")
+            if kaputt(erg0): B["lage"] = dict(loesung=0, tore=erg0, bestanden=False, fehler="tor_abgestuerzt"); return abschluss(4, f"Tor-Werkzeug abgestuerzt {erg0} - KEIN Lage-Urteil")
+            print(f"    LAGE: Loesung 0 neu gerechnet, Tore {erg0} -> {'BESTANDEN' if bestanden(erg0) else 'NICHT bestanden'}", flush=True)
+            if bestanden(erg0): erg = erg0; B["lage"] = dict(loesung=0, tore=erg, bestanden=True, hinweis="Loesung 0 nach dem Kreislauf neu gerechnet und geprueft"); __import__("json_sicher").schreiben(bp, B)
         if not bestanden(erg):
             return abschluss(3, "keine Lage besteht alle Tore - nicht modellieren (Bericht, audit/lage_gps.json, audit/wolke_grundriss.png)")
 
