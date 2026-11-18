@@ -35,10 +35,15 @@ PY_SEG = "/media/oem/scan/venv-seg/bin/python"    # torch auf der GPU (Ausrichtu
 
 def run(cmd, log=None):
     print("+", " ".join(cmd), flush=True)
-    r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
-    out = (r.stdout or "") + (r.stderr or "")
-    if log: open(log, "a").write(out)
-    return r.returncode, out
+    # 18.11.2026 (Kaufhaus gk2e: Fusion 1 h ohne jede Zeile im Log): Ausgabe zeilenweise ins Log statt erst am Ende - Fortschritt (z. B. 'Fusing image [n/N]') sichtbar
+    p = subprocess.Popen(cmd, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1); zeilen = []
+    f = open(log, "a") if log else None
+    for z in p.stdout:
+        zeilen.append(z)
+        if f: f.write(z); f.flush()
+    p.wait()
+    if f: f.close()
+    return p.returncode, "".join(zeilen)
 
 def stufe(bericht, name, status, detail):
     bericht["stufen"].append({"name": name, "status": status, "detail": detail})
