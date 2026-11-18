@@ -100,4 +100,5 @@ r = O.bogen_umriss(im, F, (2.0, 6.0, 0.0, 4.5)); assert r is not None, "kein Umr
 b = r[1]; assert abs(b["flanke_links"] - 2.5) < 0.05 and abs(b["flanke_rechts"] - 5.5) < 0.05 and abs(b["scheitel"] - 4.0) < 0.05, b
 Z = O.zonen([dict(klasse="bogen", u0=2.0, u1=6.0, z0=0.0, z1=4.5)]); assert Z == [("bogen", 2.0, 6.0, 0.0, 4.5)], Z
 PY
+k=$($P -I tools/test_flaeche_ortho.py 2>&1); [ $? = 0 ] && ok "Wandbild fuer Rundungen/Erker (flaeche_ortho: Zylinder, Kegel, n-Eck-Erker synthetisch, Gegenprobe falscher Radius/Achse)" || { rot "flaeche_ortho synthetisch"; echo "$k" | tail -6; }
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F

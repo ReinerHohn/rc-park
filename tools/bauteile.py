@@ -10,8 +10,26 @@ tools/wand_ortho.py. Reihenfolge im Generator: Relief (relief_einsatz.koerper) z
   rumpf = rumpf - W.prisma(rundbogen(2.1, 24.2, 26.7), u=4.0, w0=-0.15, w1=0.6)      # Blendnische
   rumpf = rumpf + W.kasten(1.9, 10.5, 10.95, 11.3, -0.05, 1.55)                      # Galerieboden
 """
+import json
 import numpy as np
 from manifold3d import Manifold as M, CrossSection, OpType, JoinType
+
+# Seitenkonvention des Modellrahmens (+x Sued, +y Ost, z oben): je Fassadenseite die Tiefenachse, ihr Vorzeichen nach aussen und die Querachse.
+# (18.11.2026 wieder eingefuegt: bei der Umstellung auf die Bibliothek 497af805 verloren gegangen -> regression.py martinstor, foto_silhouette_profil, masse_aus_profilen, wolke_baender brachen)
+SEITEN = {"nord": ("x", -1.0, "y"), "sued": ("x", 1.0, "y"), "ost": ("y", 1.0, "x"), "west": ("y", -1.0, "x")}
+def seite_achsen(seite):
+    """(tief, sgn, quer) einer Fassadenseite: Punkte der Seite liegen bei sgn * koordinate[tief] > 0; quer laeuft in der Fassadenebene."""
+    return SEITEN[seite.lower()]
+
+
+def lade_masse(pfad):
+    """Masse eines Bauwerks aus JSON laden: {"masse": {"NAME": {"wert": 9.8 | "DB / 2 - 0.8", "quelle": ...}}}.
+    Zahlen direkt, Text als Formel ueber die bereits geladenen Namen (Reihenfolge der Datei). Rueckgabe: dict NAME -> float."""
+    roh = json.load(open(pfad))["masse"]; w = {}
+    for name, eintrag in roh.items():
+        v = eintrag["wert"]
+        w[name] = float(v) if not isinstance(v, str) else float(eval(v, {"__builtins__": {}}, dict(w)))
+    return w
 
 
 def spitzbogen(halb, kaempfer, scheitel, unten=-0.6, nseg=24, tief=0.3):
