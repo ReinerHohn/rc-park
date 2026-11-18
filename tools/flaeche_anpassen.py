@@ -5,6 +5,7 @@ fusionierte Wandbild scharf. Eine falsche Achse/Apothem/Radius verwischt es (Geg
 Koordinatensuche mit abnehmender Schrittweite ueber die Parameter, Ziel = mittlere Uneinigkeit der Flaechen. Nur Fotos, Kamera und Kantenlage werden gebraucht, keine Wolke.
 GRENZEN: braucht Textur (glatter Putz ohne Linien -> flaches Minimum), Verdecker mischen sich in die Streuung, Fotos mit falscher Kamera wirken wie Rauschen; das Ergebnis ist ein Vorschlag
 (Vorher/Nachher-Zahl + Bild ansehen), keine Messung.
+Grenzen: Achse/Apothem/Radius/Abstand hoechstens --max-versatz (0,6 m) vom Startwert, winkel0 15 Grad, r_skala +-50 % (sonst Entarten: Achse wanderte 8 m weg).
 Aufruf: python3 tools/flaeche_anpassen.py objekt.json --flaechen flaechen.json --id erkerO --aus ORDNER [--zelle 0.02] [--fotos-max 40]
 Ausgabe: flaechen_angepasst.json (nur die angepasste Flaeche ersetzt), bericht_<id>.json (Vorher/Nachher), ortho_vorher_/ortho_nachher_ je Teilflaeche."""
 import os, sys, json, math, argparse, copy
@@ -46,7 +47,9 @@ def main(argv=None):
     ap.add_argument("--zelle", type=float, default=0.02); ap.add_argument("--fotos-max", type=int, default=40); ap.add_argument("--max-winkel", type=float, default=65.0)
     ap.add_argument("--max-fotos", type=int, default=8); ap.add_argument("--max-mpp", type=float, default=0.05); ap.add_argument("--tol", type=float, default=0.10)
     ap.add_argument("--bild-skala", type=float, default=0.5, help="Fotos fuer die Suche verkleinern (Speicher/Zeit)"); ap.add_argument("--min-schritt", type=float, default=0.003)
-    ap.add_argument("--runden", type=int, default=40); a = ap.parse_args(argv); os.makedirs(a.aus, exist_ok=True)
+    ap.add_argument("--runden", type=int, default=40)
+    ap.add_argument("--max-versatz", type=float, default=0.6, help="Achse/Apothem/Radius/Abstand duerfen hoechstens so viele m vom Startwert abweichen (18.11.: ohne Grenze wanderte die Achse 8 m weg, Uneinigkeit sank durch Entarten)")
+    ap.add_argument("--max-winkel0", type=float, default=15.0); a = ap.parse_args(argv); os.makedirs(a.aus, exist_ok=True)
     obj, cams = FO.kameras_laden(a.objekt); spec = json.load(open(a.flaechen)); idx = [i for i, s in enumerate(spec) if s["id"] == a.id]
     if not idx: sys.exit(f"Flaeche {a.id} nicht in {a.flaechen}")
     F0 = spec[idx[0]]; teile0 = FO.flaechen_expandieren([F0])
@@ -64,11 +67,14 @@ def main(argv=None):
         if im is not None: cache[nr] = cv2.resize(im, None, fx=a.bild_skala, fy=a.bild_skala, interpolation=cv2.INTER_AREA)
     print(f"{len(cache)} Fotos (verkleinert {a.bild_skala}) fuer {a.id}", flush=True)
     F = copy.deepcopy(F0); P = parameter(F); start, w0 = bewerten(F, cams, a, cache); beste = start; schritt = {n: s for n, s, _, _ in P}; print(f"  Start: Uneinigkeit {start:.2f} je Teilflaeche {np.round(w0,2).tolist()}", flush=True)
+    start_wert = {n: g(F) for n, _, g, _ in P}
     for runde in range(a.runden):
         besser = False
         for name, _, get, setv in P:
             for vz in (+1, -1):
-                F2 = copy.deepcopy(F); setv(F2, get(F2) + vz * schritt[name]); wert, _ = bewerten(F2, cams, a, cache)
+                F2 = copy.deepcopy(F); setv(F2, get(F2) + vz * schritt[name])
+                if abs(get(F2) - start_wert[name]) > (a.max_winkel0 if name == "winkel0" else (0.5 if name == "r_skala" else a.max_versatz)): continue     # Grenze um den Startwert (r_skala: +-50 %)
+                wert, _ = bewerten(F2, cams, a, cache)
                 if wert < beste - 1e-4: F, beste, besser = F2, wert, True; print(f"  Runde {runde} {name} {get(F):+.3f} -> {beste:.2f}", flush=True); break
         if not besser:
             schritt = {n: s / 2 for n, s in schritt.items()}
