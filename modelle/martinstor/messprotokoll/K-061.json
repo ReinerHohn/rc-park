@@ -2,8 +2,8 @@
  "foto": "061",
  "seite": "Ost",
  "strassenfoto": false,
- "brennweite_px": 4669.0,
- "brennweite_quelle": "EXIF Canon PowerShot A650 IS 9,855 mm / Sensor 1/1.7 Zoll 7,6 mm x 3601 px",
+ "brennweite_px": 5187.0,
+ "brennweite_quelle": "EXIF 9,855 mm / Sensor 7,6 mm x 4000 px (Original-Pixelbreite): Bild nur beschnitten (3601x2757 aus 4000x3000), Pixelgroesse unveraendert. 18.11.2026: Foto-GPS (N 47.99336 E 7.85564) liegt 500 m horizontal vom Martinstor; Fit mit f=5187 gibt 506 m (f=4669 nur 460 m); RMS bleibt 4.0 px (die Bildpunkte selbst legen f nicht fest, Abstand ~ proportional f)",
  "notiz": "Blick vom Schlossberg (Ost, ~1 km, fast Turmhoehe). Picks uebernommen aus V-061 (5x-Zoom): spitze_dokument = Goldknauf der Nadel (wie in K-006/014/040/060), nadel_spitze = Nadelende. Vier Tuermchenspitzen T1..T4 bei y 426: von Osten links = Sued, rechts = Nord; welches der beiden je Paar NE/NW bzw. SE/SW ist, wird per --tausch geprueft (ANNAHME). | 2026-11-01: Pick 'spitze_dokument' in knauf_nadel umbenannt (Goldknauf der Nadel, Anker aus SfM-Hoehen, Register AS).",
  "punkte": {
   "nadel_spitze": [
@@ -82,7 +82,8 @@
   }
  },
  "brennweite_frei": false,
- "brennweite_frei_grund": "15.11./18.11.2026: freie Brennweite divergiert (f 487237 px, 52 km) bei Teleblick ~1 km mit fast koplanaren Picks; feste EXIF-f 4669 px (frueher 528 m, 13 px Nadelresiduum)",
+ "brennweite_frei_grund": "divergiert ohne Fixierung (52 km); durch GPS-Abstand gestuetzt (18.11.2026)",
+ "kalibrier_optionen": [],
  "kamera": {
   "silhouette_genutzt": false,
   "residuen_du_dv": {
@@ -112,16 +113,16 @@
    ]
   },
   "rvec": [
-   0.31824097852253597,
-   -2.2862053886704303,
-   1.8588933507517453
+   0.30648269710574366,
+   -2.2752229928065058,
+   1.8870527381471671
   ],
   "t": [
-   55.7913423629693,
-   -47.670488212213925,
-   456.38633854437364
+   55.38434221067082,
+   -47.09263603773246,
+   502.9207228257039
   ],
-  "f_px": 4669.0,
+  "f_px": 5187.0,
   "cx": 1800.5,
   "cy": 1378.5,
   "bild": [
@@ -129,23 +130,22 @@
    2757
   ],
   "standort_xyz": [
-   -72.2,
-   454.21,
-   46.41
+   -79.37,
+   499.73,
+   46.72
   ],
-  "hoehe_ueber_gelaende": 46.41,
-  "abstand_zur_achse": 459.9,
+  "hoehe_ueber_gelaende": 46.72,
+  "abstand_zur_achse": 506.0,
   "residuen_px": {
-   "nadel_spitze": 1.6,
-   "tuermchen_SE": 1.6,
-   "tuermchen_SW": 0.9,
-   "tuermchen_NE": 1.2,
-   "tuermchen_NW": 1.5,
+   "nadel_spitze": 1.9,
+   "tuermchen_SE": 1.4,
+   "tuermchen_SW": 0.8,
+   "tuermchen_NE": 1.1,
+   "tuermchen_NW": 1.4,
    "knauf_nadel": 9.4
   },
-  "rms_px": 4.1,
+  "rms_px": 4.0,
   "plausibel_strassenfoto": false,
   "brennweite_quelle": "EXIF"
- },
- "kalibrier_optionen": []
+ }
 }
