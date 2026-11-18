@@ -28,7 +28,8 @@ Dokumentiere alle Versuche."  -> Diese Datei ist das Versuchsprotokoll (jeder Ve
   LEHRE: dicht_bildwahl braucht eine Obergrenze nach Platz (Tiefenkarten ~18 MB/Bild bei 1600 px) - offen.
 - V1c 18.11. 06:51 Fortsetzung --ab sfm: SfM uebersprungen, Tiefenkarten fortgesetzt (867), Fusion brach ab ('width_ > 0', fused.ply 0 Punkte): 272 Karten waren beim Plattenvoll-Halt leer geschrieben worden. GESCHEITERT (Folgefehler L5).
   Fix generisch: dicht-Skript loescht kaputte Karten (< 2 KB) vor dem Lauf (pipeline_objekt). Rettung von Hand (einmalig): die 272 Bilder aus sfm/sparse_dicht genommen (alt: sparse_dicht.alt_1811), fusion.cfg/patch-match.cfg bereinigt -> 595 Bilder mit gueltigen Karten.
-- V1d 18.11. ~07:30 Fortsetzung --ab sfm mit 595 Bildern (Fusion aus Cache). Ergebnis: offen.
+- V1d 18.11. 07:23 Fortsetzung --ab sfm mit 595 Bildern (Fusion aus Cache): nach 90 s OOM-Kill (11 GB RAM + 6 GB Swap). Ursache: StereoFusionOptions.cache_size Vorgabe 32 GB > 15 GB RAM. GESCHEITERT.
+  Fix generisch (6daa0c5f): cache_size = 40 % MemAvailable. V1e 07:55 gleiche Fortsetzung (Job kaufhaus_gk2e). Ergebnis: offen.
   Ideen falls V1b scheitert: (a) globaler Mapper nur auf eigenen Fotos + Commons, Videobilder danach registrieren (image_registrator); (b) Bildwahl auf ~700 Bilder nach Blickrichtungsabdeckung vor dem Mapper; (c) hierarchical_mapper testen (Reproduzierbarkeit messen).
 - V2 17.11. Kaufhaus Runde 2/3 (Agenten, Commits 1877c251, 920af251): Pipeline-Bugs gefunden (Fotoquellen, Brei, blindes Mass); Katalogteile wirken steif (-> Grundsatz Wandbild = Bauplan).
 - V3 17.11. Feinausrichtung Wandbild (eeafa1e7): Restversatz 1,2-2,5 -> 0,2-0,5 cm, Fugen-F1 0,417 -> 0,431; am Kaufhaus ohne Wirkung (Putz, Fotos aus Jahrzehnten).

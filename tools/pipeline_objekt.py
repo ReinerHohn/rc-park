@@ -208,11 +208,11 @@ if STUFE == "schnell": po.window_step = 2   # Messung 15.11.2026 (Schwabentor, 4
 if not _fertig:
     pycolmap.patch_match_stereo(out, options=po)
 fo = pycolmap.StereoFusionOptions(); fo.max_image_size = 800 if GROB else 1600
-# 18.11.2026 (Kaufhaus gk2d, 595 Bilder: OOM-Kill nach 90 s, 11 GB RAM + 6 GB Swap): COLMAP-Vorgabe cache_size 32 GB > 15 GB RAM -> nach freiem RAM begrenzen (40 %)
+# 18.11.2026 (Kaufhaus gk2d, 595 Bilder: OOM-Kill nach 90 s, 11 GB RAM + 6 GB Swap): COLMAP-Vorgabe cache_size 32 GB > 15 GB RAM -> use_cache=True (sonst laedt COLMAP alle Karten, cache_size wirkungslos) + nach freiem RAM begrenzen (40 %)
 try:
     _frei_gb = int([l for l in open("/proc/meminfo") if l.startswith("MemAvailable")][0].split()[1]) / 1048576
 except Exception: _frei_gb = 8.0
-fo.cache_size = max(1.0, round(0.4 * _frei_gb, 1)); print("Fusion cache_size", fo.cache_size, "GB (frei", round(_frei_gb, 1), "GB)", flush=True)
+fo.use_cache = True; fo.cache_size = max(1.0, round(0.4 * _frei_gb, 1)); print("Fusion cache_size", fo.cache_size, "GB (frei", round(_frei_gb, 1), "GB)", flush=True)
 if STUFE == "schnell": fo.min_num_pixels = 8   # strenger, weil die geometrische Pruefung fehlt (COLMAP-FAQ)
 GB.frei()   # Fusion hat keinen GPU-Code (Minuten auf der CPU)
 pycolmap.stereo_fusion(os.path.join(out, "fused.ply"), out, options=fo, input_type="geometric" if FEIN else "photometric", output_type="ply")
