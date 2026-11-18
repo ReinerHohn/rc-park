@@ -9,6 +9,9 @@ Verfahren (generisch, arbeitet am fertigen STL - der Generator bleibt unberuehrt
      fuellen, Inseln < min_m2 verwerfen (bleiben am Koerper = nachmalen). Je zusammenhaengender Flaeche eine Platte; hoeher als das Druckbett -> in Baender geteilt.
   2. Lage der Wandflaeche des Modells gegen die Maskenebene per Strahlen messen; Plattenrueckseite = tiefste 5 % des Reliefs + --tief_mm (Druck) Traegerschicht.
      Prisma der Flaeche von dort bis --vor_m vor der Ebene.  PLATTE = Modell geschnitten mit dem Prisma.
+     18.11.2026: nicht mehr EINE Ebene je Wand - oertliche Wandlage je Pixel (Strahlen, 0,25-m-Zellen), geneigte Ebene eingepasst (Rueckseite folgt ihr, Drucklage
+     nach ihrer Normale), Rest in Stufen von --stufe_mm geteilt; je Stufe eigene Platte mit ebener Rueckseite. Kleine Stufenstuecke nur zur Nachbarstufe, sonst am Koerper.
+     Schwabentor 2,4-mm-Wand: Anteil, auf dem die Tasche durch die Wand brach, Nord 40 -> 2 %, Sued 17 -> 1 %, West 48 -> 2 %. Alte Bauart: --eine_ebene.
      KOERPER = Modell minus Prisma, das seitlich und in der Tiefe um --spiel_mm groesser ist (Tasche mit Fuegespiel).
   3. Platte in Drucklage: Wandnormale nach oben (Relief oben, Rueckseite plan auf dem Bett = stuetzenfrei, schnell), auf z = 0. Luftinseln knapp ueber dem Bett
      (Rueckseite nicht ganz plan) fuellt tools/druck_luft.stuetzen bis 1,2 mm auf (--schicht_mm 0.16 = Bambu; --ohne_luft aus); Ergebnis je Platte 'luft' in farbteile.json.
@@ -39,8 +42,9 @@ def schreiben(k, pfad, s, boden=False):
     stl_schreiben(k, pfad, b"rcpark farbteil")
 
 
-def prisma(maske, u0, z0, px, a, t, n, hinten, vorn, weiten=0.0):
-    """Maske (H x W, Zeile 0 = oben) -> Koerper im Modellrahmen: Flaeche in (u, z), Tiefe von -hinten bis +vorn entlang n."""
+def prisma(maske, u0, z0, px, a, t, n, hinten, vorn, weiten=0.0, neig=None):
+    """Maske (H x W, Zeile 0 = oben) -> Koerper im Modellrahmen: Flaeche in (u, z), Tiefe von -hinten bis +vorn entlang n.
+    neig = (a0, b, c): Tiefe zusaetzlich um a0 + b*u + c*z verschoben (Scherung - Rueckseite = geneigte Ebene der oertlichen Wand, 18.11.2026)."""
     H, W = maske.shape; ko, _ = cv2.findContours(maske.astype(np.uint8), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE); polys = []
     for c in ko:
         if len(c) < 3: continue
@@ -50,6 +54,7 @@ def prisma(maske, u0, z0, px, a, t, n, hinten, vorn, weiten=0.0):
     if weiten: cs = cs.offset(weiten + px / 2, JoinType.Miter)
     else: cs = cs.offset(px / 2, JoinType.Miter)                                              # Konturen laufen durch Pixelmitten -> halbes Pixel nach aussen
     k = cs.extrude(hinten + vorn)                                             # lokal: X = u, Y = z, Z = Tiefe (0 = hinten)
+    if neig is not None: k = k.transform(np.array([[1.0, 0, 0, 0], [0, 1.0, 0, 0], [neig[1], neig[2], 1.0, neig[0]]]))
     T = np.array([[t[0], 0.0, n[0], a[0] - n[0] * hinten], [t[1], 0.0, n[1], a[1] - n[1] * hinten], [0.0, 1.0, 0.0, 0.0]])
     return k.transform(T)
 
@@ -146,7 +151,7 @@ def ringschicht(modell, tasche, innen, wand, falz, spiel, dz=0.1, schliess=0.6):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--masken", required=True); ap.add_argument("--stl"); ap.add_argument("--tief_mm", type=float, default=0.4); ap.add_argument("--spiel_mm", type=float, default=0.15)
     ap.add_argument("--wand_mm", type=float, default=2.2, help="Wandstaerke des (hohlen) Koerpers im Druck - begrenzt die Taschentiefe"); ap.add_argument("--innen_mm", type=float, default=0.8, help="Innenschicht hinter jeder Tasche (Druck-mm): haelt den Koerper an Ecken und duennen Waenden geschlossen"); ap.add_argument("--einsatz", action="store_true", help="duenne Wand (1 mm): Steinplatte = ganze Wand, Koerper mit Oeffnung + Klebefalz innen statt Tasche"); ap.add_argument("--falz_mm", type=float, default=3.0); ap.add_argument("--pfosten_mm", type=float, default=0.0, help="Eckpfosten innen (Druck-mm) in der Einsatz-Bauart"); ap.add_argument("--min_m2", type=float, default=1.5); ap.add_argument("--glatt_m", type=float, default=0.2, help="Glaettung der Stein/Putz-Grenze (m am Gebaeude; 0,2 m = 2,3 mm im Druck)"); ap.add_argument("--vor_m", type=float, default=0.4); ap.add_argument("--bett_mm", type=float, default=244.0); ap.add_argument("--ring", action="store_true", help="Ringschicht auch in der Taschen-Bauart (bei --einsatz immer): schliesst Ecken, an denen Taschen zweier Waende die Wand wegnehmen; kostet Material"); ap.add_argument("--schnitt_m", type=float, default=0.5, help="Abstand der Pruef-Hoehenschnitte (m)"); ap.add_argument("--schnittbild", default="", help="z-Werte (m, Komma) fuer zusaetzliche Querschnittsbilder in <ausgabe>/schnitte/")
-    ap.add_argument("--schicht_mm", type=float, default=0.16, help="Schichthoehe des Plattendrucks fuer die Luftinsel-Stuetzen (druck_luft.stuetzen)"); ap.add_argument("--ohne_luft", action="store_true"); a = ap.parse_args()
+    ap.add_argument("--schicht_mm", type=float, default=0.16, help="Schichthoehe des Plattendrucks fuer die Luftinsel-Stuetzen (druck_luft.stuetzen)"); ap.add_argument("--ohne_luft", action="store_true"); ap.add_argument("--eine_ebene", action="store_true", help="alte Bauart: Plattenrueckseite ab EINER Ebene je Wand (A/B)"); ap.add_argument("--stufe_mm", type=float, default=0.6, help="Stufung der oertlichen Wandlage (Druck-mm): je Stufe eigene Platte mit ebener Rueckseite"); a = ap.parse_args()
     od = os.path.join(ROOT, "modelle", a.objekt); obj = json.load(open(os.path.join(od, "objekt.json"))); sc = float(obj.get("stl_massstab", 87)); s = sc / 1000.0; K = 1000.0 / sc
     stl = a.stl or os.path.join(ROOT, obj["stl"]); modell = laden(stl, s); v0 = modell.volume(); print(f"Modell {os.path.basename(stl)}: {modell.num_tri()} Dreiecke, {v0:.1f} m3, {len(modell.decompose())} Koerper")
     ad = os.path.join(ROOT, "modelle", "stl", f"{a.objekt}_farbteile"); gross = "/media/oem/scan/rc-park_stl"
@@ -192,15 +197,65 @@ def main():
             if (~gut_[1:]).any(): print(f"{wand}: {(st > 0).sum() * px * px - gut_[lab].sum() * px * px:.1f} m2 Stein in Streifen schmaler als 1 m (11 mm im Druck) - keine Platte, bleibt am Koerper"); st = (gut_[lab]).astype(np.uint8)
         fz = max(1, int(round(a.falz_mm / K / px)))
         if len(w_) and 'd50' in dir(): waende.append(dict(A=np.array(A, float), t=np.array(t, float), n=np.array(n, float), innen=d50 - a.wand_mm / K, u=(u0, u0 + st.shape[1] * px), z=(z0, z0 + st.shape[0] * px)))
-        nl, lab, stat, _ = cv2.connectedComponentsWithStats(st, 4); nr = 0; rest = 0.0
-        for i in range(1, nl):
+        # 18.11.2026 (Druck-Agent, Schwabentor w01/w02 z 17-33 m): die Wand liegt oertlich bis 20 cm VOR der Maskenebene - die Platte ab EINER Ebene je Wand nahm dort die ganze
+        # Wand, nur die Innenschicht (~1 mm) trug. Jetzt: oertliche Wandlage dl je Pixel (Strahlen von aussen, 0,25-m-Zellen, Median), in Stufen von --stufe_mm geteilt; je Stufe
+        # eigene Platte (ebene Rueckseite = flach druckbar) mit Rueckseite c - max(dl) (c = Reliefraum bzw. Wandgrenze wie bisher, nur gegen die OERTLICHE statt der mittleren Wand).
+        regionen = [(st.astype(bool), hinten, vor)]; dl = None; NG = None
+        if len(w_) and 'd50' in dir() and not a.eine_ebene:
+            gv = (tr > -0.6) & (tr < 1.4) & ~o2; bz = max(1, int(round(0.25 / (2 * px)))); Hg, Wg = og.shape; tg = np.full((Hg, Wg), np.nan); tg[gi // 2, gj // 2] = np.where(gv, tr, np.nan)
+            Hc, Wc = -(-Hg // bz), -(-Wg // bz); tp = np.full((Hc * bz, Wc * bz), np.nan); tp[:Hg, :Wg] = tg
+            with np.errstate(all="ignore"): import warnings; warnings.simplefilter("ignore"); zc = np.nanmedian(tp.reshape(Hc, bz, Wc, bz).transpose(0, 2, 1, 3).reshape(Hc, Wc, -1), 2)
+            if np.isfinite(zc).any():
+                from scipy import ndimage as ndi
+                _, ix = ndi.distance_transform_edt(~np.isfinite(zc), return_indices=True); zc = ndi.median_filter(zc[ix[0], ix[1]], 3)
+                dl = cv2.resize(zc.astype(np.float32), (Wc * bz * 2, Hc * bz * 2), interpolation=cv2.INTER_LINEAR)[:st.shape[0], :st.shape[1]]
+                if dl.shape != st.shape: dl = cv2.resize(dl, (st.shape[1], st.shape[0]), interpolation=cv2.INTER_LINEAR)
+                c_ = (a.wand_mm / K) if a.einsatz else min(d50 - d5 + tief, (a.wand_mm - 0.6 - a.spiel_mm) / K); q_ = a.stufe_mm / K
+                # Wand schraeg zur Maskenebene (Schwabentor Nord: -42..-1 cm, Stufen wurden 11 mm schmale senkrechte Streifen): geneigte Ebene einpassen, nur der Rest wird gestuft
+                yy_, xx_ = np.nonzero(st > 0); sel_ = np.random.default_rng(1).choice(len(yy_), min(len(yy_), 50000), replace=False); U_ = u0 + (xx_[sel_] + 0.5) * px; Zz_ = z0 + (st.shape[0] - 1 - yy_[sel_] + 0.5) * px; D_ = dl[yy_[sel_], xx_[sel_]]
+                Am_ = np.c_[np.ones_like(U_), U_, Zz_]; ok_ = np.ones(len(U_), bool)
+                for _it in range(4): co_ = np.linalg.lstsq(Am_[ok_], D_[ok_], rcond=None)[0]; r_ = D_ - Am_ @ co_; ok_ = np.abs(r_) < max(2.5 * np.median(np.abs(r_[ok_])), q_ / 2)
+                Ug_, Zg_ = np.meshgrid(u0 + (np.arange(st.shape[1]) + 0.5) * px, z0 + (st.shape[0] - 1 - np.arange(st.shape[0]) + 0.5) * px); eb_ = co_[0] + co_[1] * Ug_ + co_[2] * Zg_
+                spanne_ = float(np.ptp(eb_[st > 0])) if (st > 0).any() else 0.0
+                if spanne_ > q_: NG = (float(co_[0]), float(co_[1]), float(co_[2])); dl = dl - eb_; print(f"{wand}: Wand geneigt gegen die Maskenebene (Ebene {co_[0] * 100:+.0f} cm, {co_[1] * 100:+.1f} cm/m in u, {co_[2] * 100:+.1f} cm/m in z; Spanne {spanne_ * 100:.0f} cm) - Plattenrueckseite folgt der geneigten Ebene")
+                d0_ = float(np.percentile(dl[st > 0], 1)) if (st > 0).any() else 0.0; stufe = np.where(st > 0, np.floor((dl - d0_) / q_).clip(-1, None).astype(np.int32) + 100000, 0)      # ab dem unteren Rand zaehlen: Rauschen um 0 teilte eine ebene Wand in zwei Stufen
+                rs_ = max(1, int(round(0.5 / px))); ke_ = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * rs_ + 1, 2 * rs_ + 1))
+                for _it in range(6):      # Stufenstuecke < min_m2 oder schmaler als 1 m zur Nachbarstufe (haeufigste Stufe am Rand)
+                    klein = np.zeros(st.shape, bool)
+                    for sv in np.unique(stufe[stufe > 0]):
+                        nl_, lab_, stt_, _ = cv2.connectedComponentsWithStats((stufe == sv).astype(np.uint8), 4); er_ = cv2.erode((stufe == sv).astype(np.uint8), ke_); breit_ = np.zeros(nl_, bool); breit_[np.unique(lab_[er_ > 0])] = True
+                        for k_ in range(1, nl_):
+                            if stt_[k_, cv2.CC_STAT_AREA] * px * px < a.min_m2 or not breit_[k_]: klein |= lab_ == k_
+                    if not klein.any(): break
+                    nlk, labk = cv2.connectedComponents(klein.astype(np.uint8), connectivity=4); geaendert = False
+                    for k_ in range(1, nlk):
+                        m_ = labk == k_; rand_ = cv2.dilate(m_.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool) & ~m_ & (stufe > 0) & ~klein
+                        if rand_.any():
+                            eig_ = int(np.median(stufe[m_])); v_, c2_ = np.unique(stufe[rand_], return_counts=True); nah_ = np.abs(v_ - eig_) <= 1      # nur zur NACHBARSTUFE (Schwabentor West: Stufe 1 sammelte Stuecke bis +15 cm -> Rueckseite zu weit vorn, Platte in 47 Stuecken)
+                            if nah_.any(): stufe[m_] = v_[nah_][np.argmax(c2_[nah_])]
+                            else: stufe[m_] = 0; st[m_] = 0      # Stufensprung > 1: kleines Stueck bleibt am Koerper (nachmalen)
+                            geaendert = True
+                    if not geaendert: break
+                if (stufe == 0).any() and (st > 0).any(): st[stufe == 0] = 0
+                regionen = []
+                for sv in np.unique(stufe[stufe > 0]):
+                    m_ = stufe == sv; dmx = float(np.percentile(dl[m_], 98)); regionen.append((m_, c_ - dmx, dmx + a.vor_m))
+                    print(f"  {wand} Stufe {sv - 100000}: {m_.sum() * px * px:.1f} m2, Wandlage {np.percentile(dl[m_], 2) * 100:+.0f}..{np.percentile(dl[m_], 98) * 100:+.0f} cm -> Rueckseite {-(c_ - dmx) * 100:+.0f} cm")
+                rest_mm = ((a.wand_mm / K - dl - np.select([r_[0] for r_ in regionen], [r_[1] for r_ in regionen], hinten) - spiel) * K)[st > 0]
+                alt_mm = ((a.wand_mm / K - (dl + (eb_ if NG else 0.0)) - hinten - spiel) * K)[st > 0]
+                print(f"{wand}: oertliche Wandlage {np.percentile(dl[st > 0], 2) * 100:+.0f}..{np.percentile(dl[st > 0], 98) * 100:+.0f} cm -> {len(regionen)} Stufe(n); Restwand hinter der Tasche (Druck): "
+                      f"mit Stufen min {np.percentile(rest_mm, 0.5):.2f} mm, < 0,6 mm auf {(rest_mm < 0.6).mean() * 100:.1f} %; mit EINER Ebene waeren es {np.percentile(alt_mm, 0.5):.2f} mm / {(alt_mm < 0.6).mean() * 100:.1f} %")
+        nr = 0; rest = 0.0
+        for reg_m, hinten, vor in regionen:
+          nl, lab, stat, _ = cv2.connectedComponentsWithStats(reg_m.astype(np.uint8), 4)
+          for i in range(1, nl):
             fl = stat[i, cv2.CC_STAT_AREA] * px * px
             if fl < a.min_m2: rest += fl; continue
             reg = lab == i; y0, hh = stat[i, cv2.CC_STAT_TOP], stat[i, cv2.CC_STAT_HEIGHT]; nb = int(np.ceil(hh * px * K / a.bett_mm)); gr = np.linspace(y0, y0 + hh, nb + 1).astype(int)
             for b in range(nb):
                 band = np.zeros_like(reg); band[gr[b]:gr[b + 1]] = reg[gr[b]:gr[b + 1]]
                 if band.sum() * px * px < 0.3: continue
-                pl = modell ^ prisma(band, u0, z0, px, A, t, n, hinten, vor)
+                pl = modell ^ prisma(band, u0, z0, px, A, t, n, hinten, vor, neig=NG)
                 if pl.is_empty() or pl.volume() < 1e-4: continue
                 st_ = pl.decompose(); vg = max(x_.volume() for x_ in st_); kr = [x_ for x_ in st_ if x_.volume() < 0.02 * vg]
                 if kr: pl = M.batch_boolean([x_ for x_ in st_ if x_.volume() >= 0.02 * vg], OpType.Add) if len(st_) - len(kr) > 1 else max(st_, key=lambda x_: x_.volume()); kruemel[0] += sum(x_.volume() for x_ in kr)      # Kruemel (< 2 % der Platte) verwerfen
@@ -212,12 +267,16 @@ def main():
                     for x_ in kr:
                         me = x_.to_mesh(); vv = np.asarray(me.vert_properties)[:, :3]; uu_ = (vv[:, 0] - A[0]) * t[0] + (vv[:, 1] - A[1]) * t[1]; pp = np.stack([(uu_ - u0) / px - 0.5, Hb - 1 - ((vv[:, 2] - z0) / px - 0.5)], 1)
                         for d_ in np.asarray(me.tri_verts): cv2.fillConvexPoly(km, np.round(pp[d_]).astype(np.int32), 1)
-                    zurueck.append((M.batch_boolean(kr, OpType.Add) + prisma(km.astype(bool), u0, z0, px, A, t, n, hinten + spiel + 0.005, -hinten + 0.005)) - pl)
-                taschen.append(prisma(band, u0, z0, px, A, t, n, hinten + spiel, vor + 0.05, weiten=spiel)); platten.append((None, pl))
+                    zurueck.append((M.batch_boolean(kr, OpType.Add) + prisma(km.astype(bool), u0, z0, px, A, t, n, hinten + spiel + 0.005, -hinten + 0.005, neig=NG)) - pl)
+                taschen.append(prisma(band, u0, z0, px, A, t, n, hinten + spiel, vor + 0.05, weiten=spiel, neig=NG)); platten.append((None, pl))
                 iw = (cv2.dilate(band.astype(np.uint8), np.ones((2 * fz + 1, 2 * fz + 1), np.uint8)).astype(bool) if a.einsatz else band) & ~offen                                                # Innenschicht hinter der Tasche (17.11.2026: an den Gebaeudeecken nahmen die Taschen zweier Waende die ganze Wand weg - der Koerper war in 34 von 48 Hoehenschnitten offen)
-                if iw.any(): innen.append(prisma(iw, u0, z0, px, A, t, n, hinten + spiel + a.innen_mm / K, -(hinten + spiel) + (0.5 / K if a.einsatz else 0.002), weiten=spiel))      # Einsatz: Innenschicht greift 0,5 mm in die Wandtiefe und --falz_mm seitlich unter den Putz (sonst trennt das Fuegespiel Wand und Innenschicht: 47 von 48 Schnitten offen)
+                if iw.any(): innen.append(prisma(iw, u0, z0, px, A, t, n, hinten + spiel + a.innen_mm / K, -(hinten + spiel) + (0.5 / K if a.einsatz else 0.002), weiten=spiel, neig=NG))      # Einsatz: Innenschicht greift 0,5 mm in die Wandtiefe und --falz_mm seitlich unter den Putz (sonst trennt das Fuegespiel Wand und Innenschicht: 47 von 48 Schnitten offen)
                 nr += 1; name = f"platte_{wand}_{nr:02d}"
                 R = np.array([[t[0], t[1], 0.0], [0.0, 0.0, 1.0], [n[0], n[1], 0.0]])                    # Drucklage: u -> x, z -> y, Wandnormale -> oben
+                if NG:      # Rueckseite = geneigte Ebene -> deren Normale nach oben (sonst laege die Platte schief auf dem Bett)
+                    n3 = np.array([n[0], n[1], 0.0]) - NG[1] * np.array([t[0], t[1], 0.0]) - NG[2] * np.array([0.0, 0.0, 1.0]); n3 /= np.linalg.norm(n3); t3 = np.array([t[0], t[1], 0.0]); t3 -= t3.dot(n3) * n3; t3 /= np.linalg.norm(t3); z3 = np.cross(n3, t3)
+                    if np.linalg.det(np.array([t3, z3, n3])) * np.linalg.det(R) < 0: z3 = -z3
+                    R = np.array([t3, z3, n3])
                 fl_ = pl.transform(np.hstack([R, np.zeros((3, 1))])); lo, hi = fl_.bounding_box()[:3], fl_.bounding_box()[3:]; fl_ = fl_.translate((-lo[0], -lo[1], -lo[2])); lu = None
                 if not a.ohne_luft:      # 17.11.2026: 5 von 8 Platten hatten Luftinseln 0,24..1,04 mm ueber dem Bett (Rueckseite nicht ganz plan: Ruecksprung, Laibung) -> druck_luft.stuetzen fuellt bis 1,2 mm (Rueckseite, unsichtbar)
                     import druck_luft as DL
@@ -227,7 +286,7 @@ def main():
                         # 18.11.2026: Stuetzen auf die TASCHE beschneiden (Taschenmass minus halbes Fuegespiel). druck_luft.stuetzen kennt die Tasche nicht: FUELLEN nimmt den
                         # Inselgrundriss + 0,2 mm, eine SAEULE Insel + Kreis 1,6 mm um die Inselmitte - an einer Insel nahe dem Plattenrand ragte das seitlich aus dem
                         # Plattenprisma in den Putz neben der Tasche (Fuegespiel 0,3 mm) -> "Durchdringung Platte/Koerper 13,8 mm3" (Kette druck, Testobjekt schwab_l2, 18.11.).
-                        kl_ = pl_s ^ prisma(band, u0, z0, px, A, t, n, hinten + 0.5 * spiel, vor + 0.025, weiten=0.5 * spiel); ab_ = (pl_s.volume() - kl_.volume()) * K ** 3
+                        kl_ = pl_s ^ prisma(band, u0, z0, px, A, t, n, hinten + 0.5 * spiel, vor + 0.025, weiten=0.5 * spiel, neig=NG); ab_ = (pl_s.volume() - kl_.volume()) * K ** 3
                         if ab_ > 0.01:
                             print(f"  {name}: Stuetzen ragten {ab_:.2f} mm3 aus der Tasche - auf Taschenmass minus {0.5 * a.spiel_mm:.2f} mm beschnitten"); pl_s = kl_
                             fl_ = pl_s.transform(np.hstack([R, np.zeros((3, 1))])).translate(tuple(-float(x) for x in lo))

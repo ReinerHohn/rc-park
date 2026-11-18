@@ -89,4 +89,5 @@ iw = dict(name="i00", fassade="f00", a=[0, 0], b=[1, 0], aussen=[0, -1], versatz
 k2, bel = laube_aus_wandbild(k, [iw], sys.argv[1]); dv = k.volume() - k2.volume(); assert len(k2.decompose()) == 1 and 120 < dv < 130, dv
 k3, b3 = laube_aus_wandbild(k, [dict(iw, u=[20, 30])], sys.argv[1]); assert k3.volume() == k.volume() and "NICHT" in b3[0]["element"]
 PY
+k=$($P -I tools/test_farbteile_neigung.py 2>&1); [ $? = 0 ] && ok "Druckplatten folgen der oertlichen Wand (geneigte Ebene, Stufen, eine Platte, Restwand >= 0,6 mm)" || { rot "druck_farbteile Plattentiefe"; echo "$k" | tail -2 | cut -c1-300; }
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F

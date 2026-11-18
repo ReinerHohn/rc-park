@@ -99,3 +99,10 @@ Dokumentiere alle Versuche."  -> Diese Datei ist das Versuchsprotokoll (jeder Ve
   + 28 Platten wasserdicht (36/36 Dateien), Luftinseln 0, Prusa 27 h 23 min / 909 cm3, Bambu 7 h 49 min / 70 cm3 (druckzeit*.json). Testobjekt danach geloescht.
   OFFEN: Platte = Prisma ab EINER Ebene je Wand; liegt die Wand oertlich bis 20 cm vor der Maskenebene (w01/w02, z 17-33 m), nimmt die Platte die ganze Wand
   und nur die Innenschicht (~1 mm) traegt dort (rippen.png z 376 mm: duenner Wandabschnitt) -> Plattentiefe je Pixel an die oertliche Wandflaeche binden.
+  ERLEDIGT 18.11. nachmittags (druck_farbteile): oertliche Wandlage je Pixel (Strahlen, 0,25-m-Zellen), geneigte Ebene je Wand eingepasst (Rueckseite + Drucklage folgen ihr),
+  Rest in Stufen --stufe_mm 0,6 (je Stufe eigene Platte, ebene Rueckseite). A/B Schwabentor schwab_v3_wand24 (Tasche + Ring, Spiel 0,3): Anteil der Steinflaeche, auf dem die
+  Tasche die 2,4-mm-Wand auf < 0,6 mm duennt: eine Ebene Nord 41 % / Sued 16 % / West 47 % (Restwand bis -1,1 mm = durchgebrochen) -> neu 2 / 0 / 2 %. Beide rc 0, 1 Koerper,
+  Durchdringung 0, 0/73 offene Schnitte; 9 -> 30 Platten (610 statt 632 m2). Schnittbild z 18: Platte nicht mehr die ganze Wand.
+  Sackgassen unterwegs: (1) nur Stufen ohne Neigung -> West 5 Stufen als 11-mm-Streifen (Wand 36 cm schraeg); (2) Stufen ab 0 gezaehlt -> ebene Wand in 2 Stufen (Rauschen um 0);
+  (3) kleine Stufenstuecke in beliebige Nachbarstufe -> Stufe -1..+15 cm, Rueckseite zu weit vorn, platte_west_04 in 47 Stuecken; jetzt nur Nachbarstufe, sonst am Koerper -> 1 Stueck.
+  Schnelltest neu: tools/test_farbteile_neigung.py (Quader 2 Grad gedreht). OFFEN: 10 Platten aus 2-4 Stuecken (Steine durch tiefe Fugen getrennt; A hatte 1) - Traegerschicht pruefen.
