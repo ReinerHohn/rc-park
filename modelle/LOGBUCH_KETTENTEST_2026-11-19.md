@@ -106,3 +106,24 @@ Je Lauf: Zeiten je Stufe, Bildzahlen, Tore, Auffaelligkeiten hier eintragen.
 |---|---|---|---|
 | 19 | Konsens Stufe 2: verworfene Bilder, die eine Kameraluecke schliessen wuerden, gezielt nachregistrieren (lockerere Schwelle nur fuer diese) | Q | offen |
 | 20 | GPS-Tor: Schwelle relativ zum besten erreichbaren Anteil / Mehrheitscluster statt fest 15 % | Q | offen |
+
+## 09:20-09:35 Ausrichtung Martinstor: Massstab aus Kamerahoehe + Hoehenprobe gegen LoD2 (Ideen 15, neu 21)
+Gleiche Wolke (Lauf mt_gk3k), Testname `martinstor_gk3_lot`:
+| Stand der Ausrichtung | Massstab Einh./m | Guete | Objektwand-Abdeckung | Wolke z p1..p99 | Fernfotos (Entfernung, Richtung) |
+|---|---|---|---|---|---|
+| alt (Lot aus Kameraebene) | 0,250 | 20 % (zweitbeste 19 %) | - | -29 .. 57 m (liegt auf der Seite) | x4,64 / 25 Grad |
+| + Lot aus Kamerablick | 0,210 | 10 % | - | -4,9 .. 15,5 m | - |
+| + Massstab aus Kamerahoehe (Start 0,073, Band x2) | 0,097 | 19 % | 45 % | -0,5 .. 31,8 m (Turm 40 m) | - |
+| + Hoehenprobe gegen LoD2-Hoehe 45 m | 0,0725 | 35 % (zweitbeste 35 %, gleiche Familie 165-168 Grad) | 82 % | -1,2 .. 42 m, Turmspitze ~55 m | x1,20 / 3 Grad |
+- Hoehenprobe: Hoehe der Wolke ueber dem Objektgrundriss (99,5-Perzentil) gegen LoD2-Hoehe des Objekts; Abweichung > 13-15 % -> Loesung abwerten, zweiter Feinfit mit korrigiertem Massstab.
+  Nur ohne GPS-Massstab (mit GPS gilt das bestehende GPS-Raster) -> Objekte mit GPS unveraendert.
+- Tore danach (von Hand auf der Testausrichtung): Gelaende ROT (A_PUR2GXND0 12/74, gjVSpDSd8rU 7/16, fotos 6/74 unter Gelaende = vermutlich die unstabilen Einzelkameras der Stufe 2),
+  Grundriss ROT (Wolke deckt 51 % des Objektrands, 11,5 % Punkte auf der Strasse: Fassadenzeilen oestlich liegen 5-8 m neben den Baulinien -> Drehung/Massstab noch nicht exakt),
+  GPS ROT (17 Geotags, Rest 44,5 m, vermutlich Objektstandorte); Fernfotos stuetzen die Lage (Richtungsfehler 3 Grad, Entfernung x1,20).
+- Bild: audit/wolke_ansichten_lot_1119.png (Turm aufrecht, Uhr, Tordurchfahrt, Spitze ~55 m, Haeuser 15-20 m), audit/wolke_grundriss_lot_1119.png.
+| Nr | Idee | Art | Stand |
+|---|---|---|---|
+| 15 | Massstab-Startwert aus Kamerahoehe | Q | gebaut |
+| 21 | Hoehenprobe gegen LoD2-Objekthoehe + Massstabskorrektur | Q | gebaut |
+| 22 | Restfehler Grundriss: Feinfit nur mit Rueckgrat-Kameras/-Punkten; unstabile Kameras (unstabil.txt) aus Gelaende-/Inseltor herausnehmen oder getrennt melden | Q | offen |
+| 23 | Himmelsrauschen ueber dem Turm ('Fahne' in der Seitenansicht): Fusion strenger oder Himmelsmaske | Q | offen |

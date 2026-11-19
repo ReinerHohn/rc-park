@@ -282,8 +282,24 @@ def main():
     if s_gps:
         print(f"Startmassstab aus Foto-GPS: {s_gps:.4f} SfM-Einheiten/m (Wolkenausdehnung haette {s0:.4f} gegeben)"); s0 = s_gps
     best = []
-    print(f"Startmassstab s0 = {s0:.4f} SfM-Einheiten/m (Wolkenausdehnung), Suche s0/4 .. 4 s0; Toleranz 0,75 m * s0/s (konstant in SfM-Einheiten)")
-    _band = 1.5 if s_gps else 4.0                                                             # 15.11.: mit GPS-Massstab nur +-50 % suchen (GPS lag 6-8 % neben LoD2; Kaufhaus: ohne Grenze gewann ein 2,6-fach geschrumpftes Modell, Wolke 9 m hoch)
+    # 19.11.2026 (Martinstor: Wolke deckt ein ganzes Viertel aus Drohnen-/Strassenclips, GPS unbrauchbar -> s0 aus Wolkenausdehnung 0,375, richtig ~0,06; das Suchband s0/4..4 s0
+    # enthielt den Massstab nicht, das Tor war im Modell 17 statt 60 m hoch). Unabhaengiger Massstab: Strassenkameras stehen ~1,6 m ueber dem Boden (ANNAHME --kamerahoehe).
+    # Boden je Kamera = 3. Perzentil der Hoehe der 300 waagerecht naechsten Wolkenpunkte; Strassenkameras = untere Haelfte der Hoehen (Drohne/Fenster fallen weg).
+    s_kam = None
+    try:
+        from scipy.spatial import cKDTree as _KD
+        _kd = _KD(Q[:, :2]); _, _ix = _kd.query(Cq[:, :2], k=min(300, len(Q))); _bod = np.percentile(Q[_ix, 2], 3, axis=1); _hk = Cq[:, 2] - _bod; _hk = _hk[_hk > 0]
+        if len(_hk) >= 20:
+            _hs = float(np.median(_hk[_hk <= np.median(_hk)])); s_kam = _hs / a.kamerahoehe[0]
+            print(f"Massstab aus Kamerahoehe: Strassenkameras {_hs:.3f} SfM-Einheiten ueber dem Boden -> {s_kam:.4f} SfM-Einheiten/m (ANNAHME {a.kamerahoehe[0]} m; Wolkenausdehnung {s0:.4f})")
+    except Exception as _e: print("HINWEIS Massstab aus Kamerahoehe nicht bestimmbar:", _e)
+    _kam_gilt = bool(s_kam) and not s_gps
+    if s_kam and s_gps and not (1 / 1.6 < s_kam / s_gps < 1.6): print(f"ACHTUNG MASSSTAB: Foto-GPS ({s_gps:.4f}) und Kamerahoehe ({s_kam:.4f}) widersprechen sich um Faktor {max(s_kam / s_gps, s_gps / s_kam):.1f} - es gilt GPS, Ergebnis an der Gebaeudehoehe pruefen", flush=True)
+    if _kam_gilt:
+        if not (1 / 2.0 < s_kam / s0 < 2.0): print(f"ACHTUNG MASSSTAB: Wolkenausdehnung ({s0:.4f}) und Kamerahoehe ({s_kam:.4f}) widersprechen sich um Faktor {max(s_kam / s0, s0 / s_kam):.1f} (Wolke deckt mehr als das Objekt?) - es gilt die Kamerahoehe, Suche {s_kam / 2:.4f} .. {s_kam * 2:.4f}", flush=True)
+        s0 = s_kam
+    print(f"Startmassstab s0 = {s0:.4f} SfM-Einheiten/m ({'Foto-GPS' if s_gps else 'Kamerahoehe' if _kam_gilt else 'Wolkenausdehnung'}), Toleranz 0,75 m * s0/s (konstant in SfM-Einheiten)")
+    _band = 1.5 if s_gps else (2.0 if _kam_gilt else 4.0)                                     # 15.11.: mit GPS-Massstab nur +-50 % suchen (GPS lag 6-8 % neben LoD2; Kaufhaus: ohne Grenze gewann ein 2,6-fach geschrumpftes Modell, Wolke 9 m hoch)
     if s_gps: print(f"Massstabssuche auf GPS-Band begrenzt: {s0 / _band:.4f} .. {s0 * _band:.4f}")
     for ls in np.linspace(math.log(s0 / _band), math.log(s0 * _band), 17 if s_gps else 33):
         s = math.exp(ls); hq = (Q[:, 2] - zc_q) / s + 1.6; fs = (hq > 1.0) & (hq < 7.0)
@@ -434,6 +450,24 @@ def main():
         if sc == -1.0: p0[0] = _s_gps_best
         p, frac, rms, ok = fein(p0, Q, band=0.005 if sc == -1.0 else 0.35); ab = abdeckung(p, Q); loes.append((frac * ab, rms, p, ok, frac, ab))
         print(f"   Start {math.degrees(th):5.0f} Grad s={s:.3f}: Inlier {100 * frac:.0f} %, Objektwand-Abdeckung {100 * ab:.0f} %, RMS {rms:.2f} m, Massstab {math.exp(p[0]):.4f}")
+        # 19.11.2026 HOEHENPROBE (Martinstor ohne brauchbares GPS: die 2D-Wandsuche bevorzugt das geschrumpfte Modell, Turm 40 statt 60 m). Unabhaengiges Mass: Hoehe der Wolke
+        # ueber dem Objektgrundriss gegen die LoD2-Hoehe des Objekts. Weicht sie > 13-15 % ab, wird die Loesung abgewertet (x Verhaeltnis) und ein zweiter Feinfit mit dem
+        # um das Verhaeltnis korrigierten Massstab gerechnet (Lage des Objekts bleibt, da das Modellsystem im Objekt zentriert ist). Nur ohne GPS-Massstab (dort gilt das GPS-Raster).
+        if not s_gps and sc != -1.0:
+            try:
+                _oe = T[Te]; _Ho = float(_oe[:, 2].max()); _bx = (_oe[:, 0].min() - 1, _oe[:, 0].max() + 1, _oe[:, 1].min() - 1, _oe[:, 1].max() + 1)
+                def _hq(p_):
+                    M_ = zu_modell(p_, Q); m_ = (M_[:, 0] > _bx[0]) & (M_[:, 0] < _bx[1]) & (M_[:, 1] > _bx[2]) & (M_[:, 1] < _bx[3])
+                    return float(np.percentile(M_[m_, 2], 99.5)) / _Ho if m_.sum() >= 200 and _Ho > 3 else None
+                _q = _hq(p)
+                if _q is not None and _q > 0:
+                    loes[-1] = (frac * ab * min(_q, 1 / _q), rms, p, ok, frac, ab)
+                    print(f"      Hoehenprobe: Wolke ueber dem Objektgrundriss {_q * _Ho:.1f} m, LoD2 {_Ho:.1f} m (Verhaeltnis {_q:.2f}) -> Guete {100 * loes[-1][0]:.0f} %")
+                    if not (0.87 < _q < 1.15) and 0.3 < _q < 3.3:
+                        _p1 = list(p); _p1[0] = p[0] + math.log(_q); _p1[4] = p[4] / _q; _p1[5] = p[5] / _q; _p1[6] = 1.6 - np.median(Cq[:, 2]) / math.exp(_p1[0])
+                        _p2, _f2, _r2, _o2 = fein(_p1, Q, band=0.12); _a2 = abdeckung(_p2, Q); _q2 = _hq(_p2); _g2 = _f2 * _a2 * (min(_q2, 1 / _q2) if _q2 else 0.5); loes.append((_g2, _r2, _p2, _o2, _f2, _a2))
+                        print(f"      Hoehenkorrektur: Massstab {math.exp(_p2[0]):.4f}: Inlier {100 * _f2:.0f} %, Abdeckung {100 * _a2:.0f} %, RMS {_r2:.2f} m, Hoehenverhaeltnis {(_q2 or 0):.2f} -> Guete {100 * _g2:.0f} %")
+            except Exception as _e: print("      HINWEIS Hoehenprobe nicht moeglich:", _e)
     if GPS_PRUEF is not None:                                                                 # 15.11.: GPS-Veto (v2: Loesung mit 2,5-fach zu grossem Modell gewann mit Guete 4 %)
         _gi, _gm, _gs = GPS_PRUEF
         def _gps_rest(p_): return float(np.median(np.linalg.norm(zu_modell(p_, Cq[_gi])[:, :2] - _gm, axis=1)))
