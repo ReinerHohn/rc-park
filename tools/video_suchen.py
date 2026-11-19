@@ -87,12 +87,15 @@ def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("objekt"); ap.add_argument("--aus", required=True); ap.add_argument("--suchen", type=int, default=12)
     ap.add_argument("--abstand", type=float, default=2.0); ap.add_argument("--ref", type=int, default=12); ap.add_argument("--min-inlier", type=int, default=60)
     ap.add_argument("--max-s", type=int, default=1500); ap.add_argument("--anfragen", nargs="*"); ap.add_argument("--nur", nargs="*", help="nur diese Clip-IDs pruefen")
+    ap.add_argument("--ref-liste", help="Datei mit Bildpfaden als Referenz STATT der Objektfotos (z.B. registrierte Modellbilder einer schwach gesehenen Seite - die Objektfotos zeigen oft nur EINE Seite, Martinstor 19.11.2026)")
+    ap.add_argument("--zusaetze", nargs="*", help="Suchzusaetze statt der festen Liste (z.B. '' wenn --anfragen schon vollstaendig sind)"); ap.add_argument("--ohne", nargs="*", default=[], help="diese Clip-IDs ueberspringen (schon im Bestand)")
     a = ap.parse_args(argv); t0 = time.time(); os.makedirs(a.aus, exist_ok=True); op = os.path.abspath(a.objekt); obj = json.load(open(op))
     root = os.path.dirname(os.path.dirname(os.path.dirname(op)))
     name = obj.get("name", "").split("(")[0].strip(); ort = obj.get("ort", "").split(",")[0].strip()
     basis = a.anfragen or sorted({x for x in [name, f"{name} {ort}".strip()] + list((obj.get("bildquellen", {}).get("commons", {}) or {}).get("suchen", [])) if x})
     fotos, fd, woher = referenzfotos(obj, root)
     if obj.get("fotos"): fotos = [p for p in fotos if os.path.splitext(os.path.basename(p))[0] in obj["fotos"]] or fotos
+    if a.ref_liste: fotos = [l.strip() for l in open(a.ref_liste) if l.strip() and os.path.isfile(l.strip())]; fd, woher = a.ref_liste, "--ref-liste"; a.ref = max(a.ref, len(fotos))
     if not fotos: print(f"FEHLER: kein Objektfoto (.jpg/.jpeg/.png) in {fd} - ohne Referenz ist jede Clip-Pruefung 'kein Treffer'; nichts gesucht"); return 2      # 17.11.2026: lief mit 0 Referenzfotos durch (rc 0, alle Clips 0 Treffer)
     step = max(1, len(fotos) // a.ref); R = sift_ref(fotos[::step][:a.ref]); print(f"{len(R)} Objektfotos als Referenz aus {fd} [{woher}] ({time.time() - t0:.0f} s)", flush=True)
     if not R: print(f"FEHLER: keines der {len(fotos[::step][:a.ref])} Referenzfotos lesbar/mit Merkmalen - nichts gesucht"); return 2
@@ -100,11 +103,11 @@ def main(argv=None):
     if a.nur: kand = {c: dict(id=c, dauer=None, titel="", anfrage="--nur") for c in a.nur}
     else:
         for b in basis:
-            for z in ZUSAETZE:
+            for z in (a.zusaetze if a.zusaetze is not None else ZUSAETZE):
                 q = f"{b} {z}".strip(); r = subprocess.run(["yt-dlp", "--flat-playlist", "--print", "%(id)s|%(duration)s|%(title)s", f"ytsearch{a.suchen}:{q}"], capture_output=True, text=True, timeout=300)
                 for ln in r.stdout.splitlines():
                     p = ln.split("|", 2)
-                    if len(p) == 3 and p[0] not in kand:
+                    if len(p) == 3 and p[0] not in kand and p[0] not in a.ohne:
                         try: du = float(p[1])
                         except ValueError: du = None
                         kand[p[0]] = dict(id=p[0], dauer=du, titel=p[2], anfrage=q)
