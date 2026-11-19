@@ -60,3 +60,21 @@ Vorarbeit der Nacht: `modelle/GLOBALER_MAPPER_STABIL.md` (Agent, Rezept Konsens-
 2. Schwabentor ganze Kette von null bis Tore, neuer Zielname (GPS dort belastbar).
 3. Kaufhaus ganze Kette von null bis Tore, neuer Zielname.
 Je Lauf: Zeiten je Stufe, Bildzahlen, Tore, Auffaelligkeiten hier eintragen.
+
+## 08:47-09:05 Nutzer: 3D-Seite der Martinstor-Wolke "ist Muell" - Ursache: LOT falsch (Modell lag auf der Seite)
+- Ich hatte die Seite veroeffentlicht, OHNE sie anzusehen. Lehre: vor jedem Zeigen drei Ansichten (Draufsicht + 2 Seiten) selbst rendern und ansehen.
+- Ursache: `sfm_lod2_ausrichten.py` nimmt das Lot als Normale der Ebene durch die Kamerazentren. Martinstor hat Drohnenclips (Kameras 10-26 m ueber der Strasse):
+  Streuung der Zentren 30/11/7,9 (Dicke/Laenge 0,26, eigene Grenze 0,25) -> Ebenennormale 86,6 Grad neben dem echten Lot. Wolke z -29..+57 m, Faecher im 3D-Bild.
+- Beleg fuer das richtige Lot (unabhaengig): Bild-x-Achsen aller 833 Kameras stehen senkrecht darauf (Rest Median 0,8 Grad, p90 3,3); Wandnormalen der dichten Wolke
+  stimmen auf 0,3 Grad ueberein (43 % der Normalen waagerecht +-10 Grad); Strassenclips liegen damit auf konstanter Hoehe (z. B. -0,14 +-0,02 Einheiten), Drohnenclips 2-5,5 Einheiten darueber.
+- Fix: Lot aus dem Kamerablick, gilt nur bei Widerspruch > 15 Grad zur Kameraebene und >= 50 % stuetzenden Kameras (`ACHTUNG LOT`); alte Laeufe unveraendert. Schnelltest 0, Regression Martinstor identisch.
+- KORREKTUR meiner Aussage von 08:16 ("Datenproblem, nicht Mapper/Kette"): die roten Lage-Tore des Laufs mt_gk3k beruhten mindestens zum Teil auf DIESEM Fehler. Das Modell selbst ist
+  in sich stimmig (ebener Boden, konstante Clip-Hoehen). Ob die Abdeckung reicht, ist erst nach neuer Ausrichtung zu beurteilen.
+- NOCH OFFEN: mit richtigem Lot liefert die Einpassung in den Stadtplan Guete 10 % (zweitbeste 7 %), Massstab 0,2096 Einh./m, Wolkenhoehe p99 nur 15,5 m (Turm ~60 m) und der Boden
+  kippt nach der Feinanpassung um ~9 Grad -> Massstab/Feinanpassung verdaechtig (Wolke deckt ein ganzes Viertel aus Drohnen- und Strassenclips, Suchradius der Einpassung 30 m).
+| Nr | Idee | Art | Stand |
+|---|---|---|---|
+| 14 | Lot aus Kamerablick statt Kameraebene bei Widerspruch | Q | gebaut (dieser Eintrag) |
+| 15 | Feinanpassung darf das Lot nicht mehr kippen (Rotation nur um die Hochachse) / Massstab-Startwert pruefen | Q | offen, als Naechstes |
+| 16 | 3D-Seite der Kette: vor dem Zeigen automatisch 3 Ansichten rendern (audit/wolke_ansichten.png) | Q | offen |
+| 17 | kh_dicht_viewer: Seitentitel aus --titel statt fest 'Kaufhaus Dichtewolke' | Q | offen, klein |

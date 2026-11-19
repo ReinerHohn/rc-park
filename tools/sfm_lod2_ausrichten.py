@@ -226,6 +226,24 @@ def main():
     if np.median((Pg - cm) @ up) < 0: up = -up
     flach = sv[2] / sv[0]
     print(f"Lot aus Kameraebene: Streuung {sv.round(2).tolist()} (Dicke/Laenge {flach:.2f}; < 0,25 = Strassenfotos in einer Ebene)")
+    # 1b. Lot aus dem KAMERABLICK (19.11.2026, Martinstor mit Drohnenclips: Kamerazentren nicht in einer Ebene, Ebenennormale 87 Grad neben dem Lot -> Modell lag auf der Seite,
+    #     alle Lage-Tore rot, 3D-Seite 'Muell'). Fotos werden fast immer waagerecht gehalten: die Bild-x-Achse jeder Kamera liegt horizontal, egal wie steil sie blickt.
+    #     Lot = Richtung, die auf moeglichst vielen x-Achsen senkrecht steht (kleinster Singulaervektor, Ausreisser wie Hochformat/gerollte Bilder iterativ raus).
+    #     Gilt nur, wenn er der Kameraebene um > 15 Grad widerspricht und >= 50 % der Kameras ihn stuetzen - sonst bleibt das bisherige Lot (alte Laeufe unveraendert).
+    try:
+        _cwf = lambda im: im.cam_from_world() if callable(im.cam_from_world) else im.cam_from_world
+        _Rm = np.array([np.asarray(_cwf(im).rotation.matrix(), float) for im in ims]); _X = _Rm[:, 0, :]; _in = np.ones(len(_X), bool)
+        for _ in range(5):
+            up_b = np.linalg.svd(_X[_in], full_matrices=False)[2][2]; _in = np.abs(_X @ up_b) < np.sin(np.radians(15))
+            if _in.sum() < 8: break
+        if _in.sum() >= 8:
+            if np.median(_Rm[_in, 1, :] @ up_b) > 0: up_b = -up_b                                  # Bild-y zeigt nach unten -> Lot entgegengesetzt
+            _w = float(np.degrees(np.arccos(min(1.0, abs(float(up @ up_b)))))); _ant = float(_in.mean())
+            print(f"Lot aus Kamerablick: {_in.sum()} von {len(_X)} Kameras waagerecht gehalten ({100 * _ant:.0f} %), Winkel zum Lot der Kameraebene {_w:.1f} Grad")
+            if _w > 15 and _ant >= 0.5:
+                print(f"ACHTUNG LOT: Kameraebene und Kamerablick widersprechen sich um {_w:.0f} Grad (Kameras nicht in einer Ebene: Drohne/Hoehenunterschiede?) - es gilt das Lot aus dem Kamerablick", flush=True)
+                up = up_b
+    except Exception as _e: print("HINWEIS Lot aus Kamerablick nicht bestimmbar:", _e)
     # Basis: e3 = up, e1/e2 beliebig senkrecht
     e1 = np.cross(up, [1, 0, 0]); e1 = e1 if np.linalg.norm(e1) > 0.1 else np.cross(up, [0, 1, 0]); e1 /= np.linalg.norm(e1); e2 = np.cross(up, e1)
     B0 = np.vstack([e1, e2, up])                                                              # Zeilen: SfM -> lotrechtes Netzsystem
