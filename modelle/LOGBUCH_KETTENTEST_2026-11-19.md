@@ -78,3 +78,16 @@ Je Lauf: Zeiten je Stufe, Bildzahlen, Tore, Auffaelligkeiten hier eintragen.
 | 15 | Feinanpassung darf das Lot nicht mehr kippen (Rotation nur um die Hochachse) / Massstab-Startwert pruefen | Q | offen, als Naechstes |
 | 16 | 3D-Seite der Kette: vor dem Zeigen automatisch 3 Ansichten rendern (audit/wolke_ansichten.png) | Q | offen |
 | 17 | kh_dicht_viewer: Seitentitel aus --titel statt fest 'Kaufhaus Dichtewolke' | Q | offen, klein |
+
+## 09:05-09:20 Nutzer: "da ist kein Martinstor zu sehen" - zweite Ursache: MASSSTAB der Einpassung um Faktor ~3,6 falsch
+- Die 3D-Seite V2 nutzte den Massstab der Einpassung (0,21 Einh./m). Unabhaengige Belege fuer ~0,058 Einh./m: (a) Strassenkameras stehen 0,13 Einh. ueber den tiefsten Punkten
+  (= 2,2 m bei 0,058; bei 0,21 waeren es 0,6 m); (b) Punkte der eigenen Martinstor-Fotos spannen 3,4 Einh. in der Hoehe (= 58 m, Turm ~60 m).
+  Mit 0,21 war das Tor im Bild 17 m hoch und ging im Viertel unter; der Ausschnitt +-90 m zeigte in Wahrheit +-325 m.
+- Mit Lot aus Kamerablick + 0,058 + Ausschnitt 50 m um den Turm: Tor steht aufrecht, Uhr, Dach und Spitze bis ~65 m erkennbar (audit/wolke_turm_ansichten_1119.png).
+  1,29 von 2,04 Mio Punkten liegen im 38-m-Umkreis des Turms -> das Modell ist brauchbar, die AUSRICHTUNG war in zwei Stufen falsch (Lot, Massstab).
+- Grobsuche der Einpassung probierte Massstaebe 1,25 .. 0,085; der richtige Bereich (~0,06) fehlte. Gewaehlt 0,25 bzw. 0,21 bei Guete 20 % / 10 %.
+- Lehre: Massstab VOR der Einpassung unabhaengig schaetzen - Kamerahoehe der Strassenkameras ueber dem Boden (~1,6 m) gibt ihn auf ~30 %; Suche nur in diesem Fenster.
+| Nr | Idee | Art | Stand |
+|---|---|---|---|
+| 15 | Massstab-Startwert aus Kamerahoehe ueber Boden (Strassenclips, Lot bekannt), Grobsuche auf Faktor 0,6..1,6 darum begrenzen | Q+G | als Naechstes |
+| 18 | Bildwahl der dichten Wolke haengt an der Ausrichtung (>= 60 Objektpunkte): bei falscher Ausrichtung falsche 548 Bilder? pruefen | Q | offen |
