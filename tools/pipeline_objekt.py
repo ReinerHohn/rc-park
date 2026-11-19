@@ -147,6 +147,16 @@ def main():
         rc2, o2 = run([PY_COL, "-I", "-c", f"import pycolmap;r=pycolmap.Reconstruction({sparse_dir!r});print('REG',r.num_reg_images())"])
         m = re.findall(r"REG (\d+)", o2)
         reg = int(m[-1]) if m else None
+        # 19.11.2026 (Nutzer): Kamera-Abdeckung SOFORT nach dem Mapper melden - vorher erst in den Lage-Toren, nach ~40 min Tiefenkarten. Winkel im MODELLSYSTEM (noch nicht eingenordet):
+        # die Meldung sagt, WIE VIEL des Kranzes fehlt, die Himmelsrichtung liefert erst tor_kamera nach der Ausrichtung. Die Kette rechnet weiter (kein Abbruch).
+        try:
+            rc3, o3 = run([PY_SEG, "-I", "tools/kamera_abdeckung.py", sparse_dir]); sk = re.search(r"Sektor: (\{[^}]*\})", o3); lu = re.search(r"groesste Luecke: (\d+) Grad", o3)
+            sek = __import__("ast").literal_eval(sk.group(1)) if sk else {}; duenn = [k for k, v in sek.items() if v < 5]; luecke = int(lu.group(1)) if lu else None
+            det = f"{len(sek) - len(duenn)} von {len(sek)} Sektoren (30 Grad) mit >= 5 Kameras, groesste Luecke {luecke} Grad, staerkster Sektor {max(sek.values()) if sek else 0} von {sum(sek.values())} Kameras"
+            if duenn or rc3 != 0:
+                print(f"ACHTUNG ABDECKUNG (frueh, vor der dichten Wolke): {det} -> von {len(duenn)} Sektoren fehlen Fotos; Fotobedarf tools/foto_auftrag.py / tools/seiten_luecken.py (Himmelsrichtung nach der Ausrichtung: tor_kamera)", flush=True)
+            stufe(bericht, "abdeckung", "OFFEN" if duenn or rc3 != 0 else "OK", det)
+        except Exception as e_: print("HINWEIS Abdeckung frueh nicht pruefbar:", e_, flush=True)
     ziel = 0.5 * n_gueltig
     status = "OK" if rc_ok and reg is not None and reg >= ziel else "FEHLER"
     stufe(bericht, "sfm", status, f"registriert {reg} von {n_gueltig} (Ziel >= {int(ziel)})")

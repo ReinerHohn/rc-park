@@ -104,5 +104,6 @@ k=$($P -I tools/test_flaeche_ortho.py 2>&1); [ $? = 0 ] && ok "Wandbild fuer Run
 k=$(python3 tools/importe_pruefen.py 2>&1); [ $? = 0 ] && ok "Importe: kein Generator/Werkzeug importiert etwas, das es nicht mehr gibt (Anlass bauteile.py 15.11.)" || { rot "Importe fehlen: $(echo "$k" | head -3 | tr '\n' ' ' | cut -c1-200)"; }
 k=$($P -I tools/test_stabil_schnitt.py 2>&1); [ $? = 0 ] && ok "Konsens-Schnitt zweier Mapper-Laeufe (sfm_stabil_schnitt: kollineare Strassenkameras, 30 % verschoben erkannt)" || { rot "stabil_schnitt: $(echo "$k" | tail -2)"; }
 k=$($P -I tools/test_konsens_urteil.py 2>&1); [ $? = 0 ] && ok "Konsens-Mapper als Standard: Urteil traegt/Datenmangel mit Ursache und Abhilfe (global_mapper_konsens.urteil)" || { rot "konsens_urteil: $(echo "$k" | tail -2)"; }
+k=$($P -I tools/test_vorpruefen_cache.py 2>&1); [ $? = 0 ] && ok "Zwischenspeicher Bildvorpruefung (bleibt ueber Neustart, geaenderte Datei/Referenz/Schwelle = neu rechnen)" || { rot "vorpruefen_cache: $(echo "$k" | tail -2)"; }
 k=$($P -I tools/test_brennweite_waehlen.py 2>&1); [ $? = 0 ] && ok "Brennweite aus EXIF-Pixelgroesse + GPS-Gegenprobe (Martinstor-061-Fall, Seitenverhaeltnis-Regel)" || { rot "brennweite_waehlen: $(echo "$k" | head -2 | tr '\n' ' ')"; }
 rm -rf $S; echo "SCHNELLTEST: $F Fehler, $(( $(date +%s) - T0 )) s"; exit $F
