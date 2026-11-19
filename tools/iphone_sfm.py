@@ -60,7 +60,7 @@ os.makedirs(f"{w}/sparse", exist_ok=True)
 COLMAP_BIN = "/media/oem/scan/colmap-build/prefix/bin/colmap"
 _env = dict(os.environ, LD_LIBRARY_PATH=":".join(["/media/oem/scan/cuda-toolkit-combo/lib64", "/media/oem/scan/venv-seg/lib/python3.12/site-packages/nvidia/cu13/lib", "/media/oem/scan/cudss-pkg/py/nvidia/cu13/lib", "/media/oem/scan/venv-colmap/lib/python3.12/site-packages/nvidia/curand/lib"]))
 # ein Thread: reproduzierbare Anzahl eingehaengter Bilder (Messung 13.11.: Mehrthread 181/149/181/21, Einthread 181/181); Qualitaet vor Tempo
-# MAPPERWAHL (15.11.2026, Bericht Massnahmen 1+2): --mapper auto (Standard) | global | inkrementell
+# MAPPERWAHL (15.11.2026, Bericht Massnahmen 1+2): --mapper auto (Standard) | global | inkrementell | konsens (19.11.: tools/global_mapper_konsens.py, Schalter, Standard unveraendert)
 #   auto: erst global (view_graph_calibrator auf DB-KOPIE + global_mapper, Minuten statt 40 min), dann GPS-TOR (tools/mapper_gps_vergleich.py: Anteil der
 #   eigenen GPS-Fotos > 15 m neben GPS). Besteht (<= 15 %, >= 15 GPS-Fotos) -> global gilt. Sonst zusaetzlich schrittweise und das Modell mit dem kleineren
 #   Anteil nehmen. Ohne GPS-Beleg (< 15 Fotos) gilt wie bisher der schrittweise Mapper (kein Urteil moeglich). Messungen: Schwabentor global 3 % / schrittweise
@@ -71,7 +71,16 @@ def _inkrementell(ziel):
     os.makedirs(ziel, exist_ok=True)
     subprocess.run([COLMAP_BIN, "mapper", "--database_path", db, "--image_path", img, "--output_path", ziel,
                     "--Mapper.num_threads", "1", "--Mapper.ba_use_gpu", "1", "--Mapper.ba_gpu_index", "0", "--Mapper.ba_max_num_images_direct_dense_gpu_solver", "0"], env=_env, check=True)
+def _konsens(ziel):
+    """--mapper konsens (19.11.2026, modelle/GLOBALER_MAPPER_STABIL.md): DB bereinigen (EXIF-Prioren weg, Kamera je Clip, Panoramen raus) -> zwei globale Laeufe ->
+    Konsens-Rueckgrat (nur in beiden Laeufen gleich stehende Kameras) -> Rest per `mapper --fix_existing_frames 1` ohne strukturlosen Rueckfall. Standard bleibt 'auto'."""
+    arb = f"{w}/konsens_arbeit"; r = subprocess.run([sys.executable, "-I", os.path.join(_tools, "global_mapper_konsens.py"), "--db", db, "--bilder", img, "--ziel", arb, "--label", "konsens"],
+                       env=_env, stdout=open(os.path.join(w, "konsens.log"), "w"), stderr=subprocess.STDOUT)
+    q = os.path.join(arb, "konsens", "0")
+    if r.returncode != 0 or not os.path.isfile(os.path.join(q, "cameras.bin")): return False
+    shutil.rmtree(ziel, ignore_errors=True); os.makedirs(ziel); shutil.copytree(q, os.path.join(ziel, "0")); return True
 def _global(ziel):
+    if MAPPER == "konsens": return _konsens(ziel)
     dbg = db + ".global.db"; shutil.copyfile(db, dbg); os.makedirs(ziel, exist_ok=True)       # Kalibrierung aendert Intrinsik/Zweibild-Geometrien in der DB -> nur auf der Kopie
     r1 = subprocess.run([COLMAP_BIN, "view_graph_calibrator", "--database_path", dbg], env=_env, stdout=open(os.path.join(w, "kalib.log"), "w"), stderr=subprocess.STDOUT)
     r2 = subprocess.run([COLMAP_BIN, "global_mapper", "--database_path", dbg, "--image_path", img, "--output_path", ziel], env=_env, stdout=open(os.path.join(w, "global.log"), "w"), stderr=subprocess.STDOUT)
@@ -87,7 +96,7 @@ else:
     ok_g = _global(f"{w}/sparse_global"); wahl["global_sek"] = round(time.time() - _t0); tg = _gps_tor(f"{w}/sparse_global/0") if ok_g else dict(n_gps=0, anteil_ueber_15m=None); wahl["tor_global"] = tg
     print("Mapper global:", "ok" if ok_g else "FEHLGESCHLAGEN", wahl["global_sek"], "s, GPS-Tor", tg, flush=True)
     besteht = ok_g and tg["n_gps"] >= 15 and tg["anteil_ueber_15m"] is not None and tg["anteil_ueber_15m"] <= 15   # ANNAHME Schwelle 15 % (Einzelmodell-Messung 15.11.: gutes Modell 12 % inkl. Ausreisserkameras, verwechselte 16 % und 26 %); Durchfall kostet nur Zeit (Vergleichslauf)
-    if MAPPER == "global" or besteht:
+    if MAPPER in ("global", "konsens") or besteht:
         if not ok_g: raise SystemExit("globaler Mapper fehlgeschlagen (kalib.log/global.log)")
         shutil.rmtree(f"{w}/sparse", ignore_errors=True); os.rename(f"{w}/sparse_global", f"{w}/sparse"); wahl["gewaehlt"] = "global"
     else:

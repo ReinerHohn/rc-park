@@ -110,7 +110,7 @@ def main():
     ap.add_argument("--trotz-lage", action="store_true", help="Fotostufen auch dann rechnen, wenn die Lage-Tore rot sind (nur zum Untersuchen)"); ap.add_argument("--ab", default="anlegen", choices=STUFEN); ap.add_argument("--bis", default="vergleich", choices=STUFEN)
     ap.add_argument("--fremd", nargs="*", default=[]); ap.add_argument("--commons-kategorie", default=""); ap.add_argument("--ohne-video", action="store_true")
     ap.add_argument("--ohne-weitere-fotos", action="store_true", help="nur fotos_dir + Commons/Video (alt); Standard: alle Fotoordner des Objekts unter rc-park_daten (tools/fotoquellen.py) als Fremdquelle vorpruefen")
-    ap.add_argument("--dicht-stufe", default="schnell", choices=["grob", "schnell", "fein"], help="schnell = ohne geometrischen PatchMatch-Durchgang (Standard 15.11.2026); fein nur wenn ein Tor zweifelt"); ap.add_argument("--referenz-wolke", default=""); ap.add_argument("--max-loesung", type=int, default=3); ap.add_argument("--fotos", default="", help="fotos_dir ersetzen")
+    ap.add_argument("--dicht-stufe", default="schnell", choices=["grob", "schnell", "fein"], help="schnell = ohne geometrischen PatchMatch-Durchgang (Standard 15.11.2026); fein nur wenn ein Tor zweifelt"); ap.add_argument("--referenz-wolke", default=""); ap.add_argument("--max-loesung", type=int, default=3); ap.add_argument("--fotos", default="", help="fotos_dir ersetzen"); ap.add_argument("--mapper", default="", choices=["", "auto", "global", "inkrementell", "konsens"], help="an iphone_sfm.py durchreichen; leer = dessen Standard (auto). konsens = zwei globale Laeufe + Rueckgrat (modelle/GLOBALER_MAPPER_STABIL.md)")
     a = ap.parse_args()
     if platte_fehler(): print("ABBRUCH: " + platte_fehler(), flush=True); return 2                  # 17.11.2026: ohne eingehaengte Datenplatte entstand der Kettenordner auf der Systemplatte
     D = f"/media/oem/scan/rc-park_daten/{a.ziel}"; os.makedirs(D, exist_ok=True); log = os.path.join(D, "gesamtkette.log"); log_ab = sum(1 for _ in open(log, errors="replace")) if os.path.exists(log) else 0; t_lauf = time.time()
@@ -215,7 +215,7 @@ def main():
     if dran("sfm"):
         # 17.11.2026: (1) scheiterte die SfM, rechneten Tore und alle Folgestufen mit Wolke/Ausrichtung eines FRUEHEREN Laufs weiter. (2) pipeline_objekt.py endet auch dann mit rc 0, wenn sein
         # LoD2-Abgleich abstuerzt (Zeile 'abgleich ... FEHLER' steht nur in pipe/pipeline.log) - dann sind Wolke und Ausrichtung alt. Beides: Abbruch statt stiller Weiterarbeit. 'lage' gilt bis zum naechsten Tor-Lauf als ungeprueft.
-        t_s = time.time(); rc_s = lauf(B, "sfm", [PY, "-u", "-I", "tools/pipeline_objekt.py", a.ziel, FV, P, "--stufe", a.dicht_stufe], log, platz=[P])[0]
+        t_s = time.time(); rc_s = lauf(B, "sfm", [PY, "-u", "-I", "tools/pipeline_objekt.py", a.ziel, FV, P, "--stufe", a.dicht_stufe] + (["--mapper", a.mapper] if a.mapper else []), log, platz=[P])[0]
         B["lage"] = dict(bestanden=None, hinweis="neue SfM - Lage-Tore noch nicht gelaufen (Stufe 'tore')")
         if rc_s != 0: return abschluss(4, f"SfM gescheitert (rc {rc_s}) - Wolke/Ausrichtung eines frueheren Laufs werden NICHT weiterverwendet")
         alt = [x_ for x_ in (W, AU) if not frisch(x_, t_s)]

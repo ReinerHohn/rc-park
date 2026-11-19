@@ -139,7 +139,8 @@ def main():
             print(f"Fotowolke wiederverwendet aus {quelle}", flush=True)
     sparse_dir = os.path.join(daten, "sfm", "sparse", "0")
     if not os.path.isdir(sparse_dir):
-        rc, out = run([PY_COL, "-I", "tools/iphone_sfm.py", fotos, os.path.join(daten, "sfm")], log)
+        mapper_wahl = sys.argv[sys.argv.index("--mapper") + 1] if "--mapper" in sys.argv and sys.argv.index("--mapper") + 1 < len(sys.argv) else ""   # 19.11.2026: auto (Standard von iphone_sfm) | global | inkrementell | konsens (modelle/GLOBALER_MAPPER_STABIL.md); leer = nichts durchreichen
+        rc, out = run([PY_COL, "-I", "tools/iphone_sfm.py", fotos, os.path.join(daten, "sfm")] + (["--mapper", mapper_wahl] if mapper_wahl else []), log)
     rc_ok = os.path.isdir(sparse_dir)
     reg = None
     if rc_ok:
