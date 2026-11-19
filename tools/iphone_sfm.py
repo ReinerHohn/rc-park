@@ -60,8 +60,11 @@ os.makedirs(f"{w}/sparse", exist_ok=True)
 COLMAP_BIN = "/media/oem/scan/colmap-build/prefix/bin/colmap"
 _env = dict(os.environ, LD_LIBRARY_PATH=":".join(["/media/oem/scan/cuda-toolkit-combo/lib64", "/media/oem/scan/venv-seg/lib/python3.12/site-packages/nvidia/cu13/lib", "/media/oem/scan/cudss-pkg/py/nvidia/cu13/lib", "/media/oem/scan/venv-colmap/lib/python3.12/site-packages/nvidia/curand/lib"]))
 # ein Thread: reproduzierbare Anzahl eingehaengter Bilder (Messung 13.11.: Mehrthread 181/149/181/21, Einthread 181/181); Qualitaet vor Tempo
-# MAPPERWAHL (15.11.2026, Bericht Massnahmen 1+2): --mapper auto (Standard) | global | inkrementell | konsens (19.11.: tools/global_mapper_konsens.py, Schalter, Standard unveraendert)
-#   auto: erst global (view_graph_calibrator auf DB-KOPIE + global_mapper, Minuten statt 40 min), dann GPS-TOR (tools/mapper_gps_vergleich.py: Anteil der
+# MAPPERWAHL: --mapper auto (Standard) | auto_alt | global | inkrementell | konsens
+#   auto (seit 19.11.2026, Nutzer 'Ja, mach es als Standard'): ZUERST Konsens-Mapper (tools/global_mapper_konsens.py, modelle/GLOBALER_MAPPER_STABIL.md). Traegt er nicht
+#   (Rueckgrat < 50 % / < 30 Kameras, < 50 % der Bilder im Modell), wird 'ACHTUNG DATENMANGEL' mit Ursache (Bildzahl, Videoclips) und Abhilfe ausgegeben
+#   (mapper_wahl.json 'datenmangel', Kettenbericht) und erst DANN der alte Weg gerechnet. konsens = erzwingen; auto_alt = alter Weg ohne Konsens.
+#   alter Weg (15.11.2026, Bericht Massnahmen 1+2): erst global (view_graph_calibrator auf DB-KOPIE + global_mapper, Minuten statt 40 min), dann GPS-TOR (tools/mapper_gps_vergleich.py: Anteil der
 #   eigenen GPS-Fotos > 15 m neben GPS). Besteht (<= 15 %, >= 15 GPS-Fotos) -> global gilt. Sonst zusaetzlich schrittweise und das Modell mit dem kleineren
 #   Anteil nehmen. Ohne GPS-Beleg (< 15 Fotos) gilt wie bisher der schrittweise Mapper (kein Urteil moeglich). Messungen: Schwabentor global 3 % / schrittweise
 #   18 %; global ist NICHT immun (Variante gemeinsame Kamera: 18 %) -> Tor ist Pflicht. Ergebnis: <w>/mapper_wahl.json.
@@ -79,8 +82,15 @@ def _konsens(ziel):
     q = os.path.join(arb, "konsens", "0")
     if r.returncode != 0 or not os.path.isfile(os.path.join(q, "cameras.bin")): return False
     shutil.rmtree(ziel, ignore_errors=True); os.makedirs(ziel); shutil.copytree(q, os.path.join(ziel, "0")); return True
+def _konsens_urteil(lief):
+    """Urteil ueber das Konsens-Modell + Datenlage (Bilder, Videoclips); Regel in global_mapper_konsens.urteil."""
+    import global_mapper_konsens as GK
+    namen = [f for f in os.listdir(img) if os.path.isfile(os.path.join(img, f))]; clips = {n_.split("__vf_")[0] for n_ in namen if "__vf_" in n_}
+    kp = f"{w}/konsens_arbeit/konsens.json"; kj = json.load(open(kp)) if lief and os.path.isfile(kp) else None
+    g, u, ab = GK.urteil(kj, len(namen), len(clips), lief)
+    return dict(bilder=len(namen), videoclips=len(clips), rueckgrat=(kj or {}).get("schnitt", {}).get("stabil"), gemeinsam=(kj or {}).get("schnitt", {}).get("gemeinsam"),
+                im_modell=(kj or {}).get("bewertung", {}).get("n_reg"), gruende=g, ursachen=u, abhilfe=ab)
 def _global(ziel):
-    if MAPPER == "konsens": return _konsens(ziel)
     dbg = db + ".global.db"; shutil.copyfile(db, dbg); os.makedirs(ziel, exist_ok=True)       # Kalibrierung aendert Intrinsik/Zweibild-Geometrien in der DB -> nur auf der Kopie
     r1 = subprocess.run([COLMAP_BIN, "view_graph_calibrator", "--database_path", dbg], env=_env, stdout=open(os.path.join(w, "kalib.log"), "w"), stderr=subprocess.STDOUT)
     r2 = subprocess.run([COLMAP_BIN, "global_mapper", "--database_path", dbg, "--image_path", img, "--output_path", ziel], env=_env, stdout=open(os.path.join(w, "global.log"), "w"), stderr=subprocess.STDOUT)
@@ -91,12 +101,26 @@ def _gps_tor(modell):
     return dict(n_gps=int(n.group(1)) if n else 0, anteil_ueber_15m=int(a_.group(1)) if a_ else None, median_m=float(m_.group(1)) if m_ else None)
 sys.path.insert(0, _tools); import gpu_buchung as GB; GB.frei()   # Mapper rechnet fast nur auf der CPU (global ~7 min, schrittweise ~40 min) -> GPU-Budget solange freigeben
 _t0 = time.time(); wahl = dict(mapper=MAPPER)
-if MAPPER == "inkrementell": _inkrementell(f"{w}/sparse"); wahl["gewaehlt"] = "inkrementell"
+_fertig = False
+if MAPPER in ("auto", "konsens"):                                         # 19.11.2026 (Nutzer 'Ja, mach es als Standard'): Konsens-Mapper zuerst
+    ok_k = _konsens(f"{w}/sparse_konsens"); wahl["konsens_sek"] = round(time.time() - _t0); ku = _konsens_urteil(ok_k); wahl["konsens"] = ku
+    print("Mapper konsens:", "ok" if ok_k else "FEHLGESCHLAGEN", wahl["konsens_sek"], "s, Rueckgrat", ku["rueckgrat"], "von", ku["gemeinsam"], "im Modell", ku["im_modell"], "von", ku["bilder"], flush=True)
+    if ku["gruende"]:
+        wahl["datenmangel"] = dict(gruende=ku["gruende"], ursachen=ku["ursachen"], abhilfe=ku["abhilfe"])
+        print("ACHTUNG DATENMANGEL: Konsens-Mapper traegt nicht - " + "; ".join(ku["gruende"]) + " | URSACHE: " + "; ".join(ku["ursachen"]) + " | ABHILFE: " + ku["abhilfe"], flush=True)
+    if ok_k and (MAPPER == "konsens" or not ku["gruende"]):
+        shutil.rmtree(f"{w}/sparse", ignore_errors=True); os.rename(f"{w}/sparse_konsens", f"{w}/sparse"); wahl["gewaehlt"] = "konsens"; _fertig = True
+    elif MAPPER == "konsens": raise SystemExit("Konsens-Mapper fehlgeschlagen (konsens.log)")
+    else:
+        print("ACHTUNG DATENMANGEL: weiche auf den alten Weg aus (globaler Lauf + GPS-Tor, sonst schrittweiser Mapper) - das dauert LAENGER und ist UNSICHERER; Ursache sind fehlende Daten, nicht die Methode", flush=True)
+        wahl["datenmangel"]["folge"] = "Ausweichweg global+GPS-Tor/schrittweise (laenger, unsicherer)"; _t0 = time.time()
+if _fertig: pass
+elif MAPPER == "inkrementell": _inkrementell(f"{w}/sparse"); wahl["gewaehlt"] = "inkrementell"
 else:
     ok_g = _global(f"{w}/sparse_global"); wahl["global_sek"] = round(time.time() - _t0); tg = _gps_tor(f"{w}/sparse_global/0") if ok_g else dict(n_gps=0, anteil_ueber_15m=None); wahl["tor_global"] = tg
     print("Mapper global:", "ok" if ok_g else "FEHLGESCHLAGEN", wahl["global_sek"], "s, GPS-Tor", tg, flush=True)
     besteht = ok_g and tg["n_gps"] >= 15 and tg["anteil_ueber_15m"] is not None and tg["anteil_ueber_15m"] <= 15   # ANNAHME Schwelle 15 % (Einzelmodell-Messung 15.11.: gutes Modell 12 % inkl. Ausreisserkameras, verwechselte 16 % und 26 %); Durchfall kostet nur Zeit (Vergleichslauf)
-    if MAPPER in ("global", "konsens") or besteht:
+    if MAPPER == "global" or besteht:
         if not ok_g: raise SystemExit("globaler Mapper fehlgeschlagen (kalib.log/global.log)")
         shutil.rmtree(f"{w}/sparse", ignore_errors=True); os.rename(f"{w}/sparse_global", f"{w}/sparse"); wahl["gewaehlt"] = "global"
     else:

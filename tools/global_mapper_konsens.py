@@ -21,6 +21,28 @@ def lauf(cmd, log):
     return r.returncode
 
 
+def urteil(kj, n_bilder, n_clips, lief=True):
+    """Traegt das Konsens-Modell? Liefert (gruende, ursachen, abhilfe); gruende leer = traegt (19.11.2026, Nutzer: 'es darf nicht sein, dass wir laenger brauchen und
+    die schlechtere Methode nehmen, nur weil wir zu wenig Daten haben' -> der Mangel wird benannt, nie still ausgewichen).
+    gruende = was am ERGEBNIS nicht reicht (gemessen), ursachen = was an den DATEN fehlt, abhilfe = was zu beschaffen ist.
+    ANNAHME Schwellen: Rueckgrat >= 50 % der gemeinsamen Kameras und >= 30 Kameras (gemessen gut: Schwabentor 60-80 %, Martinstor 72 %), >= 50 % der Bilder im Modell
+    (gleiche Schwelle wie die Kettenpruefung der Stufe sfm); Datenhinweise < 100 Bilder / kein Videoclip aus modelle/GLOBALER_MAPPER_STABIL.md (geschaetzt, nicht gemessen)."""
+    g = []; s = (kj or {}).get("schnitt") or {}; b = (kj or {}).get("bewertung") or {}
+    if not lief or not kj: g.append("Konsens-Lauf ohne Ergebnis (konsens.log)")
+    if s:
+        if s.get("stabil", 0) < 0.5 * max(s.get("gemeinsam", 0), 1): g.append(f"Rueckgrat: nur {s.get('stabil', 0)} von {s.get('gemeinsam', 0)} Kameras stehen in beiden Laeufen gleich (unter 50 %)")
+        elif s.get("stabil", 0) < 30: g.append(f"Rueckgrat: nur {s.get('stabil', 0)} stabile Kameras (unter 30)")
+    if b and n_bilder and b.get("n_reg", 0) < 0.5 * n_bilder: g.append(f"nur {b.get('n_reg', 0)} von {n_bilder} Bildern im Modell (unter 50 %)")
+    u = []
+    if g:
+        if n_bilder < 100: u.append(f"nur {n_bilder} Bilder (unter etwa 100)")
+        if n_clips == 0: u.append("kein Videoclip - das Videorueckgrat fehlt (Einzelfotos mit freier Brennweite wandern zwischen den Laeufen)")
+        elif n_clips < 3: u.append(f"nur {n_clips} Videoclip(s)")
+        if not u: u.append("Bildzahl und Clips reichen nominell - Ueberlappung/Abdeckung pruefen (tools/kamera_abdeckung.py, konsens_arbeit/unstabil.txt)")
+    ab = "ein Video-Rundgang um das Objekt (langsam, ohne Zoom) und mehr Fotos rundum; Fotobedarf: tools/foto_auftrag.py, fehlende Seiten: tools/seiten_luecken.py" if g else ""
+    return g, u, ab
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--db", required=True); ap.add_argument("--bilder", required=True); ap.add_argument("--ziel", required=True); ap.add_argument("--fotos", default="")
     ap.add_argument("--loeschen", default=r"_360\."); ap.add_argument("--ohne-clip", action="store_true"); ap.add_argument("--svc-start", action="store_true", help="AnyCalib als Startwert (Schwabentor S5: gleichwertig, nicht besser)")
