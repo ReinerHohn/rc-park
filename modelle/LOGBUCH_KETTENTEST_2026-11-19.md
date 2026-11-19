@@ -246,3 +246,17 @@ Gleiche Wolke (Lauf mt_gk3k), Testname `martinstor_gk3_lot`:
 - Abhilfe: Louvain-Aufloesung 2.0 (Standard): alte Gruppe 3 zerfaellt in jRN8 (+LY0S), eigenes Video, A_PUR; 50 Gruppen >= 12, 118 Verbindungen, 2822 Pruefpaare. Lauf seiten3.
 - Pruefer-Tempo: Bild einmal verkleinern bringt wenig (0,78 s, LoFTR selbst ~0,5 s); halbe Genauigkeit 0,49 s, aber 6 von 60 Urteilen kippen -> NICHT benutzt.
 - Verbesserung 37: Seitentest 'Blickrichtung je Bildgruppe' als Tor in die Kette (zwei Gruppen, die der Pruefer verwechselt nennt, duerfen im Modell nicht in dieselbe Richtung blicken).
+
+## 16:00 DURCHBRUCH: Martinstor mit BEIDEN Turmseiten (duenne Wolke) - strenge Seitenerkennung + Symmetrie-Drehung
+- seiten3 (Aufloesung 2.0): 161 Gemeinschaften, 50 >= 12, 116 Verbindungen: 34 echt, 53 unklar, 29 verwechselt. Mit 'unklar' bleibt alles ein Teil (1334 Bilder) -> Umwege.
+- NEU --streng (nur bestaetigte Verbindungen): Teil 0 = 555 Bilder (Nordseite: 4 Clips + 65 Fotos), Teil 1 = 122 Bilder (Suedseite: Clip A_PUR + 68 Fotos/Netzbilder), Teil 2 = 27. Preis: 1265 statt 637 Bilder fallen heraus (u.a. Drohnenclips, Clip jRN8, eigenes Video) - spaeter wieder anhaengen.
+- Modelle: Nord Konsens-Mapper 530 Bilder, 88 949 Punkte, 0,88 px, 97 unstabil (~20 min). Sued schrittweise 114 Bilder, 8147 Punkte, 0,87 px (4,4 min CPU). Sued: 45 gepruefte 'Nebenhaus links'-Bilder, 0 'rechts' = rein.
+- LoD2-Ausrichtung des reinen Nordmodells: Guete 39 %, zweitbeste 6 %, 'mehrdeutig: False', Massstab 0,0875 (+-0,04 %), Kamerahoehe Median 1,69 m, 491 von 530 plausibel. Vorher (verklebt): 35 %, mehrdeutig. -> Die Verklebung war auch die Ursache der mehrdeutigen Ausrichtung und der roten Lage-Tore.
+- Seiten zueinander: echte gemeinsame Punkte gibt es NICHT (beste 'gegenueber'-Lage 21 von 1259 = 2 %; 'geklappt' 277 = 22 %, Rest 0,011 Einheiten = 13 cm, Massstab 0,750).
+  IDEE, die traegt: die Verklebung ist selbst eine Messung. Geklappte Lage = wahre Lage um 180 Grad um die senkrechte Turmachse gedreht. Achse = Mitte des LoD2-Objektgrundrisses (0,0);
+  Gegenprobe Dach: oberste 3 m der Dachflaeche in A liegen 0,28 / 0,38 m neben der LoD2-Achse. (Erster Versuch 'gedrehte Helm-Punkte von B muessen auf A fallen' war ein Denkfehler: das tun sie gerade in der geklappten Lage.)
+- Pruefungen der gedrehten Lage: (1) FLANKENPROBE (unabhaengig, unsymmetrischer Nachbar): Nebenhaus in A auf Flanke +y (1978 gegen 504 Punkte), in B gedreht ebenfalls +y (1040 gegen 126), in B geklappt -y -> gedreht stimmt.
+  (2) LoD2-Waende: B gedreht roh Median 1,35 m (34 % < 1 m), nach Feinpassung (Drehung +1,0 Grad, Massstab 0,958 - Massstab verdaechtig, nicht uebernommen) 0,17 m / 87 %; Kontrolle geklappt 0,30 m / 77 % -> LoD2 allein entscheidet die Seite nicht (Strasse spiegelgleich).
+  (3) Turmwaende bei x = +4,12 und -4,12 m (Tiefe 8,2 m; LoD2-Sockel 11,6 m), Dachflaechen beider Seiten treffen sich an der Spitze (audit/zweiseitig_turm_1119.png).
+- 3D-Seite: https://claude.ai/artifact/9fK... (siehe Antwort an den Nutzer), Bilder audit/zweiseitig_*_1119.png. Skripte tools/versuche/seiten_*_1119.py.
+- OFFEN: Genauigkeit vorn/hinten nur ueber LoD2-Achse (+-0,4 m), Massstab B aus Turmwand-Paaren; dichte Wolke beider Seiten; verlorene Clips wieder anhaengen; alles in die Kette (Stufe 'seiten'), Seitentest Blickrichtung als Tor; Schwabentor/Kaufhaus gegenpruefen.

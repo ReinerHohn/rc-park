@@ -87,11 +87,13 @@ def main(argv=None):
     ap.add_argument("--min-paare", type=int, default=20); ap.add_argument("--min-inlier", type=int, default=30); ap.add_argument("--stichprobe", type=int, default=24); ap.add_argument("--schwelle", type=float, default=0.45)
     ap.add_argument("--referenz", default="eigen__", help="Namensanfang der Objektfotos (Sammelordner tools/fotos_sammeln.py)"); ap.add_argument("--trocken", action="store_true", help="nur Gruppen und Verbindungen zaehlen, kein Pruefer")
     ap.add_argument("--aufloesung", type=float, default=2.0, help="Louvain-Aufloesung: groesser = kleinere Gruppen. 1.0 liess am Martinstor eine Gruppe am Tordurchgang gemischt (Nahaufnahmen BEIDER Seiten), 2.0 trennt sie")
+    ap.add_argument("--streng", action="store_true", help="nur bestaetigte Verbindungen behalten: auch 'unklare' und ungepruefte schwache Verbindungen zwischen Gruppen loeschen (Verklebung laeuft sonst ueber Umwege, Martinstor 19.11.2026)")
     ap.add_argument("--pruefer-aus", help="Pruefer-Ergebnisse (p je Verbindung) aus einer frueheren seiten.json derselben Datenbank uebernehmen statt neu zu rechnen (Cache)")
     ap.add_argument("--objekt", help="objekt.json: mit Objektmitte + EXIF-GPS der Fotos entscheidet die STANDRICHTUNG je Bildgruppe vor dem Pruefer (Nutzer 19.11.2026: kuenftig GPS im EXIF; muss auch ohne gehen)")
     a = ap.parse_args(argv); db = sqlite3.connect(f"file:{a.db}?mode=ro", uri=True); nm = dict(db.execute("select image_id, name from images"))
     K = [(pid // MAXID, pid % MAXID, rows) for pid, rows in db.execute("select pair_id, rows from two_view_geometries where rows >= ?", (a.min_inlier,))]
     C = gemeinschaften(K, list(nm), aufloesung=a.aufloesung); g = {i: k for k, c in enumerate(C) for i in c}; gross = [k for k, c in enumerate(C) if len(c) >= a.min_bilder]
+    quer_alle = {tuple(sorted((g[pid // MAXID], g[pid % MAXID]))) for (pid,) in db.execute("select pair_id from two_view_geometries") if g[pid // MAXID] != g[pid % MAXID]}
     quer = collections.defaultdict(list)
     for x, y, r in K:
         if g[x] != g[y]: quer[tuple(sorted((g[x], g[y])))].append((x, y, r))
@@ -138,8 +140,10 @@ def main(argv=None):
                 if urteil_gps(gr.get(k[0]), gr.get(k[1])) == "verwechselt": verb.append(dict(a=k[0], b=k[1], paare=len(vq), p_median=None, urteil="verwechselt", quelle="gps", gps_richtung=[round(gr[k[0]][0]), round(gr[k[1]][0])]))
         print(f"GPS-Anker: {n_gps} Fotos mit Standort 15-300 m um die Objektmitte, {len(gr)} Bildgruppen mit Standrichtung; {sum(1 for v in verb if v.get('quelle') == 'gps')} Verbindungen durch GPS entschieden" if mitte else "GPS-Anker: objekt.json ohne Objektmitte (koordinate_utm) - uebersprungen")
     falsch = {(v["a"], v["b"]) for v in verb if v["urteil"] == "verwechselt"}
+    if a.streng:                                                                   # nur BESTAETIGTE Verbindungen behalten: alles zwischen zwei Gruppen, was nicht 'echt' ist, faellt weg
+        echt = {(v["a"], v["b"]) for v in verb if v["urteil"] == "echt"}; falsch = {k for k in quer_alle if k not in echt}
     # Zusammenhang der Gruppen ohne die verwechselten Verbindungen (kleine Gruppen und ungepruefte schwache Verbindungen zaehlen als echt)
-    S = teile(len(C), [k for k in quer if k not in falsch]); ref = lambda k: sum(1 for i in C[k] if nm[i].startswith(a.referenz))
+    S = teile(len(C), [k for k in quer_alle if k not in falsch]); ref = lambda k: sum(1 for i in C[k] if nm[i].startswith(a.referenz))
     seiten = [s for s in S if sum(ref(k) for k in s) > 0]; fremd_g = {k for s in S if sum(ref(k) for k in s) == 0 for k in s}; fremd = sorted(nm[i] for k in fremd_g for i in C[k])
     for v in sorted(verb, key=lambda v: v.get("p90") if v.get("p90") is not None else 9)[:40]:
         print(f"  Gruppe {v['a']:3d} ({len(C[v['a']]):4d} Bilder) <-> {v['b']:3d} ({len(C[v['b']]):4d}): {v['paare']:5d} Paare, p_gleich Median {v['p_median']}, 90 % unter {v.get('p90')}, eindeutig gleich {v.get('anteil_hoch')}  {v['urteil'].upper() if v['urteil'] != 'echt' else 'echt'}" + (f"  [GPS {v['gps_richtung'][0]} / {v['gps_richtung'][1]} Grad]" if v.get("gps_richtung") else ""))
