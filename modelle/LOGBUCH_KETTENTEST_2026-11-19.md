@@ -237,3 +237,12 @@ Gleiche Wolke (Lauf mt_gk3k), Testname `martinstor_gk3_lot`:
   Ergebnis Schwabentor: GPS loescht zusaetzlich 0<->1 (9 Paare; im Modell 180 Grad = genau die falschen Nord-Sued-Paare vom 15.11.) und 0<->4 (5 Paare, im Modell 114 Grad).
 - --pruefer-aus: Pruefer-Ergebnisse einer frueheren seiten.json wiederverwenden (Cache; prueft, dass die Gemeinschaften gleich sind).
 - Schnelltest 0 Fehler.
+
+## 15:00 Mapper auf bereinigter Datenbank (Aufloesung 1.0): NOCH VERKLEBT - Ursache gemischte Gruppe am Tordurchgang
+- seiten2 Martinstor (neue Regel): 25 echt, 35 unklar, 20 verwechselt (u.a. 0<->1 521 Paare, 0<->4 Drohne 984 Paare); 161 373 Paare geloescht (inkl. 637 fremde Bilder).
+- Konsens-Mapper auf db_seiten2.db: 45 min (statt 68; fremde Bilder weg), 1037 Bilder, 0,795 px, 313 unstabil.
+- SEITENTEST (neu, Skript blick: mittlere Blickrichtung je Bildgruppe): altes Modell Gruppe 1 (Rueckseite) 3 Grad gegen Gruppe 0 = verklebt. Neues Modell: 6 Grad -> NICHT behoben (Gruppe 1: 93 von 93 Bildern unstabil).
+- Ursache: Kette 1 (Fernansichten Sued) - 16 (Clip A_PUR2GXND0, laeuft von Sueden aufs Tor zu, Pruefer 'echt' 0,90) - 3 - 0. Gruppe 3 war GEMISCHT: Nahaufnahmen der Suedwand (A_PUR 12 Bilder) und der Nordwand (eigenes Video 15, Clip jRN8 23) in einer Gemeinschaft; Verwechslungspaare INNERHALB einer Gruppe prueft das Werkzeug nicht.
+- Abhilfe: Louvain-Aufloesung 2.0 (Standard): alte Gruppe 3 zerfaellt in jRN8 (+LY0S), eigenes Video, A_PUR; 50 Gruppen >= 12, 118 Verbindungen, 2822 Pruefpaare. Lauf seiten3.
+- Pruefer-Tempo: Bild einmal verkleinern bringt wenig (0,78 s, LoFTR selbst ~0,5 s); halbe Genauigkeit 0,49 s, aber 6 von 60 Urteilen kippen -> NICHT benutzt.
+- Verbesserung 37: Seitentest 'Blickrichtung je Bildgruppe' als Tor in die Kette (zwei Gruppen, die der Pruefer verwechselt nennt, duerfen im Modell nicht in dieselbe Richtung blicken).

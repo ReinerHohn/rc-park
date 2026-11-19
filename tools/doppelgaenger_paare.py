@@ -82,24 +82,26 @@ def eingabe(b0, b1, groesse, k0, k1, conf):
     return np.concatenate((K, rgb), 0)
 
 
-def pruefen(ordner, paare, groesse=1024, melden=50):
+def pruefen(ordner, paare, groesse=1024, melden=50, halb=False):
     """paare = [(bild0, bild1), ...] -> [(bild0, bild1, p_gleich, n_loftr)]. p_gleich klein = Doppelgaenger (andere Wand)."""
     import torch, kornia.feature as KF
     lo = KF.LoFTR(pretrained="outdoor").eval().cuda(); dec = netz(); aus = []; cache = {}
 
     def bild(n):
         if n not in cache:
-            if len(cache) > 400: cache.clear()
-            b = cv2.imread(os.path.join(ordner, n), cv2.IMREAD_COLOR); cache[n] = (b,) + grau_quadrat(b, groesse) if b is not None else None
+            if len(cache) > 900: cache.clear()
+            b = cv2.imread(os.path.join(ordner, n), cv2.IMREAD_COLOR)
+            if b is not None: b = cv2.resize(b, masse(b.shape[1], b.shape[0], groesse), interpolation=cv2.INTER_AREA)   # einmal verkleinern (12-MP-Bild je Paar neu laden kostete die halbe Zeit)
+            cache[n] = (b,) + grau_quadrat(b, groesse) if b is not None else None
         return cache[n]
     for i, (a, b) in enumerate(paare):
         A, B = bild(a), bild(b)
         if A is None or B is None: aus.append((a, b, None, 0)); continue
-        with torch.inference_mode():
+        with torch.inference_mode(), torch.autocast("cuda", dtype=torch.float16, enabled=halb):
             r = lo({"image0": torch.from_numpy(A[1]).cuda(), "image1": torch.from_numpy(B[1]).cuda(), "mask0": torch.from_numpy(A[2]).cuda(), "mask1": torch.from_numpy(B[2]).cuda()})
-            k0, k1, cf = r["keypoints0"].cpu().numpy(), r["keypoints1"].cpu().numpy(), r["confidence"].cpu().numpy()
+            k0, k1, cf = r["keypoints0"].float().cpu().numpy(), r["keypoints1"].float().cpu().numpy(), r["confidence"].float().cpu().numpy()
             x = torch.from_numpy(eingabe(A[0], B[0], groesse, k0, k1, cf))[None].cuda()
-            p = float(torch.softmax(dec(x), 1)[0, 1])
+            p = float(torch.softmax(dec(x).float(), 1)[0, 1])
         aus.append((a, b, round(p, 4), int(len(k0))))
         if melden and (i + 1) % melden == 0: print(f"  {i + 1} von {len(paare)} Paaren", flush=True)
     return aus

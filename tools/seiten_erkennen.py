@@ -19,7 +19,8 @@ Verfahren (ohne Vorwissen, ohne Kamerastandorte):
 Ausgabe seiten.json: gemeinschaft je Bild, verbindungen (paare, p_median, urteil), seiten (Zusammenhangsteile mit Objektfotos), fremd, geloeschte_paare.
 rc 0 = nichts verwechselt, rc 3 = mindestens eine Verwechslung gefunden (und bei --db-aus bereinigt).
 GRENZEN: der Pruefer ist je Paar unsicher (echte Paare Median nur 0,57-0,89) - deshalb Abstimmung je Gruppenpaar, nie Einzelpaar-Filter. Eine Gruppe, die selbst beide
-Seiten mischt (Durchgang durch einen Torbogen), wird nicht getrennt. Zwei getrennte Seiten ohne echte Verbindung ergeben zwei Modelle - Vereinen ist ein eigener Schritt."""
+Seiten mischt (Durchgang durch einen Torbogen), wird nicht getrennt (--aufloesung 2.0 trennt die am Martinstor; Beleg: Mapper-Lauf mit Aufloesung 1.0 blieb verklebt,
+Rueckseiten-Gruppe 6 Grad statt 180 Grad Blickrichtung gegen die Vorderseite). Zwei getrennte Seiten ohne echte Verbindung ergeben zwei Modelle - Vereinen ist ein eigener Schritt."""
 import sys, os, json, argparse, sqlite3, shutil, collections, random
 import numpy as np
 
@@ -30,11 +31,11 @@ def quelle(name):
     return name.split("__vf_")[0] if "__vf_" in name else name.split("__")[0]
 
 
-def gemeinschaften(kanten, knoten, saat=1):
+def gemeinschaften(kanten, knoten, saat=1, aufloesung=2.0):
     """kanten = [(a, b, gewicht)] -> Liste von Mengen, groesste zuerst (Louvain, fester Zufallskeim = wiederholbar)."""
     import networkx as nx
     G = nx.Graph(); G.add_nodes_from(knoten); G.add_weighted_edges_from(kanten)
-    return sorted((set(c) for c in nx.community.louvain_communities(G, weight="weight", seed=saat)), key=lambda c: (-len(c), min(c)))
+    return sorted((set(c) for c in nx.community.louvain_communities(G, weight="weight", seed=saat, resolution=aufloesung)), key=lambda c: (-len(c), min(c)))
 
 
 def teile(n, verbunden):
@@ -85,11 +86,12 @@ def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("db"); ap.add_argument("bilder"); ap.add_argument("--aus", required=True); ap.add_argument("--db-aus"); ap.add_argument("--min-bilder", type=int, default=12)
     ap.add_argument("--min-paare", type=int, default=20); ap.add_argument("--min-inlier", type=int, default=30); ap.add_argument("--stichprobe", type=int, default=24); ap.add_argument("--schwelle", type=float, default=0.45)
     ap.add_argument("--referenz", default="eigen__", help="Namensanfang der Objektfotos (Sammelordner tools/fotos_sammeln.py)"); ap.add_argument("--trocken", action="store_true", help="nur Gruppen und Verbindungen zaehlen, kein Pruefer")
+    ap.add_argument("--aufloesung", type=float, default=2.0, help="Louvain-Aufloesung: groesser = kleinere Gruppen. 1.0 liess am Martinstor eine Gruppe am Tordurchgang gemischt (Nahaufnahmen BEIDER Seiten), 2.0 trennt sie")
     ap.add_argument("--pruefer-aus", help="Pruefer-Ergebnisse (p je Verbindung) aus einer frueheren seiten.json derselben Datenbank uebernehmen statt neu zu rechnen (Cache)")
     ap.add_argument("--objekt", help="objekt.json: mit Objektmitte + EXIF-GPS der Fotos entscheidet die STANDRICHTUNG je Bildgruppe vor dem Pruefer (Nutzer 19.11.2026: kuenftig GPS im EXIF; muss auch ohne gehen)")
     a = ap.parse_args(argv); db = sqlite3.connect(f"file:{a.db}?mode=ro", uri=True); nm = dict(db.execute("select image_id, name from images"))
     K = [(pid // MAXID, pid % MAXID, rows) for pid, rows in db.execute("select pair_id, rows from two_view_geometries where rows >= ?", (a.min_inlier,))]
-    C = gemeinschaften(K, list(nm)); g = {i: k for k, c in enumerate(C) for i in c}; gross = [k for k, c in enumerate(C) if len(c) >= a.min_bilder]
+    C = gemeinschaften(K, list(nm), aufloesung=a.aufloesung); g = {i: k for k, c in enumerate(C) for i in c}; gross = [k for k, c in enumerate(C) if len(c) >= a.min_bilder]
     quer = collections.defaultdict(list)
     for x, y, r in K:
         if g[x] != g[y]: quer[tuple(sorted((g[x], g[y])))].append((x, y, r))
