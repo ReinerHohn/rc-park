@@ -196,7 +196,9 @@ def main():
         # Bildwahl fuer Tiefenkarten (Lehre 14.11.: Fernansichten/gleiche Videobilder kosten voll, bringen am Objekt wenig) -> tools/dicht_bildwahl.py
         sparse_wahl = os.path.join(daten, "sfm", "sparse_dicht")
         if stufe_wahl != "grob" and not os.path.isdir(sparse_wahl):
-            rc_w, out_w = run([PY_COL, "-I", "tools/dicht_bildwahl.py", sparse_dir, sparse_wahl], log); print(out_w.strip()[-400:], flush=True)
+            uns_ = os.path.join(daten, "sfm", "konsens_arbeit", "unstabil.txt"); mwj_ = os.path.join(daten, "sfm", "mapper_wahl.json")      # 19.11.2026: Konsens-Mapper -> nur Rueckgrat-Kameras in die dichte Wolke
+            kons_ = os.path.isfile(uns_) and os.path.isfile(mwj_) and json.load(open(mwj_)).get("gewaehlt") == "konsens"
+            rc_w, out_w = run([PY_COL, "-I", "tools/dicht_bildwahl.py", sparse_dir, sparse_wahl] + (["--ohne", uns_] if kons_ else []), log); print(out_w.strip()[-400:], flush=True)
             if rc_w != 0: sparse_wahl = sparse_dir
         sparse_dicht = sparse_wahl if os.path.isdir(sparse_wahl) else sparse_dir
         script = os.path.join(daten, "dicht_kette.py")

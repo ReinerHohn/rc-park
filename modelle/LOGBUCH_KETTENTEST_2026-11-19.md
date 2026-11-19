@@ -127,3 +127,18 @@ Gleiche Wolke (Lauf mt_gk3k), Testname `martinstor_gk3_lot`:
 | 21 | Hoehenprobe gegen LoD2-Objekthoehe + Massstabskorrektur | Q | gebaut |
 | 22 | Restfehler Grundriss: Feinfit nur mit Rueckgrat-Kameras/-Punkten; unstabile Kameras (unstabil.txt) aus Gelaende-/Inseltor herausnehmen oder getrennt melden | Q | offen |
 | 23 | Himmelsrauschen ueber dem Turm ('Fahne' in der Seitenansicht): Fusion strenger oder Himmelsmaske | Q | offen |
+
+## 09:57-10:15 Nutzer: "Haeuserzeile im voellig falschen Massstab" + "viel zu grosser Bereich, nur das Martinstor"
+- Ursache der schiefen, zu grossen Haeuserzeile: Tiefenkarten UNSTABILER Kameras. 4899 duenne Punkte lagen > 25 m hoch neben dem Turm; gesehen fast nur vom Fernclip
+  `video_frames_gjVSpDSd8rU` (16 Kameras, 152 m entfernt, 7 davon unter Gelaende) und Einzelfotos aus fotos_eingang. Der ganze Clip steht in konsens_arbeit/unstabil.txt.
+  Dieselben Gruppen meldeten Gelaende- und Inseltor - die Warnung war da, die Folgerung (aus der dichten Wolke nehmen) fehlte.
+- Test: Fusion nur mit den 383 stabilen der 548 Bilder (vorhandene Tiefenkarten, 360 s): hohe Punkte neben dem Turm 11 353 -> 176; Turmausschnitt 854 000 Punkte.
+  Bild audit/turm_stabil_1119.png: Turm sauber, Uhr, Daecher, Spitze ~55 m, Tordurchfahrt.
+- Fix in der Kette: `dicht_bildwahl.py --ohne konsens_arbeit/unstabil.txt` (pipeline_objekt, wenn der Konsens-Mapper gewaehlt wurde): 387 statt 548 Bilder -> auch ~30 % weniger Tiefenkarten.
+  Dazu derselbe Lot-Fehler in dicht_bildwahl (Objekt-Zylinder um die Normale der Kameraebene) behoben.
+- 3D-Seite: nur noch der Turm (12,5 m um die Achse) statt 50 m Umkreis.
+| Nr | Idee | Art | Stand |
+|---|---|---|---|
+| 12 | nur Rueckgrat-Kameras in die dichte Wolke | Q+G | gebaut |
+| 24 | 3D-Seite der Kette: Ausschnitt = Objektgrundriss + Rand, nicht die ganze Wolke; Ansichten vorher rendern | Q | offen (bisher von Hand) |
+| 25 | Tore: unstabile Kameras getrennt ausweisen (rot nur, wenn Rueckgrat-Kameras betroffen) | Q | offen |

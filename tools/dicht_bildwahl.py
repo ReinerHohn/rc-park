@@ -16,6 +16,7 @@ import numpy as np, pycolmap
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("ein"); ap.add_argument("aus")
     ap.add_argument("--fern", type=float, default=40.0); ap.add_argument("--max_bilder", type=int, default=0); ap.add_argument("--kern", type=float, default=80); ap.add_argument("--min_kern", type=int, default=60); ap.add_argument("--schritt", type=float, default=0.03); ap.add_argument("--winkel", type=float, default=4.0)
+    ap.add_argument("--ohne", default="", help="Datei mit Bildnamen (eine je Zeile), die NICHT in die dichte Wolke duerfen - Konsens-Mapper: konsens_arbeit/unstabil.txt (19.11.2026)")
     a = ap.parse_args(); r = pycolmap.Reconstruction(a.ein)
     P = np.array([p.xyz for p in r.points3D.values() if p.track.length() >= 5]); mitte = np.median(P, 0)
     # OBJEKT = ZYLINDER um die Lotachse durch die Mitte (15.11.2026, Nutzer: "kein Spezialfall von oben - Bilder, die das Objekt zeigen, sollen in die Wolke").
@@ -23,6 +24,14 @@ def main():
     # Lot = Normale der Kameraebene (Kern der Kameras), Radius = --kern-Perzentil des WAAGERECHTEN Abstands; die Hoehe ist frei.
     Cc = np.array([np.asarray(r.images[i].projection_center()) for i in r.reg_image_ids()]); cmed = np.median(Cc, 0); dk = np.linalg.norm(Cc - cmed, axis=1); kk = dk <= np.percentile(dk, 70)
     up = np.linalg.svd(Cc[kk] - Cc[kk].mean(0))[2][2]
+    # 19.11.2026 (Martinstor mit Drohnenclips): Kamerazentren nicht in einer Ebene -> Ebenennormale 87 Grad neben dem Lot, der Objekt-Zylinder lag quer. Lot aus dem Kamerablick
+    # (Bild-x-Achsen liegen waagerecht), wenn er der Kameraebene um > 15 Grad widerspricht und >= 50 % der Kameras ihn stuetzen (gleiche Regel wie tools/sfm_lod2_ausrichten.py).
+    Xa = np.array([np.asarray(r.images[i].cam_from_world().rotation.matrix())[0] for i in r.reg_image_ids()]); inl = np.ones(len(Xa), bool)
+    for _ in range(5):
+        ub = np.linalg.svd(Xa[inl], full_matrices=False)[2][2]; inl = np.abs(Xa @ ub) < np.sin(np.radians(15))
+        if inl.sum() < 8: break
+    if inl.sum() >= 8 and inl.mean() >= 0.5 and np.degrees(np.arccos(min(1.0, abs(float(up @ ub))))) > 15:
+        print(f"ACHTUNG LOT (Bildwahl): Kameraebene und Kamerablick widersprechen sich um {np.degrees(np.arccos(min(1.0, abs(float(up @ ub))))):.0f} Grad - es gilt das Lot aus dem Kamerablick"); up = ub
     hor = lambda X: np.linalg.norm((X - mitte) - np.outer((X - mitte) @ up, up), axis=1)
     rk = np.percentile(hor(P), a.kern); ids = np.array(list(r.points3D.keys())); XYZ = np.array([r.points3D[i].xyz for i in ids]); kern = set(ids[hor(XYZ) <= rk].tolist())
     info = {}
@@ -31,6 +40,9 @@ def main():
         nk = sum(1 for p2 in im.points2D if p2.has_point3D() and p2.point3D_id in kern)
         info[iid] = dict(name=im.name, C=C, d=float(np.linalg.norm(C - mitte)), blick=R[2], drin=bool(nk >= a.min_kern), kernpunkte=nk)
     dmed = float(np.median([v["d"] for v in info.values()])); behalten = {i for i, v in info.items() if v["drin"] and v["d"] <= a.fern * dmed}   # --fern jetzt 40 (nur noch Schutz gegen Ausreisserkameras): wer genug Objektpunkte sieht, zeigt das Objekt
+    ohne = set(l.strip() for l in open(a.ohne) if l.strip()) if a.ohne and os.path.isfile(a.ohne) else set()      # unstabile Kameras des Konsens-Mappers: als Kamera brauchbar, aber ihre Tiefenkarten
+    weg_ohne = {i for i in behalten if info[i]["name"] in ohne}; behalten -= weg_ohne                           # setzten am Martinstor eine Haeuserzeile schief und zu gross in die Wolke (Nutzer 19.11.)
+    if ohne: print(f"Bildwahl: {len(weg_ohne)} unstabile Kameras nicht in die dichte Wolke ({len(ohne)} auf der Liste {a.ohne})")
     clips = {}
     for i in behalten:
         m = re.match(r"(.+)__vf_(\d+)\.", info[i]["name"])
