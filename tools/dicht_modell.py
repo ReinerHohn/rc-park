@@ -31,7 +31,7 @@ def main(argv=None):
         if a.groesse: po.max_image_size = a.groesse
         pycolmap.patch_match_stereo(a.aus, options=po)
     fo = pycolmap.StereoFusionOptions(); fo.max_image_size = a.groesse or (800 if GROB else 1600)
-    if a.stufe == "schnell": fo.min_num_pixels = 8
+    if a.stufe == "schnell": fo.min_num_pixels = 3   # 19.11.2026 gemessen (Martinstor Rueckseite): 8 -> 3 = 5-fache Punktzahl, Wand 56 -> 76 % belegt, Anteil falscher Punkte gleich (1,3 %), Wanddicke 4 -> 5 cm
     try: frei = int([l for l in open("/proc/meminfo") if l.startswith("MemAvailable")][0].split()[1]) / 1048576
     except Exception: frei = 8.0
     nf = len([l for l in open(os.path.join(a.aus, "stereo", "fusion.cfg")) if l.strip()]); bedarf = nf * (0.012 if GROB else 0.045); GB.frei(); ziel = os.path.join(a.aus, "fused.ply")

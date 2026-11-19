@@ -100,7 +100,7 @@ def fusionieren(ziel, D, stufe):
     """COLMAP-Fusion (CPU, Minuten) mit der fusion.cfg des Arbeitsordners D nach `ziel` (+ ziel.vis)."""
     import pycolmap
     fo = pycolmap.StereoFusionOptions(); fo.max_image_size = 1600
-    if stufe == "schnell": fo.min_num_pixels = 8
+    if stufe == "schnell": fo.min_num_pixels = 3   # 19.11.2026 gemessen, siehe pipeline_objekt.py
     # 19.11.2026 (Durchsicht Punkt 38): wie in pipeline_objekt.py - passt die Fusion nicht in 60 % des freien RAM, Teilfusion; sonst OOM-Kill und die Kette lief auf der
     # UNGEFILTERTEN Wolke weiter (alle Dichtlaeufe > ~200 Bilder brauchten die Teilfusion).
     try: frei = int([l for l in open("/proc/meminfo") if l.startswith("MemAvailable")][0].split()[1]) / 1048576

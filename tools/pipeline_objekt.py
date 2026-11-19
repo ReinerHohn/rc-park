@@ -233,7 +233,7 @@ except Exception: _frei_gb = 8.0
 _nf = len([l for l in open(os.path.join(out, "stereo", "fusion.cfg")) if l.strip()]); _bedarf = _nf * (0.045 if not GROB else 0.012)   # GB (Messung 18.11.: 100 Bilder 1600 px = 4,1 GB)
 # 18.11.2026: use_cache (1 Thread, Nachladen) lief am Kaufhaus 4 h ohne Ende (1,56 TB gelesen) -> passt es nicht in 60 % des freien RAM: TEILFUSION in voller Aufloesung (tools/teilfusion.py), sonst normal mit allen Kernen
 print("Fusion:", _nf, "Bilder, Bedarf ~%.1f GB, frei %.1f GB" % (_bedarf, _frei_gb), "-> TEILFUSION" if _bedarf > 0.6 * _frei_gb else "-> am Stueck", flush=True)
-if STUFE == "schnell": fo.min_num_pixels = 8   # strenger, weil die geometrische Pruefung fehlt (COLMAP-FAQ)
+if STUFE == "schnell": fo.min_num_pixels = 3   # 19.11.2026 gemessen (Martinstor): 8 (Annahme vom 15.11.) warf Putz und Sockel weg; 3 = 5-fache Punktzahl, Anteil falscher Punkte gleich (1,3 %), Wanddicke 4 -> 5 cm
 GB.frei()   # Fusion hat keinen GPU-Code (Minuten auf der CPU)
 if _bedarf > 0.6 * _frei_gb:
     import subprocess as _sp
