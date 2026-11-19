@@ -204,3 +204,15 @@ Gleiche Wolke (Lauf mt_gk3k), Testname `martinstor_gk3_lot`:
 - Warum es heute nicht auffiel: am Schwabentor faengt das GPS-Tor den Fehler (9 %), am Martinstor ist es blind (keine Standort-GPS). Der Konsens-Mapper wurde nur auf Wiederholbarkeit und GPS geprueft, nicht auf Seiten.
 - MEIN FEHLER (Rueckfall, kein Lernen): um 12:05 als neuen Fund gemeldet, ohne das Register zu durchsuchen (CLAUDE.md: "Vor neuen Versuchen NICHTS_GEBRACHT / VERSUCHSREGISTER lesen").
 - Folge fuer Verbesserung 35: vorhandene Teile wiederverwenden. Teilmodelle liefern die Seite je Bild OHNE Vorwissen -> Azimut je Bild -> Paarfilter aus lg_in_db_anhaengen (alt_weg_ab 120 Grad) auf die Kettendatenbank -> ein Mapperlauf. Seitentor ohne Hand-Picks: Teilmodell aus unstabilen/nicht registrierten Bildern >= 15 Bilder = WARNUNG "zweite Seite nicht im Modell".
+
+## 12:45 Seitenerkennung (Nutzer: "Vollgas, jedes Gebaeude hat mehrere Seiten") - Messungen
+- Lauf mt_gk3t fertig 12:21: dichte Wolke 1,3 Mio Punkte (fotometrisch, 27 min), ABBRUCH "keine Lage besteht alle Tore" (GPS, Grundriss in allen 4 Loesungen rot). Die Tore haben also recht gehabt. Bild audit/dicht_lauf_gk3t_1119.png: eine Turmseite, 30 Grad gekippt -> keine 3D-Seite veroeffentlicht.
+- KORREKTUR zu 12:05: nicht nur die unstabilen Kameras sind betroffen. Das RUECKGRAT selbst ist gemischt (audit/rueckgrat_gemischt_1119.jpg): Nahaufnahmen mit Nebenhaus LINKS (Clip A_PUR2GXND0, eigen 030/041) und Fernansichten mit Nebenhaus RECHTS (Clip LSi6HGXqmiY, eigen 089) stehen beide im Rueckgrat auf derselben Seite. Beide globalen Laeufe verkleben gleich -> der Konsens-Schnitt (Wiederholbarkeit) erkennt Seitenverwechslung grundsaetzlich NICHT.
+- Was funktioniert: GEMEINSCHAFTEN im Paar-Graphen (Louvain, Gewicht = Inlier, alle 1990 Bilder, 2 s). Gemeinschaft 0 (242 Bilder): 63 Bilder "Nebenhaus rechts", 0 "links". Gemeinschaft 1 (110): 7 links, 0 rechts. Gemeinschaft 3 (61): 12 links, 0 rechts. Fremde Bauten (Muenster usw.) fallen als eigene Gemeinschaften ohne Verbindung heraus. -> Seiten trennen sich im Graphen sauber.
+- Jede Gemeinschaft allein rekonstruiert (schrittweiser Mapper, CPU, 4 parallel ~10 min): h_a/h_b (Haelften von Gem. 0), c1, c3 -> saubere Teilmodelle.
+- Offen: welche VERBINDUNG zwischen zwei Gemeinschaften ist echt, welche Verwechslung? Drei Masse gemessen (tools/versuche/mt_seiten_relation_1119.py):
+  echt (h_a:h_b): 11 509 gemeinsame Punkte, Sim3-Inlier 75 %, Freiraum-Konflikt 1,7 %
+  verwechselt (h_a:c1 / h_b:c1): 532 / 475 gemeinsame Punkte, Sim3-Inlier 33 %, Konflikt 4,7 / 4,3 %
+  unklar (h_a:c3): 435, 42 %, 1,3 %; c1:c3 keine einzige Verbindung (Fern- gegen Nahaufnahmen).
+  -> Sim3-Inlier trennt (75 gegen 33 %), aber nur EIN echtes Beispiel; Freiraum-Probe zu schwach (Nahaufnahmen sehen nur die Wand). Schwache echte Verbindung (Eckfotos) sieht bei "gemeinsame Punkte" genauso aus wie eine Verwechslung.
+- Naechster Schritt: gelernten Paar-Klassifikator pruefen (Doppelgangers, Lizenz/Gewichte), nur auf Paare ZWISCHEN Gemeinschaften anwenden (wenige tausend) und je Gemeinschaftspaar abstimmen; dazu mehr echte Vergleichspaare (Schwabentor mit GPS als Wahrheit).
