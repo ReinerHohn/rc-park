@@ -101,6 +101,17 @@ def fusionieren(ziel, D, stufe):
     import pycolmap
     fo = pycolmap.StereoFusionOptions(); fo.max_image_size = 1600
     if stufe == "schnell": fo.min_num_pixels = 8
+    # 19.11.2026 (Durchsicht Punkt 38): wie in pipeline_objekt.py - passt die Fusion nicht in 60 % des freien RAM, Teilfusion; sonst OOM-Kill und die Kette lief auf der
+    # UNGEFILTERTEN Wolke weiter (alle Dichtlaeufe > ~200 Bilder brauchten die Teilfusion).
+    try: frei = int([l for l in open("/proc/meminfo") if l.startswith("MemAvailable")][0].split()[1]) / 1048576
+    except Exception: frei = 8.0
+    nf = len([l for l in open(os.path.join(D, "stereo", "fusion.cfg")) if l.strip()]); bedarf = nf * 0.045
+    print(f"Fusion: {nf} Bilder, Bedarf ~{bedarf:.1f} GB, frei {frei:.1f} GB" + (" -> TEILFUSION" if bedarf > 0.6 * frei else ""), flush=True)
+    if bedarf > 0.6 * frei:
+        import subprocess
+        rc = subprocess.call([sys.executable, "-I", os.path.join(os.path.dirname(os.path.abspath(__file__)), "teilfusion.py"), D, ziel, "--max_image_size", str(fo.max_image_size), "--min_num_pixels", str(fo.min_num_pixels), "--input_type", "geometric" if stufe == "fein" else "photometric"])
+        if rc: raise RuntimeError(f"Teilfusion rc {rc}")
+        return
     pycolmap.stereo_fusion(ziel, D, options=fo, input_type="geometric" if stufe == "fein" else "photometric", output_type="ply")
 
 

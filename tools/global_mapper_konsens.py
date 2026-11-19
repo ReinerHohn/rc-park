@@ -32,7 +32,9 @@ def urteil(kj, n_bilder, n_clips, lief=True):
     if s:
         if s.get("stabil", 0) < 0.5 * max(s.get("gemeinsam", 0), 1): g.append(f"Rueckgrat: nur {s.get('stabil', 0)} von {s.get('gemeinsam', 0)} Kameras stehen in beiden Laeufen gleich (unter 50 %)")
         elif s.get("stabil", 0) < 30: g.append(f"Rueckgrat: nur {s.get('stabil', 0)} stabile Kameras (unter 30)")
-    if b and n_bilder and b.get("n_reg", 0) < 0.5 * n_bilder: g.append(f"nur {b.get('n_reg', 0)} von {n_bilder} Bildern im Modell (unter 50 %)")
+    # 19.11.2026 (Durchsicht Punkt 40): stuerzt mapper_bewerten.py ab, steht hier {'fehler': ...} OHNE n_reg - das zaehlte als '0 Bilder im Modell' = falscher DATENMANGEL,
+    # das fertige Konsens-Modell wurde verworfen. Ohne n_reg gibt es keine Aussage ueber die Bildzahl.
+    if b and "n_reg" in b and n_bilder and b.get("n_reg", 0) < 0.5 * n_bilder: g.append(f"nur {b.get('n_reg', 0)} von {n_bilder} Bildern im Modell (unter 50 %)")
     u = []
     if g:
         if n_bilder < 100: u.append(f"nur {n_bilder} Bilder (unter etwa 100)")

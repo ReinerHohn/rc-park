@@ -10,7 +10,7 @@ T = os.path.dirname(os.path.abspath(__file__))
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(); ap.add_argument("sparse"); ap.add_argument("bilder"); ap.add_argument("aus"); ap.add_argument("--ohne"); ap.add_argument("--stufe", default="schnell", choices=["schnell", "fein", "grob"]); ap.add_argument("--ohne-bildwahl", action="store_true")
+    ap = argparse.ArgumentParser(); ap.add_argument("sparse"); ap.add_argument("bilder"); ap.add_argument("aus"); ap.add_argument("--ohne"); ap.add_argument("--stufe", default="schnell", choices=["schnell", "fein", "grob"]); ap.add_argument("--ohne-bildwahl", action="store_true"); ap.add_argument("--fenster-radius", type=int, default=0, help="PatchMatch window_radius (COLMAP-Vorgabe 5); groesser = glatte, strukturarme Flaechen (weisser Putz) bekommen eher eine Tiefe, Kanten werden weicher"); ap.add_argument("--min-ncc", type=float, default=-1.0, help="filter_min_ncc (Vorgabe 0,1)"); ap.add_argument("--groesse", type=int, default=0, help="Bildgroesse der Tiefenkarten statt 1600/800")
     a = ap.parse_args(argv); import pycolmap; sys.path.insert(0, T); import gpu_buchung as GB
     os.makedirs(a.aus, exist_ok=True); sparse = a.sparse; wahl = os.path.join(a.aus, "sparse_dicht")
     if not a.ohne_bildwahl and a.stufe != "grob":
@@ -26,8 +26,11 @@ def main(argv=None):
         uo = pycolmap.UndistortCameraOptions(); uo.max_image_size = 1600; pycolmap.undistort_images(a.aus, sparse, a.bilder, output_type="COLMAP", undistort_options=uo)
         po = pycolmap.PatchMatchOptions(); po.max_image_size = 800 if GROB else 1600; po.gpu_index = "0"; po.geom_consistency = FEIN; po.filter = True
         if a.stufe == "schnell": po.window_step = 2
+        if a.fenster_radius: po.window_radius = a.fenster_radius
+        if a.min_ncc >= 0: po.filter_min_ncc = a.min_ncc
+        if a.groesse: po.max_image_size = a.groesse
         pycolmap.patch_match_stereo(a.aus, options=po)
-    fo = pycolmap.StereoFusionOptions(); fo.max_image_size = 800 if GROB else 1600
+    fo = pycolmap.StereoFusionOptions(); fo.max_image_size = a.groesse or (800 if GROB else 1600)
     if a.stufe == "schnell": fo.min_num_pixels = 8
     try: frei = int([l for l in open("/proc/meminfo") if l.startswith("MemAvailable")][0].split()[1]) / 1048576
     except Exception: frei = 8.0

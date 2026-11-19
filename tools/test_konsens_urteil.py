@@ -10,4 +10,5 @@ g, u, ab = urteil(duenn, 70, 0); assert len(g) == 1 and "Rueckgrat" in g[0], g
 assert any("70 Bilder" in x for x in u) and any("kein Videoclip" in x for x in u), u; assert "Video-Rundgang" in ab
 g, u, ab = urteil(dict(schnitt=dict(gemeinsam=40, stabil=25), bewertung=dict(n_reg=40)), 300, 5); assert len(g) == 2 and "unter 30" in g[0] and "unter 50 %" in g[1], g; assert "nominell" in u[0], u
 g, u, ab = urteil(None, 500, 2, lief=False); assert g and "ohne Ergebnis" in g[0] and "2 Videoclip" in u[0], (g, u)
+g, u, ab = urteil(dict(schnitt=dict(gemeinsam=900, stabil=600), bewertung=dict(fehler="Traceback ...")), 1000, 5); assert g == [], g      # 19.11.2026: abgestuerzte Bewertung ist kein Datenmangel
 print("ok konsens_urteil")
