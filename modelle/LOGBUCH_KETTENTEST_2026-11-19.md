@@ -229,3 +229,11 @@ Gleiche Wolke (Lauf mt_gk3k), Testname `martinstor_gk3_lot`:
   Ursache: kleine Video-Teilmodelle sind in sich verzogen; starre Passung gelingt auch bei echten Verbindungen nur teilweise. Die 75 % der Handmessung stammten von zwei Haelften einer grossen Gruppe - nicht uebertragbar. -> nicht in die Kette, Werkzeug als Messwerkzeug markiert.
 - Neue Urteilsregel in seiten_erkennen.py (statt Median-Schwelle): ECHT, wenn >= 10 % der Stichprobe EINDEUTIG gleich sind (p >= 0,8) - bei echter Verbindung gibt es immer ein paar leichte Paare; VERWECHSELT, wenn fast kein Paar gleich aussieht (90. Perzentil < 0,5); sonst unklar. An den 300 Handpaaren: 0<->1 verwechselt (p90 0,42, 0 % eindeutig), 0-0 / 1-1 / 3-3 echt (25 / 47 / 65 % eindeutig), 0<->3 unklar (7 %); mit 24er Stichproben gleiches Urteil.
 - Laeuft: seiten2 (Schwabentor, dann Martinstor mit bereinigter Datenbank db_seiten2.db).
+
+## 14:05 Schwabentor als Wahrheit + GPS-Anker (Nutzer: "muss auch ohne GPS funktionieren, mit GPS noch sicherer")
+- Schwabentor, neue Regel, gegen Standrichtungen aus dem GPS-geprueften Modell (konsens_komplett, 466 Bilder): 12 Verbindungen 'echt' - alle 12 richtig (Gruppen 0-60 Grad auseinander). 1 'verwechselt' (9<->10, 41 Paare, p90 0,448) = FEHLALARM (beide Gruppen bei 12/13 Grad); Folge klein (beide haengen ueber Gruppe 1 am Modell). Vom Martinstor-Fall (p90 0,42) nicht unterscheidbar.
+- GPS-Anker in seiten_erkennen.py (--objekt): EXIF-GPS -> Standrichtung je Bildgruppe (>= 3 Fotos, 15-300 m, Buendelung >= 0,7); > 120 Grad = verwechselt, < 60 Grad = echt.
+  LEHRE: GPS darf ein klares 'echt' des Pruefers NICHT ueberstimmen. Erster Versuch: Gruppen 2<->4 laut GPS 199 Grad auseinander -> 'verwechselt', im Modell aber 60 Grad und Pruefer 54 % eindeutig gleich. Handy-GPS in der Strassenschlucht 5-15 m daneben = zig Grad bei 20 m Abstand. Jetzt: GPS entscheidet nur 'unklare' und vom Pruefer nicht gesehene schwache Verbindungen.
+  Ergebnis Schwabentor: GPS loescht zusaetzlich 0<->1 (9 Paare; im Modell 180 Grad = genau die falschen Nord-Sued-Paare vom 15.11.) und 0<->4 (5 Paare, im Modell 114 Grad).
+- --pruefer-aus: Pruefer-Ergebnisse einer frueheren seiten.json wiederverwenden (Cache; prueft, dass die Gemeinschaften gleich sind).
+- Schnelltest 0 Fehler.
