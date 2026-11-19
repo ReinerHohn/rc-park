@@ -258,5 +258,5 @@ Gleiche Wolke (Lauf mt_gk3k), Testname `martinstor_gk3_lot`:
 - Pruefungen der gedrehten Lage: (1) FLANKENPROBE (unabhaengig, unsymmetrischer Nachbar): Nebenhaus in A auf Flanke +y (1978 gegen 504 Punkte), in B gedreht ebenfalls +y (1040 gegen 126), in B geklappt -y -> gedreht stimmt.
   (2) LoD2-Waende: B gedreht roh Median 1,35 m (34 % < 1 m), nach Feinpassung (Drehung +1,0 Grad, Massstab 0,958 - Massstab verdaechtig, nicht uebernommen) 0,17 m / 87 %; Kontrolle geklappt 0,30 m / 77 % -> LoD2 allein entscheidet die Seite nicht (Strasse spiegelgleich).
   (3) Turmwaende bei x = +4,12 und -4,12 m (Tiefe 8,2 m; LoD2-Sockel 11,6 m), Dachflaechen beider Seiten treffen sich an der Spitze (audit/zweiseitig_turm_1119.png).
-- 3D-Seite: https://claude.ai/artifact/9fK... (siehe Antwort an den Nutzer), Bilder audit/zweiseitig_*_1119.png. Skripte tools/versuche/seiten_*_1119.py.
+- 3D-Seite: https://claude.ai/artifact/She8oNNLBDGohUwFKbmFGh, Bilder audit/zweiseitig_*_1119.png. Skripte tools/versuche/seiten_*_1119.py.
 - OFFEN: Genauigkeit vorn/hinten nur ueber LoD2-Achse (+-0,4 m), Massstab B aus Turmwand-Paaren; dichte Wolke beider Seiten; verlorene Clips wieder anhaengen; alles in die Kette (Stufe 'seiten'), Seitentest Blickrichtung als Tor; Schwabentor/Kaufhaus gegenpruefen.
