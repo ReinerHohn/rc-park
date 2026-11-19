@@ -108,7 +108,7 @@ def notiz(B, name, ok, **k):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("quelle"); ap.add_argument("--ziel", required=True)
     ap.add_argument("--trotz-lage", action="store_true", help="Fotostufen auch dann rechnen, wenn die Lage-Tore rot sind (nur zum Untersuchen)"); ap.add_argument("--ab", default="anlegen", choices=STUFEN); ap.add_argument("--bis", default="vergleich", choices=STUFEN)
-    ap.add_argument("--fremd", nargs="*", default=[]); ap.add_argument("--commons-kategorie", default=""); ap.add_argument("--ohne-video", action="store_true")
+    ap.add_argument("--fremd", nargs="*", default=[]); ap.add_argument("--commons-kategorie", default=""); ap.add_argument("--ohne-video", action="store_true"); ap.add_argument("--ohne-netz", action="store_true", help="Stufe commons: nur die Commons-Kategorie, keine weiteren Netzquellen (tools/netz_fotos_holen.py)")
     ap.add_argument("--ohne-weitere-fotos", action="store_true", help="nur fotos_dir + Commons/Video (alt); Standard: alle Fotoordner des Objekts unter rc-park_daten (tools/fotoquellen.py) als Fremdquelle vorpruefen")
     ap.add_argument("--dicht-stufe", default="schnell", choices=["grob", "schnell", "fein"], help="schnell = ohne geometrischen PatchMatch-Durchgang (Standard 15.11.2026); fein nur wenn ein Tor zweifelt"); ap.add_argument("--referenz-wolke", default=""); ap.add_argument("--max-loesung", type=int, default=3); ap.add_argument("--fotos", default="", help="fotos_dir ersetzen"); ap.add_argument("--mapper", default="", choices=["", "auto", "auto_alt", "global", "inkrementell", "konsens"], help="an iphone_sfm.py durchreichen; leer = dessen Standard (auto = Konsens zuerst, bei Datenmangel Meldung + alter Weg). konsens = erzwingen: zwei globale Laeufe + Rueckgrat (modelle/GLOBALER_MAPPER_STABIL.md)")
     a = ap.parse_args()
@@ -167,6 +167,12 @@ def main():
     kat = a.commons_kategorie or ((obj.get("bildquellen") or {}).get("commons", {}).get("kategorien") or [""])[0]   # objekt.json bildquellen
     if dran("commons") and kat:
         lauf(B, "commons", ["python3", "-I", "tools/commons_harvest.py", "--category", kat, "--max", "120", "--width", "1600", "--out", CO], log)
+    NZ = os.path.join(D, "netz")                                         # 19.11.2026 (Nutzer: "der automatische Bilderholer muss in die Pipeline"): ALLE freien Netzquellen VOR der SfM (Openverse/Flickr, Commons-Umkreis,
+    if dran("commons") and not a.ohne_netz:                              # Hochblicke) - bisher erst in der spaeten Stufe 'seiten', die bei gescheiterter Lage nie drankam. Zwischenspeicher 7 Tage (netz_stand.json).
+        bw = [D] + [x_ for x_ in [os.path.join(os.path.dirname(D), a.quelle)] if os.path.isdir(x_) and os.path.realpath(x_) != os.path.realpath(D)]
+        rc_n = lauf(B, "netz_fotos", [PY, "-I", "tools/netz_fotos_holen.py", ZR, "--aus", NZ, "--bekannt-wurzel"] + bw, log, ok=(0, 2), timeout=4 * 3600)[0]
+        if rc_n == 2: notiz(B, "netz_fotos_quellen", False, fehler="keine Netzquelle erreicht (kein Netz?) - es wird nur mit dem Bestand gerechnet")
+    if os.path.isdir(NZ) and NZ not in fremd: fremd.append(NZ)
     bild = lambda d: os.path.isdir(d) and any(f.lower().endswith((".jpg", ".jpeg", ".png")) for f in os.listdir(d))
     if not bild(fd):                                       # Lehre Martinstor 2026-11-14: eigene Fotos verloren (Auslagerungsplatte) -> Commons-Kategorie wird Basis
         if not bild(CO): notiz(B, "basis", False, fehler=f"keine Bilder in fotos_dir {fd} und keine Commons-Ernte (--commons-kategorie)"); return abschluss(1)
