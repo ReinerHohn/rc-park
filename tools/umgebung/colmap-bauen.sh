@@ -82,11 +82,18 @@ cmake -S "$QUELLE/ceres" -B "$QUELLE/ceres/bau" -G Ninja -DCMAKE_BUILD_TYPE=Rele
 ninja -C "$QUELLE/ceres/bau" -j "$JOBS" install > "$QUELLE/ceres-bau.log" && ok "Ceres gebaut"
 
 # 4) COLMAP (Schalter wie build-cuda vom 13.11.)
+# ONNX-Falle (19.11.2026, COLMAP-Issue #5053): github.com/microsoft/onnxruntime/releases/... liefert 404 -> frischer Bau scheitert.
+# Ausweg: entpackte Kopie aus dem Bau vom 13.11. (Vorrat auf rcdaten) per FETCHCONTENT_SOURCE_DIR_ONNXRUNTIME einspeisen.
+ONNX_VERSION=$(grep -oP 'set\(ONNX_VERSION\s+"?\K[0-9.]+' "$QUELLE/colmap/cmake/FindDependencies.cmake" | head -1)
+ONNX_VORRAT=${ONNX_VORRAT:-/media/oem/rcdaten/vorrat/onnxruntime-linux-x64-gpu_cuda12-$ONNX_VERSION}
+ONNX_OPT=""
+if [ -d "$ONNX_VORRAT" ]; then ONNX_OPT="-DFETCHCONTENT_SOURCE_DIR_ONNXRUNTIME=$ONNX_VORRAT"; ok "ONNX $ONNX_VERSION aus Vorrat $ONNX_VORRAT"
+else echo "${Y}kein ONNX-Vorrat fuer $ONNX_VERSION ($ONNX_VORRAT) - Download kann mit 404 scheitern (Issue #5053)${N}"; fi
 [ -x "$ZIEL/bin/colmap" ] && cp -p "$ZIEL/bin/colmap" "$ZIEL/bin/colmap.alt_$(date +%Y%m%d)"
 cmake -S "$QUELLE/colmap" -B "$QUELLE/colmap/bau" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$ZIEL" \
   -DCUDA_ENABLED=ON -DCMAKE_CUDA_ARCHITECTURES=89 -DCMAKE_CUDA_COMPILER="$KOMBI/bin/nvcc" -DCUDAToolkit_ROOT="$KOMBI" \
   -DCeres_DIR="$ZIEL/lib/cmake/Ceres" -Dcudss_DIR="$CUDA_DIR/cudss-cmake" -DCASPAR_ENABLED=ON -DONNX_ENABLED=ON -DCGAL_ENABLED=ON \
-  -DOPENGL_ENABLED=ON -DGUI_ENABLED=OFF -DTESTS_ENABLED=OFF -DFETCH_BOOST=ON -DFETCH_FAISS=ON -DFETCH_ONNX=ON -DFETCH_POSELIB=ON > "$QUELLE/colmap-cmake.log"
+  -DOPENGL_ENABLED=ON -DGUI_ENABLED=OFF -DTESTS_ENABLED=OFF -DFETCH_BOOST=ON -DFETCH_FAISS=ON -DFETCH_ONNX=ON -DFETCH_POSELIB=ON $ONNX_OPT > "$QUELLE/colmap-cmake.log"
 ninja -C "$QUELLE/colmap/bau" -j "$JOBS" install > "$QUELLE/colmap-bau.log" && ok "COLMAP gebaut"
 
 # 5) Startumgebung + Probe
