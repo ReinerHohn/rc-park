@@ -93,6 +93,7 @@ NC-Modelle nur zur Forschung; was im Verkaufsprodukt steckt, muss aus lizenzfrei
 | MoGe-2 ViT-L | Code MIT, Gewichte laut Mirrors MIT | ? vor Einsatz pruefen | – | Treffer |
 | Metric3D | widerspruechlich (BSD-2 / "non-commercial") | ⚠ meiden bis geklaert | – | Treffer |
 | DINOv3 | eigene Meta-Lizenz (Pflichthinweis, Kuendigungsrecht) | ⚠ umstaendlich; DINOv2 Apache | – | geprueft (Recherche-Agent) |
+| **FlexGlue** (cvg/FlexGlue v0.1, in COLMAP seit 1.11.2026) | Code + Matcher/Deskriptor-Koepfe MIT; Grundnetz DINOv3-ConvNeXt-B unter DINOv3 License (an der Quelle gelesen 2026-11-19: Nutzung inkl. kommerziell erlaubt; verboten Militaer/Waffen/ITAR, Exportverstoesse, Rueckentwicklung; Weitergabe der GEWICHTE nur mit Lizenztext) | ✓ fuer Verkaufsmodelle (wir geben nur Modelle, keine Gewichte weiter) | Test Seitenverwechslung Martinstor `/media/oem/rcdaten/tmp/flexglue` | geprueft |
 | PolyFit / KSR (CGAL) / City3D | GPL (bindet nur Weitergabe der Software, nicht erzeugte Modelle); City3D braucht Gurobi | ✓ als Werkzeug denkbar | – | Treffer |
 | **Fototextur** | Textur aus CC-BY-SA-Fotos wird ShareAlike; Mapillary NC; YouTube geschuetzt | ⚠ Textur/Farbe nur aus CC-BY/PD/eigenen Fotos | geplante Farbstufe | Einschaetzung |
 
